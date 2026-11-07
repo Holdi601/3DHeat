@@ -439,4 +439,239 @@ A['mig-23mf'] = { ...flogger(false, false), cls: 'fighter' };
 A['mig-23mld'] = { ...flogger(true, false), cls: 'fighter' };
 A['mig-27k'] = { ...flogger(true, true), cls: 'attack' };
 
+// ---------------------------------------------------------------- Mirage III, 5, Kfir, F1 and 2000
+
+// Mirage III: a tailless 60-degree delta, half-cone intakes beside the cockpit, a framed canopy blending into the
+// spine, a tall fin (IIIE 15.03 x 8.22 x 4.5 m). The Mirage 5 has the long slim nose with no radar (15.55 m); the
+// Kfir the J79's fatter rear with an intake at the fin's root, fixed canards on the intakes, a dogtoothed wing and a
+// flattened nose (15.65 m).
+function mirage3(kind: 'radar' | 'slim' | 'kfir'): FixedWingSpec {
+  const tip = kind === 'radar' ? 7.53 : kind === 'slim' ? 8.05 : 8.15;
+  const nose: P2[] = kind === 'radar' ? [[7.53, -0.05], [6.2, 0.3], [4.6, 0.48]] : kind === 'slim' ? [[8.05, -0.04], [6.6, 0.22], [4.6, 0.45]] : [[8.15, -0.08], [6.8, 0.2], [4.8, 0.44]];
+  const kfir = kind === 'kfir';
+  return {
+    length: tip + 7.5, span: 8.22, height: 4.5, bodyWidth: 2.1, bodyHeight: 1.3,
+    fuselage: {
+      top: [...nose, [3.6, 0.52], [1.6, 0.6], [-3, 0.56], [-6.2, kfir ? 0.6 : 0.48], [-7.5, kfir ? 0.5 : 0.42]],
+      bottom: [[tip, -0.08], [tip - 1.3, -0.35], [3.6, -0.5], [0, -0.6], [-7.5, kfir ? -0.5 : -0.42]],
+      plan: [[tip, kind === 'kfir' ? 0.1 : 0.03], [tip - 1.3, 0.38], [4.0, 0.55], [3.0, 0.6], [2.4, 1.05], [-2, 1.05], [-5, kfir ? 0.72 : 0.6], [-7.5, kfir ? 0.62 : 0.52]],
+      round: [[tip, kfir ? 4 : 2.2], [3.0, 2.4], [2.4, 3], [-7.5, 2.4]],
+      stations: 24,
+    },
+    bodies: kfir ? [spine(-2.2, -4.6, 0.56, 0.22, 0.32)] : [],
+    wing: { x: -1.8, span: 8.22, rootChord: 7.2, tipChord: 0.8, sweep: 60, mount: -0.3 },
+    wingPlan: kfir ? [[1.8, 0], [1.8, 1.0], [-1.0, 2.6], [-0.75, 2.66], [-3.6, 4.11], [-4.4, 4.11], [-5.4, 1.0], [-5.4, 0]] : [[1.8, 0], [1.8, 1.0], [-3.6, 4.11], [-4.4, 4.11], [-5.4, 1.0], [-5.4, 0]],
+    canard: kfir ? { x: 2.6, span: 3.7, chord: 1.1 } : undefined,
+    tail: { kind: 'single', tailSpan: 0, tailChord: 0, finHeight: 3.0, finChord: 4.2, finBase: 0.5 },
+    finPlan: [[-2.4, 0], [-6.6, 0], [-7.3, 3.0], [-6.0, 3.0]],
+    engines: { kind: 'internal', count: 1, diameter: kfir ? 1.0 : 0.9 },
+    canopy: { x: 3.0, length: 2.2, kind: 'framed' },
+    glass: [bubble(4.2, 2.0, 0.98, 0.47, 0.6, 0.36)],
+  };
+}
+A['mirage-iii'] = { ...mirage3('radar'), cls: 'fighter' };
+A['mirage-5'] = { ...mirage3('slim'), cls: 'attack' };
+A['kfir'] = { ...mirage3('kfir'), cls: 'multirole' };
+
+// Mirage F1: a high swept wing with tip rails and a conventional tail, the half-moon intakes beside the cockpit
+// (F1C 15.3 x 8.4 x 4.5 m); the F1B two seats, 15.53 m.
+function mirageF1(two: boolean): FixedWingSpec {
+  const tip = two ? 7.88 : 7.65;
+  return {
+    length: tip + 7.65, span: 8.4, height: 4.5, bodyWidth: 2.0, bodyHeight: 1.4,
+    fuselage: { top: [[tip, -0.06], [tip - 1.25, 0.3], [tip - 2.7, 0.5], [2.0, 0.62], [-3, 0.6], [-7.4, 0.45]], bottom: [[tip, -0.1], [tip - 1.25, -0.4], [3.6, -0.55], [0, -0.62], [-7.4, -0.4]], plan: [[tip, 0.03], [tip - 1.25, 0.4], [4.4, 0.55], [3.6, 0.6], [3.2, 1.0], [-2, 1.05], [-5, 0.65], [-7.4, 0.55]], round: [[tip, 2.2], [3.6, 2.4], [3.2, 3.2], [-7.4, 2.4]], stations: 24 },
+    bodies: [pod(-1.8, -4.4, 0.08, 4.25, 0.5, 0.1)],
+    wing: { x: -1.4, span: 8.4, rootChord: 4.4, tipChord: 1.0, sweep: 47.5, mount: 0.9 },
+    wingPlan: [[0.8, 0], [0.8, 0.9], [-2.8, 4.2], [-3.8, 4.2], [-3.6, 0.9], [-3.6, 0]],
+    tail: { kind: 'single', finHeight: 2.4, finChord: 3.8, tailSpan: 4.0, tailChord: 1.6, finBase: 0.55, planeUp: 0.1 },
+    finPlan: [[-3.0, 0], [-6.8, 0], [-7.5, 2.4], [-6.2, 2.4]],
+    tailPlan: [[-5.4, 0.5], [-6.6, 2.0], [-7.4, 2.0], [-7.6, 0.5]],
+    engines: { kind: 'internal', count: 1, diameter: 1.0 },
+    canopy: { x: 3.6, length: two ? 3.4 : 2.2, kind: two ? 'tandem' : 'bubble' },
+    glass: [two ? tandem(tip - 2.6, 1.6, 1.0, 1.08, 0.5, 0.62, 0.38) : bubble(tip - 2.6, 2.7, 1.04, 0.5, 0.62, 0.38)],
+  };
+}
+A['mirage-f1'] = { ...mirageF1(false), cls: 'multirole' };
+A['mirage-f1b'] = { ...mirageF1(true), cls: 'trainer' };
+
+// Mirage 2000 as drawn in ./aircraft.ts, with its bubble; the two-seat B, D and N under one long canopy (14.55 m).
+const M2000: FixedWingSpec = {
+  length: 14.36, span: 9.13, height: 5.2, bodyWidth: 2.3, bodyHeight: 1.4,
+  fuselage: { top: [[7.18, -0.08], [5.8, 0.28], [4.4, 0.46], [3.6, 0.5], [1.4, 0.62], [0, 0.66], [-6.8, 0.45]], bottom: [[7.18, -0.1], [5.8, -0.35], [3, -0.55], [-3, -0.6], [-6.8, -0.45]], plan: [[7.18, 0.03], [5.8, 0.4], [4.0, 0.6], [2.8, 0.65], [2.0, 1.15], [-2, 1.15], [-6.8, 0.6]], round: 2.8, stations: 22 },
+  wing: { x: -2.4, span: 9.13, rootChord: 8.0, tipChord: 0.8, sweep: 58, mount: -0.3 },
+  wingPlan: [[1.6, 0], [1.6, 1.0], [-4.6, 4.56], [-5.4, 4.56], [-6.4, 1.0], [-6.4, 0]],
+  tail: { kind: 'single', tailSpan: 0, tailChord: 0, finHeight: 3.3, finChord: 4.8, finBase: 0.6 },
+  finPlan: [[-1.6, 0], [-6.4, 0], [-7.0, 3.3], [-5.8, 3.3]],
+  engines: { kind: 'internal', count: 1, diameter: 1.1 },
+  canopy: { x: 2.9, length: 2.6, kind: 'bubble' },
+  glass: [bubble(4.2, 1.5, 1.08, 0.48, 0.64, 0.4)],
+};
+A['mirage-2000c'] = { ...M2000, cls: 'multirole' };
+A['mirage-2000d'] = { ...M2000, cls: 'attack', length: 14.55, canopy: { x: 2.6, length: 3.4, kind: 'tandem' }, glass: [tandem(4.3, 0.6, 1.04, 1.12, 0.48, 0.66, 0.4)] };
+
+// ---------------------------------------------------------------- Rafale, Typhoon, Gripen
+
+// Rafale C and M: the close-coupled canard delta with the intakes under the canards (15.27 x 10.8 x 5.34 m); the B two seats.
+const RAFALE: FixedWingSpec = {
+  length: 15.27, span: 10.8, height: 5.34, bodyWidth: 1.9, bodyHeight: 1.6,
+  fuselage: { top: [[7.64, -0.12], [6.6, 0.28], [5.2, 0.48], [2.4, 0.62], [1.0, 0.66], [-4, 0.55], [-7.3, 0.42]], bottom: [[7.64, -0.18], [6.6, -0.38], [4.6, -0.48], [0, -0.55], [-4, -0.5], [-7.3, -0.38]], plan: [[7.64, 0.04], [6.6, 0.38], [5.0, 0.55], [3.6, 0.62], [3.0, 1.2], [0, 1.25], [-4.5, 0.85], [-7.3, 0.6]], round: [[7.6, 2.2], [3.6, 2.4], [2.8, 4], [-7.3, 2.6]], stations: 24 },
+  bodies: [pod(-1.6, -4.2, 0.08, 5.32, -0.3, 0.1)],
+  wing: { x: -2.4, span: 10.8, rootChord: 6.8, tipChord: 1.2, sweep: 48, mount: -0.2 },
+  wingPlan: [[1.0, 0], [1.0, 1.2], [-3.4, 5.25], [-4.5, 5.25], [-5.4, 1.2], [-5.6, 0]],
+  canard: { x: 2.0, span: 5.0, chord: 1.4 },
+  tail: { kind: 'single', tailSpan: 0, tailChord: 0, finHeight: 2.8, finChord: 3.4, finBase: 0.55 },
+  finPlan: [[-3.6, 0], [-7.0, 0], [-7.3, 2.8], [-6.2, 2.8]],
+  engines: { kind: 'internal', count: 2, diameter: 0.85 },
+  canopy: { x: 3.9, length: 2.6, kind: 'bubble' },
+  glass: [bubble(5.3, 2.5, 1.12, 0.48, 0.64, 0.4)],
+};
+A['rafale'] = { ...RAFALE, cls: 'multirole' };
+A['rafale-b'] = { ...RAFALE, cls: 'multirole', canopy: { x: 3.4, length: 3.6, kind: 'tandem' }, glass: [tandem(5.3, 1.6, 1.08, 1.16, 0.48, 0.66, 0.4)] };
+
+// Typhoon: canards far forward under the cockpit, the "smile" chin intake, a cranked delta well back, one fin
+// (15.96 x 10.95 x 5.28 m); the two-seat T the same length with the rear seat raised under a longer canopy.
+const TYPHOON: FixedWingSpec = {
+  length: 15.96, span: 10.95, height: 5.28, bodyWidth: 1.7, bodyHeight: 1.7,
+  fuselage: { top: [[7.98, -0.12], [6.9, 0.3], [5.4, 0.5], [2.6, 0.64], [1.0, 0.7], [-4, 0.58], [-7.6, 0.45]], bottom: [[7.98, -0.18], [6.9, -0.4], [5.0, -0.5], [3.4, -1.05], [-1.5, -1.0], [-4.5, -0.6], [-7.6, -0.45]], plan: [[7.98, 0.04], [6.9, 0.4], [5.0, 0.6], [3.4, 0.82], [0, 0.9], [-5, 0.75], [-7.6, 0.6]], round: [[8, 2.2], [3.6, 2.6], [2.6, 4], [-7.6, 2.6]], stations: 24 },
+  bodies: [pod(-2.4, -5.0, 0.12, 5.48, -0.2, 0.25)],
+  wing: { x: -2.6, span: 10.95, rootChord: 7.4, tipChord: 0.9, sweep: 53, mount: -0.2 },
+  wingPlan: [[1.4, 0], [1.4, 0.9], [-1.2, 2.8], [-4.0, 5.3], [-5.0, 5.3], [-5.7, 0.9], [-5.9, 0]],
+  canard: { x: 4.7, span: 4.4, chord: 1.3 },
+  tail: { kind: 'single', tailSpan: 0, tailChord: 0, finHeight: 3.3, finChord: 3.6, finBase: 0.6 },
+  finPlan: [[-3.4, 0], [-7.2, 0], [-7.6, 3.3], [-6.5, 3.3]],
+  engines: { kind: 'internal', count: 2, diameter: 0.9 },
+  canopy: { x: 4.0, length: 2.8, kind: 'bubble' },
+  glass: [bubble(5.5, 2.6, 1.16, 0.5, 0.66, 0.42)],
+};
+A['eurofighter-typhoon'] = { ...TYPHOON, cls: 'multirole' };
+A['eurofighter-typhoon-t'] = { ...TYPHOON, cls: 'multirole', canopy: { x: 3.6, length: 3.8, kind: 'tandem' }, glass: [tandem(5.5, 1.6, 1.12, 1.22, 0.5, 0.7, 0.42)] };
+
+// Gripen: a small canard delta, the side intakes with the canards set on them, a dogtooth on the leading edge,
+// one fin. A/C 14.1 m, the two-seat D 14.8 m, the E 15.2 m with a wider body where its main gear moved to the
+// wing roots, all 8.4 to 8.6 m span.
+function gripen(length: number, two: boolean, e: boolean): FixedWingSpec {
+  // The tail stays at -7.3; the nose moves with the length.
+  const t = length - 7.3;
+  const w = e ? 1.25 : 1.12;
+  return {
+    length, span: e ? 8.6 : 8.4, height: 4.5, bodyWidth: 1.6, bodyHeight: 1.6,
+    fuselage: { top: [[t, -0.12], [t - 1.1, 0.28], [t - 2.6, 0.48], [t - 5.6, 0.6], [-4, 0.55], [-7.3, 0.42]], bottom: [[t, -0.18], [t - 1.1, -0.38], [t - 3.2, -0.5], [0, -0.55], [-4, -0.5], [-7.3, -0.38]], plan: [[t, 0.04], [t - 1.1, 0.38], [t - 2.7, 0.55], [t - 3.6, 0.62], [t - 4.0, w], [0, w], [-4.5, e ? 0.85 : 0.75], [-7.3, 0.55]], round: [[t, 2.2], [t - 3.6, 2.4], [t - 4.2, 4], [-7.3, 2.6]], stations: 24 },
+    bodies: [pod(-1.6, -3.6, 0.08, e ? 4.3 : 4.2, 0, 0.1)],
+    wing: { x: -2.4, span: e ? 8.6 : 8.4, rootChord: 6.2, tipChord: 1.0, sweep: 45, mount: 0 },
+    wingPlan: [[1.4, 0], [1.4, 1.1], [-1.2, 3.0], [-1.0, 3.05], [-3.0, e ? 4.3 : 4.2], [-4.1, e ? 4.3 : 4.2], [-4.6, 1.1], [-4.8, 0]],
+    canard: { x: 2.6, span: 4.4, chord: 1.5 },
+    tail: { kind: 'single', tailSpan: 0, tailChord: 0, finHeight: 2.6, finChord: 3.0, finBase: 0.55 },
+    finPlan: [[-3.4, 0], [-6.8, 0], [-7.1, 2.6], [-6.1, 2.6]],
+    engines: { kind: 'internal', count: 1, diameter: 1.0 },
+    canopy: { x: t - 3.8, length: two ? 3.4 : 2.4, kind: two ? 'tandem' : 'bubble' },
+    glass: [two ? tandem(t - 2.6, t - 6.2, 1.04, 1.12, 0.48, 0.6, 0.38) : bubble(t - 2.6, t - 5.3, 1.08, 0.48, 0.6, 0.38)],
+  };
+}
+A['jas-39'] = { ...gripen(14.1, false, false), cls: 'multirole' };
+A['jas-39d'] = { ...gripen(14.8, true, false), cls: 'multirole' };
+A['jas-39e'] = { ...gripen(15.2, false, true), cls: 'multirole' };
+
+// ---------------------------------------------------------------- J-10, JF-17
+
+// J-10A: a canard delta with a big square chin intake (its splitter plate standing off the belly), canards behind
+// the cockpit, one fin, two ventral fins (16.9 x 9.75 x 5.43 m). J-10C: the bumped, raked DSI intake with no
+// splitter; J-10S two seats.
+function j10(dsi: boolean, two: boolean): FixedWingSpec {
+  return {
+    length: 16.9, span: 9.75, height: 5.43, bodyWidth: 1.8, bodyHeight: 1.7,
+    fuselage: { top: [[8.45, -0.15], [7.3, 0.28], [6.0, 0.5], [3.0, 0.66], [1.5, 0.72], [-4, 0.6], [-7.9, 0.45]], bottom: dsi ? [[8.45, -0.2], [7.3, -0.4], [6.2, -0.5], [4.6, -1.15], [-1, -1.1], [-4, -0.7], [-7.9, -0.45]] : [[8.45, -0.2], [7.3, -0.4], [5.8, -0.5], [5.6, -1.2], [-1, -1.1], [-4, -0.7], [-7.9, -0.45]], plan: [[8.45, 0.04], [7.3, 0.4], [5.6, 0.6], [4.4, 0.78], [0, 0.85], [-5, 0.72], [-7.9, 0.55]], round: [[8.4, 2.2], [5.0, 2.6], [4.0, dsi ? 3.4 : 4.5], [-1, 4], [-7.9, 2.4]], stations: 24 },
+    wing: { x: -2.4, span: 9.75, rootChord: 7.6, tipChord: 0.8, sweep: 54, mount: -0.2 },
+    wingPlan: [[2.4, 0], [2.4, 0.9], [-0.6, 3.2], [-3.4, 4.85], [-4.4, 4.85], [-5.4, 0.9], [-5.6, 0]],
+    canard: { x: 3.3, span: 5.4, chord: 1.6 },
+    tail: { kind: 'single', tailSpan: 0, tailChord: 0, finHeight: 3.2, finChord: 3.6, finBase: 0.6 },
+    finPlan: [[-3.6, 0], [-7.4, 0], [-7.8, 3.2], [-6.7, 3.2]],
+    engines: { kind: 'internal', count: 1, diameter: 1.1 },
+    canopy: { x: 4.6, length: two ? 3.8 : 2.8, kind: two ? 'tandem' : 'bubble' },
+    glass: [two ? tandem(6.1, 2.3, 1.14, 1.22, 0.5, 0.7, 0.42) : bubble(6.1, 3.2, 1.18, 0.5, 0.68, 0.42)],
+  };
+}
+A['j-10'] = { ...j10(false, false), cls: 'multirole' };
+A['j-10c'] = { ...j10(true, false), cls: 'multirole' };
+A['j-10s'] = { ...j10(false, true), cls: 'multirole' };
+
+// JF-17: bumped DSI intakes on the sides behind the cockpit, LERX into a trapezoid wing with tip rails, one fin,
+// low all-moving tailplanes (14.93 x 9.45 x 4.72 m).
+A['jf-17'] = {
+  cls: 'multirole', length: 14.93, span: 9.45, height: 4.72, bodyWidth: 1.7, bodyHeight: 1.5,
+  fuselage: { top: [[7.46, -0.12], [6.4, 0.28], [5.0, 0.48], [2.4, 0.58], [0, 0.62], [-4, 0.55], [-7.2, 0.42]], bottom: [[7.46, -0.16], [6.4, -0.38], [4.8, -0.5], [0, -0.58], [-4, -0.5], [-7.2, -0.38]], plan: [[7.46, 0.04], [6.4, 0.38], [4.6, 0.52], [3.6, 0.58], [2.9, 1.08], [-1.5, 1.08], [-4.5, 0.75], [-7.2, 0.5]], round: [[7.4, 2.2], [3.6, 2.4], [2.9, 3.6], [-7.2, 2.6]], stations: 24 },
+  bodies: [pod(-0.2, -2.8, 0.08, 4.72, 0, 0.1)],
+  wing: { x: -1.4, span: 9.45, rootChord: 4.4, tipChord: 1.2, sweep: 38, mount: 0.1 },
+  wingPlan: [[3.2, 0], [2.6, 0.9], [1.0, 1.15], [0.6, 1.4], [-1.9, 4.65], [-3.1, 4.65], [-3.6, 1.4], [-3.7, 0]],
+  tail: { kind: 'single', finHeight: 2.6, finChord: 3.2, tailSpan: 5.0, tailChord: 1.8, finBase: 0.5, planeUp: -0.1 },
+  finPlan: [[-3.2, 0], [-6.6, 0], [-7.0, 2.6], [-5.8, 2.6]],
+  tailPlan: [[-5.0, 0.5], [-5.3, 0.8], [-6.4, 2.5], [-7.3, 2.5], [-7.4, 0.5]],
+  engines: { kind: 'internal', count: 1, diameter: 1.0 },
+  canopy: { x: 3.6, length: 2.6, kind: 'bubble' },
+  glass: [bubble(5.0, 2.4, 1.06, 0.48, 0.58, 0.38)],
+};
+
+// ---------------------------------------------------------------- Tornado
+
+// Tornado IDS and ECR: the huge fin, square side intakes, the glove and swing wing (half swept), tandem seats
+// (16.72 x 11.4 x 5.95 m). The ADV is 1.36 m longer, with a longer radome and a plug behind the cockpit (18.68 m).
+function tornado(adv: boolean): FixedWingSpec {
+  const tip = adv ? 10.32 : 8.36;
+  const c = adv ? 6.4 : 5.6;
+  return {
+    length: tip + 8.36, span: 11.4, height: 5.95, bodyWidth: 2.5, bodyHeight: 1.8,
+    fuselage: { top: [[tip, -0.05], [tip - 1.6, 0.4], [c, 0.6], [c - 3.6, 0.88], [0, 0.9], [-4, 0.75], [-8, 0.5]], bottom: [[tip, -0.1], [tip - 1.6, -0.45], [3.2, -0.85], [-4, -0.85], [-8, -0.5]], plan: [[tip, 0.03], [tip - 1.6, 0.5], [c - 0.6, 0.7], [3.6, 0.75], [2.8, 1.2], [-3, 1.25], [-8.0, 1.0]], round: 3.5, stations: 24 },
+    wing: { x: -1.2, span: 11.4, rootChord: 3.4, tipChord: 1.0, sweep: 45, mount: 0.7 },
+    wingPlan: [[2.8, 0], [2.8, 1.25], [0.4, 2.2], [-2.6, 5.7], [-3.6, 5.7], [-2.4, 2.2], [-3.2, 1.25], [-3.2, 0]],
+    tail: { kind: 'single', finHeight: 3.7, finChord: 5.8, tailSpan: 6.6, tailChord: 2.4, finBase: 0.7 },
+    finPlan: [[-1.4, 0], [-7.2, 0], [-8.0, 3.7], [-6.2, 3.7], [-2.4, 0.4]],
+    tailPlan: [[-5.2, 1.0], [-5.6, 1.3], [-7.4, 3.3], [-8.6, 3.3], [-8.6, 1.0]],
+    engines: { kind: 'internal', count: 2, diameter: 1.0 },
+    canopy: { x: c - 1.8, length: 3.6, kind: 'tandem' },
+    glass: [tandem(c, c - 3.7, 1.22, 1.3, 0.6, 0.88, 0.42)],
+  };
+}
+A['tornado-ids'] = { ...tornado(false), cls: 'attack' };
+A['tornado-adv'] = { ...tornado(true), cls: 'fighter' };
+
+// ---------------------------------------------------------------- F-22, F-35
+
+// F-22 as drawn in ./aircraft.ts, with its long frameless bubble.
+const RAPTOR: FixedWingSpec = {
+  length: 18.92, span: 13.56, height: 5.08, bodyWidth: 3.4, bodyHeight: 1.6,
+  fuselage: { top: [[9.46, -0.1], [8.2, 0.25], [6.6, 0.5], [3.0, 0.68], [0, 0.66], [-6, 0.55], [-9.1, 0.35]], bottom: [[9.46, -0.12], [8.2, -0.35], [6, -0.55], [4.2, -0.8], [0, -0.8], [-6, -0.6], [-9.1, -0.35]], plan: [[9.46, 0.04], [8.2, 0.5], [6.4, 0.8], [4.8, 0.95], [4.2, 1.6], [0, 1.7], [-6, 1.55], [-9.1, 1.25]], round: [[9.4, 3], [4, 6], [-9.1, 6]], stations: 24 },
+  wing: { x: -2.4, span: 13.56, rootChord: 8.4, tipChord: 1.0, sweep: 42, mount: 0.3 },
+  wingPlan: [[3.0, 0], [3.0, 1.7], [-2.6, 6.78], [-3.6, 6.78], [-5.4, 1.7], [-5.4, 0]],
+  tail: { kind: 'twin', finHeight: 2.6, finChord: 3.0, cant: 28, spacing: 3.4, tailSpan: 8.8, tailChord: 2.4, finBase: 0.4 },
+  finPlan: [[-4.4, 0], [-7.6, 0], [-8.4, 2.6], [-6.4, 2.6]],
+  tailPlan: [[-6.8, 1.2], [-8.4, 4.4], [-9.8, 4.4], [-10.0, 1.2]],
+  engines: { kind: 'internal', count: 2, diameter: 1.1 },
+  canopy: { x: 4.6, length: 3.6, kind: 'bubble' },
+  glass: [bubble(6.6, 2.9, 1.2, 0.5, 0.68, 0.46)],
+};
+A['f-22'] = { ...RAPTOR, cls: 'fighter' };
+
+// F-35A: the F-22's family look on a deeper, shorter single-engined body (15.67 x 10.7 x 4.38 m). F-35B: the lift
+// fan's doors in a raised back behind the cockpit, a canopy ending sooner (15.61 m). F-35C: the bigger wing with
+// folding tips and bigger tail surfaces (15.7 x 13.1 x 4.48 m).
+function lightning(kind: 'a' | 'b' | 'c'): FixedWingSpec {
+  const c = kind === 'c';
+  const half = c ? 6.55 : 5.35;
+  return {
+    length: kind === 'b' ? 15.61 : c ? 15.7 : 15.67, span: half * 2, height: c ? 4.48 : 4.38, bodyWidth: 3.2, bodyHeight: 1.8,
+    fuselage: { top: [[7.83, -0.1], [6.8, 0.3], [5.4, 0.58], [3.0, 0.9], [1, 0.95], [-4, 0.7], [-7.5, 0.4]], bottom: [[7.83, -0.12], [6.8, -0.35], [5, -0.6], [3, -0.85], [-2, -0.85], [-5, -0.6], [-7.5, -0.45]], plan: [[7.83, 0.04], [6.8, 0.5], [5.2, 0.8], [3.8, 0.95], [3.2, 1.45], [0, 1.6], [-5, 1.3], [-7.5, 0.75]], round: 4, stations: 24 },
+    bodies: kind === 'b' ? [spine(3.0, -0.6, 0.9, 0.2, 0.75)] : [],
+    wing: { x: -1.8, span: half * 2, rootChord: 6.6, tipChord: c ? 1.8 : 1.2, sweep: 34, mount: 0.3 },
+    wingPlan: c ? [[2.4, 0], [2.4, 1.5], [-1.9, 6.55], [-3.7, 6.55], [-4.4, 1.5], [-4.4, 0]] : [[2.4, 0], [2.4, 1.5], [-1.4, 5.35], [-2.6, 5.35], [-4.2, 1.5], [-4.2, 0]],
+    tail: { kind: 'twin', finHeight: c ? 2.35 : 2.2, finChord: 2.6, cant: 25, spacing: 2.6, tailSpan: c ? 7.6 : 6.6, tailChord: 2.2, finBase: 0.6 },
+    finPlan: c ? [[-3.5, 0], [-6.2, 0], [-6.95, 2.35], [-5.1, 2.35]] : [[-3.6, 0], [-6.2, 0], [-6.9, 2.2], [-5.1, 2.2]],
+    tailPlan: c ? [[-5.0, 0.8], [-6.5, 3.8], [-7.8, 3.8], [-8.0, 0.8]] : [[-5.2, 0.8], [-6.5, 3.3], [-7.6, 3.3], [-7.9, 0.8]],
+    engines: { kind: 'internal', count: 1, diameter: 1.2 },
+    canopy: { x: 3.6, length: 3.0, kind: 'bubble' },
+    glass: [kind === 'b' ? bubble(5.5, 3.0, 1.32, 0.58, 0.9, 0.46) : bubble(5.5, 2.4, 1.32, 0.58, 0.95, 0.46)],
+  };
+}
+A['f-35a'] = { ...lightning('a'), cls: 'multirole' };
+A['f-35b'] = { ...lightning('b'), cls: 'multirole' };
+A['f-35c'] = { ...lightning('c'), cls: 'multirole' };
+
 export const JET_VARIANTS: SpecSet = { air: A, aliases: ALIASES };
