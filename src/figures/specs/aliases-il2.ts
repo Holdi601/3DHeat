@@ -112,7 +112,7 @@ const ALIASES: Record<string, string> = {
   'gmc cckw 353 fuel': 'gmc-cckw-tanker',
   'gotha g.v': 'gotha-g5',
   'gun boat 1124 aaa': 'gunboat-1124',
-  'gun boat 1124 mrls': 'gunboat-1124',
+  'gun boat 1124 mrls': 'gunboat-1124-mrls',
   'gun ship type a': 'marinefahrprahm',
   'halberstadt cl.ii 200hp': 'halberstadt-cl2',
   'halberstadt cl.ii': 'halberstadt-cl2',

@@ -644,23 +644,24 @@ G['namer'] = { ...MK4, cls: 'apc-tracked', turret: undefined, guns: undefined, a
 // War Thunder post-war ids that had no figure (from the public wiki's trees): each to its own figure where it has one,
 // otherwise to the vehicle it is built on or derived from.
 Object.assign(ALIASES, {
-  us_t95: 't95-medium', us_t95e1: 't95-medium', us_m728: 'm728-cev', us_t114: 't114', us_t54e1: 'm48-patton', us_t54e2: 'm48-patton', us_t58: 'm103', us_xm_800t: 'fv101-scorpion',
-  us_stingray: 'ccvl', jp_stingray: 'ccvl', us_xm_803: 'mbt-70', us_m1296_dragoon: 'm1296-stryker-dragoon', us_efv_p1: 'efv', us_xm_8: 'm8-ags', us_ags_teledyne: 'm8-ags', us_m1_ip_abrams: 'm1ip-abrams', us_rdf_lt: 'fv101-scorpion',
-  germ_marder_df_105: 'tam', fr_marder_df_105: 'tam', germ_marder_clovis: 'marder-1a3', fr_marder_clovis: 'marder-1a3', germ_erprobungstrager_3_achs_turm: 'radpanzer-90', germ_sk105_a2: 'amx-13', germ_begleitpanzer_57: 'marder-1a3',
-  germ_vt_1_2: 'strv-103', germ_th_800_bismark: 'cv90', germ_th_400: 'leopard-1a5', germ_embt: 'leopard-2a6', fr_embt: 'leopard-2a6',
-  ussr_object_906: 'pt-76', ussr_object_416: 't-55a', ussr_object_120: 'object-120', ussr_to_55: 't-55a', ussr_object_685: '2s25-sprut-sd', ussr_it_1: 'it-1', ussr_9p149: 'shturm-s', ussr_object_435: 't-64a',
-  ussr_2s25: '2s25-sprut-sd', ussr_2s25m: '2s25-sprut-sd', ussr_9p157: 'khrizantema-s', ussr_object_140: 't-55a', ussr_2s38: '2s38', ussr_t_80ue1_sm: 't-80u',
+  us_t95: 't95-medium', us_t95e1: 't95-medium', us_m728: 'm728-cev', us_t114: 't114', us_t54e1: 't54e1', us_t54e2: 't54e2', us_t58: 't58', us_xm_800t: 'xm800t',
+  us_stingray: 'stingray', jp_stingray: 'stingray', us_xm_803: 'xm803', us_m1296_dragoon: 'm1296-stryker-dragoon', us_efv_p1: 'efv', us_xm_8: 'm8-ags', us_ags_teledyne: 'm8-ags', us_m1_ip_abrams: 'm1ip-abrams', us_rdf_lt: 'rdf-lt',
+  germ_marder_df_105: 'marder-df105', fr_marder_df_105: 'marder-df105', germ_marder_clovis: 'marder-clovis', fr_marder_clovis: 'marder-clovis', germ_erprobungstrager_3_achs_turm: 'radpanzer-90', germ_sk105_a2: 'sk-105', germ_begleitpanzer_57: 'begleitpanzer-57',
+  germ_vt_1_2: 'vt1-2', germ_th_800_bismark: 'cv90', germ_th_400: 'th-400', germ_embt: 'embt', fr_embt: 'embt',
+  ussr_object_906: 'object-906', ussr_object_416: 'object-416', ussr_object_120: 'object-120', ussr_to_55: 't-55a', ussr_object_685: 'object-685', ussr_it_1: 'it-1', ussr_9p149: 'shturm-s', ussr_object_435: 't-64a',
+  ussr_2s25: '2s25-sprut-sd', ussr_2s25m: '2s25-sprut-sd', ussr_9p157: 'khrizantema-s', ussr_object_140: 'object-140', ussr_2s38: '2s38', ussr_t_80ue1_sm: 't-80u',
   uk_vickers_mbt_mk_1: 'vickers-mbt-mk1', uk_vijayanta: 'vickers-mbt-mk1', uk_vickers_mbt_mk_3: 'vickers-mbt-mk3', uk_vickers_mk_11: 'vickers-mbt-mk3', uk_vickers_mk7: 'vickers-mk7', uk_falcon: 'falcon', uk_tracked_rapier: 'tracked-rapier',
-  uk_badger: 'challenger-2', uk_vfm_5: 'ccvl', uk_ttd: 'chieftain-900', uk_ajax: 'cv90', uk_challenger_1_mk_3_gulf: 'challenger-1',
+  uk_badger: 'badger-ifv', uk_vfm_5: 'vfm-5', uk_ttd: 'chieftain-900', uk_ajax: 'ajax', uk_challenger_1_mk_3_gulf: 'challenger-ds',
   jp_type_75_mlrs: 'type-75-mlrs', jp_type_16_mcv_prot: 'type-16-mcv', jp_type_16_mod: 'type-16-mcv', jp_type_16: 'type-16-mcv', jp_btr_3e1: 'btr-82a', jp_icv_ifv_prototype: 'patria-amv', jp_icv_prototype: 'patria-amv',
-  jp_harimau: 'cv90120', jp_type_03_chusam_fcs: 'nasams-mpq-64-sentinel', jp_type_03_chusam_launcher: 'sky-sabre-launcher',
-  cn_zts_63_1980: 'pt-76', cn_type_86: 'bmp-1', cn_wz_305: '2s25-sprut-sd', cn_ztz_59a: 't-55a', cn_type_59d: 't-55a', cn_cm_25: 'm113-tow', cn_ptz_89: '2s25-sprut-sd', cn_ztz_88b: 'ztz-96', cn_ztz_88a: 'ztz-96',
-  cn_ptl_02: 'wz-551', cn_hj_9: 'wz-551', cn_cm11: 'm60a1', cn_cm_34: 'patria-amv', cn_object_122tm: 't-62', cn_wma_301: 'amx-10rc', cn_type_69_2g: 't-55a', cn_mbt2000: 'ztz-96b', cn_mbt2000_sm: 'ztz-96b',
-  cn_antelope_tc_1l_ads: 'm1097-avenger', cn_ztl_11: 'centauro', cn_qn506: 't-55a', cn_vt_5: 'cv90120', cn_wz_1001: 'wz-551',
-  it_c13_t90: 'm113', it_oto_r3_106sr: 'fiat-6616', it_fiat_6614_firos: 'fiat-6616', it_vbc_pt2: 'freccia', it_c13_tua: 'm113-tow', it_otomatic: 'flakpanzer-gepard', it_kf_41: 'cv90',
-  fr_lorraine_40t: 'amx-30', fr_amx_10m_acra: 'marder-1a3', fr_somua_sm: 'amx-30', fr_mars_15: 'amx-13', fr_vcac_mephisto: 'vab-mephisto', fr_msc: 'leclerc',
-  sw_k9_vidar: 'k9-firtina', sw_itpsv_90: 'cv90120', sw_udes_33: 'strv-103', sw_pbv_302_bill: 'm113-tow', sw_strv121b_christian2: 'leopard-2a4', sw_eldenhet_98: 'iris-t-slm-launcher', sw_nomads: 'asrad-r', sw_t_80u: 't-80u',
-  il_machbet: 'machbet', il_hunter_afv: 'm113', il_eitan: 'boxer', il_namer_rcws_30: 'namer', il_namer_tsrikhon: 'namer',
+  jp_harimau: 'harimau', jp_type_03_chusam_fcs: 'nasams-mpq-64-sentinel', jp_type_03_chusam_launcher: 'sky-sabre-launcher',
+  cn_zts_63_1980: 'type-63-amphibious', cn_type_86: 'bmp-1', cn_wz_305: '2s25-sprut-sd', cn_ztz_59a: 'ztz-59a', cn_type_59d: 'ztz-59d1', cn_cm_25: 'm113-tow', cn_ptz_89: 'ptz-89', cn_ztz_88b: 'ztz-88', cn_ztz_88a: 'ztz-88',
+  cn_ptl_02: 'ptl-02', cn_hj_9: 'aft09', cn_cm11: 'cm-11', cn_cm_34: 'cm-34', cn_object_122tm: 't-62', cn_wma_301: 'wma-301', cn_type_69_2g: 'type-69-2', cn_mbt2000: 'mbt-2000', cn_mbt2000_sm: 'mbt-2000',
+  cn_antelope_tc_1l_ads: 'm1097-avenger', cn_ztl_11: 'ztl-11', cn_qn506: 'qn506', cn_vt_5: 'vt-5', cn_wz_1001: 'wz-1001',
+  it_c13_t90: 'c13-t90', it_oto_r3_106sr: 'r3-t106', it_fiat_6614_firos: 'fiat-6614-firos', it_vbc_pt2: 'freccia', it_c13_tua: 'm113-tow', it_otomatic: 'otomatic', it_kf_41: 'kf41-lynx',
+  fr_lorraine_40t: 'lorraine-40t', fr_amx_10m_acra: 'amx-10m-acra', fr_somua_sm: 'amx-30', fr_mars_15: 'amx-13', fr_vcac_mephisto: 'vab-mephisto', fr_msc: 'leclerc',
+  sw_k9_vidar: 'k9-firtina', sw_itpsv_90: 'cv90120', sw_udes_33: 'strv-103', sw_pbv_302_bill: 'pbv-302-bill', sw_strv121b_christian2: 'leopard-2a4', sw_eldenhet_98: 'iris-t-slm-launcher', sw_nomads: 'asrad-r', sw_t_80u: 't-80u',
+  il_machbet: 'machbet', il_hunter_afv: 'm113', il_eitan: 'eitan', il_namer_rcws_30: 'namer', il_namer_tsrikhon: 'namer',
+  cn_hq_11: 'hq-11', sw_landsverk_ush_405: 'ush-405',
 });
 
 // ---------------------------------------------------------------- SAM and MLRS variants
@@ -1701,5 +1702,347 @@ G['efv'] = { cls: 'apc-tracked', chassis: 'tracked', length: 9.32, width: 3.66, 
 G['2s38'] = { ...BMP3, cls: 'spaa', turret: turret(-0.1, [[-1.4, 1.0], [-1.1, 1.25], [0.8, 1.3], [1.4, 0.9]], [[-1.4, 0.85], [-1.0, 1.05], [0.9, 1.05], [1.4, 0.65]], 10, 1.35), guns: [{ mount: 'turret', length: 4.4, calibre: 0.057, muzzle: true, at: 0.5, elevation: 0.08 }], addOns: [tb(-0.3, 0.75, 1.25, 0.5, 0.45, 0.4, DARK)] };
 // Machbet (1990s): the M163 with a four-round Stinger box beside its Vulcan.
 G['machbet'] = { ...AD('m163-vulcan'), addOns: [{ on: 'turret', kind: 'box', at: [0.2, -1.05, 0.55], size: [1.6, 0.45, 0.45], pitch: 0.15 }] };
+
+// ---------------------------------------------------------------- War Thunder vehicles that borrowed a relative, by their own outline
+
+/** A drum on the turret: a cupola or sight head, diameter `d`, height `h`, centred at (x, s, u) in the turret's frame. */
+const td = (x: number, s: number, u: number, d: number, h: number, o: Opt = {}): AddOn => ({ on: 'turret', kind: 'drum', at: [x, s, u], size: [d, d, h], ...o });
+/** An oscillating turret: the low collar on the ring (the main turret) and the upper body pivoting on it (`turrets[0]`), its gun on index 1. */
+/** The ring a rounded cast turret stands on, filling under its curved sides: `w` across, `h` high. */
+const ringOf = (w: number, h = 0.3): AddOn => td(0, 0, h / 2, w, h);
+/** A round plan of radius `r` about the turret's centre, as half-widths back to front. */
+const circle6 = (r: number): P2[] => [[-r, r * 0.3], [-r * 0.7, r * 0.71], [0, r], [r * 0.7, r * 0.71], [r, r * 0.3]];
+const collar = (x: number, r: number, h: number) => turret(x, [[-r, r * 0.6], [-r * 0.7, r * 0.93], [0, r], [r * 0.7, r * 0.93], [r, r * 0.6]], [[-r, h * 0.7], [-r * 0.6, h], [r * 0.6, h], [r, h * 0.7]], 3, r);
+
+// T54E1 (1956; the M48's hull and running gear, 6.82 x 3.63 m, about 3.1 m high: estimate): the oscillating turret - a low
+// collar on the ring, the long narrow upper body pivoting on it with the autoloader's bustle far out over the engine deck -
+// and the long 120 mm T123E6 with its bore evacuator.
+G['t54e1'] = { cls: 'mbt', ...PATTON, length: 6.82, running: { wheels: PATTON_WHEELS, rollers: [-2.0, -1.0, 0, 1.0, 2.0] }, turret: collar(0.15, 1.45, 0.48),
+  turrets: [turret(-0.45, [[-3.0, 0.7], [-2.5, 0.92], [-0.6, 1.05], [0.9, 1.05], [1.7, 0.75], [2.15, 0.4]], [[-3.0, 0.3], [-2.5, 0.6], [-0.3, 0.82], [1.0, 0.75], [2.15, 0.32]], 3, 2.1, { up: 0.25 })],
+  guns: [{ mount: 'turret', turret: 1, length: 5.9, calibre: 0.12, extractor: 0.6, at: 0.42 }], addOns: [td(-0.6, 0.6, 1.32, 0.7, 0.35), tb(-0.3, 0.6, 1.38, 0.8, 0.07, 0.07, DARK)] };
+// T54E2 (1957; the M48's hull, about 3.0 m high: estimate): a conventional cast turret, its long rounded bustle holding the
+// autoloader overhanging the engine deck, the same 120 mm with its evacuator.
+G['t54e2'] = { cls: 'mbt', ...PATTON, length: 6.82, running: { wheels: PATTON_WHEELS, rollers: [-2.0, -1.0, 0, 1.0, 2.0] },
+  turret: turret(0.05, [[-2.95, 0.75], [-2.5, 1.05], [-1.2, 1.35], [0.3, 1.5], [1.3, 1.3], [1.95, 0.7]], [[-2.95, 0.4], [-2.4, 0.72], [-1.0, 0.92], [0.3, 1.0], [1.3, 0.72], [1.95, 0.4]], 2.6, 1.9),
+  guns: [{ mount: 'turret', length: 5.9, calibre: 0.12, extractor: 0.6, at: 0.45 }], addOns: [ringOf(2.3), td(-0.5, 0.65, 1.12, 0.75, 0.35), tb(-0.2, 0.65, 1.2, 0.8, 0.07, 0.07, DARK)] };
+// M103 hull (6.98 x 3.76 m): seven road wheels and six return rollers, the rounded cast nose.
+const M103_HULL: GroundSpec = { chassis: 'tracked', length: 6.98, width: 3.76, hullHeight: 1.7, roadWheels: 7, roadWheelRadius: 0.33, trackProfile: run(6.8, 1.0, [3.4, 0.7], [-3.45, 0.75], -2.95, 2.75), running: { wheels: [-2.75, -1.87, -0.98, -0.1, 0.78, 1.66, 2.54], rollers: [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5] }, hullOutline: hull(6.98, 3.76, 1.7, 0.98, 1.9, 1.05, 0.2, 5) };
+// T58 (1953; the M103's hull, about 3.25 m high: estimate): a big oscillating turret - the wide collar and the long upper
+// body with its autoloader bustle - and the 155 mm T7.
+G['t58'] = { cls: 'heavy-tank', ...M103_HULL, turret: collar(0.0, 1.7, 0.5),
+  turrets: [turret(-0.5, [[-3.3, 0.85], [-2.8, 1.15], [-0.8, 1.35], [0.9, 1.35], [1.8, 1.0], [2.35, 0.5]], [[-3.3, 0.4], [-2.8, 0.75], [-0.5, 1.05], [1.0, 0.95], [2.35, 0.4]], 3, 2.3, { up: 0.3 })],
+  guns: [{ mount: 'turret', turret: 1, length: 6.2, calibre: 0.155, extractor: 0.55, at: 0.4 }], addOns: [td(-0.8, 0.75, 1.6, 0.8, 0.35), tb(-0.5, 0.75, 1.68, 0.8, 0.07, 0.07, DARK)] };
+// Stingray (1984; hull 6.45 x 2.71 m, 2.55 m): six road wheels and three rollers in the open, a long flat deck, the welded
+// turret with its flat upright faces and long bustle, the 105 mm LRF with its evacuator and slotted brake, the cupola on the right.
+G['stingray'] = { cls: 'light-tank', chassis: 'tracked', length: 6.45, width: 2.71, hullHeight: 1.55, roadWheels: 6, roadWheelRadius: 0.31, trackProfile: run(6.25, 0.88, [3.15, 0.6], [-3.15, 0.66], -2.65, 2.6), running: { wheels: [-2.4, -1.48, -0.56, 0.36, 1.28, 2.2], rollers: [-1.5, 0, 1.5] }, hullOutline: hull(6.45, 2.71, 1.55, 0.86, 1.7, 0.98, 0.15, 8),
+  turret: turret(-0.3, [[-2.0, 0.95], [-1.65, 1.2], [0.6, 1.25], [1.3, 1.02], [1.55, 0.55]], [[-2.0, 0.78], [-1.65, 0.9], [0.8, 0.95], [1.55, 0.55]], 10, 1.5),
+  guns: [{ mount: 'turret', length: 5.3, calibre: 0.105, extractor: 0.55, muzzle: true, at: 0.45 }], addOns: [td(-0.4, 0.62, 1.1, 0.65, 0.3), tb(0.0, 0.62, 1.18, 0.9, 0.06, 0.06, DARK), tb(0.95, 1.15, 0.6, 0.45, 0.2, 0.25, { ...M, ...DARK, yaw: 0.4 })] };
+// XM800T (1971; about 4.6 x 2.44 m, 2.2 m: estimates): the small aluminium scout on five road wheels, a steep bow, the
+// small turret amidships with the long thin 20 mm M139.
+G['xm800t'] = { cls: 'light-tank', chassis: 'tracked', length: 4.6, width: 2.44, hullHeight: 1.45, roadWheels: 5, roadWheelRadius: 0.28, trackProfile: run(4.45, 0.78, [2.22, 0.55], [-2.22, 0.55], -1.75, 1.75), running: { wheels: [-1.55, -0.78, 0, 0.78, 1.55] }, hullOutline: { top: [[-2.3, 1.3], [-2.15, 1.45], [0.9, 1.45], [2.3, 0.8]], bottom: [[-2.3, 0.6], [1.95, 0.55], [2.3, 0.8]], plan: [[-2.3, 1.18], [2.3, 1.08]], round: 10, stations: 10 },
+  turret: turret(-0.2, [[-0.8, 0.62], [-0.55, 0.75], [0.45, 0.75], [0.75, 0.55]], [[-0.8, 0.5], [0.45, 0.6], [0.75, 0.42]], 6, 0.75), guns: [{ mount: 'turret', length: 2.0, calibre: 0.02, at: 0.5 }], addOns: [td(-0.3, -0.35, 0.68, 0.45, 0.2)] };
+// XM803 (1971; the MBT-70's hull, 6.99 x 3.51 m): the driver moved down into the hull, so the turret's front is shorter and
+// blunter, an M85 cupola in place of the pop-up 20 mm, the 152 mm gun-launcher.
+G['xm803'] = { cls: 'mbt', ...MBT70, cupola: false, turret: turret(-0.3, [[-2.2, 1.1], [-1.7, 1.6], [0.5, 1.65], [1.5, 1.32], [2.1, 0.55]], [[-2.2, 0.6], [-1.3, 0.85], [0.5, 0.9], [1.6, 0.66], [2.1, 0.38]], 6, 2.0),
+  guns: [{ mount: 'turret', length: 3.8, calibre: 0.152, at: 0.45 }], addOns: [td(-0.5, 0.75, 1.05, 0.8, 0.35), tb(-0.2, 0.75, 1.12, 0.8, 0.07, 0.07, DARK), tb(-2.45, 0, 0.4, 0.45, 2.0, 0.4, DARK)] };
+// RDF/LT (1983; about 5.3 x 2.5 m, 2.0 m to the gun: estimates): a small low hull on five road wheels, the flat two-man
+// turret with the 75 mm ARES carried above its roof on an external cradle, its muzzle brake.
+G['rdf-lt'] = { cls: 'light-tank', chassis: 'tracked', length: 5.3, width: 2.5, hullHeight: 1.3, roadWheels: 5, roadWheelRadius: 0.3, trackProfile: run(5.1, 0.8, [2.55, 0.55], [-2.55, 0.58], -2.05, 2.0), running: { wheels: [-1.85, -0.95, -0.05, 0.85, 1.75] }, hullOutline: hull(5.3, 2.5, 1.3, 0.78, 1.6, 0.85, 0.12, 8),
+  turret: turret(-0.4, [[-1.1, 0.85], [-0.8, 1.0], [0.7, 1.0], [1.1, 0.7]], [[-1.1, 0.32], [0.7, 0.38], [1.1, 0.25]], 8, 0.4),
+  guns: [{ mount: 'turret', length: 3.6, calibre: 0.075, muzzle: true, at: 1.9 }], addOns: [tb(-0.2, 0, 0.58, 1.6, 0.5, 0.42), tb(-1.0, 0, 0.5, 0.6, 0.35, 0.25, DARK)] };
+/** An FL-series oscillating upper body (FL-12, FL-15, FL-20): the tall pointed front, the flat bustle holding the drum magazines; on a collar. */
+const flUpper = (x: number, l: number, hw: number, h: number, up: number) => turret(x, [[-l * 0.55, hw * 0.8], [-l * 0.45, hw], [l * 0.15, hw], [l * 0.45, hw * 0.62]], [[-l * 0.55, h * 0.88], [l * 0.12, h], [l * 0.45, h * 0.5]], 6, l * 0.45, { up });
+// Marder DF105 (1979; the Marder 1's hull, 6.79 x 3.24 m, about 2.9 m high: estimate): the FL-15 oscillating turret set over
+// the hull's middle in place of the 20 mm turret, its long bustle over the troop roof, the 105 mm CN105-57 with its brake.
+G['marder-df105'] = { cls: 'light-tank', ...MARDER, turret: collar(-0.3, 1.1, 0.35), turrets: [flUpper(-0.6, 3.2, 1.0, 0.85, 0.3)], guns: [{ mount: 'turret', turret: 1, length: 4.4, calibre: 0.105, muzzle: true, at: 0.6 }], addOns: [td(-0.8, 0.6, 1.2, 0.5, 0.2)] };
+// Marder CLOVIS (1984; the DF105 rebuilt, about 3.0 m high: estimate): the bigger, squarer FL-20 upper body with added
+// armour, the longer 105 mm CN105 G1 with its double brake and the 20 mm CN20 alongside it.
+G['marder-clovis'] = { cls: 'light-tank', ...MARDER, turret: collar(-0.3, 1.15, 0.38), turrets: [turret(-0.65, [[-1.95, 0.9], [-1.7, 1.12], [0.3, 1.15], [1.25, 0.85], [1.6, 0.55]], [[-1.95, 0.85], [-1.6, 0.98], [0.4, 1.0], [1.6, 0.55]], 10, 1.5, { up: 0.32 })],
+  guns: [{ mount: 'turret', turret: 1, length: 5.1, calibre: 0.105, muzzle: true, at: 0.55 }, { mount: 'turret', turret: 1, length: 2.0, calibre: 0.02, at: 0.4 }], addOns: [td(-1.0, 0.6, 1.4, 0.5, 0.22), tb(0.9, 0.95, 0.85, 0.4, 0.2, 0.2, { ...M, ...DARK, yaw: 0.3 })] };
+// SK-105 Kürassier (1971; hull 5.58 x 2.5 m, 2.53 m): the Saurer hull on five road wheels and three rollers, a steep glacis,
+// the FL-12 oscillating turret over the back with its 105 mm; A2 with the ballistic computer's box on the turret's back.
+G['sk-105'] = { cls: 'tank-destroyer', chassis: 'tracked', length: 5.58, width: 2.5, hullHeight: 1.45, roadWheels: 5, roadWheelRadius: 0.32, trackProfile: run(5.4, 0.85, [2.7, 0.6], [-2.72, 0.6], -2.15, 2.15), running: { wheels: [-1.95, -0.98, 0, 0.98, 1.95], rollers: [-1.0, 0, 1.0] }, hullOutline: hull(5.58, 2.5, 1.45, 0.82, 1.35, 0.92, 0.1, 8),
+  turret: collar(-0.75, 0.95, 0.3), turrets: [flUpper(-1.0, 2.9, 0.95, 0.8, 0.25)], guns: [{ mount: 'turret', turret: 1, length: 4.4, calibre: 0.105, muzzle: true, at: 0.6 }], addOns: [td(-0.9, 0.55, 1.13, 0.45, 0.2), tb(-1.95, 0, 0.75, 0.5, 1.2, 0.45, DARK)] };
+// Begleitpanzer 57 (1977; the Marder's hull, about 3.1 m high: estimate): the big Bofors turret with the 57 mm L/70 and its
+// brake high in a rounded front, the TOW launcher raised on the turret's left.
+G['begleitpanzer-57'] = { cls: 'ifv', ...MARDER, turret: turret(-0.2, [[-1.4, 1.0], [-1.1, 1.22], [0.6, 1.25], [1.25, 1.0], [1.45, 0.6]], [[-1.4, 0.95], [-1.1, 1.1], [0.6, 1.15], [1.45, 0.65]], 4, 1.4), guns: [{ mount: 'turret', length: 4.0, calibre: 0.057, muzzle: true, at: 0.6 }], addOns: [tb(-0.4, -1.4, 0.9, 1.4, 0.3, 0.32), td(-0.6, 0.55, 1.22, 0.5, 0.2)] };
+// EMBT (2015; the Leopard 2's hull, 7.72 x 3.7 m): the Leclerc's turret with its upright front, the autoloader bustle and
+// the commander's sight on its column, on the German hull and running gear.
+G['embt'] = { cls: 'mbt', ...LEO2, turret: { ...LECLERC.turret!, x: -0.35 }, guns: LECLERC.guns, addOns: [...LECLERC_ADD, ...LEO2_GLACIS(0.12)] };
+// VT1-2 (1975; about 7.0 x 3.54 m, 2.2 m: estimates): the turretless Versuchsträger on Leopard 2 running gear - a low wedge
+// casemate with two 120 mm fixed side by side in its front, aimed by turning the whole vehicle.
+G['vt1-2'] = { cls: 'tank-destroyer', chassis: 'tracked', length: 7.0, width: 3.54, hullHeight: 1.6, roadWheels: 7, roadWheelRadius: 0.33, skirts: true, trackProfile: run(6.85, 0.92, [3.42, 0.6], [-3.42, 0.7], -2.85, 2.8), hullOutline: { top: [[-3.5, 1.5], [-3.3, 1.65], [-1.0, 1.65], [0.4, 2.2], [1.6, 2.2], [3.5, 0.95]], bottom: [[-3.5, 0.92], [3.3, 0.92], [3.5, 0.95]], plan: [[-3.5, 1.72], [2.6, 1.77], [3.5, 1.35]], round: 12, stations: 14 },
+  guns: [{ mount: 'hull', count: 2, spread: 1.3, length: 5.3, calibre: 0.12, extractor: 0.5, x: 1.6, at: 0.83 }], addOns: [hb(-0.6, 0.9, 2.3, 0.45, 0.45, 0.25, DARK)] };
+// TH 400 (1983; about 6.6 x 3.1 m, 2.5 m: estimates): Thyssen-Henschel's light tank on six road wheels, the turret over the
+// middle with its sloped front and bustle, the 105 mm with its evacuator.
+G['th-400'] = { cls: 'light-tank', chassis: 'tracked', length: 6.6, width: 3.1, hullHeight: 1.55, roadWheels: 6, roadWheelRadius: 0.32, skirts: true, trackProfile: run(6.4, 0.9, [3.2, 0.62], [-3.2, 0.66], -2.65, 2.6), hullOutline: hull(6.6, 3.1, 1.55, 0.86, 1.6, 1.0, 0.12),
+  turret: turret(-0.3, [[-2.0, 1.0], [-1.6, 1.3], [0.6, 1.35], [1.4, 1.0], [1.7, 0.5]], [[-2.0, 0.7], [-1.6, 0.85], [0.6, 0.9], [1.7, 0.5]], 10, 1.65), guns: [{ ...L7, sleeve: 0.7 }], addOns: [td(-0.5, 0.65, 1.05, 0.6, 0.3)] };
+// Object 906 (1963; about 7.3 x 3.2 m, 2.2 m: estimates): the PT-76's successor - a long low amphibious hull on six road
+// wheels, the turret set back to the middle with its rounded cast front, the 85 mm D-58 with its evacuator.
+G['object-906'] = { cls: 'light-tank', chassis: 'tracked', length: 7.3, width: 3.2, hullHeight: 1.45, roadWheels: 6, roadWheelRadius: 0.33, trackProfile: run(6.9, 0.82, [3.35, 0.55], [-3.45, 0.6], -2.85, 2.85), running: { wheels: [-2.6, -1.56, -0.52, 0.52, 1.56, 2.6] }, hullOutline: { top: [[-3.65, 1.25], [-3.45, 1.45], [1.3, 1.45], [3.65, 0.9]], bottom: [[-3.65, 0.72], [2.5, 0.68], [3.65, 0.9]], plan: [[-3.65, 1.52], [2.7, 1.58], [3.65, 1.15]], round: 8, stations: 12 },
+  turret: turret(0.2, [[-1.2, 0.8], [-0.9, 1.1], [0.5, 1.2], [1.1, 0.85], [1.3, 0.45]], [[-1.2, 0.45], [-0.7, 0.68], [0.4, 0.75], [1.3, 0.35]], 2.4, 1.25), guns: [{ mount: 'turret', length: 4.6, calibre: 0.085, extractor: 0.7, at: 0.45 }], addOns: [ringOf(1.9)] };
+// Object 416 (1952; about 6.3 x 3.24 m, 1.8 m: estimates): the very low hull with the engine in front, the flat dome of a
+// turret far back holding the driver too, the 100 mm M-63 reaching past the bow.
+G['object-416'] = { cls: 'mbt', chassis: 'tracked', length: 6.3, width: 3.24, hullHeight: 1.15, roadWheels: 6, roadWheelRadius: 0.32, trackProfile: run(6.1, 0.82, [3.05, 0.58], [-3.05, 0.62], -2.5, 2.5), running: { wheels: [-2.25, -1.35, -0.45, 0.45, 1.35, 2.25] }, hullOutline: hull(6.3, 3.24, 1.15, 0.8, 2.2, 0.85, 0.1, 6),
+  turret: turret(-1.2, [[-1.5, 0.95], [-1.1, 1.35], [0.2, 1.45], [1.1, 1.25], [1.55, 0.7]], [[-1.5, 0.35], [-0.9, 0.62], [0.2, 0.68], [1.2, 0.5], [1.55, 0.25]], 2.2, 1.45), guns: [{ mount: 'turret', length: 5.4, calibre: 0.1, extractor: 0.85, at: 0.45 }], addOns: [ringOf(2.3)] };
+// Object 685 (1974; the BMP-3's forerunner, about 7.0 x 3.15 m, 2.4 m: estimates): the BMP-3's long hull with its
+// stepped glacis on six road wheels and rollers, a low wedge turret over the middle and the long 100 mm 2A48.
+G['object-685'] = { cls: 'light-tank', ...BMP3, length: 7.0, turret: turret(0.1, [[-1.3, 0.95], [-1.0, 1.25], [0.5, 1.3], [1.2, 0.95], [1.4, 0.5]], [[-1.3, 0.5], [-0.9, 0.62], [0.5, 0.68], [1.4, 0.38]], 6, 1.35), guns: [{ mount: 'turret', length: 5.4, calibre: 0.1, extractor: 0.6, at: 0.45 }], addOns: [] };
+// Object 140 (1953; about 6.4 x 3.27 m, 2.2 m: estimates): a T-54-like medium on six smaller road wheels with return
+// rollers, the lower, flatter cast turret, the 100 mm with its evacuator near the muzzle.
+G['object-140'] = { ...base('t-55a'), cls: 'mbt', length: 6.4, roadWheels: 6, roadWheelRadius: 0.32, trackProfile: run(6.2, 0.85, [3.1, 0.62], [-3.1, 0.66], -2.55, 2.5), running: { wheels: [-2.3, -1.38, -0.46, 0.46, 1.38, 2.3], rollers: [-1.4, 0, 1.4] }, hullOutline: hull(6.4, 3.27, 1.45, 0.86, 1.6, 0.95, 0.2),
+  turret: turret(0.35, [[-1.4, 0.75], [-1.05, 1.15], [-0.1, 1.3], [0.85, 1.2], [1.3, 0.75], [1.45, 0.35]], [[-1.4, 0.3], [-0.85, 0.58], [0.0, 0.68], [0.85, 0.55], [1.45, 0.22]], 2.0, 1.3), guns: [{ mount: 'turret', length: 5.4, calibre: 0.1, extractor: 0.85, at: 0.4 }], addOns: [ringOf(2.0)] };
+// Type 63 amphibious tank (1963; 7.15 x 3.2 m, 2.52 m): the PT-76's boat hull on six road wheels under a bigger cast turret
+// set further back, the 85 mm with its evacuator; the 1980s rebuild the same outline.
+G['type-63-amphibious'] = { cls: 'light-tank', chassis: 'tracked', length: 7.15, width: 3.2, hullHeight: 1.55, roadWheels: 6, roadWheelRadius: 0.35, trackProfile: run(6.8, 0.85, [3.3, 0.55], [-3.4, 0.62], -2.8, 2.8), running: { wheels: [-2.6, -1.56, -0.52, 0.52, 1.56, 2.6] }, hullOutline: { top: [[-3.58, 1.35], [-3.4, 1.55], [1.5, 1.55], [3.58, 0.95]], bottom: [[-3.58, 0.75], [2.4, 0.7], [3.58, 0.95]], plan: [[-3.58, 1.5], [2.6, 1.6], [3.58, 1.2]], round: 8, stations: 12 },
+  turret: turret(0.75, [[-1.3, 0.8], [-1.0, 1.1], [0.5, 1.15], [1.1, 0.85], [1.3, 0.5]], [[-1.3, 0.55], [-0.8, 0.85], [0.5, 0.92], [1.3, 0.5]], 2.6, 1.3), guns: [{ mount: 'turret', length: 4.4, calibre: 0.085, extractor: 0.7, at: 0.45 }], cupola: true, addOns: [ringOf(1.8)] };
+// CM-11 Brave Tiger (1990; the M60A3's hull, 6.95 x 3.63 m, 3.1 m): the round M48-type cast turret on the M60 hull, the M68
+// with its thermal sleeve, the laser rangefinder's box over the mantlet and a low cupola in place of the M19.
+G['cm-11'] = { cls: 'mbt', ...PATTON, turret: M48_TURRET, guns: [{ ...M60_GUN, sleeve: 0.8 }], addOns: [td(-0.4, 0.65, 0.98, 0.75, 0.2), tb(-0.1, 0.65, 1.04, 0.7, 0.07, 0.07, DARK), tb(1.35, 0, 0.98, 0.45, 0.5, 0.3, DARK), tb(0.5, 1.35, 0.6, 0.45, 0.18, 0.2, { ...M, ...DARK, yaw: 0.45 }), M60_RACK] };
+// PTZ-89 (1989; about 6.33 x 3.23 m, 2.65 m: estimates): a long tracked hull with the engine in front and six road wheels,
+// the big welded turret far back with its flat sides, the 120 mm smoothbore with its evacuator overhanging the bow.
+G['ptz-89'] = { cls: 'tank-destroyer', chassis: 'tracked', length: 6.33, width: 3.23, hullHeight: 1.65, roadWheels: 6, roadWheelRadius: 0.32, trackProfile: run(6.15, 0.88, [3.08, 0.62], [-3.08, 0.6], -2.55, 2.5), running: { wheels: [-2.3, -1.4, -0.5, 0.4, 1.3, 2.2], rollers: [-1.4, 0, 1.4] }, hullOutline: hull(6.33, 3.23, 1.65, 0.9, 2.0, 0.95, 0.1, 10),
+  turret: turret(-1.15, [[-1.95, 1.15], [-1.6, 1.4], [0.8, 1.45], [1.6, 1.05], [1.85, 0.6]], [[-1.95, 0.85], [-1.6, 1.0], [0.8, 1.0], [1.85, 0.6]], 10, 1.8), guns: [{ mount: 'turret', length: 6.0, calibre: 0.12, extractor: 0.55, at: 0.5 }], addOns: [td(-0.6, 0.7, 1.12, 0.5, 0.25)] };
+// MBT-2000 (2001; hull 6.9 x 3.4 m, 2.3 m): the Type 85 family's hull on six small road wheels under skirts, the welded
+// turret with its flat upright front and long bustle box, the 125 mm with its sleeve and evacuator.
+G['mbt-2000'] = { cls: 'mbt', ...ZTZ96, width: 3.4, skirts: true, turret: turret(0.1, [[-2.35, 1.05], [-1.9, 1.45], [0.5, 1.55], [1.55, 1.48], [1.9, 1.0], [1.95, 0.5]], [[-2.35, 0.6], [-1.9, 0.72], [0.6, 0.8], [1.9, 0.62], [1.95, 0.42]], 10, 1.9),
+  guns: [{ mount: 'turret', length: 6.0, calibre: 0.125, sleeve: 0.55, extractor: 0.6, at: 0.45 }], addOns: [td(-0.5, 0.7, 0.92, 0.55, 0.3), tb(1.1, -0.7, 0.92, 0.5, 0.45, 0.3), tb(0.6, 1.5, 0.45, 0.5, 0.18, 0.22, { ...M, ...DARK, yaw: 0.4 })] };
+// ZTL-11 (2011; on the ZBL-09's 8x8 hull, 8.0 x 3.0 m, about 2.9 m: estimates): the tall boxy hull with its sloped nose,
+// the low wedge turret amidships, the 105 mm with its evacuator and brake.
+G['ztl-11'] = { cls: 'tank-destroyer', chassis: 'wheeled', length: 8.0, width: 3.0, hullHeight: 2.15, axles: 4, axleAt: [0.72, 0.37, -0.25, -0.62], wheelRadius: 0.6, hullOutline: wheeledHull(8.0, 2.15, 1.15, 1.5, 2.2),
+  turret: turret(-0.6, [[-1.9, 1.05], [-1.5, 1.25], [0.6, 1.3], [1.4, 0.95], [1.7, 0.5]], [[-1.9, 0.62], [-1.5, 0.75], [0.6, 0.8], [1.7, 0.45]], 10, 1.6), guns: [{ mount: 'turret', length: 5.3, calibre: 0.105, extractor: 0.55, muzzle: true, at: 0.5 }], addOns: [td(-0.3, 0.6, 0.9, 0.5, 0.25)] };
+// VT5 / ZTQ-15 (2016; hull about 6.8 x 3.3 m, 2.5 m: estimates): six road wheels under skirts, the front-engined hull, the
+// turret faced with angular wedge modules and a long bustle, the 105 mm with its sleeve and evacuator.
+G['vt-5'] = { cls: 'light-tank', chassis: 'tracked', length: 6.8, width: 3.3, hullHeight: 1.65, roadWheels: 6, roadWheelRadius: 0.33, skirts: true, trackProfile: run(6.6, 0.92, [3.3, 0.62], [-3.3, 0.66], -2.75, 2.7), hullOutline: hull(6.8, 3.3, 1.65, 0.9, 1.9, 1.05, 0.12),
+  turret: turret(-0.45, [[-2.2, 1.1], [-1.8, 1.4], [0.5, 1.48], [1.5, 1.2], [2.1, 0.7], [2.25, 0.4]], [[-2.2, 0.65], [-1.8, 0.8], [0.6, 0.86], [1.8, 0.62], [2.25, 0.38]], 9, 2.1), guns: [{ mount: 'turret', length: 5.4, calibre: 0.105, sleeve: 0.7, extractor: 0.55, at: 0.45 }], addOns: [td(-0.5, 0.72, 0.98, 0.5, 0.35), td(0.5, -0.7, 0.98, 0.42, 0.35)] };
+// WZ1001(E) LCT (2010s; about 6.9 x 3.2 m, 2.6 m: estimates): a light tank on six road wheels, the high flat-sided turret
+// with a short bustle and the 105 mm with its evacuator.
+G['wz-1001'] = { cls: 'light-tank', chassis: 'tracked', length: 6.9, width: 3.2, hullHeight: 1.7, roadWheels: 6, roadWheelRadius: 0.33, skirts: true, trackProfile: run(6.7, 0.92, [3.35, 0.62], [-3.35, 0.66], -2.8, 2.75), hullOutline: hull(6.9, 3.2, 1.7, 0.92, 1.7, 1.05, 0.12),
+  turret: turret(-0.3, [[-1.8, 1.15], [-1.45, 1.4], [0.8, 1.45], [1.5, 1.15], [1.8, 0.6]], [[-1.8, 0.8], [-1.45, 0.92], [0.8, 0.95], [1.8, 0.6]], 12, 1.75), guns: [{ mount: 'turret', length: 5.4, calibre: 0.105, sleeve: 0.6, extractor: 0.55, at: 0.45 }], addOns: [td(-0.4, 0.7, 1.05, 0.5, 0.3)] };
+// WMA301 Assaulter (2010s; about 7.3 x 3.1 m, 2.65 m: estimates): a boxy 6x6 with a sloped nose, the turret set back with
+// its long bustle and the 105 mm with its brake.
+G['wma-301'] = { cls: 'tank-destroyer', chassis: 'wheeled', length: 7.3, width: 3.1, hullHeight: 2.0, axles: 3, axleAt: [0.65, 0.0, -0.6], wheelRadius: 0.62, hullOutline: wheeledHull(7.3, 2.0, 1.1, 1.55, 1.8),
+  turret: turret(-0.7, [[-1.8, 0.95], [-1.45, 1.15], [0.6, 1.2], [1.3, 0.9], [1.55, 0.5]], [[-1.8, 0.62], [0.6, 0.72], [1.55, 0.45]], 10, 1.5), guns: [{ mount: 'turret', length: 5.2, calibre: 0.105, muzzle: true, extractor: 0.6, at: 0.5 }], addOns: [td(-0.4, 0.6, 0.85, 0.45, 0.25)] };
+// PTL02 (2002; the WZ-551's 6x6 hull, 6.88 x 2.8 m, 2.6 m): a low flat turret open at the back over the hull's rear, the
+// 100 mm with its pepperpot brake and evacuator reaching far past the nose.
+const WZ551 = G['wz-551'];
+G['ptl-02'] = { ...WZ551, cls: 'tank-destroyer', turret: turret(-1.0, [[-1.3, 0.95], [-1.0, 1.15], [0.6, 1.2], [1.2, 0.85], [1.4, 0.45]], [[-1.3, 0.5], [0.6, 0.55], [1.4, 0.35]], 10, 1.35), guns: [{ mount: 'turret', length: 5.4, calibre: 0.1, muzzle: true, extractor: 0.6, at: 0.5 }] };
+// AFT09 (2009; on the WZ-551 6x6): no gun turret - the launcher's box turret over the back with two HJ-9 containers raised
+// on its arms each side and the millimetre-wave guidance radar's pod between them.
+G['aft09'] = { ...WZ551, cls: 'atgm', turret: turret(-1.4, [[-0.8, 0.75], [-0.6, 0.85], [0.6, 0.85], [0.85, 0.6]], [[-0.8, 0.75], [0.6, 0.8], [0.85, 0.55]], 10, 0.85), guns: undefined,
+  addOns: [...[-1, 1].flatMap((s) => [tb(-0.1, s * 1.05, 0.95, 2.0, 0.3, 0.26, { pitch: 0.1 }), tb(-0.1, s * 1.05, 1.27, 2.0, 0.3, 0.26, { pitch: 0.1 })]), td(0.3, 0, 1.05, 0.55, 0.5, LT), tb(-0.2, 0, 0.95, 0.4, 0.4, 0.3, DARK)] };
+// CM-34 Clouded Leopard IFV (2018; about 7.95 x 2.7 m, 3.0 m: estimates): the long 8x8 with its sloped nose, the two-man
+// turret with the 30 mm Bushmaster II and its sight head.
+G['cm-34'] = { cls: 'ifv', chassis: 'wheeled', length: 7.95, width: 2.7, hullHeight: 2.25, axles: 4, axleAt: [0.72, 0.38, -0.25, -0.62], wheelRadius: 0.6, hullOutline: wheeledHull(7.95, 2.25, 1.2, 1.35, 2.2),
+  turret: turret(-0.4, [[-1.3, 0.85], [-1.0, 1.0], [0.6, 1.05], [1.15, 0.7]], [[-1.3, 0.6], [0.6, 0.7], [1.15, 0.45]], 10, 1.1), guns: [{ mount: 'turret', length: 3.2, calibre: 0.03, at: 0.5 }], addOns: [td(-0.3, 0.55, 0.85, 0.45, 0.3), tb(-0.6, -1.15, 0.45, 0.6, 0.18, 0.2, { ...DARK, yaw: -0.3 })] };
+// HQ-11 launcher on its 8x8 (2020s; about 10.6 x 2.9 m, 3.6 m: estimates): the wide cab-over cab, the equipment box behind
+// it and the eight missile canisters, two rows of four, raised near upright over the back.
+G['hq-11'] = { cls: 'sam', ...MZKT_7930, length: 10.6, width: 2.9, axles: 4, axleAt: [0.75, 0.48, -0.32, -0.62], bed: 'none', cab: { length: 2.4, height: 3.0, outline: forwardCab(10.6, 2.9, 0.72, 2.4, 3.0, 0.4, 0.5, 12) },
+  addOns: [bx(-5.3, 2.9, 0, 1.2, 1.55, 2.8), kung(1.3, 2.85, 2.7, 1.55, 3.0), beam([-3.9, 0, 1.6], 1.35, 4.2, 2.3, 1.15), ...[-1, 1].map((s) => rod([-1.6, s * 0.7, 1.6], along([-3.9, s * 0.7, 1.6], 1.35, 2.0, -0.55), 0.18, MT))] };
+// QN506 (2018; the Type 59's hull, 6.2 x 3.27 m): the T-55-like hull under a big flat-sided box turret holding the
+// QN-502C missiles in pods on its sides, the 30 mm and the sight mast on top.
+G['qn506'] = { ...base('t-55a'), cls: 'atgm', turret: turret(0.1, [[-1.6, 1.15], [-1.3, 1.35], [0.9, 1.4], [1.5, 1.0], [1.65, 0.55]], [[-1.6, 0.85], [-1.3, 1.0], [0.9, 1.0], [1.65, 0.6]], 12, 1.6), guns: [{ mount: 'turret', length: 2.6, calibre: 0.03, at: 0.5 }],
+  addOns: [...[-1, 1].map((s) => tb(-0.2, s * 1.45, 0.7, 2.0, 0.35, 0.55)), { on: 'turret', kind: 'tube', at: [-0.6, 0.5, 1.0], to: [-0.6, 0.5, 1.6], size: [0.12, 0.12, 0], metal: true }, td(-0.6, 0.5, 1.7, 0.35, 0.25, DARK)] };
+// Badger (2013; Denel's 8x8 on the Patria AMV, about 8.0 x 2.9 m, 2.3 m hull: estimates): the AMV's long hull with its
+// sloped nose and the big faceted Mk II turret with sloped sides, the 30 mm and its sight head.
+G['badger-ifv'] = { ...G['patria-amv'], cls: 'ifv', length: 8.0, width: 2.9, hullOutline: wheeledHull(8.0, 2.3, 1.2, 1.45, 2.3),
+  turret: turret(-0.4, [[-1.5, 0.95], [-1.2, 1.2], [0.5, 1.25], [1.2, 0.95], [1.45, 0.55]], [[-1.5, 0.72], [-1.2, 0.85], [0.5, 0.88], [1.45, 0.5]], 9, 1.4), guns: [{ mount: 'turret', length: 3.0, calibre: 0.03, at: 0.5 }], addOns: [td(-0.5, 0.65, 1.0, 0.5, 0.3), tb(0.2, -1.3, 0.45, 0.7, 0.18, 0.25, { ...M, ...DARK, yaw: -0.3 })] };
+// VFM Mk 5 (1986; on a CCVL-type hull, 6.2 x 2.69 m, 2.4 m: estimates): Vickers' light tank turret - low, slab-sided with
+// a sloped front and a deep bustle - and the 105 mm L7 with its evacuator; five road wheels in the open.
+G['vfm-5'] = { ...G['ccvl'], cls: 'light-tank', skirts: false, running: { wheels: [-2.25, -1.15, -0.05, 1.05, 2.15], rollers: [-1.1, 1.1] }, turret: turret(-0.35, [[-2.05, 0.9], [-1.75, 1.18], [0.5, 1.22], [1.3, 0.95], [1.55, 0.5]], [[-2.05, 0.65], [-1.75, 0.78], [0.6, 0.82], [1.55, 0.48]], 10, 1.5),
+  guns: [{ ...L7, length: 5.0 }], addOns: [td(-0.6, 0.6, 0.92, 0.6, 0.25), tb(0.8, 1.15, 0.5, 0.4, 0.18, 0.2, { ...M, ...DARK, yaw: 0.4 })] };
+// Ajax (2015; 7.62 x 3.35 m, 3.0 m: estimates of the published size): the tall box hull of the ASCOD family on seven road
+// wheels under deep skirts, the wide flat turret with the stubby 40 mm CTA in its mantlet and the sight heads on the roof.
+G['ajax'] = { cls: 'light-tank', chassis: 'tracked', length: 7.62, width: 3.35, hullHeight: 2.2, roadWheels: 7, roadWheelRadius: 0.32, skirts: true, skirt: [[-3.6, 0.55], [3.5, 0.55], [3.5, 1.25], [-3.6, 1.25]], trackProfile: run(7.4, 1.0, [3.7, 0.65], [-3.7, 0.7], -3.05, 3.0), hullOutline: { top: [[-3.81, 2.05], [-3.65, 2.2], [1.4, 2.2], [3.81, 1.2]], bottom: [[-3.81, 1.0], [3.5, 1.0], [3.81, 1.2]], plan: [[-3.81, 1.62], [3.81, 1.55]], round: 12, stations: 12 },
+  turret: turret(-0.3, [[-1.5, 1.1], [-1.2, 1.3], [0.6, 1.35], [1.25, 1.05], [1.45, 0.6]], [[-1.5, 0.72], [-1.2, 0.82], [0.7, 0.85], [1.45, 0.5]], 10, 1.45), guns: [{ mount: 'turret', length: 2.8, calibre: 0.04, sleeve: 0.5, at: 0.45 }], addOns: [td(-0.3, 0.7, 1.0, 0.55, 0.35), td(0.5, -0.65, 0.98, 0.45, 0.3)] };
+// Challenger 1 Mk 3 "Desert Storm" (1991): the Challenger 1 with ROMOR-A bricks over the nose, the Chobham panels hung on
+// the hull's sides over the skirts and the long box over the engine deck's back.
+G['challenger-ds'] = { ...G['challenger-1'], addOns: [...G['challenger-1'].addOns!, ...glacis(8.3, 1.7, 1.25, 1.15, 0.2, 3.0, 1, 4), hb(0.4, 1.85, 0.95, 6.6, 0.3, 0.75, M), hb(-3.6, 0, 1.75, 0.6, 2.8, 0.5, DARK)] };
+// Harimau / Kaplan MT (2018; about 7.0 x 3.2 m, 2.6 m: estimates): a long hull on six road wheels under skirts, the
+// Cockerill 3105 turret - big, angular and flat-roofed with a long bustle - the 105 mm with its sleeve and evacuator.
+G['harimau'] = { cls: 'light-tank', chassis: 'tracked', length: 7.0, width: 3.2, hullHeight: 1.75, roadWheels: 6, roadWheelRadius: 0.32, skirts: true, trackProfile: run(6.8, 0.95, [3.4, 0.62], [-3.4, 0.66], -2.85, 2.8), hullOutline: hull(7.0, 3.2, 1.75, 0.95, 1.8, 1.05, 0.12),
+  turret: turret(-0.5, [[-2.3, 1.1], [-1.95, 1.42], [0.6, 1.48], [1.5, 1.15], [1.85, 0.6]], [[-2.3, 0.7], [-1.95, 0.84], [0.7, 0.88], [1.85, 0.5]], 11, 1.75), guns: [{ mount: 'turret', length: 5.4, calibre: 0.105, sleeve: 0.65, extractor: 0.55, at: 0.45 }], addOns: [td(-0.6, 0.72, 1.05, 0.5, 0.35), td(0.4, -0.75, 1.05, 0.42, 0.35)] };
+// OTOMATIC (1987; on the Palmaria's hull, 7.27 x 3.35 m, about 3.5 m with the radar: estimates): the long hull on seven road
+// wheels, the very big box turret with the long 76 mm and its brake, the search radar's antenna on the turret's back.
+G['otomatic'] = { cls: 'spaa', chassis: 'tracked', length: 7.27, width: 3.35, hullHeight: 1.65, roadWheels: 7, roadWheelRadius: 0.33, skirts: true, trackProfile: run(7.1, 0.95, [3.55, 0.62], [-3.55, 0.7], -2.95, 2.9), hullOutline: hull(7.27, 3.35, 1.65, 0.92, 1.6, 1.1, 0.15),
+  turret: turret(-0.4, [[-1.9, 1.35], [-1.6, 1.55], [0.9, 1.6], [1.6, 1.25], [1.85, 0.7]], [[-1.9, 1.15], [-1.6, 1.3], [0.9, 1.3], [1.85, 0.75]], 12, 1.8), guns: [{ mount: 'turret', length: 4.7, calibre: 0.076, muzzle: true, at: 0.55, elevation: 0.15 }],
+  addOns: [{ on: 'turret', kind: 'slab', at: [-1.3, 0, 1.75], size: [0.15, 0, 0], poly: rect(1.1, 0.35), plane: 'front', pitch: -0.3, paint: 'light' }, td(-1.3, 0, 1.38, 0.3, 0.2, DARK)] };
+// KF41 Lynx (2016; 7.73 x 3.6 m, 3.3 m): the tall flat-sided hull on six road wheels under skirts with its sharp nose, the
+// Lance turret with the 35 mm in its long shroud, the sight heads and the missile pod on its side.
+G['kf41-lynx'] = { cls: 'ifv', chassis: 'tracked', length: 7.73, width: 3.6, hullHeight: 2.3, roadWheels: 6, roadWheelRadius: 0.33, skirts: true, skirt: [[-3.65, 0.55], [3.55, 0.55], [3.55, 1.3], [-3.65, 1.3]], trackProfile: run(7.5, 1.0, [3.75, 0.68], [-3.75, 0.72], -3.15, 3.05), hullOutline: { top: [[-3.86, 2.15], [-3.7, 2.3], [0.9, 2.3], [3.86, 1.15]], bottom: [[-3.86, 1.0], [3.5, 1.0], [3.86, 1.15]], plan: [[-3.86, 1.75], [3.86, 1.68]], round: 12, stations: 12 },
+  turret: turret(-0.6, [[-1.6, 1.0], [-1.3, 1.2], [0.6, 1.25], [1.25, 0.95], [1.45, 0.55]], [[-1.6, 0.7], [-1.3, 0.8], [0.7, 0.82], [1.45, 0.5]], 10, 1.45), guns: [{ mount: 'turret', length: 3.3, calibre: 0.035, sleeve: 0.55, at: 0.45 }], addOns: [td(-0.4, 0.7, 0.98, 0.5, 0.35), td(0.5, -0.6, 0.98, 0.42, 0.3), tb(-0.6, -1.4, 0.6, 1.1, 0.35, 0.4)] };
+// C13 T90 (1990s; Otomelara's C13 tracked carrier, about 5.9 x 2.7 m, 2.5 m: estimates): a box hull on five road wheels
+// with its sloped nose, the small Cockerill turret with the 90 mm and its brake.
+G['c13-t90'] = { cls: 'light-tank', chassis: 'tracked', length: 5.9, width: 2.7, hullHeight: 1.8, roadWheels: 5, roadWheelRadius: 0.3, trackProfile: run(5.7, 0.85, [2.85, 0.58], [-2.85, 0.6], -2.3, 2.25), running: { wheels: [-2.05, -1.03, 0, 1.03, 2.05] }, hullOutline: { top: [[-2.95, 1.7], [-2.8, 1.8], [0.9, 1.8], [2.95, 0.95]], bottom: [[-2.95, 0.8], [2.6, 0.75], [2.95, 0.95]], plan: [[-2.95, 1.35], [2.95, 1.3]], round: 12, stations: 10 },
+  turret: turret(-0.2, [[-1.2, 0.85], [-0.95, 1.0], [0.5, 1.05], [1.1, 0.75], [1.25, 0.45]], [[-1.2, 0.6], [0.5, 0.7], [1.25, 0.42]], 8, 1.2), guns: [{ mount: 'turret', length: 3.6, calibre: 0.09, muzzle: true, at: 0.5 }] };
+// Fiat 6614 with FIROS 6 (1980s; the 6614 4x4, 5.86 x 2.5 m): the boat-nosed armoured carrier with the box of forty-eight
+// 51 mm rockets on its roof.
+G['fiat-6614-firos'] = { cls: 'mlrs', chassis: 'wheeled', length: 5.86, width: 2.5, hullHeight: 1.78, axles: 2, axleAt: [0.55, -0.45], wheelRadius: 0.55, hullOutline: wheeledHull(5.86, 1.78, 1.05, 1.25, 1.6), addOns: [hd(-0.6, 0, 1.88, 1.0, 0.2, DARK), beam([-1.6, 0, 2.05], 0.15, 1.6, 1.3, 0.75)] };
+// R3 Capraia T106 FA (1980s; about 4.86 x 1.78 m, 1.5 m: estimates): the small low 4x4 scout car with the long 106 mm
+// recoilless rifle on its pintle over the back.
+G['r3-t106'] = { cls: 'scout-car', chassis: 'wheeled', length: 4.86, width: 1.78, hullHeight: 1.45, axles: 2, axleAt: [0.6, -0.55], wheelRadius: 0.45, hullOutline: wheeledHull(4.86, 1.45, 0.95, 0.89, 1.5, 0.5), addOns: [rod([-1.4, 0, 1.45], [-1.4, 0, 1.85], 0.12, MT), rod([-2.6, 0, 1.95], [0.8, 0, 1.95], 0.16, MT), rod([-2.6, 0, 1.95], [-2.95, 0, 1.95], 0.2, MT, 0.24)] };
+// Lorraine 40t (1952; about 6.4 x 3.3 m, 2.85 m: estimates): a pike-nosed hull on four large rubber-tyred road wheels, the
+// oscillating turret - collar and long upper body with its drum bustle - and the 100 mm with its brake.
+G['lorraine-40t'] = { cls: 'mbt', chassis: 'tracked', length: 6.4, width: 3.3, hullHeight: 1.6, roadWheels: 4, roadWheelRadius: 0.45, trackProfile: run(6.2, 1.0, [3.1, 0.7], [-3.1, 0.7], -2.45, 2.4), running: { wheels: [-2.1, -0.7, 0.7, 2.1] },
+  hullOutline: { top: [[-3.2, 1.45], [-3.05, 1.6], [1.4, 1.6], [3.2, 1.0]], bottom: [[-3.2, 1.0], [2.9, 1.0], [3.2, 1.0]], plan: [[-3.2, 1.6], [2.2, 1.65], [3.2, 0.6]], round: 10, stations: 12 },
+  turret: collar(0.0, 1.3, 0.45), turrets: [flUpper(-0.4, 4.0, 1.15, 0.9, 0.35)], guns: [{ mount: 'turret', turret: 1, length: 5.0, calibre: 0.1, muzzle: true, at: 0.6 }], addOns: [td(-0.9, 0.6, 1.4, 0.5, 0.22)] };
+// AMX-10M ACRA (1970s; about 6.3 x 2.8 m, 2.7 m: estimates): the AMX-10's boxy amphibious hull lengthened to six road
+// wheels, the long turret with the fat 142 mm ACRA gun-launcher.
+G['amx-10m-acra'] = { cls: 'tank-destroyer', chassis: 'tracked', length: 6.3, width: 2.8, hullHeight: 1.85, roadWheels: 6, roadWheelRadius: 0.3, trackProfile: run(6.1, 0.85, [3.05, 0.6], [-3.05, 0.6], -2.5, 2.45), running: { wheels: [-2.25, -1.35, -0.45, 0.45, 1.35, 2.25], rollers: [-1.3, 0, 1.3] }, hullOutline: { top: [[-3.15, 1.75], [-3.0, 1.85], [0.8, 1.85], [3.15, 0.95]], bottom: [[-3.15, 0.85], [2.8, 0.8], [3.15, 0.95]], plan: [[-3.15, 1.4], [3.15, 1.3]], round: 12, stations: 12 },
+  turret: turret(-0.3, [[-1.7, 0.95], [-1.4, 1.15], [0.6, 1.2], [1.3, 0.9], [1.55, 0.5]], [[-1.7, 0.7], [0.6, 0.8], [1.55, 0.5]], 9, 1.5), guns: [{ mount: 'turret', length: 3.2, calibre: 0.142, at: 0.5 }], addOns: [td(-0.6, 0.55, 0.92, 0.5, 0.25)] };
+// Pbv 302 (1966; 5.35 x 2.86 m, 2.5 m): the low box hull on five road wheels with no rollers, the small 20 mm turret on
+// the front left; with the RBS 56 BILL launcher raised on its post over the back.
+G['pbv-302-bill'] = { cls: 'apc-tracked', chassis: 'tracked', length: 5.35, width: 2.86, hullHeight: 1.9, roadWheels: 5, roadWheelRadius: 0.32, trackProfile: run(5.15, 0.85, [2.58, 0.6], [-2.58, 0.6], -2.05, 2.0), running: { wheels: [-1.85, -0.93, 0, 0.93, 1.85] }, hullOutline: { top: [[-2.68, 1.8], [-2.55, 1.9], [1.3, 1.9], [2.68, 1.0]], bottom: [[-2.68, 0.85], [2.4, 0.8], [2.68, 1.0]], plan: [[-2.68, 1.42], [2.68, 1.35]], round: 12, stations: 10 },
+  turret: turret(1.0, [[-0.5, 0.45], [-0.35, 0.55], [0.35, 0.55], [0.55, 0.4]], [[-0.5, 0.5], [0.35, 0.55], [0.55, 0.35]], 8, 0.55, { side: -0.6 }), guns: [{ mount: 'turret', length: 2.0, calibre: 0.02, at: 0.5 }],
+  addOns: [rod([-1.6, 0.3, 1.9], [-1.6, 0.3, 2.35], 0.12, MT), hb(-1.6, 0.3, 2.45, 0.95, 0.22, 0.22, DARK), hb(-1.45, 0.3, 2.55, 0.25, 0.3, 0.25, DARK)] };
+// U-SH 405 (1960; on the Unimog 404, about 4.9 x 2.15 m, 2.1 m: estimates): the small armoured 4x4 body with its sloped
+// bonnet, the two 81 mm rocket pods side by side on the roof.
+G['ush-405'] = { cls: 'scout-car', chassis: 'wheeled', length: 4.9, width: 2.15, hullHeight: 1.85, axles: 2, axleAt: [0.6, -0.5], wheelRadius: 0.5, hullOutline: { top: [[-2.45, 1.7], [-2.3, 1.85], [0.6, 1.85], [1.3, 1.35], [2.45, 1.2]], bottom: [[-2.45, 0.75], [2.45, 0.75]], plan: [[-2.45, 1.0], [0.8, 1.05], [2.45, 0.85]], round: 10, stations: 12 },
+  addOns: [hb(-0.6, 0, 1.95, 0.6, 0.6, 0.2, DARK), ...[-1, 1].map((s) => beam([-1.5, s * 0.35, 2.15], 0.08, 1.8, 0.45, 0.45, DARK))] };
+// Eitan (2016; about 8.0 x 3.0 m, 2.6 m hull: estimates): the high 8x8 with its sloped nose and flat sides, the unmanned
+// turret with the 30 mm over the hull's middle.
+G['eitan'] = { cls: 'ifv', chassis: 'wheeled', length: 8.0, width: 3.0, hullHeight: 2.45, axles: 4, axleAt: [0.72, 0.4, -0.3, -0.62], wheelRadius: 0.62, hullOutline: wheeledHull(8.0, 2.45, 1.25, 1.5, 2.4, 0.65),
+  turret: turret(0.0, [[-0.9, 0.7], [-0.7, 0.8], [0.5, 0.8], [0.85, 0.55]], [[-0.9, 0.5], [0.5, 0.55], [0.85, 0.35]], 10, 0.85), guns: [{ mount: 'turret', length: 3.0, calibre: 0.03, at: 0.5 }], addOns: [td(-0.3, 0.5, 0.65, 0.4, 0.3)] };
+// Type 62 (1962; 5.55 x 2.86 m, 2.25 m): the Type 59 scaled down - five road wheels with the gap behind the first, no
+// rollers - the small round turret well forward, the 85 mm with its evacuator near the muzzle.
+G['type-62-light'] = { cls: 'light-tank', chassis: 'tracked', length: 5.55, width: 2.86, hullHeight: 1.35, roadWheels: 5, roadWheelRadius: 0.36, trackProfile: run(5.4, 0.8, [2.7, 0.58], [-2.7, 0.62], -2.15, 2.1), running: { wheels: [-1.95, -1.05, -0.15, 0.75, 1.85] }, hullOutline: hull(5.55, 2.86, 1.35, 0.76, 1.45, 0.9, 0.18, 8),
+  turret: turret(0.4, [[-1.15, 0.65], [-0.9, 0.98], [-0.1, 1.1], [0.7, 1.02], [1.1, 0.65], [1.25, 0.3]], [[-1.15, 0.32], [-0.7, 0.62], [0.0, 0.74], [0.7, 0.6], [1.25, 0.22]], 2.4, 1.1), guns: [{ mount: 'turret', length: 4.4, calibre: 0.085, extractor: 0.85, at: 0.4 }], addOns: [ringOf(1.75)] };
+// Strv 74 (1958; the Strv m/42's hull, about 6.1 x 2.43 m, 3.0 m: estimates): a narrow hull on six road wheels with
+// return rollers, the tall rounded turret with its long bustle and the long 75 mm with its brake.
+G['strv-74'] = { cls: 'light-tank', chassis: 'tracked', length: 6.1, width: 2.43, hullHeight: 1.75, roadWheels: 6, roadWheelRadius: 0.27, trackProfile: run(5.9, 0.85, [2.95, 0.58], [-2.95, 0.62], -2.35, 2.35), running: { wheels: [-2.15, -1.3, -0.45, 0.4, 1.25, 2.1], rollers: [-1.7, -0.6, 0.6, 1.7] }, hullOutline: { top: [[-3.05, 1.5], [-2.9, 1.75], [1.3, 1.75], [3.05, 1.0]], bottom: [[-3.05, 0.85], [2.8, 0.8], [3.05, 1.0]], plan: [[-3.05, 1.2], [3.05, 1.15]], round: 12, stations: 12 },
+  turret: turret(-0.1, [[-1.75, 0.85], [-1.4, 1.1], [0.6, 1.2], [1.2, 0.95], [1.4, 0.55]], [[-1.75, 0.95], [-1.3, 1.15], [0.5, 1.25], [1.4, 0.75]], 4, 1.35), guns: [{ mount: 'turret', length: 4.5, calibre: 0.075, muzzle: true, at: 0.5 }], addOns: [ringOf(1.8, 0.4), td(-0.6, 0.5, 1.32, 0.5, 0.2)] };
+// FV4101 Charioteer (1952; the Cromwell's hull, 6.4 x 3.05 m, 2.6 m): five big Christie wheels, the big thin-walled
+// slab-sided turret with its flat roof, the long 20-pounder with its evacuator.
+G['charioteer'] = { cls: 'tank-destroyer', chassis: 'tracked', length: 6.4, width: 3.05, hullHeight: 1.75, roadWheels: 5, roadWheelRadius: 0.41, trackProfile: [[-2.35, 0], [2.3, 0], [3.15, 0.55], [2.82, 1.0], [-2.82, 1.0], [-3.15, 0.6]], running: { wheels: [-2.05, -1.03, 0, 1.03, 2.05] }, hullOutline: { top: [[-3.2, 1.3], [-3.1, 1.72], [2.75, 1.75], [2.85, 1.35], [3.2, 1.1]], bottom: [[-3.2, 1.0], [3.2, 1.0]], plan: [[-3.2, 1.45], [3.2, 1.45]], round: 14, stations: 12 },
+  turret: turret(-0.1, [[-1.55, 1.15], [-1.4, 1.3], [0.8, 1.3], [1.15, 1.1], [1.25, 0.6]], [[-1.55, 0.82], [-1.4, 0.9], [0.9, 0.92], [1.25, 0.7]], 14, 1.25), guns: [{ mount: 'turret', length: 4.4, calibre: 0.084, extractor: 0.6, at: 0.5 }] };
+// FV4004 Conway (1951; the Centurion Mk 3's hull, 7.82 x 3.39 m, about 3.6 m: estimate): the very tall slab-sided box
+// turret on the Centurion, its 120 mm L1 with the evacuator.
+G['conway'] = { ...base('centurion'), cls: 'tank-destroyer', turret: turret(-0.4, [[-1.8, 1.3], [-1.6, 1.5], [0.9, 1.55], [1.4, 1.35], [1.5, 0.75]], [[-1.8, 1.45], [-1.6, 1.6], [1.0, 1.6], [1.5, 1.1]], 14, 1.45), guns: [{ mount: 'turret', length: 6.6, calibre: 0.12, extractor: 0.55, at: 0.55 }], cupola: false, addOns: [td(-0.8, 0.75, 1.72, 0.6, 0.25)] };
+// AMX-30 AuF1 (1977; the AMX-30's hull, 6.7 x 3.15 m, 3.25 m): the big box turret over the middle with its flat sides and
+// back, the 155 mm GCT with its brake and evacuator, the 7.62 mm on the roof.
+G['amx-30-auf1'] = { ...base('amx-30'), cls: 'sp-artillery', length: 6.7, width: 3.15, cupola: false, turret: turret(-0.4, [[-2.0, 1.45], [1.6, 1.55], [2.0, 1.2], [2.1, 0.65]], [[-2.0, 1.45], [1.6, 1.55], [2.1, 1.0]], 14, 2.05), guns: [{ mount: 'turret', length: 6.2, calibre: 0.155, muzzle: true, extractor: 0.55, at: 0.5, elevation: 0.05 }], addOns: [td(-0.6, 0.85, 1.65, 0.5, 0.2)] };
+// Palmaria (1982; on the OF-40's hull, about 7.4 x 2.35 m tracks 3.0 m, 2.87 m: estimates): a long hull on seven road wheels, the
+// big turret with its long sloped front and rear magazine, the 155 mm L/41 with its brake and evacuator.
+G['palmaria'] = { ...G['otomatic'], cls: 'sp-artillery', turret: turret(-0.8, [[-2.3, 1.35], [-2.0, 1.5], [1.2, 1.55], [2.0, 1.1], [2.2, 0.6]], [[-2.3, 1.15], [-2.0, 1.25], [1.2, 1.25], [2.2, 0.65]], 12, 2.15), guns: [{ mount: 'turret', length: 6.4, calibre: 0.155, muzzle: true, extractor: 0.5, at: 0.45, elevation: 0.04 }], addOns: [td(-0.8, 0.8, 1.35, 0.5, 0.2)] };
+// Sholef (1984; the Merkava Mk 1's hull, 7.45 x 3.72 m, about 3.4 m: estimates): the huge slab-sided turret over the back,
+// the 155 mm L/52 with its brake reaching far past the nose.
+G['sholef'] = { ...G['merkava-mk1'], cls: 'sp-artillery', turret: turret(-1.0, [[-2.6, 1.55], [1.4, 1.65], [2.2, 1.3], [2.4, 0.7]], [[-2.6, 1.55], [1.4, 1.65], [2.4, 1.1]], 14, 2.35), guns: [{ mount: 'turret', length: 8.0, calibre: 0.155, muzzle: true, extractor: 0.5, at: 0.5, elevation: 0.04 }], addOns: [] };
+// Bandkanon 1C (1967; about 6.55 x 3.37 m, 3.85 m: estimates): the huge armoured superstructure over the back on Strv 103
+// running gear - six road wheels - with the 155 mm L/50 and its brake far forward and the clip magazine at its back.
+G['bkan-1c'] = { cls: 'sp-artillery', chassis: 'tracked', length: 6.55, width: 3.37, hullHeight: 1.55, roadWheels: 6, roadWheelRadius: 0.36, trackProfile: run(6.4, 0.9, [3.2, 0.6], [-3.2, 0.65], -2.6, 2.55), running: { wheels: [-2.35, -1.42, -0.48, 0.48, 1.42, 2.35] }, hullOutline: hull(6.55, 3.37, 1.55, 0.92, 1.4, 1.0, 0.1, 10),
+  turret: turret(-1.4, [[-2.0, 1.6], [1.6, 1.68], [2.0, 1.3], [2.1, 0.8]], [[-2.0, 2.3], [1.4, 2.3], [2.1, 1.7]], 14, 2.05), guns: [{ mount: 'turret', length: 7.75, calibre: 0.155, muzzle: true, at: 0.62, elevation: 0.03 }], addOns: [tb(-2.35, 0, 1.2, 0.9, 2.8, 1.8)] };
+// AMX-10P (1973; 5.78 x 2.78 m, 2.57 m): the boxy amphibious hull with its long sloped glacis on five road wheels and
+// three rollers, the small Toucan turret with the 20 mm on the roof's left of centre.
+G['amx-10p'] = { cls: 'ifv', chassis: 'tracked', length: 5.78, width: 2.78, hullHeight: 1.9, roadWheels: 5, roadWheelRadius: 0.32, trackProfile: run(5.6, 0.88, [2.8, 0.62], [-2.8, 0.62], -2.25, 2.2), running: { wheels: [-2.0, -1.0, 0, 1.0, 2.0], rollers: [-1.0, 0, 1.0] }, hullOutline: { top: [[-2.89, 1.8], [-2.75, 1.9], [0.6, 1.9], [2.89, 0.95]], bottom: [[-2.89, 0.85], [2.6, 0.8], [2.89, 0.95]], plan: [[-2.89, 1.38], [2.89, 1.32]], round: 12, stations: 12 },
+  turret: turret(0.1, [[-0.75, 0.6], [-0.55, 0.72], [0.45, 0.72], [0.75, 0.5]], [[-0.75, 0.55], [0.45, 0.62], [0.75, 0.42]], 8, 0.7, { side: -0.3 }), guns: [{ mount: 'turret', length: 2.0, calibre: 0.02, at: 0.5 }] };
+// AMX ELC bis (1955; about 4.0 x 2.25 m, 1.6 m: estimates): the tiny air-portable hunter on four road wheels, the low
+// oscillating turret set at the back with its 90 mm reaching well past the bow.
+G['elc-bis'] = { cls: 'light-tank', chassis: 'tracked', length: 4.0, width: 2.25, hullHeight: 1.0, roadWheels: 4, roadWheelRadius: 0.3, trackProfile: run(3.9, 0.72, [1.95, 0.5], [-1.95, 0.5], -1.4, 1.4), running: { wheels: [-1.3, -0.43, 0.43, 1.3] }, hullOutline: hull(4.0, 2.25, 1.0, 0.68, 1.4, 0.75, 0.08, 8),
+  turret: collar(-0.6, 0.85, 0.28), turrets: [flUpper(-0.75, 2.4, 0.85, 0.45, 0.22)], guns: [{ mount: 'turret', turret: 1, length: 3.6, calibre: 0.09, muzzle: true, at: 0.6 }] };
+// Type 60 SPRG (1960; 4.3 x 2.23 m, 1.38 m): the tiny low carrier on five road wheels, the two 106 mm M40 recoilless
+// rifles side by side on their raising mount on the right, with the spotting rifle above.
+G['type-60-sprg'] = { cls: 'tank-destroyer', chassis: 'tracked', length: 4.3, width: 2.23, hullHeight: 1.1, roadWheels: 5, roadWheelRadius: 0.24, trackProfile: run(4.15, 0.7, [2.08, 0.5], [-2.08, 0.5], -1.65, 1.6), running: { wheels: [-1.5, -0.75, 0, 0.75, 1.5] }, hullOutline: { top: [[-2.15, 1.0], [-2.05, 1.1], [0.9, 1.1], [2.15, 0.65]], bottom: [[-2.15, 0.55], [1.9, 0.5], [2.15, 0.65]], plan: [[-2.15, 1.05], [2.15, 1.0]], round: 12, stations: 10 },
+  addOns: [hb(-0.3, 0.55, 1.2, 0.5, 0.5, 0.25, DARK), ...[0.42, 0.72].map((s) => rod([-1.9, s, 1.3], [1.5, s, 1.3], 0.17, MT)), rod([-1.0, 0.57, 1.5], [1.0, 0.57, 1.5], 0.07, MT), hb(0.9, -0.5, 1.2, 0.5, 0.5, 0.25)] };
+// Type 60 ATM (1964; the Type 60 carrier family, about 4.3 x 2.2 m: estimates): the small low carrier with its KAM-3D
+// missiles on rails, two each side of the raised launcher frame.
+G['type-60-atm'] = { ...G['type-60-sprg'], cls: 'atgm', addOns: [hb(-0.5, 0, 1.25, 1.2, 1.6, 0.3), ...[-1, 1].flatMap((s) => [s * 0.45, s * 0.75].map((y) => beam([-0.9, y, 1.45], 0.15, 1.0, 0.12, 0.12, LT)))] };
+// BTR-152 (1950; the 6x6 armoured lorry, 6.55 x 2.32 m, 2.04 m): the long bonnet and the open box body on three axles;
+// BTR-152A with the ZPTU-2 twin 14.5 mm mount in the body, BTR-152D with the four-barrelled ZPTU-4.
+const BTR152: GroundSpec = { chassis: 'wheeled', length: 6.55, width: 2.32, hullHeight: 2.0, axles: 3, axleAt: [0.72, -0.32, -0.7], wheelRadius: 0.5, hullOutline: { top: [[-3.27, 1.95], [-3.1, 2.0], [0.9, 2.0], [1.3, 1.65], [3.0, 1.55], [3.27, 1.3]], bottom: [[-3.27, 0.8], [3.27, 0.8]], plan: [[-3.27, 1.12], [0.9, 1.16], [1.3, 0.8], [3.27, 0.7]], round: 12, stations: 12 }, openTop: true };
+G['btr-152a'] = { ...BTR152, cls: 'spaa', turret: turret(-1.0, circle6(0.75), [[-0.75, 0.45], [0.75, 0.45]], 4, 0.6, { up: -0.4 }), guns: [{ mount: 'turret', count: 2, spread: 0.3, length: 1.6, calibre: 0.0145, elevation: 0.3, at: 0.9 }] };
+G['btr-152d'] = { ...BTR152, cls: 'spaa', turret: turret(-1.0, circle6(0.8), [[-0.8, 0.5], [0.8, 0.5]], 4, 0.6, { up: -0.4 }), guns: [{ mount: 'turret', count: 4, spread: 0.3, length: 1.6, calibre: 0.0145, elevation: 0.3, at: 1.0 }] };
+// R3 T20 FA-HS (1980s; the R3 Capraia 4x4): the small scout car with a one-man turret and its 20 mm.
+G['r3-t20'] = { ...G['r3-t106'], addOns: undefined, turret: turret(-0.6, [[-0.6, 0.5], [-0.45, 0.6], [0.4, 0.6], [0.6, 0.42]], [[-0.6, 0.42], [0.4, 0.5], [0.6, 0.35]], 6, 0.6), guns: [{ mount: 'turret', length: 1.8, calibre: 0.02, at: 0.5 }] };
+// Type 59 rebuilds (on the Type 59's hull, 6.2 x 3.27 m): ZTZ59A (1980s) the 105 mm with its evacuator and thermal sleeve,
+// the laser rangefinder's box over the mantlet and a stowage rack round the turret's back; ZTZ59D1 (1990s) adds the
+// wedge of FY-1 bricks round the turret's front and rows on the glacis, and rubber skirts; Type 69-II G (1982) the 100 mm
+// smoothbore with its evacuator near the muzzle, the rangefinder box, flat skirts and the bustle rack.
+const T59 = base('t-55a');
+const GUN_59_105: GunSpec = { mount: 'turret', length: 5.4, calibre: 0.105, sleeve: 0.6, extractor: 0.6, at: 0.4 };
+const T59_RF = tb(1.15, 0, 0.88, 0.45, 0.6, 0.25, DARK);
+const T59_RACK = tb(-1.45, 0, 0.3, 0.35, 2.0, 0.35, DARK);
+const T59_SKIRT: P2[] = [[-2.9, 0.48], [2.6, 0.48], [2.75, 0.82], [-2.9, 0.82]];
+G['ztz-59a'] = { ...T59, guns: [GUN_59_105], addOns: [ringOf(2.0), T59_RF, T59_RACK] };
+const FY_TURRET: AddOn[] = [...[[1.15, 0.6, -0.35], [0.8, 0.95, -0.7], [0.35, 1.2, -1.0]].map(([x, s, yaw]) => tb(x, s, 0.42, 0.55, 0.22, 0.32, { ...M, yaw, pitch: -0.25 })), tb(0.75, 0.42, 0.72, 0.5, 0.4, 0.12, { ...M, pitch: -0.4 })];
+G['ztz-59d1'] = { ...T59, skirts: true, skirt: T59_SKIRT, guns: [GUN_59_105], addOns: [ringOf(2.0), T59_RF, T59_RACK, ...FY_TURRET, ...glacis(6.2, 1.45, 1.6, 0.95, 0.12, 2.6, 2, 4)] };
+G['type-69-2'] = { ...T59, skirts: true, skirt: T59_SKIRT, guns: [{ mount: 'turret', length: 5.4, calibre: 0.1, extractor: 0.85, at: 0.4 }], addOns: [ringOf(2.0), T59_RF, T59_RACK] };
+// ZTZ-88 (1988; hull 6.33 x 3.37 m, 2.29 m): the Type 80 family's hull on six road wheels with return rollers under flat
+// skirts, a larger rounded cast turret, the 105 mm with its evacuator; 88B the same outline with its sleeve.
+G['ztz-88'] = { cls: 'mbt', chassis: 'tracked', length: 6.33, width: 3.37, hullHeight: 1.45, roadWheels: 6, roadWheelRadius: 0.32, skirts: true, skirt: [[-3.0, 0.5], [2.75, 0.5], [2.9, 0.86], [-3.0, 0.86]], trackProfile: run(6.15, 0.86, [3.08, 0.62], [-3.08, 0.66], -2.55, 2.5), running: { wheels: [-2.3, -1.4, -0.5, 0.4, 1.3, 2.2], rollers: [-1.4, 0, 1.4] }, hullOutline: hull(6.33, 3.37, 1.45, 0.86, 1.6, 0.95, 0.2),
+  turret: turret(0.35, [[-1.45, 0.78], [-1.1, 1.18], [-0.1, 1.35], [0.85, 1.25], [1.3, 0.8], [1.45, 0.38]], [[-1.45, 0.35], [-0.9, 0.66], [0.0, 0.8], [0.85, 0.64], [1.45, 0.25]], 2.4, 1.35), guns: [GUN_59_105], addOns: [ringOf(2.1), T59_RF, T59_RACK] };
+
+// ---------------------------------------------------------------- Tor, Buk, Osa, Strela, Kub and the Shilka's kin by their own outline
+
+/** A slab on the turret: `poly` in its plane about `at` (turret frame), `t` thick. */
+const ts = (at: V3, poly: P2[], t: number, plane: AddOn['plane'] = 'front', o: Opt = {}): AddOn => ({ on: 'turret', kind: 'slab', at, size: [t, 0, 0], poly, plane, ...o });
+const TOR = G['9k330-tor'];
+// 9A331 Tor-M1 (1991; on the GM-355, 7.5 x 3.3 m, 5.1 m with the antenna up): the Tor's tall turret with the TV-optical
+// tracker's box added on the roof's front left and the IFF bar along the top of the search antenna.
+G['9a331-tor-m1'] = { ...TOR, addOns: [...TOR.addOns!, tb(0.95, -0.8, 1.8, 0.5, 0.45, 0.32, DARK), { on: 'turret', kind: 'box', at: [-1.62, 0, 3.12], size: [0.12, 2.5, 0.12], paint: 'light' }] };
+// 9A331M Tor-M2 (2008; on the GM-5955, about 7.6 x 3.3 m, 5.3 m: estimates): a wider, flat-roofed turret for sixteen
+// missiles, the search antenna a flat phased array leaning back on its post, the tracking array a bigger flat face.
+G['9a331-tor-m2'] = { ...TOR, length: 7.6, turret: turret(-0.4, [[-1.6, 1.15], [-1.4, 1.27], [1.3, 1.27], [1.55, 1.05]], [[-1.6, 1.58], [-1.4, 1.72], [1.0, 1.72], [1.55, 1.05]], 12, 1.45), addOns: [
+  ts([1.33, 0, 0.75], chamfer(0.72, 0.62, 0.1), 0.3, 'front', { pitch: 0.5, paint: 'light' }), { on: 'turret', kind: 'box', at: [-1.2, 0, 2.0], size: [0.55, 0.9, 0.6], metal: true },
+  ts([-1.5, 0, 2.75], rect(1.55, 0.6), 0.25, 'front', { pitch: -0.3, paint: 'light' }), { on: 'turret', kind: 'box', at: [0.25, 0, 1.75], size: [1.9, 2.2, 0.05], metal: true }, tb(1.0, -0.85, 1.86, 0.5, 0.45, 0.3, DARK),
+] };
+// 9A310 Buk TELAR (1980; on the GM-569, 9.3 x 3.25 m, 3.8 m): the long hull on six road wheels, the flat turret with the
+// round Fire Dome radar housing on its front, the four 9M38 (5.55 m) lying on the launcher's rails above it, their noses
+// just behind the radar and their tails overhanging the hull's back.
+const M9M38: Msl = { len: 5.55, d: 0.4, nose: 0.9, fins: [[1.0, 3.6, 2.2, 3.1, 0.24, 'x'], [0.0, 0.55, 0.0, 0.3, 0.42, 'x']] };
+const BUK_T = turret(-0.8, [[-1.6, 1.05], [-1.3, 1.25], [1.1, 1.25], [1.4, 1.0]], [[-1.6, 0.72], [-1.3, 0.82], [1.1, 0.82], [1.4, 0.62]], 12, 1.4);
+const BUK_RAIL = [beam([-4.3, 0, 2.62], 0.03, 4.5, 2.7, 0.12, DARK), ...[-1, 1].map((s) => rod([-1.6, s * 0.8, 2.45], [-1.6, s * 0.8, 2.62], 0.2, MT))];
+const BUK_4 = [-1.2, -0.42, 0.42, 1.2].flatMap((y) => missile([-5.0, y, 2.9], 0.03, M9M38));
+G['9a310-buk-telar'] = { ...BUK, turret: BUK_T, radars: undefined, missiles: undefined, addOns: [
+  { on: 'turret', kind: 'blob', at: [1.75, 0, 0.95], size: [0.95, 1.9, 1.55], shade: 0.95 }, ts([2.2, 0, 0.95], ellipse(0.8, 0.65, 16), 0.06, 'front', { curve: 0.12, paint: 'light' }), ...BUK_RAIL, ...BUK_4,
+] };
+// 9A317 Buk-M2 (2008): the Fire Dome replaced by the tall flat phased-array antenna standing on the turret's front.
+G['buk-m2-9a317'] = { ...G['9a310-buk-telar'], addOns: [ts([1.6, 0, 1.25], chamfer(1.0, 0.95, 0.15), 0.35, 'front', { pitch: 0.15 }), ts([1.8, 0, 1.25], rect(0.85, 0.8), 0.04, 'front', { pitch: 0.15, paint: 'light' }), ...BUK_RAIL, ...BUK_4] };
+// 9A317M Buk-M3 (2016): the M2's phased array, and six 9M317M in closed canisters, two rows of three, over the turret.
+G['buk-m3-9a317m'] = { ...G['buk-m2-9a317'], addOns: [...G['buk-m2-9a317'].addOns!.slice(0, 2), ...BUK_RAIL, ...[2.75, 3.3].flatMap((u) => [-0.6, 0, 0.6].map((y) => beam([-4.6, y, u], 0.03, 5.9, 0.52, 0.52)))] };
+// 9A33BM3 Osa-AKM (1980; the BAZ-5937 amphibian, 9.14 x 2.75 m, 4.2 m): the turret's low round base, three missile
+// canisters stacked on each side, the tracking dish on the front with its two small dishes, the folding search antenna on
+// its post at the back of the roof.
+const OSA_T = turret(-0.4, circle6(1.0), [[-1.0, 0.55], [-0.6, 0.75], [0.6, 0.75], [1.0, 0.55]], 4, 1.0);
+const OSA_RADARS: AddOn[] = [
+  ts([1.15, 0, 1.25], ellipse(0.55, 0.55, 16), 0.1, 'front', { curve: 0.15, paint: 'light' }), ...[-1, 1].map((s) => ts([1.05, s * 0.75, 0.95], ellipse(0.18, 0.18, 10), 0.08, 'front', { paint: 'light' })),
+  { on: 'turret', kind: 'tube', at: [-0.5, 0, 0.7], to: [-0.5, 0, 1.75], size: [0.35, 0.3, 0], metal: true }, ts([-0.65, 0, 2.05], rect(1.2, 0.4), 0.15, 'front', { pitch: -0.4, curve: 0.25, paint: 'light' }),
+];
+G['9a33-osa'] = { ...OSA, turret: OSA_T, radars: undefined, missiles: undefined, addOns: [...OSA_RADARS, ...[-1, 1].flatMap((s) => [0.6, 0.92, 1.24].map((u) => tb(-0.1, s * 1.3, u, 3.2, 0.3, 0.3, { pitch: 0.1 })))] };
+// 9A33BM2 Osa-AK (1975): the same turret with four 9M33 bare on their rails, two each side.
+const M9M33: Msl = { len: 3.16, d: 0.21, nose: 0.4, fins: [[2.45, 2.7, 2.5, 2.62, 0.17, 'x'], [0.05, 0.6, 0.1, 0.38, 0.3, 'x']] };
+G['9a33bm2-osa'] = { ...OSA, turret: OSA_T, radars: undefined, missiles: undefined, addOns: [...OSA_RADARS, ...[-1, 1].flatMap((s) => [tb(-0.4, s * 1.25, 0.95, 2.4, 0.12, 0.6, DARK), ...[0.75, 1.2].flatMap((u) => missile([-2.0, s * 1.35, 2.0 + u], 0.1, M9M33))])] };
+// 9P31 Strela-1 (1968; on the BRDM-2, 5.75 x 2.37 m, 2.3 m): no machine-gun turret - a small pedestal over the middle with
+// two square missile canisters each side on its arms, laid level for travel.
+G['9p31-strela-1'] = { ...AD('9p31-strela-1'), turret: turret(-0.2, circle6(0.45), [[-0.45, 0.35], [0.45, 0.35]], 4, 0.45), missiles: undefined, addOns: [...[-1, 1].flatMap((s) => [tb(0.0, s * 0.52, 0.4, 0.3, 0.22, 0.35, DARK), ...[0.22, 0.48].map((d) => tb(0.1, s * (0.6 + d), 0.55, 2.0, 0.24, 0.24))])] };
+// 9A35 Strela-10 (1976; on the MT-LB, 6.6 x 2.85 m, 3.8 m): the turret over the back with its round-fronted body, the
+// four big square canisters on their frame two each side, the ranging radar's horns on the turret front.
+G['9a35-strela-10'] = { ...AD('9a35-strela-10'), boxes: undefined, missiles: undefined, turret: turret(-1.4, [[-0.75, 0.6], [-0.55, 0.72], [0.45, 0.72], [0.75, 0.5]], [[-0.75, 0.72], [-0.5, 0.8], [0.5, 0.8], [0.75, 0.6]], 6, 0.75),
+  addOns: [hb(2.3, 0, 1.8, 1.5, 2.4, 0.35), ...[-1, 1].flatMap((s) => [tb(0.0, s * 0.82, 0.75, 0.45, 0.14, 0.7, DARK), ...[0.15, 0.5].map((d) => tb(0.1, s * (0.95 + d), 0.95, 2.25, 0.34, 0.34))]), ...[-1, 1].map((s) => tb(0.85, s * 0.3, 0.55, 0.35, 0.25, 0.25, DARK))] };
+// 2P25 Kub TEL (1967; on the GM-578, 7.39 x 3.18 m, 3.45 m): the turntable over the back holding three 3M9 (5.8 m) side by
+// side on their rails, each with its big cruciform mid-wings and tail fins.
+const M3M9: Msl = { len: 5.8, d: 0.335, nose: 0.8, fins: [[2.3, 3.9, 3.0, 3.6, 0.42, 'x'], [0.0, 0.7, 0.05, 0.4, 0.5, 'x']] };
+G['2p25-kub-tel'] = { ...AD('2p25-kub-tel'), turret: undefined, missiles: undefined, addOns: [hd(-1.4, 0, 1.75, 1.7, 0.3, DARK), beam([-3.6, 0, 1.9], 0.12, 4.6, 2.2, 0.15, DARK), ...[-0.85, 0, 0.85].flatMap((y) => missile([-4.0, y, 2.35], 0.12, M3M9))] };
+// 2K22 Tunguska: the turret's own outline - slab sides and a sloped front - with the search antenna leaning back on its
+// post over the rear and the round tracking dish on the front.
+G['2k22-tunguska'] = { ...G['2k22-tunguska'], radars: undefined, turret: turret(0.2, [[-1.7, 1.12], [-1.45, 1.25], [1.2, 1.25], [1.7, 0.95]], [[-1.7, 1.0], [-1.45, 1.1], [1.1, 1.1], [1.7, 0.7]], 12, 1.7), addOns: [
+  { on: 'turret', kind: 'tube', at: [-1.3, 0, 1.05], to: [-1.3, 0, 1.45], size: [0.3, 0.25, 0], metal: true }, ts([-1.35, 0, 1.75], rect(1.15, 0.35), 0.15, 'front', { pitch: -0.35, curve: 0.15, paint: 'light' }),
+  ts([1.75, 0, 0.85], ellipse(0.45, 0.45, 14), 0.1, 'front', { curve: 0.1, paint: 'light' }),
+] };
+// 9S470 Buk command post (on the GM-579, 9.0 x 3.25 m, about 3.3 m: estimate): the tall equipment cabin over most of the
+// hull, its whip antennas, the small sight cupola at the front.
+G['9s470-buk-cp'] = { ...AD('9s470-buk-cp'), boxes: undefined, radars: undefined, addOns: [kung(-4.3, 1.5, 3.0, 1.55, 3.3), ...[-1, 1].map((s) => rod([-3.8, s * 1.2, 3.3], [-3.8, s * 1.2, 5.0], 0.05, MT)), hd(2.3, 0.8, 1.75, 0.5, 0.3, DARK)] };
+// 9S18M1 Snow Drift (on the GM-567, 9.6 x 3.25 m; antenna about 6.4 x 1.9 m: estimate): the equipment cabin, the wide
+// curved search antenna raised high on its mast over the back half, leaning back.
+G['9s18-snow-drift'] = { ...AD('9s18-snow-drift'), boxes: undefined, radars: undefined, addOns: [kung(-4.6, 0.6, 3.0, 1.55, 2.95), hd(-2.0, 0, 3.05, 1.3, 0.2, DARK), rod([-2.0, 0, 3.0], [-2.0, 0, 5.1], 0.35, MT), sl([-2.15, 0, 5.85], rect(3.2, 0.95), 0.25, 'front', { pitch: -0.35, curve: 0.45, ...LT })] };
+// 1S91 Straight Flush (on the GM-578, 7.39 x 3.18 m, about 4.6 m with the antennas up): the round turret over the back,
+// the tracking dish on its front and the search antenna's curved trough on a post above it.
+G['1s91-straight-flush'] = { ...AD('1s91-straight-flush'), turret: turret(-0.8, circle6(1.0), [[-1.0, 0.55], [-0.6, 0.75], [0.6, 0.75], [1.0, 0.55]], 4, 1.0), radars: undefined, addOns: [
+  ts([0.95, 0, 1.3], ellipse(0.85, 0.85, 16), 0.12, 'front', { curve: 0.2, paint: 'light' }), { on: 'turret', kind: 'tube', at: [-0.1, 0, 0.75], to: [-0.1, 0, 2.2], size: [0.25, 0.2, 0], metal: true }, ts([-0.1, 0, 2.6], rect(1.6, 0.45), 0.15, 'front', { pitch: -0.2, curve: 0.3, paint: 'light' }),
+] };
+// ZSU-23-4M4 (2012): the Shilka with the bigger electronics box on the turret's back and two Igla launch tubes on each side.
+G['zsu-23-4m4'] = { ...G['zsu-23-4m4'], missiles: [{ mount: 'turret-side', rows: 1, cols: 2, length: 1.7, diameter: 0.1, elevation: 0.2, up: 0.85 }] };
+
+// Ural-4320, the plain covered cargo truck: the outlined chassis of ./base.ts under the catalogue's starter name.
+G['ural-4320'] = { cls: 'truck', ...URAL_4320 };
 
 export const ARMOUR_MODERN: SpecSet = { ground: G, aliases: ALIASES };
