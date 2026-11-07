@@ -91,6 +91,8 @@ export interface FixedWingSpec {
     length?: number;
     /** Wing props turned up as rotors (a tiltrotor hovering, a VTOL's lift fans). */
     up?: boolean;
+    /** Internal engines: where each nozzle ends, (forward, side, up), when not side by side at the tail (nacelles set apart). */
+    nozzles?: [number, number, number][];
   };
   intakes?: 'side' | 'chin' | 'nose' | 'dorsal' | 'under' | 'none';
   /** tandem: two seats one behind the other under one long canopy, the rear one raised (trainers, two-seat fighters). */
@@ -131,6 +133,12 @@ export interface FixedWingSpec {
   wingPlan?: P2[];
   tailPlan?: P2[];
   finPlan?: P2[];
+  /** The canopy's true shape: glass bodies (forward, up from the axis), drawn in place of `canopy`'s blobs. */
+  glass?: Outline[];
+  /** Propellers where they really are, besides the engines' own: outboard props on a wing with dihedral. */
+  props?: { x: number; side: number; up: number; diameter: number; blades: number }[];
+  /** The fins' thickness (default 5 % of the fin plan's chord, at least 0.1 m), so they show from the front. */
+  finThickness?: number;
 }
 
 export function buildFixedWing(spec: FixedWingSpec): Template {
@@ -193,7 +201,9 @@ export function buildFixedWing(spec: FixedWingSpec): Template {
   tail(k, spec);
   engines(k, spec);
   intakes(k, spec);
-  canopy(k, spec);
+  if (spec.glass) for (const g of spec.glass) outlineBody(k.fixed, k.fr, g, PAINT.glass, 12);
+  else canopy(k, spec);
+  for (const p of spec.props ?? []) propeller(k, p.x, p.side, p.up, p.diameter, p.blades);
   if (spec.propeller && spec.engines?.kind === 'nose-prop') propeller(k, half + 0.1, 0, 0, spec.propeller.diameter, spec.propeller.blades);
   if (spec.rotodome) {
     const r = spec.rotodome;
@@ -314,19 +324,20 @@ function tail(k: Kit, spec: FixedWingSpec): void {
     const base = t.finBase ?? top;
     const fins = spec.finPlan ?? [];
     const fh = fins.length ? Math.max(...fins.map((p) => p[1])) : 0;
-    if (fins.length && (t.kind === 'single' || t.kind === 't')) slab(k.team, k.fr, fins, (a, h) => [a, 0, base + h], [0, 1, 0], 0.1, grey(0.82));
+    const ft = spec.finThickness ?? (fins.length ? Math.max(0.1, (Math.max(...fins.map((p) => p[0])) - Math.min(...fins.map((p) => p[0]))) * 0.05) : 0.1);
+    if (fins.length && (t.kind === 'single' || t.kind === 't')) slab(k.team, k.fr, fins, (a, h) => [a, 0, base + h], [0, 1, 0], ft, grey(0.82));
     if (fins.length && (t.kind === 'twin' || t.kind === 'h')) {
       const sp = (spec.booms?.spacing ?? t.spacing ?? spec.bodyWidth * 0.8) / 2;
       const cant = Math.tan(((t.cant ?? 0) * Math.PI) / 180);
       const b0 = t.kind === 'h' ? (t.planeUp ?? 0) - fh * 0.35 : base;
-      for (const side of [-1, 1]) slab(k.team, k.fr, fins, (a, h) => [a, side * (sp + h * cant), b0 + h], [0, side, -cant * side], 0.1, grey(0.8));
+      for (const side of [-1, 1]) slab(k.team, k.fr, fins, (a, h) => [a, side * (sp + h * cant), b0 + h], [0, side, -cant * side], ft, grey(0.8));
     }
     if (spec.tailPlan) {
       const up = t.planeUp ?? (t.kind === 't' ? base + fh : 0);
       for (const side of [-1, 1]) slab(k.team, k.fr, spec.tailPlan, (a, b) => [a, side * b, up], [0, 0, 1], 0.08, grey(0.84), 1, grey(0.6));
     }
     if (t.kind === 'v' && fins.length) {
-      for (const side of [-1, 1]) slab(k.team, k.fr, fins, (a, h) => [a, side * h * 0.8, base + h * 0.6], [0, side * 0.6, -0.8], 0.08, grey(0.8));
+      for (const side of [-1, 1]) slab(k.team, k.fr, fins, (a, h) => [a, side * h * 0.8, base + h * 0.6], [0, side * 0.6, -0.8], ft * 0.8, grey(0.8));
     }
     return;
   }
@@ -415,6 +426,8 @@ function engines(k: Kit, spec: FixedWingSpec): void {
     for (const side of [-1, 1]) tube(k.team, k.fr, [-L * 0.22, side * (spec.bodyWidth / 2 + d * 0.55), spec.bodyHeight * 0.2], [-L * 0.22 - d * 2.6, side * (spec.bodyWidth / 2 + d * 0.55), spec.bodyHeight * 0.2], d / 2, d * 0.4, grey(0.72), 10);
   } else if (e.kind === 'tail-top') {
     tube(k.team, k.fr, [-L * 0.25, 0, spec.bodyHeight * 0.6], [-L * 0.25 - d * 2.8, 0, spec.bodyHeight * 0.6], d / 2, d * 0.4, grey(0.72), 10);
+  } else if (e.kind === 'internal' && e.nozzles) {
+    for (const [x, s, u] of e.nozzles) tube(k.fixed, k.fr, [x + 0.45, s, u], [x, s, u], d / 2, d * 0.46, PAINT.dark, 10);
   } else if (e.kind === 'internal') {
     // Exhausts at the tail.
     const n = Math.max(1, e.count);
