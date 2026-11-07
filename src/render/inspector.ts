@@ -14,6 +14,9 @@ import {
   type SurfaceIndex,
 } from './pick';
 import { rowLookDirection, type Vec3 } from './pose';
+import { raycastTiles, type TileHit } from './tilePick';
+import type { WorldTile } from '../world/tileSet';
+import { t } from '../i18n';
 
 /**
  * Pick radius around a click, in CSS pixels: "a few pixels", wide enough to hit
@@ -124,6 +127,12 @@ export class Inspector {
   /** Where the marker is drawn, world space; null for none. */
   marker: Vec3 | null = null;
   private level: Level | null = null;
+  /**
+   * The streamed world tiles drawn with the level (src/world/tileSet), as the
+   * renderer was last handed them. Each is indexed on its own when a ray first
+   * comes near it (src/render/tilePick), so the set changing costs nothing here.
+   */
+  private tiles: readonly WorldTile[] = [];
   private index: LevelIndex | null = null;
   private building: Promise<LevelIndex | null> | null = null;
   private buildFraction = 0;
@@ -139,6 +148,11 @@ export class Inspector {
     this.buildToken++;
     const pick = useInspectStore.getState().pick;
     if (pick && pick.kind !== 'data') this.clear();
+  }
+
+  /** Follow the world tiles the renderer draws; a surface pick already made stays, as it does when the camera moves. */
+  setTiles(tiles: readonly WorldTile[]): void {
+    this.tiles = tiles;
   }
 
   /** Drop a pick that refers to a dataset no longer loaded. */
@@ -228,6 +242,13 @@ export class Inspector {
       });
       if (stale() || !index || level !== this.level) return;
       const hit = raycastSurface(index.main, level.vertices, ctx.ray, Infinity, ctx.accept);
+      // The world tiles round a streamed theatre are drawn with the level, so a
+      // click meets whichever of the two is nearer.
+      const tile = raycastTiles(this.tiles, ctx.ray, hit ? hit.t : Infinity, ctx.accept);
+      if (tile) {
+        this.publishSurface(id, ctx, tile.point, tileSurface(tile));
+        return;
+      }
       if (hit) {
         const surface = this.nameSurface(level, index.main, hit.set, hit.triangle, hit.point);
         surface.nav = this.navAt(level, index.nav, ctx, hit.t);
@@ -290,12 +311,13 @@ export class Inspector {
       return t > 0 ? { x: ray.origin.x + ray.dir.x * t, y: q.y, z: ray.origin.z + ray.dir.z * t } : null;
     }
     if (level?.kind !== 'model') return null;
-    if (!this.index) {
-      // Started once; the frames that ask meanwhile get the ground plane.
-      if (!this.building) this.ensureIndex(level, () => {}).catch(() => undefined);
-      return null;
-    }
-    return raycastSurface(this.index.main, level.vertices, ray, Infinity, null)?.point ?? null;
+    let hit: { t: number; point: Vec3 } | null = null;
+    if (this.index) hit = raycastSurface(this.index.main, level.vertices, ray, Infinity, null);
+    // Started once; the frames that ask meanwhile get the world tiles, which
+    // need no index over the whole set, or the ground plane.
+    else if (!this.building) this.ensureIndex(level, () => {}).catch(() => undefined);
+    const tile = raycastTiles(this.tiles, ray, hit ? hit.t : Infinity, null);
+    return (tile ?? hit)?.point ?? null;
   }
 
   private ensureIndex(level: ModelLevel, onProgress: (f: number) => void): Promise<LevelIndex | null> {
@@ -330,6 +352,15 @@ export class Inspector {
       return index;
     });
   }
+}
+
+/**
+ * What a click on a world tile names. The tiles carry no source parts - each is
+ * a piece of the earth, not of a level - so the part is the backdrop itself and
+ * the kind is the triangle set hit: ground, building or water.
+ */
+function tileSurface(hit: TileHit): PickedSurface {
+  return { part: t('heat.world.button'), cls: hit.cls, approximate: false, nav: null };
 }
 
 function distance(a: Vec3, b: Vec3): number {

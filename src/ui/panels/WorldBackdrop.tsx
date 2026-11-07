@@ -31,6 +31,19 @@ type Detail = 'data' | 'point' | 'none';
 const gameLabel = (th: Theatre) => (th.game === 'dcs' ? t('heat.world.theatre.groupDcs') : t('heat.world.theatre.groupIl2'));
 
 /**
+ * With no data to look at, the camera over a theatre's detailed area: 25 km
+ * up and 50 km south of it, looking at it.
+ */
+export function cameraOverTheatre(engine: NonNullable<ReturnType<typeof useEngine>>, placement: GeoPlacement, theatre: Theatre): void {
+  const [e, n] = planeForward(placement.geo)(theatre.detail.lat, theatre.detail.lon);
+  const at = dataToWorld(dataOfEastNorth(placement.geo, e, n, 0), placement.axes);
+  const from = dataToWorld(dataOfEastNorth(placement.geo, e, n - 50_000, 25_000), placement.axes);
+  const f = { x: at.x - from.x, y: at.y - from.y, z: at.z - from.z };
+  const l = Math.hypot(f.x, f.y, f.z);
+  engine.setCameraPose(from, { x: f.x / l, y: f.y / l, z: f.z / l });
+}
+
+/**
  * The world backdrop's part of the level panel: the real place under a
  * recording that says where it is, and a picker of known real-world theatres
  * (DCS terrains, IL-2 maps) built coarsely as a whole and finely in a chosen
@@ -202,15 +215,7 @@ export function WorldBackdrop({
     setError(null);
     setNote(null);
     setLevel({ ...lv, stream: { theatre: theatre.id, imagery, runways }, showTexture: imagery });
-    // With no data to look at, start over the theatre's detailed area, 25 km up and 50 km south of it.
-    if (!geo && engine) {
-      const [e, n] = fwd(theatre.detail.lat, theatre.detail.lon);
-      const at = dataToWorld(dataOfEastNorth(placement.geo, e, n, 0), placement.axes);
-      const from = dataToWorld(dataOfEastNorth(placement.geo, e, n - 50_000, 25_000), placement.axes);
-      const f = { x: at.x - from.x, y: at.y - from.y, z: at.z - from.z };
-      const l = Math.hypot(f.x, f.y, f.z);
-      engine.setCameraPose(from, { x: f.x / l, y: f.y / l, z: f.z / l });
-    }
+    if (!geo && engine) cameraOverTheatre(engine, placement, theatre);
   };
 
   /** Imagery on or off for the streamed theatre shown now: its tiles are built again (from the cache). */

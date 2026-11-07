@@ -1296,7 +1296,10 @@ export class Engine {
       this.tilesVersion = worldTiles.version;
       this.tilesForModel = tilesForModel;
       this.tilesRenderer = renderer;
-      renderer.setWorldTiles(tilesForModel ? worldTiles.tiles : []);
+      // The inspector gets the same set, so a click hits what is drawn.
+      const tiles = tilesForModel ? worldTiles.tiles : [];
+      renderer.setWorldTiles(tiles);
+      this.inspector.setTiles(tiles);
       this.invalidate(2);
     }
 

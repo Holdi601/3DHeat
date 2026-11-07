@@ -1,6 +1,6 @@
 import { t } from '../i18n';
 import type { LevelCredit, MapAnchor } from '../render/level';
-import type { GeoPlacement } from '../state/types';
+import type { Bounds, GeoPlacement } from '../state/types';
 import type { WorldLabel } from '../world/backdrop';
 
 /**
@@ -39,6 +39,13 @@ export interface StoredLevelMeta {
   placement?: GeoPlacement;
   /** A world backdrop's place names, in its world coordinates. */
   labels?: WorldLabel[];
+  /**
+   * A streamed theatre: no geometry is stored, only what it streams and with
+   * which options; loading it streams again, from the tile cache where the
+   * tiles are still there. `bounds` is its reach, for the camera's range.
+   */
+  stream?: { theatre: string; runways: boolean; imagery: boolean };
+  bounds?: Bounds;
 }
 
 interface StoredLevel extends StoredLevelMeta {
@@ -157,6 +164,8 @@ export interface ModelLevelPayload {
   credits?: LevelCredit[];
   placement?: GeoPlacement;
   labels?: WorldLabel[];
+  stream?: { theatre: string; runways: boolean; imagery: boolean };
+  bounds?: Bounds;
 }
 
 export async function saveModelLevel(name: string, p: ModelLevelPayload): Promise<string> {
@@ -185,6 +194,7 @@ export async function saveModelLevel(name: string, p: ModelLevelPayload): Promis
       ...(p.credits?.length ? { credits: [...p.credits] } : {}),
       ...(p.placement ? { placement: JSON.parse(JSON.stringify(p.placement)) as GeoPlacement } : {}),
       ...(p.labels?.length ? { labels: p.labels.map((l) => ({ ...l })) } : {}),
+      ...(p.stream ? { stream: { ...p.stream }, ...(p.bounds ? { bounds: { ...p.bounds } } : {}) } : {}),
       vertices: p.vertices.slice().buffer,
       ...(p.colours ? { colours: p.colours.slice().buffer } : {}),
       ...(p.uvs && p.atlas ? { uvs: p.uvs.slice().buffer, atlas: p.atlas } : {}),

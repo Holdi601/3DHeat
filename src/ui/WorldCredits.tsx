@@ -12,6 +12,8 @@ const CREDIT: Record<LevelCredit, { key: string; href: string }> = {
   ourairports: { key: 'heat.world.credit.ourairports', href: 'https://ourairports.com/data/' },
   mapterhorn: { key: 'heat.world.credit.mapterhorn', href: 'https://mapterhorn.com/attribution' },
   eox: { key: 'heat.world.credit.eox', href: 'https://cloudless.eox.at' },
+  usgs: { key: 'heat.world.credit.usgs', href: 'https://www.usgs.gov/programs/national-geospatial-program/national-map' },
+  ign: { key: 'heat.world.credit.ign', href: 'https://geoservices.ign.fr/bdortho' },
 };
 
 /**

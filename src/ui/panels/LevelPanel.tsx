@@ -36,7 +36,9 @@ import { Check, Section, Slider } from '../controls';
 import { int, num, t } from '../../i18n';
 import type { BackdropResult } from '../../world/backdrop';
 import type { GeoPlacement } from '../../state/types';
-import { WorldBackdrop } from './WorldBackdrop';
+import { cameraOverTheatre, WorldBackdrop } from './WorldBackdrop';
+import { useEngine } from '../EngineContext';
+import { theatreById } from '../../world/theatres';
 
 /** Longest edge we upload; larger maps are downscaled to fit the GPU. */
 const MAX_MAP_EDGE = 8192;
@@ -233,6 +235,7 @@ export function LevelPanel() {
   const [error, setError] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  const engine = useEngine();
   /**
    * Import decimation, defaulting to none.
    *
@@ -408,6 +411,8 @@ export function LevelPanel() {
           credits: level.credits,
           placement: level.placement,
           labels: level.labels,
+          // A streamed theatre is kept as what it streams, not as tiles.
+          ...(level.stream ? { stream: level.stream, bounds: level.bounds } : {}),
         });
       }
       refreshLibrary();
@@ -503,6 +508,23 @@ export function LevelPanel() {
           // source gives the tighter interval.
           groundBand: { minY: b.minY, maxY: b.maxY },
         });
+        // A saved streamed theatre comes back streaming, on its plane, with its reach.
+        const stream = rec.meta.stream;
+        const reach = rec.meta.bounds;
+        if (stream && rec.meta.placement && reach) {
+          const shell = worldLook({ ...restored, bounds: reach }, rec.meta.credits ?? []);
+          setLevel({
+            ...shell,
+            placement: rec.meta.placement,
+            stream,
+            showTexture: stream.imagery,
+            relief: { ...shell.relief, lowY: reach.minY, highY: reach.maxY },
+          });
+          // With no data, start over the theatre rather than wherever the camera was.
+          const th = theatreById(stream.theatre);
+          if (!dataset && engine && th) cameraOverTheatre(engine, rec.meta.placement, th);
+          return;
+        }
         // A saved world backdrop comes back with its credits and its look.
         setLevel(
           rec.meta.credits?.length
