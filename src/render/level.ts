@@ -13,7 +13,7 @@ import type { WorldLabel } from '../world/backdrop';
 export type LevelKind = 'none' | 'image' | 'model';
 
 /** A source whose credit a level must carry on screen: see `ModelLevel.credits`. */
-export type LevelCredit = 'openfreemap' | 'terrarium' | 'ourairports' | 'mapterhorn' | 'eox';
+export type LevelCredit = 'openfreemap' | 'terrarium' | 'ourairports' | 'mapterhorn' | 'eox' | 'usgs' | 'ign';
 
 /**
  * Ties one image pixel to one world position.

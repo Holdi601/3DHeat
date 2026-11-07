@@ -1255,6 +1255,7 @@ export class WebgpuRenderer implements Renderer {
       tileBuffer,
       tileTable,
       texture: null,
+      textureLevels: null,
       groundBuffer: index(src.indices, 'ground indices'),
       structBuffer: index(src.structureIndices, 'structure indices'),
       wireBuffer: index(src.structureEdges, 'structure edges'),
@@ -1300,6 +1301,7 @@ export class WebgpuRenderer implements Renderer {
     }
     mesh.texture?.destroy();
     mesh.texture = null;
+    mesh.textureLevels = null;
     mesh.atlasGroups.clear();
     mesh.freed = true;
   }
@@ -1333,38 +1335,43 @@ export class WebgpuRenderer implements Renderer {
   }
 
   /**
-   * A tile's own imagery as a texture: its full size at once, then with a mip
-   * chain once the browser has scaled one.
+   * A tile's own imagery as a texture: its full size at once, its smaller mip
+   * levels once the browser has scaled them.
    *
    * WebGPU has no generateMipmap, and the scaled levels come from
    * `createImageBitmap`, which is asynchronous - so the tile is drawn textured
-   * from the first frame and swaps to the mipmapped copy when that is ready,
-   * rather than drawing untextured while it waits. The bitmap belongs to the
-   * tile set and is left open: the same tile may be uploaded again by a
-   * recreated renderer.
+   * from the first frame, through a view of the top level only, and the view
+   * widens to the whole chain when the rest is filled in. One texture and one
+   * full-size copy per tile: a second, mipmapped texture swapped in later
+   * doubled the copies and allocations of a streaming burst, which is when
+   * frames are already at their tightest. The bitmap belongs to the tile set
+   * and is left open: the same tile may be uploaded again by a recreated
+   * renderer.
    */
   private uploadTileImage(image: ImageBitmap, mesh: GpuMesh, id: string): void {
     const limit = this.device.limits.maxTextureDimension2D;
     // A closed bitmap reports 0 x 0, and copying it would fail validation; the
     // tile is then drawn untextured. One past the device's limit likewise.
     if (image.width < 1 || image.height < 1 || image.width > limit || image.height > limit) return;
-    const usage =
-      GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT;
-    const first = this.device.createTexture({
+    const mips = Math.floor(Math.log2(Math.max(image.width, image.height))) + 1;
+    const texture = this.device.createTexture({
       label: `tile ${id} image`,
       size: [image.width, image.height],
       format: 'rgba8unorm',
-      usage,
+      mipLevelCount: mips,
+      usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
     });
-    this.device.queue.copyExternalImageToTexture({ source: image }, { texture: first }, [image.width, image.height]);
-    mesh.texture = first;
+    this.device.queue.copyExternalImageToTexture({ source: image }, { texture }, [image.width, image.height]);
+    mesh.texture = texture;
+    // Until the lower levels hold the picture, sampling them would read the
+    // zeroes a new texture starts with: a tile seen from afar would turn black.
+    mesh.textureLevels = 1;
     mesh.atlasGroups.clear();
-    const base = textureBytes(image.width, image.height, false);
-    mesh.bytes += base;
-    this.tileBytes += base;
-
-    const mips = Math.floor(Math.log2(Math.max(image.width, image.height))) + 1;
+    const bytes = textureBytes(image.width, image.height, mips > 1);
+    mesh.bytes += bytes;
+    this.tileBytes += bytes;
     if (mips < 2) return;
+
     void (async () => {
       const levels: ImageBitmap[] = [];
       let width = image.width;
@@ -1378,14 +1385,6 @@ export class WebgpuRenderer implements Renderer {
           );
           if (mesh.freed) return;
         }
-        const texture = this.device.createTexture({
-          label: `tile ${id} image`,
-          size: [image.width, image.height],
-          format: 'rgba8unorm',
-          mipLevelCount: mips,
-          usage,
-        });
-        this.device.queue.copyExternalImageToTexture({ source: image }, { texture }, [image.width, image.height]);
         levels.forEach((level, i) => {
           this.device.queue.copyExternalImageToTexture(
             { source: level },
@@ -1393,17 +1392,12 @@ export class WebgpuRenderer implements Renderer {
             [level.width, level.height],
           );
         });
-        // The frame already encoded with the first copy is submitted before
-        // this task can run, so destroying it here cannot pull it from under a
-        // draw.
-        mesh.texture?.destroy();
-        mesh.texture = texture;
+        // The copies are queued ahead of any frame that uses the wider view,
+        // so no draw ever samples a level before it is filled.
+        mesh.textureLevels = null;
         mesh.atlasGroups.clear();
-        const full = textureBytes(image.width, image.height, true);
-        mesh.bytes += full - base;
-        this.tileBytes += full - base;
       } catch {
-        // The full-size copy stays: a tile without mips is still the right picture.
+        // The top level stays: a tile without mips is still the right picture.
       } finally {
         for (const level of levels) level.close();
       }
@@ -1548,10 +1542,11 @@ export class WebgpuRenderer implements Renderer {
     if (!group) {
       const texture = mesh.texture ?? this.atlasPlaceholder;
       const tiles = mesh.tileTable ?? this.tilePlaceholder;
+      const view = mesh.texture && mesh.textureLevels ? texture.createView({ mipLevelCount: mesh.textureLevels }) : texture.createView();
       group = this.device.createBindGroup({
         layout: pipeline.getBindGroupLayout(1),
         entries: [
-          { binding: 0, resource: texture.createView() },
+          { binding: 0, resource: view },
           { binding: 1, resource: this.atlasSamplerCache },
           { binding: 2, resource: { buffer: tiles } },
         ],
@@ -3314,6 +3309,11 @@ interface GpuMesh {
   tileTable: GPUBuffer | null;
   /** The level's atlas once decoded, or a tile's own image; null without one. */
   texture: GPUTexture | null;
+  /**
+   * How many of the texture's mip levels hold the picture yet, when not all:
+   * a tile's image is drawn from its top level until the rest are filled in.
+   */
+  textureLevels: number | null;
   groundBuffer: GPUBuffer | null;
   structBuffer: GPUBuffer | null;
   wireBuffer: GPUBuffer | null;

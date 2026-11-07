@@ -121,6 +121,8 @@ const SOURCE_CREDIT: Record<BuiltTile['sources'][number], LevelCredit> = {
   terrarium: 'terrarium',
   openfreemap: 'openfreemap',
   eox: 'eox',
+  usgs: 'usgs',
+  ign: 'ign',
   ourairports: 'ourairports',
 };
 
@@ -279,7 +281,7 @@ export class WorldStreamer {
       this.labelsVersion++;
     }
     this.evict(new Set(keys));
-    const order: LevelCredit[] = ['eox', 'openfreemap', 'mapterhorn', 'terrarium', 'ourairports'];
+    const order: LevelCredit[] = ['usgs', 'ign', 'eox', 'openfreemap', 'mapterhorn', 'terrarium', 'ourairports'];
     const credits = order.filter((c) => sources.has(c));
     const changed = credits.join() !== this.credits.join() || worldTiles.version !== before;
     this.credits = credits;

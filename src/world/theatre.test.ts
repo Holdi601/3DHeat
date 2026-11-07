@@ -10,6 +10,7 @@ import { THEATRES, theatreAt, theatreById, theatreGeo } from './theatres';
 import { boxAround, dataOfEastNorth, eastNorthOf, planeForward, planeInverse } from './tiles';
 import { DCS_PROJECTIONS, fromDcs, toDcs } from './dcsProjection';
 import { renderSet, selectTiles, MAX_ZOOM, ROOT_ZOOM } from './stream';
+import { orthoFor } from './tileBuild';
 import { geoOfHints, parseHints } from '../data/automap';
 
 const ACMI_AXES: AxisMapping = { up: 'z', flipX: false, flipY: true, flipZ: false, scale: 1 };
@@ -304,5 +305,16 @@ describe('streaming round the camera', () => {
     built.delete('5/20/11');
     built.delete('6/41/23');
     expect(renderSet([root], split, (k) => built.has(k)).sort()).toEqual(['6/40/22', '6/40/23', '6/41/22']);
+  });
+});
+
+describe('national orthophotos', () => {
+  const around = (lat: number, lon: number) => ({ south: lat - 0.01, north: lat + 0.01, west: lon - 0.01, east: lon + 0.01 });
+  it('are used only for a tile wholly inside the country that publishes them', () => {
+    expect(orthoFor(around(36.236, -115.034))?.id).toBe('usgs'); // Nellis
+    expect(orthoFor(around(49.176, -0.456))?.id).toBe('ign'); // Carpiquet
+    expect(orthoFor(around(51.13, 1.3))).toBeNull(); // Dover, across the Channel
+    expect(orthoFor(around(41.61, 41.6))).toBeNull(); // Batumi
+    expect(orthoFor({ south: 48, north: 52, west: -2, east: 3 })).toBeNull(); // a tile reaching into England
   });
 });

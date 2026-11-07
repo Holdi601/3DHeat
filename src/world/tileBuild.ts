@@ -41,6 +41,69 @@ export const MAPTERHORN_URL = 'https://tiles.mapterhorn.com/{z}/{x}/{y}.webp';
 /** EOX Sentinel-2 cloudless 2016 (CC BY 4.0), Web Mercator: z, then row, then column. */
 export const EOX_URL = 'https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg';
 
+/**
+ * National orthophotos, public and keyless, finer than the satellite mosaic:
+ * the USGS National Map's imagery (USDA NAIP and others; public domain) over
+ * the United States, IGN's BD ORTHO over France (Licence Ouverte 2.0). Used
+ * for a map tile wholly inside the country, from zoom 13, at two zooms deeper
+ * than the tile (16 of their tiles laid into one picture); EOX elsewhere. See
+ * docs/world-backdrop.md for the terms.
+ */
+export const USGS_URL = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}';
+export const IGN_URL =
+  'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg';
+const ORTHO_FROM = 13;
+const ORTHO_DEEPER = 2;
+
+/** Rough outlines (latitude, longitude) of where each orthophoto exists; a tile must lie wholly inside. */
+const ORTHO: Array<{ id: 'usgs' | 'ign'; url: string; maxZoom: number; outline: Array<[number, number]> }> = [
+  {
+    id: 'usgs',
+    url: USGS_URL,
+    maxZoom: 16,
+    // The contiguous United States, inside the borders.
+    outline: [
+      [48.9, -124.6], [48.9, -95.2], [46.2, -84.6], [45.0, -74.8], [45.2, -67.8], [41.3, -70.0], [35.2, -75.5], [30.4, -81.4],
+      [25.2, -80.4], [29.6, -94.0], [26.1, -97.2], [29.6, -103.0], [31.8, -106.5], [31.4, -111.1], [32.7, -117.1], [40.3, -124.4],
+    ],
+  },
+  {
+    id: 'ign',
+    url: IGN_URL,
+    maxZoom: 17,
+    // Metropolitan France, inside the coast and the borders (England and the Channel Islands outside).
+    outline: [
+      [51.05, 2.55], [50.15, 1.55], [49.7, 0.1], [49.65, -1.3], [49.7, -1.95], [48.65, -1.6], [48.85, -3.2], [48.4, -4.8],
+      [47.3, -2.6], [46.2, -1.2], [43.4, -1.7], [42.5, 1.7], [42.4, 3.2], [43.5, 4.6], [43.1, 6.4], [43.7, 7.5], [45.9, 6.9],
+      [46.4, 6.1], [47.5, 7.6], [49.0, 8.2], [49.5, 6.4], [50.1, 4.2], [51.05, 2.55],
+    ],
+  },
+];
+
+function inside(lat: number, lon: number, poly: Array<[number, number]>): boolean {
+  let c = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [ay, ax] = poly[i];
+    const [by, bx] = poly[j];
+    if (ay > lat !== by > lat && lon < ((bx - ax) * (lat - ay)) / (by - ay) + ax) c = !c;
+  }
+  return c;
+}
+
+/** The orthophoto covering a whole tile, if any. */
+export function orthoFor(box: { south: number; north: number; west: number; east: number }): (typeof ORTHO)[number] | null {
+  for (const o of ORTHO) {
+    const corners: Array<[number, number]> = [
+      [box.south, box.west],
+      [box.south, box.east],
+      [box.north, box.west],
+      [box.north, box.east],
+    ];
+    if (corners.every(([la, lo]) => inside(la, lo, o.outline))) return o;
+  }
+  return null;
+}
+
 /** Deepest zoom asked of each source; deeper tiles read their ancestor's square. */
 const TERRAIN_MAX = 14;
 const TERRAIN_GLOBAL = 12;
@@ -72,6 +135,11 @@ export interface TileIo {
   decodeImage(bytes: ArrayBuffer, type: string): Promise<{ width: number; height: number; rgba: Uint8ClampedArray }>;
   /** The picture as a bitmap to hand to the renderer; null where bitmaps cannot be made (tests). */
   bitmap(bytes: ArrayBuffer, type: string): Promise<ImageBitmap | null>;
+  /**
+   * Pictures laid out n by n (row by row, null for a missing one, drawn as
+   * nothing) as one bitmap; null where bitmaps cannot be made (tests).
+   */
+  mosaic(parts: Array<ArrayBuffer | null>, n: number, type: string): Promise<ImageBitmap | null>;
 }
 
 export interface BuiltTile {
@@ -81,7 +149,7 @@ export interface BuiltTile {
   image: ImageBitmap | null;
   labels: WorldLabel[];
   /** Which sources it was built from, for the credits. */
-  sources: Array<'mapterhorn' | 'terrarium' | 'openfreemap' | 'eox' | 'ourairports'>;
+  sources: Array<'mapterhorn' | 'terrarium' | 'openfreemap' | 'eox' | 'usgs' | 'ign' | 'ourairports'>;
   /** Bytes downloaded (not from the cache) for it. */
   downloaded: number;
   notes: Msg[];
@@ -208,8 +276,32 @@ export async function buildTile(req: TileRequest, io: TileIo): Promise<BuiltTile
 
   // ---- imagery
   let image: ImageBitmap | null = null;
-  let imageRect: { z: number; x: number; y: number } | null = null;
-  if (req.imagery) {
+  let imageRect: { z: number; x: number; y: number; n: number } | null = null;
+  // A national orthophoto where one covers the whole tile, up to a metre a
+  // pixel: several of its tiles laid into one picture for this tile.
+  const ortho = req.imagery && z >= ORTHO_FROM ? orthoFor(box) : null;
+  if (ortho) {
+    const zf = Math.min(z + ORTHO_DEEPER, ortho.maxZoom);
+    const n = 2 ** (zf - z);
+    try {
+      const parts = await Promise.all(
+        Array.from({ length: n * n }, async (_, i) => {
+          const f = await get(fill(ortho.url, zf, x * n + (i % n), y * n + Math.floor(i / n)));
+          return f.bytes && f.bytes.byteLength > 0 ? f.bytes : null;
+        }),
+      );
+      if (parts.every((p) => p)) {
+        image = await io.mosaic(parts, n, 'image/jpeg');
+        if (image) {
+          imageRect = { z: zf, x: x * n, y: y * n, n };
+          sources.push(ortho.id);
+        }
+      }
+    } catch {
+      image = null;
+    }
+  }
+  if (req.imagery && !image) {
     const zi = Math.min(z, IMAGERY_MAX);
     const k = z - zi;
     try {
@@ -217,7 +309,7 @@ export async function buildTile(req: TileRequest, io: TileIo): Promise<BuiltTile
       // Any picture, however small: a uniform square of open sea is a few hundred bytes.
       if (f.bytes && f.bytes.byteLength > 0) {
         image = await io.bitmap(f.bytes, 'image/jpeg');
-        imageRect = { z: zi, x: x >> k, y: y >> k };
+        imageRect = { z: zi, x: x >> k, y: y >> k, n: 1 };
         sources.push('eox');
       }
     } catch {
@@ -231,7 +323,7 @@ export async function buildTile(req: TileRequest, io: TileIo): Promise<BuiltTile
     mb.withUvs();
     const r = imageRect;
     const k = 2 ** (r.z - z) / 256;
-    mb.uvOf = (px, py) => [px * k - r.x, py * k - r.y];
+    mb.uvOf = (px, py) => [(px * k - r.x) / r.n, (py * k - r.y) / r.n];
   }
   mb.begin('ground', 'terrain');
   for (let j = 0; j < GRID; j++) for (let i = 0; i < GRID; i++) mb.vertexAt(px0 + i * dx, py0 + j * dx, heights[j * GRID + i], groundColour(heights[j * GRID + i]));

@@ -41,6 +41,19 @@ function pump(): void {
       fetch: (url, mode) => cachedFetch(url, mode),
       decodeImage,
       bitmap: (bytes, type) => createImageBitmap(new Blob([bytes], { type })),
+      mosaic: async (parts, n, type) => {
+        const bitmaps = await Promise.all(parts.map((p) => (p ? createImageBitmap(new Blob([p], { type })) : Promise.resolve(null))));
+        const size = bitmaps.find((b) => b)?.width ?? 256;
+        const canvas = new OffscreenCanvas(size * n, size * n);
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return null;
+        bitmaps.forEach((b, i) => {
+          if (!b) return;
+          ctx.drawImage(b, (i % n) * size, Math.floor(i / n) * size, size, size);
+          b.close();
+        });
+        return canvas.transferToImageBitmap();
+      },
     })
       .then((tile) => {
         const m = tile.mesh;
