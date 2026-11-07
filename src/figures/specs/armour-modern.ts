@@ -2179,6 +2179,65 @@ G['elc-901'] = { ...G['elc-bis'], turret: turret(-1.0, [[-0.8, 0.8], [-0.6, 1.0]
 G['lvtdgb-m40'] = { cls: 'spaa', chassis: 'wheeled', length: 6.5, width: 2.3, hullHeight: 1.25, axles: 3, axleAt: [0.65, -0.4, -0.72], wheelRadius: 0.5, hull: 'truck', cab: { length: 1.6, height: 2.4, bonnet: 1.5, outline: bonnetCab(6.5, 2.3, 0.5, 1.6, 2.4, 1.5, 1.6, 0.15, 0.75, 0.25) }, bed: 'none', addOns: [...cargo(-3.25, -0.1, 2.2, 1.25, 0.35), ...bedMount(-1.7, 1.25, 0.55, 1, 2.6, 0.04, 0.3, 0.2, 1.1)] };
 G['ush-204-gk'] = { cls: 'scout-car', chassis: 'wheeled', length: 5.0, width: 2.2, hullHeight: 1.75, axles: 2, axleAt: [0.55, -0.5], wheelRadius: 0.55, hullOutline: { top: [[-2.5, 1.6], [-2.3, 1.75], [1.2, 1.75], [1.8, 1.5], [2.5, 1.2]], bottom: [[-2.5, 0.75], [2.5, 0.75]], plan: [[-2.5, 1.05], [2.5, 1.0]], round: 10, stations: 10 }, turret: turret(0.0, [[-0.7, 0.6], [-0.55, 0.72], [0.5, 0.72], [0.7, 0.55]], [[-0.7, 0.42], [0.7, 0.4]], 8, 0.72), guns: [{ mount: 'turret', length: 1.7, calibre: 0.02, at: 0.5 }] };
 
+// ---------------------------------------------------------------- War Thunder replay ids that borrowed a figure
+
+// M40 106 mm recoilless rifle on its M79 mount, as fielded on the ground (3.4 m long): the tripod of two front legs and a
+// trail leg, the long thin tube with its breech chamber and flared venturi, the .50 spotting rifle along its top, the sight
+// on the left (heights and the mount's spread are estimates).
+G['m40-rr'] = { cls: 'towed-gun', chassis: 'static', bare: true, length: 3.4, width: 1.5, hullHeight: 0.9, addOns: [
+  ...[-1, 1].map((s) => rod([0.05, 0, 0.78], [0.75, s * 0.7, 0.02], 0.07, MT)), rod([-0.05, 0, 0.78], [-1.0, 0, 0.02], 0.08, MT),
+  hd(0, 0, 0.82, 0.16, 0.18, DARK), hb(0, 0, 0.94, 0.5, 0.2, 0.12, DARK),
+  rod([-1.35, 0, 1.0], [1.7, 0, 1.0], 0.14, MT), rod([-1.35, 0, 1.0], [-0.6, 0, 1.0], 0.24, MT), rod([-1.7, 0, 1.0], [-1.35, 0, 1.0], 0.26, MT, 0.18),
+  rod([-0.5, 0, 1.15], [1.05, 0, 1.15], 0.05, MT), hb(-0.35, 0, 1.12, 0.3, 0.1, 0.08, DARK), hb(-0.3, -0.16, 1.05, 0.25, 0.1, 0.14, DARK),
+] };
+
+// ZSU-37-2 Yenisei (6.36 x 3.1 m, 3.33 m): the GM-123 hull of the SU-100P family on six road wheels, the big flat-sided turret
+// over the back with the twin 37 mm in its face and the Baikal radar's dome on the roof's rear (turret and dome sizes are
+// estimates).
+G['zsu-37-2'] = { cls: 'spaa', chassis: 'tracked', length: 6.36, width: 3.1, hullHeight: 1.45, roadWheels: 6, roadWheelRadius: 0.33, trackProfile: run(6.2, 0.88, [3.1, 0.62], [-3.1, 0.58], -2.6, 2.6), running: { wheels: [-2.55, -1.53, -0.51, 0.51, 1.53, 2.55], rollers: [-2.0, -0.7, 0.6, 1.9] }, hullOutline: hull(6.36, 3.1, 1.45, 0.88, 1.5, 1.0, 0.1, 10),
+  turret: turret(-0.55, [[-1.6, 1.3], [-1.35, 1.45], [1.0, 1.45], [1.55, 1.15]], [[-1.6, 0.95], [-1.3, 1.05], [1.0, 1.05], [1.55, 0.72]], 12, 1.5), guns: [{ mount: 'turret', count: 2, length: 2.7, calibre: 0.037, spread: 0.55, elevation: 0.3, at: 0.45, muzzle: true }], radars: [{ kind: 'dome', x: -0.75, up: 0.15, size: 1.45, mast: 'none' }], addOns: [tb(-1.0, 0, 0.98, 1.0, 1.1, 0.25, DARK)] };
+
+// ItO 90M (Crotale NG on the Patria XA-181 6x6, about 7.45 x 2.9 m; turret sizes estimates): the boat-nosed six-wheeler with
+// the NG turret over its back - four VT1 canisters in a box either side, the tracking radar's round face and the sight between
+// them, the flat search antenna on the roof.
+G['ito-90m'] = { cls: 'sam', chassis: 'wheeled', length: 7.45, width: 2.9, hullHeight: 2.1, axles: 3, axleAt: [0.62, -0.2, -0.62], wheelRadius: 0.55, hullOutline: wheeledHull(7.45, 2.1, 1.25, 1.45, 2.0, 0.65),
+  turret: turret(-1.3, [[-0.95, 0.65], [-0.7, 0.75], [0.6, 0.75], [0.95, 0.5]], [[-0.95, 0.95], [-0.6, 1.1], [0.6, 1.1], [0.95, 0.6]], 8, 0.9), missiles: [{ mount: 'turret-side', rows: 2, cols: 2, length: 2.4, diameter: 0.22, boxes: true, pod: true, elevation: 0.15, up: 0.55 }],
+  radars: [{ kind: 'panel', x: -0.25, up: 0.45, size: 1.9, height: 0.6, tilt: 0.3, depth: 0.15 }], addOns: [
+    { on: 'turret', kind: 'slab', at: [1.0, 0, 0.6], size: [0.1, 0, 0], poly: ellipse(0.35, 0.35, 14), plane: 'front', curve: 0.08, paint: 'light' },
+    tb(0.85, 0, 1.08, 0.4, 0.35, 0.3, DARK),
+  ] };
+
+// Airfield radars (generic; no public source says what the game shows). The surveillance radar: a curved reflector with the
+// secondary radar's bar on top, turning on a lattice tower over its equipment building (tower about 12 m, reflector about
+// 5.5 x 2.7 m: estimates after an ASR-type set). The precision approach radar: a shelter with its tall elevation antenna and
+// its wide azimuth antenna facing the runway, on a turntable (estimates after a GCA-type set).
+G['airfield-surveillance-radar'] = { cls: 'radar', chassis: 'static', bare: true, length: 6.0, width: 6.0, hullHeight: 0.4, addOns: [
+  bx(-3.0, 3.0, 0, 0, 0.3, 6.0, DARK), kung(-2.9, 0.3, 2.6, 0.3, 3.0), ...tower(1.6, 0, 0.3, 12.0, 2.4, 0.9, 5, 0.14),
+  hb(1.6, 0, 12.15, 1.4, 1.4, 0.3), hd(1.6, 0, 12.5, 1.0, 0.4, DARK),
+  sl([1.9, 0, 14.1], ellipse(2.75, 1.35, 22), 0.12, 'front', { ...LT, pitch: 0.2, curve: 0.8 }), hb(1.75, 0, 15.75, 0.3, 5.0, 0.35, LT),
+  rod([1.6, 0, 12.7], [2.8, 0, 13.1], 0.12, MT), hb(2.9, 0, 13.15, 0.35, 0.35, 0.35, DARK), ...[-1, 1].map((s) => rod([1.6, s * 0.4, 12.7], [1.85, s * 2.0, 13.4], 0.08, MT)),
+] };
+G['airfield-par-radar'] = { cls: 'radar', chassis: 'static', bare: true, length: 6.0, width: 4.5, hullHeight: 0.4, addOns: [
+  bx(-3.0, 3.0, 0, 0, 0.35, 4.5, DARK), kung(-2.6, 1.4, 2.5, 0.35, 2.85), hd(1.4, 0, 2.95, 1.6, 0.2, DARK),
+  sl([2.0, -0.7, 4.6], rect(0.45, 1.75), 0.18, 'front', LT), sl([2.0, 0.9, 3.55], rect(1.4, 0.4), 0.18, 'front', LT),
+  bx(1.5, 2.0, -0.7, 2.9, 3.0, 0.8, DARK), bx(1.5, 2.0, 0.9, 2.9, 3.15, 0.6, DARK),
+] };
+
+// Rooikat ZA-35 (on the Rooikat 8x8, 7.09 x 2.9 m): the big flat turret with a 35 mm on each side, the search and tracking
+// radars on their mast over its back (the mast raises to 5 m; drawn lowered; turret and radar sizes are estimates).
+G['rooikat-za-35'] = { ...G['rooikat'], cls: 'spaa', turret: turret(-0.5, [[-1.6, 1.1], [-1.3, 1.25], [1.0, 1.25], [1.5, 0.95]], [[-1.6, 0.85], [-1.3, 0.95], [1.0, 0.95], [1.5, 0.6]], 10, 1.3), guns: [{ mount: 'turret-side', count: 1, length: 3.2, calibre: 0.035, elevation: 0.15, at: 0.5 }],
+  radars: [{ kind: 'panel', x: -1.1, up: 0.6, size: 1.6, height: 0.5, mast: 'pole' }, { kind: 'dish', x: 1.3, up: 0.1, size: 0.65, mast: 'none' }] };
+// Rooikat 105 (Mk 1D, the technology demonstrator): the Rooikat with the long 105 mm, its fume extractor and thermal sleeve.
+G['rooikat-105'] = { ...G['rooikat'], guns: [{ mount: 'turret', length: 5.5, calibre: 0.105, extractor: 0.55, sleeve: 0.7, muzzle: true, at: 0.5 }] };
+
+ALIASES['us_at_m40'] = 'm40-rr';
+ALIASES['ussr_zsu_37_2'] = 'zsu-37-2';
+ALIASES['fr_crotale_ng'] = 'ito-90m';
+ALIASES['unit_airfield_main_radar_char'] = 'airfield-surveillance-radar';
+ALIASES['unit_airfield_flight_radar_char'] = 'airfield-par-radar';
+ALIASES['uk_rooikat_za_35'] = 'rooikat-za-35';
+ALIASES['uk_rooikat_mttd'] = 'rooikat-105';
+
 // Ural-4320, the plain covered cargo truck: the outlined chassis of ./base.ts under the catalogue's starter name.
 G['ural-4320'] = { cls: 'truck', ...URAL_4320 };
 

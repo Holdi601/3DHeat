@@ -279,7 +279,8 @@ function turret(k: Kit, t: NavalTurret, fb: number): void {
     const lean = kind === 'mount' ? w * 0.2 : w * 0.05;
     const fx = t.x + (dir * l) / 2;
     const bx = t.x - (dir * l) / 2;
-    const ftop = fx - dir * h * (kind === 'mount' ? 1.0 : 0.6);
+    // The face sloped back; a tall gunhouse's no further than 40% of its length.
+    const ftop = fx - dir * (kind === 'mount' ? Math.min(h, l * 0.4) : h * 0.6);
     const btop = bx + dir * h * 0.1;
     const bottom: [number, number, number][] = [[bx, s - w / 2, up], [fx, s - w / 2, up], [fx, s + w / 2, up], [bx, s + w / 2, up]];
     const top: [number, number, number][] = [[btop, s - w / 2 + lean, up + h], [ftop, s - w / 2 + lean, up + h], [ftop, s + w / 2 - lean, up + h], [btop, s + w / 2 - lean, up + h]];

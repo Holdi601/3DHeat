@@ -146,7 +146,6 @@ const ALIASES: Record<string, string> = {
   'm1 abrams': 'm1a2-abrams',
   "m1a2 sepv3 (bf6 'm1a2 sepv3')": "m1a2c-sepv3",
   'm1a2 sepv3': 'm1a2c-sepv3',
-  't-90': 't-90a',
   'type 98 / type 99 (ztz-99)': 'ztz-99',
   'type 98 / type 99': 'ztz-99',
   'challenger 2': 'challenger-2',

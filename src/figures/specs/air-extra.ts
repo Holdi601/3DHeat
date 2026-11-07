@@ -167,6 +167,9 @@ function belly(x0: number, x1: number, top: number, deep: number, half: number, 
   return { top: [[x0, top], [x1, top]], bottom: [[x0, top - (top - deep) * 0.5], [a, deep], [b, deep], [x1, top]], plan: [[x0, half * 0.8], [a, half], [b, half], [x1, half * 0.4]], side, round: 3, stations: 6 };
 }
 
+/** A body drawn only where it is, not mirrored: an offset refuelling probe, a gun fairing on one side. */
+export const oneSide = (o: Outline): Outline & { oneSide: boolean } => ({ ...o, oneSide: true });
+
 /** A canopy moved to one side (an offset cockpit, one of a twin fuselage's). */
 const aside = (o: Outline, side: number): Outline => ({ ...o, side });
 
@@ -194,7 +197,11 @@ export interface Fig {
   nozzles?: [number, number, number][];
   nozzle?: number;
   glass?: Outline[];
-  bodies?: Outline[];
+  bodies?: (Outline & { oneSide?: boolean })[];
+  /** The wing's thickness over its chord at the root, an outer panel's own dihedral; the tailplane's dihedral (negative droops it). */
+  thick?: number;
+  outerDihedral?: { at: number; deg: number };
+  planeDihedral?: number;
   /** Propellers: (forward, side, up, diameter, blades), mirrored when off the centre line. */
   props?: [number, number, number, number, number][];
 }
@@ -216,9 +223,9 @@ export function fig(o: Fig): Spec {
     bodyHeight,
     fuselage: fus(o.body, o.round ?? 2.4),
     bodies: o.bodies,
-    wing: { x: 0, span: 2 * ws, rootChord: 3, tipChord: 1, sweep: 0, mount: o.wingUp / (bodyHeight * 0.4), dihedral: o.dihedral ?? 0 },
+    wing: { x: 0, span: 2 * ws, rootChord: 3, tipChord: 1, sweep: 0, mount: o.wingUp / (bodyHeight * 0.4), dihedral: o.dihedral ?? 0, thicknessRatio: o.thick, outerDihedral: o.outerDihedral },
     wingPlan: o.wing,
-    tail: { kind, finHeight: fh, finChord: 2, cant: o.cant, spacing: o.twin, tailSpan: o.tail ? 2 * Math.max(...o.tail.map((p) => p[1])) : 0, tailChord: 1, finBase: o.finBase ?? 0, planeUp: kind === 't' ? undefined : (o.planeUp ?? 0) },
+    tail: { kind, finHeight: fh, finChord: 2, cant: o.cant, spacing: o.twin, tailSpan: o.tail ? 2 * Math.max(...o.tail.map((p) => p[1])) : 0, tailChord: 1, finBase: o.finBase ?? 0, planeUp: kind === 't' ? undefined : (o.planeUp ?? 0), planeDihedral: o.planeDihedral },
     finPlan: o.fin,
     tailPlan: o.tail,
     engines: o.nozzles ? { kind: 'internal', count: o.nozzles.length, diameter: o.nozzle ?? 0.8, nozzles: o.nozzles } : undefined,
@@ -303,45 +310,51 @@ A['f4d-1'] = fig({
 });
 
 // F-105D Thunderchief: a long area-ruled body, the radar nose, forward-swept intakes in the wing roots, a 45-degree
-// mid wing, the tall fin and low all-moving tailplane (19.63 x 10.65 x 5.99 m).
+// mid wing, the tall fin and low all-moving tailplane (19.63 x 10.65 x 5.99 m). Checked by eye against a public
+// dimensioned 3-view of the YF-105A, stretched to the D (estimates): a tall oval body 2.3 m deep and 1.3 m wide, belly
+// to canopy top 2.3 m, 1.35 m deep 1.2 m before the tail, the fin's top 2.55 m over the axis.
 A['f-105d'] = fig({
   cls: 'attack', length: 19.63, span: 10.65, height: 5.99,
-  body: [[9.82, 0.0, -0.2, 0.1], [9.0, 0.4, -0.5, 0.48], [7.6, 0.65, -0.7, 0.65], [6.4, 0.78, -0.8, 0.72], [4.0, 0.85, -0.95, 0.8], [1.0, 0.85, -1.0, 0.8], [-2.0, 0.85, -0.95, 0.75], [-6.0, 0.75, -0.75, 0.72], [-9.82, 0.55, -0.55, 0.55]],
+  body: [[9.82, 0.0, -0.05, 0.05], [8.45, 0.25, -0.28, 0.3], [6.06, 0.78, -0.85, 0.55], [3.98, 0.82, -1.27, 0.62], [1.0, 0.76, -1.5, 0.65], [-3.47, 0.68, -1.45, 0.65], [-5.69, 0.75, -1.3, 0.62], [-8.64, 0.62, -0.7, 0.55], [-9.82, 0.42, -0.42, 0.45]],
   wing: [[2.4, 0], [2.4, 0.85], [-2.28, 5.33], [-3.9, 5.33], [-2.8, 0.85], [-2.8, 0]], wingUp: 0.25,
-  fin: [[-3.4, 0], [-8.4, 0], [-9.9, 2.75], [-8.6, 2.8]], finBase: 0.75,
-  tail: [[-6.6, 0.6], [-7.8, 2.6], [-8.9, 2.6], [-9.0, 0.6]], planeUp: -0.35,
+  fin: [[-4.4, 0], [-8.4, 0], [-9.7, 1.8], [-8.5, 1.85]], finBase: 0.7,
+  tail: [[-6.6, 0.6], [-7.8, 2.6], [-8.9, 2.6], [-9.0, 0.6]], planeUp: -0.5,
   nozzles: [[-9.82, 0, 0]], nozzle: 1.0,
   bodies: [{ top: [[2.6, 0.5], [-1.4, 0.45]], bottom: [[1.9, -0.4], [-1.4, -0.4]], plan: [[2.6, 0.12], [1.9, 0.4], [-1.4, 0.35]], side: 0.95, round: 3, stations: 8 }],
-  glass: [bubble(6.6, 4.6, 1.25, 0.78, 0.85, 0.4)],
+  glass: [bubble(5.6, 2.2, 1.08, 0.8, 0.78, 0.4)],
 });
 
 // F-102A Delta Dagger: a long pointed nose, intakes behind the framed canopy, the area-ruled waist, a 60-degree
 // tailless delta and a tall swept fin (20.83 x 11.62 x 6.45 m). The late F-102A has the infrared seeker's ball on
-// the nose ahead of the windscreen.
+// the nose ahead of the windscreen. Drawn to the F-106's measured body (see there), the intakes forward beside the
+// cockpit and the canopy higher.
 function deltaDagger(irst: boolean): Spec {
   return fig({
     cls: 'fighter', length: 20.83, span: 11.62, height: 6.45,
-    body: [[10.42, 0.0, -0.1, 0.06], [9.0, 0.35, -0.45, 0.42], [7.2, 0.62, -0.7, 0.62], [5.8, 0.75, -0.8, 0.72], [4.2, 0.85, -0.9, 0.8], [1.0, 0.85, -0.95, 1.2], [-2.0, 0.8, -0.95, 1.05], [-5.5, 0.75, -0.85, 1.05], [-8.5, 0.65, -0.65, 0.8], [-10.42, 0.55, -0.55, 0.6]],
-    wing: [[1.8, 0], [1.8, 1.0], [-6.93, 5.81], [-7.8, 5.81], [-8.9, 1.0], [-8.9, 0]], wingUp: -0.3,
-    fin: [[-3.2, 0], [-9.6, 0], [-10.4, 3.2], [-9.0, 3.2]], finBase: 0.7,
-    nozzles: [[-10.42, 0, 0]], nozzle: 0.9,
-    bodies: [jetNac(4.8, 0.5, 0.5, 0.95, 0.1), ...(irst ? [pod(6.9, 6.2, 0.17, 0, 0.8, 0.5)] : [])],
-    glass: [bubble(6.0, 4.3, 1.45, 0.75, 0.85, 0.42)],
+    body: [[10.42, 0.0, -0.1, 0.06], [9.0, 0.32, -0.6, 0.42], [7.2, 0.45, -1.0, 0.62], [5.8, 0.55, -1.15, 0.72], [4.2, 0.7, -1.22, 0.8], [1.0, 0.76, -1.26, 1.15], [-2.0, 0.76, -1.26, 1.0], [-5.5, 0.82, -1.15, 1.05], [-8.5, 0.85, -0.85, 0.85], [-10.42, 0.55, -0.35, 0.55]],
+    wing: [[1.8, 0], [1.8, 1.0], [-6.93, 5.81], [-7.8, 5.81], [-8.9, 1.0], [-8.9, 0]], wingUp: -0.37,
+    fin: [[-3.6, 0], [-9.6, 0], [-10.4, 3.25], [-9.0, 3.25]], finBase: 0.8,
+    nozzles: [[-10.42, 0, 0.15]], nozzle: 0.9,
+    bodies: [jetNac(4.3, 0.5, 0.53, 0.72, 0.0), ...(irst ? [pod(6.9, 6.2, 0.17, 0, 0.6, 0.5)] : [])],
+    glass: [bubble(6.3, 4.2, 1.1, 0.5, 0.72, 0.42)],
   });
 }
 A['f-102a'] = deltaDagger(false);
 A['f-102a-late'] = deltaDagger(true);
 
 // F-106A Delta Dart: the F-102's layout refined - a slimmer wasp waist, intakes set further back, a broad fin with
-// its top cut square; from 1972 the frameless bubble canopy (21.56 x 11.67 x 6.18 m).
+// its top cut square; from 1972 the frameless bubble canopy (21.56 x 11.67 x 6.18 m). Checked by eye against a public
+// dimensioned 3-view (estimates): 2 m deep from the canopy's top to the flat belly, the canopy only 0.9 m over the
+// axis, 2.45 m across the intakes that start behind the cockpit, the tail cone 0.9 m deep, the fin's top 3.95 m over
+// the axis.
 A['f-106a'] = fig({
   cls: 'fighter', length: 21.56, span: 11.67, height: 6.18,
-  body: [[10.78, 0.0, -0.1, 0.06], [9.4, 0.35, -0.45, 0.42], [7.6, 0.62, -0.72, 0.62], [6.0, 0.78, -0.82, 0.72], [4.2, 0.88, -0.9, 0.78], [2.8, 0.9, -0.95, 1.2], [0, 0.88, -0.95, 1.1], [-3, 0.8, -0.95, 0.95], [-6.5, 0.78, -0.85, 1.05], [-9.0, 0.7, -0.7, 0.85], [-10.78, 0.6, -0.6, 0.62]],
-  wing: [[1.2, 0], [1.2, 1.0], [0.6, 1.1], [-7.78, 5.84], [-8.8, 5.84], [-9.5, 1.0], [-9.5, 0]], wingUp: -0.3,
-  fin: [[-3.6, 0], [-10.0, 0], [-10.6, 2.9], [-8.6, 2.9]], finBase: 0.75,
-  nozzles: [[-10.78, 0, 0]], nozzle: 0.95,
-  bodies: [jetNac(3.8, -0.5, 0.52, 0.98, 0.05)],
-  glass: [bubble(6.6, 4.4, 1.5, 0.8, 0.88, 0.45)],
+  body: [[10.78, 0.0, -0.05, 0.03], [9.3, 0.0, -0.1, 0.06], [8.16, 0.32, -0.77, 0.45], [6.6, 0.42, -1.05, 0.62], [5.08, 0.46, -1.21, 0.72], [3.0, 0.62, -1.25, 0.8], [1.65, 0.7, -1.27, 0.85], [-1.5, 0.76, -1.28, 1.0], [-4.5, 0.8, -1.2, 1.05], [-7.5, 0.88, -0.9, 0.95], [-9.5, 0.85, -0.6, 0.75], [-10.78, 0.6, -0.26, 0.5]],
+  wing: [[1.2, 0], [1.2, 1.0], [0.6, 1.1], [-7.78, 5.84], [-8.8, 5.84], [-9.5, 1.0], [-9.5, 0]], wingUp: -0.37,
+  fin: [[-4.85, 0], [-10.0, 0], [-10.6, 3.15], [-8.9, 3.15]], finBase: 0.8,
+  nozzles: [[-10.78, 0, 0.15]], nozzle: 0.95,
+  bodies: [jetNac(1.9, -3.0, 0.55, 0.7, 0.0)],
+  glass: [bubble(5.8, 2.6, 0.92, 0.38, 0.62, 0.42)],
 });
 
 // ---------------------------------------------------------------- swing wing, cranked arrow, double delta
@@ -907,43 +920,48 @@ A['ki-67'] = fig({
 // ---------------------------------------------------------------- jets once drawn from proportions
 
 // A-10A / A-10C Thunderbolt II: a deep box-sided body with the bubble high over the nose and the gun's muzzle under
-// it, the thick straight low wing with the main wheels' pods ahead of it, the two TF34s in big round nacelles on
-// short pylons high on the rear body, the H tail at the very end (16.26 x 17.53 x 4.47 m). The A-10C differs from
-// the A only inside (avionics and cockpit), so the two share this outline.
+// it, the thick straight low wing with the main wheels' pods hanging ahead of it, the two TF34s in big round
+// nacelles on short pylons beside the rear body, the H tail low at the very end (16.26 x 17.53 x 4.47 m). The A-10C
+// differs from the A only inside (avionics and cockpit), so the two share this outline. Checked by eye against a
+// public 3-view (estimates): belly to canopy top 2.2 m (figure 2.2), body 1.3 m wide at the cockpit, nacelles 1.4 m
+// across with their tops level with the canopy, 1.4 m out; wheel pods 2.7 m out; the tail boom only 0.4 m deep;
+// fins 5.9 m apart, their tops 1 m over the canopy.
 A['a-10c'] = fig({
   cls: 'attack', length: 16.26, span: 17.53, height: 4.47,
-  body: [[8.13, -0.1, -0.55, 0.14], [7.7, 0.3, -0.82, 0.48], [6.8, 0.58, -0.95, 0.7], [5.6, 0.72, -1.0, 0.78], [4.0, 0.8, -1.0, 0.8], [2.0, 0.84, -1.0, 0.82], [0, 0.8, -0.95, 0.8], [-2.0, 0.7, -0.75, 0.7], [-4.0, 0.6, -0.45, 0.56], [-6.0, 0.52, -0.15, 0.45], [-8.13, 0.45, 0.18, 0.28]], round: 3,
-  wing: [[1.5, 0], [1.5, 0.8], [1.4, 2.6], [1.0, 8.765], [-0.6, 8.765], [-1.5, 2.6], [-1.5, 0]], wingUp: -0.72, dihedral: 3,
-  fin: [[-6.75, 0], [-8.05, 0], [-8.2, 2.7], [-8.0, 3.0], [-7.15, 3.0], [-6.9, 2.7]], finBase: -0.45, twin: 5.6,
-  tail: [[-6.6, 0], [-6.6, 2.85], [-8.0, 2.85], [-8.05, 0]], planeUp: 0.5,
-  nozzles: [[-5.7, -1.55, 1.2], [-5.7, 1.55, 1.2]], nozzle: 0.9,
-  bodies: [jetNac(-1.5, -5.7, 0.7, 1.55, 1.2), post(-2.2, -4.6, 0.9, 0.4, 0.25, 0.9), pod(2.5, -0.5, 0.4, 2.0, -1.05, 0.3), pod(8.7, 7.9, 0.12, 0, -0.45, 0.1)],
-  glass: [bubble(5.6, 3.5, 1.45, 0.72, 0.84, 0.48)],
+  body: [[8.13, -0.15, -0.55, 0.15], [7.5, 0.25, -0.85, 0.48], [6.6, 0.5, -0.95, 0.62], [6.1, 0.58, -0.98, 0.65], [4.0, 0.72, -1.0, 0.66], [2.0, 0.78, -0.92, 0.66], [0, 0.74, -0.82, 0.64], [-1.9, 0.54, -0.68, 0.56], [-3.0, 0.4, -0.45, 0.48], [-5.4, 0.12, -0.38, 0.36], [-7.7, 0.0, -0.4, 0.26], [-8.13, -0.02, -0.38, 0.2]], round: 3,
+  wing: [[1.5, 0], [1.5, 0.8], [1.4, 2.6], [1.0, 8.765], [-0.6, 8.765], [-1.5, 2.6], [-1.5, 0]], wingUp: -0.45, dihedral: 0, outerDihedral: { at: 3.0, deg: 7 }, thick: 0.16,
+  fin: [[-5.95, 0], [-8.0, 0], [-7.65, 2.8], [-6.35, 2.8]], finBase: -0.6, twin: 5.9,
+  tail: [[-6.4, 0], [-6.4, 2.95], [-7.9, 2.95], [-7.9, 0]], planeUp: 0,
+  nozzles: [[-5.3, -1.38, 0.68], [-5.3, 1.38, 0.68]], nozzle: 0.9,
+  bodies: [jetNac(-1.8, -5.3, 0.7, 1.38, 0.68), post(-2.4, -4.4, 0.35, 0.0, 0.22, 0.78), pod(2.6, -0.6, 0.3, 2.67, -0.75, 0.3), pod(8.7, 7.9, 0.12, 0, -0.45, 0.1)],
+  glass: [bubble(6.1, 3.3, 1.22, 0.58, 0.8, 0.46)],
 });
 
 // SEPECAT Jaguar: a long slab-sided body over two Adours, the box intakes behind the cockpit, the shoulder wing with
 // 3 degrees of anhedral and a dogtooth, the tall swept fin, all-moving tailplanes low on the body, twin ventral fins
 // (single seat 16.83 x 8.69 x 4.89 m). Jaguar A (and the export S / IS): the sharp pointed nose and its probe.
 // GR.1 / GR.1A: the chisel laser-ranger nose and the warning receiver's bullet on the fin top. T.2 and E: two seats
-// under a long stepped canopy, the nose 0.7 m longer (17.53 m).
+// under a long stepped canopy, the nose 0.7 m longer (17.53 m). Checked by eye against a public 3-view (estimates):
+// belly to canopy top 1.85 m, 1.65 m deep over the intakes, 1.2 m at the nozzles, 2.05 m wide over the 1.3 m tall
+// intakes, the fin's top 4 m over the belly.
 function jaguar(kind: 'a' | 'gr1' | 'two'): Spec {
   const s = kind === 'two' ? 0.7 : 0;
   const n = 8.415 + s;
   const nose: Row[] = kind === 'gr1' ? [[n, -0.2, -0.48, 0.14], [n - 0.35, 0.02, -0.62, 0.3], [n - 1.0, 0.2, -0.7, 0.42]] : [[n, -0.12, -0.22, 0.04], [n - 1.0, 0.15, -0.55, 0.32]];
   return fig({
     cls: kind === 'two' ? 'trainer' : 'attack', length: 16.83 + s, span: 8.69, height: 4.89,
-    body: [...nose, [6.4 + s, 0.42, -0.7, 0.5], [5.2 + s, 0.56, -0.75, 0.54], [4.0 + s, 0.64, -0.78, 0.56], [2.6, 0.68, -0.8, 0.58], [1.0, 0.7, -0.82, 0.62], [-1.5, 0.68, -0.85, 0.8], [-4.0, 0.62, -0.82, 0.9], [-6.5, 0.55, -0.72, 0.88], [-8.415, 0.46, -0.55, 0.8]], round: 3,
+    body: [...nose, [6.4 + s, 0.42, -0.7, 0.5], [5.2 + s, 0.56, -0.75, 0.54], [4.0 + s, 0.64, -0.78, 0.56], [2.6, 0.72, -0.84, 0.58], [1.0, 0.76, -0.88, 0.62], [-1.5, 0.78, -0.86, 0.8], [-4.0, 0.76, -0.75, 0.88], [-6.5, 0.72, -0.62, 0.85], [-8.415, 0.6, -0.5, 0.75]], round: 3,
     wing: [[0.8, 0], [0.8, 0.95], [-1.05, 2.6], [-0.9, 2.66], [-2.55, 4.345], [-3.5, 4.345], [-3.45, 0.95], [-3.5, 0]], wingUp: 0.62, dihedral: -3,
-    fin: [[-3.6, 0], [-7.6, 0], [-8.5, 2.75], [-7.2, 2.8]], finBase: 0.55,
-    tail: [[-5.9, 0.75], [-7.0, 2.27], [-8.0, 2.27], [-8.15, 0.75]], planeUp: 0,
+    fin: [[-3.6, 0], [-7.6, 0], [-8.4, 2.5], [-7.2, 2.55]], finBase: 0.62,
+    tail: [[-5.9, 0.75], [-7.0, 2.27], [-8.0, 2.27], [-8.15, 0.75]], planeUp: 0, planeDihedral: -10,
     nozzles: [[-8.415, -0.42, -0.12], [-8.415, 0.42, -0.12]], nozzle: 0.7,
     bodies: [
-      trunk(2.8, -2.6, 0.48, -0.8, 0.34, 0.8, 0.3, 4),
-      spine(kind === 'two' ? 2.6 : 3.3, -3.8, 0.66, 0.1, 0.3),
+      trunk(2.8, -2.6, 0.5, -0.82, 0.31, 0.72, 0.3, 4),
+      spine(kind === 'two' ? 2.6 : 3.3, -3.8, 0.72, 0.1, 0.3),
       post(-6.0, -7.6, -0.65, -1.05, 0.03, 0.4, 0.15),
-      ...(kind === 'gr1' ? [pod(-6.9, -8.8, 0.13, 0, 3.32, 0.25)] : kind === 'a' ? [pod(n + 0.8, n - 0.1, 0.035, 0, -0.17, 0.1)] : []),
+      ...(kind === 'gr1' ? [pod(-6.9, -8.7, 0.13, 0, 3.15, 0.25)] : kind === 'a' ? [pod(n + 0.8, n - 0.1, 0.035, 0, -0.17, 0.1)] : []),
     ],
-    glass: [kind === 'two' ? tandem(6.3 + s - 0.7, 2.6, 1.15, 1.3, 0.58, 0.68, 0.42) : bubble(5.5, 3.3, 1.18, 0.56, 0.66, 0.42)],
+    glass: [kind === 'two' ? tandem(6.3 + s - 0.7, 2.6, 1.1, 1.24, 0.58, 0.72, 0.42) : bubble(5.5, 3.3, 1.12, 0.56, 0.7, 0.42)],
   });
 }
 A['jaguar'] = jaguar('a');
@@ -985,24 +1003,26 @@ A['hunter-t7'] = hunter('t7');
 // F-104 Starfighter: a long needle of a body, the half-cone intakes behind the cockpit, a dorsal spine, the tiny
 // trapezoid wing with 10 degrees of anhedral, the T-tail, a ventral fin (16.66 x 6.36 x 4.09 m). F-104A / C: the small
 // fin, Sidewinders on the tips. F-104G / J: the fin a quarter bigger, tip tanks. F-104S: the G with two more ventral
-// fins.
+// fins. Checked by eye against a public dimensioned 3-view (estimates): the tube 1.15 m deep and 1.4 m wide, the
+// spine 0.95 m over its axis from the canopy to the fin, the canopy's top 1.2 m over it (single seat), 2.3 m across the
+// intakes, the fin's top 3 m over the axis.
 function starfighter(kind: 'a' | 'g' | 's'): Spec {
   const tip = -0.15 - 2.56 * Math.tan((10 * Math.PI) / 180);
   return fig({
     cls: 'fighter', length: 16.66, span: 6.36, height: 4.09,
     body: [[8.33, -0.02, -0.07, 0.03], [7.6, 0.1, -0.2, 0.15], [6.2, 0.32, -0.42, 0.38], [5.0, 0.45, -0.55, 0.48], [3.6, 0.52, -0.6, 0.55], [2.0, 0.58, -0.62, 0.62], [0, 0.6, -0.62, 0.65], [-3.0, 0.58, -0.6, 0.63], [-6.0, 0.55, -0.55, 0.58], [-8.33, 0.5, -0.5, 0.5]], round: 2.1,
     wing: [[0.9, 0], [0.9, 0.62], [-0.3, 3.18], [-1.0, 3.18], [-1.9, 0.62], [-1.9, 0]], wingUp: -0.15, dihedral: -10,
-    fin: kind === 'a' ? [[-4.0, 0], [-7.3, 0], [-7.95, 2.3], [-6.5, 2.35]] : [[-3.8, 0], [-7.4, 0], [-8.15, 2.65], [-6.1, 2.7]], finBase: 0.55, tee: true,
+    fin: kind === 'a' ? [[-4.0, 0], [-7.3, 0], [-7.85, 1.95], [-6.5, 2.0]] : [[-3.8, 0], [-7.4, 0], [-8.05, 2.25], [-6.1, 2.3]], finBase: 0.72, tee: true,
     tail: [[-6.2, 0], [-6.9, 1.75], [-7.8, 1.75], [-7.95, 0]],
     nozzles: [[-8.33, 0, 0]], nozzle: 0.95,
     bodies: [
-      trunk(2.9, -1.8, 0.28, -0.34, 0.27, 0.72, 0, 2.2),
-      spine(2.5, -4.6, 0.58, 0.13, 0.18),
+      trunk(2.9, -1.8, 0.27, -0.33, 0.3, 0.86, 0, 2.2),
+      spine(2.5, -5.6, 0.55, 0.39, 0.22),
       post(-4.6, -6.3, -0.5, -0.95, 0.03, undefined, 0.25),
       kind === 'a' ? pod(0.7, -1.9, 0.07, 3.25, tip, 0.15) : pod(1.2, -2.4, 0.3, 3.35, tip, 0.3),
       ...(kind === 's' ? [post(-5.0, -6.6, -0.45, -0.82, 0.03, 0.42, 0.2)] : []),
     ],
-    glass: [bubble(4.7, 2.5, 1.0, 0.48, 0.6, 0.32)],
+    glass: [bubble(4.7, 2.5, 1.2, 0.48, 0.9, 0.34)],
   });
 }
 A['f-104'] = starfighter('a');
@@ -1015,7 +1035,7 @@ A['f-104s'] = starfighter('s');
 A['f-84g'] = fig({
   cls: 'fighter', length: 11.6, span: 11.1, height: 3.84,
   body: [[5.8, 0.42, -0.42, 0.42], [5.2, 0.56, -0.6, 0.56], [4.0, 0.64, -0.7, 0.63], [3.0, 0.7, -0.73, 0.66], [1.5, 0.73, -0.75, 0.68], [0, 0.7, -0.74, 0.68], [-2.0, 0.62, -0.62, 0.6], [-4.0, 0.48, -0.46, 0.46], [-5.8, 0.36, -0.33, 0.33]], round: 2,
-  wing: [[1.2, 0], [1.2, 0.7], [0.75, 5.25], [-0.5, 5.25], [-1.4, 0.7], [-1.4, 0]], wingUp: -0.3, dihedral: 4,
+  wing: [[1.2, 0], [1.2, 0.7], [0.75, 5.25], [-0.5, 5.25], [-1.4, 0.7], [-1.4, 0]], wingUp: -0.3, dihedral: 4, thick: 0.09,
   fin: [[-2.6, 0], [-5.4, 0], [-6.0, 2.2], [-4.9, 2.25]], finBase: 0.4,
   tail: [[-4.1, 0], [-4.5, 2.0], [-5.5, 2.0], [-5.7, 0]], planeUp: 0.25,
   nozzles: [[-5.8, 0, 0]], nozzle: 0.62,
@@ -1036,7 +1056,8 @@ A['f-84f'] = fig({
 // F-8 Crusader: the radome over the wide-mouthed chin intake, a long body, the bubble faired into a spine, the
 // shoulder wing with 5 degrees of anhedral and the dogtooth at the fold, the big fin, tailplanes low on the body,
 // ventral strakes (16.53 x 10.87 x 4.8 m). F-8C (F8U-2): the slim early radome. F-8E: the fatter radome for the
-// bigger radar and the infrared seeker's dome on top of the nose.
+// bigger radar and the infrared seeker's dome on top of the nose. Both with the refuelling probe's fairing on the
+// left side behind the cockpit.
 function crusader(e: boolean): Spec {
   const nose: Row[] = e ? [[8.265, 0.0, -0.08, 0.06], [7.8, 0.28, -0.32, 0.36]] : [[8.265, 0.02, -0.06, 0.04], [7.8, 0.22, -0.26, 0.27]];
   return fig({
@@ -1046,7 +1067,7 @@ function crusader(e: boolean): Spec {
     fin: [[-2.6, 0], [-7.2, 0], [-8.2, 2.7], [-6.8, 2.75]], finBase: 0.6,
     tail: [[-5.4, 0.6], [-6.6, 2.6], [-7.7, 2.6], [-8.0, 0.6]], planeUp: -0.15,
     nozzles: [[-8.265, 0, 0]], nozzle: 0.85,
-    bodies: [spine(3.4, -3.6, 0.78, 0.12, 0.28), post(-4.6, -6.8, -0.6, -1.0, 0.03, 0.35, 0.1), ...(e ? [dome(6.3, 0.48, 0.13, 0.5)] : [])],
+    bodies: [spine(3.4, -3.6, 0.78, 0.12, 0.28), post(-4.6, -6.8, -0.6, -1.0, 0.03, 0.35, 0.1), oneSide(pod(3.4, 1.8, 0.13, -0.6, 0.5, 0.3)), ...(e ? [dome(6.3, 0.48, 0.13, 0.5)] : [])],
     glass: [bubble(5.4, 3.4, 1.24, 0.6, 0.76, 0.38)],
   });
 }
@@ -1068,7 +1089,7 @@ function meteor(kind: 'f3' | 'f8' | 'nf'): Spec {
   return fig({
     cls: nf ? 'fighter' : 'fighter', length: nf ? 14.78 : kind === 'f8' ? 13.59 : 12.57, span: nf ? 13.11 : 11.32, height: 3.96,
     body: [...front, [2.0, 0.7, -0.75, 0.62], [0, 0.68, -0.72, 0.6], [-2.0, 0.6, -0.58, 0.5], [-4.0, 0.48, -0.4, 0.38], [-6.795, 0.35, -0.22, 0.25]], round: 2.1,
-    wing: [[1.5, 0], [1.5, 2.4], [0.85, h], [-0.3, h], [-1.5, 2.4], [-1.6, 0]], wingUp: -0.05, dihedral: 3,
+    wing: [[1.5, 0], [1.5, 2.4], [0.85, h], [-0.3, h], [-1.5, 2.4], [-1.6, 0]], wingUp: -0.05, dihedral: 3, thick: 0.1,
     fin: kind === 'f8' ? [[-4.5, 0], [-6.6, 0], [-6.95, 2.2], [-5.9, 2.25]] : [[-4.6, 0], [-6.6, 0], [-6.75, 1.3], [-6.5, 1.9], [-6.0, 2.05], [-5.4, 1.6]], finBase: 0.3,
     tail: [[-4.9, 0], [-5.3, 2.3], [-6.2, 2.3], [-6.4, 0]], planeUp: 0.95,
     nozzles: [[-2.7, -1.85, -0.05], [-2.7, 1.85, -0.05]], nozzle: 0.62,
@@ -1097,7 +1118,7 @@ function vampire(kind: 'fb5' | 'venom' | 'sea'): Spec {
   return fig({
     cls: sea ? 'fighter' : 'fighter', length: L, span: kind === 'fb5' ? 11.58 : sea ? 13.06 : 12.7, height: sea ? 2.6 : kind === 'venom' ? 1.88 : 2.69,
     body: [...pod0, [0, 0.68, -0.6, 0.66], [-0.7, 0.52, -0.48, 0.55], [-1.0, 0.42, -0.4, 0.42]], round: 2.2,
-    wing: kind === 'fb5' ? [[1.4, 0], [1.4, 1.5], [0.65, half], [-0.35, half], [-1.45, 1.5], [-1.5, 0]] : [[1.7, 0], [1.6, 1.5], [0.1, half], [-0.75, half], [-1.45, 1.5], [-1.5, 0]], wingUp: -0.05, dihedral: 3,
+    wing: kind === 'fb5' ? [[1.4, 0], [1.4, 1.5], [0.65, half], [-0.35, half], [-1.45, 1.5], [-1.5, 0]] : [[1.7, 0], [1.6, 1.5], [0.1, half], [-0.75, half], [-1.45, 1.5], [-1.5, 0]], wingUp: -0.05, dihedral: 3, thick: 0.1,
     fin: kind === 'fb5'
       ? [[t + 1.3, -0.35], [t + 0.07, -0.35], [t, 0.55], [t + 0.18, 1.15], [t + 0.55, 1.3], [t + 0.9, 1.1], [t + 1.1, 0.4]]
       : [[t + 1.3, -0.35], [t + 0.07, -0.35], [t, 0.7], [t + 0.25, 1.25], [t + 0.7, 1.32], [t + 1.0, 0.9]],
@@ -1149,7 +1170,7 @@ function canberra(kind: 'b2' | 'b8' | 'pr9' | 'b57'): Spec {
   return fig({
     cls: 'bomber', length: pr9 ? 20.32 : 19.96, span: 2 * h, height: 4.77,
     body: [[n, -0.05, -0.2, 0.08], [n - 0.78, 0.35, -0.55, 0.45], [8.0, 0.7, -0.85, 0.78], [6.5, 0.92, -0.98, 0.95], [4.0, 0.98, -1.0, 0.99], [0, 0.98, -1.0, 0.99], [-3.0, 0.92, -0.92, 0.92], [-6.0, 0.72, -0.68, 0.7], [-8.5, 0.5, -0.42, 0.45], [-9.98, 0.32, -0.25, 0.25]], round: 2,
-    wing: [[pr9 ? 3.4 : 2.6, 0], [pr9 ? 3.4 : 2.6, 1.0], [2.4, 2.9], [0.9, h], [-0.5, h], [-3.2, 2.9], [-3.3, 1.0], [-3.3, 0]], wingUp: 0,
+    wing: [[pr9 ? 3.4 : 2.6, 0], [pr9 ? 3.4 : 2.6, 1.0], [2.4, 2.9], [0.9, h], [-0.5, h], [-3.2, 2.9], [-3.3, 1.0], [-3.3, 0]], wingUp: 0, thick: 0.12,
     fin: [[-5.4, 0], [-9.6, 0], [-10.0, 2.0], [-9.7, 3.0], [-9.0, 3.3], [-8.2, 2.6], [-6.8, 0.6]], finBase: 0.6,
     tail: [[-7.4, 0.3], [-8.0, 4.25], [-9.4, 4.25], [-9.8, 0.3]], planeUp: 0.3,
     nozzles: [[-3.6, -2.7, -0.1], [-3.6, 2.7, -0.1]], nozzle: 0.8,
@@ -1322,7 +1343,7 @@ A['vautour-iin'] = vautour('n');
 A['ouragan'] = fig({
   cls: 'fighter', length: 10.74, span: 13.16, height: 4.14,
   body: [[5.37, 0.42, -0.42, 0.42], [4.8, 0.6, -0.64, 0.58], [3.6, 0.72, -0.76, 0.66], [2.2, 0.78, -0.8, 0.7], [0.5, 0.78, -0.8, 0.7], [-1.5, 0.7, -0.68, 0.62], [-3.5, 0.52, -0.48, 0.46], [-5.37, 0.38, -0.32, 0.34]], round: 2,
-  wing: [[1.4, 0], [1.4, 0.7], [0.0, 6.1], [-1.0, 6.1], [-1.8, 0.7], [-1.8, 0]], wingUp: -0.25, dihedral: 3,
+  wing: [[1.4, 0], [1.4, 0.7], [0.0, 6.1], [-1.0, 6.1], [-1.8, 0.7], [-1.8, 0]], wingUp: -0.25, dihedral: 3, thick: 0.09,
   fin: [[-2.4, 0], [-4.8, 0], [-5.5, 2.1], [-4.6, 2.15]], finBase: 0.45,
   tail: [[-3.9, 0], [-4.4, 2.0], [-5.2, 2.0], [-5.3, 0]], planeUp: 0.9,
   nozzles: [[-5.37, 0, 0]], nozzle: 0.6,
@@ -1339,7 +1360,7 @@ function grumman(cougar: boolean): Spec {
   return fig({
     cls: 'fighter', length: cougar ? 13.54 : 11.84, span: cougar ? 10.52 : 11.58, height: 3.73,
     body: [[n, 0.0, -0.2, 0.1], [n - 0.55, 0.42, -0.55, 0.45], [n - 1.75, 0.65, -0.72, 0.62], [n - 3.15, 0.75, -0.8, 0.68], [1.0, 0.8, -0.82, 0.72], [-1.0, 0.76, -0.74, 0.66], [-3.2, 0.6, -0.52, 0.5], [-n, 0.42, -0.32, 0.32]], round: 2.2,
-    wing: cougar ? [[2.2, 0], [2.0, 0.85], [-1.6, 5.26], [-2.8, 5.26], [-2.4, 0.85], [-2.4, 0]] : [[1.5, 0], [1.5, 0.8], [0.9, 5.4], [-0.3, 5.4], [-1.4, 0.8], [-1.5, 0]], wingUp: -0.2, dihedral: cougar ? 0 : 3,
+    wing: cougar ? [[2.2, 0], [2.0, 0.85], [-1.6, 5.26], [-2.8, 5.26], [-2.4, 0.85], [-2.4, 0]] : [[1.5, 0], [1.5, 0.8], [0.9, 5.4], [-0.3, 5.4], [-1.4, 0.8], [-1.5, 0]], wingUp: -0.2, dihedral: cougar ? 0 : 3, thick: cougar ? 0.06 : 0.09,
     fin: [[-2.6 - s, 0], [-5.3 - s, 0], [-6.0 - s, 2.3], [-5.0 - s, 2.35]], finBase: 0.45,
     tail: cougar ? [[-4.8, 0.2], [-5.6, 2.2], [-6.5, 2.2], [-6.7, 0.2]] : [[-4.2, 0.2], [-4.6, 2.2], [-5.5, 2.2], [-5.7, 0.2]], planeUp: 0.55,
     nozzles: [[-n, 0, 0]], nozzle: 0.6,
@@ -1355,7 +1376,7 @@ A['f9f-cougar'] = grumman(true);
 A['sea-hawk'] = fig({
   cls: 'fighter', length: 12.09, span: 11.89, height: 2.79,
   body: [[6.045, 0.0, -0.25, 0.12], [5.5, 0.42, -0.6, 0.48], [4.2, 0.65, -0.75, 0.66], [2.8, 0.75, -0.8, 0.72], [1.0, 0.78, -0.8, 0.8], [-1.0, 0.72, -0.72, 0.75], [-2.0, 0.62, -0.55, 0.55], [-4.0, 0.48, -0.3, 0.35], [-6.045, 0.38, -0.15, 0.22]], round: 2.2,
-  wing: [[1.6, 0], [1.6, 0.9], [0.8, 5.945], [-0.4, 5.945], [-1.6, 0.9], [-1.7, 0]], wingUp: -0.05, dihedral: 3,
+  wing: [[1.6, 0], [1.6, 0.9], [0.8, 5.945], [-0.4, 5.945], [-1.6, 0.9], [-1.7, 0]], wingUp: -0.05, dihedral: 3, thick: 0.1,
   fin: [[-3.4, 0], [-5.6, 0], [-6.1, 1.8], [-5.3, 1.85]], finBase: 0.35,
   tail: [[-4.4, 0], [-4.8, 2.3], [-5.7, 2.3], [-5.9, 0]], planeUp: 0.9,
   nozzles: [[-1.6, -0.85, -0.2], [-1.6, 0.85, -0.2]], nozzle: 0.55,
@@ -1368,7 +1389,7 @@ A['sea-hawk'] = fig({
 A['attacker'] = fig({
   cls: 'fighter', length: 11.43, span: 11.25, height: 3.02,
   body: [[5.715, 0.0, -0.25, 0.12], [5.2, 0.4, -0.55, 0.45], [4.0, 0.6, -0.7, 0.6], [2.6, 0.72, -0.75, 0.66], [1.0, 0.75, -0.75, 0.7], [-1.0, 0.68, -0.65, 0.62], [-3.0, 0.52, -0.45, 0.46], [-5.715, 0.35, -0.25, 0.3]], round: 2.2,
-  wing: [[1.4, 0], [1.4, 0.8], [0.6, 5.625], [-0.4, 5.625], [-1.5, 0.8], [-1.6, 0]], wingUp: -0.4, dihedral: 4,
+  wing: [[1.4, 0], [1.4, 0.8], [0.6, 5.625], [-0.4, 5.625], [-1.5, 0.8], [-1.6, 0]], wingUp: -0.4, dihedral: 4, thick: 0.09,
   fin: [[-3.6, 0], [-5.4, 0], [-5.75, 1.4], [-5.5, 1.75], [-4.9, 1.85], [-4.4, 1.3]], finBase: 0.35,
   tail: [[-4.0, 0.1], [-4.3, 2.0], [-5.2, 2.0], [-5.4, 0.1]], planeUp: 0.3,
   nozzles: [[-5.715, 0, 0]], nozzle: 0.55,

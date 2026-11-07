@@ -12,9 +12,10 @@
  */
 
 import { finish, newKit, PAINT, type Kit, type Template } from './kit';
-import { blob, block, body, fin, lerpPoly, outlineBody, plate, ring, slab, tube, type Outline, type P2 } from './parts';
+import { blob, block, body, fin, lerpPoly, outlineBody, plate, ring, slab, triangulate, tube, type Outline, type P2 } from './parts';
 import type { Section } from '../race/shapes';
-import type { Frame3, Rgb } from '../race/geometry';
+import { at, type Frame3, type Rgb, type Vec3 } from '../race/geometry';
+import { litQuad, litTriangle } from '../race/shapes';
 
 const grey = (k: number): Rgb => [k, k, k];
 
@@ -45,6 +46,18 @@ export interface WingSpec {
    * wing's root leading edge at the fuselage (F-14, Tornado, MiG-23, B-1).
    */
   glove?: { span: number; chord: number };
+  /**
+   * The wing's thickness over its chord at the root (default 0.05); it thins to
+   * three quarters of that at the tip and follows the local chord, so a
+   * delta's tip is thin. About 0.16 for an A-10, 0.04 for a fighter.
+   */
+  thicknessRatio?: number;
+  /**
+   * An outer panel bent to its own dihedral: `at` metres out from the centre
+   * line the wing bends to `deg` degrees (the F-4's upturned outer panels at
+   * about 12). With `wingPlan`, which is cut there so the bend shows.
+   */
+  outerDihedral?: { at: number; deg: number };
 }
 
 /**
@@ -125,7 +138,8 @@ export interface FixedWingSpec {
   upperWing?: WingSpec;
   /** More wings: a triplane's middle wing, a sesquiplane's or a big biplane's extra planes. */
   extraWings?: WingSpec[];
-  canard?: { x: number; span: number; chord: number };
+  /** Canards; `up` is their height above the axis (default 15% of the half body height), for canards set high on the intakes. */
+  canard?: { x: number; span: number; chord: number; up?: number };
   tail: {
     kind: 'single' | 'twin' | 'v' | 't' | 'h' | 'none';
     /** Height of the fin's root (with `finPlan`; default the fuselage's upper side). */
@@ -140,6 +154,8 @@ export interface FixedWingSpec {
     /** Tailplane span and chord; 0 for none (deltas). */
     tailSpan: number;
     tailChord: number;
+    /** The tailplane's dihedral, degrees; negative for anhedral (the F-4's drooped stabilators about -23, Jaguar, Harrier). */
+    planeDihedral?: number;
   };
   engines?: {
     kind: 'internal' | 'wing-pods' | 'rear-pods' | 'nose-prop' | 'wing-props' | 'pusher' | 'tail-top';
@@ -192,7 +208,8 @@ export interface FixedWingSpec {
    * fin's (forward, up from its root).
    */
   fuselage?: Outline;
-  bodies?: Outline[];
+  /** A body with `oneSide: true` is drawn where it is, not mirrored, though off the centre line (the A-4's offset refuelling probe). */
+  bodies?: (Outline & { oneSide?: boolean })[];
   wingPlan?: P2[];
   /** A swing wing: the outer panel turned about its pivot; `wingPlan` is then the fixed glove. */
   swing?: SwingWing;
@@ -234,7 +251,7 @@ export function buildFixedWing(spec: FixedWingSpec): Template {
   else body(k.team, k.fr, sections, grey(0.9), 12, 2.2);
   for (const b of spec.bodies ?? []) {
     outlineBody(k.team, k.fr, b, grey(0.84), 12);
-    if (b.side) outlineBody(k.team, k.fr, { ...b, side: -b.side }, grey(0.84), 12);
+    if (b.side && !b.oneSide) outlineBody(k.team, k.fr, { ...b, side: -b.side }, grey(0.84), 12);
   }
   if (spec.wingPlan || spec.swing) {
     const up = mountHeight(spec.wing, spec);
@@ -243,13 +260,24 @@ export function buildFixedWing(spec: FixedWingSpec): Template {
     const half = spec.wing.span / 2;
     const bend = half * 0.33;
     const drop = -spec.bodyHeight * 0.3;
-    const h = (b: number) => (spec.wing.gull ? (b < bend ? (drop * b) / bend : drop + (b - bend) * Math.max(dih, 0.14)) : b * dih);
-    const thick = Math.max(0.08, spec.wing.rootChord * 0.05);
-    if (spec.wingPlan) for (const side of [-1, 1]) slab(k.team, k.fr, spec.wingPlan, (a, b) => [a, side * b, up + h(b)], [0, 0, 1], thick, grey(0.86), 1, grey(0.6));
-    // A swing wing's outer panel at its sweep, a little thinner than the glove so its root stays hidden inside it.
+    // An outer panel with its own dihedral bends `at` out; the planform is cut there so the bend is an edge.
+    const ob = spec.wing.outerDihedral;
+    const outer = ob ? Math.tan((ob.deg * Math.PI) / 180) : 0;
+    const h = (b: number) => (spec.wing.gull ? (b < bend ? (drop * b) / bend : drop + (b - bend) * Math.max(dih, 0.14)) : ob && b > ob.at ? ob.at * dih + (b - ob.at) * outer : b * dih);
+    const pieces = (plan: P2[]) => (ob ? [clipSpan(plan, ob.at, -1), clipSpan(plan, ob.at, 1)].filter((p) => p.length >= 3) : [plan]);
+    const ratio = spec.wing.thicknessRatio ?? THICKNESS_RATIO;
+    const reach = Math.max(half, ...(spec.wingPlan ?? []).map((p) => p[1]));
+    const map = (side: number) => (a: number, b: number): Vec3 => [a, side * b, up + h(b)];
+    if (spec.wingPlan) {
+      const plan = spec.wingPlan;
+      for (const side of [-1, 1]) for (const p of pieces(plan)) wingSlab(k, p, map(side), (b) => wingThickness(plan, b, ratio, reach), grey(0.86), grey(0.6));
+    }
+    // A swing wing's outer panel at its sweep, thinner than the glove's edge so its root stays hidden inside it.
     if (spec.swing) {
       const plan = swingPlan(spec.swing);
-      for (const side of [-1, 1]) slab(k.team, k.fr, plan, (a, b) => [a, side * b, up + h(b)], [0, 0, 1], thick * 0.8, grey(0.86), 1, grey(0.6));
+      const glove = spec.wingPlan;
+      const cap = glove ? wingThickness(glove, Math.max(...glove.map((p) => p[1])) - 1e-3, ratio, reach) * 0.8 : Infinity;
+      for (const side of [-1, 1]) for (const p of pieces(plan)) wingSlab(k, p, map(side), (b) => Math.min(cap, wingThickness(plan, b, ratio, reach) * 0.8), grey(0.86), grey(0.6));
     }
   } else wing(k, spec.wing, spec, grey(0.86));
   if (spec.upperWing) {
@@ -263,7 +291,7 @@ export function buildFixedWing(spec: FixedWingSpec): Template {
   for (const w of spec.extraWings ?? []) wing(k, w, spec, grey(0.86));
   if (spec.canard) {
     const c = spec.canard;
-    for (const side of [-1, 1]) plate(k.team, k.fr, [[c.x + c.chord / 2, side * bw * 0.8], [c.x - c.chord / 2, side * bw * 0.8], [c.x - c.chord / 2, side * c.span / 2], [c.x - c.chord * 0.1, side * c.span / 2]], bh * 0.15, 0.06, grey(0.84));
+    for (const side of [-1, 1]) plate(k.team, k.fr, [[c.x + c.chord / 2, side * bw * 0.8], [c.x - c.chord / 2, side * bw * 0.8], [c.x - c.chord / 2, side * c.span / 2], [c.x - c.chord * 0.1, side * c.span / 2]], c.up ?? bh * 0.15, 0.06, grey(0.84));
   }
   if (spec.booms) {
     const b = spec.booms;
@@ -333,7 +361,11 @@ function wing(k: Kit, w: WingSpec, spec: FixedWingSpec, col: Rgb): void {
   // A swing wing starts at its pivot, out in the glove.
   const root = w.glove ? Math.max(bodyRoot, w.glove.span / 2) : bodyRoot;
   const halfSpan = w.span / 2;
-  const thick = Math.max(0.08, w.rootChord * 0.06);
+  // As thick as the chord there allows: the root's share at the root, three quarters of it at the tip.
+  const ratio = w.thicknessRatio ?? THICKNESS_RATIO;
+  const thick = Math.max(MIN_THICKNESS, w.rootChord * ratio);
+  const tipThick = Math.max(MIN_THICKNESS, w.tipChord * ratio * 0.75);
+  const ts = [thick, thick, tipThick, tipThick];
   if (w.glove) {
     const le = w.x + w.rootChord / 2;
     for (const side of [-1, 1]) plate(k.team, k.fr, [[le + w.glove.chord, side * bodyRoot], [le - w.rootChord, side * bodyRoot], [le - w.rootChord, side * root], [le, side * root]], up, thick * 1.2, grey(0.88));
@@ -348,7 +380,7 @@ function wing(k: Kit, w: WingSpec, spec: FixedWingSpec, col: Rgb): void {
       [le1, side * halfSpan],
     ];
     if (!dih && !w.gull) {
-      plate(k.team, k.fr, outline, up, thick, col);
+      taperedPlate(k, outline, up, ts, col);
       continue;
     }
     // Dihedral (or a gull's bend): the wing as two panels, the outer one raised.
@@ -358,19 +390,19 @@ function wing(k: Kit, w: WingSpec, spec: FixedWingSpec, col: Rgb): void {
     const inner: P2[] = [[le0, side * root], [le0 - w.rootChord, side * root], [midLe - midChord, side * midS], [midLe, side * midS]];
     if (w.gull) {
       const drop = -spec.bodyHeight * 0.25;
-      panel(k, inner, up, up + drop, root, midS, thick, col);
+      const midThick = Math.max(MIN_THICKNESS, midChord * ratio * (1 - 0.25 * (midS / halfSpan)));
+      panel(k, inner, up, up + drop, root, midS, [thick, thick, midThick, midThick], col);
       const outer: P2[] = [[midLe, side * midS], [midLe - midChord, side * midS], [le1 - w.tipChord, side * halfSpan], [le1, side * halfSpan]];
-      panel(k, outer, up + drop, up + drop + (halfSpan - midS) * Math.max(dih, 0.12), midS, halfSpan, thick, col);
-    } else panel(k, outline, up, up + (halfSpan - root) * dih, root, halfSpan, thick, col);
+      panel(k, outer, up + drop, up + drop + (halfSpan - midS) * Math.max(dih, 0.12), midS, halfSpan, [midThick, midThick, tipThick, tipThick], col);
+    } else panel(k, outline, up, up + (halfSpan - root) * dih, root, halfSpan, ts, col);
   }
 }
 
-/** A wing panel whose height runs from `up0` at |side| = s0 to `up1` at s1. */
-function panel(k: Kit, outline: P2[], up0: number, up1: number, s0: number, s1: number, thick: number, col: Rgb): void {
-  const t = thick / 2;
+/** A wing panel whose height runs from `up0` at |side| = s0 to `up1` at s1, thick by `thick` at each outline point. */
+function panel(k: Kit, outline: P2[], up0: number, up1: number, s0: number, s1: number, thick: number[], col: Rgb): void {
   const h = (s: number) => up0 + ((Math.abs(s) - s0) / Math.max(1e-6, s1 - s0)) * (up1 - up0);
-  const top = outline.map(([f, s]) => [f, h(s) + t, s] as [number, number, number]);
-  const bot = outline.map(([f, s]) => [f, h(s) - t, s] as [number, number, number]);
+  const top = outline.map(([f, s], i) => [f, h(s) + thick[i] / 2, s] as [number, number, number]);
+  const bot = outline.map(([f, s], i) => [f, h(s) - thick[i] / 2, s] as [number, number, number]);
   const n = outline.length;
   const c = top.reduce((a, p) => [a[0] + p[0] / n, a[1] + p[1] / n, a[2] + p[2] / n], [0, 0, 0]) as [number, number, number];
   for (let i = 0; i < n; i++) {
@@ -382,6 +414,89 @@ function panel(k: Kit, outline: P2[], up0: number, up1: number, s0: number, s1: 
   k.team.triangle(bot[0], bot[2], bot[1], grey(0.55));
   k.team.triangle(bot[0], bot[3], bot[2], grey(0.55));
   void c;
+}
+
+/** A wing's thickness over its chord at the root when the spec gives none, and the least any part of a wing is thick. */
+const THICKNESS_RATIO = 0.05;
+const MIN_THICKNESS = 0.04;
+
+/** The chord of a planform at a station `b` out from the centre line: the length of its cut there. */
+export function chordAt(poly: P2[], b: number): number {
+  let lo = Infinity;
+  let hi = -Infinity;
+  for (let i = 0; i < poly.length; i++) {
+    const [a0, b0] = poly[i];
+    const [a1, b1] = poly[(i + 1) % poly.length];
+    if (b < Math.min(b0, b1) - 1e-6 || b > Math.max(b0, b1) + 1e-6) continue;
+    const cut = Math.abs(b1 - b0) < 1e-9 ? [a0, a1] : [a0 + ((a1 - a0) * (b - b0)) / (b1 - b0)];
+    lo = Math.min(lo, ...cut);
+    hi = Math.max(hi, ...cut);
+  }
+  return hi > lo ? hi - lo : 0;
+}
+
+/** A wing's thickness at a station: its ratio of the local chord, the ratio thinning to three quarters at `reach`. */
+function wingThickness(plan: P2[], b: number, ratio: number, reach: number): number {
+  return Math.max(MIN_THICKNESS, chordAt(plan, b) * ratio * (1 - 0.25 * Math.min(1, Math.abs(b) / Math.max(1e-6, reach))));
+}
+
+/** The part of a planform inboard (`keep` -1) or outboard (1) of the station `cut`. */
+function clipSpan(poly: P2[], cut: number, keep: -1 | 1): P2[] {
+  const inside = (p: P2) => (p[1] - cut) * keep >= 0;
+  const out: P2[] = [];
+  for (let i = 0; i < poly.length; i++) {
+    const p = poly[i];
+    const q = poly[(i + 1) % poly.length];
+    if (inside(p)) out.push(p);
+    if (inside(p) !== inside(q)) {
+      const t = (cut - p[1]) / (q[1] - p[1]);
+      if (t > 0 && t < 1) out.push([p[0] + (q[0] - p[0]) * t, cut]);
+    }
+  }
+  return out;
+}
+
+/**
+ * A wing from its half planform, thick by `thick` at each point's station,
+ * placed by `map` (forward, side, up); the thickness goes up and down. Each
+ * face triangle is lit against the one opposite it, so a bent wing keeps its
+ * upper side lit.
+ */
+function wingSlab(k: Kit, poly: P2[], map: (a: number, b: number) => Vec3, thick: (b: number) => number, col: Rgb, under: Rgb): void {
+  const mid = poly.map(([a, b]) => map(a, b));
+  const t = poly.map(([, b]) => thick(b) / 2);
+  const top = mid.map(([f, s, u], i) => at(k.fr, f, s, u + t[i]));
+  const bot = mid.map(([f, s, u], i) => at(k.fr, f, s, u - t[i]));
+  const inside = centroid3([...top, ...bot]);
+  for (const [i, j, l] of triangulate(poly)) {
+    litTriangle(k.team, top[i], top[j], top[l], centroid3([bot[i], bot[j], bot[l]]), col);
+    litTriangle(k.team, bot[i], bot[j], bot[l], centroid3([top[i], top[j], top[l]]), under);
+  }
+  for (let i = 0; i < poly.length; i++) {
+    const j = (i + 1) % poly.length;
+    litQuad(k.team, top[i], top[j], bot[j], bot[i], inside, col);
+  }
+}
+
+/** A flat wing panel like `plate`, thick by `thick` at each outline point. */
+function taperedPlate(k: Kit, outline: P2[], up: number, thick: number[], col: Rgb): void {
+  const top = outline.map(([f, s], i) => at(k.fr, f, s, up + thick[i] / 2));
+  const bot = outline.map(([f, s], i) => at(k.fr, f, s, up - thick[i] / 2));
+  const inside = centroid3([...top, ...bot]);
+  const ct = centroid3(top);
+  const cb = centroid3(bot);
+  for (let i = 0; i < outline.length; i++) {
+    const j = (i + 1) % outline.length;
+    litTriangle(k.team, ct, top[i], top[j], inside, col);
+    litTriangle(k.team, cb, bot[i], bot[j], inside, col);
+    litQuad(k.team, top[i], top[j], bot[j], bot[i], inside, col);
+  }
+}
+
+function centroid3(points: Vec3[]): Vec3 {
+  const c: Vec3 = [0, 0, 0];
+  for (const p of points) for (let i = 0; i < 3; i++) c[i] += p[i] / points.length;
+  return c;
 }
 
 function tail(k: Kit, spec: FixedWingSpec): void {
@@ -405,7 +520,10 @@ function tail(k: Kit, spec: FixedWingSpec): void {
     }
     if (spec.tailPlan) {
       const up = t.planeUp ?? (t.kind === 't' ? base + fh : 0);
-      for (const side of [-1, 1]) slab(k.team, k.fr, spec.tailPlan, (a, b) => [a, side * b, up], [0, 0, 1], 0.08, grey(0.84), 1, grey(0.6));
+      // With dihedral (or anhedral) the tailplane rises from its root.
+      const tan = Math.tan(((t.planeDihedral ?? 0) * Math.PI) / 180);
+      const root = Math.min(...spec.tailPlan.map((p) => p[1]));
+      for (const side of [-1, 1]) slab(k.team, k.fr, spec.tailPlan, (a, b) => [a, side * b, up + (b - root) * tan], [0, 0, 1], 0.08, grey(0.84), 1, grey(0.6));
     }
     if (t.kind === 'v' && fins.length) {
       for (const side of [-1, 1]) slab(k.team, k.fr, fins, (a, h) => [a, side * h * 0.8, base + h * 0.6], [0, side * 0.6, -0.8], ft * 0.8, grey(0.8));
@@ -459,7 +577,12 @@ function tail(k: Kit, spec: FixedWingSpec): void {
     const x0 = back + t.tailChord * 1.05;
     const sw = t.tailChord * 0.55;
     for (const side of [-1, 1]) {
-      plate(k.team, k.fr, [[x0, side * spec.bodyWidth * 0.2], [x0 - t.tailChord, side * spec.bodyWidth * 0.2], [x0 - t.tailChord - sw * 0.2, side * t.tailSpan / 2], [x0 - sw, side * t.tailSpan / 2]], up, 0.06, grey(0.84));
+      const plane: P2[] = [[x0, side * spec.bodyWidth * 0.2], [x0 - t.tailChord, side * spec.bodyWidth * 0.2], [x0 - t.tailChord - sw * 0.2, side * t.tailSpan / 2], [x0 - sw, side * t.tailSpan / 2]];
+      if (t.planeDihedral) {
+        const s0 = spec.bodyWidth * 0.2;
+        const s1 = t.tailSpan / 2;
+        panel(k, plane, up, up + (s1 - s0) * Math.tan((t.planeDihedral * Math.PI) / 180), s0, s1, [0.06, 0.06, 0.06, 0.06], grey(0.84));
+      } else plate(k.team, k.fr, plane, up, 0.06, grey(0.84));
     }
     if (t.kind === 'h') {
       for (const side of [-1, 1]) fin(k.team, k.fr, [[x0 - 0.1, -fh * 0.4], [x0 - t.tailChord, -fh * 0.4], [x0 - t.tailChord, fh * 0.6], [x0 - 0.3, fh * 0.6]], side * t.tailSpan / 2, 0.06, grey(0.8));
@@ -609,6 +732,12 @@ export interface HeliSpec {
   /** Stub wings' forward position and height (with a fuselage outline), and their anhedral, degrees. */
   stubAt?: [number, number, number?];
   glass?: [number, number, number, number, number][];
+  /**
+   * The glass as Outline bodies (forward, up from the axis), drawn as the
+   * fixed-wing `glass` is: flat-plate canopies in their true shape (AH-1S,
+   * AH-64). Drawn besides any `glass` blobs, and in place of the default glass.
+   */
+  glassOutlines?: Outline[];
   finPlan?: P2[];
   rotorX?: number;
   mastTop?: number;
@@ -616,6 +745,10 @@ export interface HeliSpec {
   tailRotorSide?: 1 | -1;
   tailRotorAt?: [number, number];
   tailRotorDiameter?: number;
+  /** The tail rotor's blade count (default four, as two crossed pairs). */
+  tailBlades?: number;
+  /** Four tail-rotor blades as two pairs this many degrees apart, a scissor or X rotor (Mi-28 about 35, AH-64 about 55). */
+  tailScissor?: number;
   /** The tailplane's half planform (forward, out) at height `tailUp`, in place of the generic one; on one side only when `tailOneSide` is set (CH-53E). */
   tailPlan?: P2[];
   tailUp?: number;
@@ -635,6 +768,14 @@ export interface HeliSpec {
   coaxGap?: number;
   /** Rotor blades with swept (BERP-like) tips. */
   sweptTips?: boolean;
+  /**
+   * The main rotor blades' chord, metres. Set, the blades are drawn flat at
+   * their true width (default: thin round blades, about 2.4 % of the
+   * diameter wide).
+   */
+  bladeChord?: number;
+  /** The swept tips' chord at their root, metres, where wider than the blade's (AH-64E); draws the blades flat as `bladeChord` does. */
+  tipChord?: number;
   /** Two intermeshing rotors side by side, their hubs this far apart (Flettner's synchropters, the K-MAX). */
   synchropter?: number;
   /** A pusher propeller at the tail: (forward, up, diameter, blades) (AH-56 Cheyenne, X3, Raider). */
@@ -663,8 +804,11 @@ export function buildHeli(spec: HeliSpec): Template {
   if (spec.fuselage) outlineBody(k.team, k.fr, spec.fuselage, grey(0.9), 14);
   else body(k.team, k.fr, sections, grey(0.9), 12, shape === 'boxy' ? 3.6 : 2.6);
   // Glass at the front.
+  for (const g of spec.glassOutlines ?? []) outlineBody(k.fixed, k.fr, g, PAINT.glass, 12);
   if (spec.glass) for (const [gx, gu, hl, hw, hh] of spec.glass) blob(k.fixed, k.fr, [gx, 0, gu], [hl, hw, hh], PAINT.glass);
-  else if (shape === 'tandem') {
+  else if (spec.glassOutlines) {
+    // The outlines are the glass.
+  } else if (shape === 'tandem') {
     blob(k.fixed, k.fr, [cabinFront - cabinLen * 0.2, 0, bh * 0.55], [cabinLen * 0.13, bw * 0.55, bh * 0.4], PAINT.glass);
     blob(k.fixed, k.fr, [cabinFront - cabinLen * 0.42, 0, bh * 0.75], [cabinLen * 0.13, bw * 0.55, bh * 0.42], PAINT.glass);
   } else if (shape === 'bubble') {
@@ -698,8 +842,17 @@ export function buildHeli(spec: HeliSpec): Template {
       const ts = (spec.tailRotorSide ?? 1) * (0.25 + spec.bodyWidth * 0.12);
       const fr = { o: [0, 0, 0] as [number, number, number], f: [1, 0, 0] as [number, number, number], r: [0, 1, 0] as [number, number, number], u: [0, 0, 1] as [number, number, number] };
       ring(k.fixed, fr, tx, tu, ts * 0.88, r, PAINT.rotor, 0.3, 16);
-      // The tail rotor's blades, so the silhouette shows them.
-      for (const a of [0.4, 0.4 + Math.PI / 2]) tube(k.fixed, k.fr, [tx + Math.cos(a) * r, ts, tu + Math.sin(a) * r], [tx - Math.cos(a) * r, ts, tu - Math.sin(a) * r], r * 0.06, r * 0.06, PAINT.rotor, 4);
+      // The tail rotor's blades, so the silhouette shows them: two crossed pairs, a scissor's pairs, or single blades.
+      const nb = spec.tailBlades ?? 4;
+      if (spec.tailScissor || nb === 4) {
+        const pairs = [0.4, 0.4 + (spec.tailScissor ? (spec.tailScissor * Math.PI) / 180 : Math.PI / 2)];
+        for (const a of pairs) tube(k.fixed, k.fr, [tx + Math.cos(a) * r, ts, tu + Math.sin(a) * r], [tx - Math.cos(a) * r, ts, tu - Math.sin(a) * r], r * 0.06, r * 0.06, PAINT.rotor, 4);
+      } else {
+        for (let i = 0; i < nb; i++) {
+          const a = 0.4 + (i / nb) * Math.PI * 2;
+          tube(k.fixed, k.fr, [tx, ts, tu], [tx + Math.cos(a) * r, ts, tu + Math.sin(a) * r], r * 0.06, r * 0.06, PAINT.rotor, 4);
+        }
+      }
     }
   }
   // Rotors: a faint disc and the blades.
@@ -723,6 +876,20 @@ export function buildHeli(spec: HeliSpec): Template {
         const a = (i / n) * Math.PI * 2 + (n === 2 ? Math.PI / 4 : 0.4);
         const R = spec.rotor / 2;
         const tip = spec.sweptTips ? 0.92 : 1;
+        if (spec.bladeChord || spec.tipChord) {
+          // Blades of a given chord: flat (0.12 m thick, a little over true so they still read edge-on), so their width
+          // shows from above.
+          const w = (spec.bladeChord ?? spec.rotor * 0.024) / 2;
+          const wt = (spec.tipChord ?? w * 2) / 2;
+          const c = Math.cos(a);
+          const sn = Math.sin(a);
+          // Along the blade, and across it towards the way it turns.
+          const map = (r: number, q: number): Vec3 => [x + c * r - sn * q, y + sn * r + c * q, u];
+          slab(k.fixed, k.fr, [[R * 0.06, w], [R * tip, w], [R * tip, -w], [R * 0.06, -w]], map, [0, 0, 1], 0.12, PAINT.rotor);
+          // The swept tip, its leading edge running back to a narrower end (AH-64E, Merlin, Lynx's BERP blades).
+          if (spec.sweptTips) slab(k.fixed, k.fr, [[R * tip, wt], [R, wt * 0.2 - R * (1 - tip) * 0.6], [R, -wt * 0.6 - R * (1 - tip) * 0.6], [R * tip, -wt]], map, [0, 0, 1], 0.1, PAINT.rotor);
+          continue;
+        }
         tube(k.fixed, k.fr, [x, y, u], [x + Math.cos(a) * R * tip, y + Math.sin(a) * R * tip, u], spec.rotor * 0.012, spec.rotor * 0.009, PAINT.rotor, 4);
         // A swept tip: the last part of the blade bent back against the turn (AH-64E, Merlin, Lynx's BERP blades).
         if (spec.sweptTips) {

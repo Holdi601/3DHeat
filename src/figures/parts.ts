@@ -327,12 +327,11 @@ export function slab(out: VertexBuffer, fr: Frame3, poly: P2[], map: (a: number,
   const top = mid.map(([f, s, u]) => at(fr, f + normal[0] * t, s + normal[1] * t, u + normal[2] * t));
   const bot = mid.map(([f, s, u]) => at(fr, f - normal[0] * t, s - normal[1] * t, u - normal[2] * t));
   const inside = centroid([...top, ...bot]);
-  // The faces get their light against a point a little inside each face, so a thin slab shades its two sides apart.
-  const above = centroid(bot);
-  const below = centroid(top);
+  // Each face triangle gets its light against the triangle opposite it, just inside the slab, so a thin slab shades
+  // its two sides apart and a bent one (a gull wing, dihedral) keeps its upper side up wherever it bends.
   for (const [i, j, k] of triangulate(poly)) {
-    litTriangle(out, top[i], top[j], top[k], above, col, alpha);
-    litTriangle(out, bot[i], bot[j], bot[k], below, underCol ?? col, alpha);
+    litTriangle(out, top[i], top[j], top[k], centroid([bot[i], bot[j], bot[k]]), col, alpha);
+    litTriangle(out, bot[i], bot[j], bot[k], centroid([top[i], top[j], top[k]]), underCol ?? col, alpha);
   }
   for (let i = 0; i < poly.length; i++) {
     const j = (i + 1) % poly.length;
