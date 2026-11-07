@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — húzd az állításhoz",
+  "ui.jog.title": "{label}: húzd felfelé vagy lefelé a módosításhoz. Minél messzebbre húzod, annál gyorsabb; finom állításhoz tartsd lenyomva a Shiftet. Elengedve megáll.",
+  "ui.jog.limited": "A csúszka tartományára korlátozva.",
+  "ui.select.none": "— nincs —"
+}

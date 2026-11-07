@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — trascina per regolare",
+  "ui.jog.title": "Trascina in su o in giù per modificare {label}. Più lontano, più veloce; tieni premuto Shift per la regolazione fine. Rilascia per fermare.",
+  "ui.jog.limited": "Limitato all’intervallo del cursore.",
+  "ui.select.none": "— nessuno —"
+}

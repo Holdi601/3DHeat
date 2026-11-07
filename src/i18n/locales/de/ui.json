@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} – zum Anpassen ziehen",
+  "ui.jog.title": "Nach oben oder unten ziehen, um {label} zu ändern. Je weiter, desto schneller; Shift halten für feine Schritte. Loslassen zum Beenden.",
+  "ui.jog.limited": "Auf den Bereich des Schiebereglers begrenzt.",
+  "ui.select.none": "– keine –"
+}

@@ -1,0 +1,2530 @@
+import { Matrix4, Vector3 } from 'three';
+import { estimateSaturation, horizontalExtent } from '../data/calibrate';
+import { buildLines, heatModeFor, lineSettingsKey, type LineData } from '../data/lines';
+import { playbackRange } from '../data/sessions';
+import { CUBE_STRIDE, TrackCursor } from '../data/tracks';
+import { HEAT_RESPONSE_CODE, snapshot, useStore, type HeatSettings } from '../state/store';
+import { raceClock, raceHover, replayLength, useRaceStore, type RaceState } from '../state/raceStore';
+import { RaceScene } from '../race/scene';
+import { BoardScene, templateOf } from '../tactics/scene';
+import { FigureReplay } from '../figures/replay';
+import { EffectLayer } from '../figures/effects';
+import { useReplayStore } from '../state/replayStore';
+import { dropLinesOn, unitsPerMetre } from '../ui/replay/replayData';
+import { figureNear, usePlanStore } from '../state/planStore';
+import { playbackAt } from '../tactics/plan';
+import type { Dataset, FilterSpec } from '../state/types';
+import { CURVE_LUT_SIZE, bakeCurveLut, curveSignature } from '../state/curve';
+import { buildColorLut, isUnassignedLabel, teamHueCount, teamMemberColor } from './colors';
+import type { Projection } from './camera';
+import { autoExposure, type ExposureResult } from './exposure';
+import { FlyCamera, MIN_FLY_SPEED } from './camera';
+import { createRenderer, type BackendPreference } from './createRenderer';
+import {
+  mapQuadFromAnchors,
+  reliefDraw,
+  sameLevelUpload,
+  structureDraw,
+  waterDraw,
+  type Level,
+} from './level';
+import { appendCross, buildOverlay, screenToPlane, type MeasureState } from './measure';
+import { BudgetController, candidateRange, nextExactCap, planFrame } from './sampling';
+import { Inspector, type PickContext } from './inspector';
+import type { DrawnRows } from './pick';
+import { lookAtDistance, lookAtPitch, type Vec3 } from './pose';
+import { useInspectStore } from '../state/inspectStore';
+import { effectiveGpuBudget } from './budget';
+import { buildActiveFilters, frameSignTables } from './filterTables';
+import {
+  MAX_PLAN_SPRITES,
+  SAMPLE_BLOCK,
+  type ActiveFilter,
+  type BackendKind,
+  type CapturedFrame,
+  type ChunkDrawPlan,
+  type FrameParams,
+  type LevelDraw,
+  type Renderer,
+} from './types';
+import { t } from '../i18n';
+
+export interface LiveReadout {
+  playhead: number;
+  fps: number;
+  frameMs: number;
+  splats: number;
+  candidates: number;
+  accumFrames: number;
+  /**
+   * Frames actually submitted to the GPU since startup.
+   *
+   * Distinct from wall-clock frames: the engine deliberately skips work when
+   * nothing changed, so this advancing is the only evidence that motion is
+   * producing new pictures rather than one held frame.
+   */
+  frames: number;
+  /** Frames still needed for the accumulation to cover every candidate row. */
+  convergeFrames: number;
+  converged: boolean;
+  /**
+   * How the last rendered frame combined with the accumulation buffer.
+   *
+   * Exposed because the three modes normalise differently — `sum` divides by
+   * `accumFrames` at composite, the others do not — so a mismatch between the mode
+   * that filled the buffer and the mode that reads it shows up as the picture
+   * drifting brighter or dimmer while nothing is moving. Without this it is
+   * guesswork which path a frame took.
+   */
+  accumMode: 'reset' | 'mean' | 'ema' | 'extend' | 'skip';
+  cubes: number;
+  backend: BackendKind | 'none';
+  budget: number;
+  /** Rows resident on the GPU, and rows that did not fit. */
+  residentRows: number;
+  droppedRows: number;
+  gpuBytes: number;
+  gpuName: string | null;
+  /** Heat buffer resolution actually in use, after the auto throttle. */
+  heatScale: number;
+  /** Line heat's routes, while it has them: begun, reaching an end, segments. */
+  lines: { routes: number; ended: number; segments: number; jumps: number } | null;
+}
+
+const EMPTY_PLAN: ChunkDrawPlan[] = [];
+
+/**
+ * Most sprites one frame can draw, whatever it is asked for.
+ *
+ * The draw plan's own ceiling, not a policy: a request for exactness past what a plan
+ * can carry is capped here and the shortfall shows up honestly as `convergeFrames > 1`.
+ */
+const EXACT_SPRITE_CAP = MAX_PLAN_SPRITES;
+
+/**
+ * "Every row" is the default, and many sprites of a large radius can take a frame past what
+ * the GPU's watchdog allows, which loses the device. So it starts at what always was the
+ * limit, climbs while frames are easy and backs off while they are slow; a still view
+ * converges just the same.
+ */
+const EXACT_STALL_MS = 400;
+const EXACT_EASY_MS = 150;
+const EXACT_START_SPRITES = 16_384 * SAMPLE_BLOCK;
+const EXACT_FLOOR_SPRITES = 2_048 * SAMPLE_BLOCK;
+
+/**
+ * Blend weight while the visible window is moving.
+ *
+ * Fixed rather than 1/n because the field itself is changing: an average over all
+ * frames since playback started would lag behind the playhead. A third gives about
+ * three frames of smoothing, enough to kill the worst of the sampling noise while
+ * still tracking a moving window.
+ */
+const EMA_ALPHA = 0.34;
+
+/**
+ * Heat samples to meter for auto-exposure.
+ *
+ * A percentile only needs enough samples to be stable, and the field is read in
+ * one bulk transfer either way, so this bounds the sort rather than the readback.
+ */
+const EXPOSURE_SAMPLES = 40_000;
+
+/**
+ * Rendered frames to let the field build before metering a new dataset.
+ *
+ * Enough that the estimate is not pure noise, few enough that the first look is
+ * already exposed correctly.
+ */
+const AUTO_EXPOSE_AFTER_FRAMES = 8;
+
+/**
+ * Magnitude the estimated peak of the field is mapped to in a half-float target.
+ *
+ * See `heatGain`: the estimate is analytic, from the row count, the sprite and
+ * the data's extent. Low enough that a field several times the estimate still
+ * fits inside 65504, high enough that half float's 11-bit mantissa gives fine
+ * steps at the values that matter. 2048 leaves 32x headroom above the top of the
+ * ramp.
+ */
+const HEAT_F16_LEVEL = 2048;
+
+/**
+ * The two palette numbers a dataset implies: which group is neutral, and the
+ * stride that keeps neighbouring ids from sharing a hue.
+ */
+/** The box every loaded lap fits in. */
+/** A number per object, for telling whether the board's plan or draft is the one last drawn. */
+const boardIds = (() => {
+  const ids = new WeakMap<object, number>();
+  let next = 1;
+  return {
+    of(o: object | null): number {
+      if (!o) return 0;
+      let id = ids.get(o);
+      if (id === undefined) ids.set(o, (id = next++));
+      return id;
+    },
+  };
+})();
+
+/** The box round a plan's figures and arrows, padded; null for an empty plan. */
+function boardBounds(plan: import('../tactics/plan').Plan): { minX: number; minY: number; minZ: number; maxX: number; maxY: number; maxZ: number } | null {
+  const pts: { x: number; y: number; z: number }[] = [];
+  for (const f of plan.figures) for (const k of Object.values(f.keys)) pts.push(k);
+  for (const a of plan.arrows) pts.push(...a.points);
+  for (const a of plan.areas) pts.push(a.centre);
+  if (!pts.length) return null;
+  const b = { minX: Infinity, minY: Infinity, minZ: Infinity, maxX: -Infinity, maxY: -Infinity, maxZ: -Infinity };
+  for (const p of pts) {
+    b.minX = Math.min(b.minX, p.x);
+    b.maxX = Math.max(b.maxX, p.x);
+    b.minY = Math.min(b.minY, p.y);
+    b.maxY = Math.max(b.maxY, p.y);
+    b.minZ = Math.min(b.minZ, p.z);
+    b.maxZ = Math.max(b.maxZ, p.z);
+  }
+  const pad = Math.max(10, (b.maxX - b.minX + b.maxZ - b.minZ) * 0.15);
+  return { minX: b.minX - pad, maxX: b.maxX + pad, minY: b.minY, maxY: b.maxY + 2, minZ: b.minZ - pad, maxZ: b.maxZ + pad };
+}
+
+function raceBounds(race: RaceState): { minX: number; minY: number; minZ: number; maxX: number; maxY: number; maxZ: number } {
+  const b = { minX: Infinity, minY: Infinity, minZ: Infinity, maxX: -Infinity, maxY: -Infinity, maxZ: -Infinity };
+  for (const lap of race.laps) {
+    const { x, y, z } = lap.channels;
+    for (let i = 0; i < lap.count; i++) {
+      b.minX = Math.min(b.minX, x[i]);
+      b.maxX = Math.max(b.maxX, x[i]);
+      b.minY = Math.min(b.minY, y[i]);
+      b.maxY = Math.max(b.maxY, y[i]);
+      b.minZ = Math.min(b.minZ, z[i]);
+      b.maxZ = Math.max(b.maxZ, z[i]);
+    }
+  }
+  return b;
+}
+
+function teamPaletteFor(dataset: Dataset | null): { neutral: number; slices: number } {
+  const labels = dataset?.teamLabels ?? [];
+  if (labels.length === 0) return { neutral: -1, slices: 1 };
+    // Matched on the label, not the index: the index is a dictionary position and
+  // depends on which value the first file happened to mention first.
+  const neutral = labels.findIndex((l) => isUnassignedLabel(String(l)));
+  return { neutral, slices: teamHueCount(labels.length) };
+}
+
+/**
+ * Owns the render loop.
+ *
+ * Everything that changes at frame rate — camera transform, playhead, sampling
+ * budget — lives here as plain fields rather than in the store, so a frame costs
+ * no React work at all. The store is read once per frame (a property read) and
+ * written back only for the low-frequency readouts.
+ */
+export class Engine {
+  readonly camera = new FlyCamera();
+  private renderer: Renderer | null = null;
+  private raf = 0;
+  private detachInput: (() => void) | null = null;
+  private disposed = false;
+
+  private dataset: Dataset | null = null;
+  /**
+   * The dataset whose GPU upload has been announced but not yet performed.
+   *
+   * Held separately from `dataset` because the announcement and the work happen
+   * on different frames — see the note in the render loop — and without it the
+   * loop would announce the same upload forever and never get to it.
+   */
+  private uploadAnnounced: Dataset | null = null;
+
+  /**
+   * The team palette's two derived numbers, recomputed only when the data changes.
+   *
+   * Both depend on the group *labels* rather than on any setting, so they belong
+   * with the dataset and not in the per-frame parameters — finding which label
+   * means "unassigned" is a string search over every group, which is not something
+   * to repeat sixty times a second.
+   */
+  private teamPalette: { neutral: number; slices: number } = { neutral: -1, slices: 1 };
+  private level: Level | null = null;
+  private cursor: TrackCursor | null = null;
+
+  private lastNow = 0;
+  private fpsAccum = 0;
+  private fpsFrames = 0;
+  private smoothedFrameMs = 16.6;
+
+  private playhead = 0;
+  private wasPlaying = false;
+  private lastSeekNonce = -1;
+  private lastPublish = 0;
+
+  private geometrySig = '';
+  /** What line heat's routes were built from, or '' when there are none. */
+  private linesKey = '';
+  private lines: LineData | null = null;
+  /**
+   * What kind of heat the saturation was last metered on: points, or lines
+   * built from particular routes. Null before the first heat mode is shown.
+   */
+  private meteredKind: string | null = null;
+  private windowSig = '';
+  private compositeSig = '';
+  private accumFrames = 0;
+  private frameIndex = 0;
+  /** Last fly speed seen from the store, to tell a slider edit from a wheel notch. */
+  private lastStoreFlySpeed = Number.NaN;
+  /** Rendered frames remaining before the automatic exposure pass. */
+  private autoExposePending = 0;
+  /** The filters the exposure was last metered for: a change meters it again. */
+  private meteredFilters: FilterSpec[] | null = null;
+  /** Last projection seen from the store, to tell a UI change from a camera one. */
+  private lastStoreProjection: Projection | null = null;
+  /** Splat scale in force for the current frame; see `heatGain`. */
+  private frameGain = 1;
+  /**
+   * The row range the accumulation buffer currently represents, when it is a
+   * growing cumulative window.
+   *
+   * `-1` means the buffer is not a valid cumulative accumulation — it has just
+   * been reset, or the window is one that slides rather than grows — and the next
+   * frame has to estimate from scratch.
+   */
+  private accumRowLo = -1;
+  private accumRowHi = -1;
+  private lastCubeCount = 0;
+  private budget: BudgetController;
+
+  private readonly viewProj = new Matrix4();
+  /**
+   * World to display: -1 on each inverted axis (CameraSettings.mirror). The
+   * camera lives in display space, so flying and looking work as usual on a
+   * mirrored world; the renderers, the overlays and the tools all get world
+   * coordinates, through this reflection folded into the view matrix.
+   */
+  private mirror: [number, number, number] = [1, 1, 1];
+  private readonly mirrorMat = new Matrix4();
+  private readonly viewMirrored = new Matrix4();
+  /**
+   * Maps clip-space depth from OpenGL's [-1, 1] to WebGPU's [0, 1].
+   *
+   * three.js builds projection matrices in the OpenGL convention. WebGPU clips
+   * anything with z < 0, so without this correction a perspective view merely
+   * loses depth precision — most of the scene happens to land near z = +1 — while
+   * an orthographic view, whose depth is linear, lands almost entirely at
+   * negative z and is clipped away in its entirety. The symptom is an empty
+   * frame with no error, which is why it is applied explicitly here rather than
+   * left to chance.
+   */
+  private readonly depthRemap = new Matrix4().set(
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 0.5, 0.5,
+    0, 0, 0, 1,
+  );
+  private readonly viewProjArr = new Float32Array(16);
+  private readonly viewArr = new Float32Array(16);
+  private readonly projArr = new Float32Array(16);
+  private readonly camPos = new Float32Array(3);
+  /** Unit vector the camera looks along; see the planar distance cull. */
+  private readonly camFwd = new Float32Array(3);
+  private lut: Uint8Array = new Uint8Array(0);
+  private lutSig = '';
+  private curveLut: Float32Array = new Float32Array(0);
+  private curveSig = '';
+  /** The group and split sign tables, reused from frame to frame. */
+  private readonly signScratch: { group: Int8Array | null; split: Int8Array | null } = {
+    group: null,
+    split: null,
+  };
+  /**
+   * Each filter's slot description, by the spec it came from.
+   *
+   * The store replaces a spec whenever it changes, so an unchanged one can keep
+   * its description — the person filter's mask in particular. Dropped with the
+   * dataset, which the descriptions depend on.
+   */
+  private filterCache = new WeakMap<FilterSpec, ActiveFilter>();
+
+  /** How many sprites "every row" may ask for now; see `EXACT_STALL_MS`. */
+  private exactCap = EXACT_START_SPRITES;
+  /** Whether the last frame splatted anything: one that only recomposited says nothing of the cost. */
+  private lastFrameDrew = false;
+
+  /** The near plane of the last frame; see `nearForView`. */
+  private viewNear = 1;
+
+  readonly live: LiveReadout = {
+    playhead: 0,
+    fps: 0,
+    frameMs: 0,
+    splats: 0,
+    candidates: 0,
+    accumFrames: 0,
+    frames: 0,
+    convergeFrames: 0,
+    converged: false,
+    accumMode: 'reset',
+    cubes: 0,
+    backend: 'none',
+    budget: 0,
+    residentRows: 0,
+    droppedRows: 0,
+    gpuBytes: 0,
+    gpuName: null,
+    heatScale: 1,
+    lines: null,
+  };
+
+  initError: string | null = null;
+
+  /**
+   * Ruler state. Lives here rather than in the store because the cursor moves
+   * with the mouse and the heat probe is read from the framebuffer — neither
+   * belongs in React's update cycle.
+   */
+  readonly measure: MeasureState = { points: [], cursor: null, heat: null };
+  measureEnabled = false;
+  /** Click-to-inspect: the pick card's answers and the marker it draws. */
+  readonly inspector = new Inspector();
+  /** Which heat rows the last frame drew, for answering a click on one. */
+  private drawn: DrawnRows | null = null;
+  /** The box replay's boxes as last built, for the same. */
+  private pickCubes: PickContext['cubes'] = null;
+  /**
+   * World to clip in OpenGL's depth convention, whatever the backend: the
+   * pick's projection, which also rejects what is past the near and far planes
+   * and so must not see WebGPU's remapped depth.
+   */
+  private readonly pickViewProj = new Float32Array(16);
+  private cursorPx: { x: number; y: number } | null = null;
+  private overlayBuf: Float32Array = new Float32Array(0);
+  /** The race tab's geometry, and what it was last built from. */
+  private readonly raceScene = new RaceScene();
+  private raceBuiltFrom: RaceState | null = null;
+  private raceBuiltAt = Number.NaN;
+  private raceBuiltHover: number | null = null;
+  private raceWasTab = false;
+  /** The tactics board's geometry, and where on the level the pointer is while a board tool wants it. */
+  private readonly boardScene = new BoardScene();
+  /** Box replay as figures. */
+  private readonly figureReplay = new FigureReplay();
+  /** Smokes, fires and the bomb from the event rows, in box replay. */
+  private readonly effects = new EffectLayer();
+  private figureTris: { data: Float32Array; count: number } | null = null;
+  /**
+   * Box replay's live tracks as last built: who, which row, where, which way
+   * (box yaw). What the replay's labels and the follow camera read.
+   */
+  liveTracks: { person: number; row: number; x: number; y: number; z: number; yaw: number }[] = [];
+  private followCam: { x: number; y: number; z: number; yaw: number } | null = null;
+  /** Trails and drop lines together, reused frame to frame. */
+  private dropBuf = new Float32Array(0);
+  private boardCursor: { x: number; y: number; z: number } | null = null;
+  /** Where the chase camera was, so it glides rather than jitters. */
+  private chase: { x: number; y: number; z: number; yaw: number } | null = null;
+  private lastProbe = 0;
+
+  /** Set when the preferred backend was unavailable, for display. */
+  backendFallbackReason: string | null = null;
+
+  /** Backend-specific diagnostics, when the backend exposes any. */
+  get rendererDebug(): unknown {
+    return (this.renderer as unknown as { debug?: unknown })?.debug ?? null;
+  }
+
+  /**
+   * Read back the composited frame, when the backend supports it.
+   *
+   * The WebGPU backend needs this to be testable at all: headless Chromium
+   * renders it correctly but never composites the canvas, so reading the canvas
+   * gives a transparent black image no matter what was drawn.
+   */
+  /**
+   * What the live backend can say about the GPU.
+   *
+   * Exposed so the memory budget can be sized from a real context instead of the
+   * panel creating a throwaway one, which on a weak machine can evict the context
+   * the app is drawing with.
+   */
+  rendererInfo(): { gpuName: string | null; maxTextureSize: number; maxBufferBytes: number | null } | null {
+    const r = this.renderer;
+    if (!r) return null;
+    return {
+      gpuName: r.gpuName,
+      maxTextureSize: r.gpuLimits.maxTextureSize,
+      maxBufferBytes: r.gpuLimits.maxBufferBytes,
+    };
+  }
+
+  captureFrame(): Promise<CapturedFrame | null> {
+    if (!this.renderer?.captureFrame) return Promise.resolve(null);
+    // A converged, unchanged view legitimately skips rendering entirely, so a
+    // capture would wait for a frame that never comes. Force a few.
+    this.forceRenderFrames = 4;
+    return this.renderer.captureFrame();
+  }
+
+  /** Frames remaining that must render even if nothing changed. */
+  private forceRenderFrames = 0;
+
+  /** Force the next frame to redraw, e.g. after an external state change. */
+  invalidate(frames = 1): void {
+    this.forceRenderFrames = Math.max(this.forceRenderFrames, frames);
+  }
+
+  constructor(readonly canvas: HTMLCanvasElement) {
+    this.budget = new BudgetController(snapshot().budget.splatsPerFrame);
+    this.detachInput = this.camera.attach(canvas);
+    this.detachMeasure = this.attachMeasureInput(canvas);
+  }
+
+  /**
+   * Create the GPU backend.
+   *
+   * Separate from the constructor because WebGPU initialisation is asynchronous;
+   * the input handlers are attached first so the camera works even if the
+   * renderer fails.
+   */
+  async init(preference: BackendPreference = 'auto'): Promise<void> {
+    try {
+      const created = await createRenderer(this.canvas, preference);
+      if (this.disposed) {
+        created.renderer.dispose();
+        return;
+      }
+      this.renderer = created.renderer;
+      this.backendFallbackReason = created.fallbackReason;
+      this.live.backend = created.backend;
+      this.live.gpuName = created.renderer.gpuName;
+      useStore.getState().reportStats({ backend: created.backend });
+    } catch (err) {
+      this.initError = err instanceof Error ? err.message : String(err);
+    }
+  }
+
+  private detachMeasure: (() => void) | null = null;
+
+  /**
+   * Ruler input.
+   *
+   * Deliberately separate from the camera's handlers: the camera claims drag for
+   * look, so a measurement click has to be distinguished from the start of a
+   * drag by movement, not by button.
+   */
+  private attachMeasureInput(canvas: HTMLCanvasElement): () => void {
+    let downAt: { x: number; y: number } | null = null;
+    /**
+     * How far the pointer travelled while the button was down.
+     *
+     * Summed from the movement deltas rather than read off the client
+     * position at release, because the camera takes a pointer lock on press:
+     * under the lock the client position stays where the press was, so a long
+     * drag would end where it began and read as a click.
+     */
+    let travel = 0;
+
+    const toCanvas = (e: MouseEvent) => {
+      const r = canvas.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    };
+    const onMove = (e: MouseEvent) => {
+      this.cursorPx = toCanvas(e);
+    };
+    const onTravel = (e: MouseEvent) => {
+      if (downAt) travel += Math.abs(e.movementX) + Math.abs(e.movementY);
+    };
+    const onLeave = () => {
+      this.cursorPx = null;
+      this.measure.cursor = null;
+      this.measure.heat = null;
+    };
+    const onDown = (e: MouseEvent) => {
+      downAt = toCanvas(e);
+      travel = 0;
+    };
+    const onUp = (e: MouseEvent) => {
+      if (e.button !== 0 || !downAt) return;
+      const from = downAt;
+      const at = toCanvas(e);
+      // Anything past a few pixels was a camera drag, not a click.
+      const moved = Math.max(travel, Math.hypot(at.x - from.x, at.y - from.y));
+      downAt = null;
+      if (moved > 4) return;
+      // The tactics board owns clicks on its tab.
+      if (useRaceStore.getState().tab === 'plan') {
+        this.boardClick(from.x, from.y);
+        return;
+      }
+      // The ruler, when on, owns the click; picking waits until it is off, so
+      // placing a ruler point never also opens a card.
+      if (this.measureEnabled) {
+        const p = this.measure.cursor;
+        if (p) this.measure.points.push({ ...p });
+        return;
+      }
+      if (useInspectStore.getState().pickOnClick) this.pickAt(from.x, from.y);
+    };
+    const onContext = (e: MouseEvent) => {
+      // On the board a right click ends what is being drawn.
+      if (useRaceStore.getState().tab === 'plan') {
+        e.preventDefault();
+        const board = usePlanStore.getState();
+        if (board.draft) board.finish();
+        else board.cancel();
+        return;
+      }
+      if (!this.measureEnabled) return;
+      e.preventDefault();
+      // Right-click removes the last point; empties the ruler when it runs out.
+      this.measure.points.pop();
+    };
+
+    canvas.addEventListener('mousemove', onMove);
+    window.addEventListener('mousemove', onTravel);
+    canvas.addEventListener('mouseleave', onLeave);
+    canvas.addEventListener('mousedown', onDown);
+    window.addEventListener('mouseup', onUp);
+    canvas.addEventListener('contextmenu', onContext);
+    return () => {
+      canvas.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mousemove', onTravel);
+      canvas.removeEventListener('mouseleave', onLeave);
+      canvas.removeEventListener('mousedown', onDown);
+      window.removeEventListener('mouseup', onUp);
+      canvas.removeEventListener('contextmenu', onContext);
+    };
+  }
+
+  /** The ray under a CSS-pixel canvas position, in world space (through the axis mirror). */
+  private rayAt(cssX: number, cssY: number): { origin: { x: number; y: number; z: number }; dir: { x: number; y: number; z: number } } | null {
+    const cam = this.camera.camera;
+    const w = this.canvas.clientWidth;
+    const hgt = this.canvas.clientHeight;
+    if (w <= 0 || hgt <= 0) return null;
+    const ndcX = (cssX / w) * 2 - 1;
+    const ndcY = 1 - (cssY / hgt) * 2;
+    const inv = new Matrix4().multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse).invert();
+    const a = new Vector3(ndcX, ndcY, -1).applyMatrix4(inv);
+    const b = new Vector3(ndcX, ndcY, 1).applyMatrix4(inv);
+    const origin = this.mirrorPoint(a.x, a.y, a.z);
+    const far = this.mirrorPoint(b.x, b.y, b.z);
+    const len = Math.hypot(far.x - origin.x, far.y - origin.y, far.z - origin.z) || 1;
+    return { origin, dir: { x: (far.x - origin.x) / len, y: (far.y - origin.y) / len, z: (far.z - origin.z) / len } };
+  }
+
+  /**
+   * The point on the level under a canvas position: its surface where the
+   * level's index is built, else the ground plane (the data's floor, or 0).
+   */
+  worldAt(cssX: number, cssY: number): { x: number; y: number; z: number } | null {
+    const ray = this.rayAt(cssX, cssY);
+    if (!ray) return null;
+    const hit = this.inspector.surfaceHit(ray);
+    if (hit) return hit;
+    const planeY = this.dataset ? this.dataset.bounds.minY : 0;
+    const t = Math.abs(ray.dir.y) > 1e-9 ? (planeY - ray.origin.y) / ray.dir.y : -1;
+    if (t <= 0) return null;
+    return { x: ray.origin.x + ray.dir.x * t, y: planeY, z: ray.origin.z + ray.dir.z * t };
+  }
+
+  /** A click on the tactics board: the point on the level, and the figure there, to the board's store. */
+  private boardClick(cssX: number, cssY: number): void {
+    const at = this.worldAt(cssX, cssY);
+    if (!at) return;
+    const board = usePlanStore.getState();
+    const scale = Math.max(0.05, board.plan.figureScale);
+    // Each figure within its own size of its middle, and never less than a body width.
+    const reachOf = (f: { kind: string }) => {
+      const t = templateOf(f.kind);
+      const size = t ? Math.max(t.max[0] - t.min[0], t.max[2] - t.min[2]) * 0.6 : 1.2;
+      return Math.max(1.2, size) * scale;
+    };
+    const hit = figureNear(board.plan, board.step, at, reachOf);
+    board.click(at, hit?.id ?? null);
+  }
+
+  /**
+   * Board playback time while a plan plays, seconds: advanced here each frame
+   * and written to the store only at a step change, at the end, or four times
+   * a second - a store write at frame rate would re-render the sidebar with it.
+   * Null when not playing. The board's labels read it.
+   */
+  boardPlayTime: number | null = null;
+  private boardLastPublish = 0;
+  private boardKey = '';
+  private boardFrame: { tris: import('../race/geometry').VertexBuffer; lines: import('../race/geometry').VertexBuffer } | null = null;
+
+  /**
+   * The board as it is this frame: playback advanced, the pointer followed
+   * while a tool draws. Rebuilt only when something it shows changed; the
+   * second value says whether it did.
+   */
+  private buildBoard(dt: number): [{ tris: import('../race/geometry').VertexBuffer; lines: import('../race/geometry').VertexBuffer }, boolean] {
+    const board = usePlanStore.getState();
+    if (board.playing) {
+      const was = this.boardPlayTime ?? board.playTime;
+      const now = was + dt;
+      const total = playbackAt(board.plan, now).total;
+      this.boardPlayTime = Math.min(now, total);
+      const stepChanged = playbackAt(board.plan, was).step !== playbackAt(board.plan, now).step;
+      if (stepChanged || now >= total || now - this.boardLastPublish > 0.25) {
+        this.boardLastPublish = now;
+        board.setPlayTime(this.boardPlayTime);
+        if (now >= total) this.boardPlayTime = null;
+      }
+    } else if (this.boardPlayTime !== null) {
+      // Paused: the store takes the time the board stood at, not the last one published.
+      board.setPlayTime(this.boardPlayTime);
+      this.boardPlayTime = null;
+    }
+    const wantsCursor = board.tool !== 'select' || board.moving;
+    this.boardCursor = wantsCursor && this.cursorPx ? this.worldAt(this.cursorPx.x, this.cursorPx.y) : null;
+    const time = this.boardPlayTime ?? board.playTime;
+    const at = board.playing ? playbackAt(board.plan, time) : { step: board.step, u: 0 };
+    const c = this.boardCursor;
+    const key = [
+      boardIds.of(board.plan),
+      at.step,
+      at.u.toFixed(4),
+      board.selected,
+      boardIds.of(board.draft),
+      c ? `${c.x.toFixed(3)},${c.y.toFixed(3)},${c.z.toFixed(3)}` : '',
+      board.tool === 'place' ? `${board.kind}|${board.team}|${board.yaw}` : '',
+    ].join('/');
+    if (this.boardFrame && key === this.boardKey) return [this.boardFrame, false];
+    this.boardKey = key;
+    this.boardFrame = this.boardScene.build(board.plan, {
+      step: at.step,
+      u: at.u,
+      selected: board.selected,
+      draft: board.draft,
+      cursor: c,
+      placing: board.tool === 'place' ? { kind: board.kind, team: board.team, yaw: board.yaw } : null,
+    });
+    return [this.boardFrame, true];
+  }
+
+  clearMeasure(): void {
+    this.measure.points.length = 0;
+  }
+
+  /**
+   * Accumulated heat at a CSS-pixel canvas position.
+   *
+   * Exposed separately from the throttled per-frame probe so callers that want
+   * one specific reading — a test, a click handler — can take it directly.
+   */
+  readHeatProbe(cssX: number, cssY: number): number | null {
+    if (!this.renderer) return null;
+    const dpr = window.devicePixelRatio || 1;
+    // The buffer holds the estimate itself rather than a sum, so the only thing
+    // to undo is the half-float range scaling.
+    return this.renderer.readHeatAt(cssX * dpr, cssY * dpr, this.currentGain());
+  }
+
+  /**
+   * The Measure panel's live *Heat here*, read under the cursor.
+   *
+   * After the frame is drawn, and rarely: this is a single-pixel readback, which
+   * stalls the GPU pipeline every time it runs. Through `readHeatProbe`, so the
+   * live readout is divided by the gain the frame was written with — on a
+   * half-float target a power of two away from 1 — and agrees with the one-shot
+   * probe and the saturation point.
+   */
+  private probeCursor(now: number): void {
+    if (!this.measureEnabled || !this.cursorPx || now - this.lastProbe <= 120) return;
+    this.lastProbe = now;
+    this.measure.heat = this.readHeatProbe(this.cursorPx.x, this.cursorPx.y);
+  }
+
+  /** Awaited probe; WebGPU can only read a texture asynchronously. */
+  probeHeat(cssX: number, cssY: number): Promise<number | null> {
+    if (!this.renderer) return Promise.resolve(null);
+    const dpr = window.devicePixelRatio || 1;
+    return this.renderer.probeHeat(cssX * dpr, cssY * dpr, this.currentGain());
+  }
+
+  start(): void {
+    if (this.raf || !this.renderer) return;
+    this.lastNow = performance.now();
+    const tick = (now: number) => {
+      if (this.disposed) return;
+      this.raf = requestAnimationFrame(tick);
+      this.frame(now);
+    };
+    this.raf = requestAnimationFrame(tick);
+  }
+
+  stop(): void {
+    if (this.raf) cancelAnimationFrame(this.raf);
+    this.raf = 0;
+  }
+
+  dispose(): void {
+    this.disposed = true;
+    this.stop();
+    this.detachInput?.();
+    this.detachMeasure?.();
+    this.renderer?.dispose();
+    this.renderer = null;
+  }
+
+  /**
+   * Scale to apply to every splat, divided back out at composite.
+   *
+   * On a 32-bit target, none: the format spans the whole range of any real field.
+   * On a half-float target it is essential. Half float tops out at 65504 with 11
+   * bits of mantissa, while a dense field reaches hundreds of thousands — so the
+   * hot end both clips *and* loses its low bits to rounding, and the error grows
+   * with the value, which reads as the densest areas being far cooler than they
+   * are. Anchoring the field's interesting range to a magnitude the format handles
+   * well fixes both. The anchor is the analytic estimate of the field's peak
+   * (`estimateSaturation`, from the row count, the sprite and the data's extent),
+   * mapped to `HEAT_F16_LEVEL` and rounded to a power of two — not the saturation
+   * point, for the reason given in the body.
+   */
+  private heatGain(renderer: Renderer, h: HeatSettings): number {
+    if (renderer.heatPrecision === 'f32' || !this.dataset) return 1;
+    // Anchored to an analytic estimate of the field's magnitude, and *not* to the
+    // saturation point. Saturation is applied at composite precisely so that
+    // dragging it never restarts convergence — but if the gain moved with it, the
+    // buffer would still hold values written at the old gain while the composite
+    // divided by the new one, and the two errors cancel the change exactly. The
+    // slider would appear to do nothing.
+    const peak = estimateSaturation(
+      this.dataset.count,
+      h.radius,
+      h.centerIntensity,
+      this.dataset.bounds,
+    );
+    // Quantised to a power of two so a small drift in the estimate leaves the gain
+    // — and therefore the accumulated buffer — completely alone.
+    const exp = Math.round(Math.log2(HEAT_F16_LEVEL / Math.max(1e-6, peak)));
+    return Math.pow(2, Math.max(-20, Math.min(20, exp)));
+  }
+
+  /**
+   * The gain the current frame was written with.
+   *
+   * Cached per frame rather than recomputed, so a readback cannot divide by a
+   * different value than the splat multiplied by.
+   */
+  private currentGain(): number {
+    return this.frameGain;
+  }
+
+  /**
+   * Copy the engine's playhead into the store without triggering a seek.
+   *
+   * The engine owns the playhead during playback — routing it through React every
+   * frame would cost more than the rest of the frame — but the store's copy has to
+   * be right whenever something else reads it. Writing `playhead` alone is safe
+   * because adoption is gated on `seekNonce`, so this cannot feed back as a seek.
+   */
+  private publishPlayhead(): void {
+    const s = useStore.getState();
+    if (Math.abs(s.timeline.playhead - this.playhead) < 1e-6) return;
+    useStore.setState({ timeline: { ...s.timeline, playhead: this.playhead } });
+  }
+
+  /**
+   * Set the saturation point from the field currently on screen.
+   *
+   * Meters the accumulated heat rather than deriving it, because the analytic
+   * estimate has to assume a peak-to-mean ratio and real telemetry's clustering
+   * makes that assumption wrong by an order of magnitude. Returns what it chose so
+   * the caller can report it, or null when there was nothing lit to meter.
+   */
+  async autoExpose(): Promise<ExposureResult | null> {
+    const renderer = this.renderer;
+    if (!renderer || !this.dataset) return null;
+    // Metering a half-finished estimate would expose for the noise, so give the
+    // accumulation a moment to converge first.
+    this.forceRenderFrames = Math.max(this.forceRenderFrames, 2);
+    const samples = await renderer.readHeatField(EXPOSURE_SAMPLES);
+    // Undo the half-float range scaling, so the exposure is metered in the same
+    // units the saturation point is expressed in.
+    const gain = this.currentGain();
+    if (samples && gain !== 1) {
+      for (let i = 0; i < samples.length; i++) samples[i] /= gain;
+    }
+    const result = autoExposure(samples);
+    if (result.saturation !== null) {
+      useStore.getState().patchHeat({ saturation: result.saturation });
+    }
+    return result;
+  }
+
+  /** Fit the data to the view. Keeps the current orientation by default. */
+  frameDataset(keepOrientation = true): void {
+    const race = useRaceStore.getState();
+    if (race.tab === 'race' && race.laps.length) {
+      this.camera.frame(this.toDisplay(raceBounds(race)), snapshot().camera.fov, keepOrientation);
+      return;
+    }
+    if (race.tab === 'plan') {
+      // The plan's figures and arrows; with none yet, the level, then the data.
+      const b = boardBounds(usePlanStore.getState().plan);
+      const level = snapshot().level;
+      // A map picture is framed by where its anchors put it.
+      const quad = level?.kind === 'image' ? mapQuadFromAnchors(level) : null;
+      const fallback =
+        level?.kind === 'model'
+          ? level.bounds
+          : quad && !quad.degenerate
+            ? { minX: quad.minX, maxX: quad.maxX, minY: quad.y, maxY: quad.y + 1, minZ: quad.minZ, maxZ: quad.maxZ }
+            : (this.dataset?.bounds ?? null);
+      const box = b ?? fallback;
+      if (box) this.camera.frame(this.toDisplay(box), snapshot().camera.fov, keepOrientation);
+      return;
+    }
+    if (this.dataset) {
+      this.camera.frame(this.toDisplay(this.dataset.bounds), snapshot().camera.fov, keepOrientation);
+    }
+  }
+
+  /** A world box as the camera sees it, through the axis mirror. */
+  private toDisplay<B extends { minX: number; minY: number; minZ: number; maxX: number; maxY: number; maxZ: number }>(
+    b: B,
+  ): B {
+    const [mx, my, mz] = this.mirror;
+    const x = [b.minX * mx, b.maxX * mx];
+    const y = [b.minY * my, b.maxY * my];
+    const z = [b.minZ * mz, b.maxZ * mz];
+    return {
+      ...b,
+      minX: Math.min(x[0], x[1]),
+      maxX: Math.max(x[0], x[1]),
+      minY: Math.min(y[0], y[1]),
+      maxY: Math.max(y[0], y[1]),
+      minZ: Math.min(z[0], z[1]),
+      maxZ: Math.max(z[0], z[1]),
+    };
+  }
+
+  /**
+   * The near plane this view can afford.
+   *
+   * Depth precision goes with the square of the distance over the near plane: a near
+   * calibrated for standing in the data leaves steps of several metres at a map seen
+   * from far above, and water and the shore under it then fight for each pixel,
+   * flickering as the camera moves. So from outside the scene, or high over its ground,
+   * the plane moves out with the distance to the nearest thing it could cut.
+   *
+   * Outside means outside the level and the data together: a small level under wider
+   * data still has data to cut. High means past a tenth of the level's width over its
+   * ground, which leaves a person flying inside a tall building their near plane. The
+   * race tab's cars are in neither box, and its camera sits metres from one.
+   */
+  private nearForView(near: number, s: ReturnType<typeof snapshot>, raceTab: boolean): number {
+    if (raceTab || this.camera.projection !== 'perspective') return near;
+    const level = s.level?.kind === 'model' ? s.level : null;
+    const boxes = [level?.bounds, s.dataset?.bounds].filter((b) => b !== undefined);
+    if (!boxes.length) return near;
+    const p = this.mirrorPoint(this.camera.position.x, this.camera.position.y, this.camera.position.z);
+    const dx = Math.max(Math.min(...boxes.map((b) => b.minX)) - p.x, 0, p.x - Math.max(...boxes.map((b) => b.maxX)));
+    const dy = Math.max(Math.min(...boxes.map((b) => b.minY)) - p.y, 0, p.y - Math.max(...boxes.map((b) => b.maxY)));
+    const dz = Math.max(Math.min(...boxes.map((b) => b.minZ)) - p.z, 0, p.z - Math.max(...boxes.map((b) => b.maxZ)));
+    const outside = Math.hypot(dx, dy, dz);
+    const top = level?.relief?.highY;
+    const above =
+      top === undefined || !level ? 0 : p.y - top - 0.1 * Math.max(level.bounds.maxX - level.bounds.minX, level.bounds.maxZ - level.bounds.minZ);
+    return Math.max(near, 0.02 * Math.max(outside, above));
+  }
+
+  /** A world point as the camera sees it, or back: the mirror is its own inverse. */
+  mirrorPoint(x: number, y: number, z: number): { x: number; y: number; z: number } {
+    const [mx, my, mz] = this.mirror;
+    return { x: x * mx, y: y * my, z: z * mz };
+  }
+
+  // ---------------------------------------------------------------- inspect
+
+  /**
+   * The camera in world terms: where it is and the way it looks.
+   *
+   * Through the axis mirror, both of them. The camera's own yaw lives in
+   * display space, so with an axis inverted it describes the mirror image of
+   * the direction the view shows; the world direction is what a number typed
+   * back in, or compared against a tool's, has to mean.
+   */
+  cameraPose(): { position: Vec3; forward: Vec3 } {
+    const c = this.camera;
+    const f = c.forward(new Vector3());
+    return {
+      position: this.mirrorPoint(c.position.x, c.position.y, c.position.z),
+      forward: this.mirrorPoint(f.x, f.y, f.z),
+    };
+  }
+
+  /** Move the camera to a world position and, when given, turn it to a world direction. */
+  setCameraPose(position: Vec3 | null, forward: Vec3 | null): void {
+    const c = this.camera;
+    if (position) {
+      const p = this.mirrorPoint(position.x, position.y, position.z);
+      c.position.set(p.x, p.y, p.z);
+    }
+    if (forward) {
+      const f = this.mirrorPoint(forward.x, forward.y, forward.z);
+      const len = Math.hypot(f.x, f.y, f.z) || 1;
+      const lim = Math.PI / 2 - 1e-3;
+      // Straight up or down keeps the yaw it had: it has none of its own.
+      if (Math.hypot(f.x, f.z) > 1e-9) c.yaw = Math.atan2(-f.x, -f.z);
+      c.pitch = Math.max(-lim, Math.min(lim, Math.asin(Math.max(-1, Math.min(1, f.y / len)))));
+    }
+    this.chase = null;
+    c.moved = true;
+  }
+
+  /**
+   * Go to a world point.
+   *
+   * `stand` puts the camera on the point - looking along `forward` when given,
+   * otherwise the way it already looked. `look` keeps the camera's heading
+   * (tipped to look down at the point if it was looking level) and backs off
+   * along it to a distance that shows the point and what is around it; the
+   * focus distance, the parallel view's height and a fly speed that would cross
+   * that distance in about a second follow, so the view arrives usable.
+   */
+  jumpTo(target: Vec3, mode: 'look' | 'stand', forward: Vec3 | null = null): void {
+    if (mode === 'stand') {
+      this.setCameraPose(target, forward);
+      return;
+    }
+    const c = this.camera;
+    let f = forward;
+    if (!f) {
+      const pose = this.cameraPose();
+      const flat = Math.hypot(pose.forward.x, pose.forward.z);
+      const pitch = (lookAtPitch(c.pitchDegrees) * Math.PI) / 180;
+      // Straight down has no heading to keep; any will do.
+      const hx = flat > 1e-9 ? pose.forward.x / flat : 0;
+      const hz = flat > 1e-9 ? pose.forward.z / flat : -1;
+      f = { x: hx * Math.cos(pitch), y: Math.sin(pitch), z: hz * Math.cos(pitch) };
+    }
+    const len = Math.hypot(f.x, f.y, f.z) || 1;
+    const eye = this.cameraPose().position;
+    const d = lookAtDistance(Math.hypot(eye.x - target.x, eye.y - target.y, eye.z - target.z), this.sceneExtent());
+    this.setCameraPose(
+      { x: target.x - (f.x / len) * d, y: target.y - (f.y / len) * d, z: target.z - (f.z / len) * d },
+      f,
+    );
+    c.focusDistance = d;
+    if (c.projection === 'orthographic') c.orthoHeight = 2 * d * Math.tan((snapshot().camera.fov * Math.PI) / 360);
+    c.speed = Math.min(c.speed, Math.max(MIN_FLY_SPEED, d));
+  }
+
+  /** The horizontal size of what is loaded: the level when there is one, the data otherwise. */
+  private sceneExtent(): number {
+    const s = snapshot();
+    const b = s.level?.kind === 'model' ? s.level.bounds : (s.dataset?.bounds ?? null);
+    if (!b) return 1000;
+    const e = Math.max(b.maxX - b.minX, b.maxZ - b.minZ);
+    return Number.isFinite(e) && e > 0 ? e : 1000;
+  }
+
+  /**
+   * Answer a click at a CSS-pixel canvas position: the drawn data point under
+   * it, or the level's surface. See `Inspector`.
+   *
+   * Everything the answer depends on is captured here, at the click, so a
+   * pick still working when the camera moves on answers the click that was
+   * made and not the view that followed.
+   */
+  pickAt(cssX: number, cssY: number): void {
+    if (useRaceStore.getState().tab === 'race') return;
+    const s = snapshot();
+    const cam = this.camera.camera;
+    const w = this.canvas.clientWidth;
+    const hgt = this.canvas.clientHeight;
+    if (w <= 0 || hgt <= 0) return;
+    const ndcX = (cssX / w) * 2 - 1;
+    const ndcY = 1 - (cssY / hgt) * 2;
+    // Display space first, as the camera's matrices are, then through the
+    // mirror into the world the data and the level live in.
+    const inv = new Matrix4().multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse).invert();
+    const a = new Vector3(ndcX, ndcY, -1).applyMatrix4(inv);
+    const b = new Vector3(ndcX, ndcY, 1).applyMatrix4(inv);
+    const origin = this.mirrorPoint(a.x, a.y, a.z);
+    const far = this.mirrorPoint(b.x, b.y, b.z);
+    const len = Math.hypot(far.x - origin.x, far.y - origin.y, far.z - origin.z) || 1;
+    const dir = { x: (far.x - origin.x) / len, y: (far.y - origin.y) / len, z: (far.z - origin.z) / len };
+
+    // One CSS pixel at a distance along the ray. The ray starts on the near
+    // plane, so under perspective its view depth is that much further.
+    const m11 = cam.projectionMatrix.elements[5];
+    const near = this.viewNear;
+    const perspective = this.camera.projection === 'perspective';
+    const worldPerPixel = perspective ? (t: number) => (2 * (t + near)) / (m11 * hgt) : () => 2 / (m11 * hgt);
+
+    // The level is drawn only inside the slice and the distance cull, when
+    // those apply to it; a click goes through what is not drawn.
+    const sl = s.slice;
+    const hs = s.heat;
+    const eye = { x: this.camPos[0], y: this.camPos[1], z: this.camPos[2] };
+    const fwd = { x: this.camFwd[0], y: this.camFwd[1], z: this.camFwd[2] };
+    const sliceHides = sl.enabled && sl.outsideOpacity <= 0.02;
+    const axis = sl.axis === 'x' ? 0 : sl.axis === 'y' ? 1 : 2;
+    const cullHides = hs.cullGeometry && (hs.cullNear > 0 || hs.cullFar > 0);
+    const accept =
+      sliceHides || cullHides
+        ? (x: number, y: number, z: number) => {
+            if (sliceHides) {
+              const v = axis === 0 ? x : axis === 1 ? y : z;
+              if (v < sl.center - sl.thickness * 0.5 || v > sl.center + sl.thickness * 0.5) return false;
+            }
+            if (cullHides) {
+              const dist = hs.cullPlanar
+                ? (x - eye.x) * fwd.x + (y - eye.y) * fwd.y + (z - eye.z) * fwd.z
+                : Math.hypot(x - eye.x, y - eye.y, z - eye.z);
+              if (dist < hs.cullNear || (hs.cullFar > 0 && dist > hs.cullFar)) return false;
+            }
+            return true;
+          }
+        : null;
+
+    // The tables the frame reuses are copied: an answer that takes a few
+    // frames must not see them change under it.
+    const drawn = this.drawn
+      ? {
+          ...this.drawn,
+          teamSign: this.drawn.teamSign ? this.drawn.teamSign.slice() : null,
+          splitSign: this.drawn.splitSign ? this.drawn.splitSign.slice() : null,
+        }
+      : null;
+
+    void this.inspector.pick({
+      click: { x: cssX, y: cssY },
+      ray: { origin, dir },
+      eye,
+      screen: { viewProj: this.pickViewProj.slice(), width: w, height: hgt },
+      worldPerPixel,
+      dataset: this.dataset,
+      drawn,
+      cubes: this.pickCubes,
+      level: this.level,
+      accept,
+    });
+    this.invalidate(2);
+  }
+
+  /**
+   * Invert axes and keep looking at the same place: the camera's position and
+   * view direction go through the change, so the view flips in place rather
+   * than jumping to the mirror image of where it was.
+   */
+  private setMirror(want: [number, number, number]): void {
+    const flip = want.map((v, i) => v * this.mirror[i]);
+    const c = this.camera;
+    c.position.set(c.position.x * flip[0], c.position.y * flip[1], c.position.z * flip[2]);
+    // Forward is (-sin yaw cos pitch, sin pitch, -cos yaw cos pitch).
+    const fx = -Math.sin(c.yaw) * Math.cos(c.pitch) * flip[0];
+    const fy = Math.sin(c.pitch) * flip[1];
+    const fz = -Math.cos(c.yaw) * Math.cos(c.pitch) * flip[2];
+    c.yaw = Math.atan2(-fx, -fz);
+    c.pitch = Math.asin(Math.max(-1, Math.min(1, fy)));
+    c.moved = true;
+    if (this.chase) this.chase = null;
+    this.mirror = want;
+  }
+
+  /**
+   * Point at a preset view and immediately fit the data to it.
+   *
+   * A preset may also change the projection — the isometric and elevation views
+   * are only meaningful as parallel projections — so the store is updated to match
+   * rather than left disagreeing with the camera.
+   */
+  applyPreset(name: string): void {
+    const wanted = this.camera.setPreset(name);
+    this.frameDataset(true);
+    if (wanted) {
+      this.lastStoreProjection = wanted;
+      const s = useStore.getState();
+      if (s.camera.projection !== wanted) s.patchCamera({ projection: wanted });
+    }
+  }
+
+  /**
+   * Switch projection, preserving apparent scale, and tell the store.
+   *
+   * Goes through the camera rather than the store so the scale-matching and the
+   * remembered perspective pose apply; setting the store directly would work but
+   * would jump-cut the view.
+   */
+  setProjection(next: Projection): void {
+    this.camera.setProjection(next);
+    this.lastStoreProjection = next;
+    const s = useStore.getState();
+    if (s.camera.projection !== next) s.patchCamera({ projection: next });
+  }
+
+  // ------------------------------------------------------------------- frame
+
+  private frame(now: number): void {
+    const renderer = this.renderer;
+    if (!renderer) return;
+    const dtRaw = (now - this.lastNow) / 1000;
+    this.lastNow = now;
+    // Clamp so a tab switch doesn't teleport the playhead or the camera.
+    const dt = Math.min(0.1, Math.max(0, dtRaw));
+    const s = snapshot();
+
+    /**
+     * A new dataset is announced one frame before it is uploaded.
+     *
+     * `renderer.setDataset` packs every resident row into GPU buffers on this
+     * thread, synchronously, and on tens of millions of rows that is minutes
+     * during which nothing repaints and nothing can be cancelled. Reproduced with
+     * `probe-load-crash.mjs`: 55M rows left the page unresponsive for over ten
+     * minutes, and for someone with less headroom it ends as an out-of-memory tab
+     * crash instead.
+     *
+     * The label has to be published on an *earlier* frame than the work, or it
+     * would never be seen: setting it and then blocking in the same frame means
+     * the browser has no opportunity to paint it. So the first frame after a
+     * dataset arrives says what is about to happen and returns; the next one does
+     * it. One frame of delay buys the difference between a named phase and an
+     * apparent freeze — which is what this looked like, and it was reported as a
+     * crash "at computing lifetimes", the last thing the ingest worker had said.
+     */
+    if (s.dataset !== this.dataset && s.dataset && this.uploadAnnounced !== s.dataset) {
+      this.uploadAnnounced = s.dataset;
+      useStore.getState().setLoad({
+        active: true,
+        label: t('render.engine.uploading', { count: s.dataset.count }),
+        fraction: null,
+        rowsSoFar: s.dataset.count,
+        error: null,
+      });
+      // Residency counts belong to the dataset on the GPU, and that is no longer
+      // the one being asked about. Left standing they describe the *previous*
+      // load for as long as the announcement lasts, which reads as "all ten
+      // million rows are already resident" about a dataset not yet uploaded —
+      // and anything waiting for residency to settle by watching these numbers
+      // is answered by the old ones before the new upload has begun.
+      this.live.residentRows = 0;
+      this.live.droppedRows = 0;
+      this.invalidate(2);
+      return;
+    }
+
+    if (s.dataset !== this.dataset) {
+      this.dataset = s.dataset;
+      this.cursor = s.dataset ? new TrackCursor(s.dataset) : null;
+      this.teamPalette = teamPaletteFor(s.dataset);
+      this.filterCache = new WeakMap();
+      this.pickCubes = null;
+      this.inspector.setDataset(s.dataset);
+      // Decided by the same function as the load's fit check, so a load the check
+      // approved is a load that ends up resident. A figure above the detected one
+      // is the user's deliberate choice and applies; only the ceiling the slider
+      // stops at caps it, so a value set from the console cannot exceed that.
+      renderer.gpuBudgetBytes = effectiveGpuBudget(s.budget.gpuBudgetBytes, s.budget.gpuBudgetMax);
+      renderer.setDataset(s.dataset);
+      if (s.dataset) {
+        // Cleared only once the upload is actually done, so the panel does not
+        // claim success while the thread is still packing buffers.
+        useStore.getState().setLoad({
+          active: false,
+          label: '',
+          fraction: null,
+          rowsSoFar: s.dataset.count,
+          error: null,
+        });
+      }
+      this.live.residentRows = renderer.residentRows;
+      this.live.droppedRows = renderer.droppedRows;
+      this.live.gpuBytes = renderer.gpuBytesUsed;
+      this.live.gpuName = renderer.gpuName;
+      // Park at the *start*, not the end. Parking at the end means the first
+      // press of Play either snaps instantly back to the beginning (loop on) or
+      // does nothing at all (loop off), both of which read as a broken button.
+      // `all` mode ignores the playhead anyway, so nothing is lost by doing this.
+      this.playhead = s.dataset ? s.dataset.timeRange[0] : 0;
+      this.publishPlayhead();
+      // Meter the exposure once this dataset has something on screen to meter.
+      // Doing it automatically matters more than it sounds: the analytic estimate
+      // it replaces can leave the interesting part of the data in the bottom
+      // quarter of the ramp, and a first-time user has no reason to suspect the
+      // saturation slider rather than the data.
+      this.autoExposePending = s.dataset ? AUTO_EXPOSE_AFTER_FRAMES : 0;
+      this.geometrySig = '';
+      // The renderer dropped the routes with the old dataset's buffers.
+      this.linesKey = '';
+      this.meteredKind = null;
+      this.lines = null;
+      this.live.lines = null;
+      this.accumFrames = 0;
+      // A fresh dataset resets to the default three-quarter view rather than
+      // keeping whatever the previous one happened to be pointing at.
+      if (s.dataset) this.camera.frame(s.dataset.bounds, s.camera.fov, false);
+    }
+
+    if (s.level !== this.level) {
+      if (!sameLevelUpload(this.level, s.level)) renderer.setLevel(s.level);
+      this.level = s.level;
+      this.inspector.setLevel(s.level);
+      this.geometrySig = '';
+    }
+
+    // Line heat's routes: built when the mode wants them, for this dataset and
+    // these events, and freed when it no longer does - they cost four bytes a
+    // row here and eight on the GPU, which nothing else needs.
+    const wantLines = s.mode === 'heat-lines' && this.dataset !== null;
+    const linesKey = wantLines ? `${this.dataset!.id}|${lineSettingsKey(s.lines)}` : '';
+    if (linesKey !== this.linesKey) {
+      this.linesKey = linesKey;
+      this.lines = wantLines ? buildLines(this.dataset!, s.lines) : null;
+      renderer.setLines(this.lines);
+      this.live.gpuBytes = renderer.gpuBytesUsed;
+      this.live.lines = this.lines
+        ? { routes: this.lines.routes, ended: this.lines.ended, segments: this.lines.segments, jumps: this.lines.jumps }
+        : null;
+      this.geometrySig = '';
+    }
+
+    if (s.timeline.seekNonce !== this.lastSeekNonce) {
+      this.lastSeekNonce = s.timeline.seekNonce;
+      this.playhead = s.timeline.playhead;
+    }
+
+    // The selected session's span, not the whole file's. See `playbackRange`.
+    const range = playbackRange(this.dataset, s.mode, s.team.session);
+    const playing = s.timeline.playing && !!this.dataset;
+    if (playing && !this.wasPlaying) {
+      // Starting from the end restarts, the way every media player does. Without
+      // this, pressing Play after a run to the end looks like a dead button.
+      const span = range[1] - range[0];
+      if (span > 0 && this.playhead >= range[1] - span * 1e-4) this.playhead = range[0];
+    }
+    if (playing) {
+      this.playhead += dt * s.timeline.speed;
+      if (this.playhead > range[1]) {
+        if (s.timeline.loop) {
+          this.playhead = range[0];
+        } else {
+          this.playhead = range[1];
+          useStore.getState().setPlaying(false);
+        }
+      }
+    }
+    this.playhead = Math.min(range[1], Math.max(range[0], this.playhead));
+    const race = useRaceStore.getState();
+    // The tactics board draws its own scene over the level, as the race tab does,
+    // and no heat: everything that skips the heat for the race skips it for the board.
+    const boardTab = race.tab === 'plan';
+    const raceTab = race.tab === 'race' || boardTab;
+    if (raceTab !== this.raceWasTab) {
+      this.raceWasTab = raceTab;
+      this.chase = null;
+      this.invalidate(2);
+    }
+    let raceBuilt: ReturnType<RaceScene['build']> | null = null;
+    let raceChanged = false;
+    if (boardTab) {
+      const [frame, changed] = this.buildBoard(dt);
+      raceBuilt = { ...frame, cars: new Map() };
+      raceChanged = changed;
+    } else if (raceTab) {
+      this.advanceRace(race, dt);
+      raceChanged =
+        race !== this.raceBuiltFrom || raceClock.time !== this.raceBuiltAt || raceHover.value !== this.raceBuiltHover;
+      this.raceBuiltFrom = race;
+      this.raceBuiltAt = raceClock.time;
+      this.raceBuiltHover = raceHover.value;
+      // Before the camera update, so a chase camera is where the car is this
+      // frame rather than the last.
+      raceBuilt = this.raceScene.build(race, raceClock.time, s.level?.kind === 'model', raceHover.value);
+      this.follow(race, raceBuilt.cars);
+    }
+    // Publish on the transitions rather than every frame: the scrubber reads the
+    // engine directly for smoothness, but the store has to be correct whenever
+    // anything else might read it — pausing, looping, or reaching the end.
+    if (playing !== this.wasPlaying) this.publishPlayhead();
+    this.wasPlaying = playing;
+
+    const { width, height } = this.resizeCanvas();
+    this.camera.invertY = s.camera.invertY;
+    const mirror = s.camera.mirror;
+    const want: [number, number, number] = [mirror.x ? -1 : 1, mirror.y ? -1 : 1, mirror.z ? -1 : 1];
+    if (want.some((v, i) => v !== this.mirror[i])) this.setMirror(want);
+    // Fly speed is owned by two things — the slider and the mouse wheel — so it
+    // is pushed down only when the *store* changed. Assigning it unconditionally
+    // would overwrite every wheel notch before the sync-back below could see it,
+    // which silently breaks wheel-to-adjust-speed while looking correct.
+    if (s.camera.flySpeed !== this.lastStoreFlySpeed) {
+      this.camera.speed = s.camera.flySpeed;
+      this.lastStoreFlySpeed = s.camera.flySpeed;
+    }
+    // Pushed down only when the *store* changed, so a projection the camera chose
+    // itself — via a preset, or the scale-preserving switch — is not immediately
+    // overwritten by a stale store value on the same frame.
+    if (s.camera.projection !== this.lastStoreProjection) {
+      this.lastStoreProjection = s.camera.projection;
+      this.camera.setProjection(s.camera.projection);
+    }
+    this.camera.gamepad = s.camera.gamepad;
+    if (!raceTab) this.followTrack(s);
+    this.viewNear = this.nearForView(s.camera.near, s, raceTab);
+    this.camera.update(dt, width / height, s.camera.fov, this.viewNear, s.camera.far);
+    // The pad's "frame" button is a request rather than an action, so the camera
+    // does not need to know about the dataset.
+    if (this.camera.frameRequested) {
+      this.camera.frameRequested = false;
+      this.frameDataset(true);
+    }
+    // Keep the UI's fly-speed box in sync with the wheel and with framing.
+    if (Math.abs(this.camera.speed - this.lastStoreFlySpeed) > 1e-6) {
+      this.lastStoreFlySpeed = this.camera.speed;
+      useStore.getState().patchCamera({ flySpeed: this.camera.speed });
+    }
+
+    const cam = this.camera.camera;
+    const [mx, my, mz] = this.mirror;
+    this.mirrorMat.makeScale(mx, my, mz);
+    this.viewMirrored.multiplyMatrices(cam.matrixWorldInverse, this.mirrorMat);
+    this.viewProj.multiplyMatrices(cam.projectionMatrix, this.viewMirrored);
+    this.pickViewProj.set(this.viewProj.elements);
+    if (this.live.backend === 'webgpu') this.viewProj.premultiply(this.depthRemap);
+    this.viewProjArr.set(this.viewProj.elements);
+    this.viewArr.set(this.viewMirrored.elements);
+    this.projArr.set(cam.projectionMatrix.elements);
+    this.camPos[0] = cam.position.x * mx;
+    this.camPos[1] = cam.position.y * my;
+    this.camPos[2] = cam.position.z * mz;
+    // The view axis, read out of the view matrix's third row rather than
+    // recomputed from yaw and pitch: the matrix is the thing the projection
+    // actually uses, so anything derived from it cannot disagree with what is on
+    // screen. Negated because a view matrix looks down -Z.
+    const m = this.viewMirrored.elements;
+    this.camFwd[0] = -m[2];
+    this.camFwd[1] = -m[6];
+    this.camFwd[2] = -m[10];
+
+    // A line lays down far less heat per sample than a sprite where samples are
+    // close together, and none at all where someone stood still - so the
+    // saturation metered for points leaves lines all but black, and the other
+    // way round. Meter again when the kind of heat changes, in the heat mode it
+    // changed to: box replay draws no heat, and metering there would leave the
+    // next heat mode with a saturation for nothing.
+    const heatKind = raceTab || s.mode === 'team' ? null : s.mode === 'heat-lines' ? `lines|${this.linesKey}` : 'points';
+    if (heatKind !== null && heatKind !== this.meteredKind) {
+      if (this.meteredKind !== null && this.dataset) this.autoExposePending = AUTO_EXPOSE_AFTER_FRAMES;
+      this.meteredKind = heatKind;
+    }
+
+    // ---- visible time range
+    //
+    // In `all` mode the playhead is ignored entirely, which is what makes it a
+    // different question ("where does this happen") rather than just scrubbing
+    // to the end. In `lifetime` windowing the range is a superset bounded by the
+    // longest gap in the data, and the shader narrows it per row.
+    const tl = s.timeline;
+    const showAll = tl.mode === 'all' || !this.dataset?.time;
+    const maxLife = this.dataset
+      ? Math.max(this.dataset.maxLifetimeGap, tl.defaultLifetime)
+      : tl.defaultLifetime;
+    const timeHi = showAll ? range[1] : this.playhead;
+    let timeLo = range[0];
+    if (!showAll) {
+      if (tl.window === 'fixed') timeLo = Math.max(range[0], timeHi - tl.windowSeconds);
+      else if (tl.window === 'lifetime') timeLo = Math.max(range[0], timeHi - maxLife);
+    }
+    // Line heat played back: every route drawn up to where its person is now,
+    // with the heat fading over the window behind them - the whole route so
+    // far in a cumulative window. The rows it needs reach past the playhead by
+    // the longest segment, for the segments people are in the middle of.
+    const lineTrail =
+      !raceTab && !showAll && s.mode === 'heat-lines' && this.lines !== null
+        ? { now: this.playhead, tail: tl.window === 'cumulative' ? 1e30 : Math.max(1e-3, tl.windowSeconds) }
+        : null;
+    if (lineTrail) {
+      timeLo = tl.window === 'cumulative' ? range[0] : Math.max(range[0], this.playhead - lineTrail.tail);
+    }
+    const rowsHi = lineTrail ? timeHi + this.lines!.maxSeconds : timeHi;
+    const useLifetime =
+      !lineTrail && !showAll && tl.window === 'lifetime' && !!this.dataset?.lifetime;
+    const lifetimeParams = useLifetime
+      ? {
+          now: this.playhead,
+          defaultLifetime: tl.defaultLifetime,
+          fadeOut: Math.max(0, Math.min(1, tl.fadeOut)),
+        }
+      : null;
+
+    // ---- team weights, the difference split and column filters
+    //
+    // Only difference mode has two sides, so a column split is inert elsewhere.
+    // Under one the group table is visibility only, and both are sent: the column
+    // decides the sign, the groups still decide who is drawn.
+    const heatMode = heatModeFor(s.mode, s.lines);
+    const { teamSign, split } = frameSignTables(
+      this.dataset,
+      heatMode,
+      s.positiveTeams,
+      s.negativeTeams,
+      s.teamVisibility,
+      s.filters,
+      s.split,
+      this.signScratch,
+    );
+    // The person filter is one of these: a slot over the person ids, so the heat
+    // shows the selected people as the box replay does.
+    const activeFilters = buildActiveFilters(this.dataset, s.filters, this.filterCache);
+    // A filter can take what is drawn from every position to a hundred kills -
+    // a density orders of magnitude lower, which the saturation metered for
+    // all of it would leave all but invisible. Meter again, as on a load.
+    if (s.filters !== this.meteredFilters) {
+      if (this.meteredFilters !== null && this.dataset) this.autoExposePending = AUTO_EXPOSE_AFTER_FRAMES;
+      this.meteredFilters = s.filters;
+    }
+
+    // ---- colour LUT
+    const lutSig = JSON.stringify(s.heat.scheme);
+    let lutDirty = false;
+    if (lutSig !== this.lutSig) {
+      this.lutSig = lutSig;
+      this.lut = buildColorLut(s.heat.scheme, this.lut.length ? this.lut : undefined);
+      lutDirty = true;
+    }
+
+    // ---- sprite ramp curve
+    // Baked here rather than in the store so dragging a control point costs one
+    // 256-entry evaluation per frame at most, and nothing at all once released.
+    const curveSig = curveSignature(s.heat.curve);
+    let curveDirty = false;
+    if (curveSig !== this.curveSig) {
+      this.curveSig = curveSig;
+      this.curveLut = bakeCurveLut(
+        s.heat.curve,
+        CURVE_LUT_SIZE,
+        this.curveLut.length === CURVE_LUT_SIZE ? this.curveLut : undefined,
+      );
+      curveDirty = true;
+    }
+
+    // ---- adaptive budget
+    // Clamped only against the absurd — a tab regaining focus, a driver stall —
+    // not against merely slow. The cap used to be 200ms, which is inside the
+    // range this app genuinely reaches on a heavy level, and a controller whose
+    // input saturates cannot tell "slow" from "very much worse than slow": the
+    // budget controller's check for a climb making things worse compares against
+    // a multiple of the frame time, and above a 133ms baseline that multiple sat
+    // beyond the cap and could never be observed.
+    this.smoothedFrameMs = this.smoothedFrameMs * 0.9 + Math.min(2000, dtRaw * 1000) * 0.1;
+    let splatBudget = s.budget.splatsPerFrame;
+    if (s.budget.adaptive && s.mode !== 'team') {
+      splatBudget = this.budget.update(this.smoothedFrameMs, 1000 / Math.max(15, s.budget.targetFps));
+    } else {
+      this.budget.reset(s.budget.splatsPerFrame);
+    }
+    // Stage-two throttle: only below 1 once the sprite budget has bottomed out.
+    const effectiveHeatScale = s.budget.heatScale * this.budget.resolutionScale;
+    this.live.heatScale = effectiveHeatScale;
+
+    // ---- grid extent, sized from the data rather than fixed
+    const gridSpacing = this.dataset ? niceGridSpacing(this.dataset.bounds) : 10;
+    // Keep the grid a modest multiple of the data's own footprint. Extending it
+    // far past the data just fills the horizon with sub-pixel lines and moire.
+    const dataExtent = this.dataset ? horizontalExtent(this.dataset.bounds) : gridSpacing * 20;
+    const gridExtent = Math.max(gridSpacing * 8, Math.min(dataExtent * 1.5, gridSpacing * 120));
+
+    // ---- ruler
+    //
+    // The reference plane is the map's own elevation when there is one, so a
+    // measurement lands where the background says the ground is.
+    const planeY =
+      s.level?.kind === 'image' ? s.level.elevation : this.dataset ? this.dataset.bounds.minY : 0;
+    let overlayVerts: Float32Array | null = null;
+    let overlayVertCount = 0;
+    if (this.measureEnabled) {
+      if (this.cursorPx) {
+        const ndcX = (this.cursorPx.x / this.canvas.clientWidth) * 2 - 1;
+        const ndcY = 1 - (this.cursorPx.y / this.canvas.clientHeight) * 2;
+        // The camera's ray is in display space; the ruler is in world space.
+        const hit = screenToPlane(cam, ndcX, ndcY, planeY * my);
+        this.measure.cursor = hit ? { x: hit.x * mx, y: hit.y * my, z: hit.z * mz } : null;
+      }
+      const ov = buildOverlay(this.measure, gridSpacing * 0.15, this.overlayBuf);
+      this.overlayBuf = ov.data;
+      overlayVerts = ov.data;
+      overlayVertCount = ov.count;
+    } else if (this.measure.cursor) {
+      this.measure.cursor = null;
+      this.measure.heat = null;
+    }
+    // The pick marker: a cross whose arms are a fixed fraction of its distance,
+    // so it reads the same size on screen near and far.
+    const marker = raceTab ? null : this.inspector.marker;
+    if (marker) {
+      const reach = Math.hypot(marker.x - this.camPos[0], marker.y - this.camPos[1], marker.z - this.camPos[2]);
+      const ov = appendCross(this.overlayBuf, overlayVertCount, marker, Math.max(1e-3, reach * 0.025));
+      this.overlayBuf = ov.data;
+      overlayVerts = ov.data;
+      overlayVertCount = ov.count;
+    }
+
+    // ---- what invalidates the accumulation buffer
+    const groundY = this.dataset ? this.dataset.bounds.minY : 0;
+    const h = s.heat;
+    // Computed before the signatures because it belongs in one: the gain is the
+    // units the buffer is written in, so a change to it invalidates everything
+    // already accumulated.
+    this.frameGain = this.heatGain(renderer, h);
+    const geometrySig = [
+      raceTab ? 'race' : s.mode === 'heat-lines' ? `heat-lines|${heatMode}` : s.mode,
+      // Which routes line heat draws.
+      this.linesKey,
+      h.radius,
+      h.centerIntensity,
+      h.edgeIntensity,
+      h.falloff,
+      h.minPixelRadius,
+      h.maxPixelRadius,
+      h.groundProjected ? 1 : 0,
+      h.smoothRamp ? 1 : 0,
+      // The units the accumulation buffer is written in.
+      this.frameGain,
+      // The curve changes the shape of every sprite, so accumulated heat from the
+      // old shape is no longer an estimate of anything.
+      h.useCurve ? `curve:${curveSig}` : '',
+      // Distance culling changes which rows contribute, so it invalidates the
+      // accumulated field. Its cost is one signature entry, not a rebuild.
+      h.cullNear,
+      h.cullFar,
+      h.cullPlanar ? 1 : 0,
+      // Occlusion and the slice both change how much each row contributes, and
+      // both are resolved per point while splatting — so the accumulated field
+      // was written under the old setting and is no longer an estimate of
+      // anything. Left out of this list, they appear to do nothing at all: the
+      // engine keeps the converged field and only recomposites it.
+      h.occlusion,
+      h.hideBehindGround ? 1 : 0,
+      s.slice.enabled
+        ? `slice:${s.slice.axis}:${s.slice.center}:${s.slice.thickness}:${s.slice.outsideOpacity}:${s.slice.clipHeat ? 1 : 0}`
+        : '',
+      groundY,
+      width,
+      height,
+      effectiveHeatScale,
+      teamSign ? teamSign.join(',') : '',
+      // The split decides which rows contribute and with what sign, so a change
+      // invalidates accumulated heat outright.
+      `${split.mode}:${split.column ?? ''}:${split.sign ? split.sign.join(',') : ''}:${split.positiveRange.join(',')}:${split.negativeRange.join(',')}`,
+      // Switching between all/play or changing the expiry rule invalidates the
+      // accumulated field outright, so these belong here rather than in the
+      // window signature that only triggers a blend.
+      showAll ? 'all' : 'play',
+      useLifetime ? 'life' : tl.window,
+      // A filter change alters which rows contribute, so accumulated heat is
+      // no longer an estimate of anything and must be discarded.
+      activeFilters.map((f) => f.key).join(';'),
+    ].join('|');
+    const windowSig =
+      `${timeLo}|${timeHi}|` +
+      // The fade scales each row's contribution, so changing it changes the field
+      // and the accumulation has to start over.
+      (useLifetime ? `${tl.defaultLifetime}|${tl.fadeOut}` : '');
+    // Saturation and the ramp are applied at composite time, so changing them
+    // must redraw but must NOT throw away accumulated heat. The team settings
+    // ride along here for the same reason: they change what gets drawn without
+    // invalidating any accumulated heat.
+    const teamCfg = s.team;
+    const compositeSig = [
+      h.saturation,
+      h.response,
+      h.floor,
+      lutSig,
+      // Culling the level redraws the scene and leaves the heat field alone —
+      // which is what this signature is for. In `geometrySig` it would throw away
+      // a converged field to change something the field does not depend on.
+      h.cullGeometry ? 1 : 0,
+      s.showGrid,
+      s.showAxes,
+      gridSpacing,
+      teamCfg.cubeSize,
+      teamCfg.interpolate ? 1 : 0,
+      teamCfg.showLookDirection ? 1 : 0,
+      teamCfg.lookLength,
+      teamCfg.trailSeconds,
+      // Redraws the scene without touching the heat field: the session decides
+      // which cubes and trails exist, and cubes are not accumulated.
+      teamCfg.session,
+      teamCfg.showRawSamples ? 1 : 0,
+      tl.defaultLifetime,
+      // Depth of field is applied at composite, so changing it must redraw but
+      // must not throw away accumulated heat.
+      s.camera.dof.enabled ? 1 : 0,
+      s.camera.dof.maxBlur,
+      s.camera.dof.aperture,
+      s.camera.dof.autoFocus ? this.camera.focusDistance : s.camera.dof.focusDistance,
+      // The pick marker is overlay, drawn with the scene: moving it must redraw.
+      marker ? `${marker.x},${marker.y},${marker.z}` : '',
+    ].join('|');
+
+    const forced = this.forceRenderFrames > 0;
+    if (forced) this.forceRenderFrames--;
+    const geometryChanged = forced || geometrySig !== this.geometrySig;
+    const windowChanged = windowSig !== this.windowSig;
+    const compositeChanged = compositeSig !== this.compositeSig;
+    const cameraMoved = this.camera.moved;
+    this.camera.moved = false;
+    this.geometrySig = geometrySig;
+    this.windowSig = windowSig;
+    this.compositeSig = compositeSig;
+
+    // ---- what the buffer already holds
+    //
+    // A cumulative window only ever grows, so the rows already accumulated stay
+    // visible and the frame need only add the ones that just became visible.
+    // Everything else — a sliding window, a seek backwards, a camera move — makes
+    // the buffer's contents wrong and forces a fresh estimate.
+    const rowRange =
+      this.dataset && s.mode !== 'team'
+        ? candidateRange(this.dataset, timeLo, rowsHi)
+        : ([0, 0] as [number, number]);
+    // Not with a moving head: a segment drawn part-way last frame is drawn
+    // further this one, so adding to what is there would count it twice.
+    const growing = !showAll && tl.window === 'cumulative' && !useLifetime && !lineTrail;
+    const mustReset = !s.budget.progressive || cameraMoved || geometryChanged;
+    const canExtend =
+      growing &&
+      !mustReset &&
+      this.accumRowLo === rowRange[0] &&
+      this.accumRowHi >= 0 &&
+      rowRange[1] >= this.accumRowHi;
+
+    // ---- sampling plan
+    let plan: ChunkDrawPlan[] = EMPTY_PLAN;
+    let candidateRows = 0;
+    let submitted = 0;
+    let sampleWeight = 1;
+    // Rows this frame is responsible for: the whole window normally, only the
+    // newly-visible tail when extending.
+    const planLo = canExtend ? this.accumRowHi : rowRange[0];
+    const planHi = rowRange[1];
+
+    // A frame that starts a fresh estimate draws *everything*, budget aside.
+    //
+    // This is the rule that stops a moving camera glittering, and it is stated
+    // here as a rule rather than left to the budget controller to arrive at,
+    // because a controller can only ever arrive at it approximately and
+    // temporarily. Accumulation is what removes the sampling grain, a camera move
+    // discards the accumulation, and so a moving frame is a single estimate whose
+    // noise is set entirely by how much of the data it drew. Draw a quarter and
+    // you see a quarter, in bright weighted dots.
+    //
+    // Everything else tried here treats the symptom. Raising the default budget
+    // helps until a dataset is bigger than the new default. Teaching the adaptive
+    // controller to climb out of its floor works — measured, it reached exactness
+    // on a 14M-row load — but it is a feedback loop with a frame-time target, so
+    // on a heavier level it settles somewhere lower, oscillates while it hunts,
+    // and the grain comes and goes. And telling someone to switch the adaptive
+    // budget off and type 16M works right up until they reload the page, because
+    // none of these settings are persisted: that is exactly how this came back
+    // after being fixed.
+    //
+    // The cost is real and it is the right way round. A frame the camera moved on
+    // is transient — nobody reads a value off it — so spending time to make it
+    // *correct* is worth more than spending it to make it *quick*, and the
+    // alternative is not a faster picture but a wrong one. The frame the camera
+    // stops on is the one that gets read, and this makes that frame exact
+    // immediately rather than after a second of settling.
+    // Unconditional, for the rows this frame is responsible for.
+    //
+    // Narrowing it to "the camera moved" was tried and it reintroduces the
+    // problem at the other end of the gesture. The frame the camera moves on is
+    // then exact, but the frames *after* it merge partial estimates into that
+    // exact one at 1/n — so letting go of the mouse produces three or four frames
+    // of diluted picture before the accumulation catches up. Barely a tenth of a
+    // second, and precisely the shimmer this is supposed to remove.
+    //
+    // Exact everywhere means the accumulator has nothing to do in the ordinary
+    // case: `convergeFrames` comes out at one, the very next frame is idle, and
+    // the whole progressive machinery is left where it is still needed — a window
+    // holding more rows than one draw plan can carry.
+    //
+    // What this costs is the configured `Sprites / frame` becoming a floor rather
+    // than a ceiling. That is a real loss of control and it is the right trade:
+    // the setting exists to bound frame cost, the bound is already there in the
+    // draw plan's own capacity, and the levers that actually matter for cost —
+    // the time window, the filters, the distance cull — all reduce the candidate
+    // rows themselves rather than sampling them more thinly.
+    if (s.budget.exact && this.dataset && s.mode !== 'team') {
+      this.exactCap = nextExactCap(this.exactCap, Math.min(2000, dtRaw * 1000), this.lastFrameDrew, mustReset, {
+        floor: EXACT_FLOOR_SPRITES,
+        ceiling: EXACT_SPRITE_CAP,
+        stallMs: EXACT_STALL_MS,
+        easyMs: EXACT_EASY_MS,
+      });
+      splatBudget = Math.max(splatBudget, Math.min(this.exactCap, planHi - planLo));
+    }
+
+    if (this.dataset && s.mode !== 'team') {
+      const r = planFrame({
+        rowLo: planLo,
+        rowHi: planHi,
+        splatsPerFrame: splatBudget,
+        frameIndex: this.frameIndex,
+      });
+      plan = r.plan;
+      candidateRows = r.candidateRows;
+      submitted = r.submittedSprites;
+      sampleWeight = r.sampleWeight;
+    }
+
+    // Keep the planned figure for the readout: once accumulation converges the
+    // frame stops splatting, and reporting the resulting 0 would read as a bug.
+    const plannedSubmitted = submitted;
+    const convergeFrames =
+      submitted > 0 ? Math.max(1, Math.ceil(candidateRows / submitted)) : 1;
+    const converged = this.accumFrames >= convergeFrames;
+
+    let accumMode: FrameParams['accumMode'];
+    let blendAlpha = 1;
+    // Idle: converged and nothing that affects the picture changed. The frame
+    // still has to redraw the canvas — see `compositeOnly` — but it draws nothing
+    // new into the scene or heat buffers, so it costs one fullscreen pass.
+    let compositeOnly = false;
+    if (mustReset) {
+      accumMode = 'reset';
+      this.accumFrames = 1;
+    } else if (canExtend) {
+      // Add the tail. Nothing decays, so the field builds up exactly — and when
+      // the playhead stops the tail is empty and there is simply nothing left to
+      // arrive, which is why pausing no longer changes the picture.
+      accumMode = 'extend';
+      this.accumFrames = 1;
+      compositeOnly = candidateRows === 0 && !compositeChanged;
+      if (candidateRows === 0) plan = EMPTY_PLAN;
+    } else if (growing) {
+      // A growing window whose buffer is not extendable yet — first frame of
+      // playback, or just after a seek. Lay down the base in one go and extend
+      // from it, rather than taking the moving-average path: that path is checked
+      // after this one, so without this branch a growing window would re-estimate
+      // itself every frame and never become extendable at all.
+      accumMode = 'reset';
+      this.accumFrames = 1;
+    } else if (windowChanged && lineTrail) {
+      // Played-back lines move: the heads are somewhere else every frame, and a
+      // moving average would smear each into a streak of its own. Each frame is
+      // drawn whole instead - the tail is the fade the picture asks for.
+      accumMode = 'reset';
+      this.accumFrames = 1;
+    } else if (windowChanged) {
+      // A window that slides has to be re-estimated; an exponential moving average
+      // is unbiased in steady state and far quieter than starting over each frame.
+      accumMode = 'ema';
+      this.accumFrames = 1;
+      blendAlpha = EMA_ALPHA;
+    } else if (converged) {
+      // Nothing left to add; hold what the buffer already has.
+      accumMode = 'mean';
+      blendAlpha = 0;
+      plan = EMPTY_PLAN;
+      compositeOnly = !compositeChanged;
+    } else {
+      // Running mean: 1/n on the nth frame merges this estimate into the average
+      // of the previous n-1 without the buffer ever exceeding one field's worth.
+      accumMode = 'mean';
+      this.accumFrames += 1;
+      blendAlpha = 1 / this.accumFrames;
+    }
+
+    // Record what the buffer will represent after this frame. Only a growing
+    // window can be extended from; anything else invalidates it.
+    if (!growing) {
+      this.accumRowLo = -1;
+      this.accumRowHi = -1;
+    } else if (accumMode === 'extend') {
+      this.accumRowHi = Math.max(this.accumRowHi, planHi);
+    } else {
+      // A fresh estimate of the whole window, extendable from here. If the window
+      // was too large to splat in one frame this base carries the sampler's noise
+      // and keeps it — but it keeps it *steadily*, which is the point: a static
+      // grain reads as texture, while re-estimating every frame reads as flicker.
+      this.accumRowLo = rowRange[0];
+      this.accumRowHi = planHi;
+    }
+
+    if (plan === EMPTY_PLAN) submitted = 0;
+    this.live.accumMode = compositeOnly ? 'skip' : accumMode;
+
+    // ---- team viewer geometry
+    let cubes: Float32Array | null = null;
+    let cubeCount = 0;
+    let trailVerts: Float32Array | null = null;
+    let trailVertCount = 0;
+    // Skipped on an idle frame: nothing draws it, and rebuilding one cube per
+    // person every frame while the view sits still is the one cost that would make
+    // recompositing-when-idle worth avoiding.
+    if (s.mode === 'team' && this.cursor && !compositeOnly) {
+      const visible = this.personVisibility(s.teamVisibility, s.filters);
+      // `all` mode ignores the playhead, so the cursor is placed at the end and
+      // every sample in range is drawn rather than one live position per person.
+      const cursorAt = showAll ? range[1] : this.playhead;
+      // Which match is being played back. Set before the cursor is moved: it is
+      // part of what a track *is*, not a filter over one, so changing it has to
+      // invalidate the cursors rather than be applied to their results.
+      this.cursor.setSession(s.team.session);
+      this.cursor.update(cursorAt);
+
+      const drawEverySample = showAll || s.team.showRawSamples;
+      if (drawEverySample) {
+        const span = showAll
+          ? Number.POSITIVE_INFINITY
+          : tl.window === 'fixed'
+            ? tl.windowSeconds
+            : Number.POSITIVE_INFINITY;
+        const raw = this.cursor.buildRawSamples(cursorAt, span, visible);
+        cubes = raw.data;
+        cubeCount = raw.count;
+      } else {
+        // The lifetime is what decides how long someone with no further samples
+        // keeps being drawn, so it doubles as the staleness cut-off here.
+        const live = this.cursor.buildCubes(
+          cursorAt,
+          s.team.interpolate,
+          tl.defaultLifetime,
+          visible,
+        );
+        cubes = live.data;
+        cubeCount = live.count;
+      }
+      this.pickCubes = {
+        data: cubes,
+        stride: CUBE_STRIDE,
+        count: cubeCount,
+        rows: this.cursor.cubeRows,
+        size: s.team.cubeSize,
+      };
+      // The live tracks, for the labels and the follow camera.
+      const tracks: typeof this.liveTracks = [];
+      const pid = this.dataset?.personId ?? null;
+      if (!drawEverySample) {
+        for (let i = 0; i < cubeCount; i++) {
+          const row = this.cursor.cubeRows[i];
+          const o = i * CUBE_STRIDE;
+          tracks.push({ person: pid && row >= 0 ? pid[row] : i, row, x: cubes[o], y: cubes[o + 1], z: cubes[o + 2], yaw: cubes[o + 6] });
+        }
+      }
+      this.liveTracks = tracks;
+      // Clicks still answer every person; only the drawing changes.
+      this.figureTris = null;
+      if (s.team.figures && this.dataset && !drawEverySample) {
+        // Each live box as its figure; what has none stays a box. A data unit is
+        // a metre unless the data says how big one tracked thing is (a CS2 player
+        // is 32 units across, about 0.8 m).
+        const units = unitsPerMetre(this.dataset);
+        const fr = this.figureReplay;
+        fr.build(this.dataset, cubes, cubeCount, this.cursor.cubeRows, {
+          scale: units * Math.max(0.01, s.team.figureScale),
+          unknown: fr.knowsTypes(this.dataset) ? 'box' : 'soldier',
+        });
+        // What the events leave behind for a while, in the thrower's colour.
+        const d = this.dataset;
+        this.effects.build(d, cursorAt, s.team.session, units, (row) => {
+          const p = d.personId ? d.personId[row] : 0;
+          const team = d.personTeam ? d.personTeam[p] : 0;
+          return teamMemberColor(team, d.personSlot ? d.personSlot[p] : p, d.teamSizes ? d.teamSizes[team] : 1);
+        }, fr.tris);
+        this.figureTris = { data: fr.tris.data, count: fr.tris.count };
+        cubes = fr.rest;
+        cubeCount = fr.restCount;
+      }
+      if (s.team.trailSeconds > 0 && !drawEverySample) {
+        const tr = this.cursor.buildTrails(cursorAt, s.team.trailSeconds, visible);
+        trailVerts = tr.data;
+        trailVertCount = tr.count;
+      }
+      // Drop lines, as Tacview draws them: from each live track straight down
+      // to the data's floor, so a height reads in a 3D view.
+      if (this.dataset && dropLinesOn(this.dataset, useReplayStore.getState().dropLines) && this.liveTracks.length) {
+        const floor = this.dataset.bounds.minY;
+        const n = this.liveTracks.length;
+        const need = (trailVertCount + n * 2) * 7;
+        if (this.dropBuf.length < need) this.dropBuf = new Float32Array(need * 2);
+        if (trailVerts && trailVertCount) this.dropBuf.set(trailVerts.subarray(0, trailVertCount * 7));
+        let o = trailVertCount * 7;
+        for (let i = 0; i < n; i++) {
+          const tr = this.liveTracks[i];
+          if (tr.y - floor < 1) continue;
+          const c = i * CUBE_STRIDE;
+          const col = this.pickCubes ? [this.pickCubes.data[c + 3], this.pickCubes.data[c + 4], this.pickCubes.data[c + 5]] : [0.8, 0.8, 0.8];
+          for (const y of [tr.y, floor]) {
+            this.dropBuf[o++] = tr.x;
+            this.dropBuf[o++] = y;
+            this.dropBuf[o++] = tr.z;
+            this.dropBuf[o++] = col[0];
+            this.dropBuf[o++] = col[1];
+            this.dropBuf[o++] = col[2];
+            this.dropBuf[o++] = y === floor ? 0.15 : 0.55;
+          }
+        }
+        trailVerts = this.dropBuf;
+        trailVertCount = o / 7;
+      }
+    }
+
+    let sceneTris: Float32Array | null = null;
+    let sceneTriVertCount = 0;
+    if (!raceBuilt && s.mode === 'team' && this.figureTris && this.figureTris.count > 0) {
+      sceneTris = this.figureTris.data;
+      sceneTriVertCount = this.figureTris.count;
+    }
+    if (raceBuilt) {
+      plan = EMPTY_PLAN;
+      submitted = 0;
+      cubes = null;
+      cubeCount = 0;
+      trailVerts = raceBuilt.lines.data;
+      trailVertCount = raceBuilt.lines.count;
+      sceneTris = raceBuilt.tris.data;
+      sceneTriVertCount = raceBuilt.tris.count;
+      compositeOnly = !(raceChanged || geometryChanged || cameraMoved || compositeChanged);
+    }
+
+    // What a click on a data point is answered against: the rows this frame
+    // draws, by the rules the shader applies to them.
+    if (this.dataset && !raceTab && s.mode !== 'team') {
+      const [rowLo, rowHi] = candidateRange(this.dataset, timeLo, timeHi);
+      const sl = s.slice;
+      this.drawn = {
+        rowLo,
+        rowHi,
+        filters: activeFilters,
+        teamSign,
+        useSign: teamSign !== null || split.mode !== 0,
+        splitMode: split.mode,
+        splitColumn: split.column,
+        splitSign: split.sign,
+        splitPositive: split.positiveRange,
+        splitNegative: split.negativeRange,
+        lifetime: lifetimeParams ? { now: lifetimeParams.now, defaultLifetime: lifetimeParams.defaultLifetime } : null,
+        cull:
+          h.cullNear > 0 || h.cullFar > 0
+            ? {
+                near: Math.max(0, h.cullNear),
+                far: Math.max(0, h.cullFar),
+                planar: h.cullPlanar,
+                eye: { x: this.camPos[0], y: this.camPos[1], z: this.camPos[2] },
+                forward: { x: this.camFwd[0], y: this.camFwd[1], z: this.camFwd[2] },
+              }
+            : null,
+        // A slice that clips the heat to nothing outside it hides those rows;
+        // one that only dims them still draws them.
+        slice:
+          sl.enabled && sl.clipHeat && sl.outsideOpacity <= 0
+            ? {
+                axis: sl.axis === 'x' ? 0 : sl.axis === 'y' ? 1 : 2,
+                min: sl.center - sl.thickness * 0.5,
+                max: sl.center + sl.thickness * 0.5,
+              }
+            : null,
+        groundY: h.groundProjected ? groundY : null,
+      };
+    } else {
+      this.drawn = null;
+    }
+    if (raceTab || s.mode !== 'team') this.pickCubes = null;
+
+    const params: FrameParams = {
+      viewProj: this.viewProjArr,
+      view: this.viewArr,
+      proj: this.projArr,
+      cameraPos: this.camPos,
+      cameraForward: this.camFwd,
+      perspective: s.camera.projection === 'perspective',
+      width,
+      height,
+      heatScale: effectiveHeatScale,
+      // The race tab draws no heat: box-replay mode is the one that skips it.
+      mode: raceTab ? 'team' : heatMode,
+      lineHeat: !raceTab && s.mode === 'heat-lines' && this.lines !== null,
+      lineTrail,
+      heat: {
+        radius: h.radius,
+        centerIntensity: h.centerIntensity,
+        edgeIntensity: h.edgeIntensity,
+        falloff: h.falloff,
+        saturation: h.saturation,
+        floor: Math.max(0, Math.min(1, h.floor)),
+        minPixelRadius: h.minPixelRadius,
+        maxPixelRadius: h.maxPixelRadius,
+        groundProjected: h.groundProjected,
+        groundY,
+        signed: heatMode === 'heat-difference',
+        teamColors: heatMode === 'heat-teams' && (this.dataset?.teamLabels.length ?? 0) > 0,
+        // Every group, including the hidden ones. See HeatUniforms.teamCount.
+        teamCount: Math.max(1, this.dataset?.teamLabels.length ?? 1),
+        teamNeutral: this.teamPalette.neutral,
+        teamSlices: this.teamPalette.slices,
+        teamBoost: Math.max(0, h.teamBoost),
+        smoothRamp: h.smoothRamp,
+        useCurve: h.useCurve,
+        response: HEAT_RESPONSE_CODE[h.response] ?? 0,
+        cullNear: Math.max(0, h.cullNear),
+        cullFar: Math.max(0, h.cullFar),
+        cullPlanar: h.cullPlanar,
+        cullGeometry: h.cullGeometry,
+        // Meaningless with the data flattened onto one plane: every point would
+        // then sit exactly on the ground it is being tested against.
+        occlusion: h.groundProjected ? 0 : occlusionStrength(h.occlusion),
+        occlusionFloor: h.groundProjected ? 0 : occlusionFloor(h.occlusion),
+        occludedExtra: OCCLUDED_EXTRA_WALL,
+        // Flattening puts every point on the plane it would be tested against,
+        // so there is nothing behind the ground any more. A level with no
+        // geometry has no ground either.
+        hideBehindGround:
+          h.hideBehindGround && !h.groundProjected && Boolean(s.level),
+      },
+      plan,
+      candidateRows,
+      submittedSprites: submitted,
+      sampleWeight,
+      accumMode,
+      compositeOnly,
+      blendAlpha,
+      heatGain: this.frameGain,
+      accumFrames: this.accumFrames,
+      timeLo,
+      timeHi,
+      lifetime: lifetimeParams,
+      teamSign,
+      // A column split supplies the sign itself, so it does not need a group
+      // column to exist — which is the point: comparing two files works on data
+      // with no teams at all, where it is this split that makes the mode
+      // available (`splitHasTwoSides`).
+      useTeamSign: teamSign !== null || split.mode !== 0,
+      splitMode: split.mode,
+      splitColumn: split.column,
+      splitSign: split.sign,
+      splitPositive: split.positiveRange,
+      splitNegative: split.negativeRange,
+      filters: activeFilters,
+      cubes,
+      cubeCount,
+      cubeSize: s.team.cubeSize,
+      showLookDirection: s.team.showLookDirection,
+      lookLength: s.team.lookLength,
+      colorLut: this.lut,
+      colorLutDirty: lutDirty,
+      curveLut: this.curveLut,
+      curveLutDirty: curveDirty,
+      showGrid: s.showGrid,
+      showAxes: s.showAxes,
+      gridSpacing,
+      gridExtent,
+      trailVerts,
+      trailVertCount,
+      sceneTris,
+      sceneTriVertCount,
+      overlayVerts,
+      overlayVertCount,
+      level: buildLevelDraw(s.level),
+      // Auto-focus uses whatever the view was last framed on, which is the only
+      // distance the camera can honestly claim to be looking at.
+      dof:
+        s.camera.dof.enabled && s.camera.dof.maxBlur > 0
+          ? {
+              focus: s.camera.dof.autoFocus
+                ? this.camera.focusDistance
+                : Math.max(1e-3, s.camera.dof.focusDistance),
+              aperture: Math.max(0.01, s.camera.dof.aperture),
+              maxBlur: s.camera.dof.maxBlur,
+            }
+          : null,
+      near: this.viewNear,
+      far: s.camera.far,
+      slice: s.slice.enabled
+        ? {
+            axis: s.slice.axis === 'x' ? 0 : s.slice.axis === 'y' ? 1 : 2,
+            min: s.slice.center - s.slice.thickness * 0.5,
+            max: s.slice.center + s.slice.thickness * 0.5,
+            outside: Math.max(0, Math.min(1, s.slice.outsideOpacity)),
+            clipHeat: s.slice.clipHeat,
+          }
+        : null,
+    };
+
+    renderer.render(params);
+    this.frameIndex++;
+    this.lastFrameDrew = !compositeOnly && plan.length > 0;
+    this.live.frames = this.frameIndex;
+
+    // Auto-expose once the field has had a few frames to build. Counted in
+    // rendered frames rather than on a timer so it cannot fire against an empty
+    // buffer on a slow machine — and counted on *every* frame, because a dataset
+    // small enough to draw in one pass converges immediately and would otherwise
+    // never reach the threshold at all.
+    if (this.autoExposePending > 0 && this.dataset) {
+      this.autoExposePending--;
+      if (this.autoExposePending === 0) void this.autoExpose();
+    }
+    // An idle frame did not rebuild the cubes, so report the count still on
+    // screen rather than the 0 it computed.
+    if (!compositeOnly) this.lastCubeCount = cubeCount;
+
+    this.probeCursor(now);
+    this.publish(
+      now,
+      dtRaw,
+      plannedSubmitted,
+      candidateRows,
+      convergeFrames,
+      converged,
+      compositeOnly ? this.lastCubeCount : cubeCount,
+      splatBudget,
+    );
+  }
+
+  // ------------------------------------------------------------------ race
+
+  /** Run the replay clock: forward while playing, looping or stopping at the end. */
+  private advanceRace(race: RaceState, dt: number): void {
+    if (!race.replay.playing) return;
+    const end = replayLength(race);
+    let t = raceClock.time + dt * race.replay.speed;
+    if (t > end) {
+      if (race.replay.loop) t = 0;
+      else {
+        t = end;
+        race.patchReplay({ playing: false });
+      }
+    }
+    raceClock.set(t);
+  }
+
+  /**
+   * Chase the followed car: behind it and above, looking along its heading.
+   * Eased, so the camera does not shake with every wobble of the heading.
+   */
+  private follow(race: RaceState, cars: Map<string, { x: number; y: number; z: number; course: number }>): void {
+    if (!race.follow) {
+      this.chase = null;
+      return;
+    }
+    const car = cars.get(race.follow);
+    if (!car) return;
+    const back = 2.5 + race.view.carScale * 4;
+    const up = 0.9 + race.view.carScale * 1.1;
+    // The car as the camera sees it, through the axis mirror.
+    const [mx, my, mz] = this.mirror;
+    const course = Math.atan2(Math.sin(car.course) * mx, Math.cos(car.course) * mz);
+    // The camera looks along -Z at yaw 0: forward = (-sin yaw, -cos yaw).
+    const yaw = Math.atan2(-Math.sin(course), -Math.cos(course));
+    const target = {
+      x: car.x * mx - Math.sin(course) * back,
+      y: car.y * my + up,
+      z: car.z * mz - Math.cos(course) * back,
+      yaw,
+    };
+    const c = this.chase ?? target;
+    const k = 0.2;
+    let dyaw = target.yaw - c.yaw;
+    while (dyaw > Math.PI) dyaw -= 2 * Math.PI;
+    while (dyaw < -Math.PI) dyaw += 2 * Math.PI;
+    this.chase = {
+      x: c.x + (target.x - c.x) * k,
+      y: c.y + (target.y - c.y) * k,
+      z: c.z + (target.z - c.z) * k,
+      yaw: c.yaw + dyaw * k,
+    };
+    this.camera.position.set(this.chase.x, this.chase.y, this.chase.z);
+    this.camera.yaw = this.chase.yaw;
+    this.camera.pitch = -Math.atan2(up, back) * 0.8;
+    this.camera.moved = true;
+  }
+
+  /**
+   * Box replay's follow camera: behind and above the followed track, along
+   * its heading, eased so a turn does not whip the view. One frame behind the
+   * tracks, which are built after the camera.
+   */
+  private followTrack(s: ReturnType<typeof snapshot>): void {
+    const follow = useReplayStore.getState().follow;
+    if (follow === null || s.mode !== 'team') {
+      this.followCam = null;
+      return;
+    }
+    const t = this.liveTracks.find((x) => x.person === follow);
+    if (!t) return;
+    const units = this.dataset ? unitsPerMetre(this.dataset) : 1;
+    // Grows with the figures: a fighter drawn 40 times its size is followed from 40 times as far.
+    const back = useReplayStore.getState().followDistance * units * Math.max(1, s.team.figures ? s.team.figureScale : 1);
+    const up = back * 0.3;
+    const [mx, my, mz] = this.mirror;
+    // Box yaw looks along -z at 0; the heading as the race camera takes it (sin = dx, cos = dz).
+    const course0 = Math.PI - t.yaw;
+    const course = Math.atan2(Math.sin(course0) * mx, Math.cos(course0) * mz);
+    const yaw = Math.atan2(-Math.sin(course), -Math.cos(course));
+    const target = { x: t.x * mx - Math.sin(course) * back, y: t.y * my + up, z: t.z * mz - Math.cos(course) * back, yaw };
+    const c = this.followCam ?? target;
+    const k = 0.15;
+    let dyaw = target.yaw - c.yaw;
+    while (dyaw > Math.PI) dyaw -= 2 * Math.PI;
+    while (dyaw < -Math.PI) dyaw += 2 * Math.PI;
+    this.followCam = { x: c.x + (target.x - c.x) * k, y: c.y + (target.y - c.y) * k, z: c.z + (target.z - c.z) * k, yaw: c.yaw + dyaw * k };
+    this.camera.position.set(this.followCam.x, this.followCam.y, this.followCam.z);
+    this.camera.yaw = this.followCam.yaw;
+    this.camera.pitch = -Math.atan2(up, back) * 0.8;
+    this.camera.moved = true;
+  }
+
+  /** Bring a spot of the track into view: a ball of `radius` around it, keeping the view direction. */
+  frameAround(x: number, y: number, z: number, radius: number): void {
+    const b = { minX: x - radius, minY: y - radius, minZ: z - radius, maxX: x + radius, maxY: y + radius, maxZ: z + radius };
+    this.camera.frame(this.toDisplay(b), snapshot().camera.fov, true);
+  }
+
+  /** Where a world point lands on the canvas, in CSS pixels; null behind the camera. */
+  project(x: number, y: number, z: number): { x: number; y: number } | null {
+    const e = this.viewProj.elements;
+    const cx = e[0] * x + e[4] * y + e[8] * z + e[12];
+    const cy = e[1] * x + e[5] * y + e[9] * z + e[13];
+    const w = e[3] * x + e[7] * y + e[11] * z + e[15];
+    if (w <= 1e-6) return null;
+    return {
+      x: (cx / w * 0.5 + 0.5) * this.canvas.clientWidth,
+      y: (1 - (cy / w * 0.5 + 0.5)) * this.canvas.clientHeight,
+    };
+  }
+
+  // ------------------------------------------------------------------ helpers
+
+  private publish(
+    now: number,
+    dtRaw: number,
+    splats: number,
+    candidates: number,
+    convergeFrames: number,
+    converged: boolean,
+    cubes: number,
+    budget: number,
+  ): void {
+    this.fpsAccum += dtRaw;
+    this.fpsFrames++;
+    const live = this.live;
+    live.playhead = this.playhead;
+    live.frameMs = this.smoothedFrameMs;
+    live.splats = splats;
+    live.candidates = candidates;
+    live.accumFrames = this.accumFrames;
+    live.convergeFrames = convergeFrames;
+    live.converged = converged;
+    live.cubes = cubes;
+    live.budget = Math.round(budget);
+    if (this.fpsAccum >= 0.4) {
+      live.fps = this.fpsFrames / this.fpsAccum;
+      this.fpsAccum = 0;
+      this.fpsFrames = 0;
+    }
+    // The store only needs these for panels that re-render rarely.
+    if (now - this.lastPublish > 500) {
+      this.lastPublish = now;
+      useStore.getState().reportStats({
+        fps: live.fps,
+        frameMs: live.frameMs,
+        splatsSubmitted: live.splats,
+        candidateRows: live.candidates,
+        accumFrames: live.accumFrames,
+        // Republished rather than set once at init, so the store reflects the
+        // live backend even if something raced the initial report.
+        backend: live.backend,
+      });
+    }
+  }
+
+  private resizeCanvas(): { width: number; height: number } {
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const w = Math.max(1, Math.round(this.canvas.clientWidth * dpr));
+    const h = Math.max(1, Math.round(this.canvas.clientHeight * dpr));
+    if (this.canvas.width !== w || this.canvas.height !== h) {
+      this.canvas.width = w;
+      this.canvas.height = h;
+    }
+    return { width: w, height: h };
+  }
+
+  private personVisibility(
+    visibility: Record<number, boolean>,
+    filters: FilterSpec[],
+  ): (person: number) => boolean {
+    const ds = this.dataset;
+    const personTeam = ds?.personTeam ?? null;
+    const personFilter = filters.find((f) => f.kind === 'persons');
+    const allowedPersons =
+      personFilter && personFilter.kind === 'persons' ? new Set(personFilter.allowed) : null;
+    const teamFilter = filters.find((f) => f.kind === 'teams');
+    const allowedTeams =
+      teamFilter && teamFilter.kind === 'teams' ? new Set(teamFilter.allowed) : null;
+
+    return (p: number) => {
+      if (allowedPersons && !allowedPersons.has(p)) return false;
+      if (!personTeam) return true;
+      const t = personTeam[p];
+      if (visibility[t] === false) return false;
+      if (allowedTeams && !allowedTeams.has(t)) return false;
+      return true;
+    };
+  }
+}
+
+/**
+ * Per-frame appearance for the background, resolved from the level.
+ *
+ * The image footprint is recomputed each frame rather than cached, because the
+ * anchors are live controls — dragging them has to move the map immediately.
+ */
+function buildLevelDraw(level: Level | null): LevelDraw | null {
+  if (!level) return null;
+  const noStructure = {
+    faceOpacity: 0,
+    wireOpacity: 0,
+    tint: [1, 1, 1] as [number, number, number],
+    showFaces: false,
+    showWire: false,
+    flat: false,
+    textured: false,
+  };
+  const flat = {
+    slope: 0,
+    contourSpacing: 0,
+    contourStrength: 0,
+    contourIndexEvery: 0,
+    elevationRange: 0,
+    lowY: 0,
+    highY: 1,
+  };
+  if (level.kind === 'image') {
+    const q = mapQuadFromAnchors(level);
+    // Degenerate anchors would place the quad at NaN and lose the whole frame.
+    if (q.degenerate) return null;
+    return {
+      kind: 'image',
+      rect: [q.minX, q.minZ, q.maxX, q.maxZ],
+      y: q.y,
+      flipV: level.flipZ,
+      opacity: level.opacity,
+      desaturate: level.desaturate,
+      brightness: level.brightness,
+      wireframe: false,
+      vertexColours: false,
+      texture: false,
+      groundWireOpacity: 0,
+      groundWireFade: [1e9, 1e9 + 1],
+      relief: flat,
+      water: { opacity: 0, tint: [1, 1, 1], show: false },
+      structure: noStructure,
+    };
+  }
+  const groundExtent = Math.max(
+    level.bounds.maxX - level.bounds.minX,
+    level.bounds.maxZ - level.bounds.minZ,
+  );
+  return {
+    kind: 'model',
+    rect: [0, 0, 0, 0],
+    y: 0,
+    flipV: false,
+    opacity: level.opacity,
+    desaturate: level.desaturate,
+    brightness: level.brightness,
+    wireframe: level.wireframe,
+    vertexColours: level.showColours === true && !!level.colours,
+    texture: level.showTexture !== false && !!level.uvs && !!level.atlas,
+    groundWireOpacity: level.groundWireOpacity ?? 0,
+    // Out to a quarter of the level's width, which on a 4km map is about
+    // 1,000m — past the point where a 3m terrain cell still covers more than a
+    // couple of pixels.
+    groundWireFade: [groundExtent * 0.06, groundExtent * 0.25],
+    relief: reliefDraw(level),
+    water: waterDraw(level),
+    structure: structureDraw(level),
+  };
+}
+
+/**
+ * Occluded heat is never *gone*, only dim — except at the very top of the slider.
+ *
+ * Two failures, in opposite directions, and the second was caused by fixing the
+ * first.
+ *
+ * Linear was unusable. The shader multiplies an occluded point's contribution by
+ * `1 - strength`, so a slider at 0.8 left a fifth of it, and a fifth of a
+ * saturated field is still saturated — measured on the probe, the linear slider
+ * removed 7% of the heat behind a wall at 0.5 and 19% at 0.8. A control whose
+ * only useful position is the far end reads as broken.
+ *
+ * So it was curved to a fourth power, and 0.8 then removed everything. Which is
+ * also wrong, and worse: a heatmap of a building is *mostly* behind something,
+ * and hiding it completely means the map shows an empty room where the data says
+ * people walked. You cannot even tell there is something to look at, so you have
+ * no reason to reach for the slice tool that would show you.
+ *
+ * Hence a floor. Occluded heat keeps a small fraction of its brightness, enough
+ * to read as "something is in there" and far too little to be mistaken for what
+ * is in front of it. Only a slider pinned at exactly 1.0 removes it outright,
+ * because that is an explicit request rather than a default.
+ */
+const MIN_OCCLUDED_VISIBILITY = 0.006;
+
+/**
+ * Dimming applied per surface *beyond* the first.
+ *
+ * Half. Gentler than the first surface on purpose: the slider is calibrated so
+ * one wall leaves a few per cent, and a few per cent compounded is nothing by
+ * the third wall — every interior would sit on the floor and the wall count
+ * would stop meaning anything. Halving keeps four steps that are all visible and
+ * all distinguishable.
+ */
+const OCCLUDED_EXTRA_WALL = 0.5;
+
+/**
+ * The slider, curved, as the fraction of brightness the *first* surface removes.
+ *
+ * Squared rather than to the fourth power. At the fourth power the default 0.8
+ * left 0.16% — indistinguishable from erased, which is the failure the floor
+ * exists to prevent, and it left no headroom at all for extra surfaces to dim
+ * into. Squared, 0.8 leaves 4% and 0.5 leaves 25%, and the range above 0.9 is
+ * there for anyone who wants a wall to be nearly opaque.
+ */
+function occlusionStrength(slider: number): number {
+  const s = Math.max(0, Math.min(1, slider));
+  if (s >= 1) return 1;
+  return 1 - (1 - s) ** 2;
+}
+
+/**
+ * The visibility an occluded point keeps however many walls are in front of it.
+ *
+ * Applied to the compounded result rather than to the per-wall factor, because
+ * flooring the factor and then raising it to the power of the wall count is not
+ * a floor: three walls at 0.06 each come to 0.0002, which is erased. Zero only
+ * at a slider pinned to 1.0, which is an explicit request to hide.
+ */
+function occlusionFloor(slider: number): number {
+  return slider >= 1 ? 0 : MIN_OCCLUDED_VISIBILITY;
+}
+
+/** Round the grid step to a 1/2/5 x 10^n value covering the data sensibly. */
+function niceGridSpacing(bounds: {
+  minX: number;
+  maxX: number;
+  minZ: number;
+  maxZ: number;
+}): number {
+  const span = Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ);
+  if (!Number.isFinite(span) || span <= 0) return 10;
+  const target = span / 40;
+  const mag = Math.pow(10, Math.floor(Math.log10(target)));
+  const norm = target / mag;
+  const step = norm < 1.5 ? 1 : norm < 3.5 ? 2 : norm < 7.5 ? 5 : 10;
+  return step * mag;
+}
+
+export { CUBE_STRIDE };
+

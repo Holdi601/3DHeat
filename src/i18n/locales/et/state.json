@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Sekundid (suhtelised)",
+  "state.types.timeUnit.milliseconds": "Millisekundid (suhtelised)",
+  "state.types.timeUnit.microseconds": "Mikrosekundid (suhtelised)",
+  "state.types.timeUnit.nanoseconds": "Nanosekundid (suhtelised)",
+  "state.types.timeUnit.unixSeconds": "Unixi ajatempel (s)",
+  "state.types.timeUnit.unixMilliseconds": "Unixi ajatempel (ms)",
+  "state.types.timeUnit.iso8601": "ISO-8601 kuupäevastring"
+}

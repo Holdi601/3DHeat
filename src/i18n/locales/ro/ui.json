@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} – trageți pentru a ajusta",
+  "ui.jog.title": "Trageți în sus sau în jos pentru a modifica {label}. Cu cât mai departe, cu atât mai repede; țineți apăsat Shift pentru reglaj fin. Eliberați pentru a opri.",
+  "ui.jog.limited": "Limitat la intervalul glisorului.",
+  "ui.select.none": "– niciunul –"
+}

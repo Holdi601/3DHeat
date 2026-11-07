@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Секунде (релативно)",
+  "state.types.timeUnit.milliseconds": "Милисекунде (релативно)",
+  "state.types.timeUnit.microseconds": "Микросекунде (релативно)",
+  "state.types.timeUnit.nanoseconds": "Наносекунде (релативно)",
+  "state.types.timeUnit.unixSeconds": "Unix временска ознака (s)",
+  "state.types.timeUnit.unixMilliseconds": "Unix временска ознака (ms)",
+  "state.types.timeUnit.iso8601": "Датум као текст у формату ISO-8601"
+}

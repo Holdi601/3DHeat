@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — dra for å justere",
+  "ui.jog.title": "Dra opp eller ned for å endre {label}. Lenger unna går raskere; hold inne Shift for finjustering. Slipp for å stoppe.",
+  "ui.jog.limited": "Begrenset til glidebryterens område.",
+  "ui.select.none": "— ingen —"
+}

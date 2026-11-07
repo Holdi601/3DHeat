@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} – povucite za podešavanje",
+  "ui.jog.title": "Povucite gore ili dolje da promijenite {label}. Dalje je brže; držite Shift za fino podešavanje. Pustite za zaustavljanje.",
+  "ui.jog.limited": "Ograničeno na raspon klizača.",
+  "ui.select.none": "– ništa –"
+}

@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Segons (relatius)",
+  "state.types.timeUnit.milliseconds": "Mil·lisegons (relatius)",
+  "state.types.timeUnit.microseconds": "Microsegons (relatius)",
+  "state.types.timeUnit.nanoseconds": "Nanosegons (relatius)",
+  "state.types.timeUnit.unixSeconds": "Marca de temps Unix (s)",
+  "state.types.timeUnit.unixMilliseconds": "Marca de temps Unix (ms)",
+  "state.types.timeUnit.iso8601": "Cadena de data ISO-8601"
+}

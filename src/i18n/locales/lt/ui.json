@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — vilkite, kad pakeistumėte",
+  "ui.jog.title": "Vilkite aukštyn arba žemyn, kad pakeistumėte reikšmę „{label}“. Kuo toliau, tuo greičiau; tiksliau – laikykite Shift. Atleiskite, kad sustotų.",
+  "ui.jog.limited": "Apribota slankiklio intervalu.",
+  "ui.select.none": "— nėra —"
+}

@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Sekundy (relativní)",
+  "state.types.timeUnit.milliseconds": "Milisekundy (relativní)",
+  "state.types.timeUnit.microseconds": "Mikrosekundy (relativní)",
+  "state.types.timeUnit.nanoseconds": "Nanosekundy (relativní)",
+  "state.types.timeUnit.unixSeconds": "Unixové časové razítko (s)",
+  "state.types.timeUnit.unixMilliseconds": "Unixové časové razítko (ms)",
+  "state.types.timeUnit.iso8601": "Datum ISO-8601 jako text"
+}

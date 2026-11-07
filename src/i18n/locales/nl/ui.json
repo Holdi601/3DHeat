@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} – sleep om aan te passen",
+  "ui.jog.title": "Sleep omhoog of omlaag om {label} te wijzigen. Hoe verder, hoe sneller; houd Shift ingedrukt voor fijne stappen. Laat los om te stoppen.",
+  "ui.jog.limited": "Beperkt tot het bereik van de schuifregelaar.",
+  "ui.select.none": "– geen –"
+}

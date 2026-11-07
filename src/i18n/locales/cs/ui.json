@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} – upravte tažením",
+  "ui.jog.title": "Tažením nahoru nebo dolů změníte hodnotu „{label}“. Čím dál, tím rychleji; se Shiftem jemněji. Uvolněním zastavíte.",
+  "ui.jog.limited": "Omezeno na rozsah posuvníku.",
+  "ui.select.none": "— žádné —"
+}

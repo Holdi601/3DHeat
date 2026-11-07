@@ -1,0 +1,27 @@
+[submodule "exporters/gamefiles"]
+	path = exporters/gamefiles
+	url = https://github.com/Holdi601/3DHeat-GameFiles.git
+[submodule "exporters/gamecapture"]
+	path = exporters/gamecapture
+	url = https://github.com/Holdi601/3DHeat-GameCapture.git
+[submodule "exporters/unreal"]
+	path = exporters/unreal
+	url = https://github.com/Holdi601/3DHeat-UnrealExporter.git
+[submodule "exporters/cs2"]
+	path = exporters/cs2
+	url = https://github.com/Holdi601/3DHeat-CS2.git
+[submodule "exporters/watcher"]
+	path = exporters/watcher
+	url = https://github.com/Holdi601/3DHeat-Watcher.git
+[submodule "exporters/ext/squad-demo"]
+	path = exporters/ext/squad-demo
+	url = https://github.com/Holdi601/3DHeat-Ext-Squad.git
+[submodule "exporters/ext/warthunder-replay"]
+	path = exporters/ext/warthunder-replay
+	url = https://github.com/Holdi601/3DHeat-Ext-WarThunder.git
+[submodule "exporters/ext/wot-replay"]
+	path = exporters/ext/wot-replay
+	url = https://github.com/Holdi601/3DHeat-Ext-WoT.git
+[submodule "exporters/ext/wows-replay"]
+	path = exporters/ext/wows-replay
+	url = https://github.com/Holdi601/3DHeat-Ext-WoWs.git

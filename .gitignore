@@ -1,0 +1,128 @@
+node_modules/
+dist/
+
+# ---------------------------------------------------------------------------
+# Confidential: test data, maps, levels, recordings and anything derived from
+# them never go into this repository - not even a private one. Everything
+# below is kept out by folder AND by file type, so a data file dropped
+# somewhere new is still left out. To version a file of one of these types on
+# purpose (a documentation image, say), add it with `git add -f` after checking
+# it shows nothing confidential.
+# ---------------------------------------------------------------------------
+
+# Test artefacts: screenshots (they show maps), captured frames, benchmark reports.
+tools/.smoke/
+tools/.shots/
+
+# Where the local test data lives - its folder names are confidential too.
+# See tools/local-data.mjs.
+tools/local-data.json
+
+# Scripts that exist only to process the confidential test data, and use its
+# schema - column names, environment markers, folder conventions - as working
+# values. They stay on this machine.
+tools/derive_teams.py
+tools/add_region.py
+tools/sort_by_region.py
+tools/verify_teams.py
+tools/sweep_teams.py
+tools/probe-spawns.mjs
+tools/probe_shapes.py
+tools/probe_start.py
+# The same for the test that runs the viewer against the real test data: it
+# asserts that data's columns, sizes and folder conventions.
+src/data/realdata.test.ts
+# Local probes that read confidential data from disk.
+src/**/*.local.test.ts
+
+# Large inputs, kept out of version control and out of Vite's file watcher
+# (see server.watch.ignored in vite.config.ts — crawling these leaves the dev
+# server unable to answer its first request).
+TestData/
+old_tool/
+exmples/
+examples/
+
+# exporters/ is a git submodule (the public extractors repository) with its
+# own ignore rules for exported levels, probe dumps, recordings and model
+# weights; nothing under it is tracked here.
+laps/
+races/
+
+# Converted model weights.
+*.onnx
+*.pt
+*.pth
+*.safetensors
+
+# Data, by type: telemetry, tables, lap recordings.
+*.parquet
+*.csv
+*.tsv
+*.npz
+*.npy
+*.ibt
+*.lap.json
+*.match.json
+*.dem
+*.rar
+*.bz2
+*.zst
+
+# Maps, levels and models, by type.
+*.glb
+*.h3dcars
+*.gltf
+*.obj
+*.stl
+*.ply
+*.fbx
+*.kn5
+*.pak
+*.utoc
+*.ucas
+*.uasset
+*.umap
+*.minizip
+*.modelbin
+*.swatchbin
+*.zip
+*.7z
+
+# Media, by type: gameplay video, screenshots, map images.
+*.mp4
+*.mkv
+*.mov
+*.avi
+*.webm
+*.avif
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.bmp
+*.tga
+*.dds
+*.tif
+*.tiff
+
+# Secrets.
+.env
+.env.*
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+*.log
+.DS_Store
+Thumbs.db
+
+# Conversations with assistants and their logs never belong in the repository.
+.claude/
+*.jsonl

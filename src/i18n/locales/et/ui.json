@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — lohista muutmiseks",
+  "ui.jog.title": "{label}: muutmiseks lohista üles või alla. Mida kaugemale, seda kiiremini; täpsemaks hoia all Shift. Peatamiseks vabasta.",
+  "ui.jog.limited": "Piiratud liuguri vahemikuga.",
+  "ui.select.none": "— puudub —"
+}

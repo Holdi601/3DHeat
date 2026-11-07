@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Sekundės (santykinės)",
+  "state.types.timeUnit.milliseconds": "Milisekundės (santykinės)",
+  "state.types.timeUnit.microseconds": "Mikrosekundės (santykinės)",
+  "state.types.timeUnit.nanoseconds": "Nanosekundės (santykinės)",
+  "state.types.timeUnit.unixSeconds": "Unix laiko žyma (s)",
+  "state.types.timeUnit.unixMilliseconds": "Unix laiko žyma (ms)",
+  "state.types.timeUnit.iso8601": "ISO-8601 datos eilutė"
+}

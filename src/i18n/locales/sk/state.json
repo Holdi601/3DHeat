@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Sekundy (relatívne)",
+  "state.types.timeUnit.milliseconds": "Milisekundy (relatívne)",
+  "state.types.timeUnit.microseconds": "Mikrosekundy (relatívne)",
+  "state.types.timeUnit.nanoseconds": "Nanosekundy (relatívne)",
+  "state.types.timeUnit.unixSeconds": "Unixová časová pečiatka (s)",
+  "state.types.timeUnit.unixMilliseconds": "Unixová časová pečiatka (ms)",
+  "state.types.timeUnit.iso8601": "Dátum ako reťazec ISO-8601"
+}

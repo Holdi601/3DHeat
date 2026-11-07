@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label}: arrossega per ajustar",
+  "ui.jog.title": "Arrossega amunt o avall per canviar {label}. Com més lluny, més ràpid; mantén premuda la tecla Shift per ajustar amb precisió. Deixa anar per aturar.",
+  "ui.jog.limited": "Limitat a l'interval del control lliscant.",
+  "ui.select.none": "— cap —"
+}

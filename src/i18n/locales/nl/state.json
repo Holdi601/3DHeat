@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Seconden (relatief)",
+  "state.types.timeUnit.milliseconds": "Milliseconden (relatief)",
+  "state.types.timeUnit.microseconds": "Microseconden (relatief)",
+  "state.types.timeUnit.nanoseconds": "Nanoseconden (relatief)",
+  "state.types.timeUnit.unixSeconds": "Unix-tijdstempel (s)",
+  "state.types.timeUnit.unixMilliseconds": "Unix-tijdstempel (ms)",
+  "state.types.timeUnit.iso8601": "ISO-8601-datumtekst"
+}

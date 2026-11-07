@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — dragðu til að stilla",
+  "ui.jog.title": "Dragðu upp eða niður til að breyta gildinu {label}. Lengra er hraðara; haltu Shift niðri fyrir fínstillingu. Slepptu til að stöðva.",
+  "ui.jog.limited": "Takmarkað við svið sleðans.",
+  "ui.select.none": "— ekkert —"
+}

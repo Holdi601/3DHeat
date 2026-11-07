@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — drag to adjust",
+  "ui.jog.title": "Drag up or down to change {label}. Further is faster; hold Shift for fine. Release to stop.",
+  "ui.jog.limited": "Limited to the slider’s range.",
+  "ui.select.none": "— none —"
+}

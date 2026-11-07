@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — faire glisser pour régler",
+  "ui.jog.title": "Faites glisser vers le haut ou le bas pour modifier {label}. Plus loin, c’est plus rapide ; maintenez Shift pour un réglage fin. Relâchez pour arrêter.",
+  "ui.jog.limited": "Limité à la plage du curseur.",
+  "ui.select.none": "— aucun —"
+}

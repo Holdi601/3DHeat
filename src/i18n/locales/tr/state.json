@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Saniye (göreli)",
+  "state.types.timeUnit.milliseconds": "Milisaniye (göreli)",
+  "state.types.timeUnit.microseconds": "Mikrosaniye (göreli)",
+  "state.types.timeUnit.nanoseconds": "Nanosaniye (göreli)",
+  "state.types.timeUnit.unixSeconds": "Unix zaman damgası (s)",
+  "state.types.timeUnit.unixMilliseconds": "Unix zaman damgası (ms)",
+  "state.types.timeUnit.iso8601": "ISO-8601 tarih dizesi"
+}

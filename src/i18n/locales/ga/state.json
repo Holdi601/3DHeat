@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Soicindí (coibhneasta)",
+  "state.types.timeUnit.milliseconds": "Milleasoicindí (coibhneasta)",
+  "state.types.timeUnit.microseconds": "Micreashoicindí (coibhneasta)",
+  "state.types.timeUnit.nanoseconds": "Nanashoicindí (coibhneasta)",
+  "state.types.timeUnit.unixSeconds": "Stampa ama Unix (s)",
+  "state.types.timeUnit.unixMilliseconds": "Stampa ama Unix (ms)",
+  "state.types.timeUnit.iso8601": "Teaghrán dáta ISO-8601"
+}

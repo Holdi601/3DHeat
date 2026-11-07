@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — dra för att justera",
+  "ui.jog.title": "Dra uppåt eller nedåt för att ändra {label}. Längre bort går fortare; håll ned Shift för finjustering. Släpp för att stanna.",
+  "ui.jog.limited": "Begränsat till reglagets intervall.",
+  "ui.select.none": "— ingen —"
+}

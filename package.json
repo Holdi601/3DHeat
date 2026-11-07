@@ -1,0 +1,40 @@
+{
+  "name": "3dheat",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Realtime 3D telemetry heatmap and team viewer for very large positional datasets",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit -p tsconfig.json && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "smoke": "node tools/smoke.mjs",
+    "smoke:f16": "node tools/smoke.mjs \"http://127.0.0.1:5273/?heat=f16\"",
+    "bench": "node tools/run-tagged.mjs BENCH src/data/bench.test.ts",
+    "test:heavy": "node tools/run-tagged.mjs HEAVY src/data/realdata.test.ts",
+    "inspect": "node tools/inspect-parquet.mjs"
+  },
+  "dependencies": {
+    "hyparquet": "^1.29.1",
+    "meshoptimizer": "^1.2.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "three": "^0.185.1",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@types/three": "^0.185.4",
+    "@vitejs/plugin-react": "^6.1.0",
+    "@webgpu/types": "^0.1.72",
+    "playwright": "^1.62.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2",
+    "vitest": "^4.1.11"
+  }
+}

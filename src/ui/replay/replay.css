@@ -1,0 +1,71 @@
+.replay-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.replay-pair {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.replay-label,
+.replay-event,
+.replay-braa {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  font-size: 11px;
+  line-height: 1.3;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(12, 14, 18, 0.72);
+  color: #e8eaee;
+}
+.replay-label {
+  pointer-events: auto;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.replay-label.followed {
+  border-color: #6fb6ff;
+}
+.replay-label.picked {
+  border-color: #ffd166;
+}
+.replay-event {
+  color: #ffb4a8;
+  border: 1px solid rgba(255, 120, 100, 0.6);
+}
+.replay-braa {
+  color: #ffd166;
+  font-variant-numeric: tabular-nums;
+}
+.replay-events {
+  max-height: 260px;
+  overflow: auto;
+  font-size: 12px;
+}
+.replay-events button {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  padding: 2px 4px;
+  font-size: 12px;
+}
+.replay-events button span:first-child {
+  opacity: 0.65;
+  font-variant-numeric: tabular-nums;
+  min-width: 4.5em;
+}
+.replay-graph {
+  margin: 6px 0;
+}
+.replay-graph svg {
+  display: block;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 3px;
+}

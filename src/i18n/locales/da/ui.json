@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — træk for at justere",
+  "ui.jog.title": "Træk op eller ned for at ændre {label}. Længere er hurtigere; hold Shift nede for finjustering. Slip for at stoppe.",
+  "ui.jog.limited": "Begrænset til skyderens område.",
+  "ui.select.none": "— ingen —"
+}

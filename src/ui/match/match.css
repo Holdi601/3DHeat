@@ -1,0 +1,272 @@
+/* The CS2 match tab: wider sidebar for the scoreboards, the heatmap beside it. */
+
+.app.match {
+  --sidebar-w: 470px;
+  --side-t: #e0a43c;
+  --side-ct: #5d9be0;
+}
+
+.side {
+  font-weight: 650;
+}
+
+.side-T {
+  color: var(--side-t);
+}
+
+.side-CT {
+  color: var(--side-ct);
+}
+
+.side-none {
+  color: var(--text-dim);
+}
+
+.match-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 6px;
+  /* A folder of matches is dozens: the list scrolls, the match below stays in reach. */
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.match-row {
+  padding: 5px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.match-row:hover {
+  background: var(--panel-2);
+}
+
+.match-row.on {
+  border-color: var(--accent-dim);
+  background: var(--panel-2);
+}
+
+.match-name {
+  font-size: 12.5px;
+}
+
+.match-name .vs {
+  color: var(--text-faint);
+}
+
+.match-sub {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.match-head {
+  margin-bottom: 8px;
+}
+
+.score-line {
+  font-size: 15px;
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.score-line .colon {
+  color: var(--text-faint);
+  margin-right: 6px;
+}
+
+.round-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.round-cell {
+  width: 26px;
+  padding: 2px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  background: var(--panel-2);
+  font-size: 10px;
+}
+
+.round-cell .n {
+  color: var(--text-dim);
+}
+
+.round-cell .m {
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.round-cell.win-T .m {
+  color: var(--side-t);
+}
+
+.round-cell.win-CT .m {
+  color: var(--side-ct);
+}
+
+.round-cell.win-T {
+  box-shadow: inset 0 -3px 0 var(--side-t);
+}
+
+.round-cell.win-CT {
+  box-shadow: inset 0 -3px 0 var(--side-ct);
+}
+
+/* A draw is no side's: neutral. */
+.round-cell.draw .m {
+  color: var(--text-dim);
+}
+
+.round-cell.draw {
+  box-shadow: inset 0 -3px 0 var(--text-dim);
+}
+
+.round-cell.half {
+  margin-left: 8px;
+}
+
+.round-cell.on {
+  border-color: var(--text);
+}
+
+.round-detail {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.round-title {
+  font-size: 13px;
+}
+
+.economy {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.dim {
+  color: var(--text-dim);
+}
+
+.kill-feed {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+}
+
+.kill-feed td {
+  padding: 2px 3px;
+  border-top: 1px solid var(--line-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+}
+
+.kill-feed tr.after td {
+  opacity: 0.55;
+}
+
+.kill-feed .weapon {
+  color: var(--text-dim);
+}
+
+.flag {
+  display: inline-block;
+  margin-left: 3px;
+  padding: 0 3px;
+  border-radius: 3px;
+  font-size: 9.5px;
+  background: var(--line);
+  color: var(--text-dim);
+}
+
+.flag.open {
+  color: var(--text);
+}
+
+.flag.bad,
+.score-table td.bad {
+  color: var(--bad);
+}
+
+.score-table td.good {
+  color: var(--good);
+}
+
+.score-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  margin-bottom: 8px;
+}
+
+.score-table th {
+  color: var(--text-dim);
+  font-weight: 500;
+  text-align: right;
+  padding: 2px 4px;
+  white-space: nowrap;
+}
+
+.score-table td {
+  padding: 3px 4px;
+  text-align: right;
+  border-top: 1px solid var(--line-soft);
+  white-space: nowrap;
+}
+
+.score-table th:first-child,
+.score-table td:first-child {
+  text-align: left;
+}
+
+.score-table td.who {
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.score-table tbody tr {
+  cursor: pointer;
+}
+
+.score-table tbody tr:hover td {
+  background: var(--panel-2);
+}
+
+.heat-links {
+  margin-top: 6px;
+}
+
+.heat-links .label-row {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+
+.heat-links .warn {
+  color: var(--warm);
+}
+
+button.small {
+  padding: 3px 7px;
+  font-size: 11px;
+}

@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Sekonda (relative)",
+  "state.types.timeUnit.milliseconds": "Milisekonda (relative)",
+  "state.types.timeUnit.microseconds": "Mikrosekonda (relative)",
+  "state.types.timeUnit.nanoseconds": "Nanosekonda (relative)",
+  "state.types.timeUnit.unixSeconds": "Vulë kohore Unix (s)",
+  "state.types.timeUnit.unixMilliseconds": "Vulë kohore Unix (ms)",
+  "state.types.timeUnit.iso8601": "Varg date ISO-8601"
+}

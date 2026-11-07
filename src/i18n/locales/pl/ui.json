@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} – przeciągnij, aby ustawić",
+  "ui.jog.title": "Przeciągnij w górę lub w dół, aby zmienić wartość „{label}”. Dalej znaczy szybciej; przytrzymaj Shift, aby zmieniać dokładniej. Puść, aby zatrzymać.",
+  "ui.jog.limited": "Ograniczone do zakresu suwaka.",
+  "ui.select.none": "— brak —"
+}
