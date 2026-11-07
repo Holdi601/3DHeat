@@ -15,9 +15,9 @@
  */
 
 import { finish, newKit, PAINT, type Kit, type Template } from './kit';
-import { blob, block, fin, hexa, outlineBody, plate, prism, tiltBox, tube, type Outline, type P2 } from './parts';
+import { blob, block, fin, hexa, outlineBody, plate, prism, slab, tiltBox, tube, type Outline, type P2 } from './parts';
 import { disc, wheel } from '../race/shapes';
-import type { Rgb, Vec3 } from '../race/geometry';
+import { at, type Frame3, type Rgb, type Vec3 } from '../race/geometry';
 
 /**
  * tracked, wheeled, halftrack: vehicles. towed: a gun on its carriage.
@@ -171,8 +171,8 @@ export interface GroundSpec {
   wheelRadius?: number;
   /** Driver's cab at the front (trucks): its length and height; a bonnet ahead of it for a normal-control truck. */
   cab?: { length: number; height: number; glass?: boolean; bonnet?: number; outline?: Outline };
-  /** What a truck carries behind the cab. */
-  bed?: 'flat' | 'covered' | 'box' | 'tank';
+  /** What a truck carries behind the cab; 'none' draws only the frame, for a body built from `addOns`. */
+  bed?: 'flat' | 'covered' | 'box' | 'tank' | 'none';
   turret?: TurretSpec;
   /** More turrets (multi-turret tanks, sub-turrets); guns pick theirs by `turret` index (1 = the first of these). */
   turrets?: TurretSpec[];
@@ -222,6 +222,16 @@ export interface GroundSpec {
   skirt?: P2[];
   /** Parts added to the turret or the hull: armour packages, ERA bricks, sights, bustle racks, stowage. */
   addOns?: AddOn[];
+  /**
+   * Only the running gear is drawn for the chassis (wheels, tracks, bogies); the generic carriage, trailer bed,
+   * pedestal or block is left out and the body comes from `hullOutline` (on any chassis) and `addOns`: a towed gun's
+   * true trail, a trailer's own frame, a launcher's own base, a shelter of its own shape.
+   */
+  bare?: boolean;
+  /** A rail vehicle's bogie centres, forward from the middle; the axles in each (default 2 on a long vehicle) and their spacing (default 1.8). */
+  bogieAt?: number[];
+  bogieAxles?: number;
+  axleSpacing?: number;
 }
 
 /**
@@ -232,7 +242,7 @@ export interface GroundSpec {
  */
 export interface AddOn {
   on: 'turret' | 'hull';
-  kind: 'box' | 'blob' | 'drum' | 'body';
+  kind: 'box' | 'blob' | 'drum' | 'body' | 'tube' | 'slab';
   /** Centre (forward, side, up). */
   at: Vec3;
   /** Length, width, height (a drum: diameter, diameter, height). */
@@ -246,6 +256,25 @@ export interface AddOn {
   mirror?: boolean;
   /** Dark metal rather than the team's colour: sight heads, racks, smoke dischargers. */
   metal?: boolean;
+  /** For 'tube': its other end (forward, side, up), in the frame `at` is in; `size` gives the diameters at `at` and at `to`. */
+  to?: Vec3;
+  /**
+   * For 'slab': a flat part of any outline, convex or not (a reflector, a launcher arm, a trailer's side frame, a
+   * shelter seen side-on), `size[0]` thick, its polygon about `at` in its plane: 'side' upright along the vehicle
+   * (forward, up), 'front' upright across it (side, up), 'plan' level (forward, side).
+   */
+  poly?: P2[];
+  plane?: 'side' | 'front' | 'plan';
+  /** For 'slab': the plate bowed toward its face by this much at the ends of its first axis (a trough or orange-peel reflector). */
+  curve?: number;
+  /** Rolled about its own forward axis, right side down, radians: for 'slab', 'tube' and 'body', as `pitch` and `yaw` are. */
+  roll?: number;
+  /** A fixed part in this paint rather than the team's colour: antennas and missiles 'light', glass, tyres. */
+  paint?: 'metal' | 'dark' | 'light' | 'glass' | 'tyre' | 'track';
+  /** The team part's shade, 0..1 (default 0.86): a canvas tilt darker, a radome lighter. */
+  shade?: number;
+  /** Round parts' segments (tubes; default 8). */
+  segments?: number;
 }
 
 const grey = (k: number): Rgb => [k, k, k];
@@ -280,12 +309,15 @@ export function buildGround(input: GroundSpec): Template {
   if (chassis === 'tracked' || chassis === 'halftrack') tracks(k, spec);
   if (chassis === 'wheeled' || chassis === 'towed' || chassis === 'halftrack' || chassis === 'trailer') wheels(k, spec);
   if (chassis === 'rail') bogies(k, spec);
-  if (chassis === 'tracked' || chassis === 'wheeled' || chassis === 'halftrack' || chassis === 'rail' || chassis === 'hover') hull(k, spec);
+  const bare = !!spec.bare;
+  if (chassis === 'tracked' || chassis === 'wheeled' || chassis === 'halftrack' || chassis === 'rail' || chassis === 'hover') {
+    if (!bare || spec.hullOutline) hull(k, spec);
+  } else if (bare && spec.hullOutline) outlineBody(k.team, k.fr, spec.hullOutline, grey(0.86), 16, 1, grey(0.97));
   if (chassis === 'hover') blob(k.fixed, k.fr, [0, 0, 0.45], [L * 0.48, W * 0.48, 0.32], PAINT.dark);
-  if (chassis === 'towed') carriage(k, spec);
-  if (chassis === 'trailer') trailerBed(k, spec);
-  if (chassis === 'pedestal') pedestal(k, spec);
-  if (chassis === 'static') block(k.team, k.fr, [0, 0, H / 2], L, W, H, grey(0.8));
+  if (chassis === 'towed' && !bare) carriage(k, spec);
+  if (chassis === 'trailer' && !bare) trailerBed(k, spec);
+  if (chassis === 'pedestal' && !bare) pedestal(k, spec);
+  if (chassis === 'static' && !bare) block(k.team, k.fr, [0, 0, H / 2], L, W, H, grey(0.8));
   if (spec.cab) truck(k, spec);
   if (spec.boiler) boiler(k, spec);
   const top = deckAt(spec);
@@ -319,16 +351,69 @@ export function buildGround(input: GroundSpec): Template {
   return finish(k, 'ground');
 }
 
+/**
+ * The frame of an add-on turned about its centre `c` (forward, side, up in `fr`): rolled right side down, pitched
+ * nose up, then turned to the right, as `tiltBox` turns; `sd` -1 for the mirrored copy, a true reflection.
+ */
+function turned(fr: Frame3, c: Vec3, roll: number, pitch: number, yaw: number, sd: number): Frame3 {
+  const cr = Math.cos(roll * sd);
+  const sr = Math.sin(roll * sd);
+  const cp = Math.cos(pitch);
+  const sp = Math.sin(pitch);
+  const cy = Math.cos(yaw * sd);
+  const sy = Math.sin(yaw * sd);
+  // A vector given as (forward, right, up): rolled, pitched, yawed, then put in the kit's frame.
+  const v = (a0: number, b0: number, c0: number): Vec3 => {
+    const b1 = b0 * cr + c0 * sr;
+    const c1 = -b0 * sr + c0 * cr;
+    const a2 = a0 * cp - c1 * sp;
+    const c2 = a0 * sp + c1 * cp;
+    const a3 = a2 * cy - b1 * sy;
+    const b3 = a2 * sy + b1 * cy;
+    return [fr.f[0] * a3 + fr.r[0] * b3 + fr.u[0] * c2, fr.f[1] * a3 + fr.r[1] * b3 + fr.u[1] * c2, fr.f[2] * a3 + fr.r[2] * b3 + fr.u[2] * c2];
+  };
+  const r = v(0, 1, 0);
+  return { o: at(fr, c[0], c[1], c[2]), f: v(1, 0, 0), r: sd < 0 ? [-r[0], -r[1], -r[2]] : r, u: v(0, 0, 1) };
+}
+
+/** A slab add-on's polygon with its edges cut short enough along the first axis that a bowed plate bends smoothly. */
+function densify(poly: P2[], step: number): P2[] {
+  const out: P2[] = [];
+  for (let i = 0; i < poly.length; i++) {
+    const p = poly[i];
+    const q = poly[(i + 1) % poly.length];
+    const n = Math.max(1, Math.ceil(Math.abs(q[0] - p[0]) / step));
+    for (let j = 0; j < n; j++) out.push([p[0] + ((q[0] - p[0]) * j) / n, p[1] + ((q[1] - p[1]) * j) / n]);
+  }
+  return out;
+}
+
 /** Draws an add-on about its origin (the main turret's centre and base, or the hull's middle on the ground). */
 function addOn(k: Kit, a: AddOn, o: Vec3): void {
-  const buf = a.metal ? k.fixed : k.team;
-  const col = a.metal ? PAINT.metal : grey(0.86);
+  const buf = a.metal || a.paint ? k.fixed : k.team;
+  const col = a.paint ? PAINT[a.paint] : a.metal ? PAINT.metal : grey(a.shade ?? 0.86);
+  const turnedAt = (c: Vec3, sd: number) => turned(k.fr, c, a.roll ?? 0, a.pitch ?? 0, a.yaw ?? 0, sd);
   for (const sd of a.mirror ? [1, -1] : [1]) {
     const c: Vec3 = [o[0] + a.at[0], o[1] + a.at[1] * sd, o[2] + a.at[2]];
     const [l, w, h] = a.size;
     if (a.kind === 'box') tiltBox(buf, k.fr, c, l, w, h, a.pitch ?? 0, col, 1, (a.yaw ?? 0) * sd);
     else if (a.kind === 'blob') blob(buf, k.fr, c, [l / 2, w / 2, h / 2], col);
     else if (a.kind === 'drum') tube(buf, k.fr, [c[0], c[1], c[2] - h / 2], [c[0], c[1], c[2] + h / 2], l / 2, w / 2, col, 12);
+    else if (a.kind === 'tube') {
+      const e = a.to ?? a.at;
+      const d: Vec3 = [e[0] - a.at[0], e[1] - a.at[1], e[2] - a.at[2]];
+      if (a.roll || a.pitch || a.yaw) tube(buf, turnedAt(c, sd), [0, 0, 0], d, l / 2, w / 2, col, a.segments ?? 8);
+      else tube(buf, k.fr, c, [o[0] + e[0], o[1] + e[1] * sd, o[2] + e[2]], l / 2, w / 2, col, a.segments ?? 8);
+    } else if (a.kind === 'slab') {
+      if (!a.poly || a.poly.length < 3) continue;
+      const plane = a.plane ?? 'side';
+      const span = Math.max(...a.poly.map((p) => Math.abs(p[0]))) || 1;
+      const poly = a.curve ? densify(a.poly, span / 6) : a.poly;
+      const bend = (p: number) => (a.curve ?? 0) * (p / span) ** 2;
+      const map = (p: number, q: number): Vec3 => (plane === 'side' ? [p, bend(p), q] : plane === 'front' ? [bend(p), p, q] : [p, q, bend(p)]);
+      const normal: Vec3 = plane === 'side' ? [0, 1, 0] : plane === 'front' ? [1, 0, 0] : [0, 0, 1];
+      slab(buf, turnedAt(c, sd), poly, map, normal, l, col);
+    } else if (a.outline && (a.roll || a.pitch || a.yaw)) outlineBody(buf, turnedAt(c, sd), a.outline, col, 12);
     else if (a.outline) {
       const ol = a.outline;
       const mv = (p: P2[], u: number): P2[] => p.map(([f, v]) => [c[0] + f, u + v]);
@@ -503,16 +588,18 @@ function bogies(k: Kit, spec: GroundSpec): void {
   const half = spec.length / 2;
   const r = spec.wheelRadius ?? 0.46;
   const gauge = Math.min(spec.width / 2 - 0.25, 0.76);
-  const centres = spec.length > 9 ? [half - 2.4, -half + 2.4] : [half * 0.5, -half * 0.5];
+  const centres = spec.bogieAt ?? (spec.length > 9 ? [half - 2.4, -half + 2.4] : [half * 0.5, -half * 0.5]);
+  const n = spec.bogieAxles ?? (spec.length > 9 ? 2 : 1);
+  const step = spec.axleSpacing ?? 1.8;
   for (const c of centres) {
-    const axles = spec.length > 9 ? [c + 0.9, c - 0.9] : [c];
+    const axles = Array.from({ length: n }, (_, i) => c + ((n - 1) / 2 - i) * step);
     for (const x of axles) {
       for (const side of [-1, 1]) {
         const kfr = { ...k.fr, o: [x, 0, 0] as [number, number, number] };
         wheel(k.fixed, kfr, side * gauge, r, r, 0.14, PAINT.metal, PAINT.dark, side, 10);
       }
     }
-    block(k.fixed, k.fr, [c, 0, r + 0.1], spec.length > 9 ? 3.0 : 1.2, gauge * 2 + 0.3, 0.35, PAINT.dark);
+    block(k.fixed, k.fr, [c, 0, r + 0.1], (n - 1) * step + 1.2, gauge * 2 + 0.3, 0.35, PAINT.dark);
   }
 }
 
@@ -667,6 +754,8 @@ function truck(k: Kit, spec: GroundSpec): void {
     const H = spec.hullHeight;
     const bw = spec.width / 2 - 0.05;
     outlineBody(k.team, k.fr, { top: [[bx0, H - 0.12], [bx0 + 0.2, H], [bx1 - 0.2, H], [bx1, H - 0.12]], bottom: [[bx0, floor], [bx1, floor]], plan: [[bx0, bw], [bx1, bw]], round: [[bx0, 4], [bx1, 4]], stations: 6 }, grey(0.62), 16);
+  } else if (bed === 'none') {
+    // Only the frame: the body is built from add-ons.
   } else if (bed === 'box') block(k.team, k.fr, [(bx0 + bx1) / 2, 0, (floor + spec.hullHeight) / 2], bx1 - bx0, spec.width - 0.1, spec.hullHeight - floor, grey(0.8));
   else if (bed === 'tank') {
     tube(k.team, k.fr, [bx0 + 0.2, 0, (floor + spec.hullHeight) / 2], [bx1 - 0.1, 0, (floor + spec.hullHeight) / 2], (spec.hullHeight - floor) / 2, (spec.hullHeight - floor) / 2, grey(0.75), 12);

@@ -25,3 +25,6 @@
 [submodule "exporters/ext/wows-replay"]
 	path = exporters/ext/wows-replay
 	url = https://github.com/Holdi601/3DHeat-Ext-WoWs.git
+[submodule "exporters/ext/dcs-maps"]
+	path = exporters/ext/dcs-maps
+	url = https://github.com/Holdi601/3DHeat-Ext-DCS.git
