@@ -60,6 +60,12 @@ export interface TurretSpec {
    */
   outline?: Outline;
   gunX?: number;
+  /**
+   * The ring a rounded cast turret stands on: a low body under an outline turret whose sections are rounded (`round`
+   * under 5), so the dome meets the deck as the real casting does rather than touching it along one line. On by
+   * default for the main turret on the deck; false leaves it out (a spec that draws its own).
+   */
+  ring?: boolean;
 }
 
 export interface GunSpec {
@@ -882,7 +888,24 @@ function turret(k: Kit, spec: GroundSpec, t: TurretSpec, base: number): void {
   } else if (shape === 'cylinder') {
     tube(k.team, k.fr, [x, s, base], [x, s, base + h], l / 2, w / 2, grey(0.88), 14);
   } else prism(k.team, k.fr, profile, s - w / 2, s + w / 2, grey(0.92), 1, grey(1));
+  if (t.outline && t === spec.turret && t.ring !== false && !t.up) turretRing(k, t, x, s, base);
   if (spec.cupola && t === spec.turret) blob(k.team, k.fr, [x - l * 0.15, s + w * 0.22, base + h + 0.08], [0.32, 0.32, 0.14], grey(0.7));
+}
+
+/**
+ * Under a rounded outline turret, the ring it stands on: its plan drawn in a little, its top under half the dome's
+ * height (at most 0.3 m), sunk a few centimetres into the deck. A dome alone narrows to a line at its base and
+ * shows light between it and the deck from the front.
+ */
+function turretRing(k: Kit, t: TurretSpec, x: number, s: number, base: number): void {
+  const o = t.outline!;
+  const round = typeof o.round === 'number' ? o.round : o.round ? Math.min(...o.round.map((p) => p[1])) : 2.4;
+  if (round >= 5) return;
+  const cap = Math.min(0.3, t.height * 0.4);
+  const plan: P2[] = o.plan.map(([f, w]) => [x + f * 0.92, w * 0.96]);
+  const top: P2[] = o.top.map(([f, u]) => [x + f * 0.92, base + Math.max(0.06, Math.min(cap, u * 0.45))]);
+  const xs = plan.map((p) => p[0]);
+  outlineBody(k.team, k.fr, { plan, top, bottom: [[Math.min(...xs), base - 0.04], [Math.max(...xs), base - 0.04]], round: 6, side: s, stations: 8 }, grey(0.88), 14);
 }
 
 function gun(k: Kit, spec: GroundSpec, g: GunSpec, top: number, turrets: TurretSpec[]): void {

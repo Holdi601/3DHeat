@@ -7,9 +7,9 @@
  */
 
 import { finish, newKit, PAINT, type Kit, type Template } from './kit';
-import { blob, block, body, hexa, outlineBody, plate, slab, tiltBox, tube, type Outline, type P2 } from './parts';
-import type { Section } from '../race/shapes';
-import type { Rgb } from '../race/geometry';
+import { blob, block, body, hexa, lerpPoly, outlineBody, plate, slab, tiltBox, tube, type Outline, type P2 } from './parts';
+import { litQuad, litTriangle, type Section } from '../race/shapes';
+import { at, type Rgb, type Vec3 } from '../race/geometry';
 
 const grey = (k: number): Rgb => [k, k, k];
 
@@ -28,9 +28,11 @@ export interface NavalTurret {
   /**
    * round: a domed gunhouse (default). box: a big-gun turret with a flat
    * sloped face (battleships, cruisers). mount: a small faceted modern gun
-   * mount.
+   * mount. shield: an open gun behind a shield wrapping its front and sides.
    */
-  kind?: 'round' | 'box' | 'mount';
+  kind?: 'round' | 'box' | 'mount' | 'shield';
+  /** The gunhouse's (or shield's) height over its base, in place of the default share of its size. */
+  height?: number;
 }
 
 export interface NavalRadar {
@@ -55,14 +57,24 @@ export interface NavalSpec {
   /** Blocks on deck: forward position of the middle, length, width, height above the deck. */
   superstructure?: { x: number; length: number; width: number; height: number; side?: number; up?: number }[];
   turrets?: NavalTurret[];
-  funnels?: { x: number; height: number; diameter: number; side?: number }[];
-  masts?: { x: number; height: number; side?: number }[];
+  /**
+   * Funnels: diameter is fore and aft; width, when given, athwartships (an oval
+   * stack); rake, how far the top stands aft per metre of height; cap, a
+   * deeper band or cowl round the top this high.
+   */
+  funnels?: { x: number; height: number; diameter: number; side?: number; width?: number; rake?: number; cap?: number }[];
+  /**
+   * Masts: pole (default), tripod (two legs splayed aft), lattice (a tapering
+   * truss); yard, the yardarm's span (default a third of the beam); base, the
+   * height its foot stands on over the deck (a mast stepped on a bridge).
+   */
+  masts?: { x: number; height: number; side?: number; kind?: 'pole' | 'tripod' | 'lattice'; yard?: number; base?: number }[];
   /**
    * Missile launchers: forward position, length, width. vls: flush cells, a
    * grid of hatches (default). box: a raised armoured box. tubes: canisters
    * angled up, in pairs either side (`count` per side).
    */
-  launchers?: { x: number; length: number; width: number; kind?: 'vls' | 'box' | 'tubes'; count?: number; elevation?: number; up?: number }[];
+  launchers?: { x: number; length: number; width: number; kind?: 'vls' | 'box' | 'tubes'; count?: number; elevation?: number; up?: number; height?: number }[];
   radars?: NavalRadar[];
   /** A submarine's sail: forward position, length, height. */
   sail?: { x: number; length: number; height: number };
@@ -199,8 +211,10 @@ export function buildNaval(spec: NavalSpec): Template {
     if (spec.helideck) {
       const x0 = -half + Math.min(L * 0.02, 2);
       const x1 = x0 + Math.min(L * 0.18, 26);
-      plate(k.fixed, k.fr, [[x1, -b * 0.85], [x0, -b * 0.8], [x0, b * 0.8], [x1, b * 0.85]], fb + 0.03, 0.04, grey(0.36));
-      plate(k.fixed, k.fr, [[(x0 + x1) / 2 + b * 0.25, -b * 0.25], [(x0 + x1) / 2 - b * 0.25, -b * 0.25], [(x0 + x1) / 2 - b * 0.25, b * 0.25], [(x0 + x1) / 2 + b * 0.25, b * 0.25]], fb + 0.07, 0.03, PAINT.light, 0.7);
+      // On the hull's own deck where it has one (lower than the freeboard at the stern).
+      const hd = hullO ? Math.min(fb, lerpPoly(hullO.top, (x0 + x1) / 2)) : fb;
+      plate(k.fixed, k.fr, [[x1, -b * 0.85], [x0, -b * 0.8], [x0, b * 0.8], [x1, b * 0.85]], hd + 0.03, 0.04, grey(0.36));
+      plate(k.fixed, k.fr, [[(x0 + x1) / 2 + b * 0.25, -b * 0.25], [(x0 + x1) / 2 - b * 0.25, -b * 0.25], [(x0 + x1) / 2 - b * 0.25, b * 0.25], [(x0 + x1) / 2 + b * 0.25, b * 0.25]], hd + 0.07, 0.03, PAINT.light, 0.7);
     }
   }
   const carrierOff = kind === 'carrier' ? b * 0.9 : 0;
@@ -212,12 +226,12 @@ export function buildNaval(spec: NavalSpec): Template {
     // Bridge windows on the front face.
     block(k.fixed, k.fr, [s.x + s.length / 2 + 0.02, side, base + s.height * 0.8], 0.06, s.width * 0.8, Math.min(0.9, s.height * 0.15), PAINT.glass);
   }
-  for (const f of spec.funnels ?? []) tube(k.team, k.fr, [f.x, f.side ?? carrierOff, fb + deckUp], [f.x - f.diameter * 0.3, f.side ?? carrierOff, fb + deckUp + f.height], f.diameter / 2, f.diameter * 0.45, grey(0.6), 10);
-  for (const m of spec.masts ?? []) {
-    const ms = m.side ?? carrierOff;
-    tube(k.fixed, k.fr, [m.x, ms, fb], [m.x, ms, fb + deckUp + m.height], Math.max(0.12, m.height * 0.03), 0.06, PAINT.metal, 6);
-    block(k.fixed, k.fr, [m.x, ms, fb + deckUp + m.height * 0.75], 0.2, Math.max(1.5, spec.beam * 0.35), 0.2, PAINT.metal);
+  for (const f of spec.funnels ?? []) {
+    const fs = f.side ?? carrierOff;
+    if (f.width === undefined && f.rake === undefined && !f.cap) tube(k.team, k.fr, [f.x, fs, fb + deckUp], [f.x - f.diameter * 0.3, fs, fb + deckUp + f.height], f.diameter / 2, f.diameter * 0.45, grey(0.6), 10);
+    else stack(k, f, fs, fb + deckUp);
   }
+  for (const m of spec.masts ?? []) mast(k, m, m.side ?? carrierOff, fb + (m.base ?? 0), fb + deckUp + m.height, fb + deckUp + m.height * 0.75, spec.beam);
   for (const d of spec.decks ?? []) slab(k.fixed, k.fr, d.plan, (f, s) => [f, s, d.up], [0, 0, 1], d.thickness ?? 0.4, kind === 'carrier' ? grey(0.45) : PAINT.deck);
   for (const o of spec.bodies ?? []) {
     outlineBody(k.team, k.fr, o, grey(0.86), 12);
@@ -239,10 +253,27 @@ function turret(k: Kit, t: NavalTurret, fb: number): void {
   const z = t.size;
   let face = z * 0.3;
   let gunUp = up + z * 0.22;
-  if (kind === 'round') blob(k.team, k.fr, [t.x, s, up + z * 0.18], [z / 2, z / 2, z * 0.28], grey(0.82));
-  else {
+  if (kind === 'round') blob(k.team, k.fr, [t.x, s, up + ((t.height ?? z * 0.46) * 0.18) / 0.46], [z / 2, z / 2, ((t.height ?? z * 0.46) * 0.28) / 0.46], grey(0.82));
+  else if (kind === 'shield') {
+    // An open gun: the pedestal, and the shield round its front and sides, its face raked back.
+    const h = t.height ?? z * 0.55;
+    const l = z * 0.55;
+    const w = z * 0.75;
+    const fx = t.x + dir * l * 0.6;
+    const bx = t.x - dir * l * 0.4;
+    const bottom: Vec3[] = [[bx, s - w / 2, up + 0.15], [fx, s - w / 2, up + 0.15], [fx, s + w / 2, up + 0.15], [bx, s + w / 2, up + 0.15]];
+    const top: Vec3[] = [[bx, s - w / 2, up + h], [fx - dir * h * 0.25, s - w / 2, up + h], [fx - dir * h * 0.25, s + w / 2, up + h], [bx, s + w / 2, up + h]];
+    if (dir < 0) {
+      bottom.reverse();
+      top.reverse();
+    }
+    hexa(k.team, k.fr, bottom, top, grey(0.8));
+    tube(k.fixed, k.fr, [t.x, s, up], [t.x, s, up + 0.2], z * 0.4, z * 0.4, PAINT.metal, 10);
+    face = l * 0.5;
+    gunUp = up + h * 0.5;
+  } else {
     // A gunhouse: flat sides and roof, the face sloped back; a modern mount narrower on top.
-    const h = kind === 'box' ? z * 0.36 : z * 0.42;
+    const h = t.height ?? (kind === 'box' ? z * 0.36 : z * 0.42);
     const l = kind === 'box' ? z * 1.05 : z;
     const w = kind === 'box' ? z * 0.9 : z * 0.7;
     const lean = kind === 'mount' ? w * 0.2 : w * 0.05;
@@ -258,7 +289,7 @@ function turret(k: Kit, t: NavalTurret, fb: number): void {
     }
     hexa(k.team, k.fr, bottom, top, grey(0.84), 1, grey(0.92));
     face = (l / 2) * 0.8;
-    gunUp = up + h * 0.45;
+    gunUp = up + Math.min(h * 0.45, z * 0.22 + 0.4);
   }
   const r = Math.max(0.06, t.calibre * 0.8);
   for (let i = 0; i < t.barrels; i++) {
@@ -300,7 +331,8 @@ function launcher(k: Kit, l: NonNullable<NavalSpec['launchers']>[number], fb: nu
   const kind = l.kind ?? 'vls';
   const up = fb + (l.up ?? 0);
   if (kind === 'box') {
-    block(k.fixed, k.fr, [l.x, 0, up + 0.3], l.length, l.width, 0.6, PAINT.metal);
+    const h = l.height ?? 0.6;
+    block(k.fixed, k.fr, [l.x, 0, up + h / 2], l.length, l.width, h, PAINT.metal);
     return;
   }
   if (kind === 'tubes') {
@@ -311,7 +343,7 @@ function launcher(k: Kit, l: NonNullable<NavalSpec['launchers']>[number], fb: nu
     for (const sd of [-1, 1]) {
       for (let i = 0; i < n; i++) {
         const s = sd * (beam * 0.25 + i * d * 1.1);
-        tiltBox(k.team, k.fr, [l.x, s, up + d * 0.6 + (l.length / 2) * Math.sin(e)], l.length, d, d, e, grey(0.78));
+        tiltBox(k.team, k.fr, [l.x, s, up + d * 0.5 + (l.length / 2) * Math.sin(e)], l.length, d, d, e, grey(0.78));
       }
     }
     return;
@@ -345,4 +377,54 @@ function duct(k: Kit, d: NonNullable<NavalSpec['ducts']>[number]): void {
   }
   tube(k.fixed, k.fr, [d.x - d.length * 0.1, d.side, d.up], [d.x - d.length * 0.2, d.side, d.up], r0 * 0.95, r0 * 0.95, PAINT.metal, 12, 0.4);
   tube(k.fixed, k.fr, [d.x + d.length * 0.2, d.side, d.up], [d.x - d.length * 0.4, d.side, d.up], r0 * 0.18, r0 * 0.1, PAINT.metal, 8);
+}
+
+/** An oval, raked funnel lofted from its foot to its top, with a cap band round the top. */
+function stack(k: Kit, f: NonNullable<NavalSpec['funnels']>[number], side: number, deck: number): void {
+  const n = 14;
+  const a = f.diameter / 2;
+  const b = (f.width ?? f.diameter) / 2;
+  const rake = f.rake ?? (f.diameter * 0.3) / Math.max(1, f.height);
+  const ring = (z: number, k0: number): Vec3[] => Array.from({ length: n }, (_, i) => {
+    const t = (i / n) * Math.PI * 2;
+    return [f.x - rake * (z - deck) + Math.cos(t) * a * k0, side + Math.sin(t) * b * k0, z] as Vec3;
+  });
+  const top = deck + f.height;
+  const cap = Math.min(f.cap ?? 0, f.height * 0.4);
+  const levels: [number, number, Rgb][] = [[deck, 1, grey(0.6)], [top - cap, 0.95, grey(0.6)]];
+  if (cap > 0) levels.push([top - cap, 1.04, PAINT.dark], [top, 1.04, PAINT.dark]);
+  else levels.push([top, 0.95, grey(0.6)]);
+  const rings = levels.map(([z, k0]) => ring(z, k0).map(([x, y, zz]) => at(k.fr, x, y, zz)));
+  const centre = (z: number): Vec3 => at(k.fr, f.x - rake * (z - deck), side, z);
+  for (let r = 0; r + 1 < rings.length; r++) {
+    const inside = centre((levels[r][0] + levels[r + 1][0]) / 2);
+    const col = levels[r + 1][2];
+    for (let i = 0; i < n; i++) {
+      const j = (i + 1) % n;
+      litQuad(k.team, rings[r][i], rings[r][j], rings[r + 1][j], rings[r + 1][i], inside, col);
+    }
+  }
+  // The top's opening, dark.
+  const last = rings[rings.length - 1];
+  const c = centre(top);
+  const below = centre(top - 0.5);
+  for (let i = 0; i < n; i++) litTriangle(k.fixed, c, last[i], last[(i + 1) % n], below, PAINT.dark);
+}
+
+/** A mast: a pole, a tripod with its two legs splayed aft, or a tapering lattice; the yardarm across it. */
+function mast(k: Kit, m: NonNullable<NavalSpec['masts']>[number], side: number, foot: number, top: number, yardAt: number, beam: number): void {
+  const h = top - foot;
+  if (h <= 0) return;
+  const kind = m.kind ?? 'pole';
+  if (kind === 'lattice') {
+    // Four corner legs drawn as one tapering square truss, and a thin pole above it.
+    tube(k.fixed, k.fr, [m.x, side, foot], [m.x, side, foot + h * 0.8], Math.max(0.5, h * 0.09), Math.max(0.25, h * 0.025), PAINT.metal, 4);
+    tube(k.fixed, k.fr, [m.x, side, foot + h * 0.8], [m.x, side, top], 0.15, 0.06, PAINT.metal, 6);
+  } else {
+    tube(k.fixed, k.fr, [m.x, side, foot], [m.x, side, top], Math.max(0.12, m.height * 0.03), 0.06, PAINT.metal, 6);
+    if (kind === 'tripod') {
+      for (const sd of [-1, 1]) tube(k.fixed, k.fr, [m.x - h * 0.2, side + sd * h * 0.12, foot], [m.x, side, foot + h * 0.62], Math.max(0.1, h * 0.022), 0.08, PAINT.metal, 6);
+    }
+  }
+  block(k.fixed, k.fr, [m.x, side, yardAt], 0.2, m.yard ?? Math.max(1.5, beam * 0.35), 0.2, PAINT.metal);
 }

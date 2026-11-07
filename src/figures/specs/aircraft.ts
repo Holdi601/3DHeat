@@ -13,7 +13,7 @@
 
 import type { Named, SpecSet } from './index';
 import type { FixedWingSpec } from '../air';
-import type { P2 } from '../parts';
+import type { Outline, P2 } from '../parts';
 import { bubble, tandem } from './jet-variants';
 
 const A: Named<FixedWingSpec> = {};
@@ -30,55 +30,6 @@ A['f-5e'] = {
   tailPlan: [[-5.4, 0.7], [-6.2, 2.1], [-7.0, 2.1], [-7.0, 0.7]],
   engines: { kind: 'internal', count: 2, diameter: 0.6 },
   canopy: { x: 3.3, length: 2.2, kind: 'bubble' },
-};
-// A-10 Thunderbolt II: a straight thick low wing, two big engine pods high on the rear fuselage, the H tail at the end (16.26 x 17.53 x 4.47 m).
-A['a-10c'] = {
-  cls: 'attack', length: 16.26, span: 17.53, height: 4.47, bodyWidth: 1.7, bodyHeight: 2.0,
-  fuselage: { top: [[8.13, 0.1], [6.5, 0.6], [4.6, 1.0], [2.2, 1.05], [-4, 0.75], [-8, 0.55]], bottom: [[8.13, -0.25], [6.5, -0.8], [0, -0.95], [-5, -0.55], [-8, 0.1]], plan: [[8.13, 0.2], [6.5, 0.65], [3.5, 0.85], [-2, 0.8], [-8.0, 0.45]], round: 4, stations: 20 },
-  bodies: [{ top: [[-2.0, 1.85], [-6.3, 1.75]], bottom: [[-2.0, 0.65], [-6.3, 0.75]], plan: [[-2.0, 0.62], [-4.0, 0.65], [-6.3, 0.45]], side: 1.3, round: 2.2, stations: 10 }],
-  wing: { x: -0.1, span: 17.53, rootChord: 3.0, tipChord: 1.8, sweep: 0, mount: -0.8 },
-  wingPlan: [[1.4, 0], [1.4, 2.5], [1.2, 8.76], [-0.6, 8.76], [-1.6, 2.5], [-1.6, 0]],
-  tail: { kind: 'h', finHeight: 2.4, finChord: 1.9, spacing: 5.8, tailSpan: 5.8, tailChord: 1.6, planeUp: 0.6 },
-  finPlan: [[-6.2, 0], [-8.1, 0], [-8.2, 2.4], [-6.8, 2.4]],
-  tailPlan: [[-6.3, 0], [-6.6, 2.9], [-7.9, 2.9], [-7.9, 0]],
-  canopy: { x: 4.5, length: 2.2, kind: 'bubble' },
-};
-// Su-25: a shoulder wing, the long engine nacelles along the fuselage sides, one fin, a pointed nose (15.53 x 14.36 x 4.8 m).
-A['su-25t'] = {
-  cls: 'attack', length: 15.53, span: 14.36, height: 4.8, bodyWidth: 2.6, bodyHeight: 1.6,
-  fuselage: { top: [[7.76, -0.05], [6.4, 0.35], [4.5, 0.6], [3.6, 0.95], [1.5, 0.85], [-4, 0.6], [-7.6, 0.4]], bottom: [[7.76, -0.1], [6.4, -0.4], [3.6, -0.65], [-3, -0.65], [-7.6, -0.3]], plan: [[7.76, 0.03], [6.4, 0.4], [4.5, 0.6], [3.4, 0.7], [-3, 0.7], [-7.6, 0.45]], round: 3, stations: 20 },
-  bodies: [{ top: [[2.6, 0.35], [-5.0, 0.35]], bottom: [[2.6, -0.7], [-5, -0.6]], plan: [[2.6, 0.45], [-3, 0.5], [-5, 0.35]], side: 1.05, round: [[2.6, 6], [-5, 2.4]], stations: 10 }],
-  wing: { x: -0.5, span: 14.36, rootChord: 4.2, tipChord: 1.3, sweep: 20, mount: 0.8 },
-  wingPlan: [[1.6, 0], [1.6, 1.5], [-0.4, 7.18], [-1.7, 7.18], [-2.6, 1.5], [-2.6, 0]],
-  tail: { kind: 'single', finHeight: 2.6, finChord: 3.4, tailSpan: 4.6, tailChord: 1.6, finBase: 0.55, planeUp: 0.4 },
-  finPlan: [[-3.8, 0], [-7.2, 0], [-7.6, 2.6], [-6.4, 2.6]],
-  tailPlan: [[-5.6, 0.4], [-6.4, 2.3], [-7.4, 2.3], [-7.4, 0.4]],
-  canopy: { x: 3.9, length: 2.0, kind: 'framed' },
-};
-// MiG-15bis: a short fat body with the nose intake, a 35-degree wing with anhedral, the tailplane halfway up the swept fin (10.11 x 10.08 x 3.7 m); MiG-17 the 45-degree wing.
-A['mig-15bis'] = {
-  cls: 'fighter', length: 10.11, span: 10.08, height: 3.7, bodyWidth: 1.45, bodyHeight: 1.5,
-  fuselage: { top: [[5.05, 0.4], [3.6, 0.72], [2.4, 0.95], [0, 0.8], [-3, 0.6], [-5, 0.45]], bottom: [[5.05, -0.45], [3.5, -0.75], [0, -0.75], [-3, -0.55], [-5, -0.3]], plan: [[5.05, 0.5], [4, 0.68], [1.5, 0.72], [-2, 0.6], [-5.0, 0.4]], round: 2.1, stations: 18 },
-  wing: { x: -0.8, span: 10.08, rootChord: 3.4, tipChord: 1.2, sweep: 37, mount: 0.3, dihedral: -2 },
-  wingPlan: [[0.9, 0], [0.9, 0.7], [-2.6, 5.04], [-3.6, 5.04], [-2.5, 0.7], [-2.5, 0]],
-  tail: { kind: 'single', finHeight: 2.4, finChord: 3.2, tailSpan: 3.2, tailChord: 1.1, finBase: 0.5, planeUp: 1.9 },
-  finPlan: [[-1.4, 0], [-4.6, 0], [-5.6, 2.4], [-4.4, 2.4]],
-  tailPlan: [[-4.6, 0], [-5.2, 1.6], [-5.9, 1.6], [-5.9, 0]],
-  engines: { kind: 'internal', count: 1, diameter: 0.9 },
-  canopy: { x: 2.0, length: 1.8, kind: 'bubble' },
-};
-A['mig-17'] = { ...A['mig-15bis'], length: 11.26, span: 9.63, height: 3.8, wingPlan: [[0.9, 0], [0.9, 0.7], [-3.4, 4.8], [-4.3, 4.8], [-2.9, 0.7], [-2.9, 0]] };
-// F-86 Sabre: slender, the nose intake, a low 35-degree wing, the tailplane low on the fuselage (11.4 x 11.3 x 4.5 m).
-A['f-86f'] = {
-  cls: 'fighter', length: 11.4, span: 11.3, height: 4.5, bodyWidth: 1.45, bodyHeight: 1.5,
-  fuselage: { top: [[5.7, 0.45], [4.4, 0.7], [2.6, 0.95], [1, 0.8], [-3, 0.6], [-5.6, 0.45]], bottom: [[5.7, -0.45], [4.4, -0.72], [0, -0.78], [-3, -0.6], [-5.6, -0.35]], plan: [[5.7, 0.5], [4.6, 0.68], [2, 0.72], [-2, 0.6], [-5.6, 0.4]], round: 2.1, stations: 18 },
-  wing: { x: -0.8, span: 11.3, rootChord: 4.0, tipChord: 1.2, sweep: 37, mount: -0.6, dihedral: 3 },
-  wingPlan: [[1.2, 0], [1.2, 0.7], [-2.3, 5.65], [-3.5, 5.65], [-2.8, 0.7], [-2.8, 0]],
-  tail: { kind: 'single', finHeight: 2.3, finChord: 3.4, tailSpan: 3.9, tailChord: 1.2, finBase: 0.5, planeUp: 0.2 },
-  finPlan: [[-2.0, 0], [-5.4, 0], [-6.0, 2.3], [-4.8, 2.3]],
-  tailPlan: [[-4.2, 0], [-5.2, 1.95], [-6.0, 1.95], [-6.0, 0]],
-  engines: { kind: 'internal', count: 1, diameter: 0.9 },
-  canopy: { x: 2.4, length: 1.9, kind: 'bubble' },
 };
 
 // ---------------------------------------------------------------- twins and bombers
@@ -122,7 +73,20 @@ A['lancaster'] = {
   engines: { kind: 'wing-props', count: 4, diameter: 1.3, at: [0.24, 0.46] },
   propeller: { diameter: 4.0, blades: 3 },
   canopy: { x: 6.0, length: 2.4, kind: 'framed' },
+  // The cockpit's glasshouse standing on the deck, the nose, mid-upper and tail turrets (estimates).
+  glass: [
+    { top: [[7.1, 1.15], [6.6, 1.95], [5.0, 2.0], [4.3, 1.55]], bottom: [[7.1, 0.9], [4.3, 0.9]], plan: [[7.1, 0.35], [6.6, 0.6], [5.0, 0.6], [4.3, 0.45]], round: 2.4, stations: 8 },
+    { top: [[11.05, -0.15], [10.85, 0.35], [10.3, 0.45], [9.9, 0.2]], bottom: [[11.05, -0.25], [10.85, -0.75], [10.3, -0.85], [9.9, -0.5]], plan: [[11.05, 0.1], [10.85, 0.5], [10.3, 0.55], [9.9, 0.45]], round: 2, stations: 6 },
+    { top: [[-2.4, 1.1], [-2.7, 1.75], [-3.5, 1.75], [-3.8, 1.1]], bottom: [[-2.4, 0.9], [-3.8, 0.9]], plan: [[-2.4, 0.3], [-2.7, 0.5], [-3.5, 0.5], [-3.8, 0.3]], round: 2, stations: 6 },
+    { top: [[-10.2, 0.75], [-10.6, 0.85], [-11.2, 0.6], [-11.4, 0.2]], bottom: [[-10.2, -0.3], [-10.6, -0.4], [-11.2, -0.3], [-11.4, 0.0]], plan: [[-10.2, 0.45], [-10.6, 0.5], [-11.2, 0.4], [-11.4, 0.15]], round: 2, stations: 6 },
+  ],
 };
+
+// The wings' thickness at the root (about 16 % of the chord, estimate), following the dihedral.
+for (const [k, z, dih, t] of [['p-38j', 0, 0, 0.5], ['b-17g', -0.21, 4, 1.25], ['lancaster', 0.22, 4, 0.95]] as [string, number, number, number][]) {
+  const f = A[k]!;
+  f.bodies = [...(f.bodies ?? []), ...wingRoot(f.wingPlan!, f.span / 2, (y) => z + y * Math.tan((dih * Math.PI) / 180), t)];
+}
 
 // ---------------------------------------------------------------- piston aircraft from proportions
 
@@ -177,20 +141,136 @@ export interface Piston {
   /** A belly radiator scoop (P-51) or bulge (Il-2): forward position, length, depth. */
   scoop?: [number, number, number];
   gear?: boolean;
+  /** The spine stays high from the canopy back to the fin (a razorback), instead of the cut-down deck. */
+  razor?: boolean;
+  /** The canopy's height above the deck (default 0.5 m, a bubble 0.55 m; estimates). */
+  hood?: number;
+  /** A radial's cowl radius, and its half-depth when an oval (default the half-width); the half-width at the cockpit. */
+  cowl?: number;
+  cowlH?: number;
+  waist?: number;
+  /** An inline's spinner radius (default from the propeller). */
+  spinner?: number;
+  /** Radiators under the wings (Bf 109, Spitfire): front, out from the centre line, length, depth. */
+  rads?: [number, number, number, number];
+  /** The wing's thickness at the root (default 15 % of the root chord). */
+  thick?: number;
+}
+
+/** The wing's leading and trailing edge at `y` out, from its half planform. */
+export function chordAt(plan: P2[], y: number): [number, number] {
+  const xs: number[] = [];
+  for (let i = 0; i < plan.length; i++) {
+    const [ax, ay] = plan[i];
+    const [bx, by] = plan[(i + 1) % plan.length];
+    if ((ay - y) * (by - y) <= 0 && ay !== by) xs.push(ax + ((bx - ax) * (y - ay)) / (by - ay));
+  }
+  return xs.length ? [Math.max(...xs), Math.min(...xs)] : [0, 0];
+}
+
+/**
+ * The wing's true thickness over its inner half (the slab alone is a thin plate): overlapping airfoil-shaped
+ * slices, each at the wing's height there (dihedral or gull), `thick` deep at the root and thinning outward.
+ */
+export function wingRoot(plan: P2[], half: number, z: (y: number) => number, thick: number, slices = 4): Outline[] {
+  const out: Outline[] = [];
+  const W = half * 0.1;
+  for (let i = 0; i < slices; i++) {
+    const y = half * (0.06 + 0.11 * i);
+    const [le, te] = chordAt(plan, y + W);
+    const c = le - te;
+    if (c <= 0.1) continue;
+    const T = thick * (1 - (0.55 * y) / half);
+    const m = z(y);
+    out.push({
+      top: [[le, m], [le - c * 0.08, m + T * 0.36], [le - c * 0.3, m + T * 0.5], [te + c * 0.2, m + T * 0.14], [te, m + 0.01]],
+      bottom: [[le, m], [le - c * 0.08, m - T * 0.28], [le - c * 0.3, m - T * 0.38], [te + c * 0.2, m - T * 0.08], [te, m - 0.01]],
+      plan: [[le, W * 0.9], [le - c * 0.3, W], [te, W]],
+      side: y,
+      round: 6,
+      stations: 6,
+    });
+  }
+  return out;
+}
+
+/** The canopy's glass: a framed hood, a bubble, a long greenhouse or a tandem pair, standing on the deck at `sill`. */
+function hoodOf(c: Piston['canopy'], sill: number, crown: number, cw: number): Outline[] {
+  const f = c.x + c.length / 2;
+  const b = c.x - c.length / 2;
+  const L = c.length;
+  if (c.kind === 'bubble') return [bubble(f, b, crown, sill, sill, cw)];
+  if (c.kind === 'tandem') return [tandem(f, b, crown - 0.08, crown, sill, sill, cw)];
+  // Framed: a raked windscreen, a flat crown, the back dropping to the spine.
+  const rake = Math.min(0.55, L * 0.32);
+  return [{ top: [[b, crown - 0.12], [b + Math.min(0.3, L * 0.15), crown], [f - rake, crown], [f - rake * 0.15, sill + (crown - sill) * 0.25], [f, sill]], bottom: [[b, sill - 0.3], [f, sill - 0.3]], plan: [[b, cw * 0.8], [b + L * 0.25, cw], [f - rake, cw * 0.97], [f, cw * 0.6]], round: 3, stations: 12 }];
 }
 
 export function piston(p: Piston): FixedWingSpec & { cls: string } {
   const L = p.length;
   const n = L / 2;
   const t = -L / 2;
-  const cowl = p.radial ? 0.95 : 0.6;
-  // The belly runs level under the wing, then sweeps up to the tail.
+  const h = p.h;
+  const w = p.w;
+  const c = p.canopy;
+  const xf = c.x + c.length / 2;
+  const xb = c.x - c.length / 2;
   const te = p.le - p.root;
-  const bottom: P2[] = [[n, 0], [n - 0.35, -p.h * cowl], [n - L * 0.3, -p.h], [te, -p.h], [t + L * 0.22, -p.h * 0.42], [t + 0.3, -p.h * 0.1], [t, 0.05]];
+  const fr = Math.min(p.finRoot, L * 0.2);
+  // The deck at the cockpit, the canopy's crown on it (estimates: a fighter's hood stands about half a metre).
+  const sill = h * 0.92;
+  const crown = sill + (p.hood ?? (c.kind === 'bubble' ? 0.55 : 0.5));
+  const cw = Math.min(0.36, w * 0.66);
+  // The nose: a radial's blunt round cowl, or an inline's spinner and the cowl swelling back to the windscreen.
+  const R = p.cowl ?? w;
+  const RH = p.cowlH ?? R;
+  const rs = p.spinner ?? Math.max(0.22, Math.min(0.36, p.prop * 0.1));
+  const mid = (n - 0.5 + xf) / 2;
+  const waist = p.waist ?? (p.radial ? Math.min(w, R * 0.82) : w);
+  const top: P2[] = p.radial
+    ? [[n, RH * 0.78], [n - 0.12, RH * 0.95], [n - 0.4, RH], [Math.max(xf + 0.1, n - 1.2), Math.max(RH * 0.97, sill * 0.98)], [xf, sill]]
+    : [[n, 0], [n - 0.15, rs * 0.6], [n - 0.42, rs], [n - 0.55, rs * 1.3 + 0.04], [mid, h * 0.8], [xf, sill]];
+  const bottom: P2[] = p.radial
+    ? [[n, -RH * 0.78], [n - 0.12, -RH * 0.95], [n - 0.4, -RH], [Math.max(p.le, n - 1.6), -h * 0.98]]
+    : [[n, 0], [n - 0.15, -rs * 0.6], [n - 0.42, -rs], [n - 0.55, -rs * 1.4], [mid, -h * 0.9], [Math.max(p.le, mid - 0.4), -h * 0.98]];
+  const plan: P2[] = p.radial
+    ? [[n, R * 0.78], [n - 0.12, R * 0.95], [n - 0.4, R], [Math.max(xf + 0.1, n - 1.2), R * 0.96], [xf, waist * 0.98], [c.x, waist]]
+    : [[n, 0.03], [n - 0.15, rs * 0.6], [n - 0.42, rs], [n - 0.55, rs * 1.25], [mid, w * 0.9], [xf, w * 0.98], [c.x, w]];
+  // Behind the cockpit the deck falls away (a razorback keeps a narrow spine up to the fin); the belly runs level under the wing, then sweeps up.
+  if (p.razor) top.push([xb, crown - 0.12], [xb - 0.4, crown - 0.18], [t + fr, h * 0.64], [t, h * 0.5]);
+  else top.push([xb, sill * 0.98], [t + fr, h * 0.56], [t, h * 0.48]);
+  bottom.push([te, -h], [t + L * 0.25, -h * 0.58], [t + fr * 0.5, -h * 0.18], [t, h * 0.02]);
+  plan.push([xb, waist * 0.92], [t + L * 0.3, waist * 0.52], [t + fr, waist * 0.3], [t, 0.06]);
+  const bodies: Outline[] = [];
   if (p.scoop) {
+    // A belly scoop (P-51) or radiator bath (Yak, LaGG): narrower than the body, its lip deepest at the front.
     const [sx, sl, sd] = p.scoop;
-    bottom.splice(3, 0, [sx + sl / 2, -p.h], [sx, -p.h - sd], [sx - sl / 2, -p.h - sd * 0.7]);
+    const x0 = sx + sl / 2;
+    const x1 = sx - sl / 2;
+    const hw = Math.min(w * 0.72, 0.38);
+    bodies.push({ top: [[x0, -h * 0.6], [x1, -h * 0.6]], bottom: [[x0, -h - sd * 0.8], [x0 - Math.min(0.25, sl * 0.15), -h - sd], [x0 - sl * 0.55, -h - sd * 0.85], [x1, -h * 0.92]], plan: [[x0, hw * 0.92], [x0 - 0.2, hw], [x1 + sl * 0.2, hw * 0.8], [x1, hw * 0.35]], round: 2.6, stations: 8 });
   }
+  if (p.rads) {
+    const [rx, ry, rl, rd] = p.rads;
+    const up = (p.mount ?? -0.8) * 2 * h * 0.4 + ry * Math.tan(((p.dihedral ?? 6) * Math.PI) / 180) - (p.thick ?? p.root * 0.15) * 0.3;
+    bodies.push({ top: [[rx, up], [rx - rl, up]], bottom: [[rx, up - rd * 0.8], [rx - rl * 0.2, up - rd], [rx - rl * 0.7, up - rd * 0.9], [rx - rl, up - 0.05]], plan: [[rx, 0.26], [rx - rl * 0.2, 0.3], [rx - rl * 0.7, 0.28], [rx - rl, 0.15]], side: ry, round: 3, stations: 6 });
+  }
+  // The wing's thickness at the root (about 15 % of the chord, estimate), following the dihedral or the gull's bend.
+  const half = p.span / 2;
+  const dih = Math.tan(((p.dihedral ?? 6) * Math.PI) / 180);
+  const wup = (p.mount ?? -0.8) * 2 * h * 0.4;
+  const bend = half * 0.33;
+  const wz = (y: number) => wup + (p.gull ? (y < bend ? (-2 * h * 0.3 * y) / bend : -2 * h * 0.3 + (y - bend) * Math.max(dih, 0.14)) : y * dih);
+  const plan0 = wingOf(p.wing, p.le, p.root, p.tip, half, p.sweep ?? 2);
+  // A gull wing's planform gets corners at the bend, so the slab bends there instead of running straight from root to tip.
+  const bent: P2[] = plan0.flatMap((a, i): P2[] => {
+    const b = plan0[(i + 1) % plan0.length];
+    return (a[1] - bend) * (b[1] - bend) < 0 ? [a, [a[0] + ((b[0] - a[0]) * (bend - a[1])) / (b[1] - a[1]), bend]] : [a];
+  });
+  // Starting at the root's trailing edge, the triangulation clips the inner panel first, so no triangle runs across the bend.
+  const wingPlan: P2[] = !p.gull ? plan0 : [bent[bent.length - 1], ...bent.slice(0, -1)];
+  // (Not on a gull wing: its steep inner panels would cut through flat slices.)
+  if (!p.gull) bodies.push(...wingRoot(wingPlan, half, wz, p.thick ?? p.root * 0.15));
   const fins: P2[] = p.roundFin
     ? [[t + p.finRoot, 0], [t + 0.05, 0], [t + 0.02, p.fin * 0.7], [t + p.finRoot * 0.12, p.fin * 0.95], [t + p.finRoot * 0.35, p.fin], [t + p.finRoot * 0.6, p.fin * 0.88], [t + p.finRoot * 0.85, p.fin * 0.45]]
     : [[t + p.finRoot, 0], [t + 0.05, 0], [t - 0.1, p.fin], [t + p.finRoot * 0.45, p.fin]];
@@ -200,30 +280,27 @@ export function piston(p: Piston): FixedWingSpec & { cls: string } {
     length: L,
     span: p.span,
     height: p.height,
-    bodyWidth: p.w * 2,
-    bodyHeight: p.h * 2,
-    fuselage: {
-      // The decking falls away behind the cockpit to a thin tail.
-      top: [[n, 0], [n - 0.35, p.h * cowl], [n - L * 0.22, p.h], [p.canopy.x - p.canopy.length * 0.45, p.h * 0.95], [t + L * 0.2, p.h * 0.6], [t + 0.3, p.h * 0.45], [t, p.h * 0.38]],
-      bottom,
-      plan: [[n, 0.08], [n - 0.35, p.w * cowl], [n - L * 0.25, p.w], [p.canopy.x - p.canopy.length * 0.5, p.w * 0.95], [t + L * 0.25, p.w * 0.45], [t + 0.4, p.w * 0.2], [t, 0.06]],
-      round: 2.3,
-      stations: 20,
-    },
+    bodyWidth: Math.max(w, R) * 2,
+    bodyHeight: h * 2,
+    fuselage: { top, bottom, plan, round: p.radial ? 2.1 : 2.4, stations: 24 },
+    bodies,
     wing: { x: p.le - p.root / 2, span: p.span, rootChord: p.root, tipChord: p.tip, sweep: p.sweep ?? 2, mount: p.mount ?? -0.8, dihedral: p.dihedral ?? 6, gull: p.gull },
-    wingPlan: wingOf(p.wing, p.le, p.root, p.tip, p.span / 2, p.sweep ?? 2),
-    tail: { kind: 'single', finHeight: p.fin, finChord: p.finRoot, tailSpan: p.tailSpan, tailChord: tp, finBase: p.h * 0.45, planeUp: p.h * 0.3 },
+    wingPlan,
+    tail: { kind: 'single', finHeight: p.fin, finChord: p.finRoot, tailSpan: p.tailSpan, tailChord: tp, finBase: h * 0.45, planeUp: h * 0.3 },
     finPlan: fins,
     tailPlan: [[t + tp, 0], [t + tp * 0.95, p.tailSpan * 0.3], [t + tp * 0.6, p.tailSpan / 2], [t + tp * 0.15, p.tailSpan * 0.47], [t, p.tailSpan * 0.3], [t, 0]],
     engines: { kind: 'nose-prop', count: 1 },
     propeller: { diameter: p.prop, blades: p.blades },
-    canopy: p.canopy,
+    canopy: c,
+    glass: c.kind === 'glass-nose' ? undefined : hoodOf(c, sill, crown, cw),
     fixedGear: p.gear,
   };
 }
 
 // Bf 109 E: the square-tipped wing.
-A['bf-109-e'] = piston({ cls: 'ww2-fighter', length: 8.64, span: 9.87, height: 2.5, w: 0.48, h: 0.6, wing: 'square', le: 1.3, root: 2.15, tip: 1.2, sweep: 3, fin: 1.2, finRoot: 1.25, roundFin: true, tailSpan: 3.0, tailRoot: 0.9, canopy: { x: 0.5, length: 1.6, kind: 'framed' }, prop: 3.0, blades: 3 });
+A['bf-109-e'] = piston({ cls: 'ww2-fighter', length: 8.64, span: 9.87, height: 2.5, w: 0.45, h: 0.58, wing: 'square', le: 1.3, root: 2.15, tip: 1.2, sweep: 3, fin: 1.2, finRoot: 1.25, roundFin: true, tailSpan: 3.0, tailRoot: 0.9, canopy: { x: 0.5, length: 1.6, kind: 'framed' }, prop: 3.0, blades: 3, spinner: 0.28, rads: [0.9, 1.3, 1.1, 0.17] });
+// Its small oil cooler under the nose (estimate).
+A['bf-109-e'].bodies!.push({ top: [[3.2, -0.3], [2.5, -0.3]], bottom: [[3.2, -0.6], [3.0, -0.7], [2.7, -0.68], [2.5, -0.45]], plan: [[3.2, 0.12], [3.0, 0.16], [2.5, 0.08]], round: 3, stations: 6 });
 // Fw 190 A: the big round radial cowl, a straight-tapered wing, a bulged bubble hood (9.0 x 10.5 x 3.95 m).
 A['fw-190-a8'] = piston({ cls: 'ww2-fighter', length: 9.0, span: 10.5, height: 3.95, w: 0.62, h: 0.68, radial: true, wing: 'tapered', le: 1.6, root: 2.3, tip: 1.05, sweep: 5, fin: 1.25, finRoot: 1.3, roundFin: true, tailSpan: 3.65, tailRoot: 0.95, canopy: { x: 0.1, length: 1.8, kind: 'bubble' }, prop: 3.3, blades: 3 });
 // Fw 190 D-9: the long annular-cowled inline nose and a stretched tail (10.19 m).
@@ -235,7 +312,9 @@ A['f4u-corsair'] = piston({ cls: 'ww2-fighter', length: 10.2, span: 12.5, height
 // Il-2: an armoured nose, a long two-seat canopy, a tapered wing with swept outer leading edges (11.6 x 14.6 x 4.2 m).
 A['il-2'] = piston({ cls: 'ww2-attack', length: 11.6, span: 14.6, height: 4.2, w: 0.65, h: 0.8, wing: 'tapered', le: 1.8, root: 3.2, tip: 1.2, sweep: 12, fin: 1.4, finRoot: 1.7, roundFin: true, tailSpan: 4.6, tailRoot: 1.3, canopy: { x: 0.1, length: 2.8, kind: 'framed' }, prop: 3.6, blades: 3, scoop: [0.5, 1.6, 0.25] });
 // Ju 87 Stuka: the inverted gull wing, the fixed spatted gear, the long greenhouse, a square fin (11.5 x 13.8 x 3.88 m).
-A['ju-87-stuka'] = piston({ cls: 'ww2-attack', length: 11.5, span: 13.8, height: 3.88, w: 0.6, h: 0.8, wing: 'square', le: 2.0, root: 2.8, tip: 1.3, sweep: 3, gull: true, mount: -0.9, dihedral: 8, fin: 1.6, finRoot: 1.8, tailSpan: 4.8, tailRoot: 1.2, canopy: { x: 0.6, length: 3.2, kind: 'framed' }, prop: 3.4, blades: 3, gear: true, scoop: [3.4, 1.2, 0.3] });
+// Il-2 mod. 1941: the first single-seater, its short hood on the armoured hump (11.6 x 14.6 x 4.2 m).
+A['il-2-1941'] = piston({ cls: 'ww2-attack', length: 11.6, span: 14.6, height: 4.2, w: 0.65, h: 0.8, wing: 'tapered', le: 1.8, root: 3.2, tip: 1.2, sweep: 12, fin: 1.4, finRoot: 1.7, roundFin: true, tailSpan: 4.6, tailRoot: 1.3, canopy: { x: 0.6, length: 1.7, kind: 'framed' }, razor: true, prop: 3.6, blades: 3, scoop: [0.5, 1.6, 0.25] });
+A['ju-87-stuka'] = piston({ cls: 'ww2-attack', length: 11.5, span: 13.8, height: 3.88, w: 0.6, h: 0.8, wing: 'square', le: 2.0, root: 2.8, tip: 1.3, sweep: 3, gull: true, mount: -0.9, dihedral: 8, fin: 1.6, finRoot: 1.8, tailSpan: 4.8, tailRoot: 1.2, canopy: { x: 0.6, length: 3.2, kind: 'framed' }, prop: 3.4, blades: 3, gear: true, scoop: [4.3, 1.5, 0.38], spinner: 0.3 });
 A['ju-87-d'] = { ...A['ju-87-stuka'] };
 
 // ---------------------------------------------------------------- more jets and props from proportions (War Thunder families)
@@ -298,53 +377,22 @@ export function jet(p: Jet): FixedWingSpec & { cls: string } {
   };
 }
 
-// F-104 Starfighter: a long needle, side intakes, a tiny straight trapezoid wing with anhedral and tip tanks, the T-tail (16.66 x 6.36 x 4.09 m).
-A['f-104'] = jet({ cls: 'fighter', length: 16.66, span: 6.36, height: 4.09, w: 0.6, h: 0.65, intake: 'side', wingPlan: [[0.8, 0], [0.8, 0.6], [-0.4, 3.18], [-1.3, 3.18], [-2.0, 0.6], [-2.0, 0]], mount: -0.3, dihedral: -10, fin: [[-4.0, 0], [-7.6, 0], [-8.1, 2.4], [-6.4, 2.4]], tail: [[-6.6, 0], [-7.2, 1.7], [-8.0, 1.7], [-8.0, 0]], planeUp: 2.4, canopy: { x: 3.4, length: 2.2, kind: 'framed' }, tipTanks: [3.0, 0.3] });
-// F-84F Thunderstreak: a swept wing on a round body with the nose intake (13.23 x 10.24 x 4.39 m); F-84G straight wing with tip tanks (11.6 x 11.1 m).
-A['f-84f'] = jet({ cls: 'fighter', length: 13.23, span: 10.24, height: 4.39, w: 0.7, h: 0.75, intake: 'nose', wingPlan: [[1.2, 0], [1.2, 0.7], [-2.2, 5.12], [-3.4, 5.12], [-2.9, 0.7], [-2.9, 0]], mount: -0.3, fin: [[-2.8, 0], [-6.3, 0], [-6.9, 2.6], [-5.6, 2.6]], tail: [[-4.8, 0], [-5.6, 2.1], [-6.5, 2.1], [-6.5, 0]], planeUp: 0.2, canopy: { x: 2.8, length: 2.0, kind: 'bubble' } });
-A['f-84g'] = jet({ cls: 'fighter', length: 11.6, span: 11.1, height: 3.84, w: 0.7, h: 0.75, intake: 'nose', wingPlan: [[1.2, 0], [1.2, 0.7], [0.6, 5.55], [-0.6, 5.55], [-1.6, 0.7], [-1.6, 0]], mount: -0.4, fin: [[-2.6, 0], [-5.5, 0], [-6.0, 2.2], [-4.9, 2.2]], tail: [[-4.4, 0], [-4.8, 1.9], [-5.8, 1.9], [-5.8, 0]], planeUp: 0.2, canopy: { x: 2.6, length: 2.0, kind: 'bubble' }, tipTanks: [3.0, 0.32] });
-// F-8 Crusader: a chin intake under a long nose, a shoulder wing, a big fin (16.53 x 10.87 x 4.8 m).
-A['f-8e'] = jet({ cls: 'fighter', length: 16.53, span: 10.87, height: 4.8, w: 0.75, h: 0.8, intake: 'chin', wingPlan: [[1.4, 0], [1.4, 0.8], [-2.0, 4.0], [-1.7, 4.05], [-3.1, 5.43], [-4.0, 5.43], [-3.9, 0.8], [-3.9, 0]], mount: 1, dihedral: -5, fin: [[-2.8, 0], [-7.4, 0], [-8.0, 2.8], [-6.6, 2.8]], tail: [[-6.0, 0], [-6.8, 2.6], [-7.8, 2.6], [-8.0, 0]], planeUp: 0, canopy: { x: 3.4, length: 2.2, kind: 'bubble' } });
-// SEPECAT Jaguar: a long slim body, side intakes, a shoulder wing with anhedral, the slab tailplanes with anhedral (16.83 x 8.69 x 4.89 m).
-A['jaguar'] = jet({ cls: 'attack', length: 16.83, span: 8.69, height: 4.89, w: 0.75, h: 0.75, intake: 'side', wingPlan: [[0.4, 0], [0.4, 0.9], [-2.6, 4.35], [-3.4, 4.35], [-3.6, 0.9], [-3.6, 0]], mount: 1, dihedral: -3, fin: [[-3.4, 0], [-7.4, 0], [-8.2, 2.8], [-6.8, 2.8]], tail: [[-6.4, 0.6], [-7.4, 2.4], [-8.4, 2.4], [-8.4, 0.6]], engines: 2, canopy: { x: 4.4, length: 2.2, kind: 'bubble' } });
-// Hawker Hunter: wing-root intakes, a 40-degree wing, the tailplane partway up the fin (13.98 x 10.26 x 4.01 m).
-A['hunter'] = jet({ cls: 'fighter', length: 13.98, span: 10.26, height: 4.01, w: 0.7, h: 0.75, intake: 'root', wingPlan: [[1.2, 0], [1.2, 0.8], [-2.6, 5.13], [-3.6, 5.13], [-3.4, 0.8], [-3.4, 0]], mount: 0, fin: [[-3.0, 0], [-6.4, 0], [-7.0, 2.3], [-5.8, 2.3]], tail: [[-5.4, 0], [-6.2, 1.9], [-7.0, 1.9], [-7.0, 0]], planeUp: 1.0, canopy: { x: 3.4, length: 1.8, kind: 'bubble' } });
-// Gloster Meteor: two engine nacelles in a straight wing, a cruciform tail (13.59 x 11.32 x 3.96 m).
-A['meteor'] = { ...jet({ cls: 'fighter', length: 13.59, span: 11.32, height: 3.96, w: 0.65, h: 0.75, intake: 'nose', wingPlan: [[1.4, 0], [1.4, 1.8], [0.8, 5.66], [-0.4, 5.66], [-1.6, 1.8], [-1.6, 0]], mount: 0, fin: [[-4.6, 0], [-6.6, 0], [-6.8, 2.3], [-5.8, 2.3]], tail: [[-5.0, 0], [-5.4, 2.4], [-6.3, 2.4], [-6.4, 0]], planeUp: 1.0, canopy: { x: 3.2, length: 1.8, kind: 'bubble' } }), bodies: [{ top: [[2.6, 0.5], [-2.2, 0.45]], bottom: [[2.6, -0.5], [-2.2, -0.45]], plan: [[2.6, 0.45], [1.8, 0.55], [-1.6, 0.5], [-2.2, 0.3]], side: 1.8, round: 2.2, stations: 10 }] };
-// de Havilland Vampire / Venom: a short pod with twin booms to the tail (9.37 x 11.58 x 2.69 m).
-A['vampire'] = { ...jet({ cls: 'fighter', length: 9.37, span: 11.58, height: 2.69, w: 0.65, h: 0.75, intake: 'root', wingPlan: [[1.4, 0], [1.4, 1.5], [0.6, 5.79], [-0.4, 5.79], [-1.4, 1.5], [-1.4, 0]], mount: 0, fin: [[-3.4, -0.3], [-4.6, -0.3], [-4.7, 1.4], [-4.0, 1.5]], tail: [[-3.8, 0], [-3.8, 1.5], [-4.6, 1.5], [-4.6, 0]], planeUp: 0.6, canopy: { x: 2.2, length: 1.4, kind: 'bubble' } }), fuselage: { top: [[3.4, -0.1], [2.6, 0.6], [1.6, 0.85], [-1.0, 0.7], [-2.0, 0.3]], bottom: [[3.4, -0.2], [2.6, -0.6], [-1.0, -0.7], [-2.0, -0.3]], plan: [[3.4, 0.05], [2.6, 0.5], [0.5, 0.7], [-2.0, 0.35]], round: 2.4, stations: 14 }, bodies: [{ top: [[-0.8, 0.15], [-4.7, 0.12]], bottom: [[-0.8, -0.15], [-4.7, -0.12]], plan: [[-0.8, 0.15], [-4.7, 0.12]], side: 1.5, round: 2, stations: 6 }], tail: { kind: 'twin', finHeight: 1.5, finChord: 1.2, spacing: 3.0, tailSpan: 3.0, tailChord: 0.8, finBase: 0, planeUp: 0.6 } };
-// Blackburn Buccaneer: a long area-ruled body, a mid wing, the T-tail (19.33 x 13.41 x 4.97 m).
-A['buccaneer'] = jet({ cls: 'attack', length: 19.33, span: 13.41, height: 4.97, w: 0.85, h: 0.85, intake: 'root', wingPlan: [[1.4, 0], [1.4, 1.2], [-1.8, 6.7], [-3.0, 6.7], [-3.4, 1.2], [-3.4, 0]], mount: 0, fin: [[-5.0, 0], [-8.8, 0], [-9.6, 3.0], [-8.0, 3.0]], tail: [[-8.0, 0], [-8.6, 2.2], [-9.6, 2.2], [-9.6, 0]], planeUp: 3.0, engines: 2, canopy: { x: 4.8, length: 2.6, kind: 'tandem' } });
-// English Electric Canberra: a straight broad wing with two nacelles, a slim body (19.96 x 19.51 x 4.77 m).
-A['canberra'] = { ...jet({ cls: 'bomber', length: 19.96, span: 19.51, height: 4.77, w: 1.0, h: 1.0, intake: 'nose', wingPlan: [[2.0, 0], [2.0, 2.4], [0.6, 9.75], [-0.6, 9.75], [-3.0, 2.4], [-3.0, 0]], mount: 0, fin: [[-6.6, 0], [-9.4, 0], [-9.8, 3.2], [-8.4, 3.2]], tail: [[-7.6, 0], [-8.2, 4.2], [-9.6, 4.2], [-9.8, 0]], planeUp: 0.3, canopy: { x: 6.6, length: 2.0, kind: 'bubble' } }), bodies: [{ top: [[2.8, 0.7], [-3.6, 0.6]], bottom: [[2.8, -0.7], [-3.6, -0.6]], plan: [[2.8, 0.65], [2.0, 0.8], [-3.0, 0.7], [-3.6, 0.45]], side: 3.0, round: 2.2, stations: 10 }] };
-// Fiat G.91: a small swept fighter with the nose intake (10.3 x 8.56 x 4.0 m).
-// The Meteor's and Canberra's noses are pointed: their intakes are in the engine nacelles, not the nose.
-for (const [n, tip] of [['meteor', 6.795], ['canberra', 9.98]] as const) {
-  const f = A[n].fuselage!;
-  A[n] = { ...A[n], fuselage: { ...f, top: [[tip, 0.02], ...f.top.slice(1)], bottom: [[tip, -0.12], ...f.bottom.slice(1)], plan: [[tip, 0.06], ...f.plan.slice(1)] } };
-}
-A['g-91'] = jet({ cls: 'attack', length: 10.3, span: 8.56, height: 4.0, w: 0.6, h: 0.7, intake: 'nose', wingPlan: [[0.8, 0], [0.8, 0.6], [-2.0, 4.28], [-2.8, 4.28], [-2.6, 0.6], [-2.6, 0]], mount: -0.4, fin: [[-2.2, 0], [-4.8, 0], [-5.3, 2.0], [-4.3, 2.0]], tail: [[-3.8, 0], [-4.4, 1.6], [-5.1, 1.6], [-5.1, 0]], planeUp: 0.5, canopy: { x: 2.0, length: 1.6, kind: 'bubble' } });
-// Saab J35 Draken: the double delta (15.35 x 9.42 x 3.89 m); J29 Tunnan: a barrel body with the nose intake and a swept wing (10.23 x 11.0 x 3.75 m); J32 Lansen (14.94 x 13.0 x 4.65 m).
-A['j35-draken'] = jet({ cls: 'fighter', length: 15.35, span: 9.42, height: 3.89, w: 0.75, h: 0.75, intake: 'root', wingPlan: [[4.6, 0], [4.6, 0.8], [-1.0, 2.6], [-4.8, 4.71], [-5.8, 4.71], [-6.6, 0.8], [-6.6, 0]], fin: [[-2.6, 0], [-7.2, 0], [-7.6, 2.6], [-6.4, 2.6]], canopy: { x: 3.4, length: 2.0, kind: 'bubble' } });
-A['j29-tunnan'] = jet({ cls: 'fighter', length: 10.23, span: 11.0, height: 3.75, w: 0.85, h: 0.9, intake: 'nose', wingPlan: [[1.6, 0], [1.6, 0.9], [-1.6, 5.5], [-2.6, 5.5], [-2.0, 0.9], [-2.0, 0]], mount: 0, fin: [[-2.0, 0], [-4.6, 0], [-5.2, 2.0], [-4.2, 2.0]], tail: [[-3.8, 0], [-4.4, 1.7], [-5.1, 1.7], [-5.1, 0]], planeUp: 0.2, canopy: { x: 2.2, length: 1.6, kind: 'bubble' } });
-A['j32-lansen'] = jet({ cls: 'attack', length: 14.94, span: 13.0, height: 4.65, w: 0.8, h: 0.85, intake: 'side', wingPlan: [[1.2, 0], [1.2, 0.9], [-2.4, 6.5], [-3.6, 6.5], [-3.4, 0.9], [-3.4, 0]], mount: -0.6, fin: [[-3.0, 0], [-6.9, 0], [-7.5, 2.6], [-6.2, 2.6]], tail: [[-5.6, 0], [-6.4, 2.4], [-7.4, 2.4], [-7.4, 0]], planeUp: 0.6, canopy: { x: 3.4, length: 2.8, kind: 'tandem' } });
-// Dassault Mystère IV / Super Mystère: a swept wing, nose intake (Super Mystère 14.13 x 10.52 x 4.6 m).
-A['mystere'] = jet({ cls: 'fighter', length: 14.13, span: 10.52, height: 4.6, w: 0.7, h: 0.75, intake: 'nose', wingPlan: [[1.2, 0], [1.2, 0.7], [-2.8, 5.26], [-3.8, 5.26], [-3.2, 0.7], [-3.2, 0]], mount: 0, fin: [[-3.2, 0], [-6.6, 0], [-7.2, 2.6], [-6.0, 2.6]], tail: [[-5.4, 0], [-6.2, 1.9], [-7.0, 1.9], [-7.0, 0]], planeUp: 1.0, canopy: { x: 2.8, length: 2.0, kind: 'bubble' } });
-// Super Étendard: a swept mid wing, side intakes (14.31 x 9.6 x 3.86 m).
-A['etendard'] = jet({ cls: 'attack', length: 14.31, span: 9.6, height: 3.86, w: 0.7, h: 0.75, intake: 'side', wingPlan: [[1.0, 0], [1.0, 0.8], [-2.4, 4.8], [-3.3, 4.8], [-3.2, 0.8], [-3.2, 0]], mount: 0, fin: [[-3.2, 0], [-6.6, 0], [-7.2, 2.2], [-6.0, 2.2]], tail: [[-5.4, 0], [-6.2, 2.0], [-7.1, 2.0], [-7.1, 0]], planeUp: 0.6, canopy: { x: 3.0, length: 2.0, kind: 'bubble' } });
+// The jets once drawn here with jet() - F-104, F-84, F-8, Jaguar, Hunter, Meteor, Vampire, Buccaneer, Canberra, G.91,
+// Saab 29, 32 and 35, Mystère, Étendard, He 162 - are outline figures with their variants in ./air-extra; the A-10,
+// Su-25, MiG-15 and 17 and F-86 too (./air-extra, ./jet-attack). jet() stays for the jets of ./prop-variants.
 
 // Grumman F4F Wildcat: a barrel radial fighter, mid wing with square tips (8.76 x 11.58 x 3.61 m); F8F Bearcat smaller with a bubble (8.61 x 10.92 x 4.21 m).
 A['f4f-wildcat'] = piston({ cls: 'ww2-fighter', length: 8.76, span: 11.58, height: 3.61, w: 0.65, h: 0.75, radial: true, wing: 'square', le: 1.3, root: 2.4, tip: 1.3, sweep: 2, mount: 0, fin: 1.4, finRoot: 1.5, roundFin: true, tailSpan: 4.4, tailRoot: 1.1, canopy: { x: 0.6, length: 1.6, kind: 'framed' }, prop: 3.0, blades: 3 });
 A['f8f-bearcat'] = piston({ cls: 'ww2-fighter', length: 8.61, span: 10.92, height: 4.21, w: 0.65, h: 0.75, radial: true, wing: 'square', le: 1.4, root: 2.5, tip: 1.3, sweep: 2, fin: 1.7, finRoot: 1.6, tailSpan: 4.6, tailRoot: 1.1, canopy: { x: 0.2, length: 1.6, kind: 'bubble' }, prop: 3.8, blades: 4 });
 // TBF Avenger: a deep barrel fuselage, a long greenhouse with the ball turret (12.48 x 16.51 x 4.7 m); SB2C Helldiver (11.18 x 15.16 x 4.0 m).
-A['tbf-avenger'] = piston({ cls: 'ww2-attack', length: 12.48, span: 16.51, height: 4.7, w: 0.75, h: 1.0, radial: true, wing: 'tapered', le: 1.8, root: 3.2, tip: 1.3, sweep: 3, mount: -0.4, fin: 2.0, finRoot: 2.0, tailSpan: 6.4, tailRoot: 1.6, canopy: { x: 0.6, length: 4.0, kind: 'framed' }, prop: 4.0, blades: 3 });
+A['tbf-avenger'] = piston({ cls: 'ww2-attack', length: 12.48, span: 16.51, height: 4.7, w: 0.72, h: 1.0, cowl: 0.75, radial: true, wing: 'tapered', le: 1.8, root: 3.2, tip: 1.3, sweep: 3, mount: -0.4, fin: 2.0, finRoot: 2.0, tailSpan: 6.4, tailRoot: 1.6, canopy: { x: 0.9, length: 3.4, kind: 'framed' }, prop: 4.0, blades: 3 });
+// The ball turret at the back of the greenhouse and the deep belly with the ventral gunner's step (estimates).
+A['tbf-avenger'].bodies!.push({ top: [[-0.5, 0.9], [-0.85, 1.55], [-1.55, 1.55], [-1.9, 0.9]], bottom: [[-0.5, 0.5], [-1.9, 0.5]], plan: [[-0.5, 0.3], [-0.85, 0.5], [-1.55, 0.5], [-1.9, 0.3]], round: 2, stations: 6 }, { top: [[1.8, -0.6], [-2.8, -0.6]], bottom: [[1.8, -1.0], [1.0, -1.3], [-1.6, -1.3], [-2.8, -0.75]], plan: [[1.8, 0.45], [1.0, 0.55], [-1.6, 0.5], [-2.8, 0.25]], round: 3, stations: 8 });
 A['sb2c-helldiver'] = piston({ cls: 'ww2-attack', length: 11.18, span: 15.16, height: 4.0, w: 0.7, h: 0.9, radial: true, wing: 'tapered', le: 1.6, root: 3.2, tip: 1.3, sweep: 3, fin: 2.0, finRoot: 2.0, tailSpan: 6.0, tailRoot: 1.4, canopy: { x: 0.4, length: 3.6, kind: 'framed' }, prop: 3.8, blades: 3 });
 // Dewoitine D.520 (8.76 x 10.18 x 2.57 m) and Morane-Saulnier MS.406 (8.17 x 10.62 x 2.71 m).
 A['d-520'] = piston({ cls: 'ww2-fighter', length: 8.76, span: 10.18, height: 2.57, w: 0.48, h: 0.6, wing: 'round', le: 1.2, root: 2.3, tip: 1.0, sweep: 3, fin: 1.3, finRoot: 1.3, roundFin: true, tailSpan: 3.4, tailRoot: 0.9, canopy: { x: -0.4, length: 1.6, kind: 'framed' }, prop: 3.0, blades: 3 });
 A['ms-406'] = piston({ cls: 'ww2-fighter', length: 8.17, span: 10.62, height: 2.71, w: 0.5, h: 0.62, wing: 'round', le: 1.2, root: 2.4, tip: 1.1, sweep: 4, fin: 1.3, finRoot: 1.3, roundFin: true, tailSpan: 3.6, tailRoot: 0.9, canopy: { x: 0.0, length: 2.0, kind: 'framed' }, prop: 3.0, blades: 3 });
 // Fiat G.55 / Macchi C.200 / Reggiane Re.2001 class Italian fighters share the MC.202 look; P-36 / Hawk 75 a radial with a long canopy (8.69 x 11.38 x 2.82 m).
 A['p-36'] = piston({ cls: 'ww2-fighter', length: 8.69, span: 11.38, height: 2.82, w: 0.6, h: 0.7, radial: true, wing: 'round', le: 1.4, root: 2.6, tip: 1.2, sweep: 3, fin: 1.4, finRoot: 1.4, roundFin: true, tailSpan: 4.0, tailRoot: 1.0, canopy: { x: 0.0, length: 2.0, kind: 'framed' }, prop: 3.0, blades: 3 });
-// He 162 Volksjäger: the jet on the back of a small body, twin fins (9.05 x 7.2 x 2.6 m).
-A['he-162'] = { ...jet({ cls: 'jet-fighter', length: 9.05, span: 7.2, height: 2.6, w: 0.55, h: 0.6, intake: 'chin', wingPlan: [[0.8, 0], [0.8, 0.6], [0.0, 3.6], [-1.0, 3.6], [-1.4, 0.6], [-1.4, 0]], mount: 1, fin: [[-3.6, -0.4], [-4.4, -0.4], [-4.5, 1.0], [-3.8, 1.0]], tail: [[-3.4, 0], [-3.6, 1.2], [-4.4, 1.2], [-4.5, 0]], planeUp: 0.6, canopy: { x: 2.0, length: 1.4, kind: 'bubble' } }), bodies: [{ top: [[0.8, 1.2], [-3.0, 1.1]], bottom: [[0.8, 0.5], [-3.0, 0.6]], plan: [[0.8, 0.35], [-2.4, 0.38], [-3.0, 0.25]], round: 2.2, stations: 8 }], tail: { kind: 'twin', finHeight: 1.0, finChord: 0.8, spacing: 2.4, tailSpan: 2.4, tailChord: 0.8, finBase: 0, planeUp: 0.6 } };
 
 export const AIRCRAFT: SpecSet = { air: A };

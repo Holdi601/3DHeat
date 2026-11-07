@@ -18,7 +18,7 @@
 import type { SpecSet } from './index';
 import type { FixedWingSpec } from '../air';
 import type { Outline, P2 } from '../parts';
-import { AIRCRAFT, jet, piston, type Piston } from './aircraft';
+import { AIRCRAFT, jet, piston, wingRoot, type Piston } from './aircraft';
 
 type Spec = FixedWingSpec & { cls: string };
 
@@ -27,50 +27,50 @@ const A: Record<string, Spec> = {};
 const ALIASES: Record<string, string> = {
   'pbj_1j': 'b-25',
   'pbj_1h': 'b-25h',
-  'fr_1_fireball': 'f8f-bearcat',
+  'fr_1_fireball': 'fr-1-fireball',
   'fw_190a_8_mistel': 'ju-88',
-  'bv-155b-1': 'ta-152h',
-  'bb-1': 'sbd-dauntless',
-  'yak-4': 'pe-2',
-  'ar_2': 'pe-2',
-  'yak_2_kabb': 'pe-2',
-  'i_185_m82': 'la-5',
-  'i_185_m71_standard': 'la-5',
+  'bv-155b-1': 'bv-155',
+  'bb-1': 'su-2',
+  'yak-4': 'yak-4',
+  'ar_2': 'sb-2',
+  'yak_2_kabb': 'yak-4',
+  'i_185_m82': 'i-185',
+  'i_185_m71_standard': 'i-185',
   'il_8_1944': 'il-10',
   'itp_m1': 'yak-9',
   'tu-2_postwar': 'tu-2',
   'tu-2_postwar_late': 'tu-2',
   'tu-2_postwar_china': 'tu-2',
   'tu-2_postwar_late_hungary': 'tu-2',
-  'b_48_firecrest': 'a-1-skyraider',
+  'b_48_firecrest': 'firecrest',
   'thunderbolt_mk1': 'p-47d-razorback',
-  'mb_5': 'tempest-v',
-  'ki_48_2_otsu': 'pe-2',
+  'mb_5': 'mb-5',
+  'ki_48_2_otsu': 'ki-48',
   'j5n1': 'me-410',
   'ki_93_1_ko': 'me-410',
   'j6k1': 'ki-84',
-  'd_510c': 'ki-27',
-  'd_510': 'ki-27',
-  'breda_88': 'bf-110',
-  'br_20_dr': 'do-217',
-  'br_20m_m1': 'do-217',
+  'd_510c': 'd-510',
+  'd_510': 'd-510',
+  'breda_88': 'breda-88',
+  'br_20_dr': 'br-20',
+  'br_20m_m1': 'br-20',
   'fc_20_bis': 'bf-110',
   'sm_91': 'p-38j',
   'sm_92': 'p-38j',
-  'd_500': 'ki-27',
-  'd_501': 'ki-27',
-  'a-35b': 'sbd-dauntless',
-  'vg_33': 'd-520',
+  'd_500': 'd-510',
+  'd_501': 'd-510',
+  'a-35b': 'vengeance',
+  'vg_33': 'vg-33',
   'j6b': 'gladiator',
-  'saab_b17bs': 'd3a-val',
-  'saab_b17b': 'd3a-val',
-  'saab_b17a': 'd3a-val',
-  'saab_b3c': 'do-217',
+  'saab_b17bs': 'saab-17bs',
+  'saab_b17b': 'saab-17',
+  'saab_b17a': 'saab-17',
+  'saab_b3c': 'ju-86',
   're_2000_j20': 're-2000',
-  'ffvs_j22_a': 'ki-43',
-  'ffvs_j22_b': 'ki-43',
-  'j9_early': 'p-36',
-  's_199': 'bf-109-g6',
+  'ffvs_j22_a': 'ffvs-j22',
+  'ffvs_j22_b': 'ffvs-j22',
+  'j9_early': 'p-35',
+  's_199': 's-199',
 };
 
 // ---------------------------------------------------------------- helpers
@@ -218,12 +218,59 @@ interface MP {
   rotodome?: { x: number; diameter: number };
   /** One engine in the nose, its propeller on the body axis (single-engined biplanes). */
   nose?: boolean;
+  /**
+   * The cockpit's glazing from `front` back to `back`: the body's top there is cut down to the sill (default
+   * half a metre under the crown) and a narrower glass hood stands to the old crown, so the canopy reads from
+   * the front as well as the side.
+   */
+  hood?: { front: number; back: number; sill?: number; w?: number };
+  /** Glass over the nose ahead of this station (a glazed bomber nose). */
+  glazed?: number;
+  /** The wing's thickness at the root (default 16 % of the root chord), drawn over its inner half; 0 for none. */
+  thick?: number;
+}
+
+/** The body's top, bottom or half-width at `x` from its stations. */
+function rowAt(rows: Row[], x: number, k: 1 | 2 | 3): number {
+  for (let i = 1; i < rows.length; i++) {
+    const [x0] = rows[i - 1];
+    const [x1] = rows[i];
+    if ((x0 - x) * (x1 - x) <= 0) return x0 === x1 ? rows[i][k] : rows[i - 1][k] + ((rows[i][k] - rows[i - 1][k]) * (x - x0)) / (x1 - x0);
+  }
+  return x > rows[0][0] ? rows[0][k] : rows[rows.length - 1][k];
+}
+
+/** Cuts the body's top down under a hood and returns the body and the hood's glass. */
+function hooded(rows: Row[], h: NonNullable<MP['hood']>): { body: Row[]; glass: Outline } {
+  const inside = rows.filter(([x]) => x < h.front && x > h.back);
+  const ends: Row[] = [h.front, h.back].map((x) => [x, rowAt(rows, x, 1), rowAt(rows, x, 2), rowAt(rows, x, 3)]);
+  const crown = Math.max(...[...inside, ...ends].map((r) => r[1]));
+  const sill = h.sill ?? crown - 0.5;
+  const body = [...rows.filter(([x]) => x > h.front), ends[0], [h.front - 0.01, Math.min(ends[0][1], sill), ends[0][2], ends[0][3]] as Row, ...inside.map(([x, t, b, w]) => [x, Math.min(t, sill), b, w] as Row), [h.back + 0.01, Math.min(ends[1][1], sill), ends[1][2], ends[1][3]] as Row, ends[1], ...rows.filter(([x]) => x < h.back)];
+  const L = h.front - h.back;
+  const w = h.w ?? Math.min(0.5, Math.max(...[...inside, ...ends].map((r) => r[3])) * 0.72);
+  const tops: P2[] = [ends[0], ...inside, ends[1]].map(([x, t]) => [x, Math.max(t, sill + 0.05)]);
+  const glass: Outline = { top: tops, bottom: [[h.front, sill - 0.3], [h.back, sill - 0.3]], plan: [[h.front, w * 0.55], [h.front - L * 0.25, w], [h.back + L * 0.2, w], [h.back, w * 0.7]], round: 2.4, stations: 12 };
+  return { body, glass };
 }
 
 /**
  * A multi-engined aircraft from its outlines, the propellers at the nacelles' fronts.
  */
 function mp(o: MP): Spec {
+  const glass: Outline[] = [];
+  if (o.hood) {
+    const c = hooded(o.body, o.hood);
+    o = { ...o, body: c.body };
+    glass.push(c.glass);
+  }
+  if (o.glazed !== undefined) {
+    // The nose glazing: the body ahead of the station, a hair proud of it.
+    const g = o.glazed;
+    const nose = o.body.filter(([x]) => x > g);
+    const r: Row[] = [...nose, [g, rowAt(o.body, g, 1), rowAt(o.body, g, 2), rowAt(o.body, g, 3)]];
+    glass.push({ top: r.map(([x, t]) => [x + 0.02, t + 0.02] as P2), bottom: r.map(([x, , b]) => [x + 0.02, b - 0.02] as P2), plan: r.map(([x, , , w]) => [x + 0.02, w + 0.02] as P2), round: o.round ?? 2.4, stations: 10 });
+  }
   const bh = Math.max(...o.body.map((r) => Math.max(Math.abs(r[1]), Math.abs(r[2]))));
   const bodyHeight = 2 * bh;
   const bodyWidth = 2 * Math.max(...o.body.map((r) => r[3]));
@@ -246,7 +293,7 @@ function mp(o: MP): Spec {
     bodyWidth,
     bodyHeight,
     fuselage: fus(o.body, o.round ?? 2.4),
-    bodies: [...(o.nacelles ?? []).map(nacelle), ...(o.fin.length ? [finBody(o.fin, Math.max(0.05, Math.min(0.35, (Math.max(...o.fin.map((p) => p[0])) - Math.min(...o.fin.map((p) => p[0]))) * 0.035)), o.twin ? o.twin / 2 : undefined)] : []), ...(o.extra ?? [])],
+    bodies: [...(o.thick === 0 ? [] : wingRoot(planOf(o.wing, o.tipR ?? 0), o.span / 2, (y) => o.wingUp + y * Math.tan(((o.dihedral ?? 0) * Math.PI) / 180), o.thick ?? rootChord * 0.16)), ...(o.nacelles ?? []).map(nacelle), ...(o.fin.length ? [finBody(o.fin, Math.max(0.05, Math.min(0.35, (Math.max(...o.fin.map((p) => p[0])) - Math.min(...o.fin.map((p) => p[0]))) * 0.035)), o.twin ? o.twin / 2 : undefined)] : []), ...(o.extra ?? [])],
     wing: { x: root[1] - rootChord / 2, span: o.span, rootChord, tipChord: tip[1] - tip[2], sweep: 0, mount: o.wingUp / (bodyHeight * 0.4), dihedral: o.dihedral ?? 0 },
     wingPlan: planOf(o.wing, o.tipR ?? 0),
     tail: { kind: !o.fin.length ? 'none' : o.twin ? 'h' : 'single', finHeight: finTop, finChord: 2, spacing: o.twin, tailSpan: o.tail.length ? 2 * o.tail[o.tail.length - 1][0] : 0, tailChord: o.tail.length ? o.tail[0][1] - o.tail[0][2] : 0, finBase: 0, planeUp: o.tailUp },
@@ -257,6 +304,7 @@ function mp(o: MP): Spec {
     propeller: o.prop ? { diameter: o.prop[0], blades: o.prop[1] } : undefined,
     rotodome: o.rotodome,
     canopy: { x: 0, length: 0, kind: 'none' },
+    glass: glass.length ? glass : undefined,
   };
 }
 
@@ -451,7 +499,7 @@ A['b-17g'] = { ...B17, canopy: { x: 0, length: 0, kind: 'none' }, bodies: [...(B
 // twin oval fins on the tailplane's tips (B-24D 20.47 x 33.53 x 5.49 m; the J's nose turret, 20.6 m).
 function b24(nose: Row[], length: number): Spec {
   return mp({
-    cls: 'ww2-heavy-bomber', length, span: 33.53, height: 5.49,
+    cls: 'ww2-heavy-bomber', length, span: 33.53, height: 5.49, hood: { front: 7.8, back: 5.8 }, glazed: length < 20.5 ? 9.0 : undefined,
     body: [...nose, [7.4, 1.55, -1.7, 1.22], [6.4, 1.75, -1.7, 1.22], [-2, 1.7, -1.7, 1.2], [-6, 1.5, -1.0, 1.0], [-9.0, 1.2, -0.1, 0.55], [-10.24, 1.0, 0.3, 0.35]], round: 3.6,
     wing: [[0, 2.4, -2.0], [16.77, 1.0, -0.5]], tipR: 0.5, wingUp: 1.3, dihedral: 3,
     nacelles: [{ y: 4.5, x: 4.7, back: -2.2, r: 0.62, z: 1.3, wide: 0.75, below: 0.5, kind: 'radial' }, { y: 8.6, x: 4.1, back: -1.8, r: 0.62, z: 1.75, wide: 0.75, below: 0.45, kind: 'radial' }],
@@ -468,6 +516,7 @@ A['b-24j'] = b24([[10.3, 0.35, -0.75, 0.5], [9.8, 0.65, -1.3, 0.85], [9.0, 0.95,
 // nacelles, remote turret blisters top and bottom and the great fin with its dorsal fillet (30.18 x 43.05 x 8.46 m).
 A['b-29'] = mp({
   cls: 'ww2-heavy-bomber', length: 30.18, span: 43.05, height: 8.46,
+  glazed: 12.6,
   body: [[15.09, -0.2, -0.9, 0.35], [14.6, 0.65, -1.3, 1.0], [13.6, 1.3, -1.45, 1.4], [12.3, 1.45, -1.45, 1.45], [-8, 1.45, -1.45, 1.45], [-12, 1.3, -0.9, 1.2], [-14.5, 1.0, -0.2, 0.6], [-15.09, 0.8, 0.1, 0.4]], round: 2.1,
   wing: [[0, 3.0, -2.6], [21.53, -0.5, -2.4]], tipR: 0.6, wingUp: 0, dihedral: 4.5,
   nacelles: [{ y: 5.1, x: 4.4, back: -3.6, r: 0.85, z: 0, kind: 'radial', below: 0.2 }, { y: 10.2, x: 3.8, back: -3.2, r: 0.85, z: 0.4, kind: 'radial', below: 0.2 }],
@@ -482,9 +531,9 @@ A['b-29'] = mp({
 // B-25 Mitchell: the slim body with a glazed nose, the wing's inner panels raised and outer panels flat, radials
 // in nacelles running far past the trailing edge, twin fins on the tailplane's tips, the tail gunner's glazing
 // (B-25J 16.13 x 20.6 x 4.98 m); the B-25H a short solid gun nose (15.54 m).
-function b25(nose: Row[], length: number, turretX: number): Spec {
+function b25(nose: Row[], length: number, turretX: number, glazed?: number): Spec {
   return mp({
-    cls: 'ww2-bomber', length, span: 20.6, height: 4.98,
+    cls: 'ww2-bomber', length, span: 20.6, height: 4.98, hood: { front: 5.8, back: 3.9 }, glazed,
     body: [...nose, [5.4, 1.05, -0.92, 0.7], [4.4, 1.15, -0.95, 0.7], [-1, 1.0, -0.95, 0.68], [-5, 0.85, -0.55, 0.55], [-7.4, 0.65, -0.05, 0.35], [-8.07, 0.55, 0.15, 0.3]],
     wing: [[0, 2.4, -0.9], [3.6, 2.3, -0.95], [10.3, 0.9, -0.1]], tipR: 0.35, wingUp: 0.35, dihedral: 2.5,
     nacelles: [{ y: 2.95, x: 4.0, back: -2.9, r: 0.68, z: 0.35, kind: 'radial', below: 0.15 }],
@@ -494,13 +543,14 @@ function b25(nose: Row[], length: number, turretX: number): Spec {
     extra: [dome(turretX, 1.0, 0.45, 1.1)],
   });
 }
-A['b-25'] = b25([[8.07, 0.0, -0.35, 0.15], [7.6, 0.4, -0.7, 0.55], [6.9, 0.6, -0.85, 0.65], [6.0, 0.7, -0.9, 0.68]], 16.13, 3.2);
+A['b-25'] = b25([[8.07, 0.0, -0.35, 0.15], [7.6, 0.4, -0.7, 0.55], [6.9, 0.6, -0.85, 0.65], [6.0, 0.7, -0.9, 0.68]], 16.13, 3.2, 6.6);
 A['b-25h'] = b25([[7.77, 0.0, -0.4, 0.2], [7.3, 0.5, -0.75, 0.6], [6.5, 0.68, -0.88, 0.68], [5.8, 0.75, -0.9, 0.7]], 15.54, 4.2);
 
 // He 111H: the stepless, fully glazed nose blending into the body, the ventral gondola, an elliptic-tipped wing
 // tapered both ways, inlines with annular radiators, a tall rounded fin (16.4 x 22.6 x 4.0 m).
 A['he-111'] = mp({
   cls: 'ww2-bomber', length: 16.4, span: 22.6, height: 4.0,
+  glazed: 5.6,
   body: [[8.2, 0.1, -0.35, 0.2], [7.8, 0.65, -0.75, 0.6], [7.0, 0.95, -0.95, 0.8], [6.0, 1.05, -1.05, 0.85], [2, 1.05, -1.05, 0.85], [-3, 0.85, -0.75, 0.65], [-6.5, 0.6, -0.2, 0.35], [-8.2, 0.45, 0.15, 0.1]], round: 2.2,
   wing: [[0, 3.4, -2.0], [11.3, 0.6, -0.6]], tipR: 1.2, wingUp: -0.4, dihedral: 5,
   nacelles: [{ y: 3.2, x: 4.3, back: -2.4, r: 0.62, z: -0.4, kind: 'radial', below: 0.2 }],
@@ -515,7 +565,7 @@ A['he-111'] = mp({
 // heavy fighter a solid nose and no gondola.
 function ju88(nose: Row[], gondola: boolean): Spec {
   return mp({
-    cls: gondola ? 'ww2-bomber' : 'ww2-heavy-fighter', length: 14.36, span: 20.08, height: 4.85,
+    cls: gondola ? 'ww2-bomber' : 'ww2-heavy-fighter', length: 14.36, span: 20.08, height: 4.85, ...(gondola ? { glazed: 4.2 } : { hood: { front: 5.9, back: 3.8 } }),
     body: [...nose, [3.6, 0.85, -0.85, 0.72], [-1, 0.85, -0.85, 0.7], [-4.5, 0.65, -0.45, 0.5], [-7.18, 0.45, 0.1, 0.12]], round: 2.2,
     wing: [[0, 2.2, -1.4], [10.04, 0.6, -0.9]], tipR: 0.5, wingUp: -0.45, dihedral: 5,
     nacelles: [{ y: 2.75, x: 3.7, back: -2.6, r: 0.62, z: -0.45, kind: 'radial', below: 0.15 }],
@@ -532,6 +582,7 @@ A['ju-88c'] = ju88([[7.18, -0.1, -0.45, 0.2], [6.7, 0.35, -0.7, 0.6], [6.0, 0.7,
 // the tailplane's tips (12.66 x 17.16 x 3.5 m).
 A['pe-2'] = mp({
   cls: 'ww2-bomber', length: 12.66, span: 17.16, height: 3.5,
+  hood: { front: 4.6, back: 0.9 },
   body: [[6.33, -0.15, -0.4, 0.15], [5.9, 0.3, -0.6, 0.5], [5.0, 0.55, -0.75, 0.6], [4.2, 0.95, -0.75, 0.62], [2.0, 0.95, -0.75, 0.62], [0.8, 0.75, -0.75, 0.6], [-3, 0.6, -0.5, 0.45], [-6.33, 0.4, 0.0, 0.12]],
   wing: [[0, 1.8, -1.4], [8.58, 0.5, -0.55]], tipR: 0.4, wingUp: -0.3, dihedral: 7,
   nacelles: [{ y: 2.25, x: 3.0, back: -2.4, r: 0.5, z: -0.3, below: 0.15 }],
@@ -543,6 +594,7 @@ A['pe-2'] = mp({
 // Tu-2: twin big radials, a stepped high canopy over a glazed nose, a mid-high wing, twin fins (13.8 x 18.86 x 4.13 m).
 A['tu-2'] = mp({
   cls: 'ww2-bomber', length: 13.8, span: 18.86, height: 4.13,
+  hood: { front: 5.2, back: 2.4 }, glazed: 6.0,
   body: [[6.9, -0.2, -0.5, 0.2], [6.4, 0.4, -0.75, 0.6], [5.6, 0.65, -0.9, 0.7], [4.8, 1.15, -0.9, 0.72], [3.0, 1.15, -0.9, 0.72], [2.0, 0.8, -0.9, 0.7], [-3, 0.7, -0.6, 0.55], [-6.9, 0.45, 0.05, 0.12]],
   wing: [[0, 2.1, -1.5], [9.43, 0.6, -0.7]], tipR: 0.45, wingUp: 0.2, dihedral: 4,
   nacelles: [{ y: 2.75, x: 3.4, back: -2.6, r: 0.72, z: 0.2, kind: 'radial', below: 0.2 }],
@@ -554,6 +606,7 @@ A['tu-2'] = mp({
 // B-26 Marauder: a round cigar body, a shoulder wing, big four-bladed radials, a tall fin, the top turret aft (17.8 x 21.65 x 6.55 m).
 A['b-26-marauder'] = mp({
   cls: 'ww2-bomber', length: 17.8, span: 21.65, height: 6.55,
+  hood: { front: 6.9, back: 5.0, sill: 0.75 }, glazed: 8.0,
   body: [[8.9, -0.1, -0.5, 0.2], [8.4, 0.5, -0.85, 0.7], [7.5, 0.85, -0.95, 0.9], [6.6, 1.05, -0.95, 0.95], [-2, 0.98, -0.95, 0.95], [-6, 0.8, -0.6, 0.75], [-8.4, 0.55, -0.1, 0.4], [-8.9, 0.4, 0.05, 0.25]], round: 2.1,
   wing: [[0, 2.4, -1.4], [10.83, 0.7, -0.4]], tipR: 0.4, wingUp: 0.35,
   nacelles: [{ y: 2.9, x: 4.1, back: -3.0, r: 0.75, z: 0.35, kind: 'radial', below: 0.2 }],
@@ -565,9 +618,9 @@ A['b-26-marauder'] = mp({
 
 // A-26 Invader: a narrow body with the clamshell canopy, a laminar mid wing, radials, a tall fin, remote turrets
 // top and bottom (15.24 x 21.34 x 5.64 m); the B's solid gun nose, the C's rounder glazed one.
-function a26(nose: Row[]): Spec {
+function a26(nose: Row[], glazed?: number): Spec {
   return mp({
-    cls: 'ww2-bomber', length: 15.24, span: 21.34, height: 5.64,
+    cls: 'ww2-bomber', length: 15.24, span: 21.34, height: 5.64, hood: { front: 4.8, back: 2.0 }, glazed,
     body: [...nose, [5.0, 0.7, -0.85, 0.6], [4.4, 1.2, -0.85, 0.6], [2.6, 1.2, -0.85, 0.6], [1.8, 0.85, -0.85, 0.6], [-3, 0.7, -0.6, 0.5], [-7.62, 0.45, 0.05, 0.12]],
     wing: [[0, 2.0, -1.5], [10.67, 0.6, -0.6]], tipR: 0.35, wingUp: 0, dihedral: 4,
     nacelles: [{ y: 2.8, x: 3.9, back: -2.6, r: 0.75, z: 0, kind: 'radial', below: 0.2 }],
@@ -578,11 +631,12 @@ function a26(nose: Row[]): Spec {
   });
 }
 A['a-26-invader'] = a26([[7.62, -0.1, -0.45, 0.2], [7.1, 0.45, -0.75, 0.55], [6.2, 0.65, -0.85, 0.6]]);
-A['a-26c'] = a26([[7.62, -0.05, -0.35, 0.25], [7.25, 0.4, -0.65, 0.5], [6.6, 0.62, -0.82, 0.6], [5.9, 0.68, -0.85, 0.6]]);
+A['a-26c'] = a26([[7.62, -0.05, -0.35, 0.25], [7.25, 0.4, -0.65, 0.5], [6.6, 0.62, -0.82, 0.6], [5.9, 0.68, -0.85, 0.6]], 6.3);
 
 // A-20G Havoc: a very deep, narrow body with a solid gun nose, a shoulder wing, radials, a tall fin (14.63 x 18.69 x 5.36 m).
-A['a-20g'] = mp({
+const A20: MP = {
   cls: 'ww2-bomber', length: 14.63, span: 18.69, height: 5.36,
+  hood: { front: 4.4, back: 2.4 },
   body: [[7.32, -0.1, -0.6, 0.2], [6.8, 0.5, -0.95, 0.55], [5.8, 0.75, -1.1, 0.6], [4.7, 0.9, -1.1, 0.6], [4.0, 1.2, -1.1, 0.6], [2.8, 1.2, -1.1, 0.6], [2.0, 0.95, -1.1, 0.6], [-3, 0.85, -0.8, 0.5], [-7.32, 0.6, 0.05, 0.12]], round: 2.6,
   wing: [[0, 2.0, -1.4], [9.35, 0.5, -0.5]], tipR: 0.35, wingUp: 0.55, dihedral: 5,
   nacelles: [{ y: 2.6, x: 3.4, back: -2.6, r: 0.72, z: 0.55, kind: 'radial', below: 0.3 }],
@@ -590,13 +644,16 @@ A['a-20g'] = mp({
   fin: [[-4.5, 0.9], [-6.0, 1.3], [-6.6, 3.3], [-7.3, 3.4], [-7.5, 0.6]],
   tail: [[0, -5.8, -7.4], [3.3, -6.4, -7.3]], tailR: 0.3, tailUp: 1.0,
   extra: [dome(-1.0, 0.9, 0.4, 1.0)],
-});
+};
+A['a-20g'] = mp(A20);
+// A-20B: the same airframe with the glazed bombardier's nose (14.48 m).
+A['a-20b'] = mp({ ...A20, length: 14.48, glazed: 5.7 });
 
 // Blenheim Mk I: the short glazed nose, a mid-low wing, radials, the dorsal turret, a small fin (12.12 x 17.17 x 3.0 m);
 // the Mk IV's longer nose with the cockpit set back (12.98 m).
 function blenheim(nose: Row[], length: number): Spec {
   return mp({
-    cls: 'ww2-bomber', length, span: 17.17, height: 3.0,
+    cls: 'ww2-bomber', length, span: 17.17, height: 3.0, glazed: nose[nose.length - 1][0] - 0.2,
     body: [...nose, [3.6, 0.85, -0.85, 0.75], [-1, 0.8, -0.85, 0.7], [-4, 0.6, -0.5, 0.5], [-6.06, 0.4, 0.0, 0.12]],
     wing: [[0, 2.0, -1.4], [8.59, 0.6, -0.4]], tipR: 0.45, wingUp: -0.3, dihedral: 6,
     nacelles: [{ y: 2.4, x: 3.3, back: -1.9, r: 0.65, z: -0.3, kind: 'radial', below: 0.15 }],
@@ -613,6 +670,7 @@ A['blenheim-iv'] = blenheim([[6.49, -0.2, -0.55, 0.25], [6.1, 0.2, -0.7, 0.6], [
 // dorsal fin fillet (12.6 x 17.63 x 4.83 m).
 A['beaufighter'] = mp({
   cls: 'ww2-heavy-fighter', length: 12.6, span: 17.63, height: 4.83,
+  hood: { front: 5.6, back: 4.2 },
   body: [[6.3, 0.0, -0.55, 0.35], [6.0, 0.65, -0.7, 0.65], [5.4, 0.95, -0.8, 0.75], [4.6, 0.95, -0.85, 0.75], [-1, 0.85, -0.85, 0.72], [-4, 0.65, -0.45, 0.5], [-6.3, 0.45, 0.05, 0.12]],
   wing: [[0, 2.5, -1.4], [8.82, 0.9, -0.4]], tipR: 0.45, wingUp: 0, dihedral: 6,
   nacelles: [{ y: 2.65, x: 6.2, back: -1.6, r: 0.8, z: 0, kind: 'radial', below: 0.2 }],
@@ -624,6 +682,7 @@ A['beaufighter'] = mp({
 // Wellington: nose and tail turrets on a deep geodetic body, a long tapered mid wing, radials, a tall rounded fin (19.69 x 26.26 x 5.31 m).
 A['wellington'] = mp({
   cls: 'ww2-bomber', length: 19.69, span: 26.26, height: 5.31,
+  hood: { front: 7.0, back: 5.2 },
   body: [[9.85, 0.1, -0.45, 0.35], [9.3, 0.6, -0.8, 0.7], [8.3, 0.85, -1.05, 0.9], [6.7, 1.25, -1.15, 0.92], [5.5, 1.25, -1.2, 0.92], [-2, 1.15, -1.15, 0.9], [-6, 0.9, -0.6, 0.7], [-9.0, 0.6, 0.0, 0.35], [-9.85, 0.45, 0.15, 0.3]],
   wing: [[0, 2.8, -2.4], [13.13, 0.2, -1.1]], tipR: 0.7, wingUp: 0, dihedral: 5,
   nacelles: [{ y: 2.95, x: 4.6, back: -2.2, r: 0.75, z: 0, kind: 'radial', below: 0.2 }],
@@ -635,6 +694,7 @@ A['wellington'] = mp({
 // Do 217: the "flying pencil" with a bulbous glazed cockpit, a shoulder wing, BMW 801 radials, twin square fins (17.3 x 19.0 x 4.97 m).
 A['do-217'] = mp({
   cls: 'ww2-bomber', length: 17.3, span: 19.0, height: 4.97,
+  glazed: 6.2,
   body: [[8.65, 0.0, -0.5, 0.3], [8.2, 0.75, -0.75, 0.75], [7.4, 1.0, -0.85, 0.85], [6.4, 1.0, -0.85, 0.8], [5.2, 0.75, -0.8, 0.7], [-3, 0.65, -0.65, 0.6], [-7, 0.5, -0.3, 0.4], [-8.65, 0.4, 0.0, 0.15]],
   wing: [[0, 2.4, -1.2], [9.5, 0.8, -0.4]], tipR: 0.5, wingUp: 0.45, dihedral: 4,
   nacelles: [{ y: 2.9, x: 4.3, back: -2.5, r: 0.75, z: 0.45, kind: 'radial', below: 0.2 }],
@@ -647,6 +707,7 @@ A['do-217'] = mp({
 // gondola, a low wing, a single fin (16.2 x 21.2 x 4.6 m).
 A['sm-79'] = mp({
   cls: 'ww2-bomber', length: 16.2, span: 21.2, height: 4.6,
+  hood: { front: 6.0, back: 4.6, sill: 0.95 },
   body: [[8.1, -0.15, -0.95, 0.42], [7.7, 0.35, -1.05, 0.68], [7.1, 0.55, -1.05, 0.72], [6.4, 1.0, -1.05, 0.75], [5.0, 1.25, -1.05, 0.75], [3.6, 1.55, -1.05, 0.75], [1.6, 1.45, -1.05, 0.75], [0.6, 1.0, -1.0, 0.75], [-3, 0.85, -0.85, 0.65], [-8.1, 0.5, 0.1, 0.12]], round: 2.8,
   wing: [[0, 2.8, -1.6], [10.6, 0.9, -0.4]], tipR: 0.5, wingUp: -0.55, dihedral: 5,
   nacelles: [{ y: 3.4, x: 4.6, back: -1.6, r: 0.7, z: -0.55, kind: 'radial' }],
@@ -660,6 +721,7 @@ A['sm-79'] = mp({
 // G4M "Betty": a fat cigar body with glazed nose and tail cone, a mid wing, radials, a single rounded fin (19.97 x 24.88 x 6.0 m).
 A['g4m-betty'] = mp({
   cls: 'ww2-bomber', length: 19.97, span: 24.88, height: 6.0,
+  hood: { front: 7.6, back: 5.6 }, glazed: 8.6,
   body: [[9.99, 0.0, -0.4, 0.3], [9.5, 0.6, -0.85, 0.8], [8.5, 1.05, -1.1, 1.05], [7.3, 1.3, -1.1, 1.1], [5.5, 1.25, -1.1, 1.1], [-3, 1.1, -1.05, 1.05], [-7, 0.85, -0.55, 0.75], [-9.4, 0.6, 0.0, 0.4], [-9.99, 0.5, 0.15, 0.3]], round: 2.1,
   wing: [[0, 3.0, -1.9], [12.44, 0.6, -0.6]], tipR: 0.8, wingUp: 0, dihedral: 6,
   nacelles: [{ y: 3.2, x: 4.6, back: -2.0, r: 0.8, z: 0, kind: 'radial', below: 0.2 }],
@@ -672,7 +734,7 @@ A['g4m-betty'] = mp({
 // an elegant curved fin; the B Mk XVI's glazed nose (13.57 x 16.52 x 5.3 m), the FB Mk VI's solid gun nose (12.43 m).
 function mosquito(nose: Row[], length: number, cls: string): Spec {
   return mp({
-    cls, length, span: 16.52, height: 5.3,
+    cls, length, span: 16.52, height: 5.3, hood: { front: 4.9, back: 2.3 }, glazed: cls === 'ww2-bomber' ? 5.6 : undefined,
     body: [...nose, [4.4, 1.05, -0.82, 0.68], [3.0, 1.0, -0.82, 0.68], [2.2, 0.8, -0.82, 0.68], [-2, 0.7, -0.7, 0.6], [-5, 0.5, -0.3, 0.4], [-6.3, 0.4, -0.05, 0.2], [-length / 2, 0.35, 0.05, 0.12]],
     wing: [[0, 2.4, -1.3], [8.26, 0.7, -0.3]], tipR: 0.7, wingUp: -0.05, dihedral: 3,
     nacelles: [{ y: 2.45, x: 3.9, back: -2.4, r: 0.6, z: -0.05, below: 0.15 }],
@@ -689,7 +751,7 @@ A['mosquito-fb'] = mosquito([[6.2, 0.05, -0.4, 0.22], [5.8, 0.55, -0.7, 0.55], [
 function bf110(length: number, finTop: number, finBack: number): Spec {
   const h = length / 2;
   return mp({
-    cls: 'ww2-heavy-fighter', length, span: 16.27, height: finTop > 1.3 ? 4.13 : 3.3,
+    cls: 'ww2-heavy-fighter', length, span: 16.27, height: finTop > 1.3 ? 4.13 : 3.3, hood: { front: 4.6, back: 0.2 },
     body: [[h, 0.0, -0.35, 0.15], [h - 0.45, 0.4, -0.6, 0.5], [4.9, 0.6, -0.72, 0.6], [4.1, 1.0, -0.75, 0.62], [0.6, 0.95, -0.75, 0.62], [-0.4, 0.7, -0.72, 0.6], [-3.5, 0.55, -0.45, 0.45], [-6.15, 0.4, 0.0, 0.12]],
     wing: [[0, 2.0, -1.3], [8.14, 0.6, -0.5]], tipR: 0.3, wingUp: -0.45, dihedral: 6,
     nacelles: [{ y: 2.3, x: 3.4, back: -1.9, r: 0.55, z: -0.45, below: 0.15 }],
@@ -705,6 +767,7 @@ A['bf-110g'] = bf110(12.07, 1.5, -6.4);
 // sides, inline engines in annular cowls, a single fin (12.48 x 16.35 x 4.28 m).
 A['me-410'] = mp({
   cls: 'ww2-heavy-fighter', length: 12.48, span: 16.35, height: 4.28,
+  hood: { front: 5.6, back: 3.4 }, glazed: 4.4,
   body: [[6.24, -0.05, -0.6, 0.3], [5.9, 0.55, -0.75, 0.65], [5.1, 0.95, -0.8, 0.75], [3.9, 0.95, -0.8, 0.75], [3.0, 0.7, -0.8, 0.72], [-2, 0.65, -0.6, 0.6], [-4.8, 0.5, -0.25, 0.4], [-6.24, 0.4, 0.05, 0.12]],
   wing: [[0, 2.1, -1.4], [8.18, 0.4, -0.6]], tipR: 0.35, wingUp: -0.4, dihedral: 6,
   nacelles: [{ y: 2.3, x: 3.4, back: -2.3, r: 0.62, z: -0.4, kind: 'radial', below: 0.15 }],
@@ -730,6 +793,7 @@ A['hs-129'] = mp({
 // tailplane joining them (12.03 x 18.4 x 3.1 m).
 A['fw-189'] = {
   ...mp({
+    glazed: -1.0,
     cls: 'ww2-recon', length: 12.03, span: 18.4, height: 3.1,
     body: [[4.2, 0.0, -0.45, 0.3], [3.8, 0.55, -0.6, 0.6], [2.8, 0.75, -0.7, 0.7], [0.5, 0.75, -0.7, 0.7], [-1.6, 0.55, -0.5, 0.5], [-2.6, 0.3, -0.2, 0.15]],
     wing: [[0, 1.9, -0.9], [2.0, 1.9, -0.9], [9.2, 0.6, -0.3]], tipR: 0.4, wingUp: 0,
@@ -744,6 +808,7 @@ A['fw-189'] = {
 // the tailplane raised on it (19.47 x 31.7 x 6.15 m).
 A['pby-catalina'] = mp({
   cls: 'flying-boat', length: 19.47, span: 31.7, height: 6.15,
+  hood: { front: 8.6, back: 6.4 },
   body: [[9.74, -0.4, -1.0, 0.35], [9.3, 0.3, -1.3, 0.8], [8.0, 0.75, -1.4, 1.0], [6.5, 0.95, -1.45, 1.05], [2, 1.0, -1.45, 1.05], [1.0, 0.95, -1.2, 1.0], [-4, 0.8, -0.6, 0.8], [-8, 0.5, 0.15, 0.4], [-9.74, 0.45, 0.35, 0.2]], round: 3,
   wing: [[0, 1.6, -2.2], [6, 1.6, -2.2], [15.85, 0.9, -0.9]], tipR: 0.5, wingUp: 2.6,
   nacelles: [{ y: 2.95, x: 3.4, back: -1.8, r: 0.68, z: 2.5, kind: 'radial' }],
@@ -779,8 +844,6 @@ A['ar-234'] = mp({
 // ---------------------------------------------------------------- single-engined pistons by variant
 
 interface One extends Piston {
-  /** The spine stays high from the canopy back to the fin (a razorback), instead of the cut-down deck. */
-  razor?: boolean;
   /** Its own fin outline, (forward, up) from the fin's root on the fuselage. */
   finOutline?: P2[];
   bodies?: Outline[];
@@ -789,12 +852,6 @@ interface One extends Piston {
 /** A single-engined piston aircraft from `piston`, with a razorback spine, its own fin and its own lumps. */
 function one(p: One): Spec {
   const s = piston(p);
-  const c = p.canopy;
-  if (p.razor && s.fuselage) {
-    const t = -p.length / 2;
-    const top = s.fuselage.top.filter(([x]) => x >= c.x - c.length * 0.45);
-    s.fuselage = { ...s.fuselage, top: [...top, [c.x - c.length * 0.55, p.h * 1.12], [t + p.length * 0.3, p.h * 0.85], [t + 0.3, p.h * 0.5], [t, p.h * 0.4]] };
-  }
   if (p.finOutline) s.finPlan = p.finOutline;
   if (p.bodies) s.bodies = [...(s.bodies ?? []), ...p.bodies];
   return s;
@@ -822,18 +879,21 @@ function filletFin(length: number, root: number, fillet: number, height: number,
 // Bf 109: a slim pointed nose, a narrow body, the framed canopy low, a short round-tipped wing (F 8.94 x 9.92 x 2.6 m);
 // the G-6's "Beulen" over the cowl guns either side ahead of the windscreen (9.02 m); the K-4's tall fin and rudder,
 // the clear Erla hood and faired bulges (8.95 m).
-const BF109 = { cls: 'ww2-fighter', span: 9.92, height: 2.6, w: 0.48, h: 0.62, wing: 'round' as const, le: 1.3, root: 2.15, tip: 1.05, sweep: 3, fin: 1.25, finRoot: 1.3, roundFin: true, tailSpan: 3.0, tailRoot: 0.9, prop: 3.0, blades: 3 };
-A['bf-109-f'] = one({ ...BF109, length: 8.94, canopy: { x: 0.6, length: 1.6, kind: 'framed' } });
-A['bf-109-g6'] = one({ ...BF109, length: 9.02, canopy: { x: 0.6, length: 1.6, kind: 'framed' }, bodies: [bulge(2.75, 1.6, 0.35, 0.15, 0.16, 0.42)] });
-A['bf-109-k4'] = one({ ...BF109, length: 8.95, fin: 1.5, finRoot: 1.45, canopy: { x: 0.6, length: 1.6, kind: 'bubble' }, bodies: [bulge(3.1, 1.2, 0.35, 0.13, 0.11, 0.42)] });
+// The radiators under the wings and the oil cooler under the nose (estimates).
+const BF109 = { cls: 'ww2-fighter', span: 9.92, height: 2.6, w: 0.45, h: 0.58, wing: 'round' as const, le: 1.3, root: 2.15, tip: 1.05, sweep: 3, fin: 1.25, finRoot: 1.3, roundFin: true, tailSpan: 3.0, tailRoot: 0.9, prop: 3.0, blades: 3, spinner: 0.34, rads: [0.95, 1.3, 1.3, 0.22] as [number, number, number, number] };
+const BF109_OIL = belly(3.4, 2.5, -0.35, -0.78, 0.2);
+A['bf-109-f'] = one({ ...BF109, length: 8.94, canopy: { x: 0.6, length: 1.6, kind: 'framed' }, bodies: [BF109_OIL] });
+A['bf-109-g6'] = one({ ...BF109, length: 9.02, canopy: { x: 0.6, length: 1.6, kind: 'framed' }, bodies: [BF109_OIL, bulge(2.75, 1.6, 0.35, 0.15, 0.16, 0.42)] });
+A['bf-109-k4'] = one({ ...BF109, length: 8.95, fin: 1.5, finRoot: 1.45, canopy: { x: 0.6, length: 1.6, kind: 'bubble' }, bodies: [BF109_OIL, bulge(3.1, 1.2, 0.35, 0.13, 0.11, 0.42)] });
 
 // Spitfire: the elliptic wing, a long thin nose, a rounded fin. Mk V: the short Merlin nose, three blades (9.12 x 11.23 x 3.02 m);
 // Mk IX: the longer nose, four blades (9.47 x 11.23 x 3.86 m); Mk XIV: the long Griffon nose, five blades, the broad
 // fin, the cut-down rear deck and teardrop hood (9.96 x 11.23 x 3.86 m).
-const SPIT = { cls: 'ww2-fighter', span: 11.23, w: 0.5, h: 0.66, wing: 'elliptic' as const, le: 1.45, root: 2.6, tip: 0.3, fin: 1.35, finRoot: 1.3, roundFin: true, tailSpan: 3.3, tailRoot: 1.0 };
-A['spitfire-mk-v'] = one({ ...SPIT, length: 9.12, height: 3.02, le: 1.2, canopy: { x: -0.3, length: 1.5, kind: 'framed' }, razor: true, prop: 3.25, blades: 3 });
-A['spitfire-mk-ix'] = one({ ...SPIT, length: 9.47, height: 3.86, canopy: { x: -0.3, length: 1.5, kind: 'framed' }, razor: true, prop: 3.3, blades: 4 });
-A['spitfire-mk-xiv'] = one({ ...SPIT, length: 9.96, height: 3.86, le: 1.6, fin: 1.6, finRoot: 1.5, canopy: { x: -0.4, length: 1.5, kind: 'bubble' }, prop: 3.15, blades: 5 });
+// The radiators under both wings (the Mk V's smaller pair stands for its radiator and oil cooler; estimates).
+const SPIT = { cls: 'ww2-fighter', span: 11.23, w: 0.45, h: 0.62, spinner: 0.32, wing: 'elliptic' as const, le: 1.45, root: 2.6, tip: 0.3, fin: 1.35, finRoot: 1.3, roundFin: true, tailSpan: 3.3, tailRoot: 1.0 };
+A['spitfire-mk-v'] = one({ ...SPIT, length: 9.12, height: 3.02, le: 1.2, canopy: { x: -0.3, length: 1.5, kind: 'framed' }, razor: true, prop: 3.25, blades: 3, rads: [0.75, 1.55, 1.2, 0.2] });
+A['spitfire-mk-ix'] = one({ ...SPIT, length: 9.47, height: 3.86, canopy: { x: -0.3, length: 1.5, kind: 'framed' }, razor: true, prop: 3.3, blades: 4, rads: [0.95, 1.55, 1.35, 0.26] });
+A['spitfire-mk-xiv'] = one({ ...SPIT, length: 9.96, height: 3.86, le: 1.6, fin: 1.6, finRoot: 1.5, canopy: { x: -0.4, length: 1.5, kind: 'bubble' }, prop: 3.15, blades: 5, rads: [1.05, 1.55, 1.45, 0.3], bodies: [bulge(3.6, 2.4, 0.4, 0.12, 0.1, 0.36)] });
 
 // P-51 Mustang: the belly radiator scoop, a straight square-tipped laminar wing. B: the razorback and the framed
 // (Malcolm) hood (9.83 x 11.28 x 4.16 m); D: the cut-down deck, the bubble and a dorsal fin fillet (9.83 x 11.28 x 4.08 m).
@@ -843,7 +903,7 @@ A['p-51d-mustang'] = one({ ...P51, height: 4.08, canopy: { x: -0.1, length: 1.8,
 
 // P-47 Thunderbolt: the huge round body and radial with the turbo duct under the cowl, a round-tipped wing; the
 // razorback's spine runs to the fin, the D-25 on has the bubble (11.0 x 12.42 x 4.47 m).
-const P47 = { cls: 'ww2-fighter', length: 11.0, span: 12.42, height: 4.47, w: 0.75, h: 0.95, radial: true, wing: 'round' as const, le: 1.8, root: 2.9, tip: 1.3, sweep: 2, fin: 1.6, finRoot: 1.8, roundFin: true, tailSpan: 4.6, tailRoot: 1.2, prop: 3.7, blades: 4, bodies: [belly(4.6, 2.4, -0.7, -1.2, 0.5)] };
+const P47 = { cls: 'ww2-fighter', length: 11.0, span: 12.42, height: 4.47, w: 0.72, h: 1.0, cowl: 0.72, cowlH: 0.85, waist: 0.66, radial: true, wing: 'round' as const, le: 1.8, root: 2.9, tip: 1.3, sweep: 2, fin: 1.6, finRoot: 1.8, roundFin: true, tailSpan: 4.6, tailRoot: 1.2, prop: 3.7, blades: 4, bodies: [belly(4.6, 2.4, -0.7, -1.2, 0.5)] };
 A['p-47d'] = one({ ...P47, canopy: { x: 0.2, length: 1.8, kind: 'bubble' } });
 A['p-47d-razorback'] = one({ ...P47, canopy: { x: 0.2, length: 1.6, kind: 'framed' }, razor: true });
 
@@ -1041,7 +1101,7 @@ function ww1(o: WW1): Spec {
   return mp({
     cls: o.cls ?? 'biplane', length: L, span: o.span, height: o.height,
     body, round: [[h, o.engine === 'rotary' ? 2.2 : 3], [h - 0.7, 4], [t, 4]],
-    wing: main.rows, tipR: (main.rows === lowerRows ? lc : o.chord) * 0.3, wingUp: main.z, dihedral: o.dihedral ?? (layout === 'bi' || layout === 'tri' ? 2.5 : 1),
+    wing: main.rows, tipR: (main.rows === lowerRows ? lc : o.chord) * 0.3, wingUp: main.z, dihedral: o.dihedral ?? (layout === 'bi' || layout === 'tri' ? 2.5 : 1), thick: layout === 'mono' || layout === 'parasol' ? o.chord * 0.1 : 0,
     nose: true,
     prop: [o.prop ?? Math.min(2.9, o.span * 0.3), o.blades ?? 2],
     fin,
@@ -1107,6 +1167,7 @@ A['sea-fury'] = one({ cls: 'ww2-fighter', length: 10.57, span: 11.7, height: 4.8
 // and the twin fins aft, the tailplane between them (15.11 x 20.12 x 4.47 m).
 A['p-61'] = mp({
   cls: 'ww2-heavy-fighter', length: 15.11, span: 20.12, height: 4.47,
+  hood: { front: 5.4, back: 1.6 }, glazed: 6.4,
   body: [[7.55, 0.0, -0.45, 0.3], [7.1, 0.55, -0.7, 0.7], [6.0, 0.85, -0.9, 0.85], [5.0, 1.2, -0.95, 0.85], [2.0, 1.2, -0.95, 0.85], [-1.0, 0.9, -0.8, 0.75], [-2.8, 0.5, -0.3, 0.3]],
   wing: [[0, 2.6, -1.4], [3.2, 2.6, -1.4], [10.06, 1.0, -0.4]], tipR: 0.4, wingUp: 0.2, dihedral: 3,
   nacelles: [{ y: 2.6, x: 4.6, back: -7.0, r: 0.75, z: 0.2, kind: 'radial', below: 0.2 }],
@@ -1120,6 +1181,7 @@ A['p-61'] = mp({
 // oval fins on the tailplane's tips (15.87 x 22.86 x 3.63 m).
 A['pv-2'] = mp({
   cls: 'ww2-bomber', length: 15.87, span: 22.86, height: 3.63,
+  hood: { front: 5.8, back: 4.0 },
   body: [[7.93, -0.1, -0.5, 0.25], [7.4, 0.5, -0.85, 0.7], [6.4, 0.85, -1.05, 0.9], [5.2, 1.15, -1.1, 0.92], [3.0, 1.15, -1.1, 0.92], [-2, 1.0, -0.95, 0.85], [-5.5, 0.75, -0.4, 0.55], [-7.93, 0.5, 0.1, 0.15]],
   wing: [[0, 2.6, -1.6], [11.43, 0.6, -0.5]], tipR: 0.5, wingUp: -0.1, dihedral: 5,
   nacelles: [{ y: 3.0, x: 4.4, back: -2.4, r: 0.75, z: -0.1, kind: 'radial', below: 0.2 }],
@@ -1157,8 +1219,8 @@ interface Bipe {
   twin?: number;
   tail: Edge[];
   tailUp: number;
-  /** Open tail booms (a pusher's): from the wings' trailing edge to the tail, this far out. */
-  booms?: { y: number; from: number; to: number; zTo: number };
+  /** Open tail booms (a pusher's): from the wings' trailing edge, this far out, to the tail, converging to `yTo` out there. */
+  booms?: { y: number; from: number; to: number; zTo: number; yTo?: number };
   /** Wheels: forward position, out, the ground's height, radius. */
   gear?: [number, number, number, number][];
   extra?: Outline[];
@@ -1176,21 +1238,40 @@ function bipe(o: Bipe): Spec {
     const y = (Math.min(us, ls) * i) / (o.bays + 0.4);
     for (const k of [0.2, 0.75]) extra.push(post(ux - o.chord * k + 0.04, ux - o.chord * k - 0.04, uz, o.lz, 0.035, y, o.stagger ?? 0));
   }
-  if (o.booms) for (const z0 of [uz, o.lz]) extra.push({ top: [[o.booms.from, z0 + 0.05], [o.booms.to, o.booms.zTo + 0.05]], bottom: [[o.booms.from, z0 - 0.05], [o.booms.to, o.booms.zTo - 0.05]], plan: [[o.booms.from, 0.05], [o.booms.to, 0.05]], side: o.booms.y, round: 2, stations: 2 });
+  if (o.booms) {
+    // Each boom in short straight pieces, so it can close in towards the tail; a tube of 12 cm (a little heavier than
+    // the real ones, so it still reads at a distance), and a cross strut between the upper and lower boom halfway.
+    const b = o.booms;
+    const yTo = b.yTo ?? b.y;
+    const n = 6;
+    for (const z0 of [uz, o.lz]) {
+      for (let i = 0; i < n; i++) {
+        const f0 = i / n;
+        const f1 = (i + 1) / n;
+        const x0 = b.from + (b.to - b.from) * f0;
+        const x1 = b.from + (b.to - b.from) * f1;
+        const za = z0 + (b.zTo - z0) * f0;
+        const zb = z0 + (b.zTo - z0) * f1;
+        extra.push({ top: [[x0 + 0.04, za + 0.06], [x1, zb + 0.06]], bottom: [[x0 + 0.04, za - 0.06], [x1, zb - 0.06]], plan: [[x0 + 0.04, 0.06], [x1, 0.06]], side: b.y + (yTo - b.y) * (f0 + f1) / 2, round: 2, stations: 2 });
+      }
+    }
+    const xm = (b.from + b.to) / 2;
+    extra.push(post(xm + 0.04, xm - 0.04, (uz + b.zTo) / 2, (o.lz + b.zTo) / 2, 0.035, (b.y + yTo) / 2));
+  }
   for (const [x, y, g, r] of o.gear ?? []) extra.push(...wheel(x, y, o.lz, g, r));
   return mp({
     cls: o.cls ?? 'ww1-bomber', length: o.length, span: o.span, height: o.height,
     body: o.body, round: o.round ?? 5,
-    wing: [[0, o.le, o.le - lc], [ls, o.le, o.le - lc]], tipR: lc * 0.3, wingUp: o.lz, dihedral: 1.5,
+    wing: [[0, o.le, o.le - lc], [ls, o.le, o.le - lc]], tipR: lc * 0.3, wingUp: o.lz, dihedral: 1.5, thick: 0,
     nacelles: o.nacelles, prop: o.prop, fin: o.fin, twin: o.twin, tail: o.tail, tailR: 0.3, tailUp: o.tailUp,
     extra: [...extra, ...(o.extra ?? [])],
   });
 }
 
 // Airco DH.2: a short nacelle with the pilot in front and the rotary pushing behind, open booms to the tail (7.68 x 8.61 x 2.91 m).
-A['airco-dh2'] = bipe({ cls: 'biplane', length: 7.68, span: 8.61, height: 2.91, body: [[3.84, 0.05, -0.35, 0.2], [3.4, 0.45, -0.45, 0.38], [2.0, 0.5, -0.45, 0.42], [1.0, 0.4, -0.38, 0.4], [0.6, 0.25, -0.25, 0.25]], lz: -0.35, le: 2.0, gap: 1.45, chord: 1.45, bays: 2, nacelles: [{ y: 0, x: 1.0, back: 0.4, r: 0.45, z: 0.05, kind: 'radial', propX: 0.3 }], prop: [2.6, 2], booms: { y: 0.85, from: 0.55, to: -3.3, zTo: 0.15 }, fin: [[-3.0, -0.2], [-3.0, 1.0], [-3.4, 1.15], [-3.84, 0.9], [-3.84, -0.1]], tail: [[0, -2.6, -3.6], [1.4, -2.8, -3.5]], tailUp: 0.15, gear: [[2.4, 0.7, -1.35, 0.3]] });
+A['airco-dh2'] = bipe({ cls: 'biplane', length: 7.68, span: 8.61, height: 2.91, body: [[3.84, 0.05, -0.35, 0.2], [3.4, 0.45, -0.45, 0.38], [2.0, 0.5, -0.45, 0.42], [1.0, 0.4, -0.38, 0.4], [0.6, 0.25, -0.25, 0.25]], lz: -0.35, le: 2.0, gap: 1.45, chord: 1.45, bays: 2, nacelles: [{ y: 0, x: 1.0, back: 0.4, r: 0.45, z: 0.05, kind: 'radial', propX: 0.3 }], prop: [2.6, 2], booms: { y: 0.85, from: 0.55, to: -3.3, zTo: 0.15, yTo: 0.25 }, fin: [[-3.0, -0.2], [-3.0, 1.0], [-3.4, 1.15], [-3.84, 0.9], [-3.84, -0.1]], tail: [[0, -2.6, -3.6], [1.4, -2.8, -3.5]], tailUp: 0.15, gear: [[2.4, 0.7, -1.35, 0.3]] });
 // F.E.2b: the two-seat pusher, the gunner in the nose, two bays, open booms (9.83 x 14.55 x 3.85 m).
-A['fe-2b'] = bipe({ cls: 'biplane-two-seat', length: 9.83, span: 14.55, height: 3.85, body: [[4.92, 0.0, -0.35, 0.3], [4.5, 0.55, -0.5, 0.5], [3.0, 0.65, -0.55, 0.55], [1.2, 0.55, -0.45, 0.5], [0.6, 0.3, -0.3, 0.3]], lz: -0.5, le: 2.3, gap: 1.9, chord: 1.75, bays: 2, nacelles: [{ y: 0, x: 1.0, back: 0.2, r: 0.5, z: 0.1, propX: 0.15 }], prop: [2.9, 4], booms: { y: 1.4, from: 0.55, to: -3.9, zTo: 0.2 }, fin: [[-3.9, -0.2], [-3.9, 1.2], [-4.3, 1.4], [-4.92, 1.1], [-4.92, -0.1]], tail: [[0, -3.4, -4.6], [1.9, -3.6, -4.5]], tailUp: 0.2, gear: [[2.6, 0.9, -1.6, 0.38], [4.0, 0, -1.6, 0.2]] });
+A['fe-2b'] = bipe({ cls: 'biplane-two-seat', length: 9.83, span: 14.55, height: 3.85, body: [[4.92, 0.0, -0.35, 0.3], [4.5, 0.55, -0.5, 0.5], [3.0, 0.65, -0.55, 0.55], [1.2, 0.55, -0.45, 0.5], [0.6, 0.3, -0.3, 0.3]], lz: -0.5, le: 2.3, gap: 1.9, chord: 1.75, bays: 2, nacelles: [{ y: 0, x: 1.0, back: 0.2, r: 0.5, z: 0.1, propX: 0.15 }], prop: [2.9, 4], booms: { y: 1.4, from: 0.55, to: -3.9, zTo: 0.2, yTo: 0.9 }, fin: [[-3.9, -0.2], [-3.9, 1.2], [-4.3, 1.4], [-4.92, 1.1], [-4.92, -0.1]], tail: [[0, -3.4, -4.6], [1.9, -3.6, -4.5]], tailUp: 0.2, gear: [[2.6, 0.9, -1.6, 0.38], [4.0, 0, -1.6, 0.2]] });
 // Gotha G.V: a slim box body with the nose gunner, two pusher engines between the wings, three bays (12.36 x 23.7 x 4.3 m).
 A['gotha-g5'] = bipe({ length: 12.36, span: 23.7, height: 4.3, lower: 21.7, body: [[6.18, 0.3, -0.55, 0.45], [5.6, 0.65, -0.65, 0.6], [3.0, 0.7, -0.7, 0.65], [-2, 0.55, -0.5, 0.5], [-5.6, 0.3, -0.05, 0.12]], lz: -0.6, le: 2.4, gap: 2.3, chord: 2.5, bays: 3, nacelles: [{ y: 2.8, x: 2.0, back: -1.6, r: 0.55, z: 0.5, propX: -1.75 }], prop: [3.1, 2], fin: [[-4.6, 0.5], [-5.4, 0.6], [-6.0, 1.6], [-6.18, 1.4], [-6.18, 0.0], [-5.0, 0.4]], tail: [[0, -4.6, -6.0], [3.0, -4.8, -6.0]], tailUp: 0.55, gear: [[2.6, 2.8, -2.2, 0.5]] });
 // Handley Page O/400: a long box body, two tractor engines between the wings, four bays, a biplane tail with twin fins (19.16 x 30.48 x 6.71 m).
@@ -1221,21 +1302,21 @@ A['ba-349-natter'] = { ...jet({ cls: 'rocket-plane', length: 6.02, span: 4.0, he
 // ---------------------------------------------------------------- four-engined bombers and the Hampden
 
 // Short Stirling: a long slab-sided body, a short broad mid wing with four Hercules, a tall single fin (26.59 x 30.2 x 6.93 m).
-A['stirling'] = mp({ cls: 'ww2-heavy-bomber', length: 26.59, span: 30.2, height: 6.93, body: [[13.3, 0.3, -0.6, 0.5], [12.6, 1.0, -1.1, 0.9], [11.0, 1.4, -1.4, 1.0], [9.8, 1.75, -1.45, 1.0], [-6, 1.6, -1.45, 1.0], [-11, 1.2, -0.6, 0.75], [-13.3, 0.8, 0.2, 0.4]], round: 3.2, wing: [[0, 3.0, -2.8], [15.1, 1.0, -0.6]], tipR: 0.5, wingUp: -0.2, dihedral: 4, nacelles: [{ y: 4.4, x: 4.6, back: -2.6, r: 0.75, z: -0.2, kind: 'radial', below: 0.4 }, { y: 8.4, x: 4.0, back: -2.0, r: 0.75, z: 0.1, kind: 'radial', below: 0.4 }], prop: [4.0, 3], fin: [[-7, 1.6], [-9.6, 2.5], [-11.6, 5.4], [-12.8, 5.6], [-13.4, 5.0], [-13.3, 1.0]], tail: [[0, -10.2, -13.0], [5.6, -11.4, -12.9]], tailR: 0.4, tailUp: 0.8, extra: [dome(-1.5, 1.6, 0.5, 1.2)] });
+A['stirling'] = mp({ hood: { front: 10.6, back: 8.4 }, glazed: 12.0, cls: 'ww2-heavy-bomber', length: 26.59, span: 30.2, height: 6.93, body: [[13.3, 0.3, -0.6, 0.5], [12.6, 1.0, -1.1, 0.9], [11.0, 1.4, -1.4, 1.0], [9.8, 1.75, -1.45, 1.0], [-6, 1.6, -1.45, 1.0], [-11, 1.2, -0.6, 0.75], [-13.3, 0.8, 0.2, 0.4]], round: 3.2, wing: [[0, 3.0, -2.8], [15.1, 1.0, -0.6]], tipR: 0.5, wingUp: -0.2, dihedral: 4, nacelles: [{ y: 4.4, x: 4.6, back: -2.6, r: 0.75, z: -0.2, kind: 'radial', below: 0.4 }, { y: 8.4, x: 4.0, back: -2.0, r: 0.75, z: 0.1, kind: 'radial', below: 0.4 }], prop: [4.0, 3], fin: [[-7, 1.6], [-9.6, 2.5], [-11.6, 5.4], [-12.8, 5.6], [-13.4, 5.0], [-13.3, 1.0]], tail: [[0, -10.2, -13.0], [5.6, -11.4, -12.9]], tailR: 0.4, tailUp: 0.8, extra: [dome(-1.5, 1.6, 0.5, 1.2)] });
 // Handley Page Halifax B Mk III: a deep body with the nose glazing, four Hercules, big square twin fins (21.82 x 31.75 x 6.32 m).
-A['halifax'] = mp({ cls: 'ww2-heavy-bomber', length: 21.82, span: 31.75, height: 6.32, body: [[10.91, 0.0, -0.5, 0.4], [10.3, 0.8, -0.9, 0.85], [9.0, 1.2, -1.2, 0.95], [7.8, 1.55, -1.3, 0.98], [-4, 1.45, -1.3, 0.95], [-8.5, 1.1, -0.6, 0.7], [-10.91, 0.8, 0.1, 0.35]], round: 3, wing: [[0, 3.0, -2.4], [15.88, 0.6, -0.8]], tipR: 0.5, wingUp: -0.1, dihedral: 4, nacelles: [{ y: 3.8, x: 4.4, back: -2.8, r: 0.72, z: -0.1, kind: 'radial', below: 0.2 }, { y: 7.8, x: 3.8, back: -2.4, r: 0.72, z: 0.2, kind: 'radial', below: 0.2 }], prop: [3.9, 3], fin: [[-8.3, -0.8], [-8.4, 2.2], [-8.8, 2.5], [-10.4, 2.5], [-10.6, 2.1], [-10.6, -0.8], [-10.2, -1.1], [-8.6, -1.1]], twin: 7.6, tail: [[0, -8.0, -10.4], [3.8, -8.2, -10.4]], tailUp: 0.6, extra: [dome(-1.0, 1.45, 0.55, 1.2)] });
+A['halifax'] = mp({ hood: { front: 8.6, back: 6.6 }, glazed: 9.6, cls: 'ww2-heavy-bomber', length: 21.82, span: 31.75, height: 6.32, body: [[10.91, 0.0, -0.5, 0.4], [10.3, 0.8, -0.9, 0.85], [9.0, 1.2, -1.2, 0.95], [7.8, 1.55, -1.3, 0.98], [-4, 1.45, -1.3, 0.95], [-8.5, 1.1, -0.6, 0.7], [-10.91, 0.8, 0.1, 0.35]], round: 3, wing: [[0, 3.0, -2.4], [15.88, 0.6, -0.8]], tipR: 0.5, wingUp: -0.1, dihedral: 4, nacelles: [{ y: 3.8, x: 4.4, back: -2.8, r: 0.72, z: -0.1, kind: 'radial', below: 0.2 }, { y: 7.8, x: 3.8, back: -2.4, r: 0.72, z: 0.2, kind: 'radial', below: 0.2 }], prop: [3.9, 3], fin: [[-8.3, -0.8], [-8.4, 2.2], [-8.8, 2.5], [-10.4, 2.5], [-10.6, 2.1], [-10.6, -0.8], [-10.2, -1.1], [-8.6, -1.1]], twin: 7.6, tail: [[0, -8.0, -10.4], [3.8, -8.2, -10.4]], tailUp: 0.6, extra: [dome(-1.0, 1.45, 0.55, 1.2)] });
 // Pe-8: four inlines in long nacelles (gunners in the inboard ones), a mid-low wing, a single fin (23.59 x 39.13 x 6.2 m).
-A['pe-8'] = mp({ cls: 'ww2-heavy-bomber', length: 23.59, span: 39.13, height: 6.2, body: [[11.8, 0.0, -0.6, 0.4], [11.2, 0.8, -1.0, 0.9], [9.8, 1.3, -1.25, 1.0], [8.6, 1.6, -1.3, 1.05], [-5, 1.45, -1.25, 1.0], [-9.5, 1.1, -0.5, 0.7], [-11.8, 0.8, 0.1, 0.3]], wing: [[0, 3.4, -3.4], [19.57, 0.4, -1.2]], tipR: 0.6, wingUp: -0.4, dihedral: 3, nacelles: [{ y: 4.6, x: 5.4, back: -4.0, r: 0.7, z: -0.4, below: 0.2 }, { y: 9.4, x: 4.6, back: -1.6, r: 0.6, z: 0.05, below: 0.2 }], prop: [4.1, 3], fin: [[-6, 1.4], [-9.0, 2.2], [-10.8, 4.8], [-11.6, 5.0], [-12.0, 4.4], [-11.8, 0.8]], tail: [[0, -9.0, -11.8], [6.0, -10.2, -11.6]], tailR: 0.4, tailUp: 0.7, extra: [dome(2, 1.6, 0.5, 1.2)] });
+A['pe-8'] = mp({ hood: { front: 9.4, back: 7.6 }, glazed: 10.6, cls: 'ww2-heavy-bomber', length: 23.59, span: 39.13, height: 6.2, body: [[11.8, 0.0, -0.6, 0.4], [11.2, 0.8, -1.0, 0.9], [9.8, 1.3, -1.25, 1.0], [8.6, 1.6, -1.3, 1.05], [-5, 1.45, -1.25, 1.0], [-9.5, 1.1, -0.5, 0.7], [-11.8, 0.8, 0.1, 0.3]], wing: [[0, 3.4, -3.4], [19.57, 0.4, -1.2]], tipR: 0.6, wingUp: -0.4, dihedral: 3, nacelles: [{ y: 4.6, x: 5.4, back: -4.0, r: 0.7, z: -0.4, below: 0.2 }, { y: 9.4, x: 4.6, back: -1.6, r: 0.6, z: 0.05, below: 0.2 }], prop: [4.1, 3], fin: [[-6, 1.4], [-9.0, 2.2], [-10.8, 4.8], [-11.6, 5.0], [-12.0, 4.4], [-11.8, 0.8]], tail: [[0, -9.0, -11.8], [6.0, -10.2, -11.6]], tailR: 0.4, tailUp: 0.7, extra: [dome(2, 1.6, 0.5, 1.2)] });
 // Fw 200 Condor: a slim round body with the ventral gondola, a long low wing, four BMW 132 radials (23.45 x 32.85 x 6.3 m).
-A['fw-200'] = mp({ cls: 'ww2-heavy-bomber', length: 23.45, span: 32.85, height: 6.3, body: [[11.73, -0.1, -0.6, 0.3], [11.2, 0.65, -0.95, 0.8], [10.0, 1.1, -1.15, 1.05], [8.8, 1.4, -1.2, 1.1], [-6, 1.3, -1.15, 1.05], [-10, 0.95, -0.4, 0.6], [-11.73, 0.7, 0.1, 0.2]], round: 2.2, wing: [[0, 3.4, -2.4], [16.43, 0.6, -0.6]], tipR: 0.6, wingUp: -0.75, dihedral: 6, nacelles: [{ y: 3.6, x: 4.6, back: -1.2, r: 0.68, z: -0.6, kind: 'radial' }, { y: 7.4, x: 4.0, back: -0.8, r: 0.68, z: -0.2, kind: 'radial' }], prop: [3.3, 3], fin: [[-6.5, 1.2], [-9.0, 1.8], [-10.6, 4.4], [-11.4, 4.5], [-11.9, 3.8], [-11.73, 0.7]], tail: [[0, -8.8, -11.5], [5.4, -9.8, -11.4]], tailR: 0.5, tailUp: 0.6, extra: [{ top: [[7, -0.9], [-1, -0.9]], bottom: [[7, -1.2], [6, -1.65], [0, -1.6], [-1, -1.1]], plan: [[7, 0.3], [6, 0.5], [0, 0.45], [-1, 0.2]], round: 3, stations: 6 }, dome(4, 1.4, 0.5, 1.2)] });
+A['fw-200'] = mp({ hood: { front: 10.4, back: 8.4 }, cls: 'ww2-heavy-bomber', length: 23.45, span: 32.85, height: 6.3, body: [[11.73, -0.1, -0.6, 0.3], [11.2, 0.65, -0.95, 0.8], [10.0, 1.1, -1.15, 1.05], [8.8, 1.4, -1.2, 1.1], [-6, 1.3, -1.15, 1.05], [-10, 0.95, -0.4, 0.6], [-11.73, 0.7, 0.1, 0.2]], round: 2.2, wing: [[0, 3.4, -2.4], [16.43, 0.6, -0.6]], tipR: 0.6, wingUp: -0.75, dihedral: 6, nacelles: [{ y: 3.6, x: 4.6, back: -1.2, r: 0.68, z: -0.6, kind: 'radial' }, { y: 7.4, x: 4.0, back: -0.8, r: 0.68, z: -0.2, kind: 'radial' }], prop: [3.3, 3], fin: [[-6.5, 1.2], [-9.0, 1.8], [-10.6, 4.4], [-11.4, 4.5], [-11.9, 3.8], [-11.73, 0.7]], tail: [[0, -8.8, -11.5], [5.4, -9.8, -11.4]], tailR: 0.5, tailUp: 0.6, extra: [{ top: [[7, -0.9], [-1, -0.9]], bottom: [[7, -1.2], [6, -1.65], [0, -1.6], [-1, -1.1]], plan: [[7, 0.3], [6, 0.5], [0, 0.45], [-1, 0.2]], round: 3, stations: 6 }, dome(4, 1.4, 0.5, 1.2)] });
 // Piaggio P.108B: four radials, a deep body, a single fin, remote turrets on the outer nacelles (22.92 x 32.0 x 6.0 m).
-A['p-108'] = mp({ cls: 'ww2-heavy-bomber', length: 22.92, span: 32.0, height: 6.0, body: [[11.46, 0.0, -0.5, 0.4], [10.8, 0.9, -0.9, 0.9], [9.4, 1.25, -1.2, 1.0], [8.0, 1.55, -1.3, 1.0], [-5, 1.4, -1.2, 1.0], [-9.5, 1.0, -0.5, 0.65], [-11.46, 0.7, 0.1, 0.25]], wing: [[0, 3.2, -2.6], [16, 0.6, -0.8]], tipR: 0.5, wingUp: -0.2, dihedral: 5, nacelles: [{ y: 4.0, x: 4.6, back: -2.2, r: 0.72, z: -0.2, kind: 'radial' }, { y: 8.2, x: 4.0, back: -1.8, r: 0.72, z: 0.2, kind: 'radial' }], prop: [3.8, 3], fin: [[-6.5, 1.3], [-9, 2.0], [-10.6, 4.6], [-11.3, 4.7], [-11.6, 4.0], [-11.46, 0.7]], tail: [[0, -8.8, -11.4], [5.4, -9.6, -11.3]], tailR: 0.4, tailUp: 0.6, extra: [dome(0.6, 0.95, 0.35, 0.9, 1, 8.2)] });
+A['p-108'] = mp({ hood: { front: 9.8, back: 7.6 }, glazed: 10.6, cls: 'ww2-heavy-bomber', length: 22.92, span: 32.0, height: 6.0, body: [[11.46, 0.0, -0.5, 0.4], [10.8, 0.9, -0.9, 0.9], [9.4, 1.25, -1.2, 1.0], [8.0, 1.55, -1.3, 1.0], [-5, 1.4, -1.2, 1.0], [-9.5, 1.0, -0.5, 0.65], [-11.46, 0.7, 0.1, 0.25]], wing: [[0, 3.2, -2.6], [16, 0.6, -0.8]], tipR: 0.5, wingUp: -0.2, dihedral: 5, nacelles: [{ y: 4.0, x: 4.6, back: -2.2, r: 0.72, z: -0.2, kind: 'radial' }, { y: 8.2, x: 4.0, back: -1.8, r: 0.72, z: 0.2, kind: 'radial' }], prop: [3.8, 3], fin: [[-6.5, 1.3], [-9, 2.0], [-10.6, 4.6], [-11.3, 4.7], [-11.6, 4.0], [-11.46, 0.7]], tail: [[0, -8.8, -11.4], [5.4, -9.6, -11.3]], tailR: 0.4, tailUp: 0.6, extra: [dome(0.6, 0.95, 0.35, 0.9, 1, 8.2)] });
 // TB-3: a corrugated monoplane giant, a thick low wing with four inlines, fixed wheels, a single fin (24.4 x 41.8 x 8.5 m).
 A['tb-3'] = mp({ cls: 'ww2-heavy-bomber', length: 24.4, span: 41.8, height: 8.5, body: [[12.2, 0.2, -0.8, 0.6], [11.0, 1.1, -1.2, 0.9], [8, 1.4, -1.4, 1.0], [-4, 1.1, -1.0, 0.8], [-12.2, 0.5, 0.1, 0.15]], round: 4, wing: [[0, 4.0, -4.0], [20.9, 1.0, -1.0]], tipR: 0.4, wingUp: -0.6, dihedral: 3, nacelles: [{ y: 4.4, x: 5.4, back: 1.4, r: 0.55, z: -0.4 }, { y: 9.6, x: 4.8, back: 1.2, r: 0.55, z: -0.1 }], prop: [4.0, 2], fin: [[-8.8, 1.0], [-10.6, 1.4], [-11.6, 3.5], [-12.2, 3.5], [-12.2, 0.4]], tail: [[0, -9.4, -12.0], [5.6, -10.0, -12.0]], tailUp: 0.8, extra: [...wheel(3.0, 4.4, -1.1, -3.4, 0.75)] });
 // G8N Renzan: four radials, a mid wing, a tall single fin (22.94 x 32.54 x 7.2 m).
-A['g8n'] = mp({ cls: 'ww2-heavy-bomber', length: 22.94, span: 32.54, height: 7.2, body: [[11.47, 0.0, -0.6, 0.4], [10.8, 0.9, -1.05, 0.95], [9.4, 1.35, -1.3, 1.05], [8.0, 1.6, -1.35, 1.1], [-5, 1.45, -1.3, 1.05], [-9.5, 1.1, -0.5, 0.7], [-11.47, 0.8, 0.1, 0.3]], wing: [[0, 3.4, -2.6], [16.27, 0.4, -0.9]], tipR: 0.5, wingUp: -0.1, dihedral: 4, nacelles: [{ y: 4.0, x: 4.6, back: -2.4, r: 0.75, z: -0.1, kind: 'radial' }, { y: 8.0, x: 4.0, back: -2.0, r: 0.75, z: 0.2, kind: 'radial' }], prop: [3.6, 4], fin: [[-6, 1.4], [-9.0, 2.4], [-10.4, 5.2], [-11.2, 5.4], [-11.6, 4.8], [-11.47, 0.8]], tail: [[0, -8.8, -11.4], [5.0, -9.8, -11.3]], tailR: 0.4, tailUp: 0.7 });
+A['g8n'] = mp({ hood: { front: 9.8, back: 7.6 }, glazed: 10.6, cls: 'ww2-heavy-bomber', length: 22.94, span: 32.54, height: 7.2, body: [[11.47, 0.0, -0.6, 0.4], [10.8, 0.9, -1.05, 0.95], [9.4, 1.35, -1.3, 1.05], [8.0, 1.6, -1.35, 1.1], [-5, 1.45, -1.3, 1.05], [-9.5, 1.1, -0.5, 0.7], [-11.47, 0.8, 0.1, 0.3]], wing: [[0, 3.4, -2.6], [16.27, 0.4, -0.9]], tipR: 0.5, wingUp: -0.1, dihedral: 4, nacelles: [{ y: 4.0, x: 4.6, back: -2.4, r: 0.75, z: -0.1, kind: 'radial' }, { y: 8.0, x: 4.0, back: -2.0, r: 0.75, z: 0.2, kind: 'radial' }], prop: [3.6, 4], fin: [[-6, 1.4], [-9.0, 2.4], [-10.4, 5.2], [-11.2, 5.4], [-11.6, 4.8], [-11.47, 0.8]], tail: [[0, -8.8, -11.4], [5.0, -9.8, -11.3]], tailR: 0.4, tailUp: 0.7 });
 // Hampden: the "flying suitcase" - a deep narrow front body, a thin boom to twin fins, two Pegasus radials (16.33 x 21.08 x 4.55 m).
-A['hampden'] = mp({ cls: 'ww2-bomber', length: 16.33, span: 21.08, height: 4.55, body: [[8.17, 0.0, -0.6, 0.4], [7.6, 0.7, -0.95, 0.55], [6.2, 1.3, -1.25, 0.55], [4.2, 1.35, -1.3, 0.55], [1.0, 1.2, -1.25, 0.55], [-0.5, 0.9, -0.6, 0.4], [-2.0, 0.6, 0.1, 0.25], [-7.9, 0.5, 0.25, 0.18], [-8.17, 0.45, 0.25, 0.1]], round: 3, wing: [[0, 2.8, -1.8], [10.54, 0.6, -0.4]], tipR: 0.4, wingUp: -0.2, dihedral: 6, nacelles: [{ y: 2.9, x: 4.0, back: -1.6, r: 0.72, z: -0.2, kind: 'radial' }], prop: [3.5, 3], fin: [[-6.9, -0.6], [-7.0, 1.5], [-7.4, 1.8], [-8.0, 1.8], [-8.17, 1.4], [-8.17, -0.6], [-7.9, -0.9], [-7.1, -0.9]], twin: 4.6, tail: [[0, -6.6, -8.1], [2.3, -6.8, -8.1]], tailUp: 0.4 });
+A['hampden'] = mp({ hood: { front: 6.6, back: 3.2 }, glazed: 7.0, cls: 'ww2-bomber', length: 16.33, span: 21.08, height: 4.55, body: [[8.17, 0.0, -0.6, 0.4], [7.6, 0.7, -0.95, 0.55], [6.2, 1.3, -1.25, 0.55], [4.2, 1.35, -1.3, 0.55], [1.0, 1.2, -1.25, 0.55], [-0.5, 0.9, -0.6, 0.4], [-2.0, 0.6, 0.1, 0.25], [-7.9, 0.5, 0.25, 0.18], [-8.17, 0.45, 0.25, 0.1]], round: 3, wing: [[0, 2.8, -1.8], [10.54, 0.6, -0.4]], tipR: 0.4, wingUp: -0.2, dihedral: 6, nacelles: [{ y: 2.9, x: 4.0, back: -1.6, r: 0.72, z: -0.2, kind: 'radial' }], prop: [3.5, 3], fin: [[-6.9, -0.6], [-7.0, 1.5], [-7.4, 1.8], [-8.0, 1.8], [-8.17, 1.4], [-8.17, -0.6], [-7.9, -0.9], [-7.1, -0.9]], twin: 4.6, tail: [[0, -6.6, -8.1], [2.3, -6.8, -8.1]], tailUp: 0.4 });
 
 // ---------------------------------------------------------------- Japanese and Italian fighters and attack aircraft
 
@@ -1270,5 +1351,282 @@ A['g-55'] = one({ ...SM, length: 9.37, span: 11.85, height: 3.77, w: 0.52, h: 0.
 // G.50 Freccia and MC.200 Saetta: stubby radials with the cockpit on a raised hump (G.50 7.8 x 10.98 x 3.28 m; MC.200 8.19 x 10.58 x 3.05 m).
 A['g-50'] = one({ ...SM, length: 7.8, span: 10.98, height: 3.28, w: 0.62, h: 0.7, radial: true, wing: 'tapered', le: 1.4, root: 2.4, tip: 1.1, sweep: 3, dihedral: 6, fin: 1.3, finRoot: 1.3, tailSpan: 3.6, tailRoot: 1.0, canopy: { x: -0.2, length: 1.4, kind: 'bubble' }, razor: true, prop: 2.9, blades: 3 });
 A['mc-200'] = one({ ...SM, length: 8.19, span: 10.58, height: 3.05, w: 0.62, h: 0.7, radial: true, wing: 'round', le: 1.4, root: 2.3, tip: 1.1, sweep: 3, fin: 1.3, finRoot: 1.3, tailSpan: 3.4, tailRoot: 0.9, canopy: { x: -0.2, length: 1.4, kind: 'bubble' }, razor: true, prop: 3.05, blades: 3 });
+
+// ---------------------------------------------------------------- multi-engined types from a few numbers
+
+interface Tw {
+  cls: string;
+  length: number;
+  span: number;
+  height: number;
+  /** The body's half-width and half-depth at its widest. */
+  w: number;
+  h: number;
+  /**
+   * glazed: a stepless glass nose (He 111, Il-4); stepped: a glass nose under a stepped cockpit (B-25); solid: a
+   * solid nose under the stepped cockpit; cockpit: the crew's glazing is the nose itself (Ju 88, He 219).
+   */
+  nose: 'glazed' | 'stepped' | 'solid' | 'cockpit';
+  /** The windscreen's distance behind the nose tip and the hood's length (defaults 0.2 and 0.15 of the length). */
+  cockpit?: number;
+  hoodLen?: number;
+  radial?: boolean;
+  /** Engines: out along the half span (default 0.27), the nacelle's radius, its back as a share of the root chord behind the leading edge (default 1.0); a second pair out at `outer` (four engines). */
+  nacY?: number;
+  nacR?: number;
+  nacBack?: number;
+  outer?: number;
+  /** A third engine in the nose (trimotors). */
+  noseEngine?: boolean;
+  /** Wing: root and tip chords (default 14 % and 5.5 % of the span), its height as a share of h (-1 low, 1 high), dihedral, the root's leading edge. */
+  root?: number;
+  tip?: number;
+  wingZ?: number;
+  dihedral?: number;
+  le?: number;
+  /** Twin fins on the tailplane's tips; the fin's height above the tail; the tailplane's span. */
+  twinTail?: boolean;
+  finH?: number;
+  tailSpan?: number;
+  prop: [number, number];
+  /** Turret domes on top and under the body, at these forward positions. */
+  turrets?: number[];
+  belly?: number[];
+  /** A flying boat's hull: deep, the step under the wing, the rear swept up to the tail. */
+  boat?: boolean;
+  extra?: Outline[];
+}
+
+/**
+ * A twin- or four-engined aircraft from its published size and a few judged proportions (estimates): the
+ * body's girth, the cockpit and nose, the nacelles' size and place, the tail.
+ */
+function tw(o: Tw): Spec {
+  const L = o.length;
+  const n = L / 2;
+  const t = -n;
+  const { h, w } = o;
+  const hl = o.hoodLen ?? Math.min(2.6, L * 0.15);
+  const xw = n - (o.cockpit ?? L * 0.2);
+  const nose: Row[] = o.noseEngine
+    ? [[n, 0.7 * h, -0.7 * h, 0.7 * w], [n - 0.3, 0.8 * h, -0.8 * h, 0.8 * w], [n - L * 0.1, 0.85 * h, -0.95 * h, 0.9 * w], [xw + 0.1, 0.8 * h, -h, w], [xw - 0.3, h + 0.45, -h, w], [xw - hl + 0.2, h + 0.4, -h, w], [xw - hl - 0.4, h, -h, w]]
+    : o.nose === 'glazed'
+    ? [[n, 0.05 * h, -0.35 * h, 0.25 * w], [n - 0.35, 0.55 * h, -0.75 * h, 0.65 * w], [n - L * 0.07, 0.85 * h, -0.95 * h, 0.88 * w], [n - L * 0.14, h, -h, w]]
+    : o.nose === 'cockpit'
+    ? [[n, 0.1 * h, -0.5 * h, 0.35 * w], [n - 0.4, 0.75 * h, -0.85 * h, 0.75 * w], [n - 0.9, h + 0.3, -h, 0.95 * w], [n - 0.9 - hl, h + 0.3, -h, w], [n - 1.4 - hl, h, -h, w]]
+    : [[n, -0.1 * h, -0.5 * h, 0.25 * w], [n - 0.4, 0.4 * h, -0.8 * h, 0.65 * w], [n - L * 0.08, 0.6 * h, -0.95 * h, 0.88 * w], [xw + 0.1, 0.72 * h, -h, w], [xw - 0.3, h + 0.45, -h, w], [xw - hl + 0.2, h + 0.4, -h, w], [xw - hl - 0.4, h, -h, w]];
+  const root = o.root ?? o.span * 0.14;
+  const tip = o.tip ?? o.span * 0.055;
+  const le = o.le ?? root * 0.6 + L * 0.02;
+  const s = o.span / 2;
+  const sw = (root - tip) * 0.3;
+  const step = le - root * 0.85;
+  const rest: Row[] = o.boat
+    ? [[Math.min(-0.05 * L, step + 1), h, -1.25 * h, w], [step, h, -1.25 * h, w], [step - 0.05, h, -0.9 * h, w], [t + L * 0.25, 0.9 * h, 0.0, 0.6 * w], [t + 0.5, 0.85 * h, 0.55 * h, 0.2 * w], [t, 0.8 * h, 0.7 * h, 0.1 * w]]
+    : [[-0.08 * L, h, -h, w], [t + L * 0.22, 0.72 * h, -0.5 * h, 0.66 * w], [t + 0.6, 0.5 * h, 0.05 * h, 0.22 * w], [t, 0.45 * h, 0.2 * h, 0.1 * w]];
+  const body = [...nose, ...rest.filter(([x]) => x < nose[nose.length - 1][0] - 0.2)];
+  const wz = (o.wingZ ?? -0.3) * h;
+  const dih = o.dihedral ?? 5;
+  const r = o.nacR ?? (o.radial ? Math.max(0.55, o.span * 0.036) : Math.max(0.48, o.span * 0.03));
+  const kind = o.radial ? ('radial' as const) : ('inline' as const);
+  const nacs: Nac[] = [{ y: (o.nacY ?? 0.27) * s, x: le + r * 2.6, back: le - root * (o.nacBack ?? 1.0), r, z: wz, kind, below: 0.15 }];
+  if (o.outer) {
+    const y = o.outer * s;
+    const l2 = le - (sw * y) / s;
+    const c2 = root - ((root - tip) * y) / s;
+    nacs.push({ y, x: l2 + r * 2.4, back: l2 - c2 * 0.9, r, z: wz + y * Math.tan((dih * Math.PI) / 180), kind, below: 0.15 });
+  }
+  const fc = L * 0.12;
+  const fh = o.finH ?? Math.max(1.2, o.height * 0.42);
+  const top = 0.55 * h;
+  const fin: P2[] = o.twinTail
+    ? [[t + fc * 0.9, -fh * 0.25], [t + fc * 0.9, fh * 0.75], [t + fc * 0.7, fh], [t + 0.15, fh], [t, fh * 0.8], [t, -fh * 0.35], [t + 0.2, -fh * 0.45], [t + fc * 0.7, -fh * 0.4]]
+    : [[t + fc * 1.4, top], [t + fc * 0.75, top + fh * 0.35], [t + fc * 0.45, top + fh], [t + 0.12, top + fh * 0.98], [t - 0.05, top + fh * 0.6], [t + 0.05, 0.3 * h]];
+  const ts = o.tailSpan ?? o.span * 0.33;
+  const tc = L * 0.09;
+  const ex: Outline[] = [...(o.turrets ?? []).map((x) => dome(x, h * 0.95, 0.45, 1.1)), ...(o.belly ?? []).map((x) => dome(x, -h * 0.95, 0.45, 1.1, -1)), ...(o.extra ?? [])];
+  const cockpitNose = o.nose === 'cockpit';
+  return mp({
+    cls: o.cls, length: L, span: o.span, height: o.height,
+    body, round: o.boat ? [[n, 2.4], [step, 3], [t, 2.4]] : 2.3,
+    hood: o.nose === 'glazed' || cockpitNose ? undefined : { front: xw, back: xw - hl },
+    glazed: o.nose === 'glazed' || o.nose === 'stepped' ? n - L * 0.1 : cockpitNose ? n - 1.0 - hl : undefined,
+    wing: [[0, le, le - root], [s, le - sw, le - sw - tip]], tipR: tip * 0.4, wingUp: wz, dihedral: dih,
+    nacelles: nacs,
+    noseProp: o.noseEngine ? n + 0.1 : undefined,
+    prop: o.prop,
+    fin, twin: o.twinTail ? ts * 0.95 : undefined,
+    tail: [[0, t + tc + 0.3, t + 0.3], [ts / 2, t + tc * 0.7 + 0.3, t + 0.35]], tailR: tc * 0.3, tailUp: o.twinTail ? 0.4 * h : 0.45 * h,
+    extra: ex,
+  });
+}
+
+// Twin-engined fighters and fighter-bombers. Me 210: the Me 410's forerunner, mapped to it.
+// Do 335 Pfeil: push-pull, one engine in the nose and one driving the tail propeller behind the cruciform tail (13.85 x 13.8 x 5.0 m).
+A['do-335'] = mp({
+  cls: 'ww2-heavy-fighter', length: 13.85, span: 13.8, height: 5.0,
+  body: [[6.92, 0.55, -0.55, 0.55], [6.5, 0.65, -0.7, 0.62], [5.0, 0.7, -0.8, 0.65], [3.6, 0.72, -0.8, 0.62], [3.1, 1.15, -0.8, 0.6], [1.4, 1.1, -0.8, 0.6], [0.8, 0.72, -0.8, 0.62], [-2.5, 0.65, -0.65, 0.58], [-5.4, 0.45, -0.4, 0.4], [-6.6, 0.35, -0.3, 0.3]],
+  hood: { front: 3.2, back: 1.3 },
+  wing: [[0, 1.6, -1.9], [6.9, 0.4, -0.9]], tipR: 0.3, wingUp: -0.35, dihedral: 4,
+  nacelles: [{ y: 0, x: -6.0, back: -6.6, r: 0.3, z: 0, propX: -6.85 }],
+  noseProp: 7.0,
+  prop: [3.5, 3],
+  fin: [[-4.6, -1.6], [-5.6, -1.7], [-6.2, -0.6], [-6.2, 0.6], [-5.6, 1.9], [-4.6, 1.8], [-4.4, 0.0]],
+  tail: [[0, -4.4, -6.0], [2.6, -5.0, -5.9]], tailR: 0.3, tailUp: 0,
+});
+// F7F Tigercat: a slim body with the cockpit over the wing's leading edge, big radials in long nacelles, a tall single fin (13.83 x 15.7 x 4.83 m).
+A['f7f'] = tw({ cls: 'ww2-heavy-fighter', length: 13.83, span: 15.7, height: 4.83, w: 0.62, h: 0.75, nose: 'solid', cockpit: 4.6, hoodLen: 1.6, radial: true, nacR: 0.72, nacY: 0.3, nacBack: 1.2, wingZ: 0.1, dihedral: 4, finH: 2.6, prop: [4.0, 3] });
+// He 219 Uhu: the cockpit glazing at the very nose, annular-cowled engines, a high wing and twin fins (15.33 x 18.5 x 4.1 m).
+A['he-219'] = tw({ cls: 'ww2-heavy-fighter', length: 15.33, span: 18.5, height: 4.1, w: 0.62, h: 0.8, nose: 'cockpit', hoodLen: 2.2, radial: true, nacR: 0.65, nacY: 0.27, nacBack: 1.3, wingZ: 0.4, dihedral: 4, twinTail: true, finH: 1.7, tailSpan: 6.0, prop: [3.6, 3] });
+// J1N1 Gekko: a long greenhouse over a slim body, radials, a single fin (12.18 x 16.98 x 4.56 m).
+A['j1n1'] = tw({ cls: 'ww2-heavy-fighter', length: 12.18, span: 16.98, height: 4.56, w: 0.6, h: 0.75, nose: 'solid', cockpit: 2.2, hoodLen: 4.0, radial: true, nacR: 0.65, wingZ: 0, finH: 2.2, prop: [3.2, 3] });
+// Ki-45 Toryu: a slim body under a long two-seat greenhouse, radials, a single fin (11.0 x 15.02 x 3.7 m); the Ki-96, Ki-102 and Ki-109 are its family.
+A['ki-45'] = tw({ cls: 'ww2-heavy-fighter', length: 11.0, span: 15.02, height: 3.7, w: 0.55, h: 0.7, nose: 'solid', cockpit: 2.3, hoodLen: 3.0, radial: true, nacR: 0.62, wingZ: -0.2, finH: 1.9, prop: [3.0, 3] });
+// Ki-83: a long slim fighter, the cockpit far forward, big radials, a single fin (12.5 x 15.5 x 4.6 m).
+A['ki-83'] = tw({ cls: 'ww2-heavy-fighter', length: 12.5, span: 15.5, height: 4.6, w: 0.55, h: 0.7, nose: 'solid', cockpit: 2.6, hoodLen: 2.2, radial: true, nacR: 0.68, nacBack: 1.1, wingZ: -0.3, finH: 2.1, prop: [3.4, 4] });
+// Whirlwind: a slim body with the bubble hood, Peregrines in long low nacelles, the tailplane high on the fin (9.83 x 13.72 x 3.2 m).
+A['whirlwind'] = tw({ cls: 'ww2-heavy-fighter', length: 9.83, span: 13.72, height: 3.2, w: 0.48, h: 0.62, nose: 'solid', cockpit: 3.3, hoodLen: 1.5, nacR: 0.5, nacY: 0.24, nacBack: 1.1, wingZ: -0.4, finH: 1.7, tailSpan: 4.4, prop: [3.2, 3] });
+A['whirlwind'] = { ...A['whirlwind'], tail: { ...A['whirlwind'].tail, planeUp: 1.6 } };
+// Welkin: a very long, narrow wing, the pressure cabin's small bubble, Merlins, a single fin (12.67 x 21.34 x 4.83 m).
+A['welkin'] = tw({ cls: 'ww2-heavy-fighter', length: 12.67, span: 21.34, height: 4.83, w: 0.55, h: 0.7, nose: 'solid', cockpit: 3.2, hoodLen: 1.4, nacR: 0.58, nacY: 0.22, root: 2.9, tip: 1.0, wingZ: 0.2, finH: 2.1, prop: [3.5, 4] });
+// Ta 154: a high wing, annular-cowled Jumos, the cockpit at the front of a slim body, a single fin (12.45 x 16.3 x 3.5 m).
+A['ta-154'] = tw({ cls: 'ww2-heavy-fighter', length: 12.45, span: 16.3, height: 3.5, w: 0.55, h: 0.72, nose: 'solid', cockpit: 1.8, hoodLen: 2.0, radial: true, nacR: 0.6, wingZ: 0.7, dihedral: 3, finH: 1.9, prop: [3.4, 3] });
+// Potez 63: a slim body under a long greenhouse, small radials, twin fins (11.07 x 16.0 x 3.62 m).
+A['potez-63'] = tw({ cls: 'ww2-heavy-fighter', length: 11.07, span: 16.0, height: 3.62, w: 0.5, h: 0.68, nose: 'solid', cockpit: 2.1, hoodLen: 3.6, radial: true, nacR: 0.55, wingZ: -0.3, twinTail: true, finH: 1.5, tailSpan: 4.8, prop: [2.9, 3] });
+// Ro.57: a small single-seat twin with radials and a single fin (8.77 x 12.5 x 2.92 m).
+A['ro-57'] = tw({ cls: 'ww2-heavy-fighter', length: 8.77, span: 12.5, height: 2.92, w: 0.48, h: 0.62, nose: 'solid', cockpit: 3.2, hoodLen: 1.4, radial: true, nacR: 0.58, wingZ: -0.4, finH: 1.5, prop: [2.8, 3] });
+// Breda Ba.88 Lince: a slim body, the cockpit forward, radials under a shoulder wing, twin fins (10.79 x 15.6 x 3.1 m).
+A['breda-88'] = tw({ cls: 'ww2-heavy-fighter', length: 10.79, span: 15.6, height: 3.1, w: 0.55, h: 0.7, nose: 'solid', cockpit: 2.8, hoodLen: 2.2, radial: true, nacR: 0.6, wingZ: 0.5, twinTail: true, finH: 1.4, tailSpan: 4.6, prop: [3.0, 3] });
+// Br.693: the single-seat assault twin, the cockpit well back, radials, twin fins (9.67 x 15.36 x 3.19 m).
+A['br-693'] = tw({ cls: 'ww2-attack', length: 9.67, span: 15.36, height: 3.19, w: 0.5, h: 0.65, nose: 'solid', cockpit: 3.0, hoodLen: 1.6, radial: true, nacR: 0.6, wingZ: -0.1, twinTail: true, finH: 1.3, tailSpan: 4.4, prop: [2.9, 3] });
+// IA 58 Pucara: a tandem two-seat counter-insurgency twin, turboprops on a low wing, a T-tail (14.25 x 14.5 x 5.36 m).
+A['ia-58'] = tw({ cls: 'attack', length: 14.25, span: 14.5, height: 5.36, w: 0.55, h: 0.75, nose: 'solid', cockpit: 3.1, hoodLen: 2.6, nacR: 0.5, nacY: 0.32, nacBack: 1.2, wingZ: -0.5, dihedral: 7, finH: 2.8, tailSpan: 4.6, prop: [2.6, 3] });
+A['ia-58'] = { ...A['ia-58'], tail: { ...A['ia-58'].tail, planeUp: 0.4 + 2.7 } };
+
+// Twin-engined bombers.
+// Il-4 (DB-3F): a long pointed glazed nose, the stepped cockpit, radials, a single fin (14.8 x 21.44 x 4.1 m).
+A['il-4'] = tw({ cls: 'ww2-bomber', length: 14.8, span: 21.44, height: 4.1, w: 0.62, h: 0.8, nose: 'stepped', cockpit: 3.2, hoodLen: 1.8, radial: true, nacR: 0.72, nacBack: 1.0, wingZ: -0.1, finH: 2.0, prop: [3.25, 3], turrets: [-1.6] });
+// SB-2: a slim body with the glazed nose, the cockpit on top, inline engines with frontal radiators, a single fin (12.27 x 20.33 x 3.6 m); the Ar-2 dive bomber is its development.
+A['sb-2'] = tw({ cls: 'ww2-bomber', length: 12.27, span: 20.33, height: 3.6, w: 0.5, h: 0.7, nose: 'stepped', cockpit: 2.6, hoodLen: 1.5, nacR: 0.55, nacBack: 0.9, wingZ: 0, finH: 1.9, prop: [3.25, 3], turrets: [-1.5] });
+// Er-2: a long body with the cockpit offset forward, inline engines on a gull-ish wing, twin fins (16.42 x 23.0 x 4.82 m).
+A['er-2'] = tw({ cls: 'ww2-bomber', length: 16.42, span: 23.0, height: 4.82, w: 0.6, h: 0.85, nose: 'stepped', cockpit: 3.3, hoodLen: 2.2, nacR: 0.62, nacBack: 1.1, wingZ: -0.2, twinTail: true, finH: 1.9, tailSpan: 6.6, prop: [3.6, 3], turrets: [-1.8] });
+// Yak-4 (Yak-2): a slim body with the glazed nose and the cockpit forward, inlines, twin fins (10.18 x 14.0 x 3.85 m).
+A['yak-4'] = tw({ cls: 'ww2-bomber', length: 10.18, span: 14.0, height: 3.85, w: 0.45, h: 0.62, nose: 'stepped', cockpit: 2.2, hoodLen: 1.8, nacR: 0.5, wingZ: -0.1, twinTail: true, finH: 1.3, tailSpan: 4.4, prop: [3.0, 3] });
+// Ki-48: a glazed nose under the stepped cockpit, radials on a mid wing, a single fin (12.75 x 17.47 x 3.8 m).
+A['ki-48'] = tw({ cls: 'ww2-bomber', length: 12.75, span: 17.47, height: 3.8, w: 0.55, h: 0.72, nose: 'stepped', cockpit: 2.9, hoodLen: 2.4, radial: true, nacR: 0.65, wingZ: 0, finH: 1.8, prop: [3.0, 3] });
+// P1Y Ginga: a slim body with the glazed nose, radials, a mid wing, a single fin (15.0 x 20.0 x 4.3 m).
+A['p1y1'] = tw({ cls: 'ww2-bomber', length: 15.0, span: 20.0, height: 4.3, w: 0.6, h: 0.8, nose: 'stepped', cockpit: 3.2, hoodLen: 2.6, radial: true, nacR: 0.65, wingZ: -0.1, finH: 2.0, prop: [3.3, 4] });
+// He 177 Greif: a long body with the glazed nose, two coupled engines in great nacelles, a single fin (22.0 x 31.44 x 6.4 m).
+A['he-177'] = tw({ cls: 'ww2-heavy-bomber', length: 22.0, span: 31.44, height: 6.4, w: 0.95, h: 1.25, nose: 'glazed', radial: true, nacR: 1.0, nacY: 0.3, nacBack: 1.05, wingZ: -0.1, finH: 3.0, prop: [4.5, 4], turrets: [3.0, -3.5] });
+// LeO 451: a slim body with the glazed nose, radials, twin oval fins on the tailplane's tips (17.17 x 22.52 x 5.24 m).
+A['leo-451'] = tw({ cls: 'ww2-bomber', length: 17.17, span: 22.52, height: 5.24, w: 0.62, h: 0.9, nose: 'stepped', cockpit: 4.6, hoodLen: 2.2, radial: true, nacR: 0.7, wingZ: -0.2, twinTail: true, finH: 2.0, tailSpan: 6.4, prop: [3.2, 3] });
+// Martin B-10 (Model 139): a round body with the nose turret, two separate cockpits under long canopies, radials, a single fin (13.64 x 21.48 x 4.7 m).
+A['b-10'] = tw({ cls: 'ww2-bomber', length: 13.64, span: 21.48, height: 4.7, w: 0.6, h: 0.78, nose: 'stepped', cockpit: 3.2, hoodLen: 4.2, radial: true, nacR: 0.65, wingZ: -0.3, finH: 2.0, prop: [3.2, 3] });
+// B-18 Bolo: the DC-2's wing on a deep bomber body with the glazed nose, radials, a single fin (17.62 x 27.28 x 4.62 m).
+A['b-18'] = tw({ cls: 'ww2-bomber', length: 17.62, span: 27.28, height: 4.62, w: 0.8, h: 1.15, nose: 'stepped', cockpit: 3.6, hoodLen: 1.8, radial: true, nacR: 0.72, nacY: 0.22, wingZ: -0.5, finH: 2.2, prop: [3.4, 3], turrets: [-2.0] });
+// Martin Maryland: a slim, very deep-chested body, radials on a mid wing, a single fin (14.22 x 18.69 x 4.57 m); the Baltimore is its family.
+A['maryland'] = tw({ cls: 'ww2-bomber', length: 14.22, span: 18.69, height: 4.57, w: 0.48, h: 0.9, nose: 'stepped', cockpit: 3.6, hoodLen: 1.6, radial: true, nacR: 0.66, wingZ: 0, finH: 2.0, prop: [3.3, 3] });
+// BR.20 Cicogna: a deep body with the glazed nose, radials, a dorsal turret, twin fins (16.17 x 21.56 x 4.3 m).
+A['br-20'] = tw({ cls: 'ww2-bomber', length: 16.17, span: 21.56, height: 4.3, w: 0.7, h: 0.95, nose: 'stepped', cockpit: 3.4, hoodLen: 2.0, radial: true, nacR: 0.7, wingZ: -0.3, twinTail: true, finH: 1.8, tailSpan: 6.6, prop: [3.4, 3], turrets: [-1.0] });
+// Ju 86 (the Swedish B3): a slim box body with the glazed nose, radials (the B3C's Pegasus), twin fins (17.87 x 22.5 x 4.7 m).
+A['ju-86'] = tw({ cls: 'ww2-bomber', length: 17.87, span: 22.5, height: 4.7, w: 0.65, h: 0.95, nose: 'stepped', cockpit: 3.8, hoodLen: 1.8, radial: true, nacR: 0.68, wingZ: -0.6, twinTail: true, finH: 1.7, tailSpan: 7.2, prop: [3.3, 3], turrets: [-2.4] });
+// Z.1007 bis Alcione: three radials (one in the nose), a deep body, twin fins (18.35 x 24.8 x 5.22 m).
+A['z-1007'] = tw({ cls: 'ww2-bomber', length: 18.35, span: 24.8, height: 5.22, w: 0.7, h: 1.0, nose: 'solid', noseEngine: true, cockpit: 4.2, hoodLen: 2.2, radial: true, nacR: 0.65, nacY: 0.3, wingZ: -0.1, twinTail: true, finH: 2.0, tailSpan: 6.8, prop: [3.2, 3], turrets: [-0.6] });
+
+// Four-engined bombers and flying boats.
+// Me 264: a slim body with the stepless glazed nose, four BMW 801s on a long high-aspect wing, twin fins (20.11 x 39.4 x 4.29 m).
+A['me-264'] = tw({ cls: 'ww2-heavy-bomber', length: 20.11, span: 39.4, height: 4.29, w: 0.95, h: 1.15, nose: 'glazed', radial: true, nacR: 0.72, nacY: 0.22, outer: 0.44, root: 4.6, tip: 1.6, wingZ: 0.4, dihedral: 3, twinTail: true, finH: 2.0, tailSpan: 8.0, prop: [3.6, 3] });
+// G5N Shinzan: a big body with the glazed nose, four radials, twin fins (31.02 x 42.14 x 7.6 m).
+A['g5n'] = tw({ cls: 'ww2-heavy-bomber', length: 31.02, span: 42.14, height: 7.6, w: 1.25, h: 1.6, nose: 'stepped', cockpit: 5.2, hoodLen: 2.6, radial: true, nacR: 0.85, nacY: 0.2, outer: 0.42, root: 5.8, tip: 2.0, wingZ: 0, dihedral: 4, twinTail: true, finH: 3.0, tailSpan: 10.6, prop: [3.6, 3], turrets: [5.0, -4.0] });
+// Shackleton MR.2: the Lincoln's wing and tail on a deep body, four Griffons with contra-rotating propellers, a long nose (23.6 x 36.58 x 5.1 m).
+A['shackleton'] = tw({ cls: 'ww2-heavy-bomber', length: 23.6, span: 36.58, height: 5.1, w: 0.95, h: 1.3, nose: 'stepped', cockpit: 5.6, hoodLen: 2.2, nacR: 0.75, nacY: 0.21, outer: 0.42, root: 5.6, tip: 1.6, wingZ: 0.1, dihedral: 4, twinTail: true, finH: 2.4, tailSpan: 10.0, prop: [4.0, 6], turrets: [1.0] });
+// Short Sunderland: a deep two-deck boat hull, the high wing with four radials, a tall single fin (Mk V 26.0 x 34.39 x 10.52 m).
+A['sunderland'] = tw({ cls: 'flying-boat', length: 26.0, span: 34.39, height: 10.52, w: 1.6, h: 2.0, nose: 'solid', cockpit: 4.4, hoodLen: 2.6, boat: true, radial: true, nacR: 0.75, nacY: 0.19, outer: 0.38, root: 6.0, tip: 2.4, wingZ: 0.9, dihedral: 3, finH: 4.6, tailSpan: 12.0, prop: [3.8, 3] });
+// H8K "Emily": a deep, narrow boat hull, four radials on a high wing, a tall single fin (28.13 x 38.0 x 9.15 m).
+A['h8k'] = tw({ cls: 'flying-boat', length: 28.13, span: 38.0, height: 9.15, w: 1.3, h: 1.95, nose: 'solid', cockpit: 5.0, hoodLen: 2.4, boat: true, radial: true, nacR: 0.75, nacY: 0.2, outer: 0.4, root: 6.0, tip: 2.0, wingZ: 0.95, dihedral: 3, finH: 4.8, tailSpan: 12.0, prop: [3.6, 4] });
+// H6K "Mavis": a slim hull, the parasol wing on struts with four radials, twin fins (25.63 x 40.0 x 6.27 m).
+A['h6k'] = tw({ cls: 'flying-boat', length: 25.63, span: 40.0, height: 6.27, w: 1.1, h: 1.3, nose: 'solid', cockpit: 4.6, hoodLen: 2.2, boat: true, radial: true, nacR: 0.6, nacY: 0.16, outer: 0.33, root: 4.8, tip: 2.0, wingZ: 2.6, dihedral: 0, twinTail: true, finH: 2.2, tailSpan: 9.0, prop: [3.4, 3],
+  extra: [post(1.0, -1.8, 3.3, 1.2, 0.12, 0.9), post(0.6, -1.2, 3.3, 0.6, 0.06, 3.0, -0.3)] });
+// PBM Mariner: a deep hull, the gull wing with two big radials, twin canted fins (24.4 x 35.97 x 8.38 m); the Be-6 has the same layout.
+A['pbm'] = tw({ cls: 'flying-boat', length: 24.4, span: 35.97, height: 8.38, w: 1.25, h: 1.75, nose: 'solid', cockpit: 4.4, hoodLen: 2.4, boat: true, radial: true, nacR: 0.85, nacY: 0.26, root: 5.4, tip: 1.8, wingZ: 0.95, dihedral: 6, twinTail: true, finH: 2.8, tailSpan: 9.0, prop: [4.2, 3] });
+A['be-6'] = tw({ cls: 'flying-boat', length: 23.5, span: 33.0, height: 7.64, w: 1.2, h: 1.7, nose: 'stepped', cockpit: 4.4, hoodLen: 2.2, boat: true, radial: true, nacR: 0.8, nacY: 0.26, root: 5.0, tip: 1.8, wingZ: 0.95, dihedral: 6, twinTail: true, finH: 2.6, tailSpan: 8.6, prop: [4.0, 4] });
+
+// ---------------------------------------------------------------- more single-engined types
+
+// FR-1 Fireball: a stubby radial fighter with a jet in its tail, the bubble, a straight wing (9.85 x 12.19 x 4.15 m).
+A['fr-1-fireball'] = one({ cls: 'ww2-fighter', length: 9.85, span: 12.19, height: 4.15, w: 0.62, h: 0.72, radial: true, wing: 'square', le: 1.4, root: 2.6, tip: 1.3, sweep: 2, dihedral: 5, fin: 1.8, finRoot: 1.7, tailSpan: 4.6, tailRoot: 1.1, canopy: { x: 0.9, length: 1.7, kind: 'bubble' }, prop: 3.3, blades: 3 });
+// BV 155 B: a high-altitude fighter with a very long, narrow wing, the radiators under it, the cockpit well back (12.0 x 20.33 x 3.0 m, height about).
+A['bv-155'] = one({ cls: 'ww2-fighter', length: 12.0, span: 20.33, height: 3.0, w: 0.52, h: 0.66, wing: 'tapered', le: 1.0, root: 3.0, tip: 1.0, sweep: 3, dihedral: 5, fin: 1.8, finRoot: 1.8, roundFin: true, tailSpan: 5.0, tailRoot: 1.2, canopy: { x: -1.4, length: 1.6, kind: 'bubble' }, prop: 3.6, blades: 4, rads: [0.2, 2.4, 1.8, 0.35] });
+// Su-2 (BB-1): a radial light bomber with the long two-seat greenhouse and the gunner's turret at its back, a mid-low wing (10.46 x 14.3 x 3.75 m).
+A['su-2'] = one({ cls: 'ww2-attack', length: 10.46, span: 14.3, height: 3.75, w: 0.68, h: 0.8, radial: true, wing: 'tapered', le: 1.7, root: 3.0, tip: 1.3, sweep: 4, mount: -0.5, dihedral: 6, fin: 1.6, finRoot: 1.6, roundFin: true, tailSpan: 4.8, tailRoot: 1.2, canopy: { x: -0.4, length: 3.4, kind: 'framed' }, prop: 3.25, blades: 3 });
+// I-185: a short, fat radial fighter, the framed hood on a raised spine (8.05 x 9.8 x 2.5 m).
+A['i-185'] = one({ cls: 'ww2-fighter', length: 8.05, span: 9.8, height: 2.5, w: 0.66, h: 0.72, radial: true, wing: 'tapered', le: 1.4, root: 2.4, tip: 1.0, sweep: 3, dihedral: 5, fin: 1.2, finRoot: 1.3, roundFin: true, tailSpan: 3.6, tailRoot: 0.95, canopy: { x: -0.4, length: 1.5, kind: 'framed' }, razor: true, prop: 3.0, blades: 3 });
+// Firecrest (B-48): the big Centaurus radial, an inverted gull wing, the bubble well forward (11.86 x 13.56 x 4.11 m).
+A['firecrest'] = one({ cls: 'ww2-attack', length: 11.86, span: 13.56, height: 4.11, w: 0.68, h: 0.8, radial: true, wing: 'tapered', le: 1.8, root: 3.2, tip: 1.3, sweep: 3, gull: true, mount: -0.9, dihedral: 8, fin: 1.9, finRoot: 2.0, tailSpan: 5.2, tailRoot: 1.3, canopy: { x: 0.6, length: 1.7, kind: 'bubble' }, prop: 4.0, blades: 5 });
+// MB 5: a long Griffon nose with contra-rotating propellers, the radiator under the body, the bubble (11.5 x 10.67 x 3.4 m).
+A['mb-5'] = one({ cls: 'ww2-fighter', length: 11.5, span: 10.67, height: 3.4, w: 0.5, h: 0.68, wing: 'square', le: 1.3, root: 2.6, tip: 1.3, sweep: 1, dihedral: 5, fin: 1.7, finRoot: 1.8, tailSpan: 4.2, tailRoot: 1.1, canopy: { x: -0.8, length: 1.7, kind: 'bubble' }, prop: 3.6, blades: 6, scoop: [-1.4, 2.4, 0.36] });
+// D.510: an inline monoplane with the radiator under its nose, the open cockpit, fixed spatted gear (7.94 x 12.09 x 2.42 m); the D.500 and D.501 look alike.
+A['d-510'] = one({ cls: 'ww2-fighter', length: 7.94, span: 12.09, height: 2.42, w: 0.5, h: 0.62, wing: 'round', le: 1.2, root: 2.4, tip: 1.0, sweep: 3, dihedral: 4, fin: 1.2, finRoot: 1.2, roundFin: true, tailSpan: 3.4, tailRoot: 0.9, canopy: { x: -0.4, length: 0.8, kind: 'framed' }, hood: 0.3, prop: 2.9, blades: 3, gear: true, scoop: [2.6, 1.0, 0.35] });
+// A-35 Vengeance: a big radial dive bomber with the long greenhouse and the W-shaped wing (12.12 x 14.63 x 4.67 m).
+A['vengeance'] = one({ cls: 'ww2-attack', length: 12.12, span: 14.63, height: 4.67, w: 0.68, h: 0.9, radial: true, wing: 'tapered', le: 2.0, root: 3.4, tip: 1.3, sweep: -4, mount: -0.2, dihedral: 2, fin: 2.0, finRoot: 2.2, tailSpan: 5.4, tailRoot: 1.4, canopy: { x: 0.2, length: 4.0, kind: 'framed' }, prop: 3.6, blades: 3 });
+// VG-33: a small inline fighter of wood, the radiator under the body, the framed hood on a razorback (8.55 x 10.8 x 3.31 m).
+A['vg-33'] = one({ cls: 'ww2-fighter', length: 8.55, span: 10.8, height: 3.31, w: 0.46, h: 0.6, wing: 'tapered', le: 1.3, root: 2.3, tip: 1.0, sweep: 3, dihedral: 6, fin: 1.2, finRoot: 1.3, roundFin: true, tailSpan: 3.4, tailRoot: 0.9, canopy: { x: -0.3, length: 1.5, kind: 'framed' }, razor: true, prop: 3.0, blades: 3, scoop: [-0.3, 1.4, 0.3] });
+// Saab 17: a radial dive bomber with the long two-seat greenhouse, the big main-gear fairings under the wing (9.8 x 13.7 x 4.0 m); the S 17BS on floats.
+A['saab-17'] = one({ cls: 'ww2-attack', length: 9.8, span: 13.7, height: 4.0, w: 0.62, h: 0.78, radial: true, wing: 'tapered', le: 1.7, root: 2.9, tip: 1.2, sweep: 4, dihedral: 6, fin: 1.6, finRoot: 1.7, roundFin: true, tailSpan: 4.6, tailRoot: 1.2, canopy: { x: -0.2, length: 3.2, kind: 'framed' }, prop: 3.2, blades: 3, gear: true });
+A['saab-17bs'] = { ...A['saab-17'], fixedGear: false, floats: true };
+// FFVS J 22: a short, slim radial fighter of wood, the framed hood (7.8 x 10.0 x 3.6 m).
+A['ffvs-j22'] = one({ cls: 'ww2-fighter', length: 7.8, span: 10.0, height: 3.6, w: 0.6, h: 0.66, radial: true, wing: 'tapered', le: 1.3, root: 2.2, tip: 1.0, sweep: 4, dihedral: 6, fin: 1.3, finRoot: 1.3, roundFin: true, tailSpan: 3.4, tailRoot: 0.9, canopy: { x: -0.2, length: 1.6, kind: 'framed' }, razor: true, prop: 2.9, blades: 3 });
+// Seversky P-35 (the Swedish J 9): a radial fighter with a long framed canopy, a round-tipped wing (8.18 x 10.97 x 2.97 m).
+A['p-35'] = one({ cls: 'ww2-fighter', length: 8.18, span: 10.97, height: 2.97, w: 0.62, h: 0.72, radial: true, wing: 'round', le: 1.5, root: 2.6, tip: 1.2, sweep: 3, dihedral: 6, fin: 1.4, finRoot: 1.4, roundFin: true, tailSpan: 4.0, tailRoot: 1.0, canopy: { x: -0.2, length: 2.4, kind: 'framed' }, razor: true, prop: 3.0, blades: 3 });
+// P-43 Lancer: the P-35's successor with the turbocharger's duct under the body (8.68 x 10.97 x 4.27 m).
+A['p-43'] = one({ cls: 'ww2-fighter', length: 8.68, span: 10.97, height: 4.27, w: 0.62, h: 0.78, radial: true, wing: 'round', le: 1.5, root: 2.6, tip: 1.2, sweep: 3, dihedral: 6, fin: 1.5, finRoot: 1.5, roundFin: true, tailSpan: 4.0, tailRoot: 1.0, canopy: { x: -0.1, length: 1.9, kind: 'framed' }, razor: true, prop: 3.2, blades: 3, scoop: [-0.6, 1.8, 0.3] });
+// P-26 Peashooter: a wire-braced low wing, the open cockpit, the radial, fixed spatted gear (7.18 x 8.52 x 3.04 m).
+A['p-26'] = one({ cls: 'ww2-fighter', length: 7.18, span: 8.52, height: 3.04, w: 0.55, h: 0.62, radial: true, wing: 'round', le: 1.1, root: 1.9, tip: 1.2, sweep: 2, dihedral: 6, fin: 1.1, finRoot: 1.1, roundFin: true, tailSpan: 3.0, tailRoot: 0.8, canopy: { x: -0.4, length: 0.8, kind: 'framed' }, hood: 0.35, razor: true, prop: 2.7, blades: 2, gear: true });
+// A5M "Claude": an open-cockpit radial monoplane with an elliptic wing and fixed spatted gear (7.57 x 11.0 x 3.2 m).
+A['a5m'] = one({ cls: 'ww2-fighter', length: 7.57, span: 11.0, height: 3.2, w: 0.55, h: 0.62, radial: true, wing: 'elliptic', le: 1.3, root: 2.2, tip: 0.5, dihedral: 4, fin: 1.2, finRoot: 1.2, roundFin: true, tailSpan: 3.4, tailRoot: 0.9, canopy: { x: -0.3, length: 0.9, kind: 'framed' }, hood: 0.35, razor: true, prop: 2.9, blades: 2, gear: true });
+// Ki-43-I: the Hayabusa with its first two-bladed propeller (8.83 x 11.44 x 3.27 m).
+A['ki-43-i'] = one({ ...SM, length: 8.83, span: 11.44, height: 3.27, w: 0.55, h: 0.62, radial: true, wing: 'round', le: 1.5, root: 2.3, tip: 1.0, sweep: 3, dihedral: 6, fin: 1.3, finRoot: 1.3, tailSpan: 3.4, tailRoot: 0.9, canopy: { x: -0.4, length: 1.5, kind: 'bubble' }, prop: 2.9, blades: 2 });
+// Ki-61-II: the longer Ha-140 nose and a bigger wing (9.16 x 12.0 x 3.7 m).
+A['ki-61-ii'] = one({ ...SM, length: 9.16, span: 12.0, height: 3.7, w: 0.5, h: 0.62, wing: 'tapered', le: 1.3, root: 2.5, tip: 1.0, sweep: 3, dihedral: 6, fin: 1.5, finRoot: 1.5, tailSpan: 3.8, tailRoot: 1.0, canopy: { x: -0.5, length: 1.5, kind: 'framed' }, razor: true, prop: 3.0, blades: 3, scoop: [-0.8, 1.4, 0.3] });
+// Avia S-199: the Bf 109 G airframe with the heavier Jumo 211, its deeper cowl, the big intake and broad paddle blades (8.94 x 9.92 x 2.59 m).
+A['s-199'] = one({ ...BF109, length: 8.94, h: 0.6, spinner: 0.38, prop: 3.2, canopy: { x: 0.6, length: 1.6, kind: 'framed' }, bodies: [belly(3.6, 2.4, -0.35, -0.85, 0.26), bulge(3.2, 2.2, -0.05, 0.12, 0.12, 0.42)] });
+// Bf 109 B/C: the Jumo 210, its big radiator under the nose, two blades, the early square-tipped wing (8.55 x 9.87 x 2.45 m).
+A['bf-109-b'] = one({ ...BF109, length: 8.55, span: 9.87, height: 2.45, wing: 'square', tip: 1.2, spinner: 0.24, rads: undefined, canopy: { x: 0.5, length: 1.5, kind: 'framed' }, prop: 3.1, blades: 2, bodies: [belly(3.1, 2.0, -0.35, -0.9, 0.28)] });
+// P-63 Kingcobra: the P-39 grown, a taller pointed fin, four blades, a laminar wing (9.96 x 11.68 x 3.84 m).
+A['p-63'] = one({ cls: 'ww2-fighter', length: 9.96, span: 11.68, height: 3.84, w: 0.54, h: 0.7, wing: 'tapered', le: 1.2, root: 2.6, tip: 1.1, sweep: 2, fin: 1.9, finRoot: 1.9, tailSpan: 4.3, tailRoot: 1.1, canopy: { x: 1.5, length: 1.5, kind: 'framed' }, razor: true, prop: 3.6, blades: 4, bodies: [{ top: [[0.5, 0.72], [0.1, 1.0], [-0.8, 0.88], [-1.3, 0.62]], bottom: [[0.5, 0.5], [-1.3, 0.5]], plan: [[0.5, 0.1], [0.1, 0.22], [-1.3, 0.14]], round: 2.4, stations: 6 }] });
+// He 112: a Jumo inline with an elliptic-tipped wing and a near-bubble hood (9.22 x 9.09 x 3.82 m).
+A['he-112'] = one({ cls: 'ww2-fighter', length: 9.22, span: 9.09, height: 3.82, w: 0.48, h: 0.62, wing: 'elliptic', le: 1.3, root: 2.4, tip: 0.5, dihedral: 6, fin: 1.3, finRoot: 1.4, roundFin: true, tailSpan: 3.4, tailRoot: 0.9, canopy: { x: -0.3, length: 1.6, kind: 'bubble' }, prop: 3.0, blades: 3, scoop: [0.0, 1.2, 0.3] });
+// Ki-32: an inline light bomber with fixed spatted gear and the long two-seat greenhouse (11.64 x 15.0 x 2.9 m).
+A['ki-32'] = one({ cls: 'ww2-attack', length: 11.64, span: 15.0, height: 2.9, w: 0.62, h: 0.78, wing: 'tapered', le: 1.8, root: 3.0, tip: 1.3, sweep: 3, dihedral: 6, fin: 1.6, finRoot: 1.7, roundFin: true, tailSpan: 4.6, tailRoot: 1.2, canopy: { x: 0.0, length: 3.2, kind: 'framed' }, prop: 3.2, blades: 3, gear: true, scoop: [3.4, 1.4, 0.3] });
+// TBD Devastator: a long low-wing torpedo bomber under a very long greenhouse, the radial (10.67 x 15.24 x 4.6 m).
+A['tbd-1'] = one({ cls: 'ww2-attack', length: 10.67, span: 15.24, height: 4.6, w: 0.62, h: 0.82, radial: true, wing: 'tapered', le: 1.9, root: 3.2, tip: 1.4, sweep: 3, mount: -0.7, dihedral: 5, fin: 1.7, finRoot: 1.7, roundFin: true, tailSpan: 5.0, tailRoot: 1.3, canopy: { x: 0.0, length: 4.6, kind: 'framed' }, prop: 3.2, blades: 3 });
+// SB2U Vindicator (and the V-156): a radial dive bomber with a long greenhouse and a tall fin (10.36 x 12.8 x 4.34 m).
+A['sb2u'] = one({ cls: 'ww2-attack', length: 10.36, span: 12.8, height: 4.34, w: 0.62, h: 0.78, radial: true, wing: 'tapered', le: 1.8, root: 3.0, tip: 1.3, sweep: 3, dihedral: 6, fin: 1.8, finRoot: 1.8, roundFin: true, tailSpan: 4.8, tailRoot: 1.2, canopy: { x: 0.0, length: 3.8, kind: 'framed' }, prop: 3.2, blades: 2 });
+// OS2U Kingfisher: a radial scout with the long greenhouse on one big central float and two small wing floats (10.31 x 10.95 x 4.61 m).
+A['os2u'] = one({ cls: 'ww2-recon', length: 10.31, span: 10.95, height: 4.61, w: 0.58, h: 0.72, radial: true, wing: 'tapered', le: 1.4, root: 2.3, tip: 1.0, sweep: 2, mount: -0.3, dihedral: 4, fin: 1.6, finRoot: 1.6, roundFin: true, tailSpan: 3.8, tailRoot: 1.0, canopy: { x: -0.1, length: 3.4, kind: 'framed' }, prop: 2.7, blades: 2,
+  bodies: [{ top: [[4.0, -1.55], [3.2, -1.3], [-1.6, -1.35], [-3.0, -1.55]], bottom: [[4.0, -1.7], [3.2, -2.1], [0.2, -2.15], [-3.0, -1.7]], plan: [[4.0, 0.1], [3.2, 0.42], [-1.6, 0.35], [-3.0, 0.08]], round: 3, stations: 8 }, post(1.6, 1.2, -0.6, -1.4, 0.05), post(-0.2, -0.6, -0.6, -1.4, 0.05), { top: [[1.4, -0.9], [0.9, -0.75], [-0.6, -0.8]], bottom: [[1.4, -1.0], [0.9, -1.15], [-0.6, -0.95]], plan: [[1.4, 0.04], [0.9, 0.18], [-0.6, 0.04]], side: 4.6, round: 3, stations: 6 }, post(1.0, 0.7, 0.1, -0.85, 0.03, 4.6)] });
+// Ar 196: a radial scout on two big floats, the long greenhouse (11.0 x 12.4 x 4.45 m).
+A['ar-196'] = { ...one({ cls: 'ww2-recon', length: 11.0, span: 12.4, height: 4.45, w: 0.58, h: 0.75, radial: true, wing: 'tapered', le: 1.6, root: 2.4, tip: 1.2, sweep: 2, mount: -0.3, dihedral: 4, fin: 1.6, finRoot: 1.7, roundFin: true, tailSpan: 4.2, tailRoot: 1.1, canopy: { x: -0.2, length: 3.2, kind: 'framed' }, prop: 3.0, blades: 3 }), floats: true };
+// N1K1 Kyofu: a radial fighter on one big central float and two wing floats, the framed hood (10.59 x 12.0 x 4.75 m).
+A['n1k1'] = one({ cls: 'ww2-fighter', length: 10.59, span: 12.0, height: 4.75, w: 0.65, h: 0.72, radial: true, wing: 'tapered', le: 1.6, root: 2.5, tip: 1.1, sweep: 3, mount: -0.3, dihedral: 5, fin: 1.6, finRoot: 1.6, tailSpan: 4.2, tailRoot: 1.1, canopy: { x: -0.3, length: 1.7, kind: 'framed' }, razor: true, prop: 3.3, blades: 3,
+  bodies: [{ top: [[4.2, -1.55], [3.4, -1.3], [-1.8, -1.35], [-3.2, -1.55]], bottom: [[4.2, -1.7], [3.4, -2.1], [0.2, -2.15], [-3.2, -1.7]], plan: [[4.2, 0.1], [3.4, 0.42], [-1.8, 0.35], [-3.2, 0.08]], round: 3, stations: 8 }, post(1.8, 1.4, -0.6, -1.4, 0.05), post(-0.2, -0.6, -0.6, -1.4, 0.05), { top: [[1.6, -0.9], [1.1, -0.75], [-0.5, -0.8]], bottom: [[1.6, -1.0], [1.1, -1.15], [-0.5, -0.95]], plan: [[1.6, 0.04], [1.1, 0.18], [-0.5, 0.04]], side: 5.0, round: 3, stations: 6 }, post(1.2, 0.9, 0.2, -0.85, 0.03, 5.0)] });
+// Firefly: the Griffon's chin radiator, two seats under separate hoods, a square-tipped wing (Mk I 11.46 x 13.56 x 4.14 m).
+A['firefly'] = one({ cls: 'ww2-fighter', length: 11.46, span: 13.56, height: 4.14, w: 0.58, h: 0.75, wing: 'square', le: 1.6, root: 2.9, tip: 1.3, sweep: 2, dihedral: 5, fin: 1.7, finRoot: 1.8, roundFin: true, tailSpan: 4.8, tailRoot: 1.2, canopy: { x: 0.0, length: 3.0, kind: 'tandem' }, prop: 3.9, blades: 3, bodies: [belly(5.0, 3.6, -0.45, -1.15, 0.45)] });
+// Wyvern: a long turboprop striker with contra-rotating propellers, the bubble high over the nose (12.88 x 13.42 x 4.57 m).
+A['wyvern'] = one({ cls: 'attack', length: 12.88, span: 13.42, height: 4.57, w: 0.62, h: 0.8, wing: 'tapered', le: 1.4, root: 3.1, tip: 1.4, sweep: 2, mount: -0.6, dihedral: 6, fin: 2.0, finRoot: 2.2, tailSpan: 5.6, tailRoot: 1.4, canopy: { x: 1.2, length: 1.8, kind: 'bubble' }, prop: 4.0, blades: 8 });
+// AM Mauler: the huge R-4360 radial, the bubble, a straight wing (12.55 x 15.24 x 5.13 m).
+A['am-1'] = one({ cls: 'ww2-attack', length: 12.55, span: 15.24, height: 5.13, w: 0.72, h: 0.92, radial: true, wing: 'tapered', le: 1.9, root: 3.4, tip: 1.4, sweep: 2, dihedral: 6, fin: 2.2, finRoot: 2.3, tailSpan: 5.8, tailRoot: 1.5, canopy: { x: 1.0, length: 1.9, kind: 'bubble' }, prop: 4.2, blades: 4 });
+// Firebrand: the Centaurus radial on a long body, the bubble far back, a big wing (TF.4 11.86 x 15.63 x 4.04 m).
+A['firebrand'] = one({ cls: 'ww2-attack', length: 11.86, span: 15.63, height: 4.04, w: 0.68, h: 0.85, radial: true, wing: 'tapered', le: 1.8, root: 3.3, tip: 1.4, sweep: 2, dihedral: 5, fin: 2.0, finRoot: 2.0, roundFin: true, tailSpan: 5.6, tailRoot: 1.4, canopy: { x: -1.2, length: 1.7, kind: 'bubble' }, prop: 4.0, blades: 4 });
+// Ba.65: a radial attack monoplane with the open cockpit (9.65 x 12.1 x 3.2 m).
+A['ba-65'] = one({ cls: 'ww2-attack', length: 9.65, span: 12.1, height: 3.2, w: 0.66, h: 0.75, radial: true, wing: 'tapered', le: 1.6, root: 2.8, tip: 1.2, sweep: 3, dihedral: 5, fin: 1.4, finRoot: 1.5, roundFin: true, tailSpan: 4.0, tailRoot: 1.1, canopy: { x: -0.2, length: 1.0, kind: 'framed' }, hood: 0.35, razor: true, prop: 3.1, blades: 3 });
+
+// Biplanes.
+// CR.32: the Fiat inline with its radiator under the nose, a sesquiplane with W struts (7.45 x 9.5 x 2.63 m).
+A['cr-32'] = ww1({ cls: 'ww2-fighter', length: 7.45, span: 9.5, height: 2.63, lower: 7.6, lowerChord: 1.2, chord: 1.6, gap: 1.35, stagger: 0.45, engine: 'radiator', rudder: 'round', half: 0.45, depth: 1.05, prop: 2.7 });
+// Hs 123: a radial sesquiplane dive bomber with a single strut each side (8.33 x 10.5 x 3.2 m).
+A['hs-123'] = ww1({ cls: 'ww2-attack', length: 8.33, span: 10.5, height: 3.2, lower: 8.0, lowerChord: 1.1, chord: 1.7, gap: 1.5, stagger: 0.4, engine: 'rotary', rudder: 'round', half: 0.55, depth: 1.2, spats: true, prop: 2.9 });
+// F3F: a barrel-bodied radial biplane, the gear retracting into the deep body (7.06 x 9.75 x 2.84 m).
+A['f3f'] = ww1({ cls: 'ww2-fighter', length: 7.06, span: 9.75, height: 2.84, chord: 1.4, gap: 1.4, stagger: 0.4, engine: 'rotary', rudder: 'round', half: 0.6, depth: 1.3, retract: true, prop: 2.7 });
 
 export const PROP_VARIANTS: SpecSet = { air: A, aliases: ALIASES };
