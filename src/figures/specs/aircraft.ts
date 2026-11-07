@@ -82,11 +82,8 @@ A['lancaster'] = {
   ],
 };
 
-// The wings' thickness at the root (about 16 % of the chord, estimate), following the dihedral.
-for (const [k, z, dih, t] of [['p-38j', 0, 0, 0.5], ['b-17g', -0.21, 4, 1.25], ['lancaster', 0.22, 4, 0.95]] as [string, number, number, number][]) {
-  const f = A[k]!;
-  f.bodies = [...(f.bodies ?? []), ...wingRoot(f.wingPlan!, f.span / 2, (y) => z + y * Math.tan((dih * Math.PI) / 180), t)];
-}
+// The wings' thickness at the root as a share of the chord (estimates): the P-38's thin laminar wing, the bombers' deep spars.
+for (const [k, r] of [['p-38j', 0.15], ['b-17g', 0.18], ['lancaster', 0.17]] as [string, number][]) A[k]!.wing.thicknessRatio = r;
 
 // ---------------------------------------------------------------- piston aircraft from proportions
 
@@ -153,45 +150,8 @@ export interface Piston {
   spinner?: number;
   /** Radiators under the wings (Bf 109, Spitfire): front, out from the centre line, length, depth. */
   rads?: [number, number, number, number];
-  /** The wing's thickness at the root (default 15 % of the root chord). */
+  /** The wing's thickness at the root as a share of its chord (default 0.15, an estimate for a piston fighter's wing). */
   thick?: number;
-}
-
-/** The wing's leading and trailing edge at `y` out, from its half planform. */
-export function chordAt(plan: P2[], y: number): [number, number] {
-  const xs: number[] = [];
-  for (let i = 0; i < plan.length; i++) {
-    const [ax, ay] = plan[i];
-    const [bx, by] = plan[(i + 1) % plan.length];
-    if ((ay - y) * (by - y) <= 0 && ay !== by) xs.push(ax + ((bx - ax) * (y - ay)) / (by - ay));
-  }
-  return xs.length ? [Math.max(...xs), Math.min(...xs)] : [0, 0];
-}
-
-/**
- * The wing's true thickness over its inner half (the slab alone is a thin plate): overlapping airfoil-shaped
- * slices, each at the wing's height there (dihedral or gull), `thick` deep at the root and thinning outward.
- */
-export function wingRoot(plan: P2[], half: number, z: (y: number) => number, thick: number, slices = 4): Outline[] {
-  const out: Outline[] = [];
-  const W = half * 0.1;
-  for (let i = 0; i < slices; i++) {
-    const y = half * (0.06 + 0.11 * i);
-    const [le, te] = chordAt(plan, y + W);
-    const c = le - te;
-    if (c <= 0.1) continue;
-    const T = thick * (1 - (0.55 * y) / half);
-    const m = z(y);
-    out.push({
-      top: [[le, m], [le - c * 0.08, m + T * 0.36], [le - c * 0.3, m + T * 0.5], [te + c * 0.2, m + T * 0.14], [te, m + 0.01]],
-      bottom: [[le, m], [le - c * 0.08, m - T * 0.28], [le - c * 0.3, m - T * 0.38], [te + c * 0.2, m - T * 0.08], [te, m - 0.01]],
-      plan: [[le, W * 0.9], [le - c * 0.3, W], [te, W]],
-      side: y,
-      round: 6,
-      stations: 6,
-    });
-  }
-  return out;
 }
 
 /** The canopy's glass: a framed hood, a bubble, a long greenhouse or a tandem pair, standing on the deck at `sill`. */
@@ -252,15 +212,12 @@ export function piston(p: Piston): FixedWingSpec & { cls: string } {
   }
   if (p.rads) {
     const [rx, ry, rl, rd] = p.rads;
-    const up = (p.mount ?? -0.8) * 2 * h * 0.4 + ry * Math.tan(((p.dihedral ?? 6) * Math.PI) / 180) - (p.thick ?? p.root * 0.15) * 0.3;
+    const up = (p.mount ?? -0.8) * 2 * h * 0.4 + ry * Math.tan(((p.dihedral ?? 6) * Math.PI) / 180) - (p.thick ?? 0.15) * p.root * 0.3;
     bodies.push({ top: [[rx, up], [rx - rl, up]], bottom: [[rx, up - rd * 0.8], [rx - rl * 0.2, up - rd], [rx - rl * 0.7, up - rd * 0.9], [rx - rl, up - 0.05]], plan: [[rx, 0.26], [rx - rl * 0.2, 0.3], [rx - rl * 0.7, 0.28], [rx - rl, 0.15]], side: ry, round: 3, stations: 6 });
   }
-  // The wing's thickness at the root (about 15 % of the chord, estimate), following the dihedral or the gull's bend.
+  // A gull wing bends a third of the way out (where the builder bends it).
   const half = p.span / 2;
-  const dih = Math.tan(((p.dihedral ?? 6) * Math.PI) / 180);
-  const wup = (p.mount ?? -0.8) * 2 * h * 0.4;
   const bend = half * 0.33;
-  const wz = (y: number) => wup + (p.gull ? (y < bend ? (-2 * h * 0.3 * y) / bend : -2 * h * 0.3 + (y - bend) * Math.max(dih, 0.14)) : y * dih);
   const plan0 = wingOf(p.wing, p.le, p.root, p.tip, half, p.sweep ?? 2);
   // A gull wing's planform gets corners at the bend, so the slab bends there instead of running straight from root to tip.
   const bent: P2[] = plan0.flatMap((a, i): P2[] => {
@@ -269,8 +226,6 @@ export function piston(p: Piston): FixedWingSpec & { cls: string } {
   });
   // Starting at the root's trailing edge, the triangulation clips the inner panel first, so no triangle runs across the bend.
   const wingPlan: P2[] = !p.gull ? plan0 : [bent[bent.length - 1], ...bent.slice(0, -1)];
-  // (Not on a gull wing: its steep inner panels would cut through flat slices.)
-  if (!p.gull) bodies.push(...wingRoot(wingPlan, half, wz, p.thick ?? p.root * 0.15));
   const fins: P2[] = p.roundFin
     ? [[t + p.finRoot, 0], [t + 0.05, 0], [t + 0.02, p.fin * 0.7], [t + p.finRoot * 0.12, p.fin * 0.95], [t + p.finRoot * 0.35, p.fin], [t + p.finRoot * 0.6, p.fin * 0.88], [t + p.finRoot * 0.85, p.fin * 0.45]]
     : [[t + p.finRoot, 0], [t + 0.05, 0], [t - 0.1, p.fin], [t + p.finRoot * 0.45, p.fin]];
@@ -284,7 +239,7 @@ export function piston(p: Piston): FixedWingSpec & { cls: string } {
     bodyHeight: h * 2,
     fuselage: { top, bottom, plan, round: p.radial ? 2.1 : 2.4, stations: 24 },
     bodies,
-    wing: { x: p.le - p.root / 2, span: p.span, rootChord: p.root, tipChord: p.tip, sweep: p.sweep ?? 2, mount: p.mount ?? -0.8, dihedral: p.dihedral ?? 6, gull: p.gull },
+    wing: { x: p.le - p.root / 2, span: p.span, rootChord: p.root, tipChord: p.tip, sweep: p.sweep ?? 2, mount: p.mount ?? -0.8, dihedral: p.dihedral ?? 6, gull: p.gull, thicknessRatio: p.thick ?? 0.15 },
     wingPlan,
     tail: { kind: 'single', finHeight: p.fin, finChord: p.finRoot, tailSpan: p.tailSpan, tailChord: tp, finBase: h * 0.45, planeUp: h * 0.3 },
     finPlan: fins,

@@ -80,3 +80,19 @@ describe('figure replay', () => {
     expect(fr.tris.count).toBeGreaterThan(3 * 50);
   });
 });
+
+describe('name matching, exact before prefix', () => {
+  it('never lets a shorter name take a longer exact one by its prefix', () => {
+    // Every catalogue name, written as data writes it, finds itself, however a shorter name begins it (mig-35 against mig-3).
+    // Names that normalise alike (h-6k, the bomber; h6k, the flying boat) are told apart by aliases; the rest must find themselves.
+    const key = (n: string) => n.toLowerCase().replace(/[^a-z0-9]+/g, '');
+    const count = new Map<string, number>();
+    for (const n of Object.keys(CATALOG)) count.set(key(n), (count.get(key(n)) ?? 0) + 1);
+    const wrong = Object.keys(CATALOG).filter((n) => count.get(key(n)) === 1 && figureForName(n.replace(/-/g, '_')) !== n && figureForName(n.toUpperCase()) !== n);
+    expect(wrong).toEqual([]);
+    expect(figureForName('MiG-35')).toBe('mig-35');
+    expect(figureForName('mig_35')).toBe('mig-35');
+    expect(figureForName('MiG-3')).toBe('mig-3');
+    expect(figureForName('H-6K')).toBe('h-6k');
+  });
+});

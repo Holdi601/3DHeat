@@ -22,7 +22,9 @@ function build(): void {
     const cls = CATALOG[name].cls;
     if (!byClass.has(cls)) byClass.set(cls, name);
   }
-  for (const [alias, name] of Object.entries(ALIASES)) if (CATALOG[name]) index.set(norm(alias), name);
+  // A catalogue name keeps its own key: an alias spelt like another figure's name never takes it over.
+  const own = new Set(index.keys());
+  for (const [alias, name] of Object.entries(ALIASES)) if (CATALOG[name] && !own.has(norm(alias))) index.set(norm(alias), name);
 }
 
 /** The catalogue figure a name stands for: exact, by alias, or by the longest known prefix of it. */

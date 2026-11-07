@@ -11,8 +11,19 @@
 
 import type { Named, SpecSet } from './index';
 import type { FixedWingSpec, HeliSpec } from '../air';
+import type { Outline } from '../parts';
 
 const H: Named<HeliSpec> = {};
+
+/**
+ * A flat-plate canopy's glass from the windscreen's foot `front` back to `back`: the windscreen raked over `rake` of
+ * the length up to a flat crown `crown` above the axis, standing on the sill `sill`, `w` half wide (AH-1S, AH-64).
+ */
+export function plateCanopy(front: number, back: number, crown: number, sill: number, w: number, rake = 0.4): Outline {
+  const r = front - (front - back) * rake;
+  return { top: [[front, sill], [r, crown], [back + 0.08, crown], [back, crown - 0.1]], bottom: [[front, sill - 0.25], [back, crown - 0.6]], plan: [[front, w * 0.75], [r, w], [back, w]], round: 8, stations: 6 };
+}
+
 
 // A light gyrocopter (generic).
 H['gyrocopter'] = { cls: 'heli-scout', length: 4.6, rotor: 8.4, height: 2.6, bodyWidth: 0.8, bodyHeight: 1.0, cabin: 'bubble', blades: 2, tailRotor: 'none', skids: true };
@@ -37,14 +48,15 @@ export const APACHE: HeliSpec = {
     { top: [[5.4, -0.3], [4.8, -0.1], [2.0, -0.1], [1.4, -0.3]], bottom: [[5.4, -0.55], [4.8, -0.8], [2.0, -0.8], [1.4, -0.55]], plan: [[5.4, 0.12], [4.8, 0.28], [2.0, 0.28], [1.4, 0.12]], side: 0.68, round: 6, stations: 8 },
     { top: [[3.2, 1.0], [2.85, 1.5], [0.0, 1.55], [-0.6, 1.4]], bottom: [[3.2, 0.72], [2.85, 0.5], [0.0, 0.5], [-0.6, 0.72]], plan: [[3.2, 0.26], [2.85, 0.38], [0.0, 0.38], [-0.6, 0.3]], side: 0.95, round: 4, stations: 8 },
   ],
-  glass: [[5.5, 0.45, 0.8, 0.46, 0.42], [4.0, 0.95, 0.6, 0.46, 0.42]],
+  glassOutlines: [plateCanopy(6.55, 4.75, 0.95, 0.15, 0.44, 0.45), plateCanopy(4.8, 3.45, 1.45, 0.85, 0.47, 0.3)],
   finPlan: [[-6.3, 0], [-7.5, 0], [-7.95, 1.95], [-7.2, 2.0]],
-  rotorX: 2.65, mastTop: 2.15, stubs: { span: 5.23, pylons: 2 }, stubAt: [2.75, 0.2, 4], wheels: true,
+  // The blades' true chord (0.53 m), flat.
+  bladeChord: 0.53, rotorX: 2.65, mastTop: 2.15, stubs: { span: 5.23, pylons: 2 }, stubAt: [2.75, 0.2, 4], wheels: true,
 };
 
 // Mi-24 Hind: big and deep - a bubble for the gunner low in the nose, the pilot's canopy stepped up behind, a
 // troop cabin 2.4 m deep, two engines side by side on the roof with the gearbox between them, an upper deck that
-// runs on into a long tapering boom, stub wings drooping with strong anhedral under the rotor, a swept fin
+// runs on into a long tapering boom, stub wings drooping with 12 degrees of anhedral under the rotor, a swept fin
 // (fuselage 17.5 m, rotor 17.3 m, 6.5 m overall). Depths and stations judged from public three-views (estimates):
 // the hub 7.1 m behind the nose, the engines' tops 3.3 m over the belly, the boom 1.6 m deep at its root.
 export const HIND: HeliSpec = {
@@ -63,7 +75,7 @@ export const HIND: HeliSpec = {
   ],
   glass: [[7.2, 0.15, 0.85, 0.5, 0.42], [5.35, 0.75, 0.85, 0.52, 0.45]],
   finPlan: [[-7.6, 0], [-8.75, -0.1], [-9.55, 2.0], [-8.85, 2.05]],
-  rotorX: 1.6, mastTop: 2.75, stubs: { span: 6.6, pylons: 2 }, stubAt: [-0.1, 0.55, 14], wheels: true,
+  rotorX: 1.6, mastTop: 2.75, stubs: { span: 6.6, pylons: 2 }, stubAt: [-0.1, 0.55, 12], wheels: true,
 };
 
 // Mi-28: the Hind's layout made narrow and armoured - the gunner low in front behind flat armoured glass, the pilot
@@ -93,7 +105,8 @@ export const HAVOC: HeliSpec = {
   glass: [[7.0, 0.3, 0.8, 0.45, 0.38], [5.25, 0.85, 0.85, 0.48, 0.4]],
   finPlan: [[-7.0, 0], [-8.5, 0], [-9.2, 2.1], [-8.4, 2.15]],
   rotorX: 1.2, mastTop: 2.2, stubs: { span: 4.88, pylons: 2 }, stubAt: [0.4, 0.15, 6],
-  tailRotorAt: [-8.85, 2.35], tailRotorDiameter: 3.84,
+  // The X tail rotor: two pairs of blades about 35 degrees apart.
+  tailRotorAt: [-8.85, 2.35], tailRotorDiameter: 3.84, tailScissor: 35,
   // The stabiliser high on the fin, braced by struts.
   tailPlan: [[-8.25, 0.1], [-8.45, 1.6], [-9.05, 1.6], [-9.05, 0.1]], tailUp: 2.6,
   wheelAt: [[4.6, 1.2, -1.6, 0.36], [-7.2, 0, -1.3, 0.2]],
