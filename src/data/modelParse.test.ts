@@ -661,3 +661,17 @@ describe('quantised glTF', () => {
     expect(uvs.some((u) => Math.abs(u - 0.25) < 1e-3)).toBe(true);
   });
 });
+
+describe('unusable vertices', () => {
+  it('drops the triangles that touch them and keeps them out of the bounds', () => {
+    // A broken exporter's empty box: one corner at 1e32.
+    const m = parseObj(['v 0 0 0', 'v 1 0 0', 'v 0 0 1', 'v 1e32 0 0', 'f 1 2 3', 'f 2 4 3'].join('\n'));
+    expect(m.triangles).toBe(1);
+    expect(m.bounds.maxX).toBe(1);
+    expect(m.parts.reduce((sum, p) => sum + p.count, 0)).toBe(3);
+  });
+
+  it('refuses a file with nothing usable left', () => {
+    expect(() => parseObj(['v 0 -1e32 0', 'v 1 0 0', 'v 0 0 1', 'f 1 2 3'].join('\n'))).toThrow();
+  });
+});
