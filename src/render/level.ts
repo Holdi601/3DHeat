@@ -13,7 +13,7 @@ import type { WorldLabel } from '../world/backdrop';
 export type LevelKind = 'none' | 'image' | 'model';
 
 /** A source whose credit a level must carry on screen: see `ModelLevel.credits`. */
-export type LevelCredit = 'openfreemap' | 'terrarium' | 'ourairports';
+export type LevelCredit = 'openfreemap' | 'terrarium' | 'ourairports' | 'mapterhorn' | 'eox';
 
 /**
  * Ties one image pixel to one world position.
@@ -187,10 +187,11 @@ export interface ModelLevel {
   /** A world backdrop's place names (towns, airfields), written over the view. */
   labels?: WorldLabel[];
   /**
-   * How a theatre backdrop was asked for, so it can be built again round the
-   * camera as it moves (src/ui/worldStream). Absent on a backdrop built once.
+   * A streamed theatre: its ground comes as tiles round the camera
+   * (src/world/stream), and these are the options they are built with.
+   * Absent on a backdrop built once.
    */
-  stream?: { theatre: string; runways: boolean; follow: boolean; centre: { lat: number; lon: number }; size: number };
+  stream?: { theatre: string; runways: boolean; imagery: boolean };
 
   // Ground appearance.
   opacity: number;

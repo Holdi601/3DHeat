@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Még hátralévő térképcsempék: {count}. Egy építés legfeljebb {max} csempét tölt le; építsen újra a következő rész letöltéséhez.",
   "heat.world.note.noRunways": "A kifutópálya-lista nem olvasható: a kifutópályák úgy jelennek meg, ahogy a térkép rajzolja őket.",
   "heat.world.credit.ourairports": "Kifutópályák: OurAirports (közkincs)",
-  "heat.world.follow": "A kamera követése",
-  "heat.world.followTitle": "A részletes terület újraépítése a kamera alatti pont körül, amikor megáll: magasan szélesebb, alacsonyan finomabb. A már letöltött csempéket nem tölti le újra."
+  "heat.world.stream.button": "Hadszíntér streamelése",
+  "heat.world.stream.buttonTitle": "A domborzat, a felszínborítás, az utak, a repülőterek és az épületek a kamera körül töltődnek repülés közben: messze durván, közel finomabban, az egész hadszíntéren és azon túl. Csak az töltődik le, ami még nincs a gyorsítótárban.",
+  "heat.world.stream.status": "Streamelés: {drawn} csempe látszik, {loading} töltődik, {kept} megtartva ({size}); letöltve {downloaded}.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Műholdkép (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Felhőmentes műholdkép, kb. 10 m/pixel, a festett felszínborítás helyett a terepen. CC BY 4.0; szükség szerint töltődik le, és a gyorsítótárban marad.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

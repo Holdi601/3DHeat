@@ -137,12 +137,17 @@ export class MeshBuilder {
   /** A vertex at a terrain pixel and height; its index. */
   vertexAt(px: number, py: number, h: number, c: Rgb): number {
     const [e, n] = this.project(px, py);
-    return this.vertex(e, n, h, c);
+    return this.vertex(e, n, h, c, this.uvOf ? this.uvOf(px, py) : undefined);
   }
 
   /** Moves a vertex already made up or down: the sea floor is flattened once the map says where the sea is. */
   setHeight(i: number, h: number): void {
     this.pos.a[i * 3 + 2] = h;
+  }
+
+  /** A vertex's colour as it stands. */
+  colourOf(i: number): Rgb {
+    return [this.col.a[i * 3], this.col.a[i * 3 + 1], this.col.a[i * 3 + 2]];
   }
 
   /** Repaints a vertex already made: the terrain is coloured once the map says what covers it. */
@@ -152,11 +157,40 @@ export class MeshBuilder {
     this.col.a[i * 3 + 2] = c[2];
   }
 
+  /**
+   * Imagery coordinates for the vertices that follow: a function of the
+   * terrain pixel, or null for vertices that take none (-1). Only kept once
+   * `withUvs` has been called, so a backdrop without imagery carries none.
+   */
+  uvOf: ((px: number, py: number) => [number, number]) | null = null;
+  private uvs: Grow | null = null;
+
+  /** Starts keeping imagery coordinates; every vertex made so far gets none. */
+  withUvs(): void {
+    if (this.uvs) return;
+    this.uvs = new Grow();
+    for (let i = 0; i < this.vertexCount; i++) this.uvs.push3(-1, -1, 0);
+  }
+
   /** A vertex in east, north and height metres; its index. */
-  vertex(e: number, n: number, h: number, c: Rgb): number {
+  vertex(e: number, n: number, h: number, c: Rgb, uv?: [number, number]): number {
     this.pos.push3(e, n, h);
     this.col.push3(c[0], c[1], c[2]);
+    if (this.uvs) this.uvs.push3(uv ? uv[0] : -1, uv ? uv[1] : -1, 0);
     return this.pos.n / 3 - 1;
+  }
+
+  /** The imagery coordinates, two per vertex, or null when none were kept. */
+  takeUvs(): Float32Array | null {
+    const g = this.uvs;
+    if (!g) return null;
+    const n = g.n / 3;
+    const out = new Float32Array(n * 2);
+    for (let i = 0; i < n; i++) {
+      out[i * 2] = g.a[i * 3];
+      out[i * 2 + 1] = g.a[i * 3 + 1];
+    }
+    return out;
   }
 
   tri(set: MeshSet, a: number, b: number, c: number): void {

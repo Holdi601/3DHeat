@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Kaarttegels nog te gaan: {count}. Eén keer bouwen downloadt er hoogstens {max}; bouw opnieuw om het volgende deel op te halen.",
   "heat.world.note.noRunways": "De lijst met landingsbanen kon niet worden gelezen: landingsbanen zoals de kaart ze tekent.",
   "heat.world.credit.ourairports": "Landingsbanen: OurAirports (publiek domein)",
-  "heat.world.follow": "Camera volgen",
-  "heat.world.followTitle": "Het gedetailleerde gebied opnieuw bouwen rond het punt onder de camera zodra die stilstaat: breder als hij hoog is, fijner als hij laag is. Tegels die al gedownload zijn worden niet opnieuw opgehaald."
+  "heat.world.stream.button": "Strijdtoneel streamen",
+  "heat.world.stream.buttonTitle": "Terrein, bodembedekking, wegen, vliegvelden en gebouwen worden rond de camera geladen terwijl hij vliegt: grof in de verte, fijner dichtbij, over het hele strijdtoneel en verder. Alleen wat nog niet in de cache staat, wordt gedownload.",
+  "heat.world.stream.status": "Streamen: {drawn} tegels getekend, {loading} laden, {kept} bewaard ({size}); {downloaded} gedownload.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Satellietbeelden (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Een wolkenvrij satellietbeeld, ongeveer 10 m per pixel, over het terrein leggen in plaats van de geschilderde bodembedekking. CC BY 4.0; gedownload wanneer nodig en bewaard in de cache.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

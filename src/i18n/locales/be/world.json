@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Яшчэ засталося плітак мапы: {count}. Адна пабудова спампоўвае не больш за {max}; пабудуйце яшчэ раз, каб атрымаць наступную частку.",
   "heat.world.note.noRunways": "Не ўдалося прачытаць спіс узлётных палос: палосы такія, як іх малюе мапа.",
   "heat.world.credit.ourairports": "Узлётныя палосы: OurAirports (грамадскі набытак)",
-  "heat.world.follow": "Сачыць за камерай",
-  "heat.world.followTitle": "Будаваць дэталёвую вобласць нанова вакол пункта пад камерай, калі яна спыніцца: шырэй высока, дэтальней нізка. Ужо загружаныя пліткі не загружаюцца зноў."
+  "heat.world.stream.button": "Струменьнае тэатра",
+  "heat.world.stream.buttonTitle": "Рэльеф, глебавае пакрыццё, дарогі, аэрадромы і будынкі падгружаюцца вакол камеры ў палёце: далёка груба, блізка дэталёва, па ўсім тэатры і за яго межамі. Загружаецца толькі тое, чаго яшчэ няма ў кэшы.",
+  "heat.world.stream.status": "Струмень: {drawn} плітак паказана, {loading} загружаецца, {kept} захавана ({size}); загружана {downloaded}.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Спадарожнікавыя здымкі (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Накласці бясхмарны спадарожнікавы здымак, каля 10 м на піксель, на зямлю замест намаляванага пакрыцця. CC BY 4.0; загружаецца па меры патрэбы і захоўваецца ў кэшы.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

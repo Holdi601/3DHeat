@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "尚待下载的地图瓦片：{count} 个。每次构建最多下载 {max} 个；再次构建以获取下一部分。",
   "heat.world.note.noRunways": "无法读取跑道列表：跑道按地图绘制的样子显示。",
   "heat.world.credit.ourairports": "跑道：OurAirports（公有领域）",
-  "heat.world.follow": "跟随相机",
-  "heat.world.followTitle": "相机停下后，以相机正下方的点为中心重新构建细节区域：高时更广，低时更细。已下载的瓦片不会再次下载。"
+  "heat.world.stream.button": "流式加载战区",
+  "heat.world.stream.buttonTitle": "地形、地表覆盖、道路、机场和建筑随相机飞行在其周围加载：远处粗略，近处更细，覆盖整个战区及其以外。只下载缓存中还没有的内容。",
+  "heat.world.stream.status": "流式加载：已显示 {drawn} 个瓦片，{loading} 个加载中，保留 {kept} 个（{size}）；已下载 {downloaded}。",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "卫星影像（EOX Sentinel-2 cloudless 2016）",
+  "heat.world.imageryTitle": "用无云卫星影像（每像素约 10 米）代替着色的地表覆盖铺在地面上。CC BY 4.0；按需下载并保存在缓存中。",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

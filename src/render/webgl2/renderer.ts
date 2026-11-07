@@ -1,7 +1,7 @@
 import { ATLAS_MIP_LEVELS } from '../../data/atlas';
 import { packLineStarts, type LineData } from '../../data/lines';
 import { CURVE_LUT_SIZE } from '../../state/curve';
-import type { Dataset } from '../../state/types';
+import type { Bounds, Dataset } from '../../state/types';
 import { LUT_HEIGHT, LUT_WIDTH } from '../colors';
 import { filterColumnData, packSignTables } from '../filterTables';
 import { halfToFloat } from '../half';
@@ -59,6 +59,8 @@ import {
   SCALE_FS,
 } from './shaders';
 import { buildEdgeList, type Level } from '../level';
+import { boxOutsideFrustum, diffWorldTiles, frustumPlanes, textureBytes } from '../worldTiles';
+import type { WorldTile } from '../../world/tileSet';
 import { num, t } from '../../i18n';
 
 /** Texture width for the row store. Power of two so the shader can shift/mask. */
@@ -104,6 +106,58 @@ interface GpuChunk {
 interface Prog {
   prog: WebGLProgram;
   u: UniformCache;
+}
+
+/** What `uploadMesh` reads: a model level's arrays, or a world tile's. */
+interface MeshSource {
+  vertices: Float32Array;
+  colours: Float32Array | null | undefined;
+  uvs: Float32Array | null | undefined;
+  indices: Uint32Array;
+  structureIndices: Uint32Array;
+  structureEdges: Uint32Array;
+  waterIndices: Uint32Array;
+  uvTiles?: Uint16Array | null;
+  tileRects?: Float32Array | null;
+}
+
+/**
+ * One mesh's GPU resources: the model level's, or one streamed world tile's.
+ *
+ * The level and every tile are the same kind of thing - interleaved
+ * position+normal, colour, UVs, and ground / structure / water / edge index sets
+ * over the one vertex buffer - so they share the upload and every draw pass.
+ */
+interface GlMesh {
+  vbo: WebGLBuffer;
+  colourVbo: WebGLBuffer;
+  uvVbo: WebGLBuffer;
+  tileVbo: WebGLBuffer | null;
+  tileTex: WebGLTexture | null;
+  /** The level's atlas once decoded, or a tile's own image; null without one. */
+  texture: WebGLTexture | null;
+  /** Shaded VAO, its element buffer the ground's; the other sets are swapped in and back. */
+  vao: WebGLVertexArrayObject;
+  /** Positions only, with the structure edges. */
+  wireVao: WebGLVertexArrayObject;
+  groundIbo: WebGLBuffer | null;
+  structIbo: WebGLBuffer | null;
+  wireIbo: WebGLBuffer | null;
+  waterIbo: WebGLBuffer | null;
+  groundCount: number;
+  structCount: number;
+  wireCount: number;
+  waterCount: number;
+  /** Ground edges, built the first time the ground is asked for as a wireframe. */
+  groundWireIbo: WebGLBuffer | null;
+  groundWireCount: number;
+  groundIndices: Uint32Array;
+  /** GPU footprint, growing as the atlas and the ground's edges arrive. */
+  bytes: number;
+  /** For culling; null for the level, which is always drawn. */
+  bounds: Bounds | null;
+  /** A world tile, drawn with `LevelDraw.tiles` where the level's own look is resolved from its contents. */
+  tile: boolean;
 }
 
 export class Webgl2Renderer implements Renderer {
@@ -223,47 +277,31 @@ export class Webgl2Renderer implements Renderer {
   private readType = 0;
 
   private mapTex: WebGLTexture | null = null;
+  /** The model level's geometry; null for an image level or none. */
+  private levelMesh: GlMesh | null = null;
   /**
-   * Level geometry: one vertex buffer, three index buffers.
-   *
-   * Ground and structures share vertices because they came from one mesh and
-   * duplicating them would undo the memory the decimation saved; only the index
-   * sets differ.
+   * The streamed world tiles' geometry, by tile id, with the tile object each
+   * was uploaded from - identity is what says a tile is unchanged. See
+   * `setWorldTiles`.
    */
-  private meshVao: WebGLVertexArrayObject | null = null;
-  private wireVao: WebGLVertexArrayObject | null = null;
-  private meshVbo: WebGLBuffer | null = null;
+  private tileMeshes = new Map<string, GlMesh>();
+  private readonly tileSources = new Map<string, WorldTile>();
+  /** What the tiles hold on the GPU, buffers and images together. */
+  private tileBytes = 0;
   /**
-   * Captured vertex colour, or a constant white buffer when the level has none.
-   *
-   * Always allocated, so the mesh shader has one code path instead of two. A
-   * white buffer costs 12 bytes a vertex on levels that will never use it,
-   * which is a third of the interleaved buffer — acceptable next to a branch
-   * that would have to be right in two renderers.
+   * The meshes this frame draws: the level's, then every tile in view. Decided
+   * once per frame in `drawScene`, so the colour pass and every depth pass after
+   * it draw exactly the same geometry - a tile in the colour but not in the depth
+   * would show heat through a hill that is plainly there.
    */
-  private colourVbo: WebGLBuffer | null = null;
-  private uvVbo: WebGLBuffer | null = null;
-  /**
-   * Per-vertex tile numbers, 4 bytes a vertex, and the tiles' rectangles as an
-   * RGBA32F texture the vertex shader reads by number (see TILE_VS). Both null
-   * on a level with no repeating texture: the attribute then reads its
-   * constant 0, and costs nothing.
-   */
-  private tileVbo: WebGLBuffer | null = null;
-  private tileTex: WebGLTexture | null = null;
-  /** The level's texture atlas, once decoded; null until then or without one. */
-  private atlasTex: WebGLTexture | null = null;
+  private frameMeshes: GlMesh[] = [];
+  private readonly planes = new Float32Array(20);
   /**
    * Bumped on every level change, so an atlas that finishes decoding after the
    * level it belonged to was replaced is dropped rather than uploaded onto the
    * new one.
    */
   private atlasToken = 0;
-  private meshIbo: WebGLBuffer | null = null;
-  private structIbo: WebGLBuffer | null = null;
-  private wireIbo: WebGLBuffer | null = null;
-  private waterIbo: WebGLBuffer | null = null;
-  private waterIndexCount = 0;
   /** Peeled depth layers, nearest first. See HEAT_DEPTH_LAYERS. */
   private peelDepth: WebGLTexture[] = [];
   private peelFbo: WebGLFramebuffer[] = [];
@@ -277,15 +315,13 @@ export class Webgl2Renderer implements Renderer {
    */
   private structDepth: WebGLTexture | null = null;
   private structDepthFbo: WebGLFramebuffer | null = null;
-  /** Ground edges, built the first time the ground is asked for as a wireframe. */
-  private groundWireIbo: WebGLBuffer | null = null;
-  private groundWireCount = 0;
-  private groundIndices: Uint32Array | null = null;
-  private meshIndexCount = 0;
-  private structIndexCount = 0;
-  private wireIndexCount = 0;
-  /** Background geometry's GPU footprint, reported alongside the row data. */
-  levelBytes = 0;
+  /** The level's own GPU footprint: its map, or its mesh and atlas. */
+  private levelOwnBytes = 0;
+
+  /** Background geometry's GPU footprint, the world tiles included, reported alongside the row data. */
+  get levelBytes(): number {
+    return this.levelOwnBytes + this.tileBytes;
+  }
 
   constructor(private readonly canvas: HTMLCanvasElement) {
     const gl = canvas.getContext('webgl2', {
@@ -587,47 +623,10 @@ export class Webgl2Renderer implements Renderer {
       gl.deleteTexture(this.mapTex);
       this.mapTex = null;
     }
-    if (this.atlasTex) {
-      gl.deleteTexture(this.atlasTex);
-      this.atlasTex = null;
-    }
-    if (this.tileTex) {
-      gl.deleteTexture(this.tileTex);
-      this.tileTex = null;
-    }
     this.atlasToken++;
-    for (const v of [this.meshVao, this.wireVao]) if (v) gl.deleteVertexArray(v);
-    for (const b of [
-      this.meshVbo,
-      this.colourVbo,
-      this.uvVbo,
-      this.tileVbo,
-      this.meshIbo,
-      this.structIbo,
-      this.wireIbo,
-      this.waterIbo,
-      this.groundWireIbo,
-    ]) {
-      if (b) gl.deleteBuffer(b);
-    }
-    this.meshVao = null;
-    this.wireVao = null;
-    this.meshVbo = null;
-    this.colourVbo = null;
-    this.uvVbo = null;
-    this.tileVbo = null;
-    this.meshIbo = null;
-    this.structIbo = null;
-    this.wireIbo = null;
-    this.waterIbo = null;
-    this.waterIndexCount = 0;
-    this.groundWireIbo = null;
-    this.groundWireCount = 0;
-    this.groundIndices = null;
-    this.meshIndexCount = 0;
-    this.structIndexCount = 0;
-    this.wireIndexCount = 0;
-    this.levelBytes = 0;
+    if (this.levelMesh) this.freeMesh(this.levelMesh);
+    this.levelMesh = null;
+    this.levelOwnBytes = 0;
     if (!level) return;
 
     if (level.kind === 'image') {
@@ -650,47 +649,88 @@ export class Webgl2Renderer implements Renderer {
       gl.bindTexture(gl.TEXTURE_2D, null);
       this.mapTex = tex;
       // 4 bytes per texel plus a third again for the mip chain.
-      this.levelBytes = Math.round(level.width * level.height * 4 * 1.34);
+      this.levelOwnBytes = Math.round(level.width * level.height * 4 * 1.34);
       return;
     }
 
-    this.meshVbo = mustBuffer(gl);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.meshVbo);
-    gl.bufferData(gl.ARRAY_BUFFER, level.vertices, gl.STATIC_DRAW);
+    const mesh = this.uploadMesh(
+      {
+        vertices: level.vertices,
+        colours: level.colours,
+        uvs: level.uvs,
+        indices: level.indices,
+        // Structure arrays are optional: a level may have no buildings, or come
+        // from a library entry saved before the split existed.
+        structureIndices: level.structureIndices ?? EMPTY_INDICES,
+        structureEdges: level.structureEdges ?? EMPTY_INDICES,
+        waterIndices: level.waterIndices ?? EMPTY_INDICES,
+        uvTiles: level.uvs && level.tileRects ? level.uvTiles : null,
+        tileRects: level.tileRects,
+      },
+      null,
+      false,
+    );
+    this.levelMesh = mesh;
+    this.levelOwnBytes = mesh.bytes;
+    if (level.atlas && level.uvs) this.loadAtlas(level.atlas, mesh);
+  }
+
+  /**
+   * Upload one mesh: the level's, or a world tile's.
+   *
+   * One vertex buffer, up to four index buffers. Ground and structures share
+   * vertices because they came from one mesh and duplicating them would undo the
+   * memory the decimation saved; only the index sets differ.
+   */
+  private uploadMesh(src: MeshSource, bounds: Bounds | null, tile: boolean): GlMesh {
+    const gl = this.gl;
+    const vbo = mustBuffer(gl);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, src.vertices, gl.STATIC_DRAW);
 
     // The interleaved buffer is position+normal at 24 bytes; colour rides in
-    // its own buffer. A level without colour still gets one, filled with white,
+    // its own buffer. A mesh without colour still gets one, filled with white,
     // so the attribute is never unbound — an unbound attribute reads as
     // (0,0,0,1) on some drivers and as the last value left in the register on
     // others, which is a black level on one machine and not on the next.
-    const vertexCount = level.vertices.length / 6;
+    //
+    // Always allocated, so the mesh shader has one code path instead of two. A
+    // white buffer costs 12 bytes a vertex on levels that will never use it,
+    // which is a third of the interleaved buffer — acceptable next to a branch
+    // that would have to be right in two renderers.
+    const vertexCount = src.vertices.length / 6;
     const colours =
-      level.colours && level.colours.length >= vertexCount * 3
-        ? level.colours
+      src.colours && src.colours.length >= vertexCount * 3
+        ? src.colours
         : new Float32Array(vertexCount * 3).fill(1);
-    this.colourVbo = mustBuffer(gl);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.colourVbo);
+    const colourVbo = mustBuffer(gl);
+    gl.bindBuffer(gl.ARRAY_BUFFER, colourVbo);
     gl.bufferData(gl.ARRAY_BUFFER, colours, gl.STATIC_DRAW);
 
-    // UVs likewise always backed: -1 everywhere on an untextured level, which
+    // UVs likewise always backed: -1 everywhere on an untextured mesh, which
     // the shader reads as "no texture here".
     const uvs =
-      level.uvs && level.uvs.length >= vertexCount * 2
-        ? level.uvs
+      src.uvs && src.uvs.length >= vertexCount * 2
+        ? src.uvs
         : new Float32Array(vertexCount * 2).fill(-1);
-    this.uvVbo = mustBuffer(gl);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.uvVbo);
+    const uvVbo = mustBuffer(gl);
+    gl.bindBuffer(gl.ARRAY_BUFFER, uvVbo);
     gl.bufferData(gl.ARRAY_BUFFER, uvs, gl.STATIC_DRAW);
-    if (level.atlas && level.uvs) this.loadAtlas(level.atlas);
-    const tiles = level.uvs && level.uvTiles && level.tileRects ? level.uvTiles : null;
-    if (tiles && tiles.length >= vertexCount && level.tileRects) {
-      this.tileVbo = mustBuffer(gl);
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.tileVbo);
+
+    // Per-vertex tile numbers, 4 bytes a vertex, and the tiles' rectangles as an
+    // RGBA32F texture the vertex shader reads by number (see TILE_VS). Both null
+    // on a mesh with no repeating texture: the attribute then reads its
+    // constant 0, and costs nothing.
+    let tileVbo: WebGLBuffer | null = null;
+    let tileTex: WebGLTexture | null = null;
+    if (src.uvTiles && src.uvTiles.length >= vertexCount && src.tileRects) {
+      tileVbo = mustBuffer(gl);
+      gl.bindBuffer(gl.ARRAY_BUFFER, tileVbo);
       // As floats, exact for every 16-bit tile number. Not the shorts they
       // arrive as: Direct3D has no vertex format that reads an unsigned short
       // as a float, so ANGLE would keep a converted copy of its own anyway.
-      gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(tiles.subarray(0, vertexCount)), gl.STATIC_DRAW);
-      this.tileTex = this.makeTileTable(level.tileRects);
+      gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(src.uvTiles.subarray(0, vertexCount)), gl.STATIC_DRAW);
+      tileTex = this.makeTileTable(src.tileRects);
     }
 
     const ibo = (data: Uint32Array): WebGLBuffer | null => {
@@ -700,44 +740,35 @@ export class Webgl2Renderer implements Renderer {
       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW);
       return b;
     };
-    // Structure arrays are optional: a level may have no buildings, or come from
-    // a library entry saved before the split existed.
-    const structIndices = level.structureIndices ?? EMPTY_INDICES;
-    const structEdges = level.structureEdges ?? EMPTY_INDICES;
-    const waterIndices = level.waterIndices ?? EMPTY_INDICES;
-    this.meshIbo = ibo(level.indices);
-    this.structIbo = ibo(structIndices);
-    this.wireIbo = ibo(structEdges);
-    this.waterIbo = ibo(waterIndices);
-    // Kept for the lazy ground wireframe; the array is already in memory in the
-    // store, so this is a reference, not a copy.
-    this.groundIndices = level.indices;
-    this.meshIndexCount = level.indices.length;
-    this.structIndexCount = structIndices.length;
-    this.wireIndexCount = structEdges.length;
-    this.waterIndexCount = waterIndices.length;
+    // Bound with no VAO current would rebind the last VAO's element buffer, so
+    // make sure there is none.
+    gl.bindVertexArray(null);
+    const groundIbo = ibo(src.indices);
+    const structIbo = ibo(src.structureIndices);
+    const wireIbo = ibo(src.structureEdges);
+    const waterIbo = ibo(src.waterIndices);
 
     // Two VAOs: the shaded pass needs normals, the wireframe only positions.
     const makeVao = (indexBuffer: WebGLBuffer | null, withNormals: boolean) => {
       const vao = gl.createVertexArray();
       if (!vao) throw new GlError('createVertexArray failed for mesh');
       gl.bindVertexArray(vao);
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.meshVbo);
+      gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
       gl.enableVertexAttribArray(0);
       gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);
       if (withNormals) {
         gl.enableVertexAttribArray(1);
         gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 24, 12);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.colourVbo);
+        gl.bindBuffer(gl.ARRAY_BUFFER, colourVbo);
         gl.enableVertexAttribArray(2);
         gl.vertexAttribPointer(2, 3, gl.FLOAT, false, 12, 0);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.uvVbo);
+        gl.bindBuffer(gl.ARRAY_BUFFER, uvVbo);
         gl.enableVertexAttribArray(3);
         gl.vertexAttribPointer(3, 2, gl.FLOAT, false, 8, 0);
         // Without tiles the attribute stays disabled and reads the constant
         // set in bindAtlas.
-        if (this.tileVbo) {
-          gl.bindBuffer(gl.ARRAY_BUFFER, this.tileVbo);
+        if (tileVbo) {
+          gl.bindBuffer(gl.ARRAY_BUFFER, tileVbo);
           gl.enableVertexAttribArray(4);
           gl.vertexAttribPointer(4, 1, gl.FLOAT, false, 4, 0);
         }
@@ -746,17 +777,130 @@ export class Webgl2Renderer implements Renderer {
       gl.bindVertexArray(null);
       return vao;
     };
-    this.meshVao = makeVao(this.meshIbo, true);
-    this.wireVao = makeVao(this.wireIbo, false);
 
-    this.levelBytes =
-      level.vertices.byteLength +
-      colours.byteLength +
-      uvs.byteLength +
-      (this.tileVbo ? vertexCount * 4 : 0) +
-      level.indices.byteLength +
-      structIndices.byteLength +
-      structEdges.byteLength;
+    return {
+      vbo,
+      colourVbo,
+      uvVbo,
+      tileVbo,
+      tileTex,
+      texture: null,
+      vao: makeVao(groundIbo, true),
+      wireVao: makeVao(wireIbo, false),
+      groundIbo,
+      structIbo,
+      wireIbo,
+      waterIbo,
+      groundCount: src.indices.length,
+      structCount: src.structureIndices.length,
+      wireCount: src.structureEdges.length,
+      waterCount: src.waterIndices.length,
+      groundWireIbo: null,
+      groundWireCount: 0,
+      // Kept for the lazy ground wireframe; the array is already in memory in
+      // the store, so this is a reference, not a copy.
+      groundIndices: src.indices,
+      bytes:
+        src.vertices.byteLength +
+        colours.byteLength +
+        uvs.byteLength +
+        (tileVbo ? vertexCount * 4 : 0) +
+        src.indices.byteLength +
+        src.structureIndices.byteLength +
+        src.structureEdges.byteLength +
+        src.waterIndices.byteLength,
+      bounds,
+      tile,
+    };
+  }
+
+  private freeMesh(mesh: GlMesh): void {
+    const gl = this.gl;
+    gl.deleteVertexArray(mesh.vao);
+    gl.deleteVertexArray(mesh.wireVao);
+    for (const b of [
+      mesh.vbo,
+      mesh.colourVbo,
+      mesh.uvVbo,
+      mesh.tileVbo,
+      mesh.groundIbo,
+      mesh.structIbo,
+      mesh.wireIbo,
+      mesh.waterIbo,
+      mesh.groundWireIbo,
+    ]) {
+      if (b) gl.deleteBuffer(b);
+    }
+    if (mesh.texture) gl.deleteTexture(mesh.texture);
+    if (mesh.tileTex) gl.deleteTexture(mesh.tileTex);
+    mesh.texture = null;
+    mesh.tileTex = null;
+  }
+
+  /**
+   * The streamed world tiles to draw with a model level (src/world/tileSet).
+   *
+   * Uploads the tiles it has not seen and frees the ones that are gone, by id and
+   * by object - a tile is never changed in place. Each is a small model level in
+   * itself and goes through the same draw code as the level: see `frameMeshes`.
+   */
+  setWorldTiles(tiles: WorldTile[]): void {
+    const { added, removed } = diffWorldTiles(this.tileSources, tiles);
+    for (const id of removed) {
+      const mesh = this.tileMeshes.get(id);
+      if (mesh) {
+        this.tileBytes -= mesh.bytes;
+        this.freeMesh(mesh);
+      }
+      this.tileMeshes.delete(id);
+      this.tileSources.delete(id);
+    }
+    for (const tile of added) {
+      const mesh = this.uploadMesh(tile, tile.bounds, true);
+      if (tile.image && tile.uvs) {
+        mesh.texture = this.uploadTileImage(tile.image);
+        if (mesh.texture) mesh.bytes += textureBytes(tile.image.width, tile.image.height, true);
+      }
+      this.tileMeshes.set(tile.id, mesh);
+      this.tileSources.set(tile.id, tile);
+      this.tileBytes += mesh.bytes;
+    }
+    if (this.tileMeshes.size === 0) this.tileBytes = 0;
+  }
+
+  /**
+   * A tile's own imagery as a texture: mipmapped and anisotropic like the atlas,
+   * because the backdrop is seen at grazing angles far out where an unfiltered
+   * picture turns to shimmer. The bitmap belongs to the tile set and is left
+   * open - the same tile may be uploaded again by a recreated renderer.
+   */
+  private uploadTileImage(image: ImageBitmap): WebGLTexture | null {
+    const gl = this.gl;
+    const tex = gl.createTexture();
+    if (!tex) return null;
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+    try {
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    } catch {
+      // A bitmap closed before it got here throws; the tile is then drawn
+      // untextured rather than losing the frame.
+      gl.bindTexture(gl.TEXTURE_2D, null);
+      gl.deleteTexture(tex);
+      return null;
+    }
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    const aniso = gl.getExtension('EXT_texture_filter_anisotropic');
+    if (aniso) {
+      const max = gl.getParameter(aniso.MAX_TEXTURE_MAX_ANISOTROPY_EXT) as number;
+      gl.texParameterf(gl.TEXTURE_2D, aniso.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, max));
+    }
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    return tex;
   }
 
   /**
@@ -771,11 +915,11 @@ export class Webgl2Renderer implements Renderer {
    * written to the frame as they are, so decoding this one to linear would draw
    * it darker than the file it came from.
    */
-  private loadAtlas(atlas: Blob): void {
+  private loadAtlas(atlas: Blob, mesh: GlMesh): void {
     const token = this.atlasToken;
     void createImageBitmap(atlas, { imageOrientation: 'none' }).then(
       (bitmap) => {
-        if (token !== this.atlasToken) {
+        if (token !== this.atlasToken || this.levelMesh !== mesh) {
           bitmap.close();
           return;
         }
@@ -798,8 +942,10 @@ export class Webgl2Renderer implements Renderer {
           gl.texParameterf(gl.TEXTURE_2D, aniso.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, max));
         }
         gl.bindTexture(gl.TEXTURE_2D, null);
-        this.atlasTex = tex;
-        this.levelBytes += Math.round(bitmap.width * bitmap.height * 4 * 1.34);
+        mesh.texture = tex;
+        const bytes = Math.round(bitmap.width * bitmap.height * 4 * 1.34);
+        mesh.bytes += bytes;
+        this.levelOwnBytes += bytes;
         bitmap.close();
       },
       () => {
@@ -834,23 +980,23 @@ export class Webgl2Renderer implements Renderer {
     return tex;
   }
 
-  /** Bind the atlas to unit 0 and say whether to use it. */
+  /** Bind a mesh's texture (the level's atlas, a tile's image) to unit 0 and say whether to use it. */
   /** `mode` as the shader reads `uTexture`: 1 ground, 2 structures. */
   /** `unit` for a pass whose unit 0 is taken: the peel's previous layer. */
-  private bindAtlas(u: UniformCache, on: boolean, mode: 1 | 2 = 1, unit = 0): void {
+  private bindAtlas(u: UniformCache, mesh: GlMesh, on: boolean, mode: 1 | 2 = 1, unit = 0): void {
     const gl = this.gl;
-    const use = on && this.atlasTex !== null;
+    const use = on && mesh.texture !== null;
     gl.activeTexture(gl.TEXTURE0 + unit);
-    gl.bindTexture(gl.TEXTURE_2D, use ? this.atlasTex : this.blankTex());
+    gl.bindTexture(gl.TEXTURE_2D, use ? mesh.texture : this.blankTex());
     u.i1('uAtlas', unit);
     u.f1('uTexture', use ? mode : 0);
     // The tile table on a unit of its own, and the tile attribute's constant
-    // for a level without one: generic attribute values are context state, not
+    // for a mesh without one: generic attribute values are context state, not
     // the VAO's, so it is set where every pass that reads it passes through.
     gl.activeTexture(gl.TEXTURE0 + TILE_UNIT);
-    gl.bindTexture(gl.TEXTURE_2D, this.tileTex ?? this.blankTileTex());
+    gl.bindTexture(gl.TEXTURE_2D, mesh.tileTex ?? this.blankTileTex());
     u.i1('uTiles', TILE_UNIT);
-    if (!this.tileVbo) gl.vertexAttrib1f(4, 0);
+    if (!mesh.tileVbo) gl.vertexAttrib1f(4, 0);
     gl.activeTexture(gl.TEXTURE0 + unit);
   }
 
@@ -1100,6 +1246,7 @@ export class Webgl2Renderer implements Renderer {
     gl.clearDepth(1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    this.frameMeshes = this.meshesInView(params);
     // Level geometry first, with depth writes on, so heat sprites behind a wall
     // are correctly hidden by it.
     if (params.level) this.drawLevel(params, params.level);
@@ -1192,7 +1339,8 @@ export class Webgl2Renderer implements Renderer {
     const gl = this.gl;
     if (params.heat.occlusion <= 0) return;
     if (params.level?.kind !== 'model') return;
-    if (!this.structIbo || this.structIndexCount === 0 || !this.meshVao) return;
+    const meshes = this.frameMeshes.filter((m) => m.structIbo && m.structCount > 0);
+    if (meshes.length === 0) return;
     if (this.peelFbo.length === 0) return;
 
     const { prog, u } = this.peelProg;
@@ -1200,15 +1348,9 @@ export class Webgl2Renderer implements Renderer {
     gl.disable(gl.BLEND);
     gl.enable(gl.DEPTH_TEST);
     gl.depthMask(true);
-    gl.bindVertexArray(this.meshVao);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.structIbo);
     u.mat4('uViewProj', params.viewProj);
     u.f2('uViewport', this.width, this.height);
     u.i1('uPrevDepth', 0);
-    // The atlas on unit 1, unit 0 being the previous layer: a leaf card's cut-out
-    // corners are not a surface to count. See PEEL_FS. Whenever it has decoded,
-    // shell look or not - foliage never occludes heat.
-    this.bindAtlas(u, true, 2, 1);
 
     let prev = this.sceneDepth;
     for (let i = 0; i < this.peelFbo.length; i++) {
@@ -1216,13 +1358,21 @@ export class Webgl2Renderer implements Renderer {
       gl.viewport(0, 0, this.width, this.height);
       gl.clearDepth(1);
       gl.clear(gl.DEPTH_BUFFER_BIT);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, prev);
-      gl.drawElements(gl.TRIANGLES, this.structIndexCount, gl.UNSIGNED_INT, 0);
+      // Every mesh's structures into the one layer: a wall on a tile is as much
+      // a surface to count as a wall on the level.
+      for (const m of meshes) {
+        // The atlas on unit 1, unit 0 being the previous layer: a leaf card's
+        // cut-out corners are not a surface to count. See PEEL_FS. Whenever it
+        // has decoded, shell look or not - foliage never occludes heat. Bound
+        // before the previous layer, which then has unit 0 to itself.
+        this.bindAtlas(u, m, true, 2, 1);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, prev);
+        this.drawStructures(m);
+      }
       prev = this.peelDepth[i];
     }
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.meshIbo);
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.sceneFbo);
     gl.viewport(0, 0, this.width, this.height);
   }
@@ -1250,12 +1400,9 @@ export class Webgl2Renderer implements Renderer {
     gl.viewport(0, 0, this.width, this.height);
     gl.clearDepth(1);
     gl.clear(gl.DEPTH_BUFFER_BIT);
-    if (
-      params.level?.kind === 'model' &&
-      this.structIbo &&
-      this.structIndexCount > 0 &&
-      this.meshVao
-    ) {
+    const meshes =
+      params.level?.kind === 'model' ? this.frameMeshes.filter((m) => m.structIbo && m.structCount > 0) : [];
+    if (meshes.length > 0) {
       const { prog, u } = this.meshProg;
       gl.useProgram(prog);
       gl.colorMask(false, false, false, false);
@@ -1268,12 +1415,11 @@ export class Webgl2Renderer implements Renderer {
       this.setSlice(u, params.slice);
     this.setCull(u, params);
       this.setRelief(u, null);
-      // And the cut-out, as in the seal: foliage is not a wall either.
-      this.bindAtlas(u, true, 2);
-      gl.bindVertexArray(this.meshVao);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.structIbo);
-      gl.drawElements(gl.TRIANGLES, this.structIndexCount, gl.UNSIGNED_INT, 0);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.meshIbo);
+      for (const m of meshes) {
+        // And the cut-out, as in the seal: foliage is not a wall either.
+        this.bindAtlas(u, m, true, 2);
+        this.drawStructures(m);
+      }
       gl.colorMask(true, true, true, true);
     }
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.sceneFbo);
@@ -1298,7 +1444,8 @@ export class Webgl2Renderer implements Renderer {
    */
   private sealStructureDepth(params: FrameParams): void {
     if (params.level?.kind !== 'model') return;
-    if (!this.structIbo || this.structIndexCount === 0 || !this.meshVao) return;
+    const meshes = this.frameMeshes.filter((m) => m.structIbo && m.structCount > 0);
+    if (meshes.length === 0) return;
     const gl = this.gl;
     const { prog, u } = this.meshProg;
     gl.colorMask(false, false, false, false);
@@ -1321,12 +1468,46 @@ export class Webgl2Renderer implements Renderer {
     // decoded, including in the shell look, whose colour pass draws the whole
     // card: the colour is masked here, so uTexture decides only the cut-out.
     // The colour draws all set their own, so this does not carry over.
-    this.bindAtlas(u, true, 2);
-    gl.bindVertexArray(this.meshVao);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.structIbo);
-    gl.drawElements(gl.TRIANGLES, this.structIndexCount, gl.UNSIGNED_INT, 0);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.meshIbo);
+    for (const m of meshes) {
+      this.bindAtlas(u, m, true, 2);
+      this.drawStructures(m);
+    }
     gl.colorMask(true, true, true, true);
+  }
+
+  /**
+   * Draw one mesh's structure triangles with whatever program and state are set.
+   *
+   * Through the shaded VAO with the structure indices swapped in, and the
+   * ground's put back after, so the VAO is left as the next frame expects it.
+   */
+  private drawStructures(m: GlMesh): void {
+    const gl = this.gl;
+    gl.bindVertexArray(m.vao);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, m.structIbo);
+    gl.drawElements(gl.TRIANGLES, m.structCount, gl.UNSIGNED_INT, 0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, m.groundIbo);
+  }
+
+  /**
+   * The meshes a frame draws: the model level's, then every world tile whose box
+   * is in view.
+   *
+   * Nothing at all without a model level: the tiles are drawn with the level's
+   * look, and an image level or none has no look to give them. The level's own
+   * mesh is never culled - it is one draw, and its box is not kept.
+   */
+  private meshesInView(params: FrameParams): GlMesh[] {
+    if (params.level?.kind !== 'model') return [];
+    const out: GlMesh[] = [];
+    if (this.levelMesh) out.push(this.levelMesh);
+    if (this.tileMeshes.size === 0) return out;
+    frustumPlanes(params.viewProj, this.planes);
+    for (const m of this.tileMeshes.values()) {
+      if (m.bounds && boxOutsideFrustum(this.planes, m.bounds)) continue;
+      out.push(m);
+    }
+    return out;
   }
 
   /** Upload and draw coloured world-space triangles, depth-tested and written. */
@@ -1428,19 +1609,30 @@ export class Webgl2Renderer implements Renderer {
   }
 
   /**
-   * Ground, then structures, then the structure wireframe.
+   * Ground, then water, then structures, then the structure wireframe - each for
+   * the level and every world tile in view before the next begins.
    *
    * Order and depth state matter. The ground is opaque and writes depth so it
    * occludes heat below it. Structures are translucent and must not write depth,
    * or their front faces would hide their own back faces and the heat inside
-   * them — which is exactly what the transparency exists to reveal.
+   * them — which is exactly what the transparency exists to reveal. That is also
+   * why the passes go set by set rather than mesh by mesh: a tile's ground drawn
+   * after the level's shells would paint over the shells standing in front of it.
+   *
+   * A tile is drawn with the level's look, as if it were more of the level; only
+   * what the level resolved from its own contents - captured colour, its atlas,
+   * whether it has water or structures at all - is taken from `level.tiles`
+   * instead, which carries the user's switches unresolved.
    */
   private drawLevelMesh(params: FrameParams, level: NonNullable<FrameParams['level']>): void {
     const gl = this.gl;
     const { prog, u } = this.meshProg;
     const s = level.structure;
+    const look = level.tiles;
+    const meshes = this.frameMeshes;
 
-    if (this.meshVao && this.meshIndexCount > 0) {
+    const grounds = meshes.filter((m) => m.vao && m.groundIbo && m.groundCount > 0);
+    if (grounds.length > 0) {
       gl.useProgram(prog);
       u.mat4('uViewProj', params.viewProj);
       u.f3('uCameraPos', params.cameraPos[0], params.cameraPos[1], params.cameraPos[2]);
@@ -1451,13 +1643,15 @@ export class Webgl2Renderer implements Renderer {
       // Terrain stays smooth: it is a sampled height grid, and faceting it would
       // show the sampling grid rather than the hill.
       u.f1('uFlatNormals', 0);
-      u.f1('uVertexColour', level.vertexColours ? 1 : 0);
-      this.bindAtlas(u, level.texture);
       this.setRelief(u, level);
       this.setSlice(u, params.slice);
-    this.setCull(u, params);
-      gl.bindVertexArray(this.meshVao);
-      gl.drawElements(gl.TRIANGLES, this.meshIndexCount, gl.UNSIGNED_INT, 0);
+      this.setCull(u, params);
+      for (const m of grounds) {
+        u.f1('uVertexColour', (m.tile ? look.colours : level.vertexColours) ? 1 : 0);
+        this.bindAtlas(u, m, m.tile ? look.texture : level.texture);
+        gl.bindVertexArray(m.vao);
+        gl.drawElements(gl.TRIANGLES, m.groundCount, gl.UNSIGNED_INT, 0);
+      }
 
       // The ground's triangles *over* the shaded ground, not instead of it.
       //
@@ -1466,8 +1660,8 @@ export class Webgl2Renderer implements Renderer {
       // occlusion all at once, and leaves you looking through the terrain at
       // whatever is under it. A mesh you can read the shape of and count the
       // triangles of at the same time is the thing that was actually wanted.
-      if (level.groundWireOpacity > 0) this.ensureGroundWire();
-      if (level.groundWireOpacity > 0 && this.groundWireIbo && this.groundWireCount > 0) {
+      if (level.groundWireOpacity > 0) {
+        for (const m of grounds) this.ensureGroundWire(m);
         const wire = this.wireProg;
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -1480,10 +1674,14 @@ export class Webgl2Renderer implements Renderer {
         wire.u.f1('uFadeStart', level.groundWireFade[0]);
         wire.u.f1('uFadeEnd', level.groundWireFade[1]);
         this.setSlice(wire.u, params.slice);
-    this.setCull(wire.u, params);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.groundWireIbo);
-        gl.drawElements(gl.LINES, this.groundWireCount, gl.UNSIGNED_INT, 0);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.meshIbo);
+        this.setCull(wire.u, params);
+        for (const m of grounds) {
+          if (!m.groundWireIbo || m.groundWireCount === 0) continue;
+          gl.bindVertexArray(m.vao);
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, m.groundWireIbo);
+          gl.drawElements(gl.LINES, m.groundWireCount, gl.UNSIGNED_INT, 0);
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, m.groundIbo);
+        }
         gl.depthMask(true);
         gl.disable(gl.BLEND);
         gl.useProgram(prog);
@@ -1495,7 +1693,8 @@ export class Webgl2Renderer implements Renderer {
     // sits in. Depth-writing, because it is a surface — heat under a lake should
     // be hidden by it the same way heat under a hill is.
     const w = level.water;
-    if (w.show && this.waterIbo && this.waterIndexCount > 0 && this.meshVao) {
+    const waters = meshes.filter((m) => m.waterIbo && m.waterCount > 0 && (m.tile ? look.water : w.show));
+    if (waters.length > 0) {
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
       gl.useProgram(prog);
@@ -1510,18 +1709,21 @@ export class Webgl2Renderer implements Renderer {
       // for them. It has to be set rather than left: the three passes share one
       // program, and a uniform holds whatever the ground pass last wrote.
       u.f1('uVertexColour', 0);
-      this.bindAtlas(u, false);
       this.setRelief(u, null);
       this.setSlice(u, params.slice);
-    this.setCull(u, params);
-      gl.bindVertexArray(this.meshVao);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.waterIbo);
-      gl.drawElements(gl.TRIANGLES, this.waterIndexCount, gl.UNSIGNED_INT, 0);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.meshIbo);
+      this.setCull(u, params);
+      for (const m of waters) {
+        this.bindAtlas(u, m, false);
+        gl.bindVertexArray(m.vao);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, m.waterIbo);
+        gl.drawElements(gl.TRIANGLES, m.waterCount, gl.UNSIGNED_INT, 0);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, m.groundIbo);
+      }
       gl.disable(gl.BLEND);
     }
 
-    if (s.showFaces && this.structIbo && this.structIndexCount > 0 && this.meshVao) {
+    const faces = meshes.filter((m) => m.structIbo && m.structCount > 0 && (m.tile ? look.faces : s.showFaces));
+    if (faces.length > 0) {
       // Textured and fully opaque is a surface like the ground: it writes depth,
       // so a guardrail's far side cannot draw over its near side. Anything less
       // is a shell, blended and depth-neutral as below.
@@ -1545,21 +1747,20 @@ export class Webgl2Renderer implements Renderer {
       // A structure part with no texture carries its colour per vertex; a level
       // with no colour at all has a white buffer, which changes nothing.
       u.f1('uVertexColour', s.textured ? 1 : 0);
-      this.bindAtlas(u, s.textured, 2);
       // Structures are shells, not terrain: no relief cues on them.
       this.setRelief(u, null);
       this.setSlice(u, params.slice);
-    this.setCull(u, params);
-      gl.bindVertexArray(this.meshVao);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.structIbo);
-      gl.drawElements(gl.TRIANGLES, this.structIndexCount, gl.UNSIGNED_INT, 0);
-      // Restore the VAO's own element buffer so the next frame is unaffected.
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.meshIbo);
+      this.setCull(u, params);
+      for (const m of faces) {
+        this.bindAtlas(u, m, s.textured, 2);
+        this.drawStructures(m);
+      }
       gl.depthMask(true);
       gl.disable(gl.BLEND);
     }
 
-    if (s.showWire && this.wireVao && this.wireIndexCount > 0) {
+    const wires = meshes.filter((m) => m.wireIbo && m.wireCount > 0 && (m.tile ? look.wire : s.showWire));
+    if (wires.length > 0) {
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
       gl.depthMask(false);
@@ -1573,9 +1774,11 @@ export class Webgl2Renderer implements Renderer {
       wire.u.f1('uFadeStart', 1e9);
       wire.u.f1('uFadeEnd', 1e9 + 1);
       this.setSlice(wire.u, params.slice);
-    this.setCull(wire.u, params);
-      gl.bindVertexArray(this.wireVao);
-      gl.drawElements(gl.LINES, this.wireIndexCount, gl.UNSIGNED_INT, 0);
+      this.setCull(wire.u, params);
+      for (const m of wires) {
+        gl.bindVertexArray(m.wireVao);
+        gl.drawElements(gl.LINES, m.wireCount, gl.UNSIGNED_INT, 0);
+      }
       gl.depthMask(true);
       gl.disable(gl.BLEND);
     }
@@ -1584,22 +1787,27 @@ export class Webgl2Renderer implements Renderer {
   }
 
   /**
-   * Build the ground's edge list, once, the first time it is drawn as wireframe.
+   * Build a mesh's ground edge list, once, the first time it is drawn as
+   * wireframe.
    *
    * Deferred because it is a million Set operations on a decimated level and the
    * shaded view never needs it.
    */
-  private ensureGroundWire(): void {
-    if (this.groundWireIbo || !this.groundIndices || this.groundIndices.length === 0) return;
-    const edges = buildEdgeList(this.groundIndices);
+  private ensureGroundWire(m: GlMesh): void {
+    if (m.groundWireIbo || m.groundIndices.length === 0) return;
+    const edges = buildEdgeList(m.groundIndices);
     if (edges.length === 0) return;
     const gl = this.gl;
+    // No VAO current, or the upload would replace that VAO's element buffer.
+    gl.bindVertexArray(null);
     const buffer = mustBuffer(gl);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, edges, gl.STATIC_DRAW);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.meshIbo);
-    this.groundWireIbo = buffer;
-    this.groundWireCount = edges.length;
+    m.groundWireIbo = buffer;
+    m.groundWireCount = edges.length;
+    m.bytes += edges.byteLength;
+    if (m.tile) this.tileBytes += edges.byteLength;
+    else this.levelOwnBytes += edges.byteLength;
   }
 
   /** Relief cues for the ground pass; `null` turns them all off. */
@@ -2584,6 +2792,7 @@ export class Webgl2Renderer implements Renderer {
       gl.deleteProgram(p.prog);
     }
     this.setLevel(null);
+    this.setWorldTiles([]);
     for (const t of [
       this.sceneColor,
       this.sceneDepth,

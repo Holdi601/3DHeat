@@ -1,6 +1,7 @@
 import type { LineData } from '../data/lines';
 import type { Dataset, ViewMode } from '../state/types';
 import type { Level } from './level';
+import type { WorldTile } from '../world/tileSet';
 
 export type BackendKind = 'webgpu' | 'webgl2';
 
@@ -627,6 +628,24 @@ export interface LevelDraw {
      */
     textured: boolean;
   };
+  /**
+   * Model only: the user's switches as they apply to the streamed world tiles
+   * (src/world/tileSet), which are otherwise drawn with every setting above.
+   *
+   * Separate because the level's own flags are resolved against the level's
+   * contents - captured colour only if the level has colours, the texture only
+   * if it has an atlas, water and structures only if it has any - and a tile
+   * carries its own colours, imagery, water and buildings whatever the level
+   * holds. So these say only what the user asked for; the renderer still draws
+   * a tile's texture only where it has one. All false on an image level.
+   */
+  tiles: {
+    colours: boolean;
+    texture: boolean;
+    water: boolean;
+    faces: boolean;
+    wire: boolean;
+  };
 }
 
 /**
@@ -662,6 +681,16 @@ export interface Renderer {
   setLines(lines: LineData | null): void;
   /** Upload background geometry. Pass null to clear it. */
   setLevel(level: Level | null): void;
+  /**
+   * The streamed world tiles to draw with a model level, in full each time.
+   *
+   * Diffed by id and object: tiles already uploaded stay, new ones are
+   * uploaded, the rest freed. Pass an empty list to free them all. Drawn only
+   * while the level is a model level, with that level's look.
+   */
+  setWorldTiles(tiles: WorldTile[]): void;
+  /** GPU bytes held by the level and the world tiles, beside `gpuBytesUsed` for the rows. */
+  readonly levelBytes: number;
   render(params: FrameParams): FrameResult;
   dispose(): void;
   /** GPU memory ceiling for row data, in bytes. */

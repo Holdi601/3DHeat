@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Tíleanna léarscáile fós le teacht: {count}. Íoslódálann tógáil amháin {max} ar a mhéad; tóg arís chun an chéad chuid eile a fháil.",
   "heat.world.note.noRunways": "Níorbh fhéidir liosta na rúidbhealaí a léamh: rúidbhealaí mar a tharraingíonn an léarscáil iad.",
   "heat.world.credit.ourairports": "Rúidbhealaí: OurAirports (fearann poiblí)",
-  "heat.world.follow": "Lean an ceamara",
-  "heat.world.followTitle": "Tóg an limistéar mionsonraithe arís timpeall an phointe faoin gceamara nuair a stopann sé: níos leithne nuair atá sé ard, níos míne nuair atá sé íseal. Ní íoslódáiltear arís tíleanna atá íoslódáilte cheana."
+  "heat.world.stream.button": "Sruthaigh an láthair",
+  "heat.world.stream.buttonTitle": "Tír-raon, clúdach talún, bóithre, aerpháirceanna agus foirgnimh á sruthú timpeall an cheamara agus é ag eitilt: garbh i bhfad uait, níos míne in aice láimhe, ar fud na láthrach agus níos faide. Ní íoslódáiltear ach an méid nach bhfuil sa taisce fós.",
+  "heat.world.stream.status": "Á shruthú: {drawn} tíl tarraingthe, {loading} á lódáil, {kept} coinnithe ({size}); {downloaded} íoslódáilte.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Íomhánna satailíte (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Leag pictiúr satailíte gan scamall, thart ar 10 m an picteilín, ar an talamh in ionad an chlúdaigh talún péinteáilte. CC BY 4.0; íoslódáiltear de réir mar is gá agus coinnítear sa taisce é.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

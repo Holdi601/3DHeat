@@ -407,6 +407,7 @@ export function LevelPanel() {
           sourceTriangles: level.sourceTriangles,
           credits: level.credits,
           placement: level.placement,
+          labels: level.labels,
         });
       }
       refreshLibrary();
@@ -505,7 +506,11 @@ export function LevelPanel() {
         // A saved world backdrop comes back with its credits and its look.
         setLevel(
           rec.meta.credits?.length
-            ? { ...worldLook(restored, rec.meta.credits), ...(rec.meta.placement ? { placement: rec.meta.placement } : {}) }
+            ? {
+                ...worldLook(restored, rec.meta.credits),
+                ...(rec.meta.placement ? { placement: rec.meta.placement } : {}),
+                ...(rec.meta.labels?.length ? { labels: rec.meta.labels } : {}),
+              }
             : restored,
         );
       } else {

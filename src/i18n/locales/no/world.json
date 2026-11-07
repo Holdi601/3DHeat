@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Kartfliser som gjenstår: {count}. Én bygging laster ned høyst {max}; bygg igjen for å hente neste del.",
   "heat.world.note.noRunways": "Rullebanelisten kunne ikke leses: rullebaner slik kartet tegner dem.",
   "heat.world.credit.ourairports": "Rullebaner: OurAirports (allemannseie)",
-  "heat.world.follow": "Følg kameraet",
-  "heat.world.followTitle": "Bygg det detaljerte området på nytt rundt punktet under kameraet når det stopper: bredere høyt oppe, finere lavt nede. Fliser som allerede er lastet ned, hentes ikke på nytt."
+  "heat.world.stream.button": "Strøm krigsskueplassen",
+  "heat.world.stream.buttonTitle": "Terreng, arealdekke, veier, flyplasser og bygninger strømmes rundt kameraet mens det flyr: grovt langt unna, finere nært, over hele skueplassen og videre. Bare det som ikke alt er i hurtigbufferen, lastes ned.",
+  "heat.world.stream.status": "Strømming: {drawn} fliser tegnet, {loading} lastes, {kept} beholdt ({size}); {downloaded} lastet ned.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Satellittbilder (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Legg et skyfritt satellittbilde, om lag 10 m per piksel, over terrenget i stedet for det malte arealdekket. CC BY 4.0; lastes ned ved behov og beholdes i hurtigbufferen.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

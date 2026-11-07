@@ -86,14 +86,15 @@ describe('alpha cut-out in the depth-only passes', () => {
 
   it('binds the atlas in every WebGL2 depth-only pass, whatever the structures look like', () => {
     const file = 'webgl2/renderer.ts';
-    // On whenever the atlas has decoded: bindAtlas itself falls back to the
-    // opaque blank texture and uTexture 0 without one.
-    expect(method(file, 'bindAtlas')).toContain('const use = on && this.atlasTex !== null;');
+    // On whenever the mesh's texture has arrived (the level's atlas, a world
+    // tile's image): bindAtlas itself falls back to the opaque blank texture and
+    // uTexture 0 without one.
+    expect(method(file, 'bindAtlas')).toContain('const use = on && mesh.texture !== null;');
     for (const [name, call] of [
-      ['sealStructureDepth', 'this.bindAtlas(u, true, 2);'],
-      ['renderStructureDepth', 'this.bindAtlas(u, true, 2);'],
+      ['sealStructureDepth', 'this.bindAtlas(u, m, true, 2);'],
+      ['renderStructureDepth', 'this.bindAtlas(u, m, true, 2);'],
       // Unit 1 in the peel, whose unit 0 holds the previous layer.
-      ['peelDepthLayers', 'this.bindAtlas(u, true, 2, 1);'],
+      ['peelDepthLayers', 'this.bindAtlas(u, m, true, 2, 1);'],
     ]) {
       const body = method(file, name);
       expect(body, name).toContain(call);
@@ -108,30 +109,41 @@ describe('alpha cut-out in the depth-only passes', () => {
     const src = readFileSync(resolve(__dirname, file), 'utf8').replace(/\r\n/g, '\n');
     // The structure seal and the structure-depth target run fsMesh, colour masked.
     expect(src).toContain("this.buildMeshPipeline('triangle-list', true, false)");
-    // The seal has a uniform slot of its own, with texture mode 2 - which
-    // pushSceneUniform keeps at 0 until the atlas has decoded - rather than the
+    // The seal has uniform slots of its own, with texture mode 2 for a mesh
+    // whose texture has arrived and 0 for one without - rather than the
     // structures' colour slot, whose mode is 0 in the shell look.
-    const seal = src.slice(src.indexOf('const sealOffset = model'), src.indexOf('const wireOffset = model'));
-    expect(seal).toMatch(/model\.structure\.flat,\s*false,\s*2,\s*\)/);
-    expect(seal).not.toContain('structure.textured');
-    expect(method(file, 'pushSceneUniform')).toContain("u[47] = texture && this.atlasTexture !== null ? (texture === 2 ? 2 : 1) : 0;");
+    const sealSlot = method(file, 'pushSealUniform');
+    expect(sealSlot).toMatch(/model\.structure\.flat,\s*false,\s*textured \? 2 : false,\s*\)/);
+    expect(sealSlot).not.toContain('structure.textured');
+    expect(method(file, 'pushMeshUniforms')).toContain(
+      'const seal = pair((textured) => this.pushSealUniform(params, model, textured));',
+    );
+    // pushSceneUniform takes the mode as given; the callers pass it only for a
+    // mesh whose texture is there.
+    expect(method(file, 'pushSceneUniform')).toContain('u[47] = texture ? (texture === 2 ? 2 : 1) : 0;');
     const level = method(file, 'drawLevel');
-    expect(level).toContain("this.sceneBindGroup(this.structDepthPipeline, 'structdepth', sealOffset)");
-    expect(level).toContain('this.atlasBindGroup(this.structDepthPipeline)');
+    expect(level).toContain(
+      "this.sceneBindGroup(this.structDepthPipeline, 'structdepth', slots.seal[m.texture !== null ? 1 : 0])",
+    );
+    expect(level).toContain('this.atlasBindGroup(this.structDepthPipeline, m)');
     const structDepth = method(file, 'renderStructureDepth');
-    expect(structDepth).toMatch(/model\.structure\.flat,\s*false,(\s*\/\/[^\n]*)*\s*2,\s*\)/);
+    expect(structDepth).toContain('this.pushSealUniform(params, model, textured)');
+    expect(structDepth).toContain("offsets[m.texture !== null ? 1 : 0]");
     expect(structDepth).not.toContain('structure.textured');
-    expect(structDepth).toContain('this.atlasBindGroup(this.structDepthPipeline)');
-    expect(structDepth).toContain('pass.setVertexBuffer(2, this.meshUvBuffer)');
-    expect(structDepth).toContain('pass.setVertexBuffer(3, this.meshTileBuffer)');
+    expect(structDepth).toContain('this.atlasBindGroup(this.structDepthPipeline, m)');
+    expect(structDepth).toContain('this.setMeshBuffers(pass, m)');
+    const buffers = method(file, 'setMeshBuffers');
+    expect(buffers).toContain('pass.setVertexBuffer(2, m.uvBuffer)');
+    expect(buffers).toContain('pass.setVertexBuffer(3, m.tileBuffer)');
     const peel = method(file, 'peelDepthLayers');
-    expect(peel).toContain('this.atlasBindGroup(this.peelPipeline)');
-    expect(peel).toContain('pass.setVertexBuffer(1, this.meshUvBuffer)');
-    expect(peel).toContain('pass.setVertexBuffer(2, this.meshTileBuffer)');
+    expect(peel).toContain('this.atlasBindGroup(this.peelPipeline, m)');
+    expect(peel).toContain('pass.setVertexBuffer(1, m.uvBuffer)');
+    expect(peel).toContain('pass.setVertexBuffer(2, m.tileBuffer)');
+    expect(peel).toContain('offsets[m.texture !== null ? 1 : 0]');
     expect(method(file, 'buildPeelPipeline')).toContain("{ shaderLocation: 1, offset: 0, format: 'float32x2' }");
     expect(method(file, 'buildPeelPipeline')).toContain("{ shaderLocation: 2, offset: 0, format: 'uint32' }");
     const peelUniform = method(file, 'pushPeelUniform');
-    expect(peelUniform).toContain('u[19] = this.atlasTexture !== null ? 1 : 0;');
+    expect(peelUniform).toContain('u[19] = textured ? 1 : 0;');
     expect(peelUniform).not.toContain('structure.textured');
   });
 
@@ -140,9 +152,9 @@ describe('alpha cut-out in the depth-only passes', () => {
     expect(MESH_FS).toContain('if (uTexture > 0.0 && textured) {');
     expect(MESH_WGSL).toContain('if (u.cullCfg.w > 0.5 && textured) {');
     const gl = readFileSync(resolve(__dirname, 'webgl2/renderer.ts'), 'utf8');
-    expect(gl).toContain('this.bindAtlas(u, s.textured, 2);');
-    const gpu = readFileSync(resolve(__dirname, 'webgpu/renderer.ts'), 'utf8');
-    expect(gpu).toContain("this.sceneBindGroup(pipeline, solid ? 'struct-solid' : 'struct', structOffset)");
-    expect(gpu).toContain('model.structure.textured ? 2 : false,');
+    expect(gl).toContain('this.bindAtlas(u, m, s.textured, 2);');
+    const gpu = readFileSync(resolve(__dirname, 'webgpu/renderer.ts'), 'utf8').replace(/\r\n/g, '\n');
+    expect(gpu).toMatch(/solid \? 'struct-solid' : 'struct',\s*slots\.struct\[m\.texture !== null \? 1 : 0\],/);
+    expect(gpu).toContain('s.textured && textured ? 2 : false,');
   });
 });

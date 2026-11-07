@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "残りの地図タイル: {count}。1 回の構築でダウンロードするのは最大 {max} です。続きを取得するには再度構築してください。",
   "heat.world.note.noRunways": "滑走路リストを読み取れませんでした。滑走路は地図の描画どおりです。",
   "heat.world.credit.ourairports": "滑走路: OurAirports（パブリックドメイン）",
-  "heat.world.follow": "カメラに追従",
-  "heat.world.followTitle": "カメラが止まったら、その真下の地点を中心に詳細エリアを作り直します。高いときは広く、低いときは細かく。ダウンロード済みのタイルは再取得しません。"
+  "heat.world.stream.button": "戦域をストリーミング",
+  "heat.world.stream.buttonTitle": "地形・土地被覆・道路・飛行場・建物を、飛行中のカメラの周りに読み込みます。遠くは粗く、近くは細かく、戦域全体とその外まで。キャッシュにないものだけをダウンロードします。",
+  "heat.world.stream.status": "ストリーミング: 表示 {drawn} タイル、読み込み中 {loading}、保持 {kept}（{size}）、ダウンロード {downloaded}。",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "衛星画像（EOX Sentinel-2 cloudless 2016）",
+  "heat.world.imageryTitle": "塗り分けた土地被覆の代わりに、雲のない衛星画像（1 ピクセル約 10 m）を地面に貼ります。CC BY 4.0。必要に応じてダウンロードし、キャッシュに保持します。",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

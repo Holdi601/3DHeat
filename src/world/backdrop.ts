@@ -53,7 +53,7 @@ export const OPENFREEMAP_TILEJSON = 'https://tiles.openfreemap.org/planet';
 export type WorldCredit = LevelCredit;
 
 /** How deep and how wide one layer of the backdrop may go. */
-interface Limits {
+export interface Limits {
   terrainMaxZoom: number;
   /** Most elevation tiles (about 80 kB each). */
   terrainMaxTiles: number;
@@ -120,7 +120,7 @@ const PARALLEL = 4;
 const MAX_TRIANGLES = 3_000_000;
 const STRUCTURE_BUDGET = 1_500_000;
 
-const COLOUR = {
+export const COLOUR = {
   terrain: [0.74, 0.74, 0.71],
   major: [1, 0.98, 0.93],
   road: [0.95, 0.95, 0.93],
@@ -174,7 +174,7 @@ const COVER: Record<string, Rgb> = {
  * hypsometric tint, lowland grey-green to upland brown to snow, so relief
  * reads from altitude even where the map has no cover.
  */
-function groundColour(h: number): Rgb {
+export function groundColour(h: number): Rgb {
   // Below sea level is not water by itself (the Caspian lowland is -28 m):
   // the sea comes from the map's water, painted over this.
   const stops: Array<[number, Rgb]> = [
@@ -205,8 +205,14 @@ export interface WorldLabel {
   z: number;
 }
 
-/** Where the sea floor is drawn, metres: just under the water's flat surface. */
-const SEA_FLOOR = -15;
+/**
+ * The open sea's surface, metres: the terrain itself, flattened there and
+ * painted as water. A metre under sea level, so the zero contour traces the
+ * coast and no contour crosses the sea. The sea is not a separate surface: a
+ * flat sheet over a sea floor fights the floor for depth far off, and sheets
+ * clipped tile by tile leave pixel cracks along their seams.
+ */
+export const SEA_FLOOR = -1;
 
 /** The OpenMapTiles `place` classes kept, and what they are called here. */
 const PLACE_KIND: Record<string, WorldLabel['kind']> = {
@@ -216,7 +222,7 @@ const PLACE_KIND: Record<string, WorldLabel['kind']> = {
 };
 
 /** Road widths in metres by OpenMapTiles `transportation` class; classes not listed are left out. */
-const ROAD_WIDTH: Record<string, { width: number; colour: Rgb; rank: number }> = {
+export const ROAD_WIDTH: Record<string, { width: number; colour: Rgb; rank: number }> = {
   motorway: { width: 16, colour: COLOUR.major, rank: 0 },
   trunk: { width: 14, colour: COLOUR.major, rank: 0 },
   primary: { width: 11, colour: COLOUR.road, rank: 1 },
@@ -289,7 +295,7 @@ export interface BackdropResult {
 }
 
 /** Runs `fn` over `items` with at most `limit` at once. */
-async function eachLimited<T>(items: T[], limit: number, fn: (item: T, i: number) => Promise<void>): Promise<void> {
+export async function eachLimited<T>(items: T[], limit: number, fn: (item: T, i: number) => Promise<void>): Promise<void> {
   let next = 0;
   const run = async () => {
     while (next < items.length) {
@@ -300,7 +306,7 @@ async function eachLimited<T>(items: T[], limit: number, fn: (item: T, i: number
   await Promise.all(Array.from({ length: Math.min(limit, items.length) }, run));
 }
 
-const fill = (template: string, z: number, x: number, y: number) =>
+export const fill = (template: string, z: number, x: number, y: number) =>
   template.replace('{z}', String(z)).replace('{x}', String(x)).replace('{y}', String(y));
 
 /**
@@ -383,14 +389,14 @@ export function gridFor(width: number, height: number, maxVertices: number): { c
 }
 
 /** A rectangle in a layer's terrain pixels: x0, y0, x1, y1. */
-type Rect = [number, number, number, number];
+export type Rect = [number, number, number, number];
 
 /**
  * One level of detail: a box, its terrain zoom and grid, and the rectangles
  * its map features are clipped to (the whole box, or for the coarse theatre
  * the four strips round the detailed area's hole).
  */
-interface Layer {
+export interface Layer {
   limits: Limits;
   /** The box in normalised Web Mercator. */
   mx0: number;
@@ -421,7 +427,7 @@ const boxOfMercator = (mx0: number, my0: number, mx1: number, my1: number): GeoB
 });
 
 /** One building waiting for the budget: rings in terrain pixels, heights in metres. */
-interface Building {
+export interface Building {
   rings: Array<{ ring: number[]; cut: Uint8Array }>;
   area: number;
   height: number;
@@ -429,7 +435,7 @@ interface Building {
 }
 
 /** What a layer's map tiles gave, in its terrain pixels, before any of it is drawn. */
-interface Features {
+export interface Features {
   water: Array<{ outer: number[]; holes: number[][]; flat: number | null }>;
   roads: Array<{ line: number[]; half: number; colour: Rgb }>;
   rails: Array<{ line: number[]; half: number; colour: Rgb }>;
@@ -630,7 +636,7 @@ export async function buildBackdrop(req: BackdropRequest, io: BackdropIo): Promi
         // Open sea: the water surface alone. A floor under it would fight the
         // surface for depth far off (a few metres apart, hundreds of
         // kilometres away) and draw as stripes.
-        if (sea && sea[k] && sea[k + 1] && sea[k + g.cols] && sea[k + g.cols + 1]) continue;
+        void sea;
         const a = first + k;
         mb.tri('ground', a, a + 1, a + g.cols + 1);
         mb.tri('ground', a, a + g.cols + 1, a + g.cols);
@@ -728,7 +734,7 @@ export async function buildBackdrop(req: BackdropRequest, io: BackdropIo): Promi
         if (c.sea) {
           layer.sea ??= new Uint8Array(g.cols * g.rows);
           layer.sea[k] = 1;
-          if (g.h[k] < 0) {
+          if (g.h[k] < 2) {
             g.h[k] = SEA_FLOOR;
             mb.setHeight(first + k, SEA_FLOOR);
           }
@@ -801,6 +807,8 @@ export async function buildBackdrop(req: BackdropRequest, io: BackdropIo): Promi
         for (let i = 0; i < wpoly.outer.length; i += 2) flat = Math.min(flat, at(wpoly.outer[i], wpoly.outer[i + 1]));
       }
       const level = flat;
+      // The open sea is the terrain (see `SEA_FLOOR`): only lakes and docks are sheets.
+      if (wpoly.flat === 0) continue;
       if (level !== null) drapePolygon(mb, 'water', wpoly.outer, wpoly.holes, Infinity, () => level + flatLift, COLOUR.water);
       else drapePolygon(mb, 'water', wpoly.outer, wpoly.holes, step(layer), (x, y) => at(x, y) + lift(layer) * 0.6, COLOUR.water);
     }
@@ -911,7 +919,7 @@ export async function buildBackdrop(req: BackdropRequest, io: BackdropIo): Promi
 }
 
 /** A layer's map features from its decoded tiles, clipped to its regions, in its terrain pixels. */
-function collect(layer: Layer, tiles: Array<{ x: number; y: number; z: number; layers: Map<string, MvtLayer> }>, stats: BackdropStats): Features {
+export function collect(layer: Layer, tiles: Array<{ x: number; y: number; z: number; layers: Map<string, MvtLayer> }>, stats: { buildingsDropped: number }): Features {
   const S = layer.S;
   const mpp = layer.mpp;
   const metresToPx = 1 / mpp;

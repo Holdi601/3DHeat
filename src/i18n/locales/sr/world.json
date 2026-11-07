@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Преостале плочице мапе: {count}. Једна изградња преузима највише {max}; изградите поново да преузмете следећи део.",
   "heat.world.note.noRunways": "Листа писта није могла да се прочита: писте онако како их мапа црта.",
   "heat.world.credit.ourairports": "Писте: OurAirports (јавно власништво)",
-  "heat.world.follow": "Прати камеру",
-  "heat.world.followTitle": "Поново изгради детаљну област око тачке испод камере кад се заустави: шире кад је високо, финије кад је ниско. Већ преузете плочице се не преузимају поново."
+  "heat.world.stream.button": "Стримуј ратиште",
+  "heat.world.stream.buttonTitle": "Терен, покривач тла, путеви, аеродроми и зграде учитавају се око камере док лети: грубо у даљини, финије изблиза, преко целог ратишта и даље. Преузима се само оно што још није у кешу.",
+  "heat.world.stream.status": "Стримовање: {drawn} плочица приказано, {loading} се учитава, {kept} сачувано ({size}); преузето {downloaded}.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Сателитски снимци (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Прекриј тло сателитским снимком без облака, око 10 m по пикселу, уместо обојеног покривача. CC BY 4.0; преузима се по потреби и чува у кешу.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Madum tal-mappa li għad irid jasal: {count}. Bini wieħed iniżżel l-aktar {max}; erġa' ibni biex iġġib il-parti li jmiss.",
   "heat.world.note.noRunways": "Il-lista tal-mitjariet ma setgħetx tinqara: mitjariet kif tpinġihom il-mappa.",
   "heat.world.credit.ourairports": "Mitjariet: OurAirports (dominju pubbliku)",
-  "heat.world.follow": "Segwi l-kamera",
-  "heat.world.followTitle": "Erġa’ ibni ż-żona dettaljata madwar il-punt taħt il-kamera meta tieqaf: usa’ meta tkun għolja, irqaq meta tkun baxxa. Il-madum diġà mniżżel ma jitniżżilx mill-ġdid."
+  "heat.world.stream.button": "Ixxandra t-teatru",
+  "heat.world.stream.buttonTitle": "Terren, kisja tal-art, toroq, ajruporti u bini jitniżżlu madwar il-kamera waqt li ttir: oħxon ’il bogħod, irqaq qrib, mat-teatru kollu u lil hinn. Jitniżżel biss dak li għadu mhux fil-cache.",
+  "heat.world.stream.status": "Xandir: {drawn} madum muri, {loading} qed jitgħabba, {kept} miżmum ({size}); {downloaded} imniżżel.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Stampi tas-satellita (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Għatti l-art bi stampa tas-satellita mingħajr sħab, madwar 10 m kull pixel, minflok il-kisja miżbugħa. CC BY 4.0; titniżżel meta meħtieġa u tinżamm fil-cache.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

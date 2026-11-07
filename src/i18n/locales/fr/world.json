@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Tuiles de carte restantes : {count}. Une construction en télécharge au plus {max} ; reconstruisez pour récupérer la partie suivante.",
   "heat.world.note.noRunways": "La liste des pistes n’a pas pu être lue : pistes telles que la carte les dessine.",
   "heat.world.credit.ourairports": "Pistes : OurAirports (domaine public)",
-  "heat.world.follow": "Suivre la caméra",
-  "heat.world.followTitle": "Reconstruire la zone détaillée autour du point sous la caméra quand elle s’arrête : plus large en altitude, plus fine à basse altitude. Les tuiles déjà téléchargées ne sont pas récupérées à nouveau."
+  "heat.world.stream.button": "Diffuser le théâtre",
+  "heat.world.stream.buttonTitle": "Relief, occupation du sol, routes, aérodromes et bâtiments chargés autour de la caméra pendant le vol : grossiers au loin, plus fins de près, sur tout le théâtre et au-delà. Seul ce qui n’est pas encore en cache est téléchargé.",
+  "heat.world.stream.status": "Diffusion : {drawn} tuiles affichées, {loading} en chargement, {kept} gardées ({size}) ; {downloaded} téléchargés.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Imagerie satellite (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Draper une image satellite sans nuages, environ 10 m par pixel, sur le sol à la place de l’occupation du sol peinte. CC BY 4.0 ; téléchargée au besoin et gardée en cache.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }
