@@ -158,27 +158,14 @@ export function biplane(cls: string, length: number, span: number, height: numbe
 
 // The monoplane fighters, bombers and transports are drawn from their outlines in ./prop-variants.ts.
 
-A['cg-4a'] = { ...multi('glider', 14.8, 25.5, 3.7, { body: 1.8, mount: 1 }), engines: undefined, propeller: undefined };
 
 
 // ---------------------------------------------------------------- WWI
 
-A['airco-dh2'] = biplane('biplane', 7.68, 8.61, 2.91, { pusher: true });
-A['fe-2b'] = biplane('biplane', 9.83, 14.55, 3.85, { pusher: true, crew: 2 });
-A['hansa-brandenburg-w12'] = biplane('biplane', 9.65, 11.2, 3.3, { floats: true, crew: 2 });
-A['gotha-g5'] = biplane('ww1-bomber', 11.86, 23.7, 4.3, { twin: true, crew: 3 });
-A['handley-page-o400'] = biplane('ww1-bomber', 19.16, 30.48, 6.71, { twin: true, crew: 3 });
-A['airco-dh10'] = biplane('ww1-bomber', 12.08, 19.96, 4.42, { twin: true, crew: 3 });
-A['caproni-ca5'] = biplane('ww1-bomber', 12.62, 23.4, 4.48, { twin: true, crew: 3 });
-A['ilya-muromets'] = biplane('ww1-bomber', 17.1, 29.8, 4.0, { four: true, crew: 3 });
 
 // ---------------------------------------------------------------- odd ones out
 
 // Horten Ho 229 (7.47 x 16.76 x 2.81 m) and AW.52 (11.4 x 27.43 x 4.45 m): flying wings.
-A['horten-ho-229'] = { cls: 'flying-wing', length: 7.47, span: 16.76, height: 2.81, bodyWidth: 1.6, bodyHeight: 1.2, nose: 0.3, wing: { x: -0.6, span: 16.76, rootChord: 6.5, tipChord: 0.8, sweep: 35, mount: 0 }, tail: { kind: 'none', finHeight: 0, finChord: 0, tailSpan: 0, tailChord: 0 }, engines: { kind: 'internal', count: 2, diameter: 0.7 }, canopy: { x: 2.0, length: 1.4, kind: 'bubble' } };
-A['aw-52'] = { ...A['horten-ho-229'], length: 11.4, span: 27.43, height: 4.45, wing: { x: -1.0, span: 27.43, rootChord: 8.0, tipChord: 1.6, sweep: 30, mount: 0 } };
 // XF-85 Goblin, a tiny parasite jet (4.53 x 6.44 x 2.53 m); Ba 349 Natter (6.02 x 4.0 x 2.25 m).
-A['xf-85-goblin'] = { cls: 'jet-fighter', length: 4.53, span: 6.44, height: 2.53, bodyWidth: 1.2, bodyHeight: 1.4, nose: 0.2, blunt: 0.7, wing: { x: 0, span: 6.44, rootChord: 1.8, tipChord: 0.8, sweep: 37, mount: 0 }, tail: { kind: 'single', finHeight: 0.9, finChord: 0.9, tailSpan: 2.0, tailChord: 0.6 }, engines: { kind: 'internal', count: 1, diameter: 0.6 }, intakes: 'nose', canopy: { x: 1.0, length: 1.0, kind: 'bubble' } };
-A['ba-349-natter'] = { cls: 'rocket-plane', length: 6.02, span: 4.0, height: 2.25, bodyWidth: 0.9, bodyHeight: 0.9, nose: 0.15, blunt: 0.7, wing: { x: -0.3, span: 4.0, rootChord: 1.0, tipChord: 1.0, sweep: 0, mount: 0 }, tail: { kind: 'single', finHeight: 1.0, finChord: 0.8, tailSpan: 2.0, tailChord: 0.7 }, engines: { kind: 'internal', count: 1, diameter: 0.4 }, canopy: { x: 1.4, length: 0.8, kind: 'bubble' } };
 
 export const PROPS: SpecSet = { air: A };

@@ -22,6 +22,10 @@
 import type { Named, SpecSet } from './index';
 import type { GroundSpec, GunSpec, TurretSpec } from '../ground';
 import { lerpPoly, type P2 } from '../parts';
+import type { Vec3 } from '../../race/geometry';
+import { TRAILER } from './base';
+import type { FigureEntry } from '../catalog';
+import { buildRide, type RideShape } from '../small';
 
 const G: Named<GroundSpec> = {};
 
@@ -1628,7 +1632,10 @@ function towed(cls: string, L: number, W: number, r: number, H: number, shield: 
     if (spaced) parts.push(part(H, [[0.22, w * 0.95], [0.26, w * 0.8]], [[0.22, hi - 0.1], [0.26, hi - 0.2]], lo + 0.05, 14));
   }
   // The barrel's `at` is given as its height in metres; the builder takes it as a share of the carriage height.
-  return { cls, chassis: 'towed', length: L, width: W, hullHeight: H, axles: 1, wheelRadius: r, shield: false, turrets: parts, guns: [{ ...gun, at: (gun.at ?? H) / H }] };
+  const up = gun.at ?? H;
+  // The cradle and recuperator the barrel lies in, from the breech to the trunnions.
+  const cradle = part(H, [[-0.5, 0.2], [0.3, 0.2]], [[-0.5, up + 0.12], [0.3, up + 0.12]], up - 0.25, 10);
+  return { cls, chassis: 'towed', length: L, width: W, hullHeight: H, axles: 1, wheelRadius: r, shield: false, turret: cradle, turrets: parts, guns: [{ ...gun, at: up / H }] };
 }
 /** A towed gun's barrel from the trunnions forward, at `up` metres. */
 const barrel = (length: number, calibre: number, up: number, extra: Partial<GunSpec> = {}): GunSpec => ({ mount: 'hull', x: 0.0, length, calibre, ...extra, at: up });
@@ -1658,6 +1665,181 @@ G['ml-20-152mm'] = towed('towed-gun', 8.18, 2.35, 0.65, 1.4, [1.0, 0.55, 1.75], 
 // M1 155 mm howitzer: no shield, the long barrel on its recoil sledge (7.3 x 2.44 m).
 G['m1-155mm-howitzer'] = towed('towed-gun', 7.3, 2.44, 0.6, 1.4, undefined, barrel(4.0, 0.155, 1.3, { elevation: 0.15 }));
 
+// ---------------------------------------------------------------- towed and emplaced AA guns
+
+/**
+ * An AA gun's upper carriage: the side plates and cradle on its turntable, from its plan (half-widths along x) and
+ * height profile; the gun leaves it at `gunX` forward of the turntable's centre.
+ */
+const aaMount = (plan: P2[], top: P2[], gunX: number): TurretSpec => turret(0, plan, top, 12, gunX);
+const aaShield = (t: TurretSpec, x: number, w: number, lo: number, hi: number): TurretSpec => on(t, [[x, w], [x + 0.06, w * 0.9]], [[x, hi], [x + 0.06, hi - 0.1]], lo, 16);
+// 8.8 cm Flak 36/37: the cruciform platform, the upper carriage with its equilibrators, the long barrel raised, the
+// shield (5.8 m outrigger span, 7.62 m long travelling; the barrel 4.94 m).
+{
+  const t = aaMount([[-0.9, 0.55], [0.9, 0.55]], [[-0.9, 1.1], [0.4, 1.2], [0.9, 0.9]], 0.2);
+  G['flak-36-88mm'] = { cls: 'towed-aa', chassis: 'pedestal', length: 6.0, width: 6.0, hullHeight: 1.0, turret: t, turrets: [aaShield(t, 0.75, 1.1, 0.15, 1.6)], guns: [{ mount: 'turret', length: 4.9, calibre: 0.088, elevation: 0.5, at: 0.85 }] };
+}
+// 8.8 cm Flak 41: lower and wider on its turntable, the very long barrel with its brake, the wide shield with angled wings.
+{
+  const t = aaMount([[-1.1, 0.7], [1.1, 0.7]], [[-1.1, 1.0], [0.3, 1.15], [1.1, 0.8]], 0.3);
+  G['flak-41-88mm'] = { cls: 'towed-aa', chassis: 'pedestal', length: 6.5, width: 6.5, hullHeight: 0.8, turret: t, turrets: [aaShield(t, 0.95, 1.3, 0.1, 1.7)], guns: [{ mount: 'turret', length: 6.5, calibre: 0.088, elevation: 0.45, muzzle: true, at: 0.8 }] };
+}
+// 2 cm Flak 38: a small triangular platform, the single gun and its little shield; Flakvierling 38: four guns in a square
+// behind a broad shield.
+{
+  const t = aaMount([[-0.4, 0.3], [0.4, 0.3]], [[-0.4, 0.75], [0.4, 0.7]], 0.3);
+  G['flak-38-20mm'] = { cls: 'towed-aa', chassis: 'pedestal', length: 2.4, width: 2.4, hullHeight: 0.5, turret: t, turrets: [aaShield(t, 0.35, 0.5, 0.2, 1.0)], guns: [{ mount: 'turret', length: 1.9, calibre: 0.02, elevation: 0.5, at: 0.8 }] };
+  const q = aaMount([[-0.6, 0.5], [0.6, 0.5]], [[-0.6, 0.9], [0.6, 0.85]], 0.4);
+  G['flakvierling-38'] = { cls: 'towed-aa', chassis: 'pedestal', length: 3.0, width: 3.0, hullHeight: 0.55, turret: q, turrets: [aaShield(q, 0.55, 0.75, 0.15, 1.25)], guns: [{ mount: 'turret', count: 4, length: 1.9, calibre: 0.02, elevation: 0.5, spread: 0.32, at: 0.7 }] };
+}
+// Bofors 40 mm and the US M1 37 mm: the four-wheeled carriage with outriggers, the gun with its loader frame above the
+// breech (6.4 / 6.2 x 1.9 m).
+{
+  const t = aaMount([[-0.6, 0.5], [0.6, 0.5]], [[-0.6, 0.9], [0.6, 0.75]], 0.3);
+  const frame = on(t, [[-0.4, 0.15], [0.0, 0.15]], [[-0.4, 1.35], [0.0, 1.35]], 0.7, 12);
+  G['bofors-40mm'] = { cls: 'towed-aa', chassis: 'towed', length: 6.4, width: 1.9, hullHeight: 1.0, axles: 2, axleAt: [0.6, -0.6], wheelRadius: 0.4, shield: false, turret: t, turrets: [frame], guns: [{ mount: 'turret', length: 2.8, calibre: 0.04, elevation: 0.5, muzzle: true, at: 0.75 }] };
+  G['m1-37mm'] = { ...G['bofors-40mm'], length: 6.2, guns: [{ mount: 'turret', length: 2.4, calibre: 0.037, elevation: 0.5, at: 0.75 }] };
+  // 61-K 37 mm and 72-K 25 mm: the same layout with a shield.
+  G['61-k-37mm'] = { ...G['bofors-40mm'], length: 5.5, width: 1.79, turrets: [frame, aaShield(t, 0.5, 0.75, 0.2, 1.2)], guns: [{ mount: 'turret', length: 2.6, calibre: 0.037, elevation: 0.5, at: 0.75 }] };
+  G['72-k-25mm'] = { ...G['61-k-37mm'], length: 4.6, guns: [{ mount: 'turret', length: 2.0, calibre: 0.025, elevation: 0.5, at: 0.75 }] };
+}
+// QF 3.7-inch, 52-K 85 mm and the US M1A1 90 mm: four-wheeled platforms, the long barrel raised over them; the 52-K with
+// its multi-baffle brake (8.7 / 7.05 / 6.2 m).
+{
+  const t = aaMount([[-0.9, 0.6], [0.9, 0.6]], [[-0.9, 1.0], [0.9, 0.85]], 0.4);
+  G['qf-3-7-inch'] = { cls: 'towed-aa', chassis: 'towed', length: 8.7, width: 2.4, hullHeight: 1.5, axles: 2, axleAt: [0.6, -0.4], wheelRadius: 0.5, shield: false, turret: t, guns: [{ mount: 'turret', length: 4.7, calibre: 0.094, elevation: 0.45, at: 0.75 }] };
+  G['52-k-85mm'] = { ...G['qf-3-7-inch'], length: 7.05, width: 2.15, hullHeight: 1.4, axleAt: [0.6, -0.4], wheelRadius: 0.48, guns: [{ mount: 'turret', length: 4.6, calibre: 0.085, elevation: 0.45, muzzle: true, at: 0.75 }] };
+  G['m1a1-90mm-aa'] = { ...G['qf-3-7-inch'], length: 6.2, width: 2.5, hullHeight: 1.4, guns: [{ mount: 'turret', length: 4.5, calibre: 0.09, elevation: 0.45, at: 0.75 }] };
+}
+// M45 quadmount: the Maxson's round armoured turret with two pairs of .50 calibre guns, on its M20 trailer (2.9 x 2.1 m).
+G['m45-quadmount'] = { cls: 'towed-aa', ...TRAILER, length: 2.9, width: 2.1, hullHeight: 0.6, turret: turret(-0.2, circle(0, 0.55), [[-0.55, 0.9], [0.55, 0.9]], 6, 0.5), guns: [{ mount: 'turret-side', count: 2, length: 1.6, calibre: 0.0127, elevation: 0.4, spread: 0.2, at: 0.6 }] };
+// Type 88 75 mm and Type 3 80 mm: the five-legged pedestal and the long barrel; Type 96 25 mm: the twin mount on its pedestal.
+{
+  const t = aaMount([[-0.7, 0.5], [0.7, 0.5]], [[-0.7, 1.0], [0.7, 0.85]], 0.3);
+  G['type-88-75mm'] = { cls: 'towed-aa', chassis: 'pedestal', length: 5.0, width: 5.0, hullHeight: 0.9, turret: t, guns: [{ mount: 'turret', length: 3.3, calibre: 0.075, elevation: 0.5, at: 0.75 }] };
+  G['type-3-80mm'] = { ...G['type-88-75mm'], guns: [{ mount: 'turret', length: 4.0, calibre: 0.08, elevation: 0.5, at: 0.75 }] };
+  G['type-96-25mm'] = { cls: 'towed-aa', chassis: 'pedestal', length: 2.6, width: 2.6, hullHeight: 0.8, turret: aaMount([[-0.55, 0.55], [0.55, 0.55]], [[-0.55, 0.8], [0.55, 0.8]], 0.3), guns: [{ mount: 'turret', count: 2, length: 1.8, calibre: 0.025, elevation: 0.5, spread: 0.25, at: 0.7 }] };
+}
+// WWI anti-aircraft gun: a field gun on a high-angle pedestal mount.
+G['ww1-aa-gun'] = { cls: 'towed-aa', chassis: 'pedestal', length: 3.0, width: 3.0, hullHeight: 1.0, turret: aaMount([[-0.5, 0.4], [0.5, 0.4]], [[-0.5, 0.65], [0.5, 0.6]], 0.3), guns: [{ mount: 'turret', length: 2.4, calibre: 0.076, elevation: 0.6, at: 0.75 }] };
+
+// ---------------------------------------------------------------- AA trucks, gun trucks and rockets
+
+/** A gun's mount on a truck's bed: `bed` the bed's height, `cab` the truck's top (the builder's deck). */
+const bedMount = (x: number, bed: number, cab: number, plan: P2[], top: number): TurretSpec => ({ ...turret(x, plan, [[plan[0][0], top], [plan[plan.length - 1][0], top]], 10, plan[plan.length - 1][0]), up: bed - cab });
+// Morris C9/B: the open-cabbed truck with the Bofors on its bed (5.2 x 2.2 m).
+G['morris-c9b'] = { ...truck('spaa', 5.2, 2.2, 0.48, [0.62, -0.55], 1.3, 1.35, 0.6, 2.0, 1.1, 0), turret: bedMount(-1.2, 1.1, 2.0, [[-0.6, 0.5], [0.6, 0.5]], 0.85), guns: [{ mount: 'turret', length: 2.8, calibre: 0.04, elevation: 0.45, muzzle: true, at: 0.8 }] };
+// GAZ-AA with the quadruple Maxim, GAZ-MM and ZiS-5 with the 25 mm 72-K, the Type 94 with a twin 25 mm.
+G['gaz-aa-aa'] = { ...truck('spaa', 5.34, 2.04, 0.42, [0.6, -0.48], 1.35, 1.4, 0.35, 1.97, 1.35, 0), turret: bedMount(-1.2, 1.35, 1.97, [[-0.3, 0.3], [0.3, 0.3]], 0.9), guns: [{ mount: 'turret', count: 4, length: 1.0, calibre: 0.008, elevation: 0.5, spread: 0.18, at: 0.95 }] };
+G['gaz-mm-72k'] = { ...truck('spaa', 5.34, 2.04, 0.42, [0.6, -0.48], 1.35, 1.4, 0.35, 1.97, 1.35, 0), turret: bedMount(-1.2, 1.35, 1.97, [[-0.5, 0.45], [0.5, 0.45]], 0.7), guns: [{ mount: 'turret', length: 2.0, calibre: 0.025, elevation: 0.5, at: 0.8 }] };
+G['zis-5-72k'] = { ...truck('spaa', 6.06, 2.24, 0.45, [0.6, -0.5], 1.6, 1.5, 0.45, 2.16, 1.45, 0), turret: bedMount(-1.3, 1.45, 2.16, [[-0.5, 0.45], [0.5, 0.45]], 0.7), guns: [{ mount: 'turret', length: 2.0, calibre: 0.025, elevation: 0.5, at: 0.8 }] };
+G['type-94-25mm-truck'] = { ...truck('spaa', 5.4, 1.9, 0.4, [0.62, -0.35, -0.68], 1.45, 1.35, 0.5, 2.0, 1.3, 0), turret: bedMount(-1.4, 1.3, 2.0, [[-0.55, 0.5], [0.55, 0.5]], 0.75), guns: [{ mount: 'turret', count: 2, length: 1.8, calibre: 0.025, elevation: 0.5, spread: 0.25, at: 0.8 }] };
+// GMC CCKW with the M45 quadmount on its bed.
+G['cckw-m45'] = { ...truck('spaa', 6.9, 2.24, 0.48, [0.7, -0.35, -0.7], 1.95, 1.55, 0.85, 2.2, 1.45, 0), turret: { ...turret(-1.6, circle(0, 0.55), [[-0.55, 0.9], [0.55, 0.9]], 6, 0.5), up: 1.45 - 2.2 }, guns: [{ mount: 'turret-side', count: 2, length: 1.6, calibre: 0.0127, elevation: 0.4, spread: 0.2, at: 0.6 }] };
+// BM-13 Katyusha: the launch rails on the bed of a ZiS-6 or Studebaker, raised a little (6.55 x 2.24 m).
+G['bm-13-katyusha'] = { ...truck('mlrs', 6.55, 2.24, 0.45, [0.7, -0.35, -0.7], 1.75, 1.5, 0.6, 2.16, 1.45, 0), missiles: [{ mount: 'hull', rows: 2, cols: 8, length: 5.0, diameter: 0.132, rail: true, elevation: 0.2, x: -1.0, up: 1.45 - 2.16 + 0.35 }] };
+// Lancia 3Ro autocannoni: the 100/17 howitzer, or the long 90/53, behind a shield on the bed (7.25 x 2.35 m).
+{
+  const lancia = (cls: string, length: number, calibre: number) => ({ ...truck(cls, 7.25, 2.35, 0.5, [0.6, -0.45], 1.9, 1.6, 0.85, 2.5, 1.45, 0), turret: bedMount(-1.2, 1.45, 2.5, [[-0.8, 0.55], [0.8, 0.55]], 0.8), turrets: [part(2.5, [[-0.35, 1.0], [-0.3, 1.0]], [[-0.35, 2.75], [-0.3, 2.7]], 1.6, 16)], guns: [{ mount: 'turret' as const, length, calibre, elevation: 0.05, at: 0.8 }] });
+  G['lancia-3ro-100'] = lancia('sp-artillery', 1.8, 0.1);
+  G['autocannone-90-53'] = lancia('tank-destroyer', 4.6, 0.09);
+}
+// VFW (Versuchsflakwagen): the Flak 41 on an open platform with folding sides over a lengthened Pz IV running gear (7.0 m).
+G['vfw-flak-41'] = ww2({ ...PZ4, cls: 'spaa', L: 7.0, top: [[-3.5, 1.3], [-3.4, 1.6], [2.3, 1.6], [2.5, 1.4], [3.5, 1.05]], wheels: pairs([-2.1, -0.7, 0.7, 2.1], 0.55), track: trk(3.45, 0.95, 0.66, 0.52, 2.5), rollers: [-2.0, -0.7, 0.7, 2.0], turret: turret(-0.4, [[-1.1, 0.7], [1.1, 0.7]], [[-1.1, 0.9], [0.3, 1.05], [1.1, 0.75]], 14, 0.3), gun: { length: 6.0, calibre: 0.088, elevation: 0.3, muzzle: true, at: 0.8 }, parts: [compartment(1.68, -2.6, 1.8, 2.05, 1.45, 1.4)] });
+// QF 3.7-inch on the Ram: the Canadian hull without its turret, the AA gun on an open mount.
+G['ram-3-7-aa'] = { ...G['ram-ii'], cls: 'spaa', turret: turret(0.1, [[-0.9, 0.6], [0.9, 0.6]], [[-0.9, 0.85], [0.9, 0.75]], 12, 0.4), turrets: G['ram-ii'].turrets!.slice(1), guns: [{ mount: 'turret', length: 4.7, calibre: 0.094, elevation: 0.45, at: 0.75 }] };
+
+// ---------------------------------------------------------------- soft-skins and lorries
+
+// GAZ-M1 "Emka" and the Horch 830: four-door saloons, the bonnet, the cabin, the boot (4.63 x 1.77 m, 1.6 m; 4.7 x 1.7 m, 1.55 m).
+G['gaz-m1'] = car('civilian-car', 4.63, 1.77, 0.38, [0.6, -0.58], [[-2.315, 0.95], [-2.1, 1.05], [-1.6, 1.15], [-1.2, 1.6], [0.3, 1.6], [0.6, 1.15], [2.315, 0.95]], [[-2.315, 0.45], [2.315, 0.45]], [[-2.315, 0.75], [0.6, 0.88], [1.2, 0.6], [2.315, 0.5]], 3);
+G['horch-830'] = car('civilian-car', 4.7, 1.7, 0.38, [0.6, -0.58], [[-2.35, 0.9], [-2.0, 1.05], [-1.5, 1.1], [-1.15, 1.55], [0.4, 1.55], [0.7, 1.1], [2.35, 0.95]], [[-2.35, 0.45], [2.35, 0.45]], [[-2.35, 0.72], [0.7, 0.85], [1.3, 0.55], [2.35, 0.48]], 3);
+// Type 95 Kurogane: the small open four-wheel-drive car with its folding hood (3.38 x 1.52 m, 1.68 m).
+G['type-95-kurogane'] = car('jeep', 3.38, 1.52, 0.36, [0.6, -0.6], [[-1.69, 0.95], [-1.0, 0.95], [-0.9, 1.68], [0.2, 1.68], [0.3, 1.0], [1.69, 0.9]], [[-1.69, 0.5], [1.69, 0.5]], [[-1.69, 0.72], [0.3, 0.74], [0.5, 0.5], [1.69, 0.45]], 10);
+// Type 98 So-Da: the small tracked ammunition carrier with its open box (4.1 x 2.1 m, 1.4 m).
+G['type-98-so-da'] = ww2({ cls: 'apc-tracked', L: 4.1, W: 2.1, deck: 1.4, fender: 0.8, top: [[-2.05, 1.3], [-1.9, 1.4], [1.2, 1.4], [2.05, 1.0]], plan: [[-2.05, 1.04], [2.05, 1.04]], hullRound: 14, track: trk(2.0, 0.82, 0.5, 0.45, 1.4), wheels: pairs([-0.85, 0.85], 0.75), r: 0.28, rollers: [-0.4, 0.4] });
+// WWI lorry: the bonnet, the open-sided cab with its roof, the bed under a tilt or open; the AA lorries with a 13-pounder
+// or a pom-pom on the bed (5.8 x 2.1 m).
+G['ww1-lorry'] = truck('truck', 5.8, 2.1, 0.48, [0.6, -0.5], 1.5, 1.45, 0.9, 2.2, 1.3, 2.5);
+G['ww1-lorry-open'] = truck('truck', 5.8, 2.1, 0.48, [0.6, -0.5], 1.5, 1.45, 0.9, 2.2, 1.3, 0);
+G['ww1-aa-lorry'] = { ...G['ww1-lorry-open'], cls: 'spaa', turret: bedMount(-1.5, 1.3, 2.2, [[-0.6, 0.55], [0.6, 0.55]], 0.6), guns: [{ mount: 'turret', length: 2.4, calibre: 0.076, elevation: 0.5, at: 0.8 }] };
+G['ww1-pom-pom-lorry'] = { ...G['ww1-aa-lorry'], guns: [{ mount: 'turret', length: 1.6, calibre: 0.037, elevation: 0.5, at: 0.8 }] };
+// WWI field gun (18-pounder class): the big spoked wheels, the shield, the barrel over its recuperator (5.0 x 2.0 m).
+G['ww1-field-gun'] = towed('towed-gun', 5.0, 2.0, 0.65, 1.2, [0.85, 0.5, 1.55], barrel(2.2, 0.077, 0.95, { elevation: 0.08 }));
+
+// ---------------------------------------------------------------- installations and rail
+
+// V-1 launch ramp: the long inclined ramp on its concrete foundation, rising about 6 degrees (45 m).
+G['v-1-ramp'] = { cls: 'ramp', chassis: 'static', length: 45.0, width: 2.0, hullHeight: 0.3, turret: { ...part(0.3, [[-22.5, 0.6], [22.5, 0.6]], [[-22.5, 1.0], [22.5, 5.6]], [[-22.5, 0.0], [-10, 0.0], [22.5, 4.2]], 14) } };
+// FuMG 401 Freya: the cabin on its turntable post, the tall grid antenna above it.
+G['fumg-401-freya'] = { cls: 'radar', chassis: 'static', length: 3.5, width: 3.0, hullHeight: 2.2, turret: turret(0, circle(0, 0.5), [[-0.5, 0.5], [0.5, 0.5]], 8, 0.5), radars: [{ kind: 'grid', x: 0, up: 1.9, size: 6.0, height: 3.6, mast: 'none' }] };
+// FuSE 65 Würzburg-Riese: the 7.5 m dish over its cabin on the turntable.
+G['fuse-65-wurzburg-riese'] = { cls: 'radar', chassis: 'static', length: 4.0, width: 4.0, hullHeight: 2.0, turret: turret(0, circle(0, 0.8), [[-0.8, 0.6], [0.8, 0.6]], 8, 0.8), radars: [{ kind: 'dish', x: 0, up: 3.2, size: 7.5, mast: 'pole' }] };
+// AA rangefinder: the long rangefinder tube on its pedestal.
+G['aa-rangefinder'] = { cls: 'sam-cp', chassis: 'pedestal', length: 2.4, width: 2.4, hullHeight: 0.9, turret: turret(0, circle(0, 0.45), [[-0.45, 0.8], [0.45, 0.8]], 8, 0.45), radars: [{ kind: 'bar', x: 0, up: 0.2, size: 4.0, mast: 'none' }] };
+// Coastal gun: the armoured gun house with its sloped front on the emplacement.
+G['coastal-gun'] = { cls: 'emplacement-gun', chassis: 'pedestal', length: 6.0, width: 6.0, hullHeight: 1.2, turret: turret(0, [[-1.5, 1.2], [-1.2, 1.4], [0.9, 1.4], [1.5, 1.0]], [[-1.5, 1.5], [0.8, 1.6], [1.5, 1.1]], 14, 1.5), guns: [{ mount: 'turret', length: 6.5, calibre: 0.15, elevation: 0.08, at: 0.5 }] };
+// Steam locomotive with its tender: the running board, the boiler ahead of the cab, the tender behind (19.0 x 3.1 m);
+// DRG class 86 tank engine, its coal and water carried on the engine (13.9 m).
+G['steam-locomotive'] = { cls: 'rail', chassis: 'rail', length: 19.0, width: 3.1, hullHeight: 1.6, boiler: { length: 8.5, diameter: 1.8 }, hullOutline: bodyOf([[-9.5, 2.9], [-5.6, 2.9], [-5.5, 1.7], [-4.6, 1.7], [-4.5, 4.0], [-2.2, 4.0], [-2.1, 1.7], [9.5, 1.7]], [[-9.5, 1.1], [9.5, 1.1]], [[-9.5, 1.5], [9.5, 1.45]], 14) };
+G['drg-class-86'] = { cls: 'rail', chassis: 'rail', length: 13.9, width: 3.1, hullHeight: 1.6, boiler: { length: 7.5, diameter: 1.7 }, hullOutline: bodyOf([[-6.95, 3.0], [-4.0, 3.0], [-3.9, 4.0], [-1.8, 4.0], [-1.7, 1.7], [6.95, 1.7]], [[-6.95, 1.1], [6.95, 1.1]], [[-6.95, 1.5], [6.95, 1.45]], 14) };
+// Goods wagon: the covered van with its rounded roof (9.1 x 2.8 m); armoured train car: sloped armour, two turrets.
+G['ww2-goods-wagon'] = { cls: 'rail', chassis: 'rail', length: 9.1, width: 2.8, hullHeight: 3.85, hullOutline: bodyOf([[-4.55, 3.6], [-4.4, 3.85], [4.4, 3.85], [4.55, 3.6]], [[-4.55, 1.1], [4.55, 1.1]], [[-4.55, 1.4], [4.55, 1.4]], 6) };
+G['armoured-train-car'] = { cls: 'rail', chassis: 'rail', length: 16.0, width: 3.0, hullHeight: 3.4, hullOutline: bodyOf([[-8.0, 2.4], [-7.6, 3.4], [7.6, 3.4], [8.0, 2.4]], [[-8.0, 1.1], [8.0, 1.1]], [[-8.0, 1.5], [8.0, 1.5]], 8), turret: turret(5.0, circle(0, 1.1), [[-1.1, 0.9], [1.1, 0.9]], 6, 1.1), turrets: [turret(-5.0, circle(0, 1.1), [[-1.1, 0.9], [1.1, 0.9]], 6, 1.1)], guns: [{ mount: 'turret', length: 2.5, calibre: 0.076, at: 0.5 }, { mount: 'turret', turret: 1, length: 2.5, calibre: 0.076, elevation: Math.PI - 0.02, at: 0.5 }] };
+
+// ---------------------------------------------------------------- riders
+
+// The Second World War's riders, drawn from outlines: the Kettenkrad (Sd.Kfz. 2: the motorcycle front wheel, the tracked
+// body with its interleaved wheels, the driver and a passenger facing back; 3.0 x 1.0 m, 1.2 m), the solo motorcycle
+// (BMW R12 class, 2.2 m), the heavy combination with its sidecar and the sidecar's machine gun (BMW R75 / Zündapp KS 750,
+// 2.4 x 1.73 m) and the horse and rider (about 2.4 m long, 1.6 m at the withers).
+const KETTENKRAD: RideShape = {
+  bodies: [{ top: [[-1.5, 0.8], [-0.95, 0.85], [-0.5, 0.92], [0.25, 0.95], [0.65, 0.85], [1.05, 0.75], [1.25, 0.62]], bottom: [[-1.5, 0.42], [0.9, 0.45], [1.25, 0.5]], plan: [[-1.5, 0.48], [0.1, 0.48], [0.55, 0.28], [1.25, 0.14]], round: 8, stations: 12 }],
+  track: { profile: [[-1.3, 0], [0.35, 0], [0.6, 0.3], [0.45, 0.6], [-1.4, 0.6], [-1.58, 0.3]], side: 0.38, width: 0.24, wheels: [-1.15, -0.75, -0.35, 0.05], r: 0.24 },
+  wheels: [{ x: 1.2, side: 0, r: 0.3, w: 0.12 }],
+  rods: [{ a: [1.2, 0, 0.3], b: [1.0, 0, 1.0], r: 0.03, fixed: true }, { a: [1.0, -0.35, 1.0], b: [1.0, 0.35, 1.0], r: 0.025, fixed: true }],
+  riders: [{ x: 0.15, seat: 0.95 }, { x: -0.95, seat: 0.85 }],
+};
+/** A motorcycle of length L: the tank, seat and engine block, the mudguards over both wheels, the fork and bars. */
+function bike(L: number): RideShape {
+  const wx = L / 2 - 0.33;
+  const guard = (x: number): { top: P2[]; bottom: P2[]; plan: P2[]; round: number } => ({ top: [[x - 0.3, 0.6], [x, 0.72], [x + 0.28, 0.58]], bottom: [[x - 0.3, 0.53], [x, 0.66], [x + 0.28, 0.5]], plan: [[x - 0.3, 0.08], [x + 0.28, 0.08]], round: 3 });
+  return {
+    bodies: [{ top: [[-0.85, 0.82], [-0.3, 0.88], [0.05, 0.95], [0.45, 0.98], [0.6, 0.85]], bottom: [[-0.85, 0.68], [-0.3, 0.32], [0.4, 0.32], [0.6, 0.6]], plan: [[-0.85, 0.1], [-0.2, 0.2], [0.3, 0.18], [0.6, 0.1]], round: 3, stations: 12 }, guard(wx), guard(-wx)],
+    wheels: [{ x: wx, side: 0, r: 0.33, w: 0.12 }, { x: -wx, side: 0, r: 0.33, w: 0.14 }],
+    rods: [{ a: [wx, 0, 0.33], b: [0.55, 0, 0.95], r: 0.03, fixed: true }, { a: [0.55, -0.35, 0.98], b: [0.55, 0.35, 0.98], r: 0.025, fixed: true }, { a: [-wx, 0, 0.33], b: [-0.3, 0, 0.65], r: 0.03 }],
+    riders: [{ x: -0.15, seat: 0.85 }],
+  };
+}
+const SIDECAR: RideShape = (() => {
+  const b = bike(2.4);
+  return {
+    ...b,
+    bodies: [...b.bodies, { top: [[-0.8, 0.75], [-0.3, 0.85], [0.5, 0.82], [0.95, 0.62]], bottom: [[-0.8, 0.42], [0.95, 0.48]], plan: [[-0.8, 0.22], [-0.2, 0.32], [0.6, 0.26], [0.95, 0.08]], round: 2.4, side: 0.58, stations: 12 }],
+    wheels: [...b.wheels!, { x: -0.1, side: 0.75, r: 0.3, w: 0.12 }],
+    rods: [...b.rods!, { a: [0.6, 0.58, 0.95], b: [1.15, 0.58, 1.0], r: 0.03, fixed: true }],
+    riders: [...b.riders, { x: -0.35, seat: 0.72, side: 0.58 }],
+  };
+})();
+const HORSE: RideShape = {
+  bodies: [{ top: [[-0.95, 1.4], [-0.7, 1.5], [0.0, 1.42], [0.45, 1.55], [0.75, 1.75], [1.0, 1.8], [1.25, 1.6]], bottom: [[-0.95, 1.05], [-0.6, 0.9], [0.35, 0.88], [0.65, 1.2], [0.9, 1.45], [1.25, 1.45]], plan: [[-0.95, 0.18], [-0.6, 0.3], [0.3, 0.3], [0.65, 0.17], [0.95, 0.12], [1.25, 0.08]], round: 2.2, stations: 16 }],
+  rods: [
+    ...[-0.13, 0.13].flatMap((s) => [
+      { a: [0.42, s, 1.0] as Vec3, b: [0.48, s, 0.0] as Vec3, r: 0.07 },
+      { a: [-0.62, s, 1.05] as Vec3, b: [-0.72, s, 0.5] as Vec3, r: 0.09 },
+      { a: [-0.72, s, 0.5] as Vec3, b: [-0.62, s, 0.0] as Vec3, r: 0.06 },
+    ]),
+    { a: [-0.95, 0, 1.3], b: [-1.15, 0, 0.75], r: 0.06 },
+  ],
+  riders: [{ x: -0.05, seat: 1.5 }],
+};
+const RIDERS: Record<string, FigureEntry> = {
+  kettenkrad: { domain: 'ground', cls: 'motorcycle', build: () => buildRide({ kind: 'kettenkrad', length: 3.0, width: 1.0, shape: KETTENKRAD }) },
+  motorcycle: { domain: 'ground', cls: 'motorcycle', build: () => buildRide({ kind: 'motorcycle', length: 2.2, width: 0.8, shape: bike(2.2) }) },
+  'motorcycle-sidecar': { domain: 'ground', cls: 'motorcycle', build: () => buildRide({ kind: 'sidecar', length: 2.4, width: 1.73, shape: SIDECAR }) },
+  horse: { domain: 'ground', cls: 'cavalry', build: () => buildRide({ kind: 'horse', length: 2.4, width: 0.65, shape: HORSE }) },
+};
+
 // ---------------------------------------------------------------- War Thunder ids
 
 /**
@@ -1665,6 +1847,13 @@ G['m1-155mm-howitzer'] = towed('towed-gun', 7.3, 2.44, 0.6, 1.4, undefined, barr
  * figure where there is one, otherwise to the nearest figure of its family or layout.
  */
 const WT_WW2: Record<string, string> = {
+  'germ_vsw_flak_41': 'vfw-flak-41',
+  'uk_ram_90mm_aa': 'ram-3-7-aa',
+  'jp_hiro_sha': 't-28',
+  'jp_type_95_so_ki': 'type-98-so-da',
+  'it_lancia3ro_100': 'lancia-3ro-100',
+  'it_breda_52_autocannone': 'autocannone-90-53',
+  'fr_lorraine_100': 'lorraine-155',
   'uk_mark_v': 'mark-v-male',
   'fr_lorraine_155': 'lorraine-155',
   'fr_lorraine_37l': 'lorraine-37l',
@@ -1806,4 +1995,4 @@ const WT_WW2: Record<string, string> = {
   'sw_pvkv_iv': 'pvkv-m43',
 };
 
-export const ARMOUR_WW2: SpecSet = { ground: G, aliases: WT_WW2 };
+export const ARMOUR_WW2: SpecSet = { ground: G, aliases: WT_WW2, figures: RIDERS };

@@ -379,7 +379,7 @@ const ALIASES: Record<string, string> = {
   'mig-27k': 'mig-27k',
   'su-27': 'su-27',
   'mig-23mld': 'mig-23mld',
-  'su-25': 'su-25t',
+  'su-25': 'su-25',
   'su-25tm': 'su-25t',
   'su-25t': 'su-25t',
   'su-33': 'su-33',

@@ -674,4 +674,142 @@ A['f-35a'] = { ...lightning('a'), cls: 'multirole' };
 A['f-35b'] = { ...lightning('b'), cls: 'multirole' };
 A['f-35c'] = { ...lightning('c'), cls: 'multirole' };
 
+// ---------------------------------------------------------------- stealth: F-117, J-20
+
+// F-117A: a faceted pyramid of a body on a 67-degree arrow wing, the notched trailing edge, the canted V tail, the
+// faceted canopy on the peak, the gridded intakes on the flanks (20.08 x 13.2 x 3.78 m).
+A['f-117a'] = {
+  cls: 'attack', length: 20.08, span: 13.2, height: 3.78, bodyWidth: 3.8, bodyHeight: 1.5,
+  fuselage: { top: [[10.04, -0.05], [7.2, 0.55], [4.6, 0.95], [0, 0.9], [-6, 0.6], [-10.04, 0.15]], bottom: [[10.04, -0.1], [6, -0.45], [0, -0.55], [-8, -0.35], [-10.04, -0.12]], plan: [[10.04, 0.05], [6, 0.9], [3, 1.5], [0, 1.9], [-6, 1.6], [-8.5, 1.3], [-10.04, 0.7]], round: 12, stations: 22 },
+  wing: { x: -2.4, span: 13.2, rootChord: 12, tipChord: 1.5, sweep: 67.5, mount: -0.3 },
+  wingPlan: [[8.6, 0], [-5.9, 6.6], [-7.4, 6.6], [-6.2, 3.6], [-8.6, 2.0], [-10.04, 0.5], [-10.04, 0]],
+  tail: { kind: 'v', tailSpan: 0, tailChord: 0, finHeight: 3.0, finChord: 3.0, finBase: 0.6 },
+  finPlan: [[-5.6, 0], [-8.6, 0], [-9.6, 3.0], [-8.2, 3.0]],
+  engines: { kind: 'internal', count: 2, diameter: 0.6, nozzles: [[-9.6, -1.0, 0.1], [-9.6, 1.0, 0.1]] },
+  canopy: { x: 5.2, length: 2.4, kind: 'framed' },
+  glass: [{ ...bubble(6.6, 4.0, 1.18, 0.7, 0.92, 0.5), round: 6 }],
+};
+// J-20: a long canard delta with bumped DSI intakes on the sides, LERX into a cranked delta, two all-moving canted
+// fins and two ventral fins (20.4 x 13.0 x 4.45 m).
+A['j-20'] = {
+  cls: 'fighter', length: 20.4, span: 13.0, height: 4.45, bodyWidth: 3.2, bodyHeight: 1.6,
+  fuselage: { top: [[10.2, -0.1], [9.0, 0.24], [7.4, 0.48], [3.6, 0.62], [0, 0.6], [-6, 0.5], [-10.0, 0.35]], bottom: [[10.2, -0.14], [9.0, -0.36], [7.0, -0.5], [5.2, -0.62], [0, -0.75], [-6, -0.6], [-10.0, -0.35]], plan: [[10.2, 0.04], [9.0, 0.45], [7.2, 0.68], [5.6, 0.8], [4.6, 1.45], [0, 1.6], [-6, 1.45], [-10.0, 1.0]], round: [[10.2, 3], [5, 3.4], [4.4, 5], [-10, 4]], stations: 26 },
+  wing: { x: -3.2, span: 13.0, rootChord: 8.0, tipChord: 1.2, sweep: 48, mount: 0.2 },
+  wingPlan: [[3.6, 0], [3.0, 1.6], [0.8, 2.6], [-4.8, 6.5], [-6.0, 6.5], [-7.2, 1.6], [-7.2, 0]],
+  canard: { x: 3.6, span: 6.0, chord: 1.7 },
+  tail: { kind: 'twin', tailSpan: 0, tailChord: 0, finHeight: 2.2, finChord: 2.8, cant: 30, spacing: 3.2, finBase: 0.35 },
+  finPlan: [[-6.2, 0], [-8.6, 0], [-9.4, 2.2], [-7.8, 2.2]],
+  engines: { kind: 'internal', count: 2, diameter: 1.05 },
+  canopy: { x: 5.6, length: 3.4, kind: 'bubble' },
+  glass: [bubble(7.4, 3.6, 1.12, 0.48, 0.62, 0.46)],
+};
+
+// ---------------------------------------------------------------- bombers
+
+// B-52H: a long slab-sided fuselage, the stepped cockpit, a shoulder wing swept 35 degrees with the eight engines in
+// four paired pods and small tanks near the tips, the tall fin (cut short on the G and H) and a broad tailplane
+// (48.5 x 56.39 x 12.4 m).
+A['b-52h'] = {
+  cls: 'bomber', length: 48.5, span: 56.39, height: 12.4, bodyWidth: 2.9, bodyHeight: 3.4,
+  fuselage: { top: [[24.25, -0.4], [22.6, 0.9], [21.4, 1.3], [19.4, 1.5], [10, 1.55], [-15, 1.5], [-22, 1.0], [-24.25, 0.6]], bottom: [[24.25, -0.6], [22.5, -1.5], [18, -1.8], [0, -1.85], [-15, -1.6], [-22, -0.6], [-24.25, 0.2]], plan: [[24.25, 0.2], [22.5, 1.1], [19, 1.4], [-15, 1.4], [-22, 0.8], [-24.25, 0.4]], round: 3.2, stations: 26 },
+  bodies: [pod(-9.0, -13.4, 0.45, 22.4, 0.9, 0.25)],
+  wing: { x: 0.75, span: 56.39, rootChord: 10.5, tipChord: 2.5, sweep: 35, mount: 1 },
+  wingPlan: [[6, 0], [6, 1.4], [-12.8, 28.2], [-15.3, 28.2], [-4.5, 1.4], [-4.5, 0]],
+  tail: { kind: 'single', finHeight: 6.0, finChord: 8.0, tailSpan: 15.4, tailChord: 4.0, finBase: 1.4, planeUp: 0.4 },
+  finPlan: [[-15, 0], [-22.8, 0], [-24.4, 6.0], [-20.6, 6.0]],
+  tailPlan: [[-17.5, 0], [-19.8, 7.7], [-22.2, 7.7], [-23.6, 0]],
+  engines: { kind: 'wing-pods', count: 8, diameter: 1.1, at: [0.3, 0.55], pair: true, length: 5.4 },
+  canopy: { x: 20.5, length: 2.0, kind: 'airliner' },
+  glass: [sideBySide(21.6, 19.6, 1.85, 1.15, 1.5, 1.0)],
+};
+// B-1B: a blended body with the small canard vanes at the nose, the swing wing out of a long glove (shown at a
+// middle sweep), two paired engine nacelles under the glove, the tall fin with the tailplane low on it
+// (44.5 x 41.8 spread / 24.1 swept x 10.4 m).
+A['b-1b'] = {
+  cls: 'bomber', length: 44.5, span: 33.0, height: 10.4, bodyWidth: 4.4, bodyHeight: 2.9,
+  fuselage: { top: [[22.25, -0.3], [20.5, 0.6], [18.6, 1.0], [16.4, 1.35], [12, 1.45], [0, 1.4], [-12, 1.3], [-18, 1.0], [-22.25, 0.5]], bottom: [[22.25, -0.4], [20, -1.1], [15, -1.4], [0, -1.45], [-12, -1.2], [-22.25, -0.2]], plan: [[22.25, 0.1], [20, 0.9], [16, 1.35], [10, 1.5], [6, 2.2], [-4, 3.6], [-10, 2.6], [-16, 1.3], [-22.25, 0.6]], round: [[22, 2.4], [10, 2.6], [0, 6], [-16, 4], [-22, 2.4]], stations: 28 },
+  bodies: [{ top: [[0, -0.7], [-8.4, -0.6]], bottom: [[0, -2.5], [-2, -2.6], [-8.4, -2.2]], plan: [[0, 1.2], [-8.4, 1.1]], side: 3.0, round: [[0, 8], [-8.4, 4]], stations: 10 }],
+  wing: { x: -2.0, span: 33.0, rootChord: 6.5, tipChord: 2.3, sweep: 40, mount: 0.4 },
+  wingPlan: [[8, 0], [8, 2.2], [0, 6.8], [-8.1, 16.5], [-10.4, 16.5], [-4.8, 6.8], [-6, 4], [-6, 0]],
+  canard: { x: 18.2, span: 4.2, chord: 0.9 },
+  tail: { kind: 'single', finHeight: 6.4, finChord: 7.8, tailSpan: 13.7, tailChord: 3.6, finBase: 1.2, planeUp: 1.9 },
+  finPlan: [[-14, 0], [-21.8, 0], [-22.8, 6.4], [-19.4, 6.4]],
+  tailPlan: [[-17.8, 0], [-19.5, 6.85], [-21.2, 6.85], [-22.2, 0]],
+  engines: { kind: 'internal', count: 4, diameter: 0.95, nozzles: [[-8.6, -3.5, -1.55], [-8.6, -2.5, -1.55], [-8.6, 2.5, -1.55], [-8.6, 3.5, -1.55]] },
+  canopy: { x: 17, length: 1.6, kind: 'framed' },
+  glass: [sideBySide(17.8, 16.2, 1.65, 1.05, 1.4, 0.9)],
+};
+// Tu-160: the B-1's layout grown - a longer, slimmer nose, the swing wing out of a long glove blended into the
+// body, the engine pairs far out under the glove, an all-moving upper fin with the tailplane part way up it
+// (54.1 x 55.7 spread / 35.6 swept x 13.1 m; shown at a middle sweep).
+A['tu-160'] = {
+  cls: 'bomber', length: 54.1, span: 44.0, height: 13.1, bodyWidth: 5.0, bodyHeight: 3.2,
+  fuselage: { top: [[27.05, -0.3], [24.6, 0.7], [22.4, 1.2], [20.2, 1.5], [12, 1.6], [0, 1.55], [-14, 1.4], [-22, 1.0], [-27.05, 0.5]], bottom: [[27.05, -0.4], [24.6, -1.1], [19, -1.5], [0, -1.6], [-14, -1.3], [-27.05, -0.2]], plan: [[27.05, 0.1], [24.6, 0.9], [19, 1.5], [12, 1.7], [6, 3.0], [-4, 4.4], [-12, 3.2], [-20, 1.4], [-27.05, 0.6]], round: [[27, 2.4], [12, 2.6], [0, 6], [-20, 4], [-27, 2.4]], stations: 28 },
+  bodies: [{ top: [[1.0, -0.8], [-11.0, -0.7]], bottom: [[1.0, -2.8], [-1, -2.9], [-11.0, -2.4]], plan: [[1.0, 1.3], [-11.0, 1.2]], side: 3.6, round: [[1.0, 8], [-11, 4]], stations: 10 }],
+  wing: { x: -2.0, span: 44.0, rootChord: 7.5, tipChord: 2.6, sweep: 40, mount: 0.4 },
+  wingPlan: [[10, 0], [10, 2.6], [0, 9.0], [-10.8, 22.0], [-13.4, 22.0], [-5.6, 9.0], [-7, 5], [-7, 0]],
+  tail: { kind: 'single', finHeight: 7.2, finChord: 9.0, tailSpan: 13.25, tailChord: 4.0, finBase: 1.3, planeUp: 3.4 },
+  finPlan: [[-15, 0], [-25.2, 0], [-26.6, 7.2], [-22.6, 7.2]],
+  tailPlan: [[-20.4, 0], [-22.4, 6.6], [-24.4, 6.6], [-25.8, 0]],
+  engines: { kind: 'internal', count: 4, diameter: 1.1, nozzles: [[-11.2, -4.2, -1.7], [-11.2, -3.0, -1.7], [-11.2, 3.0, -1.7], [-11.2, 4.2, -1.7]] },
+  canopy: { x: 21, length: 2.0, kind: 'framed' },
+  glass: [sideBySide(22.2, 20.2, 1.85, 1.2, 1.55, 1.0)],
+};
+// Tu-22M3: a long fuselage with big wedge intakes along its sides, a low swing wing out of a fixed glove (shown
+// at a middle sweep), the tall fin with its long dorsal fillet, the two nozzles side by side
+// (42.46 x 34.28 spread / 23.3 swept x 11.05 m).
+A['tu-22m3'] = {
+  cls: 'bomber', length: 42.46, span: 28.0, height: 11.05, bodyWidth: 4.4, bodyHeight: 2.6,
+  fuselage: { top: [[21.23, -0.4], [19, 0.65], [16.6, 1.0], [14.4, 1.1], [8, 1.15], [-10, 1.1], [-17, 0.95], [-21.23, 0.6]], bottom: [[21.23, -0.5], [19, -0.95], [15, -1.15], [0, -1.25], [-12, -1.1], [-21.23, -0.6]], plan: [[21.23, 0.1], [19, 0.8], [15.5, 1.1], [13.5, 1.15], [12.6, 2.2], [-12, 2.25], [-18, 1.6], [-21.23, 1.2]], round: [[21, 2.4], [13, 2.6], [12.5, 5], [-21, 4]], stations: 28 },
+  wing: { x: -1.0, span: 28.0, rootChord: 8, tipChord: 2.2, sweep: 40, mount: -0.5 },
+  wingPlan: [[6, 0], [6, 2.2], [2.0, 6.2], [-4.5, 14], [-6.7, 14], [-2.8, 6.2], [-5.6, 5.0], [-6.4, 2.2], [-6.4, 0]],
+  tail: { kind: 'single', finHeight: 5.6, finChord: 10.5, tailSpan: 15.0, tailChord: 4.4, finBase: 0.9, planeUp: 0.2 },
+  finPlan: [[-8, 0], [-18.5, 0], [-20.6, 5.5], [-17.6, 5.6], [-10, 1.1]],
+  tailPlan: [[-15, 1.0], [-17.5, 7.5], [-19.8, 7.5], [-20.4, 1.0]],
+  engines: { kind: 'internal', count: 2, diameter: 1.4 },
+  canopy: { x: 15.5, length: 2.2, kind: 'framed' },
+  glass: [sideBySide(16.6, 14.4, 1.55, 1.0, 1.12, 0.9)],
+};
+// Tu-95MS: a slim fuselage, the 35-degree mid wing with four turboprops on long nacelles turning eight-bladed
+// contra-rotating props, the tall swept fin, the radar nose (49.5 x 50.1 x 13.3 m). Tu-142: a longer fuselage, the
+// glazed-free nose with a probe, the MAD fairing on the fin top (Tu-142M 53.07 m).
+function bear(maritime: boolean): FixedWingSpec {
+  const tip = maritime ? 28.3 : 24.75;
+  return {
+    length: tip + 24.75, span: 50.1, height: 13.3, bodyWidth: 2.9, bodyHeight: 3.0,
+    fuselage: { top: [[tip, -0.3], [tip - 1.75, 0.9], [tip - 4.2, 1.35], [tip - 5.2, 1.55], [10, 1.5], [-15, 1.4], [-22, 1.1], [-24.75, 0.7]], bottom: [[tip, -0.5], [tip - 1.75, -1.2], [tip - 5.8, -1.45], [0, -1.5], [-15, -1.35], [-22, -0.7], [-24.75, 0.0]], plan: [[tip, 0.15], [tip - 1.75, 0.95], [tip - 5.8, 1.45], [-15, 1.4], [-22, 0.85], [-24.75, 0.5]], round: 2.4, stations: 26 },
+    bodies: maritime ? [pod(-20.0, -25.0, 0.5, 0, 9.2, 0.3)] : [],
+    wing: { x: 1.0, span: 50.1, rootChord: 9, tipChord: 2.5, sweep: 37, mount: 0.1 },
+    wingPlan: [[5.5, 0], [5.5, 1.5], [-12.5, 25.05], [-15, 25.05], [-3.5, 1.5], [-3.5, 0]],
+    tail: { kind: 'single', finHeight: 7.6, finChord: 9.0, tailSpan: 14.0, tailChord: 4.6, finBase: 1.2, planeUp: 0.4 },
+    finPlan: [[-14, 0], [-22, 0], [-24.2, 7.6], [-21.4, 7.6], [-17, 1.2]],
+    tailPlan: [[-17.5, 0], [-20.2, 7.0], [-22.6, 7.0], [-23.8, 0]],
+    engines: { kind: 'wing-props', count: 4, diameter: 1.5, at: [0.27, 0.53], length: 7.0 },
+    propeller: { diameter: 5.6, blades: 8 },
+    canopy: { x: tip - 4.5, length: 2.0, kind: 'framed' },
+    glass: [sideBySide(tip - 3.2, tip - 5.2, 1.9, 1.2, 1.5, 1.0)],
+  };
+}
+A['tu-95ms'] = { ...bear(false), cls: 'bomber' };
+A['tu-142'] = { ...bear(true), cls: 'patrol' };
+// H-6 (Tu-16): a mid swept wing with the two engines buried in its roots against the fuselage, the glazed nose,
+// tail turret, tall swept fin (34.8 x 33.0 x 10.36 m). The H-6K has a solid radar nose and bigger engines.
+function badger(k: boolean): FixedWingSpec {
+  return {
+    length: 34.8, span: 33.0, height: 10.36, bodyWidth: 2.6, bodyHeight: 2.6,
+    fuselage: { top: [[17.4, k ? -0.3 : 0.0], [16.2, 0.8], [13.8, 1.25], [12.6, 1.35], [6, 1.3], [-10, 1.2], [-15.5, 0.8], [-17.4, 0.4]], bottom: [[17.4, k ? -0.4 : -0.5], [16.2, -1.0], [12, -1.3], [0, -1.3], [-10, -1.1], [-15.5, -0.5], [-17.4, -0.1]], plan: [[17.4, k ? 0.15 : 0.4], [16.2, 0.95], [12, 1.3], [-10, 1.2], [-15.5, 0.7], [-17.4, 0.35]], round: 2.4, stations: 24 },
+    bodies: [{ top: [[5.2, 0.5], [-6.4, 0.6]], bottom: [[5.2, -0.9], [-6.4, -0.6]], plan: [[5.2, 0.7], [-1, 0.8], [-6.4, 0.55]], side: 1.75, round: [[5.2, 3], [-6.4, 2.4]], stations: 10 }],
+    wing: { x: 0, span: 33.0, rootChord: 8, tipChord: 2.4, sweep: 37, mount: 0 },
+    wingPlan: [[4.6, 0], [4.6, 2.4], [-5.6, 16.5], [-8.0, 16.5], [-4.0, 2.4], [-4.0, 0]],
+    tail: { kind: 'single', finHeight: 5.6, finChord: 6.4, tailSpan: 11.8, tailChord: 3.4, finBase: 1.1, planeUp: 0.3 },
+    finPlan: [[-10, 0], [-15.8, 0], [-17.4, 5.6], [-14.8, 5.6], [-12, 1.0]],
+    tailPlan: [[-12.6, 0], [-14.6, 5.9], [-16.4, 5.9], [-17.0, 0]],
+    engines: { kind: 'internal', count: 2, diameter: k ? 1.3 : 1.15, nozzles: [[-6.6, -1.75, -0.15], [-6.6, 1.75, -0.15]] },
+    canopy: { x: 12.8, length: 2.0, kind: 'framed' },
+    glass: k ? [sideBySide(14.2, 12.4, 1.75, 1.15, 1.35, 0.85)] : [sideBySide(14.2, 12.4, 1.75, 1.15, 1.35, 0.85), { ...pod(17.6, 15.4, 0.75, 0, -0.1, 0.5), side: undefined }],
+  };
+}
+A['h-6'] = { ...badger(false), cls: 'bomber' };
+A['h-6k'] = { ...badger(true), cls: 'bomber' };
+
 export const JET_VARIANTS: SpecSet = { air: A, aliases: ALIASES };

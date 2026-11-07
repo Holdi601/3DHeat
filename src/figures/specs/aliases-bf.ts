@@ -232,7 +232,7 @@ const ALIASES: Record<string, string> = {
   'f-35e panther (2042)': 'multirole-jet',
   'f-35e panther': 'multirole-jet',
   'a-10 thunderbolt ii': 'a-10c',
-  'su-25': 'su-25t',
+  'su-25': 'su-25',
   'su-39 (bf2)': 'su-25t',
   'q-5 fantan': 'q-5',
   'su-34': 'su-34',

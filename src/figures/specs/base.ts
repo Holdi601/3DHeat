@@ -16,13 +16,13 @@ import type { Outline } from '../parts';
 type Base = Omit<GroundSpec, 'cls'>;
 
 /** The floor the truck builder sets a cab on, from the wheel radius. */
-const floorOf = (r: number) => Math.max(0.6, r * 1.6);
+export const floorOf = (r: number) => Math.max(0.6, r * 1.6);
 
 /**
  * A normal-control cab in the vehicle frame: the bonnet (`bonnet` long, `bonnetH` high, `nose` how far its front
  * falls) ahead of a cab `cabLen` long and `cabH` high, the bonnet narrower than the cab (`bw` of the half-width).
  */
-function bonnetCab(L: number, W: number, r: number, cabLen: number, cabH: number, bonnet: number, bonnetH: number, nose = 0.15, bw = 0.75, rake = 0.2): Outline {
+export function bonnetCab(L: number, W: number, r: number, cabLen: number, cabH: number, bonnet: number, bonnetH: number, nose = 0.15, bw = 0.75, rake = 0.2): Outline {
   const h = L / 2;
   const x1 = h - bonnet;
   const x0 = x1 - cabLen;
@@ -39,7 +39,7 @@ function twinCab(side: number): Outline {
 }
 
 /** A cab-over (forward-control) cab: `cabLen` long behind the front, the windscreen raked back `rake`, the front falling to `face` of its height. */
-function forwardCab(L: number, W: number, r: number, cabLen: number, cabH: number, rake = 0.35, face = 0.55, round = 10): Outline {
+export function forwardCab(L: number, W: number, r: number, cabLen: number, cabH: number, rake = 0.35, face = 0.55, round = 10): Outline {
   const h = L / 2;
   const x0 = h - cabLen;
   const w = W / 2 - 0.05;

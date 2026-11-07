@@ -8,9 +8,9 @@
  */
 
 import { finish, newKit, PAINT, type Kit, type Template } from './kit';
-import { blob, block, body, fin, plate, ring, tube } from './parts';
+import { blob, block, body, fin, outlineBody, plate, prism, ring, tube, type Outline, type P2 } from './parts';
 import type { Section } from '../race/shapes';
-import type { Rgb } from '../race/geometry';
+import type { Rgb, Vec3 } from '../race/geometry';
 import { wheel } from '../race/shapes';
 
 const grey = (k: number): Rgb => [k, k, k];
@@ -21,6 +21,36 @@ export interface RideSpec {
   kind: RideKind;
   length: number;
   width: number;
+  /** The ride's own shape from outlines, drawn in place of its kind's generic one. */
+  shape?: RideShape;
+}
+
+/**
+ * A ride drawn from outlines, in its own frame (forward from the middle, out to the right, up from the ground): its
+ * bodies (tank and seat, a sidecar's boat, a horse's barrel and neck), wheels, a track's side profile drawn on both
+ * sides, rods (forks, legs, a tail) and where its riders sit.
+ */
+export interface RideShape {
+  bodies: Outline[];
+  wheels?: { x: number; side: number; r: number; w: number }[];
+  track?: { profile: P2[]; side: number; width: number; wheels?: number[]; r?: number };
+  /** Rods as (from, to, radius); `fixed` ones keep their dark paint (forks, handlebars). */
+  rods?: { a: Vec3; b: Vec3; r: number; fixed?: boolean }[];
+  riders: { x: number; seat: number; side?: number }[];
+}
+
+function buildShape(k: Kit, shape: RideShape): void {
+  for (const o of shape.bodies) outlineBody(k.team, k.fr, o, grey(0.86), 12);
+  for (const w of shape.wheels ?? []) wheelAt(k, w.x, w.side, w.r, w.w);
+  const t = shape.track;
+  if (t) {
+    for (const s of [-1, 1]) {
+      prism(k.fixed, k.fr, t.profile, s * t.side - t.width / 2, s * t.side + t.width / 2, PAINT.track);
+      for (const x of t.wheels ?? []) wheelAt(k, x, s * (t.side + t.width / 2 + 0.01), t.r ?? 0.2, 0.04);
+    }
+  }
+  for (const r of shape.rods ?? []) tube(r.fixed ? k.fixed : k.team, k.fr, r.a, r.b, r.r, r.r * 0.85, r.fixed ? PAINT.dark : grey(0.7), 6);
+  for (const r of shape.riders) rider(k, r.x, r.seat, r.side ?? 0);
 }
 
 /** A rider sitting at (x, 0, seat): legs, body, helmet. */
@@ -42,6 +72,10 @@ export function buildRide(spec: RideSpec): Template {
   const L = spec.length;
   const W = spec.width;
   const half = L / 2;
+  if (spec.shape) {
+    buildShape(k, spec.shape);
+    return finish(k, 'ground');
+  }
   switch (spec.kind) {
     case 'motorcycle':
     case 'sidecar': {
