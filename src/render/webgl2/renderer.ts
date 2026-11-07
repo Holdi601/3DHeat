@@ -1,3 +1,4 @@
+import { GlFigures } from './figures';
 import { ATLAS_MIP_LEVELS } from '../../data/atlas';
 import { packLineStarts, type LineData } from '../../data/lines';
 import { CURVE_LUT_SIZE } from '../../state/curve';
@@ -269,6 +270,8 @@ export class Webgl2Renderer implements Renderer {
   private overlayBuf: WebGLBuffer;
   private overlayCapacity = 0;
   private triVao: WebGLVertexArrayObject;
+  /** Instanced figures, made on first use. */
+  private figures: GlFigures | null = null;
   private triBuf: WebGLBuffer;
   private triCapacity = 0;
 
@@ -1290,6 +1293,10 @@ export class Webgl2Renderer implements Renderer {
       }
     }
 
+    if (params.figureBatches && params.figureBatches.length) {
+      this.figures ??= new GlFigures(this.gl);
+      this.figures.draw(params.figureBatches, params.viewProj, params.cameraPos);
+    }
     if (params.sceneTris && params.sceneTriVertCount > 0) this.drawSceneTris(params, params.sceneTris, params.sceneTriVertCount);
     if (params.trailVerts && params.trailVertCount > 0) {
       this.drawDynamicLines(params, params.trailVerts, params.trailVertCount, this.trailVao, this.trailBuf, 'trail');
@@ -2770,6 +2777,8 @@ export class Webgl2Renderer implements Renderer {
 
   dispose(): void {
     const gl = this.gl;
+    this.figures?.dispose();
+    this.figures = null;
     for (const c of this.chunks) {
       gl.deleteTexture(c.posTex);
       if (c.timeTex) gl.deleteTexture(c.timeTex);

@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# sor} other {# sor}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# sor} other {# sor}}",
   "heat.sessionPicker.allHint": "Minden munkamenet egyszerre. A pozíciók munkamenet-határon át ekkor sem interpolálódnak, de az egyidejű meccsek egymástól független játékosokat tesznek együtt a térképre — egy meccs visszajátszásához válassz ki egyet.",
-  "heat.sessionPicker.seekHint": "A hő módokban ez csak a lejátszófejet viszi a munkamenet elejére; a hő továbbra is minden munkamenetet beszámít. A Dobozos visszajátszás csak a kiválasztott munkamenetet játssza le.",
+  "heat.sessionPicker.seekHint": "A hő módokban ez csak a lejátszófejet viszi a munkamenet elejére; a hő továbbra is minden munkamenetet beszámít. A figurás visszajátszás (Meccs lap) csak a kiválasztott munkamenetet játssza le.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Eltávolítás",
   "heat.entityPanel.title": "Entitások",
   "heat.entityPanel.selectedOf": "{selected} / {total}",
-  "heat.entityPanel.hint": "Csak a kijelölt entitásokat mutatja, a hőtérképen és a dobozos visszajátszásban egyaránt. Hagyd üresen, hogy mindenki látsszon.",
-  "heat.entityPanel.noSlot": "A hőtérképre nem érvényesül: minden szűrőhely foglalt. A dobozos visszajátszás továbbra is csak ezeket az entitásokat mutatja. Hely felszabadításához törölj egy szűrőt a Szűrők alatt.",
+  "heat.entityPanel.hint": "Csak a kijelölt entitásokat mutatja, a hőtérképen és a figurás visszajátszásban egyaránt. Hagyd üresen, hogy mindenki látsszon.",
+  "heat.entityPanel.noSlot": "A hőtérképre nem érvényesül: minden szűrőhely foglalt. A figurás visszajátszás továbbra is csak ezeket az entitásokat mutatja. Hely felszabadításához törölj egy szűrőt a Szűrők alatt.",
   "heat.entityPanel.search": "{count, plural, one {Keresés # entitás között…} other {Keresés # entitás között…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# találat} other {# találat}}, az első {page} látható",
   "heat.entityPanel.matches": "{count, plural, one {# találat} other {# találat}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# út} other {# út}}, ebből {ended} ér el véget, {segments, plural, one {# szakasz} other {# szakasz}}",
   "heat.teamPanel.figures": "Figurák kockák helyett",
   "heat.teamPanel.figuresTitle": "Mindenki annak a figurájaként, ami: gyalogos katona, vagy az a harckocsi, repülő, amit az adatok megneveznek (Name, Vehicle, Type oszlopok). Akiről az adatok nem mondanak semmit, kocka marad.",
-  "heat.teamPanel.figureScale": "Figuraméret"
+  "heat.teamPanel.figureScale": "Figuraméret",
+  "heat.teamPanel.figurePixels": "Legkisebb figura a képernyőn",
+  "heat.teamPanel.figurePixelsHint": "Közelről valódi méretben; távolabb a figurák nőnek, hogy ennyi pixel hosszúak maradjanak. 0: mindig valódi méret.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "valódi méret",
+  "heat.teamPanel.weapons": "Fegyverek, lövések és találatok",
+  "heat.teamPanel.weaponsTitle": "Repülő fegyverek füsttel, nyomjelzők, becsapódások, találatok és megsemmisítések. A találatból kikövetkeztetett nyomjelzők szaggatottak."
 }

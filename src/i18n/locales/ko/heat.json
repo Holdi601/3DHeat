@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, other {#개 행}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, other {#개 행}}",
   "heat.sessionPicker.allHint": "모든 세션을 한꺼번에. 세션 경계를 넘어 위치를 보간하지는 않지만, 동시에 진행된 매치들은 관계없는 플레이어들을 한 맵에 함께 올립니다 — 매치를 재생하려면 하나를 고르세요.",
-  "heat.sessionPicker.seekHint": "히트 모드에서는 재생 헤드를 세션 시작으로 옮길 뿐이며, 히트는 여전히 모든 세션을 셉니다. 박스 리플레이는 선택한 세션만 재생합니다.",
+  "heat.sessionPicker.seekHint": "히트 모드에서는 재생 헤드를 세션 시작으로 옮길 뿐이며, 히트는 여전히 모든 세션을 셉니다. 피규어 리플레이(매치 탭)는 선택한 세션만 재생합니다.",
   "heat.sessionPicker.seconds": "{value}s",
   "heat.sessionPicker.minutes": "{value}m",
   "heat.sessionPicker.hours": "{value}h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "내리기",
   "heat.entityPanel.title": "개체",
   "heat.entityPanel.selectedOf": "{total}개 중 {selected}개",
-  "heat.entityPanel.hint": "선택한 개체만 히트와 박스 리플레이 모두에 표시합니다. 비워 두면 모두 표시합니다.",
-  "heat.entityPanel.noSlot": "히트에는 적용되지 않았습니다: 필터 슬롯이 모두 사용 중입니다. 박스 리플레이에는 여전히 이 개체만 표시됩니다. ‘필터’에서 필터 하나를 지우면 슬롯이 비워집니다.",
+  "heat.entityPanel.hint": "선택한 개체만 히트와 피규어 리플레이 모두에 표시합니다. 비워 두면 모두 표시합니다.",
+  "heat.entityPanel.noSlot": "히트에는 적용되지 않았습니다: 필터 슬롯이 모두 사용 중입니다. 피규어 리플레이에는 여전히 이 개체만 표시됩니다. ‘필터’에서 필터 하나를 지우면 슬롯이 비워집니다.",
   "heat.entityPanel.search": "{count, plural, other {개체 #개 검색…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, other {#개 일치}}, 처음 {page}개 표시",
   "heat.entityPanel.matches": "{count, plural, other {#개 일치}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "경로 {routes, plural, other {#개}}(그중 {ended}개가 끝에 도달), 구간 {segments, plural, other {#개}}",
   "heat.teamPanel.figures": "상자 대신 피규어",
   "heat.teamPanel.figuresTitle": "각 사람을 그 정체의 피규어로 표시합니다: 도보 병사, 또는 데이터가 가리키는 전차나 항공기(Name, Vehicle, Type 열). 데이터가 아무것도 말해 주지 않는 것은 상자로 남습니다.",
-  "heat.teamPanel.figureScale": "피규어 크기"
+  "heat.teamPanel.figureScale": "피규어 크기",
+  "heat.teamPanel.figurePixels": "화면의 최소 피규어 크기",
+  "heat.teamPanel.figurePixelsHint": "가까이서는 실제 크기, 멀리서는 이 픽셀 길이를 유지하도록 커집니다. 0: 항상 실제 크기.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "실제 크기",
+  "heat.teamPanel.weapons": "무기, 사격, 명중",
+  "heat.teamPanel.weaponsTitle": "비행 중인 무기와 연기, 예광탄, 탄착, 명중, 격파. 명중에서 추정한 예광탄은 점선으로 표시됩니다."
 }

@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} – {count, plural, one {# rând} few {# rânduri} other {# de rânduri}}, {span}",
   "heat.sessionPicker.option": "{session} – {count, plural, one {# rând} few {# rânduri} other {# de rânduri}}",
   "heat.sessionPicker.allHint": "Toate sesiunile deodată. Pozițiile tot nu sunt interpolate niciodată peste granița dintre sesiuni, dar meciurile simultane pun pe hartă, împreună, jucători fără legătură între ei – alegeți una pentru a reda un meci.",
-  "heat.sessionPicker.seekHint": "În modurile de căldură, aceasta doar mută capul de redare la începutul sesiunii; căldura numără în continuare toate sesiunile. Reluarea cu cutii redă doar sesiunea aleasă.",
+  "heat.sessionPicker.seekHint": "În modurile de căldură, aceasta doar mută capul de redare la începutul sesiunii; căldura numără în continuare toate sesiunile. Reluarea cu figuri (fila Meci) redă doar sesiunea aleasă.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Descarcă",
   "heat.entityPanel.title": "Entități",
   "heat.entityPanel.selectedOf": "{selected} din {total}",
-  "heat.entityPanel.hint": "Arată doar entitățile selectate, atât în căldură, cât și în reluarea cu cutii. Lăsați gol pentru a-i afișa pe toți.",
-  "heat.entityPanel.noSlot": "Nu se aplică la căldură: toate sloturile de filtre sunt ocupate. Reluarea cu cutii arată în continuare doar aceste entități. Eliminați un filtru din „Filtre” pentru a elibera un slot.",
+  "heat.entityPanel.hint": "Arată doar entitățile selectate, atât în căldură, cât și în reluarea cu figuri. Lăsați gol pentru a-i afișa pe toți.",
+  "heat.entityPanel.noSlot": "Nu se aplică la căldură: toate sloturile de filtre sunt ocupate. Reluarea cu figuri arată în continuare doar aceste entități. Eliminați un filtru din „Filtre” pentru a elibera un slot.",
   "heat.entityPanel.search": "{count, plural, one {Căutați în # entitate…} few {Căutați în # entități…} other {Căutați în # de entități…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# rezultat} few {# rezultate} other {# de rezultate}}, se afișează primele {page}",
   "heat.entityPanel.matches": "{count, plural, one {# rezultat} few {# rezultate} other {# de rezultate}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# rută} few {# rute} other {# de rute}}, dintre care {ended} ajung la un sfârșit, {segments, plural, one {# segment} few {# segmente} other {# de segmente}}",
   "heat.teamPanel.figures": "Figuri în loc de cuburi",
   "heat.teamPanel.figuresTitle": "Fiecare persoană ca figura a ceea ce este: un soldat pe jos, tancul sau aeronava pe care o numesc datele (coloanele Name, Vehicle, Type). Despre ce datele nu spun nimic rămâne un cub.",
-  "heat.teamPanel.figureScale": "Mărimea figurilor"
+  "heat.teamPanel.figureScale": "Mărimea figurilor",
+  "heat.teamPanel.figurePixels": "Cea mai mică figură pe ecran",
+  "heat.teamPanel.figurePixelsHint": "Mărime reală de aproape; mai departe figurile cresc ca să rămână atâția pixeli de lungi. 0: mereu mărime reală.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "mărime reală",
+  "heat.teamPanel.weapons": "Arme, trageri și lovituri",
+  "heat.teamPanel.weaponsTitle": "Arme în zbor cu fum, trasoare, impacturi, lovituri și doborâri. Trasoarele deduse dintr-o lovitură sunt punctate."
 }

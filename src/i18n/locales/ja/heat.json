@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, other {#行}}、{span}",
   "heat.sessionPicker.option": "{session} — {count, plural, other {#行}}",
   "heat.sessionPicker.allHint": "全セッションを同時に表示します。セッションの境界をまたいで位置が補間されることはありませんが、同時進行のマッチでは無関係なプレイヤーが同じマップに並びます — マッチを再生するには1つ選んでください。",
-  "heat.sessionPicker.seekHint": "ヒート系のモードでは、再生位置がセッションの開始に移動するだけで、ヒートは引き続きすべてのセッションを集計します。ボックスリプレイでは選んだセッションだけを再生します。",
+  "heat.sessionPicker.seekHint": "ヒート系のモードでは、再生位置がセッションの開始に移動するだけで、ヒートは引き続きすべてのセッションを集計します。フィギュアリプレイ（マッチタブ）では選んだセッションだけを再生します。",
   "heat.sessionPicker.seconds": "{value}s",
   "heat.sessionPicker.minutes": "{value}m",
   "heat.sessionPicker.hours": "{value}h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "アンロード",
   "heat.entityPanel.title": "エンティティ",
   "heat.entityPanel.selectedOf": "{total}中{selected}",
-  "heat.entityPanel.hint": "選択したエンティティだけを、ヒートでもボックスリプレイでも表示します。空のままにすると全員を表示します。",
-  "heat.entityPanel.noSlot": "ヒートには適用されていません：フィルターのスロットがすべて使われています。ボックスリプレイでは引き続きこれらのエンティティだけが表示されます。「フィルター」でフィルターを1つクリアするとスロットが空きます。",
+  "heat.entityPanel.hint": "選択したエンティティだけを、ヒートでもフィギュアリプレイでも表示します。空のままにすると全員を表示します。",
+  "heat.entityPanel.noSlot": "ヒートには適用されていません：フィルターのスロットがすべて使われています。フィギュアリプレイでは引き続きこれらのエンティティだけが表示されます。「フィルター」でフィルターを1つクリアするとスロットが空きます。",
   "heat.entityPanel.search": "{count, plural, other {#件のエンティティを検索…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, other {#件が一致}}、最初の{page}件を表示",
   "heat.entityPanel.matches": "{count, plural, other {#件が一致}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, other {#本のルート}}（うち{ended}本が終了に到達）、{segments, plural, other {#区間}}",
   "heat.teamPanel.figures": "ボックスの代わりにフィギュア",
   "heat.teamPanel.figuresTitle": "各人物をその正体のフィギュアで表示します：徒歩の兵士、またはデータが示す戦車や航空機（Name、Vehicle、Type列）。データから分からないものはボックスのままです。",
-  "heat.teamPanel.figureScale": "フィギュアのサイズ"
+  "heat.teamPanel.figureScale": "フィギュアのサイズ",
+  "heat.teamPanel.figurePixels": "画面上の最小フィギュア",
+  "heat.teamPanel.figurePixelsHint": "近くでは実寸、遠くではこのピクセル長を保つように拡大します。0: 常に実寸。",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "実寸",
+  "heat.teamPanel.weapons": "武器・射撃・命中",
+  "heat.teamPanel.weaponsTitle": "飛行中の武器と煙、曳光弾、着弾、命中、撃破。命中から推定した曳光弾は破線で表示します。"
 }

@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# рядок} few {# рядки} many {# рядків} other {# рядка}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# рядок} few {# рядки} many {# рядків} other {# рядка}}",
   "heat.sessionPicker.allHint": "Усі сесії одразу. Позиції, як і раніше, ніколи не інтерполюються через межу сесії, але одночасні матчі виводять на карту разом гравців, не пов’язаних між собою, — виберіть одну сесію, щоб відтворити матч.",
-  "heat.sessionPicker.seekHint": "У режимах тепла це лише переносить точку відтворення на початок сесії; тепло, як і раніше, враховує всі сесії. Повтор блоками відтворює лише вибрану сесію.",
+  "heat.sessionPicker.seekHint": "У режимах тепла це лише переносить точку відтворення на початок сесії; тепло, як і раніше, враховує всі сесії. Повтор фігурами (вкладка «Матч») відтворює лише вибрану сесію.",
   "heat.sessionPicker.seconds": "{value}s",
   "heat.sessionPicker.minutes": "{value}m",
   "heat.sessionPicker.hours": "{value}h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Вивантажити",
   "heat.entityPanel.title": "Об’єкти",
   "heat.entityPanel.selectedOf": "{selected} з {total}",
-  "heat.entityPanel.hint": "Показує лише вибрані об’єкти — і в теплі, і в повторі блоками. Залиште порожнім, щоб показувати всіх.",
-  "heat.entityPanel.noSlot": "До тепла не застосовано: усі слоти фільтрів зайняті. Повтор блоками й далі показує лише ці об’єкти. Приберіть фільтр у розділі «Фільтри», щоб звільнити слот.",
+  "heat.entityPanel.hint": "Показує лише вибрані об’єкти — і в теплі, і в повторі фігурами. Залиште порожнім, щоб показувати всіх.",
+  "heat.entityPanel.noSlot": "До тепла не застосовано: усі слоти фільтрів зайняті. Повтор фігурами й далі показує лише ці об’єкти. Приберіть фільтр у розділі «Фільтри», щоб звільнити слот.",
   "heat.entityPanel.search": "{count, plural, one {Пошук серед # об’єкта…} few {Пошук серед # об’єктів…} many {Пошук серед # об’єктів…} other {Пошук серед # об’єкта…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# збіг} few {# збіги} many {# збігів} other {# збігу}}, показано перші {page}",
   "heat.entityPanel.matches": "{count, plural, one {# збіг} few {# збіги} many {# збігів} other {# збігу}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# маршрут} few {# маршрути} many {# маршрутів} other {# маршруту}}, з них до кінця доходять {ended}, {segments, plural, one {# відрізок} few {# відрізки} many {# відрізків} other {# відрізка}}",
   "heat.teamPanel.figures": "Фігури замість кубів",
   "heat.teamPanel.figuresTitle": "Кожна людина — фігура того, ким вона є: піший солдат, танк чи літак, названі в даних (стовпці Name, Vehicle, Type). Про кого дані нічого не кажуть, лишається кубом.",
-  "heat.teamPanel.figureScale": "Розмір фігур"
+  "heat.teamPanel.figureScale": "Розмір фігур",
+  "heat.teamPanel.figurePixels": "Найменша фігура на екрані",
+  "heat.teamPanel.figurePixelsHint": "Зблизька в натуральну величину; далі фігури ростуть, щоб лишатися такої довжини в пікселях. 0: завжди натуральна величина.",
+  "heat.teamPanel.pixels": "{value} пкс",
+  "heat.teamPanel.trueSize": "натуральна величина",
+  "heat.teamPanel.weapons": "Зброя, постріли й влучання",
+  "heat.teamPanel.weaponsTitle": "Зброя в польоті з димом, трасери, розриви, влучання та знищення. Трасери, виведені з влучання, пунктирні."
 }

@@ -9,6 +9,10 @@ import { RaceScene } from '../race/scene';
 import { BoardScene, templateOf } from '../tactics/scene';
 import { FigureReplay } from '../figures/replay';
 import { EffectLayer } from '../figures/effects';
+import { emptySample, MotionModel, MotionRefiner } from '../figures/motion';
+import { WeaponLayer } from './weapons';
+import type { FigureBatch } from '../figures/instances';
+import { VertexBuffer } from '../race/geometry';
 import { useReplayStore } from '../state/replayStore';
 import { dropLinesOn, unitsPerMetre } from '../ui/replay/replayData';
 import { figureNear, usePlanStore } from '../state/planStore';
@@ -425,13 +429,23 @@ export class Engine {
   private readonly figureReplay = new FigureReplay();
   /** Smokes, fires and the bomb from the event rows, in box replay. */
   private readonly effects = new EffectLayer();
+  /** Box replay's motion between samples: smooth curves and shortest-arc attitudes (figures/motion.ts). */
+  private readonly motion = new MotionRefiner();
+  private readonly motionSample = emptySample();
+  /** Weapons, shots, hits and kills in box replay (render/weapons.ts). */
+  private readonly weapons = new WeaponLayer();
+  private readonly weaponTris = new VertexBuffer();
+  private smoothTrailBuf = new Float32Array(0);
   private figureTris: { data: Float32Array; count: number } | null = null;
+  /** Box replay's figures as GPU instances this frame (`figures/instances.ts`). */
+  private figureBatches: FigureBatch[] | null = null;
   /**
    * Box replay's live tracks as last built: who, which row, where, which way
    * (box yaw). What the replay's labels and the follow camera read.
    */
   liveTracks: { person: number; row: number; x: number; y: number; z: number; yaw: number }[] = [];
-  private followCam: { x: number; y: number; z: number; yaw: number } | null = null;
+  /** The follow camera as it last set the view (display space): the eased unit, its heading, the orbit, the pose. */
+  private followCam: { person: number; fx: number; fy: number; fz: number; head: number; rel: number; yaw: number; pitch: number; px: number; py: number; pz: number } | null = null;
   /** Trails and drop lines together, reused frame to frame. */
   private dropBuf = new Float32Array(0);
   private boardCursor: { x: number; y: number; z: number } | null = null;
@@ -945,6 +959,82 @@ export class Engine {
     const above =
       top === undefined || !level ? 0 : p.y - top - 0.1 * Math.max(level.bounds.maxX - level.bounds.minX, level.bounds.maxZ - level.bounds.minZ);
     return Math.max(near, 0.02 * Math.max(outside, above));
+  }
+
+  /**
+   * The person whose figure is under a CSS-pixel canvas position, the nearest
+   * along the view ray; null when no figure is there. Picks by the figure as
+   * drawn (turned, and grown to its on-screen minimum), so a click on a wing
+   * is that aircraft, not whichever track's centre lies nearest the pointer.
+   */
+  figureAt(cssX: number, cssY: number): number | null {
+    const d = this.dataset;
+    const ray = this.rayAt(cssX, cssY);
+    if (!d?.personId || !ray || !this.figureBatches) return null;
+    const box = this.figureReplay.hit([ray.origin.x, ray.origin.y, ray.origin.z], [ray.dir.x, ray.dir.y, ray.dir.z]);
+    const row = box >= 0 && this.cursor ? this.cursor.cubeRows[box] : -1;
+    return row >= 0 ? d.personId[row] : null;
+  }
+
+  /** How many times true size a person's figure was drawn last frame (1 when not drawn as a figure). */
+  figureScaleAt(person: number): number {
+    return this.figureReplay.drawnScale.get(person) ?? 1;
+  }
+
+  /**
+   * Trails along the motion curves of the live tracks: line segments,
+   * newest opaque and fading backwards, as `TrackCursor.buildTrails` draws
+   * them sample to sample - but through the samples on the curve the boxes
+   * move along, and up to the box itself.
+   */
+  private smoothTrails(d: Dataset, motion: MotionModel, t: number, seconds: number, session: number): { data: Float32Array; count: number } {
+    const tracks = this.liveTracks;
+    const maxVerts = 1 << 17;
+    const step = Math.max(0.04, (tracks.length * seconds * 2.5) / maxVerts);
+    const need = maxVerts * 7;
+    if (this.smoothTrailBuf.length < need) this.smoothTrailBuf = new Float32Array(need);
+    const out = this.smoothTrailBuf;
+    let v = 0;
+    let px = 0;
+    let py = 0;
+    let pz = 0;
+    let pa = 0;
+    const seen = new Set<number>();
+    for (const tr of tracks) {
+      const p = tr.person;
+      if (seen.has(p) || (d.personShared && d.personShared[p])) continue;
+      seen.add(p);
+      const [r, g, b] = this.cursor!.personColor(p);
+      motion.trail(p, t - seconds, t, step, this.motionSample, (sm, ts, join) => {
+        const a = Math.max(0, Math.min(1, 1 - (t - ts) / seconds)) * 0.8;
+        if (join && session >= 0 && d.sessionId && d.sessionId[motion.knots[motion.knotAt(p, ts)]] !== session) join = false;
+        if (join) {
+          if (v + 2 > maxVerts) return false;
+          let o = v * 7;
+          out[o++] = px;
+          out[o++] = py;
+          out[o++] = pz;
+          out[o++] = r;
+          out[o++] = g;
+          out[o++] = b;
+          out[o++] = pa;
+          out[o++] = sm.x;
+          out[o++] = sm.y;
+          out[o++] = sm.z;
+          out[o++] = r;
+          out[o++] = g;
+          out[o++] = b;
+          out[o++] = a;
+          v += 2;
+        }
+        px = sm.x;
+        py = sm.y;
+        pz = sm.z;
+        pa = a;
+        return true;
+      });
+    }
+    return { data: out, count: v };
   }
 
   /** A world point as the camera sees it, or back: the mirror is its own inverse. */
@@ -1906,6 +1996,13 @@ export class Engine {
       this.cursor.update(cursorAt);
 
       const drawEverySample = showAll || s.team.showRawSamples;
+      let motion: MotionModel | null = null;
+      // Data units a pixel covers at a point, for figures and weapons kept a few pixels big at distance.
+      const eye: [number, number, number] = [this.camPos[0], this.camPos[1], this.camPos[2]];
+      const hgt = Math.max(1, this.canvas.clientHeight);
+      const focal = hgt / (2 * Math.tan((s.camera.fov * Math.PI) / 360));
+      const ortho = this.camera.projection !== 'perspective' ? this.camera.orthoHeight / hgt : 0;
+      const pixelSize = ortho ? () => ortho : (x: number, y: number, z: number) => Math.hypot(x - eye[0], y - eye[1], z - eye[2]) / focal;
       if (drawEverySample) {
         const span = showAll
           ? Number.POSITIVE_INFINITY
@@ -1926,6 +2023,11 @@ export class Engine {
         );
         cubes = live.data;
         cubeCount = live.count;
+        // On their curves rather than straight from sample to sample, turned the short way round.
+        if (s.team.interpolate && this.dataset) {
+          motion = this.motion.refine(this.dataset, cubes, CUBE_STRIDE, cubeCount, this.cursor.cubeRows, cursorAt, s.team.session);
+          cubeCount = this.motion.count;
+        }
       }
       this.pickCubes = {
         data: cubes,
@@ -1933,6 +2035,8 @@ export class Engine {
         count: cubeCount,
         rows: this.cursor.cubeRows,
         size: s.team.cubeSize,
+        // Filled in below when the boxes are drawn as figures: a click picks the figure it lands on.
+        figureHit: undefined as ((origin: [number, number, number], dir: [number, number, number]) => number) | undefined,
       };
       // The live tracks, for the labels and the follow camera.
       const tracks: typeof this.liveTracks = [];
@@ -1947,15 +2051,23 @@ export class Engine {
       this.liveTracks = tracks;
       // Clicks still answer every person; only the drawing changes.
       this.figureTris = null;
+      this.figureBatches = null;
+      const liveCubes = cubes;
+      const liveCount = cubeCount;
       if (s.team.figures && this.dataset && !drawEverySample) {
         // Each live box as its figure; what has none stays a box. A data unit is
         // a metre unless the data says how big one tracked thing is (a CS2 player
-        // is 32 units across, about 0.8 m).
+        // is 32 units across, about 0.8 m). True size up close, and never
+        // smaller on screen than `figurePixels`, as Tacview draws them.
         const units = unitsPerMetre(this.dataset);
         const fr = this.figureReplay;
         fr.build(this.dataset, cubes, cubeCount, this.cursor.cubeRows, {
           scale: units * Math.max(0.01, s.team.figureScale),
           unknown: fr.knowsTypes(this.dataset) ? 'box' : 'soldier',
+          minPixels: s.team.figurePixels,
+          pixelSize,
+          poses: motion ? this.motion.poses : undefined,
+          posed: motion ? this.motion.posed : undefined,
         });
         // What the events leave behind for a while, in the thrower's colour.
         const d = this.dataset;
@@ -1965,11 +2077,52 @@ export class Engine {
           return teamMemberColor(team, d.personSlot ? d.personSlot[p] : p, d.teamSizes ? d.teamSizes[team] : 1);
         }, fr.tris);
         this.figureTris = { data: fr.tris.data, count: fr.tris.count };
+        this.figureBatches = fr.batches.list;
+        if (this.pickCubes) this.pickCubes.figureHit = (o, dir) => fr.hit(o, dir);
         cubes = fr.rest;
         cubeCount = fr.restCount;
       }
+      // Weapons, shots, hits and kills, onto the figures' triangles (or their own without figures).
+      if (s.team.weapons && this.dataset && !drawEverySample && liveCubes) {
+        const d = this.dataset;
+        const fr = this.figureReplay;
+        const out = this.figureTris ? fr.tris : this.weaponTris;
+        if (!this.figureTris) {
+          this.weaponTris.reset();
+          fr.kindsDrawn.length = liveCount;
+          for (let i = 0; i < liveCount; i++) {
+            const row = this.cursor.cubeRows[i];
+            fr.kindsDrawn[i] = row < 0 ? '' : (fr.kindOf(d, row) ?? fr.specialOf(d, row));
+          }
+        }
+        const inspector = this.inspector;
+        const drawn = this.weapons.build(
+          d,
+          {
+            t: cursorAt,
+            session: s.team.session,
+            eye,
+            pixelSize,
+            motion: motion ?? MotionModel.of(d),
+            kindOfRow: (row) => fr.kindOf(d, row),
+            colorOfPerson: (p) => this.cursor!.personColor(p),
+            ground: (a, dir, len) => {
+              if (!inspector.surfaceState.ready) return undefined;
+              const hit = inspector.surfaceHit({ origin: { x: a[0], y: a[1], z: a[2] }, dir: { x: dir[0], y: dir[1], z: dir[2] } });
+              if (!hit) return null;
+              const along = (hit.x - a[0]) * dir[0] + (hit.y - a[1]) * dir[1] + (hit.z - a[2]) * dir[2];
+              return along >= 0 && along <= len ? along : null;
+            },
+          },
+          { cubes: liveCubes, stride: CUBE_STRIDE, count: liveCount, rows: this.cursor.cubeRows, kinds: fr.kindsDrawn },
+          out,
+        );
+        if (this.figureTris) this.figureTris = { data: fr.tris.data, count: fr.tris.count };
+        else if (drawn > 0) this.figureTris = { data: this.weaponTris.data, count: this.weaponTris.count };
+      }
       if (s.team.trailSeconds > 0 && !drawEverySample) {
-        const tr = this.cursor.buildTrails(cursorAt, s.team.trailSeconds, visible);
+        // Along the same curves the boxes move on, where there is one; else sample to sample.
+        const tr = motion && this.dataset ? this.smoothTrails(this.dataset, motion, cursorAt, s.team.trailSeconds, s.team.session) : this.cursor.buildTrails(cursorAt, s.team.trailSeconds, visible);
         trailVerts = tr.data;
         trailVertCount = tr.count;
       }
@@ -2158,6 +2311,7 @@ export class Engine {
       trailVertCount,
       sceneTris,
       sceneTriVertCount,
+      figureBatches: !raceBuilt && s.mode === 'team' ? this.figureBatches : null,
       overlayVerts,
       overlayVertCount,
       level: buildLevelDraw(s.level),
@@ -2279,38 +2433,89 @@ export class Engine {
   }
 
   /**
-   * Box replay's follow camera: behind and above the followed track, along
-   * its heading, eased so a turn does not whip the view. One frame behind the
-   * tracks, which are built after the camera.
+   * The match replay's follow camera: an orbit around the followed unit that
+   * goes where it goes. Dragging turns the view around it, the wheel and W/S
+   * move in and out (`followDistance`), A/D and Q/E orbit. In chase mode the
+   * orbit turns with the unit's heading - behind it stays behind it - and in
+   * orbit mode it keeps its own direction, as Tacview's two external views.
+   *
+   * The camera's own yaw and pitch are the orbit angles: what the user turned
+   * since the last frame is read off them, and the keyboard's flying off the
+   * position it moved to. The unit is eased a little, so a sparsely sampled
+   * track does not shake the view; the angles are not, so input is immediate.
+   * One frame behind the tracks, which are built after the camera.
    */
   private followTrack(s: ReturnType<typeof snapshot>): void {
-    const follow = useReplayStore.getState().follow;
+    const r = useReplayStore.getState();
+    const follow = r.follow;
     if (follow === null || s.mode !== 'team') {
       this.followCam = null;
       return;
     }
     const t = this.liveTracks.find((x) => x.person === follow);
     if (!t) return;
+    const c = this.camera;
     const units = this.dataset ? unitsPerMetre(this.dataset) : 1;
-    // Grows with the figures: a fighter drawn 40 times its size is followed from 40 times as far.
-    const back = useReplayStore.getState().followDistance * units * Math.max(1, s.team.figures ? s.team.figureScale : 1);
-    const up = back * 0.3;
     const [mx, my, mz] = this.mirror;
-    // Box yaw looks along -z at 0; the heading as the race camera takes it (sin = dx, cos = dz).
-    const course0 = Math.PI - t.yaw;
-    const course = Math.atan2(Math.sin(course0) * mx, Math.cos(course0) * mz);
-    const yaw = Math.atan2(-Math.sin(course), -Math.cos(course));
-    const target = { x: t.x * mx - Math.sin(course) * back, y: t.y * my + up, z: t.z * mz - Math.cos(course) * back, yaw };
-    const c = this.followCam ?? target;
-    const k = 0.15;
-    let dyaw = target.yaw - c.yaw;
-    while (dyaw > Math.PI) dyaw -= 2 * Math.PI;
-    while (dyaw < -Math.PI) dyaw += 2 * Math.PI;
-    this.followCam = { x: c.x + (target.x - c.x) * k, y: c.y + (target.y - c.y) * k, z: c.z + (target.z - c.z) * k, yaw: c.yaw + dyaw * k };
-    this.camera.position.set(this.followCam.x, this.followCam.y, this.followCam.z);
-    this.camera.yaw = this.followCam.yaw;
-    this.camera.pitch = -Math.atan2(up, back) * 0.8;
-    this.camera.moved = true;
+    const target = { x: t.x * mx, y: t.y * my, z: t.z * mz };
+    // The unit's heading as a camera yaw: box yaw is a compass heading, forward (sin, 0, -cos) in the world.
+    const headYaw = Math.atan2(-Math.sin(t.yaw) * mx, Math.cos(t.yaw) * mz);
+    const wrap = (a: number) => {
+      while (a > Math.PI) a -= 2 * Math.PI;
+      while (a < -Math.PI) a += 2 * Math.PI;
+      return a;
+    };
+    let f = this.followCam;
+    if (!f) {
+      // Starting: behind and a little above in chase, from where the camera already looks in orbit.
+      const rel = r.followMode === 'chase' ? 0 : wrap(c.yaw - headYaw);
+      f = { person: follow, fx: target.x, fy: target.y, fz: target.z, head: headYaw, rel, yaw: headYaw + rel, pitch: -0.3, px: c.position.x, py: c.position.y, pz: c.position.z };
+      // Nothing turned yet.
+      c.yaw = f.yaw;
+      c.pitch = f.pitch;
+    }
+    // What the user did since the last frame: turned the camera (a drag, the pad) ...
+    const dyaw = wrap(c.yaw - f.yaw);
+    let pitch = c.pitch;
+    // ... or flew it with the keyboard: forward and back zoom, sideways and up and down orbit.
+    const mvx = c.position.x - f.px;
+    const mvy = c.position.y - f.py;
+    const mvz = c.position.z - f.pz;
+    let rel = f.rel + dyaw;
+    let distance = r.followDistance;
+    if (Math.hypot(mvx, mvy, mvz) > 1e-9) {
+      const cp = Math.cos(f.pitch);
+      const fwd = [-Math.sin(f.yaw) * cp, Math.sin(f.pitch), -Math.cos(f.yaw) * cp];
+      const along = mvx * fwd[0] + mvy * fwd[1] + mvz * fwd[2];
+      const side = mvx * Math.cos(f.yaw) - mvz * Math.sin(f.yaw);
+      const rise = mvy - along * fwd[1];
+      const m = Math.hypot(mvx, mvy, mvz);
+      if (Math.abs(along) > m * 0.3) distance *= along > 0 ? 0.975 : 1 / 0.975;
+      if (Math.abs(side) > m * 0.3) rel -= Math.sign(side) * 0.025;
+      if (Math.abs(rise) > m * 0.3) pitch -= Math.sign(rise) * 0.02;
+      if (distance !== r.followDistance) r.setFollowDistance(distance);
+    }
+    pitch = Math.max(-1.45, Math.min(1.2, pitch));
+    // A new life of the unit somewhere else: no glide across the map to it.
+    const jump = f.person !== follow;
+    const ke = jump ? 1 : 0.45;
+    const fx = f.fx + (target.x - f.fx) * ke;
+    const fy = f.fy + (target.y - f.fy) * ke;
+    const fz = f.fz + (target.z - f.fz) * ke;
+    const head = jump ? headYaw : f.head + wrap(headYaw - f.head) * 0.12;
+    const chase = r.followMode === 'chase';
+    const yaw = chase ? head + rel : c.yaw;
+    if (!chase) rel = wrap(yaw - head);
+    const back = Math.max(1, r.followDistance) * units;
+    const cp = Math.cos(pitch);
+    const px = fx + Math.sin(yaw) * cp * back;
+    const py = fy - Math.sin(pitch) * back;
+    const pz = fz + Math.cos(yaw) * cp * back;
+    c.position.set(px, py, pz);
+    c.yaw = yaw;
+    c.pitch = pitch;
+    c.moved = true;
+    this.followCam = { person: follow, fx, fy, fz, head, rel, yaw, pitch, px, py, pz };
   }
 
   /** Bring a spot of the track into view: a ball of `radius` around it, keeping the view direction. */

@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} – {count, plural, one {# riadok} few {# riadky} many {# riadka} other {# riadkov}}, {span}",
   "heat.sessionPicker.option": "{session} – {count, plural, one {# riadok} few {# riadky} many {# riadka} other {# riadkov}}",
   "heat.sessionPicker.allHint": "Všetky relácie naraz. Polohy sa ani tak nikdy neinterpolujú cez hranicu relácie, no súbežné zápasy dajú na mapu spolu nesúvisiacich hráčov – ak chcete prehrať zápas, vyberte jednu.",
-  "heat.sessionPicker.seekHint": "V režimoch tepla to len presunie ukazovateľ prehrávania na začiatok relácie; teplo stále započítava všetky relácie. Záznam s kockami prehrá len zvolenú reláciu.",
+  "heat.sessionPicker.seekHint": "V režimoch tepla to len presunie ukazovateľ prehrávania na začiatok relácie; teplo stále započítava všetky relácie. Prehrávanie figúrok (karta Zápas) prehrá len zvolenú reláciu.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Uvoľniť",
   "heat.entityPanel.title": "Entity",
   "heat.entityPanel.selectedOf": "{selected} z {total}",
-  "heat.entityPanel.hint": "Zobrazí len vybrané entity, v teple aj v zázname s kockami. Nechajte prázdne, ak chcete zobraziť všetkých.",
-  "heat.entityPanel.noSlot": "Na teplo sa neuplatňuje: všetky sloty filtrov sú obsadené. Záznam s kockami stále zobrazuje len tieto entity. Slot uvoľníte zrušením filtra v časti „Filtre“.",
+  "heat.entityPanel.hint": "Zobrazí len vybrané entity, v teple aj v prehrávaní figúrok. Nechajte prázdne, ak chcete zobraziť všetkých.",
+  "heat.entityPanel.noSlot": "Na teplo sa neuplatňuje: všetky sloty filtrov sú obsadené. Prehrávanie figúrok stále zobrazuje len tieto entity. Slot uvoľníte zrušením filtra v časti „Filtre“.",
   "heat.entityPanel.search": "{count, plural, one {Hľadať v # entite…} few {Hľadať v # entitách…} many {Hľadať v # entity…} other {Hľadať v # entitách…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# zhoda} few {# zhody} many {# zhody} other {# zhôd}}, zobrazuje sa prvých {page}",
   "heat.entityPanel.matches": "{count, plural, one {# zhoda} few {# zhody} many {# zhody} other {# zhôd}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# cesta} few {# cesty} many {# cesty} other {# ciest}}, z toho do konca dôjde {ended}, {segments, plural, one {# úsek} few {# úseky} many {# úseku} other {# úsekov}}",
   "heat.teamPanel.figures": "Figúrky namiesto kociek",
   "heat.teamPanel.figuresTitle": "Každá osoba ako figúrka toho, čím je: vojak pešo, tank alebo lietadlo, ktoré uvádzajú dáta (stĺpce Name, Vehicle, Type). O čom dáta nič nehovoria, zostane kockou.",
-  "heat.teamPanel.figureScale": "Veľkosť figúrok"
+  "heat.teamPanel.figureScale": "Veľkosť figúrok",
+  "heat.teamPanel.figurePixels": "Najmenšia figúra na obrazovke",
+  "heat.teamPanel.figurePixelsHint": "Zblízka v skutočnej veľkosti; ďalej figúry rastú, aby zostali toľko pixelov dlhé. 0: vždy skutočná veľkosť.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "skutočná veľkosť",
+  "heat.teamPanel.weapons": "Zbrane, výstrely a zásahy",
+  "heat.teamPanel.weaponsTitle": "Zbrane v lete s dymom, svietiace strely, dopady, zásahy a zostrelenia. Svietiace strely odvodené zo zásahu sú čiarkované."
 }

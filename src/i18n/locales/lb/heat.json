@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# Zeil} other {# Zeilen}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# Zeil} other {# Zeilen}}",
   "heat.sessionPicker.allHint": "All Sessioune gläichzäiteg. Positioune ginn och esou ni iwwer eng Sessiounsgrenz ewech interpoléiert, mä Matcher, déi gläichzäiteg gelaf sinn, setze Spiller, déi näischt matenee ze dinn hunn, zesummen op d’Kaart — wielt eng aus, fir e Match nozespillen.",
-  "heat.sessionPicker.seekHint": "An den Heat-Modi setzt dat just den Ofspillkapp un den Ufank vun der Sessioun; d’Heat zielt weiderhin all Sessioun mat. De Box-Replay spillt déi gewielte Sessioun eleng of.",
+  "heat.sessionPicker.seekHint": "An den Heat-Modi setzt dat just den Ofspillkapp un den Ufank vun der Sessioun; d’Heat zielt weiderhin all Sessioun mat. De Figuren-Replay (Match-Tab) spillt déi gewielte Sessioun eleng of.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Entlueden",
   "heat.entityPanel.title": "Entitéiten",
   "heat.entityPanel.selectedOf": "{selected} vun {total}",
-  "heat.entityPanel.hint": "Weist nëmmen déi ausgewielt Entitéiten, an der Heat wéi am Box-Replay. Eidel loossen, fir jiddereen ze weisen.",
-  "heat.entityPanel.noSlot": "Net op d'Heat ugewannt: all Filterplaze si besat. De Box-Replay weist ëmmer nach nëmmen dës Entitéiten. Läscht e Filter ënner „Filteren“, fir eng Plaz fräizemaachen.",
+  "heat.entityPanel.hint": "Weist nëmmen déi ausgewielt Entitéiten, an der Heat wéi am Figuren-Replay. Eidel loossen, fir jiddereen ze weisen.",
+  "heat.entityPanel.noSlot": "Net op d’Heat ugewannt: all Filterplaze si besat. De Figuren-Replay weist ëmmer nach nëmmen dës Entitéiten. Läscht e Filter ënner „Filteren“, fir eng Plaz fräizemaachen.",
   "heat.entityPanel.search": "{count, plural, one {# Entitéit duerchsichen…} other {# Entitéiten duerchsichen…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# Treffer} other {# Treffer}}, déi éischt {page} ginn ugewisen",
   "heat.entityPanel.matches": "{count, plural, one {# Treffer} other {# Treffer}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# Route} other {# Routen}}, {ended} dovun erreechen en Enn, {segments, plural, one {# Segment} other {# Segmenter}}",
   "heat.teamPanel.figures": "Figuren amplaz Boxen",
   "heat.teamPanel.figuresTitle": "All Persoun als Figur vun deem, wat se ass: Zaldot zu Fouss, de Panzer oder de Fliger, deen d’Donnéeë nennen (Kolonnen Name, Vehicle, Type). Wou d’Donnéeë näischt soen, bleift et eng Box.",
-  "heat.teamPanel.figureScale": "Figurengréisst"
+  "heat.teamPanel.figureScale": "Figurengréisst",
+  "heat.teamPanel.figurePixels": "Klengste Figur um Écran",
+  "heat.teamPanel.figurePixelsHint": "Vu no an echter Gréisst; méi wäit ewech wuessen d’Figuren, fir sou vill Pixel laang ze bleiwen. 0: ëmmer echt Gréisst.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "echt Gréisst",
+  "heat.teamPanel.weapons": "Waffen, Schëss an Treffer",
+  "heat.teamPanel.weaponsTitle": "Waffen am Fluch mat Damp, Leuchtspuer, Aschléi, Treffer an Ofschëss. Leuchtspuer, déi aus engem Treffer ofgeleet ass, ass gestrichelt."
 }

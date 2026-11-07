@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} – {count, plural, one {# Zeile} other {# Zeilen}}, {span}",
   "heat.sessionPicker.option": "{session} – {count, plural, one {# Zeile} other {# Zeilen}}",
   "heat.sessionPicker.allHint": "Alle Sessions auf einmal. Positionen werden weiterhin nie über eine Session-Grenze hinweg interpoliert, aber gleichzeitige Matches bringen Spieler, die nichts miteinander zu tun haben, gemeinsam auf die Karte – wähle eine, um ein Match abzuspielen.",
-  "heat.sessionPicker.seekHint": "In den Heatmap-Modi setzt dies nur den Abspielkopf an den Anfang der Session; die Heatmap zählt weiterhin jede Session mit. Die Box-Wiedergabe spielt die gewählte Session allein ab.",
+  "heat.sessionPicker.seekHint": "In den Heatmap-Modi setzt dies nur den Abspielkopf an den Anfang der Session; die Heatmap zählt weiterhin jede Session mit. Das Figuren-Replay (Tab „Match“) spielt die gewählte Session allein ab.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Entladen",
   "heat.entityPanel.title": "Entitäten",
   "heat.entityPanel.selectedOf": "{selected} von {total}",
-  "heat.entityPanel.hint": "Zeigt nur die ausgewählten Entitäten, in der Heatmap wie in der Box-Wiedergabe. Leer lassen, um alle zu zeigen.",
-  "heat.entityPanel.noSlot": "Nicht auf die Heatmap angewendet: Alle Filterplätze sind belegt. Die Box-Wiedergabe zeigt weiterhin nur diese Entitäten. Entferne einen Filter unter „Filter“, um einen Platz freizugeben.",
+  "heat.entityPanel.hint": "Zeigt nur die ausgewählten Entitäten, in der Heatmap wie im Figuren-Replay. Leer lassen, um alle zu zeigen.",
+  "heat.entityPanel.noSlot": "Nicht auf die Heatmap angewendet: Alle Filterplätze sind belegt. Das Figuren-Replay zeigt weiterhin nur diese Entitäten. Entferne einen Filter unter „Filter“, um einen Platz freizugeben.",
   "heat.entityPanel.search": "{count, plural, one {# Entität durchsuchen…} other {# Entitäten durchsuchen…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# Treffer} other {# Treffer}}, die ersten {page} werden gezeigt",
   "heat.entityPanel.matches": "{count, plural, one {# Treffer} other {# Treffer}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# Route} other {# Routen}}, davon {ended} mit Ende, {segments, plural, one {# Segment} other {# Segmente}}",
   "heat.teamPanel.figures": "Figuren statt Boxen",
   "heat.teamPanel.figuresTitle": "Jede Person als Figur dessen, was sie ist: Soldat zu Fuß, der Panzer oder das Flugzeug, das die Daten nennen (Spalten Name, Vehicle, Type). Worüber die Daten nichts sagen, bleibt eine Box.",
-  "heat.teamPanel.figureScale": "Figurengröße"
+  "heat.teamPanel.figureScale": "Figurengröße",
+  "heat.teamPanel.figurePixels": "Kleinste Figur am Bildschirm",
+  "heat.teamPanel.figurePixelsHint": "Aus der Nähe in echter Größe; weiter weg wachsen Figuren, damit sie so viele Pixel lang bleiben. 0: immer echte Größe.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "echte Größe",
+  "heat.teamPanel.weapons": "Waffen, Schüsse und Treffer",
+  "heat.teamPanel.weaponsTitle": "Waffen im Flug mit Rauch, Leuchtspur, Einschlägen, Treffern und Abschüssen. Aus einem Treffer erschlossene Leuchtspur ist gestrichelt."
 }

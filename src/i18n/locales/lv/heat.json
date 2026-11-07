@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, zero {# rindu} one {# rinda} other {# rindas}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, zero {# rindu} one {# rinda} other {# rindas}}",
   "heat.sessionPicker.allHint": "Visas sesijas vienlaikus. Pozīcijas joprojām nekad netiek interpolētas pāri sesijas robežai, taču vienlaicīgi mači kartē saliek kopā nesaistītus spēlētājus — izvēlies vienu, lai atskaņotu maču.",
-  "heat.sessionPicker.seekHint": "Siltuma režīmos tas tikai pārvieto atskaņošanas kursoru uz sesijas sākumu; siltums joprojām ieskaita visas sesijas. Kastīšu atskaņojums atskaņo tikai izvēlēto sesiju.",
+  "heat.sessionPicker.seekHint": "Siltuma režīmos tas tikai pārvieto atskaņošanas kursoru uz sesijas sākumu; siltums joprojām ieskaita visas sesijas. Figūru atskaņojums (cilne „Mačs”) atskaņo tikai izvēlēto sesiju.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Izlādēt",
   "heat.entityPanel.title": "Objekti",
   "heat.entityPanel.selectedOf": "{selected} no {total}",
-  "heat.entityPanel.hint": "Rāda tikai atlasītos objektus — gan siltumā, gan kastīšu atskaņojumā. Atstāj tukšu, lai rādītu visus.",
-  "heat.entityPanel.noSlot": "Siltumam netiek piemērots: visas filtru vietas ir aizņemtas. Kastīšu atskaņojums joprojām rāda tikai šos objektus. Notīri kādu filtru sadaļā “Filtri”, lai atbrīvotu vietu.",
+  "heat.entityPanel.hint": "Rāda tikai atlasītos objektus — gan siltumā, gan figūru atskaņojumā. Atstāj tukšu, lai rādītu visus.",
+  "heat.entityPanel.noSlot": "Siltumam netiek piemērots: visas filtru vietas ir aizņemtas. Figūru atskaņojums joprojām rāda tikai šos objektus. Notīri kādu filtru sadaļā “Filtri”, lai atbrīvotu vietu.",
   "heat.entityPanel.search": "{count, plural, zero {Meklēt # objektos…} one {Meklēt # objektā…} other {Meklēt # objektos…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, zero {# atbilstību} one {# atbilstība} other {# atbilstības}}, rāda pirmās {page}",
   "heat.entityPanel.matches": "{count, plural, zero {# atbilstību} one {# atbilstība} other {# atbilstības}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, zero {# maršrutu} one {# maršruts} other {# maršruti}}, no tiem {ended} sasniedz beigas, {segments, plural, zero {# posmu} one {# posms} other {# posmi}}",
   "heat.teamPanel.figures": "Figūras kastīšu vietā",
   "heat.teamPanel.figuresTitle": "Katrs cilvēks kā figūra tam, kas viņš ir: kājnieks vai datos nosauktais tanks vai lidaparāts (kolonnas Name, Vehicle, Type). Par ko dati neko nesaka, paliek kastīte.",
-  "heat.teamPanel.figureScale": "Figūru izmērs"
+  "heat.teamPanel.figureScale": "Figūru izmērs",
+  "heat.teamPanel.figurePixels": "Mazākā figūra ekrānā",
+  "heat.teamPanel.figurePixelsHint": "Tuvumā īstajā izmērā; tālāk figūras aug, lai paliktu tik pikseļu garas. 0: vienmēr īstajā izmērā.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "īstais izmērs",
+  "heat.teamPanel.weapons": "Ieroči, šāvieni un trāpījumi",
+  "heat.teamPanel.weaponsTitle": "Ieroči lidojumā ar dūmiem, trasējošām lodēm, triecieniem, trāpījumiem un notriekšanām. No trāpījuma secinātās trases ir raustītas."
 }

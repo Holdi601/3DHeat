@@ -90,8 +90,13 @@ function SideTag({ side, children }: { side: Side | ''; children?: ReactNode }) 
   return <span className={`side side-${side || 'none'}`}>{children ?? side}</span>;
 }
 
-/** Show something in the heatmap, and say what could not be shown. */
+/** Show something in the heatmap - the tab's heat view - and say what could not be shown. */
 function focus(f: Focus, replay = false) {
+  // The heat of all of it, not of the moment a replay left the playhead at.
+  if (!replay) {
+    if (useStore.getState().mode === 'team') useStore.getState().setMode('heat-simple');
+    useStore.getState().patchTimeline({ mode: 'all' });
+  }
   const missing = applyFocus(f, replay);
   useMatchStore.getState().setNotice(missing.length ? missing.join('; ') : null);
 }
@@ -100,12 +105,13 @@ function focus(f: Focus, replay = false) {
 
 function MatchesSection() {
   const docs = useMatchStore((s) => s.docs);
+  const games = useMatchStore((s) => s.games);
   const open = useMatchStore((s) => s.open);
   const error = useMatchStore((s) => s.error);
   const store = useMatchStore.getState();
   const input = useRef<HTMLInputElement>(null);
   return (
-    <Section title={t('match.matches.title')} defaultOpen right={<span className="count">{docs.length || ''}</span>}>
+    <Section title={t('match.matches.title')} defaultOpen={docs.length > 0 || games.length === 0} right={<span className="count">{docs.length + games.length || ''}</span>}>
       <div className="row wrap" style={{ gap: 6 }}>
         <button
           className="primary"
@@ -114,7 +120,7 @@ function MatchesSection() {
         >
           {t('match.matches.load')}
         </button>
-        {docs.length > 0 && (
+        {docs.length + games.length > 0 && (
           <button className="link" onClick={() => store.clear()}>
             {t('match.matches.clear')}
           </button>
@@ -133,7 +139,10 @@ function MatchesSection() {
         />
       </div>
       {error && <pre className="hint race-error">{error}</pre>}
-      {docs.length === 0 && (
+      {games.length > 0 && docs.length === 0 && (
+        <div className="hint">{t('match.matches.gamesLoaded', { count: games.length })}</div>
+      )}
+      {docs.length === 0 && games.length === 0 && (
         <div className="hint">
           {rich('match.matches.hint', {
             command: <span className="mono">{COMMAND}</span>,

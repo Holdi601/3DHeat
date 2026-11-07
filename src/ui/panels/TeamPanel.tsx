@@ -49,15 +49,22 @@ export function TeamPanel() {
       />
       {team.figures && (
         <Slider
-          label={t('heat.teamPanel.figureScale')}
-          value={team.figureScale}
-          min={0.1}
+          label={t('heat.teamPanel.figurePixels')}
+          value={team.figurePixels}
+          min={0}
           max={200}
-          logarithmic
-          onChange={(figureScale) => patchTeam({ figureScale })}
-          format={(v) => `${num(v, v < 10 ? 1 : 0)}×`}
+          step={1}
+          onChange={(figurePixels) => patchTeam({ figurePixels })}
+          format={(v) => (v < 0.5 ? t('heat.teamPanel.trueSize') : t('heat.teamPanel.pixels', { value: num(v, 0) }))}
+          hint={t('heat.teamPanel.figurePixelsHint')}
         />
       )}
+      <Check
+        label={t('heat.teamPanel.weapons')}
+        checked={team.weapons}
+        onChange={(weapons) => patchTeam({ weapons })}
+        title={t('heat.teamPanel.weaponsTitle')}
+      />
       <Check
         label={t('heat.teamPanel.interpolate')}
         checked={team.interpolate}

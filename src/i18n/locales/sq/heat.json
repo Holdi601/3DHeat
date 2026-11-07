@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# rresht} other {# rreshta}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# rresht} other {# rreshta}}",
   "heat.sessionPicker.allHint": "Të gjitha seancat njëherësh. Pozicionet ende nuk interpolohen kurrë përtej kufirit të një seance, por ndeshjet e njëkohshme vendosin bashkë në hartë lojtarë që s'kanë lidhje me njëri-tjetrin — zgjidh një për të riluajtur një ndeshje.",
-  "heat.sessionPicker.seekHint": "Në mënyrat e nxehtësisë kjo vetëm e çon treguesin e luajtjes në fillim të seancës; nxehtësia vazhdon të numërojë të gjitha seancat. Riluajtja me kuti luan vetëm seancën e zgjedhur.",
+  "heat.sessionPicker.seekHint": "Në mënyrat e nxehtësisë kjo vetëm e çon treguesin e luajtjes në fillim të seancës; nxehtësia vazhdon të numërojë të gjitha seancat. Riluajtja me figura (skeda Ndeshja) luan vetëm seancën e zgjedhur.",
   "heat.sessionPicker.seconds": "{value}s",
   "heat.sessionPicker.minutes": "{value}m",
   "heat.sessionPicker.hours": "{value}h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Hiq",
   "heat.entityPanel.title": "Entitetet",
   "heat.entityPanel.selectedOf": "{selected} nga {total}",
-  "heat.entityPanel.hint": "Shfaq vetëm entitetet e zgjedhura, si te nxehtësia ashtu edhe te riluajtja me kuti. Lëre bosh për të shfaqur të gjithë.",
-  "heat.entityPanel.noSlot": "Nuk zbatohet te nxehtësia: të gjitha vendet e filtrave janë të zëna. Riluajtja me kuti vazhdon të shfaqë vetëm këto entitete. Pastro një filtër te Filtrat për të liruar një vend.",
+  "heat.entityPanel.hint": "Shfaq vetëm entitetet e zgjedhura, si te nxehtësia ashtu edhe te riluajtja me figura. Lëre bosh për të shfaqur të gjithë.",
+  "heat.entityPanel.noSlot": "Nuk zbatohet te nxehtësia: të gjitha vendet e filtrave janë të zëna. Riluajtja me figura vazhdon të shfaqë vetëm këto entitete. Pastro një filtër te Filtrat për të liruar një vend.",
   "heat.entityPanel.search": "{count, plural, one {Kërko # entitet…} other {Kërko # entitete…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# përputhje} other {# përputhje}}, po shfaqen {page} të parat",
   "heat.entityPanel.matches": "{count, plural, one {# përputhje} other {# përputhje}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# rrugë} other {# rrugë}}, nga të cilat {ended} arrijnë një mbarim, {segments, plural, one {# segment} other {# segmente}}",
   "heat.teamPanel.figures": "Figura në vend të kutive",
   "heat.teamPanel.figuresTitle": "Çdo person si figura e asaj që është: ushtar në këmbë, tanku ose avioni që emërtojnë të dhënat (kolonat Name, Vehicle, Type). Ajo për të cilën të dhënat nuk thonë asgjë mbetet kuti.",
-  "heat.teamPanel.figureScale": "Madhësia e figurës"
+  "heat.teamPanel.figureScale": "Madhësia e figurës",
+  "heat.teamPanel.figurePixels": "Figura më e vogël në ekran",
+  "heat.teamPanel.figurePixelsHint": "Madhësi reale nga afër; më larg figurat rriten që të mbeten kaq piksel të gjata. 0: gjithmonë madhësi reale.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "madhësi reale",
+  "heat.teamPanel.weapons": "Armë, të shtëna dhe goditje",
+  "heat.teamPanel.weaponsTitle": "Armë në fluturim me tym, gjurmues, përplasje, goditje dhe rrëzime. Gjurmuesit e nxjerrë nga një goditje janë me vija të ndërprera."
 }

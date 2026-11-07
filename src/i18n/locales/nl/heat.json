@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} – {count, plural, one {# rij} other {# rijen}}, {span}",
   "heat.sessionPicker.option": "{session} – {count, plural, one {# rij} other {# rijen}}",
   "heat.sessionPicker.allHint": "Alle sessies tegelijk. Posities worden nog steeds nooit over een sessiegrens heen geïnterpoleerd, maar gelijktijdige matches zetten spelers die niets met elkaar te maken hebben samen op de kaart – kies er een om een match af te spelen.",
-  "heat.sessionPicker.seekHint": "In de heatmapmodi zet dit alleen de afspeelkop op het begin van de sessie; de heatmap telt nog steeds elke sessie mee. Blokkenreplay speelt alleen de gekozen sessie af.",
+  "heat.sessionPicker.seekHint": "In de heatmapmodi zet dit alleen de afspeelkop op het begin van de sessie; de heatmap telt nog steeds elke sessie mee. De figurenreplay (tabblad Match) speelt alleen de gekozen sessie af.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} u",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Verwijderen uit geheugen",
   "heat.entityPanel.title": "Entiteiten",
   "heat.entityPanel.selectedOf": "{selected} van {total}",
-  "heat.entityPanel.hint": "Toont alleen de geselecteerde entiteiten, in de warmte en in de blokkenreplay. Laat leeg om iedereen te tonen.",
-  "heat.entityPanel.noSlot": "Niet toegepast op de warmte: alle filterplaatsen zijn bezet. De blokkenreplay toont nog steeds alleen deze entiteiten. Verwijder een filter onder Filters om een plaats vrij te maken.",
+  "heat.entityPanel.hint": "Toont alleen de geselecteerde entiteiten, in de warmte en in de figurenreplay. Laat leeg om iedereen te tonen.",
+  "heat.entityPanel.noSlot": "Niet toegepast op de warmte: alle filterplaatsen zijn bezet. De figurenreplay toont nog steeds alleen deze entiteiten. Verwijder een filter onder Filters om een plaats vrij te maken.",
   "heat.entityPanel.search": "{count, plural, one {# entiteit doorzoeken…} other {# entiteiten doorzoeken…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# treffer} other {# treffers}}, de eerste {page} worden getoond",
   "heat.entityPanel.matches": "{count, plural, one {# treffer} other {# treffers}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# route} other {# routes}}, waarvan {ended} een einde bereiken, {segments, plural, one {# segment} other {# segmenten}}",
   "heat.teamPanel.figures": "Figuren in plaats van blokken",
   "heat.teamPanel.figuresTitle": "Elke persoon als figuur van wat die is: een soldaat te voet, de tank of het vliegtuig dat de data noemt (kolommen Name, Vehicle, Type). Waarover de data niets zegt, blijft een blok.",
-  "heat.teamPanel.figureScale": "Figuurgrootte"
+  "heat.teamPanel.figureScale": "Figuurgrootte",
+  "heat.teamPanel.figurePixels": "Kleinste figuur op het scherm",
+  "heat.teamPanel.figurePixelsHint": "Ware grootte van dichtbij; verder weg groeien figuren zodat ze zoveel pixels lang blijven. 0: altijd ware grootte.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "ware grootte",
+  "heat.teamPanel.weapons": "Wapens, schoten en treffers",
+  "heat.teamPanel.weaponsTitle": "Wapens in de lucht met rook, lichtspoor, inslagen, treffers en kills. Lichtspoor afgeleid uit een treffer is gestippeld."
 }

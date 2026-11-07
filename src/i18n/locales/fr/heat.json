@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# ligne} other {# lignes}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# ligne} other {# lignes}}",
   "heat.sessionPicker.allHint": "Toutes les sessions à la fois. Les positions ne sont toujours pas interpolées d’une session à l’autre, mais des matchs simultanés réunissent sur la carte des joueurs sans rapport — choisissez-en un pour rejouer un match.",
-  "heat.sessionPicker.seekHint": "Dans les modes de chaleur, ceci ne fait que placer la tête de lecture au début de la session ; la chaleur compte toujours toutes les sessions. Le Replay en boîtes joue la session choisie seule.",
+  "heat.sessionPicker.seekHint": "Dans les modes de chaleur, ceci ne fait que placer la tête de lecture au début de la session ; la chaleur compte toujours toutes les sessions. Le replay en figurines (onglet Match) joue la session choisie seule.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Décharger",
   "heat.entityPanel.title": "Entités",
   "heat.entityPanel.selectedOf": "{selected} sur {total}",
-  "heat.entityPanel.hint": "N'affiche que les entités sélectionnées, dans la chaleur comme dans le replay en boîtes. Laissez vide pour afficher tout le monde.",
-  "heat.entityPanel.noSlot": "Non appliqué à la chaleur : tous les emplacements de filtre sont pris. Le replay en boîtes n'affiche toujours que ces entités. Supprimez un filtre dans « Filtres » pour en libérer un.",
+  "heat.entityPanel.hint": "N’affiche que les entités sélectionnées, dans la chaleur comme dans le replay en figurines. Laissez vide pour afficher tout le monde.",
+  "heat.entityPanel.noSlot": "Non appliqué à la chaleur : tous les emplacements de filtre sont pris. Le replay en figurines n’affiche toujours que ces entités. Supprimez un filtre dans « Filtres » pour en libérer un.",
   "heat.entityPanel.search": "{count, plural, one {Rechercher parmi # entité…} other {Rechercher parmi # entités…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# résultat} other {# résultats}}, affichage des {page} premiers",
   "heat.entityPanel.matches": "{count, plural, one {# résultat} other {# résultats}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# parcours} other {# parcours}}, dont {ended} allant jusqu’à une fin, {segments, plural, one {# segment} other {# segments}}",
   "heat.teamPanel.figures": "Figurines au lieu de boîtes",
   "heat.teamPanel.figuresTitle": "Chaque personne sous la forme de ce qu’elle est : un soldat à pied, le char ou l’avion que nomment les données (colonnes Name, Vehicle, Type). Ce sur quoi les données ne disent rien reste une boîte.",
-  "heat.teamPanel.figureScale": "Taille des figurines"
+  "heat.teamPanel.figureScale": "Taille des figurines",
+  "heat.teamPanel.figurePixels": "Plus petite figure à l’écran",
+  "heat.teamPanel.figurePixelsHint": "Taille réelle de près ; plus loin, les figures grandissent pour garder cette longueur en pixels. 0 : toujours taille réelle.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "taille réelle",
+  "heat.teamPanel.weapons": "Armes, tirs et coups au but",
+  "heat.teamPanel.weaponsTitle": "Armes en vol avec fumée, traçantes, impacts, coups au but et destructions. Les traçantes déduites d’un coup au but sont en pointillés."
 }

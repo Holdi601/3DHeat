@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# радок} few {# радкі} many {# радкоў} other {# радка}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# радок} few {# радкі} many {# радкоў} other {# радка}}",
   "heat.sessionPicker.allHint": "Усе сесіі адразу. Пазіцыі па-ранейшаму ніколі не інтэрпалююцца праз мяжу сесіі, але адначасовыя матчы змяшчаюць на карце не звязаных паміж сабой гульцоў — выберыце адну сесію, каб прайграць матч.",
-  "heat.sessionPicker.seekHint": "У рэжымах цеплыні гэта толькі пераносіць курсор прайгравання на пачатак сесіі; цеплыня па-ранейшаму ўлічвае ўсе сесіі. Паўтор блокамі прайграе толькі выбраную сесію.",
+  "heat.sessionPicker.seekHint": "У рэжымах цеплыні гэта толькі пераносіць курсор прайгравання на пачатак сесіі; цеплыня па-ранейшаму ўлічвае ўсе сесіі. Паўтор фігурамі (укладка «Матч») прайграе толькі выбраную сесію.",
   "heat.sessionPicker.seconds": "{value}s",
   "heat.sessionPicker.minutes": "{value}m",
   "heat.sessionPicker.hours": "{value}h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Выгрузіць",
   "heat.entityPanel.title": "Аб'екты",
   "heat.entityPanel.selectedOf": "{selected} з {total}",
-  "heat.entityPanel.hint": "Паказвае толькі выбраныя аб'екты — і ў цеплыні, і ў паўторы блокамі. Пакіньце пустым, каб паказаць усіх.",
-  "heat.entityPanel.noSlot": "Не ўжываецца да цеплыні: усе слоты фільтраў заняты. Паўтор блокамі па-ранейшаму паказвае толькі гэтыя аб'екты. Ачысціце фільтр у «Фільтры», каб вызваліць слот.",
+  "heat.entityPanel.hint": "Паказвае толькі выбраныя аб'екты — і ў цеплыні, і ў паўторы фігурамі. Пакіньце пустым, каб паказаць усіх.",
+  "heat.entityPanel.noSlot": "Не ўжываецца да цеплыні: усе слоты фільтраў заняты. Паўтор фігурамі па-ранейшаму паказвае толькі гэтыя аб'екты. Ачысціце фільтр у «Фільтры», каб вызваліць слот.",
   "heat.entityPanel.search": "{count, plural, one {Пошук сярод # аб'екта…} few {Пошук сярод # аб'ектаў…} many {Пошук сярод # аб'ектаў…} other {Пошук сярод # аб'екта…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# супадзенне} few {# супадзенні} many {# супадзенняў} other {# супадзення}}, паказаны першыя {page}",
   "heat.entityPanel.matches": "{count, plural, one {# супадзенне} few {# супадзенні} many {# супадзенняў} other {# супадзення}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# маршрут} few {# маршруты} many {# маршрутаў} other {# маршруту}}, з іх {ended} даходзяць да канца, {segments, plural, one {# адрэзак} few {# адрэзкі} many {# адрэзкаў} other {# адрэзка}}",
   "heat.teamPanel.figures": "Фігуры замест кубоў",
   "heat.teamPanel.figuresTitle": "Кожны чалавек — фігура таго, кім ён ёсць: пешы салдат, танк ці самалёт, названыя ў даных (слупкі Name, Vehicle, Type). Пра каго даныя нічога не кажуць, застаецца кубам.",
-  "heat.teamPanel.figureScale": "Памер фігур"
+  "heat.teamPanel.figureScale": "Памер фігур",
+  "heat.teamPanel.figurePixels": "Найменшая фігура на экране",
+  "heat.teamPanel.figurePixelsHint": "Зблізку ў натуральную велічыню; далей фігуры растуць, каб заставацца такой даўжыні ў пікселях. 0: заўсёды натуральная велічыня.",
+  "heat.teamPanel.pixels": "{value} пкс",
+  "heat.teamPanel.trueSize": "натуральная велічыня",
+  "heat.teamPanel.weapons": "Зброя, стрэлы і пападанні",
+  "heat.teamPanel.weaponsTitle": "Зброя ў палёце з дымам, трасеры, разрывы, пападанні і знішчэнні. Трасеры, выведзеныя з пападання, пункцірныя."
 }

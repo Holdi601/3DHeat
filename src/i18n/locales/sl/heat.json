@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} – {count, plural, one {# vrstica} two {# vrstici} few {# vrstice} other {# vrstic}}, {span}",
   "heat.sessionPicker.option": "{session} – {count, plural, one {# vrstica} two {# vrstici} few {# vrstice} other {# vrstic}}",
   "heat.sessionPicker.allHint": "Vse seje hkrati. Položaji se čez mejo seje še vedno nikoli ne interpolirajo, vendar sočasne tekme postavijo nepovezane igralce skupaj na zemljevid – izberite eno, da predvajate tekmo.",
-  "heat.sessionPicker.seekHint": "V načinih toplote to le premakne kazalec predvajanja na začetek seje; toplota še vedno šteje vse seje. Posnetek s kvadri predvaja samo izbrano sejo.",
+  "heat.sessionPicker.seekHint": "V načinih toplote to le premakne kazalec predvajanja na začetek seje; toplota še vedno šteje vse seje. Predvajanje figur (zavihek Tekma) predvaja samo izbrano sejo.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Odstrani",
   "heat.entityPanel.title": "Entitete",
   "heat.entityPanel.selectedOf": "{selected} od {total}",
-  "heat.entityPanel.hint": "Prikaže samo izbrane entitete, v toploti in v posnetku s kvadri. Pustite prazno, da prikažete vse.",
-  "heat.entityPanel.noSlot": "Ni uporabljeno za toploto: vsa mesta za filtre so zasedena. Posnetek s kvadri še vedno prikazuje samo te entitete. Počistite filter pod »Filtri«, da sprostite mesto.",
+  "heat.entityPanel.hint": "Prikaže samo izbrane entitete, v toploti in v predvajanju figur. Pustite prazno, da prikažete vse.",
+  "heat.entityPanel.noSlot": "Ni uporabljeno za toploto: vsa mesta za filtre so zasedena. Predvajanje figur še vedno prikazuje samo te entitete. Počistite filter pod »Filtri«, da sprostite mesto.",
   "heat.entityPanel.search": "{count, plural, one {Išči med # entiteto…} two {Išči med # entitetama…} few {Išči med # entitetami…} other {Išči med # entitetami…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# zadetek} two {# zadetka} few {# zadetki} other {# zadetkov}}, prikazanih prvih {page}",
   "heat.entityPanel.matches": "{count, plural, one {# zadetek} two {# zadetka} few {# zadetki} other {# zadetkov}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# trasa} two {# trasi} few {# trase} other {# tras}}, od tega jih do konca pride {ended}, {segments, plural, one {# odsek} two {# odseka} few {# odseki} other {# odsekov}}",
   "heat.teamPanel.figures": "Figure namesto kock",
   "heat.teamPanel.figuresTitle": "Vsaka oseba kot figura tega, kar je: vojak peš, tank ali letalo, ki ga navajajo podatki (stolpci Name, Vehicle, Type). Kar podatki ne opredelijo, ostane kocka.",
-  "heat.teamPanel.figureScale": "Velikost figur"
+  "heat.teamPanel.figureScale": "Velikost figur",
+  "heat.teamPanel.figurePixels": "Najmanjša figura na zaslonu",
+  "heat.teamPanel.figurePixelsHint": "Od blizu v pravi velikosti; dlje figure rastejo, da ostanejo toliko pikslov dolge. 0: vedno prava velikost.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "prava velikost",
+  "heat.teamPanel.weapons": "Orožje, streli in zadetki",
+  "heat.teamPanel.weaponsTitle": "Orožje v letu z dimom, sledilnimi naboji, udarci, zadetki in sestrelitvami. Sledilni naboji, sklepani iz zadetka, so črtkani."
 }

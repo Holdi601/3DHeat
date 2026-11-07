@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# riga} other {# righe}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# riga} other {# righe}}",
   "heat.sessionPicker.allHint": "Tutte le sessioni insieme. Le posizioni non vengono comunque mai interpolate da una sessione all’altra, ma partite contemporanee mettono insieme sulla mappa giocatori senza alcun legame — scegline una per riprodurre una partita.",
-  "heat.sessionPicker.seekHint": "Nelle modalità di calore questo sposta solo la testina di riproduzione all’inizio della sessione; il calore conta comunque tutte le sessioni. Il Replay a box riproduce solo la sessione scelta.",
+  "heat.sessionPicker.seekHint": "Nelle modalità di calore questo sposta solo la testina di riproduzione all’inizio della sessione; il calore conta comunque tutte le sessioni. Il replay a figure (scheda Partita) riproduce solo la sessione scelta.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Scarica",
   "heat.entityPanel.title": "Entità",
   "heat.entityPanel.selectedOf": "{selected} di {total}",
-  "heat.entityPanel.hint": "Mostra solo le entità selezionate, nel calore come nel replay a box. Lascia vuoto per mostrare tutti.",
-  "heat.entityPanel.noSlot": "Non applicato al calore: tutti gli slot dei filtri sono occupati. Il replay a box mostra ancora solo queste entità. Rimuovi un filtro in «Filtri» per liberarne uno.",
+  "heat.entityPanel.hint": "Mostra solo le entità selezionate, nel calore come nel replay a figure. Lascia vuoto per mostrare tutti.",
+  "heat.entityPanel.noSlot": "Non applicato al calore: tutti gli slot dei filtri sono occupati. Il replay a figure mostra ancora solo queste entità. Rimuovi un filtro in «Filtri» per liberarne uno.",
   "heat.entityPanel.search": "{count, plural, one {Cerca tra # entità…} other {Cerca tra # entità…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# risultato} other {# risultati}}, mostrati i primi {page}",
   "heat.entityPanel.matches": "{count, plural, one {# risultato} other {# risultati}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# percorso} other {# percorsi}}, di cui {ended} arrivano a una fine, {segments, plural, one {# segmento} other {# segmenti}}",
   "heat.teamPanel.figures": "Figure invece di cubi",
   "heat.teamPanel.figuresTitle": "Ogni persona come la figura di ciò che è: un soldato a piedi, il carro o l’aereo che i dati nominano (colonne Name, Vehicle, Type). Ciò su cui i dati non dicono nulla resta un cubo.",
-  "heat.teamPanel.figureScale": "Dimensione figure"
+  "heat.teamPanel.figureScale": "Dimensione figure",
+  "heat.teamPanel.figurePixels": "Figura più piccola sullo schermo",
+  "heat.teamPanel.figurePixelsHint": "Dimensione reale da vicino; più lontano le figure crescono per restare lunghe tanti pixel. 0: sempre dimensione reale.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "dimensione reale",
+  "heat.teamPanel.weapons": "Armi, colpi e centri",
+  "heat.teamPanel.weaponsTitle": "Armi in volo con fumo, traccianti, impatti, colpi a segno e abbattimenti. I traccianti dedotti da un colpo sono tratteggiati."
 }

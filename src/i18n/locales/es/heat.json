@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# fila} other {# filas}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# fila} other {# filas}}",
   "heat.sessionPicker.allHint": "Todas las sesiones a la vez. Las posiciones nunca se interpolan de una sesión a otra, pero las partidas simultáneas ponen juntos en el mapa a jugadores que no tienen nada que ver: elige una para reproducir una partida.",
-  "heat.sessionPicker.seekHint": "En los modos de calor, esto solo mueve el cabezal al inicio de la sesión; el calor sigue contando todas las sesiones. Repetición con cajas reproduce solo la sesión elegida.",
+  "heat.sessionPicker.seekHint": "En los modos de calor, esto solo mueve el cabezal al inicio de la sesión; el calor sigue contando todas las sesiones. La repetición con figuras (pestaña Partida) reproduce solo la sesión elegida.",
   "heat.sessionPicker.seconds": "{value}s",
   "heat.sessionPicker.minutes": "{value}min",
   "heat.sessionPicker.hours": "{value}h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Descargar",
   "heat.entityPanel.title": "Entidades",
   "heat.entityPanel.selectedOf": "{selected} de {total}",
-  "heat.entityPanel.hint": "Muestra solo las entidades seleccionadas, tanto en el calor como en la repetición con cajas. Déjalo vacío para mostrar a todos.",
-  "heat.entityPanel.noSlot": "No se aplica al calor: todas las ranuras de filtro están ocupadas. La repetición con cajas sigue mostrando solo estas entidades. Quita un filtro en «Filtros» para liberar una.",
+  "heat.entityPanel.hint": "Muestra solo las entidades seleccionadas, tanto en el calor como en la repetición con figuras. Déjalo vacío para mostrar a todos.",
+  "heat.entityPanel.noSlot": "No se aplica al calor: todas las ranuras de filtro están ocupadas. La repetición con figuras sigue mostrando solo estas entidades. Quita un filtro en «Filtros» para liberar una.",
   "heat.entityPanel.search": "{count, plural, one {Buscar en # entidad…} other {Buscar en # entidades…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# coincidencia} other {# coincidencias}}; se muestran las primeras {page}",
   "heat.entityPanel.matches": "{count, plural, one {# coincidencia} other {# coincidencias}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# ruta} other {# rutas}}, {ended} de ellas llegan a un fin, {segments, plural, one {# segmento} other {# segmentos}}",
   "heat.teamPanel.figures": "Figuras en vez de cajas",
   "heat.teamPanel.figuresTitle": "Cada persona como la figura de lo que es: un soldado a pie, o el tanque o avión que nombran los datos (columnas Name, Vehicle, Type). Aquello de lo que los datos no dicen nada sigue siendo una caja.",
-  "heat.teamPanel.figureScale": "Tamaño de figura"
+  "heat.teamPanel.figureScale": "Tamaño de figura",
+  "heat.teamPanel.figurePixels": "Figura más pequeña en pantalla",
+  "heat.teamPanel.figurePixelsHint": "Tamaño real de cerca; más lejos las figuras crecen para mantener esta longitud en píxeles. 0: siempre tamaño real.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "tamaño real",
+  "heat.teamPanel.weapons": "Armas, disparos e impactos",
+  "heat.teamPanel.weaponsTitle": "Armas en vuelo con humo, trazadoras, impactos, alcances y derribos. Las trazadoras deducidas de un impacto van discontinuas."
 }

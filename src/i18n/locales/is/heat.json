@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# röð} other {# raðir}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# röð} other {# raðir}}",
   "heat.sessionPicker.allHint": "Allar setur í einu. Staðsetningar eru samt aldrei brúaðar yfir setumörk, en samtímis leikir setja óskylda leikmenn saman á kortið — veldu eina til að spila leik aftur.",
-  "heat.sessionPicker.seekHint": "Í hitahömunum færir þetta aðeins spilunarhausinn að upphafi setunnar; hitinn telur samt allar setur. Kassaendurspilun spilar völdu setuna eina.",
+  "heat.sessionPicker.seekHint": "Í hitahömunum færir þetta aðeins spilunarhausinn að upphafi setunnar; hitinn telur samt allar setur. Fígúruendurspilunin (flipinn Leikur) spilar völdu setuna eina.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} mín.",
   "heat.sessionPicker.hours": "{value} klst.",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Afhlaða",
   "heat.entityPanel.title": "Einingar",
   "heat.entityPanel.selectedOf": "{selected} af {total}",
-  "heat.entityPanel.hint": "Sýnir aðeins valdar einingar, bæði í hitanum og í kassaendurspilun. Hafðu tómt til að sýna alla.",
-  "heat.entityPanel.noSlot": "Ekki beitt á hitann: öll síupláss eru upptekin. Kassaendurspilun sýnir enn aðeins þessar einingar. Hreinsaðu síu undir Síur til að losa pláss.",
+  "heat.entityPanel.hint": "Sýnir aðeins valdar einingar, bæði í hitanum og í fígúruendurspiluninni. Hafðu tómt til að sýna alla.",
+  "heat.entityPanel.noSlot": "Ekki beitt á hitann: öll síupláss eru upptekin. Fígúruendurspilunin sýnir enn aðeins þessar einingar. Hreinsaðu síu undir Síur til að losa pláss.",
   "heat.entityPanel.search": "{count, plural, one {Leita í # einingu…} other {Leita í # einingum…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# samsvörun} other {# samsvaranir}}, sýni fyrstu {page}",
   "heat.entityPanel.matches": "{count, plural, one {# samsvörun} other {# samsvaranir}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# leið} other {# leiðir}}, {ended} þeirra ná að endi, {segments, plural, one {# bútur} other {# bútar}}",
   "heat.teamPanel.figures": "Fígúrur í stað kassa",
   "heat.teamPanel.figuresTitle": "Hver einstaklingur sem fígúra þess sem hann er: fótgönguliði, eða skriðdrekinn eða flugvélin sem gögnin nefna (dálkarnir Name, Vehicle, Type). Það sem gögnin segja ekkert um verður áfram kassi.",
-  "heat.teamPanel.figureScale": "Stærð fígúra"
+  "heat.teamPanel.figureScale": "Stærð fígúra",
+  "heat.teamPanel.figurePixels": "Minnsta mynd á skjá",
+  "heat.teamPanel.figurePixelsHint": "Raunstærð í návígi; lengra frá stækka myndir til að haldast svona margir dílar á lengd. 0: alltaf raunstærð.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "raunstærð",
+  "heat.teamPanel.weapons": "Vopn, skot og hittni",
+  "heat.teamPanel.weaponsTitle": "Vopn á flugi með reyk, ljósrákum, höggum, hittni og fellingum. Ljósrákir ályktaðar af hittni eru strikaðar."
 }

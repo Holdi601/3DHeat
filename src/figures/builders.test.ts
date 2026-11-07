@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { VertexBuffer, type Frame3 } from '../race/geometry';
-import { extent, finish, newKit } from './kit';
+import { extent, FigBuffer, finish, newKit } from './kit';
 import { outlineBody, slab, triangulate, type P2 } from './parts';
 import { buildGround, type GroundSpec } from './ground';
 import { buildFixedWing, buildHeli, type FixedWingSpec, type HeliSpec } from './air';
@@ -23,7 +23,7 @@ function bounds(out: VertexBuffer): { min: number[]; max: number[] } {
 
 describe('outline parts', () => {
   it('lofts a body whose silhouettes match its side profile and plan', () => {
-    const out = new VertexBuffer();
+    const out = new FigBuffer();
     outlineBody(out, LOCAL, { top: [[-3, 0.5], [0, 1.2], [3, 0.2]], bottom: [[-3, -0.2], [3, -0.4]], plan: [[-3, 0.3], [-1, 0.9], [3, 0.1]], round: 4 }, [1, 1, 1]);
     const b = bounds(out);
     expect(b.min[0]).toBeCloseTo(-3, 5);
@@ -44,7 +44,7 @@ describe('outline parts', () => {
   });
 
   it('lays a slab on the surface its map gives', () => {
-    const out = new VertexBuffer();
+    const out = new FigBuffer();
     slab(out, LOCAL, [[0, 0], [1, 0], [1, 2], [0, 2]], (a, b) => [a, b, 0.5 + b * 0.1], [0, 0, 1], 0.1, [1, 1, 1]);
     const b = bounds(out);
     expect(b.max[2]).toBeCloseTo(2, 5);

@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session}——{count, plural, other {# 行}}，{span}",
   "heat.sessionPicker.option": "{session}——{count, plural, other {# 行}}",
   "heat.sessionPicker.allHint": "同时显示所有会话。位置仍不会跨会话边界插值，但同时进行的对局会把互不相关的玩家放到同一张地图上——选择一个会话即可回放一场对局。",
-  "heat.sessionPicker.seekHint": "在热度类模式中，这只会把播放头移到该会话的开头；热度仍会统计所有会话。方块回放只播放所选会话。",
+  "heat.sessionPicker.seekHint": "在热度类模式中，这只会把播放头移到该会话的开头；热度仍会统计所有会话。模型回放（“对局”标签页）只播放所选会话。",
   "heat.sessionPicker.seconds": "{value}s",
   "heat.sessionPicker.minutes": "{value}m",
   "heat.sessionPicker.hours": "{value}h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "卸载",
   "heat.entityPanel.title": "实体",
   "heat.entityPanel.selectedOf": "{selected}/{total}",
-  "heat.entityPanel.hint": "只显示所选实体，热度和方块回放中都是如此。留空则显示所有人。",
-  "heat.entityPanel.noSlot": "未应用于热度：所有筛选槽位都已占用。方块回放仍只显示这些实体。在“筛选”中清除一个筛选条件即可腾出槽位。",
+  "heat.entityPanel.hint": "只显示所选实体，热度和模型回放中都是如此。留空则显示所有人。",
+  "heat.entityPanel.noSlot": "未应用于热度：所有筛选槽位都已占用。模型回放仍只显示这些实体。在“筛选”中清除一个筛选条件即可腾出槽位。",
   "heat.entityPanel.search": "{count, plural, other {搜索 # 个实体…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, other {# 个匹配项}}，显示前 {page} 个",
   "heat.entityPanel.matches": "{count, plural, other {# 个匹配项}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, other {# 条路线}}，其中 {ended} 条到达终点，{segments, plural, other {# 段}}",
   "heat.teamPanel.figures": "用图标代替方块",
   "heat.teamPanel.figuresTitle": "每个人显示为其身份对应的图标：步行的士兵，或数据中指明的坦克、飞机（Name、Vehicle、Type 列）。数据未说明的仍显示为方块。",
-  "heat.teamPanel.figureScale": "图标大小"
+  "heat.teamPanel.figureScale": "图标大小",
+  "heat.teamPanel.figurePixels": "屏幕上最小的模型",
+  "heat.teamPanel.figurePixelsHint": "近处为真实尺寸；远处模型会放大以保持这么多像素长。0：始终真实尺寸。",
+  "heat.teamPanel.pixels": "{value} 像素",
+  "heat.teamPanel.trueSize": "真实尺寸",
+  "heat.teamPanel.weapons": "武器、射击与命中",
+  "heat.teamPanel.weaponsTitle": "飞行中的武器及其烟迹、曳光弹、弹着、命中和击毁。由命中推断的曳光弹以虚线显示。"
 }

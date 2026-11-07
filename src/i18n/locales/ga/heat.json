@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# ró} two {# ró} few {# ró} many {# ró} other {# ró}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# ró} two {# ró} few {# ró} many {# ró} other {# ró}}",
   "heat.sessionPicker.allHint": "Gach seisiún in éineacht. Ní dhéantar idirshuí ar shuímh thar theorainn seisiúin riamh, ach cuireann cluichí comhuaineacha imreoirí nach mbaineann le chéile ar an léarscáil in éineacht — roghnaigh ceann acu chun cluiche a athsheinm.",
-  "heat.sessionPicker.seekHint": "Sna móid teasa, ní dhéanann sé seo ach an ceann seinnte a bhogadh go tús an tseisiúin; áirítear gach seisiún sa teas fós. Seinneann Athsheinm boscaí an seisiún roghnaithe ina aonar.",
+  "heat.sessionPicker.seekHint": "Sna móid teasa, ní dhéanann sé seo ach an ceann seinnte a bhogadh go tús an tseisiúin; áirítear gach seisiún sa teas fós. Seinneann an athsheinm figiúirí (cluaisín Cluiche) an seisiún roghnaithe ina aonar.",
   "heat.sessionPicker.seconds": "{value}s",
   "heat.sessionPicker.minutes": "{value}m",
   "heat.sessionPicker.hours": "{value}h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Díluchtaigh",
   "heat.entityPanel.title": "Aonáin",
   "heat.entityPanel.selectedOf": "{selected} as {total}",
-  "heat.entityPanel.hint": "Ní thaispeántar ach na haonáin roghnaithe, sa teas agus san athsheinm boscaí araon. Fág folamh é chun gach duine a thaispeáint.",
-  "heat.entityPanel.noSlot": "Níl sé curtha i bhfeidhm ar an teas: tá gach sliotán scagaire in úsáid. Ní thaispeánann an athsheinm boscaí ach na haonáin seo fós. Glan scagaire faoi Scagairí chun sliotán a shaoradh.",
+  "heat.entityPanel.hint": "Ní thaispeántar ach na haonáin roghnaithe, sa teas agus san athsheinm figiúirí araon. Fág folamh é chun gach duine a thaispeáint.",
+  "heat.entityPanel.noSlot": "Níl sé curtha i bhfeidhm ar an teas: tá gach sliotán scagaire in úsáid. Ní thaispeánann an athsheinm figiúirí ach na haonáin seo fós. Glan scagaire faoi Scagairí chun sliotán a shaoradh.",
   "heat.entityPanel.search": "{count, plural, one {Cuardaigh # aonán…} two {Cuardaigh # aonán…} few {Cuardaigh # aonán…} many {Cuardaigh # n-aonán…} other {Cuardaigh # aonán…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# toradh} two {# thoradh} few {# thoradh} many {# dtoradh} other {# toradh}}, an chéad {page} ar taispeáint",
   "heat.entityPanel.matches": "{count, plural, one {# toradh} two {# thoradh} few {# thoradh} many {# dtoradh} other {# toradh}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# bealach} two {# bhealach} few {# bhealach} many {# mbealach} other {# bealach}}, {ended} díobh ag sroicheadh deiridh, {segments, plural, one {# mhír} two {# mhír} few {# mhír} many {# mír} other {# mír}}",
   "heat.teamPanel.figures": "Figiúirí in ionad boscaí",
   "heat.teamPanel.figuresTitle": "Gach duine mar fhigiúr den rud is ea é: saighdiúir ar chois, nó an t-umar nó an t-aerárthach a ainmníonn na sonraí (colúin Name, Vehicle, Type). An rud nach ndeir na sonraí faic faoi, fanann sé ina bhosca.",
-  "heat.teamPanel.figureScale": "Méid na bhfigiúirí"
+  "heat.teamPanel.figureScale": "Méid na bhfigiúirí",
+  "heat.teamPanel.figurePixels": "An fhíor is lú ar an scáileán",
+  "heat.teamPanel.figurePixelsHint": "Fíormhéid in aice láimhe; níos faide ar shiúl fásann na fíoracha chun fanacht an oiread sin picteilíní ar fad. 0: fíormhéid i gcónaí.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "fíormhéid",
+  "heat.teamPanel.weapons": "Airm, urchair agus buillí",
+  "heat.teamPanel.weaponsTitle": "Airm ag eitilt le deatach, rianairí, tuairteanna, buillí agus scriosanna. Tá rianairí a tátal ó bhuille briste."
 }

@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# rivi} other {# riviä}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# rivi} other {# riviä}}",
   "heat.sessionPicker.allHint": "Kaikki istunnot kerralla. Sijainteja ei silti koskaan interpoloida istuntorajan yli, mutta samanaikaiset ottelut tuovat kartalle toisiinsa liittymättömiä pelaajia — valitse yksi toistaaksesi ottelun.",
-  "heat.sessionPicker.seekHint": "Lämpökarttatiloissa tämä vain siirtää toistokohdan istunnon alkuun; lämpökartta laskee yhä mukaan kaikki istunnot. Laatikkotoisto toistaa valitun istunnon yksinään.",
+  "heat.sessionPicker.seekHint": "Lämpökarttatiloissa tämä vain siirtää toistokohdan istunnon alkuun; lämpökartta laskee yhä mukaan kaikki istunnot. Hahmotoisto (Ottelu-välilehti) toistaa valitun istunnon yksinään.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Vapauta",
   "heat.entityPanel.title": "Entiteetit",
   "heat.entityPanel.selectedOf": "{selected}/{total}",
-  "heat.entityPanel.hint": "Näyttää vain valitut entiteetit, sekä lämmössä että laatikkotoistossa. Jätä tyhjäksi näyttääksesi kaikki.",
-  "heat.entityPanel.noSlot": "Ei käytössä lämmössä: kaikki suodatinpaikat ovat varattuja. Laatikkotoisto näyttää yhä vain nämä entiteetit. Vapauta paikka tyhjentämällä suodatin kohdassa Suodattimet.",
+  "heat.entityPanel.hint": "Näyttää vain valitut entiteetit, sekä lämmössä että hahmotoistossa. Jätä tyhjäksi näyttääksesi kaikki.",
+  "heat.entityPanel.noSlot": "Ei käytössä lämmössä: kaikki suodatinpaikat ovat varattuja. Hahmotoisto näyttää yhä vain nämä entiteetit. Vapauta paikka tyhjentämällä suodatin kohdassa Suodattimet.",
   "heat.entityPanel.search": "{count, plural, one {Hae # entiteetistä…} other {Hae # entiteetistä…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# osuma} other {# osumaa}}, näytetään ensimmäiset {page}",
   "heat.entityPanel.matches": "{count, plural, one {# osuma} other {# osumaa}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# reitti} other {# reittiä}}, joista {ended} yltää loppuun, {segments, plural, one {# segmentti} other {# segmenttiä}}",
   "heat.teamPanel.figures": "Hahmot laatikoiden sijaan",
   "heat.teamPanel.figuresTitle": "Jokainen henkilö sen hahmona, mitä hän on: jalkaväen sotilas tai datan nimeämä panssarivaunu tai lentokone (sarakkeet Name, Vehicle, Type). Joista data ei kerro mitään, pysyvät laatikkoina.",
-  "heat.teamPanel.figureScale": "Hahmojen koko"
+  "heat.teamPanel.figureScale": "Hahmojen koko",
+  "heat.teamPanel.figurePixels": "Pienin hahmo näytöllä",
+  "heat.teamPanel.figurePixelsHint": "Todellinen koko läheltä; kauempana hahmot kasvavat pysyäkseen näin monta pikseliä pitkinä. 0: aina todellinen koko.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "todellinen koko",
+  "heat.teamPanel.weapons": "Aseet, laukaukset ja osumat",
+  "heat.teamPanel.weaponsTitle": "Lennossa olevat aseet savuineen, valojuovat, iskemät, osumat ja tuhoamiset. Osumasta päätellyt valojuovat ovat katkoviivoja."
 }
