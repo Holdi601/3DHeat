@@ -12,6 +12,7 @@ import {
   type IngestProgress,
 } from './ingest';
 import { msg, MsgError } from './msg';
+import { geoOfHints, parseHints } from './automap';
 import { asyncBufferFromFile, readParquetColumns, type ColumnRequest } from './parquet';
 import type { ColumnMapping, TimeUnit } from '../state/types';
 
@@ -193,6 +194,10 @@ export async function ingestParquet(
     attrs,
     rejected: n - kept,
   };
+  // The file's place on the earth, when its hints give one and the mapping
+  // took the columns it is for (see `geoOfHints`).
+  const geo = geoOfHints(parseHints(metadata.key_value_metadata?.find((kv) => kv.key === 'heat3d')?.value), mapping);
+  if (geo) block.geo = geo;
 
   return kept === n ? block : compact(block, keepMask, kept);
 }

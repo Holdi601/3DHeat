@@ -24,9 +24,9 @@ self.onmessage = async (ev: MessageEvent<BackdropWorkerRequest>) => {
   const { id, ...req } = ev.data;
   try {
     const result = await buildBackdrop(req, {
-      fetch: async (url, preferNetwork) => {
+      fetch: async (url, mode) => {
         try {
-          return await cachedFetch(url, preferNetwork);
+          return await cachedFetch(url, mode);
         } catch (err) {
           throw new Error(`${url}: ${err instanceof Error ? err.message : String(err)}`);
         }

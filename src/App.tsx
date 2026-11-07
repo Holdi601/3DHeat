@@ -47,6 +47,7 @@ import { CameraPanel, PerfPanel } from './ui/panels/ViewPanel';
 import { SpeedOverlay } from './ui/SpeedOverlay';
 import { StatsOverlay } from './ui/StatsOverlay';
 import { WorldCredits } from './ui/WorldCredits';
+import { WorldOverlay } from './ui/WorldOverlay';
 import { CameraReadout, copyCameraPose } from './ui/CameraReadout';
 import { PickCard } from './ui/PickCard';
 import { useInspectStore } from './state/inspectStore';
@@ -506,6 +507,7 @@ export function App() {
                 </>
               )}
               <HelpPanel />
+              <WorldOverlay />
               <WorldCredits />
               <div className="help">
                 <Rich text={t('app.help.move')} />

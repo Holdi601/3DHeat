@@ -15,7 +15,15 @@ export const CACHE_NAME = '3dheat-world-tiles-v1';
 export interface Fetched {
   bytes: ArrayBuffer | null;
   cached: boolean;
+  /** Asked for from the cache only, and the cache did not have it. */
+  missing?: boolean;
 }
+
+/**
+ * Where to look first. `cache-only` never touches the network: what a build
+ * asks for once its download allowance is spent.
+ */
+export type FetchMode = 'cache-first' | 'network-first' | 'cache-only';
 
 async function open(): Promise<Cache | null> {
   try {
@@ -31,12 +39,15 @@ async function open(): Promise<Cache | null> {
  * does not have (404, 204: open sea, the edge of the data). Other failures
  * throw.
  */
-export async function cachedFetch(url: string, preferNetwork = false): Promise<Fetched> {
+export async function cachedFetch(url: string, mode: FetchMode | boolean = 'cache-first'): Promise<Fetched> {
+  if (mode === true) mode = 'network-first';
+  else if (mode === false) mode = 'cache-first';
   const cache = await open();
-  if (cache && !preferNetwork) {
+  if (cache && mode !== 'network-first') {
     const hit = await cache.match(url);
     if (hit) return { bytes: hit.status === 204 ? null : await hit.arrayBuffer(), cached: true };
   }
+  if (mode === 'cache-only') return { bytes: null, cached: false, missing: true };
   let res: Response;
   try {
     res = await fetch(url, { mode: 'cors', credentials: 'omit' });

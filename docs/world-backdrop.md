@@ -8,13 +8,48 @@ nav_order: 5
 
 A recording made in the real world - a Tacview ACMI file from DCS, IL-2, MSFS or anything else Tacview records - says where on the earth it is. For such a dataset the **Background / level** panel offers **World backdrop**: it downloads open map data for the area under the data and builds it into a level, in the same metres as the data. Terrain, roads, railways, water, runways and buildings, simplified, and nothing else.
 
-The button is shown only when the loaded dataset carries a geographic reference (below). Everything is built in a background worker ([`src/world`](https://github.com/Holdi601/3DHeat/tree/main/src/world)) with a progress line and **Cancel**: *Elevation tiles: N of M*, *Map tiles: N of M*, *Building the backdrop*. The result replaces the current level and behaves as any [3D level](model-levels.md): it occludes the heat, is cut by the slice, has the [appearance controls](level-appearance.md), and can be saved to the [library](level-library.md).
+The button is shown only when the loaded dataset carries a geographic reference (below). Below it, a **Theatre** picker builds a whole real-world game map - a DCS terrain or an IL-2 map - with or without data loaded ([Theatres](#theatres)). Everything is built in a background worker ([`src/world`](https://github.com/Holdi601/3DHeat/tree/main/src/world)) with a progress line and **Cancel**: *Elevation tiles: N of M*, *Map tiles: N of M*, *Building the backdrop*. The result replaces the current level and behaves as any [3D level](model-levels.md): it occludes the heat, is cut by the slice, has the [appearance controls](level-appearance.md), and can be saved to the [library](level-library.md).
 
 ## Where the data is: the geographic reference
 
-A dataset gets a geographic reference only from a source that states one. Today that is an ACMI recording: its header's `ReferenceLatitude` and `ReferenceLongitude`, and positions that the reader projects onto the plane touching the WGS84 ellipsoid there (X east, Y north, metres; heights are the recording's altitude above sea level). The reference is kept when the mapping takes **X** and **Y** as the ground axes - the recording's own hints do - and dropped when the ground comes from any other column, such as a game's own flat-world **U** and **V**. A load of several recordings keeps it only when all share the same reference point. Every other loader is unaffected and carries none.
+A dataset gets a geographic reference only from a source that states one:
+
+- **An ACMI recording**: its header's `ReferenceLatitude` and `ReferenceLongitude`, and positions that the reader projects onto the plane touching the WGS84 ellipsoid there (X east, Y north, metres; heights are the recording's altitude above sea level). The reference is kept when the mapping takes **X** and **Y** as the ground axes - the recording's own hints do - and dropped when the ground comes from any other column, such as a game's own flat-world **U** and **V**.
+- **A Parquet table whose `heat3d` hints carry a `geo` entry** - the [Watcher](https://github.com/Holdi601/3DHeat-Watcher)'s DCS, MSFS, X-Plane and IL-2 (Tacview) tables:
+
+  ```json
+  "geo": {"lat0": 42.0, "lon0": 42.0, "projection": "tangent-plane", "east": "x", "north": "z", "up": "y",
+          "dcs": {"theatre": "Caucasus", "x": "dcs_x", "y": "dcs_y", "z": "dcs_z"}}
+  ```
+
+  `east`, `north` and `up` name the columns holding east and north metres on the same tangent plane at (`lat0`, `lon0`) and the altitude. The load carries the reference when its mapping takes exactly those columns (east as X, north and height as Y and Z either way round). The optional `dcs` entry names a DCS table's own metres (x north, y up, z east) and its theatre: a load that maps those columns is placed through the theatre's transverse Mercator projection instead ([DCS coordinates](#dcs-coordinates)). A table without `geo` reads as before.
+
+A load of several files keeps the reference only when all share the same one. Every other loader is unaffected and carries none.
 
 The backdrop is projected the same way and then put through the load's axis mapping, so it lands under the data whatever flips or scale the mapping applies.
+
+### DCS coordinates
+
+Each DCS theatre is a Transverse Mercator projection (WGS84, scale 0.9996) with its own central meridian and false origin, DCS x being the northing and z the easting. The constants are the ones the pydcs project publishes; the maths is Krüger's series to sixth order (Karney 2011), ported from the DCS terrain converter's own `projection.py` to [`src/world/dcsProjection.ts`](https://github.com/Holdi601/3DHeat/tree/main/src/world/dcsProjection.ts). A backdrop for DCS metres is built straight in them, so a Watcher DCS table mapped by `dcs_x`/`dcs_y`/`dcs_z`, a level the DCS terrain converter wrote and the backdrop all share one frame. Iraq's constants are not published; they are fitted to the 43 beacons the theatre's own `beacons.lua` gives both ways (4 cm root mean square; the same fit gives Caucasus, Syria and Sinai back to the millimetre).
+
+The Watcher's DCS tables are on a tangent plane at the theatre's fixed reference point (the same point the theatre picker uses, below), so several missions on one theatre merge with their reference intact and line up with a theatre backdrop without moving it.
+
+## Theatres
+
+The **Theatre** picker lists the real-world maps of DCS World (Caucasus, Nevada, Normandy 2, The Channel, Syria, Persian Gulf, Marianas, Marianas WWII, South Atlantic, Sinai, Afghanistan, Kola, Germany Cold War, Iraq) and IL-2 Great Battles (Stalingrad, Moscow, Kuban, Rheinland, Normandy, Prokhorovka, Velikie Luki, Arras, Odessa, Finnish Gulf / Leningrad, Korea), each with its box on the earth ([`src/world/theatres.ts`](https://github.com/Holdi601/3DHeat/tree/main/src/world/theatres.ts)). The DCS boxes are the editors' extents computed from the published projections; the IL-2 boxes, and the DCS ones marked so, are estimates from the maps' published sizes and the towns at their edges - the panel says which.
+
+**Build theatre backdrop** builds two levels of detail in one mesh:
+
+| Level | Area | Terrain | Map |
+|---|---|---|---|
+| Theatre | the whole box | the deepest zoom up to 10 that needs at most 64 elevation tiles (about 3 km a vertex over the Caucasus, 1 km over Normandy) | the sea, lakes, land cover and motorways from at most 64 vector tiles at zoom 4 to 9 |
+| Detailed area | **Under the data**, **Round a point** (latitude, longitude, 12 to 400 km), or none | up to zoom 12 in at most 100 tiles, at most 500,000 vertices | everything below, from at most 1,500 vector tiles at the deepest zoom up to 14 that fits |
+
+The detailed area cuts a hole in the theatre's grid, widened to whole cells so both grids share their edge lines, and a thin wall closes the seam where they sample the heights differently.
+
+With data loaded the theatre is built on the data's plane, so it lands under it as built. Without data it is built round the theatre's own reference point (whole degrees near its detailed area). Data loaded afterwards on another reference - an ACMI file names its own - moves the backdrop under it: the exact move between the two projections is computed on a 256 × 256 grid over the backdrop and read between the nodes, within a metre or two across a whole theatre ([`src/world/reproject.ts`](https://github.com/Holdi601/3DHeat/tree/main/src/world/reproject.ts)). A backdrop saved to the library keeps its place and moves the same way when loaded under other data.
+
+**Follow the camera** (on by default) builds the detailed area again round the point under the camera once the camera has stopped for a second and a half, sized by its height: about six times the height, from 12 to 200 km. Higher up the area is wider and its map zoom coarser (no buildings), lower down it is finer. Only tiles not yet in the cache are downloaded, so flying back over an area costs nothing. It is a rebuild of the backdrop's mesh, not a tile streamer: a second or two in the background worker each time, the previous backdrop shown meanwhile.
 
 ## What is built
 
@@ -24,6 +59,9 @@ The backdrop is projected the same way and then put through the load's axis mapp
 | Roads, railways | OpenFreeMap vector tiles, `transportation` layer | Flat ribbons draped on the terrain, densified to the terrain's spacing and lifted a few per cent of it so they do not fight with it. Widths by class, from 16 m (motorway) to 3 m (track, rail); never narrower than the box's diagonal / 5000. Paths, ferries and tunnels are left out. |
 | Airfields | `aeroway` layer | Runway, taxiway, apron and helipad polygons draped as ground; runway and taxiway lines as 45 m and 18 m ribbons. |
 | Water | `water` layer | The sea flat at 0 m, lakes and ponds flat at their lowest shore, rivers draped. Drawn as water: flat-shaded, no contours. |
+| Land cover | `landcover` and `landuse` layers | Painted onto the terrain's own vertices, no extra triangles: woods, grass and parks green, farmland straw, wetland, sand, rock, ice; residential, industrial, commercial, military and quarry areas in muted tones. Water is painted under the water surface too, so the shore reads from any height. Bare ground gets a quiet height tint (lowland grey-green, upland brown, snow above 3,000 m). Readable at the terrain's resolution: about 30-45 m in the detailed area, kilometres in the theatre. |
+| Place names | `place` and `aerodrome_label` layers | Cities, towns and villages, and airfields with their ICAO code, written over the view; how far each kind shows grows with the camera's height, at most 70 at once. |
+| Surveyed runways | [OurAirports](https://ourairports.com/data/) `runways.csv` (public domain) | Optional (**Runways from OurAirports**, on by default): every open runway with both ends in the list, from threshold to threshold at its listed width, with side stripes, a dashed centre line and threshold bars. One 4 MB list, downloaded once and kept in the cache. |
 | Buildings | `building` layer | Footprints extruded from `render_min_height` to `render_height` (6 m when missing) above the lowest ground under them; `hide_3d` parts skipped. Drawn as structures. |
 
 Vector tiles are read at zoom 14 (the only zoom with buildings) when the box needs at most 300 of them, else at the deepest zoom that does, down to 8. A larger area gets terrain only.
@@ -36,7 +74,7 @@ Vector tiles are read at zoom 14 (the only zoom with buildings) when the box nee
 
 ### Look
 
-A backdrop starts with **Show captured colour** on - colour is what tells a light road from the grey ground it lies on, a dark runway from its apron - and with the ground's triangle edges off, since a regular grid says nothing. Everything else is a model level's default look.
+A backdrop starts with **Show captured colour** on - colour is what tells a light road from the grey ground it lies on, a dark runway from its apron - with the ground's triangle edges off, since a regular grid says nothing, faint contours, an opaque sea (a floor under it would fight the surface for depth far off), and buildings light grey and nearly solid, as a map draws them. The open sea gets no ground triangles at all. Everything else is a model level's default look.
 
 ## Credits on the canvas
 
@@ -53,11 +91,14 @@ Each part links to its source's attribution page (openstreetmap.org/copyright an
 | [OpenFreeMap](https://openfreemap.org) - OpenMapTiles-schema vector tiles from OpenStreetMap, current build named by `https://tiles.openfreemap.org/planet` | Free, no key, commercial use allowed. The [terms](https://openfreemap.org/tos/) forbid collecting data "in automated ways, except for offline downloads": an app may let users download an area for offline use if each download is at most 3,000 tiles or 50 MB, made with at most 4 parallel requests, with a User-Agent identifying the app. Attribution is required: "OpenFreeMap © OpenMapTiles Data from OpenStreetMap" (the OpenFreeMap part optional). The service may end without notice. |
 | [OpenStreetMap](https://www.openstreetmap.org/copyright) data | ODbL 1.0. Fetching it at run time and drawing it locally is private use; the drawn view is a Produced Work that needs a visible credit, and so are screenshots and videos made from it. |
 | [OpenMapTiles](https://openmaptiles.org) schema | CC BY 4.0 for the schema; credit "© OpenMapTiles". |
+| [OurAirports](https://ourairports.com/data/) `runways.csv` | Released into the public domain; no key. The credit "Runways: OurAirports (public domain)" is shown as a courtesy. |
 | [AWS Terrain Tiles](https://registry.opendata.aws/terrain-tiles/) (Mapzen / Tilezen), `s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png` | Open data from many sources, each with its own credit ([list](https://github.com/tilezen/joerd/blob/master/docs/attribution.md)); no key, no service guarantee, served with open CORS. Heights decode as `R × 256 + G + B / 256 − 32768` metres. |
 
 How the backdrop stays inside those terms:
 
-- One build downloads at most 36 elevation tiles and 300 vector tiles, four requests at a time per source. A test sortie round 43° N, 42° E took 175 tiles, 1.2 MB, and about 3 s to build.
+- A backdrop under a recording downloads at most 36 elevation tiles and 300 vector tiles; a theatre at most 64 + 100 elevation tiles and 64 + 1,500 vector tiles, four requests at a time per source.
+- **One build is one download**, and downloads at most 1,000 vector tiles or 40 MB (OpenFreeMap's terms allow 3,000 tiles or 50 MB). Tiles are asked for centre first; past the allowance the build takes only tiles already in the cache and says how many are still to come. Building again fetches the next chunk, and so on: a large area arrives in pieces, each one cached.
+- Measured on the test sorties: the Caucasus theatre with a 25 km area round Batumi, 372 tiles, 19 MB, the first time; Normandy 2 with 25 km round Caen, 371 tiles, 24 MB. Built again, or followed back over, nothing is downloaded.
 - Tiles are downloaded only when **World backdrop** is pressed, never in the background.
 - A browser does not let a page set its own User-Agent; the requests carry the browser's, and the page's origin as `Origin`/`Referer`. A desktop build of the viewer should send its own.
 - **Nothing derived from OpenStreetMap is ever shipped** with the viewer or committed to its repository: ODbL's share-alike applies to a distributed derived database. Backdrops are built on the user's machine and kept only in that browser (the tile cache and, if saved, the level library).
@@ -68,12 +109,44 @@ Every tile, and the vector tiles' TileJSON, is kept in the browser's Cache API u
 
 Vector tile URLs carry the map's build date, so after OpenFreeMap publishes a new build the next backdrop downloads fresh tiles and the old ones stay until cleared. **Forget map tiles** deletes the whole cache. The cache needs a secure origin (`https://` or `localhost`); elsewhere every build downloads again.
 
+## Compared with Tacview
+
+Checked by eye on the Caucasus (Batumi to Kutaisi) and Normandy 2 (Caen to Deauville) with synthetic recordings: the take-off rolls lie on the drawn runways' centre lines, the coast crossings fall where the coast is, the tracks end on the destination airfields.
+
+| | Tacview (from its public documentation and screenshots, not compared side by side) | This backdrop |
+|---|---|---|
+| Extent | the whole earth, streamed | one theatre at a time; the detailed area follows the camera |
+| Terrain | global elevation, hillshaded | the same class of data (SRTM-based, about 30 m), shaded with slope cues and contours |
+| Imagery / land cover | satellite imagery (optional, online) or a coloured map | land cover from OpenStreetMap painted on the terrain; no imagery yet (EOX Sentinel-2 cloudless 2016, CC BY, about 10 m, is the candidate) |
+| Roads, railways | major roads | every class in the detailed area, motorways over the theatre |
+| Buildings | not drawn, as far as its documentation shows | extruded footprints in the detailed area, up to 1.5M triangles |
+| Airfields | runway outlines and names | runways with markings from surveyed ends, taxiways and aprons, airfield names with ICAO codes |
+| Place names | cities | cities, towns and villages by distance |
+| Water | sea and lakes | sea and lakes flat, rivers draped |
+
+Where Tacview is still ahead: it streams any part of the earth seamlessly at any distance; here, outside the theatre box there is nothing, and between the detailed area and the theatre the detail steps down at a visible edge. Its imagery option has no counterpart.
+
 ## Limits and what comes later
 
-- **Terrain resolution**: about 30 m at best, and coarser in large boxes. [Copernicus GLO-30](https://registry.opendata.aws/copernicus-dem/) (Cloud-Optimized GeoTIFFs on AWS, no key, a fixed credit text) is the better source: 30 m everywhere, GLO-90 where GLO-30 has gaps (Armenia and Azerbaijan, which DCS Caucasus covers). It needs a GeoTIFF reader and is not used yet.
+- **Terrain resolution**: about 30 m at best, and coarser in large areas. [Copernicus GLO-30](https://registry.opendata.aws/copernicus-dem/) (Cloud-Optimized GeoTIFFs on AWS, no key, a fixed credit text) is the better source: 30 m everywhere, GLO-90 where GLO-30 has gaps (Armenia and Azerbaijan, which DCS Caucasus covers). It needs a GeoTIFF reader and is not used yet.
+- **Two levels, not a tile pyramid**: a theatre has one coarse level and one detailed area. A true quadtree of tiles, each its own mesh loaded and dropped with distance, needs the renderer to draw several level meshes; it is the next step for seamless streaming.
 - **Curvature**: heights are not lowered for the earth's curve, matching how the ACMI reader places the data (altitude as height). Far from the reference both drift together, by under a part in a thousand at 100 km.
-- **Present-day world only**: DCS and IL-2 maps are historical or stylised. Historical backdrops (period maps as textures, period airfields) are planned separately; so are DCS map extents (backdrops sized to a theatre rather than to a recording).
-- **No globe mode**: a backdrop is a flat local patch round the data. A whole-earth view is planned.
-- **Only ACMI recordings** carry a geographic reference so far.
-- No airport data beyond OpenStreetMap's `aeroway`: OurAirports' runway list (public domain) adds nothing the aeroway polygons and lines do not already draw.
-- Roads are widened in large boxes so they stay visible; up close they are wider than life.
+- **Present-day world only**: DCS's and IL-2's historical maps (Normandy 2, The Channel, Germany Cold War, every IL-2 map) are drawn with today's towns, roads and coast works; the panel says so. Period airfields are not drawn.
+- **No globe mode**: a backdrop is a flat local plane. A whole-earth view is planned.
+- **Place names** are not stored in the library with a saved backdrop.
+- Roads are widened in large areas so they stay visible; up close they are wider than life.
+- DCS theatre names in the Watcher's tables are matched as DCS gives them in `mission.theatre`; a name not in the list falls back to the first fix rounded to whole degrees, and to latitude and longitude only.
+
+## Historical maps (not built yet)
+
+Period maps could texture the historical theatres later. The US Army Map Service (AMS) series are US federal government works, generally treated as public domain (check each scan's record; many are reprints of British GSGS or German originals, whose Crown copyright or anonymous-work term has also run out):
+
+| Theatre | Series | Where scanned |
+|---|---|---|
+| IL-2 Stalingrad, Moscow, Kuban, Velikie Luki, Prokhorovka, Leningrad | AMS **N501**, Eastern Europe 1:250,000 (compiled in the 1950s from Soviet and German maps) | UT Austin PCL; some sheets georeferenced at UT GeoData |
+| IL-2 Normandy, DCS Normandy 2 and The Channel | AMS **M661** / GSGS 4250, France 1:50,000 | UT Austin PCL, Princeton |
+| IL-2 Rheinland | AMS **M501** 1:250,000 and **M841** 1:25,000 (Germany) | UT Austin PCL |
+| IL-2 Korea | AMS **L751** 1:50,000 (1951 editions) and **L552** 1:250,000 | ANU Open Research (L751 sheets, "copyright expired"), UT Austin PCL, Yale |
+| IL-2 Arras (Flying Circus) | British WWI trench maps (not AMS) | McMaster University; National Library of Scotland (non-commercial terms) |
+
+AMS sheets carry latitude and longitude ticks at their corners, so each would be placed by a four-corner fit and draped on the terrain as a texture, built and kept locally like the tiles.

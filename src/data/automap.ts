@@ -4,9 +4,11 @@ import {
   TIME_UNIT_LABELS,
   type AxisMapping,
   type ColumnMapping,
+  type GeoReference,
   type LookMode,
   type TimeUnit,
 } from '../state/types';
+import { DCS_PROJECTIONS } from '../world/dcsProjection';
 
 /**
  * Guess a column mapping from column names and sampled values.
@@ -70,6 +72,52 @@ export interface MappingHints {
     /** The filter columns to retain, in order of usefulness. */
     extra?: string[];
   };
+  /**
+   * Where the positions are on the earth, for a table recorded in the real
+   * world (the Watcher's flight sims): the reference point and the columns
+   * holding east and north metres on the plane touching the WGS84 ellipsoid
+   * there, and the altitude above sea level - the projection an ACMI
+   * recording's X and Y are in. A load whose ground and height come from
+   * exactly these columns carries the reference (`geoOfHints`); any other
+   * mapping is in no frame a world backdrop knows and carries none.
+   */
+  geo?: {
+    lat0?: number;
+    lon0?: number;
+    projection?: string;
+    east?: string;
+    north?: string;
+    up?: string;
+    /**
+     * A DCS table's own metres (x north, y height, z east), in its theatre's
+     * transverse Mercator projection: the theatre and the columns.
+     */
+    dcs?: { theatre?: string; x?: string; y?: string; z?: string };
+  };
+}
+
+/**
+ * The geographic reference a load gets from a file's hints, for the columns it
+ * was mapped by: east as x, and north and the height as y and z either way
+ * round. Null when the hints have none, or the mapping took other columns.
+ */
+export function geoOfHints(hints: MappingHints | null | undefined, mapping: { x: string | null; y: string | null; z: string | null }): GeoReference | null {
+  const g = hints?.geo;
+  if (!g || typeof g !== 'object') return null;
+  const { lat0, lon0, east, north, up } = g;
+  if (typeof lat0 !== 'number' || typeof lon0 !== 'number' || !Number.isFinite(lat0) || !Number.isFinite(lon0)) return null;
+  if (Math.abs(lat0) > 90 || Math.abs(lon0) > 180) return null;
+  // DCS's own metres, when the load took those columns and the theatre's projection is known.
+  const dcs = g.dcs;
+  if (dcs && typeof dcs.theatre === 'string' && DCS_PROJECTIONS[dcs.theatre] && mapping.x === dcs.x && mapping.y === dcs.y && mapping.z === dcs.z && dcs.x) {
+    return { lat0, lon0, projection: 'dcs-tm', theatre: dcs.theatre };
+  }
+  if ((g.projection ?? 'tangent-plane') !== 'tangent-plane') return null;
+  if (typeof east !== 'string' || typeof north !== 'string' || typeof up !== 'string') return null;
+  if (mapping.x !== east) return null;
+  if (mapping.y === north && mapping.z === up) return { lat0, lon0, projection: 'tangent-plane' };
+  if (mapping.z === north && mapping.y === up) return { lat0, lon0, projection: 'tangent-plane', north: 'z' };
+  return null;
 }
 
 /** The `heat3d` hints from a JSON string; null for anything that does not parse as an object. */

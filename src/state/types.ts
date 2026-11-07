@@ -140,8 +140,33 @@ export interface GeoReference {
   /** The reference point, degrees. */
   lat0: number;
   lon0: number;
-  /** How positions are projected: x east and y north metres on the tangent plane at the reference, z height. */
-  projection: 'tangent-plane';
+  /**
+   * How positions are projected. `tangent-plane`: x east and y north metres
+   * on the plane touching the ellipsoid at the reference, z height (see
+   * `north`). `dcs-tm`: DCS World's own metres, x north, y height, z east, in
+   * the transverse Mercator projection of the theatre named by `theatre`
+   * (src/world/dcsProjection); lat0 and lon0 then only say where the theatre is.
+   */
+  projection: 'tangent-plane' | 'dcs-tm';
+  /** The DCS theatre, for `dcs-tm`. */
+  theatre?: string;
+  /**
+   * Which of the data's axes is north, the other of y and z being the height.
+   * Absent means y (an ACMI recording: x east, y north, z altitude); z is the
+   * Watcher's flight tables (x east, y altitude, z north). East is always x.
+   */
+  north?: 'y' | 'z';
+}
+
+/**
+ * Where a world backdrop was built: the plane its east and north metres are on
+ * and the axis mapping it went through into the viewer's world. A backdrop
+ * whose placement differs from the loaded data's geographic reference is
+ * moved under the data (src/world/reproject).
+ */
+export interface GeoPlacement {
+  geo: GeoReference;
+  axes: AxisMapping | null;
 }
 
 export interface Bounds {

@@ -11,6 +11,11 @@ class BackdropLoader {
   private nextId = 1;
   private reject: ((e: Error) => void) | null = null;
 
+  /** Whether a build is running. */
+  get busy(): boolean {
+    return this.worker !== null;
+  }
+
   build(req: BackdropRequest, onProgress?: (label: string, fraction: number | null) => void): Promise<BackdropResult> {
     this.cancel();
     const worker = new Worker(new URL('./backdropWorker.ts', import.meta.url), { type: 'module' });
