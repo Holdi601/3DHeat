@@ -1,4 +1,5 @@
-import type { Bounds } from '../state/types';
+import type { Bounds, GeoPlacement } from '../state/types';
+import type { WorldLabel } from '../world/backdrop';
 
 /**
  * Background geometry: the map under the heat.
@@ -12,7 +13,7 @@ import type { Bounds } from '../state/types';
 export type LevelKind = 'none' | 'image' | 'model';
 
 /** A source whose credit a level must carry on screen: see `ModelLevel.credits`. */
-export type LevelCredit = 'openfreemap' | 'terrarium';
+export type LevelCredit = 'openfreemap' | 'terrarium' | 'ourairports';
 
 /**
  * Ties one image pixel to one world position.
@@ -177,6 +178,19 @@ export interface ModelLevel {
    * canvas shows for as long as the level is shown. Absent on every other level.
    */
   credits?: LevelCredit[];
+  /**
+   * Where a world backdrop sits on the earth: the plane it was built on and
+   * the axis mapping it went through. Data on another reference moves it
+   * (src/world/reproject). Absent on every other level.
+   */
+  placement?: GeoPlacement;
+  /** A world backdrop's place names (towns, airfields), written over the view. */
+  labels?: WorldLabel[];
+  /**
+   * How a theatre backdrop was asked for, so it can be built again round the
+   * camera as it moves (src/ui/worldStream). Absent on a backdrop built once.
+   */
+  stream?: { theatre: string; runways: boolean; follow: boolean; centre: { lat: number; lon: number }; size: number };
 
   // Ground appearance.
   opacity: number;

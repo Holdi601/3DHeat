@@ -1064,6 +1064,42 @@ button.link:disabled {
  * The world backdrop's credit: bottom right, on the canvas, never hidden, so
  * a screenshot carries it. The speed readout steps up to make room.
  */
+/* A world backdrop's place names, written over the view (src/ui/WorldOverlay). */
+.world-labels {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.world-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  color: #f2f0ea;
+  font-size: 11px;
+  text-shadow: 0 0 3px #000, 0 0 2px #000;
+}
+
+.world-label.city {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.world-label.village {
+  font-size: 10px;
+  color: #d8d6d0;
+}
+
+.world-label.airfield {
+  color: #bfe3ff;
+}
+
+.world-label.airfield::before {
+  content: '\2708\FE0E  ';
+}
+
 .world-credits {
   position: absolute;
   right: 0;

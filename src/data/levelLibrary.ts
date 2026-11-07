@@ -1,5 +1,6 @@
 import { t } from '../i18n';
 import type { LevelCredit, MapAnchor } from '../render/level';
+import type { GeoPlacement } from '../state/types';
 
 /**
  * Local library of processed levels.
@@ -33,6 +34,8 @@ export interface StoredLevelMeta {
   anchors?: [MapAnchor, MapAnchor];
   /** A world backdrop's sources, whose credit must come back with it. */
   credits?: LevelCredit[];
+  /** A world backdrop's place on the earth, so it can be moved under other data. */
+  placement?: GeoPlacement;
 }
 
 interface StoredLevel extends StoredLevelMeta {
@@ -149,6 +152,7 @@ export interface ModelLevelPayload {
   sourceTriangles: number;
   /** A world backdrop's sources: see `ModelLevel.credits`. */
   credits?: LevelCredit[];
+  placement?: GeoPlacement;
 }
 
 export async function saveModelLevel(name: string, p: ModelLevelPayload): Promise<string> {
@@ -175,6 +179,7 @@ export async function saveModelLevel(name: string, p: ModelLevelPayload): Promis
       triangles: p.triangles,
       sourceTriangles: p.sourceTriangles,
       ...(p.credits?.length ? { credits: [...p.credits] } : {}),
+      ...(p.placement ? { placement: JSON.parse(JSON.stringify(p.placement)) as GeoPlacement } : {}),
       vertices: p.vertices.slice().buffer,
       ...(p.colours ? { colours: p.colours.slice().buffer } : {}),
       ...(p.uvs && p.atlas ? { uvs: p.uvs.slice().buffer, atlas: p.atlas } : {}),

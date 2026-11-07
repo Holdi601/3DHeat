@@ -98,7 +98,7 @@ export class MeshBuilder {
   /** Vertices that belong to the terrain grid, for the relief band: the first `terrainVertices`. */
   terrainVertices = 0;
 
-  constructor(readonly project: Project) {}
+  constructor(public project: Project) {}
 
   get vertexCount(): number {
     return this.pos.n / 3;
@@ -140,6 +140,18 @@ export class MeshBuilder {
     return this.vertex(e, n, h, c);
   }
 
+  /** Moves a vertex already made up or down: the sea floor is flattened once the map says where the sea is. */
+  setHeight(i: number, h: number): void {
+    this.pos.a[i * 3 + 2] = h;
+  }
+
+  /** Repaints a vertex already made: the terrain is coloured once the map says what covers it. */
+  setColour(i: number, c: Rgb): void {
+    this.col.a[i * 3] = c[0];
+    this.col.a[i * 3 + 1] = c[1];
+    this.col.a[i * 3 + 2] = c[2];
+  }
+
   /** A vertex in east, north and height metres; its index. */
   vertex(e: number, n: number, h: number, c: Rgb): number {
     this.pos.push3(e, n, h);
@@ -173,7 +185,13 @@ export class MeshBuilder {
    * triangles turned where the mapping mirrors the world, normals from the
    * faces around each vertex.
    */
-  finish(axes: AxisMapping | null | undefined): BuiltMesh {
+  finish(
+    axes: AxisMapping | null | undefined,
+    frame: { toData: (e: number, n: number, h: number) => { x: number; y: number; z: number }; sense: number } = {
+      toData: (e, n, h) => ({ x: e, y: n, z: h }),
+      sense: 1,
+    },
+  ): BuiltMesh {
     for (const s of ['ground', 'structure', 'water'] as MeshSet[]) this.closeRun(s);
     const nv = this.vertexCount;
     const src = this.pos.a;
@@ -182,7 +200,8 @@ export class MeshBuilder {
     let bandLo = Infinity;
     let bandHi = -Infinity;
     for (let i = 0; i < nv; i++) {
-      const w = dataToWorld({ x: src[i * 3], y: src[i * 3 + 1], z: src[i * 3 + 2] }, axes);
+      // East, north, height into the data's frame (see `GeoReference`).
+      const w = dataToWorld(frame.toData(src[i * 3], src[i * 3 + 1], src[i * 3 + 2]), axes);
       vertices[i * 6] = w.x;
       vertices[i * 6 + 1] = w.y;
       vertices[i * 6 + 2] = w.z;
@@ -201,7 +220,8 @@ export class MeshBuilder {
       bandLo = bounds.minY;
       bandHi = bounds.maxY;
     }
-    const mirrored = handedness(axes) < 0;
+    // A frame that mirrors east, north, height counts too.
+    const mirrored = handedness(axes) * frame.sense < 0;
     const out = (set: MeshSet) => {
       const idx = this.sets[set].done();
       if (mirrored) {
@@ -259,7 +279,7 @@ export function handedness(axes: AxisMapping | null | undefined): number {
 }
 
 /** Adds each triangle's area-weighted normal to its three vertices (interleaved position+normal). */
-function accumulateNormals(v: Float32Array, idx: Uint32Array): void {
+export function accumulateNormals(v: Float32Array, idx: Uint32Array): void {
   for (let i = 0; i + 2 < idx.length; i += 3) {
     const a = idx[i] * 6;
     const b = idx[i + 1] * 6;

@@ -1,4 +1,5 @@
 import { tangentPlane } from '../data/acmi';
+import { DCS_PROJECTIONS, fromDcs, toDcs } from './dcsProjection';
 import { worldToData } from '../render/pose';
 import type { AxisMapping, Bounds, GeoReference } from '../state/types';
 
@@ -133,6 +134,79 @@ export function fromTangentPlane(lat0: number, lon0: number): (e: number, n: num
 }
 
 /**
+ * A data-frame point's east and north metres on its projection's plane: x
+ * and y or z on a tangent plane, by which axis the reference says is north;
+ * DCS's z and x.
+ */
+export function eastNorthOf(geo: GeoReference, d: { x: number; y: number; z: number }): [number, number] {
+  if (geo.projection === 'dcs-tm') return [d.z, d.x];
+  return geo.north === 'z' ? [d.x, d.z] : [d.x, d.y];
+}
+
+/** East, north and height metres as a data-frame point: the inverse of `eastNorthOf`. */
+export function dataOfEastNorth(geo: GeoReference, e: number, n: number, h: number): { x: number; y: number; z: number } {
+  if (geo.projection === 'dcs-tm') return { x: n, y: h, z: e };
+  return geo.north === 'z' ? { x: e, y: h, z: n } : { x: e, y: n, z: h };
+}
+
+/** The height of a data-frame point. */
+export function heightOf(geo: GeoReference, d: { x: number; y: number; z: number }): number {
+  if (geo.projection === 'dcs-tm') return d.y;
+  return geo.north === 'z' ? d.y : d.z;
+}
+
+/** +1 when east, north, height go into the data's frame without a mirror, -1 when they are mirrored. */
+export function frameSense(geo: GeoReference): number {
+  // DCS's (north, height, east) is a turn of (east, north, height); (east, height, north) a mirror.
+  if (geo.projection === 'dcs-tm') return 1;
+  return geo.north === 'z' ? -1 : 1;
+}
+
+/** Whether the viewer knows the projection a reference names. */
+export function knownProjection(geo: GeoReference): boolean {
+  return geo.projection === 'tangent-plane' || (geo.projection === 'dcs-tm' && !!geo.theatre && !!DCS_PROJECTIONS[geo.theatre]);
+}
+
+/** Latitude and longitude to the reference's east and north metres. */
+export function planeForward(geo: GeoReference): (lat: number, lon: number) => [number, number] {
+  if (geo.projection === 'dcs-tm') {
+    const proj = DCS_PROJECTIONS[geo.theatre ?? ''];
+    if (!proj) throw new Error(`unknown DCS theatre ${geo.theatre}`);
+    return (lat, lon) => {
+      const p = toDcs(proj, lat, lon);
+      return [p.z, p.x];
+    };
+  }
+  const fwd = tangentPlane(geo.lat0, geo.lon0);
+  return (lat, lon) => {
+    const [e, n] = fwd(lat, lon);
+    return [e, n];
+  };
+}
+
+/** The reference's east and north metres to latitude and longitude. */
+export function planeInverse(geo: GeoReference): (e: number, n: number) => [number, number] {
+  if (geo.projection === 'dcs-tm') {
+    const proj = DCS_PROJECTIONS[geo.theatre ?? ''];
+    if (!proj) throw new Error(`unknown DCS theatre ${geo.theatre}`);
+    return (e, n) => fromDcs(proj, n, e);
+  }
+  return fromTangentPlane(geo.lat0, geo.lon0);
+}
+
+/** The smallest box holding both. */
+export function unionBox(a: GeoBox, b: GeoBox): GeoBox {
+  return { south: Math.min(a.south, b.south), west: Math.min(a.west, b.west), north: Math.max(a.north, b.north), east: Math.max(a.east, b.east) };
+}
+
+/** A box of `km` kilometres on a side round a point. */
+export function boxAround(lat: number, lon: number, km: number): GeoBox {
+  const dLat = (km * 500) / 111_320;
+  const dLon = dLat / Math.max(0.05, Math.cos((lat * Math.PI) / 180));
+  return { south: Math.max(-MAX_LAT, lat - dLat), north: Math.min(MAX_LAT, lat + dLat), west: lon - dLon, east: lon + dLon };
+}
+
+/**
  * The box of the earth under a dataset's extent, `margin` metres wider on
  * every side.
  *
@@ -150,11 +224,11 @@ export function geoBoxOf(geo: GeoReference, bounds: Bounds, axes: AxisMapping | 
   for (const x of [bounds.minX, bounds.maxX]) {
     for (const y of [bounds.minY, bounds.maxY]) {
       for (const z of [bounds.minZ, bounds.maxZ]) {
-        const d = worldToData({ x, y, z }, axes);
-        minE = Math.min(minE, d.x);
-        maxE = Math.max(maxE, d.x);
-        minN = Math.min(minN, d.y);
-        maxN = Math.max(maxN, d.y);
+        const [e, n] = eastNorthOf(geo, worldToData({ x, y, z }, axes));
+        minE = Math.min(minE, e);
+        maxE = Math.max(maxE, e);
+        minN = Math.min(minN, n);
+        maxN = Math.max(maxN, n);
       }
     }
   }
@@ -162,7 +236,7 @@ export function geoBoxOf(geo: GeoReference, bounds: Bounds, axes: AxisMapping | 
   maxE += margin;
   minN -= margin;
   maxN += margin;
-  const inv = fromTangentPlane(geo.lat0, geo.lon0);
+  const inv = planeInverse(geo);
   const box: GeoBox = { south: Infinity, west: Infinity, north: -Infinity, east: -Infinity };
   const midE = (minE + maxE) / 2;
   const midN = (minN + maxN) / 2;
@@ -194,11 +268,8 @@ export function geoBoxOf(geo: GeoReference, bounds: Bounds, axes: AxisMapping | 
  * as the ACMI reader leaves it out of the data.
  */
 export function mercatorToPlane(geo: GeoReference): (mx: number, my: number) => [number, number] {
-  const fwd = tangentPlane(geo.lat0, geo.lon0);
-  return (mx, my) => {
-    const [e, n] = fwd(myToLat(my), mxToLon(mx));
-    return [e, n];
-  };
+  const fwd = planeForward(geo);
+  return (mx, my) => fwd(myToLat(my), mxToLon(mx));
 }
 
 /** The middle of a box, degrees. */

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { acmiHints, parseAcmi } from './acmi';
-import { applyHints, type MappingHints } from './automap';
+import { applyHints, geoOfHints, parseHints, type MappingHints } from './automap';
 import { DatasetBuilder, mergeGeo, type SourceBlock } from './builder';
 import { ingestFiles } from './ingestFiles';
 import { ingestAcmi } from './ingestAcmi';
@@ -89,5 +89,26 @@ describe('geographic reference', () => {
     const b = new DatasetBuilder();
     b.append(plainBlock());
     expect(b.finish('plain').geo).toBeUndefined();
+  });
+
+  it("comes from a table's hints when the mapping takes the columns they name", () => {
+    // The Watcher's flight tables: x east, y altitude, z north.
+    const hints = parseHints(
+      JSON.stringify({ columns: { x: 'x', y: 'y', z: 'z' }, geo: { lat0: 42, lon0: 42, projection: 'tangent-plane', east: 'x', north: 'z', up: 'y' } }),
+    );
+    expect(geoOfHints(hints, { x: 'x', y: 'y', z: 'z' })).toEqual({ lat0: 42, lon0: 42, projection: 'tangent-plane', north: 'z' });
+    // North and height the other way round, as an ACMI table has them.
+    const acmiLike = parseHints(JSON.stringify({ geo: { lat0: 43, lon0: 41, east: 'X', north: 'Y', up: 'Alt' } }));
+    expect(geoOfHints(acmiLike, { x: 'X', y: 'Y', z: 'Alt' })).toEqual({ lat0: 43, lon0: 41, projection: 'tangent-plane' });
+    // Other columns, no hint, a broken hint or another projection: none.
+    expect(geoOfHints(hints, { x: 'dcs_x', y: 'y', z: 'z' })).toBeNull();
+    expect(geoOfHints(parseHints('{"columns":{}}'), { x: 'x', y: 'y', z: 'z' })).toBeNull();
+    expect(geoOfHints(parseHints('{"geo":{"lat0":"42","lon0":42,"east":"x","north":"z","up":"y"}}'), { x: 'x', y: 'y', z: 'z' })).toBeNull();
+    expect(geoOfHints(parseHints('{"geo":{"lat0":42,"lon0":42,"projection":"utm","east":"x","north":"z","up":"y"}}'), { x: 'x', y: 'y', z: 'z' })).toBeNull();
+  });
+
+  it('is kept across a load only when the north axis agrees too', () => {
+    expect(mergeGeo(geo, { ...geo, north: 'z' })).toBeNull();
+    expect(mergeGeo({ ...geo, north: 'z' }, { ...geo, north: 'z' })).toEqual({ ...geo, north: 'z' });
   });
 });

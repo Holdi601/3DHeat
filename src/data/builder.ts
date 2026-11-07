@@ -578,7 +578,9 @@ export class DatasetBuilder {
 export function mergeGeo(kept: GeoReference | null | undefined, next: GeoReference | null): GeoReference | null {
   if (kept === undefined) return next;
   if (!kept || !next) return null;
-  return kept.lat0 === next.lat0 && kept.lon0 === next.lon0 && kept.projection === next.projection ? kept : null;
+  return kept.lat0 === next.lat0 && kept.lon0 === next.lon0 && kept.projection === next.projection && (kept.north ?? 'y') === (next.north ?? 'y') && kept.theatre === next.theatre
+    ? kept
+    : null;
 }
 
 /**

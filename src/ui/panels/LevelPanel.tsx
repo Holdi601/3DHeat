@@ -34,10 +34,9 @@ import { useStore } from '../../state/store';
 import { dotaLevel } from '../../tactics/dotaMap';
 import { Check, Section, Slider } from '../controls';
 import { int, num, t } from '../../i18n';
-import { say } from '../../data/msg';
-import { backdropLoader } from '../../world/backdropLoader';
-import { clearCache } from '../../world/cache';
 import type { BackdropResult } from '../../world/backdrop';
+import type { GeoPlacement } from '../../state/types';
+import { WorldBackdrop } from './WorldBackdrop';
 
 /** Longest edge we upload; larger maps are downscaled to fit the GPU. */
 const MAX_MAP_EDGE = 8192;
@@ -168,7 +167,7 @@ function modelLevelFrom(name: string, m: LoadedModel): ModelLevel {
  * edges, since the terrain grid is regular and says nothing; and the credits,
  * which the canvas shows for as long as the level is shown.
  */
-function worldLevelFrom(name: string, r: BackdropResult): ModelLevel {
+function worldLevelFrom(name: string, r: BackdropResult, placement: GeoPlacement): ModelLevel {
   const m = r.mesh;
   const tri = (a: Uint32Array) => a.length / 3;
   const level = modelLevelFrom(name, {
@@ -193,12 +192,27 @@ function worldLevelFrom(name: string, r: BackdropResult): ModelLevel {
     bounds: m.bounds,
     groundBand: m.groundBand,
   });
-  return worldLook(level, r.credits);
+  return { ...worldLook(level, r.credits), placement, labels: r.labels };
 }
 
 /** What makes a model level read as a world backdrop; see `worldLevelFrom`. */
 function worldLook(level: ModelLevel, credits: ModelLevel['credits']): ModelLevel {
-  return { ...level, credits, showColours: true, groundWireOpacity: 0 };
+  // Buildings as a map draws them, light grey and nearly solid: from altitude
+  // the town's shape is what matters, not what is inside a house.
+  return {
+    ...level,
+    credits,
+    showColours: true,
+    groundWireOpacity: 0,
+    // The sea opaque, so the floor under a coastal cell does not show through.
+    waterOpacity: 1,
+    // Faint contours: on a map of the real place the cover and the shading
+    // carry the relief, and a sea-level contour only wanders over the plains.
+    relief: { ...level.relief, contourStrength: 0.12 },
+    structureTint: [0.88, 0.86, 0.82],
+    structureOpacity: 0.85,
+    showStructureWire: false,
+  };
 }
 
 /**
@@ -219,8 +233,6 @@ export function LevelPanel() {
   const [error, setError] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
-  /** The world backdrop's build, while it runs: its step and how far along. */
-  const [world, setWorld] = useState<{ label: string; fraction: number | null } | null>(null);
   /**
    * Import decimation, defaulting to none.
    *
@@ -365,49 +377,6 @@ export function LevelPanel() {
     }
   };
 
-  const buildWorld = async () => {
-    const geo = dataset?.geo;
-    if (!dataset || !geo) return;
-    setError(null);
-    setNote(null);
-    setWorld({ label: t('heat.world.starting'), fraction: 0 });
-    try {
-      const r = await backdropLoader.build({ geo, bounds: dataset.bounds, axes: dataset.axes ?? null }, (label, fraction) =>
-        setWorld({ label, fraction }),
-      );
-      const name = t('heat.world.name', { lat: num(geo.lat0, 3), lon: num(geo.lon0, 3) });
-      setLevel(worldLevelFrom(name, r));
-      const s = r.stats;
-      setNote(
-        [
-          t('heat.world.built', {
-            terrain: formatTriangles(r.mesh.indices.length / 3),
-            spacing: num(s.terrainSpacing, 0),
-            buildings: int(s.buildings),
-            roads: int(s.roads),
-            downloaded: int(s.downloaded),
-            cached: int(s.fromCache),
-            size: formatBytes(s.bytes),
-          }),
-          ...r.notes.map((n) => say(n)),
-        ].join(' '),
-      );
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setWorld(null);
-    }
-  };
-
-  const forgetTiles = async () => {
-    try {
-      await clearCache();
-      setNote(t('heat.world.cacheCleared'));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    }
-  };
-
   const saveCurrent = async () => {
     if (!level) return;
     setBusy(t('heat.levelPanel.saving'));
@@ -437,6 +406,7 @@ export function LevelPanel() {
           triangles: level.triangles,
           sourceTriangles: level.sourceTriangles,
           credits: level.credits,
+          placement: level.placement,
         });
       }
       refreshLibrary();
@@ -533,7 +503,11 @@ export function LevelPanel() {
           groundBand: { minY: b.minY, maxY: b.maxY },
         });
         // A saved world backdrop comes back with its credits and its look.
-        setLevel(rec.meta.credits?.length ? worldLook(restored, rec.meta.credits) : restored);
+        setLevel(
+          rec.meta.credits?.length
+            ? { ...worldLook(restored, rec.meta.credits), ...(rec.meta.placement ? { placement: rec.meta.placement } : {}) }
+            : restored,
+        );
       } else {
         throw new Error(t('heat.levelPanel.entryEmpty'));
       }
@@ -572,30 +546,7 @@ export function LevelPanel() {
         </button>
       </div>
 
-      {dataset?.geo && (
-        <div className="field">
-          <div className="row">
-            <button disabled={!!busy || !!world} onClick={() => void buildWorld()} title={t('heat.world.buttonTitle')}>
-              {t('heat.world.button')}
-            </button>
-            <button disabled={!!world} onClick={() => void forgetTiles()} title={t('heat.world.clearCacheTitle')}>
-              {t('heat.world.clearCache')}
-            </button>
-          </div>
-          <div className="hint">
-            {t('heat.world.hint', { lat: num(dataset.geo.lat0, 3), lon: num(dataset.geo.lon0, 3) })}
-          </div>
-          {world && (
-            <>
-              <div className="hint">{t('heat.levelPanel.busy', { label: world.label })}</div>
-              <div className="bar">
-                <div style={{ width: `${Math.round((world.fraction ?? 1) * 100)}%`, opacity: world.fraction === null ? 0.5 : 1 }} />
-              </div>
-              <button onClick={() => backdropLoader.cancel()}>{t('heat.levelPanel.cancel')}</button>
-            </>
-          )}
-        </div>
-      )}
+      <WorldBackdrop busy={!!busy} toLevel={worldLevelFrom} setError={setError} setNote={setNote} />
 
       <div className="field">
         <div className="label">
