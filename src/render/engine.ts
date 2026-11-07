@@ -11,10 +11,14 @@ import { FigureReplay } from '../figures/replay';
 import { EffectLayer } from '../figures/effects';
 import { emptySample, MotionModel, MotionRefiner } from '../figures/motion';
 import { WeaponLayer } from './weapons';
+import { gpuTrackStore, type GpuTrackStore } from './gpuTracks/store';
+import { emptyPose, evaluateTrack } from './gpuTracks/evaluate';
 import type { FigureBatch } from '../figures/instances';
 import { VertexBuffer } from '../race/geometry';
 import { useReplayStore } from '../state/replayStore';
 import { dropLinesOn, unitsPerMetre } from '../ui/replay/replayData';
+import { FollowRig, type RigMode } from './followRig';
+import { TacticalLayer, axesOfTrack, cockpitClip } from './tactical';
 import { figureNear, usePlanStore } from '../state/planStore';
 import { playbackAt } from '../tactics/plan';
 import type { Dataset, FilterSpec } from '../state/types';
@@ -50,6 +54,7 @@ import {
   type FrameParams,
   type LevelDraw,
   type Renderer,
+  type GpuTracksParams,
 } from './types';
 import { t } from '../i18n';
 import { worldTiles } from '../world/tileSet';
@@ -99,6 +104,19 @@ export interface LiveReadout {
 }
 
 const EMPTY_PLAN: ChunkDrawPlan[] = [];
+
+
+// The replay store for the smoke and performance scripts, beside window.__3dheat (dev only).
+if (import.meta.env.DEV && typeof window !== 'undefined') (window as unknown as Record<string, unknown>).__3dheat_replay = useReplayStore;
+
+/** From this many tracked things the GPU places the units (where it can). */
+const GPU_TRACKS_FROM = 3000;
+/** ?gputracks puts any dataset on the GPU path, ?gputracks=0 none: for comparing the two. */
+function gpuTracksForced(): boolean | null {
+  if (typeof location === 'undefined') return null;
+  const v = new URLSearchParams(location.search).get('gputracks');
+  return v === null ? null : v !== '0';
+}
 
 /**
  * Most sprites one frame can draw, whatever it is asked for.
@@ -437,13 +455,26 @@ export class Engine {
   private readonly weaponTris = new VertexBuffer();
   private smoothTrailBuf = new Float32Array(0);
   private figureTris: { data: Float32Array; count: number } | null = null;
+  /** This frame's GPU tracks, when the GPU places the units (gpuTracks/). */
+  private gpuTracksParams: GpuTracksParams | null = null;
+  /** Below this many pixels at true size a GPU-placed unit is a dart; steered by the frame time. */
+  private dartPx = 3;
+  /** Frame interval, ms, smoothed: what steers the GPU tracks' level of detail. */
+  private frameMsAvg = 16;
+  private readonly gpuPose = emptyPose();
   /** Box replay's figures as GPU instances this frame (`figures/instances.ts`). */
   private figureBatches: FigureBatch[] | null = null;
   /**
    * Box replay's live tracks as last built: who, which row, where, which way
    * (box yaw). What the replay's labels and the follow camera read.
    */
-  liveTracks: { person: number; row: number; x: number; y: number; z: number; yaw: number }[] = [];
+  liveTracks: { person: number; row: number; x: number; y: number; z: number; yaw: number; pitch: number; q: number[] | null }[] = [];
+  /** The replay's cockpit, fixed, padlock, target and satellite views (`followRig.ts`). */
+  private readonly followRig = new FollowRig();
+  /** The near plane the cockpit views ask for (data units), 0 for none. */
+  private rigNear = 0;
+  /** Velocity vectors, radar cones, locks and engagement domes (`tactical.ts`). */
+  private readonly tactical = new TacticalLayer();
   /** The follow camera as it last set the view (display space): the eased unit, its heading, the orbit, the pose. */
   private followCam: { person: number; fx: number; fy: number; fz: number; head: number; rel: number; yaw: number; pitch: number; px: number; py: number; pz: number } | null = null;
   /** Trails and drop lines together, reused frame to frame. */
@@ -970,10 +1001,122 @@ export class Engine {
   figureAt(cssX: number, cssY: number): number | null {
     const d = this.dataset;
     const ray = this.rayAt(cssX, cssY);
-    if (!d?.personId || !ray || !this.figureBatches) return null;
+    if (!d?.personId || !ray) return null;
+    if (this.gpuTracksParams) return this.gpuUnitAt(ray, cssX, cssY);
+    if (!this.figureBatches) return null;
     const box = this.figureReplay.hit([ray.origin.x, ray.origin.y, ray.origin.z], [ray.dir.x, ray.dir.y, ray.dir.z]);
     const row = box >= 0 && this.cursor ? this.cursor.cubeRows[box] : -1;
     return row >= 0 ? d.personId[row] : null;
+  }
+
+  /**
+   * The GPU-placed unit under the pointer: every unit placed on the CPU at the
+   * playhead (the shader's arithmetic, evaluate.ts), the nearest whose drawn
+   * size the ray passes within. Asked again for the same pixel, playhead and
+   * view it answers from the last time, so a hover does not redo it each frame.
+   */
+  private gpuUnitAt(ray: { origin: { x: number; y: number; z: number }; dir: { x: number; y: number; z: number } }, cssX: number, cssY: number): number | null {
+    const p = this.gpuTracksParams!;
+    const key = `${Math.round(cssX)},${Math.round(cssY)},${p.t.toFixed(3)},${this.viewProjArr.join(',')}`;
+    if (this.gpuPick && this.gpuPick.key === key) return this.gpuPick.person;
+    const st = p.store;
+    const pose = emptyPose();
+    const o = ray.origin;
+    const dir = ray.dir;
+    let best = -1;
+    let bestT = Infinity;
+    const f32 = new Float32Array(st.trackData.buffer, st.trackData.byteOffset, st.trackData.length);
+    for (let i = 0; i < st.tracks; i++) {
+      if (!evaluateTrack(st, i, p.t, p.stale, pose)) continue;
+      const dx = pose.x - o.x;
+      const dy = pose.y - o.y;
+      const dz = pose.z - o.z;
+      const along = dx * dir.x + dy * dir.y + dz * dir.z;
+      if (along <= 0 || along > bestT) continue;
+      const off = Math.hypot(dx - dir.x * along, dy - dir.y * along, dz - dir.z * along);
+      // Its drawn half length: true size, or the pixel minimum at that distance.
+      const longest = f32[i * 8 + 4];
+      const px = p.focalPx > 0 ? along / p.focalPx : p.orthoPx;
+      const half = Math.max(longest * p.scale, p.minPixels * px) / 2;
+      if (off <= Math.max(half, 4 * px)) {
+        bestT = along;
+        best = i;
+      }
+    }
+    const person = best >= 0 ? st.personOf[best] : null;
+    this.gpuPick = { key, person };
+    return person;
+  }
+
+  private gpuPick: { key: string; person: number | null } | null = null;
+
+  /**
+   * The GPU tracks for the loaded dataset, when it has so many units that
+   * the GPU places them (and the backend can): built once, null otherwise.
+   */
+  private gpuStoreFor(s: ReturnType<typeof snapshot>, renderer: Renderer): GpuTrackStore | null {
+    const d = this.dataset;
+    const max = renderer.gpuTracksMaxBytes ?? 0;
+    if (!d || !max || !d.time || !d.personId) return null;
+    const force = gpuTracksForced();
+    if (force === false || (d.personLabels.length < GPU_TRACKS_FROM && !force)) return null;
+    if (s.team.session >= 0 && d.sessionId) return null;
+    return gpuTrackStore(d, { maxKeys: Math.floor(max / 16) });
+  }
+
+  /**
+   * A frame of the GPU tracks: the playhead and view for the compute pass,
+   * the screen-size threshold below which a unit is a dart nudged by the
+   * frame time, and on the CPU only the units someone follows or picked
+   * (for the labels, the card and the follow camera).
+   */
+  private gpuFrame(s: ReturnType<typeof snapshot>, store: GpuTrackStore): void {
+    const t = this.playhead;
+    const hgt = Math.max(1, this.canvas.clientHeight);
+    const persp = this.camera.projection === 'perspective';
+    const focal = persp ? hgt / (2 * Math.tan((s.camera.fov * Math.PI) / 360)) : 0;
+    // Frame time steers how small a unit may be and still be a figure: slow frames, more darts.
+    const ms = this.frameMsAvg;
+    // Frames come at the display's rate when there is room (about 16.7 ms at 60 Hz): figures grow back slowly
+    // while that holds, darts take over quickly when a frame runs late.
+    if (ms > 19) this.dartPx = Math.min(400, this.dartPx * 1.08 + 0.25);
+    else if (ms < 17.6) this.dartPx = Math.max(2, this.dartPx * 0.985);
+    this.gpuTracksParams = {
+      store,
+      t,
+      focalPx: focal,
+      orthoPx: persp ? 0 : this.camera.orthoHeight / hgt,
+      minPixels: s.team.figurePixels,
+      stale: s.timeline.defaultLifetime,
+      scale: store.units * Math.max(0.01, s.team.figureScale),
+      fullPx: 120,
+      dartPx: this.dartPx,
+      triangleBudget: 40_000_000,
+      trailSeconds: s.team.trailSeconds,
+    };
+    // The units in question, on the CPU.
+    const r = useReplayStore.getState();
+    const want = new Set<number>();
+    if (r.follow !== null) want.add(r.follow);
+    if (r.pairFrom !== null) want.add(r.pairFrom);
+    if (r.pair) for (const p of r.pair) want.add(p);
+    const tracks: typeof this.liveTracks = [];
+    const pose = this.gpuPose;
+    for (const p of want) {
+      const i = store.trackOf[p] ?? -1;
+      if (i < 0 || !evaluateTrack(store, i, t, s.timeline.defaultLifetime, pose)) continue;
+      const f = pose.f;
+      tracks.push({ person: p, row: store.keyRow[pose.key], x: pose.x, y: pose.y, z: pose.z, yaw: Math.atan2(f[0], -f[2]), pitch: Math.asin(Math.max(-1, Math.min(1, f[1]))), q: null });
+    }
+    this.liveTracks = tracks;
+  }
+
+  /** The GPU tracks' state for the stats: units, keys, reduction, bytes, build time. */
+  gpuTracksInfo(): { tracks: number; keys: number; samples: number; tolerance: number; cpuMB: number; gpuMB: number; buildMs: number; dartPx: number } | null {
+    const p = this.gpuTracksParams;
+    if (!p) return null;
+    const st = p.store;
+    return { tracks: st.tracks, keys: st.keys, samples: st.samples, tolerance: st.tolerance, cpuMB: Math.round(st.bytes / 1e6), gpuMB: Math.round((this.renderer?.gpuTracksBytes ?? 0) / 1e6), buildMs: Math.round(st.buildMs), dartPx: Math.round(p.dartPx * 10) / 10 };
   }
 
   /** How many times true size a person's figure was drawn last frame (1 when not drawn as a figure). */
@@ -1273,6 +1416,7 @@ export class Engine {
     this.lastNow = now;
     // Clamp so a tab switch doesn't teleport the playhead or the camera.
     const dt = Math.min(0.1, Math.max(0, dtRaw));
+    if (dtRaw > 0 && dtRaw < 1) this.frameMsAvg += (dtRaw * 1000 - this.frameMsAvg) * 0.1;
     const s = snapshot();
 
     /**
@@ -1492,6 +1636,8 @@ export class Engine {
     this.camera.gamepad = s.camera.gamepad;
     if (!raceTab) this.followTrack(s);
     this.viewNear = this.nearForView(s.camera.near, s, raceTab);
+    // Out of a cockpit the unit's own figure is clipped away, as Tacview hides it.
+    if (this.rigNear > 0) this.viewNear = Math.max(this.viewNear, this.rigNear);
     this.camera.update(dt, width / height, s.camera.fov, this.viewNear, s.camera.far);
     // The pad's "frame" button is a request rather than an action, so the camera
     // does not need to know about the dataset.
@@ -1981,10 +2127,20 @@ export class Engine {
     let cubeCount = 0;
     let trailVerts: Float32Array | null = null;
     let trailVertCount = 0;
+    // A dataset of many thousands of units (an overlay of many matches): every
+    // unit placed by the GPU, the CPU only sets the playhead (gpuTracks/).
+    const gpuStore = s.mode === 'team' && !showAll && !s.team.showRawSamples && s.team.figures ? this.gpuStoreFor(s, renderer) : null;
+    if (!compositeOnly) this.gpuTracksParams = null;
+    if (gpuStore && !compositeOnly) {
+      this.figureTris = null;
+      this.figureBatches = null;
+      this.pickCubes = null;
+      this.gpuFrame(s, gpuStore);
+    }
     // Skipped on an idle frame: nothing draws it, and rebuilding one cube per
     // person every frame while the view sits still is the one cost that would make
     // recompositing-when-idle worth avoiding.
-    if (s.mode === 'team' && this.cursor && !compositeOnly) {
+    if (s.mode === 'team' && this.cursor && !compositeOnly && !gpuStore) {
       const visible = this.personVisibility(s.teamVisibility, s.filters);
       // `all` mode ignores the playhead, so the cursor is placed at the end and
       // every sample in range is drawn rather than one live position per person.
@@ -2045,7 +2201,9 @@ export class Engine {
         for (let i = 0; i < cubeCount; i++) {
           const row = this.cursor.cubeRows[i];
           const o = i * CUBE_STRIDE;
-          tracks.push({ person: pid && row >= 0 ? pid[row] : i, row, x: cubes[o], y: cubes[o + 1], z: cubes[o + 2], yaw: cubes[o + 6] });
+          // With its attitude where the motion model has one, for the cockpit view and the radar cones.
+          const q = motion && this.motion.posed[i] ? Array.from(this.motion.poses.subarray(i * 4, i * 4 + 4)) : null;
+          tracks.push({ person: pid && row >= 0 ? pid[row] : i, row, x: cubes[o], y: cubes[o + 1], z: cubes[o + 2], yaw: cubes[o + 6], pitch: cubes[o + 7], q });
         }
       }
       this.liveTracks = tracks;
@@ -2152,6 +2310,15 @@ export class Engine {
         }
         trailVerts = this.dropBuf;
         trailVertCount = o / 7;
+      }
+      // Tacview's display aids: velocity vectors, the path ahead, radar cones, locks, engagement domes.
+      if (this.dataset && this.liveTracks.length) {
+        const live = this.pickCubes;
+        const aids = this.tactical.build(this.dataset, this.liveTracks, cursorAt, s.team.session, (i) => (live ? live.data.subarray(i * CUBE_STRIDE + 3, i * CUBE_STRIDE + 6) : [0.8, 0.8, 0.8]), trailVerts, trailVertCount);
+        if (aids) {
+          trailVerts = aids.data;
+          trailVertCount = aids.count;
+        }
       }
     }
 
@@ -2312,6 +2479,7 @@ export class Engine {
       sceneTris,
       sceneTriVertCount,
       figureBatches: !raceBuilt && s.mode === 'team' ? this.figureBatches : null,
+      gpuTracks: !raceBuilt && s.mode === 'team' ? this.gpuTracksParams : null,
       overlayVerts,
       overlayVertCount,
       level: buildLevelDraw(s.level),
@@ -2448,15 +2616,48 @@ export class Engine {
   private followTrack(s: ReturnType<typeof snapshot>): void {
     const r = useReplayStore.getState();
     const follow = r.follow;
+    const c = this.camera;
+    const rigMode = r.followMode !== 'chase' && r.followMode !== 'orbit' ? (r.followMode as RigMode) : null;
+    this.rigNear = 0;
+    // Only the cockpit and fixed views roll the camera; let go, it is level again.
+    if ((follow === null || s.mode !== 'team' || !rigMode) && c.roll !== 0) {
+      c.roll = 0;
+      c.moved = true;
+    }
     if (follow === null || s.mode !== 'team') {
       this.followCam = null;
+      this.followRig.release();
       return;
     }
     const t = this.liveTracks.find((x) => x.person === follow);
     if (!t) return;
-    const c = this.camera;
     const units = this.dataset ? unitsPerMetre(this.dataset) : 1;
     const [mx, my, mz] = this.mirror;
+    if (rigMode) {
+      this.followCam = null;
+      const ax = axesOfTrack(t);
+      const m = (v: [number, number, number]): [number, number, number] => [v[0] * mx, v[1] * my, v[2] * mz];
+      const tt = r.targetPerson !== null ? this.liveTracks.find((x) => x.person === r.targetPerson && x.person !== follow) : undefined;
+      // The eye a little ahead of the unit's middle and above it, as far as its figure is drawn bigger.
+      const size = this.figureScaleAt(follow) * units;
+      const zoom = this.followRig.update(c, {
+        mode: rigMode,
+        person: follow,
+        pos: [t.x * mx, t.y * my, t.z * mz],
+        fwd: m(ax.fwd),
+        up: m(ax.up),
+        target: tt ? [tt.x * mx, tt.y * my, tt.z * mz] : null,
+        distance: Math.max(1, r.followDistance) * units,
+        units,
+        eyeAhead: 0,
+        eyeUp: 0.5 * size,
+        reset: r.viewReset,
+      });
+      if (rigMode === 'cockpit' || rigMode === 'padlock') this.rigNear = cockpitClip(this.dataset, follow) * size;
+      if (zoom !== 1) r.setFollowDistance(r.followDistance * zoom);
+      return;
+    }
+    this.followRig.release();
     const target = { x: t.x * mx, y: t.y * my, z: t.z * mz };
     // The unit's heading as a camera yaw: box yaw is a compass heading, forward (sin, 0, -cos) in the world.
     const headYaw = Math.atan2(-Math.sin(t.yaw) * mx, Math.cos(t.yaw) * mz);

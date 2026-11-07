@@ -53,8 +53,9 @@ export function turret(x: number, plan: P2[], top: P2[], round: number, gunX: nu
 // ---------------------------------------------------------------- Abrams
 
 // M1A1 / M1A2: a long low hull with a very shallow upper glacis, the rear sprocket high; the flat faceted
-// turret with angled cheeks and its long bustle overhanging the engine deck (hull 7.93 x 3.66 m, 2.44 m).
-export const ABRAMS_TURRET = turret(-0.55, [[-2.85, 1.45], [-2.4, 1.72], [0.9, 1.8], [1.75, 1.55], [2.45, 0.95], [2.62, 0.5]], [[-2.85, 0.62], [-2.5, 0.78], [1.4, 0.84], [2.3, 0.62], [2.62, 0.42]], 9, 2.55);
+// turret with angled cheeks, its side plates leaning in, and its long bustle overhanging the engine deck (hull 7.93 x
+// 3.66 m, 2.44 m).
+export const ABRAMS_TURRET = turret(-0.55, [[-2.85, 1.45], [-2.4, 1.72], [0.9, 1.8], [1.75, 1.55], [2.45, 0.95], [2.62, 0.5]], [[-2.85, 0.62], [-2.5, 0.78], [1.4, 0.84], [2.3, 0.62], [2.62, 0.42]], 9, 2.55, { slope: 0.045 });
 export const ABRAMS: GroundSpec = {
   chassis: 'tracked', length: 7.93, width: 3.66, hullHeight: 1.6, roadWheels: 7, roadWheelRadius: 0.32, skirts: true,
   trackProfile: run(7.7, 0.95, [3.85, 0.62], [-3.85, 0.72], -3.2, 3.15),

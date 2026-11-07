@@ -11,10 +11,11 @@
  * (telemetry gives the centre of an aircraft, not its wheels).
  */
 
-import { finish, newKit, PAINT, type Kit, type Template } from './kit';
-import { blob, block, body, foil, lathe, lerpPoly, outlineBody, plate, ring, tube, wheel, type Outline, type P2 } from './parts';
+import { detail, finish, LOCAL, newKit, PAINT, type FigBuffer, type Kit, type Template } from './kit';
+import { Mesh } from './mesh';
+import { blob, block, body, foil, hexa, lathe, lerpPoly, plate, ring, slab, tube, type Outline, type P2 } from './parts';
 import type { Section } from '../race/shapes';
-import type { Frame3, Rgb, Vec3 } from '../race/geometry';
+import { at, type Frame3, type Rgb, type Vec3 } from '../race/geometry';
 
 const grey = (k: number): Rgb => [k, k, k];
 
@@ -175,7 +176,14 @@ export interface FixedWingSpec {
   intakes?: 'side' | 'chin' | 'nose' | 'dorsal' | 'under' | 'none';
   /** tandem: two seats one behind the other under one long canopy, the rear one raised (trainers, two-seat fighters). */
   canopy?: { x: number; length: number; kind: 'bubble' | 'framed' | 'tandem' | 'airliner' | 'glass-nose' | 'none' };
-  propeller?: { diameter: number; blades: number };
+  /**
+   * The propeller; with `spinner` (its radius, metres) a nose propeller's
+   * spinner ends at the figure's nose, as the published length counts it,
+   * and is `spinnerLength` long (default 2.3 radii).
+   */
+  propeller?: { diameter: number; blades: number; spinner?: number; spinnerLength?: number };
+  /** Radial engines' open cowls (the nose's, or nacelles' mirrored to both sides). */
+  cowls?: Cowl[];
   /**
    * A short central nacelle instead of a fuselage to the tail, and two booms
    * from the wing to the tail carrying the fins (P-38, Fw 189, Vampire,
@@ -214,12 +222,40 @@ export interface FixedWingSpec {
   swing?: SwingWing;
   tailPlan?: P2[];
   finPlan?: P2[];
-  /** The canopy's true shape: glass bodies (forward, up from the axis), drawn in place of `canopy`'s blobs. */
-  glass?: Outline[];
+  /**
+   * The canopy's true shape: glass bodies (forward, up from the axis), drawn
+   * in place of `canopy`'s blobs; `frames` are the forward positions of its
+   * frames, drawn round the glass in the paint (a framed hood's bars, a
+   * bubble's windscreen bow).
+   */
+  glass?: (Outline & { frames?: number[] })[];
   /** Propellers where they really are, besides the engines' own: outboard props on a wing with dihedral. */
-  props?: { x: number; side: number; up: number; diameter: number; blades: number }[];
+  props?: { x: number; side: number; up: number; diameter: number; blades: number; spinner?: number }[];
   /** The fins' thickness (default 5 % of the fin plan's chord, at least 0.1 m), so they show from the front. */
   finThickness?: number;
+}
+
+/**
+ * A radial engine's open cowl, what tells a radial from an inline head on:
+ * the rounded lip with its front at `x`, the dark opening with the cylinders
+ * round the crankcase inside it, and, `gills` metres behind the lip, the step
+ * of the cooling gills round the body. Half wide `radius`, half high `height`
+ * (default round); off the centre line (`side`) it is drawn on both sides. The
+ * body or nacelle behind it should start `lip` behind its front (`cowlLip`).
+ */
+export interface Cowl {
+  x: number;
+  side?: number;
+  up?: number;
+  radius: number;
+  height?: number;
+  gills?: number;
+  cylinders?: number;
+}
+
+/** How far back from a cowl's front its lip reaches, where the body behind it begins. */
+export function cowlLip(radius: number): number {
+  return Math.max(0.08, radius * 0.24);
 }
 
 export function buildFixedWing(spec: FixedWingSpec): Template {
@@ -246,11 +282,12 @@ export function buildFixedWing(spec: FixedWingSpec): Template {
     S(B + Lb * 0.12, bw * tailW, bh * (twin ? 0.7 : 0.55), twin ? 0 : bh * 0.25),
     S(B, bw * tailW * (twin ? 0.9 : 0.5), bh * (twin ? 0.55 : 0.3), twin ? 0 : bh * 0.4),
   ];
-  if (spec.fuselage) outlineBody(k.team, k.fr, spec.fuselage, grey(0.9), 14);
+  if (spec.fuselage) loft(k.team, spec.fuselage, grey(0.9), 14);
   else body(k.team, k.fr, sections, grey(0.9), 12, 2.2);
   for (const b of spec.bodies ?? []) {
-    outlineBody(k.team, k.fr, b, grey(0.84), 12);
-    if (b.side && !b.oneSide) outlineBody(k.team, k.fr, { ...b, side: -b.side }, grey(0.84), 12);
+    const draw = (o: Outline) => (strut(o) ? straight(k, o, grey(0.84)) : loft(k.team, o, grey(0.84), 12));
+    draw(b);
+    if (b.side && !b.oneSide) draw({ ...b, side: -b.side });
   }
   if (spec.wingPlan || spec.swing) {
     const up = mountHeight(spec.wing, spec);
@@ -301,10 +338,21 @@ export function buildFixedWing(spec: FixedWingSpec): Template {
   tail(k, spec);
   engines(k, spec);
   intakes(k, spec);
-  if (spec.glass) for (const g of spec.glass) outlineBody(k.fixed, k.fr, g, PAINT.glass, 12);
+  if (spec.glass) for (const g of spec.glass) {
+    loft(k.fixed, g, PAINT.glass, 12);
+    for (const x of g.frames ?? []) frame(k, g, x);
+  }
   else canopy(k, spec);
-  for (const p of spec.props ?? []) propeller(k, p.x, p.side, p.up, p.diameter, p.blades);
-  if (spec.propeller && spec.engines?.kind === 'nose-prop') propeller(k, half + 0.1, 0, 0, spec.propeller.diameter, spec.propeller.blades);
+  for (const p of spec.props ?? []) propeller(k, p.x, p.side, p.up, p.diameter, p.blades, p.spinner);
+  if (spec.propeller && spec.engines?.kind === 'nose-prop') {
+    const pr = spec.propeller;
+    if (pr.spinner) {
+      // The spinner's tip is the nose.
+      const sl = pr.spinnerLength ?? pr.spinner * 2.3;
+      propeller(k, half - sl * 0.7, 0, 0, pr.diameter, pr.blades, pr.spinner, sl);
+    } else propeller(k, half + 0.1, 0, 0, pr.diameter, pr.blades);
+  }
+  for (const c of spec.cowls ?? []) for (const side of c.side ? [-c.side, c.side] : [0]) cowl(k, spec, { ...c, side });
   if (spec.rotodome) {
     const r = spec.rotodome;
     const up = spec.bodyHeight / 2 + Math.max(0.9, r.diameter * 0.14);
@@ -322,6 +370,83 @@ export function buildFixedWing(spec: FixedWingSpec): Template {
   if (spec.fixedGear) gear(k, spec);
   if (spec.floats) floats(k, spec);
   return finish(k, 'centre');
+}
+
+/**
+ * A body from its outlines, as `outlineBody` draws it, with rings only where
+ * an outline has a corner (and halfway between corners where the section's
+ * roundness changes). The outlines are straight between their corners and a
+ * ring's points move linearly with its half width, height and centre, so a
+ * ring between two corners lies on the straight faces joining theirs: evenly
+ * spread rings there add triangles but no shape and no shading.
+ */
+function loft(out: FigBuffer, o: Outline, col: Rgb, segments = 14, topCol?: Rgb): void {
+  const lists = [o.top, o.bottom, o.plan];
+  const x0 = Math.max(...lists.map((l) => Math.min(...l.map((p) => p[0]))));
+  const x1 = Math.min(...lists.map((l) => Math.max(...l.map((p) => p[0]))));
+  if (!(x1 > x0)) return;
+  const rl = Array.isArray(o.round) ? o.round : undefined;
+  const xs = new Set<number>([x0, x1]);
+  for (const l of [...lists, ...(rl ? [rl] : [])]) for (const [x] of l) if (x > x0 && x < x1) xs.add(x);
+  let sorted = [...xs].sort((a, b) => a - b);
+  if (rl) {
+    // Where the roundness changes, a ring halfway, so the change is spread over the gap.
+    const mids = sorted.slice(1).filter((x, i) => Math.abs(lerpPoly(rl, x) - lerpPoly(rl, sorted[i])) > 0.05).map((x) => x - (x - sorted[sorted.indexOf(x) - 1]) / 2);
+    sorted = [...sorted, ...mids].sort((a, b) => a - b);
+  }
+  sorted = sorted.filter((x, i) => i === 0 || x - sorted[i - 1] > (x1 - x0) * 2e-3);
+  const side = o.side ?? 0;
+  const big = Math.max(...o.plan.map((p) => p[1]), ...o.top.map((p) => p[1]).map((t, i) => (t - (o.bottom[Math.min(i, o.bottom.length - 1)]?.[1] ?? 0)) / 2));
+  const n = detail(big > 0.9 ? 20 : big > 0.35 ? 16 : 12, 8) - (segments <= 12 ? 2 : 0);
+  const m = new Mesh();
+  const rows = sorted.map((x) => {
+    const w = Math.max(1e-3, lerpPoly(o.plan, x));
+    const t = lerpPoly(o.top, x);
+    const b = lerpPoly(o.bottom, x);
+    const r = typeof o.round === 'number' ? o.round : rl ? lerpPoly(rl, x) : 2.4;
+    const z = (t + b) / 2;
+    const h = Math.max(1e-3, (t - b) / 2);
+    const e = 2 / r;
+    return Array.from({ length: n }, (_, i) => {
+      const a = (i / n) * Math.PI * 2;
+      const c = Math.cos(a);
+      const sn = Math.sin(a);
+      return m.v(at(LOCAL, x, side + w * Math.sign(c) * Math.abs(c) ** e, z + h * Math.sign(sn) * Math.abs(sn) ** e), topCol && sn > 0.35 ? topCol : col);
+    });
+  });
+  m.grid(rows, true);
+  for (const [k, first] of [[0, true], [rows.length - 1, false]] as const) {
+    const x = sorted[k];
+    m.fan(m.v(at(LOCAL, x, side, (lerpPoly(o.top, x) + lerpPoly(o.bottom, x)) / 2), col), rows[k], first);
+  }
+  m.emit(out, { gloss: col === PAINT.glass ? 1 : 0 });
+}
+
+/**
+ * Whether a body is a strut, a rod or a thin plate: its side profile and plan
+ * each a single straight line, and it is thin (or square-sectioned). Such a
+ * body is straight from end to end, which needs no stations between - and a
+ * raked strut, whose top and bottom lie at different forward positions, is
+ * only drawn right as a solid between its two end faces.
+ */
+function strut(o: Outline): boolean {
+  if (o.top.length !== 2 || o.bottom.length !== 2 || o.plan.length !== 2) return false;
+  const half = Math.max(...o.plan.map((p) => p[1]));
+  const deep = Math.min(Math.abs(o.top[0][1] - o.bottom[0][1]), Math.abs(o.top[1][1] - o.bottom[1][1]));
+  const round = typeof o.round === 'number' ? o.round : 2.4;
+  return half <= 0.1 && (round >= 4 || deep <= 0.2);
+}
+
+/** A strut as a six-faced solid between its top line and its bottom line, as wide as its plan says at each end. */
+function straight(k: Kit, o: Outline, col: Rgb): void {
+  const s = o.side ?? 0;
+  const face = (line: P2[]): Vec3[] => {
+    const [a, b] = line;
+    const wa = lerpPoly(o.plan, a[0]);
+    const wb = lerpPoly(o.plan, b[0]);
+    return [[a[0], s - wa, a[1]], [b[0], s - wb, b[1]], [b[0], s + wb, b[1]], [a[0], s + wa, a[1]]];
+  };
+  hexa(k.team, k.fr, face(o.bottom), face(o.top), col);
 }
 
 /** Fixed main wheels in their spats under the wing roots, and a tail wheel. */
@@ -588,6 +713,65 @@ function intakes(k: Kit, spec: FixedWingSpec): void {
   }
 }
 
+/** A canopy's glass and the frames across it (forward positions). */
+export type Hood = Outline & { frames?: number[] };
+
+/**
+ * A canopy's glass from the windscreen's foot `front` back to `back`,
+ * standing on the deck at `sill`, its crown at `crown`, `cw` half wide at the
+ * sill. Its foot reaches well into the body, so its sides rise out of the
+ * body's own and lean in towards the crown. Framed: a raked windscreen, the
+ * sliding hood with its flat crown, and behind it the rear glazing falling to
+ * the deck, or meeting a razorback's spine high (`razor`); bubble: a
+ * teardrop, the crown well forward, a long tail, frameless but for the
+ * windscreen's bow; tandem: two seats under one long glasshouse, the rear
+ * raised.
+ */
+export function hood(kind: 'bubble' | 'framed' | 'tandem', front: number, back: number, sill: number, crown: number, cw: number, razor = false): Hood {
+  const f = front;
+  const b = back;
+  const L = f - b;
+  const H = crown - sill;
+  const foot = sill - Math.max(0.35, H * 1.1);
+  if (kind === 'bubble') {
+    const ws = f - L * 0.2;
+    return {
+      top: [[f, sill], [f - L * 0.1, sill + H * 0.55], [ws, sill + H * 0.9], [f - L * 0.32, crown], [f - L * 0.45, crown - H * 0.04], [b + L * 0.35, sill + H * 0.8], [b + L * 0.18, sill + H * 0.45], [b, sill]],
+      bottom: [[f, foot], [b, foot]],
+      plan: [[f, cw * 0.5], [ws, cw * 0.88], [f - L * 0.38, cw], [b + L * 0.35, cw * 0.85], [b + L * 0.12, cw * 0.5], [b, cw * 0.25]],
+      round: 2.2,
+      stations: 12,
+      frames: [ws],
+    };
+  }
+  if (kind === 'tandem') {
+    const c1 = crown - 0.08;
+    const ws = f - L * 0.12;
+    return {
+      top: [[f, sill], [f - L * 0.05, sill + (c1 - sill) * 0.55], [ws, c1], [f - L * 0.4, c1], [f - L * 0.48, crown], [b + L * 0.2, crown], [b + L * 0.07, sill + H * 0.45], [b, sill]],
+      bottom: [[f, foot], [b, foot]],
+      plan: [[f, cw * 0.55], [ws, cw * 0.9], [f - L * 0.3, cw], [b + L * 0.2, cw], [b, cw * 0.4]],
+      round: 2.6,
+      stations: 14,
+      frames: [ws, f - L * 0.45, b + L * 0.2],
+    };
+  }
+  // Framed: the windscreen raked back to the hood's flat crown, the rear glazing sloping down behind it.
+  const rake = Math.min(0.45, L * 0.28);
+  const tail = razor ? crown - Math.min(0.08, H * 0.18) : sill + H * 0.1;
+  const rear = razor ? L * 0.12 : L * 0.3;
+  const hb = b + rear;
+  return {
+    top: [[f, sill], [f - rake * 0.15, sill + H * 0.3], [f - rake, crown], [hb, crown], [b, tail]],
+    bottom: [[f, foot], [b, foot]],
+    plan: [[f, cw * 0.62], [f - rake, cw * 0.9], [f - rake - L * 0.1, cw], [hb, cw * 0.95], [b, cw * (razor ? 0.8 : 0.5)]],
+    round: 3,
+    stations: 10,
+    frames: [f - rake, (f - rake + hb) / 2, hb],
+  };
+}
+
+/** The canopy when no glass outline is given: a hood of its kind standing on the body's top. */
 function canopy(k: Kit, spec: FixedWingSpec): void {
   const c = spec.canopy;
   if (!c || c.kind === 'none') return;
@@ -598,15 +782,123 @@ function canopy(k: Kit, spec: FixedWingSpec): void {
     blob(k.fixed, k.fr, [spec.length / 2 - c.length / 2, 0, 0], [c.length / 2, bw * 0.85, bh * 0.85], PAINT.glass);
     return;
   }
-  if (c.kind === 'tandem') {
-    // Two seats under one long canopy, the rear one stepped up.
-    const q = c.length / 4;
-    blob(k.fixed, k.fr, [c.x + q, 0, bh * 0.72], [q * 1.15, bw * 0.55, bh * 0.45], PAINT.glass);
-    blob(k.fixed, k.fr, [c.x - q, 0, bh * 0.84], [q * 1.15, bw * 0.55, bh * 0.52], PAINT.glass);
+  // The body's top where the canopy stands (its outline's, else the sections' full height), the hood about half a metre over it.
+  const top = spec.fuselage ? lerpPoly(spec.fuselage.top, c.x) : bh;
+  const sill = top * 0.96;
+  const crown = sill + Math.max(0.35, Math.min(0.6, bh * (c.kind === 'bubble' ? 0.7 : 0.6)));
+  const w = spec.fuselage ? lerpPoly(spec.fuselage.plan, c.x) : bw;
+  const g = hood(c.kind, c.x + c.length / 2, c.x - c.length / 2, sill, crown, Math.min(0.42, w * 0.62));
+  loft(k.fixed, g, PAINT.glass, 12);
+  for (const x of g.frames ?? []) frame(k, g, x);
+}
+
+/**
+ * A solid of revolution round an axis along x at (side, up), its rings ovals
+ * of half width `rw` and half height `rh` scaled by the profile's (share of
+ * the way from `x0` to `x1`, scale). A scale of 0 is a pole. Open shells say
+ * which way is out by the axis (`inner` for an inside face); closed ones are
+ * capped flat at ends that are not poles. `lathe` with oval rings, for cowls
+ * that are not round.
+ */
+function oval(out: FigBuffer, x0: number, x1: number, side: number, up: number, rw: number, rh: number, profile: P2[], col: Rgb, opts: { open?: boolean; inner?: boolean; segments?: number } = {}): void {
+  const n = detail(opts.segments ?? (Math.max(rw, rh) > 0.4 ? 18 : 14), 8);
+  const m = new Mesh();
+  const rows = profile.map(([t, s]) => {
+    const x = x0 + (x1 - x0) * t;
+    if (s <= 1e-6) {
+      const pole = m.v(at(LOCAL, x, side, up), col);
+      return Array.from({ length: n }, () => pole);
+    }
+    return Array.from({ length: n }, (_, i) => {
+      const a = (i / n) * Math.PI * 2;
+      return m.v(at(LOCAL, x, side + Math.cos(a) * rw * s, up + Math.sin(a) * rh * s), col);
+    });
+  });
+  m.grid(rows, true);
+  const dir: Vec3 = [Math.sign(x1 - x0) || 1, 0, 0];
+  if (opts.open || opts.inner) {
+    m.emit(out, { axis: [at(LOCAL, x0, side, up), [dir[0], 0, 0], opts.inner] });
     return;
   }
-  const h = c.kind === 'bubble' ? bh * 0.55 : bh * 0.4;
-  blob(k.fixed, k.fr, [c.x, 0, bh * 0.75], [c.length / 2, bw * 0.55, h], PAINT.glass);
+  for (const [k, first] of [[0, true], [rows.length - 1, false]] as const) {
+    if (profile[k][1] <= 1e-6) continue;
+    m.fan(m.v(at(LOCAL, x0 + (x1 - x0) * profile[k][0], side, up), col), rows[k], first);
+  }
+  m.emit(out, {});
+}
+
+/** A radial's cowl: the lip, the dark opening with its cylinders, the gills' step behind (see `Cowl`). */
+function cowl(k: Kit, spec: FixedWingSpec, c: Cowl): void {
+  const rw = c.radius;
+  const rh = c.height ?? rw;
+  const s = c.side ?? 0;
+  const u = c.up ?? 0;
+  const lip = cowlLip(Math.max(rw, rh));
+  const depth = Math.max(rw, rh) * 0.5;
+  // The lip: the body's full section rolling in to the opening.
+  const seg = { segments: 14 };
+  oval(k.team, c.x - lip - 0.02, c.x, s, u, rw, rh, [[0, 1], [0.7, 0.97], [0.92, 0.9], [1, 0.84]], grey(0.88), { open: true, ...seg });
+  // Inside: the lip's dark inner face going in, and the engine's face at the bottom.
+  oval(k.fixed, c.x, c.x - depth, s, u, rw, rh, [[0, 0.84], [1, 0.8]], PAINT.dark, { inner: true, ...seg });
+  oval(k.fixed, c.x - depth, c.x - depth - 0.02, s, u, rw, rh, [[0, 0.8], [1, 0]], [0.05, 0.05, 0.055], { segments: 10 });
+  // The cylinders round the crankcase, standing out of the dark (a nacelle's, mostly behind its propeller, fewer).
+  const n = detail(c.cylinders ?? (s ? 7 : 9), 5);
+  const cr = Math.max(0.03, Math.max(rw, rh) * 0.1);
+  const xc = c.x - depth * 0.55;
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2 + Math.PI / 2;
+    const ca = Math.cos(a);
+    const sa = Math.sin(a);
+    lathe(k.fixed, k.fr, [xc, s + ca * rw * 0.3, u + sa * rh * 0.3], [xc, s + ca * rw * 0.72, u + sa * rh * 0.72], [[0, cr], [1, cr * 0.8]], PAINT.metal, 4);
+  }
+  lathe(k.fixed, k.fr, [c.x - depth, s, u], [c.x - depth * 0.35, s, u], [[0, Math.min(rw, rh) * 0.36], [1, 0]], PAINT.metal, detail(8, 6));
+  // The gills: a step proud of the body round its section there, fading back into it.
+  if (c.gills && !s && spec.fuselage) {
+    const f = spec.fuselage;
+    const xg = c.x - c.gills;
+    const t = lerpPoly(f.top, xg);
+    const b = lerpPoly(f.bottom, xg);
+    oval(k.team, xg, xg - 0.22, 0, (t + b) / 2, lerpPoly(f.plan, xg), (t - b) / 2, [[0, 0.99], [0.02, 1.035], [1, 1.0]], grey(0.86), { open: true });
+  }
+}
+
+/**
+ * A canopy frame: a narrow band round the glass's upper part at `x`, standing
+ * a little proud of it, in the paint, so a framed hood reads as framed.
+ */
+function frame(k: Kit, g: Outline, x: number): void {
+  const t = lerpPoly(g.top, x);
+  const b = lerpPoly(g.bottom, x);
+  const w = lerpPoly(g.plan, x) + 0.02;
+  const zc = (t + b) / 2;
+  const hh = (t - b) / 2 + 0.02;
+  const r = typeof g.round === 'number' ? g.round : g.round ? lerpPoly(g.round, x) : 2.4;
+  const e = 2 / r;
+  const n = detail(12, 6);
+  const m = new Mesh();
+  // Over the top from one side to the other, down to the body.
+  const lo = Math.asin(Math.max(-1, Math.min(1, ((b + (t - b) * 0.3) - zc) / hh)));
+  const rows = [x + 0.03, x - 0.03].map((xx) =>
+    Array.from({ length: n + 1 }, (_, i) => {
+      const a = lo + ((Math.PI - 2 * lo) * i) / n;
+      const c = Math.cos(a);
+      const sn = Math.sin(a);
+      return m.v(at(LOCAL, xx, (g.side ?? 0) + w * Math.sign(c) * Math.abs(c) ** e, zc + hh * Math.sign(sn) * Math.abs(sn) ** e), grey(0.86));
+    }),
+  );
+  m.grid(rows, false);
+  m.emit(k.team, { axis: [at(LOCAL, x, g.side ?? 0, zc), [1, 0, 0]] });
+}
+
+/**
+ * A landing wheel: a rounded tyre and its hub, few sides - under an aircraft
+ * it is small on screen and mostly seen from the side.
+ */
+function gearWheel(k: Kit, x: number, side: number, up: number, r: number, width: number, outward: number): void {
+  const o = outward >= 0 ? 1 : -1;
+  const w = width / 2;
+  lathe(k.fixed, k.fr, [x, side - o * w, up], [x, side + o * w, up], [[0, r * 0.6], [0.2, r * 0.96], [0.8, r * 0.96], [1, r * 0.6]], PAINT.tyre, detail(9, 6));
+  lathe(k.fixed, k.fr, [x, side + o * w * 0.9, up], [x, side + o * w * 1.12, up], [[0, r * 0.5], [1, r * 0.25]], PAINT.metal, detail(6, 4));
 }
 
 /** A rotor lying level above (x, side, up): a tiltrotor's prop-rotor turned up. */
@@ -630,12 +922,15 @@ function bladePlan(r: number, chord: number): P2[] {
 }
 
 /** Propeller blades with a little twist off the disc, a faint disc, and the spinner, facing forward at (x, side, up). */
-function propeller(k: Kit, x: number, side: number, up: number, diameter: number, blades: number): void {
+function propeller(k: Kit, x: number, side: number, up: number, diameter: number, blades: number, spinner?: number, spinnerLength?: number): void {
   const r = diameter / 2;
   ring(k.fixed, FACING_FORWARD, up, side, x - 0.02, r, PAINT.rotor, 0.18, 28);
-  const c = r * 0.16;
+  const c = r * 0.17;
+  // One blade straight up when their number is odd, two pairs crossed as an X when four: from ahead, from the side
+  // and from three quarters, every blade stands clear of the spinner and of the others.
+  const phase = blades === 2 || blades === 4 ? Math.PI / 4 : blades % 2 ? Math.PI / 2 : Math.PI / blades;
   for (let i = 0; i < blades; i++) {
-    const a = (i / blades) * Math.PI * 2 + 0.3;
+    const a = (i / blades) * Math.PI * 2 + phase;
     const ca = Math.cos(a);
     const sa = Math.sin(a);
     // Along the blade (side, up) and across it towards the way it turns, the chord pitched 30 degrees off the disc.
@@ -643,9 +938,11 @@ function propeller(k: Kit, x: number, side: number, up: number, diameter: number
     const ps = Math.sin(0.5);
     foil(k.fixed, k.fr, bladePlan(r, c), (s, q) => [x + q * ps, side + ca * s - sa * q * pc, up + sa * s + ca * q * pc], unit([pc, sa * ps, -ca * ps]), c * 0.18, PAINT.rotor, { span: 'a' });
   }
-  // The spinner: a rounded cone ahead of the blades.
-  const rs = Math.max(0.08, r * 0.13);
-  lathe(k.fixed, k.fr, [x - rs * 0.6, side, up], [x + rs * 1.7, side, up], [[0, rs], [0.35, rs * 0.97], [0.7, rs * 0.7], [0.92, rs * 0.3], [1, 0]], PAINT.metal);
+  // The spinner: a rounded cone, its base a little behind the blades, painted as the nose it ends, so the nose's
+  // shape reads to its tip.
+  const rs = spinner ?? Math.max(0.08, r * 0.13);
+  const sl = spinnerLength ?? rs * 2.3;
+  lathe(k.team, k.fr, [x - sl * 0.3, side, up], [x + sl * 0.7, side, up], [[0, rs], [0.35, rs * 0.95], [0.75, rs * 0.6], [1, 0]], grey(0.8));
 }
 
 // ---------------------------------------------------------------- helicopters
@@ -755,10 +1052,10 @@ export function buildHeli(spec: HeliSpec): Template {
       : shape === 'bubble'
         ? [S(cabinFront, bw * 0.3, bh * 0.35), S(cabinFront - cabinLen * 0.25, bw * 0.95, bh * 0.95), S(cabinFront - cabinLen * 0.75, bw, bh), S(cabinBack, bw * 0.45, bh * 0.5, bh * 0.3)]
         : [S(cabinFront, bw * 0.55, bh * 0.55, -bh * 0.1), S(cabinFront - cabinLen * 0.12, bw * 0.95, bh * 0.92), S(cabinFront - cabinLen * 0.8, bw, bh), S(cabinBack, bw * 0.6, bh * 0.7, bh * 0.2)];
-  if (spec.fuselage) outlineBody(k.team, k.fr, spec.fuselage, grey(0.9), 14);
+  if (spec.fuselage) loft(k.team, spec.fuselage, grey(0.9), 14);
   else body(k.team, k.fr, sections, grey(0.9), 12, shape === 'boxy' ? 3.6 : 2.6);
   // Glass at the front.
-  for (const g of spec.glassOutlines ?? []) outlineBody(k.fixed, k.fr, g, PAINT.glass, 12);
+  for (const g of spec.glassOutlines ?? []) loft(k.fixed, g, PAINT.glass, 12);
   if (spec.glass) for (const [gx, gu, hl, hw, hh] of spec.glass) blob(k.fixed, k.fr, [gx, 0, gu], [hl, hw, hh], PAINT.glass);
   else if (spec.glassOutlines) {
     // The outlines are the glass.
@@ -864,11 +1161,11 @@ export function buildHeli(spec: HeliSpec): Template {
   }
   for (const [gx, gs, gu, gl, gr] of spec.guns ?? []) tube(k.fixed, k.fr, [gx, gs, gu], [gx + gl, gs, gu], gr, gr * 0.85, PAINT.dark, 6);
   if (spec.pusher) propeller(k, spec.pusher[0], 0, spec.pusher[1], spec.pusher[2], spec.pusher[3]);
-  for (const b of spec.oneSide ?? []) outlineBody(k.team, k.fr, b, grey(0.8), 12);
+  for (const b of spec.oneSide ?? []) loft(k.team, b, grey(0.8), 12);
   // Engine housing on the roof.
   for (const b of spec.bodies ?? []) {
-    outlineBody(k.team, k.fr, b, grey(0.8), 12);
-    if (b.side) outlineBody(k.team, k.fr, { ...b, side: -b.side }, grey(0.8), 12);
+    loft(k.team, b, grey(0.8), 12);
+    if (b.side) loft(k.team, { ...b, side: -b.side }, grey(0.8), 12);
   }
   if (spec.fuselage) {
     // Engines and the rest are in the outline and the bodies.
@@ -896,7 +1193,7 @@ export function buildHeli(spec: HeliSpec): Template {
       const s = side * ws;
       const belly = spec.fuselage ? lerpPoly(spec.fuselage.bottom, wx) + 0.05 : wu + wr * 1.6;
       tube(k.fixed, k.fr, [wx, s * 0.6, belly], [wx, s, wu], 0.06, 0.05, PAINT.dark, 4);
-      wheel(k.fixed, k.fr, s, wu, wr, wr * 0.8, PAINT.tyre, PAINT.metal, side);
+      gearWheel(k, wx, s, wu, wr, wr * 0.8, side);
     }
   }
   if (spec.wheels && !spec.wheelAt) {
@@ -980,19 +1277,18 @@ export function buildMissile(spec: MissileFigureSpec): Template {
       const ds = Math.cos(a);
       const du = Math.sin(a);
       const tip = f.span / 2;
-      const t = Math.max(0.004, r * 0.08);
-      const root = Math.min(radiusAt(x - f.chord / 2), tip * 0.98);
+      const t = Math.max(0.008, r * 0.16);
+      // From a little inside the body, so the root never shows a gap.
+      const root = Math.min(radiusAt(x - f.chord / 2) * 0.9, tip * 0.98);
       const tc = f.tip ?? f.chord * 0.55;
-      const p = (fwd: number, rad: number, n: number): [number, number, number] => [fwd, du * rad + ds * n, ds * rad - du * n];
-      // A swept fin from the body out to its tip.
-      k.team.quad(p(x, root, -t), p(x - f.chord, root, -t), p(x - f.chord, tip, -t), p(x - f.chord + tc, tip, -t), grey(0.7));
-      k.team.quad(p(x, root, t), p(x - f.chord + tc, tip, t), p(x - f.chord, tip, t), p(x - f.chord, root, t), grey(0.8));
+      // A swept fin from the body out to its tip, a thin flat plate lying along the radius at this angle.
+      slab(k.team, k.fr, [[x, root], [x - f.chord, root], [x - f.chord, tip], [x - f.chord + tc, tip]], (a, rad) => [a, ds * rad, du * rad], [0, -du, ds], t, grey(0.8));
     }
   }
   if (spec.wings) {
     const w = spec.wings;
     const x = half - L * w.at;
-    plate(k.team, k.fr, [[x + w.chord, -w.span / 2], [x, -w.span / 2], [x, w.span / 2], [x + w.chord, w.span / 2]], 0, r * 0.15, grey(0.8));
+    foil(k.team, k.fr, [[x + w.chord, -w.span / 2], [x, -w.span / 2], [x, w.span / 2], [x + w.chord, w.span / 2]], (a, b) => [a, b, 0], [0, 0, 1], r * 0.18, grey(0.8));
   }
   return finish(k, 'centre');
 }

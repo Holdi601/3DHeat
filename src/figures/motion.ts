@@ -57,6 +57,20 @@ export interface MotionSample {
   hasAttitude: boolean;
 }
 
+/**
+ * Which rows are a thing's own positions, by the event column: per event
+ * label 1 or 0 (`own`), and the column's ids; both null when the data has no
+ * event column and every row counts.
+ */
+export function positionRows(d: Dataset): { own: Uint8Array | null; ids: Uint32Array | null } {
+  const ev = d.attrs.find((a) => a.kind === 'category' && a.categories && /^events?$/i.test(a.name.trim()));
+  if (!ev) return { own: null, ids: null };
+  const labels = ev.categories!.map((c) => c.trim());
+  const hasPositions = labels.some((l) => /^(position|pos|move|sample|state|tick)$/i.test(l));
+  const ok = labels.map((l) => (hasPositions ? POSITION_EVENT.test(l) : !ELSEWHERE_EVENT.test(l)));
+  return { own: Uint8Array.from(ok, (v) => (v ? 1 : 0)), ids: ev.data as Uint32Array };
+}
+
 export function emptySample(): MotionSample {
   return { x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, q: [0, 0, 0, 1], hasAttitude: false };
 }
@@ -106,15 +120,7 @@ export class MotionModel {
     const persons = Math.max(1, d.personLabels.length);
 
     // Which rows are the thing's own positions.
-    const ev = d.attrs.find((a) => a.kind === 'category' && a.categories && /^events?$/i.test(a.name.trim()));
-    let own: Uint8Array | null = null;
-    if (ev) {
-      const labels = ev.categories!.map((c) => c.trim());
-      const hasPositions = labels.some((l) => /^(position|pos|move|sample|state|tick)$/i.test(l));
-      const ok = labels.map((l) => (hasPositions ? POSITION_EVENT.test(l) : !ELSEWHERE_EVENT.test(l)));
-      own = Uint8Array.from(ok, (v) => (v ? 1 : 0));
-    }
-    const ids = ev ? (ev.data as Uint32Array) : null;
+    const { own, ids } = positionRows(d);
     this.hasEvents = !!own;
     const take = (r: number) => (!own || own[ids![r]] === 1) && Number.isFinite(px[r]) && Number.isFinite(t[r]);
 

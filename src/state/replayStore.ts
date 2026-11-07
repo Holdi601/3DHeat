@@ -18,8 +18,89 @@ export const DEFAULT_CARD_FIELDS = ['vehicle', 'team', 'range', 'bearing', 'aspe
 export const DEFAULT_GRAPH = ['alt', 'tas'];
 
 export type UnitSystem = 'metric' | 'imperial';
-/** Chase: the camera turns with the followed unit. Orbit: it keeps its own direction. */
-export type FollowMode = 'chase' | 'orbit';
+/**
+ * How the camera follows a unit, as Tacview's views: chase turns with it,
+ * orbit keeps its own direction, cockpit looks out of it (its attitude, the
+ * horizon rolling), fixed sits at a place of its own around it that turns and
+ * rolls with it (a wingtip, head-on), padlock looks from the cockpit at the
+ * target, target looks past the unit at the target, satellite looks straight
+ * down on it.
+ */
+export type FollowMode = 'chase' | 'orbit' | 'cockpit' | 'fixed' | 'padlock' | 'target' | 'satellite';
+export const FOLLOW_MODES: FollowMode[] = ['chase', 'orbit', 'cockpit', 'fixed', 'padlock', 'target', 'satellite'];
+
+/** Which units a display aid (velocity vectors, radar cones...) is drawn for. */
+export type Scope = 'off' | 'selected' | 'all' | 'air' | 'ground' | 'sea' | 'weapon';
+export const SCOPES: Scope[] = ['off', 'selected', 'all', 'air', 'ground', 'sea', 'weapon'];
+
+/** What a label rule is for: a kind of object, AI units, or the units in question (followed, selected, target, measured). */
+export type LabelCategory = 'selected' | 'air' | 'ground' | 'sea' | 'weapon' | 'ai';
+export const LABEL_CATEGORIES: LabelCategory[] = ['selected', 'air', 'ground', 'sea', 'weapon', 'ai'];
+
+export interface LabelRule {
+  show: boolean;
+  /** Null: the dataset's label fields (the "every unit" choice). */
+  fields: string[] | null;
+  /** 1 (last) to 5 (first): who gets the space when labels would cover each other. */
+  priority: number;
+}
+
+export const DEFAULT_LABEL_RULES: Record<LabelCategory, LabelRule> = {
+  selected: { show: true, fields: null, priority: 5 },
+  air: { show: true, fields: null, priority: 4 },
+  sea: { show: true, fields: null, priority: 3 },
+  ground: { show: true, fields: null, priority: 2 },
+  ai: { show: true, fields: null, priority: 2 },
+  weapon: { show: false, fields: null, priority: 1 },
+};
+
+/** The tactical display aids: what is drawn for which units. */
+export interface DisplayAids {
+  /** The velocity vector: a line to where the unit is in `vectorSeconds` at its speed and course. */
+  vectors: Scope;
+  vectorSeconds: number;
+  /** The path ahead: where the unit really goes in the next `vectorSeconds` (Tacview's anticipatory trail). */
+  pathAhead: Scope;
+  /** Nose (heading) and lift lines, as Tacview's selected-object vectors. */
+  attitudeLines: Scope;
+  /** Radar scan cones, from the recording's Radar* properties. */
+  radar: Scope;
+  /** Lines to locked and focused targets (LockedTarget, FocusedTarget, LockedTargetAzimuth...). */
+  locks: Scope;
+  /** Engagement domes (EngagementRange, VerticalEngagementRange). */
+  engagement: Scope;
+  /** The measured pair's line drawn red where the ground is between them. */
+  lineOfSight: boolean;
+}
+
+export const DEFAULT_AIDS: DisplayAids = {
+  vectors: 'selected',
+  vectorSeconds: 10,
+  pathAhead: 'off',
+  attitudeLines: 'off',
+  radar: 'all',
+  locks: 'all',
+  engagement: 'all',
+  lineOfSight: true,
+};
+
+/** The 2D tactical map: off, a picture in the corner, or over the whole view. */
+export type MapView = 'off' | 'pip' | 'full';
+
+/** The chart window: one unit's values over time, one value for several units, or one value against another. */
+export type ChartKind = 'time' | 'compare' | 'xy';
+export interface ChartSettings {
+  open: boolean;
+  kind: ChartKind;
+  /** The value compared across units. */
+  param: string;
+  /** Value against value. */
+  x: string;
+  y: string;
+  /** Units on the chart besides the followed, selected and target ones. */
+  units: string[];
+}
+const DEFAULT_CHART: ChartSettings = { open: false, kind: 'compare', param: 'alt', x: 'tas', y: 'turnRate', units: [] };
 
 interface Saved {
   labels: boolean;
@@ -34,6 +115,15 @@ interface Saved {
   /** The figure overlay's labels and event markers: off unless asked, there are too many. */
   overlayLabels: boolean;
   overlayMarkers: boolean;
+  labelRules: Record<LabelCategory, LabelRule>;
+  aids: DisplayAids;
+  map: MapView;
+  /** Seconds of trail behind each unit on the map. */
+  mapTrail: number;
+  mapNames: boolean;
+  chart: ChartSettings;
+  /** The cockpit view's head-up display. */
+  hud: boolean;
 }
 
 const KEY = 'heat3d.replay';
@@ -50,6 +140,13 @@ function saved(): Saved {
     labelAi: true,
     overlayLabels: false,
     overlayMarkers: false,
+    labelRules: DEFAULT_LABEL_RULES,
+    aids: DEFAULT_AIDS,
+    map: 'off',
+    mapTrail: 60,
+    mapNames: true,
+    chart: DEFAULT_CHART,
+    hud: true,
   };
   try {
     const v = JSON.parse(localStorage.getItem(KEY) ?? 'null');
@@ -62,14 +159,70 @@ function saved(): Saved {
       graph: strings(v.graph, fallback.graph),
       units: v.units === 'imperial' ? 'imperial' : 'metric',
       declutter: v.declutter !== false,
-      followMode: v.followMode === 'orbit' ? 'orbit' : 'chase',
+      followMode: FOLLOW_MODES.includes(v.followMode) ? v.followMode : 'chase',
       labelAi: v.labelAi !== false,
       overlayLabels: v.overlayLabels === true,
       overlayMarkers: v.overlayMarkers === true,
+      labelRules: readRules(v.labelRules),
+      aids: readAids(v.aids),
+      map: v.map === 'pip' || v.map === 'full' ? v.map : 'off',
+      mapTrail: typeof v.mapTrail === 'number' && v.mapTrail >= 0 ? Math.min(3600, v.mapTrail) : 60,
+      mapNames: v.mapNames !== false,
+      chart: readChart(v.chart),
+      hud: v.hud !== false,
     };
   } catch {
     return fallback;
   }
+}
+
+const scopeOf = (v: unknown, d: Scope): Scope => (SCOPES.includes(v as Scope) ? (v as Scope) : d);
+
+/** Saved label rules, each checked; what is missing or wrong is the default. */
+export function readRules(v: unknown): Record<LabelCategory, LabelRule> {
+  const out = { ...DEFAULT_LABEL_RULES };
+  if (!v || typeof v !== 'object') return out;
+  for (const c of LABEL_CATEGORIES) {
+    const r = (v as Record<string, unknown>)[c] as Partial<LabelRule> | undefined;
+    if (!r || typeof r !== 'object') continue;
+    out[c] = {
+      show: typeof r.show === 'boolean' ? r.show : DEFAULT_LABEL_RULES[c].show,
+      fields: Array.isArray(r.fields) && r.fields.every((x) => typeof x === 'string') ? r.fields : null,
+      priority: typeof r.priority === 'number' && r.priority >= 1 && r.priority <= 5 ? Math.round(r.priority) : DEFAULT_LABEL_RULES[c].priority,
+    };
+  }
+  return out;
+}
+
+/** Saved display aids, each checked. */
+export function readAids(v: unknown): DisplayAids {
+  if (!v || typeof v !== 'object') return DEFAULT_AIDS;
+  const a = v as Record<string, unknown>;
+  const d = DEFAULT_AIDS;
+  return {
+    vectors: scopeOf(a.vectors, d.vectors),
+    vectorSeconds: typeof a.vectorSeconds === 'number' && a.vectorSeconds > 0 ? Math.min(600, a.vectorSeconds) : d.vectorSeconds,
+    pathAhead: scopeOf(a.pathAhead, d.pathAhead),
+    attitudeLines: scopeOf(a.attitudeLines, d.attitudeLines),
+    radar: scopeOf(a.radar, d.radar),
+    locks: scopeOf(a.locks, d.locks),
+    engagement: scopeOf(a.engagement, d.engagement),
+    lineOfSight: a.lineOfSight !== false,
+  };
+}
+
+function readChart(v: unknown): ChartSettings {
+  if (!v || typeof v !== 'object') return DEFAULT_CHART;
+  const c = v as Record<string, unknown>;
+  const str = (x: unknown, d: string) => (typeof x === 'string' && x ? x : d);
+  return {
+    open: c.open === true,
+    kind: c.kind === 'time' || c.kind === 'xy' ? c.kind : 'compare',
+    param: str(c.param, DEFAULT_CHART.param),
+    x: str(c.x, DEFAULT_CHART.x),
+    y: str(c.y, DEFAULT_CHART.y),
+    units: [],
+  };
 }
 
 function store(s: Saved): void {
@@ -113,6 +266,20 @@ interface ReplayState extends Saved {
   pick: (person: number) => void;
   clearPair: () => void;
   setEventFilter: (p: { kinds?: string[] | null; unit?: string | null }) => void;
+  /** The second unit of the padlock and target views (a unit key), and its live track. */
+  target: string | null;
+  targetPerson: number | null;
+  setTarget: (unit: string | null) => void;
+  /** Swap the followed unit and the target, as Tacview's swap button. */
+  swapTarget: () => void;
+  /** Stop playing at each event of the kinds the event list shows, as Tacview's "pause on event". */
+  pauseOnEvent: boolean;
+  /** Bumped to put the cockpit's look and the fixed camera's place back. */
+  viewReset: number;
+  resetView: () => void;
+  setAids: (p: Partial<DisplayAids>) => void;
+  setRule: (c: LabelCategory, p: Partial<LabelRule>) => void;
+  setChart: (p: Partial<ChartSettings>) => void;
 }
 
 export const useReplayStore = create<ReplayState>((set, get) => {
@@ -129,6 +296,14 @@ export const useReplayStore = create<ReplayState>((set, get) => {
       labelAi: s.labelAi,
       overlayLabels: s.overlayLabels,
       overlayMarkers: s.overlayMarkers,
+      labelRules: s.labelRules,
+      aids: s.aids,
+      map: s.map,
+      mapTrail: s.mapTrail,
+      mapNames: s.mapNames,
+      // The units charted are of this recording only.
+      chart: { ...s.chart, units: [] },
+      hud: s.hud,
     });
     set(p);
   };
@@ -144,6 +319,20 @@ export const useReplayStore = create<ReplayState>((set, get) => {
     eventKinds: null,
     eventUnit: null,
     overlay: { groups: null, colour: 'team', only: null },
+    target: null,
+    targetPerson: null,
+    setTarget: (target) => set({ target, targetPerson: null }),
+    swapTarget: () => {
+      const s = get();
+      if (!s.target || !s.followUnit) return;
+      set({ target: s.followUnit, targetPerson: s.follow, followUnit: s.target, follow: s.targetPerson ?? s.follow, selected: s.target });
+    },
+    pauseOnEvent: false,
+    viewReset: 0,
+    resetView: () => set({ viewReset: get().viewReset + 1 }),
+    setAids: (p) => keep({ aids: { ...get().aids, ...p } }),
+    setRule: (c, p) => keep({ labelRules: { ...get().labelRules, [c]: { ...get().labelRules[c], ...p } } }),
+    setChart: (p) => keep({ chart: { ...get().chart, ...p } }),
     setOverlay: (p) => set({ overlay: { ...get().overlay, ...p } }),
     setDropLines: (dropLines) => set({ dropLines }),
     patchSaved: keep,

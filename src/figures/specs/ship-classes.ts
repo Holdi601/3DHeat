@@ -1628,9 +1628,9 @@ const W: Record<string, ShipO> = {
   // Fleet tanker (Elnya, Project 160 Altay class): the forecastle, the long tank deck with its masts, the bridge,
   // quarters and funnel aft (106.2 x 15.5 m; 7,230 t full).
   'tanker': {
-    cls: 'merchant', L: 106.2, B: 15.5, fb: 5, sheer: 2, transom: 0.7,
+    cls: 'merchant', L: 106.2, B: 15.5, fb: 5, sheer: 2, fc: [44, 1.5], transom: 0.7,
     funnels: [[-47, 15, 3.5]],
-    blocks: [[53, 44, 7, 6], [-36, -53, 14, 7.4, 1], [-38, -48, 17, 5.5, 1]],
+    blocks: [[-36, -53, 14, 7.4, 1], [-38, -48, 17, 5.5, 1]],
     masts: [[30, 14], [-4, 10]],
   },
   // A Handysize bulk carrier: five hatches with four deck cranes between them, the forecastle, the tall house and

@@ -4,6 +4,7 @@ import { useStore } from '../state/store';
 import type { TimelineMode, WindowMode } from '../state/store';
 import { useAnimationFrame, useEngine } from './EngineContext';
 import { num, t } from '../i18n';
+import { ReplayMarks } from './replay/ReplayMarks';
 
 const SPEEDS = [0.25, 0.5, 1, 2, 4, 8, 16, 60, 300, 1800];
 
@@ -119,6 +120,7 @@ export function Timeline() {
           }}
           onChange={(e) => seek(Number(e.target.value))}
         />
+        <ReplayMarks range={range} />
       </div>
       <div className="tl-controls">
         <div className="seg" style={{ flex: '0 0 auto' }}>

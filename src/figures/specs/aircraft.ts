@@ -12,7 +12,7 @@
  */
 
 import type { Named, SpecSet } from './index';
-import type { FixedWingSpec } from '../air';
+import { cowlLip, hood, type FixedWingSpec } from '../air';
 import type { Outline, P2 } from '../parts';
 import { bubble, tandem } from './jet-variants';
 
@@ -87,7 +87,32 @@ for (const [k, r] of [['p-38j', 0.15], ['b-17g', 0.18], ['lancaster', 0.17]] as 
 
 // ---------------------------------------------------------------- piston aircraft from proportions
 
-/** A wing's half planform from its family: elliptic (Spitfire), tapered (straight edges), round-tipped, square-tipped. */
+/**
+ * A tapered half planform, root (leading edge `le0`, trailing edge `te0`) at
+ * `y0` out to the tip (`le1`, `te1`) at `y1`, its tip rounded: `r` is the
+ * rounding's reach inboard as a share of the tip chord (0 a square tip, about
+ * 0.7 a fully round one). The edges run on to where the rounding starts and
+ * turn round half an ellipse whose outermost point lies a little aft of mid
+ * chord, as a real round tip's does; the span stays `y1`.
+ */
+export function roundedPlan(y0: number, le0: number, te0: number, y1: number, le1: number, te1: number, r: number): P2[] {
+  if (r <= 0) return [[le0, y0], [le1, y1], [te1, y1], [te0, y0]];
+  const rr = Math.min(r * (le1 - te1), (y1 - y0) * 0.45);
+  const ys = y1 - rr;
+  const f = (ys - y0) / (y1 - y0);
+  const la = le0 + (le1 - le0) * f;
+  const ta = te0 + (te1 - te0) * f;
+  const mid = (la + ta) / 2;
+  const hc = (la - ta) / 2;
+  const arc: P2[] = [];
+  for (let i = 0; i <= 6; i++) {
+    const th = (i / 6) * Math.PI;
+    arc.push([mid + hc * Math.cos(th) - hc * 0.18 * Math.sin(th), ys + rr * Math.sin(th)]);
+  }
+  return [[le0, y0], ...arc, [te0, y0]];
+}
+
+/** A wing's half planform from its family: elliptic (Spitfire), tapered (straight edges, the tip's corners eased), round-tipped, square-tipped. */
 export function wingOf(kind: 'elliptic' | 'tapered' | 'round' | 'square', le: number, root: number, tip: number, half: number, sweep = 2, rootY = 0): P2[] {
   const sw = Math.tan((sweep * Math.PI) / 180);
   if (kind === 'elliptic') {
@@ -100,11 +125,7 @@ export function wingOf(kind: 'elliptic' | 'tapered' | 'round' | 'square', le: nu
   }
   // Sweep is of the quarter-chord line; the taper splits a quarter ahead of it, three quarters behind.
   const tipLe = le - (half - rootY) * sw - 0.25 * (root - tip);
-  const pts: P2[] = [[le, rootY], [tipLe, half - (kind === 'round' ? tip * 0.35 : 0)]];
-  if (kind === 'round') pts.push([tipLe - tip * 0.2, half - tip * 0.08], [tipLe - tip * 0.55, half], [tipLe - tip * 0.85, half - tip * 0.1]);
-  else pts.push([tipLe - tip, half]);
-  pts.push([le - root, rootY]);
-  return pts;
+  return roundedPlan(rootY, le, le - root, half, tipLe, tipLe - tip, kind === 'round' ? 0.75 : kind === 'tapered' ? 0.3 : 0.08);
 }
 
 export interface Piston {
@@ -146,24 +167,26 @@ export interface Piston {
   cowl?: number;
   cowlH?: number;
   waist?: number;
-  /** An inline's spinner radius (default from the propeller). */
+  /** The spinner's radius (default: an inline's from the propeller, a radial's two fifths of the cowl's). */
   spinner?: number;
+  /** A radial's cylinders seen in its cowl (default 9; a two-row engine shows its front row's 7 or 9). */
+  cylinders?: number;
   /** Radiators under the wings (Bf 109, Spitfire): front, out from the centre line, length, depth. */
   rads?: [number, number, number, number];
   /** The wing's thickness at the root as a share of its chord (default 0.15, an estimate for a piston fighter's wing). */
   thick?: number;
 }
 
-/** The canopy's glass: a framed hood, a bubble, a long greenhouse or a tandem pair, standing on the deck at `sill`. */
-function hoodOf(c: Piston['canopy'], sill: number, crown: number, cw: number): Outline[] {
-  const f = c.x + c.length / 2;
-  const b = c.x - c.length / 2;
-  const L = c.length;
-  if (c.kind === 'bubble') return [bubble(f, b, crown, sill, sill, cw)];
-  if (c.kind === 'tandem') return [tandem(f, b, crown - 0.08, crown, sill, sill, cw)];
-  // Framed: a raked windscreen, a flat crown, the back dropping to the spine.
-  const rake = Math.min(0.55, L * 0.32);
-  return [{ top: [[b, crown - 0.12], [b + Math.min(0.3, L * 0.15), crown], [f - rake, crown], [f - rake * 0.15, sill + (crown - sill) * 0.25], [f, sill]], bottom: [[b, sill - 0.3], [f, sill - 0.3]], plan: [[b, cw * 0.8], [b + L * 0.25, cw], [f - rake, cw * 0.97], [f, cw * 0.6]], round: 3, stations: 12 }];
+/**
+ * Points along a smooth run from (x0, v0) to (x1, v1), `n` between: with
+ * `bulge` above 0 the value falls slowly at first and faster towards the end
+ * (a full rear body), below 0 the other way (a belly sweeping up).
+ */
+function run(x0: number, v0: number, x1: number, v1: number, n: number, bulge: number): P2[] {
+  return Array.from({ length: n }, (_, i) => {
+    const u = (i + 1) / (n + 1);
+    return [x0 + (x1 - x0) * u, v1 + (v0 - v1) * (1 - u) * (1 + bulge * u)] as P2;
+  });
 }
 
 export function piston(p: Piston): FixedWingSpec & { cls: string } {
@@ -179,36 +202,52 @@ export function piston(p: Piston): FixedWingSpec & { cls: string } {
   const fr = Math.min(p.finRoot, L * 0.2);
   // The deck at the cockpit, the canopy's crown on it (estimates: a fighter's hood stands about half a metre).
   const sill = h * 0.92;
-  const crown = sill + (p.hood ?? (c.kind === 'bubble' ? 0.55 : 0.5));
-  const cw = Math.min(0.36, w * 0.66);
+  const crown = sill + (p.hood ?? (c.kind === 'bubble' ? 0.5 : 0.45));
   // The nose: a radial's blunt round cowl, or an inline's spinner and the cowl swelling back to the windscreen.
   const R = p.cowl ?? w;
   const RH = p.cowlH ?? R;
-  const rs = p.spinner ?? Math.max(0.22, Math.min(0.36, p.prop * 0.1));
-  const mid = (n - 0.5 + xf) / 2;
+  // The spinner's tip is the nose: a radial's broad and short, an inline's long and pointed.
+  const rs = p.spinner ?? (p.radial ? Math.min(R, RH) * 0.42 : Math.max(0.22, Math.min(0.36, p.prop * 0.1)));
+  const sl = p.radial ? rs * 2.0 : rs * 2.6;
+  // A radial's cowl lip stands a little behind the spinner's tip, its body behind the lip; an inline's cowl closes
+  // round the spinner's base.
+  const lipX = n - sl * 0.72;
+  const x0 = p.radial ? lipX - cowlLip(Math.max(R, RH)) : n - sl + 0.03;
+  const mid = (x0 - 0.3 + xf) / 2;
   const waist = p.waist ?? (p.radial ? Math.min(w, R * 0.82) : w);
+  // The body's cross-section: round at a radial's cowl, a rounded box at the cockpit, where the canopy stands on
+  // the sides of the deck, rounder again towards the tail.
+  const boxy = 3.2;
+  const round: P2[] = [[x0, p.radial ? 2.1 : 2.3], [xf + 0.6, 2.5], [xf, boxy], [xb, boxy], [t + fr, 2.5], [t, 2.3]];
+  // How wide the deck is at the sill, where the canopy's sides rise from it.
+  const cw = Math.min(0.4, waist * (1 - 0.92 ** boxy) ** (1 / boxy) * 0.96);
   const top: P2[] = p.radial
-    ? [[n, RH * 0.78], [n - 0.12, RH * 0.95], [n - 0.4, RH], [Math.max(xf + 0.1, n - 1.2), Math.max(RH * 0.97, sill * 0.98)], [xf, sill]]
-    : [[n, 0], [n - 0.15, rs * 0.6], [n - 0.42, rs], [n - 0.55, rs * 1.3 + 0.04], [mid, h * 0.8], [xf, sill]];
+    ? [[x0, RH], [x0 - 0.3, RH], [Math.max(xf + 0.1, x0 - 1.2), Math.max(RH * 0.97, sill * 0.98)], [xf, sill]]
+    : [[x0, rs * 1.04], [x0 - 0.15, rs * 1.25 + 0.03], [mid, h * 0.8], [xf, sill]];
   const bottom: P2[] = p.radial
-    ? [[n, -RH * 0.78], [n - 0.12, -RH * 0.95], [n - 0.4, -RH], [Math.max(p.le, n - 1.6), -h * 0.98]]
-    : [[n, 0], [n - 0.15, -rs * 0.6], [n - 0.42, -rs], [n - 0.55, -rs * 1.4], [mid, -h * 0.9], [Math.max(p.le, mid - 0.4), -h * 0.98]];
+    ? [[x0, -RH], [x0 - 0.3, -RH], [Math.max(p.le, x0 - 1.4), -h * 0.98]]
+    : [[x0, -rs * 1.04], [x0 - 0.15, -rs * 1.35], [mid, -h * 0.9], [Math.max(p.le, mid - 0.4), -h * 0.98]];
   const plan: P2[] = p.radial
-    ? [[n, R * 0.78], [n - 0.12, R * 0.95], [n - 0.4, R], [Math.max(xf + 0.1, n - 1.2), R * 0.96], [xf, waist * 0.98], [c.x, waist]]
-    : [[n, 0.03], [n - 0.15, rs * 0.6], [n - 0.42, rs], [n - 0.55, rs * 1.25], [mid, w * 0.9], [xf, w * 0.98], [c.x, w]];
-  // Behind the cockpit the deck falls away (a razorback keeps a narrow spine up to the fin); the belly runs level under the wing, then sweeps up.
-  if (p.razor) top.push([xb, crown - 0.12], [xb - 0.4, crown - 0.18], [t + fr, h * 0.64], [t, h * 0.5]);
-  else top.push([xb, sill * 0.98], [t + fr, h * 0.56], [t, h * 0.48]);
-  bottom.push([te, -h], [t + L * 0.25, -h * 0.58], [t + fr * 0.5, -h * 0.18], [t, h * 0.02]);
-  plan.push([xb, waist * 0.92], [t + L * 0.3, waist * 0.52], [t + fr, waist * 0.3], [t, 0.06]);
+    ? [[x0, R], [x0 - 0.3, R], [Math.max(xf + 0.1, x0 - 1.2), R * 0.96], [xf, waist * 0.98], [c.x, waist]]
+    : [[x0, rs * 1.04], [x0 - 0.15, rs * 1.22], [mid, w * 0.9], [xf, w * 0.98], [c.x, w]];
+  // Behind the cockpit the body tapers smoothly to the tail: the deck falls away (a razorback keeps a narrow spine
+  // up to the fin), the belly runs level under the wing and sweeps up, the sides close in.
+  top.push([xb, sill * 0.97], ...run(xb, sill * 0.97, t + fr, h * 0.56, 2, 0.3), [t + fr, h * 0.56], [t, h * 0.48]);
+  bottom.push([te, -h], ...run(te, -h, t, h * 0.02, 3, -0.35), [t, h * 0.02]);
+  plan.push([xb, waist * 0.95], ...run(xb, waist * 0.95, t, 0.07, 3, 0.35), [t, 0.07]);
   const bodies: Outline[] = [];
+  if (p.razor) {
+    // A razorback: a narrow spine from the canopy's back, as high as its rear glazing, falling to the fin.
+    const s0 = crown - 0.08;
+    bodies.push({ top: [[xb + 0.05, s0], [xb - 0.4, s0 - 0.06], ...run(xb - 0.4, s0 - 0.06, t + fr, h * 0.62, 2, 0.2), [t + fr, h * 0.62], [t + fr * 0.4, h * 0.52]], bottom: [[xb + 0.05, sill - 0.3], [t + fr * 0.4, h * 0.2]], plan: [[xb + 0.05, cw * 0.82], [xb - 0.4, cw * 0.7], [t + fr, 0.1], [t + fr * 0.4, 0.06]], round: 2.2, stations: 10 });
+  }
   if (p.scoop) {
     // A belly scoop (P-51) or radiator bath (Yak, LaGG): narrower than the body, its lip deepest at the front.
-    const [sx, sl, sd] = p.scoop;
-    const x0 = sx + sl / 2;
-    const x1 = sx - sl / 2;
+    const [sx, sln, sd] = p.scoop;
+    const s0 = sx + sln / 2;
+    const s1 = sx - sln / 2;
     const hw = Math.min(w * 0.72, 0.38);
-    bodies.push({ top: [[x0, -h * 0.6], [x1, -h * 0.6]], bottom: [[x0, -h - sd * 0.8], [x0 - Math.min(0.25, sl * 0.15), -h - sd], [x0 - sl * 0.55, -h - sd * 0.85], [x1, -h * 0.92]], plan: [[x0, hw * 0.92], [x0 - 0.2, hw], [x1 + sl * 0.2, hw * 0.8], [x1, hw * 0.35]], round: 2.6, stations: 8 });
+    bodies.push({ top: [[s0, -h * 0.6], [s1, -h * 0.6]], bottom: [[s0, -h - sd * 0.8], [s0 - Math.min(0.25, sln * 0.15), -h - sd], [s0 - sln * 0.55, -h - sd * 0.85], [s1, -h * 0.92]], plan: [[s0, hw * 0.92], [s0 - 0.2, hw], [s1 + sln * 0.2, hw * 0.8], [s1, hw * 0.35]], round: 2.6, stations: 8 });
   }
   if (p.rads) {
     const [rx, ry, rl, rd] = p.rads;
@@ -226,9 +265,12 @@ export function piston(p: Piston): FixedWingSpec & { cls: string } {
   });
   // Starting at the root's trailing edge, the triangulation clips the inner panel first, so no triangle runs across the bend.
   const wingPlan: P2[] = !p.gull ? plan0 : [bent[bent.length - 1], ...bent.slice(0, -1)];
+  // The fin: a round top as an ellipse's arc over the rudder, or a straight swept one; the rudder's heel reaches
+  // down past the tail's end to the body's underside, as the rudder post stands.
+  const heel = -h * 0.38;
   const fins: P2[] = p.roundFin
-    ? [[t + p.finRoot, 0], [t + 0.05, 0], [t + 0.02, p.fin * 0.7], [t + p.finRoot * 0.12, p.fin * 0.95], [t + p.finRoot * 0.35, p.fin], [t + p.finRoot * 0.6, p.fin * 0.88], [t + p.finRoot * 0.85, p.fin * 0.45]]
-    : [[t + p.finRoot, 0], [t + 0.05, 0], [t - 0.1, p.fin], [t + p.finRoot * 0.45, p.fin]];
+    ? [[t + p.finRoot, 0], [t + p.finRoot * 0.3, heel * 0.8], [t + 0.06, heel], [t - 0.02, heel * 0.4], [t, p.fin * 0.55], [t + p.finRoot * 0.05, p.fin * 0.8], [t + p.finRoot * 0.16, p.fin * 0.95], [t + p.finRoot * 0.32, p.fin], [t + p.finRoot * 0.5, p.fin * 0.95], [t + p.finRoot * 0.66, p.fin * 0.8], [t + p.finRoot * 0.86, p.fin * 0.42]]
+    : [[t + p.finRoot, 0], [t + p.finRoot * 0.3, heel * 0.8], [t + 0.06, heel], [t - 0.06, heel * 0.4], [t - 0.1, p.fin * 0.9], [t + p.finRoot * 0.05, p.fin], [t + p.finRoot * 0.45, p.fin]];
   const tp = p.tailRoot;
   return {
     cls: p.cls,
@@ -237,17 +279,19 @@ export function piston(p: Piston): FixedWingSpec & { cls: string } {
     height: p.height,
     bodyWidth: Math.max(w, R) * 2,
     bodyHeight: h * 2,
-    fuselage: { top, bottom, plan, round: p.radial ? 2.1 : 2.4, stations: 24 },
+    fuselage: { top, bottom, plan, round, stations: 16 },
     bodies,
     wing: { x: p.le - p.root / 2, span: p.span, rootChord: p.root, tipChord: p.tip, sweep: p.sweep ?? 2, mount: p.mount ?? -0.8, dihedral: p.dihedral ?? 6, gull: p.gull, thicknessRatio: p.thick ?? 0.15 },
     wingPlan,
     tail: { kind: 'single', finHeight: p.fin, finChord: p.finRoot, tailSpan: p.tailSpan, tailChord: tp, finBase: h * 0.45, planeUp: h * 0.3 },
     finPlan: fins,
-    tailPlan: [[t + tp, 0], [t + tp * 0.95, p.tailSpan * 0.3], [t + tp * 0.6, p.tailSpan / 2], [t + tp * 0.15, p.tailSpan * 0.47], [t, p.tailSpan * 0.3], [t, 0]],
+    // The tailplane: a swept leading edge, a near-straight elevator hinge, a round tip.
+    tailPlan: roundedPlan(0, t + tp, t, p.tailSpan / 2, t + tp * 0.82, t + tp * 0.18, 0.7),
     engines: { kind: 'nose-prop', count: 1 },
-    propeller: { diameter: p.prop, blades: p.blades },
+    propeller: { diameter: p.prop, blades: p.blades, spinner: rs, spinnerLength: sl },
+    cowls: p.radial ? [{ x: lipX, radius: R, height: RH, gills: Math.max(0.5, R * 1.1), cylinders: p.cylinders }] : undefined,
     canopy: c,
-    glass: c.kind === 'glass-nose' ? undefined : hoodOf(c, sill, crown, cw),
+    glass: c.kind === 'glass-nose' ? undefined : [hood(c.kind, c.x + c.length / 2, c.x - c.length / 2, sill, crown, cw, !!p.razor)],
     fixedGear: p.gear,
   };
 }
@@ -339,11 +383,12 @@ export function jet(p: Jet): FixedWingSpec & { cls: string } {
 // Grumman F4F Wildcat: a barrel radial fighter, mid wing with square tips (8.76 x 11.58 x 3.61 m); F8F Bearcat smaller with a bubble (8.61 x 10.92 x 4.21 m).
 A['f4f-wildcat'] = piston({ cls: 'ww2-fighter', length: 8.76, span: 11.58, height: 3.61, w: 0.65, h: 0.75, radial: true, wing: 'square', le: 1.3, root: 2.4, tip: 1.3, sweep: 2, mount: 0, fin: 1.4, finRoot: 1.5, roundFin: true, tailSpan: 4.4, tailRoot: 1.1, canopy: { x: 0.6, length: 1.6, kind: 'framed' }, prop: 3.0, blades: 3 });
 A['f8f-bearcat'] = piston({ cls: 'ww2-fighter', length: 8.61, span: 10.92, height: 4.21, w: 0.65, h: 0.75, radial: true, wing: 'square', le: 1.4, root: 2.5, tip: 1.3, sweep: 2, fin: 1.7, finRoot: 1.6, tailSpan: 4.6, tailRoot: 1.1, canopy: { x: 0.2, length: 1.6, kind: 'bubble' }, prop: 3.8, blades: 4 });
-// TBF Avenger: a deep barrel fuselage, a long greenhouse with the ball turret (12.48 x 16.51 x 4.7 m); SB2C Helldiver (11.18 x 15.16 x 4.0 m).
+// TBF Avenger: a deep barrel fuselage, a long greenhouse with the ball turret (12.48 x 16.51 x 4.7 m); SB2C Helldiver,
+// drawn as the most-built SB2C-3 to -5 with the four-bladed Curtiss propeller (11.18 x 15.16 x 4.0 m).
 A['tbf-avenger'] = piston({ cls: 'ww2-attack', length: 12.48, span: 16.51, height: 4.7, w: 0.72, h: 1.0, cowl: 0.75, radial: true, wing: 'tapered', le: 1.8, root: 3.2, tip: 1.3, sweep: 3, mount: -0.4, fin: 2.0, finRoot: 2.0, tailSpan: 6.4, tailRoot: 1.6, canopy: { x: 0.9, length: 3.4, kind: 'framed' }, prop: 4.0, blades: 3 });
 // The ball turret at the back of the greenhouse and the deep belly with the ventral gunner's step (estimates).
 A['tbf-avenger'].bodies!.push({ top: [[-0.5, 0.9], [-0.85, 1.55], [-1.55, 1.55], [-1.9, 0.9]], bottom: [[-0.5, 0.5], [-1.9, 0.5]], plan: [[-0.5, 0.3], [-0.85, 0.5], [-1.55, 0.5], [-1.9, 0.3]], round: 2, stations: 6 }, { top: [[1.8, -0.6], [-2.8, -0.6]], bottom: [[1.8, -1.0], [1.0, -1.3], [-1.6, -1.3], [-2.8, -0.75]], plan: [[1.8, 0.45], [1.0, 0.55], [-1.6, 0.5], [-2.8, 0.25]], round: 3, stations: 8 });
-A['sb2c-helldiver'] = piston({ cls: 'ww2-attack', length: 11.18, span: 15.16, height: 4.0, w: 0.7, h: 0.9, radial: true, wing: 'tapered', le: 1.6, root: 3.2, tip: 1.3, sweep: 3, fin: 2.0, finRoot: 2.0, tailSpan: 6.0, tailRoot: 1.4, canopy: { x: 0.4, length: 3.6, kind: 'framed' }, prop: 3.8, blades: 3 });
+A['sb2c-helldiver'] = piston({ cls: 'ww2-attack', length: 11.18, span: 15.16, height: 4.0, w: 0.7, h: 0.9, radial: true, wing: 'tapered', le: 1.6, root: 3.2, tip: 1.3, sweep: 3, fin: 2.0, finRoot: 2.0, tailSpan: 6.0, tailRoot: 1.4, canopy: { x: 0.4, length: 3.6, kind: 'framed' }, prop: 3.8, blades: 4 });
 // Dewoitine D.520 (8.76 x 10.18 x 2.57 m) and Morane-Saulnier MS.406 (8.17 x 10.62 x 2.71 m).
 A['d-520'] = piston({ cls: 'ww2-fighter', length: 8.76, span: 10.18, height: 2.57, w: 0.48, h: 0.6, wing: 'round', le: 1.2, root: 2.3, tip: 1.0, sweep: 3, fin: 1.3, finRoot: 1.3, roundFin: true, tailSpan: 3.4, tailRoot: 0.9, canopy: { x: -0.4, length: 1.6, kind: 'framed' }, prop: 3.0, blades: 3 });
 A['ms-406'] = piston({ cls: 'ww2-fighter', length: 8.17, span: 10.62, height: 2.71, w: 0.5, h: 0.62, wing: 'round', le: 1.2, root: 2.4, tip: 1.1, sweep: 4, fin: 1.3, finRoot: 1.3, roundFin: true, tailSpan: 3.6, tailRoot: 0.9, canopy: { x: 0.0, length: 2.0, kind: 'framed' }, prop: 3.0, blades: 3 });

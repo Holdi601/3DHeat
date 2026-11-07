@@ -49,6 +49,20 @@ From [`App.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/App.tsx).
 
 The number keys go through the same check as the mode bar: a key for a mode the bar shows as unavailable for the loaded data does nothing.
 
+## Match replay
+
+In box replay and the Match tab's figure replay ([Figure replay](figure-replay.md#match-replay-tacviews-tools)):
+
+| Key | Effect |
+|---|---|
+| `B` | Add a bookmark: the moment and the camera |
+| `M` | 2D map: corner, whole view, off |
+| `V` / `Shift+V` | Next / previous camera view of the followed unit |
+| `H` | Head-up display in the cockpit and padlock views |
+| `Page Down` / `Page Up` | Next / previous event of the kinds the event list shows |
+| `.` / `,` | A second on / back, paused (`Shift`: ten seconds) |
+| `Esc` | Stop following |
+
 ## Click-to-pick
 
 With **Click shows what is there** on and the ruler off ([Click-to-pick](camera.md#click-to-pick)):

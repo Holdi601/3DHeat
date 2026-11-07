@@ -1,4 +1,5 @@
 import type { FigureBatch } from '../figures/instances';
+import type { GpuTrackStore } from './gpuTracks/store';
 import type { LineData } from '../data/lines';
 import type { Dataset, ViewMode } from '../state/types';
 import type { Level } from './level';
@@ -462,6 +463,12 @@ export interface FrameParams {
    * and depth writes. Absent or empty: none.
    */
   figureBatches?: FigureBatch[] | null;
+  /**
+   * Every unit of a large dataset placed by the GPU (`gpuTracks/`): the store
+   * uploaded once, a compute pass a frame. Only where `gpuTracksMaxBytes` is
+   * set (WebGPU); absent: none.
+   */
+  gpuTracks?: GpuTracksParams | null;
 
   /**
    * Ruler and probe geometry, drawn last and without depth testing so it stays
@@ -702,6 +709,13 @@ export interface Renderer {
   dispose(): void;
   /** GPU memory ceiling for row data, in bytes. */
   gpuBudgetBytes: number;
+  /**
+   * The largest storage buffer the GPU tracks may use, bytes; 0 where the
+   * backend cannot place units on the GPU (WebGL2).
+   */
+  readonly gpuTracksMaxBytes?: number;
+  /** GPU bytes the GPU tracks hold now. */
+  readonly gpuTracksBytes?: number;
   readonly gpuBytesUsed: number;
   readonly residentRows: number;
   /**
@@ -784,3 +798,23 @@ export interface CapturedFrame {
 }
 
 export class GpuInitError extends Error {}
+
+/** What the renderer needs besides the view to place and draw the GPU tracks. */
+export interface GpuTracksParams {
+  store: GpuTrackStore;
+  /** Playhead, dataset seconds. */
+  t: number;
+  /** Focal length in pixels (perspective), else 0 and `orthoPx` the size of a pixel. */
+  focalPx: number;
+  orthoPx: number;
+  minPixels: number;
+  /** Seconds a unit is held at its last key. */
+  stale: number;
+  /** Data units at true size. */
+  scale: number;
+  fullPx: number;
+  dartPx: number;
+  triangleBudget: number;
+  /** Seconds of trail behind each unit; 0 none. */
+  trailSeconds: number;
+}

@@ -15,7 +15,7 @@ import type { UnitSystem } from '../../state/replayStore';
 import type { Unit } from './units';
 
 /** Fields that are not flight parameters. */
-export const INFO_FIELDS = ['name', 'vehicle', 'team', 'kind', 'range', 'bearing', 'aspect', 'closure'] as const;
+export const INFO_FIELDS = ['name', 'vehicle', 'team', 'kind', 'range', 'bearing', 'aspect', 'closure', 'bullseye'] as const;
 
 /** Every field, in the order lists show them. */
 export function allFields(): string[] {
@@ -152,6 +152,40 @@ function relative(c: FieldContext, id: string): number {
   return NaN;
 }
 
+const bullCache = new WeakMap<Dataset, Map<number, { x: number; z: number }>>();
+
+/**
+ * The bullseyes of a recording by team (-1: one for everyone): Tacview
+ * objects typed Bullseye (`Navaid+Static+Bullseye`), where they first are.
+ */
+export function bullseyes(d: Dataset): Map<number, { x: number; z: number }> {
+  const hit = bullCache.get(d);
+  if (hit) return hit;
+  const out = new Map<number, { x: number; z: number }>();
+  const type = d.attrs.find((a) => a.kind === 'category' && /^type$/i.test(a.name.trim()));
+  if (type?.categories && d.personId) {
+    const ids = type.data as Uint32Array;
+    const isBull = type.categories.map((c) => /bullseye/i.test(c));
+    for (let r = 0; r < d.count; r++) {
+      if (!isBull[ids[r]]) continue;
+      const team = d.personTeam ? d.personTeam[d.personId[r]] : -1;
+      if (!out.has(team)) out.set(team, { x: d.px[r], z: d.pz[r] });
+    }
+  }
+  bullCache.set(d, out);
+  return out;
+}
+
+/** Bearing (degrees) and range (metres) of a point from its team's bullseye, else the only one; null without. */
+export function fromBullseye(d: Dataset, team: number, p: { x: number; z: number }, k: number): { bearing: number; range: number } | null {
+  const b = bullseyes(d);
+  const bull = b.get(team) ?? (b.size === 1 ? [...b.values()][0] : undefined);
+  if (!bull) return null;
+  const east = (p.x - bull.x) / k;
+  const north = -(p.z - bull.z) / k;
+  return { bearing: ((Math.atan2(east, north) * 180) / Math.PI + 360) % 360, range: Math.hypot(east, north) };
+}
+
 /** A field's text for a unit now; '' when it has nothing to say. */
 export function fieldText(c: FieldContext, id: string, teamLabel: (team: number) => string): string {
   switch (id) {
@@ -173,6 +207,11 @@ export function fieldText(c: FieldContext, id: string, teamLabel: (team: number)
       const v = relative(c, id);
       return Number.isFinite(v) ? formatValue(id === 'bearing' ? 'heading' : 'angle', v, c.units) : '';
     }
+    case 'bullseye': {
+      // Bearing / range from the bullseye, as a controller calls it.
+      const b = fromBullseye(c.d, c.unit.team, c.pos, c.k);
+      return b ? `${formatValue('heading', b.bearing, c.units)} / ${formatValue('distance', b.range, c.units)}` : '';
+    }
   }
   const def = PARAM_BY_ID[id];
   if (!def) return '';
@@ -183,7 +222,7 @@ export function fieldText(c: FieldContext, id: string, teamLabel: (team: number)
 
 /** Fields whose value is a number, which a label writes with its abbreviation. */
 export function isNumeric(id: string): boolean {
-  return !!PARAM_BY_ID[id] || id === 'range' || id === 'bearing' || id === 'aspect' || id === 'closure';
+  return !!PARAM_BY_ID[id] || id === 'range' || id === 'bearing' || id === 'aspect' || id === 'closure' || id === 'bullseye';
 }
 
 /**
@@ -195,7 +234,8 @@ export function datasetFields(d: Dataset): string[] {
   const params = PARAMS.filter(
     (p) => p.derived || p.columns?.some((c) => names.has(c.toLowerCase())) || (p.sumColumns && d.attrs.some((a) => p.sumColumns!.test(a.name.trim()))),
   ).map((p) => p.id);
-  return [...INFO_FIELDS, ...params];
+  const info = INFO_FIELDS.filter((f) => f !== 'bullseye' || bullseyes(d).size > 0);
+  return [...info, ...params];
 }
 
 /** `ids` in the order the field lists use. */

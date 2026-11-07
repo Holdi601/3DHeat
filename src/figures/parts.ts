@@ -273,10 +273,11 @@ function ringAround(m: Mesh, c: Vec3, u: Vec3, v: Vec3, r: number, n: number, co
   });
 }
 
-/** Segments round a part of radius `r`: thin rods get few, bodies many. */
+/** Segments round a part of radius `r`: the count asked for, else by size - thin rods few, bodies many. */
 function roundSegments(r: number, asked: number): number {
-  const want = r < 0.05 ? 6 : r < 0.15 ? 10 : r < 0.5 ? 14 : 18;
-  return detail(Math.max(asked, want), r < 0.05 ? 4 : 6);
+  if (asked > 0) return detail(asked, 4);
+  const want = r < 0.05 ? 6 : r < 0.15 ? 8 : r < 0.5 ? 12 : 16;
+  return detail(want, r < 0.05 ? 4 : 6);
 }
 
 /**
@@ -318,7 +319,8 @@ export function lathe(out: FigBuffer, fr: Frame3, a: Vec3, b: Vec3, profile: P2[
 /** A round tube from `a` to `b` - points (forward, side, up) - of radius `r0` at `a` and `r1` at `b`, its ends capped. */
 export function tube(out: FigBuffer, fr: Frame3, a: Vec3, b: Vec3, r0: number, r1 = r0, col: Rgb, segments = 8, alpha = 1): void {
   // A thin rod's ends are too small to see: left open.
-  lathe(out, fr, a, b, [[0, r0], [1, r1]], col, Math.min(segments, 6), alpha, { open: Math.max(r0, r1) < 0.06 });
+  void segments;
+  lathe(out, fr, a, b, [[0, r0], [1, r1]], col, 0, alpha, { open: Math.max(r0, r1) < 0.06 });
 }
 
 /** A cross-section's ring: a superellipse of exponent `round` (2 an ellipse, higher squarer). */
@@ -396,8 +398,11 @@ export function body(out: FigBuffer, fr: Frame3, sections: Section[], col: Rgb, 
 /** A rounded blob centred at (forward, side, up) with half-sizes along each: heads, domes, clouds. */
 export function blob(out: FigBuffer, fr: Frame3, c: Vec3, half: Vec3, col: Rgb, alpha = 1, rings = 6, segments = 10): void {
   const size = Math.max(half[0], half[1], half[2]);
-  const nr = detail(Math.max(rings, size < 0.1 ? 5 : 9), 4);
-  const ns = detail(Math.max(segments, size < 0.1 ? 8 : 16), 6);
+  // By size: a lamp or a head few, a dome or a cloud more.
+  void rings;
+  void segments;
+  const nr = detail(size < 0.1 ? 4 : size < 0.4 ? 6 : 8, 4);
+  const ns = detail(size < 0.1 ? 8 : size < 0.4 ? 12 : 16, 6);
   const m = new Mesh();
   const rows: number[][] = [];
   for (let i = 1; i < nr; i++) {
