@@ -170,7 +170,7 @@ export interface GroundSpec {
   axleAt?: number[];
   wheelRadius?: number;
   /** Driver's cab at the front (trucks): its length and height; a bonnet ahead of it for a normal-control truck. */
-  cab?: { length: number; height: number; glass?: boolean; bonnet?: number };
+  cab?: { length: number; height: number; glass?: boolean; bonnet?: number; outline?: Outline };
   /** What a truck carries behind the cab. */
   bed?: 'flat' | 'covered' | 'box' | 'tank';
   turret?: TurretSpec;
@@ -250,7 +250,28 @@ export interface AddOn {
 
 const grey = (k: number): Rgb => [k, k, k];
 
-export function buildGround(spec: GroundSpec): Template {
+/**
+ * A spec that spreads a base chassis and changes its length (a longer TELAR on the same family of hull) keeps the base's
+ * hull outline, track run and wheel places; stretch those along the length to fit, when they are more than 5 % out.
+ */
+function fitLength(spec: GroundSpec): GroundSpec {
+  const o = spec.hullOutline;
+  if (!o) return spec;
+  const xs = o.top.map((p) => p[0]);
+  const span = Math.max(...xs) - Math.min(...xs);
+  if (!(span > 0) || Math.abs(span - spec.length) / spec.length < 0.05) return spec;
+  const k = spec.length / span;
+  const sx = (p: P2[]): P2[] => p.map(([x, v]) => [x * k, v]);
+  return {
+    ...spec,
+    hullOutline: { ...o, top: sx(o.top), bottom: sx(o.bottom), plan: sx(o.plan), round: Array.isArray(o.round) ? sx(o.round) : o.round },
+    trackProfile: spec.trackProfile && sx(spec.trackProfile),
+    running: spec.running && { ...spec.running, wheels: spec.running.wheels.map((x) => x * k), rollers: spec.running.rollers?.map((x) => x * k) },
+  };
+}
+
+export function buildGround(input: GroundSpec): Template {
+  const spec = fitLength(input);
   const k = newKit();
   const L = spec.length;
   const W = spec.width;
@@ -624,7 +645,10 @@ function truck(k: Kit, spec: GroundSpec): void {
   const bonnet = cab.bonnet ?? 0;
   const x1 = half - bonnet;
   const x0 = x1 - cab.length;
-  if (bonnet > 0) {
+  if (cab.outline) {
+    // The cab and bonnet from their true side profile and plan, in the vehicle's frame.
+    outlineBody(k.team, k.fr, cab.outline, grey(0.88), 16, 1, grey(0.97));
+  } else if (bonnet > 0) {
     // A normal-control truck: the engine under a bonnet ahead of the cab.
     const hb = Math.max(floor + 0.5, cab.height * 0.62);
     prism(k.team, k.fr, [[x1, floor], [half, floor], [half, hb * 0.92], [half - 0.2, hb], [x1, hb]], -w * 0.72, w * 0.72, grey(0.85), 1, grey(0.96));
@@ -638,7 +662,12 @@ function truck(k: Kit, spec: GroundSpec): void {
   const bx1 = x0 - 0.15;
   const bx0 = -half;
   const bed = spec.bed ?? 'covered';
-  if (bed === 'covered' || bed === 'box') block(k.team, k.fr, [(bx0 + bx1) / 2, 0, (floor + spec.hullHeight) / 2], bx1 - bx0, spec.width - 0.1, spec.hullHeight - floor, grey(bed === 'covered' ? 0.62 : 0.8));
+  if (bed === 'covered') {
+    // A canvas tilt over bows: upright sides, the roof's shoulders rounded, the ends a little lower.
+    const H = spec.hullHeight;
+    const bw = spec.width / 2 - 0.05;
+    outlineBody(k.team, k.fr, { top: [[bx0, H - 0.12], [bx0 + 0.2, H], [bx1 - 0.2, H], [bx1, H - 0.12]], bottom: [[bx0, floor], [bx1, floor]], plan: [[bx0, bw], [bx1, bw]], round: [[bx0, 4], [bx1, 4]], stations: 6 }, grey(0.62), 16);
+  } else if (bed === 'box') block(k.team, k.fr, [(bx0 + bx1) / 2, 0, (floor + spec.hullHeight) / 2], bx1 - bx0, spec.width - 0.1, spec.hullHeight - floor, grey(0.8));
   else if (bed === 'tank') {
     tube(k.team, k.fr, [bx0 + 0.2, 0, (floor + spec.hullHeight) / 2], [bx1 - 0.1, 0, (floor + spec.hullHeight) / 2], (spec.hullHeight - floor) / 2, (spec.hullHeight - floor) / 2, grey(0.75), 12);
   } else block(k.team, k.fr, [(bx0 + bx1) / 2, 0, floor + 0.12], bx1 - bx0, spec.width - 0.1, 0.24, grey(0.7));

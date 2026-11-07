@@ -17,7 +17,7 @@
 import type { Named, SpecSet } from './index';
 import type { HeliSpec } from '../air';
 import type { Outline, P2 } from '../parts';
-import { APACHE, COBRA, HIND, HOKUM, TIGER } from './helis';
+import { APACHE, COBRA, HAVOC, HIND, HOKUM, TIGER } from './helis';
 
 const H: Named<HeliSpec> = {};
 type HS = HeliSpec & { cls: string };
@@ -779,14 +779,67 @@ H['fl-282-kolibri'] = {
   rotorX: 0.6, mastTop: 1.1, wheelAt: [[1.6, 0.9, -0.8, 0.25], [-2.8, 0, -0.3, 0.12]],
 };
 
+// ---------------------------------------------------------------- War Thunder's remaining helicopters
+
+// H145M: a light twin with a box cabin and clamshell doors, the boom raised to a fenestron and an end-plated
+// tailplane, skids (fuselage 11.64 m, rotor 11.0 m, 3.95 m).
+H['h145m'] = {
+  cls: 'heli-transport', length: 11.64, rotor: 11.0, height: 3.95, bodyWidth: 1.75, bodyHeight: 2.0, cabin: 'cabin', blades: 4, tailRotor: 'fenestron',
+  fuselage: light(11.64, -0.6, 0.86, 1.0, 0.16),
+  bodies: [pod(1.6, -1.6, 1.2, 0.55, 0.3), pod(-4.1, -4.6, 0.6, 0.04, 0.32, 1.05, 4)],
+  glass: [[4.6, 0.25, 0.95, 0.85, 0.65]],
+  finPlan: [[-4.9, -0.7], [-5.82, -0.7], [-6.2, 1.4], [-5.5, 1.5]],
+  tailPlan: [[-4.1, 0.1], [-4.1, 1.05], [-4.6, 1.05], [-4.6, 0.1]], tailUp: 0.55,
+  rotorX: 0.6, mastTop: 1.75, skidAt: [3.0, -1.4, 1.1, -1.45],
+};
+// Denel Rooivalk: the Puma's dynamics under a big stepped tandem body, the chin gun turret and the nose sight,
+// stubs, a tail wheel (fuselage 16.39 m, rotor 15.58 m, 5.19 m).
+H['rooivalk'] = {
+  cls: 'heli-attack', ...HAVOC, length: 16.39, rotor: 15.58, height: 5.19, blades: 4,
+  fuselage: stretch(HAVOC.fuselage!, 16.39 / 17.01),
+  oneSide: [pod(8.6, 7.9, -0.25, 0.33, 0.33), pod(6.6, 5.9, -1.05, 0.3, 0.28)],
+  guns: [[6.3, 0, -1.1, 1.6, 0.05]],
+  stubs: { span: 5.2, pylons: 2 }, stubAt: [0.0, 0.05, 4],
+  wheels: false, wheelAt: [[4.4, 1.05, -1.55, 0.34], [-6.6, 0, -1.05, 0.2]],
+};
+// Superhind Mk III: the Mi-24 rebuilt with a 20 mm turret under the nose and four-tube missile launchers outboard.
+H['superhind'] = {
+  cls: 'heli-attack', ...HIND_BASE, bodies: [...ENGINES_24, ...launchers(1.0, 1.8, 2.6, -0.75, 0.14, 2, 2)],
+  oneSide: [pod(8.1, 7.4, -0.82, 0.28, 0.26)], guns: [[7.8, 0, -0.88, 1.5, 0.05]],
+};
+// MD 500 Defender with TOW (Lahatut): the egg with five blades and a T-tail, two TOW tubes either side and the mast sight.
+H['md-500-tow'] = {
+  ...LITTLE_BIRD, cls: 'heli-attack', blades: 5,
+  bodies: [...LITTLE_BIRD.bodies!, pod(0.6, 0.2, -0.45, 0.05, 0.05, 0.75, 2), ...launchers(1.1, 1.2, 0.95, -0.25, 0.17, 1, 2)],
+  mastDome: true, mastDomeSize: [0.28, 0.28, 0.6],
+};
+
 export const HELI_VARIANTS: SpecSet = {
   heli: H,
-  // Names in data with no alias elsewhere: War Thunder unit ids, Battlefield names, a DCS community type.
+  // Names in data with no alias elsewhere: War Thunder unit ids (from the public wiki's helicopter tree),
+  // Battlefield names, a DCS community type.
   aliases: {
     mi_4av: 'mi-4av',
-    oh_1: 'oh-1-ninja',
-    a_109eoa_2: 'a-109eoa',
-    hkp_9a: 'bo-105-tow',
+    h145m: 'h145m',
+    super_hind_mk3: 'superhind',
+    ah_2_rooivalk: 'rooivalk',
+    a_109_eoa2: 'a-109eoa',
+    // The A129 International: five blades and the chin gun, the T129's outline.
+    a_129_a: 't-129-atak',
+    iar_316b: 'alouette-iii',
+    hkp3c: 'uh-1b-huey',
+    hkp2: 'alouette-ii',
+    hkp9a_cb2: 'bo-105-tow',
+    hkp9a_cb3_fc: 'bo-105-tow',
+    ah_1g_iaf: 'ah-1g-cobra',
+    // Tzefa B (AH-1Q) and D/E (AH-1F): the TOW Cobras with the nose sight.
+    ah_1q_iaf: 'ah-1s-cobra',
+    ah_1f_iaf: 'ah-1s-cobra',
+    ah_64a_iaf: 'ah-64a',
+    // AHS: the AH-64A Sweden tried in its 1995 attack helicopter competition.
+    ahs: 'ah-64a',
+    ah_64d_i_saraph: 'ah-64d-no-radar',
+    md_500_tow_late: 'md-500-tow',
     'ah-6j little bird': 'ah-6-little-bird',
     'z-11w': 'z-11',
     'uh-60l': 'uh-60a-black-hawk',

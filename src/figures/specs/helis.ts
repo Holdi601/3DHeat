@@ -54,7 +54,12 @@ export const HAVOC: HeliSpec = {
   bodies: [{ top: [[2.2, 1.0], [1.8, 1.35], [-1.6, 1.35], [-2.2, 1.1]], bottom: [[2.2, 0.6], [1.8, 0.5], [-1.6, 0.5], [-2.2, 0.7]], plan: [[2.2, 0.2], [1.8, 0.4], [-1.6, 0.4], [-2.2, 0.2]], side: 0.85, round: 2.5, stations: 8 }],
   glass: [[6.4, 0.35, 0.8, 0.4, 0.35], [4.6, 0.85, 0.8, 0.4, 0.35]],
   finPlan: [[-7.0, 0], [-8.4, 0], [-9.0, 2.0], [-8.2, 2.0]],
-  rotorX: 0.2, mastTop: 1.75, stubs: { span: 4.88, pylons: 2 }, stubAt: [0.0, 0.05, 6], wheels: true,
+  rotorX: 0.2, mastTop: 2.0, stubs: { span: 4.88, pylons: 2 }, stubAt: [0.0, 0.05, 6],
+  // The X-shaped tail rotor high on the fin (on the right, est), the stabiliser at the fin's foot, a fixed tail-wheel gear
+  // with the main legs under the cockpits.
+  tailRotorAt: [-8.7, 2.3], tailRotorDiameter: 3.84,
+  tailPlan: [[-7.0, 0.15], [-7.1, 1.6], [-7.8, 1.6], [-7.8, 0.15]], tailUp: 0.75,
+  wheelAt: [[3.6, 1.15, -1.6, 0.36], [-6.8, 0, -1.4, 0.2]],
 };
 H['mi-28n'] = { cls: 'heli-attack', ...HAVOC, mastDome: true };
 H['mi-28-havoc'] = { cls: 'heli-attack', ...HAVOC };

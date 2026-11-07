@@ -7,7 +7,7 @@
  */
 
 import { finish, newKit, PAINT, type Kit, type Template } from './kit';
-import { blob, block, body, hexa, outlineBody, plate, tiltBox, tube, type Outline } from './parts';
+import { blob, block, body, hexa, outlineBody, plate, tiltBox, tube, type Outline, type P2 } from './parts';
 import type { Section } from '../race/shapes';
 import type { Rgb } from '../race/geometry';
 
@@ -81,6 +81,35 @@ export interface NavalSpec {
   hullOutline?: Outline;
   /** More parts from outlines: superstructure, bridges, hangars, stacks, sails; mirrored when off the centre line. */
   bodies?: Outline[];
+  /** The deck's rise to the bow above the freeboard (default a third of it). */
+  sheer?: number;
+  /** A raised forecastle (or a flush deck's break): where it ends, forward of the middle, and how far the deck steps down aft of it. */
+  forecastle?: { x: number; step: number };
+  /** The stern's width at the transom as a share of the beam (default 0.55; a cruiser stern narrower). */
+  transom?: number;
+}
+
+/**
+ * The hull a warship or merchant gets without an outline of its own: the deck
+ * rising to the bow over its sheer, stepping down aft of a forecastle, a fine
+ * entry widening to full beam, and the stern narrowing to its transom.
+ */
+export function defaultHull(spec: NavalSpec): Outline {
+  const L = spec.length;
+  const h = L / 2;
+  const b = spec.beam / 2;
+  const fb = spec.freeboard;
+  const rise = spec.sheer ?? fb * 0.3;
+  const step = spec.forecastle?.step ?? 0;
+  const pts: P2[] = [[h, fb + rise], [h - L * 0.06, fb + rise * 0.7], [h - L * 0.18, fb + rise * 0.35], [h - L * 0.35, fb + rise * 0.05]];
+  if (spec.forecastle) {
+    const x = Math.min(spec.forecastle.x, h - L * 0.36);
+    pts.push([x + 0.3, fb], [x - 0.3, fb - step]);
+  }
+  pts.push([-h + L * 0.05, fb - step + rise * 0.05], [-h, fb - step + rise * 0.1]);
+  const top = pts.sort((p, q) => q[0] - p[0]);
+  const plan: P2[] = [[h, b * 0.03], [h - L * 0.04, b * 0.35], [h - L * 0.12, b * 0.7], [h - L * 0.28, b * 0.97], [h - L * 0.4, b], [-h + L * 0.22, b], [-h + L * 0.07, b * 0.85], [-h, b * (spec.transom ?? (spec.hull === 'merchant' ? 0.7 : 0.55))]];
+  return { top, bottom: plan.map(([x]) => [x, 0] as P2), plan, round: 8, stations: 30 };
 }
 
 export function buildNaval(spec: NavalSpec): Template {
@@ -123,7 +152,8 @@ export function buildNaval(spec: NavalSpec): Template {
   } else {
     // The hull: a sharp bow, full beam from a third of the length aft, a transom stern.
     const bow = kind === 'landing' ? 0.85 : kind === 'rhib' || kind === 'boat' ? 0.35 : kind === 'merchant' ? 0.3 : 0.08;
-    if (spec.hullOutline) outlineBody(k.team, k.fr, spec.hullOutline, grey(0.75), 14, 1, grey(0.55));
+    const hullO = spec.hullOutline ?? (kind === 'warship' || kind === 'merchant' ? defaultHull(spec) : undefined);
+    if (hullO) outlineBody(k.team, k.fr, hullO, grey(0.75), 14, 1, grey(0.55));
     else body(
       k.team,
       k.fr,
