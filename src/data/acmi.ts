@@ -26,8 +26,17 @@
  * Columns: X east and Y north (metres), Altitude, Time (seconds, or Unix
  * seconds when the recording has a ReferenceTime), Object (name, pilot and
  * id), Coalition, Heading/Pitch/Roll (degrees), Type, Name, Pilot, Group,
- * Country, Color, Event, Latitude, Longitude, and any other numeric property
- * the recording carries (IAS, Mach, AOA, FuelWeight, ...).
+ * Country, Color, Event, Latitude, Longitude, EventObjects (every object an
+ * event names), RecordingInfo (the recording's own properties - DataSource,
+ * DataRecorder, Author, Briefing, Comments... - as JSON, as they stand at
+ * that moment), then every other property the recording carries: numeric
+ * ones as numbers (IAS, Mach, AOA, FuelWeight, ...), the rest as text
+ * (Parent, CallSign, LockedTarget, Label, Shape, ...).
+ *
+ * Every event is a row: at the first object it names that has been seen,
+ * else - a bookmark, a message to all - at the reference point, as the
+ * object "(recording)". An object's removal (`-id`) is an event, "Removed",
+ * where it was last.
  */
 
 const EARTH = 6378137;
@@ -47,6 +56,8 @@ export interface AcmiTable {
   reference: { lon: number; lat: number };
   /** Whether positions are the game's flat-world U/V. */
   flatWorld: boolean;
+  /** The recording's own properties (object 0's), as they stood at its end. */
+  globals: Record<string, string>;
 }
 
 interface ObjState {
@@ -143,13 +154,19 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
   let t = 0;
   const objects = new Map<string, ObjState>();
   // Raw samples first; projection needs to know whether all have U/V.
-  type Sample = { id: string; t: number; lon: number; lat: number; alt: number; roll: number; pitch: number; yaw: number; u: number; v: number; heading: number; props: Map<string, string>; event: string };
+  type Sample = { id: string; t: number; lon: number; lat: number; alt: number; roll: number; pitch: number; yaw: number; u: number; v: number; heading: number; props: Map<string, string>; event: string; objects: string; info: string };
   const samples: Sample[] = [];
   const numericKeys = new Set<string>();
+  // Keys with a value that is not a number: kept as text, whatever their other values.
+  const textKeys = new Set<string>();
   const NOT_NUMERIC = new Set(['T', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Coalition', 'Color', 'Shape', 'Parent', 'Next', 'CallSign', 'Registration', 'Squawk', 'ICAO24', 'Label', 'FocusedTarget', 'LockedTarget', 'Importance', 'Debug']);
+  // The recording's own properties (object 0's), as JSON as they stand: a sample keeps the text of its moment.
+  const globals: Record<string, string> = {};
+  let info = '';
+  const NO_PROPS = new Map<string, string>();
 
-  const sample = (id: string, o: ObjState, event: string) => {
-    samples.push({ id, t, lon: o.lon, lat: o.lat, alt: o.alt, roll: o.roll, pitch: o.pitch, yaw: o.yaw, u: o.u, v: o.v, heading: o.heading, props: o.props, event });
+  const sample = (id: string, o: ObjState, event: string, objects = '') => {
+    samples.push({ id, t, lon: o.lon, lat: o.lat, alt: o.alt, roll: o.roll, pitch: o.pitch, yaw: o.yaw, u: o.u, v: o.v, heading: o.heading, props: o.props, event, objects, info });
   };
 
   for (const line of logical) {
@@ -162,7 +179,11 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
       continue;
     }
     if (c0 === 0x2d /* - */) {
-      objects.delete(line.slice(1).trim().toLowerCase());
+      const gone = line.slice(1).trim().toLowerCase();
+      // The object leaves: an event where it was last.
+      const o = objects.get(gone);
+      if (o && o.seen) sample(gone, o, 'Removed');
+      objects.delete(gone);
       continue;
     }
     const fields = splitFields(line);
@@ -178,14 +199,23 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
         else if (key === 'ReferenceTime') {
           const ms = Date.parse(value);
           if (Number.isFinite(ms)) refTime = ms / 1000;
-        } else if (key === 'Title') title = value;
-        else if (key === 'Event') {
-          // Kind|id|id...|text: placed at the first object named.
+        } else if (key === 'Event') {
+          // Kind|id|id...|text: the ids are all but the last field, the text the last.
           const parts = value.split('|');
           const kind = parts[0];
-          const who = (parts[1] ?? '').trim().toLowerCase();
-          const o = objects.get(who);
-          if (o && o.seen) sample(who, o, kind + (parts.length > 2 && parts[parts.length - 1] ? `: ${parts[parts.length - 1]}` : ''));
+          const ids = parts.slice(1, Math.max(1, parts.length - 1)).map((x) => x.trim().toLowerCase()).filter(Boolean);
+          const text = parts.length > 1 ? parts[parts.length - 1] : '';
+          const label = kind + (text ? `: ${text}` : '');
+          const at = ids.find((x) => objects.get(x)?.seen);
+          if (at) sample(at, objects.get(at)!, label, ids.join(' '));
+          else {
+            // About no object seen: at the reference point, as the recording's own.
+            sample('', { lon: 0, lat: 0, alt: 0, roll: NaN, pitch: NaN, yaw: NaN, u: NaN, v: NaN, heading: NaN, props: NO_PROPS, seen: true }, label, ids.join(' '));
+          }
+        } else {
+          if (key === 'Title') title = value;
+          globals[key] = value;
+          info = JSON.stringify(globals);
         }
       }
       continue;
@@ -233,7 +263,8 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
           ownProps = true;
         }
         o.props.set(key, value);
-        if (!NOT_NUMERIC.has(key) && value !== '' && Number.isFinite(Number(value))) numericKeys.add(key);
+        if (NOT_NUMERIC.has(key) || (value !== '' && !Number.isFinite(Number(value)))) textKeys.add(key);
+        else if (value !== '') numericKeys.add(key);
       }
     }
     if (moved && Number.isFinite(o.lon) && Number.isFinite(o.lat)) {
@@ -255,9 +286,13 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
   const LON = new Float64Array(n);
   const U = new Float64Array(n);
   const V = new Float64Array(n);
-  const strCols: Record<string, string[]> = { Object: [], Coalition: [], Type: [], Name: [], Pilot: [], Group: [], Country: [], Color: [], Event: [] };
-  const extraKeys = [...numericKeys].filter((k) => !['Heading', 'Altitude'].includes(k)).sort();
+  const strCols: Record<string, string[]> = { Object: [], Coalition: [], Type: [], Name: [], Pilot: [], Group: [], Country: [], Color: [], Event: [], EventObjects: [], RecordingInfo: [] };
+  const extraKeys = [...numericKeys].filter((k) => !['Heading', 'Altitude'].includes(k) && !textKeys.has(k)).sort();
   const extra = extraKeys.map(() => new Float64Array(n));
+  // Text properties beyond the ones with columns of their own.
+  const OWN_TEXT = new Set(['Type', 'Name', 'Pilot', 'Group', 'Country', 'Coalition', 'Color']);
+  const textExtra = [...textKeys].filter((k) => !OWN_TEXT.has(k) && !strCols[k]).sort();
+  const textCols = textExtra.map(() => new Array<string>(n));
   const project = tangentPlane(refLat, refLon);
   for (let i = 0; i < n; i++) {
     const s = samples[i];
@@ -283,7 +318,7 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
     const p = s.props;
     const name = p.get('Name') ?? '';
     const pilot = p.get('Pilot') ?? '';
-    strCols.Object.push(`${pilot ? `${pilot} ` : ''}${name ? `(${name}) ` : ''}#${s.id}`.trim());
+    strCols.Object.push(s.id ? `${pilot ? `${pilot} ` : ''}${name ? `(${name}) ` : ''}#${s.id}`.trim() : '(recording)');
     strCols.Coalition.push(p.get('Coalition') ?? p.get('Color') ?? '');
     strCols.Type.push(p.get('Type') ?? '');
     strCols.Name.push(name);
@@ -292,15 +327,20 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
     strCols.Country.push(p.get('Country') ?? '');
     strCols.Color.push(p.get('Color') ?? '');
     strCols.Event.push(s.event);
+    strCols.EventObjects.push(s.objects);
+    strCols.RecordingInfo.push(s.info);
     extraKeys.forEach((k, j) => {
       const v = p.get(k);
       extra[j][i] = v === undefined || v === '' ? NaN : Number(v);
     });
+    textExtra.forEach((k, j) => {
+      textCols[j][i] = p.get(k) ?? '';
+    });
   }
   const recording = new Array<string>(n).fill(title);
   const flat = flatWorld ? ['U', 'V'] : [];
-  const columns = ['Time', 'X', 'Y', 'Altitude', 'Object', 'Coalition', 'Heading', 'Pitch', 'Roll', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Latitude', 'Longitude', 'Recording', ...flat, ...extraKeys];
-  const data: (Float64Array | string[])[] = [TIME, X, Y, ALT, strCols.Object, strCols.Coalition, HEAD, PITCH, ROLL, strCols.Type, strCols.Name, strCols.Pilot, strCols.Group, strCols.Country, strCols.Color, strCols.Event, LAT, LON, recording, ...(flatWorld ? [U, V] : []), ...extraKeys.map((_, j) => extra[j])];
+  const columns = ['Time', 'X', 'Y', 'Altitude', 'Object', 'Coalition', 'Heading', 'Pitch', 'Roll', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Latitude', 'Longitude', 'Recording', 'EventObjects', 'RecordingInfo', ...flat, ...extraKeys, ...textExtra];
+  const data: (Float64Array | string[])[] = [TIME, X, Y, ALT, strCols.Object, strCols.Coalition, HEAD, PITCH, ROLL, strCols.Type, strCols.Name, strCols.Pilot, strCols.Group, strCols.Country, strCols.Color, strCols.Event, LAT, LON, recording, strCols.EventObjects, strCols.RecordingInfo, ...(flatWorld ? [U, V] : []), ...extraKeys.map((_, j) => extra[j]), ...textCols];
   return {
     columns,
     data,
@@ -310,6 +350,7 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
     referenceTime: refTime,
     reference: { lon: refLon, lat: refLat },
     flatWorld,
+    globals: { ...globals },
   };
 }
 
@@ -343,8 +384,8 @@ export function tangentPlane(lat0: number, lon0: number): (lat: number, lon: num
   };
 }
 
-/** Columns every table has, before the recording's own numeric properties. */
-export const ACMI_FIXED_COLUMNS = 19;
+/** Columns every table has, before the recording's own properties (U and V, when there, count with these). */
+export const ACMI_FIXED_COLUMNS = 21;
 
 /** Whether a file name is an ACMI recording. */
 export function isAcmiName(name: string): boolean {
@@ -356,7 +397,7 @@ export function acmiHints(t: AcmiTable): {
   axes: { up: 'z'; flipY: boolean };
   columns: Record<string, unknown>;
 } {
-  const extra = ['Type', 'Name', 'Pilot', 'Group', 'Country', 'Event', 'Altitude', 'Roll', 'Latitude', 'Longitude', ...t.columns.slice(ACMI_FIXED_COLUMNS)];
+  const extra = ['Type', 'Name', 'Pilot', 'Group', 'Country', 'Event', 'Altitude', 'Roll', 'Latitude', 'Longitude', 'EventObjects', ...t.columns.slice(ACMI_FIXED_COLUMNS)];
   return {
     // Y north becomes the world's -Z, so a heading of 0 looks north as box yaw does.
     axes: { up: 'z', flipY: true },

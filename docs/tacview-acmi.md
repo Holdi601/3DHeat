@@ -10,7 +10,7 @@ Tacview's flight recordings load like any table: pick or drop a `.acmi` (text, `
 
 ## What a recording becomes
 
-One row each time an object's position is written, and one row per event at the object's place. The recording carries its own reading instructions, so the mapping step fills itself in:
+One row each time an object's position is written, one row per event at the object's place, and one row when an object leaves (`Removed`, where it was last). An event about no object seen yet - a bookmark, a message to all - is a row of the object `(recording)` at the reference point. The recording carries its own reading instructions, so the mapping step fills itself in:
 
 | Column | Role | Meaning |
 |---|---|---|
@@ -23,7 +23,10 @@ One row each time an object's position is written, and one row per event at the 
 | Recording | session | The recording's Title, or the file name: several recordings load side by side without their tracks joining. |
 | Type, Name, Pilot, Group, Country, Color, Event, Roll, Latitude, Longitude | filters | Kept for filtering; Type and Name pick each object's [figure](figure-replay.md), Event feeds the debrief's event list, Roll banks the aircraft. |
 | U, V | | The game's own flat-world metres, when every sample has them (DCS writes them). |
+| EventObjects | filters | Every object an event names (`Message|a01|b02|...`), by id. |
+| RecordingInfo | | The recording's own properties as they stood at that moment - DataSource, DataRecorder, Author, Category, Briefing, Comments, ... - as JSON. |
 | IAS, Mach, AOA, FuelWeight, ... | filters | Any other numeric property the recording carries. |
+| Parent, CallSign, LockedTarget, Label, Shape, ... | filters | Any other text property the recording carries; a property with any value that is not a number is text. |
 
 All four forms of Tacview's position (`lon|lat|alt`, with `u|v`, with `roll|pitch|yaw`, and with all of them and a heading) are read, empty fields keeping the last value; `-id` removes an object, and an id used again after it is a new object. Escaped commas and continued lines are handled.
 

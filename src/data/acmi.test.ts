@@ -36,8 +36,8 @@ describe('ACMI', () => {
     const name = t.data[t.columns.indexOf('Name')] as string[];
     const alt = t.data[t.columns.indexOf('Altitude')] as Float64Array;
     const lat = t.data[t.columns.indexOf('Latitude')] as Float64Array;
-    // a01 twice, b02 twice and the event, c03 once, the new b02 once.
-    expect(t.rows).toBe(7);
+    // a01 twice, b02 twice, the event and its removal, c03 once, the new b02 once.
+    expect(t.rows).toBe(8);
     expect(t.title).toBe('Test, sortie');
     const second = name.indexOf('F-16C', 1);
     expect(alt[second]).toBe(3100);
@@ -63,7 +63,43 @@ describe('ACMI', () => {
     expect(time[0]).toBe(Date.parse('2026-11-07T10:00:00Z') / 1000);
     expect(time[t.rows - 1] - time[0]).toBe(2.5);
     expect(head[0]).toBe(90);
-    expect(t.columns.slice(ACMI_FIXED_COLUMNS)).toEqual(['IAS']);
+    // The numeric properties, then the text ones.
+    expect(t.columns.slice(ACMI_FIXED_COLUMNS)).toEqual(['IAS', 'Parent']);
+  });
+
+  it('keeps every event, every removal, the recording\'s own properties and every text property', () => {
+    const rec = parseAcmi(
+      [
+        'FileType=text/acmi/tacview',
+        '0,ReferenceLongitude=10',
+        '0,ReferenceLatitude=50',
+        '0,DataSource=Test sim,Author=Someone',
+        '#0',
+        '1,T=0.1|0.1|1000,Name=A,CallSign=Uzi 1,Health=1',
+        '2,T=0.2|0.1|1000,Name=B,Health=dead',
+        '#1',
+        '0,Event=Bookmark|Merge',
+        '0,Event=Message|1|2|Fox 2',
+        '0,Comments=after the merge',
+        '-2',
+      ].join('\n'),
+    );
+    const col = (c: string) => rec.data[rec.columns.indexOf(c)] as string[];
+    const ev = col('Event');
+    const bookmark = ev.indexOf('Bookmark: Merge');
+    expect(col('Object')[bookmark]).toBe('(recording)');
+    expect((rec.data[rec.columns.indexOf('X')] as Float64Array)[bookmark]).toBe(0);
+    const message = ev.indexOf('Message: Fox 2');
+    expect(col('Object')[message]).toContain('#1');
+    expect(col('EventObjects')[message]).toBe('1 2');
+    const removed = ev.indexOf('Removed');
+    expect(col('Object')[removed]).toContain('#2');
+    expect(JSON.parse(col('RecordingInfo')[removed])).toEqual({ DataSource: 'Test sim', Author: 'Someone', Comments: 'after the merge' });
+    expect(rec.globals.Comments).toBe('after the merge');
+    expect(col('CallSign')[0]).toBe('Uzi 1');
+    // A property with a value that is not a number is text throughout.
+    expect(col('Health')).toContain('dead');
+    expect(rec.numeric[rec.columns.indexOf('Health')]).toBe(false);
   });
 
   it('projects lat/lon onto true metres round the reference', () => {
@@ -125,7 +161,7 @@ describe('ACMI', () => {
     };
     const mapping = applyHints(base, acmiHints(t2) as MappingHints, t2.columns, t2.numeric);
     const block = await ingestAcmi(file, mapping, () => {});
-    expect(block.rows).toBe(7);
+    expect(block.rows).toBe(8);
     expect(block.personLabels.length).toBe(4);
     expect(block.teamLabels).toContain('Allies');
     expect(block.timeIsAbsolute).toBe(true);
