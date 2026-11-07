@@ -233,6 +233,14 @@ export class BudgetController {
   private stuck = 0;
   /** Updates since the last climb step, so the frame time can respond to it. */
   private held = 0;
+  /** Consecutive updates meeting the target, towards the next probe. */
+  private calm = 0;
+  /** Calm updates to wait before probing; doubles after each probe that cost frames. */
+  private probeEvery = PROBE_AFTER;
+  /** A probe in progress: what to go back to if it costs frames. */
+  private trial: { budget: number; scale: number; held: number } | null = null;
+  /** After a probe that cost frames: the values put back, held while the smoothed frame time recovers. */
+  private pinned: { budget: number; scale: number; left: number } | null = null;
 
   constructor(
     initial: number,
@@ -269,6 +277,10 @@ export class BudgetController {
     this.floorMs = 0;
     this.stuck = 0;
     this.held = 0;
+    this.calm = 0;
+    this.probeEvery = PROBE_AFTER;
+    this.trial = null;
+    this.pinned = null;
   }
 
   /** `frameMs` is the smoothed frame time; `targetMs` the budget (e.g. 16.6). */
@@ -338,10 +350,82 @@ export class BudgetController {
       this.mode = 'climbing';
       this.floorMs = frameMs;
       this.stuck = 0;
+      this.trial = null;
+      return this.current;
     }
+    this.probe(ratio);
     return this.current;
   }
+
+  /**
+   * Win back what a passing stall took, when the frame cannot show headroom.
+   *
+   * With vsync on, a frame never comes in under the display's interval, so at a
+   * 60fps target on a 60Hz screen `ratio` sits at about 1 however cheap the
+   * frame is. The creep above needs a ratio over 1 and the resolution needs 1.3,
+   * so neither ever came back: one stall - a page reload, tiles streaming in -
+   * left the budget near its floor and the heat at a quarter resolution for the
+   * rest of the session.
+   *
+   * So after a spell of meeting the target, try one step up: a sixteenth of
+   * resolution and a quarter more sprites. If the frame holds, keep it and try
+   * again after the next spell; if it slips, put both back and wait twice as
+   * long before trying again, so a scene that really is at its limit pays one
+   * short dip now and then rather than a pulse. The values put back are held
+   * while the smoothed frame time recovers from the dip - otherwise the cutting
+   * above reads the dip's tail as a heavier scene, cuts well below them, and the
+   * next probes climb back up and slip again.
+   *
+   * A slow spell that is not a probe's doing means the scene changed, so the
+   * wait starts short again: what that stall takes is won back within seconds.
+   */
+  private probe(ratio: number): void {
+    if (this.pinned) {
+      this.current = Math.max(this.current, this.pinned.budget);
+      this.scale = Math.max(this.scale, this.pinned.scale);
+      if (--this.pinned.left <= 0) this.pinned = null;
+      this.calm = 0;
+      return;
+    }
+    if (this.trial) {
+      if (ratio < PROBE_FAIL) {
+        this.current = this.trial.budget;
+        this.scale = this.trial.scale;
+        this.pinned = { budget: this.trial.budget, scale: this.trial.scale, left: PROBE_HOLD };
+        this.trial = null;
+        this.calm = 0;
+        this.probeEvery = Math.min(this.probeEvery * 2, PROBE_MAX);
+      } else if (++this.trial.held >= PROBE_HOLD) {
+        this.trial = null;
+        this.calm = 0;
+      }
+      return;
+    }
+    if (ratio < PROBE_CALM) {
+      if (ratio < PROBE_FAIL) this.probeEvery = PROBE_AFTER;
+      this.calm = 0;
+      return;
+    }
+    if (++this.calm < this.probeEvery || (this.scale >= 1 && this.current >= this.max)) return;
+    this.trial = { budget: this.current, scale: this.scale, held: 0 };
+    this.scale = clamp(this.scale + 1 / 16, 0.25, 1);
+    this.current = clamp(this.current * PROBE_STEP, this.min, this.max);
+    this.calm = 0;
+  }
 }
+
+/** A frame within this share of the target counts as meeting it, for probing. */
+const PROBE_CALM = 0.97;
+/** A probe whose frame falls below this share of the target cost frames, and is undone. */
+const PROBE_FAIL = 0.9;
+/** Calm updates before the first probe: about a second at 60fps. */
+const PROBE_AFTER = 60;
+/** The longest wait between probes in a scene at its limit: about a minute. */
+const PROBE_MAX = 3600;
+/** Updates a probe must hold, long enough for the smoothed frame time to show its cost. */
+const PROBE_HOLD = 28;
+/** Sprite budget multiplier per probe. */
+const PROBE_STEP = 1.25;
 
 /** Budget multiplier per step while climbing back out of the floor. */
 const CLIMB_STEP = 1.5;

@@ -186,6 +186,52 @@ describe('BudgetController — the resolution stage', () => {
   });
 });
 
+describe('BudgetController — at the display limit', () => {
+  /** With vsync a frame takes a whole number of display intervals, never less than one. */
+  const vsync = (ms: number) => Math.max(1, Math.ceil(ms / TARGET - 1e-9)) * TARGET;
+
+  it('wins back what a passing stall took, though the frame never beats the target', () => {
+    // The bug: a 60fps target on a 60Hz screen. One stall cut the budget and the
+    // resolution, and since a vsynced frame never comes in under the target the
+    // controller never saw headroom - the heat stayed at a quarter resolution.
+    const c = new BudgetController(4 * 1024 * 1024, MIN, MAX);
+    let ms = TARGET;
+    // The stall: a spell where every pixel of heat is expensive (a reload, tiles
+    // streaming in), long enough to cut both stages.
+    for (let i = 0; i < 300; i++) {
+      ms += (2 + c.resolutionScale ** 2 * 200 - ms) * 0.25;
+      c.update(ms, TARGET);
+    }
+    expect(c.resolutionScale).toBeLessThan(0.75);
+    const cheap = (budget: number, resolution: number) => vsync(3 + (budget / 1e7) * resolution);
+    for (let i = 0; i < 60 * 60; i++) {
+      ms += (cheap(c.value, c.resolutionScale) - ms) * 0.1;
+      c.update(ms, TARGET);
+    }
+    expect(c.resolutionScale).toBe(1);
+    expect(c.value).toBeGreaterThan(4 * 1024 * 1024);
+  });
+
+  it('probes a scene at its limit only now and then', () => {
+    // Every probe there drops frames, so the wait between them has to grow.
+    const tight = (budget: number, resolution: number) => vsync(2 + (budget / 1e6) * 8 * resolution);
+    const c = new BudgetController(1024 * 1024, MIN, MAX);
+    let ms = TARGET;
+    let slipped = 0;
+    let prev = TARGET;
+    for (let i = 0; i < 60 * 60 * 5; i++) {
+      const raw = tight(c.value, c.resolutionScale);
+      if (raw > TARGET * 1.5 && prev <= TARGET * 1.5) slipped++;
+      prev = raw;
+      ms += (raw - ms) * 0.1;
+      c.update(ms, TARGET);
+    }
+    // Five minutes: a handful of dips, not one every second and a half.
+    expect(slipped).toBeLessThanOrEqual(12);
+    expect(ms).toBeLessThan(TARGET * 1.25);
+  });
+});
+
 describe('BudgetController — housekeeping', () => {
   it('respects its bounds', () => {
     const c = new BudgetController(1024 * 1024, MIN, MAX);
