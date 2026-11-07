@@ -67,7 +67,7 @@ describe('figure replay', () => {
     const fr = new FigureReplay();
     const d = dataset(true);
     fr.build(d, cubes, 3, rows, { scale: 1, unknown: fr.knowsTypes(d) ? 'box' : 'soldier' });
-    expect(fr.tris.count).toBeGreaterThan(300);
+    expect(fr.batches.list.reduce((n, b) => n + b.mesh.count * b.count, 0)).toBeGreaterThan(300);
     expect(fr.restCount).toBe(1);
     expect(fr.rest[0]).toBe(40);
   });
@@ -77,7 +77,7 @@ describe('figure replay', () => {
     const d = dataset(false);
     fr.build(d, cubes, 3, rows, { scale: 1, unknown: fr.knowsTypes(d) ? 'box' : 'soldier' });
     expect(fr.restCount).toBe(0);
-    expect(fr.tris.count).toBeGreaterThan(3 * 50);
+    expect(fr.batches.list.reduce((n, b) => n + b.mesh.count * b.count, 0)).toBeGreaterThan(3 * 50);
   });
 });
 

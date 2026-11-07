@@ -23,6 +23,10 @@ import { BoardBar, TacticsPanel } from './ui/tactics/TacticsPanel';
 import { BoardLabels } from './ui/tactics/BoardLabels';
 import { ReplayOverlay } from './ui/replay/ReplayOverlay';
 import { ReplayPanel } from './ui/replay/ReplayPanel';
+import { UnitCard } from './ui/replay/UnitCard';
+import { OverlayPanel, useFigureOverlay } from './ui/replay/FigureOverlay';
+import { GameOverview, MatchPicker } from './ui/match/MatchPicker';
+import { matchesAreSessions } from './match/matches';
 import { useReplayStore } from './state/replayStore';
 import { usePlanStore } from './state/planStore';
 import './ui/match/match.css';
@@ -74,8 +78,8 @@ const modes = (): Array<{ value: ViewMode; label: string; title: string }> => [
   },
   {
     value: 'team',
-    label: t('app.mode.boxReplay.label'),
-    title: t('app.mode.boxReplay.title'),
+    label: t('app.mode.overlay.label'),
+    title: t('app.mode.overlay.title'),
   },
   {
     value: 'heat-lines',
@@ -89,9 +93,11 @@ const DIGIT_MODES: Record<string, ViewMode> = {
   Digit1: 'heat-simple',
   Digit2: 'heat-difference',
   Digit3: 'heat-teams',
-  Digit4: 'team',
-  Digit5: 'heat-lines',
+  Digit4: 'heat-lines',
 };
+
+/** The match tab's two views: the units played back as figures, or the heat of the picked matches. */
+type MatchView = 'replay' | 'heat';
 
 export function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -109,6 +115,26 @@ export function App() {
   const planTab = tab === 'plan';
   const raceCharts = useRaceStore((s) => s.view.charts);
   const lang = useLang();
+
+  /**
+   * The replay lives on the match tab: there the units play back as figures
+   * (the replay mode) unless the heat of the picked matches is asked for, and
+   * the heatmap tab only ever shows heat. The heat mode last used is kept, so
+   * going back to the heat finds it as it was.
+   */
+  const lastHeat = useRef<ViewMode>('heat-simple');
+  /** The heatmap tab's own mode, the figure overlay among them, kept while the match tab borrows the setting. */
+  const heatTabMode = useRef<ViewMode>('heat-simple');
+  useEffect(() => {
+    if (mode !== 'team') lastHeat.current = mode;
+    if (useRaceStore.getState().tab === 'heat') heatTabMode.current = mode;
+  }, [mode]);
+  useEffect(() => {
+    if (tab === 'match') setMode('team');
+    else if (tab === 'heat') setMode(heatTabMode.current);
+  }, [tab, setMode]);
+  useFigureOverlay();
+  const matchView: MatchView = mode === 'team' ? 'replay' : 'heat';
 
   // Modes the loaded data cannot support are disabled rather than offered,
   // because the alternative is an empty viewport with no explanation.
@@ -390,10 +416,35 @@ export function App() {
             <>
               <div style={{ padding: '12px 16px 0' }}>
                 <SoftwareRenderingWarning />
-                <Segmented value={mode} options={modeOptions} onChange={setMode} />
-                <SessionPicker />
+                <Segmented<MatchView>
+                  value={matchView}
+                  options={[
+                    { value: 'replay', label: t('app.matchView.replay'), title: t('app.matchView.replayTitle') },
+                    { value: 'heat', label: t('app.matchView.heat'), title: t('app.matchView.heatTitle') },
+                  ]}
+                  onChange={(v) => setMode(v === 'replay' ? 'team' : lastHeat.current)}
+                />
+                {matchView === 'heat' && (
+                  <div style={{ marginTop: 8 }}>
+                    <Segmented value={mode} options={modeOptions.filter((m) => m.value !== 'team')} onChange={setMode} />
+                  </div>
+                )}
+                {/* Rounds (CS2): the matches themselves are picked below. */}
+                {dataset && !matchesAreSessions(dataset) && <SessionPicker />}
               </div>
+              {!dataset && <SourcePanel />}
+              <MatchPicker />
+              <GameOverview />
+              {matchView === 'replay' ? (
+                <>
+                  <ReplayPanel />
+                  <TeamPanel />
+                </>
+              ) : (
+                <HeatPanel />
+              )}
               <MatchPanel />
+              {dataset && <SourcePanel />}
               <FilterPanel />
               <LevelPanel />
               <CameraPanel />
@@ -432,8 +483,8 @@ export function App() {
           {mode === 'heat-lines' && <LinePanel />}
           {mode === 'team' ? (
             <>
+              <OverlayPanel />
               <TeamPanel />
-              <ReplayPanel />
             </>
           ) : (
             <HeatPanel />
@@ -533,6 +584,7 @@ function InspectHud() {
   return (
     <div className="inspect-hud">
       {showCamera && <CameraReadout />}
+      <UnitCard />
       <PickCard />
     </div>
   );

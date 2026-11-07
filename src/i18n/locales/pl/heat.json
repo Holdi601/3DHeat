@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} – {count, plural, one {# wiersz} few {# wiersze} many {# wierszy} other {# wiersza}}, {span}",
   "heat.sessionPicker.option": "{session} – {count, plural, one {# wiersz} few {# wiersze} many {# wierszy} other {# wiersza}}",
   "heat.sessionPicker.allHint": "Wszystkie sesje naraz. Pozycje nadal nigdy nie są interpolowane przez granicę sesji, ale równoległe mecze umieszczają na mapie razem niepowiązanych graczy – wybierz jedną sesję, aby odtworzyć mecz.",
-  "heat.sessionPicker.seekHint": "W trybach ciepła to tylko przesuwa znacznik odtwarzania na początek sesji; ciepło nadal liczy wszystkie sesje. Powtórka z bryłami odtwarza wyłącznie wybraną sesję.",
+  "heat.sessionPicker.seekHint": "W trybach ciepła to tylko przesuwa znacznik odtwarzania na początek sesji; ciepło nadal liczy wszystkie sesje. Powtórka z figurami (karta Mecz) odtwarza wyłącznie wybraną sesję.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Zwolnij",
   "heat.entityPanel.title": "Obiekty",
   "heat.entityPanel.selectedOf": "{selected} z {total}",
-  "heat.entityPanel.hint": "Pokazuje tylko wybrane obiekty – zarówno w cieple, jak i w powtórce z bryłami. Zostaw puste, aby pokazać wszystkich.",
-  "heat.entityPanel.noSlot": "Nie zastosowano do ciepła: wszystkie miejsca na filtry są zajęte. Powtórka z bryłami nadal pokazuje tylko te obiekty. Wyczyść filtr w sekcji „Filtry”, aby zwolnić miejsce.",
+  "heat.entityPanel.hint": "Pokazuje tylko wybrane obiekty – zarówno w cieple, jak i w powtórce z figurami. Zostaw puste, aby pokazać wszystkich.",
+  "heat.entityPanel.noSlot": "Nie zastosowano do ciepła: wszystkie miejsca na filtry są zajęte. Powtórka z figurami nadal pokazuje tylko te obiekty. Wyczyść filtr w sekcji „Filtry”, aby zwolnić miejsce.",
   "heat.entityPanel.search": "{count, plural, one {Szukaj w # obiekcie…} few {Szukaj w # obiektach…} many {Szukaj w # obiektach…} other {Szukaj w # obiektu…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# trafienie} few {# trafienia} many {# trafień} other {# trafienia}}, pokazano pierwsze {page}",
   "heat.entityPanel.matches": "{count, plural, one {# trafienie} few {# trafienia} many {# trafień} other {# trafienia}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# trasa} few {# trasy} many {# tras} other {# trasy}}, z czego do końca dociera: {ended}, {segments, plural, one {# odcinek} few {# odcinki} many {# odcinków} other {# odcinka}}",
   "heat.teamPanel.figures": "Figury zamiast sześcianów",
   "heat.teamPanel.figuresTitle": "Każda osoba jako figura tego, czym jest: żołnierz pieszo, czołg lub samolot wskazany w danych (kolumny Name, Vehicle, Type). Gdy dane nic o tym nie mówią, zostaje sześcian.",
-  "heat.teamPanel.figureScale": "Rozmiar figur"
+  "heat.teamPanel.figureScale": "Rozmiar figur",
+  "heat.teamPanel.figurePixels": "Najmniejsza figura na ekranie",
+  "heat.teamPanel.figurePixelsHint": "Z bliska w rzeczywistym rozmiarze; dalej figury rosną, by zachować tyle pikseli długości. 0: zawsze rzeczywisty rozmiar.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "rzeczywisty rozmiar",
+  "heat.teamPanel.weapons": "Broń, strzały i trafienia",
+  "heat.teamPanel.weaponsTitle": "Broń w locie z dymem, smugaczami, wybuchami, trafieniami i zestrzeleniami. Smugacze wywnioskowane z trafienia są przerywane."
 }

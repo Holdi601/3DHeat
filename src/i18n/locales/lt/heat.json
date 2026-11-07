@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# eilutė} few {# eilutės} many {# eilutės} other {# eilučių}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# eilutė} few {# eilutės} many {# eilutės} other {# eilučių}}",
   "heat.sessionPicker.allHint": "Visos sesijos iš karto. Per sesijos ribą padėtys vis tiek niekada neinterpoliuojamos, bet vienu metu vykusios rungtynės sudeda į žemėlapį nesusijusius žaidėjus — pasirinkite vieną, kad atkurtumėte rungtynes.",
-  "heat.sessionPicker.seekHint": "Šilumos režimuose tai tik perkelia grojimo žymeklį į sesijos pradžią; šiluma vis tiek skaičiuoja visas sesijas. Dėžučių pakartojimas groja tik pasirinktą sesiją.",
+  "heat.sessionPicker.seekHint": "Šilumos režimuose tai tik perkelia grojimo žymeklį į sesijos pradžią; šiluma vis tiek skaičiuoja visas sesijas. Figūrų pakartojimas (skirtukas „Rungtynės“) groja tik pasirinktą sesiją.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} val.",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Iškelti",
   "heat.entityPanel.title": "Objektai",
   "heat.entityPanel.selectedOf": "{selected} iš {total}",
-  "heat.entityPanel.hint": "Rodo tik pasirinktus objektus – ir šilumoje, ir dėžučių pakartojime. Palikite tuščią, kad būtų rodomi visi.",
-  "heat.entityPanel.noSlot": "Šilumai netaikoma: visos filtrų vietos užimtos. Dėžučių pakartojimas vis tiek rodo tik šiuos objektus. Išvalykite filtrą skiltyje „Filtrai“, kad atlaisvintumėte vietą.",
+  "heat.entityPanel.hint": "Rodo tik pasirinktus objektus – ir šilumoje, ir figūrų pakartojime. Palikite tuščią, kad būtų rodomi visi.",
+  "heat.entityPanel.noSlot": "Šilumai netaikoma: visos filtrų vietos užimtos. Figūrų pakartojimas vis tiek rodo tik šiuos objektus. Išvalykite filtrą skiltyje „Filtrai“, kad atlaisvintumėte vietą.",
   "heat.entityPanel.search": "{count, plural, one {Ieškoti tarp # objekto…} few {Ieškoti tarp # objektų…} many {Ieškoti tarp # objekto…} other {Ieškoti tarp # objektų…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# atitikmuo} few {# atitikmenys} many {# atitikmens} other {# atitikmenų}}, rodomi pirmieji {page}",
   "heat.entityPanel.matches": "{count, plural, one {# atitikmuo} few {# atitikmenys} many {# atitikmens} other {# atitikmenų}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# kelias} few {# keliai} many {# kelio} other {# kelių}}, iš jų {ended} pasiekia pabaigą, {segments, plural, one {# atkarpa} few {# atkarpos} many {# atkarpos} other {# atkarpų}}",
   "heat.teamPanel.figures": "Figūros vietoj dėžučių",
   "heat.teamPanel.figuresTitle": "Kiekvienas žmogus – figūra to, kas jis yra: pėstininkas arba duomenyse nurodytas tankas ar orlaivis (stulpeliai Name, Vehicle, Type). Apie ką duomenys nieko nesako, lieka dėžutė.",
-  "heat.teamPanel.figureScale": "Figūrų dydis"
+  "heat.teamPanel.figureScale": "Figūrų dydis",
+  "heat.teamPanel.figurePixels": "Mažiausia figūra ekrane",
+  "heat.teamPanel.figurePixelsHint": "Iš arti tikro dydžio; toliau figūros didėja, kad išliktų tiek pikselių ilgio. 0: visada tikras dydis.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "tikras dydis",
+  "heat.teamPanel.weapons": "Ginklai, šūviai ir pataikymai",
+  "heat.teamPanel.weaponsTitle": "Skrendantys ginklai su dūmais, trasuojančiomis kulkomis, sprogimais, pataikymais ir numušimais. Iš pataikymo numanomos trasos punktyrinės."
 }

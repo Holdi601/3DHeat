@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# rida} other {# rida}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# rida} other {# rida}}",
   "heat.sessionPicker.allHint": "Kõik seansid korraga. Asukohti ei interpoleerita ikka kunagi üle seansi piiri, kuid samaaegsed matšid toovad omavahel mitteseotud mängijad kaardile kokku — matši taasesitamiseks vali üks.",
-  "heat.sessionPicker.seekHint": "Soojusrežiimides viib see esituspea ainult seansi algusesse; soojus arvestab endiselt kõiki seansse. Kastikordus esitab ainult valitud seansi.",
+  "heat.sessionPicker.seekHint": "Soojusrežiimides viib see esituspea ainult seansi algusesse; soojus arvestab endiselt kõiki seansse. Kujukordus (vahekaart Matš) esitab ainult valitud seansi.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Eemalda",
   "heat.entityPanel.title": "Olemid",
   "heat.entityPanel.selectedOf": "{selected} / {total}",
-  "heat.entityPanel.hint": "Näitab ainult valitud olemeid, nii soojuses kui ka kastikorduses. Kõigi näitamiseks jäta tühjaks.",
-  "heat.entityPanel.noSlot": "Soojusele ei rakendata: kõik filtrikohad on hõivatud. Kastikordus näitab endiselt ainult neid olemeid. Koha vabastamiseks eemalda filter jaotises „Filtrid“.",
+  "heat.entityPanel.hint": "Näitab ainult valitud olemeid, nii soojuses kui ka kujukorduses. Kõigi näitamiseks jäta tühjaks.",
+  "heat.entityPanel.noSlot": "Soojusele ei rakendata: kõik filtrikohad on hõivatud. Kujukordus näitab endiselt ainult neid olemeid. Koha vabastamiseks eemalda filter jaotises „Filtrid“.",
   "heat.entityPanel.search": "{count, plural, one {Otsi # olemi seast…} other {Otsi # olemi seast…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# vaste} other {# vastet}}, näidatakse esimesed {page}",
   "heat.entityPanel.matches": "{count, plural, one {# vaste} other {# vastet}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# marsruut} other {# marsruuti}}, neist {ended} jõuab lõpuni, {segments, plural, one {# lõik} other {# lõiku}}",
   "heat.teamPanel.figures": "Kujud kastide asemel",
   "heat.teamPanel.figuresTitle": "Iga inimene selle kujuna, mis ta on: jalaväesõdur või andmetes nimetatud tank või lennuk (veerud Name, Vehicle, Type). Kelle kohta andmed midagi ei ütle, jääb kastiks.",
-  "heat.teamPanel.figureScale": "Kujude suurus"
+  "heat.teamPanel.figureScale": "Kujude suurus",
+  "heat.teamPanel.figurePixels": "Väikseim kujund ekraanil",
+  "heat.teamPanel.figurePixelsHint": "Lähedalt tegelik suurus; kaugemal kujundid kasvavad, et püsida nii mitu pikslit pikad. 0: alati tegelik suurus.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "tegelik suurus",
+  "heat.teamPanel.weapons": "Relvad, lasud ja tabamused",
+  "heat.teamPanel.weaponsTitle": "Lennus relvad suitsuga, trasseerivad kuulid, plahvatused, tabamused ja hävitamised. Tabamusest järeldatud trassid on katkendjoonega."
 }

@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} – {count, plural, one {# řádek} few {# řádky} many {# řádku} other {# řádků}}, {span}",
   "heat.sessionPicker.option": "{session} – {count, plural, one {# řádek} few {# řádky} many {# řádku} other {# řádků}}",
   "heat.sessionPicker.allHint": "Všechny relace najednou. Polohy se přes hranici relace stále nikdy neinterpolují, ale souběžné zápasy dávají na mapu dohromady hráče, kteří spolu nesouvisejí – pro přehrání zápasu vyberte jednu relaci.",
-  "heat.sessionPicker.seekHint": "V režimech tepla to jen přesune ukazatel přehrávání na začátek relace; teplo dál započítává všechny relace. Přehrání s kvádry přehraje jen zvolenou relaci.",
+  "heat.sessionPicker.seekHint": "V režimech tepla to jen přesune ukazatel přehrávání na začátek relace; teplo dál započítává všechny relace. Přehrávání figur (karta Zápas) přehraje jen zvolenou relaci.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Uvolnit",
   "heat.entityPanel.title": "Entity",
   "heat.entityPanel.selectedOf": "{selected} z {total}",
-  "heat.entityPanel.hint": "Zobrazí jen vybrané entity, v teple i v přehrání s kvádry. Ponechte prázdné, chcete-li zobrazit všechny.",
-  "heat.entityPanel.noSlot": "Na teplo se nepoužije: všechny sloty filtrů jsou obsazené. Přehrání s kvádry dál zobrazuje jen tyto entity. Slot uvolníte odstraněním filtru v části „Filtry“.",
+  "heat.entityPanel.hint": "Zobrazí jen vybrané entity, v teple i v přehrávání figur. Ponechte prázdné, chcete-li zobrazit všechny.",
+  "heat.entityPanel.noSlot": "Na teplo se nepoužije: všechny sloty filtrů jsou obsazené. Přehrávání figur dál zobrazuje jen tyto entity. Slot uvolníte odstraněním filtru v části „Filtry“.",
   "heat.entityPanel.search": "{count, plural, one {Hledat v # entitě…} few {Hledat ve # entitách…} many {Hledat v # entity…} other {Hledat v # entitách…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# shoda} few {# shody} many {# shody} other {# shod}}, zobrazeno prvních {page}",
   "heat.entityPanel.matches": "{count, plural, one {# shoda} few {# shody} many {# shody} other {# shod}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# trasa} few {# trasy} many {# trasy} other {# tras}}, z toho do konce dojde {ended}, {segments, plural, one {# úsek} few {# úseky} many {# úseku} other {# úseků}}",
   "heat.teamPanel.figures": "Figury místo krychlí",
   "heat.teamPanel.figuresTitle": "Každá osoba jako figura toho, čím je: voják pěšky, tank nebo letadlo, které uvádějí data (sloupce Name, Vehicle, Type). O čem data nic neříkají, zůstane krychlí.",
-  "heat.teamPanel.figureScale": "Velikost figur"
+  "heat.teamPanel.figureScale": "Velikost figur",
+  "heat.teamPanel.figurePixels": "Nejmenší figura na obrazovce",
+  "heat.teamPanel.figurePixelsHint": "Zblízka ve skutečné velikosti; dál figury rostou, aby zůstaly tolik pixelů dlouhé. 0: vždy skutečná velikost.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "skutečná velikost",
+  "heat.teamPanel.weapons": "Zbraně, výstřely a zásahy",
+  "heat.teamPanel.weaponsTitle": "Zbraně v letu s kouřem, svítící střely, dopady, zásahy a sestřely. Svítící střely odvozené ze zásahu jsou čárkované."
 }

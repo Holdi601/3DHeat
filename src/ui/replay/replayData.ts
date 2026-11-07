@@ -80,3 +80,60 @@ export function dropLinesOn(d: Dataset, setting: boolean | null): boolean {
   if (setting !== null) return setting;
   return !!d.geo || d.attrs.some((a) => /^altitude$/i.test(a.name.trim()));
 }
+
+/**
+ * Event kinds too frequent to list or mark by default: each shell burst, gun
+ * shot and flak puff is a row, thousands a match. Still a chip away.
+ */
+const NOISY_EVENTS = /^(explosions?|flak|gun_?shots?|shots? ?fired|fire_?stop|reload(ed)?|bullet_?rearm|tracer|impact|smoke_?puff)$/i;
+
+/**
+ * Kinds left out of the floating labels in the view whatever the list shows:
+ * the weapons layer draws shots, launches, hits and blasts as tracers,
+ * flashes and fireballs, and a word over each would bury the units.
+ */
+const DRAWN_EVENTS = /^(shots?|gun_?shots?|explosions?|flak|launch(es)?|hit(_\w+)?|fire_?(start|stop)|reload(ed)?|repair(ed)?|rearm(ed)?|bullet_?rearm|impact)$/i;
+
+/** Whether an event kind gets a floating label in the view. */
+export function markedInView(kind: string): boolean {
+  return !DRAWN_EVENTS.test(kind.trim());
+}
+
+/** The kinds shown when the viewer has not chosen: all but the noisy ones. */
+export function defaultEventKinds(labels: string[]): string[] {
+  return [...new Set(labels)].filter((k) => !NOISY_EVENTS.test(k.trim()));
+}
+
+export interface EventBurst {
+  /** Index into `EventRows` of the first event. */
+  first: number;
+  /** How many events it stands for. */
+  count: number;
+  /** Seconds from the first to the last. */
+  span: number;
+}
+
+/**
+ * The event list's lines: consecutive events of one kind by one unit against
+ * one other (a burst of hits, a stick of bombs) within `gap` seconds of each
+ * other are one line. `idx` are indices into `ev`, in time order.
+ */
+export function eventBursts(d: Dataset, ev: EventRows, idx: number[], keyOf: (i: number) => string, gap = 3): EventBurst[] {
+  const out: EventBurst[] = [];
+  const open = new Map<string, { b: EventBurst; last: number }>();
+  for (const i of idx) {
+    const t = d.time ? d.time[ev.rows[i]] : 0;
+    const key = `${ev.labels[i]}|${keyOf(i)}`;
+    const o = open.get(key);
+    if (o && t - o.last <= gap) {
+      o.b.count++;
+      o.b.span = t - (d.time ? d.time[ev.rows[o.b.first]] : 0);
+      o.last = t;
+      continue;
+    }
+    const b = { first: i, count: 1, span: 0 };
+    out.push(b);
+    open.set(key, { b, last: t });
+  }
+  return out;
+}

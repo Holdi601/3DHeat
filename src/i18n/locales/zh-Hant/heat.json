@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session}——{count, plural, other {# 列}}，{span}",
   "heat.sessionPicker.option": "{session}——{count, plural, other {# 列}}",
   "heat.sessionPicker.allHint": "同時顯示所有場次。位置仍不會跨越場次邊界內插，但同時進行的對戰會把不相關的玩家放在同一張地圖上——選擇一個場次即可重播該場對戰。",
-  "heat.sessionPicker.seekHint": "在熱度類模式中，這只會把播放頭移到該場次的開頭；熱度仍會計入所有場次。方塊重播只播放所選的場次。",
+  "heat.sessionPicker.seekHint": "在熱度類模式中，這只會把播放頭移到該場次的開頭；熱度仍會計入所有場次。模型重播（「對戰」分頁）只播放所選的場次。",
   "heat.sessionPicker.seconds": "{value} 秒",
   "heat.sessionPicker.minutes": "{value} 分",
   "heat.sessionPicker.hours": "{value} 小時",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "卸載",
   "heat.entityPanel.title": "實體",
   "heat.entityPanel.selectedOf": "{selected}／{total}",
-  "heat.entityPanel.hint": "只顯示所選實體，熱度與方塊重播中皆然。留空則顯示所有人。",
-  "heat.entityPanel.noSlot": "未套用於熱度：所有篩選欄位都已占用。方塊重播仍只顯示這些實體。在「篩選」中清除一個篩選條件即可空出欄位。",
+  "heat.entityPanel.hint": "只顯示所選實體，熱度與模型重播中皆然。留空則顯示所有人。",
+  "heat.entityPanel.noSlot": "未套用於熱度：所有篩選欄位都已占用。模型重播仍只顯示這些實體。在「篩選」中清除一個篩選條件即可空出欄位。",
   "heat.entityPanel.search": "{count, plural, other {搜尋 # 個實體…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, other {# 個符合}}，顯示前 {page} 個",
   "heat.entityPanel.matches": "{count, plural, other {# 個符合}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, other {# 條路線}}，其中 {ended} 條抵達終點，{segments, plural, other {# 段}}",
   "heat.teamPanel.figures": "以圖示取代方塊",
   "heat.teamPanel.figuresTitle": "每個人顯示為其身分的圖示：步行的士兵，或資料指明的戰車、飛機（Name、Vehicle、Type 欄）。資料沒說明的仍是方塊。",
-  "heat.teamPanel.figureScale": "圖示大小"
+  "heat.teamPanel.figureScale": "圖示大小",
+  "heat.teamPanel.figurePixels": "螢幕上最小的模型",
+  "heat.teamPanel.figurePixelsHint": "近處為真實尺寸；遠處模型會放大以保持這麼多像素長。0：始終真實尺寸。",
+  "heat.teamPanel.pixels": "{value} 像素",
+  "heat.teamPanel.trueSize": "真實尺寸",
+  "heat.teamPanel.weapons": "武器、射擊與命中",
+  "heat.teamPanel.weaponsTitle": "飛行中的武器及其煙跡、曳光彈、彈著、命中和擊毀。由命中推斷的曳光彈以虛線顯示。"
 }

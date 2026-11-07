@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# row} other {# rows}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# row} other {# rows}}",
   "heat.sessionPicker.allHint": "Every session at once. Positions are still never interpolated across a session boundary, but concurrent matches put unrelated players on the map together — pick one to play a match back.",
-  "heat.sessionPicker.seekHint": "In the heat modes this only moves the playhead to the session's start; the heat still counts every session. Box replay plays the chosen session alone.",
+  "heat.sessionPicker.seekHint": "In the heat modes this only moves the playhead to the session's start; the heat still counts every session. The figure replay (Match tab) plays the chosen session alone.",
   "heat.sessionPicker.seconds": "{value}s",
   "heat.sessionPicker.minutes": "{value}m",
   "heat.sessionPicker.hours": "{value}h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Unload",
   "heat.entityPanel.title": "Entities",
   "heat.entityPanel.selectedOf": "{selected} of {total}",
-  "heat.entityPanel.hint": "Shows only the selected entities, in the heat as in the box replay. Leave empty to show everyone.",
-  "heat.entityPanel.noSlot": "Not applied to the heat: all filter slots are taken. The box replay still shows only these entities. Clear a filter under Filters to free one.",
+  "heat.entityPanel.hint": "Shows only the selected entities, in the heat as in the figure replay. Leave empty to show everyone.",
+  "heat.entityPanel.noSlot": "Not applied to the heat: all filter slots are taken. The figure replay still shows only these entities. Clear a filter under Filters to free one.",
   "heat.entityPanel.search": "{count, plural, one {Search # entity…} other {Search # entities…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# match} other {# matches}}, showing the first {page}",
   "heat.entityPanel.matches": "{count, plural, one {# match} other {# matches}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# route} other {# routes}}, {ended} of them reaching an end, {segments, plural, one {# segment} other {# segments}}",
   "heat.teamPanel.figures": "Figures instead of boxes",
   "heat.teamPanel.figuresTitle": "Each person as the figure of what they are: a soldier on foot, the tank or aircraft the data names (Name, Vehicle, Type columns). What the data says nothing about stays a box.",
-  "heat.teamPanel.figureScale": "Figure size"
+  "heat.teamPanel.figureScale": "Figure size",
+  "heat.teamPanel.figurePixels": "Smallest figure on screen",
+  "heat.teamPanel.figurePixelsHint": "True size up close; further away figures grow to stay this many pixels long. 0: always true size.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "true size",
+  "heat.teamPanel.weapons": "Weapons, shots and hits",
+  "heat.teamPanel.weaponsTitle": "Weapons in flight with smoke, tracers, impacts, hits and kills. Tracers inferred from a hit are dashed."
 }

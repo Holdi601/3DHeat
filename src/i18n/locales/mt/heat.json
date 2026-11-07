@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# ringiela} two {# ringieli} few {# ringieli} many {# ringiela} other {# ringiela}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# ringiela} two {# ringieli} few {# ringieli} many {# ringiela} other {# ringiela}}",
   "heat.sessionPicker.allHint": "Is-sessjonijiet kollha f'daqqa. Il-pożizzjonijiet xorta qatt ma jiġu interpolati minn fuq konfini ta' sessjoni, iżda partiti simultanji jpoġġu plejers mhux relatati flimkien fuq il-mappa — agħżel waħda biex terġa' tara partita.",
-  "heat.sessionPicker.seekHint": "Fil-modalitajiet tas-sħana dan iċaqlaq biss il-playhead għall-bidu tas-sessjoni; is-sħana xorta tgħodd kull sessjoni. Ir-Replay bil-kaxxi jdoqq is-sessjoni magħżula waħedha.",
+  "heat.sessionPicker.seekHint": "Fil-modalitajiet tas-sħana dan iċaqlaq biss il-playhead għall-bidu tas-sessjoni; is-sħana xorta tgħodd kull sessjoni. Ir-replay bil-figuri (tab Partita) idoqq is-sessjoni magħżula waħedha.",
   "heat.sessionPicker.seconds": "{value}s",
   "heat.sessionPicker.minutes": "{value}m",
   "heat.sessionPicker.hours": "{value}h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Neħħi",
   "heat.entityPanel.title": "Entitajiet",
   "heat.entityPanel.selectedOf": "{selected} minn {total}",
-  "heat.entityPanel.hint": "Turi biss l-entitajiet magħżula, kemm fis-sħana kif ukoll fir-replay bil-kaxxi. Ħallih vojt biex turi lil kulħadd.",
-  "heat.entityPanel.noSlot": "Mhux applikat għas-sħana: is-slots kollha tal-filtri huma okkupati. Ir-replay bil-kaxxi xorta juri biss dawn l-entitajiet. Neħħi filtru taħt Filtri biex teħles slot.",
+  "heat.entityPanel.hint": "Turi biss l-entitajiet magħżula, kemm fis-sħana kif ukoll fir-replay bil-figuri. Ħallih vojt biex turi lil kulħadd.",
+  "heat.entityPanel.noSlot": "Mhux applikat għas-sħana: is-slots kollha tal-filtri huma okkupati. Ir-replay bil-figuri xorta juri biss dawn l-entitajiet. Neħħi filtru taħt Filtri biex teħles slot.",
   "heat.entityPanel.search": "{count, plural, one {Fittex fost # entità…} two {Fittex fost # entitajiet…} few {Fittex fost # entitajiet…} many {Fittex fost # entità…} other {Fittex fost # entità…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# riżultat} two {# riżultati} few {# riżultati} many {# riżultat} other {# riżultat}}, qed jintwerew l-ewwel {page}",
   "heat.entityPanel.matches": "{count, plural, one {# riżultat} two {# riżultati} few {# riżultati} many {# riżultat} other {# riżultat}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# rotta} two {# rotot} few {# rotot} many {# rotta} other {# rotta}}, {ended} minnhom jaslu fi tmiem, {segments, plural, one {# segment} two {# segmenti} few {# segmenti} many {# segment} other {# segment}}",
   "heat.teamPanel.figures": "Figuri minflok kaxxi",
   "heat.teamPanel.figuresTitle": "Kull persuna bħala l-figura ta’ dak li hi: suldat bil-mixi, jew it-tank jew l-ajruplan li jsemmu d-data (kolonni Name, Vehicle, Type). Dak li d-data ma tgħid xejn dwaru jibqa’ kaxxa.",
-  "heat.teamPanel.figureScale": "Daqs tal-figuri"
+  "heat.teamPanel.figureScale": "Daqs tal-figuri",
+  "heat.teamPanel.figurePixels": "L-iżgħar figura fuq l-iskrin",
+  "heat.teamPanel.figurePixelsHint": "Daqs reali mill-qrib; aktar il-bogħod il-figuri jikbru biex jibqgħu twal daqshekk pixels. 0: dejjem daqs reali.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "daqs reali",
+  "heat.teamPanel.weapons": "Armi, tiri u laqtiet",
+  "heat.teamPanel.weaponsTitle": "Armi fit-titjira bid-duħħan, traċċaturi, impatti, laqtiet u qtil. Traċċaturi dedotti minn laqta huma maqtugħa."
 }

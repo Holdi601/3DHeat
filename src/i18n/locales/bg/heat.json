@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} – {count, plural, one {# ред} other {# реда}}, {span}",
   "heat.sessionPicker.option": "{session} – {count, plural, one {# ред} other {# реда}}",
   "heat.sessionPicker.allHint": "Всички сесии наведнъж. Позициите пак никога не се интерполират през границата на сесия, но едновременните мачове поставят несвързани играчи заедно на картата – изберете една, за да възпроизведете мач.",
-  "heat.sessionPicker.seekHint": "В режимите на топлина това само премества указателя в началото на сесията; топлината пак отчита всички сесии. Повторение с кутии възпроизвежда само избраната сесия.",
+  "heat.sessionPicker.seekHint": "В режимите на топлина това само премества указателя в началото на сесията; топлината пак отчита всички сесии. Повторението с фигури (раздел „Мач“) възпроизвежда само избраната сесия.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Разтовари",
   "heat.entityPanel.title": "Обекти",
   "heat.entityPanel.selectedOf": "{selected} от {total}",
-  "heat.entityPanel.hint": "Показва само избраните обекти – както в топлинната карта, така и в повторението с кутии. Оставете празно, за да се показват всички.",
-  "heat.entityPanel.noSlot": "Не се прилага към топлинната карта: всички слотове за филтри са заети. Повторението с кутии все пак показва само тези обекти. Изчистете филтър в „Филтри“, за да освободите слот.",
+  "heat.entityPanel.hint": "Показва само избраните обекти – както в топлинната карта, така и в повторението с фигури. Оставете празно, за да се показват всички.",
+  "heat.entityPanel.noSlot": "Не се прилага към топлинната карта: всички слотове за филтри са заети. Повторението с фигури все пак показва само тези обекти. Изчистете филтър в „Филтри“, за да освободите слот.",
   "heat.entityPanel.search": "{count, plural, one {Търсене в # обект…} other {Търсене в # обекта…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# съвпадение} other {# съвпадения}}, показани са първите {page}",
   "heat.entityPanel.matches": "{count, plural, one {# съвпадение} other {# съвпадения}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# път} other {# пътя}}, от които {ended} стигат до край, {segments, plural, one {# сегмент} other {# сегмента}}",
   "heat.teamPanel.figures": "Фигури вместо кубове",
   "heat.teamPanel.figuresTitle": "Всеки човек като фигура на това, което е: пеши войник, танкът или самолетът, посочени в данните (колони Name, Vehicle, Type). За когото данните не казват нищо, остава куб.",
-  "heat.teamPanel.figureScale": "Размер на фигурите"
+  "heat.teamPanel.figureScale": "Размер на фигурите",
+  "heat.teamPanel.figurePixels": "Най-малка фигура на екрана",
+  "heat.teamPanel.figurePixelsHint": "Отблизо в истински размер; по-далеч фигурите растат, за да останат толкова пиксела дълги. 0: винаги истински размер.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "истински размер",
+  "heat.teamPanel.weapons": "Оръжия, изстрели и попадения",
+  "heat.teamPanel.weaponsTitle": "Оръжия в полет с дим, трасиращи, удари, попадения и сваляния. Трасиращите, изведени от попадение, са пунктирани."
 }

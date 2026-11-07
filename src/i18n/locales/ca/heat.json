@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# fila} other {# files}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# fila} other {# files}}",
   "heat.sessionPicker.allHint": "Totes les sessions alhora. Les posicions continuen sense interpolar-se mai a través del límit d'una sessió, però les partides simultànies posen al mapa jugadors que no tenen res a veure entre ells: tria'n una per reproduir una partida.",
-  "heat.sessionPicker.seekHint": "En els modes de calor, això només mou el capçal de reproducció a l'inici de la sessió; la calor continua comptant totes les sessions. La Repetició amb caixes reprodueix només la sessió triada.",
+  "heat.sessionPicker.seekHint": "En els modes de calor, això només mou el capçal de reproducció a l'inici de la sessió; la calor continua comptant totes les sessions. La repetició amb figures (pestanya Partida) reprodueix només la sessió triada.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Descarrega",
   "heat.entityPanel.title": "Entitats",
   "heat.entityPanel.selectedOf": "{selected} de {total}",
-  "heat.entityPanel.hint": "Mostra només les entitats seleccionades, tant a la calor com a la repetició amb caixes. Deixa-ho buit per mostrar tothom.",
-  "heat.entityPanel.noSlot": "No s'aplica a la calor: tots els espais de filtre estan ocupats. La repetició amb caixes continua mostrant només aquestes entitats. Esborra un filtre a «Filtres» per alliberar-ne un.",
+  "heat.entityPanel.hint": "Mostra només les entitats seleccionades, tant a la calor com a la repetició amb figures. Deixa-ho buit per mostrar tothom.",
+  "heat.entityPanel.noSlot": "No s'aplica a la calor: tots els espais de filtre estan ocupats. La repetició amb figures continua mostrant només aquestes entitats. Esborra un filtre a «Filtres» per alliberar-ne un.",
   "heat.entityPanel.search": "{count, plural, one {Cerca entre # entitat…} other {Cerca entre # entitats…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# coincidència} other {# coincidències}}; es mostren les primeres {page}",
   "heat.entityPanel.matches": "{count, plural, one {# coincidència} other {# coincidències}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# ruta} other {# rutes}}, {ended} de les quals arriben a un final, {segments, plural, one {# segment} other {# segments}}",
   "heat.teamPanel.figures": "Figures en lloc de caixes",
   "heat.teamPanel.figuresTitle": "Cada persona com la figura del que és: un soldat a peu, o el tanc o l'avió que anomenen les dades (columnes Name, Vehicle, Type). Allò de què les dades no diuen res continua sent una caixa.",
-  "heat.teamPanel.figureScale": "Mida de les figures"
+  "heat.teamPanel.figureScale": "Mida de les figures",
+  "heat.teamPanel.figurePixels": "Figura més petita a la pantalla",
+  "heat.teamPanel.figurePixelsHint": "Mida real de prop; més lluny les figures creixen per mantenir aquesta llargada en píxels. 0: sempre mida real.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "mida real",
+  "heat.teamPanel.weapons": "Armes, trets i impactes",
+  "heat.teamPanel.weaponsTitle": "Armes en vol amb fum, traçadores, impactes, encerts i abatuts. Les traçadores deduïdes d’un encert són discontínues."
 }

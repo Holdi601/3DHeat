@@ -57,7 +57,13 @@ export async function previewParquet(file: File): Promise<ParquetPreview> {
       if (typeof v === 'number' || typeof v === 'bigint' || v instanceof Date) numbers++;
       else if (typeof v === 'string' && Number.isFinite(Number(v))) numbers++;
     }
-    return seen > 0 && numbers / seen > 0.9;
+    // Empty in the sample (a column only some rows fill, its first rows null):
+    // the schema's type says, so a number column is not taken for text.
+    if (seen === 0) {
+      const el = metadata.schema.find((e) => e.name === c);
+      return !!el && ['FLOAT', 'DOUBLE', 'INT32', 'INT64'].includes(String(el.type)) && (!el.converted_type || /^U?INT_/.test(String(el.converted_type)));
+    }
+    return numbers / seen > 0.9;
   });
 
   return { columns, rows, numRows, fileBytes: file.size, numeric, metadata, file: buf };

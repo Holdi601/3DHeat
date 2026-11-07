@@ -1,3 +1,4 @@
+import { GpuFigures } from './figures';
 import { ATLAS_MIP_LEVELS } from '../../data/atlas';
 import { packLineStarts, type LineData } from '../../data/lines';
 import { CURVE_LUT_SIZE } from '../../state/curve';
@@ -258,6 +259,8 @@ export class WebgpuRenderer implements Renderer {
   private trailBuffer: GPUBuffer | null = null;
   private overlayBuffer: GPUBuffer | null = null;
   private triBuffer: GPUBuffer | null = null;
+  /** Instanced figures, made on first use. */
+  private figures: GpuFigures | null = null;
 
   private mapTexture: GPUTexture | null = null;
   /** The model level's geometry; null for an image level or none. */
@@ -1736,6 +1739,11 @@ export class WebgpuRenderer implements Renderer {
       }
     }
 
+    if (params.figureBatches && params.figureBatches.length) {
+      this.figures ??= new GpuFigures(this.device, SCENE_FORMAT, DEPTH_FORMAT, alphaBlend());
+      this.figures.draw(pass, params.figureBatches, this.sceneBindGroup(this.figures.pipeline, 'figures', plainOffset));
+    }
+
     if (params.sceneTris && params.sceneTriVertCount > 0) {
       this.triBuffer = this.uploadLines(this.triBuffer, params.sceneTris, params.sceneTriVertCount, 'scene triangles');
       pass.setPipeline(this.triPipeline);
@@ -3192,6 +3200,8 @@ export class WebgpuRenderer implements Renderer {
     this.trailBuffer?.destroy();
     this.overlayBuffer?.destroy();
     this.triBuffer?.destroy();
+    this.figures?.dispose();
+    this.figures = null;
     this.device.destroy();
   }
 }

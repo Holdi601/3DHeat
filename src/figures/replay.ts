@@ -20,7 +20,10 @@ import { VertexBuffer } from '../race/geometry';
 import type { AttributeColumn, Dataset } from '../state/types';
 import { CUBE_STRIDE } from '../data/tracks';
 import { CATALOG } from './catalog';
-import { place, TemplateCache, type Template } from './kit';
+import { placeFrame, poseFrame, TemplateCache, type Template } from './kit';
+import { InstanceBatches, meshOf } from './instances';
+import type { Frame3, Vec3 } from '../race/geometry';
+import { frameOfQuat, MotionModel } from './motion';
 import { figureFor } from './match';
 import { SWING_MACH } from './specs/swing';
 
@@ -65,10 +68,26 @@ function speedUnit(name: string): number {
 }
 
 export interface FigureReplayOptions {
-  /** 1 is true size. */
+  /** Data units a figure's metre takes: 1 is true size in data of metres. */
   scale: number;
   /** What an unknown thing becomes: a soldier (data of people), or a box. */
   unknown: 'soldier' | 'box';
+  /**
+   * The smallest a figure is drawn, in pixels along its longest side, as
+   * Tacview draws them: true size up close, and further off grown just enough
+   * to stay this big on screen. 0 or absent: always `scale`.
+   */
+  minPixels?: number;
+  /** Data units a pixel covers at a point (the camera's distance to it over the focal length in pixels). */
+  pixelSize?: (x: number, y: number, z: number) => number;
+  /** Each box's attitude, x y z w (from `MotionRefiner`), and 1 in `posed` where it has one. */
+  poses?: Float32Array;
+  posed?: Uint8Array;
+}
+
+/** The longest side of a template, metres. */
+function longest(t: Template): number {
+  return Math.max(t.max[0] - t.min[0], t.max[1] - t.min[1], t.max[2] - t.min[2], 0.1);
 }
 
 export class FigureReplay {
@@ -86,7 +105,21 @@ export class FigureReplay {
   /** Per person, where they were drawn last and which way they went: the heading when the data has none. */
   private readonly lastSeen = new Map<number, { x: number; z: number; yaw: number }>();
   private readonly templates = new TemplateCache();
+  /** Per person, how many times true size it was drawn last frame. */
+  readonly drawnScale = new Map<number, number>();
+  /** Every figure the last build drew: which box and row it stands for, its figure, where and how big. */
+  readonly placed: { box: number; row: number; kind: string; fr: Frame3; scale: number; min: Vec3; max: Vec3 }[] = [];
+  /** Per box of the last build, its figure ('' for none) - which are weapons, for their smoke. */
+  kindsDrawn: string[] = [];
+  /**
+   * What is drawn as triangles placed on the CPU: the effects and weapons
+   * the other layers add. The figures themselves are `batches`, GPU instances.
+   */
   readonly tris = new VertexBuffer();
+  /** The figures, as instances of meshes uploaded once (`instances.ts`). */
+  readonly batches = new InstanceBatches();
+  /** Place the figures' triangles on the CPU into `tris` instead, as before instancing: for comparing the two. */
+  cpuPlace = false;
   /** The boxes that stay boxes, in the cube layout. */
   rest = new Float32Array(0);
   restCount = 0;
@@ -94,6 +127,7 @@ export class FigureReplay {
   private attach(d: Dataset): void {
     this.dataset = d;
     this.kinds.clear();
+    this.specials.clear();
     this.lastSeen.clear();
     this.sweeps.clear();
     const cats = d.attrs.filter((a) => a.kind === 'category' && a.categories);
@@ -170,6 +204,21 @@ export class FigureReplay {
     return k;
   }
 
+  private readonly specials = new Map<string, string>();
+
+  /** '~projectile' for a bullet or shell, '~explosion' for an explosion (by the type columns), else ''. */
+  specialOf(d: Dataset, row: number): string {
+    if (d !== this.dataset) this.attach(d);
+    if (!this.types.length) return '';
+    const key = this.types.map((a) => a.categories![(a.data as Uint32Array)[row]] ?? '').join('');
+    let k = this.specials.get(key);
+    if (k === undefined) {
+      k = /projectile|bullet|shell|tracer/i.test(key) ? '~projectile' : /explosion/i.test(key) ? '~explosion' : '';
+      this.specials.set(key, k);
+    }
+    return k;
+  }
+
   private template(kind: string): Template | null {
     const e = CATALOG[kind];
     return e ? this.templates.get(kind, e.build) : null;
@@ -181,15 +230,26 @@ export class FigureReplay {
    */
   build(d: Dataset, cubes: Float32Array, count: number, rows: Int32Array, o: FigureReplayOptions): void {
     this.tris.reset();
+    this.batches.reset();
+    this.drawnScale.clear();
+    this.placed.length = 0;
+    this.kindsDrawn.length = count;
     if (this.rest.length < cubes.length) this.rest = new Float32Array(cubes.length);
     this.restCount = 0;
     for (let i = 0; i < count; i++) {
       const c = i * CUBE_STRIDE;
       const row = rows[i];
       let kind = row >= 0 ? this.kindOf(d, row) : null;
+      // Bullets, shells and explosions are drawn by the weapons layer, as streaks and fireballs.
+      const special = !kind && row >= 0 ? this.specialOf(d, row) : '';
+      if (special) {
+        this.kindsDrawn[i] = special;
+        continue;
+      }
       if (!kind && o.unknown === 'soldier') kind = 'soldier';
       if (kind) kind = this.sweptKind(d, row, kind);
       const t = kind ? this.template(kind) : null;
+      this.kindsDrawn[i] = t ? kind! : '';
       if (!t) {
         this.rest.set(cubes.subarray(c, c + CUBE_STRIDE), this.restCount * CUBE_STRIDE);
         this.restCount++;
@@ -214,27 +274,91 @@ export class FigureReplay {
           yaw = seen.yaw;
         }
       }
+      // True size, or as big as it takes to stay `minPixels` long on screen.
+      let scale = o.scale;
+      if (o.minPixels && o.minPixels > 0 && o.pixelSize) {
+        const need = (o.minPixels * o.pixelSize(cubes[c], cubes[c + 1], cubes[c + 2])) / longest(t);
+        if (need > scale) scale = need;
+      }
+      if (row >= 0 && d.personId) this.drawnScale.set(d.personId[row], scale / Math.max(1e-9, o.scale));
+      const team: [number, number, number] = [cubes[c + 3], cubes[c + 4], cubes[c + 5]];
       // Ground figures keep level; aircraft and missiles take the pitch, and the roll where the data has one.
       const air = t.anchor === 'centre';
-      const roll = air && this.roll && row >= 0 ? ((this.roll.data as Float32Array)[row] * Math.PI) / 180 : 0;
-      place(
-        this.tris,
-        t,
-        {
+      let fr: Frame3;
+      if (air && o.poses && o.posed && o.posed[i]) {
+        fr = frameOfQuat(o.poses.subarray(i * 4, i * 4 + 4), [cubes[c], cubes[c + 1], cubes[c + 2]]);
+      } else {
+        const roll = air && this.roll && row >= 0 ? ((this.roll.data as Float32Array)[row] * Math.PI) / 180 : 0;
+        const sign = air && row >= 0 ? (MotionModel.of(d)?.rollSign ?? 1) : 1;
+        fr = poseFrame({
           x: cubes[c],
           y: cubes[c + 1],
           z: cubes[c + 2],
           yaw: Math.PI - yaw,
           pitch: air ? cubes[c + 7] : 0,
-          roll: Number.isFinite(roll) ? roll : 0,
-          scale: o.scale,
-        },
-        [cubes[c + 3], cubes[c + 4], cubes[c + 5]],
-      );
+          roll: Number.isFinite(roll) ? sign * roll : 0,
+        });
+      }
+      // Under about 120 px long on screen, the figure's coarse build where it has one: the same shape, fewer triangles.
+      const small = o.pixelSize ? (longest(t) * scale) / Math.max(1e-9, o.pixelSize(cubes[c], cubes[c + 1], cubes[c + 2])) < 120 : false;
+      const drawn = small ? (t.coarse?.() ?? t) : t;
+      if (this.cpuPlace) placeFrame(this.tris, drawn, fr, scale, team);
+      else this.batches.add(meshOf(drawn), fr, scale, team);
+      this.placed.push({ box: i, row, kind: kind!, fr, scale, min: t.min, max: t.max });
     }
+  }
+
+  /**
+   * The figure a ray goes through first, as the index of its box in the last
+   * build (-1 for none): the figure's own box, turned and sized as drawn, so a
+   * click on a wing picks the aircraft whose wing it is.
+   */
+  hit(origin: Vec3, dir: Vec3): number {
+    let best = -1;
+    let bestT = Infinity;
+    for (const p of this.placed) {
+      const t = entry(p, origin, dir);
+      if (t < bestT) {
+        bestT = t;
+        best = p.box;
+      }
+    }
+    return best;
+  }
+
+  /** How far along a ray it enters the figure drawn for box `box` (Infinity: it misses). */
+  entry(box: number, origin: Vec3, dir: Vec3): number {
+    const p = this.placed.find((q) => q.box === box);
+    return p ? entry(p, origin, dir) : Infinity;
   }
 }
 
+/** Where a ray enters a placed figure's box, as a distance along it; Infinity when it misses. */
+function entry(p: { fr: Frame3; scale: number; min: Vec3; max: Vec3 }, origin: Vec3, dir: Vec3): number {
+  const { o, f, u, r } = p.fr;
+  // The ray in the figure's frame (x forward, y up, z right), in template metres.
+  const dx = origin[0] - o[0];
+  const dy = origin[1] - o[1];
+  const dz = origin[2] - o[2];
+  const lo = [(dx * f[0] + dy * f[1] + dz * f[2]) / p.scale, (dx * u[0] + dy * u[1] + dz * u[2]) / p.scale, (dx * r[0] + dy * r[1] + dz * r[2]) / p.scale];
+  const ld = [(dir[0] * f[0] + dir[1] * f[1] + dir[2] * f[2]) / p.scale, (dir[0] * u[0] + dir[1] * u[1] + dir[2] * u[2]) / p.scale, (dir[0] * r[0] + dir[1] * r[1] + dir[2] * r[2]) / p.scale];
+  let t0 = 0;
+  let t1 = Infinity;
+  for (let k = 0; k < 3; k++) {
+    if (Math.abs(ld[k]) < 1e-12) {
+      if (lo[k] < p.min[k] || lo[k] > p.max[k]) return Infinity;
+      continue;
+    }
+    let a = (p.min[k] - lo[k]) / ld[k];
+    let b = (p.max[k] - lo[k]) / ld[k];
+    if (a > b) [a, b] = [b, a];
+    t0 = Math.max(t0, a);
+    t1 = Math.min(t1, b);
+    if (t0 > t1) return Infinity;
+  }
+  // In template metres along a unit-length ray scaled by 1/scale: back to world distance.
+  return t0 * p.scale;
+}
 /** A swing-wing figure's name in a state. */
 function named(kind: string, state: Sweep | null): string {
   return state === 'spread' || state === 'swept' ? `${kind}@${state}` : kind;

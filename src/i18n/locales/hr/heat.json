@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} – {count, plural, one {# redak} few {# retka} other {# redaka}}, {span}",
   "heat.sessionPicker.option": "{session} – {count, plural, one {# redak} few {# retka} other {# redaka}}",
   "heat.sessionPicker.allHint": "Sve sesije odjednom. Položaji se i dalje nikad ne interpoliraju preko granice sesije, ali istodobni mečevi stavljaju nepovezane igrače zajedno na kartu – odaberite jednu da biste reproducirali meč.",
-  "heat.sessionPicker.seekHint": "U načinima topline ovo samo pomiče pokazivač reprodukcije na početak sesije; toplina i dalje broji sve sesije. Reprodukcija kutijama reproducira samo odabranu sesiju.",
+  "heat.sessionPicker.seekHint": "U načinima topline ovo samo pomiče pokazivač reprodukcije na početak sesije; toplina i dalje broji sve sesije. Reprodukcija figura (kartica Meč) reproducira samo odabranu sesiju.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Ukloni iz memorije",
   "heat.entityPanel.title": "Entiteti",
   "heat.entityPanel.selectedOf": "{selected} od {total}",
-  "heat.entityPanel.hint": "Prikazuje samo odabrane entitete, i u toplini i u reprodukciji kutijama. Ostavite prazno da biste prikazali sve.",
-  "heat.entityPanel.noSlot": "Nije primijenjeno na toplinu: svi utori za filtre su zauzeti. Reprodukcija kutijama i dalje prikazuje samo ove entitete. Uklonite filtar pod „Filtri” da biste oslobodili utor.",
+  "heat.entityPanel.hint": "Prikazuje samo odabrane entitete, i u toplini i u reprodukciji figura. Ostavite prazno da biste prikazali sve.",
+  "heat.entityPanel.noSlot": "Nije primijenjeno na toplinu: svi utori za filtre su zauzeti. Reprodukcija figura i dalje prikazuje samo ove entitete. Uklonite filtar pod „Filtri” da biste oslobodili utor.",
   "heat.entityPanel.search": "{count, plural, one {Pretraži # entitet…} few {Pretraži # entiteta…} other {Pretraži # entiteta…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# rezultat} few {# rezultata} other {# rezultata}}, prikazano prvih {page}",
   "heat.entityPanel.matches": "{count, plural, one {# rezultat} few {# rezultata} other {# rezultata}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# ruta} few {# rute} other {# ruta}}, od kojih {ended} dolazi do kraja, {segments, plural, one {# odsječak} few {# odsječka} other {# odsječaka}}",
   "heat.teamPanel.figures": "Figure umjesto kocaka",
   "heat.teamPanel.figuresTitle": "Svaka osoba kao figura onoga što jest: vojnik pješice, tenk ili zrakoplov koji navode podaci (stupci Name, Vehicle, Type). Ono o čemu podaci ništa ne govore ostaje kocka.",
-  "heat.teamPanel.figureScale": "Veličina figura"
+  "heat.teamPanel.figureScale": "Veličina figura",
+  "heat.teamPanel.figurePixels": "Najmanja figura na zaslonu",
+  "heat.teamPanel.figurePixelsHint": "Izbliza u stvarnoj veličini; dalje figure rastu da ostanu toliko piksela duge. 0: uvijek stvarna veličina.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "stvarna veličina",
+  "heat.teamPanel.weapons": "Oružje, hici i pogoci",
+  "heat.teamPanel.weaponsTitle": "Oružje u letu s dimom, svijetlećim zrnima, udarima, pogocima i obaranjima. Svijetleća zrna izvedena iz pogotka su isprekidana."
 }

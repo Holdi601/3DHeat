@@ -203,6 +203,14 @@ export interface TeamSettings {
   /** Figure size: 1 is true size. */
   figureScale: number;
   /**
+   * The smallest a figure is drawn, in pixels along its longest side: true
+   * size up close, and further off grown just enough to stay this big, as
+   * Tacview draws them. 0 keeps true size at any distance.
+   */
+  figurePixels: number;
+  /** Weapons in flight with their smoke, tracers, impacts, hits and kills (render/weapons.ts). */
+  weapons: boolean;
+  /**
    * Which session to play back, as an index into `dataset.sessionLabels`.
    *
    * -1 means every session at once, which is honest but rarely what is wanted:
@@ -599,6 +607,8 @@ export const useStore = create<AppState>((set) => ({
     showRawSamples: false,
     figures: true,
     figureScale: 1,
+    figurePixels: 36,
+    weapons: true,
     session: -1,
   },
   timeline: {

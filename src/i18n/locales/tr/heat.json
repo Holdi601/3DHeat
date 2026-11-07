@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# satır} other {# satır}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# satır} other {# satır}}",
   "heat.sessionPicker.allHint": "Tüm oturumlar aynı anda. Konumlar yine hiçbir zaman bir oturum sınırının ötesine enterpole edilmez, ancak eşzamanlı maçlar birbiriyle ilgisiz oyuncuları haritada bir araya getirir — bir maçı oynatmak için birini seçin.",
-  "heat.sessionPicker.seekHint": "Isı modlarında bu yalnızca oynatma kafasını oturumun başına taşır; ısı yine tüm oturumları sayar. Kutu tekrarı seçilen oturumu tek başına oynatır.",
+  "heat.sessionPicker.seekHint": "Isı modlarında bu yalnızca oynatma kafasını oturumun başına taşır; ısı yine tüm oturumları sayar. Figür tekrarı (Maç sekmesi) seçilen oturumu tek başına oynatır.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} dk",
   "heat.sessionPicker.hours": "{value} sa",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Kaldır",
   "heat.entityPanel.title": "Varlıklar",
   "heat.entityPanel.selectedOf": "{selected} / {total}",
-  "heat.entityPanel.hint": "Yalnızca seçili varlıkları gösterir; hem ısıda hem kutu tekrarında. Herkesi göstermek için boş bırakın.",
-  "heat.entityPanel.noSlot": "Isıya uygulanmadı: tüm filtre yuvaları dolu. Kutu tekrarı yine yalnızca bu varlıkları gösteriyor. Bir yuva boşaltmak için Filtreler altında bir filtreyi temizleyin.",
+  "heat.entityPanel.hint": "Yalnızca seçili varlıkları gösterir; hem ısıda hem figür tekrarında. Herkesi göstermek için boş bırakın.",
+  "heat.entityPanel.noSlot": "Isıya uygulanmadı: tüm filtre yuvaları dolu. Figür tekrarı yine yalnızca bu varlıkları gösteriyor. Bir yuva boşaltmak için Filtreler altında bir filtreyi temizleyin.",
   "heat.entityPanel.search": "{count, plural, one {# varlıkta ara…} other {# varlıkta ara…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# eşleşme} other {# eşleşme}}, ilk {page} gösteriliyor",
   "heat.entityPanel.matches": "{count, plural, one {# eşleşme} other {# eşleşme}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# güzergâh} other {# güzergâh}}, bunlardan {ended} tanesi bir bitişe ulaşıyor, {segments, plural, one {# segment} other {# segment}}",
   "heat.teamPanel.figures": "Kutular yerine figürler",
   "heat.teamPanel.figuresTitle": "Her kişi, ne ise onun figürüyle: yaya asker ya da verinin adını verdiği tank veya uçak (Name, Vehicle, Type sütunları). Verinin hakkında bir şey söylemediği şey kutu olarak kalır.",
-  "heat.teamPanel.figureScale": "Figür boyutu"
+  "heat.teamPanel.figureScale": "Figür boyutu",
+  "heat.teamPanel.figurePixels": "Ekrandaki en küçük figür",
+  "heat.teamPanel.figurePixelsHint": "Yakından gerçek boyutta; uzakta figürler bu kadar piksel uzun kalmak için büyür. 0: her zaman gerçek boyut.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "gerçek boyut",
+  "heat.teamPanel.weapons": "Silahlar, atışlar ve isabetler",
+  "heat.teamPanel.weaponsTitle": "Uçuştaki silahlar dumanla, izli mermiler, çarpmalar, isabetler ve düşürmeler. Bir isabetten çıkarılan izli mermiler kesik çizgilidir."
 }

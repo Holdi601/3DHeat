@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, =0 {# linhas} one {# linha} other {# linhas}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, =0 {# linhas} one {# linha} other {# linhas}}",
   "heat.sessionPicker.allHint": "Todas as sessões de uma vez. As posições continuam a nunca ser interpoladas de uma sessão para outra, mas partidas simultâneas põem no mapa, juntos, jogadores que nada têm a ver uns com os outros: escolha uma para reproduzir uma partida.",
-  "heat.sessionPicker.seekHint": "Nos modos de calor, isto apenas move a cabeça de reprodução para o início da sessão; o calor continua a contar todas as sessões. A Repetição com caixas reproduz apenas a sessão escolhida.",
+  "heat.sessionPicker.seekHint": "Nos modos de calor, isto apenas move a cabeça de reprodução para o início da sessão; o calor continua a contar todas as sessões. A repetição com figuras (separador Partida) reproduz apenas a sessão escolhida.",
   "heat.sessionPicker.seconds": "{value}s",
   "heat.sessionPicker.minutes": "{value}min",
   "heat.sessionPicker.hours": "{value}h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Remover",
   "heat.entityPanel.title": "Entidades",
   "heat.entityPanel.selectedOf": "{selected} de {total}",
-  "heat.entityPanel.hint": "Mostra apenas as entidades selecionadas, tanto no calor como na repetição com caixas. Deixe vazio para mostrar todos.",
-  "heat.entityPanel.noSlot": "Não aplicado ao calor: todas as posições de filtro estão ocupadas. A repetição com caixas continua a mostrar apenas estas entidades. Remova um filtro em «Filtros» para libertar uma posição.",
+  "heat.entityPanel.hint": "Mostra apenas as entidades selecionadas, tanto no calor como na repetição com figuras. Deixe vazio para mostrar todos.",
+  "heat.entityPanel.noSlot": "Não aplicado ao calor: todas as posições de filtro estão ocupadas. A repetição com figuras continua a mostrar apenas estas entidades. Remova um filtro em «Filtros» para libertar uma posição.",
   "heat.entityPanel.search": "{count, plural, =0 {Pesquisar em # entidades…} one {Pesquisar em # entidade…} other {Pesquisar em # entidades…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# correspondência} other {# correspondências}}, a mostrar as primeiras {page}",
   "heat.entityPanel.matches": "{count, plural, =0 {# correspondências} one {# correspondência} other {# correspondências}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# percurso} other {# percursos}}, {ended} dos quais chegam a um fim, {segments, plural, one {# segmento} other {# segmentos}}",
   "heat.teamPanel.figures": "Figuras em vez de caixas",
   "heat.teamPanel.figuresTitle": "Cada pessoa como a figura do que é: um soldado a pé, o carro de combate ou a aeronave que os dados indicam (colunas Name, Vehicle, Type). Aquilo sobre que os dados nada dizem continua a ser uma caixa.",
-  "heat.teamPanel.figureScale": "Tamanho das figuras"
+  "heat.teamPanel.figureScale": "Tamanho das figuras",
+  "heat.teamPanel.figurePixels": "Menor figura no ecrã",
+  "heat.teamPanel.figurePixelsHint": "Tamanho real de perto; mais longe as figuras crescem para manter este comprimento em píxeis. 0: sempre tamanho real.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "tamanho real",
+  "heat.teamPanel.weapons": "Armas, disparos e acertos",
+  "heat.teamPanel.weaponsTitle": "Armas em voo com fumo, tracejantes, impactos, acertos e abates. Tracejantes deduzidas de um acerto são tracejadas."
 }

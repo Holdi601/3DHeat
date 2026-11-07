@@ -1,3 +1,4 @@
+import type { FigureBatch } from '../figures/instances';
 import type { LineData } from '../data/lines';
 import type { Dataset, ViewMode } from '../state/types';
 import type { Level } from './level';
@@ -455,6 +456,12 @@ export interface FrameParams {
    */
   sceneTris: Float32Array | null;
   sceneTriVertCount: number;
+  /**
+   * Box replay's figures as GPU instances of meshes uploaded once
+   * (`figures/instances.ts`), drawn before `sceneTris` with the same blending
+   * and depth writes. Absent or empty: none.
+   */
+  figureBatches?: FigureBatch[] | null;
 
   /**
    * Ruler and probe geometry, drawn last and without depth testing so it stays

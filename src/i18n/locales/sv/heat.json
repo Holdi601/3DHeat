@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# rad} other {# rader}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# rad} other {# rader}}",
   "heat.sessionPicker.allHint": "Alla sessioner på en gång. Positioner interpoleras fortfarande aldrig över en sessionsgräns, men samtidiga matcher placerar orelaterade spelare på kartan tillsammans — välj en för att spela upp en match.",
-  "heat.sessionPicker.seekHint": "I värmelägena flyttar detta bara uppspelningsmarkören till sessionens början; värmen räknar fortfarande med alla sessioner. Boxrepris spelar upp den valda sessionen ensam.",
+  "heat.sessionPicker.seekHint": "I värmelägena flyttar detta bara uppspelningsmarkören till sessionens början; värmen räknar fortfarande med alla sessioner. Figurreprisen (fliken Match) spelar upp den valda sessionen ensam.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} h",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Ta bort",
   "heat.entityPanel.title": "Entiteter",
   "heat.entityPanel.selectedOf": "{selected} av {total}",
-  "heat.entityPanel.hint": "Visar bara de valda entiteterna, i värmen som i boxreprisen. Lämna tomt för att visa alla.",
-  "heat.entityPanel.noSlot": "Tillämpas inte på värmen: alla filterplatser är upptagna. Boxreprisen visar fortfarande bara dessa entiteter. Rensa ett filter under Filter för att frigöra en plats.",
+  "heat.entityPanel.hint": "Visar bara de valda entiteterna, i värmen som i figurreprisen. Lämna tomt för att visa alla.",
+  "heat.entityPanel.noSlot": "Tillämpas inte på värmen: alla filterplatser är upptagna. Figurreprisen visar fortfarande bara dessa entiteter. Rensa ett filter under Filter för att frigöra en plats.",
   "heat.entityPanel.search": "{count, plural, one {Sök bland # entitet…} other {Sök bland # entiteter…}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# träff} other {# träffar}}, visar de första {page}",
   "heat.entityPanel.matches": "{count, plural, one {# träff} other {# träffar}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# rutt} other {# rutter}}, varav {ended} når ett slut, {segments, plural, one {# segment} other {# segment}}",
   "heat.teamPanel.figures": "Figurer i stället för lådor",
   "heat.teamPanel.figuresTitle": "Varje person som figuren för det hen är: en soldat till fots, stridsvagnen eller flygplanet som datan anger (kolumnerna Name, Vehicle, Type). Det datan inte säger något om förblir en låda.",
-  "heat.teamPanel.figureScale": "Figurstorlek"
+  "heat.teamPanel.figureScale": "Figurstorlek",
+  "heat.teamPanel.figurePixels": "Minsta figur på skärmen",
+  "heat.teamPanel.figurePixelsHint": "Verklig storlek nära; längre bort växer figurerna så att de förblir så många pixlar långa. 0: alltid verklig storlek.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "verklig storlek",
+  "heat.teamPanel.weapons": "Vapen, skott och träffar",
+  "heat.teamPanel.weaponsTitle": "Vapen i luften med rök, spårljus, nedslag, träffar och nedskjutningar. Spårljus härlett ur en träff är streckat."
 }

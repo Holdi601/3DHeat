@@ -47,7 +47,7 @@
   "heat.sessionPicker.optionSpan": "{session} — {count, plural, one {# række} other {# rækker}}, {span}",
   "heat.sessionPicker.option": "{session} — {count, plural, one {# række} other {# rækker}}",
   "heat.sessionPicker.allHint": "Alle sessioner på én gang. Positioner interpoleres stadig aldrig hen over en sessionsgrænse, men samtidige kampe placerer urelaterede spillere på kortet sammen — vælg én for at afspille en kamp.",
-  "heat.sessionPicker.seekHint": "I varmetilstandene flytter dette kun afspilningsmarkøren til sessionens start; varmen tæller stadig alle sessioner med. Boks-replay afspiller den valgte session alene.",
+  "heat.sessionPicker.seekHint": "I varmetilstandene flytter dette kun afspilningsmarkøren til sessionens start; varmen tæller stadig alle sessioner med. Figur-replay (fanen Kamp) afspiller den valgte session alene.",
   "heat.sessionPicker.seconds": "{value} s",
   "heat.sessionPicker.minutes": "{value} min",
   "heat.sessionPicker.hours": "{value} t",
@@ -93,8 +93,8 @@
   "heat.datasetPanel.unload": "Fjern fra hukommelsen",
   "heat.entityPanel.title": "Enheder",
   "heat.entityPanel.selectedOf": "{selected} af {total}",
-  "heat.entityPanel.hint": "Viser kun de valgte enheder, både i varmen og i boks-replay. Lad feltet være tomt for at vise alle.",
-  "heat.entityPanel.noSlot": "Anvendes ikke på varmen: alle filterpladser er optaget. Boks-replay viser stadig kun disse enheder. Ryd et filter under Filtre for at frigøre en plads.",
+  "heat.entityPanel.hint": "Viser kun de valgte enheder, både i varmen og i figur-replay. Lad feltet være tomt for at vise alle.",
+  "heat.entityPanel.noSlot": "Anvendes ikke på varmen: alle filterpladser er optaget. Figur-replay viser stadig kun disse enheder. Ryd et filter under Filtre for at frigøre en plads.",
   "heat.entityPanel.search": "{count, plural, one {Søg i # enhed …} other {Søg i # enheder …}}",
   "heat.entityPanel.matchesFirst": "{count, plural, one {# resultat} other {# resultater}}, viser de første {page}",
   "heat.entityPanel.matches": "{count, plural, one {# resultat} other {# resultater}}",
@@ -652,5 +652,11 @@
   "heat.linePanel.stats": "{routes, plural, one {# rute} other {# ruter}}, hvoraf {ended} når en afslutning, {segments, plural, one {# segment} other {# segmenter}}",
   "heat.teamPanel.figures": "Figurer i stedet for bokse",
   "heat.teamPanel.figuresTitle": "Hver person som figuren for det, de er: en soldat til fods, den kampvogn eller det fly, dataene nævner (kolonnerne Name, Vehicle, Type). Det, dataene ikke siger noget om, forbliver en boks.",
-  "heat.teamPanel.figureScale": "Figurstørrelse"
+  "heat.teamPanel.figureScale": "Figurstørrelse",
+  "heat.teamPanel.figurePixels": "Mindste figur på skærmen",
+  "heat.teamPanel.figurePixelsHint": "Naturlig størrelse tæt på; længere væk vokser figurerne, så de forbliver så mange pixels lange. 0: altid naturlig størrelse.",
+  "heat.teamPanel.pixels": "{value} px",
+  "heat.teamPanel.trueSize": "naturlig størrelse",
+  "heat.teamPanel.weapons": "Våben, skud og træffere",
+  "heat.teamPanel.weaponsTitle": "Våben i luften med røg, sporlys, nedslag, træffere og nedskydninger. Sporlys udledt af en træffer er stiplet."
 }

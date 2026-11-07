@@ -43,7 +43,15 @@ export interface PickContext {
   /** The heat rows drawn last frame; null when no heat is drawn. */
   drawn: DrawnRows | null;
   /** The box replay's boxes, when that is what is drawn. */
-  cubes: { data: Float32Array; stride: number; count: number; rows: Int32Array; size: number } | null;
+  cubes: {
+    data: Float32Array;
+    stride: number;
+    count: number;
+    rows: Int32Array;
+    size: number;
+    /** The box whose figure the ray goes through first, -1 for none (box replay with figures). */
+    figureHit?: (origin: [number, number, number], dir: [number, number, number]) => number;
+  } | null;
   level: Level | null;
   /** Whether the view draws the level at a point: the slice and the distance cull. */
   accept: ((x: number, y: number, z: number) => boolean) | null;
@@ -182,8 +190,11 @@ export class Inspector {
     let found: { row: number; point: Vec3 } | null = null;
     if (ds && ctx.cubes && ctx.cubes.count > 0) {
       const c = ctx.cubes;
+      // A figure is picked where it is drawn: the one the ray goes through, wing tip to tail.
+      const r = ctx.ray;
+      const onFigure = c.figureHit ? c.figureHit([r.origin.x, r.origin.y, r.origin.z], [r.dir.x, r.dir.y, r.dir.z]) : -1;
       // A box is bigger than a few pixels up close: anywhere on it counts.
-      const hit = nearestPoint(ctx.screen, ctx.click, c.data, c.stride, c.count, (w) =>
+      const hit = onFigure >= 0 ? { index: onFigure } : nearestPoint(ctx.screen, ctx.click, c.data, c.stride, c.count, (w) =>
         Math.max(PICK_RADIUS_PX, (c.size * 0.6) / Math.max(1e-9, ctx.worldPerPixel(w))),
       );
       if (hit) {
