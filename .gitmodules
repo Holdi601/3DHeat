@@ -28,3 +28,6 @@
 [submodule "exporters/ext/dcs-maps"]
 	path = exporters/ext/dcs-maps
 	url = https://github.com/Holdi601/3DHeat-Ext-DCS.git
+[submodule "exporters/ext/il2-maps"]
+	path = exporters/ext/il2-maps
+	url = https://github.com/Holdi601/3DHeat-Ext-IL2.git
