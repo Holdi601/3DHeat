@@ -750,4 +750,431 @@ G['m5a1-stuart'] = ww2({
   gun: { length: 1.3, calibre: 0.037, at: 0.45 },
 });
 
+// ---------------------------------------------------------------- US medium and heavy
+
+// M3 Lee: the tall riveted hull on the Sherman's VVSS, the 75 mm low in the right sponson, the 37 mm turret offset
+// left with the machine-gun cupola on top (5.64 x 2.72 m, 3.12 m). Grant: the British turret with a bustle and no
+// cupola (3.0 m).
+{
+  const sponson = mantlet(2.25, 1.7, 1.95, 1.6, 0.26, 0.2, 0.72, 4);
+  const lee: Ww2 = {
+    cls: 'medium-tank', L: 5.64, W: 2.72, deck: 2.25, fender: 1.02,
+    top: [[-2.82, 1.75], [-2.7, 2.2], [0.5, 2.25], [1.6, 1.95], [2.5, 1.3], [2.82, 0.85]],
+    plan: [[-2.82, 1.33], [2.4, 1.36], [2.82, 1.1]], hullRound: 12,
+    track: [[-2.0, 0], [1.95, 0], [2.8, 0.78], [2.5, 1.02], [-2.4, 1.0], [-2.78, 0.42]],
+    wheels: pairs([-1.45, 0.05, 1.55], 0.56), r: 0.255,
+    parts: [sponson, ...vvss(2.72, [-1.45, 0.05, 1.55])],
+  };
+  const t37 = turret(0.2, [[-0.75, 0.55], [-0.6, 0.72], [0.5, 0.72], [0.75, 0.5]], [[-0.75, 0.5], [0.75, 0.52]], 3, 0.8, -0.35);
+  // The 37 mm in the turret, the 75 mm in the sponson (the first part).
+  const guns: GunSpec[] = [{ mount: 'turret', length: 1.5, calibre: 0.037, at: 0.45 }, { ...fire(sponson, 1.7, 0.075), turret: 1 }];
+  G['m3-lee'] = ww2({ ...lee, turret: t37, guns, parts: [...lee.parts!, cupola(t37, -0.1, 0, 0.36, 0.3)] });
+  const tGrant = turret(0.2, [[-1.05, 0.5], [-0.85, 0.7], [0.5, 0.74], [0.75, 0.5]], [[-1.05, 0.55], [0.75, 0.58]], 3, 0.8, -0.35);
+  G['grant'] = ww2({ ...lee, turret: tGrant, guns });
+}
+// M24 Chaffee: five road wheels on torsion bars, three return rollers, the sloped glacis, the turret with its thin
+// 75 mm (hull 4.99 x 2.95 m, 2.47 m; 5.56 m with the gun).
+const M24_T = turret(-0.2, [[-1.25, 0.62], [-1.05, 0.85], [0.55, 0.88], [1.0, 0.62], [1.1, 0.45]], [[-1.25, 0.5], [-0.9, 0.72], [0.5, 0.75], [1.1, 0.45]], 3.5, 1.15);
+G['m24-chaffee'] = ww2({
+  cls: 'light-tank', L: 4.99, W: 2.95, deck: 1.7, fender: 0.95,
+  top: [[-2.5, 1.45], [-2.4, 1.68], [0.4, 1.7], [2.2, 0.95], [2.5, 0.85]],
+  plan: [[-2.5, 1.45], [2.5, 1.45]], hullRound: 10,
+  track: trk(2.45, 0.95, 0.66, 0.55, 1.75),
+  wheels: even(5, -1.75, 1.75), r: 0.32, rollers: [-1.2, 0, 1.2],
+  turret: M24_T, gun: { length: 2.1, calibre: 0.075, at: 0.45 },
+  turretParts: (t) => [cupola(t, -0.3, -0.45, 0.3, 0.18)],
+});
+// M26 Pershing: six road wheels and five return rollers, the rear sprocket, the long hull with its sloped glacis,
+// the big cast turret with the 90 mm and its brake (hull 6.33 x 3.51 m, 2.78 m; 8.65 m with the gun).
+const M26_T = turret(-0.3, [[-1.85, 0.75], [-1.6, 1.15], [0.6, 1.25], [1.25, 0.95], [1.45, 0.6]], [[-1.85, 0.5], [-1.4, 0.75], [0.6, 0.8], [1.45, 0.5]], 3, 1.5);
+const M26: Ww2 = {
+  cls: 'heavy-tank', L: 6.33, W: 3.51, deck: 1.85, fender: 1.0,
+  top: [[-3.165, 1.5], [-3.0, 1.85], [1.0, 1.85], [2.85, 0.95], [3.165, 0.85]],
+  plan: [[-3.165, 1.72], [3.165, 1.72]], hullRound: 10,
+  track: trk(3.1, 1.0, 0.6, 0.66, 2.35),
+  wheels: even(6, -2.35, 2.35), r: 0.33, rollers: even(5, -2.0, 2.0),
+  turret: M26_T,
+};
+G['m26-pershing'] = ww2({ ...M26, gun: { length: 4.25, calibre: 0.09, muzzle: true, at: 0.45 }, turretParts: (t) => [cupola(t, -0.6, 0.5, 0.32, 0.15)] });
+// T26E4 "Super Pershing": the long 90 mm T15E2 balanced by a counterweight on the turret's back, and the boiler-plate
+// armour bolted in a V over the hull front and the mantlet.
+G['m26-super-pershing'] = ww2({ ...M26, gun: { length: 5.7, calibre: 0.09, muzzle: true, at: 0.45 }, parts: [part(1.85, [[1.2, 1.4], [3.2, 1.0]], [[1.2, 1.95], [3.2, 1.0]], [[1.2, 1.7], [3.2, 0.75]], 6)], turretParts: (t) => [cupola(t, -0.6, 0.5, 0.32, 0.15), on(t, [[-2.4, 0.45], [-1.85, 0.45]], [[-2.4, 0.55], [-1.85, 0.55]], 0.15, 8), on(t, [[1.45, 0.95], [1.75, 0.5]], [[1.45, 0.85], [1.75, 0.7]], 0.05, 6)] });
+// M6A1 heavy tank: a tall hull on four paired bogies, the big cast turret with the 3-inch gun (7.54 x 3.12 m, 2.95 m; 8.43 m with the gun).
+G['m6a1'] = ww2({
+  cls: 'heavy-tank', L: 7.54, W: 3.12, deck: 2.1, fender: 1.05,
+  top: [[-3.77, 1.7], [-3.6, 2.1], [1.0, 2.1], [2.2, 1.85], [3.3, 1.2], [3.77, 0.95]],
+  plan: [[-3.77, 1.52], [3.77, 1.52]], hullRound: 10,
+  track: trk(3.72, 1.05, 0.72, 0.6, 2.9),
+  wheels: pairs([-2.5, -0.85, 0.85, 2.5], 0.6), r: 0.3, rollers: [-2.5, -0.85, 0.85, 2.5],
+  turret: turret(0.0, [[-1.6, 0.9], [-1.3, 1.25], [0.6, 1.3], [1.3, 0.9], [1.45, 0.55]], [[-1.6, 0.55], [-1.2, 0.8], [0.6, 0.85], [1.45, 0.5]], 3, 1.5),
+  gun: { length: 3.15, calibre: 0.076, at: 0.45 },
+  turretParts: (t) => [cupola(t, -0.5, -0.55, 0.32, 0.2)],
+});
+// M10 GMC (Wolverine): the M4A2 chassis with sloped upper hull sides, the open five-sided turret with its big
+// counterweights hung on the back, the 3-inch gun (5.97 x 3.05 m, 2.57 m; 6.83 m with the gun). M36: a rounder open
+// turret with a bustle and the 90 mm (7.47 m).
+const M10: Ww2 = {
+  cls: 'tank-destroyer', L: 5.97, W: 3.05, deck: 1.8, fender: 1.02,
+  top: [[-2.98, 1.5], [-2.8, 1.75], [0.6, 1.8], [2.4, 1.15], [2.7, 1.0], [2.98, 0.78]],
+  under: [[-2.98, 1.05], [2.5, 1.05], [2.98, 0.6]],
+  plan: [[-2.98, 1.45], [2.4, 1.5], [2.98, 1.1]], hullRound: 5,
+  track: [[-2.05, 0], [2.0, 0], [2.96, 0.78], [2.66, 1.02], [-2.6, 1.0], [-2.94, 0.42]],
+  wheels: pairs([-1.6, -0.08, 1.45], 0.56), r: 0.255,
+  parts: vvss(3.05, [-1.6, -0.08, 1.45]),
+};
+G['m10-gmc'] = ww2({ ...M10, turret: turret(0.1, [[-1.0, 0.75], [-0.6, 1.05], [0.5, 1.05], [1.1, 0.6]], [[-1.0, 0.75], [1.1, 0.72]], 16, 1.15), gun: { length: 2.65, calibre: 0.076, at: 0.45 }, turretParts: (t) => [-1, 1].map((s) => on(t, [[-1.85, 0.32], [-1.0, 0.32]], [[-1.85, 0.6], [-1.0, 0.6]], 0.05, 10, s * 0.55)) });
+G['m36-jackson'] = ww2({ ...M10, turret: turret(0.05, [[-1.6, 0.6], [-1.3, 1.0], [0.5, 1.1], [1.1, 0.75], [1.2, 0.55]], [[-1.6, 0.68], [1.2, 0.68]], 5, 1.25), gun: { length: 3.25, calibre: 0.09, muzzle: true, at: 0.45 } });
+// M18 Hellcat: low and fast - five road wheels and four return rollers on torsion bars, the front sprocket, a long
+// low hull, the open turret with the 76 mm and its brake (hull 5.28 x 2.87 m, 2.58 m; 6.65 m with the gun).
+G['m18-hellcat'] = ww2({
+  cls: 'tank-destroyer', L: 5.28, W: 2.87, deck: 1.6, fender: 0.92,
+  top: [[-2.64, 1.35], [-2.5, 1.6], [0.5, 1.62], [2.2, 1.0], [2.64, 0.85]],
+  plan: [[-2.64, 1.42], [2.64, 1.4]], hullRound: 10,
+  track: trk(2.6, 0.92, 0.65, 0.55, 1.85),
+  wheels: even(5, -1.85, 1.85), r: 0.33, rollers: even(4, -1.6, 1.6),
+  turret: turret(0.05, [[-1.3, 0.7], [-1.1, 1.1], [0.6, 1.2], [1.15, 0.8], [1.25, 0.55]], [[-1.3, 0.8], [1.25, 0.75]], 6, 1.3),
+  gun: { length: 2.65, calibre: 0.076, muzzle: true, at: 0.45 },
+});
+// More Shermans: the 76 mm T23 turret on the cast M4A1 hull and the welded M4A2; the M4A3 with the short 105 mm howitzer; the Jumbo with the 76 mm.
+G['m4a1-76'] = sherman({ L: 5.84, glacisX: 1.1, cast: true, turret: SHERMAN_T23, gun: GUN_76 });
+G['m4a2-76'] = sherman({ L: 5.94, glacisX: 1.45, turret: SHERMAN_T23, gun: GUN_76, extra: [-1, 1].map((s) => part(1.9, [[-3.12, 0.3], [-2.97, 0.3]], [[-3.12, 1.25], [-2.97, 1.25]], 0.85, 6, s * 0.6)) });
+G['m4a3-105'] = sherman({ L: 5.88, glacisX: 1.45, turret: SHERMAN_T75, gun: { length: 1.6, calibre: 0.105, at: 0.48 }, extra: [-1, 1].map((s) => part(1.9, [[1.3, 0.32], [1.75, 0.32]], [[1.3, 2.02], [1.75, 1.95]], 1.85, 6, s * 0.55)) });
+G['m4a3e2-76'] = sherman({ L: 5.9, W: 2.97, glacisX: 1.1, deck: 1.95, turret: JUMBO_T, gun: GUN_76, extra: [part(1.95, [[1.1, 1.2], [2.6, 1.2]], [[1.1, 2.0], [2.6, 1.3]], 1.35, 10)], turretParts: (t) => [on(t, [[1.2, 0.62], [1.42, 0.58]], [[1.2, 0.68], [1.42, 0.64]], 0.1, 8)] });
+// LVT-4 and LVT(A)-1 amphibians: the long boat hull with the grousered tracks run round its sides, the track's front
+// rising like a bow (7.97 x 3.25 m, 2.5 m); the LVT(A)-1 with a turret and its 37 mm, the LVT-4 here with a ZiS-2 on top.
+{
+  const lvt: Ww2 = {
+    cls: 'apc-tracked', L: 7.97, W: 3.25, deck: 2.0, fender: 0.6,
+    top: [[-3.98, 1.6], [-3.9, 2.0], [2.8, 2.0], [3.98, 1.25]],
+    plan: [[-3.98, 1.05], [3.98, 1.0]], hullRound: 10,
+    track: [[-3.3, 0], [3.2, 0], [3.95, 1.1], [3.6, 1.65], [-3.7, 1.65], [-3.98, 0.9]],
+    wheels: [], r: 0.2, solid: true,
+  };
+  G['lvt-a1'] = ww2({ ...lvt, cls: 'light-tank', turret: turret(0.6, [[-0.85, 0.55], [-0.6, 0.75], [0.55, 0.78], [0.85, 0.55]], [[-0.85, 0.58], [0.85, 0.6]], 4, 0.9), gun: { length: 1.4, calibre: 0.037, at: 0.45 } });
+  const m = mantlet(2.0, 1.5, 1.75, 2.45, 0.2, 0.15);
+  G['lvt-4-zis-2'] = ww2({ ...lvt, turret: m, guns: [fire(m, 2.8, 0.057)], parts: [part(2.0, [[1.65, 0.75], [1.72, 0.75]], [[1.65, 2.75], [1.72, 2.75]], 2.0, 16)] });
+}
+
+// ---------------------------------------------------------------- Soviet, more
+
+// T-34-57: the long, thin ZiS-4 57 mm on the early and the hexagonal turret.
+G['t-34-57'] = t34(5.92, T34_EARLY, { length: 3.0, calibre: 0.057, at: 0.45 }, false);
+G['t-34-57-1943'] = t34(5.92, T34_HEX, { length: 3.0, calibre: 0.057, at: 0.45 }, true, (t) => [cupola(t, -0.45, -0.5, 0.32, 0.22)]);
+// SU-85, SU-100, SU-122 on the T-34: the glacis carried up into the casemate roof, the gun low in it; SU-85
+// 8.15 m with the gun and 2.45 m high, SU-100 9.45 m and 2.25 m with the commander's cupola on the right, SU-122 the
+// short 122 mm howitzer in its bell mantlet (6.95 m, 2.32 m). Hull 6.1 x 3.0 m.
+function su34(gun: GunSpec, cupolaRight: boolean, r = 0.32): GroundSpec & { cls: string } {
+  const m = mantlet(1.5, 1.2, 1.55, 1.55, r, r * 0.65);
+  const g = { ...fire(m, gun.length, gun.calibre), muzzle: gun.muzzle };
+  const base = t34(6.1, m, undefined, true);
+  return { ...base, cls: gun.calibre > 0.11 ? 'sp-gun' : 'tank-destroyer', guns: [g], hullOutline: { ...base.hullOutline!, top: [[-3.05, 1.05], [-2.65, 1.5], [-1.4, 1.5], [-1.3, 2.15], [0.2, 2.2], [3.05, 0.62]] }, turrets: [...(base.turrets ?? []), ...(cupolaRight ? [roofCupola(1.5, -0.5, 0.75, 2.18, 0.3, 0.15)] : [])] };
+}
+G['su-85'] = su34({ mount: 'turret', length: 3.55, calibre: 0.085 }, false);
+G['su-100'] = su34({ mount: 'turret', length: 4.85, calibre: 0.1 }, true);
+G['su-122'] = su34({ mount: 'turret', length: 1.2, calibre: 0.122 }, false, 0.42);
+// SU-152 on the KV-1S hull: the tall box casemate over its front, the ML-20S with its brake in a big box mantlet (8.95 m, 2.45 m).
+{
+  const m = mantlet(1.6, 2.0, 2.4, 1.85, 0.4, 0.3, 0, 8);
+  G['su-152'] = ww2({ ...KV, cls: 'sp-gun', W: 3.25, deck: 1.6, top: [[-3.37, 1.05], [-2.9, 1.48], [-2.0, 1.55], [-1.9, 2.45], [1.6, 2.45], [2.75, 1.25], [3.37, 1.05]], turret: m, guns: [fire(m, 2.55, 0.152, { muzzle: true })] });
+}
+// ISU-152, ISU-122, ISU-122S on the IS hull: a taller casemate, its sloped front set back from the glacis, the gun right
+// of the centre (ISU-152 9.18 m, ISU-122 9.85 m with the long A-19S, ISU-122S the D-25S with its brake; 2.48 m high).
+{
+  const m = mantlet(1.6, 1.35, 1.75, 1.9, 0.38, 0.28, 0.25);
+  const isu = { ...IS, cls: 'sp-gun', top: [[-3.385, 1.15], [-3.1, 1.6], [-2.2, 1.6], [-2.1, 2.45], [1.0, 2.45], [1.9, 1.6], [3.385, 0.98]] as P2[], turret: m };
+  G['isu-152'] = ww2({ ...isu, guns: [fire(m, 4.05, 0.152, { muzzle: true })] });
+  G['isu-122'] = ww2({ ...isu, cls: 'tank-destroyer', guns: [fire(m, 4.7, 0.122)] });
+  G['isu-122s'] = ww2({ ...isu, cls: 'tank-destroyer', guns: [fire(m, 4.7, 0.122, { muzzle: true })] });
+}
+// T-44: five road wheels on torsion bars, no return rollers, the single glacis plate, the turret set well back with
+// the 85 mm (hull 6.07 x 3.18 m, 2.41 m; 7.65 m with the gun).
+G['t-44'] = ww2({
+  cls: 'medium-tank', L: 6.07, W: 3.18, deck: 1.55, fender: 0.98,
+  top: [[-3.035, 1.15], [-2.8, 1.55], [1.1, 1.55], [3.035, 0.65]],
+  plan: [[-3.035, 1.55], [3.035, 1.55]], hullRound: 8,
+  track: trk(3.0, 0.98, 0.55, 0.6, 2.3),
+  wheels: even(5, -2.15, 2.15), r: 0.42,
+  turret: turret(-0.3, [[-1.6, 0.85], [-1.25, 1.28], [0.7, 1.32], [1.35, 0.95], [1.5, 0.55]], [[-1.6, 0.5], [-1.1, 0.82], [0.6, 0.88], [1.5, 0.5]], 3, 1.55),
+  gun: { length: 3.35, calibre: 0.085, at: 0.45 },
+  turretParts: (t) => [cupola(t, -0.75, -0.55, 0.34, 0.22)],
+});
+// KV-85 and KV-122: the IS turret on the KV-1S hull, with the 85 mm or the 122 mm.
+G['kv-85'] = ww2({ ...KV, W: 3.25, deck: 1.6, top: G['kv-1s'].hullOutline!.top, turret: IS_T, gun: { length: 3.4, calibre: 0.085, at: 0.45 }, turretParts: isParts });
+G['kv-122'] = ww2({ ...KV, W: 3.25, deck: 1.6, top: G['kv-1s'].hullOutline!.top, turret: IS_T, gun: { length: 4.7, calibre: 0.122, muzzle: true, at: 0.45 }, turretParts: isParts });
+// ZiS-30: the 57 mm ZiS-2 with its shield set up on a Komsomolets tractor (3.45 x 1.86 m, 2.23 m).
+{
+  const m = mantlet(1.1, 0.2, 0.45, 1.75, 0.2, 0.15);
+  G['zis-30'] = ww2({ cls: 'tank-destroyer', L: 3.45, W: 1.86, deck: 1.1, fender: 0.6, top: [[-1.72, 0.95], [-1.6, 1.1], [0.9, 1.15], [1.72, 0.75]], plan: [[-1.72, 0.92], [1.72, 0.92]], hullRound: 12, track: trk(1.7, 0.62, 0.42, 0.42, 1.0), wheels: pairs([-0.6, 0.6], 0.45), r: 0.2, turret: m, guns: [fire(m, 2.8, 0.057)], parts: [part(1.1, [[0.35, 0.75], [0.42, 0.75]], [[0.35, 2.1], [0.42, 2.1]], 1.35, 16)] });
+}
+// T-70: five road wheels, three return rollers, a sloped glacis, the small turret offset left with the 45 mm
+// (4.29 x 2.32 m, 2.04 m); T-60: four road wheels, the turret with the 20 mm (4.1 x 2.3 m, 1.75 m).
+G['t-70'] = ww2({
+  cls: 'light-tank', L: 4.29, W: 2.32, deck: 1.45, fender: 0.75,
+  top: [[-2.145, 1.25], [-2.05, 1.42], [0.5, 1.45], [1.6, 1.05], [2.145, 0.85]],
+  plan: [[-2.145, 1.12], [2.145, 1.12]], hullRound: 12,
+  track: trk(2.1, 0.78, 0.5, 0.45, 1.55),
+  wheels: even(5, -1.55, 1.55), r: 0.26, rollers: [-1.0, 0, 1.0],
+  turret: turret(0.2, [[-0.8, 0.6], [-0.65, 0.72], [0.55, 0.72], [0.8, 0.55]], [[-0.8, 0.55], [0.8, 0.55]], 10, 0.85, -0.25),
+  gun: { length: 1.4, calibre: 0.045, at: 0.45 },
+});
+G['t-60'] = ww2({
+  cls: 'light-tank', L: 4.1, W: 2.3, deck: 1.32, fender: 0.72,
+  top: [[-2.05, 1.15], [-1.95, 1.3], [0.5, 1.32], [1.5, 1.0], [2.05, 0.8]],
+  plan: [[-2.05, 1.1], [2.05, 1.1]], hullRound: 12,
+  track: trk(2.0, 0.75, 0.48, 0.45, 1.4),
+  wheels: even(4, -1.3, 1.3), r: 0.25, rollers: [-0.8, 0, 0.8],
+  turret: turret(0.3, [[-0.7, 0.55], [-0.55, 0.65], [0.5, 0.65], [0.7, 0.5]], [[-0.7, 0.45], [0.7, 0.45]], 10, 0.75, -0.25),
+  gun: { length: 1.2, calibre: 0.02, at: 0.45 },
+});
+// BT-7 (1937): four big Christie wheels, the narrow pointed nose, the conical turret with a bustle and the 45 mm
+// (5.66 x 2.29 m, 2.42 m); BT-5: the earlier upright cylindrical turret.
+const BT: Ww2 = {
+  cls: 'light-tank', L: 5.66, W: 2.29, deck: 1.55, fender: 0.9,
+  top: [[-2.83, 1.25], [-2.7, 1.55], [1.6, 1.55], [2.3, 1.25], [2.83, 0.95]],
+  plan: [[-2.83, 1.12], [1.6, 1.14], [2.6, 0.8], [2.83, 0.6]], hullRound: 12,
+  track: trk(2.8, 0.92, 0.5, 0.5, 2.0),
+  wheels: even(4, -1.95, 1.75), r: 0.41,
+  gun: { length: 1.6, calibre: 0.045, at: 0.45 },
+};
+G['bt-7'] = ww2({ ...BT, turret: turret(0.35, [[-1.25, 0.5], [-1.0, 0.85], [0.6, 0.92], [0.95, 0.75], [1.05, 0.55]], [[-1.25, 0.5], [-0.8, 0.62], [0.6, 0.65], [1.05, 0.55]], 3, 1.05) });
+G['bt-5'] = ww2({ ...BT, turret: turret(0.35, [[-1.25, 0.5], [-1.0, 0.85], [0.6, 0.92], [0.95, 0.75], [1.05, 0.55]], [[-1.25, 0.62], [1.05, 0.62]], 7, 1.05) });
+// T-26 (1939): eight small road wheels in leaf-sprung pairs, four return rollers, the turret with its bustle and the
+// 45 mm (4.65 x 2.44 m, 2.33 m).
+G['t-26'] = ww2({
+  cls: 'light-tank', L: 4.65, W: 2.44, deck: 1.65, fender: 0.78,
+  top: [[-2.325, 1.35], [-2.2, 1.6], [1.2, 1.65], [1.5, 1.35], [2.325, 1.0]],
+  plan: [[-2.325, 1.18], [2.325, 1.18]], hullRound: 14,
+  track: trk(2.3, 0.8, 0.55, 0.48, 1.6),
+  wheels: pairs([-1.35, -0.5, 0.5, 1.35], 0.42), r: 0.18, rollers: [-1.3, -0.45, 0.45, 1.3],
+  turret: turret(0.0, [[-1.3, 0.5], [-1.05, 0.85], [0.55, 0.9], [0.9, 0.7], [1.0, 0.5]], [[-1.3, 0.55], [1.0, 0.6]], 5, 1.0, 0.2),
+  gun: { length: 1.5, calibre: 0.045, at: 0.45 },
+});
+// T-28: a long hull with skirts over its twelve small wheels, the main turret and two machine-gun turrets ahead of it
+// (7.44 x 2.81 m, 2.82 m). T-35: five turrets on a still longer hull - the main one raised in the middle, two 45 mm
+// turrets and two machine-gun turrets at the corners (9.72 x 3.2 m, 3.43 m).
+{
+  const mg = (x: number, s: number, r: number, h: number): TurretSpec => ({ ...turret(x, circle(0, r), [[-r, h], [r, h]], 4, r), side: s });
+  G['t-28'] = ww2({
+    cls: 'medium-tank', L: 7.44, W: 2.81, deck: 1.95, fender: 0.5,
+    top: [[-3.72, 1.6], [-3.55, 1.95], [3.2, 1.95], [3.72, 1.2]],
+    plan: [[-3.72, 1.02], [3.72, 1.0]], hullRound: 12,
+    track: [[-3.0, 0], [3.0, 0], [3.7, 0.8], [3.4, 1.3], [-3.5, 1.3], [-3.72, 0.75]],
+    wheels: [], r: 0.2, solid: true,
+    turret: turret(0.0, [[-1.4, 0.6], [-1.1, 1.0], [0.7, 1.05], [1.15, 0.65]], [[-1.4, 0.85], [1.15, 0.85]], 4, 1.2),
+    gun: { length: 1.1, calibre: 0.076, at: 0.45 },
+    turretParts: () => [mg(2.3, -0.65, 0.42, 0.62), mg(2.3, 0.65, 0.42, 0.62)].map((t) => ({ ...t, up: 0 })),
+  });
+  G['t-35'] = ww2({
+    cls: 'heavy-tank', L: 9.72, W: 3.2, deck: 2.0, fender: 0.5,
+    top: [[-4.86, 1.7], [-4.7, 2.0], [3.5, 2.0], [4.3, 1.6], [4.86, 1.2]],
+    plan: [[-4.86, 1.15], [4.86, 1.1]], hullRound: 12,
+    track: [[-4.0, 0], [4.0, 0], [4.85, 0.85], [4.55, 1.35], [-4.6, 1.35], [-4.86, 0.8]],
+    wheels: [], r: 0.2, solid: true,
+    turret: { ...turret(-0.2, [[-1.4, 0.6], [-1.1, 1.0], [0.7, 1.05], [1.15, 0.65]], [[-1.4, 0.85], [1.15, 0.85]], 4, 1.2), up: 0.55 },
+    guns: [{ mount: 'turret', length: 1.1, calibre: 0.076, at: 0.45 }, { mount: 'turret', turret: 1, length: 1.5, calibre: 0.045, at: 0.45 }, { mount: 'turret', turret: 2, length: 1.5, calibre: 0.045, at: 0.45 }],
+    turretParts: () => [{ ...turret(2.4, [[-0.8, 0.5], [-0.6, 0.72], [0.5, 0.75], [0.8, 0.55]], [[-0.8, 0.6], [0.8, 0.62]], 5, 0.8), side: 0.75 }, { ...turret(-2.6, [[-0.8, 0.5], [-0.6, 0.72], [0.5, 0.75], [0.8, 0.55]], [[-0.8, 0.6], [0.8, 0.62]], 5, 0.8), side: -0.75 }, mg(2.4, -0.75, 0.4, 0.6), mg(-2.6, 0.75, 0.4, 0.6), part(2.0, circle(-0.2, 1.0), [[-1.2, 2.6], [0.8, 2.6]], 1.95, 6)],
+  });
+}
+// SU-76M: the lengthened T-70 chassis - six road wheels, three return rollers - with the ZiS-3 in an open compartment
+// at the back (5.0 x 2.72 m, 2.1 m).
+{
+  const m = mantlet(1.25, 0.25, 0.5, 1.6, 0.25, 0.18);
+  G['su-76m'] = ww2({ cls: 'sp-gun', L: 5.0, W: 2.72, deck: 1.25, fender: 0.75, top: [[-2.5, 1.15], [-2.4, 1.25], [0.3, 1.25], [1.6, 1.0], [2.5, 0.8]], plan: [[-2.5, 1.3], [2.5, 1.3]], hullRound: 12, track: trk(2.45, 0.78, 0.5, 0.45, 1.9), wheels: even(6, -1.9, 1.9), r: 0.26, rollers: [-1.2, 0, 1.2], turret: m, guns: [fire(m, 2.6, 0.076, { muzzle: true })], parts: [compartment(1.25, -2.5, 0.35, 2.05, 1.25, 1.15)] });
+}
+
+// ---------------------------------------------------------------- British, more
+
+// Crusader: five big Christie wheels, a long low hull, the many-faceted turret; Mk II with the 2-pounder and the
+// machine-gun turret at the front left (5.99 x 2.64 m, 2.24 m), Mk III the 6-pounder and no hull turret.
+const CRUSADER: Ww2 = {
+  cls: 'medium-tank', L: 5.99, W: 2.64, deck: 1.5, fender: 0.95,
+  top: [[-3.0, 1.25], [-2.9, 1.5], [1.6, 1.5], [1.7, 1.3], [2.4, 1.25], [3.0, 0.95]],
+  plan: [[-3.0, 1.3], [3.0, 1.3]], hullRound: 14,
+  track: trk(2.95, 0.95, 0.55, 0.6, 2.15),
+  wheels: even(5, -2.0, 2.0), r: 0.4,
+  turret: turret(0.1, [[-1.05, 0.6], [-0.85, 0.85], [0.35, 0.9], [0.9, 0.7], [1.05, 0.4]], [[-1.05, 0.55], [0.4, 0.65], [1.05, 0.45]], 10, 1.05),
+};
+G['crusader-ii'] = ww2({ ...CRUSADER, gun: { length: 1.5, calibre: 0.04, at: 0.45 }, parts: [part(1.5, circle(2.0, 0.38), [[1.62, 1.95], [2.38, 1.95]], 1.4, 5, -0.55)] });
+G['crusader-iii'] = ww2({ ...CRUSADER, gun: { length: 2.2, calibre: 0.057, at: 0.45 } });
+// Cruiser Mk IV (A13 Mk II): four big Christie wheels, the turret with its spaced, sloping faces (6.0 x 2.59 m, 2.59 m).
+G['a13-cruiser'] = ww2({ ...CRUSADER, L: 6.0, W: 2.59, deck: 1.65, top: [[-3.0, 1.4], [-2.9, 1.65], [1.8, 1.65], [1.9, 1.35], [3.0, 1.0]], wheels: even(4, -1.9, 1.9), turret: turret(0.1, [[-1.1, 0.55], [-0.8, 0.95], [0.4, 0.95], [1.0, 0.55], [1.1, 0.4]], [[-1.1, 0.6], [1.1, 0.6]], 10, 1.1), gun: { length: 1.4, calibre: 0.04, at: 0.45 } });
+// Matilda II: skirts with their mud chutes over the running gear, the track running along their top, the cast hull
+// with its rounded nose, the small cast turret (5.61 x 2.59 m, 2.52 m).
+G['matilda-ii'] = ww2({
+  cls: 'medium-tank', L: 5.61, W: 2.59, deck: 1.6, fender: 0.4,
+  top: [[-2.8, 1.35], [-2.7, 1.6], [1.9, 1.6], [2.4, 1.3], [2.8, 0.9]],
+  plan: [[-2.8, 0.85], [2.8, 0.85]], hullRound: 4,
+  track: [[-2.3, 0], [2.3, 0], [2.8, 0.7], [2.5, 1.18], [-2.5, 1.18], [-2.8, 0.7]],
+  wheels: [], r: 0.2, solid: true,
+  turret: turret(0.25, [[-1.0, 0.6], [-0.8, 0.82], [0.6, 0.85], [0.95, 0.6]], [[-1.0, 0.6], [0.95, 0.6]], 4, 1.0),
+  gun: { length: 1.3, calibre: 0.04, at: 0.45 },
+});
+// Valentine: six road wheels in two three-wheel bogies, three return rollers, the low hull and the small turret
+// (5.41 x 2.63 m, 2.27 m); 2-pounder (Mk I-VII), 6-pounder (Mk IX), 75 mm (Mk XI). Archer: its chassis with the
+// 17-pounder pointing back over the engine from a low open casemate.
+const VALENTINE: Ww2 = {
+  cls: 'light-tank', L: 5.41, W: 2.63, deck: 1.65, fender: 0.88,
+  top: [[-2.7, 1.35], [-2.6, 1.6], [1.4, 1.65], [1.7, 1.45], [2.3, 1.25], [2.7, 0.95]],
+  plan: [[-2.7, 1.25], [2.7, 1.25]], hullRound: 12,
+  track: trk(2.65, 0.9, 0.55, 0.55, 1.95),
+  wheels: [-1.95, -1.3, -0.65, 0.65, 1.3, 1.95], r: 0.27, rollers: [-1.0, 0, 1.0],
+  turret: turret(0.0, [[-0.95, 0.62], [-0.8, 0.78], [0.6, 0.8], [0.85, 0.62]], [[-0.95, 0.6], [0.85, 0.6]], 10, 0.9),
+};
+G['valentine'] = ww2({ ...VALENTINE, gun: { length: 1.3, calibre: 0.04, at: 0.45 } });
+G['valentine-ix'] = ww2({ ...VALENTINE, gun: { length: 2.1, calibre: 0.057, at: 0.45 } });
+G['valentine-xi'] = ww2({ ...VALENTINE, gun: { length: 1.9, calibre: 0.075, at: 0.45 } });
+{
+  const m = mantlet(1.65, -0.85, -0.6, 1.75, 0.22, 0.18);
+  G['valentine-archer'] = ww2({ ...VALENTINE, cls: 'tank-destroyer', turret: m, guns: [fire(m, 3.3, 0.076, { elevation: Math.PI - 0.02, muzzle: true })], parts: [compartment(1.65, -0.5, 2.3, 2.15, 1.2, 1.4)] });
+}
+// Tetrarch: four big road wheels and no return rollers, the small turret with the 2-pounder (4.11 x 2.31 m, 2.12 m).
+G['tetrarch'] = ww2({
+  cls: 'light-tank', L: 4.11, W: 2.31, deck: 1.45, fender: 0.95,
+  top: [[-2.055, 1.25], [-1.95, 1.45], [1.2, 1.45], [1.5, 1.2], [2.055, 1.0]],
+  plan: [[-2.055, 1.12], [2.055, 1.12]], hullRound: 12,
+  track: trk(2.0, 0.98, 0.5, 0.5, 1.5),
+  wheels: even(4, -1.5, 1.5), r: 0.44,
+  turret: turret(0.0, [[-0.85, 0.65], [-0.7, 0.8], [0.6, 0.8], [0.85, 0.6]], [[-0.85, 0.62], [0.85, 0.62]], 10, 0.9),
+  gun: { length: 1.3, calibre: 0.04, at: 0.45 },
+});
+
+// ---------------------------------------------------------------- Japanese
+
+// Type 97 Chi-Ha: six road wheels (the outer two on bell cranks, the middle four in pairs), a riveted hull with its
+// raised superstructure, the small turret right of the centre with its tall cupola and the short 57 mm
+// (5.52 x 2.33 m, 2.23 m). Chi-Ha Kai: the bigger turret with a bustle and the 47 mm.
+const CHIHA: Ww2 = {
+  cls: 'medium-tank', L: 5.52, W: 2.33, deck: 1.55, fender: 0.82,
+  top: [[-2.76, 1.3], [-2.65, 1.5], [0.9, 1.55], [1.4, 1.4], [2.3, 1.15], [2.76, 0.95]],
+  plan: [[-2.76, 1.12], [2.76, 1.12]], hullRound: 14,
+  track: trk(2.72, 0.85, 0.6, 0.45, 2.0),
+  wheels: [-1.95, -0.95, -0.4, 0.4, 0.95, 1.95], r: 0.27, rollers: [-1.5, -0.5, 0.5, 1.5],
+};
+G['type-97-chi-ha'] = ww2({ ...CHIHA, turret: turret(0.3, [[-0.9, 0.65], [-0.7, 0.78], [0.55, 0.8], [0.85, 0.6]], [[-0.9, 0.55], [0.85, 0.58]], 6, 0.9, 0.2), gun: { length: 0.8, calibre: 0.057, at: 0.45 }, turretParts: (t) => [cupola(t, -0.2, 0, 0.3, 0.18)] });
+const CHIHA_KAI_T = turret(0.2, [[-1.2, 0.6], [-1.0, 0.8], [0.55, 0.82], [0.85, 0.6]], [[-1.2, 0.6], [0.85, 0.62]], 8, 0.9, 0.2);
+G['type-97-chi-ha-kai'] = ww2({ ...CHIHA, turret: CHIHA_KAI_T, gun: { length: 1.6, calibre: 0.047, at: 0.45 } });
+// Type 1 Chi-He: the welded, angular hull with its single sloped front and the Kai's turret (5.73 x 2.33 m, 2.38 m).
+// Type 3 Chi-Nu: the Chi-He with a big hexagonal turret and the 75 mm (2.61 m).
+const CHIHE: Ww2 = { ...CHIHA, L: 5.73, deck: 1.6, top: [[-2.865, 1.35], [-2.75, 1.6], [1.0, 1.62], [2.865, 0.95]], track: trk(2.82, 0.85, 0.6, 0.45, 2.05) };
+G['type-1-chi-he'] = ww2({ ...CHIHE, turret: CHIHA_KAI_T, gun: { length: 1.6, calibre: 0.047, at: 0.45 } });
+G['type-3-chi-nu'] = ww2({ ...CHIHE, turret: turret(0.1, [[-1.25, 0.7], [-0.9, 1.0], [0.6, 1.0], [1.0, 0.7]], [[-1.25, 0.72], [1.0, 0.72]], 16, 1.05), gun: { length: 2.5, calibre: 0.075, at: 0.45 }, turretParts: (t) => [cupola(t, -0.4, 0.4, 0.3, 0.15)] });
+// Type 4 Chi-To: seven road wheels, a big welded turret with the long 75 mm (6.42 x 2.87 m, 2.87 m).
+G['type-4-chi-to'] = ww2({
+  cls: 'medium-tank', L: 6.42, W: 2.87, deck: 1.85, fender: 0.92,
+  top: [[-3.21, 1.55], [-3.1, 1.85], [1.0, 1.85], [3.21, 1.0]],
+  plan: [[-3.21, 1.4], [3.21, 1.4]], hullRound: 12,
+  track: trk(3.15, 0.92, 0.6, 0.55, 2.5),
+  wheels: even(7, -2.45, 2.45), r: 0.3, rollers: [-1.5, 0, 1.5],
+  turret: turret(-0.1, [[-1.5, 0.85], [-1.2, 1.15], [0.7, 1.2], [1.2, 0.85], [1.3, 0.6]], [[-1.5, 0.85], [1.3, 0.82]], 12, 1.35),
+  gun: { length: 3.6, calibre: 0.075, at: 0.45 },
+  turretParts: (t) => [cupola(t, -0.6, -0.5, 0.32, 0.17)],
+});
+// Type 95 Ha-Go: four road wheels in two bell-crank pairs, two return rollers, the small turret left of the centre
+// with its 37 mm (4.38 x 2.06 m, 2.13 m).
+G['type-95-ha-go'] = ww2({
+  cls: 'light-tank', L: 4.38, W: 2.06, deck: 1.5, fender: 0.8,
+  top: [[-2.19, 1.25], [-2.1, 1.45], [0.8, 1.5], [1.3, 1.35], [2.19, 0.95]],
+  plan: [[-2.19, 1.0], [2.19, 1.0]], hullRound: 14,
+  track: trk(2.15, 0.82, 0.55, 0.45, 1.4),
+  wheels: pairs([-0.95, 0.95], 0.85), r: 0.3, rollers: [-0.5, 0.5],
+  turret: turret(0.3, [[-0.75, 0.55], [-0.6, 0.65], [0.45, 0.65], [0.7, 0.5]], [[-0.75, 0.6], [0.7, 0.62]], 6, 0.75, -0.2),
+  gun: { length: 1.0, calibre: 0.037, at: 0.45 },
+});
+
+// ---------------------------------------------------------------- Italian and French
+
+// Fiat M13/40 (and M14/41): eight small road wheels in two four-wheel bogies, a riveted box hull, the turret with the
+// 47/32 (4.92 x 2.2 m, 2.37 m).
+G['fiat-m13-40'] = ww2({
+  cls: 'medium-tank', L: 4.92, W: 2.2, deck: 1.55, fender: 0.72,
+  top: [[-2.46, 1.3], [-2.35, 1.5], [0.9, 1.55], [1.4, 1.4], [2.0, 1.25], [2.46, 0.95]],
+  plan: [[-2.46, 1.08], [2.46, 1.08]], hullRound: 14,
+  track: trk(2.42, 0.75, 0.55, 0.42, 1.75),
+  wheels: [-1.6, -1.22, -0.8, -0.42, 0.42, 0.8, 1.22, 1.6], r: 0.17, rollers: [-1.2, 0, 1.2],
+  turret: turret(0.15, [[-0.95, 0.6], [-0.8, 0.72], [0.55, 0.75], [0.85, 0.55]], [[-0.95, 0.58], [0.85, 0.6]], 10, 0.9),
+  gun: { length: 1.2, calibre: 0.047, at: 0.45 },
+});
+// Char B1 bis: the tracks run round the high hull sides behind armoured skirts, the 75 mm low in the front right of
+// the hull, the small APX 4 turret with the 47 mm (6.37 x 2.58 m, 2.79 m).
+{
+  const hullGun = mantlet(2.0, 2.55, 2.75, 1.25, 0.2, 0.15, 0.4, 4);
+  G['b1-bis'] = ww2({
+    cls: 'heavy-tank', L: 6.37, W: 2.58, deck: 2.0, fender: 0.45,
+    top: [[-3.18, 1.6], [-3.0, 2.0], [2.2, 2.0], [2.6, 1.6], [3.0, 1.4]],
+    plan: [[-3.18, 0.75], [3.0, 0.75]], hullRound: 10,
+    track: [[-2.6, 0], [2.4, 0], [3.18, 1.0], [2.9, 1.7], [-2.9, 1.7], [-3.18, 0.9]],
+    wheels: [], r: 0.2, solid: true,
+    turret: turret(0.6, [[-0.75, 0.55], [-0.6, 0.72], [0.5, 0.72], [0.75, 0.5]], [[-0.75, 0.7], [0.75, 0.7]], 4, 0.8),
+    guns: [{ mount: 'turret', length: 1.1, calibre: 0.047, at: 0.45 }, { ...fire(hullGun, 0.5, 0.075), turret: 1 }],
+    parts: [hullGun],
+  });
+}
+
+// ---------------------------------------------------------------- half-tracks and armoured cars
+
+/** A wheeled or half-tracked body from its outline: side profile top and bottom, plan, roundness (forward from the middle, up from the ground). */
+const bodyOf = (top: P2[], bottom: P2[], plan: P2[], round: number) => ({ top, bottom, plan, round, stations: 14 });
+// Sd.Kfz. 251 Ausf. C/D: the armoured body faceted above and below its waist, the pointed, sloped engine bonnet, the
+// open troop compartment (5.8 x 2.1 m, 1.75 m).
+G['sdkfz-251'] = { cls: 'halftrack', chassis: 'halftrack', length: 5.8, width: 2.1, hullHeight: 1.75, roadWheels: 6, wheelRadius: 0.45, openTop: true, hullOutline: bodyOf([[-2.9, 1.6], [-2.75, 1.75], [0.9, 1.75], [1.3, 1.5], [2.9, 1.1]], [[-2.9, 0.75], [-2.6, 0.55], [2.6, 0.6], [2.9, 0.75]], [[-2.9, 0.85], [-2.4, 0.98], [0.9, 0.98], [1.4, 0.62], [2.9, 0.4]], 2.4), guns: [{ mount: 'top', length: 1.2, calibre: 0.008 }] };
+G['sdkfz-251-wurfrahmen'] = { ...G['sdkfz-251'], cls: 'mlrs', missiles: [{ mount: 'hull', rows: 3, cols: 1, length: 1.2, diameter: 0.32, elevation: 0.5, x: -0.6, up: 0.2, side: 1.15 }, { mount: 'hull', rows: 3, cols: 1, length: 1.2, diameter: 0.32, elevation: 0.5, x: -0.6, up: 0.2, side: -1.15 }] };
+// M3 half-track: a box body, the armoured windscreen, the long bonnet with the curved front mudguards and the roller
+// bumper (6.18 x 2.22 m, 2.26 m with the machine-gun ring).
+G['m3-halftrack'] = {
+  cls: 'halftrack', chassis: 'halftrack', length: 6.18, width: 2.22, hullHeight: 1.85, roadWheels: 4, wheelRadius: 0.45, openTop: true,
+  hullOutline: bodyOf([[-3.09, 1.75], [-3.0, 1.85], [0.6, 1.85], [0.75, 1.6], [1.2, 1.5], [2.7, 1.35], [3.09, 1.2]], [[-3.09, 0.62], [3.09, 0.62]], [[-3.09, 1.02], [0.7, 1.05], [0.85, 0.58], [3.09, 0.5]], 12),
+  turrets: [...[-1, 1].map((s) => part(1.85, [[0.85, 0.16], [1.3, 0.16], [2.4, 0.16], [2.75, 0.16]], [[0.85, 1.12], [1.3, 1.3], [2.4, 1.3], [2.75, 1.1]], [[0.85, 0.95], [1.3, 1.05], [2.4, 1.05], [2.75, 0.9]], 8, s * 0.95)), drumX(1.85, 3.08, 3.3, 0, 0.75, 0.15)],
+  guns: [{ mount: 'top', length: 1.6, calibre: 0.013 }],
+};
+G['m2a1-halftrack'] = { ...G['m3-halftrack'], length: 5.96 };
+G['m3-gmc'] = { ...G['m3-halftrack'], cls: 'tank-destroyer', guns: [{ mount: 'hull', length: 2.6, calibre: 0.075, x: -0.2, at: 1.15 }] };
+G['m16-mgmc'] = { ...G['m3-halftrack'], cls: 'spaa', turret: { x: -1.2, length: 1.0, width: 0.9, height: 0.8, shape: 'box' }, guns: [{ mount: 'turret-side', count: 2, length: 1.6, calibre: 0.013, elevation: 0.35, at: 0.55, spread: 0.2 }] };
+// Sd.Kfz. 234/2 "Puma": eight wheels under a double-ended hull sloped fore and aft, faceted at its waist; the oval
+// turret with sloped faces and the 50 mm in a Saukopf (hull 6.0 x 2.33 m, 2.38 m).
+{
+  const t = turret(0.0, [[-0.95, 0.62], [-0.7, 0.8], [0.6, 0.8], [0.95, 0.5]], [[-0.95, 0.5], [0.95, 0.48]], 4, 1.2);
+  G['sdkfz-234-puma'] = { cls: 'scout-car', chassis: 'wheeled', length: 6.0, width: 2.33, hullHeight: 1.6, axles: 4, axleAt: [0.62, 0.22, -0.22, -0.62], wheelRadius: 0.5, hullOutline: bodyOf([[-3.0, 1.2], [-2.3, 1.6], [2.0, 1.6], [3.0, 1.15]], [[-3.0, 0.9], [-2.5, 0.55], [2.5, 0.55], [3.0, 0.9]], [[-3.0, 0.65], [-2.3, 1.1], [2.3, 1.1], [3.0, 0.65]], 2.2), turret: t, turrets: [saukopf(t, 0.95, 1.2, 0.25, 0.16, 0.26)], guns: [{ mount: 'turret', length: 2.2, calibre: 0.05, muzzle: true, at: 0.52 }] };
+}
+// Sd.Kfz. 222: the small faceted hull and the open ten-sided turret with its 20 mm (4.8 x 1.95 m, 2.0 m).
+G['sdkfz-222'] = { cls: 'scout-car', chassis: 'wheeled', length: 4.8, width: 1.95, hullHeight: 1.5, axles: 2, wheelRadius: 0.45, hullOutline: bodyOf([[-2.4, 1.15], [-1.9, 1.5], [1.0, 1.5], [2.4, 1.0]], [[-2.4, 0.75], [-2.0, 0.5], [2.0, 0.5], [2.4, 0.75]], [[-2.4, 0.6], [-1.5, 0.95], [1.2, 0.95], [2.4, 0.55]], 2.2), turret: turret(-0.1, [[-0.72, 0.45], [-0.5, 0.72], [0.5, 0.72], [0.72, 0.45]], [[-0.72, 0.42], [0.72, 0.42]], 5, 0.7), guns: [{ mount: 'turret', length: 1.4, calibre: 0.02, elevation: 0.1, at: 0.6 }] };
+// M8 Greyhound: six wheels, a low hull with its sloped nose, the open round turret with the 37 mm (5.0 x 2.54 m, 2.25 m).
+G['m8-greyhound'] = { cls: 'scout-car', chassis: 'wheeled', length: 5.0, width: 2.54, hullHeight: 1.55, axles: 3, axleAt: [0.6, -0.25, -0.65], wheelRadius: 0.48, hullOutline: bodyOf([[-2.5, 1.45], [-2.3, 1.55], [0.8, 1.55], [2.5, 1.05]], [[-2.5, 0.8], [-2.1, 0.55], [2.1, 0.55], [2.5, 0.75]], [[-2.5, 1.1], [2.2, 1.12], [2.5, 0.9]], 8), turret: turret(0.0, circle(0, 0.85), [[-0.85, 0.6], [0.85, 0.6]], 6, 0.85), guns: [{ mount: 'turret', length: 1.5, calibre: 0.037, at: 0.5 }] };
+// Staghound: four big wheels, a tall rounded hull, the cast turret (5.49 x 2.69 m, 2.36 m).
+G['staghound'] = { cls: 'scout-car', chassis: 'wheeled', length: 5.49, width: 2.69, hullHeight: 1.75, axles: 2, wheelRadius: 0.55, hullOutline: bodyOf([[-2.75, 1.55], [-2.5, 1.75], [1.2, 1.75], [2.75, 1.15]], [[-2.75, 0.85], [2.75, 0.85]], [[-2.75, 1.2], [2.75, 1.2]], 4), turret: turret(0.0, [[-0.95, 0.55], [-0.7, 0.85], [0.55, 0.88], [0.95, 0.55]], [[-0.95, 0.5], [-0.5, 0.62], [0.5, 0.62], [0.95, 0.5]], 3, 1.0), guns: [{ mount: 'turret', length: 1.6, calibre: 0.037, at: 0.45 }] };
+// Daimler armoured car: a small rounded body on four wheels, the little turret with the 2-pounder (3.96 x 2.44 m, 2.24 m).
+// Humber Mk IV: taller and angular, its rear sloping (4.57 x 2.18 m, 2.36 m).
+const CAR_T = turret(0.0, [[-0.75, 0.55], [-0.6, 0.72], [0.5, 0.72], [0.75, 0.5]], [[-0.75, 0.55], [0.75, 0.55]], 10, 0.8);
+G['daimler-armoured-car'] = { cls: 'scout-car', chassis: 'wheeled', length: 3.96, width: 2.44, hullHeight: 1.6, axles: 2, wheelRadius: 0.5, hullOutline: bodyOf([[-1.98, 1.35], [-1.7, 1.6], [0.6, 1.62], [1.98, 1.1]], [[-1.98, 0.6], [1.98, 0.6]], [[-1.98, 0.9], [0, 1.1], [1.98, 0.85]], 4), turret: CAR_T, guns: [{ mount: 'turret', length: 1.4, calibre: 0.04, at: 0.45 }] };
+G['humber-mk4'] = { ...G['daimler-armoured-car'], length: 4.57, width: 2.18, hullHeight: 1.75, hullOutline: bodyOf([[-2.285, 1.4], [-1.8, 1.75], [0.8, 1.75], [2.285, 1.05]], [[-2.285, 0.65], [2.285, 0.65]], [[-2.285, 1.0], [2.285, 1.0]], 10) };
+// BA-10: three axles, the long bonnet, the boxy body and a BT-style turret with the 45 mm (4.65 x 2.07 m, 2.21 m).
+G['ba-10'] = { cls: 'scout-car', chassis: 'wheeled', length: 4.65, width: 2.07, hullHeight: 1.7, axles: 3, axleAt: [0.6, -0.3, -0.7], wheelRadius: 0.45, hullOutline: bodyOf([[-2.325, 1.45], [-2.1, 1.7], [0.1, 1.7], [0.4, 1.35], [2.325, 1.15]], [[-2.325, 0.65], [2.325, 0.65]], [[-2.325, 0.95], [0.2, 1.0], [0.5, 0.65], [2.325, 0.55]], 12), turret: turret(-0.6, [[-0.8, 0.55], [-0.6, 0.75], [0.6, 0.78], [0.85, 0.55]], [[-0.8, 0.55], [0.85, 0.55]], 5, 0.85), guns: [{ mount: 'turret', length: 1.4, calibre: 0.045, at: 0.45 }] };
+// BA-64: a small body faceted all round and the little open turret with its machine gun (3.67 x 1.52 m, 1.9 m).
+G['ba-64'] = { cls: 'scout-car', chassis: 'wheeled', length: 3.67, width: 1.52, hullHeight: 1.45, axles: 2, wheelRadius: 0.4, hullOutline: bodyOf([[-1.835, 1.15], [-1.3, 1.45], [0.4, 1.45], [1.835, 0.85]], [[-1.835, 0.75], [-1.5, 0.5], [1.5, 0.5], [1.835, 0.65]], [[-1.835, 0.45], [-1.0, 0.72], [0.6, 0.72], [1.835, 0.4]], 2.2), turret: turret(-0.2, circle(0, 0.42), [[-0.42, 0.4], [0.42, 0.4]], 8, 0.42), guns: [{ mount: 'turret', length: 0.9, calibre: 0.008, at: 0.5 }] };
+// Universal Carrier: the low open box, three road wheels a side (one bogie of two, one single), the Bren in front (3.65 x 2.06 m, 1.57 m).
+G['universal-carrier'] = ww2({ cls: 'apc-tracked', L: 3.65, W: 2.06, deck: 1.15, fender: 0.6, top: [[-1.825, 1.0], [-1.7, 1.15], [1.3, 1.15], [1.825, 0.85]], plan: [[-1.825, 1.0], [1.825, 1.0]], hullRound: 14, track: trk(1.8, 0.62, 0.45, 0.4, 1.35), wheels: [-1.15, -0.6, 0.8], r: 0.25, guns: [{ mount: 'hull', length: 1.0, calibre: 0.008, at: 1.0, side: -0.4 }] });
+
+// ---------------------------------------------------------------- more on the same chassis
+
+// Möbelwagen: the Pz IV with a box of folding armoured sides round the 37 mm.
+G['mobelwagen'] = ww2({ ...PZ4, cls: 'spaa', turret: turret(0.0, [[-1.55, 1.35], [1.55, 1.35]], [[-1.55, 0.95], [1.55, 0.95]], 16, 0.5), gun: { length: 2.1, calibre: 0.037, elevation: 0.5, at: 0.8 } });
+// M7 Priest: the Sherman chassis with an open superstructure, the 105 mm right of the centre and the round
+// machine-gun "pulpit" at the front right (6.02 x 2.88 m, 2.54 m).
+{
+  const m = mantlet(1.85, 1.55, 1.85, 1.8, 0.28, 0.2, -0.3);
+  G['m7-priest'] = ww2({ cls: 'sp-artillery', L: 6.02, W: 2.88, deck: 1.85, fender: 1.02, top: [[-3.01, 1.75], [-2.9, 1.85], [-1.0, 1.85], [-0.8, 2.15], [1.5, 2.15], [2.6, 1.2], [3.01, 0.85]], plan: [[-3.01, 1.38], [2.5, 1.42], [3.01, 1.1]], hullRound: 10, track: [[-2.05, 0], [2.0, 0], [3.0, 0.78], [2.7, 1.02], [-2.6, 1.0], [-2.98, 0.42]], wheels: pairs([-1.5, 0, 1.5], 0.56), r: 0.255, turret: m, guns: [fire(m, 1.15, 0.105)], parts: [...vvss(2.88, [-1.5, 0, 1.5]), part(1.85, circle(1.25, 0.42), [[0.83, 2.65], [1.67, 2.65]], 1.9, 6, 0.85)] });
+}
+// The Sherman Calliope's rocket frame over the new M4; Centaur CS: the Cromwell with the 95 mm howitzer; the Churchill
+// gun carrier: a casemate over the Churchill's front with the 3-inch gun.
+G['m4-calliope'] = { ...G['m4-sherman'], missiles: [{ mount: 'turret-top', rows: 3, cols: 12, length: 2.6, diameter: 0.115, pod: true, elevation: 0.05, x: 0.4, up: 0.8 }] };
+G['centaur-cs'] = { ...G['cromwell'], guns: [{ mount: 'turret', length: 1.0, calibre: 0.095, at: 0.48 }] };
+{
+  const m = mantlet(1.75, 2.95, 3.2, 2.0, 0.25, 0.18);
+  G['churchill-gun-carrier'] = ww2({ ...CHURCHILL, cls: 'tank-destroyer', top: [[-3.6, 1.25], [-3.45, 1.75], [0.3, 1.75], [0.4, 2.35], [2.5, 2.35], [3.05, 1.75], [3.35, 1.3]], turret: m, guns: [fire(m, 1.6, 0.076)] });
+}
+// Fiat M11/39: the M13's running gear with a 37 mm low in the hull's right front and a small machine-gun turret offset left.
+{
+  const m13 = G['fiat-m13-40'];
+  G['fiat-m11-39'] = { ...m13, cls: 'light-tank', length: 4.73, turret: turret(-0.1, [[-0.6, 0.45], [-0.5, 0.55], [0.4, 0.55], [0.6, 0.45]], [[-0.6, 0.5], [0.6, 0.5]], 6, 0.6, -0.25), guns: [{ mount: 'turret', length: 0.7, calibre: 0.008, at: 0.5 }, { mount: 'hull', length: 1.0, calibre: 0.037, side: 0.4, at: 0.65, x: 2.0 }] };
+}
+
 export const ARMOUR_WW2: SpecSet = { ground: G };
