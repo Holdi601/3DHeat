@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Noch ausstehende Kartenkacheln: {count}. Ein Bau lädt höchstens {max}; erneut bauen, um den nächsten Teil zu holen.",
   "heat.world.note.noRunways": "Die Landebahnliste ließ sich nicht lesen: Landebahnen so, wie die Karte sie zeichnet.",
   "heat.world.credit.ourairports": "Landebahnen: OurAirports (gemeinfrei)",
-  "heat.world.follow": "Der Kamera folgen",
-  "heat.world.followTitle": "Den Detailbereich neu um den Punkt unter der Kamera bauen, sobald sie anhält: weiter, wenn sie hoch ist, feiner, wenn sie tief ist. Bereits geladene Kacheln werden nicht erneut geladen."
+  "heat.world.stream.button": "Schauplatz streamen",
+  "heat.world.stream.buttonTitle": "Gelände, Bodenbedeckung, Straßen, Flugplätze und Gebäude werden um die Kamera geladen, während sie fliegt: grob in der Ferne, feiner in der Nähe, über den ganzen Schauplatz und darüber hinaus. Geladen wird nur, was noch nicht im Cache ist.",
+  "heat.world.stream.status": "Streaming: {drawn} Kacheln gezeigt, {loading} laden, {kept} behalten ({size}); {downloaded} geladen.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Satellitenbild (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Ein wolkenfreies Satellitenbild, etwa 10 m pro Pixel, statt der gemalten Bodenbedeckung über das Gelände legen. CC BY 4.0; wird bei Bedarf geladen und im Cache behalten.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

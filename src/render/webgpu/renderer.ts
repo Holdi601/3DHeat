@@ -1,11 +1,13 @@
 import { ATLAS_MIP_LEVELS } from '../../data/atlas';
 import { packLineStarts, type LineData } from '../../data/lines';
 import { CURVE_LUT_SIZE } from '../../state/curve';
-import type { Dataset } from '../../state/types';
+import type { Bounds, Dataset } from '../../state/types';
 import { LUT_HEIGHT, LUT_WIDTH } from '../colors';
 import { floatToHalf, halfToFloat } from '../half';
 import { forcedHeatPrecision } from '../webgl2/glutil';
 import { buildEdgeList, type Level } from '../level';
+import { boxOutsideFrustum, diffWorldTiles, frustumPlanes, textureBytes } from '../worldTiles';
+import type { WorldTile } from '../../world/tileSet';
 import { filterColumnData, packSignTables } from '../filterTables';
 import {
   CHUNK_ROWS,
@@ -138,7 +140,13 @@ export class WebgpuRenderer implements Renderer {
   gpuBytesUsed = 0;
   residentRows = 0;
   droppedRows = 0;
-  levelBytes = 0;
+  /** The level's own GPU footprint: its map, or its mesh and atlas. */
+  private levelOwnBytes = 0;
+
+  /** Background geometry's GPU footprint, the world tiles included. */
+  get levelBytes(): number {
+    return this.levelOwnBytes + this.tileBytes;
+  }
 
   private dataset: Dataset | null = null;
   private chunks: GpuChunk[] = [];
@@ -252,42 +260,30 @@ export class WebgpuRenderer implements Renderer {
   private triBuffer: GPUBuffer | null = null;
 
   private mapTexture: GPUTexture | null = null;
-  private meshVertexBuffer: GPUBuffer | null = null;
+  /** The model level's geometry; null for an image level or none. */
+  private levelMesh: GpuMesh | null = null;
   /**
-   * Captured vertex colour, or constant white when the level has none.
-   *
-   * Always allocated, so the pipeline's vertex layout never changes and there is
-   * one mesh shader rather than two.
+   * The streamed world tiles' geometry, by tile id, with the tile object each
+   * was uploaded from - identity is what says a tile is unchanged. See
+   * `setWorldTiles`.
    */
-  private meshColourBuffer: GPUBuffer | null = null;
-  private meshUvBuffer: GPUBuffer | null = null;
+  private tileMeshes = new Map<string, GpuMesh>();
+  private readonly tileSources = new Map<string, WorldTile>();
+  /** What the tiles hold on the GPU, buffers and images together. */
+  private tileBytes = 0;
   /**
-   * Per-vertex tile numbers as uint32, and the tiles' rectangles as a storage
-   * buffer the vertex shader reads by number (see ATLAS_WGSL). A level with no
-   * repeating texture gets a zeroed tile buffer - WebGPU zeroes a new buffer,
-   * so it costs no upload - and the one-entry placeholder table.
+   * The meshes this frame draws: the level's, then every tile in view. Decided
+   * once per frame in `drawScene`, so the colour pass and every depth pass after
+   * it draw exactly the same geometry - a tile in the colour but not in the depth
+   * would show heat through a hill that is plainly there.
    */
-  private meshTileBuffer: GPUBuffer | null = null;
-  private tileTable: GPUBuffer | null = null;
+  private frameMeshes: GpuMesh[] = [];
+  private readonly planes = new Float32Array(20);
   private tilePlaceholder: GPUBuffer | null = null;
-  /** The level's texture atlas, once decoded and uploaded; null until then. */
-  private atlasTexture: GPUTexture | null = null;
   /** Bumped per level so a late atlas is not uploaded onto the next level. */
   private atlasToken = 0;
   private atlasPlaceholder: GPUTexture | null = null;
   private atlasSamplerCache: GPUSampler | null = null;
-  private meshIndexBuffer: GPUBuffer | null = null;
-  private structIndexBuffer: GPUBuffer | null = null;
-  private wireIndexBuffer: GPUBuffer | null = null;
-  private groundWireBuffer: GPUBuffer | null = null;
-  private waterIndexBuffer: GPUBuffer | null = null;
-  private waterIndexCount = 0;
-  private meshIndexCount = 0;
-  private structIndexCount = 0;
-  private wireIndexCount = 0;
-  private groundWireCount = 0;
-  /** Kept so the ground's edge list can be built on demand rather than upfront. */
-  private groundIndices: Uint32Array | null = null;
 
   // Heat probe: WebGPU readback is asynchronous, so a probe returns the most
   // recent completed value and schedules the next.
@@ -1152,36 +1148,10 @@ export class WebgpuRenderer implements Renderer {
     this.mapTexture = null;
     // Invalidate any cached bind group that held a view of the old map.
     this.mapTextureId++;
-    this.meshVertexBuffer?.destroy();
-    this.meshVertexBuffer = null;
-    this.meshColourBuffer?.destroy();
-    this.meshColourBuffer = null;
-    this.meshUvBuffer?.destroy();
-    this.meshUvBuffer = null;
-    this.meshTileBuffer?.destroy();
-    this.meshTileBuffer = null;
-    this.tileTable?.destroy();
-    this.tileTable = null;
-    this.atlasTexture?.destroy();
-    this.atlasTexture = null;
     this.atlasToken++;
-    this.meshIndexBuffer?.destroy();
-    this.meshIndexBuffer = null;
-    this.structIndexBuffer?.destroy();
-    this.structIndexBuffer = null;
-    this.wireIndexBuffer?.destroy();
-    this.wireIndexBuffer = null;
-    this.groundWireBuffer?.destroy();
-    this.groundWireBuffer = null;
-    this.waterIndexBuffer?.destroy();
-    this.waterIndexBuffer = null;
-    this.waterIndexCount = 0;
-    this.groundIndices = null;
-    this.meshIndexCount = 0;
-    this.structIndexCount = 0;
-    this.wireIndexCount = 0;
-    this.groundWireCount = 0;
-    this.levelBytes = 0;
+    if (this.levelMesh) this.freeMesh(this.levelMesh);
+    this.levelMesh = null;
+    this.levelOwnBytes = 0;
     if (!level) return;
 
     if (level.kind === 'image') {
@@ -1200,81 +1170,244 @@ export class WebgpuRenderer implements Renderer {
         [level.width, level.height],
       );
       this.mapTexture = tex;
-      this.levelBytes = level.width * level.height * 4;
+      this.levelOwnBytes = level.width * level.height * 4;
       return;
     }
 
-    // One vertex buffer, three index buffers: ground triangles, structure
-    // triangles, structure edges. Sharing vertices is what keeps the memory the
-    // decimation saved.
-    this.meshVertexBuffer = this.makeBuffer(
-      level.vertices,
-      GPUBufferUsage.VERTEX,
-      'level verts',
+    const mesh = this.uploadMesh(
+      {
+        vertices: level.vertices,
+        colours: level.colours,
+        uvs: level.uvs,
+        indices: level.indices,
+        // Structure arrays are optional: a level may have no buildings, or come
+        // from a library entry saved before the split existed.
+        structureIndices: level.structureIndices ?? EMPTY_INDICES,
+        structureEdges: level.structureEdges ?? EMPTY_INDICES,
+        waterIndices: level.waterIndices ?? EMPTY_INDICES,
+        uvTiles: level.uvs && level.tileRects ? level.uvTiles : null,
+        tileRects: level.tileRects,
+      },
+      null,
+      false,
+      'level',
     );
+    this.levelMesh = mesh;
+    this.levelOwnBytes = mesh.bytes;
+    if (level.atlas && level.uvs) this.loadAtlas(level.atlas, mesh);
+  }
+
+  /**
+   * Upload one mesh: the level's, or a world tile's.
+   *
+   * One vertex buffer, up to four index buffers: ground triangles, structure
+   * triangles, structure edges, water. Sharing vertices is what keeps the memory
+   * the decimation saved.
+   */
+  private uploadMesh(src: MeshSource, bounds: Bounds | null, tile: boolean, label: string): GpuMesh {
+    const vertexBuffer = this.makeBuffer(src.vertices, GPUBufferUsage.VERTEX, `${label} verts`);
     // Interleaved position+normal is 24 bytes; colour rides in its own buffer.
-    // A level without colour still gets one, filled with white, so the location
+    // A mesh without colour still gets one, filled with white, so the location
     // is never left unbound — which is a validation error here rather than the
-    // driver-dependent garbage it would be in WebGL.
-    const vertexCount = level.vertices.length / 6;
+    // driver-dependent garbage it would be in WebGL. Always allocated, so the
+    // pipeline's vertex layout never changes and there is one mesh shader
+    // rather than two.
+    const vertexCount = src.vertices.length / 6;
     const colours =
-      level.colours && level.colours.length >= vertexCount * 3
-        ? level.colours
+      src.colours && src.colours.length >= vertexCount * 3
+        ? src.colours
         : new Float32Array(vertexCount * 3).fill(1);
-    this.meshColourBuffer = this.makeBuffer(
-      colours,
-      GPUBufferUsage.VERTEX,
-      'level colours',
-    );
-    // UVs always backed as well: -1 everywhere on an untextured level, which
+    const colourBuffer = this.makeBuffer(colours, GPUBufferUsage.VERTEX, `${label} colours`);
+    // UVs always backed as well: -1 everywhere on an untextured mesh, which
     // the shader reads as "no texture here".
     const uvs =
-      level.uvs && level.uvs.length >= vertexCount * 2
-        ? level.uvs
+      src.uvs && src.uvs.length >= vertexCount * 2
+        ? src.uvs
         : new Float32Array(vertexCount * 2).fill(-1);
-    this.meshUvBuffer = this.makeBuffer(uvs, GPUBufferUsage.VERTEX, 'level uvs');
-    if (level.atlas && level.uvs) this.loadAtlas(level.atlas);
-    // uint32 on the GPU: a vertex attribute here is at least four bytes wide.
-    const tiled =
-      level.uvs && level.uvTiles && level.tileRects && level.uvTiles.length >= vertexCount
-        ? level.uvTiles
-        : null;
-    if (tiled && level.tileRects) {
-      this.meshTileBuffer = this.makeBuffer(
-        Uint32Array.from(tiled.subarray(0, vertexCount)),
+    const uvBuffer = this.makeBuffer(uvs, GPUBufferUsage.VERTEX, `${label} uvs`);
+    // Per-vertex tile numbers as uint32 - a vertex attribute here is at least
+    // four bytes wide - and the tiles' rectangles as a storage buffer the vertex
+    // shader reads by number (see ATLAS_WGSL). A mesh with no repeating texture
+    // gets a zeroed tile buffer - WebGPU zeroes a new buffer, so it costs no
+    // upload - and the one-entry placeholder table.
+    let tileBuffer: GPUBuffer;
+    let tileTable: GPUBuffer | null = null;
+    if (src.uvTiles && src.uvTiles.length >= vertexCount && src.tileRects) {
+      tileBuffer = this.makeBuffer(
+        Uint32Array.from(src.uvTiles.subarray(0, vertexCount)),
         GPUBufferUsage.VERTEX,
-        'level tiles',
+        `${label} tiles`,
       );
-      this.tileTable = this.makeBuffer(level.tileRects, GPUBufferUsage.STORAGE, 'tile table');
+      tileTable = this.makeBuffer(src.tileRects, GPUBufferUsage.STORAGE, `${label} tile table`);
     } else {
-      this.meshTileBuffer = this.device.createBuffer({
-        label: 'level tiles (none)',
+      tileBuffer = this.device.createBuffer({
+        label: `${label} tiles (none)`,
         size: Math.max(4, vertexCount * 4),
         usage: GPUBufferUsage.VERTEX,
       });
     }
-    const index = (data: Uint32Array, label: string) =>
-      data.length > 0 ? this.makeBuffer(data, GPUBufferUsage.INDEX, label) : null;
-    // Structure arrays are optional: a level may have no buildings, or come from
-    // a library entry saved before the split existed.
-    const structIndices = level.structureIndices ?? EMPTY_INDICES;
-    const structEdges = level.structureEdges ?? EMPTY_INDICES;
-    this.meshIndexBuffer = index(level.indices, 'ground indices');
-    this.structIndexBuffer = index(structIndices, 'structure indices');
-    this.wireIndexBuffer = index(structEdges, 'structure edges');
-    const waterIndices = level.waterIndices ?? EMPTY_INDICES;
-    this.waterIndexBuffer = index(waterIndices, 'water indices');
-    this.waterIndexCount = waterIndices.length;
-    this.meshIndexCount = level.indices.length;
-    this.structIndexCount = structIndices.length;
-    this.wireIndexCount = structEdges.length;
-    this.groundIndices = level.indices;
-    this.levelBytes =
-      level.vertices.byteLength +
-      level.indices.byteLength +
-      structIndices.byteLength +
-      structEdges.byteLength +
-      this.meshTileBuffer.size;
+    const index = (data: Uint32Array, what: string) =>
+      data.length > 0 ? this.makeBuffer(data, GPUBufferUsage.INDEX, `${label} ${what}`) : null;
+    return {
+      vertexBuffer,
+      colourBuffer,
+      uvBuffer,
+      tileBuffer,
+      tileTable,
+      texture: null,
+      groundBuffer: index(src.indices, 'ground indices'),
+      structBuffer: index(src.structureIndices, 'structure indices'),
+      wireBuffer: index(src.structureEdges, 'structure edges'),
+      waterBuffer: index(src.waterIndices, 'water indices'),
+      groundCount: src.indices.length,
+      structCount: src.structureIndices.length,
+      wireCount: src.structureEdges.length,
+      waterCount: src.waterIndices.length,
+      groundWireBuffer: null,
+      groundWireCount: 0,
+      groundIndices: src.indices,
+      bytes:
+        src.vertices.byteLength +
+        colours.byteLength +
+        uvs.byteLength +
+        tileBuffer.size +
+        (tileTable ? tileTable.size : 0) +
+        src.indices.byteLength +
+        src.structureIndices.byteLength +
+        src.structureEdges.byteLength +
+        src.waterIndices.byteLength,
+      bounds,
+      tile,
+      atlasGroups: new Map(),
+      freed: false,
+    };
+  }
+
+  private freeMesh(mesh: GpuMesh): void {
+    for (const b of [
+      mesh.vertexBuffer,
+      mesh.colourBuffer,
+      mesh.uvBuffer,
+      mesh.tileBuffer,
+      mesh.tileTable,
+      mesh.groundBuffer,
+      mesh.structBuffer,
+      mesh.wireBuffer,
+      mesh.waterBuffer,
+      mesh.groundWireBuffer,
+    ]) {
+      b?.destroy();
+    }
+    mesh.texture?.destroy();
+    mesh.texture = null;
+    mesh.atlasGroups.clear();
+    mesh.freed = true;
+  }
+
+  /**
+   * The streamed world tiles to draw with a model level (src/world/tileSet).
+   *
+   * Uploads the tiles it has not seen and frees the ones that are gone, by id and
+   * by object - a tile is never changed in place. Each is a small model level in
+   * itself and goes through the same draw code as the level: see `frameMeshes`.
+   */
+  setWorldTiles(tiles: WorldTile[]): void {
+    const { added, removed } = diffWorldTiles(this.tileSources, tiles);
+    for (const id of removed) {
+      const mesh = this.tileMeshes.get(id);
+      if (mesh) {
+        this.tileBytes -= mesh.bytes;
+        this.freeMesh(mesh);
+      }
+      this.tileMeshes.delete(id);
+      this.tileSources.delete(id);
+    }
+    for (const tile of added) {
+      const mesh = this.uploadMesh(tile, tile.bounds, true, `tile ${tile.id}`);
+      this.tileMeshes.set(tile.id, mesh);
+      this.tileSources.set(tile.id, tile);
+      this.tileBytes += mesh.bytes;
+      if (tile.image && tile.uvs) this.uploadTileImage(tile.image, mesh, tile.id);
+    }
+    if (this.tileMeshes.size === 0) this.tileBytes = 0;
+  }
+
+  /**
+   * A tile's own imagery as a texture: its full size at once, then with a mip
+   * chain once the browser has scaled one.
+   *
+   * WebGPU has no generateMipmap, and the scaled levels come from
+   * `createImageBitmap`, which is asynchronous - so the tile is drawn textured
+   * from the first frame and swaps to the mipmapped copy when that is ready,
+   * rather than drawing untextured while it waits. The bitmap belongs to the
+   * tile set and is left open: the same tile may be uploaded again by a
+   * recreated renderer.
+   */
+  private uploadTileImage(image: ImageBitmap, mesh: GpuMesh, id: string): void {
+    const limit = this.device.limits.maxTextureDimension2D;
+    // A closed bitmap reports 0 x 0, and copying it would fail validation; the
+    // tile is then drawn untextured. One past the device's limit likewise.
+    if (image.width < 1 || image.height < 1 || image.width > limit || image.height > limit) return;
+    const usage =
+      GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT;
+    const first = this.device.createTexture({
+      label: `tile ${id} image`,
+      size: [image.width, image.height],
+      format: 'rgba8unorm',
+      usage,
+    });
+    this.device.queue.copyExternalImageToTexture({ source: image }, { texture: first }, [image.width, image.height]);
+    mesh.texture = first;
+    mesh.atlasGroups.clear();
+    const base = textureBytes(image.width, image.height, false);
+    mesh.bytes += base;
+    this.tileBytes += base;
+
+    const mips = Math.floor(Math.log2(Math.max(image.width, image.height))) + 1;
+    if (mips < 2) return;
+    void (async () => {
+      const levels: ImageBitmap[] = [];
+      let width = image.width;
+      let height = image.height;
+      try {
+        for (let mip = 1; mip < mips; mip++) {
+          width = Math.max(1, width >> 1);
+          height = Math.max(1, height >> 1);
+          levels.push(
+            await createImageBitmap(image, { resizeWidth: width, resizeHeight: height, resizeQuality: 'high' }),
+          );
+          if (mesh.freed) return;
+        }
+        const texture = this.device.createTexture({
+          label: `tile ${id} image`,
+          size: [image.width, image.height],
+          format: 'rgba8unorm',
+          mipLevelCount: mips,
+          usage,
+        });
+        this.device.queue.copyExternalImageToTexture({ source: image }, { texture }, [image.width, image.height]);
+        levels.forEach((level, i) => {
+          this.device.queue.copyExternalImageToTexture(
+            { source: level },
+            { texture, mipLevel: i + 1 },
+            [level.width, level.height],
+          );
+        });
+        // The frame already encoded with the first copy is submitted before
+        // this task can run, so destroying it here cannot pull it from under a
+        // draw.
+        mesh.texture?.destroy();
+        mesh.texture = texture;
+        mesh.atlasGroups.clear();
+        const full = textureBytes(image.width, image.height, true);
+        mesh.bytes += full - base;
+        this.tileBytes += full - base;
+      } catch {
+        // The full-size copy stays: a tile without mips is still the right picture.
+      } finally {
+        for (const level of levels) level.close();
+      }
+    })();
   }
 
   /**
@@ -1289,8 +1422,9 @@ export class WebgpuRenderer implements Renderer {
    * the level's other colours reach the frame as they are, and decoding this
    * one to linear would draw it darker than its file.
    */
-  private loadAtlas(atlas: Blob): void {
+  private loadAtlas(atlas: Blob, mesh: GpuMesh): void {
     const token = this.atlasToken;
+    const stale = () => token !== this.atlasToken || mesh.freed;
     void (async () => {
       let level = await createImageBitmap(atlas, { imageOrientation: 'none' });
       const limit = this.device.limits.maxTextureDimension2D;
@@ -1305,7 +1439,7 @@ export class WebgpuRenderer implements Renderer {
         level.close();
         level = smaller;
       }
-      if (token !== this.atlasToken) {
+      if (stale()) {
         level.close();
         return;
       }
@@ -1328,7 +1462,7 @@ export class WebgpuRenderer implements Renderer {
       let height = level.height;
       let bytes = 0;
       for (let mip = 0; mip < mips; mip++) {
-        if (token !== this.atlasToken) {
+        if (stale()) {
           level.close();
           texture.destroy();
           return;
@@ -1351,19 +1485,28 @@ export class WebgpuRenderer implements Renderer {
         level = next;
       }
       level.close();
-      if (token !== this.atlasToken) {
+      if (stale()) {
         texture.destroy();
         return;
       }
-      this.atlasTexture = texture;
-      this.levelBytes += bytes;
+      mesh.texture = texture;
+      mesh.atlasGroups.clear();
+      mesh.bytes += bytes;
+      this.levelOwnBytes += bytes;
     })().catch(() => {
       // An atlas that will not decode costs the texture, not the level.
     });
   }
 
-  /** The atlas bind group for one mesh pipeline: the texture, or a placeholder. */
-  private atlasBindGroup(pipeline: GPURenderPipeline): GPUBindGroup {
+  /**
+   * A mesh's atlas bind group for one mesh pipeline: its texture (the level's
+   * atlas, a tile's image) or a placeholder, and its tile table or a
+   * placeholder.
+   *
+   * Kept on the mesh rather than in the shared cache, so a tile's groups go
+   * when the tile does instead of piling up under ids that never come back.
+   */
+  private atlasBindGroup(pipeline: GPURenderPipeline, mesh: GpuMesh): GPUBindGroup {
     if (!this.atlasPlaceholder) {
       this.atlasPlaceholder = this.device.createTexture({
         label: 'no atlas',
@@ -1394,28 +1537,32 @@ export class WebgpuRenderer implements Renderer {
     }
     if (!this.tilePlaceholder) {
       // One zeroed rectangle: the storage binding must be backed, and nothing
-      // reads it, a level without tiles numbering every vertex 0.
+      // reads it, a mesh without tiles numbering every vertex 0.
       this.tilePlaceholder = this.device.createBuffer({
         label: 'no tiles',
         size: 16,
         usage: GPUBufferUsage.STORAGE,
       });
     }
-    const texture = this.atlasTexture ?? this.atlasPlaceholder;
-    const tiles = this.tileTable ?? this.tilePlaceholder;
-    return this.cachedBindGroup(
-      `atlas:${pipeline.label}:${texture.label}:${this.atlasToken}:${this.atlasTexture ? 1 : 0}`,
-      pipeline.getBindGroupLayout(1),
-      () => [
-        { binding: 0, resource: texture.createView() },
-        { binding: 1, resource: this.atlasSamplerCache! },
-        { binding: 2, resource: { buffer: tiles } },
-      ],
-    );
+    let group = mesh.atlasGroups.get(pipeline);
+    if (!group) {
+      const texture = mesh.texture ?? this.atlasPlaceholder;
+      const tiles = mesh.tileTable ?? this.tilePlaceholder;
+      group = this.device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(1),
+        entries: [
+          { binding: 0, resource: texture.createView() },
+          { binding: 1, resource: this.atlasSamplerCache },
+          { binding: 2, resource: { buffer: tiles } },
+        ],
+      });
+      mesh.atlasGroups.set(pipeline, group);
+    }
+    return group;
   }
 
   /**
-   * The ground's own edge list, built once, the first time it is asked for.
+   * A mesh's ground edge list, built once, the first time it is asked for.
    *
    * Deferred because it is a hash-set pass over a million triangles and the
    * shaded view never needs it. Built from `buildEdgeList` rather than by
@@ -1424,13 +1571,44 @@ export class WebgpuRenderer implements Renderer {
    * are (0,1) (2,3) (4,5), so it renders one and a half edges of every second
    * triangle and none of the rest.
    */
-  private ensureGroundWire(): void {
-    if (this.groundWireBuffer || !this.groundIndices || this.groundIndices.length === 0) return;
-    const edges = buildEdgeList(this.groundIndices);
+  private ensureGroundWire(m: GpuMesh): void {
+    if (m.groundWireBuffer || m.groundIndices.length === 0) return;
+    const edges = buildEdgeList(m.groundIndices);
     if (edges.length === 0) return;
-    this.groundWireBuffer = this.makeBuffer(edges, GPUBufferUsage.INDEX, 'ground edges');
-    this.groundWireCount = edges.length;
-    this.levelBytes += edges.byteLength;
+    m.groundWireBuffer = this.makeBuffer(edges, GPUBufferUsage.INDEX, 'ground edges');
+    m.groundWireCount = edges.length;
+    m.bytes += edges.byteLength;
+    if (m.tile) this.tileBytes += edges.byteLength;
+    else this.levelOwnBytes += edges.byteLength;
+  }
+
+  /**
+   * The meshes a frame draws: the model level's, then every world tile whose box
+   * is in view.
+   *
+   * Nothing at all without a model level: the tiles are drawn with the level's
+   * look, and an image level or none has no look to give them. The level's own
+   * mesh is never culled - it is one draw, and its box is not kept.
+   */
+  private meshesInView(params: FrameParams): GpuMesh[] {
+    if (params.level?.kind !== 'model') return [];
+    const out: GpuMesh[] = [];
+    if (this.levelMesh) out.push(this.levelMesh);
+    if (this.tileMeshes.size === 0) return out;
+    frustumPlanes(params.viewProj, this.planes);
+    for (const m of this.tileMeshes.values()) {
+      if (m.bounds && boxOutsideFrustum(this.planes, m.bounds)) continue;
+      out.push(m);
+    }
+    return out;
+  }
+
+  /** Bind one mesh's four vertex buffers, in the mesh pipelines' layout. */
+  private setMeshBuffers(pass: GPURenderPassEncoder, m: GpuMesh): void {
+    pass.setVertexBuffer(0, m.vertexBuffer);
+    pass.setVertexBuffer(1, m.colourBuffer);
+    pass.setVertexBuffer(2, m.uvBuffer);
+    pass.setVertexBuffer(3, m.tileBuffer);
   }
 
   // ------------------------------------------------------------------- frame
@@ -1510,101 +1688,9 @@ export class WebgpuRenderer implements Renderer {
     const cubeOffset = this.pushSceneUniform(params, 1e9, 1e9 + 1, params.cubeSize, 1);
     const plainOffset = this.pushSceneUniform(params, 1e9, 1e9 + 1, 0, 1);
     const lookOffset = this.pushSceneUniform(params, 1e9, 1e9 + 1, params.lookLength, 1);
+    this.frameMeshes = this.meshesInView(params);
     const model = params.level?.kind === 'model' ? params.level : null;
-    // Ground, structure faces and structure wireframe each need their own tint,
-    // opacity and fresnel, so each gets its own uniform slot.
-    const meshOffset = model
-      ? this.pushSceneUniform(
-          params,
-          1e9,
-          1e9 + 1,
-          model.opacity,
-          model.brightness,
-          [1, 1, 1],
-          0,
-          // Relief cues go to the ground pass only: structures are shells, not
-          // terrain, and contour lines across a roof would be nonsense.
-          model.relief,
-          false,
-          model.vertexColours,
-          model.texture,
-        )
-      : 0;
-    const structOffset = model
-      ? this.pushSceneUniform(
-          params,
-          1e9,
-          1e9 + 1,
-          model.structure.faceOpacity,
-          model.brightness,
-          // Textured structures are drawn in their own colours, with no rim:
-          // they are surfaces, not shells.
-          model.structure.textured ? [1, 1, 1] : model.structure.tint,
-          model.structure.textured ? 0 : 1,
-          null,
-          model.structure.flat,
-          model.structure.textured,
-          model.structure.textured ? 2 : false,
-        )
-      : 0;
-    // The structures' depth seal, with its own slot rather than theirs: the
-    // seal's colour is masked, so the texture mode decides only the cut-out, and
-    // that applies whenever the atlas has decoded - in the shell look too, whose
-    // colour pass draws a leaf card whole. Foliage never occludes heat.
-    const sealOffset = model
-      ? this.pushSceneUniform(
-          params,
-          1e9,
-          1e9 + 1,
-          model.structure.faceOpacity,
-          model.brightness,
-          model.structure.tint,
-          1,
-          null,
-          model.structure.flat,
-          false,
-          2,
-        )
-      : 0;
-    const wireOffset = model
-      ? this.pushSceneUniform(
-          params,
-          1e9,
-          1e9 + 1,
-          model.structure.wireOpacity,
-          model.brightness,
-          model.structure.tint,
-          0,
-        )
-      : 0;
-    // The ground's edges get a neutral tint: they describe the sampling of the
-    // terrain, and tinting them the structures' colour reads as buildings.
-    const groundWireOffset =
-      model && model.groundWireOpacity > 0
-        ? this.pushSceneUniform(
-            params,
-            model.groundWireFade[0],
-            model.groundWireFade[1],
-            model.groundWireOpacity,
-            model.brightness,
-            [1, 1, 1],
-            0,
-          )
-        : 0;
-    if (model && model.groundWireOpacity > 0) this.ensureGroundWire();
-    // Water: no relief cues, no Fresnel, its own tint. See `waterDraw`.
-    const waterOffset =
-      model && model.water.show
-        ? this.pushSceneUniform(
-            params,
-            1e9,
-            1e9 + 1,
-            model.water.opacity,
-            model.brightness,
-            model.water.tint,
-            0,
-          )
-        : 0;
+    const slots = model ? this.pushMeshUniforms(params, model) : null;
     const mapOffset = params.level?.kind === 'image' ? this.pushMapUniform(params, params.level) : 0;
 
     const pass = encoder.beginRenderPass({
@@ -1625,19 +1711,7 @@ export class WebgpuRenderer implements Renderer {
       },
     });
 
-    if (params.level) {
-      this.drawLevel(
-        pass,
-        params.level,
-        mapOffset,
-        meshOffset,
-        structOffset,
-        sealOffset,
-        wireOffset,
-        groundWireOffset,
-        waterOffset,
-      );
-    }
+    if (params.level) this.drawLevel(pass, params.level, mapOffset, slots);
 
     if (params.showGrid || params.showAxes) {
       this.ensureGrid(params);
@@ -1722,16 +1796,132 @@ export class WebgpuRenderer implements Renderer {
     return this.uniforms.push(u, MAP_UNIFORM_BYTES);
   }
 
+  /**
+   * Every uniform slot the level's and the tiles' passes need this frame.
+   *
+   * Ground, structure faces and structure wireframe each need their own tint,
+   * opacity and fresnel, so each gets its own slot. And the texture switch is in
+   * the slot, so a pass whose meshes differ in whether their texture has arrived
+   * - the level's atlas still decoding, a tile with imagery beside one without -
+   * gets one slot per answer, chosen per mesh at draw time. A handful of slots
+   * whatever the number of tiles.
+   */
+  private pushMeshUniforms(params: FrameParams, model: LevelDraw): MeshSlots {
+    const look = model.tiles;
+    const s = model.structure;
+    const ground = new Map<string, number>();
+    for (const m of this.frameMeshes) {
+      const colour = m.tile ? look.colours : model.vertexColours;
+      const textured = (m.tile ? look.texture : model.texture) && m.texture !== null;
+      const key = groundKey(colour, textured);
+      if (ground.has(key)) continue;
+      ground.set(
+        key,
+        this.pushSceneUniform(
+          params,
+          1e9,
+          1e9 + 1,
+          model.opacity,
+          model.brightness,
+          [1, 1, 1],
+          0,
+          // Relief cues go to the ground pass only: structures are shells, not
+          // terrain, and contour lines across a roof would be nonsense.
+          model.relief,
+          false,
+          colour,
+          textured,
+        ),
+      );
+    }
+    const anyTexture = this.frameMeshes.some((m) => m.texture !== null);
+    const anyBare = this.frameMeshes.some((m) => m.texture === null);
+    // [without a texture, with one]. Only the answers some mesh needs are pushed.
+    const pair = (push: (textured: boolean) => number): [number, number] => [
+      anyBare ? push(false) : 0,
+      anyTexture ? push(true) : 0,
+    ];
+    const struct = pair((textured) =>
+      this.pushSceneUniform(
+        params,
+        1e9,
+        1e9 + 1,
+        s.faceOpacity,
+        model.brightness,
+        // Textured structures are drawn in their own colours, with no rim:
+        // they are surfaces, not shells.
+        s.textured ? [1, 1, 1] : s.tint,
+        s.textured ? 0 : 1,
+        null,
+        s.flat,
+        s.textured,
+        s.textured && textured ? 2 : false,
+      ),
+    );
+    // The structures' depth seal, with its own slot rather than theirs: the
+    // seal's colour is masked, so the texture mode decides only the cut-out, and
+    // that applies whenever the texture has arrived - in the shell look too,
+    // whose colour pass draws a leaf card whole. Foliage never occludes heat.
+    const seal = pair((textured) => this.pushSealUniform(params, model, textured));
+    const wire = this.pushSceneUniform(
+      params,
+      1e9,
+      1e9 + 1,
+      s.wireOpacity,
+      model.brightness,
+      s.tint,
+      0,
+    );
+    // The ground's edges get a neutral tint: they describe the sampling of the
+    // terrain, and tinting them the structures' colour reads as buildings.
+    let groundWire = 0;
+    if (model.groundWireOpacity > 0) {
+      groundWire = this.pushSceneUniform(
+        params,
+        model.groundWireFade[0],
+        model.groundWireFade[1],
+        model.groundWireOpacity,
+        model.brightness,
+        [1, 1, 1],
+        0,
+      );
+      for (const m of this.frameMeshes) this.ensureGroundWire(m);
+    }
+    // Water: no relief cues, no Fresnel, its own tint. See `waterDraw`.
+    const water = this.pushSceneUniform(
+      params,
+      1e9,
+      1e9 + 1,
+      model.water.opacity,
+      model.brightness,
+      model.water.tint,
+      0,
+    );
+    return { ground, struct, seal, wire, groundWire, water };
+  }
+
+  /** The structures' depth-only slot: the seal's and the structure-depth target's. */
+  private pushSealUniform(params: FrameParams, model: LevelDraw, textured: boolean): number {
+    return this.pushSceneUniform(
+      params,
+      1e9,
+      1e9 + 1,
+      model.structure.faceOpacity,
+      model.brightness,
+      model.structure.tint,
+      1,
+      null,
+      model.structure.flat,
+      false,
+      textured ? 2 : false,
+    );
+  }
+
   private drawLevel(
     pass: GPURenderPassEncoder,
     level: NonNullable<FrameParams['level']>,
     mapOffset: number,
-    meshOffset: number,
-    structOffset: number,
-    sealOffset: number,
-    wireOffset: number,
-    groundWireOffset: number,
-    waterOffset: number,
+    slots: MeshSlots | null,
   ): void {
     if (level.kind === 'image' && this.mapTexture) {
       pass.setPipeline(this.mapPipeline);
@@ -1750,103 +1940,105 @@ export class WebgpuRenderer implements Renderer {
       pass.draw(6);
       return;
     }
-    if (level.kind !== 'model' || !this.meshVertexBuffer) return;
+    if (level.kind !== 'model' || !slots) return;
+    // Pass by pass over the level and every tile in view, not mesh by mesh: a
+    // tile's ground drawn after the level's shells would paint over the shells
+    // standing in front of it. A tile takes the level's look; only what the
+    // level resolved from its own contents comes from `level.tiles` instead.
+    const meshes = this.frameMeshes;
+    const look = level.tiles;
 
     // Ground first: opaque, writes depth, so it occludes heat beneath it.
-    if (this.meshIndexBuffer && this.meshIndexCount > 0) {
-      const pipeline = level.wireframe ? this.meshWirePipeline : this.meshPipeline;
-      pass.setPipeline(pipeline);
+    const groundPipeline = level.wireframe ? this.meshWirePipeline : this.meshPipeline;
+    for (const m of meshes) {
+      if (!m.groundBuffer || m.groundCount === 0) continue;
+      const colour = m.tile ? look.colours : level.vertexColours;
+      const textured = (m.tile ? look.texture : level.texture) && m.texture !== null;
+      const offset = slots.ground.get(groundKey(colour, textured)) ?? 0;
+      pass.setPipeline(groundPipeline);
       pass.setBindGroup(
         0,
-        this.sceneBindGroup(pipeline, level.wireframe ? 'ground-lines' : 'ground', meshOffset),
+        this.sceneBindGroup(groundPipeline, level.wireframe ? 'ground-lines' : 'ground', offset),
       );
-      pass.setBindGroup(1, this.atlasBindGroup(pipeline));
-      pass.setVertexBuffer(0, this.meshVertexBuffer);
-      pass.setVertexBuffer(1, this.meshColourBuffer);
-      pass.setVertexBuffer(2, this.meshUvBuffer);
-      pass.setVertexBuffer(3, this.meshTileBuffer);
-      pass.setIndexBuffer(this.meshIndexBuffer, 'uint32');
-      pass.drawIndexed(this.meshIndexCount);
+      pass.setBindGroup(1, this.atlasBindGroup(groundPipeline, m));
+      this.setMeshBuffers(pass, m);
+      pass.setIndexBuffer(m.groundBuffer, 'uint32');
+      pass.drawIndexed(m.groundCount);
+    }
 
-      // Its triangle edges over the top, not instead of it: the shape and the
-      // sampling density are two different questions and both get asked.
-      if (level.groundWireOpacity > 0 && this.groundWireBuffer && this.groundWireCount > 0) {
+    // Its triangle edges over the top, not instead of it: the shape and the
+    // sampling density are two different questions and both get asked.
+    if (level.groundWireOpacity > 0) {
+      for (const m of meshes) {
+        if (!m.groundWireBuffer || m.groundWireCount === 0) continue;
         pass.setPipeline(this.wirePipeline);
-        pass.setBindGroup(0, this.sceneBindGroup(this.wirePipeline, 'groundwire', groundWireOffset));
-        pass.setVertexBuffer(0, this.meshVertexBuffer);
-        pass.setVertexBuffer(1, this.meshColourBuffer);
-        pass.setVertexBuffer(2, this.meshUvBuffer);
-        pass.setVertexBuffer(3, this.meshTileBuffer);
-      pass.setVertexBuffer(3, this.meshTileBuffer);
-        pass.setIndexBuffer(this.groundWireBuffer, 'uint32');
-        pass.drawIndexed(this.groundWireCount);
+        pass.setBindGroup(0, this.sceneBindGroup(this.wirePipeline, 'groundwire', slots.groundWire));
+        this.setMeshBuffers(pass, m);
+        pass.setIndexBuffer(m.groundWireBuffer, 'uint32');
+        pass.drawIndexed(m.groundWireCount);
       }
     }
 
     // Water next: a surface, so it writes depth, but with none of the terrain
     // cues and its own tint so a lake is not the same grey as its bank.
-    if (level.water.show && this.waterIndexBuffer && this.waterIndexCount > 0) {
+    for (const m of meshes) {
+      if (!m.waterBuffer || m.waterCount === 0 || !(m.tile ? look.water : level.water.show)) continue;
       pass.setPipeline(this.meshPipeline);
-      pass.setBindGroup(0, this.sceneBindGroup(this.meshPipeline, 'water', waterOffset));
-      pass.setBindGroup(1, this.atlasBindGroup(this.meshPipeline));
-      pass.setVertexBuffer(0, this.meshVertexBuffer);
-      pass.setVertexBuffer(1, this.meshColourBuffer);
-      pass.setVertexBuffer(2, this.meshUvBuffer);
-      pass.setVertexBuffer(3, this.meshTileBuffer);
-      pass.setIndexBuffer(this.waterIndexBuffer, 'uint32');
-      pass.drawIndexed(this.waterIndexCount);
+      pass.setBindGroup(0, this.sceneBindGroup(this.meshPipeline, 'water', slots.water));
+      pass.setBindGroup(1, this.atlasBindGroup(this.meshPipeline, m));
+      this.setMeshBuffers(pass, m);
+      pass.setIndexBuffer(m.waterBuffer, 'uint32');
+      pass.drawIndexed(m.waterCount);
     }
 
     const s = level.structure;
-    if (s.showFaces && this.structIndexBuffer && this.structIndexCount > 0) {
-      // Textured and fully opaque is a surface like the ground, so it takes the
-      // ground's depth-writing pipeline: a guardrail's far side must not draw
-      // over its near side. Anything less is a shell.
-      const solid = s.textured && s.faceOpacity >= 0.999;
-      const pipeline = solid ? this.meshPipeline : this.structPipeline;
-      pass.setPipeline(pipeline);
+    // Textured and fully opaque is a surface like the ground, so it takes the
+    // ground's depth-writing pipeline: a guardrail's far side must not draw
+    // over its near side. Anything less is a shell.
+    const solid = s.textured && s.faceOpacity >= 0.999;
+    const structPipeline = solid ? this.meshPipeline : this.structPipeline;
+    for (const m of meshes) {
+      if (!m.structBuffer || m.structCount === 0 || !(m.tile ? look.faces : s.showFaces)) continue;
+      pass.setPipeline(structPipeline);
       // Its own cache key per pipeline: a bind group made from one pipeline's
       // automatic layout is not valid with another's, however alike they are.
       pass.setBindGroup(
         0,
-        this.sceneBindGroup(pipeline, solid ? 'struct-solid' : 'struct', structOffset),
+        this.sceneBindGroup(
+          structPipeline,
+          solid ? 'struct-solid' : 'struct',
+          slots.struct[m.texture !== null ? 1 : 0],
+        ),
       );
-      pass.setBindGroup(1, this.atlasBindGroup(pipeline));
-      pass.setVertexBuffer(0, this.meshVertexBuffer);
-      pass.setVertexBuffer(1, this.meshColourBuffer);
-      pass.setVertexBuffer(2, this.meshUvBuffer);
-      pass.setVertexBuffer(3, this.meshTileBuffer);
-      pass.setIndexBuffer(this.structIndexBuffer, 'uint32');
-      pass.drawIndexed(this.structIndexCount);
+      pass.setBindGroup(1, this.atlasBindGroup(structPipeline, m));
+      this.setMeshBuffers(pass, m);
+      pass.setIndexBuffer(m.structBuffer, 'uint32');
+      pass.drawIndexed(m.structCount);
     }
-    if (s.showWire && this.wireIndexBuffer && this.wireIndexCount > 0) {
+    for (const m of meshes) {
+      if (!m.wireBuffer || m.wireCount === 0 || !(m.tile ? look.wire : s.showWire)) continue;
       pass.setPipeline(this.wirePipeline);
-      pass.setBindGroup(0, this.sceneBindGroup(this.wirePipeline, 'wire', wireOffset));
-      pass.setVertexBuffer(0, this.meshVertexBuffer);
-      pass.setVertexBuffer(1, this.meshColourBuffer);
-      pass.setVertexBuffer(2, this.meshUvBuffer);
-      pass.setVertexBuffer(3, this.meshTileBuffer);
-      pass.setIndexBuffer(this.wireIndexBuffer, 'uint32');
-      pass.drawIndexed(this.wireIndexCount);
+      pass.setBindGroup(0, this.sceneBindGroup(this.wirePipeline, 'wire', slots.wire));
+      this.setMeshBuffers(pass, m);
+      pass.setIndexBuffer(m.wireBuffer, 'uint32');
+      pass.drawIndexed(m.wireCount);
     }
 
     // Last in the pass, and depth only: the colour of this frame is already
     // decided, and what changes is the depth texture the heat pass samples.
     // Without this the structures are absent from it and nothing is ever
     // occluded by a building — see `sealStructureDepth` in the WebGL2 renderer.
-    if (this.structIndexBuffer && this.structIndexCount > 0) {
+    for (const m of meshes) {
+      if (!m.structBuffer || m.structCount === 0) continue;
       pass.setPipeline(this.structDepthPipeline);
       pass.setBindGroup(
         0,
-        this.sceneBindGroup(this.structDepthPipeline, 'structdepth', sealOffset),
+        this.sceneBindGroup(this.structDepthPipeline, 'structdepth', slots.seal[m.texture !== null ? 1 : 0]),
       );
-      pass.setBindGroup(1, this.atlasBindGroup(this.structDepthPipeline));
-      pass.setVertexBuffer(0, this.meshVertexBuffer);
-      pass.setVertexBuffer(1, this.meshColourBuffer);
-      pass.setVertexBuffer(2, this.meshUvBuffer);
-      pass.setVertexBuffer(3, this.meshTileBuffer);
-      pass.setIndexBuffer(this.structIndexBuffer, 'uint32');
-      pass.drawIndexed(this.structIndexCount);
+      pass.setBindGroup(1, this.atlasBindGroup(this.structDepthPipeline, m));
+      this.setMeshBuffers(pass, m);
+      pass.setIndexBuffer(m.structBuffer, 'uint32');
+      pass.drawIndexed(m.structCount);
     }
   }
 
@@ -1860,8 +2052,8 @@ export class WebgpuRenderer implements Renderer {
   private activeLayers(params: FrameParams): number {
     if (params.heat.occlusion <= 0) return 0;
     if (params.level?.kind !== 'model') return 0;
-    if (!this.structIndexBuffer || this.structIndexCount === 0) return 0;
-    if (!this.meshVertexBuffer) return 0;
+    // A wall on a world tile is as much a surface to count as one on the level.
+    if (!this.frameMeshes.some((m) => m.structBuffer && m.structCount > 0)) return 0;
     return this.peelViews.length;
   }
 
@@ -1909,36 +2101,24 @@ export class WebgpuRenderer implements Renderer {
       },
     });
     const model = params.level?.kind === 'model' ? params.level : null;
-    if (model && this.structIndexBuffer && this.structIndexCount > 0 && this.meshVertexBuffer) {
-      // The structures' own uniform slot, so the slice applies here as it does to
-      // the seal: a wall cut open must stop counting as a wall.
-      const offset = this.pushSceneUniform(
-        params,
-        1e9,
-        1e9 + 1,
-        model.structure.faceOpacity,
-        model.brightness,
-        model.structure.tint,
-        1,
-        null,
-        model.structure.flat,
-        false,
-        // The atlas, as in the seal: a leaf card's cut-out texels are no wall,
-        // whether or not the structures are drawn from it.
-        2,
-      );
+    const meshes = model ? this.frameMeshes.filter((m) => m.structBuffer && m.structCount > 0) : [];
+    if (model && meshes.length > 0) {
+      // The structures' own uniform slots, so the slice applies here as it does
+      // to the seal: a wall cut open must stop counting as a wall. And the
+      // texture, as in the seal: a leaf card's cut-out texels are no wall,
+      // whether or not the structures are drawn from it.
+      const offsets = [false, true].map((textured) => this.pushSealUniform(params, model, textured));
       pass.setPipeline(this.structDepthPipeline);
-      pass.setBindGroup(
-        0,
-        this.sceneBindGroup(this.structDepthPipeline, 'structonly', offset),
-      );
-      pass.setBindGroup(1, this.atlasBindGroup(this.structDepthPipeline));
-      pass.setVertexBuffer(0, this.meshVertexBuffer);
-      pass.setVertexBuffer(1, this.meshColourBuffer);
-      pass.setVertexBuffer(2, this.meshUvBuffer);
-      pass.setVertexBuffer(3, this.meshTileBuffer);
-      pass.setIndexBuffer(this.structIndexBuffer, 'uint32');
-      pass.drawIndexed(this.structIndexCount);
+      for (const m of meshes) {
+        pass.setBindGroup(
+          0,
+          this.sceneBindGroup(this.structDepthPipeline, 'structonly', offsets[m.texture !== null ? 1 : 0]),
+        );
+        pass.setBindGroup(1, this.atlasBindGroup(this.structDepthPipeline, m));
+        this.setMeshBuffers(pass, m);
+        pass.setIndexBuffer(m.structBuffer!, 'uint32');
+        pass.drawIndexed(m.structCount);
+      }
     }
     // Ended even with nothing drawn: the pass is what clears the target to 1.0,
     // which is what "no structure in front of anything" means, and a level with
@@ -1951,9 +2131,10 @@ export class WebgpuRenderer implements Renderer {
     if (layers === 0) return;
 
     let prev = this.mustDepthView();
-    const atlas = this.atlasBindGroup(this.peelPipeline);
+    const meshes = this.frameMeshes.filter((m) => m.structBuffer && m.structCount > 0);
     for (let i = 0; i < layers; i++) {
-      const offset = this.pushPeelUniform(params);
+      // [without a texture, with one]: the cut-out test is per mesh.
+      const offsets = [this.pushPeelUniform(params, false), this.pushPeelUniform(params, true)];
       const pass = encoder.beginRenderPass({
         label: `depth peel ${i}`,
         colorAttachments: [],
@@ -1965,39 +2146,44 @@ export class WebgpuRenderer implements Renderer {
         },
       });
       pass.setPipeline(this.peelPipeline);
-      // Keyed by the source view as well as the offset: consecutive layers share
-      // an offset value only by coincidence and must not share a bind group.
-      pass.setBindGroup(
-        0,
-        this.cachedBindGroup(
-          `peel:${i}:${offset}:${this.depthGeneration}`,
-          this.peelPipeline.getBindGroupLayout(0),
-          () => [
-            { binding: 0, resource: this.uniforms.binding(offset, PEEL_UNIFORM_BYTES) },
-            { binding: 1, resource: prev },
-          ],
-        ),
-      );
-      pass.setBindGroup(1, atlas);
-      pass.setVertexBuffer(0, this.meshVertexBuffer!);
-      pass.setVertexBuffer(1, this.meshUvBuffer);
-      pass.setVertexBuffer(2, this.meshTileBuffer);
-      pass.setIndexBuffer(this.structIndexBuffer!, 'uint32');
-      pass.drawIndexed(this.structIndexCount);
+      const source = prev;
+      for (const m of meshes) {
+        const offset = offsets[m.texture !== null ? 1 : 0];
+        // Keyed by the source view as well as the offset: consecutive layers
+        // share an offset value only by coincidence and must not share a bind
+        // group.
+        pass.setBindGroup(
+          0,
+          this.cachedBindGroup(
+            `peel:${i}:${offset}:${this.depthGeneration}`,
+            this.peelPipeline.getBindGroupLayout(0),
+            () => [
+              { binding: 0, resource: this.uniforms.binding(offset, PEEL_UNIFORM_BYTES) },
+              { binding: 1, resource: source },
+            ],
+          ),
+        );
+        pass.setBindGroup(1, this.atlasBindGroup(this.peelPipeline, m));
+        pass.setVertexBuffer(0, m.vertexBuffer);
+        pass.setVertexBuffer(1, m.uvBuffer);
+        pass.setVertexBuffer(2, m.tileBuffer);
+        pass.setIndexBuffer(m.structBuffer!, 'uint32');
+        pass.drawIndexed(m.structCount);
+      }
       pass.end();
       prev = this.peelViews[i];
     }
   }
 
-  private pushPeelUniform(params: FrameParams): number {
+  private pushPeelUniform(params: FrameParams, textured: boolean): number {
     const u = this.scratchFor(PEEL_UNIFORM_BYTES);
     u.set(params.viewProj, 0);
     u[16] = this.width;
     u[17] = this.height;
     u[18] = PEEL_EPSILON_F;
-    // The cut-out test, whenever the atlas has decoded: foliage never occludes
-    // heat, whether or not the structures are drawn from the atlas.
-    u[19] = this.atlasTexture !== null ? 1 : 0;
+    // The cut-out test, whenever the mesh's texture has arrived: foliage never
+    // occludes heat, whether or not the structures are drawn from it.
+    u[19] = textured ? 1 : 0;
     return this.uniforms.push(u, PEEL_UNIFORM_BYTES);
   }
 
@@ -2407,9 +2593,11 @@ export class WebgpuRenderer implements Renderer {
     // their own tints and pass false, so a level in colour still reads as a
     // level rather than as three unrelated colour schemes.
     u[46] = vertexColour ? 1 : 0;
-    // The atlas, only once it has decoded: 1 (or true) for the ground, whose
-    // lighting the shader softens, 2 for textured structures, whose it does not.
-    u[47] = texture && this.atlasTexture !== null ? (texture === 2 ? 2 : 1) : 0;
+    // The texture: 1 (or true) for the ground, whose lighting the shader
+    // softens, 2 for textured structures, whose it does not. Passed only for a
+    // mesh whose texture has arrived - the level's atlas once decoded, a tile's
+    // image - so a pass over meshes that differ takes one slot for each.
+    u[47] = texture ? (texture === 2 ? 2 : 1) : 0;
     return this.uniforms.push(u, SCENE_UNIFORM_BYTES);
   }
 
@@ -2980,6 +3168,7 @@ export class WebgpuRenderer implements Renderer {
     }
     this.chunks = [];
     this.setLevel(null);
+    this.setWorldTiles([]);
     this.sceneTex?.destroy();
     this.depthTex?.destroy();
     this.heatTex?.destroy();
@@ -3089,6 +3278,82 @@ class UniformRing {
 const SIGN_TABLE_SIZE = FILTER_MASK_WIDTH;
 
 const EMPTY_INDICES = new Uint32Array(0);
+
+/** What `uploadMesh` reads: a model level's arrays, or a world tile's. */
+interface MeshSource {
+  vertices: Float32Array;
+  colours: Float32Array | null | undefined;
+  uvs: Float32Array | null | undefined;
+  indices: Uint32Array;
+  structureIndices: Uint32Array;
+  structureEdges: Uint32Array;
+  waterIndices: Uint32Array;
+  uvTiles?: Uint16Array | null;
+  tileRects?: Float32Array | null;
+}
+
+/**
+ * One mesh's GPU resources: the model level's, or one streamed world tile's.
+ *
+ * The level and every tile are the same kind of thing - interleaved
+ * position+normal, colour, UVs, and ground / structure / water / edge index sets
+ * over the one vertex buffer - so they share the upload and every draw pass.
+ */
+interface GpuMesh {
+  vertexBuffer: GPUBuffer;
+  /**
+   * Captured vertex colour, or constant white when the mesh has none.
+   *
+   * Always allocated, so the pipeline's vertex layout never changes and there is
+   * one mesh shader rather than two.
+   */
+  colourBuffer: GPUBuffer;
+  uvBuffer: GPUBuffer;
+  /** Per-vertex tile numbers; zeroed on a mesh without a repeating texture. */
+  tileBuffer: GPUBuffer;
+  tileTable: GPUBuffer | null;
+  /** The level's atlas once decoded, or a tile's own image; null without one. */
+  texture: GPUTexture | null;
+  groundBuffer: GPUBuffer | null;
+  structBuffer: GPUBuffer | null;
+  wireBuffer: GPUBuffer | null;
+  waterBuffer: GPUBuffer | null;
+  groundCount: number;
+  structCount: number;
+  wireCount: number;
+  waterCount: number;
+  /** Ground edges, built the first time the ground is asked for as a wireframe. */
+  groundWireBuffer: GPUBuffer | null;
+  groundWireCount: number;
+  /** Kept so the ground's edge list can be built on demand rather than upfront. */
+  groundIndices: Uint32Array;
+  /** GPU footprint, growing as the texture and the ground's edges arrive. */
+  bytes: number;
+  /** For culling; null for the level, which is always drawn. */
+  bounds: Bounds | null;
+  /** A world tile, drawn with `LevelDraw.tiles` where the level's own look is resolved from its contents. */
+  tile: boolean;
+  /** Atlas bind groups by pipeline, dropped whenever `texture` changes. */
+  atlasGroups: Map<GPURenderPipeline, GPUBindGroup>;
+  /** Set when freed, so a texture still decoding is not attached to it. */
+  freed: boolean;
+}
+
+/** The uniform slots of one frame's level and tile passes; see `pushMeshUniforms`. */
+interface MeshSlots {
+  /** By `groundKey`: the level and the tiles can differ in colour and texture. */
+  ground: Map<string, number>;
+  /** [without a texture, with one]. */
+  struct: [number, number];
+  seal: [number, number];
+  wire: number;
+  groundWire: number;
+  water: number;
+}
+
+function groundKey(colour: boolean, textured: boolean): string {
+  return `${colour ? 1 : 0}${textured ? 1 : 0}`;
+}
 
 function alphaBlend(): GPUBlendState {
   return {

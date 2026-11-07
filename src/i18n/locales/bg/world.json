@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Остават картни плочки: {count}. Едно изграждане изтегля най-много {max}; изградете отново, за да вземете следващата част.",
   "heat.world.note.noRunways": "Списъкът с писти не можа да се прочете: писти, както ги чертае картата.",
   "heat.world.credit.ourairports": "Писти: OurAirports (обществено достояние)",
-  "heat.world.follow": "Следване на камерата",
-  "heat.world.followTitle": "Изграждане на подробната област отново около точката под камерата, щом спре: по-широка, когато е високо, по-подробна, когато е ниско. Вече изтеглените плочки не се изтеглят отново."
+  "heat.world.stream.button": "Поточно зареждане на театъра",
+  "heat.world.stream.buttonTitle": "Релеф, земно покритие, пътища, летища и сгради се зареждат около камерата в полет: грубо надалеч, подробно наблизо, из целия театър и отвъд. Изтегля се само каквото още не е в кеша.",
+  "heat.world.stream.status": "Поточно: {drawn} плочки показани, {loading} се зареждат, {kept} пазени ({size}); изтеглени {downloaded}.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Сателитни снимки (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Сателитна снимка без облаци, около 10 м на пиксел, върху земята вместо оцветеното покритие. CC BY 4.0; изтегля се при нужда и се пази в кеша.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

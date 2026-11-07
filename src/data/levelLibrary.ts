@@ -1,6 +1,7 @@
 import { t } from '../i18n';
 import type { LevelCredit, MapAnchor } from '../render/level';
 import type { GeoPlacement } from '../state/types';
+import type { WorldLabel } from '../world/backdrop';
 
 /**
  * Local library of processed levels.
@@ -36,6 +37,8 @@ export interface StoredLevelMeta {
   credits?: LevelCredit[];
   /** A world backdrop's place on the earth, so it can be moved under other data. */
   placement?: GeoPlacement;
+  /** A world backdrop's place names, in its world coordinates. */
+  labels?: WorldLabel[];
 }
 
 interface StoredLevel extends StoredLevelMeta {
@@ -153,6 +156,7 @@ export interface ModelLevelPayload {
   /** A world backdrop's sources: see `ModelLevel.credits`. */
   credits?: LevelCredit[];
   placement?: GeoPlacement;
+  labels?: WorldLabel[];
 }
 
 export async function saveModelLevel(name: string, p: ModelLevelPayload): Promise<string> {
@@ -180,6 +184,7 @@ export async function saveModelLevel(name: string, p: ModelLevelPayload): Promis
       sourceTriangles: p.sourceTriangles,
       ...(p.credits?.length ? { credits: [...p.credits] } : {}),
       ...(p.placement ? { placement: JSON.parse(JSON.stringify(p.placement)) as GeoPlacement } : {}),
+      ...(p.labels?.length ? { labels: p.labels.map((l) => ({ ...l })) } : {}),
       vertices: p.vertices.slice().buffer,
       ...(p.colours ? { colours: p.colours.slice().buffer } : {}),
       ...(p.uvs && p.atlas ? { uvs: p.uvs.slice().buffer, atlas: p.atlas } : {}),

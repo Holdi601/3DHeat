@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Še manjkajoče ploščice zemljevida: {count}. Ena gradnja prenese največ {max}; zgradite znova za naslednji del.",
   "heat.world.note.noRunways": "Seznama stez ni bilo mogoče prebrati: steze, kot jih riše zemljevid.",
   "heat.world.credit.ourairports": "Letališke steze: OurAirports (javna last)",
-  "heat.world.follow": "Sledi kameri",
-  "heat.world.followTitle": "Ko se kamera ustavi, znova zgradi podrobno območje okoli točke pod njo: višje širše, nižje podrobneje. Že prenesene ploščice se ne prenašajo znova."
+  "heat.world.stream.button": "Pretakaj bojišče",
+  "heat.world.stream.buttonTitle": "Teren, pokrovnost tal, ceste, letališča in stavbe se nalagajo okoli kamere med letom: v daljavi grobo, od blizu podrobneje, po vsem bojišču in naprej. Prenese se le, česar še ni v predpomnilniku.",
+  "heat.world.stream.status": "Pretakanje: {drawn} ploščic prikazanih, {loading} se nalaga, {kept} shranjenih ({size}); prenesenih {downloaded}.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Satelitski posnetki (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Prekrij tla s satelitskim posnetkom brez oblakov, približno 10 m na slikovno piko, namesto pobarvane pokrovnosti. CC BY 4.0; prenese se po potrebi in ostane v predpomnilniku.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

@@ -48,6 +48,7 @@ import {
   type Renderer,
 } from './types';
 import { t } from '../i18n';
+import { worldTiles } from '../world/tileSet';
 
 export interface LiveReadout {
   playhead: number;
@@ -84,6 +85,8 @@ export interface LiveReadout {
   residentRows: number;
   droppedRows: number;
   gpuBytes: number;
+  /** GPU bytes of the level and the world tiles, apart from the rows' `gpuBytes`. */
+  levelBytes: number;
   gpuName: string | null;
   /** Heat buffer resolution actually in use, after the auto throttle. */
   heatScale: number;
@@ -248,6 +251,15 @@ export class Engine {
    */
   private teamPalette: { neutral: number; slices: number } = { neutral: -1, slices: 1 };
   private level: Level | null = null;
+  /**
+   * What the renderer last got of the world tiles: from which tile-set version,
+   * whether a model level was there to draw them with, and which renderer it
+   * was. Any one differing hands the set over again; none differing costs three
+   * comparisons a frame.
+   */
+  private tilesVersion = -1;
+  private tilesForModel = false;
+  private tilesRenderer: Renderer | null = null;
   private cursor: TrackCursor | null = null;
 
   private lastNow = 0;
@@ -372,6 +384,7 @@ export class Engine {
     residentRows: 0,
     droppedRows: 0,
     gpuBytes: 0,
+    levelBytes: 0,
     gpuName: null,
     heatScale: 1,
     lines: null,
@@ -1270,6 +1283,23 @@ export class Engine {
       this.geometrySig = '';
     }
 
+    // The streamed world tiles (src/world/tileSet), drawn with a model level's
+    // look and only with one: without it the renderer is handed none, which
+    // also frees what it held. The tiles hide heat behind them like the level
+    // does, so a change redraws the heat as well as the scene.
+    const tilesForModel = s.level?.kind === 'model';
+    if (
+      worldTiles.version !== this.tilesVersion ||
+      tilesForModel !== this.tilesForModel ||
+      renderer !== this.tilesRenderer
+    ) {
+      this.tilesVersion = worldTiles.version;
+      this.tilesForModel = tilesForModel;
+      this.tilesRenderer = renderer;
+      renderer.setWorldTiles(tilesForModel ? worldTiles.tiles : []);
+      this.invalidate(2);
+    }
+
     // Line heat's routes: built when the mode wants them, for this dataset and
     // these events, and freed when it no longer does - they cost four bytes a
     // row here and eight on the GPU, which nothing else needs.
@@ -2114,8 +2144,11 @@ export class Engine {
       colorLutDirty: lutDirty,
       curveLut: this.curveLut,
       curveLutDirty: curveDirty,
-      showGrid: s.showGrid,
-      showAxes: s.showAxes,
+      // Not over a world backdrop: the grid and the axes lie at height 0, which
+      // is sea level there, and drawn on the sea they fight it for depth far
+      // off and show as dashed lines across the water.
+      showGrid: s.showGrid && !onEarth(s.level),
+      showAxes: s.showAxes && !onEarth(s.level),
       gridSpacing,
       gridExtent,
       trailVerts,
@@ -2152,6 +2185,9 @@ export class Engine {
 
     renderer.render(params);
     this.frameIndex++;
+    // A getter on the renderer; the atlas and the tiles' edges arrive between
+    // uploads, so it is read every frame rather than at them.
+    this.live.levelBytes = renderer.levelBytes;
     this.lastFrameDrew = !compositeOnly && plan.length > 0;
     this.live.frames = this.frameIndex;
 
@@ -2419,6 +2455,7 @@ function buildLevelDraw(level: Level | null): LevelDraw | null {
       relief: flat,
       water: { opacity: 0, tint: [1, 1, 1], show: false },
       structure: noStructure,
+      tiles: { colours: false, texture: false, water: false, faces: false, wire: false },
     };
   }
   const groundExtent = Math.max(
@@ -2444,6 +2481,15 @@ function buildLevelDraw(level: Level | null): LevelDraw | null {
     relief: reliefDraw(level),
     water: waterDraw(level),
     structure: structureDraw(level),
+    // The same switches with the same defaults, unresolved: a tile brings its
+    // own colours, imagery, water and buildings whatever this level holds.
+    tiles: {
+      colours: level.showColours === true,
+      texture: level.showTexture !== false,
+      water: level.showWater ?? true,
+      faces: level.showStructureFaces ?? true,
+      wire: level.showStructureWire ?? true,
+    },
   };
 }
 
@@ -2528,3 +2574,7 @@ function niceGridSpacing(bounds: {
 
 export { CUBE_STRIDE };
 
+/** Whether the level is a world backdrop: a model level placed on the earth. */
+function onEarth(level: Level | null): boolean {
+  return level?.kind === 'model' && !!level.placement;
+}

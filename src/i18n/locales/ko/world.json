@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "남은 지도 타일: {count}개. 한 번 만들 때 최대 {max}개를 다운로드합니다. 다음 부분을 가져오려면 다시 만드세요.",
   "heat.world.note.noRunways": "활주로 목록을 읽을 수 없습니다. 활주로는 지도에 그려진 대로 표시됩니다.",
   "heat.world.credit.ourairports": "활주로: OurAirports(퍼블릭 도메인)",
-  "heat.world.follow": "카메라 따라가기",
-  "heat.world.followTitle": "카메라가 멈추면 카메라 아래 지점을 중심으로 상세 영역을 다시 만듭니다. 높을 때는 넓게, 낮을 때는 더 세밀하게. 이미 받은 타일은 다시 받지 않습니다."
+  "heat.world.stream.button": "전역 스트리밍",
+  "heat.world.stream.buttonTitle": "지형, 토지 피복, 도로, 비행장, 건물을 비행하는 카메라 주변으로 불러옵니다. 멀리는 거칠게, 가까이는 더 세밀하게, 전역 전체와 그 너머까지. 캐시에 없는 것만 내려받습니다.",
+  "heat.world.stream.status": "스트리밍: 타일 {drawn}개 표시, {loading}개 불러오는 중, {kept}개 보관({size}); {downloaded} 내려받음.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "위성 영상(EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "칠한 토지 피복 대신 구름 없는 위성 영상(픽셀당 약 10 m)을 지면에 입힙니다. CC BY 4.0; 필요할 때 내려받아 캐시에 보관합니다.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

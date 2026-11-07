@@ -49,12 +49,24 @@ The detailed area cuts a hole in the theatre's grid, widened to whole cells so b
 
 With data loaded the theatre is built on the data's plane, so it lands under it as built. Without data it is built round the theatre's own reference point (whole degrees near its detailed area). Data loaded afterwards on another reference - an ACMI file names its own - moves the backdrop under it: the exact move between the two projections is computed on a 256 × 256 grid over the backdrop and read between the nodes, within a metre or two across a whole theatre ([`src/world/reproject.ts`](https://github.com/Holdi601/3DHeat/tree/main/src/world/reproject.ts)). A backdrop saved to the library keeps its place and moves the same way when loaded under other data.
 
-**Follow the camera** (on by default) builds the detailed area again round the point under the camera once the camera has stopped for a second and a half, sized by its height: about six times the height, from 12 to 200 km. Higher up the area is wider and its map zoom coarser (no buildings), lower down it is finer. Only tiles not yet in the cache are downloaded, so flying back over an area costs nothing. It is a rebuild of the backdrop's mesh, not a tile streamer: a second or two in the background worker each time, the previous backdrop shown meanwhile.
+### Streaming a theatre
+
+**Stream theatre** shows the theatre the way a flight-sim map viewer does: the ground comes as many small tiles round the camera, loaded as it flies and dropped when out of reach ([`src/world/stream.ts`](https://github.com/Holdi601/3DHeat/tree/main/src/world/stream.ts)).
+
+- **A quadtree of Web Mercator tiles.** Roots at zoom 5 cover 1,500 km round the camera, so the ground reaches past the theatre's box to the horizon. A tile is split into its four children while the camera is nearer than 1.4 times its width, down to zoom 15 (about 1 km a tile, 15 m between terrain vertices): detail falls off with distance as it falls off on screen.
+- **Each tile its own mesh**, built in a worker ([`src/world/tileBuild.ts`](https://github.com/Holdi601/3DHeat/tree/main/src/world/tileBuild.ts)): a 65 × 65 terrain grid with a skirt round its edge (so neighbours at different detail never show a crack), land cover and the sea painted on it, roads, railways, lakes, rivers, airfields, surveyed runways and buildings on top, and optionally the satellite picture of its square. The renderer draws the tiles with the level's look and depth rules, so they hide the heat behind them like any level.
+- **Coarse first.** Tiles are asked for coarse and near first, four downloads at a time per source; while a tile's children load, the tile stands in for them, so the view fills at once and sharpens.
+- **Memory**: built tiles are kept up to 600 MB, the least recently drawn dropped first. **Downloads** stay in the tile cache, kept to a 2 GB budget, oldest first out: flying back over an area costs nothing, and there is no per-build cap.
+- With data loaded the tiles are built on the data's plane; data loaded later on another plane rebuilds them there (from the cache).
+- Measured on the test spots, first visit with imagery: Normandy round Carpiquet 63 MB, Nevada round Nellis 45 MB, Syria round Latakia 24 MB (Mapterhorn's height tiles are the largest part); a second visit downloads nothing.
+
 
 ## What is built
 
 | Part | Source | How |
 |---|---|---|
+| Imagery (streamed theatres, optional) | EOX Sentinel-2 cloudless 2016 | **Satellite imagery** drapes the cloud-free 2016 mosaic (about 10 m a pixel, zoom 14, deeper tiles enlarge it) over the ground in place of the painted land cover; roads, runways, buildings and names stay on top. |
+| Terrain (streamed theatres) | Mapterhorn | Copernicus GLO-30 everywhere (about 19 m a pixel at zoom 12), metre-scale where a country's own survey is in it (France, the US and others); read two zooms coarser than each tile. The AWS Terrain Tiles if Mapterhorn cannot be reached. |
 | Terrain | AWS Terrain Tiles (Terrarium PNG) | A height grid over the box: the zoom is the deepest up to 12 (about 28 m a pixel at 43° N) that needs at most 36 tiles, and the grid is thinned to at most 400,000 vertices. Drawn as ground with the usual relief cues. |
 | Roads, railways | OpenFreeMap vector tiles, `transportation` layer | Flat ribbons draped on the terrain, densified to the terrain's spacing and lifted a few per cent of it so they do not fight with it. Widths by class, from 16 m (motorway) to 3 m (track, rail); never narrower than the box's diagonal / 5000. Paths, ferries and tunnels are left out. |
 | Airfields | `aeroway` layer | Runway, taxiway, apron and helipad polygons draped as ground; runway and taxiway lines as 45 m and 18 m ribbons. |
@@ -92,12 +104,14 @@ Each part links to its source's attribution page (openstreetmap.org/copyright an
 | [OpenStreetMap](https://www.openstreetmap.org/copyright) data | ODbL 1.0. Fetching it at run time and drawing it locally is private use; the drawn view is a Produced Work that needs a visible credit, and so are screenshots and videos made from it. |
 | [OpenMapTiles](https://openmaptiles.org) schema | CC BY 4.0 for the schema; credit "© OpenMapTiles". |
 | [OurAirports](https://ourairports.com/data/) `runways.csv` | Released into the public domain; no key. The credit "Runways: OurAirports (public domain)" is shown as a courtesy. |
+| [EOX Sentinel-2 cloudless](https://cloudless.eox.at) 2016, `tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg` | The 2016 layer is CC BY 4.0 (later years are CC BY-NC-SA, not used). EOX's service page invites use of the endpoints in applications, as a demo service without guarantee and with rate limiting; it says nothing about caching, which CC BY allows. Credit, shown on the canvas: "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017)", linked. CORS: the request's origin is echoed. |
+| [Mapterhorn](https://mapterhorn.com), `tiles.mapterhorn.com/{z}/{x}/{y}.webp` | Terrarium-encoded 512 px lossless WebP, no key, open CORS. Sources under CC BY, public domain and similar open licences (none non-commercial or share-alike); credit "© Mapterhorn" and, for the global layer, "produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA". No published usage policy for the public endpoint. |
 | [AWS Terrain Tiles](https://registry.opendata.aws/terrain-tiles/) (Mapzen / Tilezen), `s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png` | Open data from many sources, each with its own credit ([list](https://github.com/tilezen/joerd/blob/master/docs/attribution.md)); no key, no service guarantee, served with open CORS. Heights decode as `R × 256 + G + B / 256 − 32768` metres. |
 
 How the backdrop stays inside those terms:
 
-- A backdrop under a recording downloads at most 36 elevation tiles and 300 vector tiles; a theatre at most 64 + 100 elevation tiles and 64 + 1,500 vector tiles, four requests at a time per source.
-- **One build is one download**, and downloads at most 1,000 vector tiles or 40 MB (OpenFreeMap's terms allow 3,000 tiles or 50 MB). Tiles are asked for centre first; past the allowance the build takes only tiles already in the cache and says how many are still to come. Building again fetches the next chunk, and so on: a large area arrives in pieces, each one cached.
+- A backdrop under a recording downloads at most 36 elevation tiles and 300 vector tiles; a theatre built once at most 64 + 100 elevation tiles and 64 + 1,500 vector tiles; a streamed theatre one tile of each source at a time per map tile, as the camera goes. Four requests at a time per source.
+- **A theatre built once is one download**, and downloads at most 1,000 vector tiles or 40 MB (OpenFreeMap's terms allow 3,000 tiles or 50 MB). Tiles are asked for centre first; past the allowance the build takes only tiles already in the cache and says how many are still to come. Building again fetches the next chunk, and so on: a large area arrives in pieces, each one cached.
 - Measured on the test sorties: the Caucasus theatre with a 25 km area round Batumi, 372 tiles, 19 MB, the first time; Normandy 2 with 25 km round Caen, 371 tiles, 24 MB. Built again, or followed back over, nothing is downloaded.
 - Tiles are downloaded only when **World backdrop** is pressed, never in the background.
 - A browser does not let a page set its own User-Agent; the requests carry the browser's, and the page's origin as `Origin`/`Referer`. A desktop build of the viewer should send its own.
@@ -107,33 +121,38 @@ How the backdrop stays inside those terms:
 
 Every tile, and the vector tiles' TileJSON, is kept in the browser's Cache API under `3dheat-world-tiles-v1`, by URL. A second build of the same area makes no requests at all and works offline: the TileJSON is asked for first and, when that fails, its cached copy names the tiles already held. Tiles the server does not have (open sea, 404) are remembered as absent too.
 
-Vector tile URLs carry the map's build date, so after OpenFreeMap publishes a new build the next backdrop downloads fresh tiles and the old ones stay until cleared. **Forget map tiles** deletes the whole cache. The cache needs a secure origin (`https://` or `localhost`); elsewhere every build downloads again.
+Vector tile URLs carry the map's build date, so after OpenFreeMap publishes a new build the next backdrop downloads fresh tiles and the old ones stay until cleared. The cache is kept to 2 GB: past it, the tiles stored longest ago are deleted first. **Forget map tiles** deletes the whole cache. The cache needs a secure origin (`https://` or `localhost`); elsewhere every build downloads again.
 
 ## Compared with Tacview
 
-Checked by eye on the Caucasus (Batumi to Kutaisi) and Normandy 2 (Caen to Deauville) with synthetic recordings: the take-off rolls lie on the drawn runways' centre lines, the coast crossings fall where the coast is, the tracks end on the destination airfields.
+Checked by eye on the same spots - Batumi (Caucasus), Carpiquet (Normandy 2), Nellis (Nevada) and Latakia (Syria) - with synthetic recordings where there was one: the take-off rolls lie on the drawn runways' centre lines, coast crossings fall on the coast. Tacview's side is from its documentation and its published screenshots (tacview.net, its Steam page), not from running it here.
 
-| | Tacview (from its public documentation and screenshots, not compared side by side) | This backdrop |
+| | Tacview 1.9 | This backdrop, streamed |
 |---|---|---|
-| Extent | the whole earth, streamed | one theatre at a time; the detailed area follows the camera |
-| Terrain | global elevation, hillshaded | the same class of data (SRTM-based, about 30 m), shaded with slope cues and contours |
-| Imagery / land cover | satellite imagery (optional, online) or a coloured map | land cover from OpenStreetMap painted on the terrain; no imagery yet (EOX Sentinel-2 cloudless 2016, CC BY, about 10 m, is the candidate) |
-| Roads, railways | major roads | every class in the detailed area, motorways over the theatre |
-| Buildings | not drawn, as far as its documentation shows | extruded footprints in the detailed area, up to 1.5M triangles |
-| Airfields | runway outlines and names | runways with markings from surveyed ends, taxiways and aprons, airfield names with ICAO codes |
-| Place names | cities | cities, towns and villages by distance |
-| Water | sea and lakes | sea and lakes flat, rivers draped |
+| Extent | the whole globe | 1,500 km round the camera, wherever it is |
+| Terrain | ETOPO1 (about 1.25 km) built in; SRTM 25-75 m if the user installs the files; DCS terrain exported from DCS | Copernicus GLO-30 (Mapterhorn), metre-scale in France and the US |
+| Imagery | none built in; textures the user downloads (Mapview, SAS Planet, add-ons such as a Caucasus VFR chart) | EOX Sentinel-2 cloudless 2016, about 10 m, streamed |
+| Land cover | none, unless in a texture | from OpenStreetMap, painted on the terrain (without imagery) |
+| Roads, railways | none, unless in a texture | every class near the camera, major roads far off |
+| Buildings | none | extruded footprints near the camera |
+| Airfields | labels and runways as flat boxes, no markings | runways from surveyed ends with side stripes, centre line and threshold bars; taxiways, aprons; names with ICAO codes |
+| Place names | some village and city labels | cities, towns, villages, airfields, by distance and height |
 
-Where Tacview is still ahead: it streams any part of the earth seamlessly at any distance; here, outside the theatre box there is nothing, and between the detailed area and the theatre the detail steps down at a visible edge. Its imagery option has no counterpart.
+Where it still falls short:
+
+- **Imagery resolution**: 10 m is soft below about 2 km; Tacview with a user-installed zoom-17 texture is sharper close up. The USGS (US) and IGN (France) orthophoto services are public and would give metre-scale imagery there; they are not wired in yet.
+- **Terrain in DCS's own shape**: Tacview can show the terrain DCS itself exports; here it is the real earth, which differs from DCS's terrain where the map's modellers changed it.
+- **Curvature**: the ground is a flat plane, so the horizon is not a curved earth's; Tacview draws a sphere.
+- **Speed**: the first visit to a spot downloads tens of megabytes before it is sharp; in a software-rendered browser (the screenshots) it draws at a few frames a second with several hundred tiles.
+- **Clicks**: the inspector does not pick the streamed tiles yet, and a streamed theatre cannot be saved to the level library (a theatre built once can).
 
 ## Limits and what comes later
 
 - **Terrain resolution**: about 30 m at best, and coarser in large areas. [Copernicus GLO-30](https://registry.opendata.aws/copernicus-dem/) (Cloud-Optimized GeoTIFFs on AWS, no key, a fixed credit text) is the better source: 30 m everywhere, GLO-90 where GLO-30 has gaps (Armenia and Azerbaijan, which DCS Caucasus covers). It needs a GeoTIFF reader and is not used yet.
-- **Two levels, not a tile pyramid**: a theatre has one coarse level and one detailed area. A true quadtree of tiles, each its own mesh loaded and dropped with distance, needs the renderer to draw several level meshes; it is the next step for seamless streaming.
+- **Better terrain**: Copernicus GLO-30 on AWS sends no CORS headers, so a browser cannot read it; OpenTopography's mirror can be read (CORS and ranges), but their terms for a public app's runtime use are unknown - to be asked before any use. Mapterhorn carries GLO-30 already.
 - **Curvature**: heights are not lowered for the earth's curve, matching how the ACMI reader places the data (altitude as height). Far from the reference both drift together, by under a part in a thousand at 100 km.
 - **Present-day world only**: DCS's and IL-2's historical maps (Normandy 2, The Channel, Germany Cold War, every IL-2 map) are drawn with today's towns, roads and coast works; the panel says so. Period airfields are not drawn.
 - **No globe mode**: a backdrop is a flat local plane. A whole-earth view is planned.
-- **Place names** are not stored in the library with a saved backdrop.
 - Roads are widened in large areas so they stay visible; up close they are wider than life.
 - DCS theatre names in the Watcher's tables are matched as DCS gives them in `mission.theatre`; a name not in the list falls back to the first fix rounded to whole degrees, and to latitude and longitude only.
 

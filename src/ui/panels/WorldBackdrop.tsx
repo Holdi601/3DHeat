@@ -12,6 +12,10 @@ import { clearCache } from '../../world/cache';
 import { THEATRES, theatreAt, theatreById, theatreGeo, type Theatre } from '../../world/theatres';
 import { boxAround } from '../../world/tiles';
 import { Check } from '../controls';
+import { useEngine } from '../EngineContext';
+import { dataToWorld } from '../../render/pose';
+import { worldStreamer } from '../../world/stream';
+import { dataOfEastNorth, planeForward } from '../../world/tiles';
 
 /**
  * A theatre built with no data loaded is put into the world the way a Tacview
@@ -53,7 +57,19 @@ export function WorldBackdrop({
   const [lon, setLon] = useState('');
   const [size, setSize] = useState(50);
   const [runways, setRunways] = useState(true);
-  const [follow, setFollow] = useState(true);
+  const [imagery, setImagery] = useState(false);
+  const engine = useEngine();
+  /** The streamer's counts, read once a second while a theatre streams. */
+  const [streamStats, setStreamStats] = useState<typeof worldStreamer.stats | null>(null);
+  const streaming = useStore((s) => s.level?.kind === 'model' && !!s.level.stream);
+  useEffect(() => {
+    if (!streaming) {
+      setStreamStats(null);
+      return;
+    }
+    const timer = window.setInterval(() => setStreamStats({ ...worldStreamer.stats }), 1000);
+    return () => window.clearInterval(timer);
+  }, [streaming]);
   const theatre = theatreById(theatreId);
 
   // A newly loaded recording picks its theatre, and the area under it.
@@ -135,8 +151,73 @@ export function WorldBackdrop({
       centre = { lat: la, lon: lo };
       name = t('heat.world.theatreNameAt', { game: gameLabel(theatre), theatre: theatre.name, lat: num(la, 2), lon: num(lo, 2) });
     }
-    // A theatre follows the camera from here on, unless asked not to.
-    void run(req, name, { theatre: theatre.id, runways, follow, centre, size: req.box ? size : 0 });
+    void centre;
+    void run(req, name);
+  };
+
+  /**
+   * A theatre streamed round the camera: an empty level that carries the
+   * look, the place on the earth and the credits; its ground comes as tiles
+   * (src/world/stream, driven from WorldOverlay).
+   */
+  const streamTheatre = () => {
+    if (!theatre) return;
+    const placement: GeoPlacement = { geo: geo ?? theatreGeo(theatre), axes: geo ? (dataset?.axes ?? null) : THEATRE_AXES };
+    const fwd = planeForward(placement.geo);
+    // Bounds that reach well past the theatre, for the camera's far plane.
+    const pts = [
+      [theatre.box.south, theatre.box.west],
+      [theatre.box.north, theatre.box.east],
+    ].map(([la, lo]) => fwd(la, lo));
+    const reach = 1_500_000;
+    const lo = dataToWorld(dataOfEastNorth(placement.geo, Math.min(pts[0][0], pts[1][0]) - reach, Math.min(pts[0][1], pts[1][1]) - reach, -100), placement.axes);
+    const hi = dataToWorld(dataOfEastNorth(placement.geo, Math.max(pts[0][0], pts[1][0]) + reach, Math.max(pts[0][1], pts[1][1]) + reach, 4000), placement.axes);
+    const bounds = {
+      minX: Math.min(lo.x, hi.x),
+      maxX: Math.max(lo.x, hi.x),
+      minY: Math.min(lo.y, hi.y),
+      maxY: Math.max(lo.y, hi.y),
+      minZ: Math.min(lo.z, hi.z),
+      maxZ: Math.max(lo.z, hi.z),
+    };
+    const empty: BackdropResult = {
+      mesh: {
+        vertices: new Float32Array(0),
+        colours: new Float32Array(0),
+        indices: new Uint32Array(0),
+        structureIndices: new Uint32Array(0),
+        structureEdges: new Uint32Array(0),
+        waterIndices: new Uint32Array(0),
+        partNames: [],
+        partRuns: { ground: new Uint32Array(0), structure: new Uint32Array(0), water: new Uint32Array(0) },
+        bounds,
+        groundBand: { minY: lo.y < hi.y ? lo.y : hi.y, maxY: lo.y < hi.y ? hi.y : lo.y },
+      },
+      labels: [],
+      credits: [],
+      stats: {} as BackdropResult['stats'],
+      notes: [],
+    };
+    const lv = toLevel(t('heat.world.stream.name', { game: gameLabel(theatre), theatre: theatre.name }), empty, placement);
+    setError(null);
+    setNote(null);
+    setLevel({ ...lv, stream: { theatre: theatre.id, imagery, runways }, showTexture: imagery });
+    // With no data to look at, start over the theatre's detailed area, 25 km up and 50 km south of it.
+    if (!geo && engine) {
+      const [e, n] = fwd(theatre.detail.lat, theatre.detail.lon);
+      const at = dataToWorld(dataOfEastNorth(placement.geo, e, n, 0), placement.axes);
+      const from = dataToWorld(dataOfEastNorth(placement.geo, e, n - 50_000, 25_000), placement.axes);
+      const f = { x: at.x - from.x, y: at.y - from.y, z: at.z - from.z };
+      const l = Math.hypot(f.x, f.y, f.z);
+      engine.setCameraPose(from, { x: f.x / l, y: f.y / l, z: f.z / l });
+    }
+  };
+
+  /** Imagery on or off for the streamed theatre shown now: its tiles are built again (from the cache). */
+  const switchImagery = (v: boolean) => {
+    setImagery(v);
+    const lv = useStore.getState().level;
+    if (lv?.kind === 'model' && lv.stream) setLevel({ ...lv, stream: { ...lv.stream, imagery: v }, showTexture: v });
   };
 
   const forgetTiles = async () => {
@@ -216,10 +297,24 @@ export function WorldBackdrop({
             </div>
           )}
           <div className="row">
+            <button disabled={busy || !!world} onClick={streamTheatre} title={t('heat.world.stream.buttonTitle')}>
+              {t('heat.world.stream.button')}
+            </button>
             <button disabled={busy || !!world} onClick={buildTheatre} title={t('heat.world.theatre.buildTitle')}>
               {t('heat.world.theatre.build')}
             </button>
           </div>
+          {streamStats && (
+            <div className="hint">
+              {t('heat.world.stream.status', {
+                drawn: int(streamStats.drawn),
+                loading: int(streamStats.loading),
+                kept: int(streamStats.kept),
+                size: formatBytes(streamStats.bytes),
+                downloaded: formatBytes(streamStats.downloaded),
+              })}
+            </div>
+          )}
           {plane && (
             <div className="hint">
               {geo
@@ -232,19 +327,7 @@ export function WorldBackdrop({
       {(geo || theatre) && (
         <>
           <Check label={t('heat.world.runways')} title={t('heat.world.runwaysTitle')} checked={runways} onChange={setRunways} />
-          {theatre && (
-            <Check
-              label={t('heat.world.follow')}
-              title={t('heat.world.followTitle')}
-              checked={follow}
-              onChange={(v) => {
-                setFollow(v);
-                // The backdrop shown takes it at once.
-                const lv = useStore.getState().level;
-                if (lv?.kind === 'model' && lv.stream) setLevel({ ...lv, stream: { ...lv.stream, follow: v } });
-              }}
-            />
-          )}
+          {theatre && <Check label={t('heat.world.imagery')} title={t('heat.world.imageryTitle')} checked={imagery} onChange={switchImagery} />}
           <div className="row">
             <button disabled={!!world} onClick={() => void forgetTiles()} title={t('heat.world.clearCacheTitle')}>
               {t('heat.world.clearCache')}

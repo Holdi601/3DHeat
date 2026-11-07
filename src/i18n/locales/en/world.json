@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Map tiles still to come: {count}. One build downloads at most {max}; build again to fetch the next part.",
   "heat.world.note.noRunways": "The runway list could not be read: runways as the map draws them.",
   "heat.world.credit.ourairports": "Runways: OurAirports (public domain)",
-  "heat.world.follow": "Follow the camera",
-  "heat.world.followTitle": "Build the detailed area again round the point under the camera once it stops: wider when high, finer when low. Tiles already downloaded are not fetched again."
+  "heat.world.stream.button": "Stream theatre",
+  "heat.world.stream.buttonTitle": "Terrain, land cover, roads, airfields and buildings streamed round the camera as it flies: coarse far off, finer close by, across the theatre and beyond. Only what is not cached yet is downloaded.",
+  "heat.world.stream.status": "Streaming: {drawn} tiles drawn, {loading} loading, {kept} kept ({size}); {downloaded} downloaded.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Satellite imagery (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Drape a cloud-free satellite picture, about 10 m a pixel, over the ground in place of the painted land cover. CC BY 4.0; downloaded as needed and kept in the cache.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

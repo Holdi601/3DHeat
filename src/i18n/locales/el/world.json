@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Πλακίδια χάρτη που απομένουν: {count}. Μία κατασκευή λαμβάνει το πολύ {max}· κατασκευάστε ξανά για να φέρετε το επόμενο μέρος.",
   "heat.world.note.noRunways": "Η λίστα διαδρόμων δεν ήταν δυνατό να διαβαστεί: διάδρομοι όπως τους σχεδιάζει ο χάρτης.",
   "heat.world.credit.ourairports": "Διάδρομοι: OurAirports (κοινό κτήμα)",
-  "heat.world.follow": "Ακολούθηση κάμερας",
-  "heat.world.followTitle": "Ξαναχτίζει τη λεπτομερή περιοχή γύρω από το σημείο κάτω από την κάμερα όταν σταματήσει: ευρύτερη όταν είναι ψηλά, λεπτομερέστερη όταν είναι χαμηλά. Τα πλακίδια που έχουν ήδη ληφθεί δεν λαμβάνονται ξανά."
+  "heat.world.stream.button": "Ροή του θεάτρου",
+  "heat.world.stream.buttonTitle": "Ανάγλυφο, κάλυψη γης, δρόμοι, αεροδρόμια και κτίρια φορτώνονται γύρω από την κάμερα καθώς πετά: χοντρικά μακριά, λεπτομερέστερα κοντά, σε όλο το θέατρο και πέρα από αυτό. Λαμβάνεται μόνο ό,τι δεν υπάρχει ήδη στην κρυφή μνήμη.",
+  "heat.world.stream.status": "Ροή: {drawn} πλακίδια σχεδιασμένα, {loading} φορτώνονται, {kept} φυλαγμένα ({size}); {downloaded} ελήφθησαν.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Δορυφορικές εικόνες (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Απλώνει μια δορυφορική εικόνα χωρίς σύννεφα, περίπου 10 m ανά εικονοστοιχείο, πάνω στο έδαφος αντί για τη βαμμένη κάλυψη γης. CC BY 4.0· λαμβάνεται όταν χρειάζεται και φυλάσσεται στην κρυφή μνήμη.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

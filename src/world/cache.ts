@@ -64,8 +64,68 @@ export async function cachedFetch(url: string, mode: FetchMode | boolean = 'cach
   }
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const bytes = await res.arrayBuffer();
-  if (cache) await cache.put(url, new Response(bytes.slice(0), { headers: { 'Content-Type': res.headers.get('Content-Type') ?? 'application/octet-stream' } })).catch(() => undefined);
+  if (cache) {
+    await cache
+      .put(
+        url,
+        new Response(bytes.slice(0), {
+          headers: {
+            'Content-Type': res.headers.get('Content-Type') ?? 'application/octet-stream',
+            [BYTES_HEADER]: String(bytes.byteLength),
+            [TIME_HEADER]: String(Date.now()),
+          },
+        }),
+      )
+      .catch(() => undefined);
+    stored += bytes.byteLength;
+    if (stored > CHECK_EVERY_BYTES) {
+      stored = 0;
+      void enforceBudget().catch(() => undefined);
+    }
+  }
   return { bytes, cached: false };
+}
+
+/**
+ * How much the tile cache may hold. Streaming a theatre downloads as the
+ * camera goes, so the cache is kept to a budget rather than each build being
+ * capped: past it, the tiles stored longest ago are deleted first (they come
+ * back from the network if wanted again).
+ */
+export const CACHE_BUDGET_BYTES = 2 * 1024 * 1024 * 1024;
+/** The budget is checked after this many new bytes. */
+const CHECK_EVERY_BYTES = 64 * 1024 * 1024;
+const BYTES_HEADER = 'x-heat3d-bytes';
+const TIME_HEADER = 'x-heat3d-time';
+let stored = 0;
+
+/**
+ * Deletes the oldest tiles until the cache is within `budget`. Sizes and
+ * times come from headers written when each tile was stored, so no tile's
+ * body is read; tiles stored before those headers existed count as oldest.
+ */
+export async function enforceBudget(budget = CACHE_BUDGET_BYTES): Promise<number> {
+  const cache = await open();
+  if (!cache) return 0;
+  const entries: Array<{ req: Request; bytes: number; time: number }> = [];
+  let total = 0;
+  for (const req of await cache.keys()) {
+    const r = await cache.match(req);
+    if (!r) continue;
+    const bytes = Number(r.headers.get(BYTES_HEADER) ?? 0) || 0;
+    entries.push({ req, bytes, time: Number(r.headers.get(TIME_HEADER) ?? 0) || 0 });
+    total += bytes;
+  }
+  if (total <= budget) return 0;
+  entries.sort((a, b) => a.time - b.time);
+  let freed = 0;
+  for (const e of entries) {
+    if (total <= budget) break;
+    await cache.delete(e.req);
+    total -= e.bytes;
+    freed += e.bytes;
+  }
+  return freed;
 }
 
 /** Bytes and entries the tile cache holds, when the browser can say. */

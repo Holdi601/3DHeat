@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Dale de hartă rămase: {count}. O construire descarcă cel mult {max}; construiți din nou pentru a aduce partea următoare.",
   "heat.world.note.noRunways": "Lista pistelor nu a putut fi citită: piste așa cum le desenează harta.",
   "heat.world.credit.ourairports": "Piste: OurAirports (domeniu public)",
-  "heat.world.follow": "Urmărește camera",
-  "heat.world.followTitle": "Reconstruiește zona detaliată în jurul punctului de sub cameră când aceasta se oprește: mai largă la înălțime, mai fină la joasă înălțime. Plăcile deja descărcate nu se descarcă din nou."
+  "heat.world.stream.button": "Transmite teatrul",
+  "heat.world.stream.buttonTitle": "Relieful, acoperirea terenului, drumurile, aerodromurile și clădirile se încarcă în jurul camerei în zbor: grosier în depărtare, mai fin de aproape, pe tot teatrul și dincolo de el. Se descarcă doar ce nu e încă în cache.",
+  "heat.world.stream.status": "Transmisie: {drawn} plăci desenate, {loading} se încarcă, {kept} păstrate ({size}); {downloaded} descărcați.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Imagini satelitare (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Acoperă terenul cu o imagine satelitară fără nori, cam 10 m pe pixel, în locul acoperirii pictate. CC BY 4.0; se descarcă la nevoie și se păstrează în cache.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

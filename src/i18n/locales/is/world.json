@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Kortareitir sem eftir eru: {count}. Hver bygging sækir mest {max}; byggðu aftur til að sækja næsta hluta.",
   "heat.world.note.noRunways": "Ekki tókst að lesa flugbrautalistann: flugbrautir eins og kortið teiknar þær.",
   "heat.world.credit.ourairports": "Flugbrautir: OurAirports (almenningseign)",
-  "heat.world.follow": "Fylgja myndavélinni",
-  "heat.world.followTitle": "Byggja nákvæma svæðið aftur kringum punktinn undir myndavélinni þegar hún stöðvast: víðara hátt uppi, fínna lágt niðri. Reitir sem þegar hafa verið sóttir eru ekki sóttir aftur."
+  "heat.world.stream.button": "Streyma vígvellinum",
+  "heat.world.stream.buttonTitle": "Landslag, landþekja, vegir, flugvellir og byggingar streyma kringum myndavélina á flugi: gróft fjarri, fínna nærri, um allan vígvöllinn og lengra. Aðeins það sem ekki er þegar í skyndiminni er sótt.",
+  "heat.world.stream.status": "Streymi: {drawn} reitir teiknaðir, {loading} í hleðslu, {kept} geymdir ({size}); {downloaded} sótt.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Gervihnattamyndir (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Leggja skýlausa gervihnattamynd, um 10 m á díl, yfir landið í stað málaðrar landþekju. CC BY 4.0; sótt eftir þörfum og geymt í skyndiminni.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

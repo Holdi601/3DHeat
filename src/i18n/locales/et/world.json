@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Veel tulemata kaardipaane: {count}. Üks ehitus laadib alla kuni {max}; järgmise osa saamiseks ehita uuesti.",
   "heat.world.note.noRunways": "Lennuradade loendit ei õnnestunud lugeda: lennurajad nii, nagu kaart need joonistab.",
   "heat.world.credit.ourairports": "Lennurajad: OurAirports (avalik omand)",
-  "heat.world.follow": "Järgi kaamerat",
-  "heat.world.followTitle": "Ehita detailne ala uuesti kaamera all oleva punkti ümber, kui kaamera peatub: kõrgel laiem, madalal täpsem. Juba alla laaditud paane uuesti ei laadita."
+  "heat.world.stream.button": "Voogesita sõjatanner",
+  "heat.world.stream.buttonTitle": "Maastik, maakate, teed, lennuväljad ja hooned laaditakse kaamera ümber lennu ajal: kaugel jämedalt, lähedal täpsemalt, kogu sõjatandril ja kaugemalgi. Alla laaditakse ainult see, mida vahemälus veel pole.",
+  "heat.world.stream.status": "Voogesitus: {drawn} paani joonistatud, {loading} laadimisel, {kept} hoitud ({size}); alla laaditud {downloaded}.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Satelliidipildid (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Kata maapind maalitud maakatte asemel pilvitu satelliidipildiga, umbes 10 m piksli kohta. CC BY 4.0; laaditakse vajadusel ja hoitakse vahemälus.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

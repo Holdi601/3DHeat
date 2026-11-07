@@ -1,20 +1,15 @@
 import { useEffect, useRef } from 'react';
-import { worldToData } from '../render/pose';
-import type { ModelLevel } from '../render/level';
 import { useStore } from '../state/store';
-import { backdropLoader } from '../world/backdropLoader';
-import type { BackdropResult, WorldLabel } from '../world/backdrop';
-import { theatreById } from '../world/theatres';
-import { boxAround, eastNorthOf, heightOf, planeInverse } from '../world/tiles';
+import type { WorldLabel } from '../world/backdrop';
+import { worldStreamer } from '../world/stream';
 import { useAnimationFrame, useEngine } from './EngineContext';
 
 /**
  * What a world backdrop shows over the canvas and does while the view moves:
- * the names of towns and airfields where they are, and - for a theatre built
- * to follow the camera - the detailed area built again round the point under
- * the camera once it has settled, larger when it is high, finer when it is
- * low. Mounted with the canvas, not in a panel, so it runs with the panel
- * closed.
+ * the names of towns and airfields where they are, and - for a streamed
+ * theatre - the tiles round the camera, chosen a few times a second
+ * (src/world/stream). Mounted with the canvas, not in a panel, so it runs
+ * with the panel closed.
  */
 
 /**
@@ -31,59 +26,26 @@ const REACH: Record<WorldLabel['kind'], { near: number; perHeight: number; max: 
 const PRIORITY: Record<WorldLabel['kind'], number> = { city: 0, airfield: 1, town: 2, village: 3 };
 /** Most names on screen at once. */
 const MAX_LABELS = 70;
-/** Detailed area sizes the camera's height picks from, kilometres. */
-const SIZES = [12, 25, 50, 100, 200];
-
-/** The detailed area's size for a camera this high above sea level: about six times the height. */
-export function sizeForHeight(h: number): number {
-  const want = (Math.max(0, h) * 6) / 1000;
-  return SIZES.find((s) => s >= want) ?? SIZES[SIZES.length - 1];
-}
-
-/** A built backdrop's geometry over a level, keeping its look. */
-export function withGeometry(level: ModelLevel, r: BackdropResult): ModelLevel {
-  const m = r.mesh;
-  const tri = (a: Uint32Array) => a.length / 3;
-  return {
-    ...level,
-    vertices: m.vertices,
-    colours: m.colours,
-    indices: m.indices,
-    structureIndices: m.structureIndices,
-    structureEdges: m.structureEdges,
-    waterIndices: m.waterIndices,
-    triangles: tri(m.indices),
-    structureTriangles: tri(m.structureIndices),
-    waterTriangles: tri(m.waterIndices),
-    sourceTriangles: tri(m.indices),
-    sourceStructureTriangles: tri(m.structureIndices),
-    partNames: m.partNames,
-    partClasses: m.partNames.map((n) => (n === 'building' ? 'structure' : n === 'water' ? 'water' : 'ground')),
-    partReasons: m.partNames.map(() => level.partReasons?.[0] ?? ''),
-    partRuns: { ...m.partRuns, nav: null },
-    partBounds: undefined,
-    bounds: m.bounds,
-    relief: { ...level.relief, lowY: m.groundBand.minY, highY: m.groundBand.maxY },
-    labels: r.labels,
-    credits: r.credits,
-  };
-}
+/** How often the streamed tiles are chosen again, milliseconds. */
+const STREAM_EVERY = 250;
 
 export function WorldOverlay() {
   const engine = useEngine();
   const level = useStore((s) => (s.level?.kind === 'model' ? s.level : null));
-  const labels = level?.labels;
   const root = useRef<HTMLDivElement>(null);
   const nodes = useRef<HTMLDivElement[]>([]);
+  const streamed = !!level?.stream;
 
-  // ---- names
-  useEffect(() => {
-    for (const el of nodes.current) el.remove();
-    nodes.current = [];
-  }, [labels]);
+  // ---- names: the level's own, and the streamed tiles'
   useAnimationFrame(() => {
     const host = root.current;
-    if (!engine || !host || !labels?.length) return;
+    if (!engine || !host) return;
+    const own = level?.labels ?? [];
+    const labels = worldStreamer.running ? [...own, ...worldStreamer.labels] : own;
+    if (!labels.length) {
+      for (const el of nodes.current) el.style.display = 'none';
+      return;
+    }
     const eye = engine.cameraPose().position;
     const scale = level?.placement?.axes?.scale || 1;
     const near: Array<{ l: WorldLabel; d: number }> = [];
@@ -115,51 +77,27 @@ export function WorldOverlay() {
       if (el.textContent !== s.l.text) el.textContent = s.l.text;
       el.style.transform = `translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px) translate(-50%, -100%)`;
     });
-  }, !!labels?.length);
+  }, !!level);
 
-  // ---- the detailed area following the camera
-  const still = useRef<{ x: number; y: number; z: number; since: number } | null>(null);
+  // ---- the streamed theatre: tiles round the camera
   useEffect(() => {
     if (!engine) return;
+    worldStreamer.onChange = () => engine.invalidate(2);
     const timer = window.setInterval(() => {
-      const s = useStore.getState();
-      const lv = s.level?.kind === 'model' ? s.level : null;
-      const stream = lv?.stream;
-      if (!lv || !stream?.follow || !lv.placement || backdropLoader.busy) return;
-      const th = theatreById(stream.theatre);
-      if (!th) return;
-      // Wait for the camera to settle: building while it moves would chase it.
-      const pos = engine.cameraPose().position;
-      const now = performance.now();
-      const last = still.current;
-      const moved = !last || Math.hypot(pos.x - last.x, pos.y - last.y, pos.z - last.z) > 1;
-      if (moved) {
-        still.current = { ...pos, since: now };
-        return;
-      }
-      if (now - last.since < 1500) return;
-      const { geo, axes } = lv.placement;
-      const d = worldToData(pos, axes);
-      const [e, n] = eastNorthOf(geo, d);
-      const [lat, lon] = planeInverse(geo)(e, n);
-      const b = th.box;
-      if (!(lat > b.south && lat < b.north && lon > b.west && lon < b.east)) return;
-      const size = sizeForHeight(heightOf(geo, d));
-      const dKm = Math.hypot((lat - stream.centre.lat) * 111.2, (lon - stream.centre.lon) * 111.2 * Math.cos((lat * Math.PI) / 180));
-      if (size === stream.size && dKm < size * 0.3) return;
-      const asked = stream;
-      void backdropLoader
-        .build({ geo, axes, context: th.box, box: boxAround(lat, lon, size), runways: stream.runways })
-        .then((r) => {
-          const cur = useStore.getState().level;
-          // Only onto the backdrop it was built for, and only if it still follows.
-          if (cur?.kind !== 'model' || cur.stream !== asked || !cur.placement) return;
-          s.setLevel({ ...withGeometry(cur, r), stream: { ...asked, centre: { lat, lon }, size } });
-        })
-        .catch(() => undefined);
-    }, 1000);
-    return () => window.clearInterval(timer);
+      const lv = useStore.getState().level;
+      if (lv?.kind === 'model' && lv.stream && lv.placement) {
+        worldStreamer.start({ placement: lv.placement, imagery: lv.stream.imagery, runways: lv.stream.runways });
+        worldStreamer.update(engine.cameraPose().position);
+      } else if (worldStreamer.running) worldStreamer.stop();
+    }, STREAM_EVERY);
+    return () => {
+      window.clearInterval(timer);
+      worldStreamer.onChange = null;
+    };
   }, [engine]);
+  useEffect(() => {
+    if (!streamed && worldStreamer.running) worldStreamer.stop();
+  }, [streamed]);
 
   return <div className="world-labels" ref={root} />;
 }

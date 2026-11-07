@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Ще лишилося тайлів мапи: {count}. Одна побудова завантажує не більше {max}; побудуйте ще раз, щоб отримати наступну частину.",
   "heat.world.note.noRunways": "Не вдалося прочитати список ЗПС: смуги такі, як їх малює мапа.",
   "heat.world.credit.ourairports": "ЗПС: OurAirports (суспільне надбання)",
-  "heat.world.follow": "Стежити за камерою",
-  "heat.world.followTitle": "Будувати детальну область заново навколо точки під камерою, коли вона зупиниться: ширше на висоті, детальніше внизу. Уже завантажені плитки повторно не завантажуються."
+  "heat.world.stream.button": "Потоковий театр воєнних дій",
+  "heat.world.stream.buttonTitle": "Рельєф, рослинний покрив, дороги, аеродроми й будівлі підвантажуються навколо камери в польоті: віддалік грубо, поблизу детальніше, по всьому театру й за його межами. Завантажується лише те, чого ще немає в кеші.",
+  "heat.world.stream.status": "Потік: показано {drawn} плиток, завантажується {loading}, зберігається {kept} ({size}); завантажено {downloaded}.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Супутникові знімки (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Накласти безхмарний супутниковий знімок, близько 10 м на піксель, на землю замість розфарбованого покриву. CC BY 4.0; завантажується за потреби й зберігається в кеші.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }

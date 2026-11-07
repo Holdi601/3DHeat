@@ -71,10 +71,10 @@ describe('repeating textures in the level shaders', () => {
     expect(table).toContain('gl.RGBA32F');
     expect(table).toContain('gl.TEXTURE_MIN_FILTER, gl.NEAREST');
     // Every mesh and peel pass binds the atlas through bindAtlas, which binds
-    // the table too and pins the attribute at 0 when the level has no tiles.
+    // the table too and pins the attribute at 0 when the mesh has no tiles.
     const bind = src.slice(src.indexOf('  private bindAtlas('), src.indexOf('  private blankTile'));
     expect(bind).toContain("u.i1('uTiles', TILE_UNIT);");
-    expect(bind).toContain('if (!this.tileVbo) gl.vertexAttrib1f(4, 0);');
+    expect(bind).toContain('if (!mesh.tileVbo) gl.vertexAttrib1f(4, 0);');
   });
 
   it('backs the WebGPU tile attribute and table in every pass that reads them', () => {
@@ -83,8 +83,10 @@ describe('repeating textures in the level shaders', () => {
     expect(src).toContain("attributes: [{ shaderLocation: 2, offset: 0, format: 'uint32' }]");
     expect(src).toContain('{ binding: 2, resource: { buffer: tiles } }');
     // Wherever the UVs are bound for the mesh pipelines, the tiles are bound beside them.
-    const uvBinds = src.match(/pass\.setVertexBuffer\(2, this\.meshUvBuffer\);\n\s*pass\.setVertexBuffer\(3, this\.meshTileBuffer\);/g) ?? [];
-    expect(uvBinds.length).toBe((src.match(/pass\.setVertexBuffer\(2, this\.meshUvBuffer\);/g) ?? []).length);
-    expect(src).toContain('pass.setVertexBuffer(2, this.meshTileBuffer);');
+    const uvBinds = src.match(/pass\.setVertexBuffer\(2, m\.uvBuffer\);\n\s*pass\.setVertexBuffer\(3, m\.tileBuffer\);/g) ?? [];
+    expect(uvBinds.length).toBeGreaterThan(0);
+    expect(uvBinds.length).toBe((src.match(/pass\.setVertexBuffer\(2, m\.uvBuffer\);/g) ?? []).length);
+    // The peel, whose layout has the UVs at 1 and the tiles at 2.
+    expect(src).toContain('pass.setVertexBuffer(2, m.tileBuffer);');
   });
 });

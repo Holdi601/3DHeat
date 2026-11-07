@@ -9,7 +9,7 @@ import { csvFields, parseRunways, runwaysIn, OURAIRPORTS_RUNWAYS } from './runwa
 import { THEATRES, theatreAt, theatreById, theatreGeo } from './theatres';
 import { boxAround, dataOfEastNorth, eastNorthOf, planeForward, planeInverse } from './tiles';
 import { DCS_PROJECTIONS, fromDcs, toDcs } from './dcsProjection';
-import { sizeForHeight } from '../ui/WorldOverlay';
+import { renderSet, selectTiles, MAX_ZOOM, ROOT_ZOOM } from './stream';
 import { geoOfHints, parseHints } from '../data/automap';
 
 const ACMI_AXES: AxisMapping = { up: 'z', flipX: false, flipY: true, flipZ: false, scale: 1 };
@@ -112,8 +112,12 @@ describe('a theatre backdrop', () => {
     // Flat ground at 100 m on both levels, so the wall between them is flat too.
     expect(m.groundBand.minY).toBeCloseTo(100, 0);
     expect(m.groundBand.maxY).toBeCloseTo(100, 0);
-    // The sea from both layers, a motorway, and the surveyed runway.
-    expect(m.waterIndices.length).toBeGreaterThan(0);
+    // The sea painted on the ground of both layers (it is the terrain, not a
+    // sheet: see SEA_FLOOR), a motorway, and the surveyed runway.
+    let painted = 0;
+    for (let i = 0; i < m.colours.length; i += 3) if (Math.abs(m.colours[i] - 0.55) < 1e-6 && Math.abs(m.colours[i + 2] - 0.8) < 1e-6) painted++;
+    expect(painted).toBeGreaterThan(1000);
+    expect(m.waterIndices.length).toBe(0);
     expect(s.roads).toBeGreaterThan(0);
     expect(s.runways).toBe(1);
     expect(r.credits).toEqual(['openfreemap', 'terrarium', 'ourairports']);
@@ -270,12 +274,35 @@ describe('DCS World metres', () => {
   });
 });
 
-describe('following the camera', () => {
-  it('picks a larger detailed area the higher the camera', () => {
-    expect(sizeForHeight(500)).toBe(12);
-    expect(sizeForHeight(3000)).toBe(25);
-    expect(sizeForHeight(8000)).toBe(50);
-    expect(sizeForHeight(15_000)).toBe(100);
-    expect(sizeForHeight(100_000)).toBe(200);
+describe('streaming round the camera', () => {
+  it('splits tiles near the camera down to the deepest zoom, and keeps far ones coarse', () => {
+    // 500 m above Batumi.
+    const low = selectTiles(41.61, 41.6, 500);
+    const deepest = Math.max(...low.nodes.map((t) => t.z));
+    expect(deepest).toBe(MAX_ZOOM);
+    expect(low.nodes[0].z).toBe(ROOT_ZOOM);
+    // Coarse first: zooms never go down along the list.
+    for (let i = 1; i < low.nodes.length; i++) expect(low.nodes[i].z).toBeGreaterThanOrEqual(low.nodes[i - 1].z);
+    // 40 km up: no tile finer than zoom 11 is wanted.
+    const high = selectTiles(41.61, 41.6, 40_000);
+    expect(Math.max(...high.nodes.map((t) => t.z))).toBeLessThanOrEqual(11);
+    expect(high.nodes.length).toBeLessThan(low.nodes.length);
+    // Not bound to a theatre: the roots reach 1,500 km.
+    expect(low.nodes.filter((t) => t.z === ROOT_ZOOM).length).toBeGreaterThanOrEqual(9);
+    expect(low.nodes.length).toBeLessThan(800);
+  });
+
+  it('draws a split tile in place of its children until all four are built', () => {
+    const root = { z: 5, x: 20, y: 11 };
+    const split = new Set(['5/20/11']);
+    const kids = ['6/40/22', '6/41/22', '6/40/23', '6/41/23'];
+    const built = new Set(['5/20/11', '6/40/22']);
+    expect(renderSet([root], split, (k) => built.has(k))).toEqual(['5/20/11']);
+    for (const k of kids) built.add(k);
+    expect(renderSet([root], split, (k) => built.has(k)).sort()).toEqual([...kids].sort());
+    // Neither the tile nor all its children: what there is.
+    built.delete('5/20/11');
+    built.delete('6/41/23');
+    expect(renderSet([root], split, (k) => built.has(k)).sort()).toEqual(['6/40/22', '6/40/23', '6/41/22']);
   });
 });

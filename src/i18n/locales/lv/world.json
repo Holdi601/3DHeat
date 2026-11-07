@@ -53,6 +53,12 @@
   "heat.world.note.deferred": "Vēl gaidāmās kartes flīzes: {count}. Viena būvēšana lejupielādē ne vairāk kā {max}; būvējiet vēlreiz, lai iegūtu nākamo daļu.",
   "heat.world.note.noRunways": "Skrejceļu sarakstu neizdevās nolasīt: skrejceļi tādi, kādus tos zīmē karte.",
   "heat.world.credit.ourairports": "Skrejceļi: OurAirports (publiskais īpašums)",
-  "heat.world.follow": "Sekot kamerai",
-  "heat.world.followTitle": "Kad kamera apstājas, no jauna izveidot detalizēto apgabalu ap punktu zem kameras: augstu – plašāku, zemu – smalkāku. Jau lejupielādētās flīzes netiek lejupielādētas vēlreiz."
+  "heat.world.stream.button": "Straumēt kara darbības teātri",
+  "heat.world.stream.buttonTitle": "Reljefs, zemes segums, ceļi, lidlauki un ēkas tiek ielādēti ap kameru lidojuma laikā: tālumā rupji, tuvumā smalkāk, visā teātrī un aiz tā. Lejupielādē tikai to, kā kešatmiņā vēl nav.",
+  "heat.world.stream.status": "Straumēšana: {drawn} flīzes attēlotas, {loading} ielādējas, {kept} saglabātas ({size}); lejupielādēts {downloaded}.",
+  "heat.world.stream.name": "{game} {theatre}, streamed",
+  "heat.world.imagery": "Satelītattēli (EOX Sentinel-2 cloudless 2016)",
+  "heat.world.imageryTitle": "Pārklāt zemi ar bezmākoņu satelītattēlu, aptuveni 10 m pikselī, krāsotā zemes seguma vietā. CC BY 4.0; tiek lejupielādēts pēc vajadzības un glabāts kešatmiņā.",
+  "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
+  "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0"
 }
