@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Sekundes (relatīvas)",
+  "state.types.timeUnit.milliseconds": "Milisekundes (relatīvas)",
+  "state.types.timeUnit.microseconds": "Mikrosekundes (relatīvas)",
+  "state.types.timeUnit.nanoseconds": "Nanosekundes (relatīvas)",
+  "state.types.timeUnit.unixSeconds": "Unix laikspiedols (s)",
+  "state.types.timeUnit.unixMilliseconds": "Unix laikspiedols (ms)",
+  "state.types.timeUnit.iso8601": "ISO-8601 datuma virkne"
+}

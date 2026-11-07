@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label}: arraste para ajustar",
+  "ui.jog.title": "Arraste para cima ou para baixo para alterar {label}. Quanto mais longe, mais rápido; mantenha Shift premido para um ajuste fino. Solte para parar.",
+  "ui.jog.limited": "Limitado ao intervalo do controlo deslizante.",
+  "ui.select.none": "— nenhum —"
+}

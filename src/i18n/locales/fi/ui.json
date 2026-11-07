@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — säädä vetämällä",
+  "ui.jog.title": "{label}: muuta vetämällä ylös tai alas. Mitä pidemmälle vedät, sitä nopeammin arvo muuttuu; pidä Shift pohjassa hienosäätöä varten. Lopeta päästämällä irti.",
+  "ui.jog.limited": "Rajoitettu liukusäätimen alueelle.",
+  "ui.select.none": "— ei mitään —"
+}

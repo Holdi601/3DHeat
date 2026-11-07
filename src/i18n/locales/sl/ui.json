@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} – vlecite za nastavitev",
+  "ui.jog.title": "Vlecite gor ali dol, da spremenite nastavitev {label}. Dlje ko vlečete, hitreje se spreminja; za fino nastavljanje držite Shift. Spustite, da se ustavi.",
+  "ui.jog.limited": "Omejeno na obseg drsnika.",
+  "ui.select.none": "— brez —"
+}

@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — velc, lai mainītu",
+  "ui.jog.title": "Velc augšup vai lejup, lai mainītu vērtību „{label}”. Jo tālāk, jo ātrāk; precīzai regulēšanai turi Shift. Atlaid, lai apturētu.",
+  "ui.jog.limited": "Ierobežots ar slīdņa diapazonu.",
+  "ui.select.none": "— nav —"
+}

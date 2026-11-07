@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "秒（相対）",
+  "state.types.timeUnit.milliseconds": "ミリ秒（相対）",
+  "state.types.timeUnit.microseconds": "マイクロ秒（相対）",
+  "state.types.timeUnit.nanoseconds": "ナノ秒（相対）",
+  "state.types.timeUnit.unixSeconds": "Unixタイムスタンプ（s）",
+  "state.types.timeUnit.unixMilliseconds": "Unixタイムスタンプ（ms）",
+  "state.types.timeUnit.iso8601": "ISO-8601形式の日付文字列"
+}

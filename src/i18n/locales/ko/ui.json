@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — 드래그해서 조정",
+  "ui.jog.title": "위아래로 드래그해 {label}을(를) 바꿉니다. 멀리 끌수록 빨라지고, Shift를 누르면 미세 조정됩니다. 놓으면 멈춥니다.",
+  "ui.jog.limited": "슬라이더 범위로 제한됩니다.",
+  "ui.select.none": "— 없음 —"
+}

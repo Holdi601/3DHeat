@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Sekunde (relativno)",
+  "state.types.timeUnit.milliseconds": "Milisekunde (relativno)",
+  "state.types.timeUnit.microseconds": "Mikrosekunde (relativno)",
+  "state.types.timeUnit.nanoseconds": "Nanosekunde (relativno)",
+  "state.types.timeUnit.unixSeconds": "Časovni žig Unix (s)",
+  "state.types.timeUnit.unixMilliseconds": "Časovni žig Unix (ms)",
+  "state.types.timeUnit.iso8601": "Datum kot niz ISO-8601"
+}

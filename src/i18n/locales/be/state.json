@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Секунды (адносныя)",
+  "state.types.timeUnit.milliseconds": "Мілісекунды (адносныя)",
+  "state.types.timeUnit.microseconds": "Мікрасекунды (адносныя)",
+  "state.types.timeUnit.nanoseconds": "Нанасекунды (адносныя)",
+  "state.types.timeUnit.unixSeconds": "Пазнака часу Unix (s)",
+  "state.types.timeUnit.unixMilliseconds": "Пазнака часу Unix (ms)",
+  "state.types.timeUnit.iso8601": "Радок даты ISO-8601"
+}

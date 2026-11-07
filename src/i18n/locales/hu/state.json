@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Másodperc (relatív)",
+  "state.types.timeUnit.milliseconds": "Ezredmásodperc (relatív)",
+  "state.types.timeUnit.microseconds": "Mikroszekundum (relatív)",
+  "state.types.timeUnit.nanoseconds": "Nanoszekundum (relatív)",
+  "state.types.timeUnit.unixSeconds": "Unix-időbélyeg (s)",
+  "state.types.timeUnit.unixMilliseconds": "Unix-időbélyeg (ms)",
+  "state.types.timeUnit.iso8601": "ISO-8601 dátumszöveg"
+}

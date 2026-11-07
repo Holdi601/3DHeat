@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Δευτερόλεπτα (σχετικά)",
+  "state.types.timeUnit.milliseconds": "Χιλιοστά του δευτερολέπτου (σχετικά)",
+  "state.types.timeUnit.microseconds": "Μικροδευτερόλεπτα (σχετικά)",
+  "state.types.timeUnit.nanoseconds": "Νανοδευτερόλεπτα (σχετικά)",
+  "state.types.timeUnit.unixSeconds": "Χρονοσφραγίδα Unix (s)",
+  "state.types.timeUnit.unixMilliseconds": "Χρονοσφραγίδα Unix (ms)",
+  "state.types.timeUnit.iso8601": "Συμβολοσειρά ημερομηνίας ISO-8601"
+}

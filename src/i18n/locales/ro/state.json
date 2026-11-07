@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Secunde (relative)",
+  "state.types.timeUnit.milliseconds": "Milisecunde (relative)",
+  "state.types.timeUnit.microseconds": "Microsecunde (relative)",
+  "state.types.timeUnit.nanoseconds": "Nanosecunde (relative)",
+  "state.types.timeUnit.unixSeconds": "Marcaj de timp Unix (s)",
+  "state.types.timeUnit.unixMilliseconds": "Marcaj de timp Unix (ms)",
+  "state.types.timeUnit.iso8601": "Dată ca șir ISO-8601"
+}

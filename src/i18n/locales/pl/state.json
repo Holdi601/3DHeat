@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Sekundy (względne)",
+  "state.types.timeUnit.milliseconds": "Milisekundy (względne)",
+  "state.types.timeUnit.microseconds": "Mikrosekundy (względne)",
+  "state.types.timeUnit.nanoseconds": "Nanosekundy (względne)",
+  "state.types.timeUnit.unixSeconds": "Znacznik czasu Unix (s)",
+  "state.types.timeUnit.unixMilliseconds": "Znacznik czasu Unix (ms)",
+  "state.types.timeUnit.iso8601": "Data ISO-8601 jako tekst"
+}

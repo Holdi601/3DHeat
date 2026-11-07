@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Secondes (relatives)",
+  "state.types.timeUnit.milliseconds": "Millisecondes (relatives)",
+  "state.types.timeUnit.microseconds": "Microsecondes (relatives)",
+  "state.types.timeUnit.nanoseconds": "Nanosecondes (relatives)",
+  "state.types.timeUnit.unixSeconds": "Horodatage Unix (s)",
+  "state.types.timeUnit.unixMilliseconds": "Horodatage Unix (ms)",
+  "state.types.timeUnit.iso8601": "Date ISO-8601 (texte)"
+}

@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — tërhiq për ta rregulluar",
+  "ui.jog.title": "Tërhiq lart ose poshtë për të ndryshuar {label}. Sa më larg, aq më shpejt; mbaj Shift për rregullim të imët. Lëshoje për të ndaluar.",
+  "ui.jog.limited": "I kufizuar në diapazonin e rrëshqitësit.",
+  "ui.select.none": "— asnjë —"
+}

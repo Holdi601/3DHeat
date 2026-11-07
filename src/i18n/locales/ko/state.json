@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "초(상대)",
+  "state.types.timeUnit.milliseconds": "밀리초(상대)",
+  "state.types.timeUnit.microseconds": "마이크로초(상대)",
+  "state.types.timeUnit.nanoseconds": "나노초(상대)",
+  "state.types.timeUnit.unixSeconds": "Unix 타임스탬프(s)",
+  "state.types.timeUnit.unixMilliseconds": "Unix 타임스탬프(ms)",
+  "state.types.timeUnit.iso8601": "ISO-8601 날짜 문자열"
+}

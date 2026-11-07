@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label}——拖曳以調整",
+  "ui.jog.title": "上下拖曳以變更{label}。拖得越遠變化越快；按住 Shift 可微調。放開即停止。",
+  "ui.jog.limited": "受限於滑桿的範圍。",
+  "ui.select.none": "——無——"
+}

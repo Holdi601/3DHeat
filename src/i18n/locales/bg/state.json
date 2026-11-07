@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Секунди (относително)",
+  "state.types.timeUnit.milliseconds": "Милисекунди (относително)",
+  "state.types.timeUnit.microseconds": "Микросекунди (относително)",
+  "state.types.timeUnit.nanoseconds": "Наносекунди (относително)",
+  "state.types.timeUnit.unixSeconds": "Unix времево клеймо (s)",
+  "state.types.timeUnit.unixMilliseconds": "Unix времево клеймо (ms)",
+  "state.types.timeUnit.iso8601": "Дата като низ по ISO-8601"
+}

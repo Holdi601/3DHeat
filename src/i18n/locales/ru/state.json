@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Секунды (относительные)",
+  "state.types.timeUnit.milliseconds": "Миллисекунды (относительные)",
+  "state.types.timeUnit.microseconds": "Микросекунды (относительные)",
+  "state.types.timeUnit.nanoseconds": "Наносекунды (относительные)",
+  "state.types.timeUnit.unixSeconds": "Метка времени Unix (s)",
+  "state.types.timeUnit.unixMilliseconds": "Метка времени Unix (ms)",
+  "state.types.timeUnit.iso8601": "Дата ISO-8601 в виде строки"
+}

@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — ドラッグで調整",
+  "ui.jog.title": "上下にドラッグして{label}を変更します。大きく動かすほど速く変わり、Shiftを押しながらで微調整できます。離すと止まります。",
+  "ui.jog.limited": "スライダーの範囲内に制限されます。",
+  "ui.select.none": "— なし —"
+}

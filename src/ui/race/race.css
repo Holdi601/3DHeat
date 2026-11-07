@@ -1,0 +1,1313 @@
+/* The race tab: its sidebar sections, the HUD over the view, and the charts. */
+
+.app.race {
+  --timeline-h: 400px;
+}
+
+.app.race.no-charts {
+  --timeline-h: 52px;
+}
+
+.tabs {
+  /* The sidebar is a scrolling flex column: without this the tabs are the
+     first thing squeezed to nothing when the panels below overflow it. */
+  flex: none;
+  display: flex;
+  gap: 0;
+  margin: 10px 16px 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.tabs button {
+  flex: 1;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-dim);
+  padding: 8px 6px;
+  font-weight: 550;
+  /* As the segmented controls: a long word wraps rather than runs out. */
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  line-height: 1.25;
+}
+
+.tabs button + button {
+  border-left: 1px solid var(--line);
+}
+
+.tabs button.on {
+  background: var(--panel-2);
+  color: var(--text);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.section header .count {
+  color: var(--text-faint);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.line-key {
+  flex: none;
+  vertical-align: middle;
+}
+
+.race-error {
+  color: var(--bad);
+  white-space: pre-wrap;
+  margin: 8px 0 0;
+}
+
+/* ------------------------------------------------------------------ laps */
+
+.sidebar > .section {
+  flex: none;
+}
+
+.lap-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 10px;
+}
+
+.lap-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 4px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+}
+
+.lap-row:hover {
+  background: var(--panel-2);
+}
+
+.lap-row.focus {
+  border-color: var(--line);
+  background: var(--panel-2);
+}
+
+.lap-row.off .lap-main {
+  opacity: 0.45;
+}
+
+.lap-main {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.lap-name {
+  font-weight: 550;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lap-sub {
+  color: var(--text-dim);
+  font-size: 11px;
+}
+
+.lap-sub span {
+  margin-left: 6px;
+}
+
+.warn {
+  color: var(--warm);
+}
+
+.tag {
+  margin-left: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-dim);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 0 4px;
+}
+
+.tag.warn {
+  color: var(--warm);
+}
+
+button.icon {
+  background: transparent;
+  border: none;
+  padding: 3px 5px;
+  color: var(--text-faint);
+  font-size: 13px;
+  line-height: 1;
+}
+
+button.icon:hover:not(:disabled) {
+  color: var(--text);
+  background: transparent;
+}
+
+button.icon.on {
+  color: var(--accent);
+}
+
+/* -------------------------------------------------------------- insights */
+
+.insight-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.stat-label {
+  color: var(--text-dim);
+  font-size: 11px;
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 600;
+  font-variant-numeric: proportional-nums;
+  letter-spacing: -0.02em;
+}
+
+.stat-side {
+  text-align: right;
+  color: var(--text-dim);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.stat-side .mono {
+  color: var(--text);
+}
+
+.breakdown {
+  display: flex;
+  gap: 2px;
+  height: 8px;
+  margin: 10px 0 6px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.breakdown i {
+  display: block;
+  min-width: 3px;
+}
+
+.legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  color: var(--text-dim);
+  font-size: 11px;
+  margin: 4px 0 8px;
+}
+
+.legend-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend-row i {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.findings {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 6px 0 10px;
+}
+
+button.finding {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  text-align: left;
+  white-space: normal;
+  padding: 7px 8px;
+  background: transparent;
+  border: 1px solid var(--line-soft);
+}
+
+button.finding:hover:not(:disabled) {
+  background: var(--panel-2);
+}
+
+button.finding.on {
+  border-color: var(--accent-dim);
+  background: var(--panel-2);
+}
+
+.finding .rank {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--line);
+  color: var(--text);
+  font-size: 10.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.finding-main {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.finding-title {
+  font-weight: 550;
+}
+
+.finding-evidence {
+  color: var(--text-dim);
+  font-size: 11px;
+}
+
+.finding-tip {
+  color: var(--text);
+  font-size: 11.5px;
+  margin-top: 4px;
+  padding-left: 8px;
+  border-left: 2px solid var(--accent-dim);
+}
+
+.finding-cost {
+  flex: none;
+  width: 62px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  font-size: 11.5px;
+}
+
+.cost-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--line-soft);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.cost-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+}
+
+.chip {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.finding.gain .rank,
+.finding.even .rank {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text-dim);
+}
+
+.finding-details {
+  margin: 4px 0 0;
+  padding-left: 14px;
+  color: var(--text-dim);
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.finding-cars {
+  color: var(--text);
+  font-size: 11.5px;
+  margin-top: 4px;
+  padding-left: 8px;
+  border-left: 2px solid var(--line);
+}
+
+.finding-cars b {
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.finding-line {
+  color: var(--text-dim);
+  font-size: 11px;
+  margin-top: 4px;
+  padding-left: 8px;
+  border-left: 2px solid var(--line);
+}
+
+.race-mirror {
+  margin-top: 6px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+/* ------------------------------------------------------- corner by corner */
+
+.corner-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  margin-bottom: 6px;
+  table-layout: fixed;
+}
+
+.corner-table th {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.corner-table:not(.control-table) th:nth-child(1) {
+  width: 17%;
+}
+
+.corner-table:not(.control-table) th:nth-child(2) {
+  width: 30%;
+}
+
+.corner-table:not(.control-table) th:nth-child(3) {
+  width: 11%;
+}
+
+.corner-table:not(.control-table) th:nth-child(4) {
+  width: 24%;
+}
+
+.control-table th:first-child,
+.control-table td:first-child {
+  width: 42%;
+  white-space: normal;
+}
+
+.corner-table th {
+  color: var(--text-dim);
+  font-weight: 500;
+  text-align: right;
+  padding: 2px 4px;
+  white-space: nowrap;
+}
+
+.corner-table td {
+  padding: 3px 4px;
+  text-align: right;
+  border-top: 1px solid var(--line-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.corner-table th:first-child,
+.corner-table td:first-child,
+.corner-table th:nth-child(2),
+.corner-table td.who {
+  text-align: left;
+}
+
+.corner-table td.who {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+}
+
+.corner-table td.who .line-key {
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.corner-table tbody tr {
+  cursor: pointer;
+}
+
+.corner-table tbody tr:hover td {
+  background: var(--panel-2);
+}
+
+/* ------------------------------------------------------------------- cars */
+
+.car-compare table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  margin-bottom: 6px;
+}
+
+.car-compare th,
+.car-compare td {
+  padding: 3px 4px;
+  text-align: right;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.car-compare th:first-child,
+.car-compare td:first-child {
+  text-align: left;
+  color: var(--text-dim);
+}
+
+.car-compare td.better {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.car-compare td:not(.better):not(:first-child) {
+  color: var(--text-dim);
+}
+
+.car-summary p {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.car-heading {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.advice {
+  margin: 6px 0;
+  line-height: 1.45;
+  font-size: 12px;
+}
+
+.scale-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dim);
+  font-size: 11px;
+  margin-top: 8px;
+}
+
+.scale-legend i.diverging {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgb(51, 217, 89), rgb(140, 140, 148) 50%, rgb(255, 56, 51));
+}
+
+/* -------------------------------------------------------------------- hud */
+
+.race-hud {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  pointer-events: none;
+  max-width: calc(100% - 24px);
+}
+
+.hud-card {
+  background: rgba(20, 23, 28, 0.86);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 9px 8px;
+  backdrop-filter: blur(4px);
+}
+
+.hud-card.on {
+  border-color: var(--accent-dim);
+}
+
+.hud-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.hud-head i {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.hud-name {
+  font-weight: 550;
+  font-size: 12px;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hud-body {
+  display: flex;
+  gap: 8px;
+}
+
+.hud-read {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 92px;
+}
+
+.hud-speed {
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: proportional-nums;
+}
+
+.hud-speed small {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.hud-line {
+  color: var(--text-dim);
+  font-size: 11px;
+}
+
+.hud-temps {
+  font-size: 10.5px;
+  color: var(--text-dim);
+}
+
+.pedals {
+  display: flex;
+  gap: 4px;
+  height: 30px;
+  margin-top: 3px;
+}
+
+.pedals span {
+  width: 8px;
+  height: 100%;
+  background: var(--line-soft);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pedals i {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-radius: 2px;
+}
+
+.pedals i.thr {
+  background: #46d17f;
+}
+
+.pedals i.brk {
+  background: #ff5d5d;
+}
+
+/* ----------------------------------------------------------------- labels */
+
+.race-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.race-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.race-label.corner {
+  color: var(--text);
+  background: rgba(20, 23, 28, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 0 4px;
+}
+
+.race-label.impact {
+  pointer-events: auto;
+  cursor: pointer;
+  color: var(--text);
+  background: rgba(20, 23, 28, 0.9);
+  border: 2px solid;
+  border-radius: 3px;
+  padding: 0 5px;
+  line-height: 16px;
+}
+
+.race-label.finding {
+  pointer-events: auto;
+  cursor: pointer;
+  color: var(--text);
+  background: rgba(20, 23, 28, 0.9);
+  border: 2px solid;
+  border-radius: 10px;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------------------------------------------------------------- the bar */
+
+.timeline-bar:has(.race-bar) {
+  padding: 6px 12px;
+  justify-content: flex-start;
+}
+
+.race-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  min-height: 0;
+}
+
+.race-transport {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.race-transport .seg {
+  flex: none;
+}
+
+.race-transport .seg button {
+  padding: 5px 9px;
+}
+
+.race-transport select {
+  width: auto;
+  flex: none;
+}
+
+.race-transport .scrub {
+  flex: 1;
+  min-width: 80px;
+  accent-color: var(--accent);
+}
+
+.race-transport .clock {
+  color: var(--text-dim);
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+
+.icon-btn {
+  width: 30px;
+  padding: 5px 0;
+  text-align: center;
+}
+
+.icon-btn.primary {
+  background: var(--accent-dim);
+  border-color: #3a83c9;
+  color: #fff;
+}
+
+.race-charts {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  /* The rows are sized to fit, so the wheel is free to walk the lap. */
+  overflow: hidden;
+}
+
+.race-charts.empty {
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.race-charts svg.plot {
+  display: block;
+  cursor: crosshair;
+  user-select: none;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 2px 0 2px 8px;
+}
+
+.chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.chart-legend .hint {
+  margin-left: auto;
+  color: var(--text-faint);
+}
+
+.race-charts .row-label {
+  fill: var(--text-dim);
+  font-size: 11px;
+  font-weight: 550;
+}
+
+.race-charts .axis-text {
+  fill: var(--text-faint);
+  font-size: 9.5px;
+  font-family: var(--mono);
+}
+
+.race-charts .grid-line {
+  stroke: var(--line-soft);
+  stroke-width: 1;
+}
+
+.race-charts .zero-line {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.race-charts .corner-band {
+  fill: rgba(255, 255, 255, 0.025);
+}
+
+.race-charts .strip-bg {
+  fill: var(--line-soft);
+}
+
+.race-charts .cursor-line {
+  stroke: var(--text);
+  stroke-width: 1;
+  opacity: 0.8;
+}
+
+.race-charts .cursor-dot {
+  stroke: var(--panel);
+  stroke-width: 2;
+}
+
+.race-charts .hover-line {
+  stroke: var(--text-dim);
+  stroke-width: 1;
+  pointer-events: none;
+}
+
+.chart-tip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(14, 16, 20, 0.96);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 11px;
+  z-index: 3;
+}
+
+.chart-tip .tip-head {
+  color: var(--text-dim);
+  margin-bottom: 3px;
+}
+
+.chart-tip th {
+  color: var(--text-faint);
+  font-weight: 500;
+  text-align: right;
+  padding: 0 5px;
+}
+
+.chart-tip td {
+  text-align: right;
+  padding: 1px 5px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------ inputs */
+
+.hud-cursor {
+  flex-basis: 100%;
+  color: #ffd27a;
+  font-size: 11px;
+}
+
+.hud-gap {
+  margin-left: auto;
+  color: var(--text-dim);
+  font-size: 11px;
+}
+
+.hud-inputs {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.hud-inputs .wheel {
+  flex: none;
+}
+
+.hud-num {
+  fill: var(--text-dim);
+  font-size: 10px;
+  font-family: var(--mono);
+}
+
+.hud-pedals {
+  display: flex;
+  gap: 4px;
+}
+
+.hud-pedal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 9.5px;
+  color: var(--text-dim);
+  width: 20px;
+}
+
+.hud-pedal .track {
+  position: relative;
+  width: 10px;
+  background: var(--line-soft);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.hud-pedal .track i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 2px;
+}
+
+.hud-pedal .lbl {
+  color: var(--text-faint);
+}
+
+.hud-gear {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 24px;
+}
+
+.hud-gear .mono {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.hud-gear .hb {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-faint);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 1px 3px;
+}
+
+.hud-gear .hb.on {
+  color: #16181c;
+  background: var(--warm);
+  border-color: var(--warm);
+}
+
+.hud-trace {
+  display: block;
+  margin-top: 6px;
+}
+
+.hud-trace .lane {
+  fill: rgba(255, 255, 255, 0.03);
+}
+
+.hud-trace .mid {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.hud-trace .trace {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+/* ------------------------------------------------ levels, values, picker */
+
+.hud-levels {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 10.5px;
+  min-width: 64px;
+}
+
+.hud-levels .lbl,
+.hud-values .lbl {
+  color: var(--text-faint);
+}
+
+.hud-more {
+  margin-left: 4px;
+  /* The overlay lets the mouse through to the view; this one button takes it. */
+  pointer-events: auto;
+}
+
+.hud-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px 12px;
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 10.5px;
+  max-width: 330px;
+}
+
+.hud-values .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.hud-values .row .lbl {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.graph-picker {
+  position: fixed;
+  z-index: 20;
+  width: 360px;
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+.picker-head {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.picker-head input {
+  flex: 1;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 5px 7px;
+}
+
+.picker-body {
+  overflow-y: auto;
+  padding: 6px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.picker-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 6px;
+}
+
+.picker-title {
+  color: var(--text-dim);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.picker-wheels {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-dim);
+  font-size: 11.5px;
+}
+
+.picker-wheels > span {
+  flex: 1;
+}
+
+button.chip-toggle {
+  padding: 1px 6px;
+  font-size: 10.5px;
+  font-family: var(--mono);
+  color: var(--text-dim);
+}
+
+button.chip-toggle.on {
+  background: var(--accent-dim);
+  border-color: #3a83c9;
+  color: #fff;
+}
+
+/* ------------------------------------------------------- course statistics */
+
+.course-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.course-choice button {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  text-align: left;
+}
+
+.lap-show {
+  gap: 10px;
+  margin-top: 6px;
+  align-items: baseline;
+}
+
+.lap-sub span.class-tag {
+  margin: 0 6px 0 0;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.class-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 6px 0 2px;
+}
+
+.class-chips button {
+  padding: 2px 8px;
+  font-size: 11.5px;
+}
+
+.class-chips button span {
+  color: var(--text-dim);
+  margin-left: 3px;
+}
+
+.class-chips button.on {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.stats-heading {
+  margin: 10px 0 4px;
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+  padding: 5px 7px;
+}
+
+.stat-row.on,
+.stat-corner.on {
+  border-color: var(--accent);
+}
+
+.stat-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.stat-label {
+  font-weight: 600;
+}
+
+.stat-bar {
+  height: 4px;
+  background: var(--line-soft);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.stat-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+}
+
+.stat-sub {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.stat-corner {
+  border: 1px solid var(--line-soft);
+  border-radius: 4px;
+  padding: 4px 6px;
+}
+
+.stat-corner-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: 12px;
+  text-align: left;
+  white-space: normal;
+}
+
+.stat-corner-head .stat-label {
+  flex: none;
+}
+
+.stat-corner-head .mono {
+  color: var(--text-dim);
+  font-size: 11px;
+  text-align: right;
+}
+
+.stat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.stat-chips b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.stat-detail {
+  margin-top: 6px;
+  padding-left: 8px;
+  border-left: 2px solid var(--line);
+  font-size: 11.5px;
+}
+
+.stat-detail p {
+  margin: 0 0 3px;
+  line-height: 1.4;
+}
+
+.stat-laps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+}
+
+.stat-laps .mono {
+  color: var(--text-dim);
+}
+
+.stats-heat {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.scale-legend i.mistake-scale {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgb(92, 51, 33), rgb(255, 128, 41));
+}
+
+.race-label.stat {
+  pointer-events: auto;
+  cursor: pointer;
+  color: var(--text);
+  background: rgba(20, 23, 28, 0.9);
+  border: 1px solid rgb(255, 128, 41);
+  border-radius: 3px;
+  padding: 0 5px;
+  line-height: 16px;
+}
+
+.race-label.stat.on {
+  border-width: 2px;
+  background: rgba(60, 36, 20, 0.95);
+}
+
+.chart-more {
+  color: var(--text-dim);
+}
+
+.stat-row .stat-sub,
+.stat-row .stat-top {
+  white-space: normal;
+}
+
+.car-pick {
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.car-pick select {
+  flex: 1;
+  min-width: 0;
+}

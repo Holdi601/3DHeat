@@ -1,0 +1,12 @@
+title: 3DHeat
+description: Realtime 3D telemetry heatmaps, race analysis and match review for very large positional datasets
+remote_theme: just-the-docs/just-the-docs@v0.10.0
+plugins:
+  - jekyll-remote-theme
+search_enabled: true
+heading_anchors: true
+aux_links:
+  "GitHub": "https://github.com/Holdi601/3DHeat"
+exclude:
+  - wiki
+  - "*.py"

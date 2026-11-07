@@ -1,0 +1,9 @@
+{
+  "state.types.timeUnit.seconds": "Sekondi (relattivi)",
+  "state.types.timeUnit.milliseconds": "Millisekondi (relattivi)",
+  "state.types.timeUnit.microseconds": "Mikrosekondi (relattivi)",
+  "state.types.timeUnit.nanoseconds": "Nanosekondi (relattivi)",
+  "state.types.timeUnit.unixSeconds": "Timestamp Unix (s)",
+  "state.types.timeUnit.unixMilliseconds": "Timestamp Unix (ms)",
+  "state.types.timeUnit.iso8601": "String ta' data ISO-8601"
+}

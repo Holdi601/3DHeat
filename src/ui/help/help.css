@@ -1,0 +1,153 @@
+.help-button {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.help-button.on {
+  background: #2a7be0;
+  border-color: #2a7be0;
+  color: #fff;
+}
+
+.help-panel {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 6;
+  width: 300px;
+  max-height: calc(100% - 24px);
+  overflow-y: auto;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(16, 19, 24, 0.94);
+  color: #dfe4ec;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.help-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.help-group {
+  margin-top: 10px;
+}
+
+.help-group h4 {
+  margin: 0 0 5px;
+  color: #8d96a5;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.help-row {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 4px;
+}
+
+.help-row i {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  margin-top: 2px;
+  border-radius: 2px;
+}
+
+.help-row i.none {
+  background: none;
+}
+
+.help-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 10px;
+  margin: 0 0 5px 18px;
+  color: #b9c1cd;
+}
+
+.help-chips span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.help-chips i {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+}
+
+.help-ramp {
+  margin-bottom: 7px;
+}
+
+.help-ramp .bar {
+  height: 9px;
+  margin: 2px 0;
+  border-radius: 2px;
+  background-color: #000;
+}
+
+.help-ramp .ends {
+  display: flex;
+  justify-content: space-between;
+  color: #8d96a5;
+  font-size: 11px;
+}
+
+/* The four values of a wheel channel on a car's card. */
+.hud-wheels {
+  display: grid;
+  grid-template-columns: 1fr repeat(4, auto);
+  gap: 1px 8px;
+  margin-top: 6px;
+  font-size: 11px;
+}
+
+.hud-wheels .head {
+  color: #8d96a5;
+  text-align: right;
+}
+
+.hud-wheels .value {
+  text-align: right;
+}
+
+.hud-wheels .name {
+  color: #b9c1cd;
+}
+
+/* The label beside each wheel of the car in focus. */
+.race-label.wheel {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: rgba(16, 19, 24, 0.86);
+  color: #dfe4ec;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.race-label.wheel div {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.race-label.wheel i {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}

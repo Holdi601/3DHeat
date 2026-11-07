@@ -1,0 +1,6 @@
+{
+  "ui.jog.ariaLabel": "{label} — ayarlamak için sürükleyin",
+  "ui.jog.title": "{label} değerini değiştirmek için yukarı veya aşağı sürükleyin. Ne kadar uzağa, o kadar hızlı; ince ayar için Shift tuşunu basılı tutun. Durdurmak için bırakın.",
+  "ui.jog.limited": "Kaydırıcının aralığıyla sınırlı.",
+  "ui.select.none": "— yok —"
+}
