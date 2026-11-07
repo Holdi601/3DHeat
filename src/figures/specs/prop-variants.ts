@@ -16,7 +16,7 @@
  */
 
 import type { SpecSet } from './index';
-import type { FixedWingSpec } from '../air';
+import { cowlLip, type Cowl, type FixedWingSpec } from '../air';
 import type { Outline, P2 } from '../parts';
 import { AIRCRAFT, jet, piston, type Piston } from './aircraft';
 
@@ -126,9 +126,16 @@ interface Nac {
   propX?: number;
 }
 
+/** A radial nacelle's open cowl at its front, mirrored to both sides. */
+function cowlOf(n: Nac): Cowl {
+  return { x: n.x, side: n.y, up: n.z, radius: n.r * (n.wide ?? 1), height: n.r };
+}
+
 function nacelle(n: Nac): Outline {
+  // A radial's nacelle starts behind its cowl's lip (drawn by the builder from `cowlOf`).
+  if (n.kind === 'radial') n = { ...n, x: n.x - cowlLip(Math.max(n.r, n.r * (n.wide ?? 1))) };
   const L = n.x - n.back;
-  const f0 = n.kind === 'radial' ? 0.86 : n.kind === 'jet' ? 0.92 : 0.32;
+  const f0 = n.kind === 'radial' ? 0.99 : n.kind === 'jet' ? 0.92 : 0.32;
   const w = n.r * (n.wide ?? 1);
   const d = n.below ?? 0;
   const tail = n.kind === 'jet' ? 0.6 : 0.2;
@@ -280,8 +287,8 @@ function mp(o: MP): Spec {
   const rootChord = root[1] - root[2];
   // Propellers where they turn: at each nacelle's front (or a pusher's back), both sides, at the nacelle's own height; a centre engine at the nose.
   const [pd, pb] = o.prop ?? [0, 0];
-  const props = o.prop && !o.nose
-    ? (o.nacelles ?? []).filter((n) => n.kind !== 'jet' && !n.noProp).flatMap((n) => [-1, 1].map((sd) => ({ x: n.propX ?? n.x + 0.1, side: sd * n.y, up: n.z, diameter: pd, blades: pb })))
+  const props: NonNullable<FixedWingSpec['props']> = o.prop && !o.nose
+    ? (o.nacelles ?? []).filter((n) => n.kind !== 'jet' && !n.noProp).flatMap((n) => [-1, 1].map((sd) => ({ x: n.propX ?? n.x + 0.1, side: sd * n.y, up: n.z, diameter: pd, blades: pb, spinner: n.kind === 'radial' && n.propX === undefined ? n.r * 0.4 : undefined })))
     : [];
   if (o.noseProp !== undefined && o.prop) props.push({ x: o.noseProp, side: 0, up: (o.body[0][1] + o.body[0][2]) / 2, diameter: pd, blades: pb });
   const finTop = o.fin.length ? Math.max(...o.fin.map((p) => p[1])) : 0;
@@ -294,7 +301,9 @@ function mp(o: MP): Spec {
     bodyWidth,
     bodyHeight,
     fuselage: fus(o.body, o.round ?? 2.4),
-    bodies: [...(o.nacelles ?? []).map(nacelle), ...(o.fin.length ? [finBody(o.fin, Math.max(0.05, Math.min(0.35, (Math.max(...o.fin.map((p) => p[0])) - Math.min(...o.fin.map((p) => p[0]))) * 0.035)), o.twin ? o.twin / 2 : undefined)] : []), ...(o.extra ?? [])],
+    bodies: [...(o.nacelles ?? []).map(nacelle), ...(o.extra ?? [])],
+    // The fin as thick at its root as a real one, so it shows edge-on from the front (an airfoil, thinning to its tip).
+    finThickness: o.fin.length ? 2 * Math.max(0.05, Math.min(0.35, (Math.max(...o.fin.map((p) => p[0])) - Math.min(...o.fin.map((p) => p[0]))) * 0.035)) : undefined,
     wing: { x: root[1] - rootChord / 2, span: o.span, rootChord, tipChord: tip[1] - tip[2], sweep: 0, mount: o.wingUp / (bodyHeight * 0.4), dihedral: o.dihedral ?? 0, thicknessRatio: o.thick === 0 ? undefined : o.thick ?? 0.16 },
     wingPlan: planOf(o.wing, o.tipR ?? 0),
     tail: { kind: !o.fin.length ? 'none' : o.twin ? 'h' : 'single', finHeight: finTop, finChord: 2, spacing: o.twin, tailSpan: o.tail.length ? 2 * o.tail[o.tail.length - 1][0] : 0, tailChord: o.tail.length ? o.tail[0][1] - o.tail[0][2] : 0, finBase: 0, planeUp: o.tailUp },
@@ -303,6 +312,7 @@ function mp(o: MP): Spec {
     engines: o.nose ? { kind: 'nose-prop', count: 1 } : undefined,
     props,
     propeller: o.prop ? { diameter: o.prop[0], blades: o.prop[1] } : undefined,
+    cowls: (o.nacelles ?? []).filter((n) => n.kind === 'radial' && n.y > 0).map(cowlOf),
     rotodome: o.rotodome,
     canopy: { x: 0, length: 0, kind: 'none' },
     glass: glass.length ? glass : undefined,
@@ -922,7 +932,9 @@ A['lagg-3'] = one({ cls: 'ww2-fighter', length: 8.81, span: 9.8, height: 2.54, w
 // cooler back in the cowl lip (8.62 x 9.8 x 3.47 m).
 const LA = { cls: 'ww2-fighter', span: 9.8, w: 0.62, h: 0.68, radial: true, wing: 'round' as const, le: 1.6, root: 2.5, tip: 1.1, sweep: 4, dihedral: 5, fin: 1.2, finRoot: 1.3, roundFin: true, tailSpan: 3.6, tailRoot: 1.0, prop: 3.1, blades: 3 };
 A['la-5'] = one({ ...LA, length: 8.67, height: 2.54, canopy: { x: -0.4, length: 1.5, kind: 'framed' }, bodies: [{ top: [[3.7, 0.55], [3.3, 0.86], [2.5, 0.8], [2.2, 0.55]], bottom: [[3.7, 0.4], [2.2, 0.4]], plan: [[3.7, 0.12], [3.3, 0.22], [2.2, 0.15]], round: 2.4, stations: 6 }, belly(3.6, 2.2, -0.5, -0.88, 0.32)] });
-A['la-7'] = one({ ...LA, length: 8.6, height: 2.54, canopy: { x: -0.4, length: 1.5, kind: 'bubble' }, scoop: [-1.2, 1.3, 0.25] });
+// The La-7's long low hood with the glazed fairing behind it, the oil cooler under the rear body and the
+// supercharger's intakes in the wing roots' leading edges (estimates).
+A['la-7'] = one({ ...LA, length: 8.6, height: 2.54, canopy: { x: -0.55, length: 1.9, kind: 'bubble' }, hood: 0.42, scoop: [-1.3, 1.2, 0.24], bodies: [bulge(1.75, 0.95, -0.42, 0.11, 0.13, 0.62)] });
 A['la-11'] = one({ ...LA, length: 8.62, height: 3.47, fin: 1.4, finRoot: 1.45, canopy: { x: -0.4, length: 1.5, kind: 'bubble' }, bodies: [belly(3.9, 3.0, -0.55, -0.78, 0.28)] });
 // MiG-3: a long inline nose with the cockpit far back, the radiator under it, a razorback (8.25 x 10.2 x 3.5 m).
 A['mig-3'] = one({ cls: 'ww2-fighter', length: 8.25, span: 10.2, height: 3.5, w: 0.5, h: 0.62, wing: 'tapered', le: 1.2, root: 2.5, tip: 1.0, sweep: 5, dihedral: 6, fin: 1.25, finRoot: 1.3, roundFin: true, tailSpan: 3.8, tailRoot: 0.9, canopy: { x: -0.9, length: 1.4, kind: 'framed' }, razor: true, prop: 3.0, blades: 3, scoop: [-0.6, 1.4, 0.3] });

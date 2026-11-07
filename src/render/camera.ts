@@ -197,6 +197,11 @@ export class FlyCamera {
   yaw = 0;
   /** Radians. Positive looks up. Clamped just shy of the poles. */
   pitch = -0.35;
+  /**
+   * Radians about the view axis, positive counter-clockwise. 0 for every
+   * camera but the replay's cockpit and fixed views, which roll with the unit.
+   */
+  roll = 0;
 
   speed = 120;
   private readonly keys = new Set<string>();
@@ -445,7 +450,7 @@ export class FlyCamera {
       this.moved = true;
     }
 
-    this.euler.set(this.pitch, this.yaw, 0);
+    this.euler.set(this.pitch, this.yaw, this.roll);
     for (const cam of [persp, ortho]) {
       cam.position.copy(this.position);
       cam.quaternion.setFromEuler(this.euler);

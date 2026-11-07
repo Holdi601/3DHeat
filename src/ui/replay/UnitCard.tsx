@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { useStore } from '../../state/store';
+import type { Dataset } from '../../state/types';
 import { useReplayStore } from '../../state/replayStore';
 import { rgbToCss, teamBaseColor } from '../../render/colors';
 import { t, useLang } from '../../i18n';
@@ -24,7 +25,9 @@ export function UnitCard() {
   const followUnit = useReplayStore((s) => s.followUnit);
   const cardFields = useReplayStore((s) => s.cardFields);
   const [config, setConfig] = useState(false);
+  const [raw, setRaw] = useState(false);
   const body = useRef<HTMLDivElement>(null);
+  const rawBody = useRef<HTMLDivElement>(null);
   const status = useRef<HTMLDivElement>(null);
   useLang();
   const unit = useMemo(() => (dataset && selected ? (unitsOf(dataset).byKey.get(selected) ?? null) : null), [dataset, selected]);
@@ -66,6 +69,12 @@ export function UnitCard() {
       }
     }
     if (body.current.innerHTML !== html) body.current.innerHTML = html;
+    // Every column the recording has at this row, as Tacview's raw telemetry: what no field reads too.
+    if (rawBody.current) {
+      const rows = tr && raw && tr.row >= 0 ? rawRows(dataset, tr.row) : [];
+      const rawHtml = rows.map(([k, v]) => `<span>${esc(k)}</span><b>${esc(v)}</b>`).join('');
+      if (rawBody.current.innerHTML !== rawHtml) rawBody.current.innerHTML = rawHtml;
+    }
     if (status.current) {
       const s = tr ? '' : t(now < unit.spans[0][0] ? 'replay.card.notYet' : 'replay.card.gone');
       if (status.current.textContent !== s) status.current.textContent = s;
@@ -91,6 +100,9 @@ export function UnitCard() {
           >
             {following ? t('replay.card.following') : t('replay.card.follow')}
           </button>
+          <button className={`small${raw ? ' on' : ''}`} onClick={() => setRaw(!raw)} title={t('replay.card.rawTitle')}>
+            {t('replay.card.raw')}
+          </button>
           <button className={`small${config ? ' on' : ''}`} onClick={() => setConfig(!config)} title={t('replay.card.fieldsTitle')}>
             ⚙
           </button>
@@ -104,6 +116,7 @@ export function UnitCard() {
       </div>
       <div className="uc-status" ref={status} />
       <div className="uc-grid" ref={body} />
+      {raw && <div className="uc-grid uc-raw" ref={rawBody} />}
       {config && (
         <FieldPicker
           available={fields.filter((f) => f !== 'name')}
@@ -113,6 +126,21 @@ export function UnitCard() {
       )}
     </div>
   );
+}
+
+/** A row's every column as name and text: categories by their label, numbers as recorded. */
+export function rawRows(d: Dataset, row: number): [string, string][] {
+  const out: [string, string][] = [];
+  for (const a of d.attrs) {
+    let v: string;
+    if (a.kind === 'category') v = a.categories?.[(a.data as Uint32Array)[row]] ?? '';
+    else {
+      const x = (a.data as Float32Array)[row];
+      v = Number.isFinite(x) ? String(Math.round(x * 1000) / 1000) : '';
+    }
+    if (v.trim() && a.name !== 'RecordingInfo') out.push([a.name, v.length > 80 ? `${v.slice(0, 79)}…` : v]);
+  }
+  return out;
 }
 
 function esc(s: string): string {

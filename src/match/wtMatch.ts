@@ -24,6 +24,8 @@ export interface GameKill {
   victim: string;
   victimVehicle: string;
   weapon: string;
+  /** The weapon's name as the game says it (localised by the converter), '' when the summary has none. */
+  weaponName: string;
   victimUid: number | null;
   crash: boolean;
 }
@@ -73,6 +75,7 @@ export function parseWtMatch(j: Record<string, unknown>): GameMatch {
     victim: s(k.victim),
     victimVehicle: s(k.victimVehicle),
     weapon: s(k.weapon),
+    weaponName: s(k.weaponName),
     victimUid: typeof k.victimUid === 'number' ? k.victimUid : null,
     crash: k.crash === true,
   }));
@@ -98,4 +101,9 @@ export function parseWtMatch(j: Record<string, unknown>): GameMatch {
     players,
     kills,
   };
+}
+
+/** A kill's weapon as people say it: its localised name where the summary has one, else the game's id. */
+export function killWeapon(k: { weapon: string; weaponName?: string }): string {
+  return k.weaponName?.trim() || k.weapon;
 }

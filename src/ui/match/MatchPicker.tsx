@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { int, t } from '../../i18n';
 import { matchesOf, pickedMatches, pickMatches, type MatchEntry } from '../../match/matches';
-import type { GameMatch } from '../../match/wtMatch';
+import { killWeapon, type GameMatch } from '../../match/wtMatch';
 import { useMatchStore } from '../../state/matchStore';
 import { useStore } from '../../state/store';
 import { Section } from '../controls';
@@ -239,7 +239,7 @@ function Game({ g, dataset, onKill }: { g: GameMatch; dataset: Dataset | null; o
                 <span>{clock(k.time - start)}</span>
                 <span>
                   {k.killer || '—'} <span className="dim">→</span> {dataset ? victimName(k) : k.victim}
-                  {k.weapon ? <span className="dim"> · {k.weapon}</span> : null}
+                  {k.weapon || k.weaponName ? <span className="dim" title={k.weaponName && k.weapon !== k.weaponName ? k.weapon : undefined}> · {killWeapon(k)}</span> : null}
                   {k.crash ? <span className="dim"> · {t('match.game.crash')}</span> : null}
                 </span>
               </button>

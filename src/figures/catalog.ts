@@ -9,7 +9,7 @@
  * needed (`TemplateCache` keeps it).
  */
 
-import type { Template } from './kit';
+import { withCoarse, type Template } from './kit';
 import { buildPerson } from './infantry';
 import { buildGround, type GroundSpec } from './ground';
 import { buildFixedWing, buildHeli, buildMissile, type FixedWingSpec, type HeliSpec, type MissileFigureSpec } from './air';
@@ -173,6 +173,9 @@ export const CATALOG: Record<string, FigureEntry> = {
   ...Object.fromEntries(Object.entries(MARKERS).map(([n, s]) => [n, { domain: 'marker' as const, cls: s.kind, build: () => buildMarker(s) }])),
   ...Object.assign({}, ...SPEC_SETS.map((s) => s.figures ?? {})),
 };
+
+// Vehicles carry a coarse build of themselves, for when they are small on screen (ground and naval builders wrap their own; people and markers are small already).
+for (const e of Object.values(CATALOG)) if (e.domain === 'air' || e.domain === 'heli' || e.domain === 'missile') e.build = withCoarse(e.build);
 
 /** Every figure's builder by name: what the contact sheet and the tests walk. */
 export const FIGURES: Record<string, () => Template> = Object.fromEntries(Object.entries(CATALOG).map(([n, e]) => [n, e.build]));

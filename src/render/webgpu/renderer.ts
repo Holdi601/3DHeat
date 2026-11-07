@@ -1,4 +1,6 @@
 import { GpuFigures } from './figures';
+import { GpuTracks } from './tracks';
+import { GpuProfiler } from './profiler';
 import { ATLAS_MIP_LEVELS } from '../../data/atlas';
 import { packLineStarts, type LineData } from '../../data/lines';
 import { CURVE_LUT_SIZE } from '../../state/curve';
@@ -261,6 +263,19 @@ export class WebgpuRenderer implements Renderer {
   private triBuffer: GPUBuffer | null = null;
   /** Instanced figures, made on first use. */
   private figures: GpuFigures | null = null;
+  /** Units placed by the GPU, made on first use. */
+  private tracks: GpuTracks | null = null;
+  /** GPU time a pass, with ?gpuprof where the device can. */
+  private profiler: GpuProfiler | null | undefined;
+  private get prof(): GpuProfiler | null {
+    if (this.profiler === undefined) this.profiler = GpuProfiler.wanted() && this.device.features.has('timestamp-query') ? new GpuProfiler(this.device) : null;
+    return this.profiler;
+  }
+
+  /** Milliseconds of GPU time a pass, averaged (?gpuprof); empty without. */
+  get gpuPassMs(): Record<string, number> {
+    return this.prof?.ms ?? {};
+  }
 
   private mapTexture: GPUTexture | null = null;
   /** The model level's geometry; null for an image level or none. */
@@ -346,6 +361,8 @@ export class WebgpuRenderer implements Renderer {
     // reached by users on weaker hardware.
     const forceF16 = forcedHeatPrecision() === 'f16';
     const blendable = !forceF16 && want('float32-blendable');
+    // ?gpuprof: GPU time a pass (GpuProfiler).
+    if (GpuProfiler.wanted()) want('timestamp-query');
     const filterable = want('float32-filterable');
     // Storage buffers default to a 128MiB binding limit, which is below one
     // chunk's worth on a wide dataset; ask for whatever the adapter allows.
@@ -1668,12 +1685,27 @@ export class WebgpuRenderer implements Renderer {
       else this.clearHeat(encoder);
     }
     this.composite(encoder, params);
+    this.prof?.finish(encoder);
     this.device.queue.submit([encoder.finish()]);
+    this.prof?.collect();
     this.debug.submits++;
     return { gpuMs: null };
   }
 
+  get gpuTracksMaxBytes(): number {
+    return Math.min(this.device.limits.maxStorageBufferBindingSize, this.device.limits.maxBufferSize);
+  }
+
+  get gpuTracksBytes(): number {
+    return this.tracks?.bytes ?? 0;
+  }
+
   private drawScene(encoder: GPUCommandEncoder, params: FrameParams): void {
+    // The GPU tracks are placed first, in a compute pass of their own.
+    if (params.gpuTracks) {
+      this.tracks ??= new GpuTracks(this.device, SCENE_FORMAT, DEPTH_FORMAT);
+      this.tracks.compute(encoder, { ...params.gpuTracks, viewProj: params.viewProj, camera: params.cameraPos }, this.prof?.writes('tracks'));
+    }
     // Every uniform slot this pass needs is written before the pass opens, so
     // each draw reads its own region rather than the last write to win.
     const gridOffset = this.pushSceneUniform(
@@ -1693,6 +1725,7 @@ export class WebgpuRenderer implements Renderer {
 
     const pass = encoder.beginRenderPass({
       label: 'scene',
+      timestampWrites: this.prof?.writes('scene'),
       colorAttachments: [
         {
           view: this.sceneView!,
@@ -1739,9 +1772,14 @@ export class WebgpuRenderer implements Renderer {
       }
     }
 
-    if (params.figureBatches && params.figureBatches.length) {
+    if ((params.figureBatches && params.figureBatches.length) || params.gpuTracks) {
       this.figures ??= new GpuFigures(this.device, SCENE_FORMAT, DEPTH_FORMAT, alphaBlend());
-      this.figures.draw(pass, params.figureBatches, this.sceneBindGroup(this.figures.pipeline, 'figures', plainOffset));
+      const group = this.sceneBindGroup(this.figures.pipeline, 'figures', plainOffset);
+      if (params.figureBatches && params.figureBatches.length) this.figures.draw(pass, params.figureBatches, group);
+      if (params.gpuTracks && this.tracks) {
+        this.tracks.draw(pass, this.figures, group);
+        this.tracks.drawTrails(pass, this.cachedBindGroup(`scene:trackTrail:${plainOffset}`, this.tracks.trailLayout, () => [{ binding: 0, resource: this.uniforms.binding(plainOffset, SCENE_UNIFORM_BYTES) }]));
+      }
     }
 
     if (params.sceneTris && params.sceneTriVertCount > 0) {
@@ -3202,6 +3240,8 @@ export class WebgpuRenderer implements Renderer {
     this.triBuffer?.destroy();
     this.figures?.dispose();
     this.figures = null;
+    this.tracks?.dispose();
+    this.tracks = null;
     this.device.destroy();
   }
 }

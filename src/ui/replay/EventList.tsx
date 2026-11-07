@@ -4,7 +4,8 @@ import { useReplayStore } from '../../state/replayStore';
 import { useMatchStore } from '../../state/matchStore';
 import type { AttributeColumn, Dataset } from '../../state/types';
 import { int, t } from '../../i18n';
-import { Section } from '../controls';
+import { Check, Section } from '../controls';
+import { download, eventsCsv } from './stats';
 import { useEngine } from '../EngineContext';
 import { defaultEventKinds, eventBursts, eventRows } from './replayData';
 import { clock } from './hooks';
@@ -62,8 +63,9 @@ export function EventList() {
   const defaults = useMemo(() => (events ? defaultEventKinds(events.labels) : []), [events]);
   const effective = kinds ?? defaults;
 
-  const shown = useMemo(() => {
-    if (!dataset || !events || !index) return [];
+  const pauseOnEvent = useReplayStore((s) => s.pauseOnEvent);
+  const listed = useMemo(() => {
+    if (!dataset || !events || !index) return { all: [] as number[], bursts: [] as ReturnType<typeof eventBursts> };
     const matchFilter = filters.find((f) => f.kind === 'categories' && f.column.trim().toLowerCase() === 'match');
     const matchCol = matchFilter && matchFilter.kind === 'categories' ? dataset.attrs.find((a) => a.name === matchFilter.column) : undefined;
     const allowedMatch = matchFilter && matchFilter.kind === 'categories' ? new Set(matchFilter.allowed) : null;
@@ -82,10 +84,11 @@ export function EventList() {
     }
     // A burst of the same by the same against the same is one line.
     const other = attr(dataset, 'other');
-    return eventBursts(dataset, events, out, (i) => `${events.persons[i] >= 0 ? index.personUnit[events.persons[i]] : -1}|${textAt(other, events.rows[i])}`);
+    return { all: out, bursts: eventBursts(dataset, events, out, (i) => `${events.persons[i] >= 0 ? index.personUnit[events.persons[i]] : -1}|${textAt(other, events.rows[i])}`) };
     // `effective` by its contents.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataset, events, index, filters, session, effective.join('|'), unitKey]);
+  const shown = listed.bursts;
 
   if (!dataset || !events || events.rows.length === 0 || !dataset.time || !index) return null;
   // Names of the units a summary knows that have no track: what a bomb destroyed.
@@ -95,6 +98,8 @@ export function EventList() {
   const start = session >= 0 && dataset.sessionStart ? dataset.sessionStart[session] : dataset.timeRange[0];
   const other = attr(dataset, 'other');
   const weapon = attr(dataset, 'weapon');
+  // The weapon's name as the game says it, where the converter wrote one (War Thunder's kills and deaths).
+  const weaponName = attr(dataset, 'weaponname');
   const toggleKind = (k: string) => {
     const now = new Set(effective);
     if (now.has(k)) now.delete(k);
@@ -132,13 +137,41 @@ export function EventList() {
           ))}
         </select>
       </div>
+      <div className="row-buttons">
+        <Check label={t('replay.events.pause')} checked={pauseOnEvent} onChange={(v) => useReplayStore.setState({ pauseOnEvent: v })} title={t('replay.events.pauseTitle')} />
+        <button
+          className="small"
+          disabled={!listed.all.length}
+          title={t('replay.events.csvTitle')}
+          onClick={() =>
+            download(
+              `${dataset.name.replace(/\.[^.]+$/, '').replace(/[^\w.-]+/g, '_')}.events.csv`,
+              eventsCsv(
+                listed.all.map((i) => {
+                  const row = events.rows[i];
+                  const p = events.persons[i];
+                  return {
+                    time: time[row] - start,
+                    event: events.labels[i],
+                    unit: p >= 0 ? (index.units[index.personUnit[p]]?.name ?? '') : '',
+                    other: partyName(dataset, textAt(other, row), known),
+                    weapon: textAt(weaponName, row).trim() || textAt(weapon, row),
+                  };
+                }),
+              ),
+            )
+          }
+        >
+          {t('replay.events.csv')}
+        </button>
+      </div>
       <div className="replay-events event-list">
         {shown.slice(0, MAX_ROWS).map((b) => {
           const i = b.first;
           const row = events.rows[i];
           const p = events.persons[i];
           const u = p >= 0 ? index.units[index.personUnit[p]] : undefined;
-          const extra = [textAt(weapon, row), partyName(dataset, textAt(other, row), known)].filter(Boolean);
+          const extra = [textAt(weaponName, row).trim() || textAt(weapon, row), partyName(dataset, textAt(other, row), known)].filter(Boolean);
           return (
             <button
               key={row}

@@ -5,7 +5,7 @@
  * same blending, the same depth writes, the same scene uniforms.
  */
 
-import type { FigureBatch } from '../../figures/instances';
+import type { FigureBatch, FigureMesh } from '../../figures/instances';
 import { INSTANCE_STRIDE, MESH_STRIDE } from '../../figures/instances';
 import { figureWgsl } from '../figureShaders';
 
@@ -65,14 +65,33 @@ export class GpuFigures {
     });
   }
 
-  private meshFor(b: FigureBatch): MeshGpu {
-    let m = this.meshes.get(b.mesh.id);
+  private meshFor(mesh: FigureMesh): MeshGpu {
+    let m = this.meshes.get(mesh.id);
     if (m) return m;
-    const buf = this.device.createBuffer({ label: `figure mesh ${b.mesh.id}`, size: Math.max(16, b.mesh.data.byteLength), usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
-    this.device.queue.writeBuffer(buf, 0, b.mesh.data.buffer, b.mesh.data.byteOffset, b.mesh.data.byteLength);
-    m = { buf, count: b.mesh.count, used: 0 };
-    this.meshes.set(b.mesh.id, m);
+    const buf = this.device.createBuffer({ label: `figure mesh ${mesh.id}`, size: Math.max(16, mesh.data.byteLength), usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
+    this.device.queue.writeBuffer(buf, 0, mesh.data.buffer, mesh.data.byteOffset, mesh.data.byteLength);
+    m = { buf, count: mesh.count, used: 0 };
+    this.meshes.set(mesh.id, m);
     return m;
+  }
+
+  /**
+   * Draws instances the GPU wrote itself: mesh `m`'s run starts at instance
+   * `first[m]` of `instances`, and its count is in `args` (indirect draw
+   * arguments, 16 bytes a mesh).
+   */
+  drawIndirect(pass: GPURenderPassEncoder, meshes: FigureMesh[], instances: GPUBuffer, first: Uint32Array, room: Uint32Array, args: GPUBuffer, bindGroup: GPUBindGroup): void {
+    this.frame++;
+    pass.setPipeline(this.pipeline);
+    pass.setBindGroup(0, bindGroup);
+    for (let i = 0; i < meshes.length; i++) {
+      if (!room[i]) continue;
+      const m = this.meshFor(meshes[i]);
+      m.used = this.frame;
+      pass.setVertexBuffer(0, m.buf);
+      pass.setVertexBuffer(1, instances, first[i] * INSTANCE_STRIDE * 4);
+      pass.drawIndirect(args, i * 16);
+    }
   }
 
   /** Records the draws into `pass`; the bind group carries the scene uniforms (viewProj, camera, fade). */
@@ -98,7 +117,7 @@ export class GpuFigures {
     let first = 0;
     for (const b of batches) {
       if (!b.count) continue;
-      const m = this.meshFor(b);
+      const m = this.meshFor(b.mesh);
       m.used = this.frame;
       pass.setVertexBuffer(0, m.buf);
       pass.setVertexBuffer(1, this.instances, first * INSTANCE_STRIDE * 4);

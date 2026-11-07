@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useStore } from '../../state/store';
-import { braa, labelFieldsFor, useReplayStore } from '../../state/replayStore';
+import { braa, useReplayStore } from '../../state/replayStore';
 import { useInspectStore } from '../../state/inspectStore';
 import { rgbToCss, teamBaseColor } from '../../render/colors';
 import { useAnimationFrame, useEngine } from '../EngineContext';
@@ -8,6 +8,7 @@ import { defaultEventKinds, eventRows, markedInView, unitsPerMetre } from './rep
 import { allFields, fieldName, fieldShort, fieldText, isNumeric, type FieldContext } from './fields';
 import { personAt, unitsOf, type Unit } from './units';
 import { groundProbe, teamName } from './replayView';
+import { labelCategory, labelRank, ruleFields } from './labelRules';
 import { isOverlay } from '../../match/overlay';
 import { num, t } from '../../i18n';
 import type { Engine } from '../../render/engine';
@@ -62,7 +63,8 @@ export function ReplayOverlay() {
     for (const el of events.current.values()) el.remove();
     nodes.current.clear();
     events.current.clear();
-    useReplayStore.setState({ follow: null, followUnit: null, selected: null, pair: null, pairFrom: null, eventUnit: null });
+    const r = useReplayStore.getState();
+    useReplayStore.setState({ follow: null, followUnit: null, selected: null, pair: null, pairFrom: null, eventUnit: null, target: null, targetPerson: null, chart: { ...r.chart, units: [] } });
   }, [dataset]);
 
   // The pointer, for the hover card; clicks on units; the wheel while following.
@@ -164,6 +166,13 @@ export function ReplayOverlay() {
       }
     }
 
+    // The target of the padlock and target views likewise.
+    if (r.target) {
+      const u = ui.byKey.get(r.target);
+      const p = u ? personAt(u, now) : null;
+      if (p !== null && p !== r.targetPerson && engine.liveTracks.some((tr) => tr.person === p)) useReplayStore.setState({ targetPerson: p });
+    }
+
     const pos = new Map<number, { x: number; y: number; z: number }>();
     for (const tr of engine.liveTracks) pos.set(tr.person, tr);
     const refPos = r.follow !== null ? pos.get(r.follow) : undefined;
@@ -186,9 +195,12 @@ export function ReplayOverlay() {
     const order = engine.liveTracks
       .map((tr) => {
         const unit = ui.units[ui.personUnit[tr.person]];
-        const rank =
-          r.follow === tr.person ? 0 : unit && r.selected === unit.key ? 1 : r.pair?.includes(tr.person) || r.pairFrom === tr.person ? 2 : !unit || unit.kind === 'player' ? 3 : unit.kind === 'ai' ? 4 : 5;
-        return { tr, unit, rank, dist: Math.hypot(tr.x - cam.x, tr.y - cam.y, tr.z - cam.z) };
+        const special =
+          r.follow === tr.person ? 0 : unit && r.selected === unit.key ? 1 : r.pair?.includes(tr.person) || r.pairFrom === tr.person || r.targetPerson === tr.person ? 2 : null;
+        // Each kind of object labelled by its own rule; the units in question by theirs.
+        const rule = unit ? r.labelRules[labelCategory(dataset, unit, special !== null)] : r.labelRules.ground;
+        const rank = labelRank(special, rule.priority);
+        return { tr, unit, rank, rule, dist: Math.hypot(tr.x - cam.x, tr.y - cam.y, tr.z - cam.z) };
       })
       .sort((a, b) => a.rank - b.rank || a.dist - b.dist);
     const out: Placed[] = [];
@@ -203,17 +215,17 @@ export function ReplayOverlay() {
       const start = (p: number) => unit.spans[unit.persons.indexOf(p)]?.[0] ?? 0;
       if (was === undefined || start(tr.person) > start(was)) newest.set(unit, tr.person);
     }
-    for (const { tr, unit, rank } of order) {
+    for (const { tr, unit, rank, rule } of order) {
       if (!unit || newest.get(unit) !== tr.person) continue;
       if (!showLabels && rank > 1) continue;
-      // AI and weapons are labelled only when asked, or when they are the one in question.
-      if (rank > 2 && ((unit.kind === 'ai' && !r.labelAi) || unit.kind === 'weapon')) continue;
+      // A kind of object whose rule hides its labels is labelled only when it is one in question.
+      if (rank > 2 && !rule.show) continue;
       const p = engine.project(tr.x, tr.y, tr.z);
       if (!p || p.x < -50 || p.y < -50 || p.x > W + 50 || p.y > H + 50) continue;
       const c = ctxOf(unit, tr.person, tr);
       const head: string[] = [];
       const nums: string[] = [];
-      for (const f of labelFieldsFor(dataset, r.labelFields)) {
+      for (const f of ruleFields(dataset, rule, r.labelFields)) {
         const v = fieldText(c, f, team);
         if (!v) continue;
         if (isNumeric(f)) nums.push(`${fieldShort(f)} ${v}`);
@@ -311,6 +323,11 @@ export function ReplayOverlay() {
         line.current.setAttribute('y2', String(pb.y));
         line.current.style.display = '';
         lineText.current.style.display = '';
+        // Line of sight, as Tacview draws it: red and dashed where the ground is between them.
+        const blocked = r.aids.lineOfSight && losBlocked(engine, a, b);
+        line.current.setAttribute('stroke', blocked ? '#ff5a5a' : '#ffd166');
+        line.current.setAttribute('stroke-dasharray', blocked ? '3 5' : '6 4');
+        lineText.current.classList.toggle('blocked', blocked);
         lineText.current.style.transform = `translate(${((pa.x + pb.x) / 2).toFixed(1)}px, ${((pa.y + pb.y) / 2).toFixed(1)}px) translate(-50%, -50%)`;
         lineText.current.textContent = t('replay.braa', {
           bearing: String(Math.round(m.bearing) % 360).padStart(3, '0'),
@@ -404,6 +421,20 @@ function nearestTrack(engine: Engine, x: number, y: number, labels: Placed[]): n
     }
   }
   return best;
+}
+
+/** Whether the level's surface is between two points (on its index; false while it cannot say). */
+function losBlocked(engine: Engine, a: { x: number; y: number; z: number }, b: { x: number; y: number; z: number }): boolean {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const dz = b.z - a.z;
+  const len = Math.hypot(dx, dy, dz);
+  if (len < 1e-6) return false;
+  const hit = engine.inspector.surfaceHit({ origin: a, dir: { x: dx / len, y: dy / len, z: dz / len } });
+  if (!hit) return false;
+  const along = Math.hypot(hit.x - a.x, hit.y - a.y, hit.z - a.z);
+  // Not the ground right under either end (a tank sits on it).
+  return along > len * 0.02 && along < len * 0.98;
 }
 
 function esc(s: string): string {

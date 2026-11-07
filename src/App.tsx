@@ -22,6 +22,7 @@ import { MatchPanel } from './ui/match/MatchPanel';
 import { BoardBar, TacticsPanel } from './ui/tactics/TacticsPanel';
 import { BoardLabels } from './ui/tactics/BoardLabels';
 import { ReplayOverlay } from './ui/replay/ReplayOverlay';
+import { ReplayExtras } from './ui/replay/ReplayExtras';
 import { ReplayPanel } from './ui/replay/ReplayPanel';
 import { UnitCard } from './ui/replay/UnitCard';
 import { OverlayPanel, useFigureOverlay } from './ui/replay/FigureOverlay';
@@ -546,6 +547,7 @@ export function App() {
               ) : (
                 <>
               <ReplayOverlay />
+              <ReplayExtras />
               <StatsOverlay />
               <SpeedOverlay />
               <InspectHud />

@@ -219,6 +219,10 @@ export class FigureReplay {
     return k;
   }
 
+  templateOf(kind: string): Template | null {
+    return this.template(kind);
+  }
+
   private template(kind: string): Template | null {
     const e = CATALOG[kind];
     return e ? this.templates.get(kind, e.build) : null;

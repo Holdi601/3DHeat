@@ -14,9 +14,9 @@
  * origin, standing on y = 0.
  */
 
-import { finish, newKit, PAINT, type Kit, type Template } from './kit';
-import { blob, block, fin, hexa, outlineBody, plate, prism, slab, tiltBox, tube, type Outline, type P2 } from './parts';
-import { disc, wheel } from '../race/shapes';
+import { detail, finish, newKit, PAINT, withCoarse, type FigBuffer, type Kit, type Template } from './kit';
+import { blob, block, fin, hexa, lerpPoly, outlineBody, plate, prism, slab, tiltBox, triangulate, tube, type Outline, type P2 } from './parts';
+import { Mesh } from './mesh';
 import { at, type Frame3, type Rgb, type Vec3 } from '../race/geometry';
 
 /**
@@ -49,7 +49,10 @@ export interface TurretSpec {
   shape?: TurretShape;
   /** Sideways offset of the turret's middle. */
   side?: number;
-  /** For 'sloped' and 'casemate': how far the sides lean in, as a share of the width (default 0.15). */
+  /**
+   * How far the sides lean in, as a share of the width: for 'sloped' and 'casemate' (default 0.15), and for a welded
+   * main turret of any other shape or outline (default 8 % of its height).
+   */
   slope?: number;
   /** Raised above the deck by this much (a second turret on a step, a launcher on a column). */
   up?: number;
@@ -61,9 +64,8 @@ export interface TurretSpec {
   outline?: Outline;
   gunX?: number;
   /**
-   * The ring a rounded cast turret stands on: a low body under an outline turret whose sections are rounded (`round`
-   * under 5), so the dome meets the deck as the real casting does rather than touching it along one line. On by
-   * default for the main turret on the deck; false leaves it out (a spec that draws its own).
+   * Kept for the specs that set it: a cast main turret (an outline of `round` under 5) is now drawn broad at its
+   * base, standing on the deck as the casting does, so no separate ring is drawn under it either way.
    */
   ring?: boolean;
 }
@@ -305,7 +307,12 @@ function fitLength(spec: GroundSpec): GroundSpec {
   };
 }
 
+/** A ground figure, with its coarse build (fewer segments, the same shape) for when it is small on screen. */
 export function buildGround(input: GroundSpec): Template {
+  return withCoarse(() => buildAt(input))();
+}
+
+function buildAt(input: GroundSpec): Template {
   const spec = fitLength(input);
   const k = newKit();
   const L = spec.length;
@@ -318,7 +325,7 @@ export function buildGround(input: GroundSpec): Template {
   const bare = !!spec.bare;
   if (chassis === 'tracked' || chassis === 'wheeled' || chassis === 'halftrack' || chassis === 'rail' || chassis === 'hover') {
     if (!bare || spec.hullOutline) hull(k, spec);
-  } else if (bare && spec.hullOutline) outlineBody(k.team, k.fr, spec.hullOutline, grey(0.86), 16, 1, grey(0.97));
+  } else if (bare && spec.hullOutline) shell(k.team, k.fr, spec.hullOutline, grey(0.86));
   if (chassis === 'hover') blob(k.fixed, k.fr, [0, 0, 0.45], [L * 0.48, W * 0.48, 0.32], PAINT.dark);
   if (chassis === 'towed' && !bare) carriage(k, spec);
   if (chassis === 'trailer' && !bare) trailerBed(k, spec);
@@ -343,6 +350,7 @@ export function buildGround(input: GroundSpec): Template {
     fin(k.team, k.fr, [[sx, sb], [sx + 0.12, sb], [sx + 0.12, sb + main.height * 1.15], [sx, sb + main.height * 1.05]], main.side ?? 0, main.width * 1.5, grey(0.85));
   }
   for (const g of spec.guns ?? []) gun(k, spec, g, top, turrets);
+  if (chassis === 'tracked' && main && spec.hullOutline && (spec.guns ?? []).some((g) => g.mount === 'turret' && (g.turret ?? 0) === 0 && g.calibre >= 0.075)) engineDeck(k, spec, main);
   for (const m of spec.missiles ?? []) missiles(k, spec, m, top);
   for (const r of spec.radars ?? []) {
     if (r.hull || !main) radar(k, r, 0, top, 0);
@@ -428,6 +436,195 @@ function addOn(k: Kit, a: AddOn, o: Vec3): void {
   }
 }
 
+// ---------------------------------------------------------------- bodies: welded plates and castings
+
+/** Where an outline's three polylines all reach: the x range a body from it spans. */
+function spanOf(o: Outline): [number, number] {
+  const lists = [o.top, o.bottom, o.plan];
+  return [Math.max(...lists.map((l) => Math.min(...l.map((p) => p[0])))), Math.min(...lists.map((l) => Math.max(...l.map((p) => p[0]))))];
+}
+
+/** The outline's roundness at `x` (a number, or by station). */
+function roundAt(o: Outline, x: number, fallback: number): number {
+  return typeof o.round === 'number' ? o.round : o.round ? lerpPoly(o.round, x) : fallback;
+}
+
+/** An outline's corners in its range; a step (two corners at one x) as a station just either side of it. */
+function cornersOf(o: Outline, x0: number, x1: number): number[] {
+  const set = new Set<number>([x0, x1]);
+  for (const l of [o.top, o.bottom, o.plan, ...(Array.isArray(o.round) ? [o.round] : [])]) {
+    for (let i = 0; i < l.length; i++) {
+      const x = l[i][0];
+      if (x <= x0 || x >= x1) continue;
+      const step = (i > 0 && Math.abs(l[i - 1][0] - x) < 1e-9) || (i + 1 < l.length && Math.abs(l[i + 1][0] - x) < 1e-9);
+      if (step) {
+        set.add(x - 1e-3);
+        set.add(x + 1e-3);
+      } else set.add(x);
+    }
+  }
+  return [...set].sort((a, b) => a - b).filter((x, i, a) => i === 0 || x - a[i - 1] > 2e-4);
+}
+
+/**
+ * A welded body from its outlines (as `outlineBody` takes them): cut only at the outlines' corners, so between them
+ * each face is one flat plate, and every section an octagon - the sides leaning in by `lean` of the height, the top
+ * edges chamfered (more the lower the outline's `round`) and the bottom ones a little. Hulls, turrets, cabs and boxes
+ * come out as armour plate with crisp lit edges and the glacis, deck and rear plates each catching the light their
+ * own way, where a soft loft would round them into one another.
+ */
+function facetBody(out: FigBuffer, fr: Frame3, o: Outline, col: Rgb, lean = 0): void {
+  const side = o.side ?? 0;
+  const [x0, x1] = spanOf(o);
+  if (!(x1 > x0)) return;
+  const m = new Mesh();
+  const rows = cornersOf(o, x0, x1).map((x) => {
+    const w = Math.max(1e-3, lerpPoly(o.plan, x));
+    const t = lerpPoly(o.top, x);
+    const b = Math.min(t - 1e-3, lerpPoly(o.bottom, x));
+    const h = t - b;
+    const c = Math.min(0.3, Math.max(0.05, 0.9 / roundAt(o, x, 10))) * Math.min(w, h);
+    const cb = c * 0.5;
+    const lw = Math.min(w * 0.4, lean * h);
+    const ring: P2[] = [[w - cb, b], [w, b + cb], [w - lw, t - c], [w - lw - c, t], [-(w - lw - c), t], [-(w - lw), t - c], [-w, b + cb], [-(w - cb), b]];
+    return { x, mid: (t + b) / 2, ids: ring.map(([s, u]) => m.v(at(fr, x, side + s, u), col)) };
+  });
+  m.grid(rows.map((r) => r.ids), true);
+  const first = rows[0];
+  const last = rows[rows.length - 1];
+  m.fan(m.v(at(fr, first.x, side, first.mid), col), first.ids, true);
+  m.fan(m.v(at(fr, last.x, side, last.mid), col), last.ids, false);
+  m.emit(out, { crease: 12 });
+}
+
+/** |c|^e with c's sign. */
+const spow = (c: number, e: number) => Math.sign(c) * Math.abs(c) ** e;
+
+/**
+ * A cast turret from its outlines: smooth all over, its section a dome over near-upright lower sides - widest about
+ * a third of the way up, the roof flattened, the base broad on the turret ring - and its ends drawn in round, as
+ * the Soviet castings and the wartime cast turrets are.
+ */
+function castBody(out: FigBuffer, fr: Frame3, o: Outline, col: Rgb): void {
+  const side = o.side ?? 0;
+  const [x0, x1] = spanOf(o);
+  if (!(x1 > x0)) return;
+  const span = x1 - x0;
+  const set = new Set(cornersOf(o, x0, x1));
+  const ns = detail(12, 6);
+  for (let i = 0; i <= ns; i++) {
+    const t = i / ns;
+    set.add(x0 + span * (0.5 * t + 0.25 * (1 - Math.cos(Math.PI * t))));
+  }
+  const xs = [...set].sort((a, b) => a - b).filter((x, i, a) => i === 0 || x - a[i - 1] > span * 0.012);
+  const n = detail(18, 10) & ~1;
+  // The ends drawn in over their last stretch, as a dome's would be.
+  const D = Math.min(span * 0.18, 0.3);
+  const m = new Mesh();
+  const rows = xs.map((x) => {
+    const edge = Math.min(x - x0, x1 - x);
+    const g = edge >= D ? 1 : Math.max(0.6, Math.sqrt(1 - (1 - edge / D) ** 2));
+    const w = Math.max(1e-3, lerpPoly(o.plan, x)) * g;
+    const top = lerpPoly(o.top, x);
+    const b = lerpPoly(o.bottom, x);
+    const t = b + Math.max(1e-3, top - b) * (0.55 + 0.45 * g);
+    const zc = b + (t - b) * 0.32;
+    const e = 2 / (Math.max(2.2, roundAt(o, x, 2.4)) + 0.4);
+    const ids = Array.from({ length: n }, (_, i) => {
+      const a = (i / n) * Math.PI * 2;
+      const c = Math.cos(a);
+      const s = Math.sin(a);
+      const sd = s >= 0 ? w * spow(c, e) : w * spow(c, 0.5);
+      const up = s >= 0 ? zc + (t - zc) * s ** e : zc - (zc - b) * (-s) ** 0.5;
+      return m.v(at(fr, x, side + sd, up), col);
+    });
+    return { x, zc, ids };
+  });
+  m.grid(rows.map((r) => r.ids), true);
+  const first = rows[0];
+  const last = rows[rows.length - 1];
+  m.fan(m.v(at(fr, first.x, side, first.zc), col), first.ids, true);
+  m.fan(m.v(at(fr, last.x, side, last.zc), col), last.ids, false);
+  m.emit(out, {});
+}
+
+/** A body from an outline: cast and rounded below `round` 5 when `cast`, welded plates from 5 up, the kernel's soft loft for other round parts. */
+function shell(out: FigBuffer, fr: Frame3, o: Outline, col: Rgb, lean = 0, cast = false): void {
+  const r = typeof o.round === 'number' ? o.round : o.round ? Math.min(...o.round.map((p) => p[1])) : 2.4;
+  if (r >= 5) facetBody(out, fr, o, col, lean);
+  else if (cast) castBody(out, fr, o, col);
+  else outlineBody(out, fr, o, col, 14);
+}
+
+/** A convex side profile (forward, up) as an outline of `half` width: its top and its underside at each corner. */
+function profileOutline(profile: P2[], half: number, round = 12, side = 0): Outline {
+  const xs = [...new Set(profile.map((p) => p[0]))].sort((a, b) => a - b);
+  const cut = (x: number): [number, number] => {
+    let lo = Infinity;
+    let hi = -Infinity;
+    for (let i = 0; i < profile.length; i++) {
+      const [a0, b0] = profile[i];
+      const [a1, b1] = profile[(i + 1) % profile.length];
+      if (x < Math.min(a0, a1) - 1e-9 || x > Math.max(a0, a1) + 1e-9) continue;
+      const vs = Math.abs(a1 - a0) < 1e-9 ? [b0, b1] : [b0 + ((b1 - b0) * (x - a0)) / (a1 - a0)];
+      for (const v of vs) {
+        lo = Math.min(lo, v);
+        hi = Math.max(hi, v);
+      }
+    }
+    return [lo, hi];
+  };
+  const cuts = xs.map((x) => [x, ...cut(x)] as const);
+  return { top: cuts.map(([x, , hi]) => [x, hi]), bottom: cuts.map(([x, lo]) => [x, lo]), plan: [[xs[0], half], [xs[xs.length - 1], half]], round, side };
+}
+
+/**
+ * The glass of a cab or a car body drawn from its outline: where the roof ends in a steep drop forward - a
+ * windscreen raked back between 40 and 80 degrees, at least 0.35 m tall - the screen on that face and side windows
+ * along the roof behind it. A body whose front falls more gently (an armoured car's glacis) has none.
+ */
+function glazing(k: Kit, o: Outline): void {
+  const top = o.top;
+  const hi = Math.max(...top.map((p) => p[1]));
+  let i = -1;
+  for (let j = 0; j < top.length; j++) if (top[j][1] > hi - 1e-6) i = j;
+  if (i < 0 || i + 1 >= top.length) return;
+  const [xa, ua] = top[i];
+  const [xb, ub] = top[i + 1];
+  const drop = ua - ub;
+  const angle = Math.atan2(drop, xb - xa);
+  if (!(xb > xa) || drop < 0.35 || angle < (40 * Math.PI) / 180 || angle > (80 * Math.PI) / 180) return;
+  const side = o.side ?? 0;
+  const l = Math.hypot(xb - xa, drop);
+  // Out of the screen's face, forward and up.
+  const nf = drop / l;
+  const nu = (xb - xa) / l;
+  const along = (t: number): [number, number] => [xa + (xb - xa) * t + nf * 0.012, ua - drop * t + nu * 0.012];
+  const pane = (c: Vec3[], normal: Vec3) => slab(k.fixed, k.fr, [[0, 0], [1, 0], [1, 1], [0, 1]], (p, q) => {
+    const lo = c[0].map((v, a) => v + (c[1][a] - v) * p);
+    const up = c[3].map((v, a) => v + (c[2][a] - v) * p);
+    return lo.map((v, a) => v + (up[a] - v) * q) as Vec3;
+  }, normal, 0.015, PAINT.glass);
+  const [f0, u0] = along(0.82);
+  const [f1, u1] = along(0.1);
+  const w0 = lerpPoly(o.plan, f0) * 0.82;
+  const w1 = lerpPoly(o.plan, f1) * 0.82;
+  pane([[f0, side - w0, u0], [f0, side + w0, u0], [f1, side + w1, u1], [f1, side - w1, u1]], [nf, 0, nu]);
+  // Side windows: the upper part of the cab's sides behind the screen, as far back as the roof runs level.
+  let back = xa;
+  for (let j = i - 1; j >= 0 && top[j][1] > hi - 0.08; j--) back = top[j][0];
+  const x0 = back + Math.min(0.25, (xa - back) * 0.15);
+  const x1 = xa - 0.06;
+  if (x1 - x0 < 0.3) return;
+  const lo = hi - Math.min(0.5, drop * 0.75);
+  const top2 = hi - Math.min(0.12, drop * 0.2);
+  for (const sd of [-1, 1]) {
+    const wx0 = lerpPoly(o.plan, x0) + 0.008;
+    const wx1 = lerpPoly(o.plan, x1) + 0.008;
+    pane([[x0, side + sd * wx0, lo], [x1, side + sd * wx1, lo], [x1, side + sd * wx1, top2], [x0, side + sd * wx0, top2]], [0, sd, 0]);
+  }
+}
+
 /** The deck the turret stands on. */
 function deckAt(spec: GroundSpec): number {
   return spec.hullHeight;
@@ -471,30 +668,300 @@ function tracks(k: Kit, spec: GroundSpec): void {
         [x0 - half + 0.15, th * 0.92],
         [x0 - half, th * 0.55],
       ];
-  const n = Math.max(3, spec.roadWheels ?? Math.round(L / 1.0));
-  const r = spec.roadWheelRadius ?? (rhomboid ? 0.25 : Math.min(0.42, (L - 0.9) / n / 2.1, th * 0.38));
-  if (spec.running && !rhomboid) {
-    openRunning(k, spec, profile, th, tw);
-    return;
-  }
-  for (const side of [-1, 1]) {
-    const outer = side * (spec.width / 2);
-    const inner = side * (spec.width / 2 - tw);
-    prism(k.fixed, k.fr, profile, Math.min(inner, outer), Math.max(inner, outer), PAINT.track);
-    if (rhomboid) {
+  if (rhomboid) {
+    for (const side of [-1, 1]) {
+      const outer = side * (spec.width / 2);
+      const inner = side * (spec.width / 2 - tw);
+      prism(k.fixed, k.fr, profile, Math.min(inner, outer), Math.max(inner, outer), PAINT.track);
       // The track frame's side plate, inside the run of the track.
       const inset: P2[] = profile.map(([x, u]) => [x0 + (x - x0) * 0.9, th * 0.08 + u * 0.82]);
       prism(k.team, k.fr, inset, outer - side * 0.02, outer + side * 0.03, grey(0.8));
-      continue;
     }
-    // Road wheels on the outside, evenly along the run.
-    for (let i = 0; i < n; i++) {
-      const x = x0 - half + 0.45 + r + ((L - 0.9 - 2 * r) * i) / Math.max(1, n - 1);
-      const kfr = { ...k.fr, o: [x, 0, 0] as [number, number, number] };
-      disc(k.fixed, kfr, outer + side * 0.012, r + 0.06, r, PAINT.metal, 10);
-    }
-    if (spec.skirts) prism(k.team, k.fr, spec.skirt ?? [[x0 - half + 0.2, th * 0.45], [x0 + half - 0.4, th * 0.45], [x0 + half - 0.4, th * 0.95], [x0 - half + 0.2, th * 0.95]], outer - side * 0.02, outer + side * 0.03, grey(0.78));
+    return;
   }
+  const run = spec.running;
+  let wheelsAt: number[];
+  let r: number;
+  if (run) {
+    wheelsAt = run.wheels;
+    r = spec.roadWheelRadius ?? Math.min(0.42, th * 0.38);
+  } else {
+    // Evenly along the ground run, the end wheels a little in from where the track leaves the ground.
+    const n = Math.max(3, spec.roadWheels ?? Math.round(L / 1.0));
+    r = spec.roadWheelRadius ?? Math.min(0.42, (L - 0.9) / n / 2.1, th * 0.38);
+    const ground = profile.filter((p) => p[1] < th * 0.08).map((p) => p[0]);
+    const g0 = ground.length > 1 ? Math.min(...ground) + r * 0.5 : x0 - half + 0.45 + r;
+    const g1 = ground.length > 1 ? Math.max(...ground) - r * 0.5 : x0 + half - 0.45 - r;
+    wheelsAt = Array.from({ length: n }, (_, i) => g0 + ((g1 - g0) * i) / Math.max(1, n - 1));
+  }
+  runningGear(k, spec, profile, th, tw, wheelsAt, r, run?.rollers ?? [], run?.band ?? 0.1, run?.rollerRadius);
+}
+
+/** The steel of the track's shoes, a little lighter than the rubber and shadow between them, so the links show. */
+const SHOE: Rgb = [0.3, 0.29, 0.27];
+
+/**
+ * The running gear on both sides: the track as a belt round its wheels (light shows through it between the wheels
+ * and under the hull, as on the real vehicle), its links alternating shoe and gap along the tread and the outer
+ * edge; road wheels with their rubber tyres and dished discs, the toothed sprocket at the higher end of the run and
+ * the idler at the other, return rollers under the top run; side skirts over it when the spec has them.
+ */
+function runningGear(k: Kit, spec: GroundSpec, profile: P2[], th: number, tw: number, wheelsAt: number[], r: number, rollers: number[], band: number, rollerRadius?: number): void {
+  const xs = profile.map((p) => p[0]);
+  const xf = Math.max(...xs);
+  const xb = Math.min(...xs);
+  const endAt = (x: number) => {
+    const pts = profile.filter((p) => Math.abs(p[0] - x) < 1e-6);
+    return pts.reduce((s, p) => s + p[1], 0) / pts.length;
+  };
+  // Sprocket and idler: each end of the run wraps round a wheel whose outside reaches the run's furthest point.
+  const re = Math.max(0.18, Math.min(0.4, th * 0.3));
+  const endCentre = (x: number, sign: number): [number, number] => [x - sign * re, Math.max(re + 0.02, Math.min(th - re, endAt(x)))];
+  const [fx, fu] = endCentre(xf, 1);
+  const [bx, bu] = endCentre(xb, -1);
+  // The drive sprocket is the end held higher (the front on most wartime tanks, the back on modern ones).
+  const sprocketFront = endAt(xf) > endAt(xb) + 0.02;
+  const solid = r < 0.05;
+  const rr = rollerRadius ?? Math.max(0.09, r * 0.35);
+  const circles: { x: number; u: number; r: number }[] = [{ x: fx, u: fu, r: re }, { x: bx, u: bu, r: re }];
+  for (const x of wheelsAt) if (!solid) circles.push({ x, u: band + r, r: r + band });
+  for (const x of rollers) circles.push({ x, u: th - band - rr, r: rr + band });
+  // The run's own corners hold the belt where no wheel does: the ground run's ends and the top run's.
+  for (const [x, u] of profile) {
+    if (x === xf || x === xb) continue;
+    const c = u < th * 0.5 ? 0.12 : 0.04;
+    circles.push({ x, u: u < th * 0.5 ? c : u - c, r: c });
+  }
+  const outerPath = belt(circles);
+  for (const side of [-1, 1]) {
+    const o = side * (spec.width / 2);
+    const i = side * (spec.width / 2 - tw);
+    trackBand(k.fixed, k.fr, outerPath, band, Math.min(o, i), Math.max(o, i), side);
+    if (solid) {
+      // Tracks run round a closed pannier (a Churchill's): its side plate fills the run.
+      prism(k.team, k.fr, insetPolygon(outerPath, band + 0.02), o - side * 0.06, o - side * 0.02, grey(0.8));
+    } else {
+      // The wheels' outer faces stand a little inside the track's edge, their hubs just short of it.
+      const face = o - side * 0.075;
+      const width = tw - 0.12;
+      for (const x of wheelsAt) roadWheel(k, x, band + r, r, face, width, side);
+      for (const x of rollers) roadWheel(k, x, th - band - rr, rr, face - side * 0.02, Math.min(width, 0.2), side, true);
+      const [sx, su, ix, iu] = sprocketFront ? [fx, fu, bx, bu] : [bx, bu, fx, fu];
+      sprocket(k, sx, su, re - band * 0.35, re - band - 0.03, face, side);
+      roadWheel(k, ix, iu, re - band - 0.01, face, width, side, true);
+    }
+    if (spec.skirts) skirtPanels(k, spec.skirt ?? [[xb + 0.2, th * 0.45], [xf - 0.4, th * 0.45], [xf - 0.4, th * 0.95], [xb + 0.2, th * 0.95]], o - side * 0.02, o + side * 0.03);
+  }
+}
+
+/**
+ * A gun tank's engine deck behind the turret, where the hull's roof runs level: a low raised plate with two dark
+ * louvred grilles in it, so the long back deck reads as one from above.
+ */
+function engineDeck(k: Kit, spec: GroundSpec, t: TurretSpec): void {
+  const top = spec.hullOutline!.top;
+  const x0 = -spec.length / 2 + 0.4;
+  const x1 = t.x - t.length / 2 - 0.15;
+  if (x1 - x0 < 0.9) return;
+  const u0 = lerpPoly(top, x0);
+  const u1 = lerpPoly(top, x1);
+  if (Math.abs(u0 - u1) > 0.1) return;
+  const u = Math.max(u0, u1);
+  const half = Math.min(...spec.hullOutline!.plan.map((p) => p[1])) * 0.78;
+  plate(k.team, k.fr, [[x0, -half], [x1, -half], [x1, half], [x0, half]], u + 0.015, 0.05, grey(0.84));
+  const gw = half * 0.82;
+  const louvres = detail(4, 2);
+  for (const sd of [-1, 1]) {
+    const c = sd * half * 0.5;
+    plate(k.fixed, k.fr, [[x0 + 0.12, c - gw / 2], [x1 - 0.12, c - gw / 2], [x1 - 0.12, c + gw / 2], [x0 + 0.12, c + gw / 2]], u + 0.042, 0.01, PAINT.dark);
+    for (let i = 1; i <= louvres; i++) {
+      const x = x0 + 0.12 + ((x1 - x0 - 0.24) * i) / (louvres + 1);
+      block(k.team, k.fr, [x, c, u + 0.055], 0.05, gw, 0.03, grey(0.8));
+    }
+  }
+}
+
+/** A side skirt (its outline seen from the side, convex) hung as a row of panels about a metre long, a thin gap between each. */
+function skirtPanels(k: Kit, poly: P2[], s0: number, s1: number): void {
+  const xs = poly.map((p) => p[0]);
+  const a = Math.min(...xs);
+  const b = Math.max(...xs);
+  const n = Math.max(1, Math.round((b - a) / 1.1));
+  const gap = 0.025;
+  for (let i = 0; i < n; i++) {
+    const x0 = a + ((b - a) * i) / n + (i > 0 ? gap / 2 : 0);
+    const x1 = a + ((b - a) * (i + 1)) / n - (i + 1 < n ? gap / 2 : 0);
+    const piece = clipX(poly, x0, x1);
+    if (piece.length >= 3) extrude(k.team, k.fr, piece, s0, s1, grey(0.84));
+  }
+}
+
+/** A convex polygon (forward, up) cut to the strip between x0 and x1. */
+function clipX(poly: P2[], x0: number, x1: number): P2[] {
+  const cut = (pts: P2[], keep: (p: P2) => boolean, x: number): P2[] => {
+    const out: P2[] = [];
+    for (let i = 0; i < pts.length; i++) {
+      const p = pts[i];
+      const q = pts[(i + 1) % pts.length];
+      if (keep(p)) out.push(p);
+      if (keep(p) !== keep(q)) {
+        const t = (x - p[0]) / (q[0] - p[0]);
+        out.push([x, p[1] + (q[1] - p[1]) * t]);
+      }
+    }
+    return out;
+  };
+  return cut(cut(poly, (p) => p[0] >= x0, x0), (p) => p[0] <= x1, x1);
+}
+
+/** The outline of a belt round circles (x, up, radius): their convex hull, counter-clockwise. */
+function belt(circles: { x: number; u: number; r: number }[]): P2[] {
+  const n = detail(12, 8);
+  const pts: P2[] = [];
+  for (const c of circles) for (let i = 0; i < n; i++) pts.push([c.x + Math.cos((i / n) * Math.PI * 2) * c.r, c.u + Math.sin((i / n) * Math.PI * 2) * c.r]);
+  return convexHull(pts);
+}
+
+/** The convex hull of points, counter-clockwise (the monotone chain). */
+function convexHull(points: P2[]): P2[] {
+  const p = [...points].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  if (p.length < 3) return p;
+  const turn = (o: P2, a: P2, b: P2) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const lower: P2[] = [];
+  for (const q of p) {
+    while (lower.length >= 2 && turn(lower[lower.length - 2], lower[lower.length - 1], q) <= 1e-9) lower.pop();
+    lower.push(q);
+  }
+  const upper: P2[] = [];
+  for (let i = p.length - 1; i >= 0; i--) {
+    const q = p[i];
+    while (upper.length >= 2 && turn(upper[upper.length - 2], upper[upper.length - 1], q) <= 1e-9) upper.pop();
+    upper.push(q);
+  }
+  return [...lower.slice(0, -1), ...upper.slice(0, -1)];
+}
+
+/**
+ * A track as a band round its run: `path` its outside (forward, up; convex, counter-clockwise), `band` thick, from
+ * `s0` to `s1` across, `side` the vehicle's side it is on. Cut into links along its length - each flat, alternately
+ * shoe and gap on the tread and the outer edge - so it reads as a track, not a belt, and bends round the sprocket
+ * in short straight pieces as a real one does. Its inside and the edge toward the hull are left out: they are
+ * hidden behind the wheels and the hull.
+ */
+function trackBand(out: FigBuffer, fr: Frame3, path: P2[], band: number, s0: number, s1: number, side: number): void {
+  const pitch = 0.3 / Math.max(0.5, detail(10, 4) / 10);
+  const pts: P2[] = [];
+  for (let i = 0; i < path.length; i++) {
+    const a = path[i];
+    const b = path[(i + 1) % path.length];
+    const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (len < 1e-4) continue;
+    const pieces = Math.max(1, Math.round(len / pitch));
+    for (let j = 0; j < pieces; j++) pts.push([a[0] + ((b[0] - a[0]) * j) / pieces, a[1] + ((b[1] - a[1]) * j) / pieces]);
+  }
+  const inner = insetPolygon(pts, band);
+  const so = side > 0 ? s1 : s0;
+  const n = pts.length;
+  const w = (f: number, s: number, u: number) => at(fr, f, s, u);
+  const dir = (f: number, s: number, u: number): Vec3 => [fr.f[0] * f + fr.r[0] * s + fr.u[0] * u, fr.f[1] * f + fr.r[1] * s + fr.u[1] * u, fr.f[2] * f + fr.r[2] * s + fr.u[2] * u];
+  const quad = (a: Vec3, b: Vec3, c: Vec3, d: Vec3, nn: Vec3, col: Rgb) => {
+    for (const p of [a, b, c, a, c, d]) out.vn(p, nn, col);
+  };
+  // Pieces alternate; an odd count would put two shoes together once round, where the run starts.
+  const even = n % 2 === 0 ? n : n - 1;
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    const [pf, pu] = pts[i];
+    const [qf, qu] = pts[j];
+    const l = Math.hypot(qf - pf, qu - pu) || 1;
+    // Outward from the run, for a counter-clockwise path: the edge turned right.
+    const nf = (qu - pu) / l;
+    const nu = -(qf - pf) / l;
+    const col = i % 2 === 0 || i >= even ? SHOE : PAINT.track;
+    quad(w(pf, s0, pu), w(qf, s0, qu), w(qf, s1, qu), w(pf, s1, pu), dir(nf, 0, nu), col);
+    quad(w(pf, so, pu), w(qf, so, qu), w(inner[j][0], so, inner[j][1]), w(inner[i][0], so, inner[i][1]), dir(0, side, 0), col);
+  }
+}
+
+/**
+ * A solid of revolution of the ground figures' own, about the axis from `a` along the unit `d` (both forward, side,
+ * up): `prof` gives (distance along the axis, radius) in order, a radius of 0 a pole. Its segment count is given, not
+ * set by its size as the parts' lathe sets it, so a dozen road wheels or a barrel's many rings stay light.
+ */
+function revolve(out: FigBuffer, fr: Frame3, a: Vec3, d: Vec3, prof: P2[], n: number, col: Rgb, crease = 40): void {
+  const helper: Vec3 = Math.abs(d[2]) < 0.9 ? [0, 0, 1] : [1, 0, 0];
+  const u = unit(cross3(d, helper));
+  const v = cross3(d, u);
+  const m = new Mesh();
+  const rows = prof.map(([t, r]) => {
+    const c: Vec3 = [a[0] + d[0] * t, a[1] + d[1] * t, a[2] + d[2] * t];
+    if (r <= 1e-6) {
+      const i = m.v(at(fr, c[0], c[1], c[2]), col);
+      return Array.from({ length: n }, () => i);
+    }
+    return Array.from({ length: n }, (_, i) => {
+      const ca = Math.cos((i / n) * Math.PI * 2) * r;
+      const sa = Math.sin((i / n) * Math.PI * 2) * r;
+      return m.v(at(fr, c[0] + u[0] * ca + v[0] * sa, c[1] + u[1] * ca + v[1] * sa, c[2] + u[2] * ca + v[2] * sa), col);
+    });
+  });
+  m.grid(rows, true);
+  const wa = at(fr, a[0], a[1], a[2]);
+  const wb = at(fr, a[0] + d[0], a[1] + d[1], a[2] + d[2]);
+  m.emit(out, { crease, axis: [wa, [wb[0] - wa[0], wb[1] - wa[1], wb[2] - wa[2]]] });
+}
+
+function cross3(a: Vec3, b: Vec3): Vec3 {
+  return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+}
+
+function unit(v: Vec3): Vec3 {
+  const l = Math.hypot(v[0], v[1], v[2]) || 1;
+  return [v[0] / l, v[1] / l, v[2] / l];
+}
+
+/**
+ * A road wheel at `x`, its centre `u` high: the rubber tyre round it, and the dished disc in the vehicle's paint
+ * swelling out to the hub. `face` is where its outer face stands across, `width` how wide it is, `side` which side of
+ * the vehicle. A return roller or an idler (`plain`) is all steel, its disc flatter.
+ */
+function roadWheel(k: Kit, x: number, u: number, r: number, face: number, width: number, side: number, plain = false): void {
+  const n = detail(plain ? 8 : 10, 6);
+  const a: Vec3 = [x, face - side * width, u];
+  const d: Vec3 = [0, side, 0];
+  revolve(k.fixed, k.fr, a, d, [[0, r], [width, r], [width, r * 0.8]], n, plain ? PAINT.metal : PAINT.tyre);
+  const dish = Math.min(0.07, r * 0.2);
+  revolve(k.team, k.fr, a, d, [[width, r * 0.8], [width + dish * 0.6, r * 0.3], [width + dish, 0]], n, grey(0.8), plain ? 30 : 60);
+}
+
+/** The drive sprocket: a toothed ring in the vehicle's paint at the track's outer face, and its hub. */
+function sprocket(k: Kit, x: number, u: number, tip: number, root: number, face: number, side: number): void {
+  const teeth = detail(9, 6);
+  const poly: P2[] = [];
+  for (let i = 0; i < teeth * 2; i++) {
+    const a = (i / (teeth * 2)) * Math.PI * 2;
+    const rad = i % 2 === 0 ? tip : root;
+    poly.push([x + Math.cos(a) * rad, u + Math.sin(a) * rad]);
+  }
+  extrude(k.team, k.fr, poly, face - side * 0.05, face + side * 0.05, grey(0.78));
+  revolve(k.team, k.fr, [x, face + side * 0.05, u], [0, side, 0], [[0, root * 0.45], [0.02, root * 0.3], [0.04, 0]], detail(8, 6), grey(0.82));
+}
+
+/** A flat-sided solid from its outline (forward, up; any simple polygon) pushed from `s0` to `s1` across, its edges crisp, no bevel. */
+function extrude(out: FigBuffer, fr: Frame3, poly: P2[], s0: number, s1: number, col: Rgb): void {
+  const m = new Mesh();
+  const lo = Math.min(s0, s1);
+  const hi = Math.max(s0, s1);
+  const a = poly.map(([f, u]) => m.v(at(fr, f, lo, u), col));
+  const b = poly.map(([f, u]) => m.v(at(fr, f, hi, u), col));
+  m.grid([a, b], true);
+  const ca = poly.map(([f, u]) => m.v(at(fr, f, lo, u), col));
+  const cb = poly.map(([f, u]) => m.v(at(fr, f, hi, u), col));
+  for (const [i, j, l] of triangulate(poly)) {
+    m.tri(ca[i], ca[l], ca[j]);
+    m.tri(cb[i], cb[j], cb[l]);
+  }
+  m.emit(out, { crease: 30 });
 }
 
 /** A convex polygon moved inward by `d` along each edge's normal. */
@@ -519,43 +986,6 @@ function insetPolygon(poly: P2[], d: number): P2[] {
     const t = ((b.p[0] - a.p[0]) * b.e[1] - (b.p[1] - a.p[1]) * b.e[0]) / den;
     return [a.p[0] + a.e[0] * t, a.p[1] + a.e[1] * t] as P2;
   });
-}
-
-/** The track as a band round its run, with the wheels inside it standing out solid: see `GroundSpec.running`. */
-function openRunning(k: Kit, spec: GroundSpec, profile: P2[], th: number, tw: number): void {
-  const run = spec.running!;
-  const band = run.band ?? 0.1;
-  const inner = insetPolygon(profile, band);
-  const r = spec.roadWheelRadius ?? Math.min(0.42, th * 0.38);
-  const xs = profile.map((p) => p[0]);
-  const xf = Math.max(...xs);
-  const xb = Math.min(...xs);
-  // Sprocket and idler: wheels filling each end of the run, at the height of its furthest point.
-  const end = (x: number): [number, number] => {
-    const pts = profile.filter((p) => Math.abs(p[0] - x) < 1e-6);
-    const u = pts.reduce((s, p) => s + p[1], 0) / pts.length;
-    const re = Math.max(0.18, Math.min(0.4, th * 0.3));
-    return [re, Math.max(re + band * 0.5, Math.min(th - re - band * 0.5, u))];
-  };
-  const [rf, uf] = end(xf);
-  const [rb, ub] = end(xb);
-  const rr = run.rollerRadius ?? Math.max(0.09, r * 0.35);
-  for (const side of [-1, 1]) {
-    const o = side * (spec.width / 2);
-    const i = side * (spec.width / 2 - tw);
-    const s0 = Math.min(o, i);
-    const s1 = Math.max(o, i);
-    for (let a = 0; a < profile.length; a++) {
-      const b = (a + 1) % profile.length;
-      prism(k.fixed, k.fr, [profile[a], profile[b], inner[b], inner[a]], s0, s1, PAINT.track);
-    }
-    const wheelAt = (x: number, u: number, radius: number, col: Rgb) => tube(k.fixed, k.fr, [x, s0 + 0.03, u], [x, s1 - 0.03, u], radius, radius, col, 14);
-    for (const x of run.wheels) wheelAt(x, r + band, r, PAINT.metal);
-    wheelAt(xf - rf - band * 0.3, uf, rf, PAINT.dark);
-    wheelAt(xb + rb + band * 0.3, ub, rb, PAINT.dark);
-    for (const x of run.rollers ?? []) wheelAt(x, th - band - rr, rr, PAINT.dark);
-    if (spec.skirts) prism(k.team, k.fr, spec.skirt ?? [[xb + 0.2, th * 0.45], [xf - 0.4, th * 0.45], [xf - 0.4, th * 0.95], [xb + 0.2, th * 0.95]], o - side * 0.02, o + side * 0.03, grey(0.78));
-  }
 }
 
 function wheelRadiusOf(spec: GroundSpec): number {
@@ -583,10 +1013,21 @@ function wheels(k: Kit, spec: GroundSpec): void {
   const w = Math.max(0.2, Math.min(0.5, r * 0.8));
   for (const x of xs) {
     for (const side of [-1, 1]) {
-      const kfr = { ...k.fr, o: [x, 0, 0] as [number, number, number] };
-      wheel(k.fixed, kfr, side * (spec.width / 2 - w / 2), r, r, w, PAINT.tyre, PAINT.metal, side, 12);
+      tyre(k, x, side * (spec.width / 2 - w), r, r, w, side);
     }
   }
+}
+
+/**
+ * A road vehicle's wheel at `x`: the tyre from `inner` across (signed) `w` wide toward `side`, its shoulders
+ * rounded, and the steel wheel in its face, dished in to the hub, in the vehicle's paint.
+ */
+export function tyre(k: Kit, x: number, inner: number, up: number, r: number, w: number, side: number): void {
+  const n = detail(12, 8);
+  const a: Vec3 = [x, inner, up];
+  const d: Vec3 = [0, side, 0];
+  revolve(k.fixed, k.fr, a, d, [[0, r * 0.66], [w * 0.16, r], [w * 0.84, r], [w, r * 0.66]], n, PAINT.tyre, 75);
+  revolve(k.team, k.fr, a, d, [[w, r * 0.66], [w - 0.04, r * 0.52], [w - 0.02, r * 0.2], [w + 0.01, 0]], n, grey(0.78), 50);
 }
 
 /** Two bogies of two axles each under a rail vehicle, and the frame between them. */
@@ -601,8 +1042,9 @@ function bogies(k: Kit, spec: GroundSpec): void {
     const axles = Array.from({ length: n }, (_, i) => c + ((n - 1) / 2 - i) * step);
     for (const x of axles) {
       for (const side of [-1, 1]) {
-        const kfr = { ...k.fr, o: [x, 0, 0] as [number, number, number] };
-        wheel(k.fixed, kfr, side * gauge, r, r, 0.14, PAINT.metal, PAINT.dark, side, 10);
+        // A steel rail wheel: its flange inside (standing on the ground, the rail left out), the tread, the web dished in to the hub.
+        const n = detail(12, 8);
+        revolve(k.fixed, k.fr, [x, side * (gauge - 0.07), r * 1.06], [0, side, 0], [[0, r * 0.7], [0, r * 1.06], [0.025, r * 1.06], [0.04, r], [0.14, r], [0.14, r * 0.85], [0.11, r * 0.3], [0.16, r * 0.18], [0.17, 0]], n, PAINT.metal);
       }
     }
     block(k.fixed, k.fr, [c, 0, r + 0.1], (n - 1) * step + 1.2, gauge * 2 + 0.3, 0.35, PAINT.dark);
@@ -675,14 +1117,17 @@ function hull(k: Kit, spec: GroundSpec): void {
     const tw = trackWidth(spec);
     const fender = th * 0.92;
     const lowerProfile: P2[] = [[c - half + 0.3, floor], [c + half - 0.5, floor], [c + half - 0.15, fender], [c - half + 0.15, fender]];
-    prism(k.team, k.fr, lowerProfile, -(spec.width / 2 - tw), spec.width / 2 - tw, grey(0.7));
-    if (spec.hullOutline) outlineBody(k.team, k.fr, spec.hullOutline, grey(0.86), 16, 1, grey(0.97));
+    prism(k.team, k.fr, lowerProfile, -(spec.width / 2 - tw), spec.width / 2 - tw, grey(0.8));
+    // The upper hull's sides lean in a little above the fenders, as welded hull plates do.
+    if (spec.hullOutline) shell(k.team, k.fr, spec.hullOutline, grey(0.86), 0.06);
     else {
       const upper = profile.map(([x, u]) => [x, Math.max(u, fender)] as P2);
-      prism(k.team, k.fr, dedupe(upper), -w, w, grey(0.86), 1, grey(0.97));
+      facetBody(k.team, k.fr, profileOutline(dedupe(upper), w), grey(0.86), 0.06);
     }
-  } else if (spec.hullOutline) outlineBody(k.team, k.fr, spec.hullOutline, grey(0.86), 16, 1, grey(0.97));
-  else prism(k.team, k.fr, profile, -w, w, grey(0.86), 1, grey(0.97));
+  } else if (spec.hullOutline) {
+    shell(k.team, k.fr, spec.hullOutline, grey(0.86));
+    if (spec.chassis === 'wheeled') glazing(k, spec.hullOutline);
+  } else facetBody(k.team, k.fr, profileOutline(profile, w), grey(0.86), shape === 'truck' ? 0 : 0.04);
   if (bonnet > 0) {
     // The engine bonnet, narrower and lower than the body, a radiator in front.
     const hb = Math.max(floor + 0.4, H * 0.72);
@@ -740,7 +1185,8 @@ function truck(k: Kit, spec: GroundSpec): void {
   const x0 = x1 - cab.length;
   if (cab.outline) {
     // The cab and bonnet from their true side profile and plan, in the vehicle's frame.
-    outlineBody(k.team, k.fr, cab.outline, grey(0.88), 16, 1, grey(0.97));
+    shell(k.team, k.fr, cab.outline, grey(0.88));
+    glazing(k, cab.outline);
   } else if (bonnet > 0) {
     // A normal-control truck: the engine under a bonnet ahead of the cab.
     const hb = Math.max(floor + 0.5, cab.height * 0.62);
@@ -862,10 +1308,16 @@ function turret(k: Kit, spec: GroundSpec, t: TurretSpec, base: number): void {
     default:
       profile = [];
   }
-  if (t.outline) outlineBody(k.team, k.fr, { ...t.outline, top: t.outline.top.map(([f, u]) => [x + f, base + u]), bottom: t.outline.bottom.map(([f, u]) => [x + f, base + u]), plan: t.outline.plan.map(([f, w2]) => [x + f, w2]), round: Array.isArray(t.outline.round) ? t.outline.round.map(([f, r]) => [x + f, r]) : t.outline.round, side: s }, grey(0.92), 18, 1, grey(1));
-  else if (shape === 'cast' || shape === 'round') {
-    blob(k.team, k.fr, [x, s, base + h * 0.42], [l / 2, w / 2, h * (shape === 'round' ? 0.62 : 0.55)], grey(0.92));
-    block(k.team, k.fr, [x, s, base + h * 0.12], l * 0.8, w * 0.85, h * 0.25, grey(0.85));
+  const main = t === spec.turret;
+  // How far a welded turret's sides lean in, as a share of its height; a spec's `slope` is a share of the width.
+  const lean = main ? (t.slope !== undefined ? (t.slope * w) / Math.max(0.2, h) : 0.08) : 0;
+  if (t.outline) {
+    const o = t.outline;
+    shell(k.team, k.fr, { ...o, top: o.top.map(([f, u]) => [x + f, base + u]), bottom: o.bottom.map(([f, u]) => [x + f, base + u]), plan: o.plan.map(([f, w2]) => [x + f, w2]), round: Array.isArray(o.round) ? o.round.map(([f, r]) => [x + f, r]) : o.round, side: s }, grey(0.9), lean, main);
+  } else if (shape === 'cast' || shape === 'round') {
+    // A casting: widest a little behind its middle, the front drawn in under the gun, the roof a low dome.
+    const k2 = shape === 'round' ? 1 : 0.9;
+    castBody(k.team, k.fr, { plan: [[x - l / 2, w * 0.36], [x - l * 0.22, w / 2], [x + l * 0.15, w * 0.47], [x + l / 2, w * 0.28]], top: [[x - l / 2, base + h * 0.62 * k2], [x - l * 0.15, base + h], [x + l * 0.2, base + h * 0.96], [x + l / 2, base + h * 0.55 * k2]], bottom: [[x - l / 2, base], [x + l / 2, base]], round: 2.4, side: s }, grey(0.9));
   } else if (shape === 'sloped' || shape === 'casemate') {
     // Sides leaning in; a casemate's front plate laid back steeply.
     const lean = (t.slope ?? 0.15) * w;
@@ -887,25 +1339,16 @@ function turret(k: Kit, spec: GroundSpec, t: TurretSpec, base: number): void {
     for (const side of [-1, 1]) block(k.team, k.fr, [x, s + side * (w / 2 - th / 2), base + h * 0.45], l, th, h * 0.9, grey(0.88));
   } else if (shape === 'cylinder') {
     tube(k.team, k.fr, [x, s, base], [x, s, base + h], l / 2, w / 2, grey(0.88), 14);
-  } else prism(k.team, k.fr, profile, s - w / 2, s + w / 2, grey(0.92), 1, grey(1));
-  if (t.outline && t === spec.turret && t.ring !== false && !t.up) turretRing(k, t, x, s, base);
-  if (spec.cupola && t === spec.turret) blob(k.team, k.fr, [x - l * 0.15, s + w * 0.22, base + h + 0.08], [0.32, 0.32, 0.14], grey(0.7));
-}
-
-/**
- * Under a rounded outline turret, the ring it stands on: its plan drawn in a little, its top under half the dome's
- * height (at most 0.3 m), sunk a few centimetres into the deck. A dome alone narrows to a line at its base and
- * shows light between it and the deck from the front.
- */
-function turretRing(k: Kit, t: TurretSpec, x: number, s: number, base: number): void {
-  const o = t.outline!;
-  const round = typeof o.round === 'number' ? o.round : o.round ? Math.min(...o.round.map((p) => p[1])) : 2.4;
-  if (round >= 5) return;
-  const cap = Math.min(0.3, t.height * 0.4);
-  const plan: P2[] = o.plan.map(([f, w]) => [x + f * 0.92, w * 0.96]);
-  const top: P2[] = o.top.map(([f, u]) => [x + f * 0.92, base + Math.max(0.06, Math.min(cap, u * 0.45))]);
-  const xs = plan.map((p) => p[0]);
-  outlineBody(k.team, k.fr, { plan, top, bottom: [[Math.min(...xs), base - 0.04], [Math.max(...xs), base - 0.04]], round: 6, side: s, stations: 8 }, grey(0.88), 14);
+  } else facetBody(k.team, k.fr, profileOutline(profile, w / 2, 12, s), grey(0.9), lean);
+  if (spec.cupola && main) {
+    // The commander's cupola: a low drum on the roof, its hatch a shallow dome, the vision blocks round its rim dark.
+    const cx = x - l * 0.15;
+    const cs = s + w * 0.22;
+    const roof = t.outline ? base + lerpPoly(t.outline.top, cx - x) - 0.04 : base + h - 0.04;
+    const n = detail(12, 7);
+    revolve(k.team, k.fr, [cx, cs, roof], [0, 0, 1], [[0, 0], [0, 0.34], [0.12, 0.34], [0.16, 0.31], [0.2, 0.22], [0.22, 0]], n, grey(0.84), 35);
+    revolve(k.fixed, k.fr, [cx, cs, roof + 0.07], [0, 0, 1], [[0, 0.345], [0.06, 0.345]], n, PAINT.dark);
+  }
 }
 
 function gun(k: Kit, spec: GroundSpec, g: GunSpec, top: number, turrets: TurretSpec[]): void {
@@ -918,18 +1361,25 @@ function gun(k: Kit, spec: GroundSpec, g: GunSpec, top: number, turrets: TurretS
   const se = Math.sin(elev);
   const count = Math.max(1, g.count ?? 1);
   const spread = g.spread ?? r * 3;
+  const prof = barrelProfile(g, r);
+  const n = detail(r < 0.08 ? 8 : 11, 6);
+  const end = prof[prof.length - 1][0];
   const barrel = (x: number, side: number, up: number) => {
-    const p = (f: number): [number, number, number] => [x + g.length * f * ce, side, up + g.length * f * se];
-    tube(k.fixed, k.fr, p(0), p(1), r, r * 0.85, PAINT.metal, 8);
-    if (g.sleeve) tube(k.fixed, k.fr, p(0), p(g.sleeve), r * 1.35, r * 1.25, PAINT.metal, 8);
-    if (g.extractor !== undefined) tube(k.fixed, k.fr, p(g.extractor - 0.06), p(g.extractor + 0.06), r * 1.25, r * 1.25, PAINT.metal, 8);
-    if (g.muzzle) tube(k.fixed, k.fr, p(0.97), p(1.02), r * 1.5, r * 1.5, PAINT.metal, 8);
+    const d: Vec3 = [ce, 0, se];
+    revolve(k.fixed, k.fr, [x, side, up], d, prof, n, PAINT.metal, 30);
+    // The bore's dark end, just inside the muzzle.
+    revolve(k.fixed, k.fr, [x, side, up], d, [[end + 0.004, 0], [end + 0.004, r * 0.58]], n, PAINT.dark);
   };
   if (g.mount === 'turret' && t) {
     const up = base + t.height * (g.at ?? 0.48);
     // A casemate's gun comes through its sloped front plate, partway up.
     const x = t.gunX !== undefined ? t.x + t.gunX : t.shape === 'casemate' ? t.x + t.length / 2 - Math.min(t.length * 0.45, t.height * 1.1) * (g.at ?? 0.48) - 0.1 : t.x + t.length / 2 - 0.1;
-    if (!t.outline) block(k.team, k.fr, [x, t.side ?? 0, up], 0.35, Math.min(t.width * 0.4, 0.7), Math.min(t.height * 0.6, 0.55), grey(0.7));
+    if (!t.outline) {
+      // A rounded mantlet lying across the turret front, the gun coming out of it.
+      const mr = Math.min(t.height * 0.32, 0.3);
+      const mw = Math.min(t.width * 0.42, 0.75);
+      revolve(k.team, k.fr, [x - mr * 0.3, (t.side ?? 0) - mw / 2, up], [0, 1, 0], [[0, 0], [0, mr * 0.8], [0.05, mr], [mw - 0.05, mr], [mw, mr * 0.8], [mw, 0]], detail(10, 6), grey(0.84));
+    }
     for (let i = 0; i < count; i++) {
       const off = (i - (count - 1) / 2) * spread;
       // Pairs above and below for four barrels (2 x 2), side by side otherwise.
@@ -965,6 +1415,40 @@ function gun(k: Kit, spec: GroundSpec, g: GunSpec, top: number, turrets: TurretS
     const up = (t ? base + t.height : base) + 0.25;
     tube(k.fixed, k.fr, [x, g.side ?? 0.25, up], [x + g.length, g.side ?? 0.25, up], r, r, PAINT.dark, 5);
   }
+}
+
+/**
+ * A gun barrel's profile as (distance from the breech at the mantlet, radius): the boot where it leaves the turret,
+ * a gentle taper to the muzzle, the thermal sleeve's step, the fume extractor's smooth bulge, the muzzle brake, and
+ * the bore going in at the end (its bottom dark, drawn by the caller just past where the profile ends).
+ */
+function barrelProfile(g: GunSpec, r: number): P2[] {
+  const L = g.length;
+  const base = (d: number) => r * (1.1 - (0.2 * d) / L);
+  const S = g.sleeve ? g.sleeve * L : -1;
+  const E = g.extractor !== undefined ? g.extractor * L : NaN;
+  const hl = Math.min(0.45, Math.max(0.18, L * 0.05));
+  const R = (d: number) => {
+    let v = base(d);
+    if (d <= S) v = Math.max(v, r * 1.3);
+    const q = (d - E) / hl;
+    if (Math.abs(q) < 1) v = Math.max(v, base(E) * (1 + 0.42 * Math.sqrt(1 - q * q)));
+    return v;
+  };
+  // A muzzle brake ends 2 % past the barrel's length, as the spec's gun length has always been read.
+  const brake = g.muzzle ? Math.min(0.5, Math.max(0.2, L * 0.06)) : 0;
+  const tip = g.muzzle ? L * 1.02 : L;
+  const from = Math.min(0.15, L * 0.1);
+  const knots = new Set<number>([from, tip - brake - 1e-3]);
+  if (S > 0) for (const d of [S - 0.01, S + 0.01]) knots.add(d);
+  if (!Number.isNaN(E)) for (const q of [-1, -0.55, 0.55, 1]) knots.add(E + q * hl);
+  const ds = [...knots].filter((d) => d >= from && d <= tip - brake).sort((a, b) => a - b);
+  const p: P2[] = [[-0.2, 0], [-0.2, r * 1.9]];
+  for (const d of ds) p.push([d, R(d)]);
+  const lip = g.muzzle ? r * 1.55 : base(L) * 1.06;
+  if (g.muzzle) p.push([tip - brake, lip], [tip - 0.02, lip]);
+  p.push([tip, lip * 0.92], [tip, r * 0.58], [tip - 0.08, 0]);
+  return p;
 }
 
 function missiles(k: Kit, spec: GroundSpec, m: MissileSpec, base: number): void {

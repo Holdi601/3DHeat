@@ -63,7 +63,8 @@ let detailLevel = 1;
 
 /** A count of segments or stations at the current detail, never under `min`. */
 export function detail(n: number, min = 3): number {
-  return Math.max(min, Math.round(n * detailLevel));
+  // The far build may go under the usual floors: it is a few pixels across.
+  return Math.max(detailLevel < 0.3 ? Math.min(min, 4) : min, Math.round(n * detailLevel));
 }
 
 /** Builds at a detail level, then puts the level back. */
@@ -77,8 +78,9 @@ export function atDetail<T>(level: number, build: () => T): T {
   }
 }
 
-/** The detail of a figure's coarse build. */
+/** The detail of a figure's coarse build, and of its far build (a few hundred triangles, for crowds far off). */
 export const COARSE = 0.45;
+export const FAR = 0.12;
 
 /**
  * A builder whose templates carry their coarse build: made the first time it
@@ -89,6 +91,7 @@ export function withCoarse(build: () => Template): () => Template {
   return () => {
     const t = build();
     let c: Template | undefined;
+    let f: Template | undefined;
     t.coarse = () => {
       if (!c) {
         c = atDetail(COARSE, build);
@@ -96,6 +99,14 @@ export function withCoarse(build: () => Template): () => Template {
         c.max = t.max;
       }
       return c;
+    };
+    t.far = () => {
+      if (!f) {
+        f = atDetail(FAR, build);
+        f.min = t.min;
+        f.max = t.max;
+      }
+      return f;
     };
     return t;
   };
@@ -151,6 +162,8 @@ export interface Template {
   triangles: number;
   /** The same figure built coarse, for when it is small on screen (`withCoarse`); same bounds. */
   coarse?: () => Template;
+  /** Coarser still, for crowds of figures far off (`withCoarse`); same bounds. */
+  far?: () => Template;
 }
 
 export function newKit(): Kit {

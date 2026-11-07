@@ -7,11 +7,12 @@
  * proportions or a named type's published size.
  */
 
-import { finish, newKit, PAINT, type Kit, type Template } from './kit';
+import { detail, finish, newKit, PAINT, withCoarse, type FigBuffer, type Kit, type Template } from './kit';
+import { tyre } from './ground';
+import { Mesh } from './mesh';
 import { blob, block, body, fin, outlineBody, plate, prism, ring, tube, type Outline, type P2 } from './parts';
 import type { Section } from '../race/shapes';
-import type { Rgb, Vec3 } from '../race/geometry';
-import { wheel } from '../race/shapes';
+import { at, type Frame3, type Rgb, type Vec3 } from '../race/geometry';
 
 const grey = (k: number): Rgb => [k, k, k];
 
@@ -57,17 +58,45 @@ function buildShape(k: Kit, shape: RideShape): void {
 function rider(k: Kit, x: number, seat: number, side = 0): void {
   for (const s of [-0.16, 0.16]) tube(k.team, k.fr, [x, side + s, seat], [x + 0.35, side + s * 1.4, seat - 0.45], 0.07, 0.06, grey(0.75), 5);
   block(k.team, k.fr, [x - 0.02, side, seat + 0.32], 0.26, 0.4, 0.55, grey(0.92));
-  blob(k.fixed, k.fr, [x + 0.02, side, seat + 0.72], [0.11, 0.1, 0.12], PAINT.skin);
-  blob(k.team, k.fr, [x, side, seat + 0.79], [0.14, 0.13, 0.08], grey(0.5));
+  lump(k.fixed, k.fr, [x + 0.02, side, seat + 0.72], [0.11, 0.1, 0.12], PAINT.skin);
+  lump(k.team, k.fr, [x, side, seat + 0.79], [0.14, 0.13, 0.08], grey(0.5));
   for (const s of [-0.22, 0.22]) tube(k.team, k.fr, [x, side + s, seat + 0.5], [x + 0.42, side + s * 1.2, seat + 0.25], 0.045, 0.04, grey(0.78), 5);
 }
 
+/**
+ * A small rounded lump (a head, a helmet, a sandbag) centred at (forward, side, up) with half-sizes along each, of
+ * `rings` by `segments` at full detail: the parts' blob gives anything over 10 cm nine rings of sixteen, which a
+ * ring of twelve sandbags or a rider's head does not need.
+ */
+function lump(out: FigBuffer, fr: Frame3, c: Vec3, half: Vec3, col: Rgb, rings = 5, segments = 10): void {
+  const nr = detail(rings, 3);
+  const ns = detail(segments, 6);
+  const m = new Mesh();
+  const rows: number[][] = [];
+  for (let i = 1; i < nr; i++) {
+    const t = Math.PI * (i / nr);
+    const k = Math.sin(t);
+    rows.push(Array.from({ length: ns }, (_, j) => {
+      const a = (j / ns) * Math.PI * 2;
+      return m.v(at(fr, c[0] + half[0] * Math.cos(t), c[1] + half[1] * k * Math.cos(a), c[2] + half[2] * k * Math.sin(a)), col);
+    }));
+  }
+  m.grid(rows, true);
+  m.fan(m.v(at(fr, c[0] + half[0], c[1], c[2]), col), rows[0], true);
+  m.fan(m.v(at(fr, c[0] - half[0], c[1], c[2]), col), rows[rows.length - 1], false);
+  m.emit(out, {});
+}
+
 function wheelAt(k: Kit, x: number, side: number, r: number, w: number): void {
-  const kfr = { ...k.fr, o: [x, 0, 0] as [number, number, number] };
-  wheel(k.fixed, kfr, side, r, r, w, PAINT.tyre, PAINT.metal, side >= 0 ? 1 : -1, 12);
+  const o = side >= 0 ? 1 : -1;
+  tyre(k, x, side - (o * w) / 2, r, r, w, o);
 }
 
 export function buildRide(spec: RideSpec): Template {
+  return withCoarse(() => buildRideAt(spec))();
+}
+
+function buildRideAt(spec: RideSpec): Template {
   const k = newKit();
   const L = spec.length;
   const W = spec.width;
@@ -147,6 +176,10 @@ export interface EmplacementSpec {
 
 /** A crewed weapon on the ground, or a fieldwork. */
 export function buildEmplacement(spec: EmplacementSpec): Template {
+  return withCoarse(() => buildEmplacementAt(spec))();
+}
+
+function buildEmplacementAt(spec: EmplacementSpec): Template {
   const k = newKit();
   const L = spec.length ?? 1.6;
   const W = spec.width ?? L;
@@ -189,8 +222,8 @@ export function buildEmplacement(spec: EmplacementSpec): Template {
     case 'manpad':
       // A soldier kneeling with a launcher on the shoulder.
       block(k.team, k.fr, [0, 0, 0.6], 0.3, 0.42, 0.6, grey(0.9));
-      blob(k.fixed, k.fr, [0.02, 0, 1.05], [0.11, 0.1, 0.12], PAINT.skin);
-      blob(k.team, k.fr, [0, 0, 1.12], [0.15, 0.14, 0.09], grey(0.5));
+      lump(k.fixed, k.fr, [0.02, 0, 1.05], [0.11, 0.1, 0.12], PAINT.skin);
+      lump(k.team, k.fr, [0, 0, 1.12], [0.15, 0.14, 0.09], grey(0.5));
       tube(k.fixed, k.fr, [-0.7, 0.18, 0.98], [0.8, 0.18, 1.1], 0.06, 0.06, PAINT.metal, 8);
       for (const s of [-0.12, 0.12]) block(k.team, k.fr, [0.15, s, 0.15], 0.45, 0.14, 0.3, grey(0.75));
       break;
@@ -213,7 +246,7 @@ function sandbags(k: Kit, radius: number, h: number): void {
   const n = 10;
   for (let i = 0; i < n; i++) {
     const a = (i / n) * Math.PI * 1.6 - Math.PI * 0.8;
-    blob(k.team, k.fr, [Math.cos(a) * radius, Math.sin(a) * radius, h * 0.4], [0.32, 0.22, h * 0.42], grey(0.66), 1, 4, 8);
+    lump(k.team, k.fr, [Math.cos(a) * radius, Math.sin(a) * radius, h * 0.4], [0.32, 0.22, h * 0.42], grey(0.66), 4, 8);
   }
 }
 
@@ -226,6 +259,10 @@ export interface DroneSpec {
 
 /** A multicopter: a small body, its arms and a rotor disc at each end. */
 export function buildDrone(spec: DroneSpec): Template {
+  return withCoarse(() => buildDroneAt(spec))();
+}
+
+function buildDroneAt(spec: DroneSpec): Template {
   const k = newKit();
   const r = spec.span / 2;
   const prop = (r * 2 * Math.PI) / spec.rotors / 2.4;
@@ -252,6 +289,10 @@ export interface AirshipSpec {
 
 /** An airship or barrage balloon: the envelope, its tail fins, gondolas under it. */
 export function buildAirship(spec: AirshipSpec): Template {
+  return withCoarse(() => buildAirshipAt(spec))();
+}
+
+function buildAirshipAt(spec: AirshipSpec): Template {
   const k = newKit();
   const L = spec.length;
   const r = spec.diameter / 2;
@@ -279,6 +320,10 @@ export function buildAirship(spec: AirshipSpec): Template {
 
 /** The generic walker that stands for every game-invented one: a pod on two legs. Never a likeness of any game's design. */
 export function buildWalker(height = 8): Template {
+  return withCoarse(() => buildWalkerAt(height))();
+}
+
+function buildWalkerAt(height: number): Template {
   const k = newKit();
   const hip = height * 0.55;
   blob(k.team, k.fr, [0, 0, hip + height * 0.12], [height * 0.28, height * 0.25, height * 0.16], grey(0.88));
