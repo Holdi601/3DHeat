@@ -21,13 +21,13 @@ import { BF_ALIASES } from './aliases-bf';
 import { WT_ALIASES } from './aliases-wt';
 import { IL2_ALIASES } from './aliases-il2';
 import { MUNITIONS } from './munitions';
-import { JETS } from './jets';
 import { PROPS } from './props';
 import { HELIS } from './helis';
 import { AIRCRAFT } from './aircraft';
 import { SHIPS } from './ships';
 import { JET_VARIANTS } from './jet-variants';
 import { JET_ATTACK } from './jet-attack';
+import { AIR_EXTRA } from './air-extra';
 import { HELI_VARIANTS } from './heli-variants';
 import { ARMOUR_MODERN } from './armour-modern';
 import { ARMOUR_WW2 } from './armour-ww2';
@@ -49,4 +49,4 @@ export interface SpecSet {
 }
 
 /** Every spec set, in order; a later set's entry replaces an earlier one of the same name. */
-export const SPEC_SETS: SpecSet[] = [GENERIC, AIR_DEFENCE, GROUND_MODERN, GROUND_WW2, TANKS, JETS, PROPS, HELIS, AIRCRAFT, SHIPS, JET_VARIANTS, JET_ATTACK, HELI_VARIANTS, ARMOUR_MODERN, ARMOUR_WW2, PROP_VARIANTS, SHIP_CLASSES, MUNITIONS, DCS_ALIASES, BF_ALIASES, WT_ALIASES, IL2_ALIASES];
+export const SPEC_SETS: SpecSet[] = [GENERIC, AIR_DEFENCE, GROUND_MODERN, GROUND_WW2, TANKS, PROPS, HELIS, AIRCRAFT, SHIPS, JET_VARIANTS, JET_ATTACK, HELI_VARIANTS, ARMOUR_MODERN, ARMOUR_WW2, PROP_VARIANTS, AIR_EXTRA, SHIP_CLASSES, MUNITIONS, DCS_ALIASES, BF_ALIASES, WT_ALIASES, IL2_ALIASES];

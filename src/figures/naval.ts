@@ -7,7 +7,7 @@
  */
 
 import { finish, newKit, PAINT, type Kit, type Template } from './kit';
-import { blob, block, body, hexa, outlineBody, plate, tiltBox, tube, type Outline, type P2 } from './parts';
+import { blob, block, body, hexa, outlineBody, plate, slab, tiltBox, tube, type Outline, type P2 } from './parts';
 import type { Section } from '../race/shapes';
 import type { Rgb } from '../race/geometry';
 
@@ -56,7 +56,7 @@ export interface NavalSpec {
   superstructure?: { x: number; length: number; width: number; height: number; side?: number; up?: number }[];
   turrets?: NavalTurret[];
   funnels?: { x: number; height: number; diameter: number; side?: number }[];
-  masts?: { x: number; height: number }[];
+  masts?: { x: number; height: number; side?: number }[];
   /**
    * Missile launchers: forward position, length, width. vls: flush cells, a
    * grid of hatches (default). box: a raised armoured box. tubes: canisters
@@ -87,6 +87,17 @@ export interface NavalSpec {
   forecastle?: { x: number; step: number };
   /** The stern's width at the transom as a share of the beam (default 0.55; a cruiser stern narrower). */
   transom?: number;
+  /** Bodies standing off the centre line on one side only, not mirrored: a carrier's island, a crane, a deckhouse to one side. */
+  oneSide?: Outline[];
+  /**
+   * Flat decks from their plan, any shape (forward, side; positive side is
+   * starboard): a carrier's flight deck with its angled deck and sponsons, a
+   * vehicle deck, a helicopter platform. A carrier given decks draws no
+   * default flight deck.
+   */
+  decks?: { plan: P2[]; up: number; thickness?: number }[];
+  /** Ducted propellers and fans, their axis fore and aft: a hovercraft's or an airboat's. */
+  ducts?: { x: number; side: number; up: number; diameter: number; length: number }[];
 }
 
 /**
@@ -164,7 +175,9 @@ export function buildNaval(spec: NavalSpec): Template {
     );
     // The deck.
     const deckCol = kind === 'carrier' ? grey(0.45) : PAINT.deck;
-    if (kind === 'carrier') {
+    if (kind === 'carrier' && spec.decks?.length) {
+      // The flight deck comes from its own plan below.
+    } else if (kind === 'carrier') {
       // A flight deck wider than the hull, overhanging to the left.
       plate(k.fixed, k.fr, [[half - L * 0.02, -b * 1.6], [-half, -b * 1.6], [-half, b * 1.15], [half - L * 0.02, b * 0.9]], fb + 0.5, 1.0, deckCol);
       if (spec.angled) {
@@ -201,13 +214,17 @@ export function buildNaval(spec: NavalSpec): Template {
   }
   for (const f of spec.funnels ?? []) tube(k.team, k.fr, [f.x, f.side ?? carrierOff, fb + deckUp], [f.x - f.diameter * 0.3, f.side ?? carrierOff, fb + deckUp + f.height], f.diameter / 2, f.diameter * 0.45, grey(0.6), 10);
   for (const m of spec.masts ?? []) {
-    tube(k.fixed, k.fr, [m.x, carrierOff, fb], [m.x, carrierOff, fb + deckUp + m.height], Math.max(0.12, m.height * 0.03), 0.06, PAINT.metal, 6);
-    block(k.fixed, k.fr, [m.x, carrierOff, fb + deckUp + m.height * 0.75], 0.2, Math.max(1.5, spec.beam * 0.35), 0.2, PAINT.metal);
+    const ms = m.side ?? carrierOff;
+    tube(k.fixed, k.fr, [m.x, ms, fb], [m.x, ms, fb + deckUp + m.height], Math.max(0.12, m.height * 0.03), 0.06, PAINT.metal, 6);
+    block(k.fixed, k.fr, [m.x, ms, fb + deckUp + m.height * 0.75], 0.2, Math.max(1.5, spec.beam * 0.35), 0.2, PAINT.metal);
   }
+  for (const d of spec.decks ?? []) slab(k.fixed, k.fr, d.plan, (f, s) => [f, s, d.up], [0, 0, 1], d.thickness ?? 0.4, kind === 'carrier' ? grey(0.45) : PAINT.deck);
   for (const o of spec.bodies ?? []) {
     outlineBody(k.team, k.fr, o, grey(0.86), 12);
     if (o.side) outlineBody(k.team, k.fr, { ...o, side: -o.side }, grey(0.86), 12);
   }
+  for (const o of spec.oneSide ?? []) outlineBody(k.team, k.fr, o, grey(0.86), 12);
+  for (const d of spec.ducts ?? []) duct(k, d);
   for (const r of spec.radars ?? []) radar(k, r, fb + deckUp, r.side ?? carrierOff);
   for (const t of spec.turrets ?? []) turret(k, t, fb);
   for (const l of spec.launchers ?? []) launcher(k, l, fb, spec.beam);
@@ -311,4 +328,21 @@ function launcher(k: Kit, l: NonNullable<NavalSpec['launchers']>[number], fb: nu
       block(k.fixed, k.fr, [x, s, up + 0.12], (l.length / nx) * 0.78, (l.width / ny) * 0.78, 0.06, grey(0.42));
     }
   }
+}
+
+/** A ring-shaped shroud round a propeller or fan, its axis fore and aft, with the hub and blades as a thin disc inside. */
+function duct(k: Kit, d: NonNullable<NavalSpec['ducts']>[number]): void {
+  const n = 16;
+  const r1 = d.diameter / 2;
+  const r0 = r1 * 0.9;
+  const x0 = d.x + d.length / 2;
+  const x1 = d.x - d.length / 2;
+  const p = (x: number, a: number, r: number): [number, number, number] => [x, d.side + Math.cos(a) * r, d.up + Math.sin(a) * r];
+  for (let i = 0; i < n; i++) {
+    const a0 = (i / n) * Math.PI * 2;
+    const a1 = ((i + 1) / n) * Math.PI * 2;
+    hexa(k.team, k.fr, [p(x0, a0, r0), p(x0, a0, r1), p(x0, a1, r1), p(x0, a1, r0)], [p(x1, a0, r0), p(x1, a0, r1), p(x1, a1, r1), p(x1, a1, r0)], grey(0.7));
+  }
+  tube(k.fixed, k.fr, [d.x - d.length * 0.1, d.side, d.up], [d.x - d.length * 0.2, d.side, d.up], r0 * 0.95, r0 * 0.95, PAINT.metal, 12, 0.4);
+  tube(k.fixed, k.fr, [d.x + d.length * 0.2, d.side, d.up], [d.x - d.length * 0.4, d.side, d.up], r0 * 0.18, r0 * 0.1, PAINT.metal, 8);
 }

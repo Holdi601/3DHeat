@@ -806,8 +806,6 @@ const ALIASES: Record<string, string> = {
   'su-25sm': 'su-25',
   'su-25ub': 'su-25ub',
   'mig-19pm': 'mig-19p',
-  // The M-346 grew from the same design as the Yak-130 and keeps its outline.
-  m_346fa: 'yak-130',
   md_460_sambad: 'mystere',
   // Tacview's long names, which the prefix match does not reach.
   'a-4e skyhawk': 'a-4e',
