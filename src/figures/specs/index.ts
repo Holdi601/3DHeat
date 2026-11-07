@@ -26,6 +26,7 @@ import { HELIS } from './helis';
 import { AIRCRAFT } from './aircraft';
 import { SHIPS } from './ships';
 import { JET_VARIANTS } from './jet-variants';
+import { JET_VARIANTS_WORLD } from './jet-variants-world';
 import { JET_ATTACK } from './jet-attack';
 import { AIR_EXTRA } from './air-extra';
 import { HELI_VARIANTS } from './heli-variants';
@@ -33,6 +34,7 @@ import { ARMOUR_MODERN } from './armour-modern';
 import { ARMOUR_WW2 } from './armour-ww2';
 import { PROP_VARIANTS } from './prop-variants';
 import { SHIP_CLASSES } from './ship-classes';
+import { swingStates } from './swing';
 
 export type Named<T> = Record<string, T & { cls: string }>;
 
@@ -49,4 +51,6 @@ export interface SpecSet {
 }
 
 /** Every spec set, in order; a later set's entry replaces an earlier one of the same name. */
-export const SPEC_SETS: SpecSet[] = [GENERIC, AIR_DEFENCE, GROUND_MODERN, GROUND_WW2, TANKS, PROPS, HELIS, AIRCRAFT, SHIPS, JET_VARIANTS, JET_ATTACK, HELI_VARIANTS, ARMOUR_MODERN, ARMOUR_WW2, PROP_VARIANTS, AIR_EXTRA, SHIP_CLASSES, MUNITIONS, DCS_ALIASES, BF_ALIASES, WT_ALIASES, IL2_ALIASES];
+export const SPEC_SETS: SpecSet[] = [GENERIC, AIR_DEFENCE, GROUND_MODERN, GROUND_WW2, TANKS, PROPS, HELIS, AIRCRAFT, SHIPS, JET_VARIANTS, JET_VARIANTS_WORLD, JET_ATTACK, HELI_VARIANTS, ARMOUR_MODERN, ARMOUR_WW2, PROP_VARIANTS, AIR_EXTRA, SHIP_CLASSES, MUNITIONS, DCS_ALIASES, BF_ALIASES, WT_ALIASES, IL2_ALIASES];
+// Swing wings at their sweeps, from the figures as the sets above leave them.
+SPEC_SETS.push(swingStates(SPEC_SETS));

@@ -47,6 +47,69 @@ export interface WingSpec {
   glove?: { span: number; chord: number };
 }
 
+/**
+ * A swing wing's moving outer panel (F-14, Tornado, MiG-23, Su-24, B-1,
+ * Tu-160): its half planform (forward, out from the centre line) drawn at the
+ * leading-edge sweep `ref`, turned about `pivot` to `sweep`. With it,
+ * `wingPlan` is the fixed glove alone; the panel's root reaches in under the
+ * glove and into the body, so nothing opens where the wing turns.
+ *
+ * `sweep` is the figure's own state, the type's usual one in flight; `spread`
+ * and `swept` are the published end states, [leading-edge sweep in degrees,
+ * span in metres], which the panel's tips must meet. The catalogue offers
+ * `<name>@spread` and `<name>@swept` beside the figure, and replay picks one by
+ * Mach: spread below `mach[0]`, swept above `mach[1]` (default 0.4 and 0.8).
+ */
+export interface SwingWing {
+  pivot: P2;
+  outer: P2[];
+  ref: number;
+  sweep: number;
+  spread: [number, number];
+  swept: [number, number];
+  mach?: [number, number];
+}
+
+/**
+ * A trapezoid swing panel for `SwingWing.outer`: the root chord through the
+ * pivot, `share` of it ahead of the pivot; the leading edge at `sweep`
+ * degrees out `length` metres to a streamwise tip of `tip` chord. Behind the
+ * pivot the root runs on `inset` metres inboard (default half the chord, at
+ * most 60 % of the way in), as a real panel's root slides into the body:
+ * spread, its trailing root swings out and still meets the glove.
+ */
+export function swingPanel(p: { pivot: P2; chord: number; share: number; sweep: number; length: number; tip: number; inset?: number }): P2[] {
+  const [a, b] = p.pivot;
+  const le = a + p.share * p.chord;
+  const te = a - (1 - p.share) * p.chord;
+  const tipLe = le - p.length * Math.tan((p.sweep * Math.PI) / 180);
+  const inset = p.inset ?? Math.min(p.chord * 0.5, b * 0.6);
+  return [[le, b], [tipLe, b + p.length], [tipLe - p.tip, b + p.length], [te, b], [te, b - inset], [a, b - inset]];
+}
+
+/** The outer panel's half planform at a sweep (default its own). */
+export function swingPlan(s: SwingWing, sweep = s.sweep): P2[] {
+  const t = ((sweep - s.ref) * Math.PI) / 180;
+  const c = Math.cos(t);
+  const n = Math.sin(t);
+  const [pa, pb] = s.pivot;
+  // Swept further back, a point behind the pivot comes inboard and one outboard goes back.
+  return s.outer.map(([a, b]) => [pa + (a - pa) * c - (b - pb) * n, pb + (a - pa) * n + (b - pb) * c] as P2);
+}
+
+/** The span over the outer panels' tips at a sweep, metres. */
+export function swingSpan(s: SwingWing, sweep = s.sweep): number {
+  return 2 * Math.max(...swingPlan(s, sweep).map((p) => p[1]));
+}
+
+/** A swing-wing figure at another sweep, its span following. */
+export function atSweep<T extends FixedWingSpec>(spec: T, sweep: number): T {
+  const s = spec.swing;
+  if (!s) return spec;
+  const span = swingSpan(s, sweep);
+  return { ...spec, span, wing: { ...spec.wing, span, sweep }, swing: { ...s, sweep } };
+}
+
 export interface FixedWingSpec {
   length: number;
   span: number;
@@ -131,6 +194,8 @@ export interface FixedWingSpec {
   fuselage?: Outline;
   bodies?: Outline[];
   wingPlan?: P2[];
+  /** A swing wing: the outer panel turned about its pivot; `wingPlan` is then the fixed glove. */
+  swing?: SwingWing;
   tailPlan?: P2[];
   finPlan?: P2[];
   /** The canopy's true shape: glass bodies (forward, up from the axis), drawn in place of `canopy`'s blobs. */
@@ -171,7 +236,7 @@ export function buildFixedWing(spec: FixedWingSpec): Template {
     outlineBody(k.team, k.fr, b, grey(0.84), 12);
     if (b.side) outlineBody(k.team, k.fr, { ...b, side: -b.side }, grey(0.84), 12);
   }
-  if (spec.wingPlan) {
+  if (spec.wingPlan || spec.swing) {
     const up = mountHeight(spec.wing, spec);
     const dih = Math.tan(((spec.wing.dihedral ?? 0) * Math.PI) / 180);
     // A gull wing (Stuka, Corsair: inverted) bends down over its inner third, then climbs with the dihedral.
@@ -179,7 +244,13 @@ export function buildFixedWing(spec: FixedWingSpec): Template {
     const bend = half * 0.33;
     const drop = -spec.bodyHeight * 0.3;
     const h = (b: number) => (spec.wing.gull ? (b < bend ? (drop * b) / bend : drop + (b - bend) * Math.max(dih, 0.14)) : b * dih);
-    for (const side of [-1, 1]) slab(k.team, k.fr, spec.wingPlan, (a, b) => [a, side * b, up + h(b)], [0, 0, 1], Math.max(0.08, spec.wing.rootChord * 0.05), grey(0.86), 1, grey(0.6));
+    const thick = Math.max(0.08, spec.wing.rootChord * 0.05);
+    if (spec.wingPlan) for (const side of [-1, 1]) slab(k.team, k.fr, spec.wingPlan, (a, b) => [a, side * b, up + h(b)], [0, 0, 1], thick, grey(0.86), 1, grey(0.6));
+    // A swing wing's outer panel at its sweep, a little thinner than the glove so its root stays hidden inside it.
+    if (spec.swing) {
+      const plan = swingPlan(spec.swing);
+      for (const side of [-1, 1]) slab(k.team, k.fr, plan, (a, b) => [a, side * b, up + h(b)], [0, 0, 1], thick * 0.8, grey(0.86), 1, grey(0.6));
+    }
   } else wing(k, spec.wing, spec, grey(0.86));
   if (spec.upperWing) {
     wing(k, spec.upperWing, spec, grey(0.86));

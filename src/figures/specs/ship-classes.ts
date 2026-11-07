@@ -50,12 +50,22 @@ interface ShipO {
    * ^ raises it above the deck there (superfiring), b faces aft, m is a modern faceted mount.
    */
   guns?: string;
-  /** Funnels: x, height above the deck, diameter. */
-  funnels?: [number, number, number][];
+  /** Funnels: x, height above the deck, diameter fore and aft; its width across (default 0.8 of the diameter), rake (top aft per metre of height), cap band. */
+  funnels?: [number, number, number, number?, number?, number?][];
+  /** The funnels' rake for the whole class (top aft per metre of height), unless a funnel gives its own. */
+  rake?: number;
   /** Superstructure blocks: front x, back x, top above the waterline, half-width, the front's rake. */
   blocks?: [number, number, number, number, number?][];
-  /** Masts: x, height above the deck. */
-  masts?: [number, number][];
+  /** Blocks standing on something (a platform, a director's tower, a gallery): front x, back x, bottom and top above the waterline, half-width, the front's rake. */
+  raised?: [number, number, number, number, number, number?][];
+  /** Masts: x, height above the deck; t a tripod, l a lattice; the height its foot stands on over the deck. */
+  masts?: [number, number, ('t' | 'l' | 'p')?, number?][];
+  /** Searchlight towers: x, the platform's height over the waterline. */
+  sl?: [number, number][];
+  /** Fire-control directors: x, the top of their pedestal over the waterline, half-width. */
+  dirs?: [number, number, number?][];
+  /** A deckhouse under every raised (superfiring) gun, the gun standing on its roof (default for destroyers, escorts and sloops). */
+  house?: boolean;
   launchers?: NavalSpec['launchers'];
   radars?: NavalSpec['radars'];
   helideck?: boolean;
@@ -73,13 +83,15 @@ interface ShipO {
   arms?: [number, number, number?, boolean?][];
   /** Torpedo tube mounts on the centre line aft of the funnels: how many, tubes in each. */
   tt?: [number, number];
+  /** Where the first torpedo mount's tubes lie (their middle) and how far apart the mounts are (default 5 m aft of the funnels, 8 m apart). */
+  ttAt?: [number, number];
 }
 
 /** The guns, one mount per word (see `ShipO.guns`), standing on the deck `deck(x)` over the freeboard `fb`. */
 function gunsOf(guns: string | undefined, deck: (x: number) => number, fb: number): NavalTurret[] {
   const turrets: NavalTurret[] = [];
   for (const tok of (guns ?? '').split(/\s+/).filter(Boolean)) {
-    const g = tok.match(/^(-?[\d.]+)(?:,(-?[\d.]+))?:(\d)\/(\d+)([bmos]*)(?:\^(-?[\d.]+))?([bmos]*)$/);
+    const g = tok.match(/^(-?[\d.]+)(?:,(-?[\d.]+))?:(\d)\/(\d+)([bmose]*)(?:\^(-?[\d.]+))?([bmose]*)$/);
     if (!g) throw new Error(`bad gun ${tok}`);
     // The flags may stand before or after the raise.
     const m = [g[0], g[1], g[2], g[3], g[4], g[6], g[5] + g[7]];
@@ -87,10 +99,15 @@ function gunsOf(guns: string | undefined, deck: (x: number) => number, fb: numbe
     const n = +m[3];
     const cal = +m[4] / 1000;
     // A machine gun's or light cannon's tub is far smaller than a gunhouse.
-    const size = cal < 0.05 ? 0.6 + cal * 40 + 0.2 * n : cal < 0.14 ? 2.4 + 0.5 * n : 3 + cal * 22 + (n - 1) * cal * 3;
-    // s: a small open mount (a light gun or cannon); o: one side only, not mirrored.
+    const size = cal < 0.05 ? 0.6 + cal * 40 + 0.2 * n : cal < 0.14 ? 2.6 + 0.6 * n : 3 + cal * 22 + (n - 1) * cal * 3;
+    // s: a small open mount (a light gun or cannon); o: one side only, not mirrored; e: an enclosed single gunhouse
+    // (the 5-inch/38); m: a modern faceted mount. Otherwise a single gun stands behind its shield and two or three in
+    // a gunhouse.
     const small = m[6].includes('s');
-    const t: NavalTurret = { x, size: small ? 0.6 + cal * 12 : size, barrels: n, length: small ? 1 + cal * 40 : cal * 50, calibre: cal, up: deck(x) - fb + (m[5] ? +m[5] : 0), back: m[6].includes('b'), kind: m[6].includes('m') ? 'mount' : cal >= 0.2 ? 'box' : 'round' };
+    const kind: NavalTurret['kind'] = m[6].includes('m') ? 'mount' : cal >= 0.2 ? 'box' : small || cal < 0.05 ? 'round' : m[6].includes('e') ? 'mount' : n >= 2 ? 'box' : 'shield';
+    // The gunhouse's height (estimates): a destroyer's or cruiser's about 2.5-3 m, a modern mount a little lower.
+    const height = cal < 0.05 || cal >= 0.2 || small ? undefined : kind === 'mount' && !m[6].includes('e') ? 1.6 + cal * 6 : kind === 'shield' ? 1.9 + cal * 4 : 2.2 + cal * 5;
+    const t: NavalTurret = { x, size: small ? 0.6 + cal * 12 : size, barrels: n, length: small ? 1 + cal * 40 : cal * 50, calibre: cal, up: deck(x) - fb + (m[5] ? +m[5] : 0), back: m[6].includes('b'), kind, height };
     if (m[2] && !m[6].includes('o')) for (const sd of [-1, 1]) turrets.push({ ...t, side: sd * +m[2] });
     else turrets.push(m[2] ? { ...t, side: +m[2] } : t);
   }
@@ -110,17 +127,47 @@ function barbettes(turrets: NavalTurret[], deck: (x: number) => number, fb: numb
   return out;
 }
 
+/** A searchlight tower: its pedestal from the deck `z0` up, the platform round it at `z`, the light on it. */
+function slOf(x: number, z0: number, z: number): Outline[] {
+  return [blockOf(x + 0.5, x - 0.5, z0, z, 0.5), blockOf(x + 1.6, x - 1.6, z - 0.3, z, 1.6), blockOf(x + 0.6, x - 0.6, z, z + 1.1, 0.55)];
+}
+
+/** A fire-control director on its pedestal from `z0` to `z`: the hood, the rangefinder's arms across it. */
+function dirOf(x: number, z0: number, z: number, w = 1.3): Outline[] {
+  return [blockOf(x + 0.7, x - 0.7, z0, z, 0.7), blockOf(x + w, x - w, z, z + w * 1.3, w, w * 0.3), blockOf(x + 0.4, x - 0.4, z + w * 0.5, z + w * 0.9, w * 2.6)];
+}
+
+/** Classes whose superfiring guns stand on a deckhouse rather than a barbette. */
+const HOUSED = new Set(['destroyer', 'frigate', 'sloop', 'minelayer', 'corvette', 'torpedo-boat', 'patrol-ship', 'minesweeper']);
+
 function ship(o: ShipO): NavalSpec & { cls: string } {
   const base: NavalSpec = { length: o.L, beam: o.B, freeboard: o.fb, sheer: o.sheer, forecastle: o.fc ? { x: o.fc[0], step: o.fc[1] } : undefined, transom: o.transom };
   const hull = o.hull ? hullOf(o.hull, o.hullRound) : defaultHull(base);
   const deck = (x: number) => lerpPoly(hull.top, x);
   const turrets = gunsOf(o.guns, deck, o.fb);
+  const houses: Outline[] = [];
+  if (o.house ?? HOUSED.has(o.cls)) {
+    // The deckhouse under a superfiring gun, running from it toward the ship's middle.
+    for (const t of turrets) {
+      const top = o.fb + (t.up ?? 0);
+      if (t.calibre < 0.07 || t.size < 1.5 || top - deck(t.x) < 1.2 || t.side) continue;
+      const r = t.size * 0.6;
+      const [x0, x1] = t.x > 0 ? [t.x + r, t.x - r * 2.2] : [t.x + r * 2.2, t.x - r];
+      houses.push(blockOf(x0, x1, Math.min(deck(x0), deck(x1)) - 0.2, top, Math.max(r * 0.95, o.B * 0.2)));
+    }
+  }
   if (o.tt) {
     // The mounts stand aft of the funnels, one behind the other; the tubes lie over their mount.
-    const fx = o.funnels?.length ? Math.min(...o.funnels.map(([x]) => x)) - 5 : 0;
+    const fx = o.ttAt ? o.ttAt[0] : o.funnels?.length ? Math.min(...o.funnels.map(([x]) => x)) - 5 : 0;
+    const step = o.ttAt?.[1] ?? 8;
     for (let i = 0; i < o.tt[0]; i++) {
-      const x = fx - 8 * i;
+      const x = fx - step * i;
       turrets.push({ x: x - 3.4, size: 1.2 + o.tt[1] * 0.25, barrels: o.tt[1], length: 7, calibre: 0.27, kind: 'mount', up: deck(x) - o.fb });
+    }
+    // A destroyer's searchlight tower stands between its first two torpedo mounts.
+    if (o.tt[0] >= 2 && !o.sl && o.cls === 'destroyer') {
+      const x = fx - step / 2;
+      houses.push(...slOf(x, deck(x) - 0.2, deck(x) + 4.2));
     }
   }
   for (const [x, n, up, back] of o.arms ?? []) turrets.push({ x, size: 2.6, barrels: n, length: 4.4, calibre: 0.3, kind: 'mount', up: deck(x) - o.fb + (up ?? 0), back });
@@ -129,13 +176,18 @@ function ship(o: ShipO): NavalSpec & { cls: string } {
     ...(o.hull ? { hullOutline: hull } : {}),
     bodies: [
       ...(o.blocks ?? []).map(([x0, x1, z1, half, rake]) => blockOf(x0, x1, Math.min(deck(x0), deck(x1)) - 0.2, z1, half, rake ?? 0)),
+      ...(o.raised ?? []).map(([x0, x1, z0, z1, half, rake]) => blockOf(x0, x1, z0, z1, half, rake ?? 0)),
       // A funnel aft of a forecastle break stands on a casing up from the lower deck.
       ...(o.funnels ?? []).filter(([x]) => deck(x) < o.fb - 0.1).map(([x, , d]) => blockOf(x + d * 0.6, x - d * 0.6, deck(x) - 0.2, o.fb + 0.1, d * 0.6)),
+      ...houses,
+      ...(o.sl ?? []).flatMap(([x, z]) => slOf(x, deck(x) - 0.2, z)),
+      ...(o.dirs ?? []).flatMap(([x, z, w]) => dirOf(x, Math.min(deck(x) - 0.2, z - 2), z, w)),
       ...(o.extra ?? []),
     ],
     oneSide: (o.oneSide ?? []).map(([x0, x1, z1, half, side, rake]) => blockOf(x0, x1, Math.min(deck(x0), deck(x1)) - 0.2, z1, half, rake ?? 0, 0, side)),
-    funnels: (o.funnels ?? []).map(([x, h, d]) => ({ x, height: h + deck(x) - o.fb, diameter: d })),
-    masts: (o.masts ?? []).map(([x, h]) => ({ x, height: h })),
+    funnels: (o.funnels ?? []).map(([x, h, d, w, rake, cap]) => ({ x, height: h + deck(x) - o.fb, diameter: d, width: w ?? d * 0.8, rake: rake ?? o.rake, cap })),
+    // A mast stands on the deck where it is (a quarterdeck lower than the freeboard), its height over that deck.
+    masts: (o.masts ?? []).map(([x, h, kind, foot]) => ({ x, height: h + deck(x) - o.fb, kind: kind === 't' ? ('tripod' as const) : kind === 'l' ? ('lattice' as const) : undefined, base: deck(x) - o.fb + (foot ?? 0) })),
     turrets, launchers: o.launchers?.map((l) => ({ ...l, up: (l.up ?? 0) + deck(l.x) - o.fb })), radars: o.radars, helideck: o.helideck,
     ...o.more,
   };
@@ -152,7 +204,8 @@ N['arleigh-burke'] = {
   bodies: [blockOf(36, 4, 7.0, 15.5, 7.0, 3.5), blockOf(31, 15, 15.5, 19.5, 5.2, 2), blockOf(6, -1, 7.0, 21, 2.6, 0, 1.2), blockOf(-13, -20, 6.8, 19.5, 2.6, 0, 1.2), blockOf(4, -8, 7.0, 11, 4.2), blockOf(-6, -48, 6.8, 14.5, 7.0, 1.5)],
   turrets: [{ x: 58, size: 4.5, barrels: 1, length: 7, calibre: 0.127, kind: 'mount' }],
   masts: [{ x: 13, height: 26 }],
-  launchers: [{ x: 46, length: 13, width: 8 }, { x: -56, length: 10, width: 8 }],
+  // The cells flush with the deck where it is (it rises to the bow and falls to the stern).
+  launchers: [{ x: 46, length: 13, width: 8, up: 0.78 }, { x: -56, length: 10, width: 8, up: -0.58 }],
   radars: [{ x: 24, up: 9, kind: 'faces', size: 4 }],
   helideck: true,
 };
@@ -161,16 +214,16 @@ N['arleigh-burke'] = {
 
 // Fletcher: a long flush-deck destroyer with sheer forward, the bridge, two raked funnels, five single 5-inch mounts
 // (two forward, the third on the aft deckhouse, two aft) (114.8 x 12.0 m).
-N['fletcher'] = {
-  cls: 'destroyer', length: 114.8, beam: 12.0, freeboard: 5.3,
-  hullOutline: hullOf([[57.4, 7.6, 0.15], [50, 7.0, 2.6], [35, 6.0, 5.4], [10, 5.3, 6.0], [-30, 5.0, 5.8], [-50, 4.9, 4.8], [-57.4, 5.0, 3.8]]),
-  bodies: [blockOf(31, 21, 5.6, 12.5, 3.6, 1.5), blockOf(28, 23, 12.5, 14.3, 2.4), blockOf(-19, -30, 5.0, 8.0, 3.0)],
-  funnels: [{ x: 11, height: 8.5, diameter: 3.0 }, { x: -3, height: 8.0, diameter: 3.0 }],
-  masts: [{ x: 20, height: 18 }],
-  turrets: [{ x: 41, size: 3.2, barrels: 1, length: 6.4, calibre: 0.127 }, { x: 34, size: 3.2, barrels: 1, length: 6.4, calibre: 0.127, up: 2.2 }, { x: -24, size: 3.2, barrels: 1, length: 6.4, calibre: 0.127, up: 2.7, back: true }, { x: -36, size: 3.2, barrels: 1, length: 6.4, calibre: 0.127, back: true }, { x: -47, size: 3.2, barrels: 1, length: 6.4, calibre: 0.127, back: true }],
-  launchers: [{ x: 2, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }, { x: -12, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }],
-};
-
+N['fletcher'] = ship({
+  cls: 'destroyer', L: 114.8, B: 12.0, fb: 5.3,
+  hull: [[57.4, 7.6, 0.15], [50, 7.0, 2.6], [35, 6.0, 5.4], [10, 5.3, 6.0], [-30, 5.0, 5.8], [-50, 4.9, 4.8], [-57.4, 5.0, 3.8]],
+  guns: '41:1/127e 34:1/127e^2.2 -21:1/127e^2.9b -33:1/127e^1.5b -45:1/127eb 18,4:2/40s^3 -26,3:2/40s^1.6',
+  funnels: [[11, 8.5, 3.0, 2.6, 0.08, 0.4], [-3, 8.0, 3.0, 2.6, 0.08, 0.4]],
+  blocks: [[31, 21, 12.5, 3.6, 1.5], [28, 23, 14.3, 2.4], [-16, -38, 6.4, 3.2]],
+  dirs: [[25, 16.6, 1.5]],
+  masts: [[20, 18]],
+  tt: [2, 5], ttAt: [4, 13],
+});
 // Bismarck: the Atlantic bow with its sheer, four twin 38 cm turrets (Anton and Bruno forward, Caesar and Dora aft),
 // the tall forward tower, the single big funnel, the aft superstructure, six twin 15 cm turrets on the sides
 // (251 x 36 m).
@@ -449,7 +502,173 @@ const TT: Record<string, [number, number]> = {
   'turbine': [2, 3], 'freccia': [2, 3], 'maestrale': [2, 3], 'soldati': [2, 3], 'navigatori': [2, 3], 'leone': [2, 3], 'medaglie-d-oro': [2, 3],
   'bourrasque': [2, 3], 'jaguar-1923': [2, 3], 'guepard': [2, 3], 'le-fantasque': [3, 3], 'mogador': [2, 3],
 };
-for (const [name, o] of Object.entries(S)) N[name] = ship(TT[name] ? { ...o, tt: TT[name] } : o);
+/**
+ * What stands aft of the bridge and on it, by class (from the first ship pass, which drew only the bridge block): the
+ * aft superstructure, its director, the searchlight towers, masts as they were (t tripod, l lattice), the funnels'
+ * rake. Places and heights are estimates from the ships' general arrangement; any field here replaces the class's,
+ * the lists of blocks, raised blocks, searchlights and directors are added to it.
+ */
+const AFT: Record<string, Partial<ShipO>> = {
+  // Orion: the tripod foremast stood between the funnels (Centurion's ahead of them).
+  'orion': { masts: [[12, 32, 't']] },
+  // United States cruisers.
+  'omaha': { blocks: [[-22, -32, 11, 3.5]], dirs: [[-27, 13.5]], sl: [[-12, 14]], masts: [[34, 26, 't'], [-30, 20, 't']], launchers: [{ x: -8, length: 5, width: 2.2, kind: 'tubes', count: 1, elevation: 0 }] },
+  'northampton': { blocks: [[-12, -26, 14, 6.5], [-26, -34, 15.5, 4]], dirs: [[-30, 19]], sl: [[-1, 17]], masts: [[26, 30, 't'], [-20, 24, 't']] },
+  'portland': { blocks: [[-12, -24, 14, 6.5], [-25, -34, 15.5, 4]], dirs: [[-30, 19]], sl: [[-1, 17]], masts: [[26, 32, 't'], [-20, 26, 't']] },
+  'pensacola': { blocks: [[-12, -22, 13.5, 5], [-22, -32, 14, 4]], dirs: [[-28, 17]], sl: [[-2, 16]], masts: [[24, 30, 't'], [-18, 26, 't']] },
+  'new-orleans': { blocks: [[-10, -18, 14, 6], [-18, -32, 15, 4.5]], dirs: [[-28, 19]], sl: [[-2, 17]], masts: [[22, 26, 't'], [-18, 22]] },
+  'brooklyn': { blocks: [[-10, -30, 13.5, 6], [-14, -26, 17, 4]], dirs: [[-24, 20]], sl: [[0, 16]] },
+  'cleveland': { blocks: [[-12, -30, 13, 6.5]], dirs: [[-22, 19]], masts: [[16, 26, 't'], [-10, 22]] },
+  'fargo': { blocks: [[-10, -30, 13, 6.5]], dirs: [[-22, 19]], masts: [[16, 26, 't'], [-10, 22]] },
+  'atlanta': { blocks: [[-14, -32, 13, 5], [-18, -28, 15.5, 3.5]], dirs: [[-26, 18]], masts: [[14, 26, 't'], [-14, 18]], launchers: [{ x: -2, length: 5, width: 2.2, kind: 'tubes', count: 1, elevation: 0 }] },
+  'worcester': { blocks: [[-14, -36, 14, 7], [-18, -30, 17, 5]], dirs: [[-26, 20]], masts: [[16, 28, 't'], [-14, 20]] },
+  'baltimore': { blocks: [[-14, -32, 13.5, 7], [-18, -28, 17, 5]], dirs: [[-26, 20]], masts: [[16, 28, 't'], [-16, 22]] },
+  'oregon-city': { blocks: [[-10, -32, 13.5, 7], [-14, -26, 17, 5]], dirs: [[-24, 20]], masts: [[16, 28, 't'], [-16, 22]] },
+  'des-moines': { blocks: [[-14, -36, 14.5, 7.5], [-18, -30, 18, 5.5]], dirs: [[-28, 21]], masts: [[10, 30, 't'], [-18, 24]] },
+  // German cruisers.
+  'pillau': { blocks: [[-18, -28, 10.5, 2.5]], sl: [[-6, 12.5]] },
+  'emden-1925': { blocks: [[-18, -26, 10.5, 3]], sl: [[-8, 13]], masts: [[24, 22, 't'], [-20, 18]] },
+  'konigsberg': { blocks: [[-12, -30, 12, 5], [-16, -26, 14.5, 3.5]], dirs: [[-22, 17]], launchers: [{ x: -2, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
+  'leipzig': { blocks: [[-12, -30, 12, 5], [-16, -26, 14.5, 3.5]], dirs: [[-22, 17]], launchers: [{ x: -8, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
+  'deutschland': { blocks: [[-12, -36, 13, 6], [-18, -30, 17, 4]], dirs: [[-26, 21, 1.6]], masts: [[-18, 22]] },
+  'hipper': { blocks: [[-12, -36, 13.5, 6], [-16, -30, 17.5, 4]], dirs: [[-28, 22, 1.6]], masts: [[-20, 24]], launchers: [{ x: -6, length: 7, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
+  // Soviet cruisers.
+  'krasny-kavkaz': { blocks: [[-22, -32, 10.5, 3]], sl: [[-8, 13]] },
+  'svetlana': { blocks: [[-20, -30, 10, 2.5]], sl: [[-10, 12]] },
+  'kirov-1936': { blocks: [[-12, -32, 12, 5], [-16, -28, 15, 3.5]], dirs: [[-24, 18]], masts: [[26, 28, 't'], [-18, 22]] },
+  'maxim-gorky': { blocks: [[-12, -32, 12, 5], [-16, -28, 15, 3.5]], dirs: [[-24, 18]], masts: [[-18, 22]] },
+  'chapayev': { blocks: [[-14, -34, 12, 5.5], [-18, -30, 15, 4]], dirs: [[-26, 18]], masts: [[30, 28, 't'], [-18, 22]] },
+  'sverdlov': { blocks: [[-16, -40, 12.5, 6], [-20, -34, 15.5, 4.5]], dirs: [[-30, 19, 1.6]], masts: [[22, 28, 't'], [-20, 24, 't']], launchers: [{ x: -6, length: 7, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
+  // British cruisers.
+  'hawkins': { blocks: [[-20, -30, 11, 3.5]], dirs: [[-26, 14]], masts: [[28, 28, 't'], [-22, 22]] },
+  'emerald': { blocks: [[-22, -32, 11, 3.5]], dirs: [[-28, 14]], masts: [[30, 26, 't'], [-28, 20]] },
+  'arethusa': { blocks: [[-10, -24, 12, 4], [-12, -20, 14, 3]], dirs: [[-18, 17]], masts: [[22, 24, 't'], [-16, 20]] },
+  'leander': { blocks: [[-12, -28, 12, 4.5], [-16, -24, 14.5, 3]], dirs: [[-22, 17]], masts: [[24, 26, 't'], [-16, 22]] },
+  'dido': { blocks: [[-12, -26, 12, 4], [-14, -22, 14, 3]], dirs: [[-20, 17]] },
+  'kent': { blocks: [[-14, -28, 14.5, 5], [-18, -26, 17, 3.5]], dirs: [[-24, 20]], masts: [[28, 30, 't'], [-26, 24]] },
+  'london-1941': { blocks: [[-14, -32, 15, 6], [-18, -28, 18, 4]], dirs: [[-26, 21]], masts: [[16, 30, 't'], [-24, 24]] },
+  'york': { blocks: [[-12, -26, 14, 4.5], [-16, -24, 16.5, 3]], dirs: [[-22, 19]] },
+  'southampton': { blocks: [[-10, -30, 13, 5.5], [-14, -26, 15.5, 4]], dirs: [[-22, 18]], masts: [[26, 28, 't'], [-18, 24, 't']] },
+  'belfast': { blocks: [[-12, -32, 13, 6], [-16, -28, 15.5, 4.5]], dirs: [[-24, 18]], masts: [[22, 30, 't'], [-20, 26, 't']] },
+  'fiji': { blocks: [[-10, -30, 13, 5.5], [-14, -26, 15.5, 4]], dirs: [[-22, 18]], masts: [[24, 28, 't'], [-16, 24, 't']] },
+  'tiger-1959': { masts: [[18, 26, 'l'], [-6, 22, 'l']] },
+  // Japanese cruisers: the funnels raked.
+  'kuma': { blocks: [[-20, -30, 9, 3]], sl: [[-14, 11]], masts: [[26, 24, 't'], [-28, 18]], rake: 0.1 },
+  'sendai': { blocks: [[-20, -30, 9, 3]], sl: [[-22, 11]], masts: [[26, 24, 't'], [-28, 18]], rake: 0.1 },
+  'yubari': { blocks: [[-12, -20, 9.5, 3]], masts: [[22, 20, 't'], [-18, 16]], rake: 0.25 },
+  'furutaka': { blocks: [[-10, -26, 11.5, 4.5], [-14, -22, 14, 3]], dirs: [[-20, 16]], masts: [[24, 24, 't'], [-18, 18]], rake: 0.15 },
+  'myoko': { blocks: [[-10, -26, 11.5, 5.5], [-14, -24, 14, 3.5]], dirs: [[-22, 17]], masts: [[30, 28, 't'], [-16, 22]], rake: 0.18 },
+  'mogami': { blocks: [[-12, -28, 11.5, 5], [-14, -24, 14, 3.5]], dirs: [[-20, 17]], masts: [[28, 28, 't'], [-16, 22, 't']], rake: 0.12 },
+  'mogami-1943': { dirs: [[-20, 17]], masts: [[28, 28, 't'], [-12, 22, 't']], rake: 0.12 },
+  'tone': { blocks: [[-8, -22, 11.5, 5], [-12, -20, 14, 3.5]], dirs: [[-18, 17]], masts: [[20, 26, 't'], [-14, 22, 't']], rake: 0.12 },
+  'agano': { blocks: [[-14, -28, 10.5, 4], [-16, -24, 13, 3]], dirs: [[-22, 16]], masts: [[24, 24, 't'], [-10, 20]], rake: 0.12 },
+  'oyodo': { masts: [[26, 26, 't'], [-6, 22]], rake: 0.12 },
+  'ikoma': { blocks: [[-20, -28, 13, 4]] },
+  'kurama': { blocks: [[-20, -28, 13, 4]], masts: [[28, 26, 't'], [-24, 24, 't']] },
+  // Italian cruisers.
+  'trento': { blocks: [[-14, -30, 12.5, 4.5], [-18, -26, 15, 3]], dirs: [[-24, 18]], masts: [[26, 28, 't'], [-14, 24, 't']] },
+  'zara': { blocks: [[-14, -30, 12.5, 5], [-18, -26, 15, 3.5]], dirs: [[-24, 18]], masts: [[26, 28, 't'], [-14, 20]] },
+  'giussano': { blocks: [[-14, -28, 11, 4], [-16, -24, 13, 3]], dirs: [[-22, 15]] },
+  'montecuccoli': { blocks: [[-14, -28, 11.5, 4.5], [-16, -24, 14, 3]], dirs: [[-22, 16]] },
+  'abruzzi': { blocks: [[-14, -30, 12, 5], [-18, -26, 14.5, 3.5]], dirs: [[-24, 17]], masts: [[26, 26, 't'], [-14, 20]] },
+  'etna': { blocks: [[-12, -24, 10.5, 4]] },
+  'capitani-romani': { blocks: [[-12, -22, 10, 3.5]], dirs: [[-18, 13]] },
+  // French cruisers.
+  'jeanne-d-arc': { blocks: [[-14, -28, 12, 4.5]], dirs: [[-22, 15]] },
+  'duguay-trouin': { blocks: [[-14, -28, 11.5, 4]], dirs: [[-22, 15]], masts: [[28, 26, 't'], [-24, 22]] },
+  'suffren': { blocks: [[-14, -30, 12.5, 4.5], [-18, -26, 14.5, 3]], dirs: [[-24, 17]], masts: [[28, 28, 't'], [-20, 22, 't']] },
+  'algerie': { blocks: [[-12, -30, 12.5, 5], [-16, -26, 15, 3.5]], dirs: [[-22, 18]] },
+  'emile-bertin': { blocks: [[-12, -26, 11, 4]], dirs: [[-20, 15]] },
+  'la-galissoniere': { blocks: [[-14, -30, 12, 4.5], [-18, -26, 14.5, 3]], dirs: [[-24, 17]] },
+
+  // United States destroyers: the 5-inch/38 in enclosed gunhouses forward.
+  'clemson': { guns: '40:1/102 -38:1/102^2.2b 8,4:1/102', blocks: [[-34, -42, 6.6, 2.4]], masts: [[22, 14], [-28, 10]] },
+  'farragut': { guns: '38:1/127e 31:1/127e^2 -24:1/127^2b -34:1/127b -44:1/127b', blocks: [[-20, -29, 7.6, 2.6]], masts: [[17, 16, 't'], [-14, 10]] },
+  'mahan': { guns: '38:1/127e 31:1/127e^2 -26:1/127^2b -36:1/127b -46:1/127b', masts: [[17, 16, 't'], [-14, 10]] },
+  'bagley': { guns: '38:1/127e 31:1/127e^2 -30:1/127^2b -42:1/127b', masts: [[16, 16, 't']] },
+  'porter': { masts: [[20, 18, 't'], [-16, 10]] },
+  'somers': { masts: [[20, 18, 't']] },
+  'sumner': { blocks: [[-16, -28, 8.6, 3]], dirs: [[-22, 10.6, 1]], masts: [[18, 18, 't']] },
+  'gearing': { blocks: [[-18, -30, 8.6, 3]], dirs: [[-24, 10.6, 1]], masts: [[20, 18, 't']] },
+  'mitscher': { masts: [[24, 20, 'l'], [2, 18, 'l']] },
+  'forrest-sherman': { blocks: [[-14, -34, 10, 4]], masts: [[18, 20, 't'], [-2, 14, 'l']] },
+  'charles-f-adams': { masts: [[16, 20, 'l'], [-4, 18, 'l']] },
+  // German destroyers.
+  'raubtier': { masts: [[18, 12], [-14, 9]] },
+  'type-1934a': { blocks: [[-20, -26, 8.4, 2.4]], masts: [[20, 18, 't'], [-22, 10]] },
+  'type-1936': { blocks: [[-22, -28, 8.4, 2.4]], masts: [[22, 18, 't'], [-24, 10]] },
+  'type-1936a': { blocks: [[-22, -28, 8.4, 2.4]], masts: [[22, 18, 't'], [-24, 10]] },
+  'type-1936c': { blocks: [[-24, -30, 8.4, 2.4]], masts: [[22, 18, 't'], [-22, 10]] },
+  'type-1939': { masts: [[18, 14, 't']] },
+  // Soviet destroyers.
+  'novik': { blocks: [[-30, -38, 6.6, 2.2]], masts: [[24, 14], [-30, 12]] },
+  'opytny': { masts: [[20, 16, 't'], [-22, 10]] },
+  'type-7u': { masts: [[20, 16, 't'], [-22, 10]] },
+  'leningrad': { masts: [[24, 18, 't'], [-26, 10]] },
+  'regele-ferdinand': { masts: [[20, 14, 't'], [-20, 9]] },
+  'project-30bis': { masts: [[22, 18, 't'], [-20, 14]] },
+  'project-48': { masts: [[22, 18, 't'], [-20, 12]] },
+  'kotlin': { masts: [[20, 18, 't'], [-2, 14, 't']] },
+  'project-41': { masts: [[22, 20, 't'], [-10, 14]] },
+  // British destroyers.
+  'g-class': { masts: [[18, 15, 't'], [-14, 9]] },
+  's-class': { masts: [[20, 16, 'l']] },
+  'hunt-ii': { masts: [[14, 13, 't']] },
+  'hunt-iii': { masts: [[14, 13, 't']] },
+  'hunt-iv': { masts: [[14, 14, 't']] },
+  'tribal': { masts: [[20, 16, 't'], [-14, 10]] },
+  'j-class': { masts: [[20, 16, 't']] },
+  'battle': { blocks: [[-14, -24, 8.6, 3]], dirs: [[-20, 10.6, 1.2]], masts: [[10, 16, 'l']] },
+  'daring': { masts: [[10, 18, 'l']] },
+  // Japanese destroyers: the funnels raked, the foremast a tripod, a short mainmast aft.
+  'momi': { masts: [[20, 12, 't'], [-20, 8]], rake: 0.12 },
+  'kamikaze': { masts: [[22, 13, 't'], [-24, 9]], rake: 0.12 },
+  'mutsuki': { masts: [[22, 13, 't'], [-24, 9]], rake: 0.12 },
+  'hatsuharu': { masts: [[20, 15, 't'], [-22, 9]], rake: 0.15 },
+  'shiratsuyu': { masts: [[20, 15, 't'], [-22, 9]], rake: 0.15 },
+  'kagero': { funnels: [[10, 7.5, 3.8, 2.8], [-2, 7.5, 3, 2.4]], masts: [[22, 16, 't'], [-24, 10]], rake: 0.14 },
+  'matsu': { masts: [[20, 14, 't'], [-20, 9]], rake: 0.1 },
+  'shimakaze': { masts: [[26, 16, 't'], [-30, 10]], rake: 0.14 },
+  // Italian destroyers.
+  'turbine': { masts: [[16, 13, 't'], [-18, 8]] },
+  'freccia': { masts: [[14, 14, 't'], [-18, 8]] },
+  'maestrale': { masts: [[16, 15, 't'], [-20, 9]] },
+  'soldati': { masts: [[16, 15, 't'], [-20, 9]] },
+  'navigatori': { masts: [[16, 15, 't'], [-22, 9]] },
+  'leone': { masts: [[20, 15, 't'], [-24, 10]] },
+  'medaglie-d-oro': { masts: [[20, 17, 't']] },
+  'vifor': { masts: [[20, 14, 't'], [-20, 9]] },
+  // French destroyers.
+  'bourrasque': { masts: [[18, 14, 't'], [-22, 9]] },
+  'jaguar-1923': { masts: [[24, 18, 't'], [-28, 10]] },
+  'guepard': { masts: [[26, 18, 't'], [-28, 10]] },
+  'le-fantasque': { masts: [[26, 18, 't'], [-28, 10]] },
+  'mogador': { masts: [[26, 18, 't'], [-30, 10]] },
+  // Destroyers of the later lists.
+  'gleaves': { guns: '38:1/127e 31:1/127e^2 -31:1/127^2b -42:1/127b', masts: [[18, 17]] },
+  'akizuki': { masts: [[24, 20, 't'], [-24, 12]], rake: 0.16, sl: [[-9, 11]] },
+  'fubuki': { masts: [[22, 16, 't'], [-20, 10]], rake: 0.12 },
+  'yugumo': { masts: [[22, 16, 't'], [-24, 10]], rake: 0.14, funnels: [[10, 7.5, 3.6, 2.8], [-2, 7.5, 3, 2.4]] },
+  'tashkent': { masts: [[24, 20, 't'], [-24, 14]] },
+  'abdiel': { masts: [[17, 20, 't'], [-26, 12]] },
+  'centurion-1911': { blocks: [[36, 28, 20, 6, 1]], raised: [[28, 24, 28, 29.6, 2.6]] },
+};
+
+/** A class with its aft parts (see `AFT`) and the director on its bridge, for the cruisers and destroyers of the 1910s-50s. */
+function withAft(name: string, o: ShipO): ShipO {
+  const a = AFT[name];
+  const r: ShipO = a ? { ...o, ...a, blocks: [...(o.blocks ?? []), ...(a.blocks ?? [])], raised: [...(o.raised ?? []), ...(a.raised ?? [])], sl: [...(o.sl ?? []), ...(a.sl ?? [])], dirs: [...(o.dirs ?? []), ...(a.dirs ?? [])], launchers: [...(o.launchers ?? []), ...(a.launchers ?? [])] } : { ...o };
+  if (!a?.sl?.length) delete r.sl;
+  // The main director (or rangefinder) on the bridge's roof.
+  const bridge = (o.blocks ?? []).filter(([x0]) => x0 > 0).sort((p, q) => q[2] - p[2])[0];
+  if (bridge && /cruiser|destroyer/.test(o.cls) && (o.cls !== 'destroyer' || o.L < 140)) {
+    const [x0, x1, z] = bridge;
+    r.dirs = [...(r.dirs ?? []), [x1 + (x0 - x1) * 0.4, z + 1.2, o.cls === 'destroyer' ? 1.0 : 1.4]];
+  }
+  return r;
+}
+
+for (const [name, o] of Object.entries(S)) N[name] = ship(withAft(name, TT[name] ? { ...o, tt: TT[name] } : o));
 // The Gnevny-class Type 7 keeps its catalogue name, now drawn from its layout: one funnel, two guns fore and aft.
 N['type-7-destroyer'] = ship({ cls: 'destroyer', L: 112.8, B: 10.2, fb: 5.4, guns: '44:1/130 37:1/130^2 -38:1/130^2b -48:1/130b', funnels: [[2, 8, 3.6]], blocks: [[28, 22, 12, 3.2, 1]], masts: [[20, 16]] });
 
@@ -923,7 +1142,7 @@ const M: Record<string, ShipO> = {
     blocks: [[30, 10, 13, 5, 1.5], [26, 16, 15.5, 3.5, 1], [8, -24, 10, 5], [-26, -46, 8.6, 3.4]],
     funnels: [[-4, 5, 7]],
     masts: [[16, 20]],
-    launchers: [{ x: 46, length: 7, width: 4, kind: 'box', up: 0.8 }, { x: 37, length: 3, width: 3, kind: 'box' }],
+    launchers: [{ x: 46, length: 7, width: 4.4, kind: 'box', up: 0.4, height: 2.8 }, { x: 37, length: 3, width: 3, kind: 'box', height: 1.8 }, { x: -34, length: 3, width: 3, kind: 'box', height: 1.8 }],
     radars: [{ x: 16, up: 18, kind: 'array', size: 5 }, { x: 20, up: 10, kind: 'dome', size: 2.6 }],
   },
   // Grisha (Albatros, Project 1124): the Osa-M bin forward, the RBU-6000s before the bridge, the pole mast, the low
@@ -1058,7 +1277,7 @@ N['arleigh-burke-flight-i'] = {
   bodies: [blockOf(35.3, 3.3, 7.0, 15.5, 7.0, 3.5), blockOf(30.3, 14.3, 15.5, 19.5, 5.2, 2), blockOf(5.3, -1.7, 7.0, 21, 2.6, 0, 1.2), blockOf(-13.7, -20.7, 6.8, 19.5, 2.6, 0, 1.2), blockOf(3.3, -8.7, 7.0, 11, 4.2), blockOf(-6.7, -28, 6.8, 12.5, 6.0, 1.5)],
   turrets: [{ x: 57.3, size: 4.5, barrels: 1, length: 7, calibre: 0.127, kind: 'mount' }, { x: 36, size: 2.6, barrels: 1, length: 1.2, calibre: 0.02, kind: 'mount', up: 8.4 }, { x: -24, size: 2.6, barrels: 1, length: 1.2, calibre: 0.02, kind: 'mount', up: 5.5, back: true }],
   masts: [{ x: 12.3, height: 26 }],
-  launchers: [{ x: 45.3, length: 13, width: 8 }, { x: -38, length: 10, width: 8 }],
+  launchers: [{ x: 45.3, length: 13, width: 8, up: 0.76 }, { x: -38, length: 10, width: 8, up: -0.33 }],
   radars: [{ x: 23.3, up: 9, kind: 'faces', size: 4 }],
   helideck: true,
 };
@@ -1084,7 +1303,7 @@ const W: Record<string, ShipO> = {
     funnels: [[-1, 9, 5.5]],
     blocks: [[34, 24, 14, 3.4, 1.5], [31, 26, 17, 2.4]],
     masts: [[24, 20], [-24, 12]],
-    launchers: [{ x: -14, length: 7, width: 2.6, kind: 'tubes', count: 1, elevation: 0 }],
+    tt: [1, 4], ttAt: [-14, 8],
   },
   // King George V: an almost level deck, the quadruple 14-inch turret forward with the twin superfiring over it, the
   // quadruple aft, two upright funnels, the tower bridge, eight twin 5.25-inch turrets along the sides (227.1 x 31.4 m;
@@ -1400,7 +1619,7 @@ const W: Record<string, ShipO> = {
     masts: [[50, 16], [-30, 14]],
   },
 };
-for (const [name, o] of Object.entries(W)) N[name] = ship(o);
+for (const [name, o] of Object.entries(W)) N[name] = ship(withAft(name, o));
 // Project 1124 with the BM-13 rocket launcher in place of the aft turret (as above).
 N['gunboat-1124-mrls'] = ship({ ...W['gunboat-1124'], guns: '6.5:1/76^0.4', launchers: [{ x: -6.5, length: 5, width: 2.2, kind: 'tubes', count: 2, elevation: 0.3, up: 0.6 }] });
 
@@ -1484,7 +1703,7 @@ const R: Record<string, ShipO> = {
   'riga-frigate': { cls: 'frigate', L: 91.5, B: 10.2, fb: 5, fc: [-10, 1.4], sheer: 2, guns: '28:1/100m 21:1/100m^2 -30:1/100mb', funnels: [[0, 7, 3.4]], blocks: [[16, 8, 11, 3.4, 1], [14, 9, 12.6, 2.4]], masts: [[10, 16]], tt: [1, 3] },
   // Petya (Project 159): a patrol ship, twin 76 mm turrets fore and aft, the bridge and mast, the wide low funnel, a
   // quintuple torpedo mount (81.8 x 9.2 m; 1,150 t full).
-  'petya': { cls: 'frigate', L: 81.8, B: 9.2, fb: 4.6, sheer: 2, transom: 0.7, guns: '24:2/76m -28:2/76mb', funnels: [[-6, 4, 6]], blocks: [[15, 2, 9.6, 3.4, 1.5], [13, 6, 11.5, 2.4]], masts: [[7, 16]], radars: [{ x: 7, up: 14, kind: 'array', size: 3 }], tt: [1, 5] },
+  'petya': { cls: 'frigate', L: 81.8, B: 9.2, fb: 4.6, sheer: 2, transom: 0.7, guns: '24:2/76m -28:2/76mb', funnels: [[-6, 4, 6, 5, 0.25]], blocks: [[15, 2, 9.6, 3.4, 1.5], [13, 6, 11.5, 2.4]], masts: [[7, 16]], radars: [{ x: 7, up: 14, kind: 'array', size: 3 }], tt: [1, 5] },
   // Parchim (Project 1331): a small anti-submarine ship, the long superstructure, a twin 57 mm aft, a twin 30 mm
   // forward (75.2 x 9.8 m; 960 t full).
   'parchim': { cls: 'corvette', L: 75.2, B: 9.8, fb: 4.4, sheer: 2, transom: 0.75, guns: '22:2/30m -27:2/57mb', blocks: [[14, -16, 8.8, 3.8, 1.5], [12, 2, 11, 2.8, 1]], masts: [[4, 15]], radars: [{ x: 4, up: 13, kind: 'array', size: 3 }] },
@@ -1517,7 +1736,223 @@ const R: Record<string, ShipO> = {
   // Trident: a French patrol boat, a 40 mm gun forward, the bridge, SS-12 missile rails aft (40.7 x 5.9 m; 145 t full).
   'trident-pc': { cls: 'patrol-boat', L: 40.7, B: 5.9, fb: 2.4, sheer: 1, transom: 0.85, guns: '12:1/40', blocks: [[5, -3, 5.4, 2.4, 1]], masts: [[1, 8]], launchers: [{ x: -11, length: 3, width: 2, kind: 'tubes', count: 1, elevation: 0.2 }] },
 };
-for (const [name, o] of Object.entries(R)) N[name] = ship(o);
+for (const [name, o] of Object.entries(R)) N[name] = ship(withAft(name, o));
+
+// ---------------------------------------------------------------- more classes that data named by a near relative
+// Each War Thunder ship that pointed at a look-alike of another class now gets its own figure: the escorts, the small
+// combatants and the boats by their own layout (main dimensions published, the rest estimates).
+
+const R2: Record<string, ShipO> = {
+  // Ayanami (DD-103): the first post-war Japanese destroyers, a long forecastle, three twin 3-inch/50 mounts (one
+  // forward, two aft), two funnels, the lattice foremast, a quadruple torpedo mount (109 x 10.7 m; 2,500 t full).
+  'ayanami-dd': { cls: 'destroyer', L: 109, B: 10.7, fb: 5.6, fc: [-12, 1.6], sheer: 2.5, transom: 0.7, guns: '38:2/76m -24:2/76mb^2 -42:2/76mb', funnels: [[6, 6, 3.4], [-6, 6, 3.2]], blocks: [[28, 16, 11.5, 3.8, 1.5], [26, 19, 13.6, 2.8, 1]], masts: [[15, 19, 'l'], [-14, 10]], radars: [{ x: 15, up: 16, kind: 'array', size: 3.4 }], tt: [1, 4], ttAt: [-10, 8] },
+  // Isuzu (DE-211): a flush-decked escort, twin 3-inch/50 mounts fore and aft, the single broad funnel, the lattice mast,
+  // a quadruple torpedo mount and the Bofors ASW rocket launcher before the bridge (94 x 10.4 m; 1,790 t full).
+  'isuzu-de': { cls: 'frigate', L: 94, B: 10.4, fb: 5.4, sheer: 2.6, transom: 0.7, guns: '33:2/76m -34:2/76mb', funnels: [[-3, 6, 4.2, 3.4]], blocks: [[22, 8, 10.6, 3.8, 1.5], [20, 13, 12.8, 2.8, 1], [-12, -24, 8.4, 3]], masts: [[11, 18, 'l']], radars: [{ x: 11, up: 15, kind: 'array', size: 3 }], tt: [1, 4], ttAt: [-9, 8] },
+  // Chikugo (DE-215): a twin 3-inch/50 forward, the big ASROC box amidships, the twin 40 mm aft, the combined mast and
+  // stack ("mack") over the engine room (93 x 10.8 m; 1,800 t full).
+  'chikugo-de': { cls: 'frigate', L: 93, B: 10.8, fb: 5.6, sheer: 2.6, transom: 0.75, guns: '31:2/76m -38:2/40mb', blocks: [[24, 2, 10.4, 4.2, 1.5], [21, 13, 12.8, 3, 1], [-2, -10, 12.8, 2.4], [-20, -32, 8.6, 3.6]], masts: [[-6, 21, 'l']], launchers: [{ x: -14, length: 5, width: 3.2, kind: 'box', up: 0.8 }], radars: [{ x: -6, up: 18, kind: 'array', size: 3 }, { x: 17, up: 7.4, kind: 'dome', size: 1.8 }] },
+  // Ikazuchi (DE-202): a small diesel escort, single 3-inch/50 guns fore and aft, twin 40 mm guns on the bridge front,
+  // one low funnel, the tripod foremast (88 x 8.7 m; 1,180 t full).
+  'ikazuchi-de': { cls: 'frigate', L: 88, B: 8.7, fb: 4.8, sheer: 2.2, transom: 0.7, guns: '30:1/76 -32:1/76b 21:2/40^2.6', funnels: [[-1, 4.4, 3.2, 2.4]], blocks: [[20, 9, 9.6, 3.2, 1], [18, 13, 11.6, 2.4]], masts: [[13, 15, 't'], [-20, 8]] },
+  // Akebono (DE-201): a steam turbine escort, the same guns but a taller funnel, the bridge further aft (91.8 x 8.7 m;
+  // 1,450 t full).
+  'akebono-de': { cls: 'frigate', L: 91.8, B: 8.7, fb: 4.8, sheer: 2.4, transom: 0.7, guns: '31:1/76 -34:1/76b 18:2/40^2.6 -24:2/40b^1.8', funnels: [[-2, 6.2, 3.6, 2.8, 0.08]], blocks: [[17, 7, 9.6, 3.2, 1], [15, 10, 11.8, 2.4]], masts: [[10, 16, 't']] },
+  // Tsugaru: a fast minelayer, a twin 12.7 cm high-angle mount fore and aft, the big bridge, one raked funnel, the
+  // mine deck and its rails aft (124.5 x 15.6 m; 4,400 t full).
+  'tsugaru': { cls: 'minelayer', L: 124.5, B: 15.6, fb: 6.5, fc: [8, 1.8], sheer: 2.5, transom: 0.8, guns: '44:2/127 -42:2/127b', funnels: [[-2, 9, 5.4, 4.2, 0.14]], blocks: [[30, 16, 13.5, 5, 1.5], [27, 20, 16.5, 3.4, 1], [-12, -28, 9.6, 5.5]], masts: [[22, 22, 't'], [-32, 16]], sl: [[-8, 12.5]] },
+  // Kanonenboot K2 (ex-Dutch K 2): a gunboat with three single 12 cm guns (two forward, one aft), one funnel, the
+  // tripod mast (77.8 x 10.2 m; 1,800 t full).
+  'kanonenboot-k': { cls: 'sloop', L: 77.8, B: 10.2, fb: 4.8, fc: [-6, 1.4], sheer: 2.2, transom: 0.7, guns: '28:1/120 21:1/120^2 -28:1/120b', funnels: [[0, 6, 3.2]], blocks: [[16, 7, 10.2, 3.6, 1], [14, 9, 12.2, 2.6]], masts: [[10, 16, 't'], [-18, 10]] },
+  // Lorelei (K4, ex-Belgian Artevelde): a large escort with a clipper bow, a long forecastle, the tall bridge, one
+  // funnel, 10.5 cm guns fore and aft (98.5 x 10.4 m; 2,400 t full).
+  'lorelei-k4': { cls: 'sloop', L: 98.5, B: 10.4, fb: 5.2, fc: [-18, 1.6], sheer: 2.6, transom: 0.7, guns: '36:1/105 29:1/105^2 -34:1/105b -24:1/37s^2', funnels: [[2, 7, 3.8, 3]], blocks: [[22, 10, 11.6, 3.8, 1.5], [19, 13, 14, 2.8]], masts: [[12, 18, 't'], [-20, 12]] },
+  // Drache (ex-Yugoslav seaplane tender Zmaj): the high forecastle and bridge, one funnel, the long deck aft with its
+  // cranes, 8.8 cm guns fore and aft (83 x 13 m; 2,400 t full).
+  'drache': { cls: 'minelayer', L: 83, B: 13, fb: 5.6, fc: [10, 1.6], sheer: 2.4, transom: 0.75, guns: '32:1/88 -36:1/88b -22:1/37s^2.5', funnels: [[2, 8, 3.6, 3]], blocks: [[18, 6, 11.5, 4.5, 1], [15, 9, 13.6, 3]], masts: [[12, 16], [-12, 14]], extra: [blockOf(-4, -16, 4.2, 6.8, 4.6)] },
+  // Type 1935 minesweeper (M 17): a coal-and-oil escort, two 10.5 cm guns fore and aft, the bridge, one funnel (68.1 x
+  // 8.7 m; 874 t full).
+  'm1935-minesweeper': { cls: 'minesweeper', L: 68.1, B: 8.7, fb: 4.2, fc: [-4, 1.3], sheer: 2, transom: 0.7, guns: '24:1/105 -24:1/105b^1.5 -10:1/37s^1.6', funnels: [[-1, 5, 2.8]], blocks: [[16, 7, 9.2, 3, 1], [14, 9, 10.8, 2.2]], masts: [[10, 14]] },
+  // Type 1943 minesweeper (M 802): the simplified flush-decker, one 10.5 cm forward, the bridge, the short funnel, light
+  // flak aft (62.3 x 8.9 m; 821 t full).
+  'm1943-minesweeper': { cls: 'minesweeper', L: 62.3, B: 8.9, fb: 4, sheer: 1.8, transom: 0.75, guns: '22:1/105 -20:1/37s^1.4 -8:4/20s^2', funnels: [[-1, 4, 2.6]], blocks: [[14, 4, 8.8, 3.2, 1], [12, 7, 10.2, 2.2]], masts: [[7, 13]] },
+  // Kondor II (Bernau): an East German minesweeper, the flush hull with its long superstructure, three twin 25 mm
+  // mounts, the short stack (56.5 x 7.7 m; 480 t full).
+  'kondor-ii': { cls: 'minesweeper', L: 56.5, B: 7.7, fb: 3.6, sheer: 1.6, transom: 0.8, guns: '19:2/25m 9,2.6:2/25m^3.4 -22:2/25mb', funnels: [[-4, 3.2, 2.4, 1.8]], blocks: [[13, -8, 7.2, 3.2, 1.5], [10, 1, 9, 2.4, 1]], masts: [[3, 13, 'l']], radars: [{ x: 3, up: 10, kind: 'array', size: 2 }] },
+  // Schuetze (Type 340): a West German fast minesweeper, wooden, the 40 mm gun forward, the bridge and mast amidships,
+  // the sweep deck aft (47.2 x 7.2 m; 280 t full).
+  'schutze-340': { cls: 'minesweeper', L: 47.2, B: 7.2, fb: 3, sheer: 1.4, transom: 0.85, guns: '15:1/40m', funnels: [[-6, 2.6, 2, 1.6]], blocks: [[8, -4, 6.4, 3, 1], [6, 0, 7.8, 2.2, 1]], masts: [[2, 10]], radars: [{ x: 2, up: 8, kind: 'array', size: 1.6 }] },
+  // Artilleriefaehrprahm (AF): the MFP landing barge armed as a gunboat, two 8.8 cm guns behind shields, the armoured
+  // bridge aft, light flak (47 x 6.5 m; 280 t).
+  'artilleriefahrprahm': { cls: 'gunboat', L: 47, B: 6.5, fb: 2.2, hull: [[23.5, 2.8, 1.8], [22, 2.8, 2.9], [18, 2.5, 3.25], [-20, 2.3, 3.25], [-23.5, 2.5, 2.9]], guns: '12:1/88^0.3 -4:1/88^0.3 -21:4/20bs^3.4 4:1/37s^1.8', blocks: [[-14, -22, 5.2, 2.8, 0.5], [-16, -21, 6.6, 1.8]], masts: [[-18, 8]] },
+  // Siebel ferry (SF 40): two bridging pontoons side by side under a gun platform, the deckhouse to one side, heavy or
+  // light flak on the deck (24 x 14.7 m; 130 t).
+  'siebel-ferry': { cls: 'gunboat', L: 24, B: 14.7, fb: 2.3, hull: [[12, 0.4, 0.6], [11.5, 0.4, 1.0], [-11.5, 0.4, 1.0], [-12, 0.4, 0.6]], guns: '5,4:1/88^0.4 -5,4:1/88b^0.4 0:1/88^0.4', extra: [{ top: [[12, 1.6], [10.5, 1.9], [-11, 1.9], [-12, 1.6]], bottom: [[12, 0.9], [10.5, 0], [-11, 0], [-12, 0.6]], plan: [[12, 1.0], [10.5, 1.6], [-11, 1.6], [-12, 1.2]], side: 5.8, round: 4, stations: 6 }, blockOf(11, -11, 1.9, 2.3, 7.3)], oneSide: [[-6, -11, 5.2, 1.6, 5.5, 0.4]] },
+  // Krischan der Grosse (Flusi 1): a river barge armed as a flak boat, the 8.8 cm gun on the bow, two quadruple 20 mm
+  // mounts, the wheelhouse aft (34 x 6.6 m, estimate).
+  'flusi': { cls: 'gunboat', L: 34, B: 6.6, fb: 2.0, hull: [[17, 2.4, 1.6], [16, 2.3, 2.8], [12, 2.1, 3.3], [-15, 2.0, 3.3], [-17, 2.2, 2.6]], guns: '11:1/88^0.4 2:4/20s^1.2 -7:4/20bs^1.2', blocks: [[-11, -16, 4.6, 2.2, 0.4]], masts: [[-13, 7]] },
+  // VS 8: a hydrofoil transport, the long low hull on its two foils, the bridge forward of the middle, 15 mm turrets
+  // (31.9 x 6 m; 98 t full).
+  'vs-8': { cls: 'hydrofoil', L: 31.9, B: 6, fb: 1.9, sheer: 0.8, transom: 0.85, guns: '13:1/15s^0.4 6,1.6:1/15s^1.9 -12:1/15bs^0.4', blocks: [[8, 1, 3.8, 2.4, 0.8], [6, 2, 4.6, 1.6]], masts: [[3, 6]], extra: foils([[8, 2.4, 2.2], [-11, 2.4, 2.4]], 2.4) },
+  // VS 10: a hydrofoil torpedo boat, the turtle-backed hull, the small bridge, two torpedoes aft, the foils (25.6 x
+  // 5.4 m; 46 t).
+  'vs-10': { cls: 'hydrofoil', L: 25.6, B: 5.4, fb: 1.7, sheer: 0.7, transom: 0.85, hullRound: 4, guns: '10:1/15s^0.3 7,1.4:1/15s^0.3 1:1/15s^1.4 -9,1.4:1/15bs^0.3', blocks: [[3, -1, 3.0, 1.6, 0.6]], launchers: [{ x: -6, length: 5.5, width: 1.2, kind: 'tubes', count: 1, elevation: 0 }], extra: foils([[6, 2, 1.8], [-8, 0, 2]], 2) },
+  // Pr.131.400 Libelle (V 990): an East German small torpedo boat, the low aluminium hull, the twin 23 mm aft, the
+  // torpedo troughs at the stern (18.7 x 4.4 m; 28 t).
+  'libelle': { cls: 'torpedo-boat', L: 18.7, B: 4.4, fb: 1.2, sheer: 0.5, transom: 0.9, guns: '-3:2/23m', blocks: [[4, 0, 2.6, 1.5, 0.6]], extra: [blockOf(-4, -9.4, 0.9, 1.4, 0.35, 0, 0, 1.2)] },
+  // Komsomolets (Pr.123): an aluminium torpedo boat, two 450 mm tubes on deck either side, two twin 14.5 mm turrets,
+  // the low wheelhouse (18.7 x 3.4 m; 21 t).
+  'komsomolets': { cls: 'torpedo-boat', L: 18.7, B: 3.4, fb: 1.2, sheer: 0.5, transom: 0.9, guns: '4:2/15m^0.2 -6:2/15mb^0.2', blocks: [[2, -1.5, 2.4, 1.3, 0.6]], launchers: [{ x: -1, length: 5, width: 1, kind: 'tubes', count: 1, elevation: 0.05 }] },
+  // Komsomolets on hydrofoils (Pr.123K, A-10bis): the same boat lifted on bow foils (as above).
+  'komsomolets-foil': { cls: 'torpedo-boat', L: 18.7, B: 3.4, fb: 1.2, sheer: 0.5, transom: 0.9, guns: '4:2/15m^0.2 -6:2/15mb^0.2', blocks: [[2, -1.5, 2.4, 1.3, 0.6]], launchers: [{ x: -1, length: 5, width: 1, kind: 'tubes', count: 1, elevation: 0.05 }], extra: foils([[6, 1.4, 1.6]], 1.4) },
+  // D-3: a wooden torpedo boat, the two torpedoes in drop collars along the sides, the small wheelhouse, machine guns
+  // (21.6 x 3.9 m; 32 t).
+  'd-3': { cls: 'torpedo-boat', L: 21.6, B: 3.9, fb: 1.4, sheer: 0.6, transom: 0.85, guns: '-4:1/13bs^0.3 4:1/13s^0.3', blocks: [[3, -1, 2.6, 1.3, 0.4]], masts: [[1, 4.5]], extra: [blockOf(1, -7, 1.6, 2.0, 0.28, 0, 0, 2.1)] },
+  // MO-4: a wooden sub-chaser ("small hunter"), two 45 mm guns fore and aft, the wheelhouse, the mast (26.9 x 3.9 m;
+  // 56 t).
+  'mo-4': { cls: 'patrol-boat', L: 26.9, B: 3.9, fb: 1.6, sheer: 0.7, transom: 0.85, guns: '8:1/45 -9:1/45b', blocks: [[3, -2, 3.2, 1.4, 0.4]], masts: [[1, 6]] },
+  // OD-200: the post-war wooden sub-chaser, a 45 mm forward, the wheelhouse, twin heavy machine guns aft (24 x 4.1 m;
+  // 49 t).
+  'od-200': { cls: 'patrol-boat', L: 24, B: 4.1, fb: 1.6, sheer: 0.7, transom: 0.85, guns: '7:1/45 -7:2/13bs^0.4', blocks: [[2.5, -2.5, 3.4, 1.5, 0.5], [1, -1.5, 4.0, 1.1]], masts: [[0, 6]] },
+  // Pr.122 (BO type): a large sub-chaser, the 85 mm gun forward, the bridge and funnel, 37 mm guns aft (49.5 x 6.3 m;
+  // 300 t).
+  'pr-122': { cls: 'patrol-boat', L: 49.5, B: 6.3, fb: 2.8, sheer: 1.2, transom: 0.8, guns: '16:1/85 -12:1/37s^1 -19:1/37bs', funnels: [[-3, 3.2, 2, 1.6]], blocks: [[9, 1, 5.8, 2.4, 0.8], [7, 3, 7, 1.6]], masts: [[4, 10]] },
+  // Pr.253L (MT-1): a small wooden minesweeper, the wheelhouse forward, the sweep deck aft, twin heavy machine guns
+  // (28 x 5.4 m, estimate).
+  'pr-253l': { cls: 'minesweeper', L: 28, B: 5.4, fb: 1.9, sheer: 0.9, transom: 0.85, guns: '7:2/13s^0.3 -1:2/13s^2.2', funnels: [[-3, 2.2, 1.2]], blocks: [[4, -2, 3.8, 1.8, 0.4]], masts: [[1, 7]] },
+  // Fugas (Strela, Project 3): a minesweeper, the 100 mm guns fore and aft, the bridge, one funnel (62 x 7.6 m;
+  // 490 t full).
+  'fugas': { cls: 'minesweeper', L: 62, B: 7.6, fb: 3.8, fc: [6, 1.2], sheer: 1.8, transom: 0.75, guns: '22:1/100 -22:1/100b^1.4 -8,2:1/45s', funnels: [[-1, 5, 2.4]], blocks: [[13, 5, 8.6, 2.6, 1], [11, 7, 10.2, 1.8]], masts: [[8, 13]] },
+  // Uragan (Groza): a guard ship, two single 102 mm guns fore and aft, two funnels with the torpedo mount between them
+  // (71.5 x 7.4 m; 580 t full).
+  'uragan': { cls: 'sloop', L: 71.5, B: 7.4, fb: 4.2, fc: [10, 1.3], sheer: 2, transom: 0.7, guns: '26:1/102 -27:1/102b^1.4', funnels: [[4, 5.5, 2.4], [-8, 5.5, 2.4]], blocks: [[17, 9, 9.2, 2.6, 1], [15, 11, 10.8, 1.8]], masts: [[12, 14, 't'], [-20, 9]], tt: [1, 3], ttAt: [-2, 8] },
+  // Shmel (Pr.1204): a river gunboat, the PT-76 turret forward, the rocket launcher amidships, the twin 25 mm aft
+  // (27.7 x 4.3 m; 77 t).
+  'shmel': { cls: 'gunboat', L: 27.7, B: 4.3, fb: 1.4, sheer: 0.6, transom: 0.85, guns: '8:1/76^0.4 -9:2/25mb^0.6', blocks: [[3, -3, 3.0, 1.6, 0.4]], masts: [[0, 5]], launchers: [{ x: -4.5, length: 2.4, width: 1.4, kind: 'tubes', count: 1, elevation: 0.3, up: 0.6 }] },
+  // Pr.191: a post-war armoured river boat, the T-34-85 turret forward, the armoured wheelhouse, a 25 mm aft (30 x 4.6 m,
+  // estimate).
+  'pr-191': { cls: 'gunboat', L: 30, B: 4.6, fb: 1.4, sheer: 0.6, transom: 0.85, guns: '7.5:1/85^0.5 -8:2/25mb^0.4', blocks: [[2, -2.5, 3.2, 1.4, 0.4]], masts: [[0, 5]] },
+  // MBK (Pr.161): a large armoured gunboat, two T-34-85 turrets fore and aft, the armoured conning tower, light AA
+  // guns (49.8 x 6.2 m, estimate).
+  'mbk-161': { cls: 'gunboat', L: 49.8, B: 6.2, fb: 1.8, sheer: 0.8, transom: 0.85, guns: '15:1/85^0.6 -15:1/85b^0.6 5:1/37s^1.6 -6:1/37bs^1.6', blocks: [[3, -3.5, 4.4, 1.8, 0.5], [1.5, -1.5, 5.6, 1.1]], masts: [[0, 8]] },
+  // Pr.201 (SO-1): a small sub-chaser, a flush steel hull, the bridge and low funnel, twin 25 mm mounts fore and aft,
+  // the RBU launchers (42 x 6.1 m; 215 t).
+  'so-1': { cls: 'patrol-boat', L: 42, B: 6.1, fb: 2.6, sheer: 1.2, transom: 0.8, guns: '13:2/25m -14:2/25mb', funnels: [[-3, 2.6, 2.4, 1.8]], blocks: [[7, 0, 5.4, 2.4, 0.8], [5, 1, 6.6, 1.8]], masts: [[3, 10]], radars: [{ x: 3, up: 8.5, kind: 'array', size: 1.6 }] },
+  // Poti (Pr.204): a gas turbine sub-chaser, the long superstructure, the wide low exhaust, a twin 57 mm aft, the RBUs
+  // forward (59.4 x 8 m; 580 t full).
+  'poti': { cls: 'corvette', L: 59.4, B: 8, fb: 3.6, sheer: 1.6, transom: 0.8, guns: '-22:2/57mb', funnels: [[-8, 2.4, 4.2, 4.8, 0.2]], blocks: [[14, -14, 7, 3.2, 1.5], [12, 3, 9, 2.4, 1]], masts: [[5, 14, 'l']], radars: [{ x: 5, up: 12, kind: 'array', size: 2.4 }], launchers: [{ x: 19, length: 2.4, width: 3.6, kind: 'box', height: 1.2 }] },
+  // Mirka (Pr.35): a gas turbine patrol ship, no funnel but the air intakes over the engine room and the exhausts in the
+  // stern, twin 76 mm turrets fore and aft, the RBUs, a quintuple torpedo mount (82.4 x 9.1 m; 1,150 t full).
+  'mirka': { cls: 'frigate', L: 82.4, B: 9.1, fb: 4.6, sheer: 2, transom: 0.8, guns: '25:2/76m -31:2/76mb', blocks: [[17, -14, 8.6, 3.6, 1.5], [14, 4, 10.6, 2.6, 1], [-2, -8, 9.8, 3.6]], masts: [[6, 16, 'l']], radars: [{ x: 6, up: 13, kind: 'array', size: 3 }], launchers: [{ x: 20, length: 2.4, width: 3.6, kind: 'box', height: 1.2 }], tt: [1, 5], ttAt: [-19, 8] },
+  // Pauk (Pr.12412): a small anti-submarine ship, the 76 mm gun forward, the long superstructure with the lattice mast
+  // and its radome, the AK-630 aft, the big dipping-sonar housing on the transom (57.6 x 10.2 m; 495 t full).
+  'pauk': { cls: 'corvette', L: 57.6, B: 10.2, fb: 3.8, sheer: 1.6, transom: 0.85, guns: '19:1/76m -12:1/30m^3.2b', blocks: [[11, -13, 7.6, 4.2, 1.5], [9, -2, 9.6, 3, 1]], masts: [[2, 15, 'l']], radars: [{ x: 2, up: 12, kind: 'array', size: 2.4 }, { x: 6, up: 6.6, kind: 'dome', size: 2 }], launchers: [{ x: -18, length: 4, width: 1, kind: 'tubes', count: 1, elevation: 0 }], extra: [blockOf(-26.5, -29, 1.5, 6.2, 2.4)] },
+  // Mukha (Pr.11451): a hydrofoil anti-submarine ship, the 76 mm gun forward, the high superstructure, the AK-630 aft,
+  // the foils fore and aft (50 x 10 m; 465 t full).
+  'mukha': { cls: 'hydrofoil', L: 50, B: 10, fb: 3.8, sheer: 1.4, transom: 0.85, guns: '16:1/76m -14:1/30m^3b', blocks: [[10, -12, 7.8, 4.2, 1.5], [8, -2, 10, 3, 1.5]], masts: [[1, 14, 'l']], radars: [{ x: 1, up: 11, kind: 'array', size: 2.4 }], extra: foils([[12, 3.2, 3.6], [-17, 3.6, 3.6]], 3.4) },
+  // Petya's successor Pauk aside, the Krivak I (Bditelny): the URPK-4 quad box on the bow, the Osa-M bins, the bridge,
+  // the wide low funnel, two twin 76 mm turrets aft (123 x 14.2 m; 3,575 t full).
+  'krivak-i': {
+    cls: 'frigate', L: 123, B: 14.2, fb: 6, sheer: 3, transom: 0.7,
+    guns: '-42:2/76m^2.6b -52:2/76mb',
+    blocks: [[30, 10, 13, 5, 1.5], [26, 16, 15.5, 3.5, 1], [8, -24, 10, 5], [-26, -46, 8.6, 3.4]],
+    funnels: [[-4, 5, 7, 5.6]],
+    masts: [[16, 20, 'l']],
+    launchers: [{ x: 46, length: 7.6, width: 4.6, kind: 'box', up: 0.4, height: 3.0 }, { x: 37, length: 3, width: 3, kind: 'box', height: 1.8 }, { x: -34, length: 3, width: 3, kind: 'box', height: 1.8 }],
+    radars: [{ x: 16, up: 18, kind: 'array', size: 5 }, { x: 20, up: 10, kind: 'dome', size: 2.6 }],
+  },
+  // Isles class trawler (HMCS Liscomb): a naval trawler, the high bow, a 12-pounder on the forecastle, the bridge, the
+  // tall single funnel, the mast forward (50 x 8.4 m; 770 t full).
+  'isles-trawler': { cls: 'minesweeper', L: 50, B: 8.4, fb: 3.4, fc: [12, 1.2], sheer: 2.2, transom: 0.7, guns: '20:1/76^0.5 -18:1/20bs^1.2 4,3:1/20s^2.6', funnels: [[-2, 6.6, 2, 1.8]], blocks: [[8, 1, 7.6, 2.8, 0.5], [6, 2, 9.2, 2]], masts: [[12, 13]] },
+  // Tacoma (PF, USS Hoquiam): a patrol frigate on merchant lines, the 3-inch guns fore and aft, the bridge, one funnel,
+  // the pole mast (92.6 x 11.4 m; 2,415 t full).
+  'tacoma-pf': { cls: 'frigate', L: 92.6, B: 11.4, fb: 5, fc: [10, 1.4], sheer: 2.4, transom: 0.7, guns: '34:1/76 -36:1/76b^1.6 -22:2/40bs^1.6 22:2/40s^2.6', funnels: [[-2, 6, 3, 2.4]], blocks: [[18, 6, 10.6, 3.6, 1], [16, 9, 12.6, 2.6]], masts: [[10, 18]] },
+  // SC-497 (110 ft sub-chaser): a wooden boat, the 40 mm forward, the small bridge and mast, 20 mm guns aft (33.8 x 5.2 m;
+  // 148 t full).
+  'sc-497': { cls: 'patrol-boat', L: 33.8, B: 5.2, fb: 2.2, sheer: 1, transom: 0.8, guns: '11:1/40 -6:1/20bs^0.4 -10:1/20bs^0.4', funnels: [[-2, 1.8, 1, 0.8]], blocks: [[5, 0, 4.4, 1.9, 0.6], [3.5, 1, 5.4, 1.3]], masts: [[2, 9]] },
+  // PGM-9 class: a PC-461 hull re-armed as a motor gunboat, the 3-inch forward, a row of 40 mm guns, no depth charges
+  // (52.9 x 7 m; 450 t full).
+  'pgm-9': { cls: 'gunboat', L: 52.9, B: 7, fb: 3.2, sheer: 1, guns: '18:1/76 12:1/40^1.4 -10:2/40b^1 -18:1/40b -4,2.4:1/20s^1', funnels: [[-2, 3.5, 1.8]], blocks: [[10, 2, 6.5, 2.2, 0.8]], masts: [[6, 10]] },
+  // PT-810 to 812: the post-war motor torpedo boats, a long low hull, the enclosed deckhouse, 40 mm guns fore and aft
+  // (27.4 x 7.3 m; 94 t, estimate for the class).
+  'pt-810': { cls: 'torpedo-boat', L: 27.4, B: 7.3, fb: 1.9, sheer: 0.8, transom: 0.9, guns: '9:1/40m -9:1/40mb 1,2.4:2/20s^1.4', blocks: [[4, -4, 3.8, 2.6, 1], [2, -2, 4.8, 1.8, 0.6]], masts: [[0, 6]], radars: [{ x: 0, up: 4.4, kind: 'dome', size: 1 }] },
+  // LCS(L)(3): a landing craft hull built as a support gunboat, the twin 40 mm on the bow and on the deck before the round
+  // conning tower, the twin 40 mm aft, the rocket rails (48.3 x 7.2 m; 387 t loaded).
+  'lcs-l3': { cls: 'gunboat', L: 48.3, B: 7.2, fb: 2.4, sheer: 0.8, transom: 0.8, guns: '20:1/76^0.5 9:2/40^2.4 -18:2/40b^0.5 -4,2.6:1/20s^2', blocks: [[6, -10, 4.8, 2.8, 0.5]], extra: [{ top: [[2, 7.6], [-3, 7.6]], bottom: [[2, 4.6], [-3, 4.6]], plan: [[2, 0.2], [1.3, 1.8], [-0.5, 2.5], [-2.3, 1.8], [-3, 0.2]], round: 10, stations: 6 }], masts: [[-1, 10]] },
+  // LCS(L)(2) (Fairmile H): a landing craft for close support, the 2-pounder in a tank turret forward, the bridge, the
+  // 20 mm guns aft (31.5 x 6.6 m; 116 t).
+  'lcs-l2': { cls: 'gunboat', L: 31.5, B: 6.6, fb: 2, sheer: 0.6, transom: 0.85, guns: '9:1/40m^0.6 -8,1.6:1/20bs^1', blocks: [[3, -3, 4.4, 2.2, 0.6]], masts: [[0, 7]] },
+  // LCG(M): a landing craft gun (medium), a low armoured hull with two 25-pounder or 17-pounder turrets on the
+  // centre line and the bridge between them (47.2 x 6.8 m; 380 t loaded).
+  'lcg-m': { cls: 'gunboat', L: 47.2, B: 6.8, fb: 1.6, sheer: 0.6, transom: 0.85, guns: '9:1/88m^1.2 -12:1/88mb^1.2 -2,2:1/20s^2.6', blocks: [[3, -7, 4.6, 2.4, 0.5], [1, -4, 6, 1.4]], masts: [[-2, 8]] },
+  // LCM(6) "Zippo": an armoured LCM, the well covered over, two flamethrower turrets and a 20 mm turret on the cover,
+  // the armoured coxswain's house aft (17.1 x 4.3 m; 60 t).
+  'lcm-zippo': { cls: 'landing-craft', L: 17.1, B: 4.3, fb: 1.7, hull: [[8.55, 1.9, 1.8], [8.1, 1.9, 2.15], [-8, 1.7, 2.15], [-8.55, 1.7, 1.9]], guns: '4:1/20m^0.9 0.5:1/15m^0.9 -3:1/15mb^0.9', blocks: [[6.5, -5, 2.6, 2.0], [-5.6, -8.2, 3.4, 2.0, 0.4]], extra: [blockOf(8.8, 8.3, 0.4, 2.4, 1.8)] },
+  // LCM monitor: an LCM rebuilt as a river monitor, the 40 mm turret on the bow, the armoured superstructure, the 20 mm
+  // turret aft (17.1 x 4.3 m, estimate).
+  'lcm-monitor': { cls: 'landing-craft', L: 17.1, B: 4.3, fb: 1.7, hull: [[8.55, 1.9, 1.8], [8.1, 1.9, 2.15], [-8, 1.7, 2.15], [-8.55, 1.7, 1.9]], guns: '5:1/40m^0.9 -4:1/20mb^1.4', blocks: [[3, -7, 3.1, 2.0], [-5.6, -8.2, 3.6, 1.8, 0.4]], extra: [blockOf(8.8, 8.3, 0.4, 2.4, 1.8)] },
+  // HDML (Harbour Defence Motor Launch): a small round-bilge launch, a 2-pounder forward, the wheelhouse, a 20 mm aft
+  // (21.9 x 4.8 m; 54 t).
+  'hdml': { cls: 'patrol-boat', L: 21.9, B: 4.8, fb: 1.6, sheer: 0.8, transom: 0.8, guns: '6:1/40s^0.3 -6:1/20bs^0.3', blocks: [[2, -2.5, 3.3, 1.6, 0.4], [1, -1, 4, 1.1]], masts: [[0.5, 6]] },
+  // Dark class: a fast patrol boat, the high flared bow, the enclosed bridge, a 40 mm aft and a 4.5-pounder forward,
+  // torpedo tubes on the sides (21.9 x 5.9 m; 64 t full; the 4.5-pounder is the 57 mm).
+  'dark-class': { cls: 'torpedo-boat', L: 21.9, B: 5.9, fb: 1.8, sheer: 0.9, transom: 0.9, guns: '6:1/57^0.3 -6:1/40bs^0.3', blocks: [[2.5, -1.5, 3.6, 1.8, 0.7]], masts: [[0, 5]], launchers: [{ x: -2, length: 5.5, width: 1.2, kind: 'tubes', count: 1, elevation: 0 }] },
+  // Steam gunboat (Grey Goose): a long narrow steel boat, the low bridge, the 3-inch gun aft, 2-pounders forward and
+  // amidships (44.2 x 6.2 m; 260 t full).
+  'sgb': { cls: 'gunboat', L: 44.2, B: 6.2, fb: 2.4, sheer: 1, transom: 0.8, guns: '13:1/40^0.4 -13:1/76b^0.4 -4:1/40^0.4', funnels: [[-2, 2, 1.6, 1.2]], blocks: [[6, 0, 4.8, 2.2, 0.6], [4, 1, 5.8, 1.4]], masts: [[2, 8]] },
+  // Attack class (HMAS Arrow): a patrol boat, the 40 mm forward, the superstructure with its mast amidships (32.8 x 6.2 m;
+  // 146 t full).
+  'attack-pb': { cls: 'patrol-boat', L: 32.8, B: 6.2, fb: 2.3, sheer: 1, transom: 0.85, guns: '9:1/40m', blocks: [[4, -5, 4.8, 2.4, 1], [2, -2, 6, 1.8, 1]], masts: [[0, 8]] },
+  // Fremantle class: a patrol boat, the 40 mm on the bow, the bridge forward of the middle, the 81 mm mortar aft (42 x
+  // 7.2 m; 220 t full).
+  'fremantle-pb': { cls: 'patrol-boat', L: 42, B: 7.2, fb: 2.6, sheer: 1.2, transom: 0.85, guns: '13:1/40m -10:1/13bs^0.4', blocks: [[7, -6, 5.2, 2.8, 1], [5, -1, 6.6, 2, 1]], masts: [[1, 9]] },
+  // Soukou-tei (AB-tei): an armoured landing-support boat, a tank turret forward of the armoured wheelhouse (17 x 3.3 m;
+  // 20 t, estimate).
+  'ab-tei': { cls: 'gunboat', L: 17, B: 3.3, fb: 1.3, sheer: 0.4, transom: 0.85, guns: '4:1/37^0.5 -4:1/13bs^0.4', blocks: [[1.5, -2.5, 2.5, 1.3, 0.3]] },
+  // Ujishima (MSC-655): a wooden coastal minesweeper, the 20 mm forward, the bridge and mast, the sweep deck aft (44 x
+  // 8.4 m; 440 t full).
+  'ujishima-msc': { cls: 'minesweeper', L: 44, B: 8.4, fb: 3, sheer: 1.4, transom: 0.85, guns: '14:1/20m', funnels: [[-6, 2.6, 1.8, 1.4]], blocks: [[9, -4, 6.6, 3.2, 1], [7, 0, 8, 2.4, 1]], masts: [[2, 11]] },
+  // Kusentei No.13 class: a sub-chaser with a raked bow, the 40 mm forward, the bridge, the raked funnel, depth charges
+  // aft (51 x 6.7 m; 438 t full).
+  'kusentei': { cls: 'patrol-boat', L: 51, B: 6.7, fb: 3, fc: [8, 1], sheer: 1.6, transom: 0.75, guns: '17:1/40 -12:1/25bs^1', funnels: [[-3, 4, 2, 1.6, 0.15]], blocks: [[9, 2, 6.4, 2.2, 1], [7, 3, 7.6, 1.5]], masts: [[5, 11, 't']] },
+  // Chidori: a torpedo boat with a destroyer's armament on a small hull, a twin 12.7 cm forward, single mounts aft,
+  // the tall bridge, the single funnel (82 x 7.4 m; 737 t full, as rebuilt).
+  'chidori-tb': { cls: 'torpedo-boat', L: 82, B: 7.4, fb: 4.2, fc: [10, 1.4], sheer: 2, transom: 0.7, guns: '28:2/127 -22:1/127b^1.6 -32:1/127b', funnels: [[1, 6, 3, 2.4, 0.14]], blocks: [[18, 10, 10, 2.8, 1], [16, 12, 12, 2]], masts: [[13, 13, 't']], tt: [1, 2], ttAt: [-6, 8] },
+  // Sparviero (and the Japanese PG 1 class built from it): a hydrofoil missile boat, the OTO 76 mm on the bow, two missile
+  // canisters aft, the foils (24.6 x 7 m; 63 t full).
+  'sparviero': { cls: 'hydrofoil', L: 24.6, B: 7, fb: 2.2, sheer: 0.8, transom: 0.85, guns: '7:1/76m^0.2', blocks: [[2, -6, 4.4, 2.6, 1.2], [0, -4, 5.4, 1.8, 0.8]], masts: [[-3, 7]], launchers: [{ x: -9, length: 4.5, width: 1.2, kind: 'tubes', count: 1, elevation: 0.1, up: -0.4 }], extra: foils([[7, 0, 1.4], [-8, 3, 1.2]], 2.4) },
+  // Freccia (P 493): a convertible fast patrol boat, the 40 mm guns fore and aft, the bridge amidships, torpedo tubes
+  // (46.1 x 7.2 m; 205 t full).
+  'freccia-fpb': { cls: 'torpedo-boat', L: 46.1, B: 7.2, fb: 2.6, sheer: 1.1, transom: 0.85, guns: '15:1/40m -16:1/40mb', blocks: [[6, -4, 5.4, 2.6, 1], [4, -1, 6.6, 1.8, 0.8]], masts: [[1, 9]], launchers: [{ x: -8, length: 6, width: 1.3, kind: 'tubes', count: 1, elevation: 0 }] },
+  // Saetta (P 494): the Freccia hull with a gas turbine and the Sea Killer launcher aft, a 40 mm forward, a taller bridge
+  // (46.1 x 7.2 m; 205 t full).
+  'saetta-fpb': { cls: 'fast-attack', L: 46.1, B: 7.2, fb: 2.6, sheer: 1.1, transom: 0.85, guns: '15:1/40m', funnels: [[-4, 2.2, 3, 3.6, 0.2]], blocks: [[7, -2, 5.6, 2.6, 1.2], [5, 0, 7.4, 1.8, 0.8]], masts: [[2, 10, 'l']], launchers: [{ x: -14, length: 4, width: 2.6, kind: 'tubes', count: 1, elevation: 0.15, up: -0.2 }] },
+  // VAS 201: an anti-submarine motor boat, a 13.2 mm turret and 20 mm guns, the wheelhouse forward of the middle (28 x
+  // 4.7 m; 69 t).
+  'vas': { cls: 'patrol-boat', L: 28, B: 4.7, fb: 1.8, sheer: 0.8, transom: 0.85, guns: '8:1/20s^0.3 -6:1/20bs^0.3', blocks: [[4, -1.5, 3.4, 1.5, 0.5]], masts: [[1.5, 6]] },
+  // Arras class aviso (Arras, Amiens; the Marne class as its look-alike): two single 138 mm guns fore and aft, the
+  // bridge, two funnels (75 x 8.7 m; 1,150 t full).
+  'arras-aviso': { cls: 'sloop', L: 75, B: 8.7, fb: 4.4, fc: [6, 1.3], sheer: 2.2, transom: 0.7, guns: '26:1/138 -26:1/138b -6:1/75s^1.4', funnels: [[3, 6, 2.6], [-5, 6, 2.6]], blocks: [[15, 8, 9.4, 2.8, 1], [13, 10, 11, 2]], masts: [[10, 15], [-18, 11]] },
+  // Aoba: Furutaka's sister as rebuilt, three twin 20 cm turrets, the bigger bridge, the trunked forward funnel, the
+  // tripod mainmast with its aircraft crane (185.2 x 17.6 m; 10,800 t full).
+  'aoba': { cls: 'heavy-cruiser', L: 185.2, B: 17.6, fb: 8, fc: [-22, 2.4], rake: 0.15, guns: '58:2/203 48:2/203^2.5 -56:2/203b', funnels: [[10, 11, 5.2, 4], [-4, 11, 3.6, 3]], blocks: [[34, 20, 21, 5.5, 1], [30, 23, 24.5, 3.6], [-10, -26, 11.5, 4.5], [-14, -22, 14, 3]], dirs: [[-20, 16]], masts: [[22, 26, 't'], [-16, 22, 't']] },
+  // Bolzano: Trento's half-sister, the tall tower bridge, the raised forecastle, the funnels wide apart with the
+  // catapult between them, four twin 20.3 cm turrets (196.9 x 20.6 m; 13,665 t full).
+  'bolzano': { cls: 'heavy-cruiser', L: 196.9, B: 20.6, fb: 8, fc: [-30, 2.4], sheer: 3, guns: '64:2/203 53:2/203^2.5 -52:2/203^2.5b -64:2/203b', funnels: [[20, 12, 4.6], [-22, 12, 4.6]], blocks: [[38, 28, 18, 5, 1], [36, 30, 28, 3.2, 0.5], [-28, -38, 11.5, 4]], dirs: [[-34, 14]], masts: [[30, 30, 't'], [-30, 18]], extra: [blockOf(6, -14, 8, 9.2, 1.2)], launchers: [{ x: -8, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
+  // Centurion (King George V of 1911): Orion's successor, five twin 13.5-inch turrets on the centre line, the tripod
+  // foremast forward of the first funnel (182.1 x 27.1 m; 26,100 t full).
+  'centurion-1911': { cls: 'battleship', L: 182.1, B: 27.1, fb: 8, sheer: 2.5, guns: '62:2/343 50:2/343^2.5 -4:2/343 -46:2/343^2.5b -60:2/343b', funnels: [[18, 14, 7], [6, 14, 6]], masts: [[26, 34, 't'], [-20, 24]] },
+};
+for (const [name, o] of Object.entries(R2)) N[name] = ship(withAft(name, o));
+
+// Arleigh Burke Flight III: the Flight IIA's hull, the forward deckhouse built up a deck higher and wider for the big
+// SPY-6 faces and their cooling plant, the new mast, the hangar aft (155.3 x 20.1 m; 9,700 t full).
+N['arleigh-burke-flight-iii'] = {
+  ...N['arleigh-burke'],
+  bodies: [blockOf(36, 3, 7.0, 16.6, 7.4, 3.5), blockOf(31, 13, 16.6, 21.2, 5.8, 2), blockOf(6, -1, 7.0, 21.5, 2.6, 0, 1.2), blockOf(-13, -20, 6.8, 19.5, 2.6, 0, 1.2), blockOf(4, -9, 7.0, 13, 4.6), blockOf(-6, -48, 6.8, 14.5, 7.0, 1.5)],
+  masts: [{ x: 12, height: 25 }],
+  radars: [{ x: 24, up: 10.2, kind: 'faces', size: 4.6 }],
+};
 
 // Every surface ship's raised guns stand on barbettes from the deck (the classes above and the hand-built ones alike).
 for (const spec of Object.values(N)) {
@@ -1527,13 +1962,13 @@ for (const spec of Object.values(N)) {
   if (more.length) spec.oneSide = [...(spec.oneSide ?? []), ...more];
 }
 
-/** War Thunder coastal and escort ships that had no figure, mapped to their class (from the public wiki's vehicle lists); a few still to a near relative. */
+/** War Thunder coastal and escort ships that had no figure, mapped to their class (from the public wiki's vehicle lists); boats of one look share a figure. */
 const ALIASES: Record<string, string> = {
-  'germ_kanonenboot_k4_lorelei': 'aviso-elan',
-  'germ_kanonenboot_k2': 'aviso-elan',
+  'germ_kanonenboot_k4_lorelei': 'lorelei-k4',
+  'germ_kanonenboot_k2': 'kanonenboot-k',
   'uk_egret_class': 'egret-sloop',
   'uk_minelayer_abdiel_class_abdiel': 'abdiel',
-  'jp_minelayer_tsugaru': 'j-class',
+  'jp_minelayer_tsugaru': 'tsugaru',
   'us_pt6': 'elco-80',
   'us_elco_77ft_pt20': 'elco-80',
   'us_nasty_ptf': 'nasty-ptf',
@@ -1542,7 +1977,7 @@ const ALIASES: Record<string, string> = {
   'us_elco_80ft_pt_boat': 'elco-80',
   'us_pc_451': 'pc-subchaser',
   'us_higgins_78ft_pt71': 'higgins-78',
-  'us_sc_497': 'pc-subchaser',
+  'us_sc_497': 'sc-497',
   'us_pc_466_carmi': 'pc-subchaser',
   'us_huckins_78ft_pt262': 'elco-80',
   'us_elco_80ft_pt174': 'elco-80',
@@ -1552,21 +1987,21 @@ const ALIASES: Record<string, string> = {
   'us_pgm_59_class': 'pgm-39',
   'us_elco_80ft_pt_boat_mod02': 'elco-80',
   'us_elco_77ft_pt59': 'elco-80',
-  'us_lcm_zippo': 'lcm',
+  'us_lcm_zippo': 'lcm-zippo',
   'us_higgins_78ft_pt658': 'higgins-78',
   'us_elco_80ft_pt_boat_thunderbolt': 'elco-80',
   'us_flagstaff_pgh1': 'flagstaff-pgh',
   'us_tucumcari_pgh2': 'tucumcari-pgh',
   'us_ashville_class': 'asheville-pg',
-  'us_pgm_9_class': 'type-143-fac',
-  'us_pt812': 'elco-80',
+  'us_pgm_9_class': 'pgm-9',
+  'us_pt812': 'pt-810',
   'us_admirable_class': 'admirable-am',
-  'us_pt811': 'elco-80',
+  'us_pt811': 'pt-810',
   'us_ashville_class_douglas': 'asheville-pg',
-  'us_pt810': 'elco-80',
-  'us_lcs_l_3': 'lci-l',
+  'us_pt810': 'pt-810',
+  'us_lcs_l_3': 'lcs-l3',
   'us_cyclone_class_cyclone': 'cyclone-pc',
-  'us_frigate_tacoma': 'river-frigate',
+  'us_frigate_tacoma': 'tacoma-pf',
   'us_frigate_buckley_class_coolbaugh': 'buckley-de',
   'us_frigate_dealey': 'dealey-de',
   'germ_ls_class': 'mas-boat',
@@ -1581,23 +2016,23 @@ const ALIASES: Record<string, string> = {
   'germ_s_100_class': 'schnellboot',
   'germ_rboot_r310': 'r-boot',
   'germ_s_100_s_174_class': 'schnellboot',
-  'germ_sf40_schwere_flakkampffaehre': 'marinefahrprahm',
-  'germ_vs10_hydrofoil': 'schnellboot',
-  'germ_pr_131': 'project-206',
-  'germ_sf40_leichte_flakkampffaehre': 'marinefahrprahm',
+  'germ_sf40_schwere_flakkampffaehre': 'siebel-ferry',
+  'germ_vs10_hydrofoil': 'vs-10',
+  'germ_pr_131': 'libelle',
+  'germ_sf40_leichte_flakkampffaehre': 'siebel-ferry',
   'germ_s_100_s204_lang': 'schnellboot',
   'germ_s_700_s_706': 'schnellboot',
-  'germ_vs8_hydrofoil': 'schnellboot',
+  'germ_vs8_hydrofoil': 'vs-8',
   'germ_s_700_s_701': 'schnellboot',
-  'germ_mz_1': 'marinefahrprahm',
-  'germ_artilleriefahrprahm_typ_d1': 'marinefahrprahm',
-  'germ_rdm242': 'r-boot',
-  'germ_minelayer_drache': 'aviso-elan',
-  'germ_artilleriefahrprahm_typ_d3': 'marinefahrprahm',
-  'germ_schutze_class': 'r-boot',
-  'germ_escort_typem1935': 'flower-corvette',
-  'germ_kondor2_class': 'pc-subchaser',
-  'germ_escort_typem1943': 'flower-corvette',
+  'germ_mz_1': 'artilleriefahrprahm',
+  'germ_artilleriefahrprahm_typ_d1': 'artilleriefahrprahm',
+  'germ_rdm242': 'flusi',
+  'germ_minelayer_drache': 'drache',
+  'germ_artilleriefahrprahm_typ_d3': 'artilleriefahrprahm',
+  'germ_schutze_class': 'schutze-340',
+  'germ_escort_typem1935': 'm1935-minesweeper',
+  'germ_kondor2_class': 'kondor-ii',
+  'germ_escort_typem1943': 'm1943-minesweeper',
   'germ_frigate_koln_lubeck': 'koln-frigate',
   'germ_skr_pr50_karl_marx': 'riga-frigate',
   'germ_type143_albatros': 'type-143-fac',
@@ -1605,86 +2040,86 @@ const ALIASES: Record<string, string> = {
   'germ_pr1331': 'parchim',
   'germ_pr_206': 'project-206',
   'germ_frigate_koln': 'koln-frigate',
-  'germ_type152_hugin': 'jaguar-type-140',
-  'germ_type153_pfeil': 'jaguar-type-140',
+  'germ_type152_hugin': 'nasty-ptf',
+  'germ_type153_pfeil': 'brave-fpb',
   'germ_type143_bussard': 'type-143-fac',
   'ussr_g5_mtb': 'g-5-torpedo-boat',
-  'ussr_mo_4': 'project-183',
-  'ussr_d3_tk126': 'project-183',
-  'ussr_d3': 'project-183',
-  'ussr_od_200': 'project-183',
+  'ussr_mo_4': 'mo-4',
+  'ussr_d3_tk126': 'd-3',
+  'ussr_d3': 'd-3',
+  'ussr_od_200': 'od-200',
   'ussr_pr_103_sm4': 'project-183',
   'ussr_g5_mtb_shvak': 'g-5-torpedo-boat',
   'ussr_g5_rct': 'g-5-torpedo-boat',
   'ussr_ya_5m': 'armed-speedboat',
-  'ussr_mpk_163': 'pc-subchaser',
-  'ussr_mpk_122a': 'pc-subchaser',
-  'ussr_pr253l': 'project-183',
-  'ussr_pr_123bis': 'project-183',
+  'ussr_mpk_163': 'pr-122',
+  'ussr_mpk_122a': 'pr-122',
+  'ussr_pr253l': 'pr-253l',
+  'ussr_pr_123bis': 'komsomolets',
   'ussr_1124_art': 'gunboat-1124',
-  'ussr_pr_123k': 'project-183',
-  'ussr_pr_123k_hydrofoils': 'project-183',
+  'ussr_pr_123k': 'komsomolets',
+  'ussr_pr_123k_hydrofoils': 'komsomolets-foil',
   'ussr_1124_rct': 'gunboat-1124-mrls',
-  'ussr_pr_1204': 'gunboat-1124',
-  'ussr_mpk_122bis': 'pc-subchaser',
-  'ussr_pr_1204_late': 'gunboat-1124',
+  'ussr_pr_1204': 'shmel',
+  'ussr_mpk_122bis': 'pr-122',
+  'ussr_pr_1204_late': 'shmel',
   'ussr_1124_ack': 'gunboat-1124',
-  'ussr_pr_191': 'gunboat-1124',
-  'ussr_fugas_t1_strela': 'flower-corvette',
-  'ussr_pr_191m': 'gunboat-1124',
+  'ussr_pr_191': 'pr-191',
+  'ussr_fugas_t1_strela': 'fugas',
+  'ussr_pr_191m': 'pr-191',
   'ussr_pr_183_egypt_bm_21': 'project-183',
-  'ussr_mbk_161_1943': 'gunboat-1124',
-  'ussr_bmo': 'gunboat-1124',
-  'ussr_skr_groza_1943': 'aviso-elan',
+  'ussr_mbk_161_1943': 'mbk-161',
+  'ussr_bmo': 'mo-4',
+  'ussr_skr_groza_1943': 'uragan',
   'ussr_mkl_186': 'gunboat-1124',
   'ussr_pr_183': 'project-183',
-  'ussr_mpk_201m': 'pc-subchaser',
-  'ussr_mbk_161_1944': 'gunboat-1124',
-  'ussr_mpk_204': 'pc-subchaser',
+  'ussr_mpk_201m': 'so-1',
+  'ussr_mbk_161_1944': 'mbk-161',
+  'ussr_mpk_204': 'poti',
   'ussr_mkl_186_mk85': 'gunboat-1124',
-  'ussr_mpk_201k': 'pc-subchaser',
+  'ussr_mpk_201k': 'so-1',
   'ussr_skr_pr50plo_rosomacha': 'riga-frigate',
-  'ussr_mpk_pr12412p': 'pc-subchaser',
+  'ussr_mpk_pr12412p': 'pauk',
   'ussr_pr_206': 'project-206',
   'ussr_skr_pr50_jenot': 'riga-frigate',
-  'ussr_mpk_pr12412': 'pc-subchaser',
+  'ussr_mpk_pr12412': 'pauk',
   'ussr_pr_206m': 'project-206',
   'ussr_mpk_pr1331m': 'parchim',
-  'ussr_mpk_pr11451': 'pc-subchaser',
+  'ussr_mpk_pr11451': 'mukha',
   'ussr_skr_pr159': 'petya',
   'ussr_mpk_pr_1124': 'grisha',
-  'ussr_skr_pr35': 'petya',
+  'ussr_skr_pr35': 'mirka',
   'ussr_pr_205pe_k225': 'osa-missile-boat',
   'uk_mtb_1series': 'vosper-mtb',
   'uk_mtb_vosper_1series': 'vosper-mtb',
   'uk_mtb35_vosper': 'vosper-mtb',
   'uk_mtb_vosper_2series': 'vosper-mtb',
   'uk_fairmile_a_ml100': 'fairmile-b',
-  'uk_hdml_ml1383': 'fairmile-b',
+  'uk_hdml_ml1383': 'hdml',
   'uk_70ft_mgb': 'vosper-mtb',
   'uk_mtb_2series': 'vosper-mtb',
   'uk_73ft_vosper_type1': 'vosper-mtb',
-  'uk_isles_class_trawler': 'flower-corvette',
+  'uk_isles_class_trawler': 'isles-trawler',
   'uk_fairmile_b_ml345': 'fairmile-b',
   'uk_flower_class': 'flower-corvette',
-  'uk_dark_class': 'vosper-mtb',
+  'uk_dark_class': 'dark-class',
   'uk_73ft_vosper_type2': 'vosper-mtb',
   'uk_71ft_mgb': 'vosper-mtb',
   'uk_71ft_mtb460': 'vosper-mtb',
   'uk_fairmile_c': 'fairmile-b',
-  'uk_dark_class_mtb': 'vosper-mtb',
-  'uk_fairmile_lcs_l_h_mk2': 'lci-l',
+  'uk_dark_class_mtb': 'dark-class',
+  'uk_fairmile_lcs_l_h_mk2': 'lcs-l2',
   'uk_fairmile_d_617_632': 'fairmile-d',
   'uk_fairmile_d_601_616': 'fairmile-d',
   'uk_gay_class_archer': 'vosper-mtb',
   'uk_higgins_78ft_mtb422': 'higgins-78',
   'uk_fairmile_d_5001_5029': 'fairmile-d',
-  'uk_dark_class_mtb_td': 'vosper-mtb',
-  'uk_sgb_309': 'fairmile-d',
+  'uk_dark_class_mtb_td': 'dark-class',
+  'uk_sgb_309': 'sgb',
   'uk_fairmile_d_697_800': 'fairmile-d',
-  'uk_attack_class_arrow': 'fairmile-b',
-  'uk_sgb_304': 'fairmile-d',
-  'uk_fremantle_class': 'fairmile-d',
+  'uk_attack_class_arrow': 'attack-pb',
+  'uk_sgb_304': 'sgb',
+  'uk_fremantle_class': 'fremantle-pb',
   'uk_fairmile_c_332': 'fairmile-b',
   'uk_corvette_orla': 'peacock-pc',
   'uk_frigate_river': 'river-frigate',
@@ -1697,39 +2132,39 @@ const ALIASES: Record<string, string> = {
   'jp_t14_class': 'mas-boat',
   'jp_type_t1_1941': 'mas-boat',
   'jp_t14_class_mod02': 'mas-boat',
-  'jp_abtei_pr1': 'gunboat-1124',
+  'jp_abtei_pr1': 'ab-tei',
   'jp_type5_escortboat': 'mas-boat',
   'jp_t14_class_mod01': 'mas-boat',
-  'jp_ujishima_msc': 'r-boot',
-  'jp_abtei_pr4': 'gunboat-1124',
+  'jp_ujishima_msc': 'ujishima-msc',
+  'jp_abtei_pr4': 'ab-tei',
   'jp_karotei_type2': 'mas-boat',
   'jp_type38_1944': 'mas-boat',
   'jp_sehatei_mod1': 'mas-boat',
   'jp_type1_pt2': 'elco-80',
-  'jp_kusen_tei_13_1942': 'pc-subchaser',
+  'jp_kusen_tei_13_1942': 'kusentei',
   'jp_karotei_type4': 'mas-boat',
-  'jp_kusen_tei_13_1944': 'pc-subchaser',
-  'jp_no1_ch2': 'pc-subchaser',
+  'jp_kusen_tei_13_1944': 'kusentei',
+  'jp_no1_ch2': 'kusentei',
   'jp_t51b': 'mas-boat',
-  'jp_no4_ch8': 'pc-subchaser',
+  'jp_no4_ch8': 'kusentei',
   'jp_pc301_kari_class': 'pc-subchaser',
-  'jp_type7_pt808': 'elco-80',
-  'jp_type9_pt809': 'elco-80',
+  'jp_type7_pt808': 'pt-810',
+  'jp_type9_pt809': 'pt-810',
   'jp_t51a': 'mas-boat',
   'jp_type_11_pt_15': 'elco-80',
-  'jp_escort_chikugo_class': 'buckley-de',
-  'jp_escort_ikazuchi_class': 'buckley-de',
-  'jp_escort_akebono_class': 'buckley-de',
-  'jp_pg02': 'elco-80',
+  'jp_escort_chikugo_class': 'chikugo-de',
+  'jp_escort_ikazuchi_class': 'ikazuchi-de',
+  'jp_escort_akebono_class': 'akebono-de',
+  'jp_pg02': 'sparviero',
   'jp_escort_hiburi_class_syonan': 'hiburi-kaibokan',
-  'jp_destroyer_isuzu': 'buckley-de',
-  'jp_yuri_class_asagao': 'vosper-mtb',
-  'jp_destroyer_ayanami': 'koln-frigate',
-  'jp_destroyer_chidori': 'ciclone-tb',
+  'jp_destroyer_isuzu': 'isuzu-de',
+  'jp_yuri_class_asagao': 'lcs-l3',
+  'jp_destroyer_ayanami': 'ayanami-dd',
+  'jp_destroyer_chidori': 'chidori-tb',
   'jp_escort_hiburi_class_shisaka': 'hiburi-kaibokan',
   'it_mas_classe500_3_1944': 'mas-boat',
   'it_mas_classe500_3': 'mas-boat',
-  'it_vas_baglietto_68t_1serie': 'vosper-mtb',
+  'it_vas_baglietto_68t_1serie': 'vas',
   'it_mas_classe429': 'mas-boat',
   'it_mas_classe500_4': 'mas-boat',
   'it_ms15_1a': 'vosper-mtb',
@@ -1746,20 +2181,20 @@ const ALIASES: Record<string, string> = {
   'it_mc492_baleno': 'vosper-mtb',
   'it_gabbiano_class': 'gabbiano-corvette',
   'it_gabbiano_class_c16': 'gabbiano-corvette',
-  'it_p493_freccia': 'type-143-fac',
-  'it_p420_sparviero': 'mas-boat',
-  'it_alano_9851': 'type-143-fac',
+  'it_p493_freccia': 'freccia-fpb',
+  'it_p420_sparviero': 'sparviero',
+  'it_alano_9851': 'lcs-l3',
   'it_ciclone_class_ghibli': 'ciclone-tb',
   'it_cassiopea_p401': 'cassiopea-opv',
   'it_albatros_class_f543': 'albatros-corvette',
-  'it_p494_saetta': 'type-143-fac',
+  'it_p494_saetta': 'saetta-fpb',
   'it_albatros_class_f544': 'albatros-corvette',
   'fr_vtb8': 'vtb-boat',
   'fr_vtb11': 'vtb-boat',
   'fr_vtb14': 'vtb-boat',
   'fr_vtb13': 'vtb-boat',
   'fr_vtb12_mod': 'vtb-boat',
-  'fr_lcm_monitor': 'lcm',
+  'fr_lcm_monitor': 'lcm-monitor',
   'fr_vtb18': 'vtb-boat',
   'fr_vtb10': 'vtb-boat',
   'fr_vtb9': 'vtb-boat',
@@ -1767,12 +2202,12 @@ const ALIASES: Record<string, string> = {
   'fr_mtb96_vosper': 'vosper-mtb',
   'fr_flower_class_aconit': 'flower-corvette',
   'fr_adroit_class': 'bourrasque',
-  'fr_lcg_m_l9059': 'lci-l',
-  'fr_arras_class_arras': 'aviso-elan',
-  'fr_marne_class_marne': 'aviso-elan',
-  'fr_arras_class_amiens': 'aviso-elan',
+  'fr_lcg_m_l9059': 'lcg-m',
+  'fr_arras_class_arras': 'arras-aviso',
+  'fr_marne_class_marne': 'arras-aviso',
+  'fr_arras_class_amiens': 'arras-aviso',
   'fr_trident_class_glaive_p671': 'trident-pc',
-  'fr_marne_class_aisne': 'aviso-elan',
+  'fr_marne_class_aisne': 'arras-aviso',
   'fr_vlt1': 'vtb-boat',
   'fr_elan_class_commandant_domine': 'aviso-elan',
   'fr_frigate_croix_de_lorraine_class_la_surprise': 'river-frigate',
