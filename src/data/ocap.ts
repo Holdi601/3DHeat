@@ -30,7 +30,11 @@
  * Events: [f, "killed" | "hit", victim, [killer, weapon] or ["null"], metres],
  * [f, "connected" | "disconnected", name], [f, "captured", [what, name, side,
  * [x, y, z]]], [f, "endMission", [side, text]], [f, "generalEvent", text], and
- * others (tickets, counters, snapshots) that have no place and are left out.
+ * others (tickets, counters, snapshots). A unit's `framesFired` are
+ * [frame, [x, y, z?]]: where each shot went. `Markers` are the map's markers:
+ * [type, text, firstFrame, lastFrame, player, color, side, [[frame, [x, y, z?],
+ * dir?, alpha?], ...], size?, shape?, brush?]. `times` say, now and then, the
+ * server's clock (systemTimeUTC), the in-game date and the time multiplier.
  *
  * What is kept: a dead unit or wreck once, at the frame it died, and not again
  * until it lives (a respawn): a heat of corpses standing on one spot for the
@@ -38,8 +42,13 @@
  * hit on the victim's place (Event `killed ← killer (weapon, d m)`) and on the
  * killer's (`kill → victim (...)`); a connect where that player is, when the
  * player has a unit then; getting in and out of a vehicle (`getin → Hunter`,
- * written by 3DHeat's own recorder) at the unit. Events with no place (the mission's end, messages,
- * tickets) have no row.
+ * written by 3DHeat's own recorder) at the unit. Each shot is a row at its
+ * shooter (`fired`, with TargetX/Y/Z where it went, and its Distance). Each
+ * marker is an object of its own (`marker`), a row wherever it was put.
+ * Events about no one in particular (the mission's end, messages, tickets,
+ * counters, a kill whose victim is not in the recording) are rows of the
+ * object "Mission", at the middle of everything recorded, with what they say
+ * in Text.
  *
  * Columns: Time (s from the start), Frame, X east, Y north, Z (metres),
  * Object (name and id), Side (WEST, EAST, GUER, CIV; a vehicle's is its
@@ -47,7 +56,11 @@
  * name), Type (Infantry, Car, Tank, Helicopter...), Alive (1, 0 dead, 2
  * unconscious), InVehicle, Riding (the vehicle a unit is in), Crew, Group,
  * Role, Player, Shots (fired in that frame), Event, Killer, Victim, Weapon,
- * Distance, Mission, World, Recording.
+ * Distance, Mission, World, Recording, TargetX/Y/Z (where a shot went),
+ * Text (a marker's or an event's own text), Color, Shape (a marker's shape,
+ * brush and size), GameDate and UTC (the in-game date and the server's clock
+ * at that frame, from `times`), TimeMultiplier, Info (the recording's own
+ * fields - author, versions, tags... - as JSON).
  */
 
 import { GrowableF64 } from './growable';
@@ -120,8 +133,12 @@ interface RawRecording {
   endFrame?: number;
   entities?: RawEntity[];
   events?: Raw[];
-  times?: { frameNum?: number; systemTimeUTC?: string }[];
+  times?: { frameNum?: number; systemTimeUTC?: string; date?: string; timeMultiplier?: number; time?: number }[];
+  Markers?: Raw[];
 }
+
+/** A marker's side, as OCAP numbers it: its value plus one indexes this. */
+const MARKER_SIDES = ['GLOBAL', 'EAST', 'WEST', 'GUER', 'CIV'];
 
 /** One entity's state at one frame, decoded from its entry when wanted. */
 interface State {
@@ -238,6 +255,11 @@ interface EventCols {
   victim?: string;
   weapon?: string;
   distance?: number;
+  target?: [number, number, number];
+  text?: string;
+  color?: string;
+  shape?: string;
+  side?: string;
 }
 
 /** Parses an OCAP recording into the table. `name` is the file's name without its extension. */
@@ -260,7 +282,8 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
 
   const tracks = new Map<number, Track>();
   for (const e of doc.entities) if (e && typeof e === 'object' && typeof e.id === 'number') tracks.set(e.id, trackOf(e));
-  const label = (e: RawEntity) => `${str(e.name) || str(e.class) || str(e.type)} #${e.id}`;
+  const label = (e: RawEntity) =>
+    e.type === 'mission' ? 'Mission' : e.type === 'marker' ? `${str(e.name)} #M${-999 - e.id!}` : `${str(e.name) || str(e.class) || str(e.type)} #${e.id}`;
   const stateAt = (id: number, f: number): State | null => {
     const t = tracks.get(id);
     const i = t ? entryAt(t, f) : -1;
@@ -308,7 +331,31 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
   const PLAYER = new GrowableF64();
   const SHOTS = new GrowableF64();
   const DIST = new GrowableF64();
-  const S = { Object: [] as string[], Side: [] as string[], Vehicle: [] as string[], Type: [] as string[], Riding: [] as string[], Group: [] as string[], Role: [] as string[], Event: [] as string[], Killer: [] as string[], Victim: [] as string[], Weapon: [] as string[] };
+  const TX = new GrowableF64();
+  const TY = new GrowableF64();
+  const TZ = new GrowableF64();
+  const MULT = new GrowableF64();
+  const S = { Object: [] as string[], Side: [] as string[], Vehicle: [] as string[], Type: [] as string[], Riding: [] as string[], Group: [] as string[], Role: [] as string[], Event: [] as string[], Killer: [] as string[], Victim: [] as string[], Weapon: [] as string[], Text: [] as string[], Color: [] as string[], Shape: [] as string[], GameDate: [] as string[], UTC: [] as string[] };
+  // The clock entries in frame order: each row gets the last one by its frame.
+  const clock = times.filter((c) => c && typeof c.frameNum === 'number').sort((a, b) => a.frameNum! - b.frameNum!);
+  const clockAt = (f: number) => {
+    let lo = 0;
+    let hi = clock.length - 1;
+    let k = -1;
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1;
+      if (clock[mid].frameNum! <= f) {
+        k = mid;
+        lo = mid + 1;
+      } else hi = mid - 1;
+    }
+    return k >= 0 ? clock[k] : null;
+  };
+  // Where everything was, for placing what happened nowhere in particular.
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
 
   /** The vehicle a unit sits in at frame f: from the crews, else the id newer recorders write in place of the flag. */
   const vehicleOf = (id: number, f: number, s: State): RawEntity | null => {
@@ -329,7 +376,7 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
    */
   const lastSide = new Map<number, string>();
   const sideOf = (t: Track, f: number, s: State): string => {
-    if (t.unit) return s.side;
+    if (t.unit || t.e.type === 'marker' || t.e.type === 'mission') return s.side;
     for (const c of s.crew) {
       const cs = stateAt(c, f);
       if (cs?.side) {
@@ -341,6 +388,7 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
   };
 
   const push = (t: Track, f: number, s: State, ev?: EventCols) => {
+    if (ev?.side !== undefined) s = { ...s, side: ev.side };
     const e = t.e;
     TIME.push(f * delay);
     FRAME.push(f);
@@ -358,7 +406,7 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
     S.Object.push(label(e));
     S.Side.push(sideOf(t, f, s));
     S.Vehicle.push(t.unit ? '' : str(e.name));
-    S.Type.push(TYPE_OF_CLASS[t.unit ? 'unit' : str(e.class)] ?? (str(e.class) || 'Vehicle'));
+    S.Type.push(e.type === 'marker' ? 'Marker' : e.type === 'mission' ? 'Mission' : (TYPE_OF_CLASS[t.unit ? 'unit' : str(e.class)] ?? (str(e.class) || 'Vehicle')));
     S.Riding.push(v ? str(v.name) : '');
     S.Group.push(t.unit ? s.group : '');
     S.Role.push(t.unit ? s.role : '');
@@ -366,6 +414,20 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
     S.Killer.push(ev?.killer ?? '');
     S.Victim.push(ev?.victim ?? '');
     S.Weapon.push(ev?.weapon ?? '');
+    TX.push(ev?.target ? ev.target[0] : NaN);
+    TY.push(ev?.target ? ev.target[1] : NaN);
+    TZ.push(ev?.target ? ev.target[2] : NaN);
+    S.Text.push(ev?.text ?? '');
+    S.Color.push(ev?.color ?? '');
+    S.Shape.push(ev?.shape ?? '');
+    const c = clockAt(f);
+    S.GameDate.push(str(c?.date));
+    S.UTC.push(str(c?.systemTimeUTC));
+    MULT.push(numOr(c?.timeMultiplier, NaN));
+    if (s.x < minX) minX = s.x;
+    if (s.x > maxX) maxX = s.x;
+    if (s.y < minY) minY = s.y;
+    if (s.y > maxY) maxY = s.y;
   };
 
   // Every frame of every entity; the dead once, where they died.
@@ -385,6 +447,54 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
       }
     }
   }
+
+  // Every shot, at its shooter, with where it went.
+  for (const t of tracks.values()) {
+    const fired = t.e.framesFired;
+    if (!Array.isArray(fired)) continue;
+    for (const ff of fired) {
+      if (!Array.isArray(ff) || typeof ff[0] !== 'number' || !Array.isArray(ff[1])) continue;
+      const f = ff[0];
+      const p = ff[1] as unknown[];
+      const s = stateAt(t.e.id!, f);
+      const tx = numOr(p[0], NaN);
+      const ty = numOr(p[1], NaN);
+      if (!s || !Number.isFinite(tx) || !Number.isFinite(ty)) continue;
+      const tz = numOr(p[2], s.z);
+      const d = Math.hypot(tx - s.x, ty - s.y, tz - s.z);
+      push(t, f, s, { event: `fired (${Math.round(d)} m)`, target: [tx, ty, tz], distance: d });
+    }
+  }
+
+  // The map's markers: each its own object, a row wherever it was put.
+  const markers = Array.isArray(doc.Markers) ? doc.Markers : [];
+  markers.forEach((m, k) => {
+    if (!Array.isArray(m) || m.length < 8 || !Array.isArray(m[7])) return;
+    const type = str(m[0]);
+    const text = str(m[1]);
+    const last = numOr(m[3], -1);
+    const side = MARKER_SIDES[numOr(m[6], -1) + 1] ?? 'GLOBAL';
+    const size = Array.isArray(m[8]) ? (m[8] as unknown[]).map((v) => str(v)).join('x') : '';
+    const shape = [str(m[9]), str(m[10]), size].filter(Boolean).join(' ');
+    const e: RawEntity = { id: -1000 - k, type: 'marker', name: text ? `marker ${text}` : `marker ${type}`, side };
+    const track: Track = { e, unit: false, entries: [], from: new Int32Array(0), to: new Int32Array(0) };
+    let at: State | null = null;
+    (m[7] as unknown[]).forEach((pos, j) => {
+      if (!Array.isArray(pos) || typeof pos[0] !== 'number' || !Array.isArray(pos[1])) return;
+      const p = pos[1] as unknown[];
+      const x = numOr(p[0], NaN);
+      const y = numOr(p[1], NaN);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+      at = { x, y, z: numOr(p[2], 0), dir: numOr(pos[2], 0), alive: 1, inVehicle: 0, crew: [], name: e.name!, isPlayer: 0, role: '', group: '', side };
+      push(track, pos[0], at, { event: j === 0 ? `marker ${type}${text ? `: ${text}` : ''}` : '', text, color: str(m[5]), shape, side });
+    });
+    if (at && last >= 0) push(track, last, at, { event: `marker gone${text ? `: ${text}` : ''}`, text, color: str(m[5]), shape, side });
+  });
+
+  // What happened nowhere in particular is the mission's, at the middle of everything recorded.
+  const missionTrack: Track = { e: { id: -1, type: 'mission', name: 'Mission', side: '' }, unit: false, entries: [], from: new Int32Array(0), to: new Int32Array(0) };
+  const pending: [number, EventCols][] = [];
+  const nowhere = (f: number, ev: EventCols) => pending.push([f, ev]);
 
   // Events where they happened.
   const units = [...tracks.values()].filter((t) => t.unit);
@@ -418,11 +528,13 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
       if (victim && vs) push(victim, f, vs, { event: `${kind}${kName ? ` ← ${kName}` : ''}${tail}`, ...cols });
       const ks = killer && killer !== victim ? stateAt(killer.e.id!, f) : null;
       if (killer && ks) push(killer, f, ks, { event: `${kind === 'killed' ? 'kill' : 'hit'} → ${vName || '?'}${tail}`, ...cols });
+      if (!(victim && vs) && !(killer && ks)) nowhere(f, { event: `${kind}${tail}`, ...cols, text: JSON.stringify(ev.slice(2)) });
     } else if (kind === 'connected' || kind === 'disconnected') {
       const who = str(ev[2]);
       // A player connects before their unit exists, and leaves after it is gone: the next or last frame will do.
       const hit = unitNamed(who, f) ?? unitNamed(who, kind === 'connected' ? f + 1 : f - 1);
       if (hit) push(hit[0], f, hit[1], { event: `${kind}: ${who}` });
+      else nowhere(f, { event: `${kind}: ${who}`, text: who });
     } else if (kind === 'getin' || kind === 'getout') {
       // 3DHeat's own recorder (exporters/watcher/mods/arma3): [f, "getin" | "getout", unit, vehicle].
       const u = typeof ev[2] === 'number' ? tracks.get(ev[2]) : undefined;
@@ -436,16 +548,34 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
       const what = named ? str(data[0]) : '';
       const hit = unitNamed(who, f);
       if (hit) push(hit[0], f, hit[1], { event: `${kind}${what ? ` ${what}` : ''}: ${who}` });
+      else nowhere(f, { event: `${kind}${what ? ` ${what}` : ''}: ${who}`, text: JSON.stringify(data) });
+    } else {
+      // The mission's end, messages, tickets, counters, snapshots: what they say, as they say it.
+      const data = ev.slice(2);
+      const said = data.length === 1 && typeof data[0] === 'string' ? data[0] : JSON.stringify(data.length === 1 ? data[0] : data);
+      const side = kind === 'endMission' && Array.isArray(data[0]) ? str((data[0] as unknown[])[0]) : '';
+      const text = kind === 'endMission' && Array.isArray(data[0]) ? str((data[0] as unknown[])[1]) : said;
+      nowhere(f, { event: `${kind}: ${text}`, text: said, side });
     }
+  }
+  if (pending.length) {
+    const cx = Number.isFinite(minX) ? (minX + maxX) / 2 : 0;
+    const cy = Number.isFinite(minY) ? (minY + maxY) / 2 : 0;
+    const at: State = { x: cx, y: cy, z: 0, dir: 0, alive: 1, inVehicle: 0, crew: [], name: 'Mission', isPlayer: 0, role: '', group: '', side: '' };
+    for (const [f, ev] of pending) push(missionTrack, f, at, ev);
   }
 
   const n = TIME.length;
   const fill = (v: string) => new Array<string>(n).fill(v);
-  const columns = ['Time', 'Frame', 'X', 'Y', 'Z', 'Object', 'Side', 'Heading', 'Vehicle', 'Type', 'Alive', 'InVehicle', 'Riding', 'Crew', 'Group', 'Role', 'Player', 'Shots', 'Event', 'Killer', 'Victim', 'Weapon', 'Distance', 'Mission', 'World', 'Recording'];
+  // The recording's own fields, but for what the table already holds row by row.
+  const own: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(doc as Record<string, unknown>)) if (!['entities', 'events', 'Markers', 'times'].includes(k)) own[k] = v;
+  const columns = ['Time', 'Frame', 'X', 'Y', 'Z', 'Object', 'Side', 'Heading', 'Vehicle', 'Type', 'Alive', 'InVehicle', 'Riding', 'Crew', 'Group', 'Role', 'Player', 'Shots', 'Event', 'Killer', 'Victim', 'Weapon', 'Distance', 'Mission', 'World', 'Recording', 'TargetX', 'TargetY', 'TargetZ', 'Text', 'Color', 'Shape', 'GameDate', 'UTC', 'TimeMultiplier', 'Info'];
   const data: (Float64Array | string[])[] = [
     TIME.finish(), FRAME.finish(), X.finish(), Y.finish(), Z.finish(), S.Object, S.Side, HEAD.finish(), S.Vehicle, S.Type,
     ALIVE.finish(), INVEH.finish(), S.Riding, CREW.finish(), S.Group, S.Role, PLAYER.finish(), SHOTS.finish(),
     S.Event, S.Killer, S.Victim, S.Weapon, DIST.finish(), fill(mission), fill(world), fill(recording),
+    TX.finish(), TY.finish(), TZ.finish(), S.Text, S.Color, S.Shape, S.GameDate, S.UTC, MULT.finish(), fill(JSON.stringify(own)),
   ];
   return { columns, data, numeric: data.map((d) => d instanceof Float64Array), rows: n, title: mission, world, captureDelay: delay };
 }
@@ -470,7 +600,7 @@ export function ocapHints(): {
       lookMode: 'yawPitch',
       yaw: 'Heading',
       angleUnit: 'degrees',
-      extra: ['Vehicle', 'Type', 'Event', 'Alive', 'InVehicle', 'Riding', 'Group', 'Role', 'Player', 'Shots', 'Killer', 'Victim', 'Weapon', 'Distance', 'Crew', 'Mission', 'World', 'Frame'],
+      extra: ['Vehicle', 'Type', 'Event', 'Alive', 'InVehicle', 'Riding', 'Group', 'Role', 'Player', 'Shots', 'Killer', 'Victim', 'Weapon', 'Distance', 'Crew', 'Mission', 'World', 'Frame', 'TargetX', 'TargetY', 'TargetZ', 'Text', 'Color', 'Shape', 'GameDate', 'UTC', 'TimeMultiplier'],
     },
   };
 }

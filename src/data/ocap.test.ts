@@ -16,7 +16,12 @@ const REC = {
   worldName: 'Altis',
   captureDelay: 2,
   endFrame: 5,
-  times: [{ frameNum: 0, systemTimeUTC: '2026-11-07T20:00:00.000' }],
+  missionAuthor: 'Someone',
+  addonVersion: '2.0.0',
+  times: [
+    { frameNum: 0, systemTimeUTC: '2026-11-07T20:00:00.000', date: '2035-05-01T18:00:00', timeMultiplier: 1 },
+    { frameNum: 3, systemTimeUTC: '2026-11-07T20:00:06.000', date: '2035-05-01T18:00:06', timeMultiplier: 2 },
+  ],
   entities: [
     {
       id: 0,
@@ -77,7 +82,10 @@ const REC = {
     [5, 'endMission', ['WEST', 'BLUFOR wins']],
     [5, 'respawnTickets', [-1, 10, 10, -1]],
   ],
-  Markers: [],
+  Markers: [
+    ['hd_warning', 'Mines', 1, 4, 0, 'D9D900', 0, [[1, [500, 600], 0], [3, [510, 600], 0]]],
+    ['mil_dot', '', 0, 5, -1, '000000', -1, [[0, [700, 800, 5], 0, 0]], [75, 75], 'RECTANGLE', 'grid'],
+  ],
 };
 const TEXT = JSON.stringify(REC);
 
@@ -157,8 +165,36 @@ describe('OCAP', () => {
     expect(ev[at('hit')]).toBe('hit');
     expect(ev[at('connected')]).toBe('connected: Alpha');
     expect(ev[at('getin')]).toBe('getin → Hunter');
-    // No place, no row: the mission's end, tickets.
-    expect(ev.some((e) => e.includes('endMission') || e.includes('respawn'))).toBe(false);
+    // What happened nowhere in particular: the mission's, in the middle of everything.
+    const end = at('endMission');
+    expect(ev[end]).toBe('endMission: BLUFOR wins');
+    expect(obj[end]).toBe('Mission');
+    expect(col<string[]>('Side')[end]).toBe('WEST');
+    expect(col<string[]>('Type')[end]).toBe('Mission');
+    const tickets = at('respawnTickets');
+    expect(col<string[]>('Text')[tickets]).toBe('[-1,10,10,-1]');
+  });
+
+  it('keeps every shot with where it went, the markers, the clock and the recording\'s own fields', () => {
+    const ev = col<string[]>('Event');
+    const fired = [...ev.keys()].filter((i) => ev[i].startsWith('fired'));
+    expect(fired.length).toBe(2);
+    const f = fired[0];
+    expect(col<string[]>('Object')[f]).toBe('Alpha #0');
+    expect(col<Float64Array>('TargetX')[f]).toBe(150);
+    expect(col<Float64Array>('Distance')[f]).toBeCloseTo(Math.hypot(150 - 101, 250 - 200, 10 - 10), 6);
+    const mines = [...ev.keys()].filter((i) => col<string[]>('Object')[i] === 'marker Mines #M1');
+    expect(mines.map((i) => ev[i])).toEqual(['marker hd_warning: Mines', '', 'marker gone: Mines']);
+    expect(col<Float64Array>('X')[mines[1]]).toBe(510);
+    expect(col<string[]>('Color')[mines[0]]).toBe('D9D900');
+    expect(col<string[]>('Side')[mines[0]]).toBe('EAST');
+    const dot = [...ev.keys()].find((i) => col<string[]>('Object')[i] === 'marker mil_dot #M2')!;
+    expect(col<string[]>('Shape')[dot]).toBe('RECTANGLE grid 75x75');
+    expect(col<string[]>('Side')[dot]).toBe('GLOBAL');
+    const alpha = rowsOf('Alpha #0');
+    expect(col<string[]>('GameDate')[alpha[4]]).toBe('2035-05-01T18:00:06');
+    expect(col<Float64Array>('TimeMultiplier')[alpha[0]]).toBe(1);
+    expect(JSON.parse(col<string[]>('Info')[0])).toMatchObject({ missionAuthor: 'Someone', addonVersion: '2.0.0', endFrame: 5 });
   });
 
   it('says what things are in words the figures know', () => {
