@@ -105,6 +105,9 @@ export const MODEL_EXTENSIONS = '.glb,.gltf,.obj,.stl,.ply';
 
 // ------------------------------------------------------------------ assembly
 
+/** Further from the origin than this (1,000 km in centimetres, 100,000 km in metres) a vertex is a broken file's, not geometry. */
+const INSANE = 1e8;
+
 /**
  * Accumulates triangles from any source into one interleaved buffer.
  *
@@ -291,15 +294,61 @@ class MeshBuilder {
     return this.pos.length / 3;
   }
 
+  /** Vertices `dropInsane` found unusable, left out of the bounds; null when there were none. */
+  private insane: Uint8Array | null = null;
+
+  /**
+   * The index buffer without triangles that touch an unusable vertex: one not
+   * finite, or further than INSANE along an axis. A broken exporter writes
+   * such vertices (an empty box's 1e32 corners); kept, they stretch the bounds
+   * past anything the camera, the depth range or the spatial index can hold,
+   * and the page stops responding. Such vertices are set to the origin so no
+   * later pass over the vertex list meets them either.
+   */
+  private dropInsane(indices: Uint32Array, pos: Float32Array, n: number): Uint32Array {
+    let bad: Uint8Array | null = null;
+    for (let i = 0; i < n; i++) {
+      const x = pos[i * 3];
+      const y = pos[i * 3 + 1];
+      const z = pos[i * 3 + 2];
+      if (Math.abs(x) <= INSANE && Math.abs(y) <= INSANE && Math.abs(z) <= INSANE) continue; // NaN fails this too
+      if (!bad) bad = new Uint8Array(n);
+      bad[i] = 1;
+      pos[i * 3] = 0;
+      pos[i * 3 + 1] = 0;
+      pos[i * 3 + 2] = 0;
+    }
+    if (!bad) return indices;
+    this.insane = bad;
+    const kept = new Uint32Array(indices.length);
+    let k = 0;
+    for (const span of this.partSpans) {
+      const start = k;
+      for (let i = span.start; i < span.start + span.count; i += 3) {
+        const a = indices[i];
+        const b = indices[i + 1];
+        const c = indices[i + 2];
+        if (bad[a] || bad[b] || bad[c]) continue;
+        kept[k++] = a;
+        kept[k++] = b;
+        kept[k++] = c;
+      }
+      span.start = start;
+      span.count = k - start;
+    }
+    if (k < 3) throw new MsgError(msg('data.modelParse.noTriangles'));
+    return kept.slice(0, k);
+  }
+
   finish(): RawMesh {
     const n = this.pos.length / 3;
     if (n === 0 || this.idx.length < 3) {
       throw new MsgError(msg('data.modelParse.noTriangles'));
     }
-    const indices = this.idx.finish();
-    const vertices = new Float32Array(n * 6);
     const pos = this.pos.raw();
     const nrm = this.nrm.raw();
+    const indices = this.dropInsane(this.idx.finish(), pos, n);
+    const vertices = new Float32Array(n * 6);
     let minX = Infinity;
     let minY = Infinity;
     let minZ = Infinity;
@@ -317,6 +366,7 @@ class MeshBuilder {
       vertices[i * 6 + 3] = nrm[i * 3];
       vertices[i * 6 + 4] = nrm[i * 3 + 1];
       vertices[i * 6 + 5] = nrm[i * 3 + 2];
+      if (this.insane && this.insane[i]) continue;
       if (x < minX) minX = x;
       if (x > maxX) maxX = x;
       if (y < minY) minY = y;
