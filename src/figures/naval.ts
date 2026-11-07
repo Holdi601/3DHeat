@@ -7,7 +7,7 @@
  */
 
 import { finish, newKit, PAINT, type Kit, type Template } from './kit';
-import { blob, block, body, hexa, plate, tiltBox, tube } from './parts';
+import { blob, block, body, hexa, outlineBody, plate, tiltBox, tube, type Outline } from './parts';
 import type { Section } from '../race/shapes';
 import type { Rgb } from '../race/geometry';
 
@@ -72,6 +72,15 @@ export interface NavalSpec {
   skiJump?: boolean;
   /** A helicopter deck marked on the stern. */
   helideck?: boolean;
+  /**
+   * The hull's true shape, in place of the generic one: its deck line (sheer,
+   * forecastle step, quarterdeck) over the waterline and its half-beam plan
+   * (the bow's entry, the transom), forward from the middle, up from the
+   * waterline. Not for submarines and hovercraft.
+   */
+  hullOutline?: Outline;
+  /** More parts from outlines: superstructure, bridges, hangars, stacks, sails; mirrored when off the centre line. */
+  bodies?: Outline[];
 }
 
 export function buildNaval(spec: NavalSpec): Template {
@@ -83,6 +92,16 @@ export function buildNaval(spec: NavalSpec): Template {
   const kind = spec.hull ?? 'warship';
   const S = (x: number, w: number, h: number, z: number): Section => ({ x, w: Math.max(0.02, w), h: Math.max(0.02, h), z });
   if (kind === 'submarine') {
+    if (spec.hullOutline) {
+      // A boat from its outlines: the hull awash, the sail, planes and rudders as bodies.
+      outlineBody(k.team, k.fr, spec.hullOutline, grey(0.55), 14);
+      for (const o of spec.bodies ?? []) {
+        outlineBody(k.team, k.fr, o, grey(0.5), 12);
+        if (o.side) outlineBody(k.team, k.fr, { ...o, side: -o.side }, grey(0.5), 12);
+      }
+      for (const t of spec.turrets ?? []) turret(k, t, fb);
+      return finish(k, 'ground');
+    }
     // A long round body awash: a round bow, tapering to the stern, the sail standing up from it.
     body(k.team, k.fr, [S(half, b * 0.35, b * 0.35, 0), S(half - L * 0.03, b * 0.85, b * 0.85, 0), S(half - L * 0.1, b, b, 0), S(-half + L * 0.32, b, b, 0), S(-half + L * 0.06, b * 0.35, b * 0.35, 0), S(-half, 0.05, 0.05, 0)], grey(0.55), 12, 2);
     // The cross of control surfaces at the stern.
@@ -104,7 +123,8 @@ export function buildNaval(spec: NavalSpec): Template {
   } else {
     // The hull: a sharp bow, full beam from a third of the length aft, a transom stern.
     const bow = kind === 'landing' ? 0.85 : kind === 'rhib' || kind === 'boat' ? 0.35 : kind === 'merchant' ? 0.3 : 0.08;
-    body(
+    if (spec.hullOutline) outlineBody(k.team, k.fr, spec.hullOutline, grey(0.75), 14, 1, grey(0.55));
+    else body(
       k.team,
       k.fr,
       [S(half, b * bow, fb * 0.5, fb * 0.55), S(half - L * 0.12, b * 0.7, fb * 0.5, fb * 0.5), S(half - L * 0.32, b, fb * 0.5, fb * 0.5), S(-half + L * 0.1, b, fb * 0.5, fb * 0.5), S(-half, b * 0.85, fb * 0.45, fb * 0.55)],
@@ -153,6 +173,10 @@ export function buildNaval(spec: NavalSpec): Template {
   for (const m of spec.masts ?? []) {
     tube(k.fixed, k.fr, [m.x, carrierOff, fb], [m.x, carrierOff, fb + deckUp + m.height], Math.max(0.12, m.height * 0.03), 0.06, PAINT.metal, 6);
     block(k.fixed, k.fr, [m.x, carrierOff, fb + deckUp + m.height * 0.75], 0.2, Math.max(1.5, spec.beam * 0.35), 0.2, PAINT.metal);
+  }
+  for (const o of spec.bodies ?? []) {
+    outlineBody(k.team, k.fr, o, grey(0.86), 12);
+    if (o.side) outlineBody(k.team, k.fr, { ...o, side: -o.side }, grey(0.86), 12);
   }
   for (const r of spec.radars ?? []) radar(k, r, fb + deckUp, r.side ?? carrierOff);
   for (const t of spec.turrets ?? []) turret(k, t, fb);

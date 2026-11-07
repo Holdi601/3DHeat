@@ -1053,4 +1053,44 @@ A['cr-42'] = ww1({ length: 8.25, span: 9.7, height: 3.06, lower: 6.5, lowerChord
 A['swordfish'] = ww1({ cls: 'biplane-two-seat', length: 10.87, span: 13.87, height: 3.76, chord: 1.75, gap: 1.9, stagger: 0.4, engine: 'rotary', rudder: 'round', crew: 2, bays: 2, depth: 1.25, half: 0.5, prop: 3.2, blades: 3 });
 A['he-51'] = ww1({ length: 8.4, span: 11.0, height: 3.2, chord: 1.6, gap: 1.6, stagger: 0.4, engine: 'inline', rudder: 'round', bays: 2, depth: 1.05, prop: 2.9 });
 
+// ---------------------------------------------------------------- more War Thunder types with their own silhouettes
+
+// Ki-27 "Nate": a slim radial monoplane with fixed spatted gear and a long canopy (7.53 x 11.31 x 3.25 m); the A5M and other
+// fixed-gear monoplane fighters map here.
+A['ki-27'] = one({ cls: 'ww2-fighter', length: 7.53, span: 11.31, height: 3.25, w: 0.55, h: 0.62, radial: true, wing: 'round', le: 1.3, root: 2.2, tip: 0.9, sweep: 4, dihedral: 4, fin: 1.3, finRoot: 1.3, roundFin: true, tailSpan: 3.4, tailRoot: 0.9, canopy: { x: -0.2, length: 1.6, kind: 'framed' }, razor: true, prop: 2.9, blades: 2, gear: true });
+// F2A Buffalo: a barrel body behind the radial, a mid-low round-tipped wing, the framed canopy on a razorback (8.03 x 10.67 x 3.66 m).
+A['f2a-buffalo'] = one({ cls: 'ww2-fighter', length: 8.03, span: 10.67, height: 3.66, w: 0.7, h: 0.8, radial: true, wing: 'round', le: 1.4, root: 2.4, tip: 1.2, sweep: 3, mount: -0.3, dihedral: 5, fin: 1.4, finRoot: 1.3, roundFin: true, tailSpan: 4.2, tailRoot: 1.1, canopy: { x: 0.0, length: 1.8, kind: 'framed' }, razor: true, prop: 3.15, blades: 3 });
+// Sea Fury: the big radial, five blades, a near-elliptic wing, the bubble and a dorsal fillet (10.57 x 11.7 x 4.84 m).
+A['sea-fury'] = one({ cls: 'ww2-fighter', length: 10.57, span: 11.7, height: 4.84, w: 0.68, h: 0.8, radial: true, wing: 'elliptic', le: 1.7, root: 2.9, tip: 0.6, fin: 1.75, finRoot: 1.7, tailSpan: 4.6, tailRoot: 1.2, canopy: { x: -0.3, length: 1.6, kind: 'bubble' }, prop: 3.81, blades: 5, finOutline: filletFin(10.57, 1.7, 1.0, 1.75, 0.8) });
+
+// P-61 Black Widow: a central nacelle with the glazed nose and dorsal turret, two booms carrying the radials forward
+// and the twin fins aft, the tailplane between them (15.11 x 20.12 x 4.47 m).
+A['p-61'] = mp({
+  cls: 'ww2-heavy-fighter', length: 15.11, span: 20.12, height: 4.47,
+  body: [[7.55, 0.0, -0.45, 0.3], [7.1, 0.55, -0.7, 0.7], [6.0, 0.85, -0.9, 0.85], [5.0, 1.2, -0.95, 0.85], [2.0, 1.2, -0.95, 0.85], [-1.0, 0.9, -0.8, 0.75], [-2.8, 0.5, -0.3, 0.3]],
+  wing: [[0, 2.6, -1.4], [3.2, 2.6, -1.4], [10.06, 1.0, -0.4]], tipR: 0.4, wingUp: 0.2, dihedral: 3,
+  nacelles: [{ y: 2.6, x: 4.6, back: -7.0, r: 0.75, z: 0.2, kind: 'radial', below: 0.2 }],
+  prop: [3.7, 4],
+  fin: [[-5.6, -0.5], [-5.7, 2.2], [-6.3, 2.5], [-7.4, 2.5], [-7.55, 2.1], [-7.55, -0.5], [-7.2, -0.8], [-5.9, -0.8]], twin: 5.2,
+  tail: [[0, -5.8, -7.2], [2.6, -5.8, -7.2]], tailUp: 0.9,
+  extra: [dome(1.4, 1.2, 0.45, 1.0)],
+});
+
+// PV-2 Harpoon: the Lockheed twin (Hudson, Ventura, Harpoon) - a deep body with a dorsal turret, radials, and twin
+// oval fins on the tailplane's tips (15.87 x 22.86 x 3.63 m).
+A['pv-2'] = mp({
+  cls: 'ww2-bomber', length: 15.87, span: 22.86, height: 3.63,
+  body: [[7.93, -0.1, -0.5, 0.25], [7.4, 0.5, -0.85, 0.7], [6.4, 0.85, -1.05, 0.9], [5.2, 1.15, -1.1, 0.92], [3.0, 1.15, -1.1, 0.92], [-2, 1.0, -0.95, 0.85], [-5.5, 0.75, -0.4, 0.55], [-7.93, 0.5, 0.1, 0.15]],
+  wing: [[0, 2.6, -1.6], [11.43, 0.6, -0.5]], tipR: 0.5, wingUp: -0.1, dihedral: 5,
+  nacelles: [{ y: 3.0, x: 4.4, back: -2.4, r: 0.75, z: -0.1, kind: 'radial', below: 0.2 }],
+  prop: [3.7, 3],
+  fin: [[-6.0, 0.6], [-6.2, 1.7], [-6.8, 2.2], [-7.5, 2.1], [-7.9, 1.2], [-7.9, 0.0], [-7.5, -0.7], [-6.7, -0.85], [-6.1, -0.4]], twin: 6.6,
+  tail: [[0, -6.1, -7.8], [3.3, -6.3, -7.8]], tailUp: 0.5,
+  extra: [dome(-0.6, 1.0, 0.5, 1.1)],
+});
+
+// Ju 87 G: the Stuka with a 37 mm cannon pod under each wing, long barrels reaching ahead of the nose (11.5 x 15.0 x 3.88 m).
+const STUKA = AIRCRAFT.air!['ju-87-stuka'];
+A['ju-87-g'] = { ...STUKA, cls: 'ww2-attack', span: 15.0, bodies: [...(STUKA.bodies ?? []), { top: [[4.4, -0.85], [2.4, -0.82], [1.6, -0.7], [-0.6, -0.72]], bottom: [[4.4, -0.93], [2.4, -0.96], [1.6, -1.2], [-0.6, -1.0]], plan: [[4.4, 0.05], [2.4, 0.06], [1.6, 0.22], [-0.6, 0.1]], side: 2.9, round: 2, stations: 8 }] };
+
 export const PROP_VARIANTS: SpecSet = { air: A, aliases: ALIASES };
