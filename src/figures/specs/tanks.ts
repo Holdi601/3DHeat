@@ -74,18 +74,26 @@ G['m1a2c-sepv3'] = { cls: 'mbt', ...ABRAMS, rws: true, turrets: [{ x: -1.0, leng
 // Leopard 2A4: upright faces, a box turret with a blunt vertical front and a short bustle; the hull's upper glacis
 // short and steep, the rear sprocket (hull 7.72 x 3.7 m, 2.48 m).
 export const LEO2_HULL = hull(7.72, 3.7, 1.75, 0.92, 1.4, 1.2, 0.15);
+// The turret's back 2.33 m behind the hull's middle and its front face 1.63 m ahead, the bustle's underside 0.22 m
+// over the deck for its rear 1.4 m (two CC0 side photographs of Dutch Leopard 2A4s, one with the turret turned to the
+// rear, scaled by the hull's length and fitted to the road wheels, sources.md).
+export const leo2Bustle = (front: number): P2[] => [[-1.98, 0.22], [-0.65, 0.22], [-0.5, 0], [front, 0]];
+const leo2Turret = (plan: P2[], top: P2[], gunX: number): TurretSpec => {
+  const t = turret(-0.35, plan, top, 12, gunX);
+  return { ...t, outline: { ...t.outline!, bottom: leo2Bustle(plan[plan.length - 1][0]) } };
+};
 export const LEO2: GroundSpec = {
   chassis: 'tracked', length: 7.72, width: 3.7, hullHeight: 1.75, roadWheels: 7, roadWheelRadius: 0.35, skirts: true,
   // 4.95 m of track on the ground between the end road wheels (published).
   trackProfile: run(7.5, 0.95, [3.75, 0.6], [-3.75, 0.7], -2.65, 2.65),
   hullOutline: LEO2_HULL,
-  turret: turret(-0.35, [[-2.25, 1.35], [-1.9, 1.6], [1.75, 1.65], [1.95, 1.55], [2.0, 0.6]], [[-2.25, 0.72], [-2.0, 0.8], [1.95, 0.84], [2.0, 0.6]], 12, 2.0),
+  turret: leo2Turret([[-1.98, 1.35], [-1.68, 1.6], [1.75, 1.65], [1.95, 1.55], [2.0, 0.6]], [[-1.98, 0.72], [-1.75, 0.8], [1.95, 0.84], [2.0, 0.6]], 2.0),
   guns: [{ mount: 'turret', length: 5.3, calibre: 0.12, extractor: 0.5, at: 0.45 }],
   cupola: true,
 };
 G['leopard-2a4'] = { cls: 'mbt', ...LEO2 };
 // Leopard 2A5 / 2A6: the spaced-armour arrowhead on the turret front, its top sloping down to the point; the A6 with the long L/55.
-export const LEO2_WEDGE = turret(-0.35, [[-2.25, 1.35], [-1.9, 1.6], [1.5, 1.68], [2.25, 1.15], [2.85, 0.42]], [[-2.25, 0.72], [-2.0, 0.82], [1.4, 0.88], [2.85, 0.42]], 12, 2.25);
+export const LEO2_WEDGE = leo2Turret([[-1.98, 1.35], [-1.68, 1.6], [1.5, 1.68], [2.25, 1.15], [2.85, 0.42]], [[-1.98, 0.72], [-1.75, 0.82], [1.4, 0.88], [2.85, 0.42]], 2.25);
 G['leopard-2a5'] = { cls: 'mbt', ...LEO2, turret: LEO2_WEDGE };
 G['leopard-2a6'] = { cls: 'mbt', ...LEO2, turret: LEO2_WEDGE, guns: [{ mount: 'turret', length: 6.6, calibre: 0.12, extractor: 0.45, at: 0.45 }] };
 
