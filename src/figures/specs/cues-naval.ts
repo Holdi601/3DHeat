@@ -1044,4 +1044,184 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
     { cue: 'two funnels', check: (s) => funnels(s) === 2 },
     { cue: 'long forecastle stepping down aft', check: forecastle },
   ]),
+  agano: naval('agano', [
+    { cue: 'three twin 15 cm turrets: two forward, one aft', check: (s) => battery(s, 0.14, 2, 1, 2) },
+    { cue: 'one funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'long forecastle stepping down aft', check: forecastle },
+  ]),
+  abruzzi: naval('abruzzi', [
+    { cue: 'triple 152 mm turrets A and Y, twins B and X superfiring', check: (s) => fwd(s, 0.15).map((t) => t.barrels).join() === '3,2' && aft(s, 0.15).map((t) => t.barrels).join() === '2,3' && superfires(fwd(s, 0.15)) && superfires(aft(s, 0.15)) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+  ]),
+  'leander-frigate': naval('leander-frigate', [
+    { cue: 'twin 4.5-inch turret forward', check: (s) => battery(s, 0.1, 1, 0, 2) },
+    { cue: 'one big funnel amidships', check: (s) => funnels(s) === 1 },
+    { cue: 'big radar aerial on the mainmast', check: (s) => (s.radars ?? []).some((r) => (r.size ?? 0) >= 6) },
+    { cue: 'hangar and flight deck aft', check: (s) => !!s.helideck },
+  ]),
+  aoba: naval('aoba', [
+    { cue: 'three twin 20 cm turrets: two forward, one aft', check: (s) => battery(s, 0.2, 2, 1, 2) },
+    { cue: 'two funnels, the fore one larger', check: (s) => funnels(s) === 2 && s.funnels![0].diameter > s.funnels![1].diameter },
+    { cue: 'long forecastle stepping down aft', check: forecastle },
+  ]),
+  nevada: naval('nevada', [
+    { cue: 'triple 14-inch turrets A and Y, twins B and X superfiring', check: (s) => fwd(s, 0.3).map((t) => t.barrels).join() === '3,2' && aft(s, 0.3).map((t) => t.barrels).join() === '2,3' && superfires(fwd(s, 0.3)) && superfires(aft(s, 0.3)) },
+    { cue: 'one funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'tripod masts fore and aft', check: (s) => mastCount('tripod')(s) === 2 },
+  ]),
+  nassau: naval('nassau', [
+    { cue: 'six twin 28 cm turrets in a hexagon: fore, aft and two on each beam', check: (s) => fwd(s, 0.25).length === 1 && aft(s, 0.25).length === 1 && mains(s, 0.25).filter((t) => !!t.side).length === 4 },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+    { cue: 'short beamy hull', check: (s) => s.length / s.beam < 6 },
+  ]),
+  'doria-1940': naval('doria-1940', [
+    { cue: 'triple 320 mm turrets A and Y, twins B and X superfiring', check: (s) => fwd(s, 0.3).map((t) => t.barrels).join() === '3,2' && aft(s, 0.3).map((t) => t.barrels).join() === '2,3' && superfires(fwd(s, 0.3)) && superfires(aft(s, 0.3)) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+    { cue: 'tower bridge (as rebuilt)', check: tall(20) },
+  ]),
+  fuso: naval('fuso', [
+    { cue: 'six twin 35.6 cm turrets: two forward, two amidships, two aft', check: (s) => mains(s, 0.3).length === 6 && mains(s, 0.3).filter((t) => Math.abs(t.x) < 30).length === 2 },
+    { cue: 'very tall, top-heavy pagoda', check: tall(40) },
+    { cue: 'one funnel', check: (s) => funnels(s) === 1 },
+  ]),
+  'duguay-trouin': naval('duguay-trouin', [
+    { cue: 'four twin 155 mm turrets, superfiring pairs fore and aft', check: (s) => battery(s, 0.15, 2, 2, 2) && superfires(fwd(s, 0.15)) && superfires(aft(s, 0.15)) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+    { cue: 'long forecastle stepping down aft', check: forecastle },
+  ]),
+  somers: naval('somers', [
+    { cue: 'four twin 5-inch mounts, superfiring pairs fore and aft', check: (s) => battery(s, 0.1, 2, 2, 2) && superfires(fwd(s, 0.1)) && superfires(aft(s, 0.1)) },
+    { cue: 'one funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'quadruple torpedo tube mounts', check: (s) => tubeMounts(s).some((t) => t.barrels === 4) },
+  ]),
+  mitscher: naval('mitscher', [
+    { cue: 'single 5-inch/54 mounts, one forward, one aft', check: (s) => battery(s, 0.1, 1, 1, 1) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+    { cue: 'long flush deck with sheer forward', check: (s) => flush(s) && (s.sheer ?? 0) >= 2 },
+  ]),
+  maestrale: naval('maestrale', [
+    { cue: 'twin 120 mm mounts, one forward, one aft on a deckhouse', check: (s) => battery(s, 0.1, 1, 1, 2) },
+    { cue: 'one big trunked funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'raised forecastle', check: forecastle },
+  ]),
+  delaware: naval('delaware', [
+    { cue: 'five twin 12-inch turrets: two forward, three aft', check: (s) => battery(s, 0.3, 2, 3, 2) },
+    { cue: 'cage masts fore and aft', check: (s) => mastCount('lattice')(s) === 2 },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+  ]),
+  'new-mexico': naval('new-mexico', [
+    { cue: 'four triple 14-inch turrets, superfiring pairs fore and aft', check: (s) => battery(s, 0.3, 2, 2, 3) && superfires(fwd(s, 0.3)) && superfires(aft(s, 0.3)) },
+    { cue: 'one funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'tower bridge (as rebuilt)', check: tall(20) },
+  ]),
+  konig: naval('konig', [
+    { cue: 'five twin 30.5 cm turrets on the centre line: two forward, one amidships, two aft', check: (s) => mains(s, 0.3).filter((t) => !t.side && t.barrels === 2).length === 5 && fwd(s, 0.3).length === 2 && mains(s, 0.3).some((t) => Math.abs(t.x) < 10) },
+    { cue: 'superfiring pairs at both ends', check: (s) => superfires(fwd(s, 0.3)) && superfires(aft(s, 0.3)) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+  ]),
+  derfflinger: naval('derfflinger', [
+    { cue: 'four twin 30.5 cm turrets, superfiring pairs fore and aft', check: (s) => battery(s, 0.3, 2, 2, 2) && superfires(fwd(s, 0.3)) && superfires(aft(s, 0.3)) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+    { cue: 'flush deck', check: flush },
+  ]),
+  'gneisenau-380': naval('gneisenau-380', [
+    { cue: 'three twin 38 cm turrets: two forward, one aft', check: (s) => battery(s, 0.3, 2, 1, 2) },
+    { cue: 'B turret superfiring over A', check: (s) => superfires(fwd(s, 0.3)) },
+    { cue: 'one funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'Atlantic bow with a strong sheer', check: (s) => (s.sheer ?? 0) >= 5 },
+  ]),
+  'imperatritsa-mariya': naval('imperatritsa-mariya', [
+    { cue: 'four triple 305 mm turrets spread along the deck, none superfiring', check: (s) => mains(s, 0.3).length === 4 && mains(s, 0.3).every((t) => t.barrels === 3) && !superfires(fwd(s, 0.3)) && !superfires(aft(s, 0.3)) },
+    { cue: 'two funnels far apart', check: (s) => funnels(s) === 2 && funnelGap(s) > 25 },
+  ]),
+  stalingrad: naval('stalingrad', [
+    { cue: 'three triple 305 mm turrets: two forward, one aft', check: (s) => battery(s, 0.3, 2, 1, 3) },
+    { cue: 'B turret superfiring over A', check: (s) => superfires(fwd(s, 0.3)) },
+    { cue: 'one big funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'very long hull', check: (s) => s.length > 270 },
+  ]),
+  'invincible-1908': naval('invincible-1908', [
+    { cue: 'four twin 12-inch turrets: fore, aft and two wing turrets en echelon', check: (s) => fwd(s, 0.3).length === 1 && aft(s, 0.3).length === 1 && mains(s, 0.3).filter((t) => !!t.side).length === 2 },
+    { cue: 'three funnels, the aft one apart', check: (s) => funnels(s) === 3 && s.funnels![1].x - s.funnels![2].x > s.funnels![0].x - s.funnels![1].x },
+  ]),
+  orion: naval('orion', [
+    { cue: 'five twin 13.5-inch turrets on the centre line: two forward, Q amidships, two aft', check: (s) => battery(s, 0.3, 2, 3, 2) && mains(s, 0.3).some((t) => Math.abs(t.x) < 10) },
+    { cue: 'superfiring pairs at both ends', check: (s) => superfires(fwd(s, 0.3)) && superfires(aft(s, 0.3)) },
+    { cue: 'two funnels, the tripod foremast between them', check: (s) => funnels(s) === 2 && mastKind('tripod')(s) },
+  ]),
+  vanguard: naval('vanguard', [
+    { cue: 'four twin 15-inch turrets, superfiring pairs fore and aft', check: (s) => battery(s, 0.3, 2, 2, 2) && superfires(fwd(s, 0.3)) && superfires(aft(s, 0.3)) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+    { cue: 'strong sheer to a high bow', check: (s) => (s.sheer ?? 0) >= 6 },
+  ]),
+  kawachi: naval('kawachi', [
+    { cue: 'six twin 12-inch turrets: fore, aft and two on each beam', check: (s) => fwd(s, 0.3).length === 1 && aft(s, 0.3).length === 1 && mains(s, 0.3).filter((t) => !!t.side).length === 4 },
+    { cue: 'three funnels', check: (s) => funnels(s) === 3 },
+  ]),
+  tosa: naval('tosa', [
+    { cue: 'five twin 41 cm turrets: two forward, three aft', check: (s) => battery(s, 0.4, 2, 3, 2) },
+    { cue: 'superfiring pairs at both ends', check: (s) => superfires(fwd(s, 0.4)) && superfires(aft(s, 0.4)) },
+  ]),
+  'dante-alighieri': naval('dante-alighieri', [
+    { cue: 'four triple 305 mm turrets: fore, aft and two amidships', check: (s) => mains(s, 0.3).length === 4 && mains(s, 0.3).every((t) => t.barrels === 3) && mains(s, 0.3).filter((t) => Math.abs(t.x) < 30).length === 2 },
+    { cue: 'three funnels', check: (s) => funnels(s) === 3 },
+    { cue: 'no superfiring turrets', check: (s) => !superfires(fwd(s, 0.3)) && !superfires(aft(s, 0.3)) },
+  ]),
+  'cavour-1915': naval('cavour-1915', [
+    { cue: 'thirteen 305 mm guns: triples A, Q and Y, twins B and X superfiring', check: (s) => mains(s, 0.3).reduce((n, t) => n + t.barrels, 0) === 13 && superfires(fwd(s, 0.3)) && superfires(aft(s, 0.3)) },
+    { cue: 'two funnels far apart', check: (s) => funnels(s) === 2 && funnelGap(s) > 25 },
+  ]),
+  caracciolo: naval('caracciolo', [
+    { cue: 'four twin 381 mm turrets, superfiring pairs fore and aft', check: (s) => battery(s, 0.3, 2, 2, 2) && superfires(fwd(s, 0.3)) && superfires(aft(s, 0.3)) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+  ]),
+  portland: naval('portland', [
+    { cue: 'three triple 8-inch turrets: two forward, one aft', check: (s) => battery(s, 0.2, 2, 1, 3) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+    { cue: 'long forecastle stepping down aft', check: forecastle },
+  ]),
+  'maxim-gorky': naval('maxim-gorky', [
+    { cue: 'three triple 180 mm turrets: two forward, one aft', check: (s) => battery(s, 0.17, 2, 1, 3) },
+    { cue: 'one big funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'tower bridge', check: tall(20) },
+  ]),
+  hawkins: naval('hawkins', [
+    { cue: 'single 7.5-inch guns behind shields: two forward, two aft, more on the beams', check: (s) => singles(s, 0.18) && fwd(s, 0.18).length === 2 && aft(s, 0.18).length === 2 && beamGuns(s) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+    { cue: 'long forecastle stepping down aft', check: forecastle },
+  ]),
+  dido: naval('dido', [
+    { cue: 'five twin 5.25-inch turrets: three stepped up forward, two aft', check: (s) => battery(s, 0.13, 3, 2, 2) && superfires(fwd(s, 0.13)) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+    { cue: 'long forecastle', check: forecastle },
+  ]),
+  york: naval('york', [
+    { cue: 'three twin 8-inch turrets: two forward, one aft', check: (s) => battery(s, 0.2, 2, 1, 2) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+    { cue: 'very high flush-sided hull', check: (s) => s.freeboard >= 9 && flush(s) },
+  ]),
+  trento: naval('trento', [
+    { cue: 'four twin 203 mm turrets, superfiring pairs fore and aft', check: (s) => battery(s, 0.2, 2, 2, 2) && superfires(fwd(s, 0.2)) && superfires(aft(s, 0.2)) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+    { cue: 'flush deck with sheer', check: (s) => flush(s) && (s.sheer ?? 0) >= 3 },
+  ]),
+  porter: naval('porter', [
+    { cue: 'four twin 5-inch mounts, superfiring pairs fore and aft', check: (s) => battery(s, 0.1, 2, 2, 2) && superfires(fwd(s, 0.1)) && superfires(aft(s, 0.1)) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+    { cue: 'quadruple torpedo tube mounts', check: (s) => tubeMounts(s).some((t) => t.barrels === 4) },
+  ]),
+  navigatori: naval('navigatori', [
+    { cue: 'three twin 120 mm mounts: forward, amidships between the funnels, aft', check: (s) => battery(s, 0.1, 1, 2, 2) && mains(s, 0.1).some((t) => Math.abs(t.x) < 10) },
+    { cue: 'two funnels far apart', check: (s) => funnels(s) === 2 && funnelGap(s) > 15 },
+    { cue: 'raised forecastle', check: forecastle },
+  ]),
+  'medaglie-d-oro': naval('medaglie-d-oro', [
+    { cue: 'four single 135 mm guns: two forward, two aft', check: (s) => battery(s, 0.13, 2, 2, 1) },
+    { cue: 'one funnel', check: (s) => funnels(s) === 1 },
+  ]),
+  'riga-frigate': naval('riga-frigate', [
+    { cue: 'three single 100 mm guns: two forward, one aft', check: (s) => battery(s, 0.09, 2, 1, 1) },
+    { cue: 'one funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'triple torpedo tube mount amidships', check: (s) => tubeMounts(s).some((t) => t.barrels === 3) },
+  ]),
 };
