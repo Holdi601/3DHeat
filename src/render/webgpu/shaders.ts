@@ -790,8 +790,14 @@ function lineHeatWgsl(): string {
   // A clamped line keeps the heat its true width would carry across it: weighted
   // by the width it lost or gained, the one dimension a line has across, as a
   // point is by area. See HeatUniforms.zoomInvariant.
+  // A round cap is a half disc, so its heat goes with its area: dimmed by the
+  // width alone, as the body is, a cap drawn wider than the line's true width
+  // carried the square of the difference. Routes too short to see from far
+  // away are mostly cap, and read several times too hot.
+  var capRadius = pixRadius;
   if ((flags & ${FLAG_CONSERVE}u) != 0u) {
     thin = trueRadius / max(1e-6, pixRadius);
+    capRadius = trueRadius;
   }
   // Never thinner than two and a half pixels. A line narrower than the pixel grid
   // only touches the pixel centres it happens to pass over and breaks up into
@@ -821,6 +827,7 @@ function lineHeatWgsl(): string {
   out.width = pixRadius;
   // The tail's fade, per end, so it runs down the segment.
   if (atB) { out.fade = fade * fadeB; } else { out.fade = fade * fadeA; }
+  if (quad != 1u) { out.fade = out.fade * capRadius / pixRadius; }
   out.pos = vec4<f32>(clip.xy / clip.w + offset * 2.0 / viewport, clip.z / clip.w, 1.0);
   return out;
 }

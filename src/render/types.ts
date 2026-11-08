@@ -286,6 +286,18 @@ export interface CubeInstance {
 /** Everything a backend needs to draw one frame. Rebuilt each frame, no allocations. */
 export interface FrameParams {
   viewProj: Float32Array;
+  /**
+   * The view-projection for geometry given relative to `origin`, worked out in
+   * double precision: `viewProj` times a translation by the origin.
+   *
+   * A theatre's units sit hundreds of kilometres from the world origin, where a
+   * 32-bit float steps by 6 cm and a view matrix carrying that translation
+   * cancels away as much again per vertex - a unit the camera follows shook by
+   * pixels. Figures are drawn relative to a point beside the camera instead.
+   */
+  viewProjRel: Float32Array;
+  /** The camera's position rounded to 32 bits: what `viewProjRel` is relative to. */
+  origin: Float32Array;
   view: Float32Array;
   proj: Float32Array;
   cameraPos: Float32Array;

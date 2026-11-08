@@ -1802,7 +1802,13 @@ export class WebgpuRenderer implements Renderer {
     if ((params.figureBatches && params.figureBatches.length) || params.gpuTracks) {
       this.figures ??= new GpuFigures(this.device, SCENE_FORMAT, DEPTH_FORMAT, alphaBlend());
       const group = this.sceneBindGroup(this.figures.pipeline, 'figures', plainOffset);
-      if (params.figureBatches && params.figureBatches.length) this.figures.draw(pass, params.figureBatches, group);
+      if (params.figureBatches && params.figureBatches.length) {
+        // Relative to the camera: see FrameParams.viewProjRel.
+        const o = params.origin;
+        const relCamera = Float32Array.of(params.cameraPos[0] - o[0], params.cameraPos[1] - o[1], params.cameraPos[2] - o[2]);
+        const relOffset = this.pushSceneUniform({ ...params, viewProj: params.viewProjRel, cameraPos: relCamera }, 1e9, 1e9 + 1, 0, 1);
+        this.figures.draw(pass, params.figureBatches, this.sceneBindGroup(this.figures.pipeline, 'figures', relOffset), o);
+      }
       if (params.gpuTracks && this.tracks) {
         this.tracks.draw(pass, this.figures, group);
         this.tracks.drawTrails(pass, this.cachedBindGroup(`scene:trackTrail:${plainOffset}`, this.tracks.trailLayout, () => [{ binding: 0, resource: this.uniforms.binding(plainOffset, SCENE_UNIFORM_BYTES) }]));

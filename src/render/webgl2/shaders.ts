@@ -549,6 +549,8 @@ uniform usampler2D uPosTex;`,
   float pixRadius = clamp(trueRadius, uPixelClamp.x, uPixelClamp.y);
   // A clamped line keeps the heat its true width carries across: see the WGSL copy.
   float thin = uConserve == 1 ? trueRadius / max(1e-6, pixRadius) : 1.0;
+  // The radius a cap's area is owed: see the WGSL copy.
+  float capRadius = uConserve == 1 ? trueRadius : pixRadius;
   // Never thinner than two and a half pixels, dimmed by as much: see the WGSL copy.
   if (pixRadius < 2.5) {
     thin *= pixRadius / 2.5;
@@ -570,7 +572,7 @@ uniform usampler2D uPosTex;`,
   // WGSL copy for why perspective interpolation beads the line.
   vLocal = vec2(along, c.y * pixRadius);
   vWidth = pixRadius;
-  vFade = fade * (atB ? fadeB : fadeA);
+  vFade = fade * (atB ? fadeB : fadeA) * (quad == 1 ? 1.0 : capRadius / pixRadius);
   gl_Position = vec4(clip.xy / clip.w + offset * 2.0 / uViewport, clip.z / clip.w, 1.0);
 `;
   return s.slice(0, from) + tail + s.slice(to);
