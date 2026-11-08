@@ -2,6 +2,7 @@ import { useStore } from '../../state/store';
 import { useRaceStore } from '../../state/raceStore';
 import { useVehicleStore } from '../../state/vehicleStore';
 import { vehicleView } from '../../vehicle/view';
+import { useVolumeStore } from '../../volumes/store';
 import { categoryColours, OUTCOME_COLOURS } from '../../vehicle/scene';
 import { sectorOf, weaponOf, type Outcome, type VehicleHit } from '../../vehicle/hits';
 import { regionOf } from '../../vehicle/regions';
@@ -31,6 +32,8 @@ export function VehicleOverlay() {
   const dataset = useStore((s) => s.dataset);
   const scheme = useStore((s) => s.heat.scheme);
   const s = useVehicleStore();
+  useVolumeStore((v) => v.volumes);
+  useVolumeStore((v) => v.filter);
   const view = vehicleView(dataset, s);
   if (!dataset || !view.vehicle) {
     return (

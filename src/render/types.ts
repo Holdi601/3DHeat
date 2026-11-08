@@ -1,3 +1,4 @@
+import type { VolumeDraw } from '../volumes/gpu';
 import type { FigureBatch } from '../figures/instances';
 import type { GpuTrackStore } from './gpuTracks/store';
 import type { LineData } from '../data/lines';
@@ -502,6 +503,11 @@ export interface FrameParams {
   far: number;
   /** The slab of world to draw. Null draws everything. */
   slice: SliceDraw | null;
+  /**
+   * The user's volumes as a filter on the heat (volumes/gpu.ts): only the rows
+   * inside them, or only those outside. Null or absent filters nothing.
+   */
+  volumes?: VolumeDraw | null;
 }
 
 export interface DofDraw {

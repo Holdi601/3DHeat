@@ -1,3 +1,4 @@
+import { VOLUME_BLOCK_BYTES, VOLUME_BLOCK_FLOATS } from '../../volumes/gpu';
 import { GpuFigures } from './figures';
 import { GpuTracks } from './tracks';
 import { KEY_BUFFERS, KEYS_PER_BUFFER } from '../gpuTracks/store';
@@ -233,6 +234,9 @@ export class WebgpuRenderer implements Renderer {
   private readonly filterMaskBuffer: GPUBuffer;
   private readonly emptyStorage: GPUBuffer;
   private teamSignBuffer: GPUBuffer;
+  /** The volumes filter's uniform block (volumes/gpu.ts), rewritten when it changes. */
+  private volumeBuffer: GPUBuffer;
+  private volumeKey = '';
   private readonly lutTexture: GPUTexture;
   private readonly curveTexture: GPUTexture;
   /** Cached, because a fresh view per frame would defeat the bind-group cache. */
@@ -456,6 +460,11 @@ export class WebgpuRenderer implements Renderer {
       // the person filter's tens of thousands — in whole u32 words.
       size: (MAX_FILTER_SLOTS * FILTER_MASK_CAPACITY) / 8,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+    });
+    this.volumeBuffer = device.createBuffer({
+      label: 'volumes',
+      size: VOLUME_BLOCK_BYTES,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     });
     this.emptyStorage = device.createBuffer({
       label: 'empty storage',
@@ -2318,6 +2327,15 @@ export class WebgpuRenderer implements Renderer {
       new Uint32Array(packedStarts) as unknown as BufferSource,
     );
 
+    // The volumes filter: one block for every chunk, written when it changes.
+    const vol = params.volumes ?? null;
+    const volKey = vol ? vol.key : '';
+    if (volKey !== this.volumeKey) {
+      this.volumeKey = volKey;
+      const block = vol ? vol.block : new Float32Array(VOLUME_BLOCK_FLOATS);
+      this.device.queue.writeBuffer(this.volumeBuffer, 0, block as unknown as BufferSource);
+    }
+
     const uniformOffsets: number[] = [];
     let splitSkipped = 0;
     params.plan.forEach((plan, index) => {
@@ -2886,6 +2904,7 @@ export class WebgpuRenderer implements Renderer {
         // makes every occluder look like a structure and so culls nothing — the
         // safe direction when the target does not exist.
         { binding: 13, resource: this.structDepthView ?? this.mustDepthView() },
+        { binding: 15, resource: { buffer: this.volumeBuffer } },
       ],
     );
   }

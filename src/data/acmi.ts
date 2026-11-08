@@ -203,8 +203,13 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
           // Kind|id|id...|text: the ids are all but the last field, the text the last.
           const parts = value.split('|');
           const kind = parts[0];
-          const ids = parts.slice(1, Math.max(1, parts.length - 1)).map((x) => x.trim().toLowerCase()).filter(Boolean);
-          const text = parts.length > 1 ? parts[parts.length - 1] : '';
+          // Named fields instead (Timeout: SourceId:507|AmmoType:FOX2|TargetId:201|Outcome:Kill): the ids are
+          // SourceId's and TargetId's, the text all the fields as written.
+          const named = parts.length > 2 && parts.slice(1).every((x) => !x.trim() || /^\s*[A-Za-z]+\s*:/.test(x));
+          const ids = named
+            ? parts.slice(1).filter((x) => /^\s*(SourceId|TargetId)\s*:/i.test(x)).map((x) => x.slice(x.indexOf(':') + 1).trim().toLowerCase()).filter(Boolean)
+            : parts.slice(1, Math.max(1, parts.length - 1)).map((x) => x.trim().toLowerCase()).filter(Boolean);
+          const text = named ? parts.slice(1).filter((x) => x.trim()).join('|') : parts.length > 1 ? parts[parts.length - 1] : '';
           const label = kind + (text ? `: ${text}` : '');
           const at = ids.find((x) => objects.get(x)?.seen);
           if (at) sample(at, objects.get(at)!, label, ids.join(' '));

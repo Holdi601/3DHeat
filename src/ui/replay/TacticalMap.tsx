@@ -18,6 +18,9 @@ import { unitPrefs } from '../../state/unitsStore';
 import type { UnitSystem } from '../../state/replayStore';
 import { formatLength, formatLong } from '../../units/format';
 import { fromAltitude, longUnitMetres } from '../../units/units';
+import { VolumeGestures } from '../../volumes/gestures';
+import { drawVolumesOnMap, mapHost } from '../../volumes/mapDraw';
+import { useVolumeStore } from '../../volumes/store';
 
 interface Drawn {
   x: number;
@@ -111,6 +114,24 @@ export function TacticalMap() {
   useLang();
   const on = !!engine && !!dataset && map !== 'off' && mode === 'team';
   const index = useMemo(() => (dataset ? unitsOf(dataset) : null), [dataset]);
+  // Volumes are drawn and edited here as on the 3D view (volumes/gestures.ts).
+  const gest = useMemo(
+    () =>
+      new VolumeGestures(
+        mapHost(
+          (x, z) => {
+            const c = canvas.current;
+            return view.current && c ? toMap(view.current, c.clientWidth, c.clientHeight, x, z) : null;
+          },
+          (px, py) => {
+            const c = canvas.current;
+            return view.current && c ? fromMap(view.current, c.clientWidth, c.clientHeight, px, py) : null;
+          },
+          () => useStore.getState().dataset,
+        ),
+      ),
+    [],
+  );
 
   // A new recording or size: framed whole again.
   useEffect(() => {
@@ -122,14 +143,29 @@ export function TacticalMap() {
     const c = canvas.current;
     if (!c || !on) return;
     let drag: { x: number; y: number; moved: number } | null = null;
+    let volumeDrag = false;
+    const local = (e: MouseEvent): [number, number] => {
+      const r = c.getBoundingClientRect();
+      return [e.clientX - r.left, e.clientY - r.top];
+    };
     const down = (e: PointerEvent) => {
       if (e.button !== 0) return;
       c.setPointerCapture(e.pointerId);
-      drag = { x: e.clientX, y: e.clientY, moved: 0 };
       e.stopPropagation();
+      const [lx, ly] = local(e);
+      if (gest.down(lx, ly, { shift: e.shiftKey, alt: e.altKey })) {
+        volumeDrag = true;
+        return;
+      }
+      drag = { x: e.clientX, y: e.clientY, moved: 0 };
     };
     const move = (e: PointerEvent) => {
-      if (!drag || !view.current) return;
+      if (volumeDrag || !drag) {
+        const [lx, ly] = local(e);
+        gest.move(lx, ly, { shift: e.shiftKey, alt: e.altKey });
+        return;
+      }
+      if (!view.current) return;
       const dx = e.clientX - drag.x;
       const dy = e.clientY - drag.y;
       drag.moved += Math.abs(dx) + Math.abs(dy);
@@ -145,6 +181,12 @@ export function TacticalMap() {
       }
     };
     const up = (e: PointerEvent) => {
+      if (volumeDrag) {
+        volumeDrag = false;
+        const [lx, ly] = local(e);
+        gest.up(lx, ly, { shift: e.shiftKey, alt: e.altKey });
+        return;
+      }
       const d = drag;
       drag = null;
       if (!d || d.moved > 3) return;
@@ -163,7 +205,10 @@ export function TacticalMap() {
       if (best) {
         selectAndFollow(best.unit, best.person);
         setCentred(true);
-      }
+      } else gest.click(x, y);
+    };
+    const dbl = (e: MouseEvent) => {
+      if (gest.dblclick()) e.stopPropagation();
     };
     const wheel = (e: WheelEvent) => {
       if (!view.current) return;
@@ -183,13 +228,15 @@ export function TacticalMap() {
     c.addEventListener('pointermove', move);
     c.addEventListener('pointerup', up);
     c.addEventListener('wheel', wheel, { passive: false });
+    c.addEventListener('dblclick', dbl);
     return () => {
+      c.removeEventListener('dblclick', dbl);
       c.removeEventListener('pointerdown', down);
       c.removeEventListener('pointermove', move);
       c.removeEventListener('pointerup', up);
       c.removeEventListener('wheel', wheel);
     };
-  }, [on]);
+  }, [on, gest]);
 
   useAnimationFrame(() => {
     const c = canvas.current;
@@ -375,6 +422,12 @@ export function TacticalMap() {
       out.push({ x: px, y: py, person: tr.person, unit: u });
     }
     drawn.current = out;
+
+    // ---- the volumes, their handles and the shape being drawn
+    const vol = useVolumeStore.getState();
+    // A tool put down elsewhere (Esc on the view, the panel) drops a polygon half drawn here.
+    if (!vol.drawing && gest.polygonPoints().length > 0) gest.cancel();
+    drawVolumesOnMap(g, vol.volumes, vol.selected, gest, (x, z) => toMap(v, w, h, x, z));
 
     // ---- the 3D camera: where it is and which way it looks
     const cam = engine.cameraPose();

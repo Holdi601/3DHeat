@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "hyparquet": "^1.29.1",
+    "hyparquet-writer": "^0.17.0",
     "meshoptimizer": "^1.2.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

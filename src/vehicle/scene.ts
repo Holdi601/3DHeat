@@ -47,7 +47,8 @@ export const OUTCOME_COLOURS: Record<Outcome, Rgb> = {
 
 /** The figure a vehicle is drawn as: by its id and name, else by its kind, else a generic one of its domain. */
 export function figureOfVehicle(v: Pick<VehicleInfo, 'id' | 'name' | 'kind'>): string {
-  if (v.id === 'soldier' || v.kind === 'person') return 'soldier';
+  // A Dota 2 hero stands as a person: its hits have no point, the figure only says whose they are.
+  if (v.id === 'soldier' || v.kind === 'person' || v.kind === 'hero') return 'soldier';
   const types = v.kind ? [v.kind] : [];
   const f = figureFor([v.id, v.name, ...[v.id, v.name].map(bareName)].filter(Boolean), types);
   // A figure found by the name; one found only by the type is a class's, chosen below more closely.

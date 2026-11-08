@@ -34,9 +34,36 @@ const ALIASES: Record<string, Region> = {
   rightleg: 'right_leg',
 };
 
-/** The region a hitgroup names, or null ("generic", "gear", unknown). */
+/** The region a hitgroup or a skeleton bone names, or null ("generic", "gear", unknown). */
 export function regionOf(hitgroup: string): Region | null {
-  return ALIASES[hitgroup.trim().toLowerCase().replace(/[\s-]+/g, '_')] ?? ALIASES[hitgroup.trim().toLowerCase().replace(/[\s_-]+/g, '')] ?? null;
+  return ALIASES[hitgroup.trim().toLowerCase().replace(/[\s-]+/g, '_')] ?? ALIASES[hitgroup.trim().toLowerCase().replace(/[\s_-]+/g, '')] ?? boneRegion(hitgroup);
+}
+
+/**
+ * The region of a bone or a hit zone as the engines name them: Unreal's
+ * skeleton (head, neck_01, spine_01..05, pelvis, clavicle_l, upperarm_r,
+ * thigh_l, calf_r, foot_l...), Arma's selections (spine1..3, leftforearm,
+ * rightupleg...), Reforger's hit zones (Head, Chest, Abdomen, Hips, LArm,
+ * RLeg...). The lower spine and the pelvis are the stomach, the upper spine
+ * the chest; a limb's side from an l/r or left/right part of its name.
+ */
+export function boneRegion(name: string): Region | null {
+  const n = name.trim().toLowerCase();
+  if (!n) return null;
+  if (/head|neck|face|jaw|eye|skull/.test(n)) return 'head';
+  const limb = /arm|hand|finger|thumb|wrist|elbow|clavicle|shoulder|index|middle|ring|pinky/.test(n) ? 'arm' : /thigh|calf|leg|foot|toe|knee|shin|ball|ankle/.test(n) ? 'leg' : null;
+  if (limb) {
+    const parts = n.split(/[^a-z]+/).filter(Boolean);
+    const left = /left/.test(n) || parts.includes('l') || /^l(arm|leg|hand|foot|thigh|calf|forearm|upperarm|upleg|clavicle|shoulder)/.test(n);
+    const right = /right/.test(n) || parts.includes('r') || /^r(arm|leg|hand|foot|thigh|calf|forearm|upperarm|upleg|clavicle|shoulder)/.test(n);
+    if (left === right) return null;
+    return limb === 'arm' ? (left ? 'left_arm' : 'right_arm') : left ? 'left_leg' : 'right_leg';
+  }
+  if (/pelvis|hip|abdomen|belly|stomach|lowerbody/.test(n)) return 'stomach';
+  const spine = /spine_?0*(\d)/.exec(n);
+  if (spine) return Number(spine[1]) <= 2 ? 'stomach' : 'chest';
+  if (/spine|chest|ribcage|torso|thorax|upperbody|body/.test(n)) return 'chest';
+  return null;
 }
 
 /**

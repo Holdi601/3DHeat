@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../state/store';
 import { useVehicleStore } from '../../state/vehicleStore';
 import { vehicleView } from '../../vehicle/view';
+import { useVolumeStore } from '../../volumes/store';
 import { autoRadius, categoryColours, heatOf, markRadius, OUTCOME_COLOURS, sizeOf, templateOfFigure } from '../../vehicle/scene';
 import { heatMeshOf, paint, rampOfLut, type HeatMesh } from '../../vehicle/surface';
 import { personRegions } from '../../vehicle/regions';
@@ -29,6 +30,8 @@ export function VehicleSheet() {
   const dataset = useStore((s) => s.dataset);
   const scheme = useStore((s) => s.heat.scheme);
   const s = useVehicleStore();
+  useVolumeStore((v) => v.volumes);
+  useVolumeStore((v) => v.filter);
   const view = vehicleView(dataset, s);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [url, setUrl] = useState<string | null>(null);

@@ -12,6 +12,8 @@ import { figureLabel } from '../../tactics/names';
 import { int, num, t } from '../../i18n';
 import './vehicle.css';
 import { lengthText, useUnits } from '../../state/unitsStore';
+import { useVolumeStore } from '../../volumes/store';
+import { HitArea, HitBreakdown } from './HitArea';
 
 /** The values of one field over the hits, most frequent first. */
 function tally(hits: VehicleHit[], key: (h: VehicleHit) => string): [string, number][] {
@@ -33,6 +35,9 @@ export function VehiclePanel() {
   useUnits();
   const dataset = useStore((s) => s.dataset);
   const s = useVehicleStore();
+  // The volumes drawn on the level restrict the hits: a change shows at once.
+  useVolumeStore((v) => v.volumes);
+  useVolumeStore((v) => v.filter);
   const view = vehicleView(dataset, s);
   const set = view.set;
   const vehicles = useMemo(() => (set ? [...set.vehicles.values()].sort((a, b) => b.hits + b.modules - (a.hits + a.modules)) : []), [set]);
@@ -169,12 +174,15 @@ export function VehiclePanel() {
         </div>
         {view.unplaced > 0 && <div className="hint vehicle-warn">{t('vehicle.hint.unplaced', { n: view.unplaced })}</div>}
         {set.source === 'cs2' && <div className="hint">{t('vehicle.hint.regions')}</div>}
+        {!view.anyPoint && <div className="hint">{t('vehicle.hint.noPoint')}</div>}
         <button className="vehicle-sheet-btn" onClick={() => s.patch({ sheetOpen: true })} disabled={!view.hits.length}>
           {t('vehicle.sheet.open')}
         </button>
       </Section>
 
-      <Section title={t('vehicle.look.title')} defaultOpen>
+      <HitArea dataset={dataset} view={view} />
+
+      <Section title={t('vehicle.look.title')} defaultOpen={view.anyPoint}>
         <Slider
           label={t('vehicle.look.exposure')}
           value={s.exposure}
@@ -230,9 +238,9 @@ export function VehiclePanel() {
         )}
       </Section>
 
-      {((through.known > 0 && set.source !== 'cs2') || killing.n > 0) && (
+      {((through.known > 0 && set.source !== 'cs2' && set.source !== 'dota' && view.anyPoint) || killing.n > 0) && (
         <Section title={t('vehicle.stats.title')} defaultOpen>
-          {through.known > 0 && set.source !== 'cs2' && (
+          {through.known > 0 && set.source !== 'cs2' && set.source !== 'dota' && view.anyPoint && (
             <>
               <div className="vehicle-counts">{t('vehicle.stats.through', { pct: num((100 * through.yes) / through.known, 0), n: through.known })}</div>
               <div className="hint">{t('vehicle.stats.bySide')}</div>
@@ -257,6 +265,7 @@ export function VehiclePanel() {
           )}
         </Section>
       )}
+      <HitBreakdown view={view} />
       {directed > 0 && (
         <Section title={t('vehicle.sectors.title')} defaultOpen>
           <div className="hint">{t('vehicle.sectors.hint')}</div>

@@ -21,6 +21,10 @@ export interface VehicleState {
   /** What the hits did; null: all. */
   outcomes: Outcome[] | null;
   layer: VehicleLayer;
+  /** Whose place the volumes drawn on the level test: the victim's (default) or the shooter's. */
+  areaBy: 'victim' | 'shooter';
+  /** How the breakdown groups the hits: by shooter, by weapon (or ability), or by the shooter's vehicle. */
+  breakdown: 'shooter' | 'weapon' | 'shooterVehicle';
   colourBy: ColourBy;
   /** The hits as marks on the surface, each where it struck. */
   showPoints: boolean;
@@ -51,6 +55,8 @@ export const useVehicleStore = create<VehicleState>((set, get) => ({
   weapons: null,
   outcomes: null,
   layer: 'all',
+  areaBy: 'victim',
+  breakdown: 'shooter',
   colourBy: 'outcome',
   showPoints: true,
   showHeat: true,

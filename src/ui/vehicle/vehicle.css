@@ -312,3 +312,58 @@
 .vehicle-card button.primary {
   width: 100%;
 }
+
+/* The area the hit analysis is restricted to: draw buttons, a chip per volume. */
+.vehicle-area-draw {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.vehicle-area-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 4px 2px 7px;
+  font-size: 11px;
+  border: 1px solid #3a4452;
+  border-radius: 4px;
+}
+
+.vehicle-area-chip.exclude {
+  border-style: dashed;
+}
+
+.vehicle-chips .vehicle-area-chip button {
+  opacity: 1;
+  padding: 0 4px;
+}
+
+.vehicle-breakdown {
+  width: 100%;
+  margin-top: 8px;
+  border-collapse: collapse;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.vehicle-breakdown th {
+  color: var(--text-faint);
+  font-weight: 500;
+  text-align: right;
+}
+
+.vehicle-breakdown td {
+  padding: 2px 0 2px 6px;
+  text-align: right;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.vehicle-breakdown td.vehicle-filter-name {
+  max-width: 150px;
+  padding-left: 0;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
