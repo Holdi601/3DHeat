@@ -1728,9 +1728,13 @@ A['do-335'] = mp({
   tail: [[0, -4.4, -6.0], [2.6, -5.0, -5.9]], tailR: 0.3, tailUp: 0,
 });
 // F7F Tigercat: a slim body with the cockpit over the wing's leading edge, big radials in long nacelles, a tall single fin (13.83 x 15.7 x 4.83 m).
-A['f7f'] = tw({ cls: 'ww2-heavy-fighter', length: 13.83, span: 15.7, height: 4.83, w: 0.62, h: 0.75, nose: 'solid', cockpit: 4.6, hoodLen: 1.6, radial: true, nacR: 0.72, nacY: 0.3, nacBack: 1.2, wingZ: 0.1, dihedral: 4, finH: 2.6, prop: [4.0, 3] });
+// The wing's root leading edge and chords, the nacelles' place and the hood measured on the Journal of Recognition's
+// "New and revised airplane silhouettes" (January 1945), F7F-2, with tools/figures/twinview.py.
+A['f7f'] = tw({ cls: 'ww2-heavy-fighter', length: 13.83, span: 15.7, height: 4.83, w: 0.62, h: 0.75, nose: 'solid', cockpit: 3.05, hoodLen: 1.3, radial: true, nacR: 0.74, nacY: 0.384, nacBack: 1.05, le: 2.69, root: 3.33, tip: 1.7, wingZ: 0.1, dihedral: 4, finH: 2.6, prop: [4.0, 3] });
 // He 219 Uhu: the cockpit glazing at the very nose, annular-cowled engines, a high wing and twin fins (15.33 x 18.5 x 4.1 m).
-A['he-219'] = tw({ cls: 'ww2-heavy-fighter', length: 15.33, span: 18.5, height: 4.1, w: 0.62, h: 0.8, nose: 'cockpit', hoodLen: 2.2, radial: true, nacR: 0.65, nacY: 0.27, nacBack: 1.3, wingZ: 0.4, dihedral: 4, twinTail: true, finH: 1.7, tailSpan: 6.0, prop: [3.6, 3] });
+// The wing's root leading edge and the nacelles' length from the same Journal sheet (He-219, corrected outlines); the
+// chords from the published wing area (44.5 m2), the sheet's own reading 0.6 m short of it.
+A['he-219'] = tw({ cls: 'ww2-heavy-fighter', length: 15.33, span: 18.5, height: 4.1, w: 0.62, h: 0.8, nose: 'cockpit', hoodLen: 2.2, radial: true, nacR: 0.65, nacY: 0.27, nacBack: 1.25, le: 3.3, root: 3.6, tip: 1.2, wingZ: 0.4, dihedral: 4, twinTail: true, finH: 1.7, tailSpan: 6.0, prop: [3.6, 3] });
 // J1N1 Gekko: a long greenhouse over a slim body, radials, a single fin (12.18 x 16.98 x 4.56 m).
 A['j1n1'] = tw({ cls: 'ww2-heavy-fighter', length: 12.18, span: 16.98, height: 4.56, w: 0.6, h: 0.75, nose: 'solid', cockpit: 2.2, hoodLen: 4.0, radial: true, nacR: 0.65, wingZ: 0, finH: 2.2, prop: [3.2, 3] });
 // Ki-45 Toryu: a slim body under a long two-seat greenhouse, radials, a single fin (11.0 x 15.02 x 3.7 m); the Ki-96, Ki-102 and Ki-109 are its family.
@@ -1806,8 +1810,9 @@ A['b-18'] = mp({
 });
 // Martin Maryland: a slim, very deep-chested body, radials on a mid wing, a single fin (14.22 x 18.69 x 4.57 m); the Baltimore is its family.
 A['maryland'] = tw({ cls: 'ww2-bomber', length: 14.22, span: 18.69, height: 4.57, w: 0.48, h: 0.9, nose: 'stepped', cockpit: 3.6, hoodLen: 1.6, radial: true, nacR: 0.66, wingZ: 0, finH: 2.0, prop: [3.3, 3] });
-// BR.20 Cicogna: a deep body with the glazed nose, radials, a dorsal turret, twin fins (16.17 x 21.56 x 4.3 m).
-A['br-20'] = tw({ cls: 'ww2-bomber', length: 16.17, span: 21.56, height: 4.3, w: 0.7, h: 0.95, nose: 'stepped', cockpit: 3.4, hoodLen: 2.0, radial: true, nacR: 0.7, wingZ: -0.3, twinTail: true, finH: 1.8, tailSpan: 6.6, prop: [3.4, 3], turrets: [-1.0] });
+// BR.20 Cicogna: a deep body with the glazed nose, radials, a dorsal turret, twin fins (16.17 x 21.56 x 4.3 m). The wing's
+// root leading edge and its root and tip chords, the nacelles' place measured on FM 30-30 (1943), sheet "Fiat BR-20".
+A['br-20'] = tw({ cls: 'ww2-bomber', length: 16.17, span: 21.56, height: 4.3, w: 0.7, h: 0.95, nose: 'stepped', cockpit: 3.4, hoodLen: 2.0, radial: true, nacR: 0.65, nacY: 0.257, le: 4.8, root: 4.65, tip: 1.77, wingZ: -0.3, twinTail: true, finH: 1.8, tailSpan: 6.6, prop: [3.4, 3], turrets: [-1.0] });
 // Ju 86 (the Swedish B3): a slim box body with the glazed nose, radials (the B3C's Pegasus), twin fins (17.87 x 22.5 x 4.7 m).
 A['ju-86'] = tw({ cls: 'ww2-bomber', length: 17.87, span: 22.5, height: 4.7, w: 0.65, h: 0.95, nose: 'stepped', cockpit: 3.8, hoodLen: 1.8, radial: true, nacR: 0.68, wingZ: -0.6, twinTail: true, finH: 1.7, tailSpan: 7.2, prop: [3.3, 3], turrets: [-2.4] });
 // Z.1007 bis Alcione: three radials (one in the nose), a deep body, twin fins (18.35 x 24.8 x 5.22 m).
