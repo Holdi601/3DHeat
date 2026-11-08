@@ -2749,10 +2749,11 @@ export const CUES: Record<string, CueEntry> = {
   ]),
   'bmp-2-atgm': ground('bmp-2', [{ cue: 'Konkurs launcher on the turret roof', check: adds('box', 1, 'turret') }]),
   'bmp-2m': ground('bmp-2m', [{ cue: 'Berezhok launchers either side of the turret', check: adds('box', 2, 'turret') }]),
-  'bmp-3': ground(['bmp-3', 'zbd-04a'], [
-    { cue: 'six road wheels, five return rollers', check: run(6, 5) },
-    { cue: 'turret with the stubby 100 mm launcher-gun', check: (s) => cal(0.1)(s) && gunLen(0, 3)(s) },
-  ]),  'zbd-04a': ground('zbd-04a', [
+  'bmp-3': ground(['bmp-3', 'zbd-04a'], [{ cue: 'turret with the stubby 100 mm launcher-gun', check: (s) => cal(0.1)(s) && gunLen(0, 3)(s) }]),
+  'bmp-3-run': ground('bmp-3', [{ cue: 'six road wheels, five return rollers', check: run(6, 5) }]),
+  'zbd-04a': ground('zbd-04a', [
+    { cue: 'six road wheels, three return rollers, the sprocket at the front', check: run(6, 3) },
+    { cue: 'tall box hull with the steep bow, the turret behind the middle', check: (s) => tall(2.0)(s) && (s.turret?.x ?? 0) < 0 },
     { cue: 'armoured skirts and bolted plates on the hull sides', check: (s) => skirted(s) && !!s.addOns?.some((a) => a.on === 'hull' && !!a.mirror) },
     { cue: 'add-on plate over the upper glacis', check: (s) => (s.addOns ?? []).filter((a) => a.on === 'hull' && a.kind === 'box' && (a.pitch ?? 0) < 0).length >= 1 },
   ]),
