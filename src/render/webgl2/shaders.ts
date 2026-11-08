@@ -545,12 +545,13 @@ uniform usampler2D uPosTex;`,
 
   // The width at each end is a sprite's radius at that end's distance.
   float denom = (uPerspective == 1) ? clip.w : 1.0;
-  float pixRadius = uRadius * uProj11 / denom * (uViewport.y * 0.5);
-  pixRadius = clamp(pixRadius, uPixelClamp.x, uPixelClamp.y);
+  float trueRadius = uRadius * uProj11 / denom * (uViewport.y * 0.5);
+  float pixRadius = clamp(trueRadius, uPixelClamp.x, uPixelClamp.y);
+  // A clamped line keeps the heat its true width carries across: see the WGSL copy.
+  float thin = uConserve == 1 ? trueRadius / max(1e-6, pixRadius) : 1.0;
   // Never thinner than two and a half pixels, dimmed by as much: see the WGSL copy.
-  float thin = 1.0;
   if (pixRadius < 2.5) {
-    thin = pixRadius / 2.5;
+    thin *= pixRadius / 2.5;
     pixRadius = 2.5;
   }
   fadeA *= thin;

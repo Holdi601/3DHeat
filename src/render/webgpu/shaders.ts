@@ -784,15 +784,21 @@ function lineHeatWgsl(): string {
   var denom = 1.0;
   if ((flags & ${FLAG_PERSPECTIVE}u) != 0u) { denom = clip.w; }
   let viewport = u.viewportClamp.xy;
-  var pixRadius = u.shape.x * u.shape.y / denom * (viewport.y * 0.5);
-  pixRadius = clamp(pixRadius, u.viewportClamp.z, u.viewportClamp.w);
+  let trueRadius = u.shape.x * u.shape.y / denom * (viewport.y * 0.5);
+  var pixRadius = clamp(trueRadius, u.viewportClamp.z, u.viewportClamp.w);
+  var thin = 1.0;
+  // A clamped line keeps the heat its true width would carry across it: weighted
+  // by the width it lost or gained, the one dimension a line has across, as a
+  // point is by area. See HeatUniforms.zoomInvariant.
+  if ((flags & ${FLAG_CONSERVE}u) != 0u) {
+    thin = trueRadius / max(1e-6, pixRadius);
+  }
   // Never thinner than two and a half pixels. A line narrower than the pixel grid
   // only touches the pixel centres it happens to pass over and breaks up into
   // beads wherever it runs at an angle; widened, and dimmed by as much, it keeps
   // the heat it carries across and is drawn smoothly.
-  var thin = 1.0;
   if (pixRadius < 2.5) {
-    thin = pixRadius / 2.5;
+    thin = thin * pixRadius / 2.5;
     pixRadius = 2.5;
   }
   fadeA = fadeA * thin;
