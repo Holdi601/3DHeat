@@ -15,6 +15,9 @@ import { formatValue } from './fields';
 import { selectAndFollow } from './ReplayOverlay';
 import { MediaPanel } from './Media';
 import { num, t } from '../../i18n';
+import { useUnits } from '../../state/unitsStore';
+import { unitSymbol } from '../../units/format';
+import { fromAltitude, toAltitude } from '../../units/units';
 
 /** The sidebar sections of the replay's tools: time shift and trim, map and position, audio and video. */
 export function ToolsPanels() {
@@ -180,16 +183,14 @@ function MapPanel() {
   const session = useStore((s) => s.team.session);
   const geo = useReplayStore((s) => s.geo);
   const limits = useReplayStore((s) => s.limits);
-  const units = useReplayStore((s) => s.units);
+  const units = useUnits();
   const placed = !!dataset && !!geoFrame(dataset);
   const slopes = useGlideslopes(dataset, geo.glideslope && placed);
   const crossings = useMemo(() => (dataset ? altitudeCrossings(dataset, session, limits) : []), [dataset, session, limits]);
   if (!dataset) return null;
   const r = useReplayStore.getState;
-  const FT = 0.3048;
-  const imp = units === 'imperial';
-  const toShown = (m: number | null) => (m === null ? '' : String(Math.round(imp ? m / FT : m)));
-  const fromShown = (s: string) => (s.trim() === '' || !Number.isFinite(Number(s)) ? null : imp ? Number(s) * FT : Number(s));
+  const toShown = (m: number | null) => (m === null ? '' : String(Math.round(toAltitude(m, units.altitude))));
+  const fromShown = (s: string) => (s.trim() === '' || !Number.isFinite(Number(s)) ? null : fromAltitude(Number(s), units.altitude));
   const start = dataset.timeRange[0];
   return (
     <Section title={t('replay.geo.title')}>
@@ -235,7 +236,7 @@ function MapPanel() {
               {t('replay.limits.ceiling')}{' '}
               <input className="narrow" type="number" value={toShown(limits.ceiling)} onChange={(e) => r().setLimits({ ceiling: fromShown(e.target.value) })} />
             </label>
-            <span className="dim">{imp ? 'ft' : 'm'}</span>
+            <span className="dim">{unitSymbol('altitude', units)}</span>
           </div>
           <div className="hint">{t('replay.limits.count', { n: crossings.filter((c) => c.kind !== 'backInside').length })}</div>
           <div className="limit-list">

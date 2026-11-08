@@ -20,7 +20,9 @@
  */
 
 import type { AttributeColumn, Dataset } from '../../state/types';
-import { flightSeries, type FlightSeries } from '../../data/flight';
+import { flightSeries, PARAM_BY_ID, type FlightSeries } from '../../data/flight';
+import { convertTo, unitOf, type ValueKind } from '../../units/format';
+import type { UnitPrefs } from '../../units/units';
 import { eventRows } from './replayData';
 import { partyName, unitsOf, type Unit } from './units';
 import { unitShape, categoryOfShape, type ObjectCategory } from './objectType';
@@ -414,8 +416,24 @@ export function csvField(v: string | number): string {
   return /[",\n\r;]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
 }
 
-/** The per-unit table as CSV, SI units (metres, m/s, seconds), headers in English for other tools. */
-export function statsCsv(m: MatchStats, teamName: (team: number) => string): string {
+/**
+ * A CSV column in the viewer's units: its head with the unit's id
+ * ("max_speed_kt") and the value converted. Without units: SI, as named.
+ */
+function csvUnit(units: UnitPrefs | undefined, kind: ValueKind, si: string, long = false): { suffix: string; v: (x: number) => number } {
+  if (!units) return { suffix: si, v: (x) => x };
+  const unit = unitOf(kind, units, long);
+  return { suffix: unit || si, v: (x) => (Number.isFinite(x) ? convertTo(kind, x, units, long) : x) };
+}
+
+/**
+ * The per-unit table as CSV, headers in English for other tools: SI units
+ * (metres, m/s, seconds), or the viewer's units when given, each head naming its unit.
+ */
+export function statsCsv(m: MatchStats, teamName: (team: number) => string, units?: UnitPrefs): string {
+  const spd = csvUnit(units, 'speed', 'ms');
+  const alt = csvUnit(units, 'altitude', 'm');
+  const dist = csvUnit(units, 'distance', 'm', true);
   const head = [
     'unit',
     'vehicle',
@@ -435,10 +453,10 @@ export function statsCsv(m: MatchStats, teamName: (team: number) => string): str
     'ground_from',
     'max_g',
     'min_g',
-    'max_speed_ms',
-    'max_alt_m',
+    `max_speed_${spd.suffix}`,
+    `max_alt_${alt.suffix}`,
     'max_mach',
-    'distance_m',
+    `distance_${dist.suffix}`,
     'first_s',
     'last_s',
   ];
@@ -464,10 +482,10 @@ export function statsCsv(m: MatchStats, teamName: (team: number) => string): str
         s.groundFrom,
         s.maxG,
         s.minG,
-        s.maxSpeed,
-        s.maxAlt,
+        spd.v(s.maxSpeed),
+        alt.v(s.maxAlt),
         s.maxMach,
-        s.distance,
+        dist.v(s.distance),
         s.first,
         s.last,
       ]
@@ -480,21 +498,30 @@ export function statsCsv(m: MatchStats, teamName: (team: number) => string): str
 
 /**
  * A unit's telemetry as CSV, as Tacview exports it: every value the track has
- * (recorded and worked out), `hz` samples a second, SI units.
+ * (recorded and worked out), `hz` samples a second, SI units - or the
+ * viewer's, each head naming its unit ("alt_ft", "tas_kt").
  */
 export function telemetryCsv(
   series: { name: string; s: FlightSeries }[],
   params: string[],
   hz: number,
+  units?: UnitPrefs,
 ): string {
-  const lines = [['time_s', 'unit', 'x_m', 'y_m', 'z_m', ...params].join(',')];
+  const pos = csvUnit(units, 'length', 'm');
+  const cols = params.map((p) => {
+    const kind = PARAM_BY_ID[p]?.kind;
+    if (!units || !kind) return { head: p, v: (x: number) => x };
+    const c = csvUnit(units, kind, '', kind === 'distance');
+    return { head: c.suffix ? `${p}_${c.suffix}` : p, v: c.v };
+  });
+  const lines = [['time_s', 'unit', `x_${pos.suffix}`, `y_${pos.suffix}`, `z_${pos.suffix}`, ...cols.map((c) => c.head)].join(',')];
   const step = 1 / Math.max(0.01, hz);
   for (const { name, s } of series) {
     if (!s.time.length) continue;
     let i = 0;
     for (let t = s.time[0]; t <= s.time[s.time.length - 1] + 1e-9; t += step) {
       while (i + 1 < s.time.length && s.time[i + 1] <= t) i++;
-      const row = [t, name, s.x[i], s.y[i], s.z[i], ...params.map((p) => s.values[p]?.[i] ?? NaN)];
+      const row = [t, name, pos.v(s.x[i]), pos.v(s.y[i]), pos.v(s.z[i]), ...params.map((p, k) => cols[k].v(s.values[p]?.[i] ?? NaN))];
       lines.push(row.map(csvField).join(','));
     }
   }

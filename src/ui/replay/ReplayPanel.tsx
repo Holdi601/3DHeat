@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Check, Section, Segmented, Slider } from '../controls';
 import { TrackGraph } from './TrackGraph';
 import { useStore } from '../../state/store';
-import { FOLLOW_MODES, LABEL_CATEGORIES, labelFieldsFor, useReplayStore, type FollowMode, type LabelCategory, type UnitSystem } from '../../state/replayStore';
+import { FOLLOW_MODES, LABEL_CATEGORIES, labelFieldsFor, useReplayStore, type FollowMode, type LabelCategory } from '../../state/replayStore';
 import { dropLinesOn } from './replayData';
 import { datasetFields, inFieldOrder } from './fields';
 import { FieldPicker } from './FieldPicker';
@@ -16,6 +16,9 @@ import { ToolsPanels } from './ToolsPanel';
 import { num, t } from '../../i18n';
 import { usePlayhead } from './hooks';
 import './replay.css';
+import { UnitsSettings } from '../UnitsPicker';
+import { FigureControls } from '../panels/FigureControls';
+import { applyBuildings } from './buildings';
 
 /**
  * The match replay's sidebar: the camera on a unit, the units, the events,
@@ -24,6 +27,7 @@ import './replay.css';
 export function ReplayPanel() {
   return (
     <>
+      <FigurePanel />
       <CameraPanel />
       <UnitList />
       <EventList />
@@ -33,6 +37,41 @@ export function ReplayPanel() {
       <ToolsPanels />
       <LabelPanel />
     </>
+  );
+}
+
+/**
+ * The figures as the replay draws them, right where it is played: figures
+ * or boxes, their size, the smallest they get on screen (the team panel's
+ * settings, shared), and the level's painted buildings solid or see-through.
+ */
+function FigurePanel() {
+  const dataset = useStore((s) => s.dataset);
+  const buildings = useReplayStore((s) => s.buildings);
+  const painted = useStore((s) => s.level?.kind === 'model' && s.level.structureColours === true);
+  if (!dataset) return null;
+  return (
+    <Section title={t('units.figures.title')} defaultOpen>
+      <FigureControls />
+      {painted && (
+        <div className="field">
+          <div className="label">
+            <span>{t('units.buildings.title')}</span>
+          </div>
+          <Segmented<'solid' | 'seeThrough'>
+            value={buildings}
+            options={[
+              { value: 'solid', label: t('units.buildings.solid'), title: t('units.buildings.solidTitle') },
+              { value: 'seeThrough', label: t('units.buildings.seeThrough'), title: t('units.buildings.seeThroughTitle') },
+            ]}
+            onChange={(v) => {
+              useReplayStore.getState().patchSaved({ buildings: v });
+              applyBuildings(v === 'solid');
+            }}
+          />
+        </div>
+      )}
+    </Section>
   );
 }
 
@@ -150,7 +189,6 @@ function LabelPanel() {
   const dataset = useStore((s) => s.dataset);
   const labels = useReplayStore((s) => s.labels);
   const declutter = useReplayStore((s) => s.declutter);
-  const units = useReplayStore((s) => s.units);
   const labelFields = useReplayStore((s) => s.labelFields);
   const rules = useReplayStore((s) => s.labelRules);
   const labelScale = useReplayStore((s) => s.labelScale);
@@ -164,14 +202,8 @@ function LabelPanel() {
     <Section title={t('replay.labels.title')}>
       <Check label={t('replay.labels.show')} checked={labels} onChange={(v) => r().patchSaved({ labels: v })} />
       <Check label={t('replay.labels.declutter')} checked={declutter} onChange={(v) => r().patchSaved({ declutter: v })} title={t('replay.labels.declutterTitle')} />
-      <Segmented<UnitSystem>
-        value={units}
-        options={[
-          { value: 'metric', label: t('replay.system.metric') },
-          { value: 'imperial', label: t('replay.system.imperial'), title: t('replay.system.imperialTitle') },
-        ]}
-        onChange={(v) => r().patchSaved({ units: v })}
-      />
+      <div className="hint">{t('units.inLabels')}</div>
+      <UnitsSettings />
       <Slider label={t('replay.labels.scale')} value={labelScale} min={0.6} max={2.5} step={0.05} onChange={(v) => r().patchSaved({ labelScale: v })} format={(v) => `${num(v * 100, 0)}%`} />
       <Check label={t('replay.labels.subtitles')} checked={subtitles} onChange={(v) => r().patchSaved({ subtitles: v })} title={t('replay.labels.subtitlesTitle')} />
       <div className="hint">{t('replay.labels.rulesHint')}</div>

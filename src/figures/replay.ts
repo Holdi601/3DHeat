@@ -21,7 +21,9 @@ import type { AttributeColumn, Dataset } from '../state/types';
 import { CUBE_STRIDE } from '../data/tracks';
 import { CATALOG } from './catalog';
 import { placeFrame, poseFrame, TemplateCache, type Template } from './kit';
-import { InstanceBatches, meshOf } from './instances';
+import { hasJoints, InstanceBatches, meshOf, NO_PITCH } from './instances';
+import { aimOf, type AimNow } from './aim';
+import { cameraTracks } from '../render/lookAids';
 import type { Frame3, Vec3 } from '../race/geometry';
 import { frameOfQuat, MotionModel } from './motion';
 import { figureFor } from './match';
@@ -83,7 +85,11 @@ export interface FigureReplayOptions {
   /** Each box's attitude, x y z w (from `MotionRefiner`), and 1 in `posed` where it has one. */
   poses?: Float32Array;
   posed?: Uint8Array;
+  /** The playhead, seconds: where turrets and guns point now (`aim.ts`). Absent: as built. */
+  time?: number;
 }
+
+const aimNow: AimNow = { yaw: NaN, pitch: NaN };
 
 /** The longest side of a template, metres. */
 function longest(t: Template): number {
@@ -240,9 +246,16 @@ export class FigureReplay {
     this.kindsDrawn.length = count;
     if (this.rest.length < cubes.length) this.rest = new Float32Array(cubes.length);
     this.restCount = 0;
+    const aim = o.time !== undefined ? aimOf(d) : null;
+    // A recorded camera is drawn as a camera with the display aids, not as a figure.
+    const cams = cameraTracks(d);
     for (let i = 0; i < count; i++) {
       const c = i * CUBE_STRIDE;
       const row = rows[i];
+      if (cams.any && row >= 0 && d.personId && cams.persons[d.personId[row]]) {
+        this.kindsDrawn[i] = '';
+        continue;
+      }
       let kind = row >= 0 ? this.kindOf(d, row) : null;
       // Bullets, shells and explosions are drawn by the weapons layer, as streaks and fireballs.
       const special = !kind && row >= 0 ? this.specialOf(d, row) : '';
@@ -307,7 +320,11 @@ export class FigureReplay {
       const small = o.pixelSize ? (longest(t) * scale) / Math.max(1e-9, o.pixelSize(cubes[c], cubes[c + 1], cubes[c + 2])) < 120 : false;
       const drawn = small ? (t.coarse?.() ?? t) : t;
       if (this.cpuPlace) placeFrame(this.tris, drawn, fr, scale, team);
-      else this.batches.add(meshOf(drawn), fr, scale, team);
+      else if (aim && o.time !== undefined && hasJoints(drawn)) {
+        // Its turret turned and its gun raised as the data has them now.
+        aim.at(row, o.time, aimNow);
+        this.batches.add(meshOf(drawn), fr, scale, team, 1, Number.isFinite(aimNow.yaw) ? aimNow.yaw : 0, Number.isFinite(aimNow.pitch) ? aimNow.pitch : NO_PITCH);
+      } else this.batches.add(meshOf(drawn), fr, scale, team);
       this.placed.push({ box: i, row, kind: kind!, fr, scale, min: t.min, max: t.max });
     }
   }

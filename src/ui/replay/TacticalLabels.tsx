@@ -10,6 +10,7 @@ import { formatValue } from './fields';
 import { t } from '../../i18n';
 import type { Dataset } from '../../state/types';
 import './replay.css';
+import { unitPrefs } from '../../state/unitsStore';
 
 /** Most engagement lines drawn at once: the nearest pairs first. */
 const MAX_LINES = 60;
@@ -88,14 +89,14 @@ export function TacticalLabels() {
             if (!q) continue;
             const at = project({ x: tr.x + (q.x - tr.x) * 0.62, y: tr.y + (q.y - tr.y) * 0.62, z: tr.z + (q.z - tr.z) * 0.62 });
             if (!visible(at)) continue;
-            texts.push({ x: at.x, y: at.y, s: t('replay.aids.lockLabel', { name: unitOf(p)?.name ?? '?', range: formatValue('distance', range(tr, q), r.units) }), cls: 'replay-lock' });
+            texts.push({ x: at.x, y: at.y, s: t('replay.aids.lockLabel', { name: unitOf(p)?.name ?? '?', range: formatValue('distance', range(tr, q), unitPrefs()) }), cls: 'replay-lock' });
           }
         } else if (lock.range > 0) {
           // Locked along angles only: the range at the line's end.
           const dir = bodyDirection(axesOfTrack(tr), lock.az, lock.el);
           const L = lock.range * k;
           const at = project({ x: tr.x + dir[0] * L, y: tr.y + dir[1] * L, z: tr.z + dir[2] * L });
-          if (visible(at)) texts.push({ x: at.x, y: at.y, s: t('replay.aids.lockLabel', { name: '—', range: formatValue('distance', lock.range, r.units) }), cls: 'replay-lock' });
+          if (visible(at)) texts.push({ x: at.x, y: at.y, s: t('replay.aids.lockLabel', { name: '—', range: formatValue('distance', lock.range, unitPrefs()) }), cls: 'replay-lock' });
         }
       }
     }
@@ -128,7 +129,7 @@ export function TacticalLabels() {
         if (!pa || !pb) continue;
         d += `M${pa.x.toFixed(1)},${pa.y.toFixed(1)}L${pb.x.toFixed(1)},${pb.y.toFixed(1)}`;
         const mid = { x: (pa.x + pb.x) / 2, y: (pa.y + pb.y) / 2 };
-        if (visible(mid)) texts.push({ x: mid.x, y: mid.y, s: formatValue('distance', dist, r.units), cls: 'replay-engage' });
+        if (visible(mid)) texts.push({ x: mid.x, y: mid.y, s: formatValue('distance', dist, unitPrefs()), cls: 'replay-engage' });
       }
     }
     lines.current?.setAttribute('d', d);

@@ -61,8 +61,10 @@ import { useEngine } from '../EngineContext';
 import { CameraPose } from './CameraPose';
 import { JumpTo } from './JumpTo';
 import { num, t } from '../../i18n';
+import { lengthText, unitPrefs, useUnits } from '../../state/unitsStore';
 
 export function CameraPanel() {
+  useUnits();
   const engine = useEngine();
   const camera = useStore((s) => s.camera);
   const patchCamera = useStore((s) => s.patchCamera);
@@ -201,7 +203,7 @@ export function CameraPanel() {
         // the handle works in ratios: half as fast, not one metre slower.
         proportional
         onChange={(flySpeed) => patchCamera({ flySpeed })}
-        format={(v) => t('heat.viewPanel.camera.metresPerSecond', { value: num(v, v < 10 ? 3 : 0) })}
+        format={(v) => (unitPrefs().altitude === 'ft' ? t('units.v.fts', { v: num(v / 0.3048, v < 3 ? 3 : 0) }) : t('heat.viewPanel.camera.metresPerSecond', { value: num(v, v < 10 ? 3 : 0) }))}
         hint={t('heat.viewPanel.camera.flySpeedHint', { shift: 'Shift', alt: 'Alt' })}
       />
       <div className="row">
@@ -271,6 +273,7 @@ export function CameraPanel() {
  * a level, where softening the geometry behind the data makes the data read.
  */
 function DepthOfField() {
+  useUnits();
   const engine = useEngine();
   const camera = useStore((s) => s.camera);
   const patchCamera = useStore((s) => s.patchCamera);
@@ -301,7 +304,7 @@ function DepthOfField() {
               ceiling={1e7}
               logarithmic
               onChange={(focusDistance) => patch({ focusDistance })}
-              format={(v) => t('heat.viewPanel.dof.metres', { value: num(v, v < 100 ? 1 : 0) })}
+              format={(v) => lengthText(v, (s) => (s < 100 ? 1 : 0))}
             />
           )}
           {dof.autoFocus && (

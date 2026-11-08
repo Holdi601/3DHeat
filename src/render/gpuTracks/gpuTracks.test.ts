@@ -108,8 +108,13 @@ describe('GPU tracks', () => {
     expect(evaluateTrack(s, i, first - 0.01, 5, p)).toBe(false);
     decodeKey(s, i * TRACK_U32, s.trackData[i * TRACK_U32] + s.trackData[i * TRACK_U32 + 1] - 1, k4);
     const lastT = k4[3];
-    expect(evaluateTrack(s, i, lastT + 4, 5, p)).toBe(true);
-    expect(evaluateTrack(s, i, lastT + 6, 5, p)).toBe(false);
+    // Held past its last key for its own hold (a few sample intervals, `data/despawn.ts`), never past the lifetime.
+    const hold = new Float32Array(s.trackData.buffer, s.trackData.byteOffset)[i * TRACK_U32 + 14] - 1;
+    expect(hold).toBeGreaterThan(0);
+    expect(hold).toBeLessThanOrEqual(3);
+    expect(evaluateTrack(s, i, lastT + hold * 0.9, 5, p)).toBe(true);
+    expect(evaluateTrack(s, i, lastT + hold + 0.05, 5, p)).toBe(false);
+    expect(evaluateTrack(s, i, lastT + Math.min(hold, 0.1) * 0.5, Math.min(hold, 0.1) * 0.25, p)).toBe(false);
   });
 
   it('have shaders that use the store layout', () => {

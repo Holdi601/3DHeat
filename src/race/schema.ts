@@ -27,6 +27,8 @@
  */
 
 import { num, t } from '../i18n';
+import { unitPrefs } from '../state/unitsStore';
+import { FT, toSpeed, type UnitPrefs } from '../units/units';
 
 export type Wheel = 'FL' | 'FR' | 'RL' | 'RR';
 export const WHEELS: readonly Wheel[] = ['FL', 'FR', 'RL', 'RR'];
@@ -123,7 +125,7 @@ export interface ChannelInfo {
   /** Steps rather than blends between samples: a gear, a flag, a count. */
   stepped?: boolean;
   /** Shown multiplied by `scale`, in `unit`, to `digits` places, on a fixed `range` if given. */
-  show?: { scale?: number; unit?: string; digits?: number; range?: [number, number] };
+  show?: { scale?: number; offset?: number; unit?: string; digits?: number; range?: [number, number] };
   /** Order within its group; lower first. */
   order?: number;
 }
@@ -705,16 +707,44 @@ function humanise(name: string): string {
  * never drawn on the car or the input panel, since nothing says how.
  */
 export function channelInfo(family: string, perWheel = false): ChannelInfo {
-  return (
-    CHANNELS[family] ?? {
-      label: humanise(family),
-      unit: '',
-      kind: perWheel ? 'wheel' : 'scalar',
-      group: 'other',
-      show: { digits: 2 },
-    }
-  );
+  const info = CHANNELS[family];
+  if (info) return inViewerUnits(info);
+  return {
+    label: humanise(family),
+    unit: '',
+    kind: perWheel ? 'wheel' : 'scalar',
+    group: 'other',
+    show: { digits: 2 },
+  };
 }
+
+const shownIn = new WeakMap<ChannelInfo, { prefs: UnitPrefs; info: ChannelInfo }>();
+
+/**
+ * A channel as the viewer's units show it (`units/`): speeds shown in km/h
+ * in their speed unit, lengths in feet, millimetres in inches where lengths
+ * are in feet, temperatures in theirs. Everything else as the table has it.
+ */
+export function inViewerUnits(info: ChannelInfo, prefs: UnitPrefs = unitPrefs()): ChannelInfo {
+  const hit = shownIn.get(info);
+  if (hit && hit.prefs === prefs) return hit.info;
+  const show = info.show ?? {};
+  let next: ChannelInfo['show'] | null = null;
+  if (info.unit === 'm/s' && show.unit === 'km/h' && prefs.speed !== 'kmh') {
+    next = { ...show, scale: toSpeed(1, prefs.speed), unit: SPEED_SYMBOL[prefs.speed] };
+  } else if (info.unit === 'm' && !show.unit && prefs.altitude === 'ft') {
+    next = { ...show, scale: 1 / FT, unit: 'ft' };
+  } else if (info.unit === 'm' && show.unit === 'mm' && prefs.altitude === 'ft') {
+    next = { ...show, scale: 1 / (FT / 12), unit: 'in', digits: 2 };
+  } else if (info.unit === '°C' && prefs.temperature !== 'c') {
+    next = prefs.temperature === 'f' ? { ...show, scale: 9 / 5, offset: 32, unit: '°F' } : { ...show, scale: 1, offset: 273.15, unit: 'K' };
+  }
+  const out = next ? { ...info, show: next } : info;
+  shownIn.set(info, { prefs, info: out });
+  return out;
+}
+
+const SPEED_SYMBOL: Record<UnitPrefs['speed'], string> = { kmh: 'km/h', ms: 'm/s', kt: 'kt', mph: 'mph' };
 
 /** The wheel-channel families a lap carries, e.g. `tireTemp`, `slipRatio`. */
 export function wheelFamilies(channels: Iterable<string>): string[] {
@@ -803,6 +833,12 @@ const UNITS: Record<string, string> = {
   'N m': 'race.channel.unit.newtonMetre',
   N: 'race.channel.unit.newton',
   psi: 'race.channel.unit.psi',
+  kt: 'replay.unit.kt',
+  mph: 'units.v.mph',
+  ft: 'replay.unit.ft',
+  in: 'units.v.in',
+  '°F': 'units.v.f',
+  K: 'units.v.k',
 };
 
 /** A number already written out, with its unit as the language puts it: "123 km/h", "45%". */
@@ -816,5 +852,5 @@ export function withUnit(text: string, unit: string): string {
 export function formatValue(info: ChannelInfo, value: number): string {
   if (!Number.isFinite(value)) return '–';
   const show = info.show ?? {};
-  return withUnit(num(value * (show.scale ?? 1), show.digits ?? 2), show.unit ?? info.unit);
+  return withUnit(num(value * (show.scale ?? 1) + (show.offset ?? 0), show.digits ?? 2), show.unit ?? info.unit);
 }

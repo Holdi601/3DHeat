@@ -44,8 +44,9 @@ interface Make {
   /** Exhausts at the tail: how many, and their diameter (none when 0). */
   engines?: number;
   nozzle?: number;
-  /** The exhausts' height when the tail is not on the axis. */
+  /** The exhausts' height when the tail is not on the axis, and where they end when not at the tail (a fin or a probe beyond them). */
   nozzleUp?: number;
+  nozzleX?: number;
   glass: Outline[];
   bodies?: (Outline & { oneSide?: boolean })[];
   /** The wing's thickness over its chord at the root, an outer panel's own dihedral; the tailplane's dihedral (negative droops it). */
@@ -80,7 +81,7 @@ function make(p: Make): FixedWingSpec & { cls: string } {
     tail: { kind, finHeight: fh, finChord: 3, spacing: p.twin, tailSpan: 2 * ts, tailChord: 1.5, finBase: p.finBase, planeUp: kind === 't' ? undefined : (p.planeUp ?? 0), planeDihedral: p.planeDihedral },
     finPlan: p.fin,
     tailPlan: p.tail,
-    engines: p.propeller ? { kind: 'pusher', count: 1 } : p.engines === 0 ? undefined : { kind: 'internal', count: p.engines ?? 1, diameter: p.nozzle ?? bh * 0.5, nozzles: p.nozzleUp === undefined ? undefined : Array.from({ length: p.engines ?? 1 }, (_, i) => [-p.length / 2 + 0.3, (i - ((p.engines ?? 1) - 1) / 2) * (p.nozzle ?? bh * 0.5) * 1.05, p.nozzleUp!] as [number, number, number]) },
+    engines: p.propeller ? { kind: 'pusher', count: 1 } : p.engines === 0 ? undefined : { kind: 'internal', count: p.engines ?? 1, diameter: p.nozzle ?? bh * 0.5, nozzles: p.nozzleUp === undefined ? undefined : Array.from({ length: p.engines ?? 1 }, (_, i) => [p.nozzleX ?? -p.length / 2 + 0.3, (i - ((p.engines ?? 1) - 1) / 2) * (p.nozzle ?? bh * 0.5) * 1.05, p.nozzleUp!] as [number, number, number]) },
     propeller: p.propeller,
     canopy: { x: 0, length: 1, kind: 'bubble' },
   };
@@ -276,23 +277,27 @@ const SU7: Make = {
 };
 A['su-7b'] = make(SU7);
 // Su-17M2 / Su-22M: the Su-7's body lengthened with the swing-wing outer panels (shown half swept), a bigger cone and a
-// longer spine (18.2 x 11.8 at this sweep x 5.0 m). Su-17M4 / Su-22M4: the fixed cone and the ram-air scoop at the
-// fin's root. Su-22UM3K: two seats, the instructor's canopy stepped up behind with the long hump to the fin. Checked
-// by eye against a public 3-view (estimates): the nose intake 1.3 m tall, belly to canopy top 2.35 m, to the broad
-// spine 2.2 m - the body deeper than wide - still 1.55 m deep 3 m before the nozzle; the fin's top 4.1 m over the belly.
-const FITTER_TOP: P2[] = [[9.1, 0.59], [7.6, 0.66], [6.05, 0.7], [4.2, 0.88], [1.4, 0.92], [-3, 0.82], [-5.8, 0.7], [-8.9, 0.35]];
+// longer spine (19.02 m over the long nose probe, 11.8 m across at this sweep, 5.0 m). Su-17M4 / Su-22M4: the fixed
+// cone and the ram-air scoop at the fin's root. Su-22UM3K: two seats, the instructor's canopy stepped up behind with
+// the long hump to the fin. Body, glove, fin and tailplane places digitised from the US Army's Su-17 three-view (see
+// sources.md) at the published length over the probe: the 2.3 m probe ahead of the intake's lip, the body 2.0 m deep
+// over the spine (heights from the probe's level), the glove's root from 5.4 to 12.0 m behind the probe's tip, the
+// fin's flat top 2.9 m up, the jet pipe ending 0.9 m ahead of the rudder's tip.
+const FITTER_TOP: P2[] = [[7.15, 0.15], [6.71, 0.18], [6.31, 0.25], [5.51, 0.49], [5.1, 0.62], [4.3, 0.85], [3.5, 0.92], [-3.7, 0.92], [-5.3, 0.86], [-7.0, 0.72], [-8.6, 0.42]];
 const FITTER: Make = {
-  ...SU7, length: 18.2, span: 11.8, height: 5.0,
-  top: FITTER_TOP, bottom: [[9.1, -0.71], [7.0, -0.85], [5.0, -0.95], [0, -0.95], [-4, -0.8], [-5.8, -0.6], [-8.9, -0.36]], plan: [[9.1, 0.6], [7.2, 0.68], [2, 0.78], [-4, 0.74], [-8.9, 0.5]],
-  wing: [[1.2, 0], [1.2, 0.75], [-1.5, 2.5], [-3.3, 2.5], [-4.6, 0.75], [-4.6, 0]],  // the fixed glove; the outer panel swings in ./swing.ts
-  fin: [[-4.0, 0], [-8.2, 0], [-9.3, 2.4], [-8.0, 2.45]], finBase: 0.75,
-  tail: [[-6.4, 0.5], [-7.4, 2.6], [-8.5, 2.6], [-8.7, 0.5]], planeUp: 0.2,
-  glass: [bubble(7.35, 4.75, 1.41, 0.66, 0.88, 0.4)],
-  bodies: [pod(10.0, 8.8, 0.38, 0, -0.06, 0.6), spine(4.2, -6.0, 0.85, 0.4, 0.4)],
+  ...SU7, length: 19.02, span: 11.8, height: 5.0,
+  top: FITTER_TOP, bottom: [[7.15, -0.75], [6.71, -0.8], [6.31, -0.86], [5.51, -0.98], [4.71, -1.04], [-4.09, -1.04], [-5.69, -0.98], [-6.89, -0.92], [-7.69, -0.74], [-8.6, -0.5]],
+  plan: [[7.15, 0.5], [6.31, 0.62], [5.0, 0.7], [2, 0.78], [-4, 0.74], [-7.0, 0.62], [-8.6, 0.46]],
+  wing: [[4.1, 0], [4.1, 0.9], [3.6, 1.4], [1.4, 2.3], [-0.2, 2.5], [-2.45, 2.5], [-2.45, 0.75], [-2.45, 0]],  // the fixed glove; the outer panel swings in ./swing.ts
+  fin: [[-4.0, 0], [-6.09, 1.0], [-7.69, 1.86], [-8.0, 1.98], [-9.45, 1.98], [-8.4, 0], [-8.4, -0.2], [-4.0, -0.2]], finBase: 0.9,
+  tail: [[-5.5, 0.55], [-7.3, 2.55], [-8.6, 2.65], [-7.6, 0.55]], planeUp: 0.65,
+  nozzle: 0.9, nozzleUp: -0.18, nozzleX: -8.6,
+  glass: [bubble(5.3, 3.7, 1.05, 0.55, 0.92, 0.38)],
+  bodies: [pod(7.7, 6.8, 0.32, 0, -0.3, 0.6), pod(9.51, 7.3, 0.04, 0, 0.0, 0.1)],
 };
 A['su-17m2'] = make(FITTER);
-A['su-17m4'] = make({ ...FITTER, bodies: [...FITTER.bodies!, pod(-3.6, -4.6, 0.16, 0, 1.25, 0.3)] });
-A['su-22um3k'] = make({ ...FITTER, glass: [tandem(7.35, 3.4, 1.38, 1.58, 0.66, 1.1, 0.4)], bodies: [pod(10.0, 8.8, 0.38, 0, -0.06, 0.6), spine(3.4, -6.0, 0.85, 0.55, 0.42)] });
+A['su-17m4'] = make({ ...FITTER, bodies: [...FITTER.bodies!, pod(-3.4, -4.3, 0.16, 0, 0.95, 0.3)] });
+A['su-22um3k'] = make({ ...FITTER, glass: [tandem(5.3, 2.4, 1.02, 1.22, 0.55, 0.95, 0.4)], bodies: [...FITTER.bodies!, spine(2.6, -6.0, 0.8, 0.3, 0.42)] });
 
 // Su-24M: two seats side by side behind a big radome, box intakes, the glove and swing wing (shown at 35 degrees,
 // its cruise sweep; ./swing.ts), twin engines, one big fin (22.67 x 17.64 spread / 10.37 swept x 6.19 m). Checked by eye against a public 3-view (estimates):
@@ -517,19 +522,32 @@ const TALON: Make = {
 A['t-38'] = make(TALON);
 // F-5A / C / G: one seat, the T-38's body with small LERX and tip tanks (14.38 x 7.7 x 4.01 m).
 A['f-5a'] = make({ ...TALON, cls: 'fighter', length: 14.38, wing: [[2.6, 0], [2.0, 0.8], [0.8, 0.95], [0.0, 3.85], [-0.6, 3.85], [-2.6, 0.95], [-2.6, 0]], glass: [bubble(4.87, 2.4, 1.04, 0.35, 0.8, 0.38)], bodies: [TIGER_INTAKE, pod(0.5, -2.6, 0.27, 3.9, -0.3)] });
-// F-5E: the planform of ./aircraft.ts on the T-38's deeper body with its spine, the shark nose and bubble; F-5F: the
-// two-seater, 1.2 m longer; F-20: one engine, the bigger LERX and wing.
+// F-5E: the T-38's deeper body with its spine, the shark nose and bubble, the LERX'd wing (sizes and engines from
+// ./aircraft.ts); F-5F: the two-seater, 1.2 m longer; F-20: one engine, the bigger LERX and wing.
 const TIGER2 = AIRCRAFT.air!['f-5e'];
+// The F-5E's body, wing, fin and tailplane digitised from the US Army's F-5 three-view (see sources.md) at the
+// published length: the windscreen 4.2 m behind the nose and the canopy 2.9 m long, the intakes' lips 5.9 m behind the
+// nose under the LERX, the wing's leading edge meeting the LERX 7.6 m back, its trailing edge straight across 10.3 m
+// back, the tailplane from 12 to 13.5 m, the fin's flat top 2.5 m over the nose tip. Heights from the axis 0.18 m over
+// the nose tip.
 const F5_FUS: Outline = {
-  top: [[7.22, -0.15], [6.3, -0.02], [5.0, 0.33], [3.2, 0.55], [2.2, 0.88], [0, 0.8], [-3, 0.65], [-5.2, 0.43], [-7.0, 0.33]],
-  bottom: [[7.22, -0.22], [6.3, -0.4], [5.0, -0.5], [1.4, -0.48], [-0.8, -0.43], [-3, -0.37], [-5.2, -0.24], [-7.0, -0.1]],
-  plan: TIGER2.fuselage!.plan, round: 2.8, stations: 22,
+  top: [[7.22, -0.18], [6.42, -0.04], [5.62, 0.15], [4.82, 0.29], [4.02, 0.43], [3.22, 0.57], [2.0, 0.72], [0.2, 0.95], [-0.78, 0.89], [-1.98, 0.8], [-2.78, 0.71], [-3.58, 0.61], [-5.2, 0.45], [-7.0, 0.33]],
+  bottom: [[7.22, -0.23], [6.42, -0.37], [5.62, -0.41], [4.42, -0.51], [3.22, -0.55], [-3.18, -0.6], [-4.78, -0.46], [-6.38, -0.37], [-7.0, -0.27]],
+  plan: [[7.22, 0.03], [6.42, 0.35], [5.62, 0.45], [5.0, 0.49], [3.2, 0.53], [1.6, 0.54], [1.2, 0.62], [0.4, 0.72], [-3.6, 0.8], [-4.8, 0.85], [-6.4, 0.7], [-7.0, 0.55]],
+  round: 2.8, stations: 22,
 };
+const F5_INTAKE = trunk(1.35, -2.6, 0.3, -0.45, 0.28, 0.6, 0, 2.4);
+const F5_CANOPY = bubble(3.05, 0.2, 1.08, 0.57, 0.95, 0.38);
+const F5_WING: P2[] = [[1.6, 0], [1.6, 0.55], [1.22, 0.73], [0.82, 1.1], [0.42, 1.34], [-0.38, 1.42], [-1.95, 4.06], [-2.95, 4.06], [-3.05, 0.9], [-3.05, 0]];
 const stretch = (q: P2[]) => q.map(([x, v]) => [x > 0 ? x * 1.17 : x, v] as P2);
-A['f-5e'] = { ...TIGER2, fuselage: F5_FUS, bodies: [TIGER_INTAKE], glass: [bubble(5.0, 2.2, 1.05, 0.33, 0.88, 0.38)] };
+const TIGER_TAIL = {
+  finPlan: [[-2.6, 0], [-3.7, 0.16], [-4.38, 0.91], [-5.18, 2.03], [-5.4, 2.07], [-6.05, 2.07], [-6.3, 0.6], [-6.6, 0.3], [-6.6, 0]] as P2[],
+  tailPlan: [[-4.8, 0.85], [-5.95, 2.23], [-6.25, 2.23], [-6.25, 0.85]] as P2[],
+};
+A['f-5e'] = { ...TIGER2, fuselage: F5_FUS, wingPlan: F5_WING, ...TIGER_TAIL, bodies: [F5_INTAKE], glass: [F5_CANOPY] };
 // (Its length stays the F-5E's here: the nose is stretched ahead of the same tail, 15.65 m overall.)
-A['f-5f'] = { ...TIGER2, fuselage: { ...F5_FUS, top: stretch(F5_FUS.top), bottom: stretch(F5_FUS.bottom), plan: stretch(F5_FUS.plan) }, bodies: [TIGER_INTAKE], glass: [tandem(5.85, 2.0, 1.02, 1.1, 0.38, 0.9, 0.38)] };
-A['f-20'] = { ...TIGER2, length: 14.17, span: 8.53, fuselage: F5_FUS, wingPlan: [[4.4, 0], [2.8, 1.0], [0.9, 1.15], [-1.1, 4.26], [-1.9, 4.26], [-2.8, 1.15], [-2.9, 0]], engines: { kind: 'internal', count: 1, diameter: 1.0 }, bodies: [TIGER_INTAKE], glass: [bubble(5.0, 2.1, 1.08, 0.33, 0.88, 0.4)] };
+A['f-5f'] = { ...TIGER2, fuselage: { ...F5_FUS, top: stretch(F5_FUS.top), bottom: stretch(F5_FUS.bottom), plan: stretch(F5_FUS.plan) }, wingPlan: F5_WING, ...TIGER_TAIL, bodies: [F5_INTAKE], glass: [tandem(3.57, -0.3, 1.04, 1.14, 0.62, 0.95, 0.38)] };
+A['f-20'] = { ...TIGER2, length: 14.17, span: 8.53, fuselage: F5_FUS, wingPlan: [[4.4, 0], [2.8, 1.0], [0.9, 1.15], [-1.1, 4.26], [-1.9, 4.26], [-2.8, 1.15], [-2.9, 0]], engines: { kind: 'internal', count: 1, diameter: 1.0 }, bodies: [F5_INTAKE], glass: [F5_CANOPY] };
 
 // ---------------------------------------------------------------- Viggen
 
@@ -621,7 +639,21 @@ const FEATHER: Make = {
   glass: [bubble(1.8, 0.4, 1.0, 0.65, 0.55, 0.3)],
   bodies: [pod(0.1, -0.5, 0.28, 0, -0.45, 0.05)],
 };
-A['yak-15'] = make(FEATHER);
+// The Yak-15 itself digitised from FM 30-30's Yak-15 silhouettes (1951, see sources.md) at the published length (the
+// drawn wing scaled to the published span): the blunt nose intake, the body stepping up behind the exhaust 4 m behind
+// the nose into the boom, the canopy's crown 1.26 m over the intake's middle, the wing's root from 2.2 m ahead of the
+// middle to 0.4 m behind it, its trailing edge swept forward to the tips, the fin's flat top 2.1 m up.
+A['yak-15'] = make({
+  ...FEATHER, length: 8.78,
+  top: [[4.39, 0.23], [4.14, 0.4], [3.89, 0.56], [3.39, 0.65], [2.89, 0.78], [2.39, 0.86], [1.89, 0.92], [1.39, 0.95], [0.3, 0.98], [-0.61, 1.07], [-1.36, 1.06], [-2.11, 1.03], [-2.61, 1.0], [-3.86, 1.0], [-4.39, 0.98]],
+  bottom: [[4.39, -0.2], [4.14, -0.36], [3.89, -0.41], [3.39, -0.45], [2.89, -0.48], [1.89, -0.51], [0.89, -0.48], [0.45, -0.45], [0.3, 0.08], [-0.61, 0.11], [-1.36, 0.13], [-2.11, 0.2], [-2.61, 0.27], [-3.86, 0.49], [-4.39, 0.86]],
+  plan: [[4.39, 0.2], [4.14, 0.38], [3.89, 0.42], [3.39, 0.44], [0.45, 0.44], [-0.61, 0.42], [-1.36, 0.35], [-2.11, 0.31], [-2.61, 0.27], [-3.86, 0.18], [-4.39, 0.08]],
+  wing: [[2.2, 0], [2.2, 0.5], [1.89, 1.4], [1.64, 2.83], [1.39, 4.1], [1.14, 4.57], [0.89, 4.6], [0.64, 4.5], [0.39, 3.98], [0.14, 2.88], [-0.11, 1.62], [-0.36, 0.6], [-0.4, 0]], wingUp: 0.15,
+  fin: [[-2.61, 0], [-3.36, 1.11], [-3.61, 1.1], [-3.86, 0.96], [-4.11, 0.68], [-4.36, 0.16], [-4.4, -0.1], [-2.61, -0.1]], finBase: 1.0,
+  tail: [[-3.25, 0.25], [-3.61, 1.5], [-3.86, 1.78], [-4.11, 1.7], [-4.38, 0.6], [-4.38, 0.25]], planeUp: 0.72,
+  glass: [bubble(1.5, 0.1, 1.26, 0.95, 1.05, 0.3)],
+  bodies: [pod(0.9, 0.3, 0.27, 0, -0.2, 0.05)],
+});
 A['yak-23'] = make({ ...FEATHER, length: 8.12, span: 8.73, height: 3.31, top: FEATHER.top.map(([x, v]) => [x * 0.93, v] as P2), bottom: FEATHER.bottom.map(([x, v]) => [x * 0.93, v] as P2), plan: FEATHER.plan.map(([x, v]) => [x * 0.93, v] as P2), wing: [[1.5, 0], [1.5, 0.6], [0.9, 4.37], [-0.1, 4.37], [-0.7, 0.6], [-0.7, 0]], fin: [[-2.6, 0], [-4.0, 0], [-4.5, 1.9], [-3.6, 1.95]], tail: [[-3.4, 0], [-3.7, 1.5], [-4.3, 1.5], [-4.4, 0]], planeUp: 1.3 });
 // La-15: a nose intake, the shoulder swept wing with anhedral, a T-tail (9.56 x 8.83 x 3.8 m); the La-174 its prototype.
 A['la-15'] = make({
@@ -686,24 +718,36 @@ A['il-28sh'] = make({ ...BEAGLE, cls: 'attack', bodies: [...BEAGLE.bodies!, pod(
 A['tu-14'] = make({ ...BEAGLE, length: 21.95, span: 21.69, height: 5.69, top: BEAGLE.top.map(([x, v]) => [x * 1.244, v] as P2), bottom: BEAGLE.bottom.map(([x, v]) => [x * 1.244, v] as P2), plan: BEAGLE.plan.map(([x, v]) => [x * 1.244, v] as P2), fin: BEAGLE.fin.map(([x, v]) => [x * 1.244, v] as P2), tail: BEAGLE.tail!.map(([x, v]) => [x * 1.244, v] as P2), glass: [bubble(6.4, 4.6, 1.35, 0.85, 0.9, 0.42), pod(11.2, 9.4, 0.55, 0, -0.25, 0.5)], bodies: [pod(4.4, -2.4, 0.62, 3.6, -0.5, 0.2), pod(-10.4, -11.4, 0.36, 0, -0.25, 0.3)] });
 
 // F-86F Sabre: a slimmer body than the MiG's, the oval nose intake, the bubble set further back, a low 35-degree wing
-// with dihedral, the tailplane on the fin's root fairing over the jet pipe (11.4 x 11.3 x 4.5 m). F-86D / K: the
-// radome over a chin intake (12.27 m). FJ-4 Fury: a deeper body, the spine running to the fin, a thinner, broader wing
-// (11.08 x 11.92 x 4.24 m). Checked by eye against a public dimensioned 3-view of the F-86A (estimates): the nose
-// intake 0.8 m tall, 1.45 m deep and 1.5 m wide at most, belly to canopy top 1.75 m, the belly sweeping up to the jet
-// pipe, the fin's top 3.65 m over the belly.
-const SABRE_REAR: Row[] = [[1.0, 0.72, -0.75, 0.75], [-1.0, 0.7, -0.72, 0.72], [-2.5, 0.65, -0.45, 0.62], [-4.5, 0.55, -0.15, 0.45], [-5.7, 0.42, 0.05, 0.36]];
+// with dihedral, the tailplane with 10 degrees of dihedral low on the fin's root over the jet pipe (11.44 x 11.31 x
+// 4.5 m). F-86D / K: the radome over a chin intake (12.27 m). FJ-4 Fury: a deeper body, the spine running to the fin,
+// a thinner, broader wing (11.08 x 11.92 x 4.24 m).
+// Body, fin and tailplane digitised from FM 30-30's F-86 Sabre silhouettes (1952, see sources.md) at the published
+// length; the wing's edges from the dimensioned F-86A three-view of its erection manual (root chord 10.3 ft on the
+// centre line, tip chord 5.3 ft, 35 degrees): its leading edge meets the body 2.75 m behind the nose, its trailing edge
+// 5.7 m; the wing low, its root 0.72 m under the lip (the front views). Heights from the intake's upper lip: the spine 0.56 m over it, the belly 0.9 m under it, the canopy's crown
+// 1.0 m; the jet pipe ends 0.6 m ahead of the tailplane's and the rudder's trailing edges.
+const SABRE_REAR: Row[] = [
+  [3.1, 0.49, -0.9, 0.63], [2.33, 0.52, -0.91, 0.63], [1.49, 0.54, -0.9, 0.63], [0.64, 0.56, -0.88, 0.63], [-0.21, 0.56, -0.83, 0.62], [-1.05, 0.54, -0.78, 0.58],
+  [-1.9, 0.59, -0.73, 0.53], [-2.75, 0.61, -0.66, 0.46], [-3.6, 0.6, -0.58, 0.37], [-4.2, 0.57, -0.49, 0.31], [-4.6, 0.53, -0.15, 0.29], [-4.85, 0.5, 0.03, 0.28],
+];
 const SABRE: Fig = {
-  cls: 'fighter', length: 11.4, span: 11.3, height: 4.5,
-  body: [[5.7, 0.55, -0.25, 0.42], [5.2, 0.68, -0.5, 0.56], [4.2, 0.73, -0.65, 0.66], [2.6, 0.73, -0.72, 0.72], ...SABRE_REAR], round: 2.1,
-  wing: [[1.2, 0], [1.2, 0.72], [-2.3, 5.65], [-3.5, 5.65], [-2.8, 0.72], [-2.8, 0]], wingUp: -0.55, dihedral: 3,
-  fin: [[-2.0, 0], [-5.3, 0], [-6.0, 2.35], [-4.8, 2.4]], finBase: 0.5,
-  tail: [[-4.2, 0], [-5.2, 1.95], [-6.0, 1.95], [-6.05, 0]], planeUp: 0.85,
-  nozzles: [[-5.7, 0, 0.22]], nozzle: 0.6,
-  bodies: [spine(1.3, -3.6, 0.7, 0.06, 0.2)],
-  glass: [bubble(4.2, 1.3, 1.17, 0.73, 0.73, 0.38)],
+  cls: 'fighter', length: 11.44, span: 11.31, height: 4.5,
+  body: [[5.72, 0.03, -0.03, 0.07], [5.58, 0.12, -0.24, 0.26], [5.48, 0.17, -0.74, 0.34], [5.2, 0.27, -0.8, 0.4], [4.77, 0.39, -0.84, 0.48], [4.33, 0.46, -0.86, 0.53], [3.6, 0.48, -0.88, 0.6], ...SABRE_REAR], round: 2.1,
+  wing: [[2.97, 0], [2.97, 0.69], [-0.35, 5.45], [-0.6, 5.655], [-1.95, 5.655], [-2.05, 5.5], [0.02, 0.69], [0.02, 0]], wingUp: -0.72, dihedral: 3,
+  fin: [[-3.0, 0], [-3.13, 0.11], [-3.26, 0.25], [-4.04, 1.09], [-4.75, 1.83], [-4.95, 1.9], [-5.34, 1.9], [-5.61, 1.85], [-5.42, 1.38], [-5.12, 0.62], [-4.82, -0.1], [-3.0, -0.1]], finBase: 0.6,
+  tail: [[-3.75, 0], [-3.75, 0.35], [-5.1, 1.95], [-5.72, 1.92], [-4.9, 0.3], [-4.9, 0]], planeUp: 0.42, planeDihedral: 10,
+  nozzles: [[-4.85, 0, 0.27]], nozzle: 0.5,
+  glass: [bubble(4.33, 1.67, 1.0, 0.46, 0.54, 0.36)],
 };
 A['f-86f'] = fig(SABRE);
-A['f-86k'] = fig({ ...SABRE, length: 12.27, body: [[6.135, 0.3, 0.0, 0.1], [5.8, 0.55, -0.1, 0.38], [5.5, 0.66, -0.62, 0.56], [4.4, 0.73, -0.68, 0.66], [2.6, 0.73, -0.72, 0.72], ...SABRE_REAR], glass: [bubble(4.5, 1.6, 1.17, 0.73, 0.73, 0.38)] });
+// F-86K: the F-86D's radome over its chin intake, 0.83 m longer in the nose; the same body behind the cockpit.
+A['f-86k'] = fig({
+  ...SABRE, length: 12.27,
+  body: [[6.135, 0.18, 0.06, 0.05], [5.8, 0.38, -0.12, 0.3], [5.4, 0.5, -0.35, 0.45], [5.08, 0.52, -0.8, 0.5], [4.6, 0.5, -0.86, 0.55], [4.0, 0.47, -0.88, 0.6], ...SABRE_REAR.map(([x, t, b, w]) => [x - 0.415, t, b, w] as Row)],
+  wing: SABRE.wing.map(([x, y]) => [x - 0.415, y] as P2), fin: SABRE.fin!.map(([x, y]) => [x - 0.415, y] as P2), tail: SABRE.tail!.map(([x, y]) => [x - 0.415, y] as P2),
+  nozzles: [[-5.265, 0, 0.27]],
+  glass: [bubble(3.92, 1.26, 1.0, 0.47, 0.54, 0.36)],
+});
 A['fj-4'] = fig({
   ...SABRE, length: 11.08, span: 11.92, height: 4.24,
   body: [[5.54, 0.4, -0.38, 0.42], [5.0, 0.62, -0.6, 0.58], [3.8, 0.78, -0.75, 0.68], [2.4, 0.84, -0.8, 0.72], [0.8, 0.86, -0.8, 0.74], [-1.2, 0.82, -0.72, 0.7], [-3.2, 0.68, -0.48, 0.56], [-5.54, 0.48, -0.2, 0.38]],

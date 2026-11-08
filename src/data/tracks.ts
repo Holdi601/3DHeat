@@ -1,6 +1,7 @@
 import { teamMemberColor } from '../render/colors';
 import type { Dataset } from '../state/types';
 import { lowerBound, upperBound } from '../render/sampling';
+import { holdLimit, type Ends } from './despawn';
 
 /** Floats per cube instance: x,y,z, r,g,b, yaw,pitch. */
 export const CUBE_STRIDE = 8;
@@ -194,13 +195,16 @@ export class TrackCursor {
    * Where a person has samples on both sides of the playhead the position is
    * interpolated, which is what makes playback read as motion instead of a
    * stroboscope. Someone with no later sample is held for `staleSeconds` and
-   * then dropped, so eliminated players don't linger forever.
+   * then dropped, so eliminated players don't linger forever - or, given
+   * `ends` (`despawn.ts`), as the data says they end, or as long as their
+   * own sample rate says.
    */
   buildCubes(
     t: number,
     interpolate: boolean,
     staleSeconds: number,
     visible: (person: number) => boolean,
+    ends: Ends | null = null,
   ): { data: Float32Array; count: number } {
     const {
       time,
@@ -253,6 +257,9 @@ export class TrackCursor {
         !(personShared && personShared[p]) &&
         (lifetime ? lifetime[a] >= 0 : !sessions || sessions[a] === sessions[b]);
 
+      // Past its end row (`despawn.ts`): gone.
+      if (ends && t > ends.end[p]) continue;
+
       if (interpolate && joinable) {
         const tb = time[b];
         const span = tb - ta;
@@ -263,7 +270,8 @@ export class TrackCursor {
         yw = yaw ? lerpAngle(yaw[a], yaw[b], f) : 0;
         pt = pitch ? pitch[a] + (pitch[b] - pitch[a]) * f : 0;
       } else {
-        if (t - ta > staleSeconds) continue;
+        // Past its data: held a few of its own sample intervals where asked (`despawn.ts`), never longer than the lifetime.
+        if (t - ta > (ends ? holdLimit(ends, p, staleSeconds) : staleSeconds)) continue;
         x = px[a];
         y = py[a];
         z = pz[a];

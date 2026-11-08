@@ -44,6 +44,7 @@ import {
 } from './line';
 import { compareProfiles, describeProfile, profile, type CarProfile } from './profile';
 import { curvature, findCorners, smooth, type Corner } from './segments';
+import { lengthArg, speedArg } from '../state/unitsStore';
 
 export type Phase = 'braking' | 'entry' | 'exit' | 'straight';
 
@@ -1005,14 +1006,14 @@ function facts(p: Pair, r: CornerResult, names: Map<string, string>, next: strin
 /** The measurements, one line each, naming both laps every time. */
 function detailLines(p: Pair, r: CornerResult, f: Facts): string[] {
   const { mine, theirs, lineMine, lineTheirs } = p;
-  const m = (i: number) => num(Math.round(i * f.step));
+  const m = (i: number) => lengthArg(i * f.step);
   const out: string[] = [];
   if (mine.brakeOn >= 0 || theirs.brakeOn >= 0) {
     const part = (name: string, c: CornerMetrics) =>
       c.brakeOn >= 0
-        ? t('race.detail.brakePart', { name, lifted: c.lifted ? 'yes' : 'no', at: m(c.brakeOn), speed: num(c.brakeSpeed * KMH) })
+        ? t('race.detail.brakePart', { name, lifted: c.lifted ? 'yes' : 'no', at: m(c.brakeOn), speed: speedArg(c.brakeSpeed) })
         : t('race.detail.brakeFlat', { name });
-    const gap = finite(f.earlier) && Math.abs(f.earlier) >= METRES ? num(Math.abs(f.earlier)) : 'none';
+    const gap = finite(f.earlier) && Math.abs(f.earlier) >= METRES ? lengthArg(Math.abs(f.earlier)) : 'none';
     out.push(
       t('race.detail.braking', { mine: part(f.me, mine), theirs: part(f.them, theirs), me: f.me, gap, dir: f.earlier > 0 ? 'earlier' : 'later' }),
     );
@@ -1021,9 +1022,9 @@ function detailLines(p: Pair, r: CornerResult, f: Facts): string[] {
     t('race.detail.slowest', {
       me: f.me,
       them: f.them,
-      vMine: num(mine.minSpeed * KMH),
+      vMine: speedArg(mine.minSpeed),
       atMine: m(mine.minSpeedAt),
-      vTheirs: num(theirs.minSpeed * KMH),
+      vTheirs: speedArg(theirs.minSpeed),
       atTheirs: m(theirs.minSpeedAt),
     }),
   );
@@ -1033,14 +1034,14 @@ function detailLines(p: Pair, r: CornerResult, f: Facts): string[] {
       them: f.them,
       mine: m(mine.fullThrottle),
       theirs: m(theirs.fullThrottle),
-      gap: Math.abs(f.flatLater) >= METRES ? num(Math.abs(f.flatLater)) : 'none',
+      gap: Math.abs(f.flatLater) >= METRES ? lengthArg(Math.abs(f.flatLater)) : 'none',
       dir: f.flatLater > 0 ? 'later' : 'sooner',
     }),
   );
   if (lineMine && lineTheirs) {
     const side = (v: number, where: string) =>
       finite(v) && Math.abs(v) >= 1
-        ? t('race.detail.offset', { metres: num(Math.abs(v), 1), side: v > 0 ? 'inside' : 'outside', them: f.them, where })
+        ? t('race.detail.offset', { metres: lengthArg(Math.abs(v), 1), side: v > 0 ? 'inside' : 'outside', them: f.them, where })
         : null;
     const offsets = [side(f.inTurnIn, 'turnIn'), side(f.inApex, 'apex'), side(f.inExit, 'flat')].filter((s): s is string => !!s);
     const turn = (lineTheirs.turnIn - lineMine.turnIn) * f.step;
@@ -1048,10 +1049,10 @@ function detailLines(p: Pair, r: CornerResult, f: Facts): string[] {
       t('race.detail.line', {
         me: f.me,
         them: f.them,
-        turn: Math.abs(turn) >= 8 ? num(Math.abs(turn)) : 'none',
+        turn: Math.abs(turn) >= 8 ? lengthArg(Math.abs(turn)) : 'none',
         turnDir: turn > 0 ? 'earlier' : 'later',
-        rMine: num(lineMine.radiusMin),
-        rTheirs: num(lineTheirs.radiusMin),
+        rMine: lengthArg(lineMine.radiusMin),
+        rTheirs: lengthArg(lineTheirs.radiusMin),
         offsets: offsets.length ? list(offsets, 'unit') : 'none',
         shapeMine: shapeWords(lineMine),
         shapeTheirs: shapeWords(lineTheirs),
@@ -1090,11 +1091,11 @@ function detailLines(p: Pair, r: CornerResult, f: Facts): string[] {
     out.push(
       t('race.detail.straight', {
         next: f.next,
-        metres: num(f.metres),
+        metres: lengthArg(f.metres),
         me: f.me,
         them: f.them,
-        vMine: num(vMine * KMH),
-        vTheirs: num(vTheirs * KMH),
+        vMine: speedArg(vMine),
+        vTheirs: speedArg(vTheirs),
         dir: r.straight >= 0 ? 'lost' : 'gained',
         s: num(Math.abs(r.straight), 2),
         parts: said.length ? list(said, 'unit') : 'none',
@@ -1142,7 +1143,7 @@ function lineText(p: Pair, f: Facts): string {
     mine.minSpeed,
     p.ground,
   );
-  const lead = t('race.lineText.lead', { type: seg.type, corner: f.t, before: num(seg.before), after: num(seg.after) });
+  const lead = t('race.lineText.lead', { type: seg.type, corner: f.t, before: lengthArg(seg.before), after: lengthArg(seg.after) });
   if (!lineMine) return `${lead} ${advice.text}`;
   // Where on the turn the car was slowest says as much about the line as its
   // shape: slowest before the middle and flat from there is slow in, fast out
@@ -1163,8 +1164,8 @@ function lineText(p: Pair, f: Facts): string {
     me: f.me,
     shape: shapeWords(lineMine),
     speed,
-    before: num(Math.round((lineMine.middle - mine.minSpeedAt) * p.step)),
-    past: num(Math.round((mine.minSpeedAt - lineMine.middle) * p.step)),
+    before: lengthArg((lineMine.middle - mine.minSpeedAt) * p.step),
+    past: lengthArg((mine.minSpeedAt - lineMine.middle) * p.step),
     miss,
   });
   return `${lead} ${advice.text} ${drove}`;
@@ -1262,7 +1263,7 @@ function faultCause(p: Pair, f: Facts, e: ControlEvent): Cause {
   // stop worse, so the lap needed the longer zone.
   const early =
     e.kind === 'lock' && finite(f.earlier) && f.earlier > METRES
-      ? ` ${t('race.cause.lockEarly', { me: f.me, them: f.them, metres: num(f.earlier) })}`
+      ? ` ${t('race.cause.lockEarly', { me: f.me, them: f.them, metres: lengthArg(f.earlier) })}`
       : '';
   const cost = e.cost >= 0.02 ? ` ${t(struck(e) ? 'race.cause.costRecovered' : 'race.cause.cost40', { s: num(e.cost, 2) })}` : '';
   return {
@@ -1289,8 +1290,8 @@ function entryCause(p: Pair, f: Facts): Cause {
   const gripRef = otherCar ? at(otherCar.lateral, mine.minSpeed) : Number.NaN;
   const slowerMiddle = mine.minSpeed < theirs.minSpeed - 0.5;
   const zone = [Math.max(0, mine.brakeOn), mine.brakeOff >= 0 ? mine.brakeOff : mine.minSpeedAt] as [number, number];
-  const v = (x: number) => num(x * KMH);
-  const m = (i: number) => num(Math.round(i * step));
+  const v = (x: number) => speedArg(x);
+  const m = (i: number) => lengthArg(i * step);
   const who = { me: f.me, them: f.them };
   // A near-stop: far below even what this car's grip allows where the other
   // car went through (speed on a radius grows with the root of grip).
@@ -1407,19 +1408,19 @@ function entryCause(p: Pair, f: Facts): Cause {
     return {
       kind: 'brakes-early',
       phase: 'braking',
-      what: t('race.cause.brakedEarly', { ...who, metres: num(f.earlier) }),
+      what: t('race.cause.brakedEarly', { ...who, metres: lengthArg(f.earlier) }),
       tip:
         !sameCar && finite(needed)
           ? t('race.cause.brakedEarlyTipCar', {
               ...who,
-              metres: num(Math.min(f.earlier, Math.max(METRES, spare))),
+              metres: lengthArg(Math.min(f.earlier, Math.max(METRES, spare))),
               decel: num(decelOwn, 1),
               from: v(mine.brakeSpeed),
               to: v(mine.minSpeed),
-              needed: num(needed),
-              used: num(toCorner),
+              needed: lengthArg(needed),
+              used: lengthArg(toCorner),
             })
-          : t('race.cause.brakedEarlyTip', { metres: num(Math.min(f.earlier, Math.max(METRES, spare))) }),
+          : t('race.cause.brakedEarlyTip', { metres: lengthArg(Math.min(f.earlier, Math.max(METRES, spare))) }),
       from: mine.brakeOn,
       to: theirs.brakeOn,
       basis: finite(needed) ? 'envelope' : 'comparison',
@@ -1430,8 +1431,8 @@ function entryCause(p: Pair, f: Facts): Cause {
     return {
       kind: 'coasts',
       phase: 'entry',
-      what: t('race.cause.coasted', { ...who, metres: num(mine.coastMetres) }),
-      tip: t('race.cause.coastedTip', { ...who, mine: num(mine.coastMetres), theirs: num(theirs.coastMetres) }),
+      what: t('race.cause.coasted', { ...who, metres: lengthArg(mine.coastMetres) }),
+      tip: t('race.cause.coastedTip', { ...who, mine: lengthArg(mine.coastMetres), theirs: lengthArg(theirs.coastMetres) }),
       from: mine.brakeOff >= 0 ? mine.brakeOff : mine.minSpeedAt,
       to: mine.throttleOn,
       basis: 'comparison',
@@ -1450,8 +1451,8 @@ function entryCause(p: Pair, f: Facts): Cause {
         tip: t('race.cause.tightLineTip', {
           ...who,
           diff,
-          rMine: num(middle.radiusMine),
-          rTheirs: num(middle.radiusTheirs),
+          rMine: lengthArg(middle.radiusMine),
+          rTheirs: lengthArg(middle.radiusTheirs),
           share: num(middle.byRadius * 100),
         }),
         from,
@@ -1608,7 +1609,7 @@ function rotationCause(p: Pair, f: Facts): Cause | null {
   const what = f.throttleLater > METRES ? 'power' : 'flat';
   const from = mine.brakeOn >= 0 ? mine.brakeOn : Math.max(0, mine.minSpeedAt - Math.round(30 / step));
   const to = Math.max(mine.throttleOn, mine.minSpeedAt);
-  const m = (i: number) => num(Math.round(i * step));
+  const m = (i: number) => lengthArg(i * step);
   if (theirs.entryDrift >= ROTATED && theirs.entryDrift >= mine.entryDrift + ROTATION_GAP) {
     const how = theirs.handbrakeAt >= 0 && mine.handbrakeAt < 0 ? 'handbrake' : mine.minSpeed < 15 ? 'tight' : 'none';
     return {
@@ -1621,7 +1622,7 @@ function rotationCause(p: Pair, f: Facts): Cause | null {
         theirs: deg(theirs.entryDrift),
         mine: deg(mine.entryDrift),
         what,
-        later: num(later),
+        later: lengthArg(later),
         how,
         at: m(theirs.handbrakeAt),
       }),
@@ -1641,7 +1642,7 @@ function rotationCause(p: Pair, f: Facts): Cause | null {
         mine: deg(mine.entryDrift),
         theirs: deg(theirs.entryDrift),
         what,
-        later: num(later),
+        later: lengthArg(later),
         handbrake: mine.handbrakeAt >= 0 ? 'yes' : 'no',
       }),
       from,
@@ -1674,8 +1675,8 @@ function jumpCause(p: Pair, f: Facts): (Cause & { cost: number }) | null {
     what: t('race.cause.jump', { me: f.me, them: f.them, mine: num(mine.airSeconds, 1), theirs: num(theirs.airSeconds, 1) }),
     tip: t('race.cause.jumpTip', {
       them: f.them,
-      from: num(Math.round(mine.airFrom * step)),
-      to: num(Math.round(mine.airTo * step)),
+      from: lengthArg(mine.airFrom * step),
+      to: lengthArg(mine.airTo * step),
       longer: num(mine.airSeconds - theirs.airSeconds, 1),
       s: num(Math.abs(cost), 2),
       before: before ? 'yes' : 'no',
@@ -1691,7 +1692,7 @@ function jumpCause(p: Pair, f: Facts): (Cause & { cost: number }) | null {
 /** Why a lap came out of a corner's second half behind. */
 function exitCause(p: Pair, r: CornerResult, f: Facts): Cause {
   const { mine, theirs, car, otherCar, sameCar, step } = p;
-  const m = (i: number) => num(Math.round(i * step));
+  const m = (i: number) => lengthArg(i * step);
   const who = { me: f.me, them: f.them };
   const gear =
     finite(mine.gearAtApex) && finite(theirs.gearAtApex) && mine.gearAtApex !== theirs.gearAtApex
@@ -1708,7 +1709,7 @@ function exitCause(p: Pair, r: CornerResult, f: Facts): Cause {
     return { ...cause, tip: `${cause.tip}${gear}` };
   }
   if (mine.scrub > theirs.scrub + 1 && mine.scrubFrom >= 0) {
-    const values = { ...who, from: m(mine.scrubFrom), to: m(mine.scrubTo), mine: num(mine.scrub * KMH), theirs: num(theirs.scrub * KMH) };
+    const values = { ...who, from: m(mine.scrubFrom), to: m(mine.scrubTo), mine: speedArg(mine.scrub), theirs: speedArg(theirs.scrub) };
     return {
       kind: 'scrubs',
       phase: 'exit',
@@ -1726,7 +1727,7 @@ function exitCause(p: Pair, r: CornerResult, f: Facts): Cause {
     return {
       kind: 'late-throttle',
       phase: 'exit',
-      what: t('race.cause.latePower', { ...who, metres: num(f.throttleLater) }),
+      what: t('race.cause.latePower', { ...who, metres: lengthArg(f.throttleLater) }),
       tip: `${t('race.cause.latePowerTip', { ...who, at: m(theirs.throttleOn), next: f.next })}${gear}`,
       from: theirs.throttleOn,
       to: mine.throttleOn,
@@ -1750,8 +1751,8 @@ function exitCause(p: Pair, r: CornerResult, f: Facts): Cause {
     return {
       kind: 'wide-exit',
       phase: 'exit',
-      what: t('race.cause.wide', { ...who, metres: num(Math.abs(f.inExit), 1) }),
-      tip: `${t('race.cause.wideTip', { ...who, metres: num(f.flatWait) })}${gear}`,
+      what: t('race.cause.wide', { ...who, metres: lengthArg(Math.abs(f.inExit), 1) }),
+      tip: `${t('race.cause.wideTip', { ...who, metres: lengthArg(f.flatWait) })}${gear}`,
       from: exitRange[0],
       to: exitRange[1],
       basis: 'comparison',
@@ -1763,7 +1764,7 @@ function exitCause(p: Pair, r: CornerResult, f: Facts): Cause {
     return {
       kind: 'late-throttle',
       phase: 'exit',
-      what: t('race.cause.lateFull', { ...who, metres: num(f.flatLater) }),
+      what: t('race.cause.lateFull', { ...who, metres: lengthArg(f.flatLater) }),
       tip: `${t('race.cause.lateFullTip', { ...who, acc: finite(accOwn) ? num(accOwn, 1) : 'none' })}${gear}`,
       from: theirs.fullThrottle,
       to: mine.fullThrottle,
@@ -1778,7 +1779,7 @@ function exitCause(p: Pair, r: CornerResult, f: Facts): Cause {
       kind: 'car-power',
       phase: 'exit',
       what: t('race.cause.carDrive', who),
-      tip: t('race.cause.carDriveTip', { ...who, mine: num(accOwn, 1), speed: num(mine.minSpeed * KMH), theirs: num(accRef, 1) }),
+      tip: t('race.cause.carDriveTip', { ...who, mine: num(accOwn, 1), speed: speedArg(mine.minSpeed), theirs: num(accRef, 1) }),
       from: exitRange[0],
       to: exitRange[1],
       basis: 'envelope',
@@ -1804,15 +1805,15 @@ function alsoLine(p: Pair, r: CornerResult, f: Facts, main: FindingKind): string
   if (main !== 'scrubs' && mine.scrub > theirs.scrub + 1 && mine.scrubFrom >= 0) {
     return ` ${t('race.also.scrub', {
       me: f.me,
-      lost: num(mine.scrub * KMH),
-      from: num(Math.round(mine.scrubFrom * step)),
-      to: num(Math.round(mine.scrubTo * step)),
+      lost: speedArg(mine.scrub),
+      from: lengthArg(mine.scrubFrom * step),
+      to: lengthArg(mine.scrubTo * step),
       s: num(Math.abs(r.driven), 2),
       contact: mine.scrub > 7 ? 'yes' : 'no',
     })}`;
   }
   if (main !== 'lifts-on-straight' && r.lifted && mine.liftFrom >= 0) {
-    return ` ${t('race.also.lift', { at: num(Math.round(mine.liftFrom * step)), s: num(Math.abs(r.driven), 2) })}`;
+    return ` ${t('race.also.lift', { at: lengthArg(mine.liftFrom * step), s: num(Math.abs(r.driven), 2) })}`;
   }
   return '';
 }
@@ -1831,7 +1832,7 @@ function carNote(p: Pair, r: CornerResult, f: Facts): string {
   if (p.sameCar || !me || !them) return '';
   const out: string[] = [];
   const pct = (x: number) => num(Math.abs(x - 1) * 100);
-  const v = (x: number) => num(x * KMH);
+  const v = (x: number) => speedArg(x);
   const who = { me: f.me, them: f.them };
   const pullsMore = finite(me.pull.mid) && finite(them.pull.mid) && me.pull.mid > 1.05 * them.pull.mid;
   // Through the middle: the speed this car's grip allows on the other's line.
@@ -1938,7 +1939,7 @@ function cornerFindingOnly(
   const plain = (what: string) => ({ what, title: titled(f, what) });
   const costed = (what: string) => ({ what, title: t('race.title.cornerCost', { corner: f.t, what, cost: net }) });
   const later = finite(f.earlier) && f.earlier < -METRES;
-  const laterBy = later ? num(Math.abs(f.earlier)) : 'none';
+  const laterBy = later ? lengthArg(Math.abs(f.earlier)) : 'none';
   // --- Level: only worth saying when they got there differently.
   if (Math.abs(r.net) < EVEN) {
     if (!trade || swing < SHOW_EVEN) return null;
@@ -1977,8 +1978,8 @@ function cornerFindingOnly(
           me: f.me,
           toApex: s2(r.toApex),
           fromApex: s2(r.fromApex),
-          earlier: finite(f.earlier) && f.earlier > METRES ? num(f.earlier) : 'none',
-          flat: f.flatLater < -METRES ? num(Math.abs(f.flatLater)) : 'none',
+          earlier: finite(f.earlier) && f.earlier > METRES ? lengthArg(f.earlier) : 'none',
+          flat: f.flatLater < -METRES ? lengthArg(Math.abs(f.flatLater)) : 'none',
           pull: Math.abs(r.byPower) >= 0.02 ? s2(r.byPower) : 'none',
           pullName: r.byPower < 0 ? f.me : f.them,
           pullDir: r.byPower < 0 ? 'stronger' : 'weaker',
@@ -2031,11 +2032,11 @@ function cornerFindingOnly(
         where === 'in'
           ? t('race.finding.fasterInTip', {
               later: laterBy,
-              more: mine.minSpeed > theirs.minSpeed + 0.5 ? num((mine.minSpeed - theirs.minSpeed) * KMH) : 'none',
+              more: mine.minSpeed > theirs.minSpeed + 0.5 ? speedArg((mine.minSpeed - theirs.minSpeed)) : 'none',
             })
           : t('race.finding.fasterOutTip', {
               me: f.me,
-              flat: f.flatLater < -METRES ? num(Math.abs(f.flatLater)) : 'none',
+              flat: f.flatLater < -METRES ? lengthArg(Math.abs(f.flatLater)) : 'none',
               pull: r.byPower < -0.02 ? s2(r.byPower) : 'none',
             }),
       basis: 'comparison',
@@ -2161,8 +2162,8 @@ function cornerFindingOnly(
         fromApex: s2(r.fromApex),
         later: laterBy,
         cause: exit.what,
-        brakedAt: finite(f.earlier) && f.earlier < 0 ? num(Math.round(theirs.brakeOn * step)) : 'none',
-        flatAt: num(Math.round(theirs.fullThrottle * step)),
+        brakedAt: finite(f.earlier) && f.earlier < 0 ? lengthArg(theirs.brakeOn * step) : 'none',
+        flatAt: lengthArg(theirs.fullThrottle * step),
       })} ${exit.tip}${alsoLine(p, r, f, exit.kind)}`,
       basis: exit.basis,
       source: 'driver',
@@ -2202,8 +2203,8 @@ function cornerFindingOnly(
         them: f.them,
         mine: num(mine.straightFull * 100),
         theirs: num(theirs.straightFull * 100),
-        off: mine.liftFrom >= 0 ? num((mine.liftTo - mine.liftFrom + 1) * step) : 'none',
-        at: num(Math.round(mine.liftFrom * step)),
+        off: mine.liftFrom >= 0 ? lengthArg((mine.liftTo - mine.liftFrom + 1) * step) : 'none',
+        at: lengthArg(mine.liftFrom * step),
       }),
       basis: 'comparison',
       source: 'driver',
@@ -2363,8 +2364,8 @@ function startFinding(
     what,
     title: t('race.start.title', { stretch: standing ? 'launch' : raceStart ? 'race' : 'first', what }),
     evidence: standing
-      ? t('race.start.standing', { me, them, mine: num(lap.channels.speed[firstStart] * KMH), theirs: num(other.channels.speed[firstStart] * KMH) })
-      : t('race.start.flying', { me, them, mine: num(mine * KMH), theirs: num(theirs * KMH) }),
+      ? t('race.start.standing', { me, them, mine: speedArg(lap.channels.speed[firstStart]), theirs: speedArg(other.channels.speed[firstStart]) })
+      : t('race.start.flying', { me, them, mine: speedArg(mine), theirs: speedArg(theirs) }),
     details: [],
     tip: gained
       ? ''

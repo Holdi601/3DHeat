@@ -10,6 +10,12 @@ import {
 } from '../../state/replayStore';
 import { tacticalColumns } from '../../render/tactical';
 import { num, t } from '../../i18n';
+import { useUnits } from '../../state/unitsStore';
+import { formatLong } from '../../units/format';
+import { aimOf } from '../../figures/aim';
+import { cameraTracks } from '../../render/lookAids';
+import { unitsOf } from './units';
+import { selectAndFollow } from './ReplayOverlay';
 
 /** A display aid's "for whom" choice. */
 function ScopeSelect({
@@ -56,6 +62,17 @@ export function DisplayPanel() {
   const mapNames = useReplayStore((s) => s.mapNames);
   const chartOpen = useReplayStore((s) => s.chart.open);
   const has = useMemo(() => (dataset ? tacticalColumns(dataset) : null), [dataset]);
+  const units = useUnits();
+  const lookOn = useStore((s) => s.team.showLookDirection);
+  const hasAim = useMemo(() => (dataset ? !!aimOf(dataset) : false), [dataset]);
+  // The recorded cameras, each by its unit and its first track.
+  const cameras = useMemo(() => {
+    if (!dataset) return [];
+    const cams = cameraTracks(dataset);
+    if (!cams.any) return [];
+    const index = unitsOf(dataset);
+    return index.units.filter((u) => u.persons.some((p) => cams.persons[p])).map((u) => ({ unit: u, person: u.persons[0] }));
+  }, [dataset]);
   if (!dataset || !has) return null;
   const r = useReplayStore.getState;
   const set = (p: Partial<DisplayAids>) => r().setAids(p);
@@ -136,8 +153,40 @@ export function DisplayPanel() {
           max={200}
           logarithmic
           onChange={(v) => set({ engagementRange: v * 1000 })}
-          format={(v) => t('replay.km', { v: num(v, v < 10 ? 1 : 0) })}
+          format={(v) => formatLong(v * 1000, units, v < 10 ? 1 : 0)}
         />
+      )}
+      <ScopeSelect
+        label={t('units.look.cones')}
+        title={t('units.look.conesTitle')}
+        value={aids.look}
+        onChange={(v) => set({ look: v })}
+      />
+      {aids.look !== 'off' && !lookOn && <div className="hint">{t('units.look.needsTeam')}</div>}
+      <ScopeSelect
+        label={t('units.look.aim')}
+        title={t('units.look.aimTitle')}
+        value={aids.aim}
+        onChange={(v) => set({ aim: v })}
+        missing={!hasAim}
+      />
+      {cameras.length > 0 && (
+        <>
+          <Check label={t('units.look.camera')} checked={aids.camera} onChange={(v) => set({ camera: v })} title={t('units.look.cameraTitle')} />
+          {cameras.map((c) => (
+            <button
+              key={c.unit.key}
+              className="small"
+              title={t('units.look.throughTitle')}
+              onClick={() => {
+                r().patchSaved({ followMode: 'cockpit' });
+                selectAndFollow(c.unit, c.person);
+              }}
+            >
+              {cameras.length > 1 ? t('units.look.throughNamed', { name: c.unit.name }) : t('units.look.through')}
+            </button>
+          ))}
+        </>
       )}
       <Check
         label={t('replay.aids.los')}

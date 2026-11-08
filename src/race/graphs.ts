@@ -95,13 +95,14 @@ export function graphRows(ids: string[], catalog: ChannelEntry[]): GraphRow[] {
     const e = byId.get(id);
     if (!e) continue;
     const scale = e.info.show?.scale ?? 1;
+    const offset = e.info.show?.offset ?? 0;
     rows.push({
       key: id,
       label: e.label,
       weight: weightOf(e.info),
       value: (l, i) => {
         const c = l.channels[id];
-        return c ? c[i] * scale : Number.NaN;
+        return c ? c[i] * scale + offset : Number.NaN;
       },
       range: e.info.show?.range,
       format: (v) => formatShown(e.info, v),

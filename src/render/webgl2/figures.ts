@@ -54,6 +54,11 @@ export class GlFigures {
     gl.vertexAttribPointer(2, 4, gl.FLOAT, false, S, 28);
     gl.enableVertexAttribArray(3);
     gl.vertexAttribPointer(3, 1, gl.FLOAT, false, S, 44);
+    // How each vertex moves: turret and gun (`figures/instances.ts`).
+    for (let k = 0; k < 3; k++) {
+      gl.enableVertexAttribArray(8 + k);
+      gl.vertexAttribPointer(8 + k, 4, gl.FLOAT, false, S, 48 + k * 16);
+    }
     gl.bindBuffer(gl.ARRAY_BUFFER, this.instances);
     for (let k = 0; k < 4; k++) {
       gl.enableVertexAttribArray(4 + k);

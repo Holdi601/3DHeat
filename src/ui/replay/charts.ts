@@ -4,6 +4,9 @@
  * pairs of a value-against-value chart.
  */
 
+import { convertTo, type ValueKind } from '../../units/format';
+import { longUnitMetres, type UnitPrefs } from '../../units/units';
+
 /** Round tick values from `lo` to `hi`, about `count` of them (1, 2, 2.5 or 5 times a power of ten apart). */
 export function niceTicks(lo: number, hi: number, count = 5): number[] {
   if (!Number.isFinite(lo) || !Number.isFinite(hi) || hi <= lo)
@@ -15,6 +18,21 @@ export function niceTicks(lo: number, hi: number, count = 5): number[] {
   for (let v = Math.ceil(lo / step) * step; v <= hi + step * 1e-9; v += step)
     out.push(Math.abs(v) < step * 1e-9 ? 0 : v);
   return out;
+}
+
+/**
+ * Ticks round in the unit the values are shown in (`units/format.ts`), at
+ * their SI values: an altitude axis in feet ticks at 1000 ft, not 1000 m.
+ * A distance axis ticks in the long unit (km, mi, NM) from one of it up.
+ */
+export function unitTicks(lo: number, hi: number, count: number, kind: ValueKind | null, units: UnitPrefs): number[] {
+  if (!kind) return niceTicks(lo, hi, count);
+  const long = kind === 'distance' && Math.max(Math.abs(lo), Math.abs(hi)) >= longUnitMetres(units.distance);
+  const b = convertTo(kind, 0, units, long);
+  const a = convertTo(kind, 1, units, long) - b;
+  if (!(Math.abs(a) > 0) || !Number.isFinite(a)) return niceTicks(lo, hi, count);
+  // Every conversion is a scale and an offset: ticks in the shown unit, back to SI.
+  return niceTicks(lo * a + b, hi * a + b, count).map((d) => (d - b) / a);
 }
 
 /** The largest 1, 2 or 5 times a power of ten not above `max`: a scale bar's length. */

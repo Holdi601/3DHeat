@@ -23,7 +23,9 @@
  * flags (air: turns with its pitch and roll; attitude: has one; weapon: a
  * missile, rocket or bomb, drawn with a streak behind it), and the
  * span its keys are in: origin x, y, z and the step of a position unit
- * (slots 8-11), first time and the step of a time unit (12-13).
+ * (slots 8-11), first time and the step of a time unit (12-13), and the
+ * seconds it is held past its last key plus one (14; 0 for the viewer's
+ * lifetime alone, `data/despawn.ts`).
  */
 
 import type { Dataset } from '../../state/types';
@@ -33,6 +35,8 @@ import { meshOf, MESH_STRIDE, type FigureMesh } from '../../figures/instances';
 import { poseFrame } from '../../figures/kit';
 import { positionRows, quatOfFrame } from '../../figures/motion';
 import { CATALOG } from '../../figures/catalog';
+import { endsOf, holdAfterKeys } from '../../data/despawn';
+import { aimOf, type AimNow } from '../../figures/aim';
 
 export const TRACK_U32 = 16;
 export const KEY_U32 = 2;
@@ -53,6 +57,26 @@ const TOLERANCES = [0.5, 1, 2, 5, 10, 20, 50, 100];
 export const FLAG_AIR = 1;
 export const FLAG_ATTITUDE = 2;
 export const FLAG_WEAPON = 4;
+/** Slot 14 of a track the data says lives on past its last key: held until the recording ends, not by the viewer's lifetime. */
+export const HOLD_ON = 2e9;
+/** The track has turret and gun keys (`keysAim`). */
+export const FLAG_AIM = 8;
+/** A packed aim half that is not there. */
+export const AIM_NONE = 0xffff;
+
+/** A turret yaw (radians) and gun elevation (radians) in one u32: 16 bits each across a turn and a half turn; `AIM_NONE` for either missing. */
+export function packAim(yaw: number, pitch: number): number {
+  const y = Number.isFinite(yaw) ? Math.round(((((yaw + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) / (2 * Math.PI) * 65534) : AIM_NONE;
+  const p = Number.isFinite(pitch) ? Math.round((Math.max(-Math.PI / 2, Math.min(Math.PI / 2, pitch)) + Math.PI / 2) / Math.PI * 65534) : AIM_NONE;
+  return (y | (p << 16)) >>> 0;
+}
+
+/** `packAim` undone: [yaw, pitch], NaN for a missing half. */
+export function unpackAim(v: number): [number, number] {
+  const y = v & 0xffff;
+  const p = v >>> 16;
+  return [y === AIM_NONE ? NaN : (y / 65534) * 2 * Math.PI - Math.PI, p === AIM_NONE ? NaN : (p / 65534) * Math.PI - Math.PI / 2];
+}
 
 /** Deaths to mark: x, y, z and the time a marker, and its team colour (rgba8). */
 export interface TrackMarkers {
@@ -72,6 +96,12 @@ export interface GpuTrackStore {
   readonly keysB: Uint32Array;
   /** The row each key was made from (CPU only, for labels and cards); null where a row stands for a whole track (`trackRow`). */
   readonly keyRow: Int32Array | null;
+  /**
+   * One a key where the data has turrets and guns (`figures/aim.ts`): the
+   * turret's yaw and the gun's elevation (`packAim`). Uploaded after the
+   * tracks, in the same buffer; the tracks it is for carry `FLAG_AIM`.
+   */
+  readonly keysAim?: Uint32Array | null;
   /** The row standing for each track, where keys have no rows of their own (the lean overlay). */
   readonly trackRow?: Int32Array;
   /** Deaths to mark, where the data has them. */
@@ -107,8 +137,10 @@ function dartMesh(): FigureMesh {
     nx /= l;
     ny /= l;
     nz /= l;
-    for (const p of [a, b, c]) v.push(p[0], p[1], p[2], 1, 1, 1, 1, nx, ny, nz, 0, 1);
-    for (const p of [a, c, b]) v.push(p[0], p[1], p[2], 1, 1, 1, 1, -nx, -ny, -nz, 0, 1);
+    // Nothing on a dart turns: the movement floats stay 0.
+    const still = new Array<number>(MESH_STRIDE - 12).fill(0);
+    for (const p of [a, b, c]) v.push(p[0], p[1], p[2], 1, 1, 1, 1, nx, ny, nz, 0, 1, ...still);
+    for (const p of [a, c, b]) v.push(p[0], p[1], p[2], 1, 1, 1, 1, -nx, -ny, -nz, 0, 1, ...still);
   };
   const nose = [0.5, 0, 0];
   const l = [-0.5, 0, -0.42];
@@ -319,6 +351,7 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
   const keyRow = new Int32Array(keys);
   const personOf = new Int32Array(persons);
   const trackOf = new Int32Array(persons).fill(-1);
+  const ends = endsOf(d);
   const q: [number, number, number, number] = [0, 0, 0, 1];
   let tracks = 0;
   let key = 0;
@@ -384,6 +417,9 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
     f32[o8 + 11] = step;
     f32[o8 + 12] = t0k;
     f32[o8 + 13] = tStep;
+    // How long it is held past its last key, plus one (0: the viewer's lifetime alone; HOLD_ON: until the recording ends).
+    const hold = holdAfterKeys(ends, p, t1k);
+    f32[o8 + 14] = hold === Infinity ? HOLD_ON : hold + 1;
     personOf[tracks] = p;
     trackOf[p] = tracks;
     tracks++;
@@ -395,6 +431,7 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
     keysA: keysA.subarray(0, key * KEY_U32),
     keysB: keysB.subarray(0, key),
     keyRow: keyRow.subarray(0, key),
+    keysAim: aimKeys(d, keyRow.subarray(0, key), trackData, tracks),
     keys: key,
     meshes: figures.meshes,
     meshTracks: figures.meshTracks.slice(0, figures.meshes.length),
@@ -406,6 +443,21 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
     bytes: tracks * TRACK_U32 * 4 + key * (KEY_U32 * 4 + 4),
     buildMs: performance.now() - t0,
   };
+}
+
+/** The turret and gun at each key, where the data has them; marks the tracks that have them. */
+function aimKeys(d: Dataset, keyRow: Int32Array, trackData: Uint32Array, tracks: number): Uint32Array | null {
+  const aim = aimOf(d);
+  if (!aim || !d.time) return null;
+  const out = new Uint32Array(keyRow.length);
+  const now: AimNow = { yaw: NaN, pitch: NaN };
+  for (let k = 0; k < keyRow.length; k++) {
+    const r = keyRow[k];
+    aim.at(r, d.time[r], now);
+    out[k] = packAim(now.yaw, now.pitch);
+  }
+  for (let i = 0; i < tracks; i++) trackData[i * TRACK_U32 + 5] |= FLAG_AIM;
+  return out;
 }
 
 /** Key `j` of the track at u32 offset `b` of `trackData`, decoded into `out` (x, y, z, t). */

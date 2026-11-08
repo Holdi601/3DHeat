@@ -35,18 +35,22 @@ A['f-5e'] = {
 // ---------------------------------------------------------------- twins and bombers
 
 // P-38 Lightning: a short central nacelle, two booms carrying the engines and the oval fins, the tailplane between them (11.53 x 15.85 x 3.0 m).
+// The wing's planform outboard of the booms, the booms' places, widths and heights, the central nacelle's profile and
+// plan, the canopy's run and the fins' outline measured on FM 30-30 (1943), sheet "P-38 Lightning", with
+// tools/figures/twinview.py; the centre section's trailing edge runs on the outer panels' line (the drawing's plan
+// view closes the gap between the booms), the booms' depth behind the wing is judged from its side view.
 A['p-38j'] = {
-  cls: 'ww2-heavy-fighter', length: 11.53, span: 15.85, height: 3.0, bodyWidth: 1.3, bodyHeight: 1.3,
-  fuselage: { top: [[5.1, 0], [4.4, 0.45], [2.6, 0.65], [1.8, 0.95], [0, 0.7], [-1.8, 0.2]], bottom: [[5.1, 0], [4.4, -0.45], [1, -0.6], [-1.8, -0.2]], plan: [[5.1, 0.05], [4.4, 0.5], [2.5, 0.65], [-0.5, 0.55], [-1.8, 0.1]], round: 2.2, stations: 14 },
-  bodies: [{ top: [[3.7, 0], [3.4, 0.55], [0, 0.6], [-2.0, 0.6], [-5.6, 0.3]], bottom: [[3.7, 0], [3.4, -0.55], [0, -0.75], [-2, -0.5], [-5.6, -0.2]], plan: [[3.7, 0.08], [3.4, 0.55], [0, 0.6], [-2, 0.4], [-5.6, 0.28]], side: 2.4, round: 2.2, stations: 16 }],
-  wing: { x: 0.1, span: 15.85, rootChord: 3.0, tipChord: 1.2, sweep: 2, mount: 0 },
-  wingPlan: [[1.6, 0], [1.6, 3.0], [0.8, 7.92], [-0.4, 7.92], [-1.4, 3.0], [-1.4, 0]],
-  tail: { kind: 'twin', finHeight: 1.4, finChord: 1.2, spacing: 4.8, tailSpan: 5.2, tailChord: 1.0, finBase: 0 },
-  finPlan: [[-4.6, -0.9], [-5.8, -0.9], [-5.8, 1.4], [-4.8, 1.4]],
-  tailPlan: [[-4.6, 0], [-4.6, 2.6], [-5.6, 2.6], [-5.6, 0]],
-  engines: { kind: 'wing-props', count: 2, diameter: 1.0, at: [0.303], length: 0.6 },
+  cls: 'ww2-heavy-fighter', length: 11.53, span: 15.85, height: 3.0, bodyWidth: 1.0, bodyHeight: 1.8,
+  fuselage: { top: [[5.765, 0.03], [5.34, 0.39], [4.91, 0.53], [4.48, 0.62], [4.06, 0.67], [3.63, 0.69], [3.2, 0.69], [2.78, 0.95], [2.35, 1.1], [1.92, 1.08], [1.5, 0.96], [1.07, 0.8], [0.64, 0.72], [0, 0.65], [-1.0, 0.45], [-1.8, 0.22]], bottom: [[5.765, -0.06], [5.34, -0.35], [4.91, -0.49], [4.48, -0.57], [4.06, -0.62], [3.63, -0.65], [3.2, -0.67], [2.35, -0.67], [1.92, -0.64], [1.5, -0.5], [1.07, -0.46], [0.64, -0.4], [0, -0.3], [-1.0, -0.1], [-1.8, 0.12]], plan: [[5.765, 0.04], [5.34, 0.24], [4.91, 0.35], [4.48, 0.41], [4.06, 0.45], [3.63, 0.48], [3.2, 0.5], [2.35, 0.5], [1.5, 0.45], [0.64, 0.38], [0, 0.3], [-1.0, 0.18], [-1.8, 0.03]], round: 2.2, stations: 18 },
+  bodies: [{ top: [[4.86, 0.18], [4.46, 0.55], [4.06, 0.68], [3.26, 0.76], [0.85, 0.76], [-1.56, 0.62], [-3.96, 0.5], [-5.57, 0.42]], bottom: [[4.86, 0.18], [4.46, -0.2], [4.06, -0.32], [3.26, -0.4], [0.85, -0.4], [-1.56, -0.12], [-3.96, -0.02], [-5.57, 0.0]], plan: [[4.86, 0.05], [4.46, 0.25], [4.06, 0.33], [3.26, 0.42], [0.85, 0.42], [-1.56, 0.37], [-3.96, 0.34], [-5.57, 0.31]], side: 2.34, round: 2.2, stations: 18 }],
+  wing: { x: 1.1, span: 15.85, rootChord: 3.0, tipChord: 1.2, sweep: 2, mount: 0 },
+  wingPlan: [[2.59, 0], [2.59, 1.62], [2.47, 3.06], [2.33, 4.09], [2.2, 5.28], [2.09, 6.57], [1.96, 7.65], [1.75, 7.92], [1.49, 7.92], [1.19, 7.65], [0.81, 6.57], [0.59, 5.28], [0.4, 4.09], [0.25, 3.25], [-0.43, 0]],
+  tail: { kind: 'twin', finHeight: 2.0, finChord: 1.38, spacing: 4.68, tailSpan: 5.2, tailChord: 1.2, finBase: 0 },
+  finPlan: [[-4.38, -0.08], [-4.52, 1.44], [-4.68, 1.76], [-4.95, 2.0], [-5.2, 2.0], [-5.43, 1.8], [-5.63, 1.4], [-5.76, 0.74], [-5.72, 0.42], [-5.6, 0.21], [-5.27, -0.03], [-4.6, 0.1]],
+  tailPlan: [[-4.4, 0], [-4.4, 2.5], [-5.6, 2.5], [-5.6, 0]],
+  engines: { kind: 'wing-props', count: 2, diameter: 1.0, at: [0.295], length: 0.6 },
   propeller: { diameter: 3.5, blades: 3 },
-  canopy: { x: 1.8, length: 1.8, kind: 'bubble' },
+  canopy: { x: 2.47, length: 1.42, kind: 'bubble' },
 };
 // B-17G: four radials, the glazed nose and chin turret, a tapered wing, the great dorsal fin fillet (22.66 x 31.62 x 5.82 m).
 A['b-17g'] = {
@@ -61,29 +65,8 @@ A['b-17g'] = {
   propeller: { diameter: 3.5, blades: 3 },
   canopy: { x: 10.0, length: 2.2, kind: 'glass-nose' },
 };
-// Avro Lancaster: a deep fuselage with a big canopy and turrets, a long straight wing, four inline engines, twin oval fins on the tailplane tips (21.18 x 31.09 x 6.25 m).
-A['lancaster'] = {
-  cls: 'ww2-heavy-bomber', length: 21.18, span: 31.09, height: 6.25, bodyWidth: 2.0, bodyHeight: 2.7,
-  fuselage: { top: [[10.6, 0.2], [9.2, 0.8], [6.5, 1.2], [5.5, 1.65], [3.5, 1.4], [-6, 1.2], [-10.6, 0.7]], bottom: [[10.6, -0.5], [9.2, -1.1], [6, -1.35], [-4, -1.3], [-9, -0.7], [-10.6, -0.2]], plan: [[10.6, 0.5], [9.4, 0.9], [6, 1.0], [-4, 1.0], [-9, 0.7], [-10.6, 0.4]], round: 3, stations: 22 },
-  wing: { x: 0.1, span: 31.09, rootChord: 5.4, tipChord: 1.5, sweep: 3, mount: 0.2, dihedral: 4 },
-  wingPlan: [[2.8, 0], [2.8, 4.0], [2.4, 8.5], [0.9, 15.55], [-0.6, 15.55], [-1.8, 8.5], [-2.6, 4.0], [-2.6, 0]],
-  tail: { kind: 'h', finHeight: 3.4, finChord: 2.0, spacing: 6.6, tailSpan: 6.6, tailChord: 2.0, planeUp: 0.5 },
-  finPlan: [[-8.2, -1.0], [-9.8, -1.2], [-10.2, 0], [-10.0, 2.0], [-8.8, 2.4], [-8.0, 1.6]],
-  tailPlan: [[-7.8, 0], [-8.0, 3.3], [-9.8, 3.3], [-9.9, 0]],
-  engines: { kind: 'wing-props', count: 4, diameter: 1.3, at: [0.24, 0.46] },
-  propeller: { diameter: 4.0, blades: 3 },
-  canopy: { x: 6.0, length: 2.4, kind: 'framed' },
-  // The cockpit's glasshouse standing on the deck, the nose, mid-upper and tail turrets (estimates).
-  glass: [
-    { top: [[7.1, 1.15], [6.6, 1.95], [5.0, 2.0], [4.3, 1.55]], bottom: [[7.1, 0.9], [4.3, 0.9]], plan: [[7.1, 0.35], [6.6, 0.6], [5.0, 0.6], [4.3, 0.45]], round: 2.4, stations: 8 },
-    { top: [[11.05, -0.15], [10.85, 0.35], [10.3, 0.45], [9.9, 0.2]], bottom: [[11.05, -0.25], [10.85, -0.75], [10.3, -0.85], [9.9, -0.5]], plan: [[11.05, 0.1], [10.85, 0.5], [10.3, 0.55], [9.9, 0.45]], round: 2, stations: 6 },
-    { top: [[-2.4, 1.1], [-2.7, 1.75], [-3.5, 1.75], [-3.8, 1.1]], bottom: [[-2.4, 0.9], [-3.8, 0.9]], plan: [[-2.4, 0.3], [-2.7, 0.5], [-3.5, 0.5], [-3.8, 0.3]], round: 2, stations: 6 },
-    { top: [[-10.2, 0.75], [-10.6, 0.85], [-11.2, 0.6], [-11.4, 0.2]], bottom: [[-10.2, -0.3], [-10.6, -0.4], [-11.2, -0.3], [-11.4, 0.0]], plan: [[-10.2, 0.45], [-10.6, 0.5], [-11.2, 0.4], [-11.4, 0.15]], round: 2, stations: 6 },
-  ],
-};
-
 // The wings' thickness at the root as a share of the chord (estimates): the P-38's thin laminar wing, the bombers' deep spars.
-for (const [k, r] of [['p-38j', 0.15], ['b-17g', 0.18], ['lancaster', 0.17]] as [string, number][]) A[k]!.wing.thicknessRatio = r;
+for (const [k, r] of [['p-38j', 0.15], ['b-17g', 0.18]] as [string, number][]) A[k]!.wing.thicknessRatio = r;
 
 // ---------------------------------------------------------------- piston aircraft from proportions
 
@@ -216,6 +199,14 @@ export interface Drawn {
  */
 export const LE_FIX = 0.135;
 /**
+ * The same for the dive and torpedo bombers (`ww2-attack` or `attack` under a greenhouse at least a quarter of the
+ * length long): seven FM 30-30 sheets (SBD, SB2C, TBF, Vengeance, Ju 87 B, B5N, D3A) put their wings, at a quarter
+ * of the span, a median 0.036 of the length further aft than `LE_FIX` had moved those types' estimates: behind a
+ * two- or three-seat cockpit the estimates had already stood the wing further forward than a fighter's. Single-seat
+ * attack aircraft keep `LE_FIX` (no drawing measured).
+ */
+export const LE_FIX_ATTACK = 0.1;
+/**
  * The tailplane, from the same drawings: its root's trailing edge about 0.06 of the length ahead of the
  * rudder's (the estimates had them flush), its root chord with the fillet about 1.3 times the `tailRoot`
  * estimates.
@@ -252,7 +243,8 @@ export function piston(p: Piston): FixedWingSpec & { cls: string } {
   const xf = d?.canopy ? d.canopy[0][0] : c.x + c.length / 2;
   const xb = d?.canopy ? d.canopy[d.canopy.length - 1][0] : c.x - c.length / 2;
   // The wing where the drawings put it (see LE_FIX); what hangs under it moves with it.
-  const fix = d || p.midEngine ? 0 : LE_FIX * L;
+  const attack = (p.cls === 'ww2-attack' || p.cls === 'attack') && c.length >= 0.25 * L;
+  const fix = d || p.midEngine ? 0 : (attack ? LE_FIX_ATTACK : LE_FIX) * L;
   const le = p.le + fix;
   const te = le - p.root;
   const fr = Math.min(p.finRoot, L * 0.2);
@@ -326,7 +318,7 @@ export function piston(p: Piston): FixedWingSpec & { cls: string } {
   if (p.rads) {
     const [r0, ry, rl, rd] = p.rads;
     // Placed by the estimated wing, so moved with it (see LE_FIX) under a drawn one too.
-    const rx = r0 + (p.midEngine ? 0 : LE_FIX * L);
+    const rx = r0 + (p.midEngine ? 0 : (attack ? LE_FIX_ATTACK : LE_FIX) * L);
     const up = mount * 2 * h * 0.4 + ry * Math.tan((dihedral * Math.PI) / 180) - (p.thick ?? 0.15) * p.root * 0.3;
     bodies.push({ top: [[rx, up], [rx - rl, up]], bottom: [[rx, up - rd * 0.8], [rx - rl * 0.2, up - rd], [rx - rl * 0.7, up - rd * 0.9], [rx - rl, up - 0.05]], plan: [[rx, 0.26], [rx - rl * 0.2, 0.3], [rx - rl * 0.7, 0.28], [rx - rl, 0.15]], side: ry, round: 3, stations: 6 });
   }
@@ -632,6 +624,17 @@ export const DRAWN: Record<string, Drawn> = {
     fin: [[-2.671, 0.755], [-3.053, 1.867], [-3.136, 1.883], [-3.152, 1.999], [-3.219, 2.066], [-3.235, 2.132], [-3.401, 2.132], [-3.418, 2.165], [-3.716, 2.149], [-3.866, 2.082], [-4.032, 1.933], [-4.181, 1.667], [-4.364, 0.572], [-4.43, 0.523], [-4.446, 0.456], [-4.596, 0.456], [-4.977, 0.373], [-5.11, 0.274], [-5.127, 0.224]],
     canopy: [[1.128, 0.755], [1.012, 0.672], [0.896, 0.639], [0.78, 0.987], [0.664, 1.037], [0.548, 1.054], [0.431, 1.054], [0.315, 1.054], [0.199, 0.937], [0.083, 0.937], [-0.033, 0.954], [-0.149, 1.037]],
     wingZ: 0.02, dihedral: 8.69, tailZ: 0.707,
+  },
+  // FM 30-30 (1943), sheet "A-35 Vengeance".
+  'vengeance': {
+    top: [[6.06, 0.055], [5.669, 0.199], [5.278, 0.75], [4.105, 0.823], [2.932, 0.859], [-0.195, 1.192], [-0.586, 1.133], [-0.977, 0.841], [-3.323, 0.666], [-6.06, 0.269]],
+    bottom: [[6.06, 0], [5.669, -0.183], [5.278, -0.786], [4.887, -0.841], [-1.368, -0.841], [-1.759, -0.823], [-2.15, -0.731], [-4.496, -0.347], [-5.669, -0.11], [-6.06, 0.219]],
+    plan: [[6.06, 0.019], [5.669, 0.184], [5.278, 0.658], [4.887, 0.732], [3.714, 0.714], [0.195, 0.797], [-0.195, 0.723], [-0.977, 0.714], [-1.759, 0.658], [-2.15, 0.603], [-2.932, 0.534], [-3.714, 0.436], [-4.496, 0.326], [-6.06, 0]],
+    wing: [[3.155, 0], [3.155, 0.861], [3.02, 1.233], [2.944, 1.583], [2.781, 2.039], [2.56, 2.904], [2.56, 6.857], [2.416, 7.296], [2.076, 7.315], [1.736, 7.296], [1.41, 6.857], [0.297, 3.235], [0.221, 2.904], [0.192, 2.593], [0.201, 0.996], [0.221, 0.921], [0.201, 0.861], [0.201, 0]],
+    tail: [[-3.778, 0], [-3.778, 0.416], [-4.286, 0.461], [-4.334, 0.773], [-4.334, 0.931], [-4.392, 1.114], [-4.603, 2.889], [-4.689, 3.18], [-4.967, 3.199], [-5.245, 3.18], [-5.523, 2.889], [-5.753, 1.546], [-5.897, 0.931], [-5.926, 0.641], [-5.983, 0.461], [-5.983, 0]],
+    fin: [[-3.254, 0.676], [-3.29, 0.859], [-3.437, 1.133], [-3.455, 1.261], [-3.638, 1.7], [-3.711, 1.938], [-3.766, 2.029], [-3.784, 2.139], [-3.967, 2.596], [-3.985, 2.706], [-4.003, 2.706], [-4.077, 2.87], [-4.186, 2.943], [-4.552, 2.943], [-4.588, 2.907], [-4.899, 2.907], [-4.917, 2.852], [-4.954, 2.852], [-5.009, 2.504], [-5.045, 2.358], [-5.082, 2.34], [-5.1, 2.139], [-5.137, 2.084], [-5.192, 1.81], [-5.228, 1.444], [-5.301, 1.225], [-5.32, 0.951], [-5.374, 0.896], [-5.393, 0.768], [-5.448, 0.768], [-5.466, 0.658], [-5.612, 0.64], [-5.704, 0.603], [-5.758, 0.384], [-6.014, 0.384], [-6.051, 0.274]],
+    canopy: [[2.559, 0.896], [2.297, 1.122], [2.034, 1.207], [1.772, 1.225], [1.509, 1.225], [1.246, 1.225], [0.984, 1.225], [0.721, 1.243], [0.459, 1.225], [0.196, 1.225], [-0.066, 1.207], [-0.329, 1.207]],
+    wingZ: -0.415, dihedral: 6.13, tailZ: 0.563,
   },
 };
 

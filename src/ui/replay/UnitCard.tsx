@@ -12,6 +12,7 @@ import { groundProbe, teamName } from './replayView';
 import { unitsPerMetre } from './replayData';
 import { selectAndFollow } from './ReplayOverlay';
 import { leanRawRows } from '../../overlay/lean/load';
+import { unitPrefs } from '../../state/unitsStore';
 
 /**
  * The selected unit's live data, top left of the view: the fields the viewer
@@ -52,7 +53,7 @@ export function UnitCard() {
         person: tr.person,
         time: now,
         session: useStore.getState().team.session,
-        units: r.units,
+        units: unitPrefs(),
         pos: tr,
         k,
         ref: refTr ? { person: refTr.person, pos: refTr } : null,

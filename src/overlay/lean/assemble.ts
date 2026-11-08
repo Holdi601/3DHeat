@@ -19,6 +19,7 @@ import { Dictionary } from '../../data/growable';
 import type { Dataset } from '../../state/types';
 import { TRACK_U32 } from '../../render/gpuTracks/store';
 import { BOX, KEY_LEVELS, SPAN, STEPS, type LeanSpec, type Pass1Result, type Pass2Result } from './scan';
+import { holdFor } from '../../data/despawn';
 
 export interface LeanFile {
   name: string;
@@ -459,6 +460,8 @@ export class LeanAssembler {
       f32[tr + 13] = spans[o + 5];
       const first = trackData[tr];
       const n = trackData[tr + 1];
+      // Held past its last key a few of its own sample intervals (`data/despawn.ts`), plus one.
+      f32[tr + 14] = holdFor(keyInterval(keysA, first, n, spans[o + 5])) + 1;
       for (let e = 0; e < 2; e++) {
         const k = e === 0 ? first : first + Math.max(0, n - 1);
         const r = i * 2 + e;
@@ -554,4 +557,20 @@ export class LeanAssembler {
       empty: this.units - T,
     };
   }
+}
+
+/** The median time between a track's keys (16-bit times, `step` seconds each), from at most a few hundred of them; NaN for one key. */
+function keyInterval(keysA: Uint32Array, first: number, n: number, step: number): number {
+  if (n < 2) return NaN;
+  const stride = Math.max(1, Math.floor((n - 1) / 400));
+  const gaps: number[] = [];
+  let prev = keysA[first * 2 + 1] >>> 16;
+  for (let k = first + stride; k < first + n; k += stride) {
+    const tq = keysA[k * 2 + 1] >>> 16;
+    if (tq > prev) gaps.push(((tq - prev) * step) / stride);
+    prev = tq;
+  }
+  if (!gaps.length) return NaN;
+  gaps.sort((a, b) => a - b);
+  return gaps[gaps.length >> 1];
 }

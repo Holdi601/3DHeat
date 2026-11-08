@@ -29,8 +29,9 @@ const BACKFIRE = S({ pivot: [0, 5.1], chord: 5.0, share: 0.4, sweep: 30, length:
 const TORNADO = S({ pivot: [-0.75, 1.52], chord: 2.8, share: 0.4, sweep: 45, length: 4.28, tip: 1.0, spread: [25, 13.91], swept: [67, 8.6] });
 // MiG-23 and MiG-27: 16 degrees (13.97 m) to 72 (7.78 m); shown at 45.
 const FLOGGER = S({ pivot: [-0.6, 1.66], chord: 2.8, share: 0.4, sweep: 45, length: 3.96, tip: 1.0, spread: [16, 13.97], swept: [72, 7.78] });
-// Su-17M and Su-22: 30 degrees (13.68 m) to 63 (10.02 m) out of the big fixed inner wing; shown at 45.
-const FITTER = S({ pivot: [-2.38, 2.28], chord: 2.7, share: 0.4, sweep: 45, length: 3.74, tip: 1.0, spread: [30, 13.68], swept: [63, 10.02] });
+// Su-17M and Su-22: 30 degrees (13.68 m) to 63 (10.02 m) out of the big fixed inner wing; shown at 45. The pivot
+// behind the glove's leading edge as the US Army's Su-17 three-view places it (see sources.md).
+const FITTER = S({ pivot: [-0.68, 2.28], chord: 2.7, share: 0.4, sweep: 45, length: 3.74, tip: 1.0, spread: [30, 13.68], swept: [63, 10.02] });
 // Su-24M: 16 degrees (17.64 m) to 69 (10.37 m); shown at 35, its sweep in cruise.
 const FENCER = S({ pivot: [-0.6, 1.54], chord: 4.0, share: 0.4, sweep: 35, length: 6.28, tip: 1.3, spread: [16, 17.64], swept: [69, 10.37] });
 // F-111A/F: 16 degrees (19.2 m) to 72.5 (9.74 m); the F-111C's long FB-111 wing 21.34 / 10.34 m; shown at 26, cruise.

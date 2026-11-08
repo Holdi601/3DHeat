@@ -18,6 +18,9 @@ import { raceClock, raceHover, useRaceStore } from '../../state/raceStore';
 import { int, t } from '../../i18n';
 import { WheelTable } from './RaceHelp';
 import { signed } from './RacePanel';
+import { lengthArg, unitPrefs } from '../../state/unitsStore';
+import { formatLength, symbolOf } from '../../units/format';
+import { toSpeed } from '../../units/units';
 
 const W = 64;
 const H = 104;
@@ -387,7 +390,7 @@ export function RaceHud() {
   return (
     <div className="race-hud">
       {hover !== null && (
-        <div className="hud-cursor mono">{t('race.ui.hud.cursor', { m: int(hover) })}</div>
+        <div className="hud-cursor mono">{t('race.ui.hud.cursor', { m: lengthArg(hover) })}</div>
       )}
       {visible.map((lap) => {
         const m = motions.get(lap.id);
@@ -422,11 +425,11 @@ export function RaceHud() {
               <TopDown car={car} color={color} />
               <div className="hud-read">
                 <div className="hud-speed mono">
-                  {int(car.speed * 3.6)}
-                  <small> {t('race.ui.hud.speedUnit')}</small>
+                  {int(toSpeed(car.speed, unitPrefs().speed))}
+                  <small> {symbolOf(unitPrefs().speed)}</small>
                 </div>
                 <div className="mono hud-line">{formatLapTime(car.time)}</div>
-                <div className="mono hud-line">{withUnit(int(car.distance), 'm')}</div>
+                <div className="mono hud-line">{formatLength(car.distance, unitPrefs(), 0)}</div>
               </div>
               <Inputs car={car} />
             </div>

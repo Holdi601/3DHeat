@@ -135,7 +135,8 @@ void main() {
   float sP = 0.0;
   int kb = k;
   if (k == last) {
-    if (t - A0.w > uPx.w) return;
+    float hold = uintBitsToFloat(t3.z);
+    if (hold < 1e8 && t - A0.w > (hold > 0.5 ? min(uPx.w, hold - 1.0) : uPx.w)) return;
     P = A0.xyz;
     V = vel(k, first, last);
   } else {
@@ -188,7 +189,7 @@ void main() {
     up = vec3(0.0, 1.0, 0.0);
   }
   uint c = t0.z;
-  oTeam = vec4(float(c & 255u) / 255.0, float((c >> 8u) & 255u) / 255.0, float((c >> 16u) & 255u) / 255.0, 0.0);
+  oTeam = vec4(float(c & 255u) / 255.0, float((c >> 8u) & 255u) / 255.0, float((c >> 16u) & 255u) / 255.0, -100.0);  // gun elevation: as built
   oForward = vec4(f, 1.0);
   oUp = vec4(up, weapon && uOpt.x > 0.0 ? speed : -1.0);
   oOrigin = vec4(P, 0.0);

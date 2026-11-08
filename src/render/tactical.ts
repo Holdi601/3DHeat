@@ -23,6 +23,10 @@ import { useReplayStore, type DisplayAids, type Scope } from '../state/replaySto
 import { unitsOf } from '../ui/replay/units';
 import { unitCategory } from '../ui/replay/objectType';
 import { unitsPerMetre } from '../ui/replay/replayData';
+import { unitShape } from '../ui/replay/objectType';
+import { useStore } from '../state/store';
+import { aimOf, type AimNow } from '../figures/aim';
+import { cameraGlyph, cameraTracks, fovAt, viewCone, type LookFrame } from './lookAids';
 
 export type Vec3 = [number, number, number];
 
@@ -48,6 +52,8 @@ const CLIP: Record<string, number> = { air: 30, ground: 8, sea: 150, weapon: 4 }
 /** The cockpit view's near plane for a person (data units at true size): its own figure is clipped away. */
 export function cockpitClip(d: Dataset | null, person: number): number {
   if (!d) return 0;
+  // A recorded camera has no figure of its own to clip away.
+  if (cameraTracks(d).persons[person]) return 0.05 * unitsPerMetre(d);
   const index = unitsOf(d);
   const u = index.units[index.personUnit[person]];
   return (u ? CLIP[unitCategory(d, u)] : CLIP.ground) * unitsPerMetre(d);
@@ -332,6 +338,23 @@ export function locksAt(d: Dataset, row: number): { persons: number[]; range: nu
   return { persons, range, az, el: fin(cols.lockEl, row, 0) };
 }
 
+/** A recorded camera's horizontal field of view at a zoom of 1, degrees, where the data gives only the zoom. */
+const CAMERA_FOV = 80;
+const CAMERA_COLOUR = [1, 0.85, 0.3];
+
+const zoomCols = new WeakMap<Dataset, Float32Array | null>();
+
+/** A camera's magnification at a row (War Thunder's `zoom`), or NaN. */
+function zoomAt(d: Dataset, row: number): number {
+  let z = zoomCols.get(d);
+  if (z === undefined) {
+    const a = d.attrs.find((x) => x.kind === 'number' && /^zoom$/i.test(x.name.trim()));
+    z = a ? (a.data as Float32Array) : null;
+    zoomCols.set(d, z);
+  }
+  return z && row >= 0 ? z[row] : NaN;
+}
+
 const fin = (a: Float32Array | null, row: number, d = NaN) => {
   if (!a || row < 0) return d;
   const v = a[row];
@@ -392,6 +415,66 @@ export class TacticalLayer {
     }
   }
 
+  private readonly aimNow: AimNow = { yaw: NaN, pitch: NaN };
+
+  /** The look aids of one track (`lookAids.ts`): its camera glyph, its gun's line, or its view cone. */
+  private look(
+    d: Dataset,
+    tr: TacticalTrack,
+    i: number,
+    p: Vec3,
+    colour: ArrayLike<number>,
+    k: number,
+    cams: ReturnType<typeof cameraTracks>,
+    aim: ReturnType<typeof aimOf>,
+    cone: boolean,
+    gun: boolean,
+    camera: boolean,
+    fov: number,
+    length: number,
+    t: number,
+    axesNow: () => { fwd: Vec3; up: Vec3; right: Vec3 },
+  ): void {
+    void i;
+    const aspect = 16 / 9;
+    if (cams.persons[tr.person]) {
+      if (!camera) return;
+      const a = axesNow();
+      const zoom = zoomAt(d, tr.row);
+      const f = fovAt(cams.fov, tr.row);
+      const h = Number.isFinite(f) ? f : CAMERA_FOV / (zoom > 0.2 ? zoom : 1);
+      const fr: LookFrame = { o: p, fwd: a.fwd, up: a.up, right: a.right };
+      for (const [x, y] of cameraGlyph(fr, h, aspect, 1.6 * k, Math.max(12 * k, length))) this.line(x, y, CAMERA_COLOUR, 0.95);
+      return;
+    }
+    if (gun && aim && tr.row >= 0) {
+      aim.at(tr.row, t, this.aimNow);
+      if (Number.isFinite(this.aimNow.yaw) || Number.isFinite(this.aimNow.pitch)) {
+        const a = axesNow();
+        const yaw = Number.isFinite(this.aimNow.yaw) ? this.aimNow.yaw : 0;
+        const pitch = Number.isFinite(this.aimNow.pitch) ? this.aimNow.pitch : 0;
+        const dir = bodyDirection(a, (yaw * 180) / Math.PI, (pitch * 180) / Math.PI);
+        // From about where a turret ring sits, along the gun.
+        const o: Vec3 = [p[0] + a.up[0] * 2.2 * k, p[1] + a.up[1] * 2.2 * k, p[2] + a.up[2] * 2.2 * k];
+        const len = Math.max(100 * k, length);
+        this.dashed(o, [o[0] + dir[0] * len, o[1] + dir[1] * len, o[2] + dir[2] * len], colour, 0.9, len / 30);
+        return;
+      }
+    }
+    if (!cone || tr.row < 0) return;
+    const index = unitsOf(d);
+    const u = index.units[index.personUnit[tr.person]];
+    if (!u || unitShape(d, u) !== 'person') return;
+    // From the eyes, about a person's height above where it stands.
+    const a = axesOfTrack({ ...tr, q: null });
+    const level = Math.hypot(a.fwd[0], a.fwd[2]) > 1e-6;
+    const up: Vec3 = level ? a.up : [0, 1, 0];
+    const eye: Vec3 = [p[0], p[1] + 1.6 * k, p[2]];
+    const c = viewCone({ o: eye, fwd: a.fwd, up, right: a.right }, fov, aspect, Math.max(1e-6, length));
+    for (const [x, y] of c.edges) this.line(x, y, colour, 0.85, 0.35);
+    for (const [x, y] of c.mid) this.line(x, y, colour, 0.25);
+  }
+
   /**
    * The aids for this frame, after the `baseCount` vertices of `base`; null
    * when none is drawn (the caller keeps its own buffer).
@@ -411,7 +494,13 @@ export class TacticalLayer {
     const cols = columnsOf(d);
     const wanted = (s: Scope) => s !== 'off';
     const motionAids = wanted(aids.vectors) || wanted(aids.pathAhead) || wanted(aids.attitudeLines);
-    if (!tracks.length || (!motionAids && !cols.any)) return null;
+    // Where people look: view cones (with the team panel's look direction on), turrets' aim, the recorded camera.
+    const team = useStore.getState().team;
+    const lookOn = team.showLookDirection && wanted(aids.look);
+    const aim = wanted(aids.aim) ? aimOf(d) : null;
+    const cams = cameraTracks(d);
+    const lookAids = lookOn || !!aim || (aids.camera && cams.any);
+    if (!tracks.length || (!motionAids && !cols.any && !lookAids)) return null;
     this.n = 0;
     if (base && baseCount) {
       this.reserve(baseCount);
@@ -509,6 +598,9 @@ export class TacticalLayer {
           );
         }
       }
+
+      // ---- where it looks: the recorded camera, a turret's gun, a player's eyes
+      if (lookAids) this.look(d, tr, i, p, bright, k, cams, aim, lookOn && inScope(aids.look, tr), !!aim && inScope(aids.aim, tr), aids.camera, aids.lookFov, team.lookLength, t, axesNow);
 
       const row = tr.row;
       if (row < 0 || !cols.any) continue;

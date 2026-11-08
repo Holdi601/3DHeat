@@ -12,6 +12,7 @@ import { DEFAULT_AIDS, DEFAULT_LABEL_RULES, readAids, readRules } from '../../st
 import { killWeapon, parseWtMatch } from '../../match/wtMatch';
 import { ladderY, headingOfYaw } from './CockpitHud';
 import { niceBar } from './TacticalMap';
+import { PRESET_UNITS } from '../../units/units';
 
 const cat = (name: string, values: string[]) => {
   const categories = [...new Set(values)];
@@ -300,8 +301,8 @@ describe('charts and the map', () => {
     expect(niceTicks(3, 7, 4)).toEqual([3, 4, 5, 6, 7]);
     expect(niceLength(7300)).toBe(5000);
     expect(niceLength(1999)).toBe(1000);
-    expect(niceBar(7300, 'metric')).toBe(5000);
-    expect(niceBar(5000, 'imperial')).toBeCloseTo(2 * 1852);
+    expect(niceBar(7300, PRESET_UNITS.metric)).toBe(5000);
+    expect(niceBar(5000, PRESET_UNITS.aviation)).toBeCloseTo(2 * 1852);
   });
 
   it('keeps a scale wide enough and leaves out a spike', () => {

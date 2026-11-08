@@ -7,7 +7,8 @@
  * arguments, no more than the run has room for.
  *
  * Instance (4 x vec4, as `figures/instances.ts`): origin + scale, forward +
- * alpha, up, team colour.
+ * alpha, up + turret yaw, team colour + gun elevation (from the aim keys
+ * after the tracks where the store has them, `store.ts`).
  */
 
 import { KEYS_PER_BUFFER, TRACK_U32 } from './store';
@@ -156,7 +157,8 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
   var sP = 0.0;
   var kb = k;
   if (k == last) {
-    if (t - A0.w > u.px.w) { return; }
+    let hold = bitcast<f32>(tracks[b + 14u]);
+    if (hold < 1e8 && t - A0.w > select(u.px.w, min(u.px.w, hold - 1.0), hold > 0.5)) { return; }
     P = A0.xyz;
     V = vel(k, first, last);
   } else {
@@ -255,11 +257,37 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
   }
   let o = (runs[mesh].x + slot) * 4u;
   let c = tracks[b + 2u];
+  // The turret and gun, where the store has them after the tracks: between keys the short way round.
+  var tYaw = 0.0;
+  var gPitch = -100.0;
+  if ((flags & 8u) != 0u) {
+    let ia = u.n.x * TRACK_U32 + k;
+    let ib = u.n.x * TRACK_U32 + kb;
+    if (ib < arrayLength(&tracks)) {
+      let wa = tracks[ia];
+      let wb = tracks[ib];
+      if ((wa & 0xffffu) != 0xffffu) {
+        let ya = f32(wa & 0xffffu) / 65534.0 * 6.2831853 - 3.14159265;
+        var yb = ya;
+        if ((wb & 0xffffu) != 0xffffu) { yb = f32(wb & 0xffffu) / 65534.0 * 6.2831853 - 3.14159265; }
+        var dy = yb - ya;
+        if (dy > 3.14159265) { dy = dy - 6.2831853; }
+        if (dy < -3.14159265) { dy = dy + 6.2831853; }
+        tYaw = ya + dy * sP;
+      }
+      if ((wa >> 16u) != 0xffffu) {
+        let pa = f32(wa >> 16u) / 65534.0 * 3.14159265 - 1.57079633;
+        var pb = pa;
+        if ((wb >> 16u) != 0xffffu) { pb = f32(wb >> 16u) / 65534.0 * 3.14159265 - 1.57079633; }
+        gPitch = pa + (pb - pa) * sP;
+      }
+    }
+  }
   inst[o] = vec4<f32>(P, scale);
   inst[o + 1u] = vec4<f32>(f, 1.0);
-  inst[o + 2u] = vec4<f32>(up, 0.0);
+  inst[o + 2u] = vec4<f32>(up, tYaw);
   let team = vec3<f32>(f32(c & 255u) / 255.0, f32((c >> 8u) & 255u) / 255.0, f32((c >> 16u) & 255u) / 255.0);
-  inst[o + 3u] = vec4<f32>(team, 0.0);
+  inst[o + 3u] = vec4<f32>(team, gPitch);
 
   // Its trail: from where it is back through its keys over the last seconds, fading with age; a weapon's streak.
   var W = u.trail.x;

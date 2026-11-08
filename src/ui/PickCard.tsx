@@ -7,6 +7,8 @@ import { useInspectStore, type PickResult } from '../state/inspectStore';
 import { useStore } from '../state/store';
 import { useAnimationFrame, useEngine } from './EngineContext';
 import { coord, copyText, rowFields } from './inspectFormat';
+import { formatLength } from '../render/measure';
+import { useUnits } from '../state/unitsStore';
 
 /**
  * Eye height for "stand here" on a surface, in world units (metres): standing
@@ -30,6 +32,7 @@ export function PickCard() {
   const axes = useStore((s) => s.dataset?.axes ?? null);
   const dataset = useStore((s) => s.dataset);
   useLang();
+  useUnits();
   const ring = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
 
@@ -149,7 +152,7 @@ export function PickCard() {
           )}
           <div className="line">
             <span>{t('heat.inspect.distance')}</span>
-            <b>{t('heat.inspect.distanceValue', { value: num(pick.distance, pick.distance < 100 ? 2 : 1) })}</b>
+            <b>{formatLength(pick.distance)}</b>
           </div>
         </div>
         <div className="pick-actions">

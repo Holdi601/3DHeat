@@ -12,6 +12,7 @@ import { int, num, t, useLang } from '../../i18n';
 import { Segmented } from '../controls';
 import { lineUpAt, seekToDistance } from './actions';
 import { LineKey } from './RacePanel';
+import { lengthArg } from '../../state/unitsStore';
 
 const modes = (): Array<{ value: ReplayMode; label: string; title: string }> => [
   { value: 'start', label: t('race.ui.transport.modes.start'), title: t('race.ui.transport.modes.startTitle') },
@@ -78,7 +79,7 @@ function Transport() {
         onChange={(e) => raceClock.set(Number(e.target.value))}
       />
       <span className="mono clock">
-        {t('race.ui.transport.clock', { time: formatLapTime(clock), end: formatLapTime(end), m: int(refDistance) })}
+        {t('race.ui.transport.clock', { time: formatLapTime(clock), end: formatLapTime(end), m: lengthArg(refDistance) })}
       </span>
       <Segmented
         value={replay.mode}
@@ -664,7 +665,7 @@ function Charts() {
           className="chart-tip"
           style={{ left: hover.px + 340 > lay.width ? hover.px - 340 : hover.px + 14, top: 24 }}
         >
-          <div className="tip-head mono">{t('race.ui.chart.at', { m: int(hover.s) })}</div>
+          <div className="tip-head mono">{t('race.ui.chart.at', { m: lengthArg(hover.s) })}</div>
           <table className="mono">
             <thead>
               <tr>

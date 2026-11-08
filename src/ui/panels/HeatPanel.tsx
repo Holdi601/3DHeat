@@ -9,11 +9,13 @@ import { CurveEditor } from '../CurveEditor';
 import { useEngine } from '../EngineContext';
 import { RampEditor } from '../RampEditor';
 import { int, num, t } from '../../i18n';
+import { lengthText, useUnits } from '../../state/unitsStore';
 
 /** A distance in metres, as the sliders show it. */
-const metres = (v: number) => t('heat.heatPanel.metres', { value: num(v, v < 10 ? 2 : 0) });
+const metres = (v: number) => lengthText(v);
 
 export function HeatPanel() {
+  useUnits();
   const engine = useEngine();
   const mode = useStore((s) => heatModeFor(s.mode, s.lines));
   const dataset = useStore((s) => s.dataset);

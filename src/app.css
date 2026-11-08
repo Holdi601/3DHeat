@@ -1292,3 +1292,63 @@ button.link:disabled {
   font-size: 11px;
   line-height: 1.5;
 }
+
+/* The viewer's units: the preset in the header, the rest in a popover. */
+.units-picker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.units-picker select.language-picker {
+  max-width: 92px;
+}
+.units-more {
+  padding: 1px 5px;
+  font-size: 11px;
+  line-height: 1.3;
+}
+.units-more.on {
+  color: var(--accent);
+}
+.units-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 60;
+  width: 340px;
+  max-width: calc(100vw - 24px);
+  padding: 10px 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+}
+.units-popover-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.units-settings .seg button {
+  flex: 1;
+}
+.units-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 8px;
+  align-items: center;
+  margin-top: 6px;
+}
+.units-grid label {
+  display: contents;
+}
+.units-grid label > span {
+  color: var(--text-dim);
+  font-size: 11px;
+}
+.units-grid label.own > span {
+  color: var(--accent);
+}
+.units-grid select {
+  font-size: 11px;
+  padding: 2px 4px;
+}

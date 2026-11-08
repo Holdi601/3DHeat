@@ -10,7 +10,8 @@
  * The test and the sizes are the place shader's (`shader.ts`).
  */
 
-import { INSTANCE_STRIDE, type FigureBatch } from '../../figures/instances';
+import { INSTANCE_STRIDE, NO_PITCH, type FigureBatch } from '../../figures/instances';
+import { aimOf, type AimNow } from '../../figures/aim';
 import { emptyPose, evaluateTrack } from './evaluate';
 import { KEY_U32, TRACK_U32, type GpuTrackStore } from './store';
 import { isShown } from './visibility';
@@ -88,6 +89,7 @@ class Runs {
 }
 
 const pose = emptyPose();
+const aimNow: AimNow = { yaw: NaN, pitch: NaN };
 
 /**
  * The figures of the units at least `dartPx` long on screen at true size, as
@@ -100,11 +102,13 @@ export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): Figu
   const cx = f.camera[0], cy = f.camera[1], cz = f.camera[2];
   const persp = f.focalPx > 0;
   const m = f.viewProj;
+  // Turrets and guns as the data has them now, where it has them and the keys have rows.
+  const aim = s.keysAim && s.keyRow ? aimOf(s.dataset) : null;
   let n = 0;
   for (let i = 0; i < s.tracks && n < limit; i++) {
     const L = b.longest[i];
     if (!L) continue;
-    if (f.t < b.span[i * 2] || f.t > b.span[i * 2 + 1] + f.stale) continue;
+    if (f.t < b.span[i * 2] || (f.t > b.span[i * 2 + 1] + f.stale && f32[i * TRACK_U32 + 14] < 1e8)) continue;
     // The nearest its box comes: its figure could not be longer on screen than from there.
     const o = i * 4;
     const d = Math.max(1e-6, Math.hypot(b.sphere[o] - cx, b.sphere[o + 1] - cy, b.sphere[o + 2] - cz) - b.sphere[o + 3]);
@@ -141,11 +145,12 @@ export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): Figu
     out[8] = pose.u[0];
     out[9] = pose.u[1];
     out[10] = pose.u[2];
-    out[11] = 0;
+    if (aim) aim.at(s.keyRow![pose.key], f.t, aimNow);
+    out[11] = aim && Number.isFinite(aimNow.yaw) ? aimNow.yaw : 0;
     out[12] = (c & 255) / 255;
     out[13] = ((c >>> 8) & 255) / 255;
     out[14] = ((c >>> 16) & 255) / 255;
-    out[15] = 0;
+    out[15] = aim && Number.isFinite(aimNow.pitch) ? aimNow.pitch : NO_PITCH;
     n++;
   }
   return runs.batches(s);

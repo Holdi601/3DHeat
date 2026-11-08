@@ -10,6 +10,7 @@
 
 import { create } from 'zustand';
 import { onLanguageChange, t } from '../i18n';
+import { useUnitsStore } from './unitsStore';
 import { analyse, classOf, type Analysis } from '../race/analysis';
 import type { CarPack } from '../race/carPack';
 import { unnamedCar, type LapTrace } from '../race/lap';
@@ -316,12 +317,17 @@ export const useRaceStore = create<RaceState>((set, get) => ({
 
 // What the analysis says is said in the language it was worked out in: a new
 // language, the analysis again.
-onLanguageChange(() => {
+function reword(): void {
   const s = useRaceStore.getState();
   if (!s.laps.length) return;
   for (const lap of s.laps) renameDemoLap(lap);
   for (const lap of s.laps) lap.label = labelFor(lap, s.laps);
   useRaceStore.setState({ selected: null, ...derive(s.laps, s.referenceId, s.focusId, s.replay) });
+}
+onLanguageChange(reword);
+// Its speeds and distances are written in the viewer's units: new units, the analysis again.
+useUnitsStore.subscribe((now, before) => {
+  if (now.prefs.speed !== before.prefs.speed || now.prefs.altitude !== before.prefs.altitude) reword();
 });
 
 /** The laps worth drawing among many: the reference, the focus, and the best of the focus's class. */

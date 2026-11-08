@@ -36,6 +36,8 @@ import type { ViewMode } from './state/types';
 import { Rich, Segmented } from './ui/controls';
 import { EngineContext } from './ui/EngineContext';
 import { LanguagePicker } from './ui/LanguagePicker';
+import { UnitsPicker } from './ui/UnitsPicker';
+import { applyBuildings } from './ui/replay/buildings';
 import { SessionPicker } from './ui/SessionPicker';
 import { SoftwareRenderingWarning } from './ui/SoftwareRenderingWarning';
 import { DatasetPanel } from './ui/panels/DatasetPanel';
@@ -137,6 +139,9 @@ export function App() {
   useEffect(() => {
     if (tab === 'match') setMode('team');
     else if (tab === 'heat') setMode(heatTabMode.current);
+    // A level's painted buildings: solid in the replay (as chosen there), see-through over the heat.
+    if (tab === 'match') applyBuildings(useReplayStore.getState().buildings === 'solid');
+    else if (tab === 'heat') applyBuildings(false);
   }, [tab, setMode]);
   useFigureOverlay();
   const matchView: MatchView = mode === 'team' ? 'replay' : 'heat';
@@ -382,6 +387,7 @@ export function App() {
             <h1>3DHeat</h1>
             <span className="sub">{t('app.brand.sub')}</span>
             <HelpButton />
+            <UnitsPicker />
             <LanguagePicker />
           </div>
           <UpdateBanner />

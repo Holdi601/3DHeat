@@ -107,7 +107,9 @@ export function evaluateTrack(s: GpuTrackStore, i: number, t: number, stale: num
   decodeKey(s, b, k, K0);
   let sP = 0;
   if (k === last) {
-    if (t - K0[3] > stale) return false;
+    // Held past its last key as long as its own sample rate says (slot 14, plus one), never past `stale`.
+    const hold = f32[b + 14];
+    if (t - K0[3] > (hold > 1e8 ? Infinity : hold > 0.5 ? Math.min(stale, hold - 1) : stale)) return false;
     out.x = K0[0];
     out.y = K0[1];
     out.z = K0[2];

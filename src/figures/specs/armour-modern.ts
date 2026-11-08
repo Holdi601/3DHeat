@@ -13,7 +13,7 @@
  */
 
 import type { Named, SpecSet } from './index';
-import type { AddOn, GroundSpec, GunSpec } from '../ground';
+import type { AddOn, AddOnMount, GroundSpec, GunSpec } from '../ground';
 import type { Outline, P2 } from '../parts';
 import { ABRAMS, ABRAMS_TURRET, hull, LEO1, LEO2, LEO2_WEDGE, run, T72, T72B_TURRET, T80, TANKS, turret } from './tanks';
 import { bonnetCab, FMTV, forwardCab, GAZ_66, GM_CHASSIS, HEMTT, HMMWV, KAMAZ_43101, KRAZ_255, KRAZ_6322, M548, M939, MAN_HX, MAZ_543, MZKT_7930, PICKUP, TRAILER, URAL_4320, ZIL_131 } from './base';
@@ -775,6 +775,8 @@ const chamfer = (a: number, b: number, c: number, a0 = 0, b0 = 0): P2[] => ([[-a
 const along = (p: V3, e: number, d: number, n = 0, yaw = 0): V3 => [p[0] + (d * Math.cos(e) - n * Math.sin(e)) * Math.cos(yaw), p[1] + (d * Math.cos(e) - n * Math.sin(e)) * Math.sin(yaw), p[2] + d * Math.sin(e) + n * Math.cos(e)];
 /** A block `l` long whose back end is at `p`, raised `e` and turned `yaw`: launch beams, canister packs, booms. */
 const beam = (p: V3, e: number, l: number, w: number, h: number, o: Opt = {}, yaw = 0): AddOn => ({ on: 'hull', kind: 'box', at: along(p, e, l / 2, 0, yaw), size: [l, w, h], pitch: e, yaw, ...o });
+/** Parts of a weapon mount drawn from add-ons, so replay can turn them with mount `m` - and raise them with its gun, `gun`. */
+const onMount = (m: AddOnMount, parts: AddOn[], gun = false): AddOn[] => parts.map((a) => ({ ...a, mount: m, ...(gun ? { elevates: true } : {}) }));
 
 /**
  * A missile: length, body diameter, nose length, a booster stage at the tail (length, diameter), and fin sets - root
@@ -1348,11 +1350,12 @@ G['zsu-57-2'] = { cls: 'spaa', chassis: 'tracked', length: 6.22, width: 3.27, hu
 // upper mount with its shield, the layers' seats, the long L/77 barrel and its pepperpot brake.
 const S60_E = 0.35;
 const S60_B: V3 = [-0.4, 0, 1.6];
+const S60_MOUNT: AddOnMount = { at: [0.3, 0, 1.15], trunnion: S60_B, pitch: S60_E };
 G['s-60-57mm'] = { cls: 'towed-aa', chassis: 'towed', bare: true, length: 8.5, width: 2.05, hullHeight: 1.3, axles: 2, axleAt: [0.5, -0.25], wheelRadius: 0.45, addOns: [
   bx(-2.4, 2.9, 0, 0.55, 0.85, 1.3), rod([2.9, 0, 0.7], [4.25, 0, 0.5], 0.12, MT), ...[-1, 1].flatMap((s) => [rod([0.4, s * 0.6, 0.7], [0.4, s * 2.3, 0.15], 0.14, MT), hd(0.4, s * 2.3, 0.06, 0.45, 0.12, DARK)]),
-  hd(0.3, 0, 1.0, 1.3, 0.3, DARK), bx(-0.6, 0.9, 0, 1.15, 1.75, 0.95), sl([1.05, 0, 1.75], rect(0.85, 0.45), 0.05, 'front'), sl([0.65, 0.85, 1.75], rect(0.4, 0.42), 0.05, 'side', M),
-  ...[-1, 1].map((s) => hb(-0.4, s * 0.75, 1.4, 0.4, 0.35, 0.45, DARK)), rod(S60_B, along(S60_B, S60_E, 4.4), 0.12, MT), rod(S60_B, along(S60_B, S60_E, 1.4), 0.28, MT), rod(along(S60_B, S60_E, 4.2), along(S60_B, S60_E, 4.55), 0.19, MT),
-  beam(along(S60_B, S60_E, -0.6, 0.15), S60_E, 0.8, 0.3, 0.35, DARK),
+  // The upper carriage with its shields turns on the turntable; the cradle and barrel elevate about the trunnion.
+  ...onMount(S60_MOUNT, [hd(0.3, 0, 1.0, 1.3, 0.3, DARK), bx(-0.6, 0.9, 0, 1.15, 1.75, 0.95), sl([1.05, 0, 1.75], rect(0.85, 0.45), 0.05, 'front'), sl([0.65, 0.85, 1.75], rect(0.4, 0.42), 0.05, 'side', M), ...[-1, 1].map((s) => hb(-0.4, s * 0.75, 1.4, 0.4, 0.35, 0.45, DARK))]),
+  ...onMount(S60_MOUNT, [rod(S60_B, along(S60_B, S60_E, 4.4), 0.12, MT), rod(S60_B, along(S60_B, S60_E, 1.4), 0.28, MT), rod(along(S60_B, S60_E, 4.2), along(S60_B, S60_E, 4.55), 0.19, MT), beam(along(S60_B, S60_E, -0.6, 0.15), S60_E, 0.8, 0.3, 0.35, DARK)], true),
 ] };
 // KS-19 100 mm (9.45 x 2.35 m travelling, 2.2 m): the heavier four-wheeled carriage on its cross of outriggers, the big
 // shield, the equilibrator cylinders over the cradle, the fuze setter and the L/57 barrel with its brake.
@@ -1374,9 +1377,11 @@ G['son-9-fire-can'] = { cls: 'radar', chassis: 'trailer', length: 6.5, width: 2.
 /** The ZU-23-2 mount at (x, s, u): its base, the cradle and the two 23 mm side by side with their flash hiders and the magazines on the receivers, a layer's seat each side. */
 function zu23(x: number, s: number, u: number, e = 0.35): AddOn[] {
   const p: V3 = [x - 0.55, s, u + 0.75];
+  // The upper carriage turns on the base, the cradle with the guns and magazines elevating about its trunnion.
+  const m: AddOnMount = { at: [x, s, u + 0.2], trunnion: p, pitch: e };
   return [
-    hd(x, s, u + 0.1, 1.0, 0.2, DARK), bx(x - 0.55, x + 0.35, s, u + 0.2, u + 0.65, 0.6), ...[-1, 1].map((d) => hb(x - 0.35, s + d * 0.6, u + 0.45, 0.45, 0.35, 0.5, DARK)),
-    beam(p, e, 1.0, 0.5, 0.28, DARK), ...[-0.14, 0.14].flatMap((d) => [rod(along([p[0], s + d, p[2]], e, 0.9), along([p[0], s + d, p[2]], e, 2.6), 0.075, MT), rod(along([p[0], s + d, p[2]], e, 2.35), along([p[0], s + d, p[2]], e, 2.6), 0.12, MT), beam(along([p[0], s + d * 1.6, p[2]], e, 0.15, 0.25), e, 0.55, 0.16, 0.22, DARK)]),
+    hd(x, s, u + 0.1, 1.0, 0.2, DARK), ...onMount(m, [bx(x - 0.55, x + 0.35, s, u + 0.2, u + 0.65, 0.6), ...[-1, 1].map((d) => hb(x - 0.35, s + d * 0.6, u + 0.45, 0.45, 0.35, 0.5, DARK))]),
+    ...onMount(m, [beam(p, e, 1.0, 0.5, 0.28, DARK), ...[-0.14, 0.14].flatMap((d) => [rod(along([p[0], s + d, p[2]], e, 0.9), along([p[0], s + d, p[2]], e, 2.6), 0.075, MT), rod(along([p[0], s + d, p[2]], e, 2.35), along([p[0], s + d, p[2]], e, 2.6), 0.12, MT), beam(along([p[0], s + d * 1.6, p[2]], e, 0.15, 0.25), e, 0.55, 0.16, 0.22, DARK)])], true),
   ];
 }
 // ZU-23-2 (4.57 x 1.83 m travelling, 1.87 m): emplaced on its triangular base and three jacks, the wheels at its sides.
@@ -2052,12 +2057,14 @@ G['zsu-23-4m4'] = { ...G['zsu-23-4m4'], missiles: [{ mount: 'turret-side', rows:
  */
 function bedMount(x: number, u: number, h: number, n: number, len: number, d: number, e = 0.3, spread = 0.2, shield = 0): AddOn[] {
   const top = u + h;
-  const out: AddOn[] = [hd(x, 0, u + 0.1, 0.6, 0.2, DARK), rod([x, 0, u + 0.2], [x, 0, top - 0.15], 0.25, MT), hb(x, 0, top, 0.6, 0.3 + spread * (n - 1), 0.35, DARK)];
+  // The head turns on the column with its shield, the barrels elevating about where they leave it.
+  const m: AddOnMount = { at: [x, 0, top - 0.175], trunnion: [x - 0.25, 0, top + 0.08], pitch: e };
+  const out: AddOn[] = [hd(x, 0, u + 0.1, 0.6, 0.2, DARK), rod([x, 0, u + 0.2], [x, 0, top - 0.15], 0.25, MT), ...onMount(m, [hb(x, 0, top, 0.6, 0.3 + spread * (n - 1), 0.35, DARK)])];
   for (let i = 0; i < n; i++) {
     const p: V3 = [x - 0.25, (i - (n - 1) / 2) * spread, top + 0.08];
-    out.push(rod(p, along(p, e, len), Math.max(0.07, d), MT));
+    out.push(...onMount(m, [rod(p, along(p, e, len), Math.max(0.07, d), MT)], true));
   }
-  if (shield > 0) out.push(sl([x + 0.4, 0, top + 0.1], rect(shield / 2, 0.45), 0.05, 'front', DARK));
+  if (shield > 0) out.push(...onMount(m, [sl([x + 0.4, 0, top + 0.1], rect(shield / 2, 0.45), 0.05, 'front', DARK)]));
   return out;
 }
 
@@ -2187,12 +2194,14 @@ G['ush-204-gk'] = { cls: 'scout-car', chassis: 'wheeled', length: 5.0, width: 2.
 // the spotting rifle, legs 1.52 m apart when spread): the pivot standing on a single small wheel under the front of the
 // mount and two fixed legs splayed back to the sides, the long thin tube with its breech chamber and flared venturi, the
 // .50 spotting rifle along its top, the sight on the left (the bore's height and the legs' run are estimates from photos).
+const M40_MOUNT: AddOnMount = { at: [0, 0, 0.7], trunnion: [0, 0, 0.9], pitch: 0 };
 G['m40-rr'] = { cls: 'towed-gun', chassis: 'static', bare: true, length: 3.4, width: 1.52, hullHeight: 0.9, addOns: [
   ...[-1, 1].map((s) => rod([-0.05, s * 0.06, 0.66], [-1.05, s * 0.74, 0.03], 0.06, MT)), ...[-1, 1].map((s) => hb(-1.05, s * 0.74, 0.03, 0.18, 0.12, 0.06, DARK)),
   rod([0.05, 0, 0.66], [0.3, 0, 0.16], 0.07, MT), rod([0.3, -0.05, 0.13], [0.3, 0.05, 0.13], 0.26, { paint: 'tyre', segments: 10 }),
-  hd(0, 0, 0.7, 0.2, 0.14, DARK), hb(0, 0, 0.8, 0.45, 0.2, 0.12, DARK),
-  rod([-1.35, 0, 0.9], [1.7, 0, 0.9], 0.14, MT), rod([-1.35, 0, 0.9], [-0.6, 0, 0.9], 0.24, MT), rod([-1.7, 0, 0.9], [-1.35, 0, 0.9], 0.26, MT, 0.18),
-  rod([-0.5, 0, 1.05], [1.05, 0, 1.05], 0.05, MT), hb(-0.35, 0, 1.02, 0.3, 0.1, 0.08, DARK), hb(-0.3, -0.16, 0.97, 0.25, 0.1, 0.14, DARK),
+  // The cradle turns on the pivot; the rifle, its spotting rifle and sight elevate about the trunnion over it.
+  hd(0, 0, 0.7, 0.2, 0.14, DARK), ...onMount(M40_MOUNT, [hb(0, 0, 0.8, 0.45, 0.2, 0.12, DARK)]),
+  ...onMount(M40_MOUNT, [rod([-1.35, 0, 0.9], [1.7, 0, 0.9], 0.14, MT), rod([-1.35, 0, 0.9], [-0.6, 0, 0.9], 0.24, MT), rod([-1.7, 0, 0.9], [-1.35, 0, 0.9], 0.26, MT, 0.18),
+    rod([-0.5, 0, 1.05], [1.05, 0, 1.05], 0.05, MT), hb(-0.35, 0, 1.02, 0.3, 0.1, 0.08, DARK), hb(-0.3, -0.16, 0.97, 0.25, 0.1, 0.14, DARK)], true),
 ] };
 
 // ZSU-37-2 Yenisei (6.36 x 3.1 m, 3.33 m): the GM-123 hull of the SU-100P family on six road wheels, the big flat-sided turret

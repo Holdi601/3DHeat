@@ -8,6 +8,7 @@ import { formatValue } from './fields';
 import { unitsOf } from './units';
 import { t } from '../../i18n';
 import './replay.css';
+import { unitPrefs } from '../../state/unitsStore';
 
 const GREEN = 'rgba(124, 255, 138, 0.92)';
 const sample = emptySample();
@@ -177,7 +178,7 @@ export function CockpitHud() {
     const val = (id: string) => (series ? valueAt(series, id, now) : NaN);
     const fmt = (id: string) => {
       const v = val(id);
-      return Number.isFinite(v) ? formatValue(PARAM_BY_ID[id].kind, v, r.units) : '—';
+      return Number.isFinite(v) ? formatValue(PARAM_BY_ID[id].kind, v, unitPrefs()) : '—';
     };
     const box = (x: number, y: number, text: string, align: CanvasTextAlign) => {
       g.textAlign = align;
