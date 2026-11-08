@@ -23,6 +23,8 @@ export interface SampleResult {
   sampleWeight: number;
   /** True when every candidate row is submitted, i.e. the frame is already exact. */
   exact: boolean;
+  /** With `runFrame`: frames whose plans together draw every block exactly once. */
+  frames?: number;
 }
 
 const EMPTY: SampleResult = {
@@ -84,6 +86,14 @@ export interface PlanOptions {
   splatsPerFrame: number;
   /** Monotonic counter driving the low-discrepancy stratum offset. */
   frameIndex: number;
+  /**
+   * The frame's place in a run of accumulation, from 0. Given, the frames of a
+   * run take every `frames`th block in turn, so a run that has drawn `frames`
+   * frames has drawn every block exactly once and its mean is the whole field.
+   * The low-discrepancy offsets only come close to that: a block drawn twice and
+   * a neighbour never left grain in a still view that never went away.
+   */
+  runFrame?: number;
 }
 
 /**
@@ -107,6 +117,116 @@ export function nextExactCap(
   return startingRun && lastFrameMs < o.easyMs ? Math.min(o.ceiling, cap * 1.25) : cap;
 }
 
+/**
+ * Sprites "every row" may draw in one frame, steered by what the heat pass costs.
+ *
+ * The cap that `nextExactCap` keeps lets a frame run to 400 ms before it reacts,
+ * which is a dropped frame on every camera move once a window holds tens of
+ * millions of rows. This one aims at a share of the frame instead. Its input is
+ * the heat pass's own GPU time where the device can time it, so the display's
+ * refresh cannot hide the headroom, and the drawn frame's time otherwise.
+ *
+ * It moves in small steps and in proportion: past the budget it cuts by the
+ * overshoot, at most a quarter a frame (half on a frame twice over, which is
+ * already a dropped one); under half the budget it grows towards seven tenths of
+ * it, at most doubling, and only as a new run of accumulation starts, for the
+ * reason given at `nextExactCap`.
+ * Between the two it holds, so a cost near the budget never makes it hunt.
+ */
+export function nextHeatCap(
+  cap: number,
+  costMs: number,
+  budgetMs: number,
+  lastFrameDrew: boolean,
+  startingRun: boolean,
+  o: { floor: number; ceiling: number },
+): number {
+  if (!lastFrameDrew || !(costMs > 0) || !(budgetMs > 0)) return cap;
+  if (costMs > budgetMs * 1.15) {
+    const cut = Math.max(costMs > budgetMs * 2 ? 0.5 : 0.75, budgetMs / costMs);
+    return Math.max(o.floor, cap * cut);
+  }
+  // Well under, it grows towards what the budget would carry, at most doubling:
+  // after a cut that went too deep, an eighth a step took seconds to come back.
+  if (startingRun && costMs < budgetMs * 0.5) return Math.min(o.ceiling, cap * Math.min(2, Math.max(1.125, (budgetMs * 0.7) / costMs)));
+  return cap;
+}
+
+/**
+ * The heat buffer's resolution, from how large a sprite is on screen.
+ *
+ * A sprite's cost is the pixels it covers, the square of its radius, so a wide
+ * radius or a camera close to the data makes the heat pass fill-bound however
+ * few rows there are. Drawing it at a lower resolution costs the square less
+ * and loses nothing a smooth kernel had: what decides the level is the sprite's
+ * radius in texels of the level, kept near `texels`.
+ *
+ * Set from the geometry rather than from the frame time, so it is ahead of the
+ * cost instead of chasing it, and a radius or zoom that grows fourfold lowers
+ * the resolution on the frame it happens. The frame time trims `texels` only,
+ * slowly and inside a dead band. Levels are powers of two, the renderers keep a
+ * buffer for each, and a level changes only past a margin of 0.85 of a step
+ * either way, so a sprite size sitting on a boundary does not flip it.
+ */
+export class HeatLevel {
+  private level = 1;
+  private texels: number;
+  private hold = 0;
+
+  constructor(
+    private readonly start = HEAT_LEVEL_TEXELS,
+    private readonly minLevel = 1 / 16,
+  ) {
+    this.texels = start;
+  }
+
+  /** Resolution multiplier, a power of two in [minLevel, 1]. */
+  get value(): number {
+    return this.level;
+  }
+
+  reset(): void {
+    this.level = 1;
+    this.texels = this.start;
+    this.hold = 0;
+  }
+
+  /**
+   * `spritePx` is a typical sprite radius in full-resolution pixels; `costMs`
+   * what the last drawn frame's heat cost and `budgetMs` what it may, or null
+   * when nothing was drawn. Returns the level wanted now; the caller adopts it
+   * only on a frame that starts the accumulation over anyway.
+   */
+  update(spritePx: number, costMs: number | null, budgetMs: number): number {
+    if (costMs !== null && costMs > 0 && budgetMs > 0) {
+      if (this.hold > 0) this.hold--;
+      else if (costMs > budgetMs * 1.15 && this.texels > HEAT_LEVEL_MIN) {
+        // Fill goes with the square of the radius, so the root of the overshoot.
+        this.texels = Math.max(HEAT_LEVEL_MIN, this.texels * Math.max(0.5, Math.min(0.9, Math.sqrt(budgetMs / costMs))));
+        this.hold = HEAT_LEVEL_HOLD;
+      } else if (costMs < budgetMs * 0.35 && this.texels < this.start) {
+        this.texels = Math.min(this.start, this.texels * 1.1);
+        this.hold = HEAT_LEVEL_HOLD;
+      }
+    }
+    if (!(spritePx > 0)) return this.level;
+    const want = Math.log2(this.texels / spritePx);
+    const now = Math.log2(this.level);
+    const lo = Math.log2(this.minLevel);
+    if (want < now - 0.85 || want > now + 0.85) {
+      this.level = Math.pow(2, Math.max(lo, Math.min(0, Math.round(want))));
+    }
+    return this.level;
+  }
+}
+
+/** Sprite radius, in texels of its level, that the level aims for. */
+export const HEAT_LEVEL_TEXELS = 16;
+/** The least it may be trimmed to: below this a sprite is too coarse to be round. */
+const HEAT_LEVEL_MIN = 8;
+/** Drawn frames between trims, enough for a smoothed cost to show the last one. */
+const HEAT_LEVEL_HOLD = 12;
+
 export function planFrame(opts: PlanOptions): SampleResult {
   const { rowLo, rowHi, splatsPerFrame, frameIndex } = opts;
   const candidateRows = Math.max(0, rowHi - rowLo);
@@ -120,8 +240,35 @@ export function planFrame(opts: PlanOptions): SampleResult {
   const wantBlocks = Math.min(MAX_PLAN_BLOCKS - roomForSplits, Math.max(1, Math.ceil(Math.max(1, splatsPerFrame) / SAMPLE_BLOCK)));
 
   const selected: number[] = [];
+  let frames = 1;
+  const absolute = new Map<number, number[]>();
+  let absoluteRows = 0;
   if (wantBlocks >= totalBlocks) {
     for (let b = 0; b < totalBlocks; b++) selected.push(b);
+  } else if (opts.runFrame !== undefined) {
+    // Blocks on the absolute row grid rather than counted from the window's
+    // start, and a power of two of frames, so a window that slides or a cap that
+    // moves a little keeps drawing the same rows: playback under a thinned plan
+    // is then a steady thinning of the data instead of a new sample every frame.
+    frames = Math.pow(2, Math.ceil(Math.log2(totalBlocks / wantBlocks)));
+    const k = opts.runFrame % frames;
+    const first = Math.floor(rowLo / SAMPLE_BLOCK);
+    const last = Math.ceil(rowHi / SAMPLE_BLOCK);
+    for (let b = first + ((k - (first % frames) + frames) % frames); b < last; b += frames) {
+      const start = b * SAMPLE_BLOCK;
+      const gStart = Math.max(rowLo, start);
+      const gEnd = Math.min(rowHi, start + SAMPLE_BLOCK);
+      if (gEnd <= gStart) continue;
+      // A chunk holds a whole number of blocks, so an aligned block never crosses one.
+      const chunk = Math.floor(start / CHUNK_ROWS);
+      let list = absolute.get(chunk);
+      if (!list) {
+        list = [];
+        absolute.set(chunk, list);
+      }
+      list.push(start - chunk * CHUNK_ROWS);
+      absoluteRows += gEnd - gStart;
+    }
   } else {
     // Stratified: one block per stratum of width `stride`, offset by a
     // low-discrepancy sequence so consecutive frames tile the whole range.
@@ -135,8 +282,8 @@ export function planFrame(opts: PlanOptions): SampleResult {
 
   // Blocks are addressed globally over the candidate range, then split at chunk
   // boundaries because each chunk is a separate set of textures.
-  const byChunk = new Map<number, number[]>();
-  let submitted = 0;
+  const byChunk = absolute;
+  let submitted = absoluteRows;
   for (const b of selected) {
     const gStart = rowLo + b * SAMPLE_BLOCK;
     const gEnd = Math.min(rowHi, gStart + SAMPLE_BLOCK);
@@ -177,6 +324,7 @@ export function planFrame(opts: PlanOptions): SampleResult {
     submittedSprites: submitted,
     sampleWeight: submitted > 0 ? candidateRows / submitted : 1,
     exact: submitted >= candidateRows,
+    frames: opts.runFrame !== undefined ? frames : undefined,
   };
 }
 

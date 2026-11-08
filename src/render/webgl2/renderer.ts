@@ -1252,7 +1252,7 @@ export class Webgl2Renderer implements Renderer {
     // to run every frame regardless.
     if (!params.compositeOnly) {
       this.drawScene(params);
-      if (params.mode !== 'team') this.drawHeat(params);
+      if (params.mode !== 'team') this.timeHeat(params);
       else this.clearHeat();
     }
     const post = params.post ?? null;
@@ -1938,6 +1938,45 @@ export class Webgl2Renderer implements Renderer {
     gl.clear(gl.COLOR_BUFFER_BIT);
   }
 
+  /**
+   * The heat pass, timed on the GPU where the context has timer queries.
+   *
+   * The engine sizes the heat by its own GPU time, since the display's refresh
+   * hides any headroom from the frame time. One query in flight at a time,
+   * read when it is ready and never waited on; a disjoint reading is dropped.
+   */
+  private timeHeat(params: FrameParams): void {
+    const gl = this.gl;
+    if (this.timer === undefined) this.timer = gl.getExtension('EXT_disjoint_timer_query_webgl2') as { TIME_ELAPSED_EXT: number; GPU_DISJOINT_EXT: number } | null;
+    const t = this.timer;
+    if (t && this.heatQuery && gl.getQueryParameter(this.heatQuery, gl.QUERY_RESULT_AVAILABLE)) {
+      const ns = gl.getQueryParameter(this.heatQuery, gl.QUERY_RESULT) as number;
+      if (!gl.getParameter(t.GPU_DISJOINT_EXT)) {
+        const ms = ns / 1e6;
+        const prev = this.passMs.heat;
+        if (ms >= 0 && ms < 1000) this.passMs.heat = prev === undefined ? ms : prev * 0.9 + ms * 0.1;
+      }
+      gl.deleteQuery(this.heatQuery);
+      this.heatQuery = null;
+    }
+    const q = t && !this.heatQuery ? gl.createQuery() : null;
+    if (q) gl.beginQuery(t!.TIME_ELAPSED_EXT, q);
+    this.drawHeat(params);
+    if (q) {
+      gl.endQuery(t!.TIME_ELAPSED_EXT);
+      this.heatQuery = q;
+    }
+  }
+
+  private timer: { TIME_ELAPSED_EXT: number; GPU_DISJOINT_EXT: number } | null | undefined;
+  private heatQuery: WebGLQuery | null = null;
+  private readonly passMs: Record<string, number> = {};
+
+  /** Milliseconds of GPU time a pass, averaged; empty where the context cannot time them. */
+  get gpuPassMs(): Record<string, number> {
+    return this.passMs;
+  }
+
   private drawHeat(params: FrameParams): void {
     const gl = this.gl;
     const alpha = Math.min(1, Math.max(0, params.blendAlpha));
@@ -1999,7 +2038,13 @@ export class Webgl2Renderer implements Renderer {
     u.f1('uProj11', params.proj[5]);
     u.i1('uPerspective', params.perspective ? 1 : 0);
     u.f1('uRadius', params.heat.radius);
-    u.f2('uPixelClamp', params.heat.minPixelRadius, params.heat.maxPixelRadius);
+    // Screen pixels, in texels of the heat buffer; see the WebGPU renderer.
+    const texelsPerPixel = this.heatHeight / Math.max(1, this.height);
+    u.f2(
+      'uPixelClamp',
+      Math.max(Math.min(1, params.heat.minPixelRadius), params.heat.minPixelRadius * texelsPerPixel),
+      Math.max(1, params.heat.maxPixelRadius * texelsPerPixel),
+    );
     u.i1('uConserve', params.heat.zoomInvariant ? 1 : 0);
     u.i1('uTexMask', ROW_TEX_WIDTH - 1);
     u.i1('uTexShift', ROW_TEX_SHIFT);
@@ -2725,6 +2770,8 @@ export class Webgl2Renderer implements Renderer {
       return;
     }
     const gl = this.gl;
+    const sceneChanged = width !== this.width || height !== this.height || !this.sceneFbo;
+    if (sceneChanged || heatChannels !== this.heatChannels) this.dropHeatSets();
     this.width = width;
     this.height = height;
     this.heatWidth = hw;
@@ -2741,14 +2788,17 @@ export class Webgl2Renderer implements Renderer {
       : heatChannels === 4
         ? gl.RGBA16F
         : gl.R16F;
+    // The readback format depends on the attachment, so re-query it after a
+    // resize recreates the target.
+    this.readFormat = 0;
+    this.readType = 0;
+    if (!sceneChanged) {
+      // Only the heat resolution moved: the scene, depth and peel targets stay.
+      this.useHeatSet(hw, hh);
+      return;
+    }
 
-    for (const t of [
-      this.sceneColor,
-      this.sceneDepth,
-      this.heatColor,
-      this.heatDepth,
-      this.heatScratch,
-    ]) {
+    for (const t of [this.sceneColor, this.sceneDepth]) {
       if (t) gl.deleteTexture(t);
     }
     for (const t of this.peelDepth) gl.deleteTexture(t);
@@ -2760,8 +2810,6 @@ export class Webgl2Renderer implements Renderer {
     this.structDepth = null;
     this.structDepthFbo = null;
     if (this.sceneFbo) gl.deleteFramebuffer(this.sceneFbo);
-    if (this.heatFbo) gl.deleteFramebuffer(this.heatFbo);
-    if (this.heatScratchFbo) gl.deleteFramebuffer(this.heatScratchFbo);
 
     this.sceneColor = createTexture(gl, {
       width,
@@ -2816,7 +2864,56 @@ export class Webgl2Renderer implements Renderer {
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this.structDepth, 0);
     checkFramebuffer(gl, 'structure depth');
 
-    this.heatColor = createTexture(gl, {
+    this.heatDepth = null;
+    this.useHeatSet(hw, hh);
+  }
+
+  /**
+   * The heat targets at one resolution, kept for the next time it is wanted.
+   *
+   * The engine moves the heat resolution in powers of two as the sprites grow
+   * and shrink on screen. Each level's targets are made once, the levels around
+   * the current one ahead of need, and switching is then a rebinding.
+   */
+  private readonly heatSets = new Map<string, { color: WebGLTexture; fbo: WebGLFramebuffer; scratch: WebGLTexture; scratchFbo: WebGLFramebuffer }>();
+
+  private useHeatSet(hw: number, hh: number): void {
+    const set = this.heatSetFor(hw, hh);
+    this.heatColor = set.color;
+    this.heatFbo = set.fbo;
+    this.heatScratch = set.scratch;
+    this.heatScratchFbo = set.scratchFbo;
+    // The neighbouring levels, so the first switch to one does not allocate.
+    for (const k of [0.5, 0.25, 0.125, 2, 4]) {
+      const w = Math.round(hw * k);
+      const h = Math.round(hh * k);
+      if (w >= 8 && h >= 8 && w <= this.width && h <= this.height) this.heatSetFor(w, h);
+    }
+    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+  }
+
+  private dropHeatSets(): void {
+    const gl = this.gl;
+    for (const s of this.heatSets.values()) {
+      gl.deleteTexture(s.color);
+      gl.deleteTexture(s.scratch);
+      gl.deleteFramebuffer(s.fbo);
+      gl.deleteFramebuffer(s.scratchFbo);
+    }
+    this.heatSets.clear();
+  }
+
+  private heatSetFor(hw: number, hh: number) {
+    const gl = this.gl;
+    const key = `${hw}x${hh}`;
+    const have = this.heatSets.get(key);
+    if (have) {
+      // Most recently used last, so the trim below drops the stalest.
+      this.heatSets.delete(key);
+      this.heatSets.set(key, have);
+      return have;
+    }
+    const color = createTexture(gl, {
       width: hw,
       height: hh,
       internalFormat: this.heatInternalFormat,
@@ -2840,14 +2937,9 @@ export class Webgl2Renderer implements Renderer {
     // at any resolution, in every accumulation mode, and can attenuate instead
     // of cull — and sampling a texture that is also an attachment would be a
     // feedback loop, so the attachment has to go.
-    this.heatDepth = null;
-    // The readback format depends on the attachment, so re-query it after a
-    // resize recreates the target.
-    this.readFormat = 0;
-    this.readType = 0;
-    this.heatFbo = gl.createFramebuffer();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.heatFbo);
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.heatColor, 0);
+    const fbo = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, color, 0);
     checkFramebuffer(gl, 'heat');
 
     // One frame's estimate, accumulated from zero and then blended into the
@@ -2860,7 +2952,7 @@ export class Webgl2Renderer implements Renderer {
     // eats the dense areas and leaves the sparse ones intact. Accumulating a
     // frame from zero keeps every addend comparable to the total it is joining,
     // which is the same arithmetic a single unaccumulated frame does.
-    this.heatScratch = createTexture(gl, {
+    const scratch = createTexture(gl, {
       width: hw,
       height: hh,
       internalFormat: this.heatInternalFormat,
@@ -2869,13 +2961,13 @@ export class Webgl2Renderer implements Renderer {
       filter:
         !this.float.blendF32 || this.float.linearF32 ? gl.LINEAR : gl.NEAREST,
     });
-    this.heatScratchFbo = gl.createFramebuffer();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.heatScratchFbo);
+    const scratchFbo = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, scratchFbo);
     gl.framebufferTexture2D(
       gl.FRAMEBUFFER,
       gl.COLOR_ATTACHMENT0,
       gl.TEXTURE_2D,
-      this.heatScratch,
+      scratch,
       0,
     );
     // Colour only, like the accumulator above: the splat shader does its own
@@ -2884,6 +2976,18 @@ export class Webgl2Renderer implements Renderer {
     // attachment leaves the framebuffer incomplete, and every frame fails.
     checkFramebuffer(gl, 'heat scratch');
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    const set = { color: color!, fbo: fbo!, scratch: scratch!, scratchFbo: scratchFbo! };
+    this.heatSets.set(key, set);
+    while (this.heatSets.size > 8) {
+      const [oldest, s] = this.heatSets.entries().next().value!;
+      if (s.color === this.heatColor) break;
+      gl.deleteTexture(s.color);
+      gl.deleteTexture(s.scratch);
+      gl.deleteFramebuffer(s.fbo);
+      gl.deleteFramebuffer(s.scratchFbo);
+      this.heatSets.delete(oldest);
+    }
+    return set;
   }
 
   dispose(): void {
@@ -2918,10 +3022,10 @@ export class Webgl2Renderer implements Renderer {
     }
     this.setLevel(null);
     this.setWorldTiles([]);
+    this.dropHeatSets();
     for (const t of [
       this.sceneColor,
       this.sceneDepth,
-      this.heatColor,
       this.heatDepth,
       this.blockTex,
       this.lutTex,
@@ -2936,7 +3040,6 @@ export class Webgl2Renderer implements Renderer {
     }
     this.filterTextures.clear();
     if (this.sceneFbo) gl.deleteFramebuffer(this.sceneFbo);
-    if (this.heatFbo) gl.deleteFramebuffer(this.heatFbo);
     for (const b of [
       this.cubeGeom,
       this.cubeIndex,

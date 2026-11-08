@@ -9,6 +9,11 @@
  * 3. Jitter: a unit moves smoothly frame to frame in every replay path (CPU
  *    figures, GPU tracks) and stays put on screen under every follow camera,
  *    far from the origin over a long recording, as a DCS theatre is.
+ * 4. Frame time: a still view holds its exposure, heat resolution and sprite
+ *    budget and redraws nothing; flying, zooming, changing the radius and
+ *    playing back drop no frame, and playback moves the exposure only gently.
+ *    Frame times are judged on a real GPU only (--gpu); in software they are
+ *    reported.
  *
  * Synthetic data only, generated here, so the run needs no files. Starts its own
  * dev server on port 5285 and renders in software (SwiftShader), so it puts no
@@ -16,7 +21,8 @@
  *
  *   npm run check:visual                     all three, WebGL2
  *   npm run check:visual -- --webgpu         also on WebGPU
- *   npm run check:visual -- --only=jitter    one property (zoom | flicker | jitter)
+ *   npm run check:visual -- --only=jitter    one property (zoom | flicker | jitter | frametime)
+ *   npm run check:visual -- --only=frametime --webgpu --gpu   frame times on this machine's GPU (Edge)
  *   npm run check:visual -- --url=http://127.0.0.1:5285/   against a server already running
  *   --setting=<regex>   only the heat settings whose name matches
  *   --follow=<mode>     only one follow view in the jitter check (null for the still camera)
@@ -80,14 +86,18 @@ function report(property, setting, pass, detail) {
   console.log(`  ${pass === null ? 'info' : pass ? 'ok  ' : 'FAIL'} ${property} / ${setting}: ${detail}`);
 }
 
-async function open(backend, query = '') {
-  const browser = await chromium.launch({
-    ...(backend === 'webgpu' ? { channel: 'chromium' } : {}),
-    args:
-      backend === 'webgpu'
-        ? ['--enable-unsafe-webgpu', '--enable-features=Vulkan', '--disable-vulkan-surface', '--use-webgpu-adapter=swiftshader', '--ignore-gpu-blocklist']
-        : ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
-  });
+async function open(backend, query = '', gpu = false) {
+  // The real GPU through Edge, shown, so the display's refresh paces it as it
+  // does for a user; only the frame time check asks for it.
+  const browser = gpu
+    ? await chromium.launch({ channel: 'msedge', headless: false, args: ['--enable-unsafe-webgpu'] })
+    : await chromium.launch({
+        ...(backend === 'webgpu' ? { channel: 'chromium' } : {}),
+        args:
+          backend === 'webgpu'
+            ? ['--enable-unsafe-webgpu', '--enable-features=Vulkan', '--disable-vulkan-surface', '--use-webgpu-adapter=swiftshader', '--ignore-gpu-blocklist']
+            : ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
+      });
   const page = await browser.newPage({ viewport: { width: 900, height: 560 }, deviceScaleFactor: 1 });
   page.on('pageerror', (e) => console.log('  pageerror:', e.message));
   page.on('console', (m) => {
@@ -134,7 +144,8 @@ async function open(backend, query = '') {
         for (let i = 0; i < maxFrames; i++) {
           await frame();
           const sat = st.getState().heat.saturation;
-          still = eng.live.converged && sat === last ? still + 1 : 0;
+          // A glide is drawn without being written to the store until it lands.
+          still = eng.live.converged && sat === last && eng.follower?.from == null ? still + 1 : 0;
           last = sat;
           // Longer than the follower's settle frames plus its glide, so a
           // pending re-exposure has happened before the reading is taken. A
@@ -789,6 +800,120 @@ async function checkJitter(backend) {
   }
 }
 
+// ------------------------------------------------------------------ 4. frame time
+
+/** On a real GPU: the 99th percentile within a tenth of a 60 Hz frame, and no frame past 20 ms. */
+const FRAME_P99_MS = 16.7 * 1.1;
+const FRAME_MAX_MS = 20;
+/**
+ * Fastest the exposure may move in playback, in natural-log units a second: the
+ * follower's glide across a factor of three, at its steepest. A jump is far past it.
+ */
+const EXPOSURE_RATE = 1.5;
+
+const quantile = (xs, q) => {
+  const s = [...xs].sort((a, b) => a - b);
+  return s.length ? s[Math.min(s.length - 1, Math.floor(q * s.length))] : NaN;
+};
+
+async function checkFrameTime(backend) {
+  const gpu = argv.includes('--gpu');
+  const { browser, page } = await open(backend, '', gpu);
+  try {
+    await loadBlob(page, false);
+    await page.evaluate(() => {
+      const s = globalThis.__3dheat.useStore.getState();
+      s.patchHeat({ followExposure: true, radius: 16 });
+      s.patchBudget({ adaptive: true });
+    });
+    // A still view, after it has settled: nothing it controls may move, and
+    // no frame may draw anything new.
+    const still = await page.evaluate(async () => {
+      const eng = globalThis.__3dheat_engine;
+      eng.placeCamera({ x: 300, y: 500, z: 400 }, { x: 0, y: 0, z: 0 });
+      await globalThis.__vc.settle();
+      const rows = [];
+      for (let i = 0; i < 150; i++) {
+        await globalThis.__vc.frame();
+        rows.push([eng.live.heatScale, eng.live.budget, eng.shownSaturation, eng.live.accumMode]);
+      }
+      return rows;
+    });
+    const distinct = (i) => new Set(still.map((r) => r[i])).size;
+    const drew = still.filter((r) => r[3] !== 'skip').length;
+    report('frametime', `${backend} still view`, distinct(0) === 1 && distinct(1) === 1 && distinct(2) === 1 && drew === 0,
+      `over ${still.length} frames: ${distinct(0)} heat scale(s), ${distinct(1)} budget(s), ${distinct(2)} exposure(s), ${drew} frame(s) redrawn`);
+
+    // Flying and zooming in and out, with the radius stepping up under it.
+    const motion = await page.evaluate(async () => {
+      const eng = globalThis.__3dheat_engine;
+      const st = globalThis.__3dheat.useStore;
+      const dts = [];
+      const why = [];
+      let last = performance.now();
+      const t0 = last;
+      const radii = [16, 40, 118, 200, 400];
+      for (;;) {
+        await globalThis.__vc.frame();
+        const now = performance.now();
+        dts.push(now - last);
+        const l = eng.live;
+        const gpu = Object.entries(eng.renderer.gpuPassMs ?? {}).map(([k, v]) => `${k} ${v.toFixed(1)}`).join(' ');
+        why.push(`${(now - last).toFixed(1)} ms at radius ${st.getState().heat.radius}, scale ${l.heatScale}, ${l.splats} sprites, ${l.accumMode}; GPU ms ${gpu || '-'}`);
+        last = now;
+        const t = (now - t0) / 1000;
+        if (t > 5) break;
+        const r = radii[Math.min(radii.length - 1, Math.floor(t))];
+        if (st.getState().heat.radius !== r) st.getState().patchHeat({ radius: r });
+        const d = 700 * (1.1 + Math.sin(t * 1.3));
+        eng.placeCamera({ x: d * Math.cos(t * 0.7), y: d * 0.7 + 30, z: d * Math.sin(t * 0.7) }, { x: 0, y: 0, z: 0 });
+      }
+      return { dts: dts.slice(3), why: why.slice(3) };
+    });
+    if (verbose) {
+      const worst = motion.dts.map((d, i) => [d, i]).sort((a, b) => b[0] - a[0]).slice(0, 6);
+      for (const [, i] of worst) console.log(`    slow frame ${i}: ${motion.why[i]} (before: ${motion.why[i - 1] ?? '-'})`);
+    }
+
+    // Playback under a still camera: frames on time, exposure moving gently.
+    const play = await page.evaluate(async () => {
+      const eng = globalThis.__3dheat_engine;
+      const s = globalThis.__3dheat.useStore.getState();
+      s.patchHeat({ radius: 16 });
+      eng.placeCamera({ x: 300, y: 500, z: 400 }, { x: 0, y: 0, z: 0 });
+      await globalThis.__vc.settle();
+      s.patchTimeline({ mode: 'play', window: 'cumulative', playing: true, speed: 20 });
+      const rows = [];
+      let last = performance.now();
+      const t0 = last;
+      while (last - t0 < 3000) {
+        await globalThis.__vc.frame();
+        const now = performance.now();
+        rows.push([now - last, eng.shownSaturation]);
+        last = now;
+      }
+      s.patchTimeline({ playing: false });
+      return rows.slice(3);
+    });
+    let rate = 0;
+    for (let i = 1; i < play.length; i++) {
+      rate = Math.max(rate, Math.abs(Math.log(play[i][1] / play[i - 1][1])) / Math.max(1e-3, play[i][0] / 1000));
+    }
+    report('frametime', `${backend} playback exposure`, rate <= EXPOSURE_RATE, `fastest change ${rate.toFixed(2)}/s (limit ${EXPOSURE_RATE})`);
+
+    for (const [name, dts] of [['motion', motion.dts], ['playback', play.map((r) => r[0])]]) {
+      const p50 = quantile(dts, 0.5);
+      const p99 = quantile(dts, 0.99);
+      const max = Math.max(...dts);
+      const detail = `${dts.length} frames: p50 ${p50.toFixed(1)} ms, p99 ${p99.toFixed(1)} ms, max ${max.toFixed(1)} ms`;
+      if (gpu) report('frametime', `${backend} ${name}`, p99 <= FRAME_P99_MS && max <= FRAME_MAX_MS, `${detail} (limits ${FRAME_P99_MS.toFixed(1)} / ${FRAME_MAX_MS})`);
+      else report('frametime', `${backend} ${name}`, null, `${detail} (software rendering: reported, not judged)`);
+    }
+  } finally {
+    await browser.close();
+  }
+}
+
 // ------------------------------------------------------------------ run
 
 try {
@@ -809,13 +934,14 @@ try {
       }
     }
     if (want('jitter')) await checkJitter(backend);
+    if (want('frametime')) await checkFrameTime(backend);
   }
 } finally {
   stop();
 }
 
 console.log('\nsummary');
-for (const property of ['zoom', 'flicker', 'jitter']) {
+for (const property of ['zoom', 'flicker', 'jitter', 'frametime']) {
   const mine = results.filter((r) => r.property === property && r.pass !== null);
   if (!mine.length) continue;
   const failed = mine.filter((r) => !r.pass);

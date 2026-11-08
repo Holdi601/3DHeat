@@ -32,7 +32,10 @@ export const DEFAULT_FOLLOW: FollowOptions = {
   // each other; a region genuinely denser or sparser than the last one is out by
   // a factor of two or more.
   deadBand: 1.35,
-  glideMs: 400,
+  // Long enough to read as the scale settling rather than the picture pumping;
+  // a re-exposure is a slow change of the whole image, and the eye takes a fast
+  // one for a flicker.
+  glideMs: 1200,
 };
 
 export class ExposureFollower {
@@ -93,6 +96,11 @@ export class ExposureFollower {
     // of the logarithm read as an even change.
     const s = t * t * (3 - 2 * t);
     return Math.exp(Math.log(g.from) + (Math.log(g.to) - Math.log(g.from)) * s);
+  }
+
+  /** The saturation a glide in progress started from, or null when none is. */
+  get from(): number | null {
+    return this.glide ? this.glide.from : null;
   }
 
   /** Drop any glide and pending reading, as when the scale is locked. */
