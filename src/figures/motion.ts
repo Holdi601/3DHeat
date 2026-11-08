@@ -704,6 +704,15 @@ export function noseWeight(speed: number, units: number): number {
 export class MotionRefiner {
   poses = new Float32Array(0);
   posed = new Uint8Array(0);
+  /**
+   * Each box's position as the model placed it, x y z in double precision.
+   *
+   * The cube layout is 32-bit, which steps by 6 cm a few hundred kilometres
+   * from the origin - a theatre's distance - and the figures drawn from it shook
+   * by as much every frame. Read from here they keep every digit; boxes the
+   * model has nothing for carry their cube's own position.
+   */
+  exact = new Float64Array(0);
   /** How many boxes are left after the last refine. */
   count = 0;
   private readonly s = emptySample();
@@ -712,6 +721,7 @@ export class MotionRefiner {
     if (this.posed.length < count) {
       this.poses = new Float32Array(Math.max(count, 64) * 4);
       this.posed = new Uint8Array(Math.max(count, 64));
+      this.exact = new Float64Array(Math.max(count, 64) * 3);
     }
     this.posed.fill(0, 0, count);
     this.count = count;
@@ -736,6 +746,11 @@ export class MotionRefiner {
     count = w;
     this.count = w;
     for (let i = 0; i < count; i++) {
+      this.exact[i * 3] = cubes[i * stride];
+      this.exact[i * 3 + 1] = cubes[i * stride + 1];
+      this.exact[i * 3 + 2] = cubes[i * stride + 2];
+    }
+    for (let i = 0; i < count; i++) {
       const row = rows[i];
       if (row < 0) continue;
       const p = d.personId[row];
@@ -745,6 +760,9 @@ export class MotionRefiner {
       cubes[c] = s.x;
       cubes[c + 1] = s.y;
       cubes[c + 2] = s.z;
+      this.exact[i * 3] = s.x;
+      this.exact[i * 3 + 1] = s.y;
+      this.exact[i * 3 + 2] = s.z;
       const speed = Math.hypot(s.vx, s.vy, s.vz);
       if (s.hasAttitude) {
         const w = noseWeight(speed, m.units);

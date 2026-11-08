@@ -1807,7 +1807,7 @@ export class WebgpuRenderer implements Renderer {
         const o = params.origin;
         const relCamera = Float32Array.of(params.cameraPos[0] - o[0], params.cameraPos[1] - o[1], params.cameraPos[2] - o[2]);
         const relOffset = this.pushSceneUniform({ ...params, viewProj: params.viewProjRel, cameraPos: relCamera }, 1e9, 1e9 + 1, 0, 1);
-        this.figures.draw(pass, params.figureBatches, this.sceneBindGroup(this.figures.pipeline, 'figures', relOffset), o);
+        this.figures.draw(pass, params.figureBatches, this.sceneBindGroup(this.figures.pipeline, 'figures', relOffset));
       }
       if (params.gpuTracks && this.tracks) {
         this.tracks.draw(pass, this.figures, group);

@@ -95,6 +95,20 @@ export interface FigureReplayOptions {
   /** Below this many pixels long at true size a unit is a symbol. */
   symbolThreshold?: number;
   symbolPx?: number;
+  /** Each cube's position in double precision, x y z a cube (`MotionRefiner.exact`); the cube's own otherwise. */
+  exact?: Float64Array;
+  /**
+   * Write the figures' positions relative to this point, for a view relative
+   * to it (`FrameParams.viewProjRel`): worked out in double precision and only
+   * then rounded, they keep their centimetres however far out the scene is.
+   * Glyphs, darts' hit boxes and picking stay absolute.
+   */
+  origin?: ArrayLike<number>;
+}
+
+/** `fr` moved by minus `o`, for the instance buffers. */
+function relativeFrame(fr: Frame3, o: ArrayLike<number> | undefined): Frame3 {
+  return o ? { ...fr, o: [fr.o[0] - o[0], fr.o[1] - o[1], fr.o[2] - o[2]] } : fr;
 }
 
 /** The darts, one shape a domain (`render/symbols/darts.ts`). */
@@ -397,15 +411,19 @@ export class FigureReplay {
       // Ground figures keep level; aircraft and missiles take the pitch, and the roll where the data has one.
       const air = t.anchor === 'centre';
       let fr: Frame3;
+      const ex = o.exact && o.exact.length >= (i + 1) * 3 ? o.exact : null;
+      const px = ex ? ex[i * 3] : cubes[c];
+      const py = ex ? ex[i * 3 + 1] : cubes[c + 1];
+      const pz = ex ? ex[i * 3 + 2] : cubes[c + 2];
       if (air && o.poses && o.posed && o.posed[i]) {
-        fr = frameOfQuat(o.poses.subarray(i * 4, i * 4 + 4), [cubes[c], cubes[c + 1], cubes[c + 2]]);
+        fr = frameOfQuat(o.poses.subarray(i * 4, i * 4 + 4), [px, py, pz]);
       } else {
         const roll = air && this.roll && row >= 0 ? ((this.roll.data as Float32Array)[row] * Math.PI) / 180 : 0;
         const sign = air && row >= 0 ? (MotionModel.of(d)?.rollSign ?? 1) : 1;
         fr = poseFrame({
-          x: cubes[c],
-          y: cubes[c + 1],
-          z: cubes[c + 2],
+          x: px,
+          y: py,
+          z: pz,
           yaw: Math.PI - yaw,
           pitch: air ? cubes[c + 7] : 0,
           roll: Number.isFinite(roll) ? sign * roll : 0,
@@ -417,7 +435,7 @@ export class FigureReplay {
       if (look && (look.glyph > 0 || look.dart)) {
         const moving = dom !== Domain.Person && dom !== Domain.Static && dom !== Domain.Unknown;
         const w = (word | (moving ? WORD_MOVING : 0)) >>> 0;
-        if (look.dart) this.batches.add(DARTS, fr, Math.max(o.scale, ((o.minPixels ?? 0) * ps) || o.scale), team, 1, 0, -WORD_BASE - w);
+        if (look.dart) this.batches.add(DARTS, relativeFrame(fr, o.origin), Math.max(o.scale, ((o.minPixels ?? 0) * ps) || o.scale), team, 1, 0, -WORD_BASE - w);
         if (look.glyph > 0) this.glyph(fr.o[0], fr.o[1], fr.o[2], glyphPx(dom, o.symbolPx ?? 28, far), fr.f, look.glyph, fr.u, team, w);
         if (look.figure <= 0) {
           this.placed.push({ box: i, row, kind: kind!, fr, scale, min: t.min, max: t.max });
@@ -429,8 +447,8 @@ export class FigureReplay {
       else if (aim && o.time !== undefined && hasJoints(drawn)) {
         // Its turret turned and its gun raised as the data has them now.
         aim.at(row, o.time, aimNow);
-        this.batches.add(meshOf(drawn), fr, scale, team, alpha, Number.isFinite(aimNow.yaw) ? aimNow.yaw : 0, Number.isFinite(aimNow.pitch) ? aimNow.pitch : NO_PITCH);
-      } else this.batches.add(meshOf(drawn), fr, scale, team, alpha);
+        this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha, Number.isFinite(aimNow.yaw) ? aimNow.yaw : 0, Number.isFinite(aimNow.pitch) ? aimNow.pitch : NO_PITCH);
+      } else this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha);
       this.placed.push({ box: i, row, kind: kind!, fr, scale, min: t.min, max: t.max });
     }
   }
