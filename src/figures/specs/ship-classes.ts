@@ -322,8 +322,11 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'gangut': { cls: 'battleship', L: 181.2, B: 26.9, fb: 7, sheer: 3, guns: '60:3/305 20:3/305 -22:3/305b -62:3/305b', funnels: [[38, 14, 5], [0, 14, 5]], blocks: [[50, 40, 24, 5, 1]], masts: [[44, 28], [-44, 22]] },
   'imperatritsa-mariya': { cls: 'battleship', L: 168.0, B: 27.4, fb: 7, guns: '58:3/305 18:3/305 -20:3/305b -58:3/305b', funnels: [[34, 14, 5], [-2, 14, 5]], blocks: [[46, 36, 22, 5, 1]], masts: [[40, 26], [-38, 22]] },
   'izmail': { cls: 'battlecruiser', L: 223.9, B: 30.5, fb: 8, guns: '75:3/356 25:3/356 -28:3/356b -76:3/356b', funnels: [[48, 14, 5], [4, 14, 5], [-12, 14, 5]], blocks: [[60, 50, 22, 5, 1]], masts: [[55, 28], [-50, 24]] },
-  'cavour-1933': { cls: 'battleship', L: 186.4, B: 28.0, fb: 8, sheer: 3, guns: '62:3/320 50:2/320^2.5 -50:2/320^2.5b -62:3/320b', funnels: [[14, 12, 6], [-2, 12, 6]], blocks: [[36, 24, 26, 6, 2], [32, 26, 32, 3]], masts: [[-14, 24]] },
-  'doria-1940': { cls: 'battleship', L: 186.9, B: 28.0, fb: 8, sheer: 3, guns: '62:3/320 50:2/320^2.5 -50:2/320^2.5b -62:3/320b', funnels: [[12, 12, 6], [-4, 12, 6]], blocks: [[38, 22, 28, 7, 2], [34, 26, 34, 3]], masts: [[-16, 22]] },
+  // Cavour (as rebuilt) and Doria (1940): turret places and heights, the forecastle's end, bridge tower, funnels and
+  // masts measured on the ONI 202 (1943) Cavour profile with its height scale and the Doria silhouette, scaled by the
+  // overall length (sources.md).
+  'cavour-1933': { cls: 'battleship', L: 186.4, B: 28.0, fb: 6.8, sheer: 0.6, fc: [-47, 2.8], guns: '44:3/320 27.5:2/320^3.5 -38:2/320^1b -56.5:3/320b', funnels: [[2, 13.4, 5.5], [-8.5, 12, 6]], blocks: [[23, -3, 12.6, 6, 1], [22, 10, 23.7, 3.5, 1], [17, 13, 28.3, 2.5]], masts: [[15, 26.4], [-29, 27.4, 't']] },
+  'doria-1940': { cls: 'battleship', L: 186.9, B: 28.0, fb: 7.6, sheer: 0.7, fc: [-48, 3], guns: '43:3/320 28.5:2/320^3.5 -41:2/320^1b -58:3/320b', funnels: [[-1.8, 11.9, 5], [-11.8, 11, 5]], blocks: [[25, 3, 14, 6, 1], [17, 7, 24.9, 3.5, 1], [15, 11, 29.3, 2.5]], masts: [[7.2, 33], [-37, 22]] },
   'kronshtadt': { cls: 'battlecruiser', L: 250.5, B: 31.6, fb: 9, sheer: 5, guns: '78:3/305 62:3/305^3 -70:3/305b', funnels: [[2, 14, 8]], blocks: [[44, 18, 30, 7, 2], [38, 24, 38, 3]], masts: [[-14, 28]] },
   'stalingrad': { cls: 'battlecruiser', L: 273.5, B: 32.0, fb: 9, sheer: 6, guns: '86:3/305 69:3/305^3 -78:3/305b', funnels: [[0, 14, 8]], blocks: [[48, 20, 30, 7, 2], [42, 26, 38, 3]], masts: [[-16, 28]] },
   'sovetsky-soyuz': { cls: 'battleship', L: 269.4, B: 38.9, fb: 10, sheer: 6, guns: '82:3/406 65:3/406^3 -76:3/406b 30,13:2/152^4 -30,13:2/152^4b', funnels: [[0, 15, 10]], blocks: [[44, 18, 32, 9, 2], [38, 24, 42, 4]], masts: [[-18, 28]] },
@@ -350,16 +353,23 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   // Kongo and Nagato as rebuilt: deck line and quarterdeck step, turret places and heights, the pagoda's steps,
   // funnels, masts and the after superstructure measured on the ONI 222-J profiles (sources.md).
   'kongo': { cls: 'battlecruiser', L: 222.0, B: 31.0, fb: 8, sheer: 0.5, fc: [-45, 3], guns: '58:2/356 45:2/356^3.4 -26:2/356^3.4b -68:2/356b', funnels: [[5.5, 15.6, 7], [-10.3, 15.2, 7]], blocks: [[43, 20, 13.5, 7, 1], [35, 21, 30, 4.5, 1], [33, 23, 39, 3]], masts: [[-70, 20]] },
-  'fuso': { cls: 'battleship', L: 212.8, B: 33.1, fb: 8, sheer: 3, guns: '70:2/356 58:2/356^2.5 2:2/356 -26:2/356b -56:2/356^2.5b -70:2/356b', funnels: [[16, 13, 7]], blocks: [[44, 34, 28, 7, 1], [42, 36, 44, 3.5], [40, 38, 52, 2.5]], masts: [[-40, 24]] },
-  'ise': { cls: 'battleship', L: 215.8, B: 33.8, fb: 8, sheer: 3, guns: '70:2/356 58:2/356^2.5 -10:2/356^2.5b -24:2/356b -58:2/356^2.5b -72:2/356b', funnels: [[12, 13, 7]], blocks: [[44, 32, 28, 7, 1], [42, 36, 42, 3]], masts: [[-38, 22]] },
+  // Fuso and Ise: turret places, pagoda, funnel, mainmast tower and mast measured on the ONI 41-42 (1942) broadside
+  // model photographs, scaled by the overall length (sources.md); Fuso's pagoda top about 50 m over the waterline
+  // (published).
+  'fuso': { cls: 'battleship', L: 212.8, B: 33.1, fb: 8, sheer: 3, guns: '53:2/356 40:2/356^3 5:2/356 -26:2/356b -55:2/356^3b -67:2/356b', funnels: [[-13.4, 17, 6]], blocks: [[35, 19, 16, 7, 1], [33, 21, 30, 4.5], [31, 23, 48.5, 3]], masts: [[-43.5, 40]] },
+  'ise': { cls: 'battleship', L: 215.8, B: 33.8, fb: 8, sheer: 3, guns: '57:2/356 45:2/356^3 -14:2/356^2.5b -25.5:2/356b -61.5:2/356^3b -75:2/356b', funnels: [[0.3, 18, 7]], blocks: [[36.5, 17.6, 16, 7, 1], [34, 20, 28, 4.5], [31, 23, 37, 3]], masts: [[-49, 33]] },
   'nagato': { cls: 'battleship', L: 224.9, B: 34.6, fb: 8, sheer: 1.4, fc: [-75, 3], guns: '57:2/410 43.4:2/410^4 -54:2/410^3.8b -67:2/410b', funnels: [[-3.4, 21, 9]], blocks: [[38.6, 15, 16.6, 7, 1], [36, 20.5, 30, 5, 1], [34, 22, 36.6, 4], [33, 24.5, 44, 2.5]], masts: [[-25, 32]] },
   'tosa': { cls: 'battleship', L: 231.7, B: 30.5, fb: 8, sheer: 3, guns: '76:2/410 63:2/410^2.5 -24:2/410b -60:2/410^2.5b -74:2/410b', funnels: [[14, 13, 8]], blocks: [[46, 32, 26, 7, 1]], masts: [[40, 32]] },
   'amagi': { cls: 'battlecruiser', L: 252.0, B: 30.8, fb: 8, sheer: 3, guns: '84:2/410 71:2/410^2.5 -10:2/410b -66:2/410^2.5b -80:2/410b', funnels: [[22, 13, 8], [6, 13, 8]], blocks: [[50, 36, 26, 7, 1]], masts: [[44, 32]] },
   // Italy.
   'dante-alighieri': { cls: 'battleship', L: 168.1, B: 26.6, fb: 7, guns: '58:3/305 18:3/305 -22:3/305b -58:3/305b', funnels: [[36, 12, 5], [0, 12, 5], [-6, 12, 5]], blocks: [[46, 38, 18, 5, 1]], masts: [[42, 26], [-38, 22]] },
-  'cavour-1915': { cls: 'battleship', L: 176.0, B: 28.0, fb: 7, guns: '62:3/305 50:2/305^2.5 0:3/305 -50:2/305^2.5b -62:3/305b', funnels: [[22, 12, 5], [-20, 12, 5]], blocks: [[38, 30, 18, 5, 1]], masts: [[34, 26], [-26, 22]] },
+  // Cavour as built: the turrets stand where the rebuilt ship's do (ONI 202, above), 5.2 m further forward of the
+  // middle because the rebuild added 10.4 m at the bow; the Q turret amidships between the funnels.
+  'cavour-1915': { cls: 'battleship', L: 176.0, B: 28.0, fb: 7, fc: [-42, 2.8], guns: '49:3/305 33:2/305^3.5 0:3/305 -33:2/305^1b -51:3/305b', funnels: [[22, 12, 5], [-20, 12, 5]], blocks: [[38, 30, 18, 5, 1]], masts: [[34, 26], [-26, 22]] },
   'caracciolo': { cls: 'battleship', L: 212.0, B: 29.6, fb: 8, guns: '72:2/381 60:2/381^2.5 -56:2/381^2.5b -70:2/381b', funnels: [[14, 13, 6], [-2, 13, 6]], blocks: [[40, 30, 22, 6, 1]], masts: [[34, 30]] },
-  'littorio': { cls: 'battleship', L: 240.7, B: 32.8, fb: 9, sheer: 5, guns: '76:3/381 60:3/381^3 -68:3/381b 26,11:3/152^3 -20,11:3/152^3b', funnels: [[6, 12, 7], [-10, 12, 7]], blocks: [[40, 20, 30, 8, 2], [36, 26, 40, 3]], masts: [[-26, 24]] },
+  // Littorio: turret places, the 152 mm wing turrets, bridge tower, funnels, aft superstructure and masts measured on
+  // the ONI 202 (1943) profile and plan with their height scale, scaled by the overall length (sources.md).
+  'littorio': { cls: 'battleship', L: 240.7, B: 32.8, fb: 8.3, sheer: 1.5, fc: [-77, 1], guns: '49.5:3/381 28:3/381^3.5 -59:3/381b 15,11:3/152^3 -47,11:3/152^3b', funnels: [[-4, 17.1, 7], [-18, 15.9, 7]], blocks: [[22, -10, 16.3, 8, 2], [17, 2, 34, 4]], masts: [[8.5, 41], [-32, 27.6]] },
   // France.
   'courbet': { cls: 'battleship', L: 166.0, B: 27.0, fb: 8, guns: '60:2/305 48:2/305^2.5 6,9:2/305 -46:2/305^2.5b -58:2/305b', funnels: [[22, 12, 5], [-14, 12, 5]], blocks: [[38, 30, 20, 5, 1]], masts: [[32, 26]] },
   'bretagne': { cls: 'battleship', L: 166.0, B: 26.9, fb: 8, guns: '60:2/340 48:2/340^2.5 -2:2/340 -46:2/340^2.5b -58:2/340b', funnels: [[20, 12, 5], [-12, 12, 5]], blocks: [[38, 28, 22, 6, 1]], masts: [[32, 28]] },
@@ -434,11 +444,14 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'ikoma': { cls: 'armoured-cruiser', L: 147.8, B: 22.8, fb: 8, guns: '50:2/305 -50:2/305b 18,8:2/203 -14,8:2/203b', funnels: [[10, 13, 4], [-6, 13, 4]], blocks: [[32, 24, 18, 5, 1]], masts: [[28, 26], [-24, 24]] },
   'kurama': { cls: 'armoured-cruiser', L: 147.8, B: 22.8, fb: 8, guns: '50:2/305 -50:2/305b 18,8:2/203 -14,8:2/203b', funnels: [[14, 13, 4], [2, 13, 4], [-10, 13, 4]], blocks: [[32, 24, 18, 5, 1]], masts: [[28, 26], [-24, 24]] },
   // Italy.
-  'trento': { cls: 'heavy-cruiser', L: 196.9, B: 20.6, fb: 8, sheer: 3, guns: '64:2/203 53:2/203^2.5 -52:2/203^2.5b -64:2/203b', funnels: [[8, 12, 4], [-6, 12, 4]], blocks: [[34, 22, 24, 6, 1]], masts: [[26, 28], [-14, 24]] },
-  'zara': { cls: 'heavy-cruiser', L: 182.8, B: 20.6, fb: 8, fc: [-20, 2.4], guns: '58:2/203 47:2/203^2.5 -46:2/203^2.5b -58:2/203b', funnels: [[8, 12, 5], [-6, 12, 5]], blocks: [[32, 20, 24, 6, 1]], masts: [[26, 28]] },
-  'giussano': { cls: 'light-cruiser', L: 169.3, B: 15.5, fb: 7, fc: [-20, 2.2], guns: '56:2/152 46:2/152^2.5 -46:2/152^2.5b -56:2/152b', funnels: [[8, 11, 4], [-6, 11, 4]], blocks: [[30, 20, 20, 5, 1]], masts: [[24, 24]] },
-  'montecuccoli': { cls: 'light-cruiser', L: 182.2, B: 16.5, fb: 7, sheer: 3, guns: '60:2/152 49:2/152^2.5 -48:2/152^2.5b -60:2/152b', funnels: [[12, 11, 4], [-10, 11, 4]], blocks: [[32, 22, 22, 6, 1]], masts: [[26, 26], [-4, 22]] },
-  'abruzzi': { cls: 'light-cruiser', L: 187.0, B: 18.9, fb: 8, sheer: 3, guns: '62:3/152 51:2/152^2.5 -50:2/152^2.5b -62:3/152b', funnels: [[10, 11, 5], [-8, 11, 5]], blocks: [[34, 22, 22, 6, 1]], masts: [[26, 26]] },
+  // Trento, Zara (as Gorizia), Giussano (as Cadorna), Montecuccoli and Abruzzi (as Garibaldi): turret places, the
+  // forecastle's end, bridge, funnels and masts measured on the ONI 202 (1943) profiles (Trieste, Montecuccoli) and
+  // silhouettes, scaled by the overall length (sources.md).
+  'trento': { cls: 'heavy-cruiser', L: 196.9, B: 20.6, fb: 8, sheer: 3, guns: '49.5:2/203 41:2/203^2.5 -47:2/203^3b -55:2/203b', funnels: [[15.3, 10.5, 7], [-20.4, 10, 6]], blocks: [[39, 25, 14, 5, 1], [29, 25, 28, 2], [24, 8, 11, 4.5]], masts: [[27, 20]] },
+  'zara': { cls: 'heavy-cruiser', L: 182.8, B: 20.6, fb: 5.8, sheer: 1.4, fc: [-41, 2.6], guns: '40.5:2/203 30:2/203^3 -37.5:2/203^0.6b -46:2/203b', funnels: [[7, 12.8, 5.5], [-20, 11.5, 6]], blocks: [[26, 3, 10, 5, 1], [25, 13, 16.3, 4.5, 1], [21.5, 16.5, 23.5, 3]], masts: [[18, 25.5]] },
+  'giussano': { cls: 'light-cruiser', L: 169.3, B: 15.5, fb: 7, fc: [-35, 3.2], guns: '50.5:2/152 41:2/152^2.5 -41.3:2/152^2.6b -50.3:2/152b', funnels: [[15.7, 9, 5], [-12.3, 8.7, 4]], blocks: [[36.7, 24.7, 16.5, 4.5, 1], [26.7, 24.7, 22.7, 2], [22, 10, 15, 4]], masts: [[25.7, 16]] },
+  'montecuccoli': { cls: 'light-cruiser', L: 182.2, B: 16.5, fb: 7, sheer: 3, guns: '51:2/152 43.5:2/152^2.5 -47.5:2/152^2.5b -55.5:2/152b', funnels: [[20.8, 11, 5], [-22.5, 11, 5]], blocks: [[40, 31, 16.5, 5, 1], [37, 34, 21, 2.5], [16, -12, 9.3, 5.5]], masts: [[37, 20], [-16.5, 19.5]] },
+  'abruzzi': { cls: 'light-cruiser', L: 187.0, B: 18.9, fb: 7.4, sheer: 1, fc: [-33, 3.2], guns: '44.5:3/152 34.5:2/152^2.5 -36.5:2/152^2.6b -46.5:3/152b', funnels: [[7.5, 10, 5], [-6.5, 8.8, 5]], blocks: [[29.5, 3.5, 13, 5, 1], [29.5, 21.5, 16, 4, 1], [25.5, 23.5, 21.2, 2]], masts: [[24.5, 14]] },
   'etna': { cls: 'light-cruiser', L: 153.8, B: 14.5, fb: 6, fc: [-10, 2], guns: '50:2/135 41:2/135^2.5 -46:2/135b', funnels: [[0, 11, 4]], blocks: [[28, 18, 18, 5, 1]], masts: [[20, 22]] },
   'capitani-romani': { cls: 'light-cruiser', L: 142.9, B: 14.4, fb: 6, fc: [-14, 2], guns: '48:2/135 40:2/135^2.5 -40:2/135^2.5b -48:2/135b', funnels: [[8, 10, 3.5], [-4, 10, 3.5]], blocks: [[26, 18, 16, 4, 1]], masts: [[18, 20]] },
   // France.
@@ -655,8 +668,8 @@ const AFT: Record<string, Partial<ShipO>> = {
   'gangut': { blocks: [[-36, -48, 12, 3.5]] },
   'imperatritsa-mariya': { blocks: [[-32, -44, 12.5, 3.5]] },
   'izmail': { blocks: [[-40, -52, 12.5, 3.5]] },
-  'cavour-1933': { blocks: [[-18, -38, 16, 5]], dirs: [[-28, 20]], guns2: '12,10:2/120^3 -16,10:2/120^3b' },
-  'doria-1940': { blocks: [[-20, -38, 16, 5]], dirs: [[-28, 20]], guns2: '20,10:3/135^3 -22,10:3/135^3b' },
+  'cavour-1933': { blocks: [[-12, -33, 12.6, 5]], guns2: '12,10:2/120^3 -16,10:2/120^3b' },
+  'doria-1940': { blocks: [[-14, -31, 12.9, 5], [-31, -36, 18.9, 2.5]], guns2: '20,10:3/135^3 -22,10:3/135^3b' },
   'kronshtadt': { blocks: [[-18, -50, 16, 6], [-26, -42, 20, 4]], dirs: [[-36, 24, 1.8]], masts: [[-14, 28], [-44, 18]], guns2: '24,11:2/152^4 -22,11:2/152^4b' },
   'stalingrad': { blocks: [[-18, -56, 16, 6], [-26, -46, 20, 4]], dirs: [[-40, 24, 1.8]], guns2: '28,11:2/130^4 -26,11:2/130^4b' },
   'sovetsky-soyuz': { blocks: [[-18, -52, 17, 7], [-26, -44, 22, 4.5]], dirs: [[-38, 26, 2]] },
@@ -674,8 +687,8 @@ const AFT: Record<string, Partial<ShipO>> = {
   'lion-1938': { blocks: [[-18, -46, 16, 6]], dirs: [[-34, 22]], guns2: '24,12:2/133^3 12,12:2/133^3 -24,12:2/133^3b -36,12:2/133^3b' },
   'kawachi': { blocks: [[-20, -32, 13, 4]] },
   'kongo': { blocks: [[0, -19, 12, 5]], dirs: [[-15, 22]], masts: [[-6, 36, 't'], [-70, 20]], guns2: '8,10:2/127^5 -4,10:2/127^5' },
-  'fuso': { blocks: [[-34, -48, 13, 4]], guns2: '6,10:2/127^5' },
-  'ise': { blocks: [[-34, -50, 13, 4]], guns2: '6,10:2/127^5 -2,10:2/127^5' },
+  'fuso': { blocks: [[-42, -51, 22, 3.5]], guns2: '6,10:2/127^5' },
+  'ise': { blocks: [[-44, -55, 20, 3.5]], guns2: '6,10:2/127^5 -2,10:2/127^5' },
   'nagato': { blocks: [[13, -21, 14, 6], [-8, -21, 21, 3.5]], dirs: [[-14, 23]], masts: [[-25, 32, 't']], guns2: '6,10:2/127^5 -4,10:2/127^5' },
   'tosa': { blocks: [[-34, -50, 13, 4]], masts: [[40, 32, 't'], [-40, 22]] },
   'amagi': { blocks: [[-20, -58, 13, 4]], masts: [[44, 32, 't'], [-30, 22]] },
@@ -684,7 +697,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   'dunkerque': { blocks: [[-8, -40, 16, 6]], dirs: [[-20, 20]] },
   'richelieu': { blocks: [[-10, -44, 16, 6]], dirs: [[-24, 21]] },
   'caracciolo': { blocks: [[-18, -44, 13, 4]] },
-  'littorio': { blocks: [[-26, -50, 16, 6], [-30, -44, 20, 4]], dirs: [[-38, 23]] },
+  'littorio': { blocks: [[-10, -48, 13.5, 6], [-28, -35, 25.8, 2.5]], dirs: [[-50, 15.8]] },
   'cavour-1915': { blocks: [[-26, -40, 12.5, 3.5]] },
   'dante-alighieri': { blocks: [[-30, -48, 12, 3.5]] },
   // United States cruisers.
@@ -743,11 +756,11 @@ const AFT: Record<string, Partial<ShipO>> = {
   'ikoma': { blocks: [[-20, -28, 13, 4]] },
   'kurama': { blocks: [[-20, -28, 13, 4]], masts: [[28, 26, 't'], [-24, 24, 't']] },
   // Italian cruisers.
-  'trento': { blocks: [[-14, -30, 12.5, 4.5], [-18, -26, 15, 3]], dirs: [[-24, 18]], masts: [[26, 28, 't'], [-14, 24, 't']] },
-  'zara': { blocks: [[-14, -30, 12.5, 5], [-18, -26, 15, 3.5]], dirs: [[-24, 18]], masts: [[26, 28, 't'], [-14, 20]] },
-  'giussano': { blocks: [[-14, -28, 11, 4], [-16, -24, 13, 3]], dirs: [[-22, 15]] },
-  'montecuccoli': { blocks: [[-14, -28, 11.5, 4.5], [-16, -24, 14, 3]], dirs: [[-22, 16]] },
-  'abruzzi': { blocks: [[-14, -30, 12, 5], [-18, -26, 14.5, 3.5]], dirs: [[-24, 17]], masts: [[26, 26, 't'], [-14, 20]] },
+  'trento': { blocks: [[-12, -27, 12, 4.5], [-28, -40, 10.5, 3.5]], dirs: [[-36, 13]], masts: [[27, 20, 't'], [-13, 18, 't']] },
+  'zara': { blocks: [[-11, -24, 9, 5], [-26, -32, 9.4, 4]], dirs: [[-29.5, 13.6]], masts: [[18, 25.5, 't'], [-13, 33, 't']] },
+  'giussano': { blocks: [[-9, -16, 9.5, 4]], masts: [[25.7, 16], [-7.3, 13]] },
+  'montecuccoli': { blocks: [[-26, -37, 9.5, 4.5]] },
+  'abruzzi': { blocks: [[-2, -12, 11, 4.5], [-27.5, -31, 13.3, 3]], masts: [[24.5, 14, 't'], [-26.5, 17.4]] },
   'etna': { blocks: [[-12, -24, 10.5, 4]] },
   'capitani-romani': { blocks: [[-12, -22, 10, 3.5]], dirs: [[-18, 13]] },
   // French cruisers.
@@ -2213,7 +2226,9 @@ const R2: Record<string, ShipO> = {
   'aoba': { cls: 'heavy-cruiser', L: 185.2, B: 17.6, fb: 8, fc: [-22, 2.4], rake: 0.15, guns: '58:2/203 48:2/203^2.5 -56:2/203b', funnels: [[10, 11, 5.2, 4], [-4, 11, 3.6, 3]], blocks: [[34, 20, 21, 5.5, 1], [30, 23, 24.5, 3.6], [-10, -26, 11.5, 4.5], [-14, -22, 14, 3]], dirs: [[-20, 16]], masts: [[22, 26, 't'], [-16, 22, 't']], extra: [jib(-15, 20, -3, 12)] },
   // Bolzano: Trento's half-sister, the tall tower bridge, the raised forecastle, the funnels wide apart with the
   // catapult between them, four twin 20.3 cm turrets (196.9 x 20.6 m; 13,665 t full).
-  'bolzano': { cls: 'heavy-cruiser', L: 196.9, B: 20.6, fb: 8, fc: [-30, 2.4], sheer: 3, guns: '64:2/203 53:2/203^2.5 -52:2/203^2.5b -64:2/203b', funnels: [[20, 12, 4.6], [-22, 12, 4.6]], blocks: [[38, 28, 18, 5, 1], [36, 30, 28, 3.2, 0.5], [-28, -38, 11.5, 4]], dirs: [[-34, 14]], masts: [[30, 30, 't'], [-30, 18]], extra: [blockOf(6, -14, 8, 9.2, 1.2)], launchers: [{ x: -8, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
+  // Turret places, the forecastle's end, bridge, funnels and masts measured on the ONI 202 (1943) silhouette, scaled
+  // by the overall length (sources.md).
+  'bolzano': { cls: 'heavy-cruiser', L: 196.9, B: 20.6, fb: 6.7, fc: [-50, 2.4], sheer: 1.2, guns: '51.5:2/203 40.5:2/203^3 -43:2/203^0.8b -55:2/203b', funnels: [[15.5, 12.5, 6], [-23.5, 12, 5]], blocks: [[35, 24, 18.5, 5, 1], [29, 24.5, 28, 3.2, 0.5], [-26, -38, 13, 4]], dirs: [[-35.5, 13]], masts: [[27, 21, 't'], [-15.5, 25]], extra: [blockOf(6, -14, 8, 9.2, 1.2)], launchers: [{ x: -8, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
   // Centurion (King George V of 1911): Orion's successor, five twin 13.5-inch turrets on the centre line, the tripod
   // foremast forward of the first funnel (182.1 x 27.1 m; 26,100 t full).
   'centurion-1911': { cls: 'battleship', L: 182.1, B: 27.1, fb: 8, sheer: 2.5, guns: '62:2/343 50:2/343^2.5 -4:2/343 -46:2/343^2.5b -60:2/343b', funnels: [[18, 14, 7], [6, 14, 6]], masts: [[26, 34, 't'], [-20, 24]] },
