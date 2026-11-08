@@ -2250,4 +2250,10 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
     { cue: 'vertical launch cells fore and aft', check: (s) => (s.launchers ?? []).filter((l) => (l.kind ?? 'vls') === 'vls').length === 2 },
     { cue: 'hangars and flight deck aft', check: (s) => !!s.helideck },
   ]),
+  'ark-royal-1937': naval('ark-royal-1937', [
+    { cue: 'high slab-sided hull closed up to the flight deck', check: (s) => s.freeboard >= 18 },
+    { cue: 'flight deck overhanging bow and stern', check: (s) => Math.max(...(s.decks?.[0]?.plan ?? []).map((p) => Math.abs(p[0]))) > s.length / 2 },
+    { cue: 'long island to starboard, the funnel at its after end', check: (s) => islandSide(s) > 0 && (s.oneSide?.length ?? 0) === 3 },
+    { cue: 'eight twin 4.5-inch turrets in sponsons, four a side', check: (s) => turrets(s).filter((t) => t.calibre === 0.114 && t.barrels === 2).length === 8 },
+  ]),
 };
