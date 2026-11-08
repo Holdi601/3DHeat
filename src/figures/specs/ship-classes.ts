@@ -294,7 +294,9 @@ N['type-viic'] = {
 
 const S: Record<string, Parameters<typeof ship>[0]> = {
   // United States.
-  'delaware': { cls: 'battleship', L: 158.2, B: 26.0, fb: 8, guns: '55:2/305 43:2/305^2.5 -25:2/305b -42:2/305^2.5b -58:2/305b', funnels: [[8, 14, 5], [-6, 14, 5]], blocks: [[36, 26, 17, 6, 1]], masts: [[30, 30], [-14, 30]] },
+  // Delaware from Jane's Fighting Ships 1914 (profile and plan): the forecastle 10 m to C, the quarterdeck 6.7 m with D and E
+  // level; the cage mainmast between the funnels.
+  'delaware': { cls: 'battleship', L: 158.2, B: 26.0, fb: 10, fc: [-30, 3.3], guns: '49.1:2/305 38.1:2/305^2.4 -15.7:2/305b -41.8:2/305b -54.4:2/305b', funnels: [[16, 15.4, 5], [-3.5, 15.4, 5.1]], blocks: [[31, 25.7, 13, 5]], raised: [[29.9, 25.7, 13, 18.6, 3]], masts: [[22.6, 33.8, 'l'], [4.2, 33.8, 'l']] },
   'wyoming': { cls: 'battleship', L: 171.3, B: 28.4, fb: 8, guns: '62:2/305 50:2/305^2.5 -6:2/305^2.5b -22:2/305b -48:2/305^2.5b -62:2/305b', funnels: [[8, 14, 6]], blocks: [[40, 28, 22, 6, 1]], masts: [[32, 32], [-10, 26]] },
   // New York, Nevada, New Mexico, Pennsylvania (1941): turret places (and Nevada's masts and funnel) measured on the FM 30-50
   // (1941) plans and profiles, scaled by the overall length (sources.md).
@@ -313,17 +315,27 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   // Germany.
   'nassau': { cls: 'battleship', L: 146.1, B: 26.9, fb: 8, guns: '52:2/280 -52:2/280b 20,8:2/280 -12,8:2/280b', funnels: [[8, 14, 5], [-4, 14, 5]], blocks: [[36, 26, 18, 5, 1]], masts: [[30, 24], [-24, 22]] },
   'helgoland': { cls: 'battleship', L: 167.2, B: 28.5, fb: 8, guns: '60:2/305 -60:2/305b 22,9:2/305 -14,9:2/305b', funnels: [[12, 14, 5], [2, 14, 5], [-8, 14, 5]], blocks: [[40, 30, 18, 5, 1]], masts: [[34, 26], [-28, 22]] },
-  'kaiser': { cls: 'battleship', L: 172.4, B: 29.0, fb: 8, guns: '60:2/305 8,8:2/305 -44:2/305^2.5b -60:2/305b', funnels: [[18, 14, 5], [6, 14, 5]], blocks: [[42, 30, 18, 5, 1]], masts: [[34, 26], [-20, 22]] },
-  'konig': { cls: 'battleship', L: 175.4, B: 29.5, fb: 8, guns: '62:2/305 50:2/305^2.5 0:2/305 -46:2/305^2.5b -60:2/305b', funnels: [[18, 14, 5], [8, 14, 5]], blocks: [[40, 30, 18, 5, 1]], masts: [[34, 26], [-22, 22]] },
-  'von-der-tann': { cls: 'battlecruiser', L: 171.7, B: 26.6, fb: 8, guns: '60:2/280 -58:2/280b 12,8:2/280', funnels: [[16, 13, 5], [-4, 13, 5]], blocks: [[40, 30, 16, 5, 1]], masts: [[34, 24], [-20, 22]] },
-  'derfflinger': { cls: 'battlecruiser', L: 210.4, B: 29.0, fb: 8, sheer: 4, guns: '75:2/305 63:2/305^2.5 -52:2/305^2.5b -66:2/305b', funnels: [[22, 14, 6], [4, 14, 6]], blocks: [[46, 34, 18, 5, 1]], masts: [[40, 26], [-10, 24]] },
+  // Kaiser from Jane's Fighting Ships 1914 (profile and plan): the forward deck 8.6 m, the battery deck amidships 9.9 m,
+  // the quarterdeck 7.1 m; A, the wing turrets en echelon, C on the battery deck, D on the quarterdeck.
+  'kaiser': { cls: 'battleship', L: 172.4, B: 29.0, fb: 8.6, fc: [-40, 1.5], guns: '44.4:2/305^1.3 13.7,8.4:2/305^1.3o 0.8,-8.4:2/305^1.3o -32.5:2/305^1.3b -44.6:2/305b', funnels: [[27, 15.2, 4.7], [-10.3, 15.4, 4.8]], blocks: [[40, -40, 9.9, 12.5], [39, 22, 12.6, 5]], raised: [[37.5, 29, 12.6, 15.6, 4]], masts: [[33, 39.4], [-16.4, 39.4]] },
+  // Konig: the turrets' places and the superstructures' ends from the plan in Jane's Fighting Ships 1914 (marked
+  // approximate there); funnels and masts estimates.
+  'konig': { cls: 'battleship', L: 175.4, B: 29.5, fb: 8, guns: '49.3:2/305 35.8:2/305^2.5 -2.9:2/305 -38.4:2/305^2.5b -51:2/305b', funnels: [[18, 14, 5], [8, 14, 5]], blocks: [[29, 17.3, 18, 5, 1]], masts: [[27, 26], [-22, 22]] },
+  // Von der Tann from Jane's Fighting Ships 1914 (profile and plan): the forecastle 9.0 m to the fore funnel, 7.6 m aft of
+  // it; the wing turrets en echelon, the tall pole masts.
+  'von-der-tann': { cls: 'battlecruiser', L: 171.7, B: 26.6, fb: 9.0, fc: [31, 1.4], guns: '51.2:2/280 7.6,8.2:2/280o -14.6,-8.8:2/280o -46.2:2/280b', funnels: [[27.5, 11.1, 5.1], [-3.5, 11.1, 5.5]], blocks: [[44.6, 31.4, 12.9, 5]], raised: [[41, 31.4, 12.9, 17.3, 4]], masts: [[32.8, 54], [-29.9, 53.4]] },
+  // Derfflinger from Jane's Fighting Ships 1914 (profile and plan): flush deck 9.5 m, A and B forward, C and D aft, the
+  // two funnels and the pole masts as built.
+  'derfflinger': { cls: 'battlecruiser', L: 210.4, B: 29.0, fb: 9.5, guns: '53.3:2/305 42.1:2/305^2.8 -36:2/305^0.3b -62:2/305^-1.5b', funnels: [[17.2, 14.3, 6.6], [-15, 14.6, 6.8]], blocks: [[39, 13.4, 11.7, 6]], raised: [[33, 20.5, 11.7, 20, 4]], masts: [[27.6, 44.4], [-23.3, 44.4]] },
   'mackensen': { cls: 'battlecruiser', L: 223.0, B: 30.4, fb: 8, sheer: 4, guns: '80:2/350 67:2/350^2.5 -58:2/350^2.5b -72:2/350b', funnels: [[22, 14, 6], [4, 14, 6]], blocks: [[50, 36, 20, 6, 1]], masts: [[44, 28], [-14, 24]] },
   'ersatz-yorck': { cls: 'battlecruiser', L: 227.8, B: 30.4, fb: 8, sheer: 4, guns: '80:2/380 67:2/380^2.5 -60:2/380^2.5b -74:2/380b', funnels: [[10, 15, 8]], blocks: [[48, 34, 22, 6, 1]], masts: [[42, 28], [-14, 24]] },
   'bayern': { cls: 'battleship', L: 180.0, B: 30.0, fb: 8, guns: '63:2/380 51:2/380^2.5 -50:2/380^2.5b -63:2/380b', funnels: [[12, 14, 6], [2, 14, 6]], blocks: [[38, 26, 20, 6, 1]], masts: [[32, 30], [-18, 22]] },
   'scharnhorst': { cls: 'battleship', L: 235.0, B: 30.0, fb: 9, sheer: 6, guns: '76:3/283 60:3/283^3 -66:3/283b 28,10:2/150^3 12,10:2/150^3 -30,10:1/150^3b', funnels: [[4, 14, 8]], blocks: [[44, 16, 30, 7, 2], [38, 26, 40, 3]], masts: [[-8, 28]] },
   'gneisenau-380': { cls: 'battleship', L: 235.0, B: 30.0, fb: 9, sheer: 6, guns: '76:2/380 60:2/380^3 -66:2/380b 28,10:2/150^3 12,10:2/150^3 -30,10:1/150^3b', funnels: [[4, 14, 8]], blocks: [[44, 16, 30, 7, 2], [38, 26, 40, 3]], masts: [[-8, 28]] },
   // Russia and the Soviet Union.
-  'gangut': { cls: 'battleship', L: 181.2, B: 26.9, fb: 7, sheer: 3, guns: '60:3/305 20:3/305 -22:3/305b -62:3/305b', funnels: [[38, 14, 5], [0, 14, 5]], blocks: [[50, 40, 24, 5, 1]], masts: [[44, 28], [-44, 22]] },
+  // Gangut from Jane's Fighting Ships 1914 (profile and plan): four triple turrets on the centre line on a flush deck 7.7 m,
+  // the two funnels and pole masts as built (topmasts 50 and 44 m over the waterline).
+  'gangut': { cls: 'battleship', L: 181.2, B: 26.9, fb: 7.7, sheer: 0.5, guns: '57.5:3/305 17.3:3/305 -12.8:3/305b -54:3/305b', funnels: [[37.1, 14.3, 5.2], [3.7, 14.3, 6.1]], blocks: [[48.8, 39.7, 15.2, 4.5]], masts: [[41.7, 42.7], [-40.1, 36.2]] },
   'imperatritsa-mariya': { cls: 'battleship', L: 168.0, B: 27.4, fb: 7, guns: '58:3/305 18:3/305 -20:3/305b -58:3/305b', funnels: [[34, 14, 5], [-2, 14, 5]], blocks: [[46, 36, 22, 5, 1]], masts: [[40, 26], [-38, 22]] },
   'izmail': { cls: 'battlecruiser', L: 223.9, B: 30.5, fb: 8, guns: '75:3/356 25:3/356 -28:3/356b -76:3/356b', funnels: [[48, 14, 5], [4, 14, 5], [-12, 14, 5]], blocks: [[60, 50, 22, 5, 1]], masts: [[55, 28], [-50, 24]] },
   // Cavour (as rebuilt) and Doria (1940): turret places and heights, the forecastle's end, bridge tower, funnels and
@@ -338,7 +350,9 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   // masts measured on the ONI 201-I (1945) broadside silhouettes, scaled by the overall length (sources.md).
   'royal-sovereign': { cls: 'battleship', L: 189.2, B: 27.0, fb: 8, guns: '50.7:2/381 35.2:2/381^3 -38:2/381^3b -53:2/381b', funnels: [[5, 16.5, 7]], blocks: [[20.7, 9.8, 21, 6, 1], [19, 11, 32, 4, 1]], masts: [[11.8, 37], [-22, 37]] },
   // Britain.
-  'invincible-1908': { cls: 'battlecruiser', L: 172.8, B: 23.9, fb: 8, guns: '58:2/305 -58:2/305b 4,8:2/305', funnels: [[20, 14, 5], [10, 14, 5], [-14, 14, 5]], blocks: [[42, 32, 18, 5, 1]], masts: [[36, 30], [-6, 26]] },
+  // Invincible from Jane's Fighting Ships 1914 (profile and plan): the forecastle 7.5 m to the after turret, the wing
+  // turrets en echelon, the tall fore funnel, the two tripods' topmasts 56 and 52 m over the waterline.
+  'invincible-1908': { cls: 'battlecruiser', L: 172.8, B: 23.9, fb: 7.5, fc: [-36, 2], guns: '46.7:2/305 4.5,8.6:2/305o -3.7,-6.5:2/305o -41.2:2/305b', funnels: [[31.2, 15.7, 6], [14.8, 13.1, 5.6], [-12.5, 13.1, 3.8]], blocks: [[45, 12, 11.2, 6]], raised: [[45, 39.6, 11.2, 19.8, 3]], masts: [[37.2, 48.3, 't'], [-17.2, 44.1, 't']] },
   'colossus-1910': { cls: 'battleship', L: 166.4, B: 26.4, fb: 8, guns: '56:2/305 6,9:2/305 -40:2/305^2.5b -56:2/305b', funnels: [[22, 14, 5], [-14, 14, 5]], blocks: [[40, 30, 18, 5, 1]], masts: [[2, 30]] },
   'orion': { cls: 'battleship', L: 177.0, B: 27.0, fb: 8, guns: '60:2/343 48:2/343^2.5 -4:2/343 -46:2/343^2.5b -60:2/343b', funnels: [[18, 14, 5], [6, 14, 5]], blocks: [[38, 28, 20, 6, 1]], masts: [[30, 32]] },
   'queen-mary': { cls: 'battlecruiser', L: 214.4, B: 27.2, fb: 8, sheer: 3, guns: '75:2/343 63:2/343^2.5 -24:2/343 -75:2/343b', funnels: [[40, 14, 5], [14, 14, 5], [0, 14, 5]], blocks: [[52, 44, 20, 5, 1]], masts: [[46, 32]] },
@@ -366,16 +380,24 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'tosa': { cls: 'battleship', L: 231.7, B: 30.5, fb: 8, sheer: 3, guns: '76:2/410 63:2/410^2.5 -24:2/410b -60:2/410^2.5b -74:2/410b', funnels: [[14, 13, 8]], blocks: [[46, 32, 26, 7, 1]], masts: [[40, 32]] },
   'amagi': { cls: 'battlecruiser', L: 252.0, B: 30.8, fb: 8, sheer: 3, guns: '84:2/410 71:2/410^2.5 -10:2/410b -66:2/410^2.5b -80:2/410b', funnels: [[22, 13, 8], [6, 13, 8]], blocks: [[50, 36, 26, 7, 1]], masts: [[44, 32]] },
   // Italy.
-  'dante-alighieri': { cls: 'battleship', L: 168.1, B: 26.6, fb: 7, guns: '58:3/305 18:3/305 -22:3/305b -58:3/305b', funnels: [[36, 12, 5], [0, 12, 5], [-6, 12, 5]], blocks: [[46, 38, 18, 5, 1]], masts: [[42, 26], [-38, 22]] },
+  // Dante Alighieri from Jane's Fighting Ships 1914 (profile and plan): four triple turrets on the centre line, four funnels
+  // in two pairs with a pole mast inside each pair (topmasts 52 m over the waterline); the deck rising to the bow as the
+  // turrets' roofs stand (13.8 m forward, 12 m amidships, 10.9 m aft).
+  'dante-alighieri': { cls: 'battleship', L: 168.1, B: 26.6, fb: 8, sheer: 1.7, guns: '50:3/305 8.9:3/305 -8.3:3/305b -45.1:3/305b', funnels: [[33, 10.5, 4.1], [25.5, 10.5, 4.1], [-24, 10.5, 4.1], [-32.2, 10.5, 4.1]], blocks: [[45, 22.3, 12, 6]], raised: [[42, 34, 12, 17.3, 3]], masts: [[30.1, 42.6], [-27.1, 42.6]] },
   // Cavour as built: the turrets stand where the rebuilt ship's do (ONI 202, above), 5.2 m further forward of the
   // middle because the rebuild added 10.4 m at the bow; the Q turret amidships between the funnels.
-  'cavour-1915': { cls: 'battleship', L: 176.0, B: 28.0, fb: 7, fc: [-42, 2.8], guns: '49:3/305 33:2/305^3.5 0:3/305 -33:2/305^1b -51:3/305b', funnels: [[22, 12, 5], [-20, 12, 5]], blocks: [[38, 30, 18, 5, 1]], masts: [[34, 26], [-26, 22]] },
+  // Conte di Cavour as built, from Jane's Fighting Ships 1914 (Giulio Cesare's profile and plan): triple A, C and E, twin
+  // B and D superfiring; two funnels, tripod masts; the forecastle 10.1 m to D, the quarterdeck 5.5 m.
+  'cavour-1915': { cls: 'battleship', L: 176.0, B: 28.0, fb: 10.1, fc: [-40, 4.6], guns: '51.8:3/305^-1.8 39.2:2/305^2.1 0.5:3/305^-0.85 -34.7:2/305^-0.9b -46.8:3/305^-0.75b', funnels: [[21.5, 13.5, 4.9], [-14.4, 13.5, 5]], blocks: [[32.7, 26.9, 18, 4]], masts: [[16.1, 25.8, 't'], [-10.1, 31.7, 't']] },
   'caracciolo': { cls: 'battleship', L: 212.0, B: 29.6, fb: 8, guns: '72:2/381 60:2/381^2.5 -56:2/381^2.5b -70:2/381b', funnels: [[14, 13, 6], [-2, 13, 6]], blocks: [[40, 30, 22, 6, 1]], masts: [[34, 30]] },
   // Littorio: turret places, the 152 mm wing turrets, bridge tower, funnels, aft superstructure and masts measured on
   // the ONI 202 (1943) profile and plan with their height scale, scaled by the overall length (sources.md).
   'littorio': { cls: 'battleship', L: 240.7, B: 32.8, fb: 8.3, sheer: 1.5, fc: [-77, 1], guns: '49.5:3/381 28:3/381^3.5 -59:3/381b 15,11:3/152^3 -47,11:3/152^3b', funnels: [[-4, 17.1, 7], [-18, 15.9, 7]], blocks: [[22, -10, 16.3, 8, 2], [17, 2, 34, 4]], masts: [[8.5, 41], [-32, 27.6]] },
   // France.
-  'courbet': { cls: 'battleship', L: 166.0, B: 27.0, fb: 8, guns: '60:2/305 48:2/305^2.5 6,9:2/305 -46:2/305^2.5b -58:2/305b', funnels: [[22, 12, 5], [-14, 12, 5]], blocks: [[38, 30, 20, 5, 1]], masts: [[32, 26]] },
+  // Courbet from Jane's Fighting Ships 1914 (profile and plan): A and B forward, the wing turrets abreast amidships, C and
+  // D aft (D on the quarterdeck, 6 m); the pole foremast between the forward funnels and the wing turrets. Jane's draws
+  // three funnels as built; the forward two were trunked into one in the 1920s refits (that funnel's size an estimate).
+  'courbet': { cls: 'battleship', L: 166.0, B: 27.0, fb: 9.5, fc: [-38, 3.5], guns: '52.1:2/305 39.7:2/305^3 2.2,8.9:2/305^-1.3 -31.8:2/305^-0.6b -44.5:2/305b', funnels: [[19.9, 13.5, 8, 4.5], [-4.6, 13.5, 5]], blocks: [[32.5, 13.5, 12, 5.5]], raised: [[32.5, 25, 12, 18.4, 3.5]], masts: [[10.3, 30.6], [-23.4, 23]] },
   'bretagne': { cls: 'battleship', L: 166.0, B: 26.9, fb: 8, guns: '60:2/340 48:2/340^2.5 -2:2/340 -46:2/340^2.5b -58:2/340b', funnels: [[20, 12, 5], [-12, 12, 5]], blocks: [[38, 28, 22, 6, 1]], masts: [[32, 28]] },
   'dunkerque': { cls: 'battleship', L: 214.5, B: 31.1, fb: 9, sheer: 6, guns: '64:4/330 49:4/330^3 -50:4/130^2b -62,8:4/130b', funnels: [[0, 13, 8]], blocks: [[34, 16, 30, 8, 2], [30, 22, 38, 3]], masts: [[-10, 24]] },
   'richelieu': { cls: 'battleship', L: 247.9, B: 33.1, fb: 9, sheer: 7, guns: '76:4/380 59:4/380^3 -60:3/152^2b -40,10:3/152^3b', funnels: [[-2, 13, 8]], blocks: [[40, 20, 32, 9, 2], [34, 26, 42, 3.5]], masts: [[-10, 28]] },
@@ -660,7 +682,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   'orion': { masts: [[12, 32, 't']], blocks: [[-16, -34, 13, 4]] },
   // Battleships and battlecruisers: the aft superstructure (the after conning position on the dreadnoughts, a whole
   // aft tower on the later ships), the mainmast, the aft director and the secondary guns on the superstructure deck.
-  'delaware': { masts: [[30, 30, 'l'], [-14, 30, 'l']], blocks: [[-10, -20, 12.5, 3.5]] },
+  'delaware': { masts: [[22.6, 33.8, 'l'], [4.2, 33.8, 'l']], sl: [[-9, 21.6]] },
   'wyoming': { masts: [[32, 32, 'l'], [-12, 28, 'l']], blocks: [[-30, -40, 12.5, 3.5]] },
   'new-york': { masts: [[19.8, 34, 't'], [-5.3, 26]], blocks: [[-24, -32, 14, 4.5]], dirs: [[-26, 18]] },
   'nevada': { masts: [[15.4, 34, 't'], [-19, 30, 't']], blocks: [[-12, -30, 15, 5]], dirs: [[-24, 20]], guns2: '22,12:1/127^1.2 12,12:1/127^1.2 -10,12:1/127^1.2b' },
@@ -674,16 +696,16 @@ const AFT: Record<string, Partial<ShipO>> = {
   'alaska': { blocks: [[-16, -36, 16, 5.5]], dirs: [[-28, 20]], masts: [[-8, 28], [-24, 18]] },
   'nassau': { blocks: [[-20, -34, 13, 4]], masts: [[30, 24], [-24, 22]] },
   'helgoland': { blocks: [[-20, -34, 13, 4]] },
-  'kaiser': { blocks: [[-20, -34, 13, 4]] },
-  'konig': { blocks: [[-16, -34, 13, 4]] },
-  'von-der-tann': { blocks: [[-16, -30, 12.5, 4]] },
-  'derfflinger': { blocks: [[-18, -38, 13, 4]], masts: [[40, 26, 't'], [-10, 24]] },
+  'kaiser': { blocks: [[-13, -25, 12.6, 4]], raised: [[-13, -20, 12.6, 15.5, 3]] },
+  'konig': { blocks: [[-14.5, -31, 13, 4]] },
+  'von-der-tann': { blocks: [[-29.5, -40.6, 11.8, 4.5]], raised: [[-29.5, -34, 11.8, 16, 3]] },
+  'derfflinger': { blocks: [[-10.7, -29.9, 12.3, 5]], raised: [[-10.7, -19, 12.3, 18.8, 4]] },
   'mackensen': { blocks: [[-20, -44, 13, 4]], masts: [[44, 28, 't'], [-14, 24]] },
   'ersatz-yorck': { blocks: [[-20, -46, 13.5, 4]], masts: [[42, 28, 't'], [-14, 24]] },
   'bayern': { blocks: [[-14, -38, 13.5, 4]], masts: [[32, 30, 't'], [-18, 22]] },
   'scharnhorst': { blocks: [[-14, -48, 15, 6], [-24, -40, 19, 4]], dirs: [[-34, 23, 1.8]] },
   'gneisenau-380': { blocks: [[-14, -48, 15, 6], [-24, -40, 19, 4]], dirs: [[-34, 23, 1.8]] },
-  'gangut': { blocks: [[-36, -48, 12, 3.5]] },
+  'gangut': { blocks: [[-42.3, -46.2, 15.9, 3]] },
   'imperatritsa-mariya': { blocks: [[-32, -44, 12.5, 3.5]] },
   'izmail': { blocks: [[-40, -52, 12.5, 3.5]] },
   'cavour-1933': { blocks: [[-12, -33, 12.6, 5]], guns2: '12,10:2/120^3 -16,10:2/120^3b' },
@@ -692,7 +714,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   'stalingrad': { blocks: [[-18, -56, 16, 6], [-26, -46, 20, 4]], dirs: [[-40, 24, 1.8]], guns2: '28,11:2/130^4 -26,11:2/130^4b' },
   'sovetsky-soyuz': { blocks: [[-18, -52, 17, 7], [-26, -44, 22, 4.5]], dirs: [[-38, 26, 2]] },
   'royal-sovereign': { blocks: [[-5, -30, 15, 5]], dirs: [[-26, 19]], masts: [[11.8, 37, 't'], [-22, 37, 't']], guns2: '6,10:2/102^3' },
-  'invincible-1908': { blocks: [[-24, -40, 12.5, 3.5]], masts: [[36, 30, 't'], [-6, 26, 't']] },
+  'invincible-1908': { blocks: [[-10.5, -33.6, 12, 5]], raised: [[-21.6, -33.6, 12, 13.8, 4]] },
   'colossus-1910': { blocks: [[-20, -34, 13, 4]], masts: [[2, 30, 't']] },
   'queen-mary': { blocks: [[-34, -58, 13, 4]], masts: [[46, 32, 't']] },
   'glorious': { blocks: [[-20, -50, 14, 4]], masts: [[36, 34, 't']] },
@@ -710,14 +732,14 @@ const AFT: Record<string, Partial<ShipO>> = {
   'nagato': { blocks: [[13, -21, 14, 6], [-8, -21, 21, 3.5]], dirs: [[-14, 23]], masts: [[-25, 32, 't']], guns2: '6,10:2/127^5 -4,10:2/127^5' },
   'tosa': { blocks: [[-34, -50, 13, 4]], masts: [[40, 32, 't'], [-40, 22]] },
   'amagi': { blocks: [[-20, -58, 13, 4]], masts: [[44, 32, 't'], [-30, 22]] },
-  'courbet': { blocks: [[-20, -36, 13, 4]], masts: [[32, 26], [-6, 24]] },
+  'courbet': { blocks: [[-1.3, -12.5, 13.1, 4.5], [-17.6, -26.3, 13.1, 4]], masts: [[10.3, 30.6], [-23.4, 23]] },
   'bretagne': { blocks: [[-18, -36, 13.5, 4]], masts: [[32, 28, 't'], [-20, 24]] },
   'dunkerque': { blocks: [[-8, -40, 16, 6]], dirs: [[-20, 20]] },
   'richelieu': { blocks: [[-10, -44, 16, 6]], dirs: [[-24, 21]] },
   'caracciolo': { blocks: [[-18, -44, 13, 4]] },
   'littorio': { blocks: [[-10, -48, 13.5, 6], [-28, -35, 25.8, 2.5]], dirs: [[-50, 15.8]] },
-  'cavour-1915': { blocks: [[-26, -40, 12.5, 3.5]] },
-  'dante-alighieri': { blocks: [[-30, -48, 12, 3.5]] },
+  'cavour-1915': { blocks: [[-20.7, -28.3, 14.8, 4]] },
+  'dante-alighieri': { blocks: [[-21.5, -38.4, 11.5, 5]] },
   // United States cruisers.
   'omaha': { blocks: [[-22, -32, 11, 3.5]], dirs: [[-27, 13.5]], sl: [[-12, 14]], masts: [[34, 26, 't'], [-30, 20, 't']], launchers: [{ x: -8, length: 5, width: 2.2, kind: 'tubes', count: 1, elevation: 0 }] },
   'northampton': { blocks: [[-12, -26, 14, 6.5], [-26, -34, 15.5, 4]], dirs: [[-30, 19]], sl: [[-1, 17]], masts: [[26, 30, 't'], [-20, 24, 't']] },
@@ -858,7 +880,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   'yugumo': { masts: [[20.5, 15, 't'], [-23.5, 13]], rake: 0.14, funnels: [[13, 9.5, 3.6, 2.8], [-2.6, 8.2, 3, 2.4]] },
   'tashkent': { masts: [[24, 20, 't'], [-24, 14]] },
   'abdiel': { masts: [[17, 20, 't'], [-26, 12]] },
-  'centurion-1911': { blocks: [[36, 28, 20, 6, 1]], raised: [[28, 24, 28, 29.6, 2.6]] },
+  'centurion-1911': { blocks: [[36.5, 20.9, 15, 6], [-22.7, -32.3, 15.6, 4]], raised: [[34, 26, 15, 18, 4], [30, 21, 18, 24, 2.5], [-24, -27.5, 15.6, 21, 2]] },
 };
 
 /** A class with its aft parts (see `AFT`) and the director on its bridge, for the cruisers and destroyers of the 1910s-50s. */
@@ -1602,13 +1624,16 @@ const W: Record<string, ShipO> = {
     masts: [[6.7, 36.8], [-43, 34]],
   },
   // Iron Duke: five twin 13.5-inch turrets (A and B forward, Q amidships, X and Y aft), two funnels close together,
-  // the tripod foremast (189.8 x 27.4 m; 29,560 t full).
+  // the tripod foremast (189.8 x 27.4 m; 29,560 t full). Places and heights from Jane's Fighting Ships 1914 (profile):
+  // the forecastle deck 10 m to the second funnel, 8.5 m aft; the tripod's topmast 53 m over the waterline, the
+  // derrick post between the funnels.
   'iron-duke': {
-    cls: 'battleship', L: 189.8, B: 27.4, fb: 8, sheer: 2.5,
-    guns: '62:2/343 50:2/343^2.5 -8:2/343 -46:2/343^2.5b -60:2/343b',
-    funnels: [[18, 14, 6], [6, 14, 6]],
-    blocks: [[38, 26, 18, 6, 1], [34, 28, 22, 3.5]],
-    masts: [[28, 34, 't'], [-28, 22]],
+    cls: 'battleship', L: 189.8, B: 27.4, fb: 10, fc: [-3, 1.5],
+    guns: '50.3:2/343 36.3:2/343^3 -12:2/343 -41.6:2/343^3.5b -53.9:2/343^0.5b',
+    funnels: [[13.5, 16.9, 4.7], [-1.4, 17.3, 5]],
+    blocks: [[30, 17, 15.9, 6], [-26.3, -34.5, 15.9, 4]],
+    raised: [[28, 15, 15.9, 19.4, 4]],
+    masts: [[19.9, 42.8, 't'], [4.1, 17.3]],
   },
   // A heavy and a light cruiser of the 1930s-40s, not of one class (estimates, 190 x 20 m and 170 x 17 m).
   'heavy-cruiser': {
@@ -1959,7 +1984,9 @@ const R: Record<string, ShipO> = {
   'nagara': { cls: 'light-cruiser', L: 162.1, B: 14.2, fb: 7, fc: [-6, 2.4], guns: '60.8:1/140 56.2:1/140^2 -38.5:1/140b -47:1/140^2b -53.2:1/140b 36,6:1/140', funnels: [[20.5, 9.2, 3.5], [8.1, 9.2, 3.5], [-4.5, 9.2, 3.5]], blocks: [[50.4, 44.5, 13.4, 3, 1], [44.5, 33.4, 18, 4, 1]], masts: [[37.1, 27.8], [-42, 23.9]], tt: [2, 4] },
   // Dreadnought (1906): five twin 12-inch turrets, one forward, two on the wings amidships and two aft, two funnels
   // with the tripod foremast aft of the fore funnel, as built (160.6 x 25 m; 21,060 t full).
-  'dreadnought': { cls: 'battleship', L: 160.6, B: 25, fb: 8, sheer: 3, guns: '56:2/305 8,8.5:2/305 -40:2/305b -56:2/305b', funnels: [[20, 13, 5], [2, 13, 5]], blocks: [[36, 28, 16, 5, 1], [-12, -24, 13, 4]], masts: [[12, 30, 't'], [-14, 26]] },
+  // Dreadnought from Jane's Fighting Ships 1914 (profile and plan): the forecastle 10 m, A on it, the wing turrets abreast
+  // the tripod, the centre-line turret and Y on the upper deck; the tripod foremast ahead of the second funnel.
+  'dreadnought': { cls: 'battleship', L: 160.6, B: 25, fb: 10, fc: [-47, 3], guns: '41:2/305 14.3,9:2/305^-2.7 -13.2:2/305^-2.7b -41.3:2/305^-2.7b', funnels: [[24, 11.8, 4.2], [-0.4, 11.8, 5.3]], blocks: [[34.8, 25.8, 16, 5], [9.6, -3.9, 12.6, 4]], raised: [[34.8, 30.5, 16, 19.3, 3]], masts: [[15.7, 40, 't'], [-29.8, 26.2]] },
   // Tashkent: the Italian-built destroyer leader, three twin 130 mm turrets, two funnels, three triple torpedo mounts
   // (139.7 x 13.7 m; 4,175 t full).
   'tashkent': { cls: 'destroyer', L: 139.7, B: 13.7, fb: 6, sheer: 3, guns: '50:2/130m 42:2/130m^2.5 -46:2/130mb', funnels: [[6, 9, 4], [-8, 9, 4]], blocks: [[34, 24, 14, 3.8, 1.5], [31, 26, 16.5, 2.6]], masts: [[24, 20], [-24, 14]], tt: [2, 3] },
@@ -2253,7 +2280,9 @@ const R2: Record<string, ShipO> = {
   'bolzano': { cls: 'heavy-cruiser', L: 196.9, B: 20.6, fb: 6.7, fc: [-50, 2.4], sheer: 1.2, guns: '51.5:2/203 40.5:2/203^3 -43:2/203^0.8b -55:2/203b', funnels: [[15.5, 12.5, 6], [-23.5, 12, 5]], blocks: [[35, 24, 18.5, 5, 1], [29, 24.5, 28, 3.2, 0.5], [-26, -38, 13, 4]], dirs: [[-35.5, 13]], masts: [[27, 21, 't'], [-15.5, 25]], extra: [blockOf(6, -14, 8, 9.2, 1.2)], launchers: [{ x: -8, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
   // Centurion (King George V of 1911): Orion's successor, five twin 13.5-inch turrets on the centre line, the tripod
   // foremast forward of the first funnel (182.1 x 27.1 m; 26,100 t full).
-  'centurion-1911': { cls: 'battleship', L: 182.1, B: 27.1, fb: 8, sheer: 2.5, guns: '62:2/343 50:2/343^2.5 -4:2/343 -46:2/343^2.5b -60:2/343b', funnels: [[18, 14, 7], [6, 14, 6]], masts: [[26, 34, 't'], [-20, 24]] },
+  // Centurion (King George V class) from Jane's Fighting Ships 1914 (profile): the forecastle deck 10 m to the second
+  // funnel, 7.8 m aft; Q on the upper deck, X superfiring over Y; the tripod foremast's topmast 58 m over the waterline.
+  'centurion-1911': { cls: 'battleship', L: 182.1, B: 27.1, fb: 10, fc: [0, 2.2], guns: '51.7:2/343 40.4:2/343^2.5 -7.5:2/343 -39.2:2/343^3.4b -50.9:2/343b', funnels: [[17.8, 17.3, 6.2], [2.7, 17.3, 5.4]], masts: [[22.4, 47.7, 't'], [6.6, 22.9]] },
 };
 for (const [name, o] of Object.entries(R2)) N[name] = ship(withAft(name, o));
 // Project 186 (MBK/MKL): the improved 161 with the T-34-85's turrets, 36.2 x 5.2 m.
