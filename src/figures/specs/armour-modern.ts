@@ -2460,4 +2460,46 @@ more('pgz-09', [...sight(0.85, 0.6, 1.3, 0.45, 0.35, 0.22), ...smokeRow(1.05, 1.
 // Tor-M1: the eight missile hatches let into the turret's roof between the antennas.
 more('9a331-tor-m1', [tb(0.15, 0, 1.66, 1.3, 1.25, 0.03, DARK), ...[-0.32, 0.32].flatMap((x) => [-0.3, 0.3].map((s) => tb(0.15 + x, s, 1.69, 0.56, 0.54, 0.03)))]);
 
+// ERA layouts. Kontakt-5's turret containers sit under hinged lids on the brow, a row of them each side of the gun,
+// their seams running fore and aft; on the glacis the K-5 plate is built from rows of panels under one cover, the
+// joints showing across it. FY-4 bricks stand on the Chinese turrets' front faces in rows.
+/** Seams between the K-5 lids on a turret's sloping brow from (x0, z0) at the roof to (x1, z1) at the nose, `n` lids a side out to `half`. */
+const k5Lids = (x0: number, x1: number, z0: number, z1: number, half: number, n: number): AddOn[] => {
+  const len = Math.hypot(x1 - x0, z0 - z1);
+  const pitch = -Math.atan2(z0 - z1, x1 - x0);
+  const at = (f: number): [number, number] => [x0 + (x1 - x0) * f, z0 + (z1 - z0) * f + 0.012];
+  const [xm, um] = at(0.5);
+  const seams = Array.from({ length: n + 1 }, (_, i) => tb(xm, 0.32 + ((half - 0.32) * i) / n, um, len, 0.035, 0.014, { ...DARK, ...M, pitch }));
+  const [xc, uc] = at(0.45);
+  return [...seams, tb(xc, (0.32 + half) / 2, uc, 0.035, half - 0.32, 0.014, { ...DARK, ...M, pitch })];
+};
+/** The joints across a K-5 glacis plate `t` thick (see `glacis`): `rows` panels from the deck down to the nose. */
+const glacisJoints = (L: number, deck: number, len: number, nose: number, t: number, width: number, rows: number): AddOn[] => {
+  const a = Math.atan2(deck - nose, len);
+  return Array.from({ length: rows - 1 }, (_, r) => {
+    const f = (r + 1) / rows;
+    return hb(L / 2 - len + f * len + Math.sin(a) * (t + 0.01), 0, deck - f * (deck - nose) + Math.cos(a) * (t + 0.01), 0.035 / Math.cos(a), width, 0.02, { ...DARK, pitch: -a });
+  });
+};
+/** FY-4 bricks on a turret's front face from plan point (xa, sa) to (xb, sb), `cols` along it and `rows` up from `u0`, both sides. */
+const faceBricks = (xa: number, sa: number, xb: number, sb: number, u0: number, cols: number, rows: number, h = 0.24, t = 0.12): AddOn[] => {
+  const dx = xb - xa;
+  const ds = sb - sa;
+  const L = Math.hypot(dx, ds);
+  const yaw = Math.atan2(ds, dx);
+  const [nx, ns] = [-ds / L, dx / L].map((v) => v * Math.sign(dx / L)) as [number, number];
+  const out: AddOn[] = [];
+  for (let c = 0; c < cols; c++) {
+    const f = (c + 0.5) / cols;
+    for (let r = 0; r < rows; r++) out.push(tb(xa + dx * f + nx * t * 0.5, sa + ds * f + Math.abs(ns) * t * 0.5, u0 + r * (h + 0.04) + h / 2, L / cols - 0.05, t, h, { ...M, yaw }));
+  }
+  return out;
+};
+for (const n of ['t-72b3', 't-72b3-arena-m']) more(n, [...k5Lids(0.85, 1.95, 0.82, 0.44, 1.5, 4), ...glacisJoints(6.86, 1.4, 1.9, 0.95, 0.22, 2.9, 3)]);
+more('t-80ue1', [...k5Lids(1.15, 1.95, 0.8, 0.45, 1.5, 4), ...glacisJoints(7.0, 1.4, 1.95, 0.95, 0.22, 2.9, 3)]);
+more('t-80uk', [...k5Lids(1.1, 1.9, 0.77, 0.45, 1.52, 4), ...glacisJoints(7.0, 1.4, 1.95, 0.95, 0.22, 2.9, 3)]);
+// ZTZ-96B: FY-4 on the wedge's front faces; ZTZ-99A: on the arrow's outer front faces.
+more('ztz-96b', faceBricks(1.4, 1.35, 2.1, 0.8, 0.12, 3, 2));
+more('ztz-99a', faceBricks(2.0, 1.3, 3.0, 0.42, 0.14, 3, 2));
+
 export const ARMOUR_MODERN: SpecSet = { ground: G, aliases: ALIASES };
