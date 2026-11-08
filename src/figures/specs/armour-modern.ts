@@ -218,7 +218,7 @@ G['leopard-c2-mexas'] = { cls: 'mbt', ...LEO1, turret: turret(-0.1, [[-1.85, 1.0
 const CWS: AddOn[] = [{ on: 'turret', kind: 'drum', at: [-0.4, 0.72, 1.04], size: [0.78, 0.78, 0.4] }, tb(-0.1, 0.72, 1.2, 1.1, 0.07, 0.07, DARK)];
 // The bustle rack round the turret's back; the CITV head on the left of the roof (M1A2 on).
 const RACK = tb(-3.15, 0, 0.55, 0.6, 3.0, 0.45, DARK);
-const CITV = { on: 'turret', kind: 'drum', at: [0.9, -0.62, 1.06], size: [0.42, 0.42, 0.45] } as AddOn;
+const CITV = { on: 'turret', kind: 'drum', at: [0.9, -0.62, 0.92], size: [0.42, 0.42, 0.45] } as AddOn;
 const CROWS = [tb(-0.4, 0.72, 1.1, 0.6, 0.5, 0.48, DARK), tb(0.1, 0.72, 1.18, 0.9, 0.07, 0.07, DARK)];
 const M256: GunSpec = { mount: 'turret', length: 5.3, calibre: 0.12, extractor: 0.55, at: 0.5 };
 const ABRAMS_PLAIN = { ...ABRAMS, cupola: false, rws: false };
@@ -304,7 +304,7 @@ G['k1a1'] = { cls: 'mbt', ...K1, guns: [M256] };
 // with add-on modules on the turret front and sides.
 const ARIETE = { ...base('ariete'), hullHeight: 1.65, roadWheels: 7, trackProfile: run(7.4, 0.92, [3.7, 0.62], [-3.7, 0.7], -3.0, 3.0), hullOutline: hull(7.59, 3.6, 1.65, 0.9, 1.5, 1.15, 0.15) };
 G['ariete'] = { ...ARIETE, addOns: [tb(-0.2, 0.7, 0.95, 0.4, 0.4, 0.4)] };
-G['ariete-amv'] = { ...ARIETE, addOns: [tb(-0.2, 0.7, 0.95, 0.4, 0.4, 0.4), tb(1.6, 0.9, 0.4, 0.9, 0.7, 0.55, { ...M, yaw: -0.6 }), tb(-0.3, 1.72, 0.4, 2.0, 0.16, 0.55, M), tb(-1.2, -0.6, 1.0, 0.5, 0.4, 0.4, DARK)] };
+G['ariete-amv'] = { ...ARIETE, addOns: [tb(-0.2, 0.7, 0.95, 0.4, 0.4, 0.4), tb(1.6, 0.9, 0.4, 0.9, 0.7, 0.55, { ...M, yaw: -0.6 }), tb(-0.3, 1.72, 0.4, 2.0, 0.16, 0.55, M), tb(-1.2, -0.6, 0.88, 0.5, 0.4, 0.4, DARK)] };
 
 // ---------------------------------------------------------------- Patton and M60
 
@@ -2427,7 +2427,7 @@ more('challenger-2', [...sight(1.9, 0.48, 0.86, 0.7, 0.42, 0.32), ...smokeRow(1.
 more('challenger-2-tes', [...sight(1.9, 0.48, 0.86, 0.7, 0.42, 0.32), ...smokeRow(1.35, 1.55, 0.7, 5, 0.11, 0.6, 0.5)], mainGun({ sleeve: 0.95, mrs: true }));
 // M1A1: the M256's sleeve and sensor, the gunner's primary sight doghouse, the six-tube smoke banks on the cheeks,
 // the loader's M240, the exhaust grille across the back plate.
-more('m1a1-abrams', [...sight(1.05, 0.62, 1.0, 0.8, 0.55, 0.32), ...smokeRow(1.35, 1.62, 0.68, 3, 0.12, 0.6), ...smokeRow(1.35, 1.62, 0.54, 3, 0.12, 0.6), panel(-3.98, 0, 1.15, 0.04, 2.7, 0.5, DARK)],
+more('m1a1-abrams', [...sight(1.05, 0.62, 0.84, 0.8, 0.55, 0.32), ...smokeRow(1.35, 1.62, 0.68, 3, 0.12, 0.6), ...smokeRow(1.35, 1.62, 0.54, 3, 0.12, 0.6), panel(-3.98, 0, 1.15, 0.04, 2.7, 0.5, DARK)],
   (g) => [{ ...g[0], sleeve: 0.95, mrs: true }, roofMg(-0.6, -0.72, 0.0076)]);
 // Type 90: the sleeved L44 with its sensor, the commander's panoramic sight, the gunner's sight, three smoke tubes a
 // side, the bustle basket, the 12.7 mm on the roof.
@@ -2435,7 +2435,7 @@ more('type-90', [...pano(0.25, 0.72, 0.75, 0.36, 0.5), ...sight(1.15, -0.7, 0.85
   (g) => [{ ...g[0], sleeve: 0.92, mrs: true }, roofMg(-0.3, -0.65)]);
 // Ariete: the sleeved 120/44 with its sensor, the commander's panoramic sight, the gunner's sight, four smoke tubes a
 // side, the bustle basket, the roof machine gun.
-more('ariete', [...pano(0.55, 0.8, 0.82, 0.36, 0.42), ...sight(1.25, -0.65, 0.92, 0.55, 0.4, 0.2), ...smokeRow(0.95, 1.6, 0.6, 4), ...basket(-2.77, 0.48, 0.5, 2.6, 0.42)],
+more('ariete', [...pano(0.9, 0.8, 0.72, 0.36, 0.42), ...sight(1.25, -0.65, 0.78, 0.55, 0.4, 0.2), ...smokeRow(0.95, 1.6, 0.6, 4)],
   (g) => [{ ...g[0], sleeve: 0.9, mrs: true }, roofMg(-0.3, -0.7, 0.0076)]);
 // T-72B3 (and with Arena-M): the two fuel drums and the unditching beam across the back plate, the snorkel on the
 // turret's back in its stowage basket (whose back is 2.4 m behind the hull's middle on a broadside photograph), the

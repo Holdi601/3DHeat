@@ -2491,7 +2491,7 @@ export const CUES: Record<string, CueEntry> = {
   ]),
   ariete: ground(['ariete', 'ariete-amv'], [
     { cue: 'seven road wheels behind skirts', check: (s) => run(7)(s) && skirted(s) },
-    { cue: 'long welded wedge-fronted turret with bustle', check: (s) => angular(s) && turretL(4.5)(s) },
+    { cue: 'long welded wedge-fronted turret with bustle', check: (s) => angular(s) && turretL(4.1)(s) },
     { cue: '120 mm with an evacuator', check: (s) => cal(0.12)(s) && evacuator(s) },
   ]),
   'ariete-amv': ground('ariete-amv', [{ cue: 'add-on armour blocks on the turret', check: adds('box', 4, 'turret') }]),
