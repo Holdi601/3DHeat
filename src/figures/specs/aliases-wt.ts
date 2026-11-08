@@ -1490,7 +1490,7 @@ const ALIASES: Record<string, string> = {
   'gladiator_mk2_france': 'gladiator',
   'nimrod_mk1': 'fury-mk1', // the naval Fury
   'v_156_b1': 'sb2u',
-  'hp_12': 'ww2-fighter',
+  'hp_12': 'handley-page-o400', // H.P.12 is the O/400's maker's type number
   'gladiator_mk2_silver': 'gladiator',
   'nimrod_mk2': 'fury-mk2', // the naval Fury
   'blenheim_mkiv': 'blenheim-iv',

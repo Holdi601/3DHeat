@@ -2256,6 +2256,14 @@ const R2: Record<string, ShipO> = {
   // PT-810 to 812: the post-war motor torpedo boats, a long low hull, the enclosed deckhouse, 40 mm guns fore and aft
   // (27.4 x 7.3 m; 94 t, estimate for the class).
   'pt-810': { cls: 'torpedo-boat', L: 27.4, B: 7.3, fb: 1.9, sheer: 0.8, transom: 0.9, guns: '9:1/40m -9:1/40mb 1,2.4:2/20s^1.4', blocks: [[4, -4, 3.8, 2.6, 1], [2, -2, 4.8, 1.8, 0.6]], masts: [[0, 6]], radars: [{ x: 0, up: 4.4, kind: 'dome', size: 1 }] },
+  // PT-11 class (11-go, PT-811 to PT-815, 1971-75): a broad planing hull, single 40/60 guns fore and aft, the
+  // bridge and deckhouse amidships with the radar mast, four single 533 mm tubes on the side decks aft (35.0 x
+  // 9.2 m; 100 t standard; Navypedia's published data; heights and places estimates).
+  'pt-11': { cls: 'torpedo-boat', L: 35.0, B: 9.2, fb: 2.0, sheer: 0.9, transom: 0.9, guns: '11:1/40 -13:1/40b', blocks: [[6, -6, 3.6, 3.0, 0.8], [5, 1, 4.9, 2.0, 0.6]], masts: [[1.5, 6]], launchers: [{ x: -5.5, length: 7.2, width: 0.6, kind: 'tubes', count: 1, elevation: 0, side: 3.6 }, { x: -10, length: 7.2, width: 0.6, kind: 'tubes', count: 1, elevation: 0, side: 2.9 }] },
+  // VLT 1 and 2: two wartime German air-sea rescue boat hulls finished in France as torpedo boats, single 40 mm guns
+  // fore and aft, two 20 mm beside the bridge, two 550 mm tubes on the side decks (30.4 x 5.85 m; 94 t full;
+  // Navypedia's published data; places estimates).
+  'vlt-boat': { cls: 'torpedo-boat', L: 30.4, B: 5.85, fb: 1.7, sheer: 0.7, transom: 0.85, guns: '10:1/40 -12:1/40b -1,1.8:1/20s^0.6', blocks: [[4, -3, 3.5, 1.6, 0.5]], masts: [[0, 4.5]], launchers: [{ x: -6, length: 7.2, width: 0.6, kind: 'tubes', count: 1, elevation: 0, side: 2.2 }] },
   // LCS(L)(3): a landing craft hull built as a support gunboat, the twin 40 mm on the bow and on the deck before the round
   // conning tower, the twin 40 mm aft, the rocket rails (48.3 x 7.2 m; 387 t loaded).
   'lcs-l3': { cls: 'gunboat', L: 48.3, B: 7.2, fb: 2.4, sheer: 0.8, transom: 0.8, guns: '20:1/76^0.5 9:2/40^2.4 -18:2/40b^0.5 -4,2.6:1/20s^2', blocks: [[6, -10, 4.8, 2.8, 0.5]], extra: [{ top: [[2, 7.6], [-3, 7.6]], bottom: [[2, 4.6], [-3, 4.6]], plan: [[2, 0.2], [1.3, 1.8], [-0.5, 2.5], [-2.3, 1.8], [-3, 0.2]], round: 10, stations: 6 }], masts: [[-1, 10]] },
@@ -2716,7 +2724,7 @@ const ALIASES: Record<string, string> = {
   'jp_type7_pt808': 'pt-810',
   'jp_type9_pt809': 'pt-810',
   'jp_t51a': 't-51-boat',
-  'jp_type_11_pt_15': 'pt-810',
+  'jp_type_11_pt_15': 'pt-11',
   'jp_escort_chikugo_class': 'chikugo-de',
   'jp_escort_ikazuchi_class': 'ikazuchi-de',
   'jp_escort_akebono_class': 'akebono-de',
@@ -2772,10 +2780,10 @@ const ALIASES: Record<string, string> = {
   'fr_arras_class_amiens': 'arras-aviso',
   'fr_trident_class_glaive_p671': 'trident-pc',
   'fr_marne_class_aisne': 'arras-aviso',
-  'fr_vlt1': 'vtb-boat',
+  'fr_vlt1': 'vlt-boat',
   'fr_elan_class_commandant_domine': 'aviso-elan',
   'fr_frigate_croix_de_lorraine_class_la_surprise': 'river-frigate',
-  'fr_vlt2': 'vtb-boat',
+  'fr_vlt2': 'vlt-boat',
   'fr_frigate_corse_class_corse': 'le-corse-e50',
   'fr_p730_combattante': 'la-combattante',
   'fr_frigate_corse_class_brestois': 'le-corse-e50',
