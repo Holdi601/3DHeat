@@ -2267,4 +2267,9 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
     { cue: 'island to starboard amidships, the funnel at its after end', check: (s) => islandSide(s) > 0 && Math.abs(islandX(s)) < s.length * 0.1 },
     { cue: 'twin 4.5-inch turrets in pairs at the four corners', check: (s) => turrets(s).filter((t) => t.calibre === 0.114 && t.barrels === 2).length === 8 && turrets(s).filter((t) => t.calibre === 0.114 && Math.abs(t.x) < 60).length === 0 },
   ]),
+  'wasp-cv7': naval('wasp-cv7', [
+    { cue: 'island to starboard with a tall funnel', check: (s) => islandSide(s) > 0 && (s.oneSide ?? []).some((o) => Math.max(...o.top.map((p) => p[1])) > s.freeboard + 15) },
+    { cue: 'deck-edge lift on the port side', check: (s) => Math.min(...(s.decks?.[0]?.plan ?? []).map((p) => p[1])) < -s.beam * 0.65 },
+    { cue: 'single 5-inch guns in galleries at the deck corners', check: (s) => turrets(s).filter((t) => t.calibre === 0.127 && t.barrels === 1).length === 8 },
+  ]),
 };
