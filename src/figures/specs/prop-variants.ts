@@ -1737,7 +1737,8 @@ A['f7f'] = tw({ cls: 'ww2-heavy-fighter', length: 13.83, span: 15.7, height: 4.8
 // chords from the published wing area (44.5 m2), the sheet's own reading 0.6 m short of it.
 A['he-219'] = tw({ cls: 'ww2-heavy-fighter', length: 15.33, span: 18.5, height: 4.1, w: 0.62, h: 0.8, nose: 'cockpit', hoodLen: 2.2, radial: true, nacR: 0.65, nacY: 0.27, nacBack: 1.25, le: 3.3, root: 3.6, tip: 1.2, wingZ: 0.4, dihedral: 4, twinTail: true, finH: 1.7, tailSpan: 6.0, prop: [3.6, 3] });
 // J1N1 Gekko: a long greenhouse over a slim body, radials, a single fin (12.18 x 16.98 x 4.56 m).
-A['j1n1'] = tw({ cls: 'ww2-heavy-fighter', length: 12.18, span: 16.98, height: 4.56, w: 0.6, h: 0.75, nose: 'solid', cockpit: 2.2, hoodLen: 4.0, radial: true, nacR: 0.65, wingZ: 0, finH: 2.2, prop: [3.2, 3] });
+// The wing's root leading edge and chords and the nacelles measured on the Journal of Recognition's sheet "Irving II" (Oct. 1944).
+A['j1n1'] = tw({ cls: 'ww2-heavy-fighter', length: 12.18, span: 16.98, height: 4.56, w: 0.6, h: 0.75, nose: 'solid', cockpit: 2.2, hoodLen: 4.0, radial: true, nacR: 0.75, nacY: 0.269, nacBack: 0.95, le: 3.56, root: 3.18, tip: 1.8, wingZ: 0, finH: 2.2, prop: [3.2, 3] });
 // Ki-45 Toryu: a slim body under a long two-seat greenhouse, radials, a single fin (11.0 x 15.02 x 3.7 m); the Ki-96, Ki-102 and Ki-109 are its family.
 // Outlines digitised from the U.S. Army-Navy Journal of Recognition, Jan. 1944, "Nick, Type 2" (a provisional silhouette), with
 // tools/figures/twinview.py.
@@ -1786,9 +1787,11 @@ A['yak-4'] = tw({ cls: 'ww2-bomber', length: 10.18, span: 14.0, height: 3.85, w:
 // Ki-48: a glazed nose under the stepped cockpit, radials on a mid wing, a single fin (12.75 x 17.47 x 3.8 m).
 A['ki-48'] = tw({ cls: 'ww2-bomber', length: 12.75, span: 17.47, height: 3.8, w: 0.55, h: 0.72, nose: 'stepped', cockpit: 2.9, hoodLen: 2.4, radial: true, nacR: 0.65, wingZ: 0, finH: 1.8, prop: [3.0, 3] });
 // P1Y Ginga: a slim body with the glazed nose, radials, a mid wing, a single fin (15.0 x 20.0 x 4.3 m).
-A['p1y1'] = tw({ cls: 'ww2-bomber', length: 15.0, span: 20.0, height: 4.3, w: 0.6, h: 0.8, nose: 'stepped', cockpit: 3.2, hoodLen: 2.6, radial: true, nacR: 0.65, wingZ: -0.1, finH: 2.0, prop: [3.3, 4] });
+// The wing's root leading edge and chords and the nacelles measured on the Journal of Recognition's sheet "Frances II" (Oct. 1944).
+A['p1y1'] = tw({ cls: 'ww2-bomber', length: 15.0, span: 20.0, height: 4.3, w: 0.6, h: 0.8, nose: 'stepped', cockpit: 3.2, hoodLen: 2.6, radial: true, nacR: 0.73, nacY: 0.258, nacBack: 0.96, le: 4.43, root: 3.7, tip: 1.6, wingZ: -0.1, finH: 2.0, prop: [3.3, 4] });
 // He 177 Greif: a long body with the glazed nose, two coupled engines in great nacelles, a single fin (22.0 x 31.44 x 6.4 m).
-A['he-177'] = tw({ cls: 'ww2-heavy-bomber', length: 22.0, span: 31.44, height: 6.4, w: 0.95, h: 1.25, nose: 'glazed', radial: true, nacR: 1.0, nacY: 0.3, nacBack: 1.05, wingZ: -0.1, finH: 3.0, prop: [4.5, 4], turrets: [3.0, -3.5] });
+// The wing's root leading edge and chords and the coupled engines' nacelles measured on FM 30-30 (1943), sheet "Heinkel He. 177".
+A['he-177'] = tw({ cls: 'ww2-heavy-bomber', length: 22.0, span: 31.44, height: 6.4, w: 0.95, h: 1.25, nose: 'glazed', radial: true, nacR: 0.7, nacY: 0.231, nacBack: 0.93, le: 4.7, root: 5.8, tip: 2.3, wingZ: -0.1, finH: 3.0, prop: [4.5, 4], turrets: [3.0, -3.5] });
 // LeO 451: a slim body with the glazed nose, radials, twin oval fins on the tailplane's tips (17.17 x 22.52 x 5.24 m).
 A['leo-451'] = tw({ cls: 'ww2-bomber', length: 17.17, span: 22.52, height: 5.24, w: 0.62, h: 0.9, nose: 'stepped', cockpit: 4.6, hoodLen: 2.2, radial: true, nacR: 0.7, wingZ: -0.2, twinTail: true, finH: 2.0, tailSpan: 6.4, prop: [3.2, 3] });
 // Martin B-10 (Model 139): a round body with the nose turret, two separate cockpits under long canopies, radials, a single fin (13.64 x 21.48 x 4.7 m).
