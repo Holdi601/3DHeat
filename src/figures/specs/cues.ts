@@ -1670,6 +1670,15 @@ export const CUES: Record<string, CueEntry> = {
     { cue: '40 mm with its cone flash hider', check: (s) => muzzle(s) && cal(0.04, 0.045)(s) },
     { cue: 'four-wheeled carriage', check: axles(2) },
   ]),
+  'type-65-spaa': ground('type-65-spaa', [
+    { cue: 'T-34 hull: five big road wheels', check: run(5) },
+    { cue: 'open-topped turret with twin 37 mm', check: (s) => s.turret?.shape === 'open' && guns(2)(s) && cal(0.035, 0.04)(s) },
+  ]),
+  'bofors-40mm-emplaced': ground(['bofors-40mm-emplaced', '61-k-37mm-emplaced', '72-k-25mm-emplaced'], [
+    { cue: 'carriage down on four levelling jacks, outriggers swung out level', check: (s) => s.chassis === 'pedestal' && (s.addOns ?? []).filter((a) => a.kind === 'tube' && a.to && a.to[2] > a.at[2]).length === 4 },
+    { cue: 'the four road wheels kept on, raised clear', check: (s) => (s.addOns ?? []).filter((a) => a.kind === 'tube' && (a.size?.[0] ?? 0) > 0.8).length === 4 },
+    { cue: 'single automatic gun over the centre of the cross', check: (s) => guns(1)(s) },
+  ]),
   skink: ground('skink', [
     { cue: 'cast turret with four 20 mm Polstens', check: (s) => castTurret(s) && guns(4)(s) },
     { cue: 'Grizzly (M4A1) cast hull, three VVSS bogies', check: (s) => castHull(s) && run(6)(s) },
