@@ -12,6 +12,10 @@
  *   gun          `gunPitch` / `gun_pitch` / `gunElevation` - degrees;
  *                World of Tanks' `gunStep` (0-63 across the gun's limits, which
  *                the replay does not carry: taken as +20° to -8°, a typical gun's)
+ *   or, where a row has neither, `aimHeading` / `aimPitch`: where the gun
+ *                points in the world, degrees (War Thunder's server replays
+ *                write these for every vehicle and the turret only for a few),
+ *                less the hull's own heading and pitch
  */
 
 import type { AttributeColumn, Dataset } from '../state/types';
@@ -20,6 +24,8 @@ import { personRows } from '../data/flight';
 const YAW_NAMES = ['turretYaw', 'turret_yaw', 'TurretYaw', 'turretHeading'];
 const PITCH_NAMES = ['gunPitch', 'gun_pitch', 'GunPitch', 'gunElevation', 'gun_elevation'];
 const STEP_NAMES = ['gunStep'];
+const AIM_HEADING_NAMES = ['aimHeading'];
+const AIM_PITCH_NAMES = ['aimPitch'];
 /** A World of Tanks gun step's range: step 0 the most it raises, 63 the most it dips, degrees. */
 const STEP_UP = 20;
 const STEP_DOWN = -8;
@@ -118,6 +124,22 @@ export function lerpAngle(a: number, b: number, f: number): number {
 
 const cache = new WeakMap<Dataset, Aim | null>();
 
+/**
+ * `own` (radians, relative to the hull) with its gaps filled from `world`
+ * (degrees) less `hull` (radians), wrapped to a half turn either way.
+ */
+function fromWorld(own: Float32Array | null, world: Float32Array, hull: Float32Array): Float32Array {
+  const out = own ? Float32Array.from(own) : new Float32Array(world.length).fill(NaN);
+  for (let r = 0; r < out.length; r++) {
+    if (Number.isFinite(out[r]) || !Number.isFinite(world[r]) || !Number.isFinite(hull[r])) continue;
+    let a = (world[r] * DEG - hull[r]) % (2 * Math.PI);
+    if (a > Math.PI) a -= 2 * Math.PI;
+    if (a < -Math.PI) a += 2 * Math.PI;
+    out[r] = a;
+  }
+  return out;
+}
+
 /** The aim of a dataset's vehicles, or null where it has no turret or gun column. Worked out once. */
 export function aimOf(d: Dataset): Aim | null {
   const hit = cache.get(d);
@@ -140,6 +162,11 @@ export function aimOf(d: Dataset): Aim | null {
     const v = sc.data as Float32Array;
     pitch = Float32Array.from(v, (s) => (Number.isFinite(s) ? (STEP_UP + ((STEP_DOWN - STEP_UP) * s) / 63) * DEG : NaN));
   }
+  // The world aim, less the hull, for every row the turret columns leave empty.
+  const ah = column(d, AIM_HEADING_NAMES);
+  if (ah && d.yaw) yaw = fromWorld(yaw, ah.data as Float32Array, d.yaw);
+  const ap = column(d, AIM_PITCH_NAMES);
+  if (ap && d.pitch) pitch = fromWorld(pitch, ap.data as Float32Array, d.pitch);
   const out = yaw || pitch ? new Aim(d, yaw, pitch) : null;
   cache.set(d, out);
   return out;
