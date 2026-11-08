@@ -17,8 +17,8 @@ import type { LeanBuilt } from './assemble';
 import type { LoadProgress, LoadRequest, LoadResponse } from './loadWorker';
 import { asyncBuffer, readColumns } from './columns';
 
-/** Bytes a key takes on the CPU and on the GPU alike: x, y, z, t in 8 bytes, the attitude in 4. */
-export const KEY_BYTES = 12;
+/** Bytes a key takes on the CPU and on the GPU alike: x, y, z, t in 8 bytes, the attitude in 4, a share of its chunk span's 32. */
+export const KEY_BYTES = 12.5;
 
 export interface LeanBudget {
   /** Most keys the load may keep. */
@@ -106,7 +106,8 @@ export function leanStore(b: LeanBuilt, colour: LeanColour, t0 = performance.now
   const store: GpuTrackStore = {
     dataset: d,
     tracks: T,
-    trackData: trackData.subarray(0, Math.max(1, T) * TRACK_U32),
+    // The tracks with their chunk spans after them.
+    trackData,
     keysA: b.keysA,
     keysB: b.keysB,
     keyRow: null,
@@ -120,7 +121,7 @@ export function leanStore(b: LeanBuilt, colour: LeanColour, t0 = performance.now
     units: d.entitySize ? d.entitySize / 0.8 : 1,
     tolerance: b.tolerance,
     samples: b.samples,
-    bytes: T * TRACK_U32 * 4 + b.keysA.byteLength + b.keysB.byteLength,
+    bytes: trackData.byteLength + b.keysA.byteLength + b.keysB.byteLength,
     buildMs: performance.now() - t0,
   };
   return store;

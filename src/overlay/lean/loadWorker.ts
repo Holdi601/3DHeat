@@ -203,7 +203,7 @@ ctx.onmessage = async (ev: MessageEvent<LoadRequest>) => {
         const u = used[job.file];
         const r = await p.run(() => {
           const inp = asm.pass2Input(j);
-          return { req: { pass: 2, file: u.file, fileIndex: job.file, rowStart: job.rowStart, rowEnd: job.rowEnd, spec: u.spec, spans: inp.spans, alloc: inp.alloc, level: inp.level }, transfer: [inp.spans.buffer] };
+          return { req: { pass: 2, file: u.file, fileIndex: job.file, rowStart: job.rowStart, rowEnd: job.rowEnd, spec: u.spec, base: inp.base, alloc: inp.alloc, level: inp.level }, transfer: [inp.base.buffer] };
         });
         fail(r);
         if (r.ok && r.pass === 2) asm.addPass2(j, r.result);

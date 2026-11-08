@@ -11,8 +11,12 @@
  *
  * Pass 2 reads the same rows again, with the attitude, and writes each unit's
  * kept samples straight as GPU keys (`gpuTracks/store.ts`): x, y, z and t in
- * 16 bits of the unit's span, which pass 1 found, and the attitude as four
- * signed bytes. Nothing in between is kept: no dataset, no copy of a column.
+ * 16 bits of the span of each `CHUNK_KEYS` keys of its run, and the attitude
+ * as four signed bytes. Nothing in between is kept but the rows of the chunk
+ * each unit is in: no dataset, no copy of a column.
+ *
+ * A sample that only holds a moving unit's last position (a late update) is
+ * not its own position in either pass (`gpuTracks/store.ts`, `heldSamples`).
  *
  * Which samples are kept is decided while streaming, by the test
  * `gpuTracks/store.ts` uses: a sample is left out while the last kept key,
@@ -27,6 +31,8 @@
  * encode, the tests call them directly.
  */
 
+
+import { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32, encodeChunk } from '../../render/gpuTracks/chunks';
 
 /** Tolerances, metres: 0 keeps every sample (doubles aside); the rest thin the tracks when they would not fit. */
 export const KEY_LEVELS = [0, 0.25, 0.5, 1, 2, 5, 10, 25] as const;
@@ -368,9 +374,47 @@ export interface Pass1Result {
 
 export const BOX = 8;
 
+/**
+ * Own samples that only hold a moving unit's last position no longer own: a
+ * run at one place under `MAX_GAP` seconds, the unit moving into it at a
+ * metre a second or more and out of it at about that speed over the whole
+ * run, its first sample kept. Both passes alike.
+ */
+function dropHeld(p: Prepared, unitsPerMetre: number): void {
+  const { t, x, y, z, unit, own, n } = p;
+  const U = p.units;
+  const last = new Int32Array(U).fill(-1);
+  const from = new Int32Array(U).fill(-1);
+  const pre = new Int32Array(U).fill(-1);
+  const next = new Int32Array(n).fill(-1);
+  const dist = (a: number, b: number) => Math.hypot(x[b] - x[a], y[b] - y[a], z[b] - z[a]);
+  for (let i = 0; i < n; i++) {
+    const u = unit[i];
+    if (u < 0 || !own[i]) continue;
+    const l = last[u];
+    if (l >= 0 && t[i] < t[l]) continue;
+    if (l >= 0 && x[i] === x[l] && y[i] === y[l] && z[i] === z[l]) {
+      next[l] = i;
+      last[u] = i;
+      continue;
+    }
+    const f = from[u];
+    const b = pre[u];
+    if (f >= 0 && l !== f && b >= 0 && t[i] - t[f] < MAX_GAP) {
+      const vIn = dist(b, f) / Math.max(1e-3, t[f] - t[b]);
+      const vOut = dist(l, i) / Math.max(1e-3, t[i] - t[f]);
+      if (vIn > unitsPerMetre && Math.abs(vOut - vIn) < 0.3 * vIn) for (let j = next[f]; j >= 0; j = next[j]) own[j] = 0;
+    }
+    pre[u] = l;
+    from[u] = i;
+    last[u] = i;
+  }
+}
+
 /** Pass 1 of a job: counts, spans, keys at each level, what each unit is, deaths. */
 export function scanPass1(cols: Columns, n: number, s: LeanSpec, rowBase: number, levels: number[]): Pass1Result {
   const p = prepare(cols, n, s);
+  dropHeld(p, s.units);
   const U = p.units;
   const box = new Float64Array(U * BOX);
   for (let u = 0; u < U; u++) {
@@ -461,8 +505,11 @@ export interface Pass2Result {
   /** Per local unit, where its run starts in `keysA`/`keysB` (keys), and how many it wrote. */
   offset: Uint32Array;
   used: Uint32Array;
-  /** Two a key: x | y << 16, z | t << 16. */
+  /** Two a key: x | y << 16, z | t << 16, in 16 bits of the span of its chunk of the run. */
   keysA: Uint32Array;
+  /** The chunk spans, `CHUNK_U32` each (`gpuTracks/chunks.ts`), times from the unit's base; per unit, its first. */
+  spans: Float32Array;
+  chunkOff: Uint32Array;
   /** One a key: the attitude, snorm8 x4; empty without one. */
   keysB: Uint32Array;
 }
@@ -539,22 +586,31 @@ function packQuat(q: ArrayLike<number>): number {
 const s8 = (v: number) => ((v & 0xff) << 24) >> 24;
 
 /**
- * Pass 2 of a job: each unit's kept rows as keys, in the span pass 1 found,
- * at tolerance level `level` (an index into `KEY_LEVELS`). `alloc` is what
- * pass 1 counted at that level for each unit: the room its run is given.
+ * Pass 2 of a job: each unit's kept rows as keys, a span each `CHUNK_KEYS`
+ * of its run, at tolerance level `level` (an index into `KEY_LEVELS`), times
+ * from each unit's `base` (seconds of the file). `alloc` is what pass 1
+ * counted at that level for each unit: the room its run is given.
  */
-export function scanPass2(cols: Columns, n: number, s: LeanSpec, spans: Float64Array, alloc: Uint32Array, level: number): Pass2Result {
+export function scanPass2(cols: Columns, n: number, s: LeanSpec, base: Float64Array, alloc: Uint32Array, level: number): Pass2Result {
   const p = prepare(cols, n, s);
+  dropHeld(p, s.units);
   const U = p.units;
   if (alloc.length !== U) throw new Error(`lean overlay: pass 2 saw ${U} units where pass 1 saw ${alloc.length}`);
   const offset = new Uint32Array(U + 1);
-  for (let u = 0; u < U; u++) offset[u + 1] = offset[u] + alloc[u];
+  const chunkOff = new Uint32Array(U + 1);
+  for (let u = 0; u < U; u++) {
+    offset[u + 1] = offset[u] + alloc[u];
+    chunkOff[u + 1] = chunkOff[u] + Math.ceil(alloc[u] / CHUNK_KEYS);
+  }
   const total = offset[U];
   const keysA = new Uint32Array(total * 2);
+  const spans = new Float32Array(chunkOff[U] * CHUNK_U32);
   const attitude = s.look !== 'none';
   const keysB = new Uint32Array(attitude ? total : 0);
   const used = new Uint32Array(U);
-  const lastQt = new Int32Array(U).fill(-1);
+  // The rows of the chunk each unit is filling, and a chunk's keys as numbers.
+  const pend = new Int32Array(U * CHUNK_KEYS);
+  const buf = new Float64Array(CHUNK_KEYS * 4);
   // The attitude: yaw and pitch (radians, as the generic loader reads them) and roll (degrees).
   let yawAt: ((i: number) => number) | null = null;
   let pitchAt: (i: number) => number = () => 0;
@@ -592,18 +648,25 @@ export function scanPass2(cols: Columns, n: number, s: LeanSpec, spans: Float64A
   const roll = s.roll ? numbers(cols[s.roll], n) : null;
   const q = [0, 0, 0, 1];
   const { t, x, y, z } = p;
-  const q16 = (v: number, o: number, st: number) => Math.max(0, Math.min(STEPS, Math.round((v - o) / st)));
+  /** Unit `u`'s chunk that ends before its key `end` (from its run's start): written. */
+  const flush = (u: number, end: number) => {
+    const c0 = ((end - 1) >> CHUNK_SHIFT) << CHUNK_SHIFT;
+    const m = end - c0;
+    for (let k = 0; k < m; k++) {
+      const i = pend[u * CHUNK_KEYS + k];
+      buf[k * 4] = x[i];
+      buf[k * 4 + 1] = y[i];
+      buf[k * 4 + 2] = z[i];
+      buf[k * 4 + 3] = t[i] - base[u];
+    }
+    encodeChunk(buf, m, keysA, offset[u] + c0, spans, (chunkOff[u] + (c0 >> CHUNK_SHIFT)) * CHUNK_U32);
+  };
   const emit = (u: number, _l: number, i: number) => {
-    const o = u * SPAN;
-    const qt = q16(t[i], spans[o + 4], spans[o + 5]);
-    // Two samples in one time step: the first is kept.
-    if (qt <= lastQt[u]) return;
     if (used[u] >= alloc[u]) return;
-    lastQt[u] = qt;
-    const key = offset[u] + used[u]++;
-    const st = spans[o + 3];
-    keysA[key * 2] = (q16(x[i], spans[o], st) | (q16(y[i], spans[o + 1], st) << 16)) >>> 0;
-    keysA[key * 2 + 1] = (q16(z[i], spans[o + 2], st) | (qt << 16)) >>> 0;
+    const k = used[u]++;
+    const key = offset[u] + k;
+    pend[u * CHUNK_KEYS + (k & (CHUNK_KEYS - 1))] = i;
+    if (((k + 1) & (CHUNK_KEYS - 1)) === 0) flush(u, k + 1);
     if (!attitude) return;
     if (yawAt) {
       const rv = roll ? Math.fround(roll[i]) : NaN;
@@ -629,5 +692,6 @@ export function scanPass2(cols: Columns, n: number, s: LeanSpec, spans: Float64A
     th.push(u, i, emit);
   }
   th.finish(emit);
-  return { offset, used, keysA, keysB };
+  for (let u = 0; u < U; u++) if (used[u] & (CHUNK_KEYS - 1)) flush(u, used[u]);
+  return { offset, used, keysA, keysB, spans, chunkOff };
 }

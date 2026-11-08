@@ -14,7 +14,7 @@ import { scanPass1, scanPass2, specColumns, type LeanSpec, type Pass1Result, typ
 
 export type DecodeRequest =
   | { id: number; pass: 1; file: File; fileIndex: number; rowStart: number; rowEnd: number; spec: LeanSpec; levels: number[] }
-  | { id: number; pass: 2; file: File; fileIndex: number; rowStart: number; rowEnd: number; spec: LeanSpec; spans: Float64Array; alloc: Uint32Array; level: number };
+  | { id: number; pass: 2; file: File; fileIndex: number; rowStart: number; rowEnd: number; spec: LeanSpec; base: Float64Array; alloc: Uint32Array; level: number };
 
 export type DecodeResponse =
   | { id: number; ok: true; pass: 1; result: Pass1Result }
@@ -40,8 +40,8 @@ ctx.onmessage = async (ev: MessageEvent<DecodeRequest>) => {
       const transfer = [r.firstRow.buffer, r.lastRow.buffer, r.samples.buffer, r.box.buffer, r.keys.buffer, r.groupStart.buffer, r.groupRows.buffer, r.markers.pos.buffer, r.markers.t.buffer, r.markers.group.buffer];
       ctx.postMessage({ id: q.id, ok: true, pass: 1, result: r } satisfies DecodeResponse, transfer as Transferable[]);
     } else {
-      const r = scanPass2(cols, n, q.spec, q.spans, q.alloc, q.level);
-      ctx.postMessage({ id: q.id, ok: true, pass: 2, result: r } satisfies DecodeResponse, [r.offset.buffer, r.used.buffer, r.keysA.buffer, r.keysB.buffer] as Transferable[]);
+      const r = scanPass2(cols, n, q.spec, q.base, q.alloc, q.level);
+      ctx.postMessage({ id: q.id, ok: true, pass: 2, result: r } satisfies DecodeResponse, [r.offset.buffer, r.used.buffer, r.keysA.buffer, r.keysB.buffer, r.spans.buffer, r.chunkOff.buffer] as Transferable[]);
     }
   } catch (e) {
     ctx.postMessage({ id: q.id, ok: false, error: e instanceof Error ? e.message : String(e) } satisfies DecodeResponse);
