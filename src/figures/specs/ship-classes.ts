@@ -1864,8 +1864,8 @@ const R: Record<string, ShipO> = {
   // 14.2 m; 5,570 t full).
   'nagara': { cls: 'light-cruiser', L: 162.1, B: 14.2, fb: 7, fc: [-6, 2.4], guns: '56:1/140 47:1/140^2 -46:1/140^2b -54:1/140b 10,6:1/140', funnels: [[12, 11, 3.5], [2, 11, 3.5], [-8, 11, 3.5]], blocks: [[38, 30, 11, 3, 1], [32, 24, 18, 4, 1]], masts: [[26, 24], [-28, 18]], tt: [2, 4] },
   // Dreadnought (1906): five twin 12-inch turrets, one forward, two on the wings amidships and two aft, two funnels
-  // with the tripod foremast between bridge and funnel (160.6 x 25 m; 21,060 t full).
-  'dreadnought': { cls: 'battleship', L: 160.6, B: 25, fb: 8, sheer: 3, guns: '56:2/305 8,8.5:2/305 -40:2/305b -56:2/305b', funnels: [[20, 13, 5], [2, 13, 5]], blocks: [[36, 28, 16, 5, 1], [-12, -24, 13, 4]], masts: [[27, 30], [-14, 26]] },
+  // with the tripod foremast aft of the fore funnel, as built (160.6 x 25 m; 21,060 t full).
+  'dreadnought': { cls: 'battleship', L: 160.6, B: 25, fb: 8, sheer: 3, guns: '56:2/305 8,8.5:2/305 -40:2/305b -56:2/305b', funnels: [[20, 13, 5], [2, 13, 5]], blocks: [[36, 28, 16, 5, 1], [-12, -24, 13, 4]], masts: [[12, 30, 't'], [-14, 26]] },
   // Tashkent: the Italian-built destroyer leader, three twin 130 mm turrets, two funnels, three triple torpedo mounts
   // (139.7 x 13.7 m; 4,175 t full).
   'tashkent': { cls: 'destroyer', L: 139.7, B: 13.7, fb: 6, sheer: 3, guns: '50:2/130m 42:2/130m^2.5 -46:2/130mb', funnels: [[6, 9, 4], [-8, 9, 4]], blocks: [[34, 24, 14, 3.8, 1.5], [31, 26, 16.5, 2.6]], masts: [[24, 20], [-24, 14]], tt: [2, 3] },
