@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { CATALOG } from './catalog';
-import type { Joint, Template } from './kit';
+import { finish, into, joint, newKit, type Joint, type Template } from './kit';
+import { articulate, carrierOf, meshOf, MESH_STRIDE } from './instances';
+import { block } from './parts';
 
 /** Every vertex of a template (both parts) with the joint it moves with: -1 the hull, else the index into `joints`. */
 function vertices(t: Template): { p: [number, number, number]; j: number }[] {
@@ -133,5 +135,38 @@ describe('ground figure joints', () => {
         (t.joints ?? []).forEach((_, i) => expect(vs.some((v) => v.j === i), `${c.name} lod joint ${i}`).toBe(true));
       }
     }
+  });
+});
+
+describe('a turret on a turret', () => {
+  // A main turret, a cupola on its roof (a yaw joint whose parent is the turret's) and the cupola's machine gun.
+  const k = newKit();
+  const turretJ = joint(k, { kind: 'yaw', pivot: [0.5, 2, 0], parent: -1, rest: 0 });
+  const cupolaJ = joint(k, { kind: 'yaw', pivot: [-0.4, 2.9, 0.6], parent: turretJ, rest: 0 });
+  const gunJ = joint(k, { kind: 'pitch', pivot: [-0.2, 3.1, 0.6], parent: cupolaJ, rest: 0, pitch: 0 });
+  for (const [j, c] of [[turretJ, [0.5, 0, 2.4]], [cupolaJ, [-0.4, 0.6, 3.1]], [gunJ, [0.1, 0.6, 3.2]]] as const) {
+    into(k, j);
+    block(k.team, k.fr, [...c], 0.3, 0.2, 0.2, [0.8, 0.8, 0.8]);
+  }
+  into(k, -1);
+  const t = finish(k, 'ground');
+
+  it("is carried round with the turret under it, about that turret's pivot", () => {
+    const m = meshOf(t);
+    const yaw = 0.7;
+    const out = [0, 0, 0];
+    const [px, , pz] = t.joints![turretJ].pivot;
+    for (let v = 0; v < m.count; v++) {
+      const p = v * MESH_STRIDE;
+      const [x, y, z] = [m.data[p], m.data[p + 1], m.data[p + 2]];
+      articulate(m.data, p, x, y, z, yaw, 0, true, out);
+      // All three parts turn rigidly with the main turret.
+      const rx = x - px;
+      const rz = z - pz;
+      expect(out[0]).toBeCloseTo(px + rx * Math.cos(yaw) - rz * Math.sin(yaw), 5);
+      expect(out[1]).toBeCloseTo(y, 5);
+      expect(out[2]).toBeCloseTo(pz + rx * Math.sin(yaw) + rz * Math.cos(yaw), 5);
+    }
+    expect(carrierOf(t.joints!, t.joints![cupolaJ])).toBe(t.joints![turretJ]);
   });
 });

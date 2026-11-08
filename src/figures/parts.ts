@@ -341,10 +341,11 @@ function superRing(m: Mesh, fr: Frame3, x: number, side: number, w: number, z: n
  * point at their centre, so a nose or a tail comes to a smooth tip; larger
  * ones take a flat cap (a nozzle, a cut-off tail).
  */
-function loftRings(out: FigBuffer, fr: Frame3, st: { x: number; y: number; w: number; z: number; h: number; r: number }[], col: Rgb, n: number, alpha: number, topCol?: Rgb): void {
+function loftRings(out: FigBuffer, fr: Frame3, st: { x: number; y: number; w: number; z: number; h: number; r: number; ring?: P2[] }[], col: Rgb, n: number, alpha: number, topCol?: Rgb): void {
   if (st.length < 2) return;
   const m = new Mesh();
-  const rows = st.map((s) => superRing(m, fr, s.x, s.y, s.w, s.z, s.h, s.r, n, col, topCol));
+  // A station with its own ring (a drawn section's, as (side, up) points) takes it in place of the superellipse.
+  const rows = st.map((s) => (s.ring ? s.ring.map(([sd, u]) => m.v(at(fr, s.x, s.y + sd, u), topCol && u > s.z + s.h * 0.35 ? topCol : col)) : superRing(m, fr, s.x, s.y, s.w, s.z, s.h, s.r, n, col, topCol)));
   m.grid(rows, true);
   const big = Math.max(...st.map((s) => Math.max(s.w, s.h)));
   for (const [k, first] of [[0, true], [st.length - 1, false]] as const) {
@@ -457,6 +458,120 @@ export interface Outline {
   side?: number;
   /** At least this many stations (default 24); every outline corner is a station too. */
   stations?: number;
+  /**
+   * The cross-section as a front view shows it, in place of `round`'s superellipse (see `SectionShape`): a hull narrow
+   * below its fenders, `[[-1, 0.66], [-0.2, 0.66], [-0.2, 1], [1, 1]]`; upright sides leaning in from two thirds up,
+   * `[[-1, 1], [0.33, 1], [1, 0.85]]`. A body with one is cut at its outline corners and the section's own points.
+   */
+  section?: SectionShape;
+  /**
+   * `section`'s heights are heights in the outline's own frame (metres up), not -1..1 between its bottom and top: a
+   * fender line stays at one height the length of a hull whose glacis and belly slope.
+   */
+  sectionAbs?: boolean;
+}
+
+/**
+ * A cross-section as a front view shows it: points (height, share) from the bottom up, the half-width there as a
+ * share of the plan's at that station. Heights run from -1 at the bottom outline to 1 at the top (or are true heights
+ * with `sectionAbs`). Two points at one height make a step - fenders or a superstructure overhanging the tracks over
+ * a narrower lower hull; a share falling off above some height leans the sides in from there. One shape for the
+ * whole body, or shapes at stations along x (`SectionAt`), blended between them: point by point when they have as
+ * many points (steps kept), else at all their heights.
+ */
+export type SectionShape = P2[] | SectionAt[];
+
+/** A section at station `x` along the body. */
+export interface SectionAt {
+  x: number;
+  shape: P2[];
+}
+
+const stationed = (s: SectionShape): s is SectionAt[] => s.length > 0 && !Array.isArray(s[0]);
+
+/** The places along x where a section is given (none for one shape everywhere). */
+export function sectionXs(o: Outline): number[] {
+  return o.section && stationed(o.section) ? o.section.map((p) => p.x) : [];
+}
+
+/** The section at `x`: the one shape, or the stations' shapes blended. */
+export function sectionAt(s: SectionShape, x: number): P2[] {
+  if (!stationed(s)) return s;
+  const st = [...s].sort((a, b) => a.x - b.x);
+  const i = st.findIndex((p) => p.x >= x);
+  if (i === 0) return st[0].shape;
+  if (i < 0) return st[st.length - 1].shape;
+  const a = st[i - 1];
+  const b = st[i];
+  const t = (x - a.x) / (b.x - a.x);
+  if (st.every((p) => p.shape.length === a.shape.length)) return a.shape.map(([u, w], k) => [u + (b.shape[k][0] - u) * t, w + (b.shape[k][1] - w) * t]);
+  // Different point counts: every station's heights, so each ring has as many points.
+  const us = [...new Set(st.flatMap((p) => p.shape.map((q) => q[0])))].sort((p, q) => p - q);
+  return us.map((u) => [u, lerpPoly(a.shape, u) + (lerpPoly(b.shape, u) - lerpPoly(a.shape, u)) * t]);
+}
+
+/** A section's share at height `u`, coming from below (`below`) or from above: at a step, the lower or the upper point's. */
+function shareAt(sec: P2[], u: number, below: boolean): number {
+  if (u <= sec[0][0]) return sec[0][1];
+  for (let i = 1; i < sec.length; i++) {
+    const [u0, s0] = sec[i - 1];
+    const [u1, s1] = sec[i];
+    if (below ? u <= u1 : u < u1) return u1 - u0 < 1e-9 ? (below ? s0 : s1) : s0 + ((s1 - s0) * (u - u0)) / (u1 - u0);
+  }
+  return sec[sec.length - 1][1];
+}
+
+/** A section's points in true heights at `x`, for a body between heights `b` and `t` there. */
+function sectionUp(o: Outline, x: number, b: number, t: number): P2[] {
+  const sec = sectionAt(o.section!, x);
+  return o.sectionAbs ? sec : sec.map(([u, s]) => [b + ((u + 1) / 2) * (t - b), s]);
+}
+
+/**
+ * A section's ring at station `x`, for a half-width `w` between heights `b` and `t`: (side, up) points from the
+ * bottom up the right side and back down the left, as many at every station of the outline. Points above the top or
+ * below the bottom there are held to it. Undefined without a section.
+ */
+export function sectionRing(o: Outline, x: number, w: number, b: number, t: number): P2[] | undefined {
+  const s = o.section;
+  if (!s || !s.length) return undefined;
+  const shapes = stationed(s) ? s.map((p) => p.shape) : [s];
+  const sec = sectionUp(o, x, b, t);
+  const half: P2[] = [];
+  // The ends at the bottom and the top, unless every shape already runs from -1 to 1.
+  if (o.sectionAbs || shapes.some((sh) => sh[0][0] > -1)) half.push([b, shareAt(sec, b, false)]);
+  for (const [u, sh] of sec) half.push(u > t ? [t, shareAt(sec, t, true)] : u < b ? [b, shareAt(sec, b, false)] : [u, sh]);
+  if (o.sectionAbs || shapes.some((sh) => sh[sh.length - 1][0] < 1)) half.push([t, shareAt(sec, t, true)]);
+  return [...half.map(([u, sh]): P2 => [w * sh, u]), ...[...half].reverse().map(([u, sh]): P2 => [-w * sh, u])];
+}
+
+/** An outline's half-width at station `x` and height `up` (in its frame): the plan's, times its section's share there. */
+export function halfWidthAt(o: Outline, x: number, up: number): number {
+  const w = lerpPoly(o.plan, x);
+  if (!o.section || !o.section.length) return w;
+  return w * shareAt(sectionUp(o, x, lerpPoly(o.bottom, x), lerpPoly(o.top, x)), up, true);
+}
+
+/** An outline's section moved with it: its stations `dx` along (after scaling them by `k`), true heights `du` up. */
+export function moveSection(o: Outline, dx: number, du: number, k = 1): SectionShape | undefined {
+  const s = o.section;
+  if (!s) return undefined;
+  const mv = (sh: P2[]): P2[] => (o.sectionAbs && du ? sh.map(([u, w]): P2 => [u + du, w]) : sh);
+  return stationed(s) ? s.map((p) => ({ x: p.x * k + dx, shape: mv(p.shape) })) : mv(s);
+}
+
+/**
+ * A plan's rounded end, as half-widths along x from the end at `x0` inward (ascending x either way): a quarter round
+ * of radius `r` from half-width `w - r` at the end to the full `w`, `r` further in; `dir` +1 for a rear end, -1 for a
+ * front one. With `r` = `w` a full half round - the horseshoe of a Tiger's turret wall, a cast turret's back.
+ * `roundEnd(-1.2, 1.17, 0.67, 1)` is a 1 m flat back plate bending round into the sides.
+ */
+export function roundEnd(x0: number, w: number, r: number, dir: 1 | -1, n = 6): P2[] {
+  const pts: P2[] = Array.from({ length: n + 1 }, (_, i) => {
+    const a = (i / n) * (Math.PI / 2);
+    return [x0 + dir * r * (1 - Math.cos(a)), Math.max(0.01, w - r + r * Math.sin(a))];
+  });
+  return dir > 0 ? pts : pts.reverse();
 }
 
 /** Linear interpolation along a polyline of (x, value), sorted or not; clamped at its ends. */
@@ -483,6 +598,7 @@ function stationsOf(o: Outline): number[] {
   const x1 = Math.min(...lists.map((l) => Math.max(...l.map((p) => p[0]))));
   const xs = new Set<number>();
   for (const l of lists) for (const [x] of l) if (x >= x0 - 1e-9 && x <= x1 + 1e-9) xs.add(x);
+  for (const x of sectionXs(o)) if (x > x0 && x < x1) xs.add(x);
   const n = detail(Math.min(o.stations ?? 20, 20), 6);
   for (let i = 0; i <= n; i++) {
     // Half even, half bunched to the ends.
@@ -505,7 +621,7 @@ export function outlineBody(out: FigBuffer, fr: Frame3, o: Outline, col: Rgb, se
     const t = lerpPoly(o.top, x);
     const b = lerpPoly(o.bottom, x);
     const r = typeof o.round === 'number' ? o.round : o.round ? lerpPoly(o.round, x) : 2.4;
-    return { x, y: side, w, z: (t + b) / 2, h: Math.max(1e-3, (t - b) / 2), r };
+    return { x, y: side, w, z: (t + b) / 2, h: Math.max(1e-3, (t - b) / 2), r, ring: sectionRing(o, x, w, b, Math.max(t, b + 2e-3)) };
   });
   loftRings(out, fr, st, col, n, alpha, topCol);
 }

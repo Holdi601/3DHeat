@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { VertexBuffer, type Frame3 } from '../race/geometry';
 import { extent, FigBuffer, finish, newKit } from './kit';
-import { outlineBody, slab, triangulate, type P2 } from './parts';
+import { outlineBody, roundEnd, slab, triangulate, type P2 } from './parts';
 import { buildGround, type GroundSpec } from './ground';
 import { buildFixedWing, buildHeli, type FixedWingSpec, type HeliSpec } from './air';
 import { buildNaval } from './naval';
@@ -31,6 +31,66 @@ describe('outline parts', () => {
     expect(b.max[1]).toBeCloseTo(1.2, 1);
     expect(b.max[2]).toBeCloseTo(0.9, 1);
     expect(b.min[2]).toBeCloseTo(-0.9, 1);
+  });
+
+  it('draws a body to its front-view section: narrow below a ledge, full width above it', () => {
+    const out = new FigBuffer();
+    // True heights: half the plan's width up to 1 m, the full width from there to the 2 m top.
+    outlineBody(out, LOCAL, { top: [[-3, 2], [3, 2]], bottom: [[-3, 0], [3, 0]], plan: [[-3, 1], [3, 1]], round: 8, section: [[0, 0.5], [1, 0.5], [1, 1], [3, 1]], sectionAbs: true }, [1, 1, 1]);
+    let below = 0;
+    let above = 0;
+    for (let i = 0; i < out.count; i++) {
+      const [y, z] = [out.data[i * 7 + 1], out.data[i * 7 + 2]];
+      if (y < 0.99) below = Math.max(below, Math.abs(z));
+      if (y > 1.01) above = Math.max(above, Math.abs(z));
+    }
+    expect(below).toBeCloseTo(0.5, 5);
+    expect(above).toBeCloseTo(1, 5);
+    // Blended between stations: narrow at the back, full at the front.
+    const tapered = new FigBuffer();
+    outlineBody(tapered, LOCAL, { top: [[-3, 1], [3, 1]], bottom: [[-3, -1], [3, -1]], plan: [[-3, 1], [3, 1]], section: [{ x: -3, shape: [[-1, 0.4], [1, 0.4]] }, { x: 3, shape: [[-1, 1], [1, 1]] }] }, [1, 1, 1]);
+    let back = 0;
+    let front = 0;
+    for (let i = 0; i < tapered.count; i++) {
+      const [x, z] = [tapered.data[i * 7], tapered.data[i * 7 + 2]];
+      if (x < -2.99) back = Math.max(back, Math.abs(z));
+      if (x > 2.99) front = Math.max(front, Math.abs(z));
+    }
+    expect(back).toBeCloseTo(0.4, 5);
+    expect(front).toBeCloseTo(1, 5);
+  });
+
+  it('rounds a plan end into a horseshoe', () => {
+    const p = roundEnd(-1, 1, 1, 1, 8);
+    expect(p[0][0]).toBeCloseTo(-1, 6);
+    expect(p[0][1]).toBeLessThan(0.02);
+    expect(p[p.length - 1][0]).toBeCloseTo(0, 6);
+    expect(p[p.length - 1][1]).toBeCloseTo(1, 6);
+    for (const [x, w] of p.slice(1)) expect(Math.hypot(x, w)).toBeCloseTo(1, 6);
+    const front = roundEnd(2, 1, 0.5, -1, 4);
+    expect(front[front.length - 1][0]).toBeCloseTo(2, 6);
+    expect(front[0][0]).toBeCloseTo(1.5, 6);
+    expect(front[0][1]).toBeCloseTo(1, 6);
+  });
+
+  it('builds interleaved road wheels, an open well and a half-track layout within the same bounds', () => {
+    const tank: GroundSpec = { chassis: 'tracked', length: 6.3, width: 3.5, hullHeight: 1.8, roadWheelRadius: 0.4, running: { wheels: [1.8, 1.3, 0.8, 0.3, -0.2, -0.7, -1.2, -1.7] } };
+    const plain = buildGround(tank);
+    for (const interleave of ['full', 'overlap'] as const) {
+      const t = buildGround({ ...tank, running: { ...tank.running!, interleave } });
+      // The full layout has half again as many wheels; the overlapping one as many, in two rows.
+      if (interleave === 'full') expect(t.triangles).toBeGreaterThan(plain.triangles);
+      else expect(t.team).not.toEqual(plain.team);
+      for (let c = 0; c < 3; c++) expect(t.max[c]).toBeCloseTo(plain.max[c], 2);
+    }
+    const ht: GroundSpec = { chassis: 'halftrack', length: 5.8, width: 2.1, hullHeight: 1.75, wheelRadius: 0.45, bonnet: 1.6, openTop: true };
+    const open = buildGround({ ...ht, well: { rear: -2.6, front: 0.4, floor: 0.7 } });
+    // The walls stand to the deck; nothing is painted on it.
+    expect(open.max[1]).toBeCloseTo(ht.hullHeight, 2);
+    expect(open.triangles).toBeGreaterThan(buildGround(ht).triangles);
+    const laid = buildGround({ ...ht, halftrack: { rear: -2.9, front: 0.5, axleTrack: 1.6, fender: 0.95 }, running: { wheels: [0, -0.5, -1, -1.5, -2], interleave: 'full' } });
+    expect(laid.max[2]).toBeLessThanOrEqual(buildGround(ht).max[2] + 1e-6);
+    expect(laid.triangles).toBeGreaterThan(0);
   });
 
   it('triangulates a concave planform without losing area', () => {

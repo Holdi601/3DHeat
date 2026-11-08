@@ -163,7 +163,11 @@ export interface Joint {
   kind: 'yaw' | 'pitch';
   /** In the template frame (x forward, y up, z right), metres. */
   pivot: Vec3;
-  /** The yaw joint a pitch joint rides on, an index into `joints`; -1 for none. */
+  /**
+   * The yaw joint a pitch joint rides on, an index into `joints`; -1 for none. A yaw joint's parent is the turret it
+   * stands on (a cupola, a sub-turret on the turret roof): it is carried round with that turret, about its pivot, as
+   * the figure has one yaw (`carrierOf` in instances.ts).
+   */
   parent: number;
   /** The yaw the part was built facing, radians, right (+z) positive: 0 forward, PI aft (a ship's after turret). */
   rest: number;
