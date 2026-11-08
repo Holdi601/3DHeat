@@ -64,8 +64,8 @@ const slats = (x0: number, x1: number, side: number, u: number, h: number): AddO
 
 // ---------------------------------------------------------------- T-72
 
-// T-72 hull: 6.86 m, deck 1.4, upper glacis 1.9 m long down to a 0.95 m nose (see `sovietHull`).
-const T72_GLACIS = (t: number, rows = 1, cols = 1) => glacis(6.86, 1.4, 1.9, 0.95, t, 2.9, rows, cols);
+// T-72 hull: 6.86 m, deck 1.4, upper glacis 1.4 m long down to a 0.95 m nose (measured, see `T72` in tanks.ts).
+const T72_GLACIS = (t: number, rows = 1, cols = 1) => glacis(6.86, 1.4, 1.4, 0.95, t, 2.9, rows, cols);
 // The IR searchlight right of the gun and the 902 smoke dischargers on the turret front's sides.
 const LUNA = (x: number, s: number, u: number): AddOn => ({ on: 'turret', kind: 'blob', at: [x, s, u], size: [0.32, 0.38, 0.38], metal: true });
 const SMOKE_902 = (x: number, s: number, u: number): AddOn => tb(x, s, u, 0.55, 0.18, 0.18, { ...M, ...DARK, yaw: 0.5 });
@@ -77,13 +77,14 @@ const K1_TURRET = (front: number, cheek: number, roof: number): AddOn[] => [
   tb(front - 0.75, 0.32, roof * 0.95, 0.4, 0.32, 0.1, { ...M, pitch: -0.2 }),
   tb(front - 1.15, cheek * 0.62, roof * 0.9, 0.4, 0.3, 0.1, { ...M, pitch: -0.15, yaw: -0.9 }),
 ];
-// The K-5 "brow": the cast dome squared at the front by the wedge containers, their tops sloping from the roof down
-// about 0.4 m to the nose over the front 1.1 m (side photograph of a T-72B3, Russian MoD, CC BY 4.0).
-const K5_TURRET = turret(0.25, [[-1.55, 0.85], [-1.2, 1.3], [-0.3, 1.47], [0.6, 1.58], [1.55, 1.56], [1.88, 1.12], [1.95, 0.5]], [[-1.55, 0.4], [-1.0, 0.72], [0.2, 0.84], [0.85, 0.82], [1.95, 0.44]], 5, 1.85);
+// The K-5 "brow": the cast dome squared at the front by the wedge containers, their tops sloping from the roof about
+// 0.35 m down to the tip over the front 1.4 m, the tip 1.1 m ahead of the hull's middle; the turret's back (its rear
+// stowage) 2.2 m behind it (two side photographs of T-72B3s, Russian MoD, CC BY 4.0, scaled by the road wheels).
+const K5_TURRET = turret(-0.75, [[-1.45, 0.85], [-1.1, 1.3], [-0.2, 1.47], [0.6, 1.58], [1.5, 1.56], [1.82, 1.12], [1.88, 0.5]], [[-1.45, 0.4], [-0.95, 0.72], [0.1, 0.81], [0.45, 0.81], [1.88, 0.46]], 5, 1.8);
 // Relikt: bigger, squarer containers on the front and down the turret's sides.
-const RELIKT_TURRET = turret(0.25, [[-1.55, 0.95], [-1.2, 1.45], [0.6, 1.66], [1.65, 1.62], [1.98, 1.15], [2.02, 0.5]], [[-1.55, 0.42], [-1.0, 0.74], [0.2, 0.86], [1.6, 0.86], [2.02, 0.52]], 7, 1.9);
+const RELIKT_TURRET = turret(-0.75, [[-1.55, 0.95], [-1.2, 1.45], [0.6, 1.66], [1.65, 1.62], [1.98, 1.15], [2.02, 0.5]], [[-1.55, 0.42], [-1.0, 0.74], [0.2, 0.86], [1.6, 0.86], [2.02, 0.52]], 7, 1.9);
 // Sosna-U: the gunner's sight head on the roof left of the gun; the commander's PK PAN panoramic head on the right.
-const SOSNA = tb(0.85, -0.62, 1.0, 0.5, 0.5, 0.4);
+const SOSNA = tb(0.45, -0.62, 1.0, 0.5, 0.5, 0.4);
 const PK_PAN = { on: 'turret', kind: 'drum', at: [-0.2, 0.72, 1.12], size: [0.36, 0.36, 0.5] } as AddOn;
 
 // T-72 "Ural" (1973): no skirts but four spring-out "gill" plates on each fender's front half, the optical
@@ -127,7 +128,7 @@ G['t-80ud'] = { cls: 'mbt', ...T80, turret: T80U_TURRET, addOns: [...T80U_ADD, h
 // launchers in clusters on the turret's sides; its radio mast is raised only at the halt and is not drawn.
 G['t-80uk'] = { cls: 'mbt', ...T80, turret: T80U_TURRET, addOns: [...T80U_ADD, tb(1.72, 0.66, 0.45, 0.3, 0.4, 0.3, M), tb(-0.1, 1.38, 0.62, 0.5, 0.3, 0.26, { ...M, ...DARK, yaw: -0.4 })] };
 // T-80BVM (2017): the BV with Relikt on the turret and skirts, Sosna-U, slat armour round the engine deck.
-G['t-80bvm'] = { cls: 'mbt', ...T80, turret: { ...RELIKT_TURRET, x: 0.3 }, addOns: [SMOKE_902(0.4, 1.62, 0.45), ...T80_GLACIS(0.26), ...skirtBoxes(0.2, 3.3, 1.8, 0.6, 0.5, 4, 0.18), SOSNA, ...slats(-3.4, -1.2, 1.9, 1.15, 0.95)] };
+G['t-80bvm'] = { cls: 'mbt', ...T80, turret: { ...RELIKT_TURRET, x: -0.7 }, addOns: [SMOKE_902(0.4, 1.62, 0.45), ...T80_GLACIS(0.26), ...skirtBoxes(0.2, 3.3, 1.8, 0.6, 0.5, 4, 0.18), SOSNA, ...slats(-3.4, -1.2, 1.9, 1.15, 0.95)] };
 
 // ---------------------------------------------------------------- T-64
 
@@ -141,7 +142,7 @@ G['t-64b'] = { ...T64, addOns: [SMOKE_902(0.7, 1.28, 0.45), LUNA(1.35, 0.8, 0.7)
 // T-64BV (1985): the B with Kontakt-1.
 G['t-64bv'] = { ...T64, addOns: [SMOKE_902(0.6, 1.3, 0.45), LUNA(1.35, 0.8, 0.7), ...K1_TURRET(1.55, 1.3, 0.72), ...T64_GLACIS(0.1, 3, 5)] };
 // T-64BM Bulat (2005): Nizh ERA boxes squaring the whole turret front and sides, ERA skirts, slat armour behind.
-G['t-64bm-bulat'] = { ...T64, turret: turret(0.35, [[-1.4, 0.9], [-1.1, 1.38], [0.8, 1.58], [1.75, 1.5], [1.95, 0.95], [2.0, 0.45]], [[-1.4, 0.4], [-0.8, 0.7], [0.2, 0.8], [1.6, 0.8], [2.0, 0.48]], 8, 1.85), addOns: [...T64_GLACIS(0.24), ...skirtBoxes(0.0, 3.1, 1.75, 0.62, 0.5, 4, 0.18), ...slats(-3.2, -1.4, 1.8, 1.15, 0.9), SMOKE_902(0.4, 1.55, 0.45)] };
+G['t-64bm-bulat'] = { ...T64, turret: turret(-0.65, [[-1.4, 0.9], [-1.1, 1.38], [0.8, 1.58], [1.75, 1.5], [1.95, 0.95], [2.0, 0.45]], [[-1.4, 0.4], [-0.8, 0.7], [0.2, 0.8], [1.6, 0.8], [2.0, 0.48]], 8, 1.85), addOns: [...T64_GLACIS(0.24), ...skirtBoxes(0.0, 3.1, 1.75, 0.62, 0.5, 4, 0.18), ...slats(-3.2, -1.4, 1.8, 1.15, 0.9), SMOKE_902(0.4, 1.55, 0.45)] };
 
 // ---------------------------------------------------------------- T-90
 
@@ -345,9 +346,9 @@ G['chieftain-mk11'] = { cls: 'mbt', ...CHIEFTAIN, addOns: [STILLBREW, tb(0.1, 1.
 G['t-84-oplot-m'] = { cls: 'mbt', ...T80, length: 7.08, width: 3.78, turret: turret(0.2, [[-2.3, 1.2], [-1.6, 1.45], [0.5, 1.62], [1.6, 1.55], [2.0, 1.0], [2.1, 0.5]], [[-2.3, 0.62], [-1.6, 0.7], [0.6, 0.84], [1.6, 0.82], [2.1, 0.5]], 8, 1.95), addOns: [...T80_GLACIS(0.24), ...skirtBoxes(0.3, 3.4, 1.9, 0.6, 0.5, 4, 0.16), { on: 'turret', kind: 'drum', at: [-0.2, 0.75, 1.1], size: [0.4, 0.4, 0.5] }, hb(-2.4, 0, 1.5, 2.0, 2.9, 0.22)] };
 // ZTZ-96 (1997): a T-72-like hull, a welded turret with an upright front; ZTZ-96B (2016) arrowhead ERA on the front, a bustle box.
 // Its own running gear and gun mount, not the T-72's measured ones: the track run and gun height stay estimates.
-const ZTZ96 = { ...T72, length: 6.9, width: 3.5, trackProfile: run(6.7, 0.88, [3.35, 0.62], [-3.35, 0.7], -2.75, 2.7), guns: [{ ...T72.guns![0], at: 0.42 }] };
+const ZTZ96 = { ...T72, hullOutline: hull(6.86, 3.59, 1.4, 0.8, 1.9, 0.95, 0.15), length: 6.9, width: 3.5, trackProfile: run(6.7, 0.88, [3.35, 0.62], [-3.35, 0.7], -2.75, 2.7), guns: [{ ...T72.guns![0], at: 0.42 }] };
 G['ztz-96'] = { cls: 'mbt', ...ZTZ96, turret: turret(0.2, [[-1.8, 1.0], [-1.4, 1.45], [0.5, 1.55], [1.5, 1.45], [1.85, 0.9], [1.95, 0.45]], [[-1.8, 0.5], [-1.2, 0.75], [0.6, 0.8], [1.95, 0.45]], 8, 1.85) };
-G['ztz-96b'] = { cls: 'mbt', ...ZTZ96, turret: turret(0.2, [[-2.2, 1.1], [-1.4, 1.45], [0.5, 1.55], [1.4, 1.35], [2.1, 0.8], [2.3, 0.4]], [[-2.2, 0.55], [-1.2, 0.75], [0.6, 0.82], [2.3, 0.38]], 8, 2.1), addOns: [...T72_GLACIS(0.2), tb(-0.3, 0.7, 0.95, 0.4, 0.4, 0.3)] };
+G['ztz-96b'] = { cls: 'mbt', ...ZTZ96, turret: turret(0.2, [[-2.2, 1.1], [-1.4, 1.45], [0.5, 1.55], [1.4, 1.35], [2.1, 0.8], [2.3, 0.4]], [[-2.2, 0.55], [-1.2, 0.75], [0.6, 0.82], [2.3, 0.38]], 8, 2.1), addOns: [...glacis(6.86, 1.4, 1.9, 0.95, 0.2, 2.9, 1, 1), tb(-0.3, 0.7, 0.95, 0.4, 0.4, 0.3)] };
 // ZTZ-99A (2011; hull 7.6 x 3.5 m, 11.0 m with the gun): the ZTZ-99's long hull with reactive bricks over the glacis and
 // the front of the skirts, the larger turret whose arrow-shaped front armour comes to a point well ahead of the mantlet
 // (its roof sloping down to the point) over the deep bustle, the commander's panoramic sight on the roof.
@@ -2190,7 +2191,7 @@ G['object-435'] = { cls: 'mbt', chassis: 'tracked', length: 6.0, width: 3.3, hul
 // T-80UE-1 (2005; 7.0 x 3.6 m, 2.2 m): the T-80BV's hull and turbine deck with the T-80UD's welded turret - flat faces,
 // a level roof, the Kontakt-5 wedges squaring its front, their tops sloping down to the nose as on the T-80U - and the
 // remote 12.7 mm on the cupola.
-G['t-80ue1'] = { cls: 'mbt', ...T80, turret: turret(0.3, [[-1.6, 0.95], [-1.3, 1.4], [0.5, 1.55], [1.5, 1.58], [1.88, 1.12], [1.95, 0.5]], [[-1.6, 0.5], [-1.3, 0.72], [1.15, 0.8], [1.95, 0.45]], 8, 1.85), addOns: [...T80U_ADD, tb(-0.3, 0.6, 1.15, 0.6, 0.35, 0.3, DARK), tb(0.25, 0.6, 1.2, 1.2, 0.06, 0.06, DARK)] };
+G['t-80ue1'] = { cls: 'mbt', ...T80, turret: turret(-0.7, [[-1.6, 0.95], [-1.3, 1.4], [0.5, 1.55], [1.5, 1.58], [1.88, 1.12], [1.95, 0.5]], [[-1.6, 0.5], [-1.3, 0.72], [1.15, 0.8], [1.95, 0.45]], 8, 1.85), addOns: [...T80U_ADD, tb(-0.3, 0.6, 1.15, 0.6, 0.35, 0.3, DARK), tb(0.25, 0.6, 1.2, 1.2, 0.06, 0.06, DARK)] };
 // Vickers Mk 11 (1990; about 6.5 x 3.2 m, 3.5 m; estimates): the Timoney 6x6's very tall slab-sided hull with the VFM 5
 // turret and its low-recoil 105 mm.
 G['vickers-mk11'] = { cls: 'tank-destroyer', chassis: 'wheeled', length: 6.5, width: 3.2, hullHeight: 2.5, axles: 3, axleAt: [0.66, 0.0, -0.66], wheelRadius: 0.65, hullOutline: { top: [[-3.25, 2.35], [-3.1, 2.5], [1.6, 2.5], [3.25, 1.6]], bottom: [[-3.25, 0.85], [2.8, 0.85], [3.25, 1.3]], plan: [[-3.25, 1.55], [2.6, 1.6], [3.25, 1.3]], round: 14, stations: 12 }, turret: G['vfm-5'].turret, guns: [{ mount: 'turret', length: 5.0, calibre: 0.105, extractor: 0.55, muzzle: true, at: 0.45 }] };
@@ -2499,7 +2500,7 @@ const faceBricks = (xa: number, sa: number, xb: number, sb: number, u0: number, 
   }
   return out;
 };
-for (const n of ['t-72b3', 't-72b3-arena-m']) more(n, [...k5Lids(0.85, 1.95, 0.82, 0.44, 1.5, 4), ...glacisJoints(6.86, 1.4, 1.9, 0.95, 0.22, 2.9, 3)]);
+for (const n of ['t-72b3', 't-72b3-arena-m']) more(n, [...k5Lids(0.45, 1.88, 0.81, 0.46, 1.5, 4), ...glacisJoints(6.86, 1.4, 1.4, 0.95, 0.22, 2.9, 3)]);
 more('t-80ue1', [...k5Lids(1.15, 1.95, 0.8, 0.45, 1.5, 4), ...glacisJoints(7.0, 1.4, 1.95, 0.95, 0.22, 2.9, 3)]);
 more('t-80uk', [...k5Lids(1.1, 1.9, 0.77, 0.45, 1.52, 4), ...glacisJoints(7.0, 1.4, 1.95, 0.95, 0.22, 2.9, 3)]);
 // ZTZ-96B: FY-4 on the wedge's front faces; ZTZ-99A: on the arrow's outer front faces.
