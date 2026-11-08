@@ -369,7 +369,10 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   // Orion from Jane's Fighting Ships 1914 (profile and plan): the forecastle 7.4 m to the second funnel, 5.2 m aft; B and X
   // superfiring; the narrow fore funnel; the tripod between the funnels (topmast 42.3 m over the waterline).
   'orion': { cls: 'battleship', L: 177.0, B: 27.0, fb: 7.4, fc: [-2, 2.2], guns: '43.9:2/343 30.2:2/343^3.6 -7.5:2/343 -40.2:2/343^3.1b -52:2/343b', funnels: [[15.2, 13.3, 3.6], [2.1, 13.3, 4.4]], blocks: [[22.8, 18.5, 17.1, 3.5]], masts: [[9.7, 34.9, 't']] },
-  'queen-mary': { cls: 'battlecruiser', L: 214.4, B: 27.2, fb: 8, sheer: 3, guns: '75:2/343 63:2/343^2.5 -24:2/343 -75:2/343b', funnels: [[40, 14, 5], [14, 14, 5], [0, 14, 5]], blocks: [[52, 44, 20, 5, 1]], masts: [[46, 32]] },
+  // Queen Mary, "generally of Lion type" (Jane's Fighting Ships 1914, which draws only Lion): the turrets, the three
+  // funnels with Q between the second and third, the tripod foremast and pole mainmast from Lion's profile, heights over
+  // the corrected waterline.
+  'queen-mary': { cls: 'battlecruiser', L: 214.4, B: 27.2, fb: 8.9, guns: '72.9:2/343^0.2 55.1:2/343^3.7 -5.8:2/343^0.7 -68.6:2/343^-1.3b', funnels: [[24.4, 20.6, 5.4], [11.3, 20.6, 7.5], [-28.3, 20.6, 6.6]], blocks: [[41, 30.9, 14.6, 6]], raised: [[40, 33, 14.6, 27.1, 3.5]], masts: [[30, 45.4, 't'], [-34.6, 45.4]] },
   'glorious': { cls: 'battlecruiser', L: 239.8, B: 24.7, fb: 8, sheer: 4, guns: '75:2/381 -75:2/381b', funnels: [[6, 14, 7]], blocks: [[44, 24, 24, 6, 1]], masts: [[36, 34]] },
   // Renown and Nelson: turret places and heights, bridge, funnels and masts measured on the ONI 201-I (1945)
   // broadside silhouettes, scaled by the overall length (sources.md).
@@ -502,7 +505,9 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'tone': { cls: 'heavy-cruiser', L: 201.6, B: 19.4, fb: 8, fc: [-20, 2.4], guns: '65.4:2/203 57.2:2/203^2.5 49.9:2/203^0.5 36.4:2/203^2', funnels: [[-2.6, 15.1, 5]], blocks: [[24.5, 9.8, 22.2, 6, 1], [22.8, 13.3, 27.7, 3.6]], masts: [[-27.2, 23.6]], extra: [jib(-46.4, 31.6, -29.1, 12.6)] },
   'agano': { cls: 'light-cruiser', L: 174.1, B: 15.2, fb: 7, fc: [-14, 2.4], guns: '56:2/152 46:2/152^2.5 -50:2/152b', funnels: [[4, 11, 4]], blocks: [[30, 20, 20, 5, 1]], masts: [[-10, 20]] },
   'oyodo': { cls: 'light-cruiser', L: 192.1, B: 16.6, fb: 7, fc: [-10, 2.4], guns: '58:3/155 48:3/155^2.5', funnels: [[6, 12, 5]], blocks: [[32, 20, 22, 6, 1], [-8, -30, 14, 6]], masts: [[-6, 22]] },
-  'ikoma': { cls: 'armoured-cruiser', L: 147.8, B: 22.8, fb: 8, guns: '50:2/305 -50:2/305b 18,8:2/203 -14,8:2/203b', funnels: [[10, 13, 4], [-6, 13, 4]], blocks: [[32, 24, 18, 5, 1]], masts: [[28, 26], [-24, 24]] },
+  // Ikoma (Tsukuba class) from Jane's Fighting Ships 1914 (profile and plan; 475 ft over all): the 12-inch turrets fore and
+  // aft, the 6-inch in casemates (no 8-inch turrets), two funnels, pole masts; heights over the corrected waterline.
+  'ikoma': { cls: 'armoured-cruiser', L: 144.8, B: 22.8, fb: 8.2, fc: [-18, 2.8], guns: '43.9:2/305^-2.4 -24.8:2/305^-2b', funnels: [[24.8, 12.3, 3.7], [8.6, 12.3, 3.7]], blocks: [[37.2, 32.2, 13.6, 4.5]], masts: [[29.4, 33], [-8.8, 22.9]] },
   // Kurama from Jane's Fighting Ships 1914 (Ibuki's profile and plan, the sister's; Kurama's masts tripods as its photo
   // shows): the 12-inch turrets fore and aft, the 8-inch pairs on the beams, three funnels; heights over the real waterline.
   'kurama': { cls: 'armoured-cruiser', L: 147.8, B: 22.8, fb: 8.3, fc: [-28, 0.8], guns: '42.4:2/305^-0.5 -34.2:2/305^-2.3b 21.4,8:2/203^-2.9 -13.8,8:2/203^-2.9b', funnels: [[21.5, 11.5, 4.2], [8.3, 11.1, 4.2], [-6, 11.1, 4]], blocks: [[33.8, 25.4, 13.4, 4.5]], masts: [[25.9, 41.1], [-15.2, 41.9]] },
@@ -739,7 +744,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   'royal-sovereign': { blocks: [[-5, -30, 15, 5]], dirs: [[-26, 19]], masts: [[11.8, 37, 't'], [-22, 37, 't']], guns2: '6,10:2/102^3' },
   'invincible-1908': { blocks: [[-10.5, -33.6, 10.3, 5]], raised: [[-21.6, -33.6, 10.3, 12.1, 4]] },
   'colossus-1910': { blocks: [[-19.6, -28.4, 11, 4]], masts: [[20.7, 45.6, 't'], [-22.7, 10.4]] },
-  'queen-mary': { blocks: [[-34, -58, 13, 4]], masts: [[46, 32, 't']] },
+  'queen-mary': { blocks: [[-39.5, -59.4, 10.7, 4]], masts: [[30, 45.4, 't'], [-34.6, 45.4]] },
   'glorious': { blocks: [[-20, -50, 14, 4]], masts: [[36, 34, 't']] },
   'renown': { blocks: [[-20, -45, 12, 5], [-50, -68, 11, 4]], dirs: [[-30, 18]], masts: [[16, 36, 't'], [-39, 33]], guns2: '24,11:2/114^3 10,11:2/114^3 -10,11:2/114^3b' },
   'nelson': { blocks: [[-38, -83, 13, 5]], masts: [[-70, 39]] },
@@ -816,7 +821,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   'tone': { blocks: [[-8.2, -28, 14, 5], [-22.8, -56.4, 10.1, 4.5]], dirs: [[-12.5, 18.5]], masts: [[9.5, 27.1, 't'], [-27.2, 23.6, 't']], rake: 0.12 },
   'agano': { blocks: [[-14, -28, 10.5, 4], [-16, -24, 13, 3]], dirs: [[-22, 16]], masts: [[24, 24, 't'], [-10, 20]], rake: 0.12 },
   'oyodo': { masts: [[26, 26, 't'], [-6, 22]], rake: 0.12 },
-  'ikoma': { blocks: [[-20, -28, 13, 4]] },
+  'ikoma': { blocks: [[-12.5, -18.6, 10.7, 4]] },
   'kurama': { blocks: [[-18.7, -26, 11.1, 4]], masts: [[25.9, 41.1, 't'], [-15.2, 41.9, 't']] },
   // Italian cruisers.
   'trento': { blocks: [[-12, -27, 12, 4.5], [-28, -40, 10.5, 3.5]], dirs: [[-36, 13]], masts: [[27, 20, 't'], [-13, 18, 't']] },

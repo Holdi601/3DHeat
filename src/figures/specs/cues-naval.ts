@@ -1811,7 +1811,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
   ]),
   ikoma: naval('ikoma', [
     { cue: 'twin 12-inch turrets fore and aft', check: (s) => battery(s, 0.3, 1, 1, 2) },
-    { cue: 'twin 8-inch wing turrets, two a side', check: (s) => wings(s, 0.203, 2) === 4 },
+    { cue: 'no wing turrets: the 6-inch guns in casemates along the sides', check: (s) => mains(s, 0.1).length === 2 },
     { cue: 'two funnels', check: (s) => funnels(s) === 2 },
   ]),
   kurama: naval('kurama', [
