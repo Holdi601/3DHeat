@@ -1474,7 +1474,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
   ]),
   nagara: naval('nagara', [
     { cue: 'three funnels', check: (s) => funnels(s) === 3 },
-    { cue: 'single 14 cm guns: two forward, two aft and on the beams', check: (s) => singles(s) && fwd(s).length === 2 && aft(s).length === 2 && beamGuns(s) },
+    { cue: 'single 14 cm guns: two forward, three aft and on the beams', check: (s) => singles(s) && fwd(s).length === 2 && aft(s).length === 3 && beamGuns(s) },
     { cue: 'raised forecastle', check: forecastle },
     { cue: 'quadruple torpedo tube mounts', check: (s) => tubeMounts(s).filter((t) => t.barrels === 4).length === 2 },
   ]),
@@ -1805,7 +1805,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
   ]),
   sendai: naval('sendai', [
     { cue: 'four funnels', check: (s) => funnels(s) === 4 },
-    { cue: 'single 14 cm guns: two forward, two aft and on the beams', check: (s) => singles(s) && fwd(s).length === 2 && aft(s).length === 2 && beamGuns(s) },
+    { cue: 'single 14 cm guns: two forward, three aft and on the beams', check: (s) => singles(s) && fwd(s).length === 2 && aft(s).length === 3 && beamGuns(s) },
     { cue: 'raised forecastle', check: forecastle },
     { cue: 'tripod foremast', check: mastKind('tripod') },
   ]),
