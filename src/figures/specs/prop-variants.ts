@@ -2205,4 +2205,12 @@ A['yak-30'] = jet({ cls: 'jet-fighter', length: 8.6, span: 8.5, height: 3.3, w: 
 // IAR-93 (J-22 Orao): a shoulder wing swept 35 degrees, intakes beside the cockpit, two Vipers, a single swept fin (13.2 x 9.4 m as listed; height 4.52 m).
 A['iar-93'] = jet({ cls: 'attack', length: 13.2, span: 9.4, height: 4.52, w: 0.75, h: 0.75, intake: 'side', engines: 2, wingPlan: [[0.6, 0], [0.6, 0.9], [-2.0, 4.7], [-2.8, 4.7], [-3.0, 0.9], [-3.0, 0]], mount: 0.8, dihedral: -4, fin: [[-2.8, 0], [-5.9, 0], [-6.6, 2.4], [-5.4, 2.4]], tail: [[-4.6, 0], [-5.6, 2.1], [-6.4, 2.1], [-6.5, 0]], planeUp: 0.3, canopy: { x: 3.2, length: 1.8, kind: 'bubble' } });
 
+// The wings' thickness at the root as a share of the chord, from the published root sections (D. Lednicer, The Incomplete
+// Guide to Airfoil Usage): Spitfire NACA 2213, Bf 109 NACA 2R1 14.2, Fw 190 and Ta 152 NACA 23015.3, Mustang NAA/NACA 45-100
+// (15.1 %), Corsair, Wildcat and Avenger NACA 23015, Hellcat NACA 23015.6, Zero NACA 2315, Yak-1 and Yak-3 Clark YH 14 %, Il-2
+// Clark YH 14 %, Tempest NACA 22 14.5, Typhoon NACA 22 19.5, Dauntless NACA 2415, B-25 NACA 23017, B-24 Davis 22 %, B-29
+// Boeing 117 22 %, Lancaster NACA 23018. The tips thin to three quarters of it.
+const ROOT_TC: [string, number][] = [['spitfire-mk-ix', 0.13], ['spitfire-mk-v', 0.13], ['spitfire-mk-xiv', 0.13], ['bf-109-e', 0.142], ['bf-109-g6', 0.142], ['bf-109-k4', 0.142], ['fw-190-a8', 0.153], ['fw-190-d9', 0.153], ['ta-152h', 0.153], ['p-51b', 0.151], ['p-51d-mustang', 0.151], ['f4u-corsair', 0.15], ['f6f-hellcat', 0.156], ['f4f-wildcat', 0.15], ['a6m-zero', 0.15], ['yak-3', 0.14], ['yak-1b', 0.14], ['il-2', 0.14], ['il-2-1941', 0.14], ['tempest-v', 0.145], ['typhoon', 0.195], ['sbd-dauntless', 0.15], ['tbf-avenger', 0.15], ['b-25h', 0.17], ['b-25', 0.17], ['b-24', 0.22], ['b-29', 0.22], ['lancaster', 0.18]];
+for (const [k, r] of ROOT_TC) if (A[k]?.wing) A[k]!.wing.thicknessRatio = r;
+
 export const PROP_VARIANTS: SpecSet = { air: A, aliases: ALIASES };
