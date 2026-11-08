@@ -15,7 +15,7 @@
 import type { Named, SpecSet } from './index';
 import type { AddOn, AddOnMount, GroundSpec, GunSpec } from '../ground';
 import type { Outline, P2 } from '../parts';
-import { ABRAMS, ABRAMS_TURRET, hull, LEO1, LEO2, LEO2_WEDGE, run, T72, T72B_TURRET, T80, TANKS, turret } from './tanks';
+import { ABRAMS, ABRAMS_TURRET, hull, LEO1, LEO2, leo2Bustle, LEO2_WEDGE, run, T72, T72B_TURRET, T80, TANKS, turret } from './tanks';
 import { bonnetCab, FMTV, forwardCab, GAZ_66, GM_CHASSIS, HEMTT, HMMWV, KAMAZ_43101, KRAZ_255, KRAZ_6322, M548, M939, MAN_HX, MAZ_543, MZKT_7930, PICKUP, TRAILER, URAL_4320, ZIL_131 } from './base';
 import { AIR_DEFENCE } from './air-defence';
 import { GROUND_MODERN } from './ground-modern';
@@ -162,31 +162,33 @@ const LEO2_GLACIS = (t: number) => glacis(7.72, 1.75, 1.4, 1.2, t, 3.2);
 // Commander and gunner sit right: the EMES 15 gunner's sight box on the roof's right front, the PERI R17 head behind it;
 // smoke dischargers in fours on the turret's rear sides.
 const PERI = (x: number, h = 0.36): AddOn => ({ on: 'turret', kind: 'drum', at: [x, 0.78, 0.84 + h / 2], size: [0.38, 0.38, h] });
-const LEO2_SMOKE = tb(-0.9, 1.7, 0.62, 0.75, 0.2, 0.26, { ...M, ...DARK });
+const LEO2_SMOKE = tb(-1.15, 1.7, 0.62, 0.75, 0.2, 0.26, { ...M, ...DARK });
 const L44: GunSpec = { mount: 'turret', length: 5.3, calibre: 0.12, extractor: 0.5, at: 0.45 };
 const L55: GunSpec = { mount: 'turret', length: 6.6, calibre: 0.12, extractor: 0.45, at: 0.45 };
 // 2A4 (1985): the upright slab-fronted box turret, the EMES box and PERI, small bins at the back.
-G['leopard-2a4'] = { cls: 'mbt', ...LEO2, guns: [L44], addOns: [tb(1.25, 0.72, 0.9, 0.75, 0.55, 0.16), PERI(0.35), LEO2_SMOKE, tb(-2.35, 1.05, 0.4, 0.3, 0.6, 0.45, M)] };
+G['leopard-2a4'] = { cls: 'mbt', ...LEO2, guns: [L44], addOns: [tb(1.25, 0.72, 0.9, 0.75, 0.55, 0.16), PERI(0.35), LEO2_SMOKE, tb(-1.85, 1.05, 0.4, 0.3, 0.6, 0.45, M)] };
 // 2A5 (1995): the arrowhead wedge on the turret front, the PERI moved back and raised, a big stowage box across the
 // turret's back, heavier front skirt sections.
-const A5_ADD = [PERI(-0.7, 0.5), LEO2_SMOKE, tb(-2.45, 0, 0.42, 0.45, 2.6, 0.55), ...skirtBoxes(1.6, 3.7, 1.9, 0.62, 0.55, 2, 0.12)];
+const A5_ADD = [PERI(-0.7, 0.5), LEO2_SMOKE, tb(-2.18, 0, 0.42, 0.45, 2.6, 0.55), ...skirtBoxes(1.6, 3.7, 1.9, 0.62, 0.55, 2, 0.12)];
 G['leopard-2a5'] = { cls: 'mbt', ...LEO2, turret: LEO2_WEDGE, guns: [L44], addOns: A5_ADD };
 // 2A6 (2001): the 2A5 with the long L/55.
 G['leopard-2a6'] = { cls: 'mbt', ...LEO2, turret: LEO2_WEDGE, guns: [L55], addOns: A5_ADD };
 // 2A7 / 2A7V (2014): the A6 with an armour module on the hull front, thick add-on modules along the turret's sides,
 // the remote weapon station on the roof, heavy skirts all along.
-G['leopard-2a7'] = { cls: 'mbt', ...LEO2, turret: LEO2_WEDGE, guns: [L55], addOns: [PERI(-0.7, 0.5), LEO2_SMOKE, tb(-2.45, 0, 0.42, 0.45, 2.6, 0.55), ...LEO2_GLACIS(0.28), hb(3.95, 0, 0.98, 0.3, 3.3, 0.5), tb(0.55, 1.78, 0.42, 1.9, 0.26, 0.7, M), tb(-1.2, -0.75, 1.08, 0.55, 0.45, 0.45, DARK), ...skirtBoxes(-3.4, 3.7, 1.92, 0.6, 0.6, 5, 0.16)] };
+G['leopard-2a7'] = { cls: 'mbt', ...LEO2, turret: LEO2_WEDGE, guns: [L55], addOns: [PERI(-0.7, 0.5), LEO2_SMOKE, tb(-2.18, 0, 0.42, 0.45, 2.6, 0.55), ...LEO2_GLACIS(0.28), hb(3.95, 0, 0.98, 0.3, 3.3, 0.5), tb(0.55, 1.78, 0.42, 1.9, 0.26, 0.7, M), tb(-1.2, -0.75, 1.08, 0.55, 0.45, 0.45, DARK), ...skirtBoxes(-3.4, 3.7, 1.92, 0.6, 0.6, 5, 0.16)] };
 // Leopard 2PL (2020): the 2A4 with Rheinmetall's add-on wedge - blunter and shorter than the A5's - and plates down the turret's sides; L/44.
-G['leopard-2pl'] = { cls: 'mbt', ...LEO2, turret: turret(-0.35, [[-2.25, 1.35], [-1.9, 1.62], [1.6, 1.72], [2.3, 1.38], [2.55, 0.6]], [[-2.25, 0.72], [-2.0, 0.82], [1.6, 0.9], [2.55, 0.62]], 12, 2.4), guns: [L44], addOns: [PERI(0.0, 0.42), LEO2_SMOKE, tb(-0.2, 1.75, 0.45, 2.2, 0.14, 0.62, M), tb(-2.35, 1.05, 0.4, 0.3, 0.6, 0.45, M)] };
+const L2PL = turret(-0.35, [[-1.98, 1.35], [-1.68, 1.62], [1.6, 1.72], [2.3, 1.38], [2.55, 0.6]], [[-1.98, 0.72], [-1.75, 0.82], [1.6, 0.9], [2.55, 0.62]], 12, 2.4);
+G['leopard-2pl'] = { cls: 'mbt', ...LEO2, turret: { ...L2PL, outline: { ...L2PL.outline!, bottom: leo2Bustle(2.55) } }, guns: [L44], addOns: [PERI(0.0, 0.42), LEO2_SMOKE, tb(-0.2, 1.75, 0.45, 2.2, 0.14, 0.62, M), tb(-1.85, 1.05, 0.4, 0.3, 0.6, 0.45, M)] };
 // Strv 122 (1996): the 2A5-type wedge with extra armour on the turret roof, heavier skirts, Swedish dischargers; L/44.
-G['strv-122'] = { cls: 'mbt', ...LEO2, turret: LEO2_WEDGE, guns: [L44], addOns: [PERI(-0.7, 0.5), tb(0.2, 0, 0.92, 2.6, 2.7, 0.1), tb(-1.3, 1.7, 0.66, 0.5, 0.25, 0.32, { ...M, ...DARK }), tb(-2.45, 0, 0.42, 0.45, 2.6, 0.55), ...skirtBoxes(-3.0, 3.7, 1.92, 0.6, 0.55, 4, 0.14)] };
+G['strv-122'] = { cls: 'mbt', ...LEO2, turret: LEO2_WEDGE, guns: [L44], addOns: [PERI(-0.7, 0.5), tb(0.2, 0, 0.92, 2.6, 2.7, 0.1), tb(-1.3, 1.7, 0.66, 0.5, 0.25, 0.32, { ...M, ...DARK }), tb(-2.18, 0, 0.42, 0.45, 2.6, 0.55), ...skirtBoxes(-3.0, 3.7, 1.92, 0.6, 0.55, 4, 0.14)] };
 // Leopard 2E (2006): the A6-type wedge and L/55 with thicker turret side armour.
 G['leopard-2e'] = { cls: 'mbt', ...LEO2, turret: LEO2_WEDGE, guns: [L55], addOns: [...A5_ADD, tb(0.2, 1.74, 0.45, 2.0, 0.18, 0.66, M)] };
 // Leopard 2A4M CAN (2010s): the 2A4 with the 2A7's add-on armour reworked for its turret - thick upright modules
 // squaring the turret front and running down its sides, a module on the hull front, armoured skirts - small panels of
 // slat armour on the turret bustle and the hull's back, and the L/44 (9.67 x 3.7 m, 2.9 m).
-const A4M_TURRET = turret(-0.35, [[-2.25, 1.35], [-1.9, 1.62], [-1.5, 1.85], [2.15, 1.85], [2.45, 1.7], [2.5, 0.62]], [[-2.25, 0.72], [-2.0, 0.8], [2.2, 0.88], [2.5, 0.66]], 12, 2.4);
-G['leopard-2a4m-can'] = { cls: 'mbt', ...LEO2, turret: A4M_TURRET, guns: [L44], addOns: [tb(1.25, 0.72, 0.94, 0.75, 0.55, 0.16), PERI(0.35), tb(-1.75, 1.75, 0.62, 0.45, 0.2, 0.26, { ...M, ...DARK }), tb(-2.35, 1.05, 0.4, 0.3, 0.6, 0.45, M), tb(-2.45, 0, 0.42, 0.08, 2.7, 0.6, DARK),
+const A4M_BASE = turret(-0.35, [[-1.98, 1.35], [-1.68, 1.62], [-1.4, 1.85], [2.15, 1.85], [2.45, 1.7], [2.5, 0.62]], [[-1.98, 0.72], [-1.75, 0.8], [2.2, 0.88], [2.5, 0.66]], 12, 2.4);
+const A4M_TURRET = { ...A4M_BASE, outline: { ...A4M_BASE.outline!, bottom: leo2Bustle(2.5) } };
+G['leopard-2a4m-can'] = { cls: 'mbt', ...LEO2, turret: A4M_TURRET, guns: [L44], addOns: [tb(1.25, 0.72, 0.94, 0.75, 0.55, 0.16), PERI(0.35), tb(-1.75, 1.75, 0.62, 0.45, 0.2, 0.26, { ...M, ...DARK }), tb(-1.85, 1.05, 0.4, 0.3, 0.6, 0.45, M), tb(-2.45, 0, 0.42, 0.08, 2.7, 0.6, DARK),
   ...LEO2_GLACIS(0.28), hb(3.95, 0, 0.98, 0.3, 3.3, 0.5), ...skirtBoxes(-3.4, 3.7, 1.92, 0.6, 0.6, 5, 0.16), hb(-3.98, 0, 1.25, 0.08, 3.4, 0.8, DARK)] };
 
 // ---------------------------------------------------------------- Leopard 1
@@ -2245,7 +2247,7 @@ G['itpsv-90'] = { cls: 'spaa', ...LEO2, cupola: false, turret: turret(-0.4, [[-1
 G['udes-33'] = { cls: 'atgm', chassis: 'tracked', length: 4.8, width: 2.5, hullHeight: 1.5, roadWheels: 5, roadWheelRadius: 0.3, trackProfile: run(4.65, 0.8, [2.3, 0.55], [-2.33, 0.55], -1.85, 1.85), running: { wheels: [-1.7, -0.85, 0, 0.85, 1.7] }, hullOutline: { top: [[-2.4, 1.4], [-2.2, 1.5], [0.6, 1.5], [2.4, 0.9]], bottom: [[-2.4, 0.75], [2.0, 0.7], [2.4, 0.9]], plan: [[-2.4, 1.2], [2.4, 1.15]], round: 12, stations: 10 }, addOns: [hb(-0.8, 0, 1.6, 0.6, 0.6, 0.2, DARK), hb(-0.8, 0, 1.78, 0.2, 0.2, 0.3, DARK), hb(-0.7, 0, 1.95, 1.4, 0.3, 0.28)] };
 // Strv 121B "Christian II" (Leopard 2A4, 7.72 x 3.75 m, 2.79 m): GALIX launchers on the turret sides in place of the 2A4's
 // smoke clusters, a thermal sight's head on the EMES box.
-G['strv-121b'] = { ...G['leopard-2a4'], addOns: [tb(1.25, 0.72, 0.9, 0.75, 0.55, 0.16), tb(1.25, 0.72, 1.08, 0.5, 0.42, 0.2, DARK), PERI(0.35), ...[0.2, 0.55].map((x) => tb(x, 1.72, 0.75, 0.3, 0.22, 0.22, { ...M, ...DARK, pitch: 0.5 })), tb(-2.35, 1.05, 0.4, 0.3, 0.6, 0.45, M)] };
+G['strv-121b'] = { ...G['leopard-2a4'], addOns: [tb(1.25, 0.72, 0.9, 0.75, 0.55, 0.16), tb(1.25, 0.72, 1.08, 0.5, 0.42, 0.2, DARK), PERI(0.35), ...[0.2, 0.55].map((x) => tb(x, 1.72, 0.75, 0.3, 0.22, 0.22, { ...M, ...DARK, pitch: 0.5 })), tb(-1.85, 1.05, 0.4, 0.3, 0.6, 0.45, M)] };
 // EldE 98 (on the Bv410, about 7.6 x 2.3 m; estimates): the articulated two-car carrier - the front car with the Giraffe 1X
 // radar on its mast, the rear car with four IRIS-T in their launcher.
 G['elde-98'] = { cls: 'sam', chassis: 'tracked', length: 7.6, width: 2.3, hullHeight: 1.7, roadWheels: 10, roadWheelRadius: 0.2, trackProfile: run(7.5, 0.7, [3.75, 0.45], [-3.75, 0.45], -3.4, 3.4), hullOutline: { top: [[-3.8, 1.6], [-3.7, 1.7], [-0.5, 1.7], [-0.45, 0.9], [0.45, 0.9], [0.5, 2.0], [3.0, 2.0], [3.8, 1.2]], bottom: [[-3.8, 0.65], [3.8, 0.75]], plan: [[-3.8, 1.12], [3.8, 1.1]], round: 10, stations: 16 },
