@@ -488,7 +488,8 @@ export interface FrameParams {
   /**
    * Box replay's figures as GPU instances of meshes uploaded once
    * (`figures/instances.ts`), drawn before `sceneTris` with the same blending
-   * and depth writes. Absent or empty: none.
+   * and depth writes. Absent or empty: none. Their positions are relative to
+   * `origin`, drawn with `viewProjRel`.
    */
   figureBatches?: FigureBatch[] | null;
   /**

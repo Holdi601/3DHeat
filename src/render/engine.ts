@@ -756,7 +756,7 @@ export class Engine {
    * the box replay shows what the heat shows. Compacts in place, keeping each
    * box's row and motion pose with it; returns the new count.
    */
-  private filterCubes(cubes: Float32Array, count: number, stride: number, rows: Int32Array, poses: Float32Array | null, posed: Uint8Array | null): number {
+  private filterCubes(cubes: Float32Array, count: number, stride: number, rows: Int32Array, poses: Float32Array | null, posed: Uint8Array | null, exact: Float64Array | null = null): number {
     const v = useVolumeStore.getState();
     const keep = this.volumesLive() ? volumeFilter(v.volumes, v.filter) : null;
     if (!keep) return count;
@@ -769,6 +769,7 @@ export class Engine {
         if (rows.length > i) rows[j] = rows[i];
         if (poses && poses.length >= (i + 1) * 4) poses.copyWithin(j * 4, i * 4, i * 4 + 4);
         if (posed && posed.length > i) posed[j] = posed[i];
+        if (exact && exact.length >= (i + 1) * 3) exact.copyWithin(j * 3, i * 3, i * 3 + 3);
       }
       j++;
     }
@@ -2704,7 +2705,7 @@ export class Engine {
         }
         // The volumes filter: the replay shows the units the heat would.
         if (cubes) {
-          cubeCount = this.filterCubes(cubes, cubeCount, CUBE_STRIDE, this.cursor.cubeRows, motion ? this.motion.poses : null, motion ? this.motion.posed : null);
+          cubeCount = this.filterCubes(cubes, cubeCount, CUBE_STRIDE, this.cursor.cubeRows, motion ? this.motion.poses : null, motion ? this.motion.posed : null, motion ? this.motion.exact : null);
           if (motion) this.motion.count = cubeCount;
         }
       }
@@ -2726,7 +2727,10 @@ export class Engine {
           const o = i * CUBE_STRIDE;
           // With its attitude where the motion model has one, for the cockpit view and the radar cones.
           const q = motion && this.motion.posed[i] ? Array.from(this.motion.poses.subarray(i * 4, i * 4 + 4)) : null;
-          tracks.push({ person: pid && row >= 0 ? pid[row] : i, row, x: cubes[o], y: cubes[o + 1], z: cubes[o + 2], yaw: cubes[o + 6], pitch: cubes[o + 7], q });
+          // In double precision where the motion model placed it (`MotionRefiner.exact`).
+          const ex = motion ? this.motion.exact : null;
+          const [x, y, z] = ex ? [ex[i * 3], ex[i * 3 + 1], ex[i * 3 + 2]] : [cubes[o], cubes[o + 1], cubes[o + 2]];
+          tracks.push({ person: pid && row >= 0 ? pid[row] : i, row, x, y, z, yaw: cubes[o + 6], pitch: cubes[o + 7], q });
         }
       }
       this.liveTracks = tracks;
@@ -2753,6 +2757,10 @@ export class Engine {
           farMode: FAR_MODE_ID[s.team.farMode],
           symbolThreshold: symbolThreshold(s.team.figurePixels, s.team.symbolPx),
           symbolPx: s.team.symbolPx,
+          // Positions in double precision, written relative to the frame's
+          // origin: see FrameParams.viewProjRel.
+          exact: motion ? this.motion.exact : undefined,
+          origin: this.originArr,
         });
         // What the events leave behind for a while, in the thrower's colour.
         const d = this.dataset;

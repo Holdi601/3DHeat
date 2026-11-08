@@ -1329,7 +1329,7 @@ export class Webgl2Renderer implements Renderer {
     this.relCamera[2] = params.cameraPos[2] - o[2];
     if (params.figureBatches && params.figureBatches.length) {
       this.figures ??= new GlFigures(this.gl);
-      this.figures.draw(params.figureBatches, params.viewProjRel, this.relCamera, o);
+      this.figures.draw(params.figureBatches, params.viewProjRel, this.relCamera);
     }
     if (params.gpuTracks) {
       this.figures ??= new GlFigures(this.gl);
