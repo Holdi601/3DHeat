@@ -537,6 +537,9 @@ G['t-34-76-1943'] = t34(5.92, T34_HEX, F34, true, (t) => [cupola(t, -0.45, -0.5,
 // ring to the mantlet 1.9 m ahead of the hull's middle, the roof 0.85 m over the hull's, the bore 2.05 m up.
 const T34_85 = turret(0.5, [[-1.32, 0.85], [-1.05, 1.2], [0.6, 1.28], [1.1, 1.0], [1.25, 0.6]], [[-1.32, 0.6], [-1.2, 0.8], [-0.95, 0.85], [0.25, 0.85], [0.75, 0.72], [1.1, 0.55], [1.25, 0.48]], 3, 1.25);
 G['t-34-85'] = t34(6.1, T34_85, { length: 3.25, calibre: 0.085, at: 0.59, elevation: 0 }, true, (t) => [cupola(t, -0.33, -0.45, 0.32, 0.25), on(t, [[1.2, 0.45], [1.42, 0.4]], [[1.2, 0.72], [1.42, 0.68]], [[1.2, 0.3], [1.42, 0.34]], 4)]);
+// Type 65 SPAA: the T-34-85 hull under an open-topped box turret with twin 37 mm (the 61-K pattern guns, 2.6 m); turret
+// size estimated from public photographs, nearest counterpart.
+G['type-65-spaa'] = { ...G['t-34-85'], cls: 'spaa', cupola: false, turret: { x: 0.3, length: 2.6, width: 2.5, height: 0.8, shape: 'open' }, turrets: [], guns: [{ mount: 'turret', count: 2, length: 2.6, calibre: 0.037, spread: 0.5, elevation: 0.2, at: 0.6 }] };
 
 // ---------------------------------------------------------------- KV
 
@@ -2211,6 +2214,26 @@ G['flak-36-88mm-emplaced'] = { ...G['flak-36-88mm'], addOns: parapet(6.7, 1.2) }
   // 61-K 37 mm and 72-K 25 mm: the same layout with a shield.
   G['61-k-37mm'] = { ...G['bofors-40mm'], length: 5.5, width: 1.79, turrets: [frame, aaShield(t, 0.5, 0.75, 0.2, 1.2)], guns: [{ mount: 'turret', length: 2.6, calibre: 0.037, elevation: 0.5, at: 0.75 }] };
   G['72-k-25mm'] = { ...G['61-k-37mm'], length: 4.6, guns: [{ mount: 'turret', length: 2.0, calibre: 0.025, elevation: 0.5, at: 0.75 }] };
+  // Emplaced for firing (TM 9-252 figs 1-2 and its data table: wheelbase 3.2 m, tread 1.41 m, 6.00-20 tyres, 4.19 m high
+  // at full elevation): the carriage lowered by its road clearance onto four levelling jacks, the side outriggers swung
+  // out level (span est 4.1 m from the photographs), the wheels raised just clear on their axles. The 61-K and 72-K
+  // carriages are of the Bofors pattern and go down the same way.
+  const down = (L: number, tread: number): Partial<GroundSpec> => {
+    const wb = L * 0.5;
+    const ends = [[wb / 2 + 0.4, 0], [-wb / 2 - 0.4, 0], [0, 2.05], [0, -2.05]] as const;
+    const addOns: AddOn[] = [
+      { on: 'hull', kind: 'box', at: [0, 0, 0.42], size: [wb + 0.8, 0.45, 0.26], metal: true },
+      ...[-1, 1].map((d): AddOn => ({ on: 'hull', kind: 'box', at: [0, d * 1.15, 0.4], size: [0.25, 1.85, 0.16], metal: true })),
+      { on: 'hull', kind: 'drum', at: [0, 0, 0.6], size: [1.1, 1.1, 0.12], metal: true },
+      ...[-wb / 2, wb / 2].flatMap((x) => [-tread / 2, tread / 2].map((s): AddOn => ({ on: 'hull', kind: 'tube', at: [x, s - 0.09, 0.47], to: [x, s + 0.09, 0.47], size: [0.86, 0.86, 0], metal: true }))),
+      ...ends.map(([x, s]): AddOn => ({ on: 'hull', kind: 'tube', at: [x, s, 0.05], to: [x, s, 0.6], size: [0.1, 0.1, 0], metal: true })),
+      ...ends.map(([x, s]): AddOn => ({ on: 'hull', kind: 'box', at: [x, s, 0.03], size: [0.35, 0.35, 0.06], metal: true })),
+    ];
+    return { chassis: 'pedestal', bare: true, length: wb + 0.8, width: 4.1, hullHeight: 0.64, axles: undefined, axleAt: undefined, addOns };
+  };
+  G['bofors-40mm-emplaced'] = { ...G['bofors-40mm'], ...down(6.4, 1.41) };
+  G['61-k-37mm-emplaced'] = { ...G['61-k-37mm'], ...down(5.5, 1.41) };
+  G['72-k-25mm-emplaced'] = { ...G['72-k-25mm'], ...down(4.6, 1.41) };
 }
 // QF 3.7-inch, 52-K 85 mm and the US M1A1 90 mm: four-wheeled platforms, the long barrel raised over them; the 52-K with
 // its multi-baffle brake (8.7 / 7.05 / 6.2 m).
