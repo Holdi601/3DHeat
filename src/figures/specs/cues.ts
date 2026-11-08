@@ -524,7 +524,7 @@ const AIR_CUES: Record<string, CueEntry> = {
     { cue: 'slim inline nose, three blades', check: (s) => inline(s) && blades(3)(s) },
     { cue: 'radiator bath under the wing centre', check: (s) => bump(s.fuselage?.bottom, 1.2, -1.0, -1, 0.04) },
   ]),
-  'he-112': air('he-112', [
+  'he-112': air(['he-112', 'he-112a'], [
     { cue: 'elliptic wing', check: roundTips },
     { cue: 'radiator under the belly', check: (s) => bodiesOf(s).some((b) => !b.side && highest(b) < 0 && halfWidth(b) >= 0.25) },
     { cue: 'inline nose, three blades', check: (s) => inline(s) && blades(3)(s) },
