@@ -1,7 +1,7 @@
 import { dataToWorld, worldToData } from '../render/pose';
 import type { Bounds, GeoPlacement } from '../state/types';
 import { accumulateNormals, handedness } from './mesh';
-import { dataOfEastNorth, eastNorthOf, frameSense, heightOf, planeForward, planeInverse } from './tiles';
+import { dataOfEastNorth, eastNorthOf, frameSense, heightOf, planeForward, planeInverse, type GeoBox } from './tiles';
 
 /**
  * A world backdrop moved from the plane it was built on to another: a theatre
@@ -151,4 +151,41 @@ export function reproject(vertices: Float32Array, indices: Uint32Array[], from: 
       return { lowY: Math.min(a, b), highY: Math.max(a, b) };
     },
   };
+}
+
+/** One world point moved exactly from one placement to another (through latitude and longitude); heights stay. */
+export function movePoint(p: { x: number; y: number; z: number }, from: GeoPlacement, to: GeoPlacement): { x: number; y: number; z: number } {
+  const d = worldToData(p, from.axes);
+  const [e, n] = eastNorthOf(from.geo, d);
+  const [lat, lon] = planeInverse(from.geo)(e, n);
+  const [e2, n2] = planeForward(to.geo)(lat, lon);
+  return dataToWorld(dataOfEastNorth(to.geo, e2, n2, heightOf(from.geo, d)), to.axes);
+}
+
+/**
+ * The world box a streamed theatre's level stands for: the theatre's box and
+ * 1,500 km round it (the streamer's reach), from 100 m below the sea to 4 km
+ * up, on the placement given. The level itself has no triangles (its ground
+ * comes as tiles), so this is what the camera's far plane and the framing go
+ * by; it is worked out again, never moved, when the level is put on another
+ * placement, since an empty mesh moved has no box at all.
+ */
+export function streamBounds(placement: GeoPlacement, box: GeoBox): { bounds: Bounds; band: { minY: number; maxY: number } } {
+  const fwd = planeForward(placement.geo);
+  const pts = [
+    [box.south, box.west],
+    [box.north, box.east],
+  ].map(([la, lo]) => fwd(la, lo));
+  const reach = 1_500_000;
+  const lo = dataToWorld(dataOfEastNorth(placement.geo, Math.min(pts[0][0], pts[1][0]) - reach, Math.min(pts[0][1], pts[1][1]) - reach, -100), placement.axes);
+  const hi = dataToWorld(dataOfEastNorth(placement.geo, Math.max(pts[0][0], pts[1][0]) + reach, Math.max(pts[0][1], pts[1][1]) + reach, 4000), placement.axes);
+  const bounds = {
+    minX: Math.min(lo.x, hi.x),
+    maxX: Math.max(lo.x, hi.x),
+    minY: Math.min(lo.y, hi.y),
+    maxY: Math.max(lo.y, hi.y),
+    minZ: Math.min(lo.z, hi.z),
+    maxZ: Math.max(lo.z, hi.z),
+  };
+  return { bounds, band: { minY: bounds.minY, maxY: bounds.maxY } };
 }

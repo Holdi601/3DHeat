@@ -18,6 +18,7 @@ import { boxAround } from '../../world/tiles';
 import { Check } from '../controls';
 import { useEngine } from '../EngineContext';
 import { dataToWorld } from '../../render/pose';
+import { streamBounds } from '../../world/reproject';
 import { worldStreamer } from '../../world/stream';
 import { boxCentre, dataOfEastNorth, geoBoxOf, knownProjection, planeForward } from '../../world/tiles';
 
@@ -205,23 +206,7 @@ export function WorldBackdrop({
     const theatre = game?.th ?? theatreById(theatreId);
     if (!theatre) return;
     const placement: GeoPlacement = { geo: geo ?? theatreGeo(theatre), axes: geo ? (dataset?.axes ?? null) : THEATRE_AXES };
-    const fwd = planeForward(placement.geo);
-    // Bounds that reach well past the theatre, for the camera's far plane.
-    const pts = [
-      [theatre.box.south, theatre.box.west],
-      [theatre.box.north, theatre.box.east],
-    ].map(([la, lo]) => fwd(la, lo));
-    const reach = 1_500_000;
-    const lo = dataToWorld(dataOfEastNorth(placement.geo, Math.min(pts[0][0], pts[1][0]) - reach, Math.min(pts[0][1], pts[1][1]) - reach, -100), placement.axes);
-    const hi = dataToWorld(dataOfEastNorth(placement.geo, Math.max(pts[0][0], pts[1][0]) + reach, Math.max(pts[0][1], pts[1][1]) + reach, 4000), placement.axes);
-    const bounds = {
-      minX: Math.min(lo.x, hi.x),
-      maxX: Math.max(lo.x, hi.x),
-      minY: Math.min(lo.y, hi.y),
-      maxY: Math.max(lo.y, hi.y),
-      minZ: Math.min(lo.z, hi.z),
-      maxZ: Math.max(lo.z, hi.z),
-    };
+    const { bounds, band } = streamBounds(placement, theatre.box);
     const empty: BackdropResult = {
       mesh: {
         vertices: new Float32Array(0),
@@ -233,7 +218,7 @@ export function WorldBackdrop({
         partNames: [],
         partRuns: { ground: new Uint32Array(0), structure: new Uint32Array(0), water: new Uint32Array(0) },
         bounds,
-        groundBand: { minY: lo.y < hi.y ? lo.y : hi.y, maxY: lo.y < hi.y ? hi.y : lo.y },
+        groundBand: band,
       },
       labels: [],
       credits: [],
