@@ -2262,4 +2262,9 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
     { cue: 'six single 20 cm guns in casemates low aft', check: (s) => turrets(s).filter((t) => t.calibre === 0.2 && t.x < 0 && (t.up ?? 0) < -5).length === 6 },
     { cue: 'twin 12 cm mounts on sponsons, three a side', check: (s) => turrets(s).filter((t) => t.calibre === 0.12 && t.barrels === 2).length === 6 },
   ]),
+  'illustrious-1940': naval('illustrious-1940', [
+    { cue: 'flight deck ending short of bow and stern, the hull longer than it', check: (s) => Math.max(...(s.decks?.[0]?.plan ?? []).map((p) => Math.abs(p[0]))) < s.length / 2 - 5 },
+    { cue: 'island to starboard amidships, the funnel at its after end', check: (s) => islandSide(s) > 0 && Math.abs(islandX(s)) < s.length * 0.1 },
+    { cue: 'twin 4.5-inch turrets in pairs at the four corners', check: (s) => turrets(s).filter((t) => t.calibre === 0.114 && t.barrels === 2).length === 8 && turrets(s).filter((t) => t.calibre === 0.114 && Math.abs(t.x) < 60).length === 0 },
+  ]),
 };
