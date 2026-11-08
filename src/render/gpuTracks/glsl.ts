@@ -13,6 +13,33 @@
  * up + weapon speed (-1: no streak), team colour.
  */
 
+import { CHUNK_SHIFT } from './store';
+
+/**
+ * Keys from their span (`store.ts`: the chunk's, else the track's), times
+ * from the playhead: uCam.w, the playhead as a float, and uTLo, what that
+ * leaves out (2 ms at five hours, half a metre at 250 m/s).
+ */
+const SPAN_GLSL = `uniform float uTLo;
+// The track's first texel, its first key, its chunk spans' first texel (0: none): set before its keys are read.
+int spanTrack;
+int spanFirst;
+int spanChunks;
+// Key j's span: origin xyz + position step, then first time + time step, two texels.
+int spanOf(int j) { return spanChunks == 0 ? spanTrack + 2 : spanChunks + ((j - spanFirst) >> ${CHUNK_SHIFT}) * 2; }
+float timeAt(int j) {
+  uvec4 b = texelFetch(uTracks, at(spanOf(j) + 1), 0);
+  return (uintBitsToFloat(b.x) - uCam.w) + float(texelFetch(uKeysA, at(j), 0).y >> 16u) * uintBitsToFloat(b.y) - uTLo;
+}
+vec4 keyAt(int j) {
+  int o = spanOf(j);
+  uvec4 a = texelFetch(uTracks, at(o), 0);
+  uvec4 b = texelFetch(uTracks, at(o + 1), 0);
+  uvec2 k = texelFetch(uKeysA, at(j), 0).xy;
+  float t = (uintBitsToFloat(b.x) - uCam.w) + float(k.y >> 16u) * uintBitsToFloat(b.y) - uTLo;
+  return vec4(vec3(uintBitsToFloat(a.x), uintBitsToFloat(a.y), uintBitsToFloat(a.z)) + vec3(float(k.x & 0xffffu), float(k.x >> 16u), float(k.y & 0xffffu)) * uintBitsToFloat(a.w), t);
+}`;
+
 export const EVAL_GLSL_VS = `#version 300 es
 precision highp float;
 precision highp int;
@@ -34,19 +61,7 @@ out vec4 oTeam;
 
 ivec2 at(int n) { return ivec2(n % uW, n / uW); }
 uvec4 trackTexel(int i, int k) { return texelFetch(uTracks, at(i * 4 + k), 0); }
-
-vec3 spanO;
-float spanStep;
-float spanT0;
-float spanTS;
-
-vec4 keyAt(int j) {
-  uvec2 k = texelFetch(uKeysA, at(j), 0).xy;
-  return vec4(spanO + vec3(float(k.x & 0xffffu), float(k.x >> 16u), float(k.y & 0xffffu)) * spanStep, spanT0 + float(k.y >> 16u) * spanTS);
-}
-float timeAt(int j) {
-  return spanT0 + float(texelFetch(uKeysA, at(j), 0).y >> 16u) * spanTS;
-}
+${SPAN_GLSL}
 vec4 unpackQ(uint v) {
   ivec4 b = ivec4(int(v << 24u) >> 24, int(v << 16u) >> 24, int(v << 8u) >> 24, int(v) >> 24);
   return vec4(b) / 127.0;
@@ -102,12 +117,12 @@ void main() {
   oTeam = vec4(0.0);
   uvec4 t0 = trackTexel(i, 0);
   uvec4 t1 = trackTexel(i, 1);
-  uvec4 t2 = trackTexel(i, 2);
   uvec4 t3 = trackTexel(i, 3);
   int first = int(t0.x);
   int count = int(t0.y);
   uint flags = t1.y;
-  float t = uCam.w;
+  // Times are from the playhead.
+  float t = 0.0;
   if (count == 0) return;
   if (uOpt.y < 0.5) {
     uint word = texelFetch(uVis, at(i >> 5), 0).x;
@@ -115,10 +130,9 @@ void main() {
   }
   bool weapon = (flags & 4u) != 0u;
   if (weapon && uOpt.x < 0.0) return;
-  spanO = vec3(uintBitsToFloat(t2.x), uintBitsToFloat(t2.y), uintBitsToFloat(t2.z));
-  spanStep = uintBitsToFloat(t2.w);
-  spanT0 = uintBitsToFloat(t3.x);
-  spanTS = uintBitsToFloat(t3.y);
+  spanTrack = i * 4;
+  spanFirst = first;
+  spanChunks = int(t1.w) / 4;
   if (timeAt(first) > t) return;
   int last = first + count - 1;
   int lo = first;
@@ -155,7 +169,8 @@ void main() {
     m1 = m1 > cap ? (cap / m1) * h : h;
     float s2 = s * s;
     float s3 = s2 * s;
-    P = (2.0 * s3 - 3.0 * s2 + 1.0) * A0.xyz + (s3 - 2.0 * s2 + s) * va * m0 + (-2.0 * s3 + 3.0 * s2) * A1.xyz + (s3 - s2) * vb * m1;
+    // From A0 (h00 = 1 - h01): no sum of two big coordinates.
+    P = A0.xyz + ((s3 - 2.0 * s2 + s) * va * m0 + (-2.0 * s3 + 3.0 * s2) * C + (s3 - s2) * vb * m1);
     V = ((6.0 * s2 - 6.0 * s) * -C + (3.0 * s2 - 4.0 * s + 1.0) * va * m0 + (3.0 * s2 - 2.0 * s) * vb * m1) / h;
   }
   float speed = length(V);
@@ -264,15 +279,7 @@ out vec4 vColor;
 out vec3 vWorld;
 
 ivec2 at(int n) { return ivec2(n % uW, n / uW); }
-vec3 spanO;
-float spanStep;
-float spanT0;
-float spanTS;
-vec4 keyAt(int j) {
-  uvec2 k = texelFetch(uKeysA, at(j), 0).xy;
-  return vec4(spanO + vec3(float(k.x & 0xffffu), float(k.x >> 16u), float(k.y & 0xffffu)) * spanStep, spanT0 + float(k.y >> 16u) * spanTS);
-}
-float timeAt(int j) { return spanT0 + float(texelFetch(uKeysA, at(j), 0).y >> 16u) * spanTS; }
+${SPAN_GLSL}
 
 void main() {
   gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
@@ -299,15 +306,13 @@ void main() {
     if (W <= 0.0) return;
     int i = gl_InstanceID;
     uvec4 t0 = texelFetch(uTracks, at(i * 4), 0);
-    uvec4 t2 = texelFetch(uTracks, at(i * 4 + 2), 0);
-    uvec4 t3 = texelFetch(uTracks, at(i * 4 + 3), 0);
+    uvec4 t1 = texelFetch(uTracks, at(i * 4 + 1), 0);
     int first = int(t0.x);
     int last = first + int(t0.y) - 1;
-    spanO = vec3(uintBitsToFloat(t2.x), uintBitsToFloat(t2.y), uintBitsToFloat(t2.z));
-    spanStep = uintBitsToFloat(t2.w);
-    spanT0 = uintBitsToFloat(t3.x);
-    spanTS = uintBitsToFloat(t3.y);
-    float t = uCam.w;
+    spanTrack = i * 4;
+    spanFirst = first;
+    spanChunks = int(t1.w) / 4;
+    float t = 0.0;
     int lo = first;
     int hi = last + 1;
     for (int it = 0; it < 32; it++) {

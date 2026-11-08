@@ -13,7 +13,7 @@
 import { INSTANCE_STRIDE, NO_PITCH, type FigureBatch } from '../../figures/instances';
 import { aimOf, type AimNow } from '../../figures/aim';
 import { emptyPose, evaluateTrack } from './evaluate';
-import { KEY_U32, TRACK_U32, type GpuTrackStore } from './store';
+import { keyTime, TRACK_U32, type GpuTrackStore } from './store';
 import { isShown } from './visibility';
 
 interface Boxes {
@@ -43,8 +43,8 @@ function boxesOf(s: GpuTrackStore): Boxes {
     sphere[i * 4 + 3] = size * 0.8661;
     const first = s.trackData[o];
     const n = s.trackData[o + 1];
-    span[i * 2] = f32[o + 12] + (s.keysA[first * KEY_U32 + 1] >>> 16) * f32[o + 13];
-    span[i * 2 + 1] = f32[o + 12] + (s.keysA[(first + Math.max(0, n - 1)) * KEY_U32 + 1] >>> 16) * f32[o + 13];
+    span[i * 2] = keyTime(s, o, first);
+    span[i * 2 + 1] = keyTime(s, o, first + Math.max(0, n - 1));
     longest[i] = s.trackData[o + 3] ? f32[o + 4] : 0;
   }
   b = { sphere, span, longest };

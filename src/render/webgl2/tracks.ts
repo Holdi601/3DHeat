@@ -12,7 +12,7 @@ import { INSTANCE_STRIDE, MESH_STRIDE } from '../../figures/instances';
 import { figureGlslVs } from '../figureShaders';
 import { EVAL_GLSL_FS, EVAL_GLSL_VS, MARK_GLSL_VS, STREAK_GLSL_VS, TRAIL_GLSL_VS, TRAIL_SEGMENTS_GL } from '../gpuTracks/glsl';
 import { nearFigures } from '../gpuTracks/near';
-import { sameKeys, TRACK_U32, type GpuTrackStore } from '../gpuTracks/store';
+import { sameKeys, type GpuTrackStore } from '../gpuTracks/store';
 import type { GpuTracksParams } from '../types';
 import type { GlFigures } from './figures';
 import { compileProgram, GlError, UniformCache } from './glutil';
@@ -143,7 +143,8 @@ export class GlTracks {
   private upload(s: GpuTrackStore): Uploaded {
     const gl = this.gl;
     const width = Math.min(16384, gl.getParameter(gl.MAX_TEXTURE_SIZE) as number);
-    const tracks = this.texture(s.trackData.subarray(0, s.tracks * TRACK_U32), 4, width);
+    // The tracks with their chunk spans after them.
+    const tracks = this.texture(s.trackData, 4, width);
     const keysA = this.texture(s.keysA, 2, width);
     const keysB = this.texture(s.keysB.length ? s.keysB : new Uint32Array(1), 1, width);
     const vis = this.texture(new Uint32Array(Math.max(1, Math.ceil(s.tracks / 32))), 1, width);
@@ -194,7 +195,7 @@ export class GlTracks {
     }
     gl.bindVertexArray(null);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
-    const bytes = s.tracks * TRACK_U32 * 4 + s.keysA.byteLength + s.keysB.byteLength + s.tracks * INSTANCE_STRIDE * 4 + (mk?.count ?? 0) * 20;
+    const bytes = s.trackData.byteLength + s.keysA.byteLength + s.keysB.byteLength + s.tracks * INSTANCE_STRIDE * 4 + (mk?.count ?? 0) * 20;
     return { store: s, width, tracks, keysA, keysB, vis, visSent: undefined, instances, dartBuf, dartVao, streakVao, marks, markVao, bytes };
   }
 
@@ -216,7 +217,7 @@ export class GlTracks {
     if (this.up && this.up.store !== s && sameKeys(this.up.store, s)) {
       // Recoloured: only the tracks' table again (the markers' colours with it), not the keys.
       gl.deleteTexture(this.up.tracks);
-      this.up.tracks = this.texture(s.trackData.subarray(0, s.tracks * TRACK_U32), 4, this.up.width);
+      this.up.tracks = this.texture(s.trackData, 4, this.up.width);
       if (this.up.marks && s.markers) this.up.marks = this.markBuffer(s, this.up.marks);
       this.up.store = s;
     }
@@ -250,6 +251,7 @@ export class GlTracks {
     U.i1('uW', up.width);
     U.mat4('uViewProj', viewProj);
     gl.uniform4f(U.loc('uCam'), camera[0], camera[1], camera[2], p.t);
+    gl.uniform1f(U.loc('uTLo'), p.t - Math.fround(p.t));
     gl.uniform4f(U.loc('uPx'), p.focalPx, p.orthoPx, p.minPixels, p.stale);
     gl.uniform4f(U.loc('uLod'), s.units, p.scale, p.fullPx, p.dartPx);
     gl.uniform4f(U.loc('uOpt'), weapons > 0 ? weapons : -1, visible ? 0 : 1, 0, 0);
@@ -311,6 +313,7 @@ export class GlTracks {
       T.i1('uW', up.width);
       T.mat4('uViewProj', viewProj);
       gl.uniform4f(T.loc('uCam'), camera[0], camera[1], camera[2], p.t);
+      gl.uniform1f(T.loc('uTLo'), p.t - Math.fround(p.t));
       gl.uniform4f(T.loc('uTrail'), p.trailSeconds, drop === null ? 0 : 1, drop ?? 0, TRAIL_SEGMENTS_GL);
       T.f3('uCameraPos', camera[0], camera[1], camera[2]);
       T.f1('uFadeStart', 1e9);

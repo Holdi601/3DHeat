@@ -53,7 +53,7 @@ function dispatch(pass: GPUComputePassEncoder, n: number): void {
 /** Pixels across a death's marker. */
 const MARKER_PX = 9;
 /** Uniform bytes. */
-const U_BYTES = 160;
+const U_BYTES = 176;
 
 /** Trail vertices the buffer holds: 32 bytes each, 128 MB. */
 const TRAIL_ROOM = 4_000_000;
@@ -264,6 +264,9 @@ export class GpuTracks {
     const drop = f.dropFloor ?? null;
     ui[38] = drop === null ? 0 : 1;
     fl[39] = drop ?? 0;
+    // The playhead past what its f32 holds (2 ms at five hours: half a metre at 250 m/s), and where the aim keys start.
+    fl[40] = f.t - fl[19];
+    ui[41] = s.trackData.length;
     if (f.visible && f.visible !== up.visSent) this.device.queue.writeBuffer(up.vis, 0, f.visible.buffer, f.visible.byteOffset, Math.min(f.visible.byteLength, up.vis.size));
     up.visSent = f.visible ?? null;
     this.trailsOn = f.trailSeconds > 0 || weapons > 0 || markSeconds > 0 || drop !== null;
