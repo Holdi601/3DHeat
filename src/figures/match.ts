@@ -67,7 +67,8 @@ export function figureForClass(cls: string): string | null {
  */
 const TYPE_RULES: [RegExp, string[], FigureDomain][] = [
   [/missile|rocket\b|\baam\b|\bsam\b/i, ['aam', 'agm'], 'missile'],
-  [/bomb/i, ['bomb'], 'missile'],
+  // Not "bomber": that is an aircraft (rule below).
+  [/bomb(?!er)/i, ['bomb'], 'missile'],
   [/torpedo/i, ['aam'], 'missile'],
   // Before the aircraft rule: "AntiAircraft" and "AircraftCarrier" have "Aircraft" in them.
   [/antiaircraft|airdefen[cs]e|\bspaa\b|\baaa\b/i, ['spaa', 'sam'], 'ground'],

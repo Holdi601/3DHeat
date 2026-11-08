@@ -236,6 +236,13 @@ export interface GroundSpec {
    * true trail, a trailer's own frame, a launcher's own base, a shelter of its own shape.
    */
   bare?: boolean;
+  /**
+   * The published length with the gun forward, from the rearmost part to the muzzle. Sources give a gun's length in two
+   * ways - the whole barrel (calibres x bore, a quarter of it inside the turret) or the part that shows - so a spec's
+   * `length` alone can put the muzzle well over a metre too far out; with this set, the gun that reaches furthest
+   * forward is drawn to end here, the part of its barrel inside the turret left out.
+   */
+  overall?: number;
   /** A rail vehicle's bogie centres, forward from the middle; the axles in each (default 2 on a long vehicle) and their spacing (default 1.8). */
   bogieAt?: number[];
   bogieAxles?: number;
@@ -349,7 +356,6 @@ function buildAt(input: GroundSpec): Template {
     const sb = top + (main.up ?? 0) + main.height * 0.15;
     fin(k.team, k.fr, [[sx, sb], [sx + 0.12, sb], [sx + 0.12, sb + main.height * 1.15], [sx, sb + main.height * 1.05]], main.side ?? 0, main.width * 1.5, grey(0.85));
   }
-  for (const g of spec.guns ?? []) gun(k, spec, g, top, turrets);
   if (chassis === 'tracked' && main && spec.hullOutline && (spec.guns ?? []).some((g) => g.mount === 'turret' && (g.turret ?? 0) === 0 && g.calibre >= 0.075)) engineDeck(k, spec, main);
   for (const m of spec.missiles ?? []) missiles(k, spec, m, top);
   for (const r of spec.radars ?? []) {
@@ -362,6 +368,8 @@ function buildAt(input: GroundSpec): Template {
     tube(k.fixed, k.fr, [x + 0.1, W * 0.15, top + 0.25], [x + 0.9, W * 0.15, top + 0.25], 0.03, 0.03, PAINT.dark, 5);
   }
   for (const a of spec.addOns ?? []) addOn(k, a, a.on === 'turret' && main ? [main.x, main.side ?? 0, top + (main.up ?? 0)] : [0, 0, 0]);
+  // The guns last, so a published length with the gun forward is measured from the rearmost part already drawn.
+  for (const g of reach(spec, turrets, rearOf(k))) gun(k, spec, g, top, turrets);
   return finish(k, 'ground');
 }
 
@@ -1351,6 +1359,67 @@ function turret(k: Kit, spec: GroundSpec, t: TurretSpec, base: number): void {
   }
 }
 
+/** Where a gun's barrel starts (forward from the middle): the turret front or the spec's own place. */
+function breechX(spec: GroundSpec, g: GunSpec, turrets: TurretSpec[]): number {
+  const t = turrets[g.turret ?? 0];
+  if (g.mount === 'turret' && t) {
+    // A casemate's gun comes through its sloped front plate, partway up.
+    if (t.gunX !== undefined) return t.x + t.gunX;
+    if (t.shape === 'casemate') return t.x + t.length / 2 - Math.min(t.length * 0.45, t.height * 1.1) * (g.at ?? 0.48) - 0.1;
+    return t.x + t.length / 2 - 0.1;
+  }
+  if (g.mount === 'turret-side' && t) return t.x + t.length * 0.35;
+  if (g.mount === 'hull') return g.x ?? spec.length / 2 - spec.length * 0.12;
+  if (g.mount === 'sponson') return (g.x ?? spec.length * 0.12) + Math.max(0.45, Math.min(0.9, spec.hullHeight * 0.3)) * 0.5;
+  return t ? t.x : 0;
+}
+
+/** The rearmost point of what a kit holds so far (forward is x in the kit's frame). */
+function rearOf(k: Kit): number {
+  let x = Infinity;
+  for (const b of [k.team, k.fixed]) for (let o = 0; o < b.count * 7; o += 7) x = Math.min(x, b.data[o]);
+  return Number.isFinite(x) ? x : 0;
+}
+
+/** How far forward of its breech a gun's muzzle reaches, level (a muzzle brake ends 2 % past the barrel's length). */
+const muzzleReach = (g: GunSpec) => (g.mount === 'top' ? g.length : (g.muzzle ? g.length * 1.02 : g.length) * Math.cos(g.elevation ?? 0.03));
+
+/**
+ * The guns, the one reaching furthest forward ended at the spec's published `overall` length: its barrel shortened
+ * (or lengthened) at the breech, the part that goes inside the turret, so the sleeve and fume extractor stay where
+ * they sit on the real barrel - their places given as shares of the whole barrel move to shares of the part shown.
+ */
+function reach(spec: GroundSpec, turrets: TurretSpec[], rear: number): GunSpec[] {
+  const guns = spec.guns ?? [];
+  if (!spec.overall || !guns.length) return guns;
+  let best = -1;
+  let tip = -Infinity;
+  guns.forEach((g, i) => {
+    if (g.mount === 'top') return;
+    const x = breechX(spec, g, turrets) + muzzleReach(g);
+    if (x > tip) {
+      tip = x;
+      best = i;
+    }
+  });
+  if (best < 0) return guns;
+  const g = guns[best];
+  const target = rear + spec.overall;
+  const per = muzzleReach(g) / g.length;
+  const shown = Math.max(0.3, (target - breechX(spec, g, turrets)) / per);
+  const hidden = g.length - shown;
+  if (Math.abs(hidden) < 0.02) return guns;
+  // A place along the whole barrel as a share of the part shown; gone when it falls inside the turret.
+  const move = (f: number | undefined) => {
+    if (f === undefined || hidden <= 0) return f;
+    const v = (f * g.length - hidden) / shown;
+    return v > 0.04 ? v : undefined;
+  };
+  const out = [...guns];
+  out[best] = { ...g, length: shown, sleeve: move(g.sleeve), extractor: move(g.extractor) };
+  return out;
+}
+
 function gun(k: Kit, spec: GroundSpec, g: GunSpec, top: number, turrets: TurretSpec[]): void {
   const t = turrets[g.turret ?? 0];
   const base = t ? top + (t.up ?? 0) : top;
@@ -1372,8 +1441,7 @@ function gun(k: Kit, spec: GroundSpec, g: GunSpec, top: number, turrets: TurretS
   };
   if (g.mount === 'turret' && t) {
     const up = base + t.height * (g.at ?? 0.48);
-    // A casemate's gun comes through its sloped front plate, partway up.
-    const x = t.gunX !== undefined ? t.x + t.gunX : t.shape === 'casemate' ? t.x + t.length / 2 - Math.min(t.length * 0.45, t.height * 1.1) * (g.at ?? 0.48) - 0.1 : t.x + t.length / 2 - 0.1;
+    const x = breechX(spec, g, turrets);
     if (!t.outline) {
       // A rounded mantlet lying across the turret front, the gun coming out of it.
       const mr = Math.min(t.height * 0.32, 0.3);
@@ -1391,11 +1459,11 @@ function gun(k: Kit, spec: GroundSpec, g: GunSpec, top: number, turrets: TurretS
     for (const side of [-1, 1]) {
       const s = (t.side ?? 0) + side * (t.width / 2 + r + 0.12);
       block(k.team, k.fr, [t.x + t.length * 0.1, s, up], t.length * 0.55, r * 4 + 0.1, r * 4 + 0.15, grey(0.72));
-      for (let i = 0; i < count; i++) barrel(t.x + t.length * 0.35, s + (i - (count - 1) / 2) * spread, up);
+      for (let i = 0; i < count; i++) barrel(breechX(spec, g, turrets), s + (i - (count - 1) / 2) * spread, up);
     }
   } else if (g.mount === 'hull') {
     const up = spec.hullHeight * (g.at ?? 0.72);
-    const x = g.x ?? spec.length / 2 - spec.length * 0.12;
+    const x = breechX(spec, g, turrets);
     // A towed gun's cradle and breech, which the barrel comes out of.
     if (spec.chassis === 'towed' || spec.chassis === 'pedestal') block(k.team, k.fr, [x, g.side ?? 0, up], 0.9, Math.max(0.35, spread * (count - 1) + 0.35), 0.4, grey(0.72));
     for (let i = 0; i < count; i++) barrel(x, (g.side ?? 0) + (i - (count - 1) / 2) * spread, up);

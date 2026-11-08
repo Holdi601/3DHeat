@@ -321,7 +321,7 @@ G['ztz-96b'] = { cls: 'mbt', ...ZTZ96, turret: turret(0.2, [[-2.2, 1.1], [-1.4, 
 // ---------------------------------------------------------------- light tanks and gun carriers
 
 // PT-76 (1951): a long boat hull, six road wheels and no return rollers, the small conical turret far forward, the 76 mm (7.63 x 3.15 m, 2.26 m).
-G['pt-76'] = { cls: 'light-tank', chassis: 'tracked', length: 7.63, width: 3.15, hullHeight: 1.55, roadWheels: 6, roadWheelRadius: 0.35, trackProfile: run(7.2, 0.85, [3.5, 0.55], [-3.6, 0.62], -3.0, 3.0), running: { wheels: [-2.75, -1.65, -0.55, 0.55, 1.65, 2.75] }, hullOutline: { top: [[-3.8, 1.35], [-3.6, 1.55], [1.6, 1.55], [3.8, 0.95]], bottom: [[-3.8, 0.75], [2.6, 0.7], [3.8, 0.95]], plan: [[-3.8, 1.5], [2.8, 1.55], [3.8, 1.2]], round: 8, stations: 12 }, turret: turret(1.2, [[-1.0, 0.7], [-0.7, 1.0], [0.5, 1.05], [1.0, 0.7]], [[-1.0, 0.5], [0.6, 0.6], [1.0, 0.45]], 2.6, 1.0), guns: [{ mount: 'turret', length: 3.4, calibre: 0.076, muzzle: true, extractor: 0.7, at: 0.5 }] };
+G['pt-76'] = { cls: 'light-tank', chassis: 'tracked', length: 6.91, width: 3.15, hullHeight: 1.55, roadWheels: 6, roadWheelRadius: 0.35, trackProfile: run(7.2, 0.85, [3.5, 0.55], [-3.6, 0.62], -3.0, 3.0), running: { wheels: [-2.75, -1.65, -0.55, 0.55, 1.65, 2.75] }, hullOutline: { top: [[-3.8, 1.35], [-3.6, 1.55], [1.6, 1.55], [3.8, 0.95]], bottom: [[-3.8, 0.75], [2.6, 0.7], [3.8, 0.95]], plan: [[-3.8, 1.5], [2.8, 1.55], [3.8, 1.2]], round: 8, stations: 12 }, turret: turret(1.2, [[-1.0, 0.7], [-0.7, 1.0], [0.5, 1.05], [1.0, 0.7]], [[-1.0, 0.5], [0.6, 0.6], [1.0, 0.45]], 2.6, 1.0), guns: [{ mount: 'turret', length: 3.4, calibre: 0.076, muzzle: true, extractor: 0.7, at: 0.5 }] };
 // FV101 Scorpion (1972): a small aluminium hull, five big road wheels, a small box turret with the short 76 mm (4.79 x 2.2 m, 2.1 m);
 // FV107 Scimitar the same with the long thin 30 mm RARDEN.
 const CVRT: GroundSpec = { chassis: 'tracked', length: 4.79, width: 2.2, hullHeight: 1.35, roadWheels: 5, roadWheelRadius: 0.3, trackProfile: run(4.6, 0.8, [2.3, 0.55], [-2.3, 0.6], -1.8, 1.9), running: { wheels: [-1.6, -0.8, 0, 0.8, 1.6] }, hullOutline: { top: [[-2.4, 1.1], [-2.3, 1.35], [0.7, 1.35], [2.4, 0.85]], bottom: [[-2.4, 0.6], [2.0, 0.6], [2.4, 0.85]], plan: [[-2.4, 1.1], [2.4, 1.0]], round: 10, stations: 10 }, turret: turret(-0.3, [[-0.9, 0.8], [-0.6, 0.95], [0.6, 0.95], [0.95, 0.7]], [[-0.9, 0.55], [0.6, 0.6], [0.95, 0.4]], 8, 0.9) };
@@ -426,8 +426,9 @@ const MILAN = tb(-0.1, -1.05, 0.65, 1.2, 0.16, 0.16, DARK);
 G['marder-1a1'] = { cls: 'ifv', ...MARDER, addOns: [MILAN] };
 G['marder-1a3'] = { cls: 'ifv', ...MARDER, width: 3.38, addOns: [MILAN, hb(-0.3, 1.68, 1.55, 5.4, 0.16, 0.65, M), tb(0.0, 1.05, 0.25, 1.6, 0.14, 0.45, M)] };
 // Puma (2015): a broad flat box with side armour modules down to the skirts, six road wheels, the low unmanned turret with
-// the 30 mm and the Spike launcher on its side (7.6 x 3.9 m, 3.6 m).
-G['puma'] = { cls: 'ifv', chassis: 'tracked', length: 7.6, width: 3.9, hullHeight: 2.35, roadWheels: 6, roadWheelRadius: 0.33, skirts: true, skirt: [[-3.7, 0.45], [3.5, 0.45], [3.7, 1.0], [3.7, 1.9], [-3.7, 1.9]], trackProfile: run(7.4, 1.0, [3.65, 0.7], [-3.65, 0.7], -3.0, 3.0), hullOutline: { top: [[-3.8, 2.2], [-3.6, 2.35], [1.4, 2.35], [3.8, 1.4]], bottom: [[-3.8, 1.0], [3.6, 1.0], [3.8, 1.2]], plan: [[-3.8, 1.95], [3.2, 1.95], [3.8, 1.6]], round: 12, stations: 12 }, turret: turret(0.1, [[-1.0, 0.8], [-0.8, 1.0], [0.9, 1.0], [1.2, 0.7]], [[-1.0, 0.5], [0.9, 0.55], [1.2, 0.4]], 10, 1.2), guns: [{ mount: 'turret', length: 3.0, calibre: 0.03, at: 0.5 }], addOns: [tb(-0.3, -1.15, 0.45, 1.1, 0.3, 0.35)] };
+// the 30 mm and the Spike launcher on its side, the commander's periscope head on its post over the turret's rear (7.6 x
+// 3.9 m, 3.6 m to the periscope's top).
+G['puma'] = { cls: 'ifv', chassis: 'tracked', length: 7.6, width: 3.9, hullHeight: 2.35, roadWheels: 6, roadWheelRadius: 0.33, skirts: true, skirt: [[-3.7, 0.45], [3.5, 0.45], [3.7, 1.0], [3.7, 1.9], [-3.7, 1.9]], trackProfile: run(7.4, 1.0, [3.65, 0.7], [-3.65, 0.7], -3.0, 3.0), hullOutline: { top: [[-3.8, 2.2], [-3.6, 2.35], [1.4, 2.35], [3.8, 1.4]], bottom: [[-3.8, 1.0], [3.6, 1.0], [3.8, 1.2]], plan: [[-3.8, 1.95], [3.2, 1.95], [3.8, 1.6]], round: 12, stations: 12 }, turret: turret(0.1, [[-1.0, 0.8], [-0.8, 1.0], [0.9, 1.0], [1.2, 0.7]], [[-1.0, 0.5], [0.9, 0.55], [1.2, 0.4]], 10, 1.2), guns: [{ mount: 'turret', length: 3.0, calibre: 0.03, at: 0.5 }], addOns: [tb(-0.3, -1.15, 0.45, 1.1, 0.3, 0.35), { on: 'turret', kind: 'drum', at: [-0.65, -0.55, 0.78], size: [0.2, 0.2, 0.46] }, tb(-0.65, -0.55, 1.13, 0.42, 0.34, 0.24, DARK)] };
 // CV90 (Strf 9040, 1993): a high box hull, seven road wheels, the two-man turret with the 40 mm in its shroud (6.47 x 3.1 m, 2.7 m);
 // CV9030 the 30 mm, CV9035 the longer 35 mm and a bustle, CV90120 / CV90105 a tank turret with the big gun.
 const CV90: GroundSpec = { chassis: 'tracked', length: 6.47, width: 3.1, hullHeight: 1.75, roadWheels: 7, roadWheelRadius: 0.3, skirts: true, trackProfile: run(6.3, 0.9, [3.15, 0.62], [-3.15, 0.65], -2.6, 2.55), hullOutline: { top: [[-3.24, 1.65], [-3.1, 1.75], [1.2, 1.75], [3.24, 1.0]], bottom: [[-3.24, 0.9], [3.0, 0.9], [3.24, 1.0]], plan: [[-3.24, 1.52], [3.24, 1.45]], round: 10, stations: 12 }, turret: turret(0.0, [[-1.3, 0.95], [-1.0, 1.15], [0.7, 1.2], [1.2, 0.9], [1.35, 0.55]], [[-1.3, 0.55], [0.7, 0.65], [1.35, 0.45]], 8, 1.3), guns: [{ mount: 'turret', length: 2.8, calibre: 0.04, sleeve: 0.75, at: 0.5 }] };
@@ -636,8 +637,9 @@ G['type-63-twin-25'] = { cls: 'spaa', chassis: 'tracked', length: 5.48, width: 2
 G['asrad-r'] = { cls: 'sam', chassis: 'tracked', length: 6.9, width: 1.87, hullHeight: 1.9, roadWheels: 8, roadWheelRadius: 0.2, hull: 'box', missiles: [{ mount: 'hull', rows: 2, cols: 2, length: 1.6, diameter: 0.2, boxes: true, elevation: 0.2, x: 1.2, up: 0.4 }] };
 // M8 AGS (1995): the CCVL's layout grown to six road wheels, the low turret with the 105 mm (6.2 x 2.69 m).
 G['m8-ags'] = { ...G['ccvl'], roadWheels: 6 };
-// Type 16 MCV (2016): a long 8x8 with evenly spaced axles and a Type 10-like turret with the 105 mm (8.45 x 2.98 m, 2.87 m).
-G['type-16-mcv'] = { cls: 'tank-destroyer', ...CENTAURO, length: 8.45, width: 2.98, axleAt: [0.75, 0.27, -0.27, -0.75], hullOutline: wheeledHull(8.45, 1.9, 1.15, 1.49, 1.9), turret: turret(-0.4, [[-2.0, 1.1], [-1.6, 1.35], [0.8, 1.4], [1.7, 1.0], [2.0, 0.5]], [[-2.0, 0.6], [0.8, 0.72], [2.0, 0.45]], 10, 1.95) };
+// Type 16 MCV (2016): a long 8x8 with evenly spaced axles and a Type 10-like turret with the 105 mm (8.45 m with the gun
+// forward, 2.98 m wide, 2.87 m high; the hull's 7.1 m is an estimate from photos, the gun overhanging the nose).
+G['type-16-mcv'] = { cls: 'tank-destroyer', ...CENTAURO, length: 7.1, width: 2.98, axleAt: [0.75, 0.27, -0.27, -0.75], hullOutline: wheeledHull(7.1, 1.9, 1.15, 1.49, 1.9), turret: turret(-0.4, [[-2.0, 1.1], [-1.6, 1.35], [0.8, 1.4], [1.7, 1.0], [2.0, 0.5]], [[-2.0, 0.6], [0.8, 0.72], [2.0, 0.45]], 10, 1.95) };
 // Namer (2008): the Merkava Mk 4 hull as a heavy carrier - no turret, a raised troop compartment and a remote station.
 G['namer'] = { ...MK4, cls: 'apc-tracked', turret: undefined, guns: undefined, addOns: [hb(-1.6, 0, 1.95, 4.0, 3.2, 0.5), hb(-0.6, 0.6, 2.45, 0.6, 0.5, 0.45, DARK), hb(-0.05, 0.6, 2.52, 1.0, 0.07, 0.07, DARK)] };
 
@@ -2181,14 +2183,16 @@ G['ush-204-gk'] = { cls: 'scout-car', chassis: 'wheeled', length: 5.0, width: 2.
 
 // ---------------------------------------------------------------- War Thunder replay ids that borrowed a figure
 
-// M40 106 mm recoilless rifle on its M79 mount, as fielded on the ground (3.4 m long): the tripod of two front legs and a
-// trail leg, the long thin tube with its breech chamber and flared venturi, the .50 spotting rifle along its top, the sight
-// on the left (heights and the mount's spread are estimates).
-G['m40-rr'] = { cls: 'towed-gun', chassis: 'static', bare: true, length: 3.4, width: 1.5, hullHeight: 0.9, addOns: [
-  ...[-1, 1].map((s) => rod([0.05, 0, 0.78], [0.75, s * 0.7, 0.02], 0.07, MT)), rod([-0.05, 0, 0.78], [-1.0, 0, 0.02], 0.08, MT),
-  hd(0, 0, 0.82, 0.16, 0.18, DARK), hb(0, 0, 0.94, 0.5, 0.2, 0.12, DARK),
-  rod([-1.35, 0, 1.0], [1.7, 0, 1.0], 0.14, MT), rod([-1.35, 0, 1.0], [-0.6, 0, 1.0], 0.24, MT), rod([-1.7, 0, 1.0], [-1.35, 0, 1.0], 0.26, MT, 0.18),
-  rod([-0.5, 0, 1.15], [1.05, 0, 1.15], 0.05, MT), hb(-0.35, 0, 1.12, 0.3, 0.1, 0.08, DARK), hb(-0.3, -0.16, 1.05, 0.25, 0.1, 0.14, DARK),
+// M40 106 mm recoilless rifle on its M79 "wheelbarrow" mount, as fielded on the ground (rifle 3.40 m long, 1.12 m high to
+// the spotting rifle, legs 1.52 m apart when spread): the pivot standing on a single small wheel under the front of the
+// mount and two fixed legs splayed back to the sides, the long thin tube with its breech chamber and flared venturi, the
+// .50 spotting rifle along its top, the sight on the left (the bore's height and the legs' run are estimates from photos).
+G['m40-rr'] = { cls: 'towed-gun', chassis: 'static', bare: true, length: 3.4, width: 1.52, hullHeight: 0.9, addOns: [
+  ...[-1, 1].map((s) => rod([-0.05, s * 0.06, 0.66], [-1.05, s * 0.74, 0.03], 0.06, MT)), ...[-1, 1].map((s) => hb(-1.05, s * 0.74, 0.03, 0.18, 0.12, 0.06, DARK)),
+  rod([0.05, 0, 0.66], [0.3, 0, 0.16], 0.07, MT), rod([0.3, -0.05, 0.13], [0.3, 0.05, 0.13], 0.26, { paint: 'tyre', segments: 10 }),
+  hd(0, 0, 0.7, 0.2, 0.14, DARK), hb(0, 0, 0.8, 0.45, 0.2, 0.12, DARK),
+  rod([-1.35, 0, 0.9], [1.7, 0, 0.9], 0.14, MT), rod([-1.35, 0, 0.9], [-0.6, 0, 0.9], 0.24, MT), rod([-1.7, 0, 0.9], [-1.35, 0, 0.9], 0.26, MT, 0.18),
+  rod([-0.5, 0, 1.05], [1.05, 0, 1.05], 0.05, MT), hb(-0.35, 0, 1.02, 0.3, 0.1, 0.08, DARK), hb(-0.3, -0.16, 0.97, 0.25, 0.1, 0.14, DARK),
 ] };
 
 // ZSU-37-2 Yenisei (6.36 x 3.1 m, 3.33 m): the GM-123 hull of the SU-100P family on six road wheels, the big flat-sided turret

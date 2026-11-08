@@ -18,7 +18,7 @@
 import type { SpecSet } from './index';
 import { cowlLip, type Cowl, type FixedWingSpec } from '../air';
 import type { Outline, P2 } from '../parts';
-import { AIRCRAFT, jet, piston, type Piston } from './aircraft';
+import { AIRCRAFT, DRAWN, F4U, jet, piston, type Piston } from './aircraft';
 
 type Spec = FixedWingSpec & { cls: string };
 
@@ -890,33 +890,38 @@ function filletFin(length: number, root: number, fillet: number, height: number,
 // Bf 109: a slim pointed nose, a narrow body, the framed canopy low, a short round-tipped wing (F 8.94 x 9.92 x 2.6 m);
 // the G-6's "Beulen" over the cowl guns either side ahead of the windscreen (9.02 m); the K-4's tall fin and rudder,
 // the clear Erla hood and faired bulges (8.95 m).
-// The radiators under the wings and the oil cooler under the nose (estimates).
+// The body, wing, tail and canopy line from the FM 30-30 three-view (DRAWN, the oil cooler under the nose in its
+// profile); the radiators under the wings (estimates).
 const BF109 = { cls: 'ww2-fighter', span: 9.92, height: 2.6, w: 0.45, h: 0.58, wing: 'round' as const, le: 1.3, root: 2.15, tip: 1.05, sweep: 3, fin: 1.25, finRoot: 1.3, roundFin: true, tailSpan: 3.0, tailRoot: 0.9, prop: 3.0, blades: 3, spinner: 0.34, rads: [0.95, 1.3, 1.3, 0.22] as [number, number, number, number] };
-const BF109_OIL = belly(3.4, 2.5, -0.35, -0.78, 0.2);
-A['bf-109-f'] = one({ ...BF109, length: 8.94, canopy: { x: 0.6, length: 1.6, kind: 'framed' }, bodies: [BF109_OIL] });
-A['bf-109-g6'] = one({ ...BF109, length: 9.02, canopy: { x: 0.6, length: 1.6, kind: 'framed' }, bodies: [BF109_OIL, bulge(2.75, 1.6, 0.35, 0.15, 0.16, 0.42)] });
-A['bf-109-k4'] = one({ ...BF109, length: 8.95, fin: 1.5, finRoot: 1.45, canopy: { x: 0.6, length: 1.6, kind: 'bubble' }, bodies: [BF109_OIL, bulge(3.1, 1.2, 0.35, 0.13, 0.11, 0.42)] });
+A['bf-109-f'] = one({ ...BF109, length: 8.94, canopy: { x: 1.02, length: 1.5, kind: 'framed' }, draw: DRAWN['bf-109-f'] });
+A['bf-109-g6'] = one({ ...BF109, length: 9.02, canopy: { x: 1.03, length: 1.52, kind: 'framed' }, draw: DRAWN['bf-109-g6'], bodies: [bulge(3.2, 2.05, 0.35, 0.15, 0.16, 0.42)] });
+A['bf-109-k4'] = one({ ...BF109, length: 8.95, fin: 1.5, finRoot: 1.45, canopy: { x: 1.02, length: 1.5, kind: 'bubble' }, draw: DRAWN['bf-109-k4'], bodies: [bulge(3.55, 1.65, 0.35, 0.13, 0.11, 0.42)] });
 
 // Spitfire: the elliptic wing, a long thin nose, a rounded fin. Mk V: the short Merlin nose, three blades (9.12 x 11.23 x 3.02 m);
 // Mk IX: the longer nose, four blades (9.47 x 11.23 x 3.86 m); Mk XIV: the long Griffon nose, five blades, the broad
 // fin, the cut-down rear deck and teardrop hood (9.96 x 11.23 x 3.86 m).
 // The radiators under both wings (the Mk V's smaller pair stands for its radiator and oil cooler; estimates).
 const SPIT = { cls: 'ww2-fighter', span: 11.23, w: 0.45, h: 0.62, spinner: 0.32, wing: 'elliptic' as const, le: 1.45, root: 2.6, tip: 0.3, fin: 1.35, finRoot: 1.3, roundFin: true, tailSpan: 3.3, tailRoot: 1.0 };
-A['spitfire-mk-v'] = one({ ...SPIT, length: 9.12, height: 3.02, le: 1.2, canopy: { x: -0.3, length: 1.5, kind: 'framed' }, razor: true, prop: 3.25, blades: 3, rads: [0.75, 1.55, 1.2, 0.2] });
-A['spitfire-mk-ix'] = one({ ...SPIT, length: 9.47, height: 3.86, canopy: { x: -0.3, length: 1.5, kind: 'framed' }, razor: true, prop: 3.3, blades: 4, rads: [0.95, 1.55, 1.35, 0.26] });
-A['spitfire-mk-xiv'] = one({ ...SPIT, length: 9.96, height: 3.86, le: 1.6, fin: 1.6, finRoot: 1.5, canopy: { x: -0.4, length: 1.5, kind: 'bubble' }, prop: 3.15, blades: 5, rads: [1.05, 1.55, 1.45, 0.3], bodies: [bulge(3.6, 2.4, 0.4, 0.12, 0.1, 0.36)] });
+// Body, wing, tail and canopy line from the recognition three-views (DRAWN: the V's from FM 30-30, the IX's the same
+// with the longer nose, the XIV's from the Journal of Recognition).
+A['spitfire-mk-v'] = one({ ...SPIT, length: 9.12, height: 3.02, le: 1.2, canopy: { x: -0.3, length: 1.5, kind: 'framed' }, razor: true, prop: 3.25, blades: 3, rads: [0.75, 1.55, 1.2, 0.2], draw: DRAWN['spitfire-mk-v'] });
+A['spitfire-mk-ix'] = one({ ...SPIT, length: 9.47, height: 3.86, canopy: { x: -0.3, length: 1.5, kind: 'framed' }, razor: true, prop: 3.3, blades: 4, rads: [0.95, 1.55, 1.35, 0.26], draw: DRAWN['spitfire-mk-ix'] });
+A['spitfire-mk-xiv'] = one({ ...SPIT, length: 9.96, height: 3.86, le: 1.6, fin: 1.6, finRoot: 1.5, canopy: { x: -0.4, length: 1.5, kind: 'bubble' }, prop: 3.15, blades: 5, rads: [1.05, 1.55, 1.45, 0.3], draw: DRAWN['spitfire-mk-xiv'], bodies: [bulge(3.6, 2.4, 0.4, 0.12, 0.1, 0.36)] });
 
 // P-51 Mustang: the belly radiator scoop, a straight square-tipped laminar wing. B: the razorback and the framed
 // (Malcolm) hood (9.83 x 11.28 x 4.16 m); D: the cut-down deck, the bubble and a dorsal fin fillet (9.83 x 11.28 x 4.08 m).
 const P51 = { cls: 'ww2-fighter', length: 9.83, span: 11.28, w: 0.52, h: 0.72, wing: 'square' as const, le: 1.5, root: 2.75, tip: 1.2, sweep: 1, fin: 1.5, finRoot: 1.8, tailSpan: 4.1, tailRoot: 1.1, prop: 3.4, blades: 4, scoop: [-1.2, 2.2, 0.35] as [number, number, number] };
-A['p-51b'] = one({ ...P51, height: 4.16, canopy: { x: -0.1, length: 1.5, kind: 'framed' }, razor: true });
-A['p-51d-mustang'] = one({ ...P51, height: 4.08, canopy: { x: -0.1, length: 1.8, kind: 'bubble' }, finOutline: filletFin(9.83, 1.8, 1.1, 1.5, 0.75) });
+A['p-51b'] = one({ ...P51, height: 4.16, canopy: { x: -0.1, length: 1.5, kind: 'framed' }, razor: true, scoop: undefined, draw: DRAWN['p-51b'] });
+// The D drawn from the Journal of Recognition's three-view (DRAWN: the belly scoop and the dorsal fillet in its profile).
+A['p-51d-mustang'] = one({ ...P51, height: 4.08, canopy: { x: 0.35, length: 1.9, kind: 'bubble' }, scoop: undefined, draw: DRAWN['p-51d-mustang'] });
 
 // P-47 Thunderbolt: the huge round body and radial with the turbo duct under the cowl, a round-tipped wing; the
 // razorback's spine runs to the fin, the D-25 on has the bubble (11.0 x 12.42 x 4.47 m).
 const P47 = { cls: 'ww2-fighter', length: 11.0, span: 12.42, height: 4.47, w: 0.72, h: 1.0, cowl: 0.72, cowlH: 0.85, waist: 0.66, radial: true, wing: 'round' as const, le: 1.8, root: 2.9, tip: 1.3, sweep: 2, fin: 1.6, finRoot: 1.8, roundFin: true, tailSpan: 4.6, tailRoot: 1.2, prop: 3.7, blades: 4, bodies: [belly(4.6, 2.4, -0.7, -1.2, 0.5)] };
-A['p-47d'] = one({ ...P47, canopy: { x: 0.2, length: 1.8, kind: 'bubble' } });
-A['p-47d-razorback'] = one({ ...P47, canopy: { x: 0.2, length: 1.6, kind: 'framed' }, razor: true });
+// Drawn (DRAWN: the razorback from FM 30-30's P-47D, the bubble D with the P-47N's body from the Journal of
+// Recognition): the turbo duct under the cowl is in their profiles.
+A['p-47d'] = one({ ...P47, canopy: { x: 0.2, length: 1.8, kind: 'bubble' }, draw: DRAWN['p-47d'], bodies: [] });
+A['p-47d-razorback'] = one({ ...P47, canopy: { x: 0.2, length: 1.6, kind: 'framed' }, razor: true, draw: DRAWN['p-47d-razorback'], bodies: [] });
 
 // Ta 152H: the Fw 190 D's long annular nose and stretched tail on a very long, narrow wing (10.82 x 14.44 x 3.36 m).
 A['ta-152h'] = one({ cls: 'ww2-fighter', length: 10.82, span: 14.44, height: 3.36, w: 0.6, h: 0.66, radial: true, wing: 'tapered', le: 1.4, root: 2.4, tip: 0.9, sweep: 3, fin: 1.4, finRoot: 1.6, roundFin: true, tailSpan: 3.65, tailRoot: 0.95, canopy: { x: -0.4, length: 1.8, kind: 'bubble' }, prop: 3.6, blades: 4 });
@@ -931,10 +936,12 @@ A['lagg-3'] = one({ cls: 'ww2-fighter', length: 8.81, span: 9.8, height: 2.54, w
 // intake, the oil cooler moved under the rear body, a cleaner cowl (8.6 m); La-11: the La-7 with a bigger fin, the
 // cooler back in the cowl lip (8.62 x 9.8 x 3.47 m).
 const LA = { cls: 'ww2-fighter', span: 9.8, w: 0.62, h: 0.68, radial: true, wing: 'round' as const, le: 1.6, root: 2.5, tip: 1.1, sweep: 4, dihedral: 5, fin: 1.2, finRoot: 1.3, roundFin: true, tailSpan: 3.6, tailRoot: 1.0, prop: 3.1, blades: 3 };
-A['la-5'] = one({ ...LA, length: 8.67, height: 2.54, canopy: { x: -0.4, length: 1.5, kind: 'framed' }, bodies: [{ top: [[3.7, 0.55], [3.3, 0.86], [2.5, 0.8], [2.2, 0.55]], bottom: [[3.7, 0.4], [2.2, 0.4]], plan: [[3.7, 0.12], [3.3, 0.22], [2.2, 0.15]], round: 2.4, stations: 6 }, belly(3.6, 2.2, -0.5, -0.88, 0.32)] });
-// The La-7's long low hood with the glazed fairing behind it, the oil cooler under the rear body and the
-// supercharger's intakes in the wing roots' leading edges (estimates).
-A['la-7'] = one({ ...LA, length: 8.6, height: 2.54, canopy: { x: -0.55, length: 1.9, kind: 'bubble' }, hood: 0.42, scoop: [-1.3, 1.2, 0.24], bodies: [bulge(1.75, 0.95, -0.42, 0.11, 0.13, 0.62)] });
+// Drawn from the Journal of Recognition (DRAWN: the intake on the cowl and the oil cooler under it in its profile).
+A['la-5'] = one({ ...LA, length: 8.67, height: 2.54, canopy: { x: -0.4, length: 1.5, kind: 'framed' }, draw: DRAWN['la-5'] });
+// The La-7 drawn from the Journal of Recognition's La-5 three-view (DRAWN, its long low hood and glazed fairing in
+// the canopy line); the oil cooler under the rear body and the supercharger's intakes in the wing roots' leading
+// edges (estimates).
+A['la-7'] = one({ ...LA, length: 8.6, height: 2.54, canopy: { x: 0.3, length: 2.0, kind: 'bubble' }, scoop: [-1.3, 1.2, 0.24], draw: DRAWN['la-7'], bodies: [bulge(2.3, 1.5, -0.42, 0.11, 0.13, 0.62)] });
 A['la-11'] = one({ ...LA, length: 8.62, height: 3.47, fin: 1.4, finRoot: 1.45, canopy: { x: -0.4, length: 1.5, kind: 'bubble' }, bodies: [belly(3.9, 3.0, -0.55, -0.78, 0.28)] });
 // MiG-3: a long inline nose with the cockpit far back, the radiator under it, a razorback (8.25 x 10.2 x 3.5 m).
 A['mig-3'] = one({ cls: 'ww2-fighter', length: 8.25, span: 10.2, height: 3.5, w: 0.5, h: 0.62, wing: 'tapered', le: 1.2, root: 2.5, tip: 1.0, sweep: 5, dihedral: 6, fin: 1.25, finRoot: 1.3, roundFin: true, tailSpan: 3.8, tailRoot: 0.9, canopy: { x: -0.9, length: 1.4, kind: 'framed' }, razor: true, prop: 3.0, blades: 3, scoop: [-0.6, 1.4, 0.3] });
@@ -942,10 +949,13 @@ A['mig-3'] = one({ cls: 'ww2-fighter', length: 8.25, span: 10.2, height: 3.5, w:
 // cut-down deck and bubble; Yak-7B: the razorback with the longer canopy (2.75 m); Yak-9: the cut-down deck, the chin
 // oil cooler (8.55 x 9.74 x 3.0 m); Yak-3: smaller (9.2 m span), the oil coolers in the wing roots, the radiator further back.
 const YAK = { cls: 'ww2-fighter', w: 0.5, h: 0.6, wing: 'tapered' as const, le: 1.4, root: 2.4, tip: 1.1, sweep: 4, dihedral: 6, fin: 1.2, finRoot: 1.2, roundFin: true, tailSpan: 3.6, tailRoot: 0.95, prop: 3.0, blades: 3 };
-A['yak-1'] = one({ ...YAK, length: 8.48, span: 10.0, height: 2.64, canopy: { x: -0.2, length: 1.5, kind: 'framed' }, razor: true, scoop: [-0.2, 1.4, 0.28] });
-A['yak-1b'] = one({ ...YAK, length: 8.48, span: 10.0, height: 2.64, canopy: { x: -0.2, length: 1.5, kind: 'bubble' }, scoop: [-0.2, 1.4, 0.28] });
-A['yak-7b'] = one({ ...YAK, length: 8.48, span: 10.0, height: 2.75, canopy: { x: -0.4, length: 2.0, kind: 'framed' }, razor: true, scoop: [-0.2, 1.4, 0.28] });
-A['yak-9'] = one({ ...YAK, length: 8.55, span: 9.74, height: 3.0, root: 2.3, tip: 1.0, canopy: { x: -0.3, length: 1.5, kind: 'bubble' }, scoop: [-0.4, 1.5, 0.28], bodies: [belly(3.7, 2.8, -0.3, -0.68, 0.22)] });
+// The Yak-1, 1b and 7B from the Yak-9's drawing at their size (DRAWN, the radiator bath in its profile), the
+// razorbacks' spine added.
+A['yak-1'] = one({ ...YAK, length: 8.48, span: 10.0, height: 2.64, canopy: { x: -0.2, length: 1.5, kind: 'framed' }, razor: true, draw: DRAWN['yak-1'] });
+A['yak-1b'] = one({ ...YAK, length: 8.48, span: 10.0, height: 2.64, canopy: { x: -0.2, length: 1.5, kind: 'bubble' }, draw: DRAWN['yak-1b'] });
+A['yak-7b'] = one({ ...YAK, length: 8.48, span: 10.0, height: 2.75, canopy: { x: -0.4, length: 2.0, kind: 'framed' }, razor: true, draw: DRAWN['yak-7b'] });
+// The Yak-9 drawn from the Journal of Recognition (DRAWN: its radiator bath and chin cooler in the profile).
+A['yak-9'] = one({ ...YAK, length: 8.55, span: 9.74, height: 3.0, root: 2.3, tip: 1.0, canopy: { x: -0.3, length: 1.5, kind: 'bubble' }, draw: DRAWN['yak-9'] });
 A['yak-3'] = one({ ...YAK, length: 8.5, span: 9.2, height: 2.39, le: 1.3, root: 2.2, tip: 0.95, canopy: { x: -0.3, length: 1.3, kind: 'bubble' }, scoop: [-0.9, 1.2, 0.25], bodies: [bulge(1.5, 0.7, -0.35, 0.12, 0.14, 0.5)] });
 // Il-10: the Il-2's successor, cleaner, the long two-seat canopy and a tapered wing (11.12 x 13.4 x 4.18 m).
 A['il-10'] = one({ cls: 'ww2-attack', length: 11.12, span: 13.4, height: 4.18, w: 0.62, h: 0.8, wing: 'tapered', le: 1.6, root: 3.0, tip: 1.2, sweep: 8, fin: 1.5, finRoot: 1.6, roundFin: true, tailSpan: 4.6, tailRoot: 1.2, canopy: { x: 0.2, length: 2.6, kind: 'framed' }, razor: true, prop: 3.6, blades: 4, scoop: [0.0, 1.4, 0.2] });
@@ -957,7 +967,7 @@ A['yak-52'] = one({ cls: 'trainer', length: 7.75, span: 9.3, height: 2.7, w: 0.5
 // P-40E: the big chin radiator under the nose, a razorback, a round-tipped wing (9.66 x 11.38 x 3.76 m).
 A['p-40e'] = one({ cls: 'ww2-fighter', length: 9.66, span: 11.38, height: 3.76, w: 0.52, h: 0.68, wing: 'round', le: 1.5, root: 2.6, tip: 1.2, sweep: 3, dihedral: 6, fin: 1.4, finRoot: 1.5, roundFin: true, tailSpan: 4.0, tailRoot: 1.1, canopy: { x: -0.5, length: 1.5, kind: 'framed' }, razor: true, prop: 3.4, blades: 3, bodies: [belly(4.5, 2.2, -0.4, -1.05, 0.45)] });
 // P-39 Airacobra: the cockpit well forward with car doors, the engine behind it fed from a dorsal intake (9.2 x 10.36 x 3.79 m).
-A['p-39'] = one({ cls: 'ww2-fighter', length: 9.2, span: 10.36, height: 3.79, w: 0.52, h: 0.68, wing: 'tapered', le: 1.2, root: 2.5, tip: 1.1, sweep: 3, fin: 1.6, finRoot: 1.6, roundFin: true, tailSpan: 4.0, tailRoot: 1.1, canopy: { x: 1.4, length: 1.5, kind: 'framed' }, razor: true, prop: 3.2, blades: 3, bodies: [{ top: [[0.5, 0.7], [0.1, 0.98], [-0.8, 0.85], [-1.3, 0.6]], bottom: [[0.5, 0.5], [-1.3, 0.5]], plan: [[0.5, 0.1], [0.1, 0.22], [-1.3, 0.14]], round: 2.4, stations: 6 }] });
+A['p-39'] = one({ cls: 'ww2-fighter', midEngine: true, length: 9.2, span: 10.36, height: 3.79, w: 0.52, h: 0.68, wing: 'tapered', le: 1.2, root: 2.5, tip: 1.1, sweep: 3, fin: 1.6, finRoot: 1.6, roundFin: true, tailSpan: 4.0, tailRoot: 1.1, canopy: { x: 1.4, length: 1.5, kind: 'framed' }, razor: true, prop: 3.2, blades: 3, bodies: [{ top: [[0.5, 0.7], [0.1, 0.98], [-0.8, 0.85], [-1.3, 0.6]], bottom: [[0.5, 0.5], [-1.3, 0.5]], plan: [[0.5, 0.1], [0.1, 0.22], [-1.3, 0.14]], round: 2.4, stations: 6 }] });
 // F6F Hellcat: a deep body behind the big radial, the cockpit on a hump, a square-tipped low wing, a big fin (10.24 x 13.06 x 3.99 m).
 A['f6f-hellcat'] = one({ cls: 'ww2-fighter', length: 10.24, span: 13.06, height: 3.99, w: 0.7, h: 0.9, radial: true, wing: 'square', le: 1.8, root: 3.1, tip: 1.6, sweep: 3, mount: -0.7, dihedral: 5, fin: 1.8, finRoot: 1.9, roundFin: true, tailSpan: 5.0, tailRoot: 1.3, canopy: { x: 0.4, length: 1.6, kind: 'framed' }, razor: true, prop: 4.0, blades: 3, bodies: [belly(4.7, 3.4, -0.6, -1.05, 0.38)] });
 // SBD Dauntless: a radial dive bomber with the long two-seat greenhouse, a round-tipped wing (10.09 x 12.66 x 4.14 m).
@@ -1606,7 +1616,7 @@ A['s-199'] = one({ ...BF109, length: 8.94, h: 0.6, spinner: 0.38, prop: 3.2, can
 // Bf 109 B/C: the Jumo 210, its big radiator under the nose, two blades, the early square-tipped wing (8.55 x 9.87 x 2.45 m).
 A['bf-109-b'] = one({ ...BF109, length: 8.55, span: 9.87, height: 2.45, wing: 'square', tip: 1.2, spinner: 0.24, rads: undefined, canopy: { x: 0.5, length: 1.5, kind: 'framed' }, prop: 3.1, blades: 2, bodies: [belly(3.1, 2.0, -0.35, -0.9, 0.28)] });
 // P-63 Kingcobra: the P-39 grown, a taller pointed fin, four blades, a laminar wing (9.96 x 11.68 x 3.84 m).
-A['p-63'] = one({ cls: 'ww2-fighter', length: 9.96, span: 11.68, height: 3.84, w: 0.54, h: 0.7, wing: 'tapered', le: 1.2, root: 2.6, tip: 1.1, sweep: 2, fin: 1.9, finRoot: 1.9, tailSpan: 4.3, tailRoot: 1.1, canopy: { x: 1.5, length: 1.5, kind: 'framed' }, razor: true, prop: 3.6, blades: 4, bodies: [{ top: [[0.5, 0.72], [0.1, 1.0], [-0.8, 0.88], [-1.3, 0.62]], bottom: [[0.5, 0.5], [-1.3, 0.5]], plan: [[0.5, 0.1], [0.1, 0.22], [-1.3, 0.14]], round: 2.4, stations: 6 }] });
+A['p-63'] = one({ cls: 'ww2-fighter', midEngine: true, length: 9.96, span: 11.68, height: 3.84, w: 0.54, h: 0.7, wing: 'tapered', le: 1.2, root: 2.6, tip: 1.1, sweep: 2, fin: 1.9, finRoot: 1.9, tailSpan: 4.3, tailRoot: 1.1, canopy: { x: 1.5, length: 1.5, kind: 'framed' }, razor: true, prop: 3.6, blades: 4, bodies: [{ top: [[0.5, 0.72], [0.1, 1.0], [-0.8, 0.88], [-1.3, 0.62]], bottom: [[0.5, 0.5], [-1.3, 0.5]], plan: [[0.5, 0.1], [0.1, 0.22], [-1.3, 0.14]], round: 2.4, stations: 6 }] });
 // He 112: a Jumo inline with an elliptic-tipped wing and a near-bubble hood (9.22 x 9.09 x 3.82 m).
 A['he-112'] = one({ cls: 'ww2-fighter', length: 9.22, span: 9.09, height: 3.82, w: 0.48, h: 0.62, wing: 'elliptic', le: 1.3, root: 2.4, tip: 0.5, dihedral: 6, fin: 1.3, finRoot: 1.4, roundFin: true, tailSpan: 3.4, tailRoot: 0.9, canopy: { x: -0.3, length: 1.6, kind: 'bubble' }, prop: 3.0, blades: 3, scoop: [0.0, 1.2, 0.3] });
 // Ki-32: an inline light bomber with fixed spatted gear and the long two-seat greenhouse (11.64 x 15.0 x 2.9 m).
@@ -1798,14 +1808,14 @@ A['hs-129b-3'] = { ...A['hs-129'], bodies: [...A['hs-129'].bodies!,
 ] };
 
 // P-47N: the long-range Thunderbolt - the bigger wing with squared tips, the bubble and the dorsal fin fillet (11.13 x 12.98 x 4.47 m).
-A['p-47n'] = one({ ...P47, length: 11.13, span: 12.98, wing: 'square', tip: 1.45, canopy: { x: 0.2, length: 1.8, kind: 'bubble' }, finOutline: filletFin(11.13, 1.8, 1.1, 1.6, 0.8) });
+A['p-47n'] = one({ ...P47, length: 11.13, span: 12.98, wing: 'square', tip: 1.45, canopy: { x: 0.2, length: 1.8, kind: 'bubble' }, draw: DRAWN['p-47n'], bodies: [] });
 
 // P-51 / A-36 / Mustang I and IA: the Allison nose - the carburettor intake on top behind the spinner, no chin scoop, three
 // blades, the framed hood on the razorback (9.83 x 11.28 x 3.71 m).
-A['p-51a'] = one({ ...P51, height: 3.71, prop: 3.1, blades: 3, canopy: { x: -0.1, length: 1.5, kind: 'framed' }, razor: true, bodies: [{ top: [[3.95, 0.6], [3.6, 0.82], [2.7, 0.74], [2.4, 0.6]], bottom: [[3.95, 0.5], [2.4, 0.5]], plan: [[3.95, 0.12], [3.6, 0.15], [2.4, 0.1]], round: 3, stations: 6 }] });
+A['p-51a'] = one({ ...P51, height: 3.71, prop: 3.1, blades: 3, canopy: { x: -0.1, length: 1.5, kind: 'framed' }, razor: true, scoop: undefined, draw: DRAWN['p-51a'], bodies: [{ top: [[3.95, 0.6], [3.6, 0.82], [2.7, 0.74], [2.4, 0.6]], bottom: [[3.95, 0.5], [2.4, 0.5]], plan: [[3.95, 0.12], [3.6, 0.15], [2.4, 0.1]], round: 3, stations: 6 }] });
 
 // F4U-4 Corsair: the -1D's airframe with the R-2800-18W, the chin intake under the cowl and four blades (10.27 x 12.5 x 4.5 m).
-A['f4u-4'] = { ...AIRCRAFT.air!['f4u-corsair'], length: 10.27, propeller: { diameter: 3.96, blades: 4 }, bodies: [...(AIRCRAFT.air!['f4u-corsair'].bodies ?? []), belly(4.75, 3.7, -0.55, -0.98, 0.32)] };
+A['f4u-4'] = one({ ...F4U, length: 10.27, prop: 3.96, blades: 4, draw: DRAWN['f4u-4'], bodies: [belly(4.75, 3.7, -0.55, -0.98, 0.32)] });
 
 // Firefly FR.4: the Griffon 74 without the chin radiator, the radiators moved into fairings ahead of the wing roots, the
 // clipped square tips and four blades (11.56 x 12.55 x 4.37 m; the fairings' sizes are estimates).
