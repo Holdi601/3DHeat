@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Ömür",
   "heat.timeline.window.lifetimeTitle": "Her veri noktası aynı kişinin bir sonraki örneğine kadar yaşar; yani kişi başına tek bir güncel konum. Sonraki örneği olmayan noktalar yedek ömrü kullanır.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Özel…",
+  "heat.timeline.speedCustomTitle": "{min}× ile {max}× arasında herhangi bir hız yazın (ör. 0,3 veya 12), ardından Enter. Esc mevcut hızı korur.",
   "heat.timeline.allClock": "tümü · {span} veri",
   "heat.timeline.allTitle": "Oynatma kafasını yok sayarak tüm veri noktalarını aynı anda göster",
   "heat.timeline.all": "Tümü",

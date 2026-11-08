@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Elinaika",
   "heat.timeline.window.lifetimeTitle": "Jokainen datapiste elää saman henkilön seuraavaan näytteeseen asti, joten kullakin henkilöllä on yksi nykyinen sijainti. Pisteet, joilla ei ole seuraavaa näytettä, käyttävät varaelinaikaa.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Mukautettu…",
+  "heat.timeline.speedCustomTitle": "Kirjoita mikä tahansa nopeus väliltä {min}×–{max}× (esim. 0,3 tai 12) ja paina Enter. Esc pitää nykyisen.",
   "heat.timeline.allClock": "kaikki · {span} dataa",
   "heat.timeline.allTitle": "Näytä kaikki datapisteet kerralla toistokohdasta välittämättä",
   "heat.timeline.all": "Kaikki",

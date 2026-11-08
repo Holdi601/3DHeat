@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "수명",
   "heat.timeline.window.lifetimeTitle": "각 데이터 포인트는 같은 사람의 다음 샘플까지 살아 있으므로, 사람마다 현재 위치가 하나입니다. 다음 샘플이 없는 점은 대체 수명을 씁니다.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "사용자 지정…",
+  "heat.timeline.speedCustomTitle": "{min}×부터 {max}×까지 원하는 속도를 입력하고 Enter를 누르세요(예: 0.3 또는 12). Esc는 현재 속도를 유지합니다.",
   "heat.timeline.allClock": "전체 · 데이터 {span}",
   "heat.timeline.allTitle": "재생 헤드와 상관없이 모든 데이터 포인트를 한꺼번에 표시",
   "heat.timeline.all": "전체",

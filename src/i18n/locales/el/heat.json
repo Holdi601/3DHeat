@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Διάρκεια ζωής",
   "heat.timeline.window.lifetimeTitle": "Κάθε σημείο δεδομένων ζει μέχρι το επόμενο δείγμα του ίδιου ατόμου, άρα μία τρέχουσα θέση ανά άτομο. Τα σημεία χωρίς επόμενο δείγμα χρησιμοποιούν την εφεδρική διάρκεια ζωής.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Προσαρμογή…",
+  "heat.timeline.speedCustomTitle": "Πληκτρολογήστε οποιαδήποτε ταχύτητα από {min}× έως {max}× (π.χ. 0,3 ή 12) και πατήστε Enter. Το Esc κρατά την τρέχουσα.",
   "heat.timeline.allClock": "όλα · {span} δεδομένων",
   "heat.timeline.allTitle": "Εμφάνιση όλων των σημείων δεδομένων ταυτόχρονα, αγνοώντας την κεφαλή αναπαραγωγής",
   "heat.timeline.all": "Όλα",

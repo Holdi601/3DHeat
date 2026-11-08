@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Время жизни",
   "heat.timeline.window.lifetimeTitle": "Каждая точка данных живёт до следующего отсчёта того же человека, то есть на каждого человека приходится одна текущая позиция. Точки без следующего отсчёта используют резервное время жизни.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Своя…",
+  "heat.timeline.speedCustomTitle": "Введите любую скорость от {min}× до {max}× (например, 0,3 или 12) и нажмите Enter. Esc оставляет текущую.",
   "heat.timeline.allClock": "все · {span} данных",
   "heat.timeline.allTitle": "Показать все точки данных сразу, без учёта точки воспроизведения",
   "heat.timeline.all": "Все",

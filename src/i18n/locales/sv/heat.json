@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Livstid",
   "heat.timeline.window.lifetimeTitle": "Varje datapunkt lever tills samma persons nästa sampling, alltså en aktuell position per person. Punkter utan nästa sampling använder reservlivstiden.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Anpassad…",
+  "heat.timeline.speedCustomTitle": "Skriv valfri hastighet från {min}× till {max}× (t.ex. 0,3 eller 12) och tryck Enter. Esc behåller den nuvarande.",
   "heat.timeline.allClock": "alla · {span} data",
   "heat.timeline.allTitle": "Visa alla datapunkter på en gång, oavsett uppspelningsmarkören",
   "heat.timeline.all": "Alla",

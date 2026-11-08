@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Lebensdauer",
   "heat.timeline.window.lifetimeTitle": "Jeder Datenpunkt lebt bis zum nächsten Messwert derselben Person, also gibt es eine aktuelle Position pro Person. Punkte ohne nächsten Messwert nutzen die Ersatz-Lebensdauer.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Eigene…",
+  "heat.timeline.speedCustomTitle": "Beliebige Geschwindigkeit von {min}× bis {max}× eingeben (z. B. 0,3 oder 12), dann Enter. Esc behält die aktuelle.",
   "heat.timeline.allClock": "alle · {span} Daten",
   "heat.timeline.allTitle": "Alle Datenpunkte auf einmal zeigen, ohne Rücksicht auf den Abspielkopf",
   "heat.timeline.all": "Alle",

@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Трајање",
   "heat.timeline.window.lifetimeTitle": "Свака тачка података траје до следећег узорка исте особе, па по особи постоји један тренутни положај. Тачке без следећег узорка користе резервно трајање.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Прилагођено…",
+  "heat.timeline.speedCustomTitle": "Унесите било коју брзину од {min}× до {max}× (нпр. 0,3 или 12), па Enter. Esc задржава тренутну.",
   "heat.timeline.allClock": "све · {span} података",
   "heat.timeline.allTitle": "Прикажи све тачке података одједном, без обзира на показивач репродукције",
   "heat.timeline.all": "Све",

@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Jetëgjatësi",
   "heat.timeline.window.lifetimeTitle": "Çdo pikë të dhënash jeton deri te kampioni i radhës i të njëjtit person, pra një pozicion aktual për person. Pikat pa kampion të radhës përdorin jetëgjatësinë rezervë.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "E personalizuar…",
+  "heat.timeline.speedCustomTitle": "Shkruani çdo shpejtësi nga {min}× deri në {max}× (p.sh. 0,3 ose 12), pastaj Enter. Esc mban shpejtësinë aktuale.",
   "heat.timeline.allClock": "të gjitha · {span} të dhëna",
   "heat.timeline.allTitle": "Shfaq të gjitha pikat e të dhënave njëherësh, duke shpërfillur treguesin e luajtjes",
   "heat.timeline.all": "Të gjitha",

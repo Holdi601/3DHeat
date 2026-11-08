@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "存續時間",
   "heat.timeline.window.lifetimeTitle": "每個資料點存續到同一人的下一個取樣為止，因此每人只有一個目前位置。沒有下一個取樣的資料點會使用備用存續時間。",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "自訂…",
+  "heat.timeline.speedCustomTitle": "輸入 {min}× 到 {max}× 之間的任意速度（如 0.3 或 12），按 Enter 確認。Esc 保留目前速度。",
   "heat.timeline.allClock": "全部 · {span} 的資料",
   "heat.timeline.allTitle": "忽略播放頭，一次顯示所有資料點",
   "heat.timeline.all": "全部",

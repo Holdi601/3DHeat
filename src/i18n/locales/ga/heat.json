@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Saolré",
   "heat.timeline.window.lifetimeTitle": "Maireann gach pointe sonraí go dtí an chéad sampla eile ón duine céanna, mar sin suíomh reatha amháin in aghaidh an duine. Úsáideann pointí gan sampla eile an tsaolré chúltaca.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Saincheaptha…",
+  "heat.timeline.speedCustomTitle": "Clóscríobh luas ar bith ó {min}× go {max}× (m.sh. 0.3 nó 12), ansin Enter. Coinníonn Esc an luas reatha.",
   "heat.timeline.allClock": "uile · {span} sonraí",
   "heat.timeline.allTitle": "Taispeáin gach pointe sonraí in éineacht, gan aird ar an gceann seinnte",
   "heat.timeline.all": "Uile",

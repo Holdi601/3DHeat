@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Eluiga",
   "heat.timeline.window.lifetimeTitle": "Iga andmepunkt elab kuni sama isiku järgmise proovini, seega on igal isikul üks praegune asukoht. Punktid, millel järgmist proovi pole, kasutavad varueluiga.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Kohandatud…",
+  "heat.timeline.speedCustomTitle": "Sisestage mis tahes kiirus vahemikus {min}× kuni {max}× (nt 0,3 või 12) ja vajutage Enter. Esc jätab praeguse.",
   "heat.timeline.allClock": "kõik · {span} andmeid",
   "heat.timeline.allTitle": "Näita kõiki andmepunkte korraga, esituspead eirates",
   "heat.timeline.all": "Kõik",

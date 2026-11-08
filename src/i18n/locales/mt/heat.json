@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Ħajja",
   "heat.timeline.window.lifetimeTitle": "Kull punt tad-dejta jgħix sal-kampjun li jmiss tal-istess persuna, għalhekk pożizzjoni attwali waħda għal kull persuna. Il-punti mingħajr kampjun li jmiss jużaw il-ħajja ta' riżerva.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Personalizzata…",
+  "heat.timeline.speedCustomTitle": "Ikteb kwalunkwe veloċità minn {min}× sa {max}× (eż. 0.3 jew 12), imbagħad Enter. Esc iżżomm dik attwali.",
   "heat.timeline.allClock": "kollox · {span} ta' dejta",
   "heat.timeline.allTitle": "Uri kull punt tad-dejta f'daqqa, billi tinjora l-playhead",
   "heat.timeline.all": "Kollox",

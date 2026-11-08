@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Temps de vida",
   "heat.timeline.window.lifetimeTitle": "Cada punt de dades viu fins a la mostra següent de la mateixa persona, així que hi ha una posició actual per persona. Els punts sense mostra següent fan servir la vida per defecte.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Personalitzada…",
+  "heat.timeline.speedCustomTitle": "Escriviu qualsevol velocitat de {min}× a {max}× (p. ex. 0,3 o 12) i premeu Retorn. Esc manté l’actual.",
   "heat.timeline.allClock": "tot · {span} de dades",
   "heat.timeline.allTitle": "Mostra tots els punts de dades alhora, sense tenir en compte el capçal de reproducció",
   "heat.timeline.all": "Tot",

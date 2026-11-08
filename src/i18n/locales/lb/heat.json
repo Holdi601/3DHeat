@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Liewensdauer",
   "heat.timeline.window.lifetimeTitle": "All Datepunkt lieft bis zum nächste Moosspunkt vun derselwechter Persoun, also eng aktuell Positioun pro Persoun. Punkten ouni nächste Moosspunkt kréien d’Ersatz-Liewensdauer.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Eegen…",
+  "heat.timeline.speedCustomTitle": "Gitt eng Vitess vun {min}× bis {max}× an (z. B. 0,3 oder 12), dann Enter. Esc behält déi aktuell.",
   "heat.timeline.allClock": "alles · {span} Donnéeën",
   "heat.timeline.allTitle": "All Datepunkt gläichzäiteg weisen, ouni den Ofspillkapp ze berécksiichtegen",
   "heat.timeline.all": "Alles",

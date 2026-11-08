@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Durată de viață",
   "heat.timeline.window.lifetimeTitle": "Fiecare punct de date trăiește până la următorul eșantion al aceleiași persoane, deci o singură poziție curentă per persoană. Punctele fără un eșantion următor folosesc durata de viață de rezervă.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Personalizată…",
+  "heat.timeline.speedCustomTitle": "Introduceți orice viteză de la {min}× la {max}× (de ex. 0,3 sau 12), apoi Enter. Esc o păstrează pe cea curentă.",
   "heat.timeline.allClock": "tot · {span} de date",
   "heat.timeline.allTitle": "Arată toate punctele de date deodată, ignorând capul de redare",
   "heat.timeline.all": "Toate",

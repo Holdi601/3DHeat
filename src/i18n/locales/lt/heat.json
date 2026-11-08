@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Gyvavimo trukmė",
   "heat.timeline.window.lifetimeTitle": "Kiekvienas duomenų taškas gyvuoja iki kito to paties asmens mėginio, todėl kiekvienas asmuo turi vieną dabartinę padėtį. Taškams be kito mėginio taikoma atsarginė gyvavimo trukmė.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Pasirinktinis…",
+  "heat.timeline.speedCustomTitle": "Įveskite bet kokį greitį nuo {min}× iki {max}× (pvz., 0,3 arba 12) ir paspauskite Enter. Esc palieka dabartinį.",
   "heat.timeline.allClock": "visi · {span} duomenų",
   "heat.timeline.allTitle": "Rodyti visus duomenų taškus iš karto, nepaisant grojimo žymeklio",
   "heat.timeline.all": "Visi",

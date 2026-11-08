@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Lifetime",
   "heat.timeline.window.lifetimeTitle": "Each datapoint lives until the same person's next sample, so one current position per person. Points with no next sample use the fallback lifetime.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Custom…",
+  "heat.timeline.speedCustomTitle": "Type any speed from {min}× to {max}× (e.g. 0.3 or 12), then Enter. Esc keeps the current speed.",
   "heat.timeline.allClock": "all · {span} of data",
   "heat.timeline.allTitle": "Show every datapoint at once, ignoring the playhead",
   "heat.timeline.all": "All",

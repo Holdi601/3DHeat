@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Élettartam",
   "heat.timeline.window.lifetimeTitle": "Minden adatpont ugyanazon személy következő mintájáig él, így személyenként egy aktuális pozíció van. A következő minta nélküli pontok a tartalék élettartamot használják.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Egyéni…",
+  "heat.timeline.speedCustomTitle": "Írjon be tetszőleges sebességet {min}× és {max}× között (pl. 0,3 vagy 12), majd Enter. Az Esc megtartja a jelenlegit.",
   "heat.timeline.allClock": "összes · {span} adat",
   "heat.timeline.allTitle": "Minden adatpont egyszerre, a lejátszófejtől függetlenül",
   "heat.timeline.all": "Összes",

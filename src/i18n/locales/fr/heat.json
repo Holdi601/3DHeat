@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Durée de vie",
   "heat.timeline.window.lifetimeTitle": "Chaque point de données vit jusqu’au prochain échantillon de la même personne, soit une position actuelle par personne. Les points sans échantillon suivant utilisent la durée de vie par défaut.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Personnalisée…",
+  "heat.timeline.speedCustomTitle": "Saisissez une vitesse de {min}× à {max}× (p. ex. 0,3 ou 12), puis Entrée. Échap conserve la vitesse actuelle.",
   "heat.timeline.allClock": "tout · {span} de données",
   "heat.timeline.allTitle": "Afficher tous les points de données à la fois, sans tenir compte de la tête de lecture",
   "heat.timeline.all": "Tout",

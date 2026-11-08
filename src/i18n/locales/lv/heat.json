@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Dzīves ilgums",
   "heat.timeline.window.lifetimeTitle": "Katrs datu punkts dzīvo līdz tās pašas personas nākamajam paraugam, tātad katrai personai viena pašreizējā pozīcija. Punkti bez nākamā parauga izmanto rezerves dzīves ilgumu.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Pielāgots…",
+  "heat.timeline.speedCustomTitle": "Ievadiet jebkuru ātrumu no {min}× līdz {max}× (piem., 0,3 vai 12) un nospiediet Enter. Esc saglabā pašreizējo.",
   "heat.timeline.allClock": "viss · {span} datu",
   "heat.timeline.allTitle": "Rādīt visus datu punktus vienlaikus, ignorējot atskaņošanas kursoru",
   "heat.timeline.all": "Viss",

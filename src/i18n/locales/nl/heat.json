@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Levensduur",
   "heat.timeline.window.lifetimeTitle": "Elk datapunt leeft tot het volgende meetpunt van dezelfde persoon, dus één actuele positie per persoon. Punten zonder volgend meetpunt gebruiken de standaardlevensduur.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Aangepast…",
+  "heat.timeline.speedCustomTitle": "Typ een snelheid van {min}× tot {max}× (bijv. 0,3 of 12) en druk op Enter. Esc houdt de huidige.",
   "heat.timeline.allClock": "alles · {span} aan data",
   "heat.timeline.allTitle": "Alle datapunten tegelijk tonen, ongeacht de afspeelkop",
   "heat.timeline.all": "Alles",
