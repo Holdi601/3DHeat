@@ -851,14 +851,16 @@ A['mb-162'] = fig({
 
 // PB4Y-2 Privateer: the Liberator's Davis wing on a much longer body, the tall single fin, oval cowlings, the bow
 // turret, two dorsal turrets and waist blisters (22.73 x 33.53 x 9.17 m).
+// The PB4Y-2's wing planform (the narrow Davis wing), nacelles and tailplane measured on the Journal of Recognition's
+// "New and revised airplane silhouettes" (1944), PB4Y-2, with tools/figures/twinview.py.
 A['pb4y-2-privateer'] = fig({
   cls: 'patrol', length: 22.73, span: 33.53, height: 9.17,
   body: [[11.37, 0.3, -0.8, 0.5], [10.8, 0.75, -1.35, 0.9], [9.6, 1.15, -1.6, 1.15], [8.0, 1.3, -1.65, 1.2], [0, 1.3, -1.65, 1.2], [-5, 1.15, -1.1, 1.05], [-9, 0.9, -0.3, 0.65], [-11.37, 0.7, 0.2, 0.25]], round: 3,
-  wing: planOf([[0, 2.6, -2.2], [6.0, 2.4, -1.9], [16.77, 0.8, -0.3]], 0.4), wingUp: 0.9, dihedral: 2,
+  wing: planOf([[0, 2.66, -1.23], [6.6, 2.41, -0.79], [11.24, 2.09, -0.34], [16.19, 1.77, 0.25], [16.77, 1.4, 0.7]], 0.4), wingUp: 0.9, dihedral: 2,
   fin: [[-6.0, 0], [-8.4, 0.4], [-10.4, 4.1], [-11.8, 4.3], [-12.1, 3.4], [-11.4, 0]], finBase: 0.9,
-  tail: [[-8.2, 0.3], [-8.8, 4.8], [-10.6, 4.8], [-11.2, 0.3]], planeUp: 0.6,
-  bodies: [nac(4.3, -3.4, 0.7, 3.4, 0.7, true, 0.3, 0.75), nac(3.8, -2.8, 0.7, 7.6, 0.85, true, 0.3, 0.75), dome(6.6, 1.3, 0.55, 1.3), dome(1.6, 1.3, 0.55, 1.3), dome(-4.6, 0.3, 0.45, 1.4, 1, 1.05)],
-  props: [[4.4, 3.4, 0.7, 3.53, 3], [3.9, 7.6, 0.85, 3.53, 3]],
+  tail: [[-7.65, 0.3], [-8.17, 3.46], [-9.28, 5.21], [-9.76, 5.21], [-10.36, 3.46], [-10.28, 0.3]], planeUp: 0.6,
+  bodies: [nac(4.87, -1.13, 0.7, 3.66, 0.7, true, 0.3, 0.75), nac(4.62, -0.69, 0.7, 7.73, 0.85, true, 0.3, 0.75), dome(6.6, 1.3, 0.55, 1.3), dome(1.6, 1.3, 0.55, 1.3), dome(-4.6, 0.3, 0.45, 1.4, 1, 1.05)],
+  props: [[4.97, 3.66, 0.7, 3.53, 3], [4.72, 7.73, 0.85, 3.53, 3]],
   glass: [pod(11.6, 10.4, 0.55, 0, 0.0, 0.5), bubble(9.0, 7.6, 1.75, 1.25, 1.3, 0.75)],
 });
 
