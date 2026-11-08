@@ -46,6 +46,46 @@ export function teamName(d: Dataset, team: number): string {
 
 let flight = 0;
 
+type Dir = [number, number, number];
+
+/**
+ * A direction to look at `at` along from `dist` away with a clear line of sight
+ * and the camera above the ground. `first` is tried first; then its pitch from
+ * twelve headings around the target, then 25, 40 and 60 degrees down from each.
+ * The level is asked by raycast; with no level loaded every view is clear.
+ */
+export function clearView(engine: Engine, at: { x: number; y: number; z: number }, first: Dir, dist: number, k: number): Dir {
+  const surface = (origin: { x: number; y: number; z: number }, dir: Dir) =>
+    engine.inspector.surfaceHit({ origin, dir: { x: dir[0], y: dir[1], z: dir[2] } });
+  // Aim a little above the point itself, so the ground the event lies on does not block it.
+  const target = { x: at.x, y: at.y + 1.5 * k, z: at.z };
+  const clear = (f: Dir): boolean => {
+    const back: Dir = [-f[0], -f[1], -f[2]];
+    const hit = surface(target, back);
+    if (hit && Math.hypot(hit.x - target.x, hit.y - target.y, hit.z - target.z) < dist) return false;
+    const cam = { x: at.x - f[0] * dist, y: at.y - f[1] * dist, z: at.z - f[2] * dist };
+    const ground = surface({ x: cam.x, y: cam.y + 10000 * k, z: cam.z }, [0, -1, 0]);
+    return !ground || cam.y > ground.y + 3 * k;
+  };
+  if (clear(first)) return first;
+  const flat = Math.hypot(first[0], first[2]) || 1;
+  const hx = first[0] / flat;
+  const hz = first[2] / flat;
+  const pitch0 = Math.asin(Math.max(-1, Math.min(1, -first[1])));
+  const tries = [pitch0, 25, 40, 60].map((p, i) => (i === 0 ? p : (p * Math.PI) / 180));
+  for (const down of tries) {
+    for (let s = 0; s < 12; s++) {
+      const yaw = ((s % 2 ? 1 : -1) * Math.ceil(s / 2) * Math.PI) / 6;
+      const c = Math.cos(yaw);
+      const sn = Math.sin(yaw);
+      const f: Dir = [Math.cos(down) * (hx * c - hz * sn), -Math.sin(down), Math.cos(down) * (hx * sn + hz * c)];
+      if (clear(f)) return f;
+    }
+  }
+  // Nothing clear: straight from above, which at worst looks down onto a roof.
+  return [hx * 0.26, -0.966, hz * 0.26];
+}
+
 /**
  * Fly the camera to a world point (data units) and look at it from `metres`
  * away: along the current line of sight, so the view turns toward it rather
@@ -74,6 +114,11 @@ export function flyTo(engine: Engine, d: Dataset, at: { x: number; y: number; z:
   fy /= fl;
   fz /= fl;
   const dist = metres * k;
+  // A view with nothing in the way: the approach along the current line of
+  // sight first, then the same pitch from other sides, then ever steeper from
+  // above. Without this the camera landed behind a hill or inside a building
+  // whenever one stood on the line it came in along.
+  [fx, fy, fz] = clearView(engine, at, [fx, fy, fz], dist, k);
   const to = { x: at.x - fx * dist, y: at.y - fy * dist, z: at.z - fz * dist };
   const start = performance.now();
   const id = ++flight;
