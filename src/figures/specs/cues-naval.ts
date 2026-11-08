@@ -508,7 +508,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
   ]),
   zara: naval('zara', [
     { cue: 'four twin 203 mm turrets, superfiring pairs fore and aft', check: (s) => battery(s, 0.2, 2, 2, 2) && superfires(fwd(s, 0.2)) && superfires(aft(s, 0.2)) },
-    { cue: 'two funnels close together', check: (s) => funnels(s) === 2 && funnelGap(s) < 16 },
+    { cue: 'two funnels, the tripod mainmast between them', check: (s) => funnels(s) === 2 && !!s.masts?.some((m) => m.x < s.funnels![0].x && m.x > s.funnels![1].x) },
     { cue: 'long forecastle stepping down aft', check: forecastle },
     { cue: 'tripod foremast behind the bridge', check: mastKind('tripod') },
   ]),
