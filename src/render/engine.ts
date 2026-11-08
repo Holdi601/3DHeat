@@ -52,7 +52,7 @@ import {
 } from './level';
 import { appendCross, buildOverlay, screenToPlane, type MeasureState } from './measure';
 import { endsOf } from '../data/despawn';
-import { BudgetController, candidateRange, nextExactCap, planFrame } from './sampling';
+import { BudgetController, candidateRange, HeatLevel, nextExactCap, nextHeatCap, planFrame } from './sampling';
 import { Inspector, type PickContext } from './inspector';
 import type { DrawnRows } from './pick';
 import { lookAtDistance, lookAtPitch, type Vec3 } from './pose';
@@ -166,11 +166,25 @@ const EXACT_SPRITE_CAP = MAX_PLAN_SPRITES;
  * the GPU's watchdog allows, which loses the device. So it starts at what always was the
  * limit, climbs while frames are easy and backs off while they are slow; a still view
  * converges just the same.
+ *
+ * Where the heat's GPU time is known, a frame that slow is a dropped one on every
+ * camera move, so there the cap aims at a share of the frame instead; see
+ * `nextHeatCap`. It starts where a window of tens of millions of rows still fits,
+ * and a still view converges over a few frames rather than stalling one.
  */
 const EXACT_STALL_MS = 400;
 const EXACT_EASY_MS = 150;
-const EXACT_START_SPRITES = 16_384 * SAMPLE_BLOCK;
-const EXACT_FLOOR_SPRITES = 2_048 * SAMPLE_BLOCK;
+const EXACT_START_SPRITES = 2_048 * SAMPLE_BLOCK;
+const EXACT_FLOOR_SPRITES = 8 * SAMPLE_BLOCK;
+/** The floor without the heat's GPU time, as it always was: the frame time cannot show what cutting buys. */
+const EXACT_FLOOR_UNTIMED = 2_048 * SAMPLE_BLOCK;
+/**
+ * Share of the frame budget the heat pass may take, when the GPU times it. The
+ * rest is the level, the composite and the margin a display's refresh needs.
+ */
+const HEAT_GPU_SHARE = 0.45;
+/** Drawn frames the sprite cap holds after a change, for the smoothed GPU time to catch up. */
+const CAP_HOLD_FRAMES = 12;
 
 /**
  * Blend weight while the visible window is moving.
@@ -433,6 +447,29 @@ export class Engine {
 
   /** How many sprites "every row" may ask for now; see `EXACT_STALL_MS`. */
   private exactCap = EXACT_START_SPRITES;
+  /** The heat buffer's resolution level, from the sprites' size; see `HeatLevel`. */
+  private readonly heatLevel = new HeatLevel();
+  /** The heat scale the buffer was last drawn at; 0 before the first frame. */
+  private heatScaleUsed = 0;
+  /** Smoothed time of frames that followed a frame which drew, for the controllers. */
+  private drawnFrameMs = 16.6;
+  /** The user's own heat scale when `heatScaleUsed` was taken. */
+  private heatScaleUserSet = 0;
+  /** The last frame's heat cost and its budget, for the sprite cap. */
+  private heatCostMs = 0;
+  private heatBudgetMs = 1;
+  /** Sprites a frame of the current run of accumulation draws; see `planFrame`. */
+  private runSplats = 0;
+  /** Whether the renderer had geometry on its way last frame. */
+  private wasUploading = false;
+  /** Whether the heat pass's GPU time is known, rather than only the frame's. */
+  private heatTimed = false;
+  /** Drawn frames before the sprite cap may move again. */
+  private capHold = 0;
+  /** The texel radius the sprite cap was last sized for. */
+  private capTexelRadius = 0;
+  /** The saturation the last frame was composited with, a glide's included. */
+  private shownSaturation: number | null = null;
   /** Whether the last frame splatted anything: one that only recomposited says nothing of the cost. */
   private lastFrameDrew = false;
 
@@ -1209,6 +1246,40 @@ export class Engine {
   }
 
   /**
+   * A typical heat sprite's radius in device pixels at full resolution.
+   *
+   * Sampled where five rays down the middle of the picture meet the data's
+   * floor, and averaged as squares, because what it sizes is fill: the near
+   * ground at the bottom of the picture costs more than the far ground at the
+   * top. A ray over the horizon counts at the distance to the data's centre.
+   * Clamped as the shader clamps. An estimate for the heat level, not for drawing.
+   */
+  private spritePixels(s: ReturnType<typeof snapshot>, heightPx: number): number {
+    if (!this.dataset) return 0;
+    const h = s.heat;
+    const clampPx = (px: number) => Math.max(h.minPixelRadius, Math.min(h.maxPixelRadius > 0 ? h.maxPixelRadius : Infinity, px));
+    if (s.camera.projection === 'orthographic') return clampPx((h.radius * heightPx) / Math.max(1e-6, this.camera.orthoHeight));
+    const b = this.toDisplay(this.dataset.bounds);
+    const p = this.camPos;
+    const m = this.viewMirrored.elements;
+    const tanHalf = Math.tan((s.camera.fov * Math.PI) / 360);
+    const focal = heightPx / (2 * tanHalf);
+    const centre = Math.hypot((b.minX + b.maxX) / 2 - p[0], (b.minY + b.maxY) / 2 - p[1], (b.minZ + b.maxZ) / 2 - p[2]);
+    let sum = 0;
+    for (const y of [-0.8, -0.4, 0, 0.4, 0.8]) {
+      // Forward plus up times the ray's height in the picture; its y component
+      // is all the floor distance needs, the length all the depth does.
+      const dy = -m[6] + m[5] * y * tanHalf;
+      // Depth along the view axis: what the shader divides the radius by.
+      let d = p[1] > b.minY && dy < -0.02 ? (p[1] - b.minY) / -dy : centre;
+      d = Math.max(this.viewNear, Math.min(d, centre * 4));
+      const px = clampPx((h.radius * focal) / d);
+      sum += px * px;
+    }
+    return Math.sqrt(sum / 5);
+  }
+
+  /**
    * Copy the engine's playhead into the store without triggering a seek.
    *
    * The engine owns the playhead during playback — routing it through React every
@@ -1268,7 +1339,7 @@ export class Engine {
       const result = autoExposure(samples);
       const heat = useStore.getState().heat;
       if (result.saturation !== null && heat.followExposure) {
-        this.follower.propose(generation, heat.saturation, result.saturation, performance.now());
+        this.follower.propose(generation, this.shownSaturation ?? heat.saturation, result.saturation, performance.now());
       }
     } finally {
       this.followMetering = false;
@@ -2378,15 +2449,74 @@ export class Engine {
     // a multiple of the frame time, and above a 133ms baseline that multiple sat
     // beyond the cap and could never be observed.
     this.smoothedFrameMs = this.smoothedFrameMs * 0.9 + Math.min(2000, dtRaw * 1000) * 0.1;
+    // The controllers listen only to frames that drew. A converged view redraws
+    // nothing but the composite, so its frames say nothing of what drawing costs,
+    // and with the display's refresh holding them at the target they used to
+    // read as a spell of calm: the controller probed upward, the probe changed
+    // the resolution, the change threw the field away and redrew it, and the
+    // redraw's slow frame cut it back - every second or so, on a view nobody
+    // touched.
+    const targetMs = 1000 / Math.max(15, s.budget.targetFps);
+    if (this.lastFrameDrew) this.drawnFrameMs = this.drawnFrameMs * 0.9 + Math.min(2000, dtRaw * 1000) * 0.1;
     let splatBudget = s.budget.splatsPerFrame;
     if (s.budget.adaptive && s.mode !== 'team') {
-      splatBudget = this.budget.update(this.smoothedFrameMs, 1000 / Math.max(15, s.budget.targetFps));
+      // Not while every row is drawn: the sprite cap answers for the heat there.
+      splatBudget = this.lastFrameDrew && !s.budget.exact ? this.budget.update(this.drawnFrameMs, targetMs) : this.budget.value;
     } else {
       this.budget.reset(s.budget.splatsPerFrame);
     }
-    // Stage-two throttle: only below 1 once the sprite budget has bottomed out.
-    const effectiveHeatScale = s.budget.heatScale * this.budget.resolutionScale;
+    // What the heat pass cost: its GPU time where the device times it, which the
+    // display's refresh cannot hide; the drawn frame's time otherwise.
+    const passMs = (renderer as { gpuPassMs?: Record<string, number> }).gpuPassMs;
+    const heatGpuMs = passMs?.heat;
+    const heatCost = heatGpuMs !== undefined ? heatGpuMs : Math.min(2000, dtRaw * 1000);
+    const heatBudgetMs =
+      heatGpuMs !== undefined ? Math.max(1, targetMs * HEAT_GPU_SHARE - (passMs?.scene ?? 0) * 0.25) : targetMs;
+    const spritePx = this.spritePixels(s, height);
+    // Not for line heat: a route is drawn at least a few pixels wide however
+    // coarse the buffer, so a coarser level changes how much heat a thin route
+    // leaves, and a camera move that changed the level showed as a flicker.
+    const level =
+      s.mode === 'heat-lines'
+        ? 1
+        : this.heatLevel.update(spritePx, this.lastFrameDrew && s.mode !== 'team' ? heatCost : null, heatBudgetMs);
+    // The resolution: the user's, the budget's second stage, and the level for
+    // the sprites' size. A change of it throws the field away, so it is taken up
+    // only on a frame that starts over anyway - the camera moving, or the user
+    // changing it - and never on a still view, which would redraw for nothing.
+    // The budget's second stage in powers of two too, so its levels are ones the
+    // renderers keep targets for. Not with every row drawn: there the level and
+    // the sprite cap answer to the heat's own cost, and a third control on the
+    // same cost, reading the whole frame's time, only fights them.
+    const budgetScale = s.budget.exact
+      ? 1
+      : Math.pow(2, Math.round(Math.log2(Math.max(0.25, this.budget.resolutionScale))));
+    const wantHeatScale = s.budget.heatScale * budgetScale * level;
+    if (this.heatScaleUsed === 0 || this.camera.moved || this.heatScaleUserSet !== s.budget.heatScale) {
+      this.heatScaleUsed = wantHeatScale;
+      this.heatScaleUserSet = s.budget.heatScale;
+    }
+    const effectiveHeatScale = this.heatScaleUsed;
     this.live.heatScale = effectiveHeatScale;
+    this.heatCostMs = heatCost;
+    this.heatBudgetMs = heatBudgetMs;
+    // Line heat keeps the patient rule: a route's heat is spread along it, so a
+    // cap that moves while the camera does shows as the routes flickering.
+    this.heatTimed = heatGpuMs !== undefined && s.mode !== 'heat-lines';
+    // A sprite's cost goes with the texels it covers. When a radius change or a
+    // zoom changes that, the cap moves with it on the same frame, rather than
+    // after the GPU time has shown the frame it already dropped. Below a couple
+    // of texels the vertex work dominates and size stops mattering.
+    const texelRadius = Math.max(2, spritePx * effectiveHeatScale);
+    if (this.capTexelRadius > 0 && this.dataset && this.heatTimed) {
+      const k = (this.capTexelRadius / texelRadius) ** 2;
+      if (k < 0.9 || k > 1.1) {
+        this.exactCap = Math.max(EXACT_FLOOR_SPRITES, Math.min(EXACT_SPRITE_CAP, this.exactCap * Math.max(0.25, Math.min(2, k))));
+        this.capTexelRadius = texelRadius;
+      }
+    } else {
+      this.capTexelRadius = texelRadius;
+    }
 
     // ---- grid extent, sized from the data rather than fixed
     const gridSpacing = this.dataset ? niceGridSpacing(this.dataset.bounds) : 10;
@@ -2454,6 +2584,15 @@ export class Engine {
     // ---- what invalidates the accumulation buffer
     const groundY = this.dataset ? this.dataset.bounds.minY : 0;
     const h = s.heat;
+    // The exposure follower's glide is drawn from here and written to the store
+    // once, as it lands. Written every frame it re-rendered every panel reading
+    // the heat settings sixty times a second for the length of the glide, which
+    // is CPU the frame did not have. A saturation set by hand meanwhile wins.
+    if (this.follower.from !== null && h.saturation !== this.follower.from) this.follower.cancel();
+    const glide = this.follower.value(now);
+    if (glide !== null && this.follower.from === null) useStore.getState().patchHeat({ saturation: glide });
+    const saturation = glide ?? h.saturation;
+    this.shownSaturation = saturation;
     // Computed before the signatures because it belongs in one: the gain is the
     // units the buffer is written in, so a change to it invalidates everything
     // already accumulated.
@@ -2524,7 +2663,7 @@ export class Engine {
     // invalidating any accumulated heat.
     const teamCfg = s.team;
     const compositeSig = [
-      h.saturation,
+      saturation,
       h.response,
       h.floor,
       lutSig,
@@ -2557,6 +2696,11 @@ export class Engine {
       volumeSig,
     ].join('|');
 
+    // A level arriving a slice a frame is drawn once all of it is there, and the
+    // view may be still by then, so that frame has to draw the scene.
+    const uploading = (renderer as { uploadsPending?: boolean }).uploadsPending ?? false;
+    if (this.wasUploading && !uploading) this.forceRenderFrames = Math.max(this.forceRenderFrames, 1);
+    this.wasUploading = uploading;
     const forced = this.forceRenderFrames > 0;
     if (forced) this.forceRenderFrames--;
     const geometryChanged = forced || geometrySig !== this.geometrySig;
@@ -2594,6 +2738,7 @@ export class Engine {
     let candidateRows = 0;
     let submitted = 0;
     let sampleWeight = 1;
+    let runFrames = 0;
     // Rows this frame is responsible for: the whole window normally, only the
     // newly-visible tail when extending.
     const planLo = canExtend ? this.accumRowHi : rowRange[0];
@@ -2646,33 +2791,68 @@ export class Engine {
     // the time window, the filters, the distance cull — all reduce the candidate
     // rows themselves rather than sampling them more thinly.
     if (s.budget.exact && this.dataset && s.mode !== 'team') {
-      this.exactCap = nextExactCap(this.exactCap, Math.min(2000, dtRaw * 1000), this.lastFrameDrew, mustReset, {
-        floor: EXACT_FLOOR_SPRITES,
-        ceiling: EXACT_SPRITE_CAP,
-        stallMs: EXACT_STALL_MS,
-        easyMs: EXACT_EASY_MS,
-      });
-      splatBudget = Math.max(splatBudget, Math.min(this.exactCap, planHi - planLo));
+      // Held after each change for as long as the smoothed GPU time takes to
+      // show it; acting again on the old reading cut a cap that had already
+      // been cut, down to the floor.
+      if (this.lastFrameDrew && this.capHold > 0) {
+        this.capHold--;
+      } else {
+        // Without the heat's GPU time the frame time is all there is, and the
+        // display's refresh hides what part of it the heat is: there the old,
+        // patient rule stays, which only reacts to a frame near the watchdog.
+        const cap = this.heatTimed
+          ? nextHeatCap(this.exactCap, this.heatCostMs, this.heatBudgetMs, this.lastFrameDrew, mustReset, {
+              floor: EXACT_FLOOR_SPRITES,
+              ceiling: EXACT_SPRITE_CAP,
+            })
+          : nextExactCap(Math.max(this.exactCap, EXACT_FLOOR_UNTIMED), Math.min(2000, dtRaw * 1000), this.lastFrameDrew, mustReset, {
+              floor: EXACT_FLOOR_UNTIMED,
+              ceiling: EXACT_SPRITE_CAP,
+              stallMs: EXACT_STALL_MS,
+              easyMs: EXACT_EASY_MS,
+            });
+        if (cap !== this.exactCap) this.capHold = CAP_HOLD_FRAMES;
+        this.exactCap = cap;
+      }
+      // With the budget adaptive, the cap is the control: the frame-time
+      // controller's own figure used to be a floor under it, and that
+      // controller, having seen cutting fail to help on a slow frame for other
+      // reasons, climbs - it held a radius too wide for the frame at every row.
+      const exactRows = Math.min(this.exactCap, planHi - planLo);
+      splatBudget = s.budget.adaptive ? exactRows : Math.max(splatBudget, exactRows);
+      // A growing window's base is kept and only extended from, never averaged
+      // over again, so a sampled base stayed sampled for as long as it played.
+      // It is drawn whole up to the floor the cap always had.
+      if (growing && !canExtend) splatBudget = Math.max(splatBudget, Math.min(EXACT_FLOOR_UNTIMED, planHi - planLo));
     }
 
     if (this.dataset && s.mode !== 'team') {
+      // A run of accumulation keeps the sprite count it started with and takes
+      // the blocks in turn, so that when it ends every row has been drawn once.
+      // See `PlanOptions.runFrame`.
+      const fresh = mustReset || canExtend || growing || windowChanged;
+      if (fresh || this.runSplats === 0) this.runSplats = splatBudget;
       const r = planFrame({
         rowLo: planLo,
         rowHi: planHi,
-        splatsPerFrame: splatBudget,
+        splatsPerFrame: fresh ? splatBudget : this.runSplats,
         frameIndex: this.frameIndex,
+        // A frame that starts over, or a sliding window's, draws the run's first
+        // share; the tail a growing window adds is drawn the old way, whole.
+        runFrame: canExtend ? undefined : fresh ? 0 : this.accumFrames,
       });
       plan = r.plan;
       candidateRows = r.candidateRows;
       submitted = r.submittedSprites;
       sampleWeight = r.sampleWeight;
+      runFrames = r.frames ?? 0;
     }
 
     // Keep the planned figure for the readout: once accumulation converges the
     // frame stops splatting, and reporting the resulting 0 would read as a bug.
     const plannedSubmitted = submitted;
     const convergeFrames =
-      submitted > 0 ? Math.max(1, Math.ceil(candidateRows / submitted)) : 1;
+      submitted > 0 ? Math.max(1, runFrames || Math.ceil(candidateRows / submitted)) : 1;
     const converged = this.accumFrames >= convergeFrames;
 
     let accumMode: FrameParams['accumMode'];
@@ -3069,7 +3249,7 @@ export class Engine {
         centerIntensity: h.centerIntensity,
         edgeIntensity: h.edgeIntensity,
         falloff: h.falloff,
-        saturation: h.saturation,
+        saturation,
         floor: Math.max(0, Math.min(1, h.floor)),
         minPixelRadius: h.minPixelRadius,
         maxPixelRadius: h.maxPixelRadius,
@@ -3202,8 +3382,6 @@ export class Engine {
     const follow = !raceTab && s.mode !== 'team' && !!this.dataset && h.followExposure;
     const due = this.follower.frame(cameraMoved, follow);
     if (due !== null && !this.followMetering && this.autoExposePending === 0) void this.followExposure(due);
-    const glide = this.follower.value(now);
-    if (glide !== null) useStore.getState().patchHeat({ saturation: glide });
     // What the split drew, for the panel: the rows on each side, and chunks left
     // out because the split's column could not be put on the GPU for them.
     if (heatMode === 'heat-difference' && !raceTab && s.mode !== 'team') {

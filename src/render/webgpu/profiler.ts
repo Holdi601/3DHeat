@@ -6,7 +6,7 @@
  * read, in milliseconds.
  */
 
-const NAMES = ['tracks', 'scene', 'heat', 'composite'] as const;
+const NAMES = ['tracks', 'scene', 'structdepth', 'peel', 'heat', 'composite'] as const;
 export type PassName = (typeof NAMES)[number];
 
 export class GpuProfiler {
@@ -27,11 +27,18 @@ export class GpuProfiler {
     return typeof location !== 'undefined' && new URLSearchParams(location.search).has('gpuprof');
   }
 
-  /** The `timestampWrites` for a pass. */
-  writes(name: PassName): GPURenderPassTimestampWrites & GPUComputePassTimestampWrites {
+  /**
+   * The `timestampWrites` for a pass; for a span of several passes, `first` on
+   * the first one's and `last` on the last one's.
+   */
+  writes(name: PassName, first = true, last = true): GPURenderPassTimestampWrites & GPUComputePassTimestampWrites {
     const i = NAMES.indexOf(name);
-    this.used.add(name);
-    return { querySet: this.set, beginningOfPassWriteIndex: i * 2, endOfPassWriteIndex: i * 2 + 1 };
+    if (last) this.used.add(name);
+    return {
+      querySet: this.set,
+      ...(first ? { beginningOfPassWriteIndex: i * 2 } : {}),
+      ...(last ? { endOfPassWriteIndex: i * 2 + 1 } : {}),
+    };
   }
 
   /** At the end of the frame's encoding: resolve, and copy for reading when the last read is done. */

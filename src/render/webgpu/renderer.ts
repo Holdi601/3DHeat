@@ -65,6 +65,10 @@ import { t } from '../../i18n';
 /** Largest block index texture we size the per-frame buffer for. */
 const MAX_BLOCKS = MAX_PLAN_BLOCKS;
 const BLOCK_SHIFT = Math.log2(SAMPLE_BLOCK);
+/** Geometry bytes written to the GPU per frame while a level arrives; see `flushUploads`. */
+const UPLOAD_SLICE_BYTES = 8 * 1024 * 1024;
+/** Heat target sets kept across resolution changes: the levels in use and their neighbours. */
+const HEAT_SETS_KEPT = 8;
 const SCENE_FORMAT: GPUTextureFormat = 'rgba8unorm';
 const DEPTH_FORMAT: GPUTextureFormat = 'depth24plus';
 /** Bytes in a scene uniform buffer: mat4 + 2 vec4. */
@@ -182,7 +186,6 @@ export class WebgpuRenderer implements Renderer {
    * geometry occlude heat behind it; at reduced sizes this is a private,
    * never-written depth and that occlusion is given up.
    */
-  private heatScratchTex: GPUTexture | null = null;
   private heatScratchView: GPUTextureView | null = null;
   /** Bumped whenever the scene depth texture is recreated, to key bind groups. */
   private depthGeneration = 0;
@@ -282,11 +285,11 @@ export class WebgpuRenderer implements Renderer {
   /** GPU time a pass, with ?gpuprof where the device can. */
   private profiler: GpuProfiler | null | undefined;
   private get prof(): GpuProfiler | null {
-    if (this.profiler === undefined) this.profiler = GpuProfiler.wanted() && this.device.features.has('timestamp-query') ? new GpuProfiler(this.device) : null;
+    if (this.profiler === undefined) this.profiler = this.device.features.has('timestamp-query') ? new GpuProfiler(this.device) : null;
     return this.profiler;
   }
 
-  /** Milliseconds of GPU time a pass, averaged (?gpuprof); empty without. */
+  /** Milliseconds of GPU time a pass, averaged; empty where the device cannot time them. */
   get gpuPassMs(): Record<string, number> {
     return this.prof?.ms ?? {};
   }
@@ -375,8 +378,10 @@ export class WebgpuRenderer implements Renderer {
     // reached by users on weaker hardware.
     const forceF16 = forcedHeatPrecision() === 'f16';
     const blendable = !forceF16 && want('float32-blendable');
-    // ?gpuprof: GPU time a pass (GpuProfiler).
-    if (GpuProfiler.wanted()) want('timestamp-query');
+    // GPU time a pass (GpuProfiler), wherever the device can: the heat's own
+    // time is what the engine sizes the heat by, since the display's refresh
+    // hides any headroom from the frame time.
+    want('timestamp-query');
     const filterable = want('float32-filterable');
     // Storage buffers default to a 128MiB binding limit, which is below one
     // chunk's worth on a wide dataset; ask for whatever the adapter allows.
@@ -554,14 +559,64 @@ export class WebgpuRenderer implements Renderer {
     this.wirePipeline = this.buildWirePipeline();
   }
 
-  private makeBuffer(data: ArrayBufferView, usage: number, label: string): GPUBuffer {
+  private makeBuffer(data: ArrayBufferView, usage: number, label: string, spread = false): GPUBuffer {
     const buf = this.device.createBuffer({
       label,
       size: Math.max(4, align4(data.byteLength)),
       usage: usage | GPUBufferUsage.COPY_DST,
     });
-    this.device.queue.writeBuffer(buf, 0, data as unknown as BufferSource);
+    if (spread && data.byteLength > UPLOAD_SLICE_BYTES) {
+      this.uploads.push({ buf, data, offset: 0 });
+      this.uploading.add(buf);
+    } else {
+      this.device.queue.writeBuffer(buf, 0, data as unknown as BufferSource);
+    }
     return buf;
+  }
+
+  /**
+   * Geometry waiting to reach the GPU, a slice a frame.
+   *
+   * A level is hundreds of megabytes, and `writeBuffer` copies it on the calling
+   * thread: in one go that was a quarter of a second without a frame, the
+   * moment the level appeared. Spread, the level arrives over a second or so
+   * and is drawn once all of it is there.
+   */
+  private readonly uploads: { buf: GPUBuffer; data: ArrayBufferView; offset: number }[] = [];
+  private readonly uploading = new Set<GPUBuffer>();
+
+  private flushUploads(): void {
+    let budget = UPLOAD_SLICE_BYTES;
+    while (budget > 0 && this.uploads.length > 0) {
+      const u = this.uploads[0];
+      if (!this.uploading.has(u.buf)) {
+        // Freed before it finished arriving.
+        this.uploads.shift();
+        continue;
+      }
+      const n = Math.min(budget, u.data.byteLength - u.offset);
+      this.device.queue.writeBuffer(u.buf, u.offset, u.data.buffer as ArrayBuffer, u.data.byteOffset + u.offset, align4(n));
+      u.offset += n;
+      budget -= n;
+      if (u.offset >= u.data.byteLength) {
+        this.uploads.shift();
+        this.uploading.delete(u.buf);
+      }
+    }
+  }
+
+  /** Whether geometry is still on its way; the engine redraws the scene when it lands. */
+  get uploadsPending(): boolean {
+    return this.uploading.size > 0;
+  }
+
+  /** Whether all of a mesh's geometry has arrived. */
+  private meshReady(m: GpuMesh): boolean {
+    if (this.uploading.size === 0) return true;
+    for (const b of [m.vertexBuffer, m.colourBuffer, m.uvBuffer, m.tileBuffer, m.groundBuffer, m.structBuffer, m.wireBuffer, m.waterBuffer]) {
+      if (b && this.uploading.has(b)) return false;
+    }
+    return true;
   }
 
   // -------------------------------------------------------------- pipelines
@@ -1250,7 +1305,7 @@ export class WebgpuRenderer implements Renderer {
    * the decimation saved.
    */
   private uploadMesh(src: MeshSource, bounds: Bounds | null, tile: boolean, label: string): GpuMesh {
-    const vertexBuffer = this.makeBuffer(src.vertices, GPUBufferUsage.VERTEX, `${label} verts`);
+    const vertexBuffer = this.makeBuffer(src.vertices, GPUBufferUsage.VERTEX, `${label} verts`, true);
     // Interleaved position+normal is 24 bytes; colour rides in its own buffer.
     // A mesh without colour still gets one, filled with white, so the location
     // is never left unbound — which is a validation error here rather than the
@@ -1262,14 +1317,14 @@ export class WebgpuRenderer implements Renderer {
       src.colours && src.colours.length >= vertexCount * 3
         ? src.colours
         : new Float32Array(vertexCount * 3).fill(1);
-    const colourBuffer = this.makeBuffer(colours, GPUBufferUsage.VERTEX, `${label} colours`);
+    const colourBuffer = this.makeBuffer(colours, GPUBufferUsage.VERTEX, `${label} colours`, true);
     // UVs always backed as well: -1 everywhere on an untextured mesh, which
     // the shader reads as "no texture here".
     const uvs =
       src.uvs && src.uvs.length >= vertexCount * 2
         ? src.uvs
         : new Float32Array(vertexCount * 2).fill(-1);
-    const uvBuffer = this.makeBuffer(uvs, GPUBufferUsage.VERTEX, `${label} uvs`);
+    const uvBuffer = this.makeBuffer(uvs, GPUBufferUsage.VERTEX, `${label} uvs`, true);
     // Per-vertex tile numbers as uint32 - a vertex attribute here is at least
     // four bytes wide - and the tiles' rectangles as a storage buffer the vertex
     // shader reads by number (see ATLAS_WGSL). A mesh with no repeating texture
@@ -1282,6 +1337,7 @@ export class WebgpuRenderer implements Renderer {
         Uint32Array.from(src.uvTiles.subarray(0, vertexCount)),
         GPUBufferUsage.VERTEX,
         `${label} tiles`,
+        true,
       );
       tileTable = this.makeBuffer(src.tileRects, GPUBufferUsage.STORAGE, `${label} tile table`);
     } else {
@@ -1292,7 +1348,7 @@ export class WebgpuRenderer implements Renderer {
       });
     }
     const index = (data: Uint32Array, what: string) =>
-      data.length > 0 ? this.makeBuffer(data, GPUBufferUsage.INDEX, `${label} ${what}`) : null;
+      data.length > 0 ? this.makeBuffer(data, GPUBufferUsage.INDEX, `${label} ${what}`, true) : null;
     return {
       vertexBuffer,
       colourBuffer,
@@ -1330,6 +1386,9 @@ export class WebgpuRenderer implements Renderer {
   }
 
   private freeMesh(mesh: GpuMesh): void {
+    for (const b of [mesh.vertexBuffer, mesh.colourBuffer, mesh.uvBuffer, mesh.tileBuffer, mesh.groundBuffer, mesh.structBuffer, mesh.wireBuffer, mesh.waterBuffer]) {
+      if (b) this.uploading.delete(b);
+    }
     for (const b of [
       mesh.vertexBuffer,
       mesh.colourBuffer,
@@ -1633,7 +1692,7 @@ export class WebgpuRenderer implements Renderer {
   private meshesInView(params: FrameParams): GpuMesh[] {
     if (params.level?.kind !== 'model') return [];
     const out: GpuMesh[] = [];
-    if (this.levelMesh) out.push(this.levelMesh);
+    if (this.levelMesh && this.meshReady(this.levelMesh)) out.push(this.levelMesh);
     if (this.tileMeshes.size === 0) return out;
     frustumPlanes(params.viewProj, this.planes);
     for (const m of this.tileMeshes.values()) {
@@ -1698,6 +1757,7 @@ export class WebgpuRenderer implements Renderer {
     // Uniform slots are handed out fresh each frame, which keeps the bind-group
     // cache keys stable rather than growing without bound.
     this.uniforms.reset();
+    this.flushUploads();
     const encoder = this.device.createCommandEncoder({ label: 'frame' });
     // An idle frame recomposites the buffers it already has. They are our own
     // textures and retain reliably; the canvas surface does not, so the composite
@@ -2173,6 +2233,7 @@ export class WebgpuRenderer implements Renderer {
     const pass = encoder.beginRenderPass({
       label: 'structure depth',
       colorAttachments: [{ view: this.sceneView, loadOp: 'load', storeOp: 'store' }],
+      timestampWrites: this.prof?.writes('structdepth'),
       depthStencilAttachment: {
         view: this.structDepthView,
         depthClearValue: 1,
@@ -2218,6 +2279,8 @@ export class WebgpuRenderer implements Renderer {
       const pass = encoder.beginRenderPass({
         label: `depth peel ${i}`,
         colorAttachments: [],
+        // The span's ends only: a pass in between may not name a timestamp at all.
+        timestampWrites: i === 0 || i === layers - 1 ? this.prof?.writes('peel', i === 0, i === layers - 1) : undefined,
         depthStencilAttachment: {
           view: this.peelViews[i],
           depthClearValue: 1,
@@ -2395,6 +2458,7 @@ export class WebgpuRenderer implements Renderer {
     const pass = encoder.beginRenderPass({
       label: 'heat',
       colorAttachments: [{ view: target, loadOp: 'load', storeOp: 'store' }],
+      timestampWrites: this.prof?.writes('heat'),
       // Colour only: the splat shader compares depth itself, reading the scene's
       // depth as a texture. See buildHeatPipeline.
     });
@@ -2530,6 +2594,7 @@ export class WebgpuRenderer implements Renderer {
             storeOp: 'store',
           },
         ],
+        timestampWrites: this.prof?.writes('composite'),
       });
       if (!this.debug.clearProbe) {
         pass.setPipeline(this.compositePipeline);
@@ -2728,8 +2793,13 @@ export class WebgpuRenderer implements Renderer {
     u.set(params.viewProj, 0);
     u[16] = this.heatWidth;
     u[17] = this.heatHeight;
-    u[18] = params.heat.minPixelRadius;
-    u[19] = params.heat.maxPixelRadius;
+    // The clamps are screen pixels, so in texels of a lower heat resolution
+    // they shrink with it: a clamp in texels let a sprite grow on screen as the
+    // resolution fell and made a coarser level no cheaper. Never below a texel,
+    // or a sprite could fall between texels and lose its heat.
+    const texelsPerPixel = this.heatHeight / Math.max(1, this.height);
+    u[18] = Math.max(Math.min(1, params.heat.minPixelRadius), params.heat.minPixelRadius * texelsPerPixel);
+    u[19] = Math.max(1, params.heat.maxPixelRadius * texelsPerPixel);
     u[20] = chunk.aabbMin[0];
     u[21] = chunk.aabbMin[1];
     u[22] = chunk.aabbMin[2];
@@ -3035,21 +3105,37 @@ export class WebgpuRenderer implements Renderer {
     ) {
       return;
     }
+    const sceneChanged = width !== this.width || height !== this.height || !this.sceneTex;
+    if (sceneChanged || format !== this.heatFormat) {
+      for (const set of this.heatSets.values()) {
+        set.tex.destroy();
+        set.scratch.destroy();
+      }
+      this.heatSets.clear();
+    }
     this.width = width;
     this.height = height;
     this.heatWidth = hw;
     this.heatHeight = hh;
     this.heatFormat = format;
     this.heatTexelBytes = (this.heatF32 ? 4 : 2) * heatChannels;
+    // Any cached bind group holds a view of a texture that is no longer the target.
+    this.targetGeneration++;
+    this.bindCache.clear();
+    // The heat pass's bind groups are keyed on this, and hold the heat level's views.
+    this.depthGeneration++;
+    if (!sceneChanged) {
+      // Only the heat resolution moved. The scene, depth and peel targets stay
+      // as they are: reallocating all of them, and dropping every bind group,
+      // for a change of the heat level was a stall on the frame that made it.
+      this.useHeatSet(hw, hh, true);
+      return;
+    }
     this.canvas.width = width;
     this.canvas.height = height;
 
     this.sceneTex?.destroy();
     this.depthTex?.destroy();
-    this.heatTex?.destroy();
-    // Any cached bind group holds a view of a texture that no longer exists.
-    this.targetGeneration++;
-    this.bindCache.clear();
 
     this.sceneTex = this.device.createTexture({
       label: 'scene',
@@ -3095,7 +3181,42 @@ export class WebgpuRenderer implements Renderer {
     });
     this.structDepthView = this.structDepthTex.createView();
 
-    this.heatTex = this.device.createTexture({
+    this.useHeatSet(hw, hh, true);
+  }
+
+  /**
+   * The heat targets at one resolution, kept for the next time it is wanted.
+   *
+   * The engine moves the heat resolution in powers of two as the sprites grow
+   * and shrink on screen. Each level's targets are made once, the levels around
+   * the current one ahead of need, and switching is then a pointer swap.
+   */
+  private readonly heatSets = new Map<string, { tex: GPUTexture; view: GPUTextureView; scratch: GPUTexture; scratchView: GPUTextureView }>();
+
+  private useHeatSet(hw: number, hh: number, prewarm: boolean): void {
+    const set = this.heatSetFor(hw, hh);
+    this.heatTex = set.tex;
+    this.heatView = set.view;
+    this.heatScratchView = set.scratchView;
+    if (!prewarm) return;
+    // The neighbouring levels, so the first switch to one does not allocate.
+    for (const k of [0.5, 0.25, 0.125, 2, 4]) {
+      const w = Math.round(hw * k);
+      const h = Math.round(hh * k);
+      if (w >= 8 && h >= 8 && w <= this.width && h <= this.height) this.heatSetFor(w, h);
+    }
+  }
+
+  private heatSetFor(hw: number, hh: number) {
+    const key = `${hw}x${hh}`;
+    const have = this.heatSets.get(key);
+    if (have) {
+      // Most recently used last, so the trim below drops the stalest.
+      this.heatSets.delete(key);
+      this.heatSets.set(key, have);
+      return have;
+    }
+    const tex = this.device.createTexture({
       label: 'heat',
       size: [hw, hh],
       format: this.heatFormat,
@@ -3104,25 +3225,26 @@ export class WebgpuRenderer implements Renderer {
         GPUTextureUsage.TEXTURE_BINDING |
         GPUTextureUsage.COPY_SRC,
     });
-    this.heatView = this.heatTex.createView();
-
     // One frame's estimate, accumulated from zero and then blended into the
     // history above. See `mergeHeat`: splatting a fractional frame straight into
     // the accumulator makes every sprite's contribution a small fraction of a much
     // larger running total, which a half-float target rounds away.
-    this.heatScratchTex?.destroy();
-    this.heatScratchTex = this.device.createTexture({
+    const scratch = this.device.createTexture({
       label: 'heat scratch',
       size: [hw, hh],
       format: this.heatFormat,
       usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
     });
-    this.heatScratchView = this.heatScratchTex.createView();
-
-    // The heat pass has no depth attachment any more — see buildHeatPipeline —
-    // so this generation counter is what keeps its bind groups from holding a
-    // view of a depth texture this resize has just replaced.
-    this.depthGeneration++;
+    const set = { tex, view: tex.createView(), scratch, scratchView: scratch.createView() };
+    this.heatSets.set(key, set);
+    while (this.heatSets.size > HEAT_SETS_KEPT) {
+      const [oldest, s] = this.heatSets.entries().next().value!;
+      if (s.tex === this.heatTex) break;
+      s.tex.destroy();
+      s.scratch.destroy();
+      this.heatSets.delete(oldest);
+    }
+    return set;
   }
 
   /**
@@ -3285,8 +3407,11 @@ export class WebgpuRenderer implements Renderer {
     this.setWorldTiles([]);
     this.sceneTex?.destroy();
     this.depthTex?.destroy();
-    this.heatTex?.destroy();
-    this.heatScratchTex?.destroy();
+    for (const set of this.heatSets.values()) {
+      set.tex.destroy();
+      set.scratch.destroy();
+    }
+    this.heatSets.clear();
     this.captureTex?.destroy();
     this.captureBuffer?.destroy();
     this.fieldBuffer?.destroy();
