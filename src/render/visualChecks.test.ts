@@ -17,7 +17,8 @@ import { axesOf, FollowRig, type RigCamera, type RigMode, type Vec3 } from './fo
 import { HEAT_VS, LINE_HEAT_VS } from './webgl2/shaders';
 import { HEAT_WGSL, LINE_HEAT_WGSL } from './webgpu/shaders';
 import { emptySample, MotionModel } from '../figures/motion';
-import { gpuTrackStore } from './gpuTracks/store';
+import { gpuTrackStore, unpackAim } from './gpuTracks/store';
+import { aimOf } from '../figures/aim';
 import { emptyPose, evaluateTrack } from './gpuTracks/evaluate';
 
 /** A small deterministic generator, so a failure reproduces. */
@@ -361,4 +362,98 @@ describe('units move smoothly in every replay path', () => {
       expect(worst).toBeLessThan(1 / 1200 / 10);
     });
   }
+});
+
+// ------------------------------------------------------------------ turrets
+
+/**
+ * A tank driving a slow circle with its gun held on one point, firing at it
+ * every couple of seconds - the way War Thunder's server replays write it: the
+ * gun's world heading (`aimHeading`) on every position row, the turret's own
+ * angle (`turretYaw`) only on some, and each shot's direction as its row's yaw.
+ */
+function tank(): { d: Dataset; shots: number[]; bearing: (t: number) => number } {
+  const target = [800, 0, -300];
+  const rows: { t: number; x: number; z: number; yaw: number; ev: number; aimH: number; turret: number }[] = [];
+  const at = (t: number) => {
+    const a = t / 40;
+    return { x: 200 * Math.sin(a), z: -200 * Math.cos(a) + 200, hull: a + Math.PI / 2 };
+  };
+  // Compass bearing from a point to the target: forward is (sin, 0, -cos).
+  const bearingFrom = (x: number, z: number) => Math.atan2(target[0] - x, -(target[2] - z));
+  for (let t = 0; t <= 120; t += 0.1) {
+    const p = at(t);
+    const b = bearingFrom(p.x, p.z);
+    // The turret's own angle on every tenth row only, degrees right of the hull.
+    const rel = (((b - p.hull) % (2 * Math.PI)) + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
+    rows.push({ t: f32(t), x: p.x, z: p.z, yaw: p.hull, ev: 0, aimH: (b * 180) / Math.PI, turret: rows.length % 10 ? NaN : (rel * 180) / Math.PI });
+    if (Math.abs((t % 2) - 1) < 0.05) rows.push({ t: f32(t), x: p.x, z: p.z, yaw: b, ev: 1, aimH: NaN, turret: NaN });
+  }
+  const n = rows.length;
+  const num = (name: string, v: (r: (typeof rows)[number]) => number) => ({ name, kind: 'number', data: Float32Array.from(rows, v), min: 0, max: 1 });
+  const d = {
+    id: 'tank', name: 'tank', count: n,
+    px: Float32Array.from(rows, (r) => r.x), py: new Float32Array(n), pz: Float32Array.from(rows, (r) => r.z),
+    time: Float32Array.from(rows, (r) => r.t), epochMs: null, lifetime: null, maxLifetimeGap: 0, personShared: null,
+    yaw: Float32Array.from(rows, (r) => r.yaw), pitch: new Float32Array(n),
+    personId: new Uint32Array(n), teamId: new Uint16Array(n), personLabels: ['t0'], teamLabels: ['a'],
+    sessionId: null, sessionLabels: [], sessionRows: null, sessionStart: null, sessionEnd: null,
+    personTeam: Uint16Array.of(0), personSlot: null, teamSizes: null, warnings: [],
+    attrs: [
+      { name: 'event', kind: 'category', data: Uint32Array.from(rows, (r) => r.ev), min: 0, max: 1, categories: ['position', 'shot'] },
+      { name: 'kind', kind: 'category', data: new Uint32Array(n), min: 0, max: 0, categories: ['tank'] },
+      num('aimHeading', (r) => r.aimH),
+      num('turretYaw', (r) => r.turret),
+    ],
+    bounds: { minX: -300, minY: 0, minZ: -300, maxX: 900, maxY: 10, maxZ: 500 },
+    timeRange: [0, rows[n - 1].t], timeSorted: true,
+  } as unknown as Dataset;
+  const shots: number[] = [];
+  rows.forEach((r, i) => r.ev === 1 && shots.push(i));
+  return { d, shots, bearing: (t) => { const p = at(t); return bearingFrom(p.x, p.z); } };
+}
+
+const angleOff = (a: number, b: number) => Math.abs((((a - b) % (2 * Math.PI)) + 3 * Math.PI) % (2 * Math.PI) - Math.PI);
+
+describe('turrets point where the shots go', () => {
+  const { d, shots, bearing } = tank();
+
+  it('on the CPU figures: hull heading plus turret is the shot direction, within 3 degrees', () => {
+    const aim = aimOf(d)!;
+    expect(aim).not.toBeNull();
+    const now = { yaw: NaN, pitch: NaN };
+    let worst = 0;
+    for (const r of shots) {
+      const t = d.time![r];
+      aim.at(r, t, now);
+      // The hull at the shot: the position row written beside it.
+      worst = Math.max(worst, angleOff(d.yaw![r - 1] + now.yaw, d.yaw![r]));
+    }
+    expect(shots.length).toBeGreaterThan(40);
+    expect(worst).toBeLessThan((3 * Math.PI) / 180);
+  });
+
+  it('on the GPU tracks: the aim keys carry the same turret, packed and unpacked', () => {
+    const s = gpuTrackStore(d, { maxKeys: 1e9 })!;
+    expect(s.keysAim).toBeTruthy();
+    let worst = 0;
+    let n = 0;
+    for (let k = 0; k < s.keysAim!.length; k++) {
+      const r = s.keyRow![k];
+      if (d.attrs[0].data[r] !== 0) continue;
+      const [yaw] = unpackAim(s.keysAim![k]);
+      worst = Math.max(worst, angleOff(d.yaw![r] + yaw, bearing(d.time![r])));
+      n++;
+    }
+    expect(n).toBeGreaterThan(1000);
+    expect(worst).toBeLessThan((3 * Math.PI) / 180);
+  });
+
+  it('a turret that never turned would fail it: the check has teeth', () => {
+    // What the figures showed before the world aim was read: most of the
+    // replay's tanks have no turret column, so their turret sat fore and aft.
+    let worst = 0;
+    for (const r of shots) worst = Math.max(worst, angleOff(d.yaw![r - 1], d.yaw![r]));
+    expect(worst).toBeGreaterThan((30 * Math.PI) / 180);
+  });
 });
