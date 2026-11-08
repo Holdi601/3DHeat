@@ -448,7 +448,9 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'oregon-city': { cls: 'heavy-cruiser', L: 205.3, B: 21.6, fb: 8, sheer: 4, guns: '64:3/203 51:3/203^2.5 -60:3/203b 28,9:2/127^3 -24,9:2/127^3b', funnels: [[-2, 12, 6]], blocks: [[36, 14, 24, 7, 2]], masts: [[16, 28], [-16, 22]] },
   'des-moines': { cls: 'heavy-cruiser', L: 218.4, B: 23.3, fb: 9, sheer: 4, guns: '68:3/203 54:3/203^2.5 -64:3/203b', funnels: [[-2, 13, 6]], blocks: [[38, 18, 26, 8, 2], [34, 22, 32, 4]], masts: [[10, 30], [-18, 24]] },
   // Germany.
-  'pillau': { cls: 'light-cruiser', L: 135.3, B: 13.6, fb: 7, fc: [-10, 2.4], guns: '48:1/150 -48:1/150b 20,5:1/150 -10,5:1/150b', funnels: [[12, 11, 3], [4, 11, 3], [-4, 11, 3]], blocks: [[30, 24, 14, 3, 1]], masts: [[26, 20], [-26, 18]] },
+  // Pillau: the funnels' and masts' places and heights from the sketch of her as the Russian Mooraviev Amursky in Jane's
+  // Fighting Ships 1914 (marked building; the guns as completed for Germany are estimates).
+  'pillau': { cls: 'light-cruiser', L: 135.3, B: 13.6, fb: 7, fc: [-10, 2.4], guns: '48:1/150 -48:1/150b 20,5:1/150 -10,5:1/150b', funnels: [[21.2, 9.6, 3], [4.3, 9.6, 3], [-11.5, 9.6, 3]], blocks: [[30, 24, 14, 3, 1]], masts: [[17.4, 33], [-37.5, 33]] },
   'emden-1925': { cls: 'light-cruiser', L: 155.1, B: 14.3, fb: 7, fc: [-20, 2.2], guns: '50:1/150 -50:1/150b 20,6:1/150 6,6:1/150 -10,6:1/150b', funnels: [[12, 11, 4], [0, 11, 4]], blocks: [[30, 22, 16, 4, 1]], masts: [[24, 22], [-20, 18]] },
   'konigsberg': { cls: 'light-cruiser', L: 174.0, B: 15.3, fb: 7, guns: '56:3/150 -44:3/150^2.5b -58:3/150b', funnels: [[8, 11, 4], [-6, 11, 4]], blocks: [[32, 20, 18, 5, 1]], masts: [[26, 22], [-14, 18]] },
   'leipzig': { cls: 'light-cruiser', L: 177.0, B: 16.3, fb: 7, guns: '58:3/150 -46:3/150^2.5b -60:3/150b', funnels: [[2, 12, 5]], blocks: [[34, 20, 20, 5, 1]], masts: [[28, 24], [-16, 18]] },
@@ -501,7 +503,9 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'agano': { cls: 'light-cruiser', L: 174.1, B: 15.2, fb: 7, fc: [-14, 2.4], guns: '56:2/152 46:2/152^2.5 -50:2/152b', funnels: [[4, 11, 4]], blocks: [[30, 20, 20, 5, 1]], masts: [[-10, 20]] },
   'oyodo': { cls: 'light-cruiser', L: 192.1, B: 16.6, fb: 7, fc: [-10, 2.4], guns: '58:3/155 48:3/155^2.5', funnels: [[6, 12, 5]], blocks: [[32, 20, 22, 6, 1], [-8, -30, 14, 6]], masts: [[-6, 22]] },
   'ikoma': { cls: 'armoured-cruiser', L: 147.8, B: 22.8, fb: 8, guns: '50:2/305 -50:2/305b 18,8:2/203 -14,8:2/203b', funnels: [[10, 13, 4], [-6, 13, 4]], blocks: [[32, 24, 18, 5, 1]], masts: [[28, 26], [-24, 24]] },
-  'kurama': { cls: 'armoured-cruiser', L: 147.8, B: 22.8, fb: 8, guns: '50:2/305 -50:2/305b 18,8:2/203 -14,8:2/203b', funnels: [[14, 13, 4], [2, 13, 4], [-10, 13, 4]], blocks: [[32, 24, 18, 5, 1]], masts: [[28, 26], [-24, 24]] },
+  // Kurama from Jane's Fighting Ships 1914 (Ibuki's profile and plan, the sister's; Kurama's masts tripods as its photo
+  // shows): the 12-inch turrets fore and aft, the 8-inch pairs on the beams, three funnels; heights over the real waterline.
+  'kurama': { cls: 'armoured-cruiser', L: 147.8, B: 22.8, fb: 8.3, fc: [-28, 0.8], guns: '42.4:2/305^-0.5 -34.2:2/305^-2.3b 21.4,8:2/203^-2.9 -13.8,8:2/203^-2.9b', funnels: [[21.5, 11.5, 4.2], [8.3, 11.1, 4.2], [-6, 11.1, 4]], blocks: [[33.8, 25.4, 13.4, 4.5]], masts: [[25.9, 41.1], [-15.2, 41.9]] },
   // Italy.
   // Trento, Zara (as Gorizia), Giussano (as Cadorna), Montecuccoli and Abruzzi (as Garibaldi): turret places, the
   // forecastle's end, bridge, funnels and masts measured on the ONI 202 (1943) profiles (Trieste, Montecuccoli) and
@@ -813,7 +817,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   'agano': { blocks: [[-14, -28, 10.5, 4], [-16, -24, 13, 3]], dirs: [[-22, 16]], masts: [[24, 24, 't'], [-10, 20]], rake: 0.12 },
   'oyodo': { masts: [[26, 26, 't'], [-6, 22]], rake: 0.12 },
   'ikoma': { blocks: [[-20, -28, 13, 4]] },
-  'kurama': { blocks: [[-20, -28, 13, 4]], masts: [[28, 26, 't'], [-24, 24, 't']] },
+  'kurama': { blocks: [[-18.7, -26, 11.1, 4]], masts: [[25.9, 41.1, 't'], [-15.2, 41.9, 't']] },
   // Italian cruisers.
   'trento': { blocks: [[-12, -27, 12, 4.5], [-28, -40, 10.5, 3.5]], dirs: [[-36, 13]], masts: [[27, 20, 't'], [-13, 18, 't']] },
   'zara': { blocks: [[-11, -24, 9, 5], [-26, -32, 9.4, 4]], dirs: [[-29.5, 13.6]], masts: [[18, 25.5, 't'], [-13, 33, 't']] },
