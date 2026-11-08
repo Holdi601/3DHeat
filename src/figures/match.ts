@@ -24,7 +24,8 @@ function build(): void {
   }
   // A catalogue name keeps its own key: an alias spelt like another figure's name never takes it over.
   const own = new Set(index.keys());
-  for (const [alias, name] of Object.entries(ALIASES)) if (CATALOG[name] && !own.has(norm(alias))) index.set(norm(alias), name);
+  // Domain aliases ("air:ariete") are looked up only by `figureFor`, never by spelling.
+  for (const [alias, name] of Object.entries(ALIASES)) if (CATALOG[name] && !alias.includes(':') && !own.has(norm(alias))) index.set(norm(alias), name);
 }
 
 /** The catalogue figure a name stands for: exact, by alias, or by the longest known prefix of it. */
@@ -131,6 +132,9 @@ export function figureFor(names: string[], types: string[]): string | null {
   for (const n of names) {
     const f = figureForName(n);
     if (f && fits(f, domain)) return f;
+    // A name that is another domain's figure may have an alias in this one ("air:ariete", the fighter of the tank's name).
+    const d = f && domain ? ALIASES[`${domain}:${n.toLowerCase()}`] : undefined;
+    if (d && CATALOG[d] && fits(d, domain)) return d;
   }
   for (const t of types) {
     const f = figureForType(t);

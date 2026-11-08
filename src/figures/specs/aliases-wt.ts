@@ -528,7 +528,7 @@ const ALIASES: Record<string, string> = {
   'uk_9a33bm2': '9a33-osa',
   'uk_challenger_ii': 'challenger-2',
   'uk_challenger_2_dorchester': 'challenger-2',
-  'uk_challenger_2_tes': 'challenger-2',
+  'uk_challenger_2_tes': 'challenger-2-tes',
   'uk_stormer_hvm': 'stormer-hvm',
   'uk_9a35_m': '9a35-strela-10',
   'uk_arjun_mk1': 'arjun',
@@ -543,7 +543,7 @@ const ALIASES: Record<string, string> = {
   'uk_adats_m113a3': 'adats-m113',
   'uk_challenger_2_bn': 'challenger-2',
   'uk_challenger_2e': 'challenger-2',
-  'uk_sky_sabre_fcs': 'nasams-mpq-64-sentinel',
+  'uk_sky_sabre_fcs': 'patriot-mpq-53', // nearest: a truck-borne array radar of its size
   'uk_sky_sabre_launcher': 'sky-sabre-launcher',
   'jp_type_95_ha_go': 'type-95-ha-go',
   'jp_type_89b_i_go_otsu': 'type-89-i-go',
@@ -598,7 +598,9 @@ const ALIASES: Record<string, string> = {
   'jp_leopard_2ri': 'leopard-2a4',
   'jp_type_10': 'type-10',
   'jp_tkx_prot': 'type-10',
-  'jp_type_81_tansam_fcs': 'nasams-mpq-64-sentinel',
+  'jp_type_81_tansam_fcs': 'patriot-mpq-53', // nearest: a truck-borne array radar of its size
+  // The Re.2002 Ariete fighter, whose id is spelt like the Italian tank's figure: taken only where the data says aircraft.
+  'air:ariete': 're-2000',
   'jp_type_81_tansam_launcher': 'type-81-tansam-launcher',
   'jp_oplot_t': 't-84-oplot-m',
   'cn_m8_greyhound': 'm8-greyhound',
@@ -743,7 +745,7 @@ const ALIASES: Record<string, string> = {
   'it_c1_ariete_certezza': 'ariete',
   'it_centauro_2': 'centauro-2',
   'it_ariete_amv_pt1': 'ariete-amv',
-  'it_samp_t_fcs': 'nasams-mpq-64-sentinel',
+  'it_samp_t_fcs': 'patriot-mpq-53', // nearest: a truck-borne array radar of its size
   'it_samp_t_launcher': 'samp-t-launcher',
   'it_leopard_2a7_hungary': 'leopard-2a7',
   'fr_m3a3_stuart': 'm3a3-stuart',
@@ -815,7 +817,7 @@ const ALIASES: Record<string, string> = {
   'fr_crotale_ng': 'ito-90m',
   'fr_leclerc_sxxi': 'leclerc',
   'fr_leopard_2a6nl': 'leopard-2a6',
-  'fr_samp_t_fcs': 'nasams-mpq-64-sentinel',
+  'fr_samp_t_fcs': 'patriot-mpq-53', // nearest: a truck-borne array radar of its size
   'fr_samp_t_launcher': 'samp-t-launcher',
   'fr_leclerc_azur': 'leclerc-xlr',
   'sw_pvlvv_fm42': 'm42-duster',
@@ -842,7 +844,7 @@ const ALIASES: Record<string, string> = {
   'sw_ikv_91': 'ikv-91',
   'sw_strv_81': 'centurion',
   'sw_zsu_57_2': 'zsu-57-2',
-  'sw_pvrbv_551': 'm113-tow',
+  'sw_pvrbv_551': 'pbv-302-bill', // the same Pbv 302 hull, with TOW in place of Bill
   'sw_t_54_1951': 't-55a',
   'sw_strv_101': 'centurion',
   'sw_strv_103a': 'strv-103',
@@ -855,7 +857,7 @@ const ALIASES: Record<string, string> = {
   'sw_t_55m': 't-55a',
   'sw_ikv_91_105': 'ikv-91',
   'sw_strv_105': 'centurion',
-  'sw_lvrbv_701': 'raketenjagdpanzer',
+  'sw_lvrbv_701': 'ikv-103', // nearest: its Ikv 102/103 chassis, without the missile launcher
   'sw_t_72m1': 't-72a',
   'sw_cv_9030_fin': 'cv9030',
   'sw_strf_90b': 'cv90',
@@ -1238,10 +1240,10 @@ const ALIASES: Record<string, string> = {
   'he_219a_7': 'he-219',
   'ia_58a_pucara': 'ia-58',
   'do_335b_2': 'do-335',
-  'bf-109z': 'bf-109-g6',
+  'bf-109z': 'f-82e', // nearest: the twin-fuselage fighter in the catalogue
   'tempest_mkv_luftwaffe': 'tempest-v',
   'ju-388j': 'ju-88',
-  'ju-288c': 'ju-88',
+  'ju-288c': 'do-217', // nearest: a twin-finned bomber of its size
   'fw-190c': 'fw-190-a8',
   'he-177a-3': 'he-177',
   'fw-190d-13': 'fw-190-d9',
@@ -1486,11 +1488,11 @@ const ALIASES: Record<string, string> = {
   'fury_mk1': 'fury-mk1',
   'fury_mk2': 'fury-mk2',
   'gladiator_mk2_france': 'gladiator',
-  'nimrod_mk1': 'gladiator',
+  'nimrod_mk1': 'fury-mk1', // the naval Fury
   'v_156_b1': 'sb2u',
   'hp_12': 'ww2-fighter',
   'gladiator_mk2_silver': 'gladiator',
-  'nimrod_mk2': 'gladiator',
+  'nimrod_mk2': 'fury-mk2', // the naval Fury
   'blenheim_mkiv': 'blenheim-iv',
   'beaufort_mkviii': 'beaufighter',
   'swordfish_mk1': 'swordfish',
@@ -1552,7 +1554,7 @@ const ALIASES: Record<string, string> = {
   'spitfire_mk5c': 'spitfire-mk-v',
   'spitfire_mk5c_notrop': 'spitfire-mk-v',
   'seafire_mk3': 'spitfire-mk-v',
-  'brigand_b1': 'beaufighter',
+  'brigand_b1': 'a-26-invader', // nearest: a twin-radial attack aircraft of its size
   'whirlwind_mk1': 'whirlwind',
   'stirling_mk1': 'stirling',
   'stirling_mk3': 'stirling',
@@ -1575,11 +1577,11 @@ const ALIASES: Record<string, string> = {
   'spitfire_f22': 'spitfire-mk-xiv',
   'spitfire_f24': 'spitfire-mk-xiv',
   'sea_fury_fb11': 'sea-fury',
-  'hornet_mk3': 'mosquito-fb',
+  'hornet_mk3': 'whirlwind', // nearest: a twin-engined single-seat fighter of its span
   'lincoln_b2': 'lancaster',
   'shackleton_mr_mk_2': 'shackleton',
   'wyvern_s4': 'wyvern',
-  'hornet_mk1': 'mosquito-fb',
+  'hornet_mk1': 'whirlwind', // nearest: a twin-engined single-seat fighter of its span
   'spitfire_mk14c': 'spitfire-mk-xiv',
   'spitfire_ix_plagis': 'spitfire-mk-ix',
   'spitfire_fr_mk14e': 'spitfire-mk-xiv',
@@ -1635,7 +1637,7 @@ const ALIASES: Record<string, string> = {
   'cf_188a_canada': 'f-a-18c',
   'ef_2000_fgr4': 'eurofighter-typhoon',
   'fa_18f_block_2_raaf': 'f-a-18f',
-  'f1m2': 'gladiator',
+  'f1m2': 'os2u', // nearest: a float-and-wingtip-float scout of its size (no biplane floatplane yet)
   'ki_10_1': 'ki-10',
   'ki_10_2': 'ki-10',
   'ki_10_1_commander': 'ki-10',
@@ -1771,7 +1773,7 @@ const ALIASES: Record<string, string> = {
   'cw_21': 'cw-21',
   'i-153_m62_china': 'i-153',
   'v_12d': 'ww2-fighter',
-  'hawk_iii': 'gladiator',
+  'hawk_iii': 'bf2c', // the export BF2C Goshawk
   'h-75m_china': 'p-36',
   'p-66': 'ww2-fighter',
   'i-16_type10_china': 'i-16',
