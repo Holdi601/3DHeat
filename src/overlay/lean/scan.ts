@@ -27,8 +27,6 @@
  * encode, the tests call them directly.
  */
 
-import { poseFrame } from '../../figures/kit';
-import { quatOfFrame } from '../../figures/motion';
 
 /** Tolerances, metres: 0 keeps every sample (doubles aside); the rest thin the tracks when they would not fit. */
 export const KEY_LEVELS = [0, 0.25, 0.5, 1, 2, 5, 10, 25] as const;
@@ -469,6 +467,70 @@ export interface Pass2Result {
   keysB: Uint32Array;
 }
 
+/**
+ * The attitude of a heading, pitch and roll as x y z w: `figures/kit`'s
+ * `poseFrame` then `figures/motion`'s `quatOfFrame`, worked through without
+ * the arrays (pass 2 does it for every key).
+ */
+export function quatOfAttitude(yaw: number, pitch: number, roll: number, out: number[]): void {
+  const s = Math.sin(yaw), c = Math.cos(yaw);
+  // Heading: forward, right, up.
+  let fx = s, fy = 0, fz = c;
+  const rx0 = -c, ry0 = 0, rz0 = s;
+  let ux = 0, uy = 1, uz = 0;
+  if (pitch) {
+    const cp = Math.cos(pitch), sp = Math.sin(pitch);
+    const f2x = fx * cp + ux * sp, f2y = fy * cp + uy * sp, f2z = fz * cp + uz * sp;
+    ux = ux * cp - fx * sp;
+    uy = uy * cp - fy * sp;
+    uz = uz * cp - fz * sp;
+    fx = f2x;
+    fy = f2y;
+    fz = f2z;
+  }
+  let rx = rx0, ry = ry0, rz = rz0;
+  if (roll) {
+    const cr = Math.cos(roll), sr = Math.sin(roll);
+    rx = rx0 * cr - ux * sr;
+    ry = ry0 * cr - uy * sr;
+    rz = rz0 * cr - uz * sr;
+    const u2x = ux * cr + rx0 * sr, u2y = uy * cr + ry0 * sr, u2z = uz * cr + rz0 * sr;
+    ux = u2x;
+    uy = u2y;
+    uz = u2z;
+  }
+  // Columns: local x -> f, local y -> u, local z -> r.
+  const m00 = fx, m01 = ux, m02 = rx;
+  const m10 = fy, m11 = uy, m12 = ry;
+  const m20 = fz, m21 = uz, m22 = rz;
+  const tr = m00 + m11 + m22;
+  if (tr > 0) {
+    const k = Math.sqrt(tr + 1) * 2;
+    out[3] = 0.25 * k;
+    out[0] = (m21 - m12) / k;
+    out[1] = (m02 - m20) / k;
+    out[2] = (m10 - m01) / k;
+  } else if (m00 > m11 && m00 > m22) {
+    const k = Math.sqrt(1 + m00 - m11 - m22) * 2;
+    out[3] = (m21 - m12) / k;
+    out[0] = 0.25 * k;
+    out[1] = (m01 + m10) / k;
+    out[2] = (m02 + m20) / k;
+  } else if (m11 > m22) {
+    const k = Math.sqrt(1 + m11 - m00 - m22) * 2;
+    out[3] = (m02 - m20) / k;
+    out[0] = (m01 + m10) / k;
+    out[1] = 0.25 * k;
+    out[2] = (m12 + m21) / k;
+  } else {
+    const k = Math.sqrt(1 + m22 - m00 - m11) * 2;
+    out[3] = (m10 - m01) / k;
+    out[0] = (m02 + m20) / k;
+    out[1] = (m12 + m21) / k;
+    out[2] = 0.25 * k;
+  }
+}
+
 function packQuat(q: ArrayLike<number>): number {
   const b = (v: number) => (Math.round(Math.max(-1, Math.min(1, v)) * 127) & 0xff) >>> 0;
   return (b(q[0]) | (b(q[1]) << 8) | (b(q[2]) << 16) | (b(q[3]) << 24)) >>> 0;
@@ -528,7 +590,7 @@ export function scanPass2(cols: Columns, n: number, s: LeanSpec, spans: Float64A
     }
   }
   const roll = s.roll ? numbers(cols[s.roll], n) : null;
-  const q: [number, number, number, number] = [0, 0, 0, 1];
+  const q = [0, 0, 0, 1];
   const { t, x, y, z } = p;
   const q16 = (v: number, o: number, st: number) => Math.max(0, Math.min(STEPS, Math.round((v - o) / st)));
   const emit = (u: number, _l: number, i: number) => {
@@ -546,7 +608,7 @@ export function scanPass2(cols: Columns, n: number, s: LeanSpec, spans: Float64A
     if (yawAt) {
       const rv = roll ? Math.fround(roll[i]) : NaN;
       const rl = (rv * Math.PI) / 180;
-      quatOfFrame(poseFrame({ x: 0, y: 0, z: 0, yaw: Math.PI - yawAt(i), pitch: pitchAt(i) || 0, roll: Number.isFinite(rl) ? rl : 0 }), q);
+      quatOfAttitude(Math.PI - yawAt(i), pitchAt(i) || 0, Number.isFinite(rl) ? rl : 0, q);
     } else {
       q[0] = q[1] = q[2] = 0;
       q[3] = 1;

@@ -7,7 +7,7 @@
  */
 
 import { INSTANCE_STRIDE } from '../../figures/instances';
-import type { GpuTrackStore } from '../gpuTracks/store';
+import { KEY_U32, KEYS_PER_BUFFER, sameKeys, type GpuTrackStore } from '../gpuTracks/store';
 import { FINISH_WGSL, MARKS_WGSL, PLACE_WGSL, TRAIL_WGSL } from '../gpuTracks/shader';
 import type { GpuFigures } from './figures';
 
@@ -61,6 +61,7 @@ interface Uploaded {
   store: GpuTrackStore;
   tracks: GPUBuffer;
   keysA: GPUBuffer;
+  keysA1: GPUBuffer;
   keysB: GPUBuffer;
   runs: GPUBuffer;
   runFirst: Uint32Array;
@@ -125,7 +126,9 @@ export class GpuTracks {
     };
     const S = GPUBufferUsage.STORAGE;
     const tracks = buf('tracks', s.trackData, S);
-    const keysA = buf('track keys', s.keysA, S);
+    // The keys in two buffers when there are more than one may hold.
+    const keysA = buf('track keys', s.keysA.subarray(0, Math.min(s.keys, KEYS_PER_BUFFER) * KEY_U32), S);
+    const keysA1 = buf('track keys (2)', s.keys > KEYS_PER_BUFFER ? s.keysA.subarray(KEYS_PER_BUFFER * KEY_U32) : new Uint32Array(4), S);
     const keysB = buf('track attitudes', s.keysB, S);
     // A run per mesh: the dart's holds every track; a figure's as many as it has tracks, within the triangle budget.
     const M = s.meshes.length;
@@ -180,6 +183,7 @@ export class GpuTracks {
         { binding: 6, resource: { buffer: instances } },
         { binding: 7, resource: { buffer: trail } },
         { binding: 8, resource: { buffer: vis } },
+        { binding: 9, resource: { buffer: keysA1 } },
       ],
     });
     const finishGroup = dev.createBindGroup({
@@ -192,20 +196,26 @@ export class GpuTracks {
         { binding: 4, resource: { buffer: trailArgs } },
       ],
     });
-    const bytes = tracks.size + keysA.size + keysB.size + runs.size + counts.size + args.size + instances.size + trail.size + vis.size + (marks?.size ?? 0) + (markColour?.size ?? 0);
-    return { store: s, tracks, keysA, keysB, runs, runFirst, runRoom, counts, args, argsInit, instances, trail, trailArgs, vis, visSent: undefined, marks, markColour, markGroup, placeGroup, finishGroup, bytes };
+    const bytes = tracks.size + keysA.size + keysA1.size + keysB.size + runs.size + counts.size + args.size + instances.size + trail.size + vis.size + (marks?.size ?? 0) + (markColour?.size ?? 0);
+    return { store: s, tracks, keysA, keysA1, keysB, runs, runFirst, runRoom, counts, args, argsInit, instances, trail, trailArgs, vis, visSent: undefined, marks, markColour, markGroup, placeGroup, finishGroup, bytes };
   }
 
   private release(): void {
     const u = this.up;
     if (!u) return;
-    for (const b of [u.tracks, u.keysA, u.keysB, u.runs, u.counts, u.args, u.instances, u.trail, u.trailArgs, u.vis, u.marks, u.markColour]) b?.destroy();
+    for (const b of [u.tracks, u.keysA, u.keysA1, u.keysB, u.runs, u.counts, u.args, u.instances, u.trail, u.trailArgs, u.vis, u.marks, u.markColour]) b?.destroy();
     this.up = null;
     this.bytes = 0;
   }
 
   /** Places every unit: a compute pass into `encoder`, before the scene pass that draws them. */
   compute(encoder: GPUCommandEncoder, f: GpuTracksFrame, timestampWrites?: GPUComputePassTimestampWrites): void {
+    if (this.up && this.up.store !== f.store && sameKeys(this.up.store, f.store)) {
+      // Recoloured: only the tracks' table again, not gigabytes of keys.
+      this.device.queue.writeBuffer(this.up.tracks, 0, f.store.trackData.buffer, f.store.trackData.byteOffset, f.store.trackData.byteLength);
+      if (this.up.markColour && f.store.markers) this.device.queue.writeBuffer(this.up.markColour, 0, f.store.markers.colour.buffer, f.store.markers.colour.byteOffset, f.store.markers.colour.byteLength);
+      this.up.store = f.store;
+    }
     if (!this.up || this.up.store !== f.store) {
       this.release();
       this.up = this.upload(f.store, f.triangleBudget);

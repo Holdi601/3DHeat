@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import type { AttributeColumn, Dataset } from '../../state/types';
 import { gpuTrackStore, TRACK_U32, FLAG_WEAPON } from '../../render/gpuTracks/store';
 import { emptyPose, evaluateTrack } from '../../render/gpuTracks/evaluate';
-import { KEY_LEVELS, scanPass1, scanPass2, specColumns, type Columns, type LeanSpec } from './scan';
+import { poseFrame } from '../../figures/kit';
+import { quatOfFrame } from '../../figures/motion';
+import { KEY_LEVELS, quatOfAttitude, scanPass1, scanPass2, specColumns, type Columns, type LeanSpec } from './scan';
 import { LeanAssembler, planJobs, type LeanBuilt } from './assemble';
 import { leanSpec } from './spec';
 import { leanBudget, leanStore } from './load';
@@ -252,6 +254,19 @@ describe('lean overlay loader', () => {
     expect(kind.categories![(kind.data as Uint32Array)[b.trackRow[tank]]]).toBe('tank');
   });
 
+  it('turns heading, pitch and roll into the quaternion the figures use', () => {
+    const a = [0, 0, 0, 0];
+    const b: [number, number, number, number] = [0, 0, 0, 0];
+    for (let k = 0; k < 500; k++) {
+      const yaw = (k * 0.731) % 6.28 - 3.14;
+      const pitch = ((k * 0.377) % 3) - 1.5;
+      const roll = ((k * 1.13) % 6.28) - 3.14;
+      quatOfAttitude(yaw, pitch, roll, a);
+      quatOfFrame(poseFrame({ x: 0, y: 0, z: 0, yaw, pitch, roll }), b);
+      for (let c = 0; c < 4; c++) expect(a[c]).toBeCloseTo(b[c], 12);
+    }
+  });
+
   it('sizes the load by the GPU buffer, its memory and the machine', () => {
     const b = leanBudget({ gpuMaxBufferBytes: 4e9, vramBytes: 16e9, freeBytes: 30e9, totalBytes: 64e9, deviceMemoryGB: 8 });
     expect(b.maxKeys).toBe(Math.floor(4e9 / 8));
@@ -259,5 +274,37 @@ describe('lean overlay loader', () => {
     const small = leanBudget({ gpuMaxBufferBytes: 4e9, vramBytes: null, freeBytes: null, totalBytes: null, deviceMemoryGB: 8 });
     expect(small.limit).toBe('ram');
     expect(small.maxKeys).toBe(Math.floor(2e9 / 12));
+  });
+});
+
+describe('GPU track visibility and near figures', () => {
+  it('hides a team or a match by one bit a track, and finds the units big enough to be figures', async () => {
+    const { trackVisibility, isShown, rayNearTrack } = await import('../../render/gpuTracks/visibility');
+    const { nearFigures } = await import('../../render/gpuTracks/near');
+    const b = load(rows());
+    const s = leanStore(b, 'team');
+    const d = b.dataset;
+    expect(trackVisibility(s, d, {}, [])).toBeNull();
+    // Team toggles: hide the first team.
+    const team0 = d.personTeam![0];
+    const bits = trackVisibility(s, d, { [team0]: false }, [])!;
+    for (let i = 0; i < s.tracks; i++) expect(isShown(bits, i)).toBe(d.personTeam![s.personOf[i]] !== team0);
+    // A match filter: only m1.
+    const col = d.attrs.find((a) => a.name === 'match')!;
+    const m1 = col.categories!.indexOf('m1');
+    const only = trackVisibility(s, d, {}, [{ kind: 'categories', column: 'match', allowed: [m1] }])!;
+    for (let i = 0; i < s.tracks; i++) expect(isShown(only, i)).toBe(b.trackGroup[i] === b.groups.indexOf('m1'));
+    // A camera right above unit 0 at t = 30 s: it, and only near ones, as figures.
+    const pose = emptyPose();
+    expect(evaluateTrack(s, 0, 30, 2, pose)).toBe(true);
+    const cam = [pose.x, pose.y + 30, pose.z];
+    const look = new Float32Array([1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, -cam[0], -cam[2], cam[1], 1]);
+    const near = nearFigures(s, { t: 30, viewProj: look, camera: cam, focalPx: 800, orthoPx: 0, minPixels: 24, stale: 2, scale: 1, fullPx: 120, dartPx: 6, visible: null, noWeapons: false });
+    const n = near.reduce((a, x) => a + x.count, 0);
+    expect(n).toBeGreaterThan(0);
+    expect(n).toBeLessThan(s.tracks);
+    // A ray straight down onto unit 0 passes its box; one far off does not.
+    expect(rayNearTrack(s, 0, cam, [0, -1, 0], 1, 0)).toBe(true);
+    expect(rayNearTrack(s, 0, [cam[0] + 1e6, cam[1], cam[2]], [0, -1, 0], 1, 0)).toBe(false);
   });
 });

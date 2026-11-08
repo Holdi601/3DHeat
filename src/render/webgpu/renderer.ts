@@ -1,5 +1,6 @@
 import { GpuFigures } from './figures';
 import { GpuTracks } from './tracks';
+import { KEY_BUFFERS, KEYS_PER_BUFFER } from '../gpuTracks/store';
 import { GpuProfiler } from './profiler';
 import { ATLAS_MIP_LEVELS } from '../../data/atlas';
 import { packLineStarts, type LineData } from '../../data/lines';
@@ -1700,7 +1701,9 @@ export class WebgpuRenderer implements Renderer {
   }
 
   get gpuTracksMaxBytes(): number {
-    return Math.min(this.device.limits.maxStorageBufferBindingSize, this.device.limits.maxBufferSize);
+    // The keys' x, y, z, t (8 bytes each) in up to two buffers (`KEY_BUFFERS`), each within one binding.
+    const one = Math.min(this.device.limits.maxStorageBufferBindingSize, this.device.limits.maxBufferSize, KEYS_PER_BUFFER * 8);
+    return one < KEYS_PER_BUFFER * 8 ? one : KEY_BUFFERS * KEYS_PER_BUFFER * 8;
   }
 
   get gpuTracksBytes(): number {

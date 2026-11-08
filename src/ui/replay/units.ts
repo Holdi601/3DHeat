@@ -103,6 +103,8 @@ export function unitsOf(d: Dataset): UnitIndex {
   const units: Unit[] = [];
   const byKey = new Map<string, Unit>();
   const personUnit = new Int32Array(persons).fill(-1);
+  // Each unit's index, not searched for: hundreds of thousands of units in a large overlay.
+  const unitIndex = new Map<Unit, number>();
   for (let p = 0; p < persons; p++) {
     let first = -1;
     let last = -1;
@@ -156,6 +158,7 @@ export function unitsOf(d: Dataset): UnitIndex {
         spans: [],
       };
       byKey.set(key, u);
+      unitIndex.set(u, units.length);
       units.push(u);
     }
     if (!u.vehicle && vehicle) u.vehicle = vehicle;
@@ -163,7 +166,7 @@ export function unitsOf(d: Dataset): UnitIndex {
     const t0 = d.time && first >= 0 ? d.time[first] : 0;
     const t1 = d.time && last >= 0 ? d.time[last] : 0;
     u.spans.push([t0, t1]);
-    personUnit[p] = units.indexOf(u);
+    personUnit[p] = unitIndex.get(u)!;
   }
   // Each unit's tracks in time order, so the "current life" is the last one started.
   for (const u of units) {

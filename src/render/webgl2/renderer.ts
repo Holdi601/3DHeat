@@ -1,4 +1,5 @@
 import { GlFigures } from './figures';
+import { GlTracks } from './tracks';
 import { ATLAS_MIP_LEVELS } from '../../data/atlas';
 import { packLineStarts, type LineData } from '../../data/lines';
 import { CURVE_LUT_SIZE } from '../../state/curve';
@@ -272,6 +273,8 @@ export class Webgl2Renderer implements Renderer {
   private triVao: WebGLVertexArrayObject;
   /** Instanced figures, made on first use. */
   private figures: GlFigures | null = null;
+  /** Every unit of a large dataset placed on the GPU (transform feedback): `tracks.ts`. */
+  private tracks: GlTracks | null = null;
   private triBuf: WebGLBuffer;
   private triCapacity = 0;
 
@@ -324,6 +327,15 @@ export class Webgl2Renderer implements Renderer {
   /** Background geometry's GPU footprint, the world tiles included, reported alongside the row data. */
   get levelBytes(): number {
     return this.levelOwnBytes + this.tileBytes;
+  }
+
+  /** The GPU tracks' room here: their keys in integer textures, a square of the largest. */
+  get gpuTracksMaxBytes(): number {
+    return GlTracks.maxBytes(this.gl);
+  }
+
+  get gpuTracksBytes(): number {
+    return this.tracks?.bytes ?? 0;
   }
 
   constructor(private readonly canvas: HTMLCanvasElement) {
@@ -1296,6 +1308,11 @@ export class Webgl2Renderer implements Renderer {
     if (params.figureBatches && params.figureBatches.length) {
       this.figures ??= new GlFigures(this.gl);
       this.figures.draw(params.figureBatches, params.viewProj, params.cameraPos);
+    }
+    if (params.gpuTracks) {
+      this.figures ??= new GlFigures(this.gl);
+      this.tracks ??= new GlTracks(this.gl);
+      this.tracks.draw(params.gpuTracks, params.viewProj, params.cameraPos, this.figures);
     }
     if (params.sceneTris && params.sceneTriVertCount > 0) this.drawSceneTris(params, params.sceneTris, params.sceneTriVertCount);
     if (params.trailVerts && params.trailVertCount > 0) {
@@ -2819,6 +2836,8 @@ export class Webgl2Renderer implements Renderer {
     const gl = this.gl;
     this.figures?.dispose();
     this.figures = null;
+    this.tracks?.dispose();
+    this.tracks = null;
     for (const c of this.chunks) {
       gl.deleteTexture(c.posTex);
       if (c.timeTex) gl.deleteTexture(c.timeTex);

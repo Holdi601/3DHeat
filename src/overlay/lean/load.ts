@@ -235,3 +235,49 @@ async function readUnit(o: LeanOverlay, track: number): Promise<UnitRows | null>
     }),
   };
 }
+
+const resolved = new WeakMap<LeanOverlay, Map<number, UnitRows | null>>();
+
+function shown(v: unknown): string {
+  if (v === null || v === undefined) return '';
+  if (typeof v === 'number') return Number.isFinite(v) ? String(Math.round(v * 1000) / 1000) : '';
+  if (typeof v === 'bigint') return v.toString();
+  if (v instanceof Date) return v.toISOString();
+  const s = String(v);
+  return s.length > 80 ? `${s.slice(0, 79)}…` : s;
+}
+
+/**
+ * The raw telemetry of a lean overlay's unit at time `t`: every column of its
+ * own row at or before it, read from its file the first time it is asked for
+ * (empty until then). Null when `d` is not a lean overlay.
+ */
+export function leanRawRows(d: Dataset, person: number, t: number): [string, string][] | null {
+  const o = leanOverlayOf(d);
+  if (!o) return null;
+  let m = resolved.get(o);
+  if (!m) resolved.set(o, (m = new Map()));
+  if (!m.has(person)) {
+    m.set(person, null);
+    void unitRows(o, person).then((r) => m.set(person, r));
+    return [];
+  }
+  const r = m.get(person);
+  if (!r || !r.time.length) return [];
+  let lo = 0;
+  let hi = r.time.length - 1;
+  if (r.time[0] > t) hi = 0;
+  else
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1;
+      if (r.time[mid] <= t) lo = mid;
+      else hi = mid - 1;
+    }
+  const row = hi;
+  const out: [string, string][] = [];
+  r.columns.forEach((c, k) => {
+    const v = shown(r.values[k][row]);
+    if (v.trim()) out.push([c, v]);
+  });
+  return out;
+}

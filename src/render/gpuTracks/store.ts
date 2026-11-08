@@ -36,6 +36,13 @@ import { CATALOG } from '../../figures/catalog';
 
 export const TRACK_U32 = 16;
 export const KEY_U32 = 2;
+/**
+ * Keys one GPU buffer of x, y, z, t holds (8 bytes each, just under the 2 GB
+ * a WebGPU buffer may be): beyond them the keys go on in a second buffer, so
+ * the GPU tracks hold up to `KEY_BUFFERS` times this many.
+ */
+export const KEYS_PER_BUFFER = (1 << 28) - (1 << 16);
+export const KEY_BUFFERS = 2;
 /** Steps a coordinate or the time spans within a track (16 bits). */
 const STEPS = 65535;
 /** Most seconds between two keys when the data is reduced. */
@@ -209,6 +216,11 @@ export function registerGpuTrackStore(d: Dataset, s: GpuTrackStore): void {
 /** The tracks registered for `d`, which is drawn from them whatever its size; null for any other dataset. */
 export function registeredGpuTrackStore(d: Dataset | null): GpuTrackStore | null {
   return d && registered.has(d) ? (cache.get(d) ?? null) : null;
+}
+
+/** Whether `b` differs from `a` only in its tracks' table (colours, say): the keys, meshes and markers are the same. */
+export function sameKeys(a: GpuTrackStore, b: GpuTrackStore): boolean {
+  return a.keysA === b.keysA && a.keysB === b.keysB && a.tracks === b.tracks && a.markers?.data === b.markers?.data && a.meshes.length === b.meshes.length && a.meshes.every((m, i) => m === b.meshes[i]);
 }
 
 /** The dataset row for key `key` of track `track`. */
