@@ -1983,9 +1983,18 @@ G['harimau'] = { cls: 'light-tank', chassis: 'tracked', length: 7.0, width: 3.2,
   turret: turret(-0.5, [[-2.3, 1.1], [-1.95, 1.42], [0.6, 1.48], [1.5, 1.15], [1.85, 0.6]], [[-2.3, 0.7], [-1.95, 0.84], [0.7, 0.88], [1.85, 0.5]], 11, 1.75), guns: [{ mount: 'turret', length: 5.4, calibre: 0.105, sleeve: 0.65, extractor: 0.55, at: 0.45 }], addOns: [td(-0.6, 0.72, 1.05, 0.5, 0.35), td(0.4, -0.75, 1.05, 0.42, 0.35)] };
 // OTOMATIC (1987; on the Palmaria's hull, 7.27 x 3.35 m, about 3.5 m with the radar: estimates): the long hull on seven road
 // wheels, the very big box turret with the long 76 mm and its brake, the search radar's antenna on the turret's back.
-G['otomatic'] = { cls: 'spaa', chassis: 'tracked', length: 7.27, width: 3.35, hullHeight: 1.65, roadWheels: 7, roadWheelRadius: 0.33, skirts: true, trackProfile: run(7.1, 0.95, [3.55, 0.62], [-3.55, 0.7], -2.95, 2.9), hullOutline: hull(7.27, 3.35, 1.65, 0.92, 1.6, 1.1, 0.15),
-  turret: turret(-0.4, [[-1.9, 1.35], [-1.6, 1.55], [0.9, 1.6], [1.6, 1.25], [1.85, 0.7]], [[-1.9, 1.15], [-1.6, 1.3], [0.9, 1.3], [1.85, 0.75]], 12, 1.8), guns: [{ mount: 'turret', length: 4.7, calibre: 0.076, muzzle: true, at: 0.55, elevation: 0.15 }],
-  addOns: [{ on: 'turret', kind: 'slab', at: [-1.3, 0, 1.75], size: [0.15, 0, 0], poly: rect(1.1, 0.35), plane: 'front', pitch: -0.3, paint: 'light' }, td(-1.3, 0, 1.38, 0.3, 0.2, DARK)] };
+// Measured on the U.S. Army Armor Center's side drawing (public domain, scaled by the 7.27 m hull, sources.md): the deck 1.7 m
+// up, a short upper glacis 0.95 m long to a 1.16 m nose; the road wheels' places; the turret's roof 1.35 m over the deck from
+// its upright back 2.44 m behind the hull's middle to 1.36 m ahead of it, the front plate sloping down and forward to a beak
+// 0.5 m up at 2.2 m ahead, under it the face back to the deck; the bustle's underside 0.23 m over the deck; the tracking
+// radar's dish on its pedestal over the roof's middle, the search radar's head on its arm at the back.
+G['otomatic'] = { cls: 'spaa', chassis: 'tracked', length: 7.27, width: 3.35, hullHeight: 1.7, roadWheels: 7, roadWheelRadius: 0.33, skirts: true, trackProfile: run(7.0, 0.9, [3.47, 0.6], [-3.49, 0.66], -2.13, 2.44), running: { wheels: [-2.13, -1.39, -0.63, 0.14, 0.88, 1.65, 2.44] }, hullOutline: hull(7.27, 3.35, 1.7, 0.75, 0.95, 1.16, 0.05),
+  turret: (() => {
+    const t = turret(-0.4, [[-2.04, 1.35], [-1.8, 1.55], [1.76, 1.6], [2.3, 1.25], [2.59, 0.7]], [[-2.04, 1.25], [-1.95, 1.33], [1.76, 1.35], [2.59, 0.51]], 12, 2.1);
+    return { ...t, outline: { ...t.outline!, bottom: [[-2.04, 0.23], [-0.85, 0.23], [-0.55, 0], [2.13, 0], [2.59, 0.51]] as P2[] } };
+  })(),
+  guns: [{ mount: 'turret', length: 4.2, calibre: 0.076, muzzle: true, at: 0.75, elevation: 0.15 }],
+  addOns: [{ on: 'turret', kind: 'slab', at: [-0.48, 0, 2.35], size: [0.15, 0, 0], poly: rect(0.55, 0.45), plane: 'front', pitch: -0.3, paint: 'light' }, td(-0.48, 0, 1.62, 0.4, 0.58, DARK), { on: 'turret', kind: 'tube', at: [-1.39, 0, 1.4], to: [-1.87, 0, 2.85], size: [0.2, 0.2, 0], metal: true }, { on: 'turret', kind: 'drum', at: [-1.87, 0, 3.0], size: [0.42, 0.42, 0.32], paint: 'light' }] };
 // KF41 Lynx (2016; 7.73 x 3.6 m, 3.3 m): the tall flat-sided hull on six road wheels under skirts with its sharp nose, the
 // Lance turret with the 35 mm in its long shroud, the sight heads and the missile pod on its side.
 G['kf41-lynx'] = { cls: 'ifv', chassis: 'tracked', length: 7.73, width: 3.6, hullHeight: 2.3, roadWheels: 6, roadWheelRadius: 0.33, skirts: true, skirt: [[-3.65, 0.55], [3.55, 0.55], [3.55, 1.3], [-3.65, 1.3]], trackProfile: run(7.5, 1.0, [3.75, 0.68], [-3.75, 0.72], -3.15, 3.05), hullOutline: { top: [[-3.86, 2.15], [-3.7, 2.3], [0.9, 2.3], [3.86, 1.15]], bottom: [[-3.86, 1.0], [3.5, 1.0], [3.86, 1.15]], plan: [[-3.86, 1.75], [3.86, 1.68]], round: 12, stations: 12 },
