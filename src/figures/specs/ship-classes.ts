@@ -564,7 +564,9 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
     more: { stem: 1.5 },
   },
   'hatsuharu': { cls: 'destroyer', L: 109.5, B: 10.0, fb: 5, fc: [16, 1.4], guns: '40:2/127 33:2/127^2 -38:2/127b', funnels: [[10, 7, 3], [-2, 7, 3]], blocks: [[28, 22, 12, 3, 1]], masts: [[20, 15]] },
-  'shiratsuyu': { cls: 'destroyer', L: 107.5, B: 9.9, fb: 5, fc: [16, 1.4], guns: '40:2/127 -28:1/127^2b -40:2/127b', funnels: [[10, 7, 3], [-2, 7, 3]], blocks: [[28, 22, 12, 3, 1]], masts: [[20, 15]] },
+  // Shiratsuyu: deck line, forecastle break, bridge and director, funnels, masts and gun places measured on the
+  // ONI 222-J profile of the Hatsuharu-Shigure class (sources.md); both after mounts stand level there.
+  'shiratsuyu': { cls: 'destroyer', L: 107.5, B: 9.9, fb: 4.8, fc: [16, 1.7], sheer: 0.8, guns: '40:2/127 -31:1/127^1b -39:2/127^1b', funnels: [[12.4, 9, 3], [-3, 8.4, 3]], blocks: [[29, 22, 12.8, 3, 1]], raised: [[27.5, 23.5, 12.8, 14.6, 2]], sl: [[-10, 8.5]], masts: [[19, 16]] },
   'kagero': { cls: 'destroyer', L: 118.5, B: 10.8, fb: 5.4, fc: [18, 1.4], guns: '44:2/127 -32:2/127^2b -44:2/127b', funnels: [[10, 7.5, 3], [-2, 7.5, 3]], blocks: [[30, 24, 12, 3.2, 1]], masts: [[22, 16]] },
   // Matsu: the forecastle ending at the long low bridge, the widely spaced upright stacks, the quadruple tubes between
   // them, the aft deckhouse and the twin 5-inch on the stern, measured on the ONI 222-J profile (sources.md; its
@@ -793,7 +795,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   'kamikaze': { rake: 0.1 },
   'mutsuki': { rake: 0.1 },
   'hatsuharu': { masts: [[20, 15, 't'], [-22, 9]], rake: 0.15 },
-  'shiratsuyu': { masts: [[20, 15, 't'], [-22, 9]], rake: 0.15 },
+  'shiratsuyu': { masts: [[19, 16, 't'], [-24, 13, 't']], rake: 0.15 },
   'kagero': { funnels: [[10, 7.5, 3.8, 2.8], [-2, 7.5, 3, 2.4]], masts: [[22, 16, 't'], [-24, 10]], rake: 0.14, blocks: [[28.5, 24.5, 13.2, 2.6]] },
   'matsu': { rake: 0.02, sl: [[-12.6, 7.1]] },
   'shimakaze': { masts: [[26, 16, 't'], [-30, 10]], rake: 0.14 },
@@ -814,9 +816,9 @@ const AFT: Record<string, Partial<ShipO>> = {
   'mogador': { masts: [[26, 18, 't'], [-30, 10]] },
   // Destroyers of the later lists.
   'gleaves': { guns: '38:1/127e 31:1/127e^2 -31:1/127^2b -42:1/127b', masts: [[18, 17]] },
-  'akizuki': { masts: [[24, 20, 't'], [-24, 12]], rake: 0.16, sl: [[-9, 11]] },
+  'akizuki': { masts: [[16.5, 15.5, 't'], [-19, 10.5]], rake: 0.16, sl: [[-9, 11]] },
   'fubuki': { masts: [[22, 16, 't'], [-20, 10]], rake: 0.12 },
-  'yugumo': { masts: [[22, 16, 't'], [-24, 10]], rake: 0.14, funnels: [[10, 7.5, 3.6, 2.8], [-2, 7.5, 3, 2.4]] },
+  'yugumo': { masts: [[20.5, 15, 't'], [-23.5, 13]], rake: 0.14, funnels: [[13, 9.5, 3.6, 2.8], [-2.6, 8.2, 3, 2.4]] },
   'tashkent': { masts: [[24, 20, 't'], [-24, 14]] },
   'abdiel': { masts: [[17, 20, 't'], [-26, 12]] },
   'centurion-1911': { blocks: [[36, 28, 20, 6, 1]], raised: [[28, 24, 28, 29.6, 2.6]] },
@@ -1539,14 +1541,16 @@ const W: Record<string, ShipO> = {
     launchers: [{ x: 4, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }, { x: -12, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }],
   },
   // Akizuki: the long forecastle, four twin 10 cm gunhouses (superfiring pairs fore and aft), the single big raked
-  // funnel, one quadruple torpedo mount (134.2 x 11.6 m; 3,700 t full).
+  // funnel, one quadruple torpedo mount (134.2 x 11.6 m; 3,700 t full). Deck line, forecastle break, bridge, funnel,
+  // masts, gun and torpedo mount places measured on the ONI 222-J profile of the Teruzuki class (sources.md).
   'akizuki': {
-    cls: 'destroyer', L: 134.2, B: 11.6, fb: 6, fc: [-6, 1.6], sheer: 2.5,
-    guns: '50:2/100m 42:2/100m^2.4 -42:2/100mb^2.4 -52:2/100mb',
-    funnels: [[-1, 9, 5.5]],
-    blocks: [[34, 24, 14, 3.4, 1.5], [31, 26, 17, 2.4]],
-    masts: [[24, 20], [-24, 12]],
-    tt: [1, 4], ttAt: [-14, 8],
+    cls: 'destroyer', L: 134.2, B: 11.6, fb: 4, fc: [-2, 1], sheer: 2.5,
+    guns: '45:2/100m 35:2/100m^2.4 -30.5:2/100mb^2 -39.5:2/100mb',
+    funnels: [[7.5, 8, 5.8]],
+    blocks: [[27, 16, 10.5, 3.4, 1], [26, 21.5, 15.3, 2.6, 1]],
+    raised: [[24.5, 22, 15.3, 17, 1.2]],
+    masts: [[16.5, 15.5], [-19, 10.5]],
+    tt: [1, 4], ttAt: [-3, 8],
   },
   // King George V: an almost level deck, the quadruple 14-inch turret forward with the twin superfiring over it, the
   // quadruple aft, two upright funnels, the tower bridge, eight twin 5.25-inch turrets along the sides (227.1 x 31.4 m;
@@ -1906,7 +1910,9 @@ const R: Record<string, ShipO> = {
   'fubuki': { cls: 'destroyer', L: 118.4, B: 10.4, fb: 5.4, fc: [16, 1.5], guns: '44:2/127m -32:2/127mb^2 -43:2/127mb', funnels: [[9, 7.5, 3.6], [-4, 7, 3]], blocks: [[30, 22, 12.5, 3.2, 1], [-27, -36, 6.4, 2.6]], masts: [[22, 16], [-20, 10]], tt: [3, 3], ttAt: [6, 13] },
   // Yugumo: Kagero's improved sister, three twin 12.7 cm turrets, two funnels, two quadruple torpedo mounts (119.2 x
   // 10.8 m; 2,520 t full).
-  'yugumo': { cls: 'destroyer', L: 119.2, B: 10.8, fb: 5.4, fc: [18, 1.4], guns: '45:2/127m -32:2/127mb^2 -45:2/127mb', funnels: [[10, 7.5, 3.2], [-2, 7.5, 3]], blocks: [[32, 24, 12, 3.4, 2.5], [29.5, 24.5, 14.2, 2.4, 2]], masts: [[22, 16]], tt: [2, 4] },
+  // Yugumo: deck line, funnels, masts, gun and torpedo mount places measured on the ONI 222-J profile of the Takanami
+  // class (sources.md).
+  'yugumo': { cls: 'destroyer', L: 119.2, B: 10.8, fb: 4.9, fc: [18, 1.4], sheer: 1, guns: '40:2/127m -28:2/127mb^1.5 -37:2/127mb', funnels: [[13, 9.5, 3.2], [-2.6, 8.2, 3]], blocks: [[32, 24, 12, 3.4, 2.5], [29.5, 24.5, 14.2, 2.4, 2]], masts: [[20.5, 15]], tt: [2, 4], ttAt: [3, 16] },
   // Nagara: Kuma's successor, seven single 14 cm guns, three funnels, the aircraft hangar in the bridge's base (162.1 x
   // 14.2 m; 5,570 t full).
   'nagara': { cls: 'light-cruiser', L: 162.1, B: 14.2, fb: 7, fc: [-6, 2.4], guns: '56:1/140 47:1/140^2 -46:1/140^2b -54:1/140b 10,6:1/140', funnels: [[12, 11, 3.5], [2, 11, 3.5], [-8, 11, 3.5]], blocks: [[38, 30, 11, 3, 1], [32, 24, 18, 4, 1]], masts: [[26, 24], [-28, 18]], tt: [2, 4] },
