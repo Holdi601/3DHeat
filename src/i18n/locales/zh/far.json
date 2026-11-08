@@ -22,5 +22,7 @@
   "far.weaponMarks": "武器也显示垂线和标签",
   "far.weaponMarksTitle": "飞行中的武器像单位一样显示垂线和名称。",
   "far.decoys": "诱饵和炮弹 ({count})",
-  "far.decoysTitle": "在列表中显示红外诱饵弹、箔条、炮弹和残骸。"
+  "far.decoysTitle": "在列表中显示红外诱饵弹、箔条、炮弹和残骸。",
+  "far.fires": "单位起火",
+  "far.firesTitle": "在单位部件燃烧处显示火焰和烟雾，从起火到熄灭，包括残骸。"
 }

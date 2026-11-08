@@ -22,5 +22,7 @@
   "far.weaponMarks": "Líneas al suelo y etiquetas en armas",
   "far.weaponMarksTitle": "Las armas en vuelo reciben líneas al suelo y nombres como las unidades.",
   "far.decoys": "Señuelos y proyectiles ({count})",
-  "far.decoysTitle": "Bengalas, chaff, proyectiles y restos en las listas."
+  "far.decoysTitle": "Bengalas, chaff, proyectiles y restos en las listas.",
+  "far.fires": "Incendios en unidades",
+  "far.firesTitle": "Llamas y humo donde arde una parte de una unidad, desde que se prende hasta que se apaga, restos incluidos."
 }

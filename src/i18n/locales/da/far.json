@@ -22,5 +22,7 @@
   "far.weaponMarks": "Lodlinjer og etiketter på våben",
   "far.weaponMarksTitle": "Våben i luften får lodlinjer og navne som enhederne.",
   "far.decoys": "Lokkemidler og granater ({count})",
-  "far.decoysTitle": "Flares, chaff, granater og vragdele i listerne."
+  "far.decoysTitle": "Flares, chaff, granater og vragdele i listerne.",
+  "far.fires": "Brande på enheder",
+  "far.firesTitle": "Flammer og røg, hvor en del af en enhed brænder, fra den antændes, til den er slukket, også vragdele."
 }

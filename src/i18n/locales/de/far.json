@@ -22,5 +22,7 @@
   "far.weaponMarks": "Lotlinien und Beschriftungen an Waffen",
   "far.weaponMarksTitle": "Waffen im Flug erhalten Lotlinien und Namen wie die Einheiten.",
   "far.decoys": "Täuschkörper und Granaten ({count})",
-  "far.decoysTitle": "Flares, Düppel, Granaten und Trümmer in den Listen."
+  "far.decoysTitle": "Flares, Düppel, Granaten und Trümmer in den Listen.",
+  "far.fires": "Brände an Einheiten",
+  "far.firesTitle": "Flammen und Rauch, wo ein Teil einer Einheit brennt, vom Entzünden bis zum Erlöschen, auch an Wracks."
 }

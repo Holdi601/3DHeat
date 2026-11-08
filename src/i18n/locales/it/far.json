@@ -22,5 +22,7 @@
   "far.weaponMarks": "Linee a terra ed etichette sulle armi",
   "far.weaponMarksTitle": "Le armi in volo ricevono linee a terra e nomi come le unità.",
   "far.decoys": "Esche e proiettili ({count})",
-  "far.decoysTitle": "Flare, chaff, proiettili e detriti negli elenchi."
+  "far.decoysTitle": "Flare, chaff, proiettili e detriti negli elenchi.",
+  "far.fires": "Incendi sulle unità",
+  "far.firesTitle": "Fiamme e fumo dove brucia una parte di un'unità, da quando prende fuoco a quando si spegne, relitti compresi."
 }

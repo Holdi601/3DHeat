@@ -249,6 +249,8 @@ export interface TeamSettings {
   weaponMarks: boolean;
   /** Weapons in flight with their smoke, tracers, impacts, hits and kills (render/weapons.ts). */
   weapons: boolean;
+  /** Fires burning on units, flames and smoke from fire_on to fire_off (figures/fires.ts). */
+  fires: boolean;
   /**
    * Which session to play back, as an index into `dataset.sessionLabels`.
    *
@@ -692,6 +694,7 @@ export const useStore = create<AppState>((set) => ({
     figurePixels: 36,
     ...savedFar(),
     weapons: true,
+    fires: true,
     session: -1,
   },
   timeline: {

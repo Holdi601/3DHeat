@@ -22,5 +22,7 @@
   "far.weaponMarks": "Vija vertikale dhe etiketa te armët",
   "far.weaponMarksTitle": "Armët në fluturim marrin vija vertikale dhe emra si njësitë.",
   "far.decoys": "Karremë dhe predha ({count})",
-  "far.decoysTitle": "Flakëza, chaff, predha dhe mbeturina në lista."
+  "far.decoysTitle": "Flakëza, chaff, predha dhe mbeturina në lista.",
+  "far.fires": "Zjarre në njësi",
+  "far.firesTitle": "Flakë dhe tym aty ku digjet një pjesë e një njësie, nga ndezja deri në shuarje, përfshirë rrënojat."
 }

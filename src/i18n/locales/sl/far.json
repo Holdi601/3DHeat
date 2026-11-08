@@ -22,5 +22,7 @@
   "far.weaponMarks": "Navpičnice in oznake pri orožju",
   "far.weaponMarksTitle": "Orožje v letu dobi navpičnice in imena kot enote.",
   "far.decoys": "Vabe in izstrelki ({count})",
-  "far.decoysTitle": "Bakle, pleve, izstrelki in razbitine na seznamih."
+  "far.decoysTitle": "Bakle, pleve, izstrelki in razbitine na seznamih.",
+  "far.fires": "Požari na enotah",
+  "far.firesTitle": "Plameni in dim, kjer gori del enote, od vžiga do pogasitve, vključno z razbitinami."
 }

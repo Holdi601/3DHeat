@@ -22,5 +22,7 @@
   "far.weaponMarks": "Függőlegesek és címkék a fegyvereken",
   "far.weaponMarksTitle": "A repülő fegyverek függőlegest és nevet kapnak, mint az egységek.",
   "far.decoys": "Csalik és lövedékek ({count})",
-  "far.decoysTitle": "Hőcsapdák, dipólok, lövedékek és roncsok a listákban."
+  "far.decoysTitle": "Hőcsapdák, dipólok, lövedékek és roncsok a listákban.",
+  "far.fires": "Tüzek az egységeken",
+  "far.firesTitle": "Lángok és füst ott, ahol egy egység része ég, a lángra kapástól az eloltásig, a roncsokon is."
 }

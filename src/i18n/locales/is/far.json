@@ -22,5 +22,7 @@
   "far.weaponMarks": "Lóðlínur og merki á vopnum",
   "far.weaponMarksTitle": "Vopn á flugi fá lóðlínur og nöfn eins og einingar.",
   "far.decoys": "Tálbeitur og skot ({count})",
-  "far.decoysTitle": "Blys, álræmur, skot og brak á listunum."
+  "far.decoysTitle": "Blys, álræmur, skot og brak á listunum.",
+  "far.fires": "Eldar á einingum",
+  "far.firesTitle": "Logar og reykur þar sem hluti einingar brennur, frá því að kviknar í honum þar til eldurinn slokknar, flök meðtalin."
 }

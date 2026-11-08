@@ -22,5 +22,7 @@
   "far.weaponMarks": "Verticale și etichete la arme",
   "far.weaponMarksTitle": "Armele în zbor primesc verticale și nume ca unitățile.",
   "far.decoys": "Momeli și proiectile ({count})",
-  "far.decoysTitle": "Rachete termice, dipoli, proiectile și resturi în liste."
+  "far.decoysTitle": "Rachete termice, dipoli, proiectile și resturi în liste.",
+  "far.fires": "Incendii pe unități",
+  "far.firesTitle": "Flăcări și fum acolo unde arde o parte a unei unități, de la aprindere până la stingere, inclusiv epavele."
 }

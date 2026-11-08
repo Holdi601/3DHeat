@@ -22,5 +22,7 @@
   "far.weaponMarks": "兵装にも垂線とラベル",
   "far.weaponMarksTitle": "飛翔中の兵装にもユニットと同じく垂線と名前を付けます。",
   "far.decoys": "デコイと砲弾 ({count})",
-  "far.decoysTitle": "フレア、チャフ、砲弾、破片を一覧に表示します。"
+  "far.decoysTitle": "フレア、チャフ、砲弾、破片を一覧に表示します。",
+  "far.fires": "ユニットの火災",
+  "far.firesTitle": "ユニットの部位が燃えている場所に、発火から鎮火まで炎と煙を表示します。残骸も含みます。"
 }

@@ -22,5 +22,7 @@
   "far.weaponMarks": "Silahlarda düşey çizgiler ve etiketler",
   "far.weaponMarksTitle": "Uçuştaki silahlar birimler gibi düşey çizgi ve ad alır.",
   "far.decoys": "Yemler ve mermiler ({count})",
-  "far.decoysTitle": "Isı fişekleri, chaff, mermiler ve enkaz listelerde."
+  "far.decoysTitle": "Isı fişekleri, chaff, mermiler ve enkaz listelerde.",
+  "far.fires": "Birimlerdeki yangınlar",
+  "far.firesTitle": "Bir birimin bir parçasının yandığı yerde, tutuştuğu andan sönene dek alev ve duman; enkazlar dahil."
 }

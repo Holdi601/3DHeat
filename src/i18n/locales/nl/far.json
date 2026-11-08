@@ -22,5 +22,7 @@
   "far.weaponMarks": "Loodlijnen en labels bij wapens",
   "far.weaponMarksTitle": "Wapens in de lucht krijgen loodlijnen en namen zoals de eenheden.",
   "far.decoys": "Lokmiddelen en granaten ({count})",
-  "far.decoysTitle": "Flares, chaff, granaten en brokstukken in de lijsten."
+  "far.decoysTitle": "Flares, chaff, granaten en brokstukken in de lijsten.",
+  "far.fires": "Branden op eenheden",
+  "far.firesTitle": "Vlammen en rook waar een deel van een eenheid brandt, vanaf het vlamvatten tot het gedoofd is, wrakken inbegrepen."
 }

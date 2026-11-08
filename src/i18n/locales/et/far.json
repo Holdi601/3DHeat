@@ -22,5 +22,7 @@
   "far.weaponMarks": "Loodjooned ja sildid relvadel",
   "far.weaponMarksTitle": "Lennus relvad saavad loodjooned ja nimed nagu üksused.",
   "far.decoys": "Peibutised ja mürsud ({count})",
-  "far.decoysTitle": "Rakettpeibutised, fooliumiribad, mürsud ja rusud loendites."
+  "far.decoysTitle": "Rakettpeibutised, fooliumiribad, mürsud ja rusud loendites.",
+  "far.fires": "Tulekahjud üksustel",
+  "far.firesTitle": "Leegid ja suits seal, kus üksuse osa põleb, süttimisest kustumiseni, ka vrakkidel."
 }
