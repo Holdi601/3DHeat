@@ -29,8 +29,10 @@ export interface Unit {
   key: string;
   /** As the unit list and the labels say it: the player, or an AI unit by its vehicle. */
   name: string;
-  /** The vehicle's display name ('' when the data has none). */
+  /** The vehicle's display name ('' when the data has none): its first life's. */
   vehicle: string;
+  /** Each life's vehicle, beside `persons`: a player who changes vehicle is named by the one they are in (`vehicleOf`). */
+  vehicles: string[];
   kind: UnitKind;
   /** A decoy, a shell or debris (`figures/symbolClass.ts`): no label, and out of the lists unless asked for. */
   decoy?: boolean;
@@ -166,6 +168,7 @@ export function unitsOf(d: Dataset): UnitIndex {
         team: d.personTeam ? d.personTeam[p] : -1,
         persons: [],
         spans: [],
+        vehicles: [],
       };
       byKey.set(key, u);
       unitIndex.set(u, units.length);
@@ -173,6 +176,7 @@ export function unitsOf(d: Dataset): UnitIndex {
     }
     if (!u.vehicle && vehicle) u.vehicle = vehicle;
     u.persons.push(p);
+    u.vehicles.push(vehicle);
     const t0 = d.time && first >= 0 ? d.time[first] : 0;
     const t1 = d.time && last >= 0 ? d.time[last] : 0;
     u.spans.push([t0, t1]);
@@ -183,10 +187,18 @@ export function unitsOf(d: Dataset): UnitIndex {
     const order = u.persons.map((_, i) => i).sort((a, b) => u.spans[a][0] - u.spans[b][0]);
     u.persons = order.map((i) => u.persons[i]);
     u.spans = order.map((i) => u.spans[i]);
+    u.vehicles = order.map((i) => u.vehicles[i]);
+    if (u.vehicles[0]) u.vehicle = u.vehicles[0];
   }
   const out: UnitIndex = { units, byKey, personUnit, aiFrom };
   cache.set(d, out);
   return out;
+}
+
+/** The vehicle of one of the unit's tracks: the life's own, else the unit's first. */
+export function vehicleOf(u: Unit, person: number): string {
+  const i = u.persons.indexOf(person);
+  return (i >= 0 && u.vehicles[i]) || u.vehicle;
 }
 
 /** The unit's track at `time`: the life that spans it, else the last that started before it, else the first. */
