@@ -986,8 +986,9 @@ G['m24-chaffee'] = ww2({
   cls: 'light-tank', L: 4.99, W: 2.95, deck: 1.7, fender: 0.95,
   top: [[-2.5, 1.45], [-2.4, 1.68], [0.4, 1.7], [2.2, 0.95], [2.5, 0.85]],
   plan: [[-2.5, 1.45], [2.5, 1.45]], hullRound: 10,
-  track: trk(2.45, 0.95, 0.66, 0.55, 1.75),
-  wheels: even(5, -1.75, 1.75), r: 0.32, rollers: [-1.2, 0, 1.2],
+  // 2.85 m of track on the ground (112.25 in): the five wheels close together, the end ones 2.85 m apart.
+  track: trk(2.45, 0.95, 0.66, 0.55, 1.425),
+  wheels: even(5, -1.425, 1.425), r: 0.32, rollers: [-1.2, 0, 1.2],
   turret: M24_T, gun: { length: 2.1, calibre: 0.075, at: 0.45 },
   turretParts: (t) => [cupola(t, -0.3, -0.45, 0.3, 0.18)],
 });
@@ -998,8 +999,9 @@ const M26: Ww2 = {
   cls: 'heavy-tank', L: 6.33, W: 3.51, deck: 1.85, fender: 1.0,
   top: [[-3.165, 1.5], [-3.0, 1.85], [1.0, 1.85], [2.85, 0.95], [3.165, 0.85]],
   plan: [[-3.165, 1.72], [3.165, 1.72]], hullRound: 10,
-  track: trk(3.1, 1.0, 0.6, 0.66, 2.35),
-  wheels: even(6, -2.35, 2.35), r: 0.33, rollers: even(5, -2.0, 2.0),
+  // 3.85-3.95 m of track on the ground (151.5 in left, 155.5 in right): the end wheels 3.9 m apart.
+  track: trk(3.1, 1.0, 0.6, 0.66, 1.95),
+  wheels: even(6, -1.95, 1.95), r: 0.33, rollers: even(5, -2.0, 2.0),
   turret: M26_T,
 };
 G['m26-pershing'] = ww2({ ...M26, gun: { length: 4.25, calibre: 0.09, muzzle: true, at: 0.45 }, turretParts: (t) => [cupola(t, -0.6, 0.5, 0.32, 0.15)] });
