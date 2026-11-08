@@ -1490,6 +1490,31 @@ export class Engine {
   }
 
   /**
+   * The far plane for this view: the calibrated one, pushed out to the far side of
+   * the level and the data when the camera has flown further away than that.
+   *
+   * The calibration sets far from the data's extent, so a small dataset seen from a
+   * few kilometres up lay wholly past it and vanished - heat, lines and all - the
+   * moment the camera crossed it. With the near plane moving out with the distance
+   * (`nearForView`), the ratio stays where depth precision wants it.
+   */
+  private farForView(far: number, s: ReturnType<typeof snapshot>, raceTab: boolean): number {
+    if (raceTab) return far;
+    const level = s.level?.kind === 'model' ? s.level : null;
+    const boxes = [level?.bounds, s.dataset?.bounds].filter((b) => b !== undefined);
+    if (!boxes.length) return far;
+    const p = this.mirrorPoint(this.camera.position.x, this.camera.position.y, this.camera.position.z);
+    let reach = 0;
+    for (const b of boxes) {
+      const dx = Math.max(Math.abs(b.minX - p.x), Math.abs(b.maxX - p.x));
+      const dy = Math.max(Math.abs(b.minY - p.y), Math.abs(b.maxY - p.y));
+      const dz = Math.max(Math.abs(b.minZ - p.z), Math.abs(b.maxZ - p.z));
+      reach = Math.max(reach, Math.hypot(dx, dy, dz));
+    }
+    return Number.isFinite(reach) ? Math.max(far, reach * 1.1) : far;
+  }
+
+  /**
    * The person whose figure is under a CSS-pixel canvas position, the nearest
    * along the view ray; null when no figure is there. Picks by the figure as
    * drawn (turned, and grown to its on-screen minimum), so a click on a wing
@@ -1555,31 +1580,6 @@ export class Engine {
   }
 
   private gpuPick: { key: string; person: number | null } | null = null;
-
-  /**
-   * The far plane for this view: the calibrated one, pushed out to the far side of
-   * the level and the data when the camera has flown further away than that.
-   *
-   * The calibration sets far from the data's extent, so a small dataset seen from a
-   * few kilometres up lay wholly past it and vanished - heat, lines and all - the
-   * moment the camera crossed it. With the near plane moving out with the distance
-   * (`nearForView`), the ratio stays where depth precision wants it.
-   */
-  private farForView(far: number, s: ReturnType<typeof snapshot>, raceTab: boolean): number {
-    if (raceTab) return far;
-    const level = s.level?.kind === 'model' ? s.level : null;
-    const boxes = [level?.bounds, s.dataset?.bounds].filter((b) => b !== undefined);
-    if (!boxes.length) return far;
-    const p = this.mirrorPoint(this.camera.position.x, this.camera.position.y, this.camera.position.z);
-    let reach = 0;
-    for (const b of boxes) {
-      const dx = Math.max(Math.abs(b.minX - p.x), Math.abs(b.maxX - p.x));
-      const dy = Math.max(Math.abs(b.minY - p.y), Math.abs(b.maxY - p.y));
-      const dz = Math.max(Math.abs(b.minZ - p.z), Math.abs(b.maxZ - p.z));
-      reach = Math.max(reach, Math.hypot(dx, dy, dz));
-    }
-    return Number.isFinite(reach) ? Math.max(far, reach * 1.1) : far;
-  }
 
   /**
    * The GPU tracks for the loaded dataset, when it has so many units that
@@ -2500,8 +2500,9 @@ export class Engine {
     // Not for line heat: a route is drawn at least a few pixels wide however
     // coarse the buffer, so a coarser level changes how much heat a thin route
     // leaves, and a camera move that changed the level showed as a flicker.
+    // With the automatic off the resolution is the user's alone: no level for the sprites' size or cost.
     const level =
-      s.mode === 'heat-lines'
+      s.mode === 'heat-lines' || !s.budget.adaptive
         ? 1
         : this.heatLevel.update(spritePx, this.lastFrameDrew && s.mode !== 'team' ? heatCost : null, heatBudgetMs);
     // The resolution: the user's, the budget's second stage, and the level for
@@ -2865,7 +2866,8 @@ export class Engine {
       // controller's own figure used to be a floor under it, and that
       // controller, having seen cutting fail to help on a slow frame for other
       // reasons, climbs - it held a radius too wide for the frame at every row.
-      const exactRows = Math.min(this.exactCap, planHi - planLo);
+      // With the automatic off nothing adapts: every row in view, every frame.
+      const exactRows = s.budget.adaptive ? Math.min(this.exactCap, planHi - planLo) : planHi - planLo;
       splatBudget = s.budget.adaptive ? exactRows : Math.max(splatBudget, exactRows);
       // A growing window's base is kept and only extended from, never averaged
       // over again, so a sampled base stayed sampled for as long as it played.
@@ -2882,7 +2884,7 @@ export class Engine {
       // A step up waits for the GPU's reading of the last one, a few frames:
       // doubling every frame reached every row in view before the first
       // reading of the cost came back.
-      if (this.heatTimed && this.prevSprites > 0) {
+      if (s.budget.adaptive && this.heatTimed && this.prevSprites > 0) {
         const settled = this.frameIndex - this.rampFrame >= RAMP_FRAMES;
         const ramp = !settled ? 1 : this.heatCostPeak > 0 ? Math.max(1, Math.min(2, (this.heatBudgetMs * 0.9) / this.heatCostPeak)) : 2;
         const limit = Math.max(EXACT_FLOOR_SPRITES, this.prevSprites * ramp);
