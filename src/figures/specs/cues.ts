@@ -20,6 +20,7 @@ import { SPEC_SETS } from './index';
 import { NAVAL_CUES } from './cues-naval';
 import { HELI_CUES } from './cues-heli';
 import { JET_CUES } from './cues-jets';
+import { MORE_AIR_CUES } from './cues-air';
 
 export interface Cue<S = unknown> {
   cue: string;
@@ -1297,6 +1298,7 @@ export const CUES: Record<string, CueEntry> = {
   ...NAVAL_CUES,
   ...HELI_CUES,
   ...JET_CUES,
+  ...MORE_AIR_CUES,
 
   // The remaining ground figures, all nations: families first, then each figure in replay rank order.
   shermans: ground(['m4a1-sherman', 'm4a4-sherman', 'm4a1-76', 'm4a2-76', 'm4a3e2-76', 'm4a3e2-jumbo', 'm4a4-firefly', 'm4a4-cn-75-50', 'm4-t26'], SHERMAN),
