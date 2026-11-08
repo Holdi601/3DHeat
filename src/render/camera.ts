@@ -249,9 +249,15 @@ export class FlyCamera {
   private readonly lastViewProj = new Matrix4();
   private readonly viewProjScratch = new Matrix4();
 
+  /** Keys another tool takes while no drag is held (the tactics board's gizmo keys); true leaves them to it. */
+  keyFilter: ((e: KeyboardEvent) => boolean) | null = null;
+  /** Presses another tool takes (the board's box select); true leaves the camera still. */
+  pressFilter: ((e: MouseEvent) => boolean) | null = null;
+
   attach(canvas: HTMLCanvasElement): () => void {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (!this.dragging && this.keyFilter?.(e)) return;
       this.keys.add(e.code);
       // Don't let space scroll the page while flying.
       if (e.code === 'Space') e.preventDefault();
@@ -262,6 +268,7 @@ export class FlyCamera {
     let lastX = 0;
     let lastY = 0;
     const onMouseDown = (e: MouseEvent) => {
+      if (this.pressFilter?.(e)) return;
       if (e.button === 0 || e.button === 2) {
         this.dragging = true;
         lastX = e.clientX;

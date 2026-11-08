@@ -13,6 +13,9 @@ import { emptyPlan, keyAt, newId, onBoard, playbackAt, readPlan, type ArrowStyle
 import { gamePreset } from '../tactics/games';
 import { CATALOG } from '../figures/catalog';
 import { figureLabel } from '../tactics/names';
+import { applyTransform, type GizmoMode, type Transform } from '../tactics/gizmo';
+import type { Mode } from '../tactics/speeds';
+import { routeModes, stepStart } from '../tactics/timing';
 
 export type BoardTool = 'select' | 'place' | 'arrow' | 'throw' | 'area' | 'note' | 'erase';
 
@@ -35,7 +38,20 @@ export interface PlanState {
   /** Heading for the next placed figure, radians (box yaw). */
   yaw: number;
   step: number;
+  /** The primary selection (the last picked): a figure, arrow, area or note id, or `<arrow>#<point>`. */
   selected: string | null;
+  /** Everything selected; `selected` is its last. */
+  selection: string[];
+  /** What the gizmo does, and how the keys pick it (W/E/R, or Blender's G/R/S). */
+  gizmo: GizmoMode;
+  keyScheme: 'editor' | 'blender';
+  /** Moved things that stand on the ground land on the surface. */
+  snapGround: boolean;
+  /** Grid for Ctrl-snapped moves, plan units (0: a metre); angle step for Ctrl-snapped turns, degrees. */
+  grid: number;
+  angleStep: number;
+  /** The plan as a gizmo drag began, while one is under way. */
+  dragBase: Plan | null;
   draft: Draft | null;
   /** Moving a selected figure: the next click puts it there. */
   moving: boolean;
@@ -57,7 +73,28 @@ export interface PlanState {
   setFigureScale: (k: number) => void;
   setTitle: (t: string) => void;
   /** A click on the board at a world point; `hit` is the figure under the click, if any. */
-  click: (at: Vec3, hit: string | null) => void;
+  click: (at: Vec3, hit: string | null, additive?: boolean) => void;
+  /** Select these references; `additive` toggles them in the selection instead. */
+  selectRefs: (refs: string[], additive: boolean) => void;
+  setGizmo: (m: GizmoMode) => void;
+  setKeyScheme: (k: 'editor' | 'blender') => void;
+  setSnapGround: (on: boolean) => void;
+  setGrid: (grid: number, angleStep: number) => void;
+  beginDrag: () => void;
+  /** The drag so far, from where it began. */
+  dragPreview: (t: Transform) => void;
+  endDrag: () => void;
+  cancelDrag: () => void;
+  /** One recorded transform of the selection (typed numbers). */
+  transformSelection: (t: Transform) => void;
+  setFigureAngles: (id: string, a: { yaw?: number; pitch?: number; roll?: number }) => void;
+  setAreaRadius: (id: string, r: number) => void;
+  setSegmentMode: (arrow: string, segment: number | 'all', mode: Mode) => void;
+  setPause: (arrow: string, point: number, seconds: number) => void;
+  setProfile: (figure: string, profile: string | null) => void;
+  setSpeedOverride: (figure: string, mode: Mode, metresPerSecond: number | null) => void;
+  setUnitsPerMetre: (k: number | null) => void;
+  setRealTime: (on: boolean) => void;
   /** Ends the arrow or area being drawn (double click, Enter, right click). */
   finish: () => void;
   cancel: () => void;
@@ -114,6 +151,13 @@ export const usePlanStore = create<PlanState>((set, get) => ({
   yaw: 0,
   step: 0,
   selected: null,
+  selection: [],
+  gizmo: 'move',
+  keyScheme: 'editor',
+  snapGround: true,
+  grid: 0,
+  angleStep: 15,
+  dragBase: null,
   draft: null,
   moving: false,
   playing: false,
@@ -193,8 +237,10 @@ export const usePlanStore = create<PlanState>((set, get) => ({
   },
   setTitle: (title) => set({ plan: { ...get().plan, title } }),
 
-  click: (at, hit) => {
+  click: (at, ref, additive) => {
     const s = get();
+    // Placing and drawing start from figures only.
+    const hit = s.tool === 'select' || s.tool === 'erase' ? ref : ref && s.plan.figures.some((f) => f.id === ref) ? ref : null;
     const step = s.step;
     switch (s.tool) {
       case 'select': {
@@ -210,7 +256,7 @@ export const usePlanStore = create<PlanState>((set, get) => ({
           set({ ...edit(s, plan), moving: false });
           return;
         }
-        set({ selected: hit, moving: false });
+        get().selectRefs(hit ? [hit] : [], !!additive);
         return;
       }
       case 'place': {
@@ -219,7 +265,7 @@ export const usePlanStore = create<PlanState>((set, get) => ({
         const id = newId('f');
         const n = plan.figures.filter((f) => f.kind === s.kind && f.team === s.team).length + 1;
         plan.figures.push({ id, kind: s.kind, team: s.team, label: `${figureLabel(s.kind)} ${n}`, keys: { [step]: { ...at, yaw: s.yaw } }, from: step });
-        set({ ...edit(s, plan), selected: id });
+        set({ ...edit(s, plan), selected: id, selection: [id] });
         return;
       }
       case 'arrow':
@@ -325,6 +371,19 @@ export const usePlanStore = create<PlanState>((set, get) => ({
   remove: (id) => {
     const s = get();
     const plan = clone(s.plan);
+    if (id.includes('#')) {
+      // A waypoint: out of its arrow, which keeps at least its two ends.
+      const [aid, idx] = id.split('#');
+      const a = plan.arrows.find((x) => x.id === aid);
+      const i = Number(idx);
+      if (!a || a.points.length <= 2) return;
+      a.points.splice(i, 1);
+      a.modes?.splice(Math.min(i, a.modes.length - 1), 1);
+      a.pauses?.splice(i, 1);
+      const selection = s.selection.filter((r) => !r.startsWith(`${aid}#`));
+      set({ ...edit(s, plan), selection, selected: selection[selection.length - 1] ?? null });
+      return;
+    }
     const f = plan.figures.find((x) => x.id === id);
     if (f && s.step > f.from) {
       // Gone from this step on, kept before it.
@@ -336,15 +395,134 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     plan.arrows = plan.arrows.filter((a) => a.id !== id);
     plan.areas = plan.areas.filter((a) => a.id !== id);
     plan.notes = plan.notes.filter((n) => n.id !== id);
-    set({ ...edit(s, plan), selected: s.selected === id ? null : s.selected });
+    const selection = s.selection.filter((r) => r !== id && !r.startsWith(`${id}#`));
+    set({ ...edit(s, plan), selection, selected: selection[selection.length - 1] ?? null });
   },
-  select: (selected) => set({ selected, moving: false }),
+  select: (selected) => set({ selected, selection: selected ? [selected] : [], moving: false }),
+  selectRefs: (refs, additive) => {
+    const s = get();
+    let selection = refs;
+    if (additive) {
+      selection = [...s.selection];
+      for (const r of refs) {
+        const i = selection.indexOf(r);
+        if (i >= 0 && refs.length === 1) selection.splice(i, 1);
+        else if (i < 0) selection.push(r);
+      }
+    }
+    set({ selection, selected: selection[selection.length - 1] ?? null, moving: false });
+  },
+  setGizmo: (gizmo) => set({ gizmo, tool: 'select', draft: null }),
+  setKeyScheme: (keyScheme) => set({ keyScheme }),
+  setSnapGround: (snapGround) => set({ snapGround }),
+  setGrid: (grid, angleStep) => set({ grid: Math.max(0, grid), angleStep: Math.max(0.1, angleStep) }),
+  beginDrag: () => set({ dragBase: get().plan }),
+  dragPreview: (t) => {
+    const s = get();
+    if (!s.dragBase) return;
+    set({ plan: applyTransform(s.dragBase, s.step, s.selection, t) });
+  },
+  endDrag: () => {
+    const s = get();
+    if (!s.dragBase) return;
+    if (s.dragBase !== s.plan) set({ past: [...s.past.slice(-99), s.dragBase], future: [] });
+    set({ dragBase: null });
+  },
+  cancelDrag: () => {
+    const s = get();
+    if (s.dragBase) set({ plan: s.dragBase, dragBase: null });
+  },
+  transformSelection: (t) => {
+    const s = get();
+    if (!s.selection.length) return;
+    set(edit(s, applyTransform(s.plan, s.step, s.selection, t)));
+  },
+  setFigureAngles: (id, a) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const f = plan.figures.find((x) => x.id === id);
+    const k = f && keyAt(f, s.step);
+    if (!f || !k) return;
+    const nk = { ...k, ...a };
+    if (!nk.pitch) delete nk.pitch;
+    if (!nk.roll) delete nk.roll;
+    f.keys[s.step] = nk;
+    set(edit(s, plan));
+  },
+  setAreaRadius: (id, r) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const a = plan.areas.find((x) => x.id === id);
+    if (!a || !(r > 0)) return;
+    a.radius = r;
+    set(edit(s, plan));
+  },
+  setSegmentMode: (id, segment, mode) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const a = plan.arrows.find((x) => x.id === id);
+    if (!a) return;
+    if (segment === 'all') {
+      a.mode = mode;
+      delete a.modes;
+    } else {
+      const f = plan.figures.find((x) => x.id === a.figure);
+      const now = f ? routeModes(a, f) : Array.from({ length: a.points.length - 1 }, () => mode);
+      a.modes = now.map((m, i) => (i === segment ? mode : m));
+    }
+    set(edit(s, plan));
+  },
+  setPause: (id, point, seconds) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const a = plan.arrows.find((x) => x.id === id);
+    if (!a) return;
+    const p = Array.from({ length: a.points.length }, (_, i) => a.pauses?.[i] ?? 0);
+    p[point] = Math.max(0, Math.min(600, seconds || 0));
+    a.pauses = p;
+    set(edit(s, plan));
+  },
+  setProfile: (id, profile) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const f = plan.figures.find((x) => x.id === id);
+    if (!f) return;
+    if (profile) f.profile = profile;
+    else delete f.profile;
+    set(edit(s, plan));
+  },
+  setSpeedOverride: (id, mode, v) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const f = plan.figures.find((x) => x.id === id);
+    if (!f) return;
+    const sp = { ...(f.speeds ?? {}) };
+    if (v && v > 0) sp[mode] = v;
+    else delete sp[mode];
+    if (Object.keys(sp).length) f.speeds = sp;
+    else delete f.speeds;
+    set(edit(s, plan));
+  },
+  setUnitsPerMetre: (k) => {
+    const s = get();
+    const plan = clone(s.plan);
+    if (k && k > 0) plan.unitsPerMetre = k;
+    else delete plan.unitsPerMetre;
+    set(edit(s, plan));
+  },
+  setRealTime: (on) => {
+    const s = get();
+    const plan = clone(s.plan);
+    if (on) delete plan.realTime;
+    else plan.realTime = false;
+    set(edit(s, plan));
+  },
   startMove: () => set({ moving: !!get().selected, tool: 'select' }),
   undo: () => {
     const s = get();
     const prev = s.past[s.past.length - 1];
     if (!prev) return;
-    set({ plan: prev, past: s.past.slice(0, -1), future: [s.plan, ...s.future], draft: null, step: Math.min(s.step, prev.steps.length - 1) });
+    set({ plan: prev, past: s.past.slice(0, -1), future: [s.plan, ...s.future], draft: null, dragBase: null, step: Math.min(s.step, prev.steps.length - 1) });
   },
   redo: () => {
     const s = get();
@@ -356,7 +534,7 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     const s = get();
     if (on) {
       // From the start of the shown step.
-      const before = s.plan.steps.slice(0, s.step).reduce((t, x) => t + Math.max(0.1, x.seconds), 0);
+      const before = stepStart(s.plan, s.step);
       set({ playing: true, playTime: before, draft: null });
     } else set({ playing: false });
   },
@@ -369,12 +547,12 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     const s = get();
     const plan = readPlan(text);
     if (!plan.level) plan.level = level;
-    set({ ...edit(s, plan), step: 0, selected: null, draft: null, team: plan.teams[0].id });
+    set({ ...edit(s, plan), step: 0, selected: null, selection: [], draft: null, team: plan.teams[0].id });
   },
   clear: () => {
     const s = get();
     const preset = gamePreset(s.plan.game);
-    set({ ...edit(s, emptyPlan(preset.id, preset.teams, s.plan.level)), step: 0, selected: null, draft: null });
+    set({ ...edit(s, emptyPlan(preset.id, preset.teams, s.plan.level)), step: 0, selected: null, selection: [], draft: null });
   },
 }));
 

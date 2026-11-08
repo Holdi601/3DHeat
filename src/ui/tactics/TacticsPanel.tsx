@@ -8,6 +8,7 @@ import type { ArrowStyle } from '../../tactics/plan';
 import { num, t } from '../../i18n';
 import { useEngine } from '../EngineContext';
 import { fetchValorantMaps, RIOT_NOTICE, valorantLevel, type ValorantMap } from '../../tactics/valorantMaps';
+import { GizmoControls, SelectionInspector, TelemetryPanel, TimingSettings } from './TacticsInspector';
 import './tactics.css';
 
 /**
@@ -21,7 +22,6 @@ export function TacticsPanel() {
   const kind = usePlanStore((s) => s.kind);
   const team = usePlanStore((s) => s.team);
   const arrowStyle = usePlanStore((s) => s.arrowStyle);
-  const selected = usePlanStore((s) => s.selected);
   const draft = usePlanStore((s) => s.draft);
   const moving = usePlanStore((s) => s.moving);
   const canUndo = usePlanStore((s) => s.past.length > 0);
@@ -62,7 +62,6 @@ export function TacticsPanel() {
   };
 
   const preset = gamePreset(plan.game);
-  const figure = plan.figures.find((f) => f.id === selected) ?? null;
   const groups = useMemo(() => {
     const q = search.trim().toLowerCase();
     return preset.palette
@@ -163,6 +162,7 @@ export function TacticsPanel() {
             ))}
           </div>
         )}
+        {tool === 'select' && <GizmoControls />}
         <div className="hint">{t(`tactics.hint.${moving ? 'moving' : tool}`)}{draft ? ` ${t('tactics.hint.finish')}` : ''}</div>
         <div className="tactics-tools">
           <button disabled={!canUndo} onClick={() => store().undo()} title="Ctrl+Z">
@@ -195,23 +195,13 @@ export function TacticsPanel() {
         />
       </Section>
 
-      {figure && (
-        <Section title={t('tactics.selected')} defaultOpen>
-          <div className="hint">{figureLabel(figure.kind)}</div>
-          <label className="field">
-            <span>{t('tactics.label')}</span>
-            <input type="text" value={figure.label} onChange={(e) => store().setLabel(figure.id, e.target.value)} />
-          </label>
-          <div className="tactics-tools">
-            <button className={moving ? 'on' : ''} onClick={() => store().startMove()} title="M">
-              {t('tactics.move')}
-            </button>
-            <button onClick={() => store().remove(figure.id)} title="Del">
-              {t('tactics.remove')}
-            </button>
-          </div>
-        </Section>
-      )}
+      <SelectionInspector />
+
+      <Section title={t('tactics.timing.title')}>
+        <TimingSettings />
+      </Section>
+
+      <TelemetryPanel />
 
       <Section title={t('tactics.palette')} defaultOpen>
         <input className="tactics-search" type="search" value={search} placeholder={t('tactics.search')} onChange={(e) => setSearch(e.target.value)} />

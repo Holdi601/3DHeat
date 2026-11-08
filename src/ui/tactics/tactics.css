@@ -86,3 +86,143 @@
   text-align: right;
   pointer-events: none;
 }
+.board-gizmo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+.board-gizmo .axis,
+.board-gizmo .ring {
+  fill: none;
+  stroke-width: 2.5;
+  pointer-events: none;
+}
+.board-gizmo .hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 12;
+  pointer-events: stroke;
+  cursor: grab;
+}
+.board-gizmo .hit:hover {
+  stroke: rgba(255, 220, 80, 0.45);
+}
+.board-gizmo .plane {
+  fill-opacity: 0.35;
+  pointer-events: all;
+  cursor: grab;
+}
+.board-gizmo .plane:hover,
+.board-gizmo .head:hover,
+.board-gizmo .centre:hover {
+  fill: #ffd84f;
+  fill-opacity: 0.8;
+}
+.board-gizmo .head {
+  pointer-events: all;
+  cursor: grab;
+}
+.board-gizmo .centre {
+  fill: rgba(255, 255, 255, 0.35);
+  stroke: #fff;
+  stroke-width: 1.5;
+  pointer-events: all;
+  cursor: move;
+}
+.board-gizmo .wp {
+  fill: rgba(20, 20, 20, 0.6);
+  stroke: #fff;
+  stroke-width: 1.5;
+  pointer-events: all;
+  cursor: pointer;
+}
+.board-gizmo .wp.on {
+  fill: #ffd84f;
+}
+.board-gizmo .eta {
+  fill: #fff;
+  font-size: 11px;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.75);
+  stroke-width: 3px;
+  pointer-events: none;
+}
+.board-gizmo .box {
+  fill: rgba(120, 170, 255, 0.12);
+  stroke: rgba(150, 190, 255, 0.9);
+  stroke-dasharray: 4 3;
+}
+.tactics-num {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin: 4px 0;
+}
+.tactics-num label {
+  display: flex;
+  flex-direction: column;
+  font-size: 11px;
+  opacity: 0.9;
+}
+.tactics-num input {
+  width: 100%;
+  box-sizing: border-box;
+}
+.tactics-table {
+  width: 100%;
+  font-size: 11px;
+  border-collapse: collapse;
+}
+.tactics-table td,
+.tactics-table th {
+  padding: 2px 3px;
+  text-align: left;
+}
+.tactics-table select,
+.tactics-table input {
+  font-size: 11px;
+  max-width: 7em;
+}
+.tactics-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 6px 0;
+  font-size: 11px;
+}
+.tactics-timeline .row {
+  display: grid;
+  grid-template-columns: 7em 1fr 3.5em;
+  align-items: center;
+  gap: 4px;
+}
+.tactics-timeline .bar {
+  position: relative;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}
+.tactics-timeline .fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 4px;
+  opacity: 0.8;
+}
+.tactics-timeline .tick {
+  position: absolute;
+  top: -2px;
+  width: 2px;
+  height: 12px;
+  background: #fff;
+}
+.tactics-legend {
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgb(26, 217, 64), rgb(242, 217, 51), rgb(242, 64, 51));
+  margin: 4px 0 2px;
+}

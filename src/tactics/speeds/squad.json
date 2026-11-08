@@ -1,0 +1,142 @@
+{
+  "game": "squad",
+  "unit": "km/h",
+  "slope": "horizontal",
+  "sources": [
+    {
+      "id": "squad-mechanics",
+      "title": "r/joinsquad \"Squad game mechanics\" post (Feb 2018): max walking (default) speed 3.3 m/s, max sprint 5.9 m/s",
+      "url": "https://reddit.rtrace.io/r/joinsquad/comments/7xeh9g/squad_game_mechanics_post",
+      "accessed": "2026-11-08",
+      "note": "Community write-up of the then-current values; the game has been updated since. The figures were read from the search-indexed text, the mirror was unreachable on access."
+    },
+    {
+      "id": "squad-typical",
+      "title": "Squad (Offworld Industries): no published vehicle speeds; typical in-game speeds per class, estimated",
+      "url": "https://joinsquad.com/",
+      "accessed": "2026-11-08",
+      "note": "Rounded estimates of each vehicle class as driven in game; replace with measured values when available."
+    }
+  ],
+  "classes": {
+    "infantry": {
+      "modes": {"crawl": 3, "crouch": 7, "walk": 6, "run": 11.9, "sprint": 21.2},
+      "source": "squad-mechanics",
+      "approx": true,
+      "note": "run 3.3 m/s and sprint 5.9 m/s from the 2018 mechanics post; prone crawl (~0.8 m/s), crouch-move (~1.9 m/s) and slow walk (~1.7 m/s) estimated. Approximate: OWI publishes no table."
+    },
+    "ground": {
+      "modes": {"crawl": 8, "cautious": 25, "normal": 50, "rush": 90},
+      "source": "squad-typical",
+      "approx": true,
+      "note": "Wheeled APC default. Approximate: OWI publishes no table."
+    },
+    "heli": {
+      "modes": {"slow": 40, "cruise": 200, "combat": 140, "max": 250},
+      "source": "squad-typical",
+      "approx": true,
+      "note": "Approximate: OWI publishes no table."
+    }
+  },
+  "profiles": [
+    {
+      "id": "logi-truck",
+      "label": "Logistics / transport truck",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 25, "normal": 50, "rush": 90},
+      "source": "squad-typical",
+      "approx": true,
+      "match": ["truck", "ural-4320", "mlrs"]
+    },
+    {
+      "id": "mrap",
+      "label": "MRAP / light vehicle",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 25, "normal": 55, "rush": 100},
+      "source": "squad-typical",
+      "approx": true,
+      "match": ["mrap", "jeep", "m1025-humvee"]
+    },
+    {
+      "id": "apc-wheeled",
+      "label": "Wheeled APC",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 22, "normal": 50, "rush": 90},
+      "source": "squad-typical",
+      "approx": true,
+      "match": ["apc-wheeled", "btr-80", "m1126-stryker"]
+    },
+    {
+      "id": "apc-tracked",
+      "label": "Tracked APC",
+      "class": "ground",
+      "modes": {"crawl": 6, "cautious": 18, "normal": 40, "rush": 60},
+      "source": "squad-typical",
+      "approx": true,
+      "match": ["apc-tracked"]
+    },
+    {
+      "id": "ifv",
+      "label": "IFV",
+      "class": "ground",
+      "modes": {"crawl": 6, "cautious": 18, "normal": 40, "rush": 65},
+      "source": "squad-typical",
+      "approx": true,
+      "match": ["ifv", "bmp-2", "spaa", "sp-artillery"]
+    },
+    {
+      "id": "light-tank",
+      "label": "Light tank",
+      "class": "ground",
+      "modes": {"crawl": 6, "cautious": 18, "normal": 40, "rush": 65},
+      "source": "squad-typical",
+      "approx": true,
+      "match": ["light-tank"]
+    },
+    {
+      "id": "mbt",
+      "label": "Main battle tank",
+      "class": "ground",
+      "modes": {"crawl": 5, "cautious": 15, "normal": 35, "rush": 60},
+      "source": "squad-typical",
+      "approx": true,
+      "match": ["mbt", "m1a2-abrams", "t-90a"]
+    },
+    {
+      "id": "towed",
+      "label": "Towed gun (when towed)",
+      "class": "ground",
+      "modes": {"crawl": 4, "cautious": 15, "normal": 35, "rush": 60},
+      "source": "squad-typical",
+      "approx": true,
+      "match": ["towed-gun"]
+    },
+    {
+      "id": "uh-60",
+      "label": "UH-60 Black Hawk",
+      "class": "heli",
+      "modes": {"slow": 40, "cruise": 220, "combat": 150, "max": 270},
+      "source": "squad-typical",
+      "approx": true,
+      "match": ["uh-60a-black-hawk"]
+    },
+    {
+      "id": "mi-8",
+      "label": "Mi-8",
+      "class": "heli",
+      "modes": {"slow": 40, "cruise": 210, "combat": 140, "max": 250},
+      "source": "squad-typical",
+      "approx": true,
+      "match": ["mi-8mtv2"]
+    },
+    {
+      "id": "uh-1",
+      "label": "UH-1 Huey",
+      "class": "heli",
+      "modes": {"slow": 40, "cruise": 180, "combat": 130, "max": 210},
+      "source": "squad-typical",
+      "approx": true,
+      "match": ["uh-1h-huey"]
+    }
+  ]
+}

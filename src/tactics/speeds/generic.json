@@ -1,0 +1,57 @@
+{
+  "game": "generic",
+  "unit": "m/s",
+  "slope": "tobler",
+  "sources": [
+    {
+      "id": "walking",
+      "title": "Preferred walking speed (about 1.4 m/s)",
+      "url": "https://en.wikipedia.org/wiki/Preferred_walking_speed",
+      "accessed": "2026-11-08"
+    },
+    {
+      "id": "tobler",
+      "title": "Tobler's hiking function (6 km/h on flat ground, slower up and down hill)",
+      "url": "https://en.wikipedia.org/wiki/Tobler%27s_hiking_function",
+      "accessed": "2026-11-08"
+    },
+    {
+      "id": "typical",
+      "title": "Typical real-world speeds of soldiers, vehicles, boats and aircraft (rounded)",
+      "url": "https://en.wikipedia.org/wiki/Orders_of_magnitude_(speed)",
+      "accessed": "2026-11-08"
+    }
+  ],
+  "classes": {
+    "infantry": {
+      "modes": {"crawl": 0.5, "crouch": 1.5, "walk": 1.4, "run": 3.5, "sprint": 6},
+      "source": "walking",
+      "approx": true,
+      "note": "Real-world defaults: crawl 0.5, crouched move 1.5, walk 1.4, run 3.5, sprint 6 m/s."
+    },
+    "ground": {
+      "modes": {"crawl": 1.5, "cautious": 5, "normal": 11, "rush": 20},
+      "source": "typical",
+      "approx": true,
+      "note": "Military vehicle: crawl ~5 km/h, cautious ~18, cross-country ~40, road ~72."
+    },
+    "sea": {
+      "modes": {"crawl": 1.5, "cautious": 4, "normal": 8, "rush": 15},
+      "source": "typical",
+      "approx": true,
+      "note": "Small craft: ~3, 8, 16, 30 kn."
+    },
+    "air": {
+      "modes": {"slow": 70, "cruise": 250, "combat": 180, "max": 400},
+      "source": "typical",
+      "approx": true,
+      "note": "Jet: approach ~135 kn, cruise ~485 kn, corner ~350 kn, low-level max ~780 kn."
+    },
+    "heli": {
+      "modes": {"slow": 10, "cruise": 70, "combat": 45, "max": 80},
+      "source": "typical",
+      "approx": true,
+      "note": "Helicopter: ~20, 135, 90, 155 kn."
+    }
+  }
+}

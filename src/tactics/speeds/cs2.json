@@ -1,0 +1,394 @@
+{
+  "game": "cs2",
+  "unit": "u/s",
+  "metresPerUnit": 0.0254,
+  "slope": "horizontal",
+  "sources": [
+    {
+      "id": "cs2-vdata",
+      "title": "Counter-Strike 2 weapon definitions (scripts/weapons.vdata, m_flMaxSpeed), as tracked by SteamDB's GameTracking-CS2",
+      "url": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "accessed": "2026-11-08",
+      "note": "Valve's own item data from the game files; m_flMaxSpeed is [normal, scoped/alternate] in units per second."
+    },
+    {
+      "id": "csdb",
+      "title": "CSDB weapon pages (stats extracted from CS2 game data)",
+      "url": "https://csdb.gg/weapons/",
+      "accessed": "2026-11-08",
+      "note": "Cross-check; agrees with the weapon definitions for every weapon except the Zeus."
+    },
+    {
+      "id": "cs-movement",
+      "title": "Counter-Strike Wiki: Movement Mechanics",
+      "url": "https://counterstrikewiki.com/Movement_Mechanics",
+      "accessed": "2026-11-08",
+      "note": "Knife 250 u/s, AWP 200 (100 scoped)."
+    }
+  ],
+  "classes": {
+    "infantry": {
+      "modes": {"crawl": null, "crouch": 85, "walk": 130, "run": 250, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false,
+      "note": "Knife (fastest, 250 u/s). run = m_flMaxSpeed from the weapon definition; walk = run x 0.52 (shift-walk), crouch = run x 0.34. The two modifiers are not in any published Valve file; they are the long-standing CS:GO values and were confirmed in CS2 demo telemetry (speed peaks at 0.52 and 0.34 of the run speed for every weapon). No sprint, no prone."
+    }
+  },
+  "profiles": [
+    {
+      "id": "knife",
+      "label": "Knife",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 85, "walk": 130, "run": 250, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false,
+      "note": "Same for every knife model and for C4."
+    },
+    {
+      "id": "c4",
+      "label": "C4",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 85, "walk": 130, "run": 250, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "grenade",
+      "label": "Grenade (HE, flash, smoke, molotov, incendiary, decoy)",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 83.3, "walk": 127.4, "run": 245, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false,
+      "note": "All six grenades share 245."
+    },
+    {
+      "id": "zeus-x27",
+      "label": "Zeus x27",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 78.2, "walk": 119.6, "run": 230, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false,
+      "note": "Weapon definition gives 230; csdb.gg lists 220. Demo telemetry agrees with 230."
+    },
+    {
+      "id": "glock-18",
+      "label": "Glock-18",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 81.6, "walk": 124.8, "run": 240, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "usp-s",
+      "label": "USP-S",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 81.6, "walk": 124.8, "run": 240, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "p2000",
+      "label": "P2000",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 81.6, "walk": 124.8, "run": 240, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "p250",
+      "label": "P250",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 81.6, "walk": 124.8, "run": 240, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "dual-berettas",
+      "label": "Dual Berettas",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 81.6, "walk": 124.8, "run": 240, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "five-seven",
+      "label": "Five-SeveN",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 81.6, "walk": 124.8, "run": 240, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "tec-9",
+      "label": "Tec-9",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 81.6, "walk": 124.8, "run": 240, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "cz75-auto",
+      "label": "CZ75-Auto",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 81.6, "walk": 124.8, "run": 240, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "desert-eagle",
+      "label": "Desert Eagle",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 78.2, "walk": 119.6, "run": 230, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "r8-revolver",
+      "label": "R8 Revolver",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 61.2, "walk": 93.6, "run": 180, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false,
+      "note": "Definition is [180, 220]: 180 normally, 220 in the alternate state."
+    },
+    {
+      "id": "mac-10",
+      "label": "MAC-10",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 81.6, "walk": 124.8, "run": 240, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "mp9",
+      "label": "MP9",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 81.6, "walk": 124.8, "run": 240, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "pp-bizon",
+      "label": "PP-Bizon",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 81.6, "walk": 124.8, "run": 240, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "mp5-sd",
+      "label": "MP5-SD",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 79.9, "walk": 122.2, "run": 235, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false,
+      "note": "Definition lists 220 as the alternate value; the MP5-SD has no scope, so 235 is what a player moves at."
+    },
+    {
+      "id": "ump-45",
+      "label": "UMP-45",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 78.2, "walk": 119.6, "run": 230, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "p90",
+      "label": "P90",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 78.2, "walk": 119.6, "run": 230, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "mp7",
+      "label": "MP7",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 74.8, "walk": 114.4, "run": 220, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "nova",
+      "label": "Nova",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 74.8, "walk": 114.4, "run": 220, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "xm1014",
+      "label": "XM1014",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 73.1, "walk": 111.8, "run": 215, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "mag-7",
+      "label": "MAG-7",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 76.5, "walk": 117, "run": 225, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "sawed-off",
+      "label": "Sawed-Off",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 71.4, "walk": 109.2, "run": 210, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "galil-ar",
+      "label": "Galil AR",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 73.1, "walk": 111.8, "run": 215, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "famas",
+      "label": "FAMAS",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 74.8, "walk": 114.4, "run": 220, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "ak-47",
+      "label": "AK-47",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 73.1, "walk": 111.8, "run": 215, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "m4a4",
+      "label": "M4A4",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 76.5, "walk": 117, "run": 225, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "m4a1-s",
+      "label": "M4A1-S",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 76.5, "walk": 117, "run": 225, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "sg-553",
+      "label": "SG 553",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 71.4, "walk": 109.2, "run": 210, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "sg-553-scoped",
+      "label": "SG 553 (scoped)",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 51, "walk": 78, "run": 150, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false,
+      "note": "Scoped: m_flMaxSpeed[1] = 150."
+    },
+    {
+      "id": "aug",
+      "label": "AUG",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 74.8, "walk": 114.4, "run": 220, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "aug-scoped",
+      "label": "AUG (scoped)",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 51, "walk": 78, "run": 150, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false,
+      "note": "Scoped: m_flMaxSpeed[1] = 150."
+    },
+    {
+      "id": "ssg-08",
+      "label": "SSG 08",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 78.2, "walk": 119.6, "run": 230, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false,
+      "note": "Scoping does not slow the SSG 08 (both values 230)."
+    },
+    {
+      "id": "awp",
+      "label": "AWP",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 68, "walk": 104, "run": 200, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "awp-scoped",
+      "label": "AWP (scoped)",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 34, "walk": 52, "run": 100, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false,
+      "note": "Scoped: m_flMaxSpeed[1] = 100."
+    },
+    {
+      "id": "g3sg1",
+      "label": "G3SG1",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 73.1, "walk": 111.8, "run": 215, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "g3sg1-scoped",
+      "label": "G3SG1 (scoped)",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 40.8, "walk": 62.4, "run": 120, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false,
+      "note": "Scoped: m_flMaxSpeed[1] = 120."
+    },
+    {
+      "id": "scar-20",
+      "label": "SCAR-20",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 73.1, "walk": 111.8, "run": 215, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "scar-20-scoped",
+      "label": "SCAR-20 (scoped)",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 40.8, "walk": 62.4, "run": 120, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false,
+      "note": "Scoped: m_flMaxSpeed[1] = 120."
+    },
+    {
+      "id": "m249",
+      "label": "M249",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 66.3, "walk": 101.4, "run": 195, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    },
+    {
+      "id": "negev",
+      "label": "Negev",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 51, "walk": 78, "run": 150, "sprint": null},
+      "source": "cs2-vdata",
+      "approx": false
+    }
+  ]
+}

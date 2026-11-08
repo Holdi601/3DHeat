@@ -1,0 +1,280 @@
+{
+  "game": "arma",
+  "unit": "km/h",
+  "slope": "tobler",
+  "sources": [
+    {
+      "id": "arma-walk",
+      "title": "Bohemia forums: walking speed (about 5.15 km/h)",
+      "url": "https://forums.bohemia.net/forums/topic/176583-walking-speed/",
+      "accessed": "2026-11-08"
+    },
+    {
+      "id": "arma-pace",
+      "title": "Bohemia forums: movement speed tweaking (tactical pace 11 km/h standing, 9 km/h crouched; run 15 km/h)",
+      "url": "https://forums.bistudio.com/topic/144224-movement-speed-tweaking/",
+      "accessed": "2026-11-08",
+      "note": "Community timings across Arma 3 development builds."
+    },
+    {
+      "id": "arma-sprint",
+      "title": "Arma 3 feedback tracker: sprint measured at about 18 km/h standing, 17 km/h crouched",
+      "url": "https://feedback.bistudio.com/T64047",
+      "accessed": "2026-11-08"
+    },
+    {
+      "id": "arma-fm",
+      "title": "Arma 3 Field Manual - Infantry Controls",
+      "url": "https://community.bistudio.com/wiki/Arma_3_Field_Manual_-_Infantry_Controls",
+      "accessed": "2026-11-08",
+      "note": "Official: default pace is run; sprint works in every stance. No speeds."
+    },
+    {
+      "id": "arma-vehicles",
+      "title": "Arma 3 vanilla vehicle top speeds by faction (holy.gg listing of the vehicles' configured max speeds)",
+      "url": "https://www.holy.gg/en/post/arma-3-complete-vehicle-stats-by-faction",
+      "accessed": "2026-11-08",
+      "note": "Third-party list; rush = the class's configured top speed (rounded across the vehicles of that class), lower modes are estimates."
+    },
+    {
+      "id": "lcvp",
+      "title": "Landing Craft, Vehicle, Personnel (real-world top speed ~12 kn)",
+      "url": "https://en.wikipedia.org/wiki/Landing_Craft,_Vehicle,_Personnel",
+      "accessed": "2026-11-08"
+    }
+  ],
+  "classes": {
+    "infantry": {
+      "modes": {"crawl": 3, "crouch": 9, "walk": 5.2, "run": 15, "sprint": 21},
+      "source": "arma-pace",
+      "approx": true,
+      "note": "crouch = crouched tactical pace (9), walk = standing walk (~5.2), run = default jog (~15), sprint ~18-24 depending on version and load; prone crawl ~3 estimated. Approximate: Bohemia publishes no pace table; values are community-measured on flat ground and change between versions and with load."
+    },
+    "ground": {
+      "modes": {"crawl": 8, "cautious": 25, "normal": 55, "rush": 100},
+      "source": "arma-vehicles",
+      "approx": true,
+      "note": "Wheeled APC default (Gorgon 100, Marid 96, Marshall 110)."
+    },
+    "sea": {
+      "modes": {"crawl": 6, "cautious": 25, "normal": 50, "rush": 95},
+      "source": "arma-vehicles",
+      "approx": true,
+      "note": "RHIB default (95)."
+    },
+    "air": {
+      "modes": {"slow": 280, "cruise": 800, "combat": 650, "max": 1300},
+      "source": "arma-vehicles",
+      "approx": true,
+      "note": "Fighter default (Black Wasp II 1,213, Gryphon 1,015, Shikra 1,600)."
+    },
+    "heli": {
+      "modes": {"slow": 40, "cruise": 230, "combat": 150, "max": 290},
+      "source": "arma-vehicles",
+      "approx": true,
+      "note": "Transport helicopter default (Ghost Hawk 270, Orca 290, Mohawk 330)."
+    }
+  },
+  "profiles": [
+    {
+      "id": "mbt",
+      "label": "Main battle tank",
+      "class": "ground",
+      "modes": {"crawl": 5, "cautious": 18, "normal": 40, "rush": 68},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["mbt"],
+      "note": "Slammer 64, Varsuk 71, Kuma 72, Angara 68."
+    },
+    {
+      "id": "light-tank",
+      "label": "Light tank",
+      "class": "ground",
+      "modes": {"crawl": 6, "cautious": 20, "normal": 45, "rush": 79},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["light-tank"],
+      "note": "Nyx 79."
+    },
+    {
+      "id": "ifv",
+      "label": "Tracked IFV",
+      "class": "ground",
+      "modes": {"crawl": 6, "cautious": 20, "normal": 45, "rush": 76},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["ifv"],
+      "note": "Mora 76, Kamysh 91."
+    },
+    {
+      "id": "apc-tracked",
+      "label": "Tracked APC",
+      "class": "ground",
+      "modes": {"crawl": 6, "cautious": 18, "normal": 38, "rush": 60},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["apc-tracked"],
+      "note": "Panther 60."
+    },
+    {
+      "id": "apc-wheeled",
+      "label": "Wheeled APC",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 25, "normal": 55, "rush": 100},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["apc-wheeled"],
+      "note": "Gorgon 100, Marid 96, Marshall 110."
+    },
+    {
+      "id": "mrap",
+      "label": "MRAP",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 25, "normal": 60, "rush": 125},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["mrap"],
+      "note": "Hunter 116, Strider 128, Ifrit 137."
+    },
+    {
+      "id": "jeep",
+      "label": "Light strike vehicle",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 25, "normal": 70, "rush": 170},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["jeep"],
+      "note": "Prowler 172, Qilin 177."
+    },
+    {
+      "id": "truck",
+      "label": "Truck",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 22, "normal": 50, "rush": 85},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["truck"],
+      "note": "HEMTT 83, Zamak 82, Tempest 93."
+    },
+    {
+      "id": "spaa",
+      "label": "Self-propelled AA",
+      "class": "ground",
+      "modes": {"crawl": 6, "cautious": 20, "normal": 45, "rush": 75},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["spaa"],
+      "note": "Cheetah 60, Tigris 91."
+    },
+    {
+      "id": "artillery",
+      "label": "Self-propelled artillery / MLRS",
+      "class": "ground",
+      "modes": {"crawl": 5, "cautious": 18, "normal": 40, "rush": 68},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["sp-artillery", "mlrs"],
+      "note": "Scorcher 64, Sochor 71, Zamak MRL 74."
+    },
+    {
+      "id": "towed",
+      "label": "Towed gun (when towed)",
+      "class": "ground",
+      "modes": {"crawl": 4, "cautious": 15, "normal": 40, "rush": 70},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["towed-gun"],
+      "note": "Moves at its tow vehicle's speed."
+    },
+    {
+      "id": "attack-heli",
+      "label": "Attack helicopter",
+      "class": "heli",
+      "modes": {"slow": 40, "cruise": 260, "combat": 160, "max": 320},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["heli-attack"],
+      "note": "Blackfoot 365, Kajman 275, Pawnee 240."
+    },
+    {
+      "id": "transport-heli",
+      "label": "Transport helicopter",
+      "class": "heli",
+      "modes": {"slow": 40, "cruise": 230, "combat": 150, "max": 290},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["heli-transport"],
+      "note": "Ghost Hawk 270, Orca 290, Mohawk 330."
+    },
+    {
+      "id": "heavy-heli",
+      "label": "Heavy-lift helicopter",
+      "class": "heli",
+      "modes": {"slow": 40, "cruise": 220, "combat": 140, "max": 270},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["ch-47-chinook"],
+      "note": "Huron 285, Taru 255."
+    },
+    {
+      "id": "attack-jet",
+      "label": "Attack jet",
+      "class": "air",
+      "modes": {"slow": 230, "cruise": 550, "combat": 550, "max": 750},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["attack"],
+      "note": "Wipeout 715, Buzzard 702, Neophron 935."
+    },
+    {
+      "id": "jet",
+      "label": "Fighter / multirole jet",
+      "class": "air",
+      "modes": {"slow": 280, "cruise": 800, "combat": 650, "max": 1300},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["fighter", "multirole"],
+      "note": "Black Wasp II 1,213, Gryphon 1,015, Shikra 1,600."
+    },
+    {
+      "id": "transport",
+      "label": "Transport aircraft",
+      "class": "air",
+      "modes": {"slow": 230, "cruise": 450, "combat": 400, "max": 540},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["transport"],
+      "note": "Blackfish 538."
+    },
+    {
+      "id": "rhib",
+      "label": "RHIB",
+      "class": "sea",
+      "modes": {"crawl": 6, "cautious": 25, "normal": 50, "rush": 95},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["rhib"],
+      "note": "RHIB 95; the small assault boat only 28."
+    },
+    {
+      "id": "patrol-boat",
+      "label": "Patrol / speed boat",
+      "class": "sea",
+      "modes": {"crawl": 6, "cautious": 20, "normal": 45, "rush": 74},
+      "source": "arma-vehicles",
+      "approx": true,
+      "match": ["patrol-boat"],
+      "note": "Speedboat 74."
+    },
+    {
+      "id": "landing-craft",
+      "label": "Landing craft",
+      "class": "sea",
+      "modes": {"crawl": 4, "cautious": 10, "normal": 15, "rush": 22},
+      "source": "lcvp",
+      "approx": true,
+      "match": ["landing-craft"],
+      "note": "Not in vanilla Arma 3; real-world LCVP top speed ~12 kn (22 km/h)."
+    }
+  ]
+}

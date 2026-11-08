@@ -24,6 +24,10 @@ import { FollowRig, type RigMode } from './followRig';
 import { TacticalLayer, axesOfTrack, cockpitClip } from './tactical';
 import { figureNear, usePlanStore } from '../state/planStore';
 import { playbackAt } from '../tactics/plan';
+import { pickRef, refPoints } from '../tactics/gizmo';
+import { setTerrain } from '../tactics/timing';
+import { useTelemetry } from '../tactics/telemetryClient';
+import { gamePreset } from '../tactics/games';
 import type { Dataset, FilterSpec } from '../state/types';
 import { CURVE_LUT_SIZE, bakeCurveLut, curveSignature } from '../state/curve';
 import { buildColorLut, isUnassignedLabel, teamHueCount, teamMemberColor } from './colors';
@@ -562,6 +566,15 @@ export class Engine {
     this.budget = new BudgetController(snapshot().budget.splatsPerFrame);
     this.detachInput = this.camera.attach(canvas);
     this.detachMeasure = this.attachMeasureInput(canvas);
+    // The tactics board: its gizmo keys while something is selected, shift-drag for a box.
+    const boardKeys = { editor: ['KeyW', 'KeyE', 'KeyR'], blender: ['KeyG', 'KeyR', 'KeyS'] };
+    this.camera.keyFilter = (e) => {
+      if (useRaceStore.getState().tab !== 'plan' || e.ctrlKey || e.metaKey || e.altKey) return false;
+      const b = usePlanStore.getState();
+      return b.selection.length > 0 && boardKeys[b.keyScheme].includes(e.code);
+    };
+    this.camera.pressFilter = (e) => e.button === 0 && e.shiftKey && useRaceStore.getState().tab === 'plan' && usePlanStore.getState().tool === 'select';
+    setTerrain((x, y, z, reach) => this.surfaceBelow(x, y, z, reach), 0);
     this.detachVolumes = this.attachVolumeInput(canvas);
   }
 
@@ -794,6 +807,12 @@ export class Engine {
     const onDown = (e: MouseEvent) => {
       downAt = toCanvas(e);
       travel = 0;
+      this.boardBox = this.camera.pressFilter?.(e) ? { x0: downAt.x, y0: downAt.y, x1: downAt.x, y1: downAt.y } : null;
+    };
+    const onBoxMove = (e: MouseEvent) => {
+      if (!this.boardBox) return;
+      const p = toCanvas(e);
+      this.boardBox = { ...this.boardBox, x1: p.x, y1: p.y };
     };
     const onUp = (e: MouseEvent) => {
       if (e.button !== 0 || !downAt) return;
@@ -802,10 +821,16 @@ export class Engine {
       // Anything past a few pixels was a camera drag, not a click.
       const moved = Math.max(travel, Math.hypot(at.x - from.x, at.y - from.y));
       downAt = null;
+      const box = this.boardBox;
+      this.boardBox = null;
+      if (box && Math.hypot(box.x1 - box.x0, box.y1 - box.y0) > 4) {
+        this.boardBoxSelect(box);
+        return;
+      }
       if (moved > 4) return;
       // The tactics board owns clicks on its tab.
       if (useRaceStore.getState().tab === 'plan') {
-        this.boardClick(from.x, from.y);
+        this.boardClick(from.x, from.y, e.shiftKey);
         return;
       }
       // The vehicle heatmap's clicks pick a hit.
@@ -841,6 +866,7 @@ export class Engine {
 
     canvas.addEventListener('mousemove', onMove);
     window.addEventListener('mousemove', onTravel);
+    window.addEventListener('mousemove', onBoxMove);
     canvas.addEventListener('mouseleave', onLeave);
     canvas.addEventListener('mousedown', onDown);
     window.addEventListener('mouseup', onUp);
@@ -848,6 +874,7 @@ export class Engine {
     return () => {
       canvas.removeEventListener('mousemove', onMove);
       window.removeEventListener('mousemove', onTravel);
+      window.removeEventListener('mousemove', onBoxMove);
       canvas.removeEventListener('mouseleave', onLeave);
       canvas.removeEventListener('mousedown', onDown);
       window.removeEventListener('mouseup', onUp);
@@ -887,8 +914,8 @@ export class Engine {
     return { x: ray.origin.x + ray.dir.x * t, y: planeY, z: ray.origin.z + ray.dir.z * t };
   }
 
-  /** A click on the tactics board: the point on the level, and the figure there, to the board's store. */
-  private boardClick(cssX: number, cssY: number): void {
+  /** A click on the tactics board: the point on the level, and what is there, to the board's store. */
+  private boardClick(cssX: number, cssY: number, additive = false): void {
     const at = this.worldAt(cssX, cssY);
     if (!at) return;
     const board = usePlanStore.getState();
@@ -899,9 +926,49 @@ export class Engine {
       const size = t ? Math.max(t.max[0] - t.min[0], t.max[2] - t.min[2]) * 0.6 : 1.2;
       return Math.max(1.2, size) * scale;
     };
+    if (board.tool === 'select') {
+      const ref = pickRef(board.plan, board.step, at, (kind) => reachOf({ kind }), gamePreset(board.plan.game).arrowWidth);
+      board.click(at, ref, additive);
+      return;
+    }
     const hit = figureNear(board.plan, board.step, at, reachOf);
     board.click(at, hit?.id ?? null);
   }
+
+  /** The rectangle being dragged out on the board (shift-drag), CSS pixels; the gizmo overlay draws it. */
+  boardBox: { x0: number; y0: number; x1: number; y1: number } | null = null;
+
+  /** Adds everything of the shown step whose place falls in a screen rectangle to the board's selection. */
+  private boardBoxSelect(box: { x0: number; y0: number; x1: number; y1: number }): void {
+    const b = usePlanStore.getState();
+    const [x0, x1] = [Math.min(box.x0, box.x1), Math.max(box.x0, box.x1)];
+    const [y0, y1] = [Math.min(box.y0, box.y1), Math.max(box.y0, box.y1)];
+    const inside = (p: { x: number; y: number; z: number }) => {
+      const s = this.project(p.x, p.y, p.z);
+      return !!s && s.x >= x0 && s.x <= x1 && s.y >= y0 && s.y <= y1;
+    };
+    const p = b.plan;
+    const refs: string[] = [];
+    for (const f of p.figures) if (refPoints(p, b.step, f.id).some(inside)) refs.push(f.id);
+    for (const a of p.arrows) if (a.step === b.step) a.points.forEach((q, i) => inside(q) && refs.push(`${a.id}#${i}`));
+    for (const a of p.areas) if (a.step === b.step && inside(a.centre)) refs.push(a.id);
+    for (const n of p.notes) if (n.step === b.step && inside(n.at)) refs.push(n.id);
+    b.selectRefs([...new Set([...b.selection, ...refs])], false);
+  }
+
+  /** The world ray under a canvas position, for the board's gizmo. */
+  boardRay(cssX: number, cssY: number): { origin: { x: number; y: number; z: number }; dir: { x: number; y: number; z: number } } | null {
+    return this.rayAt(cssX, cssY);
+  }
+
+  /** The level's surface below a point, within `reach` under it; null without a level there. */
+  surfaceBelow(x: number, y: number, z: number, reach: number): number | null {
+    const hit = this.inspector.surfaceHit({ origin: { x, y, z }, dir: { x: 0, y: -1, z: 0 } });
+    return hit && y - hit.y <= reach ? hit.y : null;
+  }
+  private boardTerrainKey: unknown = null;
+  private boardTerrainReady = false;
+  private boardTerrainStamp = 0;
 
   /**
    * Board playback time while a plan plays, seconds: advanced here each frame
@@ -937,6 +1004,16 @@ export class Engine {
       board.setPlayTime(this.boardPlayTime);
       this.boardPlayTime = null;
     }
+    // Route timings follow the level's surface: a new level, or its index done, times them again.
+    const lvl = useStore.getState().level;
+    const ready = this.inspector.surfaceState.ready;
+    if (this.boardTerrainKey !== lvl || this.boardTerrainReady !== ready) {
+      this.boardTerrainKey = lvl;
+      this.boardTerrainReady = ready;
+      setTerrain((x, y, z, reach) => this.surfaceBelow(x, y, z, reach), ++this.boardTerrainStamp);
+      this.boardKey = '';
+    }
+    const heat = useTelemetry.getState().heat;
     const wantsCursor = board.tool !== 'select' || board.moving;
     this.boardCursor = wantsCursor && this.cursorPx ? this.worldAt(this.cursorPx.x, this.cursorPx.y) : null;
     const time = this.boardPlayTime ?? board.playTime;
@@ -946,7 +1023,8 @@ export class Engine {
       boardIds.of(board.plan),
       at.step,
       at.u.toFixed(4),
-      board.selected,
+      board.selection.join(','),
+      boardIds.of(heat),
       boardIds.of(board.draft),
       c ? `${c.x.toFixed(3)},${c.y.toFixed(3)},${c.z.toFixed(3)}` : '',
       board.tool === 'place' ? `${board.kind}|${board.team}|${board.yaw}` : '',
@@ -957,6 +1035,8 @@ export class Engine {
       step: at.step,
       u: at.u,
       selected: board.selected,
+      selection: board.selection,
+      heat,
       draft: board.draft,
       cursor: c,
       placing: board.tool === 'place' ? { kind: board.kind, team: board.team, yaw: board.yaw } : null,
