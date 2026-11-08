@@ -1340,7 +1340,9 @@ A['bf2c'] = ww1({ cls: 'ww2-fighter', length: 6.88, span: 9.6, height: 3.02, low
 A['u-2-po-2'] = ww1({ cls: 'trainer', length: 8.17, span: 11.4, height: 3.1, lower: 10.6, chord: 1.65, gap: 1.7, stagger: 0.4, engine: 'rotary', rudder: 'round', crew: 2, depth: 1.0, prop: 2.4 });
 A['christen-eagle'] = ww1({ cls: 'trainer', length: 5.64, span: 6.07, height: 1.98, chord: 1.15, gap: 1.15, stagger: 0.35, engine: 'rotary', rudder: 'round', depth: 0.9, prop: 1.9 });
 A['gladiator'] = ww1({ length: 8.36, span: 9.83, height: 3.53, chord: 1.55, gap: 1.6, stagger: 0.45, engine: 'rotary', rudder: 'round', half: 0.5, depth: 1.1, prop: 3.2, blades: 3, cowl: 0.69, hood: true });
-A['cr-42'] = ww1({ length: 8.25, span: 9.7, height: 3.06, lower: 6.5, lowerChord: 1.05, chord: 1.65, gap: 1.4, stagger: 0.4, engine: 'rotary', rudder: 'round', half: 0.5, depth: 1.1, spats: true, prop: 2.9, cowl: 0.6, cylinders: 7 });
+// CR.42: the wings' places (the upper leading edge 1.6 m behind the spinner), the gap and the stagger measured on M. L.
+// Watts' CC0 three-view (sources.md).
+A['cr-42'] = ww1({ length: 8.25, span: 9.7, height: 3.06, lower: 6.5, lowerChord: 1.05, chord: 1.65, gap: 1.47, stagger: 0.16, wingX: 2.35, engine: 'rotary', rudder: 'round', half: 0.5, depth: 1.1, spats: true, prop: 2.9, cowl: 0.6, cylinders: 7 });
 A['swordfish'] = ww1({ cls: 'biplane-two-seat', length: 10.87, span: 13.87, height: 3.76, chord: 1.75, gap: 1.9, stagger: 0.4, engine: 'rotary', rudder: 'round', crew: 2, bays: 2, depth: 1.25, half: 0.5, prop: 3.2, blades: 3, cowl: 0.74 });
 A['he-51'] = ww1({ length: 8.4, span: 11.0, height: 3.2, chord: 1.6, gap: 1.6, stagger: 0.4, engine: 'inline', rudder: 'round', bays: 2, depth: 1.05, prop: 2.9 });
 
