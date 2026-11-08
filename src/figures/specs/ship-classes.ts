@@ -327,17 +327,21 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'kronshtadt': { cls: 'battlecruiser', L: 250.5, B: 31.6, fb: 9, sheer: 5, guns: '78:3/305 62:3/305^3 -70:3/305b', funnels: [[2, 14, 8]], blocks: [[44, 18, 30, 7, 2], [38, 24, 38, 3]], masts: [[-14, 28]] },
   'stalingrad': { cls: 'battlecruiser', L: 273.5, B: 32.0, fb: 9, sheer: 6, guns: '86:3/305 69:3/305^3 -78:3/305b', funnels: [[0, 14, 8]], blocks: [[48, 20, 30, 7, 2], [42, 26, 38, 3]], masts: [[-16, 28]] },
   'sovetsky-soyuz': { cls: 'battleship', L: 269.4, B: 38.9, fb: 10, sheer: 6, guns: '82:3/406 65:3/406^3 -76:3/406b 30,13:2/152^4 -30,13:2/152^4b', funnels: [[0, 15, 10]], blocks: [[44, 18, 32, 9, 2], [38, 24, 42, 4]], masts: [[-18, 28]] },
-  'royal-sovereign': { cls: 'battleship', L: 189.2, B: 27.0, fb: 8, guns: '62:2/381 50:2/381^2.5 -48:2/381^2.5b -62:2/381b', funnels: [[6, 14, 7]], blocks: [[34, 20, 26, 6, 1]], masts: [[28, 34], [-16, 26]] },
+  // Royal Sovereign, Warspite (modernised) and Barham (as Malaya, unmodernised): turret places, bridge, funnel and
+  // masts measured on the ONI 201-I (1945) broadside silhouettes, scaled by the overall length (sources.md).
+  'royal-sovereign': { cls: 'battleship', L: 189.2, B: 27.0, fb: 8, guns: '50.7:2/381 35.2:2/381^3 -38:2/381^3b -53:2/381b', funnels: [[5, 16.5, 7]], blocks: [[20.7, 9.8, 21, 6, 1], [19, 11, 32, 4, 1]], masts: [[11.8, 37], [-22, 37]] },
   // Britain.
   'invincible-1908': { cls: 'battlecruiser', L: 172.8, B: 23.9, fb: 8, guns: '58:2/305 -58:2/305b 4,8:2/305', funnels: [[20, 14, 5], [10, 14, 5], [-14, 14, 5]], blocks: [[42, 32, 18, 5, 1]], masts: [[36, 30], [-6, 26]] },
   'colossus-1910': { cls: 'battleship', L: 166.4, B: 26.4, fb: 8, guns: '56:2/305 6,9:2/305 -40:2/305^2.5b -56:2/305b', funnels: [[22, 14, 5], [-14, 14, 5]], blocks: [[40, 30, 18, 5, 1]], masts: [[2, 30]] },
   'orion': { cls: 'battleship', L: 177.0, B: 27.0, fb: 8, guns: '60:2/343 48:2/343^2.5 -4:2/343 -46:2/343^2.5b -60:2/343b', funnels: [[18, 14, 5], [6, 14, 5]], blocks: [[38, 28, 20, 6, 1]], masts: [[30, 32]] },
   'queen-mary': { cls: 'battlecruiser', L: 214.4, B: 27.2, fb: 8, sheer: 3, guns: '75:2/343 63:2/343^2.5 -24:2/343 -75:2/343b', funnels: [[40, 14, 5], [14, 14, 5], [0, 14, 5]], blocks: [[52, 44, 20, 5, 1]], masts: [[46, 32]] },
   'glorious': { cls: 'battlecruiser', L: 239.8, B: 24.7, fb: 8, sheer: 4, guns: '75:2/381 -75:2/381b', funnels: [[6, 14, 7]], blocks: [[44, 24, 24, 6, 1]], masts: [[36, 34]] },
-  'renown': { cls: 'battlecruiser', L: 242.0, B: 27.4, fb: 8, sheer: 4, guns: '80:2/381 67:2/381^2.5 -78:2/381b', funnels: [[22, 14, 6], [0, 14, 6]], blocks: [[50, 36, 24, 6, 1]], masts: [[42, 34], [-24, 28]] },
-  'nelson': { cls: 'battleship', L: 216.4, B: 32.3, fb: 9, sheer: 3, guns: '70:3/406 54:3/406^3 38:3/406 -40,9:2/152^2b -54,9:2/152^2b', funnels: [[0, 14, 7]], blocks: [[26, 12, 32, 7, 1]], masts: [[-16, 26]] },
-  'warspite': { cls: 'battleship', L: 196.8, B: 31.7, fb: 8, guns: '64:2/381 52:2/381^2.5 -52:2/381^2.5b -64:2/381b', funnels: [[8, 14, 7]], blocks: [[34, 18, 17, 7, 1], [32, 24, 30, 5.5, 1.5]], masts: [[-12, 28]] },
-  'barham': { cls: 'battleship', L: 196.8, B: 31.7, fb: 8, guns: '64:2/381 52:2/381^2.5 -52:2/381^2.5b -64:2/381b', funnels: [[8, 14, 7]], blocks: [[34, 26, 24, 6, 1]], masts: [[30, 36], [-12, 26]] },
+  // Renown and Nelson: turret places and heights, bridge, funnels and masts measured on the ONI 201-I (1945)
+  // broadside silhouettes, scaled by the overall length (sources.md).
+  'renown': { cls: 'battlecruiser', L: 242.0, B: 27.4, fb: 7.4, sheer: 0.8, fc: [-70, 2], guns: '58:2/381 43:2/381^3 -79:2/381b', funnels: [[4, 18, 7], [-12.6, 18, 7]], blocks: [[39, 13, 17.5, 6, 1], [31.7, 20.7, 29.5, 4, 1]], masts: [[16, 36], [-39, 33]] },
+  'nelson': { cls: 'battleship', L: 216.4, B: 32.3, fb: 9.2, sheer: 1, guns: '40:3/406 21:3/406^4 -2.5:3/406 -62,9:2/152^2b -78,9:2/152^2b', funnels: [[-47, 15, 7]], blocks: [[-16, -38, 16.8, 7, 1], [-21, -34, 37.8, 4.5, 1]], masts: [[-70, 39]] },
+  'warspite': { cls: 'battleship', L: 196.8, B: 31.7, fb: 8, guns: '54:2/381 38.5:2/381^3 -46.4:2/381^3b -60:2/381b', funnels: [[1, 16, 7]], blocks: [[30, 10, 17, 7, 1], [28, 14, 29, 5.5, 1.5], [24, 16, 38, 3.5]], masts: [[11.5, 41], [-30.7, 41]] },
+  'barham': { cls: 'battleship', L: 196.8, B: 31.7, fb: 8, guns: '54:2/381 38.5:2/381^3 -46.4:2/381^3b -60:2/381b', funnels: [[-5, 16.4, 9]], blocks: [[30.6, 12, 18, 6, 1], [26.5, 15, 33, 4, 1]], masts: [[16, 36], [-28.6, 41]] },
   'hood': { cls: 'battlecruiser', L: 262.3, B: 31.8, fb: 9, sheer: 5, guns: '88:2/381 75:2/381^2.5 -72:2/381^2.5b -86:2/381b', funnels: [[22, 14, 7], [4, 14, 7]], blocks: [[50, 34, 28, 7, 1]], masts: [[44, 36], [-14, 26]] },
   'vanguard': { cls: 'battleship', L: 248.2, B: 32.9, fb: 9, sheer: 7, guns: '80:2/381 67:2/381^3 -64:2/381^3b -78:2/381b', funnels: [[10, 13, 7], [-10, 13, 7]], blocks: [[40, 22, 30, 8, 2], [34, 26, 38, 3.5]], masts: [[18, 34], [-18, 26]] },
   'lion-1938': { cls: 'battleship', L: 239.6, B: 32.0, fb: 9, sheer: 6, guns: '76:3/406 60:3/406^3 -70:3/406b', funnels: [[8, 13, 7], [-10, 13, 7]], blocks: [[40, 22, 30, 8, 2], [34, 26, 38, 3.5]], masts: [[14, 32], [-20, 26]] },
@@ -656,15 +660,15 @@ const AFT: Record<string, Partial<ShipO>> = {
   'kronshtadt': { blocks: [[-18, -50, 16, 6], [-26, -42, 20, 4]], dirs: [[-36, 24, 1.8]], masts: [[-14, 28], [-44, 18]], guns2: '24,11:2/152^4 -22,11:2/152^4b' },
   'stalingrad': { blocks: [[-18, -56, 16, 6], [-26, -46, 20, 4]], dirs: [[-40, 24, 1.8]], guns2: '28,11:2/130^4 -26,11:2/130^4b' },
   'sovetsky-soyuz': { blocks: [[-18, -52, 17, 7], [-26, -44, 22, 4.5]], dirs: [[-38, 26, 2]] },
-  'royal-sovereign': { blocks: [[-16, -34, 15, 5]], dirs: [[-26, 19]], masts: [[28, 34, 't'], [-16, 26]], guns2: '6,10:2/102^3' },
+  'royal-sovereign': { blocks: [[-5, -30, 15, 5]], dirs: [[-26, 19]], masts: [[11.8, 37, 't'], [-22, 37, 't']], guns2: '6,10:2/102^3' },
   'invincible-1908': { blocks: [[-24, -40, 12.5, 3.5]], masts: [[36, 30, 't'], [-6, 26, 't']] },
   'colossus-1910': { blocks: [[-20, -34, 13, 4]], masts: [[2, 30, 't']] },
   'queen-mary': { blocks: [[-34, -58, 13, 4]], masts: [[46, 32, 't']] },
   'glorious': { blocks: [[-20, -50, 14, 4]], masts: [[36, 34, 't']] },
-  'renown': { blocks: [[-16, -50, 14, 5]], dirs: [[-36, 19]], masts: [[42, 34, 't'], [-24, 28]], guns2: '24,11:2/114^3 10,11:2/114^3 -10,11:2/114^3b' },
-  'nelson': { blocks: [[-6, -30, 15, 5]], masts: [[-16, 26]] },
-  'warspite': { blocks: [[-14, -34, 15, 5]], dirs: [[-24, 19]], masts: [[-12, 28]], guns2: '2,11:2/102^3 -6,11:2/102^3' },
-  'barham': { blocks: [[-14, -34, 14, 4.5]], dirs: [[-24, 18]], masts: [[30, 36, 't'], [-12, 26]], guns2: '2,11:2/102^3' },
+  'renown': { blocks: [[-20, -45, 12, 5], [-50, -68, 11, 4]], dirs: [[-30, 18]], masts: [[16, 36, 't'], [-39, 33]], guns2: '24,11:2/114^3 10,11:2/114^3 -10,11:2/114^3b' },
+  'nelson': { blocks: [[-38, -83, 13, 5]], masts: [[-70, 39]] },
+  'warspite': { blocks: [[-20, -40, 15, 5]], dirs: [[-34, 19]], masts: [[11.5, 41], [-30.7, 41]], guns2: '2,11:2/102^3 -6,11:2/102^3' },
+  'barham': { blocks: [[-20.5, -39, 14, 4.5]], dirs: [[-33, 18]], masts: [[16, 36, 't'], [-28.6, 41]], guns2: '2,11:2/102^3' },
   'hood': { blocks: [[-14, -50, 15, 5], [-38, -48, 19, 3.5]], dirs: [[-44, 22]], masts: [[44, 36, 't'], [-14, 26]], guns2: '12,12:2/102^3 -4,12:2/102^3 -20,12:2/102^3' },
   'vanguard': { blocks: [[-16, -46, 16, 6]], dirs: [[-34, 22]], guns2: '26,12:2/133^3 14,12:2/133^3 -26,12:2/133^3b -38,12:2/133^3b' },
   'lion-1938': { blocks: [[-18, -46, 16, 6]], dirs: [[-34, 22]], guns2: '24,12:2/133^3 12,12:2/133^3 -24,12:2/133^3b -36,12:2/133^3b' },
@@ -1559,10 +1563,12 @@ const W: Record<string, ShipO> = {
   // 42,237 t full).
   'king-george-v': {
     cls: 'battleship', L: 227.1, B: 31.4, fb: 9, sheer: 2,
-    guns: '72:4/356 57:2/356^3 -66:4/356b 34,11:2/133^3 22,11:2/133^3 -16,11:2/133^3b -28,11:2/133^3b',
-    funnels: [[8, 14, 7], [-14, 14, 7]],
-    blocks: [[46, 22, 20, 8, 2], [42, 28, 28, 5, 1.5], [38, 32, 34, 3], [0, -30, 16, 6], [-32, -42, 20, 3.5]],
-    masts: [[30, 36], [-34, 30]],
+    // Turret places, bridge, funnels, after superstructure and masts measured on the ONI 201-I (1945) broadside
+    // silhouette, scaled by the overall length (sources.md); the 5.25-inch groups moved with the bridge and funnels.
+    guns: '46.7:4/356 33:2/356^3 -61:4/356b 20,11:2/133^3 8,11:2/133^3 -34,11:2/133^3b -46,11:2/133^3b',
+    funnels: [[0, 15.7, 7], [-24.8, 15.7, 7]],
+    blocks: [[28.5, 10.3, 20, 8, 2], [26, 14, 28, 5, 1.5], [23, 17, 34, 3], [-20.4, -53, 16, 6], [-38, -48, 20, 3.5]],
+    masts: [[6.7, 36.8], [-43, 34]],
   },
   // Iron Duke: five twin 13.5-inch turrets (A and B forward, Q amidships, X and Y aft), two funnels close together,
   // the tripod foremast (189.8 x 27.4 m; 29,560 t full).

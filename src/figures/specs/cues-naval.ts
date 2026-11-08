@@ -705,7 +705,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
     { cue: 'long hull with superfiring pairs at both ends', check: (s) => superfires(fwd(s, 0.4)) && superfires(aft(s, 0.4)) },
   ]),
   nelson: naval('nelson', [
-    { cue: 'all three triple 16-inch turrets forward of the bridge', check: (s) => battery(s, 0.4, 3, 0, 3) },
+    { cue: 'all three triple 16-inch turrets forward of the bridge', check: (s) => mains(s, 0.4).length === 3 && mains(s, 0.4).every((t) => t.x > s.funnels![0].x + 30 && t.barrels === 3) },
     { cue: 'B turret superfiring, X lower behind it', check: (s) => superfires(fwd(s, 0.4)) },
     { cue: 'tall tower bridge aft of the guns', check: tall(20) },
     { cue: 'one funnel aft of the tower', check: (s) => funnels(s) === 1 },
