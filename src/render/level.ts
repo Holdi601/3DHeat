@@ -1,5 +1,6 @@
 import type { Bounds, GeoPlacement } from '../state/types';
 import type { WorldLabel } from '../world/backdrop';
+import type { DcsGroundData } from '../world/dcsGround';
 
 /**
  * Background geometry: the map under the heat.
@@ -191,7 +192,7 @@ export interface ModelLevel {
    * (src/world/stream), and these are the options they are built with.
    * Absent on a backdrop built once.
    */
-  stream?: { theatre: string; runways: boolean; imagery: boolean };
+  stream?: { theatre: string; runways: boolean; imagery: boolean; dcs?: DcsGroundData | null };
 
   // Ground appearance.
   opacity: number;

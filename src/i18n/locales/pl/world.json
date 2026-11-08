@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "Teren DCS z gry",
+  "heat.world.dcs.open": "Otwórz poziom DCS…",
+  "heat.world.dcs.openTitle": "Pliki .glb i .json, które konwerter DCS (heat3d-dcs-maps level) zapisał z Twojej własnej instalacji: teren gry, dzięki czemu nagrane samoloty stoją na ziemi, nad którą latały. Wybierz oba pliki.",
+  "heat.world.dcs.detail": "Szczegóły prawdziwego świata na wierzchu",
+  "heat.world.dcs.detailTitle": "Zdjęcia, drogi, budynki i pomierzone pasy startowe strumieniowane na teren gry, przesunięte na pasy gry i pokazywane tylko tam, gdzie wybrzeże i wysokości się zgadzają; gdzie indziej własny grunt gry. Domyślnie wyłączone na historycznych teatrach działań, których miasta i drogi pochodzą z gry.",
+  "heat.world.dcs.hint": "Najpierw wyeksportuj obszar: heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "Wybierz plik .json poziomu razem z jego .glb: .json mówi, jakim teatrem jest teren.",
+  "heat.world.dcs.unknown": "{theatre} nie jest teatrem DCS, którego odwzorowanie zna przeglądarka.",
+  "heat.world.dcs.otherTheatre": "Poziom to {level}, ale nagranie jest na {data}.",
+  "heat.world.dcs.loaded": "{theatre} z gry: {triangles}, miast: {towns}, lotnisk: {airfields}.",
+  "heat.world.dcs.status": "Na gruncie gry: {real} kafelków pokazuje prawdziwy świat, {game} własny grunt gry; prawdziwy świat przesunięto do {shift} m na pasy gry.",
+  "heat.world.dcs.name": "{theatre} z gry ({level})"
 }

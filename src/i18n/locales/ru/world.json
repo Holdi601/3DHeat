@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "Рельеф DCS из игры",
+  "heat.world.dcs.open": "Открыть уровень DCS…",
+  "heat.world.dcs.openTitle": "Файлы .glb и .json, которые конвертер DCS (heat3d-dcs-maps level) записал из вашей собственной установки: рельеф игры, чтобы записанные самолёты стояли на земле, над которой они летали. Выберите оба файла.",
+  "heat.world.dcs.detail": "Детали реального мира поверх",
+  "heat.world.dcs.detailTitle": "Снимки, дороги, здания и измеренные ВПП, транслируемые поверх рельефа игры, сдвинутые на ВПП игры и показываемые только там, где совпадают береговая линия и высоты; в остальных местах собственная земля игры. На исторических театрах военных действий, города и дороги которых взяты из игры, по умолчанию выключено.",
+  "heat.world.dcs.hint": "Сначала экспортируйте область: heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "Выберите .json уровня вместе с его .glb: .json сообщает, какой театр военных действий представляет рельеф.",
+  "heat.world.dcs.unknown": "{theatre} не является театром DCS, проекцию которого знает просмотрщик.",
+  "heat.world.dcs.otherTheatre": "Уровень — {level}, но запись находится на {data}.",
+  "heat.world.dcs.loaded": "{theatre} из игры: {triangles}, городов: {towns}, аэродромов: {airfields}.",
+  "heat.world.dcs.status": "На земле игры: {real} тайлов показывают реальный мир, {game} — собственную землю игры; реальный мир сдвинут до {shift} м на ВПП игры.",
+  "heat.world.dcs.name": "{theatre} из игры ({level})"
 }

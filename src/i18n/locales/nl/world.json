@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "DCS-terrein uit de game",
+  "heat.world.dcs.open": "DCS-level openen…",
+  "heat.world.dcs.openTitle": "De .glb en .json die de DCS-converter (heat3d-dcs-maps level) uit je eigen installatie heeft geschreven: het terrein van de game, zodat opgenomen vliegtuigen staan op de grond waarover ze vlogen. Kies beide bestanden.",
+  "heat.world.dcs.detail": "Echte details erbovenop",
+  "heat.world.dcs.detailTitle": "Luchtbeelden, wegen, gebouwen en opgemeten start- en landingsbanen, gestreamd over het terrein van de game, verschoven naar de banen van de game en alleen getoond waar kust en hoogtes ermee overeenkomen; elders de eigen grond van de game. Standaard uit bij historische strijdtonelen, waarvan de steden en wegen die van de game zijn.",
+  "heat.world.dcs.hint": "Exporteer eerst het gebied: heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "Kies de .json van het level samen met de .glb: de .json zegt welk strijdtoneel het terrein is.",
+  "heat.world.dcs.unknown": "{theatre} is geen DCS-strijdtoneel waarvan de viewer de projectie kent.",
+  "heat.world.dcs.otherTheatre": "Het level is {level}, maar de opname bevindt zich op {data}.",
+  "heat.world.dcs.loaded": "{theatre} uit de game: {triangles}, {towns} steden, {airfields} vliegvelden.",
+  "heat.world.dcs.status": "Op de grond van de game: {real} tegels tonen de echte wereld, {game} de eigen grond van de game; de echte wereld is tot {shift} m verschoven naar de banen van de game.",
+  "heat.world.dcs.name": "{theatre} uit de game ({level})"
 }

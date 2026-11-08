@@ -2,6 +2,7 @@ import type { LevelCredit } from '../render/level';
 import { worldToData } from '../render/pose';
 import type { GeoPlacement } from '../state/types';
 import type { WorldLabel } from './backdrop';
+import type { DcsGroundData } from './dcsGround';
 import type { StreamWorkerRequest, StreamWorkerResponse } from './streamWorker';
 import type { BuiltTile, TileRequest } from './tileBuild';
 import { worldTiles, type WorldTile } from './tileSet';
@@ -39,6 +40,8 @@ export interface StreamOptions {
   placement: GeoPlacement;
   imagery: boolean;
   runways: boolean;
+  /** A DCS theatre's own ground: the hybrid backdrop (src/world/dcsGround). */
+  dcs?: DcsGroundData | null;
 }
 
 export interface TileNode {
@@ -112,6 +115,7 @@ interface Entry {
   tile: WorldTile;
   labels: WorldLabel[];
   sources: BuiltTile['sources'];
+  dcs?: BuiltTile['dcs'];
   bytes: number;
   used: number;
 }
@@ -143,9 +147,16 @@ export class WorldStreamer {
   /** The sources the drawn tiles came from. */
   credits: LevelCredit[] = [];
   /** Counts for the panel. */
-  stats = { drawn: 0, kept: 0, loading: 0, bytes: 0, downloaded: 0 };
+  stats = { drawn: 0, kept: 0, loading: 0, bytes: 0, downloaded: 0, dcsReal: 0, dcsGame: 0, dcsShift: 0 };
   /** Called when the drawn set, its credits or its counts change. */
   onChange: (() => void) | null = null;
+
+  /** The drawn tiles' meeting with the game's ground, for a closer look (counts are in `stats`). */
+  dcsVerdicts(): Array<{ key: string } & NonNullable<BuiltTile['dcs']>> {
+    const out: Array<{ key: string } & NonNullable<BuiltTile['dcs']>> = [];
+    for (const [key, e] of this.built) if (e.dcs && e.used === this.frame) out.push({ key, ...e.dcs });
+    return out;
+  }
 
   get running(): boolean {
     return this.opts !== null;
@@ -158,6 +169,7 @@ export class WorldStreamer {
     this.opts = opts;
     this.worker = new Worker(new URL('./streamWorker.ts', import.meta.url), { type: 'module' });
     this.worker.onmessage = (ev: MessageEvent<StreamWorkerResponse>) => this.received(ev.data);
+    if (opts.dcs) this.worker.postMessage({ kind: 'dcs', ground: opts.dcs } satisfies StreamWorkerRequest);
   }
 
   stop(): void {
@@ -248,7 +260,7 @@ export class WorldStreamer {
       mesh.structureEdges.byteLength +
       mesh.waterIndices.byteLength +
       (t.image ? t.image.width * t.image.height * 4 : 0);
-    this.built.set(k, { tile, labels: t.labels, sources: t.sources, bytes, used: this.frame });
+    this.built.set(k, { tile, labels: t.labels, sources: t.sources, ...(t.dcs ? { dcs: t.dcs } : {}), bytes, used: this.frame });
     this.stats.downloaded += t.downloaded;
     this.publish();
   }
@@ -262,9 +274,17 @@ export class WorldStreamer {
     const labels: WorldLabel[] = [];
     const sources = new Set<LevelCredit>();
     const seen = new Set<string>();
+    let dcsReal = 0;
+    let dcsGame = 0;
+    let dcsShift = 0;
     for (const k of keys) {
       const e = this.built.get(k)!;
       e.used = this.frame;
+      if (e.dcs) {
+        if (e.dcs.agree) dcsReal++;
+        else dcsGame++;
+        dcsShift = Math.max(dcsShift, e.dcs.shift);
+      }
       drawn.push(e.tile);
       for (const s of e.sources) sources.add(SOURCE_CREDIT[s]);
       for (const l of e.labels) {
@@ -287,7 +307,7 @@ export class WorldStreamer {
     this.credits = credits;
     let bytes = 0;
     for (const e of this.built.values()) bytes += e.bytes;
-    this.stats = { ...this.stats, drawn: drawn.length, kept: this.built.size, loading: this.pending.size, bytes };
+    this.stats = { ...this.stats, drawn: drawn.length, kept: this.built.size, loading: this.pending.size, bytes, dcsReal, dcsGame, dcsShift };
     if (changed) this.onChange?.();
   }
 
@@ -312,6 +332,7 @@ function sameOptions(a: StreamOptions, b: StreamOptions): boolean {
   return (
     a.imagery === b.imagery &&
     a.runways === b.runways &&
+    (a.dcs ?? null) === (b.dcs ?? null) &&
     ga.lat0 === gb.lat0 &&
     ga.lon0 === gb.lon0 &&
     ga.projection === gb.projection &&

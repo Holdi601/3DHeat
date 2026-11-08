@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "DCS-terreng fra spillet",
+  "heat.world.dcs.open": "Åpne DCS-bane…",
+  "heat.world.dcs.openTitle": "Filene .glb og .json som DCS-konverteren (heat3d-dcs-maps level) skrev fra din egen installasjon: spillets terreng, slik at innspilte fly står på bakken de fløy over. Velg begge filene.",
+  "heat.world.dcs.detail": "Virkelige detaljer oppå",
+  "heat.world.dcs.detailTitle": "Flybilder, veier, bygninger og oppmålte rullebaner strømmet over spillets terreng, flyttet til spillets baner og bare vist der kyst og høyder stemmer overens; ellers spillets egen bakke. Av som standard for historiske krigsskueplasser, der byene og veiene er spillets egne.",
+  "heat.world.dcs.hint": "Eksporter området først: heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "Velg banens .json sammen med .glb-filen: .json forteller hvilken krigsskueplass terrenget er.",
+  "heat.world.dcs.unknown": "{theatre} er ikke en DCS-krigsskueplass som visningsprogrammet kjenner projeksjonen til.",
+  "heat.world.dcs.otherTheatre": "Banen er {level}, men opptaket ligger på {data}.",
+  "heat.world.dcs.loaded": "{theatre} fra spillet: {triangles}, {towns} byer, {airfields} flyplasser.",
+  "heat.world.dcs.status": "På spillets bakke: {real} fliser viser den virkelige verden, {game} spillets egen bakke; den virkelige verden ble flyttet opptil {shift} m til spillets baner.",
+  "heat.world.dcs.name": "{theatre} fra spillet ({level})"
 }

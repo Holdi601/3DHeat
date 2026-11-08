@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "Έδαφος DCS από το παιχνίδι",
+  "heat.world.dcs.open": "Άνοιγμα επιπέδου DCS…",
+  "heat.world.dcs.openTitle": "Τα .glb και .json που έγραψε ο μετατροπέας DCS (heat3d-dcs-maps level) από τη δική σας εγκατάσταση: το έδαφος του παιχνιδιού, ώστε τα καταγεγραμμένα αεροσκάφη να πατούν στο έδαφος πάνω από το οποίο πέταξαν. Επιλέξτε και τα δύο αρχεία.",
+  "heat.world.dcs.detail": "Λεπτομέρειες του πραγματικού κόσμου από πάνω",
+  "heat.world.dcs.detailTitle": "Εικόνες, δρόμοι, κτίρια και μετρημένοι διάδρομοι που μεταδίδονται πάνω από το έδαφος του παιχνιδιού, μετακινούνται στους διαδρόμους του παιχνιδιού και εμφανίζονται μόνο όπου η ακτογραμμή και τα υψόμετρα συμφωνούν· αλλού το δικό του έδαφος του παιχνιδιού. Απενεργοποιημένο από προεπιλογή στα ιστορικά θέατρα επιχειρήσεων, των οποίων οι πόλεις και οι δρόμοι είναι του παιχνιδιού.",
+  "heat.world.dcs.hint": "Εξαγάγετε πρώτα την περιοχή: heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "Επιλέξτε το .json του επιπέδου μαζί με το .glb του: το .json λέει ποιο θέατρο επιχειρήσεων είναι το έδαφος.",
+  "heat.world.dcs.unknown": "Το {theatre} δεν είναι θέατρο DCS του οποίου την προβολή γνωρίζει το πρόγραμμα προβολής.",
+  "heat.world.dcs.otherTheatre": "Το επίπεδο είναι {level}, αλλά η καταγραφή βρίσκεται στο {data}.",
+  "heat.world.dcs.loaded": "{theatre} από το παιχνίδι: {triangles}, {towns} πόλεις, {airfields} αεροδρόμια.",
+  "heat.world.dcs.status": "Στο έδαφος του παιχνιδιού: {real} πλακίδια δείχνουν τον πραγματικό κόσμο, {game} το δικό του έδαφος του παιχνιδιού· ο πραγματικός κόσμος μετακινήθηκε έως και {shift} m στους διαδρόμους του παιχνιδιού.",
+  "heat.world.dcs.name": "{theatre} από το παιχνίδι ({level})"
 }

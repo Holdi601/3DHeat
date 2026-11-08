@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "Рельєф DCS з гри",
+  "heat.world.dcs.open": "Відкрити рівень DCS…",
+  "heat.world.dcs.openTitle": "Файли .glb і .json, які конвертер DCS (heat3d-dcs-maps level) записав з вашої власної інсталяції: рельєф гри, щоб записані літаки стояли на землі, над якою вони летіли. Виберіть обидва файли.",
+  "heat.world.dcs.detail": "Деталі реального світу поверх",
+  "heat.world.dcs.detailTitle": "Знімки, дороги, будівлі та виміряні злітно-посадкові смуги, що транслюються поверх рельєфу гри, зсунуті на смуги гри та показані лише там, де збігаються берегова лінія й висоти; в інших місцях власна земля гри. На історичних театрах воєнних дій, міста й дороги яких узято з гри, за замовчуванням вимкнено.",
+  "heat.world.dcs.hint": "Спершу експортуйте область: heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "Виберіть .json рівня разом з його .glb: .json повідомляє, який театр воєнних дій становить рельєф.",
+  "heat.world.dcs.unknown": "{theatre} не є театром DCS, проєкцію якого знає переглядач.",
+  "heat.world.dcs.otherTheatre": "Рівень — {level}, але запис розташований на {data}.",
+  "heat.world.dcs.loaded": "{theatre} з гри: {triangles}, міст: {towns}, аеродромів: {airfields}.",
+  "heat.world.dcs.status": "На землі гри: {real} тайлів показують реальний світ, {game} — власну землю гри; реальний світ зсунуто до {shift} м на смуги гри.",
+  "heat.world.dcs.name": "{theatre} з гри ({level})"
 }

@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "DCS терен од играта",
+  "heat.world.dcs.open": "Отвори DCS ниво…",
+  "heat.world.dcs.openTitle": "Датотеките .glb и .json што конверторот на DCS (heat3d-dcs-maps level) ги запиша од вашата сопствена инсталација: теренот на играта, за снимените авиони да стојат на земјата над која летале. Изберете ги двете датотеки.",
+  "heat.world.dcs.detail": "Детали од реалниот свет одозгора",
+  "heat.world.dcs.detailTitle": "Снимки, патишта, згради и измерени писти, пренесувани врз теренот на играта, поместени на пистите на играта и прикажани само таму каде што брегот и висините се совпаѓаат; на други места сопствената земја на играта. По дифолт е исклучено на историски театри на дејствија, чии градови и патишта се од играта.",
+  "heat.world.dcs.hint": "Прво извезете ја областа: heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "Изберете го .json на нивото заедно со неговиот .glb: .json кажува кој театар на дејствија е теренот.",
+  "heat.world.dcs.unknown": "{theatre} не е DCS театар чија проекција ја познава прегледувачот.",
+  "heat.world.dcs.otherTheatre": "Нивото е {level}, но снимката е на {data}.",
+  "heat.world.dcs.loaded": "{theatre} од играта: {triangles}, градови: {towns}, аеродроми: {airfields}.",
+  "heat.world.dcs.status": "На земјата на играта: {real} плочки го прикажуваат реалниот свет, {game} сопствената земја на играта; реалниот свет е поместен до {shift} м на пистите на играта.",
+  "heat.world.dcs.name": "{theatre} од играта ({level})"
 }

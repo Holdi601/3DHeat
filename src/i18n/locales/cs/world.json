@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "Terén DCS ze hry",
+  "heat.world.dcs.open": "Otevřít úroveň DCS…",
+  "heat.world.dcs.openTitle": "Soubory .glb a .json, které převodník DCS (heat3d-dcs-maps level) zapsal z vaší vlastní instalace: terén hry, aby nahraná letadla stála na zemi, nad kterou letěla. Vyberte oba soubory.",
+  "heat.world.dcs.detail": "Detaily skutečného světa navrch",
+  "heat.world.dcs.detailTitle": "Snímky, silnice, budovy a zaměřené dráhy streamované přes terén hry, posunuté na dráhy hry a zobrazené jen tam, kde se pobřeží a výšky shodují; jinde vlastní zem hry. Ve výchozím stavu vypnuto u historických bojišť, jejichž města a silnice jsou ze hry.",
+  "heat.world.dcs.hint": "Nejprve exportujte oblast: heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "Vyberte .json úrovně spolu s jejím .glb: .json říká, které bojiště terén je.",
+  "heat.world.dcs.unknown": "{theatre} není bojiště DCS, jehož projekci prohlížeč zná.",
+  "heat.world.dcs.otherTheatre": "Úroveň je {level}, ale záznam je na {data}.",
+  "heat.world.dcs.loaded": "{theatre} ze hry: {triangles}, měst: {towns}, letišť: {airfields}.",
+  "heat.world.dcs.status": "Na zemi hry: {real} dlaždic ukazuje skutečný svět, {game} vlastní zemi hry; skutečný svět byl posunut až o {shift} m na dráhy hry.",
+  "heat.world.dcs.name": "{theatre} ze hry ({level})"
 }

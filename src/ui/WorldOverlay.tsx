@@ -41,7 +41,10 @@ export function WorldOverlay() {
     const host = root.current;
     if (!engine || !host) return;
     const own = level?.labels ?? [];
-    const labels = worldStreamer.running ? [...own, ...worldStreamer.labels] : own;
+    // A streamed name the level already gives (a DCS level's towns under the real world) is written once.
+    const named = worldStreamer.running && own.length ? new Set(own.map((l) => l.text.toLowerCase())) : null;
+    const streamed = named ? worldStreamer.labels.filter((l) => !named.has(l.text.toLowerCase())) : worldStreamer.labels;
+    const labels = worldStreamer.running ? [...own, ...streamed] : own;
     if (!labels.length) {
       for (const el of nodes.current) el.style.display = 'none';
       return;
@@ -86,7 +89,7 @@ export function WorldOverlay() {
     const timer = window.setInterval(() => {
       const lv = useStore.getState().level;
       if (lv?.kind === 'model' && lv.stream && lv.placement) {
-        worldStreamer.start({ placement: lv.placement, imagery: lv.stream.imagery, runways: lv.stream.runways });
+        worldStreamer.start({ placement: lv.placement, imagery: lv.stream.imagery, runways: lv.stream.runways, dcs: lv.stream.dcs ?? null });
         worldStreamer.update(engine.cameraPose().position);
       } else if (worldStreamer.running) worldStreamer.stop();
     }, STREAM_EVERY);

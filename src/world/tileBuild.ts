@@ -15,6 +15,7 @@ import {
   type WorldLabel,
 } from './backdrop';
 import type { FetchMode } from './cache';
+import type { DcsGround, TileVerdict } from './dcsGround';
 import { clipLine, drapePolygon, extrudeBuilding, MeshBuilder, ribbon, type BuiltMesh } from './mesh';
 import { decodeTile, inflateIfGzip } from './mvt';
 import { OURAIRPORTS_RUNWAYS, parseRunways, runwaysIn, type Runway } from './runways';
@@ -140,6 +141,8 @@ export interface TileIo {
    * nothing) as one bitmap; null where bitmaps cannot be made (tests).
    */
   mosaic(parts: Array<ArrayBuffer | null>, n: number, type: string): Promise<ImageBitmap | null>;
+  /** A DCS theatre's own ground, for the hybrid backdrop (src/world/dcsGround); absent otherwise. */
+  dcs?: DcsGround | null;
 }
 
 export interface BuiltTile {
@@ -153,6 +156,8 @@ export interface BuiltTile {
   /** Bytes downloaded (not from the cache) for it. */
   downloaded: number;
   notes: Msg[];
+  /** How the tile met the game's ground, where a DCS ground was given and reaches it. */
+  dcs?: TileVerdict & { shift: number };
 }
 
 const key = (z: number, x: number, y: number) => `${z}/${x}/${y}`;
@@ -233,8 +238,23 @@ export async function buildTile(req: TileRequest, io: TileIo): Promise<BuiltTile
       }
     }
   }
+  // ---- the game's own ground: its heights where it reaches, the real world moved onto it or left out
+  if (io.dcs && !io.dcs.shifts) {
+    try {
+      runwayList ??= io.fetch(OURAIRPORTS_RUNWAYS).then((f) => (f.bytes ? parseRunways(new TextDecoder().decode(f.bytes)) : []));
+      io.dcs.shifts = io.dcs.findShifts(await runwayList);
+    } catch {
+      runwayList = null;
+      io.dcs.shifts = [];
+    }
+  }
+  const game = io.dcs ? io.dcs.forTile(px0, py0, dx, GRID, S, heights, dx * mpp) : null;
+  const realWorld = !game || game.verdict.agree;
+  if (game) for (let k = 0; k < heights.length; k++) if (game.covered[k]) heights[k] = game.heights[k];
   const grid = new TerrainGrid(px0, py0, GRID, GRID, dx, dx, heights);
-  const toPlane = mercatorToPlane(geo);
+  const plane = mercatorToPlane(geo);
+  const [smx, smy] = game?.shift ?? [0, 0];
+  const toPlane = smx || smy ? (mx: number, my: number) => plane(mx + smx, my + smy) : plane;
   const layer: Layer = {
     limits: { full: z >= 9 } as Limits,
     mx0: x / n,
@@ -255,7 +275,7 @@ export async function buildTile(req: TileRequest, io: TileIo): Promise<BuiltTile
 
   // ---- map features
   let features: ReturnType<typeof collect> | null = null;
-  try {
+  if (realWorld) try {
     vectorTemplate ??= io
       .fetch(OPENFREEMAP_TILEJSON, 'network-first')
       .then((f) => (f.bytes ? ((JSON.parse(new TextDecoder().decode(f.bytes)) as { tiles?: string[] }).tiles?.[0] ?? null) : null))
@@ -279,7 +299,7 @@ export async function buildTile(req: TileRequest, io: TileIo): Promise<BuiltTile
   let imageRect: { z: number; x: number; y: number; n: number } | null = null;
   // A national orthophoto where one covers the whole tile, up to a metre a
   // pixel: several of its tiles laid into one picture for this tile.
-  const ortho = req.imagery && z >= ORTHO_FROM ? orthoFor(box) : null;
+  const ortho = req.imagery && realWorld && z >= ORTHO_FROM ? orthoFor(box) : null;
   if (ortho) {
     const zf = Math.min(z + ORTHO_DEEPER, ortho.maxZoom);
     const n = 2 ** (zf - z);
@@ -301,7 +321,7 @@ export async function buildTile(req: TileRequest, io: TileIo): Promise<BuiltTile
       image = null;
     }
   }
-  if (req.imagery && !image) {
+  if (req.imagery && realWorld && !image) {
     const zi = Math.min(z, IMAGERY_MAX);
     const k = z - zi;
     try {
@@ -327,6 +347,8 @@ export async function buildTile(req: TileRequest, io: TileIo): Promise<BuiltTile
   }
   mb.begin('ground', 'terrain');
   for (let j = 0; j < GRID; j++) for (let i = 0; i < GRID; i++) mb.vertexAt(px0 + i * dx, py0 + j * dx, heights[j * GRID + i], groundColour(heights[j * GRID + i]));
+  // Where the real world is left out, the game's ground in its own class colours.
+  if (game && !realWorld) for (let k = 0; k < GRID * GRID; k++) if (game.covered[k]) mb.setColour(k, [game.colours[k * 3], game.colours[k * 3 + 1], game.colours[k * 3 + 2]]);
   if (features) {
     features.cover.sort((a, b) => a.rank - b.rank);
     for (const c of features.cover) {
@@ -417,7 +439,7 @@ export async function buildTile(req: TileRequest, io: TileIo): Promise<BuiltTile
   }
 
   // ---- runways as surveyed, with markings
-  if (req.runways && z >= 11) {
+  if (req.runways && realWorld && z >= 11) {
     try {
       runwayList ??= io
         .fetch(OURAIRPORTS_RUNWAYS)
@@ -454,7 +476,8 @@ export async function buildTile(req: TileRequest, io: TileIo): Promise<BuiltTile
   const mesh = mb.finish(req.axes, { toData: (e, nn, h) => dataOfEastNorth(geo, e, nn, h), sense: frameSense(geo) });
   // Skirts lit as the ground they hang from (world up; heights are always world Y).
   for (let i = skirtFirst; i < skirtEnd; i++) mesh.vertices.set([0, 1, 0], i * 6 + 3);
-  return { key: key(z, x, y), mesh, uvs, image, labels, sources, downloaded, notes: [] };
+  const dcs = game ? { ...game.verdict, shift: Math.hypot(smx, smy) * 40_075_016 * Math.cos((centreLat * Math.PI) / 180) } : undefined;
+  return { key: key(z, x, y), mesh, uvs, image, labels, sources, downloaded, notes: [], ...(dcs ? { dcs } : {}) };
 }
 
 /** A runway from threshold to threshold, with side stripes, a dashed centre line and threshold bars. */

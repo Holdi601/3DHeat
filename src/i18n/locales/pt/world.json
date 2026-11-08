@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "Terreno DCS do jogo",
+  "heat.world.dcs.open": "Abrir nível DCS…",
+  "heat.world.dcs.openTitle": "O .glb e o .json que o conversor do DCS (heat3d-dcs-maps level) escreveu a partir da sua própria instalação: o terreno do jogo, para que as aeronaves gravadas assentem no solo sobre o qual voaram. Escolha os dois ficheiros.",
+  "heat.world.dcs.detail": "Detalhe do mundo real por cima",
+  "heat.world.dcs.detailTitle": "Imagens, estradas, edifícios e pistas medidas transmitidos por cima do terreno do jogo, deslocados para as pistas do jogo e mostrados apenas onde a costa e as altitudes coincidem; nos restantes locais, o solo próprio do jogo. Desligado por predefinição nos teatros históricos, cujas cidades e estradas são as do jogo.",
+  "heat.world.dcs.hint": "Exporte primeiro a área: heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "Escolha o .json do nível juntamente com o seu .glb: o .json indica de que teatro é o terreno.",
+  "heat.world.dcs.unknown": "{theatre} não é um teatro do DCS cuja projeção o visualizador conheça.",
+  "heat.world.dcs.otherTheatre": "O nível é {level}, mas a gravação está em {data}.",
+  "heat.world.dcs.loaded": "{theatre} do jogo: {triangles}, {towns} cidades, {airfields} aeródromos.",
+  "heat.world.dcs.status": "No solo do jogo: {real} mosaicos mostram o mundo real, {game} o solo próprio do jogo; o mundo real foi deslocado até {shift} m para as pistas do jogo.",
+  "heat.world.dcs.name": "{theatre} do jogo ({level})"
 }

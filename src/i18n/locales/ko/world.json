@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "게임의 DCS 지형",
+  "heat.world.dcs.open": "DCS 레벨 열기…",
+  "heat.world.dcs.openTitle": "DCS 변환기(heat3d-dcs-maps level)가 직접 설치한 게임에서 만들어 낸 .glb와 .json입니다. 게임의 지형이므로 기록된 항공기가 비행했던 지면 위에 놓입니다. 두 파일을 모두 선택하세요.",
+  "heat.world.dcs.detail": "실제 세계 디테일 겹치기",
+  "heat.world.dcs.detailTitle": "게임 지형 위에 스트리밍되는 항공 영상, 도로, 건물, 측량된 활주로로, 게임의 활주로에 맞춰 이동하며 해안선과 고도가 일치하는 곳에만 표시되고 그 외에는 게임 자체의 지면이 쓰입니다. 도시와 도로가 게임 것인 역사적 전역에서는 기본적으로 꺼져 있습니다.",
+  "heat.world.dcs.hint": "먼저 영역을 내보내세요: heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "레벨의 .json을 .glb와 함께 선택하세요. .json에 이 지형이 어느 전역인지 나와 있습니다.",
+  "heat.world.dcs.unknown": "{theatre}은(는) 뷰어가 투영법을 아는 DCS 전역이 아닙니다.",
+  "heat.world.dcs.otherTheatre": "레벨은 {level}이지만 기록은 {data}에 있습니다.",
+  "heat.world.dcs.loaded": "게임의 {theatre}: {triangles}, 도시 {towns}곳, 비행장 {airfields}곳.",
+  "heat.world.dcs.status": "게임 지면 위: 실제 세계를 보여 주는 타일 {real}개, 게임 자체 지면을 보여 주는 타일 {game}개. 실제 세계는 게임의 활주로에 맞춰 최대 {shift} m 이동했습니다.",
+  "heat.world.dcs.name": "게임의 {theatre} ({level})"
 }

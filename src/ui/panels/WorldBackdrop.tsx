@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { formatBytes } from '../../data/memory';
+import { modelLoader, type LoadedModel } from '../../data/modelLoader';
 import { say } from '../../data/msg';
 import { formatTriangles } from '../../data/simplify';
 import { int, num, t } from '../../i18n';
@@ -9,13 +10,16 @@ import type { AxisMapping, GeoPlacement } from '../../state/types';
 import type { BackdropRequest, BackdropResult } from '../../world/backdrop';
 import { backdropLoader } from '../../world/backdropLoader';
 import { clearCache } from '../../world/cache';
-import { THEATRES, theatreAt, theatreById, theatreGeo, type Theatre } from '../../world/theatres';
+import type { WorldLabel } from '../../world/backdrop';
+import { dcsGroundFrom, type DcsGroundData } from '../../world/dcsGround';
+import { DCS_PROJECTIONS, fromDcs } from '../../world/dcsProjection';
+import { THEATRES, theatreById, theatreGeo, theatreOfData, theatreOfDcsFolder, type Theatre } from '../../world/theatres';
 import { boxAround } from '../../world/tiles';
 import { Check } from '../controls';
 import { useEngine } from '../EngineContext';
 import { dataToWorld } from '../../render/pose';
 import { worldStreamer } from '../../world/stream';
-import { dataOfEastNorth, planeForward } from '../../world/tiles';
+import { boxCentre, dataOfEastNorth, geoBoxOf, knownProjection, planeForward } from '../../world/tiles';
 
 /**
  * A theatre built with no data loaded is put into the world the way a Tacview
@@ -27,6 +31,23 @@ const THEATRE_AXES: AxisMapping = { up: 'z', flipX: false, flipY: true, flipZ: f
 const SIZES = [25, 50, 100, 200, 400];
 
 type Detail = 'data' | 'point' | 'none';
+
+/** What the DCS converter writes beside its level (exporters/ext/dcs-maps, `<name>.json`); only what is read here. */
+interface DcsLevelMeta {
+  theatre: string;
+  level?: string;
+  towns?: Array<{ name: string; x?: number; z?: number; ground?: number | null }>;
+  airfields?: Array<{ name: string; x: number; z: number; ground?: number | null }>;
+}
+
+/** The DCS level's place names, in its own metres (x north, y up, z east): the game's towns and airfields. */
+export function dcsLabels(meta: DcsLevelMeta): WorldLabel[] {
+  const out: WorldLabel[] = [];
+  for (const tw of meta.towns ?? [])
+    if (typeof tw.x === 'number' && typeof tw.z === 'number') out.push({ text: tw.name, kind: 'town', x: tw.x, y: (tw.ground ?? 0) + 30, z: tw.z });
+  for (const a of meta.airfields ?? []) out.push({ text: a.name, kind: 'airfield', x: a.x, y: (a.ground ?? 0) + 30, z: a.z });
+  return out;
+}
 
 const gameLabel = (th: Theatre) => (th.game === 'dcs' ? t('heat.world.theatre.groupDcs') : t('heat.world.theatre.groupIl2'));
 
@@ -52,11 +73,14 @@ export function cameraOverTheatre(engine: NonNullable<ReturnType<typeof useEngin
 export function WorldBackdrop({
   busy,
   toLevel,
+  fromModel,
   setError,
   setNote,
 }: {
   busy: boolean;
   toLevel: (name: string, r: BackdropResult, placement: GeoPlacement) => ModelLevel;
+  /** A loaded model (the DCS level) as a world backdrop level. */
+  fromModel: (name: string, m: LoadedModel, placement: GeoPlacement) => ModelLevel;
   setError: (e: string | null) => void;
   setNote: (n: string | null) => void;
 }) {
@@ -64,13 +88,16 @@ export function WorldBackdrop({
   const setLevel = useStore((s) => s.setLevel);
   const geo = dataset?.geo;
   const [world, setWorld] = useState<{ label: string; fraction: number | null } | null>(null);
-  const [theatreId, setTheatreId] = useState<string>(() => (geo ? (theatreAt(geo.lat0, geo.lon0)?.id ?? '') : ''));
+  const [theatreId, setTheatreId] = useState<string>(() => (geo ? (theatreOfData(geo, dataset?.bounds, dataset?.axes)?.id ?? '') : ''));
   const [detail, setDetail] = useState<Detail>(geo ? 'data' : 'point');
   const [lat, setLat] = useState('');
   const [lon, setLon] = useState('');
   const [size, setSize] = useState(50);
   const [runways, setRunways] = useState(true);
   const [imagery, setImagery] = useState(false);
+  /** The real world streamed over the game's terrain; off by default on a historical theatre. */
+  const [gameDetail, setGameDetail] = useState(true);
+  const dcsInput = useRef<HTMLInputElement>(null);
   const engine = useEngine();
   /** The streamer's counts, read once a second while a theatre streams. */
   const [streamStats, setStreamStats] = useState<typeof worldStreamer.stats | null>(null);
@@ -88,7 +115,7 @@ export function WorldBackdrop({
   // A newly loaded recording picks its theatre, and the area under it.
   useEffect(() => {
     if (!geo) return;
-    const th = theatreAt(geo.lat0, geo.lon0);
+    const th = theatreOfData(geo, dataset?.bounds, dataset?.axes);
     if (th) setTheatreId(th.id);
     setDetail('data');
   }, [geo]);
@@ -96,6 +123,7 @@ export function WorldBackdrop({
     if (!theatre) return;
     setLat(String(theatre.detail.lat));
     setLon(String(theatre.detail.lon));
+    setGameDetail(!theatre.historical);
   }, [theatre]);
   useEffect(() => {
     if (!geo && detail === 'data') setDetail('point');
@@ -173,7 +201,8 @@ export function WorldBackdrop({
    * look, the place on the earth and the credits; its ground comes as tiles
    * (src/world/stream, driven from WorldOverlay).
    */
-  const streamTheatre = () => {
+  const streamTheatre = (game?: { th: Theatre; dcs: DcsGroundData; labels: WorldLabel[]; name: string; centre: { lat: number; lon: number } }) => {
+    const theatre = game?.th ?? theatreById(theatreId);
     if (!theatre) return;
     const placement: GeoPlacement = { geo: geo ?? theatreGeo(theatre), axes: geo ? (dataset?.axes ?? null) : THEATRE_AXES };
     const fwd = planeForward(placement.geo);
@@ -211,11 +240,86 @@ export function WorldBackdrop({
       stats: {} as BackdropResult['stats'],
       notes: [],
     };
-    const lv = toLevel(t('heat.world.stream.name', { game: gameLabel(theatre), theatre: theatre.name }), empty, placement);
+    const lv = toLevel(game?.name ?? t('heat.world.stream.name', { game: gameLabel(theatre), theatre: theatre.name }), empty, placement);
+    if (!game) {
+      setError(null);
+      setNote(null);
+    }
+    // The game's place names, from its metres to this plane.
+    const proj = game ? DCS_PROJECTIONS[game.dcs.theatre] : null;
+    const toPlane = planeForward(placement.geo);
+    const labels =
+      game && proj
+        ? game.labels.map((l) => {
+            const [la, lo] = fromDcs(proj, l.x, l.z);
+            const [e, n] = toPlane(la, lo);
+            return { ...l, ...dataToWorld(dataOfEastNorth(placement.geo, e, n, l.y), placement.axes) };
+          })
+        : lv.labels;
+    setLevel({ ...lv, labels, stream: { theatre: theatre.id, imagery, runways, ...(game ? { dcs: game.dcs } : {}) }, showTexture: imagery });
+    if (!geo && engine) cameraOverTheatre(engine, placement, game ? { ...theatre, detail: game.centre } : theatre);
+  };
+
+  /**
+   * The DCS converter's level (its .glb and .json): the game's own terrain.
+   * Alone, it is the level, moved under the data; with the real world on top
+   * it is the ground the streamed tiles are draped on and judged against
+   * (src/world/dcsGround).
+   */
+  const openDcs = async (files: File[]) => {
     setError(null);
     setNote(null);
-    setLevel({ ...lv, stream: { theatre: theatre.id, imagery, runways }, showTexture: imagery });
-    if (!geo && engine) cameraOverTheatre(engine, placement, theatre);
+    const glb = files.find((f) => /[.](glb|gltf)$/i.test(f.name));
+    const json = files.find((f) => /[.]json$/i.test(f.name));
+    if (!glb || !json) {
+      setError(t('heat.world.dcs.needJson'));
+      return;
+    }
+    let meta: DcsLevelMeta;
+    try {
+      meta = JSON.parse(await json.text()) as DcsLevelMeta;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+      return;
+    }
+    const proj = DCS_PROJECTIONS[meta.theatre];
+    const th = theatreOfDcsFolder(meta.theatre);
+    if (!proj || !th) {
+      setError(t('heat.world.dcs.unknown', { theatre: String(meta.theatre) }));
+      return;
+    }
+    if (th.id !== theatreId) setTheatreId(th.id);
+    const dataTheatre = geo ? theatreOfData(geo, dataset?.bounds, dataset?.axes) : undefined;
+    setWorld({ label: t('heat.levelPanel.reading'), fraction: null });
+    try {
+      const m = await modelLoader.load(glb, Infinity, (p) => setWorld({ label: p.label, fraction: p.fraction }));
+      const name = t('heat.world.dcs.name', { theatre: th.name, level: meta.level ?? glb.name });
+      const labels = dcsLabels(meta);
+      const b = m.bounds;
+      const [cLat, cLon] = fromDcs(proj, (b.minX + b.maxX) / 2, (b.minZ + b.maxZ) / 2);
+      if (gameDetail) {
+        const dcs = dcsGroundFrom(meta.theatre, m.vertices, m.colours, m.indices, m.waterIndices);
+        streamTheatre({ th, dcs, labels, name, centre: { lat: cLat, lon: cLon } });
+      } else {
+        const placement: GeoPlacement = { geo: { lat0: th.origin.lat, lon0: th.origin.lon, projection: 'dcs-tm', theatre: meta.theatre }, axes: null };
+        setLevel({ ...fromModel(name, m, placement), labels });
+      }
+      setNote(
+        [
+          t('heat.world.dcs.loaded', {
+            theatre: th.name,
+            triangles: formatTriangles(m.triangles + m.waterTriangles),
+            towns: int(meta.towns?.length ?? 0),
+            airfields: int(meta.airfields?.length ?? 0),
+          }),
+          ...(dataTheatre && dataTheatre.id !== th.id ? [t('heat.world.dcs.otherTheatre', { level: th.name, data: dataTheatre.name })] : []),
+        ].join(' '),
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setWorld(null);
+    }
   };
 
   /** Imagery on or off for the streamed theatre shown now: its tiles are built again (from the cache). */
@@ -235,6 +339,15 @@ export function WorldBackdrop({
   };
 
   const box = theatre?.box;
+  // Where the converter should cut the game's terrain: the middle of the data, else the theatre's detailed area.
+  let around = theatre?.detail ?? { lat: 0, lon: 0 };
+  if (dataset && geo && knownProjection(geo) && Number.isFinite(dataset.bounds.minX)) {
+    try {
+      around = boxCentre(geoBoxOf(geo, dataset.bounds, dataset.axes ?? null, 0));
+    } catch {
+      // The theatre's area stands.
+    }
+  }
   const plane = geo ?? (theatre ? theatreGeo(theatre) : null);
   return (
     <div className="field">
@@ -302,7 +415,7 @@ export function WorldBackdrop({
             </div>
           )}
           <div className="row">
-            <button disabled={busy || !!world} onClick={streamTheatre} title={t('heat.world.stream.buttonTitle')}>
+            <button disabled={busy || !!world} onClick={() => streamTheatre()} title={t('heat.world.stream.buttonTitle')}>
               {t('heat.world.stream.button')}
             </button>
             <button disabled={busy || !!world} onClick={buildTheatre} title={t('heat.world.theatre.buildTitle')}>
@@ -318,7 +431,37 @@ export function WorldBackdrop({
                 size: formatBytes(streamStats.bytes),
                 downloaded: formatBytes(streamStats.downloaded),
               })}
+              {streamStats.dcsReal + streamStats.dcsGame > 0 &&
+                ` ${t('heat.world.dcs.status', { real: int(streamStats.dcsReal), game: int(streamStats.dcsGame), shift: num(streamStats.dcsShift, 0) })}`}
             </div>
+          )}
+          {theatre.game === 'dcs' && (
+            <>
+              <div className="label">
+                <span>{t('heat.world.dcs.label')}</span>
+              </div>
+              <div className="row">
+                <button disabled={busy || !!world} onClick={() => dcsInput.current?.click()} title={t('heat.world.dcs.openTitle')}>
+                  {t('heat.world.dcs.open')}
+                </button>
+              </div>
+              <input
+                ref={dcsInput}
+                type="file"
+                accept=".glb,.json"
+                multiple
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const files = [...(e.target.files ?? [])];
+                  e.target.value = '';
+                  if (files.length) void openDcs(files);
+                }}
+              />
+              <Check label={t('heat.world.dcs.detail')} title={t('heat.world.dcs.detailTitle')} checked={gameDetail} onChange={setGameDetail} />
+              <div className="hint">
+                {t('heat.world.dcs.hint', { folder: theatre.id, lat: num(around.lat, 2), lon: num(around.lon, 2) })}
+              </div>
+            </>
           )}
           {plane && (
             <div className="hint">
