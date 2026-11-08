@@ -28,13 +28,6 @@ export const KEY_BYTES = 12.5;
  */
 export const PEAK_KEY_BYTES = 2 * 12 + 0.5;
 
-/**
- * The keys' x, y, z, t in one GPU buffer at most. A load past 2 GiB of them
- * (268 M keys), which the renderer splits over two buffers, lost the WebGPU
- * device on an RTX 5080 (Edge, 2026-11-08); until that is mended a load
- * thins to fit one.
- */
-export const ONE_KEY_BUFFER = 2 ** 31;
 
 /** What the load holds besides the keys at that peak: the decodes in flight, the units' records, the page's own. */
 export const LOAD_HEADROOM = 4e9;
@@ -49,15 +42,15 @@ export interface LeanBudget {
 }
 
 /**
- * The keys this machine holds: within the GPU's largest storage buffer (the
- * x, y, z, t keys are one binding), within half its memory, and within the
+ * The keys this machine holds: within what the GPU's key buffers hold (the
+ * x, y, z, t keys go in up to two bindings, see the renderer's `gpuTracksMaxBytes`), within half its memory, and within the
  * RAM the page may take - half what is free when the host says, else what
  * the browser admits to (`navigator.deviceMemory`, capped at 8 GB), a quarter
  * of it - and never past the wall of typed arrays one tab holds, the keys
  * counted at their peak (`PEAK_KEY_BYTES`) beside the rest of the load.
  */
 export function leanBudget(o: { gpuMaxBufferBytes: number; vramBytes: number | null; freeBytes: number | null; totalBytes: number | null; deviceMemoryGB: number | null }): LeanBudget {
-  const gpuBuffer = o.gpuMaxBufferBytes > 0 ? Math.floor(Math.min(o.gpuMaxBufferBytes, ONE_KEY_BUFFER) / 8) : Infinity;
+  const gpuBuffer = o.gpuMaxBufferBytes > 0 ? Math.floor(o.gpuMaxBufferBytes / 8) : Infinity;
   const gpuMemory = o.vramBytes ? Math.floor((o.vramBytes * 0.5) / KEY_BYTES) : Infinity;
   const ram = o.freeBytes ? o.freeBytes * 0.5 : o.totalBytes ? o.totalBytes * 0.25 : (o.deviceMemoryGB ?? 4) * 1e9 * 0.25;
   const ramBytes = Math.min(ram, MAX_TAB_ARRAY_BYTES - LOAD_HEADROOM);

@@ -627,7 +627,7 @@ export class WebgpuRenderer implements Renderer {
 
   /** Whether geometry is still on its way; the engine redraws the scene when it lands. */
   get uploadsPending(): boolean {
-    return this.uploading.size > 0 || this.tileQueue.length > 0;
+    return this.uploading.size > 0 || this.tileQueue.length > 0 || (this.tracks?.uploading ?? false);
   }
 
   /** Whether all of a mesh's geometry has arrived. */

@@ -2092,7 +2092,10 @@ export class Webgl2Renderer implements Renderer {
       if (!gl.getParameter(t.GPU_DISJOINT_EXT)) {
         const ms = ns / 1e6;
         const prev = this.passMs.heat;
-        if (ms >= 0 && ms < 1000) this.passMs.heat = prev === undefined ? ms : prev * 0.9 + ms * 0.1;
+        if (ms >= 0 && ms < 1000) {
+          this.passMs.heat = prev === undefined ? ms : prev * 0.9 + ms * 0.1;
+          this.passMs.heatLast = ms;
+        }
       }
       gl.deleteQuery(this.heatQuery);
       this.heatQuery = null;

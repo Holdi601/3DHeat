@@ -185,6 +185,8 @@ const EXACT_FLOOR_UNTIMED = 2_048 * SAMPLE_BLOCK;
 const HEAT_GPU_SHARE = 0.45;
 /** Drawn frames the sprite cap holds after a change, for the smoothed GPU time to catch up. */
 const CAP_HOLD_FRAMES = 12;
+/** Drawn frames the sprite cap holds after a cut: the GPU's reading of a frame comes back in two or three. */
+const CAP_CUT_HOLD_FRAMES = 4;
 
 /**
  * Blend weight while the visible window is moving.
@@ -460,6 +462,10 @@ export class Engine {
   private heatBudgetMs = 1;
   /** Sprites a frame of the current run of accumulation draws; see `planFrame`. */
   private runSplats = 0;
+  /** The heat cost's latest reading where it is above the average. */
+  private heatCostPeak = 0;
+  /** Whether the growing window's base was drawn thinned, while the camera moved. */
+  private baseThinned = false;
   /** Sprites the last frame that drew drew. */
   private prevSprites = 0;
   /** Whether the renderer had geometry on its way last frame. */
@@ -2502,6 +2508,7 @@ export class Engine {
     this.live.heatScale = effectiveHeatScale;
     this.heatCostMs = heatCost;
     this.heatBudgetMs = heatBudgetMs;
+    this.heatCostPeak = Math.max(heatCost, passMs?.heatLast ?? 0);
     // Line heat keeps the patient rule: a route's heat is spread along it, so a
     // cap that moves while the camera does shows as the routes flickering.
     this.heatTimed = heatGpuMs !== undefined && s.mode !== 'heat-lines';
@@ -2731,9 +2738,12 @@ export class Engine {
     // further this one, so adding to what is there would count it twice.
     const growing = !showAll && tl.window === 'cumulative' && !useLifetime && !lineTrail;
     const mustReset = !s.budget.progressive || cameraMoved || geometryChanged;
+    // A base thinned while the camera moved is drawn again, whole, once it
+    // stops: it is kept and only extended from, and the thinning would stay.
     const canExtend =
       growing &&
       !mustReset &&
+      !(this.baseThinned && !cameraMoved) &&
       this.accumRowLo === rowRange[0] &&
       this.accumRowHi >= 0 &&
       rowRange[1] >= this.accumRowHi;
@@ -2805,8 +2815,17 @@ export class Engine {
         // Without the heat's GPU time the frame time is all there is, and the
         // display's refresh hides what part of it the heat is: there the old,
         // patient rule stays, which only reacts to a frame near the watchdog.
+        // Over budget, cut from what was drawn rather than from the cap: with
+        // fewer rows in view than the cap allows, cutting the cap did nothing
+        // for step after step while every other frame was dropped.
+        //
+        // And judged on the latest reading as well as the average: a view that
+        // turns onto dense data costs more at once, and the average showed it
+        // only after a run of dropped frames.
+        const over = this.heatCostPeak > this.heatBudgetMs * 1.15;
+        const from = over && this.prevSprites > 0 ? Math.min(this.exactCap, this.prevSprites) : this.exactCap;
         const cap = this.heatTimed
-          ? nextHeatCap(this.exactCap, this.heatCostMs, this.heatBudgetMs, this.lastFrameDrew, mustReset, {
+          ? nextHeatCap(from, over ? this.heatCostPeak : this.heatCostMs, this.heatBudgetMs, this.lastFrameDrew, mustReset, {
               floor: EXACT_FLOOR_SPRITES,
               ceiling: EXACT_SPRITE_CAP,
             })
@@ -2816,7 +2835,9 @@ export class Engine {
               stallMs: EXACT_STALL_MS,
               easyMs: EXACT_EASY_MS,
             });
-        if (cap !== this.exactCap) this.capHold = CAP_HOLD_FRAMES;
+        // A cut is judged again as soon as the GPU's reading of it is back, a
+        // few frames; growth waits for the average to settle.
+        if (cap !== this.exactCap) this.capHold = cap < from ? CAP_CUT_HOLD_FRAMES : CAP_HOLD_FRAMES;
         this.exactCap = cap;
       }
       // With the budget adaptive, the cap is the control: the frame-time
@@ -2828,7 +2849,7 @@ export class Engine {
       // A growing window's base is kept and only extended from, never averaged
       // over again, so a sampled base stayed sampled for as long as it played.
       // It is drawn whole up to the floor the cap always had.
-      if (growing && !canExtend) splatBudget = Math.max(splatBudget, Math.min(EXACT_FLOOR_UNTIMED, planHi - planLo));
+      if (growing && !canExtend && !cameraMoved) splatBudget = Math.max(splatBudget, Math.min(EXACT_FLOOR_UNTIMED, planHi - planLo));
       // At most twice what the last drawn frame drew. The cap answers a cost it
       // has seen; when the rows on offer jump - a chunk of a dataset landing, a
       // window opening - drawing all of them at once was a frame it never saw.
@@ -2929,6 +2950,9 @@ export class Engine {
       // grain reads as texture, while re-estimating every frame reads as flicker.
       this.accumRowLo = rowRange[0];
       this.accumRowHi = planHi;
+      // Only a base thinned by the cap while moving is redrawn, once: one
+      // past the floor even at rest stays as it is.
+      this.baseThinned = cameraMoved && submitted < candidateRows;
     }
 
     // The team view's units move with the playhead even when no heat changes. In

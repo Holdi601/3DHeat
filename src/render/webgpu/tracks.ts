@@ -63,6 +63,9 @@ function dispatch(pass: GPUComputePassEncoder, n: number): void {
 const MARKER_PX = 9;
 /** Uniform bytes. */
 const U_BYTES = 192;
+/** Bytes a write of the keys carries, and milliseconds a frame may spend on them; see `flushWrites`. */
+const TRACK_WRITE_BYTES = 4 * 1024 * 1024;
+const TRACK_WRITE_MS = 3;
 
 /** Trail vertices the buffer holds: 32 bytes each, 128 MB. */
 const TRAIL_ROOM = 4_000_000;
@@ -131,11 +134,38 @@ export class GpuTracks {
     });
   }
 
+  /**
+   * Writes still to make, a few megabytes a frame; see `flushWrites`.
+   *
+   * Gigabytes of keys written in one go held the page for seconds, and past
+   * 2 GiB of them in one frame the GPU process gave out: the device was lost
+   * right after the upload of a 279 M-key overlay. Nothing is placed or drawn
+   * until every write is made.
+   */
+  private writes: { buffer: GPUBuffer; data: ArrayBufferView; offset: number }[] = [];
+
+  /** Whether the tracks are still on their way to the GPU. */
+  get uploading(): boolean {
+    return this.writes.length > 0;
+  }
+
+  private flushWrites(): void {
+    const until = performance.now() + TRACK_WRITE_MS;
+    while (this.writes.length > 0 && performance.now() < until) {
+      const w = this.writes[0];
+      const n = Math.min(TRACK_WRITE_BYTES, w.data.byteLength - w.offset);
+      this.device.queue.writeBuffer(w.buffer, w.offset, w.data.buffer, w.data.byteOffset + w.offset, n);
+      w.offset += n;
+      if (w.offset >= w.data.byteLength) this.writes.shift();
+    }
+  }
+
   private upload(s: GpuTrackStore, triangleBudget: number): Uploaded {
     const dev = this.device;
     const buf = (label: string, data: ArrayBufferView, usage: number) => {
       const b = dev.createBuffer({ label, size: Math.max(16, Math.ceil(data.byteLength / 4) * 4), usage: usage | GPUBufferUsage.COPY_DST });
-      dev.queue.writeBuffer(b, 0, data.buffer, data.byteOffset, data.byteLength);
+      if (data.byteLength > TRACK_WRITE_BYTES) this.writes.push({ buffer: b, data, offset: 0 });
+      else dev.queue.writeBuffer(b, 0, data.buffer, data.byteOffset, data.byteLength);
       return b;
     };
     const S = GPUBufferUsage.STORAGE;
@@ -150,7 +180,8 @@ export class GpuTracks {
     const tracks = buf('tracks', trackWords, S);
     // The keys in two buffers when there are more than one may hold.
     const keysA = buf('track keys', s.keysA.subarray(0, Math.min(s.keys, KEYS_PER_BUFFER) * KEY_U32), S);
-    const keysA1 = buf('track keys (2)', s.keys > KEYS_PER_BUFFER ? s.keysA.subarray(KEYS_PER_BUFFER * KEY_U32) : new Uint32Array(4), S);
+    // Only the keys there are: the array past them is room the load did not use.
+    const keysA1 = buf('track keys (2)', s.keys > KEYS_PER_BUFFER ? s.keysA.subarray(KEYS_PER_BUFFER * KEY_U32, s.keys * KEY_U32) : new Uint32Array(4), S);
     const keysB = buf('track attitudes', s.keysB, S);
     // A run per mesh: the dart's holds every track; a figure's as many as it has tracks, within the triangle budget.
     const M = s.meshes.length;
@@ -234,6 +265,7 @@ export class GpuTracks {
     const u = this.up;
     if (!u) return;
     for (const b of [u.tracks, u.keysA, u.keysA1, u.keysB, u.runs, u.counts, u.args, u.instances, u.trail, u.trailArgs, u.vis, u.marks, u.markColour]) b?.destroy();
+    this.writes = [];
     this.up = null;
     this.bytes = 0;
   }
@@ -250,6 +282,10 @@ export class GpuTracks {
       this.release();
       this.up = this.upload(f.store, f.triangleBudget);
       this.bytes = this.up.bytes;
+    }
+    if (this.writes.length > 0) {
+      this.flushWrites();
+      if (this.writes.length > 0) return;
     }
     const up = this.up;
     const s = f.store;
@@ -316,21 +352,21 @@ export class GpuTracks {
   /** The draws, inside the scene pass: one indirect instanced draw a mesh. */
   draw(pass: GPURenderPassEncoder, figures: GpuFigures, bindGroup: GPUBindGroup): void {
     const up = this.up;
-    if (!up) return;
+    if (!up || this.writes.length > 0) return;
     figures.drawIndirect(pass, up.store.meshes, up.instances, up.runFirst, up.runRoom, up.args, bindGroup);
   }
 
   /** The glyphs (symbols, weapons, decoys), inside the scene pass after the trails: one indirect quad draw. */
   drawGlyphs(pass: GPURenderPassEncoder, glyphs: GpuSymbols, p: SymbolParams, viewProj: Float32Array, camera: ArrayLike<number>, w: number, h: number): void {
     const up = this.up;
-    if (!up) return;
+    if (!up || this.writes.length > 0) return;
     glyphs.drawIndirect(pass, p, viewProj, camera, w, h, up.instances, this.glyphFirst, up.args, up.store.meshes.length * 16);
   }
 
   /** The trails, inside the scene pass after the figures: one indirect line draw. */
   drawTrails(pass: GPURenderPassEncoder, bindGroup: GPUBindGroup): void {
     const up = this.up;
-    if (!up || !this.trailsOn) return;
+    if (!up || !this.trailsOn || this.writes.length > 0) return;
     pass.setPipeline(this.trailPipeline);
     pass.setBindGroup(0, bindGroup);
     pass.setVertexBuffer(0, up.trail);
