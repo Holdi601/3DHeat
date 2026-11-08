@@ -1494,7 +1494,7 @@ const ALIASES: Record<string, string> = {
   'gladiator_mk2_silver': 'gladiator',
   'nimrod_mk2': 'fury-mk2', // the naval Fury
   'blenheim_mkiv': 'blenheim-iv',
-  'beaufort_mkviii': 'beaufighter',
+  'beaufort_mkviii': 'beaufort', // the figure is the Beaufort I: the Australian Mk VIII's Twin Wasps and taller fin not drawn
   'swordfish_mk1': 'swordfish',
   'gladiator_mk2': 'gladiator',
   'gladiator_mk2_navy': 'gladiator',
