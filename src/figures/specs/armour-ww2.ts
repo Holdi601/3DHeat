@@ -300,7 +300,8 @@ G['pz-iv-j'] = ww2({
 
 // StuG III on the Pz III running gear: six road wheels in three pairs, three return rollers, front sprocket; the low
 // casemate with its panniers and sloped front, the gun just right of the centre. Hull 5.38 x 2.95 m, 1.95-2.16 m high.
-const STUG_CASEMATE = turret(0.55, [[-1.45, 1.22], [0.85, 1.35], [1.3, 1.05], [1.4, 0.7]], [[-1.45, 0.58], [0.3, 0.66], [1.3, 0.3], [1.4, 0.22]], 12, 1.4);
+// Drawn from a turret's outline, but it does not turn: the gun only traverses a little in its mount.
+const STUG_CASEMATE: TurretSpec = { ...turret(0.55, [[-1.45, 1.22], [0.85, 1.35], [1.3, 1.05], [1.4, 0.7]], [[-1.45, 0.58], [0.3, 0.66], [1.3, 0.3], [1.4, 0.22]], 12, 1.4), fixed: true };
 const STUG: Ww2 = {
   cls: 'assault-gun', L: 5.38, W: 2.95, deck: 1.32, fender: 0.92,
   top: [[-2.69, 1.15], [-2.6, 1.32], [2.25, 1.32], [2.4, 1.15], [2.69, 1.05]],
@@ -745,7 +746,8 @@ G['m2a4'] = ww2({ ...M2, turret: turret(0.0, [[-0.85, 0.6], [-0.6, 0.78], [0.55,
 G['m2a2-light-tank'] = ww2({ ...M2, turret: turret(0.0, [[-0.5, 0.35], [-0.35, 0.48], [0.35, 0.48], [0.5, 0.35]], [[-0.5, 0.65], [0.5, 0.65]], 6, 0.5, -0.45), gun: { length: 0.8, calibre: 0.0127, at: 0.45 }, turretParts: (t) => [on(t, [[-0.5, 0.35], [-0.35, 0.48], [0.35, 0.48], [0.5, 0.35]], [[-0.5, 0.65], [0.5, 0.65]], 0, 6, 0.9)] });
 // M3 / M3A1 Stuart: the M2A4 layout with the trailing idler, a taller hull and the rounded welded turret (4.53 x 2.24 m, 2.64 m).
 G['m3-stuart'] = ww2({ ...M2, L: 4.53, W: 2.24, parts: vvss(2.24, [-0.95, 0.55], 1.85), turret: turret(0.0, [[-0.85, 0.55], [-0.6, 0.75], [0.55, 0.78], [0.85, 0.55]], [[-0.85, 0.58], [-0.5, 0.72], [0.5, 0.72], [0.85, 0.6]], 4, 0.92), gun: { length: 1.25, calibre: 0.037, at: 0.45 } });
-// M5A1 Stuart: the new hull with its sloped glacis and raised engine deck, the turret with a radio bustle (4.84 x 2.29 m, 2.3 m).
+// M5A1 Stuart: the new hull with its sloped glacis and raised engine deck, the turret with a radio bustle (4.84 x 2.29 m,
+// 2.3 m to the turret roof, 2.57 m over the .30 cal AA machine gun on its bracket on the turret's right side).
 G['m5a1-stuart'] = ww2({
   ...M2, L: 4.84, W: 2.29, deck: 1.6,
   top: [[-2.42, 1.4], [-2.3, 1.62], [0.0, 1.6], [1.85, 0.9], [2.42, 0.85]],
@@ -753,7 +755,7 @@ G['m5a1-stuart'] = ww2({
   track: [[-2.4, 0.0], [1.1, 0], [2.4, 0.72], [2.1, 0.98], [-1.6, 0.98], [-2.4, 0.35]],
   parts: vvss(2.29, [-0.95, 0.65], 1.6), wheels: pairs([-0.95, 0.65], 0.52),
   turret: turret(-0.1, [[-1.15, 0.5], [-0.95, 0.72], [0.5, 0.78], [0.85, 0.55]], [[-1.15, 0.55], [-0.5, 0.7], [0.5, 0.7], [0.85, 0.58]], 5, 0.92),
-  gun: { length: 1.3, calibre: 0.037, at: 0.45 },
+  guns: [{ mount: 'turret', length: 1.3, calibre: 0.037, at: 0.45 }, { mount: 'top', length: 1.0, calibre: 0.0076, x: -0.4, side: 0.62, up: 0.205 }],
 });
 
 // ---------------------------------------------------------------- US medium and heavy
@@ -831,7 +833,8 @@ const M10: Ww2 = {
 G['m10-gmc'] = ww2({ ...M10, turret: turret(0.1, [[-1.0, 0.75], [-0.6, 1.05], [0.5, 1.05], [1.1, 0.6]], [[-1.0, 0.75], [1.1, 0.72]], 16, 1.15), gun: { length: 2.65, calibre: 0.076, at: 0.45 }, turretParts: (t) => [-1, 1].map((s) => on(t, [[-1.85, 0.32], [-1.0, 0.32]], [[-1.85, 0.6], [-1.0, 0.6]], 0.05, 10, s * 0.55)) });
 G['m36-jackson'] = ww2({ ...M10, turret: turret(0.05, [[-1.6, 0.6], [-1.3, 1.0], [0.5, 1.1], [1.1, 0.75], [1.2, 0.55]], [[-1.6, 0.68], [1.2, 0.68]], 5, 1.25), gun: { length: 3.25, calibre: 0.09, muzzle: true, at: 0.45 } });
 // M18 Hellcat: low and fast - five road wheels and four return rollers on torsion bars, the front sprocket, a long
-// low hull, the open turret with the 76 mm and its brake (hull 5.28 x 2.87 m, 2.58 m; 6.65 m with the gun).
+// low hull, the open turret with the 76 mm and its brake (hull 5.28 x 2.87 m; 6.65 m with the gun; 2.57 m over the
+// .50 cal AA machine gun on the ring at the turret's back).
 G['m18-hellcat'] = ww2({
   cls: 'tank-destroyer', L: 5.28, W: 2.87, deck: 1.6, fender: 0.92,
   top: [[-2.64, 1.35], [-2.5, 1.6], [0.5, 1.62], [2.2, 1.0], [2.64, 0.85]],
@@ -839,7 +842,7 @@ G['m18-hellcat'] = ww2({
   track: trk(2.6, 0.92, 0.65, 0.55, 1.85),
   wheels: even(5, -1.85, 1.85), r: 0.33, rollers: even(4, -1.6, 1.6),
   turret: turret(0.05, [[-1.3, 0.7], [-1.1, 1.1], [0.6, 1.2], [1.15, 0.8], [1.25, 0.55]], [[-1.3, 0.8], [1.25, 0.75]], 6, 1.3),
-  gun: { length: 2.65, calibre: 0.076, muzzle: true, at: 0.45 },
+  guns: [{ mount: 'turret', length: 2.65, calibre: 0.076, muzzle: true, at: 0.45 }, { mount: 'top', length: 1.65, calibre: 0.0127, x: -1.05, side: 0, up: 0.105 }],
 });
 // More Shermans: the 76 mm T23 turret on the cast M4A1 hull and the welded M4A2; the M4A3 with the short 105 mm howitzer; the Jumbo with the 76 mm.
 G['m4a1-76'] = sherman({ L: 5.84, glacisX: 1.1, cast: true, turret: SHERMAN_T23, gun: GUN_76 });

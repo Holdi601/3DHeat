@@ -28,6 +28,7 @@ import { at, BIN, BINS, grounded, onGround, type Envelope } from './envelope';
 import { disciplineOf, groundAt, surfaceOf, type Ground, type LapTrace, type Surface } from './lap';
 import { impacts, type Impact } from './impacts';
 import { WHEELS, type Wheel } from './schema';
+import { lengthArg, speedArg } from '../state/unitsStore';
 
 export type ControlKind =
   | 'lock'
@@ -888,9 +889,9 @@ export function describeEvent(
   lap: LapTrace,
   step: number,
 ): { title: string; what: string; tip: string } {
-  const at = { from: num(Math.round(e.from * step)), to: num(Math.round(e.to * step)), speed: num(e.speed * KMH) };
+  const at = { from: lengthArg(e.from * step), to: lengthArg(e.to * step), speed: speedArg(e.speed) };
   const seconds = num(e.seconds, 2);
-  const lost = finite(e.speedLost) && e.speedLost > 0.5 ? num(e.speedLost * KMH) : 'none';
+  const lost = finite(e.speedLost) && e.speedLost > 0.5 ? speedArg(e.speedLost) : 'none';
   const loose = e.ground === 'loose';
   const rally = disciplineOf(lap) === 'rally';
   const said = (what: string, tip: string) => ({ what, title: e.label ? t('race.title.corner', { corner: e.label, what }) : what, tip });
@@ -932,7 +933,7 @@ export function describeEvent(
       if (e.kind === 'spin') {
         return said(
           t('race.event.spin.title', { me, angle }),
-          t('race.event.spin.tip', { ...at, slowest: num(e.slowest * KMH), pedal }),
+          t('race.event.spin.tip', { ...at, slowest: speedArg(e.slowest), pedal }),
         );
       }
       const technique = rally || loose ? ` ${t('race.event.oversteer.technique', { them, theirs })}` : '';
@@ -963,12 +964,12 @@ export function describeEvent(
               ? t('race.event.hit.tipCrash')
               : t('race.event.hit.tipFront');
       return said(
-        t('race.event.hit.title', { me, kind: e.kind, direction: hit.direction, lost: num((hit.before - hit.after) * KMH) }),
+        t('race.event.hit.title', { me, kind: e.kind, direction: hit.direction, lost: speedArg((hit.before - hit.after)) }),
         `${t('race.event.hit.detail', {
           from: at.from,
           to: at.to,
-          before: num(hit.before * KMH),
-          after: num(hit.after * KMH),
+          before: speedArg(hit.before),
+          after: speedArg(hit.after),
           seconds: num(Math.max(0.01, e.seconds), 2),
           g: Number.isFinite(hit.peak) ? num(hit.peak / 9.81, 1) : 'none',
           grip: num(hit.grip / 9.81, 1),
@@ -990,7 +991,7 @@ function arcadeNote(e: ControlEvent, lap: LapTrace): string {
   if (!/trackmania/i.test(lap.game)) return '';
   const kmh = e.speed * KMH;
   const floor = e.ground === 'loose' ? 300 : 400;
-  return ` ${t(kmh < floor ? 'race.event.arcade.slow' : 'race.event.arcade.fast', { floor: num(floor) })}`;
+  return ` ${t(kmh < floor ? 'race.event.arcade.slow' : 'race.event.arcade.fast', { floor: speedArg(floor / KMH) })}`;
 }
 
 /** A lap's events, summed. */

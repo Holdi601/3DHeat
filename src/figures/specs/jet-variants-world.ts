@@ -38,27 +38,33 @@ interface FlankerOpts {
 //   cockpit (25 %)       2.3, canopy top +1.8 over the nose tip      2.3, +1.8
 //   intake lip (40-50 %) upper lip 40 %, lower lip 49 %, 1.45 under the nose tip   the same
 //   wing root (55 %)     2.35            2.35
-//   nacelles             1.5 wide, 1.5 deep, 3.0 apart              the same
+//   nacelles             1.4 wide, 1.4 deep, 2.6 apart (the drawing's head-on view)   the same
+// The planform, the fins and the stabilators digitised from the US Army's Su-27 three-view (see sources.md) at the
+// published length: the LERX's edge out to 2.17 m 10.4 m behind the nose, the 42-degree leading edge to tips 2.9 m in
+// chord, the trailing edge swept back from 5.0 m behind the middle at the root to 6.3 m at the tips; the fins 2.3 m
+// out on the booms, their roots from 3.95 to 7.75 m behind the middle, their tops 3.8 m over the nose tip; the
+// stabilators from 6 m back, 9.3 m across; the wing 0.3 m over the nose tip 5 m out (its slight droop in the drawing's
+// head-on view is too fine to measure there, so it stays level).
 // The nacelle boxes hang under the LERX behind the cockpit, their mouths raked back from the upper lip, running
 // straight and flat-bottomed back to the round engine bays and the nozzles (estimates).
 const FLANKER_NACELLE: Outline = {
-  top: [[2.2, 0.04], [-2, 0.08], [-6, 0.24], [-8.4, 0.3]],
-  bottom: [[2.2, -0.06], [0.1, -1.45], [-2, -1.46], [-5, -1.36], [-8.4, -0.95]],
-  plan: [[2.2, 0.72], [-2, 0.75], [-6, 0.72], [-8.4, 0.64]],
-  side: 1.5, round: [[2.2, 10], [-1, 7], [-5.5, 2.6]], stations: 16,
+  top: [[1.5, 0.04], [-2, 0.08], [-6, 0.24], [-8.4, 0.3]],
+  bottom: [[1.5, -0.06], [0.5, -1.37], [-2, -1.38], [-5, -1.3], [-8.4, -0.95]],
+  plan: [[1.5, 0.7], [-2, 0.72], [-6, 0.66], [-8.4, 0.5]],
+  side: 1.3, round: [[1.5, 10], [-1, 7], [-5.5, 2.6]], stations: 16,
 };
 // The LERX's thick root: the flat, blended centre body widening from under the windscreen to the wing (estimate).
 // The ventral fins under the tail booms (estimate).
 const FLANKER_VENTRAL: Outline = { top: [[-4.4, 0.0], [-7.8, 0.0]], bottom: [[-4.4, -0.05], [-5.6, -1.55], [-7.2, -1.6], [-7.8, -0.1]], plan: [[-4.4, 0.04], [-7.8, 0.04]], side: 2.05, round: 8, stations: 6 };
-const FLANKER_LERX: Outline = { top: [[6.6, 0.3], [3.4, 0.36], [0, 0.34], [-4, 0.28]], bottom: [[6.6, 0.0], [3.4, -0.1], [0, -0.14], [-4, -0.1]], plan: [[6.6, 0.4], [4.2, 1.2], [2.5, 1.8], [0.4, 2.3], [-4, 2.3]], round: 8, stations: 12 };
+const FLANKER_LERX: Outline = { top: [[6.6, 0.45], [3.4, 0.56], [0, 0.56], [-4, 0.5]], bottom: [[6.6, 0.15], [3.4, 0.12], [0, 0.1], [-4, 0.14]], plan: [[6.6, 0.6], [5.4, 0.86], [4.2, 1.04], [3.0, 1.3], [2.2, 1.53], [1.4, 1.81], [0.6, 2.17], [-4, 2.17]], round: 8, stations: 12 };
 function flanker(o: FlankerOpts): FixedWingSpec {
   const [tx, th] = o.tail ?? [-10.95, 0.24];
-  const fh = o.fin ?? 3.4;
+  const fh = o.fin ?? 3.25;
   const two = o.seats === 'two';
-  const bodies: Outline[] = [FLANKER_NACELLE, FLANKER_LERX, FLANKER_VENTRAL, pod(-2.4, -5.6, 0.08, 7.35, 0.13, 0.1)];
-  if (o.tvc) bodies.push(pod(-8.0, -9.3, 0.52, 1.4, -0.32, 0.05));
+  const bodies: Outline[] = [FLANKER_NACELLE, FLANKER_LERX, FLANKER_VENTRAL, pod(-2.9, -6.3, 0.09, 7.3, 0.13, 0.1)];
+  if (o.tvc) bodies.push(pod(-8.0, -9.3, 0.52, 1.25, -0.32, 0.05));
   return {
-    length: o.length ?? 21.9, span: 14.7, height: 5.93 + (fh - 3.4), bodyWidth: 2.0, bodyHeight: 1.6,
+    length: o.length ?? 21.9, span: 14.7, height: 5.93 + (fh - 3.25), bodyWidth: 2.0, bodyHeight: 1.6,
     // The drooped radome (about 0.95 m at its base), the cockpit section standing high over the nose, the tall
     // humped spine behind the canopy falling to the tail (higher behind a second seat), the tunnel floor between the
     // nacelles (estimates).
@@ -70,22 +76,23 @@ function flanker(o: FlankerOpts): FixedWingSpec {
       stations: 30,
     },
     bodies,
-    wing: { x: -2.0, span: 14.7, rootChord: 6.6, tipChord: 1.4, sweep: 42, mount: 0.2 },
-    wingPlan: [[6.4, 0], [5.8, 0.7], [4.2, 1.15], [2.5, 1.75], [1.1, 2.3], [-3.6, 7.3], [-5.0, 7.3], [-5.7, 2.4], [-5.8, 0]],
-    canard: o.canards ? { x: 4.6, span: 6.4, chord: 1.5 } : undefined,
-    tail: { kind: 'twin', finHeight: fh, finChord: 3.0, spacing: 4.3, tailSpan: 9.9, tailChord: 3.0, finBase: 0.15 },
-    finPlan: [[-5.3, 0], [-9.1, 0], [-9.9, fh], [-8.7, fh]],
-    tailPlan: [[-6.3, 0.9], [-6.4, 2.0], [-8.5, 4.95], [-9.6, 4.95], [-10.3, 2.2], [-10.3, 0.9]],
-    engines: { kind: 'internal', count: 2, diameter: 1.2, nozzles: [[-8.6, -1.4, -0.32], [-8.6, 1.4, -0.32]] },
+    wing: { x: -2.0, span: 14.7, rootChord: 6.6, tipChord: 2.9, sweep: 42, mount: 0.2 },
+    wingPlan: [[6.6, 0], [6.6, 0.6], [5.4, 0.86], [4.2, 1.04], [3.0, 1.3], [2.2, 1.53], [1.4, 1.81], [0.6, 2.17], [-3.25, 6.3], [-3.4, 7.08], [-6.3, 7.08], [-6.25, 6.27], [-5.0, 2.46], [-5.0, 0]],
+    // The canards on the LERX over the intakes, their leading edges about 7.8 m behind the nose (estimate from photos).
+    canard: o.canards ? { x: 2.4, span: 6.4, chord: 1.5 } : undefined,
+    tail: { kind: 'twin', finHeight: fh, finChord: 3.0, spacing: 4.6, tailSpan: 9.3, tailChord: 3.0, finBase: 0.4 },
+    finPlan: [[-3.95, 0], [-7.75, 0], [-7.45, fh], [-6.4, fh]],
+    tailPlan: [[-6.0, 1.8], [-6.2, 2.3], [-8.6, 4.64], [-9.0, 4.64], [-9.6, 4.1], [-8.95, 1.8]],
+    engines: { kind: 'internal', count: 2, diameter: 1.2, nozzles: [[-8.6, -1.25, -0.32], [-8.6, 1.25, -0.32]] },
     canopy: two ? { x: 5.0, length: 4.6, kind: 'tandem' } : { x: 5.5, length: 3.6, kind: 'bubble' },
     glass: [two ? tandem(7.1, 2.4, 1.64, 1.84, 0.95, 1.5, 0.54) : bubble(7.0, 3.2, 1.7, 0.95, 1.46, 0.52)],
   };
 }
 A['su-27'] = { ...flanker({}), cls: 'fighter' };
 // Su-30 (and the two-seat Su-27UB, the Su-30MKK and MK2, the J-16): the raised rear seat under a long canopy, taller fins, no canards.
-A['su-30'] = { ...flanker({ seats: 'two', fin: 3.82 }), cls: 'multirole' };
+A['su-30'] = { ...flanker({ seats: 'two', fin: 3.67 }), cls: 'multirole' };
 // Su-30MKI, SM and MKM: the two-seater with canards and the long thrust-vectoring nozzles.
-A['su-30mki'] = { ...flanker({ seats: 'two', fin: 3.82, canards: true, tvc: true }), cls: 'multirole' };
+A['su-30mki'] = { ...flanker({ seats: 'two', fin: 3.67, canards: true, tvc: true }), cls: 'multirole' };
 // Su-33 (and J-15): canards ahead of the LERX and the tail cone cut short for the deck (21.19 m).
 A['su-33'] = { ...flanker({ length: 21.19, tail: [-10.25, 0.22], canards: true }), cls: 'fighter' };
 // Su-35S: no canards, no dorsal airbrake, the tail cone shorter and thicker (estimate), thrust-vectoring nozzles.

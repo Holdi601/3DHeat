@@ -8,6 +8,7 @@ import { buildOverlay, isOverlay, overlayGroups } from '../../match/overlay';
 import { useStore } from '../../state/store';
 import { has } from '../../i18n';
 import type { Dataset } from '../../state/types';
+import { PRESET_UNITS } from '../../units/units';
 
 describe('debrief', () => {
   it('reads bearing, range and height from one track to another, north being -z', () => {
@@ -141,12 +142,12 @@ describe('units', () => {
   });
 
   it('formats values metric and aviation', () => {
-    expect(formatValue('altitude', 1000, 'metric')).toBe('1000 m');
-    expect(formatValue('altitude', 1000, 'imperial')).toBe('3281 ft');
-    expect(formatValue('speed', 100, 'metric')).toBe('360 km/h');
-    expect(formatValue('speed', 100, 'imperial')).toBe('194 kt');
-    expect(formatValue('heading', 5, 'metric')).toBe('005°');
-    expect(formatValue('g', 4.23, 'metric')).toBe('4.2 g');
+    expect(formatValue('altitude', 1000, PRESET_UNITS.metric)).toBe('1000 m');
+    expect(formatValue('altitude', 1000, PRESET_UNITS.aviation)).toBe('3281 ft');
+    expect(formatValue('speed', 100, PRESET_UNITS.metric)).toBe('360 km/h');
+    expect(formatValue('speed', 100, PRESET_UNITS.aviation)).toBe('194 kt');
+    expect(formatValue('heading', 5, PRESET_UNITS.metric)).toBe('005°');
+    expect(formatValue('g', 4.23, PRESET_UNITS.metric)).toBe('4.2 g');
   });
 
   it('has a name and an abbreviation for every field', () => {

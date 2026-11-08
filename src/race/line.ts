@@ -16,6 +16,7 @@ import type { AlignedLap } from './align';
 import { at, BIN, BINS, type Envelope } from './envelope';
 import type { Ground } from './lap';
 import { smooth, type Corner } from './segments';
+import { speedArg } from '../state/unitsStore';
 
 /** The stretch of the reference where a corner turns, grid indices. */
 export interface CornerWindow {
@@ -242,7 +243,6 @@ export interface LineAdvice {
   text: string;
 }
 
-const KMH = 3.6;
 
 /**
  * The shape of line that suits a car at a corner.
@@ -308,7 +308,7 @@ export function lineFor(type: CornerType, car: CarCharacter, vMin: number, groun
     return {
       shape: 'U',
       apex: 'late',
-      text: `${aero ? t('race.line.fastAero', { speed: num(vMin * KMH), ratio }) : t('race.line.momentum', { ratio })}${drive}`,
+      text: `${aero ? t('race.line.fastAero', { speed: speedArg(vMin), ratio }) : t('race.line.momentum', { ratio })}${drive}`,
     };
   }
   if (power) {

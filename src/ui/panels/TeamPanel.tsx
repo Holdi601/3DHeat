@@ -10,8 +10,13 @@ import { heatModeFor } from '../../data/lines';
 import { useStore } from '../../state/store';
 import { Check, Rich, Section, Slider } from '../controls';
 import { int, num, t } from '../../i18n';
+import { lengthText, useUnits } from '../../state/unitsStore';
+import { useReplayStore } from '../../state/replayStore';
+import { FigureControls } from './FigureControls';
 
 export function TeamPanel() {
+  useUnits();
+  const lookFov = useReplayStore((s) => s.aids.lookFov);
   const team = useStore((s) => s.team);
   const patchTeam = useStore((s) => s.patchTeam);
   const hasSessions = useStore((s) => Boolean(s.dataset?.sessionId));
@@ -39,26 +44,9 @@ export function TeamPanel() {
         ceiling={5000}
         logarithmic
         onChange={(cubeSize) => patchTeam({ cubeSize })}
-        format={(v) => t('heat.teamPanel.metres', { value: num(v, v < 10 ? 2 : 1) })}
+        format={(v) => lengthText(v, (s) => (s < 10 ? 2 : 1))}
       />
-      <Check
-        label={t('heat.teamPanel.figures')}
-        checked={team.figures}
-        onChange={(figures) => patchTeam({ figures })}
-        title={t('heat.teamPanel.figuresTitle')}
-      />
-      {team.figures && (
-        <Slider
-          label={t('heat.teamPanel.figurePixels')}
-          value={team.figurePixels}
-          min={0}
-          max={200}
-          step={1}
-          onChange={(figurePixels) => patchTeam({ figurePixels })}
-          format={(v) => (v < 0.5 ? t('heat.teamPanel.trueSize') : t('heat.teamPanel.pixels', { value: num(v, 0) }))}
-          hint={t('heat.teamPanel.figurePixelsHint')}
-        />
-      )}
+      <FigureControls />
       <Check
         label={t('heat.teamPanel.weapons')}
         checked={team.weapons}
@@ -98,7 +86,19 @@ export function TeamPanel() {
           ceiling={20_000}
           logarithmic
           onChange={(lookLength) => patchTeam({ lookLength })}
-          format={(v) => t('heat.teamPanel.metres', { value: num(v, 1) })}
+          format={(v) => lengthText(v, () => 1)}
+        />
+      )}
+      {team.showLookDirection && (
+        <Slider
+          label={t('units.look.fov')}
+          value={lookFov}
+          min={0}
+          max={150}
+          step={1}
+          onChange={(v) => useReplayStore.getState().setAids({ lookFov: v })}
+          format={(v) => (v === 0 ? t('units.look.fovLine') : t('replay.unit.deg', { v: num(v, 0) }))}
+          hint={t('units.look.fovHint')}
         />
       )}
       <Slider

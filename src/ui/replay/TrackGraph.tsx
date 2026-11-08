@@ -5,6 +5,7 @@ import { useAnimationFrame, useEngine } from '../EngineContext';
 import { t } from '../../i18n';
 import { flightSeries, PARAM_BY_ID, sampleIndex, valueAt, available, type FlightSeries } from '../../data/flight';
 import { fieldName, formatValue } from './fields';
+import { useUnits } from '../../state/unitsStore';
 
 /** Series colours, in the order the parameters were picked. */
 const COLORS = ['#6fb6ff', '#ffd166', '#7ee0a1', '#ff8fa3'];
@@ -57,7 +58,7 @@ export function TrackGraph({ person }: { person: number }) {
   const dataset = useStore((s) => s.dataset);
   const session = useStore((s) => s.team.session);
   const graph = useReplayStore((s) => s.graph);
-  const units = useReplayStore((s) => s.units);
+  const units = useUnits();
   const marker = useRef<SVGLineElement>(null);
   const readout = useRef<HTMLDivElement>(null);
   const series = useMemo<FlightSeries | null>(() => (dataset ? flightSeries(dataset, person, session) : null), [dataset, person, session]);

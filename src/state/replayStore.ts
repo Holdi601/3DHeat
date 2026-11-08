@@ -9,6 +9,7 @@
  */
 
 import { create } from 'zustand';
+import type { UnitPrefs } from '../units/units';
 
 /** What the labels over the units show (field ids, `fields.ts`), until the viewer chooses: height and speed where things fly. */
 export const DEFAULT_LABEL_FIELDS = ['name', 'vehicle', 'alt', 'tas'];
@@ -17,7 +18,8 @@ export const DEFAULT_LABEL_FIELDS_GROUND = ['name', 'vehicle'];
 export const DEFAULT_CARD_FIELDS = ['vehicle', 'team', 'range', 'bearing', 'aspect', 'alt', 'agl', 'tas', 'ias', 'mach', 'gs', 'vs', 'heading', 'pitch', 'roll', 'aoa', 'g', 'turnRate', 'energy', 'throttle', 'rpm', 'fuel', 'health'];
 export const DEFAULT_GRAPH = ['alt', 'tas'];
 
-export type UnitSystem = 'metric' | 'imperial';
+/** The units values are written in: the viewer's one choice for everything (`state/unitsStore.ts`). */
+export type UnitSystem = UnitPrefs;
 /**
  * How the camera follows a unit, as Tacview's views: chase turns with it,
  * orbit keeps its own direction, cockpit looks out of it (its attitude, the
@@ -79,6 +81,14 @@ export interface DisplayAids {
   engagements: Scope;
   /** Metres. */
   engagementRange: number;
+  /** View cones from where players look (their view angles), with the team panel's look direction on. */
+  look: Scope;
+  /** The view cone's horizontal field of view, degrees; 0: a line of sight only. */
+  lookFov: number;
+  /** A line along each turret's gun, where the data has turret angles. */
+  aim: Scope;
+  /** The recording player's own camera, as a camera with its view, where the data has it. */
+  camera: boolean;
 }
 
 export const DEFAULT_AIDS: DisplayAids = {
@@ -94,6 +104,10 @@ export const DEFAULT_AIDS: DisplayAids = {
   lockLabels: true,
   engagements: 'off',
   engagementRange: 20000,
+  look: 'all',
+  lookFov: 90,
+  aim: 'all',
+  camera: true,
 };
 
 /** The 2D tactical map: off, a picture in the corner, or over the whole view. */
@@ -142,7 +156,6 @@ interface Saved {
   labelFields: string[] | null;
   cardFields: string[];
   graph: string[];
-  units: UnitSystem;
   declutter: boolean;
   followMode: FollowMode;
   labelAi: boolean;
@@ -164,6 +177,8 @@ interface Saved {
   subtitles: boolean;
   geo: GeoSettings;
   limits: AltitudeLimits;
+  /** The match replay's buildings, where the level paints them: solid in their colours, or see-through shells as the heat views draw them. */
+  buildings: 'solid' | 'seeThrough';
 }
 
 const KEY = 'heat3d.replay';
@@ -174,7 +189,6 @@ function saved(): Saved {
     labelFields: null,
     cardFields: DEFAULT_CARD_FIELDS,
     graph: DEFAULT_GRAPH,
-    units: 'metric',
     declutter: true,
     followMode: 'chase',
     labelAi: true,
@@ -191,6 +205,7 @@ function saved(): Saved {
     subtitles: true,
     geo: DEFAULT_GEO,
     limits: DEFAULT_LIMITS,
+    buildings: 'solid',
   };
   try {
     const v = JSON.parse(localStorage.getItem(KEY) ?? 'null');
@@ -201,7 +216,6 @@ function saved(): Saved {
       labelFields: Array.isArray(v.labelFields) ? strings(v.labelFields, []) : null,
       cardFields: strings(v.cardFields, fallback.cardFields),
       graph: strings(v.graph, fallback.graph),
-      units: v.units === 'imperial' ? 'imperial' : 'metric',
       declutter: v.declutter !== false,
       followMode: FOLLOW_MODES.includes(v.followMode) ? v.followMode : 'chase',
       labelAi: v.labelAi !== false,
@@ -218,6 +232,7 @@ function saved(): Saved {
       subtitles: v.subtitles !== false,
       geo: readGeo(v.geo),
       limits: readLimits(v.limits),
+      buildings: v.buildings === 'seeThrough' ? 'seeThrough' : 'solid',
     };
   } catch {
     return fallback;
@@ -260,6 +275,10 @@ export function readAids(v: unknown): DisplayAids {
     lockLabels: a.lockLabels !== false,
     engagements: scopeOf(a.engagements, d.engagements),
     engagementRange: typeof a.engagementRange === 'number' && a.engagementRange > 0 ? Math.min(500000, a.engagementRange) : d.engagementRange,
+    look: scopeOf(a.look, d.look),
+    lookFov: typeof a.lookFov === 'number' && a.lookFov >= 0 ? Math.min(150, a.lookFov) : d.lookFov,
+    aim: scopeOf(a.aim, d.aim),
+    camera: a.camera !== false,
   };
 }
 
@@ -364,7 +383,6 @@ export const useReplayStore = create<ReplayState>((set, get) => {
       labelFields: s.labelFields,
       cardFields: s.cardFields,
       graph: s.graph,
-      units: s.units,
       declutter: s.declutter,
       followMode: s.followMode,
       labelAi: s.labelAi,
@@ -382,6 +400,7 @@ export const useReplayStore = create<ReplayState>((set, get) => {
       subtitles: s.subtitles,
       geo: s.geo,
       limits: s.limits,
+      buildings: s.buildings,
     });
     set(p);
   };

@@ -45,6 +45,10 @@ export class GpuFigures {
               { shaderLocation: 1, offset: 12, format: 'float32x4' },
               { shaderLocation: 2, offset: 28, format: 'float32x4' },
               { shaderLocation: 3, offset: 44, format: 'float32' },
+              // How each vertex moves: turret and gun (`figures/instances.ts`).
+              { shaderLocation: 8, offset: 48, format: 'float32x4' },
+              { shaderLocation: 9, offset: 64, format: 'float32x4' },
+              { shaderLocation: 10, offset: 80, format: 'float32x4' },
             ],
           },
           {

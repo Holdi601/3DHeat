@@ -1,6 +1,9 @@
 import { Matrix4, Vector3 } from 'three';
 import type { Camera } from 'three';
 import { num, t } from '../i18n';
+import { unitPrefs } from '../state/unitsStore';
+import { formatLength as formatShort, formatLong } from '../units/format';
+import { FT, longUnitMetres, type UnitPrefs } from '../units/units';
 
 /**
  * Ruler and probe tools.
@@ -172,10 +175,11 @@ export function appendCross(
   return { data: out, count: v };
 }
 
-/** Format a length with a unit that suits its magnitude. */
-export function formatLength(metres: number): string {
+/** Format a length with a unit that suits its magnitude, in the viewer's units (`units/`). */
+export function formatLength(metres: number, units: UnitPrefs = unitPrefs()): string {
   const a = Math.abs(metres);
-  if (a < 1) return t('render.measure.centimetres', { value: num(metres * 100, 1) });
-  if (a < 1000) return t('render.measure.metres', { value: num(metres, 2) });
-  return t('render.measure.kilometres', { value: num(metres / 1000, 3) });
+  if (units.altitude === 'm' && a < 1) return t('render.measure.centimetres', { value: num(metres * 100, 1) });
+  if (units.altitude === 'ft' && a < FT) return t('units.v.in', { v: num(metres / FT * 12, 1) });
+  if (a < longUnitMetres(units.distance)) return formatShort(metres, units, 2);
+  return formatLong(metres, units, 3);
 }

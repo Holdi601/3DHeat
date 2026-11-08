@@ -4,7 +4,8 @@ import { useStore } from '../../state/store';
 import { useEngine } from '../EngineContext';
 import { Check, Section, Segmented, Slider } from '../controls';
 import { JumpChart } from './JumpChart';
-import { int, num, t } from '../../i18n';
+import { int, t } from '../../i18n';
+import { lengthText, useUnits } from '../../state/unitsStore';
 
 /** Values offered as chips at most; an event column is a handful, an id column is not one. */
 const MAX_VALUES = 120;
@@ -14,6 +15,7 @@ const MAX_VALUES = 120;
  * begin a route, end it, and lie along it. See `data/lines.ts` for the rules.
  */
 export function LinePanel() {
+  useUnits();
   const dataset = useStore((s) => s.dataset);
   const lines = useStore((s) => s.lines);
   const patchLines = useStore((s) => s.patchLines);
@@ -197,7 +199,7 @@ export function LinePanel() {
           max={span}
           logarithmic
           onChange={setDraft}
-          format={(v) => t('heat.heatPanel.metres', { value: num(v, v < 10 ? 2 : 0) })}
+          format={(v) => lengthText(v)}
           hint={t('heat.linePanel.maxJumpHint')}
         />
       )}

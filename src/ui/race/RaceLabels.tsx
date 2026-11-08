@@ -7,6 +7,8 @@ import { useAnimationFrame, useEngine } from '../EngineContext';
 import { describeEvent, type ControlEvent } from '../../race/control';
 import { int, num, t } from '../../i18n';
 import { showEvent, showFinding } from './actions';
+import { unitPrefs } from '../../state/unitsStore';
+import { formatIn } from '../../units/format';
 
 interface Label {
   key: string;
@@ -116,7 +118,7 @@ export function RaceLabels() {
       const said = describeEvent(e, analysis.names.get(e.lapId) ?? '', analysis.names.get(e.againstId) ?? '', lap, step);
       labels.push({
         key: `i${e.from}`,
-        text: t('race.ui.labels.impact', { kind: e.kind, kmh: int((e.impact.before - e.impact.after) * 3.6) }),
+        text: t('units.race.impact', { kind: e.kind, speed: formatIn('speed', e.impact.before - e.impact.after, unitPrefs(), 0) }),
         x: e.impact.x,
         y: e.impact.y + (e.kind === 'crash' ? 4.8 : 3.6) * Math.max(1, carScale),
         z: e.impact.z,

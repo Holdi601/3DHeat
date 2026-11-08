@@ -1491,7 +1491,7 @@ const ALIASES: Record<string, string> = {
   'hp_12': 'ww2-fighter',
   'gladiator_mk2_silver': 'gladiator',
   'nimrod_mk2': 'gladiator',
-  'blenheim_mkiv': 'blenheim',
+  'blenheim_mkiv': 'blenheim-iv',
   'beaufort_mkviii': 'beaufighter',
   'swordfish_mk1': 'swordfish',
   'gladiator_mk2': 'gladiator',

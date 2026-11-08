@@ -19,7 +19,7 @@ import {
   CHART_COLORS,
   linePath,
   MIN_SPAN,
-  niceTicks,
+  unitTicks,
   robustSpanOf,
   xyPath,
   zoomSpan,
@@ -28,6 +28,7 @@ import {
   timeAtValue,
 } from './charts';
 import './replay.css';
+import { useUnits } from '../../state/unitsStore';
 
 const PAD = { l: 58, r: 12, t: 8, b: 22 };
 
@@ -64,7 +65,7 @@ export function ChartDock() {
   const target = useReplayStore((s) => s.target);
   const selected = useReplayStore((s) => s.selected);
   const graph = useReplayStore((s) => s.graph);
-  const units = useReplayStore((s) => s.units);
+  const units = useUnits();
   const [large, setLarge] = useState(false);
   /** The time span shown, zoomed with the wheel; null the whole of it. */
   const [zoom, setZoom] = useState<[number, number] | null>(null);
@@ -265,8 +266,6 @@ export function ChartDock() {
     </select>
   );
   const addable = sortUnits(index.units.filter((u) => u.kind !== 'weapon' && !picked.includes(u)));
-  const yTicks = plot ? niceTicks(plot.ys[0], plot.ys[1], large ? 7 : 4) : [];
-  const xTicks = plot ? niceTicks(plot.xs[0], plot.xs[1], large ? 9 : 6) : [];
   const yKind =
     plot?.kind === 'compare'
       ? PARAM_BY_ID[chart.param]?.kind
@@ -276,6 +275,8 @@ export function ChartDock() {
           ? PARAM_BY_ID[plot.ids[0]].kind
           : undefined;
   const xKind = plot?.kind === 'xy' ? PARAM_BY_ID[chart.x]?.kind : undefined;
+  const yTicks = plot ? unitTicks(plot.ys[0], plot.ys[1], large ? 7 : 4, yKind ?? null, units) : [];
+  const xTicks = plot ? unitTicks(plot.xs[0], plot.xs[1], large ? 9 : 6, xKind ?? (axis !== 'time' ? 'distance' : null), units) : [];
   const start = dataset.timeRange[0];
 
   return (

@@ -40,6 +40,15 @@ const INTL: Record<string, string> = { pt: 'pt-PT', no: 'nb', zh: 'zh-CN', 'zh-H
 const intl = () => INTL[current] ?? current;
 let catalog: Catalog = english;
 
+/** Run on a written message that carries a mark (U+2063): the units module's `reword`, set by it. */
+let marked: ((text: string) => string) | null = null;
+const MARK = '⁣';
+
+/** Sets what a message with marked values goes through once written (`units/inText.ts`). */
+export function setMarkedText(fn: ((text: string) => string) | null): void {
+  marked = fn;
+}
+
 /** The message `key` in the current language, `values` filled in. */
 export function t(key: string, values: Values = {}): string {
   const text = catalog[key] ?? english[key];
@@ -47,12 +56,14 @@ export function t(key: string, values: Values = {}): string {
     if (import.meta.env.DEV) console.warn(`i18n: no message "${key}"`);
     return key;
   }
+  let out: string;
   try {
-    return formatMessage(text, values, intl());
+    out = formatMessage(text, values, intl());
   } catch {
     // A broken translation must not break the viewer: say it in English.
-    return formatMessage(english[key] ?? key, values, 'en');
+    out = formatMessage(english[key] ?? key, values, 'en');
   }
+  return marked && out.includes(MARK) ? marked(out) : out;
 }
 
 /** Whether a message exists, in English at least. */

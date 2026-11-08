@@ -26,6 +26,7 @@ import {
   mapScale,
   reliefDraw,
   structureDraw,
+  structuresColoured,
   structuresTextured,
   type MapAnchor,
   type ModelLevel,
@@ -39,6 +40,10 @@ import type { GeoPlacement } from '../../state/types';
 import { cameraOverTheatre, WorldBackdrop } from './WorldBackdrop';
 import { useEngine } from '../EngineContext';
 import { theatreById } from '../../world/theatres';
+import { lengthText, useUnits } from '../../state/unitsStore';
+import { useRaceStore } from '../../state/raceStore';
+import { useReplayStore } from '../../state/replayStore';
+import { buildingsLook } from '../replay/buildings';
 
 /** Longest edge we upload; larger maps are downscaled to fit the GPU. */
 const MAX_MAP_EDGE = 8192;
@@ -95,6 +100,8 @@ const percent = (v: number, digits = 0) => t('heat.levelPanel.percent', { value:
 function modelLevelFrom(name: string, m: LoadedModel): ModelLevel {
   const dense = (m.structureTriangles ?? 0) > WIRE_OFF_ABOVE_TRIANGLES;
   const textured = !!m.atlas && structuresTextured(m.structureIndices, m.uvs, m.uvTiles);
+  // Structures painted per object (an extracted level's own colours): solid in the match replay, as buildings.
+  const coloured = structuresColoured(m.structureIndices, m.colours);
   return {
     kind: 'model',
     name,
@@ -159,6 +166,8 @@ function modelLevelFrom(name: string, m: LoadedModel): ModelLevel {
           flatStructures: false,
         }
       : {}),
+    structureColours: coloured,
+    ...(coloured && !textured ? buildingsLook(useRaceStore.getState().tab === 'match' && useReplayStore.getState().buildings === 'solid') : {}),
   };
 }
 
@@ -227,6 +236,7 @@ function worldLook(level: ModelLevel, credits: ModelLevel['credits']): ModelLeve
  * rather than re-decimated every session.
  */
 export function LevelPanel() {
+  useUnits();
   const level = useStore((s) => s.level);
   const setLevel = useStore((s) => s.setLevel);
   const patchLevel = useStore((s) => s.patchLevel);
@@ -662,9 +672,7 @@ export function LevelPanel() {
                   <span>{t('heat.levelPanel.relief')}</span>
                   <span className="val">
                     {relief.contourSpacing > 0
-                      ? t('heat.levelPanel.contourEvery', {
-                          value: num(relief.contourSpacing, relief.contourSpacing < 10 ? 2 : 0),
-                        })
+                      ? t('units.every', { length: lengthText(relief.contourSpacing) })
                       : t('heat.levelPanel.noContours')}
                   </span>
                 </div>
@@ -789,7 +797,7 @@ export function LevelPanel() {
                 </div>
               </div>
 
-              {mdl.uvs && mdl.atlas ? (
+              {(mdl.uvs && mdl.atlas) || mdl.structureColours ? (
                 <Check
                   label={t('heat.levelPanel.structureTexture')}
                   checked={mdl.structureTexture === true}

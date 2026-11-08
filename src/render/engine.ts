@@ -40,6 +40,7 @@ import {
   type Level,
 } from './level';
 import { appendCross, buildOverlay, screenToPlane, type MeasureState } from './measure';
+import { endsOf } from '../data/despawn';
 import { BudgetController, candidateRange, nextExactCap, planFrame } from './sampling';
 import { Inspector, type PickContext } from './inspector';
 import type { DrawnRows } from './pick';
@@ -633,6 +634,11 @@ export class Engine {
       // The tactics board owns clicks on its tab.
       if (useRaceStore.getState().tab === 'plan') {
         this.boardClick(from.x, from.y);
+        return;
+      }
+      // The vehicle heatmap's clicks pick a hit.
+      if (useRaceStore.getState().tab === 'vehicle') {
+        this.vehicleStage.click(from.x, from.y, canvas.clientWidth, canvas.clientHeight, this.pickViewProj);
         return;
       }
       // The ruler, when on, owns the click; picking waits until it is off, so
@@ -2323,6 +2329,8 @@ export class Engine {
           s.team.interpolate,
           tl.defaultLifetime,
           visible,
+          // Figures leave when their data does (`data/despawn.ts`).
+          s.team.figures && this.dataset ? endsOf(this.dataset) : null,
         );
         cubes = live.data;
         cubeCount = live.count;
@@ -2373,6 +2381,7 @@ export class Engine {
           pixelSize,
           poses: motion ? this.motion.poses : undefined,
           posed: motion ? this.motion.posed : undefined,
+          time: cursorAt,
         });
         // What the events leave behind for a while, in the thrower's colour.
         const d = this.dataset;

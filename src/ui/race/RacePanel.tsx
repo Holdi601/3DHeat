@@ -20,6 +20,8 @@ import type { Values } from '../../i18n/message';
 import { useEngine } from '../EngineContext';
 import { lineUpAt, loadCarFile, loadDemoLaps, loadLapFiles, restoreCarFiles, showEvent, showFinding } from './actions';
 import { StatsSection } from './StatsSection';
+import { lengthArg, unitPrefs, useUnits } from '../../state/unitsStore';
+import { formatIn } from '../../units/format';
 
 export function signed(v: number, digits = 3): string {
   if (!Number.isFinite(v)) return '—';
@@ -649,9 +651,9 @@ function CornersSection() {
                 title={
                   line
                     ? t('race.ui.corners.radii', {
-                        tightest: int(line.radiusMin),
-                        entry: int(line.radiusIn),
-                        exit: int(line.radiusOut),
+                        tightest: lengthArg(line.radiusMin),
+                        entry: lengthArg(line.radiusIn),
+                        exit: lengthArg(line.radiusOut),
                       })
                     : ''
                 }
@@ -866,7 +868,7 @@ function ControlSection() {
  */
 type ProfileRow = [string, (p: CarProfile) => number, (v: number) => string, 'higher' | 'lower' | null, string?];
 
-const kmhOf = (v: number) => num(v * 3.6, 0);
+const kmhOf = (v: number) => formatIn('speed', v, unitPrefs(), 0);
 const oneDigit = (v: number) => num(v, 1);
 const profileRows = (): ProfileRow[] => [
   [t('race.ui.cars.rows.grip'), (p) => p.grip, oneDigit, 'higher'],
@@ -875,8 +877,8 @@ const profileRows = (): ProfileRow[] => [
   [t('race.ui.cars.rows.pullMid'), (p) => p.pull.mid, oneDigit, 'higher'],
   [t('race.ui.cars.rows.pullHigh'), (p) => p.pull.high, oneDigit, 'higher'],
   [t('race.ui.cars.rows.braking'), (p) => p.braking, oneDigit, 'higher'],
-  [t('race.ui.cars.rows.vmax'), (p) => p.vmax, kmhOf, 'higher'],
-  [t('race.ui.cars.rows.topsOut'), (p) => p.topsOut, kmhOf, 'higher', t('race.ui.cars.stillPulling')],
+  [t('units.race.vmax'), (p) => p.vmax, kmhOf, 'higher'],
+  [t('units.race.topsOut'), (p) => p.topsOut, kmhOf, 'higher', t('race.ui.cars.stillPulling')],
   [t('race.ui.cars.rows.pullAtTop'), (p) => p.pullAtTop, oneDigit, null],
   [t('race.ui.cars.rows.rearSlides'), (p) => p.rearSlides, oneDigit, 'lower'],
   [t('race.ui.cars.rows.sideways'), (p) => p.sideways, (v) => withUnit(num(v * 100, 0), '%'), null],
@@ -884,6 +886,7 @@ const profileRows = (): ProfileRow[] => [
 
 /** The cars' measured character, side by side; a row only where a car has a value. */
 function ProfileTable({ profiles, labels }: { profiles: CarProfile[]; labels: string[] }) {
+  useUnits();
   const rows = profileRows().filter(([, get]) => profiles.some((p) => Number.isFinite(get(p))));
   return (
     <table className="mono">

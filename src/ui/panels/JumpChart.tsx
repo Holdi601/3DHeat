@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { stepHistogram, type StepHistogram } from '../../data/lines';
 import type { Dataset } from '../../state/types';
 import { num, t } from '../../i18n';
+import { lengthText, useUnits } from '../../state/unitsStore';
 
 const WIDTH = 280;
 const HEIGHT = 96;
@@ -17,7 +18,7 @@ function ticks(lo: number, hi: number): number[] {
   return out;
 }
 
-const length = (v: number) => t('heat.heatPanel.metres', { value: num(v, v < 10 ? 2 : 0) });
+const length = (v: number) => lengthText(v);
 
 /**
  * How far people move between two samples, with the limit on it: the steps left
@@ -34,6 +35,7 @@ export function JumpChart({
   limit: number | null;
   onLimit: (v: number) => void;
 }) {
+  useUnits();
   const hist: StepHistogram | null = useMemo(() => stepHistogram(dataset), [dataset]);
   if (!hist || hist.steps === 0) return null;
   const { edges, counts, steps } = hist;

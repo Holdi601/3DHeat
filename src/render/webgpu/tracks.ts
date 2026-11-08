@@ -125,7 +125,15 @@ export class GpuTracks {
       return b;
     };
     const S = GPUBufferUsage.STORAGE;
-    const tracks = buf('tracks', s.trackData, S);
+    // The turret and gun keys, where there are any, after the tracks in the same buffer (`store.ts`): the place shader finds them there.
+    const aimBytes = s.keysAim ? s.trackData.byteLength + s.keysAim.byteLength : 0;
+    let trackWords: Uint32Array = s.trackData;
+    if (s.keysAim && aimBytes <= dev.limits.maxStorageBufferBindingSize) {
+      trackWords = new Uint32Array(s.trackData.length + s.keysAim.length);
+      trackWords.set(s.trackData);
+      trackWords.set(s.keysAim, s.trackData.length);
+    }
+    const tracks = buf('tracks', trackWords, S);
     // The keys in two buffers when there are more than one may hold.
     const keysA = buf('track keys', s.keysA.subarray(0, Math.min(s.keys, KEYS_PER_BUFFER) * KEY_U32), S);
     const keysA1 = buf('track keys (2)', s.keys > KEYS_PER_BUFFER ? s.keysA.subarray(KEYS_PER_BUFFER * KEY_U32) : new Uint32Array(4), S);

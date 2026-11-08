@@ -14,7 +14,7 @@
  * origin, standing on y = 0.
  */
 
-import { detail, finish, newKit, PAINT, withCoarse, type FigBuffer, type Kit, type Template } from './kit';
+import { detail, finish, into, joint, newKit, PAINT, withCoarse, type FigBuffer, type Kit, type Template } from './kit';
 import { blob, block, fin, hexa, lerpPoly, outlineBody, plate, prism, slab, tiltBox, triangulate, tube, type Outline, type P2 } from './parts';
 import { Mesh } from './mesh';
 import { at, type Frame3, type Rgb, type Vec3 } from '../race/geometry';
@@ -68,6 +68,11 @@ export interface TurretSpec {
    * base, standing on the deck as the casting does, so no separate ring is drawn under it either way.
    */
   ring?: boolean;
+  /**
+   * A superstructure that does not turn, though it is drawn as a turret (a casemate built from a turret's outline):
+   * replay leaves it with the hull and only raises its gun. A 'casemate' shape is fixed without this.
+   */
+  fixed?: boolean;
 }
 
 export interface GunSpec {
@@ -95,11 +100,13 @@ export interface GunSpec {
   muzzle?: boolean;
   /** A thicker thermal sleeve over this share of the barrel from the breech. */
   sleeve?: number;
-  /** Hull and sponson guns: forward position of the breech (default near the front) and sideways offset. */
+  /** Hull and sponson guns: forward position of the breech (default near the front) and sideways offset; a roof machine gun's, from the turret's centre. */
   x?: number;
   side?: number;
   /** A sponson gun on both sides. */
   both?: boolean;
+  /** A roof machine gun ('top'): its barrel's axis this far over the turret's roof (default 0.25), as a published height over the AA gun puts it. */
+  up?: number;
 }
 
 export interface MissileSpec {
@@ -290,6 +297,21 @@ export interface AddOn {
   shade?: number;
   /** Round parts' segments (tubes; default 8). */
   segments?: number;
+  /**
+   * A weapon mount drawn from add-ons (a pedestal gun on a truck's bed, a towed mount drawn whole): every part that
+   * turns with it carries the same `mount` object, and the parts that also elevate with its gun set `elevates`.
+   */
+  mount?: AddOnMount;
+  elevates?: boolean;
+}
+
+/** Where an add-on mount turns and elevates, in the frame its parts' `at` is in (forward, side, up). */
+export interface AddOnMount {
+  /** The centre it turns about, on its base. */
+  at: Vec3;
+  /** The trunnion its gun elevates about, and the elevation the gun is drawn at, radians. */
+  trunnion?: Vec3;
+  pitch?: number;
 }
 
 const grey = (k: number): Rgb => [k, k, k];
@@ -346,8 +368,15 @@ function buildAt(input: GroundSpec): Template {
     block(k.team, k.fr, [b.x, b.side ?? 0, top + (b.up ?? 0) + b.height / 2], b.length, w, b.height, grey(0.84));
   }
   const turrets = [spec.turret, ...(spec.turrets ?? [])].filter((t): t is TurretSpec => !!t);
-  for (const t of turrets) turret(k, spec, t, top + (t.up ?? 0));
+  // Each turret's parts go into the joint it turns with (the hull's, -1, for a fixed one), so replay can train it.
+  const yawOf = turretJoints(k, spec, turrets, top);
+  turrets.forEach((t, i) => {
+    into(k, yawOf[i]);
+    turret(k, spec, t, top + (t.up ?? 0));
+  });
   const main = spec.turret;
+  const mainJ = main ? yawOf[turrets.indexOf(main)] : -1;
+  into(k, mainJ);
   const base = main ? top + (main.up ?? 0) + main.height : top;
   const mountX = main ? main.x : 0;
   if (spec.shield && chassis !== 'towed' && main) {
@@ -356,20 +385,47 @@ function buildAt(input: GroundSpec): Template {
     const sb = top + (main.up ?? 0) + main.height * 0.15;
     fin(k.team, k.fr, [[sx, sb], [sx + 0.12, sb], [sx + 0.12, sb + main.height * 1.15], [sx, sb + main.height * 1.05]], main.side ?? 0, main.width * 1.5, grey(0.85));
   }
+  into(k, -1);
   if (chassis === 'tracked' && main && spec.hullOutline && (spec.guns ?? []).some((g) => g.mount === 'turret' && (g.turret ?? 0) === 0 && g.calibre >= 0.075)) engineDeck(k, spec, main);
-  for (const m of spec.missiles ?? []) missiles(k, spec, m, top);
+  // Launchers and antennas on the turret turn with it.
+  for (const m of spec.missiles ?? []) {
+    into(k, main && m.mount !== 'hull' ? mainJ : -1);
+    missiles(k, spec, m, top);
+  }
   for (const r of spec.radars ?? []) {
+    into(k, r.hull || !main ? -1 : mainJ);
     if (r.hull || !main) radar(k, r, 0, top, 0);
     else radar(k, r, mountX, base, main.side ?? 0);
   }
+  into(k, -1);
   if (spec.rws) {
     const x = main ? main.x - main.length * 0.2 : L * 0.1;
     block(k.fixed, k.fr, [x, W * 0.15, top + 0.18], 0.4, 0.35, 0.3, PAINT.metal);
     tube(k.fixed, k.fr, [x + 0.1, W * 0.15, top + 0.25], [x + 0.9, W * 0.15, top + 0.25], 0.03, 0.03, PAINT.dark, 5);
   }
-  for (const a of spec.addOns ?? []) addOn(k, a, a.on === 'turret' && main ? [main.x, main.side ?? 0, top + (main.up ?? 0)] : [0, 0, 0]);
+  // An add-on mount's parts into its own joints: a yaw joint at its turning centre, a pitch joint at its trunnion on it.
+  const mounts = new Map<AddOnMount, { yaw: number; pitch: number }>();
+  for (const a of spec.addOns ?? []) {
+    const o: Vec3 = a.on === 'turret' && main ? [main.x, main.side ?? 0, top + (main.up ?? 0)] : [0, 0, 0];
+    let j = a.on === 'turret' && main ? mainJ : -1;
+    if (a.mount) {
+      let m = mounts.get(a.mount);
+      if (!m) {
+        const p = (v: Vec3) => at(k.fr, o[0] + v[0], o[1] + v[1], o[2] + v[2]);
+        const yaw = joint(k, { kind: 'yaw', pivot: p(a.mount.at), parent: -1, rest: 0 });
+        const pitch = a.mount.trunnion ? joint(k, { kind: 'pitch', pivot: p(a.mount.trunnion), parent: yaw, rest: 0, pitch: a.mount.pitch ?? 0 }) : yaw;
+        m = { yaw, pitch };
+        mounts.set(a.mount, m);
+      }
+      j = a.elevates ? m.pitch : m.yaw;
+    }
+    into(k, j);
+    addOn(k, a, o);
+  }
+  into(k, -1);
   // The guns last, so a published length with the gun forward is measured from the rearmost part already drawn.
-  for (const g of reach(spec, turrets, rearOf(k))) gun(k, spec, g, top, turrets);
+  for (const g of reach(spec, turrets, rearOf(k))) gun(k, spec, g, top, turrets, yawOf);
+  into(k, -1);
   return finish(k, 'ground');
 }
 
@@ -1291,6 +1347,44 @@ function pedestal(k: Kit, spec: GroundSpec): void {
   tube(k.team, k.fr, [0, 0, 0.2], [0, 0, H], r * 1.2, r, grey(0.78), 12);
 }
 
+/**
+ * A spec's `turrets` are more than turrets: a part placed in the vehicle's own frame (a nose, skirts, a casemate's
+ * gun mount) has its base on the ground, lowered by the whole deck height (`top`); a mount on a truck's bed below
+ * the cab's roof is lowered too, but not to the ground.
+ */
+const inHullFrame = (t: TurretSpec, top: number) => top + (t.up ?? 0) < 0.15;
+
+/** A part of the main turret given as an extra turret: a cupola, a mantlet, skirts, the ring under a casting, an oscillating turret's top. */
+function onTurret(main: TurretSpec, t: TurretSpec): boolean {
+  const dx = Math.abs(t.x - main.x);
+  const ds = Math.abs((t.side ?? 0) - (main.side ?? 0));
+  // Skirts and track links hang a little outside the turret's sides; a twin turret as big as the main one beside it (M2A2) is its own.
+  const big = t.length >= 0.7 * main.length && t.width >= 0.7 * main.width;
+  return dx <= main.length / 2 + 0.1 && ds <= main.width / 2 + (big ? 0 : 0.4);
+}
+
+/**
+ * The joint each turret turns with, by its place in `turrets`: its own yaw joint, about the vertical through its
+ * centre on the deck; the main turret's for a part on it; the hull's (-1) for a part in the hull's frame, a casemate
+ * or a fixed superstructure. A turret whose gun was built pointing aft rests facing aft.
+ */
+function turretJoints(k: Kit, spec: GroundSpec, turrets: TurretSpec[], top: number): number[] {
+  const main = spec.turret;
+  const turns = (t: TurretSpec) => !inHullFrame(t, top) && !t.fixed && t.shape !== 'casemate';
+  const yaw = (t: TurretSpec): number => {
+    const i = turrets.indexOf(t);
+    const aft = (spec.guns ?? []).some((g) => (g.turret ?? 0) === i && (g.elevation ?? 0) > Math.PI / 2);
+    return joint(k, { kind: 'yaw', pivot: at(k.fr, t.x, t.side ?? 0, top + (t.up ?? 0)), parent: -1, rest: aft ? Math.PI : 0 });
+  };
+  const mainJ = main && turns(main) ? yaw(main) : -1;
+  return turrets.map((t) => {
+    if (t === main) return mainJ;
+    if (inHullFrame(t, top)) return -1;
+    if (main && !inHullFrame(main, top) && onTurret(main, t)) return mainJ;
+    return turns(t) ? yaw(t) : -1;
+  });
+}
+
 function turret(k: Kit, spec: GroundSpec, t: TurretSpec, base: number): void {
   const x = t.x;
   const l = t.length;
@@ -1420,8 +1514,16 @@ function reach(spec: GroundSpec, turrets: TurretSpec[], rear: number): GunSpec[]
   return out;
 }
 
-function gun(k: Kit, spec: GroundSpec, g: GunSpec, top: number, turrets: TurretSpec[]): void {
+/**
+ * A gun, into the joints replay moves it by: its barrels into a pitch joint at the trunnion - on the barrel's axis
+ * where the drawn barrel starts, just inside the mantlet - riding on its turret's yaw joint (`yawOf`, by turret), or
+ * on the hull for a casemate, hull or sponson gun; the mantlet and a side mount's housing turn with the turret only.
+ * Hull machine guns and towed guns' cradles stay with the hull; a roof machine gun turns with its turret.
+ */
+function gun(k: Kit, spec: GroundSpec, g: GunSpec, top: number, turrets: TurretSpec[], yawOf: number[]): void {
   const t = turrets[g.turret ?? 0];
+  // Hull and sponson guns sit in the hull whatever turret the spec has.
+  const yawJ = t && g.mount !== 'hull' && g.mount !== 'sponson' ? yawOf[g.turret ?? 0] ?? -1 : -1;
   const base = t ? top + (t.up ?? 0) : top;
   const elev = g.elevation ?? 0.03;
   // Barrels a little thicker than true, or a 23 mm gun vanishes at any distance.
@@ -1439,15 +1541,21 @@ function gun(k: Kit, spec: GroundSpec, g: GunSpec, top: number, turrets: TurretS
     // The bore's dark end, just inside the muzzle.
     revolve(k.fixed, k.fr, [x, side, up], d, [[end + 0.004, 0], [end + 0.004, r * 0.58]], n, PAINT.dark);
   };
+  // A gun built pointing aft (elevated past the vertical) rests facing aft at its true elevation.
+  const aft = elev > Math.PI / 2;
+  const pitchAt = (x: number, side: number, up: number, parent: number) => joint(k, { kind: 'pitch', pivot: at(k.fr, x - 0.2 * ce, side, up - 0.2 * se), parent, rest: aft ? Math.PI : 0, pitch: aft ? Math.PI - elev : elev });
+  into(k, yawJ);
   if (g.mount === 'turret' && t) {
     const up = base + t.height * (g.at ?? 0.48);
     const x = breechX(spec, g, turrets);
+    const pj = pitchAt(x, t.side ?? 0, up, yawJ);
     if (!t.outline) {
       // A rounded mantlet lying across the turret front, the gun coming out of it.
       const mr = Math.min(t.height * 0.32, 0.3);
       const mw = Math.min(t.width * 0.42, 0.75);
       revolve(k.team, k.fr, [x - mr * 0.3, (t.side ?? 0) - mw / 2, up], [0, 1, 0], [[0, 0], [0, mr * 0.8], [0.05, mr], [mw - 0.05, mr], [mw, mr * 0.8], [mw, 0]], detail(10, 6), grey(0.84));
     }
+    into(k, pj);
     for (let i = 0; i < count; i++) {
       const off = (i - (count - 1) / 2) * spread;
       // Pairs above and below for four barrels (2 x 2), side by side otherwise.
@@ -1456,16 +1564,26 @@ function gun(k: Kit, spec: GroundSpec, g: GunSpec, top: number, turrets: TurretS
     }
   } else if (g.mount === 'turret-side' && t) {
     const up = base + t.height * (g.at ?? 0.55);
+    // Both sides' guns elevate together, about one axis across the turret.
+    const pj = pitchAt(breechX(spec, g, turrets), t.side ?? 0, up, yawJ);
     for (const side of [-1, 1]) {
       const s = (t.side ?? 0) + side * (t.width / 2 + r + 0.12);
+      into(k, yawJ);
       block(k.team, k.fr, [t.x + t.length * 0.1, s, up], t.length * 0.55, r * 4 + 0.1, r * 4 + 0.15, grey(0.72));
+      into(k, pj);
       for (let i = 0; i < count; i++) barrel(breechX(spec, g, turrets), s + (i - (count - 1) / 2) * spread, up);
     }
   } else if (g.mount === 'hull') {
     const up = spec.hullHeight * (g.at ?? 0.72);
     const x = breechX(spec, g, turrets);
-    // A towed gun's cradle and breech, which the barrel comes out of.
-    if (spec.chassis === 'towed' || spec.chassis === 'pedestal') block(k.team, k.fr, [x, g.side ?? 0, up], 0.9, Math.max(0.35, spread * (count - 1) + 0.35), 0.4, grey(0.72));
+    // A towed or emplaced gun turns on its carriage, about the vertical through its trunnion: the cradle and breech
+    // (which the barrel comes out of) with it, the barrel elevating on it. A hull machine gun stays with the hull.
+    const carriage = spec.chassis === 'towed' || spec.chassis === 'pedestal';
+    const gunJ = g.calibre >= 0.02;
+    const yj = carriage && gunJ ? joint(k, { kind: 'yaw', pivot: at(k.fr, x, g.side ?? 0, Math.min(up, spec.hullHeight)), parent: -1, rest: aft ? Math.PI : 0 }) : -1;
+    into(k, yj);
+    if (carriage) block(k.team, k.fr, [x, g.side ?? 0, up], 0.9, Math.max(0.35, spread * (count - 1) + 0.35), 0.4, grey(0.72));
+    if (gunJ) into(k, pitchAt(x, g.side ?? 0, up, yj));
     for (let i = 0; i < count; i++) barrel(x, (g.side ?? 0) + (i - (count - 1) / 2) * spread, up);
   } else if (g.mount === 'sponson') {
     // A half-round sponson on the hull side, its gun forward.
@@ -1475,14 +1593,21 @@ function gun(k: Kit, spec: GroundSpec, g: GunSpec, top: number, turrets: TurretS
     const sides = g.both ? [-1, 1] : [Math.sign(g.side ?? 1) || 1];
     const size = Math.max(0.45, Math.min(0.9, spec.hullHeight * 0.3));
     for (const sd of sides) {
+      into(k, -1);
       blob(k.team, k.fr, [x, sd * off, up], [size, size * 0.7, size * 0.8], grey(0.86));
+      if (g.calibre >= 0.02) into(k, pitchAt(x + size * 0.5, sd * (off + size * 0.15), up, -1));
       for (let i = 0; i < count; i++) barrel(x + size * 0.5, sd * (off + size * 0.15) + (i - (count - 1) / 2) * spread, up);
     }
   } else {
-    const x = t ? t.x : 0;
-    const up = (t ? base + t.height : base) + 0.25;
-    tube(k.fixed, k.fr, [x, g.side ?? 0.25, up], [x + g.length, g.side ?? 0.25, up], r, r, PAINT.dark, 5);
+    // A roof machine gun, its breech `x` forward of the turret's centre (default over it), `side` across.
+    const x = (t ? t.x : 0) + (g.x ?? 0);
+    const up = (t ? base + t.height : base) + (g.up ?? 0.25);
+    const s = (t?.side ?? 0) + (g.side ?? 0.25);
+    tube(k.fixed, k.fr, [x, s, up], [x + g.length, s, up], r, r, PAINT.dark, 5);
+    // The pintle or ring post it stands on, from the roof up to the gun.
+    if (t) tube(k.fixed, k.fr, [x + 0.3, s, base + t.height - 0.05], [x + 0.3, s, up - r], 0.035, 0.035, PAINT.dark, 5);
   }
+  into(k, -1);
 }
 
 /**

@@ -973,26 +973,41 @@ A['jaguar-t2'] = jaguar('two');
 // (13.98 x 10.26 x 4.01 m). F.1: the plain leading edge. F.6 (and F.58, Dutch and Swedish F.6 and F.50): the
 // dogtooth and the "Sabrina" link blisters under the cockpit. FGA.9: the same with the brake parachute's fairing over
 // the jet pipe. T.7: two seats side by side in a broad, deep nose (14.9 m).
+// Body, wing, tailplane and fin digitised from FM 30-30's Hunter silhouettes (1954, see sources.md) scaled to the
+// published length and span (the drawn wing comes out at 31.6 m2, the F.1's published area): the wing's root 4.04 m
+// behind the nose, the fin's top 2.25 m over the nose's height, the tailplane on the fin 0.83 m up. Heights are from
+// the nose tip's level; behind the fin's root the body runs down to the jet pipe (0.7 m across) under the rudder.
+const HUNTER_BODY: Row[] = [
+  [6.99, 0.06, -0.06, 0.03], [6.47, 0.3, -0.32, 0.3], [5.96, 0.43, -0.46, 0.44], [5.44, 0.5, -0.56, 0.52], [4.92, 0.56, -0.63, 0.58], [4.41, 0.68, -0.69, 0.63],
+  [3.89, 0.79, -0.71, 0.65], [3.37, 0.86, -0.75, 0.66], [2.86, 0.79, -0.75, 0.7], [2.34, 0.71, -0.75, 0.69], [1.82, 0.69, -0.77, 0.68], [0.79, 0.65, -0.79, 0.67],
+  [-0.76, 0.61, -0.79, 0.64], [-2.31, 0.58, -0.8, 0.62], [-2.83, 0.58, -0.79, 0.61], [-3.34, 0.65, -0.77, 0.61], [-3.86, 0.77, -0.75, 0.61], [-4.38, 0.84, -0.71, 0.58],
+  [-4.89, 0.75, -0.69, 0.54], [-5.41, 0.65, -0.68, 0.5], [-5.93, 0.55, -0.58, 0.46], [-6.45, 0.45, -0.5, 0.41], [-6.96, 0.36, -0.33, 0.35],
+];
+const HUNTER_WING: P2[] = [[2.95, 0], [2.95, 0.76], [2.73, 1.14], [2.55, 1.34], [2.43, 1.59], [0.76, 3.34], [-0.55, 4.66], [-1.67, 5.11], [-2.02, 5.13], [-2.37, 5.11], [-2.6, 4.66], [-1.84, 2.94], [-1.71, 2.55], [-1.28, 1.59], [-1.04, 0.97], [-1.03, 0.85], [-1.18, 0.76], [-1.18, 0]];
+/** The F.6's dogtooth: the leading edge outboard of 3.25 m out brought forward, a notch at its inner end. */
+const HUNTER_DOG: P2[] = [[2.95, 0], [2.95, 0.76], [2.73, 1.14], [2.55, 1.34], [2.43, 1.59], [0.67, 3.25], [0.86, 3.27], [-0.44, 4.66], [-1.62, 5.11], [-2.02, 5.13], [-2.37, 5.11], [-2.6, 4.66], [-1.84, 2.94], [-1.71, 2.55], [-1.28, 1.59], [-1.04, 0.97], [-1.03, 0.85], [-1.18, 0.76], [-1.18, 0]];
+
 function hunter(kind: 'f1' | 'f6' | 'fga9' | 't7'): Spec {
   const t7 = kind === 't7';
-  const front: Row[] = t7
-    ? [[7.91, 0.0, -0.2, 0.08], [7.2, 0.3, -0.5, 0.42], [6.1, 0.6, -0.74, 0.7], [4.9, 0.74, -0.82, 0.8], [3.6, 0.8, -0.84, 0.82], [2.2, 0.8, -0.84, 0.8]]
-    : [[6.99, 0.0, -0.16, 0.1], [6.5, 0.32, -0.5, 0.42], [5.6, 0.56, -0.7, 0.6], [4.4, 0.7, -0.82, 0.7], [3.0, 0.8, -0.86, 0.76], [1.5, 0.84, -0.88, 0.8]];
+  // The T.7's broad side-by-side nose, 0.92 m longer, ahead of the single-seater's body from behind the cockpit.
+  const body: Row[] = t7
+    ? [[7.91, -0.05, -0.25, 0.08], [7.2, 0.25, -0.52, 0.42], [6.1, 0.55, -0.74, 0.7], [4.9, 0.69, -0.8, 0.8], [3.6, 0.75, -0.8, 0.82], [2.2, 0.73, -0.78, 0.76], ...HUNTER_BODY.filter((r) => r[0] < 1)]
+    : HUNTER_BODY;
   const dog = kind !== 'f1';
   return fig({
     cls: t7 ? 'trainer' : kind === 'fga9' ? 'attack' : 'fighter', length: t7 ? 14.9 : 13.98, span: 10.26, height: 4.01,
-    body: [...front, [0, 0.84, -0.86, 0.82], [-2.0, 0.76, -0.76, 0.74], [-4.0, 0.62, -0.62, 0.6], [-6.0, 0.48, -0.46, 0.46], [-6.99, 0.42, -0.4, 0.4]], round: 2.2,
-    wing: dog ? [[1.4, 0], [1.3, 0.8], [-0.95, 3.25], [-0.75, 3.3], [-2.65, 5.13], [-3.85, 5.13], [-3.5, 0.8], [-3.5, 0]] : [[1.4, 0], [1.3, 0.8], [-2.65, 5.13], [-3.85, 5.13], [-3.5, 0.8], [-3.5, 0]], wingUp: -0.05,
-    fin: [[-3.2, 0], [-6.3, 0], [-7.25, 2.3], [-6.2, 2.35]], finBase: 0.5,
-    tail: [[-5.4, 0], [-6.2, 1.8], [-7.0, 1.8], [-7.1, 0]], planeUp: 1.1,
-    nozzles: [[-6.99, 0, 0]], nozzle: 0.75,
+    body, round: 2.2,
+    wing: dog ? HUNTER_DOG : HUNTER_WING, wingUp: -0.15,
+    fin: [[-4.18, 0], [-4.47, 0.15], [-5.56, 0.96], [-6.0, 1.23], [-6.46, 1.36], [-6.89, 1.35], [-6.98, 1.29], [-6.98, -0.6], [-4.18, -0.1]], finBase: 0.88,
+    tail: [[-5.26, 0], [-5.26, 0.92], [-6.08, 1.68], [-6.43, 1.82], [-6.62, 1.84], [-6.81, 1.82], [-6.94, 1.68], [-6.63, 0.92], [-6.63, 0]], planeUp: 0.83,
+    nozzles: [[-6.96, 0, 0.01]], nozzle: 0.66,
     bodies: [
-      trunk(1.5, -1.2, 0.2, -0.3, 0.32, 0.88, 0, 4),
-      spine(t7 ? 3.0 : 2.5, -3.6, 0.82, 0.1, t7 ? 0.3 : 0.24),
-      ...(kind === 'f6' || kind === 'fga9' ? [pod(3.6, 2.3, 0.15, 0.42, -0.76, 0.3)] : []),
-      ...(kind === 'fga9' ? [pod(-6.0, -7.45, 0.17, 0, 0.5, 0.2)] : []),
+      // The intakes' triangular fairings in the wing roots, round the wing's root ahead of its spar.
+      trunk(2.95, 0.4, 0.14, -0.4, 0.3, 0.86, 0, 4),
+      ...(kind === 'f6' || kind === 'fga9' ? [pod(4.6, 3.3, 0.15, 0.42, -0.72, 0.3)] : []),
+      ...(kind === 'fga9' ? [pod(-6.0, -7.3, 0.17, 0, 0.42, 0.2)] : []),
     ],
-    glass: [t7 ? sideBySide(5.0, 3.0, 1.5, 0.74, 0.8, 0.62) : bubble(4.2, 2.5, 1.36, 0.7, 0.82, 0.4)],
+    glass: [t7 ? sideBySide(5.0, 3.0, 1.45, 0.69, 0.75, 0.62) : bubble(5.22, 3.45, 0.95, 0.53, 0.86, 0.38)],
   });
 }
 A['hunter-f1'] = hunter('f1');
@@ -1001,28 +1016,42 @@ A['hunter-fga9'] = hunter('fga9');
 A['hunter-t7'] = hunter('t7');
 
 // F-104 Starfighter: a long needle of a body, the half-cone intakes behind the cockpit, a dorsal spine, the tiny
-// trapezoid wing with 10 degrees of anhedral, the T-tail, a ventral fin (16.66 x 6.36 x 4.09 m). F-104A / C: the small
-// fin, Sidewinders on the tips. F-104G / J: the fin a quarter bigger, tip tanks. F-104S: the G with two more ventral
-// fins. Checked by eye against a public dimensioned 3-view (estimates): the tube 1.15 m deep and 1.4 m wide, the
-// spine 0.95 m over its axis from the canopy to the fin, the canopy's top 1.2 m over it (single seat), 2.3 m across the
-// intakes, the fin's top 3 m over the axis.
+// trapezoid wing with 10 degrees of anhedral, the T-tail, a ventral fin (16.66 x 6.36 x 4.09 m; the length over the
+// 1.07 m nose probe). F-104A / C: the small fin, Sidewinders on the tips. F-104G / J: the fin a tenth bigger each way,
+// tip tanks. F-104S: the G with two more ventral fins.
+// Body, wing, tailplane and fin digitised from NASA's F-104 three-view (see sources.md), scaled so its length over
+// the probe is the published one: the wing's root 9.0 m behind the probe's tip (its trailing edge 12.1 m), the canopy
+// 3.1-5.2 m ahead of the middle, the spine 0.95 m over the nose tip's level, the fin's top 2.72 m, the wing's root
+// 0.3 m up falling 10 degrees to its tips. Heights are from the nose tip's level.
 function starfighter(kind: 'a' | 'g' | 's'): Spec {
-  const tip = -0.15 - 2.56 * Math.tan((10 * Math.PI) / 180);
+  const tip = 0.3 - 3.18 * Math.tan((10 * Math.PI) / 180);
+  const g = kind === 'a' ? 1 : 1.1;
+  const fin: P2[] = [[-4.44, 0], [-5.08, 0.45], [-6.29, 1.65], [-6.59, 1.74], [-6.9, 1.74], [-7.34, 1.66], [-7.75, 1.52], [-7.6, 0.6], [-7.35, -0.1], [-4.44, -0.1]];
+  // The G's bigger fin: grown about its root's leading edge.
+  const fins = fin.map(([x, h]) => [-4.44 + (x + 4.44) * g, h * g] as P2);
+  const top = 0.98 + 1.74 * g;
   return fig({
     cls: 'fighter', length: 16.66, span: 6.36, height: 4.09,
-    body: [[8.33, -0.02, -0.07, 0.03], [7.6, 0.1, -0.2, 0.15], [6.2, 0.32, -0.42, 0.38], [5.0, 0.45, -0.55, 0.48], [3.6, 0.52, -0.6, 0.55], [2.0, 0.58, -0.62, 0.62], [0, 0.6, -0.62, 0.65], [-3.0, 0.58, -0.6, 0.63], [-6.0, 0.55, -0.55, 0.58], [-8.33, 0.5, -0.5, 0.5]], round: 2.1,
-    wing: [[0.9, 0], [0.9, 0.62], [-0.3, 3.18], [-1.0, 3.18], [-1.9, 0.62], [-1.9, 0]], wingUp: -0.15, dihedral: -10,
-    fin: kind === 'a' ? [[-4.0, 0], [-7.3, 0], [-7.85, 1.95], [-6.5, 2.0]] : [[-3.8, 0], [-7.4, 0], [-8.05, 2.25], [-6.1, 2.3]], finBase: 0.72, tee: true,
-    tail: [[-6.2, 0], [-6.9, 1.75], [-7.8, 1.75], [-7.95, 0]],
-    nozzles: [[-8.33, 0, 0]], nozzle: 0.95,
+    body: [
+      [7.26, 0.02, -0.02, 0.03], [6.72, 0.16, -0.14, 0.18], [6.18, 0.31, -0.24, 0.29], [5.64, 0.45, -0.33, 0.37], [5.1, 0.57, -0.4, 0.43], [4.56, 0.69, -0.45, 0.49],
+      [4.02, 0.8, -0.48, 0.53], [3.48, 0.92, -0.5, 0.56], [2.94, 0.97, -0.52, 0.57], [2.4, 0.94, -0.53, 0.58], [1.33, 0.94, -0.5, 0.6], [-0.29, 0.95, -0.47, 0.6],
+      [-2.45, 0.97, -0.43, 0.6], [-4.06, 0.98, -0.45, 0.6], [-5.14, 0.95, -0.32, 0.58], [-6.22, 0.85, -0.19, 0.53], [-7.3, 0.85, 0.05, 0.42],
+    ], round: 2.1,
+    wing: [[-0.6, 0], [-0.6, 0.62], [-0.9, 1.0], [-1.97, 3.18], [-3.53, 3.18], [-3.94, 1.0], [-4.1, 0.62], [-4.1, 0]], wingUp: 0.3, dihedral: -10,
+    fin: fins, finBase: 0.98, tee: true,
+    tail: [[-6.45, 0], [-7.11, 1.78], [-7.72, 1.8], [-8.2, 0]],
+    nozzles: [[-7.3, 0, 0.45]], nozzle: 0.85,
     bodies: [
-      trunk(2.9, -1.8, 0.27, -0.33, 0.3, 0.86, 0, 2.2),
-      spine(2.5, -5.6, 0.55, 0.39, 0.22),
-      post(-4.6, -6.3, -0.5, -0.95, 0.03, undefined, 0.25),
-      kind === 'a' ? pod(0.7, -1.9, 0.07, 3.25, tip, 0.15) : pod(1.2, -2.4, 0.3, 3.35, tip, 0.3),
-      ...(kind === 's' ? [post(-5.0, -6.6, -0.45, -0.82, 0.03, 0.42, 0.2)] : []),
+      // The half-cone intakes either side behind the cockpit, faired back along the body over the wing's root.
+      trunk(1.0, -3.6, 0.6, -0.2, 0.25, 0.79, 0, 2.2),
+      // The nose probe, and the bullet at the top of the fin where the tailplane sits.
+      pod(8.33, 7.0, 0.035, 0, 0.0, 0.1),
+      pod(-6.2, -8.33, 0.13, 0, top - 0.17, 0.3),
+      post(-4.6, -5.8, -0.25, -0.6, 0.03, undefined, 0.2),
+      kind === 'a' ? pod(-0.2, -3.0, 0.07, 3.25, tip, 0.15) : pod(-0.5, -4.1, 0.3, 3.35, tip, 0.3),
+      ...(kind === 's' ? [post(-5.2, -6.6, -0.1, -0.55, 0.03, 0.42, 0.2)] : []),
     ],
-    glass: [bubble(4.7, 2.5, 1.2, 0.48, 0.9, 0.34)],
+    glass: [bubble(5.17, 3.14, 1.03, 0.56, 0.97, 0.34)],
   });
 }
 A['f-104'] = starfighter('a');

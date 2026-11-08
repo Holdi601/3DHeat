@@ -231,6 +231,12 @@ export interface ModelLevel {
    * so a level saved before this existed looks as it did.
    */
   structureTexture?: boolean;
+  /**
+   * The structure parts carry their own colours per vertex (a level extracted
+   * with each object's paint, COLOR_0): `structureTexture` then draws them in
+   * those colours even without a texture.
+   */
+  structureColours?: boolean;
   /** Water appearance. Flat-shaded on purpose; see `waterDraw`. Unset is `DEFAULT_WATER_OPACITY`. */
   waterOpacity?: number;
   waterTint?: [number, number, number];
@@ -338,6 +344,17 @@ export function structuresTextured(
   return false;
 }
 
+/** Whether the structure parts have colours of their own: some structure vertex not white (colours x, y, z per vertex). */
+export function structuresColoured(structureIndices: Uint32Array | undefined, colours: Float32Array | null | undefined): boolean {
+  if (!structureIndices || !colours) return false;
+  const step = Math.max(1, Math.floor(structureIndices.length / 20000));
+  for (let i = 0; i < structureIndices.length; i += step) {
+    const o = structureIndices[i] * 3;
+    if (colours[o] < 0.98 || colours[o + 1] < 0.98 || colours[o + 2] < 0.98) return true;
+  }
+  return false;
+}
+
 export function structureDraw(level: ModelLevel): {
   faceOpacity: number;
   wireOpacity: number;
@@ -349,7 +366,7 @@ export function structureDraw(level: ModelLevel): {
 } {
   const hasStructures = (level.structureIndices?.length ?? 0) > 0;
   return {
-    textured: level.structureTexture === true && !!level.uvs && !!level.atlas,
+    textured: level.structureTexture === true && ((!!level.uvs && !!level.atlas) || (level.structureColours === true && !!level.colours)),
     faceOpacity: level.structureOpacity ?? 0.25,
     wireOpacity: level.structureWireOpacity ?? 0.5,
     tint: level.structureTint ?? [0.35, 0.85, 1],

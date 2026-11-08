@@ -3,7 +3,7 @@ import { useStore } from '../../state/store';
 import { useReplayStore } from '../../state/replayStore';
 import { rgbToCss, teamBaseColor } from '../../render/colors';
 import { useAnimationFrame, useEngine } from '../EngineContext';
-import { num, t, useLang } from '../../i18n';
+import { t, useLang } from '../../i18n';
 import { flightSeries, sampleIndex } from '../../data/flight';
 import { unitsOf, type Unit } from './units';
 import { unitShape, type ObjectShape } from './objectType';
@@ -14,6 +14,10 @@ import { bullseyes } from './fields';
 import { niceLength } from './charts';
 import { fromMap, frameBox, headingOnMap, toMap, zoomAt, type MapView } from './tacmap';
 import './replay.css';
+import { unitPrefs } from '../../state/unitsStore';
+import type { UnitSystem } from '../../state/replayStore';
+import { formatLength, formatLong } from '../../units/format';
+import { fromAltitude, longUnitMetres } from '../../units/units';
 
 interface Drawn {
   x: number;
@@ -217,7 +221,7 @@ export function TacticalMap() {
     g.fillRect(0, 0, w, h);
 
     // ---- a grid at the scale bar's spacing
-    const bar = niceBar((w * 0.3 * v.upp) / k, r.units);
+    const bar = niceBar((w * 0.3 * v.upp) / k, unitPrefs());
     const step = bar * k;
     if (step / v.upp > 12) {
       g.strokeStyle = 'rgba(255,255,255,0.06)';
@@ -277,7 +281,7 @@ export function TacticalMap() {
         g.beginPath();
         g.arc(fx, fy, rr, 0, Math.PI * 2);
         g.stroke();
-        g.fillText(distanceText(bar * i, r.units), fx + rr * 0.71 + 2, fy - rr * 0.71 - 2);
+        g.fillText(distanceText(bar * i, unitPrefs()), fx + rr * 0.71 + 2, fy - rr * 0.71 - 2);
       }
     }
 
@@ -403,7 +407,7 @@ export function TacticalMap() {
     g.lineTo(12 + len, h - 9);
     g.stroke();
     g.font = '11px system-ui, sans-serif';
-    g.fillText(distanceText(bar, r.units), 16, h - 20);
+    g.fillText(distanceText(bar, unitPrefs()), 16, h - 20);
     g.beginPath();
     g.moveTo(w - 18, 12);
     g.lineTo(w - 13, 26);
@@ -452,24 +456,20 @@ export function TacticalMap() {
   );
 }
 
-const NM = 1852;
-const FT = 0.3048;
-
-/** A scale bar's length in metres, round in the units shown: 1, 2 or 5 km or m, nautical miles or feet. */
-export function niceBar(maxMetres: number, units: 'metric' | 'imperial'): number {
-  if (units === 'imperial')
-    return maxMetres >= NM ? niceLength(maxMetres / NM) * NM : niceLength(maxMetres / FT) * FT;
-  return niceLength(maxMetres);
+/** A scale bar's length in metres, round in the units shown: 1, 2 or 5 of the long unit (km, mi, NM) or the short one (m, ft). */
+export function niceBar(maxMetres: number, units: UnitSystem): number {
+  const long = longUnitMetres(units.distance);
+  if (maxMetres >= long) return niceLength(maxMetres / long) * long;
+  const short = fromAltitude(1, units.altitude);
+  return niceLength(maxMetres / short) * short;
 }
 
-/** A map distance with its unit: km or m, nautical miles or feet. */
-export function distanceText(metres: number, units: 'metric' | 'imperial'): string {
+/** A map distance with its unit: the long unit from one of it up, else the short one. */
+export function distanceText(metres: number, units: UnitSystem): string {
   const digits = (v: number) => (Math.abs(v - Math.round(v)) < 1e-6 || v >= 10 ? 0 : 1);
-  if (units === 'imperial')
-    return metres >= NM
-      ? t('replay.unit.nm', { v: num(metres / NM, digits(metres / NM)) })
-      : t('replay.unit.ft', { v: num(metres / FT, 0) });
-  return metres >= 1000
-    ? t('replay.unit.km', { v: num(metres / 1000, digits(metres / 1000)) })
-    : t('replay.unit.m', { v: num(metres, 0) });
+  const long = longUnitMetres(units.distance);
+  if (metres >= long) {
+    return formatLong(metres, units, digits(metres / long));
+  }
+  return formatLength(metres, units, 0);
 }

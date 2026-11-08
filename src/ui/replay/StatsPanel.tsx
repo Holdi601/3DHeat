@@ -22,6 +22,7 @@ import { teamName } from './replayView';
 import { selectAndFollow } from './ReplayOverlay';
 import { clock } from './hooks';
 import { useEngine } from '../EngineContext';
+import { unitPrefs, useUnits } from '../../state/unitsStore';
 
 /** Whether the full statistics table is open over the view. */
 export const useStatsView = create<{ open: boolean; setOpen: (v: boolean) => void }>((set) => ({
@@ -170,7 +171,7 @@ function StatsBody() {
         </button>
         <button
           className="small"
-          onClick={() => download(fileName(dataset, 'stats'), statsCsv(stats, team))}
+          onClick={() => download(fileName(dataset, 'stats'), statsCsv(stats, team, unitPrefs()))}
         >
           {t('replay.stats.csv')}
         </button>
@@ -210,7 +211,7 @@ function StatsBody() {
               const params = [...new Set(series.flatMap((x) => available(x.s)))];
               download(
                 fileName(dataset, `${telemetryUnit.name.replace(/[^\w.-]+/g, '_')}.telemetry`),
-                telemetryCsv(series, params, hz),
+                telemetryCsv(series, params, hz, unitPrefs()),
               );
             }}
           >
@@ -247,7 +248,7 @@ export function StatsTable() {
   const engine = useEngine();
   const open = useStatsView((s) => s.open);
   const dataset = useStore((s) => s.dataset);
-  const units = useReplayStore((s) => s.units);
+  const units = useUnits();
   const [sort, setSort] = useState<{ key: SortKey; down: boolean }>({ key: 'kills', down: true });
   const [ai, setAi] = useState(true);
   useLang();
@@ -311,7 +312,7 @@ export function StatsTable() {
         {stats && (
           <button
             className="small"
-            onClick={() => download(fileName(dataset, 'stats'), statsCsv(stats, team))}
+            onClick={() => download(fileName(dataset, 'stats'), statsCsv(stats, team, unitPrefs()))}
           >
             {t('replay.stats.csv')}
           </button>

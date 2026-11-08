@@ -14,6 +14,7 @@ import { limitSide } from './altitudeLimits';
 import { num, t } from '../../i18n';
 import type { Engine } from '../../render/engine';
 import './replay.css';
+import { unitPrefs } from '../../state/unitsStore';
 
 /** Pixels a click may be off a unit and still be on it. */
 const HIT_PX = 16;
@@ -184,7 +185,7 @@ export function ReplayOverlay() {
       person,
       time: now,
       session,
-      units: r.units,
+      units: unitPrefs(),
       pos: p,
       k,
       ref: ref && ref.person !== person ? ref : null,

@@ -4,6 +4,8 @@ import { useStore } from '../state/store';
 import { useAnimationFrame, useEngine } from './EngineContext';
 import { useJogDrag } from './Jog';
 import { num, t } from '../i18n';
+import { unitPrefs } from '../state/unitsStore';
+import { FT } from '../units/units';
 
 /**
  * Fly speed, over the viewport, draggable.
@@ -99,6 +101,11 @@ export function SpeedOverlay() {
  */
 function format(v: number): string {
   if (!Number.isFinite(v)) return '—';
+  if (unitPrefs().altitude === 'ft') {
+    // Feet a second where lengths are in feet: a camera's pace, not a vehicle's.
+    const f = v / FT;
+    return t('units.v.fts', { v: num(f, f >= 100 ? 0 : f >= 10 ? 1 : f >= 1 ? 2 : 3) });
+  }
   if (v >= 1000) return t('heat.speedOverlay.kms', { value: num(v / 1000, 2) });
   return t('heat.speedOverlay.ms', { value: num(v, v >= 100 ? 0 : v >= 10 ? 1 : v >= 1 ? 2 : 3) });
 }

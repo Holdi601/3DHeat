@@ -35,6 +35,7 @@ import { slipScale } from './control';
 import { at, grounded, heldAbs, HOLD, strengths, type Envelope } from './envelope';
 import { struckMask } from './impacts';
 import { groundAt, type LapTrace } from './lap';
+import { speedArg } from '../state/unitsStore';
 
 export interface CarProfile {
   key: string;
@@ -236,7 +237,7 @@ export function profile(key: string, laps: LapTrace[], env: Envelope): CarProfil
 // ---------------------------------------------------------------- in words
 
 const v1 = (v: number) => num(v, 1);
-const kmhOf = (v: number) => num(v * 3.6);
+const kmhOf = (v: number) => speedArg(v);
 const pct = (r: number) => num(Math.abs(r - 1) * 100);
 
 /** One car against another: what each is better at, and how that shows. */

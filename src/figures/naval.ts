@@ -14,7 +14,7 @@
  * all through `Mesh`, so the figure is lit where it is placed.
  */
 
-import { detail, finish, newKit, PAINT, withCoarse, type Kit, type Template } from './kit';
+import { detail, finish, into, joint, newKit, PAINT, withCoarse, type Kit, type Template } from './kit';
 import { blob, foil, lerpPoly, outlineBody, plate, ring, slab, tiltBox, triangulate, type Outline, type P2 } from './parts';
 import { Mesh } from './mesh';
 import { at, type Frame3, type Rgb, type Vec3 } from '../race/geometry';
@@ -99,9 +99,10 @@ export interface NavalSpec {
   /**
    * Missile launchers: forward position, length, width. vls: flush cells, a
    * grid of hatches (default). box: a raised armoured box. tubes: canisters
-   * angled up, in pairs either side (`count` per side).
+   * angled up, in pairs either side (`count` per side), the first row `side`
+   * out from the centre line (default a quarter of the beam).
    */
-  launchers?: { x: number; length: number; width: number; kind?: 'vls' | 'box' | 'tubes'; count?: number; elevation?: number; up?: number; height?: number }[];
+  launchers?: { x: number; length: number; width: number; kind?: 'vls' | 'box' | 'tubes'; count?: number; elevation?: number; up?: number; height?: number; side?: number }[];
   radars?: NavalRadar[];
   /** A submarine's sail: forward position, length, height. */
   sail?: { x: number; length: number; height: number };
@@ -914,9 +915,17 @@ function submarine(k: Kit, spec: NavalSpec): void {
 const MOUNT_SECTION: P2[] = [[-1, 0], [1, 0], [1, 0.5], [0.6, 1], [-0.6, 1], [-1, 0.5]];
 const BOX_SECTION: P2[] = [[-1, 0], [1, 0], [0.98, 0.84], [0.92, 1], [-0.92, 1], [-0.98, 0.84]];
 
+/**
+ * A gun mount and its guns. The gunhouse (or shield, or a light gun's
+ * pedestal, or a torpedo mount's turntable and tubes) goes into a yaw joint
+ * about the vertical through the mount's centre on its deck, the barrels into
+ * a pitch joint at the trunnion riding on it, so replay can train and elevate
+ * them; the barbette and a tub's fixed wall stay on the hull.
+ */
 function turret(k: Kit, t: NavalTurret, fb: number, deckAt: (x: number, s?: number) => number, covered: (x: number, s: number, z: number) => boolean): void {
   const s = t.side ?? 0;
   const dir = t.back ? -1 : 1;
+  const rest = t.back ? Math.PI : 0;
   const kind = t.kind ?? 'round';
   const z = t.size;
   // On the deck where it is: a gun forward stands no lower than the sheered deck under it.
@@ -924,36 +933,47 @@ function turret(k: Kit, t: NavalTurret, fb: number, deckAt: (x: number, s?: numb
   const up = Math.max(fb + (t.up ?? 0), deck);
   const tub = kind === 'round' && t.calibre < 0.05;
   const torpedo = kind === 'mount' && t.calibre >= 0.25 && t.length >= 5.5 && z < 4;
+  // What stays on the hull, what trains with the mount (house: team, mount: fixed), what elevates with the guns.
+  const base = new Mesh();
   const team = new Mesh();
+  const mount = new Mesh();
   const gun = new Mesh();
   // A raised gun stands on a barbette (or a deckhouse) down to the deck.
   if (Number.isFinite(deck) && up - deck > 0.3 && !covered(t.x, s, up)) {
     const rb = tub ? z * 0.5 : z * 0.42;
-    spin(team, at(k.fr, t.x, s, deck - 0.2), at(k.fr, t.x, s, up), [[0, rb], [1, rb]], detail(14, 8), HOUSE);
+    spin(base, at(k.fr, t.x, s, deck - 0.2), at(k.fr, t.x, s, up), [[0, rb], [1, rb]], detail(14, 8), HOUSE);
   }
+  if (base.idx.length) base.emit(k.team, { crease: 35 });
+  const yaw = joint(k, { kind: 'yaw', pivot: at(k.fr, t.x, s, up), parent: -1, rest });
+  into(k, yaw);
   let face = z * 0.3;
   let gunUp = up + z * 0.22;
   let profile: P2[] = [[0, 1], [1, 0.8]];
   if (torpedo) {
-    // A torpedo mount: the tubes lie on a low turntable, centred over it.
+    // A torpedo mount: the tubes lie on a low turntable, centred over it; they train but do not elevate.
     spin(team, at(k.fr, t.x, s, up), at(k.fr, t.x, s, up + 0.5), [[0, z * 0.45], [1, z * 0.42]], detail(12, 8), HOUSE);
     const r = Math.max(0.2, t.calibre * 0.8);
     const n = Math.max(1, t.barrels);
     for (let i = 0; i < n; i++) {
       const off = (i - (n - 1) / 2) * r * 2.3;
-      spin(gun, at(k.fr, t.x - dir * t.length * 0.4, s + off, up + 0.5 + r), at(k.fr, t.x + dir * t.length * 0.6, s + off, up + 0.5 + r), [[0, r], [0.9, r], [1, r * 0.92]], detail(8, 5), PAINT.metal);
+      spin(mount, at(k.fr, t.x - dir * t.length * 0.4, s + off, up + 0.5 + r), at(k.fr, t.x + dir * t.length * 0.6, s + off, up + 0.5 + r), [[0, r], [0.9, r], [1, r * 0.92]], detail(8, 5), PAINT.metal);
     }
     team.emit(k.team);
-    gun.emit(k.fixed);
+    mount.emit(k.fixed);
+    into(k, -1);
     return;
   }
   if (tub) {
-    // A light gun's open tub: a low round wall, the gun on its pedestal inside.
+    // A light gun's open tub: a low round wall (fixed to the deck), the gun on its pedestal inside.
     const r = z * 0.5;
     const h = Math.min(1.0, Math.max(0.35, z * 0.32));
     const th = Math.max(0.05, r * 0.08);
-    sweep(team, at(k.fr, t.x, s, up), sub3(at(k.fr, 0, 0, 1), at(k.fr, 0, 0, 0)), sub3(at(k.fr, 1, 0, 0), at(k.fr, 0, 0, 0)), [[r, 0], [r, h], [r - th, h], [r - th, 0.05]], 0, Math.PI * 2, detail(14, 8), HOUSE);
-    spin(gun, at(k.fr, t.x, s, up), at(k.fr, t.x, s, up + h * 0.9), [[0, r * 0.22], [1, r * 0.16]], 6, PAINT.metal);
+    const wall = new Mesh();
+    sweep(wall, at(k.fr, t.x, s, up), sub3(at(k.fr, 0, 0, 1), at(k.fr, 0, 0, 0)), sub3(at(k.fr, 1, 0, 0), at(k.fr, 0, 0, 0)), [[r, 0], [r, h], [r - th, h], [r - th, 0.05]], 0, Math.PI * 2, detail(14, 8), HOUSE);
+    into(k, -1);
+    wall.emit(k.team, { crease: 35 });
+    into(k, yaw);
+    spin(mount, at(k.fr, t.x, s, up), at(k.fr, t.x, s, up + h * 0.9), [[0, r * 0.22], [1, r * 0.16]], 6, PAINT.metal);
     face = r * 0.1;
     gunUp = up + h * 0.95;
   } else if (kind === 'round') {
@@ -966,7 +986,7 @@ function turret(k: Kit, t: NavalTurret, fb: number, deckAt: (x: number, s?: numb
     const ref = sub3(at(k.fr, dir, 0, 0), at(k.fr, 0, 0, 0));
     const upV = sub3(at(k.fr, 0, 0, 1), at(k.fr, 0, 0, 0));
     sweep(team, at(k.fr, t.x, s, up + 0.15), upV, ref, [[r, 0], [r - h * 0.15, h], [r - h * 0.15 - 0.06, h], [r - 0.06, 0]], -1.75, 1.75, detail(8, 5), HOUSE);
-    spin(gun, at(k.fr, t.x, s, up), at(k.fr, t.x, s, up + h * 0.45), [[0, z * 0.18], [1, z * 0.14]], 8, PAINT.metal);
+    spin(mount, at(k.fr, t.x, s, up), at(k.fr, t.x, s, up + h * 0.45), [[0, z * 0.18], [1, z * 0.14]], 8, PAINT.metal);
     face = r * 0.6;
     gunUp = up + h * 0.5;
   } else if (kind === 'box') {
@@ -990,16 +1010,24 @@ function turret(k: Kit, t: NavalTurret, fb: number, deckAt: (x: number, s?: numb
     gunUp = up + Math.min(h * 0.45, z * 0.22 + 0.4);
     profile = [[0, 1.5], [0.07, 1.5], [0.09, 1], [1, 0.8]];
   }
-  const r = Math.max(0.05, t.calibre * 0.8);
-  const nb = detail(8, 5);
-  for (let i = 0; i < t.barrels; i++) {
-    const off = (i - (t.barrels - 1) / 2) * Math.max(r * 3, (z * 0.6) / Math.max(1, t.barrels));
-    const a = at(k.fr, t.x + dir * face, s + off, gunUp);
-    const e = at(k.fr, t.x + dir * (face + t.length), s + off, gunUp + z * 0.03);
-    spin(gun, a, e, profile.map(([p, q]) => [p, q * r] as P2), nb, PAINT.metal);
-  }
   if (team.idx.length) team.emit(k.team, { crease: 35 });
-  if (gun.idx.length) gun.emit(k.fixed);
+  if (mount.idx.length) mount.emit(k.fixed);
+  if (t.barrels > 0) {
+    // The guns rise z * 0.03 over their length: that is the elevation they are built at.
+    const rise = z * 0.03;
+    const pitch = joint(k, { kind: 'pitch', pivot: at(k.fr, t.x + dir * face, s, gunUp), parent: yaw, rest, pitch: Math.atan2(rise, t.length) });
+    into(k, pitch);
+    const r = Math.max(0.05, t.calibre * 0.8);
+    const nb = detail(8, 5);
+    for (let i = 0; i < t.barrels; i++) {
+      const off = (i - (t.barrels - 1) / 2) * Math.max(r * 3, (z * 0.6) / Math.max(1, t.barrels));
+      const a = at(k.fr, t.x + dir * face, s + off, gunUp);
+      const e = at(k.fr, t.x + dir * (face + t.length), s + off, gunUp + rise);
+      spin(gun, a, e, profile.map(([p, q]) => [p, q * r] as P2), nb, PAINT.metal);
+    }
+    if (gun.idx.length) gun.emit(k.fixed);
+  }
+  into(k, -1);
 }
 
 // ---------------------------------------------------------------- radars, launchers, funnels, masts
@@ -1090,15 +1118,16 @@ function launcher(k: Kit, l: NonNullable<NavalSpec['launchers']>[number], fb: nu
     const m = new Mesh();
     const team = new Mesh();
     const seg = detail(10, 6);
+    const s0 = l.side ?? beam * 0.25;
     for (const sd of [-1, 1]) {
       for (let i = 0; i < n; i++) {
-        const s = sd * (beam * 0.25 + i * d * 1.1);
+        const s = sd * (s0 + i * d * 1.1);
         const h0 = up + d * 0.5;
         const dx = (l.length / 2) * Math.cos(e);
         const dz = (l.length / 2) * Math.sin(e);
         spin(team, at(k.fr, l.x - dx, s, h0 + (l.length / 2) * Math.sin(e) - dz), at(k.fr, l.x + dx, s, h0 + (l.length / 2) * Math.sin(e) + dz), [[0, d * 0.48], [0.03, d * 0.5], [0.97, d * 0.5], [1, d * 0.46]], seg, grey(0.8));
       }
-      spin(m, at(k.fr, l.x - l.length * 0.3, sd * (beam * 0.25 + (n - 1) * d * 0.55), up), at(k.fr, l.x - l.length * 0.3, sd * (beam * 0.25 + (n - 1) * d * 0.55), up + d * 0.5), [[0, d * 0.3], [1, d * 0.3]], 4, PAINT.metal, Math.PI / 4);
+      spin(m, at(k.fr, l.x - l.length * 0.3, sd * (s0 + (n - 1) * d * 0.55), up), at(k.fr, l.x - l.length * 0.3, sd * (s0 + (n - 1) * d * 0.55), up + d * 0.5), [[0, d * 0.3], [1, d * 0.3]], 4, PAINT.metal, Math.PI / 4);
     }
     team.emit(k.team);
     m.emit(k.fixed);

@@ -366,7 +366,18 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'northampton': { cls: 'heavy-cruiser', L: 182.9, B: 20.1, fb: 8, fc: [-24, 2.4], guns: '56:3/203 44:3/203^2.5 -52:3/203b', funnels: [[6, 12, 4], [-8, 12, 4]], blocks: [[32, 22, 20, 5, 1]], masts: [[26, 30], [-20, 24]] },
   'portland': { cls: 'heavy-cruiser', L: 186.0, B: 20.1, fb: 8, fc: [-24, 2.4], guns: '58:3/203 46:3/203^2.5 -54:3/203b', funnels: [[6, 12, 4], [-8, 12, 4]], blocks: [[34, 20, 22, 6, 1]], masts: [[26, 32], [-20, 26]] },
   'pensacola': { cls: 'heavy-cruiser', L: 178.5, B: 19.9, fb: 8, fc: [-24, 2.4], guns: '58:2/203 46:3/203^2.5 -44:3/203^2.5b -56:2/203b', funnels: [[4, 12, 4], [-8, 12, 4]], blocks: [[30, 22, 20, 6, 1]], masts: [[24, 30], [-18, 26]] },
-  'new-orleans': { cls: 'heavy-cruiser', L: 179.2, B: 18.8, fb: 8, fc: [-20, 2.4], guns: '54:3/203 42:3/203^2.5 -50:3/203b', funnels: [[4, 11, 4], [-8, 11, 4]], blocks: [[30, 16, 22, 6, 2]], masts: [[22, 26], [-18, 22]] },
+  // New Orleans: deck line and plan, turrets, funnels, towers, directors and masts measured on the Bureau of
+  // Construction and Repair outboard profile and main deck plan of San Francisco (CA-38), as fitted about 1942 (sources.md).
+  'new-orleans': {
+    cls: 'heavy-cruiser', L: 179.2, B: 18.8, fb: 6.2,
+    hull: [[89.4, 8.8, 0.3], [85, 8.5, 2.1], [80, 8.2, 3.3], [75, 7.8, 4.6], [70, 7.4, 4.9], [65, 7.1, 5.9], [60, 6.9, 6.1], [50, 6.5, 6.9], [40, 6.35, 7.6], [30, 6.25, 8.1], [15, 6.2, 8.7], [0, 6.2, 9.0], [-25, 6.1, 9.1], [-41, 6.05, 8.6], [-49.6, 6.0, 8.3], [-50.4, 4.5, 8.25], [-61, 4.6, 7.9], [-70, 4.7, 6.8], [-76, 4.75, 6.6], [-81, 4.8, 5.2], [-85.5, 4.85, 3.7], [-88.8, 4.9, 1.0]],
+    guns: '54.2:3/203^0.4 39.6:3/203^3.6 -55:3/203^0.5b 27,6.6:1/127^1.4 14.5,6.6:1/127^1.4 5.5,6.6:1/127^1.4 -1,6.6:1/127^1.4',
+    funnels: [[13.6, 14.8, 5.3, 4.4, 0.02], [-3.1, 14.2, 6.0, 4.8, 0.02]],
+    blocks: [[35, -6, 10.4, 6.1], [-6, -29.5, 10.0, 6.0], [-29.7, -52, 10.1, 5.0], [30, 24.6, 21.5, 2.2]],
+    raised: [[34.5, 18, 10.4, 15.6, 4.4, 1], [33, 19.5, 15.6, 17.8, 4.3], [31, 20.5, 17.8, 19.9, 3.9], [33.8, 21.4, 19.9, 20.3, 3.9], [26.8, 23, 24.2, 26.9, 1.6], [-46.9, -49.8, 10.1, 16.6, 1.6], [-40.7, -50.7, 13.4, 14.3, 3.5], [-33.6, -34.7, 10, 20.8, 0.5]],
+    dirs: [[-45.3, 19.4, 1.5]],
+    masts: [[20.6, 30.9, 't'], [-39.2, 31, 't']],
+  },
   'brooklyn': { cls: 'light-cruiser', L: 185.4, B: 18.6, fb: 8, guns: '62:3/152 51:3/152^2.5 40:3/152 -52:3/152^2.5b -64:3/152b', funnels: [[6, 11, 4], [-6, 11, 4]], blocks: [[30, 18, 20, 6, 1]], masts: [[22, 26], [-14, 22]] },
   'cleveland': { cls: 'light-cruiser', L: 186.0, B: 20.2, fb: 8, sheer: 3, guns: '56:3/152 45:3/152^2.5 -48:3/152^2.5b -60:3/152b', funnels: [[6, 11, 4], [-8, 11, 4]], blocks: [[32, 18, 22, 6, 2], [-14, -24, 16, 4]], masts: [[16, 26], [-10, 22]] },
   'fargo': { cls: 'light-cruiser', L: 186.0, B: 20.2, fb: 8, sheer: 3, guns: '56:3/152 45:3/152^2.5 -48:3/152^2.5b -60:3/152b', funnels: [[-2, 11, 5]], blocks: [[32, 14, 22, 7, 2], [-14, -24, 16, 4]], masts: [[16, 26], [-10, 22]] },
@@ -436,7 +447,21 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   // United States.
   // Clemson: deck line, deckhouses, the four stacks and the tall masts from the Bureau of Ships outboard profile (sources.md).
   'clemson': { cls: 'destroyer', L: 95.8, B: 9.4, fb: 3.8, sheer: 1.6, guns: '29:1/102^1.0 6,3.6:1/102^1.8 -37:1/102^1.4b -45:1/76b', funnels: [[14.5, 7.6, 2.4], [9, 7.6, 2.4], [1.5, 7.7, 2.4], [-3.5, 7.5, 2.4]], blocks: [[26.5, 18.5, 9.3, 2.2, 1], [17, -7, 5.6, 2.2], [-27, -42, 5.3, 2.4]], raised: [[25, 19, 9.3, 10.8, 2.6], [-13.5, -16, 3.5, 10.0, 1.2]], masts: [[17.5, 26.5], [-31.5, 12.2]] },
-  'farragut': { cls: 'destroyer', L: 104.0, B: 10.4, fb: 5.4, fc: [-14, 1.4], guns: '38:1/127 31:1/127^2 -24:1/127^2b -34:1/127b -44:1/127b', funnels: [[8, 7, 2.8], [-4, 7, 2.8]], blocks: [[24, 18, 11, 3, 1]], masts: [[17, 16]] },
+  // Farragut: forecastle and main deck, the bridge, the single stack and the galley pipe, the boats, the deckhouses,
+  // gun and tube places and both masts measured on the Bureau of Construction and Repair outboard profile of Hull
+  // (DD-350) (sources.md); beam published, the plan estimated.
+  'farragut': {
+    cls: 'destroyer', L: 104.0, B: 10.4, fb: 5.7,
+    hull: [[52.3, 6.9, 0.15], [48, 6.7, 2.2], [40, 6.45, 4.0], [30, 6.2, 5.0], [20, 5.85, 5.2], [10.2, 5.7, 5.2], [8.0, 3.05, 5.2], [0, 3.0, 5.2], [-20, 3.05, 5.1], [-35, 3.15, 4.7], [-45, 3.25, 4.0], [-51.0, 3.3, 3.2]],
+    guns: '36:1/127e 28.7:1/127e^1.6 -6:1/127^2.6b -33:1/127^2.2b -41.5:1/127b',
+    funnels: [[0.5, 10.9, 3.75, 3.2, 0.03], [8.2, 11.5, 0.6, 0.6, 0]],
+    blocks: [[21, 10, 8.8, 3.0, 0.8], [20.6, 14.3, 11.9, 2.6, 0.6], [19.9, 15.9, 12.6, 1.4], [7.4, -9.4, 5.6, 2.2], [-25.1, -39.4, 5.3, 2.4]],
+    raised: [[-26.7, -29.5, 9.3, 10.3, 1.0]],
+    // The boats on their davits either side (mirrored).
+    extra: [[-1.5, 6.5, 5.9, 7.6], [7.7, 14.2, 6.0, 7.8]].map(([x0, x1, z0, z1]) => ({ top: [[x1, z1], [x0, z1]] as P2[], bottom: [[x1, z1 - 0.4], [(x0 + x1) / 2, z0], [x0, z1 - 0.4]] as P2[], plan: [[x1, 0.3], [(x0 + x1) / 2, 1.0], [x0, 0.3]] as P2[], side: 4.3, round: 2.5, stations: 8 })),
+    masts: [[13.8, 21.5, 't'], [-29.9, 19.8]],
+    ttAt: [-9.1, 10.4],
+  },
   // Mahan: deck line, deckhouses, funnels and mast from the Bureau of Ships outboard profile of Dunlap, her near sister (sources.md).
   'mahan': { cls: 'destroyer', L: 104.0, B: 10.5, fb: 6.0, fc: [9, 2.1], sheer: 0.6, guns: '37:1/127e 28:1/127e^2.4 -27:1/127^2.7b -37:1/127^2.7b -45:1/127b', funnels: [[7.5, 11.4, 3.4], [-6, 9.7, 3.4]], blocks: [[26, 12.5, 12.8, 3.2, 1], [32, 24, 8.4, 3.0], [3, -12, 5.6, 2.2], [-21, -41, 6.6, 3.0]], masts: [[11.5, 21.5, 't']] },
   'bagley': { cls: 'destroyer', L: 104.0, B: 10.9, fb: 5.4, fc: [-12, 1.4], guns: '38:1/127 31:1/127^2 -30:1/127^2b -42:1/127b', funnels: [[2, 7.5, 3.2]], blocks: [[24, 18, 11, 3, 1]], masts: [[16, 16]] },
@@ -596,8 +621,9 @@ const AFT: Record<string, Partial<ShipO>> = {
   'omaha': { blocks: [[-22, -32, 11, 3.5]], dirs: [[-27, 13.5]], sl: [[-12, 14]], masts: [[34, 26, 't'], [-30, 20, 't']], launchers: [{ x: -8, length: 5, width: 2.2, kind: 'tubes', count: 1, elevation: 0 }] },
   'northampton': { blocks: [[-12, -26, 14, 6.5], [-26, -34, 15.5, 4]], dirs: [[-30, 19]], sl: [[-1, 17]], masts: [[26, 30, 't'], [-20, 24, 't']] },
   'portland': { blocks: [[-12, -24, 14, 6.5], [-25, -34, 15.5, 4]], dirs: [[-30, 19]], sl: [[-1, 17]], masts: [[26, 32, 't'], [-20, 26, 't']] },
+  // The searchlight platforms round the after funnel (CA-38 outboard profile).
+  'new-orleans': { sl: [[6.5, 14.2]] },
   'pensacola': { blocks: [[-12, -22, 13.5, 5], [-22, -32, 14, 4]], dirs: [[-28, 17]], sl: [[-2, 16]], masts: [[24, 30, 't'], [-18, 26, 't']] },
-  'new-orleans': { blocks: [[-10, -18, 14, 6], [-18, -32, 15, 4.5]], dirs: [[-28, 19]], sl: [[-2, 17]], masts: [[22, 26, 't'], [-18, 22]] },
   'brooklyn': { blocks: [[-10, -30, 13.5, 6], [-14, -26, 17, 4]], dirs: [[-24, 20]], sl: [[0, 16]] },
   'cleveland': { blocks: [[-12, -30, 13, 6.5]], dirs: [[-22, 19]], masts: [[16, 26, 't'], [-10, 22]] },
   'fargo': { blocks: [[-10, -30, 13, 6.5]], dirs: [[-22, 19]], masts: [[16, 26, 't'], [-10, 22]] },
@@ -664,7 +690,6 @@ const AFT: Record<string, Partial<ShipO>> = {
 
   // United States destroyers: the 5-inch/38 in enclosed gunhouses forward.
   'clemson': { masts: [[17.5, 26.5], [-31.5, 12.2]] },
-  'farragut': { guns: '38:1/127e 31:1/127e^2 -24:1/127^2b -34:1/127b -44:1/127b', blocks: [[-20, -29, 7.6, 2.6]], masts: [[17, 16, 't'], [-14, 10]] },
   'mahan': { masts: [[11.5, 21.5, 't'], [-16.5, 7.3]] },
   'bagley': { guns: '38:1/127e 31:1/127e^2 -30:1/127^2b -42:1/127b', masts: [[16, 16, 't']] },
   'porter': { masts: [[20, 18, 't'], [-16, 10]] },
@@ -767,7 +792,18 @@ const C: Record<string, Parameters<typeof ship>[0]> = {
   'fairmile-d': { cls: 'torpedo-boat', L: 35.1, B: 6.4, fb: 2.4, sheer: 1.0, guns: '12:1/57 4,2:2/13^1 -10:1/57b', blocks: [[6, 0, 5.0, 2.2, 0.6]], masts: [[2, 5]], launchers: [{ x: -3, length: 6, width: 1.3, kind: 'tubes', count: 2, elevation: 0 }] },
   'r-boot': { cls: 'patrol-boat', L: 37.8, B: 5.8, fb: 2.2, sheer: 0.8, guns: '12:1/20 -12:1/37b', blocks: [[4, -2, 4.4, 2, 0.6]], masts: [[0, 6]], funnels: [[-3, 2, 1.2]] },
   'project-183': { cls: 'torpedo-boat', L: 25.4, B: 6.2, fb: 1.6, sheer: 0.6, guns: '7:2/25 -8:2/25b', blocks: [[4, -2, 3.2, 1.8, 0.5]], masts: [[0, 4]], launchers: [{ x: -2, length: 6, width: 1.2, kind: 'tubes', count: 1, elevation: 0 }] },
-  'project-206': { cls: 'torpedo-boat', L: 34.7, B: 6.7, fb: 2.0, sheer: 0.8, guns: '10:2/30m -12:2/30bm', blocks: [[4, -4, 4.0, 2.4, 0.8]], masts: [[0, 5]], launchers: [{ x: 0, length: 6, width: 1.4, kind: 'tubes', count: 2, elevation: 0 }] },
+  // Project 206 (Shershen): hull deck line and plan, the long narrow deckhouse, the two AK-230 turrets, the four tubes
+  // along the sides, the lattice mast with its radome and the director, measured on the CC BY three-view by Ebs08 (sources.md).
+  'project-206': {
+    cls: 'torpedo-boat', L: 34.7, B: 6.7, fb: 2.0, transom: 0.95,
+    hull: [[17.3, 2.65, 0.05], [15.9, 2.55, 1.0], [14.2, 2.45, 1.9], [10.5, 2.3, 2.65], [6.7, 2.15, 3.1], [3, 2.0, 3.3], [-3, 1.85, 3.35], [-10, 1.7, 3.3], [-17.1, 1.5, 3.2]],
+    guns: '8:2/30m^0.3 -11.1:2/30bm^0.3',
+    blocks: [[6.3, 2.3, 4.1, 1.05, 0.6], [2.3, -9.6, 3.7, 1.05], [6.0, 2.3, 4.8, 1.0, 0.5]],
+    raised: [[-3.0, -4.3, 4.1, 6.0, 0.6]],
+    masts: [[1.1, 7.15, 'l', 2.15]],
+    radars: [{ x: 1.1, up: 5.5, kind: 'dome', size: 1.4 }],
+    launchers: [{ x: 3.5 - 4.45, length: 8.9, width: 0.7, kind: 'tubes', count: 1, elevation: 0, side: 2.7, up: 0.5 }, { x: -13.2 + 4.45, length: 8.9, width: 0.7, kind: 'tubes', count: 1, elevation: 0, side: 2.4, up: 0.5 }],
+  },
   'type-143-fac': { cls: 'fast-attack-craft', L: 57.6, B: 7.8, fb: 3.2, sheer: 1.0, guns: '22:1/76m -22:1/76bm', blocks: [[12, -6, 7, 3, 1]], masts: [[4, 9]], launchers: [{ x: -12, length: 6, width: 4, kind: 'box' }] },
   'pc-subchaser': { cls: 'patrol-boat', L: 52.9, B: 7.0, fb: 3.2, sheer: 1.0, guns: '18:1/76 -18:1/40b', funnels: [[-2, 3.5, 1.8]], blocks: [[10, 2, 6.5, 2.2, 0.8]], masts: [[6, 10]] },
   // Corvettes, sloops, escorts and frigates.
@@ -879,6 +915,20 @@ N['essex'] = carrier({
   island: [[48, -48, 17.5, 17.2, 2.8], [22, -22, 27, 17.2, 3.2, 1], [16, -2, 31, 17.3, 2.6, 1], [-4, -20, 34, 17.3, 3.6, 3]],
   masts: [[6, 26, 17.3]],
   turrets: level('42,17.2:2/127o 33,17.2:2/127^3o -33,17.2:2/127^3bo -42,17.2:2/127bo', 16, 15),
+});
+// Lexington (CV-2, as in 1941): the battlecruiser hull plated up to the flight deck, the deck as wide as the hull and
+// narrowing to a squared end at the bow, the small island and the huge flat-sided funnel in line on the starboard
+// edge, the two pairs of twin 8-inch turrets fore and aft of them (270.7 m overall, 266.4 m on the waterline, 32.1 m
+// beam; flight deck 264 x 32.3 m). The flight deck's height over the water is measured on the outboard profile
+// (NARA 76058200, sources.md); the island's, funnel's and turrets' places and the funnel's height on a broadside
+// aerial photo of 1930 (general proportions).
+N['lexington-cv2'] = carrier({
+  cls: 'carrier', L: 266.4, B: 32.1, deck: 15.2,
+  plan: [[132, -9], [132, 9], [126, 13.5], [112, 16.15], [-122, 16.15], [-132, 13.5], [-132, -13.5], [-122, -16.15], [112, -16.15], [126, -13.5]],
+  island: [[36, 22, 22, 13.2, 3.0], [33, 25, 29, 13.2, 2.6, 1], [31, 27, 35, 13.2, 2.0]],
+  masts: [[28, 39, 13.2]],
+  turrets: level('52,12:2/203o 43,12:2/203^3o -25,12:2/203^3bo -35,12:2/203bo', 15.2, 14.2),
+  more: { funnels: [{ x: -3, height: 24, diameter: 30, width: 9, side: 11.8, rake: 0 }] },
 });
 // Yorktown: a straight deck open at bow and stern, a compact island with the funnel built in and a tripod mast, the
 // 5-inch singles in galleries at the deck's four corners (251.4 m long, 25.4 m beam on the waterline; 25,500 t full).
@@ -1856,7 +1906,16 @@ const R2: Record<string, ShipO> = {
   'drache': { cls: 'minelayer', L: 83, B: 13, fb: 5.6, fc: [10, 1.6], sheer: 2.4, transom: 0.75, guns: '32:1/88 -36:1/88b -22:1/37s^2.5', funnels: [[2, 8, 3.6, 3]], blocks: [[18, 6, 11.5, 4.5, 1], [15, 9, 13.6, 3]], masts: [[12, 16], [-12, 14]], extra: [blockOf(-4, -16, 4.2, 6.8, 4.6)] },
   // Type 1935 minesweeper (M 17): a coal-and-oil escort, two 10.5 cm guns fore and aft, the bridge, one funnel (68.1 x
   // 8.7 m; 874 t full).
-  'm1935-minesweeper': { cls: 'minesweeper', L: 68.1, B: 8.7, fb: 4.2, fc: [-4, 1.3], sheer: 2, transom: 0.7, guns: '24:1/105 -24:1/105b^1.5 -10:1/37s^1.6', funnels: [[-1, 5, 2.8]], blocks: [[16, 7, 9.2, 3, 1], [14, 9, 10.8, 2.2]], masts: [[10, 14]] },
+  // M 1935 (M-1 class): deck line, bridge, funnel, masts, deckhouses and gun places measured on the ONI 204 side
+  // profile with its height scale (sources.md); beam published.
+  'm1935-minesweeper': {
+    cls: 'minesweeper', L: 68.1, B: 8.7, fb: 3.7,
+    hull: [[34.05, 4.8, 0.1], [30, 4.6, 1.9], [24, 4.4, 3.3], [16, 4.1, 4.2], [8, 3.8, 4.35], [-10, 3.4, 4.35], [-24, 3.3, 4.0], [-30, 3.35, 3.5], [-34.05, 3.45, 2.8]],
+    guns: '23.5:1/105 -19.5:1/105b^0.6 -15.5:1/37s^1.2',
+    funnels: [[6.3, 6.45, 3.6]],
+    blocks: [[19.4, 11, 8.1, 3.2, 1], [18.5, 11.5, 9.7, 2.4], [11, -8, 5.1, 2.5], [-8.1, -16.9, 4.8, 2.2]],
+    masts: [[11.8, 20.5], [-9.6, 10.0]],
+  },
   // Type 1943 minesweeper (M 802): the simplified flush-decker, one 10.5 cm forward, the bridge, the short funnel, light
   // flak aft (62.3 x 8.9 m; 821 t full).
   'm1943-minesweeper': { cls: 'minesweeper', L: 62.3, B: 8.9, fb: 4, sheer: 1.8, transom: 0.75, guns: '22:1/105 -20:1/37s^1.4 -8:4/20s^2', funnels: [[-1, 4, 2.6]], blocks: [[14, 4, 8.8, 3.2, 1], [12, 7, 10.2, 2.2]], masts: [[7, 13]] },
@@ -1919,10 +1978,12 @@ const R2: Record<string, ShipO> = {
   'shmel': { cls: 'gunboat', L: 27.7, B: 4.3, fb: 1.4, sheer: 0.6, transom: 0.85, guns: '8:1/76^0.4 -9:2/25mb^0.6', blocks: [[3, -3, 3.0, 1.6, 0.4]], masts: [[0, 5]], launchers: [{ x: -4.5, length: 2.4, width: 1.4, kind: 'tubes', count: 1, elevation: 0.3, up: 0 }] },
   // Pr.191: a post-war armoured river boat, the T-34-85 turret forward, the armoured wheelhouse, a 25 mm aft (30 x 4.6 m,
   // estimate).
-  'pr-191': { cls: 'gunboat', L: 30, B: 4.6, fb: 1.4, sheer: 0.6, transom: 0.85, guns: '7.5:1/85^0.5 -8:2/25mb^0.4', blocks: [[2, -2.5, 3.2, 1.4, 0.4]], masts: [[0, 5]] },
+  // Project 191M (BK-167 class): 26.0 x 4.43 m (navypedia); the layout scaled to it.
+  'pr-191': { cls: 'gunboat', L: 26.0, B: 4.43, fb: 1.4, sheer: 0.6, transom: 0.85, guns: '6.5:1/85^0.5 -7:2/25mb^0.4', blocks: [[1.7, -2.2, 3.2, 1.3, 0.4]], masts: [[0, 5]] },
   // MBK (Pr.161): a large armoured gunboat, two T-34-85 turrets fore and aft, the armoured conning tower, light AA
   // guns (49.8 x 6.2 m, estimate).
-  'mbk-161': { cls: 'gunboat', L: 49.8, B: 6.2, fb: 1.8, sheer: 0.8, transom: 0.85, guns: '15:1/85^0.6 -15:1/85b^0.6 5:1/37s^1.6 -6:1/37bs^1.6', blocks: [[3, -3.5, 4.4, 1.8, 0.5], [1.5, -1.5, 5.6, 1.1]], masts: [[0, 8]] },
+  // Project 161 (MBK, BK-501 class): 36.2 x 5.5 m (navypedia), side 1.5 m high; the layout scaled to it.
+  'mbk-161': { cls: 'gunboat', L: 36.2, B: 5.5, fb: 1.5, sheer: 0.6, transom: 0.85, guns: '11:1/85^0.6 -11:1/85b^0.6 3.6:1/37s^1.6 -4.4:1/37bs^1.6', blocks: [[2.2, -2.5, 4.1, 1.6, 0.5], [1.1, -1.1, 5.3, 1.0]], masts: [[0, 8]] },
   // Pr.201 (SO-1): a small sub-chaser, a flush steel hull, the bridge and low funnel, twin 25 mm mounts fore and aft,
   // the RBU launchers (42 x 6.1 m; 215 t).
   'so-1': { cls: 'patrol-boat', L: 42, B: 6.1, fb: 2.6, sheer: 1.2, transom: 0.8, guns: '13:2/25m -14:2/25mb', funnels: [[-3, 2.6, 2.4, 1.8]], blocks: [[7, 0, 5.4, 2.4, 0.8], [5, 1, 6.6, 1.8]], masts: [[3, 10]], radars: [{ x: 3, up: 8.5, kind: 'array', size: 1.6 }] },
@@ -2032,6 +2093,8 @@ const R2: Record<string, ShipO> = {
   'centurion-1911': { cls: 'battleship', L: 182.1, B: 27.1, fb: 8, sheer: 2.5, guns: '62:2/343 50:2/343^2.5 -4:2/343 -46:2/343^2.5b -60:2/343b', funnels: [[18, 14, 7], [6, 14, 6]], masts: [[26, 34, 't'], [-20, 24]] },
 };
 for (const [name, o] of Object.entries(R2)) N[name] = ship(withAft(name, o));
+// Project 186 (MBK/MKL): the improved 161 with the T-34-85's turrets, 36.2 x 5.2 m.
+N['mbk-186'] = ship({ ...R2['mbk-161'], B: 5.2 });
 
 // ---------------------------------------------------------------- boats that shared a look-alike's figure
 // The motor torpedo boats, gunboats and launches whose outlines differ from the boat they were drawn as (main
@@ -2217,12 +2280,12 @@ const ALIASES: Record<string, string> = {
   'ussr_mbk_161_1943': 'mbk-161',
   'ussr_bmo': 'mo-4',
   'ussr_skr_groza_1943': 'uragan',
-  'ussr_mkl_186': 'mbk-161',
+  'ussr_mkl_186': 'mbk-186',
   'ussr_pr_183': 'project-183',
   'ussr_mpk_201m': 'so-1',
   'ussr_mbk_161_1944': 'mbk-161',
   'ussr_mpk_204': 'poti',
-  'ussr_mkl_186_mk85': 'mbk-161',
+  'ussr_mkl_186_mk85': 'mbk-186',
   'ussr_mpk_201k': 'so-1',
   'ussr_skr_pr50plo_rosomacha': 'riga-frigate',
   'ussr_mpk_pr12412p': 'pauk',
@@ -2410,8 +2473,8 @@ const ALIASES: Record<string, string> = {
   'uss_cv_wasp': 'yorktown',
   'uss_cv_wasp_story': 'yorktown',
   'uss_cv_immortal': 'yorktown',
-  'uss_cv_lexington': 'essex',
-  'uss_cv_lexington_story': 'essex',
+  'uss_cv_lexington': 'lexington-cv2',
+  'uss_cv_lexington_story': 'lexington-cv2',
   'hms_cv_illustrious': 'yorktown',
   'ital_cv_aquila': 'yorktown',
   'us_aircraftcarrier_enterprise': 'nimitz-carrier',

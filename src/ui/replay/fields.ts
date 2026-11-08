@@ -4,14 +4,15 @@
  * parameter (`data/flight.ts`), and the range, bearing and aspect from the
  * followed unit - Tacview's label and telemetry fields.
  *
- * Values are metric or imperial (feet, knots, feet a minute, nautical
- * miles, pounds) as the viewer chose; an estimate is written with "~".
+ * Values are in the viewer's units (`state/unitsStore.ts`); an estimate is
+ * written with "~".
  */
 
 import { flightSeries, PARAM_BY_ID, PARAMS, valueAt, type FlightSeries, type ParamKind } from '../../data/flight';
 import { num, t } from '../../i18n';
 import type { Dataset } from '../../state/types';
 import type { UnitSystem } from '../../state/replayStore';
+import { formatIn } from '../../units/format';
 import type { Unit } from './units';
 import { useReplayStore } from '../../state/replayStore';
 import { geoFrame } from '../../world/geoFrame';
@@ -50,9 +51,18 @@ export function declinationAt(d: Dataset, p: { x: number; y: number; z: number }
 function headingText(c: FieldContext, trueHeading: number): string {
   if (useReplayStore.getState().geo.magnetic) {
     const decl = declinationAt(c.d, c.pos, c.time);
-    if (Number.isFinite(decl)) return t('replay.unit.degMag', { v: formatValue('heading', trueHeading - decl, c.units).replace('°', '') });
+    if (Number.isFinite(decl)) return magneticText(trueHeading - decl, c.units);
   }
   return formatValue('heading', trueHeading, c.units);
+}
+
+/** A magnetic heading with its mark: "087°M", or "1547 mil M". */
+export function magneticText(heading: number, units: UnitSystem): string {
+  const mil = units.angle === 'mil';
+  const full = mil ? 6400 : 360;
+  const v = mil ? heading * (6400 / 360) : heading;
+  const r = Math.round(((v % full) + full) % full) % full;
+  return t(mil ? 'units.v.milMag' : 'replay.unit.degMag', { v: String(r).padStart(mil ? 4 : 3, '0') });
 }
 
 /** Every field, in the order lists show them. */
@@ -70,50 +80,22 @@ export function fieldShort(id: string): string {
   return t(`replay.short.${id}`);
 }
 
-const FT = 0.3048;
-const KT = 1852 / 3600;
-const NM = 1852;
-const LB = 0.45359237;
-const GAL = 3.785411784;
-
-/** A value of a kind, written with its unit. */
+/** A value of a kind, written with its unit in the viewer's units (`units/format.ts`). */
 export function formatValue(kind: ParamKind, v: number, units: UnitSystem): string {
   if (!Number.isFinite(v)) return '—';
-  const imp = units === 'imperial';
   switch (kind) {
-    case 'altitude':
-      return imp ? t('replay.unit.ft', { v: num(v / FT, 0) }) : t('replay.unit.m', { v: num(v, 0) });
-    case 'distance':
-      if (imp) return Math.abs(v) >= NM ? t('replay.unit.nm', { v: num(v / NM, 1) }) : t('replay.unit.ft', { v: num(v / FT, 0) });
-      return Math.abs(v) >= 10000 ? t('replay.unit.km', { v: num(v / 1000, 1) }) : t('replay.unit.m', { v: num(v, 0) });
-    case 'speed':
-      return imp ? t('replay.unit.kt', { v: num(v / KT, 0) }) : t('replay.unit.kmh', { v: num(v * 3.6, 0) });
-    case 'vspeed':
-      return imp ? t('replay.unit.fpm', { v: num((v / FT) * 60, 0) }) : t('replay.unit.ms', { v: num(v, 1) });
-    case 'angle':
-      return t('replay.unit.deg', { v: num(v, 1) });
-    case 'heading':
-      return t('replay.unit.deg', { v: String(Math.round(((v % 360) + 360) % 360) % 360).padStart(3, '0') });
-    case 'rate':
-      return t('replay.unit.degs', { v: num(v, 1) });
     case 'g':
       return t('replay.unit.g', { v: num(v, 1) });
     case 'mach':
       return t('replay.unit.mach', { v: num(v, 2) });
     case 'ratio':
       return t('replay.unit.pct', { v: num(v * 100, 0) });
-    case 'mass':
-      return imp ? t('replay.unit.lb', { v: num(v / LB, 0) }) : t('replay.unit.kg', { v: num(v, 0) });
-    case 'massFlow':
-      return imp ? t('replay.unit.lbh', { v: num(v / LB, 0) }) : t('replay.unit.kgh', { v: num(v, 0) });
-    case 'volume':
-      return imp ? t('replay.unit.gal', { v: num(v / GAL, 0) }) : t('replay.unit.l', { v: num(v, 0) });
     case 'rpm':
       return t('replay.unit.rpm', { v: num(v, 0) });
     case 'flag':
       return v ? t('replay.yes') : t('replay.no');
     default:
-      return num(v, Math.abs(v) < 10 ? 2 : 0);
+      return formatIn(kind, v, units);
   }
 }
 
@@ -292,7 +274,7 @@ export function fieldText(c: FieldContext, id: string, teamLabel: (team: number)
       const s = seriesOf(c);
       const h = s ? valueAt(s, 'heading', c.time) : NaN;
       const decl = declinationAt(c.d, c.pos, c.time);
-      return Number.isFinite(h) && Number.isFinite(decl) ? t('replay.unit.degMag', { v: formatValue('heading', h - decl, c.units).replace('°', '') }) : '';
+      return Number.isFinite(h) && Number.isFinite(decl) ? magneticText(h - decl, c.units) : '';
     }
     case 'bullseye': {
       // Bearing / range from the bullseye, as a controller calls it.
