@@ -169,6 +169,8 @@ export const OVERALL: Record<string, number> = {
   'ariete': 9.67,
   'ariete-amv': 9.67,
   'centauro': 8.56,
+  // Centauro MGS with the 120/45: IVECO-OTO Melara sales sheet, 8.48 m with the barrel, 7.63 m without.
+  'centauro-120': 8.48,
   'merkava-mk1': 8.63,
   'merkava-mk2': 8.63,
   'merkava-mk3': 9.04,

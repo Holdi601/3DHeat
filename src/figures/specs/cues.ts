@@ -2506,13 +2506,18 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'low-recoil 105 mm with a pepperpot brake', check: (s) => cal(0.105)(s) && muzzle(s) },
     { cue: 'welded turret with a bustle', check: angular },
   ]),
-  'light-105': ground(['ccvl', 'm8-ags', 'th-400', 'ttd', 'harimau', 'vt-5', 'wz-1001'], [
+  'light-105': ground(['ccvl', 'm8-ags', 'th-400', 'ttd', 'harimau', 'vt-5'], [
     { cue: 'road wheels behind side skirts', check: skirted },
     { cue: 'welded angular turret with a 105 mm', check: (s) => angular(s) && cal(0.105, 0.11)(s) },
   ]),
   ccvl: ground('ccvl', [{ cue: 'five road wheels', check: run(5) }]),
   'm8-ags': ground('m8-ags', [{ cue: 'six road wheels, low turret with autoloader', check: (s) => run(6)(s) && (s.turret?.height ?? 1) <= 0.6 }]),
-  'six-105': ground(['th-400', 'ttd', 'harimau', 'vt-5', 'wz-1001'], [{ cue: 'six road wheels', check: run(6) }]),
+  'six-105': ground(['th-400', 'ttd', 'harimau', 'vt-5'], [{ cue: 'six road wheels', check: run(6) }]),
+  'wz-1001': ground('wz-1001', [
+    { cue: 'ZTZ-99 long hull, six road wheels behind skirts', check: (s) => run(6)(s) && skirted(s) && longHull(7.5)(s) },
+    { cue: 'very long 125 mm (L/54) reaching far past the nose', check: (s) => (s.guns ?? []).some((g) => g.calibre >= 0.12 && g.length >= 6.5) },
+    { cue: '125 mm with a sleeve and evacuator', check: (s) => cal(0.125)(s) && evacuator(s) },
+  ]),
   'ags-teledyne': ground('ags-teledyne', [
     { cue: 'small overhead mount: gun over a low cradle turret', check: (s) => shortTurret(2.5)(s) && cal(0.105)(s) },
     { cue: 'six road wheels behind skirts', check: (s) => run(6)(s) && skirted(s) },

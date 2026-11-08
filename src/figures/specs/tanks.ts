@@ -58,7 +58,8 @@ export function turret(x: number, plan: P2[], top: P2[], round: number, gunX: nu
 export const ABRAMS_TURRET = turret(-0.55, [[-2.85, 1.45], [-2.4, 1.72], [0.9, 1.8], [1.75, 1.55], [2.45, 0.95], [2.62, 0.5]], [[-2.85, 0.62], [-2.5, 0.78], [1.4, 0.84], [2.3, 0.62], [2.62, 0.42]], 9, 2.55, { slope: 0.045 });
 export const ABRAMS: GroundSpec = {
   chassis: 'tracked', length: 7.93, width: 3.66, hullHeight: 1.6, roadWheels: 7, roadWheelRadius: 0.32, skirts: true,
-  trackProfile: run(7.7, 0.95, [3.85, 0.62], [-3.85, 0.72], -3.2, 3.15),
+  // 180 in (4.57 m) of track on the ground between the end road wheels, as the US Army's data gives it.
+  trackProfile: run(7.7, 0.95, [3.85, 0.62], [-3.85, 0.72], -2.445, 2.445),
   hullOutline: hull(7.93, 3.66, 1.6, 0.88, 2.3, 1.05, 0.2),
   turret: ABRAMS_TURRET,
   guns: [{ mount: 'turret', length: 5.3, calibre: 0.12, extractor: 0.55, at: 0.5 }],
@@ -75,7 +76,8 @@ G['m1a2c-sepv3'] = { cls: 'mbt', ...ABRAMS, rws: true, turrets: [{ x: -1.0, leng
 export const LEO2_HULL = hull(7.72, 3.7, 1.75, 0.92, 1.4, 1.2, 0.15);
 export const LEO2: GroundSpec = {
   chassis: 'tracked', length: 7.72, width: 3.7, hullHeight: 1.75, roadWheels: 7, roadWheelRadius: 0.35, skirts: true,
-  trackProfile: run(7.5, 0.95, [3.75, 0.6], [-3.75, 0.7], -3.1, 3.05),
+  // 4.95 m of track on the ground between the end road wheels (published).
+  trackProfile: run(7.5, 0.95, [3.75, 0.6], [-3.75, 0.7], -2.65, 2.65),
   hullOutline: LEO2_HULL,
   turret: turret(-0.35, [[-2.25, 1.35], [-1.9, 1.6], [1.75, 1.65], [1.95, 1.55], [2.0, 0.6]], [[-2.25, 0.72], [-2.0, 0.8], [1.95, 0.84], [2.0, 0.6]], 12, 2.0),
   guns: [{ mount: 'turret', length: 5.3, calibre: 0.12, extractor: 0.5, at: 0.45 }],
@@ -90,12 +92,14 @@ G['leopard-2a6'] = { cls: 'mbt', ...LEO2, turret: LEO2_WEDGE, guns: [{ mount: 't
 // ---------------------------------------------------------------- Challenger 2, Leclerc, Merkava, Type 99
 
 // Challenger 2: the slab-sided turret with a near-vertical front and a long bustle, a hull with a steep short glacis
-// and a long flat deck; the L30 gun with its thermal sleeve and extractor (hull 8.3 x 3.52 m, 2.49 m).
+// and a long flat deck; the L30 gun with its thermal sleeve and extractor (hull 8.3 x 3.52 m, 2.49 m to the turret
+// roof as published: the roof 0.79 m over the 1.7 m deck).
 G['challenger-2'] = {
   cls: 'mbt', chassis: 'tracked', length: 8.3, width: 3.52, hullHeight: 1.7, roadWheels: 6, roadWheelRadius: 0.36, skirts: true,
-  trackProfile: run(8.1, 0.95, [4.05, 0.65], [-4.05, 0.75], -3.4, 3.35),
+  // 4.79 m of track on the ground between the end road wheels (published).
+  trackProfile: run(8.1, 0.95, [4.05, 0.65], [-4.05, 0.75], -2.575, 2.575),
   hullOutline: hull(8.3, 3.52, 1.7, 0.9, 1.25, 1.15, 0.12),
-  turret: turret(-0.6, [[-2.75, 1.35], [-2.4, 1.6], [1.55, 1.65], [2.05, 1.35], [2.15, 0.8]], [[-2.75, 0.78], [1.7, 0.86], [2.15, 0.5]], 14, 2.1),
+  turret: turret(-0.6, [[-2.75, 1.35], [-2.4, 1.6], [1.55, 1.65], [2.05, 1.35], [2.15, 0.8]], [[-2.75, 0.72], [1.7, 0.79], [2.15, 0.46]], 14, 2.1),
   guns: [{ mount: 'turret', length: 6.0, calibre: 0.12, sleeve: 0.8, extractor: 0.55, at: 0.45 }],
   cupola: true,
 };
@@ -136,10 +140,12 @@ export function sovietHull(L: number, W: number): Outline {
 // T-72A / T-72B: big road wheels (0.75 m), the domed cast turret well forward; the B with thick "Dolly Parton" cheeks (6.86 x 3.59 m, 2.23 m).
 export const T72: GroundSpec = {
   chassis: 'tracked', length: 6.86, width: 3.59, hullHeight: 1.4, roadWheels: 6, roadWheelRadius: 0.375, skirts: true,
-  trackProfile: run(6.7, 0.88, [3.35, 0.62], [-3.35, 0.7], -2.75, 2.7),
+  // Track on the ground 4.25 m (first to last road wheel centre, GlobalSecurity T-72 mobility data).
+  trackProfile: run(6.7, 0.88, [3.35, 0.62], [-3.35, 0.7], -2.34, 2.29),
   hullOutline: sovietHull(6.86, 3.59),
   turret: turret(0.25, [[-1.55, 0.85], [-1.2, 1.3], [-0.3, 1.45], [0.7, 1.4], [1.25, 1.05], [1.55, 0.45]], [[-1.55, 0.4], [-1.0, 0.72], [0.1, 0.8], [0.9, 0.68], [1.55, 0.3]], 2.4, 1.4),
-  guns: [{ mount: 'turret', length: 6.0, calibre: 0.125, sleeve: 0.55, extractor: 0.62, at: 0.42 }],
+  // The gun's axis about 0.2 m over the hull roof, 0.6 m under the turret roof (side photograph of a T-72B3).
+  guns: [{ mount: 'turret', length: 6.0, calibre: 0.125, sleeve: 0.55, extractor: 0.62, at: 0.26 }],
   cupola: true,
 };
 G['t-72a'] = { cls: 'mbt', ...T72 };
@@ -156,15 +162,17 @@ G['t-90'] = { cls: 'mbt', ...T72, width: 3.78, turret: T72B_TURRET, turrets: [{ 
 // T-80B: a longer hull (the turbine) with smaller road wheels (0.67 m) and return rollers; a T-64-like cast turret (7.0 x 3.58 m, 2.2 m).
 export const T80: GroundSpec = {
   chassis: 'tracked', length: 7.0, width: 3.58, hullHeight: 1.4, roadWheels: 6, roadWheelRadius: 0.335, skirts: true,
-  trackProfile: run(6.85, 0.85, [3.42, 0.58], [-3.42, 0.68], -2.9, 2.85),
+  // Track on the ground 4.3 m (first to last road wheel centre, T-80U data sheet).
+  trackProfile: run(6.85, 0.85, [3.42, 0.58], [-3.42, 0.68], -2.34, 2.29),
   hullOutline: hull(7.0, 3.58, 1.4, 0.78, 1.95, 0.95, 0.1),
   turret: turret(0.3, [[-1.5, 0.8], [-1.15, 1.25], [-0.2, 1.42], [0.7, 1.38], [1.25, 1.0], [1.5, 0.45]], [[-1.5, 0.38], [-0.9, 0.7], [0.1, 0.76], [0.9, 0.64], [1.5, 0.3]], 2.4, 1.35),
   guns: [{ mount: 'turret', length: 6.0, calibre: 0.125, sleeve: 0.55, extractor: 0.62, at: 0.42 }],
   cupola: true,
 };
 G['t-80b'] = { cls: 'mbt', ...T80 };
-// T-80U / T-80UD: the cast dome behind a horseshoe of Kontakt-5 bricks that squares the front and lifts it level with the roof.
-G['t-80u'] = { cls: 'mbt', ...T80, turret: turret(0.3, [[-1.5, 0.8], [-1.15, 1.25], [-0.2, 1.48], [0.6, 1.62], [1.55, 1.6], [1.85, 1.15], [1.9, 0.5]], [[-1.5, 0.38], [-0.9, 0.7], [-0.1, 0.78], [1.5, 0.78], [1.9, 0.55]], 5, 1.75) };
+// T-80U / T-80UD: the cast dome behind a horseshoe of Kontakt-5 bricks that squares the front, their tops sloping from
+// the roof down about 0.35 m to the nose over the front 0.8 m (side photograph of a T-80U, Russian MoD, CC BY 4.0).
+G['t-80u'] = { cls: 'mbt', ...T80, turret: turret(0.3, [[-1.5, 0.8], [-1.15, 1.25], [-0.2, 1.48], [0.6, 1.62], [1.55, 1.6], [1.85, 1.15], [1.9, 0.5]], [[-1.5, 0.38], [-0.9, 0.7], [-0.1, 0.78], [1.1, 0.77], [1.9, 0.45]], 5, 1.75) };
 // T-64BV: small road wheels (0.55 m) close together, a low small turret with Kontakt-1 (6.54 x 3.42 m, 2.17 m).
 G['t-64bv'] = { cls: 'mbt', ...T80, length: 6.54, width: 3.42, roadWheelRadius: 0.28, trackProfile: run(6.4, 0.85, [3.2, 0.58], [-3.2, 0.66], -2.75, 2.7), hullOutline: hull(6.54, 3.42, 1.4, 0.78, 1.8, 0.95, 0.1), turret: turret(0.35, [[-1.4, 0.8], [-1.1, 1.2], [-0.2, 1.35], [0.8, 1.38], [1.3, 1.1], [1.55, 0.45]], [[-1.4, 0.35], [-0.8, 0.66], [0.2, 0.72], [1.0, 0.64], [1.55, 0.32]], 3, 1.45) };
 // T-55 / T-54: five big road wheels with a gap behind the first, no return rollers; the round "frying pan" turret well forward (6.2 x 3.27 m, 2.35 m).
