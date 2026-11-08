@@ -301,8 +301,9 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   // level; the cage mainmast between the funnels.
   'delaware': { cls: 'battleship', L: 158.2, B: 26.0, fb: 8.3, fc: [-30, 3.3], guns: '49.1:2/305 38.1:2/305^2.4 -15.7:2/305b -41.8:2/305b -54.4:2/305b', funnels: [[16, 15.4, 5], [-3.5, 15.4, 5.1]], blocks: [[31, 25.7, 11.3, 5]], raised: [[29.9, 25.7, 11.3, 16.9, 3]], masts: [[22.6, 33.8, 'l'], [4.2, 33.8, 'l']] },
   // Wyoming: the turrets' places and roofs and the deck's rise to the bow from Jane's Fighting Ships 1914 (profile and
-  // plan); the single funnel of the 1920s oil-firing refit and the masts as before (estimates).
-  'wyoming': { cls: 'battleship', L: 171.3, B: 28.4, fb: 6.2, sheer: 3, guns: '54.8:2/305^-1.9 43.5:2/305^2.7 -10.4:2/305^3.5b -22.5:2/305^-0.6b -41:2/305^3.5b -52.8:2/305^0.5b', funnels: [[8, 14, 6]], blocks: [[40, 28, 22, 6, 1]], masts: [[32, 32], [-10, 26]] },
+  // plan); the single funnel of the 1920s oil-firing refit, the cage foremast and the tripod mainmast as FM 30-50 (1941)
+  // draws Arkansas.
+  'wyoming': { cls: 'battleship', L: 171.3, B: 28.4, fb: 6.2, sheer: 3, guns: '54.8:2/305^-1.9 43.5:2/305^2.7 -10.4:2/305^3.5b -22.5:2/305^-0.6b -41:2/305^3.5b -52.8:2/305^0.5b', funnels: [[12.7, 16.5, 5.5]], blocks: [[40, 28, 22, 6, 1]], masts: [[28.4, 31.8], [-36.3, 30.3]] },
   // New York, Nevada, New Mexico, Pennsylvania (1941): turret places (and Nevada's masts and funnel) measured on the FM 30-50
   // (1941) plans and profiles, scaled by the overall length (sources.md).
   'new-york': { cls: 'battleship', L: 174.7, B: 29.1, fb: 8, guns: '49.2:2/356 35.6:2/356^2.5 -19.4:2/356b -40.8:2/356^2.5b -53.3:2/356b', funnels: [[2.5, 14, 6]], blocks: [[26.2, 15.7, 22, 6, 1]], masts: [[19.8, 34], [-5.3, 28]] },
@@ -724,7 +725,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   // Battleships and battlecruisers: the aft superstructure (the after conning position on the dreadnoughts, a whole
   // aft tower on the later ships), the mainmast, the aft director and the secondary guns on the superstructure deck.
   'delaware': { masts: [[22.6, 33.8, 'l'], [4.2, 33.8, 'l']], sl: [[-9, 19.9]] },
-  'wyoming': { masts: [[32, 32, 'l'], [-12, 28, 'l']], blocks: [[-30, -40, 12.5, 3.5]] },
+  'wyoming': { masts: [[28.4, 31.8, 'l'], [-36.3, 30.3, 't']], blocks: [[-30, -40, 12.5, 3.5]] },
   'new-york': { masts: [[19.8, 34, 't'], [-5.3, 26]], blocks: [[-24, -32, 14, 4.5]], dirs: [[-26, 18]] },
   'nevada': { masts: [[15.4, 34, 't'], [-19, 30, 't']], blocks: [[-12, -30, 15, 5]], dirs: [[-24, 20]], guns2: '22,12:1/127^1.2 12,12:1/127^1.2 -10,12:1/127^1.2b' },
   'pennsylvania': { masts: [[30, 36, 't'], [-18, 30, 't']], dirs: [[-20, 22]], guns2: '22,12:1/127^1.2 12,12:1/127^1.2 -8,12:1/127^1.2b' },

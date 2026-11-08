@@ -906,7 +906,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
   wyoming: naval('wyoming', [
     { cue: 'six twin 12-inch turrets: two forward, four aft', check: (s) => battery(s, 0.3, 2, 4, 2) },
     { cue: 'superfiring pairs forward and aft', check: (s) => superfires(fwd(s, 0.3)) && superfires(aft(s, 0.3)) },
-    { cue: 'cage masts fore and aft', check: (s) => mastCount('lattice')(s) === 2 },
+    { cue: 'a cage foremast and a tripod mainmast (as refitted)', check: (s) => mastCount('lattice')(s) === 1 && mastKind('tripod')(s) },
     { cue: 'one funnel', check: (s) => funnels(s) === 1 },
   ]),
   svetlana: naval('svetlana', [
