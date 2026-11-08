@@ -636,15 +636,30 @@ G['ru-251'] = { cls: 'light-tank', chassis: 'tracked', length: 6.3, width: 3.0, 
 
 // M109 (1963): a low hull with seven road wheels and no rollers, the big box turret over the back half; the short M126
 // howitzer with its muzzle brake (hull 6.11 x 3.15 m, 3.28 m); M109A1 (1973) the long M185; M109A6 Paladin (1994) a
-// longer bustle, side armour on the turret, the M284.
-const M109: GroundSpec = { chassis: 'tracked', length: 6.11, width: 3.15, hullHeight: 1.6, roadWheels: 7, roadWheelRadius: 0.3, trackProfile: run(5.95, 0.9, [2.95, 0.6], [-2.95, 0.65], -2.45, 2.4), running: { wheels: [-2.15, -1.43, -0.71, 0.01, 0.73, 1.45, 2.17] }, hullOutline: { top: [[-3.05, 1.5], [-2.9, 1.6], [1.6, 1.6], [3.05, 1.0]], bottom: [[-3.05, 0.9], [2.8, 0.9], [3.05, 1.0]], plan: [[-3.05, 1.55], [3.05, 1.5]], round: 12, stations: 10 }, turret: turret(-0.9, [[-1.9, 1.45], [1.6, 1.5], [2.0, 1.2]], [[-1.9, 1.45], [1.5, 1.5], [2.0, 1.15]], 12, 1.95), cupola: true };
+// longer bustle, side armour on the turret, the M284. 3.96 m of track on the ground; the M126 reaches 0.50 m past the
+// nose, the M185 2.94 m.
+const M109: GroundSpec = { chassis: 'tracked', length: 6.11, width: 3.15, hullHeight: 1.6, roadWheels: 7, roadWheelRadius: 0.3, trackProfile: run(5.95, 0.9, [2.95, 0.6], [-2.95, 0.65], -2.13, 2.13), running: { wheels: [-1.98, -1.32, -0.66, 0, 0.66, 1.32, 1.98] }, hullOutline: { top: [[-3.05, 1.5], [-2.9, 1.6], [1.6, 1.6], [3.05, 1.0]], bottom: [[-3.05, 0.9], [2.8, 0.9], [3.05, 1.0]], plan: [[-3.05, 1.55], [3.05, 1.5]], round: 12, stations: 10 }, turret: turret(-0.9, [[-1.9, 1.45], [1.6, 1.5], [2.0, 1.2]], [[-1.9, 1.45], [1.5, 1.5], [2.0, 1.15]], 12, 1.95), cupola: true };
 G['m109'] = { cls: 'sp-artillery', ...M109, guns: [{ mount: 'turret', length: 3.6, calibre: 0.155, muzzle: true, extractor: 0.5, at: 0.4, elevation: 0.05 }] };
 G['m109a1'] = { cls: 'sp-artillery', ...M109, guns: [{ mount: 'turret', length: 6.0, calibre: 0.155, muzzle: true, extractor: 0.45, at: 0.4, elevation: 0.05 }] };
 G['m109-paladin'] = { cls: 'sp-artillery', ...M109, turret: turret(-1.0, [[-2.4, 1.45], [1.6, 1.55], [2.0, 1.2]], [[-2.4, 1.4], [1.5, 1.5], [2.0, 1.15]], 12, 1.95), guns: [{ mount: 'turret', length: 6.1, calibre: 0.155, muzzle: true, at: 0.4, elevation: 0.05 }], addOns: [tb(0.2, 1.55, 0.55, 2.4, 0.12, 0.8, M)] };
-// M44 (1953): the howitzer in an open-topped box over the back (6.16 x 3.24 m); M55 (1956) the same chassis with a big closed turret and the 8-inch.
-const M44_HULL: GroundSpec = { chassis: 'tracked', length: 6.16, width: 3.24, hullHeight: 1.5, roadWheels: 6, roadWheelRadius: 0.32, trackProfile: run(6.0, 0.9, [3.0, 0.6], [-3.0, 0.6], -2.45, 2.45), running: { wheels: [-2.2, -1.32, -0.44, 0.44, 1.32, 2.2], rollers: [-1.3, 0, 1.3] }, hullOutline: hull(6.16, 3.24, 1.5, 0.88, 1.2, 1.05, 0.1, 8) };
+// M44 (1953): the howitzer in an open-topped box over the back (6.16 x 3.24 m); the M41's parts turned round, the sprocket
+// at the front, six road wheels a side, the last doubling as the idler, so only 3.80 m of track bears from the front
+// wheel to the fifth; the howitzer does not reach past the nose in travel.
+const M44_HULL: GroundSpec = { chassis: 'tracked', length: 6.16, width: 3.24, hullHeight: 1.5, roadWheels: 6, roadWheelRadius: 0.32, trackProfile: run(6.0, 0.9, [3.0, 0.6], [-3.05, 0.4], -2.73, 2.18), running: { wheels: [-2.73, -1.78, -0.83, 0.12, 1.07, 2.02], rollers: [-1.3, 0, 1.3] }, hullOutline: hull(6.16, 3.24, 1.5, 0.88, 1.2, 1.05, 0.1, 8) };
 G['m44'] = { cls: 'sp-artillery', ...M44_HULL, turret: { x: -1.2, length: 3.4, width: 3.1, height: 1.2, shape: 'open' }, guns: [{ mount: 'turret', length: 3.6, calibre: 0.155, muzzle: true, at: 0.6, elevation: 0.12 }] };
-G['m55'] = { cls: 'sp-artillery', ...M44_HULL, turret: turret(-1.2, [[-1.7, 1.5], [1.4, 1.55], [1.75, 1.25]], [[-1.7, 1.45], [1.4, 1.5], [1.75, 1.2]], 10, 1.7), guns: [{ mount: 'turret', length: 5.0, calibre: 0.203, at: 0.45, elevation: 0.08 }] };
+// The M55 is not on the M44's chassis: the M53/M55 hull from M47 parts, its engine in the front with the sprocket, seven
+// road wheels and three return rollers, the big turret over the back (hull 7.91 x 3.58 m, 3.47 m over the AAMG mount,
+// track centres 2.79 m, 0.58 m tracks, 4.67 m on the ground, 0.47 m clearance; the howitzer does not reach past the
+// nose in travel).
+G['m55'] = {
+  cls: 'sp-artillery', chassis: 'tracked', length: 7.91, width: 3.58, hullHeight: 1.6, roadWheels: 7, roadWheelRadius: 0.33,
+  trackProfile: run(7.6, 0.98, [3.5, 0.72], [-3.45, 0.62], -2.5, 2.5),
+  running: { wheels: [-2.335, -1.557, -0.778, 0, 0.778, 1.557, 2.335], rollers: [-1.55, 0, 1.55] },
+  hullOutline: hull(7.91, 3.58, 1.6, 0.98, 1.4, 1.1, 0.1, 8),
+  turret: turret(-2.1, [[-1.8, 1.6], [1.4, 1.62], [1.8, 1.3]], [[-1.8, 1.6], [1.4, 1.65], [1.8, 1.3]], 10, 1.8),
+  guns: [{ mount: 'turret', length: 4.2, calibre: 0.203, at: 0.45, elevation: 0 }],
+  cupola: true,
+};
 // M110A2 (1977): the bare 8-inch on an open mount over the back, five road wheels, the spade (5.72 x 3.15 m).
 G['m110a2'] = { cls: 'sp-artillery', chassis: 'tracked', length: 5.72, width: 3.15, hullHeight: 1.5, roadWheels: 5, roadWheelRadius: 0.35, trackProfile: run(5.5, 0.9, [2.75, 0.6], [-2.75, 0.6], -2.3, 2.25), running: { wheels: [-2.0, -1.0, 0, 1.0, 2.0] }, hullOutline: hull(5.72, 3.15, 1.5, 0.88, 1.0, 1.1, 0.1, 8), turret: { x: -1.6, length: 1.6, width: 2.2, height: 0.8, shape: 'open' }, guns: [{ mount: 'turret', length: 7.6, calibre: 0.203, elevation: 0.15, at: 0.6 }], addOns: [hb(-3.1, 0, 0.6, 0.3, 2.6, 0.9, { pitch: 0.6 })] };
 // 2S1 Gvozdika (1971): the long low MT-LB-derived boat hull on seven road wheels, the low rounded turret behind, the 122 mm (7.26 x 2.85 m, 2.73 m).

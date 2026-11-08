@@ -1406,6 +1406,10 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'five large Christie road wheels a side', check: run(5) },
     { cue: 'tall open-backed turret with the 40 mm Bofors', check: (s) => turretH(1)(s) && cal(0.04, 0.045)(s) },
   ]),
+  'crusader-aa-mk2': ground('crusader-aa-mk2', [
+    { cue: 'five large Christie road wheels a side', check: run(5) },
+    { cue: 'low turret with twin 20 mm', check: (s) => guns(2)(s) && cal(0.02)(s) },
+  ]),
   'btr-zd': ground('btr-zd', [
     { cue: 'BTR-D: small low airborne hull', check: (s) => hullShape(s) && low(1.4)(s) },
     { cue: 'ZU-23-2 twin 23 mm on the roof', check: guns(2) },
@@ -1564,10 +1568,9 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'angular turret with the 2-pounder', check: (s) => turretShape(s) && cal(0.04, 0.045)(s) },
   ]),
   'cckw-bofors': ground('cckw-bofors', [{ cue: '40 mm Bofors on the load bed', check: (s) => cal(0.04, 0.045)(s) && turretAt(-9, -1)(s) }]),
-  m44: ground(['m44', 'm55'], [
-    { cue: 'gun house at the back over a spade', check: turretAt(-9, -0.5) },
-    { cue: 'six road wheels, three return rollers', check: run(6, 3) },
-  ]),
+  m44: ground(['m44', 'm55'], [{ cue: 'gun house at the back over a spade', check: turretAt(-9, -0.5) }]),
+  'm44-run': ground('m44', [{ cue: 'six road wheels, three return rollers', check: run(6, 3) }]),
+  'm55-run': ground('m55', [{ cue: 'long hull on seven road wheels, three return rollers', check: run(7, 3) }]),
   'm44-open': ground('m44', [{ cue: 'open-topped box with the 155 mm', check: (s) => openAbove(s) && cal(0.15)(s) }]),
   m55: ground('m55', [{ cue: 'closed box turret with the 203 mm', check: (s) => !openAbove(s) && cal(0.2)(s) }]),
   'semovente-m43': ground('semovente-m43', [{ cue: 'wide low casemate with the 105 mm', check: (s) => cal(0.105)(s) && s.width >= 2.3 }]),

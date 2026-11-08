@@ -1180,12 +1180,14 @@ G['su-122'] = su34({ mount: 'turret', length: 1.2, calibre: 0.122 }, false, 0.42
 // ISU-152, ISU-122, ISU-122S on the IS hull: a taller casemate, its sloped front set back from the glacis, the gun right
 // of the centre (ISU-152 9.18 m, ISU-122 9.85 m with the long A-19S, ISU-122S the D-25S with its brake; 2.48 m high).
 {
-  // The bore 1.8 m up (USAREUR Pam 30-60-1).
-  const m = mantlet(1.6, 1.35, 1.75, 1.8, 0.38, 0.28, 0.25);
-  const isu = { ...IS, cls: 'sp-gun', top: [[-3.385, 1.15], [-3.1, 1.6], [-2.2, 1.6], [-2.1, 2.45], [1.0, 2.45], [1.9, 1.6], [3.385, 0.98]] as P2[], turret: m };
-  G['isu-152'] = ww2({ ...isu, guns: [fire(m, 4.05, 0.152, { muzzle: true })] });
-  G['isu-122'] = ww2({ ...isu, cls: 'tank-destroyer', guns: [fire(m, 4.7, 0.122)] });
-  G['isu-122s'] = ww2({ ...isu, cls: 'tank-destroyer', guns: [fire(m, 4.7, 0.122, { muzzle: true })] });
+  // The bore 1.8 m up (USAREUR Pam 30-60-1). The casemate over the front 59% of the hull: its sloped front plate rising
+  // from the nose plate over the idler, its rear wall over the fourth road wheel, the long engine deck behind (broadside
+  // photo "JSU-152", same Pam); the guns' reach from the published lengths with the gun forward.
+  const m = mantlet(1.6, 2.25, 2.65, 1.8, 0.38, 0.28, 0.25);
+  const isu = { ...IS, cls: 'sp-gun', top: [[-3.385, 1.15], [-3.1, 1.6], [-0.75, 1.6], [-0.65, 2.45], [2.2, 2.45], [2.85, 1.45], [3.385, 0.98]] as P2[], turret: m };
+  G['isu-152'] = ww2({ ...isu, guns: [fire(m, 3.15, 0.152, { muzzle: true })] });
+  G['isu-122'] = ww2({ ...isu, cls: 'tank-destroyer', guns: [fire(m, 3.84, 0.122)] });
+  G['isu-122s'] = ww2({ ...isu, cls: 'tank-destroyer', guns: [fire(m, 3.84, 0.122, { muzzle: true })] });
 }
 // T-44: five road wheels on torsion bars, no return rollers, the single glacis plate, the turret set well back with
 // the 85 mm (hull 6.07 x 3.18 m, 2.41 m; 7.65 m with the gun).
@@ -1338,6 +1340,9 @@ G['crusader-aa'] = ww2({
   turret: { ...turret(0.3, [[-0.9, 0.8], [0.6, 0.97], [0.9, 0.85]], [[-0.9, 1.12], [0.6, 1.2], [0.9, 0.65]], 10, 0.9), slope: 0.15 },
   gun: { length: 2.23, calibre: 0.04, at: 0.34 },
 });
+// Crusader AA Mk II and III: the same Crusader III hull with the low turret of twin 20 mm Oerlikons in place of the
+// Bofors (they are not Valentines: five big Christie wheels, 5.99 m).
+G['crusader-aa-mk2'] = ww2({ ...CRUSADER, cls: 'spaa', turret: turret(0.1, [[-0.95, 0.75], [0.95, 0.75]], [[-0.95, 0.65], [0.95, 0.65]], 12, 0.9), gun: { count: 2, length: 1.8, calibre: 0.02, elevation: 0.45, at: 0.8, spread: 0.3 } });
 // Cruiser Mk IV (A13 Mk II): four big Christie wheels, the turret with its spaced, sloping faces (6.0 x 2.59 m, 2.59 m).
 G['a13-cruiser'] = ww2({ ...CRUSADER, L: 6.0, W: 2.59, deck: 1.65, top: [[-3.0, 1.4], [-2.9, 1.65], [1.8, 1.65], [1.9, 1.35], [3.0, 1.0]], wheels: even(4, -1.9, 1.9), turret: turret(0.1, [[-1.1, 0.55], [-0.8, 0.95], [0.4, 0.95], [1.0, 0.55], [1.1, 0.4]], [[-1.1, 0.6], [1.1, 0.6]], 10, 1.1), gun: { length: 1.4, calibre: 0.04, at: 0.45 } });
 // Matilda II: skirts with their mud chutes over the running gear, the track running along their top, the cast hull
