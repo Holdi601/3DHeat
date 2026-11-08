@@ -24,5 +24,9 @@
   "far.decoys": "Wabiki i pociski ({count})",
   "far.decoysTitle": "Flary, dipole, pociski i szczątki na listach.",
   "far.fires": "Pożary na jednostkach",
-  "far.firesTitle": "Płomienie i dym tam, gdzie płonie część jednostki, od zapłonu do ugaszenia, także na wrakach."
+  "far.firesTitle": "Płomienie i dym tam, gdzie płonie część jednostki, od zapłonu do ugaszenia, także na wrakach.",
+  "far.hitMarks": "Trafienia w jednostki",
+  "far.hitMarksTitle": "Znacznik w miejscu, gdzie każdy pocisk trafił jednostkę, w kolorze zależnym od skutku, poruszający się z jednostką; wskaż go, by zobaczyć, kto strzelał.",
+  "far.hitMarkSeconds": "Trafienia pozostają",
+  "far.hitMarkWhole": "Cały mecz"
 }

@@ -14,6 +14,7 @@ import { emptySample, MotionModel, MotionRefiner } from '../figures/motion';
 import { WeaponLayer } from './weapons';
 import { FireLayer, type FirePose, type FireView } from '../figures/fires';
 import { FireBody, firesOf } from '../data/fires';
+import { HitMarkLayer, hitMarksOf, type MarkPose, type MarkView } from '../figures/hitmarks';
 import { gpuTrackStore, registeredGpuTrackStore, rowOfKey, TRACK_U32, type GpuTrackStore } from './gpuTracks/store';
 import { emptyPose, evaluateTrack } from './gpuTracks/evaluate';
 import { isShown, rayNearTrack, trackTimes, trackVisibility } from './gpuTracks/visibility';
@@ -585,6 +586,24 @@ export class Engine {
     units: 1,
     poseOf: (p, body, out) => this.firePose(p, body, out),
   };
+  /** Marks where shots struck the units (figures/hitmarks.ts), onto the same triangles as the fires. */
+  private readonly hitMarkLayer = new HitMarkLayer();
+  /** Per person: the figure it was placed as this frame (CPU path), valid where its stamp is this frame's. */
+  private markSlot = new Int32Array(0);
+  private markSeen = new Int32Array(0);
+  private markStamp = 0;
+  /** The row of the unit the last `firePose` placed. */
+  private poseRow = -1;
+  private readonly markView: MarkView = {
+    t: 0,
+    seconds: 10,
+    session: -1,
+    eye: [0, 0, 0],
+    pixelSize: () => 0,
+    units: 1,
+    poseOf: (p, body, out) => this.markPose(p, body, out),
+    dataset: null as unknown as Dataset,
+  };
   private smoothTrailBuf = new Float32Array(0);
   private figureTris: { data: Float32Array; count: number } | null = null;
   /** This frame's GPU tracks, when the GPU places the units (gpuTracks/). */
@@ -726,6 +745,32 @@ export class Engine {
     const w = this.canvas.clientWidth;
     const h = this.canvas.clientHeight;
     return [((cx / cw) * 0.5 + 0.5) * w, (1 - ((cy / cw) * 0.5 + 0.5)) * h];
+  }
+
+  /**
+   * The hit whose mark (figures/hitmarks.ts) is under a point of the canvas
+   * (CSS pixels), the nearest of those drawn last frame within its size or
+   * `slack` pixels; its index in `hitsOf(dataset).hits`, or -1.
+   */
+  hitMarkAt(cssX: number, cssY: number, slack = 4): number {
+    const dr = this.hitMarkLayer.drawn;
+    let best = -1;
+    let bestD = Infinity;
+    for (let i = 0; i < dr.count; i++) {
+      const x = dr.xyz[i * 3], y = dr.xyz[i * 3 + 1], z = dr.xyz[i * 3 + 2];
+      const s = this.toScreen(x, y, z);
+      if (!s) continue;
+      const d = Math.hypot(s[0] - cssX, s[1] - cssY);
+      if (d > slack + 40 || d >= bestD) continue;
+      // The mark's own radius on screen: a point its radius off to the side.
+      const e = this.toScreen(x + dr.radius[i], y, z);
+      const r = e ? Math.hypot(e[0] - s[0], e[1] - s[1]) : 0;
+      if (d <= Math.max(r, 3) + slack) {
+        bestD = d;
+        best = dr.hit[i];
+      }
+    }
+    return best;
   }
 
   /** Whether the volume tools work on the current tab: the heatmap and the match views show the level. */
@@ -1662,6 +1707,11 @@ export class Engine {
       const eye = this.camPos;
       this.drawFires(this.dataset, store, t, eye, ortho ? () => ortho : (x, y, z) => Math.hypot(x - eye[0], y - eye[1], z - eye[2]) / focal);
     }
+    if (s.team.hitMarks && this.dataset) {
+      const ortho = persp ? 0 : this.camera.orthoHeight / hgt;
+      const eye = this.camPos;
+      this.drawHitMarks(this.dataset, store, t, eye, ortho ? () => ortho : (x, y, z) => Math.hypot(x - eye[0], y - eye[1], z - eye[2]) / focal);
+    } else this.hitMarkLayer.drawn.count = 0;
   }
 
   /**
@@ -1672,6 +1722,83 @@ export class Engine {
   private drawFires(d: Dataset, store: GpuTrackStore | null, t: number, eye: ArrayLike<number>, pixelSize: (x: number, y: number, z: number) => number): void {
     const fires = firesOf(d);
     if (!fires.count) return;
+    this.posesFor(d, store, t, eye, pixelSize);
+    const v = this.fireView;
+    const ft = this.figureTris;
+    const out = store || !ft ? this.fireTris : ft.data === this.weaponTris.data ? this.weaponTris : this.figureReplay.tris;
+    if (out === this.fireTris) out.reset();
+    if (this.fireLayer.build(fires, v, out) > 0 || ft) this.figureTris = out.count ? { data: out.data, count: out.count } : ft;
+  }
+
+  /**
+   * The marks of the shots that struck units in the time window, into the
+   * frame's triangles as the fires go (after them: onto the fires' own where
+   * those are this frame's).
+   */
+  private drawHitMarks(d: Dataset, store: GpuTrackStore | null, t: number, eye: ArrayLike<number>, pixelSize: (x: number, y: number, z: number) => number): void {
+    const marks = hitMarksOf(d);
+    this.hitMarkLayer.drawn.count = 0;
+    if (!marks.count) return;
+    this.posesFor(d, store, t, eye, pixelSize);
+    const team = useStore.getState().team;
+    // The CPU figures as placed this frame, with their roll and their drawn size.
+    const n = d.personLabels.length;
+    if (this.markSlot.length < n) {
+      this.markSlot = new Int32Array(n);
+      this.markSeen = new Int32Array(n);
+    }
+    const stamp = ++this.markStamp;
+    if (!store && team.figures && d.personId) {
+      const placed = this.figureReplay.placed;
+      for (let i = 0; i < placed.length; i++) {
+        const r = placed[i].row;
+        const p = r >= 0 && r < d.count ? d.personId[r] : -1;
+        if (p >= 0 && p < n) {
+          this.markSlot[p] = i;
+          this.markSeen[p] = stamp;
+        }
+      }
+    }
+    const v = this.markView;
+    v.t = t;
+    v.seconds = team.hitMarkSeconds > 0 ? team.hitMarkSeconds : Infinity;
+    v.session = team.session;
+    v.eye = eye;
+    v.pixelSize = pixelSize;
+    v.units = this.fireView.units;
+    v.dataset = d;
+    const ft = this.figureTris;
+    const own = ft !== null && ft.data === this.fireTris.data;
+    const out = own || store || !ft ? this.fireTris : ft.data === this.weaponTris.data ? this.weaponTris : this.figureReplay.tris;
+    if (out === this.fireTris && !own) out.reset();
+    if (this.hitMarkLayer.build(marks, v, out) > 0 || ft) this.figureTris = out.count ? { data: out.data, count: out.count } : ft;
+  }
+
+  /** A unit's pose for its hit marks: the CPU figure as placed, else as the fires take it. */
+  private markPose(p: number, body: FireBody, out: MarkPose): boolean {
+    if (!this.fireStore && p >= 0 && p < this.markSeen.length && this.markSeen[p] === this.markStamp) {
+      const e = this.figureReplay.placed[this.markSlot[p]];
+      out.x = e.fr.o[0];
+      out.y = e.fr.o[1];
+      out.z = e.fr.o[2];
+      out.f[0] = e.fr.f[0];
+      out.f[1] = e.fr.f[1];
+      out.f[2] = e.fr.f[2];
+      out.u[0] = e.fr.u[0];
+      out.u[1] = e.fr.u[1];
+      out.u[2] = e.fr.u[2];
+      out.scale = e.scale / this.fireView.units;
+      out.row = e.row;
+      return true;
+    }
+    this.poseRow = -1;
+    if (!this.firePose(p, body, out)) return false;
+    out.row = this.poseRow;
+    return true;
+  }
+
+  /** The tables `firePose` reads, for this frame: the GPU tracks, or who each live track is. */
+  private posesFor(d: Dataset, store: GpuTrackStore | null, t: number, eye: ArrayLike<number>, pixelSize: (x: number, y: number, z: number) => number): void {
     this.fireStore = store;
     if (!store) {
       const n = d.personLabels.length;
@@ -1697,10 +1824,6 @@ export class Engine {
     v.eye = eye;
     v.pixelSize = pixelSize;
     v.units = unitsPerMetre(d);
-    const ft = this.figureTris;
-    const out = store || !ft ? this.fireTris : ft.data === this.weaponTris.data ? this.weaponTris : this.figureReplay.tris;
-    if (out === this.fireTris) out.reset();
-    if (this.fireLayer.build(fires, v, out) > 0 || ft) this.figureTris = out.count ? { data: out.data, count: out.count } : ft;
   }
 
   /** A person's pose for its fires (`drawFires`): the GPU tracks' evaluated on the CPU, or the live track's. */
@@ -1712,6 +1835,7 @@ export class Engine {
       if (i < 0 || (g && !isShown(g.visible ?? null, i))) return false;
       const pose = this.fireTrackPose;
       if (!evaluateTrack(store, i, this.fireView.t, g ? g.stale : Infinity, pose)) return false;
+      this.poseRow = rowOfKey(store, i, pose.key);
       out.x = pose.x;
       out.y = pose.y;
       out.z = pose.z;
@@ -1733,6 +1857,7 @@ export class Engine {
     }
     if (p < 0 || p >= this.fireSeen.length || this.fireSeen[p] !== this.fireStamp) return false;
     const tr = this.liveTracks[this.fireSlot[p]];
+    this.poseRow = tr.row;
     out.scale = (this.figureReplay.drawnScale.get(p) ?? 1) * this.fireFigureScale;
     // As the figure is placed (`figures/replay.ts`): heading, and the pitch for aircraft; ground figures keep level.
     const yaw = Math.PI - tr.yaw;
@@ -3182,6 +3307,9 @@ export class Engine {
       }
       // Fires burning on the units, onto the same triangles.
       if (s.team.fires && this.dataset && !drawEverySample && this.liveTracks.length) this.drawFires(this.dataset, null, cursorAt, eye, pixelSize);
+      // The shots that struck the units, marked on them.
+      if (s.team.hitMarks && this.dataset && !drawEverySample && this.liveTracks.length) this.drawHitMarks(this.dataset, null, cursorAt, eye, pixelSize);
+      else this.hitMarkLayer.drawn.count = 0;
       if (s.team.trailSeconds > 0 && !drawEverySample) {
         // Along the same curves the boxes move on, where there is one; else sample to sample.
         const tr = motion && this.dataset ? this.smoothTrails(this.dataset, motion, cursorAt, s.team.trailSeconds, s.team.session) : this.cursor.buildTrails(cursorAt, s.team.trailSeconds, visible);

@@ -24,5 +24,9 @@
   "far.decoys": "Lokkemidler og granater ({count})",
   "far.decoysTitle": "Flares, chaff, granater og vrakrester i listene.",
   "far.fires": "Branner på enheter",
-  "far.firesTitle": "Flammer og røyk der en del av en enhet brenner, fra den tar fyr til den er slukket, vrak inkludert."
+  "far.firesTitle": "Flammer og røyk der en del av en enhet brenner, fra den tar fyr til den er slukket, vrak inkludert.",
+  "far.hitMarks": "Treff på enheter",
+  "far.hitMarksTitle": "Et merke der hvert skudd traff en enhet, farget etter hva det gjorde, som følger enheten; pek på det for å se hvem som skjøt.",
+  "far.hitMarkSeconds": "Treff blir stående",
+  "far.hitMarkWhole": "Hele kampen"
 }

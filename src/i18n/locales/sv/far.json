@@ -24,5 +24,9 @@
   "far.decoys": "Skenmål och granater ({count})",
   "far.decoysTitle": "Facklor, remsor, granater och vrakdelar i listorna.",
   "far.fires": "Bränder på enheter",
-  "far.firesTitle": "Lågor och rök där en del av en enhet brinner, från att den fattar eld tills den är släckt, vrak inräknade."
+  "far.firesTitle": "Lågor och rök där en del av en enhet brinner, från att den fattar eld tills den är släckt, vrak inräknade.",
+  "far.hitMarks": "Träffar på enheter",
+  "far.hitMarksTitle": "En markering där varje skott träffade en enhet, färgad efter vad det gjorde, som följer med enheten; peka på den för att se vem som sköt.",
+  "far.hitMarkSeconds": "Träffar ligger kvar",
+  "far.hitMarkWhole": "Hela matchen"
 }

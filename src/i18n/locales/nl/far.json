@@ -24,5 +24,9 @@
   "far.decoys": "Lokmiddelen en granaten ({count})",
   "far.decoysTitle": "Flares, chaff, granaten en brokstukken in de lijsten.",
   "far.fires": "Branden op eenheden",
-  "far.firesTitle": "Vlammen en rook waar een deel van een eenheid brandt, vanaf het vlamvatten tot het gedoofd is, wrakken inbegrepen."
+  "far.firesTitle": "Vlammen en rook waar een deel van een eenheid brandt, vanaf het vlamvatten tot het gedoofd is, wrakken inbegrepen.",
+  "far.hitMarks": "Treffers op eenheden",
+  "far.hitMarksTitle": "Een markering waar elk schot een eenheid trof, gekleurd naar wat het deed, die met de eenheid meebeweegt; wijs ernaar om te zien wie schoot.",
+  "far.hitMarkSeconds": "Treffers blijven",
+  "far.hitMarkWhole": "Hele wedstrijd"
 }

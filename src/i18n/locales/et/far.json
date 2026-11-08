@@ -24,5 +24,9 @@
   "far.decoys": "Peibutised ja mürsud ({count})",
   "far.decoysTitle": "Rakettpeibutised, fooliumiribad, mürsud ja rusud loendites.",
   "far.fires": "Tulekahjud üksustel",
-  "far.firesTitle": "Leegid ja suits seal, kus üksuse osa põleb, süttimisest kustumiseni, ka vrakkidel."
+  "far.firesTitle": "Leegid ja suits seal, kus üksuse osa põleb, süttimisest kustumiseni, ka vrakkidel.",
+  "far.hitMarks": "Tabamused üksustel",
+  "far.hitMarksTitle": "Märk kohas, kus iga lask üksust tabas, värvitud selle järgi, mida see tegi, liigub üksusega kaasa; osuta sellele, et näha, kes tulistas.",
+  "far.hitMarkSeconds": "Tabamused püsivad",
+  "far.hitMarkWhole": "Kogu mäng"
 }

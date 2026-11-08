@@ -24,5 +24,9 @@
   "far.decoys": "诱饵和炮弹 ({count})",
   "far.decoysTitle": "在列表中显示红外诱饵弹、箔条、炮弹和残骸。",
   "far.fires": "单位起火",
-  "far.firesTitle": "在单位部件燃烧处显示火焰和烟雾，从起火到熄灭，包括残骸。"
+  "far.firesTitle": "在单位部件燃烧处显示火焰和烟雾，从起火到熄灭，包括残骸。",
+  "far.hitMarks": "单位中弹",
+  "far.hitMarksTitle": "在每发弹药命中单位的位置显示按结果着色的标记，并随单位移动；指向标记可查看射击者。",
+  "far.hitMarkSeconds": "中弹标记保留",
+  "far.hitMarkWhole": "整场比赛"
 }

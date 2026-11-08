@@ -24,5 +24,9 @@
   "far.decoys": "Iscos e projéteis ({count})",
   "far.decoysTitle": "Flares, chaff, projéteis e destroços nas listas.",
   "far.fires": "Incêndios nas unidades",
-  "far.firesTitle": "Chamas e fumo onde arde uma parte de uma unidade, desde que pega fogo até se apagar, destroços incluídos."
+  "far.firesTitle": "Chamas e fumo onde arde uma parte de uma unidade, desde que pega fogo até se apagar, destroços incluídos.",
+  "far.hitMarks": "Impactos nas unidades",
+  "far.hitMarksTitle": "Uma marca onde cada disparo atingiu uma unidade, colorida pelo que fez, que se move com a unidade; aponte para ela para ver quem disparou.",
+  "far.hitMarkSeconds": "Os impactos ficam",
+  "far.hitMarkWhole": "Partida inteira"
 }

@@ -24,5 +24,9 @@
   "far.decoys": "Masalai ir sviediniai ({count})",
   "far.decoysTitle": "Šiluminiai masalai, dipoliai, sviediniai ir nuolaužos sąrašuose.",
   "far.fires": "Gaisrai vienetuose",
-  "far.firesTitle": "Liepsnos ir dūmai ten, kur dega vieneto dalis, nuo užsiliepsnojimo iki užgesimo, įskaitant nuolaužas."
+  "far.firesTitle": "Liepsnos ir dūmai ten, kur dega vieneto dalis, nuo užsiliepsnojimo iki užgesimo, įskaitant nuolaužas.",
+  "far.hitMarks": "Pataikymai į vienetus",
+  "far.hitMarksTitle": "Žymė ten, kur kiekvienas šūvis pataikė į vienetą, nuspalvinta pagal poveikį ir judanti kartu su vienetu; užveskite žymeklį, kad pamatytumėte, kas šovė.",
+  "far.hitMarkSeconds": "Pataikymai lieka",
+  "far.hitMarkWhole": "Visos rungtynės"
 }

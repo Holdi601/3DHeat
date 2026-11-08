@@ -45,6 +45,8 @@ export function localFromWorld(d: Dataset, row: number, x: number, y: number, z:
 export interface HitPlaces {
   /** Per hit (by `VehicleHit.id`): the victim's x, y, z, then the shooter's; NaN where not known. */
   xyz: Float32Array;
+  /** Per hit: the victim's row there, then the shooter's; -1 where not known. */
+  rows: Int32Array;
   /** Hits whose victim's place is known, and whose shooter's. */
   victims: number;
   shooters: number;
@@ -72,6 +74,7 @@ export function placeOf(p: HitPlaces, h: VehicleHit, who: 'victim' | 'shooter'):
 export function findPlaces(d: Dataset, hits: VehicleHit[]): HitPlaces {
   const n = hits.reduce((m, h) => Math.max(m, h.id + 1), 0);
   const xyz = new Float32Array(n * 6).fill(NaN);
+  const at2 = new Int32Array(n * 2).fill(-1);
   const rows = personRows(d);
   const time = d.time;
   // Tracks by every name they go by: the player, the unit's name, the label, the label without its id.
@@ -124,6 +127,7 @@ export function findPlaces(d: Dataset, hits: VehicleHit[]): HitPlaces {
     return best;
   };
   const put = (o: number, r: number) => {
+    at2[o / 3] = r;
     xyz[o] = d.px[r];
     xyz[o + 1] = d.py[r];
     xyz[o + 2] = d.pz[r];
@@ -160,5 +164,5 @@ export function findPlaces(d: Dataset, hits: VehicleHit[]): HitPlaces {
       h.distance = Math.hypot(xyz[o] - xyz[o + 3], xyz[o + 1] - xyz[o + 4], xyz[o + 2] - xyz[o + 5]) / k;
     }
   }
-  return { xyz, victims, shooters };
+  return { xyz, rows: at2, victims, shooters };
 }

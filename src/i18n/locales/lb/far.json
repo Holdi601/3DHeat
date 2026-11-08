@@ -24,5 +24,9 @@
   "far.decoys": "Täuschkierper a Granaten ({count})",
   "far.decoysTitle": "Flares, Düppel, Granaten an Dréckstécker an de Lëschten.",
   "far.fires": "Bränn op Eenheeten",
-  "far.firesTitle": "Flamen a Damp, wou en Deel vun enger Eenheet brennt, vum Ufänken bis zum Ausgoen, och op Wracken."
+  "far.firesTitle": "Flamen a Damp, wou en Deel vun enger Eenheet brennt, vum Ufänken bis zum Ausgoen, och op Wracken.",
+  "far.hitMarks": "Treffer op Eenheeten",
+  "far.hitMarksTitle": "Eng Markéierung, wou all Schoss eng Eenheet getraff huet, gefierft no senger Wierkung, déi mat der Eenheet matfiert; mam Zeiger drop gesitt Dir, wien geschoss huet.",
+  "far.hitMarkSeconds": "Treffer bleiwen",
+  "far.hitMarkWhole": "De ganze Match"
 }

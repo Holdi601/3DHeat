@@ -24,5 +24,9 @@
   "far.decoys": "Momeli și proiectile ({count})",
   "far.decoysTitle": "Rachete termice, dipoli, proiectile și resturi în liste.",
   "far.fires": "Incendii pe unități",
-  "far.firesTitle": "Flăcări și fum acolo unde arde o parte a unei unități, de la aprindere până la stingere, inclusiv epavele."
+  "far.firesTitle": "Flăcări și fum acolo unde arde o parte a unei unități, de la aprindere până la stingere, inclusiv epavele.",
+  "far.hitMarks": "Lovituri pe unități",
+  "far.hitMarksTitle": "Un semn unde fiecare proiectil a lovit o unitate, colorat după efect, care se mișcă odată cu unitatea; indicați-l pentru a vedea cine a tras.",
+  "far.hitMarkSeconds": "Loviturile rămân",
+  "far.hitMarkWhole": "Tot meciul"
 }

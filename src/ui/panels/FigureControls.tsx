@@ -3,6 +3,10 @@ import { useStore } from '../../state/store';
 import type { FarMode } from '../../render/symbols/lod';
 import type { SymbolStyle } from '../../render/symbols/affiliation';
 import { Check, Segmented, Select, Slider } from '../controls';
+import { OUTCOME_COLOURS } from '../../vehicle/scene';
+import { OUTCOMES } from '../../vehicle/hits';
+
+const swatch = (c: readonly number[]) => `rgb(${c.map((v) => Math.round(Math.min(1, v) * 255)).join(',')})`;
 
 /**
  * The figures' controls, the same settings wherever they are shown (the team
@@ -23,6 +27,8 @@ export function FigureControls({ toggle = true }: { toggle?: boolean }) {
   const ticks = useStore((s) => s.team.symbolTicks);
   const weaponMarks = useStore((s) => s.team.weaponMarks);
   const fires = useStore((s) => s.team.fires);
+  const hitMarks = useStore((s) => s.team.hitMarks);
+  const hitMarkSeconds = useStore((s) => s.team.hitMarkSeconds);
   const teams = useStore((s) => s.dataset?.teamLabels ?? null);
   const patchTeam = useStore((s) => s.patchTeam);
   return (
@@ -106,6 +112,28 @@ export function FigureControls({ toggle = true }: { toggle?: boolean }) {
           )}
           <Check label={t('far.weaponMarks')} checked={weaponMarks} onChange={(v) => patchTeam({ weaponMarks: v })} title={t('far.weaponMarksTitle')} />
           <Check label={t('far.fires')} checked={fires} onChange={(v) => patchTeam({ fires: v })} title={t('far.firesTitle')} />
+          <Check label={t('far.hitMarks')} checked={hitMarks} onChange={(v) => patchTeam({ hitMarks: v })} title={t('far.hitMarksTitle')} />
+          {hitMarks && (
+            <>
+              <Slider
+                label={t('far.hitMarkSeconds')}
+                value={hitMarkSeconds > 0 ? hitMarkSeconds : 300}
+                min={1}
+                max={300}
+                logarithmic
+                onChange={(v) => patchTeam({ hitMarkSeconds: v >= 299 ? 0 : Math.round(v) })}
+                format={(v) => (v >= 299 ? t('far.hitMarkWhole') : `${num(v, 0)} s`)}
+              />
+              <div className="hit-mark-legend">
+                {OUTCOMES.map((o) => (
+                  <span key={o} title={t(`vehicle.outcome.${o}Title`)}>
+                    <i className={o === 'kill' ? 'hit-mark-swatch ring' : 'hit-mark-swatch'} style={{ background: swatch(OUTCOME_COLOURS[o]) }} />
+                    {t(`vehicle.outcome.${o}`)}
+                  </span>
+                ))}
+              </div>
+            </>
+          )}
         </>
       )}
     </>

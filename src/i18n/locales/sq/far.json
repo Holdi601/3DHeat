@@ -24,5 +24,9 @@
   "far.decoys": "Karremë dhe predha ({count})",
   "far.decoysTitle": "Flakëza, chaff, predha dhe mbeturina në lista.",
   "far.fires": "Zjarre në njësi",
-  "far.firesTitle": "Flakë dhe tym aty ku digjet një pjesë e një njësie, nga ndezja deri në shuarje, përfshirë rrënojat."
+  "far.firesTitle": "Flakë dhe tym aty ku digjet një pjesë e një njësie, nga ndezja deri në shuarje, përfshirë rrënojat.",
+  "far.hitMarks": "Goditje mbi njësitë",
+  "far.hitMarksTitle": "Një shenjë aty ku çdo e shtënë goditi një njësi, e ngjyrosur sipas efektit, që lëviz me njësinë; drejtojeni treguesin për të parë kush qëlloi.",
+  "far.hitMarkSeconds": "Goditjet qëndrojnë",
+  "far.hitMarkWhole": "E gjithë ndeshja"
 }

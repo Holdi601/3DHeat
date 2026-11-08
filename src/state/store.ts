@@ -251,6 +251,10 @@ export interface TeamSettings {
   weapons: boolean;
   /** Fires burning on units, flames and smoke from fire_on to fire_off (figures/fires.ts). */
   fires: boolean;
+  /** The shots that struck units, marked where they hit, coloured by what they did (figures/hitmarks.ts). */
+  hitMarks: boolean;
+  /** Seconds a hit's mark stays; 0: the whole match. */
+  hitMarkSeconds: number;
   /**
    * Which session to play back, as an index into `dataset.sessionLabels`.
    *
@@ -372,8 +376,8 @@ const STREAM_NEAR_CAP = 10;
 const MIRROR_KEY = 'heat3d.mirror';
 const FAR_KEY = 'heat3d.far';
 
-type FarSettings = Pick<TeamSettings, 'farMode' | 'symbolStyle' | 'symbolPx' | 'mySide' | 'symbolOthers' | 'symbolTicks' | 'weaponMarks'>;
-const FAR_DEFAULTS: FarSettings = { farMode: 'figure', symbolStyle: 'nato', symbolPx: 28, mySide: -1, symbolOthers: 'hostile', symbolTicks: true, weaponMarks: false };
+type FarSettings = Pick<TeamSettings, 'farMode' | 'symbolStyle' | 'symbolPx' | 'mySide' | 'symbolOthers' | 'symbolTicks' | 'weaponMarks' | 'hitMarks' | 'hitMarkSeconds'>;
+const FAR_DEFAULTS: FarSettings = { farMode: 'figure', symbolStyle: 'nato', symbolPx: 28, mySide: -1, symbolOthers: 'hostile', symbolTicks: true, weaponMarks: false, hitMarks: true, hitMarkSeconds: 10 };
 
 /** The far-off settings this viewer last had, as the other figure settings, per browser. */
 function savedFar(): FarSettings {
@@ -389,6 +393,8 @@ function savedFar(): FarSettings {
         symbolOthers: v.symbolOthers === 'neutral' ? 'neutral' : 'hostile',
         symbolTicks: v.symbolTicks !== false,
         weaponMarks: v.weaponMarks === true,
+        hitMarks: v.hitMarks !== false,
+        hitMarkSeconds: Number.isFinite(v.hitMarkSeconds) ? Math.max(0, Math.min(600, v.hitMarkSeconds)) : FAR_DEFAULTS.hitMarkSeconds,
       };
     }
   } catch {
@@ -399,7 +405,7 @@ function savedFar(): FarSettings {
 
 function saveFar(t: TeamSettings): void {
   try {
-    const f: FarSettings = { farMode: t.farMode, symbolStyle: t.symbolStyle, symbolPx: t.symbolPx, mySide: t.mySide, symbolOthers: t.symbolOthers, symbolTicks: t.symbolTicks, weaponMarks: t.weaponMarks };
+    const f: FarSettings = { farMode: t.farMode, symbolStyle: t.symbolStyle, symbolPx: t.symbolPx, mySide: t.mySide, symbolOthers: t.symbolOthers, symbolTicks: t.symbolTicks, weaponMarks: t.weaponMarks, hitMarks: t.hitMarks, hitMarkSeconds: t.hitMarkSeconds };
     localStorage.setItem(FAR_KEY, JSON.stringify(f));
   } catch {
     // Private windows and blocked storage: the settings last this session only.
