@@ -126,7 +126,7 @@ const ALIASES: Record<string, string> = {
   'm110 self-propelled howitzer': 'm110a2',
   'm151 mutt': 'jeep',
   'uaz-469': 'uaz-469',
-  'm35 truck': 'm939',
+  'm35 truck': 'm35a2',
   'ural-375d': 'ural-4320',
   'vespa scooter': 'motorcycle',
   'uh-1 iroquois (huey)': 'uh-1h-huey',

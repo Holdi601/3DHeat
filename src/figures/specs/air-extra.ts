@@ -11,7 +11,7 @@
  */
 
 import type { Named, SpecSet } from './index';
-import type { FixedWingSpec } from '../air';
+import { cowlLip, type Cowl, type FixedWingSpec } from '../air';
 import type { Outline, P2 } from '../parts';
 import { bubble, pod, sideBySide, spine, tandem } from './jet-variants';
 
@@ -466,11 +466,12 @@ A['javelin-faw9'] = fig({
 
 // Lightning F.6 (and the export F.53): the nose intake with its cone, the deep body over two engines stacked one
 // above the other, the big ventral tank, a 60-degree wing with the notched trailing edge and the F.6's kinked
-// leading edge, the tailplane low at the back, the tall square-topped fin (16.84 x 10.62 x 5.97 m).
+// leading edge, the tailplane low at the back, the tall square-topped fin (16.84 x 10.62 x 5.97 m). The leading edge
+// swept 60 degrees out to the cropped tips (published), so the tips sit well back by the tailplane.
 A['lightning-f6'] = fig({
   cls: 'fighter', length: 16.84, span: 10.62, height: 5.97,
   body: [[8.42, 0.45, -0.45, 0.45], [7.6, 0.55, -0.6, 0.55], [6.0, 0.68, -0.75, 0.66], [4.4, 0.85, -0.85, 0.72], [2.0, 1.0, -1.0, 0.75], [-2, 1.0, -1.05, 0.75], [-5.5, 0.85, -1.0, 0.7], [-8.42, 0.7, -0.85, 0.6]], round: 2.2,
-  wing: [[1.8, 0], [1.6, 0.75], [-1.6, 2.6], [-1.4, 2.65], [-4.0, 5.31], [-5.0, 5.31], [-3.6, 2.9], [-5.0, 0.9], [-5.0, 0]], wingUp: 0.25,
+  wing: [[1.8, 0], [1.6, 0.75], [-1.6, 2.6], [-1.4, 2.65], [-6.0, 5.31], [-7.0, 5.31], [-3.6, 2.9], [-5.0, 0.9], [-5.0, 0]], wingUp: 0.25,
   fin: [[-3.0, 0], [-7.6, 0], [-8.6, 2.3], [-7.2, 2.3]], finBase: 0.75,
   tail: [[-5.6, 0.6], [-6.6, 2.2], [-7.4, 2.2], [-7.6, 0.6]], planeUp: -0.75,
   nozzles: [[-8.42, 0, 0.4], [-8.42, 0, -0.45]], nozzle: 0.8,
@@ -1432,6 +1433,28 @@ A['attacker'] = fig({
 });
 
 /** Names in data with no alias elsewhere (War Thunder ids from the public wiki's vehicle lists). */
+/**
+ * A radial's open cowl on each blunt radial nacelle (`nac` with `radial`): the nacelle starts behind the cowl's lip
+ * and the cowl's dark opening and cylinders stand in front of it, as head on a radial reads; inline nacelles stay.
+ */
+function cowled(s: FixedWingSpec): FixedWingSpec {
+  const cowls: Cowl[] = [];
+  const bodies = (s.bodies ?? []).map((b) => {
+    const w = Math.max(...b.plan.map((q) => q[1]));
+    if (!b.side || b.side < 0 || b.plan.length !== 4 || Math.abs(b.plan[0][1] / w - 0.86) > 0.005) return b;
+    const x = b.plan[0][0];
+    const z = (b.top[0][1] + b.bottom[0][1]) / 2;
+    const r = b.top[1][1] - z;
+    const lip = cowlLip(Math.max(w, r));
+    cowls.push({ x, side: b.side, up: z, radius: w, height: r });
+    const cut = (l: P2[]): P2[] => [[x - lip, l[0][1] + ((l[1][1] - l[0][1]) * lip) / (x - l[1][0])], ...l.slice(1)];
+    return { ...b, top: cut(b.top), bottom: cut(b.bottom), plan: cut(b.plan) };
+  });
+  return { ...s, bodies, cowls: [...(s.cowls ?? []), ...cowls] };
+}
+// Radial-engined types drawn with blunt nacelles get their open cowls (Ha-5, Ha-41, Ha-104, Twin Wasp, BMW 132).
+for (const k of ['ki-21', 'ki-49', 'ki-67', 'pb4y-2-privateer', 'saab-b18a', 'he-115']) A[k] = { ...A[k], ...cowled(A[k]) };
+
 const ALIASES: Record<string, string> = {
   // Variants of the jets once drawn from proportions: Tacview, DCS and Battlefield names the prefix match misses.
   'jaguar gr.3': 'jaguar-gr1',

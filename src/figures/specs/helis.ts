@@ -32,26 +32,29 @@ H['gyrocopter'] = { cls: 'heli-scout', length: 4.6, rotor: 8.4, height: 2.6, bod
 
 // AH-64 Apache: a narrow nose with the TADS drum at its tip and the PNVS on top, flat stepped tandem canopies, the
 // rotor well forward over the engine nacelles that stand off the shoulders, avionics sponsons low on the sides,
-// stubs under the mast, a thick boom to a tall swept fin (fuselage 15.5 m, rotor 14.63 m, 3.87 m to the rotor head).
-// Depths and where things sit judged from public three-views (estimates): the hub 5.1 m behind the nose, the
-// fuselage 2.3 m deep at the rear cockpit, the nacelles 1 m tall either side of the gearbox.
+// stubs under the mast, a long boom that runs down to the tail wheel and a tall swept fin with the tail rotor high
+// on its left (49 ft 1 in nose to tail rotor, rotor 48 ft, wing span 17 ft 2 in, tread 6 ft 8 in, tail rotor
+// 9 ft 2 in). Profile, depths and where things sit read off the principal-dimensions figure of TM 1-1520-238-10
+// (fig. 2-3, scaled by those dimensions): the axis 1.78 m over the ground, the hub 5 m behind the nose with the
+// blades 3.58 m up, the canopy crown 3.05 m, the belly 0.85 m under the rotor and 0.6 m at the boom's end, the
+// nacelles' axes 2.43 m up and 0.97 m out, the stubs 1.78 m up, the tail rotor's hub 3 m up 14 m behind the nose.
 export const APACHE: HeliSpec = {
-  length: 15.5, rotor: 14.63, height: 3.87, bodyWidth: 1.1, bodyHeight: 2.3, cabin: 'tandem', blades: 4,
+  length: 15.0, rotor: 14.63, height: 3.87, bodyWidth: 1.1, bodyHeight: 2.3, cabin: 'tandem', blades: 4,
   fuselage: {
-    top: [[7.2, -0.1], [6.9, 0.05], [6.55, 0.2], [5.9, 0.75], [5.0, 0.92], [4.75, 0.98], [4.35, 1.3], [3.6, 1.42], [2.0, 1.42], [0.2, 1.25], [-0.8, 0.88], [-1.6, 0.74], [-7.0, 0.57], [-7.6, 0.55]],
-    bottom: [[7.2, -0.5], [6.8, -0.78], [6.0, -0.9], [2.2, -0.92], [0.6, -0.76], [-1.2, -0.38], [-4.0, -0.2], [-7.0, -0.06], [-7.6, 0.05]],
-    plan: [[7.2, 0.18], [6.8, 0.36], [6.0, 0.44], [4.5, 0.5], [3.0, 0.55], [1.0, 0.55], [-0.8, 0.42], [-1.6, 0.3], [-7.0, 0.2], [-7.6, 0.14]],
-    round: [[7.2, 4], [3, 5], [-1.6, 4], [-7.6, 3]], stations: 28,
+    top: [[7.0, 0.17], [6.6, 0.27], [6.2, 0.32], [5.5, 0.72], [4.9, 1.02], [4.1, 1.05], [3.95, 1.2], [3.5, 1.27], [2.3, 1.27], [1.5, 1.17], [0.5, 0.92], [0.0, 0.72], [-0.5, 0.44], [-2.5, 0.12], [-5.0, -0.33], [-7.2, -0.48]],
+    bottom: [[7.0, -0.28], [6.5, -0.58], [5.5, -0.73], [4.5, -0.78], [2.5, -0.93], [0.5, -1.03], [-1.5, -1.13], [-3.5, -1.18], [-5.0, -1.2], [-6.1, -1.18], [-7.2, -0.78]],
+    plan: [[7.0, 0.2], [6.6, 0.36], [6.0, 0.44], [4.5, 0.5], [3.0, 0.55], [1.0, 0.55], [-0.3, 0.5], [-1.2, 0.3], [-3.0, 0.22], [-7.2, 0.14]],
+    round: [[7.0, 4], [3, 5], [-1.2, 4], [-7.2, 3]], stations: 28,
   },
   bodies: [
-    // The avionics sponsons, then the engine nacelles off the shoulders with their exhausts.
-    { top: [[5.4, -0.3], [4.8, -0.1], [2.0, -0.1], [1.4, -0.3]], bottom: [[5.4, -0.55], [4.8, -0.8], [2.0, -0.8], [1.4, -0.55]], plan: [[5.4, 0.12], [4.8, 0.28], [2.0, 0.28], [1.4, 0.12]], side: 0.68, round: 6, stations: 8 },
-    { top: [[3.2, 1.0], [2.85, 1.5], [0.0, 1.55], [-0.6, 1.4]], bottom: [[3.2, 0.72], [2.85, 0.5], [0.0, 0.5], [-0.6, 0.72]], plan: [[3.2, 0.26], [2.85, 0.38], [0.0, 0.38], [-0.6, 0.3]], side: 0.95, round: 4, stations: 8 },
+    // The avionics bays along the cockpit's cheeks, then the engine nacelles off the shoulders.
+    { top: [[6.5, -0.35], [6.0, -0.08], [2.3, -0.08], [1.7, -0.3]], bottom: [[6.5, -0.45], [6.0, -0.61], [2.3, -0.61], [1.7, -0.45]], plan: [[6.5, 0.1], [6.0, 0.28], [2.3, 0.28], [1.7, 0.12]], side: 0.68, round: 6, stations: 8 },
+    { top: [[2.6, 0.75], [2.3, 1.07], [0.2, 1.07], [-0.3, 0.75]], bottom: [[2.6, 0.55], [2.3, 0.23], [0.2, 0.23], [-0.3, 0.45]], plan: [[2.6, 0.26], [2.3, 0.37], [0.2, 0.37], [-0.3, 0.3]], side: 0.97, round: 4, stations: 8 },
   ],
-  glassOutlines: [plateCanopy(6.55, 4.75, 0.95, 0.15, 0.44, 0.45), plateCanopy(4.8, 3.45, 1.45, 0.85, 0.47, 0.3)],
-  finPlan: [[-6.3, 0], [-7.5, 0], [-7.95, 1.95], [-7.2, 2.0]],
+  glassOutlines: [plateCanopy(6.2, 4.1, 1.02, 0.4, 0.44, 0.45), plateCanopy(4.15, 3.2, 1.27, 0.6, 0.47, 0.3)],
+  finPlan: [[-5.0, 0.1], [-7.15, 0], [-7.2, 2.2], [-6.5, 2.25]],
   // The blades' true chord (0.53 m), flat.
-  bladeChord: 0.53, rotorX: 2.65, mastTop: 2.15, stubs: { span: 5.23, pylons: 2 }, stubAt: [2.75, 0.2, 4], wheels: true,
+  bladeChord: 0.53, rotorX: 2.5, mastTop: 1.8, stubs: { span: 5.23, pylons: 2 }, stubAt: [2.6, 0.0, 4], wheels: true,
 };
 
 // Mi-24 Hind: big and deep - a bubble for the gunner low in the nose, the pilot's canopy stepped up behind, a
@@ -104,7 +107,7 @@ export const HAVOC: HeliSpec = {
   guns: [[5.9, 0, -1.2, 1.7, 0.06]],
   glass: [[7.0, 0.3, 0.8, 0.45, 0.38], [5.25, 0.85, 0.85, 0.48, 0.4]],
   finPlan: [[-7.0, 0], [-8.5, 0], [-9.2, 2.1], [-8.4, 2.15]],
-  rotorX: 1.2, mastTop: 2.2, stubs: { span: 4.88, pylons: 2 }, stubAt: [0.4, 0.15, 6],
+  rotorX: 1.2, mastTop: 1.72, stubs: { span: 4.88, pylons: 2 }, stubAt: [0.4, 0.15, 6],
   // The X tail rotor: two pairs of blades about 35 degrees apart.
   tailRotorAt: [-8.85, 2.35], tailRotorDiameter: 3.84, tailScissor: 35,
   // The stabiliser high on the fin, braced by struts.
@@ -140,7 +143,7 @@ export const HOKUM: HeliSpec = {
   glass: [[4.05, 0.85, 0.72, 0.5, 0.36]],
   finPlan: [[-5.4, 0], [-6.75, 0], [-7.2, 1.7], [-6.5, 1.75]],
   tailPlan: [[-5.0, 0.1], [-5.15, 1.45], [-5.9, 1.45], [-5.9, 0.1]], tailUp: 0.55,
-  rotorX: 1.2, mastTop: 1.95, coaxGap: 1.4, stubs: { span: 7.34, pylons: 2 }, stubAt: [0.4, 0.0, 0], wheels: true,
+  rotorX: 1.2, mastTop: 1.76, coaxGap: 1.4, stubs: { span: 7.34, pylons: 2 }, stubAt: [0.4, 0.0, 0], wheels: true,
 };
 
 // AH-1 Cobra / Viper: very narrow (under a metre), a long stepped tandem canopy, the rotor 4.5 m behind the nose over
@@ -182,7 +185,7 @@ export const TIGER: HeliSpec = {
   ],
   glass: [[4.85, 0.5, 0.55, 0.45, 0.35], [3.75, 1.12, 0.6, 0.47, 0.4]],
   finPlan: [[-5.0, 0], [-6.35, 1.8], [-6.85, 1.8], [-6.9, -0.2]],
-  rotorX: 1.98, mastTop: 2.2, stubs: { span: 4.5, pylons: 2 }, stubAt: [3.05, 0.2, 3], wheels: true,
+  rotorX: 1.98, mastTop: 1.84, stubs: { span: 4.5, pylons: 2 }, stubAt: [3.05, 0.2, 3], wheels: true,
 };
 
 // V-22 Osprey: a tiltrotor shown with its rotors up (17.5 m, 25.8 m over the rotors, 6.73 m; rotor 11.6 m).

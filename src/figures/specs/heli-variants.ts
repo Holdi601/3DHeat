@@ -17,6 +17,7 @@
 import type { Named, SpecSet } from './index';
 import type { HeliSpec } from '../air';
 import type { Outline, P2 } from '../parts';
+import type { Vec3 } from '../../race/geometry';
 import { APACHE, COBRA, HAVOC, HIND, HOKUM, plateCanopy, TIGER } from './helis';
 
 const H: Named<HeliSpec> = {};
@@ -38,6 +39,33 @@ function launchers(x1: number, len: number, side: number, up: number, d: number,
   const out: Outline[] = [];
   for (let i = 0; i < n; i++) for (let j = 0; j < rows; j++) out.push(pod(x1, x1 - len, up - j * d * 1.1, d / 2, d / 2, side + i * d * 1.1, 2, d * 0.3));
   return out;
+}
+
+/**
+ * An open lattice boom from x0 back to x1 in `bays` bays: two upper longerons (the top line's heights `top` and half
+ * widths `half` at both ends) and one under the centre line (`bottom`), each side face braced zigzag, as thin tubes.
+ */
+function lattice(x0: number, x1: number, bays: number, top: P2, bottom: P2, half: P2, r: number, rb: number): [Vec3, Vec3, number][] {
+  const at = (f: number): [number, number, number, number] => [x0 + (x1 - x0) * f, top[0] + (top[1] - top[0]) * f, bottom[0] + (bottom[1] - bottom[0]) * f, half[0] + (half[1] - half[0]) * f];
+  const out: [Vec3, Vec3, number][] = [];
+  const [ax, at0, ab0, aw0] = at(0);
+  const [bx, at1, ab1, aw1] = at(1);
+  for (const s of [-1, 1]) out.push([[ax, s * aw0, at0], [bx, s * aw1, at1], r]);
+  out.push([[ax, 0, ab0], [bx, 0, ab1], r]);
+  for (let i = 0; i < bays; i++) {
+    const [p, pt, pb, pw] = at(i / bays);
+    const [q, qt, qb, qw] = at((i + 1) / bays);
+    // Each side face: a zigzag from the upper longeron down to the lower and back.
+    for (const s of [-1, 1]) out.push(i % 2 ? [[p, 0, pb], [q, s * qw, qt], rb] : [[p, s * pw, pt], [q, 0, qb], rb]);
+    // The top face: a cross brace between the upper longerons.
+    out.push([[p, -pw, pt], [q, qw, qt], rb]);
+  }
+  return out;
+}
+
+/** A tube along a line of (forward, up) points on the centre line. */
+function loop(p: P2[], r: number): [Vec3, Vec3, number][] {
+  return p.slice(1).map((q, i) => [[p[i][0], 0, p[i][1]], [q[0], 0, q[1]], r]);
 }
 
 /** A variant's whole layout stretched along its length: every forward position scales by `k`, heights stay. */
@@ -70,22 +98,26 @@ function scaled(o: HeliSpec, k: number): HeliSpec {
 // blades with swept tips. All: the TADS drum hanging at the nose tip with the PNVS turret on top of it, the
 // "Black Hole" exhaust boxes turned outward behind the nacelles, the M230 under the front cockpit, the tail rotor on
 // the left high on the fin, the stabilator at its foot, the main wheels on long legs, a tail wheel under the fin.
-const TADS = [pod(7.75, 6.95, -0.42, 0.4, 0.4, 0, 3), pod(7.55, 6.95, 0.12, 0.2, 0.2)];
-const BLACK_HOLE = pod(-0.2, -1.2, 1.0, 0.24, 0.3, 1.2, 4);
+// Positions from TM 1-1520-238-10 fig. 2-3 (see APACHE): the TADS drum 1.7 m up at the nose tip, the gun's turret
+// under the front cockpit 2.5-3.2 m behind the nose, the main wheels 3.8 m back on a 2.03 m tread, the tail wheel
+// 14.3 m back, the stabilator 1.2 m up at the fin's foot (3.4 m span).
+const TADS = [pod(7.5, 6.85, -0.08, 0.3, 0.3, 0, 3), pod(7.35, 6.85, 0.3, 0.17, 0.17)];
+const BLACK_HOLE = pod(0.0, -0.9, 0.5, 0.22, 0.28, 1.15, 4);
 const APACHE_A: HeliSpec = {
   ...APACHE,
   bodies: [...APACHE.bodies!, BLACK_HOLE],
-  oneSide: [...TADS, pod(5.25, 4.55, -1.05, 0.3, 0.26)],
-  guns: [[4.9, 0, -1.12, 1.7, 0.06]],
+  oneSide: [...TADS, pod(5.0, 4.3, -0.9, 0.28, 0.24)],
+  guns: [[4.6, 0, -0.95, 1.7, 0.06]],
   // The scissor tail rotor: two pairs of blades about 55 degrees apart.
-  tailRotorSide: -1, tailRotorAt: [-7.55, 2.15], tailRotorDiameter: 2.79, tailScissor: 55,
-  tailPlan: [[-6.9, 0.15], [-7.05, 1.7], [-7.8, 1.7], [-7.8, 0.15]], tailUp: 0.5,
-  wheels: false, wheelAt: [[3.4, 1.05, -1.45, 0.36], [-7.2, 0, -1.3, 0.2]],
+  tailRotorSide: -1, tailRotorAt: [-6.5, 1.2], tailRotorDiameter: 2.79, tailScissor: 55,
+  tailPlan: [[-5.85, 0.15], [-5.95, 1.7], [-7.0, 1.7], [-7.0, 0.15]], tailUp: -0.58,
+  wheels: false, wheelAt: [[3.69, 1.015, -1.47, 0.31], [-6.83, 0, -1.62, 0.16]],
 };
+// The Longbow radar's dome 4.95 m over the ground (published) on its mast over the hub.
 const APACHE_D: HeliSpec = {
   ...APACHE_A,
-  bodies: [{ top: [[6.75, -0.25], [6.1, 0.08], [2.0, 0.08], [1.2, -0.25]], bottom: [[6.75, -0.5], [6.1, -0.92], [2.0, -0.92], [1.2, -0.6]], plan: [[6.75, 0.14], [6.1, 0.38], [2.0, 0.4], [1.2, 0.14]], side: 0.72, round: 6, stations: 8 }, APACHE.bodies![1], BLACK_HOLE],
-  mastDome: true, mastDomeSize: [0.62, 0.3, 0.75],
+  bodies: [{ top: [[6.6, -0.25], [5.95, 0.07], [1.9, 0.07], [1.1, -0.25]], bottom: [[6.6, -0.5], [5.95, -0.9], [1.9, -0.9], [1.1, -0.6]], plan: [[6.6, 0.14], [5.95, 0.38], [1.9, 0.4], [1.1, 0.14]], side: 0.72, round: 6, stations: 8 }, APACHE.bodies![1], BLACK_HOLE],
+  mastDome: true, mastDomeSize: [0.62, 0.3, 1.07],
 };
 H['ah-64a'] = { cls: 'heli-attack', ...APACHE_A };
 H['ah-64d-apache'] = { cls: 'heli-attack', ...APACHE_D };
@@ -210,8 +242,9 @@ const HIP: HS = {
     pod(5.2, 1.6, -0.82, 0.36, 0.33, 1.28, 2.4),
   ],
   glass: [[8.15, 0.3, 0.85, 1.08, 0.55]],
-  finPlan: [[-8.0, -0.1], [-9.08, -0.1], [-9.7, 1.9], [-9.15, 2.0]],
-  tailRotorAt: [-9.35, 2.3], tailRotorDiameter: 3.91, tailBlades: 3,
+  // The tail pylon and rotor: 5.65 m to the top of the tail rotor's disc (published overall height).
+  finPlan: [[-8.0, -0.1], [-9.08, -0.1], [-9.55, 1.4], [-9.0, 1.45]],
+  tailRotorAt: [-9.25, 1.73], tailRotorDiameter: 3.91, tailBlades: 3,
   tailPlan: [[-7.2, 0.15], [-7.3, 1.35], [-7.9, 1.35], [-7.9, 0.15]], tailUp: 0.7,
   rotorX: 3.3, mastTop: 2.65, wheelAt: [[6.6, 0.3, -1.55, 0.3], [2.15, 2.15, -1.55, 0.43]],
 };
@@ -322,7 +355,8 @@ H['mh-60r'] = { ...SEAHAWK, oneSide: [pod(2.6, 0.6, -1.12, 0.6, 0.2), pod(7.45, 
 // side in a broad, tall glazed cabin, the radar in a rounded nose, the sensor ball under the chin and the second on
 // the cabin roof.
 const HOKUM2: HeliSpec = { ...HOKUM, oneSide: [pod(2.6, 0.2, -0.55, 0.22, 0.24, 0.72)], guns: [[2.5, 0.72, -0.55, 1.8, 0.05]], wheels: false, wheelAt: [[4.7, 0.3, -1.3, 0.28], [-0.2, 1.0, -1.25, 0.38]] };
-H['ka-50'] = { cls: 'heli-attack', ...HOKUM2 };
+// The Ka-50's blades have swept-back tips (FAS military analysis network, Ka-50).
+H['ka-50'] = { cls: 'heli-attack', ...HOKUM2, sweptTips: true };
 H['ka-52'] = {
   cls: 'heli-attack', ...HOKUM2, length: 13.53,
   fuselage: { ...HOKUM.fuselage!, top: [[6.77, -0.15], [6.5, 0.25], [5.9, 0.55], [5.3, 0.75], [4.7, 1.0], [3.6, 1.15], [2.6, 1.2], [0.0, 1.2], [-1.2, 1.1], [-2.4, 0.7], [-6.2, 0.5], [-6.75, 0.5]], bottom: [[6.77, -0.4], [6.4, -0.75], [5.4, -0.95], [1.0, -1.0], [-1.2, -0.9], [-2.6, -0.35], [-6.2, 0.1], [-6.75, 0.15]], plan: [[6.77, 0.35], [6.4, 0.65], [5.6, 0.82], [4.4, 0.9], [3.0, 0.85], [1.0, 0.72], [-1.0, 0.6], [-2.5, 0.32], [-6.75, 0.2]], round: [[6.7, 3], [4, 4], [0, 4.5], [-6.7, 3]] },
@@ -378,25 +412,31 @@ H['sa-342-mistral'] = { ...GAZELLE, cls: 'heli-attack', bodies: [...GAZELLE.bodi
 H['sa-342-minigun'] = { ...GAZELLE, cls: 'heli-attack', oneSide: [pod(2.6, 2.0, -0.3, 0.13, 0.13, -0.98)], guns: [[2.5, -0.98, -0.3, 0.7, 0.04]] };
 
 // SA 313B Alouette II: the glass bubble 1.4 m deep, the rotor right behind it over the bare engine, the open lattice
-// boom (drawn solid) tapering to a small fin and the tail rotor (fuselage 9.66 m, rotor 10.2 m, 2.75 m). SA 316B
+// boom (three steel-tube longerons, two on top and one under, braced zigzag) tapering to a small fin and the tail
+// rotor (fuselage 9.66 m, rotor 10.2 m, 2.75 m to the rotor head). SA 316B
 // Alouette III: an enclosed cabin 1.55 m deep with a rounded glazed nose, the rotor 2.7 m behind the nose, the engine
 // bare on top behind it, a box boom to an end-plated tailplane and the tail rotor on the left (as the public
 // three-view shows), fixed tricycle wheels (fuselage 10.03 m, rotor 11.02 m, 3.0 m). Stations and depths judged from
 // public three-views (estimates).
 H['alouette-ii'] = {
   cls: 'heli-scout', length: 9.66, rotor: 10.2, height: 2.75, bodyWidth: 1.6, bodyHeight: 1.42, cabin: 'bubble', blades: 3,
+  // The bubble and the frame under the engine; the boom is open lattice (struts).
   fuselage: {
-    top: [[4.83, -0.15], [4.7, 0.3], [4.3, 0.62], [3.6, 0.71], [3.0, 0.65], [2.6, 0.5], [2.4, 0.53], [-3.2, 0.37], [-3.8, 0.35]],
-    bottom: [[4.83, -0.3], [4.6, -0.55], [4.0, -0.7], [2.8, -0.71], [2.4, -0.48], [-3.2, 0.2], [-3.8, 0.22]],
-    plan: [[4.83, 0.2], [4.5, 0.6], [3.8, 0.8], [3.0, 0.78], [2.5, 0.5], [2.4, 0.3], [-3.2, 0.08], [-3.8, 0.06]],
-    round: [[4.8, 2.2], [2.6, 2.4], [2.4, 6], [-3.8, 6]], stations: 22,
+    top: [[4.83, -0.15], [4.7, 0.3], [4.3, 0.62], [3.6, 0.71], [3.0, 0.65], [2.6, 0.5], [2.4, 0.53], [2.0, 0.5]],
+    bottom: [[4.83, -0.3], [4.6, -0.55], [4.0, -0.7], [2.8, -0.71], [2.4, -0.48], [2.0, -0.42]],
+    plan: [[4.83, 0.2], [4.5, 0.6], [3.8, 0.8], [3.0, 0.78], [2.5, 0.5], [2.4, 0.3], [2.0, 0.28]],
+    round: [[4.8, 2.2], [2.6, 2.4], [2.4, 6], [2.0, 6]], stations: 16,
   },
-  bodies: [pod(2.15, 0.4, 0.5, 0.28, 0.25), pod(0.5, -0.1, 0.62, 0.1, 0.1)],
+  // The bare engine and its exhaust, the tail rotor's gearbox at the boom's end.
+  bodies: [pod(2.15, 0.4, 0.5, 0.28, 0.25), pod(0.5, -0.1, 0.62, 0.1, 0.1), pod(-3.3, -3.85, 0.3, 0.08, 0.1)],
+  // The lattice boom, and the tubular guard looped round under and behind the tail rotor (FM 44-80 three-view).
+  struts: [...lattice(2.3, -3.4, 7, [0.53, 0.37], [-0.45, 0.2], [0.3, 0.08], 0.03, 0.018), ...loop([[-3.24, 0.5], [-4.3, 0.48], [-4.79, 0.29], [-4.75, -0.1], [-4.67, -0.37], [-4.01, -0.59], [-3.46, -0.37], [-3.3, 0.2]], 0.03)],
   glass: [[3.6, 0.0, 1.15, 0.82, 0.72]],
-  finPlan: [[-3.0, -0.35], [-3.8, -0.35], [-3.95, 0.45], [-3.45, 0.45]],
+  finPlan: [[-3.0, -0.5], [-3.8, -0.5], [-3.95, 0.3], [-3.45, 0.3]],
   tailRotorAt: [-3.65, 0.6], tailRotorDiameter: 1.8, tailBlades: 3,
   tailPlan: [[-2.7, 0.05], [-2.7, 0.7], [-3.1, 0.7], [-3.1, 0.05]], tailUp: 0.3,
-  rotorX: 2.25, mastTop: 1.24, skidAt: [3.9, 1.0, 1.0, -1.05],
+  // The rotor head 2.75 m up (published height).
+  rotorX: 2.25, mastTop: 1.48, skidAt: [3.9, 1.0, 1.0, -1.05],
 };
 H['alouette-iii'] = {
   cls: 'heli-transport', length: 10.03, rotor: 11.02, height: 3.0, bodyWidth: 1.75, bodyHeight: 1.55, cabin: 'cabin', blades: 3,
@@ -624,7 +664,7 @@ const HELIX: HS = {
   bodies: [{ top: [[3.9, 1.0], [3.5, 1.75], [-0.9, 1.83], [-1.6, 1.0]], bottom: [[3.9, 0.95], [-1.6, 0.95]], plan: [[3.9, 0.6], [3.5, 0.95], [-0.9, 0.95], [-1.6, 0.6]], round: 3, stations: 8 }],
   glass: [[4.9, 0.55, 0.6, 1.0, 0.45]],
   finPlan: [[-5.0, 0], [-5.65, 0], [-5.65, 2.14], [-5.0, 2.14]],
-  rotorX: 1.5, mastTop: 2.07, coaxGap: 1.8, wheelAt: [[3.5, 0.9, -1.45, 0.3], [0.7, 1.4, -1.4, 0.35]],
+  rotorX: 1.5, mastTop: 1.81, coaxGap: 1.8, wheelAt: [[3.5, 0.9, -1.45, 0.3], [0.7, 1.4, -1.4, 0.35]],
 };
 H['ka-27'] = { ...HELIX, oneSide: [pod(4.6, 3.6, -1.45, 0.5, 0.22)] };
 H['ka-29'] = {
@@ -699,14 +739,14 @@ const JETRANGER: HS = {
   finPlan: [[-3.85, 0], [-4.27, 1.07], [-4.75, 1.07], [-4.65, -0.98], [-4.35, -0.98]],
   tailRotorSide: -1, tailRotorAt: [-4.15, 0.55], tailRotorDiameter: 1.65, tailBlades: 2,
   tailPlan: [[-1.7, 0.05], [-1.7, 0.95], [-2.1, 0.95], [-2.1, 0.05]], tailUp: 0.4,
-  rotorX: 1.99, mastTop: 1.69, skidAt: [3.53, 1.18, 0.95, -1.37],
+  rotorX: 1.99, mastTop: 1.32, skidAt: [3.53, 1.18, 0.95, -1.37],
 };
 H['bell-206'] = { ...JETRANGER };
 H['oh-58a-kiowa'] = { ...JETRANGER, cls: 'heli-scout' };
 H['oh-58d'] = {
   ...scaled({ ...JETRANGER, bodies: [{ ...JETRANGER.bodies![0], top: [[2.6, 0.83], [2.2, 1.12], [0.8, 1.12], [-0.5, 0.55]], plan: [[2.6, 0.4], [2.2, 0.52], [0.8, 0.5], [-0.5, 0.22]] }, pod(0.5, 0.0, 1.15, 0.18, 0.26), pod(2.0, 0.9, -0.35, 0.16, 0.16, 1.05), pod(2.3, 0.7, -0.6, 0.12, 0.12, 1.05)] }, 10.48 / 9.5),
   cls: 'heli-scout', length: 10.48, rotor: 10.67, height: 3.93, blades: 4,
-  mastDome: true, mastDomeSize: [0.33, 0.33, 0.82],
+  mastDome: true, mastDomeSize: [0.33, 0.33, 0.85],
 };
 
 // Hughes OH-6 Cayuse / MD 500 / MH-6 Little Bird: the tall egg-shaped cabin 2 m deep under a short mast, the thin
@@ -898,7 +938,7 @@ H['z-10'] = {
   tailPlan: [[-6.4, 0.1], [-6.5, 1.1], [-7.0, 1.1], [-7.0, 0.1]], tailUp: 1.85,
   oneSide: [pod(7.0, 6.4, -1.15, 0.27, 0.25), pod(3.2, 2.7, 1.45, 0.22, 0.22)], guns: [[6.9, 0, -1.2, 1.3, 0.05]],
   stubs: { span: 4.4, pylons: 2 }, stubAt: [1.7, -0.2, 3],
-  rotorX: 1.55, mastTop: 1.93, wheelAt: [[3.2, 0.95, -1.67, 0.3], [-5.47, 0, -1.5, 0.18]],
+  rotorX: 1.55, mastTop: 1.74, wheelAt: [[3.2, 0.95, -1.67, 0.3], [-5.47, 0, -1.5, 0.18]],
 };
 // Z-19: the Dauphin's dynamics under a narrow stepped tandem body 2 m deep, engine nacelles on the shoulders with
 // their exhausts behind, the low rear fuselage to the big fenestron fin with a stabiliser and end plates ahead of it,

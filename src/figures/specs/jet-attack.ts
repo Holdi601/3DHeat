@@ -263,14 +263,17 @@ A['amx'] = make({
 // ---------------------------------------------------------------- Su-7, Su-17/20/22, Su-24, JH-7
 
 // Su-7B: a round body with the nose intake and its cone, a fixed 60-degree wing, a dorsal spine (16.8 x 9.31 x 4.8 m).
+// The wing and the all-moving tailplane from the FM 44-80 three-view (scaled by span and length): the wing's root
+// from 4.3 m behind the nose, its leading edge swept about 64 degrees and the trailing edge 47, the tips well back
+// by the tailplane; the chords scaled to the published 34 m2. The tailplane swept as steeply.
 const SU7: Make = {
   cls: 'attack', length: 16.8, span: 9.31, height: 4.8,
   top: [[8.4, 0.59], [7.0, 0.66], [5.6, 0.7], [3.6, 0.88], [1.0, 0.92], [-3, 0.82], [-8.2, 0.4]],
   bottom: [[8.4, -0.71], [6.4, -0.85], [4.6, -0.95], [0, -0.95], [-4, -0.78], [-8.2, -0.4]],
   plan: [[8.4, 0.6], [6.5, 0.68], [2, 0.78], [-4, 0.74], [-8.2, 0.52]], round: 2.1,
-  wing: [[1.2, 0], [1.2, 0.7], [-2.8, 4.65], [-3.6, 4.65], [-4.2, 0.7], [-4.2, 0]],
+  wing: [[4.11, 0], [4.11, 0.75], [-4.0, 4.655], [-5.52, 4.655], [-1.09, 0.75], [-1.09, 0]],
   fin: [[-3.6, 0], [-7.6, 0], [-8.5, 2.35], [-7.4, 2.4]], finBase: 0.75,
-  tail: [[-5.8, 0.5], [-6.8, 2.4], [-7.8, 2.4], [-8.0, 0.5]], planeUp: 0.2,
+  tail: [[-5.27, 0.6], [-8.2, 2.4], [-8.5, 2.4], [-7.14, 0.6]], planeUp: 0.2,
   nozzle: 0.95,
   glass: [bubble(6.6, 4.2, 1.35, 0.66, 0.88, 0.4)],
   bodies: [pod(9.2, 8.2, 0.34, 0, -0.06, 0.6), spine(3.6, -5.0, 0.85, 0.3, 0.38)],
@@ -293,7 +296,8 @@ const FITTER: Make = {
   tail: [[-5.5, 0.55], [-7.3, 2.55], [-8.6, 2.65], [-7.6, 0.55]], planeUp: 0.65,
   nozzle: 0.9, nozzleUp: -0.18, nozzleX: -8.6,
   glass: [bubble(5.3, 3.7, 1.05, 0.55, 0.92, 0.38)],
-  bodies: [pod(7.7, 6.8, 0.32, 0, -0.3, 0.6), pod(9.51, 7.3, 0.04, 0, 0.0, 0.1)],
+  // The cone, the probe, and the tall fence on each glove's outer end by the pivot (its height an estimate from photos).
+  bodies: [pod(7.7, 6.8, 0.32, 0, -0.3, 0.6), pod(9.51, 7.3, 0.04, 0, 0.0, 0.1), post(1.6, -2.45, 0.32, 0.0, 0.02, 2.2)],
 };
 A['su-17m2'] = make(FITTER);
 A['su-17m4'] = make({ ...FITTER, bodies: [...FITTER.bodies!, pod(-3.4, -4.3, 0.16, 0, 0.95, 0.3)] });
@@ -368,13 +372,14 @@ A['su-25ub'] = frogfoot('ub');
 // ---------------------------------------------------------------- Q-5 / A-5
 
 // Q-5 Fantan: the MiG-19 reworked - a solid pointed nose, side intakes, the 52-degree wing, twin engines, a dorsal
-// spine (15.65 x 9.68 x 4.33 m).
+// spine (15.65 x 9.68 x 4.33 m). The wing from the FM 44-80 three-view (scaled by span and length): the root from
+// 5 m behind the nose, the leading edge swept 57 degrees; the chords set to the published 27.95 m2.
 A['q-5'] = make({
   cls: 'attack', length: 15.65, span: 9.68, height: 4.33,
   top: [[7.825, -0.1], [6.8, 0.35], [5.4, 0.6], [4.4, 0.75], [2, 0.8], [-3, 0.7], [-7.7, 0.5]],
   bottom: [[7.825, -0.15], [6.8, -0.45], [5.0, -0.65], [0, -0.75], [-4, -0.7], [-7.7, -0.5]],
   plan: [[7.825, 0.03], [6.8, 0.4], [5.2, 0.6], [4.2, 0.62], [3.8, 1.05], [-1, 1.05], [-5, 0.85], [-7.7, 0.65]],
-  wing: [[1.6, 0], [1.6, 1.0], [-2.0, 4.84], [-2.8, 4.84], [-3.6, 1.0], [-3.6, 0]],
+  wing: [[2.8, 0], [2.8, 1.0], [-3.08, 4.84], [-4.28, 4.84], [-1.2, 1.0], [-1.2, 0]],
   fin: [[-3.0, 0], [-7.0, 0], [-7.8, 2.7], [-6.6, 2.75]], finBase: 0.7,
   tail: [[-5.4, 0.6], [-6.4, 2.4], [-7.4, 2.4], [-7.6, 0.6]], planeUp: -0.1,
   engines: 2, nozzle: 0.75,
@@ -544,7 +549,9 @@ const TIGER_TAIL = {
   finPlan: [[-2.6, 0], [-3.7, 0.16], [-4.38, 0.91], [-5.18, 2.03], [-5.4, 2.07], [-6.05, 2.07], [-6.3, 0.6], [-6.6, 0.3], [-6.6, 0]] as P2[],
   tailPlan: [[-4.8, 0.85], [-5.95, 2.23], [-6.25, 2.23], [-6.25, 0.85]] as P2[],
 };
-A['f-5e'] = { ...TIGER2, fuselage: F5_FUS, wingPlan: F5_WING, ...TIGER_TAIL, bodies: [F5_INTAKE], glass: [F5_CANOPY] };
+// The Sidewinders on the wing-tip rails (2.87 m long, 0.127 m across, published), their noses well ahead of the tip.
+const F5_TIP_AAM = pod(-0.1, -2.97, 0.064, 4.13, -0.31, 0.25);
+A['f-5e'] = { ...TIGER2, fuselage: F5_FUS, wingPlan: F5_WING, ...TIGER_TAIL, bodies: [F5_INTAKE, F5_TIP_AAM], glass: [F5_CANOPY] };
 // (Its length stays the F-5E's here: the nose is stretched ahead of the same tail, 15.65 m overall.)
 A['f-5f'] = { ...TIGER2, fuselage: { ...F5_FUS, top: stretch(F5_FUS.top), bottom: stretch(F5_FUS.bottom), plan: stretch(F5_FUS.plan) }, wingPlan: F5_WING, ...TIGER_TAIL, bodies: [F5_INTAKE], glass: [tandem(3.57, -0.3, 1.04, 1.14, 0.62, 0.95, 0.38)] };
 A['f-20'] = { ...TIGER2, length: 14.17, span: 8.53, fuselage: F5_FUS, wingPlan: [[4.4, 0], [2.8, 1.0], [0.9, 1.15], [-1.1, 4.26], [-1.9, 4.26], [-2.8, 1.15], [-2.9, 0]], engines: { kind: 'internal', count: 1, diameter: 1.0 }, bodies: [F5_INTAKE], glass: [F5_CANOPY] };
@@ -597,13 +604,14 @@ A['mig-17pf'] = { ...fagot(11.68, true), bodies: [pod(6.3, 5.5, 0.2, 0, 0.05, 0.
 // MiG-19: twin engines side by side behind the nose intake, the 55-degree wing with big fences, twin nozzles
 // (12.54 x 9.0 x 3.89 m). MiG-19P/PT/PM and J-6A: the radar cone in the intake. Checked by eye against a public
 // 3-view (estimates): the nose intake 1.25 m tall, 1.75 m deep at most, 1.4 m wide, belly to canopy top 1.9 m, to the
-// fin's top 3.2 m.
+// fin's top 3.2 m. The wing from the FM 44-80 three-view (scaled by span and length): the root from 2.2 m behind the
+// nose, the leading edge swept 58 degrees, the trailing edge 45, a 1 m tip (about the published 25 m2).
 const FARMER: Make = {
   cls: 'fighter', length: 12.54, span: 9.0, height: 3.89,
   top: [[6.27, 0.6], [5.4, 0.7], [3.8, 0.78], [3.0, 0.85], [0.6, 0.88], [-3, 0.72], [-6.2, 0.55]],
   bottom: [[6.27, -0.62], [5.2, -0.75], [0, -0.86], [-4, -0.74], [-6.2, -0.55]],
   plan: [[6.27, 0.6], [5.4, 0.66], [2, 0.71], [-4, 0.72], [-6.2, 0.65]], round: 2.3,
-  wing: [[1.2, 0], [1.2, 0.7], [-2.6, 4.5], [-3.4, 4.5], [-3.4, 0.7], [-3.4, 0]],
+  wing: [[4.1, 0], [4.1, 0.7], [-2.11, 4.5], [-3.13, 4.5], [0.37, 0.7], [0.37, 0]],
   fin: [[-2.2, 0], [-5.6, 0], [-6.4, 1.8], [-5.3, 1.85]], finBase: 0.6,
   tail: [[-4.4, 0.5], [-5.4, 2.3], [-6.4, 2.3], [-6.5, 0.5]], planeUp: 0.1,
   engines: 2, nozzle: 0.65,
@@ -758,13 +766,14 @@ A['fj-4'] = fig({
   glass: [bubble(3.2, 1.6, 1.25, 0.8, 0.84, 0.36)],
 });
 // F-100 Super Sabre: the oval nose intake with its upper lip forward, a 45-degree wing, a tall fin, the low tailplane
-// (14.36 x 11.81 x 4.95 m). F-100F: the two-seater, 0.9 m longer.
+// (14.36 x 11.81 x 4.95 m). F-100F: the two-seater, 0.9 m longer. The wing swept 45 degrees at its quarter chord
+// with the published 35.8 m2 (root chord 4.9 m, tip 1.2 m; where the root sits is an estimate).
 const HUN: Make = {
   cls: 'fighter', length: 14.36, span: 11.81, height: 4.95,
   top: [[7.18, 0.35], [6.4, 0.55], [4.8, 0.7], [3.8, 0.85], [1.0, 0.85], [-3, 0.7], [-7.1, 0.5]],
   bottom: [[7.0, -0.5], [6.4, -0.62], [2, -0.75], [-3, -0.7], [-7.1, -0.5]],
   plan: [[7.18, 0.5], [6.4, 0.62], [2, 0.75], [-3, 0.72], [-7.1, 0.55]], round: 2.3,
-  wing: [[1.4, 0], [1.4, 0.75], [-3.5, 5.9], [-4.5, 5.9], [-4.0, 0.75], [-4.0, 0]], wingUp: -0.2,
+  wing: [[1.4, 0], [1.4, 0.75], [-4.56, 5.9], [-5.76, 5.9], [-3.03, 0.75], [-3.03, 0]], wingUp: -0.2,
   fin: [[-2.8, 0], [-6.4, 0], [-7.6, 3.0], [-6.4, 3.1]], finBase: 0.6,
   tail: [[-5.2, 0.5], [-6.4, 2.8], [-7.4, 2.8], [-7.6, 0.5]], planeUp: -0.35,
   nozzle: 0.85,
