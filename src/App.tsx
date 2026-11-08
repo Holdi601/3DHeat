@@ -457,6 +457,8 @@ export function App() {
                 {/* Rounds (CS2): the matches themselves are picked below. */}
                 {dataset && !matchesAreSessions(dataset) && <SessionPicker />}
               </div>
+              {/* The level first: it is loaded before the data, then the rest is done on top of both. */}
+              <LevelPanel />
               {!dataset && <SourcePanel />}
               <MatchPicker />
               <GameOverview />
@@ -471,7 +473,6 @@ export function App() {
               <MatchPanel />
               {dataset && <SourcePanel />}
               <FilterPanel />
-              <LevelPanel />
               <CameraPanel />
             </>
           ) : (
@@ -503,6 +504,8 @@ export function App() {
             )}
           </div>
 
+          {/* The level first: it is loaded before the data, then the rest is done on top of both. */}
+          <LevelPanel />
           <SourcePanel />
           <LeanOverlayPanel />
           <DatasetPanel />
@@ -519,7 +522,6 @@ export function App() {
           <TeamsList />
           <EntityPanel />
           <FilterPanel />
-          <LevelPanel />
           <SlicePanel />
           <MeasurePanel />
           <PathPanel />
