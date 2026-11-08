@@ -11,12 +11,17 @@ import { CATALOG } from '../figures/catalog';
 import { place, TemplateCache, type Template } from '../figures/kit';
 import { keyAt, onBoard, posesAt, throwArc, type Plan, type PlanArrow, type Vec3 } from './plan';
 import { gamePreset } from './games';
+import type { ArrivalGrid } from './telemetry';
 
 export interface BoardView {
   step: number;
   /** Share of the step played, 0..1; 0 when editing. */
   u: number;
   selected: string | null;
+  /** Everything selected (figure, arrow, area, note ids, `<arrow>#<point>`); `selected` alone when absent. */
+  selection?: string[];
+  /** The earliest-arrival overlay from telemetry, when shown. */
+  heat?: ArrivalGrid | null;
   /** Points of an arrow or area being drawn, and where the cursor is. */
   draft: { kind: 'arrow' | 'throw' | 'area'; style?: PlanArrow['style']; points: Vec3[]; team: string } | null;
   cursor: Vec3 | null;
@@ -53,17 +58,22 @@ export class BoardScene {
     const width = preset.arrowWidth;
     const color = (team: string): Rgb => plan.teams.find((t) => t.id === team)?.color ?? [0.8, 0.8, 0.8];
     const scale = Math.max(0.05, plan.figureScale);
+    const sel = new Set(view.selection ?? (view.selected ? [view.selected] : []));
+    const white: Rgb = [1, 1, 1];
 
+    if (view.heat) heatGrid(tris, view.heat);
     // Areas, under everything else.
     for (const a of plan.areas) {
       if (a.step !== view.step) continue;
       disc(tris, lines, a.centre, a.radius, color(a.team), 0.18);
+      if (sel.has(a.id)) ring(lines, a.centre, a.radius * 1.02, white);
     }
     // Arrows of this step, and the last step's faintly, so a phase reads as following on.
     for (const a of plan.arrows) {
       const here = a.step === view.step;
       if (!here && a.step !== view.step - 1) continue;
       arrow(tris, lines, a, color(a.team), width, here ? 0.85 : 0.22, preset.throwApex);
+      if (here) a.points.forEach((p, i) => (sel.has(a.id) || sel.has(`${a.id}#${i}`)) && ring(lines, p, width * 0.9, white));
     }
     // Figures where they are at this moment.
     const poses = posesAt(plan, view.step, view.u);
@@ -72,8 +82,8 @@ export class BoardScene {
       const t = templateOf(f.kind);
       if (!p || !t) continue;
       const col = color(f.team);
-      place(tris, t, { x: p.x, y: p.y, z: p.z, yaw: figureHeading(p.yaw), scale }, col);
-      if (f.id === view.selected) ring(lines, p, Math.max(t.max[0] - t.min[0], t.max[2] - t.min[2]) * 0.65 * scale + 0.3, [1, 1, 1]);
+      place(tris, t, { x: p.x, y: p.y, z: p.z, yaw: figureHeading(p.yaw), pitch: p.pitch, roll: p.roll, scale }, col);
+      if (sel.has(f.id)) ring(lines, p, Math.max(t.max[0] - t.min[0], t.max[2] - t.min[2]) * 0.65 * scale + 0.3, white);
       // Where the figure goes next, as a ghost, while editing.
       if (view.u === 0 && onBoard(f, view.step + 1)) {
         const next = f.keys[view.step + 1];
@@ -83,7 +93,12 @@ export class BoardScene {
     }
     // Notes as pins.
     const pin = templateOf('waypoint');
-    if (pin) for (const n of plan.notes) if (n.step === view.step) place(tris, pin, { x: n.at.x, y: n.at.y, z: n.at.z, yaw: 0, scale: Math.max(0.3, width) }, [0.95, 0.95, 0.95], 0.9);
+    if (pin)
+      for (const n of plan.notes) {
+        if (n.step !== view.step) continue;
+        place(tris, pin, { x: n.at.x, y: n.at.y, z: n.at.z, yaw: 0, scale: Math.max(0.3, width) }, [0.95, 0.95, 0.95], 0.9);
+        if (sel.has(n.id)) ring(lines, n.at, width * 2, white);
+      }
 
     // What is being drawn.
     const d = view.draft;
@@ -103,6 +118,29 @@ export class BoardScene {
     }
     return this.frame;
   }
+}
+
+/** Seconds to colour: early green through yellow to late red. */
+export function arrivalColor(u: number): Rgb {
+  const x = Math.max(0, Math.min(1, u));
+  return x < 0.5 ? [0.1 + x * 1.7, 0.85, 0.25] : [0.95, 0.85 - (x - 0.5) * 1.5, 0.2];
+}
+
+/** The earliest-arrival overlay: a cell per square, coloured by the time it was first reached. */
+function heatGrid(tris: VertexBuffer, g: ArrivalGrid): void {
+  const span = Math.max(1e-3, g.tMax - g.tMin);
+  const lift = g.cell * 0.02;
+  for (let j = 0; j < g.nz; j++)
+    for (let i = 0; i < g.nx; i++) {
+      const k = j * g.nx + i;
+      const v = g.values[k];
+      if (!Number.isFinite(v)) continue;
+      const col = arrivalColor((v - g.tMin) / span);
+      const x0 = g.x0 + i * g.cell;
+      const z0 = g.z0 + j * g.cell;
+      const y = g.heights[k] + lift;
+      tris.quad([x0, y, z0], [x0 + g.cell, y, z0], [x0 + g.cell, y, z0 + g.cell], [x0, y, z0 + g.cell], col, 0.42);
+    }
 }
 
 /** A flat ring of lines round a point, just above it. */

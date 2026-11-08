@@ -1,0 +1,253 @@
+{
+  "game": "valorant",
+  "unit": "m/s",
+  "slope": "horizontal",
+  "sources": [
+    {
+      "id": "valorant-api",
+      "title": "valorant-api.com weapons endpoint (weaponStats.runSpeedMultiplier from the game data)",
+      "url": "https://valorant-api.com/v1/weapons",
+      "accessed": "2026-11-08",
+      "note": "Community mirror of the game files; multipliers 0.85 / 0.8 / 0.76 / 0.75 of the 6.75 m/s knife speed."
+    },
+    {
+      "id": "vlr-knife",
+      "title": "VLR.gg forum: knife movement speed 6.75 m/s as shown in game",
+      "url": "https://vlr.gg/post/4240306",
+      "accessed": "2026-11-08"
+    },
+    {
+      "id": "riot-movement",
+      "title": "Riot Games support: Walking, Running and Crouching",
+      "url": "https://support.riotgames.com/en-us/valorant/gameplay/walking-running-and-crouching",
+      "accessed": "2026-11-08",
+      "note": "Official description of the modes; gives no speeds."
+    }
+  ],
+  "classes": {
+    "infantry": {
+      "modes": {"crawl": null, "crouch": 2.7, "walk": 3.71, "run": 6.75, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "Knife out, 6.75 m/s. run = 6.75 m/s x the weapon's runSpeedMultiplier from the game data (matches the run speeds the in-game Arsenal shows: 5.73, 5.4, 5.13, 5.06 m/s). walk (x0.55) and crouch (x0.4) are estimates: Riot does not publish them. No sprint, no prone."
+    }
+  },
+  "profiles": [
+    {
+      "id": "melee",
+      "label": "Melee (knife)",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.7, "walk": 3.71, "run": 6.75, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 1.00); walk and crouch estimated."
+    },
+    {
+      "id": "classic",
+      "label": "Classic",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.29, "walk": 3.16, "run": 5.74, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.85); walk and crouch estimated."
+    },
+    {
+      "id": "shorty",
+      "label": "Shorty",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.16, "walk": 2.97, "run": 5.4, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.80); walk and crouch estimated."
+    },
+    {
+      "id": "frenzy",
+      "label": "Frenzy",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.29, "walk": 3.16, "run": 5.74, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.85); walk and crouch estimated."
+    },
+    {
+      "id": "ghost",
+      "label": "Ghost",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.29, "walk": 3.16, "run": 5.74, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.85); walk and crouch estimated."
+    },
+    {
+      "id": "bandit",
+      "label": "Bandit",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.29, "walk": 3.16, "run": 5.74, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.85); walk and crouch estimated."
+    },
+    {
+      "id": "sheriff",
+      "label": "Sheriff",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.16, "walk": 2.97, "run": 5.4, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.80); walk and crouch estimated."
+    },
+    {
+      "id": "stinger",
+      "label": "Stinger",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.29, "walk": 3.16, "run": 5.74, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.85); walk and crouch estimated."
+    },
+    {
+      "id": "spectre",
+      "label": "Spectre",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.29, "walk": 3.16, "run": 5.74, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.85); walk and crouch estimated."
+    },
+    {
+      "id": "bucky",
+      "label": "Bucky",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.02, "walk": 2.78, "run": 5.06, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.75); walk and crouch estimated."
+    },
+    {
+      "id": "judge",
+      "label": "Judge",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.02, "walk": 2.78, "run": 5.06, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.75); walk and crouch estimated."
+    },
+    {
+      "id": "bulldog",
+      "label": "Bulldog",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.16, "walk": 2.97, "run": 5.4, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.80); walk and crouch estimated."
+    },
+    {
+      "id": "guardian",
+      "label": "Guardian",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.16, "walk": 2.97, "run": 5.4, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.80); walk and crouch estimated."
+    },
+    {
+      "id": "phantom",
+      "label": "Phantom",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.16, "walk": 2.97, "run": 5.4, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.80); walk and crouch estimated."
+    },
+    {
+      "id": "vandal",
+      "label": "Vandal",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.16, "walk": 2.97, "run": 5.4, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.80); walk and crouch estimated."
+    },
+    {
+      "id": "warden",
+      "label": "Warden",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.16, "walk": 2.97, "run": 5.4, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.80); walk and crouch estimated."
+    },
+    {
+      "id": "marshal",
+      "label": "Marshal",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.16, "walk": 2.97, "run": 5.4, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.80); walk and crouch estimated."
+    },
+    {
+      "id": "marshal-scoped",
+      "label": "Marshal (scoped)",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 1.94, "walk": 2.67, "run": 4.86, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "Scoped: run x the ADS runSpeedMultiplier 0.90, assuming it applies to the weapon's own run speed."
+    },
+    {
+      "id": "outlaw",
+      "label": "Outlaw",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.16, "walk": 2.97, "run": 5.4, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.80); walk and crouch estimated."
+    },
+    {
+      "id": "outlaw-scoped",
+      "label": "Outlaw (scoped)",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 1.73, "walk": 2.38, "run": 4.32, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "Scoped: run x the ADS runSpeedMultiplier 0.80, assuming it applies to the weapon's own run speed."
+    },
+    {
+      "id": "operator",
+      "label": "Operator",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.05, "walk": 2.82, "run": 5.13, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.76); walk and crouch estimated."
+    },
+    {
+      "id": "operator-scoped",
+      "label": "Operator (scoped)",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 1.48, "walk": 2.03, "run": 3.69, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "Scoped: run x the ADS runSpeedMultiplier 0.72, assuming it applies to the weapon's own run speed."
+    },
+    {
+      "id": "ares",
+      "label": "Ares",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.05, "walk": 2.82, "run": 5.13, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.76); walk and crouch estimated."
+    },
+    {
+      "id": "odin",
+      "label": "Odin",
+      "class": "infantry",
+      "modes": {"crawl": null, "crouch": 2.05, "walk": 2.82, "run": 5.13, "sprint": null},
+      "source": "valorant-api",
+      "approx": true,
+      "note": "run exact (multiplier 0.76); walk and crouch estimated."
+    }
+  ]
+}

@@ -1,0 +1,773 @@
+{
+  "game": "air",
+  "unit": "km/h",
+  "slope": "grade",
+  "sources": [
+    {
+      "id": "wp-f16",
+      "title": "F-16 Fighting Falcon - Specifications (F-16C Block 50/52)",
+      "url": "https://en.wikipedia.org/wiki/General_Dynamics_F-16_Fighting_Falcon",
+      "accessed": "2026-11-08",
+      "note": "Mach 1.2 (800 kn) at sea level, Mach 2.05 at 40,000 ft; cruise 504 kn."
+    },
+    {
+      "id": "wp-f15",
+      "title": "F-15 Eagle - Specifications (F-15C)",
+      "url": "https://en.wikipedia.org/wiki/McDonnell_Douglas_F-15_Eagle",
+      "accessed": "2026-11-08",
+      "note": "Mach 1.2 (800 kn) at sea level, Mach 2.5 at altitude; cruise 496 kn."
+    },
+    {
+      "id": "wp-f18",
+      "title": "F/A-18 Hornet - Specifications (F/A-18C/D)",
+      "url": "https://en.wikipedia.org/wiki/McDonnell_Douglas_F/A-18_Hornet",
+      "accessed": "2026-11-08",
+      "note": "Mach 1.06 (700 kn) at sea level, Mach 1.8 at 40,000 ft; cruise 480 kn."
+    },
+    {
+      "id": "wp-su27",
+      "title": "Su-27 - Specifications (Su-27SK)",
+      "url": "https://en.wikipedia.org/wiki/Sukhoi_Su-27",
+      "accessed": "2026-11-08",
+      "note": "1,400 km/h at sea level, 2,500 km/h at altitude."
+    },
+    {
+      "id": "wp-mig29",
+      "title": "MiG-29 - Specifications",
+      "url": "https://en.wikipedia.org/wiki/Mikoyan_MiG-29",
+      "accessed": "2026-11-08",
+      "note": "2,450 km/h at high altitude; sea-level 1,500 km/h is the manufacturer figure."
+    },
+    {
+      "id": "wp-mig21",
+      "title": "MiG-21 - Specifications (MiG-21bis)",
+      "url": "https://en.wikipedia.org/wiki/Mikoyan-Gurevich_MiG-21",
+      "accessed": "2026-11-08",
+      "note": "1,300 km/h at sea level, 2,175 km/h at 13,000 m; landing 250 km/h."
+    },
+    {
+      "id": "wp-m2000",
+      "title": "Mirage 2000 - Specifications",
+      "url": "https://en.wikipedia.org/wiki/Dassault_Mirage_2000",
+      "accessed": "2026-11-08",
+      "note": "1,110 km/h at sea level, 2,336 km/h (Mach 2.2) at high altitude."
+    },
+    {
+      "id": "wp-ef",
+      "title": "Eurofighter Typhoon - Specifications",
+      "url": "https://en.wikipedia.org/wiki/Eurofighter_Typhoon",
+      "accessed": "2026-11-08",
+      "note": "1,530 km/h at sea level, 2,495 km/h at 11 km."
+    },
+    {
+      "id": "wp-a10",
+      "title": "A-10 Thunderbolt II - Specifications (A-10C)",
+      "url": "https://en.wikipedia.org/wiki/Fairchild_Republic_A-10_Thunderbolt_II",
+      "accessed": "2026-11-08",
+      "note": "706 km/h at sea level clean, cruise 560 km/h, stall 220 km/h."
+    },
+    {
+      "id": "wp-su25",
+      "title": "Su-25 - Specifications (Su-25K)",
+      "url": "https://en.wikipedia.org/wiki/Sukhoi_Su-25",
+      "accessed": "2026-11-08",
+      "note": "975 km/h at sea level."
+    },
+    {
+      "id": "wp-c130",
+      "title": "C-130 Hercules - Specifications (C-130H)",
+      "url": "https://en.wikipedia.org/wiki/Lockheed_C-130_Hercules",
+      "accessed": "2026-11-08",
+      "note": "320 kn at 20,000 ft, cruise 292 kn."
+    },
+    {
+      "id": "wp-bf109",
+      "title": "Bf 109 - Specifications (Bf 109 G-6)",
+      "url": "https://en.wikipedia.org/wiki/Messerschmitt_Bf_109",
+      "accessed": "2026-11-08",
+      "note": "530 km/h at sea level, 642 km/h at 6,300 m; cruise 590 km/h at 6,000 m."
+    },
+    {
+      "id": "wp-spit",
+      "title": "Spitfire variants - performance table (LF Mk IXe)",
+      "url": "https://en.wikipedia.org/wiki/Supermarine_Spitfire_variants:_specifications,_performance_and_armament",
+      "accessed": "2026-11-08",
+      "note": "404 mph (650 km/h) at 21,000 ft."
+    },
+    {
+      "id": "wp-p51",
+      "title": "P-51 Mustang - Specifications (P-51D)",
+      "url": "https://en.wikipedia.org/wiki/North_American_P-51_Mustang",
+      "accessed": "2026-11-08",
+      "note": "440 mph at altitude, cruise 362 mph, stall 100 mph."
+    },
+    {
+      "id": "wp-fw190",
+      "title": "Fw 190 - Specifications (Fw 190 A-8)",
+      "url": "https://en.wikipedia.org/wiki/Focke-Wulf_Fw_190",
+      "accessed": "2026-11-08",
+      "note": "652 km/h at 5,920 m."
+    },
+    {
+      "id": "wp-ju87",
+      "title": "Ju 87 - Specifications (Ju 87 D-1)",
+      "url": "https://en.wikipedia.org/wiki/Junkers_Ju_87",
+      "accessed": "2026-11-08",
+      "note": "255 mph at 13,500 ft, cruise 198 mph."
+    },
+    {
+      "id": "wp-b17",
+      "title": "B-17 Flying Fortress - Specifications (B-17G)",
+      "url": "https://en.wikipedia.org/wiki/Boeing_B-17_Flying_Fortress",
+      "accessed": "2026-11-08",
+      "note": "472 km/h at 25,000 ft, cruise 293 km/h."
+    },
+    {
+      "id": "wp-camel",
+      "title": "Sopwith Camel - Specifications (F.1)",
+      "url": "https://en.wikipedia.org/wiki/Sopwith_Camel",
+      "accessed": "2026-11-08",
+      "note": "113 mph, stall 48 mph."
+    },
+    {
+      "id": "wp-ah64",
+      "title": "AH-64 Apache - Specifications (AH-64A/D)",
+      "url": "https://en.wikipedia.org/wiki/Boeing_AH-64_Apache",
+      "accessed": "2026-11-08",
+      "note": "max 158 kn, cruise 143 kn, Vne 197 kn."
+    },
+    {
+      "id": "wp-mi24",
+      "title": "Mi-24 - Specifications",
+      "url": "https://en.wikipedia.org/wiki/Mil_Mi-24",
+      "accessed": "2026-11-08",
+      "note": "max 320 km/h, cruise 270 km/h."
+    },
+    {
+      "id": "wp-ka50",
+      "title": "Ka-50 - Specifications",
+      "url": "https://en.wikipedia.org/wiki/Kamov_Ka-50",
+      "accessed": "2026-11-08",
+      "note": "max 315 km/h, cruise 270 km/h, Vne 350 km/h."
+    },
+    {
+      "id": "wp-uh1",
+      "title": "UH-1 Iroquois - Specifications (UH-1H)",
+      "url": "https://en.wikipedia.org/wiki/Bell_UH-1_Iroquois",
+      "accessed": "2026-11-08",
+      "note": "max and cruise 127 mph at max take-off weight."
+    },
+    {
+      "id": "wp-uh60",
+      "title": "UH-60 Black Hawk - Specifications (UH-60M)",
+      "url": "https://en.wikipedia.org/wiki/Sikorsky_UH-60_Black_Hawk",
+      "accessed": "2026-11-08",
+      "note": "max 159 kn, cruise 152 kn."
+    },
+    {
+      "id": "wp-ch47",
+      "title": "CH-47 Chinook - Specifications (CH-47F)",
+      "url": "https://en.wikipedia.org/wiki/Boeing_CH-47_Chinook",
+      "accessed": "2026-11-08",
+      "note": "max 170 kn, cruise 157 kn."
+    },
+    {
+      "id": "wp-mi8",
+      "title": "Mi-8 - Specifications (Mi-8MT)",
+      "url": "https://en.wikipedia.org/wiki/Mil_Mi-8",
+      "accessed": "2026-11-08",
+      "note": "max 250 km/h, cruise 240 km/h."
+    },
+    {
+      "id": "wp-gazelle",
+      "title": "Gazelle - Specifications (SA 341G)",
+      "url": "https://en.wikipedia.org/wiki/A%C3%A9rospatiale_Gazelle",
+      "accessed": "2026-11-08",
+      "note": "max 310 km/h at sea level, cruise 264 km/h."
+    },
+    {
+      "id": "wt-ground",
+      "title": "Published road speeds of the real vehicles (Wikipedia specifications), as War Thunder models them",
+      "url": "https://wiki.warthunder.com/",
+      "accessed": "2026-11-08",
+      "note": "Rounded; game values differ slightly by mode and modification."
+    },
+    {
+      "id": "ship-speeds",
+      "title": "Published top speeds of the ship classes (Wikipedia specifications)",
+      "url": "https://en.wikipedia.org/wiki/Arleigh_Burke-class_destroyer",
+      "accessed": "2026-11-08",
+      "note": "Arleigh Burke 30+ kn, Nimitz 30+ kn, Bismarck 30 kn, Kilo 20 kn submerged; rounded."
+    },
+    {
+      "id": "air-typical",
+      "title": "V speeds (approach and manoeuvring speeds); typical jet values used: approach ~140 kn, corner ~330-350 kn",
+      "url": "https://en.wikipedia.org/wiki/V_speeds",
+      "accessed": "2026-11-08",
+      "note": "Estimates for the slow and combat modes; not specific to one aircraft."
+    }
+  ],
+  "classes": {
+    "air": {
+      "modes": {"slow": 260, "cruise": 900, "combat": 650, "max": 1400},
+      "source": "air-typical",
+      "approx": true,
+      "note": "Fourth-generation fighter default. cruise and max are the published figures for the real aircraft (the sims model them closely); slow (approach / loiter) and combat (corner / attack speed) are typical values."
+    },
+    "heli": {
+      "modes": {"slow": 50, "cruise": 260, "combat": 160, "max": 300},
+      "source": "air-typical",
+      "approx": true,
+      "note": "Attack / utility helicopter default."
+    },
+    "ground": {
+      "modes": {"crawl": 8, "cautious": 20, "normal": 39, "rush": 65},
+      "source": "wt-ground",
+      "approx": true,
+      "note": "Tank default. rush = published road top speed of the real vehicle, which War Thunder uses (some vehicles differ by a few km/h per mode); normal ~ cross-country, cautious and crawl for moving in cover."
+    },
+    "sea": {
+      "modes": {"crawl": 9, "cautious": 30, "normal": 33, "rush": 56},
+      "source": "ship-speeds",
+      "approx": true,
+      "note": "Warship default (30 kn)."
+    }
+  },
+  "profiles": [
+    {
+      "id": "f-16c",
+      "label": "F-16C",
+      "class": "air",
+      "modes": {"slow": 260, "cruise": 933, "combat": 650, "max": 1482},
+      "source": "wp-f16",
+      "approx": false,
+      "match": ["f-16c"],
+      "note": "max at sea level (low-level combat); much faster at altitude, see source."
+    },
+    {
+      "id": "f-15c",
+      "label": "F-15C",
+      "class": "air",
+      "modes": {"slow": 280, "cruise": 919, "combat": 650, "max": 1482},
+      "source": "wp-f15",
+      "approx": false,
+      "match": ["f-15c"],
+      "note": "max at sea level (low-level combat); much faster at altitude, see source."
+    },
+    {
+      "id": "f-a-18c",
+      "label": "F/A-18C",
+      "class": "air",
+      "modes": {"slow": 250, "cruise": 889, "combat": 640, "max": 1296},
+      "source": "wp-f18",
+      "approx": false,
+      "match": ["f-a-18c"],
+      "note": "max at sea level (low-level combat); much faster at altitude, see source."
+    },
+    {
+      "id": "su-27",
+      "label": "Su-27",
+      "class": "air",
+      "modes": {"slow": 270, "cruise": 900, "combat": 650, "max": 1400},
+      "source": "wp-su27",
+      "approx": false,
+      "match": ["su-27"],
+      "note": "max at sea level (low-level combat); much faster at altitude, see source. Cruise not published, typical 900."
+    },
+    {
+      "id": "mig-29a",
+      "label": "MiG-29A",
+      "class": "air",
+      "modes": {"slow": 260, "cruise": 900, "combat": 650, "max": 1500},
+      "source": "wp-mig29",
+      "approx": false,
+      "match": ["mig-29a"],
+      "note": "max at sea level (low-level combat); much faster at altitude, see source. Cruise not published, typical 900."
+    },
+    {
+      "id": "mig-21bis",
+      "label": "MiG-21bis",
+      "class": "air",
+      "modes": {"slow": 300, "cruise": 900, "combat": 700, "max": 1300},
+      "source": "wp-mig21",
+      "approx": false,
+      "match": ["mig-21bis"],
+      "note": "max at sea level (low-level combat); much faster at altitude, see source. Cruise not published, typical 900."
+    },
+    {
+      "id": "mirage-2000c",
+      "label": "Mirage 2000C",
+      "class": "air",
+      "modes": {"slow": 260, "cruise": 900, "combat": 650, "max": 1110},
+      "source": "wp-m2000",
+      "approx": false,
+      "match": ["mirage-2000c"],
+      "note": "max at sea level (low-level combat); much faster at altitude, see source. Cruise not published, typical 900."
+    },
+    {
+      "id": "eurofighter-typhoon",
+      "label": "Eurofighter Typhoon",
+      "class": "air",
+      "modes": {"slow": 260, "cruise": 900, "combat": 650, "max": 1530},
+      "source": "wp-ef",
+      "approx": false,
+      "match": ["eurofighter-typhoon"],
+      "note": "max at sea level (low-level combat); much faster at altitude, see source. Cruise not published, typical 900."
+    },
+    {
+      "id": "a-10c",
+      "label": "A-10C",
+      "class": "air",
+      "modes": {"slow": 250, "cruise": 560, "combat": 550, "max": 706},
+      "source": "wp-a10",
+      "approx": false,
+      "match": ["a-10c"],
+      "note": "max at sea level, clean; Vne 833 km/h."
+    },
+    {
+      "id": "su-25t",
+      "label": "Su-25T",
+      "class": "air",
+      "modes": {"slow": 280, "cruise": 750, "combat": 650, "max": 975},
+      "source": "wp-su25",
+      "approx": false,
+      "match": ["su-25t"],
+      "note": "max is the Su-25K sea-level figure (the T is slightly slower); cruise typical."
+    },
+    {
+      "id": "c-130h-hercules",
+      "label": "C-130H Hercules",
+      "class": "air",
+      "modes": {"slow": 240, "cruise": 541, "combat": 460, "max": 593},
+      "source": "wp-c130",
+      "approx": false,
+      "match": ["c-130h-hercules"],
+      "note": "max at 20,000 ft."
+    },
+    {
+      "id": "bf-109-g6",
+      "label": "Bf 109 G-6",
+      "class": "air",
+      "modes": {"slow": 220, "cruise": 450, "combat": 450, "max": 642},
+      "source": "wp-bf109",
+      "approx": false,
+      "match": ["bf-109-g6"],
+      "note": "max is the published top speed at its rated altitude; lower near the ground. 530 km/h at sea level; published cruise (590 at 6 km) is a fast cruise, 450 used."
+    },
+    {
+      "id": "spitfire-mk-ix",
+      "label": "Spitfire Mk IX",
+      "class": "air",
+      "modes": {"slow": 220, "cruise": 450, "combat": 450, "max": 650},
+      "source": "wp-spit",
+      "approx": false,
+      "match": ["spitfire-mk-ix"],
+      "note": "max is the published top speed at its rated altitude; lower near the ground. Cruise typical."
+    },
+    {
+      "id": "p-51d-mustang",
+      "label": "P-51D Mustang",
+      "class": "air",
+      "modes": {"slow": 250, "cruise": 583, "combat": 500, "max": 708},
+      "source": "wp-p51",
+      "approx": false,
+      "match": ["p-51d-mustang"],
+      "note": "max is the published top speed at its rated altitude; lower near the ground."
+    },
+    {
+      "id": "fw-190-a8",
+      "label": "Fw 190 A-8",
+      "class": "air",
+      "modes": {"slow": 230, "cruise": 480, "combat": 450, "max": 652},
+      "source": "wp-fw190",
+      "approx": false,
+      "match": ["fw-190-a8"],
+      "note": "max is the published top speed at its rated altitude; lower near the ground. Cruise typical."
+    },
+    {
+      "id": "ju-87-stuka",
+      "label": "Ju 87 Stuka",
+      "class": "air",
+      "modes": {"slow": 180, "cruise": 319, "combat": 320, "max": 410},
+      "source": "wp-ju87",
+      "approx": false,
+      "match": ["ju-87-stuka"],
+      "note": "max is the published top speed at its rated altitude; lower near the ground. Dives far faster (~600)."
+    },
+    {
+      "id": "b-17g",
+      "label": "B-17G",
+      "class": "air",
+      "modes": {"slow": 200, "cruise": 293, "combat": 290, "max": 472},
+      "source": "wp-b17",
+      "approx": false,
+      "match": ["b-17g"],
+      "note": "max is the published top speed at its rated altitude; lower near the ground."
+    },
+    {
+      "id": "sopwith-camel",
+      "label": "Sopwith Camel",
+      "class": "air",
+      "modes": {"slow": 100, "cruise": 145, "combat": 160, "max": 182},
+      "source": "wp-camel",
+      "approx": false,
+      "match": ["sopwith-camel"],
+      "note": "Stall 77 km/h; cruise typical."
+    },
+    {
+      "id": "ah-64d-apache",
+      "label": "AH-64D Apache",
+      "class": "heli",
+      "modes": {"slow": 50, "cruise": 265, "combat": 150, "max": 293},
+      "source": "wp-ah64",
+      "approx": false,
+      "match": ["ah-64d-apache"],
+      "note": "cruise and max are the published figures; slow is a nap-of-earth / hover-taxi pace and combat a typical attack-run speed."
+    },
+    {
+      "id": "mi-24p-hind",
+      "label": "Mi-24P Hind",
+      "class": "heli",
+      "modes": {"slow": 60, "cruise": 270, "combat": 200, "max": 320},
+      "source": "wp-mi24",
+      "approx": false,
+      "match": ["mi-24p-hind"],
+      "note": "cruise and max are the published figures; slow is a nap-of-earth / hover-taxi pace and combat a typical attack-run speed."
+    },
+    {
+      "id": "ka-50",
+      "label": "Ka-50",
+      "class": "heli",
+      "modes": {"slow": 50, "cruise": 270, "combat": 180, "max": 315},
+      "source": "wp-ka50",
+      "approx": false,
+      "match": ["ka-50"],
+      "note": "cruise and max are the published figures; slow is a nap-of-earth / hover-taxi pace and combat a typical attack-run speed."
+    },
+    {
+      "id": "uh-1h-huey",
+      "label": "UH-1H Huey",
+      "class": "heli",
+      "modes": {"slow": 40, "cruise": 185, "combat": 130, "max": 204},
+      "source": "wp-uh1",
+      "approx": false,
+      "match": ["uh-1h-huey"],
+      "note": "cruise and max are the published figures; slow is a nap-of-earth / hover-taxi pace and combat a typical attack-run speed. Published cruise equals max at full weight; 185 (100 kn) used as a working cruise."
+    },
+    {
+      "id": "uh-60a-black-hawk",
+      "label": "UH-60A Black Hawk",
+      "class": "heli",
+      "modes": {"slow": 50, "cruise": 282, "combat": 160, "max": 294},
+      "source": "wp-uh60",
+      "approx": false,
+      "match": ["uh-60a-black-hawk"],
+      "note": "cruise and max are the published figures; slow is a nap-of-earth / hover-taxi pace and combat a typical attack-run speed. Figures are for the UH-60M."
+    },
+    {
+      "id": "ch-47-chinook",
+      "label": "CH-47 Chinook",
+      "class": "heli",
+      "modes": {"slow": 50, "cruise": 291, "combat": 160, "max": 315},
+      "source": "wp-ch47",
+      "approx": false,
+      "match": ["ch-47-chinook"],
+      "note": "cruise and max are the published figures; slow is a nap-of-earth / hover-taxi pace and combat a typical attack-run speed. Figures are for the CH-47F."
+    },
+    {
+      "id": "mi-8mtv2",
+      "label": "Mi-8MTV-2",
+      "class": "heli",
+      "modes": {"slow": 50, "cruise": 240, "combat": 160, "max": 250},
+      "source": "wp-mi8",
+      "approx": false,
+      "match": ["mi-8mtv2"],
+      "note": "cruise and max are the published figures; slow is a nap-of-earth / hover-taxi pace and combat a typical attack-run speed. Figures are for the Mi-8MT."
+    },
+    {
+      "id": "sa-342-gazelle",
+      "label": "SA 342 Gazelle",
+      "class": "heli",
+      "modes": {"slow": 50, "cruise": 264, "combat": 180, "max": 310},
+      "source": "wp-gazelle",
+      "approx": false,
+      "match": ["sa-342-gazelle"],
+      "note": "cruise and max are the published figures; slow is a nap-of-earth / hover-taxi pace and combat a typical attack-run speed. Figures are for the SA 341G."
+    },
+    {
+      "id": "mbt",
+      "label": "Main battle tank",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 20, "normal": 39, "rush": 65},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["mbt"]
+    },
+    {
+      "id": "light-tank",
+      "label": "Light tank",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 21, "normal": 42, "rush": 70},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["light-tank"]
+    },
+    {
+      "id": "ifv",
+      "label": "IFV",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 20, "normal": 39, "rush": 65},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["ifv"]
+    },
+    {
+      "id": "apc-tracked",
+      "label": "Tracked APC",
+      "class": "ground",
+      "modes": {"crawl": 7, "cautious": 18, "normal": 36, "rush": 60},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["apc-tracked"]
+    },
+    {
+      "id": "wheeled",
+      "label": "Wheeled vehicle (APC, MRAP)",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 27, "normal": 54, "rush": 90},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["apc-wheeled", "mrap"]
+    },
+    {
+      "id": "jeep",
+      "label": "Light vehicle",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 30, "normal": 60, "rush": 100},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["jeep"]
+    },
+    {
+      "id": "truck",
+      "label": "Truck / MLRS",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 24, "normal": 48, "rush": 80},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["truck", "mlrs"]
+    },
+    {
+      "id": "spaa",
+      "label": "SPAA / SAM",
+      "class": "ground",
+      "modes": {"crawl": 7, "cautious": 18, "normal": 36, "rush": 60},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["spaa", "sam"]
+    },
+    {
+      "id": "sp-artillery",
+      "label": "Self-propelled artillery",
+      "class": "ground",
+      "modes": {"crawl": 7, "cautious": 17, "normal": 34, "rush": 56},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["sp-artillery"]
+    },
+    {
+      "id": "towed",
+      "label": "Towed gun (when towed)",
+      "class": "ground",
+      "modes": {"crawl": 7, "cautious": 18, "normal": 36, "rush": 60},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["towed-gun", "towed-aa"]
+    },
+    {
+      "id": "m1a2-abrams",
+      "label": "M1A2 Abrams",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 20, "normal": 40, "rush": 67},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["m1a2-abrams"]
+    },
+    {
+      "id": "t-90a",
+      "label": "T-90A",
+      "class": "ground",
+      "modes": {"crawl": 7, "cautious": 18, "normal": 36, "rush": 60},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["t-90a"]
+    },
+    {
+      "id": "leopard-2a6",
+      "label": "Leopard 2A6",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 20, "normal": 41, "rush": 68},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["leopard-2a6"]
+    },
+    {
+      "id": "leopard-1a5",
+      "label": "Leopard 1A5",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 20, "normal": 39, "rush": 65},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["leopard-1a5"]
+    },
+    {
+      "id": "t-55a",
+      "label": "T-55A",
+      "class": "ground",
+      "modes": {"crawl": 6, "cautious": 15, "normal": 30, "rush": 50},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["t-55a"]
+    },
+    {
+      "id": "bmp-2",
+      "label": "BMP-2",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 20, "normal": 39, "rush": 65},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["bmp-2"]
+    },
+    {
+      "id": "m2a2-bradley",
+      "label": "M2A2 Bradley",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 20, "normal": 40, "rush": 66},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["m2a2-bradley"]
+    },
+    {
+      "id": "bm-21-grad",
+      "label": "BM-21 Grad",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 22, "normal": 45, "rush": 75},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["bm-21-grad"]
+    },
+    {
+      "id": "m109-paladin",
+      "label": "M109 Paladin",
+      "class": "ground",
+      "modes": {"crawl": 7, "cautious": 17, "normal": 34, "rush": 56},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["m109-paladin"]
+    },
+    {
+      "id": "zsu-23-4-shilka",
+      "label": "ZSU-23-4 Shilka",
+      "class": "ground",
+      "modes": {"crawl": 6, "cautious": 15, "normal": 30, "rush": 50},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["zsu-23-4-shilka"]
+    },
+    {
+      "id": "2k22-tunguska",
+      "label": "2K22 Tunguska",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 20, "normal": 39, "rush": 65},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["2k22-tunguska"]
+    },
+    {
+      "id": "flakpanzer-gepard",
+      "label": "Gepard",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 20, "normal": 39, "rush": 65},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["flakpanzer-gepard"]
+    },
+    {
+      "id": "roland-marder",
+      "label": "Roland (Marder)",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 20, "normal": 39, "rush": 65},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["roland-marder"]
+    },
+    {
+      "id": "9k330-tor",
+      "label": "9K330 Tor",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 20, "normal": 39, "rush": 65},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["9k330-tor"]
+    },
+    {
+      "id": "mim-104-patriot-launcher",
+      "label": "Patriot launcher",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 27, "normal": 54, "rush": 90},
+      "source": "wt-ground",
+      "approx": true,
+      "match": ["mim-104-patriot-launcher"]
+    },
+    {
+      "id": "arleigh-burke",
+      "label": "Arleigh Burke destroyer",
+      "class": "sea",
+      "modes": {"crawl": 9, "cautious": 22, "normal": 33, "rush": 56},
+      "source": "ship-speeds",
+      "approx": true,
+      "match": ["arleigh-burke", "destroyer"],
+      "note": "rush = published top speed 30 kn; normal = economical cruise."
+    },
+    {
+      "id": "nimitz-carrier",
+      "label": "Nimitz carrier",
+      "class": "sea",
+      "modes": {"crawl": 9, "cautious": 22, "normal": 33, "rush": 56},
+      "source": "ship-speeds",
+      "approx": true,
+      "match": ["nimitz-carrier", "carrier"],
+      "note": "rush = published top speed 30 kn; normal = economical cruise."
+    },
+    {
+      "id": "kilo-submarine",
+      "label": "Kilo submarine (submerged)",
+      "class": "sea",
+      "modes": {"crawl": 9, "cautious": 15, "normal": 22, "rush": 37},
+      "source": "ship-speeds",
+      "approx": true,
+      "match": ["kilo-submarine", "submarine"],
+      "note": "rush = published top speed 20 kn; normal = economical cruise."
+    },
+    {
+      "id": "bismarck-battleship",
+      "label": "Bismarck battleship",
+      "class": "sea",
+      "modes": {"crawl": 9, "cautious": 22, "normal": 33, "rush": 56},
+      "source": "ship-speeds",
+      "approx": true,
+      "match": ["bismarck-battleship", "battleship"],
+      "note": "rush = published top speed 30 kn; normal = economical cruise."
+    },
+    {
+      "id": "patrol-boat",
+      "label": "Patrol boat",
+      "class": "sea",
+      "modes": {"crawl": 9, "cautious": 26, "normal": 33, "rush": 65},
+      "source": "ship-speeds",
+      "approx": true,
+      "match": ["patrol-boat"],
+      "note": "rush = published top speed 35 kn; normal = economical cruise."
+    }
+  ]
+}

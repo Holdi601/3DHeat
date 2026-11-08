@@ -12,6 +12,9 @@
  * renderer, so a plan opens in any later version that knows its `version`.
  */
 
+import type { Mode } from './speeds';
+import { planTimings, poseOnRoute, stepDuration } from './timing';
+
 export type Vec3 = { x: number; y: number; z: number };
 
 export interface PlanTeam {
@@ -24,6 +27,9 @@ export interface PlanTeam {
 export interface PlanKey extends Vec3 {
   /** Heading, radians, as box yaw: 0 looks along -z, pi/2 along +x. */
   yaw: number;
+  /** Nose up, and right side down, radians; absent is level. */
+  pitch?: number;
+  roll?: number;
 }
 
 export interface PlanFigure {
@@ -38,6 +44,10 @@ export interface PlanFigure {
   from: number;
   /** Last step it is on the board in; absent: to the end. */
   to?: number;
+  /** The speed profile it moves by (`speeds.ts`): a weapon held, a vehicle type; absent picks by its kind. */
+  profile?: string;
+  /** Its own speed per mode, metres a second, over the game's. */
+  speeds?: Partial<Record<Mode, number>>;
 }
 
 export type ArrowStyle = 'move' | 'attack' | 'look' | 'throw';
@@ -52,6 +62,11 @@ export interface PlanArrow {
   figure?: string;
   /** For a throw: the utility figure that lands at the end. */
   lands?: string;
+  /** A route's movement mode per segment (`speeds.ts`); `mode` for the segments without one. */
+  modes?: Mode[];
+  mode?: Mode;
+  /** Seconds a route waits at each point. */
+  pauses?: number[];
 }
 
 export interface PlanArea {
@@ -85,6 +100,10 @@ export interface Plan {
   notes: PlanNote[];
   /** Figure size multiplier on the board: 1 is true size. */
   figureScale: number;
+  /** Plan (level) units in a metre; absent: the game's usual (Source units for CS2, metres elsewhere). */
+  unitsPerMetre?: number;
+  /** False: steps play for their set seconds; otherwise a step lasts until its slowest route arrives. */
+  realTime?: boolean;
 }
 
 export function emptyPlan(game: string, teams: PlanTeam[], level = ''): Plan {
@@ -156,6 +175,12 @@ export function posesAt(plan: Plan, step: number, u: number): Map<string, PlanKe
     if (!here) continue;
     const route = routeOf(plan, f.id, step);
     if (route && route.points.length >= 2 && u > 0) {
+      const timing = plan.realTime === false ? undefined : planTimings(plan).get(route.id);
+      if (timing && timing.total > 0) {
+        const r = poseOnRoute(route.points, timing, u * stepDuration(plan, step));
+        out.set(f.id, { ...r.p, yaw: r.yaw, pitch: here.pitch, roll: here.roll });
+        continue;
+      }
       const a = along(route.points, u);
       out.set(f.id, { ...a.p, yaw: a.yaw });
       continue;
@@ -175,10 +200,11 @@ export function posesAt(plan: Plan, step: number, u: number): Map<string, PlanKe
 
 /** Total playback seconds, and the step and share at a playback time. */
 export function playbackAt(plan: Plan, seconds: number): { step: number; u: number; total: number } {
-  const total = plan.steps.reduce((s, x) => s + Math.max(0.1, x.seconds), 0);
+  const lengths = plan.steps.map((_, i) => stepDuration(plan, i));
+  const total = lengths.reduce((s, x) => s + x, 0);
   let t = Math.max(0, Math.min(total, seconds));
   for (let i = 0; i < plan.steps.length; i++) {
-    const d = Math.max(0.1, plan.steps[i].seconds);
+    const d = lengths[i];
     if (t <= d || i === plan.steps.length - 1) return { step: i, u: Math.min(1, t / d), total };
     t -= d;
   }
@@ -237,7 +263,14 @@ export function readPlan(text: string): Plan {
       label: String(f.label ?? ''),
       from: num(f.from, 0),
       ...(f.to !== undefined ? { to: num(f.to, 0) } : {}),
-      keys: Object.fromEntries(Object.entries(f.keys ?? {}).map(([k, key]) => [Number(k), { ...vec(key), yaw: num((key as PlanKey).yaw, 0) }])),
+      keys: Object.fromEntries(
+        Object.entries(f.keys ?? {}).map(([k, key]) => {
+          const pk = key as PlanKey;
+          return [Number(k), { ...vec(key), yaw: num(pk.yaw, 0), ...(pk.pitch ? { pitch: num(pk.pitch, 0) } : {}), ...(pk.roll ? { roll: num(pk.roll, 0) } : {}) }];
+        }),
+      ),
+      ...(typeof f.profile === 'string' ? { profile: f.profile } : {}),
+      ...(f.speeds && typeof f.speeds === 'object' ? { speeds: Object.fromEntries(Object.entries(f.speeds).filter(([, v]) => typeof v === 'number' && v > 0)) } : {}),
     })),
     arrows: arr(p.arrows).map((a: PlanArrow) => ({
       id: String(a.id),
@@ -247,9 +280,14 @@ export function readPlan(text: string): Plan {
       points: arr(a.points).map(vec),
       ...(a.figure ? { figure: String(a.figure) } : {}),
       ...(a.lands ? { lands: String(a.lands) } : {}),
+      ...(Array.isArray(a.modes) ? { modes: a.modes.map(String) as Mode[] } : {}),
+      ...(typeof a.mode === 'string' ? { mode: a.mode } : {}),
+      ...(Array.isArray(a.pauses) ? { pauses: a.pauses.map((x) => Math.max(0, num(x, 0))) } : {}),
     })),
     areas: arr(p.areas).map((a: PlanArea) => ({ id: String(a.id), step: num(a.step, 0), team: String(a.team), centre: vec(a.centre), radius: num(a.radius, 5), label: String(a.label ?? '') })),
     notes: arr(p.notes).map((n: PlanNote) => ({ id: String(n.id), step: num(n.step, 0), at: vec(n.at), text: String(n.text ?? '') })),
     figureScale: num(p.figureScale, 1),
+    ...(typeof p.unitsPerMetre === 'number' && p.unitsPerMetre > 0 ? { unitsPerMetre: p.unitsPerMetre } : {}),
+    ...(p.realTime === false ? { realTime: false } : {}),
   };
 }

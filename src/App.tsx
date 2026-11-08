@@ -282,12 +282,26 @@ export function App() {
           return;
         }
         if (ev.code === 'Escape') {
-          board.cancel();
+          if (board.dragBase) board.cancelDrag();
+          else if (board.draft || board.moving) board.cancel();
+          else board.select(null);
           return;
         }
-        if ((ev.code === 'Delete' || ev.code === 'Backspace') && board.selected) {
+        if ((ev.code === 'Delete' || ev.code === 'Backspace') && board.selection.length) {
           ev.preventDefault();
-          board.remove(board.selected);
+          // Whole things first; a point of an arrow being removed with it is gone already.
+          const whole = board.selection.filter((r) => !r.includes('#'));
+          for (const r of whole.length ? whole : board.selection.slice(-1)) usePlanStore.getState().remove(r);
+          return;
+        }
+        // The gizmo's keys: W/E/R as in Unity and Unreal, or G/R/S as in Blender.
+        const gizmoKeys: Record<string, Record<string, 'move' | 'rotate' | 'scale'>> = {
+          editor: { KeyW: 'move', KeyE: 'rotate', KeyR: 'scale' },
+          blender: { KeyG: 'move', KeyR: 'rotate', KeyS: 'scale' },
+        };
+        const gm = !ctrl && !ev.altKey && board.selection.length ? gizmoKeys[board.keyScheme][ev.code] : undefined;
+        if (gm) {
+          board.setGizmo(gm);
           return;
         }
         if (ev.code === 'KeyR' && !ctrl) {

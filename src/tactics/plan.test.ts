@@ -46,7 +46,8 @@ describe('the board', () => {
     expect(plan.arrows[0].figure).toBe(id);
     // The route starts at the figure, not where the click was.
     expect(plan.arrows[0].points[0]).toEqual({ x: 0, y: 0, z: 0 });
-    const half = posesAt(plan, 0, 0.5).get(id)!;
+    // Set seconds, not real time: the route is shared out over the step.
+    const half = posesAt({ ...plan, realTime: false }, 0, 0.5).get(id)!;
     expect(half.x).toBeCloseTo(10);
     expect(half.z).toBeCloseTo(0);
     // The next step begins where the route ended.

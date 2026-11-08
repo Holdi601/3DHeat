@@ -1,0 +1,206 @@
+{
+  "game": "battlefield",
+  "unit": "km/h",
+  "slope": "grade",
+  "sources": [
+    {
+      "id": "bf-community",
+      "title": "Battlefield 6 movement discussion and community measurements (EA forums)",
+      "url": "https://forums.ea.com/discussions/battlefield-6-beta-feedback-en/movement-speed/12440378",
+      "accessed": "2026-11-08",
+      "note": "No official numbers exist; values are typical community-observed speeds, rounded."
+    },
+    {
+      "id": "bf-sprint-leak",
+      "title": "Pre-release report of a 6.4 m/s Battlefield 6 sprint (Reddit, via redlib mirror)",
+      "url": "https://redlib.cypherpunktools.com/r/Battlefield/comments/1jci338/for_reference/mi9ahrb/?context=3",
+      "accessed": "2026-11-08",
+      "note": "Second-hand, unconfirmed; used only as the order of magnitude for sprint."
+    },
+    {
+      "id": "bf-movement-guide",
+      "title": "Battlefield 6 movement guide (crouch-sprint about 80% of sprint)",
+      "url": "https://deltiasgaming.com/?p=309455",
+      "accessed": "2026-11-08"
+    }
+  ],
+  "classes": {
+    "infantry": {
+      "modes": {"crawl": 3.6, "crouch": 7.5, "walk": 7.2, "run": 14.4, "sprint": 23},
+      "source": "bf-community",
+      "approx": true,
+      "note": "prone crawl ~1 m/s, crouch-move ~2.1, ADS / analogue walk ~2, default run ~4, sprint ~6.4 m/s. Typical in-game values for Battlefield 6 / 2042, approximate: EA publishes no movement speeds."
+    },
+    "ground": {
+      "modes": {"crawl": 8, "cautious": 20, "normal": 45, "rush": 70},
+      "source": "bf-community",
+      "approx": true,
+      "note": "Wheeled APC-like default. Typical in-game values for Battlefield 6 / 2042, approximate: EA publishes no movement speeds."
+    },
+    "sea": {
+      "modes": {"crawl": 8, "cautious": 25, "normal": 45, "rush": 70},
+      "source": "bf-community",
+      "approx": true,
+      "note": "RHIB-like default. Typical in-game values for Battlefield 6 / 2042, approximate: EA publishes no movement speeds."
+    },
+    "air": {
+      "modes": {"slow": 250, "cruise": 320, "combat": 330, "max": 600},
+      "source": "bf-community",
+      "approx": true,
+      "note": "Jets: slow ~ stall margin, cruise ~ the throttle-neutral speed, combat ~ best-turn speed, max with afterburner. Typical in-game values for Battlefield 6 / 2042, approximate: EA publishes no movement speeds."
+    },
+    "heli": {
+      "modes": {"slow": 40, "cruise": 170, "combat": 120, "max": 230},
+      "source": "bf-community",
+      "approx": true,
+      "note": "Typical in-game values for Battlefield 6 / 2042, approximate: EA publishes no movement speeds."
+    }
+  },
+  "profiles": [
+    {
+      "id": "mbt",
+      "label": "Main battle tank",
+      "class": "ground",
+      "modes": {"crawl": 5, "cautious": 15, "normal": 35, "rush": 50},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["mbt"]
+    },
+    {
+      "id": "light-tank",
+      "label": "Light tank",
+      "class": "ground",
+      "modes": {"crawl": 6, "cautious": 18, "normal": 40, "rush": 60},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["light-tank"]
+    },
+    {
+      "id": "ifv",
+      "label": "IFV",
+      "class": "ground",
+      "modes": {"crawl": 6, "cautious": 16, "normal": 38, "rush": 55},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["ifv", "apc-tracked"]
+    },
+    {
+      "id": "apc-wheeled",
+      "label": "Wheeled APC",
+      "class": "ground",
+      "modes": {"crawl": 6, "cautious": 20, "normal": 45, "rush": 75},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["apc-wheeled"]
+    },
+    {
+      "id": "mrap",
+      "label": "MRAP",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 25, "normal": 55, "rush": 95},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["mrap"]
+    },
+    {
+      "id": "jeep",
+      "label": "Light vehicle",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 25, "normal": 60, "rush": 110},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["jeep"]
+    },
+    {
+      "id": "truck",
+      "label": "Truck",
+      "class": "ground",
+      "modes": {"crawl": 8, "cautious": 22, "normal": 50, "rush": 85},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["truck"]
+    },
+    {
+      "id": "spaa",
+      "label": "Mobile AA / artillery",
+      "class": "ground",
+      "modes": {"crawl": 6, "cautious": 16, "normal": 38, "rush": 55},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["spaa", "sp-artillery", "mlrs"]
+    },
+    {
+      "id": "towed",
+      "label": "Towed gun (when towed)",
+      "class": "ground",
+      "modes": {"crawl": 4, "cautious": 12, "normal": 30, "rush": 50},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["towed-gun"]
+    },
+    {
+      "id": "jet",
+      "label": "Jet",
+      "class": "air",
+      "modes": {"slow": 250, "cruise": 320, "combat": 330, "max": 600},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["fighter", "multirole"]
+    },
+    {
+      "id": "attack-jet",
+      "label": "Attack jet",
+      "class": "air",
+      "modes": {"slow": 230, "cruise": 300, "combat": 320, "max": 500},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["attack"]
+    },
+    {
+      "id": "attack-heli",
+      "label": "Attack helicopter",
+      "class": "heli",
+      "modes": {"slow": 40, "cruise": 180, "combat": 130, "max": 240},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["heli-attack"]
+    },
+    {
+      "id": "transport-heli",
+      "label": "Transport helicopter",
+      "class": "heli",
+      "modes": {"slow": 40, "cruise": 170, "combat": 120, "max": 220},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["heli-transport", "heli-scout"]
+    },
+    {
+      "id": "rhib",
+      "label": "RHIB",
+      "class": "sea",
+      "modes": {"crawl": 8, "cautious": 25, "normal": 45, "rush": 70},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["rhib"]
+    },
+    {
+      "id": "patrol-boat",
+      "label": "Patrol boat",
+      "class": "sea",
+      "modes": {"crawl": 6, "cautious": 20, "normal": 35, "rush": 55},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["patrol-boat"]
+    },
+    {
+      "id": "hovercraft",
+      "label": "Hovercraft",
+      "class": "sea",
+      "modes": {"crawl": 8, "cautious": 30, "normal": 50, "rush": 80},
+      "source": "bf-community",
+      "approx": true,
+      "match": ["hovercraft"],
+      "note": "Also crosses land at the same speeds."
+    }
+  ]
+}

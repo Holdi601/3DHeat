@@ -6,6 +6,8 @@ import { playbackAt, posesAt } from '../../tactics/plan';
 import { templateOf } from '../../tactics/scene';
 import { useStore } from '../../state/store';
 import { RIOT_NOTICE } from '../../tactics/valorantMaps';
+import { BoardGizmo } from './BoardGizmo';
+import './tactics.css';
 
 /**
  * The names of the board's figures and its notes, over them in the view,
@@ -57,6 +59,7 @@ export function BoardLabels() {
   return (
     <div className="race-labels">
       {riot && <div className="board-notice">{RIOT_NOTICE}</div>}
+      <BoardGizmo />
       {labels.map((l) => (
         <div
           key={l.key}
