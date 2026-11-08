@@ -430,8 +430,12 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   // quarterdeck; the four funnels in two pairs, the twin 6-inch turrets fore and on the after deckhouse, the bridge, the
   // fore and main tripods.
   'omaha': { cls: 'light-cruiser', L: 169.4, B: 16.9, fb: 9.0, fc: [-40, 4.5], guns: '62.3:2/152^0.4 -46.2:2/152^6b', funnels: [[22.4, 11.1, 4], [12.7, 11.1, 4], [-6.1, 11.1, 4], [-15.3, 11.1, 4]], blocks: [[51.5, 33, 15.4, 4.5]], raised: [[46, 35, 15.4, 17.9, 3]], masts: [[40, 25.6], [-34.8, 27.5]] },
-  'northampton': { cls: 'heavy-cruiser', L: 182.9, B: 20.1, fb: 8, fc: [-24, 2.4], guns: '56:3/203 44:3/203^2.5 -52:3/203b', funnels: [[6, 12, 4], [-8, 12, 4]], blocks: [[32, 22, 20, 5, 1]], masts: [[26, 30], [-20, 24]] },
-  'portland': { cls: 'heavy-cruiser', L: 186.0, B: 20.1, fb: 8, fc: [-24, 2.4], guns: '58:3/203 46:3/203^2.5 -54:3/203b', funnels: [[6, 12, 4], [-8, 12, 4]], blocks: [[34, 20, 22, 6, 1]], masts: [[26, 32], [-20, 26]] },
+  // Northampton from FM 30-50 (1941) (profile): the deck 9 m to the main tripod, which stands far aft by the after
+  // turret; the two funnels 32 m apart, the fore one taller; the bridge and hangar.
+  'northampton': { cls: 'heavy-cruiser', L: 182.9, B: 20.1, fb: 9, fc: [-60, 3.4], guns: '53.8:3/203^0.1 41.3:3/203^2.6 -48.3:3/203^-0.7b', funnels: [[14.8, 14.6, 7], [-16.8, 10.9, 6.1]], blocks: [[33.6, 19.7, 14.7, 5.5]], raised: [[30, 22, 14.7, 19.5, 3.5]], masts: [[25, 31.4], [-53.6, 25.2]] },
+  // Portland from FM 30-50 (1941) (profile): the deck 9.3 m to the main tripod far aft by the after turret, the two
+  // funnels 31 m apart, the bridge and the hangar.
+  'portland': { cls: 'heavy-cruiser', L: 186.0, B: 20.1, fb: 9.3, fc: [-60, 4.1], guns: '55:3/203^0.3 40.3:3/203^2.8 -49:3/203^-1b', funnels: [[13.6, 13.7, 6.7], [-17.7, 12.6, 5.8]], blocks: [[33.6, 20.3, 15.2, 5.5]], raised: [[31, 22, 15.2, 18.5, 3.5]], masts: [[24.9, 29], [-54.8, 19.7]] },
   // Pensacola from FM 30-50 (1941), "Heavy cruisers, Pensacola class" (profile): the triples superfiring over the twins,
   // the two funnels 30 m apart, the tall fore tripod over the bridge, the main tripod; the deck stepping down at the mainmast.
   'pensacola': { cls: 'heavy-cruiser', L: 178.5, B: 19.9, fb: 8, fc: [-40, 2.4], guns: '61.3:2/203^-0.7 45.8:3/203^3.8 -51:3/203^3.1b -64.6:2/203^-0.8b', funnels: [[17.4, 12.7, 6.5], [-13, 12, 6.2]], blocks: [[37.7, 23.7, 15, 5.5]], raised: [[34, 26, 15, 19.7, 3.5]], masts: [[30, 33], [-37.5, 23.4]] },
@@ -558,7 +562,9 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'mahan': { cls: 'destroyer', L: 104.0, B: 10.5, fb: 6.0, fc: [9, 2.1], sheer: 0.6, guns: '37:1/127e 28:1/127e^2.4 -27:1/127^2.7b -37:1/127^2.7b -45:1/127b', funnels: [[7.5, 11.4, 3.4], [-6, 9.7, 3.4]], blocks: [[26, 12.5, 12.8, 3.2, 1], [32, 24, 8.4, 3.0], [3, -12, 5.6, 2.2], [-21, -41, 6.6, 3.0]], masts: [[11.5, 21.5, 't']] },
   'bagley': { cls: 'destroyer', L: 104.0, B: 10.9, fb: 5.4, fc: [-12, 1.4], guns: '38:1/127 31:1/127^2 -30:1/127^2b -42:1/127b', funnels: [[2, 7.5, 3.2]], blocks: [[24, 18, 11, 3, 1]], masts: [[16, 16]] },
   'porter': { cls: 'destroyer', L: 116.2, B: 11.1, fb: 5.6, fc: [-14, 1.4], guns: '44:2/127 36:2/127^2 -34:2/127^2b -46:2/127b', funnels: [[8, 8, 3], [-4, 8, 3]], blocks: [[28, 22, 13, 3.5, 1]], masts: [[20, 18]] },
-  'somers': { cls: 'destroyer', L: 116.2, B: 11.0, fb: 5.6, fc: [-14, 1.4], guns: '44:2/127 36:2/127^2 -34:2/127^2b -46:2/127b', funnels: [[2, 8, 3.6]], blocks: [[28, 22, 13, 3.5, 1]], masts: [[20, 18]] },
+  // Somers from FM 30-50 (1941) (profile): the forecastle 6.4 m, the twin mounts' places and heights, the single trunked
+  // funnel, the tripod and the bridge.
+  'somers': { cls: 'destroyer', L: 116.2, B: 11.0, fb: 6.4, fc: [-10, 1.3], guns: '38.6:2/127 30.7:2/127^1.7 -30.3:2/127^0.8b -37.4:2/127^-1b', funnels: [[1.9, 8.6, 4.7]], blocks: [[22.1, 13.7, 12.2, 3.5]], raised: [[22, 15, 12.2, 16.4, 2]], masts: [[11.9, 24.3]] },
   'sumner': { cls: 'destroyer', L: 114.8, B: 12.5, fb: 5.6, sheer: 2, guns: '42:2/127 34:2/127^2 -40:2/127b', funnels: [[8, 8, 3], [-4, 8, 3]], blocks: [[28, 20, 13, 3.5, 1]], masts: [[18, 18]] },
   'gearing': { cls: 'destroyer', L: 119.0, B: 12.5, fb: 5.6, sheer: 2, guns: '44:2/127 36:2/127^2 -42:2/127b', funnels: [[10, 8, 3], [-6, 8, 3]], blocks: [[30, 22, 13, 3.5, 1]], masts: [[20, 18]] },
   'mitscher': { cls: 'destroyer', L: 150.3, B: 14.8, fb: 6.5, sheer: 3, guns: '56:1/127m -56:1/127mb', funnels: [[12, 9, 3.5], [-6, 9, 3.5]], blocks: [[36, 22, 14, 5, 1], [-14, -30, 11, 4]], masts: [[24, 20], [2, 18]] },
@@ -775,8 +781,8 @@ const AFT: Record<string, Partial<ShipO>> = {
   'dante-alighieri': { blocks: [[-21.5, -38.4, 9.8, 5]] },
   // United States cruisers.
   'omaha': { blocks: [[-40, -52.5, 10.5, 4]], dirs: [[-27, 13.5]], sl: [[-12, 14]], masts: [[40, 25.6, 't'], [-34.8, 27.5, 't']], launchers: [{ x: -8, length: 5, width: 2.2, kind: 'tubes', count: 1, elevation: 0 }] },
-  'northampton': { blocks: [[-12, -26, 14, 6.5], [-26, -34, 15.5, 4]], dirs: [[-30, 19]], sl: [[-1, 17]], masts: [[26, 30, 't'], [-20, 24, 't']] },
-  'portland': { blocks: [[-12, -24, 14, 6.5], [-25, -34, 15.5, 4]], dirs: [[-30, 19]], sl: [[-1, 17]], masts: [[26, 32, 't'], [-20, 26, 't']] },
+  'northampton': { blocks: [[-12, -31.6, 13, 6.5], [-50.3, -57.6, 15.5, 4]], dirs: [[-30, 19]], sl: [[-1, 17]], masts: [[25, 31.4, 't'], [-53.6, 25.2, 't']] },
+  'portland': { blocks: [[-12, -21.4, 14, 6.5], [-21.4, -33, 15.2, 4], [-51, -56, 13.6, 3.5]], dirs: [[-30, 19]], sl: [[-1, 17]], masts: [[24.9, 29, 't'], [-54.8, 19.7, 't']] },
   // The searchlight platforms round the after funnel (CA-38 outboard profile).
   'new-orleans': { sl: [[6.5, 14.2]] },
   'pensacola': { blocks: [[-16.6, -24, 15.6, 4.5], [-34, -41, 13, 4]], dirs: [[-28, 17]], sl: [[-2, 16]], masts: [[30, 33, 't'], [-37.5, 23.4, 't']] },
@@ -849,7 +855,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   'mahan': { masts: [[11.5, 21.5, 't'], [-16.5, 7.3]] },
   'bagley': { guns: '38:1/127e 31:1/127e^2 -30:1/127^2b -42:1/127b', masts: [[16, 16, 't']] },
   'porter': { masts: [[20, 18, 't'], [-16, 10]] },
-  'somers': { masts: [[20, 18, 't']] },
+  'somers': { masts: [[11.9, 24.3, 't']] },
   'sumner': { blocks: [[-16, -28, 8.6, 3]], dirs: [[-22, 10.6, 1]], masts: [[18, 18, 't']] },
   'gearing': { blocks: [[-18, -30, 8.6, 3]], dirs: [[-24, 10.6, 1]], masts: [[20, 18, 't']] },
   'mitscher': { masts: [[24, 20, 'l'], [2, 18, 'l']] },
