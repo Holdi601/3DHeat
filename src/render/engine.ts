@@ -21,6 +21,7 @@ import { VertexBuffer } from '../race/geometry';
 import { useReplayStore } from '../state/replayStore';
 import { dropLinesOn, unitsPerMetre } from '../ui/replay/replayData';
 import { FollowRig, type RigMode } from './followRig';
+import { nearForFollow } from './followNear';
 import { TacticalLayer, axesOfTrack, cockpitClip } from './tactical';
 import { figureNear, usePlanStore } from '../state/planStore';
 import { playbackAt } from '../tactics/plan';
@@ -2035,6 +2036,8 @@ export class Engine {
       this.vehicleStage.orbit(this.camera, dt, this.mirror);
     }
     this.viewNear = this.nearForView(s.camera.near, s, raceTab);
+    // A followed unit is never cut by the near plane, however close the camera comes (`followNear.ts`).
+    if (!raceTab) this.viewNear = nearForFollow(this.viewNear, [this.camera.position.x, this.camera.position.y, this.camera.position.z], this.followedPoint(s), this.dataset ? unitsPerMetre(this.dataset) : 1);
     // Out of a cockpit the unit's own figure is clipped away, as Tacview hides it.
     if (this.rigNear > 0) this.viewNear = Math.max(this.viewNear, this.rigNear);
     this.camera.update(dt, width / height, s.camera.fov, this.viewNear, s.camera.far);
@@ -3107,6 +3110,16 @@ export class Engine {
    * track does not shake the view; the angles are not, so input is immediate.
    * One frame behind the tracks, which are built after the camera.
    */
+  /** Where the followed unit is in the view's (mirrored) space; null when nothing is followed or it is not live. */
+  private followedPoint(s: ReturnType<typeof snapshot>): [number, number, number] | null {
+    const follow = useReplayStore.getState().follow;
+    if (follow === null || s.mode !== 'team') return null;
+    const t = this.liveTracks.find((x) => x.person === follow);
+    if (!t) return null;
+    const [mx, my, mz] = this.mirror;
+    return [t.x * mx, t.y * my, t.z * mz];
+  }
+
   private followTrack(s: ReturnType<typeof snapshot>): void {
     const r = useReplayStore.getState();
     const follow = r.follow;
