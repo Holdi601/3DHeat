@@ -9,6 +9,7 @@ import { unitsOf } from './units';
 import { t } from '../../i18n';
 import './replay.css';
 import { unitPrefs } from '../../state/unitsStore';
+import { cameraTracks } from '../../render/lookAids';
 
 const GREEN = 'rgba(124, 255, 138, 0.92)';
 const sample = emptySample();
@@ -45,7 +46,9 @@ export function CockpitHud() {
     mode === 'team' &&
     follow !== null &&
     hud &&
-    (followMode === 'cockpit' || followMode === 'padlock');
+    (followMode === 'cockpit' || followMode === 'padlock') &&
+    // Through a recorded camera there is no cockpit to have a HUD.
+    !cameraTracks(dataset).persons[follow];
 
   useAnimationFrame(() => {
     const c = canvas.current;
