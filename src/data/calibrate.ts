@@ -65,6 +65,13 @@ export function calibrate(dataset: Dataset): Calibration {
 export function cameraForExtent<T extends { near: number; far: number; flySpeed: number }>(
   camera: T,
   bounds: Bounds,
+  /**
+   * Furthest the near plane is pushed. A streamed world's box reaches 1,500 km
+   * past its theatre, which would put the near plane 140 m out and cut a
+   * figure followed from 60 m; its views cap it (the per-view near still moves
+   * out from high above or outside the scene).
+   */
+  nearCap = Infinity,
 ): T {
   const extent = horizontalExtent(bounds);
   // Three times the extent: enough to hold the framing distance for any field
@@ -74,7 +81,7 @@ export function cameraForExtent<T extends { near: number; far: number; flySpeed:
   return {
     ...camera,
     far,
-    near: Math.max(camera.near, far / 100_000),
+    near: Math.max(camera.near, Math.min(far / 100_000, nearCap)),
     flySpeed: Math.max(camera.flySpeed, extent / 12),
   };
 }

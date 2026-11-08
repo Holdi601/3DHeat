@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useStore } from '../state/store';
 import type { GeoPlacement } from '../state/types';
-import { reproject, samePlacement } from '../world/reproject';
+import { movePoint, reproject, samePlacement, streamBounds } from '../world/reproject';
+import { theatreById } from '../world/theatres';
 
 /**
  * Keeps a world backdrop under the data. A backdrop built for a theatre on
@@ -19,6 +20,22 @@ export function useBackdropUnderData(): void {
     if (!geo || level?.kind !== 'model' || !level.placement) return;
     const to: GeoPlacement = { geo, axes: axes ?? null };
     if (samePlacement(level.placement, to)) return;
+    // A streamed theatre's level has no triangles: its box is worked out on the
+    // new placement (an empty mesh moved has none, and an infinite box hides
+    // the whole scene), its names moved one by one.
+    const from = level.placement;
+    const th = level.stream ? theatreById(level.stream.theatre) : undefined;
+    if (level.stream && th && level.vertices.length === 0) {
+      const { bounds, band } = streamBounds(to, th.box);
+      setLevel({
+        ...level,
+        bounds,
+        ...(level.labels ? { labels: level.labels.map((l) => ({ ...l, ...movePoint(l, from, to) })) } : {}),
+        ...(level.relief ? { relief: { ...level.relief, lowY: band.minY, highY: band.maxY } } : {}),
+        placement: to,
+      });
+      return;
+    }
     const sets = [level.indices, level.structureIndices, level.waterIndices, level.navIndices];
     const present = sets.filter((s): s is Uint32Array => !!s);
     const r = reproject(level.vertices, present, level.placement, to);

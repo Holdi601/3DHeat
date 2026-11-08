@@ -347,6 +347,9 @@ export interface AxisMirror {
   z: boolean;
 }
 
+/** Furthest a streamed world level pushes the near plane, metres (see cameraForExtent). */
+const STREAM_NEAR_CAP = 10;
+
 const MIRROR_KEY = 'heat3d.mirror';
 
 /** The axes this viewer last had inverted: a per-browser convenience. */
@@ -789,7 +792,7 @@ export const useStore = create<AppState>((set) => ({
       // Model levels only. An image level is placed by anchors derived from the
       // data it sits under, so the dataset's own calibration already covers it.
       const camera =
-        level?.kind === 'model' ? cameraForExtent(s.camera, level.bounds) : s.camera;
+        level?.kind === 'model' ? cameraForExtent(s.camera, level.bounds, level.stream ? STREAM_NEAR_CAP : Infinity) : s.camera;
       return { level, camera };
     }),
   patchLevel: (p) =>
