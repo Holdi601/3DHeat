@@ -19,6 +19,7 @@ import type { AttributeColumn, Dataset } from '../../state/types';
 import { personRows } from '../../data/flight';
 import { trackName } from './replayData';
 import { isOverlay } from '../../match/overlay';
+import { cameraTracks } from '../../render/lookAids';
 
 export type UnitKind = 'player' | 'ai' | 'weapon';
 
@@ -98,6 +99,7 @@ export function unitsOf(d: Dataset): UnitIndex {
   const playerFlag = attr(d, ['isPlayer', 'is_player', 'human']);
   const userId = attr(d, ['userId', 'user_id', 'steamid', 'steamId']);
   const acmi = !!attr(d, ['Pilot']) && !!attr(d, ['Coalition', 'EventObjects']);
+  const cams = cameraTracks(d);
   const aiFrom: UnitIndex['aiFrom'] = aiCol || playerFlag ? 'column' : userId ? 'userId' : acmi ? 'pilot' : 'none';
 
   const units: Unit[] = [];
@@ -133,11 +135,14 @@ export function unitsOf(d: Dataset): UnitIndex {
     // Weapons are their own: one entry per flight, named by launcher and weapon. In
     // the figure overlay each player in each round is a thing of its own.
     const overlay = isOverlay(d);
-    const key = !weapon && who && !overlay ? who : `#${p}`;
+    // A recorded camera is a unit of its own, not another life of the player it belongs to.
+    const camera = cams.persons[p] === 1;
+    const key = !weapon && !camera && who && !overlay ? who : `#${p}`;
     let u = byKey.get(key);
     if (!u) {
       let name: string;
-      if (weapon) name = trackName(d, p, first);
+      if (camera) name = d.personLabels[p]?.replace(/\s*#\w+$/, '') || trackName(d, p, first);
+      else if (weapon) name = trackName(d, p, first);
       else if (ai) {
         // An AI unit by its vehicle, and which one where there are several ("#83").
         const num = /#\s*([0-9]+)$/.exec(who)?.[1];

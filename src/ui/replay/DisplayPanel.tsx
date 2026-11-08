@@ -71,7 +71,7 @@ export function DisplayPanel() {
     const cams = cameraTracks(dataset);
     if (!cams.any) return [];
     const index = unitsOf(dataset);
-    return index.units.filter((u) => u.persons.some((p) => cams.persons[p])).map((u) => ({ unit: u, person: u.persons[0] }));
+    return index.units.filter((u) => u.persons.some((p) => cams.persons[p])).map((u) => ({ unit: u, person: u.persons.find((p) => cams.persons[p]) ?? u.persons[0] }));
   }, [dataset]);
   if (!dataset || !has) return null;
   const r = useReplayStore.getState;

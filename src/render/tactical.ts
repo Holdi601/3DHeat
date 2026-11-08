@@ -438,7 +438,9 @@ export class TacticalLayer {
     void i;
     const aspect = 16 / 9;
     if (cams.persons[tr.person]) {
-      if (!camera) return;
+      // Not while the view is through it: its own frustum would frame the picture.
+      const r = useReplayStore.getState();
+      if (!camera || (r.follow === tr.person && (r.followMode === 'cockpit' || r.followMode === 'padlock'))) return;
       const a = axesNow();
       const zoom = zoomAt(d, tr.row);
       const f = fovAt(cams.fov, tr.row);
