@@ -5,8 +5,9 @@
  * overlay of hundreds or thousands of matches is drawn from.
  *
  * Per key 12 bytes: x, y, z and t in 16 bits each, across the span of the
- * track's own positions and times (a fighter's 50 km in 0.8 m steps, its ten
- * minutes in 9 ms; a soldier's 200 m in 3 mm), and the attitude as a
+ * `CHUNK_KEYS` keys around it (a fighter's 16 s at 300 m/s in 7 cm and
+ * 0.25 ms steps, wherever in a theatre and however long the recording; a
+ * soldier's in well under a millimetre), and the attitude as a
  * quaternion in four signed bytes (0.5 degree). Velocities are not stored: the shader takes them from the
  * neighbouring keys, the three-point estimate `motion.ts` uses, so the curve
  * on the GPU is the curve on the CPU.
@@ -25,7 +26,13 @@
  * span its keys are in: origin x, y, z and the step of a position unit
  * (slots 8-11), first time and the step of a time unit (12-13), and the
  * seconds it is held past its last key plus one (14; 0 for the viewer's
- * lifetime alone, `data/despawn.ts`).
+ * lifetime alone, `data/despawn.ts`). Slot 7: where in the same table the
+ * track's chunk spans start (u32), one of `CHUNK_U32` per `CHUNK_KEYS` keys
+ * laid out as slots 8-13; 0 where every key is in the track's span (the lean
+ * overlay's). Over a whole track 16 bits are too coarse for a long or
+ * theatre-sized one (five hours in 0.27 s steps: 80 m along the path of a
+ * fast jet), so keys count from their chunk's span; the track's span stays
+ * as its bounds.
  */
 
 import type { Dataset } from '../../state/types';
@@ -47,8 +54,12 @@ export const KEY_U32 = 2;
  */
 export const KEYS_PER_BUFFER = (1 << 28) - (1 << 16);
 export const KEY_BUFFERS = 2;
-/** Steps a coordinate or the time spans within a track (16 bits). */
+/** Steps a coordinate or the time spans within a chunk or track (16 bits). */
 const STEPS = 65535;
+/** Keys a chunk span holds, and the u32 of one (origin x, y, z, step, first time, time step, two spare). */
+export const CHUNK_SHIFT = 6;
+export const CHUNK_KEYS = 1 << CHUNK_SHIFT;
+export const CHUNK_U32 = 8;
 /** Most seconds between two keys when the data is reduced. */
 const MAX_GAP = 4;
 /** Tolerances tried, metres, when lossless does not fit. */
@@ -291,6 +302,7 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
   const samples = rows.length;
 
   /** Marks the rows kept as keys at a tolerance (0: all but doubled times); returns how many. */
+  const held = heldSamples(rows, start, persons, px, py, pz, time, units);
   const keep = new Uint8Array(samples);
   const choose = (tol: number): number => {
     let n = 0;
@@ -303,6 +315,7 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
       for (let k = a; k < b; k++) {
         const r = rows[k];
         keep[k] = 0;
+        if (held[k]) continue;
         if (last >= 0 && time[r] - time[rows[last]] < 1e-3) continue;
         if (last >= 0 && tol > 0 && k !== b - 1) {
           const lr = rows[last];
@@ -344,8 +357,18 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
   const rollCol = d.attrs.find((a) => a.kind !== 'category' && /^roll$/i.test(a.name.trim()));
   const roll = rollCol ? (rollCol.data as Float32Array) : null;
 
+  let chunkCount = 0;
+  for (let p = 0; p < persons; p++) {
+    let n = 0;
+    for (let k = start[p]; k < start[p + 1]; k++) n += keep[k];
+    chunkCount += Math.ceil(n / CHUNK_KEYS);
+  }
   const trackData = new Uint32Array(persons * TRACK_U32);
   const f32 = new Float32Array(trackData.buffer);
+  const chunkData = new Uint32Array(chunkCount * CHUNK_U32);
+  const chunkF = new Float32Array(chunkData.buffer);
+  const kept = new Int32Array(samples);
+  let chunkAt = 0;
   const keysA = new Uint32Array(keys * KEY_U32);
   const keysB = new Uint32Array(keys);
   const keyRow = new Int32Array(keys);
@@ -378,18 +401,25 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
     if (!(t1k >= t0k)) continue;
     const step = Math.max(x1 - x0, y1 - y0, z1 - z0, 1e-6) / STEPS;
     const tStep = Math.max(t1k - t0k, 1e-6) / STEPS;
-    const q16 = (v: number, o: number, st: number) => Math.max(0, Math.min(STEPS, Math.round((v - o) / st)));
+    let m = 0;
+    for (let k = a; k < b; k++) if (keep[k]) kept[m++] = rows[k];
+    const firstChunk = chunkAt;
     let lastQt = -1;
-    for (let k = a; k < b; k++) {
-      if (!keep[k]) continue;
-      const r = rows[k];
-      // Two samples in one time step (a long track sampled fast) would be one key: the first is kept.
-      const qt = q16(time[r], t0k, tStep);
-      if (qt === lastQt) continue;
+    for (let n = 0; n < m; n++) {
+      const r = kept[n];
+      if (n % CHUNK_KEYS === 0) {
+        chunkSpan(px, py, pz, time, kept, n, Math.min(m, n + CHUNK_KEYS), chunkF, chunkAt);
+        chunkAt += CHUNK_U32;
+        lastQt = -1;
+      }
+      const c = chunkAt - CHUNK_U32;
+      const st = chunkF[c + 3];
+      // A step apart at least, so no two keys share a time (the samples are 1 ms apart at least).
+      const qt = Math.min(STEPS, Math.max(lastQt + 1, q16(time[r], chunkF[c + 4], chunkF[c + 5])));
       lastQt = qt;
       const o2 = key * KEY_U32;
-      keysA[o2] = (q16(px[r], x0, step) | (q16(py[r], y0, step) << 16)) >>> 0;
-      keysA[o2 + 1] = (q16(pz[r], z0, step) | (qt << 16)) >>> 0;
+      keysA[o2] = (q16(px[r], chunkF[c], st) | (q16(py[r], chunkF[c + 1], st) << 16)) >>> 0;
+      keysA[o2 + 1] = (q16(pz[r], chunkF[c + 2], st) | (qt << 16)) >>> 0;
       keyRow[key] = r;
       if (d.yaw) {
         const rl = roll ? (roll[r] * Math.PI) / 180 : 0;
@@ -410,6 +440,7 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
     const o8 = tracks * TRACK_U32;
     trackData[o8] = first;
     trackData[o8 + 1] = key - first;
+    trackData[o8 + 7] = firstChunk + 1;
     figures.place(trackData, f32, o8, p, rows[a], !!d.yaw);
     f32[o8 + 8] = x0;
     f32[o8 + 9] = y0;
@@ -424,14 +455,20 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
     trackOf[p] = tracks;
     tracks++;
   }
+  // The chunk spans after the tracks: slot 7 from an index into them (plus one) to where they are.
+  const head = Math.max(1, tracks) * TRACK_U32;
+  const table = new Uint32Array(head + chunkAt);
+  table.set(trackData.subarray(0, head));
+  table.set(chunkData.subarray(0, chunkAt), head);
+  for (let i = 0; i < tracks; i++) table[i * TRACK_U32 + 7] += head - 1;
   return {
     dataset: d,
     tracks,
-    trackData: trackData.subarray(0, Math.max(1, tracks) * TRACK_U32),
+    trackData: table,
     keysA: keysA.subarray(0, key * KEY_U32),
     keysB: keysB.subarray(0, key),
     keyRow: keyRow.subarray(0, key),
-    keysAim: aimKeys(d, keyRow.subarray(0, key), trackData, tracks),
+    keysAim: aimKeys(d, keyRow.subarray(0, key), table, tracks),
     keys: key,
     meshes: figures.meshes,
     meshTracks: figures.meshTracks.slice(0, figures.meshes.length),
@@ -440,7 +477,7 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
     units,
     tolerance,
     samples,
-    bytes: tracks * TRACK_U32 * 4 + key * (KEY_U32 * 4 + 4),
+    bytes: table.byteLength + key * (KEY_U32 * 4 + 4),
     buildMs: performance.now() - t0,
   };
 }
@@ -460,14 +497,89 @@ function aimKeys(d: Dataset, keyRow: Int32Array, trackData: Uint32Array, tracks:
   return out;
 }
 
+/**
+ * Samples that only hold a moving unit's last position (`rows` grouped by
+ * `start`): a run at one place, after it moved and before it moves on, under
+ * `MAX_GAP` seconds, after which it is where its speed would have taken it.
+ * A recording writes them where an update did not come in
+ * time or a line changed the attitude alone (a DCS server's Tacview: a jet's
+ * client late by a frame); as keys they would stop the unit and jump it on.
+ * The first sample of the run is where the unit was then, and stays.
+ */
+export function heldSamples(rows: Int32Array, start: Int32Array, persons: number, px: ArrayLike<number>, py: ArrayLike<number>, pz: ArrayLike<number>, time: ArrayLike<number>, units: number): Uint8Array {
+  const held = new Uint8Array(rows.length);
+  const same = (i: number, j: number) => px[rows[i]] === px[rows[j]] && py[rows[i]] === py[rows[j]] && pz[rows[i]] === pz[rows[j]];
+  const dist = (i: number, j: number) => Math.hypot(px[rows[j]] - px[rows[i]], py[rows[j]] - py[rows[i]], pz[rows[j]] - pz[rows[i]]);
+  for (let p = 0; p < persons; p++) {
+    const a = start[p];
+    const b = start[p + 1];
+    for (let k = a + 1; k < b - 1; k++) {
+      if (!same(k, k - 1)) continue;
+      // The run k - 1 .. e at one place.
+      let e = k;
+      while (e + 1 < b && same(e + 1, k - 1)) e++;
+      const from = k - 1;
+      if (from > a && e < b - 1 && time[rows[e + 1]] - time[rows[from]] < MAX_GAP) {
+        const vIn = dist(from - 1, from) / Math.max(1e-3, time[rows[from]] - time[rows[from - 1]]);
+        const vOut = dist(e, e + 1) / Math.max(1e-3, time[rows[e + 1]] - time[rows[from]]);
+        // Moving into it (a metre a second at least), and the step out of it catching up the whole run at
+        // about that speed: a unit that stops, however briefly, stays stopped.
+        if (vIn > units && Math.abs(vOut - vIn) < 0.3 * vIn) for (let j = k; j <= e; j++) held[j] = 1;
+      }
+      k = e;
+    }
+  }
+  return held;
+}
+
+const q16 = (v: number, o: number, st: number) => Math.max(0, Math.min(STEPS, Math.round((v - o) / st)));
+
+/**
+ * The span of keys `from` to `to` of `kept` (rows) into `out` at `o`, as the
+ * float32 the GPU reads: the low corner and the first time as the data has
+ * them, and steps just big enough for 16 bits to reach across.
+ */
+function chunkSpan(px: ArrayLike<number>, py: ArrayLike<number>, pz: ArrayLike<number>, time: ArrayLike<number>, kept: Int32Array, from: number, to: number, out: Float32Array, o: number): void {
+  let x0 = Infinity, y0 = Infinity, z0 = Infinity, x1 = -Infinity, y1 = -Infinity, z1 = -Infinity;
+  for (let n = from; n < to; n++) {
+    const r = kept[n];
+    x0 = Math.min(x0, px[r]);
+    x1 = Math.max(x1, px[r]);
+    y0 = Math.min(y0, py[r]);
+    y1 = Math.max(y1, py[r]);
+    z0 = Math.min(z0, pz[r]);
+    z1 = Math.max(z1, pz[r]);
+  }
+  out[o] = x0;
+  out[o + 1] = y0;
+  out[o + 2] = z0;
+  out[o + 3] = (Math.max(x1 - out[o], y1 - out[o + 1], z1 - out[o + 2], 1e-6) / STEPS) * (1 + 1e-6);
+  out[o + 4] = time[kept[from]];
+  out[o + 5] = (Math.max(time[kept[to - 1]] - out[o + 4], 1e-6) / STEPS) * (1 + 1e-6);
+}
+
+/** Where the span of key `j` of the track at u32 offset `b` is: its chunk's, else the track's own (slots 8-13). */
+export function spanOfKey(trackData: Uint32Array, b: number, j: number): number {
+  const c = trackData[b + 7];
+  return c ? c + ((j - trackData[b]) >>> CHUNK_SHIFT) * CHUNK_U32 : b + 8;
+}
+
+/** The time of key `j` of the track at u32 offset `b`. */
+export function keyTime(s: GpuTrackStore, b: number, j: number): number {
+  const f = new Float32Array(s.trackData.buffer, s.trackData.byteOffset, s.trackData.length);
+  const o = spanOfKey(s.trackData, b, j);
+  return f[o + 4] + (s.keysA[j * KEY_U32 + 1] >>> 16) * f[o + 5];
+}
+
 /** Key `j` of the track at u32 offset `b` of `trackData`, decoded into `out` (x, y, z, t). */
 export function decodeKey(s: GpuTrackStore, b: number, j: number, out: number[]): void {
   const f = new Float32Array(s.trackData.buffer, s.trackData.byteOffset, s.trackData.length);
+  const o = spanOfKey(s.trackData, b, j);
   const a = s.keysA[j * KEY_U32];
   const c = s.keysA[j * KEY_U32 + 1];
-  const step = f[b + 11];
-  out[0] = f[b + 8] + (a & 0xffff) * step;
-  out[1] = f[b + 9] + (a >>> 16) * step;
-  out[2] = f[b + 10] + (c & 0xffff) * step;
-  out[3] = f[b + 12] + (c >>> 16) * f[b + 13];
+  const step = f[o + 3];
+  out[0] = f[o] + (a & 0xffff) * step;
+  out[1] = f[o + 1] + (a >>> 16) * step;
+  out[2] = f[o + 2] + (c & 0xffff) * step;
+  out[3] = f[o + 4] + (c >>> 16) * f[o + 5];
 }

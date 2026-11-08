@@ -10,7 +10,7 @@
  * velocity (fully above 40 m/s, not below 25), its up axis kept square to it.
  */
 
-import { decodeKey, FLAG_AIR, FLAG_ATTITUDE, TRACK_U32, type GpuTrackStore } from './store';
+import { decodeKey, keyTime, FLAG_AIR, FLAG_ATTITUDE, TRACK_U32, type GpuTrackStore } from './store';
 
 export interface TrackPose {
   x: number;
@@ -90,9 +90,7 @@ export function evaluateTrack(s: GpuTrackStore, i: number, t: number, stale: num
   const last = first + count - 1;
   if (count === 0) return false;
   const f32 = new Float32Array(T.buffer, T.byteOffset, T.length);
-  const t0 = f32[b + 12];
-  const ts = f32[b + 13];
-  const timeOf = (j: number) => t0 + (s.keysA[j * 2 + 1] >>> 16) * ts;
+  const timeOf = (j: number) => keyTime(s, b, j);
   if (timeOf(first) > t) return false;
   // The last key at or before t.
   let lo = first;
@@ -131,13 +129,14 @@ export function evaluateTrack(s: GpuTrackStore, i: number, t: number, stale: num
     m0 = m0 > cap ? (cap / m0) * h : h;
     m1 = m1 > cap ? (cap / m1) * h : h;
     const s2 = sv * sv, s3 = s2 * sv;
-    const h00 = 2 * s3 - 3 * s2 + 1, h10 = s3 - 2 * s2 + sv, h01 = -2 * s3 + 3 * s2, h11 = s3 - s2;
+    // P from K0, as the shader works it (h00 = 1 - h01): no sum of two big coordinates.
+    const h10 = s3 - 2 * s2 + sv, h01 = -2 * s3 + 3 * s2, h11 = s3 - s2;
     const d00 = 6 * s2 - 6 * sv, d10 = 3 * s2 - 4 * sv + 1, d11 = 3 * s2 - 2 * sv;
     const C = [cx, cy, cz];
     const P = [0, 0, 0];
     const V = [0, 0, 0];
     for (let c = 0; c < 3; c++) {
-      P[c] = h00 * K0[c] + h10 * va[c] * m0 + h01 * K1[c] + h11 * vb[c] * m1;
+      P[c] = K0[c] + (h10 * va[c] * m0 + h01 * C[c] + h11 * vb[c] * m1);
       V[c] = (d00 * -C[c] + d10 * va[c] * m0 + d11 * vb[c] * m1) / h;
     }
     out.x = P[0];

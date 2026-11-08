@@ -11,7 +11,7 @@
  * after the tracks where the store has them, `store.ts`).
  */
 
-import { KEYS_PER_BUFFER, TRACK_U32 } from './store';
+import { CHUNK_SHIFT, CHUNK_U32, KEYS_PER_BUFFER, TRACK_U32 } from './store';
 
 export const PLACE_WGSL = /* wgsl */ `
 struct U {
@@ -22,6 +22,7 @@ struct U {
   n : vec4<u32>,     // tracks, meshes, trail vertex room, most trail segments a unit
   trail : vec4<f32>, // trail seconds (0: none), weapon streak seconds (<0: weapons hidden), marker seconds, marker px
   m : vec4<u32>,     // markers, 1 when every track is shown, 1 for drop lines, the floor's height (f32 bits)
+  x : vec4<u32>,     // the playhead's remainder below cam.w (f32 bits), where the aim keys start in tracks
 };
 @group(0) @binding(0) var<uniform> u : U;
 @group(0) @binding(1) var<storage, read> tracks : array<u32>;
@@ -55,19 +56,32 @@ fn rot(q : vec4<f32>, v : vec3<f32>) -> vec3<f32> {
   return v + q.w * t + cross(q.xyz, t);
 }
 
-// The track's span, set per thread before its keys are read: origin, position step, first time, time step.
-var<private> spanO : vec3<f32>;
-var<private> spanStep : f32;
-var<private> spanT0 : f32;
-var<private> spanTS : f32;
+// The track, set per thread before its keys are read: where it is in tracks, its first key, its chunk spans (0: none).
+var<private> spanTrack : u32;
+var<private> spanFirst : u32;
+var<private> spanChunks : u32;
+// The playhead as cam.w plus the rest that a f32 of it leaves out: key times are taken relative to it.
+var<private> tLo : f32;
 
-fn keyAt(j : u32) -> vec4<f32> {
-  let k = keyRaw(j);
-  return vec4<f32>(spanO + vec3<f32>(f32(k.x & 0xffffu), f32(k.x >> 16u), f32(k.y & 0xffffu)) * spanStep, spanT0 + f32(k.y >> 16u) * spanTS);
+// Where key j's span is (origin xyz, position step, first time, time step): its chunk's, else the track's.
+fn spanOf(j : u32) -> u32 {
+  if (spanChunks == 0u) { return spanTrack + 8u; }
+  return spanChunks + ((j - spanFirst) >> ${CHUNK_SHIFT}u) * ${CHUNK_U32}u;
 }
 
+// Key j's time, seconds from the playhead: the span's first time less the playhead's f32 is exact near it.
 fn timeAt(j : u32) -> f32 {
-  return spanT0 + f32(keyRaw(j).y >> 16u) * spanTS;
+  let o = spanOf(j);
+  return (bitcast<f32>(tracks[o + 4u]) - u.cam.w) + f32(keyRaw(j).y >> 16u) * bitcast<f32>(tracks[o + 5u]) - tLo;
+}
+
+// Key j: position, and time from the playhead.
+fn keyAt(j : u32) -> vec4<f32> {
+  let o = spanOf(j);
+  let k = keyRaw(j);
+  let O = vec3<f32>(bitcast<f32>(tracks[o]), bitcast<f32>(tracks[o + 1u]), bitcast<f32>(tracks[o + 2u]));
+  let t = (bitcast<f32>(tracks[o + 4u]) - u.cam.w) + f32(k.y >> 16u) * bitcast<f32>(tracks[o + 5u]) - tLo;
+  return vec4<f32>(O + vec3<f32>(f32(k.x & 0xffffu), f32(k.x >> 16u), f32(k.y & 0xffffu)) * bitcast<f32>(tracks[o + 3u]), t);
 }
 
 fn vel(j : u32, first : u32, last : u32) -> vec3<f32> {
@@ -131,16 +145,17 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
   let first = tracks[b];
   let count = tracks[b + 1u];
   let flags = tracks[b + 5u];
-  let t = u.cam.w;
+  // Times are from the playhead.
+  let t = 0.0;
   if (count == 0u) { return; }
   // Hidden by a team toggle or a filter; a weapon while weapons are off.
   if (u.m.y == 0u && ((vis[i >> 5u] >> (i & 31u)) & 1u) == 0u) { return; }
   let weapon = (flags & 4u) != 0u;
   if (weapon && u.trail.y < 0.0) { return; }
-  spanO = vec3<f32>(bitcast<f32>(tracks[b + 8u]), bitcast<f32>(tracks[b + 9u]), bitcast<f32>(tracks[b + 10u]));
-  spanStep = bitcast<f32>(tracks[b + 11u]);
-  spanT0 = bitcast<f32>(tracks[b + 12u]);
-  spanTS = bitcast<f32>(tracks[b + 13u]);
+  spanTrack = b;
+  spanFirst = first;
+  spanChunks = tracks[b + 7u];
+  tLo = bitcast<f32>(u.x.x);
   if (timeAt(first) > t) { return; }
   let last = first + count - 1u;
   var lo = first;
@@ -177,14 +192,14 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
     if (m1 > cap) { m1 = (cap / m1) * h; } else { m1 = h; }
     let s2 = s * s;
     let s3 = s2 * s;
-    let h00 = 2.0 * s3 - 3.0 * s2 + 1.0;
     let h10 = s3 - 2.0 * s2 + s;
     let h01 = -2.0 * s3 + 3.0 * s2;
     let h11 = s3 - s2;
     let d00 = 6.0 * s2 - 6.0 * s;
     let d10 = 3.0 * s2 - 4.0 * s + 1.0;
     let d11 = 3.0 * s2 - 2.0 * s;
-    P = h00 * A0.xyz + h10 * va * m0 + h01 * A1.xyz + h11 * vb * m1;
+    // From A0 (h00 = 1 - h01): no sum of two big coordinates.
+    P = A0.xyz + (h10 * va * m0 + h01 * C + h11 * vb * m1);
     V = (d00 * -C + d10 * va * m0 + d11 * vb * m1) / h;
   }
 
@@ -261,8 +276,8 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
   var tYaw = 0.0;
   var gPitch = -100.0;
   if ((flags & 8u) != 0u) {
-    let ia = u.n.x * TRACK_U32 + k;
-    let ib = u.n.x * TRACK_U32 + kb;
+    let ia = u.x.y + k;
+    let ib = u.x.y + kb;
     if (ib < arrayLength(&tracks)) {
       let wa = tracks[ia];
       let wb = tracks[ib];

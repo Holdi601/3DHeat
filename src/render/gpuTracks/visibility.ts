@@ -11,7 +11,7 @@
  */
 
 import type { Dataset, FilterSpec } from '../../state/types';
-import { KEY_U32, TRACK_U32, type GpuTrackStore } from './store';
+import { keyTime, TRACK_U32, type GpuTrackStore } from './store';
 
 /** The row a track is judged by. */
 export function trackRowOf(s: GpuTrackStore, i: number): number {
@@ -81,12 +81,9 @@ export function isShown(bits: Uint32Array | null, i: number): boolean {
 /** The time of a track's first and last key. */
 export function trackTimes(s: GpuTrackStore, i: number): [number, number] {
   const b = i * TRACK_U32;
-  const f32 = new Float32Array(s.trackData.buffer, s.trackData.byteOffset, s.trackData.length);
   const first = s.trackData[b];
   const n = s.trackData[b + 1];
-  const t0 = f32[b + 12];
-  const ts = f32[b + 13];
-  return [t0 + (s.keysA[first * KEY_U32 + 1] >>> 16) * ts, t0 + (s.keysA[(first + Math.max(0, n - 1)) * KEY_U32 + 1] >>> 16) * ts];
+  return [keyTime(s, b, first), keyTime(s, b, first + Math.max(0, n - 1))];
 }
 
 /**
