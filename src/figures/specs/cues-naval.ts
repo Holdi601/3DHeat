@@ -873,7 +873,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
     { cue: 'one funnel', check: (s) => funnels(s) === 1 },
   ]),
   bretagne: naval('bretagne', [
-    { cue: 'five twin 340 mm turrets: two forward, one amidships, two aft', check: (s) => battery(s, 0.3, 2, 3, 2) && mains(s, 0.3).some((t) => Math.abs(t.x) < 15) },
+    { cue: 'five twin 340 mm turrets: two forward, one amidships, two aft', check: (s) => mains(s, 0.3).length === 5 && mains(s, 0.3).every((t) => t.barrels === 2 && !t.side) && mains(s, 0.3).filter((t) => t.x > 15).length === 2 && mains(s, 0.3).filter((t) => t.x < -15).length === 2 && mains(s, 0.3).some((t) => Math.abs(t.x) < 15) },
     { cue: 'superfiring pairs at both ends', check: (s) => superfires(fwd(s, 0.3)) && superfires(aft(s, 0.3)) },
     { cue: 'two funnels far apart, the midships turret between them', check: (s) => funnels(s) === 2 && funnelGap(s) > 25 },
   ]),
