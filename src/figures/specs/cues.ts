@@ -2467,7 +2467,7 @@ export const CUES: Record<string, CueEntry> = {
   ]),
   'type-90': ground('type-90', [
     { cue: 'six road wheels behind skirts', check: (s) => run(6)(s) && skirted(s) },
-    { cue: 'boxy welded turret with vertical sides and a bustle autoloader', check: (s) => angular(s) && turretL(4)(s) },
+    { cue: 'boxy welded turret with vertical sides and a bustle autoloader', check: (s) => angular(s) && turretL(3.9)(s) },
     { cue: '120 mm with an evacuator', check: (s) => cal(0.12)(s) && evacuator(s) },
   ]),
   'type-10': ground('type-10', [
