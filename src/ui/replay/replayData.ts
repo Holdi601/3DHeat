@@ -6,23 +6,23 @@
 
 import type { Dataset } from '../../state/types';
 
-const nameCache = new WeakMap<Dataset, Map<string, string>>();
+const nameCache = new WeakMap<Dataset, (string | undefined)[]>();
 
 /**
  * A track's name: its person label, with a Tacview id suffix (" #1a2") taken
  * off; a pilot and their aircraft read "Viper 1 (F-16C_50)".
  */
 export function trackName(d: Dataset, person: number, row: number): string {
+  // By track number, not by a key made for each call: an overlay of many matches has millions of tracks.
   let cache = nameCache.get(d);
-  if (!cache) nameCache.set(d, (cache = new Map()));
-  const key = `${person}`;
-  const hit = cache.get(key);
+  if (!cache) nameCache.set(d, (cache = []));
+  const hit = cache[person];
   if (hit !== undefined) return hit;
   const label = d.personLabels[person] ?? String(person);
   // Without a pilot a Tacview object is "(T-90A) #1a2": the type alone.
   const bare = label.replace(/\s*#[0-9a-f]+$/i, '');
   const name = (/^\(([^()]*)\)$/.test(bare) ? bare.slice(1, -1) : bare) || label;
-  cache.set(key, name);
+  cache[person] = name;
   void row;
   return name;
 }

@@ -112,6 +112,10 @@ export function unitsOf(d: Dataset): UnitIndex {
   const personUnit = new Int32Array(persons).fill(-1);
   // Each unit's index, not searched for: hundreds of thousands of units in a large overlay.
   const unitIndex = new Map<Unit, number>();
+  // In the figure overlay each player in each round is a thing of its own.
+  const overlay = isOverlay(d);
+  // What a type and kind are, worked out once each: an overlay has millions of tracks but few types.
+  const effects = new Map<string, boolean>();
   for (let p = 0; p < persons; p++) {
     let first = -1;
     let last = -1;
@@ -123,7 +127,9 @@ export function unitsOf(d: Dataset): UnitIndex {
     const lifeText = text(life, first);
     const type = text(typeCol, first);
     const kind = text(kindCol, first);
-    const effect = isEffectDomain(classOfType(`${type}+${kind}`)?.domain ?? -1);
+    const tk = `${type}+${kind}`;
+    let effect = effects.get(tk);
+    if (effect === undefined) effects.set(tk, (effect = isEffectDomain(classOfType(tk)?.domain ?? -1)));
     const weapon = effect || /^w[0-9a-f]/i.test(lifeText) || (acmi && WEAPON_TYPE.test(type)) || (!!kindCol && /^(weapon|projectile|missile|rocket|bomb|shell|torpedo)$/i.test(kind));
     const who = text(player, first).trim();
     const vehicleId = text(vehicleRaw, first);
@@ -138,9 +144,7 @@ export function unitsOf(d: Dataset): UnitIndex {
     else if (userId) ai = !text(userId, first).trim() || text(userId, first) === '0';
     else if (acmi) ai = !who;
     else ai = false;
-    // Weapons are their own: one entry per flight, named by launcher and weapon. In
-    // the figure overlay each player in each round is a thing of its own.
-    const overlay = isOverlay(d);
+    // Weapons are their own: one entry per flight, named by launcher and weapon.
     // A recorded camera is a unit of its own, not another life of the player it belongs to.
     const camera = cams.persons[p] === 1;
     const key = !weapon && !camera && who && !overlay ? who : `#${p}`;
@@ -184,6 +188,10 @@ export function unitsOf(d: Dataset): UnitIndex {
   }
   // Each unit's tracks in time order, so the "current life" is the last one started.
   for (const u of units) {
+    if (u.persons.length === 1) {
+      if (u.vehicles[0]) u.vehicle = u.vehicles[0];
+      continue;
+    }
     const order = u.persons.map((_, i) => i).sort((a, b) => u.spans[a][0] - u.spans[b][0]);
     u.persons = order.map((i) => u.persons[i]);
     u.spans = order.map((i) => u.spans[i]);
