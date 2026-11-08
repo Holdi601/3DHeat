@@ -298,9 +298,10 @@ G['merkava-mk4m'] = { ...MK4, addOns: [...MK4_ADD, tb(-0.4, 1.62, 0.45, 0.8, 0.4
 // turret on the 1.5 m deck, not the Leopard 2's.
 // Deck height, the short upper glacis down to the nose, the turret's front face, roof and back plate (the bustle rack
 // behind it) measured on a CC0 broadside photograph ("JGSDF Type90 tank 20120527-04", sources.md), scaled by the
-// published 7.5 m hull and 2.33 m height.
+// published 7.5 m hull and 2.33 m height. The turret 2.6 m across its front face, about three quarters of the deck's width at
+// the glacis' top edge (head-on CC0 photograph, "JGSDF Type90 tank 20120527-07").
 G['type-90'] = { ...base('type-90'), hullHeight: 1.6, roadWheels: 6, trackProfile: run(7.3, 0.9, [3.65, 0.6], [-3.65, 0.68], -3.0, 2.95), hullOutline: hull(7.5, 3.43, 1.6, 0.88, 0.85, 0.98, 0.15),
-  turret: turret(0, [[-1.95, 1.45], [-1.8, 1.6], [1.6, 1.6], [1.95, 1.4], [2.0, 0.62]], [[-1.95, 0.72], [1.6, 0.75], [2.0, 0.7]], 14, 2.0) };
+  turret: turret(0, [[-1.95, 1.2], [-1.8, 1.3], [1.6, 1.3], [1.95, 1.22], [2.0, 0.62]], [[-1.95, 0.72], [1.6, 0.75], [2.0, 0.7]], 14, 2.0) };
 // Type 10 (2012): five road wheels, a lighter hull, the angular wedge turret with modular faces (hull 7.42 x 3.24 m, 2.3 m).
 G['type-10'] = { ...base('type-10'), length: 7.42, roadWheels: 5, roadWheelRadius: 0.38, trackProfile: run(7.2, 0.9, [3.6, 0.6], [-3.6, 0.68], -2.9, 2.9), hullOutline: hull(7.42, 3.24, 1.45, 0.86, 1.4, 1.05, 0.15), addOns: [tb(-0.3, 0.7, 0.95, 0.4, 0.4, 0.3)] };
 // K1 (1987): the Abrams-like faceted turret, smaller, on a six-wheeled hull; the 105 mm; K1A1 the 120 mm (hull 7.48 x 3.6 m, 2.25 m).
@@ -2469,7 +2470,7 @@ more('m1a1-abrams', [...sight(1.05, 0.62, 0.84, 0.8, 0.55, 0.32), ...smokeRow(1.
   (g) => [{ ...g[0], sleeve: 0.95, mrs: true }, roofMg(-0.6, -0.72, 0.0076)]);
 // Type 90: the sleeved L44 with its sensor, the commander's panoramic sight, the gunner's sight, three smoke tubes a
 // side, the bustle basket, the 12.7 mm on the roof.
-more('type-90', [...pano(0.25, 0.72, 0.75, 0.36, 0.5), ...sight(1.15, -0.7, 0.85, 0.6, 0.42, 0.2), ...smokeRow(-0.4, 1.6, 0.58, 3), ...basket(-2.22, 0.45, 0.55, 2.6, 0.4)],
+more('type-90', [...pano(0.25, 0.72, 0.75, 0.36, 0.5), ...sight(1.15, -0.7, 0.85, 0.6, 0.42, 0.2), ...smokeRow(-0.4, 1.32, 0.58, 3), ...basket(-2.22, 0.45, 0.55, 2.4, 0.4)],
   (g) => [{ ...g[0], sleeve: 0.92, mrs: true }, roofMg(-0.3, -0.65)]);
 // Ariete: the sleeved 120/44 with its sensor, the commander's panoramic sight, the gunner's sight, four smoke tubes a
 // side, the bustle basket, the roof machine gun.
