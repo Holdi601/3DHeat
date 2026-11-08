@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Levetid",
   "heat.timeline.window.lifetimeTitle": "Hvert datapunkt lever til samme persons neste måling, så det er én gjeldende posisjon per person. Punkter uten neste måling bruker reservelevetiden.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Egendefinert…",
+  "heat.timeline.speedCustomTitle": "Skriv inn en hastighet fra {min}× til {max}× (f.eks. 0,3 eller 12), og trykk Enter. Esc beholder den nåværende.",
   "heat.timeline.allClock": "alle · {span} med data",
   "heat.timeline.allTitle": "Vis alle datapunkter samtidig, uavhengig av avspillingshodet",
   "heat.timeline.all": "Alle",

@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Животен век",
   "heat.timeline.window.lifetimeTitle": "Секоја точка живее до следниот примерок на истата личност, па има по една тековна позиција за секоја личност. Точките без следен примерок го користат резервниот животен век.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Сопствена…",
+  "heat.timeline.speedCustomTitle": "Внесете која било брзина од {min}× до {max}× (на пр. 0,3 или 12), па Enter. Esc ја задржува тековната.",
   "heat.timeline.allClock": "сè · {span} податоци",
   "heat.timeline.allTitle": "Прикажи ги сите точки одеднаш, без оглед на курсорот на репродукција",
   "heat.timeline.all": "Сè",

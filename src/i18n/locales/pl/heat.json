@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Czas życia",
   "heat.timeline.window.lifetimeTitle": "Każdy punkt danych żyje do następnej próbki tej samej osoby, więc na osobę przypada jedna bieżąca pozycja. Punkty bez następnej próbki używają zapasowego czasu życia.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Własna…",
+  "heat.timeline.speedCustomTitle": "Wpisz dowolną prędkość od {min}× do {max}× (np. 0,3 lub 12) i naciśnij Enter. Esc zachowuje bieżącą.",
   "heat.timeline.allClock": "wszystko · {span} danych",
   "heat.timeline.allTitle": "Pokaż wszystkie punkty danych naraz, z pominięciem znacznika odtwarzania",
   "heat.timeline.all": "Wszystko",

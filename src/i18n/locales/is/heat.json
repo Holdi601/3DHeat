@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Líftími",
   "heat.timeline.window.lifetimeTitle": "Hver gagnapunktur lifir fram að næsta sýni sömu persónu, svo ein núverandi staðsetning er á hverja persónu. Punktar án næsta sýnis nota varalíftímann.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Sérsniðið…",
+  "heat.timeline.speedCustomTitle": "Sláðu inn hvaða hraða sem er frá {min}× til {max}× (t.d. 0,3 eða 12) og ýttu á Enter. Esc heldur núverandi hraða.",
   "heat.timeline.allClock": "allt · {span} af gögnum",
   "heat.timeline.allTitle": "Sýna alla gagnapunkta í einu, óháð spilunarhausnum",
   "heat.timeline.all": "Allt",

@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "生命周期",
   "heat.timeline.window.lifetimeTitle": "每个数据点一直存在到同一人员的下一个样本，因此每人只有一个当前位置。没有下一个样本的点使用后备生命周期。",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "自定义…",
+  "heat.timeline.speedCustomTitle": "输入 {min}× 到 {max}× 之间的任意速度（如 0.3 或 12），按 Enter 确认。Esc 保留当前速度。",
   "heat.timeline.allClock": "全部 · {span} 的数据",
   "heat.timeline.allTitle": "忽略播放头，一次显示所有数据点",
   "heat.timeline.all": "全部",

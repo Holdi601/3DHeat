@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Životnost",
   "heat.timeline.window.lifetimeTitle": "Každý datový bod žije do dalšího vzorku téže osoby, takže na osobu připadá jedna aktuální poloha. Body bez dalšího vzorku používají záložní životnost.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Vlastní…",
+  "heat.timeline.speedCustomTitle": "Zadejte libovolnou rychlost od {min}× do {max}× (např. 0,3 nebo 12) a stiskněte Enter. Esc ponechá současnou.",
   "heat.timeline.allClock": "vše · {span} dat",
   "heat.timeline.allTitle": "Zobrazit všechny datové body najednou bez ohledu na ukazatel přehrávání",
   "heat.timeline.all": "Vše",

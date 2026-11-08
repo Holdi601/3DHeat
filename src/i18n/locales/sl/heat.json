@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Življenjska doba",
   "heat.timeline.window.lifetimeTitle": "Vsaka podatkovna točka živi do naslednjega vzorca iste osebe, tako da ima vsaka oseba en trenutni položaj. Točke brez naslednjega vzorca uporabijo nadomestno življenjsko dobo.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Po meri…",
+  "heat.timeline.speedCustomTitle": "Vpišite poljubno hitrost od {min}× do {max}× (npr. 0,3 ali 12) in pritisnite Enter. Esc ohrani trenutno.",
   "heat.timeline.allClock": "vse · {span} podatkov",
   "heat.timeline.allTitle": "Prikaži vse podatkovne točke hkrati, ne glede na kazalec predvajanja",
   "heat.timeline.all": "Vse",

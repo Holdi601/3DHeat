@@ -20,6 +20,7 @@ import {
   type SplitRule,
   type ViewMode,
 } from './types';
+import { savedSpeed } from './playbackSpeed';
 
 /**
  * Heat appearance. Every field here maps to a shader uniform and can change
@@ -649,7 +650,7 @@ export const useStore = create<AppState>((set) => ({
     playhead: 0,
     seekNonce: 0,
     playing: false,
-    speed: 1,
+    speed: savedSpeed(),
     loop: true,
     windowSeconds: 30,
     fadeOut: 0.4,

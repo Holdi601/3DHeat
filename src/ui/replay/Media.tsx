@@ -142,7 +142,8 @@ export function MediaPlayer() {
     const s = useStore.getState();
     const st = useMedia.getState();
     const want = mediaTimeAt(engine.live.playhead, st.offset, v.duration);
-    const playing = s.timeline.playing && !s.timeline.reverse && s.timeline.mode === 'play';
+    // Slower than the browser plays a video, it is held and stepped to the playhead like a scrub.
+    const playing = s.timeline.playing && !s.timeline.reverse && s.timeline.mode === 'play' && s.timeline.speed >= 0.0625;
     if (want === null) {
       if (!v.paused) v.pause();
       return;

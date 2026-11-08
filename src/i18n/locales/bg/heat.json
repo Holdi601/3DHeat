@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Време на живот",
   "heat.timeline.window.lifetimeTitle": "Всяка точка живее до следващото отчитане на същия човек, така че има по една текуща позиция на човек. Точките без следващо отчитане използват резервното време на живот.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Друга…",
+  "heat.timeline.speedCustomTitle": "Въведете произволна скорост от {min}× до {max}× (напр. 0,3 или 12) и натиснете Enter. Esc запазва текущата.",
   "heat.timeline.allClock": "всички · {span} данни",
   "heat.timeline.allTitle": "Показване на всички точки наведнъж, без оглед на указателя",
   "heat.timeline.all": "Всички",

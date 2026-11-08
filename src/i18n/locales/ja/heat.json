@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "ライフタイム",
   "heat.timeline.window.lifetimeTitle": "各データポイントは同じ人物の次のサンプルまで表示されるので、1人につき現在位置は1つです。次のサンプルがない点には、フォールバックのライフタイムを使います。",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "カスタム…",
+  "heat.timeline.speedCustomTitle": "{min}×〜{max}×の任意の速度を入力して Enter（例: 0.3 や 12）。Esc で現在の速度のままにします。",
   "heat.timeline.allClock": "すべて · {span}分のデータ",
   "heat.timeline.allTitle": "再生位置を無視して、すべてのデータポイントを一度に表示",
   "heat.timeline.all": "すべて",

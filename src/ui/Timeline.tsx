@@ -1,12 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { playbackRange } from '../data/sessions';
 import { useStore } from '../state/store';
 import type { TimelineMode, WindowMode } from '../state/store';
 import { useAnimationFrame, useEngine } from './EngineContext';
 import { num, t } from '../i18n';
 import { ReplayMarks } from './replay/ReplayMarks';
-
-const SPEEDS = [0.25, 0.5, 1, 2, 4, 8, 16, 60, 300, 1800];
+import { MAX_SPEED, MIN_SPEED, parseSpeed, saveSpeed, speedDigits, speedOptions } from '../state/playbackSpeed';
 
 const windowModes = (): Array<{ value: WindowMode; label: string; title: string }> => [
   {
@@ -28,8 +27,53 @@ const windowModes = (): Array<{ value: WindowMode; label: string; title: string 
 
 /** A playback speed as the menu shows it: with as many decimals as it has. */
 function speedLabel(s: number): string {
-  const digits = Number.isInteger(s) ? 0 : Number.isInteger(s * 10) ? 1 : 2;
-  return t('heat.timeline.speedOption', { speed: num(s, digits) });
+  return t('heat.timeline.speedOption', { speed: num(s, speedDigits(s)) });
+}
+
+/**
+ * The speed menu, and in its place a box for any speed when "Custom" is picked:
+ * Enter or leaving the box takes it, Escape or a speed that is not one keeps the old.
+ */
+function SpeedControl({ speed, onSpeed }: { speed: number; onSpeed: (v: number) => void }) {
+  const [typing, setTyping] = useState<string | null>(null);
+  if (typing !== null) {
+    const bad = parseSpeed(typing) === null;
+    const done = (take: boolean) => {
+      const v = parseSpeed(typing);
+      if (take && v !== null) onSpeed(v);
+      setTyping(null);
+    };
+    return (
+      <input
+        className="narrow"
+        autoFocus
+        value={typing}
+        aria-invalid={bad}
+        style={bad ? { outline: '1px solid var(--bad)' } : undefined}
+        title={t('heat.timeline.speedCustomTitle', { min: num(MIN_SPEED, 3), max: num(MAX_SPEED, 0) })}
+        onChange={(e) => setTyping(e.target.value)}
+        onFocus={(e) => e.target.select()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !bad) done(true);
+          else if (e.key === 'Escape') done(false);
+        }}
+        onBlur={() => done(true)}
+      />
+    );
+  }
+  return (
+    <select
+      value={speed}
+      onChange={(e) => (e.target.value === 'custom' ? setTyping(String(speed)) : onSpeed(Number(e.target.value)))}
+    >
+      {speedOptions(speed).map((s) => (
+        <option key={s} value={s}>
+          {speedLabel(s)}
+        </option>
+      ))}
+      <option value="custom">{t('heat.timeline.speedCustom')}</option>
+    </select>
+  );
 }
 
 /**
@@ -187,16 +231,13 @@ export function Timeline() {
           <>
             <label>
               {t('heat.timeline.speed')}
-              <select
-                value={timeline.speed}
-                onChange={(e) => patchTimeline({ speed: Number(e.target.value) })}
-              >
-                {SPEEDS.map((s) => (
-                  <option key={s} value={s}>
-                    {speedLabel(s)}
-                  </option>
-                ))}
-              </select>
+              <SpeedControl
+                speed={timeline.speed}
+                onSpeed={(speed) => {
+                  patchTimeline({ speed });
+                  saveSpeed(speed);
+                }}
+              />
             </label>
 
             <label title={t('heat.timeline.historyTitle')}>

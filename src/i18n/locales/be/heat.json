@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Час жыцця",
   "heat.timeline.window.lifetimeTitle": "Кожная кропка даных жыве да наступнага замеру таго ж чалавека, таму ў кожнага чалавека адна бягучая пазіцыя. Кропкі без наступнага замеру карыстаюцца запасным часам жыцця.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Свая…",
+  "heat.timeline.speedCustomTitle": "Увядзіце любую хуткасць ад {min}× да {max}× (напр. 0,3 або 12) і націсніце Enter. Esc пакідае бягучую.",
   "heat.timeline.allClock": "усё · {span} даных",
   "heat.timeline.allTitle": "Паказаць усе кропкі даных адразу, не зважаючы на курсор прайгравання",
   "heat.timeline.all": "Усё",

@@ -20,6 +20,8 @@
   "heat.timeline.window.lifetime": "Životni vijek",
   "heat.timeline.window.lifetimeTitle": "Svaka podatkovna točka živi do sljedećeg uzorka iste osobe, pa po osobi postoji jedan trenutačni položaj. Točke bez sljedećeg uzorka koriste rezervni životni vijek.",
   "heat.timeline.speedOption": "{speed}×",
+  "heat.timeline.speedCustom": "Prilagođeno…",
+  "heat.timeline.speedCustomTitle": "Upišite bilo koju brzinu od {min}× do {max}× (npr. 0,3 ili 12), zatim Enter. Esc zadržava trenutačnu.",
   "heat.timeline.allClock": "sve · {span} podataka",
   "heat.timeline.allTitle": "Prikaži sve podatkovne točke odjednom, zanemarujući pokazivač reprodukcije",
   "heat.timeline.all": "Sve",
