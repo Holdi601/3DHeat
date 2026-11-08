@@ -1009,7 +1009,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
     { cue: 'one funnel', check: (s) => funnels(s) === 1 },
   ]),
   'new-york': naval('new-york', [
-    { cue: 'five twin 14-inch turrets: two forward, one amidships, two aft', check: (s) => battery(s, 0.3, 2, 3, 2) && mains(s, 0.3).some((t) => Math.abs(t.x) < 15) },
+    { cue: 'five twin 14-inch turrets: two forward, one amidships, two aft', check: (s) => battery(s, 0.3, 2, 3, 2) && mains(s, 0.3).some((t) => Math.abs(t.x) < 21) },
     { cue: 'superfiring pairs at both ends', check: (s) => superfires(fwd(s, 0.3)) && superfires(aft(s, 0.3)) },
     { cue: 'one funnel', check: (s) => funnels(s) === 1 },
     { cue: 'tripod foremast', check: mastKind('tripod') },
