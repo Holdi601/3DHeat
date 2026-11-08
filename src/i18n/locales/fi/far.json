@@ -24,5 +24,9 @@
   "far.decoys": "Harhautteet ja ammukset ({count})",
   "far.decoysTitle": "Soihdut, silpu, ammukset ja romu luetteloissa.",
   "far.fires": "Palot yksiköissä",
-  "far.firesTitle": "Liekit ja savu siellä, missä yksikön osa palaa, syttymisestä sammumiseen, myös hylyissä."
+  "far.firesTitle": "Liekit ja savu siellä, missä yksikön osa palaa, syttymisestä sammumiseen, myös hylyissä.",
+  "far.hitMarks": "Osumat yksiköihin",
+  "far.hitMarksTitle": "Merkki kohdassa, johon kukin laukaus osui yksikköön, väritetty sen vaikutuksen mukaan, ja se liikkuu yksikön mukana; osoita sitä nähdäksesi ampujan.",
+  "far.hitMarkSeconds": "Osumat näkyvät",
+  "far.hitMarkWhole": "Koko ottelu"
 }

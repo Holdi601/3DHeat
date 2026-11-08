@@ -24,5 +24,9 @@
   "far.decoys": "Lixki u qxur ({count})",
   "far.decoysTitle": "Flares, chaff, qxur u fdalijiet fil-listi.",
   "far.fires": "Nirien fuq l-unitajiet",
-  "far.firesTitle": "Fjammi u duħħan fejn taqbad parti minn unità, minn meta tieħu n-nar sakemm jintefa, inklużi l-fdalijiet."
+  "far.firesTitle": "Fjammi u duħħan fejn taqbad parti minn unità, minn meta tieħu n-nar sakemm jintefa, inklużi l-fdalijiet.",
+  "far.hitMarks": "Laqtiet fuq l-unitajiet",
+  "far.hitMarksTitle": "Marka fejn kull tir laqat unità, ikkulurita skont x’għamel, li timxi mal-unità; ipponta fuqha biex tara min spara.",
+  "far.hitMarkSeconds": "Il-laqtiet jibqgħu",
+  "far.hitMarkWhole": "Il-logħba kollha"
 }

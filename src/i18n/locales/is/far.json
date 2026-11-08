@@ -24,5 +24,9 @@
   "far.decoys": "Tálbeitur og skot ({count})",
   "far.decoysTitle": "Blys, álræmur, skot og brak á listunum.",
   "far.fires": "Eldar á einingum",
-  "far.firesTitle": "Logar og reykur þar sem hluti einingar brennur, frá því að kviknar í honum þar til eldurinn slokknar, flök meðtalin."
+  "far.firesTitle": "Logar og reykur þar sem hluti einingar brennur, frá því að kviknar í honum þar til eldurinn slokknar, flök meðtalin.",
+  "far.hitMarks": "Hittni á einingar",
+  "far.hitMarksTitle": "Merki þar sem hvert skot hæfði einingu, litað eftir því hvað það gerði, og fylgir einingunni; bentu á það til að sjá hver skaut.",
+  "far.hitMarkSeconds": "Hittni helst",
+  "far.hitMarkWhole": "Allur leikurinn"
 }

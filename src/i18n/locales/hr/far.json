@@ -24,5 +24,9 @@
   "far.decoys": "Mamci i projektili ({count})",
   "far.decoysTitle": "Baklje, pljeva, projektili i krhotine na popisima.",
   "far.fires": "Požari na jedinicama",
-  "far.firesTitle": "Plamen i dim gdje gori dio jedinice, od zapaljenja do gašenja, uključujući olupine."
+  "far.firesTitle": "Plamen i dim gdje gori dio jedinice, od zapaljenja do gašenja, uključujući olupine.",
+  "far.hitMarks": "Pogoci na jedinicama",
+  "far.hitMarksTitle": "Oznaka gdje je svaki hitac pogodio jedinicu, obojena prema učinku, kreće se s jedinicom; pokažite na nju da vidite tko je pucao.",
+  "far.hitMarkSeconds": "Pogoci ostaju",
+  "far.hitMarkWhole": "Cijeli meč"
 }

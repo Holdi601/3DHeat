@@ -24,5 +24,9 @@
   "far.decoys": "Mealltaí agus sliogáin ({count})",
   "far.decoysTitle": "Bladhairí, cáith, sliogáin agus smionagar sna liostaí.",
   "far.fires": "Tinte ar aonaid",
-  "far.firesTitle": "Lasracha agus deatach san áit a bhfuil cuid d'aonad ar lasadh, ón uair a théann sé trí thine go dtí go múchtar é, raiceanna san áireamh."
+  "far.firesTitle": "Lasracha agus deatach san áit a bhfuil cuid d'aonad ar lasadh, ón uair a théann sé trí thine go dtí go múchtar é, raiceanna san áireamh.",
+  "far.hitMarks": "Buillí ar aonaid",
+  "far.hitMarksTitle": "Marc san áit ar bhuail gach urchar aonad, daite de réir a ndearna sé, ag gluaiseacht leis an aonad; dírigh air chun a fheiceáil cé a scaoil é.",
+  "far.hitMarkSeconds": "Fanann na buillí",
+  "far.hitMarkWhole": "An cluiche ar fad"
 }

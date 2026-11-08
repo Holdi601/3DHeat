@@ -24,5 +24,9 @@
   "far.decoys": "Esche e proiettili ({count})",
   "far.decoysTitle": "Flare, chaff, proiettili e detriti negli elenchi.",
   "far.fires": "Incendi sulle unità",
-  "far.firesTitle": "Fiamme e fumo dove brucia una parte di un'unità, da quando prende fuoco a quando si spegne, relitti compresi."
+  "far.firesTitle": "Fiamme e fumo dove brucia una parte di un'unità, da quando prende fuoco a quando si spegne, relitti compresi.",
+  "far.hitMarks": "Colpi sulle unità",
+  "far.hitMarksTitle": "Un segno dove ogni colpo ha raggiunto un’unità, colorato secondo l’effetto, che si muove con l’unità; puntalo per vedere chi ha sparato.",
+  "far.hitMarkSeconds": "I colpi restano",
+  "far.hitMarkWhole": "Tutta la partita"
 }

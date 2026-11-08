@@ -24,5 +24,9 @@
   "far.decoys": "Leurres et obus ({count})",
   "far.decoysTitle": "Leurres thermiques, paillettes, obus et débris dans les listes.",
   "far.fires": "Incendies sur les unités",
-  "far.firesTitle": "Flammes et fumée là où une partie d'une unité brûle, du départ du feu jusqu'à son extinction, épaves comprises."
+  "far.firesTitle": "Flammes et fumée là où une partie d'une unité brûle, du départ du feu jusqu'à son extinction, épaves comprises.",
+  "far.hitMarks": "Impacts sur les unités",
+  "far.hitMarksTitle": "Une marque là où chaque tir a touché une unité, colorée selon son effet, qui suit l’unité ; pointez-la pour voir qui a tiré.",
+  "far.hitMarkSeconds": "Durée des impacts",
+  "far.hitMarkWhole": "Tout le match"
 }

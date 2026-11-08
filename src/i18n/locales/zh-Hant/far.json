@@ -24,5 +24,9 @@
   "far.decoys": "誘餌和砲彈 ({count})",
   "far.decoysTitle": "在清單中顯示紅外線誘餌彈、干擾絲、砲彈和殘骸。",
   "far.fires": "單位起火",
-  "far.firesTitle": "在單位部件燃燒處顯示火焰和煙霧，從起火到熄滅，包括殘骸。"
+  "far.firesTitle": "在單位部件燃燒處顯示火焰和煙霧，從起火到熄滅，包括殘骸。",
+  "far.hitMarks": "單位中彈",
+  "far.hitMarksTitle": "在每發彈藥命中單位的位置顯示依結果著色的標記，並隨單位移動；指向標記可查看射擊者。",
+  "far.hitMarkSeconds": "中彈標記保留",
+  "far.hitMarkWhole": "整場比賽"
 }

@@ -24,5 +24,9 @@
   "far.decoys": "Mamci i projektili ({count})",
   "far.decoysTitle": "Baklje, pleva, projektili i krhotine na listama.",
   "far.fires": "Пожари на јединицама",
-  "far.firesTitle": "Пламен и дим где гори део јединице, од паљења до гашења, укључујући олупине."
+  "far.firesTitle": "Пламен и дим где гори део јединице, од паљења до гашења, укључујући олупине.",
+  "far.hitMarks": "Погоци на јединицама",
+  "far.hitMarksTitle": "Ознака где је сваки хитац погодио јединицу, обојена према учинку, креће се са јединицом; покажите на њу да видите ко је пуцао.",
+  "far.hitMarkSeconds": "Погоци остају",
+  "far.hitMarkWhole": "Цео меч"
 }

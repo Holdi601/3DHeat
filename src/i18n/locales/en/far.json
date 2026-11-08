@@ -24,5 +24,9 @@
   "far.decoys": "Decoys and shells ({count})",
   "far.decoysTitle": "Flares, chaff, shells and debris in the lists.",
   "far.fires": "Fires on units",
-  "far.firesTitle": "Flames and smoke where a unit's part burns, from when it catches fire until it is out, wrecks included."
+  "far.firesTitle": "Flames and smoke where a unit's part burns, from when it catches fire until it is out, wrecks included.",
+  "far.hitMarks": "Hits on units",
+  "far.hitMarksTitle": "A mark where each shot struck a unit, coloured by what it did, riding with the unit; point at one for who fired it.",
+  "far.hitMarkSeconds": "Hits stay",
+  "far.hitMarkWhole": "Whole match"
 }

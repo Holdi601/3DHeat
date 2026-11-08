@@ -24,5 +24,9 @@
   "far.decoys": "Esquers i projectils ({count})",
   "far.decoysTitle": "Bengales, chaff, projectils i restes a les llistes.",
   "far.fires": "Incendis a les unitats",
-  "far.firesTitle": "Flames i fum on crema una part d'una unitat, des que s'encén fins que s'apaga, restes incloses."
+  "far.firesTitle": "Flames i fum on crema una part d'una unitat, des que s'encén fins que s'apaga, restes incloses.",
+  "far.hitMarks": "Impactes a les unitats",
+  "far.hitMarksTitle": "Una marca on cada tret ha tocat una unitat, acolorida segons el que ha fet, que es mou amb la unitat; passeu-hi el punter per veure qui ha disparat.",
+  "far.hitMarkSeconds": "Els impactes queden",
+  "far.hitMarkWhole": "Tota la partida"
 }

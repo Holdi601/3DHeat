@@ -24,5 +24,9 @@
   "far.decoys": "Csalik és lövedékek ({count})",
   "far.decoysTitle": "Hőcsapdák, dipólok, lövedékek és roncsok a listákban.",
   "far.fires": "Tüzek az egységeken",
-  "far.firesTitle": "Lángok és füst ott, ahol egy egység része ég, a lángra kapástól az eloltásig, a roncsokon is."
+  "far.firesTitle": "Lángok és füst ott, ahol egy egység része ég, a lángra kapástól az eloltásig, a roncsokon is.",
+  "far.hitMarks": "Találatok az egységeken",
+  "far.hitMarksTitle": "Jelölés ott, ahol egy lövés eltalált egy egységet, színe a hatását mutatja, és az egységgel együtt mozog; mutasson rá, hogy lássa, ki lőtt.",
+  "far.hitMarkSeconds": "A találatok maradnak",
+  "far.hitMarkWhole": "Az egész meccs"
 }

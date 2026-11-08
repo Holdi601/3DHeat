@@ -24,5 +24,9 @@
   "far.decoys": "Yemler ve mermiler ({count})",
   "far.decoysTitle": "Isı fişekleri, chaff, mermiler ve enkaz listelerde.",
   "far.fires": "Birimlerdeki yangınlar",
-  "far.firesTitle": "Bir birimin bir parçasının yandığı yerde, tutuştuğu andan sönene dek alev ve duman; enkazlar dahil."
+  "far.firesTitle": "Bir birimin bir parçasının yandığı yerde, tutuştuğu andan sönene dek alev ve duman; enkazlar dahil.",
+  "far.hitMarks": "Birimlere isabetler",
+  "far.hitMarksTitle": "Her atışın bir birime isabet ettiği yerde, etkisine göre renklenen ve birimle birlikte hareket eden bir işaret; kimin ateş ettiğini görmek için üzerine gelin.",
+  "far.hitMarkSeconds": "İsabetler kalır",
+  "far.hitMarkWhole": "Tüm maç"
 }

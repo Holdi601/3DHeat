@@ -24,5 +24,9 @@
   "far.decoys": "Vabe in izstrelki ({count})",
   "far.decoysTitle": "Bakle, pleve, izstrelki in razbitine na seznamih.",
   "far.fires": "Požari na enotah",
-  "far.firesTitle": "Plameni in dim, kjer gori del enote, od vžiga do pogasitve, vključno z razbitinami."
+  "far.firesTitle": "Plameni in dim, kjer gori del enote, od vžiga do pogasitve, vključno z razbitinami.",
+  "far.hitMarks": "Zadetki na enotah",
+  "far.hitMarksTitle": "Oznaka, kjer je vsak strel zadel enoto, obarvana glede na učinek, ki se premika z enoto; pokažite nanjo, da vidite, kdo je streljal.",
+  "far.hitMarkSeconds": "Zadetki ostanejo",
+  "far.hitMarkWhole": "Celotna tekma"
 }

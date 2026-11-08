@@ -24,5 +24,9 @@
   "far.decoys": "Klamné cíle a střely ({count})",
   "far.decoysTitle": "Světlice, düppel, střely a trosky v seznamech.",
   "far.fires": "Požáry na jednotkách",
-  "far.firesTitle": "Plameny a kouř tam, kde hoří část jednotky, od vzplanutí až po uhašení, včetně vraků."
+  "far.firesTitle": "Plameny a kouř tam, kde hoří část jednotky, od vzplanutí až po uhašení, včetně vraků.",
+  "far.hitMarks": "Zásahy jednotek",
+  "far.hitMarksTitle": "Značka tam, kde každá střela zasáhla jednotku, obarvená podle účinku, pohybuje se s jednotkou; najeďte na ni a uvidíte, kdo střílel.",
+  "far.hitMarkSeconds": "Zásahy zůstávají",
+  "far.hitMarkWhole": "Celý zápas"
 }

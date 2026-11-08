@@ -24,5 +24,9 @@
   "far.decoys": "Täuschkörper und Granaten ({count})",
   "far.decoysTitle": "Flares, Düppel, Granaten und Trümmer in den Listen.",
   "far.fires": "Brände an Einheiten",
-  "far.firesTitle": "Flammen und Rauch, wo ein Teil einer Einheit brennt, vom Entzünden bis zum Erlöschen, auch an Wracks."
+  "far.firesTitle": "Flammen und Rauch, wo ein Teil einer Einheit brennt, vom Entzünden bis zum Erlöschen, auch an Wracks.",
+  "far.hitMarks": "Treffer an Einheiten",
+  "far.hitMarksTitle": "Eine Markierung, wo jeder Schuss eine Einheit traf, gefärbt nach seiner Wirkung, die mit der Einheit mitfährt; mit dem Zeiger darauf steht, wer schoss.",
+  "far.hitMarkSeconds": "Treffer bleiben",
+  "far.hitMarkWhole": "Ganzes Match"
 }

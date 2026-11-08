@@ -43,7 +43,8 @@ function named(d: Dataset, re: RegExp, kind: 'number' | 'category'): AttributeCo
   return d.attrs.find((a) => a.kind === kind && re.test(a.name.trim())) ?? null;
 }
 
-function bodyOf(label: string): FireBody {
+/** What a unit is, for its fires and hit marks: by its kind's words, ground where none fit. */
+export function bodyOf(label: string): FireBody {
   if (/ship|boat|destroyer|cruiser|frigate|naval/i.test(label)) return FireBody.Ship;
   if (/air|plane|fighter|bomber|heli/i.test(label)) return FireBody.Air;
   return FireBody.Ground;
