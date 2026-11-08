@@ -183,9 +183,10 @@ export const T80: GroundSpec = {
   cupola: true,
 };
 G['t-80b'] = { cls: 'mbt', ...T80 };
-// T-80U / T-80UD: the cast dome behind a horseshoe of Kontakt-5 bricks that squares the front, their tops sloping from
-// the roof down about 0.35 m to the nose over the front 0.8 m (side photograph of a T-80U, Russian MoD, CC BY 4.0).
-G['t-80u'] = { cls: 'mbt', ...T80, turret: turret(-0.7, [[-1.5, 0.8], [-1.15, 1.25], [-0.2, 1.48], [0.6, 1.62], [1.55, 1.6], [1.85, 1.15], [1.9, 0.5]], [[-1.5, 0.38], [-0.9, 0.7], [-0.1, 0.78], [1.1, 0.77], [1.9, 0.45]], 5, 1.75) };
+// T-80U / T-80UD: the cast dome behind a horseshoe of Kontakt-5 bricks that squares the front: their tops flat 0.6 m
+// over the deck for the front 1.1 m, the dome rising 0.16 m behind them, an upright face down to 0.22 m (broadside
+// photograph of a T-80U, Russian MoD, CC BY 4.0, sources.md).
+G['t-80u'] = { cls: 'mbt', ...T80, turret: turret(-0.7, [[-1.5, 0.8], [-1.15, 1.25], [-0.2, 1.48], [0.6, 1.62], [1.55, 1.6], [1.85, 1.15], [1.9, 0.5]], [[-1.5, 0.38], [-0.9, 0.7], [-0.1, 0.78], [0.6, 0.77], [0.8, 0.62], [1.85, 0.6], [1.9, 0.22]], 5, 1.75) };
 // T-64BV: small road wheels (0.55 m) close together, a low small turret with Kontakt-1 (6.54 x 3.42 m, 2.17 m).
 G['t-64bv'] = { cls: 'mbt', ...T80, length: 6.54, width: 3.42, roadWheelRadius: 0.28, trackProfile: run(6.4, 0.85, [3.2, 0.58], [-3.2, 0.66], -2.75, 2.7), hullOutline: hull(6.54, 3.42, 1.4, 0.78, 1.8, 0.95, 0.1), turret: turret(-0.65, [[-1.4, 0.8], [-1.1, 1.2], [-0.2, 1.35], [0.8, 1.38], [1.3, 1.1], [1.55, 0.45]], [[-1.4, 0.35], [-0.8, 0.66], [0.2, 0.72], [1.0, 0.64], [1.55, 0.32]], 3, 1.45) };
 // T-55 / T-54: five big road wheels with a gap behind the first, no return rollers; the round "frying pan" turret well forward (6.2 x 3.27 m, 2.35 m).
