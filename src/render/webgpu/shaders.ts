@@ -1,6 +1,7 @@
 import { CURVE_U0, CURVE_U1 } from '../../state/curve';
 import { TEAM_CHROMA, TEAM_LIGHTNESS } from '../colors';
 import { FILTER_MASK_CAPACITY } from '../types';
+import { volumeWgsl } from '../../volumes/gpu';
 
 /**
  * WGSL sources for the WebGPU backend.
@@ -219,6 +220,9 @@ struct HeatUniforms {
 };
 
 @group(0) @binding(0) var<uniform> u : HeatUniforms;
+// The user's volumes, as a filter: see volumes/gpu.ts. A uniform block of its
+// own, written once a frame, rather than lanes of the per-chunk ring slot.
+${volumeWgsl(15)}
 // Two u32 per row: x | y<<16, then z | team<<16.
 @group(0) @binding(1) var<storage, read> positions : array<u32>;
 // One u32 per row: quantised time | lifetime<<16.
@@ -402,6 +406,9 @@ fn vsHeat(@builtin(vertex_index) vid : u32) -> VsOut {
   let team = packedB >> 16u;
 
   var p = u.aabbMin.xyz + vec3<f32>(qx, qy, qz) * (1.0 / 65535.0) * u.aabbSize.xyz;
+  // Inside or outside the volumes, at the row's true height: before the ground
+  // projection flattens it.
+  if (!volKeep(p)) { reject = true; }
   let flags = u.rowCfg.w;
   if ((flags & ${FLAG_GROUND_PROJECTED}u) != 0u) { p.y = u.shape2.z; }
 

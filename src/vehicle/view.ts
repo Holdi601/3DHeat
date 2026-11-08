@@ -12,6 +12,7 @@ import { filterList, hitsOf, type HitSet, type VehicleHit, type VehicleInfo } fr
 import { figureOfVehicle, templateOfFigure } from './scene';
 import { placeBoxHits } from './boxes';
 import { CATALOG } from '../figures/catalog';
+import { areaKeep, inArea } from './area';
 
 export interface VehicleView {
   set: HitSet | null;
@@ -31,9 +32,16 @@ export interface VehicleView {
    * body, World of Tanks' component boxes).
    */
   fits: boolean;
+  /** Whether the volumes drawn on the level restrict the hits, and how many of the vehicle's hits of the layer they leave out. */
+  area: boolean;
+  areaOut: number;
+  /** The vehicle's hits of the layer before the area: what the area's counts are of. */
+  beforeArea: VehicleHit[];
+  /** Whether any hit of the vehicle has a point or a body part to show on the figure. */
+  anyPoint: boolean;
 }
 
-const EMPTY: VehicleView = { set: null, vehicle: null, figure: null, hits: [], all: [], placed: [], unplaced: 0, fits: false };
+const EMPTY: VehicleView = { set: null, vehicle: null, figure: null, hits: [], all: [], placed: [], unplaced: 0, fits: false, area: false, areaOut: 0, beforeArea: [], anyPoint: false };
 
 const vehicleCache = new WeakMap<HitSet, Map<string, { all: VehicleHit[]; placed: VehicleHit[] }>>();
 
@@ -53,11 +61,13 @@ function hitsOfVehicle(set: HitSet, vehicle: string, figure: string): { all: Veh
   return v;
 }
 
-type Choice = Pick<VehicleState, 'vehicle' | 'matches' | 'shooters' | 'weapons' | 'layer' | 'outcomes'>;
-let last: { d: Dataset | null; s: Choice; out: VehicleView } | null = null;
+type Choice = Pick<VehicleState, 'vehicle' | 'matches' | 'shooters' | 'weapons' | 'layer' | 'outcomes' | 'areaBy'>;
+const KEYS: (keyof Choice)[] = ['vehicle', 'matches', 'shooters', 'weapons', 'layer', 'outcomes', 'areaBy'];
+let last: { d: Dataset | null; s: Choice; keep: ReturnType<typeof areaKeep>; out: VehicleView } | null = null;
 
 export function vehicleView(d: Dataset | null, s: Choice): VehicleView {
-  if (last && last.d === d && (Object.keys(s) as (keyof Choice)[]).every((k) => last!.s[k] === s[k])) return last.out;
+  const keep = areaKeep();
+  if (last && last.d === d && last.keep === keep && KEYS.every((k) => last!.s[k] === s[k])) return last.out;
   let out = EMPTY;
   if (d) {
     const set = hitsOf(d);
@@ -66,13 +76,16 @@ export function vehicleView(d: Dataset | null, s: Choice): VehicleView {
     if (vehicle) {
       const figure = figureOfVehicle(vehicle);
       const own = hitsOfVehicle(set, vehicle.id, figure);
-      const all = filterList(own.all, { vehicle: null, matches: null, shooters: null, weapons: null, layer: s.layer });
-      const hits = filterList(own.all, { vehicle: null, matches: s.matches, shooters: s.shooters, weapons: s.weapons, outcomes: s.outcomes, layer: s.layer });
+      const layer = filterList(own.all, { vehicle: null, matches: null, shooters: null, weapons: null, layer: s.layer });
+      // The area first: the filter lists offer what is in it.
+      const all = keep ? inArea(d, set, layer, keep, s.areaBy) : layer;
+      const hits = filterList(all, { vehicle: null, matches: s.matches, shooters: s.shooters, weapons: s.weapons, outcomes: s.outcomes, layer: s.layer });
       const person = CATALOG[figure]?.domain === 'person';
       const fits = !person && !own.all.some((h) => h.box !== null);
-      out = { set, vehicle, figure, hits, all, placed: own.placed, unplaced: set.unplacedBy.get(vehicle.id) ?? 0, fits };
+      const anyPoint = own.all.some((h) => h.local !== null || h.box !== null || h.region !== null);
+      out = { set, vehicle, figure, hits, all, placed: own.placed, unplaced: set.unplacedBy.get(vehicle.id) ?? 0, fits, area: !!keep, areaOut: layer.length - all.length, beforeArea: layer, anyPoint };
     } else out = { ...EMPTY, set };
   }
-  last = { d, s: { vehicle: s.vehicle, matches: s.matches, shooters: s.shooters, weapons: s.weapons, layer: s.layer, outcomes: s.outcomes }, out };
+  last = { d, keep, s: { vehicle: s.vehicle, matches: s.matches, shooters: s.shooters, weapons: s.weapons, layer: s.layer, outcomes: s.outcomes, areaBy: s.areaBy }, out };
   return out;
 }

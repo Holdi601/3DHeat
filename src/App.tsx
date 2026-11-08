@@ -46,6 +46,7 @@ import { FilterPanel } from './ui/panels/FilterPanel';
 import { HeatPanel } from './ui/panels/HeatPanel';
 import { LevelPanel } from './ui/panels/LevelPanel';
 import { MeasurePanel } from './ui/panels/MeasurePanel';
+import { VolumePanel } from './ui/panels/VolumePanel';
 import { PathPanel } from './ui/panels/PathPanel';
 import { SourcePanel } from './ui/panels/SourcePanel';
 import { SlicePanel } from './ui/panels/SlicePanel';
@@ -473,6 +474,7 @@ export function App() {
               <MatchPanel />
               {dataset && <SourcePanel />}
               <FilterPanel />
+              <VolumePanel />
               <CameraPanel />
             </>
           ) : (
@@ -523,6 +525,7 @@ export function App() {
           <EntityPanel />
           <FilterPanel />
           <SlicePanel />
+          <VolumePanel />
           <MeasurePanel />
           <PathPanel />
           <PerfPanel />

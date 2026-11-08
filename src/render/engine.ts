@@ -64,6 +64,11 @@ import {
 } from './types';
 import { t } from '../i18n';
 import { worldTiles } from '../world/tileSet';
+import { VolumeGestures, rayToVertical } from '../volumes/gestures';
+import { appendVolumeOverlay } from '../volumes/overlay';
+import { packVolumes, type VolumeDraw } from '../volumes/gpu';
+import { selectedVolume, useVolumeStore } from '../volumes/store';
+import { volumeFilter } from '../volumes/volume';
 
 export interface LiveReadout {
   playhead: number;
@@ -557,6 +562,173 @@ export class Engine {
     this.budget = new BudgetController(snapshot().budget.splatsPerFrame);
     this.detachInput = this.camera.attach(canvas);
     this.detachMeasure = this.attachMeasureInput(canvas);
+    this.detachVolumes = this.attachVolumeInput(canvas);
+  }
+
+  // ---------------------------------------------------------------- volumes
+
+  /** Drawing and editing the user's volumes on the view (volumes/gestures.ts). */
+  readonly volumeGestures = new VolumeGestures({
+    ground: (sx, sy) => {
+      const p = this.worldAt(sx, sy);
+      return p ? [p.x, p.y, p.z] : null;
+    },
+    plane: (sx, sy, y) => {
+      const ray = this.rayAt(sx, sy);
+      if (!ray || Math.abs(ray.dir.y) < 1e-9) return null;
+      const t = (y - ray.origin.y) / ray.dir.y;
+      if (!(t > 0) || !Number.isFinite(t)) return null;
+      return [ray.origin.x + ray.dir.x * t, y, ray.origin.z + ray.dir.z * t];
+    },
+    toScreen: (p) => this.toScreen(p[0], p[1], p[2]),
+    vertical: (sx, sy, x, z) => {
+      const ray = this.rayAt(sx, sy);
+      if (!ray) return null;
+      return rayToVertical([ray.origin.x, ray.origin.y, ray.origin.z], [ray.dir.x, ray.dir.y, ray.dir.z], x, z);
+    },
+    dataset: () => this.dataset,
+  });
+  private detachVolumes: (() => void) | null = null;
+  /** Bumped when the volumes change, for the overlay's redraw. */
+  private volumeRev = 0;
+  /** The volumes filter as last packed, and what it was packed from. */
+  private volumeDraw: VolumeDraw | null = null;
+  private volumeDrawFrom: unknown = null;
+
+  /** A world point in CSS pixels of the canvas, or null behind the camera. */
+  toScreen(x: number, y: number, z: number): [number, number] | null {
+    const m = this.pickViewProj;
+    const cx = m[0] * x + m[4] * y + m[8] * z + m[12];
+    const cy = m[1] * x + m[5] * y + m[9] * z + m[13];
+    const cw = m[3] * x + m[7] * y + m[11] * z + m[15];
+    if (cw <= 1e-9) return null;
+    const w = this.canvas.clientWidth;
+    const h = this.canvas.clientHeight;
+    return [((cx / cw) * 0.5 + 0.5) * w, (1 - ((cy / cw) * 0.5 + 0.5)) * h];
+  }
+
+  /** Whether the volume tools work on the current tab: the heatmap and the match views show the level. */
+  private volumesLive(): boolean {
+    const tab = useRaceStore.getState().tab;
+    return tab === 'heat' || tab === 'match';
+  }
+
+  /**
+   * Pointer and keys for the volume tools.
+   *
+   * On the window in the capture phase, so a press the tools take - drawing, or
+   * on the selected volume's handles or body - is stopped before the camera's
+   * own handlers see it: the view must not turn while a handle is dragged. A
+   * press they do not take passes through untouched.
+   */
+  private attachVolumeInput(canvas: HTMLCanvasElement): () => void {
+    const g = this.volumeGestures;
+    let active = false;
+    const at = (e: MouseEvent): [number, number] => {
+      const r = canvas.getBoundingClientRect();
+      return [e.clientX - r.left, e.clientY - r.top];
+    };
+    const mods = (e: MouseEvent) => ({ shift: e.shiftKey, alt: e.altKey });
+    const onDown = (e: MouseEvent) => {
+      if (e.target !== canvas || e.button !== 0 || !this.volumesLive()) return;
+      const [x, y] = at(e);
+      if (!g.down(x, y, mods(e))) return;
+      active = true;
+      e.stopPropagation();
+      e.preventDefault();
+      canvas.focus({ preventScroll: true });
+      this.invalidate(2);
+    };
+    const onMove = (e: MouseEvent) => {
+      if (!active && (e.target !== canvas || !this.volumesLive())) return;
+      const [x, y] = at(e);
+      const before = g.version;
+      g.move(x, y, mods(e));
+      if (g.version !== before) this.invalidate(2);
+    };
+    const onUp = (e: MouseEvent) => {
+      if (!active || e.button !== 0) return;
+      active = false;
+      const [x, y] = at(e);
+      g.up(x, y, mods(e));
+      this.invalidate(2);
+    };
+    const onDbl = (e: MouseEvent) => {
+      if (e.target !== canvas || !this.volumesLive()) return;
+      if (g.dblclick()) {
+        e.stopPropagation();
+        e.preventDefault();
+        this.invalidate(2);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (!this.volumesLive()) return;
+      const el = e.target as HTMLElement | null;
+      if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable)) return;
+      if (g.key(e.code, e.ctrlKey || e.metaKey, e.shiftKey)) {
+        e.stopPropagation();
+        e.preventDefault();
+        this.invalidate(2);
+      }
+    };
+    const unsub = useVolumeStore.subscribe((s, prev) => {
+      if (s.volumes !== prev.volumes || s.selected !== prev.selected || s.filter !== prev.filter || s.drawing !== prev.drawing) {
+        this.volumeRev++;
+        // A tool put down from the panel mid-polygon drops the polygon.
+        if (!s.drawing && prev.drawing && g.busy) g.cancel();
+        this.invalidate(2);
+      }
+    });
+    window.addEventListener('mousedown', onDown, true);
+    window.addEventListener('mousemove', onMove, true);
+    window.addEventListener('mouseup', onUp, true);
+    window.addEventListener('dblclick', onDbl, true);
+    window.addEventListener('keydown', onKey, true);
+    return () => {
+      unsub();
+      window.removeEventListener('mousedown', onDown, true);
+      window.removeEventListener('mousemove', onMove, true);
+      window.removeEventListener('mouseup', onUp, true);
+      window.removeEventListener('dblclick', onDbl, true);
+      window.removeEventListener('keydown', onKey, true);
+    };
+  }
+
+  /**
+   * The volumes filter for this frame, packed for the heat shaders: rebuilt
+   * only when the volumes or the filter change.
+   */
+  private frameVolumes(): VolumeDraw | null {
+    const v = useVolumeStore.getState();
+    if (this.volumeDrawFrom !== v.volumes || this.volumeDraw?.mode !== (v.filter === 'inside' ? 1 : v.filter === 'outside' ? 2 : undefined)) {
+      this.volumeDrawFrom = v.volumes;
+      this.volumeDraw = packVolumes(v.volumes, v.filter);
+    }
+    return this.volumesLive() ? this.volumeDraw : null;
+  }
+
+  /**
+   * Drop the boxes outside the volumes filter from this frame's live boxes:
+   * the box replay shows what the heat shows. Compacts in place, keeping each
+   * box's row and motion pose with it; returns the new count.
+   */
+  private filterCubes(cubes: Float32Array, count: number, stride: number, rows: Int32Array, poses: Float32Array | null, posed: Uint8Array | null): number {
+    const v = useVolumeStore.getState();
+    const keep = this.volumesLive() ? volumeFilter(v.volumes, v.filter) : null;
+    if (!keep) return count;
+    let j = 0;
+    for (let i = 0; i < count; i++) {
+      const o = i * stride;
+      if (!keep(cubes[o], cubes[o + 1], cubes[o + 2])) continue;
+      if (i !== j) {
+        cubes.copyWithin(j * stride, o, o + stride);
+        if (rows.length > i) rows[j] = rows[i];
+        if (poses && poses.length >= (i + 1) * 4) poses.copyWithin(j * 4, i * 4, i * 4 + 4);
+        if (posed && posed.length > i) posed[j] = posed[i];
+      }
+      j++;
+    }
+    return j;
   }
 
   /**
@@ -648,6 +820,8 @@ export class Engine {
         if (p) this.measure.points.push({ ...p });
         return;
       }
+      // A click on a volume selects it, for its handles; elsewhere it deselects.
+      if (this.volumesLive() && this.volumeGestures.click(from.x, from.y)) return;
       if (useInspectStore.getState().pickOnClick) this.pickAt(from.x, from.y);
     };
     const onContext = (e: MouseEvent) => {
@@ -851,6 +1025,7 @@ export class Engine {
     this.stop();
     this.detachInput?.();
     this.detachMeasure?.();
+    this.detachVolumes?.();
     this.renderer?.dispose();
     this.renderer = null;
   }
@@ -1977,6 +2152,27 @@ export class Engine {
       overlayVerts = ov.data;
       overlayVertCount = ov.count;
     }
+    // The user's volumes, their handles and the shape being drawn.
+    const vols = useVolumeStore.getState();
+    const volGest = this.volumeGestures;
+    let volumeSig = '';
+    if (!raceTab && (vols.volumes.length > 0 || volGest.busy)) {
+      const sel = selectedVolume(vols);
+      const ov = appendVolumeOverlay(this.overlayBuf, overlayVertCount, {
+        volumes: vols.volumes,
+        selected: vols.selected,
+        handles: sel && sel.visible ? volGest.handles(sel) : [],
+        hover: volGest.hover,
+        draft: volGest.draft(),
+        polygon: volGest.polygonPoints(),
+        markerSize: (p) => Math.max(1e-3, Math.hypot(p[0] - this.camPos[0], p[1] - this.camPos[1], p[2] - this.camPos[2]) * 0.008),
+      });
+      this.overlayBuf = ov.data;
+      overlayVerts = ov.data;
+      overlayVertCount = ov.count;
+      volumeSig = `${this.volumeRev}|${volGest.version}`;
+    }
+    const volumeDraw = raceTab ? null : this.frameVolumes();
 
     // ---- what invalidates the accumulation buffer
     const groundY = this.dataset ? this.dataset.bounds.minY : 0;
@@ -2037,6 +2233,8 @@ export class Engine {
       // A filter change alters which rows contribute, so accumulated heat is
       // no longer an estimate of anything and must be discarded.
       activeFilters.map((f) => f.key).join(';'),
+      // So does the volumes filter.
+      volumeDraw ? volumeDraw.key : '',
     ].join('|');
     const windowSig =
       `${timeLo}|${timeHi}|` +
@@ -2078,6 +2276,8 @@ export class Engine {
       s.camera.dof.autoFocus ? this.camera.focusDistance : s.camera.dof.focusDistance,
       // The pick marker is overlay, drawn with the scene: moving it must redraw.
       marker ? `${marker.x},${marker.y},${marker.z}` : '',
+      // The volumes' outlines and handles, likewise.
+      volumeSig,
     ].join('|');
 
     const forced = this.forceRenderFrames > 0;
@@ -2321,6 +2521,7 @@ export class Engine {
         const raw = this.cursor.buildRawSamples(cursorAt, span, visible);
         cubes = raw.data;
         cubeCount = raw.count;
+        if (cubes) cubeCount = this.filterCubes(cubes, cubeCount, CUBE_STRIDE, this.cursor.cubeRows, null, null);
       } else {
         // The lifetime is what decides how long someone with no further samples
         // keeps being drawn, so it doubles as the staleness cut-off here.
@@ -2338,6 +2539,11 @@ export class Engine {
         if (s.team.interpolate && this.dataset) {
           motion = this.motion.refine(this.dataset, cubes, CUBE_STRIDE, cubeCount, this.cursor.cubeRows, cursorAt, s.team.session);
           cubeCount = this.motion.count;
+        }
+        // The volumes filter: the replay shows the units the heat would.
+        if (cubes) {
+          cubeCount = this.filterCubes(cubes, cubeCount, CUBE_STRIDE, this.cursor.cubeRows, motion ? this.motion.poses : null, motion ? this.motion.posed : null);
+          if (motion) this.motion.count = cubeCount;
         }
       }
       this.pickCubes = {
@@ -2664,6 +2870,7 @@ export class Engine {
             clipHeat: s.slice.clipHeat,
           }
         : null,
+      volumes: volumeDraw,
     };
 
     renderer.render(params);

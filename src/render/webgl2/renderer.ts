@@ -1,3 +1,4 @@
+import { VOL_CFG, VOL_INFO, VOL_M, VOL_POLY, VOLUME_BLOCK_FLOATS, type VolumeDraw } from '../../volumes/gpu';
 import { GlFigures } from './figures';
 import { GlTracks } from './tracks';
 import { ATLAS_MIP_LEVELS } from '../../data/atlas';
@@ -1845,6 +1846,25 @@ export class Webgl2Renderer implements Renderer {
     u.f2('uElevBand', r ? r.lowY : 0, r ? r.highY : 1);
   }
 
+  /** The volumes filter (volumes/gpu.ts), for the heat passes. */
+  private setVolumes(u: UniformCache, vol: VolumeDraw | null | undefined): void {
+    const gl = this.gl;
+    const cfg = u.loc('uVolCfg');
+    if (!cfg) return;
+    if (!vol) {
+      gl.uniform4f(cfg, 0, 0, 0, 0);
+      return;
+    }
+    const b = vol.block;
+    gl.uniform4fv(cfg, b.subarray(VOL_CFG, VOL_CFG + 4));
+    const m = u.loc('uVolM[0]') ?? u.loc('uVolM');
+    if (m) gl.uniform4fv(m, b.subarray(VOL_M, VOL_INFO));
+    const info = u.loc('uVolInfo[0]') ?? u.loc('uVolInfo');
+    if (info) gl.uniform4fv(info, b.subarray(VOL_INFO, VOL_POLY));
+    const poly = u.loc('uVolPoly[0]') ?? u.loc('uVolPoly');
+    if (poly) gl.uniform4fv(poly, b.subarray(VOL_POLY, VOLUME_BLOCK_FLOATS));
+  }
+
   /** The slice slab, for any pass that draws world-space geometry. */
   private setSlice(u: UniformCache, slice: SliceDraw | null): void {
     u.i1('uSliceAxis', slice ? slice.axis : -1);
@@ -2057,6 +2077,7 @@ export class Webgl2Renderer implements Renderer {
     u.i1('uSliceAxis', slice ? slice.axis : -1);
     u.f2('uSliceRange', slice ? slice.min : 0, slice ? slice.max : 0);
     u.f1('uSliceOutside', slice ? slice.outside : 1);
+    this.setVolumes(u, params.volumes);
 
     gl.bindVertexArray(this.emptyVao);
 

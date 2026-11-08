@@ -9,6 +9,7 @@ import {
   PEEL_EPSILON,
   TILE_TABLE_WIDTH,
 } from '../types';
+import { VOLUME_GLSL } from '../../volumes/gpu';
 
 /**
  * GLSL ES 3.00 sources for the WebGL2 backend.
@@ -135,6 +136,9 @@ uniform vec2  uNearFar;
 uniform int   uSliceAxis;      // -1 disables
 uniform vec2  uSliceRange;
 uniform float uSliceOutside;
+
+// The user's volumes, as a filter: see volumes/gpu.ts.
+${VOLUME_GLSL}
 
 /**
  * Window depth this sprite must be in front of to count as visible.
@@ -268,6 +272,9 @@ void main() {
   ivec2 tc = ivec2(row & uTexMask, row >> uTexShift);
   uvec4 q = texelFetch(uPosTex, tc, 0);
   vec3 p = uAabbMin + vec3(q.xyz) * (1.0 / 65535.0) * uAabbSize;
+  // Inside or outside the volumes, at the row's true height: before the ground
+  // projection flattens it.
+  if (!volKeep(p)) reject = true;
   if (uGroundProjected == 1) p.y = uGroundY;
 
   // Distance culling. Slices the field to a shell around the camera, which is

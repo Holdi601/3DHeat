@@ -28,10 +28,27 @@
  *                 the first (none: it bounced or did not get through)
  *   World of Warships `impact` - the shooter's row; on a ship it names the
  *                 ship and the point in its frame, `reason` the hit type
+ *   Squad         `hit` - a vehicle's row where a shell struck it (the impact
+ *                 in the world, placed in the vehicle's frame from its own
+ *                 rows when the converter gives no point), the damage type in
+ *                 `detail`, the damage from the `damaged` row of the moment
+ *   Arma (OCAP)   `hit ← …` / `killed ← …` - the victim's row, `Killer`,
+ *                 `Weapon`, `Distance`: who, with what, from how far; no point
+ *   Dota 2        `hurt` without a hitgroup - the hero's row, the attacker
+ *                 `other`, the damage `value`, the ability `text`; no point
+ *   IL-2          `hit` / `damage` with `local_x/y/z` - the player's own
+ *                 aircraft, the point in its frame, the force
+ *   Any           a victim's row (`hit`, `impact`, `hurt`, `wounded`...) with
+ *                 `hitBone` (a skeleton bone, a hit zone, an Arma selection)
+ *                 or `hitLocalX/Y/Z`
+ *   Tacview ACMI  see `acmiHits.ts`
  */
 
 import type { AttributeColumn, Dataset } from '../state/types';
 import type { Vec3 } from '../race/geometry';
+import { regionOf } from './regions';
+import { acmiHits, isAcmiData } from './acmiHits';
+import { localFromWorld } from './places';
 
 export type HitKind = 'hit' | 'module';
 
@@ -54,6 +71,15 @@ export interface BoxPoint {
 }
 
 export interface VehicleHit {
+  /** The hit's index in its set's `hits`. */
+  id: number;
+  /** Whose place the dataset row `row` holds: the victim's (a hurt, a struck) or the shooter's (a shot). */
+  side: 'victim' | 'shooter';
+  /** The victim's and the shooter's tracks (person ids) where the data ties them; -1: found by name. */
+  victimPerson: number;
+  shooterPerson: number;
+  /** Metres from the shooter to the victim, where the data says. */
+  distance: number | null;
   /** The vehicle hit, as the data names it (a War Thunder id, "soldier" for a shooter's people). */
   vehicle: string;
   victim: string;
@@ -98,7 +124,7 @@ export interface VehicleHit {
   kind: HitKind;
 }
 
-export type HitSource = 'warthunder' | 'cs2' | 'wot' | 'wows' | 'generic' | 'none';
+export type HitSource = 'warthunder' | 'cs2' | 'wot' | 'wows' | 'squad' | 'ocap' | 'acmi' | 'il2' | 'dota' | 'generic' | 'none';
 
 export interface HitSet {
   hits: VehicleHit[];
@@ -166,6 +192,12 @@ export const MODULE_WINDOW = 0.6;
 export const MARK_WINDOW = 0.6;
 
 const CS2_HIT = /^(hurt|player_hurt)$/i;
+/** OCAP's victim rows: "hit ← killer (weapon, 120 m)", "killed"; not the killer's "hit → victim". */
+const OCAP_HIT = /^(hit|killed)\b(?!\s*→)/i;
+/** A victim's row that names a bone or a point. */
+const VICTIM_HIT = /^(hit|impact|hurt|wound(ed)?|damage(d)?|hit_?part)$/i;
+const SQUAD_HIT = /^hit$/i;
+const IL2_HIT = /^(hit|damage)$/i;
 const WT_SHOT = /^shot$/i;
 const WOT_STRUCK = /^struck$/i;
 const WOWS_IMPACT = /^impact$/i;
@@ -218,8 +250,31 @@ export function hitsFromDataset(d: Dataset): HitSet {
   const armorCol = num(d, 'armorDamage') ?? NONE;
   const healthCol = num(d, 'health') ?? NONE;
   const time = d.time;
+  const pid = d.personId;
+  const personOf = (r: number) => (pid ? pid[r] : -1);
+  // OCAP: the victim's and the killer's names, the distance; the victim's own kind.
+  const ocap = !!find(d, 'Victim') && !!find(d, 'Killer');
+  const victimCol = text(d, 'Victim');
+  const killerCol = text(d, 'Killer');
+  const distCol = num(d, 'Distance', 'distance') ?? NONE;
+  const ocapType = text(d, 'Type');
+  // Dota 2: the hero hurt and the ability that did it.
+  const heroCol = find(d, 'hero') ? text(d, 'hero') : null;
+  const abilityCol = find(d, 'inflictor', 'ability') ? text(d, 'inflictor', 'ability') : heroCol ? text(d, 'text') : null;
+  // Squad: the actor a row is about, its blueprint, the damage type.
+  const squad = !!find(d, 'entity') && !!find(d, 'pawn');
+  const entityCol = text(d, 'entity');
+  const pawnCol = text(d, 'pawn');
+  const detailCol = text(d, 'detail');
+  const boneCol = find(d, 'hitBone', 'hitZone', 'bone', 'selection') ? text(d, 'hitBone', 'hitZone', 'bone', 'selection') : null;
+  // IL-2's telemetry: a hit on the player's aircraft, in its frame, and the force.
+  const il2x = num(d, 'local_x'), il2y = num(d, 'local_y'), il2z = num(d, 'local_z');
+  const forceCol = num(d, 'force') ?? NONE;
+  const fx = num(d, 'force_x') ?? NONE, fy = num(d, 'force_y') ?? NONE, fz = num(d, 'force_z') ?? NONE;
+  const lifeOf: Text = squad ? (r) => life(r) || entityCol(r) : life;
   const hasEvents = !!find(d, 'event', 'events', 'event type', 'eventType');
   const hasLocal = !!find(d, 'hitLocalX');
+  const acmi = isAcmiData(d);
 
   const hits: VehicleHit[] = [];
   const modules: { row: number; part: number | null }[] = [];
@@ -250,6 +305,11 @@ export function hitsFromDataset(d: Dataset): HitSet {
   if (!hasEvents && !hasLocal) return { hits, source: 'none', unplaced, unplacedBy: new Map(), vehicles: new Map() };
 
   const base = (r: number, t: number): Omit<VehicleHit, 'vehicle' | 'victim' | 'shooter' | 'shooterVehicle' | 'life'> => ({
+    id: 0,
+    side: 'victim',
+    victimPerson: personOf(r),
+    shooterPerson: -1,
+    distance: null,
     weapon: weapon(r),
     match: match(r),
     time: t,
@@ -279,13 +339,94 @@ export function hitsFromDataset(d: Dataset): HitSet {
   };
   // World of Tanks sends a hit's points as rows of their own; the damage is on the first.
   let lastStruck: VehicleHit | null = null;
+  const squadIndex = squad ? squadRows(d, event, entityCol, healthCol) : null;
 
-  for (let r = 0; r < d.count; r++) {
+  // A Tacview recording's hits are found apart (`acmiHits.ts`): the rows go round once there.
+  for (let r = 0; r < (acmi ? 0 : d.count); r++) {
     const ev = event(r);
     const t = time ? time[r] : 0;
+    if (ocap) {
+      const m = OCAP_HIT.exec(ev);
+      if (m) {
+        const type = ocapType(r);
+        const own = vehicleCol(r);
+        const infantry = !own || /^(infantry|man|unit|soldier|person)$/i.test(type);
+        const vehicle = infantry ? 'soldier' : own;
+        if (!typeOf.has(vehicle)) typeOf.set(vehicle, infantry ? 'person' : type);
+        const kill = m[1].toLowerCase() === 'killed';
+        const victim = victimCol(r);
+        const shooter = killerCol(r);
+        hits.push({
+          ...base(r, t),
+          vehicle,
+          victim,
+          life: '',
+          shooter,
+          shooterVehicle: '',
+          distance: fin(distCol(r)),
+          outcome: kill ? 'kill' : 'hit',
+          fatal: kill,
+          killingShot: kill,
+        });
+        if (kill) deaths.push({ life: '', victim, killer: shooter, time: t, match: match(r) });
+        sources.add('ocap');
+        continue;
+      }
+    }
     if (DEATH.test(ev)) {
-      deaths.push({ life: life(r), victim: player(r), killer: other(r), time: t, match: match(r) });
+      deaths.push({ life: lifeOf(r), victim: player(r), killer: other(r), time: t, match: match(r) });
       continue;
+    }
+    if (squadIndex && SQUAD_HIT.test(ev) && !boneCol?.(r)) {
+      const entity = entityCol(r);
+      const ref = squadIndex.near(entity, t);
+      const local = localAt(r) ?? (ref >= 0 ? localFromWorld(d, ref, d.px[r], d.py[r], d.pz[r]) : null);
+      const drop = squadIndex.drop.get(`${entity}|${t}`);
+      const vehicle = pawnCol(r) || player(r);
+      if (!typeOf.has(vehicle)) typeOf.set(vehicle, SQUAD_HELI.test(vehicle) ? 'helicopter' : '');
+      hits.push({
+        ...base(r, t),
+        victimPerson: ref >= 0 ? personOf(ref) : personOf(r),
+        vehicle,
+        victim: player(r),
+        life: entity,
+        shooter: '',
+        shooterVehicle: '',
+        local,
+        weapon: detailCol(r),
+        code: detailCol(r),
+        damage: drop ? drop.damage : null,
+        healthAfter: drop ? drop.health : null,
+        outcome: drop ? (drop.health <= 0 ? 'kill' : drop.damage > 0 ? 'damage' : 'nodamage') : 'hit',
+      });
+      if (!local) {
+        unplaced++;
+        unplacedBy.set(vehicle, (unplacedBy.get(vehicle) ?? 0) + 1);
+      }
+      sources.add('squad');
+      continue;
+    }
+    if (il2x && il2y && il2z && IL2_HIT.test(ev)) {
+      const x = il2x(r), y = il2y(r), z = il2z(r);
+      if (Number.isFinite(x) && Number.isFinite(y) && Number.isFinite(z)) {
+        const vehicle = vehicleCol(r) || 'aircraft';
+        if (!typeOf.has(vehicle)) typeOf.set(vehicle, 'aircraft');
+        const f = forceCol(r);
+        hits.push({
+          ...base(r, t),
+          vehicle,
+          victim: player(r),
+          life: life(r),
+          shooter: other(r),
+          shooterVehicle: '',
+          local: [x, y, z],
+          dir: unit(fx, fy, fz, r),
+          code: Number.isFinite(f) ? `${ev.toLowerCase()} ${Math.round(f)} N` : ev.toLowerCase(),
+          outcome: /^damage$/i.test(ev) ? 'damage' : 'hit',
+        });
+        sources.add('il2');
+        continue;
+      }
     }
     if (MODULE.test(ev)) {
       const m = PART.exec(weaponRaw(r));
@@ -327,9 +468,30 @@ export function hitsFromDataset(d: Dataset): HitSet {
       sources.add('wot');
       continue;
     }
-    if (CS2_HIT.test(ev)) {
+    if (CS2_HIT.test(ev) && !hitgroup(r).trim() && !boneCol?.(r) && !localAt(r)) {
+      // A hurt with no body part (Dota 2's combat log): a hit on the unit, no point.
+      const dmg = damageCol(r);
+      const health = healthCol(r);
+      const vehicle = heroCol?.(r) || vehicleCol(r) || player(r);
+      if (!vehicle) continue;
+      if (!typeOf.has(vehicle)) typeOf.set(vehicle, heroCol ? 'hero' : '');
+      hits.push({
+        ...base(r, t),
+        vehicle,
+        victim: player(r),
+        life: life(r),
+        shooter: other(r),
+        shooterVehicle: '',
+        weapon: abilityCol?.(r) || weapon(r),
+        damage: fin(dmg),
+        healthAfter: fin(health),
+        outcome: Number.isFinite(health) && health <= 0 ? 'kill' : Number.isFinite(dmg) ? (dmg > 0 ? 'damage' : 'nodamage') : 'hit',
+      });
+      sources.add(heroCol ? 'dota' : 'generic');
+      continue;
+    }
+    if (CS2_HIT.test(ev) && hitgroup(r).trim()) {
       const g = hitgroup(r).trim().toLowerCase();
-      if (!g) continue;
       const dmg = damageCol(r);
       const health = healthCol(r);
       hits.push({
@@ -353,6 +515,34 @@ export function hitsFromDataset(d: Dataset): HitSet {
       sources.add('cs2');
       continue;
     }
+    // A victim's row naming a bone or a point (Squad's impacts, Arma's hit parts, Reforger's hit zones, any converter).
+    if (VICTIM_HIT.test(ev) && !otherVehicle(r)) {
+      const bone = boneCol?.(r) ?? '';
+      const local = localAt(r);
+      if (bone || local) {
+        const region = bone && regionOf(bone) ? bone : null;
+        const vehicle = region !== null ? 'soldier' : vehicleCol(r) || pawnCol(r) || player(r);
+        const dmg = damageCol(r);
+        const health = healthCol(r);
+        hits.push({
+          ...base(r, t),
+          vehicle,
+          victim: player(r),
+          life: lifeOf(r),
+          shooter: other(r),
+          shooterVehicle: '',
+          local,
+          region,
+          code: bone || detailCol(r),
+          damage: fin(dmg),
+          healthAfter: fin(health),
+          distance: fin(distCol(r)),
+          outcome: Number.isFinite(health) && health <= 0 ? 'kill' : Number.isFinite(dmg) ? (dmg > 0 ? 'damage' : 'nodamage') : 'hit',
+        });
+        sources.add(squad ? 'squad' : 'generic');
+        continue;
+      }
+    }
     // A hit with a point: the shooter's row naming the vehicle hit (War Thunder, World of Warships, any converter).
     const vehicle = otherVehicle(r);
     const wt = WT_SHOT.test(ev);
@@ -374,6 +564,9 @@ export function hitsFromDataset(d: Dataset): HitSet {
     }
     hits.push({
       ...base(r, t),
+      side: 'shooter',
+      victimPerson: -1,
+      shooterPerson: personOf(r),
       vehicle,
       victim: other(r),
       life: otherLife(r),
@@ -384,6 +577,13 @@ export function hitsFromDataset(d: Dataset): HitSet {
       code: wt ? (Number.isFinite(flag) ? String(flag) : Number.isFinite(part) ? String(Math.floor(part / 256)) : '') : reason(r),
     });
     sources.add(wt ? 'warthunder' : WOWS_IMPACT.test(ev) ? 'wows' : 'generic');
+  }
+
+  if (acmi) {
+    const found = acmiHits(d);
+    for (const h of found.hits) hits.push(h);
+    for (const [k, v] of found.kinds) if (!typeOf.has(k)) typeOf.set(k, v);
+    if (found.hits.length) sources.add('acmi');
   }
 
   // Hits by life (or by victim where lives are not named), in time order, for deaths, marks and modules.
@@ -463,6 +663,8 @@ export function hitsFromDataset(d: Dataset): HitSet {
     let killing: VehicleHit | null = null;
     let total = 0;
     let known = true;
+    // Where no hit of the life has a point (OCAP, Dota 2), the killer's last hit is the killing one all the same.
+    const placed = list.some((h) => h.local || h.box || h.region);
     for (const h of list) {
       if (h.kind !== 'hit' || h.time > death.time + 0.2) continue;
       h.toDeath = Math.max(0, death.time - h.time);
@@ -471,7 +673,7 @@ export function hitsFromDataset(d: Dataset): HitSet {
       if (h.time < death.time - FATAL_WINDOW) continue;
       if (death.killer && h.shooter && death.killer !== h.shooter) continue;
       h.fatal = true;
-      if (h.local || h.box || h.region) killing = h;
+      if (h.local || h.box || h.region || !placed) killing = h;
     }
     // CS2 says which hurt killed; elsewhere the killer's last hit before the death.
     const own = list.find((h) => h.killingShot) ?? killing;
@@ -497,6 +699,7 @@ export function hitsFromDataset(d: Dataset): HitSet {
     }
   }
 
+  hits.forEach((h, i) => (h.id = i));
   const vehicles = new Map<string, VehicleInfo>();
   for (const h of hits) {
     if (!h.vehicle) continue;
@@ -517,6 +720,52 @@ export function hitsFromDataset(d: Dataset): HitSet {
   }
   const source: HitSource = sources.size === 0 ? 'none' : sources.size === 1 ? [...sources][0] : 'generic';
   return { hits, source, unplaced, unplacedBy, vehicles };
+}
+
+/** Squad's helicopters by their blueprints: the figure they are drawn as. */
+const SQUAD_HELI = /heli|loach|uh60|uh1|mi8|mi17|ch146|sa330|mrh90|z8|cas_small|raven|bell|merlin/i;
+
+/**
+ * Squad's vehicle rows by actor: each actor's rows that place it (not its
+ * hits, shots or seats), in time order, to place a hit in its frame; and the
+ * damage of each `damaged` row - the fall of the health from the actor's
+ * last before it - by actor and time.
+ */
+function squadRows(d: Dataset, event: Text, entity: Text, health: Num): { near: (entity: string, t: number) => number; drop: Map<string, { damage: number; health: number }> } {
+  const rows = new Map<string, number[]>();
+  const drop = new Map<string, { damage: number; health: number }>();
+  const last = new Map<string, number>();
+  const time = d.time;
+  const order = time ? Array.from({ length: d.count }, (_, i) => i).sort((a, b) => time[a] - time[b]) : Array.from({ length: d.count }, (_, i) => i);
+  for (const r of order) {
+    const e = entity(r);
+    if (!e) continue;
+    const ev = event(r);
+    if (/^(hit|fire|seat|position|wounded|revived|death)$/i.test(ev)) continue;
+    let list = rows.get(e);
+    if (!list) rows.set(e, (list = []));
+    list.push(r);
+    const h = health(r);
+    if (!Number.isFinite(h)) continue;
+    const before = last.get(e);
+    if (/^(damaged|destroyed)$/i.test(ev) && before !== undefined) drop.set(`${e}|${time ? time[r] : 0}`, { damage: Math.max(0, before - h), health: h });
+    last.set(e, h);
+  }
+  const near = (e: string, t: number): number => {
+    const list = rows.get(e);
+    if (!list || !list.length || !time) return list?.[0] ?? -1;
+    let lo = 0, hi = list.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (time[list[mid]] < t) lo = mid + 1;
+      else hi = mid;
+    }
+    // The nearer of the row at or after the time and the one before it.
+    const a = list[lo];
+    const b = lo > 0 ? list[lo - 1] : a;
+    return Math.abs(time[a] - t) <= Math.abs(time[b] - t) ? a : b;
+  };
+  return { near, drop };
 }
 
 /** A life's hits found by its id alone or by the victim alone, whichever match the keys hold. */
