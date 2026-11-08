@@ -68,10 +68,10 @@ describe('nextHeatCap', () => {
   it('holds inside the band', () => {
     expect(nextHeatCap(1e6, 5, 7, true, true, o)).toBe(1e6);
   });
-  it('cuts by the overshoot, a quarter at most unless twice over', () => {
-    expect(nextHeatCap(1e6, 7 * 1.25, 7, true, false, o)).toBeCloseTo(1e6 * 0.8);
-    expect(nextHeatCap(1e6, 7 * 1.6, 7, true, false, o)).toBe(1e6 * 0.75);
-    expect(nextHeatCap(1e6, 7 * 3, 7, true, false, o)).toBe(1e6 * 0.5);
+  it('cuts to nine tenths of the budget at once, to a quarter at most', () => {
+    expect(nextHeatCap(1e6, 7 * 1.25, 7, true, false, o)).toBeCloseTo(1e6 * 0.72);
+    expect(nextHeatCap(1e6, 7 * 3, 7, true, false, o)).toBeCloseTo(1e6 * 0.3);
+    expect(nextHeatCap(1e6, 7 * 10, 7, true, false, o)).toBe(1e6 * 0.25);
   });
   it('grows only as a run starts, and only well under budget', () => {
     expect(nextHeatCap(1e6, 2, 7, true, false, o)).toBe(1e6);
