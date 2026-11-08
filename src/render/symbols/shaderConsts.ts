@@ -4,14 +4,14 @@
  * the word's layout and the thresholds of `lod.ts`.
  */
 
-import { Domain, fallbackWord, symbolIndex, WORD_BASE, WORD_MOVING } from '../../figures/symbolClass';
+import { Domain, fallbackWord, symbolIndex, WORD_BASE, WORD_DEAD, WORD_MOVING } from '../../figures/symbolClass';
 import { FADE_FROM, WEAPON_PX } from './lod';
 
 const f = (x: number) => (Number.isInteger(x) ? `${x}.0` : `${x}`);
 
 export const FALLBACK_AIR = fallbackWord(true);
 export const FALLBACK_GROUND = fallbackWord(false);
-export { WORD_BASE, WORD_MOVING };
+export { WORD_BASE, WORD_DEAD, WORD_MOVING };
 export const D_UNKNOWN = Domain.Unknown;
 export const D_AIR = Domain.Air;
 export const D_HELI = Domain.Heli;

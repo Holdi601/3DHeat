@@ -13,7 +13,10 @@
 
 import { CHUNK_SHIFT, CHUNK_U32, KEYS_PER_BUFFER, TRACK_U32 } from './store';
 import { dartIndex as dartIndexOf } from '../symbols/darts';
-import { C_AGM, C_SAM, C_SHIP, D_BOMB, D_CHAFF, D_FLARE, D_GROUND, D_HELI, D_MARKER, D_MISC, D_MISSILE, D_ROCKET, D_SHELL, D_STATIC, FADE_FROM_F, FALLBACK_AIR, FALLBACK_GROUND, WEAPON_PX_F, WORD_BASE, WORD_MOVING } from '../symbols/shaderConsts';
+import { WRECK_GREY, WRECK_TINT } from '../../figures/wreck';
+import { C_AGM, C_SAM, C_SHIP, D_BOMB, D_CHAFF, D_FLARE, D_GROUND, D_HELI, D_MARKER, D_MISC, D_MISSILE, D_ROCKET, D_SHELL, D_STATIC, FADE_FROM_F, FALLBACK_AIR, FALLBACK_GROUND, WEAPON_PX_F, WORD_BASE, WORD_DEAD, WORD_MOVING } from '../symbols/shaderConsts';
+
+const f = (x: number) => (Number.isInteger(x) ? `${x}.0` : `${x}`);
 
 /** `dartIndex` in WGSL: each domain with a dart of its own. */
 const DART_INDEX_WGSL = Array.from({ length: 16 }, (_, d) => d)
@@ -340,7 +343,20 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
   // Seconds since its first key: a decoy's bloom and fade, a motor's burn.
   let age = -timeAt(first);
   let c = tracks[b + 2u];
-  let team = vec3<f32>(f32(c & 255u) / 255.0, f32((c >> 8u) & 255u) / 255.0, f32((c >> 16u) & 255u) / 255.0);
+  var team = vec3<f32>(f32(c & 255u) / 255.0, f32((c >> 8u) & 255u) / 255.0, f32((c >> 16u) & 255u) / 255.0);
+  // A wreck between its death and its return to life (\`store.ts\` setDeadSpan, as fractions of its keys): charred grey,
+  // which its model's instance carries negated (\`figures/wreck.ts\`), and its symbol crossed out.
+  var tsign = 1.0;
+  let dA = tracks[b + 5u] >> 16u;
+  if (dA != 0u) {
+    let frac = age / max(timeAt(last) + age, 1e-6);
+    let dB = tracks[b + 6u] >> 16u;
+    if (frac >= f32(dA - 1u) / 65534.0 && (dB == 0u || frac < f32(dB - 1u) / 65534.0)) {
+      team = vec3<f32>(${f(WRECK_GREY)}) + ${f(WRECK_TINT)} * team;
+      tsign = -1.0;
+      word = (word & ~${WORD_MOVING}u) | ${WORD_DEAD}u;
+    }
+  }
   // Below the gun's "as built": what it is, for the dart's shape and the glyph (\`symbolClass.ts\`).
   let tag = -${WORD_BASE}.0 - f32(word);
   var glyphA = look.y;
@@ -349,7 +365,7 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
     // Full when big at true size, coarse from a third of that, far below.
     var mesh = meshes & 0xffffu;
     if (trueLen < u.lod.z) { mesh = meshes >> 16u; }
-    if (trueLen < u.lod.z / 3.0) { mesh = tracks[b + 6u]; }
+    if (trueLen < u.lod.z / 3.0) { mesh = tracks[b + 6u] & 0xffffu; }
     var scale = u.lod.y;
     if (look.w < 0.5) { scale = max(u.lod.y, u.px.z * pxSize / longest); }
     let slot = atomicAdd(&counts[mesh], 1u);
@@ -384,7 +400,7 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
       inst[o] = vec4<f32>(P, scale);
       inst[o + 1u] = vec4<f32>(f, look.x);
       inst[o + 2u] = vec4<f32>(up, tYaw);
-      inst[o + 3u] = vec4<f32>(team, gPitch);
+      inst[o + 3u] = vec4<f32>(team * tsign, gPitch);
     } else if (u.sym.x > 1.5 || look.w > 0.5) {
       // Its mesh's run is full: its symbol or glyph.
       glyphA = 1.0;
@@ -401,7 +417,7 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
       inst[o] = vec4<f32>(P, max(u.lod.y, u.px.z * pxSize));
       inst[o + 1u] = vec4<f32>(f, 1.0);
       inst[o + 2u] = vec4<f32>(up, 0.0);
-      inst[o + 3u] = vec4<f32>(team, tag);
+      inst[o + 3u] = vec4<f32>(team * tsign, tag);
     }
   }
   if (glyphA > 0.0) {

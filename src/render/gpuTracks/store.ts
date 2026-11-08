@@ -22,7 +22,8 @@
  * Per track 64 bytes: first key, key count, team colour (rgba8), full and
  * coarse mesh index (the far one in slot 6), the figure's longest side,
  * flags (air: turns with its pitch and roll; attitude: has one; weapon: a
- * missile, rocket or bomb, drawn with a streak behind it), and the
+ * missile, rocket or bomb, drawn with a streak behind it), the dead span
+ * in the upper halves of slots 5 and 6 (`setDeadSpan`), and the
  * span its keys are in: origin x, y, z and the step of a position unit
  * (slots 8-11), first time and the step of a time unit (12-13), and the
  * seconds it is held past its last key plus one (14; 0 for the viewer's
@@ -44,6 +45,7 @@ import { poseFrame } from '../../figures/kit';
 import { positionRows, quatOfFrame } from '../../figures/motion';
 import { CATALOG } from '../../figures/catalog';
 import { endsOf, holdAfterKeys } from '../../data/despawn';
+import { deadInSpan, deathsOf, lastDeadSpan, packDeadSpan } from '../../data/deaths';
 import { aimOf, type AimNow } from '../../figures/aim';
 import { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32 } from './chunks';
 import { dartIndex, dartMeshes } from '../symbols/darts';
@@ -89,6 +91,22 @@ export function unpackAim(v: number): [number, number] {
   const y = v & 0xffff;
   const p = v >>> 16;
   return [y === AIM_NONE ? NaN : (y / 65534) * 2 * Math.PI - Math.PI, p === AIM_NONE ? NaN : (p / 65534) * Math.PI - Math.PI / 2];
+}
+
+/**
+ * A track's dead span (`data/deaths.ts` `packDeadSpan`) in its slots: the
+ * death in the upper half of slot 5 (the flags keep the lower), the return
+ * to life in the upper half of slot 6 (the far mesh keeps the lower).
+ */
+export function setDeadSpan(trackData: Uint32Array, o8: number, packed: number): void {
+  trackData[o8 + 5] = ((trackData[o8 + 5] & 0xffff) | ((packed & 0xffff) << 16)) >>> 0;
+  trackData[o8 + 6] = ((trackData[o8 + 6] & 0xffff) | (packed & 0xffff0000)) >>> 0;
+}
+
+/** Whether track `i` is a wreck at fraction `frac` of its keys, first to last (`setDeadSpan`). */
+export function trackDeadAt(trackData: Uint32Array, i: number, frac: number): boolean {
+  const o = i * TRACK_U32;
+  return deadInSpan(((trackData[o + 5] >>> 16) | (trackData[o + 6] & 0xffff0000)) >>> 0, frac);
 }
 
 /** Deaths to mark: x, y, z and the time a marker, and its team colour (rgba8). */
@@ -210,8 +228,9 @@ export class TrackFigures {
     trackData[o8 + 2] = rgba8(cr, cg, cb);
     trackData[o8 + 3] = km ? (km.full | (km.coarse << 16)) >>> 0 : 0;
     f32[o8 + 4] = km ? km.longest : 1;
-    trackData[o8 + 5] = (km && km.air ? FLAG_AIR : 0) | (attitude ? FLAG_ATTITUDE : 0) | (weapon || isWeaponKind(kind) ? FLAG_WEAPON : 0);
-    trackData[o8 + 6] = km ? km.far : 0;
+    // The upper halves of slots 5 and 6 are the dead span's (`setDeadSpan`), kept.
+    trackData[o8 + 5] = ((trackData[o8 + 5] & 0xffff0000) | (km && km.air ? FLAG_AIR : 0) | (attitude ? FLAG_ATTITUDE : 0) | (weapon || isWeaponKind(kind) ? FLAG_WEAPON : 0)) >>> 0;
+    trackData[o8 + 6] = ((trackData[o8 + 6] & 0xffff0000) | (km ? km.far : 0)) >>> 0;
     // What it is far off: its domain, symbol class and team (`symbolClass.ts`).
     const uc = classify(kind, row >= 0 ? this.fr.typeText(d, row) : '');
     trackData[o8 + 15] = packWord(uc, d.personTeam ? team : null);
@@ -355,6 +374,7 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
   const personOf = new Int32Array(persons);
   const trackOf = new Int32Array(persons).fill(-1);
   const ends = endsOf(d);
+  const deaths = deathsOf(d);
   const q: [number, number, number, number] = [0, 0, 0, 1];
   let tracks = 0;
   let key = 0;
@@ -431,6 +451,9 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
     // How long it is held past its last key, plus one (0: the viewer's lifetime alone; HOLD_ON: until the recording ends).
     const hold = holdAfterKeys(ends, p, t1k);
     f32[o8 + 14] = hold === Infinity ? HOLD_ON : hold + 1;
+    // When it is a wreck: its last dead span, across its keys.
+    const span = deaths.any ? lastDeadSpan(deaths, p) : null;
+    if (span) setDeadSpan(trackData, o8, packDeadSpan(span[0], span[1], t0k, t1k));
     personOf[tracks] = p;
     trackOf[p] = tracks;
     tracks++;

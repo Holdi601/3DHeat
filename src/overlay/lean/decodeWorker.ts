@@ -37,7 +37,7 @@ ctx.onmessage = async (ev: MessageEvent<DecodeRequest>) => {
     const n = q.rowEnd - q.rowStart;
     if (q.pass === 1) {
       const r = scanPass1(cols, n, q.spec, q.rowStart, q.levels);
-      const transfer = [r.firstRow.buffer, r.lastRow.buffer, r.samples.buffer, r.box.buffer, r.keys.buffer, r.groupStart.buffer, r.groupRows.buffer, r.markers.pos.buffer, r.markers.t.buffer, r.markers.group.buffer];
+      const transfer = [r.firstRow.buffer, r.lastRow.buffer, r.samples.buffer, r.box.buffer, r.death.buffer, r.keys.buffer, r.groupStart.buffer, r.groupRows.buffer, r.markers.pos.buffer, r.markers.t.buffer, r.markers.group.buffer];
       ctx.postMessage({ id: q.id, ok: true, pass: 1, result: r } satisfies DecodeResponse, transfer as Transferable[]);
     } else {
       const r = scanPass2(cols, n, q.spec, q.base, q.alloc, q.level);

@@ -17,13 +17,15 @@
  *
  * Instance (16 floats): o.x, o.y, o.z, scale, f.x, f.y, f.z, alpha, u.x, u.y,
  * u.z, turret yaw (radians from the hull's forward, right positive), team r,
- * g, b, gun elevation (radians, up positive; `NO_PITCH`: as built). The right
- * axis is cross(f, u), as `poseFrame` and a quaternion's frame both have it.
+ * g, b (negative: a wreck of that colour, `wreck.ts`), gun elevation
+ * (radians, up positive; `NO_PITCH`: as built). The right axis is
+ * cross(f, u), as `poseFrame` and a quaternion's frame both have it.
  */
 
 import { VertexBuffer, type Frame3, type Rgb } from '../race/geometry';
 import type { Joint, Template } from './kit';
 import { shade } from './light';
+import { wreckShade } from './wreck';
 
 export const MESH_STRIDE = 24;
 export const INSTANCE_STRIDE = 16;
@@ -251,7 +253,7 @@ export function expand(b: FigureBatch, out: VertexBuffer): void {
       articulate(m, p, m[p], m[p + 1], m[p + 2], yaw, pitch, true, at);
       const a = at[0] * k, bb = at[1] * k, c = at[2] * k;
       const tint = m[p + 11] > 0.5;
-      const base: Rgb = tint ? [tr * m[p + 3], tg * m[p + 4], tb * m[p + 5]] : [m[p + 3], m[p + 4], m[p + 5]];
+      const base: Rgb = tr < 0 ? wreckShade(m[p + 3], m[p + 4], m[p + 5], [-tr, -tg, -tb]) : tint ? [tr * m[p + 3], tg * m[p + 4], tb * m[p + 5]] : [m[p + 3], m[p + 4], m[p + 5]];
       articulate(m, p, m[p + 7], m[p + 8], m[p + 9], yaw, pitch, false, at);
       const na = at[0], nb = at[1], nc = at[2];
       const lit = shade(base, [fx * na + ux * nb + rx * nc, fy * na + uy * nb + ry * nc, fz * na + uz * nb + rz * nc], m[p + 10]);

@@ -12,7 +12,7 @@
  */
 
 import { ATLAS_COLUMNS, ATLAS_HEIGHT, ATLAS_WIDTH, CELL, LAYOUT } from './atlas';
-import { C_AAM, C_AGM, C_GUIDED_BOMB, C_SAM, C_SHIP, D_BOMB, D_CHAFF, D_FLARE, D_MISC, D_MISSILE, D_ROCKET, D_SEA, D_SHELL, D_SUB, WORD_BASE, WORD_MOVING } from './shaderConsts';
+import { C_AAM, C_AGM, C_GUIDED_BOMB, C_SAM, C_SHIP, D_BOMB, D_CHAFF, D_FLARE, D_MISC, D_MISSILE, D_ROCKET, D_SEA, D_SHELL, D_SUB, WORD_BASE, WORD_DEAD, WORD_MOVING } from './shaderConsts';
 
 /** Uniform floats: viewProj, view (w, h, style, mode), opt (ticks, -, -, -), cam, 16 sides. */
 export const SYMBOL_UNIFORM_FLOATS = 16 + 4 + 4 + 4 + 64;
@@ -131,7 +131,7 @@ void main() {
     turn = moving && dl > 1e-4;
   } else if (style == 2) {
     vCells = ivec2(-1, ${LAYOUT.mapGlyphs} + int(dom));
-    vFill = vec4(iTeam.rgb, 1.0);
+    vFill = vec4(abs(iTeam.rgb), 1.0);
     vLine = vec4(dark, 0.0);
     vHalo = vec4(0.0, 0.0, 0.0, 0.45);
     vTick = vec4(head, moving ? 1.0 : 0.0, 1.0);
@@ -143,6 +143,11 @@ void main() {
     vTick = vec4(head, moving ? 1.0 : 0.0, 1.0);
   }
   if (uOpt.x < 0.5) vTick.z = 0.0;
+  // A wreck (\`data/deaths.ts\`): its fill greyed and the frame crossed out, as APP-6 and MIL-STD-2525 mark destroyed (tick.z -1).
+  if ((word & ${WORD_DEAD}u) != 0u && !effect && !weapon) {
+    vFill.rgb = mix(vec3(0.4), vFill.rgb, 0.3);
+    vTick.z = -1.0;
+  }
   vGlow.a *= alpha; vFill.a *= alpha; vHalo.a *= alpha; vTick.w = alpha;
   // Turned glyphs: the cell's up along the heading; the rest stand upright.
   vec2 o = q * ${f(QUAD)};
@@ -191,6 +196,13 @@ void main() {
   if (vTick.z > 0.5) {
     line = max(line, (1.0 - smoothstep(0.055 - aa, 0.055 + aa, d)) * vTick.w);
     halo = max(halo, 1.0 - smoothstep(0.13 - aa, 0.13 + aa, d));
+  }
+  // Destroyed: an X across the frame.
+  float dx = min(seg(vUv, vec2(-0.82, -0.82), vec2(0.82, 0.82)), seg(vUv, vec2(-0.82, 0.82), vec2(0.82, -0.82)));
+  float ax = fwidth(dx);
+  if (vTick.z < -0.5) {
+    line = max(line, (1.0 - smoothstep(0.07 - ax, 0.07 + ax, dx)) * vTick.w);
+    halo = max(halo, 1.0 - smoothstep(0.16 - ax, 0.16 + ax, dx));
   }
   vec4 c = vec4(vHalo.rgb, 1.0) * halo * vHalo.a;
   c = c * (1.0 - fill) + vec4(vFill.rgb, 1.0) * fill;
@@ -299,7 +311,7 @@ fn vsGlyph(@builtin(vertex_index) vi : u32, @location(4) origin : vec4<f32>, @lo
     turn = moving && dl > 1e-4;
   } else if (style == 2) {
     out.cells = vec2<i32>(-1, ${LAYOUT.mapGlyphs} + i32(dom));
-    out.fill = vec4<f32>(team.rgb, 1.0);
+    out.fill = vec4<f32>(abs(team.rgb), 1.0);
     out.line = vec4<f32>(dark, 0.0);
     out.halo = vec4<f32>(0.0, 0.0, 0.0, 0.45);
     out.tick = vec4<f32>(head, select(0.0, 1.0, moving), 1.0);
@@ -311,6 +323,11 @@ fn vsGlyph(@builtin(vertex_index) vi : u32, @location(4) origin : vec4<f32>, @lo
     out.tick = vec4<f32>(head, select(0.0, 1.0, moving), 1.0);
   }
   if (u.opt.x < 0.5) { out.tick.z = 0.0; }
+  // A wreck (\`data/deaths.ts\`): its fill greyed and the frame crossed out, as APP-6 and MIL-STD-2525 mark destroyed (tick.z -1).
+  if ((word & ${WORD_DEAD}u) != 0u && !effect && !weapon) {
+    out.fill = vec4<f32>(mix(vec3<f32>(0.4), out.fill.rgb, 0.3), out.fill.a);
+    out.tick.z = -1.0;
+  }
   out.glow.a = out.glow.a * alpha;
   out.fill.a = out.fill.a * alpha;
   out.halo.a = out.halo.a * alpha;
@@ -352,6 +369,13 @@ fn fsGlyph(in : GOut) -> @location(0) vec4<f32> {
   if (in.tick.z > 0.5) {
     line = max(line, (1.0 - smoothstep(0.055 - aa, 0.055 + aa, dd)) * in.tick.w);
     halo = max(halo, 1.0 - smoothstep(0.13 - aa, 0.13 + aa, dd));
+  }
+  // Destroyed: an X across the frame.
+  let dx = min(seg(in.uv, vec2<f32>(-0.82, -0.82), vec2<f32>(0.82, 0.82)), seg(in.uv, vec2<f32>(-0.82, 0.82), vec2<f32>(0.82, -0.82)));
+  let ax = fwidth(dx);
+  if (in.tick.z < -0.5) {
+    line = max(line, (1.0 - smoothstep(0.07 - ax, 0.07 + ax, dx)) * in.tick.w);
+    halo = max(halo, 1.0 - smoothstep(0.16 - ax, 0.16 + ax, dx));
   }
   var c = vec4<f32>(in.halo.rgb, 1.0) * halo * in.halo.a;
   c = c * (1.0 - fill) + vec4<f32>(in.fill.rgb, 1.0) * fill;

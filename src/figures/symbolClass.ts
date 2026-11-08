@@ -189,6 +189,8 @@ export function isEffectDomain(d: number): boolean {
 export const WORD_TEAMS = 15;
 /** The moving bit: set by the place pass for a unit with a heading worth drawing. */
 export const WORD_MOVING = 1 << 20;
+/** The dead bit: set where the unit is a wreck now (`data/deaths.ts`); its symbol is crossed out. */
+export const WORD_DEAD = 1 << 21;
 /** Instance float: `-WORD_BASE - word`. */
 export const WORD_BASE = 1000;
 

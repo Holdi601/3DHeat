@@ -17,7 +17,9 @@ import { axesOf, FollowRig, type RigCamera, type RigMode, type Vec3 } from './fo
 import { HEAT_VS, LINE_HEAT_VS } from './webgl2/shaders';
 import { HEAT_WGSL, LINE_HEAT_WGSL } from './webgpu/shaders';
 import { emptySample, MotionModel } from '../figures/motion';
-import { gpuTrackStore, unpackAim } from './gpuTracks/store';
+import { gpuTrackStore, trackDeadAt, unpackAim } from './gpuTracks/store';
+import { deadAt, deathsOf } from '../data/deaths';
+import { wreckColour, wreckShade } from '../figures/wreck';
 import { aimOf } from '../figures/aim';
 import { emptyPose, evaluateTrack } from './gpuTracks/evaluate';
 
@@ -457,5 +459,40 @@ describe('turrets point where the shots go', () => {
     let worst = 0;
     for (const r of shots) worst = Math.max(worst, angleOff(d.yaw![r - 1], d.yaw![r]));
     expect(worst).toBeGreaterThan((30 * Math.PI) / 180);
+  });
+});
+
+// ------------------------------------------------------------------ wrecks
+
+describe('a dead unit is drawn as a wreck from its death on', () => {
+  // The tank above, killed at 60 s: its alive column 0 from then on, as War Thunder's converter writes a wreck.
+  const { d: alive } = tank();
+  const n = alive.count;
+  const flag = Float32Array.from(alive.time!, (t) => (t >= 60 ? 0 : 1));
+  const d = { ...alive, id: 'wreck', attrs: [...alive.attrs, { name: 'alive', kind: 'number', data: flag, min: 0, max: 1 }] } as unknown as Dataset;
+  const e = deathsOf(d);
+
+  it('on the CPU figures and the GPU tracks alike, at every frame of a minute either side', () => {
+    const s = gpuTrackStore(d, { maxKeys: 1e9 })!;
+    const first = s.dataset.time![0];
+    const last = s.dataset.time![n - 1];
+    let wrong = 0;
+    for (let t = 0; t <= 120; t += 1 / 60) {
+      const frac = (t - first) / (last - first);
+      if (trackDeadAt(s.trackData, 0, frac) !== deadAt(e, 0, t)) wrong++;
+      if (deadAt(e, 0, t) !== t >= 60) wrong++;
+    }
+    // The GPU's 16-bit step across two minutes is 2 ms: at most the frame on the death itself may differ.
+    expect(wrong).toBeLessThanOrEqual(1);
+  });
+
+  it('charred: dark and grey whatever the team colour, a hint of it kept', () => {
+    for (const team of [[0.2, 0.45, 1], [0.95, 0.3, 0.25], [1, 1, 1]]) {
+      const w = wreckColour(team);
+      expect(Math.max(...w) - Math.min(...w)).toBeLessThan(0.07);
+      expect(Math.max(...w)).toBeLessThan(0.25);
+      // Its whole figure, dark parts and team parts, within the charred range.
+      for (const base of [[0.1, 0.1, 0.1], [0.8, 0.8, 0.8]]) expect(Math.max(...wreckShade(base[0], base[1], base[2], w))).toBeLessThan(0.3);
+    }
   });
 });

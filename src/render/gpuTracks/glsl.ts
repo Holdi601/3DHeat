@@ -14,7 +14,10 @@
  */
 
 import { CHUNK_SHIFT } from './store';
-import { C_AGM, C_SAM, C_SHIP, D_BOMB, D_CHAFF, D_FLARE, D_GROUND, D_HELI, D_MARKER, D_MISC, D_MISSILE, D_ROCKET, D_SHELL, D_STATIC, FADE_FROM_F, FALLBACK_AIR, FALLBACK_GROUND, WEAPON_PX_F, WORD_BASE, WORD_MOVING } from '../symbols/shaderConsts';
+import { WRECK_GREY, WRECK_TINT } from '../../figures/wreck';
+import { C_AGM, C_SAM, C_SHIP, D_BOMB, D_CHAFF, D_FLARE, D_GROUND, D_HELI, D_MARKER, D_MISC, D_MISSILE, D_ROCKET, D_SHELL, D_STATIC, FADE_FROM_F, FALLBACK_AIR, FALLBACK_GROUND, WEAPON_PX_F, WORD_BASE, WORD_DEAD, WORD_MOVING } from '../symbols/shaderConsts';
+
+const f = (x: number) => (Number.isInteger(x) ? `${x}.0` : `${x}`);
 
 /**
  * \`symbols/lod.ts\` in GLSL, as the WebGPU place shader has it (\`shader.ts\`):
@@ -262,7 +265,19 @@ void main() {
   uint cls = word & 255u;
   if (speed > 0.5 * uLod.x) word |= ${WORD_MOVING}u;
   float age = -timeAt(first);
-  oTeam = vec4(float(c & 255u) / 255.0, float((c >> 8u) & 255u) / 255.0, float((c >> 16u) & 255u) / 255.0, -${WORD_BASE}.0 - float(word));
+  vec3 team = vec3(float(c & 255u) / 255.0, float((c >> 8u) & 255u) / 255.0, float((c >> 16u) & 255u) / 255.0);
+  // A wreck between its death and its return to life (\`store.ts\` setDeadSpan): charred grey, negated for its
+  // model (\`figures/wreck.ts\`; the glyphs and trails take its size), its symbol crossed out.
+  uint dA = t1.y >> 16u;
+  if (dA != 0u) {
+    float frac = age / max(timeAt(last) + age, 1e-6);
+    uint dB = t1.z >> 16u;
+    if (frac >= float(dA - 1u) / 65534.0 && (dB == 0u || frac < float(dB - 1u) / 65534.0)) {
+      team = -(vec3(${f(WRECK_GREY)}) + ${f(WRECK_TINT)} * team);
+      word = (word & ~${WORD_MOVING}u) | ${WORD_DEAD}u;
+    }
+  }
+  oTeam = vec4(team, -${WORD_BASE}.0 - float(word));
   oForward = vec4(f, 1.0);
   // The streak's speed; past a motor's burn, a million more (thin smoke).
   float sp = weapon && uOpt.x > 0.0 ? speed : -1.0;
@@ -320,7 +335,7 @@ void main() {
   bool burnt = iUp.w >= 1e6;
   float speed = burnt ? iUp.w - 1e6 : iUp.w;
   float secs = uStreak;
-  vec3 col = iTeam.rgb;
+  vec3 col = abs(iTeam.rgb);
   float a = 0.9;
   if (dom == ${D_SHELL}u) { secs = 0.06; col = vec3(1.0, 0.82, 0.4); a = 1.0; }
   else if (dom == ${D_FLARE}u) { secs = 1.2; col = vec3(0.78, 0.78, 0.76); a = 0.5; }
@@ -413,7 +428,7 @@ void main() {
     p = key.xyz;
     a = 0.8 * clamp(1.0 - (t - key.w) / W, 0.0, 1.0);
   }
-  vColor = vec4(iTeam.rgb, a);
+  vColor = vec4(abs(iTeam.rgb), a);
   vWorld = p;
   gl_Position = uViewProj * vec4(p, 1.0);
 }

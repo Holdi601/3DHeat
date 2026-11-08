@@ -14,6 +14,7 @@
  */
 
 import { NO_PITCH_BELOW } from '../figures/instances';
+import { WRECK_BASE, WRECK_GAIN } from '../figures/wreck';
 import { AMBIENT, GROUND_COLOR, SHEEN_BASE, SHEEN_COLOR, SHEEN_UP, SKY_COLOR, SUN_COLOR, SUN_DIR, UNLIT } from '../figures/light';
 
 const f = (v: number) => {
@@ -150,6 +151,8 @@ void main() {
   vec3 an = articulate(aNormal.xyz, iUp.w, iTeam.w, false);
   vec3 n = f * an.x + u * an.y + r * an.z;
   vec3 base = aTint > 0.5 ? iTeam.rgb * aColor.rgb : aColor.rgb;
+  // A wreck (\`figures/wreck.ts\`): the whole figure charred, its own shade kept as detail.
+  if (iTeam.r < 0.0) base = -iTeam.rgb * (${f(WRECK_BASE)} + ${f(WRECK_GAIN)} * dot(aColor.rgb, vec3(0.299, 0.587, 0.114)));
   vColor = vec4(shadeFigure(base, n, aNormal.w), aColor.a * iForward.w);
   vWorld = world;
   gl_Position = uViewProj * vec4(world, 1.0);
@@ -208,6 +211,8 @@ fn vsFigure(
   let n = f * an.x + up * an.y + r * an.z;
   var base = colour.rgb;
   if (tint > 0.5) { base = team.rgb * colour.rgb; }
+  // A wreck (\`figures/wreck.ts\`): the whole figure charred, its own shade kept as detail.
+  if (team.r < 0.0) { base = -team.rgb * (${f(WRECK_BASE)} + ${f(WRECK_GAIN)} * dot(colour.rgb, vec3<f32>(0.299, 0.587, 0.114))); }
   out.colour = vec4<f32>(shadeFigure(base, n, normal.w), colour.a * forward.w);
   out.world = world;
   out.pos = u.viewProj * vec4<f32>(world, 1.0);
