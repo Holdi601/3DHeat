@@ -736,6 +736,7 @@ const PROP_CUES: Record<string, CueEntry> = {
   'g4m-betty': air('g4m-betty', [RADIALS2, GLASS_NOSE, FIN, { cue: 'fat cigar body', check: deepBody(0.1) }]),
   'b-26-marauder': air('b-26-marauder', [RADIALS2, GLASS_NOSE, FIN, { cue: 'round cigar body', check: (s) => s.bodyWidth >= 1.4 }]),
   'pv-2': air(['pv-2', 'b-34'], [RADIALS2, TWIN_FINS]),
+  beaufort: air('beaufort', [RADIALS2, GLASS_NOSE, { cue: 'dorsal turret amidships behind the wing', check: (s) => bump(s.fuselage?.top, 0.4, -0.9, 1, 0.15) }, { cue: 'nacelles slung low under a wing of strong dihedral', check: (s) => dihedral(s) >= 6 }]),
   hudson: air('hudson', [RADIALS2, GLASS_NOSE, { cue: 'twin oval fins set inboard on the tailplane', check: hTail }, { cue: 'dorsal turret well aft', check: (s) => bump(s.fuselage?.top, -2.8, -4.2, 1, 0.3) }]),
   hampden: air('hampden', [RADIALS2, TWIN_FINS, GLASS_NOSE, { cue: 'deep narrow forward body, slim tail boom', check: (s) => depthAt(s, noseX(s) - 3) >= 2 * depthAt(s, tailX(s) + 3) }]),
   wellington: air('wellington', [RADIALS2, FIN, { cue: 'high-aspect wing with dihedral', check: (s) => s.span / s.length >= 1.3 && dihedral(s) >= 2 }]),
