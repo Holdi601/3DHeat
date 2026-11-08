@@ -4,7 +4,7 @@ import { clampBudgets, detectBudgets, type Budgets } from '../data/memory';
 import { sayDataset, speakWith } from '../data/msg';
 import { int, lang, num, onLanguageChange, t } from '../i18n';
 import { datasetCapabilities, defaultColumnSplit, splitHasTwoSides } from '../data/validate';
-import { suggestLineSettings, suggestMaxJump, type LineSettings } from '../data/lines';
+import { suggestLineSettings, suggestMaxJumpAsync, type LineSettings } from '../data/lines';
 import { DEFAULT_CURVE, normaliseCurve, type CurvePoint } from './curve';
 import type { Projection } from '../render/camera';
 import type { Keyframe, PathEasing } from '../render/campath';
@@ -759,7 +759,15 @@ export const useStore = create<AppState>((set) => ({
   showGrid: true,
   showAxes: true,
 
-  setDataset: (d) =>
+  setDataset: (d) => {
+    // The jump limit is measured off the frame and filled in when it is known,
+    // unless it was set by hand meanwhile; see `suggestMaxJumpAsync`.
+    if (d) {
+      void suggestMaxJumpAsync(d).then((maxJump) => {
+        const s = useStore.getState();
+        if (maxJump !== null && s.dataset === d && s.lines.maxJump === null) s.patchLines({ maxJump });
+      });
+    }
     set((s) => {
       if (!d) return { dataset: null };
       const cap = datasetCapabilities(d);
@@ -815,7 +823,7 @@ export const useStore = create<AppState>((set) => ({
                 ? 'heat-simple'
                 : s.mode,
         // What a route is, guessed afresh from each dataset's own events.
-        lines: { ...suggestLineSettings(d), maxJump: suggestMaxJump(d) },
+        lines: { ...suggestLineSettings(d), maxJump: null },
         timeline: {
           ...s.timeline,
           // Without a time axis there is nothing to play.
@@ -830,7 +838,8 @@ export const useStore = create<AppState>((set) => ({
           playing: false,
         },
       };
-    }),
+    });
+  },
   setLevel: (level) =>
     set((s) => {
       // Release the decoded bitmap: at map resolutions it is tens of megabytes

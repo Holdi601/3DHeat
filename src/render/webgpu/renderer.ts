@@ -65,6 +65,10 @@ import { t } from '../../i18n';
 /** Largest block index texture we size the per-frame buffer for. */
 const MAX_BLOCKS = MAX_PLAN_BLOCKS;
 const BLOCK_SHIFT = Math.log2(SAMPLE_BLOCK);
+/** Milliseconds a frame spends packing and writing a dataset that is arriving; see `flushDataUpload`. */
+const DATA_UPLOAD_MS = 3;
+/** Rows read or packed between checks of the clock: small, as the first slices run before the code is optimised. */
+const DATA_SLICE_ROWS = 16_384;
 /** Geometry bytes written to the GPU per frame while a level arrives; see `flushUploads`. */
 const UPLOAD_SLICE_BYTES = 8 * 1024 * 1024;
 /** Heat target sets kept across resolution changes: the levels in use and their neighbours. */
@@ -78,6 +82,20 @@ const DEPTH_FORMAT: GPUTextureFormat = 'depth24plus';
 // simply never read them.
 const SCENE_UNIFORM_BYTES = 64 + 16 * 8;
 const MAP_UNIFORM_BYTES = 64 + 16 + 16 + 16;
+
+/** A chunk on its way to the GPU, a slice a frame; see `flushDataUpload`. */
+interface PendingChunk {
+  start: number;
+  rows: number;
+  hasTime: boolean;
+  /** The next row to read: bounds first, then packing. */
+  cursor: number;
+  packing: boolean;
+  min: [number, number, number];
+  max: [number, number, number];
+  positions: GPUBuffer | null;
+  times: GPUBuffer | null;
+}
 
 interface GpuChunk {
   positions: GPUBuffer;
@@ -627,6 +645,32 @@ export class WebgpuRenderer implements Renderer {
    * Built on demand and kept, so the first frame after switching into or out of
    * team colours pays a shader compile and no frame after it does.
    */
+  /**
+   * Make the heat pipelines of every accumulation format ahead of need.
+   *
+   * Built on first use, a switch into team colours or line heat paid the
+   * shader compile on the frame it happened. Asked for once, off the frame,
+   * the browser compiles them in the background meanwhile.
+   */
+  private prewarmed = false;
+  private prewarm(): void {
+    if (this.prewarmed) return;
+    this.prewarmed = true;
+    setTimeout(() => {
+      const formats: GPUTextureFormat[] = this.heatF32 ? ['r32float', 'rgba32float'] : ['r16float', 'rgba16float'];
+      try {
+        for (const f of formats) {
+          this.heatPipelineFor(f);
+          this.lineHeatPipelineFor(f);
+          this.decayPipelineFor(f);
+          this.mergePipelineFor(f);
+        }
+      } catch {
+        // A device lost meanwhile: the pipelines are built on use as before.
+      }
+    }, 0);
+  }
+
   private lineHeatPipelineFor(format: GPUTextureFormat): GPURenderPipeline {
     let p = this.lineHeatPipelines.get(format);
     if (!p) {
@@ -1013,7 +1057,9 @@ export class WebgpuRenderer implements Renderer {
     // Cached bind groups reference these buffers; destroying a buffer that a
     // cached group still points at makes every later command buffer invalid, and
     // the symptom is a black canvas rather than an error at the call site.
-    this.bindCache.clear();
+    // Only the heat passes' groups hold them; the rest stay, rather than all
+    // being made again on the frame a dataset arrives.
+    this.dropChunkBindGroups();
     for (const c of this.chunks) {
       c.positions.destroy();
       c.times?.destroy();
@@ -1021,6 +1067,14 @@ export class WebgpuRenderer implements Renderer {
       c.lineStarts?.destroy();
     }
     this.chunks = [];
+    for (const j of this.pendingChunks) {
+      j.positions?.destroy();
+      j.times?.destroy();
+    }
+    this.pendingChunks = [];
+    this.dataGeneration++;
+    // The frame a dataset arrives on has the rest of its arrival to carry.
+    this.uploadIdle = true;
     this.lines = null;
     this.filterMaskKey = '';
     this.gpuBytesUsed = 0;
@@ -1048,7 +1102,19 @@ export class WebgpuRenderer implements Renderer {
       }
       if (affordable < rows) rows = affordable;
 
-      this.chunks.push(this.uploadChunk(dataset, start, rows, hasTime));
+      // Queued rather than packed here: packing and writing 100 million rows in
+      // one go held the page for two seconds. See `flushDataUpload`.
+      this.pendingChunks.push({
+        start,
+        rows,
+        hasTime,
+        cursor: start,
+        packing: false,
+        min: [Infinity, Infinity, Infinity],
+        max: [-Infinity, -Infinity, -Infinity],
+        positions: null,
+        times: null,
+      });
       this.gpuBytesUsed += rows * bytesPerRow;
       this.residentRows += rows;
       if (start + rows < dataset.count && rows < Math.min(CHUNK_ROWS, dataset.count - start)) {
@@ -1060,7 +1126,7 @@ export class WebgpuRenderer implements Renderer {
 
   setLines(lines: LineData | null): void {
     // Cached bind groups hold the buffers about to be destroyed.
-    this.bindCache.clear();
+    this.dropChunkBindGroups();
     for (const c of this.chunks) {
       if (c.lineStarts) {
         c.lineStarts.destroy();
@@ -1082,76 +1148,141 @@ export class WebgpuRenderer implements Renderer {
     }
   }
 
-  private uploadChunk(
-    dataset: Dataset,
-    start: number,
-    rows: number,
-    hasTime: boolean,
-  ): GpuChunk {
-    const { px, py, pz, teamId } = dataset;
-    let minX = Infinity;
-    let minY = Infinity;
-    let minZ = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-    let maxZ = -Infinity;
-    for (let i = start; i < start + rows; i++) {
-      if (px[i] < minX) minX = px[i];
-      if (px[i] > maxX) maxX = px[i];
-      if (py[i] < minY) minY = py[i];
-      if (py[i] > maxY) maxY = py[i];
-      if (pz[i] < minZ) minZ = pz[i];
-      if (pz[i] > maxZ) maxZ = pz[i];
-    }
-    const sizeX = Math.max(1e-6, maxX - minX);
-    const sizeY = Math.max(1e-6, maxY - minY);
-    const sizeZ = Math.max(1e-6, maxZ - minZ);
+  /** Chunks still on their way to the GPU, in order. */
+  private pendingChunks: PendingChunk[] = [];
+  /** Bumped when a dataset is set and as each of its chunks lands, so the engine redraws with it. */
+  dataGeneration = 0;
+  private packScratch = new Uint32Array(0);
+  private timeScratch = new Uint32Array(0);
 
-    // Two u32 per row: x | y<<16, then z | team<<16.
-    const packed = new Uint32Array(rows * 2);
-    const sx = 65535 / sizeX;
-    const sy = 65535 / sizeY;
-    const sz = 65535 / sizeZ;
-    for (let i = 0; i < rows; i++) {
-      const r = start + i;
-      const qx = clampU16((px[r] - minX) * sx);
-      const qy = clampU16((py[r] - minY) * sy);
-      const qz = clampU16((pz[r] - minZ) * sz);
-      packed[i * 2] = qx | (qy << 16);
-      packed[i * 2 + 1] = qz | ((teamId ? teamId[r] : 0) << 16);
-    }
-    const positions = this.makeBuffer(packed, GPUBufferUsage.STORAGE, `chunk ${start} pos`);
+  /** Skip the upload for a frame: set on the frame a dataset arrives. */
+  private uploadIdle = false;
 
-    let times: GPUBuffer | null = null;
+  /** Whether some of the dataset is still on its way to the GPU. */
+  get dataPending(): boolean {
+    return this.pendingChunks.length > 0;
+  }
+
+  /**
+   * Pack and write the dataset a slice at a time, for a few milliseconds a frame.
+   *
+   * A chunk's bounds are read first, since its positions are quantised against
+   * them, then it is packed and written in slices. It is drawn once all of it is
+   * there; the chunks before it draw meanwhile. Done in one call on the frame the
+   * dataset arrived, the same work was a stall that grew with the row count: two
+   * seconds without a frame for 100 million rows.
+   */
+  private flushDataUpload(): void {
+    const ds = this.dataset;
+    if (!ds || this.pendingChunks.length === 0) return;
+    if (this.uploadIdle) {
+      this.uploadIdle = false;
+      return;
+    }
+    const { px, py, pz, teamId } = ds;
+    const until = performance.now() + DATA_UPLOAD_MS;
+    while (this.pendingChunks.length > 0 && performance.now() < until) {
+      const j = this.pendingChunks[0];
+      const end = j.start + j.rows;
+      const stop = Math.min(end, j.cursor + DATA_SLICE_ROWS);
+      if (!j.packing) {
+        const mn = j.min;
+        const mx = j.max;
+        for (let i = j.cursor; i < stop; i++) {
+          const x = px[i];
+          const y = py[i];
+          const z = pz[i];
+          if (x < mn[0]) mn[0] = x;
+          if (x > mx[0]) mx[0] = x;
+          if (y < mn[1]) mn[1] = y;
+          if (y > mx[1]) mx[1] = y;
+          if (z < mn[2]) mn[2] = z;
+          if (z > mx[2]) mx[2] = z;
+        }
+        j.cursor = stop;
+        if (stop >= end) {
+          j.packing = true;
+          j.cursor = j.start;
+          j.positions = this.device.createBuffer({
+            label: `chunk ${j.start} pos`,
+            size: Math.max(4, j.rows * 8),
+            usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+          });
+          if (j.hasTime) {
+            j.times = this.device.createBuffer({
+              label: `chunk ${j.start} time`,
+              size: Math.max(4, j.rows * 4),
+              usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+            });
+          }
+        }
+        continue;
+      }
+      // Two u32 per row: x | y<<16, then z | team<<16.
+      const n = stop - j.cursor;
+      if (this.packScratch.length < DATA_SLICE_ROWS * 2) this.packScratch = new Uint32Array(DATA_SLICE_ROWS * 2);
+      const packed = this.packScratch;
+      const sx = 65535 / Math.max(1e-6, j.max[0] - j.min[0]);
+      const sy = 65535 / Math.max(1e-6, j.max[1] - j.min[1]);
+      const sz = 65535 / Math.max(1e-6, j.max[2] - j.min[2]);
+      const [x0, y0, z0] = j.min;
+      for (let i = 0; i < n; i++) {
+        const r = j.cursor + i;
+        packed[i * 2] = clampU16((px[r] - x0) * sx) | (clampU16((py[r] - y0) * sy) << 16);
+        packed[i * 2 + 1] = clampU16((pz[r] - z0) * sz) | ((teamId ? teamId[r] : 0) << 16);
+      }
+      this.device.queue.writeBuffer(j.positions!, (j.cursor - j.start) * 8, packed as unknown as BufferSource, 0, n * 2);
+      if (j.times && ds.time && ds.lifetime) {
+        const q = this.timeQuantum(ds, j.start, j.rows);
+        if (this.timeScratch.length < DATA_SLICE_ROWS) this.timeScratch = new Uint32Array(DATA_SLICE_ROWS);
+        const tl = this.timeScratch;
+        for (let i = 0; i < n; i++) {
+          const r = j.cursor + i;
+          const t = clampU16((ds.time[r] - q.timeMin) * q.invTime);
+          const life = ds.lifetime[r];
+          const l = life < 0 ? 65535 : Math.min(65534, clampU16(life * q.invLife));
+          tl[i] = t | (l << 16);
+        }
+        this.device.queue.writeBuffer(j.times, (j.cursor - j.start) * 4, tl as unknown as BufferSource, 0, n);
+      }
+      j.cursor = stop;
+      if (stop >= end) {
+        this.pendingChunks.shift();
+        this.chunks.push(this.landChunk(ds, j));
+        this.dataGeneration++;
+      }
+    }
+  }
+
+  /** How a chunk's times and lifetimes are quantised: from its first and last row. */
+  private timeQuantum(ds: Dataset, start: number, rows: number) {
+    const timeMin = ds.time![start];
+    const span = Math.max(1e-6, ds.time![start + rows - 1] - timeMin);
+    const lifeCap = Math.max(1e-6, ds.maxLifetimeGap);
+    return { timeMin, span, lifeCap, invTime: 65535 / span, invLife: 65534 / lifeCap };
+  }
+
+  /** A chunk whose rows have all arrived, as the passes draw it. */
+  private landChunk(ds: Dataset, j: PendingChunk): GpuChunk {
+    const sizeX = Math.max(1e-6, j.max[0] - j.min[0]);
+    const sizeY = Math.max(1e-6, j.max[1] - j.min[1]);
+    const sizeZ = Math.max(1e-6, j.max[2] - j.min[2]);
     let timeMin = 0;
     let timeScale = 1;
     let lifeScale = 1;
-    if (hasTime && dataset.time && dataset.lifetime) {
-      timeMin = dataset.time[start];
-      const span = Math.max(1e-6, dataset.time[start + rows - 1] - timeMin);
-      timeScale = span / 65535;
-      const lifeCap = Math.max(1e-6, dataset.maxLifetimeGap);
-      lifeScale = lifeCap / 65534;
-      const invTime = 65535 / span;
-      const invLife = 65534 / lifeCap;
-      const tl = new Uint32Array(rows);
-      for (let i = 0; i < rows; i++) {
-        const r = start + i;
-        const t = clampU16((dataset.time[r] - timeMin) * invTime);
-        const life = dataset.lifetime[r];
-        const l = life < 0 ? 65535 : Math.min(65534, clampU16(life * invLife));
-        tl[i] = t | (l << 16);
-      }
-      times = this.makeBuffer(tl, GPUBufferUsage.STORAGE, `chunk ${start} time`);
+    if (j.times && ds.time && ds.lifetime) {
+      const q = this.timeQuantum(ds, j.start, j.rows);
+      timeMin = q.timeMin;
+      timeScale = q.span / 65535;
+      lifeScale = q.lifeCap / 65534;
     }
-
-    return {
-      positions,
-      start,
+    const chunk: GpuChunk = {
+      positions: j.positions!,
+      start: j.start,
       lineStarts: null,
-      times,
-      rows,
-      aabbMin: [minX, minY, minZ],
+      times: j.times,
+      rows: j.rows,
+      aabbMin: [j.min[0], j.min[1], j.min[2]],
       aabbSize: [sizeX, sizeY, sizeZ],
       timeMin,
       timeScale,
@@ -1161,6 +1292,12 @@ export class WebgpuRenderer implements Renderer {
       filterSlots: 0,
       splitSlot: -1,
     };
+    // Routes set while it was on its way get their starts now.
+    if (this.lines) {
+      chunk.lineStarts = this.makeBuffer(packLineStarts(ds, this.lines, chunk.start, chunk.rows, 3), GPUBufferUsage.STORAGE, `chunk ${chunk.start} line starts`);
+      this.gpuBytesUsed += chunk.rows * 12;
+    }
+    return chunk;
   }
 
   /**
@@ -1213,7 +1350,7 @@ export class WebgpuRenderer implements Renderer {
     const reuse = old && old.size === Math.max(4, align4(bytes));
     if (old && !reuse) {
       // Same hazard as setDataset: a cached bind group still points at this.
-      this.bindCache.clear();
+      this.dropChunkBindGroups();
       this.gpuBytesUsed -= old.size;
       old.destroy();
       chunk.filterValues = null;
@@ -1758,6 +1895,8 @@ export class WebgpuRenderer implements Renderer {
     // cache keys stable rather than growing without bound.
     this.uniforms.reset();
     this.flushUploads();
+    this.flushDataUpload();
+    this.prewarm();
     const encoder = this.device.createCommandEncoder({ label: 'frame' });
     // An idle frame recomposites the buffers it already has. They are our own
     // textures and retain reliably; the canvas surface does not, so the composite
@@ -2945,6 +3084,13 @@ export class WebgpuRenderer implements Renderer {
    * the top of every frame, so the cache warms up within one frame and never
    * grows after that.
    */
+  /** Forget the cached bind groups that hold a chunk's buffers: the heat passes', keyed by chunk. */
+  private dropChunkBindGroups(): void {
+    for (const key of [...this.bindCache.keys()]) {
+      if (key.startsWith('heat:') || key.startsWith('lineheat:')) this.bindCache.delete(key);
+    }
+  }
+
   private cachedBindGroup(
     key: string,
     layout: GPUBindGroupLayout,
@@ -3396,6 +3542,11 @@ export class WebgpuRenderer implements Renderer {
   }
 
   dispose(): void {
+    for (const j of this.pendingChunks) {
+      j.positions?.destroy();
+      j.times?.destroy();
+    }
+    this.pendingChunks = [];
     for (const c of this.chunks) {
       c.positions.destroy();
       c.times?.destroy();
@@ -3618,7 +3769,8 @@ function align4(n: number): number {
 }
 
 function clampU16(v: number): number {
-  return v < 0 ? 0 : v > 65535 ? 65535 : Math.round(v);
+  // Rounds as Math.round does for these non-negative values, without the call.
+  return v < 0 ? 0 : v > 65535 ? 65535 : (v + 0.5) | 0;
 }
 
 /** Unit cube centred on the origin, 4 verts per face so normals stay flat. */
