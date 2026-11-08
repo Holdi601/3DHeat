@@ -571,12 +571,14 @@ A['lancaster'] = mp({
 
 // B-29 Superfortress: a long round tube with the stepless glazed nose, a high-aspect mid wing, four radials in long
 // nacelles, remote turret blisters top and bottom and the great fin with its dorsal fillet (30.18 x 43.05 x 8.46 m).
+// The wing's planform and the nacelles' places measured on the Journal of Recognition's sheet "B-29" (June 1944) with
+// tools/figures/twinview.py: the root's leading edge 8.5 m behind the nose, the tip chord 2.6 m.
 A['b-29'] = mp({
   cls: 'ww2-heavy-bomber', length: 30.18, span: 43.05, height: 8.46,
   glazed: 12.6,
   body: [[15.09, -0.2, -0.9, 0.35], [14.6, 0.65, -1.3, 1.0], [13.6, 1.3, -1.45, 1.4], [12.3, 1.45, -1.45, 1.45], [-8, 1.45, -1.45, 1.45], [-12, 1.3, -0.9, 1.2], [-14.5, 1.0, -0.2, 0.6], [-15.09, 0.8, 0.1, 0.4]], round: 2.1,
-  wing: [[0, 3.0, -2.6], [21.53, -0.5, -2.4]], tipR: 0.6, wingUp: 0, dihedral: 4.5,
-  nacelles: [{ y: 5.1, x: 4.4, back: -3.6, r: 0.85, z: 0, kind: 'radial', below: 0.2 }, { y: 10.2, x: 3.8, back: -3.2, r: 0.85, z: 0.4, kind: 'radial', below: 0.2 }],
+  wing: [[0, 6.6, 0.85], [21.53, 4.0, 1.5]], tipR: 0.6, wingUp: 0, dihedral: 4.5,
+  nacelles: [{ y: 4.77, x: 8.9, back: 0.85, r: 0.85, z: 0, kind: 'radial', below: 0.2 }, { y: 9.98, x: 8.26, back: 1.25, r: 0.85, z: 0.4, kind: 'radial', below: 0.2 }],
   prop: [5.05, 4],
   fin: [[-6.5, 1.45], [-10.0, 2.3], [-12.0, 5.2], [-13.2, 5.4], [-14.4, 5.0], [-15.0, 1.0]],
   tail: [[0, -10.2, -14.0], [6.7, -12.0, -13.8]], tailR: 0.5, tailUp: 0.3,
@@ -914,17 +916,18 @@ A['hs-129'] = mp({
 });
 
 // Fw 189: a fully glazed central nacelle, two booms carrying the Argus engines forward and the fins aft, the
-// tailplane joining them (12.03 x 18.4 x 3.1 m).
+// tailplane joining them (12.03 x 18.4 x 3.1 m). The wing's planform, the booms' places and the nacelle's plan measured
+// on the Fw 189 sheet of FM 30-30 (1943) with tools/figures/twinview.py.
 A['fw-189'] = {
   ...mp({
     glazed: -1.0,
     cls: 'ww2-recon', length: 12.03, span: 18.4, height: 3.1,
-    body: [[4.2, 0.0, -0.45, 0.3], [3.8, 0.55, -0.6, 0.6], [2.8, 0.75, -0.7, 0.7], [0.5, 0.75, -0.7, 0.7], [-1.6, 0.55, -0.5, 0.5], [-2.6, 0.3, -0.2, 0.15]],
-    wing: [[0, 1.9, -0.9], [2.0, 1.9, -0.9], [9.2, 0.6, -0.3]], tipR: 0.4, wingUp: 0,
-    nacelles: [{ y: 1.8, x: 3.5, back: -5.4, r: 0.5, z: 0, below: 0.1 }],
+    body: [[5.3, 0.0, -0.45, 0.3], [4.9, 0.55, -0.6, 0.55], [3.8, 0.75, -0.7, 0.59], [0.5, 0.75, -0.7, 0.4], [-1.6, 0.55, -0.5, 0.27], [-2.6, 0.3, -0.2, 0.15]],
+    wing: [[0, 3.7, 1.0], [3.25, 3.65, 1.14], [6.09, 2.84, 1.14], [8.89, 2.11, 1.2], [9.2, 1.55, 1.55]], tipR: 0.4, wingUp: 0,
+    nacelles: [{ y: 2.05, x: 5.98, back: -5.43, r: 0.5, z: 0, below: 0.1 }],
     prop: [2.6, 2],
-    fin: [[-4.6, -0.7], [-4.7, 1.2], [-5.0, 1.3], [-5.9, 1.3], [-6.0, 1.0], [-6.0, -0.6], [-5.6, -0.8]], twin: 3.6,
-    tail: [[0, -4.7, -5.9], [1.8, -4.7, -5.9]], tailUp: 0.25,
+    fin: [[-4.6, -0.7], [-4.7, 1.2], [-5.0, 1.3], [-5.9, 1.3], [-6.0, 1.0], [-6.0, -0.6], [-5.6, -0.8]], twin: 4.1,
+    tail: [[0, -4.7, -5.9], [2.05, -4.7, -5.9]], tailUp: 0.25,
   }),
 };
 
@@ -1550,7 +1553,9 @@ A['tb-3'] = mp({ cls: 'ww2-heavy-bomber', length: 24.4, span: 41.8, height: 8.5,
 // G8N Renzan: four radials, a mid wing, a tall single fin (22.94 x 32.54 x 7.2 m).
 A['g8n'] = mp({ hood: { front: 9.8, back: 7.6 }, glazed: 10.6, cls: 'ww2-heavy-bomber', length: 22.94, span: 32.54, height: 7.2, body: [[11.47, 0.0, -0.6, 0.4], [10.8, 0.9, -1.05, 0.95], [9.4, 1.35, -1.3, 1.05], [8.0, 1.6, -1.35, 1.1], [-5, 1.45, -1.3, 1.05], [-9.5, 1.1, -0.5, 0.7], [-11.47, 0.8, 0.1, 0.3]], wing: [[0, 3.4, -2.6], [16.27, 0.4, -0.9]], tipR: 0.5, wingUp: -0.1, dihedral: 4, nacelles: [{ y: 4.0, x: 4.6, back: -2.4, r: 0.75, z: -0.1, kind: 'radial' }, { y: 8.0, x: 4.0, back: -2.0, r: 0.75, z: 0.2, kind: 'radial' }], prop: [3.6, 4], fin: [[-6, 1.4], [-9.0, 2.4], [-10.4, 5.2], [-11.2, 5.4], [-11.6, 4.8], [-11.47, 0.8]], tail: [[0, -8.8, -11.4], [5.0, -9.8, -11.3]], tailR: 0.4, tailUp: 0.7 });
 // Hampden: the "flying suitcase" - a deep narrow front body, a thin boom to twin fins, two Pegasus radials (16.33 x 21.08 x 4.55 m).
-A['hampden'] = mp({ hood: { front: 6.6, back: 3.2 }, glazed: 7.0, cls: 'ww2-bomber', length: 16.33, span: 21.08, height: 4.55, body: [[8.17, 0.0, -0.6, 0.4], [7.6, 0.7, -0.95, 0.55], [6.2, 1.3, -1.25, 0.55], [4.2, 1.35, -1.3, 0.55], [1.0, 1.2, -1.25, 0.55], [-0.5, 0.9, -0.6, 0.4], [-2.0, 0.6, 0.1, 0.25], [-7.9, 0.5, 0.25, 0.18], [-8.17, 0.45, 0.25, 0.1]], round: 3, wing: [[0, 2.8, -1.8], [10.54, 0.6, -0.4]], tipR: 0.4, wingUp: -0.2, dihedral: 6, nacelles: [{ y: 2.9, x: 4.0, back: -1.6, r: 0.72, z: -0.2, kind: 'radial' }], prop: [3.5, 3], fin: [[-6.9, -0.6], [-7.0, 1.5], [-7.4, 1.8], [-8.0, 1.8], [-8.17, 1.4], [-8.17, -0.6], [-7.9, -0.9], [-7.1, -0.9]], twin: 4.6, tail: [[0, -6.6, -8.1], [2.3, -6.8, -8.1]], tailUp: 0.4 });
+// The wing's planform (its trailing edge swept forward), the nacelles' places, the tailplane's span and the fins' spacing
+// measured on FM 30-30 (1943), sheet "Hampden", with tools/figures/twinview.py.
+A['hampden'] = mp({ hood: { front: 6.6, back: 3.2 }, glazed: 7.0, cls: 'ww2-bomber', length: 16.33, span: 21.08, height: 4.55, body: [[8.17, 0.0, -0.6, 0.4], [7.6, 0.7, -0.95, 0.55], [6.2, 1.3, -1.25, 0.55], [4.2, 1.35, -1.3, 0.55], [1.0, 1.2, -1.25, 0.55], [-0.5, 0.9, -0.6, 0.4], [-2.0, 0.6, 0.1, 0.25], [-7.9, 0.5, 0.25, 0.18], [-8.17, 0.45, 0.25, 0.1]], round: 3, wing: [[0, 5.31, -0.13], [2.15, 5.31, 0.03], [4.75, 4.24, 0.81], [10.19, 4.04, 2.44], [10.54, 3.88, 3.47]], tipR: 0.4, wingUp: -0.2, dihedral: 6, nacelles: [{ y: 3.17, x: 6.22, back: 0.32, r: 0.72, z: -0.2, kind: 'radial' }], prop: [3.5, 3], fin: [[-6.9, -0.6], [-7.0, 1.5], [-7.4, 1.8], [-8.0, 1.8], [-8.17, 1.4], [-8.17, -0.6], [-7.9, -0.9], [-7.1, -0.9]], twin: 7.5, tail: [[0, -6.36, -8.13], [3.75, -6.7, -8.1]], tailUp: 0.4 });
 
 // ---------------------------------------------------------------- Japanese and Italian fighters and attack aircraft
 
@@ -1994,13 +1999,14 @@ A['sm-92'] = booms({ cls: 'ww2-heavy-fighter', length: 13.7, span: 18.55, height
 A['fokker-g1'] = booms({ cls: 'ww2-heavy-fighter', length: 10.87, span: 17.16, height: 3.8, nacelle: [[4.4, 0.0, -0.45, 0.3], [4.0, 0.5, -0.65, 0.6], [3.0, 0.95, -0.72, 0.68], [0.2, 0.95, -0.72, 0.68], [-0.8, 0.6, -0.6, 0.55], [-2.2, 0.3, -0.3, 0.25]], hood: { front: 3.4, back: -0.2 }, y: 2.2, r: 0.65, radial: true, front: 3.9, finH: 1.5, prop: [3.0, 3], root: 2.7, tip: 1.0, wingZ: 0.2 });
 
 // BV 138: a short boat hull with the bow turret, a high wing, three diesels (the middle one high on a pylon over the
-// hull), the outer nacelles running back into booms with twin fins (19.85 x 26.94 x 5.9 m).
+// hull), the outer nacelles running back into booms with twin fins (19.85 x 26.94 x 5.9 m). The wing's planform and the
+// booms' places measured on the BV 138 sheet of FM 30-30 (1943) with tools/figures/twinview.py.
 A['bv-138'] = mp({
   cls: 'flying-boat', length: 19.85, span: 26.94, height: 5.9,
   body: [[7.4, 0.4, -0.7, 0.55], [7.0, 0.9, -1.1, 0.95], [5.6, 1.1, -1.35, 1.05], [1.0, 1.1, -1.4, 1.05], [0.9, 1.1, -1.05, 1.0], [-2.6, 0.95, -0.55, 0.8], [-4.2, 0.6, -0.1, 0.35]], round: [[7.4, 2.4], [1, 3], [-4.2, 2.4]],
   hood: { front: 5.6, back: 3.8 },
-  wing: [[0, 2.6, -1.3], [13.47, 1.4, -0.4]], tipR: 0.5, wingUp: 1.6, dihedral: 2,
-  nacelles: [{ y: 3.8, x: 3.6, back: -9.6, r: 0.5, z: 1.4, below: 0.1 }, { y: 0, x: 3.2, back: -1.2, r: 0.5, z: 2.6 }],
+  wing: [[0, 3.36, -1.4], [5.37, 3.29, -1.06], [12.06, 3.04, 0.02], [13.47, 2.6, 1.2]], tipR: 0.5, wingUp: 1.6, dihedral: 2,
+  nacelles: [{ y: 3.85, x: 4.9, back: -9.34, r: 0.5, z: 1.4, below: 0.1 }, { y: 0, x: 3.2, back: -1.2, r: 0.5, z: 2.6 }],
   prop: [3.3, 3],
   fin: [[-8.4, -0.2], [-8.5, 2.2], [-8.9, 2.5], [-9.7, 2.5], [-9.9, 2.1], [-9.9, -0.5], [-9.4, -0.7], [-8.6, -0.6]], twin: 7.6,
   tail: [[0, -8.2, -9.8], [4.0, -8.3, -9.7]], tailUp: 1.6,
