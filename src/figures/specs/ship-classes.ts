@@ -1097,24 +1097,27 @@ N['lexington-cv2'] = carrier({
 });
 // Yorktown: a straight deck open at bow and stern, a compact island with the funnel built in and a tripod mast, the
 // 5-inch singles in galleries at the deck's four corners (251.4 m long, 25.4 m beam on the waterline; 25,500 t full).
+// The flight deck's height (18.3 m), the island's place forward of the middle, its heights, funnel and tripod measured on
+// FM 30-50's (1941) profile; the galleries' heights follow the deck (estimates).
 N['yorktown'] = carrier({
-  cls: 'carrier', L: 245, B: 25.4, deck: 15,
+  cls: 'carrier', L: 245, B: 25.4, deck: 18.3,
   plan: [[116, -9], [116, 9], [110, 13], [-118, 13], [-125, 11], [-125, -11], [-118, -13], [110, -13]],
-  island: [[12, -18, 22, 14.8, 2.8, 1], [8, -4, 26, 14.8, 2.4, 1], [-4, -18, 31, 14.9, 3.4, 3]],
-  masts: [[4, 24, 14.8]],
-  turrets: level('100,13.8:1/127 92,13.8:1/127 -102,13.8:1/127b -110,13.8:1/127b', 13, 14),
-  more: { bodies: [blockOf(105, 87, 11.5, 13, 2.2, 0, 0, 13.4), blockOf(-97, -115, 11.5, 13, 2.2, 0, 0, 13.4)] },
+  island: [[35.3, 14.7, 25.9, 14.8, 2.8, 1], [14.7, -9.9, 25.9, 14.8, 2.6, 1], [14.7, -4.8, 32.8, 14.9, 3.4, 3]],
+  masts: [[20.4, 28.7, 14.8]],
+  turrets: level('100,13.8:1/127 92,13.8:1/127 -102,13.8:1/127b -110,13.8:1/127b', 16.3, 17.3),
+  more: { bodies: [blockOf(105, 87, 14.8, 16.3, 2.2, 0, 0, 13.4), blockOf(-97, -115, 14.8, 16.3, 2.2, 0, 0, 13.4)] },
 });
 // Wasp (CV-7): a smaller Yorktown on a narrower hull, the island to starboard with its tall funnel, the deck-edge lift
 // folding out on the port side forward of the middle, the 5-inch singles in galleries at the deck's four corners
-// (225.9 m overall, 24.6 m beam on the waterline; deck height an estimate).
+// (225.9 m overall, 24.6 m beam on the waterline). The flight deck's height (18.2 m), the island's length, heights, funnel
+// and mast measured on FM 30-50's (1941) profile; the galleries' heights follow the deck (estimates).
 N['wasp-cv7'] = carrier({
-  cls: 'carrier', L: 215, B: 24.6, deck: 14.5,
+  cls: 'carrier', L: 215, B: 24.6, deck: 18.2,
   plan: [[111, -8], [111, 8], [105, 12.5], [-104, 14], [-110, 12], [-110, -12], [-104, -14], [-4, -14], [-4, -17.5], [10, -17.5], [10, -13.8], [105, -12.5]],
-  island: [[10, -18, 21, 13.2, 2.6, 1], [6, -6, 25, 13.2, 2.2, 1], [-6, -18, 32, 13.4, 3.4, 3]],
-  masts: [[2, 22, 13.2]],
-  turrets: level('96,12.6:1/127 88,12.6:1/127 -92,12.6:1/127b -100,12.6:1/127b', 12.5, 13.5),
-  more: { bodies: [blockOf(101, 83, 11, 12.5, 2.0, 0, 0, 12.8), blockOf(-87, -105, 11, 12.5, 2.0, 0, 0, 12.8)] },
+  island: [[27.9, 18, 21.9, 13.2, 2.4, 1], [18, -19.3, 26, 13.2, 2.6, 1], [-0.8, -8, 35.7, 13.4, 3.4, 3]],
+  masts: [[8.4, 29.3, 13.2]],
+  turrets: level('96,12.6:1/127 88,12.6:1/127 -92,12.6:1/127b -100,12.6:1/127b', 16.2, 17.2),
+  more: { bodies: [blockOf(101, 83, 14.7, 16.2, 2.0, 0, 0, 12.8), blockOf(-87, -105, 14.7, 16.2, 2.0, 0, 0, 12.8)] },
 });
 // Shokaku: a long flight deck, a small island well forward to starboard, the two funnels curving down and out over the
 // starboard side amidships, twin 12.7 cm mounts in sponsons along both sides (257.5 m long, 26 m beam on the
