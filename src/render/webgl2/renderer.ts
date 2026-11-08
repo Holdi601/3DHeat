@@ -83,6 +83,19 @@ const LINE_UNIT = 16;
 /** The tile table's texture unit; see `bindAtlas`. */
 const TILE_UNIT = 17;
 
+/** A chunk on its way to the GPU, a slice a frame; see `flushDataUpload`. */
+interface PendingChunk {
+  start: number;
+  rows: number;
+  /** The next row to read: bounds first, then packing. */
+  cursor: number;
+  packing: boolean;
+  min: [number, number, number];
+  max: [number, number, number];
+  posTex: WebGLTexture | null;
+  timeTex: WebGLTexture | null;
+}
+
 interface GpuChunk {
   posTex: WebGLTexture;
   /** First dataset row in this chunk. */
@@ -558,6 +571,14 @@ export class Webgl2Renderer implements Renderer {
     }
     this.lines = null;
     this.chunks = [];
+    for (const j of this.pendingChunks) {
+      if (j.posTex) gl.deleteTexture(j.posTex);
+      if (j.timeTex) gl.deleteTexture(j.timeTex);
+    }
+    this.pendingChunks = [];
+    this.dataGeneration++;
+    // The frame a dataset arrives on has the rest of its arrival to carry.
+    this.uploadIdle = true;
     if (this.teamSignTex) {
       gl.deleteTexture(this.teamSignTex);
       this.teamSignTex = null;
@@ -596,14 +617,15 @@ export class Webgl2Renderer implements Renderer {
           break;
         }
         rows = Math.min(rows, partial);
-        this.chunks.push(this.uploadChunk(dataset, start, rows));
+        this.pendingChunks.push(pendingChunk(start, rows));
         this.gpuBytesUsed += cost(rows);
         this.residentRows += rows;
         this.droppedRows = dataset.count - start - rows;
         break;
       }
 
-      this.chunks.push(this.uploadChunk(dataset, start, rows));
+      // Queued rather than packed here; see `flushDataUpload`.
+      this.pendingChunks.push(pendingChunk(start, rows));
       this.gpuBytesUsed += cost(rows);
       this.residentRows += rows;
     }
@@ -1061,100 +1083,179 @@ export class Webgl2Renderer implements Renderer {
    * covers a fraction of it, so the quantisation step lands well under a
    * centimetre and is far below any positional noise in real telemetry.
    */
-  private uploadChunk(dataset: Dataset, start: number, rows: number): GpuChunk {
-    const { px, py, pz, teamId } = dataset;
-    let minX = Infinity;
-    let minY = Infinity;
-    let minZ = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-    let maxZ = -Infinity;
-    for (let i = start; i < start + rows; i++) {
-      const x = px[i];
-      const y = py[i];
-      const z = pz[i];
-      if (x < minX) minX = x;
-      if (x > maxX) maxX = x;
-      if (y < minY) minY = y;
-      if (y > maxY) maxY = y;
-      if (z < minZ) minZ = z;
-      if (z > maxZ) maxZ = z;
-    }
-    // Guard against a degenerate axis (all rows share a plane).
-    const sizeX = Math.max(1e-6, maxX - minX);
-    const sizeY = Math.max(1e-6, maxY - minY);
-    const sizeZ = Math.max(1e-6, maxZ - minZ);
+  /** Chunks still on their way to the GPU, in order. */
+  private pendingChunks: PendingChunk[] = [];
+  /** Bumped when a dataset is set and as each of its chunks lands, so the engine redraws with it. */
+  dataGeneration = 0;
 
-    const texHeight = Math.ceil(rows / ROW_TEX_WIDTH);
-    const data = new Uint16Array(ROW_TEX_WIDTH * texHeight * 4);
-    const sx = 65535 / sizeX;
-    const sy = 65535 / sizeY;
-    const sz = 65535 / sizeZ;
-    for (let i = 0; i < rows; i++) {
-      const r = start + i;
-      const o = i * 4;
-      data[o] = (px[r] - minX) * sx;
-      data[o + 1] = (py[r] - minY) * sy;
-      data[o + 2] = (pz[r] - minZ) * sz;
-      data[o + 3] = teamId ? teamId[r] : 0;
-    }
+  /** Skip the upload for a frame: set on the frame a dataset arrives. */
+  private uploadIdle = false;
 
+  /** Whether some of the dataset is still on its way to the GPU. */
+  get dataPending(): boolean {
+    return this.pendingChunks.length > 0;
+  }
+
+  /**
+   * Pack and write the dataset a slice at a time, for a few milliseconds a frame.
+   *
+   * A chunk's bounds are read first, since its positions are quantised against
+   * them, then it is packed and written a band of texture rows at a time. It is
+   * drawn once all of it is there; the chunks before it draw meanwhile. Done in
+   * one call on the frame the dataset arrived, the same work was a stall that
+   * grew with the row count.
+   */
+  private flushDataUpload(): void {
+    const ds = this.dataset;
+    if (!ds || this.pendingChunks.length === 0) return;
+    if (this.uploadIdle) {
+      this.uploadIdle = false;
+      return;
+    }
     const gl = this.gl;
-    const posTex = createTexture(gl, {
-      width: ROW_TEX_WIDTH,
-      height: texHeight,
-      internalFormat: gl.RGBA16UI,
-      format: gl.RGBA_INTEGER,
-      type: gl.UNSIGNED_SHORT,
-      data,
-    });
+    const { px, py, pz, teamId } = ds;
+    const until = performance.now() + DATA_UPLOAD_MS;
+    while (this.pendingChunks.length > 0 && performance.now() < until) {
+      const j = this.pendingChunks[0];
+      const end = j.start + j.rows;
+      const stop = Math.min(end, j.cursor + DATA_SLICE_ROWS);
+      if (!j.posTex) {
+        // A chunk's textures are tens of megabytes, and making them is a stall of
+        // its own in some drivers: a frame of its own, with nothing else to do.
+        const texHeight = Math.ceil(j.rows / ROW_TEX_WIDTH);
+        j.posTex = createTexture(gl, {
+          width: ROW_TEX_WIDTH,
+          height: texHeight,
+          internalFormat: gl.RGBA16UI,
+          format: gl.RGBA_INTEGER,
+          type: gl.UNSIGNED_SHORT,
+        });
+        if (ds.time && ds.lifetime) {
+          j.timeTex = createTexture(gl, {
+            width: ROW_TEX_WIDTH,
+            height: texHeight,
+            internalFormat: gl.RG16UI,
+            format: gl.RG_INTEGER,
+            type: gl.UNSIGNED_SHORT,
+          });
+        }
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        return;
+      }
+      if (!j.packing) {
+        const mn = j.min;
+        const mx = j.max;
+        for (let i = j.cursor; i < stop; i++) {
+          const x = px[i];
+          const y = py[i];
+          const z = pz[i];
+          if (x < mn[0]) mn[0] = x;
+          if (x > mx[0]) mx[0] = x;
+          if (y < mn[1]) mn[1] = y;
+          if (y > mx[1]) mx[1] = y;
+          if (z < mn[2]) mn[2] = z;
+          if (z > mx[2]) mx[2] = z;
+        }
+        j.cursor = stop;
+        if (stop >= end) {
+          j.packing = true;
+          j.cursor = j.start;
+        }
+        continue;
+      }
+      // Whole texture rows a slice, the last one padded.
+      const n = stop - j.cursor;
+      const band = Math.ceil(n / ROW_TEX_WIDTH);
+      const y0 = (j.cursor - j.start) / ROW_TEX_WIDTH;
+      if (this.posScratch.length < DATA_SLICE_ROWS * 4) this.posScratch = new Uint16Array(DATA_SLICE_ROWS * 4);
+      const data = this.posScratch;
+      const sx = 65535 / Math.max(1e-6, j.max[0] - j.min[0]);
+      const sy = 65535 / Math.max(1e-6, j.max[1] - j.min[1]);
+      const sz = 65535 / Math.max(1e-6, j.max[2] - j.min[2]);
+      const [x0, ya, z0] = j.min;
+      for (let i = 0; i < n; i++) {
+        const r = j.cursor + i;
+        const o = i * 4;
+        data[o] = (px[r] - x0) * sx;
+        data[o + 1] = (py[r] - ya) * sy;
+        data[o + 2] = (pz[r] - z0) * sz;
+        data[o + 3] = teamId ? teamId[r] : 0;
+      }
+      data.fill(0, n * 4, band * ROW_TEX_WIDTH * 4);
+      gl.bindTexture(gl.TEXTURE_2D, j.posTex);
+      gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, y0, ROW_TEX_WIDTH, band, gl.RGBA_INTEGER, gl.UNSIGNED_SHORT, data, 0);
+      if (j.timeTex && ds.time && ds.lifetime) {
+        const q = timeQuantum(ds, j.start, j.rows);
+        if (this.timeScratch.length < DATA_SLICE_ROWS * 2) this.timeScratch = new Uint16Array(DATA_SLICE_ROWS * 2);
+        const tl = this.timeScratch;
+        for (let i = 0; i < n; i++) {
+          const r = j.cursor + i;
+          const o = i * 2;
+          tl[o] = clampU16((ds.time[r] - q.timeMin) * q.invTime);
+          const life = ds.lifetime[r];
+          tl[o + 1] = life < 0 ? 65535 : Math.min(65534, clampU16(life * q.invLife));
+        }
+        tl.fill(0, n * 2, band * ROW_TEX_WIDTH * 2);
+        gl.bindTexture(gl.TEXTURE_2D, j.timeTex);
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, y0, ROW_TEX_WIDTH, band, gl.RG_INTEGER, gl.UNSIGNED_SHORT, tl, 0);
+      }
+      gl.bindTexture(gl.TEXTURE_2D, null);
+      j.cursor = stop;
+      if (stop >= end) {
+        this.pendingChunks.shift();
+        this.chunks.push(this.landChunk(ds, j));
+        this.dataGeneration++;
+      }
+    }
+  }
 
-    let timeTex: WebGLTexture | null = null;
+  private posScratch = new Uint16Array(0);
+  private timeScratch = new Uint16Array(0);
+
+  /** A chunk whose rows have all arrived, as the passes draw it. */
+  private landChunk(ds: Dataset, j: PendingChunk): GpuChunk {
     let timeMin = 0;
     let timeScale = 1;
     let lifeScale = 1;
-    if (dataset.time && dataset.lifetime) {
-      // Rows are time-sorted, so the chunk's span is just its endpoints.
-      timeMin = dataset.time[start];
-      const timeSpan = Math.max(1e-6, dataset.time[start + rows - 1] - timeMin);
-      timeScale = timeSpan / 65535;
-      const lifeCap = Math.max(1e-6, dataset.maxLifetimeGap);
-      lifeScale = lifeCap / 65534;
-
-      const tl = new Uint16Array(ROW_TEX_WIDTH * texHeight * 2);
-      const invTime = 65535 / timeSpan;
-      const invLife = 65534 / lifeCap;
-      for (let i = 0; i < rows; i++) {
-        const r = start + i;
-        const o = i * 2;
-        tl[o] = clampU16((dataset.time[r] - timeMin) * invTime);
-        const life = dataset.lifetime[r];
-        // 65535 marks "this person never appears again", which is a viewing
-        // decision rather than a duration, so it must survive quantisation.
-        tl[o + 1] = life < 0 ? 65535 : Math.min(65534, clampU16(life * invLife));
-      }
-      timeTex = createTexture(gl, {
-        width: ROW_TEX_WIDTH,
-        height: texHeight,
-        internalFormat: gl.RG16UI,
-        format: gl.RG_INTEGER,
-        type: gl.UNSIGNED_SHORT,
-        data: tl,
-      });
+    if (j.timeTex && ds.time && ds.lifetime) {
+      const q = timeQuantum(ds, j.start, j.rows);
+      timeMin = q.timeMin;
+      timeScale = q.span / 65535;
+      lifeScale = q.lifeCap / 65534;
     }
-
-    return {
-      posTex,
-      start,
+    const chunk: GpuChunk = {
+      posTex: j.posTex!,
+      start: j.start,
       lineTex: null,
-      timeTex,
-      rows,
-      aabbMin: [minX, minY, minZ],
-      aabbSize: [sizeX, sizeY, sizeZ],
+      timeTex: j.timeTex,
+      rows: j.rows,
+      aabbMin: [j.min[0], j.min[1], j.min[2]],
+      aabbSize: [
+        Math.max(1e-6, j.max[0] - j.min[0]),
+        Math.max(1e-6, j.max[1] - j.min[1]),
+        Math.max(1e-6, j.max[2] - j.min[2]),
+      ],
       timeMin,
       timeScale,
       lifeScale,
     };
+    // Routes set while it was on its way get their starts now.
+    if (this.lines) {
+      const gl = this.gl;
+      const texHeight = Math.ceil(chunk.rows / ROW_TEX_WIDTH);
+      const data = new Uint32Array(ROW_TEX_WIDTH * texHeight * 4);
+      data.set(packLineStarts(ds, this.lines, chunk.start, chunk.rows, 4));
+      chunk.lineTex = createTexture(gl, {
+        width: ROW_TEX_WIDTH,
+        height: texHeight,
+        internalFormat: gl.RGBA32UI,
+        format: gl.RGBA_INTEGER,
+        type: gl.UNSIGNED_INT,
+        data,
+      });
+      this.gpuBytesUsed += ROW_TEX_WIDTH * texHeight * 16;
+    }
+    return chunk;
   }
 
   setLines(lines: LineData | null): void {
@@ -1189,6 +1290,13 @@ export class Webgl2Renderer implements Renderer {
     }
   }
 
+  private lineHeatQueued = false;
+
+  /** The pixel buffer `readHeatField` reads into, its size, and whether a read is under way. */
+  private fieldPbo: WebGLBuffer | null = null;
+  private fieldPboBytes = 0;
+  private fieldReading = false;
+
   /** The line heat program, compiled on first use; null where it would not compile. */
   private lineHeat(): Prog | null {
     if (this.lineHeatProg || this.lineHeatBroken) return this.lineHeatProg;
@@ -1205,6 +1313,13 @@ export class Webgl2Renderer implements Renderer {
 
   render(params: FrameParams): FrameResult {
     const gl = this.gl;
+    this.flushDataUpload();
+    // The line heat program, compiled off the frame rather than on the first
+    // frame of line heat.
+    if (!this.lineHeatProg && !this.lineHeatBroken && !this.lineHeatQueued) {
+      this.lineHeatQueued = true;
+      setTimeout(() => this.lineHeat(), 0);
+    }
     this.ensureTargets(
       params.width,
       params.height,
@@ -2681,50 +2796,83 @@ export class Webgl2Renderer implements Renderer {
   /**
    * Read the heat target and return the magnitudes, subsampled.
    *
-   * One `readPixels` of the whole target rather than many small ones: each read
-   * stalls the pipeline, so a thousand single-pixel reads costs far more than one
-   * bulk read plus a strided walk in JS. The target is already at the heat
-   * resolution, which the throttle often has at a quarter of the canvas, so this
-   * is a few megabytes at most.
+   * One read of the whole target rather than many small ones, and without
+   * waiting for it: the pixels go to a pixel buffer, a fence marks them, and the
+   * fence is polled between frames. A plain `readPixels` waits for the GPU to
+   * finish everything queued before it, and the exposure metering after a
+   * dataset arrived was a frame lost that way.
    */
   async readHeatField(maxSamples: number): Promise<Float32Array | null> {
     const gl = this.gl;
     if (!this.heatFbo || this.heatWidth <= 0 || this.heatHeight <= 0) return null;
+    if (this.fieldReading) return null;
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.heatFbo);
     if (this.readFormat === 0) {
       this.readFormat = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) as number;
       this.readType = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) as number;
     }
-    const channels = this.readFormat === gl.RED ? 1 : this.readFormat === gl.RG ? 2 : 4;
+    const format = this.readFormat;
+    const type = this.readType;
+    const channels = format === gl.RED ? 1 : format === gl.RG ? 2 : 4;
+    const bytes = type === gl.FLOAT ? 4 : type === gl.HALF_FLOAT ? 2 : type === gl.UNSIGNED_BYTE ? 1 : 0;
     const w = this.heatWidth;
     const h = this.heatHeight;
     const texels = w * h;
+    if (bytes === 0) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      return null;
+    }
     while (gl.getError() !== gl.NO_ERROR) {
       /* drain, so the check below refers to this read */
     }
 
+    const size = texels * channels * bytes;
+    this.fieldPbo ??= gl.createBuffer();
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, this.fieldPbo);
+    if (this.fieldPboBytes < size) {
+      gl.bufferData(gl.PIXEL_PACK_BUFFER, size, gl.STREAM_READ);
+      this.fieldPboBytes = size;
+    }
+    gl.readPixels(0, 0, w, h, format, type, 0);
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    if (gl.getError() !== gl.NO_ERROR) return null;
+    const sync = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
+    if (!sync) return null;
+    gl.flush();
+
+    this.fieldReading = true;
     let read: ((i: number) => number) | null = null;
     try {
-      if (this.readType === gl.FLOAT) {
+      for (;;) {
+        const state = gl.clientWaitSync(sync, 0, 0);
+        if (state === gl.ALREADY_SIGNALED || state === gl.CONDITION_SATISFIED) break;
+        if (state === gl.WAIT_FAILED || gl.isContextLost()) return null;
+        await new Promise((r) => setTimeout(r, 4));
+      }
+      gl.bindBuffer(gl.PIXEL_PACK_BUFFER, this.fieldPbo);
+      if (type === gl.FLOAT) {
         const buf = new Float32Array(texels * channels);
-        gl.readPixels(0, 0, w, h, this.readFormat, this.readType, buf);
+        gl.getBufferSubData(gl.PIXEL_PACK_BUFFER, 0, buf);
         read = (i) => buf[i * channels];
-      } else if (this.readType === gl.HALF_FLOAT) {
+      } else if (type === gl.HALF_FLOAT) {
         const buf = new Uint16Array(texels * channels);
-        gl.readPixels(0, 0, w, h, this.readFormat, this.readType, buf);
+        gl.getBufferSubData(gl.PIXEL_PACK_BUFFER, 0, buf);
         read = (i) => halfToFloat(buf[i * channels]);
-      } else if (this.readType === gl.UNSIGNED_BYTE) {
+      } else {
         const buf = new Uint8Array(texels * channels);
-        gl.readPixels(0, 0, w, h, this.readFormat, this.readType, buf);
+        gl.getBufferSubData(gl.PIXEL_PACK_BUFFER, 0, buf);
         read = (i) => buf[i * channels] / 255;
       }
+      gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
     } catch {
       read = null;
+    } finally {
+      gl.deleteSync(sync);
+      this.fieldReading = false;
     }
-    const err = gl.getError();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    if (!read || err !== gl.NO_ERROR) return null;
+    if (!read) return null;
 
     const stride = Math.max(1, Math.floor(texels / Math.max(1, maxSamples)));
     const out = new Float32Array(Math.ceil(texels / stride));
@@ -2992,6 +3140,11 @@ export class Webgl2Renderer implements Renderer {
 
   dispose(): void {
     const gl = this.gl;
+    for (const j of this.pendingChunks) {
+      if (j.posTex) gl.deleteTexture(j.posTex);
+      if (j.timeTex) gl.deleteTexture(j.timeTex);
+    }
+    this.pendingChunks = [];
     this.symbols?.dispose();
     this.symbols = null;
     this.figures?.dispose();
@@ -3066,6 +3219,33 @@ export class Webgl2Renderer implements Renderer {
     void this.canvas;
   }
 }
+
+/** A chunk queued for `flushDataUpload`. */
+function pendingChunk(start: number, rows: number): PendingChunk {
+  return {
+    start,
+    rows,
+    cursor: start,
+    packing: false,
+    min: [Infinity, Infinity, Infinity],
+    max: [-Infinity, -Infinity, -Infinity],
+    posTex: null,
+    timeTex: null,
+  };
+}
+
+/** How a chunk's times and lifetimes are quantised: from its first and last row. */
+function timeQuantum(ds: Dataset, start: number, rows: number) {
+  const timeMin = ds.time![start];
+  const span = Math.max(1e-6, ds.time![start + rows - 1] - timeMin);
+  const lifeCap = Math.max(1e-6, ds.maxLifetimeGap);
+  return { timeMin, span, lifeCap, invTime: 65535 / span, invLife: 65534 / lifeCap };
+}
+
+/** Milliseconds a frame spends packing and writing a dataset that is arriving; see `flushDataUpload`. */
+const DATA_UPLOAD_MS = 3;
+/** Rows read or packed between checks of the clock: whole texture rows, few of them, as the first slices run before the code is optimised. */
+const DATA_SLICE_ROWS = 2 * ROW_TEX_WIDTH;
 
 function clampU16(v: number): number {
   return v < 0 ? 0 : v > 65535 ? 65535 : Math.round(v);

@@ -460,6 +460,8 @@ export class Engine {
   private heatBudgetMs = 1;
   /** Sprites a frame of the current run of accumulation draws; see `planFrame`. */
   private runSplats = 0;
+  /** Sprites the last frame that drew drew. */
+  private prevSprites = 0;
   /** Whether the renderer had geometry on its way last frame. */
   private wasUploading = false;
   /** Whether the heat pass's GPU time is known, rather than only the frame's. */
@@ -2611,6 +2613,9 @@ export class Engine {
       h.zoomInvariant ? 1 : 0,
       h.groundProjected ? 1 : 0,
       h.smoothRamp ? 1 : 0,
+      // Each chunk of a dataset still arriving, as it lands: see the renderers'
+      // `flushDataUpload`.
+      (renderer as { dataGeneration?: number }).dataGeneration ?? 0,
       // The units the accumulation buffer is written in.
       this.frameGain,
       // The curve changes the shape of every sprite, so accumulated heat from the
@@ -2824,6 +2829,10 @@ export class Engine {
       // over again, so a sampled base stayed sampled for as long as it played.
       // It is drawn whole up to the floor the cap always had.
       if (growing && !canExtend) splatBudget = Math.max(splatBudget, Math.min(EXACT_FLOOR_UNTIMED, planHi - planLo));
+      // At most twice what the last drawn frame drew. The cap answers a cost it
+      // has seen; when the rows on offer jump - a chunk of a dataset landing, a
+      // window opening - drawing all of them at once was a frame it never saw.
+      if (this.heatTimed && this.prevSprites > 0) splatBudget = Math.min(splatBudget, Math.max(EXACT_FLOOR_SPRITES, this.prevSprites * 2));
     }
 
     if (this.dataset && s.mode !== 'team') {
@@ -2929,6 +2938,7 @@ export class Engine {
     if (s.mode === 'team' && this.dataset && this.playhead !== this.teamDrawnAt) compositeOnly = false;
 
     if (plan === EMPTY_PLAN) submitted = 0;
+    if (submitted > 0 && !compositeOnly) this.prevSprites = submitted;
     this.live.accumMode = compositeOnly ? 'skip' : accumMode;
 
     // ---- team viewer geometry
@@ -3373,7 +3383,10 @@ export class Engine {
     // buffer on a slow machine — and counted on *every* frame, because a dataset
     // small enough to draw in one pass converges immediately and would otherwise
     // never reach the threshold at all.
-    if (this.autoExposePending > 0 && this.dataset) {
+    // Not while the dataset is still arriving: a field of part of it would be
+    // exposed too bright for the whole.
+    const dataPending = (renderer as { dataPending?: boolean }).dataPending ?? false;
+    if (this.autoExposePending > 0 && this.dataset && !dataPending) {
       this.autoExposePending--;
       if (this.autoExposePending === 0) void this.autoExpose();
     }

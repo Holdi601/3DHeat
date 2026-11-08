@@ -10,8 +10,9 @@
  *    figures, GPU tracks) and stays put on screen under every follow camera,
  *    far from the origin over a long recording, as a DCS theatre is.
  * 4. Frame time: a still view holds its exposure, heat resolution and sprite
- *    budget and redraws nothing; flying, zooming, changing the radius and
- *    playing back drop no frame, and playback moves the exposure only gently.
+ *    budget and redraws nothing; flying, zooming, changing the radius, playing
+ *    back and loading a dataset of ten million rows mid-flight drop no frame,
+ *    and playback moves the exposure only gently.
  *    Frame times are judged on a real GPU only (--gpu); in software they are
  *    reported.
  *
@@ -802,8 +803,12 @@ async function checkJitter(backend) {
 
 // ------------------------------------------------------------------ 4. frame time
 
-/** On a real GPU: the 99th percentile within a tenth of a 60 Hz frame, and no frame past 20 ms. */
-const FRAME_P99_MS = 16.7 * 1.1;
+/**
+ * On a real GPU, no frame past 20 ms, at the 99th percentile or at all. The
+ * display paces frames at 16.7 ms and a dropped one shows as 33; what lies
+ * between is the browser's timer jitter, not a frame lost.
+ */
+const FRAME_P99_MS = 20;
 const FRAME_MAX_MS = 20;
 /**
  * Fastest the exposure may move in playback, in natural-log units a second: the
@@ -901,7 +906,65 @@ async function checkFrameTime(backend) {
     }
     report('frametime', `${backend} playback exposure`, rate <= EXPOSURE_RATE, `fastest change ${rate.toFixed(2)}/s (limit ${EXPOSURE_RATE})`);
 
-    for (const [name, dts] of [['motion', motion.dts], ['playback', play.map((r) => r[0])]]) {
+    // A dataset of ten million rows set while the camera flies: it arrives a
+    // slice a frame, so no frame may stall for it. Built before the clock
+    // starts; building it is the test's work, not the viewer's.
+    const load = await page.evaluate(async () => {
+      const eng = globalThis.__3dheat_engine;
+      const st = globalThis.__3dheat.useStore;
+      const n = 10_000_000;
+      const P = 5000;
+      const px = new Float32Array(n);
+      const py = new Float32Array(n);
+      const pz = new Float32Array(n);
+      const time = new Float32Array(n);
+      const personId = new Uint32Array(n);
+      for (let i = 0; i < n; i++) {
+        const p = i % P;
+        const k = (i - p) / P;
+        px[i] = Math.cos(p) * 400 + Math.sin(k * 0.01 + p) * 150;
+        pz[i] = Math.sin(p * 1.7) * 400 + Math.cos(k * 0.013 + p) * 150;
+        py[i] = 1;
+        time[i] = k;
+        personId[i] = p;
+      }
+      const ds = {
+        id: 'frametime-load', name: 'frametime-load', count: n, px, py, pz, time,
+        epochMs: null, lifetime: null, maxLifetimeGap: 0, personShared: null, yaw: null, pitch: null,
+        personId, teamId: new Uint16Array(n), personLabels: Array.from({ length: P }, (_, p) => 'p' + p), teamLabels: ['a'],
+        sessionId: null, sessionLabels: [], sessionRows: null, sessionStart: null, sessionEnd: null,
+        personTeam: new Uint16Array(P), personSlot: null, teamSizes: Uint32Array.of(P), attrs: [], warnings: [],
+        bounds: { minX: -560, minY: 0, minZ: -560, maxX: 560, maxY: 2, maxZ: 560 }, timeRange: [0, n / P - 1], timeSorted: true,
+      };
+      st.getState().patchHeat({ radius: 16 });
+      const dts = [];
+      let last = performance.now();
+      const t0 = last;
+      let set = false;
+      let setAt = -1;
+      for (;;) {
+        await globalThis.__vc.frame();
+        const now = performance.now();
+        dts.push(now - last);
+        last = now;
+        const t = (now - t0) / 1000;
+        if (t > 4) break;
+        if (!set && t > 0.5) {
+          set = true;
+          setAt = dts.length - 3;
+          st.getState().setDataset(ds);
+        }
+        const d = 900 + 300 * Math.sin(t);
+        eng.placeCamera({ x: d * Math.cos(t * 0.5), y: d * 0.6, z: d * Math.sin(t * 0.5) }, { x: 0, y: 0, z: 0 });
+      }
+      return { dts: dts.slice(3), setAt };
+    });
+    if (verbose) {
+      const worst = load.dts.map((d, i) => [d, i]).sort((a, b) => b[0] - a[0]).slice(0, 4);
+      console.log(`    load: set on frame ${load.setAt}; slowest ${worst.map(([d, i]) => `${d.toFixed(1)} ms at ${i}`).join(', ')}`);
+    }
+
+    for (const [name, dts] of [['motion', motion.dts], ['playback', play.map((r) => r[0])], ['dataset load in flight', load.dts]]) {
       const p50 = quantile(dts, 0.5);
       const p99 = quantile(dts, 0.99);
       const max = Math.max(...dts);

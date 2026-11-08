@@ -177,7 +177,19 @@ const JUMP_GAP_BINS = 2;
  * typical step: on data where most people stand still that would cut real moves.
  */
 export function suggestMaxJump(ds: Dataset): number | null {
-  const hist = stepHistogram(ds);
+  return maxJumpFrom(stepHistogram(ds));
+}
+
+/**
+ * `suggestMaxJump` without holding the page: the steps are measured a slice at
+ * a time between frames. On ten million rows the measuring alone was a fifth of
+ * a second on the frame the dataset arrived.
+ */
+export async function suggestMaxJumpAsync(ds: Dataset): Promise<number | null> {
+  return maxJumpFrom(await stepHistogramAsync(ds));
+}
+
+function maxJumpFrom(hist: StepHistogram | null): number | null {
   if (!hist || hist.steps === 0) return null;
   // One bin per doubling of the squared length: two of the histogram's.
   const bins = new Float64Array(Math.ceil(hist.counts.length / 2));
@@ -222,11 +234,71 @@ const histograms = new WeakMap<Dataset, StepHistogram | null>();
 export function stepHistogram(ds: Dataset): StepHistogram | null {
   const known = histograms.get(ds);
   if (known !== undefined) return known;
-  const person = ds.personId;
-  if (!person || ds.count < 2) {
+  const scan = stepScan(ds);
+  if (!scan) {
     histograms.set(ds, null);
     return null;
   }
+  scan.run(Infinity);
+  const out = scan.finish();
+  histograms.set(ds, out);
+  return out;
+}
+
+/**
+ * `stepHistogram` a slice at a time: a few milliseconds once a frame, after it
+ * has been drawn. Yielding to any task instead let the slices run back to back
+ * and fill every gap between frames, with the dataset's upload and the browser's
+ * own work still to come.
+ */
+export async function stepHistogramAsync(ds: Dataset): Promise<StepHistogram | null> {
+  const known = histograms.get(ds);
+  if (known !== undefined) return known;
+  const scan = stepScan(ds);
+  if (!scan) {
+    histograms.set(ds, null);
+    return null;
+  }
+  // Not on the frame the dataset arrives: that one has enough to do.
+  await nextFrame();
+  let since = performance.now();
+  while (!scan.run(STEP_SLICE_ROWS)) {
+    if (performance.now() - since > STEP_SLICE_MS) {
+      await nextFrame();
+      // Measured meanwhile by someone who could not wait.
+      const done = histograms.get(ds);
+      if (done !== undefined) return done;
+      since = performance.now();
+    }
+  }
+  const out = scan.finish();
+  histograms.set(ds, out);
+  return out;
+}
+
+/** Rows a slice of `stepHistogramAsync` reads, and the milliseconds it may run before yielding. */
+const STEP_SLICE_ROWS = 4_096;
+const STEP_SLICE_MS = 2;
+
+/** Just after the next frame, or a moment later where there are no frames (a hidden tab, a test). */
+function nextFrame(): Promise<void> {
+  return new Promise((done) => {
+    if (typeof requestAnimationFrame !== 'function') {
+      setTimeout(done, 0);
+      return;
+    }
+    const timer = setTimeout(done, 100);
+    requestAnimationFrame(() => {
+      clearTimeout(timer);
+      setTimeout(done, 0);
+    });
+  });
+}
+
+/** The measuring behind `stepHistogram`, resumable: `run` reads up to that many more rows. */
+function stepScan(ds: Dataset) {
+  const person = ds.personId;
+  if (!person || ds.count < 2) return null;
   const { px, py, pz } = ds;
   const session = ds.sessionId;
   const lifetime = ds.lifetime;
@@ -238,33 +310,41 @@ export function stepHistogram(ds: Dataset): StepHistogram | null {
   // At least a few people whatever the rows: one person may be standing still.
   const stride = Math.max(1, Math.min(Math.ceil(ds.count / JUMP_SAMPLE), Math.ceil(people / 8)));
   let steps = 0;
-  for (let i = 0; i < ds.count; i++) {
-    const p: number = person[i];
-    if (p % stride !== 0 || p >= people || (shared && shared[p])) continue;
-    const track = tracks.track(p, session ? session[i] : 0);
-    const a = tracks.last[track];
-    tracks.last[track] = i;
-    if (a < 0) continue;
-    if (lifetime && lifetime[a] < 0) continue;
-    const dx = px[i] - px[a];
-    const dy = py[i] - py[a];
-    const dz = pz[i] - pz[a];
-    const sq = dx * dx + dy * dy + dz * dz;
-    if (sq <= 0) continue;
-    raw[Math.max(0, Math.min(255, Math.floor(Math.log2(sq) * 2) + 80))]++;
-    steps++;
-  }
-  // Whole doublings of the squared length at the start, so that pairs of bins add up to them.
-  let first = 0;
-  while (first < 255 && raw[first] === 0) first++;
-  first -= first % 2;
-  let last = 255;
-  while (last > first && raw[last] === 0) last--;
-  const counts = Array.from(raw.subarray(first, last + 1));
-  const edges = Array.from({ length: counts.length + 1 }, (_, i) => Math.sqrt(2 ** ((first + i - 80) / 2)));
-  const out = { edges, counts, steps };
-  histograms.set(ds, out);
-  return out;
+  let i = 0;
+  return {
+    /** Reads up to `rows` more rows; true once every row has been read. */
+    run(rows: number): boolean {
+      const end = Math.min(ds.count, i + rows);
+      for (; i < end; i++) {
+        const p: number = person[i];
+        if (p % stride !== 0 || p >= people || (shared && shared[p])) continue;
+        const track = tracks.track(p, session ? session[i] : 0);
+        const a = tracks.last[track];
+        tracks.last[track] = i;
+        if (a < 0) continue;
+        if (lifetime && lifetime[a] < 0) continue;
+        const dx = px[i] - px[a];
+        const dy = py[i] - py[a];
+        const dz = pz[i] - pz[a];
+        const sq = dx * dx + dy * dy + dz * dz;
+        if (sq <= 0) continue;
+        raw[Math.max(0, Math.min(255, Math.floor(Math.log2(sq) * 2) + 80))]++;
+        steps++;
+      }
+      return i >= ds.count;
+    },
+    finish(): StepHistogram {
+      // Whole doublings of the squared length at the start, so that pairs of bins add up to them.
+      let first = 0;
+      while (first < 255 && raw[first] === 0) first++;
+      first -= first % 2;
+      let last = 255;
+      while (last > first && raw[last] === 0) last--;
+      const counts = Array.from(raw.subarray(first, last + 1));
+      const edges = Array.from({ length: counts.length + 1 }, (_, i) => Math.sqrt(2 ** ((first + i - 80) / 2)));
+      return { edges, counts, steps };
+    },
+  };
 }
 
 /**

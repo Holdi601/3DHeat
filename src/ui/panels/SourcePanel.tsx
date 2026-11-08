@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { autoMap } from '../../data/automap';
 import {
   describeSelection,
@@ -184,7 +184,9 @@ export function SourcePanel() {
     }
   };
 
-  const columnOptions = (preview?.columns ?? []).map((c) => ({ value: c, label: c }));
+  // The same array while the preview is, so the selects keep their option lists.
+  const columns = preview?.columns;
+  const columnOptions = useMemo(() => (columns ?? []).map((c) => ({ value: c, label: c })), [columns]);
 
   const validation = mapping ? validateMapping(mapping, preview) : null;
   const totalRows = size?.rows ?? 0;

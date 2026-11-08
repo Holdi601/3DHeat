@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { Jog } from './Jog';
 import { num, t } from '../i18n';
 
@@ -233,6 +233,18 @@ export function Select<T extends string>({
   onChange: (v: T | null) => void;
   allowEmpty?: boolean;
 }) {
+  // Made once per list rather than on every render: a panel showing a wide
+  // table's columns in a dozen of these rebuilt thousands of elements whenever it
+  // redrew, which a loading dataset makes it do several times - a frame lost each.
+  const items = useMemo(
+    () =>
+      options.map((o) => (
+        <option key={o.value} value={o.value}>
+          {o.label}
+        </option>
+      )),
+    [options],
+  );
   return (
     <div className="field">
       <div className="label">
@@ -243,11 +255,7 @@ export function Select<T extends string>({
         onChange={(e) => onChange((e.target.value || null) as T | null)}
       >
         {allowEmpty && <option value="">{t('ui.select.none')}</option>}
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
+        {items}
       </select>
     </div>
   );
