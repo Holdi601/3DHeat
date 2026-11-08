@@ -46,14 +46,32 @@ export class VehicleStage {
     }
     this.box = view.figure ? this.scene.bounds(view.figure) : null;
     const tpl = view.figure ? templateOfFigure(view.figure) : null;
-    this.offset = tpl && s.fit ? offsetFor(tpl, view.placed) : [0, 0, 0];
+    this.offset = tpl && s.fit && view.fits ? offsetFor(tpl, view.placed) : [0, 0, 0];
     return this.scene.build({
       figure: view.figure ?? '',
       hits: shiftHits(view.hits, this.offset),
-      look: { radius: s.radius, exposure: s.exposure, showPoints: s.showPoints, showArrows: s.showArrows, colourBy: s.colourBy },
+      look: { radius: s.radius, exposure: s.exposure, showPoints: s.showPoints, showHeat: s.showHeat, showArrows: s.showArrows, colourBy: s.colourBy },
       lut: this.lut,
       lutKey: this.lutKey,
+      selected: s.selected,
     });
+  }
+
+  /**
+   * A click at canvas pixel (x, y) of a w x h canvas: the hit drawn nearest
+   * it is selected (its card opens), or the selection cleared when none is.
+   * `viewProj` is the view's world-to-clip matrix (OpenGL depth, mirror in).
+   */
+  click(x: number, y: number, w: number, h: number, viewProj: Float32Array): void {
+    const m = viewProj;
+    const project = (px: number, py: number, pz: number): [number, number] | null => {
+      const cw = m[3] * px + m[7] * py + m[11] * pz + m[15];
+      if (cw <= 1e-6) return null;
+      const cx = (m[0] * px + m[4] * py + m[8] * pz + m[12]) / cw;
+      const cy = (m[1] * px + m[5] * py + m[9] * pz + m[13]) / cw;
+      return [((cx + 1) / 2) * w, ((1 - cy) / 2) * h];
+    };
+    useVehicleStore.getState().patch({ selected: this.scene.pick(project, [x, y]) });
   }
 
   /** Whether the view should frame the vehicle (a new one is shown); asked once. */
@@ -72,7 +90,8 @@ export class VehicleStage {
   frameCamera(cam: FlyCamera, fovDeg: number, aspect: number, mirror: [number, number, number], keep: boolean): void {
     const b = this.box;
     if (!b) return;
-    if (!keep) cam.setOrientationDegrees(-130, -18);
+    // From ahead and to the left (yaw 130: looking back along -x, towards +z).
+    if (!keep) cam.setOrientationDegrees(130, -18);
     const across = Math.max(b.maxX - b.minX, b.maxZ - b.minZ);
     const height = b.maxY - b.minY;
     const p = Math.abs(cam.pitch);

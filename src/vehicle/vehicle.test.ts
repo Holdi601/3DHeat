@@ -216,13 +216,13 @@ describe('the scene', () => {
     const figure = figureOfVehicle({ id: 'zz', name: '', kind: 'tank' });
     const hits = [{ local: [0, 1, 0], dir: [0, -1, 0], kind: 'hit' } as never];
     const lut = new Uint8Array(256 * 4).fill(255);
-    const look = { radius: 0, exposure: 0, showPoints: true, showArrows: true, colourBy: 'none' as const };
-    const [f1, c1] = scene.build({ figure, hits, look, lut, lutKey: 1 });
+    const look = { radius: 0, exposure: 0, showPoints: true, showHeat: true, showArrows: true, colourBy: 'none' as const };
+    const [f1, c1] = scene.build({ figure, hits, look, lut, lutKey: 1, selected: null });
     expect(c1).toBe(true);
     expect(f1.tris.count).toBeGreaterThan(1000);
     expect(f1.lines.count).toBeGreaterThan(6);
-    expect(scene.build({ figure, hits, look, lut, lutKey: 1 })[1]).toBe(false);
-    expect(scene.build({ figure, hits, look: { ...look, exposure: 1 }, lut, lutKey: 1 })[1]).toBe(true);
+    expect(scene.build({ figure, hits, look, lut, lutKey: 1, selected: null })[1]).toBe(false);
+    expect(scene.build({ figure, hits, look: { ...look, exposure: 1 }, lut, lutKey: 1, selected: null })[1]).toBe(true);
     // Lifted onto the grid.
     let low = Infinity;
     for (let i = 0; i < f1.tris.count; i++) low = Math.min(low, f1.tris.data[i * 7 + 1]);
@@ -280,5 +280,92 @@ describe('fitting hits to the figure', () => {
     expect(moved[1]).toBe(hits[1]);
     expect(shiftHits(hits, [1, 0, -1])).toBe(moved);
     expect(shiftHits(hits, [0, 0, 0])).toBe(hits);
+  });
+});
+
+describe('what each hit did', () => {
+  it('War Thunder: the killing shot, a critical hit, a destroyed module', async () => {
+    const { hitsFromDataset } = await import('./hits');
+    const d = dataset([
+      { time: 10, event: 'shot', player: 'Red', Vehicle: 'bf-109f-4', other: 'Blue', otherVehicle: 'p-51d-30', otherLife: '7#1', hitLocalX: 1, hitLocalY: 0.5, hitLocalZ: 2, match: 'm' },
+      { time: 10.2, event: 'hit_critical', player: 'Blue', other: 'Red', match: 'm' },
+      { time: 11, event: 'shot', player: 'Red', Vehicle: 'bf-109f-4', other: 'Blue', otherVehicle: 'p-51d-30', otherLife: '7#1', hitLocalX: -2, hitLocalY: 0.5, hitLocalZ: 0, match: 'm' },
+      { time: 11.3, event: 'module_destroyed', player: 'Blue', Vehicle: 'p-51d-30', life: '7#1', other: 'Red', weapon: 'part 9', match: 'm' },
+      { time: 11.6, event: 'shot', player: 'Red', Vehicle: 'bf-109f-4', other: 'Blue', otherVehicle: 'p-51d-30', otherLife: '7#1', hitLocalX: 0, hitLocalY: 1, hitLocalZ: 0, match: 'm' },
+      { time: 12, event: 'death', player: 'Blue', Vehicle: 'p-51d-30', life: '7#1', other: 'Red', match: 'm' },
+    ]);
+    const hits = hitsFromDataset(d).hits.filter((h) => h.kind === 'hit');
+    expect(hits.map((h) => h.outcome)).toEqual(['critical', 'module', 'kill']);
+    expect(hits.map((h) => h.killingShot)).toEqual([false, false, true]);
+    expect(hits[1].modules).toBe(1);
+    expect(hits[0].toDeath).toBeCloseTo(2, 5);
+    expect(hits[2].share).toBeNull(); // War Thunder sends no damage per hit
+  });
+
+  it('CS2: the exact point, the hurt that killed and its share of the damage', async () => {
+    const { hitsFromDataset, penetrated } = await import('./hits');
+    const d = dataset([
+      { time: 1, event: 'hurt', player: 'Vic', other: 'Att', weapon: 'AK-47', hitgroup: 'chest', damage: 27, health: 73, armorDamage: 4, hitLocalX: 0.1, hitLocalY: 1.25, hitLocalZ: -0.1 },
+      { time: 2, event: 'hurt', player: 'Vic', other: 'Att', weapon: 'AK-47', hitgroup: 'head', damage: 73, health: 0, hitLocalX: 0.05, hitLocalY: 1.625, hitLocalZ: 0 },
+    ]);
+    const hits = hitsFromDataset(d).hits;
+    expect(hits[0]).toMatchObject({ outcome: 'damage', local: [Math.fround(0.1), Math.fround(1.25), Math.fround(-0.1)], region: 'chest', armorDamage: 4, healthAfter: 73 });
+    expect(hits[1]).toMatchObject({ outcome: 'kill', killingShot: true, share: 0.73 });
+    expect(hits[0].toDeath).toBe(1);
+    expect(penetrated('nodamage')).toBe(false);
+    expect(penetrated('hit')).toBeNull();
+  });
+
+  it('World of Tanks: a point per row, on its component; no damage is a bounce or no penetration', async () => {
+    const { hitsFromDataset } = await import('./hits');
+    const { placeBoxHits, roleOf } = await import('./boxes');
+    const d = dataset([
+      { time: 5, event: 'struck', player: 'Foe', vehicle: 'R04_T-34', other: 'Me', value: 0, hitComponent: 4, hitU: 0.5, hitV: 0.3, hitW: 1, hitExitU: 0.5, hitExitV: 0.3, hitExitW: 0.8, hitDirX: -1, hitDirY: 0, hitDirZ: 0 },
+      { time: 6, event: 'struck', player: 'Foe', vehicle: 'R04_T-34', other: 'Me', value: 220, hitComponent: 2, hitU: 1, hitV: 0.5, hitW: 0.5, turretYaw: Math.PI / 2 },
+      { time: 6, event: 'struck', player: 'Foe', vehicle: 'R04_T-34', other: 'Me', hitComponent: 2, hitU: 0.9, hitV: 0.5, hitW: 0.5, turretYaw: Math.PI / 2 },
+    ]);
+    const set = hitsFromDataset(d);
+    expect(set.source).toBe('wot');
+    expect(set.hits.map((h) => h.outcome)).toEqual(['nodamage', 'damage', 'damage']);
+    expect(roleOf(4)).toBe('hull');
+    expect(roleOf(2)).toBe('turret');
+    const min: Vec3 = [-3, 0, -1.5], max: Vec3 = [3, 2.4, 1.5];
+    const placed = placeBoxHits(set.hits, min, max);
+    // The front face of the hull, half way across; its path ends further in.
+    expect(placed[0].local![0]).toBeCloseTo(3, 5);
+    expect(placed[0].local![2]).toBeCloseTo(0, 5);
+    expect(placed[0].exit![0]).toBeLessThan(placed[0].local![0]);
+    // The turret's right side, drawn on the figure's turret facing forward, whatever way the turret stood.
+    expect(placed[1].local![2]).toBeGreaterThan(1);
+    // Turned with the turret (a quarter right) it would face the rear.
+    const { boxPoint } = await import('./boxes');
+    expect(boxPoint(2, [1, 0.5, 0.5], min, max, Math.PI / 2)[0]).toBeLessThan(-0.5);
+  });
+
+  it('World of Warships: a shell that ended on a ship is that ship hit', async () => {
+    const { hitsFromDataset } = await import('./hits');
+    const d = dataset([
+      { time: 3, event: 'impact', player: 'Gunner', vehicle: 'PASB018', other: 'Target', otherVehicle: 'PJSB018', reason: '99', hitLocalX: 40, hitLocalY: 6, hitLocalZ: -12 },
+      { time: 3, event: 'impact', player: 'Gunner', vehicle: 'PASB018', reason: '0' },
+    ]);
+    const set = hitsFromDataset(d);
+    expect(set.source).toBe('wows');
+    expect(set.hits).toHaveLength(1);
+    expect(set.hits[0]).toMatchObject({ vehicle: 'PJSB018', victim: 'Target', shooter: 'Gunner', code: '99', outcome: 'hit' });
+  });
+
+  it('picks the hit drawn nearest a click', () => {
+    const scene = new VehicleScene();
+    const figure = figureOfVehicle({ id: 'zz', name: '', kind: 'tank' });
+    const a = { local: [2, 1, 0], dir: null, kind: 'hit', outcome: 'hit', damage: null, killingShot: false, exit: null } as never;
+    const b = { local: [-2, 1, 0], dir: null, kind: 'hit', outcome: 'kill', damage: null, killingShot: true, exit: null } as never;
+    const lut = new Uint8Array(256 * 4).fill(255);
+    const look = { radius: 0, exposure: 0, showPoints: true, showHeat: true, showArrows: false, colourBy: 'outcome' as const };
+    scene.build({ figure, hits: [a, b], look, lut, lutKey: 1, selected: null });
+    // Looking down from above: x to the right of the screen, 100 px a metre, the origin at (500, 300).
+    const project = (x: number, _y: number, z: number): [number, number] => [500 + x * 100, 300 + z * 100];
+    expect(scene.pick(project, [690, 300])).toBe(a);
+    expect(scene.pick(project, [310, 305])).toBe(b);
+    expect(scene.pick(project, [500, 300])).toBeNull();
   });
 });

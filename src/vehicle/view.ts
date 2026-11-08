@@ -1,14 +1,17 @@
 /**
  * What the vehicle heatmap shows, from the loaded data and the settings: the
  * hits the data holds, the vehicle picked (the most-hit one until one is),
- * the figure it is drawn as, and the hits that pass the filters. Kept while
+ * the figure it is drawn as, its hits placed on that figure (World of Tanks'
+ * component points, `boxes.ts`), and those that pass the filters. Kept while
  * neither changes, so the engine can ask every frame.
  */
 
 import type { Dataset } from '../state/types';
 import type { VehicleState } from '../state/vehicleStore';
-import { filterHits, hitsOf, type HitSet, type VehicleHit, type VehicleInfo } from './hits';
-import { figureOfVehicle } from './scene';
+import { filterList, hitsOf, type HitSet, type VehicleHit, type VehicleInfo } from './hits';
+import { figureOfVehicle, templateOfFigure } from './scene';
+import { placeBoxHits } from './boxes';
+import { CATALOG } from '../figures/catalog';
 
 export interface VehicleView {
   set: HitSet | null;
@@ -20,38 +23,56 @@ export interface VehicleView {
   all: VehicleHit[];
   /** Every hit on the vehicle with a point, whatever the layer and filters: what places them on the figure (`fit.ts`). */
   placed: VehicleHit[];
-  /** Hits on the vehicle without a point (an old conversion, or a point in another frame). */
+  /** Hits on the vehicle without a point (an old conversion). */
   unplaced: number;
+  /**
+   * Whether the hits are moved onto the figure (`fit.ts`): for points in a
+   * game model's own frame, not for those already in the figure's (CS2's
+   * body, World of Tanks' component boxes).
+   */
+  fits: boolean;
 }
 
-const EMPTY: VehicleView = { set: null, vehicle: null, figure: null, hits: [], all: [], placed: [], unplaced: 0 };
+const EMPTY: VehicleView = { set: null, vehicle: null, figure: null, hits: [], all: [], placed: [], unplaced: 0, fits: false };
 
-const placedCache = new WeakMap<HitSet, Map<string, VehicleHit[]>>();
+const vehicleCache = new WeakMap<HitSet, Map<string, { all: VehicleHit[]; placed: VehicleHit[] }>>();
 
-/** A vehicle's hits with a point, kept per hit set so the fit is made once. */
-function placedOf(set: HitSet, vehicle: string): VehicleHit[] {
-  let m = placedCache.get(set);
-  if (!m) placedCache.set(set, (m = new Map()));
-  let list = m.get(vehicle);
-  if (!list) m.set(vehicle, (list = set.hits.filter((h) => h.vehicle === vehicle && h.local !== null && h.kind === 'hit')));
-  return list;
+/** A vehicle's hits placed on its figure, and those with a point: kept per hit set so the fit is made once. */
+function hitsOfVehicle(set: HitSet, vehicle: string, figure: string): { all: VehicleHit[]; placed: VehicleHit[] } {
+  let m = vehicleCache.get(set);
+  if (!m) vehicleCache.set(set, (m = new Map()));
+  const key = `${vehicle}\u0000${figure}`;
+  let v = m.get(key);
+  if (!v) {
+    const own = set.hits.filter((h) => h.vehicle === vehicle);
+    const t = templateOfFigure(figure);
+    const all = t ? placeBoxHits(own, t.min, t.max) : own;
+    v = { all, placed: all.filter((h) => h.local !== null && h.kind === 'hit') };
+    m.set(key, v);
+  }
+  return v;
 }
 
-let last: { d: Dataset | null; vehicle: string | null; matches: unknown; shooters: unknown; weapons: unknown; layer: string; out: VehicleView } | null = null;
+type Choice = Pick<VehicleState, 'vehicle' | 'matches' | 'shooters' | 'weapons' | 'layer' | 'outcomes'>;
+let last: { d: Dataset | null; s: Choice; out: VehicleView } | null = null;
 
-export function vehicleView(d: Dataset | null, s: Pick<VehicleState, 'vehicle' | 'matches' | 'shooters' | 'weapons' | 'layer'>): VehicleView {
-  if (last && last.d === d && last.vehicle === s.vehicle && last.matches === s.matches && last.shooters === s.shooters && last.weapons === s.weapons && last.layer === s.layer) return last.out;
+export function vehicleView(d: Dataset | null, s: Choice): VehicleView {
+  if (last && last.d === d && (Object.keys(s) as (keyof Choice)[]).every((k) => last!.s[k] === s[k])) return last.out;
   let out = EMPTY;
   if (d) {
     const set = hitsOf(d);
     const list = [...set.vehicles.values()].sort((a, b) => b.hits + b.modules - (a.hits + a.modules));
     const vehicle = (s.vehicle ? set.vehicles.get(s.vehicle) : undefined) ?? list[0] ?? null;
     if (vehicle) {
-      const all = filterHits(set, { vehicle: vehicle.id, matches: null, shooters: null, weapons: null, layer: s.layer });
-      const hits = filterHits(set, { vehicle: vehicle.id, matches: s.matches, shooters: s.shooters, weapons: s.weapons, layer: s.layer });
-      out = { set, vehicle, figure: figureOfVehicle(vehicle), hits, all, placed: placedOf(set, vehicle.id), unplaced: set.unplacedBy.get(vehicle.id) ?? 0 };
+      const figure = figureOfVehicle(vehicle);
+      const own = hitsOfVehicle(set, vehicle.id, figure);
+      const all = filterList(own.all, { vehicle: null, matches: null, shooters: null, weapons: null, layer: s.layer });
+      const hits = filterList(own.all, { vehicle: null, matches: s.matches, shooters: s.shooters, weapons: s.weapons, outcomes: s.outcomes, layer: s.layer });
+      const person = CATALOG[figure]?.domain === 'person';
+      const fits = !person && !own.all.some((h) => h.box !== null);
+      out = { set, vehicle, figure, hits, all, placed: own.placed, unplaced: set.unplacedBy.get(vehicle.id) ?? 0, fits };
     } else out = { ...EMPTY, set };
   }
-  last = { d, vehicle: s.vehicle, matches: s.matches, shooters: s.shooters, weapons: s.weapons, layer: s.layer, out };
+  last = { d, s: { vehicle: s.vehicle, matches: s.matches, shooters: s.shooters, weapons: s.weapons, layer: s.layer, outcomes: s.outcomes }, out };
   return out;
 }

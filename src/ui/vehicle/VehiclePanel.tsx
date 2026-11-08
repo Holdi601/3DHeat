@@ -3,13 +3,15 @@ import { Check, Section, Segmented, Select, Slider } from '../controls';
 import { useStore } from '../../state/store';
 import { useVehicleStore, type VehicleLayer } from '../../state/vehicleStore';
 import { vehicleView } from '../../vehicle/view';
-import { SECTORS, sectorOf, weaponOf, type VehicleHit } from '../../vehicle/hits';
+import { OUTCOMES, penetrated, SECTORS, sectorOf, weaponOf, type Outcome, type VehicleHit } from '../../vehicle/hits';
 import { REGIONS, regionOf } from '../../vehicle/regions';
-import { onFigure, templateOfFigure, type ColourBy } from '../../vehicle/scene';
-import { FIT_MIN_HITS, offsetFor, shiftHits } from '../../vehicle/fit';
+import { OUTCOME_COLOURS, onFigure, templateOfFigure, type ColourBy } from '../../vehicle/scene';
+import { FIT_MIN_HITS, fitResidual, offsetFor, shiftHits } from '../../vehicle/fit';
+import { rgbCss } from '../../race/geometry';
 import { figureLabel } from '../../tactics/names';
 import { int, num, t } from '../../i18n';
 import './vehicle.css';
+import { lengthText, useUnits } from '../../state/unitsStore';
 
 /** The values of one field over the hits, most frequent first. */
 function tally(hits: VehicleHit[], key: (h: VehicleHit) => string): [string, number][] {
@@ -28,6 +30,7 @@ function tally(hits: VehicleHit[], key: (h: VehicleHit) => string): [string, num
  * the body parts hit.
  */
 export function VehiclePanel() {
+  useUnits();
   const dataset = useStore((s) => s.dataset);
   const s = useVehicleStore();
   const view = vehicleView(dataset, s);
@@ -59,7 +62,41 @@ export function VehiclePanel() {
     return c;
   }, [view.hits]);
   const tpl = view.figure ? templateOfFigure(view.figure) : null;
-  const offset = tpl && s.fit ? offsetFor(tpl, view.placed) : null;
+  const offset = tpl && s.fit && view.fits ? offsetFor(tpl, view.placed) : null;
+  const residual = tpl && view.placed.length ? fitResidual(tpl, view.placed, offset ?? [0, 0, 0]) : null;
+  // What the hits did, before the outcome filter: the chips' counts.
+  const outcomes = useMemo(() => {
+    const c = new Map<Outcome, number>();
+    for (const h of view.all) c.set(h.outcome, (c.get(h.outcome) ?? 0) + 1);
+    return OUTCOMES.filter((o) => c.has(o)).map((o) => [o, c.get(o)!] as [Outcome, number]);
+  }, [view.all]);
+  // Got through or not, overall and by the side the shot came from (where the data says).
+  const through = useMemo(() => {
+    const bySide = new Map(SECTORS.map((k) => [k, [0, 0]] as [string, number[]]));
+    let yes = 0, known = 0;
+    for (const h of view.hits) {
+      const p = penetrated(h.outcome);
+      if (p === null) continue;
+      known++;
+      if (p) yes++;
+      if (h.dir) {
+        const side = bySide.get(sectorOf(h.dir))!;
+        side[1]++;
+        if (!p) side[0]++;
+      }
+    }
+    return { yes, known, bySide };
+  }, [view.hits]);
+  const killing = useMemo(() => {
+    const k = view.hits.filter((h) => h.killingShot);
+    const mid = (xs: number[]) => (xs.length ? xs.sort((a, b) => a - b)[Math.floor(xs.length / 2)] : null);
+    return {
+      n: k.length,
+      share: mid(k.map((h) => h.share).filter((v): v is number => v !== null)),
+      toDeath: mid(view.hits.filter((h) => h.fatal && h.toDeath !== null).map((h) => h.toDeath!)),
+      modules: k.reduce((a, h) => a + h.modules, 0),
+    };
+  }, [view.hits]);
   // On the figure: a point near it once moved, or a body part the figure has.
   const onIt = useMemo(() => {
     if (!tpl) return 0;
@@ -93,7 +130,9 @@ export function VehiclePanel() {
     { value: 'modules', label: t('vehicle.layer.modules'), title: t('vehicle.layer.modulesTitle') },
   ];
   const colourOptions: { value: ColourBy; label: string }[] = [
+    { value: 'outcome', label: t('vehicle.colour.outcome') },
     { value: 'none', label: t('vehicle.colour.none') },
+    { value: 'code', label: t('vehicle.colour.code') },
     { value: 'weapon', label: t('vehicle.colour.weapon') },
     { value: 'shooter', label: t('vehicle.colour.shooter') },
     { value: 'match', label: t('vehicle.colour.match') },
@@ -112,6 +151,19 @@ export function VehiclePanel() {
         <div style={{ marginTop: 8 }}>
           <Segmented value={s.layer} options={layers} onChange={(layer) => s.patch({ layer })} />
         </div>
+        {outcomes.length > 1 && (
+          <div className="vehicle-chips" title={t('vehicle.outcome.chipsTitle')}>
+            {outcomes.map(([o, n]) => {
+              const on = !s.outcomes || s.outcomes.includes(o);
+              return (
+                <button key={o} className={on ? 'on' : ''} title={t(`vehicle.outcome.${o}Title`)} onClick={() => s.toggle('outcomes', o, outcomes.map(([k]) => k))}>
+                  <i style={{ background: rgbCss(OUTCOME_COLOURS[o]) }} />
+                  {t(`vehicle.outcome.${o}`)} <span className="vehicle-filter-n">{int(n)}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
         <div className="vehicle-counts">
           {t('vehicle.counts', { hits: view.hits.length, placed: onIt, fatal })}
         </div>
@@ -139,11 +191,11 @@ export function VehiclePanel() {
           min={0}
           max={3}
           step={0.01}
-          format={(v) => (v > 0 ? t('vehicle.look.metres', { n: num(v, 2) }) : t('vehicle.look.auto'))}
+          format={(v) => (v > 0 ? lengthText(v, () => 2) : t('vehicle.look.auto'))}
           hint={t('vehicle.look.radiusHint')}
           onChange={(radius) => s.patch({ radius })}
         />
-        {view.placed.length > 0 && (
+        {view.placed.length > 0 && view.fits && (
           <>
             <Check label={t('vehicle.look.fit')} title={t('vehicle.look.fitTitle')} checked={s.fit} onChange={(fit) => s.patch({ fit })} />
             <div className="hint">
@@ -155,7 +207,13 @@ export function VehiclePanel() {
             </div>
           </>
         )}
-        <Check label={t('vehicle.look.points')} checked={s.showPoints} onChange={(showPoints) => s.patch({ showPoints })} />
+        {residual && (
+          <div className="hint" title={t('vehicle.look.residualTitle')}>
+            {t('vehicle.look.residual', { median: lengthText(residual.median, () => 2), near: num(residual.near * 100, 0), n: residual.hits })}
+          </div>
+        )}
+        <Check label={t('vehicle.look.points')} title={t('vehicle.look.pointsTitle')} checked={s.showPoints} onChange={(showPoints) => s.patch({ showPoints })} />
+        <Check label={t('vehicle.look.heat')} checked={s.showHeat} onChange={(showHeat) => s.patch({ showHeat })} />
         <Check label={t('vehicle.look.arrows')} title={t('vehicle.look.arrowsTitle')} checked={s.showArrows} onChange={(showArrows) => s.patch({ showArrows })} />
         <Select label={t('vehicle.colour.label')} value={s.colourBy} options={colourOptions} onChange={(v) => s.patch({ colourBy: v ?? 'none' })} />
         <Check label={t('vehicle.look.turntable')} checked={s.turntable} onChange={(turntable) => s.patch({ turntable })} />
@@ -172,6 +230,33 @@ export function VehiclePanel() {
         )}
       </Section>
 
+      {((through.known > 0 && set.source !== 'cs2') || killing.n > 0) && (
+        <Section title={t('vehicle.stats.title')} defaultOpen>
+          {through.known > 0 && set.source !== 'cs2' && (
+            <>
+              <div className="vehicle-counts">{t('vehicle.stats.through', { pct: num((100 * through.yes) / through.known, 0), n: through.known })}</div>
+              <div className="hint">{t('vehicle.stats.bySide')}</div>
+              <Bars
+                rows={SECTORS.filter((k) => through.bySide.get(k)![1] > 0).map((k) => {
+                  const [no, all] = through.bySide.get(k)!;
+                  return [t(`vehicle.sector.${k}`), Math.round((100 * no) / all), t('vehicle.stats.ofSide', { pct: num((100 * no) / all, 0), n: all })];
+                })}
+                max={100}
+              />
+            </>
+          )}
+          {killing.n > 0 && (
+            <div className="vehicle-counts">
+              {t('vehicle.stats.killing', {
+                n: killing.n,
+                share: killing.share === null ? '-' : num(killing.share * 100, 0),
+                toDeath: killing.toDeath === null ? '-' : num(killing.toDeath, 1),
+                modules: killing.modules,
+              })}
+            </div>
+          )}
+        </Section>
+      )}
       {directed > 0 && (
         <Section title={t('vehicle.sectors.title')} defaultOpen>
           <div className="hint">{t('vehicle.sectors.hint')}</div>
@@ -199,17 +284,18 @@ export function VehiclePanel() {
   );
 }
 
-function Bars({ rows }: { rows: [string, number][] }) {
-  const max = Math.max(1, ...rows.map(([, n]) => n));
+/** Labelled bars: a value each, against the largest (or `max`), its own text or the count beside it. */
+function Bars({ rows, max }: { rows: ([string, number] | [string, number, string])[]; max?: number }) {
+  const top = max ?? Math.max(1, ...rows.map((r) => r[1]));
   return (
     <div className="vehicle-bars">
-      {rows.map(([label, n]) => (
-        <div key={label} className="vehicle-bar">
+      {rows.map(([label, n, text]) => (
+        <div key={label} className="vehicle-bar" title={text}>
           <span className="vehicle-bar-label">{label}</span>
           <span className="vehicle-bar-track">
-            <i style={{ width: `${(100 * n) / max}%` }} />
+            <i style={{ width: `${(100 * n) / top}%` }} />
           </span>
-          <span className="vehicle-bar-n">{int(n)}</span>
+          <span className="vehicle-bar-n">{text ?? int(n)}</span>
         </div>
       ))}
     </div>

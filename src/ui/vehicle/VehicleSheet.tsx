@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../state/store';
 import { useVehicleStore } from '../../state/vehicleStore';
 import { vehicleView } from '../../vehicle/view';
-import { autoRadius, heatOf, sizeOf, templateOfFigure } from '../../vehicle/scene';
+import { autoRadius, categoryColours, heatOf, markRadius, OUTCOME_COLOURS, sizeOf, templateOfFigure } from '../../vehicle/scene';
 import { heatMeshOf, paint, rampOfLut, type HeatMesh } from '../../vehicle/surface';
 import { personRegions } from '../../vehicle/regions';
 import { offsetFor, shiftHits } from '../../vehicle/fit';
-import { drawSide, sheetScale, SIDES, splitVertices } from '../../vehicle/sheet';
+import { drawSide, sheetScale, sidePoint, SIDES, splitVertices } from '../../vehicle/sheet';
 import { buildColorLut, stopToCss } from '../../render/colors';
 import { CATALOG } from '../../figures/catalog';
 import { VertexBuffer } from '../../race/geometry';
@@ -46,11 +46,11 @@ export function VehicleSheet() {
     const tags = CATALOG[view.figure]?.domain === 'person' ? personRegions(m) : null;
     const radius = s.radius > 0 ? s.radius : autoRadius(sizeOf(m));
     const tpl = templateOfFigure(view.figure);
-    const hits = tpl && s.fit ? shiftHits(view.hits, offsetFor(tpl, view.placed)) : view.hits;
+    const hits = tpl && s.fit && view.fits ? shiftHits(view.hits, offsetFor(tpl, view.placed)) : view.hits;
     const r = heatOf(m, hits, radius, tags);
     const saturation = r.auto * Math.pow(2, -s.exposure);
     const vb = new VertexBuffer();
-    paint(m, r.heat, saturation, rampOfLut(buildColorLut(scheme)), vb);
+    paint(m, s.showHeat ? r.heat : new Float32Array(m.count), saturation, rampOfLut(buildColorLut(scheme)), vb);
     const { pos, rgba } = splitVertices(vb.data, vb.count);
 
     const ctx = canvas.getContext('2d')!;
@@ -61,11 +61,39 @@ export function VehicleSheet() {
     const cw = Math.floor(W / cols);
     const ch = Math.floor((H - HEAD - FOOT) / rows);
     const scale = sheetScale(m.min, m.max, cw, ch - 50, 0.88);
-    SIDES.forEach((side, i) => {
+    const cells = SIDES.map((side, i) => {
       const cell = { x: (i % cols) * cw, y: HEAD + Math.floor(i / cols) * ch + 50, w: cw, h: ch - 50 };
-      drawSide(img, side, pos, m!.nrm, rgba, m!.count, m!.min, m!.max, cell, scale, 0.45, true);
+      return { side, cell, depth: drawSide(img, side, pos, m!.nrm, rgba, m!.count, m!.min, m!.max, cell, scale, 0.45, true) };
     });
     ctx.putImageData(img, 0, 0);
+    // Each hit where it struck, on the sides that see it: a dot in its colour, the killing shot ringed.
+    if (s.showPoints) {
+      const colours = categoryColours(r.marks.map((k) => k.hit), s.colourBy);
+      const dot = Math.max(3, markRadius(sizeOf(m)) * scale);
+      const slack = sizeOf(m) * 0.02;
+      for (const { side, cell, depth } of cells) {
+        for (const k of r.marks) {
+          const q = sidePoint(side, k.p, k.n, m.min, m.max, cell, scale);
+          const px = Math.floor(q.x - cell.x), py = Math.floor(q.y - cell.y);
+          if (!q.facing || px < 0 || py < 0 || px >= cell.w || py >= cell.h || q.z > depth[py * cell.w + px] + slack) continue;
+          const c = colours.of(k.hit);
+          ctx.beginPath();
+          ctx.arc(q.x, q.y, dot, 0, Math.PI * 2);
+          ctx.fillStyle = `rgb(${c.map((v) => Math.round(v * 255)).join(',')})`;
+          ctx.fill();
+          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = 'rgba(10,10,14,0.85)';
+          ctx.stroke();
+          if (k.hit.killingShot) {
+            ctx.beginPath();
+            ctx.arc(q.x, q.y, dot * 2.2, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgb(${OUTCOME_COLOURS.kill.map((v) => Math.round(v * 255)).join(',')})`;
+            ctx.lineWidth = 3;
+            ctx.stroke();
+          }
+        }
+      }
+    }
 
     ctx.fillStyle = '#16181b';
     ctx.font = '600 54px system-ui, sans-serif';
@@ -98,7 +126,7 @@ export function VehicleSheet() {
     const note = t('vehicle.sheet.note');
     ctx.fillText(note, W - 48 - ctx.measureText(note).width, 82);
     setUrl(canvas.toDataURL('image/png'));
-  }, [view.figure, view.vehicle, view.hits, view.placed, s.fit, s.radius, s.exposure, s.layer, scheme]);
+  }, [view.figure, view.vehicle, view.hits, view.placed, view.fits, s.fit, s.radius, s.exposure, s.layer, s.showPoints, s.showHeat, s.colourBy, scheme]);
 
   const close = () => s.patch({ sheetOpen: false });
   const file = `${(view.vehicle?.name ?? 'vehicle').replace(/[^\w\- ]+/g, '_')} hits.png`;

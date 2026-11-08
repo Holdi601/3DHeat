@@ -7,6 +7,7 @@
 
 import { create } from 'zustand';
 import type { ColourBy } from '../vehicle/scene';
+import type { Outcome, VehicleHit } from '../vehicle/hits';
 
 export type VehicleLayer = 'all' | 'kills' | 'modules';
 
@@ -17,10 +18,17 @@ export interface VehicleState {
   matches: string[] | null;
   shooters: string[] | null;
   weapons: string[] | null;
+  /** What the hits did; null: all. */
+  outcomes: Outcome[] | null;
   layer: VehicleLayer;
   colourBy: ColourBy;
+  /** The hits as marks on the surface, each where it struck. */
   showPoints: boolean;
+  /** The heat the hits make on the surface. */
+  showHeat: boolean;
   showArrows: boolean;
+  /** The hit clicked: its card is open and it is ringed. */
+  selected: VehicleHit | null;
   /** Move the hits to where they lie best on the figure (`vehicle/fit.ts`). */
   fit: boolean;
   /** Gaussian radius, m; 0 is automatic. */
@@ -33,7 +41,7 @@ export interface VehicleState {
   sheetOpen: boolean;
   patch: (p: Partial<Omit<VehicleState, 'patch' | 'toggle'>>) => void;
   /** Adds or removes one value of a filter list; a list holding every value is all (null) again. */
-  toggle: (list: 'matches' | 'shooters' | 'weapons', value: string, all: string[]) => void;
+  toggle: (list: 'matches' | 'shooters' | 'weapons' | 'outcomes', value: string, all: string[]) => void;
 }
 
 export const useVehicleStore = create<VehicleState>((set, get) => ({
@@ -41,10 +49,13 @@ export const useVehicleStore = create<VehicleState>((set, get) => ({
   matches: null,
   shooters: null,
   weapons: null,
+  outcomes: null,
   layer: 'all',
-  colourBy: 'none',
-  showPoints: false,
+  colourBy: 'outcome',
+  showPoints: true,
+  showHeat: true,
   showArrows: false,
+  selected: null,
   fit: true,
   radius: 0,
   exposure: 0,
