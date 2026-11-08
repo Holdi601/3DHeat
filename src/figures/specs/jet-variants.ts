@@ -285,7 +285,8 @@ const EAGLE: FixedWingSpec = {
     // The narrow dorsal spine behind the canopy, over the broad flat engine bay.
     { top: [[3.4, 0.85], [2.6, 0.97], [0.0, 0.82], [-2.5, 0.62], [-5.1, 0.45], [-6.5, 0.35]], bottom: [[3.4, 0.3], [-6.5, 0.2]], plan: [[3.4, 0.5], [2.6, 0.55], [-2.5, 0.55], [-5.1, 0.45], [-6.5, 0.3]], round: 2.6, stations: 12 },
   ],
-  wing: { x: -2.55, span: 13.05, rootChord: 5.7, tipChord: 1.7, sweep: 45, mount: 0.63 },
+  // The wing's published 1 degree of anhedral.
+  wing: { x: -2.55, span: 13.05, rootChord: 5.7, tipChord: 1.7, sweep: 45, mount: 0.63, dihedral: -1 },
   wingPlan: [[2.6, 0], [2.6, 1.2], [0.6, 1.86], [0.3, 2.0], [-3.75, 6.35], [-4.4, 6.52], [-5.8, 6.4], [-5.45, 2.0], [-5.5, 0]],
   tail: { kind: 'twin', finHeight: 2.85, finChord: 3.0, spacing: 3.2, tailSpan: 8.6, tailChord: 2.8, finBase: 0.45 },
   finPlan: [[-5.6, 0], [-9.0, 0], [-9.25, 2.85], [-7.9, 2.85], [-7.7, 2.6]],

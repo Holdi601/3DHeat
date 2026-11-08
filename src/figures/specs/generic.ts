@@ -65,6 +65,9 @@ const A: Named<FixedWingSpec> = {
   'vtol-transport': { cls: 'vtol-transport', length: 18, span: 14, height: 5, bodyWidth: 3.0, bodyHeight: 3.0, nose: 0.15, blunt: 0.6, wing: { x: 0, span: 10, rootChord: 3.0, tipChord: 2.4, sweep: 5, mount: 1 }, tail: { kind: 'single', finHeight: 2.6, finChord: 2.6, tailSpan: 5.0, tailChord: 1.6 }, engines: { kind: 'wing-props', count: 2, diameter: 1.6, at: [1.0], up: true, length: 3.0 }, propeller: { diameter: 4.4, blades: 4 }, canopy: { x: 6.5, length: 2, kind: 'airliner' } },
   // A generic fixed-wing drone: no cockpit, long straight wing, V tail, pusher prop.
   'drone-fixed': { cls: 'drone-fixed', length: 8.2, span: 14.8, height: 2.1, bodyWidth: 0.8, bodyHeight: 0.9, nose: 0.2, blunt: 0.9, wing: { x: -0.4, span: 14.8, rootChord: 1.0, tipChord: 0.45, sweep: 2, mount: 0.2 }, tail: { kind: 'v', finHeight: 1.4, finChord: 0.8, tailSpan: 0, tailChord: 0 }, engines: { kind: 'pusher', count: 1 }, propeller: { diameter: 1.8, blades: 3 } },
+  // A hand-launched micro reconnaissance drone, of no particular type: the size and layout of the published RQ-11B Raven
+  // (0.91 m long, 1.37 m span; the wing on top of a slim body, a small conventional tail, a two-bladed nose propeller).
+  'recon-micro-uav': { cls: 'drone-fixed', length: 0.91, span: 1.37, height: 0.28, bodyWidth: 0.09, bodyHeight: 0.1, nose: 0.25, blunt: 0.7, wing: { x: 0.08, span: 1.37, rootChord: 0.2, tipChord: 0.16, sweep: 0, mount: 1.2, dihedral: 4 }, tail: { kind: 'single', finHeight: 0.17, finChord: 0.13, tailSpan: 0.42, tailChord: 0.1 }, engines: { kind: 'nose-prop', count: 1 }, propeller: { diameter: 0.25, blades: 2, spinner: 0.02 } },
 };
 
 // Generic class figures for the air classes: plain average shapes of the class, for data that names only a class or a game-invented type.

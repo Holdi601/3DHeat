@@ -840,6 +840,9 @@ DRAWN['il-2-1941'] = { ...DRAWN['il-2'],canopy: [[2.109, 0.57], [1.954, 1.121], 
 // Bf 109 E: the square-tipped wing. From the Me 109 F's drawing with the E's square tips (DRAWN); its small oil cooler under the nose (estimate).
 A['bf-109-e'] = piston({ cls: 'ww2-fighter', length: 8.64, span: 9.87, height: 2.5, w: 0.45, h: 0.58, wing: 'square', le: 1.3, root: 2.15, tip: 1.2, sweep: 3, fin: 1.2, finRoot: 1.25, roundFin: true, tailSpan: 3.0, tailRoot: 0.9, canopy: { x: 0.5, length: 1.6, kind: 'framed' }, prop: 3.0, blades: 3, spinner: 0.28, rads: [0.9, 1.3, 1.1, 0.17], draw: DRAWN['bf-109-e'] });
 A['bf-109-e'].bodies!.push({ top: [[3.2, -0.3], [2.5, -0.3]], bottom: [[3.2, -0.6], [3.0, -0.7], [2.7, -0.68], [2.5, -0.45]], plan: [[3.2, 0.12], [3.0, 0.16], [2.5, 0.08]], round: 3, stations: 6 });
+// The E's strut under each tailplane half (the F dropped them), from the tailplane's front spar down to the body's
+// side; drawn upright half way between its ends (estimate).
+A['bf-109-e'].bodies!.push({ top: [[-2.95, 0.62], [-3.05, 0.62]], bottom: [[-2.95, 0.24], [-3.05, 0.24]], plan: [[-2.95, 0.025], [-3.05, 0.025]], side: 0.4, round: 4, stations: 2 });
 // Fw 190 A: the big round radial cowl, a straight-tapered wing, a bulged bubble hood (9.0 x 10.5 x 3.95 m).
 A['fw-190-a8'] = piston({ cls: 'ww2-fighter', length: 9.0, span: 10.5, height: 3.95, w: 0.62, h: 0.68, radial: true, wing: 'tapered', le: 1.6, root: 2.3, tip: 1.05, sweep: 5, fin: 1.25, finRoot: 1.3, roundFin: true, tailSpan: 3.65, tailRoot: 0.95, canopy: { x: 0.575, length: 2.15, kind: 'bubble' }, prop: 3.3, blades: 3, draw: DRAWN['fw-190-a8'] });
 // Fw 190 D-9: the long annular-cowled inline nose and a stretched tail (10.19 m).

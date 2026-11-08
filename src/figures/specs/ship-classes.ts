@@ -2212,6 +2212,109 @@ N['s-30'] = ship({ ...W['schnellboot'], L: 32.8, B: 4.5, fb: 1.8, guns: '10:1/20
 N['s-38'] = ship({ ...W['schnellboot'], B: 5.1, blocks: [[3, -1.5, 3.4, 1.5, 0.4]], extra: [W['schnellboot'].extra![0]] });
 // S 700: the last S-boats, the dome bridge, twin 30 mm guns forward, amidships and aft (34.9 x 5.3 m; 120 t full).
 N['s-700'] = ship({ ...W['schnellboot'], guns: '11:2/30m^-0.3 -5:2/30m -15:2/30mb' });
+// Torpedo tubes on the beams where the class carried them there (general plans): Clemson's four triple mounts two a
+// side on the main deck aft of the funnels; Mahan's two wing mounts abreast, the third on the centre line aft of them.
+function beamTubes(spec: NavalSpec, side: number, keep: number): void {
+  const tubes = (spec.turrets ?? []).filter((t) => t.calibre === 0.27 && !t.side).sort((p, q) => q.x - p.x);
+  const wing = keep ? tubes.slice(0, 1) : tubes;
+  const gone = keep ? tubes.slice(1, tubes.length - keep) : [];
+  spec.turrets = [...spec.turrets!.filter((t) => !wing.includes(t) && !gone.includes(t)), ...wing.flatMap((t) => [-1, 1].map((s) => ({ ...t, side: s * side })))];
+}
+beamTubes(N['clemson'], 3.3, 0);
+beamTubes(N['mahan'], 3.6, 1);
+// Bagley (and Gridley): four quadruple mounts, two on each beam.
+beamTubes(N['bagley'], 3.6, 0);
+// T-51 (10-go to 19-go): a Japanese copy of the German S-boat type, the raised forecastle with the two tubes, an open
+// bridge, three single 25 mm guns forward, amidships and aft (32.4 x 5.0 m; 84 t full; Navypedia's published data).
+N['t-51-boat'] = ship({ ...W['schnellboot'], L: 32.4, B: 5.0, guns: '10:1/25s^-0.3 -4:1/25s -13:1/25bs', blocks: [[3, -1.5, 3.4, 1.5, 0.4]], extra: [W['schnellboot'].extra![0]] });
+// T-14: the small single-engined wooden torpedo boat of 1944, a V-bottomed hull, the low wheelhouse amidships, the two
+// torpedoes on their rails either side aft, one 13.2 mm or 25 mm gun on the foredeck (15.0 x 3.65 m; 14.5 t full;
+// Navypedia's published data; places estimates).
+N['t-14-boat'] = ship({
+  cls: 'torpedo-boat', L: 15.0, B: 3.65, fb: 1.1, sheer: 0.4, transom: 0.9, hullRound: 4,
+  guns: '4.5:1/25s^0.2', blocks: [[1.5, -1.5, 2.1, 1.0, 0.4]],
+  launchers: [{ x: -4, length: 5, width: 0.5, kind: 'tubes', count: 1, elevation: 0, side: 1.2 }],
+});
+
+// ---------------------------------------------------------------- carriers by ship where the class figure differs
+// Published dimensions; heights over the water, the island's, funnels' and mounts' places estimates from photos.
+
+// Soryu: a long flight deck on a slim cruiser-like hull, the small island forward on a starboard extension, the two
+// funnels curving down over the starboard side amidships, six twin 12.7 cm mounts three a side on sponsons (227.5 m
+// overall, 21.3 m beam; flight deck 216.9 x 26 m, 12.8 m over the water).
+N['soryu'] = carrier({
+  cls: 'carrier', L: 222, B: 21.3, deck: 12.8,
+  plan: [[101, -8], [101, 8], [93, 13], [-111, 13], [-115.9, 11], [-115.9, -11], [-111, -13], [93, -13]],
+  island: [[66, 58, 20.5, 13.8, 2.0, 1], [64, 60, 23, 13.8, 1.6]],
+  masts: [[61, 12, 13.8]],
+  turrets: level('78,11.3:2/127 64,11.3:2/127 -68,11.3:2/127b', 10.4, 11.8),
+  more: { bodies: [blockOf(83, 59, 8.4, 10.4, 2.0, 0, 0, 10.9), blockOf(-63, -73, 8.4, 10.4, 2.0, 0, 0, 10.9)] },
+});
+N['soryu'].oneSide!.push(blockOf(7, 1, 4, 9.5, 2.2, 0, 0, 11.6), blockOf(-3, -9, 4, 9.5, 2.2, 0, 0, 11.6), blockOf(6, 2, 4, 6, 1.7, 0, 0, 14), blockOf(-4, -8, 4, 6, 1.7, 0, 0, 14));
+// Hiryu: Soryu's hull a little wider, the island on the port side and much further aft, near the middle, standing in
+// on the flight deck's edge (227.4 m overall, 22.3 m beam; flight deck 216.9 x 27 m, 12.8 m over the water).
+N['hiryu'] = carrier({
+  cls: 'carrier', L: 222, B: 22.3, deck: 12.8,
+  plan: [[101, -8], [101, 8], [93, 13.5], [-111, 13.5], [-115.9, 11.5], [-115.9, -11.5], [-111, -13.5], [93, -13.5]],
+  island: [[18, 10, 20.5, -12.6, 2.0, 1], [16, 12, 23, -12.6, 1.6]],
+  masts: [[13, 12, -12.6]],
+  turrets: level('78,11.8:2/127 64,11.8:2/127 -68,11.8:2/127b', 10.4, 11.8),
+  more: { bodies: [blockOf(83, 59, 8.4, 10.4, 2.0, 0, 0, 11.4), blockOf(-63, -73, 8.4, 10.4, 2.0, 0, 0, 11.4)] },
+});
+N['hiryu'].oneSide!.push(blockOf(7, 1, 4, 9.5, 2.2, 0, 0, 12.1), blockOf(-3, -9, 4, 9.5, 2.2, 0, 0, 12.1), blockOf(6, 2, 4, 6, 1.7, 0, 0, 14.5), blockOf(-4, -8, 4, 6, 1.7, 0, 0, 14.5));
+// Ryujo (after the 1934-36 rebuild): a small, tall two-hangar hull with no island, the flight deck starting 23.5 m aft
+// of the stem over the open forecastle, the glazed bridge under its forward lip, two small funnels curving down on the
+// starboard side, four twin 12.7 cm mounts two a side (179.9 m overall, 20.78 m beam; flight deck 156.5 x 23 m, 14.9 m
+// freeboard to the flight deck).
+N['ryujo'] = carrier({
+  cls: 'carrier', L: 176, B: 20.78, deck: 14.9,
+  plan: [[66.4, -9], [66.4, 9], [62, 11.5], [-86, 11.5], [-90, 10], [-90, -10], [-86, -11.5], [62, -11.5]],
+  island: [],
+  turrets: level('50,11.2:2/127 -46,11.2:2/127b', 11, 13.9),
+  more: { bodies: [blockOf(55, 45, 9, 11, 2.0, 0, 0, 10.8), blockOf(-41, -51, 9, 11, 2.0, 0, 0, 10.8)] },
+});
+// The forecastle two decks under the flight deck, the hangar's front with the bridge rising from it.
+N['ryujo'].hullOutline = hullOf([[89.95, 9.6, 0.3], [82, 9.3, 5.5], [68, 9.2, 8.9], [66.6, 13.9, 9.3], [40, 13.9, 10.3], [-50, 13.9, 10.39], [-80, 13.9, 8.6], [-88, 13.9, 7.4]]);
+N['ryujo'].oneSide!.push(blockOf(4, -1, 5, 11, 1.8, 0, 0, 11.0), blockOf(-4, -9, 5, 11, 1.8, 0, 0, 11.0), blockOf(3, 0, 5, 7.5, 1.4, 0, 0, 12.6), blockOf(-5, -8, 5, 7.5, 1.4, 0, 0, 12.6));
+// Clemenceau class (Foch): the 8 degree angled deck to port over a slim hull, the island on the starboard edge with its
+// tall funnel and the big search radar, single 100 mm turrets on sponsons at the corners (265 m overall, 31.7 m beam on
+// the waterline, 51.2 m over the flight deck; deck height and the island's place estimates).
+N['clemenceau'] = carrier({
+  cls: 'carrier', L: 238, B: 31.7, deck: 15.5, shift: -4,
+  plan: [[127, -9], [127, 9], [112, 14.5], [-128, 15.5], [-138, 13], [-138, -13], [-120, -16], [20, -26], [45, -25], [70, -17], [100, -12]],
+  island: [[22, -8, 26, 14.8, 3.0, 1], [16, 0, 33, 15, 2.4, 1], [4, -6, 38, 15, 2.0]],
+  masts: [[8, 26, 15]],
+  radars: [{ x: 8, up: 22, kind: 'array', size: 6, side: 15 }],
+  turrets: level('108,14:1/100m -112,14:1/100mb', 13, 14.5),
+});
+// Baku (Admiral Gorshkov as built, a Kiev-class development): the long forecastle with the anti-ship missile tubes and
+// the two 100 mm guns, the angled flight deck to port from the island aft, the tall island to starboard with its
+// fixed array faces (273.1 m overall, 31 m beam on the waterline, 53 m over the deck; heights and places estimates).
+N['baku'] = carrier({
+  cls: 'carrier', L: 258, B: 31, deck: 17, shift: -6,
+  plan: [[48, -6], [44, -22], [10, -26.5], [-60, -23], [-128, -15], [-136.5, -10], [-136.5, 12], [-128, 15.5], [-45, 15.5], [-45, 4], [30, 4]],
+  island: [[30, -42, 31, 11.5, 4.5, 1], [22, -32, 40, 11.8, 3.5, 1], [10, -20, 48, 12, 2.5]],
+  masts: [[-6, 34, 12]],
+  radars: [{ x: 0, up: 19, kind: 'faces', size: 4.5, side: 11.8 }, { x: -6, up: 32, kind: 'dome', size: 3, side: 12 }],
+  turrets: level('122:1/100m 110:1/100m^1.5', 16.5, 16),
+  more: { launchers: [{ x: 80, length: 18, width: 2, kind: 'tubes', count: 3, elevation: 12 }] },
+});
+// Goldenfels (later the raider Atlantis): a Hansa line cargo liner, the house and the broad funnel amidships, the masts
+// and kingposts over the hatches fore and aft (155 m overall, 18.7 m beam; heights and places estimates).
+N['goldenfels'] = ship({
+  cls: 'merchant', L: 155, B: 18.7, fb: 7, sheer: 2.5, transom: 0.7,
+  funnels: [[-6, 9, 6, 5]],
+  blocks: [[72, 64, 9.5, 8], [16, -16, 13, 8.6, 1], [12, -2, 17.5, 6, 1], [-60, -70, 9.5, 7]],
+  masts: [[38, 20], [-40, 20]],
+  extra: [blockOf(58, 48, 7.3, 8.6, 6.2), blockOf(34, 22, 7.3, 8.6, 6.2), blockOf(-24, -34, 7.3, 8.6, 6.2), blockOf(-46, -56, 7.3, 8.6, 6.2)],
+});
+// No.1 and No.4 class submarine chasers: the kusentei's layout on their own longer, slimmer hulls (No.1: 65.3 m overall,
+// 5.9 m beam; No.4: 56.2 x 5.6 m; published; places stretched with the hull, estimates).
+N['ch-1'] = ship({ ...R2['kusentei'], L: 65.3, B: 5.9, fc: [10, 1], guns: '22:1/40 -16:1/25bs^1', funnels: [[-4, 4, 2, 1.6, 0.15]], blocks: [[12, 3, 6.4, 2.0, 1], [9, 4, 7.6, 1.4]], masts: [[7, 11, 't']] });
+N['ch-4'] = ship({ ...R2['kusentei'], L: 56.2, B: 5.6, fc: [9, 1], guns: '19:1/40 -13:1/25bs^1', funnels: [[-3.5, 4, 2, 1.6, 0.15]], blocks: [[10, 2.5, 6.4, 2.0, 1], [8, 3.5, 7.6, 1.4]], masts: [[6, 11, 't']] });
+// Saratoga (CV-3) from 1942: Lexington's hull, flight deck, island and funnel, her four 8-inch twin turrets replaced by
+// four twin 5-inch/38 gunhouses in the same places.
+N['saratoga-cv3'] = { ...N['lexington-cv2'], turrets: level('52,12:2/127o 43,12:2/127^3o -25,12:2/127^3bo -35,12:2/127bo', 15.2, 14.2) };
 
 // Krivak I and II told apart from the side too: the Krivak I's twin 76 mm turrets low and flat, the Krivak II's single
 // 100 mm gunhouses tall (estimates).
@@ -2402,12 +2505,12 @@ const ALIASES: Record<string, string> = {
   'uk_destroyer_restigouche_class_terranova': 'restigouche',
   'uk_corvette_peacock': 'peacock-pc',
   'uk_frigate_leopard': 'leopard-type-41',
-  'jp_t14_class': 'mas-boat',
+  'jp_t14_class': 't-14-boat',
   'jp_type_t1_1941': 'mas-boat',
-  'jp_t14_class_mod02': 'mas-boat',
+  'jp_t14_class_mod02': 't-14-boat',
   'jp_abtei_pr1': 'ab-tei',
   'jp_type5_escortboat': 'type-5-escort-boat',
-  'jp_t14_class_mod01': 'mas-boat',
+  'jp_t14_class_mod01': 't-14-boat',
   'jp_ujishima_msc': 'ujishima-msc',
   'jp_abtei_pr4': 'ab-tei',
   'jp_karotei_type2': 'mas-boat',
@@ -2417,13 +2520,13 @@ const ALIASES: Record<string, string> = {
   'jp_kusen_tei_13_1942': 'kusentei',
   'jp_karotei_type4': 'mas-boat',
   'jp_kusen_tei_13_1944': 'kusentei',
-  'jp_no1_ch2': 'kusentei',
-  'jp_t51b': 'mas-boat',
-  'jp_no4_ch8': 'kusentei',
+  'jp_no1_ch2': 'ch-1',
+  'jp_t51b': 't-51-boat',
+  'jp_no4_ch8': 'ch-4',
   'jp_pc301_kari_class': 'kari-pc',
   'jp_type7_pt808': 'pt-810',
   'jp_type9_pt809': 'pt-810',
-  'jp_t51a': 'mas-boat',
+  'jp_t51a': 't-51-boat',
   'jp_type_11_pt_15': 'pt-810',
   'jp_escort_chikugo_class': 'chikugo-de',
   'jp_escort_ikazuchi_class': 'ikazuchi-de',
@@ -2526,12 +2629,12 @@ const ALIASES: Record<string, string> = {
   'ijn_cv_zuikaku_story': 'shokaku',
   'ijn_cv_akagi': 'shokaku',
   'ijn_cv_akagi_story': 'shokaku',
-  'ijn_cv_hiryu': 'shokaku',
-  'ijn_cv_hiryu_story': 'shokaku',
-  'ijn_cv_soryu': 'shokaku',
-  'ijn_cv_soryu_story': 'shokaku',
-  'ijn_cv_soryu_immortal': 'shokaku',
-  'ijn_cvl_ryujo': 'shokaku',
+  'ijn_cv_hiryu': 'hiryu',
+  'ijn_cv_hiryu_story': 'hiryu',
+  'ijn_cv_soryu': 'soryu',
+  'ijn_cv_soryu_story': 'soryu',
+  'ijn_cv_soryu_immortal': 'soryu',
+  'ijn_cvl_ryujo': 'ryujo',
   'uss_cv_enterprise': 'yorktown',
   'uss_cv_enterprise_story': 'yorktown',
   'uss_cv_wasp': 'yorktown',
@@ -2541,24 +2644,24 @@ const ALIASES: Record<string, string> = {
   'uss_cv_lexington_story': 'lexington-cv2',
   'hms_cv_illustrious': 'yorktown',
   'ital_cv_aquila': 'yorktown',
-  'us_aircraftcarrier_enterprise': 'nimitz-carrier',
-  'us_aircraftcarrier_enterprise_ai': 'nimitz-carrier',
-  'us_aircraftcarrier_saratoga': 'forrestal',
-  'us_aircraftcarrier_saratoga_ai': 'forrestal',
+  'us_aircraftcarrier_enterprise': 'yorktown',
+  'us_aircraftcarrier_enterprise_ai': 'yorktown',
+  'us_aircraftcarrier_saratoga': 'saratoga-cv3',
+  'us_aircraftcarrier_saratoga_ai': 'saratoga-cv3',
   'us_aircraftcarrier_lexington': 'essex',
   'us_aircraftcarrier_lexington_ai': 'essex',
   'uk_aircraftcarrier_illustrious': 'invincible',
   'uk_aircraftcarrier_illustrious_ai': 'invincible',
   'uk_aircraftcarrier_ark_royal': 'colossus',
   'uk_aircraftcarrier_ark_royal_ai': 'colossus',
-  'fr_aircraftcarrier_foch': 'colossus',
-  'fr_aircraftcarrier_foch_ai': 'colossus',
+  'fr_aircraftcarrier_foch': 'clemenceau',
+  'fr_aircraftcarrier_foch_ai': 'clemenceau',
   'ussr_aircraftcarrier_admiral_kuznetsov': 'kuznetsov',
   'ussr_aircraftcarrier_admiral_kuznetsov_ai': 'kuznetsov',
-  'ussr_aircraftcarrier_baku': 'kuznetsov',
-  'ussr_aircraftcarrier_baku_ai': 'kuznetsov',
-  'germ_cargo_ship_goldenfels': 'cargo-ship',
-  'germ_cargo_ship_goldenfels_ec': 'cargo-ship',
+  'ussr_aircraftcarrier_baku': 'baku',
+  'ussr_aircraftcarrier_baku_ai': 'baku',
+  'germ_cargo_ship_goldenfels': 'goldenfels',
+  'germ_cargo_ship_goldenfels_ec': 'goldenfels',
   'hms_cargo_ship': 'cargo-ship',
   'ijn_cargo_ship': 'cargo-ship',
   'ijn_cargo_ship_heavy': 'cargo-ship',
@@ -2574,11 +2677,11 @@ const ALIASES: Record<string, string> = {
   'uss_lst': 'lst-mk2',
   'uss_lst_heavy': 'lst-mk2',
   'uss_lst_includes': 'lst-mk2',
-  'uss_lcvp': 'lca',
-  'uss_lcvp_includes': 'lca',
-  'uss_lcvp_lite': 'lca',
-  'ijn_lcvp': 'lca',
-  'ijn_lcvp_lite': 'lca',
+  'uss_lcvp': 'lcvp-landing-craft',
+  'uss_lcvp_includes': 'lcvp-landing-craft',
+  'uss_lcvp_lite': 'lcvp-landing-craft',
+  'ijn_lcvp': 'daihatsu',
+  'ijn_lcvp_lite': 'daihatsu',
   'jp_daihatsu_landing_craft': 'daihatsu',
   'uss_pt_109': 'elco-80',
   'uss_pt_109_lite': 'elco-80',

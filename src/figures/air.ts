@@ -1060,6 +1060,15 @@ export interface HeliSpec {
   synchropter?: number;
   /** A pusher propeller at the tail: (forward, up, diameter, blades) (AH-56 Cheyenne, X3, Raider). */
   pusher?: [number, number, number, number];
+  /**
+   * Where the first main-rotor blade points, degrees from forward towards the right. Default: parked as tied down
+   * (TM 1-1500-250-23), one blade back over the tail boom on a single rotor; on tandem rotors one blade of each
+   * straight out to the side (TM 55-1520-240-23); coaxial and intermeshing rotors keep the spread that shows
+   * every blade.
+   */
+  bladePhase?: number;
+  /** Thin tubes from one point (forward, side, up) to another, this radius, drawn where they are: an open lattice boom's longerons and braces (Alouette II). */
+  struts?: [Vec3, Vec3, number][];
 }
 
 export function buildHeli(spec: HeliSpec): Template {
@@ -1151,9 +1160,18 @@ export function buildHeli(spec: HeliSpec): Template {
       tube(k.fixed, k.fr, [x, y * 0.3, bh * 0.8], [x, y, u], 0.1, 0.08, PAINT.metal, 6);
       ring(k.fixed, k.fr, x, y, u, spec.rotor / 2, PAINT.rotor, 0.22, 28);
       const n = spec.blades ?? 4;
+      // Parked blades (see `bladePhase`); coaxial and intermeshing rotors: two blades at 45 degrees, so their span
+      // shows from the side and the front alike.
+      const phase =
+        spec.bladePhase !== undefined
+          ? (spec.bladePhase * Math.PI) / 180
+          : spec.rotors === 'coaxial' || spec.synchropter
+            ? n === 2 ? Math.PI / 4 : 0.4
+            : tandem || spec.rotor2
+              ? Math.PI / 2
+              : Math.PI;
       for (let i = 0; i < n; i++) {
-        // Two blades at 45 degrees, so their span shows from the side and the front alike.
-        const a = (i / n) * Math.PI * 2 + (n === 2 ? Math.PI / 4 : 0.4);
+        const a = (i / n) * Math.PI * 2 + phase;
         const R = spec.rotor / 2;
         const tip = spec.sweptTips ? 0.92 : 1;
         if (spec.bladeChord || spec.tipChord) {
@@ -1191,6 +1209,7 @@ export function buildHeli(spec: HeliSpec): Template {
   for (const [gx, gs, gu, gl, gr] of spec.guns ?? []) tube(k.fixed, k.fr, [gx, gs, gu], [gx + gl, gs, gu], gr, gr * 0.85, PAINT.dark, 6);
   if (spec.pusher) propeller(k, spec.pusher[0], 0, spec.pusher[1], spec.pusher[2], spec.pusher[3]);
   for (const b of spec.oneSide ?? []) loft(k.team, b, grey(0.8), 12);
+  for (const [a, b, r] of spec.struts ?? []) tube(k.team, k.fr, a, b, r, r, grey(0.78), 4);
   // Engine housing on the roof.
   for (const b of spec.bodies ?? []) {
     loft(k.team, b, grey(0.8), 12);
