@@ -11,6 +11,7 @@ import { personAt, unitsOf } from './units';
 import { groundProbe, teamName } from './replayView';
 import { unitsPerMetre } from './replayData';
 import { selectAndFollow } from './ReplayOverlay';
+import { leanRawRows } from '../../overlay/lean/load';
 
 /**
  * The selected unit's live data, top left of the view: the fields the viewer
@@ -71,7 +72,8 @@ export function UnitCard() {
     if (body.current.innerHTML !== html) body.current.innerHTML = html;
     // Every column the recording has at this row, as Tacview's raw telemetry: what no field reads too.
     if (rawBody.current) {
-      const rows = tr && raw && tr.row >= 0 ? rawRows(dataset, tr.row) : [];
+      // A lean overlay keeps no rows: the unit's own, read from its file when first asked for.
+      const rows = tr && raw && tr.row >= 0 ? (leanRawRows(dataset, tr.person, now) ?? rawRows(dataset, tr.row)) : [];
       const rawHtml = rows.map(([k, v]) => `<span>${esc(k)}</span><b>${esc(v)}</b>`).join('');
       if (rawBody.current.innerHTML !== rawHtml) rawBody.current.innerHTML = rawHtml;
     }

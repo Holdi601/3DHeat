@@ -10,7 +10,7 @@
  * alpha, up, team colour.
  */
 
-import { TRACK_U32 } from './store';
+import { KEYS_PER_BUFFER, TRACK_U32 } from './store';
 
 export const PLACE_WGSL = /* wgsl */ `
 struct U {
@@ -31,8 +31,15 @@ struct U {
 @group(0) @binding(6) var<storage, read_write> inst : array<vec4<f32>>;
 @group(0) @binding(7) var<storage, read_write> trail : array<vec4<f32>>;   // per vertex: position, then colour
 @group(0) @binding(8) var<storage, read> vis : array<u32>;   // a bit a track: shown
+@group(0) @binding(9) var<storage, read> keysA1 : array<vec2<u32>>;   // the keys past the first buffer's room
 
 const TRACK_U32 = ${TRACK_U32}u;
+const KEYS_PER_BUFFER = ${KEYS_PER_BUFFER}u;
+
+fn keyRaw(j : u32) -> vec2<u32> {
+  if (j < KEYS_PER_BUFFER) { return keysA[j]; }
+  return keysA1[j - KEYS_PER_BUFFER];
+}
 
 fn unpackQ(v : u32) -> vec4<f32> {
   return vec4<f32>(
@@ -54,12 +61,12 @@ var<private> spanT0 : f32;
 var<private> spanTS : f32;
 
 fn keyAt(j : u32) -> vec4<f32> {
-  let k = keysA[j];
+  let k = keyRaw(j);
   return vec4<f32>(spanO + vec3<f32>(f32(k.x & 0xffffu), f32(k.x >> 16u), f32(k.y & 0xffffu)) * spanStep, spanT0 + f32(k.y >> 16u) * spanTS);
 }
 
 fn timeAt(j : u32) -> f32 {
-  return spanT0 + f32(keysA[j].y >> 16u) * spanTS;
+  return spanT0 + f32(keyRaw(j).y >> 16u) * spanTS;
 }
 
 fn vel(j : u32, first : u32, last : u32) -> vec3<f32> {

@@ -8,7 +8,7 @@ import { create } from 'zustand';
 import type { LeanLoadHandle, LeanOverlay } from './load';
 
 export interface LeanProgress {
-  phase: 'footers' | 'scan' | 'planned' | 'keys' | 'build' | 'upload';
+  phase: 'footers' | 'scan' | 'planned' | 'keys' | 'build';
   done: number;
   total: number;
   rows: number;

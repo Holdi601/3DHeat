@@ -1,20 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-import { useStore } from "../../state/store";
-import { useRaceStore } from "../../state/raceStore";
-import { probeHostMemory } from "../../data/hostMemory";
-import { markOverlay } from "../../match/overlay";
-import { int, num, t, useLang } from "../../i18n";
-import { Check, Section, Segmented } from "../controls";
-import { useEngine } from "../EngineContext";
-import {
-  leanBudget,
-  leanOverlayOf,
-  loadLeanOverlay,
-  overlayFiles,
-  recolour,
-  type LeanColour,
-} from "../../overlay/lean/load";
-import { useLeanStore } from "../../overlay/lean/leanState";
+import { useEffect, useRef, useState } from 'react';
+import { useStore } from '../../state/store';
+import { useRaceStore } from '../../state/raceStore';
+import { probeHostMemory } from '../../data/hostMemory';
+import { markOverlay } from '../../match/overlay';
+import { int, num, t, useLang } from '../../i18n';
+import { Check, Section, Segmented } from '../controls';
+import { useEngine } from '../EngineContext';
+import { leanBudget, leanOverlayOf, loadLeanOverlay, overlayFiles, recolour, type LeanColour } from '../../overlay/lean/load';
+import { useLeanStore } from '../../overlay/lean/leanState';
 
 const MB = 1e6;
 
@@ -53,17 +46,13 @@ export function LeanOverlayPanel() {
       vramBytes: host?.vramBytes ?? null,
       freeBytes: host?.freeBytes ?? null,
       totalBytes: host?.totalBytes ?? null,
-      deviceMemoryGB:
-        (navigator as { deviceMemory?: number }).deviceMemory ?? null,
+      deviceMemoryGB: (navigator as { deviceMemory?: number }).deviceMemory ?? null,
     });
     const startedMs = performance.now();
-    const name =
-      picked.length === 1
-        ? picked[0].name.replace(/\.parquet$/i, "")
-        : t("lean.name", { count: picked.length });
+    const name = picked.length === 1 ? picked[0].name.replace(/\.parquet$/i, '') : t('lean.name', { count: picked.length });
     const handle = loadLeanOverlay(picked, name, budget, (p) => {
       const prev = useLeanStore.getState().progress;
-      if (p.phase === "planned")
+      if (p.phase === 'planned')
         useLeanStore.setState({
           progress: {
             ...(prev ?? {
@@ -73,7 +62,7 @@ export function LeanOverlayPanel() {
               totalRows: 0,
               startedMs,
             }),
-            phase: "planned",
+            phase: 'planned',
             samples: p.samples,
             keys: p.keys,
             level: p.level,
@@ -85,7 +74,7 @@ export function LeanOverlayPanel() {
       handle,
       error: null,
       progress: {
-        phase: "footers",
+        phase: 'footers',
         done: 0,
         total: picked.length,
         rows: 0,
@@ -98,9 +87,11 @@ export function LeanOverlayPanel() {
       markOverlay(o.built.dataset);
       const s = useStore.getState();
       s.setDataset(o.built.dataset);
-      useRaceStore.getState().setTab("heat");
-      s.setMode("team");
+      useRaceStore.getState().setTab('heat');
+      s.setMode('team');
       s.patchTeam({ figures: true });
+      // Played back, not every sample at once: the overlay keeps no samples but its keys on the GPU.
+      s.patchTimeline({ mode: 'play' });
       s.seek(o.built.dataset.timeRange[0]);
       useLeanStore.setState({ overlay: o, progress: null, handle: null });
     } catch (e) {
@@ -108,10 +99,7 @@ export function LeanOverlayPanel() {
       useLeanStore.setState({
         progress: null,
         handle: null,
-        error:
-          err.message === "cancelled"
-            ? null
-            : { key: err.message, detail: err.detail },
+        error: err.message === 'cancelled' ? null : { key: err.message, detail: err.detail },
       });
     }
   };
@@ -135,59 +123,33 @@ export function LeanOverlayPanel() {
   return (
     <>
       {/* Outside the section, so the pickers are there while it is folded too. */}
-      <input
-        ref={files}
-        data-lean="files"
-        type="file"
-        accept=".parquet"
-        multiple
-        hidden
-        onChange={(e) =>
-          void start(e.target.files).finally(() => (e.target.value = ""))
-        }
-      />
+      <input ref={files} data-lean="files" type="file" accept=".parquet" multiple hidden onChange={(e) => void start(e.target.files).finally(() => (e.target.value = ''))} />
       <input
         ref={(el) => {
           folder.current = el;
-          el?.setAttribute("webkitdirectory", "");
+          el?.setAttribute('webkitdirectory', '');
         }}
         data-lean="folder"
         type="file"
         multiple
         hidden
-        onChange={(e) =>
-          void start(e.target.files).finally(() => (e.target.value = ""))
-        }
+        onChange={(e) => void start(e.target.files).finally(() => (e.target.value = ''))}
       />
-      <Section
-        title={t("lean.title")}
-        defaultOpen={!!overlay || !!progress}
-        right={
-          b ? <span className="count">{int(b.groups.length)}</span> : undefined
-        }
-      >
-        <div className="hint">{t("lean.hint")}</div>
-        <div className="row wrap" style={{ gap: 6, margin: "4px 0" }}>
-          <button
-            className="small"
-            disabled={!!progress}
-            onClick={() => files.current?.click()}
-          >
-            {t("lean.pickFiles")}
+      <Section title={t('lean.title')} defaultOpen={!!overlay || !!progress} right={b ? <span className="count">{int(b.groups.length)}</span> : undefined}>
+        <div className="hint">{t('lean.hint')}</div>
+        <div className="row wrap" style={{ gap: 6, margin: '4px 0' }}>
+          <button className="small" disabled={!!progress} onClick={() => files.current?.click()}>
+            {t('lean.pickFiles')}
           </button>
-          <button
-            className="small"
-            disabled={!!progress}
-            onClick={() => folder.current?.click()}
-          >
-            {t("lean.pickFolder")}
+          <button className="small" disabled={!!progress} onClick={() => folder.current?.click()}>
+            {t('lean.pickFolder')}
           </button>
         </div>
         {progress && (
           <div className="lean-progress">
             <div className="hint">
-              {t(`lean.phase.${progress.phase}`)} ·{" "}
-              {t("lean.progress", {
+              {t(`lean.phase.${progress.phase}`)} ·{' '}
+              {t('lean.progress', {
                 done: int(progress.done),
                 total: int(progress.total),
                 rows: int(progress.rows),
@@ -197,134 +159,113 @@ export function LeanOverlayPanel() {
             <div
               style={{
                 height: 4,
-                background: "var(--line, #333)",
+                background: 'var(--line, #333)',
                 borderRadius: 2,
-                margin: "4px 0",
+                margin: '4px 0',
               }}
             >
               <div
                 style={{
                   height: 4,
                   width: `${Math.round(frac * 100)}%`,
-                  background: "var(--accent, #4af)",
+                  background: 'var(--accent, #4af)',
                   borderRadius: 2,
                 }}
               />
             </div>
             {progress.keys !== undefined && progress.samples !== undefined && (
               <div className="hint">
-                {t(progress.level ? "lean.plannedThin" : "lean.planned", {
+                {t(progress.level ? 'lean.plannedThin' : 'lean.planned', {
                   samples: int(progress.samples),
                   keys: int(progress.keys),
                 })}
               </div>
             )}
-            <button
-              className="small"
-              onClick={() => useLeanStore.getState().handle?.cancel()}
-            >
-              {t("lean.cancel")}
+            <button className="small" onClick={() => useLeanStore.getState().handle?.cancel()}>
+              {t('lean.cancel')}
             </button>
           </div>
         )}
-        {error && (
-          <div className="hint warn">
-            {t(`lean.error.${error.key}`, { detail: error.detail ?? "" })}
-          </div>
-        )}
+        {error && <div className="hint warn">{t(`lean.error.${error.key}`, { detail: error.detail ?? '' })}</div>}
         {b && overlay && (
           <>
             <div
               className="kv lean-stats"
               style={{
-                display: "grid",
-                gridTemplateColumns: "auto 1fr",
-                gap: "2px 10px",
-                margin: "6px 0",
+                display: 'grid',
+                gridTemplateColumns: 'auto 1fr',
+                gap: '2px 10px',
+                margin: '6px 0',
               }}
             >
-              {row("lean.stat.matches", int(b.groups.length))}
-              {row("lean.stat.units", int(b.tracks))}
-              {row("lean.stat.rows", int(b.rows))}
-              {row("lean.stat.samples", int(b.samples))}
+              {row('lean.stat.matches', int(b.groups.length))}
+              {row('lean.stat.units', int(b.tracks))}
+              {row('lean.stat.rows', int(b.rows))}
+              {row('lean.stat.samples', int(b.samples))}
               {row(
-                "lean.stat.keys",
+                'lean.stat.keys',
                 b.tolerance
-                  ? t("lean.keysThin", {
+                  ? t('lean.keysThin', {
                       keys: int(b.keys),
                       metres: num(b.tolerance, 2),
                     })
-                  : t("lean.keysAll", { keys: int(b.keys) }),
+                  : t('lean.keysAll', { keys: int(b.keys) }),
               )}
               {row(
-                "lean.stat.memory",
-                t("lean.megabytes", {
+                'lean.stat.memory',
+                t('lean.megabytes', {
                   cpu: int(overlay.store.bytes / MB),
                   gpu: int(info?.gpuMB ?? 0),
                 }),
               )}
+              {row('lean.stat.load', t('lean.seconds', { seconds: num(overlay.loadMs / 1000, 1) }))}
               {row(
-                "lean.stat.load",
-                t("lean.seconds", { seconds: num(overlay.loadMs / 1000, 1) }),
-              )}
-              {row(
-                "lean.stat.budget",
+                'lean.stat.budget',
                 t(`lean.limit.${overlay.budget.limit}`, {
                   keys: int(overlay.budget.maxKeys),
                 }),
               )}
-              {info &&
-                row(
-                  "lean.stat.dart",
-                  t("lean.pixels", { px: num(info.dartPx, 1) }),
-                )}
-              {b.markers.count > 0 &&
-                row("lean.stat.deaths", int(b.markers.count))}
+              {info && row('lean.stat.dart', t('lean.pixels', { px: num(info.dartPx, 1) }))}
+              {b.markers.count > 0 && row('lean.stat.deaths', int(b.markers.count))}
             </div>
             {overlay.skipped.length > 0 && (
               <div className="hint warn">
-                {t("lean.skipped", {
+                {t('lean.skipped', {
                   count: overlay.skipped.length,
-                  files: overlay.skipped.slice(0, 3).join(", "),
+                  files: overlay.skipped.slice(0, 3).join(', '),
                 })}
               </div>
             )}
             <Segmented<LeanColour>
               value={overlay.colour}
               options={[
-                { value: "team", label: t("lean.byTeam") },
-                { value: "group", label: t("lean.byMatch") },
+                { value: 'team', label: t('lean.byTeam') },
+                { value: 'group', label: t('lean.byMatch') },
               ]}
               onChange={colour}
             />
             {b.markers.count > 0 && (
               <>
-                <Check
-                  label={t("lean.markers")}
-                  checked={markers}
-                  onChange={(v) => useLeanStore.setState({ markers: v })}
-                />
+                <Check label={t('lean.markers')} checked={markers} onChange={(v) => useLeanStore.setState({ markers: v })} />
                 {markers && (
                   <Segmented<string>
                     value={String(markerSeconds)}
                     options={[
                       {
-                        value: "10",
-                        label: t("lean.markerFor", { seconds: 10 }),
+                        value: '10',
+                        label: t('lean.seconds', { seconds: 10 }),
                       },
                       {
-                        value: "30",
-                        label: t("lean.markerFor", { seconds: 30 }),
+                        value: '30',
+                        label: t('lean.seconds', { seconds: 30 }),
                       },
                       {
-                        value: "120",
-                        label: t("lean.markerFor", { seconds: 120 }),
+                        value: '120',
+                        label: t('lean.seconds', { seconds: 120 }),
                       },
-                      { value: "0", label: t("lean.markerAll") },
+                      { value: '0', label: t('lean.markerAll') },
                     ]}
-                    onChange={(v) =>
-                      useLeanStore.setState({ markerSeconds: Number(v) })
-                    }
+                    onChange={(v) => useLeanStore.setState({ markerSeconds: Number(v) })}
                   />
                 )}
               </>

@@ -33,7 +33,7 @@ export interface LeanJob {
 }
 
 /** Most rows a job: what one decode holds at once. */
-export const JOB_ROWS = 1_200_000;
+export const JOB_ROWS = 300_000;
 
 /** Jobs over the files: whole row groups, small ones together, none past `JOB_ROWS` unless a group is. */
 export function planJobs(files: LeanFile[], maxRows = JOB_ROWS): LeanJob[] {
@@ -420,8 +420,9 @@ export class LeanAssembler {
       cursor += n;
     }
     const keys = cursor;
-    const keysA = A.length === keys * 2 ? A : A.slice(0, keys * 2);
-    const keysB = !withB ? new Uint32Array(0) : B.length === keys ? B : B.slice(0, keys);
+    // Views, not copies: a copy of gigabytes of keys would double the peak for the few dropped.
+    const keysA = A.subarray(0, keys * 2);
+    const keysB = withB ? B.subarray(0, keys) : new Uint32Array(0);
     this.keysA = null;
     this.keysB = null;
 
