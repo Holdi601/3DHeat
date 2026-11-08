@@ -83,7 +83,7 @@ The server binds to `127.0.0.1` only, so neither route is reachable from the net
 
 **Heatmap tab**
 
-- [Getting data in](getting-data-in.md) - [loading files](loading-files.md), [column mapping](column-mapping.md), [axes, units and time](axes-units-and-time.md), [sessions, persons and groups](sessions-persons-groups.md), [the synthetic generator](synthetic-generator.md), [memory and budgets](memory-and-budgets.md)
+- [Getting data in](getting-data-in.md) - [loading files](loading-files.md), [converters keep everything](converters.md), [column mapping](column-mapping.md), [axes, units and time](axes-units-and-time.md), [sessions, persons and groups](sessions-persons-groups.md), [the synthetic generator](synthetic-generator.md), [memory and budgets](memory-and-budgets.md)
 - [Heat modes](heat-modes.md) - [heat](heat.md) with [sprite shape](sprite-shape.md), [colour and exposure](colour-and-exposure.md) and [depth and culling](depth-and-culling.md); [difference](difference.md), [team heat](team-heat.md), [line heat](line-heat.md), [box replay](box-replay.md)
 - [Timeline and playback](timeline.md)
 - [Filters and tools](filters-and-tools.md) - [filters](filters.md), [teams list](teams-list.md), [entities](entities.md), [slice](slice.md), [measure](measure.md)

@@ -27,6 +27,7 @@ Before anything is read, the selection is filtered ([`filterDataFiles`](https://
 
 - A file with another extension is skipped: *not a csv/parquet file*.
 - A file of 0 bytes is skipped: *empty (0 bytes)*.
+- **Converter sidecars** - the raw data a converter keeps beside a match's table, `<match>.messages.parquet`, `.events.parquet`, `.raw.parquet` and the others listed in [Converters keep everything](converters.md) - are skipped: *a converter's sidecar*. To open one, pick or drop it on its own (or only sidecars): a selection of nothing but sidecars loads them like any table. The JSON beside a table (`.match.json`, `.meta.json`, `.summary.json` and the like) is never offered as positions.
 - **The movement-file rule.** If any file in the selection is named `movement*.parquet`, `movement*.csv` (and the other extensions) - `movement.parquet`, `movement_1.parquet` and so on - then every other data file is skipped: *not a movement file, and this folder has movement files*. Telemetry exports often hold one table of positions beside dozens of tables without positions, and only the former can be drawn. A folder without any movement file loads all its data files.
 - The kept files are sorted by their path inside the selection, so the same folder always produces the same dataset and the same colours.
 

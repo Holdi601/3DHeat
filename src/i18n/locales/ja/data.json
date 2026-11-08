@@ -138,6 +138,7 @@
   "data.filePick.notData": "csv/parquetファイルではありません",
   "data.filePick.empty": "空（0バイト）",
   "data.filePick.notMovement": "移動データのファイルではなく、このフォルダーには移動データのファイルがあります",
+  "data.filePick.sidecar": "変換ツールのサイドカー（テーブル横の生データ）。読み込むには単独で開いてください",
   "data.filePick.nothing": "何も選択されていません",
   "data.filePick.filesIn": "{root}（{count, plural, other {#ファイル}}）",
   "data.filePick.files": "{count, plural, other {#ファイル}}",

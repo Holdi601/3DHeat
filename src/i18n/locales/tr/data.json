@@ -138,6 +138,7 @@
   "data.filePick.notData": "csv/parquet dosyası değil",
   "data.filePick.empty": "boş (0 bayt)",
   "data.filePick.notMovement": "hareket dosyası değil ve bu klasörde hareket dosyaları var",
+  "data.filePick.sidecar": "bir dönüştürücünün yan dosyası (tablonun yanındaki ham veri); yüklemek için tek başına açın",
   "data.filePick.nothing": "hiçbir şey seçilmedi",
   "data.filePick.filesIn": "{root} ({count, plural, one {# dosya} other {# dosya}})",
   "data.filePick.files": "{count, plural, one {# dosya} other {# dosya}}",

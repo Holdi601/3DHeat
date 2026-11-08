@@ -94,7 +94,7 @@ describe('ACMI', () => {
     expect(col('EventObjects')[message]).toBe('1 2');
     const removed = ev.indexOf('Removed');
     expect(col('Object')[removed]).toContain('#2');
-    expect(JSON.parse(col('RecordingInfo')[removed])).toEqual({ DataSource: 'Test sim', Author: 'Someone', Comments: 'after the merge' });
+    expect(JSON.parse(col('RecordingInfo')[removed])).toEqual({ FileType: 'text/acmi/tacview', DataSource: 'Test sim', Author: 'Someone', Comments: 'after the merge' });
     expect(rec.globals.Comments).toBe('after the merge');
     expect(col('CallSign')[0]).toBe('Uzi 1');
     // A property with a value that is not a number is text throughout.
@@ -169,5 +169,44 @@ describe('ACMI', () => {
     expect(block.py[0]).toBe(3000);
     expect(block.pz[0]).toBeLessThan(0);
     expect(block.yaw![0]).toBeCloseTo(Math.PI / 2, 6);
+  });
+});
+
+describe('ACMI, nothing left out', () => {
+  const t = parseAcmi(
+    [
+      'FileType=text/acmi/tacview',
+      'FileVersion=2.2',
+      '0,ReferenceLongitude=10',
+      '0,ReferenceLatitude=50',
+      '// a note in the file',
+      '#0',
+      'a01,T=0.1|0.2|3000|0|5|90|100|200|91,Name=F-16C',
+      'b02,T=0.1|0.2|3000,Name=Su-27',
+      'f0f,Type=Navaid+Static,Name=Beacon',
+      'a01,FuelWeight=2000',
+    ].join('\n'),
+    'file',
+  );
+  const event = t.data[t.columns.indexOf('Event')] as string[];
+
+  it('keeps the header, comments and objects that never got a position', () => {
+    expect(t.globals.FileVersion).toBe('2.2');
+    expect(event).toContain('Comment: a note in the file');
+    const name = t.data[t.columns.indexOf('Name')] as string[];
+    expect(name[event.indexOf('Unplaced')]).toBe('Beacon');
+  });
+
+  it('keeps U and V when only some rows have them', () => {
+    expect(t.flatWorld).toBe(false);
+    const u = t.data[t.columns.indexOf('U')] as Float64Array;
+    expect(u[event.indexOf('')]).toBe(100);
+  });
+
+  it('counts every line kind, none lost', () => {
+    expect(t.completeness.header.seen).toBe(2);
+    expect(t.completeness.comment.decoded).toBe(1);
+    expect(t.completeness.properties).toEqual({ seen: 2, decoded: 0, partial: 2, raw: 0, lost: 0 });
+    expect(Object.values(t.completeness).every((c) => c.lost === 0)).toBe(true);
   });
 });

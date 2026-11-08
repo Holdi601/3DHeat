@@ -138,6 +138,7 @@
   "data.filePick.notData": "not a csv/parquet file",
   "data.filePick.empty": "empty (0 bytes)",
   "data.filePick.notMovement": "not a movement file, and this folder has movement files",
+  "data.filePick.sidecar": "a converter's sidecar (raw data beside a table); open it on its own to load it",
   "data.filePick.nothing": "nothing selected",
   "data.filePick.filesIn": "{root} ({count, plural, one {# file} other {# files}})",
   "data.filePick.files": "{count, plural, one {# file} other {# files}}",

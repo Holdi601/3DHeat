@@ -138,6 +138,7 @@
   "data.filePick.notData": "не е csv/parquet датотека",
   "data.filePick.empty": "празна (0 бајти)",
   "data.filePick.notMovement": "не е датотека со движење, а оваа папка има датотеки со движење",
+  "data.filePick.sidecar": "придружна датотека на конвертор (сурови податоци покрај табела); отворете ја посебно за да ја вчитате",
   "data.filePick.nothing": "ништо не е избрано",
   "data.filePick.filesIn": "{root} ({count, plural, one {# датотека} other {# датотеки}})",
   "data.filePick.files": "{count, plural, one {# датотека} other {# датотеки}}",

@@ -138,6 +138,7 @@
   "data.filePick.notData": "nije csv/parquet datoteka",
   "data.filePick.empty": "prazno (0 bajtova)",
   "data.filePick.notMovement": "nije datoteka kretanja, a ova mapa sadrži datoteke kretanja",
+  "data.filePick.sidecar": "prateća datoteka pretvarača (sirovi podaci uz tablicu); otvorite je zasebno da biste je učitali",
   "data.filePick.nothing": "ništa nije odabrano",
   "data.filePick.filesIn": "{root} ({count, plural, one {# datoteka} few {# datoteke} other {# datoteka}})",
   "data.filePick.files": "{count, plural, one {# datoteka} few {# datoteke} other {# datoteka}}",

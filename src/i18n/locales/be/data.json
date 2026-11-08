@@ -138,6 +138,7 @@
   "data.filePick.notData": "не файл csv/parquet",
   "data.filePick.empty": "пусты (0 байтаў)",
   "data.filePick.notMovement": "не файл руху, а ў гэтай папцы ёсць файлы руху",
+  "data.filePick.sidecar": "дапаможны файл канвертара (сырыя даныя побач з табліцай); адкрыйце яго асобна, каб загрузіць",
   "data.filePick.nothing": "нічога не выбрана",
   "data.filePick.filesIn": "{root} ({count, plural, one {# файл} few {# файлы} many {# файлаў} other {# файла}})",
   "data.filePick.files": "{count, plural, one {# файл} few {# файлы} many {# файлаў} other {# файла}}",

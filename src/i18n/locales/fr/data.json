@@ -138,6 +138,7 @@
   "data.filePick.notData": "pas un fichier CSV/Parquet",
   "data.filePick.empty": "vide (0 octet)",
   "data.filePick.notMovement": "pas un fichier de déplacements, et ce dossier en contient",
+  "data.filePick.sidecar": "fichier annexe d'un convertisseur (données brutes à côté d'une table) ; ouvrez-le seul pour le charger",
   "data.filePick.nothing": "rien de sélectionné",
   "data.filePick.filesIn": "{root} ({count, plural, one {# fichier} other {# fichiers}})",
   "data.filePick.files": "{count, plural, one {# fichier} other {# fichiers}}",

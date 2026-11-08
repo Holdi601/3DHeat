@@ -138,6 +138,7 @@
   "data.filePick.notData": "keine CSV- oder Parquet-Datei",
   "data.filePick.empty": "leer (0 Bytes)",
   "data.filePick.notMovement": "keine Bewegungsdatei, und dieser Ordner enthält Bewegungsdateien",
+  "data.filePick.sidecar": "Begleitdatei eines Konverters (Rohdaten neben einer Tabelle); einzeln öffnen, um sie zu laden",
   "data.filePick.nothing": "nichts ausgewählt",
   "data.filePick.filesIn": "{root} ({count, plural, one {# Datei} other {# Dateien}})",
   "data.filePick.files": "{count, plural, one {# Datei} other {# Dateien}}",

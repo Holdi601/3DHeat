@@ -138,6 +138,7 @@
   "data.filePick.notData": "не файл csv/parquet",
   "data.filePick.empty": "пусто (0 байт)",
   "data.filePick.notMovement": "не файл движения, а в этой папке есть файлы движения",
+  "data.filePick.sidecar": "вспомогательный файл конвертера (сырые данные рядом с таблицей); откройте его отдельно, чтобы загрузить",
   "data.filePick.nothing": "ничего не выбрано",
   "data.filePick.filesIn": "{root} ({count, plural, one {# файл} few {# файла} many {# файлов} other {# файла}})",
   "data.filePick.files": "{count, plural, one {# файл} few {# файла} many {# файлов} other {# файла}}",

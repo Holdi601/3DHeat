@@ -138,6 +138,7 @@
   "data.filePick.notData": "δεν είναι αρχείο csv/parquet",
   "data.filePick.empty": "κενό (0 byte)",
   "data.filePick.notMovement": "δεν είναι αρχείο κίνησης, και αυτός ο φάκελος έχει αρχεία κίνησης",
+  "data.filePick.sidecar": "βοηθητικό αρχείο μετατροπέα (ακατέργαστα δεδομένα δίπλα σε πίνακα)· ανοίξτε το μόνο του για να φορτωθεί",
   "data.filePick.nothing": "δεν επιλέχθηκε τίποτα",
   "data.filePick.filesIn": "{root} ({count, plural, one {# αρχείο} other {# αρχεία}})",
   "data.filePick.files": "{count, plural, one {# αρχείο} other {# αρχεία}}",

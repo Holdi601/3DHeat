@@ -138,6 +138,7 @@
   "data.filePick.notData": "mhux fajl csv/parquet",
   "data.filePick.empty": "vojt (0 bytes)",
   "data.filePick.notMovement": "mhux fajl tal-moviment, u dan il-folder fih fajls tal-moviment",
+  "data.filePick.sidecar": "fajl anċillari ta' konvertitur (dejta mhux maħduma ħdejn tabella); iftħu waħdu biex tgħabbih",
   "data.filePick.nothing": "xejn magħżul",
   "data.filePick.filesIn": "{root} ({count, plural, one {# fajl} two {# fajls} few {# fajls} many {# fajl} other {# fajl}})",
   "data.filePick.files": "{count, plural, one {# fajl} two {# fajls} few {# fajls} many {# fajl} other {# fajl}}",

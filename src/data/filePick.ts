@@ -37,6 +37,21 @@ export function isDataFile(name: string): boolean {
 }
 
 /**
+ * Parquet a converter writes beside a match's table: what it decoded only in
+ * part or not at all, kept whole (`<match>.<what>.parquet`, see
+ * docs/converters.md, whose list of `<what>` this must match). Left out when
+ * a folder is loaded, so a folder of matches loads its tables; picked or
+ * dropped on their own (nothing but sidecars in the selection) they load like
+ * any table.
+ */
+const SIDECAR_PARQUET =
+  /\.(messages|flight|packets|events|entities|props|units|combatlog|strings|raw)\.(parquet|pq)$/i;
+
+export function isSidecar(name: string): boolean {
+  return SIDECAR_PARQUET.test(name);
+}
+
+/**
  * Keep only loadable files, drop empties, and order them deterministically.
  *
  * Sorting matters: a set of files read in directory order would produce a
@@ -59,11 +74,17 @@ export function filterDataFiles(files: PickedFile[]): {
   // of files that will actually appear, and so a folder of a thousand tables does
   // not spend minutes being read before saying so.
   const positional = files.some((f) => MOVEMENT.test(f.file.name));
+  // Sidecars are wanted only when they are all that was chosen: then the user
+  // opened them on purpose, else they are the raw data beside the tables.
+  const data = files.filter((f) => isDataFile(f.file.name));
+  const deliberate = data.length > 0 && data.every((f) => isSidecar(f.file.name));
   for (const f of files) {
     if (!isDataFile(f.file.name)) {
       skipped.push({ name: f.relativePath || f.file.name, reason: t('data.filePick.notData') });
     } else if (f.file.size === 0) {
       skipped.push({ name: f.relativePath || f.file.name, reason: t('data.filePick.empty') });
+    } else if (!deliberate && isSidecar(f.file.name)) {
+      skipped.push({ name: f.relativePath || f.file.name, reason: t('data.filePick.sidecar') });
     } else if (positional && !MOVEMENT.test(f.file.name)) {
       // Only when a movement file is present. A folder of something else entirely
       // — one CSV of positions with a name of its own — must still load, so the

@@ -138,6 +138,7 @@
   "data.filePick.notData": "nu este un fișier csv/parquet",
   "data.filePick.empty": "gol (0 octeți)",
   "data.filePick.notMovement": "nu este un fișier de mișcare, iar acest dosar are fișiere de mișcare",
+  "data.filePick.sidecar": "fișier auxiliar al unui convertor (date brute lângă un tabel); deschideți-l separat pentru a-l încărca",
   "data.filePick.nothing": "nimic selectat",
   "data.filePick.filesIn": "{root} ({count, plural, one {# fișier} few {# fișiere} other {# de fișiere}})",
   "data.filePick.files": "{count, plural, one {# fișier} few {# fișiere} other {# de fișiere}}",

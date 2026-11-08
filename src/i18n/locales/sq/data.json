@@ -138,6 +138,7 @@
   "data.filePick.notData": "nuk është skedar csv/parquet",
   "data.filePick.empty": "bosh (0 bajte)",
   "data.filePick.notMovement": "nuk është skedar lëvizjesh, ndërsa kjo dosje ka skedarë lëvizjesh",
+  "data.filePick.sidecar": "skedar shoqërues i një konvertuesi (të dhëna të papërpunuara pranë një tabele); hapeni veçmas për ta ngarkuar",
   "data.filePick.nothing": "asgjë e zgjedhur",
   "data.filePick.filesIn": "{root} ({count, plural, one {# skedar} other {# skedarë}})",
   "data.filePick.files": "{count, plural, one {# skedar} other {# skedarë}}",

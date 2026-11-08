@@ -138,6 +138,7 @@
   "data.filePick.notData": "ekki csv/parquet-skrá",
   "data.filePick.empty": "tóm (0 bæti)",
   "data.filePick.notMovement": "ekki hreyfingaskrá, og þessi mappa hefur hreyfingaskrár",
+  "data.filePick.sidecar": "hliðarskrá umbreytis (hrágögn við hlið töflu); opnaðu hana eina til að hlaða henni",
   "data.filePick.nothing": "ekkert valið",
   "data.filePick.filesIn": "{root} ({count, plural, one {# skrá} other {# skrár}})",
   "data.filePick.files": "{count, plural, one {# skrá} other {# skrár}}",

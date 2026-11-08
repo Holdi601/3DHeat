@@ -138,6 +138,7 @@
   "data.filePick.notData": "ne csv/parquet failas",
   "data.filePick.empty": "tuščias (0 baitų)",
   "data.filePick.notMovement": "ne judėjimo failas, o šiame aplanke yra judėjimo failų",
+  "data.filePick.sidecar": "keitiklio šalutinis failas (neapdoroti duomenys šalia lentelės); atidarykite jį atskirai, kad įkeltumėte",
   "data.filePick.nothing": "nieko nepasirinkta",
   "data.filePick.filesIn": "{root} ({count, plural, one {# failas} few {# failai} many {# failo} other {# failų}})",
   "data.filePick.files": "{count, plural, one {# failas} few {# failai} many {# failo} other {# failų}}",
