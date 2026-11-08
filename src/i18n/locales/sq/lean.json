@@ -3,6 +3,8 @@
   "lean.hint": "Vendos qindra ose mijëra ndeshje njëra mbi tjetrën, secilën nga fillimi i saj. Skedarët e tyre Parquet (një për ndeshje, ose skedarë me shumë) lexohen drejtpërdrejt në GPU, kurrë si tabelë e plotë, prandaj mbivendosja luhet me shpejtësi të plotë kuadrosh.",
   "lean.pickFiles": "Skedarë…",
   "lean.pickFolder": "Dosje…",
+  "lean.addFolder": "Shto dosje…",
+  "lean.addFolderTitle": "Shton ndeshjet e një dosjeje te të ngarkuarat: një hartë me regjistrime në disa dosje ngarkohet e plotë.",
   "lean.name": "{count, plural, one {# skedar ndeshjeje} other {# skedarë ndeshjesh}}",
   "lean.cancel": "Anulo",
   "lean.progress": "{done} nga {total} copa · {rows} rreshta · {seconds} s",

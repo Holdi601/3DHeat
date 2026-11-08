@@ -3,6 +3,8 @@
   "lean.hint": "Asetab sadu või tuhandeid mänge üksteise peale, igaüks oma algusest. Nende Parquet-failid (üks mängu kohta või paljude mängudega failid) loetakse otse GPU-sse, mitte kunagi tervikliku tabelina, nii et ülekate mängib täiskaadrisagedusega.",
   "lean.pickFiles": "Failid…",
   "lean.pickFolder": "Kaust…",
+  "lean.addFolder": "Lisa kaust…",
+  "lean.addFolderTitle": "Lisab kausta mängud laaditutele: kaart, mille salvestused on mitmes kaustas, laaditakse tervikuna.",
   "lean.name": "{count, plural, one {# mängufail} other {# mängufaili}}",
   "lean.cancel": "Tühista",
   "lean.progress": "{done} / {total} osa · {rows} rida · {seconds} s",

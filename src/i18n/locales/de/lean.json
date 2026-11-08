@@ -3,6 +3,8 @@
   "lean.hint": "Legt Hunderte oder Tausende Matches übereinander, jedes ab seinem eigenen Start. Ihre Parquet-Dateien (eine je Match oder Dateien mit vielen) werden direkt in die GPU gelesen, nie als ganze Tabelle, so läuft die Überlagerung mit voller Bildrate.",
   "lean.pickFiles": "Dateien…",
   "lean.pickFolder": "Ordner…",
+  "lean.addFolder": "Ordner hinzufügen…",
+  "lean.addFolderTitle": "Fügt die Matches eines Ordners den geladenen hinzu: eine Karte, deren Aufnahmen in mehreren Ordnern liegen, lädt ganz.",
   "lean.name": "{count, plural, one {# Match-Datei} other {# Match-Dateien}}",
   "lean.cancel": "Abbrechen",
   "lean.progress": "{done} von {total} Stücken · {rows} Zeilen · {seconds} s",

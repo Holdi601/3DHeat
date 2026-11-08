@@ -3,6 +3,8 @@
   "lean.hint": "数百から数千の試合を、それぞれの開始時点から重ねて表示します。Parquet ファイル（試合ごとに 1 つ、または多数の試合を含むファイル）は表全体としてではなく GPU に直接読み込まれるため、重ね表示はフルフレームレートで再生されます。",
   "lean.pickFiles": "ファイル…",
   "lean.pickFolder": "フォルダー…",
+  "lean.addFolder": "フォルダーを追加…",
+  "lean.addFolderTitle": "フォルダーの試合を読み込み済みのものに加えます。記録が複数のフォルダーにあるマップも全体を読み込めます。",
   "lean.name": "{count, plural, other {試合ファイル # 件}}",
   "lean.cancel": "キャンセル",
   "lean.progress": "{done} / {total} 個 · {rows} 行 · {seconds} 秒",

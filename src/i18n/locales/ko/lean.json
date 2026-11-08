@@ -3,6 +3,8 @@
   "lean.hint": "수백, 수천 개의 경기를 각자의 시작부터 겹쳐 보여 줍니다. Parquet 파일(경기마다 하나, 또는 여러 경기가 든 파일)을 전체 표로 만들지 않고 GPU로 바로 읽어 들이므로 겹친 화면이 최대 프레임 속도로 재생됩니다.",
   "lean.pickFiles": "파일…",
   "lean.pickFolder": "폴더…",
+  "lean.addFolder": "폴더 추가…",
+  "lean.addFolderTitle": "폴더의 경기를 불러온 경기에 더합니다. 기록이 여러 폴더에 있는 맵도 전체를 불러옵니다.",
   "lean.name": "{count, plural, other {경기 파일 #개}}",
   "lean.cancel": "취소",
   "lean.progress": "{done}/{total}개 · {rows}행 · {seconds}초",

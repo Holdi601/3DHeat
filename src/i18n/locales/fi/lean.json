@@ -3,6 +3,8 @@
   "lean.hint": "Asettaa satoja tai tuhansia otteluita päällekkäin, kunkin omasta alustaan. Niiden Parquet-tiedostot (yksi ottelua kohden tai monen ottelun tiedostot) luetaan suoraan GPU:lle, ei koskaan kokonaisena taulukkona, joten päällekkäisnäkymä toistuu täydellä kuvanopeudella.",
   "lean.pickFiles": "Tiedostot…",
   "lean.pickFolder": "Kansio…",
+  "lean.addFolder": "Lisää kansio…",
+  "lean.addFolderTitle": "Lisää kansion ottelut ladattuihin: kartta, jonka tallenteet ovat useassa kansiossa, latautuu kokonaan.",
   "lean.name": "{count, plural, one {# ottelutiedosto} other {# ottelutiedostoa}}",
   "lean.cancel": "Peruuta",
   "lean.progress": "{done} / {total} osaa · {rows} riviä · {seconds} s",

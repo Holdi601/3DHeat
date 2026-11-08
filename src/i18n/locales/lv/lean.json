@@ -3,6 +3,8 @@
   "lean.hint": "Uzliek simtiem vai tūkstošiem spēļu vienu uz otras, katru no tās sākuma. To Parquet faili (viens katrai spēlei vai faili ar daudzām) tiek lasīti tieši GPU, nekad kā pilna tabula, tāpēc pārklājums rit ar pilnu kadru ātrumu.",
   "lean.pickFiles": "Faili…",
   "lean.pickFolder": "Mape…",
+  "lean.addFolder": "Pievienot mapi…",
+  "lean.addFolderTitle": "Pievieno mapes spēles ielādētajām: karte, kuras ieraksti ir vairākās mapēs, ielādējas pilnībā.",
   "lean.name": "{count, plural, zero {# spēļu failu} one {# spēles fails} other {# spēļu faili}}",
   "lean.cancel": "Atcelt",
   "lean.progress": "{done} no {total} daļām · {rows} rindas · {seconds} s",

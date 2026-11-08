@@ -11,7 +11,7 @@ import { parquetMetadataAsync, parquetReadObjects } from 'hyparquet';
 import type { FileMetaData } from 'hyparquet';
 import { LeanAssembler, planJobs, type LeanBuilt, type LeanFile } from './assemble';
 import type { DecodeRequest, DecodeResponse } from './decodeWorker';
-import { leanSpec, specFor } from './spec';
+import { leanSpec, sharedGeo, specFor } from './spec';
 import type { LeanSpec } from './scan';
 
 export type LoadRequest = { files: File[]; maxKeys: number; threads: number; name: string };
@@ -66,8 +66,11 @@ async function specOfFirst(file: File, md: FileMetaData) {
     const lt = el?.logical_type as { type?: string } | undefined;
     return !!el && ((!!lt?.type && /TIMESTAMP|DATE/i.test(lt.type)) || (!!el.converted_type && /TIMESTAMP|DATE/i.test(String(el.converted_type))));
   });
-  const hints = md.key_value_metadata?.find((kv) => kv.key === 'heat3d')?.value ?? null;
-  return leanSpec({ columns, rows, numeric, hints, timestamps });
+  return leanSpec({ columns, rows, numeric, hints: hintsOf(md), timestamps });
+}
+
+function hintsOf(md: FileMetaData): string | null {
+  return md.key_value_metadata?.find((kv) => kv.key === 'heat3d')?.value ?? null;
 }
 
 /** A pool of decode workers taking jobs as they free up. */
@@ -219,6 +222,10 @@ ctx.onmessage = async (ev: MessageEvent<LoadRequest>) => {
     const built = asm.finish(name, sp.entitySize);
     lap('build');
     const d = built.dataset;
+    // The axes the load read the files by, and their place on the earth: what a world backdrop is built from.
+    d.axes = { ...sp.mapping.axes };
+    const geo = sharedGeo(used.map((u) => hintsOf(u.md)), sp.mapping);
+    if (geo) d.geo = geo;
     const transfer: ArrayBufferLike[] = [built.groupStart.buffer, built.trackData.buffer, built.keysA.buffer, built.keysB.buffer, built.trackRow.buffer, built.trackGroup.buffer, built.trackFile.buffer, built.trackRows.buffer, built.markers.data.buffer, built.markers.team.buffer, built.markers.group.buffer];
     for (const a of [d.px, d.py, d.pz, d.time, d.lifetime, d.personId, d.teamId, d.personShared, d.personTeam, d.personSlot, d.teamSizes]) if (a) transfer.push(a.buffer);
     for (const a of d.attrs) transfer.push(a.data.buffer);

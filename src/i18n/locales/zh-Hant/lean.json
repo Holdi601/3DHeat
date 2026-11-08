@@ -3,6 +3,8 @@
   "lean.hint": "將數百乃至數千場比賽各自從開局起疊加顯示。它們的 Parquet 檔案（每場一個，或含多場的檔案）直接讀入 GPU，從不產生完整表格，因此疊加以滿幀率播放。",
   "lean.pickFiles": "檔案…",
   "lean.pickFolder": "資料夾…",
+  "lean.addFolder": "新增資料夾…",
+  "lean.addFolderTitle": "把資料夾中的對局加入已載入的對局：錄影分散在多個資料夾的地圖也能完整載入。",
   "lean.name": "{count, plural, other {# 個比賽檔案}}",
   "lean.cancel": "取消",
   "lean.progress": "{done}/{total} 塊 · {rows} 列 · {seconds} 秒",

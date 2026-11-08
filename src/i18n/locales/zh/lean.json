@@ -3,6 +3,8 @@
   "lean.hint": "将数百乃至数千场比赛各自从开局起叠加显示。它们的 Parquet 文件（每场一个，或含多场的文件）直接读入 GPU，从不生成完整表格，因此叠加以满帧率播放。",
   "lean.pickFiles": "文件…",
   "lean.pickFolder": "文件夹…",
+  "lean.addFolder": "添加文件夹…",
+  "lean.addFolderTitle": "把文件夹中的对局加入已加载的对局：录像分散在多个文件夹的地图也能完整加载。",
   "lean.name": "{count, plural, other {# 个比赛文件}}",
   "lean.cancel": "取消",
   "lean.progress": "{done}/{total} 块 · {rows} 行 · {seconds} 秒",

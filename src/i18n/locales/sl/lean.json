@@ -3,6 +3,8 @@
   "lean.hint": "Položi na stotine ali tisoče tekem eno čez drugo, vsako od njenega začetka. Njihove datoteke Parquet (ena na tekmo ali datoteke z mnogimi) se berejo naravnost v GPE, nikoli kot cela tabela, zato prekrivanje teče s polno hitrostjo sličic.",
   "lean.pickFiles": "Datoteke…",
   "lean.pickFolder": "Mapa…",
+  "lean.addFolder": "Dodaj mapo…",
+  "lean.addFolderTitle": "Doda tekme iz mape k naloženim: zemljevid s posnetki v več mapah se naloži v celoti.",
   "lean.name": "{count, plural, one {# datoteka tekme} two {# datoteki tekem} few {# datoteke tekem} other {# datotek tekem}}",
   "lean.cancel": "Prekliči",
   "lean.progress": "{done} od {total} kosov · {rows} vrstic · {seconds} s",

@@ -3,6 +3,8 @@
   "lean.hint": "Sobrepõe centenas ou milhares de partidas, cada uma a partir do seu próprio início. Os seus ficheiros Parquet (um por partida, ou ficheiros com muitas) são lidos diretamente para a GPU, nunca como tabela completa, e a sobreposição corre à taxa de fotogramas total.",
   "lean.pickFiles": "Ficheiros…",
   "lean.pickFolder": "Pasta…",
+  "lean.addFolder": "Adicionar pasta…",
+  "lean.addFolderTitle": "Adiciona as partidas de uma pasta às carregadas: um mapa com gravações em várias pastas carrega inteiro.",
   "lean.name": "{count, plural, one {# ficheiro de partida} other {# ficheiros de partida}}",
   "lean.cancel": "Cancelar",
   "lean.progress": "{done} de {total} partes · {rows} linhas · {seconds} s",

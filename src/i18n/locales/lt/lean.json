@@ -3,6 +3,8 @@
   "lean.hint": "Sudeda šimtus ar tūkstančius rungtynių vienas ant kitų, kiekvienas nuo savo pradžios. Jų Parquet failai (po vieną rungtynėms arba failai su daugeliu) skaitomi tiesiai į GPU, niekada kaip visa lentelė, todėl perdanga groja visu kadrų dažniu.",
   "lean.pickFiles": "Failai…",
   "lean.pickFolder": "Aplankas…",
+  "lean.addFolder": "Pridėti aplanką…",
+  "lean.addFolderTitle": "Prideda aplanko rungtynes prie įkeltų: žemėlapis, kurio įrašai yra keliuose aplankuose, įkeliamas visas.",
   "lean.name": "{count, plural, one {# rungtynių failas} few {# rungtynių failai} many {# rungtynių failo} other {# rungtynių failų}}",
   "lean.cancel": "Atšaukti",
   "lean.progress": "{done} iš {total} dalių · {rows} eil. · {seconds} s",

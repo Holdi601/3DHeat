@@ -3,6 +3,8 @@
   "lean.hint": "Több száz vagy ezer meccset fektet egymásra, mindegyiket a saját kezdetétől. Parquet-fájljaikat (meccsenként egyet, vagy sok meccset tartalmazó fájlokat) közvetlenül a GPU-ba olvassa, soha nem teljes táblaként, így az átfedés teljes képkockasebességgel fut.",
   "lean.pickFiles": "Fájlok…",
   "lean.pickFolder": "Mappa…",
+  "lean.addFolder": "Mappa hozzáadása…",
+  "lean.addFolderTitle": "Egy mappa meccseit hozzáadja a betöltöttekhez: a több mappában tárolt felvételű térkép egészben betöltődik.",
   "lean.name": "{count, plural, one {# meccsfájl} other {# meccsfájl}}",
   "lean.cancel": "Mégse",
   "lean.progress": "{done} / {total} darab · {rows} sor · {seconds} mp",

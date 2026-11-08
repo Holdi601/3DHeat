@@ -3,6 +3,8 @@
   "lean.hint": "Superposa centenars o milers de partides, cadascuna des del seu propi inici. Els seus fitxers Parquet (un per partida, o fitxers amb moltes) es llegeixen directament a la GPU, mai com a taula sencera, i la superposició va a la taxa de fotogrames completa.",
   "lean.pickFiles": "Fitxers…",
   "lean.pickFolder": "Carpeta…",
+  "lean.addFolder": "Afegeix carpeta…",
+  "lean.addFolderTitle": "Afegeix les partides d'una carpeta a les carregades: un mapa amb enregistraments en diverses carpetes es carrega sencer.",
   "lean.name": "{count, plural, one {# fitxer de partida} other {# fitxers de partida}}",
   "lean.cancel": "Cancel·la",
   "lean.progress": "{done} de {total} parts · {rows} files · {seconds} s",
