@@ -3,6 +3,8 @@
   "lean.hint": "Lägger hundratals eller tusentals matcher över varandra, var och en från sin egen start. Deras Parquet-filer (en per match, eller filer med många) läses direkt in i GPU:n, aldrig som en hel tabell, så överlagringen spelas med full bildfrekvens.",
   "lean.pickFiles": "Filer…",
   "lean.pickFolder": "Mapp…",
+  "lean.addFolder": "Lägg till mapp…",
+  "lean.addFolderTitle": "Lägger till en mapps matcher till de inlästa: en karta med inspelningar i flera mappar läses in helt.",
   "lean.name": "{count, plural, one {# matchfil} other {# matchfiler}}",
   "lean.cancel": "Avbryt",
   "lean.progress": "{done} av {total} delar · {rows} rader · {seconds} s",

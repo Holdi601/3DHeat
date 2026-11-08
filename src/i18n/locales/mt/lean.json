@@ -3,6 +3,8 @@
   "lean.hint": "Ipoġġi mijiet jew eluf ta' logħbiet fuq xulxin, kull waħda mill-bidu tagħha. Il-fajls Parquet tagħhom (wieħed għal kull logħba, jew fajls b'ħafna) jinqraw dritt fil-GPU, qatt bħala tabella sħiħa, u għalhekk is-sovrappożizzjoni tilgħab b'rata sħiħa ta' frejms.",
   "lean.pickFiles": "Fajls…",
   "lean.pickFolder": "Folder…",
+  "lean.addFolder": "Żid folder…",
+  "lean.addFolderTitle": "Iżżid il-logħbiet ta' folder ma' dawk imtella': mappa b'reġistrazzjonijiet f'diversi folders titella' sħiħa.",
   "lean.name": "{count, plural, one {# fajl ta' logħba} few {# fajls ta' logħba} many {# fajl ta' logħba} other {# fajls ta' logħba}}",
   "lean.cancel": "Ikkanċella",
   "lean.progress": "{done} minn {total} biċċiet · {rows} ringieli · {seconds} s",

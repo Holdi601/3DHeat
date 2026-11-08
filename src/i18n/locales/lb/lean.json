@@ -3,6 +3,8 @@
   "lean.hint": "Leet Honnerte oder Dausende Matcher iwwerenee, all vu sengem eegene Start. Hir Parquet-Fichieren (ee pro Match oder Fichiere mat villen) ginn direkt an d'GPU gelies, ni als ganz Tabell, sou leeft d'Iwwerlagerung mat voller Bildrate.",
   "lean.pickFiles": "Fichieren…",
   "lean.pickFolder": "Dossier…",
+  "lean.addFolder": "Dossier derbäisetzen…",
+  "lean.addFolderTitle": "Setzt d'Matcher vun engem Dossier bei déi gelueden: eng Kaart mat Opnamen a méi Dossieren gëtt ganz gelueden.",
   "lean.name": "{count, plural, one {# Match-Fichier} other {# Match-Fichieren}}",
   "lean.cancel": "Ofbriechen",
   "lean.progress": "{done} vun {total} Stécker · {rows} Zeilen · {seconds} s",

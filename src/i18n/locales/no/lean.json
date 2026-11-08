@@ -3,6 +3,8 @@
   "lean.hint": "Legger hundrevis eller tusenvis av kamper over hverandre, hver fra sin egen start. Parquet-filene deres (én per kamp, eller filer med mange) leses rett inn i GPU-en, aldri som en hel tabell, så overlegget spilles med full bildefrekvens.",
   "lean.pickFiles": "Filer…",
   "lean.pickFolder": "Mappe…",
+  "lean.addFolder": "Legg til mappe…",
+  "lean.addFolderTitle": "Legger en mappes kamper til de innlastede: et kart med opptak i flere mapper lastes helt.",
   "lean.name": "{count, plural, one {# kampfil} other {# kampfiler}}",
   "lean.cancel": "Avbryt",
   "lean.progress": "{done} av {total} deler · {rows} rader · {seconds} s",

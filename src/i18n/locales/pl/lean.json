@@ -3,6 +3,8 @@
   "lean.hint": "Nakłada setki lub tysiące meczów na siebie, każdy od jego własnego początku. Ich pliki Parquet (jeden na mecz albo pliki z wieloma) są wczytywane prosto do GPU, nigdy jako pełna tabela, więc nakładka gra z pełną liczbą klatek.",
   "lean.pickFiles": "Pliki…",
   "lean.pickFolder": "Folder…",
+  "lean.addFolder": "Dodaj folder…",
+  "lean.addFolderTitle": "Dodaje mecze z folderu do wczytanych: mapa, której nagrania leżą w kilku folderach, wczytuje się w całości.",
   "lean.name": "{count, plural, one {# plik meczu} few {# pliki meczów} many {# plików meczów} other {# pliku meczów}}",
   "lean.cancel": "Anuluj",
   "lean.progress": "{done} z {total} części · {rows} wierszy · {seconds} s",

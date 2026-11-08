@@ -3,6 +3,8 @@
   "lean.hint": "Slaže stotine ili tisuće utakmica jednu preko druge, svaku od njezina početka. Njihove Parquet datoteke (jedna po utakmici ili datoteke s mnogima) čitaju se izravno u GPU, nikad kao cijela tablica, pa preklapanje radi punom brzinom sličica.",
   "lean.pickFiles": "Datoteke…",
   "lean.pickFolder": "Mapa…",
+  "lean.addFolder": "Dodaj mapu…",
+  "lean.addFolderTitle": "Dodaje mečeve iz mape učitanima: karta čije su snimke u više mapa učitava se cijela.",
   "lean.name": "{count, plural, one {# datoteka utakmice} few {# datoteke utakmica} other {# datoteka utakmica}}",
   "lean.cancel": "Odustani",
   "lean.progress": "{done} od {total} dijelova · {rows} redaka · {seconds} s",

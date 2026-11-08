@@ -255,7 +255,8 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
     }
     let o = objects.get(id);
     if (!o) {
-      o = { lon: NaN, lat: NaN, alt: NaN, roll: NaN, pitch: NaN, yaw: NaN, u: NaN, v: NaN, heading: NaN, props: new Map(), seen: false };
+      // An altitude never written is sea level, as Tacview reads it: DCS writes ships with none.
+      o = { lon: NaN, lat: NaN, alt: 0, roll: NaN, pitch: NaN, yaw: NaN, u: NaN, v: NaN, heading: NaN, props: new Map(), seen: false };
       objects.set(id, o);
     }
     let moved = false;

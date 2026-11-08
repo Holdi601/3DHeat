@@ -3,6 +3,8 @@
   "lean.hint": "Sovrappone centinaia o migliaia di partite, ognuna dal proprio inizio. I loro file Parquet (uno per partita, o file con molte) vengono letti direttamente nella GPU, mai come tabella intera, così la sovrapposizione gira a pieno frame rate.",
   "lean.pickFiles": "File…",
   "lean.pickFolder": "Cartella…",
+  "lean.addFolder": "Aggiungi cartella…",
+  "lean.addFolderTitle": "Aggiunge le partite di una cartella a quelle caricate: una mappa con registrazioni in più cartelle si carica intera.",
   "lean.name": "{count, plural, one {# file di partita} other {# file di partita}}",
   "lean.cancel": "Annulla",
   "lean.progress": "{done} di {total} parti · {rows} righe · {seconds} s",

@@ -3,6 +3,8 @@
   "lean.hint": "Překládá stovky nebo tisíce zápasů přes sebe, každý od jeho vlastního začátku. Jejich soubory Parquet (jeden na zápas, nebo soubory s mnoha) se čtou přímo do GPU, nikdy jako celá tabulka, takže překryv běží v plné snímkové frekvenci.",
   "lean.pickFiles": "Soubory…",
   "lean.pickFolder": "Složka…",
+  "lean.addFolder": "Přidat složku…",
+  "lean.addFolderTitle": "Přidá zápasy ze složky k načteným: mapa, jejíž záznamy leží v několika složkách, se načte celá.",
   "lean.name": "{count, plural, one {# soubor zápasu} few {# soubory zápasů} many {# souboru zápasů} other {# souborů zápasů}}",
   "lean.cancel": "Zrušit",
   "lean.progress": "{done} z {total} částí · {rows} řádků · {seconds} s",

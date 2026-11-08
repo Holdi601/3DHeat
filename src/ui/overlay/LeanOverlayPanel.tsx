@@ -28,6 +28,8 @@ export function LeanOverlayPanel() {
   const overlay = leanOverlayOf(dataset);
   const files = useRef<HTMLInputElement>(null);
   const folder = useRef<HTMLInputElement>(null);
+  /** The next folder picked joins the matches loaded (a map's recordings kept in several places). */
+  const adding = useRef(false);
   const [, tick] = useState(0);
   // The GPU's figures (bytes held, the dart size the frame time steers) move on their own: looked at twice a second.
   useEffect(() => {
@@ -37,8 +39,14 @@ export function LeanOverlayPanel() {
   }, [overlay, progress]);
 
   const start = async (list: FileList | null) => {
-    const picked = overlayFiles(Array.from(list ?? []));
-    if (!picked.length) return;
+    const add = adding.current;
+    adding.current = false;
+    const fresh = Array.from(list ?? []);
+    const kept = add ? (leanOverlayOf(useStore.getState().dataset)?.files ?? []) : [];
+    // A file picked twice (the same folder again) counts once.
+    const seen = new Set(kept.map((f) => `${f.name}${f.size}`));
+    const picked = overlayFiles([...kept, ...fresh.filter((f) => !seen.has(`${f.name}${f.size}`))]);
+    if (!picked.length || picked.length === kept.length) return;
     useLeanStore.getState().handle?.cancel();
     const host = await probeHostMemory();
     const budget = leanBudget({
@@ -138,12 +146,39 @@ export function LeanOverlayPanel() {
       <Section title={t('lean.title')} defaultOpen={!!overlay || !!progress} right={b ? <span className="count">{int(b.groups.length)}</span> : undefined}>
         <div className="hint">{t('lean.hint')}</div>
         <div className="row wrap" style={{ gap: 6, margin: '4px 0' }}>
-          <button className="small" disabled={!!progress} onClick={() => files.current?.click()}>
+          <button
+            className="small"
+            disabled={!!progress}
+            onClick={() => {
+              adding.current = false;
+              files.current?.click();
+            }}
+          >
             {t('lean.pickFiles')}
           </button>
-          <button className="small" disabled={!!progress} onClick={() => folder.current?.click()}>
+          <button
+            className="small"
+            disabled={!!progress}
+            onClick={() => {
+              adding.current = false;
+              folder.current?.click();
+            }}
+          >
             {t('lean.pickFolder')}
           </button>
+          {overlay && (
+            <button
+              className="small"
+              disabled={!!progress}
+              title={t('lean.addFolderTitle')}
+              onClick={() => {
+                adding.current = true;
+                folder.current?.click();
+              }}
+            >
+              {t('lean.addFolder')}
+            </button>
+          )}
         </div>
         {progress && (
           <div className="lean-progress">

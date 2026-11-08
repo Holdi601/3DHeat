@@ -3,6 +3,8 @@
   "lean.hint": "Superpose des centaines ou des milliers de matchs, chacun depuis son propre début. Leurs fichiers Parquet (un par match, ou des fichiers de plusieurs) sont lus directement dans le GPU, jamais en table complète, et la superposition tourne à pleine fréquence d'images.",
   "lean.pickFiles": "Fichiers…",
   "lean.pickFolder": "Dossier…",
+  "lean.addFolder": "Ajouter un dossier…",
+  "lean.addFolderTitle": "Ajoute les parties d'un dossier à celles chargées : une carte dont les enregistrements sont dans plusieurs dossiers se charge en entier.",
   "lean.name": "{count, plural, one {# fichier de match} other {# fichiers de match}}",
   "lean.cancel": "Annuler",
   "lean.progress": "{done} sur {total} morceaux · {rows} lignes · {seconds} s",

@@ -3,6 +3,8 @@
   "lean.hint": "Lægger hundreder eller tusinder af kampe oven på hinanden, hver fra sin egen start. Deres Parquet-filer (én pr. kamp eller filer med mange) læses direkte ind i GPU'en, aldrig som en hel tabel, så overlejringen kører med fuld billedfrekvens.",
   "lean.pickFiles": "Filer…",
   "lean.pickFolder": "Mappe…",
+  "lean.addFolder": "Tilføj mappe…",
+  "lean.addFolderTitle": "Føjer en mappes kampe til de indlæste: et kort med optagelser i flere mapper indlæses helt.",
   "lean.name": "{count, plural, one {# kampfil} other {# kampfiler}}",
   "lean.cancel": "Annullér",
   "lean.progress": "{done} af {total} dele · {rows} rækker · {seconds} s",

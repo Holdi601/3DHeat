@@ -3,6 +3,8 @@
   "lean.hint": "Yüzlerce ya da binlerce maçı, her birini kendi başlangıcından, üst üste koyar. Parquet dosyaları (maç başına bir ya da birçok maç içeren dosyalar) hiçbir zaman tam tablo olarak değil, doğrudan GPU'ya okunur; böylece bindirme tam kare hızında oynar.",
   "lean.pickFiles": "Dosyalar…",
   "lean.pickFolder": "Klasör…",
+  "lean.addFolder": "Klasör ekle…",
+  "lean.addFolderTitle": "Bir klasörün maçlarını yüklenenlere ekler: kayıtları birkaç klasörde duran bir harita bütün olarak yüklenir.",
   "lean.name": "{count, plural, one {# maç dosyası} other {# maç dosyası}}",
   "lean.cancel": "İptal",
   "lean.progress": "{done}/{total} parça · {rows} satır · {seconds} sn",

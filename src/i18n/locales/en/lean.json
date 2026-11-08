@@ -3,6 +3,8 @@
   "lean.hint": "Lays hundreds or thousands of matches over each other, each from its own start. Their Parquet files (one a match, or files of many) are read straight into the GPU, never as a full table, so the overlay plays at full frame rate.",
   "lean.pickFiles": "Files…",
   "lean.pickFolder": "Folder…",
+  "lean.addFolder": "Add folder…",
+  "lean.addFolderTitle": "Adds a folder's matches to those loaded: a map whose recordings lie in several folders loads whole.",
   "lean.name": "{count, plural, one {# match file} other {# match files}}",
   "lean.cancel": "Cancel",
   "lean.progress": "{done} of {total} pieces · {rows} rows · {seconds} s",

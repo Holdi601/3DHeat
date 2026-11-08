@@ -3,6 +3,8 @@
   "lean.hint": "Legt honderden of duizenden wedstrijden over elkaar, elk vanaf zijn eigen begin. Hun Parquet-bestanden (één per wedstrijd, of bestanden met vele) worden direct in de GPU gelezen, nooit als volledige tabel, zodat de overlay op volle framerate speelt.",
   "lean.pickFiles": "Bestanden…",
   "lean.pickFolder": "Map…",
+  "lean.addFolder": "Map toevoegen…",
+  "lean.addFolderTitle": "Voegt de wedstrijden van een map toe aan de geladen: een kaart met opnamen in meerdere mappen laadt in zijn geheel.",
   "lean.name": "{count, plural, one {# wedstrijdbestand} other {# wedstrijdbestanden}}",
   "lean.cancel": "Annuleren",
   "lean.progress": "{done} van {total} delen · {rows} rijen · {seconds} s",

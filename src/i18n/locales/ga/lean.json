@@ -3,6 +3,8 @@
   "lean.hint": "Leagann sé na céadta nó na mílte cluiche ar a chéile, gach ceann óna thús féin. Léitear a gcomhaid Parquet (ceann in aghaidh an chluiche, nó comhaid le go leor) díreach isteach sa GPU, riamh mar thábla iomlán, mar sin seinneann an forleagan ag lánráta frámaí.",
   "lean.pickFiles": "Comhaid…",
   "lean.pickFolder": "Fillteán…",
+  "lean.addFolder": "Cuir fillteán leis…",
+  "lean.addFolderTitle": "Cuireann sé cluichí fillteáin leo siúd atá luchtaithe: lódáiltear léarscáil iomlán a bhfuil a taifeadtaí i roinnt fillteán.",
   "lean.name": "{count, plural, one {# chomhad cluiche} two {# chomhad cluiche} few {# chomhad cluiche} many {# gcomhad cluiche} other {# comhad cluiche}}",
   "lean.cancel": "Cealaigh",
   "lean.progress": "{done} as {total} píosa · {rows} ró · {seconds} s",

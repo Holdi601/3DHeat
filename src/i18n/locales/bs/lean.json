@@ -3,6 +3,8 @@
   "lean.hint": "Slaže stotine ili hiljade mečeva jedan preko drugog, svaki od njegovog početka. Njihove Parquet datoteke (jedna po meču ili datoteke s mnogima) čitaju se direktno u GPU, nikad kao cijela tabela, pa preklapanje radi punom brzinom sličica.",
   "lean.pickFiles": "Datoteke…",
   "lean.pickFolder": "Folder…",
+  "lean.addFolder": "Dodaj folder…",
+  "lean.addFolderTitle": "Dodaje mečeve iz foldera onima koji su učitani: mapa čiji su snimci u više foldera učitava se cijela.",
   "lean.name": "{count, plural, one {# datoteka meča} few {# datoteke mečeva} other {# datoteka mečeva}}",
   "lean.cancel": "Otkaži",
   "lean.progress": "{done} od {total} dijelova · {rows} redova · {seconds} s",

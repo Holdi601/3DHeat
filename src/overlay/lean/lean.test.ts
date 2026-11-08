@@ -6,7 +6,7 @@ import { poseFrame } from '../../figures/kit';
 import { quatOfFrame } from '../../figures/motion';
 import { KEY_LEVELS, quatOfAttitude, scanPass1, scanPass2, specColumns, type Columns, type LeanSpec } from './scan';
 import { LeanAssembler, planJobs, type LeanBuilt } from './assemble';
-import { leanSpec } from './spec';
+import { leanSpec, sharedGeo } from './spec';
 import { leanBudget, leanStore } from './load';
 
 /** A file's rows: aircraft circling and tanks driving, in two matches, with shots and deaths among them, in time order. */
@@ -352,5 +352,32 @@ describe('GPU track visibility and near figures', () => {
     // A ray straight down onto unit 0 passes its box; one far off does not.
     expect(rayNearTrack(s, 0, cam, [0, -1, 0], 1, 0)).toBe(true);
     expect(rayNearTrack(s, 0, [cam[0] + 1e6, cam[1], cam[2]], [0, -1, 0], 1, 0)).toBe(false);
+  });
+});
+
+describe('lean overlay garbage positions', () => {
+  it('reads a coordinate a recorder wrote as 1e20 as no place: the bounds and the other keys stay true', () => {
+    const r = rows();
+    const m = r.find((x) => x.track === 'm #9')!;
+    r.push({ ...m, time: (m.time as number) + 0.05, y: 1.8e20 });
+    r.sort((a, b) => (a.time as number) - (b.time as number));
+    const b = load(r);
+    expect(b.samples).toBe(r.filter((x) => x.event === 'position').length - 1);
+    expect(b.dataset.bounds.maxY).toBeLessThan(1e4);
+  });
+});
+
+describe('lean overlay place on the earth', () => {
+  const hints = (lat0: number) => JSON.stringify({ geo: { lat0, lon0: 42, projection: 'tangent-plane', east: 'X', north: 'Y', up: 'Altitude' } });
+  const mapping = { x: 'X', y: 'Y', z: 'Altitude' };
+
+  it('takes the reference every file shares', () => {
+    expect(sharedGeo([hints(42), hints(42)], mapping)).toEqual({ lat0: 42, lon0: 42, projection: 'tangent-plane' });
+  });
+
+  it('takes none when the files differ, one has none, or the load took other columns', () => {
+    expect(sharedGeo([hints(42), hints(43)], mapping)).toBeNull();
+    expect(sharedGeo([hints(42), null], mapping)).toBeNull();
+    expect(sharedGeo([hints(42)], { x: 'U', y: 'V', z: 'Altitude' })).toBeNull();
   });
 });

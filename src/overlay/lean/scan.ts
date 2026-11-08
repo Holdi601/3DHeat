@@ -42,6 +42,16 @@ export const MAX_GAP = 4;
 export const STEPS = 65535;
 /** Two samples closer than this in time are one. */
 const DOUBLE = 1e-3;
+/**
+ * A coordinate past this is a recorder's garbage, not a place (a million
+ * kilometres in metres; DCS writes the odd missile at 1e20 m): such a sample
+ * is no position, so it neither stretches the bounds nor ruins its track's keys.
+ */
+const FAR = 1e9;
+
+function placed(x: number, y: number, z: number): boolean {
+  return Math.abs(x) < FAR && Math.abs(y) < FAR && Math.abs(z) < FAR;
+}
 
 /** Event labels whose rows are positions of the thing itself (as `figures/motion.ts`). */
 const POSITION_EVENT = /^(position|pos|move|moved|sample|state|tick|update|spawn|spawned|alive)?$/i;
@@ -235,7 +245,7 @@ export function prepare(cols: Columns, n: number, s: LeanSpec): Prepared {
       units.set(k, u);
     }
     unit[i] = u;
-    if (ownOf(e) && Number.isFinite(x[i]) && Number.isFinite(y[i]) && Number.isFinite(z[i])) own[i] = 1;
+    if (ownOf(e) && placed(x[i], y[i], z[i])) own[i] = 1;
   }
   return { n, t, x, y, z, unit, group, own, death, units: track.length, track, match, groups };
 }
@@ -445,7 +455,7 @@ export function scanPass1(cols: Columns, n: number, s: LeanSpec, rowBase: number
     if (g < 0) continue;
     groupRows[g]++;
     if (t[i] < groupStart[g]) groupStart[g] = t[i];
-    if (p.death[i] && Number.isFinite(x[i]) && Number.isFinite(y[i]) && Number.isFinite(z[i])) {
+    if (p.death[i] && placed(x[i], y[i], z[i])) {
       mPos.push(x[i], y[i], z[i]);
       mT.push(t[i]);
       mG.push(g);

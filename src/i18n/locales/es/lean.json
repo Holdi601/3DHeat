@@ -3,6 +3,8 @@
   "lean.hint": "Superpone cientos o miles de partidas, cada una desde su propio inicio. Sus archivos Parquet (uno por partida, o archivos con muchas) se leen directamente en la GPU, nunca como tabla completa, así la superposición va a la tasa de fotogramas completa.",
   "lean.pickFiles": "Archivos…",
   "lean.pickFolder": "Carpeta…",
+  "lean.addFolder": "Añadir carpeta…",
+  "lean.addFolderTitle": "Añade las partidas de una carpeta a las cargadas: un mapa con grabaciones en varias carpetas se carga entero.",
   "lean.name": "{count, plural, one {# archivo de partida} other {# archivos de partida}}",
   "lean.cancel": "Cancelar",
   "lean.progress": "{done} de {total} partes · {rows} filas · {seconds} s",

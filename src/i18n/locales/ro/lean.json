@@ -3,6 +3,8 @@
   "lean.hint": "Suprapune sute sau mii de meciuri, fiecare de la propriul început. Fișierele lor Parquet (unul pe meci sau fișiere cu multe) sunt citite direct în GPU, niciodată ca tabel complet, astfel suprapunerea rulează la rata de cadre completă.",
   "lean.pickFiles": "Fișiere…",
   "lean.pickFolder": "Dosar…",
+  "lean.addFolder": "Adaugă dosar…",
+  "lean.addFolderTitle": "Adaugă meciurile unui dosar la cele încărcate: o hartă cu înregistrări în mai multe dosare se încarcă întreagă.",
   "lean.name": "{count, plural, one {# fișier de meci} few {# fișiere de meci} other {# de fișiere de meci}}",
   "lean.cancel": "Anulează",
   "lean.progress": "{done} din {total} bucăți · {rows} rânduri · {seconds} s",

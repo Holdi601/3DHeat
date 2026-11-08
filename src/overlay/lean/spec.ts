@@ -5,8 +5,8 @@
  * the generic loader - axes, flips and scale, look direction, time unit.
  */
 
-import { applyHints, autoMap, parseHints } from '../../data/automap';
-import type { ColumnMapping, TimeUnit } from '../../state/types';
+import { applyHints, autoMap, geoOfHints, parseHints } from '../../data/automap';
+import type { ColumnMapping, GeoReference, TimeUnit } from '../../state/types';
 import type { LeanSpec } from './scan';
 
 const TIME_SCALE: Partial<Record<TimeUnit, number>> = {
@@ -96,4 +96,20 @@ export function specFor(spec: LeanSpec, columns: Set<string>): LeanSpec | null {
     pitch: opt(spec.pitch),
     roll: opt(spec.roll),
   };
+}
+
+/**
+ * Where the load is on the earth: the reference the files' hints give for the
+ * columns the load took, when every file gives the same one (as the
+ * ACMI converter's files of one theatre do); else none, as the generic loader.
+ */
+export function sharedGeo(hints: (string | null)[], mapping: { x: string | null; y: string | null; z: string | null }): GeoReference | null {
+  let geo: GeoReference | null = null;
+  for (const h of hints) {
+    const g = geoOfHints(parseHints(h), mapping);
+    if (!g) return null;
+    if (geo && (g.lat0 !== geo.lat0 || g.lon0 !== geo.lon0 || g.projection !== geo.projection || g.north !== geo.north || g.theatre !== geo.theatre)) return null;
+    geo = g;
+  }
+  return geo;
 }

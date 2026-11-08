@@ -3,6 +3,8 @@
   "lean.hint": "Leggur hundruð eða þúsundir leikja hvern ofan á annan, hvern frá eigin upphafi. Parquet-skrár þeirra (ein á leik eða skrár með mörgum) eru lesnar beint inn í skjákortið, aldrei sem heil tafla, svo yfirlögnin keyrir á fullum rammahraða.",
   "lean.pickFiles": "Skrár…",
   "lean.pickFolder": "Mappa…",
+  "lean.addFolder": "Bæta við möppu…",
+  "lean.addFolderTitle": "Bætir leikjum möppu við þá sem eru hlaðnir: kort með upptökur í mörgum möppum hleðst í heild.",
   "lean.name": "{count, plural, one {# leikjaskrá} other {# leikjaskrár}}",
   "lean.cancel": "Hætta við",
   "lean.progress": "{done} af {total} hlutum · {rows} raðir · {seconds} s",
