@@ -330,7 +330,7 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'royal-sovereign': { cls: 'battleship', L: 189.2, B: 27.0, fb: 8, guns: '62:2/381 50:2/381^2.5 -48:2/381^2.5b -62:2/381b', funnels: [[6, 14, 7]], blocks: [[34, 20, 26, 6, 1]], masts: [[28, 34], [-16, 26]] },
   // Britain.
   'invincible-1908': { cls: 'battlecruiser', L: 172.8, B: 23.9, fb: 8, guns: '58:2/305 -58:2/305b 4,8:2/305', funnels: [[20, 14, 5], [10, 14, 5], [-14, 14, 5]], blocks: [[42, 32, 18, 5, 1]], masts: [[36, 30], [-6, 26]] },
-  'colossus-1910': { cls: 'battleship', L: 166.4, B: 26.4, fb: 8, guns: '56:2/305 6,9:2/305 -40:2/305b -56:2/305b', funnels: [[22, 14, 5], [-14, 14, 5]], blocks: [[40, 30, 18, 5, 1]], masts: [[2, 30]] },
+  'colossus-1910': { cls: 'battleship', L: 166.4, B: 26.4, fb: 8, guns: '56:2/305 6,9:2/305 -40:2/305^2.5b -56:2/305b', funnels: [[22, 14, 5], [-14, 14, 5]], blocks: [[40, 30, 18, 5, 1]], masts: [[2, 30]] },
   'orion': { cls: 'battleship', L: 177.0, B: 27.0, fb: 8, guns: '60:2/343 48:2/343^2.5 -4:2/343 -46:2/343^2.5b -60:2/343b', funnels: [[18, 14, 5], [6, 14, 5]], blocks: [[38, 28, 20, 6, 1]], masts: [[30, 32]] },
   'queen-mary': { cls: 'battlecruiser', L: 214.4, B: 27.2, fb: 8, sheer: 3, guns: '75:2/343 63:2/343^2.5 -24:2/343 -75:2/343b', funnels: [[40, 14, 5], [14, 14, 5], [0, 14, 5]], blocks: [[52, 44, 20, 5, 1]], masts: [[46, 32]] },
   'glorious': { cls: 'battlecruiser', L: 239.8, B: 24.7, fb: 8, sheer: 4, guns: '75:2/381 -75:2/381b', funnels: [[6, 14, 7]], blocks: [[44, 24, 24, 6, 1]], masts: [[36, 34]] },
