@@ -2307,7 +2307,7 @@ export const CUES: Record<string, CueEntry> = {
   'strv-122': ground('strv-122', [{ cue: 'thick roof armour and armoured skirts', check: adds('box', 4, 'hull') }]),
   'leopard-2a4m-can': ground('leopard-2a4m-can', [
     { cue: 'short L/44 gun', check: (s) => cal(0.12)(s) && gunLen(5, 6)(s) },
-    { cue: 'upright add-on modules squaring the turret front and down its sides, no wedge', check: (s) => !wedgeTurret(s) && turretL(4.4)(s) && (s.turret?.width ?? 0) >= 3.6 },
+    { cue: 'upright add-on modules squaring the turret front and down its sides, no wedge', check: (s) => !wedgeTurret(s) && turretL(4.4)(s) && (s.turret?.width ?? 0) >= 3.35 },
     { cue: 'armour module on the hull front, armoured skirts', check: adds('box', 6, 'hull') },
     { cue: "slat panels on the turret bustle and the hull's back", check: (s) => (s.addOns ?? []).filter((a) => a.metal && a.kind === 'box' && Math.min(a.size[0], a.size[1]) <= 0.1 && a.size[2] >= 0.5).length >= 2 },
   ]),

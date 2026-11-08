@@ -186,9 +186,10 @@ G['leopard-2e'] = { cls: 'mbt', ...LEO2, turret: LEO2_WEDGE, guns: [L55], addOns
 // Leopard 2A4M CAN (2010s): the 2A4 with the 2A7's add-on armour reworked for its turret - thick upright modules
 // squaring the turret front and running down its sides, a module on the hull front, armoured skirts - small panels of
 // slat armour on the turret bustle and the hull's back, and the L/44 (9.67 x 3.7 m, 2.9 m).
-const A4M_BASE = turret(-0.35, [[-1.98, 1.35], [-1.68, 1.62], [-1.4, 1.85], [2.15, 1.85], [2.45, 1.7], [2.5, 0.62]], [[-1.98, 0.72], [-1.75, 0.8], [2.2, 0.88], [2.5, 0.66]], 12, 2.4);
+// Its turret 3.4 m across the modules (two US Army head-on photographs, public domain, against the 3.7 m hull).
+const A4M_BASE = turret(-0.35, [[-1.98, 1.35], [-1.68, 1.55], [-1.4, 1.7], [2.15, 1.7], [2.45, 1.58], [2.5, 0.62]], [[-1.98, 0.72], [-1.75, 0.8], [2.2, 0.88], [2.5, 0.66]], 12, 2.4);
 const A4M_TURRET = { ...A4M_BASE, outline: { ...A4M_BASE.outline!, bottom: leo2Bustle(2.5) } };
-G['leopard-2a4m-can'] = { cls: 'mbt', ...LEO2, turret: A4M_TURRET, guns: [L44], addOns: [tb(1.25, 0.72, 0.94, 0.75, 0.55, 0.16), PERI(0.35), tb(-1.75, 1.75, 0.62, 0.45, 0.2, 0.26, { ...M, ...DARK }), tb(-1.85, 1.05, 0.4, 0.3, 0.6, 0.45, M), tb(-2.45, 0, 0.42, 0.08, 2.7, 0.6, DARK),
+G['leopard-2a4m-can'] = { cls: 'mbt', ...LEO2, turret: A4M_TURRET, guns: [L44], addOns: [tb(1.25, 0.72, 0.94, 0.75, 0.55, 0.16), PERI(0.35), tb(-1.75, 1.62, 0.62, 0.45, 0.2, 0.26, { ...M, ...DARK }), tb(-1.85, 1.05, 0.4, 0.3, 0.6, 0.45, M), tb(-2.45, 0, 0.42, 0.08, 2.7, 0.6, DARK),
   ...LEO2_GLACIS(0.28), hb(3.95, 0, 0.98, 0.3, 3.3, 0.5), ...skirtBoxes(-3.4, 3.7, 1.92, 0.6, 0.6, 5, 0.16), hb(-3.98, 0, 1.25, 0.08, 3.4, 0.8, DARK)] };
 
 // ---------------------------------------------------------------- Leopard 1
@@ -2409,7 +2410,7 @@ const mainGun = (o: Partial<GunSpec>) => (g: GunSpec[]) => g.map((x, i) => (i ==
 
 // Leopard 2A4M CAN: the L44 with its sleeve and muzzle sensor, the EMES 15's window, PERI R17's head, the eight smoke
 // tubes on each turret side, the gun shield, the loader's machine gun.
-more('leopard-2a4m-can', [tb(1.63, 0.72, 0.95, 0.024, 0.4, 0.08, { paint: 'glass' }), tb(0.55, 0.78, 1.12, 0.03, 0.22, 0.1, { paint: 'glass' }), ...smokeRow(-1.25, 1.84, 0.74, 4), ...smokeRow(-1.25, 1.84, 0.58, 4), tb(2.48, 0, 0.42, 0.28, 0.78, 0.56)],
+more('leopard-2a4m-can', [tb(1.63, 0.72, 0.95, 0.024, 0.4, 0.08, { paint: 'glass' }), tb(0.55, 0.78, 1.12, 0.03, 0.22, 0.1, { paint: 'glass' }), ...smokeRow(-1.25, 1.7, 0.74, 4), ...smokeRow(-1.25, 1.7, 0.58, 4), tb(2.48, 0, 0.42, 0.28, 0.78, 0.56)],
   (g) => [{ ...g[0], sleeve: 0.92, mrs: true }, roofMg(-0.4, -0.75, 0.0076)]);
 // Merkava Mk 3 and 3D: the sleeved gun (no fume extractor) with its sensor, the 60 mm mortar on the roof's front left, the
 // gunner's sight, the smoke banks on the wedge's flanks, the two roof machine guns, the big rear door.
