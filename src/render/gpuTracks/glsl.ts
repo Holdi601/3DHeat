@@ -236,6 +236,97 @@ void main() {
 }
 `;
 
+/** Most trail segments a unit, as on WebGPU (`webgpu/tracks.ts`). */
+export const TRAIL_SEGMENTS_GL = 48;
+
+/**
+ * Trails and drop lines, as the WebGPU place shader writes them (`shader.ts`):
+ * one instance a track (its placed instance from the feedback buffer, so a
+ * hidden, stale or not yet started unit draws nothing), two vertices a line.
+ * Line n < 48 is the trail's n-th piece: from where the unit is (n = 0) or
+ * its key k - n + 1 back to key k - n, kept while that key is no older than
+ * the trail seconds, fading with age; the last line is the drop line, straight
+ * down to the data's floor. Units off screen draw neither, as on WebGPU.
+ */
+export const TRAIL_GLSL_VS = `#version 300 es
+precision highp float;
+precision highp int;
+precision highp usampler2D;
+layout(location = 4) in vec4 iOrigin;
+layout(location = 7) in vec4 iTeam;
+uniform usampler2D uTracks;
+uniform usampler2D uKeysA;
+uniform int uW;
+uniform mat4 uViewProj;
+uniform vec4 uCam;      // camera xyz, playhead t
+uniform vec4 uTrail;    // trail seconds (0: none), 1 for drop lines, the floor's height, segments
+out vec4 vColor;
+out vec3 vWorld;
+
+ivec2 at(int n) { return ivec2(n % uW, n / uW); }
+vec3 spanO;
+float spanStep;
+float spanT0;
+float spanTS;
+vec4 keyAt(int j) {
+  uvec2 k = texelFetch(uKeysA, at(j), 0).xy;
+  return vec4(spanO + vec3(float(k.x & 0xffffu), float(k.x >> 16u), float(k.y & 0xffffu)) * spanStep, spanT0 + float(k.y >> 16u) * spanTS);
+}
+float timeAt(int j) { return spanT0 + float(texelFetch(uKeysA, at(j), 0).y >> 16u) * spanTS; }
+
+void main() {
+  gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
+  vColor = vec4(0.0);
+  vWorld = vec3(0.0);
+  // Placed this frame (the eval pass writes the gun elevation -100 only then), and on screen.
+  if (iTeam.w > -99.0) return;
+  vec3 P = iOrigin.xyz;
+  vec4 clip = uViewProj * vec4(P, 1.0);
+  if (clip.w <= 0.0) return;
+  vec2 ndc = clip.xy / clip.w;
+  if (abs(ndc.x) > 1.3 || abs(ndc.y) > 1.3) return;
+  int n = gl_VertexID / 2;
+  bool end = (gl_VertexID % 2) == 1;
+  int segs = int(uTrail.w);
+  vec3 p;
+  float a;
+  if (n == segs) {
+    if (uTrail.y < 0.5 || P.y - uTrail.z < 1.0) return;
+    p = end ? vec3(P.x, uTrail.z, P.z) : P;
+    a = end ? 0.15 : 0.55;
+  } else {
+    float W = uTrail.x;
+    if (W <= 0.0) return;
+    int i = gl_InstanceID;
+    uvec4 t0 = texelFetch(uTracks, at(i * 4), 0);
+    uvec4 t2 = texelFetch(uTracks, at(i * 4 + 2), 0);
+    uvec4 t3 = texelFetch(uTracks, at(i * 4 + 3), 0);
+    int first = int(t0.x);
+    int last = first + int(t0.y) - 1;
+    spanO = vec3(uintBitsToFloat(t2.x), uintBitsToFloat(t2.y), uintBitsToFloat(t2.z));
+    spanStep = uintBitsToFloat(t2.w);
+    spanT0 = uintBitsToFloat(t3.x);
+    spanTS = uintBitsToFloat(t3.y);
+    float t = uCam.w;
+    int lo = first;
+    int hi = last + 1;
+    for (int it = 0; it < 32; it++) {
+      if (hi - lo <= 1) break;
+      int mid = (lo + hi) >> 1;
+      if (timeAt(mid) <= t) lo = mid; else hi = mid;
+    }
+    int k = lo;
+    if (n > 0 && (k - n < first || timeAt(k - n + 1) < t - W)) return;
+    vec4 key = end ? keyAt(k - n) : (n == 0 ? vec4(P, t) : keyAt(k - n + 1));
+    p = key.xyz;
+    a = 0.8 * clamp(1.0 - (t - key.w) / W, 0.0, 1.0);
+  }
+  vColor = vec4(iTeam.rgb, a);
+  vWorld = p;
+  gl_Position = uViewProj * vec4(p, 1.0);
+}
+`;
+
 /** Deaths: a small cross each (three lines), in its team's colour, fading with age, kept some pixels big. */
 export const MARK_GLSL_VS = `#version 300 es
 precision highp float;

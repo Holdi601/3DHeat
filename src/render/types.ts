@@ -878,6 +878,8 @@ export interface GpuTracksParams {
   triangleBudget: number;
   /** Seconds of trail behind each unit; 0 none. */
   trailSeconds: number;
+  /** Drop lines from each unit down to this height (the data's floor); null or absent: none. */
+  dropFloor?: number | null;
   /** One bit a track, set when shown (team toggles, filters); null: all shown. */
   visible?: Uint32Array | null;
   /** Seconds of streak behind a weapon in flight; 0 hides weapons. */
