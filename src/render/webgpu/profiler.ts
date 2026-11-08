@@ -63,6 +63,8 @@ export class GpuProfiler {
           const d = Number(t[i * 2 + 1] - t[i * 2]) / 1e6;
           if (d < 0 || d > 1000) return;
           this.ms[n] = this.ms[n] === undefined ? d : this.ms[n] * 0.9 + d * 0.1;
+          // The latest reading too, unsmoothed: a cost that jumps shows in it frames before the average.
+          this.ms[`${n}Last`] = d;
         });
       })
       .catch(() => undefined)

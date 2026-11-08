@@ -323,10 +323,15 @@ describe('lean overlay loader', () => {
     expect(small.maxKeys).toBe(Math.floor(2e9 / PEAK_KEY_BYTES));
   });
 
-  it('keeps the keys in one GPU buffer', () => {
-    const b = leanBudget({ gpuMaxBufferBytes: 4.29e9, vramBytes: 16e9, freeBytes: 30e9, totalBytes: 64e9, deviceMemoryGB: 8 });
+  it('keeps the keys within what the GPU key buffers hold', () => {
+    const b = leanBudget({ gpuMaxBufferBytes: 1e9, vramBytes: 16e9, freeBytes: 30e9, totalBytes: 64e9, deviceMemoryGB: 8 });
     expect(b.limit).toBe('gpuBuffer');
-    expect(b.maxKeys).toBe(2 ** 28);
+    expect(b.maxKeys).toBe(Math.floor(1e9 / 8));
+  });
+
+  it('takes both key buffers, past what one holds', () => {
+    const b = leanBudget({ gpuMaxBufferBytes: 2 * 2 ** 31, vramBytes: 32e9, freeBytes: 200e9, totalBytes: 256e9, deviceMemoryGB: 8 });
+    expect(b.maxKeys).toBeGreaterThan(2 ** 28);
   });
 
   it('keeps a load inside the wall of one tab, whatever the machine has free', () => {

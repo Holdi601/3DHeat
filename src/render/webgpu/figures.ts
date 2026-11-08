@@ -9,6 +9,9 @@ import type { FigureBatch, FigureMesh } from '../../figures/instances';
 import { INSTANCE_STRIDE, MESH_STRIDE } from '../../figures/instances';
 import { figureWgsl } from '../figureShaders';
 
+/** Figure mesh bytes written in one frame at most; see `meshFor`. */
+const MESH_BYTES_PER_FRAME = 2 * 1024 * 1024;
+
 interface MeshGpu {
   buf: GPUBuffer;
   count: number;
@@ -69,9 +72,25 @@ export class GpuFigures {
     });
   }
 
-  private meshFor(mesh: FigureMesh): MeshGpu {
+  /** Mesh bytes written this frame, and the frame they count for; see `meshFor`. */
+  private uploadedBytes = 0;
+  private uploadedFrame = -1;
+
+  /**
+   * A mesh's vertex buffer, made on first use - a few megabytes of them a
+   * frame at most, null past that: the frame the GPU tracks became ready wrote
+   * every figure of the catalogue at once, a tenth of a second without a frame.
+   * A mesh not made yet is drawn from the next frame.
+   */
+  private meshFor(mesh: FigureMesh): MeshGpu | null {
     let m = this.meshes.get(mesh.id);
     if (m) return m;
+    if (this.uploadedFrame !== this.frame) {
+      this.uploadedFrame = this.frame;
+      this.uploadedBytes = 0;
+    }
+    if (this.uploadedBytes > 0 && this.uploadedBytes + mesh.data.byteLength > MESH_BYTES_PER_FRAME) return null;
+    this.uploadedBytes += mesh.data.byteLength;
     const buf = this.device.createBuffer({ label: `figure mesh ${mesh.id}`, size: Math.max(16, mesh.data.byteLength), usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
     this.device.queue.writeBuffer(buf, 0, mesh.data.buffer, mesh.data.byteOffset, mesh.data.byteLength);
     m = { buf, count: mesh.count, used: 0 };
@@ -91,6 +110,7 @@ export class GpuFigures {
     for (let i = 0; i < meshes.length; i++) {
       if (!room[i]) continue;
       const m = this.meshFor(meshes[i]);
+      if (!m) continue;
       m.used = this.frame;
       pass.setVertexBuffer(0, m.buf);
       pass.setVertexBuffer(1, instances, first[i] * INSTANCE_STRIDE * 4);
@@ -134,6 +154,10 @@ export class GpuFigures {
     for (const b of batches) {
       if (!b.count) continue;
       const m = this.meshFor(b.mesh);
+      if (!m) {
+        first += b.count;
+        continue;
+      }
       m.used = this.frame;
       pass.setVertexBuffer(0, m.buf);
       pass.setVertexBuffer(1, this.instances, first * INSTANCE_STRIDE * 4);
