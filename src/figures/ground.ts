@@ -239,6 +239,8 @@ export interface GroundSpec {
   spade?: boolean;
   /** A gun shield: on a towed gun by default; on an emplaced mount when set. */
   shield?: boolean;
+  /** A towed gun's split trail opened for firing: the angle between the two legs, degrees (default: closed for towing). */
+  trailSpread?: number;
   /** Levelling jacks at the corners (emplaced trailers and launchers). */
   outriggers?: boolean;
   /** A steam locomotive's boiler: its length and diameter, ahead of the cab. */
@@ -1418,7 +1420,14 @@ function carriage(k: Kit, spec: GroundSpec): void {
     tube(k.team, k.fr, [(x0 + x1) / 2, 0, r * 1.1], [(x0 + x1) / 2, 0, h * 0.95], 0.35, 0.3, grey(0.75), 10);
   }
   // A towed gun's split trail and shield.
-  else for (const side of [-1, 1]) tube(k.team, k.fr, [0.2, side * 0.2, h * 0.5], [-half + 0.2, side * spec.width * 0.35, 0.1], 0.07, 0.06, grey(0.78), 5);
+  else
+    for (const side of [-1, 1]) {
+      // Opened, each leg swings out about its hinge by half the spread, keeping its length.
+      const tl = Math.hypot(half, spec.width * 0.35 - 0.2);
+      const a = ((spec.trailSpread ?? 0) * Math.PI) / 360;
+      const end: [number, number, number] = spec.trailSpread ? [0.2 - tl * Math.cos(a), side * (0.2 + tl * Math.sin(a)), 0.1] : [-half + 0.2, side * spec.width * 0.35, 0.1];
+      tube(k.team, k.fr, [0.2, side * 0.2, h * 0.5], end, 0.07, 0.06, grey(0.78), 5);
+    }
   if (spec.shield !== false) fin(k.team, k.fr, [[0.15, h * 0.35], [0.3, h * 0.35], [0.3, h * 1.25], [0.15, h * 1.15]], 0, spec.width * 0.8, grey(0.85));
   else block(k.team, k.fr, [0, 0, h * 0.6], 0.8, 0.8, h * 0.5, grey(0.8));
 }

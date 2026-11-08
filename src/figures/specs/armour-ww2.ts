@@ -2081,6 +2081,8 @@ G['krupp-protze'] = truck('truck', 5.1, 1.96, 0.42, [0.65, -0.35, -0.7], 1.35, 1
 G['type-94-truck'] = truck('truck', 5.4, 1.9, 0.4, [0.62, -0.35, -0.68], 1.45, 1.35, 0.5, 2.0, 1.3, 2.2);
 
 // ---------------------------------------------------------------- towed guns
+// The anti-tank guns stand as deployed, their split trails opened as far as the published traverse (Pak 40 and Pak 38
+// 65 degrees, Pak 36 60, ZiS-3 and ZiS-2 54, the 45 mm guns 60, the QF 6-pounder 90): the gun swings between the legs.
 
 /**
  * A towed gun: the builder's carriage (wheels, split trail, a cradle) with the gun's own shield - its outline seen
@@ -2103,20 +2105,20 @@ function towed(cls: string, L: number, W: number, r: number, H: number, shield: 
 /** A towed gun's barrel from the trunnions forward, at `up` metres. */
 const barrel = (length: number, calibre: number, up: number, extra: Partial<GunSpec> = {}): GunSpec => ({ mount: 'hull', x: 0.0, length, calibre, ...extra, at: up });
 // Pak 40: the low, wide spaced double shield, the long 75 mm with its double-baffle brake (6.2 x 2.08 m, 1.2 m).
-G['pak-40'] = towed('towed-gun', 6.2, 2.08, 0.45, 0.9, [1.0, 0.3, 1.2], barrel(3.4, 0.075, 0.85, { muzzle: true }), true);
+G['pak-40'] = { ...towed('towed-gun', 6.2, 2.08, 0.45, 0.9, [1.0, 0.3, 1.2], barrel(3.4, 0.075, 0.85, { muzzle: true }), true), trailSpread: 65 };
 // Pak 38: the curved shield, the 50 mm L/60 with its brake (4.75 x 1.85 m, 1.05 m).
-G['pak-38'] = towed('towed-gun', 4.75, 1.85, 0.4, 0.9, [0.9, 0.25, 1.05], barrel(2.8, 0.05, 0.75, { muzzle: true }), true);
+G['pak-38'] = { ...towed('towed-gun', 4.75, 1.85, 0.4, 0.9, [0.9, 0.25, 1.05], barrel(2.8, 0.05, 0.75, { muzzle: true }), true), trailSpread: 65 };
 // Pak 36: the small shield and the short 37 mm (3.4 x 1.65 m, 1.0 m).
-G['pak-36'] = towed('towed-gun', 3.4, 1.65, 0.35, 0.9, [0.75, 0.25, 1.0], barrel(1.6, 0.037, 0.7));
+G['pak-36'] = { ...towed('towed-gun', 3.4, 1.65, 0.35, 0.9, [0.75, 0.25, 1.0], barrel(1.6, 0.037, 0.7)), trailSpread: 60 };
 // ZiS-3: the shield with its sloped top half, the 76 mm with its brake (6.1 x 1.6 m, 1.37 m); ZiS-2 the long 57 mm
 // without one on the same carriage (7.0 m).
-G['zis-3'] = towed('towed-gun', 6.1, 1.6, 0.4, 0.9, [0.8, 0.3, 1.37], barrel(3.2, 0.076, 0.95, { muzzle: true }));
-G['zis-2-57mm'] = towed('towed-gun', 7.0, 1.6, 0.4, 0.9, [0.8, 0.3, 1.37], barrel(3.9, 0.057, 0.95));
+G['zis-3'] = { ...towed('towed-gun', 6.1, 1.6, 0.4, 0.9, [0.8, 0.3, 1.37], barrel(3.2, 0.076, 0.95, { muzzle: true })), trailSpread: 54 };
+G['zis-2-57mm'] = { ...towed('towed-gun', 7.0, 1.6, 0.4, 0.9, [0.8, 0.3, 1.37], barrel(3.9, 0.057, 0.95)), trailSpread: 54 };
 // M-42 and 53-K 45 mm: the small shield, the long or the short 45 mm (4.9 / 4.0 m).
-G['m-42-45mm'] = towed('towed-gun', 4.9, 1.63, 0.35, 0.9, [0.75, 0.25, 1.1], barrel(2.8, 0.045, 0.75));
-G['53-k-45mm'] = towed('towed-gun', 4.0, 1.63, 0.35, 0.9, [0.75, 0.25, 1.1], barrel(2.0, 0.045, 0.75));
+G['m-42-45mm'] = { ...towed('towed-gun', 4.9, 1.63, 0.35, 0.9, [0.75, 0.25, 1.1], barrel(2.8, 0.045, 0.75)), trailSpread: 60 };
+G['53-k-45mm'] = { ...towed('towed-gun', 4.0, 1.63, 0.35, 0.9, [0.75, 0.25, 1.1], barrel(2.0, 0.045, 0.75)), trailSpread: 60 };
 // QF 6-pounder (and the US M1 57 mm): the shield with its angled wings, the long 57 mm (4.8 x 1.8 m, 1.28 m).
-G['qf-6-pounder'] = towed('towed-gun', 4.8, 1.8, 0.4, 0.9, [0.9, 0.25, 1.28], barrel(2.6, 0.057, 0.85));
+G['qf-6-pounder'] = { ...towed('towed-gun', 4.8, 1.8, 0.4, 0.9, [0.9, 0.25, 1.28], barrel(2.6, 0.057, 0.85)), trailSpread: 90 };
 // leFH 18: the big spoked wheels, the tall shield, the short fat 105 mm (6.1 x 1.98 m, 1.88 m).
 G['lefh-18'] = towed('towed-gun', 6.1, 1.98, 0.6, 1.2, [0.95, 0.45, 1.88], barrel(2.6, 0.105, 1.15, { elevation: 0.15 }));
 // M-30 122 mm: the shield with a sloped top, the barrel without a brake (5.9 x 1.98 m, 1.82 m).

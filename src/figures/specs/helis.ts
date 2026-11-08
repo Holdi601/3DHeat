@@ -79,6 +79,9 @@ export const HIND: HeliSpec = {
   glass: [[7.2, 0.15, 0.85, 0.5, 0.42], [5.35, 0.75, 0.85, 0.52, 0.45]],
   finPlan: [[-7.6, 0], [-8.75, -0.1], [-9.55, 2.0], [-8.85, 2.05]],
   rotorX: 1.6, mastTop: 2.75, stubs: { span: 6.6, pylons: 2 }, stubAt: [-0.1, 0.55, 12], wheels: true,
+  // The stub wing's plan from FM 44-80's three-view (1996): the leading edge 7.7 m behind the nose at the root, 8.1 m
+  // at the tip, the chord 1.3 m tapering to 0.8 m.
+  stubPlan: [[1.05, 0.8], [-0.25, 0.8], [-0.1, 3.3], [0.65, 3.3]],
 };
 
 // Mi-28: the Hind's layout made narrow and armoured - the gunner low in front behind flat armoured glass, the pilot

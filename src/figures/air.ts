@@ -1011,6 +1011,8 @@ export interface HeliSpec {
   bodies?: Outline[];
   /** Stub wings' forward position and height (with a fuselage outline), and their anhedral, degrees. */
   stubAt?: [number, number, number?];
+  /** The stub wing's half planform (forward, out from the centre line), as a drawing gives it, in place of the chord judged from the span. */
+  stubPlan?: P2[];
   glass?: [number, number, number, number, number][];
   /**
    * The glass as Outline bodies (forward, up from the axis), drawn as the
@@ -1228,7 +1230,7 @@ export function buildHeli(spec: HeliSpec): Template {
     const chord = spec.stubAt ? 0.6 + spec.stubs.span * 0.05 : 0.4;
     for (const side of [-1, 1]) {
       // A stub wing out from the side (drooping with anhedral, as on the Mi-24), its stores under it.
-      foil(k.team, k.fr, [[sx + chord, bw * 0.8], [sx - chord, bw * 0.8], [sx - chord * 0.9, span], [sx + chord * 0.8, span]], (a, b) => [a, side * b, su - (b - bw * 0.8) * an], [0, 0, 1], chord * 0.24, grey(0.82), { under: UNDER });
+      foil(k.team, k.fr, spec.stubPlan ?? [[sx + chord, bw * 0.8], [sx - chord, bw * 0.8], [sx - chord * 0.9, span], [sx + chord * 0.8, span]], (a, b) => [a, side * b, su - (b - bw * 0.8) * an], [0, 0, 1], chord * 0.24, grey(0.82), { under: UNDER });
       for (let i = 0; i < spec.stubs.pylons; i++) {
         const y = bw + ((span - bw) * (i + 0.6)) / spec.stubs.pylons;
         const z = su - (y - bw * 0.8) * an - 0.35;
