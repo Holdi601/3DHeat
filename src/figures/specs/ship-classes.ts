@@ -2616,7 +2616,7 @@ const ALIASES: Record<string, string> = {
   'ussr_pr_103_sm4': 'project-183',
   'ussr_g5_mtb_shvak': 'g-5-torpedo-boat',
   'ussr_g5_rct': 'g-5-torpedo-boat',
-  'ussr_ya_5m': 'armed-speedboat',
+  'ussr_ya_5m': 'km-boat', // 18.7 x 3.56 m Yaroslavets motor boat (Navypedia): a small launch, not an 11 m speedboat
   'ussr_mpk_163': 'pr-122',
   'ussr_mpk_122a': 'pr-122',
   'ussr_pr253l': 'pr-253l',
@@ -2734,7 +2734,7 @@ const ALIASES: Record<string, string> = {
   'it_mas_classe500_4': 'mas-boat',
   'it_ms15_1a': 'ms-crda',
   'it_ms53_2a': 'ms-crda',
-  'it_mas_stefano_turr': 'mas-boat',
+  'it_mas_stefano_turr': 'ms-crda', // 32 m, 64 t experimental MTB of 1937 (Navypedia): the 60 t CRDA boats' size, not a MAS
   'it_mas441': 'mas-boat',
   'it_a1_vosper': 'vosper-mtb',
   'it_ms471_1a': 'ms-crda',
