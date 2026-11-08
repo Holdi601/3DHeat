@@ -6,6 +6,7 @@ import { t } from '../../i18n';
 import { TacticalMap } from './TacticalMap';
 import { ChartDock } from './ChartDock';
 import { CockpitHud } from './CockpitHud';
+import { TacticalHud } from './TacticalHud';
 import { StatsTable } from './StatsPanel';
 import { addBookmark } from './BookmarkPanel';
 import { defaultEventKinds, eventRows } from './replayData';
@@ -216,6 +217,7 @@ export function ReplayExtras() {
       <GeoOverlay />
       <TacticalLabels />
       <CockpitHud />
+      <TacticalHud />
       <TacticalMap />
       <ChartDock />
       <StatsTable />

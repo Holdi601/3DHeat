@@ -73,6 +73,10 @@ import { appendVolumeOverlay } from '../volumes/overlay';
 import { packVolumes, type VolumeDraw } from '../volumes/gpu';
 import { selectedVolume, useVolumeStore } from '../volumes/store';
 import { volumeFilter } from '../volumes/volume';
+import { postDrawFor, tacticalLevel, tacticalLines, LOOK_TINT, type LookTrack, type TacticalLook } from './tacticalLook';
+import type { PostDraw } from './types';
+import { unitCategory } from '../ui/replay/objectType';
+import { unitsOf } from '../ui/replay/units';
 
 export interface LiveReadout {
   playhead: number;
@@ -509,6 +513,12 @@ export class Engine {
   private followCam: { person: number; fx: number; fy: number; fz: number; head: number; rel: number; yaw: number; pitch: number; px: number; py: number; pz: number } | null = null;
   /** Trails and drop lines together, reused frame to frame. */
   private dropBuf = new Float32Array(0);
+  /** The tactical display's rings and ladders, appended to the trail lines. */
+  private readonly lookBuf = { buf: new Float32Array(0) };
+  /** Which persons are aircraft, per dataset: the ladders stand under those. */
+  private airOf: { d: Dataset; air: Uint8Array } | null = null;
+  /** `performance.now()` of the director's last cut: the tactical display flashes on it. */
+  lookCutAt = -1e9;
   private boardCursor: { x: number; y: number; z: number } | null = null;
   /** Where the chase camera was, so it glides rather than jitters. */
   private chase: { x: number; y: number; z: number; yaw: number } | null = null;
@@ -2762,6 +2772,13 @@ export class Engine {
           trailVertCount = aids.count;
         }
       }
+      // The tactical display's range rings and altitude ladders.
+      const look = useReplayStore.getState().look;
+      if (look.on && this.dataset && this.liveTracks.length && (look.rings || look.ladders)) {
+        const lines = this.lookLines(this.dataset, look, trailVerts, trailVertCount);
+        trailVerts = lines.data;
+        trailVertCount = lines.count;
+      }
     }
 
     let sceneTris: Float32Array | null = null;
@@ -2826,6 +2843,8 @@ export class Engine {
     }
     if (raceTab || s.mode !== 'team') this.pickCubes = null;
 
+    // The tactical display: the match replay only.
+    const lookOn = !raceTab && s.mode === 'team' && !!this.dataset && useReplayStore.getState().look.on;
     const params: FrameParams = {
       viewProj: this.viewProjArr,
       view: this.viewArr,
@@ -2914,8 +2933,9 @@ export class Engine {
       // Not over a world backdrop: the grid and the axes lie at height 0, which
       // is sea level there, and drawn on the sea they fight it for depth far
       // off and show as dashed lines across the water.
-      showGrid: s.showGrid && (vehicleTab || !onEarth(s.level)),
-      showAxes: s.showAxes && !vehicleTab && !onEarth(s.level),
+      // The tactical display draws its own grid on the ground; the line grid would only glow as stripes under it.
+      showGrid: !lookOn && s.showGrid && (vehicleTab || !onEarth(s.level)),
+      showAxes: !lookOn && s.showAxes && !vehicleTab && !onEarth(s.level),
       gridSpacing,
       gridExtent,
       trailVerts,
@@ -2926,7 +2946,8 @@ export class Engine {
       gpuTracks: !raceBuilt && s.mode === 'team' ? this.gpuTracksParams : null,
       overlayVerts,
       overlayVertCount,
-      level: vehicleTab ? null : buildLevelDraw(s.level),
+      level: vehicleTab ? null : lookOn ? tacticalLevel(buildLevelDraw(s.level)) : buildLevelDraw(s.level),
+      post: lookOn ? this.lookPost(s) : null,
       // Auto-focus uses whatever the view was last framed on, which is the only
       // distance the camera can honestly claim to be looking at.
       dof:
@@ -3188,6 +3209,70 @@ export class Engine {
     c.pitch = pitch;
     c.moved = true;
     this.followCam = { person: follow, fx, fy, fz, head, rel, yaw, pitch, px, py, pz };
+  }
+
+  /** The scene's scale for the tactical display: the level's bounds where it has a model, else the data's. */
+  private lookScene(s: ReturnType<typeof snapshot>): { extent: number; heightRange: number; floor: number; unitsPerMetre: number } {
+    const b = s.level?.kind === 'model' ? s.level.bounds : (this.dataset?.bounds ?? null);
+    const upm = this.dataset ? unitsPerMetre(this.dataset) : 1;
+    if (!b) return { extent: 1000 * upm, heightRange: 100 * upm, floor: 0, unitsPerMetre: upm };
+    return { extent: Math.max(b.maxX - b.minX, b.maxZ - b.minZ), heightRange: b.maxY - b.minY, floor: b.minY, unitsPerMetre: upm };
+  }
+
+  private lookPost(s: ReturnType<typeof snapshot>): PostDraw {
+    const now = performance.now();
+    return postDrawFor(useReplayStore.getState().look, this.lookScene(s), now / 1000, 1 - (now - this.lookCutAt) / 450);
+  }
+
+  private lookLines(d: Dataset, look: TacticalLook, base: Float32Array | null, baseCount: number): { data: Float32Array; count: number } {
+    if (this.airOf?.d !== d) {
+      const index = unitsOf(d);
+      const air = new Uint8Array(index.personUnit.length);
+      for (let p = 0; p < air.length; p++) {
+        const u = index.units[index.personUnit[p]];
+        air[p] = u && unitCategory(d, u) === 'air' ? 1 : 0;
+      }
+      this.airOf = { d, air };
+    }
+    const air = this.airOf.air;
+    const cam = this.camera.position;
+    const [mx, my, mz] = this.mirror;
+    const cubes = this.pickCubes;
+    const follow = useReplayStore.getState().follow;
+    const tracks: LookTrack[] = [];
+    let followed: LookTrack | null = null;
+    this.liveTracks.forEach((t, i) => {
+      const c = i * CUBE_STRIDE;
+      const tr: LookTrack = {
+        x: t.x,
+        y: t.y,
+        z: t.z,
+        colour: cubes ? cubes.data.subarray(c + 3, c + 6) : [0.8, 0.8, 0.8],
+        air: air[t.person] === 1,
+        near: (t.x * mx - cam.x) ** 2 + (t.y * my - cam.y) ** 2 + (t.z * mz - cam.z) ** 2,
+      };
+      tracks.push(tr);
+      if (t.person === follow) followed = tr;
+    });
+    const sc = this.lookScene(snapshot());
+    // Without a model level the data's floor; a level's lowest point otherwise.
+    const floor = this.dataset ? this.dataset.bounds.minY : sc.floor;
+    return tacticalLines(tracks, followed, { floor, extent: sc.extent, unitsPerMetre: sc.unitsPerMetre, rings: look.rings, ladders: look.ladders, quality: look.quality, tint: LOOK_TINT[look.colour] }, base, baseCount, this.lookBuf);
+  }
+
+  /** Put the camera at a point of the data looking at another: the director's flyby, which holds the camera still while the unit passes. */
+  placeCamera(from: { x: number; y: number; z: number }, at: { x: number; y: number; z: number }): void {
+    const [mx, my, mz] = this.mirror;
+    const c = this.camera;
+    const px = from.x * mx, py = from.y * my, pz = from.z * mz;
+    const dx = at.x * mx - px, dy = at.y * my - py, dz = at.z * mz - pz;
+    const len = Math.hypot(dx, dy, dz);
+    if (len < 1e-9) return;
+    c.position.set(px, py, pz);
+    // Forward is (-sin yaw cos pitch, sin pitch, -cos yaw cos pitch), as the follow camera has it.
+    c.yaw = Math.atan2(-dx, -dz);
+    c.pitch = Math.asin(Math.max(-1, Math.min(1, dy / len)));
+    c.moved = true;
   }
 
   /** Bring a spot of the track into view: a ball of `radius` around it, keeping the view direction. */

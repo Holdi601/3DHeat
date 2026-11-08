@@ -1,3 +1,4 @@
+import { GpuPost } from './post';
 import { VOLUME_BLOCK_BYTES, VOLUME_BLOCK_FLOATS } from '../../volumes/gpu';
 import { GpuFigures } from './figures';
 import { GpuTracks } from './tracks';
@@ -101,6 +102,9 @@ interface GpuChunk {
   /** Slot holding the difference split's column, or -1 when there is none. */
   splitSlot: number;
 }
+
+/** The scene pass's background; the tactical display swaps exactly this for its own. */
+const SCENE_CLEAR = [0.086, 0.09, 0.102] as const;
 
 /**
  * WebGPU backend.
@@ -269,6 +273,8 @@ export class WebgpuRenderer implements Renderer {
   private triBuffer: GPUBuffer | null = null;
   /** Instanced figures, made on first use. */
   private figures: GpuFigures | null = null;
+  /** The tactical display's screen pass; made the first time it is asked for. */
+  private post: GpuPost | null = null;
   /** Units placed by the GPU, made on first use. */
   private tracks: GpuTracks | null = null;
   /** GPU time a pass, with ?gpuprof where the device can. */
@@ -1748,7 +1754,7 @@ export class WebgpuRenderer implements Renderer {
       colorAttachments: [
         {
           view: this.sceneView!,
-          clearValue: { r: 0.086, g: 0.09, b: 0.102, a: 1 },
+          clearValue: { r: SCENE_CLEAR[0], g: SCENE_CLEAR[1], b: SCENE_CLEAR[2], a: 1 },
           loadOp: 'clear',
           storeOp: 'store',
         },
@@ -2519,7 +2525,14 @@ export class WebgpuRenderer implements Renderer {
       pass.end();
     };
 
-    runPass(target.createView());
+    const post = params.post ?? null;
+    const postSrc = post ? (this.post ??= new GpuPost(this.device, this.canvasFormat)).begin(this.width, this.height, post.quality) : null;
+    if (post && postSrc && this.post && this.depthView) {
+      runPass(postSrc);
+      this.post.run(encoder, params, post, this.depthView, SCENE_CLEAR, target.createView());
+    } else {
+      runPass(target.createView());
+    }
     this.debug.composites++;
 
     // Repeat into an offscreen copy when a capture is pending. Compositing twice
@@ -2528,7 +2541,8 @@ export class WebgpuRenderer implements Renderer {
     if (this.captureWanted) {
       this.ensureCapture();
       if (this.captureTex && this.captureBuffer) {
-        runPass(this.captureTex.createView());
+        if (post && postSrc && this.post && this.depthView) this.post.finalInto(encoder, this.depthView, this.captureTex.createView());
+        else runPass(this.captureTex.createView());
         encoder.copyTextureToBuffer(
           { texture: this.captureTex },
           { buffer: this.captureBuffer, bytesPerRow: this.captureStride },
@@ -3284,6 +3298,7 @@ export class WebgpuRenderer implements Renderer {
     this.overlayBuffer?.destroy();
     this.triBuffer?.destroy();
     this.figures?.dispose();
+    this.post?.dispose();
     this.figures = null;
     this.tracks?.dispose();
     this.tracks = null;
