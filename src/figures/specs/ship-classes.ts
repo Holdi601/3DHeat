@@ -434,8 +434,12 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'kuma': { cls: 'light-cruiser', L: 162.1, B: 14.2, fb: 7, fc: [-6, 2.4], guns: '54:1/140 46:1/140^2 -46:1/140^2b -54:1/140b 10,6:1/140', funnels: [[12, 11, 3.5], [2, 11, 3.5], [-8, 11, 3.5]], blocks: [[32, 24, 18, 4, 1]], masts: [[26, 24], [-28, 18]] },
   'sendai': { cls: 'light-cruiser', L: 162.1, B: 14.2, fb: 7, fc: [-6, 2.4], guns: '54:1/140 46:1/140^2 -46:1/140^2b -54:1/140b 10,6:1/140', funnels: [[16, 11, 3.5], [6, 11, 3.5], [-4, 11, 3.5], [-14, 11, 3.5]], blocks: [[32, 24, 18, 4, 1]], masts: [[26, 24], [-28, 18]] },
   'yubari': { cls: 'light-cruiser', L: 139.0, B: 12.0, fb: 6, fc: [-18, 2.2], guns: '46:1/140 38:2/140^2 -38:2/140^2b -46:1/140b', funnels: [[0, 11, 4]], blocks: [[28, 20, 16, 4, 1]], masts: [[22, 20], [-18, 16]] },
-  'furutaka': { cls: 'heavy-cruiser', L: 185.2, B: 16.9, fb: 8, fc: [-22, 2.4], guns: '58:2/203 48:2/203^2.5 -56:2/203b', funnels: [[10, 11, 4], [-4, 11, 4]], blocks: [[32, 22, 20, 5, 1]], masts: [[24, 24], [-18, 18]] },
-  'myoko': { cls: 'heavy-cruiser', L: 203.8, B: 19.0, fb: 8, fc: [-20, 2.4], guns: '66:2/203 56:2/203^2.5 46:2/203^0.5 -50:2/203^2.5b -62:2/203b', funnels: [[14, 12, 7, 4.4], [0, 12, 4.4]], blocks: [[38, 26, 26, 6, 1]], masts: [[-8, 24]] },
+  // Furutaka (rebuilt): turrets, bridge tower, the trunked fore funnel and the thin aft one, the deckhouses and masts measured
+  // on the ONI 41-42 (1943) recognition-model broadside, scaled by the overall length (sources.md).
+  'furutaka': { cls: 'heavy-cruiser', L: 185.2, B: 16.9, fb: 8, fc: [-22, 2.4], guns: '55.5:2/203 47:2/203^2.5 -53.8:2/203b', funnels: [[8.9, 13.2, 7, 4.2], [-7.7, 10.3, 2.6]], blocks: [[35.4, 21, 21.2, 5, 1], [30.9, 23, 27.3, 3.2]], masts: [[19.4, 26], [-46.8, 24.4]] },
+  // Myoko (Nachi): turrets, bridge and tower, funnels and masts measured on the ONI 41-42 (1943) recognition-model broadside,
+  // scaled by the overall length (sources.md).
+  'myoko': { cls: 'heavy-cruiser', L: 203.8, B: 19.0, fb: 8, fc: [-20, 2.4], guns: '58:2/203 49.8:2/203^2.5 43.9:2/203^0.5 -46.2:2/203^2.5b -55.7:2/203b', funnels: [[8.9, 12.9, 7, 4.4], [-7.8, 10.8, 4.4]], blocks: [[33.5, 20.7, 18.8, 6, 1], [28.3, 21, 24, 3.6]], masts: [[-14.1, 29]] },
   'mogami': { cls: 'heavy-cruiser', L: 200.6, B: 20.2, fb: 8, fc: [-20, 2.4], guns: '66:2/203 56:2/203^2.5 46:2/203^0.5 -48:2/203^2.5b -60:2/203b', funnels: [[6, 12, 5]], blocks: [[34, 24, 26, 6, 1]], masts: [[-12, 22]] },
   'mogami-1943': { cls: 'heavy-cruiser', L: 200.6, B: 20.2, fb: 8, fc: [-20, 2.4], guns: '66:2/203 56:2/203^2.5 46:2/203^0.5', funnels: [[6, 12, 5]], blocks: [[34, 24, 26, 6, 1], [-34, -92, 8.4, 9]], masts: [[-12, 22]] },
   'tone': { cls: 'heavy-cruiser', L: 201.6, B: 19.4, fb: 8, fc: [-20, 2.4], guns: '68:2/203 58:2/203^2.5 48:2/203^0.5 38:2/203^2', funnels: [[2, 12, 5]], blocks: [[26, 16, 24, 6, 1]], masts: [[-14, 22]] },
@@ -746,8 +750,8 @@ const AFT: Record<string, Partial<ShipO>> = {
   'kuma': { blocks: [[-20, -30, 9, 3]], sl: [[-14, 11]], masts: [[26, 24, 't'], [-28, 18]], rake: 0.1 },
   'sendai': { blocks: [[-20, -30, 9, 3]], sl: [[-22, 11]], masts: [[26, 24, 't'], [-28, 18]], rake: 0.1 },
   'yubari': { blocks: [[-12, -20, 9.5, 3]], masts: [[22, 20, 't'], [-18, 16]], rake: 0.25 },
-  'furutaka': { blocks: [[-10, -26, 11.5, 4.5], [-14, -22, 14, 3]], dirs: [[-20, 16]], masts: [[24, 24, 't'], [-18, 18]], rake: 0.15 },
-  'myoko': { blocks: [[-10, -26, 11.5, 5.5], [-14, -24, 14, 3.5]], dirs: [[-22, 17]], masts: [[30, 28, 't'], [-16, 22]], rake: 0.18 },
+  'furutaka': { blocks: [[-5.3, -16.4, 11.7, 4.5], [-16.4, -27.4, 10, 3.5], [-35.5, -50, 10.7, 4]], dirs: [[-11.8, 15.3]], masts: [[19.4, 26], [-46.8, 24.4, 't']], rake: 0.15 },
+  'myoko': { blocks: [[-10, -26, 11.5, 5.5], [-14, -24, 14, 3.5]], dirs: [[-22, 17]], masts: [[19.5, 26.9, 't'], [-14.1, 29]], rake: 0.18 },
   'mogami': { blocks: [[-12, -28, 11.5, 5], [-14, -24, 14, 3.5]], dirs: [[-20, 17]], masts: [[28, 28, 't'], [-16, 22, 't']], rake: 0.12 },
   'mogami-1943': { dirs: [[-20, 17]], masts: [[28, 28, 't'], [-12, 22, 't']], rake: 0.12 },
   'tone': { blocks: [[-8, -22, 11.5, 5], [-12, -20, 14, 3.5]], dirs: [[-18, 17]], masts: [[20, 26, 't'], [-14, 22, 't']], rake: 0.12 },
@@ -2223,7 +2227,9 @@ const R2: Record<string, ShipO> = {
   'arras-aviso': { cls: 'sloop', L: 75, B: 8.7, fb: 4.4, fc: [6, 1.3], sheer: 2.2, transom: 0.7, guns: '26:1/138 -26:1/138b -6:1/75s^1.4', funnels: [[3, 6, 2.6], [-5, 6, 2.6]], blocks: [[15, 8, 9.4, 2.8, 1], [13, 10, 11, 2]], masts: [[10, 15], [-18, 11]] },
   // Aoba: Furutaka's sister as rebuilt, three twin 20 cm turrets, the bigger bridge, the trunked forward funnel, the
   // tripod mainmast with its aircraft crane (185.2 x 17.6 m; 10,800 t full).
-  'aoba': { cls: 'heavy-cruiser', L: 185.2, B: 17.6, fb: 8, fc: [-22, 2.4], rake: 0.15, guns: '58:2/203 48:2/203^2.5 -56:2/203b', funnels: [[10, 11, 5.2, 4], [-4, 11, 3.6, 3]], blocks: [[34, 20, 21, 5.5, 1], [30, 23, 24.5, 3.6], [-10, -26, 11.5, 4.5], [-14, -22, 14, 3]], dirs: [[-20, 16]], masts: [[22, 26, 't'], [-16, 22, 't']], extra: [jib(-15, 20, -3, 12)] },
+  // Turrets, bridge and tower, funnels, deckhouses, masts and the crane's jib measured on the ONI 41-42 (1943) recognition-model
+  // broadside, scaled by the overall length (sources.md).
+  'aoba': { cls: 'heavy-cruiser', L: 185.2, B: 17.6, fb: 8, fc: [-22, 2.4], rake: 0.15, guns: '55.3:2/203 46.6:2/203^2.5 -53.7:2/203b', funnels: [[8.6, 12.2, 5.2, 4], [-7.7, 10.9, 3.6, 3]], blocks: [[36.6, 17.9, 16.8, 5.5, 1], [27.7, 19.2, 26.1, 3.6], [3, -3.9, 12.6, 4.5], [-11.6, -22, 11.8, 4.5], [-24.1, -35.1, 12, 3.5]], dirs: [[-16.5, 16.7]], masts: [[17.1, 23.7, 't'], [-23, 22.4, 't']], extra: [jib(-33, 28.8, -24.1, 13.3)] },
   // Bolzano: Trento's half-sister, the tall tower bridge, the raised forecastle, the funnels wide apart with the
   // catapult between them, four twin 20.3 cm turrets (196.9 x 20.6 m; 13,665 t full).
   // Turret places, the forecastle's end, bridge, funnels and masts measured on the ONI 202 (1943) silhouette, scaled
