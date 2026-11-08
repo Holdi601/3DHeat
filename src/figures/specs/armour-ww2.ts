@@ -2919,7 +2919,7 @@ const WT_WW2: Record<string, string> = {
   'ussr_kv_7_u13': 'kv-7',
   'ussr_sdkfz_251_21_kit_3rank': 'sdkfz-251',
   'ussr_pzkpfw_v': 'panther-g',
-  'uk_vickers_mk_6_aa_mk_1': 'valentine-aa',
+  'uk_vickers_mk_6_aa_mk_1': 'tetrarch', // Vickers light-tank size: nearest counterpart
   'uk_sarc_mk4_a': 'sarc-mk4',
   'uk_alecto_mk_1': 'alecto',
   'uk_a25_mk_8': 'harry-hopkins',

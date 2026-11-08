@@ -88,7 +88,7 @@ const ALIASES: Record<string, string> = {
   'us_magach_3': 'm48-patton',
   'us_m60a1': 'm60a1',
   'us_m60a1_rise_passive_era': 'magach-6',
-  'us_xm246': 'm24-chaffee',
+  'us_xm246': 'm247-sergeant-york', // DIVADS rival on the same M48A5 chassis
   'us_m60a2': 'm60a2',
   'us_m60a3_tts': 'm60a3',
   'us_mbt_70': 'mbt-70',
@@ -293,7 +293,7 @@ const ALIASES: Record<string, string> = {
   'ussr_t_35': 't-35',
   'ussr_ba_11': 'ba-10',
   'ussr_su_57': 'm3-gmc',
-  'ussr_bm_8_24': 'bm-13-katyusha',
+  'ussr_bm_8_24': 't-60', // the rocket rails ride a T-60 chassis
   'ussr_bt_7_m_816': 'bt-7',
   'ussr_t_28e': 't-28',
   'ussr_t_80': 't-80-light',
@@ -322,7 +322,7 @@ const ALIASES: Record<string, string> = {
   'ussr_a_12_mk_2_matilda_2a_f96': 'matilda-ii',
   'ussr_t_34e': 't-34-76',
   'ussr_valentine_mk_9': 'valentine-ix',
-  'ussr_su_85a': 'su-85',
+  'ussr_su_85a': 'su-76m', // light open SPG of the SU-76 size, not the SU-85 casemate
   'ussr_t_34_1941_57': 't-34-57',
   'ussr_kv_1_zis_5': 'kv-1',
   'ussr_kv_85': 'kv-85',
@@ -360,7 +360,7 @@ const ALIASES: Record<string, string> = {
   'ussr_kv_122': 'kv-122',
   'ussr_kv_220': 'kv-220',
   'ussr_t_34_85e': 't-34-85',
-  'ussr_su_122p': 'su-122',
+  'ussr_su_122p': 'su-100', // the 122 mm gun in the SU-100 hull
   'ussr_t_44_po': 't-44',
   'ussr_t_44_122': 't-44-122',
   'ussr_is_2_1944_revenge': 'is-2',
@@ -400,7 +400,7 @@ const ALIASES: Record<string, string> = {
   'ussr_t_72a': 't-72a',
   'ussr_t_64a_1971': 't-64a',
   'ussr_bmd_4m2': 'bmd-4',
-  'ussr_object_775': 't-10m',
+  'ussr_object_775': 'it-1', // low missile tank: nearest counterpart
   'ussr_is_7': 'is-7',
   'ussr_t_55_am': 't-55a',
   'ussr_object_279': 't-10m',
@@ -454,14 +454,14 @@ const ALIASES: Record<string, string> = {
   'uk_sp_17_pdr_valentine': 'valentine-archer',
   'uk_crusader_aa_mk_1': 'crusader-aa',
   'uk_a_12_mk_2_matilda_2': 'matilda-ii',
-  'uk_armored_car_mk_2_aa': 'daimler-armoured-car',
+  'uk_armored_car_mk_2_aa': 'staghound', // AEC-size heavy 4x4: nearest counterpart
   'uk_a27m_cromwell_1': 'cromwell',
   'uk_sherman_ii': 'm4a1-sherman',
   'uk_a_22_mk_1_churchill_1941': 'churchill-i',
   'uk_17_pdr_m10_achilles': 'm10-gmc',
   'uk_crusader_mk_2_the_saint': 'crusader-ii',
   'uk_mk1_grant': 'grant',
-  'uk_armored_car_aec_mk_2': 'daimler-armoured-car',
+  'uk_armored_car_aec_mk_2': 'staghound', // 5.2 m heavy 4x4: nearest counterpart
   'uk_matilda_hedgehog': 'matilda-ii',
   'uk_churchill_avre': 'churchill-iii',
   'uk_a27m_cromwell_5': 'cromwell',
@@ -486,7 +486,7 @@ const ALIASES: Record<string, string> = {
   'uk_m109a1': 'm109a1',
   'uk_ratel_90': 'ratel',
   'uk_ratel_20': 'ratel',
-  'uk_fv4202': 'conqueror',
+  'uk_fv4202': 'centurion', // the shortened Centurion-based prototype, not the heavy Conqueror
   'uk_g6_spg': 'pzh-2000',
   'uk_eland_90_mk_7': 'aml-90',
   'uk_centurion_mk_3': 'centurion',
@@ -773,7 +773,7 @@ const ALIASES: Record<string, string> = {
   'fr_m4a1_sherman_fl_10': 'm4-sherman',
   'fr_arl_44_mod': 'arl-44',
   'fr_m26_pershing': 'm26-pershing',
-  'fr_amx_m4': 'm4-sherman',
+  'fr_amx_m4': 'amx-50', // the AMX-50 forerunner, not a Sherman
   'fr_amx_13_75': 'amx-13',
   'fr_pzkpfw_v_panther_dauphine': 'panther-g',
   'fr_amx_13_75_ss11': 'amx-13',
@@ -795,7 +795,7 @@ const ALIASES: Record<string, string> = {
   'fr_amx_30_b2_brenus': 'amx-30',
   'fr_amx_32_105': 'amx-30',
   'fr_amx_32': 'amx-30',
-  'fr_amx_30_dca': 'amx-30',
+  'fr_amx_30_dca': 'amx-30-roland', // AMX-30 hull under an AA turret, no long gun
   'fr_amx_30_acra': 'amx-30',
   'fr_amx_10rc': 'amx-10rc',
   'fr_sk105_a2': 'sk-105',
@@ -1235,7 +1235,7 @@ const ALIASES: Record<string, string> = {
   'ju-188a-2': 'ju-88',
   'bf-109k-4': 'bf-109-k4',
   'ta-152h-1': 'ta-152h',
-  'ta-152c': 'ta-152h',
+  'ta-152c': 'fw-190-d9', // short-span Ta 152: nearer the D-9 than the high-altitude H
   'he-177a-5': 'he-177',
   'he_219a_7': 'he-219',
   'ia_58a_pucara': 'ia-58',
@@ -1450,7 +1450,7 @@ const ALIASES: Record<string, string> = {
   'mig-17_cuba': 'mig-17',
   'tu_95m': 'tu-95m',
   'yak-38': 'yak-38',
-  'j_22m1a': 'mig-15bis',
+  'j_22m1a': 'iar-93', // Orao, the Yugoslav twin of the IAR-93
   'mig-21_s': 'mig-21mf',
   'mig-21_pfm': 'mig-21mf',
   'su-7bmk': 'su-7b',
@@ -1502,7 +1502,10 @@ const ALIASES: Record<string, string> = {
   'hp52_hampden_tbmk1': 'hampden',
   'gladiator_mk2_tuck': 'gladiator',
   'swordfish_mk2': 'swordfish',
-  'wirraway': 'ww2-fighter',
+  'wirraway': 'p-36', // radial low-wing NA-16 kin: nearest counterpart
+  'kor_2': 'mbr-2', // Beriev single-engine flying boat
+  'loire_130': 'mbr-2', // single pusher-engine flying boat
+  'gl_832': 'ar-196', // small float monoplane
   'pby-5a_raf': 'pby-catalina',
   'hurricanemkii': 'hurricane',
   'hurricane_mk1': 'hurricane',
@@ -1538,9 +1541,9 @@ const ALIASES: Record<string, string> = {
   'd_520': 'd-520',
   'f4f-4_martlet_mk4': 'f4f-wildcat',
   'd_521': 'd-520',
-  'boomerang_mki': 'ww2-fighter',
+  'boomerang_mki': 'p-36', // radial stub fighter: nearest counterpart
   'spitfire_mk5b_float': 'spitfire-mk-v',
-  'boomerang_mkii': 'ww2-fighter',
+  'boomerang_mkii': 'p-36',
   'typhoon_mk1b_late': 'typhoon',
   'spitfire_ix_early': 'spitfire-mk-ix',
   'spitfire_xvi': 'spitfire-mk-ix',
@@ -1775,7 +1778,7 @@ const ALIASES: Record<string, string> = {
   'v_12d': 'vengeance', // nearest: a single-radial Vultee attack monoplane with a long canopy
   'hawk_iii': 'bf2c', // the export BF2C Goshawk
   'h-75m_china': 'p-36',
-  'p-66': 'ww2-fighter',
+  'p-66': 'p-36', // same size and layout as the P-36
   'i-16_type10_china': 'i-16',
   'a_29_hudson': 'hudson',
   'db_3a_china': 'il-4',
@@ -2566,6 +2569,7 @@ const ALIASES: Record<string, string> = {
   'us_apc_m113': 'm113',
   'us_aircraftcarrier_forrestal_ai': 'forrestal',
   'us_cargo_ship_ss_ohio': 'ww2-tanker',
+  'tanker_nicolaos': 'ww2-tanker', // large tanker: the longest tanker figure
   // AI, scenery and test units of the replays (anti-aircraft and anti-tank guns, trucks, trains, radars, launchers): the
   // figure of the same weapon or vehicle, or of the nearest one of its kind.
   'germ_88mm_flak36': 'flak-36-88mm-emplaced',
@@ -2716,10 +2720,10 @@ const ALIASES: Record<string, string> = {
   'us_ai_sam_radar_an_mpq_53': 'patriot-mpq-53',
   'us_amx_13_75': 'amx-13',
   'us_amx_13_90': 'amx-13',
-  'us_bulldozer_caterpillar_d7': 'bulldozer',
-  'us_bulldozer_caterpillar_d7_armored': 'bulldozer',
-  'us_bulldozer_caterpillar_d7_armored_snowed': 'bulldozer',
-  'us_bulldozer_caterpillar_d7_snowed': 'bulldozer',
+  'us_bulldozer_caterpillar_d7': 'caterpillar-d7',
+  'us_bulldozer_caterpillar_d7_armored': 'caterpillar-d7-armoured',
+  'us_bulldozer_caterpillar_d7_armored_snowed': 'caterpillar-d7-armoured',
+  'us_bulldozer_caterpillar_d7_snowed': 'caterpillar-d7',
   'us_cargo_truck': 'gmc-cckw',
   'us_hummer_h1': 'm1025-humvee',
   'us_hummer_hmmwv_burned_b_destroyed_unit': 'm1025-humvee',
