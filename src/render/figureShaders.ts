@@ -132,6 +132,16 @@ out vec3 vWorld;
 ${glslShade()}
 ${glslArticulate()}
 void main() {
+  // Not drawn: no instance here (scale 0, the WebGL2 tracks' rows that are glyphs), or a dart's vertex of another
+  // domain's shape (\`symbols/darts.ts\`: the shape in aArt2.y, the domain in the word below the gun elevation).
+  float dom = iTeam.w <= -999.5 ? float((uint(-iTeam.w - 999.5) >> 16u) & 15u) : 0.0;
+  dom = max(dom, 1.0);  // an unknown thing's dart is the aircraft's
+  if (iOrigin.w <= 0.0 || (aArt2.y > 0.5 && abs(aArt2.y - 1.0 - dom) > 0.5)) {
+    gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
+    vColor = vec4(0.0);
+    vWorld = vec3(0.0);
+    return;
+  }
   vec3 f = iForward.xyz;
   vec3 u = iUp.xyz;
   vec3 r = cross(f, u);
@@ -179,6 +189,16 @@ fn vsFigure(
   @location(10) art2 : vec4<f32>,
 ) -> FigureOut {
   var out : FigureOut;
+  // Not drawn: a dart's vertex of another domain's shape (\`symbols/darts.ts\`).
+  var dom = 0.0;
+  if (team.w <= -999.5) { dom = f32((u32(-team.w - 999.5) >> 16u) & 15u); }
+  dom = max(dom, 1.0);
+  if (origin.w <= 0.0 || (art2.y > 0.5 && abs(art2.y - 1.0 - dom) > 0.5)) {
+    out.pos = vec4<f32>(2.0, 2.0, 2.0, 1.0);
+    out.colour = vec4<f32>(0.0);
+    out.world = vec3<f32>(0.0);
+    return out;
+  }
   let f = forward.xyz;
   let up = upAxis.xyz;
   let r = cross(f, up);

@@ -2,6 +2,7 @@ import { GpuPost } from './post';
 import { VOLUME_BLOCK_BYTES, VOLUME_BLOCK_FLOATS } from '../../volumes/gpu';
 import { GpuFigures } from './figures';
 import { GpuTracks } from './tracks';
+import { GpuSymbols } from './symbols';
 import { KEY_BUFFERS, KEYS_PER_BUFFER } from '../gpuTracks/store';
 import { GpuProfiler } from './profiler';
 import { ATLAS_MIP_LEVELS } from '../../data/atlas';
@@ -277,6 +278,7 @@ export class WebgpuRenderer implements Renderer {
   private post: GpuPost | null = null;
   /** Units placed by the GPU, made on first use. */
   private tracks: GpuTracks | null = null;
+  private symbols: GpuSymbols | null = null;
   /** GPU time a pass, with ?gpuprof where the device can. */
   private profiler: GpuProfiler | null | undefined;
   private get prof(): GpuProfiler | null {
@@ -1806,6 +1808,12 @@ export class WebgpuRenderer implements Renderer {
         this.tracks.drawTrails(pass, this.cachedBindGroup(`scene:trackTrail:${plainOffset}`, this.tracks.trailLayout, () => [{ binding: 0, resource: this.uniforms.binding(plainOffset, SCENE_UNIFORM_BYTES) }]));
       }
     }
+    // The far-off glyphs: map symbols, weapons, decoys (`symbols/`), over everything in the scene.
+    if (params.symbols) {
+      this.symbols ??= new GpuSymbols(this.device, SCENE_FORMAT, DEPTH_FORMAT);
+      if (params.gpuTracks && this.tracks) this.tracks.drawGlyphs(pass, this.symbols, params.symbols, params.viewProj, params.cameraPos, this.width, this.height);
+      this.symbols.draw(pass, params.symbols, params.viewProj, params.cameraPos, this.width, this.height);
+    }
 
     if (params.sceneTris && params.sceneTriVertCount > 0) {
       this.triBuffer = this.uploadLines(this.triBuffer, params.sceneTris, params.sceneTriVertCount, 'scene triangles');
@@ -3297,6 +3305,8 @@ export class WebgpuRenderer implements Renderer {
     this.trailBuffer?.destroy();
     this.overlayBuffer?.destroy();
     this.triBuffer?.destroy();
+    this.symbols?.dispose();
+    this.symbols = null;
     this.figures?.dispose();
     this.post?.dispose();
     this.figures = null;

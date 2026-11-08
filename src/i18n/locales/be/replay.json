@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Збіцці",
   "replay.look.none": "Пакуль няма",
   "replay.look.events": "Падзеі",
-  "replay.look.scrubTitle": "Націсніце, каб перайсці да гэтага моманту; чырвоным пазначаны збіцці, бурштынавым пускі"
+  "replay.look.scrubTitle": "Націсніце, каб перайсці да гэтага моманту; чырвоным пазначаны збіцці, бурштынавым пускі",
+  "replay.field.altDiff": "Розніца вышынь",
+  "replay.lookAt.bTitle": "Аб'ект, на які камера глядзіць ад суправаджаемага",
+  "replay.lookAt.clearTitle": "Перастаць глядзець на гэты аб'ект (Esc)",
+  "replay.lookAt.pick": "Глядзець на",
+  "replay.lookAt.pickTitle": "Камера застаецца на суправаджаемым аб'екце і глядзіць на другі. Ctrl- або Alt-пстрычка па аб'екце робіць тое ж.",
+  "replay.lookAt.rowTitle": "Глядзець на гэты аб'ект ад суправаджаемага (або пстрычка па ім з Ctrl ці Alt)",
+  "replay.lookAt.lost": "B страчаны",
+  "replay.lookAt.stripTitle": "Паміж суправаджаемым аб'ектам і тым, на які глядзіць камера",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

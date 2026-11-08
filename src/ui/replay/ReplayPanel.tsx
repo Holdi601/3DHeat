@@ -6,8 +6,9 @@ import { FOLLOW_MODES, LABEL_CATEGORIES, labelFieldsFor, useReplayStore, type Fo
 import { dropLinesOn } from './replayData';
 import { datasetFields, inFieldOrder } from './fields';
 import { FieldPicker } from './FieldPicker';
-import { personAt, sortUnits, unitsOf } from './units';
+import { personAt, unitsOf } from './units';
 import { UnitList } from './UnitList';
+import { lookTargets } from './pair';
 import { EventList } from './EventList';
 import { BookmarkPanel } from './BookmarkPanel';
 import { DisplayPanel } from './DisplayPanel';
@@ -115,7 +116,7 @@ function CameraPanel() {
     }
   };
   // Targets: everyone but the followed unit, weapons only while they fly.
-  const targets = sortUnits(index.units.filter((u) => u.key !== followUnit && (u.kind !== 'weapon' || u.spans.some(([a, b]) => a <= now && now <= b))));
+  const targets = lookTargets(index, followUnit, now);
 
   return (
     <Section title={t('replay.title')} defaultOpen>

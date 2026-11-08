@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Καταρρίψεις",
   "replay.look.none": "Καμία ακόμη",
   "replay.look.events": "Συμβάντα",
-  "replay.look.scrubTitle": "Κάντε κλικ για να μεταβείτε σε εκείνη τη στιγμή· το κόκκινο σημειώνει καταρρίψεις, το κεχριμπάρι εκτοξεύσεις"
+  "replay.look.scrubTitle": "Κάντε κλικ για να μεταβείτε σε εκείνη τη στιγμή· το κόκκινο σημειώνει καταρρίψεις, το κεχριμπάρι εκτοξεύσεις",
+  "replay.field.altDiff": "Διαφορά ύψους",
+  "replay.lookAt.bTitle": "Η μονάδα προς την οποία κοιτά η κάμερα από την παρακολουθούμενη",
+  "replay.lookAt.clearTitle": "Σταμάτα να κοιτάς αυτή τη μονάδα (Esc)",
+  "replay.lookAt.pick": "Κοίτα προς",
+  "replay.lookAt.pickTitle": "Η κάμερα μένει στην παρακολουθούμενη μονάδα, στραμμένη προς μια δεύτερη. Ctrl- ή Alt-κλικ σε μονάδα κάνει το ίδιο.",
+  "replay.lookAt.rowTitle": "Κοίτα αυτή τη μονάδα από την παρακολουθούμενη (ή Ctrl- ή Alt-κλικ πάνω της)",
+  "replay.lookAt.lost": "Η B χάθηκε",
+  "replay.lookAt.stripTitle": "Μεταξύ της παρακολουθούμενης μονάδας και αυτής που κοιτάζεται",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

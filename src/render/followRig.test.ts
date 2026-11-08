@@ -100,7 +100,8 @@ describe('follow rig', () => {
     const rig = new FollowRig();
     rig.update(c, input({ mode: 'padlock', target: [100, 2000, -1050] }));
     close(axesOf(c.yaw, c.pitch, c.roll).fwd, [0, 0, -1]);
-    rig.update(c, input({ mode: 'padlock', target: [1100, 2000, -50] }));
+    // A jump of the target is swung to, not snapped: a second later it is there.
+    rig.update(c, input({ mode: 'padlock', target: [1100, 2000, -50], dt: 1 }));
     close(axesOf(c.yaw, c.pitch, c.roll).fwd, [1, 0, 0]);
     rig.update(c, input({ mode: 'satellite', distance: 3000 }));
     expect(c.position.y).toBeCloseTo(5000);

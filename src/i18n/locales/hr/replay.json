@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Obaranja",
   "replay.look.none": "Još nema",
   "replay.look.events": "Događaji",
-  "replay.look.scrubTitle": "Klikni za skok na taj trenutak; crvena označava obaranja, jantarna lansiranja"
+  "replay.look.scrubTitle": "Klikni za skok na taj trenutak; crvena označava obaranja, jantarna lansiranja",
+  "replay.field.altDiff": "Visinska razlika",
+  "replay.lookAt.bTitle": "Jedinica u koju kamera gleda iz praćene",
+  "replay.lookAt.clearTitle": "Prestani gledati ovu jedinicu (Esc)",
+  "replay.lookAt.pick": "Gledaj",
+  "replay.lookAt.pickTitle": "Kamera ostaje na praćenoj jedinici, okrenuta prema drugoj. Ctrl- ili Alt-klik na jedinicu čini isto.",
+  "replay.lookAt.rowTitle": "Gledaj ovu jedinicu iz praćene (ili je kliknite s Ctrl ili Alt)",
+  "replay.lookAt.lost": "B izgubljena",
+  "replay.lookAt.stripTitle": "Između praćene jedinice i one u koju se gleda",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

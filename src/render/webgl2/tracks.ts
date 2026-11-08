@@ -13,7 +13,12 @@ import { figureGlslVs } from '../figureShaders';
 import { EVAL_GLSL_FS, EVAL_GLSL_VS, MARK_GLSL_VS, STREAK_GLSL_VS, TRAIL_GLSL_VS, TRAIL_SEGMENTS_GL } from '../gpuTracks/glsl';
 import { nearFigures } from '../gpuTracks/near';
 import { sameKeys, type GpuTrackStore } from '../gpuTracks/store';
-import type { GpuTracksParams } from '../types';
+import type { GpuTracksParams, SymbolParams } from '../types';
+import type { GlSymbols } from './symbols';
+import { dartMesh } from '../symbols/darts';
+
+/** Every domain's dart in one mesh: each feedback row keeps its own shape (`symbols/darts.ts`). */
+const DART_ALL = dartMesh();
 import type { GlFigures } from './figures';
 import { compileProgram, GlError, UniformCache } from './glutil';
 import { LINE_FS } from './shaders';
@@ -151,8 +156,8 @@ export class GlTracks {
     const instances = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, instances);
     gl.bufferData(gl.ARRAY_BUFFER, Math.max(1, s.tracks) * INSTANCE_STRIDE * 4, gl.DYNAMIC_COPY);
-    // The dart (mesh 0), its instances straight from the feedback buffer.
-    const dart = s.meshes[0];
+    // The darts, their instances straight from the feedback buffer.
+    const dart = DART_ALL;
     const dartBuf = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, dartBuf);
     gl.bufferData(gl.ARRAY_BUFFER, dart.data, gl.STATIC_DRAW);
@@ -167,6 +172,11 @@ export class GlTracks {
     gl.vertexAttribPointer(2, 4, gl.FLOAT, false, M, 28);
     gl.enableVertexAttribArray(3);
     gl.vertexAttribPointer(3, 1, gl.FLOAT, false, M, 44);
+    // The movement floats: the darts' shape is in the last (`symbols/darts.ts`).
+    for (let k = 0; k < 3; k++) {
+      gl.enableVertexAttribArray(8 + k);
+      gl.vertexAttribPointer(8 + k, 4, gl.FLOAT, false, M, 48 + k * 16);
+    }
     const instanceAttrs = () => {
       gl.bindBuffer(gl.ARRAY_BUFFER, instances);
       for (let k = 0; k < 4; k++) {
@@ -255,6 +265,7 @@ export class GlTracks {
     gl.uniform4f(U.loc('uPx'), p.focalPx, p.orthoPx, p.minPixels, p.stale);
     gl.uniform4f(U.loc('uLod'), s.units, p.scale, p.fullPx, p.dartPx);
     gl.uniform4f(U.loc('uOpt'), weapons > 0 ? weapons : -1, visible ? 0 : 1, 0, 0);
+    gl.uniform4f(U.loc('uSym'), p.farMode ?? 0, p.symbolThreshold ?? 36, p.symbolPx ?? 28, 0);
     gl.bindVertexArray(this.emptyVao);
     gl.enable(gl.RASTERIZER_DISCARD);
     gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, this.tf);
@@ -276,12 +287,12 @@ export class GlTracks {
     gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     gl.depthMask(true);
     gl.bindVertexArray(up.dartVao);
-    gl.drawArraysInstanced(gl.TRIANGLES, 0, s.meshes[0].count, s.tracks);
+    gl.drawArraysInstanced(gl.TRIANGLES, 0, DART_ALL.count, s.tracks);
     gl.bindVertexArray(null);
     gl.disable(gl.BLEND);
 
     // The figures, near enough to be more than darts.
-    const near = nearFigures(s, { t: p.t, viewProj, camera, focalPx: p.focalPx, orthoPx: p.orthoPx, minPixels: p.minPixels, stale: p.stale, scale: p.scale, fullPx: p.fullPx, dartPx: p.dartPx, visible, noWeapons: weapons <= 0 });
+    const near = nearFigures(s, { t: p.t, viewProj, camera, focalPx: p.focalPx, orthoPx: p.orthoPx, minPixels: p.minPixels, stale: p.stale, scale: p.scale, fullPx: p.fullPx, dartPx: p.dartPx, visible, noWeapons: weapons <= 0, farMode: p.farMode ?? 0, symbolThreshold: p.symbolThreshold ?? 36 });
     if (near.length) figures.draw(near, viewProj, camera);
 
     // Weapons' streaks and the deaths, as lines over the figures.
@@ -315,6 +326,7 @@ export class GlTracks {
       gl.uniform4f(T.loc('uCam'), camera[0], camera[1], camera[2], p.t);
       gl.uniform1f(T.loc('uTLo'), p.t - Math.fround(p.t));
       gl.uniform4f(T.loc('uTrail'), p.trailSeconds, drop === null ? 0 : 1, drop ?? 0, TRAIL_SEGMENTS_GL);
+      gl.uniform1f(T.loc('uDropWeapons'), p.weaponDrops ? 1 : 0);
       T.f3('uCameraPos', camera[0], camera[1], camera[2]);
       T.f1('uFadeStart', 1e9);
       T.f1('uFadeEnd', 1e9 + 1);
@@ -336,6 +348,13 @@ export class GlTracks {
     gl.bindVertexArray(null);
     gl.depthMask(true);
     gl.disable(gl.BLEND);
+  }
+
+  /** The glyphs (symbols, weapons, decoys) from this frame's placed rows: one instanced quad draw. */
+  drawGlyphs(glyphs: GlSymbols, sp: SymbolParams, viewProj: Float32Array, camera: ArrayLike<number>, w: number, h: number): void {
+    const up = this.up;
+    if (!up) return;
+    glyphs.drawFrom(up.streakVao, up.store.tracks, -1, sp, viewProj, camera, w, h);
   }
 
   dispose(): void {

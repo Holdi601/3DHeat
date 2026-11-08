@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Nedskjutningar",
   "replay.look.none": "Inga ännu",
   "replay.look.events": "Händelser",
-  "replay.look.scrubTitle": "Klicka för att gå till det ögonblicket; rött markerar nedskjutningar, bärnsten avfyrningar"
+  "replay.look.scrubTitle": "Klicka för att gå till det ögonblicket; rött markerar nedskjutningar, bärnsten avfyrningar",
+  "replay.field.altDiff": "Höjdskillnad",
+  "replay.lookAt.bTitle": "Enheten kameran tittar på från den följda",
+  "replay.lookAt.clearTitle": "Sluta titta på den här enheten (Esc)",
+  "replay.lookAt.pick": "Titta på",
+  "replay.lookAt.pickTitle": "Kameran stannar på den följda enheten, vänd mot en andra. Ctrl- eller Alt-klick på en enhet gör samma sak.",
+  "replay.lookAt.rowTitle": "Titta på den här enheten från den följda (eller Ctrl- eller Alt-klicka på den)",
+  "replay.lookAt.lost": "B förlorad",
+  "replay.lookAt.stripTitle": "Mellan den följda enheten och den som betraktas",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

@@ -518,5 +518,15 @@
   "replay.look.killFeed": "격추",
   "replay.look.none": "아직 없음",
   "replay.look.events": "이벤트",
-  "replay.look.scrubTitle": "클릭하면 해당 시점으로 이동합니다. 빨간색은 격추, 호박색은 발사를 나타냅니다"
+  "replay.look.scrubTitle": "클릭하면 해당 시점으로 이동합니다. 빨간색은 격추, 호박색은 발사를 나타냅니다",
+  "replay.field.altDiff": "고도 차",
+  "replay.lookAt.bTitle": "추적 중인 유닛에서 카메라가 바라보는 유닛",
+  "replay.lookAt.clearTitle": "이 유닛 주시 해제 (Esc)",
+  "replay.lookAt.pick": "주시",
+  "replay.lookAt.pickTitle": "카메라가 추적 중인 유닛에 머물며 두 번째 유닛을 향합니다. 유닛을 Ctrl 또는 Alt 클릭해도 같습니다.",
+  "replay.lookAt.rowTitle": "추적 중인 유닛에서 이 유닛을 주시 (Ctrl 또는 Alt 클릭으로도 가능)",
+  "replay.lookAt.lost": "B 놓침",
+  "replay.lookAt.stripTitle": "추적 중인 유닛과 주시 중인 유닛 사이",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

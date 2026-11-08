@@ -518,5 +518,15 @@
   "replay.look.killFeed": "撃墜",
   "replay.look.none": "まだありません",
   "replay.look.events": "イベント",
-  "replay.look.scrubTitle": "クリックでその時点へ移動。赤は撃墜、アンバーは発射を示します"
+  "replay.look.scrubTitle": "クリックでその時点へ移動。赤は撃墜、アンバーは発射を示します",
+  "replay.field.altDiff": "高度差",
+  "replay.lookAt.bTitle": "追従中のユニットからカメラが見ているユニット",
+  "replay.lookAt.clearTitle": "このユニットを見るのをやめる (Esc)",
+  "replay.lookAt.pick": "注視",
+  "replay.lookAt.pickTitle": "カメラは追従中のユニットに留まり、2 つ目のユニットの方を向きます。ユニットを Ctrl または Alt クリックしても同じです。",
+  "replay.lookAt.rowTitle": "追従中のユニットからこのユニットを見る (Ctrl または Alt クリックでも可)",
+  "replay.lookAt.lost": "B を見失いました",
+  "replay.lookAt.stripTitle": "追従中のユニットと注視中のユニットの間",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

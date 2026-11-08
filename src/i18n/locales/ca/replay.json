@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Baixes",
   "replay.look.none": "Encara cap",
   "replay.look.events": "Esdeveniments",
-  "replay.look.scrubTitle": "Clica per anar a aquest moment; el vermell marca les baixes, l’ambre els llançaments"
+  "replay.look.scrubTitle": "Clica per anar a aquest moment; el vermell marca les baixes, l’ambre els llançaments",
+  "replay.field.altDiff": "Diferència d'altitud",
+  "replay.lookAt.bTitle": "La unitat que la càmera mira des de la seguida",
+  "replay.lookAt.clearTitle": "Deixa de mirar aquesta unitat (Esc)",
+  "replay.lookAt.pick": "Mira a",
+  "replay.lookAt.pickTitle": "La càmera es queda a la unitat seguida, girada cap a una segona. Ctrl o Alt + clic en una unitat fa el mateix.",
+  "replay.lookAt.rowTitle": "Mira aquesta unitat des de la seguida (o Ctrl o Alt + clic a sobre)",
+  "replay.lookAt.lost": "B perduda",
+  "replay.lookAt.stripTitle": "Entre la unitat seguida i la mirada",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

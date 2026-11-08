@@ -835,7 +835,7 @@ button.finding.on {
   border-radius: 6px;
   padding: 6px 8px;
   font-size: 11px;
-  z-index: 3;
+  z-index: var(--z-tooltip);
 }
 
 .chart-tip .tip-head {
@@ -1018,7 +1018,7 @@ button.finding.on {
 
 .graph-picker {
   position: fixed;
-  z-index: 20;
+  z-index: var(--z-popover);
   width: 360px;
   max-height: 60vh;
   display: flex;

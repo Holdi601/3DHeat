@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Sestřely",
   "replay.look.none": "Zatím žádné",
   "replay.look.events": "Události",
-  "replay.look.scrubTitle": "Kliknutím přejdete na daný okamžik; červená značí sestřely, jantarová odpaly"
+  "replay.look.scrubTitle": "Kliknutím přejdete na daný okamžik; červená značí sestřely, jantarová odpaly",
+  "replay.field.altDiff": "Výškový rozdíl",
+  "replay.lookAt.bTitle": "Jednotka, na kterou se kamera dívá ze sledované",
+  "replay.lookAt.clearTitle": "Přestat se dívat na tuto jednotku (Esc)",
+  "replay.lookAt.pick": "Dívat se na",
+  "replay.lookAt.pickTitle": "Kamera zůstane u sledované jednotky, natočená ke druhé. Ctrl- nebo Alt-klik na jednotku udělá totéž.",
+  "replay.lookAt.rowTitle": "Dívat se na tuto jednotku ze sledované (nebo na ni klikněte s Ctrl či Alt)",
+  "replay.lookAt.lost": "B ztracena",
+  "replay.lookAt.stripTitle": "Mezi sledovanou jednotkou a tou, na kterou se dívá",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

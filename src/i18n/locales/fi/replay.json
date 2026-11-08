@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Tuhoamiset",
   "replay.look.none": "Ei vielä",
   "replay.look.events": "Tapahtumat",
-  "replay.look.scrubTitle": "Napsauta siirtyäksesi siihen hetkeen; punainen merkitsee tuhoamisia, meripihka laukaisuja"
+  "replay.look.scrubTitle": "Napsauta siirtyäksesi siihen hetkeen; punainen merkitsee tuhoamisia, meripihka laukaisuja",
+  "replay.field.altDiff": "Korkeusero",
+  "replay.lookAt.bTitle": "Yksikkö, jota kamera katsoo seuratusta",
+  "replay.lookAt.clearTitle": "Lopeta tämän yksikön katsominen (Esc)",
+  "replay.lookAt.pick": "Katso kohti",
+  "replay.lookAt.pickTitle": "Kamera pysyy seuratussa yksikössä ja kääntyy toista kohti. Ctrl- tai Alt-napsautus yksikköön tekee saman.",
+  "replay.lookAt.rowTitle": "Katso tätä yksikköä seuratusta (tai Ctrl- tai Alt-napsauta sitä)",
+  "replay.lookAt.lost": "B kadonnut",
+  "replay.lookAt.stripTitle": "Seuratun ja katsotun yksikön välillä",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

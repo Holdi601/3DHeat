@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Éliminations",
   "replay.look.none": "Aucune pour l’instant",
   "replay.look.events": "Événements",
-  "replay.look.scrubTitle": "Cliquer pour aller à ce moment ; le rouge marque les éliminations, l’ambre les tirs"
+  "replay.look.scrubTitle": "Cliquer pour aller à ce moment ; le rouge marque les éliminations, l’ambre les tirs",
+  "replay.field.altDiff": "Différence d'altitude",
+  "replay.lookAt.bTitle": "L'unité que la caméra regarde depuis l'unité suivie",
+  "replay.lookAt.clearTitle": "Ne plus regarder cette unité (Échap)",
+  "replay.lookAt.pick": "Regarder",
+  "replay.lookAt.pickTitle": "La caméra reste sur l'unité suivie, tournée vers une seconde. Ctrl- ou Alt-clic sur une unité fait de même.",
+  "replay.lookAt.rowTitle": "Regarder cette unité depuis l'unité suivie (ou Ctrl- ou Alt-clic dessus)",
+  "replay.lookAt.lost": "B perdue",
+  "replay.lookAt.stripTitle": "Entre l'unité suivie et celle regardée",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

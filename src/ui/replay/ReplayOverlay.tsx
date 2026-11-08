@@ -15,6 +15,7 @@ import { num, t } from '../../i18n';
 import type { Engine } from '../../render/engine';
 import './replay.css';
 import { unitPrefs } from '../../state/unitsStore';
+import { lookAtUnit } from './pair';
 
 /** Pixels a click may be off a unit and still be on it. */
 const HIT_PX = 16;
@@ -100,6 +101,8 @@ export function ReplayOverlay() {
       const unit = u.units[u.personUnit[hit]];
       if (!unit) return;
       if (e.shiftKey) useReplayStore.getState().pick(hit);
+      // Ctrl or Alt: the camera stays on the followed unit and looks at this one.
+      else if (e.ctrlKey || e.altKey) lookAtUnit(unit, hit);
       else selectAndFollow(unit, hit);
       // The click also asked the inspector what is there; the unit is the answer.
       suppressPick.current = performance.now() + 1500;
@@ -194,13 +197,16 @@ export function ReplayOverlay() {
 
     // ---- labels, most important first, each where it does not cover another
     const cam = engine.cameraPose().position;
+    const weaponMarks = useStore.getState().team.weaponMarks;
     const order = engine.liveTracks
       .map((tr) => {
         const unit = ui.units[ui.personUnit[tr.person]];
         const special =
           r.follow === tr.person ? 0 : unit && r.selected === unit.key ? 1 : r.pair?.includes(tr.person) || r.pairFrom === tr.person || r.targetPerson === tr.person ? 2 : null;
         // Each kind of object labelled by its own rule; the units in question by theirs.
-        const rule = unit ? r.labelRules[labelCategory(dataset, unit, special !== null)] : r.labelRules.ground;
+        // Decoys and shells are never labelled; weapons only as their rule (or "drop lines and labels on weapons") says.
+        const base = unit ? r.labelRules[labelCategory(dataset, unit, special !== null)] : r.labelRules.ground;
+        const rule = unit && special === null && (unit.decoy || (unit.kind === 'weapon' && weaponMarks)) ? { ...base, show: !unit.decoy } : base;
         const rank = labelRank(special, rule.priority);
         return { tr, unit, rank, rule, dist: Math.hypot(tr.x - cam.x, tr.y - cam.y, tr.z - cam.z) };
       })

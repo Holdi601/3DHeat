@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Sestrelitve",
   "replay.look.none": "Še nobene",
   "replay.look.events": "Dogodki",
-  "replay.look.scrubTitle": "Kliknite za skok na ta trenutek; rdeča označuje sestrelitve, jantarna izstrelitve"
+  "replay.look.scrubTitle": "Kliknite za skok na ta trenutek; rdeča označuje sestrelitve, jantarna izstrelitve",
+  "replay.field.altDiff": "Višinska razlika",
+  "replay.lookAt.bTitle": "Enota, v katero kamera gleda iz sledene",
+  "replay.lookAt.clearTitle": "Nehaj gledati to enoto (Esc)",
+  "replay.lookAt.pick": "Glej",
+  "replay.lookAt.pickTitle": "Kamera ostane pri sledeni enoti, obrnjena proti drugi. Ctrl- ali Alt-klik na enoto naredi isto.",
+  "replay.lookAt.rowTitle": "Glej to enoto iz sledene (ali jo kliknite s Ctrl ali Alt)",
+  "replay.lookAt.lost": "B izgubljena",
+  "replay.lookAt.stripTitle": "Med sledeno enoto in tisto, v katero gleda",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

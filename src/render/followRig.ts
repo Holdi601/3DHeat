@@ -15,6 +15,8 @@
  * x east, y up, -z north.
  */
 
+import { framePadlock, framePair, pairState } from './pairFrame';
+
 export type Vec3 = [number, number, number];
 
 export type RigMode = 'cockpit' | 'fixed' | 'padlock' | 'target' | 'satellite';
@@ -45,6 +47,8 @@ export interface RigInput {
   eyeUp: number;
   /** Bumped to put the look and the place back. */
   reset: number;
+  /** Seconds since the last frame, for the two-unit views' swing; the wall clock's when not given. */
+  dt?: number;
 }
 
 const dot = (a: Vec3, b: Vec3) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
@@ -143,6 +147,9 @@ export class FollowRig {
     person: number;
   } | null = null;
   private resetSeen = 0;
+  /** The two-unit views' eased framing, and when the last frame was (ms). */
+  private pair = pairState();
+  private lastAt = 0;
 
   /** Forget the last frame, as when the camera is let go. */
   release(): void {
@@ -164,6 +171,12 @@ export class FollowRig {
     }
     let zoom = 1;
     const l = this.last;
+    // Another unit or view starts its framing afresh; the same one eases on.
+    const at = performance.now();
+    const same = !!l && l.mode === inp.mode && l.person === inp.person;
+    const dt = same ? Math.max(0, inp.dt ?? (at - this.lastAt) / 1000) : 0;
+    if (!same) this.pair = pairState();
+    this.lastAt = at;
     if (l && l.mode === inp.mode) {
       // What the user turned since the last frame.
       const dyaw = wrap(c.yaw - l.yaw);
@@ -204,7 +217,7 @@ export class FollowRig {
       }
       case 'padlock': {
         eye = eye0;
-        look = inp.target ? norm(add(inp.target, eye, -1)) : fwd;
+        look = framePadlock(this.pair, eye, fwd, inp.target, dt);
         // The head stays upright in the cockpit: the unit's up, squared to the look.
         top = squareTo(up, look);
         break;
@@ -224,15 +237,10 @@ export class FollowRig {
         break;
       }
       case 'target': {
-        if (inp.target) {
-          // Behind the unit on the line from the target, a little above, the target ahead.
-          const toT = norm(add(inp.target, inp.pos, -1));
-          eye = add(add(inp.pos, toT, -inp.distance), [0, 1, 0], inp.distance * 0.25);
-          look = norm(add(inp.target, eye, -1));
-        } else {
-          eye = add(add(inp.pos, fwd, -inp.distance), [0, 1, 0], inp.distance * 0.25);
-          look = norm(add(inp.pos, eye, -1));
-        }
+        // Behind the unit on the line from the target, a little above, both in the picture (pairFrame.ts).
+        const p = framePair(this.pair, inp.pos, fwd, inp.target, inp.distance, dt);
+        eye = p.eye;
+        look = p.look;
         top = squareTo([0, 1, 0], look);
         break;
       }

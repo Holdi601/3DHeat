@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Lelövések",
   "replay.look.none": "Még nincs",
   "replay.look.events": "Események",
-  "replay.look.scrubTitle": "Kattints, hogy az adott pillanatra ugorj; a piros a lelövéseket, a borostyán az indításokat jelöli"
+  "replay.look.scrubTitle": "Kattints, hogy az adott pillanatra ugorj; a piros a lelövéseket, a borostyán az indításokat jelöli",
+  "replay.field.altDiff": "Magasságkülönbség",
+  "replay.lookAt.bTitle": "Az egység, amelyre a kamera a követettből néz",
+  "replay.lookAt.clearTitle": "Ne nézzen tovább erre az egységre (Esc)",
+  "replay.lookAt.pick": "Nézz rá",
+  "replay.lookAt.pickTitle": "A kamera a követett egységen marad, egy másodikra fordulva. Ctrl- vagy Alt-kattintás egy egységre ugyanezt teszi.",
+  "replay.lookAt.rowTitle": "Erre az egységre nézés a követettből (vagy Ctrl- vagy Alt-kattintás rá)",
+  "replay.lookAt.lost": "B elveszett",
+  "replay.lookAt.stripTitle": "A követett és a nézett egység között",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

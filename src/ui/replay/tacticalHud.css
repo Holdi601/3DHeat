@@ -7,7 +7,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 3;
+  z-index: var(--z-hud-furniture);
   font-family: 'Share Tech Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
   color: rgba(var(--tac), 0.92);
   font-size: 12px;

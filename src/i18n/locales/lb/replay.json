@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Ofschëss",
   "replay.look.none": "Nach keng",
   "replay.look.events": "Evenementer",
-  "replay.look.scrubTitle": "Klickt, fir op dee Moment ze sprangen; rout markéiert Ofschëss, Bernstee Starten"
+  "replay.look.scrubTitle": "Klickt, fir op dee Moment ze sprangen; rout markéiert Ofschëss, Bernstee Starten",
+  "replay.field.altDiff": "Héichtenënnerscheed",
+  "replay.lookAt.bTitle": "D'Eenheet, op déi d'Kamera vun der verfollegter aus kuckt",
+  "replay.lookAt.clearTitle": "Net méi op dës Eenheet kucken (Esc)",
+  "replay.lookAt.pick": "Kuck op",
+  "replay.lookAt.pickTitle": "D'Kamera bleift bei der verfollegter Eenheet a dréint sech op eng zweet. Ctrl- oder Alt-Klick op eng Eenheet mécht datselwecht.",
+  "replay.lookAt.rowTitle": "Vun der verfollegter Eenheet aus op dës kucken (oder Ctrl- oder Alt-Klick drop)",
+  "replay.lookAt.lost": "B verluer",
+  "replay.lookAt.stripTitle": "Tëscht der verfollegter Eenheet an där, op déi gekuckt gëtt",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

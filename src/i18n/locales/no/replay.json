@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Drap",
   "replay.look.none": "Ingen ennå",
   "replay.look.events": "Hendelser",
-  "replay.look.scrubTitle": "Klikk for å gå til det øyeblikket; rødt markerer drap, rav utskytinger"
+  "replay.look.scrubTitle": "Klikk for å gå til det øyeblikket; rødt markerer drap, rav utskytinger",
+  "replay.field.altDiff": "Høydeforskjell",
+  "replay.lookAt.bTitle": "Enheten kameraet ser på fra den fulgte",
+  "replay.lookAt.clearTitle": "Slutt å se på denne enheten (Esc)",
+  "replay.lookAt.pick": "Se på",
+  "replay.lookAt.pickTitle": "Kameraet blir ved den fulgte enheten, vendt mot en annen. Ctrl- eller Alt-klikk på en enhet gjør det samme.",
+  "replay.lookAt.rowTitle": "Se på denne enheten fra den fulgte (eller Ctrl- eller Alt-klikk på den)",
+  "replay.lookAt.lost": "B mistet",
+  "replay.lookAt.stripTitle": "Mellom den fulgte enheten og den det ses på",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

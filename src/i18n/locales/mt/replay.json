@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Qtil",
   "replay.look.none": "Għad m'hemm xejn",
   "replay.look.events": "Avvenimenti",
-  "replay.look.scrubTitle": "Ikklikkja biex tmur f'dak il-mument; l-aħmar jimmarka l-qtil, l-ambra l-isparar"
+  "replay.look.scrubTitle": "Ikklikkja biex tmur f'dak il-mument; l-aħmar jimmarka l-qtil, l-ambra l-isparar",
+  "replay.field.altDiff": "Differenza fl-altitudni",
+  "replay.lookAt.bTitle": "L-unità li l-kamera qed tħares lejha minn dik segwita",
+  "replay.lookAt.clearTitle": "Tieqafx tħares lejn din l-unità (Esc)",
+  "replay.lookAt.pick": "Ħares lejn",
+  "replay.lookAt.pickTitle": "Il-kamera tibqa' fuq l-unità segwita, imdawra lejn it-tieni waħda. Ctrl- jew Alt-klikk fuq unità jagħmel l-istess.",
+  "replay.lookAt.rowTitle": "Ħares lejn din l-unità minn dik segwita (jew Ctrl- jew Alt-klikk fuqha)",
+  "replay.lookAt.lost": "B mitlufa",
+  "replay.lookAt.stripTitle": "Bejn l-unità segwita u dik li qed tħares lejha",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

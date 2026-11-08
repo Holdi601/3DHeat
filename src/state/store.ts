@@ -21,6 +21,8 @@ import {
   type ViewMode,
 } from './types';
 import { savedSpeed } from './playbackSpeed';
+import type { FarMode } from '../render/symbols/lod';
+import type { SymbolStyle } from '../render/symbols/affiliation';
 
 /**
  * Heat appearance. Every field here maps to a shader uniform and can change
@@ -231,6 +233,20 @@ export interface TeamSettings {
    * Tacview draws them. 0 keeps true size at any distance.
    */
   figurePixels: number;
+  /** How a unit is drawn far off: its model, its domain's arrow, or a map symbol (`render/symbols/lod.ts`). */
+  farMode: FarMode;
+  /** The symbols' convention: NATO APP-6, Russian tactical signs, a game map's glyphs, or shape-only (`symbols/atlas.ts`). */
+  symbolStyle: SymbolStyle;
+  /** A symbol's size on screen, px. */
+  symbolPx: number;
+  /** The team that is friend in the symbols (-1: the first). */
+  mySide: number;
+  /** What the teams that are not mine are in the symbols. */
+  symbolOthers: 'hostile' | 'neutral';
+  /** A tick on moving units' symbols the way they go. */
+  symbolTicks: boolean;
+  /** Drop lines and name labels on weapons in flight too. */
+  weaponMarks: boolean;
   /** Weapons in flight with their smoke, tracers, impacts, hits and kills (render/weapons.ts). */
   weapons: boolean;
   /**
@@ -352,6 +368,41 @@ export interface AxisMirror {
 const STREAM_NEAR_CAP = 10;
 
 const MIRROR_KEY = 'heat3d.mirror';
+const FAR_KEY = 'heat3d.far';
+
+type FarSettings = Pick<TeamSettings, 'farMode' | 'symbolStyle' | 'symbolPx' | 'mySide' | 'symbolOthers' | 'symbolTicks' | 'weaponMarks'>;
+const FAR_DEFAULTS: FarSettings = { farMode: 'figure', symbolStyle: 'nato', symbolPx: 28, mySide: -1, symbolOthers: 'hostile', symbolTicks: true, weaponMarks: false };
+
+/** The far-off settings this viewer last had, as the other figure settings, per browser. */
+function savedFar(): FarSettings {
+  try {
+    const v = JSON.parse(localStorage.getItem(FAR_KEY) ?? 'null');
+    if (v && typeof v === 'object') {
+      const pick = <T,>(x: unknown, ok: readonly T[], d: T): T => (ok.includes(x as T) ? (x as T) : d);
+      return {
+        farMode: pick<FarMode>(v.farMode, ['figure', 'arrow', 'symbol'], FAR_DEFAULTS.farMode),
+        symbolStyle: pick<SymbolStyle>(v.symbolStyle, ['nato', 'russian', 'map', 'mono'], FAR_DEFAULTS.symbolStyle),
+        symbolPx: Number.isFinite(v.symbolPx) ? Math.max(8, Math.min(96, v.symbolPx)) : FAR_DEFAULTS.symbolPx,
+        mySide: Number.isInteger(v.mySide) ? v.mySide : -1,
+        symbolOthers: v.symbolOthers === 'neutral' ? 'neutral' : 'hostile',
+        symbolTicks: v.symbolTicks !== false,
+        weaponMarks: v.weaponMarks === true,
+      };
+    }
+  } catch {
+    // No storage, or something unreadable in it: the defaults.
+  }
+  return { ...FAR_DEFAULTS };
+}
+
+function saveFar(t: TeamSettings): void {
+  try {
+    const f: FarSettings = { farMode: t.farMode, symbolStyle: t.symbolStyle, symbolPx: t.symbolPx, mySide: t.mySide, symbolOthers: t.symbolOthers, symbolTicks: t.symbolTicks, weaponMarks: t.weaponMarks };
+    localStorage.setItem(FAR_KEY, JSON.stringify(f));
+  } catch {
+    // Private windows and blocked storage: the settings last this session only.
+  }
+}
 
 /** The axes this viewer last had inverted: a per-browser convenience. */
 function savedMirror(): AxisMirror {
@@ -639,6 +690,7 @@ export const useStore = create<AppState>((set) => ({
     figures: true,
     figureScale: 1,
     figurePixels: 36,
+    ...savedFar(),
     weapons: true,
     session: -1,
   },
@@ -803,7 +855,12 @@ export const useStore = create<AppState>((set) => ({
   patchHeat: (p) => set((s) => ({ heat: { ...s.heat, ...p } })),
   patchSlice: (p) => set((s) => ({ slice: { ...s.slice, ...p } })),
   patchPath: (p) => set((s) => ({ path: { ...s.path, ...p } })),
-  patchTeam: (p) => set((s) => ({ team: { ...s.team, ...p } })),
+  patchTeam: (p) =>
+    set((s) => {
+      const team = { ...s.team, ...p };
+      if (Object.keys(p).some((k) => k in FAR_DEFAULTS)) saveFar(team);
+      return { team };
+    }),
   patchLines: (p) => set((s) => ({ lines: { ...s.lines, ...p } })),
   patchBudget: (p) => set((s) => ({ budget: { ...s.budget, ...p } })),
   patchCamera: (p) => {

@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Zestrzelenia",
   "replay.look.none": "Jeszcze brak",
   "replay.look.events": "Zdarzenia",
-  "replay.look.scrubTitle": "Kliknij, aby przejść do tej chwili; czerwony oznacza zestrzelenia, bursztynowy wystrzały"
+  "replay.look.scrubTitle": "Kliknij, aby przejść do tej chwili; czerwony oznacza zestrzelenia, bursztynowy wystrzały",
+  "replay.field.altDiff": "Różnica wysokości",
+  "replay.lookAt.bTitle": "Jednostka, na którą kamera patrzy ze śledzonej",
+  "replay.lookAt.clearTitle": "Przestań patrzeć na tę jednostkę (Esc)",
+  "replay.lookAt.pick": "Patrz na",
+  "replay.lookAt.pickTitle": "Kamera zostaje przy śledzonej jednostce, zwrócona ku drugiej. Ctrl- lub Alt-kliknięcie jednostki działa tak samo.",
+  "replay.lookAt.rowTitle": "Patrz na tę jednostkę ze śledzonej (lub kliknij ją z Ctrl lub Alt)",
+  "replay.lookAt.lost": "B utracona",
+  "replay.lookAt.stripTitle": "Między śledzoną jednostką a obserwowaną",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

@@ -26,7 +26,8 @@
  * span its keys are in: origin x, y, z and the step of a position unit
  * (slots 8-11), first time and the step of a time unit (12-13), and the
  * seconds it is held past its last key plus one (14; 0 for the viewer's
- * lifetime alone, `data/despawn.ts`). Slot 7: where in the same table the
+ * lifetime alone, `data/despawn.ts`), and what it is far off - domain,
+ * symbol class and team (15, `figures/symbolClass.ts`). Slot 7: where in the same table the
  * track's chunk spans start (u32), one of `CHUNK_U32` per `CHUNK_KEYS` keys
  * laid out as slots 8-13; 0 where every key is in the track's span (the lean
  * overlay's). Over a whole track 16 bits are too coarse for a long or
@@ -38,13 +39,15 @@
 import type { Dataset } from '../../state/types';
 import { teamMemberColor } from '../colors';
 import { FigureReplay } from '../../figures/replay';
-import { meshOf, MESH_STRIDE, type FigureMesh } from '../../figures/instances';
+import { meshOf, type FigureMesh } from '../../figures/instances';
 import { poseFrame } from '../../figures/kit';
 import { positionRows, quatOfFrame } from '../../figures/motion';
 import { CATALOG } from '../../figures/catalog';
 import { endsOf, holdAfterKeys } from '../../data/despawn';
 import { aimOf, type AimNow } from '../../figures/aim';
 import { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32 } from './chunks';
+import { dartIndex, dartMeshes } from '../symbols/darts';
+import { classify, Domain, isEffectDomain, isWeaponDomain, packWord } from '../../figures/symbolClass';
 
 export { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32, encodeChunk } from './chunks';
 
@@ -117,7 +120,7 @@ export interface GpuTrackStore {
   /** Deaths to mark, where the data has them. */
   readonly markers?: TrackMarkers | null;
   readonly keys: number;
-  /** Index 0 is the dart, the far stand-in; then each figure's full and coarse builds. */
+  /** First the darts, the far stand-ins, one a domain (`symbols/darts.ts`); then each figure's full, coarse and far builds. */
   readonly meshes: FigureMesh[];
   /** Per mesh, how many tracks may draw with it: the room its instances need. */
   readonly meshTracks: Uint32Array;
@@ -134,34 +137,7 @@ export interface GpuTrackStore {
   readonly buildMs: number;
 }
 
-const DART = dartMesh();
-
-/** A dart: a flat arrowhead with a fin, 1 m long, nose along +x, in the team's colour. */
-function dartMesh(): FigureMesh {
-  const v: number[] = [];
-  const tri = (a: number[], b: number[], c: number[]) => {
-    const ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2];
-    const vx = c[0] - a[0], vy = c[1] - a[1], vz = c[2] - a[2];
-    let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
-    const l = Math.hypot(nx, ny, nz) || 1;
-    nx /= l;
-    ny /= l;
-    nz /= l;
-    // Nothing on a dart turns: the movement floats stay 0.
-    const still = new Array<number>(MESH_STRIDE - 12).fill(0);
-    for (const p of [a, b, c]) v.push(p[0], p[1], p[2], 1, 1, 1, 1, nx, ny, nz, 0, 1, ...still);
-    for (const p of [a, c, b]) v.push(p[0], p[1], p[2], 1, 1, 1, 1, -nx, -ny, -nz, 0, 1, ...still);
-  };
-  const nose = [0.5, 0, 0];
-  const l = [-0.5, 0, -0.42];
-  const r = [-0.5, 0, 0.42];
-  const tail = [-0.3, 0, 0];
-  const fin = [-0.5, 0.25, 0];
-  tri(nose, r, tail);
-  tri(nose, tail, l);
-  tri([0.1, 0, 0], tail, fin);
-  return { id: -1, data: new Float32Array(v), count: v.length / MESH_STRIDE };
-}
+const DARTS = dartMeshes();
 
 function packQuat(q: ArrayLike<number>): number {
   const b = (x: number) => (Math.round(Math.max(-1, Math.min(1, x)) * 127) & 0xff) >>> 0;
@@ -179,10 +155,10 @@ function rgba8(r: number, g: number, b: number): number {
  * team colour (or a colour of its own group's, where asked) - slots 2 to 6.
  */
 export class TrackFigures {
-  readonly meshes: FigureMesh[] = [DART];
+  readonly meshes: FigureMesh[] = [...DARTS];
   /** Per mesh, the tracks that may draw with it. */
   readonly meshTracks = new Uint32Array(0x10000);
-  private readonly meshIndex = new Map<FigureMesh, number>([[DART, 0]]);
+  private readonly meshIndex = new Map<FigureMesh, number>(DARTS.map((m, i) => [m, i]));
   private readonly kindMeshes = new Map<string, { full: number; coarse: number; far: number; longest: number; air: boolean } | null>();
   private readonly fr = new FigureReplay();
   private readonly knows: boolean;
@@ -236,8 +212,13 @@ export class TrackFigures {
     f32[o8 + 4] = km ? km.longest : 1;
     trackData[o8 + 5] = (km && km.air ? FLAG_AIR : 0) | (attitude ? FLAG_ATTITUDE : 0) | (weapon || isWeaponKind(kind) ? FLAG_WEAPON : 0);
     trackData[o8 + 6] = km ? km.far : 0;
+    // What it is far off: its domain, symbol class and team (`symbolClass.ts`).
+    const uc = classify(kind, row >= 0 ? this.fr.typeText(d, row) : '');
+    trackData[o8 + 15] = packWord(uc, d.personTeam ? team : null);
+    // Decoys and shells go with the weapons: hidden with them, streaked like them.
+    if (isWeaponDomain(uc.domain) || (isEffectDomain(uc.domain) && uc.domain !== Domain.Misc)) trackData[o8 + 5] |= FLAG_WEAPON;
     if (km) for (const m of new Set([km.full, km.coarse, km.far])) this.meshTracks[m]++;
-    this.meshTracks[0]++;
+    this.meshTracks[dartIndex(uc.domain)]++;
   }
 }
 

@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Drab",
   "replay.look.none": "Ingen endnu",
   "replay.look.events": "Hændelser",
-  "replay.look.scrubTitle": "Klik for at gå til det øjeblik; rød markerer drab, rav affyringer"
+  "replay.look.scrubTitle": "Klik for at gå til det øjeblik; rød markerer drab, rav affyringer",
+  "replay.field.altDiff": "Højdeforskel",
+  "replay.lookAt.bTitle": "Enheden kameraet ser på fra den fulgte",
+  "replay.lookAt.clearTitle": "Hold op med at se på denne enhed (Esc)",
+  "replay.lookAt.pick": "Se på",
+  "replay.lookAt.pickTitle": "Kameraet bliver ved den fulgte enhed, vendt mod en anden. Ctrl- eller Alt-klik på en enhed gør det samme.",
+  "replay.lookAt.rowTitle": "Se på denne enhed fra den fulgte (eller Ctrl- eller Alt-klik på den)",
+  "replay.lookAt.lost": "B mistet",
+  "replay.lookAt.stripTitle": "Mellem den fulgte enhed og den, der ses på",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

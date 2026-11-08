@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Zostrelenia",
   "replay.look.none": "Zatiaľ žiadne",
   "replay.look.events": "Udalosti",
-  "replay.look.scrubTitle": "Kliknutím prejdete na daný okamih; červená značí zostrelenia, jantárová odpaly"
+  "replay.look.scrubTitle": "Kliknutím prejdete na daný okamih; červená značí zostrelenia, jantárová odpaly",
+  "replay.field.altDiff": "Výškový rozdiel",
+  "replay.lookAt.bTitle": "Jednotka, na ktorú sa kamera pozerá zo sledovanej",
+  "replay.lookAt.clearTitle": "Prestať sa pozerať na túto jednotku (Esc)",
+  "replay.lookAt.pick": "Pozerať na",
+  "replay.lookAt.pickTitle": "Kamera zostane pri sledovanej jednotke, natočená k druhej. Ctrl- alebo Alt-klik na jednotku urobí to isté.",
+  "replay.lookAt.rowTitle": "Pozerať na túto jednotku zo sledovanej (alebo na ňu kliknite s Ctrl či Alt)",
+  "replay.lookAt.lost": "B stratená",
+  "replay.lookAt.stripTitle": "Medzi sledovanou jednotkou a tou, na ktorú sa pozerá",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

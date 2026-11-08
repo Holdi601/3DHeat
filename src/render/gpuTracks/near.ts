@@ -10,6 +10,8 @@
  * The test and the sizes are the place shader's (`shader.ts`).
  */
 
+import { fallbackWord } from '../../figures/symbolClass';
+import { FADE_FROM, farLook, WEAPON_PX } from '../symbols/lod';
 import { INSTANCE_STRIDE, NO_PITCH, type FigureBatch } from '../../figures/instances';
 import { aimOf, type AimNow } from '../../figures/aim';
 import { emptyPose, evaluateTrack } from './evaluate';
@@ -66,6 +68,9 @@ export interface NearFrame {
   visible: Uint32Array | null;
   /** Weapons hidden. */
   noWeapons: boolean;
+  /** Far off (`symbols/lod.ts`): 0 figure, 1 arrow, 2 symbol. */
+  farMode?: number;
+  symbolThreshold?: number;
 }
 
 /** One growable instance run a mesh. */
@@ -105,6 +110,10 @@ export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): Figu
   // Turrets and guns as the data has them now, where it has them and the keys have rows.
   const aim = s.keysAim && s.keyRow ? aimOf(s.dataset) : null;
   let n = 0;
+  const mode = f.farMode ?? 1;
+  const T = f.symbolThreshold ?? 36;
+  // Below this no model is drawn whatever the unit is: the smallest of the thresholds that apply.
+  const least = Math.min(mode === 2 ? T * FADE_FROM : f.dartPx, WEAPON_PX * FADE_FROM);
   for (let i = 0; i < s.tracks && n < limit; i++) {
     const L = b.longest[i];
     if (!L) continue;
@@ -113,14 +122,18 @@ export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): Figu
     const o = i * 4;
     const d = Math.max(1e-6, Math.hypot(b.sphere[o] - cx, b.sphere[o + 1] - cy, b.sphere[o + 2] - cz) - b.sphere[o + 3]);
     const maxLen = persp ? (L * f.scale * f.focalPx) / d : (L * f.scale) / f.orthoPx;
-    if (maxLen < f.dartPx) continue;
+    if (maxLen < least) continue;
     if (!isShown(f.visible, i)) continue;
     const flags = s.trackData[i * TRACK_U32 + 5];
     if (f.noWeapons && flags & 4) continue;
     if (!evaluateTrack(s, i, f.t, f.stale, pose)) continue;
     const pxSize = persp ? Math.hypot(pose.x - cx, pose.y - cy, pose.z - cz) / f.focalPx : f.orthoPx;
     const trueLen = (L * f.scale) / pxSize;
-    if (trueLen < f.dartPx) continue;
+    if (trueLen < least) continue;
+    // How it is drawn (`symbols/lod.ts`): the model, faded where its symbol takes over, weapons at true size.
+    const word = s.trackData[i * TRACK_U32 + 15] || fallbackWord((flags & 1) !== 0);
+    const look = farLook(mode, (word >>> 16) & 15, trueLen, true, T, f.dartPx);
+    if (look.figure <= 0) continue;
     // In view (with the shader's margin).
     const w = m[3] * pose.x + m[7] * pose.y + m[11] * pose.z + m[15];
     if (w <= 0) continue;
@@ -131,7 +144,7 @@ export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): Figu
     let mesh = meshes & 0xffff;
     if (trueLen < f.fullPx) mesh = meshes >>> 16;
     if (trueLen < f.fullPx / 3) mesh = s.trackData[i * TRACK_U32 + 6];
-    const scale = Math.max(f.scale, (f.minPixels * pxSize) / f32[i * TRACK_U32 + 4]);
+    const scale = look.trueSize ? f.scale : Math.max(f.scale, (f.minPixels * pxSize) / f32[i * TRACK_U32 + 4]);
     const c = s.trackData[i * TRACK_U32 + 2];
     const out = runs.add(mesh);
     out[0] = pose.x;
@@ -141,7 +154,7 @@ export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): Figu
     out[4] = pose.f[0];
     out[5] = pose.f[1];
     out[6] = pose.f[2];
-    out[7] = 1;
+    out[7] = look.figure;
     out[8] = pose.u[0];
     out[9] = pose.u[1];
     out[10] = pose.u[2];
