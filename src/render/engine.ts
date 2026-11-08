@@ -135,6 +135,15 @@ if (import.meta.env.DEV && typeof window !== 'undefined') (window as unknown as 
 
 /** From this many tracked things the GPU places the units (where it can). */
 const GPU_TRACKS_FROM = 3000;
+
+/**
+ * Time constants of the follow cameras' easing, seconds: how long a change takes
+ * to come about two thirds of the way. Chosen to match what the per-frame
+ * shares they replace (0.12 of the heading, 0.2 of the race chase) did at 60
+ * frames a second, without depending on the frame rate.
+ */
+const CHASE_HEADING_SECONDS = 0.13;
+const RACE_CHASE_SECONDS = 0.075;
 /** ?gputracks puts any dataset on the GPU path, ?gputracks=0 none: for comparing the two. */
 function gpuTracksForced(): boolean | null {
   if (typeof location === 'undefined') return null;
@@ -398,6 +407,8 @@ export class Engine {
   private readonly viewArr = new Float32Array(16);
   private readonly projArr = new Float32Array(16);
   private readonly camPos = new Float32Array(3);
+  private readonly viewProjRelArr = new Float32Array(16);
+  private readonly originArr = new Float32Array(3);
   /** Unit vector the camera looks along; see the planar distance cull. */
   private readonly camFwd = new Float32Array(3);
   private lut: Uint8Array = new Uint8Array(0);
@@ -425,6 +436,8 @@ export class Engine {
 
   /** The near plane of the last frame; see `nearForView`. */
   private viewNear = 1;
+  /** The far plane of the last frame; see `farForView`. */
+  private viewFar = 40_000;
 
   readonly live: LiveReadout = {
     playhead: 0,
@@ -489,6 +502,9 @@ export class Engine {
   /** Box replay's motion between samples: smooth curves and shortest-arc attitudes (figures/motion.ts). */
   private readonly motion = new MotionRefiner();
   private readonly motionSample = emptySample();
+  private readonly followSample = emptySample();
+  /** The GPU tracks the last frame placed its units from, for the follow camera. */
+  private lastGpuStore: GpuTrackStore | null = null;
   /** Weapons, shots, hits and kills in box replay (render/weapons.ts). */
   private readonly weapons = new WeaponLayer();
   private readonly weaponTris = new VertexBuffer();
@@ -1429,6 +1445,31 @@ export class Engine {
   private gpuPick: { key: string; person: number | null } | null = null;
 
   /**
+   * The far plane for this view: the calibrated one, pushed out to the far side of
+   * the level and the data when the camera has flown further away than that.
+   *
+   * The calibration sets far from the data's extent, so a small dataset seen from a
+   * few kilometres up lay wholly past it and vanished - heat, lines and all - the
+   * moment the camera crossed it. With the near plane moving out with the distance
+   * (`nearForView`), the ratio stays where depth precision wants it.
+   */
+  private farForView(far: number, s: ReturnType<typeof snapshot>, raceTab: boolean): number {
+    if (raceTab) return far;
+    const level = s.level?.kind === 'model' ? s.level : null;
+    const boxes = [level?.bounds, s.dataset?.bounds].filter((b) => b !== undefined);
+    if (!boxes.length) return far;
+    const p = this.mirrorPoint(this.camera.position.x, this.camera.position.y, this.camera.position.z);
+    let reach = 0;
+    for (const b of boxes) {
+      const dx = Math.max(Math.abs(b.minX - p.x), Math.abs(b.maxX - p.x));
+      const dy = Math.max(Math.abs(b.minY - p.y), Math.abs(b.maxY - p.y));
+      const dz = Math.max(Math.abs(b.minZ - p.z), Math.abs(b.maxZ - p.z));
+      reach = Math.max(reach, Math.hypot(dx, dy, dz));
+    }
+    return Number.isFinite(reach) ? Math.max(far, reach * 1.1) : far;
+  }
+
+  /**
    * The GPU tracks for the loaded dataset, when it has so many units that
    * the GPU places them (and the backend can): built once, null otherwise.
    */
@@ -1452,6 +1493,7 @@ export class Engine {
    * (for the labels, the card and the follow camera).
    */
   private gpuFrame(s: ReturnType<typeof snapshot>, store: GpuTrackStore): void {
+    this.lastGpuStore = store;
     const t = this.playhead;
     const hgt = Math.max(1, this.canvas.clientHeight);
     const persp = this.camera.projection === 'perspective';
@@ -2016,7 +2058,7 @@ export class Engine {
       // Before the camera update, so a chase camera is where the car is this
       // frame rather than the last.
       raceBuilt = this.raceScene.build(race, raceClock.time, s.level?.kind === 'model', raceHover.value);
-      this.follow(race, raceBuilt.cars);
+      this.follow(race, raceBuilt.cars, dt);
     }
     // Publish on the transitions rather than every frame: the scrubber reads the
     // engine directly for smoothness, but the store has to be correct whenever
@@ -2045,7 +2087,7 @@ export class Engine {
       this.camera.setProjection(s.camera.projection);
     }
     this.camera.gamepad = s.camera.gamepad;
-    if (!raceTab) this.followTrack(s);
+    if (!raceTab) this.followTrack(s, dt);
     if (vehicleTab) {
       if (this.vehicleStage.takeFrameRequest()) this.frameDataset(false);
       this.vehicleStage.orbit(this.camera, dt, this.mirror);
@@ -2055,7 +2097,8 @@ export class Engine {
     if (!raceTab) this.viewNear = nearForFollow(this.viewNear, [this.camera.position.x, this.camera.position.y, this.camera.position.z], this.followedPoint(s), this.dataset ? unitsPerMetre(this.dataset) : 1);
     // Out of a cockpit the unit's own figure is clipped away, as Tacview hides it.
     if (this.rigNear > 0) this.viewNear = Math.max(this.viewNear, this.rigNear);
-    this.camera.update(dt, width / height, s.camera.fov, this.viewNear, s.camera.far);
+    this.viewFar = this.farForView(s.camera.far, s, raceTab);
+    this.camera.update(dt, width / height, s.camera.fov, this.viewNear, this.viewFar);
     // The pad's "frame" button is a request rather than an action, so the camera
     // does not need to know about the dataset.
     if (this.camera.frameRequested) {
@@ -2081,6 +2124,15 @@ export class Engine {
     this.camPos[0] = cam.position.x * mx;
     this.camPos[1] = cam.position.y * my;
     this.camPos[2] = cam.position.z * mz;
+    // The same view relative to the camera's (32-bit) position, for figures: see
+    // FrameParams.viewProjRel. The translation is folded in while still double.
+    this.originArr.set(this.camPos);
+    {
+      const e = this.viewProj.elements;
+      const [ox, oy, oz] = this.originArr;
+      this.viewProjRelArr.set(e);
+      for (let r = 0; r < 4; r++) this.viewProjRelArr[12 + r] = e[r] * ox + e[4 + r] * oy + e[8 + r] * oz + e[12 + r];
+    }
     // The view axis, read out of the view matrix's third row rather than
     // recomputed from yaw and pitch: the matrix is the thing the projection
     // actually uses, so anything derived from it cannot disagree with what is on
@@ -2874,6 +2926,8 @@ export class Engine {
     const lookOn = !raceTab && s.mode === 'team' && !!this.dataset && useReplayStore.getState().look.on;
     const params: FrameParams = {
       viewProj: this.viewProjArr,
+      viewProjRel: this.viewProjRelArr,
+      origin: this.originArr,
       view: this.viewArr,
       proj: this.projArr,
       cameraPos: this.camPos,
@@ -2989,7 +3043,7 @@ export class Engine {
             }
           : null,
       near: this.viewNear,
-      far: s.camera.far,
+      far: this.viewFar,
       slice: s.slice.enabled
         ? {
             axis: s.slice.axis === 'x' ? 0 : s.slice.axis === 'y' ? 1 : 2,
@@ -3083,7 +3137,7 @@ export class Engine {
    * Chase the followed car: behind it and above, looking along its heading.
    * Eased, so the camera does not shake with every wobble of the heading.
    */
-  private follow(race: RaceState, cars: Map<string, { x: number; y: number; z: number; course: number }>): void {
+  private follow(race: RaceState, cars: Map<string, { x: number; y: number; z: number; course: number }>, dt: number): void {
     if (!race.follow) {
       this.chase = null;
       return;
@@ -3104,7 +3158,7 @@ export class Engine {
       yaw,
     };
     const c = this.chase ?? target;
-    const k = 0.2;
+    const k = 1 - Math.exp(-dt / RACE_CHASE_SECONDS);
     let dyaw = target.yaw - c.yaw;
     while (dyaw > Math.PI) dyaw -= 2 * Math.PI;
     while (dyaw < -Math.PI) dyaw += 2 * Math.PI;
@@ -3129,9 +3183,9 @@ export class Engine {
    *
    * The camera's own yaw and pitch are the orbit angles: what the user turned
    * since the last frame is read off them, and the keyboard's flying off the
-   * position it moved to. The unit is eased a little, so a sparsely sampled
-   * track does not shake the view; the angles are not, so input is immediate.
-   * One frame behind the tracks, which are built after the camera.
+   * position it moved to. The unit is taken where it is at this frame's
+   * playhead (`followedNow`), on the same curve its figure is drawn from, so it
+   * holds still in the view; only the chase heading is eased, over time.
    */
   private sidesKey = '';
   private readonly sides = new Float32Array(64);
@@ -3165,7 +3219,33 @@ export class Engine {
     return [t.x * mx, t.y * my, t.z * mz];
   }
 
-  private followTrack(s: ReturnType<typeof snapshot>): void {
+  /**
+   * The followed unit where it is at this frame's playhead, on the curve the
+   * figures are drawn from - the GPU tracks' own evaluation, or the motion model -
+   * rather than where the last frame's tracks had it. Following last frame's
+   * position put the camera a frame's travel behind the figure, a lag that
+   * changed with every frame's length and shook the unit on screen. Its attitude
+   * is the last frame's: it turns slowly enough that a frame does not show.
+   */
+  private followedNow(person: number, s: ReturnType<typeof snapshot>): (typeof this.liveTracks)[number] | undefined {
+    const last = this.liveTracks.find((x) => x.person === person);
+    const d = this.dataset;
+    if (!d) return last;
+    const store = this.lastGpuStore;
+    if (store && this.gpuTracksParams) {
+      const i = store.trackOf[person] ?? -1;
+      const pose = this.gpuPose;
+      if (i < 0 || !evaluateTrack(store, i, this.playhead, s.timeline.defaultLifetime, pose)) return last;
+      const f = pose.f;
+      return { person, row: last?.row ?? -1, x: pose.x, y: pose.y, z: pose.z, yaw: Math.atan2(f[0], -f[2]), pitch: Math.asin(Math.max(-1, Math.min(1, f[1]))), q: null };
+    }
+    const m = s.team.interpolate && last ? MotionModel.of(d) : null;
+    if (!m || !last || !m.at(person, this.playhead, s.team.session, this.followSample)) return last;
+    const p = this.followSample;
+    return { ...last, x: p.x, y: p.y, z: p.z };
+  }
+
+  private followTrack(s: ReturnType<typeof snapshot>, dt: number): void {
     const r = useReplayStore.getState();
     const follow = r.follow;
     const c = this.camera;
@@ -3181,7 +3261,7 @@ export class Engine {
       this.followRig.release();
       return;
     }
-    const t = this.liveTracks.find((x) => x.person === follow);
+    const t = this.followedNow(follow, s);
     if (!t) return;
     const units = this.dataset ? unitsPerMetre(this.dataset) : 1;
     const [mx, my, mz] = this.mirror;
@@ -3251,11 +3331,16 @@ export class Engine {
     pitch = Math.max(-1.45, Math.min(1.2, pitch));
     // A new life of the unit somewhere else: no glide across the map to it.
     const jump = f.person !== follow;
-    const ke = jump ? 1 : 0.45;
-    const fx = f.fx + (target.x - f.fx) * ke;
-    const fy = f.fy + (target.y - f.fy) * ke;
-    const fz = f.fz + (target.z - f.fz) * ke;
-    const head = jump ? headYaw : f.head + wrap(headYaw - f.head) * 0.12;
+    // On the unit itself, which is on its curve at this frame's playhead
+    // (`followedNow`): any easing of the position leaves it a speed-dependent
+    // distance off the middle of the view. The heading still swings round
+    // gently, over a time constant rather than a share of each frame, so how
+    // far it swings does not depend on how fast frames come; it turns the
+    // view about the unit and never moves it on screen.
+    const fx = target.x;
+    const fy = target.y;
+    const fz = target.z;
+    const head = jump ? headYaw : f.head + wrap(headYaw - f.head) * (1 - Math.exp(-dt / CHASE_HEADING_SECONDS));
     const chase = r.followMode === 'chase';
     const yaw = chase ? head + rel : c.yaw;
     if (!chase) rel = wrap(yaw - head);

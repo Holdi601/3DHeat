@@ -144,7 +144,7 @@ async function open(backend, query = '') {
         return false;
       },
       /** Heat (in saturation units) and colour at world points, averaged. */
-      async sample(points, withScene = false) {
+      async sample(points, withScene = false, patch = 1) {
         const px = [];
         for (const [x, y, z] of points) {
           const p = eng.project(x, y, z);
@@ -167,13 +167,15 @@ async function open(backend, query = '') {
             const sy = f.height / eng.canvas.clientHeight;
             // A 3 x 3 patch about each point, so a point drifting across a pixel
             // boundary as the camera moves does not read as a change of colour.
+            // One pixel for the zoom: from far away a patch spans the blob's slope.
+            const n = (2 * patch + 1) ** 2;
             for (const p of px) {
-              for (let dy = -1; dy <= 1; dy++) {
-                for (let dx = -1; dx <= 1; dx++) {
+              for (let dy = -patch; dy <= patch; dy++) {
+                for (let dx = -patch; dx <= patch; dx++) {
                   const y = Math.max(0, Math.min(f.height - 1, Math.floor(p.y * sy) + dy));
                   const x = Math.max(0, Math.min(f.width - 1, Math.floor(p.x * sx) + dx));
                   const i = (y * f.width + x) * 4;
-                  for (let c = 0; c < 3; c++) rgb[c] += f.rgba[i + c] / (9 * px.length);
+                  for (let c = 0; c < 3; c++) rgb[c] += f.rgba[i + c] / (n * px.length);
                 }
               }
             }
@@ -217,12 +219,14 @@ async function loadBlob(page, routes) {
       return seed / 4294967296;
     };
     const gauss = () => Math.sqrt(-2 * Math.log(1 - rnd())) * Math.cos(2 * Math.PI * rnd());
-    const P = routes ? 20000 : 3000;
+    const P = routes ? 180000 : 3000;
     const S = routes ? 6 : 200;
     const walk = new Float64Array(P * 2);
     for (let p = 0; p < P; p++) {
-      walk[p * 2] = (rnd() - 0.5) * 400;
-      walk[p * 2 + 1] = (rnd() - 0.5) * 400;
+      // Wide enough that a view from 20 km, at a quarter of the heat
+      // resolution, still has several texels of it around the probe.
+      walk[p * 2] = (rnd() - 0.5) * 1200;
+      walk[p * 2 + 1] = (rnd() - 0.5) * 1200;
     }
     const n = P * S;
     const px = new Float32Array(n);
@@ -377,7 +381,7 @@ async function checkZoom(page, backend, pick) {
     for (const h of heights) {
       await above(page, h);
       await page.evaluate(() => globalThis.__vc.settle());
-      got.push(await page.evaluate((pts) => globalThis.__vc.sample(pts, true), PROBE));
+      got.push(await page.evaluate((pts) => globalThis.__vc.sample(pts, true, 0), PROBE));
       if (opt('shot') && verbose) await page.screenshot({ path: `${opt('shot')}/zoom-${cfg.name.replace(/\W+/g, '_')}-${h}.png` });
     }
     const heats = got.map((g) => g.heat).filter((v) => v !== null && v > 0);
@@ -497,8 +501,10 @@ async function checkFlicker(page, backend, pick) {
       const sp = sparkle(series);
       const sat = series.map((s) => s.sat);
       const satMove = Math.max(...sat) / Math.min(...sat) - 1;
-      const ok = sp.heat <= FLICKER_HEAT && sp.rgb <= FLICKER_RGB;
-      const detail = `heat ${pct(sp.heat)}, colour ${sp.rgb.toFixed(1)}/255${satMove > 1e-6 ? `, exposure moved ${pct(satMove)}` : ''}`;
+      // A run that read no heat at all would pass by having nothing to flicker.
+      const lit = series.every((x) => x.heat !== null && x.heat > 0);
+      const ok = lit && sp.heat <= FLICKER_HEAT && sp.rgb <= FLICKER_RGB;
+      const detail = `${lit ? '' : 'NO HEAT READ, '}heat ${pct(sp.heat)}, colour ${sp.rgb.toFixed(1)}/255${satMove > 1e-6 ? `, exposure moved ${pct(satMove)}` : ''}`;
       if (cfg.control) report('flicker', `${backend} ${cfg.name}, ${kind}`, null, `${detail} (must flicker: ${ok ? 'NOT DETECTED' : 'detected'})`);
       else report('flicker', `${backend} ${cfg.name}, ${kind}`, ok, detail);
     }

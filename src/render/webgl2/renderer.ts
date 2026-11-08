@@ -279,6 +279,8 @@ export class Webgl2Renderer implements Renderer {
   private triVao: WebGLVertexArrayObject;
   /** Instanced figures, made on first use. */
   private figures: GlFigures | null = null;
+  /** The camera relative to the frame's origin, for the figures. */
+  private readonly relCamera = new Float32Array(3);
   private symbols: GlSymbols | null = null;
   /** The tactical display's screen pass; made the first time it is asked for. */
   private post: GlPost | null = null;
@@ -1320,14 +1322,19 @@ export class Webgl2Renderer implements Renderer {
       }
     }
 
+    // Figures relative to the camera: see FrameParams.viewProjRel.
+    const o = params.origin;
+    this.relCamera[0] = params.cameraPos[0] - o[0];
+    this.relCamera[1] = params.cameraPos[1] - o[1];
+    this.relCamera[2] = params.cameraPos[2] - o[2];
     if (params.figureBatches && params.figureBatches.length) {
       this.figures ??= new GlFigures(this.gl);
-      this.figures.draw(params.figureBatches, params.viewProj, params.cameraPos);
+      this.figures.draw(params.figureBatches, params.viewProjRel, this.relCamera, o);
     }
     if (params.gpuTracks) {
       this.figures ??= new GlFigures(this.gl);
       this.tracks ??= new GlTracks(this.gl);
-      this.tracks.draw(params.gpuTracks, params.viewProj, params.cameraPos, this.figures);
+      this.tracks.draw(params.gpuTracks, params.viewProj, params.cameraPos, this.figures, { viewProj: params.viewProjRel, camera: this.relCamera, origin: o });
     }
     // The far-off glyphs: map symbols, weapons, decoys (`symbols/`), over everything in the scene.
     if (params.symbols) {

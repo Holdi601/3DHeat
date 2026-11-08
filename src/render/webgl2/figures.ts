@@ -70,7 +70,12 @@ export class GlFigures {
     return m;
   }
 
-  draw(batches: FigureBatch[], viewProj: Float32Array, cameraPos: ArrayLike<number>): void {
+  /**
+   * Draws `batches`. With `origin`, their positions are absolute and are moved
+   * relative to it here, for a `viewProj` relative to the same point (see
+   * FrameParams.viewProjRel); without, they already are.
+   */
+  draw(batches: FigureBatch[], viewProj: Float32Array, cameraPos: ArrayLike<number>, origin: ArrayLike<number> | null = null): void {
     const gl = this.gl;
     this.frame++;
     let total = 0;
@@ -83,6 +88,14 @@ export class GlFigures {
     for (const b of batches) {
       this.staging.set(b.data.subarray(0, b.count * INSTANCE_STRIDE), o);
       o += b.count * INSTANCE_STRIDE;
+    }
+    // Two 32-bit numbers this close subtract exactly, so nothing more is lost here.
+    if (origin) {
+      for (let i = 0; i < need; i += INSTANCE_STRIDE) {
+        this.staging[i] -= origin[0];
+        this.staging[i + 1] -= origin[1];
+        this.staging[i + 2] -= origin[2];
+      }
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, this.instances);
     if (this.capacity < need) {

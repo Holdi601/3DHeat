@@ -221,7 +221,8 @@ export class GlTracks {
   }
 
   /** Places and draws every unit; `figures` draws the ones near enough to be figures. */
-  draw(p: GpuTracksParams, viewProj: Float32Array, camera: ArrayLike<number>, figures: GlFigures): void {
+  /** `rel` is the view relative to a point by the camera, which the near figures are drawn in (FrameParams.viewProjRel). */
+  draw(p: GpuTracksParams, viewProj: Float32Array, camera: ArrayLike<number>, figures: GlFigures, rel: { viewProj: Float32Array; camera: ArrayLike<number>; origin: ArrayLike<number> }): void {
     const gl = this.gl;
     const s = p.store;
     if (this.up && this.up.store !== s && sameKeys(this.up.store, s)) {
@@ -292,8 +293,8 @@ export class GlTracks {
     gl.disable(gl.BLEND);
 
     // The figures, near enough to be more than darts.
-    const near = nearFigures(s, { t: p.t, viewProj, camera, focalPx: p.focalPx, orthoPx: p.orthoPx, minPixels: p.minPixels, stale: p.stale, scale: p.scale, fullPx: p.fullPx, dartPx: p.dartPx, visible, noWeapons: weapons <= 0, farMode: p.farMode ?? 0, symbolThreshold: p.symbolThreshold ?? 36 });
-    if (near.length) figures.draw(near, viewProj, camera);
+    const near = nearFigures(s, { t: p.t, viewProj, camera, focalPx: p.focalPx, orthoPx: p.orthoPx, minPixels: p.minPixels, stale: p.stale, scale: p.scale, fullPx: p.fullPx, dartPx: p.dartPx, visible, noWeapons: weapons <= 0, farMode: p.farMode ?? 0, symbolThreshold: p.symbolThreshold ?? 36, origin: rel.origin });
+    if (near.length) figures.draw(near, rel.viewProj, rel.camera);
 
     // Weapons' streaks and the deaths, as lines over the figures.
     gl.enable(gl.BLEND);

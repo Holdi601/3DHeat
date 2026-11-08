@@ -98,6 +98,8 @@ describe('heat keeps its colour from far and near', () => {
     // only after the clamp, before the 2.5 px floor that dims by itself.
     for (const src of [LINE_HEAT_VS, LINE_HEAT_WGSL]) {
       expect(src).toMatch(/trueRadius\s*\/\s*max\(1e-6,\s*pixRadius\)/);
+      // Its round caps are half discs: weighted once more, by area.
+      expect(src).toMatch(/capRadius\s*\/\s*pixRadius/);
     }
   });
 });
@@ -154,14 +156,14 @@ describe('exposure neither pumps nor flickers', () => {
     expect(f.propose(due!, 10, 80, 0)).toBe(true);
     let prev = 10;
     let worst = 0;
-    for (let now = 16.7; now < 1000; now += 16.7) {
+    for (let now = 16.7; now < DEFAULT_FOLLOW.glideMs + 200; now += 16.7) {
       const v = f.value(now) ?? prev;
       expect(v).toBeGreaterThanOrEqual(prev);
       worst = Math.max(worst, Math.log(v / prev));
       prev = v;
     }
     expect(prev).toBeCloseTo(80, 9);
-    // An eightfold change over 400 ms of smoothstep: never more than 15% in one frame.
+    // An eightfold change over the glide's smoothstep: never more than 15% in one frame.
     expect(worst).toBeLessThan(Math.log(1.15));
   });
 

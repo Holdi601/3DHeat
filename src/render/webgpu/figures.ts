@@ -98,8 +98,12 @@ export class GpuFigures {
     }
   }
 
-  /** Records the draws into `pass`; the bind group carries the scene uniforms (viewProj, camera, fade). */
-  draw(pass: GPURenderPassEncoder, batches: FigureBatch[], bindGroup: GPUBindGroup): void {
+  /**
+   * Records the draws into `pass`; the bind group carries the scene uniforms (viewProj, camera, fade).
+   * With `origin`, the batches' absolute positions are moved relative to it, for scene uniforms
+   * relative to the same point (FrameParams.viewProjRel).
+   */
+  draw(pass: GPURenderPassEncoder, batches: FigureBatch[], bindGroup: GPUBindGroup, origin: ArrayLike<number> | null = null): void {
     this.frame++;
     let total = 0;
     for (const b of batches) total += b.count;
@@ -110,6 +114,14 @@ export class GpuFigures {
     for (const b of batches) {
       this.staging.set(b.data.subarray(0, b.count * INSTANCE_STRIDE), o);
       o += b.count * INSTANCE_STRIDE;
+    }
+    // Two 32-bit numbers this close subtract exactly, so nothing more is lost here.
+    if (origin) {
+      for (let i = 0; i < need; i += INSTANCE_STRIDE) {
+        this.staging[i] -= origin[0];
+        this.staging[i + 1] -= origin[1];
+        this.staging[i + 2] -= origin[2];
+      }
     }
     if (!this.instances || this.instances.size < need * 4) {
       this.instances?.destroy();

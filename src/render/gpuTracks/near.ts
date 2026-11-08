@@ -70,6 +70,12 @@ export interface NearFrame {
   noWeapons: boolean;
   /** Far off (`symbols/lod.ts`): 0 figure, 1 arrow, 2 symbol. */
   farMode?: number;
+  /**
+   * Write positions relative to this point rather than absolute: placed in
+   * double precision and only then rounded, they keep their centimetres at any
+   * distance from the world origin (FrameParams.viewProjRel).
+   */
+  origin?: ArrayLike<number>;
   symbolThreshold?: number;
 }
 
@@ -101,6 +107,7 @@ const aimNow: AimNow = { yaw: NaN, pitch: NaN };
  * instance batches (at most `limit` of them, nearest kept first come).
  */
 export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): FigureBatch[] {
+  const ox = f.origin ? f.origin[0] : 0, oy = f.origin ? f.origin[1] : 0, oz = f.origin ? f.origin[2] : 0;
   const b = boxesOf(s);
   const runs = new Runs();
   const f32 = new Float32Array(s.trackData.buffer, s.trackData.byteOffset, s.trackData.length);
@@ -147,9 +154,9 @@ export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): Figu
     const scale = look.trueSize ? f.scale : Math.max(f.scale, (f.minPixels * pxSize) / f32[i * TRACK_U32 + 4]);
     const c = s.trackData[i * TRACK_U32 + 2];
     const out = runs.add(mesh);
-    out[0] = pose.x;
-    out[1] = pose.y;
-    out[2] = pose.z;
+    out[0] = pose.x - ox;
+    out[1] = pose.y - oy;
+    out[2] = pose.z - oz;
     out[3] = scale;
     out[4] = pose.f[0];
     out[5] = pose.f[1];
