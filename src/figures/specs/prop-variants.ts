@@ -1356,15 +1356,17 @@ A['sea-fury'] = one({ cls: 'ww2-fighter', length: 10.57, span: 11.7, height: 4.8
 
 // P-61 Black Widow: a central nacelle with the glazed nose and dorsal turret, two booms carrying the radials forward
 // and the twin fins aft, the tailplane between them (15.11 x 20.12 x 4.47 m).
+// The P-61's straight-edged wing, the booms' spacing and the fins' measured on the Journal of Recognition's sheet "P-61"
+// (1944-45) with tools/figures/twinview.py.
 A['p-61'] = mp({
   cls: 'ww2-heavy-fighter', length: 15.11, span: 20.12, height: 4.47,
   hood: { front: 5.4, back: 1.6 }, glazed: 6.4,
   body: [[7.55, 0.0, -0.45, 0.3], [7.1, 0.55, -0.7, 0.7], [6.0, 0.85, -0.9, 0.85], [5.0, 1.2, -0.95, 0.85], [2.0, 1.2, -0.95, 0.85], [-1.0, 0.9, -0.8, 0.75], [-2.8, 0.5, -0.3, 0.3]],
-  wing: [[0, 2.6, -1.4], [3.2, 2.6, -1.4], [10.06, 1.0, -0.4]], tipR: 0.4, wingUp: 0.2, dihedral: 3,
-  nacelles: [{ y: 2.6, x: 4.6, back: -7.0, r: 0.75, z: 0.2, kind: 'radial', below: 0.2 }],
+  wing: [[0, 3.4, -1.4], [3.2, 3.4, -1.4], [4.96, 2.78, -0.58], [8.99, 2.76, 0.37], [10.06, 2.4, 1.3]], tipR: 0.4, wingUp: 0.2, dihedral: 3,
+  nacelles: [{ y: 2.91, x: 4.8, back: -7.0, r: 0.75, z: 0.2, kind: 'radial', below: 0.2 }],
   prop: [3.7, 4],
-  fin: [[-5.6, -0.5], [-5.7, 2.2], [-6.3, 2.5], [-7.4, 2.5], [-7.55, 2.1], [-7.55, -0.5], [-7.2, -0.8], [-5.9, -0.8]], twin: 5.2,
-  tail: [[0, -5.8, -7.2], [2.6, -5.8, -7.2]], tailUp: 0.9,
+  fin: [[-5.6, -0.5], [-5.7, 2.2], [-6.3, 2.5], [-7.4, 2.5], [-7.55, 2.1], [-7.55, -0.5], [-7.2, -0.8], [-5.9, -0.8]], twin: 5.82,
+  tail: [[0, -5.8, -7.2], [2.91, -5.8, -7.2]], tailUp: 0.9,
   extra: [dome(1.4, 1.2, 0.45, 1.0)],
 });
 
@@ -1740,7 +1742,7 @@ A['f7f'] = tw({ cls: 'ww2-heavy-fighter', length: 13.83, span: 15.7, height: 4.8
 // chords from the published wing area (44.5 m2), the sheet's own reading 0.6 m short of it.
 A['he-219'] = tw({ cls: 'ww2-heavy-fighter', length: 15.33, span: 18.5, height: 4.1, w: 0.62, h: 0.8, nose: 'cockpit', hoodLen: 2.2, radial: true, nacR: 0.65, nacY: 0.27, nacBack: 1.25, le: 3.3, root: 3.6, tip: 1.2, wingZ: 0.4, dihedral: 4, twinTail: true, finH: 1.7, tailSpan: 6.0, prop: [3.6, 3] });
 // J1N1 Gekko: a long greenhouse over a slim body, radials, a single fin (12.18 x 16.98 x 4.56 m).
-// The wing's root leading edge and chords and the nacelles measured on the Journal of Recognition's sheet "Irving II" (Oct. 1944).
+// The wing's root leading edge and chords and the nacelles measured on the Journal of Recognition's sheet "Irving II" (1944).
 A['j1n1'] = tw({ cls: 'ww2-heavy-fighter', length: 12.18, span: 16.98, height: 4.56, w: 0.6, h: 0.75, nose: 'solid', cockpit: 2.2, hoodLen: 4.0, radial: true, nacR: 0.75, nacY: 0.269, nacBack: 0.95, le: 3.56, root: 3.18, tip: 1.8, wingZ: 0, finH: 2.2, prop: [3.2, 3] });
 // Ki-45 Toryu: a slim body under a long two-seat greenhouse, radials, a single fin (11.0 x 15.02 x 3.7 m); the Ki-96, Ki-102 and Ki-109 are its family.
 // Outlines digitised from the U.S. Army-Navy Journal of Recognition, Jan. 1944, "Nick, Type 2" (a provisional silhouette), with
@@ -1791,7 +1793,7 @@ A['yak-4'] = tw({ cls: 'ww2-bomber', length: 10.18, span: 14.0, height: 3.85, w:
 // Ki-48: a glazed nose under the stepped cockpit, radials on a mid wing, a single fin (12.75 x 17.47 x 3.8 m).
 A['ki-48'] = tw({ cls: 'ww2-bomber', length: 12.75, span: 17.47, height: 3.8, w: 0.55, h: 0.72, nose: 'stepped', cockpit: 2.9, hoodLen: 2.4, radial: true, nacR: 0.65, wingZ: 0, finH: 1.8, prop: [3.0, 3] });
 // P1Y Ginga: a slim body with the glazed nose, radials, a mid wing, a single fin (15.0 x 20.0 x 4.3 m).
-// The wing's root leading edge and chords and the nacelles measured on the Journal of Recognition's sheet "Frances II" (Oct. 1944).
+// The wing's root leading edge and chords and the nacelles measured on the Journal of Recognition's sheet "Frances II" (1944).
 A['p1y1'] = tw({ cls: 'ww2-bomber', length: 15.0, span: 20.0, height: 4.3, w: 0.6, h: 0.8, nose: 'stepped', cockpit: 3.2, hoodLen: 2.6, radial: true, nacR: 0.73, nacY: 0.258, nacBack: 0.96, le: 4.43, root: 3.7, tip: 1.6, wingZ: -0.1, finH: 2.0, prop: [3.3, 4] });
 // He 177 Greif: a long body with the glazed nose, two coupled engines in great nacelles, a single fin (22.0 x 31.44 x 6.4 m).
 // The wing's root leading edge and chords and the coupled engines' nacelles measured on FM 30-30 (1943), sheet "Heinkel He. 177".
