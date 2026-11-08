@@ -1036,6 +1036,18 @@ N['colossus'] = carrier({
   masts: [[6, 24, 13]],
   radars: [{ x: 6, up: 21, kind: 'array', size: 7, side: 13 }],
 });
+// Ark Royal (1937): the high hull closed up to the flight deck over two hangar decks, the flight deck overhanging bow
+// and stern, the long island to starboard with the big funnel at its after end and the tripod mast, eight twin 4.5-inch
+// turrets in sponsons at the deck's corners, four a side (243.8 m over the flight deck, 28.9 m beam; flight deck about
+// 20 m over the water; 27,700 t full).
+N['ark-royal-1937'] = carrier({
+  cls: 'carrier', L: 226, B: 28.9, deck: 20, shift: -3,
+  plan: [[119, -7], [119, 7], [110, 13], [60, 14.6], [-112, 14.6], [-124.8, 12], [-124.8, -12], [-112, -14.6], [60, -14.6], [110, -13]],
+  island: [[10, -32, 27, 14.4, 3, 1], [6, -14, 31, 14.4, 2.4, 1], [-16, -32, 37, 14.6, 3.6, 2]],
+  masts: [[-4, 22, 14.4]],
+  turrets: level('72,15.4:2/114 60,15.4:2/114 -70,15.4:2/114b -82,15.4:2/114b', 17.5, 19),
+  more: { bodies: [blockOf(77, 55, 16.3, 17.5, 1.9, 0, 0, 15.4), blockOf(-65, -87, 16.3, 17.5, 1.9, 0, 0, 15.4)] },
+});
 // Tarawa (LHA): a full-length straight flight deck on a slab-sided hull, the big island to starboard with two masts,
 // the 5-inch guns on sponsons at the forward corners and one aft, the port side lift (254 m long, 32.3 m beam; 39,400 t
 // full).
@@ -2653,8 +2665,8 @@ const ALIASES: Record<string, string> = {
   'us_aircraftcarrier_lexington_ai': 'essex',
   'uk_aircraftcarrier_illustrious': 'invincible',
   'uk_aircraftcarrier_illustrious_ai': 'invincible',
-  'uk_aircraftcarrier_ark_royal': 'colossus',
-  'uk_aircraftcarrier_ark_royal_ai': 'colossus',
+  'uk_aircraftcarrier_ark_royal': 'ark-royal-1937',
+  'uk_aircraftcarrier_ark_royal_ai': 'ark-royal-1937',
   'fr_aircraftcarrier_foch': 'clemenceau',
   'fr_aircraftcarrier_foch_ai': 'clemenceau',
   'ussr_aircraftcarrier_admiral_kuznetsov': 'kuznetsov',
