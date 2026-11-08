@@ -108,8 +108,11 @@ G['challenger-2'] = {
   cls: 'mbt', chassis: 'tracked', length: 8.3, width: 3.52, hullHeight: 1.7, roadWheels: 6, roadWheelRadius: 0.36, skirts: true,
   // 4.79 m of track on the ground between the end road wheels (published).
   trackProfile: run(8.1, 0.95, [4.05, 0.65], [-4.05, 0.75], -2.575, 2.575),
-  hullOutline: hull(8.3, 3.52, 1.7, 0.9, 1.25, 1.15, 0.12),
-  turret: turret(-0.6, [[-2.75, 1.35], [-2.4, 1.6], [1.55, 1.65], [2.05, 1.35], [2.15, 0.8]], [[-2.75, 0.72], [1.7, 0.79], [2.15, 0.46]], 14, 2.1),
+  // The turret's front face 2.35 m ahead of the hull's middle, its back 2.3 m behind it (the bustle rack beyond); the
+  // upper glacis 1.65 m long down to a 1.27 m nose over the steep lower plate (broadside silhouette, UK MOD, Open
+  // Government Licence, scaled by the 8.3 m hull; the gun's 11.55 m length forward agrees).
+  hullOutline: hull(8.3, 3.52, 1.7, 0.9, 1.65, 1.27, 0.12),
+  turret: turret(0.2, [[-2.75, 1.35], [-2.4, 1.6], [1.55, 1.65], [2.05, 1.35], [2.15, 0.8]], [[-2.75, 0.72], [1.7, 0.79], [2.15, 0.46]], 14, 2.1),
   guns: [{ mount: 'turret', length: 6.0, calibre: 0.12, sleeve: 0.8, extractor: 0.55, at: 0.45 }],
   cupola: true,
 };
