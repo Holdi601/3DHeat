@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Обарања",
   "replay.look.none": "Још нема",
   "replay.look.events": "Догађаји",
-  "replay.look.scrubTitle": "Кликните да скочите на тај тренутак; црвена означава обарања, ћилибарна лансирања"
+  "replay.look.scrubTitle": "Кликните да скочите на тај тренутак; црвена означава обарања, ћилибарна лансирања",
+  "replay.field.altDiff": "Висинска разлика",
+  "replay.lookAt.bTitle": "Јединица у коју камера гледа из праћене",
+  "replay.lookAt.clearTitle": "Престани да гледаш ову јединицу (Esc)",
+  "replay.lookAt.pick": "Гледај",
+  "replay.lookAt.pickTitle": "Камера остаје на праћеној јединици, окренута ка другој. Ctrl- или Alt-клик на јединицу ради исто.",
+  "replay.lookAt.rowTitle": "Гледај ову јединицу из праћене (или је кликните са Ctrl или Alt)",
+  "replay.lookAt.lost": "B изгубљена",
+  "replay.lookAt.stripTitle": "Између праћене јединице и оне у коју се гледа",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

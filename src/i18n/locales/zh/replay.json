@@ -518,5 +518,15 @@
   "replay.look.killFeed": "击杀",
   "replay.look.none": "暂无",
   "replay.look.events": "事件",
-  "replay.look.scrubTitle": "点击跳转到该时刻；红色标记击杀，琥珀色标记发射"
+  "replay.look.scrubTitle": "点击跳转到该时刻；红色标记击杀，琥珀色标记发射",
+  "replay.field.altDiff": "高度差",
+  "replay.lookAt.bTitle": "相机从跟随单位看向的单位",
+  "replay.lookAt.clearTitle": "停止看向此单位 (Esc)",
+  "replay.lookAt.pick": "看向",
+  "replay.lookAt.pickTitle": "相机停留在跟随的单位上，并转向第二个单位。按住 Ctrl 或 Alt 点击单位效果相同。",
+  "replay.lookAt.rowTitle": "从跟随的单位看向此单位（或按住 Ctrl 或 Alt 点击它）",
+  "replay.lookAt.lost": "B 已丢失",
+  "replay.lookAt.stripTitle": "跟随单位与被看向单位之间",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Свалени",
   "replay.look.none": "Още няма",
   "replay.look.events": "Събития",
-  "replay.look.scrubTitle": "Щракнете, за да отидете на този момент; червеното отбелязва свалени, кехлибареното изстрелвания"
+  "replay.look.scrubTitle": "Щракнете, за да отидете на този момент; червеното отбелязва свалени, кехлибареното изстрелвания",
+  "replay.field.altDiff": "Разлика във височината",
+  "replay.lookAt.bTitle": "Единицата, към която камерата гледа от следената",
+  "replay.lookAt.clearTitle": "Спри да гледаш тази единица (Esc)",
+  "replay.lookAt.pick": "Гледай към",
+  "replay.lookAt.pickTitle": "Камерата остава на следената единица, обърната към втора. Ctrl- или Alt-щракване върху единица прави същото.",
+  "replay.lookAt.rowTitle": "Гледай тази единица от следената (или щракнете върху нея с Ctrl или Alt)",
+  "replay.lookAt.lost": "B изгубена",
+  "replay.lookAt.stripTitle": "Между следената единица и тази, към която се гледа",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

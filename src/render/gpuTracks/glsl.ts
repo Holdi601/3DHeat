@@ -14,6 +14,55 @@
  */
 
 import { CHUNK_SHIFT } from './store';
+import { C_AGM, C_SAM, C_SHIP, D_BOMB, D_CHAFF, D_FLARE, D_GROUND, D_HELI, D_MARKER, D_MISC, D_MISSILE, D_ROCKET, D_SHELL, D_STATIC, FADE_FROM_F, FALLBACK_AIR, FALLBACK_GROUND, WEAPON_PX_F, WORD_BASE, WORD_MOVING } from '../symbols/shaderConsts';
+
+/**
+ * \`symbols/lod.ts\` in GLSL, as the WebGPU place shader has it (\`shader.ts\`):
+ * how a unit is drawn by its size, a glyph's size, a decoy's fade, a motor's burn.
+ */
+const FAR_GLSL = `
+vec4 farLook(uint dom, float trueLen, bool hasMesh) {
+  if (dom == ${D_SHELL}u) return vec4(0.0, 0.0, 0.0, 1.0);
+  if (dom == ${D_FLARE}u || dom == ${D_CHAFF}u || dom == ${D_MISC}u) {
+    if (dom == ${D_MISC}u && hasMesh && trueLen >= ${WEAPON_PX_F}) return vec4(1.0, 0.0, 0.0, 1.0);
+    return vec4(0.0, 1.0, 0.0, 1.0);
+  }
+  if (dom >= ${D_MISSILE}u && dom <= ${D_ROCKET}u) {
+    float fa = hasMesh ? smoothstep(${WEAPON_PX_F} * ${FADE_FROM_F}, ${WEAPON_PX_F}, trueLen) : 0.0;
+    return vec4(fa, 1.0 - fa, 0.0, 1.0);
+  }
+  if (dom == ${D_MARKER}u) return vec4(hasMesh ? 1.0 : 0.0, 0.0, 0.0, 0.0);
+  if (uSym.x > 1.5) {
+    float fa = hasMesh ? smoothstep(uSym.y * ${FADE_FROM_F}, uSym.y, trueLen) : 0.0;
+    return vec4(fa, 1.0 - fa, 0.0, 0.0);
+  }
+  bool fig = hasMesh && trueLen >= uLod.w;
+  bool dartable = dom <= ${D_HELI}u || (dom >= ${D_GROUND}u && dom <= ${D_STATIC}u);
+  return vec4(fig ? 1.0 : 0.0, 0.0, !fig && dartable ? 1.0 : 0.0, 0.0);
+}
+float glyphPx(uint dom) {
+  if (dom == ${D_MISSILE}u) return uSym.x > 1.5 ? uSym.z : 22.0;
+  if (dom == ${D_ROCKET}u) return 16.0;
+  if (dom == ${D_BOMB}u) return 13.0;
+  if (dom == ${D_FLARE}u) return 12.0;
+  if (dom == ${D_CHAFF}u) return 10.0;
+  if (dom == ${D_MISC}u) return 6.0;
+  return uSym.z;
+}
+float chaffMetres(float age) { return 3.0 + 12.0 * min(1.0, max(0.0, age) / 3.0); }
+float decoyAlpha(uint dom, float age, float life, float seed) {
+  float left = max(0.15, 1.0 - max(0.0, age) / max(0.5, life));
+  if (dom == ${D_FLARE}u) return left * (0.8 + 0.2 * sin(seed * 1.7 + uCam.w * 31.0));
+  return 0.75 * left;
+}
+float burnSeconds(uint dom, uint cls) {
+  if (dom == ${D_ROCKET}u) return 1.5;
+  if (cls == ${C_SAM}u) return 8.0;
+  if (cls == ${C_AGM}u) return 5.0;
+  if (cls == ${C_SHIP}u) return 0.0;
+  return 6.0;
+}
+`;
 
 /**
  * Keys from their span (`store.ts`: the chunk's, else the track's), times
@@ -54,6 +103,7 @@ uniform vec4 uCam;            // camera xyz, playhead t
 uniform vec4 uPx;             // focal px (0: orthographic), px size when orthographic, min px, stale s
 uniform vec4 uLod;            // units a metre, scale at true size, full figure from px, figure (not dart) from px
 uniform vec4 uOpt;            // weapon streak s (<0: weapons hidden), 1 when every track is shown
+uniform vec4 uSym;            // far mode (0 figure, 1 arrow, 2 symbol), symbol threshold px, symbol px, -
 out vec4 oOrigin;
 out vec4 oForward;
 out vec4 oUp;
@@ -62,6 +112,7 @@ out vec4 oTeam;
 ivec2 at(int n) { return ivec2(n % uW, n / uW); }
 uvec4 trackTexel(int i, int k) { return texelFetch(uTracks, at(i * 4 + k), 0); }
 ${SPAN_GLSL}
+${FAR_GLSL}
 vec4 unpackQ(uint v) {
   ivec4 b = ivec4(int(v << 24u) >> 24, int(v << 16u) >> 24, int(v << 8u) >> 24, int(v) >> 24);
   return vec4(b) / 127.0;
@@ -204,11 +255,21 @@ void main() {
     up = vec3(0.0, 1.0, 0.0);
   }
   uint c = t0.z;
-  oTeam = vec4(float(c & 255u) / 255.0, float((c >> 8u) & 255u) / 255.0, float((c >> 16u) & 255u) / 255.0, -100.0);  // gun elevation: as built
+  // What it is (\`symbolClass.ts\`), below the gun's "as built": the dart's shape, the glyph, the streak's look.
+  uint word = t3.w;
+  if (word == 0u) word = (flags & 1u) != 0u ? ${FALLBACK_AIR}u : ${FALLBACK_GROUND}u;
+  uint dom = (word >> 16u) & 15u;
+  uint cls = word & 255u;
+  if (speed > 0.5 * uLod.x) word |= ${WORD_MOVING}u;
+  float age = -timeAt(first);
+  oTeam = vec4(float(c & 255u) / 255.0, float((c >> 8u) & 255u) / 255.0, float((c >> 16u) & 255u) / 255.0, -${WORD_BASE}.0 - float(word));
   oForward = vec4(f, 1.0);
-  oUp = vec4(up, weapon && uOpt.x > 0.0 ? speed : -1.0);
+  // The streak's speed; past a motor's burn, a million more (thin smoke).
+  float sp = weapon && uOpt.x > 0.0 ? speed : -1.0;
+  if (sp >= 0.0 && (dom == ${D_MISSILE}u || dom == ${D_ROCKET}u) && age >= burnSeconds(dom, cls)) sp += 1e6;
+  oUp = vec4(up, sp);
   oOrigin = vec4(P, 0.0);
-  // Off screen: no dart (its streak may still show).
+  // Off screen: neither dart nor glyph (its streak may still show).
   vec4 clip = uViewProj * vec4(P, 1.0);
   if (clip.w <= 0.0) return;
   vec2 ndc = clip.xy / clip.w;
@@ -217,9 +278,20 @@ void main() {
   float longest = uintBitsToFloat(t1.x);
   uint meshes = t0.w;
   float trueLen = longest * uLod.y / pxSize;
-  // Big enough to be a figure: placed on the CPU.
-  if (meshes != 0u && trueLen >= uLod.w) return;
-  oOrigin.w = max(uLod.y, uPx.z * pxSize);
+  // How it is drawn (\`symbols/lod.ts\`): its model is placed on the CPU (\`near.ts\`); here its dart, or its glyph (scale < 0: the glyph's px).
+  vec4 look = farLook(dom, trueLen, meshes != 0u);
+  if (look.z > 0.5) {
+    oOrigin.w = max(uLod.y, uPx.z * pxSize);
+  } else if (look.y > 0.0) {
+    float gpx = glyphPx(dom);
+    float ga = look.y;
+    if (dom == ${D_FLARE}u || dom == ${D_CHAFF}u) {
+      ga *= decoyAlpha(dom, age, timeAt(last) + age, float(i));
+      if (dom == ${D_CHAFF}u) gpx = clamp(chaffMetres(age) * uLod.x / pxSize, 3.0, 96.0);
+    }
+    oOrigin.w = -gpx;
+    oForward.w = ga;
+  }
 }
 `;
 
@@ -242,10 +314,21 @@ uniform float uStreak;
 out vec4 vColor;
 out vec3 vWorld;
 void main() {
-  if (iUp.w < 0.0) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); vColor = vec4(0.0); vWorld = vec3(0.0); return; }
-  float back = gl_VertexID == 1 ? iUp.w * uStreak : 0.0;
+  uint dom = iTeam.w <= -999.5 ? (uint(-iTeam.w - 999.5) >> 16u) & 15u : 0u;
+  if (iUp.w < 0.0 || dom == ${D_CHAFF}u || dom == ${D_MISC}u) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); vColor = vec4(0.0); vWorld = vec3(0.0); return; }
+  // A missile's smoke (thin once its motor is out), a flare's falling smoke, a bomb's faint wake, a shell's tracer.
+  bool burnt = iUp.w >= 1e6;
+  float speed = burnt ? iUp.w - 1e6 : iUp.w;
+  float secs = uStreak;
+  vec3 col = iTeam.rgb;
+  float a = 0.9;
+  if (dom == ${D_SHELL}u) { secs = 0.06; col = vec3(1.0, 0.82, 0.4); a = 1.0; }
+  else if (dom == ${D_FLARE}u) { secs = 1.2; col = vec3(0.78, 0.78, 0.76); a = 0.5; }
+  else if (dom == ${D_BOMB}u) { secs = min(secs, 1.0); col = vec3(0.7); a = 0.2; }
+  else if (dom == ${D_MISSILE}u || dom == ${D_ROCKET}u) { col = vec3(0.93, 0.93, 0.92); a = burnt ? 0.25 : 0.85; }
+  float back = gl_VertexID == 1 ? speed * secs : 0.0;
   vec3 p = iOrigin.xyz - iForward.xyz * back;
-  vColor = vec4(iTeam.rgb, gl_VertexID == 1 ? 0.0 : 0.9);
+  vColor = vec4(col, gl_VertexID == 1 ? 0.0 : a);
   vWorld = p;
   gl_Position = uViewProj * vec4(p, 1.0);
 }
@@ -275,6 +358,7 @@ uniform int uW;
 uniform mat4 uViewProj;
 uniform vec4 uCam;      // camera xyz, playhead t
 uniform vec4 uTrail;    // trail seconds (0: none), 1 for drop lines, the floor's height, segments
+uniform float uDropWeapons;   // 1: drop lines under weapons too
 out vec4 vColor;
 out vec3 vWorld;
 
@@ -287,6 +371,9 @@ void main() {
   vWorld = vec3(0.0);
   // Placed this frame (the eval pass writes the gun elevation -100 only then), and on screen.
   if (iTeam.w > -99.0) return;
+  uint dom = iTeam.w <= -999.5 ? (uint(-iTeam.w - 999.5) >> 16u) & 15u : 0u;
+  bool weapon = dom >= ${D_MISSILE}u && dom <= ${D_ROCKET}u;
+  bool effect = dom >= ${D_FLARE}u && dom != ${D_MARKER}u;
   vec3 P = iOrigin.xyz;
   vec4 clip = uViewProj * vec4(P, 1.0);
   if (clip.w <= 0.0) return;
@@ -298,12 +385,12 @@ void main() {
   vec3 p;
   float a;
   if (n == segs) {
-    if (uTrail.y < 0.5 || P.y - uTrail.z < 1.0) return;
+    if (uTrail.y < 0.5 || P.y - uTrail.z < 1.0 || effect || (weapon && uDropWeapons < 0.5)) return;
     p = end ? vec3(P.x, uTrail.z, P.z) : P;
     a = end ? 0.15 : 0.55;
   } else {
     float W = uTrail.x;
-    if (W <= 0.0) return;
+    if (W <= 0.0 || weapon || effect) return;
     int i = gl_InstanceID;
     uvec4 t0 = texelFetch(uTracks, at(i * 4), 0);
     uvec4 t1 = texelFetch(uTracks, at(i * 4 + 1), 0);

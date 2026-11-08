@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Соборени",
   "replay.look.none": "Сè уште нема",
   "replay.look.events": "Настани",
-  "replay.look.scrubTitle": "Кликнете за да скокнете на тој момент; црвено означува соборени, килибарно лансирања"
+  "replay.look.scrubTitle": "Кликнете за да скокнете на тој момент; црвено означува соборени, килибарно лансирања",
+  "replay.field.altDiff": "Висинска разлика",
+  "replay.lookAt.bTitle": "Единицата кон која гледа камерата од следената",
+  "replay.lookAt.clearTitle": "Престани да гледаш во оваа единица (Esc)",
+  "replay.lookAt.pick": "Гледај кон",
+  "replay.lookAt.pickTitle": "Камерата останува на следената единица, свртена кон втора. Ctrl- или Alt-клик на единица го прави истото.",
+  "replay.lookAt.rowTitle": "Гледај ја оваа единица од следената (или кликнете ја со Ctrl или Alt)",
+  "replay.lookAt.lost": "B изгубена",
+  "replay.lookAt.stripTitle": "Меѓу следената единица и онаа кон која се гледа",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

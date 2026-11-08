@@ -28,6 +28,9 @@ import type { Frame3, Vec3 } from '../race/geometry';
 import { frameOfQuat, MotionModel } from './motion';
 import { figureFor } from './match';
 import { SWING_MACH } from './specs/swing';
+import { classify, Domain, isEffectDomain, packWord, WORD_BASE, WORD_MOVING } from './symbolClass';
+import { chaffMetres, decoyAlpha, farLook, glyphPx } from '../render/symbols/lod';
+import { dartMesh } from '../render/symbols/darts';
 
 const NAME_COLUMN = /^(name|vehicle|vehicle.?name|unit|unit.?type|model|aircraft|plane|tank|ship|craft|loadout|kit|figure)$/i;
 const TYPE_COLUMN = /^(type|class|kind|category|icon|role|domain|vehicle.?type|vehicle.?class)$/i;
@@ -87,7 +90,17 @@ export interface FigureReplayOptions {
   posed?: Uint8Array;
   /** The playhead, seconds: where turrets and guns point now (`aim.ts`). Absent: as built. */
   time?: number;
+  /** Far off (`render/symbols/lod.ts`): 0 figure, 1 arrow, 2 symbol; absent: figures only. */
+  farMode?: number;
+  /** Below this many pixels long at true size a unit is a symbol. */
+  symbolThreshold?: number;
+  symbolPx?: number;
 }
+
+/** The darts, one shape a domain (`render/symbols/darts.ts`). */
+const DARTS = dartMesh();
+/** A unit's model is a dart below this many pixels long at true size ("At a distance: arrow"). */
+const CPU_DART_PX = 3;
 
 const aimNow: AimNow = { yaw: NaN, pitch: NaN };
 
@@ -129,10 +142,58 @@ export class FigureReplay {
   /** The boxes that stay boxes, in the cube layout. */
   rest = new Float32Array(0);
   restCount = 0;
+  /** The far-off glyphs of the last build: figure instances (`render/symbols/shaders.ts`). */
+  readonly glyphs = { data: new Float32Array(64 * 16), count: 0 };
+  /** Per person: its symbol word without the moving bit (`symbolClass.ts`). */
+  private readonly words = new Map<number, number>();
+  /** Per person: when its first row is, for a decoy's age, and its last. */
+  private readonly lives = new Map<number, [number, number]>();
+
+  /** The symbol word for a row (cached per person). */
+  wordOf(d: Dataset, row: number, kind: string | null): number {
+    if (d !== this.dataset) this.attach(d);
+    const p = d.personId ? d.personId[row] : -1 - row;
+    let w = this.words.get(p);
+    if (w === undefined) {
+      const team = d.personTeam && d.personId ? d.personTeam[d.personId[row]] : null;
+      w = packWord(classify(kind, this.typeText(d, row)), team);
+      this.words.set(p, w);
+    }
+    return w;
+  }
+
+  /** When a person's first and last rows are: every person's, worked out in one pass the first time one is asked for. */
+  private lifeOf(d: Dataset, p: number): [number, number] {
+    if (!this.lives.size && d.time && d.personId) {
+      for (let r = 0; r < d.count; r++) {
+        const q = d.personId[r];
+        const l = this.lives.get(q);
+        if (!l) this.lives.set(q, [d.time[r], d.time[r]]);
+        else {
+          if (d.time[r] < l[0]) l[0] = d.time[r];
+          if (d.time[r] > l[1]) l[1] = d.time[r];
+        }
+      }
+    }
+    return this.lives.get(p) ?? [0, 0];
+  }
+
+  private glyph(x: number, y: number, z: number, px: number, f: ArrayLike<number>, alpha: number, u: ArrayLike<number>, team: ArrayLike<number>, word: number): void {
+    const g = this.glyphs;
+    if ((g.count + 1) * 16 > g.data.length) {
+      const next = new Float32Array(g.data.length * 2);
+      next.set(g.data);
+      g.data = next;
+    }
+    g.data.set([x, y, z, px, f[0], f[1], f[2], alpha, u[0], u[1], u[2], 0, team[0], team[1], team[2], -WORD_BASE - word], g.count * 16);
+    g.count++;
+  }
 
   private attach(d: Dataset): void {
     this.dataset = d;
     this.kinds.clear();
+    this.words?.clear();
+    this.lives?.clear();
     this.specials.clear();
     this.lastSeen.clear();
     this.sweeps.clear();
@@ -210,6 +271,13 @@ export class FigureReplay {
     return k;
   }
 
+  /** The row's type labels joined (what `classOfType` reads); its names where the data has no types. */
+  typeText(d: Dataset, row: number): string {
+    if (d !== this.dataset) this.attach(d);
+    const cols = this.types.length ? this.types : this.names;
+    return cols.map((a) => a.categories![(a.data as Uint32Array)[row]] ?? '').join('+');
+  }
+
   private readonly specials = new Map<string, string>();
 
   /** '~projectile' for a bullet or shell, '~explosion' for an explosion (by the type columns), else ''. */
@@ -219,7 +287,7 @@ export class FigureReplay {
     const key = this.types.map((a) => a.categories![(a.data as Uint32Array)[row]] ?? '').join('');
     let k = this.specials.get(key);
     if (k === undefined) {
-      k = /projectile|bullet|shell|tracer/i.test(key) ? '~projectile' : /explosion/i.test(key) ? '~explosion' : '';
+      k = /projectile|bullet|\bshell\b|tracer/i.test(key) ? '~projectile' : /explosion/i.test(key) ? '~explosion' : '';
       this.specials.set(key, k);
     }
     return k;
@@ -246,7 +314,10 @@ export class FigureReplay {
     this.kindsDrawn.length = count;
     if (this.rest.length < cubes.length) this.rest = new Float32Array(cubes.length);
     this.restCount = 0;
+    this.glyphs.count = 0;
+    if (d !== this.dataset) this.attach(d);
     const aim = o.time !== undefined ? aimOf(d) : null;
+    const far = o.farMode ?? -1;
     // A recorded camera is drawn as a camera with the display aids, not as a figure.
     const cams = cameraTracks(d);
     for (let i = 0; i < count; i++) {
@@ -263,10 +334,30 @@ export class FigureReplay {
         this.kindsDrawn[i] = special;
         continue;
       }
+      const word = far >= 0 && row >= 0 ? this.wordOf(d, row, kind) : 0;
+      const dom = (word >>> 16) & 15;
+      if (far >= 0 && isEffectDomain(dom) && dom !== Domain.Shell) {
+        this.kindsDrawn[i] = '';
+        if (o.pixelSize && d.personId) {
+          const p = d.personId[row];
+          const [t0, t1] = this.lifeOf(d, p);
+          const age = (o.time ?? t0) - t0;
+          const ps = o.pixelSize(cubes[c], cubes[c + 1], cubes[c + 2]);
+          const px = dom === Domain.Chaff ? Math.min(96, Math.max(3, (chaffMetres(age) * o.scale) / ps)) : glyphPx(dom, o.symbolPx ?? 28, far);
+          const yaw = cubes[c + 6];
+          this.glyph(cubes[c], cubes[c + 1], cubes[c + 2], px, [Math.sin(yaw), 0, -Math.cos(yaw)], decoyAlpha(dom, age, t1 - t0, p, o.time ?? 0), [0, 1, 0], [cubes[c + 3], cubes[c + 4], cubes[c + 5]], word);
+        }
+        continue;
+      }
       if (!kind && o.unknown === 'soldier') kind = 'soldier';
       if (kind) kind = this.sweptKind(d, row, kind);
       const t = kind ? this.template(kind) : null;
       this.kindsDrawn[i] = t ? kind! : '';
+      if (!t && far === 2 && o.pixelSize && dom !== Domain.Marker) {
+        const yaw = cubes[c + 6];
+        this.glyph(cubes[c], cubes[c + 1], cubes[c + 2], glyphPx(dom, o.symbolPx ?? 28, far), [Math.sin(yaw), 0, -Math.cos(yaw)], 1, [0, 1, 0], [cubes[c + 3], cubes[c + 4], cubes[c + 5]], word);
+        continue;
+      }
       if (!t) {
         this.rest.set(cubes.subarray(c, c + CUBE_STRIDE), this.restCount * CUBE_STRIDE);
         this.restCount++;
@@ -291,9 +382,13 @@ export class FigureReplay {
           yaw = seen.yaw;
         }
       }
-      // True size, or as big as it takes to stay `minPixels` long on screen.
+      // How it is drawn by its size on screen (`render/symbols/lod.ts`).
+      const ps = o.pixelSize ? o.pixelSize(cubes[c], cubes[c + 1], cubes[c + 2]) : 0;
+      const trueLen = ps > 0 ? (longest(t) * o.scale) / ps : Infinity;
+      const look = far >= 0 ? farLook(far, dom, trueLen, true, o.symbolThreshold ?? 36, far === 1 ? CPU_DART_PX : 0) : null;
+      // True size, or as big as it takes to stay `minPixels` long on screen; weapons always true size.
       let scale = o.scale;
-      if (o.minPixels && o.minPixels > 0 && o.pixelSize) {
+      if (o.minPixels && o.minPixels > 0 && o.pixelSize && !(look && look.trueSize)) {
         const need = (o.minPixels * o.pixelSize(cubes[c], cubes[c + 1], cubes[c + 2])) / longest(t);
         if (need > scale) scale = need;
       }
@@ -319,12 +414,23 @@ export class FigureReplay {
       // Under about 120 px long on screen, the figure's coarse build where it has one: the same shape, fewer triangles.
       const small = o.pixelSize ? (longest(t) * scale) / Math.max(1e-9, o.pixelSize(cubes[c], cubes[c + 1], cubes[c + 2])) < 120 : false;
       const drawn = small ? (t.coarse?.() ?? t) : t;
+      if (look && (look.glyph > 0 || look.dart)) {
+        const moving = dom !== Domain.Person && dom !== Domain.Static && dom !== Domain.Unknown;
+        const w = (word | (moving ? WORD_MOVING : 0)) >>> 0;
+        if (look.dart) this.batches.add(DARTS, fr, Math.max(o.scale, ((o.minPixels ?? 0) * ps) || o.scale), team, 1, 0, -WORD_BASE - w);
+        if (look.glyph > 0) this.glyph(fr.o[0], fr.o[1], fr.o[2], glyphPx(dom, o.symbolPx ?? 28, far), fr.f, look.glyph, fr.u, team, w);
+        if (look.figure <= 0) {
+          this.placed.push({ box: i, row, kind: kind!, fr, scale, min: t.min, max: t.max });
+          continue;
+        }
+      }
+      const alpha = look ? look.figure : 1;
       if (this.cpuPlace) placeFrame(this.tris, drawn, fr, scale, team);
       else if (aim && o.time !== undefined && hasJoints(drawn)) {
         // Its turret turned and its gun raised as the data has them now.
         aim.at(row, o.time, aimNow);
-        this.batches.add(meshOf(drawn), fr, scale, team, 1, Number.isFinite(aimNow.yaw) ? aimNow.yaw : 0, Number.isFinite(aimNow.pitch) ? aimNow.pitch : NO_PITCH);
-      } else this.batches.add(meshOf(drawn), fr, scale, team);
+        this.batches.add(meshOf(drawn), fr, scale, team, alpha, Number.isFinite(aimNow.yaw) ? aimNow.yaw : 0, Number.isFinite(aimNow.pitch) ? aimNow.pitch : NO_PITCH);
+      } else this.batches.add(meshOf(drawn), fr, scale, team, alpha);
       this.placed.push({ box: i, row, kind: kind!, fr, scale, min: t.min, max: t.max });
     }
   }

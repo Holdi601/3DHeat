@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Skot",
   "replay.look.none": "Engin enn",
   "replay.look.events": "Atburðir",
-  "replay.look.scrubTitle": "Smelltu til að fara á þá stund; rautt merkir skot, gulbrúnt skotflaugar"
+  "replay.look.scrubTitle": "Smelltu til að fara á þá stund; rautt merkir skot, gulbrúnt skotflaugar",
+  "replay.field.altDiff": "Hæðarmunur",
+  "replay.lookAt.bTitle": "Einingin sem myndavélin horfir á frá þeirri sem fylgt er",
+  "replay.lookAt.clearTitle": "Hætta að horfa á þessa einingu (Esc)",
+  "replay.lookAt.pick": "Horfa á",
+  "replay.lookAt.pickTitle": "Myndavélin helst við eininguna sem fylgt er og snýr að annarri. Ctrl- eða Alt-smellur á einingu gerir það sama.",
+  "replay.lookAt.rowTitle": "Horfa á þessa einingu frá þeirri sem fylgt er (eða Ctrl- eða Alt-smella á hana)",
+  "replay.lookAt.lost": "B týnd",
+  "replay.lookAt.stripTitle": "Milli einingarinnar sem fylgt er og þeirrar sem horft er á",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

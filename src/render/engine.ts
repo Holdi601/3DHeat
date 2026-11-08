@@ -22,6 +22,10 @@ import { useReplayStore } from '../state/replayStore';
 import { dropLinesOn, unitsPerMetre } from '../ui/replay/replayData';
 import { FollowRig, type RigMode } from './followRig';
 import { nearForFollow } from './followNear';
+import { FAR_MODE_ID, symbolThreshold } from './symbols/lod';
+import { Domain, isEffectDomain, isWeaponDomain } from '../figures/symbolClass';
+import { sideTable, SYMBOL_STYLE_ID } from './symbols/affiliation';
+import type { SymbolParams } from './types';
 import { TacticalLayer, axesOfTrack, cockpitClip } from './tactical';
 import { figureNear, usePlanStore } from '../state/planStore';
 import { playbackAt } from '../tactics/plan';
@@ -1457,7 +1461,8 @@ export class Engine {
     // Frames come at the display's rate when there is room (about 16.7 ms at 60 Hz): figures grow back slowly
     // while that holds, darts take over quickly when a frame runs late.
     if (ms > 19) this.dartPx = Math.min(400, this.dartPx * 1.08 + 0.25);
-    else if (ms < 17.6) this.dartPx = Math.max(2, this.dartPx * 0.985);
+    // "At a distance: figure" keeps every model it can; the governor still turns the smallest into darts on slow frames.
+    else if (ms < 17.6) this.dartPx = Math.max(s.team.farMode === 'figure' ? 0.25 : 2, this.dartPx * 0.985);
     this.gpuTracksParams = {
       store,
       t,
@@ -1475,6 +1480,10 @@ export class Engine {
       visible: this.dataset ? trackVisibility(store, this.dataset, s.teamVisibility, s.filters) : null,
       weapons: s.team.weapons ? 1.5 : 0,
       markerSeconds: markerSeconds(),
+      farMode: FAR_MODE_ID[s.team.farMode],
+      symbolThreshold: symbolThreshold(s.team.figurePixels, s.team.symbolPx),
+      symbolPx: s.team.symbolPx,
+      weaponDrops: s.team.weaponMarks,
     };
     // The units in question, on the CPU.
     const r = useReplayStore.getState();
@@ -1482,6 +1491,8 @@ export class Engine {
     if (r.follow !== null) want.add(r.follow);
     if (r.pairFrom !== null) want.add(r.pairFrom);
     if (r.pair) for (const p of r.pair) want.add(p);
+    // The second unit of the padlock and target views, which the camera and its card read.
+    if (r.targetPerson !== null) want.add(r.targetPerson);
     const tracks: typeof this.liveTracks = [];
     const pose = this.gpuPose;
     for (const p of want) {
@@ -1534,9 +1545,13 @@ export class Engine {
       const p = tr.person;
       if (seen.has(p) || (d.personShared && d.personShared[p])) continue;
       seen.add(p);
-      const [r, g, b] = this.cursor!.personColor(p);
-      motion.trail(p, t - seconds, t, step, this.motionSample, (sm, ts, join) => {
-        const a = Math.max(0, Math.min(1, 1 - (t - ts) / seconds)) * 0.8;
+      // Chaff, shells and debris leave no trail; a flare a short one of smoke (`symbolClass.ts`).
+      const dom = this.domainOfRow(tr.row);
+      if (dom === Domain.Chaff || dom === Domain.Shell || dom === Domain.Misc) continue;
+      const secs = dom === Domain.Flare ? Math.min(seconds, 1.2) : seconds;
+      const [r, g, b] = dom === Domain.Flare ? [0.78, 0.78, 0.76] : this.cursor!.personColor(p);
+      motion.trail(p, t - secs, t, step, this.motionSample, (sm, ts, join) => {
+        const a = Math.max(0, Math.min(1, 1 - (t - ts) / secs)) * (dom === Domain.Flare ? 0.5 : 0.8);
         if (join && session >= 0 && d.sessionId && d.sessionId[motion.knots[motion.knotAt(p, ts)]] !== session) join = false;
         if (join) {
           if (v + 2 > maxVerts) return false;
@@ -2683,6 +2698,9 @@ export class Engine {
           poses: motion ? this.motion.poses : undefined,
           posed: motion ? this.motion.posed : undefined,
           time: cursorAt,
+          farMode: FAR_MODE_ID[s.team.farMode],
+          symbolThreshold: symbolThreshold(s.team.figurePixels, s.team.symbolPx),
+          symbolPx: s.team.symbolPx,
         });
         // What the events leave behind for a while, in the thrower's colour.
         const d = this.dataset;
@@ -2750,9 +2768,13 @@ export class Engine {
         if (this.dropBuf.length < need) this.dropBuf = new Float32Array(need * 2);
         if (trailVerts && trailVertCount) this.dropBuf.set(trailVerts.subarray(0, trailVertCount * 7));
         let o = trailVertCount * 7;
+        const weaponMarks = s.team.weaponMarks;
         for (let i = 0; i < n; i++) {
           const tr = this.liveTracks[i];
           if (tr.y - floor < 1) continue;
+          // None under decoys and shells; under weapons only when asked for.
+          const dom = this.domainOfRow(tr.row);
+          if (isEffectDomain(dom) || (isWeaponDomain(dom) && !weaponMarks)) continue;
           const c = i * CUBE_STRIDE;
           const col = this.pickCubes ? [this.pickCubes.data[c + 3], this.pickCubes.data[c + 4], this.pickCubes.data[c + 5]] : [0.8, 0.8, 0.8];
           for (const y of [tr.y, floor]) {
@@ -2949,6 +2971,7 @@ export class Engine {
       sceneTriVertCount,
       figureBatches: !raceBuilt && s.mode === 'team' ? this.figureBatches : null,
       gpuTracks: !raceBuilt && s.mode === 'team' ? this.gpuTracksParams : null,
+      symbols: !raceBuilt && s.mode === 'team' && s.team.figures ? this.symbolParams(s) : null,
       overlayVerts,
       overlayVertCount,
       level: vehicleTab ? null : lookOn ? tacticalLevel(buildLevelDraw(s.level)) : buildLevelDraw(s.level),
@@ -3110,6 +3133,28 @@ export class Engine {
    * track does not shake the view; the angles are not, so input is immediate.
    * One frame behind the tracks, which are built after the camera.
    */
+  private sidesKey = '';
+  private readonly sides = new Float32Array(64);
+
+  /** The far-off glyphs' settings this frame, and the CPU path's glyphs (`symbols/`). */
+  private symbolParams(s: ReturnType<typeof snapshot>): SymbolParams {
+    const t = s.team;
+    const labels = this.dataset?.teamLabels ?? [];
+    const key = `${t.symbolStyle}|${t.mySide}|${t.symbolOthers}|${labels.join('\u0001')}`;
+    if (key !== this.sidesKey) {
+      sideTable(t.symbolStyle, { mySide: t.mySide, teams: labels.length, others: t.symbolOthers, labels }, this.sides);
+      this.sidesKey = key;
+    }
+    return { style: SYMBOL_STYLE_ID[t.symbolStyle], mode: FAR_MODE_ID[t.farMode], ticks: t.symbolTicks, sides: this.sides, cpu: this.gpuTracksParams ? null : this.figureReplay.glyphs };
+  }
+
+  /** A row's far-off domain (`figures/symbolClass.ts`); -1 without a row. */
+  private domainOfRow(row: number): number {
+    const d = this.dataset;
+    if (!d || row < 0) return -1;
+    return (this.figureReplay.wordOf(d, row, this.figureReplay.kindOf(d, row)) >>> 16) & 15;
+  }
+
   /** Where the followed unit is in the view's (mirrored) space; null when nothing is followed or it is not live. */
   private followedPoint(s: ReturnType<typeof snapshot>): [number, number, number] | null {
     const follow = useReplayStore.getState().follow;

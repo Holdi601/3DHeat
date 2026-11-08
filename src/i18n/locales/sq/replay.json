@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Rrëzime",
   "replay.look.none": "Ende asnjë",
   "replay.look.events": "Ngjarje",
-  "replay.look.scrubTitle": "Kliko për të shkuar te ai moment; e kuqja shënon rrëzimet, qelibari lëshimet"
+  "replay.look.scrubTitle": "Kliko për të shkuar te ai moment; e kuqja shënon rrëzimet, qelibari lëshimet",
+  "replay.field.altDiff": "Ndryshimi i lartësisë",
+  "replay.lookAt.bTitle": "Njësia që kamera shikon nga ajo e ndjekur",
+  "replay.lookAt.clearTitle": "Ndalo së shikuari këtë njësi (Esc)",
+  "replay.lookAt.pick": "Shiko",
+  "replay.lookAt.pickTitle": "Kamera mbetet te njësia e ndjekur, e kthyer drejt një të dyte. Ctrl- ose Alt-klik mbi një njësi bën të njëjtën gjë.",
+  "replay.lookAt.rowTitle": "Shiko këtë njësi nga ajo e ndjekur (ose Ctrl- ose Alt-klik mbi të)",
+  "replay.lookAt.lost": "B e humbur",
+  "replay.lookAt.stripTitle": "Midis njësisë së ndjekur dhe asaj që shikohet",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

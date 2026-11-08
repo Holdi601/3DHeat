@@ -518,5 +518,15 @@
   "replay.look.killFeed": "擊殺",
   "replay.look.none": "尚無",
   "replay.look.events": "事件",
-  "replay.look.scrubTitle": "點擊跳到該時刻；紅色標記擊殺，琥珀色標記發射"
+  "replay.look.scrubTitle": "點擊跳到該時刻；紅色標記擊殺，琥珀色標記發射",
+  "replay.field.altDiff": "高度差",
+  "replay.lookAt.bTitle": "相機從跟隨單位看向的單位",
+  "replay.lookAt.clearTitle": "停止看向此單位 (Esc)",
+  "replay.lookAt.pick": "看向",
+  "replay.lookAt.pickTitle": "相機停留在跟隨的單位上，並轉向第二個單位。按住 Ctrl 或 Alt 點擊單位效果相同。",
+  "replay.lookAt.rowTitle": "從跟隨的單位看向此單位（或按住 Ctrl 或 Alt 點擊它）",
+  "replay.lookAt.lost": "B 已遺失",
+  "replay.lookAt.stripTitle": "跟隨單位與被看向單位之間",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

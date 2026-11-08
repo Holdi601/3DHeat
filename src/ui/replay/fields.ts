@@ -17,10 +17,11 @@ import type { Unit } from './units';
 import { useReplayStore } from '../../state/replayStore';
 import { geoFrame } from '../../world/geoFrame';
 import { formatLatLon, toMgrs } from '../../world/mgrs';
+import { relativeValue, velocityOf } from './relative';
 import { declination } from '../../world/wmm';
 
 /** Fields that are not flight parameters. */
-export const INFO_FIELDS = ['name', 'vehicle', 'team', 'kind', 'range', 'bearing', 'relBearing', 'aspect', 'closure', 'losRate', 'bullseye', 'position', 'mgrs', 'magHeading'] as const;
+export const INFO_FIELDS = ['name', 'vehicle', 'team', 'kind', 'range', 'bearing', 'relBearing', 'aspect', 'closure', 'losRate', 'altDiff', 'bullseye', 'position', 'mgrs', 'magHeading'] as const;
 
 /** Fields only a recording placed on the earth has. */
 const GEO_FIELDS = new Set(['position', 'mgrs', 'magHeading']);
@@ -135,66 +136,23 @@ export function paramValue(c: FieldContext, id: string): { v: number; estimate: 
   return { v: valueAt(s, id, c.time), estimate: s.source[id] === 'estimate' };
 }
 
-/** Range, bearing, aspect or closure to this unit from the followed one. */
+/** Range, bearing, aspect, closure and the like to this unit from the followed one (relative.ts). */
 function relative(c: FieldContext, id: string): number {
   if (!c.ref) return NaN;
   const a = c.ref.pos;
   const b = c.pos;
-  const east = (b.x - a.x) / c.k;
-  const north = -(b.z - a.z) / c.k;
-  const up = (b.y - a.y) / c.k;
-  if (id === 'range') return Math.hypot(east, north, up);
-  if (id === 'bearing') return ((Math.atan2(east, north) * 180) / Math.PI + 360) % 360;
   const me = flightSeries(c.d, c.ref.person, c.session);
   const them = seriesOf(c);
-  if (id === 'relBearing') {
-    // Off the followed unit's nose, right positive.
-    const hdg = me ? valueAt(me, 'heading', c.time) : NaN;
-    if (!Number.isFinite(hdg)) return NaN;
-    const brg = (Math.atan2(east, north) * 180) / Math.PI;
-    return ((((brg - hdg) % 360) + 540) % 360) - 180;
-  }
-  if (id === 'losRate' && me && them) {
-    // How fast the line of sight turns: the relative velocity across it over the range, degrees a second.
-    const r = Math.hypot(east, north, up);
-    if (r < 1) return NaN;
-    const vel = (s: FlightSeries) => {
-      const gs = valueAt(s, 'gs', c.time);
-      const crs = (valueAt(s, 'course', c.time) * Math.PI) / 180;
-      return [gs * Math.sin(crs), gs * Math.cos(crs), valueAt(s, 'vs', c.time)];
-    };
-    const va = vel(me);
-    const vb = vel(them);
-    const dv = [vb[0] - va[0], vb[1] - va[1], vb[2] - va[2]];
-    const rel = [east, north, up];
-    const cx = rel[1] * dv[2] - rel[2] * dv[1];
-    const cy = rel[2] * dv[0] - rel[0] * dv[2];
-    const cz = rel[0] * dv[1] - rel[1] * dv[0];
-    return (Math.hypot(cx, cy, cz) / (r * r)) * (180 / Math.PI);
-  }
-  if (id === 'aspect') {
-    // Where the followed unit sits seen from this one's tail: 0 astern, 180 head on.
-    const course = them ? valueAt(them, 'course', c.time) : NaN;
-    if (!Number.isFinite(course)) return NaN;
-    const toRef = ((Math.atan2(-east, -north) * 180) / Math.PI + 360) % 360;
-    const off = Math.abs(((toRef - course + 540) % 360) - 180);
-    return 180 - off;
-  }
-  if (id === 'closure' && me && them) {
-    // The rate the range shrinks: the relative velocity along the line of sight.
-    const r = Math.hypot(east, north, up);
-    if (r < 1) return NaN;
-    const vel = (s: FlightSeries) => {
-      const gs = valueAt(s, 'gs', c.time);
-      const crs = (valueAt(s, 'course', c.time) * Math.PI) / 180;
-      const vs = valueAt(s, 'vs', c.time);
-      return [gs * Math.sin(crs), gs * Math.cos(crs), vs];
-    };
-    const va = vel(me);
-    const vb = vel(them);
-    return -((vb[0] - va[0]) * east + (vb[1] - va[1]) * north + (vb[2] - va[2]) * up) / r;
-  }
-  return NaN;
+  const vel = (s: FlightSeries | null) => (s ? velocityOf(valueAt(s, 'gs', c.time), valueAt(s, 'course', c.time), valueAt(s, 'vs', c.time)) : null);
+  return relativeValue(id, {
+    east: (b.x - a.x) / c.k,
+    north: -(b.z - a.z) / c.k,
+    up: (b.y - a.y) / c.k,
+    heading: me ? valueAt(me, 'heading', c.time) : NaN,
+    course: them ? valueAt(them, 'course', c.time) : NaN,
+    va: vel(me),
+    vb: vel(them),
+  });
 }
 
 const bullCache = new WeakMap<Dataset, Map<number, { x: number; z: number }>>();
@@ -263,6 +221,10 @@ export function fieldText(c: FieldContext, id: string, teamLabel: (team: number)
       const v = relative(c, id);
       return Number.isFinite(v) ? formatValue('rate', v, c.units) : '';
     }
+    case 'altDiff': {
+      const v = relative(c, id);
+      return Number.isFinite(v) ? (v > 0 ? '+' : '') + formatValue('altitude', v, c.units) : '';
+    }
     case 'position':
     case 'mgrs': {
       const frame = geoFrame(c.d);
@@ -292,7 +254,7 @@ export function fieldText(c: FieldContext, id: string, teamLabel: (team: number)
 
 /** Fields whose value is a number, which a label writes with its abbreviation. */
 export function isNumeric(id: string): boolean {
-  return !!PARAM_BY_ID[id] || ['range', 'bearing', 'relBearing', 'aspect', 'closure', 'losRate', 'bullseye', 'position', 'mgrs', 'magHeading'].includes(id);
+  return !!PARAM_BY_ID[id] || ['range', 'bearing', 'relBearing', 'aspect', 'closure', 'losRate', 'altDiff', 'bullseye', 'position', 'mgrs', 'magHeading'].includes(id);
 }
 
 /**

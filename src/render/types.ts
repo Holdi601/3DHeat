@@ -485,6 +485,12 @@ export interface FrameParams {
    * set (WebGPU); absent: none.
    */
   gpuTracks?: GpuTracksParams | null;
+  /**
+   * The far-off glyphs (`symbols/`): map symbols, weapons' glyphs, decoys -
+   * screen-facing quads from one atlas, from the GPU tracks' own run and
+   * from `cpu` (the CPU path's). Absent: none.
+   */
+  symbols?: SymbolParams | null;
 
   /**
    * Ruler and probe geometry, drawn last and without depth testing so it stays
@@ -860,6 +866,20 @@ export interface CapturedFrame {
 
 export class GpuInitError extends Error {}
 
+/** How the far-off glyphs are drawn (`symbols/shaders.ts`). */
+export interface SymbolParams {
+  /** `SYMBOL_STYLE_ID`. */
+  style: number;
+  /** `FAR_MODE_ID`. */
+  mode: number;
+  /** Heading ticks on moving units' symbols. */
+  ticks: boolean;
+  /** 16 x (r, g, b, affiliation), `symbols/affiliation.ts` sideTable. */
+  sides: Float32Array;
+  /** Glyph instances the CPU placed (figure instances, `symbols/cpuGlyphs.ts`). */
+  cpu?: { data: Float32Array; count: number } | null;
+}
+
 /** What the renderer needs besides the view to place and draw the GPU tracks. */
 export interface GpuTracksParams {
   store: GpuTrackStore;
@@ -886,4 +906,12 @@ export interface GpuTracksParams {
   weapons?: number;
   /** Seconds a death stays marked; 0 none. */
   markerSeconds?: number;
+  /** `FAR_MODE_ID`: figure, arrow or symbol far off. */
+  farMode?: number;
+  /** Below this many pixels long at true size a unit is a symbol (symbol mode). */
+  symbolThreshold?: number;
+  /** A symbol's size on screen, px. */
+  symbolPx?: number;
+  /** Drop lines under weapons in flight too. */
+  weaponDrops?: boolean;
 }

@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Знищення",
   "replay.look.none": "Поки немає",
   "replay.look.events": "Події",
-  "replay.look.scrubTitle": "Натисніть, щоб перейти до цього моменту; червоним позначено знищення, бурштиновим пуски"
+  "replay.look.scrubTitle": "Натисніть, щоб перейти до цього моменту; червоним позначено знищення, бурштиновим пуски",
+  "replay.field.altDiff": "Різниця висот",
+  "replay.lookAt.bTitle": "Об'єкт, на який камера дивиться від супроводжуваного",
+  "replay.lookAt.clearTitle": "Перестати дивитися на цей об'єкт (Esc)",
+  "replay.lookAt.pick": "Дивитися на",
+  "replay.lookAt.pickTitle": "Камера лишається на супроводжуваному об'єкті й дивиться на другий. Ctrl- або Alt-клік по об'єкту робить те саме.",
+  "replay.lookAt.rowTitle": "Дивитися на цей об'єкт від супроводжуваного (або клік по ньому з Ctrl чи Alt)",
+  "replay.lookAt.lost": "B втрачено",
+  "replay.lookAt.stripTitle": "Між супроводжуваним об'єктом і тим, на який дивиться камера",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

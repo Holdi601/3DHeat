@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Düşürmeler",
   "replay.look.none": "Henüz yok",
   "replay.look.events": "Olaylar",
-  "replay.look.scrubTitle": "O ana gitmek için tıklayın; kırmızı düşürmeleri, kehribar atışları işaretler"
+  "replay.look.scrubTitle": "O ana gitmek için tıklayın; kırmızı düşürmeleri, kehribar atışları işaretler",
+  "replay.field.altDiff": "İrtifa farkı",
+  "replay.lookAt.bTitle": "Kameranın izlenen birimden baktığı birim",
+  "replay.lookAt.clearTitle": "Bu birime bakmayı bırak (Esc)",
+  "replay.lookAt.pick": "Bak",
+  "replay.lookAt.pickTitle": "Kamera izlenen birimde kalır ve ikinci bir birime döner. Bir birime Ctrl veya Alt ile tıklamak da aynısını yapar.",
+  "replay.lookAt.rowTitle": "Bu birime izlenen birimden bak (veya Ctrl ya da Alt ile tıkla)",
+  "replay.lookAt.lost": "B kayboldu",
+  "replay.lookAt.stripTitle": "İzlenen birim ile bakılan birim arasında",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

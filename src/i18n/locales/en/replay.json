@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Kills",
   "replay.look.none": "None yet",
   "replay.look.events": "Events",
-  "replay.look.scrubTitle": "Click to go to that moment; red marks kills, amber launches"
+  "replay.look.scrubTitle": "Click to go to that moment; red marks kills, amber launches",
+  "replay.field.altDiff": "Altitude difference",
+  "replay.lookAt.bTitle": "The unit the camera looks at from the followed one",
+  "replay.lookAt.clearTitle": "Stop looking at this unit (Esc)",
+  "replay.lookAt.pick": "Look at",
+  "replay.lookAt.pickTitle": "Keep the camera on the followed unit, turned towards a second one. Ctrl- or Alt-click a unit does the same.",
+  "replay.lookAt.rowTitle": "Look at this unit from the followed one (or Ctrl- or Alt-click it)",
+  "replay.lookAt.lost": "B lost",
+  "replay.lookAt.stripTitle": "Between the followed unit and the one looked at",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

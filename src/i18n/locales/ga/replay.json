@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Maruithe",
   "replay.look.none": "Ceann ar bith go fóill",
   "replay.look.events": "Imeachtaí",
-  "replay.look.scrubTitle": "Cliceáil chun dul chuig an nóiméad sin; marcálann dearg maruithe, omra lainseálacha"
+  "replay.look.scrubTitle": "Cliceáil chun dul chuig an nóiméad sin; marcálann dearg maruithe, omra lainseálacha",
+  "replay.field.altDiff": "Difríocht airde",
+  "replay.lookAt.bTitle": "An t-aonad a bhfuil an ceamara ag féachaint air ón aonad atá á leanúint",
+  "replay.lookAt.clearTitle": "Stop ag féachaint ar an aonad seo (Esc)",
+  "replay.lookAt.pick": "Féach ar",
+  "replay.lookAt.pickTitle": "Fanann an ceamara ar an aonad atá á leanúint, casta i dtreo an dara ceann. Déanann Ctrl- nó Alt-chliceáil ar aonad an rud céanna.",
+  "replay.lookAt.rowTitle": "Féach ar an aonad seo ón aonad atá á leanúint (nó Ctrl- nó Alt-chliceáil air)",
+  "replay.lookAt.lost": "B caillte",
+  "replay.lookAt.stripTitle": "Idir an t-aonad atá á leanúint agus an ceann a bhfuiltear ag féachaint air",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

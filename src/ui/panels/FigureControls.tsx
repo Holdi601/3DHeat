@@ -1,16 +1,28 @@
 import { num, t } from '../../i18n';
 import { useStore } from '../../state/store';
-import { Check, Slider } from '../controls';
+import type { FarMode } from '../../render/symbols/lod';
+import type { SymbolStyle } from '../../render/symbols/affiliation';
+import { Check, Segmented, Select, Slider } from '../controls';
 
 /**
  * The figures' controls, the same settings wherever they are shown (the team
  * panel, the match replay): figures instead of boxes, their size as a
- * multiple of true size, and the smallest they are drawn on screen.
+ * multiple of true size, the smallest they are drawn on screen, and what
+ * they become far off - their model, an arrow of their kind, or a map
+ * symbol (`render/symbols/`).
  */
 export function FigureControls({ toggle = true }: { toggle?: boolean }) {
   const figures = useStore((s) => s.team.figures);
   const figureScale = useStore((s) => s.team.figureScale);
   const figurePixels = useStore((s) => s.team.figurePixels);
+  const farMode = useStore((s) => s.team.farMode);
+  const symbolStyle = useStore((s) => s.team.symbolStyle);
+  const symbolPx = useStore((s) => s.team.symbolPx);
+  const mySide = useStore((s) => s.team.mySide);
+  const others = useStore((s) => s.team.symbolOthers);
+  const ticks = useStore((s) => s.team.symbolTicks);
+  const weaponMarks = useStore((s) => s.team.weaponMarks);
+  const teams = useStore((s) => s.dataset?.teamLabels ?? null);
   const patchTeam = useStore((s) => s.patchTeam);
   return (
     <>
@@ -44,6 +56,54 @@ export function FigureControls({ toggle = true }: { toggle?: boolean }) {
             format={(v) => (v < 0.5 ? t('heat.teamPanel.trueSize') : t('heat.teamPanel.pixels', { value: num(v, 0) }))}
             hint={t('heat.teamPanel.figurePixelsHint')}
           />
+          <div className="field">
+            <div className="label">
+              <span>{t('far.label')}</span>
+            </div>
+            <Segmented<FarMode>
+              value={farMode}
+              options={(['figure', 'arrow', 'symbol'] as const).map((m) => ({ value: m, label: t(`far.${m}`), title: t(`far.${m}Title`) }))}
+              onChange={(v) => patchTeam({ farMode: v })}
+            />
+          </div>
+          {farMode === 'symbol' && (
+            <>
+              <Select<SymbolStyle>
+                label={t('far.style')}
+                value={symbolStyle}
+                options={(['nato', 'russian', 'map', 'mono'] as const).map((s) => ({ value: s, label: t(`far.style.${s}`) }))}
+                onChange={(v) => v && patchTeam({ symbolStyle: v })}
+              />
+              <Slider
+                label={t('far.symbolPx')}
+                value={symbolPx}
+                min={12}
+                max={64}
+                step={1}
+                onChange={(v) => patchTeam({ symbolPx: v })}
+                format={(v) => t('heat.teamPanel.pixels', { value: num(v, 0) })}
+                hint={t('far.symbolHint')}
+              />
+              {teams && teams.length > 0 && (
+                <Select<string>
+                  label={t('far.mySide')}
+                  value={String(mySide)}
+                  options={[{ value: '-1', label: t('far.mySideAuto') }, ...teams.map((l, i) => ({ value: String(i), label: l || `#${i + 1}` }))]}
+                  onChange={(v) => patchTeam({ mySide: v === null ? -1 : Number(v) })}
+                />
+              )}
+              <Segmented<'hostile' | 'neutral'>
+                value={others}
+                options={[
+                  { value: 'hostile', label: t('far.othersHostile'), title: t('far.othersTitle') },
+                  { value: 'neutral', label: t('far.othersNeutral'), title: t('far.othersTitle') },
+                ]}
+                onChange={(v) => patchTeam({ symbolOthers: v })}
+              />
+              <Check label={t('far.ticks')} checked={ticks} onChange={(v) => patchTeam({ symbolTicks: v })} />
+            </>
+          )}
+          <Check label={t('far.weaponMarks')} checked={weaponMarks} onChange={(v) => patchTeam({ weaponMarks: v })} title={t('far.weaponMarksTitle')} />
         </>
       )}
     </>

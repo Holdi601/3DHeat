@@ -57,6 +57,7 @@ import { SpeedOverlay } from './ui/SpeedOverlay';
 import { StatsOverlay } from './ui/StatsOverlay';
 import { WorldCredits } from './ui/WorldCredits';
 import { WorldOverlay } from './ui/WorldOverlay';
+import { clearLook } from './ui/replay/pair';
 import { CameraReadout, copyCameraPose } from './ui/CameraReadout';
 import { PickCard } from './ui/PickCard';
 import { useInspectStore } from './state/inspectStore';
@@ -353,7 +354,8 @@ export function App() {
         useInspectStore.getState().requestJumpFocus();
       } else if (ev.code === 'Escape') {
         engine?.inspector.clear();
-        useReplayStore.getState().stopFollow();
+        // The second unit goes first, then the follow.
+        if (!clearLook()) useReplayStore.getState().stopFollow();
       } else if (DIGIT_MODES[ev.code]) {
         // Through the same check as the mode bar, so a key cannot reach a mode
         // the bar shows as unavailable and leave an empty view.

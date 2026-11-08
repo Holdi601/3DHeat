@@ -4,11 +4,12 @@ import { useReplayStore } from '../../state/replayStore';
 import type { Dataset, FilterSpec } from '../../state/types';
 import { rgbToCss, teamBaseColor } from '../../render/colors';
 import { int, t } from '../../i18n';
-import { Section } from '../controls';
+import { Check, Section } from '../controls';
 import { usePlayhead } from './hooks';
 import { personAt, sortUnits, unitsInPlay, unitsOf, type Unit, type UnitKind } from './units';
 import { teamName } from './replayView';
 import { selectAndFollow } from './ReplayOverlay';
+import { clearLook, lookAtUnit } from './pair';
 
 /** Rows a section lists before asking for a search. */
 const MAX_ROWS = 400;
@@ -38,8 +39,11 @@ export function UnitList() {
   const session = useStore((s) => s.team.session);
   const follow = useReplayStore((s) => s.followUnit);
   const selected = useReplayStore((s) => s.selected);
+  const target = useReplayStore((s) => s.target);
   const now = usePlayhead();
   const [query, setQuery] = useState('');
+  // Decoys, shells and debris: hundreds in an air combat recording, out of the lists unless asked for.
+  const [decoys, setDecoys] = useState(false);
   const index = useMemo(() => (dataset ? unitsOf(dataset) : null), [dataset]);
   const allowed = useMemo(() => {
     const f = filters.find((x) => x.kind === 'persons');
@@ -55,9 +59,9 @@ export function UnitList() {
     if (!index) return null;
     const q = query.trim().toLowerCase();
     const match = (u: Unit) => (!inPlay || inPlay.has(u.key)) && (!q || u.name.toLowerCase().includes(q) || u.vehicle.toLowerCase().includes(q));
-    const by = (k: UnitKind) => sortUnits(index.units.filter((u) => u.kind === k && match(u)));
-    return { player: by('player'), ai: by('ai'), weapon: by('weapon') };
-  }, [index, query, inPlay]);
+    const by = (k: UnitKind) => sortUnits(index.units.filter((u) => u.kind === k && match(u) && (decoys || !u.decoy)));
+    return { player: by('player'), ai: by('ai'), weapon: by('weapon'), decoys: index.units.reduce((n, u) => n + (u.decoy && match(u) ? 1 : 0), 0) };
+  }, [index, query, inPlay, decoys]);
   if (!dataset || !index || !groups || index.units.length === 0) return null;
   const visible = (u: Unit) => !allowed || u.persons.some((p) => allowed.has(p));
   const live = (u: Unit) => u.spans.some(([a, b]) => a <= now && now <= b);
@@ -68,8 +72,14 @@ export function UnitList() {
     return (
       <div
         key={u.key}
-        className={`unit-row${live(u) ? '' : ' gone'}${follow === u.key ? ' followed' : ''}${selected === u.key ? ' selected' : ''}${shown ? '' : ' hidden'}`}
-        onClick={() => {
+        className={`unit-row${live(u) ? '' : ' gone'}${follow === u.key ? ' followed' : ''}${selected === u.key ? ' selected' : ''}${target === u.key ? ' target' : ''}${shown ? '' : ' hidden'}`}
+        onClick={(e) => {
+          // Ctrl or Alt: look at it from the followed unit instead.
+          if ((e.ctrlKey || e.altKey) && follow && follow !== u.key) {
+            if (target === u.key) clearLook();
+            else lookAtUnit(u, personAt(u, now));
+            return;
+          }
           if (follow === u.key) {
             useReplayStore.getState().stopFollow();
             return;
@@ -85,6 +95,19 @@ export function UnitList() {
         <span className="swatch" style={{ background: color }} />
         <span className="who">{u.name}</span>
         {u.vehicle && !u.name.startsWith(u.vehicle) && <span className="veh">{u.vehicle}</span>}
+        {follow && follow !== u.key && (
+          <button
+            className={`look${target === u.key ? ' on' : ''}`}
+            title={target === u.key ? t('replay.lookAt.clearTitle') : t('replay.lookAt.rowTitle')}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (target === u.key) clearLook();
+              else lookAtUnit(u, personAt(u, now));
+            }}
+          >
+            ⌖
+          </button>
+        )}
         <button
           className={`eye${shown ? '' : ' off'}`}
           title={shown ? t('replay.units.hide') : t('replay.units.show')}
@@ -131,6 +154,9 @@ export function UnitList() {
       {block('player', groups.player, true)}
       {block('ai', groups.ai, groups.player.length === 0 || !!query)}
       {block('weapon', groups.weapon, !!query)}
+      {groups.decoys > 0 && (
+        <Check label={t('far.decoys', { count: groups.decoys })} checked={decoys} onChange={setDecoys} title={t('far.decoysTitle')} />
+      )}
       {index.aiFrom === 'none' && <div className="hint">{t('replay.units.noAi')}</div>}
       {index.aiFrom === 'pilot' && <div className="hint">{t('replay.units.aiByPilot')}</div>}
       {index.aiFrom === 'userId' && <div className="hint">{t('replay.units.aiByUser')}</div>}

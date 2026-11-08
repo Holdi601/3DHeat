@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Notriektie",
   "replay.look.none": "Vēl nav",
   "replay.look.events": "Notikumi",
-  "replay.look.scrubTitle": "Noklikšķiniet, lai pārietu uz šo brīdi; sarkans atzīmē notriektos, dzintara palaišanas"
+  "replay.look.scrubTitle": "Noklikšķiniet, lai pārietu uz šo brīdi; sarkans atzīmē notriektos, dzintara palaišanas",
+  "replay.field.altDiff": "Augstuma starpība",
+  "replay.lookAt.bTitle": "Vienība, uz kuru kamera skatās no sekotās",
+  "replay.lookAt.clearTitle": "Beigt skatīties uz šo vienību (Esc)",
+  "replay.lookAt.pick": "Skatīties uz",
+  "replay.lookAt.pickTitle": "Kamera paliek pie sekotās vienības, pagriezta pret otru. Ctrl vai Alt klikšķis uz vienības dara to pašu.",
+  "replay.lookAt.rowTitle": "Skatīties uz šo vienību no sekotās (vai Ctrl vai Alt klikšķis uz tās)",
+  "replay.lookAt.lost": "B pazaudēta",
+  "replay.lookAt.stripTitle": "Starp sekoto vienību un to, uz kuru skatās",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

@@ -15,6 +15,7 @@
  * Worked out once per dataset.
  */
 
+import { classOfType, isEffectDomain } from '../../figures/symbolClass';
 import type { AttributeColumn, Dataset } from '../../state/types';
 import { personRows } from '../../data/flight';
 import { trackName } from './replayData';
@@ -31,6 +32,8 @@ export interface Unit {
   /** The vehicle's display name ('' when the data has none). */
   vehicle: string;
   kind: UnitKind;
+  /** A decoy, a shell or debris (`figures/symbolClass.ts`): no label, and out of the lists unless asked for. */
+  decoy?: boolean;
   /** Team index into `teamLabels`, -1 for none. */
   team: number;
   /** Its tracks (person ids), in the order they first appear. */
@@ -118,7 +121,8 @@ export function unitsOf(d: Dataset): UnitIndex {
     const lifeText = text(life, first);
     const type = text(typeCol, first);
     const kind = text(kindCol, first);
-    const weapon = /^w[0-9a-f]/i.test(lifeText) || (acmi && WEAPON_TYPE.test(type)) || (!!kindCol && /^(weapon|projectile|missile|rocket|bomb|shell|torpedo)$/i.test(kind));
+    const effect = isEffectDomain(classOfType(`${type}+${kind}`)?.domain ?? -1);
+    const weapon = effect || /^w[0-9a-f]/i.test(lifeText) || (acmi && WEAPON_TYPE.test(type)) || (!!kindCol && /^(weapon|projectile|missile|rocket|bomb|shell|torpedo)$/i.test(kind));
     const who = text(player, first).trim();
     const vehicleId = text(vehicleRaw, first);
     const vehicle = text(display, first) || prettyVehicle(vehicleId);
@@ -158,6 +162,7 @@ export function unitsOf(d: Dataset): UnitIndex {
         name,
         vehicle,
         kind: weapon ? 'weapon' : ai ? 'ai' : 'player',
+        ...(effect ? { decoy: true } : {}),
         team: d.personTeam ? d.personTeam[p] : -1,
         persons: [],
         spans: [],

@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Bajas",
   "replay.look.none": "Ninguna aún",
   "replay.look.events": "Eventos",
-  "replay.look.scrubTitle": "Clic para ir a ese momento; el rojo marca las bajas, el ámbar los lanzamientos"
+  "replay.look.scrubTitle": "Clic para ir a ese momento; el rojo marca las bajas, el ámbar los lanzamientos",
+  "replay.field.altDiff": "Diferencia de altitud",
+  "replay.lookAt.bTitle": "La unidad que la cámara mira desde la seguida",
+  "replay.lookAt.clearTitle": "Dejar de mirar esta unidad (Esc)",
+  "replay.lookAt.pick": "Mirar a",
+  "replay.lookAt.pickTitle": "La cámara sigue en la unidad seguida, girada hacia una segunda. Ctrl o Alt + clic en una unidad hace lo mismo.",
+  "replay.lookAt.rowTitle": "Mirar esta unidad desde la seguida (o Ctrl o Alt + clic en ella)",
+  "replay.lookAt.lost": "B perdida",
+  "replay.lookAt.stripTitle": "Entre la unidad seguida y la observada",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

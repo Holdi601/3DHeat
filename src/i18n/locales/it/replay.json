@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Uccisioni",
   "replay.look.none": "Ancora nessuna",
   "replay.look.events": "Eventi",
-  "replay.look.scrubTitle": "Clicca per andare a quel momento; il rosso segna le uccisioni, l’ambra i lanci"
+  "replay.look.scrubTitle": "Clicca per andare a quel momento; il rosso segna le uccisioni, l’ambra i lanci",
+  "replay.field.altDiff": "Differenza di quota",
+  "replay.lookAt.bTitle": "L'unità che la telecamera guarda da quella seguita",
+  "replay.lookAt.clearTitle": "Smetti di guardare questa unità (Esc)",
+  "replay.lookAt.pick": "Guarda",
+  "replay.lookAt.pickTitle": "La telecamera resta sull'unità seguita, rivolta verso una seconda. Ctrl- o Alt-clic su un'unità fa lo stesso.",
+  "replay.lookAt.rowTitle": "Guarda questa unità da quella seguita (o Ctrl- o Alt-clic su di essa)",
+  "replay.lookAt.lost": "B persa",
+  "replay.lookAt.stripTitle": "Tra l'unità seguita e quella guardata",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Hävitamised",
   "replay.look.none": "Veel pole",
   "replay.look.events": "Sündmused",
-  "replay.look.scrubTitle": "Klõpsa, et minna sellesse hetke; punane märgib hävitamisi, merevaik väljalaskeid"
+  "replay.look.scrubTitle": "Klõpsa, et minna sellesse hetke; punane märgib hävitamisi, merevaik väljalaskeid",
+  "replay.field.altDiff": "Kõrguste vahe",
+  "replay.lookAt.bTitle": "Üksus, mida kaamera jälgitavast vaatab",
+  "replay.lookAt.clearTitle": "Lõpeta selle üksuse vaatamine (Esc)",
+  "replay.lookAt.pick": "Vaata",
+  "replay.lookAt.pickTitle": "Kaamera jääb jälgitavale üksusele, pööratuna teise poole. Ctrl- või Alt-klõps üksusel teeb sama.",
+  "replay.lookAt.rowTitle": "Vaata seda üksust jälgitavast (või Ctrl- või Alt-klõpsa sellel)",
+  "replay.lookAt.lost": "B kadunud",
+  "replay.lookAt.stripTitle": "Jälgitava ja vaadatava üksuse vahel",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

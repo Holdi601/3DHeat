@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Abschüsse",
   "replay.look.none": "Noch keine",
   "replay.look.events": "Ereignisse",
-  "replay.look.scrubTitle": "Klicken, um zu diesem Moment zu springen; rot markiert Abschüsse, Bernstein Starts"
+  "replay.look.scrubTitle": "Klicken, um zu diesem Moment zu springen; rot markiert Abschüsse, Bernstein Starts",
+  "replay.field.altDiff": "Höhendifferenz",
+  "replay.lookAt.bTitle": "Die Einheit, auf die die Kamera von der verfolgten aus blickt",
+  "replay.lookAt.clearTitle": "Diese Einheit nicht mehr anblicken (Esc)",
+  "replay.lookAt.pick": "Blick auf",
+  "replay.lookAt.pickTitle": "Die Kamera bleibt an der verfolgten Einheit und richtet sich auf eine zweite. Strg- oder Alt-Klick auf eine Einheit tut dasselbe.",
+  "replay.lookAt.rowTitle": "Diese Einheit von der verfolgten aus anblicken (oder Strg- bzw. Alt-Klick darauf)",
+  "replay.lookAt.lost": "B verloren",
+  "replay.lookAt.stripTitle": "Zwischen der verfolgten und der angeblickten Einheit",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Doborâri",
   "replay.look.none": "Încă niciuna",
   "replay.look.events": "Evenimente",
-  "replay.look.scrubTitle": "Faceți clic pentru a merge la acel moment; roșu marchează doborârile, chihlimbarul lansările"
+  "replay.look.scrubTitle": "Faceți clic pentru a merge la acel moment; roșu marchează doborârile, chihlimbarul lansările",
+  "replay.field.altDiff": "Diferență de altitudine",
+  "replay.lookAt.bTitle": "Unitatea spre care privește camera din cea urmărită",
+  "replay.lookAt.clearTitle": "Nu mai privi această unitate (Esc)",
+  "replay.lookAt.pick": "Privește spre",
+  "replay.lookAt.pickTitle": "Camera rămâne pe unitatea urmărită, întoarsă spre o a doua. Ctrl- sau Alt-clic pe o unitate face același lucru.",
+  "replay.lookAt.rowTitle": "Privește această unitate din cea urmărită (sau Ctrl- ori Alt-clic pe ea)",
+  "replay.lookAt.lost": "B pierdută",
+  "replay.lookAt.stripTitle": "Între unitatea urmărită și cea privită",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

@@ -12,6 +12,14 @@
  */
 
 import { CHUNK_SHIFT, CHUNK_U32, KEYS_PER_BUFFER, TRACK_U32 } from './store';
+import { dartIndex as dartIndexOf } from '../symbols/darts';
+import { C_AGM, C_SAM, C_SHIP, D_BOMB, D_CHAFF, D_FLARE, D_GROUND, D_HELI, D_MARKER, D_MISC, D_MISSILE, D_ROCKET, D_SHELL, D_STATIC, FADE_FROM_F, FALLBACK_AIR, FALLBACK_GROUND, WEAPON_PX_F, WORD_BASE, WORD_MOVING } from '../symbols/shaderConsts';
+
+/** `dartIndex` in WGSL: each domain with a dart of its own. */
+const DART_INDEX_WGSL = Array.from({ length: 16 }, (_, d) => d)
+  .filter((d) => dartIndexOf(d) !== 0)
+  .map((d) => `  if (dom == ${d}u) { return ${dartIndexOf(d)}u; }`)
+  .join('\n');
 
 export const PLACE_WGSL = /* wgsl */ `
 struct U {
@@ -23,6 +31,7 @@ struct U {
   trail : vec4<f32>, // trail seconds (0: none), weapon streak seconds (<0: weapons hidden), marker seconds, marker px
   m : vec4<u32>,     // markers, 1 when every track is shown, 1 for drop lines, the floor's height (f32 bits)
   x : vec4<u32>,     // the playhead's remainder below cam.w (f32 bits), where the aim keys start in tracks
+  sym : vec4<f32>,   // far mode (0 figure, 1 arrow, 2 symbol), symbol threshold px, symbol px, 1: drop lines on weapons
 };
 @group(0) @binding(0) var<uniform> u : U;
 @group(0) @binding(1) var<storage, read> tracks : array<u32>;
@@ -136,6 +145,78 @@ fn square(f : vec3<f32>, u0 : vec3<f32>) -> vec3<f32> {
   return r / l;
 }
 
+// \`symbols/lod.ts\` farLook: the model's alpha, the glyph's, 1 for a dart, 1 for true size.
+fn farLook(dom : u32, trueLen : f32, hasMesh : bool) -> vec4<f32> {
+  if (dom == ${D_SHELL}u) { return vec4<f32>(0.0, 0.0, 0.0, 1.0); }
+  if (dom == ${D_FLARE}u || dom == ${D_CHAFF}u || dom == ${D_MISC}u) {
+    if (dom == ${D_MISC}u && hasMesh && trueLen >= ${WEAPON_PX_F}) { return vec4<f32>(1.0, 0.0, 0.0, 1.0); }
+    return vec4<f32>(0.0, 1.0, 0.0, 1.0);
+  }
+  if (dom >= ${D_MISSILE}u && dom <= ${D_ROCKET}u) {
+    var fa = 0.0;
+    if (hasMesh) { fa = smoothstep(${WEAPON_PX_F} * ${FADE_FROM_F}, ${WEAPON_PX_F}, trueLen); }
+    return vec4<f32>(fa, 1.0 - fa, 0.0, 1.0);
+  }
+  if (dom == ${D_MARKER}u) { return vec4<f32>(select(0.0, 1.0, hasMesh), 0.0, 0.0, 0.0); }
+  if (u.sym.x > 1.5) {
+    var fa = 0.0;
+    if (hasMesh) { fa = smoothstep(u.sym.y * ${FADE_FROM_F}, u.sym.y, trueLen); }
+    return vec4<f32>(fa, 1.0 - fa, 0.0, 0.0);
+  }
+  let fig = hasMesh && trueLen >= u.lod.w;
+  let dartable = dom <= ${D_HELI}u || (dom >= ${D_GROUND}u && dom <= ${D_STATIC}u);
+  return vec4<f32>(select(0.0, 1.0, fig), 0.0, select(0.0, 1.0, !fig && dartable), 0.0);
+}
+
+fn dartIndex(dom : u32) -> u32 {
+${DART_INDEX_WGSL}
+  return 0u;
+}
+
+fn glyphPx(dom : u32) -> f32 {
+  if (dom == ${D_MISSILE}u) { return select(22.0, u.sym.z, u.sym.x > 1.5); }
+  if (dom == ${D_ROCKET}u) { return 16.0; }
+  if (dom == ${D_BOMB}u) { return 13.0; }
+  if (dom == ${D_FLARE}u) { return 12.0; }
+  if (dom == ${D_CHAFF}u) { return 10.0; }
+  if (dom == ${D_MISC}u) { return 6.0; }
+  return u.sym.z;
+}
+
+fn chaffMetres(age : f32) -> f32 { return 3.0 + 12.0 * min(1.0, max(0.0, age) / 3.0); }
+
+fn decoyAlpha(dom : u32, age : f32, life : f32, seed : f32) -> f32 {
+  let left = max(0.15, 1.0 - max(0.0, age) / max(0.5, life));
+  if (dom == ${D_FLARE}u) { return left * (0.8 + 0.2 * sin(seed * 1.7 + u.cam.w * 31.0)); }
+  return 0.75 * left;
+}
+
+// A trail's colour (x < 0: the team's) and longest seconds (w < 0: as set), by what it is.
+fn trailLook(dom : u32) -> vec4<f32> {
+  if (dom == ${D_SHELL}u) { return vec4<f32>(1.0, 0.82, 0.4, 0.06); }
+  if (dom == ${D_FLARE}u) { return vec4<f32>(0.78, 0.78, 0.76, 1.2); }
+  if (dom == ${D_BOMB}u) { return vec4<f32>(0.7, 0.7, 0.7, 1.0); }
+  if (dom == ${D_MISSILE}u || dom == ${D_ROCKET}u) { return vec4<f32>(0.93, 0.93, 0.92, -1.0); }
+  return vec4<f32>(-1.0, 0.0, 0.0, -1.0);
+}
+
+// A motor's burn, seconds, by class: the smoke is thick while it burns, thin after.
+fn burnSeconds(dom : u32, cls : u32) -> f32 {
+  if (dom == ${D_ROCKET}u) { return 1.5; }
+  if (cls == ${C_SAM}u) { return 8.0; }
+  if (cls == ${C_AGM}u) { return 5.0; }
+  if (cls == ${C_SHIP}u) { return 0.0; }
+  return 6.0;
+}
+
+fn trailAlpha(dom : u32, cls : u32, age : f32) -> f32 {
+  if (dom == ${D_SHELL}u) { return 1.0; }
+  if (dom == ${D_FLARE}u) { return 0.5; }
+  if (dom == ${D_BOMB}u) { return 0.2; }
+  if (dom == ${D_MISSILE}u || dom == ${D_ROCKET}u) { return select(0.25, 0.85, age < burnSeconds(dom, cls)); }
+  return 0.8;
+}
+
 @compute @workgroup_size(64)
 fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups) nwg : vec3<u32>) {
   // More than 65535 groups of 64 go in rows of them.
@@ -244,73 +325,128 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
     up = vec3<f32>(0.0, 1.0, 0.0);
   }
 
-  // How big: true size, or as big as it takes to stay min px long; and so which mesh.
+  // How big on screen at true size, and so how it is drawn (\`symbols/lod.ts\`): its model, its domain's dart, its glyph or symbol.
   var pxSize = u.px.y;
   if (u.px.x > 0.0) { pxSize = distance(P, u.cam.xyz) / u.px.x; }
   let longest = bitcast<f32>(tracks[b + 4u]);
   let meshes = tracks[b + 3u];
   let trueLen = longest * u.lod.y / pxSize;
-  var mesh = 0u;
-  var size = longest;
-  if (meshes != 0u && trueLen >= u.lod.w) {
+  var word = tracks[b + 15u];
+  if (word == 0u) { word = select(${FALLBACK_GROUND}u, ${FALLBACK_AIR}u, (flags & 1u) != 0u); }
+  let dom = (word >> 16u) & 15u;
+  let cls = word & 255u;
+  if (speed > 0.5 * u.lod.x) { word = word | ${WORD_MOVING}u; }
+  let look = farLook(dom, trueLen, meshes != 0u);
+  // Seconds since its first key: a decoy's bloom and fade, a motor's burn.
+  let age = -timeAt(first);
+  let c = tracks[b + 2u];
+  let team = vec3<f32>(f32(c & 255u) / 255.0, f32((c >> 8u) & 255u) / 255.0, f32((c >> 16u) & 255u) / 255.0);
+  // Below the gun's "as built": what it is, for the dart's shape and the glyph (\`symbolClass.ts\`).
+  let tag = -${WORD_BASE}.0 - f32(word);
+  var glyphA = look.y;
+  var dart = look.z > 0.5;
+  if (look.x > 0.0) {
     // Full when big at true size, coarse from a third of that, far below.
-    mesh = meshes & 0xffffu;
+    var mesh = meshes & 0xffffu;
     if (trueLen < u.lod.z) { mesh = meshes >> 16u; }
     if (trueLen < u.lod.z / 3.0) { mesh = tracks[b + 6u]; }
-  } else {
-    size = 1.0;
-  }
-  var scale = max(u.lod.y, u.px.z * pxSize / size);
-  var slot = atomicAdd(&counts[mesh], 1u);
-  let run = runs[mesh];
-  if (slot >= run.y) {
-    // Its mesh's run is full: a dart.
-    mesh = 0u;
-    scale = max(u.lod.y, u.px.z * pxSize);
-    slot = atomicAdd(&counts[0], 1u);
-    if (slot >= runs[0].y) { return; }
-  }
-  let o = (runs[mesh].x + slot) * 4u;
-  let c = tracks[b + 2u];
-  // The turret and gun, where the store has them after the tracks: between keys the short way round.
-  var tYaw = 0.0;
-  var gPitch = -100.0;
-  if ((flags & 8u) != 0u) {
-    let ia = u.x.y + k;
-    let ib = u.x.y + kb;
-    if (ib < arrayLength(&tracks)) {
-      let wa = tracks[ia];
-      let wb = tracks[ib];
-      if ((wa & 0xffffu) != 0xffffu) {
-        let ya = f32(wa & 0xffffu) / 65534.0 * 6.2831853 - 3.14159265;
-        var yb = ya;
-        if ((wb & 0xffffu) != 0xffffu) { yb = f32(wb & 0xffffu) / 65534.0 * 6.2831853 - 3.14159265; }
-        var dy = yb - ya;
-        if (dy > 3.14159265) { dy = dy - 6.2831853; }
-        if (dy < -3.14159265) { dy = dy + 6.2831853; }
-        tYaw = ya + dy * sP;
+    var scale = u.lod.y;
+    if (look.w < 0.5) { scale = max(u.lod.y, u.px.z * pxSize / longest); }
+    let slot = atomicAdd(&counts[mesh], 1u);
+    if (slot < runs[mesh].y) {
+      let o = (runs[mesh].x + slot) * 4u;
+      // The turret and gun, where the store has them after the tracks: between keys the short way round.
+      var tYaw = 0.0;
+      var gPitch = -100.0;
+      if ((flags & 8u) != 0u) {
+        let ia = u.x.y + k;
+        let ib = u.x.y + kb;
+        if (ib < arrayLength(&tracks)) {
+          let wa = tracks[ia];
+          let wb = tracks[ib];
+          if ((wa & 0xffffu) != 0xffffu) {
+            let ya = f32(wa & 0xffffu) / 65534.0 * 6.2831853 - 3.14159265;
+            var yb = ya;
+            if ((wb & 0xffffu) != 0xffffu) { yb = f32(wb & 0xffffu) / 65534.0 * 6.2831853 - 3.14159265; }
+            var dy = yb - ya;
+            if (dy > 3.14159265) { dy = dy - 6.2831853; }
+            if (dy < -3.14159265) { dy = dy + 6.2831853; }
+            tYaw = ya + dy * sP;
+          }
+          if ((wa >> 16u) != 0xffffu) {
+            let pa = f32(wa >> 16u) / 65534.0 * 3.14159265 - 1.57079633;
+            var pb = pa;
+            if ((wb >> 16u) != 0xffffu) { pb = f32(wb >> 16u) / 65534.0 * 3.14159265 - 1.57079633; }
+            gPitch = pa + (pb - pa) * sP;
+          }
+        }
       }
-      if ((wa >> 16u) != 0xffffu) {
-        let pa = f32(wa >> 16u) / 65534.0 * 3.14159265 - 1.57079633;
-        var pb = pa;
-        if ((wb >> 16u) != 0xffffu) { pb = f32(wb >> 16u) / 65534.0 * 3.14159265 - 1.57079633; }
-        gPitch = pa + (pb - pa) * sP;
-      }
+      inst[o] = vec4<f32>(P, scale);
+      inst[o + 1u] = vec4<f32>(f, look.x);
+      inst[o + 2u] = vec4<f32>(up, tYaw);
+      inst[o + 3u] = vec4<f32>(team, gPitch);
+    } else if (u.sym.x > 1.5 || look.w > 0.5) {
+      // Its mesh's run is full: its symbol or glyph.
+      glyphA = 1.0;
+    } else {
+      dart = true;
     }
   }
-  inst[o] = vec4<f32>(P, scale);
-  inst[o + 1u] = vec4<f32>(f, 1.0);
-  inst[o + 2u] = vec4<f32>(up, tYaw);
-  let team = vec3<f32>(f32(c & 255u) / 255.0, f32((c >> 8u) & 255u) / 255.0, f32((c >> 16u) & 255u) / 255.0);
-  inst[o + 3u] = vec4<f32>(team, gPitch);
+  if (dart) {
+    // Its domain's dart, from that dart's own run (\`symbols/darts.ts\`).
+    let dm = dartIndex(dom);
+    let slot = atomicAdd(&counts[dm], 1u);
+    if (slot < runs[dm].y) {
+      let o = (runs[dm].x + slot) * 4u;
+      inst[o] = vec4<f32>(P, max(u.lod.y, u.px.z * pxSize));
+      inst[o + 1u] = vec4<f32>(f, 1.0);
+      inst[o + 2u] = vec4<f32>(up, 0.0);
+      inst[o + 3u] = vec4<f32>(team, tag);
+    }
+  }
+  if (glyphA > 0.0) {
+    var gpx = glyphPx(dom);
+    var ga = glyphA;
+    if (dom == ${D_FLARE}u || dom == ${D_CHAFF}u) {
+      let life = timeAt(last) + age;
+      ga = ga * decoyAlpha(dom, age, life, f32(i));
+      if (dom == ${D_CHAFF}u) { gpx = clamp(chaffMetres(age) * u.lod.x / pxSize, 3.0, 96.0); }
+    }
+    let slot = atomicAdd(&counts[u.n.y + 1u], 1u);
+    if (slot < runs[u.n.y].y) {
+      let o = (runs[u.n.y].x + slot) * 4u;
+      inst[o] = vec4<f32>(P, gpx);
+      inst[o + 1u] = vec4<f32>(f, ga);
+      inst[o + 2u] = vec4<f32>(up, 0.0);
+      inst[o + 3u] = vec4<f32>(team, tag);
+    }
+  }
 
   // Its trail: from where it is back through its keys over the last seconds, fading with age; a weapon's streak.
   var W = u.trail.x;
   if (weapon) { W = max(W, u.trail.y); }
-  // Its drop line, as Tacview draws it: straight down to the data's floor.
+  // A weapon's smoke, a flare's falling smoke, a shell's tracer: their own colour and length (\`trailLook\`).
+  let tl = trailLook(dom);
+  var tc = team;
+  if (tl.x >= 0.0) { tc = tl.xyz; }
+  if (tl.w >= 0.0) { W = min(max(W, 0.001), tl.w); }
+  if (dom == ${D_CHAFF}u || dom == ${D_MISC}u) { W = 0.0; }
+  let ta0 = trailAlpha(dom, cls, age);
+  // Its drop line, as Tacview draws it: straight down to the data's floor; none for weapons (unless asked) and decoys.
   let floorY = bitcast<f32>(u.m.w);
-  let drop = u.m.z != 0u && P.y - floorY >= 1.0;
+  let noDrop = (dom >= ${D_MISSILE}u && dom <= ${D_ROCKET}u && u.sym.w < 0.5) || (dom >= ${D_FLARE}u && dom <= ${D_SHELL}u) || dom == ${D_MISC}u;
+  let drop = u.m.z != 0u && P.y - floorY >= 1.0 && !noDrop;
   if (W <= 0.0 && !drop) { return; }
+  if (dom == ${D_SHELL}u) {
+    // A tracer: a short bright line back along its flight, however far apart its keys are.
+    let tb = atomicAdd(&counts[u.n.y], 2u);
+    if (tb + 2u > u.n.z) { return; }
+    trail[tb * 2u] = vec4<f32>(P, 1.0);
+    trail[tb * 2u + 1u] = vec4<f32>(tc, 1.0);
+    trail[tb * 2u + 2u] = vec4<f32>(P - V * 0.06, 1.0);
+    trail[tb * 2u + 3u] = vec4<f32>(tc, 0.0);
+    return;
+  }
   var segs = 0u;
   if (W > 0.0) {
     segs = 1u;
@@ -339,9 +475,9 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
     let key = keyAt(kk);
     let v = (base + n * 2u) * 2u;
     trail[v] = vec4<f32>(a, 1.0);
-    trail[v + 1u] = vec4<f32>(team, 0.8 * clamp(1.0 - (t - ta) / W, 0.0, 1.0));
+    trail[v + 1u] = vec4<f32>(tc, ta0 * clamp(1.0 - (t - ta) / W, 0.0, 1.0));
     trail[v + 2u] = vec4<f32>(key.xyz, 1.0);
-    trail[v + 3u] = vec4<f32>(team, 0.8 * clamp(1.0 - (t - key.w) / W, 0.0, 1.0));
+    trail[v + 3u] = vec4<f32>(tc, ta0 * clamp(1.0 - (t - key.w) / W, 0.0, 1.0));
     a = key.xyz;
     ta = key.w;
     if (kk > first) { kk = kk - 1u; }
@@ -405,7 +541,7 @@ export const FINISH_WGSL = /* wgsl */ `
 @group(0) @binding(0) var<storage, read> runs : array<vec2<u32>>;
 @group(0) @binding(1) var<storage, read> counts : array<u32>;
 @group(0) @binding(2) var<storage, read_write> args : array<u32>;
-@group(0) @binding(3) var<uniform> n : vec4<u32>;   // meshes, trail vertex room
+@group(0) @binding(3) var<uniform> n : vec4<u32>;   // meshes, trail vertex room (counts: the meshes', the trail's, the glyphs')
 @group(0) @binding(4) var<storage, read_write> trailArgs : array<u32>;
 
 @compute @workgroup_size(64)
@@ -415,6 +551,11 @@ fn finish(@builtin(global_invocation_id) gid : vec3<u32>) {
     // The trail's vertex count: whole segments that fitted.
     let c = counts[n.x];
     trailArgs[0] = min(c, n.y);
+    return;
+  }
+  if (m == n.x + 1u) {
+    // The glyphs' run, after the meshes': its draw's arguments after theirs.
+    args[n.x * 4u + 1u] = min(counts[m], runs[n.x].y);
     return;
   }
   if (m > n.x) { return; }

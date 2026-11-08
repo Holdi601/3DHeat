@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Kills",
   "replay.look.none": "Nog geen",
   "replay.look.events": "Gebeurtenissen",
-  "replay.look.scrubTitle": "Klik om naar dat moment te gaan; rood markeert kills, amber lanceringen"
+  "replay.look.scrubTitle": "Klik om naar dat moment te gaan; rood markeert kills, amber lanceringen",
+  "replay.field.altDiff": "Hoogteverschil",
+  "replay.lookAt.bTitle": "De eenheid waar de camera vanaf de gevolgde naar kijkt",
+  "replay.lookAt.clearTitle": "Niet meer naar deze eenheid kijken (Esc)",
+  "replay.lookAt.pick": "Kijk naar",
+  "replay.lookAt.pickTitle": "De camera blijft bij de gevolgde eenheid, gericht op een tweede. Ctrl- of Alt-klik op een eenheid doet hetzelfde.",
+  "replay.lookAt.rowTitle": "Vanaf de gevolgde eenheid naar deze kijken (of Ctrl- of Alt-klik erop)",
+  "replay.lookAt.lost": "B kwijt",
+  "replay.lookAt.stripTitle": "Tussen de gevolgde eenheid en die waarnaar gekeken wordt",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

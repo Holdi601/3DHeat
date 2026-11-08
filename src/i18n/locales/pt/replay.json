@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Abates",
   "replay.look.none": "Ainda nenhum",
   "replay.look.events": "Eventos",
-  "replay.look.scrubTitle": "Clique para ir a esse momento; o vermelho marca abates, o âmbar lançamentos"
+  "replay.look.scrubTitle": "Clique para ir a esse momento; o vermelho marca abates, o âmbar lançamentos",
+  "replay.field.altDiff": "Diferença de altitude",
+  "replay.lookAt.bTitle": "A unidade para a qual a câmara olha a partir da seguida",
+  "replay.lookAt.clearTitle": "Deixar de olhar para esta unidade (Esc)",
+  "replay.lookAt.pick": "Olhar para",
+  "replay.lookAt.pickTitle": "A câmara fica na unidade seguida, virada para uma segunda. Ctrl- ou Alt-clique numa unidade faz o mesmo.",
+  "replay.lookAt.rowTitle": "Olhar para esta unidade a partir da seguida (ou Ctrl- ou Alt-clique nela)",
+  "replay.lookAt.lost": "B perdida",
+  "replay.lookAt.stripTitle": "Entre a unidade seguida e a observada",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

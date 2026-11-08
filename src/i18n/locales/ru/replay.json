@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Победы",
   "replay.look.none": "Пока нет",
   "replay.look.events": "События",
-  "replay.look.scrubTitle": "Нажмите, чтобы перейти к этому моменту; красным отмечены победы, янтарным пуски"
+  "replay.look.scrubTitle": "Нажмите, чтобы перейти к этому моменту; красным отмечены победы, янтарным пуски",
+  "replay.field.altDiff": "Разница высот",
+  "replay.lookAt.bTitle": "Объект, на который камера смотрит от сопровождаемого",
+  "replay.lookAt.clearTitle": "Перестать смотреть на этот объект (Esc)",
+  "replay.lookAt.pick": "Смотреть на",
+  "replay.lookAt.pickTitle": "Камера остаётся на сопровождаемом объекте и смотрит на второй. Ctrl- или Alt-щелчок по объекту делает то же самое.",
+  "replay.lookAt.rowTitle": "Смотреть на этот объект от сопровождаемого (или щелчок по нему с Ctrl или Alt)",
+  "replay.lookAt.lost": "B потерян",
+  "replay.lookAt.stripTitle": "Между сопровождаемым объектом и тем, на который смотрит камера",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }

@@ -1,5 +1,6 @@
 import { VOL_CFG, VOL_INFO, VOL_M, VOL_POLY, VOLUME_BLOCK_FLOATS, type VolumeDraw } from '../../volumes/gpu';
 import { GlFigures } from './figures';
+import { GlSymbols } from './symbols';
 import { GlPost } from './post';
 import { GlTracks } from './tracks';
 import { ATLAS_MIP_LEVELS } from '../../data/atlas';
@@ -278,6 +279,7 @@ export class Webgl2Renderer implements Renderer {
   private triVao: WebGLVertexArrayObject;
   /** Instanced figures, made on first use. */
   private figures: GlFigures | null = null;
+  private symbols: GlSymbols | null = null;
   /** The tactical display's screen pass; made the first time it is asked for. */
   private post: GlPost | null = null;
   /** Every unit of a large dataset placed on the GPU (transform feedback): `tracks.ts`. */
@@ -1326,6 +1328,12 @@ export class Webgl2Renderer implements Renderer {
       this.figures ??= new GlFigures(this.gl);
       this.tracks ??= new GlTracks(this.gl);
       this.tracks.draw(params.gpuTracks, params.viewProj, params.cameraPos, this.figures);
+    }
+    // The far-off glyphs: map symbols, weapons, decoys (`symbols/`), over everything in the scene.
+    if (params.symbols) {
+      this.symbols ??= new GlSymbols(this.gl);
+      if (params.gpuTracks && this.tracks) this.tracks.drawGlyphs(this.symbols, params.symbols, params.viewProj, params.cameraPos, this.width, this.height);
+      this.symbols.draw(params.symbols, params.viewProj, params.cameraPos, this.width, this.height);
     }
     if (params.sceneTris && params.sceneTriVertCount > 0) this.drawSceneTris(params, params.sceneTris, params.sceneTriVertCount);
     if (params.trailVerts && params.trailVertCount > 0) {
@@ -2873,6 +2881,8 @@ export class Webgl2Renderer implements Renderer {
 
   dispose(): void {
     const gl = this.gl;
+    this.symbols?.dispose();
+    this.symbols = null;
     this.figures?.dispose();
     this.post?.dispose();
     this.figures = null;

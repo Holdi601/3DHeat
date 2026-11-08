@@ -518,5 +518,15 @@
   "replay.look.killFeed": "Numušimai",
   "replay.look.none": "Kol kas nėra",
   "replay.look.events": "Įvykiai",
-  "replay.look.scrubTitle": "Spustelėkite, kad pereitumėte į tą akimirką; raudona žymi numušimus, gintaro paleidimus"
+  "replay.look.scrubTitle": "Spustelėkite, kad pereitumėte į tą akimirką; raudona žymi numušimus, gintaro paleidimus",
+  "replay.field.altDiff": "Aukščių skirtumas",
+  "replay.lookAt.bTitle": "Vienetas, į kurį kamera žiūri iš sekamo",
+  "replay.lookAt.clearTitle": "Nebežiūrėti į šį vienetą (Esc)",
+  "replay.lookAt.pick": "Žiūrėti į",
+  "replay.lookAt.pickTitle": "Kamera lieka prie sekamo vieneto, pasukta į antrą. Ctrl arba Alt spustelėjimas ant vieneto daro tą patį.",
+  "replay.lookAt.rowTitle": "Žiūrėti į šį vienetą iš sekamo (arba spustelėkite jį su Ctrl ar Alt)",
+  "replay.lookAt.lost": "B prarastas",
+  "replay.lookAt.stripTitle": "Tarp sekamo vieneto ir to, į kurį žiūrima",
+  "replay.short.altDiff": "ΔALT",
+  "replay.lookAt.b": "B"
 }
