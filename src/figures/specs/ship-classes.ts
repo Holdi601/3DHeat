@@ -296,12 +296,16 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   // United States.
   'delaware': { cls: 'battleship', L: 158.2, B: 26.0, fb: 8, guns: '55:2/305 43:2/305^2.5 -25:2/305b -42:2/305^2.5b -58:2/305b', funnels: [[8, 14, 5], [-6, 14, 5]], blocks: [[36, 26, 17, 6, 1]], masts: [[30, 30], [-14, 30]] },
   'wyoming': { cls: 'battleship', L: 171.3, B: 28.4, fb: 8, guns: '62:2/305 50:2/305^2.5 -6:2/305^2.5b -22:2/305b -48:2/305^2.5b -62:2/305b', funnels: [[8, 14, 6]], blocks: [[40, 28, 22, 6, 1]], masts: [[32, 32], [-10, 26]] },
-  'new-york': { cls: 'battleship', L: 174.7, B: 29.1, fb: 8, guns: '60:2/356 47:2/356^2.5 -10:2/356b -42:2/356^2.5b -56:2/356b', funnels: [[6, 14, 6]], blocks: [[38, 26, 22, 6, 1]], masts: [[30, 34], [-20, 28]] },
-  'nevada': { cls: 'battleship', L: 177.7, B: 32.9, fb: 8, guns: '62:3/356 50:2/356^2.5 -48:2/356^2.5b -62:3/356b', funnels: [[2, 14, 6]], blocks: [[36, 24, 24, 6, 1]], masts: [[30, 34], [-18, 28]] },
-  'pennsylvania': { cls: 'battleship', L: 185.4, B: 32.4, fb: 8, guns: '64:3/356 51:3/356^2.5 -52:3/356^2.5b -65:3/356b', funnels: [[4, 14, 6]], blocks: [[38, 24, 24, 6, 1], [-14, -24, 18, 5]], masts: [[30, 36], [-16, 30]] },
+  // New York, Nevada, New Mexico, Pennsylvania (1941): turret places (and Nevada's masts and funnel) measured on the FM 30-50
+  // (1941) plans and profiles, scaled by the overall length (sources.md).
+  'new-york': { cls: 'battleship', L: 174.7, B: 29.1, fb: 8, guns: '49.2:2/356 35.6:2/356^2.5 -19.4:2/356b -40.8:2/356^2.5b -53.3:2/356b', funnels: [[2.5, 14, 6]], blocks: [[26.2, 15.7, 22, 6, 1]], masts: [[19.8, 34], [-5.3, 28]] },
+  'nevada': { cls: 'battleship', L: 177.7, B: 32.9, fb: 8, guns: '54.6:3/356 42.7:2/356^2.5 -43.2:2/356^2.5b -54.8:3/356b', funnels: [[5.8, 14, 6]], blocks: [[23, 12, 24, 6, 1]], masts: [[15.4, 34], [-19, 28]] },
+  'pennsylvania': { cls: 'battleship', L: 185.4, B: 32.4, fb: 8, guns: '61.6:3/356 51.8:3/356^2.5 -44.1:3/356^2.5b -55:3/356b', funnels: [[4, 14, 6]], blocks: [[38, 24, 24, 6, 1], [-14, -24, 18, 5]], masts: [[30, 36], [-16, 30]] },
   'tennessee': { cls: 'battleship', L: 190.3, B: 34.8, fb: 8, guns: '64:3/356 51:3/356^2.5 -52:3/356^2.5b -65:3/356b 20,13:2/127^3 2,13:2/127^3', funnels: [[0, 14, 7]], blocks: [[36, 14, 24, 8, 1], [34, 22, 32, 4]], masts: [[26, 36]] },
-  'new-mexico': { cls: 'battleship', L: 190.2, B: 32.4, fb: 8, guns: '64:3/356 51:3/356^2.5 -52:3/356^2.5b -65:3/356b', funnels: [[2, 14, 6]], blocks: [[40, 20, 16, 7, 1], [38, 28, 30, 4.5, 1]], masts: [[-18, 26]] },
-  'colorado': { cls: 'battleship', L: 190.2, B: 29.7, fb: 8, guns: '64:2/406 51:2/406^2.5 -52:2/406^2.5b -65:2/406b', funnels: [[6, 14, 6]], blocks: [[38, 24, 22, 6, 1]], masts: [[30, 36], [-14, 32]] },
+  'new-mexico': { cls: 'battleship', L: 190.2, B: 32.4, fb: 8, guns: '60.2:3/356 47.8:3/356^2.5 -42.2:3/356^2.5b -55.1:3/356b', funnels: [[6.7, 14, 6]], blocks: [[40, 20, 16, 7, 1], [38, 28, 30, 4.5, 1]], masts: [[-18, 26]] },
+  // Colorado (1941): turrets, conning tower and bridge, the funnel and the cage masts measured on the FM 30-50 (1941) plan and
+  // profile, scaled by the overall length (sources.md): the forward turrets sit well back from the bow, the funnel aft of the middle.
+  'colorado': { cls: 'battleship', L: 190.2, B: 29.7, fb: 8, guns: '43.6:2/406 29.7:2/406^2.5 -38.7:2/406^2.5b -52.8:2/406b', funnels: [[-18, 12.5, 6]], blocks: [[20.5, 4.4, 23.2, 6, 1]], masts: [[9, 29], [-28.5, 27.4]] },
   'north-carolina': { cls: 'battleship', L: 222.1, B: 33.0, fb: 9, sheer: 4, guns: '62:3/406 46:3/406^3 -55:3/406b 18,12:2/127^3 2,12:2/127^3 -14,12:2/127^3b', funnels: [[6, 12, 7], [-10, 12, 7]], blocks: [[34, 12, 28, 8, 2], [30, 18, 38, 3.5]], masts: [[-4, 30]] },
   'south-dakota': { cls: 'battleship', L: 207.3, B: 33.0, fb: 9, sheer: 4, guns: '56:3/406 41:3/406^3 -52:3/406b 16,12:2/127^3 2,12:2/127^3 -12,12:2/127^3b', funnels: [[4, 13, 9]], blocks: [[30, 8, 28, 9, 2], [26, 16, 38, 3.5]], masts: [[-6, 26]] },
   'iowa': { cls: 'battleship', L: 270.4, B: 33.0, fb: 9, sheer: 6, guns: '78:3/406 61:3/406^3 -72:3/406b 26,12:2/127^3 10,12:2/127^3 -8,12:2/127^3b', funnels: [[8, 12, 7], [-14, 12, 7]], blocks: [[44, 18, 30, 8, 2], [38, 26, 40, 3.5], [-20, -36, 18, 5]], masts: [[0, 32]] },
@@ -658,12 +662,12 @@ const AFT: Record<string, Partial<ShipO>> = {
   // aft tower on the later ships), the mainmast, the aft director and the secondary guns on the superstructure deck.
   'delaware': { masts: [[30, 30, 'l'], [-14, 30, 'l']], blocks: [[-10, -20, 12.5, 3.5]] },
   'wyoming': { masts: [[32, 32, 'l'], [-12, 28, 'l']], blocks: [[-30, -40, 12.5, 3.5]] },
-  'new-york': { masts: [[30, 34, 't'], [-20, 26]], blocks: [[-18, -32, 14, 4.5]], dirs: [[-26, 18]] },
-  'nevada': { masts: [[30, 34, 't'], [-20, 30, 't']], blocks: [[-12, -30, 15, 5]], dirs: [[-24, 20]], guns2: '22,12:1/127^1.2 12,12:1/127^1.2 -10,12:1/127^1.2b' },
+  'new-york': { masts: [[19.8, 34, 't'], [-5.3, 26]], blocks: [[-24, -32, 14, 4.5]], dirs: [[-26, 18]] },
+  'nevada': { masts: [[15.4, 34, 't'], [-19, 30, 't']], blocks: [[-12, -30, 15, 5]], dirs: [[-24, 20]], guns2: '22,12:1/127^1.2 12,12:1/127^1.2 -10,12:1/127^1.2b' },
   'pennsylvania': { masts: [[30, 36, 't'], [-18, 30, 't']], dirs: [[-20, 22]], guns2: '22,12:1/127^1.2 12,12:1/127^1.2 -8,12:1/127^1.2b' },
   'tennessee': { masts: [[26, 36, 't'], [-24, 22]], blocks: [[-14, -34, 16, 5]], dirs: [[-26, 20]] },
   'new-mexico': { masts: [[30, 24], [-20, 26]], blocks: [[-12, -30, 15, 5]], dirs: [[-24, 19]], guns2: '20,12:1/127^1.2 8,12:1/127^1.2 -8,12:1/127^1.2b' },
-  'colorado': { masts: [[30, 36, 'l'], [-14, 32, 'l']], blocks: [[-20, -34, 13, 4]], guns2: '20,12:1/127^1.2 8,12:1/127^1.2 -6,12:1/127^1.2b' },
+  'colorado': { masts: [[9, 29, 'l'], [-28.5, 27.4, 'l']], blocks: [[-22, -33, 13, 4]], guns2: '27,12:1/127^1.2 19,12:1/127^1.2 -21,12:1/127^1.2b' },
   'north-carolina': { blocks: [[-16, -34, 18, 6]], dirs: [[-26, 22]], masts: [[-6, 30], [-22, 20]] },
   'south-dakota': { blocks: [[-12, -30, 17, 6]], dirs: [[-22, 21]] },
   'iowa': { dirs: [[-30, 22]], masts: [[0, 32, 't'], [-24, 22]] },
