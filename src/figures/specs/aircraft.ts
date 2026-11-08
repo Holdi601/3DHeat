@@ -946,4 +946,12 @@ A['ms-406'] = piston({ cls: 'ww2-fighter', length: 8.17, span: 10.62, height: 2.
 // Fiat G.55 / Macchi C.200 / Reggiane Re.2001 class Italian fighters share the MC.202 look; P-36 / Hawk 75 a radial with a long canopy (8.69 x 11.38 x 2.82 m).
 A['p-36'] = piston({ cls: 'ww2-fighter', length: 8.69, span: 11.38, height: 2.82, w: 0.6, h: 0.7, radial: true, wing: 'round', le: 1.4, root: 2.6, tip: 1.2, sweep: 3, fin: 1.4, finRoot: 1.4, roundFin: true, tailSpan: 4.0, tailRoot: 1.0, canopy: { x: 0.0, length: 2.0, kind: 'framed' }, prop: 3.0, blades: 3 });
 
+// The wings' thickness at the root as a share of the chord, from the published root sections (D. Lednicer, The Incomplete
+// Guide to Airfoil Usage): Spitfire NACA 2213, Bf 109 NACA 2R1 14.2, Fw 190 and Ta 152 NACA 23015.3, Mustang NAA/NACA 45-100
+// (15.1 %), Corsair, Wildcat and Avenger NACA 23015, Hellcat NACA 23015.6, Zero NACA 2315, Yak-1 and Yak-3 Clark YH 14 %, Il-2
+// Clark YH 14 %, Tempest NACA 22 14.5, Typhoon NACA 22 19.5, Dauntless NACA 2415, B-25 NACA 23017, B-24 Davis 22 %, B-29
+// Boeing 117 22 %, Lancaster NACA 23018. The tips thin to three quarters of it.
+const ROOT_TC: [string, number][] = [['spitfire-mk-ix', 0.13], ['spitfire-mk-v', 0.13], ['spitfire-mk-xiv', 0.13], ['bf-109-e', 0.142], ['bf-109-g6', 0.142], ['bf-109-k4', 0.142], ['fw-190-a8', 0.153], ['fw-190-d9', 0.153], ['ta-152h', 0.153], ['p-51b', 0.151], ['p-51d-mustang', 0.151], ['f4u-corsair', 0.15], ['f6f-hellcat', 0.156], ['f4f-wildcat', 0.15], ['a6m-zero', 0.15], ['yak-3', 0.14], ['yak-1b', 0.14], ['il-2', 0.14], ['il-2-1941', 0.14], ['tempest-v', 0.145], ['typhoon', 0.195], ['sbd-dauntless', 0.15], ['tbf-avenger', 0.15], ['b-25h', 0.17], ['b-25', 0.17], ['b-24', 0.22], ['b-29', 0.22], ['lancaster', 0.18]];
+for (const [k, r] of ROOT_TC) if (A[k]?.wing) A[k]!.wing.thicknessRatio = r;
+
 export const AIRCRAFT: SpecSet = { air: A };
