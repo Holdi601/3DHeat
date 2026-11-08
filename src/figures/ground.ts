@@ -109,6 +109,8 @@ export interface GunSpec {
   muzzle?: boolean;
   /** A thicker thermal sleeve over this share of the barrel from the breech. */
   sleeve?: number;
+  /** The muzzle reference sensor's small box on top of the barrel just behind the muzzle (modern tank guns). */
+  mrs?: boolean;
   /** Hull and sponson guns: forward position of the breech (default near the front) and sideways offset; a roof machine gun's, from the turret's centre. */
   x?: number;
   side?: number;
@@ -1654,6 +1656,11 @@ function gun(k: Kit, spec: GroundSpec, g: GunSpec, top: number, turrets: TurretS
     revolve(k.fixed, k.fr, [x, side, up], d, prof, n, PAINT.metal, 30);
     // The bore's dark end, just inside the muzzle.
     revolve(k.fixed, k.fr, [x, side, up], d, [[end + 0.004, 0], [end + 0.004, r * 0.58]], n, PAINT.dark);
+    if (g.mrs) {
+      const dm = end - 0.32;
+      const lift = r * 1.35;
+      tiltBox(k.fixed, k.fr, [x + dm * ce - lift * se, side, up + dm * se + lift * ce], 0.24, r * 1.4, r * 1.1, elev, PAINT.metal);
+    }
   };
   // A gun built pointing aft (elevated past the vertical) rests facing aft at its true elevation.
   const aft = elev > Math.PI / 2;

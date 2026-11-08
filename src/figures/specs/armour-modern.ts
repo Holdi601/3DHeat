@@ -2352,4 +2352,112 @@ ALIASES['uk_rooikat_mttd'] = 'rooikat-105';
 // Ural-4320, the plain covered cargo truck: the outlined chassis of ./base.ts under the catalogue's starter name.
 G['ural-4320'] = { cls: 'truck', ...URAL_4320 };
 
+// ---------------------------------------------------------------- recognition details: the modern battle group
+
+// What people tell these vehicles apart by when they look closer: the gun's thermal sleeve, fume extractor and muzzle
+// reference sensor, the sight heads with their dark glass, the smoke grenade launcher banks, the bustle baskets, the
+// roof machine guns, the external fuel drums and unditching beam on the Soviet hulls, exhausts and rear doors. Places
+// judged from public photographs (estimates, as above); sizes of the guns and hulls are the published ones.
+
+/** A sight head: its armoured box and the dark glass of its window facing forward (on the turret unless `on` says). */
+const sight = (x: number, s: number, u: number, l: number, w: number, h: number, o: Opt = {}): AddOn[] => [
+  { on: 'turret', kind: 'box', at: [x, s, u], size: [l, w, h], ...o },
+  { on: o.on ?? 'turret', kind: 'box', at: [x + l / 2 + 0.012, s, u + h * 0.08], size: [0.024, w * 0.7, h * 0.48], paint: 'glass', mirror: o.mirror },
+];
+/** A panoramic sight: a drum on the roof, its head's window facing forward. */
+const pano = (x: number, s: number, u: number, d: number, h: number): AddOn[] => [
+  { on: 'turret', kind: 'drum', at: [x, s, u + h / 2], size: [d, d, h] },
+  { on: 'turret', kind: 'box', at: [x + d / 2, s, u + h * 0.7], size: [0.03, d * 0.6, h * 0.28], paint: 'glass' },
+];
+/** Smoke grenade launcher tubes on both sides of the turret: `n` in a row back from x, pointing out and up. */
+const smokeRow = (x: number, s: number, u: number, n: number, step = 0.13, out = 0.4, up = 0.55, len = 0.3): AddOn[] =>
+  Array.from({ length: n }, (_, i) => {
+    const xx = x - i * step;
+    const to: [number, number, number] = [xx + len * Math.cos(up) * Math.cos(out), s + len * Math.cos(up) * Math.sin(out), u + len * Math.sin(up)];
+    return { on: 'turret', kind: 'tube', at: [xx, s, u], to, size: [0.085, 0.085, 0], metal: true, mirror: true } as AddOn;
+  });
+/** A bustle basket on the turret's back: its dark rails and floor round a load of kit. */
+const basket = (x: number, u: number, l: number, w: number, h: number): AddOn[] => [
+  tb(x, 0, u - h / 2 + 0.03, l, w, 0.05, DARK),
+  tb(x - l / 2 + 0.025, 0, u, 0.05, w, h, DARK),
+  tb(x, w / 2 - 0.025, u, l, 0.05, h, { ...DARK, ...M }),
+  tb(x + 0.02, 0, u - 0.06, l * 0.8, w * 0.86, h * 0.7, { shade: 0.62 }),
+];
+/** Two fuel drums lying across the hull's back plate, side by side (Soviet and Chinese tanks). */
+const drums = (x: number, u: number, s: number, d = 0.6, len = 0.92): AddOn => ({ on: 'hull', kind: 'tube', at: [x, s - len / 2, u], to: [x, s + len / 2, u], size: [d, d, 0], mirror: true, segments: 10 });
+/** The unditching beam lying across the back plate. */
+const ditchBeam = (x: number, u: number, w: number): AddOn => ({ on: 'hull', kind: 'tube', at: [x, -w / 2, u], to: [x, w / 2, u], size: [0.24, 0.24, 0], paint: 'dark', segments: 6 });
+/** A roof machine gun on its pintle: breech x forward of the turret's centre, `side` across. */
+const roofMg = (x: number, side: number, cal = 0.0127, length = cal > 0.01 ? 1.6 : 1.1, up = 0.32): GunSpec => ({ mount: 'top', length, calibre: cal, x, side, up });
+/** A plate let into a back plate or a hull side: a door or an exhaust grille, a little proud of it. */
+const panel = (x: number, s: number, u: number, l: number, w: number, h: number, o: Opt = {}): AddOn => hb(x, s, u, l, w, h, { shade: 0.7, ...o });
+
+const more = (n: string, add: AddOn[], guns?: (g: GunSpec[]) => GunSpec[]): void => {
+  const s = G[n];
+  G[n] = { ...s, addOns: [...(s.addOns ?? []), ...add], ...(guns ? { guns: guns(s.guns ?? []) } : {}) };
+};
+const mainGun = (o: Partial<GunSpec>) => (g: GunSpec[]) => g.map((x, i) => (i === 0 ? { ...x, ...o } : x));
+
+// Leopard 2A4M CAN: the L44 with its sleeve and muzzle sensor, the EMES 15's window, PERI R17's head, the eight smoke
+// tubes on each turret side, the gun shield, the loader's machine gun.
+more('leopard-2a4m-can', [tb(1.63, 0.72, 0.95, 0.024, 0.4, 0.08, { paint: 'glass' }), tb(0.55, 0.78, 1.12, 0.03, 0.22, 0.1, { paint: 'glass' }), ...smokeRow(-1.25, 1.84, 0.74, 4), ...smokeRow(-1.25, 1.84, 0.58, 4), tb(2.48, 0, 0.42, 0.28, 0.78, 0.56)],
+  (g) => [{ ...g[0], sleeve: 0.92, mrs: true }, roofMg(-0.4, -0.75, 0.0076)]);
+// Merkava Mk 3 and 3D: the sleeved gun (no fume extractor) with its sensor, the 60 mm mortar on the roof's front left, the
+// gunner's sight, the smoke banks on the wedge's flanks, the two roof machine guns, the big rear door.
+for (const n of ['merkava-mk3', 'merkava-mk3d']) {
+  more(n, [{ on: 'turret', kind: 'tube', at: [0.2, -0.85, 1.0], to: [1.15, -0.85, 1.22], size: [0.11, 0.1, 0], metal: true }, ...sight(1.1, 0.72, 1.06, 0.55, 0.36, 0.2), ...smokeRow(1.0, 1.4, 0.72, 3, 0.13, 0.7), panel(-3.81, 0, 1.0, 0.04, 1.05, 1.25)],
+    (g) => [{ ...g[0], sleeve: 0.92, mrs: true }, roofMg(-0.4, 0.75, 0.0076), roofMg(-0.6, -0.7, 0.0076)]);
+}
+// Challenger 2: the L30's sleeve, extractor and sensor, the TOGS barbette over the gun, the five-tube smoke banks on
+// the turret front, the stowage bins down the turret sides, the two fuel drums on the back plate.
+more('challenger-2', [...sight(1.9, 0.48, 0.86, 0.7, 0.42, 0.32), ...smokeRow(1.35, 1.55, 0.7, 5, 0.11, 0.6, 0.5), tb(-1.3, 1.72, 0.42, 1.6, 0.25, 0.52, M), drums(-4.42, 1.3, 0.85, 0.6, 1.0)],
+  (g) => [{ ...g[0], sleeve: 0.95, mrs: true }, roofMg(-0.3, -0.7, 0.0076)]);
+more('challenger-2-tes', [...sight(1.9, 0.48, 0.86, 0.7, 0.42, 0.32), ...smokeRow(1.35, 1.55, 0.7, 5, 0.11, 0.6, 0.5)], mainGun({ sleeve: 0.95, mrs: true }));
+// M1A1: the M256's sleeve and sensor, the gunner's primary sight doghouse, the six-tube smoke banks on the cheeks,
+// the loader's M240, the exhaust grille across the back plate.
+more('m1a1-abrams', [...sight(1.05, 0.62, 1.0, 0.8, 0.55, 0.32), ...smokeRow(1.35, 1.62, 0.68, 3, 0.12, 0.6), ...smokeRow(1.35, 1.62, 0.54, 3, 0.12, 0.6), panel(-3.98, 0, 1.15, 0.04, 2.7, 0.5, DARK)],
+  (g) => [{ ...g[0], sleeve: 0.95, mrs: true }, roofMg(-0.6, -0.72, 0.0076)]);
+// Type 90: the sleeved L44 with its sensor, the commander's panoramic sight, the gunner's sight, three smoke tubes a
+// side, the bustle basket, the 12.7 mm on the roof.
+more('type-90', [...pano(0.25, 0.72, 0.82, 0.36, 0.5), ...sight(1.15, -0.7, 0.92, 0.6, 0.42, 0.2), ...smokeRow(-0.4, 1.6, 0.62, 3), ...basket(-2.47, 0.48, 0.5, 2.6, 0.42)],
+  (g) => [{ ...g[0], sleeve: 0.92, mrs: true }, roofMg(-0.3, -0.65)]);
+// Ariete: the sleeved 120/44 with its sensor, the commander's panoramic sight, the gunner's sight, four smoke tubes a
+// side, the bustle basket, the roof machine gun.
+more('ariete', [...pano(0.55, 0.8, 0.82, 0.36, 0.42), ...sight(1.25, -0.65, 0.92, 0.55, 0.4, 0.2), ...smokeRow(0.95, 1.6, 0.6, 4), ...basket(-2.77, 0.48, 0.5, 2.6, 0.42)],
+  (g) => [{ ...g[0], sleeve: 0.9, mrs: true }, roofMg(-0.3, -0.7, 0.0076)]);
+// T-72B3 (and with Arena-M): the two fuel drums and the unditching beam across the back plate, the snorkel on the
+// turret's back, the stowage boxes down its right side, the Kord on the commander's cupola.
+for (const n of ['t-72b3', 't-72b3-arena-m']) {
+  more(n, [drums(-3.68, 1.2, 0.85), ditchBeam(-3.55, 0.78, 2.9), { on: 'turret', kind: 'tube', at: [-1.55, -0.9, 0.5], to: [-1.55, 0.9, 0.5], size: [0.2, 0.2, 0], shade: 0.7 }, tb(-0.5, 1.45, 0.42, 1.0, 0.28, 0.36, { yaw: 0.35 })], (g) => [...g, roofMg(-0.1, -0.55)]);
+}
+// T-80UE-1 and T-80UK: the fuel drums and beam, the turbine's wide exhaust grille in the back plate; the UK's 12.7 mm.
+more('t-80ue1', [drums(-3.75, 1.2, 0.85), ditchBeam(-3.62, 0.8, 2.9), panel(-3.53, 0, 1.05, 0.04, 2.1, 0.3, DARK)]);
+more('t-80uk', [drums(-3.75, 1.2, 0.85), ditchBeam(-3.62, 0.8, 2.9), panel(-3.53, 0, 1.05, 0.04, 2.1, 0.3, DARK)], (g) => [...g, roofMg(-0.2, 0.6)]);
+// ZTZ-96B: the gunner's and the commander's sights, four smoke tubes a side, the bustle basket, the 12.7 mm.
+more('ztz-96b', [...sight(1.3, -0.6, 0.92, 0.55, 0.4, 0.22), ...pano(0.4, 0.7, 0.82, 0.32, 0.38), ...smokeRow(1.2, 1.45, 0.62, 4), ...basket(-2.45, 0.46, 0.45, 2.4, 0.42)], (g) => [...g, roofMg(-0.3, -0.65)]);
+// ZTZ-99A, ZTZ-99 with ERA and WZ1001: the gunner's sight, the laser warning and dazzler head behind the commander,
+// five smoke tubes a side on the turret's back, the bustle basket, the remote 12.7 mm on the roof.
+more('ztz-99a', [...sight(1.6, -0.8, 0.98, 0.6, 0.42, 0.22), tb(-1.0, 0.62, 1.04, 0.4, 0.32, 0.32, DARK), ...smokeRow(-1.6, 1.7, 0.62, 5, 0.12), ...basket(-2.95, 0.5, 0.45, 2.8, 0.45)],
+  (g) => [{ ...g[0], mrs: true }, roofMg(-0.6, -0.7)]);
+for (const n of ['ztz-99-era', 'wz-1001']) {
+  more(n, [...sight(1.3, -0.75, 0.92, 0.55, 0.4, 0.22), ...pano(0.0, 0.72, 0.82, 0.36, 0.42), ...smokeRow(-1.4, 1.58, 0.6, 5, 0.12), ...basket(-2.75, 0.48, 0.45, 2.6, 0.42)], (g) => [...g, roofMg(-0.5, -0.7)]);
+}
+// Puma: the MK30-2's armoured cradle and its muzzle device, four smoke tubes a side on the turret, the rear ramp.
+more('puma', [tb(1.35, 0, 0.3, 0.7, 0.36, 0.3), ...smokeRow(0.7, 1.0, 0.36, 4, 0.11, 0.6), panel(-3.81, 0, 1.75, 0.04, 1.7, 1.25)], mainGun({ muzzle: true }));
+// Ajax: the commander's panoramic sight, the gunner's sight, smoke banks, the bustle basket, the remote machine gun.
+more('ajax', [...pano(0.1, 0.8, 0.85, 0.36, 0.45), ...sight(1.0, -0.75, 0.95, 0.5, 0.4, 0.22), ...smokeRow(0.6, 1.36, 0.62, 4), ...basket(-1.8, 0.5, 0.5, 2.3, 0.45)], (g) => [...g, roofMg(-0.4, -0.6, 0.0076)]);
+// Eitan: the Trophy radar panels at the hull's corners, the Spike launcher on the turret's side, the commander's sight.
+more('eitan', [hb(2.7, 1.42, 2.62, 0.45, 0.22, 0.42, { ...M, yaw: 0.6 }), hb(-2.9, 1.42, 2.62, 0.45, 0.22, 0.42, { ...M, yaw: -0.6 }), tb(-0.1, -0.95, 0.3, 1.1, 0.3, 0.32), ...pano(-0.4, 0.55, 0.55, 0.3, 0.38)]);
+// ZBD-04A: the commander's panoramic sight, the gunner's sight, four smoke tubes a side.
+more('zbd-04a', [...pano(-0.3, 0.75, 0.6, 0.3, 0.38), ...sight(0.7, -0.75, 0.68, 0.45, 0.35, 0.2), ...smokeRow(0.5, 1.38, 0.42, 4)]);
+// Centauro 120: the commander's panoramic sight, the gunner's sight, four smoke tubes a side, the bustle basket, the
+// roof machine gun.
+more('centauro-120', [...pano(0.3, 0.75, 0.9, 0.34, 0.42), ...sight(1.3, -0.65, 0.98, 0.5, 0.38, 0.2), ...smokeRow(0.9, 1.48, 0.62, 4), ...basket(-2.5, 0.5, 0.45, 2.4, 0.42)], (g) => [...g, roofMg(-0.3, -0.65, 0.0076)]);
+// OTOMATIC: the tracking radar's dish on the turret's front roof, the smoke banks.
+more('otomatic', [{ on: 'turret', kind: 'drum', at: [0.95, -0.95, 1.42], size: [0.6, 0.6, 0.22], paint: 'light' }, ...smokeRow(0.7, 1.58, 0.9, 4)]);
+// PGZ-09: the commander's sight and the smoke banks on the turret front.
+more('pgz-09', [...sight(0.85, 0.6, 1.3, 0.45, 0.35, 0.22), ...smokeRow(1.05, 1.25, 0.8, 4, 0.11, 0.6)]);
+// Tor-M1: the eight missile hatches let into the turret's roof between the antennas.
+more('9a331-tor-m1', [tb(0.15, 0, 1.66, 1.3, 1.25, 0.03, DARK), ...[-0.32, 0.32].flatMap((x) => [-0.3, 0.3].map((s) => tb(0.15 + x, s, 1.69, 0.56, 0.54, 0.03)))]);
+
 export const ARMOUR_MODERN: SpecSet = { ground: G, aliases: ALIASES };
