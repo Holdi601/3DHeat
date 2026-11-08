@@ -120,7 +120,9 @@ G['t-80b'] = { cls: 'mbt', ...T80, addOns: [SMOKE_902(0.7, 1.3, 0.45), LUNA(1.3,
 // T-80BV: Kontakt-1 on the turret and glacis.
 G['t-80bv'] = { cls: 'mbt', ...T80, addOns: [SMOKE_902(0.6, 1.35, 0.45), LUNA(1.3, 0.8, 0.7), ...K1_TURRET(1.5, 1.38, 0.76), ...T80_GLACIS(0.1, 3, 5)] };
 // T-80U (1985): the Kontakt-5 horseshoe, a stowage box round the turret's back, the K-5 glacis plate and skirt boxes.
-const T80U_ADD = [SMOKE_902(0.7, 1.55, 0.45), ...T80_GLACIS(0.22), ...skirtBoxes(1.1, 3.3, 1.78, 0.6, 0.42, 3), tb(-1.75, 0, 0.35, 0.45, 2.1, 0.5), { on: 'turret', kind: 'drum', at: [-0.3, 0.6, 0.9], size: [0.55, 0.55, 0.25] } as AddOn];
+// The stowage box across the turret's back and down both sides of the bustle; the gunner's sight head on the roof left
+// of the gun, behind the bricks.
+const T80U_ADD = [SMOKE_902(0.7, 1.55, 0.45), ...T80_GLACIS(0.22), ...skirtBoxes(1.1, 3.3, 1.78, 0.6, 0.42, 3), tb(-1.75, 0, 0.35, 0.45, 2.1, 0.5), tb(-1.3, 1.12, 0.35, 0.8, 0.35, 0.45, M), tb(0.5, -0.62, 0.9, 0.45, 0.36, 0.28), tb(0.735, -0.62, 0.92, 0.024, 0.25, 0.13, { paint: 'glass' }), { on: 'turret', kind: 'drum', at: [-0.3, 0.6, 0.9], size: [0.55, 0.55, 0.25] } as AddOn];
 G['t-80u'] = { cls: 'mbt', ...T80, turret: T80U_TURRET, addOns: T80U_ADD };
 // T-80UD: the diesel - a taller, grilled engine deck and the commander's remote 12.7 mm mount on the cupola.
 G['t-80ud'] = { cls: 'mbt', ...T80, turret: T80U_TURRET, addOns: [...T80U_ADD, hb(-2.4, 0, 1.5, 2.0, 2.9, 0.22), tb(-0.3, 0.6, 1.15, 0.6, 0.35, 0.3, DARK), tb(0.25, 0.6, 1.2, 1.2, 0.06, 0.06, DARK)] };
@@ -2196,7 +2198,7 @@ G['object-435'] = { cls: 'mbt', chassis: 'tracked', length: 6.0, width: 3.3, hul
 // T-80UE-1 (2005; 7.0 x 3.6 m, 2.2 m): the T-80BV's hull and turbine deck with the T-80UD's welded turret - flat faces,
 // a level roof, the Kontakt-5 wedges squaring its front, their tops sloping down to the nose as on the T-80U - and the
 // remote 12.7 mm on the cupola.
-G['t-80ue1'] = { cls: 'mbt', ...T80, turret: turret(-0.7, [[-1.6, 0.95], [-1.3, 1.4], [0.5, 1.55], [1.5, 1.58], [1.88, 1.12], [1.95, 0.5]], [[-1.6, 0.5], [-1.3, 0.72], [1.15, 0.8], [1.95, 0.45]], 8, 1.85), addOns: [...T80U_ADD, tb(-0.3, 0.6, 1.15, 0.6, 0.35, 0.3, DARK), tb(0.25, 0.6, 1.2, 1.2, 0.06, 0.06, DARK)] };
+G['t-80ue1'] = { cls: 'mbt', ...T80, turret: turret(-0.7, [[-1.6, 0.95], [-1.3, 1.4], [0.5, 1.55], [1.5, 1.58], [1.88, 1.12], [1.95, 0.5]], [[-1.6, 0.5], [-1.3, 0.72], [0.65, 0.8], [0.85, 0.63], [1.9, 0.6], [1.95, 0.22]], 8, 1.85), addOns: [...T80U_ADD, tb(-0.3, 0.6, 1.15, 0.6, 0.35, 0.3, DARK), tb(0.25, 0.6, 1.2, 1.2, 0.06, 0.06, DARK)] };
 // Vickers Mk 11 (1990; about 6.5 x 3.2 m, 3.5 m; estimates): the Timoney 6x6's very tall slab-sided hull with the VFM 5
 // turret and its low-recoil 105 mm.
 G['vickers-mk11'] = { cls: 'tank-destroyer', chassis: 'wheeled', length: 6.5, width: 3.2, hullHeight: 2.5, axles: 3, axleAt: [0.66, 0.0, -0.66], wheelRadius: 0.65, hullOutline: { top: [[-3.25, 2.35], [-3.1, 2.5], [1.6, 2.5], [3.25, 1.6]], bottom: [[-3.25, 0.85], [2.8, 0.85], [3.25, 1.3]], plan: [[-3.25, 1.55], [2.6, 1.6], [3.25, 1.3]], round: 14, stations: 12 }, turret: G['vfm-5'].turret, guns: [{ mount: 'turret', length: 5.0, calibre: 0.105, extractor: 0.55, muzzle: true, at: 0.45 }] };
@@ -2436,12 +2438,13 @@ more('type-90', [...pano(0.25, 0.72, 0.75, 0.36, 0.5), ...sight(1.15, -0.7, 0.85
 more('ariete', [...pano(0.55, 0.8, 0.82, 0.36, 0.42), ...sight(1.25, -0.65, 0.92, 0.55, 0.4, 0.2), ...smokeRow(0.95, 1.6, 0.6, 4), ...basket(-2.77, 0.48, 0.5, 2.6, 0.42)],
   (g) => [{ ...g[0], sleeve: 0.9, mrs: true }, roofMg(-0.3, -0.7, 0.0076)]);
 // T-72B3 (and with Arena-M): the two fuel drums and the unditching beam across the back plate, the snorkel on the
-// turret's back, the stowage boxes down its right side, the Kord on the commander's cupola.
+// turret's back in its stowage basket (whose back is 2.4 m behind the hull's middle on a broadside photograph), the
+// stowage boxes down its right side, the Kord on the commander's cupola.
 for (const n of ['t-72b3', 't-72b3-arena-m']) {
-  more(n, [drums(-3.68, 1.2, 0.85), ditchBeam(-3.55, 0.78, 2.9), { on: 'turret', kind: 'tube', at: [-1.55, -0.9, 0.5], to: [-1.55, 0.9, 0.5], size: [0.2, 0.2, 0], shade: 0.7 }, tb(-0.5, 1.45, 0.42, 1.0, 0.28, 0.36, { yaw: 0.35 })], (g) => [...g, roofMg(-0.1, -0.55)]);
+  more(n, [drums(-3.68, 1.2, 0.85), ditchBeam(-3.55, 0.78, 2.9), { on: 'turret', kind: 'tube', at: [-1.55, -0.9, 0.5], to: [-1.55, 0.9, 0.5], size: [0.2, 0.2, 0], shade: 0.7 }, ...basket(-1.62, 0.5, 0.4, 2.2, 0.42), tb(-0.5, 1.45, 0.42, 1.0, 0.28, 0.36, { yaw: 0.35 })], (g) => [...g, roofMg(-0.1, -0.55)]);
 }
 // T-80UE-1 and T-80UK: the fuel drums and beam, the turbine's wide exhaust grille in the back plate; the UK's 12.7 mm.
-more('t-80ue1', [drums(-3.75, 1.2, 0.85), ditchBeam(-3.62, 0.8, 2.9), panel(-3.53, 0, 1.05, 0.04, 2.1, 0.3, DARK)]);
+more('t-80ue1', [drums(-3.75, 1.2, 0.85), ditchBeam(-3.62, 0.8, 2.9), panel(-3.53, 0, 1.05, 0.04, 2.1, 0.3, DARK)], (g) => [...g, roofMg(-0.3, 0.6)]);
 more('t-80uk', [drums(-3.75, 1.2, 0.85), ditchBeam(-3.62, 0.8, 2.9), panel(-3.53, 0, 1.05, 0.04, 2.1, 0.3, DARK)], (g) => [...g, roofMg(-0.2, 0.6)]);
 // ZTZ-96B: the gunner's and the commander's sights, four smoke tubes a side, the bustle basket, the 12.7 mm.
 more('ztz-96b', [...sight(1.3, -0.6, 0.92, 0.55, 0.4, 0.22), ...pano(0.4, 0.7, 0.82, 0.32, 0.38), ...smokeRow(1.2, 1.45, 0.62, 4), ...basket(-2.45, 0.46, 0.45, 2.4, 0.42)], (g) => [...g, roofMg(-0.3, -0.65)]);
@@ -2506,8 +2509,8 @@ const faceBricks = (xa: number, sa: number, xb: number, sb: number, u0: number, 
   return out;
 };
 for (const n of ['t-72b3', 't-72b3-arena-m']) more(n, [...k5Lids(0.45, 1.88, 0.81, 0.46, 1.5, 4), ...glacisJoints(6.86, 1.4, 1.4, 0.95, 0.22, 2.9, 3)]);
-more('t-80ue1', [...k5Lids(1.15, 1.95, 0.8, 0.45, 1.5, 4), ...glacisJoints(7.0, 1.4, 1.95, 0.95, 0.22, 2.9, 3)]);
-more('t-80uk', [...k5Lids(1.1, 1.9, 0.77, 0.45, 1.52, 4), ...glacisJoints(7.0, 1.4, 1.95, 0.95, 0.22, 2.9, 3)]);
+more('t-80ue1', [...k5Lids(0.85, 1.9, 0.62, 0.6, 1.5, 4), ...glacisJoints(7.0, 1.4, 1.95, 0.95, 0.22, 2.9, 3)]);
+more('t-80uk', [...k5Lids(0.8, 1.85, 0.61, 0.6, 1.52, 4), ...glacisJoints(7.0, 1.4, 1.95, 0.95, 0.22, 2.9, 3)]);
 // ZTZ-96B: FY-4 on the wedge's front faces; ZTZ-99A: on the arrow's outer front faces.
 more('ztz-96b', faceBricks(1.4, 1.35, 2.1, 0.8, 0.12, 3, 2));
 more('ztz-99a', faceBricks(2.0, 1.3, 3.0, 0.42, 0.14, 3, 2));
