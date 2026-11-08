@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "stvarna veličina",
   "heat.teamPanel.weapons": "Oružje, hici i pogoci",
-  "heat.teamPanel.weaponsTitle": "Oružje u letu s dimom, svijetlećim zrnima, udarima, pogocima i obaranjima. Svijetleća zrna izvedena iz pogotka su isprekidana."
+  "heat.teamPanel.weaponsTitle": "Oružje u letu s dimom, svijetlećim zrnima, udarima, pogocima i obaranjima. Svijetleća zrna izvedena iz pogotka su isprekidana.",
+  "heat.timeline.reverseKey": "Reprodukcija unatrag ({key})",
+  "heat.heatPanel.followExposure": "Prati prikaz",
+  "heat.heatPanel.followExposureHint": "Ponovno mjeri ekspoziciju svaki put kad se kamera zaustavi, pa područje u koje uletite koristi cijelu toplinsku skalu umjesto skale izmjerene za cijelu kartu. Male promjene zanemaruju se, a skala klizi umjesto da skače. Isključite potvrdni okvir da biste zaključali skalu i uspoređivali mjesta na jednoj skali; povlačenje točke zasićenja također je zaključava.",
+  "heat.heatPanel.zoomInvariant": "Ista gustoća pri svakom zumiranju",
+  "heat.heatPanel.zoomInvariantHint": "Boja znači isti broj redaka po površini tla, koliko god bili blizu. Sprite koji ograničenja piksela povećavaju (izdaleka) ili smanjuju (izbliza) zadržava toplinu koju bi dodala njegova prava veličina, pa slika eksponirana izdaleka više ne blijedi kad uletite u nju. Isključeno: ograničeni sprite dodaje punu težinu u svojoj ograničenoj veličini.",
+  "heat.splitPanel.sides": "Retci u prozoru: <b>+</b> {plus} · <b>−</b> {minus}",
+  "heat.splitPanel.sidesApprox": "Retci u prozoru: <b>+</b> oko {plus} · <b>−</b> oko {minus} (prebrojeno iz uzorka)",
+  "heat.splitPanel.noSides": "Nijedna vrijednost nije ni na jednoj strani, pa razlika ništa ne crta. Stavite barem jednu vrijednost na <b>+</b> ili <b>−</b>.",
+  "heat.splitPanel.wrongKind": "Stupac {column} ne može se podijeliti na ovaj način, pa razlika ništa ne crta. Ponovno odaberite stupac.",
+  "heat.splitPanel.positiveEmpty": "Nijedan redak u prozoru nije na strani <b>+</b>, pa se crta samo strana <b>−</b>: slika nije razlika.",
+  "heat.splitPanel.negativeEmpty": "Nijedan redak u prozoru nije na strani <b>−</b>, pa se crta samo strana <b>+</b>: slika nije razlika.",
+  "heat.splitPanel.skipped": "Stupac podjele nije stao u GPU memoriju za {skipped} od {total} blokova redaka, i ti se retci ne crtaju. Povećajte GPU proračun pod Performanse → Proračun resursa ili učitajte manje redaka.",
+  "heat.splitPanel.shares": "Usporedi udjele, ne brojeve",
+  "heat.splitPanel.sharesHint": "Ponderira svaku stranu s jedan kroz njezin broj redaka, pa strana s pet puta više redaka više ne prekriva kartu samim brojem. Boja tada pokazuje gdje je koja strana razmjerno češća od druge.",
+  "heat.teamsList.columnSplitHint": "Razlika je podijeljena po <b>{column}</b>, pa skupine ovdje određuju samo što se crta, a ne na kojoj se strani broje."
 }

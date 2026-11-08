@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Ei luettavissa pisteeksi. Käytä muotoa x, y, z tai x y z, esim. -321.6, 137.8, -59.9 tai -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Kierto- ja nyökkäyskulman on oltava lukuja asteina.",
   "heat.inspect.jump.hint": "Koordinaatit ovat maailmakoordinaatteja, samoja kuin lukemassa ja yllä olevassa asennossa. {key} avaa tätä varten syöttöruudun näkymän päälle.",
-  "heat.inspect.jump.hintDataFrame": "Koordinaatit ovat ladatun aineiston omassa koordinaatistossa, kuten sen taulukossa - samoja kuin lukemassa ja yllä olevassa asennossa. {key} avaa tätä varten syöttöruudun näkymän päälle."
+  "heat.inspect.jump.hintDataFrame": "Koordinaatit ovat ladatun aineiston omassa koordinaatistossa, kuten sen taulukossa - samoja kuin lukemassa ja yllä olevassa asennossa. {key} avaa tätä varten syöttöruudun näkymän päälle.",
+  "heat.inspect.latLon": "Lev. / pit."
 }

@@ -14,7 +14,7 @@ Every feature of Tacview 1.9 (its manual, its user-interface string table and th
 - **not yet**: applies, not built.
 - **n/a**: does not apply here, with the reason.
 
-Where to find the features: the **Match** tab, **Figure replay** (or box replay in the Heatmap tab), in the sidebar sections **Replay**, **Units**, **Events**, **Bookmarks**, **Tactical display**, **Statistics** and **Labels**. See [Figure replay and debrief](figure-replay.md).
+Where to find the features: the **Match** tab, **Figure replay** (or box replay in the Heatmap tab), in the sidebar sections **Replay**, **Units**, **Events**, **Bookmarks**, **Tactical display**, **Statistics**, **Time shift and trim**, **Map and position**, **Audio and video** and **Labels**. See [Figure replay and debrief](figure-replay.md).
 
 ## Cameras
 
@@ -43,25 +43,25 @@ Where to find the features: the **Match** tab, **Figure replay** (or box replay 
 | Anticipatory trail (path ahead) | **Path ahead**: where the unit really goes in the next seconds | new |
 | Object height lines / walls | **Drop lines** | done (lines; walls not built) |
 | Selected object vectors: heading (dotted), course (solid), lift | **Velocity vectors** (course and speed for so many seconds, with a tip) and **Nose and lift lines** (nose dashed, lift short and dark) | new |
-| Pilot line of sight | PilotHead* are in **Raw**; no line drawn | not yet |
+| Pilot line of sight | **Pilot line of sight**: a dashed cyan line along PilotHeadYaw/PilotHeadPitch (or a HeadYaw, ViewYaw or LookYaw column) against the unit's axes | new |
 | SAM/AAA lethal range domes (EngagementRange, VerticalEngagementRange, EngagementMode, "2" twins) | **Engagement zones**: domes, ovoid where the vertical range differs, off while EngagementMode is 0 | new |
-| Radar locks (LockedTarget..9) with labels | **Locks**: red lines to each locked object; dashed amber to FocusedTarget; along LockedTargetAzimuth/Elevation/Range where no object is named | new (no lock labels) |
+| Radar locks (LockedTarget..9) with labels | **Locks**: red lines to each locked object; dashed amber to FocusedTarget; along LockedTargetAzimuth/Elevation/Range where no object is named. **Lock labels**: the target's name and range on each lock line | new |
 | Radar cone (RadarMode, Azimuth, Elevation, Roll, Range, beamwidths) and range gate | **Radar cones**: rim and mid ring of the beam turned by azimuth, elevation and roll against the unit; the range gate as two yellow rims. Without beamwidths, the beam's axis only. | new |
 | Line of sight between the two selected objects (green / red dotted when terrain blocks) | The measured pair's line turns red and dashed when the level is between them | new |
 | Automatically scale up distant objects | Smallest figure on screen (pixels) | done |
-| Latitude/longitude grid | Grid on the 2D map; no lat/long grid in 3D | not yet |
+| Latitude/longitude grid | **Map and position → Grid**: latitude and longitude lines on the ground under the camera, at a round spacing for the height (10° down to 1'), labelled; or the **MGRS** kilometre grid of the UTM zone, with the zone and 100 km square shown. The 2D map's own grid as before | new |
 | Bullseye rings | Rings around each team's bullseye on the 2D map | new (2D only) |
-| Glideslope overlay | The glideslope deviation values show in **Raw** | not yet |
-| Altitude restrictions (ceiling/floor alarm) | Not built | not yet |
+| Glideslope overlay | **Glideslopes**: 3° paths with the ±0.7° full-scale edges onto both ends of every runway near the recording, from the surveyed thresholds and elevations of OurAirports (downloaded once, kept offline), a tick at each nautical mile, named by airport and runway | new |
+| Altitude restrictions (ceiling/floor alarm) | **Altitude restriction**: a floor and a ceiling; labels of units outside turn red, and every crossing (below the floor, above the ceiling, back inside) is listed - a click goes there and follows the unit | new |
 | Destroyed objects grey, removed after 15 min | Lives end with their track; a dead unit is dimmed in the unit list | done |
 | Visible / Disabled properties | Shown in **Raw**; nothing is hidden by them | not yet |
 | Display stick/throttle/pedal positions | Throttle and engine values in fields; control inputs in **Raw** | done (as values) |
-| Comments as subtitles | Recording properties are kept (RecordingInfo); not shown as subtitles | not yet |
+| Comments as subtitles | **Messages as subtitles** (Labels): ACMI Message and Comment events, and chat from any game (Chat, Say or Radio events, or a chat column), at the bottom of the view with who said it, for six seconds | new |
 | Date and UTC time display | Timeline clock with UTC where the recording has a reference time | done |
-| Mouse position lat/long, MGRS, bullseye | Pick card and camera readout in world metres; bullseye per unit (field) | done (no MGRS) |
+| Mouse position lat/long, MGRS, bullseye | The pick card (click a point) gives latitude/longitude in degrees, minutes and seconds and MGRS beside the world metres; bullseye per unit (field) | new |
 | Custom logo | Not built | n/a (branding) |
 | 3D models, nearest when unknown | Own figure catalogue, nearest counterpart, true size | done |
-| Multiple engagements (lines between all pairs) | One measured pair at a time | not yet |
+| Multiple engagements (lines between all pairs) | **Engagement lines**: from each unit in scope to every opponent within the set range (1-200 km), each with its range, the nearest 60 pairs; the measured pair as before | new |
 
 ## Labels
 
@@ -73,7 +73,7 @@ Where to find the features: the **Match** tab, **Figure replay** (or box replay 
 | ILS deviations, distance flown | Raw values; distance flown in the statistics | done (partly) |
 | Declutter unselected telemetry | **Declutter**, now ordered by each rule's priority | done / new |
 | Label all ground objects / only threats | The Ground and AI rules | new |
-| Labels scale | Not built | not yet |
+| Labels scale | **Label size** (60-250 %) | new |
 | Metric / imperial units | Metric / imperial | done (two presets, not eight) |
 
 ## Object info and telemetry
@@ -82,12 +82,12 @@ Where to find the features: the **Match** tab, **Figure replay** (or box replay 
 |---|---|---|
 | Primary and secondary selection | Click follows and selects; shift-click two to measure; **Target** picker | done / new |
 | Range / bearing / aspect / closure between two objects | BRAA line of the measured pair; Range, Bearing, Aspect and Closure fields from the followed unit | done |
-| Relative bearing, LOS rate | Not built | not yet |
+| Relative bearing, LOS rate | **Relative bearing** (off the followed unit's nose, L/R) and **Line-of-sight rate** (°/s) fields | new |
 | Telemetry windows | The unit card and the hover card | done |
 | Raw telemetry (every recorded property, also unknown ones) | **Raw** in the unit card: every column at the unit's row as written | new |
 | Active objects list | **Units**: players, AI, weapons in flight, live ones bright | done |
 | Recording properties window (title, author, briefing...) | Kept as the RecordingInfo column; shown in Raw | done (no window) |
-| Position formats DMS/MGRS, magnetic north | Metres and true north | not yet |
+| Position formats DMS/MGRS, magnetic north | **Position (lat / long)** in DMS and **MGRS** fields; a **Magnetic heading** field; **Magnetic headings** writes heading, course and bearing magnetic (°M) and shows a compass with both norths and the variation - the World Magnetic Model 2025 (public domain coefficients), worked out here at the unit's place and date | new |
 
 ## Charts
 
@@ -97,7 +97,7 @@ Where to find the features: the **Match** tab, **Figure replay** (or box replay 
 | Plot up to 4 objects at once | **Compare**: one value of up to 8 units on one scale | new |
 | Value against value (energy-manoeuvrability style) | **Value vs value**: turn rate against speed or any pair, each unit a line, its current point marked | new |
 | X axis by time; zoom; scrub time from the chart | Wheel zooms in time, double click resets, click goes to the moment | new |
-| X axis by air or ground distance | Not built | not yet |
+| X axis by air or ground distance | **Time / Air distance / Ground distance** on the time and compare charts; zoom and click-to-go work the same | new |
 | Predefined charts (energy, acceleration...) | Any value can be picked (energy height and its rate are values) | done |
 
 ## Statistics, flight log, events
@@ -130,10 +130,10 @@ Where to find the features: the **Match** tab, **Figure replay** (or box replay 
 |---|---|---|
 | Play/pause, to start, speed, timeline scrub | Timeline | done |
 | Frame by frame | **,** and **.** a second back and on (Shift: ten) | new |
-| Reverse playback | Not built: the track cursor plays forward; seeking back works | not yet |
+| Reverse playback | **◀** on the timeline, **J** (**L** forwards; the same key again pauses): plays from the end towards the start at the chosen speed, looping or stopping at the start | new |
 | Time jump dialog | The timeline and the event list | done |
-| Time shift one object (ghost) | Not built | not yet |
-| Trim before/after | The session picker plays one match or round; no trim | not yet |
+| Time shift one object (ghost) | **Time shift and trim**: move one unit's flight, or a whole recording, by so many seconds; **Line the recordings up** moves several recordings to start together and plays them at once (two sorties on different days side by side). The recording is rebuilt, so trails, events, charts and statistics follow | new |
+| Trim before/after | **From now / To now / Cut to this span** (undoing keeps the shifts), then **Export CSV** (loads back into 3DHeat) or **Export ACMI** (Tacview 2.2 text, for a recording placed on the earth) | new |
 
 ## Terrain and map
 
@@ -142,17 +142,17 @@ Where to find the features: the **Match** tab, **Figure replay** (or box replay 
 | Real terrain, custom elevation and textures | Levels (the game's own map as a 3D model), world backdrop tiles | done |
 | Flat / empty / high-contrast terrain modes | [Level appearance](level-appearance.md): ground relief, surface and structures shown or not | done (not the same modes) |
 | 2D tactical map (Tacview has none: satellite view) | **2D map**: corner or whole view, symbols by kind and team (filled players, outlined AI) turned to their heading, trails, names, scale bar, range rings around the followed unit, bullseye rings, the 3D camera's place, recent deaths; drag, wheel, click to follow (M) | new |
-| Static objects (airports, runways, waypoints, areas, KML) | [Tactics board](tactics-board.md) draws areas and routes; no airport database | not yet |
+| Static objects (airports, runways, waypoints, areas, KML) | Surveyed runways (OurAirports) in the world backdrop and their glideslopes; GPX waypoints and KML placemarks load as standing objects; [Tactics board](tactics-board.md) draws areas and routes | new |
 
 ## Import, export, recording
 
 | Tacview | 3DHeat | Status |
 |---|---|---|
 | ACMI text and zip | [Tacview ACMI](tacview-acmi.md) | done |
-| GPX, KML, CSV, NMEA, IGC, FIT, DIS... | CSV and Parquet; others not | not yet (CSV covers the tables) |
+| GPX, KML, CSV, NMEA, IGC, FIT, DIS... | **GPX** (tracks, routes, waypoints; Garmin heart rate, cadence, power, temperature), **KML/KMZ** (gx:Track, LineString, Point), **NMEA 0183** (RMC and GGA of any talker, checksums checked, across midnight), **IGC** (B records, date, pilot and glider), **FIT** (record messages, compressed timestamps) - each placed by latitude and longitude on the plane at the tracks' middle, so the world backdrop lines up; heading, pitch and speed from the file or from fix to fix. CSV and Parquet as before | new (DIS n/a: a live network protocol) |
 | Native recorders (DCS, BMS, IL-2, MSFS...) | 3DHeat's own converters (War Thunder, CS2, Squad, Arma and others) | done (own) |
 | Real-time telemetry over TCP, ADS-B | Not built | n/a (replays after the match) |
-| Synchronised audio/video | Not built | not yet |
+| Synchronised audio/video | **Audio and video**: a local file plays, pauses, seeks and changes speed with the timeline from a set start (**Starts now**, ±0.1 s); a video in a resizable panel over the view, or picture-in-picture. The file stays in the browser | new |
 | Video export | [Camera path and video](camera-path-and-video.md) | done |
 
 ## Other
@@ -160,7 +160,7 @@ Where to find the features: the **Match** tab, **Figure replay** (or box replay 
 | Tacview | 3DHeat | Status |
 |---|---|---|
 | Lua add-ons | Not built | n/a (open source: change the viewer itself) |
-| Online debriefing (shared session) | Not built | not yet |
+| Online debriefing (shared session) | Not built | n/a (Tacview's is a hosted session that keeps everyone on one playhead. 3DHeat has no server and keeps recordings on the viewer's machine, and even a peer-to-peer link needs a signalling server. A debrief is shared as files: the trimmed recording (Export ACMI or CSV) and the bookmarks file, which open at the same moments and views) |
 | Instructor remote control | Not built | n/a (controls a running simulator) |
 | Object editing (add, edit, remove objects) | [Tactics board](tactics-board.md) for planned objects; recordings are read-only | n/a |
 | Languages | 40 languages | done |
@@ -182,8 +182,9 @@ Read by `data/acmi.ts`; numeric properties become number columns, text ones cate
 | EngagementMode(2), EngagementRange(2), VerticalEngagementRange(2) | Engagement domes |
 | QNH, AltimeterSetting, WindSpeed, WindDirection, HeartRate | Fields |
 | Health | Field |
-| Events: Destroyed, TakenOff, Landed, Bookmark, Message, LeftArea, Timeout | Event list, statistics (deaths, take-offs, landings), bookmarks |
+| Events: Destroyed, TakenOff, Landed, Bookmark, Message, Comment, LeftArea, Timeout | Event list, statistics (deaths, take-offs, landings), bookmarks; Message and Comment as subtitles |
+| PilotHeadYaw, PilotHeadPitch | Pilot line of sight |
 | Type tag Bullseye (Navaid+Static+Bullseye) | Bullseye field and map rings |
-| Everything else (PilotHead*, controls, surfaces, ILS deviations, SpO2, ENL, Label, Debug, Importance, Slot, Visible, Disabled, Radius, sizes...) | Shown as written under **Raw** |
+| Everything else (PilotHeadRoll, controls, surfaces, ILS deviations, SpO2, ENL, Label, Debug, Importance, Slot, Visible, Disabled, Radius, sizes...) | Shown as written under **Raw** |
 
 Radar and lock angles are taken against the unit's own axes: azimuth to the right, elevation up, roll right wing down. The ACMI spec says they are relative to the aircraft but not which way is positive; this reading follows its transform (yaw clockwise, pitch up, roll right).

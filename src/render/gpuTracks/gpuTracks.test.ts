@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { AttributeColumn, Dataset } from '../../state/types';
 import { emptySample, MotionModel } from '../../figures/motion';
-import { gpuTrackStore } from './store';
+import { decodeKey, gpuTrackStore, TRACK_U32 } from './store';
 import { emptyPose, evaluateTrack } from './evaluate';
 import { PLACE_WGSL, FINISH_WGSL } from './shader';
 
@@ -52,6 +52,7 @@ describe('GPU tracks', () => {
     const s = gpuTrackStore(d, { maxKeys: 1e9 })!;
     expect(s.tolerance).toBe(0);
     expect(s.keys).toBe(s.samples);
+    expect(s.keysA.length).toBe(s.keys * 2);
     expect(s.tracks).toBe(12);
     const m = MotionModel.of(d)!;
     const cpu = emptySample();
@@ -70,8 +71,10 @@ describe('GPU tracks', () => {
         worstNose = Math.max(worstNose, Math.acos(Math.min(1, c)));
       }
     }
-    expect(worst).toBeLessThan(1e-3);
-    expect(worstNose).toBeLessThan(1e-3);
+    // Positions and times in 16-bit steps of each track's span (here 3 cm and 0.9 ms, which at 100 m/s is 9 cm
+    // along the path): within those steps of the CPU curve.
+    expect(worst).toBeLessThan(0.1);
+    expect(worstNose).toBeLessThan(2e-3);
   });
 
   it('reduce to a stated tolerance only when the keys would not fit, and stay within it', () => {
@@ -99,15 +102,18 @@ describe('GPU tracks', () => {
     const s = gpuTrackStore(d, { maxKeys: 1e9 })!;
     const p = emptyPose();
     const i = s.trackOf[2];
-    const first = s.keysA[s.trackData[i * 8] * 4 + 3];
+    const k4 = [0, 0, 0, 0];
+    decodeKey(s, i * TRACK_U32, s.trackData[i * TRACK_U32], k4);
+    const first = k4[3];
     expect(evaluateTrack(s, i, first - 0.01, 5, p)).toBe(false);
-    const lastT = s.keysA[(s.trackData[i * 8] + s.trackData[i * 8 + 1] - 1) * 4 + 3];
+    decodeKey(s, i * TRACK_U32, s.trackData[i * TRACK_U32] + s.trackData[i * TRACK_U32 + 1] - 1, k4);
+    const lastT = k4[3];
     expect(evaluateTrack(s, i, lastT + 4, 5, p)).toBe(true);
     expect(evaluateTrack(s, i, lastT + 6, 5, p)).toBe(false);
   });
 
   it('have shaders that use the store layout', () => {
-    expect(PLACE_WGSL).toContain('const TRACK_U32 = 8u');
+    expect(PLACE_WGSL).toContain('const TRACK_U32 = 16u');
     expect(FINISH_WGSL).toContain('fn finish');
   });
 });

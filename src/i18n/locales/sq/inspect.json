@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Nuk lexohet si pikë. Përdor x, y, z ose x y z, p.sh. -321.6, 137.8, -59.9 ose -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Drejtimi dhe pjerrësia duhet të jenë numra, në gradë.",
   "heat.inspect.jump.hint": "Koordinatat janë koordinata të botës, të njëjtat si në leximin e kamerës dhe në pozën më sipër. {key} hap një kuti për këtë mbi pamje.",
-  "heat.inspect.jump.hintDataFrame": "Koordinatat janë në sistemin e vetë të dhënave të ngarkuara, si në tabelën e tyre - të njëjtat si në leximin e kamerës dhe në pozën më sipër. {key} hap një kuti për këtë mbi pamje."
+  "heat.inspect.jump.hintDataFrame": "Koordinatat janë në sistemin e vetë të dhënave të ngarkuara, si në tabelën e tyre - të njëjtat si në leximin e kamerës dhe në pozën më sipër. {key} hap një kuti për këtë mbi pamje.",
+  "heat.inspect.latLon": "Gjerësi / gjatësi"
 }

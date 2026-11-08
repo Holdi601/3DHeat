@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "mida real",
   "heat.teamPanel.weapons": "Armes, trets i impactes",
-  "heat.teamPanel.weaponsTitle": "Armes en vol amb fum, traçadores, impactes, encerts i abatuts. Les traçadores deduïdes d’un encert són discontínues."
+  "heat.teamPanel.weaponsTitle": "Armes en vol amb fum, traçadores, impactes, encerts i abatuts. Les traçadores deduïdes d’un encert són discontínues.",
+  "heat.timeline.reverseKey": "Reprodueix cap enrere ({key})",
+  "heat.heatPanel.followExposure": "Segueix la vista",
+  "heat.heatPanel.followExposureHint": "Torna a mesurar l'exposició cada cop que la càmera s'atura, de manera que una regió on entres volant fa servir tota la rampa de calor en lloc de l'escala mesurada per a tot el mapa. Els canvis petits s'ignoren i l'escala llisca en lloc de saltar. Desmarca-ho per fixar l'escala i comparar llocs en una mateixa escala; arrossegar el punt de saturació també la fixa.",
+  "heat.heatPanel.zoomInvariant": "Mateixa densitat a qualsevol zoom",
+  "heat.heatPanel.zoomInvariantHint": "Un color vol dir el mateix nombre de files per àrea de terra, siguis tan a prop com siguis. Un sprite que els límits de píxels amplien (de lluny) o redueixen (de prop) conserva la calor que hi afegiria la seva mida real, i així una imatge exposada de lluny ja no s'esvaeix quan hi entres volant. Desactivat, un sprite limitat hi afegeix tot el seu pes a la mida limitada.",
+  "heat.splitPanel.sides": "<b>+</b> {plus} files · <b>−</b> {minus} files a la finestra",
+  "heat.splitPanel.sidesApprox": "<b>+</b> unes {plus} files · <b>−</b> unes {minus} files a la finestra (comptades a partir d'una mostra)",
+  "heat.splitPanel.noSides": "Cap valor no és a cap costat, per tant la diferència no dibuixa res. Posa almenys un valor a <b>+</b> o <b>−</b>.",
+  "heat.splitPanel.wrongKind": "{column} no es pot dividir d'aquesta manera, per tant la diferència no dibuixa res. Torna a triar la columna.",
+  "heat.splitPanel.positiveEmpty": "Cap fila de la finestra no és al costat <b>+</b>, per tant només es dibuixa el costat <b>−</b>: la imatge no és una diferència.",
+  "heat.splitPanel.negativeEmpty": "Cap fila de la finestra no és al costat <b>−</b>, per tant només es dibuixa el costat <b>+</b>: la imatge no és una diferència.",
+  "heat.splitPanel.skipped": "La columna de divisió no ha cabut a la memòria de la GPU per a {skipped} de {total} blocs de files, i aquestes files no es dibuixen. Augmenta el pressupost de GPU a Rendiment → Pressupostos de recursos o carrega menys files.",
+  "heat.splitPanel.shares": "Compara proporcions, no recomptes",
+  "heat.splitPanel.sharesHint": "Pondera cada costat per u dividit pel seu propi nombre de files, de manera que un costat amb cinc vegades més files ja no cobreix el mapa només per quantitat. Llavors el color mostra on cada costat és proporcionalment més freqüent que l'altre.",
+  "heat.teamsList.columnSplitHint": "La diferència es divideix per <b>{column}</b>, de manera que aquí els grups només decideixen què es dibuixa, no a quin costat compten."
 }

@@ -40,6 +40,7 @@ import {
   FLAG_PERSPECTIVE,
   FLAG_SMOOTH_RAMP,
   FLAG_TEAM_COLORS,
+  FLAG_CONSERVE,
   FLAG_USE_CURVE,
   FLAG_USE_LIFETIME,
   FLAG_USE_TEAM_SIGN,
@@ -1147,7 +1148,13 @@ export class WebgpuRenderer implements Renderer {
     if (resolved.length === 0) return { slots: 0, splitSlot: -1 };
 
     const cost = reuse ? 0 : bytes;
-    if (this.gpuBytesUsed + cost > this.gpuBudgetBytes) return { slots: 0, splitSlot: -1 };
+    if (this.gpuBytesUsed + cost > this.gpuBudgetBytes) {
+      // Not remembered as this chunk's answer: the budget may have room next
+      // frame (a level freed, another chunk's values shrunk), and a cached
+      // failure kept the split's column off this chunk for good.
+      chunk.filterKey = '';
+      return { slots: 0, splitSlot: -1 };
+    }
 
     const start = chunkIndex * CHUNK_ROWS;
     const packed = new Float32Array(resolved.length * chunk.rows);
@@ -2275,6 +2282,7 @@ export class WebgpuRenderer implements Renderer {
 
     const weight = params.sampleWeight * params.heatGain;
     if (params.plan.length === 0) {
+      this.splitSkippedChunks = 0;
       // Nothing to splat. A partial frame still folds its (empty) estimate in, or
       // the history would not decay and a stale field would persist.
       if (!direct) this.mergeHeat(encoder, alpha);
@@ -2308,6 +2316,7 @@ export class WebgpuRenderer implements Renderer {
     );
 
     const uniformOffsets: number[] = [];
+    let splitSkipped = 0;
     params.plan.forEach((plan, index) => {
       const chunk = this.chunks[plan.chunk];
       if (!chunk || plan.blockCount === 0) {
@@ -2319,6 +2328,15 @@ export class WebgpuRenderer implements Renderer {
         filters,
         params.splitMode === 0 ? null : params.splitColumn,
       );
+      // A column split whose column is not on the GPU for this chunk - it would
+      // not fit, or the split has no column it can draw - leaves the chunk out
+      // and counts it. It used to fall back to the group split, which drew a
+      // team split under a column someone had just chosen and said nothing.
+      if (params.splitMode !== 0 && splitSlot < 0) {
+        splitSkipped++;
+        uniformOffsets.push(-1);
+        return;
+      }
       uniformOffsets.push(
         this.writeHeatUniform(
           params,
@@ -2352,9 +2370,13 @@ export class WebgpuRenderer implements Renderer {
       pass.draw(blocks * SAMPLE_BLOCK * (lines ? 18 : 3));
     });
     pass.end();
+    this.splitSkippedChunks = splitSkipped;
 
     if (!direct) this.mergeHeat(encoder, alpha);
   }
+
+  /** See `Renderer.splitSkippedChunks`. */
+  splitSkippedChunks = 0;
 
   /**
    * Fold the scratch estimate into the accumulator: `acc = acc*(1-a) + scratch*a`.
@@ -2691,6 +2713,7 @@ export class WebgpuRenderer implements Renderer {
     if (params.heat.smoothRamp) flags |= FLAG_SMOOTH_RAMP;
     if (params.heat.useCurve) flags |= FLAG_USE_CURVE;
     if (params.heat.teamColors) flags |= FLAG_TEAM_COLORS;
+    if (params.heat.zoomInvariant) flags |= FLAG_CONSERVE;
     i[40] = plan.minRow;
     i[41] = Math.min(plan.maxRow, chunk.rows);
     i[42] = BLOCK_SHIFT;
@@ -2714,10 +2737,9 @@ export class WebgpuRenderer implements Renderer {
     // unchanged; `i` and `u` alias the same scratch buffer.
     u[58] = params.heat.cullFar;
     // Split mode and the slot its column landed in, packed into one lane: mode in
-    // the low byte, slot above it. A column split with no resident column falls
-    // back to the group split rather than signing rows from whatever is at slot 0.
-    const splitMode = splitSlot >= 0 ? params.splitMode : 0;
-    i[59] = splitMode | (Math.max(0, splitSlot) << 8);
+    // the low byte, slot above it. A column split never gets here without its
+    // column: the caller leaves such a chunk out (see the heat pass).
+    i[59] = params.splitMode | (Math.max(0, splitSlot) << 8);
     u[60] = params.cameraPos[0];
     u[61] = params.cameraPos[1];
     u[62] = params.cameraPos[2];
@@ -2755,8 +2777,9 @@ export class WebgpuRenderer implements Renderer {
     // keeps neighbouring ids off neighbouring hues.
     u[84] = params.heat.teamNeutral;
     u[85] = Math.max(1, params.heat.teamSlices);
-    u[86] = 0;
-    u[87] = 0;
+    // The weight of a positive row and of a negative one; see sideScales.
+    u[86] = params.splitScale[0];
+    u[87] = params.splitScale[1];
     // The box line heat's segment starts are quantised to.
     const box = this.lines;
     u[88] = box ? box.min[0] : 0;

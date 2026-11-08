@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "점으로 읽을 수 없습니다. x, y, z 또는 x y z 형식을 사용하세요. 예: -321.6, 137.8, -59.9 또는 -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "요와 피치는 도 단위의 숫자여야 합니다.",
   "heat.inspect.jump.hint": "좌표는 월드 좌표이며, 카메라 표시 및 위의 자세와 같습니다. {key}를 누르면 뷰 위에 입력 상자가 열립니다.",
-  "heat.inspect.jump.hintDataFrame": "좌표는 불러온 데이터 자체의 좌표계로, 그 표와 같습니다 - 카메라 표시 및 위의 자세와도 같습니다. {key}를 누르면 뷰 위에 입력 상자가 열립니다."
+  "heat.inspect.jump.hintDataFrame": "좌표는 불러온 데이터 자체의 좌표계로, 그 표와 같습니다 - 카메라 표시 및 위의 자세와도 같습니다. {key}를 누르면 뷰 위에 입력 상자가 열립니다.",
+  "heat.inspect.latLon": "위도 / 경도"
 }

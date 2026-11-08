@@ -1,0 +1,225 @@
+.vehicle-counts {
+  margin: 8px 0 4px;
+  color: var(--text-dim);
+  font-size: 12px;
+}
+
+.vehicle-warn {
+  color: var(--warm);
+}
+
+.vehicle-sheet-btn {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.vehicle-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 6px;
+}
+
+.vehicle-bar {
+  display: grid;
+  grid-template-columns: 96px 1fr 44px;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.vehicle-bar-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-dim);
+}
+
+.vehicle-bar-track {
+  height: 8px;
+  border-radius: 2px;
+  background: var(--line-soft);
+  overflow: hidden;
+}
+
+.vehicle-bar-track i {
+  display: block;
+  height: 100%;
+  background: var(--warm);
+}
+
+.vehicle-bar-n {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.vehicle-filter {
+  margin: 8px 0;
+}
+
+.vehicle-filter-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+
+.vehicle-filter-items {
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.vehicle-filter-items .check {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.vehicle-filter-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vehicle-filter-n {
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.vehicle-hud {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 240px;
+  padding: 10px 12px;
+  background: rgba(20, 23, 28, 0.86);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.vehicle-hud-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.vehicle-hud-sub {
+  color: var(--text-dim);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.vehicle-ramp {
+  height: 10px;
+  margin-top: 8px;
+  border-radius: 2px;
+}
+
+.vehicle-ramp-ends {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-faint);
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.vehicle-legend {
+  margin-top: 8px;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vehicle-legend div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vehicle-legend i {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.vehicle-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 6, 8, 0.72);
+}
+
+.vehicle-sheet-card {
+  width: min(96%, 1200px);
+  max-height: 96%;
+  overflow: auto;
+  padding: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.vehicle-sheet-card canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 10px 0 6px;
+  border-radius: 4px;
+}
+
+.vehicle-sheet-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vehicle-sheet-bar .spacer {
+  flex: 1;
+}
+
+.vehicle-sheet-bar a.button {
+  background: var(--accent-dim);
+  border: 1px solid #3a83c9;
+  border-radius: 4px;
+  padding: 6px 10px;
+  color: #fff;
+  text-decoration: none;
+}
+
+/* No timeline: the vehicle heatmap shows every hit at once. */
+.app.vehicle {
+  grid-template-rows: 1fr 0;
+}
+
+.app.vehicle .timeline-bar {
+  display: none;
+}
+
+/* Five tabs share the sidebar's width: a little tighter, so a word keeps whole. */
+.tabs button {
+  padding: 8px 3px;
+  font-size: 12px;
+}
+
+.vehicle-panel .hint {
+  color: var(--text-dim);
+  font-size: 12px;
+  line-height: 1.4;
+  margin-top: 6px;
+}
+
+.vehicle-panel .hint.vehicle-warn {
+  color: var(--warm);
+}

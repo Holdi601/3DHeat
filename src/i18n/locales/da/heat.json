@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "naturlig størrelse",
   "heat.teamPanel.weapons": "Våben, skud og træffere",
-  "heat.teamPanel.weaponsTitle": "Våben i luften med røg, sporlys, nedslag, træffere og nedskydninger. Sporlys udledt af en træffer er stiplet."
+  "heat.teamPanel.weaponsTitle": "Våben i luften med røg, sporlys, nedslag, træffere og nedskydninger. Sporlys udledt af en træffer er stiplet.",
+  "heat.timeline.reverseKey": "Afspil baglæns ({key})",
+  "heat.heatPanel.followExposure": "Følg visningen",
+  "heat.heatPanel.followExposureHint": "Måler eksponeringen igen, hver gang kameraet falder til ro, så et område, du flyver ind i, bruger hele varmerampen i stedet for skalaen målt for hele kortet. Små ændringer ignoreres, og skalaen glider i stedet for at springe. Fjern markeringen for at låse skalaen og sammenligne steder på én skala; at trække i mætningspunktet låser den også.",
+  "heat.heatPanel.zoomInvariant": "Samme tæthed ved enhver zoom",
+  "heat.heatPanel.zoomInvariantHint": "En farve betyder det samme antal rækker pr. jordareal, uanset hvor tæt på du er. En sprite, som pixelgrænserne forstørrer (langt væk) eller formindsker (tæt på), beholder den varme, dens sande størrelse ville tilføje, så et billede eksponeret langt fra ikke længere blegner, når du flyver ind i det. Slået fra tilføjer en begrænset sprite sin fulde vægt i sin begrænsede størrelse.",
+  "heat.splitPanel.sides": "<b>+</b> {plus} rækker · <b>−</b> {minus} rækker i vinduet",
+  "heat.splitPanel.sidesApprox": "<b>+</b> ca. {plus} rækker · <b>−</b> ca. {minus} rækker i vinduet (talt ud fra en stikprøve)",
+  "heat.splitPanel.noSides": "Ingen værdi er på nogen af siderne, så forskellen tegner intet. Sæt mindst én værdi på <b>+</b> eller <b>−</b>.",
+  "heat.splitPanel.wrongKind": "{column} kan ikke opdeles på denne måde, så forskellen tegner intet. Vælg kolonnen igen.",
+  "heat.splitPanel.positiveEmpty": "Ingen række i vinduet er på <b>+</b>-siden, så kun <b>−</b>-siden tegnes: billedet er ikke en forskel.",
+  "heat.splitPanel.negativeEmpty": "Ingen række i vinduet er på <b>−</b>-siden, så kun <b>+</b>-siden tegnes: billedet er ikke en forskel.",
+  "heat.splitPanel.skipped": "Opdelingskolonnen kunne ikke være i GPU-hukommelsen for {skipped} af {total} blokke af rækker, og de rækker tegnes ikke. Hæv GPU-budgettet under Ydeevne → Ressourcebudgetter, eller indlæs færre rækker.",
+  "heat.splitPanel.shares": "Sammenlign andele, ikke antal",
+  "heat.splitPanel.sharesHint": "Vægter hver side med én divideret med sit eget antal rækker, så en side med fem gange så mange rækker ikke længere dækker kortet alene i kraft af antallet. Farven viser så, hvor hver side forholdsmæssigt er mere almindelig end den anden.",
+  "heat.teamsList.columnSplitHint": "Forskellen er opdelt efter <b>{column}</b>, så grupperne her afgør kun, hvad der tegnes, ikke hvilken side de tæller på."
 }

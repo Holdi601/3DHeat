@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "ekte størrelse",
   "heat.teamPanel.weapons": "Våpen, skudd og treff",
-  "heat.teamPanel.weaponsTitle": "Våpen i lufta med røyk, sporlys, nedslag, treff og nedskytinger. Sporlys utledet fra et treff er stiplet."
+  "heat.teamPanel.weaponsTitle": "Våpen i lufta med røyk, sporlys, nedslag, treff og nedskytinger. Sporlys utledet fra et treff er stiplet.",
+  "heat.timeline.reverseKey": "Spill baklengs ({key})",
+  "heat.heatPanel.followExposure": "Følg visningen",
+  "heat.heatPanel.followExposureHint": "Måler eksponeringen på nytt hver gang kameraet blir stående i ro, slik at et område du flyr inn i, bruker hele varmerampen i stedet for skalaen målt for hele kartet. Små endringer ignoreres, og skalaen glir i stedet for å hoppe. Fjern avkryssingen for å låse skalaen og sammenligne steder på én skala; å dra i metningspunktet låser den også.",
+  "heat.heatPanel.zoomInvariant": "Samme tetthet ved all zoom",
+  "heat.heatPanel.zoomInvariantHint": "En farge betyr samme antall rader per areal av bakken, uansett hvor nær du er. En sprite som pikselgrensene forstørrer (langt unna) eller forminsker (nært), beholder varmen dens sanne størrelse ville gitt, så et bilde eksponert langt unna ikke lenger blekner når du flyr inn i det. Av: en begrenset sprite legger til hele vekten sin i den begrensede størrelsen.",
+  "heat.splitPanel.sides": "<b>+</b> {plus} rader · <b>−</b> {minus} rader i vinduet",
+  "heat.splitPanel.sidesApprox": "<b>+</b> omtrent {plus} rader · <b>−</b> omtrent {minus} rader i vinduet (telt fra et utvalg)",
+  "heat.splitPanel.noSides": "Ingen verdi er på noen av sidene, så differansen tegner ingenting. Legg minst én verdi på <b>+</b> eller <b>−</b>.",
+  "heat.splitPanel.wrongKind": "{column} kan ikke deles på denne måten, så differansen tegner ingenting. Velg kolonnen på nytt.",
+  "heat.splitPanel.positiveEmpty": "Ingen rad i vinduet er på <b>+</b>-siden, så bare <b>−</b>-siden tegnes: bildet er ikke en differanse.",
+  "heat.splitPanel.negativeEmpty": "Ingen rad i vinduet er på <b>−</b>-siden, så bare <b>+</b>-siden tegnes: bildet er ikke en differanse.",
+  "heat.splitPanel.skipped": "Delingskolonnen fikk ikke plass i GPU-minnet for {skipped} av {total} blokker med rader, og de radene tegnes ikke. Øk GPU-budsjettet under Ytelse → Ressursbudsjetter, eller last inn færre rader.",
+  "heat.splitPanel.shares": "Sammenlign andeler, ikke antall",
+  "heat.splitPanel.sharesHint": "Vekter hver side med én delt på sitt eget antall rader, slik at en side med fem ganger så mange rader ikke lenger dekker kartet bare i kraft av antallet. Fargen viser da hvor hver side forholdsmessig er vanligere enn den andre.",
+  "heat.teamsList.columnSplitHint": "Differansen er delt etter <b>{column}</b>, så gruppene her bestemmer bare hva som tegnes, ikke hvilken side de teller på."
 }

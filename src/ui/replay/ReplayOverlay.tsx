@@ -10,6 +10,7 @@ import { personAt, unitsOf, type Unit } from './units';
 import { groundProbe, teamName } from './replayView';
 import { labelCategory, labelRank, ruleFields } from './labelRules';
 import { isOverlay } from '../../match/overlay';
+import { limitSide } from './altitudeLimits';
 import { num, t } from '../../i18n';
 import type { Engine } from '../../render/engine';
 import './replay.css';
@@ -207,6 +208,10 @@ export function ReplayOverlay() {
     const seen = new Set<number>();
     const W = host.clientWidth;
     const H = host.clientHeight;
+    // The labels' size, as the viewer set it; the layout below is in the same scale.
+    const scale = r.labelScale;
+    if (host.style.getPropertyValue('--label-scale') !== String(scale)) host.style.setProperty('--label-scale', String(scale));
+    const limits = r.limits.on && (r.limits.floor !== null || r.limits.ceiling !== null) ? r.limits : null;
     // One label a unit: its newest track. A track that has just ended can still be drawn beside the next for a moment.
     const newest = new Map<Unit, number>();
     for (const { tr, unit } of order) {
@@ -236,8 +241,8 @@ export function ReplayOverlay() {
       if (nums.length) lines.push(nums.join(' · '));
       const text = lines.join('\n');
       // Sized from the text rather than measured: a layout read per label per frame costs more than it buys.
-      const w = Math.max(...lines.map((l) => l.length)) * 6.2 + 12;
-      const h = lines.length * 14 + 4;
+      const w = (Math.max(...lines.map((l) => l.length)) * 6.2 + 12) * scale;
+      const h = (lines.length * 14 + 4) * scale;
       // Clear of the figure: as far out as about six metres of it reach on screen, within reason.
       const up = engine.project(tr.x, tr.y + 8 * k, tr.z);
       const m = Math.max(rank === 0 ? 22 : 10, Math.min(110, up ? Math.hypot(up.x - p.x, up.y - p.y) : 10));
@@ -275,6 +280,8 @@ export function ReplayOverlay() {
       el.classList.toggle('selected', r.selected === unit.key);
       el.classList.toggle('picked', r.pairFrom === tr.person || (r.pair !== null && r.pair.includes(tr.person)));
       el.classList.toggle('ai', unit.kind !== 'player');
+      // Outside the altitude restriction: the label turns red.
+      el.classList.toggle('alarm', !!limits && unit.kind !== 'weapon' && limitSide(tr.y / k, limits) !== 0);
     }
     placed.current = out;
     for (const [person, el] of nodes.current) {

@@ -24,6 +24,9 @@ export interface Runway {
   /** Metres; 30 when the list has no width. */
   width: number;
   surface: string;
+  /** Each end's elevation, metres above sea level; NaN when the list has none. */
+  leElevation?: number;
+  heElevation?: number;
 }
 
 const FEET = 0.3048;
@@ -68,6 +71,8 @@ export function parseRunways(text: string): Runway[] {
     heIdent: col('he_ident'),
     heLat: col('he_latitude_deg'),
     heLon: col('he_longitude_deg'),
+    leElev: col('le_elevation_ft'),
+    heElev: col('he_elevation_ft'),
   };
   if (c.leLat < 0 || c.leLon < 0 || c.heLat < 0 || c.heLon < 0) return [];
   const out: Runway[] = [];
@@ -80,6 +85,7 @@ export function parseRunways(text: string): Runway[] {
     const he: [number, number] = [Number(f[c.heLat]), Number(f[c.heLon])];
     if (!f[c.leLat] || !f[c.heLat] || !f[c.leLon] || !f[c.heLon] || ![...le, ...he].every(Number.isFinite)) continue;
     const w = Number(f[c.width]);
+    const elev = (i: number) => (i >= 0 && f[i] ? Number(f[i]) * FEET : NaN);
     out.push({
       airport: f[c.airport] ?? '',
       le,
@@ -88,6 +94,8 @@ export function parseRunways(text: string): Runway[] {
       heIdent: f[c.heIdent] ?? '',
       width: Number.isFinite(w) && w > 0 ? w * FEET : 30,
       surface: f[c.surface] ?? '',
+      leElevation: elev(c.leElev),
+      heElevation: elev(c.heElev),
     });
   }
   return out;

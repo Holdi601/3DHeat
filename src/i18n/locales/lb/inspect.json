@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Net als Punkt liesbar. Benotzt x, y, z oder x y z, z. B. -321.6, 137.8, -59.9 oder -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Gier- an Nickwénkel mussen Zuelen a Grad sinn.",
   "heat.inspect.jump.hint": "D’Koordinate si Weltkoordinaten, déiselwecht wéi an der Anzeig an an der Positioun hei uewen. {key} mécht dofir e Feld iwwer der Usiicht op.",
-  "heat.inspect.jump.hintDataFrame": "D’Koordinate sinn am eegene System vun de geluedenen Donnéeën, wéi an hirer Tabell - déiselwecht wéi an der Anzeig an an der Positioun hei uewen. {key} mécht dofir e Feld iwwer der Usiicht op."
+  "heat.inspect.jump.hintDataFrame": "D’Koordinate sinn am eegene System vun de geluedenen Donnéeën, wéi an hirer Tabell - déiselwecht wéi an der Anzeig an an der Positioun hei uewen. {key} mécht dofir e Feld iwwer der Usiicht op.",
+  "heat.inspect.latLon": "Breet / Längt"
 }

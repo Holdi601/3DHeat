@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Not readable as a point. Use x, y, z or x y z, e.g. -321.6, 137.8, -59.9 or -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Yaw and pitch must be numbers, in degrees.",
   "heat.inspect.jump.hint": "Coordinates are world coordinates, the same as the readout and the pose above. {key} opens a box for this over the view.",
-  "heat.inspect.jump.hintDataFrame": "Coordinates are in the loaded data's own frame, as in its table - the same as the readout and the pose above. {key} opens a box for this over the view."
+  "heat.inspect.jump.hintDataFrame": "Coordinates are in the loaded data's own frame, as in its table - the same as the readout and the pose above. {key} opens a box for this over the view.",
+  "heat.inspect.latLon": "Lat / long"
 }

@@ -10,7 +10,7 @@
  * alpha, up, team colour.
  */
 
-import { KEY_F32, TRACK_U32 } from './store';
+import { TRACK_U32 } from './store';
 
 export const PLACE_WGSL = /* wgsl */ `
 struct U {
@@ -19,19 +19,20 @@ struct U {
   px : vec4<f32>,    // focal length in px (0: orthographic), px size when orthographic, min px, stale s
   lod : vec4<f32>,   // units a metre, scale at true size, full figure from px, figure (not dart) from px
   n : vec4<u32>,     // tracks, meshes, trail vertex room, most trail segments a unit
-  trail : vec4<f32>, // trail seconds (0: none)
+  trail : vec4<f32>, // trail seconds (0: none), weapon streak seconds (<0: weapons hidden), marker seconds, marker px
+  m : vec4<u32>,     // markers, 1 when every track is shown
 };
 @group(0) @binding(0) var<uniform> u : U;
 @group(0) @binding(1) var<storage, read> tracks : array<u32>;
-@group(0) @binding(2) var<storage, read> keysA : array<vec4<f32>>;
+@group(0) @binding(2) var<storage, read> keysA : array<vec2<u32>>;
 @group(0) @binding(3) var<storage, read> keysB : array<u32>;
 @group(0) @binding(4) var<storage, read> runs : array<vec2<u32>>;   // per mesh: first instance, room
 @group(0) @binding(5) var<storage, read_write> counts : array<atomic<u32>>;
 @group(0) @binding(6) var<storage, read_write> inst : array<vec4<f32>>;
 @group(0) @binding(7) var<storage, read_write> trail : array<vec4<f32>>;   // per vertex: position, then colour
+@group(0) @binding(8) var<storage, read> vis : array<u32>;   // a bit a track: shown
 
 const TRACK_U32 = ${TRACK_U32}u;
-const KEY_F32 = ${KEY_F32}u;
 
 fn unpackQ(v : u32) -> vec4<f32> {
   return vec4<f32>(
@@ -46,21 +47,36 @@ fn rot(q : vec4<f32>, v : vec3<f32>) -> vec3<f32> {
   return v + q.w * t + cross(q.xyz, t);
 }
 
+// The track's span, set per thread before its keys are read: origin, position step, first time, time step.
+var<private> spanO : vec3<f32>;
+var<private> spanStep : f32;
+var<private> spanT0 : f32;
+var<private> spanTS : f32;
+
+fn keyAt(j : u32) -> vec4<f32> {
+  let k = keysA[j];
+  return vec4<f32>(spanO + vec3<f32>(f32(k.x & 0xffffu), f32(k.x >> 16u), f32(k.y & 0xffffu)) * spanStep, spanT0 + f32(k.y >> 16u) * spanTS);
+}
+
+fn timeAt(j : u32) -> f32 {
+  return spanT0 + f32(keysA[j].y >> 16u) * spanTS;
+}
+
 fn vel(j : u32, first : u32, last : u32) -> vec3<f32> {
-  let o = keysA[j];
+  let o = keyAt(j);
   if (j > first && j < last) {
-    let p = keysA[j - 1u];
-    let n = keysA[j + 1u];
+    let p = keyAt(j - 1u);
+    let n = keyAt(j + 1u);
     let h0 = o.w - p.w;
     let h1 = n.w - o.w;
     return ((o.xyz - p.xyz) / h0) * (h1 / (h0 + h1)) + ((n.xyz - o.xyz) / h1) * (h0 / (h0 + h1));
   }
   if (j < last) {
-    let n = keysA[j + 1u];
+    let n = keyAt(j + 1u);
     return (n.xyz - o.xyz) / (n.w - o.w);
   }
   if (j > first) {
-    let p = keysA[j - 1u];
+    let p = keyAt(j - 1u);
     return (o.xyz - p.xyz) / (o.w - p.w);
   }
   return vec3<f32>(0.0);
@@ -99,25 +115,35 @@ fn square(f : vec3<f32>, u0 : vec3<f32>) -> vec3<f32> {
 }
 
 @compute @workgroup_size(64)
-fn place(@builtin(global_invocation_id) gid : vec3<u32>) {
-  let i = gid.x;
+fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups) nwg : vec3<u32>) {
+  // More than 65535 groups of 64 go in rows of them.
+  let i = gid.x + gid.y * nwg.x * 64u;
   if (i >= u.n.x) { return; }
   let b = i * TRACK_U32;
   let first = tracks[b];
   let count = tracks[b + 1u];
   let flags = tracks[b + 5u];
   let t = u.cam.w;
-  if (count == 0u || keysA[first].w > t) { return; }
+  if (count == 0u) { return; }
+  // Hidden by a team toggle or a filter; a weapon while weapons are off.
+  if (u.m.y == 0u && ((vis[i >> 5u] >> (i & 31u)) & 1u) == 0u) { return; }
+  let weapon = (flags & 4u) != 0u;
+  if (weapon && u.trail.y < 0.0) { return; }
+  spanO = vec3<f32>(bitcast<f32>(tracks[b + 8u]), bitcast<f32>(tracks[b + 9u]), bitcast<f32>(tracks[b + 10u]));
+  spanStep = bitcast<f32>(tracks[b + 11u]);
+  spanT0 = bitcast<f32>(tracks[b + 12u]);
+  spanTS = bitcast<f32>(tracks[b + 13u]);
+  if (timeAt(first) > t) { return; }
   let last = first + count - 1u;
   var lo = first;
   var hi = last + 1u;
   loop {
     if (hi - lo <= 1u) { break; }
     let mid = (lo + hi) >> 1u;
-    if (keysA[mid].w <= t) { lo = mid; } else { hi = mid; }
+    if (timeAt(mid) <= t) { lo = mid; } else { hi = mid; }
   }
   let k = lo;
-  let A0 = keysA[k];
+  let A0 = keyAt(k);
   var P : vec3<f32>;
   var V : vec3<f32>;
   var sP = 0.0;
@@ -128,7 +154,7 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>) {
     V = vel(k, first, last);
   } else {
     kb = k + 1u;
-    let A1 = keysA[k + 1u];
+    let A1 = keyAt(k + 1u);
     let h = A1.w - A0.w;
     let s = clamp((t - A0.w) / h, 0.0, 1.0);
     sP = s;
@@ -228,14 +254,15 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>) {
   let team = vec3<f32>(f32(c & 255u) / 255.0, f32((c >> 8u) & 255u) / 255.0, f32((c >> 16u) & 255u) / 255.0);
   inst[o + 3u] = vec4<f32>(team, 0.0);
 
-  // Its trail: from where it is back through its keys over the last seconds, fading with age.
-  let W = u.trail.x;
+  // Its trail: from where it is back through its keys over the last seconds, fading with age; a weapon's streak.
+  var W = u.trail.x;
+  if (weapon) { W = max(W, u.trail.y); }
   if (W <= 0.0) { return; }
   var segs = 1u;
   var j = k;
   loop {
     if (j <= first || segs >= u.n.w) { break; }
-    if (keysA[j].w < t - W) { break; }
+    if (timeAt(j) < t - W) { break; }
     j = j - 1u;
     segs = segs + 1u;
   }
@@ -245,7 +272,7 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>) {
   var ta = t;
   var kk = k;
   for (var n = 0u; n < segs; n = n + 1u) {
-    let key = keysA[kk];
+    let key = keyAt(kk);
     let v = (base + n * 2u) * 2u;
     trail[v] = vec4<f32>(a, 1.0);
     trail[v + 1u] = vec4<f32>(team, 0.8 * clamp(1.0 - (t - ta) / W, 0.0, 1.0));
@@ -254,6 +281,58 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>) {
     a = key.xyz;
     ta = key.w;
     if (kk > first) { kk = kk - 1u; }
+  }
+}
+`;
+
+/**
+ * Deaths as markers: each one dead within the last marker seconds a small
+ * cross in its team's colour, fading as it ages, kept some pixels big; its
+ * three lines go into the trail buffer, drawn with the trails.
+ */
+export const MARKS_WGSL = /* wgsl */ `
+struct U {
+  viewProj : mat4x4<f32>,
+  cam : vec4<f32>,
+  px : vec4<f32>,
+  lod : vec4<f32>,
+  n : vec4<u32>,
+  trail : vec4<f32>,
+  m : vec4<u32>,
+};
+@group(0) @binding(0) var<uniform> u : U;
+@group(0) @binding(1) var<storage, read> markPos : array<vec4<f32>>;   // x, y, z, time
+@group(0) @binding(2) var<storage, read> markColour : array<u32>;
+@group(0) @binding(3) var<storage, read_write> counts : array<atomic<u32>>;
+@group(0) @binding(4) var<storage, read_write> trail : array<vec4<f32>>;
+
+@compute @workgroup_size(64)
+fn marks(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups) nwg : vec3<u32>) {
+  let i = gid.x + gid.y * nwg.x * 64u;
+  if (i >= u.m.x) { return; }
+  let mk = markPos[i];
+  let age = u.cam.w - mk.w;
+  let W = u.trail.z;
+  if (age < 0.0 || age > W) { return; }
+  let clip = u.viewProj * vec4<f32>(mk.xyz, 1.0);
+  if (clip.w <= 0.0) { return; }
+  let ndc = clip.xy / clip.w;
+  if (abs(ndc.x) > 1.1 || abs(ndc.y) > 1.1) { return; }
+  var pxSize = u.px.y;
+  if (u.px.x > 0.0) { pxSize = distance(mk.xyz, u.cam.xyz) / u.px.x; }
+  let r = 0.5 * u.trail.w * pxSize;
+  let c = markColour[i];
+  let a = 0.95 * clamp(1.0 - age / W, 0.3, 1.0);
+  let col = vec4<f32>(f32(c & 255u) / 255.0, f32((c >> 8u) & 255u) / 255.0, f32((c >> 16u) & 255u) / 255.0, a);
+  let base = atomicAdd(&counts[u.n.y], 6u);
+  if (base + 6u > u.n.z) { return; }
+  let axes = array<vec3<f32>, 3>(vec3<f32>(r, 0.0, r), vec3<f32>(r, 0.0, -r), vec3<f32>(0.0, 1.4 * r, 0.0));
+  for (var k = 0u; k < 3u; k = k + 1u) {
+    let v = (base + k * 2u) * 2u;
+    trail[v] = vec4<f32>(mk.xyz - axes[k], 1.0);
+    trail[v + 1u] = col;
+    trail[v + 2u] = vec4<f32>(mk.xyz + axes[k], 1.0);
+    trail[v + 3u] = col;
   }
 }
 `;

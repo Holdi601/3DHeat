@@ -4,7 +4,8 @@ import { t } from '../../i18n';
 /** Groups the field chips are shown in. */
 const GROUPS: { id: string; fields: (f: string) => boolean }[] = [
   { id: 'who', fields: (f) => ['name', 'vehicle', 'team', 'kind'].includes(f) },
-  { id: 'relative', fields: (f) => ['range', 'bearing', 'aspect', 'closure'].includes(f) },
+  { id: 'relative', fields: (f) => ['range', 'bearing', 'relBearing', 'aspect', 'closure', 'losRate', 'bullseye'].includes(f) },
+  { id: 'place', fields: (f) => ['position', 'mgrs', 'magHeading'].includes(f) },
   { id: 'flight', fields: (f) => ['alt', 'agl', 'tas', 'ias', 'cas', 'gs', 'mach', 'vs', 'heading', 'hdm', 'course', 'pitch', 'roll', 'aoa', 'aos'].includes(f) },
   { id: 'energy', fields: (f) => ['g', 'gLong', 'gLat', 'turnRate', 'turnRadius', 'energy', 'energyRate'].includes(f) },
   { id: 'systems', fields: () => true },

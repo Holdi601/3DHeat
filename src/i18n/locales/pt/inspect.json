@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Não é legível como ponto. Use x, y, z ou x y z, p. ex. -321.6, 137.8, -59.9 ou -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "A guinada e a inclinação têm de ser números, em graus.",
   "heat.inspect.jump.hint": "As coordenadas são coordenadas do mundo, iguais às da leitura e da pose acima. {key} abre uma caixa para isto sobre a vista.",
-  "heat.inspect.jump.hintDataFrame": "As coordenadas estão no referencial próprio dos dados carregados, como na sua tabela - iguais às da leitura e da pose acima. {key} abre uma caixa para isto sobre a vista."
+  "heat.inspect.jump.hintDataFrame": "As coordenadas estão no referencial próprio dos dados carregados, como na sua tabela - iguais às da leitura e da pose acima. {key} abre uma caixa para isto sobre a vista.",
+  "heat.inspect.latLon": "Lat / long"
 }

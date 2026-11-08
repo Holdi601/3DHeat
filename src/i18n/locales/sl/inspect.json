@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Tega ni mogoče prebrati kot točko. Uporabite x, y, z ali x y z, npr. -321.6, 137.8, -59.9 ali -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Zasuk in naklon morata biti števili v stopinjah.",
   "heat.inspect.jump.hint": "Koordinate so svetovne, enake kot v prikazu kamere in v pozi zgoraj. {key} odpre polje za to nad pogledom.",
-  "heat.inspect.jump.hintDataFrame": "Koordinate so v lastnem sistemu naloženih podatkov, kot v njihovi tabeli - enake kot v prikazu kamere in v pozi zgoraj. {key} odpre polje za to nad pogledom."
+  "heat.inspect.jump.hintDataFrame": "Koordinate so v lastnem sistemu naloženih podatkov, kot v njihovi tabeli - enake kot v prikazu kamere in v pozi zgoraj. {key} odpre polje za to nad pogledom.",
+  "heat.inspect.latLon": "Šir. / dolž."
 }

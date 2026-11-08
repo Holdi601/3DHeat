@@ -170,6 +170,12 @@ export function buildGroupTable(
   return sign;
 }
 
+/**
+ * Why a column split cannot be drawn: the column is not in the dataset, it is
+ * not the kind the rule needs, or no value is on either side.
+ */
+export type SplitProblem = 'noColumn' | 'wrongKind' | 'noSides';
+
 /** The difference split, resolved against the dataset. */
 export interface SplitTable {
   mode: SplitMode;
@@ -178,6 +184,8 @@ export interface SplitTable {
   sign: Int8Array | null;
   positiveRange: [number, number];
   negativeRange: [number, number];
+  /** Set when the rule cannot be drawn; the split then draws nothing. */
+  problem: SplitProblem | null;
 }
 
 export const NO_SPLIT: SplitTable = {
@@ -186,15 +194,29 @@ export const NO_SPLIT: SplitTable = {
   sign: null,
   positiveRange: [0, 0],
   negativeRange: [0, 0],
+  problem: null,
 };
+
+/**
+ * A column split that cannot be drawn: mode 1 over no column.
+ *
+ * Draws nothing - both renderers skip a column split whose column they cannot
+ * read - and says why, so the panel can. It used to fall back to the group
+ * split, and a group split drawn under a column the user had just chosen is
+ * the one picture that looks like it worked: someone splitting kills by event
+ * saw the teams again and could not tell why.
+ */
+function unusableSplit(problem: SplitProblem): SplitTable {
+  return { ...NO_SPLIT, mode: 1, problem };
+}
 
 /**
  * The split rule as the shader needs it: a mode, the column whose per-row values
  * to read, and either a sign-per-category table or two ranges.
  *
- * A rule naming a column the dataset does not have falls back to groups rather
- * than rendering nothing, because a saved view outliving its dataset should
- * degrade rather than go blank.
+ * A rule that cannot be drawn - its column gone, the wrong kind, neither side
+ * chosen - draws nothing and carries the reason (`problem`), rather than
+ * quietly drawing the group split instead.
  */
 export function buildSplitTable(
   ds: Dataset | null,
@@ -203,10 +225,10 @@ export function buildSplitTable(
 ): SplitTable {
   if (!ds || rule.kind === 'teams') return NO_SPLIT;
   const attr = ds.attrs.find((a) => a.name === rule.column);
-  if (!attr) return NO_SPLIT;
+  if (!attr) return unusableSplit('noColumn');
 
   if (rule.kind === 'categories') {
-    if (attr.kind !== 'category' || !attr.categories) return NO_SPLIT;
+    if (attr.kind !== 'category' || !attr.categories) return unusableSplit('wrongKind');
     const n = attr.categories.length;
     const sign = reuse && reuse.length === n ? reuse : new Int8Array(n);
     const pos = new Set(rule.positive);
@@ -216,19 +238,20 @@ export function buildSplitTable(
       sign[i] = pos.has(i) ? 1 : neg.has(i) ? -1 : 0;
       if (sign[i] !== 0) any = true;
     }
-    // Neither side selected would reject every row and show an empty frame with
-    // no explanation; groups at least show something.
-    if (!any) return NO_SPLIT;
-    return { mode: 1, column: rule.column, sign, positiveRange: [0, 0], negativeRange: [0, 0] };
+    // Neither side selected rejects every row. Said so, rather than drawn as the
+    // group split: see `unusableSplit`.
+    if (!any) return unusableSplit('noSides');
+    return { mode: 1, column: rule.column, sign, positiveRange: [0, 0], negativeRange: [0, 0], problem: null };
   }
 
-  if (attr.kind !== 'number') return NO_SPLIT;
+  if (attr.kind !== 'number') return unusableSplit('wrongKind');
   return {
     mode: 2,
     column: rule.column,
     sign: null,
     positiveRange: normaliseRange(rule.positive),
     negativeRange: normaliseRange(rule.negative),
+    problem: null,
   };
 }
 
@@ -288,4 +311,94 @@ export function packSignTables(
     packed[width + i] = categories && i < categories.length ? categories[i] : 0;
   }
   return packed;
+}
+
+/** Rows on each side of the difference; see `splitSideCounts`. */
+export interface SideCounts {
+  positive: number;
+  negative: number;
+  /** False when only every so-many-th row was read and the totals scaled up. */
+  exact: boolean;
+}
+
+/**
+ * Rows on each side of the difference among rows `[rowLo, rowHi)`.
+ *
+ * By the rules the shader signs rows with - the filters, the group table, the
+ * split - and not by the view: the distance cull and the slice follow the
+ * camera, and a side's share of the data should not change because the camera
+ * moved. Reads every row up to `maxRows`, then every so-many-th one and scales
+ * up, which keeps a playing window's recount to a few milliseconds on any load.
+ */
+export function splitSideCounts(
+  ds: Dataset,
+  rowLo: number,
+  rowHi: number,
+  filters: ActiveFilter[],
+  teamSign: Int8Array | null,
+  split: SplitTable,
+  maxRows = 4_000_000,
+): SideCounts {
+  const lo = Math.max(0, rowLo);
+  const hi = Math.min(ds.count, rowHi);
+  const span = hi - lo;
+  if (span <= 0 || split.problem) return { positive: 0, negative: 0, exact: true };
+  const stride = Math.max(1, Math.ceil(span / Math.max(1, maxRows)));
+  const resolved = filters.map((f) => ({ f, data: filterColumnData(ds, f.column) }));
+  // A slot whose column is gone passes nothing, in the shader as here.
+  if (resolved.some((r) => !r.data)) return { positive: 0, negative: 0, exact: stride === 1 };
+  const splitData = split.mode !== 0 && split.column ? filterColumnData(ds, split.column) : null;
+  if (split.mode !== 0 && !splitData) return { positive: 0, negative: 0, exact: stride === 1 };
+  const team = ds.teamId;
+  let pos = 0;
+  let neg = 0;
+  rows: for (let i = lo; i < hi; i += stride) {
+    if (!Number.isFinite(ds.px[i])) continue;
+    for (const { f, data } of resolved) {
+      const v = data![i];
+      if (f.kind === 'range') {
+        if (!(v >= f.min && v <= f.max)) continue rows;
+      } else {
+        const c = Math.trunc(v);
+        if (!f.mask || c < 0 || c >= f.mask.length || f.mask[c] === 0) continue rows;
+      }
+    }
+    const g = team ? team[i] : 0;
+    const groupSign = teamSign && g < teamSign.length ? teamSign[g] : 1;
+    let sign = groupSign;
+    if (split.mode !== 0) {
+      if (groupSign === 0) continue;
+      const v = splitData![i];
+      if (split.mode === 1) {
+        const cat = Math.round(v);
+        sign = split.sign && cat >= 0 && cat < split.sign.length ? split.sign[cat] : 0;
+      } else {
+        sign =
+          v >= split.positiveRange[0] && v <= split.positiveRange[1]
+            ? 1
+            : v >= split.negativeRange[0] && v <= split.negativeRange[1]
+              ? -1
+              : 0;
+      }
+    }
+    if (sign > 0) pos++;
+    else if (sign < 0) neg++;
+  }
+  return { positive: pos * stride, negative: neg * stride, exact: stride === 1 };
+}
+
+/**
+ * Per-side weights that compare shares rather than counts.
+ *
+ * Each side is scaled as if it held half of all the rows on either side, so a
+ * side with five times the rows of the other no longer covers the picture by
+ * sheer number: the colour then says where each side is *proportionally* more
+ * common. The total weight is unchanged, so the exposure carries over. 1 and 1
+ * when either side is empty, since there is then no comparison to normalise.
+ */
+export function sideScales(counts: { positive: number; negative: number }): [number, number] {
+  const { positive, negative } = counts;
+  if (!(positive > 0 && negative > 0)) return [1, 1];
+  const half = (positive + negative) / 2;
+  return [half / positive, half / negative];
 }

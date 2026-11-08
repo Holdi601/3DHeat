@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { useStore } from '../../state/store';
-import { useReplayStore, type ChartKind } from '../../state/replayStore';
+import { useReplayStore, type ChartAxis, type ChartKind } from '../../state/replayStore';
 import { useAnimationFrame, useEngine } from '../EngineContext';
 import { t, useLang } from '../../i18n';
 import {
@@ -23,6 +23,9 @@ import {
   robustSpanOf,
   xyPath,
   zoomSpan,
+  cumulativeDistance,
+  interpolateAt,
+  timeAtValue,
 } from './charts';
 import './replay.css';
 
@@ -105,12 +108,27 @@ export function ChartDock() {
     return PARAMS.map((p) => p.id).filter((id) => s.has(id));
   }, [lines]);
 
+  // What the time and compare charts run along: time, or the distance flown (Tacview's X axis by distance).
+  const axis: ChartAxis = kind === 'xy' ? 'time' : chart.xAxis;
+  const along = useMemo(
+    () =>
+      lines.map((l) =>
+        axis === 'time' ? l.s.time : cumulativeDistance(l.s.time, l.s.x, l.s.y, l.s.z, axis === 'ground'),
+      ),
+    [lines, axis],
+  );
+  /** A time as the first line's place on the X axis, and back. */
+  const toX = (tm: number) => (axis === 'time' || !lines.length ? tm : interpolateAt(lines[0].s.time, along[0], tm));
+  const toTime = (x: number) => (axis === 'time' || !lines.length ? x : timeAtValue(lines[0].s.time, along[0], x));
+
   const plot = useMemo(() => {
     if (!lines.length) return null;
     const whole: [number, number] = [
-      Math.min(...lines.map((l) => l.s.time[0])),
-      Math.max(...lines.map((l) => l.s.time[l.s.time.length - 1])),
+      Math.min(...along.map((a) => a[0])),
+      Math.max(...along.map((a) => a[a.length - 1])),
     ];
+    // Distance has no respawn gaps of its own: the series is cut where time jumps instead.
+    const gap = axis === 'time' ? 10 : Infinity;
     const tSpan: [number, number] =
       zoom && zoom[0] >= whole[0] - 1 && zoom[1] <= whole[1] + 1 ? zoom : whole;
     if (kind === 'compare') {
@@ -127,7 +145,7 @@ export function ChartDock() {
         xs: tSpan,
         ys,
         paths: lines.map((l) => ({
-          d: l.s.values[id] ? linePath(l.s.time, l.s.values[id], w, h, tSpan, ys) : '',
+          d: l.s.values[id] ? linePath(along[lines.indexOf(l)], l.s.values[id], w, h, tSpan, ys, gap) : '',
           color: l.color,
         })),
       };
@@ -177,18 +195,18 @@ export function ChartDock() {
       scales,
       ids,
       paths: ids.map((id, i) => ({
-        d: linePath(l.s.time, l.s.values[id], w, h, tSpan, scales[i]),
+        d: linePath(along[0], l.s.values[id], w, h, tSpan, scales[i], gap),
         color: CHART_COLORS[i],
       })),
     };
-  }, [lines, kind, chart.param, chart.x, chart.y, graph, w, h, zoom]);
+  }, [lines, along, axis, kind, chart.param, chart.x, chart.y, graph, w, h, zoom]);
 
   useAnimationFrame(() => {
     if (!engine || !plot) return;
     const tNow = engine.live.playhead;
     if (marker.current) {
       const show = plot.kind !== 'xy';
-      const x = ((tNow - plot.xs[0]) / Math.max(1e-9, plot.xs[1] - plot.xs[0])) * w;
+      const x = ((toX(tNow) - plot.xs[0]) / Math.max(1e-9, plot.xs[1] - plot.xs[0])) * w;
       marker.current.setAttribute('x1', x.toFixed(1));
       marker.current.setAttribute('x2', x.toFixed(1));
       marker.current.style.display = show ? '' : 'none';
@@ -286,6 +304,22 @@ export function ChartDock() {
             {paramSelect(chart.x, (v) => set({ x: v }))}
           </>
         )}
+        {kind !== 'xy' && (
+          <select
+            value={chart.xAxis}
+            onChange={(e) => {
+              setZoom(null);
+              set({ xAxis: e.target.value as ChartAxis });
+            }}
+            title={t('replay.chart.axisTitle')}
+          >
+            {(['time', 'air', 'ground'] as ChartAxis[]).map((a) => (
+              <option key={a} value={a}>
+                {t(`replay.chart.axis.${a}`)}
+              </option>
+            ))}
+          </select>
+        )}
         <span className="spacer" />
         <button
           className="small"
@@ -352,7 +386,7 @@ export function ChartDock() {
             const r = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
             const x = ((e.clientX - r.left) / r.width) * W - PAD.l;
             if (x < 0 || x > w) return;
-            useStore.getState().seek(plot.xs[0] + (x / w) * (plot.xs[1] - plot.xs[0]));
+            useStore.getState().seek(toTime(plot.xs[0] + (x / w) * (plot.xs[1] - plot.xs[0])));
           }}
         >
           <defs>
@@ -379,7 +413,7 @@ export function ChartDock() {
                 <g key={`x${v}`}>
                   <line x1={x} x2={x} y1={0} y2={h} className="cd-grid" />
                   <text x={x} y={h + 15} textAnchor="middle" className="cd-tick">
-                    {xKind ? formatValue(xKind, v, units) : clock(v - start)}
+                    {xKind ? formatValue(xKind, v, units) : axis !== 'time' ? formatValue('distance', v, units) : clock(v - start)}
                   </text>
                 </g>
               );

@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Nelze přečíst jako bod. Použijte x, y, z nebo x y z, např. -321.6, 137.8, -59.9 nebo -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Stáčení a sklon musí být čísla ve stupních.",
   "heat.inspect.jump.hint": "Souřadnice jsou světové, stejné jako v údajích kamery a v poloze výše. {key} pro to otevře pole nad zobrazením.",
-  "heat.inspect.jump.hintDataFrame": "Souřadnice jsou ve vlastní soustavě načtených dat, jako v jejich tabulce - stejné jako v údajích kamery a v poloze výše. {key} pro to otevře pole nad zobrazením."
+  "heat.inspect.jump.hintDataFrame": "Souřadnice jsou ve vlastní soustavě načtených dat, jako v jejich tabulce - stejné jako v údajích kamery a v poloze výše. {key} pro to otevře pole nad zobrazením.",
+  "heat.inspect.latLon": "Šířka / délka"
 }

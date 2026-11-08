@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "madhësi reale",
   "heat.teamPanel.weapons": "Armë, të shtëna dhe goditje",
-  "heat.teamPanel.weaponsTitle": "Armë në fluturim me tym, gjurmues, përplasje, goditje dhe rrëzime. Gjurmuesit e nxjerrë nga një goditje janë me vija të ndërprera."
+  "heat.teamPanel.weaponsTitle": "Armë në fluturim me tym, gjurmues, përplasje, goditje dhe rrëzime. Gjurmuesit e nxjerrë nga një goditje janë me vija të ndërprera.",
+  "heat.timeline.reverseKey": "Luaj mbrapsht ({key})",
+  "heat.heatPanel.followExposure": "Ndiq pamjen",
+  "heat.heatPanel.followExposureHint": "Mat sërish ekspozimin sa herë që kamera ndalon, që një zonë ku fluturon brenda të përdorë gjithë shkallën e nxehtësisë në vend të shkallës së matur për gjithë hartën. Ndryshimet e vogla shpërfillen dhe shkalla rrëshqet në vend që të kërcejë. Hiqe shenjën për ta kyçur shkallën dhe për të krahasuar vende në një shkallë të vetme; edhe tërheqja e pikës së ngopjes e kyç atë.",
+  "heat.heatPanel.zoomInvariant": "E njëjta dendësi në çdo zmadhim",
+  "heat.heatPanel.zoomInvariantHint": "Një ngjyrë do të thotë i njëjti numër rreshtash për njësi sipërfaqeje toke, sado afër të jesh. Një sprite që kufijtë e pikselëve e zmadhojnë (nga larg) ose e zvogëlojnë (nga afër) ruan nxehtësinë që do të shtonte madhësia e tij e vërtetë, ndaj një pamje e ekspozuar nga larg nuk zbehet më kur fluturon brenda saj. Kur është i çaktivizuar, një sprite i kufizuar shton gjithë peshën e vet në madhësinë e kufizuar.",
+  "heat.splitPanel.sides": "Rreshta në dritare: <b>+</b> {plus} · <b>−</b> {minus}",
+  "heat.splitPanel.sidesApprox": "Rreshta në dritare: <b>+</b> rreth {plus} · <b>−</b> rreth {minus} (numëruar nga një mostër)",
+  "heat.splitPanel.noSides": "Asnjë vlerë nuk është në asnjërën anë, ndaj diferenca nuk vizaton asgjë. Vendos të paktën një vlerë në <b>+</b> ose <b>−</b>.",
+  "heat.splitPanel.wrongKind": "{column} nuk mund të ndahet në këtë mënyrë, ndaj diferenca nuk vizaton asgjë. Zgjidhe sërish kolonën.",
+  "heat.splitPanel.positiveEmpty": "Asnjë rresht në dritare nuk është në anën <b>+</b>, ndaj vizatohet vetëm ana <b>−</b>: pamja nuk është diferencë.",
+  "heat.splitPanel.negativeEmpty": "Asnjë rresht në dritare nuk është në anën <b>−</b>, ndaj vizatohet vetëm ana <b>+</b>: pamja nuk është diferencë.",
+  "heat.splitPanel.skipped": "Kolona e ndarjes nuk u nxu në kujtesën e GPU-së për {skipped} nga {total} blloqe rreshtash, dhe ato rreshta nuk vizatohen. Rrite buxhetin e GPU-së te Performanca → Buxhetet e burimeve, ose ngarko më pak rreshta.",
+  "heat.splitPanel.shares": "Krahaso përqindjet, jo sasitë",
+  "heat.splitPanel.sharesHint": "Peshon secilën anë me një pjesëtuar me numrin e vet të rreshtave, që një anë me pesëfish më shumë rreshta të mos e mbulojë më hartën vetëm me numër. Ngjyra tregon atëherë ku secila anë është proporcionalisht më e shpeshtë se tjetra.",
+  "heat.teamsList.columnSplitHint": "Diferenca ndahet sipas <b>{column}</b>, ndaj grupet këtu vendosin vetëm çfarë vizatohet, jo në cilën anë numërohen."
 }

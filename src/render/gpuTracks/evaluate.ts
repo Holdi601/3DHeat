@@ -10,7 +10,7 @@
  * velocity (fully above 40 m/s, not below 25), its up axis kept square to it.
  */
 
-import { FLAG_AIR, FLAG_ATTITUDE, KEY_F32, TRACK_U32, type GpuTrackStore } from './store';
+import { decodeKey, FLAG_AIR, FLAG_ATTITUDE, TRACK_U32, type GpuTrackStore } from './store';
 
 export interface TrackPose {
   x: number;
@@ -54,87 +54,88 @@ const qb = [0, 0, 0, 1];
 const va = [0, 0, 0];
 const vb = [0, 0, 0];
 
-function velocity(k: KeysView, j: number, first: number, last: number, out: number[]): void {
-  const A = k.a;
-  const o = j * KEY_F32;
+const K0 = [0, 0, 0, 0];
+const K1 = [0, 0, 0, 0];
+const KP = [0, 0, 0, 0];
+const KN = [0, 0, 0, 0];
+
+/** The velocity at key `j` (decoded into `at`), the three-point estimate from its neighbours. */
+function velocity(s: GpuTrackStore, b: number, j: number, at: number[], first: number, last: number, out: number[]): void {
   if (j > first && j < last) {
-    const p = o - KEY_F32;
-    const n = o + KEY_F32;
-    const h0 = A[o + 3] - A[p + 3];
-    const h1 = A[n + 3] - A[o + 3];
+    decodeKey(s, b, j - 1, KP);
+    decodeKey(s, b, j + 1, KN);
+    const h0 = at[3] - KP[3];
+    const h1 = KN[3] - at[3];
     const w0 = h1 / (h0 + h1);
     const w1 = h0 / (h0 + h1);
-    for (let c = 0; c < 3; c++) out[c] = ((A[o + c] - A[p + c]) / h0) * w0 + ((A[n + c] - A[o + c]) / h1) * w1;
+    for (let c = 0; c < 3; c++) out[c] = ((at[c] - KP[c]) / h0) * w0 + ((KN[c] - at[c]) / h1) * w1;
   } else if (j < last) {
-    const n = o + KEY_F32;
-    const h = A[n + 3] - A[o + 3];
-    for (let c = 0; c < 3; c++) out[c] = (A[n + c] - A[o + c]) / h;
+    decodeKey(s, b, j + 1, KN);
+    const h = KN[3] - at[3];
+    for (let c = 0; c < 3; c++) out[c] = (KN[c] - at[c]) / h;
   } else if (j > first) {
-    const p = o - KEY_F32;
-    const h = A[o + 3] - A[p + 3];
-    for (let c = 0; c < 3; c++) out[c] = (A[o + c] - A[p + c]) / h;
+    decodeKey(s, b, j - 1, KP);
+    const h = at[3] - KP[3];
+    for (let c = 0; c < 3; c++) out[c] = (at[c] - KP[c]) / h;
   } else out[0] = out[1] = out[2] = 0;
-}
-
-interface KeysView {
-  a: Float32Array;
-  b: Uint32Array;
 }
 
 /** Track `i` at time `t` into `out`; false when it is not there (before its first key, or `stale` s past its last). */
 export function evaluateTrack(s: GpuTrackStore, i: number, t: number, stale: number, out: TrackPose): boolean {
   const T = s.trackData;
-  const first = T[i * TRACK_U32];
-  const count = T[i * TRACK_U32 + 1];
-  const flags = T[i * TRACK_U32 + 5];
-  const A = s.keysA;
+  const b = i * TRACK_U32;
+  const first = T[b];
+  const count = T[b + 1];
+  const flags = T[b + 5];
   const last = first + count - 1;
-  if (count === 0 || A[first * KEY_F32 + 3] > t) return false;
+  if (count === 0) return false;
+  const f32 = new Float32Array(T.buffer, T.byteOffset, T.length);
+  const t0 = f32[b + 12];
+  const ts = f32[b + 13];
+  const timeOf = (j: number) => t0 + (s.keysA[j * 2 + 1] >>> 16) * ts;
+  if (timeOf(first) > t) return false;
   // The last key at or before t.
   let lo = first;
   let hi = last + 1;
   while (hi - lo > 1) {
     const mid = (lo + hi) >> 1;
-    if (A[mid * KEY_F32 + 3] <= t) lo = mid;
+    if (timeOf(mid) <= t) lo = mid;
     else hi = mid;
   }
   const k = lo;
   out.key = k;
-  const view = { a: A, b: s.keysB };
-  const o0 = k * KEY_F32;
+  decodeKey(s, b, k, K0);
   let sP = 0;
   if (k === last) {
-    if (t - A[o0 + 3] > stale) return false;
-    out.x = A[o0];
-    out.y = A[o0 + 1];
-    out.z = A[o0 + 2];
-    velocity(view, k, first, last, va);
+    if (t - K0[3] > stale) return false;
+    out.x = K0[0];
+    out.y = K0[1];
+    out.z = K0[2];
+    velocity(s, b, k, K0, first, last, va);
     out.vx = va[0];
     out.vy = va[1];
     out.vz = va[2];
   } else {
-    const o1 = o0 + KEY_F32;
-    const h = A[o1 + 3] - A[o0 + 3];
-    const s = Math.min(1, Math.max(0, (t - A[o0 + 3]) / h));
-    sP = s;
-    velocity(view, k, first, last, va);
-    velocity(view, k + 1, first, last, vb);
-    const cx = A[o1] - A[o0], cy = A[o1 + 1] - A[o0 + 1], cz = A[o1 + 2] - A[o0 + 2];
+    decodeKey(s, b, k + 1, K1);
+    const h = K1[3] - K0[3];
+    const sv = Math.min(1, Math.max(0, (t - K0[3]) / h));
+    sP = sv;
+    velocity(s, b, k, K0, first, last, va);
+    velocity(s, b, k + 1, K1, first, last, vb);
+    const cx = K1[0] - K0[0], cy = K1[1] - K0[1], cz = K1[2] - K0[2];
     const cap = 1.5 * Math.hypot(cx, cy, cz);
     let m0 = Math.hypot(va[0], va[1], va[2]) * h;
     let m1 = Math.hypot(vb[0], vb[1], vb[2]) * h;
-    const k0 = m0 > cap ? (cap / m0) * h : h;
-    const k1 = m1 > cap ? (cap / m1) * h : h;
-    m0 = k0;
-    m1 = k1;
-    const s2 = s * s, s3 = s2 * s;
-    const h00 = 2 * s3 - 3 * s2 + 1, h10 = s3 - 2 * s2 + s, h01 = -2 * s3 + 3 * s2, h11 = s3 - s2;
-    const d00 = 6 * s2 - 6 * s, d10 = 3 * s2 - 4 * s + 1, d11 = 3 * s2 - 2 * s;
+    m0 = m0 > cap ? (cap / m0) * h : h;
+    m1 = m1 > cap ? (cap / m1) * h : h;
+    const s2 = sv * sv, s3 = s2 * sv;
+    const h00 = 2 * s3 - 3 * s2 + 1, h10 = s3 - 2 * s2 + sv, h01 = -2 * s3 + 3 * s2, h11 = s3 - s2;
+    const d00 = 6 * s2 - 6 * sv, d10 = 3 * s2 - 4 * sv + 1, d11 = 3 * s2 - 2 * sv;
+    const C = [cx, cy, cz];
     const P = [0, 0, 0];
     const V = [0, 0, 0];
-    const C = [cx, cy, cz];
     for (let c = 0; c < 3; c++) {
-      P[c] = h00 * A[o0 + c] + h10 * va[c] * m0 + h01 * A[o1 + c] + h11 * vb[c] * m1;
+      P[c] = h00 * K0[c] + h10 * va[c] * m0 + h01 * K1[c] + h11 * vb[c] * m1;
       V[c] = (d00 * -C[c] + d10 * va[c] * m0 + d11 * vb[c] * m1) / h;
     }
     out.x = P[0];

@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Non leggibile come punto. Usa x, y, z oppure x y z, ad es. -321.6, 137.8, -59.9 oppure -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Imbardata e beccheggio devono essere numeri, in gradi.",
   "heat.inspect.jump.hint": "Le coordinate sono coordinate del mondo, le stesse della lettura e della posa qui sopra. {key} apre una casella per questo sopra la vista.",
-  "heat.inspect.jump.hintDataFrame": "Le coordinate sono nel sistema proprio dei dati caricati, come nella loro tabella - le stesse della lettura e della posa qui sopra. {key} apre una casella per questo sopra la vista."
+  "heat.inspect.jump.hintDataFrame": "Le coordinate sono nel sistema proprio dei dati caricati, come nella loro tabella - le stesse della lettura e della posa qui sopra. {key} apre una casella per questo sopra la vista.",
+  "heat.inspect.latLon": "Lat / long"
 }

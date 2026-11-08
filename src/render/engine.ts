@@ -7,12 +7,15 @@ import { HEAT_RESPONSE_CODE, snapshot, useStore, type HeatSettings } from '../st
 import { raceClock, raceHover, replayLength, useRaceStore, type RaceState } from '../state/raceStore';
 import { RaceScene } from '../race/scene';
 import { BoardScene, templateOf } from '../tactics/scene';
+import { VehicleStage } from '../vehicle/stage';
 import { FigureReplay } from '../figures/replay';
 import { EffectLayer } from '../figures/effects';
 import { emptySample, MotionModel, MotionRefiner } from '../figures/motion';
 import { WeaponLayer } from './weapons';
-import { gpuTrackStore, type GpuTrackStore } from './gpuTracks/store';
+import { gpuTrackStore, registeredGpuTrackStore, rowOfKey, TRACK_U32, type GpuTrackStore } from './gpuTracks/store';
 import { emptyPose, evaluateTrack } from './gpuTracks/evaluate';
+import { isShown, rayNearTrack, trackTimes, trackVisibility } from './gpuTracks/visibility';
+import { markerSeconds } from '../overlay/lean/leanState';
 import type { FigureBatch } from '../figures/instances';
 import { VertexBuffer } from '../race/geometry';
 import { useReplayStore } from '../state/replayStore';
@@ -43,7 +46,9 @@ import type { DrawnRows } from './pick';
 import { lookAtDistance, lookAtPitch, type Vec3 } from './pose';
 import { useInspectStore } from '../state/inspectStore';
 import { effectiveGpuBudget } from './budget';
-import { buildActiveFilters, frameSignTables } from './filterTables';
+import { buildActiveFilters, frameSignTables, sideScales, splitSideCounts, type SideCounts, type SplitTable } from './filterTables';
+import { ExposureFollower } from './exposureFollow';
+import { publishSplitStatus } from '../state/splitStatus';
 import {
   MAX_PLAN_SPRITES,
   SAMPLE_BLOCK,
@@ -313,6 +318,17 @@ export class Engine {
   private autoExposePending = 0;
   /** The filters the exposure was last metered for: a change meters it again. */
   private meteredFilters: FilterSpec[] | null = null;
+  /** Re-meters the exposure when the camera comes to rest; see `followExposure`. */
+  private readonly follower = new ExposureFollower();
+  /** A follow reading is in flight; another is not started until it lands. */
+  private followMetering = false;
+  /** Rows on each side of the difference, and what they were counted for. */
+  private sideCounts: SideCounts = { positive: 0, negative: 0, exact: true };
+  private sideCountsKey = '';
+  private sideCountsRange: [number, number] = [0, 0];
+  private sideCountsAt = 0;
+  /** Chunks the last splat left out for want of the split's column, of how many. */
+  private splitChunks = { skipped: 0, total: 0 };
   /** Last projection seen from the store, to tell a UI change from a camera one. */
   private lastStoreProjection: Projection | null = null;
   /** Splat scale in force for the current frame; see `heatGain`. */
@@ -443,6 +459,8 @@ export class Engine {
   private raceWasTab = false;
   /** The tactics board's geometry, and where on the level the pointer is while a board tool wants it. */
   private readonly boardScene = new BoardScene();
+  /** The vehicle heatmap's figure and its turntable. */
+  private readonly vehicleStage = new VehicleStage();
   /** Box replay as figures. */
   private readonly figureReplay = new FigureReplay();
   /** Smokes, fires and the bomb from the event rows, in box replay. */
@@ -915,11 +933,84 @@ export class Engine {
     return result;
   }
 
+  /**
+   * Meter the field for the view the camera has come to rest on, and hand the
+   * reading to the follower, which glides to it unless it is close to the
+   * current saturation or the camera has moved since. See `ExposureFollower`.
+   */
+  private async followExposure(generation: number): Promise<void> {
+    const renderer = this.renderer;
+    if (!renderer || !this.dataset) return;
+    this.followMetering = true;
+    try {
+      const samples = await renderer.readHeatField(EXPOSURE_SAMPLES);
+      const gain = this.currentGain();
+      if (samples && gain !== 1) {
+        for (let i = 0; i < samples.length; i++) samples[i] /= gain;
+      }
+      const result = autoExposure(samples);
+      const heat = useStore.getState().heat;
+      if (result.saturation !== null && heat.followExposure) {
+        this.follower.propose(generation, heat.saturation, result.saturation, performance.now());
+      }
+    } finally {
+      this.followMetering = false;
+    }
+  }
+
+  /**
+   * Rows on each side of the difference over the time window, and the per-side
+   * weights that follow from them.
+   *
+   * Counted again when what decides a row's side changes, and at most four
+   * times a second while only the window moves - a playing window moves every
+   * frame, and the weights barely change from one frame to the next. Returns
+   * [1, 1] unless each side is to be normalised to its own total.
+   */
+  private updateSideCounts(
+    now: number,
+    difference: boolean,
+    shares: boolean,
+    timeLo: number,
+    timeHi: number,
+    filters: ActiveFilter[],
+    teamSign: Int8Array | null,
+    split: SplitTable,
+  ): [number, number] {
+    const ds = this.dataset;
+    if (!ds || !difference) return [1, 1];
+    const key = [
+      ds.id,
+      teamSign ? teamSign.join(',') : '',
+      `${split.mode}:${split.column ?? ''}:${split.sign ? split.sign.join(',') : ''}:${split.positiveRange}:${split.negativeRange}:${split.problem ?? ''}`,
+      filters.map((f) => f.key).join(';'),
+    ].join('|');
+    const range = candidateRange(ds, timeLo, timeHi);
+    const moved = range[0] !== this.sideCountsRange[0] || range[1] !== this.sideCountsRange[1];
+    if (key !== this.sideCountsKey || (moved && now - this.sideCountsAt > 250)) {
+      this.sideCounts = splitSideCounts(ds, range[0], range[1], filters, teamSign, split);
+      this.sideCountsKey = key;
+      this.sideCountsRange = range;
+      this.sideCountsAt = now;
+    }
+    if (!shares) return [1, 1];
+    // Quantised, so a playing window's slowly drifting counts do not restart the
+    // accumulation every time they move a fraction of a per cent.
+    const q = (v: number) => Math.exp(Math.round(Math.log(v) * 50) / 50);
+    const [p, n] = sideScales(this.sideCounts);
+    return [q(p), q(n)];
+  }
+
   /** Fit the data to the view. Keeps the current orientation by default. */
   frameDataset(keepOrientation = true): void {
     const race = useRaceStore.getState();
     if (race.tab === 'race' && race.laps.length) {
       this.camera.frame(this.toDisplay(raceBounds(race)), snapshot().camera.fov, keepOrientation);
+      return;
+    }
+    if (race.tab === 'vehicle') {
+      const aspect = Math.max(1, this.canvas.clientWidth) / Math.max(1, this.canvas.clientHeight);
+      this.vehicleStage.frameCamera(this.camera, snapshot().camera.fov, aspect, this.mirror, keepOrientation);
       return;
     }
     if (race.tab === 'plan') {
@@ -1026,7 +1117,16 @@ export class Engine {
     let best = -1;
     let bestT = Infinity;
     const f32 = new Float32Array(st.trackData.buffer, st.trackData.byteOffset, st.trackData.length);
+    const oa = [o.x, o.y, o.z];
+    const da = [dir.x, dir.y, dir.z];
+    // Near enough to matter: the longest figure at true size, or the pixel minimum at the box's distance.
+    const fixed = 200 * p.scale + (p.focalPx > 0 ? 0 : Math.max(p.minPixels, 8) * p.orthoPx);
+    const perDistance = p.focalPx > 0 ? Math.max(p.minPixels, 8) / p.focalPx : 0;
     for (let i = 0; i < st.tracks; i++) {
+      if (!isShown(p.visible ?? null, i)) continue;
+      const [ta, tb] = trackTimes(st, i);
+      if (p.t < ta || p.t > tb + p.stale) continue;
+      if (!rayNearTrack(st, i, oa, da, fixed, perDistance)) continue;
       if (!evaluateTrack(st, i, p.t, p.stale, pose)) continue;
       const dx = pose.x - o.x;
       const dy = pose.y - o.y;
@@ -1035,7 +1135,7 @@ export class Engine {
       if (along <= 0 || along > bestT) continue;
       const off = Math.hypot(dx - dir.x * along, dy - dir.y * along, dz - dir.z * along);
       // Its drawn half length: true size, or the pixel minimum at that distance.
-      const longest = f32[i * 8 + 4];
+      const longest = f32[i * TRACK_U32 + 4];
       const px = p.focalPx > 0 ? along / p.focalPx : p.orthoPx;
       const half = Math.max(longest * p.scale, p.minPixels * px) / 2;
       if (off <= Math.max(half, 4 * px)) {
@@ -1058,10 +1158,13 @@ export class Engine {
     const d = this.dataset;
     const max = renderer.gpuTracksMaxBytes ?? 0;
     if (!d || !max || !d.time || !d.personId) return null;
+    // An overlay loaded straight into tracks (overlay/lean): drawn from them whatever its size.
+    const lean = registeredGpuTrackStore(d);
+    if (lean) return lean;
     const force = gpuTracksForced();
     if (force === false || (d.personLabels.length < GPU_TRACKS_FROM && !force)) return null;
-    if (s.team.session >= 0 && d.sessionId) return null;
-    return gpuTrackStore(d, { maxKeys: Math.floor(max / 16) });
+    if (s.team.session >= 0 && d.sessionId && d.sessionLabels.length > 1) return null;
+    return gpuTrackStore(d, { maxKeys: Math.floor(max / 8) });
   }
 
   /**
@@ -1093,6 +1196,9 @@ export class Engine {
       dartPx: this.dartPx,
       triangleBudget: 40_000_000,
       trailSeconds: s.team.trailSeconds,
+      visible: this.dataset ? trackVisibility(store, this.dataset, s.teamVisibility, s.filters) : null,
+      weapons: s.team.weapons ? 1.5 : 0,
+      markerSeconds: markerSeconds(),
     };
     // The units in question, on the CPU.
     const r = useReplayStore.getState();
@@ -1106,9 +1212,14 @@ export class Engine {
       const i = store.trackOf[p] ?? -1;
       if (i < 0 || !evaluateTrack(store, i, t, s.timeline.defaultLifetime, pose)) continue;
       const f = pose.f;
-      tracks.push({ person: p, row: store.keyRow[pose.key], x: pose.x, y: pose.y, z: pose.z, yaw: Math.atan2(f[0], -f[2]), pitch: Math.asin(Math.max(-1, Math.min(1, f[1]))), q: null });
+      tracks.push({ person: p, row: rowOfKey(store, i, pose.key), x: pose.x, y: pose.y, z: pose.z, yaw: Math.atan2(f[0], -f[2]), pitch: Math.asin(Math.max(-1, Math.min(1, f[1]))), q: null });
     }
     this.liveTracks = tracks;
+  }
+
+  /** The largest buffer the GPU tracks may use on this backend, bytes (0: none). */
+  get gpuTracksMaxBytes(): number {
+    return this.renderer?.gpuTracksMaxBytes ?? 0;
   }
 
   /** The GPU tracks' state for the stats: units, keys, reduction, bytes, build time. */
@@ -1561,19 +1672,22 @@ export class Engine {
     // The selected session's span, not the whole file's. See `playbackRange`.
     const range = playbackRange(this.dataset, s.mode, s.team.session);
     const playing = s.timeline.playing && !!this.dataset;
+    // Played backwards as Tacview's reverse playback: the same, from the end towards the start.
+    const back = !!s.timeline.reverse;
     if (playing && !this.wasPlaying) {
       // Starting from the end restarts, the way every media player does. Without
       // this, pressing Play after a run to the end looks like a dead button.
       const span = range[1] - range[0];
-      if (span > 0 && this.playhead >= range[1] - span * 1e-4) this.playhead = range[0];
+      if (span > 0 && !back && this.playhead >= range[1] - span * 1e-4) this.playhead = range[0];
+      if (span > 0 && back && this.playhead <= range[0] + span * 1e-4) this.playhead = range[1];
     }
     if (playing) {
-      this.playhead += dt * s.timeline.speed;
-      if (this.playhead > range[1]) {
+      this.playhead += dt * s.timeline.speed * (back ? -1 : 1);
+      if (this.playhead > range[1] || this.playhead < range[0]) {
         if (s.timeline.loop) {
-          this.playhead = range[0];
+          this.playhead = back ? range[1] : range[0];
         } else {
-          this.playhead = range[1];
+          this.playhead = back ? range[0] : range[1];
           useStore.getState().setPlaying(false);
         }
       }
@@ -1583,7 +1697,9 @@ export class Engine {
     // The tactics board draws its own scene over the level, as the race tab does,
     // and no heat: everything that skips the heat for the race skips it for the board.
     const boardTab = race.tab === 'plan';
-    const raceTab = race.tab === 'race' || boardTab;
+    // The vehicle heatmap too: its own scene, one figure, no heat of the data and no level.
+    const vehicleTab = race.tab === 'vehicle';
+    const raceTab = race.tab === 'race' || boardTab || vehicleTab;
     if (raceTab !== this.raceWasTab) {
       this.raceWasTab = raceTab;
       this.chase = null;
@@ -1591,7 +1707,11 @@ export class Engine {
     }
     let raceBuilt: ReturnType<RaceScene['build']> | null = null;
     let raceChanged = false;
-    if (boardTab) {
+    if (vehicleTab) {
+      const [frame, changed] = this.vehicleStage.build(this.dataset, s.heat.scheme);
+      raceBuilt = { ...frame, cars: new Map() };
+      raceChanged = changed;
+    } else if (boardTab) {
       const [frame, changed] = this.buildBoard(dt);
       raceBuilt = { ...frame, cars: new Map() };
       raceChanged = changed;
@@ -1635,6 +1755,10 @@ export class Engine {
     }
     this.camera.gamepad = s.camera.gamepad;
     if (!raceTab) this.followTrack(s);
+    if (vehicleTab) {
+      if (this.vehicleStage.takeFrameRequest()) this.frameDataset(false);
+      this.vehicleStage.orbit(this.camera, dt, this.mirror);
+    }
     this.viewNear = this.nearForView(s.camera.near, s, raceTab);
     // Out of a cockpit the unit's own figure is clipped away, as Tacview hides it.
     if (this.rigNear > 0) this.viewNear = Math.max(this.viewNear, this.rigNear);
@@ -1743,6 +1867,16 @@ export class Engine {
     // The person filter is one of these: a slot over the person ids, so the heat
     // shows the selected people as the box replay does.
     const activeFilters = buildActiveFilters(this.dataset, s.filters, this.filterCache);
+    const splitScale = this.updateSideCounts(
+      now,
+      heatMode === 'heat-difference' && !raceTab && s.mode !== 'team',
+      s.heat.splitShares,
+      timeLo,
+      rowsHi,
+      activeFilters,
+      teamSign,
+      split,
+    );
     // A filter can take what is drawn from every position to a hundred kills -
     // a density orders of magnitude lower, which the saturation metered for
     // all of it would leave all but invisible. Meter again, as on a load.
@@ -1853,6 +1987,8 @@ export class Engine {
       h.falloff,
       h.minPixelRadius,
       h.maxPixelRadius,
+      // Whether a clamped sprite keeps its heat changes every clamped sprite.
+      h.zoomInvariant ? 1 : 0,
       h.groundProjected ? 1 : 0,
       h.smoothRamp ? 1 : 0,
       // The units the accumulation buffer is written in.
@@ -1883,6 +2019,8 @@ export class Engine {
       // The split decides which rows contribute and with what sign, so a change
       // invalidates accumulated heat outright.
       `${split.mode}:${split.column ?? ''}:${split.sign ? split.sign.join(',') : ''}:${split.positiveRange.join(',')}:${split.negativeRange.join(',')}`,
+      // Each side's weight, when the sides are normalised to their totals.
+      splitScale.join(','),
       // Switching between all/play or changing the expiry rule invalidates the
       // accumulated field outright, so these belong here rather than in the
       // window signature that only triggers a blend.
@@ -2407,6 +2545,7 @@ export class Engine {
         floor: Math.max(0, Math.min(1, h.floor)),
         minPixelRadius: h.minPixelRadius,
         maxPixelRadius: h.maxPixelRadius,
+        zoomInvariant: h.zoomInvariant,
         groundProjected: h.groundProjected,
         groundY,
         signed: heatMode === 'heat-difference',
@@ -2457,6 +2596,7 @@ export class Engine {
       splitSign: split.sign,
       splitPositive: split.positiveRange,
       splitNegative: split.negativeRange,
+      splitScale,
       filters: activeFilters,
       cubes,
       cubeCount,
@@ -2470,8 +2610,8 @@ export class Engine {
       // Not over a world backdrop: the grid and the axes lie at height 0, which
       // is sea level there, and drawn on the sea they fight it for depth far
       // off and show as dashed lines across the water.
-      showGrid: s.showGrid && !onEarth(s.level),
-      showAxes: s.showAxes && !onEarth(s.level),
+      showGrid: s.showGrid && (vehicleTab || !onEarth(s.level)),
+      showAxes: s.showAxes && !vehicleTab && !onEarth(s.level),
       gridSpacing,
       gridExtent,
       trailVerts,
@@ -2482,7 +2622,7 @@ export class Engine {
       gpuTracks: !raceBuilt && s.mode === 'team' ? this.gpuTracksParams : null,
       overlayVerts,
       overlayVertCount,
-      level: buildLevelDraw(s.level),
+      level: vehicleTab ? null : buildLevelDraw(s.level),
       // Auto-focus uses whatever the view was last framed on, which is the only
       // distance the camera can honestly claim to be looking at.
       dof:
@@ -2524,6 +2664,32 @@ export class Engine {
     if (this.autoExposePending > 0 && this.dataset) {
       this.autoExposePending--;
       if (this.autoExposePending === 0) void this.autoExpose();
+    }
+    // Following the view: meter again once the camera has come to rest, and
+    // glide to the result. Heat modes only - the box replay has no field.
+    const follow = !raceTab && s.mode !== 'team' && !!this.dataset && h.followExposure;
+    const due = this.follower.frame(cameraMoved, follow);
+    if (due !== null && !this.followMetering && this.autoExposePending === 0) void this.followExposure(due);
+    const glide = this.follower.value(now);
+    if (glide !== null) useStore.getState().patchHeat({ saturation: glide });
+    // What the split drew, for the panel: the rows on each side, and chunks left
+    // out because the split's column could not be put on the GPU for them.
+    if (heatMode === 'heat-difference' && !raceTab && s.mode !== 'team') {
+      // Read only after a frame that splatted: a composite-only frame leaves
+      // the renderer's count from the last splat and draws no chunks itself.
+      if (!compositeOnly) {
+        this.splitChunks = {
+          skipped: split.mode !== 0 && !split.problem ? (renderer.splitSkippedChunks ?? 0) : 0,
+          total: plan.length,
+        };
+      }
+      publishSplitStatus({
+        positive: this.sideCounts.positive,
+        negative: this.sideCounts.negative,
+        exact: this.sideCounts.exact,
+        skippedChunks: this.splitChunks.skipped,
+        chunks: this.splitChunks.total,
+      });
     }
     // An idle frame did not rebuild the cubes, so report the count still on
     // screen rather than the 0 it computed.

@@ -83,8 +83,8 @@ export interface RaceReplay {
 }
 
 export interface RaceState {
-  /** Which tab the sidebar shows; `match` is the CS2 match analysis over the heatmap. */
-  tab: 'heat' | 'race' | 'match' | 'plan';
+  /** Which tab the sidebar shows; `match` is the CS2 match analysis over the heatmap, `vehicle` the hits on one vehicle. */
+  tab: 'heat' | 'race' | 'match' | 'plan' | 'vehicle';
   laps: LapTrace[];
   /** lap id -> hidden. */
   hidden: Record<string, boolean>;
@@ -107,7 +107,7 @@ export interface RaceState {
   /** Laps of several courses were picked: which to load. Null otherwise. */
   courses: CourseChoice[] | null;
 
-  setTab: (tab: 'heat' | 'race' | 'match' | 'plan') => void;
+  setTab: (tab: 'heat' | 'race' | 'match' | 'plan' | 'vehicle') => void;
   /** The car files loaded, one a game. */
   carPacks: CarPack[];
   setCarPacks: (packs: CarPack[]) => void;

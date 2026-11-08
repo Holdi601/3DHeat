@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import type { AttributeColumn, Dataset, FilterSpec } from '../state/types';
+import type { AttributeColumn, Dataset, FilterSpec, SplitRule } from '../state/types';
 import {
   PERSON_FILTER_COLUMN,
   buildActiveFilters,
   filterColumnData,
   filterSlots,
+  buildSplitTable,
   frameSignTables,
   packSignTables,
+  sideScales,
+  splitSideCounts,
 } from './filterTables';
 import { FILTER_MASK_CAPACITY, MAX_FILTER_SLOTS, type ActiveFilter } from './types';
 import { HEAT_VS, LINE_HEAT_VS } from './webgl2/shaders';
@@ -30,6 +33,7 @@ function dataset(people = 5): Dataset {
   ];
   return {
     count: 6,
+    px: new Float32Array(6),
     teamId: new Uint16Array([0, 1, 2, 0, 1, 2]),
     teamLabels: ['red', 'blue', 'green'],
     personId: new Uint32Array([0, 1, 2, 3, 4, 0]),
@@ -190,5 +194,101 @@ describe('the heat shaders', () => {
   it('size the filter masks for the person filter', () => {
     expect(HEAT_VS).toContain(`c >= ${FILTER_MASK_CAPACITY}`);
     expect(HEAT_WGSL).toContain(`FILTER_MASK_CAPACITY : u32 = ${FILTER_MASK_CAPACITY}u`);
+  });
+});
+
+describe('a column split that cannot be drawn', () => {
+  // The defect: each of these fell back to the group split, so a difference
+  // split by a column the user had just chosen drew the teams instead.
+  it('draws nothing when neither side has a value, and says why', () => {
+    const t = buildSplitTable(dataset(), { kind: 'categories', column: 'build', positive: [], negative: [] });
+    expect(t.problem).toBe('noSides');
+    // Mode 1 over no column: both renderers skip such a chunk.
+    expect(t.mode).toBe(1);
+    expect(t.column).toBeNull();
+  });
+
+  it('draws nothing for a column that is gone or of the wrong kind', () => {
+    expect(buildSplitTable(dataset(), { kind: 'categories', column: 'gone', positive: [0], negative: [1] }).problem).toBe('noColumn');
+    expect(buildSplitTable(dataset(), { kind: 'range', column: 'build', positive: [0, 1], negative: [1, 2] }).problem).toBe('wrongKind');
+    expect(buildSplitTable(dataset(), { kind: 'categories', column: 'speed', positive: [0], negative: [1] }).problem).toBe('wrongKind');
+  });
+
+  it('keeps the group table visibility-only, so no team split appears', () => {
+    const { teamSign, split } = frameSignTables(
+      dataset(),
+      'heat-difference',
+      [0],
+      [1, 2],
+      {},
+      [],
+      { kind: 'categories', column: 'build', positive: [], negative: [] },
+      scratch(),
+    );
+    expect(split.mode).not.toBe(0);
+    expect([...teamSign!]).toEqual([1, 1, 1]);
+  });
+
+  it('draws one side alone when only one side has values', () => {
+    const t = buildSplitTable(dataset(), { kind: 'categories', column: 'build', positive: [2], negative: [] });
+    expect(t.problem).toBeNull();
+    expect([...t.sign!]).toEqual([0, 0, 1]);
+  });
+});
+
+describe('rows on each side of the difference', () => {
+  const rule: SplitRule = { kind: 'categories', column: 'build', positive: [0], negative: [1, 2] };
+
+  it('counts by the split, and the groups still decide who is drawn', () => {
+    const ds = dataset();
+    const { teamSign, split } = frameSignTables(ds, 'heat-difference', [], [], { 2: false }, [], rule, scratch());
+    // Rows: build a,b,c,a,b,c in groups 0,1,2,0,1,2; group 2 hidden.
+    expect(splitSideCounts(ds, 0, 6, [], teamSign, split)).toEqual({ positive: 2, negative: 2, exact: true });
+    // The window bounds the rows.
+    expect(splitSideCounts(ds, 0, 3, [], teamSign, split)).toEqual({ positive: 1, negative: 1, exact: true });
+  });
+
+  it('applies the filters and the group split', () => {
+    const ds = dataset();
+    const filters = buildActiveFilters(ds, [{ kind: 'range', column: 'speed', min: 1, max: 3 }]);
+    const cols = frameSignTables(ds, 'heat-difference', [], [], {}, [], rule, scratch());
+    expect(splitSideCounts(ds, 0, 6, filters, cols.teamSign, cols.split)).toEqual({ positive: 1, negative: 2, exact: true });
+    const groups = frameSignTables(ds, 'heat-difference', [0], [1], {}, [], { kind: 'teams' }, scratch());
+    expect(splitSideCounts(ds, 0, 6, [], groups.teamSign, groups.split)).toEqual({ positive: 2, negative: 2, exact: true });
+  });
+
+  it('samples a large window and scales up', () => {
+    const ds = dataset();
+    const { teamSign, split } = frameSignTables(ds, 'heat-difference', [], [], {}, [], rule, scratch());
+    const c = splitSideCounts(ds, 0, 6, [], teamSign, split, 3);
+    expect(c.exact).toBe(false);
+    // Every second row: a, c, b -> one positive, two negative, times two.
+    expect(c).toEqual({ positive: 2, negative: 4, exact: false });
+  });
+
+  it('counts nothing for a split that cannot be drawn', () => {
+    const ds = dataset();
+    const split = buildSplitTable(ds, { kind: 'categories', column: 'build', positive: [], negative: [] });
+    expect(splitSideCounts(ds, 0, 6, [], null, split)).toEqual({ positive: 0, negative: 0, exact: true });
+  });
+
+  it('weights each side to half the total when comparing shares', () => {
+    // Five times as many on one side: each then weighs as if it held half.
+    const [p, n] = sideScales({ positive: 500, negative: 100 });
+    expect(p * 500).toBeCloseTo(300);
+    expect(n * 100).toBeCloseTo(300);
+    expect(sideScales({ positive: 10, negative: 0 })).toEqual([1, 1]);
+  });
+});
+
+describe('the heat shaders, for the split and the zoom', () => {
+  it('scale each side and never fall back to the group split', () => {
+    for (const src of [HEAT_VS, LINE_HEAT_VS]) expect(src).toContain('uSideScale.x : uSideScale.y');
+    for (const src of [HEAT_WGSL, LINE_HEAT_WGSL]) expect(src).toContain('sgn * u.teamCfg.z');
+  });
+
+  it('keeps the heat of a clamped point sprite when asked', () => {
+    expect(HEAT_VS).toContain('vFade = fade * ratio * ratio;');
+    expect(HEAT_WGSL).toContain('out.fade = out.fade * ratio * ratio;');
   });
 });

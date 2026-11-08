@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Nepavyksta perskaityti kaip taško. Naudokite x, y, z arba x y z, pvz., -321.6, 137.8, -59.9 arba -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Posūkis ir polinkis turi būti skaičiai, laipsniais.",
   "heat.inspect.jump.hint": "Koordinatės yra pasaulio koordinatės, tokios pačios kaip rodmenyse ir aukščiau esančioje pozoje. {key} atidaro tam skirtą lauką virš vaizdo.",
-  "heat.inspect.jump.hintDataFrame": "Koordinatės pateikiamos pačių įkeltų duomenų sistemoje, kaip jų lentelėje - tokios pačios kaip rodmenyse ir aukščiau esančioje pozoje. {key} atidaro tam skirtą lauką virš vaizdo."
+  "heat.inspect.jump.hintDataFrame": "Koordinatės pateikiamos pačių įkeltų duomenų sistemoje, kaip jų lentelėje - tokios pačios kaip rodmenyse ir aukščiau esančioje pozoje. {key} atidaro tam skirtą lauką virš vaizdo.",
+  "heat.inspect.latLon": "Platuma / ilguma"
 }

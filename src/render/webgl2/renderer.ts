@@ -1900,6 +1900,7 @@ export class Webgl2Renderer implements Renderer {
 
     const weight = params.sampleWeight * params.heatGain;
     if (params.plan.length === 0) {
+      this.splitSkippedChunks = 0;
       // Nothing to splat. A partial frame still has to fold its (empty) estimate
       // in, or the history would not decay and a stale field would persist.
       if (!direct) this.mergeHeat(alpha);
@@ -1935,6 +1936,7 @@ export class Webgl2Renderer implements Renderer {
     u.i1('uPerspective', params.perspective ? 1 : 0);
     u.f1('uRadius', params.heat.radius);
     u.f2('uPixelClamp', params.heat.minPixelRadius, params.heat.maxPixelRadius);
+    u.i1('uConserve', params.heat.zoomInvariant ? 1 : 0);
     u.i1('uTexMask', ROW_TEX_WIDTH - 1);
     u.i1('uTexShift', ROW_TEX_SHIFT);
     u.i1('uBlockShift', BLOCK_SHIFT);
@@ -1982,6 +1984,7 @@ export class Webgl2Renderer implements Renderer {
     u.i1('uSignWidth', this.teamSignWidth);
     u.f2('uSplitPos', params.splitPositive[0], params.splitPositive[1]);
     u.f2('uSplitNeg', params.splitNegative[0], params.splitNegative[1]);
+    u.f2('uSideScale', params.splitScale[0], params.splitScale[1]);
     if (filters.some((f) => f.kind === 'categories')) {
       gl.activeTexture(gl.TEXTURE0 + 4 + MAX_FILTER_SLOTS);
       gl.bindTexture(gl.TEXTURE_2D, this.ensureFilterMask(filters));
@@ -2049,10 +2052,26 @@ export class Webgl2Renderer implements Renderer {
     }
     let drawn = 0;
     let sprites = 0;
+    let splitSkipped = 0;
     for (const plan of params.plan) {
       const chunk = this.chunks[plan.chunk];
       if (!chunk || plan.blockCount === 0) continue;
       const blocks = Math.min(plan.blockCount, MAX_BLOCKS);
+
+      // The split column rides the same per-chunk, per-column value textures the
+      // filters use, so a column split costs one lazily uploaded 4-bytes-per-row
+      // texture and nothing else. Without it - the column could not be put on
+      // the GPU for this chunk, or the split has no column it can draw - the
+      // chunk is left out and counted, not drawn with the group split: that
+      // silently showed a team split under a column someone had just chosen.
+      const splitTex =
+        params.splitMode !== 0 && params.splitColumn
+          ? this.filterTexture(plan.chunk, params.splitColumn, filters)
+          : null;
+      if (params.splitMode !== 0 && !splitTex) {
+        splitSkipped++;
+        continue;
+      }
 
       gl.activeTexture(gl.TEXTURE1);
       gl.bindTexture(gl.TEXTURE_2D, this.blockTex);
@@ -2111,7 +2130,7 @@ export class Webgl2Renderer implements Renderer {
       const modes = new Int32Array(MAX_FILTER_SLOTS);
       for (let i = 0; i < MAX_FILTER_SLOTS; i++) {
         const f = filters[i];
-        const tex = f ? this.filterTexture(plan.chunk, f.column) : null;
+        const tex = f ? this.filterTexture(plan.chunk, f.column, filters, params.splitColumn) : null;
         gl.activeTexture(gl.TEXTURE0 + 4 + i);
         gl.bindTexture(gl.TEXTURE_2D, tex ?? this.ensureDummy());
         modes[i] = tex ? (f!.kind === 'range' ? 1 : 2) : 0;
@@ -2119,24 +2138,9 @@ export class Webgl2Renderer implements Renderer {
       const modeLoc = u.loc('uFilterMode[0]') ?? u.loc('uFilterMode');
       if (modeLoc) gl.uniform1iv(modeLoc, modes);
 
-      // The split column rides the same per-chunk, per-column value textures the
-      // filters use, so a column split costs one lazily uploaded 4-bytes-per-row
-      // texture and nothing else.
-      let splitMode = params.splitMode;
-      if (splitMode !== 0) {
-        const tex = params.splitColumn
-          ? this.filterTexture(plan.chunk, params.splitColumn)
-          : null;
-        // No texture means the column is not resident for this chunk; fall back
-        // to the group split rather than signing every row from a dummy texture.
-        if (!tex) splitMode = 0;
-        gl.activeTexture(gl.TEXTURE0 + 6 + MAX_FILTER_SLOTS);
-        gl.bindTexture(gl.TEXTURE_2D, tex ?? this.ensureDummy());
-      } else {
-        gl.activeTexture(gl.TEXTURE0 + 6 + MAX_FILTER_SLOTS);
-        gl.bindTexture(gl.TEXTURE_2D, this.ensureDummy());
-      }
-      u.i1('uSplitMode', splitMode);
+      gl.activeTexture(gl.TEXTURE0 + 6 + MAX_FILTER_SLOTS);
+      gl.bindTexture(gl.TEXTURE_2D, splitTex ?? this.ensureDummy());
+      u.i1('uSplitMode', params.splitMode);
 
       u.f3('uAabbMin', chunk.aabbMin[0], chunk.aabbMin[1], chunk.aabbMin[2]);
       u.f3('uAabbSize', chunk.aabbSize[0], chunk.aabbSize[1], chunk.aabbSize[2]);
@@ -2161,11 +2165,15 @@ export class Webgl2Renderer implements Renderer {
     this.heatDebug.mode = params.accumMode;
     this.heatDebug.draws = drawn;
     this.heatDebug.sprites = sprites;
+    this.splitSkippedChunks = splitSkipped;
     if (GL_CHECK) this.heatDebug.error = gl.getError();
   }
 
   /** What the last heat pass did, for diagnosing a heatmap that is not there. */
   readonly heatDebug = { mode: '', draws: 0, sprites: 0, error: 0 };
+
+  /** See `Renderer.splitSkippedChunks`. */
+  splitSkippedChunks = 0;
 
   /**
    * Fold the scratch estimate into the accumulator: `acc = acc*(1-a) + scratch*a`.
@@ -2302,7 +2310,12 @@ export class Webgl2Renderer implements Renderer {
    * ones: it keeps the shader to a single sampler type, and a float32 represents
    * every integer below 2^24 exactly, far more categories than are usable.
    */
-  private filterTexture(chunkIndex: number, column: string): WebGLTexture | null {
+  private filterTexture(
+    chunkIndex: number,
+    column: string,
+    inUse: readonly ActiveFilter[] = [],
+    splitColumn: string | null = null,
+  ): WebGLTexture | null {
     const key = `${chunkIndex}:${column}`;
     const hit = this.filterTextures.get(key);
     if (hit) return hit;
@@ -2318,6 +2331,15 @@ export class Webgl2Renderer implements Renderer {
     if (rows <= 0) return null;
     const texHeight = Math.ceil(rows / ROW_TEX_WIDTH);
     const cost = ROW_TEX_WIDTH * texHeight * 4;
+    // Every column ever filtered or split on stays resident until the dataset
+    // changes, so a budget that has filled up is mostly columns nobody is using
+    // any more. Those go first, before a column in use is refused.
+    if (this.gpuBytesUsed + cost > this.gpuBudgetBytes) {
+      const keep = new Set(inUse.map((f) => f.column));
+      keep.add(column);
+      if (splitColumn) keep.add(splitColumn);
+      this.evictFilterTextures(keep, cost);
+    }
     if (this.gpuBytesUsed + cost > this.gpuBudgetBytes) return null;
 
     const data = new Float32Array(ROW_TEX_WIDTH * texHeight);
@@ -2335,6 +2357,24 @@ export class Webgl2Renderer implements Renderer {
     this.filterTextures.set(key, tex);
     this.gpuBytesUsed += cost;
     return tex;
+  }
+
+  /**
+   * Free per-row column textures for columns outside `keep` until `need` more
+   * bytes fit in the budget, or there is nothing left to free.
+   */
+  private evictFilterTextures(keep: ReadonlySet<string>, need: number): void {
+    const gl = this.gl;
+    for (const [key, tex] of this.filterTextures) {
+      if (this.gpuBytesUsed + need <= this.gpuBudgetBytes) return;
+      const column = key.slice(key.indexOf(':') + 1);
+      if (keep.has(column)) continue;
+      const chunkIndex = Number(key.slice(0, key.indexOf(':')));
+      const rows = Math.min(CHUNK_ROWS, (this.dataset?.count ?? 0) - chunkIndex * CHUNK_ROWS);
+      gl.deleteTexture(tex);
+      this.filterTextures.delete(key);
+      this.gpuBytesUsed -= ROW_TEX_WIDTH * Math.ceil(Math.max(0, rows) / ROW_TEX_WIDTH) * 4;
+    }
   }
 
   /**

@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Kan inte läsas som en punkt. Använd x, y, z eller x y z, t.ex. -321.6, 137.8, -59.9 eller -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Gir och nick måste vara tal, i grader.",
   "heat.inspect.jump.hint": "Koordinaterna är världskoordinater, samma som i kameravisningen och kameraläget ovan. {key} öppnar en ruta för detta över vyn.",
-  "heat.inspect.jump.hintDataFrame": "Koordinaterna är i inlästa datas egen ram, som i dess tabell - samma som i kameravisningen och kameraläget ovan. {key} öppnar en ruta för detta över vyn."
+  "heat.inspect.jump.hintDataFrame": "Koordinaterna är i inlästa datas egen ram, som i dess tabell - samma som i kameravisningen och kameraläget ovan. {key} öppnar en ruta för detta över vyn.",
+  "heat.inspect.latLon": "Lat / long"
 }

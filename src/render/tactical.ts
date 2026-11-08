@@ -211,6 +211,9 @@ interface Columns {
   locked: AttributeColumn[];
   focused: AttributeColumn | null;
   engage: { mode: Float32Array | null; range: Float32Array; vertical: Float32Array | null }[];
+  /** Where the pilot looks, against the unit's axes (PilotHeadYaw, PilotHeadPitch, or a head or view yaw and pitch). */
+  headYaw: Float32Array | null;
+  headPitch: Float32Array | null;
   /** Hex object id (as ACMI writes it) -> person. */
   byId: Map<string, number>;
   any: boolean;
@@ -282,10 +285,12 @@ function columnsOf(d: Dataset): Columns {
     locked,
     focused: cat('FocusedTarget'),
     engage,
+    headYaw: num('PilotHeadYaw') ?? num('HeadYaw') ?? num('ViewYaw') ?? num('LookYaw'),
+    headPitch: num('PilotHeadPitch') ?? num('HeadPitch') ?? num('ViewPitch') ?? num('LookPitch'),
     byId,
     any: false,
   };
-  c.any = !!(c.radarRange || c.lockAz || locked.length || c.focused || engage.length);
+  c.any = !!(c.radarRange || c.lockAz || locked.length || c.focused || engage.length || c.headYaw);
   colCache.set(d, c);
   return c;
 }
@@ -295,13 +300,36 @@ export function tacticalColumns(d: Dataset): {
   radar: boolean;
   locks: boolean;
   engagement: boolean;
+  sight: boolean;
 } {
   const c = columnsOf(d);
   return {
     radar: !!c.radarRange,
     locks: !!(c.locked.length || c.focused || c.lockAz),
     engagement: c.engage.length > 0,
+    sight: !!c.headYaw,
   };
+}
+
+/**
+ * What a unit has locked at a row: the persons it names (LockedTarget..9)
+ * and, where it names none, the lock's range along its angles (metres), as
+ * the lock lines are drawn.
+ */
+export function locksAt(d: Dataset, row: number): { persons: number[]; range: number; az: number; el: number } | null {
+  const cols = columnsOf(d);
+  if (row < 0 || !(cols.locked.length || cols.lockAz)) return null;
+  if (fin(cols.lockMode, row, 1) === 0) return null;
+  const persons: number[] = [];
+  for (const col of cols.locked) {
+    const id = (col.categories?.[(col.data as Uint32Array)[row]] ?? '').trim().toLowerCase();
+    const other = id ? cols.byId.get(id) : undefined;
+    if (other !== undefined) persons.push(other);
+  }
+  const range = fin(cols.lockRange, row);
+  const az = fin(cols.lockAz, row);
+  if (!persons.length && !(range > 0 && Number.isFinite(az))) return null;
+  return { persons, range, az, el: fin(cols.lockEl, row, 0) };
 }
 
 const fin = (a: Float32Array | null, row: number, d = NaN) => {
@@ -484,6 +512,16 @@ export class TacticalLayer {
 
       const row = tr.row;
       if (row < 0 || !cols.any) continue;
+
+      // ---- the pilot's line of sight, along the head's yaw and pitch
+      if (cols.headYaw && inScope(aids.pilotSight, tr)) {
+        const hy = fin(cols.headYaw, row);
+        if (Number.isFinite(hy)) {
+          const dir = bodyDirection(axesNow(), hy, fin(cols.headPitch, row, 0));
+          const len = Math.max(300, aids.vectorSeconds * 150) * k;
+          this.dashed(p, [p[0] + dir[0] * len, p[1] + dir[1] * len, p[2] + dir[2] * len], [0.4, 0.95, 1], 0.85, len / 24);
+        }
+      }
 
       // ---- radar cone and range gate
       if (cols.radarRange && inScope(aids.radar, tr)) {

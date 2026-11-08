@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "無法辨識為點。請使用 x, y, z 或 x y z，例如 -321.6, 137.8, -59.9 或 -321,6 137,8 -59,9。",
   "heat.inspect.jump.badAngle": "偏航與俯仰必須是以度為單位的數字。",
   "heat.inspect.jump.hint": "座標為世界座標，與讀數及上方的姿態相同。{key} 會在檢視上開啟輸入框。",
-  "heat.inspect.jump.hintDataFrame": "座標位於已載入資料本身的座標系中，與其表格一致，也與讀數及上方的姿態相同。{key} 會在檢視上開啟輸入框。"
+  "heat.inspect.jump.hintDataFrame": "座標位於已載入資料本身的座標系中，與其表格一致，也與讀數及上方的姿態相同。{key} 會在檢視上開啟輸入框。",
+  "heat.inspect.latLon": "緯度 / 經度"
 }

@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "valódi méret",
   "heat.teamPanel.weapons": "Fegyverek, lövések és találatok",
-  "heat.teamPanel.weaponsTitle": "Repülő fegyverek füsttel, nyomjelzők, becsapódások, találatok és megsemmisítések. A találatból kikövetkeztetett nyomjelzők szaggatottak."
+  "heat.teamPanel.weaponsTitle": "Repülő fegyverek füsttel, nyomjelzők, becsapódások, találatok és megsemmisítések. A találatból kikövetkeztetett nyomjelzők szaggatottak.",
+  "heat.timeline.reverseKey": "Lejátszás visszafelé ({key})",
+  "heat.heatPanel.followExposure": "Nézet követése",
+  "heat.heatPanel.followExposureHint": "Újraméri az expozíciót minden alkalommal, amikor a kamera megáll, így egy terület, ahová berepülsz, a teljes hőskálát használja a teljes térképre mért skála helyett. A kis változásokat figyelmen kívül hagyja, és a skála ugrás helyett folyamatosan változik. Kapcsold ki, ha rögzítenéd a skálát, és egy skálán hasonlítanál össze helyeket; a telítési pont húzása is rögzíti.",
+  "heat.heatPanel.zoomInvariant": "Azonos sűrűség minden nagyításnál",
+  "heat.heatPanel.zoomInvariantHint": "Egy szín ugyanannyi sort jelent területegységnyi talajon, akármilyen közel vagy. Az a sprite, amelyet a pixelkorlátok felnagyítanak (messziről) vagy lekicsinyítenek (közelről), megtartja azt a hőt, amelyet valódi mérete adna, így a messziről exponált kép már nem halványul el, amikor belerepülsz. Kikapcsolva a korlátozott sprite teljes súlyát adja hozzá korlátozott méretében.",
+  "heat.splitPanel.sides": "<b>+</b> {plus} sor · <b>−</b> {minus} sor az ablakban",
+  "heat.splitPanel.sidesApprox": "<b>+</b> kb. {plus} sor · <b>−</b> kb. {minus} sor az ablakban (mintából számolva)",
+  "heat.splitPanel.noSides": "Egyik oldalon sincs érték, ezért a különbség semmit sem rajzol. Tegyél legalább egy értéket a <b>+</b> vagy a <b>−</b> oldalra.",
+  "heat.splitPanel.wrongKind": "A(z) {column} oszlop így nem osztható fel, ezért a különbség semmit sem rajzol. Válaszd ki újra az oszlopot.",
+  "heat.splitPanel.positiveEmpty": "Az ablakban egyetlen sor sincs a <b>+</b> oldalon, ezért csak a <b>−</b> oldal rajzolódik ki: a kép nem különbség.",
+  "heat.splitPanel.negativeEmpty": "Az ablakban egyetlen sor sincs a <b>−</b> oldalon, ezért csak a <b>+</b> oldal rajzolódik ki: a kép nem különbség.",
+  "heat.splitPanel.skipped": "A felosztó oszlop {total} sorblokkból {skipped} esetén nem fért el a GPU-memóriában, és ezek a sorok nem rajzolódnak ki. Emeld a GPU-keretet a Teljesítmény → Erőforráskeretek alatt, vagy tölts be kevesebb sort.",
+  "heat.splitPanel.shares": "Arányok összevetése darabszámok helyett",
+  "heat.splitPanel.sharesHint": "Minden oldalt egy osztva a saját sorszámával súlyoz, így egy ötször annyi sort tartalmazó oldal már nem pusztán a mennyiségével borítja be a térképet. A szín ekkor azt mutatja, hol gyakoribb az egyik oldal arányaiban a másiknál.",
+  "heat.teamsList.columnSplitHint": "A különbség a(z) <b>{column}</b> szerint van felosztva, így az itteni csoportok csak azt döntik el, mi rajzolódik ki, azt nem, hogy melyik oldalon számítanak."
 }

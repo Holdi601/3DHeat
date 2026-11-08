@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "No es pot llegir com a punt. Fes servir x, y, z o x y z, p. ex. -321.6, 137.8, -59.9 o -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "La guinyada i el capcineig han de ser nombres, en graus.",
   "heat.inspect.jump.hint": "Les coordenades són coordenades del món, les mateixes que la lectura i la posició de dalt. {key} obre un quadre per a això sobre la vista.",
-  "heat.inspect.jump.hintDataFrame": "Les coordenades són al marc propi de les dades carregades, com a la seva taula - les mateixes que la lectura i la posició de dalt. {key} obre un quadre per a això sobre la vista."
+  "heat.inspect.jump.hintDataFrame": "Les coordenades són al marc propi de les dades carregades, com a la seva taula - les mateixes que la lectura i la posició de dalt. {key} obre un quadre per a això sobre la vista.",
+  "heat.inspect.latLon": "Lat / long"
 }

@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "tamaño real",
   "heat.teamPanel.weapons": "Armas, disparos e impactos",
-  "heat.teamPanel.weaponsTitle": "Armas en vuelo con humo, trazadoras, impactos, alcances y derribos. Las trazadoras deducidas de un impacto van discontinuas."
+  "heat.teamPanel.weaponsTitle": "Armas en vuelo con humo, trazadoras, impactos, alcances y derribos. Las trazadoras deducidas de un impacto van discontinuas.",
+  "heat.timeline.reverseKey": "Reproducir hacia atrás ({key})",
+  "heat.heatPanel.followExposure": "Seguir la vista",
+  "heat.heatPanel.followExposureHint": "Vuelve a medir la exposición cada vez que la cámara se detiene, para que una región en la que entras volando use toda la rampa de calor en lugar de la escala medida para todo el mapa. Los cambios pequeños se ignoran y la escala se desliza en vez de saltar. Desmárcalo para fijar la escala y comparar lugares en una misma escala; arrastrar el punto de saturación también la fija.",
+  "heat.heatPanel.zoomInvariant": "Misma densidad con cualquier zoom",
+  "heat.heatPanel.zoomInvariantHint": "Un color significa el mismo número de filas por área de suelo, estés tan cerca como estés. Un sprite que los límites de píxeles agrandan (de lejos) o encogen (de cerca) conserva el calor que aportaría su tamaño real, de modo que una imagen expuesta desde lejos ya no se desvanece al volar hacia ella. Desactivado, un sprite limitado aporta todo su peso con su tamaño limitado.",
+  "heat.splitPanel.sides": "<b>+</b> {plus} filas · <b>−</b> {minus} filas en la ventana",
+  "heat.splitPanel.sidesApprox": "<b>+</b> unas {plus} filas · <b>−</b> unas {minus} filas en la ventana (contadas a partir de una muestra)",
+  "heat.splitPanel.noSides": "Ningún valor está en ninguno de los lados, por lo que la diferencia no dibuja nada. Pon al menos un valor en <b>+</b> o <b>−</b>.",
+  "heat.splitPanel.wrongKind": "{column} no se puede dividir de esta forma, por lo que la diferencia no dibuja nada. Vuelve a elegir la columna.",
+  "heat.splitPanel.positiveEmpty": "Ninguna fila de la ventana está en el lado <b>+</b>, por lo que solo se dibuja el lado <b>−</b>: la imagen no es una diferencia.",
+  "heat.splitPanel.negativeEmpty": "Ninguna fila de la ventana está en el lado <b>−</b>, por lo que solo se dibuja el lado <b>+</b>: la imagen no es una diferencia.",
+  "heat.splitPanel.skipped": "La columna de división no cupo en la memoria de la GPU en {skipped} de {total} bloques de filas, y esas filas no se dibujan. Sube el presupuesto de GPU en Rendimiento → Presupuestos de recursos o carga menos filas.",
+  "heat.splitPanel.shares": "Comparar proporciones, no recuentos",
+  "heat.splitPanel.sharesHint": "Pondera cada lado por uno entre su propio número de filas, para que un lado con cinco veces más filas ya no cubra el mapa solo por cantidad. El color muestra entonces dónde cada lado es proporcionalmente más frecuente que el otro.",
+  "heat.teamsList.columnSplitHint": "La diferencia se divide por <b>{column}</b>, así que los grupos de aquí solo deciden qué se dibuja, no en qué lado cuentan."
 }

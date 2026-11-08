@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "taille réelle",
   "heat.teamPanel.weapons": "Armes, tirs et coups au but",
-  "heat.teamPanel.weaponsTitle": "Armes en vol avec fumée, traçantes, impacts, coups au but et destructions. Les traçantes déduites d’un coup au but sont en pointillés."
+  "heat.teamPanel.weaponsTitle": "Armes en vol avec fumée, traçantes, impacts, coups au but et destructions. Les traçantes déduites d’un coup au but sont en pointillés.",
+  "heat.timeline.reverseKey": "Lecture arrière ({key})",
+  "heat.heatPanel.followExposure": "Suivre la vue",
+  "heat.heatPanel.followExposureHint": "Remesure l’exposition chaque fois que la caméra s’immobilise, pour qu’une région dans laquelle vous entrez en vol utilise toute la rampe de chaleur au lieu de l’échelle mesurée pour toute la carte. Les petits changements sont ignorés et l’échelle glisse au lieu de sauter. Décochez cette option pour figer l’échelle et comparer des endroits sur une même échelle ; faire glisser le point de saturation la fige aussi.",
+  "heat.heatPanel.zoomInvariant": "Même densité à tout niveau de zoom",
+  "heat.heatPanel.zoomInvariantHint": "Une couleur correspond au même nombre de lignes par surface de sol, quelle que soit votre distance. Un sprite que les limites en pixels agrandissent (de loin) ou réduisent (de près) garde la chaleur qu’apporterait sa taille réelle : une image exposée de loin ne pâlit plus quand vous volez vers elle. Désactivé, un sprite limité ajoute tout son poids à sa taille limitée.",
+  "heat.splitPanel.sides": "<b>+</b> {plus} lignes · <b>−</b> {minus} lignes dans la fenêtre",
+  "heat.splitPanel.sidesApprox": "<b>+</b> environ {plus} lignes · <b>−</b> environ {minus} lignes dans la fenêtre (compté sur un échantillon)",
+  "heat.splitPanel.noSides": "Aucune valeur n’est d’un côté ou de l’autre, la différence ne dessine donc rien. Placez au moins une valeur sur <b>+</b> ou <b>−</b>.",
+  "heat.splitPanel.wrongKind": "{column} ne peut pas être répartie ainsi, la différence ne dessine donc rien. Choisissez à nouveau la colonne.",
+  "heat.splitPanel.positiveEmpty": "Aucune ligne de la fenêtre n’est du côté <b>+</b>, seul le côté <b>−</b> est donc dessiné : l’image n’est pas une différence.",
+  "heat.splitPanel.negativeEmpty": "Aucune ligne de la fenêtre n’est du côté <b>−</b>, seul le côté <b>+</b> est donc dessiné : l’image n’est pas une différence.",
+  "heat.splitPanel.skipped": "La colonne de répartition n’a pas tenu en mémoire GPU pour {skipped} des {total} blocs de lignes, et ces lignes ne sont pas dessinées. Augmentez le budget GPU dans Performances → Budgets de ressources, ou chargez moins de lignes.",
+  "heat.splitPanel.shares": "Comparer les proportions, pas les effectifs",
+  "heat.splitPanel.sharesHint": "Pondère chaque côté par l’inverse de son propre nombre de lignes, pour qu’un côté cinq fois plus fourni ne couvre plus la carte par le seul nombre. La couleur montre alors où chaque côté est proportionnellement plus fréquent que l’autre.",
+  "heat.teamsList.columnSplitHint": "La différence est répartie selon <b>{column}</b> : les groupes ici décident seulement de ce qui est dessiné, pas du côté où ils comptent."
 }

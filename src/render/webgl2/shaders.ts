@@ -75,6 +75,7 @@ uniform float uProj11;         // perspective: 1/tan(fovY/2); ortho: 2/frustumHe
 uniform int   uPerspective;    // 0 for an orthographic projection
 uniform float uRadius;         // sprite radius, world units
 uniform vec2  uPixelClamp;     // (min, max) sprite radius in pixels
+uniform int   uConserve;       // 1: a clamped sprite keeps its heat (zoomInvariant)
 uniform int   uTexMask;        // texture width - 1 (width is a power of two)
 uniform int   uTexShift;       // log2(texture width)
 uniform vec3  uAabbMin;
@@ -122,6 +123,7 @@ uniform sampler2D uSplitTex;    // per-row value of the split column
 uniform int       uSignWidth;   // entries per row of uTeamSignTex, for clamping the index
 uniform vec2      uSplitPos;    // positive range, mode 2
 uniform vec2      uSplitNeg;    // negative range, mode 2
+uniform vec2      uSideScale;   // weight of a positive row, of a negative one
 uniform vec3  uCamPos;
 uniform vec3  uCamFwd;         // unit view axis, for the planar cull
 uniform vec2  uDistCull;       // (near, far) world units; far <= 0 disables
@@ -321,6 +323,8 @@ void main() {
       }
     }
     if (sgn == 0.0) reject = true;
+    // Each side normalised to its own total, when asked: see sideScales.
+    sgn *= sgn > 0.0 ? uSideScale.x : uSideScale.y;
   }
   vSign = sgn;
 
@@ -404,8 +408,15 @@ void main() {
   // so size falls off with distance. Orthographic has no falloff: clip.w is 1
   // and the scale is the same everywhere, which is the point of using it.
   float denom = (uPerspective == 1) ? clip.w : 1.0;
-  float pixRadius = uRadius * uProj11 / denom * (uViewport.y * 0.5);
-  pixRadius = clamp(pixRadius, uPixelClamp.x, uPixelClamp.y);
+  float trueRadius = uRadius * uProj11 / denom * (uViewport.y * 0.5);
+  float pixRadius = clamp(trueRadius, uPixelClamp.x, uPixelClamp.y);
+  // A clamped sprite keeps the heat its true size would add: weighted by the
+  // area it lost or gained, so the field is density per world area at any zoom.
+  // See HeatUniforms.zoomInvariant.
+  if (uConserve == 1) {
+    float ratio = trueRadius / max(1e-6, pixRadius);
+    vFade = fade * ratio * ratio;
+  }
 
   vec2 c = SPRITE_CORNERS[corner];
   vLocal = c;

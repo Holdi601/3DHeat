@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Ei ole punktina loetav. Kasuta kuju x, y, z või x y z, nt -321.6, 137.8, -59.9 või -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Pöördenurk ja kaldenurk peavad olema arvud kraadides.",
   "heat.inspect.jump.hint": "Koordinaadid on maailmakoordinaadid, samad mis näidul ja ülal oleval asendil. {key} avab selleks välja vaate kohal.",
-  "heat.inspect.jump.hintDataFrame": "Koordinaadid on laaditud andmete enda teljestikus, nagu nende tabelis - samad mis näidul ja ülal oleval asendil. {key} avab selleks välja vaate kohal."
+  "heat.inspect.jump.hintDataFrame": "Koordinaadid on laaditud andmete enda teljestikus, nagu nende tabelis - samad mis näidul ja ülal oleval asendil. {key} avab selleks välja vaate kohal.",
+  "heat.inspect.latLon": "Laius / pikkus"
 }

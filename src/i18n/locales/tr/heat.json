@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "gerçek boyut",
   "heat.teamPanel.weapons": "Silahlar, atışlar ve isabetler",
-  "heat.teamPanel.weaponsTitle": "Uçuştaki silahlar dumanla, izli mermiler, çarpmalar, isabetler ve düşürmeler. Bir isabetten çıkarılan izli mermiler kesik çizgilidir."
+  "heat.teamPanel.weaponsTitle": "Uçuştaki silahlar dumanla, izli mermiler, çarpmalar, isabetler ve düşürmeler. Bir isabetten çıkarılan izli mermiler kesik çizgilidir.",
+  "heat.timeline.reverseKey": "Geriye oynat ({key})",
+  "heat.heatPanel.followExposure": "Görünümü izle",
+  "heat.heatPanel.followExposureHint": "Kamera her durduğunda pozlamayı yeniden ölçer; böylece içine uçtuğunuz bölge, tüm harita için ölçülen ölçek yerine tüm ısı rampasını kullanır. Küçük değişiklikler yok sayılır ve ölçek sıçramak yerine yumuşakça kayar. Ölçeği kilitleyip yerleri tek bir ölçekte karşılaştırmak için işareti kaldırın; doygunluk noktasını sürüklemek de ölçeği kilitler.",
+  "heat.heatPanel.zoomInvariant": "Her yakınlaştırmada aynı yoğunluk",
+  "heat.heatPanel.zoomInvariantHint": "Bir renk, ne kadar yakın olursanız olun, zemin alanı başına aynı sayıda satır anlamına gelir. Piksel sınırlarının büyüttüğü (uzaktan) veya küçülttüğü (yakından) bir sprite, gerçek boyutunun ekleyeceği ısıyı korur; böylece uzaktan pozlanmış bir görüntü içine uçtukça artık solmaz. Kapalıyken sınırlanmış bir sprite tüm ağırlığını sınırlanmış boyutunda ekler.",
+  "heat.splitPanel.sides": "Pencerede <b>+</b> {plus} satır · <b>−</b> {minus} satır",
+  "heat.splitPanel.sidesApprox": "Pencerede <b>+</b> yaklaşık {plus} satır · <b>−</b> yaklaşık {minus} satır (bir örneklemden sayıldı)",
+  "heat.splitPanel.noSides": "Hiçbir değer iki taraftan birinde değil, bu yüzden fark hiçbir şey çizmiyor. En az bir değeri <b>+</b> veya <b>−</b> tarafına koyun.",
+  "heat.splitPanel.wrongKind": "{column} bu şekilde ayrılamaz, bu yüzden fark hiçbir şey çizmiyor. Sütunu yeniden seçin.",
+  "heat.splitPanel.positiveEmpty": "Penceredeki hiçbir satır <b>+</b> tarafında değil, bu yüzden yalnızca <b>−</b> tarafı çiziliyor: görüntü bir fark değil.",
+  "heat.splitPanel.negativeEmpty": "Penceredeki hiçbir satır <b>−</b> tarafında değil, bu yüzden yalnızca <b>+</b> tarafı çiziliyor: görüntü bir fark değil.",
+  "heat.splitPanel.skipped": "Ayırma sütunu {total} satır bloğunun {skipped} tanesinde GPU belleğine sığmadı ve bu satırlar çizilmiyor. Performans → Kaynak bütçeleri altında GPU bütçesini artırın veya daha az satır yükleyin.",
+  "heat.splitPanel.shares": "Sayıları değil, payları karşılaştır",
+  "heat.splitPanel.sharesHint": "Her tarafı kendi satır sayısının tersiyle ağırlıklandırır; böylece beş kat fazla satırı olan bir taraf haritayı artık yalnızca sayısıyla kaplamaz. Renk bu durumda her tarafın diğerine göre orantılı olarak nerede daha yaygın olduğunu gösterir.",
+  "heat.teamsList.columnSplitHint": "Fark <b>{column}</b> ölçütüne göre ayrılmıştır; bu yüzden buradaki gruplar yalnızca neyin çizileceğini belirler, hangi tarafta sayılacaklarını değil."
 }

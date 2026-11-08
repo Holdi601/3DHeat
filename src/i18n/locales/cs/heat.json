@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "skutečná velikost",
   "heat.teamPanel.weapons": "Zbraně, výstřely a zásahy",
-  "heat.teamPanel.weaponsTitle": "Zbraně v letu s kouřem, svítící střely, dopady, zásahy a sestřely. Svítící střely odvozené ze zásahu jsou čárkované."
+  "heat.teamPanel.weaponsTitle": "Zbraně v letu s kouřem, svítící střely, dopady, zásahy a sestřely. Svítící střely odvozené ze zásahu jsou čárkované.",
+  "heat.timeline.reverseKey": "Přehrát pozpátku ({key})",
+  "heat.heatPanel.followExposure": "Sledovat pohled",
+  "heat.heatPanel.followExposureHint": "Znovu změří expozici pokaždé, když se kamera zastaví, takže oblast, do které vletíte, využije celou škálu tepla místo škály změřené pro celou mapu. Drobné změny se ignorují a škála se mění plynule bez skoků. Zrušte zaškrtnutí, chcete-li škálu zamknout a porovnávat místa na jedné škále; zamkne ji i tažení bodu nasycení.",
+  "heat.heatPanel.zoomInvariant": "Stejná hustota při každém přiblížení",
+  "heat.heatPanel.zoomInvariantHint": "Barva znamená stejný počet řádků na plochu terénu, ať jste jakkoli blízko. Sprite, který omezení pixelů zvětší (zdálky) nebo zmenší (zblízka), si ponechá teplo, které by přidala jeho skutečná velikost, takže obraz exponovaný zdálky už nebledne, když do něj vletíte. Vypnuto: omezený sprite přidá svou plnou váhu ve své omezené velikosti.",
+  "heat.splitPanel.sides": "Řádky v okně: <b>+</b> {plus} · <b>−</b> {minus}",
+  "heat.splitPanel.sidesApprox": "Řádky v okně: <b>+</b> asi {plus} · <b>−</b> asi {minus} (spočteno ze vzorku)",
+  "heat.splitPanel.noSides": "Žádná hodnota není na žádné straně, takže rozdíl nic nevykreslí. Dejte alespoň jednu hodnotu na <b>+</b> nebo <b>−</b>.",
+  "heat.splitPanel.wrongKind": "Sloupec {column} nelze takto rozdělit, takže rozdíl nic nevykreslí. Vyberte sloupec znovu.",
+  "heat.splitPanel.positiveEmpty": "Žádný řádek v okně není na straně <b>+</b>, takže se vykresluje jen strana <b>−</b>: obraz není rozdíl.",
+  "heat.splitPanel.negativeEmpty": "Žádný řádek v okně není na straně <b>−</b>, takže se vykresluje jen strana <b>+</b>: obraz není rozdíl.",
+  "heat.splitPanel.skipped": "Sloupec rozdělení se nevešel do paměti GPU u {skipped} z {total} bloků řádků a tyto řádky se nevykreslí. Zvyšte rozpočet GPU v části Výkon → Rozpočty prostředků nebo načtěte méně řádků.",
+  "heat.splitPanel.shares": "Porovnávat podíly, ne počty",
+  "heat.splitPanel.sharesHint": "Váží každou stranu jedničkou dělenou jejím vlastním počtem řádků, takže strana s pětinásobkem řádků už nepokrývá mapu jen díky počtu. Barva pak ukazuje, kde je která strana poměrně častější než ta druhá.",
+  "heat.teamsList.columnSplitHint": "Rozdíl je rozdělen podle <b>{column}</b>, takže skupiny zde určují jen to, co se vykreslí, ne na které straně se počítají."
 }

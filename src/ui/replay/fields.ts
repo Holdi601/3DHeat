@@ -13,9 +13,47 @@ import { num, t } from '../../i18n';
 import type { Dataset } from '../../state/types';
 import type { UnitSystem } from '../../state/replayStore';
 import type { Unit } from './units';
+import { useReplayStore } from '../../state/replayStore';
+import { geoFrame } from '../../world/geoFrame';
+import { formatLatLon, toMgrs } from '../../world/mgrs';
+import { declination } from '../../world/wmm';
 
 /** Fields that are not flight parameters. */
-export const INFO_FIELDS = ['name', 'vehicle', 'team', 'kind', 'range', 'bearing', 'aspect', 'closure', 'bullseye'] as const;
+export const INFO_FIELDS = ['name', 'vehicle', 'team', 'kind', 'range', 'bearing', 'relBearing', 'aspect', 'closure', 'losRate', 'bullseye', 'position', 'mgrs', 'magHeading'] as const;
+
+/** Fields only a recording placed on the earth has. */
+const GEO_FIELDS = new Set(['position', 'mgrs', 'magHeading']);
+
+const declCache = new Map<string, number>();
+
+/**
+ * Magnetic declination (WMM) at a world point of a recording placed on the
+ * earth, at its time; NaN for one that is not. Kept on a tenth-of-a-degree
+ * grid and by day: it changes slower than that.
+ */
+export function declinationAt(d: Dataset, p: { x: number; y: number; z: number }, time: number): number {
+  const frame = geoFrame(d);
+  if (!frame) return NaN;
+  const [lat, lon, h] = frame.latLon(p.x, p.y, p.z);
+  const ms = d.epochMs !== null ? d.epochMs + time * 1000 : null;
+  const key = `${lat.toFixed(1)},${lon.toFixed(1)},${ms === null ? '' : Math.floor(ms / 86400000)}`;
+  let v = declCache.get(key);
+  if (v === undefined) {
+    if (declCache.size > 5000) declCache.clear();
+    v = declination(lat, lon, Math.max(0, h), ms);
+    declCache.set(key, v);
+  }
+  return v;
+}
+
+/** A true heading as shown: magnetic, with its mark, when the viewer asked for magnetic headings and the place is known. */
+function headingText(c: FieldContext, trueHeading: number): string {
+  if (useReplayStore.getState().geo.magnetic) {
+    const decl = declinationAt(c.d, c.pos, c.time);
+    if (Number.isFinite(decl)) return t('replay.unit.degMag', { v: formatValue('heading', trueHeading - decl, c.units).replace('°', '') });
+  }
+  return formatValue('heading', trueHeading, c.units);
+}
 
 /** Every field, in the order lists show them. */
 export function allFields(): string[] {
@@ -127,6 +165,31 @@ function relative(c: FieldContext, id: string): number {
   if (id === 'bearing') return ((Math.atan2(east, north) * 180) / Math.PI + 360) % 360;
   const me = flightSeries(c.d, c.ref.person, c.session);
   const them = seriesOf(c);
+  if (id === 'relBearing') {
+    // Off the followed unit's nose, right positive.
+    const hdg = me ? valueAt(me, 'heading', c.time) : NaN;
+    if (!Number.isFinite(hdg)) return NaN;
+    const brg = (Math.atan2(east, north) * 180) / Math.PI;
+    return ((((brg - hdg) % 360) + 540) % 360) - 180;
+  }
+  if (id === 'losRate' && me && them) {
+    // How fast the line of sight turns: the relative velocity across it over the range, degrees a second.
+    const r = Math.hypot(east, north, up);
+    if (r < 1) return NaN;
+    const vel = (s: FlightSeries) => {
+      const gs = valueAt(s, 'gs', c.time);
+      const crs = (valueAt(s, 'course', c.time) * Math.PI) / 180;
+      return [gs * Math.sin(crs), gs * Math.cos(crs), valueAt(s, 'vs', c.time)];
+    };
+    const va = vel(me);
+    const vb = vel(them);
+    const dv = [vb[0] - va[0], vb[1] - va[1], vb[2] - va[2]];
+    const rel = [east, north, up];
+    const cx = rel[1] * dv[2] - rel[2] * dv[1];
+    const cy = rel[2] * dv[0] - rel[0] * dv[2];
+    const cz = rel[0] * dv[1] - rel[1] * dv[0];
+    return (Math.hypot(cx, cy, cz) / (r * r)) * (180 / Math.PI);
+  }
   if (id === 'aspect') {
     // Where the followed unit sits seen from this one's tail: 0 astern, 180 head on.
     const course = them ? valueAt(them, 'course', c.time) : NaN;
@@ -202,10 +265,34 @@ export function fieldText(c: FieldContext, id: string, teamLabel: (team: number)
       const v = relative(c, id);
       return Number.isFinite(v) ? formatValue(id === 'range' ? 'distance' : 'speed', v, c.units) : '';
     }
-    case 'bearing':
+    case 'bearing': {
+      const v = relative(c, id);
+      return Number.isFinite(v) ? headingText(c, v) : '';
+    }
     case 'aspect': {
       const v = relative(c, id);
-      return Number.isFinite(v) ? formatValue(id === 'bearing' ? 'heading' : 'angle', v, c.units) : '';
+      return Number.isFinite(v) ? formatValue('angle', v, c.units) : '';
+    }
+    case 'relBearing': {
+      const v = relative(c, id);
+      return Number.isFinite(v) ? t(v >= 0 ? 'replay.unit.degRight' : 'replay.unit.degLeft', { v: num(Math.abs(v), 0) }) : '';
+    }
+    case 'losRate': {
+      const v = relative(c, id);
+      return Number.isFinite(v) ? formatValue('rate', v, c.units) : '';
+    }
+    case 'position':
+    case 'mgrs': {
+      const frame = geoFrame(c.d);
+      if (!frame) return '';
+      const [lat, lon] = frame.latLon(c.pos.x, c.pos.y, c.pos.z);
+      return id === 'mgrs' ? toMgrs(lat, lon) : formatLatLon(lat, lon);
+    }
+    case 'magHeading': {
+      const s = seriesOf(c);
+      const h = s ? valueAt(s, 'heading', c.time) : NaN;
+      const decl = declinationAt(c.d, c.pos, c.time);
+      return Number.isFinite(h) && Number.isFinite(decl) ? t('replay.unit.degMag', { v: formatValue('heading', h - decl, c.units).replace('°', '') }) : '';
     }
     case 'bullseye': {
       // Bearing / range from the bullseye, as a controller calls it.
@@ -217,12 +304,13 @@ export function fieldText(c: FieldContext, id: string, teamLabel: (team: number)
   if (!def) return '';
   const { v, estimate } = paramValue(c, id);
   if (!Number.isFinite(v)) return '';
+  if (id === 'heading' || id === 'course') return (estimate ? '~' : '') + headingText(c, v);
   return (estimate ? '~' : '') + formatValue(def.kind, v, c.units);
 }
 
 /** Fields whose value is a number, which a label writes with its abbreviation. */
 export function isNumeric(id: string): boolean {
-  return !!PARAM_BY_ID[id] || id === 'range' || id === 'bearing' || id === 'aspect' || id === 'closure' || id === 'bullseye';
+  return !!PARAM_BY_ID[id] || ['range', 'bearing', 'relBearing', 'aspect', 'closure', 'losRate', 'bullseye', 'position', 'mgrs', 'magHeading'].includes(id);
 }
 
 /**
@@ -234,7 +322,8 @@ export function datasetFields(d: Dataset): string[] {
   const params = PARAMS.filter(
     (p) => p.derived || p.columns?.some((c) => names.has(c.toLowerCase())) || (p.sumColumns && d.attrs.some((a) => p.sumColumns!.test(a.name.trim()))),
   ).map((p) => p.id);
-  const info = INFO_FIELDS.filter((f) => f !== 'bullseye' || bullseyes(d).size > 0);
+  const placed = !!geoFrame(d);
+  const info = INFO_FIELDS.filter((f) => (f !== 'bullseye' || bullseyes(d).size > 0) && (placed || !GEO_FIELDS.has(f)));
   return [...info, ...params];
 }
 

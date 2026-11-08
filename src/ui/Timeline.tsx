@@ -143,13 +143,35 @@ export function Timeline() {
 
         {!isAll && (
           <>
+            {mode === 'team' && (
+              <button
+                className={timeline.reverse ? 'play on' : 'play'}
+                disabled={!hasTime}
+                title={t(timeline.playing && timeline.reverse ? 'heat.timeline.pauseKey' : 'heat.timeline.reverseKey', { key: 'J' })}
+                onClick={() => {
+                  if (timeline.playing && timeline.reverse) setPlaying(false);
+                  else {
+                    patchTimeline({ reverse: true });
+                    setPlaying(true);
+                  }
+                }}
+              >
+                {timeline.playing && timeline.reverse ? '❚❚' : '◀'}
+              </button>
+            )}
             <button
               className="play"
               disabled={!hasTime}
-              title={t(timeline.playing ? 'heat.timeline.pauseKey' : 'heat.timeline.playKey', { key: 'K' })}
-              onClick={() => setPlaying(!timeline.playing)}
+              title={t(timeline.playing && !timeline.reverse ? 'heat.timeline.pauseKey' : 'heat.timeline.playKey', { key: 'K' })}
+              onClick={() => {
+                if (timeline.playing && !timeline.reverse) setPlaying(false);
+                else {
+                  patchTimeline({ reverse: false });
+                  setPlaying(true);
+                }
+              }}
             >
-              {timeline.playing ? '❚❚' : '▶'}
+              {timeline.playing && !timeline.reverse ? '❚❚' : '▶'}
             </button>
             <button disabled={!hasTime} title={t('heat.timeline.toStart')} onClick={() => seek(range[0])}>
               ⏮

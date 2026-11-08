@@ -10,6 +10,10 @@ import { StatsTable } from './StatsPanel';
 import { addBookmark } from './BookmarkPanel';
 import { defaultEventKinds, eventRows } from './replayData';
 import { flyTo } from './replayView';
+import { GeoOverlay } from './GeoOverlay';
+import { TacticalLabels } from './TacticalLabels';
+import { Subtitles } from './Subtitles';
+import { MediaPlayer } from './Media';
 import './replay.css';
 
 /** The event times of the kinds the event list shows, in the session played, ascending. */
@@ -124,6 +128,18 @@ export function ReplayExtras() {
         case 'KeyH':
           r.patchSaved({ hud: !r.hud });
           break;
+        case 'KeyJ':
+        case 'KeyL': {
+          // J plays backwards, L forwards; the same key again pauses.
+          const s = useStore.getState();
+          const back = ev.code === 'KeyJ';
+          if (s.timeline.playing && !!s.timeline.reverse === back) s.setPlaying(false);
+          else {
+            s.patchTimeline({ reverse: back, mode: 'play' });
+            s.setPlaying(true);
+          }
+          break;
+        }
         case 'PageDown':
         case 'PageUp': {
           ev.preventDefault();
@@ -197,10 +213,14 @@ export function ReplayExtras() {
   if (!on) return null;
   return (
     <>
+      <GeoOverlay />
+      <TacticalLabels />
       <CockpitHud />
       <TacticalMap />
       <ChartDock />
       <StatsTable />
+      <Subtitles />
+      <MediaPlayer />
       {toast && <div className="replay-toast">{toast}</div>}
     </>
   );

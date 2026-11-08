@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "skutočná veľkosť",
   "heat.teamPanel.weapons": "Zbrane, výstrely a zásahy",
-  "heat.teamPanel.weaponsTitle": "Zbrane v lete s dymom, svietiace strely, dopady, zásahy a zostrelenia. Svietiace strely odvodené zo zásahu sú čiarkované."
+  "heat.teamPanel.weaponsTitle": "Zbrane v lete s dymom, svietiace strely, dopady, zásahy a zostrelenia. Svietiace strely odvodené zo zásahu sú čiarkované.",
+  "heat.timeline.reverseKey": "Prehrať dozadu ({key})",
+  "heat.heatPanel.followExposure": "Sledovať pohľad",
+  "heat.heatPanel.followExposureHint": "Znova zmeria expozíciu zakaždým, keď sa kamera zastaví, takže oblasť, do ktorej vletíte, využije celú škálu tepla namiesto škály zmeranej pre celú mapu. Drobné zmeny sa ignorujú a škála sa mení plynulo bez skokov. Zrušte začiarknutie, ak chcete škálu uzamknúť a porovnávať miesta na jednej škále; uzamkne ju aj ťahanie bodu nasýtenia.",
+  "heat.heatPanel.zoomInvariant": "Rovnaká hustota pri každom priblížení",
+  "heat.heatPanel.zoomInvariantHint": "Farba znamená rovnaký počet riadkov na plochu terénu, nech ste akokoľvek blízko. Sprite, ktorý obmedzenia pixelov zväčšia (zďaleka) alebo zmenšia (zblízka), si ponechá teplo, ktoré by pridala jeho skutočná veľkosť, takže obraz exponovaný zďaleka už nebledne, keď doň vletíte. Vypnuté: obmedzený sprite pridá svoju plnú váhu vo svojej obmedzenej veľkosti.",
+  "heat.splitPanel.sides": "Riadky v okne: <b>+</b> {plus} · <b>−</b> {minus}",
+  "heat.splitPanel.sidesApprox": "Riadky v okne: <b>+</b> asi {plus} · <b>−</b> asi {minus} (spočítané zo vzorky)",
+  "heat.splitPanel.noSides": "Žiadna hodnota nie je na žiadnej strane, takže rozdiel nič nevykreslí. Dajte aspoň jednu hodnotu na <b>+</b> alebo <b>−</b>.",
+  "heat.splitPanel.wrongKind": "Stĺpec {column} sa nedá takto rozdeliť, takže rozdiel nič nevykreslí. Vyberte stĺpec znova.",
+  "heat.splitPanel.positiveEmpty": "Žiadny riadok v okne nie je na strane <b>+</b>, takže sa vykresľuje len strana <b>−</b>: obraz nie je rozdiel.",
+  "heat.splitPanel.negativeEmpty": "Žiadny riadok v okne nie je na strane <b>−</b>, takže sa vykresľuje len strana <b>+</b>: obraz nie je rozdiel.",
+  "heat.splitPanel.skipped": "Stĺpec rozdelenia sa nezmestil do pamäte GPU pri {skipped} z {total} blokov riadkov a tieto riadky sa nevykreslia. Zvýšte rozpočet GPU v časti Výkon → Rozpočty zdrojov alebo načítajte menej riadkov.",
+  "heat.splitPanel.shares": "Porovnávať podiely, nie počty",
+  "heat.splitPanel.sharesHint": "Váži každú stranu jednotkou delenou jej vlastným počtom riadkov, takže strana s päťnásobkom riadkov už nepokrýva mapu len vďaka počtu. Farba potom ukazuje, kde je ktorá strana pomerne častejšia ako druhá.",
+  "heat.teamsList.columnSplitHint": "Rozdiel je rozdelený podľa <b>{column}</b>, takže skupiny tu určujú len to, čo sa vykreslí, nie na ktorej strane sa počítajú."
 }

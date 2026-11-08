@@ -8,6 +8,7 @@ import { useMatchStore } from '../../state/matchStore';
 import { int, t } from '../../i18n';
 import { Check, Section, Segmented } from '../controls';
 import { sortUnits, unitsOf } from './units';
+import { leanOverlayOf } from '../../overlay/lean/load';
 
 /** The loaded dataset while the overlay stands in for it, and the filters it had. */
 let original: { d: Dataset; filters: FilterSpec[] } | null = null;
@@ -81,7 +82,8 @@ export function OverlayPanel() {
     return u ? groupsWith(base, groups, u.persons) : new Set<number>();
   }, [base, groups, overlay.only]);
   const r = useReplayStore.getState;
-  if (!base) return null;
+  // An overlay loaded straight into GPU tracks has its own panel (LeanOverlayPanel).
+  if (!base || leanOverlayOf(base)) return null;
   if (!groups) {
     return (
       <Section title={t('replay.overlay.title')} defaultOpen>

@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Ma jinqarax bħala punt. Uża x, y, z jew x y z, eż. -321.6, 137.8, -59.9 jew -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Il-yaw u l-pitch iridu jkunu numri, bil-gradi.",
   "heat.inspect.jump.hint": "Il-koordinati huma koordinati tad-dinja, l-istess bħall-qari u l-poża ta' fuq. {key} jiftaħ kaxxa għal dan fuq il-veduta.",
-  "heat.inspect.jump.hintDataFrame": "Il-koordinati huma fil-qafas proprju tad-dejta mgħobbija, bħal fit-tabella tagħha - l-istess bħall-qari u l-poża ta' fuq. {key} jiftaħ kaxxa għal dan fuq il-veduta."
+  "heat.inspect.jump.hintDataFrame": "Il-koordinati huma fil-qafas proprju tad-dejta mgħobbija, bħal fit-tabella tagħha - l-istess bħall-qari u l-poża ta' fuq. {key} jiftaħ kaxxa għal dan fuq il-veduta.",
+  "heat.inspect.latLon": "Lat / long"
 }

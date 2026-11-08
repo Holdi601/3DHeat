@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "No se puede leer como punto. Usa x, y, z o x y z, p. ej. -321.6, 137.8, -59.9 o -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "La guiñada y el cabeceo deben ser números, en grados.",
   "heat.inspect.jump.hint": "Las coordenadas son coordenadas del mundo, las mismas que la lectura y la pose de arriba. {key} abre un cuadro para esto sobre la vista.",
-  "heat.inspect.jump.hintDataFrame": "Las coordenadas están en el marco propio de los datos cargados, como en su tabla - las mismas que la lectura y la pose de arriba. {key} abre un cuadro para esto sobre la vista."
+  "heat.inspect.jump.hintDataFrame": "Las coordenadas están en el marco propio de los datos cargados, como en su tabla - las mismas que la lectura y la pose de arriba. {key} abre un cuadro para esto sobre la vista.",
+  "heat.inspect.latLon": "Lat / long"
 }

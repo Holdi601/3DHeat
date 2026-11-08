@@ -4,6 +4,7 @@ import { ingestCsv, type IngestProgress } from './ingest';
 import { ingestParquet } from './ingestParquet';
 import { ingestAcmi } from './ingestAcmi';
 import { ingestOcap } from './ingestOcap';
+import { ingestGeo } from './ingestGeo';
 import { fileParseBytes, parseHeadroom } from './memory';
 import { errorMsg, msg, MsgError, say, sayDataset, type Msg } from './msg';
 import { asyncBufferFromFile } from './parquet';
@@ -25,6 +26,7 @@ export const parseHere: ParseFileFn = async (file, mapping, columns, stride, onP
   const format = detectFormat(file.name);
   if (format === 'acmi') return ingestAcmi(file, mapping, onProgress, stride);
   if (format === 'ocap') return ingestOcap(file, mapping, onProgress, stride);
+  if (format === 'geo') return ingestGeo(file, mapping, onProgress, stride);
   return format === 'parquet'
     ? ingestParquet(file, mapping, onProgress, stride)
     : ingestCsv(file, mapping, columns, onProgress, stride);

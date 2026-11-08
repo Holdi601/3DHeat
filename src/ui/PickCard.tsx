@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
 import { num, t, useLang } from '../i18n';
 import { formatPoint, worldToData } from '../render/pose';
+import { geoFrame } from '../world/geoFrame';
+import { formatLatLon, toMgrs } from '../world/mgrs';
 import { useInspectStore, type PickResult } from '../state/inspectStore';
 import { useStore } from '../state/store';
 import { useAnimationFrame, useEngine } from './EngineContext';
@@ -26,6 +28,7 @@ export function PickCard() {
   const pick = useInspectStore((s) => s.pick);
   const convention = useInspectStore((s) => s.yawConvention);
   const axes = useStore((s) => s.dataset?.axes ?? null);
+  const dataset = useStore((s) => s.dataset);
   useLang();
   const ring = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
@@ -72,12 +75,16 @@ export function PickCard() {
   const point = pick.point;
   const fields = pick.kind === 'data' && pick.dataset && pick.row !== undefined ? rowFields(pick.dataset, pick.row, convention) : [];
   const local = point ? worldToData(point, axes) : null;
+  // On a recording placed on the earth: where the point is in latitude and longitude, and in MGRS.
+  const frame = dataset ? geoFrame(dataset) : null;
+  const place = frame && point ? frame.latLon(point.x, point.y, point.z) : null;
 
   const copy = () => {
     const lines: string[] = [];
     if (pick.kind === 'data') for (const f of fields) lines.push(`${f.label}: ${f.copy}`);
     else if (pick.surface?.part) lines.push(`part: ${pick.surface.part}`);
     if (local) lines.push(formatPoint(local, 3));
+    if (place) lines.push(formatLatLon(place[0], place[1]), toMgrs(place[0], place[1]));
     void copyText(lines.join('\n')).then((ok) => {
       setCopied(ok);
       if (ok) setTimeout(() => setCopied(false), 1200);
@@ -125,6 +132,18 @@ export function PickCard() {
               <div className="line">
                 <span>z</span>
                 <b>{coord(local.z)}</b>
+              </div>
+            </>
+          )}
+          {place && (
+            <>
+              <div className="line">
+                <span>{t('heat.inspect.latLon')}</span>
+                <b>{formatLatLon(place[0], place[1])}</b>
+              </div>
+              <div className="line">
+                <span>MGRS</span>
+                <b>{toMgrs(place[0], place[1]) || '—'}</b>
               </div>
             </>
           )}

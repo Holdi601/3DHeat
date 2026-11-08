@@ -8,7 +8,7 @@
 
 import { INSTANCE_STRIDE } from '../../figures/instances';
 import type { GpuTrackStore } from '../gpuTracks/store';
-import { FINISH_WGSL, PLACE_WGSL, TRAIL_WGSL } from '../gpuTracks/shader';
+import { FINISH_WGSL, MARKS_WGSL, PLACE_WGSL, TRAIL_WGSL } from '../gpuTracks/shader';
 import type { GpuFigures } from './figures';
 
 export interface GpuTracksFrame {
@@ -31,7 +31,26 @@ export interface GpuTracksFrame {
   triangleBudget: number;
   /** Seconds of trail behind each unit; 0 none. */
   trailSeconds: number;
+  /** One bit a track, set when shown; null: all. */
+  visible?: Uint32Array | null;
+  /** Seconds of streak behind a weapon; 0 hides weapons. */
+  weapons?: number;
+  /** Seconds a death stays marked; 0 none. */
+  markerSeconds?: number;
 }
+
+/** Groups of 64 for `n` threads, in rows of at most 65535 groups (the shader counts rows by `num_workgroups`). */
+function dispatch(pass: GPUComputePassEncoder, n: number): void {
+  const groups = Math.ceil(n / 64);
+  if (!groups) return;
+  const x = Math.min(groups, 65535);
+  pass.dispatchWorkgroups(x, Math.ceil(groups / x));
+}
+
+/** Pixels across a death's marker. */
+const MARKER_PX = 9;
+/** Uniform bytes. */
+const U_BYTES = 160;
 
 /** Trail vertices the buffer holds: 32 bytes each, 128 MB. */
 const TRAIL_ROOM = 4_000_000;
@@ -52,6 +71,12 @@ interface Uploaded {
   instances: GPUBuffer;
   trail: GPUBuffer;
   trailArgs: GPUBuffer;
+  vis: GPUBuffer;
+  /** The visibility bits last sent, to send them again only when they change. */
+  visSent: Uint32Array | null | undefined;
+  marks: GPUBuffer | null;
+  markColour: GPUBuffer | null;
+  markGroup: GPUBindGroup | null;
   placeGroup: GPUBindGroup;
   finishGroup: GPUBindGroup;
   bytes: number;
@@ -60,9 +85,10 @@ interface Uploaded {
 export class GpuTracks {
   private readonly place: GPUComputePipeline;
   private readonly finish: GPUComputePipeline;
+  private readonly marks: GPUComputePipeline;
   private readonly uniform: GPUBuffer;
   private readonly meshCountBuf: GPUBuffer;
-  private readonly u = new ArrayBuffer(144);
+  private readonly u = new ArrayBuffer(U_BYTES);
   private readonly trailPipeline: GPURenderPipeline;
   private trailsOn = false;
   private up: Uploaded | null = null;
@@ -76,7 +102,8 @@ export class GpuTracks {
   ) {
     this.place = device.createComputePipeline({ label: 'tracks place', layout: 'auto', compute: { module: device.createShaderModule({ label: 'tracks place', code: PLACE_WGSL }), entryPoint: 'place' } });
     this.finish = device.createComputePipeline({ label: 'tracks finish', layout: 'auto', compute: { module: device.createShaderModule({ label: 'tracks finish', code: FINISH_WGSL }), entryPoint: 'finish' } });
-    this.uniform = device.createBuffer({ label: 'tracks uniforms', size: 144, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    this.marks = device.createComputePipeline({ label: 'tracks marks', layout: 'auto', compute: { module: device.createShaderModule({ label: 'tracks marks', code: MARKS_WGSL }), entryPoint: 'marks' } });
+    this.uniform = device.createBuffer({ label: 'tracks uniforms', size: U_BYTES, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
     this.meshCountBuf = device.createBuffer({ label: 'tracks mesh count', size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
     const tm = device.createShaderModule({ label: 'tracks trail', code: TRAIL_WGSL });
     this.trailPipeline = device.createRenderPipeline({
@@ -124,6 +151,23 @@ export class GpuTracks {
     const instances = dev.createBuffer({ label: 'track instances', size: Math.max(64, total * INSTANCE_STRIDE * 4), usage: S | GPUBufferUsage.VERTEX });
     const trail = dev.createBuffer({ label: 'track trails', size: TRAIL_ROOM * 32, usage: S | GPUBufferUsage.VERTEX });
     const trailArgs = buf('track trail draw', new Uint32Array([0, 1, 0, 0]), S | GPUBufferUsage.INDIRECT);
+    const vis = dev.createBuffer({ label: 'track visibility', size: Math.max(16, Math.ceil(s.tracks / 32) * 4), usage: S | GPUBufferUsage.COPY_DST });
+    const mk = s.markers && s.markers.count ? s.markers : null;
+    const marks = mk ? buf('track marks', mk.data, S) : null;
+    const markColour = mk ? buf('track mark colours', mk.colour, S) : null;
+    const markGroup =
+      marks && markColour
+        ? dev.createBindGroup({
+            layout: this.marks.getBindGroupLayout(0),
+            entries: [
+              { binding: 0, resource: { buffer: this.uniform } },
+              { binding: 1, resource: { buffer: marks } },
+              { binding: 2, resource: { buffer: markColour } },
+              { binding: 3, resource: { buffer: counts } },
+              { binding: 4, resource: { buffer: trail } },
+            ],
+          })
+        : null;
     const placeGroup = dev.createBindGroup({
       layout: this.place.getBindGroupLayout(0),
       entries: [
@@ -135,6 +179,7 @@ export class GpuTracks {
         { binding: 5, resource: { buffer: counts } },
         { binding: 6, resource: { buffer: instances } },
         { binding: 7, resource: { buffer: trail } },
+        { binding: 8, resource: { buffer: vis } },
       ],
     });
     const finishGroup = dev.createBindGroup({
@@ -147,14 +192,14 @@ export class GpuTracks {
         { binding: 4, resource: { buffer: trailArgs } },
       ],
     });
-    const bytes = tracks.size + keysA.size + keysB.size + runs.size + counts.size + args.size + instances.size + trail.size;
-    return { store: s, tracks, keysA, keysB, runs, runFirst, runRoom, counts, args, argsInit, instances, trail, trailArgs, placeGroup, finishGroup, bytes };
+    const bytes = tracks.size + keysA.size + keysB.size + runs.size + counts.size + args.size + instances.size + trail.size + vis.size + (marks?.size ?? 0) + (markColour?.size ?? 0);
+    return { store: s, tracks, keysA, keysB, runs, runFirst, runRoom, counts, args, argsInit, instances, trail, trailArgs, vis, visSent: undefined, marks, markColour, markGroup, placeGroup, finishGroup, bytes };
   }
 
   private release(): void {
     const u = this.up;
     if (!u) return;
-    for (const b of [u.tracks, u.keysA, u.keysB, u.runs, u.counts, u.args, u.instances, u.trail, u.trailArgs]) b.destroy();
+    for (const b of [u.tracks, u.keysA, u.keysB, u.runs, u.counts, u.args, u.instances, u.trail, u.trailArgs, u.vis, u.marks, u.markColour]) b?.destroy();
     this.up = null;
     this.bytes = 0;
   }
@@ -188,7 +233,16 @@ export class GpuTracks {
     ui[30] = TRAIL_ROOM;
     ui[31] = TRAIL_SEGMENTS;
     fl[32] = f.trailSeconds;
-    this.trailsOn = f.trailSeconds > 0;
+    const weapons = f.weapons ?? 1.5;
+    fl[33] = weapons > 0 ? weapons : -1;
+    const markSeconds = up.markGroup ? (f.markerSeconds ?? 0) : 0;
+    fl[34] = markSeconds;
+    fl[35] = MARKER_PX;
+    ui[36] = s.markers?.count ?? 0;
+    ui[37] = f.visible ? 0 : 1;
+    if (f.visible && f.visible !== up.visSent) this.device.queue.writeBuffer(up.vis, 0, f.visible.buffer, f.visible.byteOffset, Math.min(f.visible.byteLength, up.vis.size));
+    up.visSent = f.visible ?? null;
+    this.trailsOn = f.trailSeconds > 0 || weapons > 0 || markSeconds > 0;
     this.device.queue.writeBuffer(this.uniform, 0, this.u);
     this.device.queue.writeBuffer(this.meshCountBuf, 0, new Uint32Array([s.meshes.length, TRAIL_ROOM, 0, 0]));
     // Counters to zero, and the draws' instance counts with them.
@@ -197,7 +251,12 @@ export class GpuTracks {
     const pass = encoder.beginComputePass({ label: 'tracks', timestampWrites });
     pass.setPipeline(this.place);
     pass.setBindGroup(0, up.placeGroup);
-    pass.dispatchWorkgroups(Math.ceil(s.tracks / 64));
+    dispatch(pass, s.tracks);
+    if (up.markGroup && markSeconds > 0) {
+      pass.setPipeline(this.marks);
+      pass.setBindGroup(0, up.markGroup);
+      dispatch(pass, s.markers?.count ?? 0);
+    }
     pass.setPipeline(this.finish);
     pass.setBindGroup(0, up.finishGroup);
     pass.dispatchWorkgroups(Math.ceil((s.meshes.length + 1) / 64));

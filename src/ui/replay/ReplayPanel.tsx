@@ -12,6 +12,7 @@ import { EventList } from './EventList';
 import { BookmarkPanel } from './BookmarkPanel';
 import { DisplayPanel } from './DisplayPanel';
 import { StatsPanel } from './StatsPanel';
+import { ToolsPanels } from './ToolsPanel';
 import { num, t } from '../../i18n';
 import { usePlayhead } from './hooks';
 import './replay.css';
@@ -29,6 +30,7 @@ export function ReplayPanel() {
       <BookmarkPanel />
       <DisplayPanel />
       <StatsPanel />
+      <ToolsPanels />
       <LabelPanel />
     </>
   );
@@ -151,6 +153,8 @@ function LabelPanel() {
   const units = useReplayStore((s) => s.units);
   const labelFields = useReplayStore((s) => s.labelFields);
   const rules = useReplayStore((s) => s.labelRules);
+  const labelScale = useReplayStore((s) => s.labelScale);
+  const subtitles = useReplayStore((s) => s.subtitles);
   const [tab, setTab] = useState<'all' | LabelCategory>('all');
   const fields = useMemo(() => (dataset ? datasetFields(dataset) : []), [dataset]);
   const r = useReplayStore.getState;
@@ -168,6 +172,8 @@ function LabelPanel() {
         ]}
         onChange={(v) => r().patchSaved({ units: v })}
       />
+      <Slider label={t('replay.labels.scale')} value={labelScale} min={0.6} max={2.5} step={0.05} onChange={(v) => r().patchSaved({ labelScale: v })} format={(v) => `${num(v * 100, 0)}%`} />
+      <Check label={t('replay.labels.subtitles')} checked={subtitles} onChange={(v) => r().patchSaved({ subtitles: v })} title={t('replay.labels.subtitlesTitle')} />
       <div className="hint">{t('replay.labels.rulesHint')}</div>
       <Segmented<'all' | LabelCategory>
         value={tab}
