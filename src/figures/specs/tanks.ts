@@ -55,7 +55,9 @@ export function turret(x: number, plan: P2[], top: P2[], round: number, gunX: nu
 // M1A1 / M1A2: a long low hull with a very shallow upper glacis, the rear sprocket high; the flat faceted
 // turret with angled cheeks, its side plates leaning in, and its long bustle overhanging the engine deck (hull 7.93 x
 // 3.66 m, 2.44 m).
-export const ABRAMS_TURRET = turret(-0.55, [[-2.85, 1.45], [-2.4, 1.72], [0.9, 1.8], [1.75, 1.55], [2.45, 0.95], [2.62, 0.5]], [[-2.85, 0.62], [-2.5, 0.78], [1.4, 0.84], [2.3, 0.62], [2.62, 0.42]], 9, 2.55, { slope: 0.045 });
+// The roof rising gently from the upright front face (0.54 m over the deck) to 0.8 m over the bustle (U.S. Army
+// recognition silhouette of the M1A2 SEP, public domain, sources.md).
+export const ABRAMS_TURRET = turret(-0.55, [[-2.85, 1.45], [-2.4, 1.72], [0.9, 1.8], [1.75, 1.55], [2.45, 0.95], [2.62, 0.5]], [[-2.85, 0.6], [-2.5, 0.78], [-0.3, 0.8], [1.9, 0.56], [2.62, 0.54]], 9, 2.55, { slope: 0.045 });
 export const ABRAMS: GroundSpec = {
   chassis: 'tracked', length: 7.93, width: 3.66, hullHeight: 1.6, roadWheels: 7, roadWheelRadius: 0.32, skirts: true,
   // 180 in (4.57 m) of track on the ground between the end road wheels, as the US Army's data gives it.
@@ -324,7 +326,11 @@ G['type-74'] = { ...G['amx-30'], length: 6.7, width: 3.18, roadWheels: 5, turret
 G['type-90'] = { ...G['leopard-2a4'], length: 7.5, width: 3.43, roadWheels: 6, turret: turret(-0.3, [[-2.2, 1.3], [-1.8, 1.55], [1.4, 1.6], [1.8, 1.4], [1.85, 0.6]], [[-2.2, 0.72], [1.5, 0.82], [1.85, 0.62]], 14, 1.85) };
 G['type-10'] = { ...G['leopard-2a4'], length: 7.5, width: 3.24, roadWheels: 5, turret: turret(-0.2, [[-2.3, 1.2], [-1.8, 1.5], [1.0, 1.55], [2.0, 1.1], [2.35, 0.5]], [[-2.3, 0.7], [1.0, 0.8], [2.35, 0.45]], 10, 2.2) };
 // Ariete / OF-40: a long welded turret with a sloped face and big bustle (Ariete hull 7.59 x 3.6 m, 2.5 m).
-G['ariete'] = { ...G['leopard-2a4'], length: 7.59, width: 3.6, turret: turret(-0.4, [[-2.5, 1.2], [-2.0, 1.55], [1.0, 1.6], [1.9, 1.2], [2.2, 0.55]], [[-2.5, 0.7], [1.0, 0.82], [2.2, 0.45]], 10, 2.1) };
+// Ariete: the turret's roof rising from the 0.43 m front face to 0.78 m, stepping down to 0.55 m over the bustle's last
+// 0.4 m, which ends 2.4 m behind the hull's middle with its underside 0.14 m over the deck (U.S. Army recognition
+// silhouette, public domain).
+const ARIETE_T = turret(-0.4, [[-1.98, 1.2], [-1.6, 1.55], [1.0, 1.6], [1.9, 1.2], [2.2, 0.55]], [[-1.98, 0.55], [-1.6, 0.55], [-1.5, 0.7], [-0.1, 0.78], [1.6, 0.6], [2.2, 0.43]], 10, 2.1);
+G['ariete'] = { ...G['leopard-2a4'], length: 7.59, width: 3.6, turret: { ...ARIETE_T, outline: { ...ARIETE_T.outline!, bottom: [[-1.98, 0.14], [-0.9, 0.14], [-0.8, 0], [2.2, 0]] } } };
 // Strv 103 "S-tank": turretless - the gun fixed in a low wedge hull, aimed by the suspension (hull 7.04 x 3.63 m, 2.14 m).
 G['strv-103'] = {
   cls: 'tank-destroyer', chassis: 'tracked', length: 7.04, width: 3.63, hullHeight: 1.9, roadWheels: 4, roadWheelRadius: 0.4,
