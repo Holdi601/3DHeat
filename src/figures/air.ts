@@ -13,7 +13,7 @@
 
 import { detail, finish, LOCAL, newKit, PAINT, type FigBuffer, type Kit, type Template } from './kit';
 import { Mesh } from './mesh';
-import { blob, block, body, foil, hexa, lathe, lerpPoly, plate, ring, slab, tube, type Outline, type P2 } from './parts';
+import { blob, block, body, foil, hexa, lathe, lerpPoly, plate, ring, sectionAt, sectionXs, slab, tube, type Outline, type P2 } from './parts';
 import type { Section } from '../race/shapes';
 import { at, type Frame3, type Rgb, type Vec3 } from '../race/geometry';
 
@@ -244,12 +244,12 @@ export interface FixedWingSpec {
 
 /**
  * A body's outlines, optionally with its cross-section as a front view
- * shows it: (height, half width) with the height from -1 at the bottom to 1
- * at the top and the half width a share of the plan's there, the same shape
- * at every station (a Me 262's triangle, a Bf 109's narrow top). Without it
- * the sections are `round`'s superellipses.
+ * shows it (`Outline.section`): (height, half width) with the height from -1
+ * at the bottom to 1 at the top and the half width a share of the plan's
+ * there (a Me 262's triangle, a Bf 109's narrow top). Without it the
+ * sections are `round`'s superellipses.
  */
-export type Body = Outline & { section?: P2[] };
+export type Body = Outline;
 
 /**
  * A radial engine's open cowl, what tells a radial from an inline head on:
@@ -406,6 +406,7 @@ function loft(out: FigBuffer, o: Outline, col: Rgb, segments = 14, topCol?: Rgb)
   const rl = Array.isArray(o.round) ? o.round : undefined;
   const xs = new Set<number>([x0, x1]);
   for (const l of [...lists, ...(rl ? [rl] : [])]) for (const [x] of l) if (x > x0 && x < x1) xs.add(x);
+  for (const x of sectionXs(o)) if (x > x0 && x < x1) xs.add(x);
   let sorted = [...xs].sort((a, b) => a - b);
   if (rl) {
     // Where the roundness changes, a ring halfway, so the change is spread over the gap.
@@ -417,8 +418,9 @@ function loft(out: FigBuffer, o: Outline, col: Rgb, segments = 14, topCol?: Rgb)
   const big = Math.max(...o.plan.map((p) => p[1]), ...o.top.map((p) => p[1]).map((t, i) => (t - (o.bottom[Math.min(i, o.bottom.length - 1)]?.[1] ?? 0)) / 2));
   const n = detail(big > 0.9 ? 20 : big > 0.35 ? 16 : 12, 8) - (segments <= 12 ? 2 : 0);
   const m = new Mesh();
-  const sec = (o as Body).section;
+  const sec = o.section;
   const rows = sorted.map((x) => {
+    const sh = sec && sectionAt(sec, x);
     const w = Math.max(1e-3, lerpPoly(o.plan, x));
     const t = lerpPoly(o.top, x);
     const b = lerpPoly(o.bottom, x);
@@ -431,7 +433,7 @@ function loft(out: FigBuffer, o: Outline, col: Rgb, segments = 14, topCol?: Rgb)
       const c = Math.cos(a);
       const sn = Math.sin(a);
       // A drawn cross-section: the half width at each height as the front view has it (a Me 262's triangle).
-      if (sec) return m.v(at(LOCAL, x, side + w * Math.sign(c) * lerpPoly(sec, sn), z + h * sn), topCol && sn > 0.35 ? topCol : col);
+      if (sh) return m.v(at(LOCAL, x, side + w * Math.sign(c) * lerpPoly(sh, o.sectionAbs ? z + h * sn : sn), z + h * sn), topCol && sn > 0.35 ? topCol : col);
       return m.v(at(LOCAL, x, side + w * Math.sign(c) * Math.abs(c) ** e, z + h * Math.sign(sn) * Math.abs(sn) ** e), topCol && sn > 0.35 ? topCol : col);
     });
   });

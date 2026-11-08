@@ -78,7 +78,7 @@ export function meshOf(t: Template): FigureMesh {
       data[o + 11] = tint;
       const ji = jn ? jn[v] - 1 : -1;
       const jt = ji >= 0 ? joints[ji] : undefined;
-      if (jt) writeJoint(data, o + 12, jt, jt.parent >= 0 ? joints[jt.parent] : undefined);
+      if (jt) writeJoint(data, o + 12, jt, jt.parent >= 0 ? joints[jt.parent] : undefined, joints);
       o += MESH_STRIDE;
     }
   }
@@ -92,16 +92,28 @@ export function hasJoints(t: Template): boolean {
   return !!t.joints?.length;
 }
 
+/**
+ * The yaw joint that carries a yaw joint round: itself, or for one on another turret (a cupola, a sub-turret on the
+ * turret roof: `parent` a yaw joint) the outermost turret it rides on. A figure has one yaw, so a turret on a turret
+ * turns with the one under it, about that one's pivot, rather than about its own.
+ */
+export function carrierOf(joints: Joint[], j: Joint): Joint {
+  let c = j;
+  for (let n = 0; n < joints.length && c.parent >= 0 && joints[c.parent]?.kind === 'yaw'; n++) c = joints[c.parent];
+  return c;
+}
+
 /** A vertex's movement (the 12 floats after its tint) for the joint it moves with. */
-function writeJoint(out: Float32Array, o: number, j: Joint, parent: Joint | undefined): void {
+function writeJoint(out: Float32Array, o: number, j: Joint, parent: Joint | undefined, joints: Joint[]): void {
   if (j.kind === 'yaw') {
+    const c = carrierOf(joints, j);
     out[o] = 1;
-    out[o + 1] = j.pivot[0];
-    out[o + 2] = j.pivot[2];
-    out[o + 3] = j.rest;
+    out[o + 1] = c.pivot[0];
+    out[o + 2] = c.pivot[2];
+    out[o + 3] = c.rest;
     return;
   }
-  const turret = parent && parent.kind === 'yaw' ? parent : undefined;
+  const turret = parent && parent.kind === 'yaw' ? carrierOf(joints, parent) : undefined;
   out[o] = turret ? 2 : 3;
   if (turret) {
     out[o + 1] = turret.pivot[0];

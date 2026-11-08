@@ -309,8 +309,10 @@ G['strv-103'] = {
   hullOutline: { top: [[-3.52, 1.6], [-3.2, 1.9], [-0.5, 1.9], [3.52, 0.9]], bottom: [[-3.52, 0.8], [3.4, 0.8], [3.52, 0.9]], plan: [[-3.52, 1.7], [2.8, 1.8], [3.52, 1.3]], round: 12, stations: 10 },
   guns: [{ mount: 'hull', length: 5.6, calibre: 0.105, extractor: 0.6, x: 1.0, at: 0.83 }],
 };
-// M41 Walker Bulldog: a light tank with a long boxy turret and bustle (hull 5.82 x 3.2 m, 2.73 m).
-G['m41'] = { ...G['leopard-1a3'], cls: 'light-tank', length: 5.82, width: 3.2, roadWheels: 5, roadWheelRadius: 0.32, trackProfile: run(5.7, 0.9, [2.85, 0.6], [-2.85, 0.65], -2.3, 2.25), hullOutline: hull(5.82, 3.2, 1.6, 0.86, 1.2, 1.15, 0.2, 8), turret: turret(-0.1, [[-1.9, 0.95], [-1.4, 1.25], [0.8, 1.3], [1.4, 1.05], [1.6, 0.6]], [[-1.9, 0.55], [-1.3, 0.85], [0.8, 0.9], [1.6, 0.55]], 6, 1.6), guns: [{ mount: 'turret', length: 3.6, calibre: 0.076, extractor: 0.6, muzzle: true, at: 0.45 }] };
+// M41 Walker Bulldog: a light tank with a long boxy turret and bustle (hull 5.82 x 3.2 m, 2.73 m). Its open running
+// gear: five 0.65 m road wheels and three return rollers a side, the sprocket at the back and the idler at the front
+// both clear of the ground; about 3.1 m of track on the ground (the published 10.2 psi on two 21 in tracks at 23.5 t).
+G['m41'] = { ...G['leopard-1a3'], cls: 'light-tank', length: 5.82, width: 3.2, roadWheels: 5, roadWheelRadius: 0.32, trackProfile: run(5.7, 0.9, [2.85, 0.6], [-2.85, 0.65], -1.55, 1.55), running: { wheels: [1.42, 0.71, 0, -0.71, -1.42], rollers: [1.05, 0, -1.05] }, hullOutline: hull(5.82, 3.2, 1.6, 0.86, 1.2, 1.15, 0.2, 8), turret: turret(-0.1, [[-1.9, 0.95], [-1.4, 1.25], [0.8, 1.3], [1.4, 1.05], [1.6, 0.6]], [[-1.9, 0.55], [-1.3, 0.85], [0.8, 0.9], [1.6, 0.55]], 6, 1.6), guns: [{ mount: 'turret', length: 3.6, calibre: 0.076, extractor: 0.6, muzzle: true, at: 0.45 }] };
 // M103 (hull 6.98 x 3.76 m) and Conqueror (hull 7.72 x 3.99 m): heavy tanks with very long cast turrets and big guns.
 G['m103'] = { ...G['centurion'], cls: 'heavy-tank', length: 6.98, width: 3.76, roadWheels: 7, turret: turret(0.1, [[-2.6, 1.0], [-2.0, 1.6], [0.6, 1.7], [1.5, 1.4], [1.9, 0.7]], [[-2.6, 0.55], [-1.6, 1.0], [0.6, 1.05], [1.9, 0.5]], 2.6, 1.85), guns: [{ mount: 'turret', length: 7.0, calibre: 0.12, extractor: 0.55, at: 0.45 }] };
 G['conqueror'] = { ...G['m103'], length: 7.72, width: 3.99, turret: turret(-0.2, [[-2.8, 1.2], [-2.2, 1.65], [0.6, 1.7], [1.5, 1.35], [1.9, 0.7]], [[-2.8, 0.75], [-2.0, 1.05], [0.6, 1.1], [1.9, 0.6]], 4, 1.85) };

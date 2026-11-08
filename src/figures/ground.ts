@@ -15,7 +15,7 @@
  */
 
 import { detail, finish, into, joint, newKit, PAINT, withCoarse, type FigBuffer, type Kit, type Template } from './kit';
-import { blob, block, fin, hexa, lerpPoly, outlineBody, plate, prism, slab, tiltBox, triangulate, tube, type Outline, type P2 } from './parts';
+import { blob, block, fin, halfWidthAt, hexa, lerpPoly, moveSection, outlineBody, plate, prism, sectionRing, sectionXs, slab, tiltBox, triangulate, tube, type Outline, type P2 } from './parts';
 import { Mesh } from './mesh';
 import { at, type Frame3, type Rgb, type Vec3 } from '../race/geometry';
 
@@ -59,7 +59,10 @@ export interface TurretSpec {
   /**
    * The turret's true shape: its side profile and plan, relative to the
    * turret's centre (forward) and its base (up), which replaces `shape`. The
-   * gun comes out at `gunX` forward of the centre (default the front).
+   * gun comes out at `gunX` forward of the centre (default the front). A curved wall seen from above (a Tiger I's
+   * horseshoe, a cast turret's round back) is its plan, `roundEnd` drawing the bend; its `section` sets the walls
+   * across (upright, `[[-1, 1], [0.8, 1], [1, 0.9]]`, in place of the welded lean and chamfers; a casting's rounded
+   * edges with `round` under 5), section heights from the turret's base with `sectionAbs`.
    */
   outline?: Outline;
   gunX?: number;
@@ -73,6 +76,12 @@ export interface TurretSpec {
    * replay leaves it with the hull and only raises its gun. A 'casemate' shape is fixed without this.
    */
   fixed?: boolean;
+  /**
+   * An open-topped turret (opt-in, with `outline`): its top cut down to a floor `floor` over its base between `rear`
+   * and `front` (forward from its centre), as a hull's `well` - the plates ahead of and behind the cut stand as its
+   * end walls, its side walls are drawn round the well, the floor dark. An Ostwind's or a Wirbelwind's open turret.
+   */
+  well?: { rear: number; front: number; floor?: number; wall?: number };
 }
 
 export interface GunSpec {
@@ -205,6 +214,23 @@ export interface GroundSpec {
   open?: boolean;
   /** The fighting compartment is open above (half-tracks, open SPGs). */
   openTop?: boolean;
+  /**
+   * Where an `openTop` vehicle's open compartment really is: from `rear` to `front` (forward from the middle), its floor
+   * `floor` high above the ground (default 0.2 over the hull's bottom there), its side walls `wall` thick (default
+   * 0.03). The hull's top is cut down to the floor between the ends, so the hull itself makes the end walls and the
+   * side walls stand round the well, open above. Without it a dark well is painted on the deck.
+   * `well: { rear: -2.6, front: 0.4, floor: 0.75 }`.
+   */
+  well?: { rear: number; front: number; floor?: number; wall?: number };
+  /**
+   * A half-track drawn as one (opt-in; without it the generic layout): the rear track unit's run from `rear` to `front`
+   * (forward from the middle; default the back 55 % of the length, or `trackProfile`), the front axle's wheel track
+   * `axleTrack` (tyre centre to centre; default out to the full width), and the body over the tracks from `fender` up
+   * with the lower hull between the tracks below it, as a tank's (so the track run, its road wheels and the front
+   * wheels show under the body). The road wheels take `running` (with `interleave` for the German half-tracks); the
+   * engine's `bonnet` stands ahead. `halftrack: { rear: -2.9, front: 0.6, axleTrack: 1.6, fender: 0.95 }`.
+   */
+  halftrack?: { rear?: number; front?: number; axleTrack?: number; fender?: number };
   /** An engine bonnet ahead of the hull, this long (half-tracks, armoured cars). */
   bonnet?: number;
   /** Spade at the back (towed guns and artillery). */
@@ -218,7 +244,9 @@ export interface GroundSpec {
   /**
    * The upper hull's true shape, side profile and plan in the vehicle's frame
    * (forward from the middle, up from the ground), in place of `hull`'s
-   * generic profile. The lower hull between the tracks stays.
+   * generic profile. The lower hull between the tracks stays - unless the outline has a `section`, which then draws
+   * the whole hull from its bottom up: the lower hull narrow between the tracks, the superstructure and fenders over
+   * them from a ledge up, the sides leaning in from where they do (with `sectionAbs`, at true heights).
    */
   hullOutline?: Outline;
   /** The run of the track seen from the side, (forward, up), in place of the generic one: where the sprocket and idler sit. */
@@ -241,8 +269,14 @@ export interface GroundSpec {
    * under the hull), solid road wheels at `wheels` (forward from the middle),
    * the sprocket and idler filling the ends, return rollers under the top run
    * at `rollers`. `band` is the track's thickness (default 0.1).
+   *
+   * `interleave` lays overlapping wheels out in rows across the track, so neighbours pass each other: 'overlap' puts
+   * the stations alternately in an outer and an inner row (overlapping wheels, not interleaved); 'full' is the
+   * Schachtellaufwerk - an outer and an inner wheel on every other station, a middle one on the rest (Tiger I,
+   * Panther, the German half-tracks). The first station in `wheels` is on the outer row. `wheelWidth` is one wheel's
+   * width (default the track's width less 0.12, shared among the rows).
    */
-  running?: { wheels: number[]; rollers?: number[]; band?: number; rollerRadius?: number };
+  running?: { wheels: number[]; rollers?: number[]; band?: number; rollerRadius?: number; interleave?: 'overlap' | 'full'; wheelWidth?: number };
   /** The side skirt seen from the side, (forward, up), convex, in place of the default band; with `skirts`. */
   skirt?: P2[];
   /** Parts added to the turret or the hull: armour packages, ERA bricks, sights, bustle racks, stowage. */
@@ -345,7 +379,7 @@ function fitLength(spec: GroundSpec): GroundSpec {
   const sx = (p: P2[]): P2[] => p.map(([x, v]) => [x * k, v]);
   return {
     ...spec,
-    hullOutline: { ...o, top: sx(o.top), bottom: sx(o.bottom), plan: sx(o.plan), round: Array.isArray(o.round) ? sx(o.round) : o.round },
+    hullOutline: { ...o, top: sx(o.top), bottom: sx(o.bottom), plan: sx(o.plan), round: Array.isArray(o.round) ? sx(o.round) : o.round, section: moveSection(o, 0, 0, k) },
     trackProfile: spec.trackProfile && sx(spec.trackProfile),
     running: spec.running && { ...spec.running, wheels: spec.running.wheels.map((x) => x * k), rollers: spec.running.rollers?.map((x) => x * k) },
   };
@@ -401,7 +435,7 @@ function buildAt(input: GroundSpec): Template {
     fin(k.team, k.fr, [[sx, sb], [sx + 0.12, sb], [sx + 0.12, sb + main.height * 1.15], [sx, sb + main.height * 1.05]], main.side ?? 0, main.width * 1.5, grey(0.85));
   }
   into(k, -1);
-  if (chassis === 'tracked' && main && spec.hullOutline && (spec.guns ?? []).some((g) => g.mount === 'turret' && (g.turret ?? 0) === 0 && g.calibre >= 0.075)) engineDeck(k, spec, main);
+  if (chassis === 'tracked' && main && spec.hullOutline && !(spec.openTop && spec.well) && (spec.guns ?? []).some((g) => g.mount === 'turret' && (g.turret ?? 0) === 0 && g.calibre >= 0.075)) engineDeck(k, spec, main);
   // Launchers and antennas on the turret turn with it.
   for (const m of spec.missiles ?? []) {
     into(k, main && m.mount !== 'hull' ? mainJ : -1);
@@ -510,7 +544,7 @@ function addOn(k: Kit, a: AddOn, o: Vec3): void {
     else if (a.outline) {
       const ol = a.outline;
       const mv = (p: P2[], u: number): P2[] => p.map(([f, v]) => [c[0] + f, u + v]);
-      outlineBody(buf, k.fr, { ...ol, top: mv(ol.top, c[2]), bottom: mv(ol.bottom, c[2]), plan: ol.plan.map(([f, v]) => [c[0] + f, v]), round: Array.isArray(ol.round) ? ol.round.map(([f, r]) => [c[0] + f, r]) : ol.round, side: c[1] }, col, 12);
+      outlineBody(buf, k.fr, { ...ol, top: mv(ol.top, c[2]), bottom: mv(ol.bottom, c[2]), plan: ol.plan.map(([f, v]) => [c[0] + f, v]), round: Array.isArray(ol.round) ? ol.round.map(([f, r]) => [c[0] + f, r]) : ol.round, side: c[1], section: moveSection(ol, c[0], c[2]) }, col, 12);
     }
   }
 }
@@ -542,6 +576,7 @@ function cornersOf(o: Outline, x0: number, x1: number): number[] {
       } else set.add(x);
     }
   }
+  for (const x of sectionXs(o)) if (x > x0 && x < x1) set.add(x);
   return [...set].sort((a, b) => a - b).filter((x, i, a) => i === 0 || x - a[i - 1] > 2e-4);
 }
 
@@ -565,7 +600,8 @@ function facetBody(out: FigBuffer, fr: Frame3, o: Outline, col: Rgb, lean = 0): 
     const c = Math.min(0.3, Math.max(0.05, 0.9 / roundAt(o, x, 10))) * Math.min(w, h);
     const cb = c * 0.5;
     const lw = Math.min(w * 0.4, lean * h);
-    const ring: P2[] = [[w - cb, b], [w, b + cb], [w - lw, t - c], [w - lw - c, t], [-(w - lw - c), t], [-(w - lw), t - c], [-w, b + cb], [-(w - cb), b]];
+    // A drawn section (`Outline.section`) in place of the octagon: its own ledges and lean, no chamfers or `lean`.
+    const ring: P2[] = sectionRing(o, x, w, b, t) ?? [[w - cb, b], [w, b + cb], [w - lw, t - c], [w - lw - c, t], [-(w - lw - c), t], [-(w - lw), t - c], [-w, b + cb], [-(w - cb), b]];
     return { x, mid: (t + b) / 2, ids: ring.map(([s, u]) => m.v(at(fr, x, side + s, u), col)) };
   });
   m.grid(rows.map((r) => r.ids), true);
@@ -627,11 +663,15 @@ function castBody(out: FigBuffer, fr: Frame3, o: Outline, col: Rgb): void {
   m.emit(out, {});
 }
 
-/** A body from an outline: cast and rounded below `round` 5 when `cast`, welded plates from 5 up, the kernel's soft loft for other round parts. */
+/**
+ * A body from an outline: cast and rounded below `round` 5 when `cast`, welded plates from 5 up, the kernel's soft loft
+ * for other round parts. With a drawn `section` the section is the shape: flat plates between the corners from 5 up,
+ * the soft loft below (a cast turret's rounded edges drawn into its section).
+ */
 function shell(out: FigBuffer, fr: Frame3, o: Outline, col: Rgb, lean = 0, cast = false): void {
   const r = typeof o.round === 'number' ? o.round : o.round ? Math.min(...o.round.map((p) => p[1])) : 2.4;
   if (r >= 5) facetBody(out, fr, o, col, lean);
-  else if (cast) castBody(out, fr, o, col);
+  else if (cast && !o.section) castBody(out, fr, o, col);
   else outlineBody(out, fr, o, col, 14);
 }
 
@@ -720,8 +760,10 @@ function trackWidth(spec: GroundSpec): number {
 }
 
 function tracks(k: Kit, spec: GroundSpec): void {
-  const L = spec.chassis === 'halftrack' ? spec.length * 0.55 : spec.length * 0.97;
-  const x0 = spec.chassis === 'halftrack' ? -spec.length / 2 + L / 2 : 0;
+  const ht = spec.chassis === 'halftrack' ? spec.halftrack : undefined;
+  const htRear = ht?.rear ?? -spec.length / 2;
+  const L = spec.chassis === 'halftrack' ? (ht?.front !== undefined ? ht.front - htRear : spec.length * 0.55) : spec.length * 0.97;
+  const x0 = spec.chassis === 'halftrack' ? htRear + L / 2 : 0;
   const th = trackHeight(spec);
   const tw = trackWidth(spec);
   const half = L / 2;
@@ -774,7 +816,7 @@ function tracks(k: Kit, spec: GroundSpec): void {
     const g1 = ground.length > 1 ? Math.max(...ground) - r * 0.5 : x0 + half - 0.45 - r;
     wheelsAt = Array.from({ length: n }, (_, i) => g0 + ((g1 - g0) * i) / Math.max(1, n - 1));
   }
-  runningGear(k, spec, profile, th, tw, wheelsAt, r, run?.rollers ?? [], run?.band ?? 0.1, run?.rollerRadius);
+  runningGear(k, spec, profile, th, tw, wheelsAt, r, run?.rollers ?? [], run?.band ?? 0.1, run?.rollerRadius, run?.interleave, run?.wheelWidth);
 }
 
 /** The steel of the track's shoes, a little lighter than the rubber and shadow between them, so the links show. */
@@ -786,7 +828,7 @@ const SHOE: Rgb = [0.3, 0.29, 0.27];
  * edge; road wheels with their rubber tyres and dished discs, the toothed sprocket at the higher end of the run and
  * the idler at the other, return rollers under the top run; side skirts over it when the spec has them.
  */
-function runningGear(k: Kit, spec: GroundSpec, profile: P2[], th: number, tw: number, wheelsAt: number[], r: number, rollers: number[], band: number, rollerRadius?: number): void {
+function runningGear(k: Kit, spec: GroundSpec, profile: P2[], th: number, tw: number, wheelsAt: number[], r: number, rollers: number[], band: number, rollerRadius?: number, interleave?: 'overlap' | 'full', wheelWidth?: number): void {
   const xs = profile.map((p) => p[0]);
   const xf = Math.max(...xs);
   const xb = Math.min(...xs);
@@ -824,7 +866,16 @@ function runningGear(k: Kit, spec: GroundSpec, profile: P2[], th: number, tw: nu
       // The wheels' outer faces stand a little inside the track's edge, their hubs just short of it.
       const face = o - side * 0.075;
       const width = tw - 0.12;
-      for (const x of wheelsAt) roadWheel(k, x, band + r, r, face, width, side);
+      if (interleave) {
+        // Rows across the track, the outer one at the wheels' usual face: 'full' outer and inner on the even
+        // stations and the middle row on the odd, 'overlap' outer on the even and inner on the odd.
+        const rows = interleave === 'full' ? 3 : 2;
+        const ww = wheelWidth ?? width / rows;
+        const lanes = (i: number) => (interleave === 'full' ? (i % 2 === 0 ? [0, 2] : [1]) : [i % 2]);
+        wheelsAt.forEach((x, i) => {
+          for (const j of lanes(i)) roadWheel(k, x, band + r, r, face - side * j * (width / rows), ww, side);
+        });
+      } else for (const x of wheelsAt) roadWheel(k, x, band + r, r, face, width, side);
       for (const x of rollers) roadWheel(k, x, th - band - rr, rr, face - side * 0.02, Math.min(width, 0.2), side, true);
       const [sx, su, ix, iu] = sprocketFront ? [fx, fu, bx, bu] : [bx, bu, fx, fu];
       sprocket(k, sx, su, re - band * 0.35, re - band - 0.03, face, side);
@@ -1091,9 +1142,12 @@ function wheels(k: Kit, spec: GroundSpec): void {
     for (let i = 0; i < axles; i++) xs.push(front - ((front - back) * i) / (axles - 1));
   }
   const w = Math.max(0.2, Math.min(0.5, r * 0.8));
+  // A half-track's front axle on its own wheel track, tyre centre to centre.
+  const axle = spec.chassis === 'halftrack' ? spec.halftrack?.axleTrack : undefined;
+  const inner = axle ? axle / 2 - w / 2 : spec.width / 2 - w;
   for (const x of xs) {
     for (const side of [-1, 1]) {
-      tyre(k, x, side * (spec.width / 2 - w), r, r, w, side);
+      tyre(k, x, side * inner, r, r, w, side);
     }
   }
 }
@@ -1190,6 +1244,17 @@ function hull(k: Kit, spec: GroundSpec): void {
   }
   if (c !== 0) profile = profile.map(([x, u]) => [x + c, u] as P2);
   const w = spec.width / 2 - (tracked ? 0.02 : 0.05);
+  // The body's outline as drawn: a half-track's (opt-in) narrow between its tracks below the fender, as a tank's
+  // lower hull is; an open compartment's well cut into it.
+  const htFender = spec.chassis === 'halftrack' ? spec.halftrack?.fender : undefined;
+  const body = (o: Outline): Outline => {
+    let r = o;
+    if (htFender !== undefined && !o.section) {
+      const s = Math.min(1, Math.max(0.2, (spec.width / 2 - trackWidth(spec) - 0.02) / Math.max(...o.plan.map((p) => p[1]))));
+      r = { ...o, section: [[-99, s], [htFender, s], [htFender, 1], [99, 1]], sectionAbs: true };
+    }
+    return spec.openTop && spec.well ? openWell(k, r, spec.well) : r;
+  };
   if (tracked) {
     // The lower hull sits between the tracks; the upper hull spans them, its
     // sides the fenders, so the run of the track shows below it.
@@ -1197,17 +1262,18 @@ function hull(k: Kit, spec: GroundSpec): void {
     const tw = trackWidth(spec);
     const fender = th * 0.92;
     const lowerProfile: P2[] = [[c - half + 0.3, floor], [c + half - 0.5, floor], [c + half - 0.15, fender], [c - half + 0.15, fender]];
-    prism(k.team, k.fr, lowerProfile, -(spec.width / 2 - tw), spec.width / 2 - tw, grey(0.8));
+    // A hull outline with a drawn section is the whole hull, the lower part between the tracks included.
+    if (!spec.hullOutline?.section) prism(k.team, k.fr, lowerProfile, -(spec.width / 2 - tw), spec.width / 2 - tw, grey(0.8));
     // The upper hull's sides lean in a little above the fenders, as welded hull plates do.
-    if (spec.hullOutline) shell(k.team, k.fr, spec.hullOutline, grey(0.86), spec.hullLean ?? 0.06);
+    if (spec.hullOutline) shell(k.team, k.fr, body(spec.hullOutline), grey(0.86), spec.hullLean ?? 0.06);
     else {
       const upper = profile.map(([x, u]) => [x, Math.max(u, fender)] as P2);
-      facetBody(k.team, k.fr, profileOutline(dedupe(upper), w), grey(0.86), 0.06);
+      facetBody(k.team, k.fr, body(profileOutline(dedupe(upper), w)), grey(0.86), 0.06);
     }
   } else if (spec.hullOutline) {
-    shell(k.team, k.fr, spec.hullOutline, grey(0.86));
+    shell(k.team, k.fr, body(spec.hullOutline), grey(0.86));
     if (spec.chassis === 'wheeled') glazing(k, spec.hullOutline);
-  } else facetBody(k.team, k.fr, profileOutline(profile, w), grey(0.86), shape === 'truck' ? 0 : 0.04);
+  } else facetBody(k.team, k.fr, body(profileOutline(profile, w)), grey(0.86), shape === 'truck' ? 0 : 0.04);
   if (bonnet > 0) {
     // The engine bonnet, narrower and lower than the body, a radiator in front.
     const hb = Math.max(floor + 0.4, H * 0.72);
@@ -1215,7 +1281,7 @@ function hull(k: Kit, spec: GroundSpec): void {
     prism(k.team, k.fr, [[front + 0.05, floor], [x1, floor], [x1, hb * 0.85], [x1 - 0.25, hb], [front + 0.05, hb]], -w * 0.8, w * 0.8, grey(0.84), 1, grey(0.95));
     block(k.fixed, k.fr, [x1 + 0.01, 0, (floor + hb * 0.85) / 2], 0.04, w * 1.1, (hb * 0.85 - floor) * 0.8, PAINT.dark);
   }
-  if (spec.openTop) {
+  if (spec.openTop && !spec.well) {
     // The open fighting compartment: a dark well behind the driver.
     const x0 = back + 0.25;
     const x1 = front - Math.min(L * 0.3, 1.6);
@@ -1231,6 +1297,33 @@ function hull(k: Kit, spec: GroundSpec): void {
     // The armoured cab's windows.
     plate(k.fixed, k.fr, [[c + half - L * 0.3, -w * 0.9], [c + half - L * 0.18, -w * 0.9], [c + half - L * 0.18, w * 0.9], [c + half - L * 0.3, w * 0.9]], H * 0.88, 0.3, PAINT.glass);
   }
+}
+
+/**
+ * An open compartment cut into a body's outline: the top dropped to the well's floor between its ends - the body
+ * behind and ahead of it stands as the end walls - with the side walls drawn round it up to the top, and the floor dark.
+ * Returns the outline to draw.
+ */
+function openWell(k: Kit, o: Outline, well: NonNullable<GroundSpec['well']>): Outline {
+  const [x0, x1] = spanOf(o);
+  const a = Math.max(x0 + 0.02, Math.min(well.rear, well.front));
+  const b = Math.min(x1 - 0.02, Math.max(well.rear, well.front));
+  if (!(b > a + 0.1)) return o;
+  const top = [...o.top].sort((p, q) => p[0] - q[0]);
+  const deck = (x: number) => lerpPoly(top, x);
+  const mid = (a + b) / 2;
+  const f = Math.max(lerpPoly(o.bottom, mid) + 0.02, Math.min(deck(mid) - 0.05, well.floor ?? lerpPoly(o.bottom, mid) + 0.2));
+  const e = 0.01;
+  const cut: P2[] = [...top.filter((p) => p[0] < a), [a, deck(a)], [a + e, f], [b - e, f], [b, deck(b)], ...top.filter((p) => p[0] > b)];
+  // The side walls: the body's sides from the floor up to its top, inside its plan at the top.
+  const t = well.wall ?? 0.03;
+  const wall: P2[] = [[a, f], [b, f], [b, deck(b)], ...top.filter((p) => p[0] > a && p[0] < b).reverse(), [a, deck(a)]];
+  const hw = halfWidthAt(o, mid, deck(mid) - 0.01);
+  const side = o.side ?? 0;
+  for (const s of [-1, 1]) prism(k.team, k.fr, wall, side + s * hw, side + s * (hw - t), grey(0.86));
+  const fw = Math.max(0.05, halfWidthAt(o, mid, f + 0.01) - t);
+  plate(k.fixed, k.fr, [[b, side - fw], [a, side - fw], [a, side + fw], [b, side + fw]], f + 0.01, 0.02, PAINT.dark);
+  return { ...o, top: cut };
 }
 
 /** A WWI tank's hull between its rhomboid track frames, and the driver's cab on the front of the roof. */
@@ -1431,7 +1524,9 @@ function turret(k: Kit, spec: GroundSpec, t: TurretSpec, base: number): void {
   const lean = main ? (t.slope !== undefined ? (t.slope * w) / Math.max(0.2, h) : 0.08) : 0;
   if (t.outline) {
     const o = t.outline;
-    shell(k.team, k.fr, { ...o, top: o.top.map(([f, u]) => [x + f, base + u]), bottom: o.bottom.map(([f, u]) => [x + f, base + u]), plan: o.plan.map(([f, w2]) => [x + f, w2]), round: Array.isArray(o.round) ? o.round.map(([f, r]) => [x + f, r]) : o.round, side: s }, grey(0.9), lean, main);
+    const moved: Outline = { ...o, top: o.top.map(([f, u]) => [x + f, base + u]), bottom: o.bottom.map(([f, u]) => [x + f, base + u]), plan: o.plan.map(([f, w2]) => [x + f, w2]), round: Array.isArray(o.round) ? o.round.map(([f, r]) => [x + f, r]) : o.round, side: s, section: moveSection(o, x, base) };
+    const wl = t.well;
+    shell(k.team, k.fr, wl ? openWell(k, moved, { rear: x + wl.rear, front: x + wl.front, floor: wl.floor === undefined ? undefined : base + wl.floor, wall: wl.wall }) : moved, grey(0.9), lean, main);
   } else if (shape === 'cast' || shape === 'round') {
     // A casting: widest a little behind its middle, the front drawn in under the gun, the roof a low dome.
     const k2 = shape === 'round' ? 1 : 0.9;
