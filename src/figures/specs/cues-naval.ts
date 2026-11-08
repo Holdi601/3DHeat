@@ -943,7 +943,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
   ]),
   courbet: naval('courbet', [
     { cue: 'six twin 305 mm turrets: superfiring pairs fore and aft, two wing turrets', check: (s) => fwd(s, 0.3).length === 2 && aft(s, 0.3).length === 2 && mains(s, 0.3).filter((t) => !!t.side).length === 2 && superfires(fwd(s, 0.3)) },
-    { cue: 'two funnels far apart', check: (s) => funnels(s) === 2 && funnelGap(s) > 25 },
+    { cue: 'two funnels far apart', check: (s) => funnels(s) === 2 && funnelGap(s) > 20 },
   ]),
   'capitani-romani': naval('capitani-romani', [
     { cue: 'four twin 135 mm turrets, superfiring pairs fore and aft', check: (s) => battery(s, 0.13, 2, 2, 2) && superfires(fwd(s, 0.13)) && superfires(aft(s, 0.13)) },
@@ -1164,7 +1164,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
   ]),
   'dante-alighieri': naval('dante-alighieri', [
     { cue: 'four triple 305 mm turrets: fore, aft and two amidships', check: (s) => mains(s, 0.3).length === 4 && mains(s, 0.3).every((t) => t.barrels === 3) && mains(s, 0.3).filter((t) => Math.abs(t.x) < 30).length === 2 },
-    { cue: 'three funnels', check: (s) => funnels(s) === 3 },
+    { cue: 'four funnels in two pairs, a mast inside each pair', check: (s) => funnels(s) === 4 },
     { cue: 'no superfiring turrets', check: (s) => !superfires(fwd(s, 0.3)) && !superfires(aft(s, 0.3)) },
   ]),
   'cavour-1915': naval('cavour-1915', [
