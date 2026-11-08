@@ -2845,9 +2845,10 @@ const WT_WW2: Record<string, string> = {
   'jp_type_95_so_ki': 'type-95-so-ki',
   'it_lancia3ro_100': 'lancia-3ro-100',
   'it_breda_52_autocannone': 'autocannone-90-53',
-  'fr_lorraine_100': 'lorraine-155',
+  // The post-war Lorraine 100 mm and 155 mm Mle.50 stand on the Lorraine 40t's big chassis, not the 37L carrier's.
+  'fr_lorraine_100': 'lorraine-40t',
   'uk_mark_v': 'mark-v-male',
-  'fr_lorraine_155': 'lorraine-155',
+  'fr_lorraine_155': 'lorraine-40t',
   'fr_lorraine_37l': 'lorraine-37l',
   'us_m2_medium': 'm2a4',
   'us_lvt_a_1': 'lvt-a1',
