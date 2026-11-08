@@ -2256,4 +2256,10 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
     { cue: 'long island to starboard, the funnel at its after end', check: (s) => islandSide(s) > 0 && (s.oneSide?.length ?? 0) === 3 },
     { cue: 'eight twin 4.5-inch turrets in sponsons, four a side', check: (s) => turrets(s).filter((t) => t.calibre === 0.114 && t.barrels === 2).length === 8 },
   ]),
+  akagi: naval('akagi', [
+    { cue: 'small island on the port side amidships', check: (s) => islandSide(s) < 0 && Math.abs(islandX(s)) < s.length * 0.15 },
+    { cue: 'big funnel curving down over the starboard side', check: (s) => (s.oneSide ?? []).some((o) => (o.side ?? 0) > 0 && Math.max(...o.top.map((p) => p[1])) < s.freeboard) },
+    { cue: 'six single 20 cm guns in casemates low aft', check: (s) => turrets(s).filter((t) => t.calibre === 0.2 && t.x < 0 && (t.up ?? 0) < -5).length === 6 },
+    { cue: 'twin 12 cm mounts on sponsons, three a side', check: (s) => turrets(s).filter((t) => t.calibre === 0.12 && t.barrels === 2).length === 6 },
+  ]),
 };

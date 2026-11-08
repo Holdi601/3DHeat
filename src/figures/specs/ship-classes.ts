@@ -2275,6 +2275,22 @@ N['hiryu'] = carrier({
   more: { bodies: [blockOf(83, 59, 8.4, 10.4, 2.0, 0, 0, 11.4), blockOf(-63, -73, 8.4, 10.4, 2.0, 0, 0, 11.4)] },
 });
 N['hiryu'].oneSide!.push(blockOf(7, 1, 4, 9.5, 2.2, 0, 0, 12.1), blockOf(-3, -9, 4, 9.5, 2.2, 0, 0, 12.1), blockOf(6, 2, 4, 6, 1.7, 0, 0, 14.5), blockOf(-4, -8, 4, 6, 1.7, 0, 0, 14.5));
+// Akagi (after the 1935-38 rebuild): one long flight deck over the big converted battlecruiser hull, the small island
+// on the port side amidships, the big funnel curving down over the starboard side with the small upright one behind
+// it, six single 20 cm guns in casemates low aft, six twin 12 cm mounts on sponsons three a side (260.67 m overall,
+// 31.32 m beam; flight deck 249.17 x 30.48 m; its height over the water an estimate).
+N['akagi'] = carrier({
+  cls: 'carrier', L: 255, B: 31.3, deck: 16,
+  plan: [[118, -9], [118, 9], [108, 15.2], [-124, 15.2], [-131, 13], [-131, -13], [-124, -15.2], [108, -15.2]],
+  island: [[20, 10, 23.5, -14.6, 2.2, 1], [18, 12, 26, -14.6, 1.7]],
+  masts: [[14, 10, -14.6]],
+  turrets: [
+    ...level('42,15.6:2/120 30,15.6:2/120 -34,15.6:2/120b', 14, 15),
+    ...[-62, -74, -86].flatMap((x) => [-1, 1].map((sd) => ({ x, side: sd * 15.4, size: 2.4, barrels: 1, length: 9, calibre: 0.2, kind: 'shield' as const, back: true, up: -9 }))),
+  ],
+  more: { bodies: [blockOf(47, 25, 12, 14, 2.0, 0, 0, 15.4), blockOf(-29, -39, 12, 14, 2.0, 0, 0, 15.4)] },
+});
+N['akagi'].oneSide!.push(blockOf(8, -4, 6, 13, 2.8, 0, 0, 15.8), blockOf(6, -2, 6, 9, 2.2, 0, 0, 18.4), blockOf(-6, -10, 9, 20.5, 1.7, 0, 0, 14.6));
 // Ryujo (after the 1934-36 rebuild): a small, tall two-hangar hull with no island, the flight deck starting 23.5 m aft
 // of the stem over the open forecastle, the glazed bridge under its forward lip, two small funnels curving down on the
 // starboard side, four twin 12.7 cm mounts two a side (179.9 m overall, 20.78 m beam; flight deck 156.5 x 23 m, 14.9 m
@@ -2640,8 +2656,8 @@ const ALIASES: Record<string, string> = {
   'jp_aircraftcarrier_shokaku_ai': 'shokaku',
   'ijn_cv_zuikaku': 'shokaku',
   'ijn_cv_zuikaku_story': 'shokaku',
-  'ijn_cv_akagi': 'shokaku',
-  'ijn_cv_akagi_story': 'shokaku',
+  'ijn_cv_akagi': 'akagi',
+  'ijn_cv_akagi_story': 'akagi',
   'ijn_cv_hiryu': 'hiryu',
   'ijn_cv_hiryu_story': 'hiryu',
   'ijn_cv_soryu': 'soryu',
