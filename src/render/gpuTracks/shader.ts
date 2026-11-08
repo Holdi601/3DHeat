@@ -21,7 +21,7 @@ struct U {
   lod : vec4<f32>,   // units a metre, scale at true size, full figure from px, figure (not dart) from px
   n : vec4<u32>,     // tracks, meshes, trail vertex room, most trail segments a unit
   trail : vec4<f32>, // trail seconds (0: none), weapon streak seconds (<0: weapons hidden), marker seconds, marker px
-  m : vec4<u32>,     // markers, 1 when every track is shown
+  m : vec4<u32>,     // markers, 1 when every track is shown, 1 for drop lines, the floor's height (f32 bits)
 };
 @group(0) @binding(0) var<uniform> u : U;
 @group(0) @binding(1) var<storage, read> tracks : array<u32>;
@@ -292,17 +292,31 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
   // Its trail: from where it is back through its keys over the last seconds, fading with age; a weapon's streak.
   var W = u.trail.x;
   if (weapon) { W = max(W, u.trail.y); }
-  if (W <= 0.0) { return; }
-  var segs = 1u;
-  var j = k;
-  loop {
-    if (j <= first || segs >= u.n.w) { break; }
-    if (timeAt(j) < t - W) { break; }
-    j = j - 1u;
-    segs = segs + 1u;
+  // Its drop line, as Tacview draws it: straight down to the data's floor.
+  let floorY = bitcast<f32>(u.m.w);
+  let drop = u.m.z != 0u && P.y - floorY >= 1.0;
+  if (W <= 0.0 && !drop) { return; }
+  var segs = 0u;
+  if (W > 0.0) {
+    segs = 1u;
+    var j = k;
+    loop {
+      if (j <= first || segs >= u.n.w) { break; }
+      if (timeAt(j) < t - W) { break; }
+      j = j - 1u;
+      segs = segs + 1u;
+    }
   }
-  let base = atomicAdd(&counts[u.n.y], segs * 2u);
-  if (base + segs * 2u > u.n.z) { return; }
+  let lines = segs + select(0u, 1u, drop);
+  let base = atomicAdd(&counts[u.n.y], lines * 2u);
+  if (base + lines * 2u > u.n.z) { return; }
+  if (drop) {
+    let v = (base + segs * 2u) * 2u;
+    trail[v] = vec4<f32>(P, 1.0);
+    trail[v + 1u] = vec4<f32>(team, 0.55);
+    trail[v + 2u] = vec4<f32>(P.x, floorY, P.z, 1.0);
+    trail[v + 3u] = vec4<f32>(team, 0.15);
+  }
   var a = P;
   var ta = t;
   var kk = k;

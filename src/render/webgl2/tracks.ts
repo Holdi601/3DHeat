@@ -10,7 +10,7 @@
 
 import { INSTANCE_STRIDE, MESH_STRIDE } from '../../figures/instances';
 import { figureGlslVs } from '../figureShaders';
-import { EVAL_GLSL_FS, EVAL_GLSL_VS, MARK_GLSL_VS, STREAK_GLSL_VS } from '../gpuTracks/glsl';
+import { EVAL_GLSL_FS, EVAL_GLSL_VS, MARK_GLSL_VS, STREAK_GLSL_VS, TRAIL_GLSL_VS, TRAIL_SEGMENTS_GL } from '../gpuTracks/glsl';
 import { nearFigures } from '../gpuTracks/near';
 import { sameKeys, TRACK_U32, type GpuTrackStore } from '../gpuTracks/store';
 import type { GpuTracksParams } from '../types';
@@ -47,6 +47,8 @@ export class GlTracks {
   private readonly streakU: UniformCache;
   private readonly markProg: WebGLProgram;
   private readonly markU: UniformCache;
+  private readonly trailProg: WebGLProgram;
+  private readonly trailU: UniformCache;
   private readonly emptyVao: WebGLVertexArrayObject;
   private readonly tf: WebGLTransformFeedback;
   private up: Uploaded | null = null;
@@ -61,6 +63,8 @@ export class GlTracks {
     this.streakU = new UniformCache(gl, this.streakProg);
     this.markProg = compileProgram(gl, MARK_GLSL_VS, LINE_FS, 'track marks');
     this.markU = new UniformCache(gl, this.markProg);
+    this.trailProg = compileProgram(gl, TRAIL_GLSL_VS, LINE_FS, 'track trails');
+    this.trailU = new UniformCache(gl, this.trailProg);
     this.emptyVao = gl.createVertexArray()!;
     this.tf = gl.createTransformFeedback()!;
   }
@@ -292,6 +296,28 @@ export class GlTracks {
       gl.bindVertexArray(up.streakVao);
       gl.drawArraysInstanced(gl.LINES, 0, 2, s.tracks);
     }
+    // Trails and drop lines (as the WebGPU place shader writes them), from the placed instances.
+    const drop = p.dropFloor ?? null;
+    if (p.trailSeconds > 0 || drop !== null) {
+      gl.useProgram(this.trailProg);
+      const T = this.trailU;
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, up.tracks);
+      T.i1('uTracks', 0);
+      gl.activeTexture(gl.TEXTURE1);
+      gl.bindTexture(gl.TEXTURE_2D, up.keysA);
+      T.i1('uKeysA', 1);
+      gl.activeTexture(gl.TEXTURE0);
+      T.i1('uW', up.width);
+      T.mat4('uViewProj', viewProj);
+      gl.uniform4f(T.loc('uCam'), camera[0], camera[1], camera[2], p.t);
+      gl.uniform4f(T.loc('uTrail'), p.trailSeconds, drop === null ? 0 : 1, drop ?? 0, TRAIL_SEGMENTS_GL);
+      T.f3('uCameraPos', camera[0], camera[1], camera[2]);
+      T.f1('uFadeStart', 1e9);
+      T.f1('uFadeEnd', 1e9 + 1);
+      gl.bindVertexArray(up.streakVao);
+      gl.drawArraysInstanced(gl.LINES, 0, (TRAIL_SEGMENTS_GL + 1) * 2, s.tracks);
+    }
     const markSeconds = p.markerSeconds ?? 0;
     if (up.markVao && markSeconds > 0 && s.markers) {
       gl.useProgram(this.markProg);
@@ -312,7 +338,7 @@ export class GlTracks {
   dispose(): void {
     this.release();
     const gl = this.gl;
-    for (const p of [this.evalProg, this.dartProg, this.streakProg, this.markProg]) gl.deleteProgram(p);
+    for (const p of [this.evalProg, this.dartProg, this.streakProg, this.markProg, this.trailProg]) gl.deleteProgram(p);
     gl.deleteVertexArray(this.emptyVao);
     gl.deleteTransformFeedback(this.tf);
   }

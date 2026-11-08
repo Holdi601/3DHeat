@@ -9,6 +9,7 @@
 import { INSTANCE_STRIDE } from '../../figures/instances';
 import { KEY_U32, KEYS_PER_BUFFER, sameKeys, type GpuTrackStore } from '../gpuTracks/store';
 import { FINISH_WGSL, MARKS_WGSL, PLACE_WGSL, TRAIL_WGSL } from '../gpuTracks/shader';
+import { TRAIL_SEGMENTS_GL } from '../gpuTracks/glsl';
 import type { GpuFigures } from './figures';
 
 export interface GpuTracksFrame {
@@ -31,6 +32,8 @@ export interface GpuTracksFrame {
   triangleBudget: number;
   /** Seconds of trail behind each unit; 0 none. */
   trailSeconds: number;
+  /** Drop lines from each unit down to this height (the data's floor); null or absent: none. */
+  dropFloor?: number | null;
   /** One bit a track, set when shown; null: all. */
   visible?: Uint32Array | null;
   /** Seconds of streak behind a weapon; 0 hides weapons. */
@@ -54,8 +57,8 @@ const U_BYTES = 160;
 
 /** Trail vertices the buffer holds: 32 bytes each, 128 MB. */
 const TRAIL_ROOM = 4_000_000;
-/** Most trail segments a unit. */
-const TRAIL_SEGMENTS = 48;
+/** Most trail segments a unit: the same on WebGL2 (`gpuTracks/glsl.ts`). */
+const TRAIL_SEGMENTS = TRAIL_SEGMENTS_GL;
 
 interface Uploaded {
   store: GpuTrackStore;
@@ -258,9 +261,12 @@ export class GpuTracks {
     fl[35] = MARKER_PX;
     ui[36] = s.markers?.count ?? 0;
     ui[37] = f.visible ? 0 : 1;
+    const drop = f.dropFloor ?? null;
+    ui[38] = drop === null ? 0 : 1;
+    fl[39] = drop ?? 0;
     if (f.visible && f.visible !== up.visSent) this.device.queue.writeBuffer(up.vis, 0, f.visible.buffer, f.visible.byteOffset, Math.min(f.visible.byteLength, up.vis.size));
     up.visSent = f.visible ?? null;
-    this.trailsOn = f.trailSeconds > 0 || weapons > 0 || markSeconds > 0;
+    this.trailsOn = f.trailSeconds > 0 || weapons > 0 || markSeconds > 0 || drop !== null;
     this.device.queue.writeBuffer(this.uniform, 0, this.u);
     this.device.queue.writeBuffer(this.meshCountBuf, 0, new Uint32Array([s.meshes.length, TRAIL_ROOM, 0, 0]));
     // Counters to zero, and the draws' instance counts with them.

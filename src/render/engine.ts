@@ -1469,6 +1469,8 @@ export class Engine {
       dartPx: this.dartPx,
       triangleBudget: 40_000_000,
       trailSeconds: s.team.trailSeconds,
+      // Drop lines as the CPU path draws them (below): to the data's floor.
+      dropFloor: this.dataset && dropLinesOn(this.dataset, useReplayStore.getState().dropLines) ? this.dataset.bounds.minY : null,
       visible: this.dataset ? trackVisibility(store, this.dataset, s.teamVisibility, s.filters) : null,
       weapons: s.team.weapons ? 1.5 : 0,
       markerSeconds: markerSeconds(),

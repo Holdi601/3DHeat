@@ -4,6 +4,7 @@ import { emptySample, MotionModel } from '../../figures/motion';
 import { decodeKey, gpuTrackStore, TRACK_U32 } from './store';
 import { emptyPose, evaluateTrack } from './evaluate';
 import { PLACE_WGSL, FINISH_WGSL } from './shader';
+import { EVAL_GLSL_VS, TRAIL_GLSL_VS, TRAIL_SEGMENTS_GL } from './glsl';
 
 /** Synthetic aircraft circling, each its own radius and start, sampled at 4 Hz. */
 function dataset(n: number, seconds = 60): Dataset {
@@ -120,5 +121,18 @@ describe('GPU tracks', () => {
   it('have shaders that use the store layout', () => {
     expect(PLACE_WGSL).toContain('const TRACK_U32 = 16u');
     expect(FINISH_WGSL).toContain('fn finish');
+  });
+
+  it('draw trails and drop lines on WebGL2 as the WebGPU place shader writes them', () => {
+    // WebGPU: the drop line after the trail's pieces, from the unit to the floor, 0.55 fading to 0.15.
+    expect(PLACE_WGSL).toContain('let drop = u.m.z != 0u && P.y - floorY >= 1.0;');
+    expect(PLACE_WGSL).toContain('trail[v + 2u] = vec4<f32>(P.x, floorY, P.z, 1.0);');
+    // WebGL2: one instance a placed track, the same number of pieces and the drop line last.
+    expect(TRAIL_SEGMENTS_GL).toBe(48);
+    expect(TRAIL_GLSL_VS).toContain('if (iTeam.w > -99.0) return;');
+    expect(TRAIL_GLSL_VS).toContain('if (n == segs) {');
+    expect(TRAIL_GLSL_VS).toContain('a = 0.8 * clamp(1.0 - (t - key.w) / W, 0.0, 1.0);');
+    // The eval pass marks a placed unit with that gun elevation, which the trail pass keys on.
+    expect(EVAL_GLSL_VS).toContain('-100.0);  // gun elevation: as built');
   });
 });
