@@ -17,6 +17,9 @@ import type { FixedWingSpec, HeliSpec } from '../air';
 import type { NavalSpec } from '../naval';
 import { lerpPoly, type Outline, type P2 } from '../parts';
 import { SPEC_SETS } from './index';
+import { DOMAIN_SPECS } from '../catalog';
+import type { AirshipSpec, EmplacementSpec } from '../small';
+import { AIRSHIPS, EMPLACEMENTS } from './generic';
 import { NAVAL_CUES } from './cues-naval';
 import { HELI_CUES } from './cues-heli';
 import { JET_CUES } from './cues-jets';
@@ -36,6 +39,9 @@ interface SpecOf {
   air: FixedWingSpec;
   heli: HeliSpec;
   naval: NavalSpec;
+  /** Own-builder figures: airships and balloons, emplacements. */
+  airship: AirshipSpec;
+  emplacement: EmplacementSpec;
 }
 
 export type CueDomain = keyof SpecOf;
@@ -49,11 +55,15 @@ export interface CueEntry<D extends CueDomain = CueDomain> {
 
 /** A figure's spec as the catalogue builds it: the last spec set that names it wins. */
 export function specOf<D extends CueDomain>(domain: D, name: string): SpecOf[D] | undefined {
+  if (domain === 'airship') return AIRSHIPS[name] as SpecOf[D] | undefined;
+  if (domain === 'emplacement') return EMPLACEMENTS[name] as SpecOf[D] | undefined;
+  const d = domain as 'ground' | 'air' | 'heli' | 'naval';
   for (let i = SPEC_SETS.length - 1; i >= 0; i--) {
-    const s = SPEC_SETS[i][domain]?.[name];
+    const s = SPEC_SETS[i][d]?.[name];
     if (s) return s as unknown as SpecOf[D];
   }
-  return undefined;
+  // The generic class figures and first types the catalogue starts from.
+  return DOMAIN_SPECS[d][name] as unknown as SpecOf[D] | undefined;
 }
 
 const entry =
@@ -61,6 +71,10 @@ const entry =
   (figures: string | string[], cues: Cue<SpecOf[D]>[]): CueEntry<D> => ({ domain, figures: typeof figures === 'string' ? [figures] : figures, cues });
 const ground = entry('ground');
 const air = entry('air');
+const airship = entry('airship');
+const emplacement = entry('emplacement');
+/** Envelope length over diameter. */
+const slender = (s: AirshipSpec) => s.length / s.diameter;
 
 // Ground checks.
 const muzzle = (s: GroundSpec) => !!s.guns?.some((g) => g.muzzle);
@@ -3196,6 +3210,43 @@ export const CUES: Record<string, CueEntry> = {
   ]),
   'amx-50-120': ground('amx-50-120', [{ cue: 'long 120 mm with a muzzle brake', check: (s) => cal(0.12)(s) && muzzle(s) }]),
   'amx-50-100': ground('amx-50', [{ cue: '100 mm with a muzzle brake', check: (s) => cal(0.1, 0.105)(s) && muzzle(s) }]),
+  // The generic 6x6 army truck (the class figure).
+  truck: ground('truck', [
+    { cue: 'three-axle army lorry', check: lorry(3) },
+    { cue: 'cab forward of a long cargo body', check: (s) => !!s.cab && s.cab.length < s.length * 0.35 },
+    { cue: 'canvas tilt over the cargo bed', check: (s) => s.bed === 'covered' },
+  ]),
+  // A trailer-mounted anti-aircraft searchlight (150 cm class).
+  searchlight: emplacement('searchlight', [
+    { cue: 'big drum lamp on a pedestal', check: (s) => s.kind === 'searchlight' },
+    { cue: 'lamp taller than a man, on outrigger feet', check: (s) => s.kind === 'searchlight' },
+  ]),
+  // Rigid airship (Zeppelin L 30 class, 198 x 23.9 m).
+  zeppelin: airship('zeppelin', [
+    { cue: 'very long slim cylindrical hull', check: (s) => slender(s) > 7 },
+    { cue: 'cruciform tail fins', check: (s) => !s.balloon },
+    { cue: 'control car forward and engine cars along the keel', check: (s) => (s.gondolas ?? 0) >= 3 },
+  ]),
+  // Non-rigid blimp (C class, 59 x 12 m).
+  blimp: airship('blimp', [
+    { cue: 'short tapered envelope', check: (s) => slender(s) > 4 && slender(s) < 6 },
+    { cue: 'cruciform tail fins', check: (s) => !s.balloon },
+    { cue: 'one small car under the middle', check: (s) => s.gondolas === 1 },
+  ]),
+  'barrage-balloon': airship('barrage-balloon', [
+    { cue: 'fat short envelope', check: (s) => slender(s) < 3 },
+    { cue: 'three inflated tail lobes', check: (s) => !!s.balloon },
+    { cue: 'no car', check: (s) => !s.gondolas },
+  ]),
+  'observation-balloon': airship('observation-balloon', [
+    { cue: 'sausage-shaped envelope, longer than a barrage balloon', check: (s) => slender(s) >= 3 && s.length > 20 },
+    { cue: 'three inflated tail lobes', check: (s) => !!s.balloon },
+  ]),
+  // The generic flying capital ship that stands for every game-invented one.
+  titan: airship('titan', [
+    { cue: 'hull hundreds of metres long', check: (s) => s.length >= 300 },
+    { cue: 'cruciform tail fins', check: (s) => !s.balloon },
+  ]),
   m35a2: ground('m35a2', [
     { cue: 'bonneted 2.5-ton 6x6, smaller than the M939', check: (s) => lorry(3)(s) && !!s.cab?.bonnet && shortHull(7.5)(s) },
     { cue: 'cargo bed with a tilt', check: adds('body', 1, 'hull') },

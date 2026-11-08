@@ -2256,6 +2256,13 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
     { cue: 'long island to starboard, the funnel at its after end', check: (s) => islandSide(s) > 0 && (s.oneSide?.length ?? 0) === 3 },
     { cue: 'eight twin 4.5-inch turrets in sponsons, four a side', check: (s) => turrets(s).filter((t) => t.calibre === 0.114 && t.barrels === 2).length === 8 },
   ]),
+  'ark-royal-r09': naval('ark-royal-r09', [
+    { cue: 'full angled deck to port, far wider than the hull', check: (s) => Math.min(...(s.decks?.[0]?.plan ?? [[0, 0]]).map((p) => p[1])) < -s.beam * 0.9 },
+    { cue: 'bridle-catcher horn projecting over the bow', check: (s) => Math.max(...(s.decks?.[0]?.plan ?? [[0, 0]]).map((p) => p[0])) > s.length / 2 + 15 },
+    { cue: 'long island amidships on the starboard edge, two masts', check: (s) => islandSide(s) > 0 && Math.abs(islandX(s)) < s.length * 0.1 && (s.masts?.length ?? 0) === 2 },
+    { cue: 'double search radar on the forward mast', check: (s) => !!s.radars?.some((r) => r.kind === 'array' && r.x > 0) },
+    { cue: 'no guns', check: (s) => turrets(s).length === 0 },
+  ]),
   akagi: naval('akagi', [
     { cue: 'small island on the port side amidships', check: (s) => islandSide(s) < 0 && Math.abs(islandX(s)) < s.length * 0.15 },
     { cue: 'big funnel curving down over the starboard side', check: (s) => (s.oneSide ?? []).some((o) => (o.side ?? 0) > 0 && Math.max(...o.top.map((p) => p[1])) < s.freeboard) },
