@@ -225,8 +225,27 @@ export function personAt(u: Unit, time: number): number {
 
 /** Units sorted for a list: by name, as the language sorts, numbers by value. */
 export function sortUnits(units: Unit[]): Unit[] {
-  const coll = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
-  return units.slice().sort((a, b) => coll.compare(a.name, b.name));
+  // A plain string key per unit, made once, instead of a locale compare per comparison: a
+  // collator over a million units of a large overlay took seconds.
+  const keyed = units.map((u) => [sortKey(u), u] as const);
+  keyed.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+  return keyed.map((k) => k[1]);
+}
+
+const sortKeys = new WeakMap<Unit, string>();
+
+/** A unit's name for sorting: case and accents ignored, numbers in number order ("Unit 9" before "Unit 10"). */
+export function sortKey(u: Unit): string {
+  let k = sortKeys.get(u);
+  if (k === undefined) {
+    k = u.name
+      .normalize('NFD')
+      .replace(/\p{M}/gu, '')
+      .toLowerCase()
+      .replace(/\d+/g, (d) => d.replace(/^0+(?=\d)/, '').padStart(12, '0'));
+    sortKeys.set(u, k);
+  }
+  return k;
 }
 
 const uidCache = new WeakMap<Dataset, Map<number, Unit>>();

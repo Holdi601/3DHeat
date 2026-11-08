@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { vehicleOf, type Unit } from './units';
+import { sortUnits, vehicleOf, type Unit } from './units';
 
 const unit: Unit = {
   key: 'p',
@@ -25,5 +25,21 @@ describe('a player who changes vehicle', () => {
 
   it('falls back to the first vehicle for a track it does not know', () => {
     expect(vehicleOf(unit, 999)).toBe('Challenger 2 TES');
+  });
+});
+
+describe('sorting units', () => {
+  const mk = (name: string): Unit => ({ ...unit, key: name, name });
+  it('orders names ignoring case and accents, numbers by value', () => {
+    const names = sortUnits([mk('Unit 10'), mk('unit 9'), mk('Émile'), mk('alpha'), mk('Zulu')]).map((u) => u.name);
+    expect(names).toEqual(['alpha', 'Émile', 'unit 9', 'Unit 10', 'Zulu']);
+  });
+
+  it('sorts a million units quickly', () => {
+    const many = Array.from({ length: 1_000_000 }, (_, i) => mk(`Unit ${(i * 7919) % 1_000_000}`));
+    const t0 = performance.now();
+    const out = sortUnits(many);
+    expect(out[0].name).toBe('Unit 0');
+    expect(performance.now() - t0).toBeLessThan(4000);
   });
 });
