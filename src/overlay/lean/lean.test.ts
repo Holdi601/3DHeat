@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { AttributeColumn, Dataset } from '../../state/types';
-import { gpuTrackStore, TRACK_U32, FLAG_WEAPON } from '../../render/gpuTracks/store';
+import { decodeKey, gpuTrackStore, TRACK_U32, FLAG_WEAPON, type GpuTrackStore } from '../../render/gpuTracks/store';
 import { emptyPose, evaluateTrack } from '../../render/gpuTracks/evaluate';
 import { poseFrame } from '../../figures/kit';
 import { quatOfFrame } from '../../figures/motion';
@@ -79,7 +79,7 @@ function load(r: Record<string, unknown>[], maxKeys = 1e9, group = 1e9, totals?:
   if (!asm.plan(maxKeys)) throw new Error('too big');
   jobs.forEach((j, k) => {
     const inp = asm.pass2Input(k);
-    asm.addPass2(k, scanPass2(slice(c, j.rowStart, j.rowEnd), j.rowEnd - j.rowStart, s, inp.spans, inp.alloc, inp.level));
+    asm.addPass2(k, scanPass2(slice(c, j.rowStart, j.rowEnd), j.rowEnd - j.rowStart, s, inp.base, inp.alloc, inp.level));
   });
   return asm.finish('test');
 }
@@ -186,9 +186,52 @@ describe('lean overlay loader', () => {
     const one = load(r);
     const many = load(r, 1e9, 397);
     expect(many.keys).toBe(one.keys);
-    expect(Array.from(many.keysA)).toEqual(Array.from(one.keysA));
     expect(Array.from(many.keysB)).toEqual(Array.from(one.keysB));
-    expect(Array.from(many.trackData)).toEqual(Array.from(one.trackData));
+    // Runs that do not start a chunk are counted again from the track's chunks: within a step or two of them.
+    const a = [0, 0, 0, 0];
+    const b = [0, 0, 0, 0];
+    let dx = 0, dt = 0;
+    for (let i = 0; i < one.tracks; i++) {
+      const o = i * TRACK_U32;
+      expect([many.trackData[o], many.trackData[o + 1]]).toEqual([one.trackData[o], one.trackData[o + 1]]);
+      for (let k = one.trackData[o]; k < one.trackData[o] + one.trackData[o + 1]; k++) {
+        decodeKey(one as unknown as GpuTrackStore, o, k, a);
+        decodeKey(many as unknown as GpuTrackStore, o, k, b);
+        dx = Math.max(dx, Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]));
+        dt = Math.max(dt, Math.abs(a[3] - b[3]));
+      }
+    }
+    expect(dx).toBeLessThan(0.1);
+    expect(dt).toBeLessThan(1e-3);
+  });
+
+  it("keeps a long, theatre-sized track to centimetres, and leaves out samples that only hold a moving unit's place", () => {
+    // A jet 690 km out at 250 m/s for two hours, every 0.23 to 0.26 s, its times to 10 ms; one sample in
+    // a hundred repeats the one before (its update came late). In row groups, so its runs are many.
+    const r: Record<string, unknown>[] = [];
+    const at = (t: number) => ({ x: 690000 + 250 * t * 0.6, y: 6000 + 300 * Math.sin(t / 40), z: -560000 + 2000 * Math.cos(t / 50) });
+    let seed = 7;
+    let prev = at(0);
+    for (let t = 0, n = 0; t < 7200; n++) {
+      const p = n % 100 === 50 ? prev : at(t);
+      r.push({ time: 5000 + t, event: 'position', track: 'jet', match: 'm0', team: '1', kind: 'aircraft', Vehicle: 'la-7', ...p, dirX: 1, dirY: 0, dirZ: 0, roll: 0 });
+      prev = p;
+      seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+      t = Math.round((t + 0.23 + (seed / 0x7fffffff) * 0.03) * 100) / 100;
+    }
+    const b = load(r, 1e9, 9973);
+    const held = Math.floor(r.length / 100);
+    expect(b.keys).toBe(r.length - held);
+    const k4 = [0, 0, 0, 0];
+    let dx = 0;
+    for (let k = 0; k < b.keys; k++) {
+      decodeKey(b as unknown as GpuTrackStore, 0, k, k4);
+      const t = Math.round(k4[3] * 100) / 100;
+      const p = at(t);
+      dx = Math.max(dx, Math.hypot(k4[0] - p.x, k4[1] - p.y, k4[2] + p.z));
+    }
+    // The world's z is the file's, flipped.
+    expect(dx).toBeLessThan(0.1);
   });
 
   it('thins only when the keys would not fit, to the least tolerance that fits, and stays near the full curve', () => {
@@ -226,12 +269,9 @@ describe('lean overlay loader', () => {
     const p1 = scanPass1(c, r.length, s, 0, levels);
     for (const level of [0, 3, 7]) {
       const alloc = Uint32Array.from({ length: p1.units }, (_, u) => p1.keys[u * levels.length + level]);
-      const spans = new Float64Array(p1.units * 6);
-      for (let u = 0; u < p1.units; u++) {
-        const o = u * 8;
-        spans.set([p1.box[o], p1.box[o + 1], p1.box[o + 2], Math.max(p1.box[o + 3] - p1.box[o], p1.box[o + 4] - p1.box[o + 1], p1.box[o + 5] - p1.box[o + 2]) / 65535, p1.box[o + 6], (p1.box[o + 7] - p1.box[o + 6]) / 65535], u * 6);
-      }
-      const p2 = scanPass2(c, r.length, s, spans, alloc, level);
+      // Times from each unit's first.
+      const base = Float64Array.from({ length: p1.units }, (_, u) => p1.box[u * 8 + 6]);
+      const p2 = scanPass2(c, r.length, s, base, alloc, level);
       expect(Array.from(p2.used)).toEqual(Array.from(alloc));
     }
   });
@@ -273,7 +313,7 @@ describe('lean overlay loader', () => {
     expect(b.limit).toBe('gpuBuffer');
     const small = leanBudget({ gpuMaxBufferBytes: 4e9, vramBytes: null, freeBytes: null, totalBytes: null, deviceMemoryGB: 8 });
     expect(small.limit).toBe('ram');
-    expect(small.maxKeys).toBe(Math.floor(2e9 / 12));
+    expect(small.maxKeys).toBe(Math.floor(2e9 / 12.5));
   });
 });
 

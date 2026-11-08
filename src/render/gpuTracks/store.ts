@@ -44,6 +44,9 @@ import { positionRows, quatOfFrame } from '../../figures/motion';
 import { CATALOG } from '../../figures/catalog';
 import { endsOf, holdAfterKeys } from '../../data/despawn';
 import { aimOf, type AimNow } from '../../figures/aim';
+import { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32 } from './chunks';
+
+export { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32, encodeChunk } from './chunks';
 
 export const TRACK_U32 = 16;
 export const KEY_U32 = 2;
@@ -56,10 +59,6 @@ export const KEYS_PER_BUFFER = (1 << 28) - (1 << 16);
 export const KEY_BUFFERS = 2;
 /** Steps a coordinate or the time spans within a chunk or track (16 bits). */
 const STEPS = 65535;
-/** Keys a chunk span holds, and the u32 of one (origin x, y, z, step, first time, time step, two spare). */
-export const CHUNK_SHIFT = 6;
-export const CHUNK_KEYS = 1 << CHUNK_SHIFT;
-export const CHUNK_U32 = 8;
 /** Most seconds between two keys when the data is reduced. */
 const MAX_GAP = 4;
 /** Tolerances tried, metres, when lossless does not fit. */

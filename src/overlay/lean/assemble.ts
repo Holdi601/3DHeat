@@ -7,9 +7,11 @@
  * while the GPU draws the units from the keys.
  *
  * The keys of a unit are written run by run, one run a job, each into room
- * pass 1 measured; afterwards the runs are closed up (a run may have written
- * fewer: two samples in one 16-bit time step are one key) and the units
- * closed up after them. All moves go left, so it is done in place.
+ * pass 1 measured, in 16 bits of a span each 64 keys of the run
+ * (`gpuTracks/chunks.ts`); afterwards the runs are closed up (a key not after
+ * the one before it is dropped) and the units closed up after them. A run
+ * that does not start a track's next chunk is counted again from the
+ * track's own chunks. All moves go left, so it is done in place.
  *
  * Runs in the load worker; the jobs run in decode workers, or inline in tests.
  */
@@ -18,6 +20,7 @@ import { DatasetBuilder, type BlockAttr, type SourceBlock } from '../../data/bui
 import { Dictionary } from '../../data/growable';
 import type { Dataset } from '../../state/types';
 import { TRACK_U32 } from '../../render/gpuTracks/store';
+import { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32, encodeChunk } from '../../render/gpuTracks/chunks';
 import { BOX, KEY_LEVELS, SPAN, STEPS, type LeanSpec, type Pass1Result, type Pass2Result } from './scan';
 import { holdFor } from '../../data/despawn';
 
@@ -167,6 +170,11 @@ export class LeanAssembler {
   private order: Int32Array | null = null;
   private offset: Float64Array | null = null;
   private spans: Float64Array | null = null;
+  /** Per track, the file second its keys' times count from: its match's start and the overlay's origin. */
+  private base: Float64Array | null = null;
+  private origin = 0;
+  private jobSpans: (Float32Array | null)[] = [];
+  private jobChunkOff: (Uint32Array | null)[] = [];
   private jobSlot: (Float64Array | null)[] = [];
   private jobUsed: (Uint32Array | null)[] = [];
   private keysA: Uint32Array | null = null;
@@ -326,6 +334,12 @@ export class LeanAssembler {
       const step = Math.max(b[o + 3] - b[o], b[o + 4] - b[o + 1], b[o + 5] - b[o + 2], 1e-6) / STEPS;
       spans.set([b[o], b[o + 1], b[o + 2], step, b[o + 6], Math.max(b[o + 7] - b[o + 6], 1e-6) / STEPS], i * SPAN);
     }
+    // Times from each match's start, less the earliest track's first time (the dataset's origin, `finish`).
+    const gs = (g: number) => (Number.isFinite(this.groupStart[g]) ? this.groupStart[g] : 0);
+    let origin = Infinity;
+    for (let i = 0; i < T; i++) origin = Math.min(origin, b[order[i] * BOX + 6] - gs(grp[order[i]]));
+    this.origin = Number.isFinite(origin) ? origin : 0;
+    this.base = Float64Array.from(order, (g) => gs(grp[g]) + this.origin);
     this.order = order;
     this.trackOfUnit = trackOf;
     this.offset = offset;
@@ -341,17 +355,16 @@ export class LeanAssembler {
 
   private chosenAlloc: (Uint32Array | null)[] = [];
 
-  /** What pass 2 of job `j` needs: its units' spans and room (what pass 1 counted at the level), and the level. */
-  pass2Input(j: number): { spans: Float64Array; alloc: Uint32Array; level: number } {
+  /** What pass 2 of job `j` needs: the second its units' times count from, their room (what pass 1 counted at the level), and the level. */
+  pass2Input(j: number): { base: Float64Array; alloc: Uint32Array; level: number } {
     const ids = this.jobUnits[j]!;
     const slot = this.jobSlot[j]!;
-    const spans = new Float64Array(ids.length * SPAN);
+    const base = new Float64Array(ids.length);
     for (let u = 0; u < ids.length; u++) {
       const tr = this.trackOfUnit![ids[u]];
-      if (tr < 0 || slot[u] < 0) continue;
-      spans.set(this.spans!.subarray(tr * SPAN, tr * SPAN + SPAN), u * SPAN);
+      if (tr >= 0 && slot[u] >= 0) base[u] = this.base![tr];
     }
-    return { spans, alloc: this.chosenAlloc[j]!, level: this.level };
+    return { base, alloc: this.chosenAlloc[j]!, level: this.level };
   }
 
   addPass2(j: number, r: Pass2Result): void {
@@ -367,6 +380,8 @@ export class LeanAssembler {
       if (withB) B.set(r.keysB.subarray(o, o + n), slot[u]);
     }
     this.jobUsed[j] = r.used;
+    this.jobSpans[j] = r.spans;
+    this.jobChunkOff[j] = r.chunkOff;
   }
 
   /** After pass 2: the keys closed up, the tracks' table, and the dataset standing for them. */
@@ -377,36 +392,84 @@ export class LeanAssembler {
     const withB = B.length > 0;
     const offset = this.offset!;
     const wr = offset.slice(0, T);
-    const lastQt = new Int32Array(T).fill(-1);
-    // Each track's runs closed up, in job order; a key in the same time step as the one before is dropped.
+    const lastT = new Float64Array(T).fill(-Infinity);
+    // The tracks' chunk spans after the tracks: room for one a 64 keys of each track's room.
+    const chunkAt = new Float64Array(T + 1);
+    for (let i = 0; i < T; i++) chunkAt[i + 1] = chunkAt[i] + Math.ceil((offset[i + 1] - offset[i]) / CHUNK_KEYS);
+    const head = Math.max(1, T) * TRACK_U32;
+    const trackData = new Uint32Array(head + chunkAt[T] * CHUNK_U32);
+    const f32 = new Float32Array(trackData.buffer);
+    const CT = f32.subarray(head);
+    const buf = new Float64Array(CHUNK_KEYS * 4);
+    /** Key `k` (absolute) as numbers into `buf` at `q`, from the span at `so` of `S`. */
+    const decode = (S: Float32Array, so: number, k: number, q: number) => {
+      const a = A[k * 2];
+      const c = A[k * 2 + 1];
+      const st = S[so + 3];
+      buf[q * 4] = S[so] + (a & 0xffff) * st;
+      buf[q * 4 + 1] = S[so + 1] + (a >>> 16) * st;
+      buf[q * 4 + 2] = S[so + 2] + (c & 0xffff) * st;
+      buf[q * 4 + 3] = S[so + 4] + (c >>> 16) * S[so + 5];
+    };
+    // Each track's runs closed up, in job order; a key not after the one before is dropped.
     for (let j = 0; j < this.jobs.length; j++) {
       const ids = this.jobUnits[j]!;
       const slot = this.jobSlot[j]!;
       const used = this.jobUsed[j];
+      const RS = this.jobSpans[j]!;
+      const RC = this.jobChunkOff[j]!;
       if (!used) continue;
       for (let u = 0; u < ids.length; u++) {
         const n = used[u];
         if (!n || slot[u] < 0) continue;
         const tr = this.trackOfUnit![ids[u]];
-        let src = slot[u];
-        const end = src + n;
-        while (src < end && A[src * 2 + 1] >>> 16 <= lastQt[tr]) src++;
-        if (src >= end) continue;
+        const s0 = slot[u];
+        const runSpan = (k: number) => (RC[u] + (k >> CHUNK_SHIFT)) * CHUNK_U32;
+        const timeOf = (k: number) => {
+          const so = runSpan(k);
+          return RS[so + 4] + (A[(s0 + k) * 2 + 1] >>> 16) * RS[so + 5];
+        };
+        let k0 = 0;
+        while (k0 < n && timeOf(k0) <= lastT[tr]) k0++;
+        if (k0 >= n) continue;
         const dst = wr[tr];
-        const m = end - src;
-        if (dst !== src) {
-          A.copyWithin(dst * 2, src * 2, end * 2);
-          if (withB) B.copyWithin(dst, src, end);
+        const len = dst - offset[tr];
+        const m = n - k0;
+        const lastTime = timeOf(n - 1);
+        if (k0 === 0 && (len & (CHUNK_KEYS - 1)) === 0) {
+          // The run starts the track's next chunk: its keys and spans as they are.
+          if (dst !== s0) {
+            A.copyWithin(dst * 2, s0 * 2, (s0 + n) * 2);
+            if (withB) B.copyWithin(dst, s0, s0 + n);
+          }
+          const c = Math.ceil(n / CHUNK_KEYS);
+          CT.set(RS.subarray(RC[u] * CHUNK_U32, (RC[u] + c) * CHUNK_U32), (chunkAt[tr] + (len >> CHUNK_SHIFT)) * CHUNK_U32);
+        } else {
+          // Counted again, from the track's last chunk on: its keys first, then the run's.
+          let c = len >> CHUNK_SHIFT;
+          let q = 0;
+          const own = (chunkAt[tr] + c) * CHUNK_U32;
+          for (let k = offset[tr] + (c << CHUNK_SHIFT); k < dst; k++) decode(CT, own, k, q++);
+          for (let k = k0; k < n; k++) {
+            decode(RS, runSpan(k), s0 + k, q);
+            if (withB) B[dst + k - k0] = B[s0 + k];
+            if (++q === CHUNK_KEYS) {
+              encodeChunk(buf, q, A, offset[tr] + (c << CHUNK_SHIFT), CT, (chunkAt[tr] + c) * CHUNK_U32);
+              c++;
+              q = 0;
+            }
+          }
+          if (q) encodeChunk(buf, q, A, offset[tr] + (c << CHUNK_SHIFT), CT, (chunkAt[tr] + c) * CHUNK_U32);
         }
         // The run's attitudes on the same side as the key before it, as within a run, so slerps take the short arc.
         if (withB && dst > offset[tr] && quatDot(B[dst - 1], B[dst]) < 0) for (let k = dst; k < dst + m; k++) B[k] = negQuat(B[k]);
         wr[tr] = dst + m;
-        lastQt[tr] = A[(dst + m - 1) * 2 + 1] >>> 16;
+        lastT[tr] = lastTime;
       }
     }
+    this.jobSpans = [];
+    this.jobChunkOff = [];
     // Then the tracks closed up.
-    const trackData = new Uint32Array(Math.max(1, T) * TRACK_U32);
-    const f32 = new Float32Array(trackData.buffer);
     let cursor = 0;
     for (let i = 0; i < T; i++) {
       const s = offset[i];
@@ -418,6 +481,7 @@ export class LeanAssembler {
       const o = i * TRACK_U32;
       trackData[o] = cursor;
       trackData[o + 1] = n;
+      trackData[o + 7] = head + chunkAt[i] * CHUNK_U32;
       cursor += n;
     }
     const keys = cursor;
@@ -460,17 +524,27 @@ export class LeanAssembler {
       f32[tr + 13] = spans[o + 5];
       const first = trackData[tr];
       const n = trackData[tr + 1];
+      const cs = (k: number) => trackData[tr + 7] - head + ((k - first) >> CHUNK_SHIFT) * CHUNK_U32;
       // Held past its last key a few of its own sample intervals (`data/despawn.ts`), plus one.
-      f32[tr + 14] = holdFor(keyInterval(keysA, first, n, spans[o + 5])) + 1;
+      f32[tr + 14] = holdFor(keyInterval(keysA, CT, trackData[tr + 7] - head, first, n)) + 1;
       for (let e = 0; e < 2; e++) {
         const k = e === 0 ? first : first + Math.max(0, n - 1);
         const r = i * 2 + e;
-        const a = keysA[k * 2] ?? 0;
-        const c = keysA[k * 2 + 1] ?? 0;
-        px[r] = spans[o] + (a & 0xffff) * spans[o + 3];
-        py[r] = spans[o + 1] + (a >>> 16) * spans[o + 3];
-        pz[r] = spans[o + 2] + (c & 0xffff) * spans[o + 3];
-        time[r] = t0rel + (c >>> 16) * spans[o + 5];
+        if (!n) {
+          px[r] = spans[o];
+          py[r] = spans[o + 1];
+          pz[r] = spans[o + 2];
+          time[r] = t0rel;
+        } else {
+          const so = cs(k);
+          const a = keysA[k * 2];
+          const c = keysA[k * 2 + 1];
+          px[r] = CT[so] + (a & 0xffff) * CT[so + 3];
+          py[r] = CT[so + 1] + (a >>> 16) * CT[so + 3];
+          pz[r] = CT[so + 2] + (c & 0xffff) * CT[so + 3];
+          // The keys' times are from the origin; the dataset's from each match's start, its origin the least.
+          time[r] = CT[so + 4] + (c >>> 16) * CT[so + 5] + this.origin;
+        }
         personIds[r] = i;
         teamIds[r] = this.uTeam.data[g];
         groupIds[r] = grp;
@@ -559,15 +633,19 @@ export class LeanAssembler {
   }
 }
 
-/** The median time between a track's keys (16-bit times, `step` seconds each), from at most a few hundred of them; NaN for one key. */
-function keyInterval(keysA: Uint32Array, first: number, n: number, step: number): number {
+/** The median time between a track's keys (spans from `cb` of `CT`), from at most a few hundred of them; NaN for one key. */
+function keyInterval(keysA: Uint32Array, CT: Float32Array, cb: number, first: number, n: number): number {
   if (n < 2) return NaN;
   const stride = Math.max(1, Math.floor((n - 1) / 400));
   const gaps: number[] = [];
-  let prev = keysA[first * 2 + 1] >>> 16;
+  const timeOf = (k: number) => {
+    const so = cb + ((k - first) >> CHUNK_SHIFT) * CHUNK_U32;
+    return CT[so + 4] + (keysA[k * 2 + 1] >>> 16) * CT[so + 5];
+  };
+  let prev = timeOf(first);
   for (let k = first + stride; k < first + n; k += stride) {
-    const tq = keysA[k * 2 + 1] >>> 16;
-    if (tq > prev) gaps.push(((tq - prev) * step) / stride);
+    const tq = timeOf(k);
+    if (tq > prev) gaps.push((tq - prev) / stride);
     prev = tq;
   }
   if (!gaps.length) return NaN;
