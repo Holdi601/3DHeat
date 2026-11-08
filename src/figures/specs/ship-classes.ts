@@ -431,18 +431,28 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'fiji': { cls: 'light-cruiser', L: 169.3, B: 18.9, fb: 8, sheer: 3, transom: 0.8, guns: '56:3/152 45:3/152^2.5 -46:3/152^2.5b -58:3/152b', funnels: [[8, 12, 5], [-6, 12, 5]], blocks: [[32, 20, 22, 6, 2]], masts: [[24, 28], [-16, 24]] },
   'tiger-1959': { cls: 'light-cruiser', L: 169.3, B: 19.5, fb: 8, sheer: 3, guns: '56:2/152m -54:2/152mb 44:2/76m -42,6:2/76mb', funnels: [[6, 10, 5], [-10, 10, 5]], blocks: [[34, 16, 22, 7, 2], [-4, -26, 16, 6]], masts: [[18, 26], [-6, 22]] },
   // Japan.
-  'kuma': { cls: 'light-cruiser', L: 162.1, B: 14.2, fb: 7, fc: [-6, 2.4], guns: '54:1/140 46:1/140^2 -46:1/140^2b -54:1/140b 10,6:1/140', funnels: [[12, 11, 3.5], [2, 11, 3.5], [-8, 11, 3.5]], blocks: [[32, 24, 18, 4, 1]], masts: [[26, 24], [-28, 18]] },
-  'sendai': { cls: 'light-cruiser', L: 162.1, B: 14.2, fb: 7, fc: [-6, 2.4], guns: '54:1/140 46:1/140^2 -46:1/140^2b -54:1/140b 10,6:1/140', funnels: [[16, 11, 3.5], [6, 11, 3.5], [-4, 11, 3.5], [-14, 11, 3.5]], blocks: [[32, 24, 18, 4, 1]], masts: [[26, 24], [-28, 18]] },
-  'yubari': { cls: 'light-cruiser', L: 139.0, B: 12.0, fb: 6, fc: [-18, 2.2], guns: '46:1/140 38:2/140^2 -38:2/140^2b -46:1/140b', funnels: [[0, 11, 4]], blocks: [[28, 20, 16, 4, 1]], masts: [[22, 20], [-18, 16]] },
+  // Kuma: gun places, the bridge, the three funnels and the masts measured on the ONI 41-42 (Aug. 1942) recognition-model
+  // broadside, scaled by the overall length (sources.md); the beam guns abreast the bridge as its notes give them.
+  'kuma': { cls: 'light-cruiser', L: 162.1, B: 14.2, fb: 7, fc: [-6, 2.4], guns: '59.2:1/140 54.3:1/140^2 -40.3:1/140^2b -55.7:1/140b 36,6:1/140', funnels: [[21.6, 9.6, 3.5], [8.7, 9.6, 3.5], [-4.3, 9.6, 3.5]], blocks: [[48.5, 32.2, 18.6, 4, 1]], masts: [[34.6, 25], [-45, 20.3]] },
+  // Sendai: gun places (three aft), the bridge, the four funnels and the tripods measured on the ONI 41-42 (Aug. 1942)
+  // recognition-model broadside, scaled by the overall length (sources.md); the beam guns abreast the bridge as its notes give them.
+  'sendai': { cls: 'light-cruiser', L: 162.1, B: 14.2, fb: 7, fc: [-6, 2.4], guns: '61.2:1/140 55:1/140^2 -26.1:1/140b -43.1:1/140^2b -56.8:1/140b 36,6:1/140', funnels: [[25, 8.4, 3.5], [12.3, 8.4, 3.5], [1.2, 8.4, 3.5], [-11.6, 8.4, 3.5]], blocks: [[48.1, 33.6, 18, 4, 1]], masts: [[36.7, 20.4], [-33.3, 22.3]] },
+  // Yubari: gun places, the bridge, the trunked funnel and the masts measured on the ONI 41-42 (April 1943) recognition-model
+  // broadside, scaled by the overall length (sources.md).
+  'yubari': { cls: 'light-cruiser', L: 139.0, B: 12.0, fb: 6, fc: [-18, 2.2], guns: '44.7:1/140 38.6:2/140^2 -35.2:2/140^2b -41:1/140b', funnels: [[8.5, 8.3, 4]], blocks: [[28.7, 15.7, 16, 4, 1]], masts: [[17.3, 20], [-26.9, 16]] },
   // Furutaka (rebuilt): turrets, bridge tower, the trunked fore funnel and the thin aft one, the deckhouses and masts measured
   // on the ONI 41-42 (1943) recognition-model broadside, scaled by the overall length (sources.md).
   'furutaka': { cls: 'heavy-cruiser', L: 185.2, B: 16.9, fb: 8, fc: [-22, 2.4], guns: '55.5:2/203 47:2/203^2.5 -53.8:2/203b', funnels: [[8.9, 13.2, 7, 4.2], [-7.7, 10.3, 2.6]], blocks: [[35.4, 21, 21.2, 5, 1], [30.9, 23, 27.3, 3.2]], masts: [[19.4, 26], [-46.8, 24.4]] },
   // Myoko (Nachi): turrets, bridge and tower, funnels and masts measured on the ONI 41-42 (1943) recognition-model broadside,
   // scaled by the overall length (sources.md).
   'myoko': { cls: 'heavy-cruiser', L: 203.8, B: 19.0, fb: 8, fc: [-20, 2.4], guns: '58:2/203 49.8:2/203^2.5 43.9:2/203^0.5 -46.2:2/203^2.5b -55.7:2/203b', funnels: [[8.9, 12.9, 7, 4.4], [-7.8, 10.8, 4.4]], blocks: [[33.5, 20.7, 18.8, 6, 1], [28.3, 21, 24, 3.6]], masts: [[-14.1, 29]] },
-  'mogami': { cls: 'heavy-cruiser', L: 200.6, B: 20.2, fb: 8, fc: [-20, 2.4], guns: '66:2/203 56:2/203^2.5 46:2/203^0.5 -48:2/203^2.5b -60:2/203b', funnels: [[6, 12, 5]], blocks: [[34, 24, 26, 6, 1]], masts: [[-12, 22]] },
-  'mogami-1943': { cls: 'heavy-cruiser', L: 200.6, B: 20.2, fb: 8, fc: [-20, 2.4], guns: '66:2/203 56:2/203^2.5 46:2/203^0.5', funnels: [[6, 12, 5]], blocks: [[34, 24, 26, 6, 1], [-34, -92, 8.4, 9]], masts: [[-12, 22]] },
-  'tone': { cls: 'heavy-cruiser', L: 201.6, B: 19.4, fb: 8, fc: [-20, 2.4], guns: '68:2/203 58:2/203^2.5 48:2/203^0.5 38:2/203^2', funnels: [[2, 12, 5]], blocks: [[26, 16, 24, 6, 1]], masts: [[-14, 22]] },
+  // Mogami: turrets (the first two on the forecastle deck, the third superfiring), bridge tower, the big funnel and the tripods
+  // measured on the ONI 41-42 (Dec. 1942) recognition-model broadside, scaled by the overall length (sources.md).
+  'mogami': { cls: 'heavy-cruiser', L: 200.6, B: 20.2, fb: 8, fc: [-20, 2.4], guns: '68.5:2/203 52.4:2/203 44.4:2/203^2.5 -49.3:2/203^2.5b -58.5:2/203b', funnels: [[5.4, 13.1, 5]], blocks: [[32.8, 23, 21.6, 6, 1]], masts: [[-11.8, 24.7]] },
+  'mogami-1943': { cls: 'heavy-cruiser', L: 200.6, B: 20.2, fb: 8, fc: [-20, 2.4], guns: '68.5:2/203 52.4:2/203 44.4:2/203^2.5', funnels: [[5.4, 13.1, 5]], blocks: [[32.8, 23, 21.6, 6, 1], [-34, -92, 8.4, 9]], masts: [[-11.8, 24.7]] },
+  // Tone: the four forward turrets, bridge and tower, the raked funnel, the tripods and the crane's jib measured on the ONI
+  // 41-42 (1943) recognition-model broadside, scaled by the overall length (sources.md).
+  'tone': { cls: 'heavy-cruiser', L: 201.6, B: 19.4, fb: 8, fc: [-20, 2.4], guns: '65.4:2/203 57.2:2/203^2.5 49.9:2/203^0.5 36.4:2/203^2', funnels: [[-2.6, 15.1, 5]], blocks: [[24.5, 9.8, 22.2, 6, 1], [22.8, 13.3, 27.7, 3.6]], masts: [[-27.2, 23.6]], extra: [jib(-46.4, 31.6, -29.1, 12.6)] },
   'agano': { cls: 'light-cruiser', L: 174.1, B: 15.2, fb: 7, fc: [-14, 2.4], guns: '56:2/152 46:2/152^2.5 -50:2/152b', funnels: [[4, 11, 4]], blocks: [[30, 20, 20, 5, 1]], masts: [[-10, 20]] },
   'oyodo': { cls: 'light-cruiser', L: 192.1, B: 16.6, fb: 7, fc: [-10, 2.4], guns: '58:3/155 48:3/155^2.5', funnels: [[6, 12, 5]], blocks: [[32, 20, 22, 6, 1], [-8, -30, 14, 6]], masts: [[-6, 22]] },
   'ikoma': { cls: 'armoured-cruiser', L: 147.8, B: 22.8, fb: 8, guns: '50:2/305 -50:2/305b 18,8:2/203 -14,8:2/203b', funnels: [[10, 13, 4], [-6, 13, 4]], blocks: [[32, 24, 18, 5, 1]], masts: [[28, 26], [-24, 24]] },
@@ -747,14 +757,14 @@ const AFT: Record<string, Partial<ShipO>> = {
   'fiji': { blocks: [[-10, -30, 13, 5.5], [-14, -26, 15.5, 4]], dirs: [[-22, 18]], masts: [[24, 28, 't'], [-16, 24, 't']] },
   'tiger-1959': { masts: [[18, 26, 'l'], [-6, 22, 'l']] },
   // Japanese cruisers: the funnels raked.
-  'kuma': { blocks: [[-20, -30, 9, 3]], sl: [[-14, 11]], masts: [[26, 24, 't'], [-28, 18]], rake: 0.1 },
-  'sendai': { blocks: [[-20, -30, 9, 3]], sl: [[-22, 11]], masts: [[26, 24, 't'], [-28, 18]], rake: 0.1 },
-  'yubari': { blocks: [[-12, -20, 9.5, 3]], masts: [[22, 20, 't'], [-18, 16]], rake: 0.25 },
+  'kuma': { blocks: [[-17.5, -38, 9, 3]], sl: [[-13.8, 11]], masts: [[34.6, 25, 't'], [-45, 20.3]], rake: 0.1 },
+  'sendai': { blocks: [[-14.3, -25, 8, 3]], sl: [[-18.8, 11]], masts: [[36.7, 20.4, 't'], [-33.3, 22.3, 't']], rake: 0.1 },
+  'yubari': { blocks: [[-13.2, -17, 9.5, 3]], masts: [[17.3, 20, 't'], [-26.9, 16]], rake: 0.25 },
   'furutaka': { blocks: [[-5.3, -16.4, 11.7, 4.5], [-16.4, -27.4, 10, 3.5], [-35.5, -50, 10.7, 4]], dirs: [[-11.8, 15.3]], masts: [[19.4, 26], [-46.8, 24.4, 't']], rake: 0.15 },
   'myoko': { blocks: [[-10, -26, 11.5, 5.5], [-14, -24, 14, 3.5]], dirs: [[-22, 17]], masts: [[19.5, 26.9, 't'], [-14.1, 29]], rake: 0.18 },
-  'mogami': { blocks: [[-12, -28, 11.5, 5], [-14, -24, 14, 3.5]], dirs: [[-20, 17]], masts: [[28, 28, 't'], [-16, 22, 't']], rake: 0.12 },
-  'mogami-1943': { dirs: [[-20, 17]], masts: [[28, 28, 't'], [-12, 22, 't']], rake: 0.12 },
-  'tone': { blocks: [[-8, -22, 11.5, 5], [-12, -20, 14, 3.5]], dirs: [[-18, 17]], masts: [[20, 26, 't'], [-14, 22, 't']], rake: 0.12 },
+  'mogami': { blocks: [[-12, -28, 11.5, 5], [-14, -24, 14, 3.5]], dirs: [[-20, 17]], masts: [[20.1, 23.7, 't'], [-11.8, 24.7, 't']], rake: 0.12 },
+  'mogami-1943': { dirs: [[-20, 17]], masts: [[20.1, 23.7, 't'], [-11.8, 24.7, 't']], rake: 0.12 },
+  'tone': { blocks: [[-8.2, -28, 14, 5], [-22.8, -56.4, 10.1, 4.5]], dirs: [[-12.5, 18.5]], masts: [[9.5, 27.1, 't'], [-27.2, 23.6, 't']], rake: 0.12 },
   'agano': { blocks: [[-14, -28, 10.5, 4], [-16, -24, 13, 3]], dirs: [[-22, 16]], masts: [[24, 24, 't'], [-10, 20]], rake: 0.12 },
   'oyodo': { masts: [[26, 26, 't'], [-6, 22]], rake: 0.12 },
   'ikoma': { blocks: [[-20, -28, 13, 4]] },
@@ -1940,7 +1950,9 @@ const R: Record<string, ShipO> = {
   'yugumo': { cls: 'destroyer', L: 119.2, B: 10.8, fb: 4.9, fc: [18, 1.4], sheer: 1, guns: '40:2/127m -28:2/127mb^1.5 -37:2/127mb', funnels: [[13, 9.5, 3.2], [-2.6, 8.2, 3]], blocks: [[32, 24, 12, 3.4, 2.5], [29.5, 24.5, 14.2, 2.4, 2]], masts: [[20.5, 15]], tt: [2, 4], ttAt: [3, 16] },
   // Nagara: Kuma's successor, seven single 14 cm guns, three funnels, the aircraft hangar in the bridge's base (162.1 x
   // 14.2 m; 5,570 t full).
-  'nagara': { cls: 'light-cruiser', L: 162.1, B: 14.2, fb: 7, fc: [-6, 2.4], guns: '56:1/140 47:1/140^2 -46:1/140^2b -54:1/140b 10,6:1/140', funnels: [[12, 11, 3.5], [2, 11, 3.5], [-8, 11, 3.5]], blocks: [[38, 30, 11, 3, 1], [32, 24, 18, 4, 1]], masts: [[26, 24], [-28, 18]], tt: [2, 4] },
+  // Gun places (three aft), the bridge, the funnels and masts measured on the ONI 41-42 (Aug. 1942) recognition-model broadside
+  // of the Natori class, scaled by the overall length (sources.md); the beam guns abreast the bridge as its notes give them.
+  'nagara': { cls: 'light-cruiser', L: 162.1, B: 14.2, fb: 7, fc: [-6, 2.4], guns: '60.8:1/140 56.2:1/140^2 -38.5:1/140b -47:1/140^2b -53.2:1/140b 36,6:1/140', funnels: [[20.5, 9.2, 3.5], [8.1, 9.2, 3.5], [-4.5, 9.2, 3.5]], blocks: [[50.4, 44.5, 13.4, 3, 1], [44.5, 33.4, 18, 4, 1]], masts: [[37.1, 27.8], [-42, 23.9]], tt: [2, 4] },
   // Dreadnought (1906): five twin 12-inch turrets, one forward, two on the wings amidships and two aft, two funnels
   // with the tripod foremast aft of the fore funnel, as built (160.6 x 25 m; 21,060 t full).
   'dreadnought': { cls: 'battleship', L: 160.6, B: 25, fb: 8, sheer: 3, guns: '56:2/305 8,8.5:2/305 -40:2/305b -56:2/305b', funnels: [[20, 13, 5], [2, 13, 5]], blocks: [[36, 28, 16, 5, 1], [-12, -24, 13, 4]], masts: [[12, 30, 't'], [-14, 26]] },
