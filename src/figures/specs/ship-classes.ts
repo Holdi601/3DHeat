@@ -1048,6 +1048,18 @@ N['ark-royal-1937'] = carrier({
   turrets: level('72,15.4:2/114 60,15.4:2/114 -70,15.4:2/114b -82,15.4:2/114b', 17.5, 19),
   more: { bodies: [blockOf(77, 55, 16.3, 17.5, 1.9, 0, 0, 15.4), blockOf(-65, -87, 16.3, 17.5, 1.9, 0, 0, 15.4)] },
 });
+// Illustrious (1940): the armoured-hangar carrier, the flight deck ending short of bow and stern with round-downs over
+// a hull longer than it, the island to starboard amidships with the funnel at its after end and the mast, eight twin
+// 4.5-inch turrets in pairs at the deck's corners, their roofs at flight-deck level (226.7 m overall, 29.2 m beam;
+// flight deck 189 x 29 m; its height over the water an estimate).
+N['illustrious-1940'] = carrier({
+  cls: 'carrier', L: 222, B: 29.2, deck: 13,
+  plan: [[95, -8], [95, 8], [88, 13], [-86, 13], [-94, 10], [-94, -10], [-86, -13], [88, -13]],
+  island: [[14, -16, 21, 13.6, 2.8, 1], [10, -2, 25, 13.6, 2.2, 1], [-4, -16, 29, 13.8, 3.2, 2]],
+  masts: [[2, 22, 13.6]],
+  turrets: level('86,13.6:2/114 76,13.6:2/114 -80,13.6:2/114b -90,13.6:2/114b', 12.4, 12),
+  more: { bodies: [blockOf(91, 71, 10.6, 12.4, 2.2, 0, 0, 13.6), blockOf(-75, -95, 10.6, 12.4, 2.2, 0, 0, 13.6)] },
+});
 // Tarawa (LHA): a full-length straight flight deck on a slab-sided hull, the big island to starboard with two masts,
 // the 5-inch guns on sponsons at the forward corners and one aft, the port side lift (254 m long, 32.3 m beam; 39,400 t
 // full).
@@ -2671,7 +2683,7 @@ const ALIASES: Record<string, string> = {
   'uss_cv_immortal': 'yorktown',
   'uss_cv_lexington': 'lexington-cv2',
   'uss_cv_lexington_story': 'lexington-cv2',
-  'hms_cv_illustrious': 'yorktown',
+  'hms_cv_illustrious': 'illustrious-1940',
   'ital_cv_aquila': 'yorktown',
   'us_aircraftcarrier_enterprise': 'yorktown',
   'us_aircraftcarrier_enterprise_ai': 'yorktown',
@@ -2679,8 +2691,8 @@ const ALIASES: Record<string, string> = {
   'us_aircraftcarrier_saratoga_ai': 'saratoga-cv3',
   'us_aircraftcarrier_lexington': 'essex',
   'us_aircraftcarrier_lexington_ai': 'essex',
-  'uk_aircraftcarrier_illustrious': 'invincible',
-  'uk_aircraftcarrier_illustrious_ai': 'invincible',
+  'uk_aircraftcarrier_illustrious': 'illustrious-1940',
+  'uk_aircraftcarrier_illustrious_ai': 'illustrious-1940',
   'uk_aircraftcarrier_ark_royal': 'ark-royal-1937',
   'uk_aircraftcarrier_ark_royal_ai': 'ark-royal-1937',
   'fr_aircraftcarrier_foch': 'clemenceau',
