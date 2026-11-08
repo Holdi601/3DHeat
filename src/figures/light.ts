@@ -19,7 +19,7 @@ export const SUN_COLOR: Rgb3 = [0.82, 0.8, 0.76];
 
 /** The hemisphere: what a face looking straight up gets, and one looking straight down. */
 export const SKY_COLOR: Rgb3 = [0.46, 0.48, 0.52];
-export const GROUND_COLOR: Rgb3 = [0.16, 0.15, 0.14];
+export const GROUND_COLOR: Rgb3 = [0.27, 0.26, 0.25];
 
 /** Light every face gets whichever way it looks. */
 export const AMBIENT = 0.06;

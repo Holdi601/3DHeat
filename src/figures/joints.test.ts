@@ -113,7 +113,7 @@ describe('ground figure joints', () => {
       const js = build(name).joints!;
       expect(js.map((j) => j.kind), name).toEqual(['yaw', 'pitch']);
       expect(js[1].parent, name).toBe(0);
-      expect(js[1].pitch, name).toBeGreaterThan(0);
+      expect(js[1].pitch, name).toBeGreaterThanOrEqual(0);
     }
   });
 

@@ -78,7 +78,9 @@ def otsu(values: np.ndarray) -> float:
         between = w0 * (total - w0) * (m0 - m1) ** 2
         if between > best:
             best, thr = between, t
-    return float(thr)
+    # The dark class is the values up to t inclusive; callers test `gray < thr`, so the cut lies half a step above
+    # (a pure black-and-white scan otherwise puts it at 0 and finds nothing dark).
+    return float(thr) + 0.5
 
 
 def inside_frame(dark: np.ndarray) -> tuple[int, int, int, int]:

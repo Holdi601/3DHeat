@@ -223,6 +223,16 @@ export interface GroundSpec {
   hullOutline?: Outline;
   /** The run of the track seen from the side, (forward, up), in place of the generic one: where the sprocket and idler sit. */
   trackProfile?: P2[];
+  /**
+   * The published width of one track (default 17 % of the vehicle's width): the outer edge stays at the side, so a
+   * wide-tracked heavy tank seen from the front shows its tracks as broad as they are.
+   */
+  trackWidth?: number;
+  /**
+   * How far a tracked hull's upper sides lean in, as a share of its height (default 0.06): the steeply sloped sponson
+   * plates of a T-34 or IS-2 make the roof far narrower than the hull over the tracks.
+   */
+  hullLean?: number;
   /** Road wheel radius (default from the run and count). */
   roadWheelRadius?: number;
   /**
@@ -250,6 +260,11 @@ export interface GroundSpec {
    * forward is drawn to end here, the part of its barrel inside the turret left out.
    */
   overall?: number;
+  /**
+   * Where `overall` is measured from, forward from the middle, when the source measures it from the hull's rear plate
+   * rather than from the rearmost part drawn (exhausts, air filters or stowage hung behind it): German wartime figures.
+   */
+  overallFrom?: number;
   /** A rail vehicle's bogie centres, forward from the middle; the axles in each (default 2 on a long vehicle) and their spacing (default 1.8). */
   bogieAt?: number[];
   bogieAxles?: number;
@@ -424,7 +439,7 @@ function buildAt(input: GroundSpec): Template {
   }
   into(k, -1);
   // The guns last, so a published length with the gun forward is measured from the rearmost part already drawn.
-  for (const g of reach(spec, turrets, rearOf(k))) gun(k, spec, g, top, turrets, yawOf);
+  for (const g of reach(spec, turrets, spec.overallFrom ?? rearOf(k))) gun(k, spec, g, top, turrets, yawOf);
   into(k, -1);
   return finish(k, 'ground');
 }
@@ -700,6 +715,7 @@ function trackHeight(spec: GroundSpec): number {
 }
 
 function trackWidth(spec: GroundSpec): number {
+  if (spec.trackWidth) return spec.trackWidth;
   return spec.hull === 'rhomboid' ? Math.max(0.5, spec.width * 0.2) : Math.max(0.3, spec.width * 0.17);
 }
 
@@ -1183,7 +1199,7 @@ function hull(k: Kit, spec: GroundSpec): void {
     const lowerProfile: P2[] = [[c - half + 0.3, floor], [c + half - 0.5, floor], [c + half - 0.15, fender], [c - half + 0.15, fender]];
     prism(k.team, k.fr, lowerProfile, -(spec.width / 2 - tw), spec.width / 2 - tw, grey(0.8));
     // The upper hull's sides lean in a little above the fenders, as welded hull plates do.
-    if (spec.hullOutline) shell(k.team, k.fr, spec.hullOutline, grey(0.86), 0.06);
+    if (spec.hullOutline) shell(k.team, k.fr, spec.hullOutline, grey(0.86), spec.hullLean ?? 0.06);
     else {
       const upper = profile.map(([x, u]) => [x, Math.max(u, fender)] as P2);
       facetBody(k.team, k.fr, profileOutline(dedupe(upper), w), grey(0.86), 0.06);
@@ -1476,7 +1492,10 @@ function rearOf(k: Kit): number {
 }
 
 /** How far forward of its breech a gun's muzzle reaches, level (a muzzle brake ends 2 % past the barrel's length). */
-const muzzleReach = (g: GunSpec) => (g.mount === 'top' ? g.length : (g.muzzle ? g.length * 1.02 : g.length) * Math.cos(g.elevation ?? 0.03));
+/** A gun's elevation when its spec gives none: level, as vehicles stand in photographs and drawings (a slight lift put long barrels 10-15 cm high). */
+const GUN_REST = 0;
+
+const muzzleReach = (g: GunSpec) => (g.mount === 'top' ? g.length : (g.muzzle ? g.length * 1.02 : g.length) * Math.cos(g.elevation ?? GUN_REST));
 
 /**
  * The guns, the one reaching furthest forward ended at the spec's published `overall` length: its barrel shortened
@@ -1525,7 +1544,7 @@ function gun(k: Kit, spec: GroundSpec, g: GunSpec, top: number, turrets: TurretS
   // Hull and sponson guns sit in the hull whatever turret the spec has.
   const yawJ = t && g.mount !== 'hull' && g.mount !== 'sponson' ? yawOf[g.turret ?? 0] ?? -1 : -1;
   const base = t ? top + (t.up ?? 0) : top;
-  const elev = g.elevation ?? 0.03;
+  const elev = g.elevation ?? GUN_REST;
   // Barrels a little thicker than true, or a 23 mm gun vanishes at any distance.
   const r = Math.max(0.065, g.calibre * 0.75);
   const ce = Math.cos(elev);

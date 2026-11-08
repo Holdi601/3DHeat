@@ -210,8 +210,8 @@ N['arleigh-burke'] = {
   hullOutline: hullOf([[77.65, 9.5, 0.2], [70, 9.0, 3.5], [55, 8.3, 7.8], [35, 7.6, 9.8], [0, 7.2, 10.05], [-45, 6.8, 9.8], [-70, 6.4, 8.6], [-77.65, 6.3, 7.4]]),
   bodies: [blockOf(36, 4, 7.0, 15.5, 7.0, 3.5), blockOf(31, 15, 15.5, 19.5, 5.2, 2), blockOf(6, -1, 7.0, 21, 2.6, 0, 1.2), blockOf(-13, -20, 6.8, 19.5, 2.6, 0, 1.2), blockOf(4, -8, 7.0, 11, 4.2), blockOf(-6, -48, 6.8, 14.5, 7.0, 1.5)],
   turrets: [{ x: 58, size: 4.5, barrels: 1, length: 7, calibre: 0.127, kind: 'mount' }],
-  // The raked tripod mast over the bridge.
-  masts: [{ x: 13, height: 26, kind: 'tripod' }],
+  // The tripod mast stepped on the deckhouse behind the bridge, raked aft (about 14 degrees, from photos).
+  masts: [{ x: 13, height: 26, kind: 'tripod', base: 8.3, rake: 0.25 }],
   // The cells flush with the deck where it is (it rises to the bow and falls to the stern).
   launchers: [{ x: 46, length: 13, width: 8, up: 0.78 }, { x: -56, length: 10, width: 8, up: -0.58 }],
   radars: [{ x: 24, up: 9, kind: 'faces', size: 4 }],
@@ -446,7 +446,7 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   // ---------------------------------------------------------------- destroyers by class
   // United States.
   // Clemson: deck line, deckhouses, the four stacks and the tall masts from the Bureau of Ships outboard profile (sources.md).
-  'clemson': { cls: 'destroyer', L: 95.8, B: 9.4, fb: 3.8, sheer: 1.6, guns: '29:1/102^1.0 6,3.6:1/102^1.8 -37:1/102^1.4b -45:1/76b', funnels: [[14.5, 7.6, 2.4], [9, 7.6, 2.4], [1.5, 7.7, 2.4], [-3.5, 7.5, 2.4]], blocks: [[26.5, 18.5, 9.3, 2.2, 1], [17, -7, 5.6, 2.2], [-27, -42, 5.3, 2.4]], raised: [[25, 19, 9.3, 10.8, 2.6], [-13.5, -16, 3.5, 10.0, 1.2]], masts: [[17.5, 26.5], [-31.5, 12.2]] },
+  'clemson': { cls: 'destroyer', L: 95.8, B: 9.4, fb: 3.8, sheer: 1.6, guns: '29:1/102^1.0 6,3.6:1/102^1.8 -37:1/102^1.4b -45:1/76b', funnels: [[14.5, 7.6, 2.4], [9, 7.6, 2.4], [1.5, 7.7, 2.4], [-3.5, 7.5, 2.4]], blocks: [[26.5, 18.5, 9.3, 2.2, 1], [17, -7, 5.6, 2.2], [-27, -42, 5.3, 2.4]], raised: [[25, 19, 9.3, 10.8, 2.6], [-13.5, -16, 3.5, 10.0, 1.2]], masts: [[17.5, 26.5], [-31.5, 12.2]], more: { stem: 1.0 } },
   // Farragut: forecastle and main deck, the bridge, the single stack and the galley pipe, the boats, the deckhouses,
   // gun and tube places and both masts measured on the Bureau of Construction and Repair outboard profile of Hull
   // (DD-350) (sources.md); beam published, the plan estimated.
@@ -486,6 +486,21 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'z52': { cls: 'destroyer', L: 126.2, B: 12.0, fb: 6, sheer: 3, guns: '48:2/128 -36:2/128^2b -50:2/128b', funnels: [[4, 8, 3.6]], blocks: [[30, 22, 13, 3.6, 1]], masts: [[20, 18]] },
   // Russia and the Soviet Union.
   'novik': { cls: 'destroyer', L: 102.4, B: 9.5, fb: 4.8, sheer: 2, guns: '40:1/102 -40:1/102b 0:1/102', funnels: [[18, 7, 2.4], [10, 7, 2.4], [2, 7, 2.4], [-6, 7, 2.4]], blocks: [[30, 24, 9, 2.4, 1]], masts: [[24, 14], [-30, 12]] },
+  // Derzky and Bespokoiny classes (Frunze, ex-Bystry; Kerch): the Novik's successors with three stacks - the long
+  // raised forecastle running aft past the third stack, the low quarterdeck with the aft guns, the bridge over the
+  // forward gun, two tall pole masts. Places along the hull from public-domain photographs of Frunze (sources.md),
+  // corrected for their perspective by the stacks' widths; length and beam published, heights estimates.
+  'frunze': {
+    cls: 'destroyer', L: 98.0, B: 9.3, fb: 4.4,
+    hull: [[49, 5.0, 0.15], [45, 4.85, 2.0], [40, 4.7, 3.3], [32, 4.55, 4.2], [20, 4.45, 4.6], [0, 4.4, 4.65], [-11.6, 4.4, 4.55], [-12.2, 2.5, 4.5], [-25, 2.45, 4.1], [-38, 2.4, 3.4], [-49, 2.4, 2.4]],
+    guns: '34:1/102 -33:1/102^1.4b -43:1/102b',
+    funnels: [[13, 5.4, 3.0], [3, 5.4, 3.0], [-7, 5.4, 3.0]],
+    blocks: [[31, 22, 8.6, 2.6, 0.5], [-15, -30, 4.6, 2.2]],
+    masts: [[24, 19], [-22, 16]],
+    tt: [3, 2], ttAt: [11.4, 10],
+    // The plumb stem (photos).
+    more: { stem: 0.4 },
+  },
   'opytny': { cls: 'destroyer', L: 113.5, B: 10.2, fb: 5.6, guns: '44:1/130 -38:1/130^2b -50:1/130b', funnels: [[6, 8, 3], [-6, 8, 3]], blocks: [[30, 22, 12, 3.5, 1]], masts: [[20, 16]] },
   'type-7u': { cls: 'destroyer', L: 112.5, B: 10.2, fb: 5.4, guns: '44:1/130 37:1/130^2 -38:1/130^2b -48:1/130b', funnels: [[8, 8, 3], [-4, 8, 3]], blocks: [[28, 22, 12, 3.2, 1]], masts: [[20, 16]] },
   'leningrad': { cls: 'destroyer', L: 127.5, B: 11.7, fb: 5.6, guns: '50:1/130 42:1/130^2 -38:1/130^2b -50:1/130b -58:1/130b', funnels: [[14, 8, 3], [4, 8, 3], [-6, 8, 3]], blocks: [[32, 26, 13, 3.5, 1]], masts: [[24, 18]] },
@@ -511,13 +526,60 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'battle': { cls: 'destroyer', L: 115.5, B: 12.3, fb: 5.6, fc: [6, 1.3], guns: '44:2/114 36:2/114^2', funnels: [[0, 8, 3.6]], blocks: [[28, 18, 13, 4, 1]], masts: [[10, 16]] },
   'daring': { cls: 'destroyer', L: 118.9, B: 13.1, fb: 6, sheer: 2, guns: '44:2/114m 36:2/114^2m -46:2/114mb', funnels: [[0, 7, 4]], blocks: [[28, 14, 13, 4, 1]], masts: [[10, 18]] },
   // Japan.
-  'momi': { cls: 'destroyer', L: 85.3, B: 7.9, fb: 4.4, fc: [22, 1.4], guns: '34:1/120 -2:1/120 -36:1/120b', funnels: [[8, 6, 2.2], [-12, 6, 2.2]], blocks: [[24, 20, 8, 2.2, 1]], masts: [[20, 12]] },
-  'kamikaze': { cls: 'destroyer', L: 102.6, B: 9.2, fb: 4.8, fc: [28, 1.6], guns: '38:1/120 6:1/120 -30:1/120b -42:1/120b', funnels: [[14, 6.5, 2.4], [-6, 6.5, 2.4]], blocks: [[28, 24, 9, 2.4, 1]], masts: [[22, 13]] },
-  'mutsuki': { cls: 'destroyer', L: 102.7, B: 9.2, fb: 4.8, sheer: 2.5, fc: [28, 1.6], guns: '38:1/120 6:1/120 -30:1/120b -42:1/120b', funnels: [[14, 6.5, 2.4], [-6, 6.5, 2.4]], blocks: [[28, 24, 9, 2.4, 1]], masts: [[22, 13]] },
+  // Momi (and Wakatake, identical in appearance): the short raised forecastle, the low flush main deck, the well with
+  // the forward tubes, the bridge, the two upright stacks, the gun platforms and the masts measured on the ONI 41-42
+  // profile and plan (sources.md); the forecastle in front of the stacks is about 2.4 m above the main deck.
+  'momi': {
+    cls: 'destroyer', L: 85.3, B: 7.9, fb: 3.1,
+    hull: [[42.65, 4.55, 0.15], [41, 4.5, 0.75], [39, 4.45, 1.4], [36, 4.4, 2.2], [32, 4.35, 2.8], [27.4, 4.3, 3.35], [26.8, 1.95, 3.4], [20, 1.9, 3.55], [10, 1.85, 3.8], [0, 1.85, 3.9], [-10, 1.8, 3.85], [-20, 1.8, 3.65], [-28, 1.75, 3.3], [-34, 1.75, 2.8], [-38, 1.72, 2.3], [-42.65, 1.72, 2.0]],
+    guns: '30.6:1/120 2.05:1/120^2.0 -22.1:1/120^1.95b',
+    funnels: [[8.4, 6.85, 3.0], [-2.8, 6.15, 2.0]],
+    blocks: [[19.3, 11.4, 5.2, 2.2, 0.3], [19.3, 14.3, 7.95, 2.0, 0.3], [10.8, 4.8, 3.1, 1.6], [4.8, -0.9, 3.85, 2.2], [-17.3, -25.3, 3.74, 2.4]],
+    masts: [[12.9, 18.8, 't', 3.3], [-18.5, 14.0, undefined, 2.0]],
+    ttAt: [26.4, 36],
+    more: { stem: 2.0 },
+  },
+  // Kamikaze and Mutsuki: one appearance (ONI 41-42: the Kamikazes' tubes in twin mounts, the Mutsukis' in triples).
+  // The raised forecastle with the curved break, the well before the bridge with the first tubes, the low main deck,
+  // the two raked stacks on the casing, the gun platform between them, the aft deckhouse with two guns and the
+  // mainmast, measured on the ONI 41-42 profile and plan (sources.md).
+  'kamikaze': {
+    cls: 'destroyer', L: 102.6, B: 9.2, fb: 3.4,
+    hull: [[51.3, 5.8, 0.15], [48, 5.55, 2.0], [43, 5.3, 3.2], [37, 5.05, 3.9], [32.6, 4.8, 4.05], [32.0, 3.3, 4.1], [22.8, 3.3, 4.4], [22.2, 2.2, 4.4], [10, 2.15, 4.6], [0, 2.15, 4.6], [-10, 2.1, 4.55], [-20, 2.05, 4.3], [-30, 2.0, 3.9], [-40, 2.0, 3.4], [-48, 2.0, 2.8], [-51.3, 2.0, 2.3]],
+    guns: '33.3:1/120 6.6:1/120^2.6 -26.8:1/120^2.2b -34:1/120^2.2b',
+    funnels: [[13.8, 8.2, 3.3], [-0.4, 7.9, 4.3]],
+    blocks: [[23.0, 16.8, 6.8, 2.6, 0.5], [23.6, 18.7, 9.05, 2.2, 0.6], [17.0, -3.9, 3.4, 2.0], [10.1, 3.2, 4.8, 2.0], [-3.7, -8.6, 6.2, 2.0], [-24.6, -37.3, 4.16, 2.4], [-29.2, -32.0, 6.0, 1.5], [29.7, 25.2, 5.0, 1.6]],
+    masts: [[18.1, 18.2, 't', 4.6], [-30.6, 14.8, undefined, 4.0]],
+    ttAt: [-2.6, 12],
+    more: { stem: 1.5 },
+  },
+  'mutsuki': {
+    cls: 'destroyer', L: 102.7, B: 9.2, fb: 3.4,
+    hull: [[51.35, 5.8, 0.15], [48, 5.55, 2.0], [43, 5.3, 3.2], [37, 5.05, 3.9], [32.6, 4.8, 4.05], [32.0, 3.3, 4.1], [22.8, 3.3, 4.4], [22.2, 2.2, 4.4], [10, 2.15, 4.6], [0, 2.15, 4.6], [-10, 2.1, 4.55], [-20, 2.05, 4.3], [-30, 2.0, 3.9], [-40, 2.0, 3.4], [-48, 2.0, 2.8], [-51.35, 2.0, 2.3]],
+    guns: '33.3:1/120 6.6:1/120^2.6 -26.8:1/120^2.2b -34:1/120^2.2b',
+    funnels: [[13.8, 8.2, 3.3], [-0.4, 7.9, 4.3]],
+    blocks: [[23.0, 16.8, 6.8, 2.6, 0.5], [23.6, 18.7, 9.05, 2.2, 0.6], [17.0, -3.9, 3.4, 2.0], [10.1, 3.2, 4.8, 2.0], [-3.7, -8.6, 6.2, 2.0], [-24.6, -37.3, 4.16, 2.4], [-29.2, -32.0, 6.0, 1.5], [29.7, 25.2, 5.0, 1.6]],
+    masts: [[18.1, 18.2, 't', 4.6], [-30.6, 14.8, undefined, 4.0]],
+    ttAt: [-2.6, 12],
+    more: { stem: 1.5 },
+  },
   'hatsuharu': { cls: 'destroyer', L: 109.5, B: 10.0, fb: 5, fc: [16, 1.4], guns: '40:2/127 33:2/127^2 -38:2/127b', funnels: [[10, 7, 3], [-2, 7, 3]], blocks: [[28, 22, 12, 3, 1]], masts: [[20, 15]] },
   'shiratsuyu': { cls: 'destroyer', L: 107.5, B: 9.9, fb: 5, fc: [16, 1.4], guns: '40:2/127 -28:1/127^2b -40:2/127b', funnels: [[10, 7, 3], [-2, 7, 3]], blocks: [[28, 22, 12, 3, 1]], masts: [[20, 15]] },
   'kagero': { cls: 'destroyer', L: 118.5, B: 10.8, fb: 5.4, fc: [18, 1.4], guns: '44:2/127 -32:2/127^2b -44:2/127b', funnels: [[10, 7.5, 3], [-2, 7.5, 3]], blocks: [[30, 24, 12, 3.2, 1]], masts: [[22, 16]] },
-  'matsu': { cls: 'destroyer', L: 100.0, B: 9.4, fb: 5, fc: [16, 1.3], guns: '36:1/127 -36:2/127b', funnels: [[8, 6.5, 2.6], [-2, 6.5, 2.6]], blocks: [[26, 22, 10, 2.8, 1]], masts: [[20, 14]] },
+  // Matsu: the forecastle ending at the long low bridge, the widely spaced upright stacks, the quadruple tubes between
+  // them, the aft deckhouse and the twin 5-inch on the stern, measured on the ONI 222-J profile (sources.md; its
+  // height scale for the heights, the length published).
+  'matsu': {
+    cls: 'destroyer', L: 100.0, B: 9.4, fb: 5.3,
+    hull: [[50, 6.6, 0.15], [46, 6.4, 1.65], [38, 6.0, 3.3], [30, 5.7, 4.2], [22, 5.4, 4.56], [19, 5.3, 4.65], [17.5, 4.5, 4.7], [15.5, 2.8, 4.7], [10, 2.7, 4.7], [-28, 2.7, 4.7], [-43, 2.7, 4.0], [-50, 2.7, 2.6]],
+    guns: '34.2:1/127 -32.6:2/127b',
+    funnels: [[8.4, 8.7, 2.2], [-9.9, 8.7, 2.2]],
+    blocks: [[26.8, 13.0, 8.9, 2.8, 0.6], [24.5, 14.8, 11.2, 2.2, 0.5], [14.2, 6.6, 5.3, 2.0], [-7.9, -13.5, 5.3, 2.0], [-17.0, -26.4, 5.9, 2.4], [-2.3, -6.2, 7.9, 1.6]],
+    // The foremast to its masthead (70 ft on the sheet's scale), not the thin pole above it.
+    masts: [[12.1, 18.9, 't', 2.6], [-18.3, 13.2, undefined, 3.2]],
+    ttAt: [5.7, 8],
+    more: { stem: 2.8 },
+  },
   'shimakaze': { cls: 'destroyer', L: 129.5, B: 11.2, fb: 5.6, fc: [22, 1.5], guns: '50:2/127 -38:2/127^2b -50:2/127b', funnels: [[12, 7.5, 3], [0, 7.5, 3]], blocks: [[34, 28, 12, 3.2, 1]], masts: [[26, 16]] },
   // Italy.
   // Turbine: deck line, bridge, funnels and masts measured on the broadside photo in ONI 202 (sources.md).
@@ -727,13 +789,13 @@ const AFT: Record<string, Partial<ShipO>> = {
   'battle': { blocks: [[-14, -24, 8.6, 3]], dirs: [[-20, 10.6, 1.2]], masts: [[10, 16, 'l']] },
   'daring': { masts: [[10, 18, 'l']] },
   // Japanese destroyers: the funnels raked, the foremast a tripod, a short mainmast aft.
-  'momi': { masts: [[20, 12, 't'], [-20, 8]], rake: 0.12 },
-  'kamikaze': { masts: [[22, 13, 't'], [-24, 9]], rake: 0.12 },
-  'mutsuki': { masts: [[22, 13, 't'], [-24, 9]], rake: 0.12 },
+  'momi': { rake: 0.02, sl: [[-5.9, 5.2]] },
+  'kamikaze': { rake: 0.1 },
+  'mutsuki': { rake: 0.1 },
   'hatsuharu': { masts: [[20, 15, 't'], [-22, 9]], rake: 0.15 },
   'shiratsuyu': { masts: [[20, 15, 't'], [-22, 9]], rake: 0.15 },
   'kagero': { funnels: [[10, 7.5, 3.8, 2.8], [-2, 7.5, 3, 2.4]], masts: [[22, 16, 't'], [-24, 10]], rake: 0.14, blocks: [[28.5, 24.5, 13.2, 2.6]] },
-  'matsu': { masts: [[20, 14, 't'], [-20, 9]], rake: 0.1 },
+  'matsu': { rake: 0.02, sl: [[-12.6, 7.1]] },
   'shimakaze': { masts: [[26, 16, 't'], [-30, 10]], rake: 0.14 },
   // Italian destroyers.
   'turbine': { masts: [[25, 20.6], [-18, 24]] },
@@ -1409,7 +1471,7 @@ N['arleigh-burke-flight-i'] = {
   hullOutline: hullOf([[76.95, 9.5, 0.2], [69.3, 9.0, 3.5], [54.3, 8.3, 7.8], [34.3, 7.6, 9.8], [-0.7, 7.2, 10.05], [-45.7, 6.8, 9.8], [-69.3, 6.4, 8.6], [-76.95, 6.3, 7.4]]),
   bodies: [blockOf(35.3, 3.3, 7.0, 15.5, 7.0, 3.5), blockOf(30.3, 14.3, 15.5, 19.5, 5.2, 2), blockOf(5.3, -1.7, 7.0, 21, 2.6, 0, 1.2), blockOf(-13.7, -20.7, 6.8, 19.5, 2.6, 0, 1.2), blockOf(3.3, -8.7, 7.0, 11, 4.2), blockOf(-6.7, -28, 6.8, 12.5, 6.0, 1.5)],
   turrets: [{ x: 57.3, size: 4.5, barrels: 1, length: 7, calibre: 0.127, kind: 'mount' }, { x: 36, size: 2.6, barrels: 1, length: 1.2, calibre: 0.02, kind: 'mount', up: 8.4 }, { x: -24, size: 2.6, barrels: 1, length: 1.2, calibre: 0.02, kind: 'mount', up: 5.5, back: true }],
-  masts: [{ x: 12.3, height: 26, kind: 'tripod' }],
+  masts: [{ x: 12.3, height: 26, kind: 'tripod', base: 8.3, rake: 0.25 }],
   launchers: [{ x: 45.3, length: 13, width: 8, up: 0.76 }, { x: -38, length: 10, width: 8, up: -0.33 }],
   radars: [{ x: 23.3, up: 9, kind: 'faces', size: 4 }],
   helideck: true,
@@ -1595,10 +1657,12 @@ const W: Record<string, ShipO> = {
   // 20.5 t loaded).
   'cb90': {
     cls: 'attack-boat', L: 15.9, B: 3.8, fb: 1.6, sheer: 0.4, transom: 0.9,
+    // The full, blunt bow that carries the landing ramp (photos), the beam kept to the wide transom.
+    hull: [[7.95, 2.0, 0.6], [7.3, 1.95, 1.25], [6, 1.85, 1.6], [4, 1.75, 1.85], [0, 1.65, 1.9], [-4, 1.6, 1.9], [-7.95, 1.6, 1.85]],
     guns: '-1:1/13s^1.9 5.5:1/13s',
     blocks: [[3, -4, 3.4, 1.7, 0.6]],
     // The bow ramp, raised, standing on the bow inside the stem.
-    extra: [blockOf(7.4, 6.8, 1.0, 2.0, 0.7)],
+    extra: [blockOf(7.5, 6.9, 1.4, 2.1, 0.6)],
   },
   // PBR Mk II: a fibreglass river boat, the twin .50 guns in the bow tub, the canopied coxswain's flat, a .50 aft
   // (9.8 x 3.5 m; 7.3 t).
@@ -2159,7 +2223,7 @@ for (const t of N['krivak'].turrets ?? []) if (t.calibre === 0.1) t.height = 2.9
 N['arleigh-burke-flight-iii'] = {
   ...N['arleigh-burke'],
   bodies: [blockOf(36, 3, 7.0, 16.6, 7.4, 3.5), blockOf(31, 13, 16.6, 21.2, 5.8, 2), blockOf(6, -1, 7.0, 21.5, 2.6, 0, 1.2), blockOf(-13, -20, 6.8, 19.5, 2.6, 0, 1.2), blockOf(4, -9, 7.0, 13, 4.6), blockOf(-6, -48, 6.8, 14.5, 7.0, 1.5)],
-  masts: [{ x: 12, height: 25, kind: 'tripod' }],
+  masts: [{ x: 12, height: 25, kind: 'tripod', base: 9.4, rake: 0.25 }],
   radars: [{ x: 24, up: 10.2, kind: 'faces', size: 4.6 }],
 };
 

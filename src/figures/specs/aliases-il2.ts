@@ -141,7 +141,7 @@ const ALIASES: Record<string, string> = {
   'jeffery quad winch': 'ww1-lorry',
   'ju 52 3mg4e': 'ju-52',
   'ju 87 d-3': 'ju-87-d',
-  'ju 87 d-5': 'ju-87-d',
+  'ju 87 d-5': 'ju-87-d5',
   'ju 88 a-4': 'ju-88',
   'ju 88 c-6': 'ju-88c',
   'kv-1-41': 'kv-1',
