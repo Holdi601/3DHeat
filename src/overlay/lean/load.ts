@@ -13,12 +13,31 @@ import { parquetMetadataAsync } from 'hyparquet';
 import type { Dataset } from '../../state/types';
 import { registerGpuTrackStore, TRACK_U32, TrackFigures, type GpuTrackStore } from '../../render/gpuTracks/store';
 import { teamHeatColor, teamMemberColor } from '../../render/colors';
-import type { LeanBuilt } from './assemble';
+import { restoreTrackStrings, type LeanBuilt } from './assemble';
 import type { LoadProgress, LoadRequest, LoadResponse } from './loadWorker';
 import { asyncBuffer, readColumns } from './columns';
+import { MAX_TAB_ARRAY_BYTES } from '../../data/memory';
 
 /** Bytes a key takes on the CPU and on the GPU alike: x, y, z, t in 8 bytes, the attitude in 4, a share of its chunk span's 32. */
 export const KEY_BYTES = 12.5;
+
+/**
+ * Bytes a key holds in the page at the peak of a load: its keys twice (the
+ * worker's, and the page's while the worker hands them over in pieces) and
+ * its chunk span's share. Worker and page share one wall (`MAX_TAB_ARRAY_BYTES`).
+ */
+export const PEAK_KEY_BYTES = 2 * 12 + 0.5;
+
+/**
+ * The keys' x, y, z, t in one GPU buffer at most. A load past 2 GiB of them
+ * (268 M keys), which the renderer splits over two buffers, lost the WebGPU
+ * device on an RTX 5080 (Edge, 2026-11-08); until that is mended a load
+ * thins to fit one.
+ */
+export const ONE_KEY_BUFFER = 2 ** 31;
+
+/** What the load holds besides the keys at that peak: the decodes in flight, the units' records, the page's own. */
+export const LOAD_HEADROOM = 4e9;
 
 export interface LeanBudget {
   /** Most keys the load may keep. */
@@ -34,14 +53,15 @@ export interface LeanBudget {
  * x, y, z, t keys are one binding), within half its memory, and within the
  * RAM the page may take - half what is free when the host says, else what
  * the browser admits to (`navigator.deviceMemory`, capped at 8 GB), a quarter
- * of it - and never past 24 GB, where a browser tab ends.
+ * of it - and never past the wall of typed arrays one tab holds, the keys
+ * counted at their peak (`PEAK_KEY_BYTES`) beside the rest of the load.
  */
 export function leanBudget(o: { gpuMaxBufferBytes: number; vramBytes: number | null; freeBytes: number | null; totalBytes: number | null; deviceMemoryGB: number | null }): LeanBudget {
-  const gpuBuffer = o.gpuMaxBufferBytes > 0 ? Math.floor(o.gpuMaxBufferBytes / 8) : Infinity;
+  const gpuBuffer = o.gpuMaxBufferBytes > 0 ? Math.floor(Math.min(o.gpuMaxBufferBytes, ONE_KEY_BUFFER) / 8) : Infinity;
   const gpuMemory = o.vramBytes ? Math.floor((o.vramBytes * 0.5) / KEY_BYTES) : Infinity;
   const ram = o.freeBytes ? o.freeBytes * 0.5 : o.totalBytes ? o.totalBytes * 0.25 : (o.deviceMemoryGB ?? 4) * 1e9 * 0.25;
-  const ramBytes = Math.min(ram, 24e9);
-  const ramKeys = Math.floor(ramBytes / KEY_BYTES);
+  const ramBytes = Math.min(ram, MAX_TAB_ARRAY_BYTES - LOAD_HEADROOM);
+  const ramKeys = Math.floor(ramBytes / PEAK_KEY_BYTES);
   const maxKeys = Math.max(1, Math.min(gpuBuffer, gpuMemory, ramKeys));
   const limit = maxKeys === gpuBuffer ? 'gpuBuffer' : maxKeys === gpuMemory ? 'gpuMemory' : 'ram';
   return { maxKeys, limit, ramBytes, gpuBytes: Number.isFinite(gpuMemory) ? gpuMemory * KEY_BYTES : o.gpuMaxBufferBytes };
@@ -49,9 +69,16 @@ export function leanBudget(o: { gpuMaxBufferBytes: number; vramBytes: number | n
 
 export type LeanColour = 'team' | 'group';
 
-/** The match files among those picked: Parquet, without a converter's side files (flight data, messages). */
+/**
+ * The match files among those picked: Parquet, without a converter's side
+ * files (flight data, messages). Effects files (the ACMI converter's shells,
+ * shrapnel and decoys) only when nothing else is picked: a folder loads its
+ * units, and the effects when they are picked alone.
+ */
 export function overlayFiles(files: File[]): File[] {
-  return files.filter((f) => /\.parquet$/i.test(f.name) && !/\.(flight|messages|events|chat)\.parquet$/i.test(f.name)).sort((a, b) => a.name.localeCompare(b.name));
+  const parquet = files.filter((f) => /\.parquet$/i.test(f.name) && !/\.(flight|messages|events|chat)\.parquet$/i.test(f.name));
+  const units = parquet.filter((f) => !/\.effects\.parquet$/i.test(f.name));
+  return (units.length ? units : parquet).sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /** A loaded lean overlay: what was read, the tracks, and where each came from. */
@@ -145,17 +172,26 @@ export function loadLeanOverlay(files: File[], name: string, budget: LeanBudget,
   const t0 = performance.now();
   const w = new Worker(new URL('./loadWorker.ts', import.meta.url), { type: 'module' });
   let reject: (e: Error) => void = () => {};
+  // The arrays too big to come in one message, put together again from their pieces.
+  const big = new Map<string, Uint8Array>();
   const promise = new Promise<LeanOverlay>((resolve, rej) => {
     reject = rej;
     w.onmessage = (ev: MessageEvent<LoadResponse>) => {
       const r = ev.data;
-      if (r.kind === 'progress') onProgress(r.progress);
+      if (r.kind === 'piece') {
+        let whole = big.get(r.key);
+        if (!whole) big.set(r.key, (whole = new Uint8Array(r.total)));
+        whole.set(r.part, r.offset);
+      } else if (r.kind === 'progress') onProgress(r.progress);
       else if (r.kind === 'planned') onProgress({ phase: 'planned', samples: r.samples, keys: r.keys, level: r.level });
       else if (r.kind === 'error') {
         w.terminate();
         rej(Object.assign(new Error(r.reason), { detail: r.detail }));
       } else {
         w.terminate();
+        for (const [key, whole] of big) r.built[key as 'keysA' | 'keysB' | 'trackData'] = new Uint32Array(whole.buffer);
+        big.clear();
+        restoreTrackStrings(r.built);
         const store = leanStore(r.built, 'team');
         registerGpuTrackStore(r.built.dataset, store);
         const o: LeanOverlay = { built: r.built, store, files, skipped: r.skipped, ms: r.ms, loadMs: performance.now() - t0, budget, colour: 'team' };

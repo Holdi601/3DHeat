@@ -5,9 +5,10 @@ import { emptyPose, evaluateTrack } from '../../render/gpuTracks/evaluate';
 import { poseFrame } from '../../figures/kit';
 import { quatOfFrame } from '../../figures/motion';
 import { KEY_LEVELS, quatOfAttitude, scanPass1, scanPass2, specColumns, type Columns, type LeanSpec } from './scan';
-import { LeanAssembler, planJobs, type LeanBuilt } from './assemble';
+import { LeanAssembler, planJobs, restoreTrackStrings, stripTrackStrings, type LeanBuilt } from './assemble';
 import { leanSpec, sharedGeo } from './spec';
-import { leanBudget, leanStore } from './load';
+import { LOAD_HEADROOM, PEAK_KEY_BYTES, leanBudget, leanStore, overlayFiles } from './load';
+import { MAX_TAB_ARRAY_BYTES } from '../../data/memory';
 
 /** A file's rows: aircraft circling and tanks driving, in two matches, with shots and deaths among them, in time order. */
 function rows(opts: { matches?: number; units?: number; seconds?: number; hz?: number } = {}) {
@@ -314,12 +315,24 @@ describe('lean overlay loader', () => {
   });
 
   it('sizes the load by the GPU buffer, its memory and the machine', () => {
-    const b = leanBudget({ gpuMaxBufferBytes: 4e9, vramBytes: 16e9, freeBytes: 30e9, totalBytes: 64e9, deviceMemoryGB: 8 });
-    expect(b.maxKeys).toBe(Math.floor(4e9 / 8));
+    const b = leanBudget({ gpuMaxBufferBytes: 2e9, vramBytes: 16e9, freeBytes: 30e9, totalBytes: 64e9, deviceMemoryGB: 8 });
+    expect(b.maxKeys).toBe(Math.floor(2e9 / 8));
     expect(b.limit).toBe('gpuBuffer');
     const small = leanBudget({ gpuMaxBufferBytes: 4e9, vramBytes: null, freeBytes: null, totalBytes: null, deviceMemoryGB: 8 });
     expect(small.limit).toBe('ram');
-    expect(small.maxKeys).toBe(Math.floor(2e9 / 12.5));
+    expect(small.maxKeys).toBe(Math.floor(2e9 / PEAK_KEY_BYTES));
+  });
+
+  it('keeps the keys in one GPU buffer', () => {
+    const b = leanBudget({ gpuMaxBufferBytes: 4.29e9, vramBytes: 16e9, freeBytes: 30e9, totalBytes: 64e9, deviceMemoryGB: 8 });
+    expect(b.limit).toBe('gpuBuffer');
+    expect(b.maxKeys).toBe(2 ** 28);
+  });
+
+  it('keeps a load inside the wall of one tab, whatever the machine has free', () => {
+    const b = leanBudget({ gpuMaxBufferBytes: 0, vramBytes: null, freeBytes: 30e9, totalBytes: 64e9, deviceMemoryGB: 8 });
+    expect(b.limit).toBe('ram');
+    expect(b.maxKeys).toBe(Math.floor((MAX_TAB_ARRAY_BYTES - LOAD_HEADROOM) / PEAK_KEY_BYTES));
   });
 });
 
@@ -352,6 +365,28 @@ describe('GPU track visibility and near figures', () => {
     // A ray straight down onto unit 0 passes its box; one far off does not.
     expect(rayNearTrack(s, 0, cam, [0, -1, 0], 1, 0)).toBe(true);
     expect(rayNearTrack(s, 0, [cam[0] + 1e6, cam[1], cam[2]], [0, -1, 0], 1, 0)).toBe(false);
+  });
+});
+
+describe('lean overlay files', () => {
+  const f = (name: string) => ({ name }) as File;
+  it('loads the units of a folder, leaving side files out, and effects only when picked alone', () => {
+    const names = (l: File[]) => overlayFiles(l).map((x) => x.name);
+    expect(names([f('b.parquet'), f('a.parquet'), f('a.events.parquet'), f('a.effects.parquet'), f('notes.txt')])).toEqual(['a.parquet', 'b.parquet']);
+    expect(names([f('a.effects.parquet'), f('a.events.parquet')])).toEqual(['a.effects.parquet']);
+  });
+});
+
+describe('lean overlay hand-over', () => {
+  it('makes the strings it leaves out of the message again as they were', () => {
+    const b = load(rows());
+    const labels = [...b.dataset.personLabels];
+    const match = [...b.trackMatch];
+    stripTrackStrings(b);
+    expect(b.dataset.personLabels).toEqual([]);
+    restoreTrackStrings(b);
+    expect(b.dataset.personLabels).toEqual(labels);
+    expect(b.trackMatch).toEqual(match);
   });
 });
 

@@ -13,7 +13,11 @@
  *   <name>.parquet         every row at a real place - each position, and each
  *                          event or removal at the object it names - with the
  *                          columns of the viewer's ACMI table and a column for
- *                          every property the recording carries
+ *                          every property the recording carries; object by
+ *                          object, each object's rows in time order
+ *   <name>.effects.parquet the same for shells, bullets, shrapnel, flares and
+ *                          chaff (`EFFECT`): millions of objects a server
+ *                          evening, kept apart so a folder loads its units
  *   <name>.events.parquet  the rows at no place: comments, events about no
  *                          object seen, objects that never got a position, and
  *                          a row each time the recording's own properties
@@ -43,6 +47,13 @@ const SELF = fileURLToPath(import.meta.url);
 const ROOT = path.resolve(path.dirname(SELF), '..');
 /** Rows a row group. */
 const GROUP_ROWS = 250_000;
+/**
+ * What a DCS server writes by the million and nobody flies: shells, bullets,
+ * shrapnel, flares and chaff (four objects in five, a third of the rows).
+ * They go to their own file beside the recording's, so the many-match overlay
+ * reads the units of a folder and these only when asked.
+ */
+const EFFECT = /(^|\+)(Shell|Bullet|Shrapnel|Decoy|Flare|Chaff)(\+|$)/i;
 
 function stemOf(name) {
   return name.replace(/\.(zip|txt)\.acmi$/i, '').replace(/\.acmi$/i, '');
@@ -226,9 +237,62 @@ async function convert(job, theatres) {
     };
   };
 
+  /**
+   * The same, but the rows held until the end and written object by object (each object's rows in the
+   * order read): a track's rows lie together, so the overlay reads a track from one piece of the file
+   * and a picked unit's rows from a few row groups, not from all of them.
+   */
+  const outByObject = (file, keyCol) => {
+    let cap = 1 << 16;
+    let bufs = columns.map((c) => (c.num ? (c.float ? new Float32Array(cap) : new Float64Array(cap)) : new Array(cap)));
+    let n = 0;
+    const o = {
+      bufs,
+      next() {
+        if (n === cap) {
+          cap *= 2;
+          bufs = bufs.map((b) => {
+            if (Array.isArray(b)) return b;
+            const g = new b.constructor(cap);
+            g.set(b);
+            return g;
+          });
+          o.bufs = bufs;
+        }
+        return n++;
+      },
+      finish(kv) {
+        // A stable counting sort by object, objects in the order first seen.
+        const keys = bufs[keyCol];
+        const index = new Map();
+        const of = new Uint32Array(n);
+        for (let i = 0; i < n; i++) {
+          let k = index.get(keys[i]);
+          if (k === undefined) index.set(keys[i], (k = index.size));
+          of[i] = k;
+        }
+        const start = new Uint32Array(index.size + 1);
+        for (let i = 0; i < n; i++) start[of[i] + 1]++;
+        for (let k = 0; k < index.size; k++) start[k + 1] += start[k];
+        const order = new Uint32Array(n);
+        for (let i = 0; i < n; i++) order[start[of[i]]++] = i;
+        const w = out(file);
+        for (let i = 0; i < n; i++) {
+          const r = w.next();
+          const src = order[i];
+          for (let j = 0; j < bufs.length; j++) w.bufs[j][r] = bufs[j][src];
+        }
+        return w.finish(kv);
+      },
+    };
+    return o;
+  };
+
   fs.mkdirSync(path.dirname(job.output), { recursive: true });
-  const main = out(job.output);
+  const at0 = columns.findIndex((c) => c.name === 'Object');
+  const main = outByObject(job.output, at0);
   const sideFile = job.output.replace(/\.parquet$/, '.events.parquet');
+  const effects = outByObject(job.output.replace(/\.parquet$/, '.effects.parquet'), at0);
   const side = out(sideFile);
   const at = Object.fromEntries(columns.map((c, j) => [c.name, j]));
   const J = (k) => at[k];
@@ -238,8 +302,9 @@ async function convert(job, theatres) {
   let infoVersion = -1;
   const labels = new WeakMap();
   let mainRows = 0;
+  let effectRows = 0;
   const reader = new AcmiStreamReader((row) => {
-    const o = row.placed ? main : side;
+    const o = !row.placed ? side : EFFECT.test(row.props.get('Type') ?? '') ? effects : main;
     const i = o.next();
     const b = o.bufs;
     b[jT][i] = (reader.refTime ?? 0) + row.t;
@@ -260,7 +325,8 @@ async function convert(job, theatres) {
       b[jV][i] = row.v;
     }
     const p = row.props;
-    // The label of an object's rows, worked out once per set of its properties (each object has its own).
+    // The label of an object's rows, worked out once per object (its properties change in place, so the
+    // name and pilot it first had name all its rows: one track, as an id taken anew is a new object).
     let label = row.id ? labels.get(p) : '(recording)';
     if (label === undefined) labels.set(p, (label = acmiObjectLabel(row.id, p)));
     b[jObj][i] = label;
@@ -279,7 +345,8 @@ async function convert(job, theatres) {
       const v = p.get(c.prop);
       b[j][i] = c.num ? (v === undefined || v === '' ? NaN : Number(v)) : (v ?? '');
     }
-    if (row.placed) mainRows++;
+    if (o === main) mainRows++;
+    else if (o === effects) effectRows++;
     info(row.t);
   }, name);
   // The recording's own properties, whenever they changed: a row of the side file.
@@ -310,16 +377,17 @@ async function convert(job, theatres) {
     reference: { lat: reader.refLat, lon: reader.refLon, time: reader.refTime },
     globals: reader.globals,
     completeness: reader.completeness(),
-    rows: { placed: mainRows, other: reader.rows - mainRows },
+    rows: { placed: mainRows, effects: effectRows, other: reader.rows - mainRows - effectRows },
   };
   const kv = [
     { key: 'heat3d', value: JSON.stringify(hints) },
     { key: 'acmi', value: JSON.stringify(meta) },
   ];
   const wrote = main.finish(kv);
+  const effectsWrote = effects.finish(kv);
   const sideRows = side.finish(kv);
   if (!sideRows) fs.rmSync(`${sideFile}.part`, { force: true });
-  return { rows: wrote, sideRows, theatre: theatre?.id ?? null, ms: performance.now() - t0, columns: columns.length };
+  return { rows: wrote, sideRows: sideRows + effectsWrote, theatre: theatre?.id ?? null, ms: performance.now() - t0, columns: columns.length };
 }
 
 if (!isMainThread) {

@@ -9,7 +9,7 @@
 
 import { parquetMetadataAsync, parquetReadObjects } from 'hyparquet';
 import type { FileMetaData } from 'hyparquet';
-import { LeanAssembler, planJobs, type LeanBuilt, type LeanFile } from './assemble';
+import { LeanAssembler, planJobs, stripTrackStrings, type LeanBuilt, type LeanFile } from './assemble';
 import type { DecodeRequest, DecodeResponse } from './decodeWorker';
 import { leanSpec, sharedGeo, specFor } from './spec';
 import type { LeanSpec } from './scan';
@@ -28,9 +28,18 @@ export type LoadResponse =
   | { kind: 'progress'; progress: LoadProgress }
   | { kind: 'planned'; samples: number; keys: number; level: number; skipped: string[] }
   | { kind: 'done'; built: LeanBuilt; skipped: string[]; ms: Record<string, number> }
+  | { kind: 'piece'; key: BigKey; total: number; offset: number; part: Uint8Array }
   | { kind: 'error'; reason: string; detail?: string };
 
 const ctx = self as unknown as DedicatedWorkerGlobalScope;
+
+/** The arrays that grow with the keys: past `PIECE` they go to the page in pieces. */
+export type BigKey = 'keysA' | 'keysB' | 'trackData';
+/**
+ * Bytes a piece. A browser hands no buffer past 2 GiB from a worker to the
+ * page (postMessage throws), while the keys of a large load are up to 4 GiB.
+ */
+export const PIECE = 1 << 30;
 
 /** Bytes the decodes in flight may hold together, and what one row takes while decoded. */
 const DECODE_BYTES = 1.6e9;
@@ -221,11 +230,23 @@ ctx.onmessage = async (ev: MessageEvent<LoadRequest>) => {
     post({ kind: 'progress', progress: { phase: 'build', done: 0, total: 1, rows: totalRows, totalRows } });
     const built = asm.finish(name, sp.entitySize);
     lap('build');
+    for (const [k, v] of Object.entries(asm.finishMs)) ms[`build.${k}`] = v;
     const d = built.dataset;
     // The axes the load read the files by, and their place on the earth: what a world backdrop is built from.
     d.axes = { ...sp.mapping.axes };
     const geo = sharedGeo(used.map((u) => hintsOf(u.md)), sp.mapping);
     if (geo) d.geo = geo;
+    stripTrackStrings(built);
+    // The big arrays first, piece by piece (copied out a piece at a time, so the worker holds one piece more).
+    for (const key of ['keysA', 'keysB', 'trackData'] as const) {
+      const a = built[key];
+      if (a.byteLength <= PIECE) continue;
+      for (let o = 0; o < a.byteLength; o += PIECE) {
+        const part = new Uint8Array(a.buffer, a.byteOffset + o, Math.min(PIECE, a.byteLength - o)).slice();
+        post({ kind: 'piece', key, total: a.byteLength, offset: o, part }, [part.buffer]);
+      }
+      built[key] = new Uint32Array(0);
+    }
     const transfer: ArrayBufferLike[] = [built.groupStart.buffer, built.trackData.buffer, built.keysA.buffer, built.keysB.buffer, built.trackRow.buffer, built.trackGroup.buffer, built.trackFile.buffer, built.trackRows.buffer, built.markers.data.buffer, built.markers.team.buffer, built.markers.group.buffer];
     for (const a of [d.px, d.py, d.pz, d.time, d.lifetime, d.personId, d.teamId, d.personShared, d.personTeam, d.personSlot, d.teamSizes]) if (a) transfer.push(a.buffer);
     for (const a of d.attrs) transfer.push(a.data.buffer);

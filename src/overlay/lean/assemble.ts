@@ -123,6 +123,8 @@ export interface LeanBuilt {
   trackKey: string[];
   trackMatch: string[];
   groups: string[];
+  /** Per group, its match's own value in the files ('' for a file that is one match). */
+  groupMatch: string[];
   /** Per group, its start in file seconds; overlay seconds are file seconds less it and `origin`. */
   groupStart: Float64Array;
   origin: number;
@@ -157,6 +159,8 @@ export class LeanAssembler {
   private readonly uMatch: string[] = [];
   private readonly groupIndex = new Map<string, number>();
   private readonly groupLabel: string[] = [];
+  /** Each match's own value in the files (`groupLabel` names one with none by its file): one string a match, not a unit. */
+  private readonly groupMatch: string[] = [];
   private readonly groupStart: number[] = [];
   private readonly groupFile: number[] = [];
   private readonly mPos: number[] = [];
@@ -210,6 +214,7 @@ export class LeanAssembler {
       g = this.groupLabel.length;
       this.groupIndex.set(k, g);
       this.groupLabel.push(label || this.files[file].name.replace(/\.parquet$/i, ''));
+      this.groupMatch.push(label);
       this.groupStart.push(Infinity);
       this.groupFile.push(file);
     }
@@ -227,7 +232,9 @@ export class LeanAssembler {
     });
     const ids = new Int32Array(r.units);
     for (let u = 0; u < r.units; u++) {
-      const key = `${file}\u0001${r.match[u]}\u0001${r.track[u]}`;
+      // Keyed by the match's number, not its name: millions of units (an evening of DCS shells) in a worker's heap.
+      const grp = this.groupOf(file, r.match[u]);
+      const key = `${grp}\u0001${r.track[u]}`;
       let g = this.unitIndex.get(key);
       if (g === undefined) {
         g = this.units++;
@@ -235,9 +242,9 @@ export class LeanAssembler {
         for (const c of [this.uFile, this.uGroup, this.uSamples, this.uFirst, this.uLast, this.uDeath, this.uMetaJob, this.uTeam, ...this.uMeta]) c.ensure(this.units);
         this.uBox.ensure(this.units * BOX);
         this.uFile.data[g] = file;
-        this.uGroup.data[g] = this.groupOf(file, r.match[u]);
+        this.uGroup.data[g] = grp;
         this.uKey.push(r.track[u]);
-        this.uMatch.push(r.match[u]);
+        this.uMatch.push(this.groupMatch[grp]);
       }
       ids[u] = g;
       this.uFirst.data[g] = Math.min(this.uFirst.data[g], r.firstRow[u]);
@@ -287,6 +294,8 @@ export class LeanAssembler {
    * of each unit is given. Null when nothing fits even thinned the most.
    */
   plan(maxKeys: number): { level: number; keys: number } | null {
+    // Pass 1 is done: the units' keys are no longer looked up.
+    this.unitIndex.clear();
     const { keys } = this.totals();
     const li = keys.findIndex((k) => k <= maxKeys);
     if (li < 0) return null;
@@ -389,7 +398,16 @@ export class LeanAssembler {
   }
 
   /** After pass 2: the keys closed up, the tracks' table, and the dataset standing for them. */
+  /** Milliseconds of each step of `finish`, for the load's report. */
+  readonly finishMs: Record<string, number> = {};
+
   finish(name: string, entitySize?: number): LeanBuilt {
+    let lapAt = performance.now();
+    const lap = (k: string) => {
+      const now = performance.now();
+      this.finishMs[k] = Math.round(now - lapAt);
+      lapAt = now;
+    };
     const T = this.order!.length;
     const A = this.keysA!;
     const B = this.keysB!;
@@ -473,6 +491,7 @@ export class LeanAssembler {
     }
     this.jobSpans = [];
     this.jobChunkOff = [];
+    lap('runs');
     // Then the tracks closed up.
     let cursor = 0;
     for (let i = 0; i < T; i++) {
@@ -495,6 +514,7 @@ export class LeanAssembler {
     this.keysA = null;
     this.keysB = null;
 
+    lap('closeUp');
     // The standing-in dataset: each track's first and last key, and what it is.
     const order = this.order!;
     const spans = this.spans!;
@@ -588,9 +608,11 @@ export class LeanAssembler {
       attrs,
       rejected: 0,
     };
+    lap('tracks');
     const b = new DatasetBuilder(rows);
     b.append(block);
     const dataset = b.finish(name);
+    lap('dataset');
     if (entitySize) dataset.entitySize = entitySize;
     dataset.roleColumns = { x: this.spec.x, y: this.spec.y ?? undefined, z: this.spec.z ?? undefined, time: this.spec.time, person: this.spec.track, team: this.spec.team ?? undefined };
     // The dataset's times count from its first; the tracks' with them.
@@ -629,6 +651,7 @@ export class LeanAssembler {
       trackKey,
       trackMatch,
       groups: [...this.groupLabel],
+      groupMatch: [...this.groupMatch],
       groupStart: Float64Array.from(groupStart),
       origin,
       spec: this.spec,
@@ -658,4 +681,28 @@ function keyInterval(keysA: Uint32Array, CT: Float32Array, cb: number, first: nu
   if (!gaps.length) return NaN;
   gaps.sort((a, b) => a - b);
   return gaps[gaps.length >> 1];
+}
+
+/**
+ * Leaves out the strings a track has that the page can make again (its label
+ * and its match), for the message to the page: millions of tracks' strings do
+ * not fit one structured clone. `restoreTrackStrings` puts them back.
+ */
+export function stripTrackStrings(b: LeanBuilt): void {
+  b.dataset.personLabels = [];
+  b.trackMatch = [];
+}
+
+/** The strings `stripTrackStrings` left out, made again from each track's key and match, as `finish` makes them. */
+export function restoreTrackStrings(b: LeanBuilt): void {
+  const T = b.tracks;
+  const labels: string[] = new Array(T);
+  const match: string[] = new Array(T);
+  for (let i = 0; i < T; i++) {
+    const g = b.trackGroup[i];
+    labels[i] = `${b.trackKey[i]} · ${b.groups[g]}`;
+    match[i] = b.groupMatch[g];
+  }
+  b.dataset.personLabels = labels;
+  b.trackMatch = match;
 }
