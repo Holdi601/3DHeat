@@ -126,10 +126,9 @@ export function nextExactCap(
  * the heat pass's own GPU time where the device can time it, so the display's
  * refresh cannot hide the headroom, and the drawn frame's time otherwise.
  *
- * It moves in small steps and in proportion: past the budget it cuts by the
- * overshoot, at most a quarter a frame (half on a frame twice over, which is
- * already a dropped one); under half the budget it grows towards seven tenths of
- * it, at most doubling, and only as a new run of accumulation starts, for the
+ * It moves in proportion: past the budget it cuts to nine tenths of it at once
+ * (a frame over is a frame dropped); under half the budget it grows towards
+ * seven tenths of it, at most doubling, and only as a new run of accumulation starts, for the
  * reason given at `nextExactCap`.
  * Between the two it holds, so a cost near the budget never makes it hunt.
  */
@@ -143,7 +142,9 @@ export function nextHeatCap(
 ): number {
   if (!lastFrameDrew || !(costMs > 0) || !(budgetMs > 0)) return cap;
   if (costMs > budgetMs * 1.15) {
-    const cut = Math.max(costMs > budgetMs * 2 ? 0.5 : 0.75, budgetMs / costMs);
+    // To nine tenths of the budget in one step, at most a quarter left: cut in
+    // smaller steps, each frame on the way down was a dropped one.
+    const cut = Math.max(0.25, (budgetMs * 0.9) / costMs);
     return Math.max(o.floor, cap * cut);
   }
   // Well under, it grows towards what the budget would carry, at most doubling:

@@ -185,6 +185,12 @@ const EXACT_FLOOR_UNTIMED = 2_048 * SAMPLE_BLOCK;
 const HEAT_GPU_SHARE = 0.45;
 /** Drawn frames the sprite cap holds after a change, for the smoothed GPU time to catch up. */
 const CAP_HOLD_FRAMES = 12;
+/** Frames between steps up of the sprites drawn: the GPU's reading of a frame comes back in two or three. */
+const RAMP_FRAMES = 4;
+/** Milliseconds of the heat's budget given over to data arriving a slice a frame. */
+const ARRIVING_MS = 3;
+/** Sprites the first frame of a new scene may draw; each frame after may draw up to twice the last. */
+const RAMP_START_SPRITES = 64 * SAMPLE_BLOCK;
 /** Drawn frames the sprite cap holds after a cut: the GPU's reading of a frame comes back in two or three. */
 const CAP_CUT_HOLD_FRAMES = 4;
 
@@ -462,6 +468,10 @@ export class Engine {
   private heatBudgetMs = 1;
   /** Sprites a frame of the current run of accumulation draws; see `planFrame`. */
   private runSplats = 0;
+  /** Whether the cap's hold follows a step up, which a cut need not wait out. */
+  private capHoldAfterGrowth = false;
+  /** The frame the drawn sprites last stepped up on; see `RAMP_FRAMES`. */
+  private rampFrame = -Infinity;
   /** The heat cost's latest reading where it is above the average. */
   private heatCostPeak = 0;
   /** Whether the growing window's base was drawn thinned, while the camera moved. */
@@ -2136,6 +2146,8 @@ export class Engine {
       // quarter of the ramp, and a first-time user has no reason to suspect the
       // saturation slider rather than the data.
       this.autoExposePending = s.dataset ? AUTO_EXPOSE_AFTER_FRAMES : 0;
+      // A new scene's cost is unknown: its sprites ramp up from a few.
+      this.prevSprites = RAMP_START_SPRITES;
       this.geometrySig = '';
       // The renderer dropped the routes with the old dataset's buffers.
       this.linesKey = '';
@@ -2346,6 +2358,7 @@ export class Engine {
     if (heatKind !== null && heatKind !== this.meteredKind) {
       if (this.meteredKind !== null && this.dataset) this.autoExposePending = AUTO_EXPOSE_AFTER_FRAMES;
       this.meteredKind = heatKind;
+      this.prevSprites = RAMP_START_SPRITES;
     }
 
     // ---- visible time range
@@ -2478,8 +2491,11 @@ export class Engine {
     const passMs = (renderer as { gpuPassMs?: Record<string, number> }).gpuPassMs;
     const heatGpuMs = passMs?.heat;
     const heatCost = heatGpuMs !== undefined ? heatGpuMs : Math.min(2000, dtRaw * 1000);
+    // Less while a dataset or tracks are still arriving: their slices take
+    // a few milliseconds of every frame meanwhile.
+    const arriving = (renderer as { dataPending?: boolean }).dataPending || (renderer as { uploadsPending?: boolean }).uploadsPending ? ARRIVING_MS : 0;
     const heatBudgetMs =
-      heatGpuMs !== undefined ? Math.max(1, targetMs * HEAT_GPU_SHARE - (passMs?.scene ?? 0) * 0.25) : targetMs;
+      heatGpuMs !== undefined ? Math.max(1, targetMs * HEAT_GPU_SHARE - (passMs?.scene ?? 0) * 0.25 - arriving) : targetMs;
     const spritePx = this.spritePixels(s, height);
     // Not for line heat: a route is drawn at least a few pixels wide however
     // coarse the buffer, so a coarser level changes how much heat a thin route
@@ -2809,7 +2825,9 @@ export class Engine {
       // Held after each change for as long as the smoothed GPU time takes to
       // show it; acting again on the old reading cut a cap that had already
       // been cut, down to the floor.
-      if (this.lastFrameDrew && this.capHold > 0) {
+      // A cut does not wait out the hold that followed a step up: over budget
+      // is frames being dropped now.
+      if (this.lastFrameDrew && this.capHold > 0 && !(this.capHoldAfterGrowth && this.heatCostPeak > this.heatBudgetMs * 1.15)) {
         this.capHold--;
       } else {
         // Without the heat's GPU time the frame time is all there is, and the
@@ -2837,7 +2855,10 @@ export class Engine {
             });
         // A cut is judged again as soon as the GPU's reading of it is back, a
         // few frames; growth waits for the average to settle.
-        if (cap !== this.exactCap) this.capHold = cap < from ? CAP_CUT_HOLD_FRAMES : CAP_HOLD_FRAMES;
+        if (cap !== this.exactCap) {
+          this.capHold = cap < from ? CAP_CUT_HOLD_FRAMES : CAP_HOLD_FRAMES;
+          this.capHoldAfterGrowth = cap >= from;
+        }
         this.exactCap = cap;
       }
       // With the budget adaptive, the cap is the control: the frame-time
@@ -2853,7 +2874,21 @@ export class Engine {
       // At most twice what the last drawn frame drew. The cap answers a cost it
       // has seen; when the rows on offer jump - a chunk of a dataset landing, a
       // window opening - drawing all of them at once was a frame it never saw.
-      if (this.heatTimed && this.prevSprites > 0) splatBudget = Math.min(splatBudget, Math.max(EXACT_FLOOR_SPRITES, this.prevSprites * 2));
+      //
+      // And less than twice where the last reading says twice would not fit:
+      // the cap had never seen this scene's cost on its first frames, drew
+      // every row in view at once, and the GPU took 27 ms over it.
+      //
+      // A step up waits for the GPU's reading of the last one, a few frames:
+      // doubling every frame reached every row in view before the first
+      // reading of the cost came back.
+      if (this.heatTimed && this.prevSprites > 0) {
+        const settled = this.frameIndex - this.rampFrame >= RAMP_FRAMES;
+        const ramp = !settled ? 1 : this.heatCostPeak > 0 ? Math.max(1, Math.min(2, (this.heatBudgetMs * 0.9) / this.heatCostPeak)) : 2;
+        const limit = Math.max(EXACT_FLOOR_SPRITES, this.prevSprites * ramp);
+        if (splatBudget > this.prevSprites && limit > this.prevSprites) this.rampFrame = this.frameIndex;
+        splatBudget = Math.min(splatBudget, limit);
+      }
     }
 
     if (this.dataset && s.mode !== 'team') {
@@ -2962,7 +2997,9 @@ export class Engine {
     if (s.mode === 'team' && this.dataset && this.playhead !== this.teamDrawnAt) compositeOnly = false;
 
     if (plan === EMPTY_PLAN) submitted = 0;
-    if (submitted > 0 && !compositeOnly) this.prevSprites = submitted;
+    // What the frame asked for, not what the plan's power-of-two thinning drew:
+    // ramping from the drawn count never reached the next power of two.
+    if (submitted > 0 && !compositeOnly) this.prevSprites = Math.max(submitted, Math.min(splatBudget, candidateRows));
     this.live.accumMode = compositeOnly ? 'skip' : accumMode;
 
     // ---- team viewer geometry
