@@ -865,14 +865,15 @@ A['pb4y-2-privateer'] = fig({
 });
 
 // Saab B 18: a slim body with the cockpit offset to port above a glazed bomb-aimer's nose, a mid wing, twin fins on
-// the tailplane's tips (13.23 x 17.04 x 4.35 m). B18A with Twin Wasp radials; B18B with DB 605 inlines; T18B the
+// the tailplane's tips (13.23 x 17.04 x 4.35 m; the chords from the published 43.75 m2 wing area at a 0.4 taper, kept
+// on the old quarter-chord line). B18A with Twin Wasp radials; B18B with DB 605 inlines; T18B the
 // attack version with a solid gun nose and the inlines.
 function saab18(radial: boolean, glassNose: boolean): Spec {
   const nacelle = radial ? nac(3.1, -2.4, 0.66, 2.6, -0.1) : nac(3.5, -2.6, 0.55, 2.6, -0.1, false, 0.15);
   return fig({
     cls: glassNose ? 'ww2-bomber' : 'ww2-heavy-fighter', length: 13.23, span: 17.04, height: 4.35,
     body: [[6.62, glassNose ? -0.1 : 0.0, -0.6, glassNose ? 0.3 : 0.15], [6.2, 0.45, -0.8, 0.6], [5.2, 0.7, -0.9, 0.7], [3.5, 0.8, -0.92, 0.72], [0, 0.8, -0.9, 0.68], [-3, 0.6, -0.55, 0.5], [-6.62, 0.35, 0.0, 0.1]],
-    wing: planOf([[0, 1.8, -1.2], [8.52, 0.6, -0.6]], 0.4), wingUp: -0.2, dihedral: 5,
+    wing: planOf([[0, 1.97, -1.7], [8.52, 0.67, -0.8]], 0.4), wingUp: -0.2, dihedral: 5,
     fin: [[-5.4, -0.7], [-5.5, 1.2], [-5.9, 1.4], [-6.7, 1.35], [-6.8, -0.6], [-6.4, -0.85]], finBase: 0.4, twin: 5.0,
     tail: [[-5.0, 0], [-5.3, 2.6], [-6.3, 2.6], [-6.5, 0]], planeUp: 0.4,
     bodies: [nacelle],

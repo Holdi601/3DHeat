@@ -1253,6 +1253,18 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
     { cue: '20 mm guns along the sides', check: (s) => wings(s, 0.02) >= 4 },
     { cue: 'one mast on the aft deckhouse', check: (s) => (s.masts?.length ?? 0) === 1 && s.masts![0].x < -20 },
   ]),
+  'pt-11': naval('pt-11', [
+    { cue: 'single 40 mm guns on the foredeck and the quarterdeck', check: (s) => turrets(s).filter((t) => t.calibre === 0.04).length === 2 },
+    { cue: 'four single torpedo tubes on the side decks aft', check: (s) => (s.launchers ?? []).filter((l) => l.kind === 'tubes' && l.x < 0).length >= 2 },
+    { cue: 'deckhouse amidships with the bridge and a radar mast', check: (s) => (s.masts?.length ?? 0) === 1 && (s.bodies ?? []).length >= 2 },
+    { cue: 'very broad planing hull with a square transom', check: (s) => (s.transom ?? 0) >= 0.85 },
+  ]),
+  'vlt-boat': naval('vlt-boat', [
+    { cue: 'single 40 mm guns fore and aft', check: (s) => turrets(s).filter((t) => t.calibre === 0.04).length === 2 },
+    { cue: '20 mm guns either side of the bridge', check: (s) => wings(s, 0.02) >= 2 },
+    { cue: 'torpedo tubes on the side decks', check: (s) => (s.launchers ?? []).some((l) => l.kind === 'tubes') },
+    { cue: 'small bridge amidships with a pole mast', check: (s) => (s.masts?.length ?? 0) === 1 },
+  ]),
   'ms-crda': naval('ms-crda', [
     { cue: 'torpedo tubes on the foredeck', check: (s) => (s.launchers ?? []).some((l) => l.kind === 'tubes' && l.x > 0) },
     { cue: '20 mm gun aft', check: (s) => turrets(s).some((t) => t.calibre === 0.02 && t.x < 0) },
