@@ -1006,12 +1006,12 @@ const ALIASES: Record<string, string> = {
   'p-47n-15': 'p-47n',
   'f6f-5n': 'f6f-hellcat',
   'a6m2_zero_usa': 'a6m-zero',
-  'xf5f': 'ww2-fighter',
+  'xf5f': 'whirlwind', // nearest: a twin-engined single-seat fighter
   'btd-1': 'btd-1',
   'pbm_5a': 'pbm',
   'xp-55': 'xp-55',
   'p-61a_1': 'p-61',
-  'xp-50': 'ww2-fighter',
+  'xp-50': 'whirlwind', // nearest: a twin-engined single-seat fighter
   'pv_2d': 'pv-2',
   'bf-109f-4_usa': 'bf-109-f',
   'p-63c-5_kingcobra_animal_version': 'p-63',
@@ -1769,10 +1769,10 @@ const ALIASES: Record<string, string> = {
   'ki_43_3_ko': 'ki-43',
   'i-16_chung_28': 'i-16',
   'i-16_type5_1935_china': 'i-16',
-  'v_11g': 'ww2-fighter',
+  'v_11g': 'vengeance', // nearest: a single-radial Vultee attack monoplane with a long canopy
   'cw_21': 'cw-21',
   'i-153_m62_china': 'i-153',
-  'v_12d': 'ww2-fighter',
+  'v_12d': 'vengeance', // nearest: a single-radial Vultee attack monoplane with a long canopy
   'hawk_iii': 'bf2c', // the export BF2C Goshawk
   'h-75m_china': 'p-36',
   'p-66': 'ww2-fighter',
@@ -1852,7 +1852,7 @@ const ALIASES: Record<string, string> = {
   'ba_65_k14_l': 'ba-65',
   'ju-87r-2_italy': 'ju-87-b',
   's_81_ar125': 's-81',
-  'wm_21': 'ww2-fighter',
+  'wm_21': 'swordfish', // nearest: a two-seat biplane
   're_2000_int': 're-2000',
   're_2000_ga': 're-2000',
   'fiat_cr42_italy': 'cr-42',
@@ -1969,7 +1969,7 @@ const ALIASES: Record<string, string> = {
   'mb_175t': 'mb-174',
   'leo_451_early': 'leo-451',
   'leo_451_late': 'leo-451',
-  'fokker_d23': 'ww2-fighter',
+  'fokker_d23': 'do-335', // nearest: a push-pull fighter, engines fore and aft of the cockpit
   'p-40f-5_france_ep': 'p-40e',
   'mb_152c1': 'mb-152',
   'vb_10c1': 'vb-10',
@@ -2868,6 +2868,25 @@ const ALIASES: Record<string, string> = {
   'fairey_3f_mk3b': 'swordfish', // nearest: a two-seat biplane of its size
   'osprey_mk4': 'swordfish', // nearest: a two-seat biplane of its size
   'walrus_mk1': 'swordfish', // nearest: a two-seat biplane of its size
+  'f_2a_killstreak': 'f-2a',
+  'tu_4_killstreak': 'b-29',
+  'us_ai_tbm_m752_lance': 'm113',
+  'us_m16_truck': 'm16-mgmc',
+  'ucav_mq_1_predator': 'mq-1-predator',
+  'ucav_mq_1_predator_france_killstreak': 'mq-1-predator',
+  'ucav_mq_1_predator_germany_killstreak': 'mq-1-predator',
+  'ucav_mq_1_predator_iaf_killstreak': 'mq-1-predator',
+  'ucav_mq_1_predator_italy_killstreak': 'mq-1-predator',
+  'ucav_mq_1_predator_japan_killstreak': 'mq-1-predator',
+  'ucav_mq_1_predator_sweden_killstreak': 'mq-1-predator',
+  'ucav_mq_1_predator_uk_killstreak': 'mq-1-predator',
+  'ucav_mq_1_predator_usa_killstreak': 'mq-1-predator',
+  'ucav_wing_loong_i': 'wing-loong',
+  'ucav_wing_loong_i_killstreak': 'wing-loong',
+  'heavy_load_carrier_black_marlin': 'cargo-ship', // nearest: a big merchant hull
+  'ucav_orion': 'mq-1-predator', // nearest: a MALE drone of its layout
+  'ucav_orion_killstreak': 'mq-1-predator', // nearest: a MALE drone of its layout
+  'ussr_ai_tbm_9k79_tochka': 'iskander-tel', // nearest: a wheeled ballistic-missile launcher
 };
 
 export const WT_ALIASES: SpecSet = { aliases: ALIASES };
