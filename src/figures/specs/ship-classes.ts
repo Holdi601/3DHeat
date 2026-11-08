@@ -561,7 +561,9 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   // Mahan: deck line, deckhouses, funnels and mast from the Bureau of Ships outboard profile of Dunlap, her near sister (sources.md).
   'mahan': { cls: 'destroyer', L: 104.0, B: 10.5, fb: 6.0, fc: [9, 2.1], sheer: 0.6, guns: '37:1/127e 28:1/127e^2.4 -27:1/127^2.7b -37:1/127^2.7b -45:1/127b', funnels: [[7.5, 11.4, 3.4], [-6, 9.7, 3.4]], blocks: [[26, 12.5, 12.8, 3.2, 1], [32, 24, 8.4, 3.0], [3, -12, 5.6, 2.2], [-21, -41, 6.6, 3.0]], masts: [[11.5, 21.5, 't']] },
   'bagley': { cls: 'destroyer', L: 104.0, B: 10.9, fb: 5.4, fc: [-12, 1.4], guns: '38:1/127 31:1/127^2 -30:1/127^2b -42:1/127b', funnels: [[2, 7.5, 3.2]], blocks: [[24, 18, 11, 3, 1]], masts: [[16, 16]] },
-  'porter': { cls: 'destroyer', L: 116.2, B: 11.1, fb: 5.6, fc: [-14, 1.4], guns: '44:2/127 36:2/127^2 -34:2/127^2b -46:2/127b', funnels: [[8, 8, 3], [-4, 8, 3]], blocks: [[28, 22, 13, 3.5, 1]], masts: [[20, 18]] },
+  // Porter from FM 30-50 (1941) (profile): the forecastle 6.8 m to the second funnel, the superfiring twin mounts fore and
+  // aft, the two funnels close together, the tripod foremast and the mainmast.
+  'porter': { cls: 'destroyer', L: 116.2, B: 11.1, fb: 6.8, fc: [0, 1.7], guns: '36.8:2/127^-1.1 30.1:2/127^1.9 -29.6:2/127^1b -36.3:2/127^-1.1b', funnels: [[10.4, 7.6, 3.6], [-1.3, 7.6, 3.8]], blocks: [[22.9, 8.4, 15, 3.5]], masts: [[13, 23.4], [-15.2, 19.1]] },
   // Somers from FM 30-50 (1941) (profile): the forecastle 6.4 m, the twin mounts' places and heights, the single trunked
   // funnel, the tripod and the bridge.
   'somers': { cls: 'destroyer', L: 116.2, B: 11.0, fb: 6.4, fc: [-10, 1.3], guns: '38.6:2/127 30.7:2/127^1.7 -30.3:2/127^0.8b -37.4:2/127^-1b', funnels: [[1.9, 8.6, 4.7]], blocks: [[22.1, 13.7, 12.2, 3.5]], raised: [[22, 15, 12.2, 16.4, 2]], masts: [[11.9, 24.3]] },
@@ -854,7 +856,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   'clemson': { masts: [[17.5, 26.5], [-31.5, 12.2]] },
   'mahan': { masts: [[11.5, 21.5, 't'], [-16.5, 7.3]] },
   'bagley': { guns: '38:1/127e 31:1/127e^2 -30:1/127^2b -42:1/127b', masts: [[16, 16, 't']] },
-  'porter': { masts: [[20, 18, 't'], [-16, 10]] },
+  'porter': { masts: [[13, 23.4, 't'], [-15.2, 19.1]], blocks: [[-17, -23, 13.3, 2.5]] },
   'somers': { masts: [[11.9, 24.3, 't']] },
   'sumner': { blocks: [[-16, -28, 8.6, 3]], dirs: [[-22, 10.6, 1]], masts: [[18, 18, 't']] },
   'gearing': { blocks: [[-18, -30, 8.6, 3]], dirs: [[-24, 10.6, 1]], masts: [[20, 18, 't']] },
