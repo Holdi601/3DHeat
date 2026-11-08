@@ -71,6 +71,14 @@ export interface DisplayAids {
   engagement: Scope;
   /** The measured pair's line drawn red where the ground is between them. */
   lineOfSight: boolean;
+  /** The pilot's line of sight, from head angles (PilotHeadYaw/Pitch) where the recording has them. */
+  pilotSight: Scope;
+  /** The locked target's name and range along each lock line. */
+  lockLabels: boolean;
+  /** Lines with ranges from each unit to every opponent within `engagementRange` (Tacview's multiple engagements). */
+  engagements: Scope;
+  /** Metres. */
+  engagementRange: number;
 }
 
 export const DEFAULT_AIDS: DisplayAids = {
@@ -82,6 +90,10 @@ export const DEFAULT_AIDS: DisplayAids = {
   locks: 'all',
   engagement: 'all',
   lineOfSight: true,
+  pilotSight: 'selected',
+  lockLabels: true,
+  engagements: 'off',
+  engagementRange: 20000,
 };
 
 /** The 2D tactical map: off, a picture in the corner, or over the whole view. */
@@ -89,6 +101,8 @@ export type MapView = 'off' | 'pip' | 'full';
 
 /** The chart window: one unit's values over time, one value for several units, or one value against another. */
 export type ChartKind = 'time' | 'compare' | 'xy';
+/** What a time or compare chart runs along: time, or the distance flown through the air or over the ground. */
+export type ChartAxis = 'time' | 'air' | 'ground';
 export interface ChartSettings {
   open: boolean;
   kind: ChartKind;
@@ -99,8 +113,28 @@ export interface ChartSettings {
   y: string;
   /** Units on the chart besides the followed, selected and target ones. */
   units: string[];
+  xAxis: ChartAxis;
 }
-const DEFAULT_CHART: ChartSettings = { open: false, kind: 'compare', param: 'alt', x: 'tas', y: 'turnRate', units: [] };
+const DEFAULT_CHART: ChartSettings = { open: false, kind: 'compare', param: 'alt', x: 'tas', y: 'turnRate', units: [], xAxis: 'time' };
+
+/** The grid over the view of a recording placed on the earth. */
+export type GridKind = 'off' | 'latlon' | 'mgrs';
+export interface GeoSettings {
+  grid: GridKind;
+  /** Headings written magnetic (WMM) where a heading is shown, and the compass with both norths. */
+  magnetic: boolean;
+  /** 3° glideslopes from the runway thresholds near the recording (OurAirports). */
+  glideslope: boolean;
+}
+const DEFAULT_GEO: GeoSettings = { grid: 'off', magnetic: false, glideslope: false };
+
+/** An altitude restriction: a floor and a ceiling (metres above sea level), events where a unit crosses one. */
+export interface AltitudeLimits {
+  on: boolean;
+  floor: number | null;
+  ceiling: number | null;
+}
+const DEFAULT_LIMITS: AltitudeLimits = { on: false, floor: null, ceiling: null };
 
 interface Saved {
   labels: boolean;
@@ -124,6 +158,12 @@ interface Saved {
   chart: ChartSettings;
   /** The cockpit view's head-up display. */
   hud: boolean;
+  /** How big the labels over the units are, 1 as designed. */
+  labelScale: number;
+  /** Messages and comments of the recording (and chat) as subtitles. */
+  subtitles: boolean;
+  geo: GeoSettings;
+  limits: AltitudeLimits;
 }
 
 const KEY = 'heat3d.replay';
@@ -147,6 +187,10 @@ function saved(): Saved {
     mapNames: true,
     chart: DEFAULT_CHART,
     hud: true,
+    labelScale: 1,
+    subtitles: true,
+    geo: DEFAULT_GEO,
+    limits: DEFAULT_LIMITS,
   };
   try {
     const v = JSON.parse(localStorage.getItem(KEY) ?? 'null');
@@ -170,6 +214,10 @@ function saved(): Saved {
       mapNames: v.mapNames !== false,
       chart: readChart(v.chart),
       hud: v.hud !== false,
+      labelScale: typeof v.labelScale === 'number' && v.labelScale >= 0.5 && v.labelScale <= 3 ? v.labelScale : 1,
+      subtitles: v.subtitles !== false,
+      geo: readGeo(v.geo),
+      limits: readLimits(v.limits),
     };
   } catch {
     return fallback;
@@ -208,7 +256,30 @@ export function readAids(v: unknown): DisplayAids {
     locks: scopeOf(a.locks, d.locks),
     engagement: scopeOf(a.engagement, d.engagement),
     lineOfSight: a.lineOfSight !== false,
+    pilotSight: scopeOf(a.pilotSight, d.pilotSight),
+    lockLabels: a.lockLabels !== false,
+    engagements: scopeOf(a.engagements, d.engagements),
+    engagementRange: typeof a.engagementRange === 'number' && a.engagementRange > 0 ? Math.min(500000, a.engagementRange) : d.engagementRange,
   };
+}
+
+/** Saved grid and compass settings, each checked. */
+export function readGeo(v: unknown): GeoSettings {
+  if (!v || typeof v !== 'object') return DEFAULT_GEO;
+  const g = v as Record<string, unknown>;
+  return {
+    grid: g.grid === 'latlon' || g.grid === 'mgrs' ? g.grid : 'off',
+    magnetic: g.magnetic === true,
+    glideslope: g.glideslope === true,
+  };
+}
+
+/** A saved altitude restriction, checked. */
+export function readLimits(v: unknown): AltitudeLimits {
+  if (!v || typeof v !== 'object') return DEFAULT_LIMITS;
+  const l = v as Record<string, unknown>;
+  const h = (x: unknown) => (typeof x === 'number' && Number.isFinite(x) ? x : null);
+  return { on: l.on === true, floor: h(l.floor), ceiling: h(l.ceiling) };
 }
 
 function readChart(v: unknown): ChartSettings {
@@ -222,6 +293,7 @@ function readChart(v: unknown): ChartSettings {
     x: str(c.x, DEFAULT_CHART.x),
     y: str(c.y, DEFAULT_CHART.y),
     units: [],
+    xAxis: c.xAxis === 'air' || c.xAxis === 'ground' ? c.xAxis : 'time',
   };
 }
 
@@ -280,6 +352,8 @@ interface ReplayState extends Saved {
   setAids: (p: Partial<DisplayAids>) => void;
   setRule: (c: LabelCategory, p: Partial<LabelRule>) => void;
   setChart: (p: Partial<ChartSettings>) => void;
+  setGeo: (p: Partial<GeoSettings>) => void;
+  setLimits: (p: Partial<AltitudeLimits>) => void;
 }
 
 export const useReplayStore = create<ReplayState>((set, get) => {
@@ -304,6 +378,10 @@ export const useReplayStore = create<ReplayState>((set, get) => {
       // The units charted are of this recording only.
       chart: { ...s.chart, units: [] },
       hud: s.hud,
+      labelScale: s.labelScale,
+      subtitles: s.subtitles,
+      geo: s.geo,
+      limits: s.limits,
     });
     set(p);
   };
@@ -333,6 +411,8 @@ export const useReplayStore = create<ReplayState>((set, get) => {
     setAids: (p) => keep({ aids: { ...get().aids, ...p } }),
     setRule: (c, p) => keep({ labelRules: { ...get().labelRules, [c]: { ...get().labelRules[c], ...p } } }),
     setChart: (p) => keep({ chart: { ...get().chart, ...p } }),
+    setGeo: (p) => keep({ geo: { ...get().geo, ...p } }),
+    setLimits: (p) => keep({ limits: { ...get().limits, ...p } }),
     setOverlay: (p) => set({ overlay: { ...get().overlay, ...p } }),
     setDropLines: (dropLines) => set({ dropLines }),
     patchSaved: keep,

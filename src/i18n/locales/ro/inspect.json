@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Nu poate fi citit ca punct. Folosește x, y, z sau x y z, de ex. -321.6, 137.8, -59.9 sau -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Girația și tangajul trebuie să fie numere, în grade.",
   "heat.inspect.jump.hint": "Coordonatele sunt coordonate ale lumii, aceleași ca în afișaj și în poziția de mai sus. {key} deschide o casetă pentru asta peste vizualizare.",
-  "heat.inspect.jump.hintDataFrame": "Coordonatele sunt în sistemul propriu al datelor încărcate, ca în tabelul lor - aceleași ca în afișaj și în poziția de mai sus. {key} deschide o casetă pentru asta peste vizualizare."
+  "heat.inspect.jump.hintDataFrame": "Coordonatele sunt în sistemul propriu al datelor încărcate, ca în tabelul lor - aceleași ca în afișaj și în poziția de mai sus. {key} deschide o casetă pentru asta peste vizualizare.",
+  "heat.inspect.latLon": "Latitudine / longitudine"
 }

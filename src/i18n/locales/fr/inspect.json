@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Illisible comme point. Utilisez x, y, z ou x y z, p. ex. -321.6, 137.8, -59.9 ou -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Le lacet et le tangage doivent être des nombres, en degrés.",
   "heat.inspect.jump.hint": "Les coordonnées sont des coordonnées monde, les mêmes que l'affichage et la pose ci-dessus. {key} ouvre une boîte pour cela par-dessus la vue.",
-  "heat.inspect.jump.hintDataFrame": "Les coordonnées sont dans le repère propre des données chargées, comme dans leur table - les mêmes que l'affichage et la pose ci-dessus. {key} ouvre une boîte pour cela par-dessus la vue."
+  "heat.inspect.jump.hintDataFrame": "Les coordonnées sont dans le repère propre des données chargées, comme dans leur table - les mêmes que l'affichage et la pose ci-dessus. {key} ouvre une boîte pour cela par-dessus la vue.",
+  "heat.inspect.latLon": "Lat / long"
 }

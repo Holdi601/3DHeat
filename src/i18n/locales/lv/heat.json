@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "īstais izmērs",
   "heat.teamPanel.weapons": "Ieroči, šāvieni un trāpījumi",
-  "heat.teamPanel.weaponsTitle": "Ieroči lidojumā ar dūmiem, trasējošām lodēm, triecieniem, trāpījumiem un notriekšanām. No trāpījuma secinātās trases ir raustītas."
+  "heat.teamPanel.weaponsTitle": "Ieroči lidojumā ar dūmiem, trasējošām lodēm, triecieniem, trāpījumiem un notriekšanām. No trāpījuma secinātās trases ir raustītas.",
+  "heat.timeline.reverseKey": "Atskaņot atpakaļ ({key})",
+  "heat.heatPanel.followExposure": "Sekot skatam",
+  "heat.heatPanel.followExposureHint": "Atkārtoti nomēra ekspozīciju katru reizi, kad kamera apstājas, lai apgabals, kurā ielido, izmantotu visu siltuma skalu, nevis visai kartei nomērīto skalu. Nelielas izmaiņas tiek ignorētas, un skala mainās plūstoši, nevis lēcienveidā. Noņem atzīmi, lai fiksētu skalu un salīdzinātu vietas pēc vienas skalas; arī piesātinājuma punkta vilkšana to fiksē.",
+  "heat.heatPanel.zoomInvariant": "Vienāds blīvums jebkurā tālummaiņā",
+  "heat.heatPanel.zoomInvariantHint": "Krāsa nozīmē vienādu rindu skaitu uz zemes laukuma vienību neatkarīgi no tā, cik tuvu esi. Spraits, ko pikseļu ierobežojumi palielina (no tālienes) vai samazina (no tuvuma), saglabā siltumu, ko pievienotu tā patiesais izmērs, tāpēc no tālienes eksponēts attēls vairs neizbalē, kad tajā ielido. Izslēgts: ierobežots spraits pievieno visu savu svaru ierobežotajā izmērā.",
+  "heat.splitPanel.sides": "Rindas logā: <b>+</b> {plus} · <b>−</b> {minus}",
+  "heat.splitPanel.sidesApprox": "Rindas logā: <b>+</b> ap {plus} · <b>−</b> ap {minus} (saskaitīts no izlases)",
+  "heat.splitPanel.noSides": "Neviena vērtība nav nevienā pusē, tāpēc starpība neko nezīmē. Novieto vismaz vienu vērtību pusē <b>+</b> vai <b>−</b>.",
+  "heat.splitPanel.wrongKind": "Kolonnu {column} nevar šādi sadalīt, tāpēc starpība neko nezīmē. Izvēlies kolonnu vēlreiz.",
+  "heat.splitPanel.positiveEmpty": "Neviena loga rinda nav <b>+</b> pusē, tāpēc tiek zīmēta tikai <b>−</b> puse: attēls nav starpība.",
+  "heat.splitPanel.negativeEmpty": "Neviena loga rinda nav <b>−</b> pusē, tāpēc tiek zīmēta tikai <b>+</b> puse: attēls nav starpība.",
+  "heat.splitPanel.skipped": "Sadalījuma kolonna neietilpa GPU atmiņā {skipped} no {total} rindu blokiem, un šīs rindas netiek zīmētas. Palielini GPU budžetu sadaļā Veiktspēja → Resursu budžeti vai ielādē mazāk rindu.",
+  "heat.splitPanel.shares": "Salīdzināt daļas, nevis skaitu",
+  "heat.splitPanel.sharesHint": "Katrai pusei piešķir svaru viens, dalīts ar tās pašas rindu skaitu, lai puse ar piecreiz vairāk rindām vairs nepārklātu karti tikai skaita dēļ. Tad krāsa rāda, kur katra puse ir proporcionāli biežāka par otru.",
+  "heat.teamsList.columnSplitHint": "Starpība ir sadalīta pēc <b>{column}</b>, tāpēc grupas šeit nosaka tikai to, kas tiek zīmēts, nevis kurā pusē tās tiek skaitītas."
 }

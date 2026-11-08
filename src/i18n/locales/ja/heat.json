@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "実寸",
   "heat.teamPanel.weapons": "武器・射撃・命中",
-  "heat.teamPanel.weaponsTitle": "飛行中の武器と煙、曳光弾、着弾、命中、撃破。命中から推定した曳光弾は破線で表示します。"
+  "heat.teamPanel.weaponsTitle": "飛行中の武器と煙、曳光弾、着弾、命中、撃破。命中から推定した曳光弾は破線で表示します。",
+  "heat.timeline.reverseKey": "逆再生（{key}）",
+  "heat.heatPanel.followExposure": "ビューに追従",
+  "heat.heatPanel.followExposureHint": "カメラが静止するたびに露出を測り直すので、飛び込んだ領域ではマップ全体で測ったスケールではなく、ヒートランプ全体を使えます。小さな変化は無視され、スケールは跳ばずに滑らかに移行します。スケールを固定して場所を同じスケールで比べるにはチェックを外してください。飽和点をドラッグしても固定されます。",
+  "heat.heatPanel.zoomInvariant": "ズームに関係なく同じ密度",
+  "heat.heatPanel.zoomInvariantHint": "どれだけ近づいても、色は地面の単位面積あたりの同じ行数を表します。ピクセル制限によって拡大（遠く）または縮小（近く）されたスプライトも、本来のサイズで加わるはずのヒートを保つので、遠くから露出した画像が近づくにつれて薄れることはなくなります。オフの場合、制限されたスプライトは制限後のサイズで全重みを加えます。",
+  "heat.splitPanel.sides": "ウィンドウ内 <b>+</b> {plus}行 · <b>−</b> {minus}行",
+  "heat.splitPanel.sidesApprox": "ウィンドウ内 <b>+</b> 約{plus}行 · <b>−</b> 約{minus}行（サンプルから集計）",
+  "heat.splitPanel.noSides": "どちらの側にも値がないため、差分には何も描画されません。少なくとも1つの値を<b>+</b>か<b>−</b>に割り当ててください。",
+  "heat.splitPanel.wrongKind": "{column}はこの方法では分割できないため、差分には何も描画されません。列を選び直してください。",
+  "heat.splitPanel.positiveEmpty": "ウィンドウ内に<b>+</b>側の行がないため、<b>−</b>側だけが描画されます。この画像は差分ではありません。",
+  "heat.splitPanel.negativeEmpty": "ウィンドウ内に<b>−</b>側の行がないため、<b>+</b>側だけが描画されます。この画像は差分ではありません。",
+  "heat.splitPanel.skipped": "{total}個の行チャンクのうち{skipped}個で分割列がGPUメモリに収まらず、それらの行は描画されません。パフォーマンス → リソース予算でGPU予算を増やすか、読み込む行を減らしてください。",
+  "heat.splitPanel.shares": "件数ではなく割合を比較",
+  "heat.splitPanel.sharesHint": "各側をそれぞれの行数の逆数で重み付けするので、行数が5倍ある側が数だけでマップを覆うことはなくなります。色は、各側がもう一方より相対的に多い場所を示します。",
+  "heat.teamsList.columnSplitHint": "差分は<b>{column}</b>で分割されているため、ここのグループは描画するものを決めるだけで、どちらの側に数えるかは決めません。"
 }

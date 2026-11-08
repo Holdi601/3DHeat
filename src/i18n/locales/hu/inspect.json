@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Nem olvasható pontként. Használja az x, y, z vagy x y z formát, pl. -321.6, 137.8, -59.9 vagy -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "A legyezés és a bólintás csak fokban megadott szám lehet.",
   "heat.inspect.jump.hint": "A koordináták világkoordináták, ugyanazok, mint a kijelzőn és a fenti pózban. {key} megnyit ehhez egy mezőt a nézet fölött.",
-  "heat.inspect.jump.hintDataFrame": "A koordináták a betöltött adatok saját keretében vannak, mint a táblázatukban - ugyanazok, mint a kijelzőn és a fenti pózban. {key} megnyit ehhez egy mezőt a nézet fölött."
+  "heat.inspect.jump.hintDataFrame": "A koordináták a betöltött adatok saját keretében vannak, mint a táblázatukban - ugyanazok, mint a kijelzőn és a fenti pózban. {key} megnyit ehhez egy mezőt a nézet fölött.",
+  "heat.inspect.latLon": "Szélesség / hosszúság"
 }

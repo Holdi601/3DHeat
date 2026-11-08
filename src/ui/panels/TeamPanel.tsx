@@ -132,9 +132,14 @@ export function TeamsList() {
   const positive = useStore((s) => s.positiveTeams);
   const negative = useStore((s) => s.negativeTeams);
   const setTeamSplit = useStore((s) => s.setTeamSplit);
+  const split = useStore((s) => s.split);
 
   if (!dataset || dataset.teamLabels.length === 0) return null;
-  const difference = mode === 'heat-difference';
+  // Under a column split the groups decide only what is drawn, so their +/−
+  // buttons would offer a choice that does nothing - and look like the group
+  // split were still the one in force.
+  const columnSplit = mode === 'heat-difference' && split.kind !== 'teams' ? split.column : null;
+  const difference = mode === 'heat-difference' && columnSplit === null;
   const teams = mode === 'heat-teams';
 
   /**
@@ -177,6 +182,11 @@ export function TeamsList() {
       {difference && (
         <div className="hint">
           <Rich text={t('heat.teamsList.differenceHint')} />
+        </div>
+      )}
+      {columnSplit !== null && (
+        <div className="hint">
+          <Rich text={t('heat.teamsList.columnSplitHint', { column: columnSplit })} />
         </div>
       )}
       {teams && (

@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Kan ikke læses som et punkt. Brug x, y, z eller x y z, f.eks. -321.6, 137.8, -59.9 eller -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Yaw og pitch skal være tal i grader.",
   "heat.inspect.jump.hint": "Koordinaterne er verdenskoordinater, de samme som aflæsningen og posituren ovenfor. {key} åbner et felt til dette over visningen.",
-  "heat.inspect.jump.hintDataFrame": "Koordinaterne er i de indlæste datas eget system, som i deres tabel - de samme som aflæsningen og posituren ovenfor. {key} åbner et felt til dette over visningen."
+  "heat.inspect.jump.hintDataFrame": "Koordinaterne er i de indlæste datas eget system, som i deres tabel - de samme som aflæsningen og posituren ovenfor. {key} åbner et felt til dette over visningen.",
+  "heat.inspect.latLon": "Bredde / længde"
 }

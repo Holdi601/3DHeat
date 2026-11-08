@@ -8,8 +8,10 @@ import { previewAcmi } from './ingestAcmi';
 import { isOcapName } from './ocap';
 import { previewOcap } from './ingestOcap';
 import { estimateRows } from './tableIngest';
+import { geoFormatOf } from './geoTracks';
+import { previewGeo } from './ingestGeo';
 
-export type SourceFormat = 'csv' | 'parquet' | 'acmi' | 'ocap';
+export type SourceFormat = 'csv' | 'parquet' | 'acmi' | 'ocap' | 'geo';
 
 /** Format-independent description of a file, for the mapping UI and auto-mapper. */
 export interface SourcePreview {
@@ -34,6 +36,7 @@ export interface SourcePreview {
 export function detectFormat(name: string): SourceFormat {
   if (isAcmiName(name)) return 'acmi';
   if (isOcapName(name)) return 'ocap';
+  if (geoFormatOf(name)) return 'geo';
   return /\.parquet$|\.pq$/i.test(name) ? 'parquet' : 'csv';
 }
 
@@ -72,6 +75,24 @@ export async function previewSource(file: File, delimiterOverride?: string): Pro
       delimiter: ',',
       logicalTypes: {},
       hints: a.hints,
+    };
+  }
+
+  if (detectFormat(file.name) === 'geo') {
+    // GPS tracks (GPX, KML/KMZ, NMEA, IGC, FIT): their table and their own reading instructions.
+    const g = await previewGeo(file);
+    return {
+      format: 'geo',
+      fileName: file.name,
+      columns: g.columns,
+      rows: g.rows,
+      numeric: g.numeric,
+      rowCount: g.rowCount,
+      rowCountExact: true,
+      fileBytes: file.size,
+      delimiter: ',',
+      logicalTypes: {},
+      hints: g.hints,
     };
   }
 
@@ -147,6 +168,10 @@ export async function measureSelection(files: File[]): Promise<SelectionSize> {
       if (detectFormat(file.name) === 'parquet') {
         const metadata = await parquetMetadataAsync(asyncBufferFromFile(file));
         rows += Number(metadata.num_rows);
+      } else if (detectFormat(file.name) === 'geo') {
+        // A GPS fix is some 60-150 bytes of XML or text, a FIT record about 30.
+        rows += estimateRows(file.size, /\.fit$/i.test(file.name) ? 30 : /\.kmz$/i.test(file.name) ? 10 : 80);
+        exact = false;
       } else if (detectFormat(file.name) === 'acmi' || detectFormat(file.name) === 'ocap') {
         // Sized from the file, not parsed: a recording is parsed when it is
         // previewed and again when it loads, and a third full parse only to

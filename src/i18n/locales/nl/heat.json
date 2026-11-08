@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "ware grootte",
   "heat.teamPanel.weapons": "Wapens, schoten en treffers",
-  "heat.teamPanel.weaponsTitle": "Wapens in de lucht met rook, lichtspoor, inslagen, treffers en kills. Lichtspoor afgeleid uit een treffer is gestippeld."
+  "heat.teamPanel.weaponsTitle": "Wapens in de lucht met rook, lichtspoor, inslagen, treffers en kills. Lichtspoor afgeleid uit een treffer is gestippeld.",
+  "heat.timeline.reverseKey": "Achteruit afspelen ({key})",
+  "heat.heatPanel.followExposure": "De weergave volgen",
+  "heat.heatPanel.followExposureHint": "Meet de belichting opnieuw telkens als de camera tot rust komt, zodat een gebied waar je in vliegt het hele heatmapverloop gebruikt in plaats van de schaal die voor de hele kaart is gemeten. Kleine veranderingen worden genegeerd en de schaal glijdt in plaats van te springen. Vink het uit om de schaal vast te zetten en plekken op één schaal te vergelijken; slepen aan het verzadigingspunt zet hem ook vast.",
+  "heat.heatPanel.zoomInvariant": "Gelijke dichtheid bij elke zoom",
+  "heat.heatPanel.zoomInvariantHint": "Een kleur betekent hetzelfde aantal rijen per grondoppervlak, hoe dichtbij je ook bent. Een sprite die de pixelgrenzen vergroten (van ver) of verkleinen (van dichtbij) houdt de intensiteit die zijn ware grootte zou toevoegen, zodat een beeld dat van ver is belicht niet meer vervaagt als je erin vliegt. Uit: een begrensde sprite voegt zijn volle gewicht toe op zijn begrensde grootte.",
+  "heat.splitPanel.sides": "<b>+</b> {plus} rijen · <b>−</b> {minus} rijen in het venster",
+  "heat.splitPanel.sidesApprox": "<b>+</b> ongeveer {plus} rijen · <b>−</b> ongeveer {minus} rijen in het venster (geteld uit een steekproef)",
+  "heat.splitPanel.noSides": "Geen enkele waarde staat aan een van beide kanten, dus het verschil tekent niets. Zet minstens één waarde op <b>+</b> of <b>−</b>.",
+  "heat.splitPanel.wrongKind": "{column} kan niet op deze manier worden verdeeld, dus het verschil tekent niets. Kies de kolom opnieuw.",
+  "heat.splitPanel.positiveEmpty": "Geen rij in het venster staat aan de <b>+</b>-kant, dus alleen de <b>−</b>-kant wordt getekend: het beeld is geen verschil.",
+  "heat.splitPanel.negativeEmpty": "Geen rij in het venster staat aan de <b>−</b>-kant, dus alleen de <b>+</b>-kant wordt getekend: het beeld is geen verschil.",
+  "heat.splitPanel.skipped": "De verdeelkolom paste voor {skipped} van {total} blokken rijen niet in het GPU-geheugen, en die rijen worden niet getekend. Verhoog het GPU-budget onder Prestaties → Resourcebudgetten, of laad minder rijen.",
+  "heat.splitPanel.shares": "Aandelen vergelijken, geen aantallen",
+  "heat.splitPanel.sharesHint": "Weegt elke kant met één gedeeld door zijn eigen aantal rijen, zodat een kant met vijf keer zoveel rijen de kaart niet meer puur door aantallen bedekt. De kleur toont dan waar elke kant naar verhouding vaker voorkomt dan de andere.",
+  "heat.teamsList.columnSplitHint": "Het verschil is verdeeld op <b>{column}</b>, dus de groepen hier bepalen alleen wat er wordt getekend, niet aan welke kant ze meetellen."
 }

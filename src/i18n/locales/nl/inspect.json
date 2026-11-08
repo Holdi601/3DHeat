@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Niet leesbaar als punt. Gebruik x, y, z of x y z, bijv. -321.6, 137.8, -59.9 of -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Gierhoek en stamphoek moeten getallen zijn, in graden.",
   "heat.inspect.jump.hint": "Coördinaten zijn wereldcoördinaten, dezelfde als in de uitlezing en de pose hierboven. {key} opent hiervoor een vak boven het beeld.",
-  "heat.inspect.jump.hintDataFrame": "Coördinaten staan in het eigen stelsel van de geladen data, zoals in de tabel daarvan - dezelfde als in de uitlezing en de pose hierboven. {key} opent hiervoor een vak boven het beeld."
+  "heat.inspect.jump.hintDataFrame": "Coördinaten staan in het eigen stelsel van de geladen data, zoals in de tabel daarvan - dezelfde als in de uitlezing en de pose hierboven. {key} opent hiervoor een vak boven het beeld.",
+  "heat.inspect.latLon": "Breedte / lengte"
 }

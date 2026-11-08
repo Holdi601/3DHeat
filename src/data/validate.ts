@@ -255,20 +255,54 @@ export function splitHasTwoSides(rule: SplitRule, ds: Dataset | null): boolean {
   return attr.kind === 'number' && attr.max > attr.min;
 }
 
+/** Rows per category id, cached per column: see `categoryRowCounts`. */
+const CATEGORY_COUNTS = new WeakMap<ArrayLike<number>, Uint32Array>();
+
+/**
+ * How many rows carry each value of a category column, by category id.
+ *
+ * One pass over the column, cached against its data array, so the split panel
+ * can show the size of each side and the default split can skip values no row
+ * has. Null for a numeric column, or one passed without its rows.
+ */
+export function categoryRowCounts(attr: AttributeColumn): Uint32Array | null {
+  if (attr.kind !== 'category' || !attr.categories || attr.data.length === 0) return null;
+  const hit = CATEGORY_COUNTS.get(attr.data);
+  if (hit && hit.length === attr.categories.length) return hit;
+  const n = attr.categories.length;
+  const counts = new Uint32Array(n);
+  const data = attr.data;
+  for (let i = 0; i < data.length; i++) {
+    const c = Math.round(data[i]);
+    if (c >= 0 && c < n) counts[c]++;
+  }
+  CATEGORY_COUNTS.set(attr.data, counts);
+  return counts;
+}
+
 /**
  * The split a column starts with: its first value against its second, or a
  * numeric column halved at its midpoint.
+ *
+ * "First" and "second" among the values rows actually have. A dictionary-encoded
+ * column keeps the empty string as its first entry whether or not any row is
+ * empty, and a default putting that entry on one side left that side empty —
+ * which, toggled by someone who assumed both sides started empty, cleared the
+ * other one too.
  */
 export function defaultSplitRule(attr: AttributeColumn): SplitRule {
   if (attr.kind === 'category') {
     const n = attr.categories?.length ?? 0;
+    const counts = categoryRowCounts(attr);
+    const used: number[] = [];
+    for (let i = 0; i < n && used.length < 2; i++) if (!counts || counts[i] > 0) used.push(i);
     // First value against the second, which is the comparison anyone picking a
     // two-valued column — a source file, a win flag — almost certainly wants.
     return {
       kind: 'categories',
       column: attr.name,
-      positive: n > 0 ? [0] : [],
-      negative: n > 1 ? [1] : [],
+      positive: used.length > 0 ? [used[0]] : [],
+      negative: used.length > 1 ? [used[1]] : [],
     };
   }
   // Numeric: split at the midpoint, which at least divides the data in two.

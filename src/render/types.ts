@@ -128,6 +128,16 @@ export interface HeatUniforms {
   floor: number;
   minPixelRadius: number;
   maxPixelRadius: number;
+  /**
+   * Keep each sprite's total heat when the pixel clamps resize it.
+   *
+   * A sprite clamped up to the minimum pixel radius covers more ground than its
+   * world radius, and one clamped down to the maximum covers less; weighting it
+   * by (true radius / drawn radius)^2 keeps the heat it adds the same, so the
+   * field is density per area of the world at any zoom. Without it a far view of
+   * sub-pixel sprites reads many times hotter than the same ground seen close.
+   */
+  zoomInvariant: boolean;
   groundProjected: boolean;
   /** Y of the ground plane when groundProjected. */
   groundY: number;
@@ -421,6 +431,11 @@ export interface FrameParams {
   splitSign: Int8Array | null;
   splitPositive: [number, number];
   splitNegative: [number, number];
+  /**
+   * Weight of a positive row and of a negative one, in difference mode; 1 and 1
+   * unless each side is normalised to its own total (`sideScales`).
+   */
+  splitScale: [number, number];
   /** Column filters, up to MAX_FILTER_SLOTS. Evaluated per row in the shader. */
   filters: ActiveFilter[];
 
@@ -778,6 +793,12 @@ export interface Renderer {
    * not present it, which would otherwise make the backend untestable.
    */
   captureFrame?(): Promise<CapturedFrame | null>;
+  /**
+   * Chunks the last heat pass left out because the difference split's column
+   * could not be put on the GPU for them. They are skipped rather than drawn
+   * with the group split, so the caller has to say so.
+   */
+  readonly splitSkippedChunks?: number;
 }
 
 /** 0 = by group, 1 = by column category, 2 = by column range. */
@@ -817,4 +838,10 @@ export interface GpuTracksParams {
   triangleBudget: number;
   /** Seconds of trail behind each unit; 0 none. */
   trailSeconds: number;
+  /** One bit a track, set when shown (team toggles, filters); null: all shown. */
+  visible?: Uint32Array | null;
+  /** Seconds of streak behind a weapon in flight; 0 hides weapons. */
+  weapons?: number;
+  /** Seconds a death stays marked; 0 none. */
+  markerSeconds?: number;
 }

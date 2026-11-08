@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Nicht als Punkt lesbar. Verwende x, y, z oder x y z, z. B. -321.6, 137.8, -59.9 oder -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Gier- und Nickwinkel müssen Zahlen in Grad sein.",
   "heat.inspect.jump.hint": "Die Koordinaten sind Weltkoordinaten, dieselben wie in der Anzeige und der Pose oben. {key} öffnet dafür ein Feld über der Ansicht.",
-  "heat.inspect.jump.hintDataFrame": "Die Koordinaten liegen im eigenen System der geladenen Daten, wie in deren Tabelle - dieselben wie in der Anzeige und der Pose oben. {key} öffnet dafür ein Feld über der Ansicht."
+  "heat.inspect.jump.hintDataFrame": "Die Koordinaten liegen im eigenen System der geladenen Daten, wie in deren Tabelle - dieselben wie in der Anzeige und der Pose oben. {key} öffnet dafür ein Feld über der Ansicht.",
+  "heat.inspect.latLon": "Breite / Länge"
 }

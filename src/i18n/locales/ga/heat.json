@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "fíormhéid",
   "heat.teamPanel.weapons": "Airm, urchair agus buillí",
-  "heat.teamPanel.weaponsTitle": "Airm ag eitilt le deatach, rianairí, tuairteanna, buillí agus scriosanna. Tá rianairí a tátal ó bhuille briste."
+  "heat.teamPanel.weaponsTitle": "Airm ag eitilt le deatach, rianairí, tuairteanna, buillí agus scriosanna. Tá rianairí a tátal ó bhuille briste.",
+  "heat.timeline.reverseKey": "Seinn siar ({key})",
+  "heat.heatPanel.followExposure": "Lean an t-amharc",
+  "heat.heatPanel.followExposureHint": "Tomhaiseann sé an nochtadh arís gach uair a stopann an ceamara, ionas go n-úsáideann réigiún a n-eitlíonn tú isteach ann an grádán teasa ar fad in ionad an scála a tomhaiseadh don léarscáil iomlán. Déantar neamhaird d’athruithe beaga agus sleamhnaíonn an scála in ionad léim. Bain an tic chun an scála a ghlasáil agus áiteanna a chur i gcomparáid ar aon scála amháin; glasálann tarraingt an phointe sáithithe é freisin.",
+  "heat.heatPanel.zoomInvariant": "An dlús céanna ag gach zúmáil",
+  "heat.heatPanel.zoomInvariantHint": "Ciallaíonn dath an líon céanna rónna in aghaidh an aonaid achair talún, is cuma cé chomh gar is atá tú. Coinníonn sprid a mhéadaíonn (i bhfad uait) nó a laghdaíonn (gar duit) na teanntáin picteilíní an teas a chuirfeadh a fíormhéid leis, ionas nach dtréigeann pictiúr a nochtadh i bhfad uait a thuilleadh agus tú ag eitilt isteach ann. Múchta, cuireann sprid theanntaithe a meáchan iomlán léi ag a méid teanntaithe.",
+  "heat.splitPanel.sides": "Rónna san fhuinneog: <b>+</b> {plus} · <b>−</b> {minus}",
+  "heat.splitPanel.sidesApprox": "Rónna san fhuinneog: <b>+</b> thart ar {plus} · <b>−</b> thart ar {minus} (comhairthe ó shampla)",
+  "heat.splitPanel.noSides": "Níl luach ar bith ar cheachtar taobh, mar sin ní tharraingíonn an difríocht aon rud. Cuir luach amháin ar a laghad ar <b>+</b> nó <b>−</b>.",
+  "heat.splitPanel.wrongKind": "Ní féidir {column} a scoilt mar seo, mar sin ní tharraingíonn an difríocht aon rud. Roghnaigh an colún arís.",
+  "heat.splitPanel.positiveEmpty": "Níl ró ar bith san fhuinneog ar an taobh <b>+</b>, mar sin ní tharraingítear ach an taobh <b>−</b>: ní difríocht é an pictiúr.",
+  "heat.splitPanel.negativeEmpty": "Níl ró ar bith san fhuinneog ar an taobh <b>−</b>, mar sin ní tharraingítear ach an taobh <b>+</b>: ní difríocht é an pictiúr.",
+  "heat.splitPanel.skipped": "Níor luigh an colún scoilte i gcuimhne an GPU do {skipped} as {total} bloc rónna, agus ní tharraingítear na rónna sin. Ardaigh buiséad an GPU faoi Feidhmíocht → Buiséid acmhainní, nó lódáil níos lú rónna.",
+  "heat.splitPanel.shares": "Cuir codanna i gcomparáid, ní líonta",
+  "heat.splitPanel.sharesHint": "Ualaíonn sé gach taobh le haon roinnte ar a líon rónna féin, ionas nach gclúdaíonn taobh a bhfuil cúig oiread rónna aige an léarscáil de bharr líon amháin a thuilleadh. Taispeánann an dath ansin cá bhfuil gach taobh níos coitianta go comhréireach ná an taobh eile.",
+  "heat.teamsList.columnSplitHint": "Tá an difríocht scoilte de réir <b>{column}</b>, mar sin ní shocraíonn na grúpaí anseo ach cad a tharraingítear, ní cén taobh a gcomhairtear iad air."
 }

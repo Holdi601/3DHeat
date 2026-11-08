@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Ní féidir é a léamh mar phointe. Úsáid x, y, z nó x y z, m.sh. -321.6, 137.8, -59.9 nó -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Caithfidh an luascadh agus an tuairteáil a bheith ina n-uimhreacha, i gcéimeanna.",
   "heat.inspect.jump.hint": "Is comhordanáidí domhanda iad na comhordanáidí, mar an gcéanna leis an léamh agus leis an staidiúir thuas. Osclaíonn {key} bosca chuige seo thar an radharc.",
-  "heat.inspect.jump.hintDataFrame": "Tá na comhordanáidí i gcóras féin na sonraí lódáilte, mar atá ina dtábla - mar an gcéanna leis an léamh agus leis an staidiúir thuas. Osclaíonn {key} bosca chuige seo thar an radharc."
+  "heat.inspect.jump.hintDataFrame": "Tá na comhordanáidí i gcóras féin na sonraí lódáilte, mar atá ina dtábla - mar an gcéanna leis an léamh agus leis an staidiúir thuas. Osclaíonn {key} bosca chuige seo thar an radharc.",
+  "heat.inspect.latLon": "Domhanleithead / domhanfhad"
 }

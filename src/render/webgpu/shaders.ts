@@ -23,6 +23,8 @@ export const FLAG_SIGNED_COMPOSITE = 16;
 export const FLAG_SMOOTH_RAMP = 32;
 export const FLAG_USE_CURVE = 64;
 export const FLAG_TEAM_COLORS = 128;
+/** A clamped sprite keeps the heat its true size would add: `HeatUniforms.zoomInvariant`. */
+export const FLAG_CONSERVE = 256;
 
 /**
  * Bytes in the heat pass uniform buffer.
@@ -207,7 +209,8 @@ struct HeatUniforms {
   cullPlane     : vec4<f32>,
   // x: the group index that means "no group", or -1. Given no hue at all.
   // y: slice permutation stride, coprime with the group count. 1 = identity.
-  // z, w: spare.
+  // z, w: the weight of a positive row and of a negative one in a signed field
+  //       (see sideScales), 1 and 1 unless each side is normalised to its total.
   teamCfg       : vec4<f32>,
   // Line heat: the box segment starts are quantised to - all of the data, not
   // this chunk, since a segment can start in another chunk. w lanes spare.
@@ -457,6 +460,8 @@ fn vsHeat(@builtin(vertex_index) vid : u32) -> VsOut {
       }
     }
     if (sgn == 0.0) { reject = true; }
+    // Each side normalised to its own total, when asked: see sideScales.
+    if (sgn > 0.0) { sgn = sgn * u.teamCfg.z; } else { sgn = sgn * u.teamCfg.w; }
   }
   out.sign = sgn;
 
@@ -549,8 +554,15 @@ fn vsHeat(@builtin(vertex_index) vid : u32) -> VsOut {
   var denom = 1.0;
   if ((flags & ${FLAG_PERSPECTIVE}u) != 0u) { denom = clip.w; }
   let viewport = u.viewportClamp.xy;
-  var pixRadius = u.shape.x * u.shape.y / denom * (viewport.y * 0.5);
-  pixRadius = clamp(pixRadius, u.viewportClamp.z, u.viewportClamp.w);
+  let trueRadius = u.shape.x * u.shape.y / denom * (viewport.y * 0.5);
+  let pixRadius = clamp(trueRadius, u.viewportClamp.z, u.viewportClamp.w);
+  // A clamped sprite keeps the heat its true size would add: weighted by the
+  // area it lost or gained, so the field is density per world area at any zoom.
+  // See HeatUniforms.zoomInvariant.
+  if ((flags & ${FLAG_CONSERVE}u) != 0u) {
+    let ratio = trueRadius / max(1e-6, pixRadius);
+    out.fade = out.fade * ratio * ratio;
+  }
 
   let c = SPRITE_CORNERS[corner];
   out.local = c;

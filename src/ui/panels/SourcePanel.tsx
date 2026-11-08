@@ -228,7 +228,7 @@ export function SourcePanel() {
         >
           {t('heat.sourcePanel.drop')}
           <br />
-          <span style={{ opacity: 0.7 }}>.parquet · .csv · .tsv · .acmi · .json</span>
+          <span style={{ opacity: 0.7 }}>.parquet · .csv · .tsv · .acmi · .json · .gpx · .kml · .kmz · .nmea · .igc · .fit</span>
         </div>
 
         <div className="row wrap">

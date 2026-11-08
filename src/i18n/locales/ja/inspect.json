@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "点として読み取れません。x, y, z または x y z の形式で入力してください。例：-321.6, 137.8, -59.9 または -321,6 137,8 -59,9。",
   "heat.inspect.jump.badAngle": "ヨーとピッチは度単位の数値で指定してください。",
   "heat.inspect.jump.hint": "座標はワールド座標で、カメラ表示や上のポーズと同じです。{key}でビュー上に入力欄を開きます。",
-  "heat.inspect.jump.hintDataFrame": "座標は読み込んだデータ自身の座標系で、そのテーブルと同じです - カメラ表示や上のポーズとも同じです。{key}でビュー上に入力欄を開きます。"
+  "heat.inspect.jump.hintDataFrame": "座標は読み込んだデータ自身の座標系で、そのテーブルと同じです - カメラ表示や上のポーズとも同じです。{key}でビュー上に入力欄を開きます。",
+  "heat.inspect.latLon": "緯度 / 経度"
 }

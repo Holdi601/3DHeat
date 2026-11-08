@@ -51,6 +51,28 @@ export interface HeatSettings {
   minPixelRadius: number;
   /** Clamp sprites to a maximum pixel radius; the main defence against overdraw. */
   maxPixelRadius: number;
+  /**
+   * Colour means density per area of the world, the same at any zoom.
+   *
+   * A sprite the pixel clamps resize keeps the heat its true size would add (see
+   * `HeatUniforms.zoomInvariant`). Without it a far view of sprites clamped up to
+   * a pixel reads many times hotter than the same ground seen close, so a picture
+   * exposed from far away fades as you fly into it.
+   */
+  zoomInvariant: boolean;
+  /**
+   * Re-meter the exposure for whatever is on screen each time the camera comes
+   * to rest, gliding to it and ignoring small changes. Off is the lock: the
+   * scale then stays put, so two places can be compared on one scale. Dragging
+   * the saturation slider turns it off.
+   */
+  followExposure: boolean;
+  /**
+   * Difference mode: weight each side by the inverse of its own row count, so
+   * the picture compares where each side is proportionally more common rather
+   * than which side simply has more rows. See `sideScales`.
+   */
+  splitShares: boolean;
   /** Ignore Z and flatten all heat onto the ground plane. */
   groundProjected: boolean;
   /** S-curve the per-sprite ramp instead of using the raw falloff. */
@@ -254,6 +276,8 @@ export interface TimelineSettings {
   /** Dataset-seconds advanced per wall-clock second. */
   speed: number;
   loop: boolean;
+  /** Played backwards, from the end towards the start (Tacview's reverse playback). */
+  reverse?: boolean;
   /** Window length for `fixed`, in seconds. */
   windowSeconds: number;
   /**
@@ -551,6 +575,9 @@ export const useStore = create<AppState>((set) => ({
     floor: 0,
     minPixelRadius: 1,
     maxPixelRadius: 96,
+    zoomInvariant: true,
+    followExposure: true,
+    splitShares: false,
     groundProjected: false,
     smoothRamp: true,
     useCurve: false,

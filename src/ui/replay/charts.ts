@@ -213,3 +213,49 @@ export const CHART_COLORS = [
   '#5fd4d4',
   '#e0e0e0',
 ];
+
+/**
+ * The distance travelled up to each sample: through the air (3D) or over the
+ * ground, metres. A jump across a gap of more than `gap` seconds (a respawn)
+ * adds nothing.
+ */
+export function cumulativeDistance(
+  t: ArrayLike<number>,
+  x: ArrayLike<number>,
+  y: ArrayLike<number>,
+  z: ArrayLike<number>,
+  ground: boolean,
+  gap = 10,
+): Float64Array {
+  const out = new Float64Array(t.length);
+  for (let i = 1; i < t.length; i++) {
+    const dx = x[i] - x[i - 1];
+    const dy = ground ? 0 : y[i] - y[i - 1];
+    const dz = z[i] - z[i - 1];
+    const d = Math.hypot(dx, dy, dz);
+    out[i] = out[i - 1] + (t[i] - t[i - 1] > gap || !Number.isFinite(d) ? 0 : d);
+  }
+  return out;
+}
+
+/** A series' value at a time, between the samples either side; the ends held. */
+export function interpolateAt(t: ArrayLike<number>, v: ArrayLike<number>, time: number): number {
+  const n = t.length;
+  if (!n) return NaN;
+  if (time <= t[0]) return v[0];
+  if (time >= t[n - 1]) return v[n - 1];
+  const i = Math.max(0, lowerBound(t, time) - 1);
+  const f = (time - t[i]) / Math.max(1e-12, t[i + 1] - t[i]);
+  return v[i] + (v[i + 1] - v[i]) * f;
+}
+
+/** The time at which an ascending series first reaches a value (the inverse of `interpolateAt`). */
+export function timeAtValue(t: ArrayLike<number>, v: ArrayLike<number>, value: number): number {
+  const n = t.length;
+  if (!n) return NaN;
+  const i = lowerBound(v, value);
+  if (i <= 0) return t[0];
+  if (i >= n) return t[n - 1];
+  const f = (value - v[i - 1]) / Math.max(1e-12, v[i] - v[i - 1]);
+  return t[i - 1] + (t[i] - t[i - 1]) * f;
+}

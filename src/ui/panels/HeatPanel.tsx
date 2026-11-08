@@ -164,7 +164,9 @@ export function HeatPanel() {
           // saturation point orders of magnitude past the track.
           ceiling={1e7}
           logarithmic
-          onChange={(saturation) => patchHeat({ saturation })}
+          // A hand-set scale is a locked one: following the view would undo it
+          // the next time the camera stopped.
+          onChange={(saturation) => patchHeat({ saturation, followExposure: false })}
           hint={t('heat.heatPanel.saturationHint')}
         />
         <Slider
@@ -207,6 +209,20 @@ export function HeatPanel() {
           {t('heat.heatPanel.autoExpose')}
         </button>
         {exposure && <div className="hint">{t(exposure.key, exposure.values)}</div>}
+        <Check
+          label={t('heat.heatPanel.followExposure')}
+          checked={heat.followExposure}
+          onChange={(followExposure) => patchHeat({ followExposure })}
+          title={t('heat.heatPanel.followExposureHint')}
+        />
+        <div className="hint">{t('heat.heatPanel.followExposureHint')}</div>
+        <Check
+          label={t('heat.heatPanel.zoomInvariant')}
+          checked={heat.zoomInvariant}
+          onChange={(zoomInvariant) => patchHeat({ zoomInvariant })}
+          title={t('heat.heatPanel.zoomInvariantHint')}
+        />
+        <div className="hint">{t('heat.heatPanel.zoomInvariantHint')}</div>
         <Check
           label={t('heat.heatPanel.flatten')}
           checked={heat.groundProjected}

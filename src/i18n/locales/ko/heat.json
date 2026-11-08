@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "실제 크기",
   "heat.teamPanel.weapons": "무기, 사격, 명중",
-  "heat.teamPanel.weaponsTitle": "비행 중인 무기와 연기, 예광탄, 탄착, 명중, 격파. 명중에서 추정한 예광탄은 점선으로 표시됩니다."
+  "heat.teamPanel.weaponsTitle": "비행 중인 무기와 연기, 예광탄, 탄착, 명중, 격파. 명중에서 추정한 예광탄은 점선으로 표시됩니다.",
+  "heat.timeline.reverseKey": "역방향 재생({key})",
+  "heat.heatPanel.followExposure": "뷰 따라가기",
+  "heat.heatPanel.followExposureHint": "카메라가 멈출 때마다 노출을 다시 측정하므로, 날아 들어간 영역은 맵 전체에 맞춰 측정한 스케일 대신 히트 램프 전체를 사용합니다. 작은 변화는 무시되고, 스케일은 건너뛰지 않고 부드럽게 바뀝니다. 스케일을 고정하고 여러 장소를 같은 스케일로 비교하려면 선택을 해제하세요. 포화점을 드래그해도 고정됩니다.",
+  "heat.heatPanel.zoomInvariant": "줌과 관계없이 같은 밀도",
+  "heat.heatPanel.zoomInvariantHint": "얼마나 가까이 있든 같은 색은 지면 단위 면적당 같은 행 수를 뜻합니다. 픽셀 제한이 확대(멀리서)하거나 축소(가까이서)한 스프라이트도 실제 크기가 더했을 히트를 유지하므로, 멀리서 노출한 화면이 가까이 날아 들어가도 더 이상 옅어지지 않습니다. 끄면 제한된 스프라이트가 제한된 크기로 전체 가중치를 더합니다.",
+  "heat.splitPanel.sides": "구간 안의 행: <b>+</b> {plus}개 · <b>−</b> {minus}개",
+  "heat.splitPanel.sidesApprox": "구간 안의 행: <b>+</b> 약 {plus}개 · <b>−</b> 약 {minus}개 (표본으로 집계)",
+  "heat.splitPanel.noSides": "어느 쪽에도 값이 없어 차이가 아무것도 그리지 않습니다. 값을 하나 이상 <b>+</b> 또는 <b>−</b>에 배정하세요.",
+  "heat.splitPanel.wrongKind": "{column} 열은 이 방식으로 분할할 수 없어 차이가 아무것도 그리지 않습니다. 열을 다시 선택하세요.",
+  "heat.splitPanel.positiveEmpty": "구간 안에 <b>+</b> 쪽 행이 없어 <b>−</b> 쪽만 그려집니다. 이 그림은 차이가 아닙니다.",
+  "heat.splitPanel.negativeEmpty": "구간 안에 <b>−</b> 쪽 행이 없어 <b>+</b> 쪽만 그려집니다. 이 그림은 차이가 아닙니다.",
+  "heat.splitPanel.skipped": "행 청크 {total}개 중 {skipped}개에서 분할 열이 GPU 메모리에 들어가지 않아 해당 행이 그려지지 않습니다. 성능 → 리소스 예산에서 GPU 예산을 늘리거나 행을 더 적게 불러오세요.",
+  "heat.splitPanel.shares": "개수가 아닌 비율 비교",
+  "heat.splitPanel.sharesHint": "각 쪽에 자기 행 수의 역수만큼 가중치를 주므로, 행이 다섯 배 많은 쪽이 수만으로 맵을 덮지 않습니다. 그러면 색은 각 쪽이 다른 쪽보다 비율상 더 흔한 곳을 보여 줍니다.",
+  "heat.teamsList.columnSplitHint": "차이가 <b>{column}</b> 기준으로 분할되어 있으므로, 여기 그룹은 무엇을 그릴지만 정하고 어느 쪽에 셀지는 정하지 않습니다."
 }

@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "tegelik suurus",
   "heat.teamPanel.weapons": "Relvad, lasud ja tabamused",
-  "heat.teamPanel.weaponsTitle": "Lennus relvad suitsuga, trasseerivad kuulid, plahvatused, tabamused ja hävitamised. Tabamusest järeldatud trassid on katkendjoonega."
+  "heat.teamPanel.weaponsTitle": "Lennus relvad suitsuga, trasseerivad kuulid, plahvatused, tabamused ja hävitamised. Tabamusest järeldatud trassid on katkendjoonega.",
+  "heat.timeline.reverseKey": "Esita tagurpidi ({key})",
+  "heat.heatPanel.followExposure": "Järgi vaadet",
+  "heat.heatPanel.followExposureHint": "Mõõdab särituse uuesti iga kord, kui kaamera peatub, nii et piirkond, kuhu sisse lendad, kasutab kogu soojusskaalat, mitte kogu kaardi jaoks mõõdetud skaalat. Väikseid muutusi eiratakse ja skaala liugleb, mitte ei hüppa. Eemalda linnuke, et skaala lukustada ja kohti ühel skaalal võrrelda; ka küllastuspunkti lohistamine lukustab selle.",
+  "heat.heatPanel.zoomInvariant": "Sama tihedus igal suumil",
+  "heat.heatPanel.zoomInvariantHint": "Värv tähendab sama arvu ridu maapinna pindalaühiku kohta, ükskõik kui lähedal sa oled. Sprait, mida pikslipiirangud suurendavad (kaugelt) või vähendavad (lähedalt), säilitab soojuse, mida tema tegelik suurus lisaks, nii et kaugelt säritatud pilt ei tuhmu enam, kui sa sellesse sisse lendad. Väljas lisab piiratud sprait oma täiskaalu piiratud suuruses.",
+  "heat.splitPanel.sides": "<b>+</b> {plus} rida · <b>−</b> {minus} rida aknas",
+  "heat.splitPanel.sidesApprox": "<b>+</b> umbes {plus} rida · <b>−</b> umbes {minus} rida aknas (loendatud valimist)",
+  "heat.splitPanel.noSides": "Ükski väärtus pole kummalgi poolel, seega erinevus ei joonista midagi. Pane vähemalt üks väärtus poolele <b>+</b> või <b>−</b>.",
+  "heat.splitPanel.wrongKind": "Veergu {column} ei saa nii jaotada, seega erinevus ei joonista midagi. Vali veerg uuesti.",
+  "heat.splitPanel.positiveEmpty": "Ükski akna rida pole <b>+</b> poolel, seega joonistatakse ainult <b>−</b> pool: pilt ei ole erinevus.",
+  "heat.splitPanel.negativeEmpty": "Ükski akna rida pole <b>−</b> poolel, seega joonistatakse ainult <b>+</b> pool: pilt ei ole erinevus.",
+  "heat.splitPanel.skipped": "Jaotusveerg ei mahtunud GPU mällu {skipped} reaplokis {total}-st ning neid ridu ei joonistata. Suurenda GPU eelarvet jaotises Jõudlus → Ressursieelarved või laadi vähem ridu.",
+  "heat.splitPanel.shares": "Võrdle osakaale, mitte arve",
+  "heat.splitPanel.sharesHint": "Kaalub kumbagi poolt ühega jagatuna tema enda ridade arvuga, nii et viis korda rohkemate ridadega pool ei kata kaarti enam lihtsalt arvu poolest. Värv näitab siis, kus kumbki pool on proportsionaalselt sagedasem kui teine.",
+  "heat.teamsList.columnSplitHint": "Erinevus on jaotatud veeru <b>{column}</b> järgi, seega rühmad siin otsustavad ainult, mida joonistatakse, mitte seda, kummale poolele nad loetakse."
 }

@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "daqs reali",
   "heat.teamPanel.weapons": "Armi, tiri u laqtiet",
-  "heat.teamPanel.weaponsTitle": "Armi fit-titjira bid-duħħan, traċċaturi, impatti, laqtiet u qtil. Traċċaturi dedotti minn laqta huma maqtugħa."
+  "heat.teamPanel.weaponsTitle": "Armi fit-titjira bid-duħħan, traċċaturi, impatti, laqtiet u qtil. Traċċaturi dedotti minn laqta huma maqtugħa.",
+  "heat.timeline.reverseKey": "Ħaddem lura ({key})",
+  "heat.heatPanel.followExposure": "Segwi l-veduta",
+  "heat.heatPanel.followExposureHint": "Ikejjel l-espożizzjoni mill-ġdid kull darba li l-kamera tieqaf, biex reġjun li ttir fih juża r-rampa tas-sħana kollha minflok l-iskala mkejla għall-mappa kollha. Bidliet żgħar jiġu injorati u l-iskala tiżloq minflok taqbeż. Neħħi l-marka biex tiffissa l-iskala u tqabbel postijiet fuq skala waħda; il-kaxkir tal-punt tas-saturazzjoni jiffissaha wkoll.",
+  "heat.heatPanel.zoomInvariant": "L-istess densità f'kull zoom",
+  "heat.heatPanel.zoomInvariantHint": "Kulur ifisser l-istess numru ta' ringieli għal kull erja ta' art, tkun kemm tkun qrib. Sprite li l-limiti tal-pixels ikabbru (mill-bogħod) jew iċekknu (mill-qrib) iżomm is-sħana li kien iżid id-daqs veru tiegħu, għalhekk stampa esposta mill-bogħod ma tibqax tbaħħat meta ttir lejha. Mitfi, sprite limitat iżid il-piż sħiħ tiegħu fid-daqs limitat tiegħu.",
+  "heat.splitPanel.sides": "Ringieli fit-tieqa: <b>+</b> {plus} · <b>−</b> {minus}",
+  "heat.splitPanel.sidesApprox": "Ringieli fit-tieqa: <b>+</b> madwar {plus} · <b>−</b> madwar {minus} (magħduda minn kampjun)",
+  "heat.splitPanel.noSides": "L-ebda valur ma jinsab fuq xi naħa, għalhekk id-differenza ma tpinġi xejn. Poġġi mill-inqas valur wieħed fuq <b>+</b> jew <b>−</b>.",
+  "heat.splitPanel.wrongKind": "{column} ma tistax tinqasam b'dan il-mod, għalhekk id-differenza ma tpinġi xejn. Erġa' agħżel il-kolonna.",
+  "heat.splitPanel.positiveEmpty": "L-ebda ringiela fit-tieqa ma hi fuq in-naħa <b>+</b>, għalhekk tiġi mpinġija biss in-naħa <b>−</b>: l-istampa mhix differenza.",
+  "heat.splitPanel.negativeEmpty": "L-ebda ringiela fit-tieqa ma hi fuq in-naħa <b>−</b>, għalhekk tiġi mpinġija biss in-naħa <b>+</b>: l-istampa mhix differenza.",
+  "heat.splitPanel.skipped": "Il-kolonna tal-qasma ma daħlitx fil-memorja tal-GPU għal {skipped} minn {total} blokki ta' ringieli, u dawk ir-ringieli ma jiġux impinġija. Għolli l-baġit tal-GPU taħt Prestazzjoni → Baġits tar-riżorsi, jew tella' inqas ringieli.",
+  "heat.splitPanel.shares": "Qabbel proporzjonijiet, mhux għadd",
+  "heat.splitPanel.sharesHint": "Jiżen kull naħa b'wieħed diviż bl-għadd tar-ringieli tagħha stess, biex naħa b'ħames darbiet aktar ringieli ma tibqax tkopri l-mappa bin-numri biss. Imbagħad il-kulur juri fejn kull naħa hi proporzjonalment aktar komuni mill-oħra.",
+  "heat.teamsList.columnSplitHint": "Id-differenza hi maqsuma skont <b>{column}</b>, għalhekk il-gruppi hawn jiddeċiedu biss x'jitpinġa, mhux fuq liema naħa jgħoddu."
 }

@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "verklig storlek",
   "heat.teamPanel.weapons": "Vapen, skott och träffar",
-  "heat.teamPanel.weaponsTitle": "Vapen i luften med rök, spårljus, nedslag, träffar och nedskjutningar. Spårljus härlett ur en träff är streckat."
+  "heat.teamPanel.weaponsTitle": "Vapen i luften med rök, spårljus, nedslag, träffar och nedskjutningar. Spårljus härlett ur en träff är streckat.",
+  "heat.timeline.reverseKey": "Spela baklänges ({key})",
+  "heat.heatPanel.followExposure": "Följ vyn",
+  "heat.heatPanel.followExposureHint": "Mäter exponeringen på nytt varje gång kameran stannar, så att ett område du flyger in i använder hela värmerampen i stället för skalan som mättes för hela kartan. Små ändringar ignoreras och skalan glider i stället för att hoppa. Avmarkera för att låsa skalan och jämföra platser på en och samma skala; att dra i mättnadspunkten låser den också.",
+  "heat.heatPanel.zoomInvariant": "Samma täthet vid all zoom",
+  "heat.heatPanel.zoomInvariantHint": "En färg betyder lika många rader per markyta, oavsett hur nära du är. En sprite som pixelgränserna förstorar (på avstånd) eller förminskar (på nära håll) behåller den värme dess verkliga storlek skulle ge, så en bild som exponerats på avstånd inte längre bleknar när du flyger in i den. Av: en begränsad sprite lägger till hela sin vikt i sin begränsade storlek.",
+  "heat.splitPanel.sides": "<b>+</b> {plus} rader · <b>−</b> {minus} rader i fönstret",
+  "heat.splitPanel.sidesApprox": "<b>+</b> cirka {plus} rader · <b>−</b> cirka {minus} rader i fönstret (räknat ur ett stickprov)",
+  "heat.splitPanel.noSides": "Inget värde ligger på någon av sidorna, så differensen ritar ingenting. Lägg minst ett värde på <b>+</b> eller <b>−</b>.",
+  "heat.splitPanel.wrongKind": "{column} kan inte delas upp på det här sättet, så differensen ritar ingenting. Välj kolumnen igen.",
+  "heat.splitPanel.positiveEmpty": "Ingen rad i fönstret ligger på <b>+</b>-sidan, så bara <b>−</b>-sidan ritas: bilden är ingen differens.",
+  "heat.splitPanel.negativeEmpty": "Ingen rad i fönstret ligger på <b>−</b>-sidan, så bara <b>+</b>-sidan ritas: bilden är ingen differens.",
+  "heat.splitPanel.skipped": "Uppdelningskolumnen fick inte plats i GPU-minnet för {skipped} av {total} block med rader, och de raderna ritas inte. Höj GPU-budgeten under Prestanda → Resursbudgetar, eller läs in färre rader.",
+  "heat.splitPanel.shares": "Jämför andelar, inte antal",
+  "heat.splitPanel.sharesHint": "Viktar varje sida med ett delat med dess eget antal rader, så att en sida med fem gånger så många rader inte längre täcker kartan bara genom antalet. Färgen visar då var varje sida är proportionellt vanligare än den andra.",
+  "heat.teamsList.columnSplitHint": "Differensen är uppdelad efter <b>{column}</b>, så grupperna här avgör bara vad som ritas, inte vilken sida de räknas till."
 }

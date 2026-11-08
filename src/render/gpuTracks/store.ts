@@ -4,9 +4,10 @@
  * playhead and the CPU does nothing per unit per frame. What the figure
  * overlay of hundreds or thousands of matches is drawn from.
  *
- * Per key 20 bytes: x, y, z, t (f32 - a 60 km map keeps 4 mm, a two-hour
- * match 0.5 ms) and the attitude as a quaternion in four signed bytes (0.5
- * degree). Velocities are not stored: the shader takes them from the
+ * Per key 12 bytes: x, y, z and t in 16 bits each, across the span of the
+ * track's own positions and times (a fighter's 50 km in 0.8 m steps, its ten
+ * minutes in 9 ms; a soldier's 200 m in 3 mm), and the attitude as a
+ * quaternion in four signed bytes (0.5 degree). Velocities are not stored: the shader takes them from the
  * neighbouring keys, the three-point estimate `motion.ts` uses, so the curve
  * on the GPU is the curve on the CPU.
  *
@@ -17,9 +18,12 @@
  * the last kept key at its velocity), with at most `MAX_GAP` seconds between
  * keys. The tolerance used and what it cost are kept, to be shown.
  *
- * Per track 32 bytes: first key, key count, team colour (rgba8), full and
- * coarse mesh index (and the far one in slot 6), the figure's longest side, flags (air: turns with its
- * pitch and roll; attitude: has one).
+ * Per track 64 bytes: first key, key count, team colour (rgba8), full and
+ * coarse mesh index (the far one in slot 6), the figure's longest side,
+ * flags (air: turns with its pitch and roll; attitude: has one; weapon: a
+ * missile, rocket or bomb, drawn with a streak behind it), and the
+ * span its keys are in: origin x, y, z and the step of a position unit
+ * (slots 8-11), first time and the step of a time unit (12-13).
  */
 
 import type { Dataset } from '../../state/types';
@@ -28,9 +32,12 @@ import { FigureReplay } from '../../figures/replay';
 import { meshOf, MESH_STRIDE, type FigureMesh } from '../../figures/instances';
 import { poseFrame } from '../../figures/kit';
 import { positionRows, quatOfFrame } from '../../figures/motion';
+import { CATALOG } from '../../figures/catalog';
 
-export const TRACK_U32 = 8;
-export const KEY_F32 = 4;
+export const TRACK_U32 = 16;
+export const KEY_U32 = 2;
+/** Steps a coordinate or the time spans within a track (16 bits). */
+const STEPS = 65535;
 /** Most seconds between two keys when the data is reduced. */
 const MAX_GAP = 4;
 /** Tolerances tried, metres, when lossless does not fit. */
@@ -38,18 +45,30 @@ const TOLERANCES = [0.5, 1, 2, 5, 10, 20, 50, 100];
 
 export const FLAG_AIR = 1;
 export const FLAG_ATTITUDE = 2;
+export const FLAG_WEAPON = 4;
+
+/** Deaths to mark: x, y, z and the time a marker, and its team colour (rgba8). */
+export interface TrackMarkers {
+  count: number;
+  data: Float32Array;
+  colour: Uint32Array;
+}
 
 export interface GpuTrackStore {
   readonly dataset: Dataset;
   readonly tracks: number;
   /** TRACK_U32 a track. */
   readonly trackData: Uint32Array;
-  /** KEY_F32 a key: x, y, z, t. */
-  readonly keysA: Float32Array;
+  /** KEY_U32 a key: x | y << 16, z | t << 16, each 16 bits across its track's span (`decodeKey`). */
+  readonly keysA: Uint32Array;
   /** One a key: the attitude, snorm8 x4 (x, y, z, w). */
   readonly keysB: Uint32Array;
-  /** The row each key was made from (CPU only, for labels and cards). */
-  readonly keyRow: Int32Array;
+  /** The row each key was made from (CPU only, for labels and cards); null where a row stands for a whole track (`trackRow`). */
+  readonly keyRow: Int32Array | null;
+  /** The row standing for each track, where keys have no rows of their own (the lean overlay). */
+  readonly trackRow?: Int32Array;
+  /** Deaths to mark, where the data has them. */
+  readonly markers?: TrackMarkers | null;
   readonly keys: number;
   /** Index 0 is the dart, the far stand-in; then each figure's full and coarse builds. */
   readonly meshes: FigureMesh[];
@@ -105,12 +124,102 @@ function rgba8(r: number, g: number, b: number): number {
   return (c(r) | (c(g) << 8) | (c(b) << 16) | (255 << 24)) >>> 0;
 }
 
+/**
+ * What tracks are drawn as: each track's figure (by its row's name and type
+ * columns), its full, coarse and far meshes, longest side and flags, and its
+ * team colour (or a colour of its own group's, where asked) - slots 2 to 6.
+ */
+export class TrackFigures {
+  readonly meshes: FigureMesh[] = [DART];
+  /** Per mesh, the tracks that may draw with it. */
+  readonly meshTracks = new Uint32Array(0x10000);
+  private readonly meshIndex = new Map<FigureMesh, number>([[DART, 0]]);
+  private readonly kindMeshes = new Map<string, { full: number; coarse: number; far: number; longest: number; air: boolean } | null>();
+  private readonly fr = new FigureReplay();
+  private readonly knows: boolean;
+
+  constructor(private readonly d: Dataset) {
+    this.knows = this.fr.knowsTypes(d);
+  }
+
+  private meshFor(m: FigureMesh): number {
+    let i = this.meshIndex.get(m);
+    if (i === undefined) {
+      i = this.meshes.length;
+      this.meshes.push(m);
+      this.meshIndex.set(m, i);
+    }
+    return i;
+  }
+
+  /** The figure kind for a dataset row (null: a dart). */
+  kindAt(row: number): string | null {
+    return this.fr.kindOf(this.d, row) ?? (this.knows ? null : 'soldier');
+  }
+
+  /**
+   * Slots 2 to 6 of the track at u32 offset `o8`, for person `p` drawn from
+   * dataset row `row`. `colour` overrides the team colour (rgb 0..1); `weapon`
+   * marks a weapon its figure does not say is one.
+   */
+  place(trackData: Uint32Array, f32: Float32Array, o8: number, p: number, row: number, attitude: boolean, colour?: [number, number, number] | null, weapon = false): void {
+    const d = this.d;
+    let kind = row >= 0 ? this.kindAt(row) : null;
+    let km = kind ? this.kindMeshes.get(kind) : undefined;
+    if (kind && km === undefined) {
+      const t = this.fr.templateOf(kind);
+      if (t) {
+        const full = this.meshFor(meshOf(t));
+        const c = t.coarse?.();
+        const coarse = c ? this.meshFor(meshOf(c)) : full;
+        const fa = t.far?.();
+        const far = fa ? this.meshFor(meshOf(fa)) : coarse;
+        km = { full, coarse, far, longest: Math.max(t.max[0] - t.min[0], t.max[1] - t.min[1], t.max[2] - t.min[2], 0.1), air: t.anchor === 'centre' };
+      } else km = null;
+      this.kindMeshes.set(kind, km);
+    }
+    if (!km) kind = null;
+    const persons = Math.max(1, d.personLabels.length);
+    const team = d.personTeam ? d.personTeam[p] : 0;
+    const [cr, cg, cb] = colour ?? teamMemberColor(team, d.personSlot ? d.personSlot[p] : p, d.teamSizes ? d.teamSizes[team] : persons);
+    trackData[o8 + 2] = rgba8(cr, cg, cb);
+    trackData[o8 + 3] = km ? (km.full | (km.coarse << 16)) >>> 0 : 0;
+    f32[o8 + 4] = km ? km.longest : 1;
+    trackData[o8 + 5] = (km && km.air ? FLAG_AIR : 0) | (attitude ? FLAG_ATTITUDE : 0) | (weapon || isWeaponKind(kind) ? FLAG_WEAPON : 0);
+    trackData[o8 + 6] = km ? km.far : 0;
+    if (km) for (const m of new Set([km.full, km.coarse, km.far])) this.meshTracks[m]++;
+    this.meshTracks[0]++;
+  }
+}
+
 export interface BuildOptions {
-  /** Most keys the GPU can hold (its largest buffer over 16 bytes). */
+  /** Most keys the GPU can hold (its largest buffer over 8 bytes). */
   maxKeys: number;
 }
 
 const cache = new WeakMap<Dataset, GpuTrackStore>();
+const registered = new WeakSet<Dataset>();
+
+/** Tracks built elsewhere (the lean overlay's loader) for a dataset that only stands for them. */
+export function registerGpuTrackStore(d: Dataset, s: GpuTrackStore): void {
+  cache.set(d, s);
+  registered.add(d);
+}
+
+/** The tracks registered for `d`, which is drawn from them whatever its size; null for any other dataset. */
+export function registeredGpuTrackStore(d: Dataset | null): GpuTrackStore | null {
+  return d && registered.has(d) ? (cache.get(d) ?? null) : null;
+}
+
+/** The dataset row for key `key` of track `track`. */
+export function rowOfKey(s: GpuTrackStore, track: number, key: number): number {
+  return s.keyRow ? s.keyRow[key] : (s.trackRow?.[track] ?? -1);
+}
+
+/** Whether a figure kind is a weapon in flight (a missile, rocket or bomb). */
+export function isWeaponKind(kind: string | null): boolean {
+  return !!kind && CATALOG[kind.replace(/@.*$/, '')]?.domain === 'missile';
+}
 
 export function gpuTrackStore(d: Dataset, o: BuildOptions): GpuTrackStore | null {
   const hit = cache.get(d);
@@ -187,31 +296,17 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
   if (keys > o.maxKeys) return null;
 
   // What each track is drawn as.
-  const fr = new FigureReplay();
-  const knows = fr.knowsTypes(d);
-  const meshes: FigureMesh[] = [DART];
-  const meshIndex = new Map<FigureMesh, number>([[DART, 0]]);
-  const meshFor = (m: FigureMesh) => {
-    let i = meshIndex.get(m);
-    if (i === undefined) {
-      i = meshes.length;
-      meshes.push(m);
-      meshIndex.set(m, i);
-    }
-    return i;
-  };
-  const kindMeshes = new Map<string, { full: number; coarse: number; far: number; longest: number; air: boolean }>();
+  const figures = new TrackFigures(d);
   const rollCol = d.attrs.find((a) => a.kind !== 'category' && /^roll$/i.test(a.name.trim()));
   const roll = rollCol ? (rollCol.data as Float32Array) : null;
 
   const trackData = new Uint32Array(persons * TRACK_U32);
   const f32 = new Float32Array(trackData.buffer);
-  const keysA = new Float32Array(keys * KEY_F32);
+  const keysA = new Uint32Array(keys * KEY_U32);
   const keysB = new Uint32Array(keys);
   const keyRow = new Int32Array(keys);
   const personOf = new Int32Array(persons);
   const trackOf = new Int32Array(persons).fill(-1);
-  const meshTracks = new Uint32Array(0x10000);
   const q: [number, number, number, number] = [0, 0, 0, 1];
   let tracks = 0;
   let key = 0;
@@ -221,14 +316,35 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
     if (a >= b) continue;
     if (d.personShared && d.personShared[p]) continue;
     const first = key;
+    // The span of the kept keys: where the 16-bit steps are counted from, and how big one is.
+    let x0 = Infinity, y0 = Infinity, z0 = Infinity, x1 = -Infinity, y1 = -Infinity, z1 = -Infinity, t0k = Infinity, t1k = -Infinity;
     for (let k = a; k < b; k++) {
       if (!keep[k]) continue;
       const r = rows[k];
-      const o4 = key * KEY_F32;
-      keysA[o4] = px[r];
-      keysA[o4 + 1] = py[r];
-      keysA[o4 + 2] = pz[r];
-      keysA[o4 + 3] = time[r];
+      x0 = Math.min(x0, px[r]);
+      x1 = Math.max(x1, px[r]);
+      y0 = Math.min(y0, py[r]);
+      y1 = Math.max(y1, py[r]);
+      z0 = Math.min(z0, pz[r]);
+      z1 = Math.max(z1, pz[r]);
+      t0k = Math.min(t0k, time[r]);
+      t1k = Math.max(t1k, time[r]);
+    }
+    if (!(t1k >= t0k)) continue;
+    const step = Math.max(x1 - x0, y1 - y0, z1 - z0, 1e-6) / STEPS;
+    const tStep = Math.max(t1k - t0k, 1e-6) / STEPS;
+    const q16 = (v: number, o: number, st: number) => Math.max(0, Math.min(STEPS, Math.round((v - o) / st)));
+    let lastQt = -1;
+    for (let k = a; k < b; k++) {
+      if (!keep[k]) continue;
+      const r = rows[k];
+      // Two samples in one time step (a long track sampled fast) would be one key: the first is kept.
+      const qt = q16(time[r], t0k, tStep);
+      if (qt === lastQt) continue;
+      lastQt = qt;
+      const o2 = key * KEY_U32;
+      keysA[o2] = (q16(px[r], x0, step) | (q16(py[r], y0, step) << 16)) >>> 0;
+      keysA[o2 + 1] = (q16(pz[r], z0, step) | (qt << 16)) >>> 0;
       keyRow[key] = r;
       if (d.yaw) {
         const rl = roll ? (roll[r] * Math.PI) / 180 : 0;
@@ -246,33 +362,16 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
     }
     if (key === first) continue;
     // The figure, from the track's first own row.
-    const row = rows[a];
-    let kind = fr.kindOf(d, row) ?? (knows ? null : 'soldier');
-    let km = kind ? kindMeshes.get(kind) : undefined;
-    if (kind && !km) {
-      const t = fr.templateOf(kind);
-      if (t) {
-        const full = meshFor(meshOf(t));
-        const c = t.coarse?.();
-        const coarse = c ? meshFor(meshOf(c)) : full;
-        const fa = t.far?.();
-        const far = fa ? meshFor(meshOf(fa)) : coarse;
-        km = { full, coarse, far, longest: Math.max(t.max[0] - t.min[0], t.max[1] - t.min[1], t.max[2] - t.min[2], 0.1), air: t.anchor === 'centre' };
-        kindMeshes.set(kind, km);
-      } else kind = null;
-    }
-    const team = d.personTeam ? d.personTeam[p] : 0;
-    const [cr, cg, cb] = teamMemberColor(team, d.personSlot ? d.personSlot[p] : p, d.teamSizes ? d.teamSizes[team] : persons);
     const o8 = tracks * TRACK_U32;
     trackData[o8] = first;
     trackData[o8 + 1] = key - first;
-    trackData[o8 + 2] = rgba8(cr, cg, cb);
-    trackData[o8 + 3] = km ? (km.full | (km.coarse << 16)) >>> 0 : 0;
-    f32[o8 + 4] = km ? km.longest : 1;
-    trackData[o8 + 5] = (km && km.air ? FLAG_AIR : 0) | (d.yaw ? FLAG_ATTITUDE : 0);
-    trackData[o8 + 6] = km ? km.far : 0;
-    if (km) for (const m of new Set([km.full, km.coarse, km.far])) meshTracks[m]++;
-    meshTracks[0]++;
+    figures.place(trackData, f32, o8, p, rows[a], !!d.yaw);
+    f32[o8 + 8] = x0;
+    f32[o8 + 9] = y0;
+    f32[o8 + 10] = z0;
+    f32[o8 + 11] = step;
+    f32[o8 + 12] = t0k;
+    f32[o8 + 13] = tStep;
     personOf[tracks] = p;
     trackOf[p] = tracks;
     tracks++;
@@ -281,18 +380,30 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
     dataset: d,
     tracks,
     trackData: trackData.subarray(0, Math.max(1, tracks) * TRACK_U32),
-    keysA,
-    keysB,
-    keyRow,
-    keys,
-    meshes,
-    meshTracks: meshTracks.slice(0, meshes.length),
+    keysA: keysA.subarray(0, key * KEY_U32),
+    keysB: keysB.subarray(0, key),
+    keyRow: keyRow.subarray(0, key),
+    keys: key,
+    meshes: figures.meshes,
+    meshTracks: figures.meshTracks.slice(0, figures.meshes.length),
     personOf: personOf.subarray(0, tracks),
     trackOf,
     units,
     tolerance,
     samples,
-    bytes: tracks * TRACK_U32 * 4 + keys * (KEY_F32 * 4 + 4),
+    bytes: tracks * TRACK_U32 * 4 + key * (KEY_U32 * 4 + 4),
     buildMs: performance.now() - t0,
   };
+}
+
+/** Key `j` of the track at u32 offset `b` of `trackData`, decoded into `out` (x, y, z, t). */
+export function decodeKey(s: GpuTrackStore, b: number, j: number, out: number[]): void {
+  const f = new Float32Array(s.trackData.buffer, s.trackData.byteOffset, s.trackData.length);
+  const a = s.keysA[j * KEY_U32];
+  const c = s.keysA[j * KEY_U32 + 1];
+  const step = f[b + 11];
+  out[0] = f[b + 8] + (a & 0xffff) * step;
+  out[1] = f[b + 9] + (a >>> 16) * step;
+  out[2] = f[b + 10] + (c & 0xffff) * step;
+  out[3] = f[b + 12] + (c >>> 16) * f[b + 13];
 }

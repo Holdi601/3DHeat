@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Nav nolasāms kā punkts. Izmantojiet x, y, z vai x y z, piem., -321.6, 137.8, -59.9 vai -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Pagriezienam un slīpumam jābūt skaitļiem grādos.",
   "heat.inspect.jump.hint": "Koordinātas ir pasaules koordinātas, tādas pašas kā rādījumā un augstāk redzamajā pozā. {key} atver tam lauku virs skata.",
-  "heat.inspect.jump.hintDataFrame": "Koordinātas ir pašu ielādēto datu sistēmā, kā to tabulā - tādas pašas kā rādījumā un augstāk redzamajā pozā. {key} atver tam lauku virs skata."
+  "heat.inspect.jump.hintDataFrame": "Koordinātas ir pašu ielādēto datu sistēmā, kā to tabulā - tādas pašas kā rādījumā un augstāk redzamajā pozā. {key} atver tam lauku virs skata.",
+  "heat.inspect.latLon": "Platums / garums"
 }

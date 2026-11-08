@@ -109,6 +109,36 @@ export function DisplayPanel() {
         onChange={(v) => set({ engagement: v })}
         missing={!has.engagement}
       />
+      <ScopeSelect
+        label={t('replay.aids.sight')}
+        title={t('replay.aids.sightTitle')}
+        value={aids.pilotSight}
+        onChange={(v) => set({ pilotSight: v })}
+        missing={!has.sight}
+      />
+      <Check
+        label={t('replay.aids.lockLabels')}
+        checked={aids.lockLabels}
+        onChange={(v) => set({ lockLabels: v })}
+        title={t('replay.aids.lockLabelsTitle')}
+      />
+      <ScopeSelect
+        label={t('replay.aids.engagements')}
+        title={t('replay.aids.engagementsTitle')}
+        value={aids.engagements}
+        onChange={(v) => set({ engagements: v })}
+      />
+      {aids.engagements !== 'off' && (
+        <Slider
+          label={t('replay.aids.engagementRange')}
+          value={aids.engagementRange / 1000}
+          min={1}
+          max={200}
+          logarithmic
+          onChange={(v) => set({ engagementRange: v * 1000 })}
+          format={(v) => t('replay.km', { v: num(v, v < 10 ? 1 : 0) })}
+        />
+      )}
       <Check
         label={t('replay.aids.los')}
         checked={aids.lineOfSight}

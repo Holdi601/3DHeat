@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} 像素",
   "heat.teamPanel.trueSize": "真实尺寸",
   "heat.teamPanel.weapons": "武器、射击与命中",
-  "heat.teamPanel.weaponsTitle": "飞行中的武器及其烟迹、曳光弹、弹着、命中和击毁。由命中推断的曳光弹以虚线显示。"
+  "heat.teamPanel.weaponsTitle": "飞行中的武器及其烟迹、曳光弹、弹着、命中和击毁。由命中推断的曳光弹以虚线显示。",
+  "heat.timeline.reverseKey": "倒放（{key}）",
+  "heat.heatPanel.followExposure": "跟随视图",
+  "heat.heatPanel.followExposureHint": "每当相机停稳时重新测光，使你飞入的区域使用整条热度色带，而不是为整张地图测得的标尺。微小变化会被忽略，标尺平滑过渡而不是跳变。取消勾选可锁定标尺，以便在同一标尺上比较各处；拖动饱和点也会将其锁定。",
+  "heat.heatPanel.zoomInvariant": "任意缩放下密度一致",
+  "heat.heatPanel.zoomInvariantHint": "无论离得多近，同一种颜色都代表单位地面面积上相同的行数。被像素限制放大（远处）或缩小（近处）的精灵，仍保留其真实大小本应贡献的热度，因此从远处曝光的画面在飞近时不再变淡。关闭时，受限的精灵按受限后的大小贡献全部权重。",
+  "heat.splitPanel.sides": "时间窗内 <b>+</b> {plus} 行 · <b>−</b> {minus} 行",
+  "heat.splitPanel.sidesApprox": "时间窗内 <b>+</b> 约 {plus} 行 · <b>−</b> 约 {minus} 行（按样本统计）",
+  "heat.splitPanel.noSides": "两侧都没有值，因此差值不会绘制任何内容。请至少将一个值放到 <b>+</b> 或 <b>−</b>。",
+  "heat.splitPanel.wrongKind": "{column} 无法以这种方式拆分，因此差值不会绘制任何内容。请重新选择该列。",
+  "heat.splitPanel.positiveEmpty": "时间窗内没有行属于 <b>+</b> 侧，因此只绘制 <b>−</b> 侧：画面并不是差值。",
+  "heat.splitPanel.negativeEmpty": "时间窗内没有行属于 <b>−</b> 侧，因此只绘制 <b>+</b> 侧：画面并不是差值。",
+  "heat.splitPanel.skipped": "在 {total} 个行块中，有 {skipped} 个的拆分列无法放入 GPU 显存，这些行不会被绘制。请在“性能 → 资源预算”中提高 GPU 预算，或加载更少的行。",
+  "heat.splitPanel.shares": "比较占比，而非计数",
+  "heat.splitPanel.sharesHint": "以各侧自身行数的倒数为权重，这样行数多五倍的一侧不再仅凭数量覆盖地图。颜色随后显示每一侧在何处按比例比另一侧更常见。",
+  "heat.teamsList.columnSplitHint": "差值按 <b>{column}</b> 拆分，因此这里的分组只决定绘制哪些内容，而不决定它们计入哪一侧。"
 }

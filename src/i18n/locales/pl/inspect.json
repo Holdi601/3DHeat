@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Nie da się odczytać jako punktu. Użyj x, y, z lub x y z, np. -321.6, 137.8, -59.9 albo -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Odchylenie i pochylenie muszą być liczbami w stopniach.",
   "heat.inspect.jump.hint": "Współrzędne są współrzędnymi świata, takimi samymi jak w odczycie i w pozycji powyżej. {key} otwiera do tego pole nad widokiem.",
-  "heat.inspect.jump.hintDataFrame": "Współrzędne są we własnym układzie wczytanych danych, jak w ich tabeli – takie same jak w odczycie i w pozycji powyżej. {key} otwiera do tego pole nad widokiem."
+  "heat.inspect.jump.hintDataFrame": "Współrzędne są we własnym układzie wczytanych danych, jak w ich tabeli – takie same jak w odczycie i w pozycji powyżej. {key} otwiera do tego pole nad widokiem.",
+  "heat.inspect.latLon": "Szer. / dł."
 }

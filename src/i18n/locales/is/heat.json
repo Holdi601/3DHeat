@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "raunstærð",
   "heat.teamPanel.weapons": "Vopn, skot og hittni",
-  "heat.teamPanel.weaponsTitle": "Vopn á flugi með reyk, ljósrákum, höggum, hittni og fellingum. Ljósrákir ályktaðar af hittni eru strikaðar."
+  "heat.teamPanel.weaponsTitle": "Vopn á flugi með reyk, ljósrákum, höggum, hittni og fellingum. Ljósrákir ályktaðar af hittni eru strikaðar.",
+  "heat.timeline.reverseKey": "Spila aftur á bak ({key})",
+  "heat.heatPanel.followExposure": "Fylgja sjónarhorninu",
+  "heat.heatPanel.followExposureHint": "Mælir lýsinguna aftur í hvert sinn sem myndavélin stöðvast, svo svæði sem þú flýgur inn á notar allan hitaskalann í stað skalans sem var mældur fyrir allt kortið. Smábreytingar eru hunsaðar og skalinn rennur í stað þess að stökkva. Taktu hakið af til að læsa skalanum og bera staði saman á einum skala; að draga mettunarpunktinn læsir honum líka.",
+  "heat.heatPanel.zoomInvariant": "Sami þéttleiki við hvaða aðdrátt sem er",
+  "heat.heatPanel.zoomInvariantHint": "Litur merkir sama fjölda raða á hverja flatareiningu jarðar, sama hve nálægt þú ert. Depill sem pixlamörkin stækka (langt frá) eða minnka (nálægt) heldur þeim hita sem raunstærð hans myndi bæta við, svo mynd sem var lýst langt frá dofnar ekki lengur þegar þú flýgur inn í hana. Slökkt: takmarkaður depill bætir við fullri þyngd sinni í takmarkaðri stærð.",
+  "heat.splitPanel.sides": "<b>+</b> {plus} raðir · <b>−</b> {minus} raðir í glugganum",
+  "heat.splitPanel.sidesApprox": "<b>+</b> um {plus} raðir · <b>−</b> um {minus} raðir í glugganum (talið út frá úrtaki)",
+  "heat.splitPanel.noSides": "Engu gildi hefur verið skipað á hlið, svo mismunurinn teiknar ekkert. Settu að minnsta kosti eitt gildi á <b>+</b> eða <b>−</b>.",
+  "heat.splitPanel.wrongKind": "Ekki er hægt að skipta {column} á þennan hátt, svo mismunurinn teiknar ekkert. Veldu dálkinn aftur.",
+  "heat.splitPanel.positiveEmpty": "Engin röð í glugganum er á <b>+</b> hliðinni, svo aðeins <b>−</b> hliðin er teiknuð: myndin er ekki mismunur.",
+  "heat.splitPanel.negativeEmpty": "Engin röð í glugganum er á <b>−</b> hliðinni, svo aðeins <b>+</b> hliðin er teiknuð: myndin er ekki mismunur.",
+  "heat.splitPanel.skipped": "Skiptingardálkurinn komst ekki fyrir í GPU-minni fyrir {skipped} af {total} blokkum af röðum, og þær raðir eru ekki teiknaðar. Hækkaðu GPU-heimildina undir Afköst → Auðlindaheimildir, eða hladdu inn færri röðum.",
+  "heat.splitPanel.shares": "Bera saman hlutföll, ekki fjölda",
+  "heat.splitPanel.sharesHint": "Vegur hverja hlið með einum deilt með eigin raðafjölda, svo hlið með fimmfalt fleiri raðir þekur kortið ekki lengur einungis vegna fjöldans. Liturinn sýnir þá hvar hvor hlið er hlutfallslega algengari en hin.",
+  "heat.teamsList.columnSplitHint": "Mismuninum er skipt eftir <b>{column}</b>, svo hóparnir hér ráða aðeins hvað er teiknað, ekki á hvorri hlið þeir teljast."
 }

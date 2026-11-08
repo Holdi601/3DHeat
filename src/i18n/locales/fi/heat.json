@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "todellinen koko",
   "heat.teamPanel.weapons": "Aseet, laukaukset ja osumat",
-  "heat.teamPanel.weaponsTitle": "Lennossa olevat aseet savuineen, valojuovat, iskemät, osumat ja tuhoamiset. Osumasta päätellyt valojuovat ovat katkoviivoja."
+  "heat.teamPanel.weaponsTitle": "Lennossa olevat aseet savuineen, valojuovat, iskemät, osumat ja tuhoamiset. Osumasta päätellyt valojuovat ovat katkoviivoja.",
+  "heat.timeline.reverseKey": "Toista taaksepäin ({key})",
+  "heat.heatPanel.followExposure": "Seuraa näkymää",
+  "heat.heatPanel.followExposureHint": "Mittaa valotuksen uudelleen aina, kun kamera pysähtyy, jotta alue, jolle lennät, käyttää koko lämpöliukumaa koko kartalle mitatun asteikon sijaan. Pienet muutokset jätetään huomiotta, ja asteikko liukuu hyppimisen sijaan. Poista valinta lukitaksesi asteikon ja verrataksesi paikkoja samalla asteikolla; myös kyllästymispisteen vetäminen lukitsee sen.",
+  "heat.heatPanel.zoomInvariant": "Sama tiheys kaikilla zoomaustasoilla",
+  "heat.heatPanel.zoomInvariantHint": "Väri tarkoittaa samaa rivimäärää maan pinta-alaa kohti, olitpa kuinka lähellä tahansa. Sprite, jota pikselirajat suurentavat (kaukaa) tai pienentävät (läheltä), säilyttää lämmön, jonka sen todellinen koko lisäisi, joten kaukaa valotettu kuva ei enää haalistu, kun lennät sen sisään. Pois päältä rajattu sprite lisää koko painonsa rajatussa koossaan.",
+  "heat.splitPanel.sides": "<b>+</b> {plus} riviä · <b>−</b> {minus} riviä ikkunassa",
+  "heat.splitPanel.sidesApprox": "<b>+</b> noin {plus} riviä · <b>−</b> noin {minus} riviä ikkunassa (laskettu otoksesta)",
+  "heat.splitPanel.noSides": "Yksikään arvo ei ole kummallakaan puolella, joten erotus ei piirrä mitään. Aseta vähintään yksi arvo puolelle <b>+</b> tai <b>−</b>.",
+  "heat.splitPanel.wrongKind": "Saraketta {column} ei voi jakaa näin, joten erotus ei piirrä mitään. Valitse sarake uudelleen.",
+  "heat.splitPanel.positiveEmpty": "Mikään ikkunan rivi ei ole <b>+</b>-puolella, joten vain <b>−</b>-puoli piirretään: kuva ei ole erotus.",
+  "heat.splitPanel.negativeEmpty": "Mikään ikkunan rivi ei ole <b>−</b>-puolella, joten vain <b>+</b>-puoli piirretään: kuva ei ole erotus.",
+  "heat.splitPanel.skipped": "Jakosarake ei mahtunut GPU-muistiin {skipped}/{total} rivilohkossa, eikä niitä rivejä piirretä. Nosta GPU-budjettia kohdassa Suorituskyky → Resurssibudjetit tai lataa vähemmän rivejä.",
+  "heat.splitPanel.shares": "Vertaa osuuksia, ei määriä",
+  "heat.splitPanel.sharesHint": "Painottaa kumpaakin puolta yhdellä jaettuna sen omalla rivimäärällä, jotta puoli, jolla on viisinkertainen määrä rivejä, ei enää peitä karttaa pelkällä määrällään. Väri näyttää silloin, missä kumpikin puoli on suhteellisesti yleisempi kuin toinen.",
+  "heat.teamsList.columnSplitHint": "Erotus on jaettu sarakkeen <b>{column}</b> mukaan, joten ryhmät tässä ratkaisevat vain, mitä piirretään, eivät sitä, kummalle puolelle ne lasketaan."
 }

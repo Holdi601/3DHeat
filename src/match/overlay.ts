@@ -87,6 +87,11 @@ export function groupsWith(d: Dataset, g: OverlayGroups, who: number[]): Set<num
 
 const overlays = new WeakSet<Dataset>();
 
+/** Marks a dataset as an overlay already (one loaded straight into GPU tracks), so it is not overlaid again. */
+export function markOverlay(d: Dataset): void {
+  overlays.add(d);
+}
+
 /** Whether a dataset is a figure overlay built here. */
 export function isOverlay(d: Dataset | null): boolean {
   return !!d && overlays.has(d);

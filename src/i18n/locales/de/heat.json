@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "echte Größe",
   "heat.teamPanel.weapons": "Waffen, Schüsse und Treffer",
-  "heat.teamPanel.weaponsTitle": "Waffen im Flug mit Rauch, Leuchtspur, Einschlägen, Treffern und Abschüssen. Aus einem Treffer erschlossene Leuchtspur ist gestrichelt."
+  "heat.teamPanel.weaponsTitle": "Waffen im Flug mit Rauch, Leuchtspur, Einschlägen, Treffern und Abschüssen. Aus einem Treffer erschlossene Leuchtspur ist gestrichelt.",
+  "heat.timeline.reverseKey": "Rückwärts abspielen ({key})",
+  "heat.heatPanel.followExposure": "Der Ansicht folgen",
+  "heat.heatPanel.followExposureHint": "Misst die Belichtung jedes Mal neu, wenn die Kamera zur Ruhe kommt, sodass eine Region, in die du hineinfliegst, den ganzen Heatmap-Verlauf nutzt statt der Skala, die für die ganze Karte gemessen wurde. Kleine Änderungen werden ignoriert, und die Skala gleitet, statt zu springen. Deaktiviere es, um die Skala festzuhalten und Orte auf einer Skala zu vergleichen; auch das Ziehen am Sättigungspunkt hält sie fest.",
+  "heat.heatPanel.zoomInvariant": "Gleiche Dichte bei jedem Zoom",
+  "heat.heatPanel.zoomInvariantHint": "Eine Farbe bedeutet gleich viele Zeilen pro Bodenfläche, egal wie nah du bist. Ein Sprite, das die Pixelgrenzen vergrößern (aus der Ferne) oder verkleinern (aus der Nähe), behält die Intensität, die seine wahre Größe beitragen würde – so verblasst ein aus der Ferne belichtetes Bild nicht mehr, wenn du hineinfliegst. Aus: Ein begrenztes Sprite trägt sein volles Gewicht in seiner begrenzten Größe bei.",
+  "heat.splitPanel.sides": "<b>+</b> {plus} Zeilen · <b>−</b> {minus} Zeilen im Fenster",
+  "heat.splitPanel.sidesApprox": "<b>+</b> etwa {plus} Zeilen · <b>−</b> etwa {minus} Zeilen im Fenster (aus einer Stichprobe gezählt)",
+  "heat.splitPanel.noSides": "Kein Wert liegt auf einer der Seiten, daher zeichnet die Differenz nichts. Lege mindestens einen Wert auf <b>+</b> oder <b>−</b>.",
+  "heat.splitPanel.wrongKind": "{column} lässt sich so nicht aufteilen, daher zeichnet die Differenz nichts. Wähle die Spalte erneut.",
+  "heat.splitPanel.positiveEmpty": "Keine Zeile im Fenster liegt auf der <b>+</b>-Seite, daher wird nur die <b>−</b>-Seite gezeichnet: Das Bild ist keine Differenz.",
+  "heat.splitPanel.negativeEmpty": "Keine Zeile im Fenster liegt auf der <b>−</b>-Seite, daher wird nur die <b>+</b>-Seite gezeichnet: Das Bild ist keine Differenz.",
+  "heat.splitPanel.skipped": "Die Aufteilungsspalte passte bei {skipped} von {total} Zeilenblöcken nicht in den GPU-Speicher; diese Zeilen werden nicht gezeichnet. Erhöhe das GPU-Budget unter Leistung → Ressourcenbudgets oder lade weniger Zeilen.",
+  "heat.splitPanel.shares": "Anteile statt Anzahlen vergleichen",
+  "heat.splitPanel.sharesHint": "Gewichtet jede Seite mit eins durch ihre eigene Zeilenzahl, sodass eine Seite mit fünfmal so vielen Zeilen die Karte nicht mehr allein durch ihre Menge bedeckt. Die Farbe zeigt dann, wo jede Seite anteilig häufiger ist als die andere.",
+  "heat.teamsList.columnSplitHint": "Die Differenz ist nach <b>{column}</b> aufgeteilt, daher bestimmen die Gruppen hier nur, was gezeichnet wird, nicht auf welcher Seite sie zählen."
 }

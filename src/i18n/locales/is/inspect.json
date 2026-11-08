@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Ekki læsilegt sem punktur. Notaðu x, y, z eða x y z, t.d. -321.6, 137.8, -59.9 eða -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Stefnuhorn og hallahorn verða að vera tölur, í gráðum.",
   "heat.inspect.jump.hint": "Hnitin eru heimshnit, þau sömu og í aflestrinum og stöðunni hér að ofan. {key} opnar reit fyrir þetta yfir sýninni.",
-  "heat.inspect.jump.hintDataFrame": "Hnitin eru í eigin ramma hlaðinna gagna, eins og í töflu þeirra - þau sömu og í aflestrinum og stöðunni hér að ofan. {key} opnar reit fyrir þetta yfir sýninni."
+  "heat.inspect.jump.hintDataFrame": "Hnitin eru í eigin ramma hlaðinna gagna, eins og í töflu þeirra - þau sömu og í aflestrinum og stöðunni hér að ofan. {key} opnar reit fyrir þetta yfir sýninni.",
+  "heat.inspect.latLon": "Breidd / lengd"
 }

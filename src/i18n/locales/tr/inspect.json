@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Nokta olarak okunamıyor. x, y, z veya x y z kullanın, örn. -321.6, 137.8, -59.9 ya da -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Yaw ve pitch derece cinsinden sayı olmalıdır.",
   "heat.inspect.jump.hint": "Koordinatlar dünya koordinatlarıdır; kamera göstergesindeki ve yukarıdaki pozla aynıdır. {key} bunun için görünümün üzerinde bir kutu açar.",
-  "heat.inspect.jump.hintDataFrame": "Koordinatlar yüklenen verinin kendi çerçevesindedir, tablosundaki gibi - kamera göstergesindeki ve yukarıdaki pozla aynıdır. {key} bunun için görünümün üzerinde bir kutu açar."
+  "heat.inspect.jump.hintDataFrame": "Koordinatlar yüklenen verinin kendi çerçevesindedir, tablosundaki gibi - kamera göstergesindeki ve yukarıdaki pozla aynıdır. {key} bunun için görünümün üzerinde bir kutu açar.",
+  "heat.inspect.latLon": "Enlem / boylam"
 }

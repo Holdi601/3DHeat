@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} 像素",
   "heat.teamPanel.trueSize": "真實尺寸",
   "heat.teamPanel.weapons": "武器、射擊與命中",
-  "heat.teamPanel.weaponsTitle": "飛行中的武器及其煙跡、曳光彈、彈著、命中和擊毀。由命中推斷的曳光彈以虛線顯示。"
+  "heat.teamPanel.weaponsTitle": "飛行中的武器及其煙跡、曳光彈、彈著、命中和擊毀。由命中推斷的曳光彈以虛線顯示。",
+  "heat.timeline.reverseKey": "倒轉播放（{key}）",
+  "heat.heatPanel.followExposure": "跟隨視角",
+  "heat.heatPanel.followExposureHint": "每當攝影機停定時重新測光，讓你飛入的區域使用整條熱度漸層，而不是為整張地圖測得的刻度。細微變化會被忽略，刻度會平滑過渡而非跳動。取消勾選即可鎖定刻度，在同一刻度上比較各處；拖曳飽和點也會鎖定它。",
+  "heat.heatPanel.zoomInvariant": "任何縮放下密度一致",
+  "heat.heatPanel.zoomInvariantHint": "無論離得多近，同一種顏色都代表單位地面面積上相同的資料列數。被像素限制放大（遠處）或縮小（近處）的 Sprite，仍保留其真實大小本應貢獻的熱度，因此從遠處曝光的畫面在飛近時不再變淡。關閉時，受限的 Sprite 會以受限後的大小貢獻全部權重。",
+  "heat.splitPanel.sides": "時間窗內 <b>+</b> {plus} 列 · <b>−</b> {minus} 列",
+  "heat.splitPanel.sidesApprox": "時間窗內 <b>+</b> 約 {plus} 列 · <b>−</b> 約 {minus} 列（依樣本計算）",
+  "heat.splitPanel.noSides": "兩側都沒有值，因此差異不會繪製任何內容。請至少將一個值放到 <b>+</b> 或 <b>−</b>。",
+  "heat.splitPanel.wrongKind": "{column} 無法以這種方式分割，因此差異不會繪製任何內容。請重新選擇該欄位。",
+  "heat.splitPanel.positiveEmpty": "時間窗內沒有資料列屬於 <b>+</b> 側，因此只繪製 <b>−</b> 側：畫面並不是差異。",
+  "heat.splitPanel.negativeEmpty": "時間窗內沒有資料列屬於 <b>−</b> 側，因此只繪製 <b>+</b> 側：畫面並不是差異。",
+  "heat.splitPanel.skipped": "在 {total} 個資料列區塊中，有 {skipped} 個的分割欄位無法放入 GPU 記憶體，這些資料列不會被繪製。請在「效能 → 資源預算」中提高 GPU 預算，或載入更少的資料列。",
+  "heat.splitPanel.shares": "比較占比，而非計數",
+  "heat.splitPanel.sharesHint": "以各側自身資料列數的倒數作為權重，讓資料列多五倍的一側不再只憑數量覆蓋地圖。顏色接著會顯示每一側在何處按比例比另一側更常見。",
+  "heat.teamsList.columnSplitHint": "差異依 <b>{column}</b> 分割，因此這裡的群組只決定繪製哪些內容，而不決定它們計入哪一側。"
 }

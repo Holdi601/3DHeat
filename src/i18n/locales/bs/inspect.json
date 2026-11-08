@@ -68,5 +68,6 @@
   "heat.inspect.jump.unreadable": "Ne može se pročitati kao tačka. Koristite x, y, z ili x y z, npr. -321.6, 137.8, -59.9 ili -321,6 137,8 -59,9.",
   "heat.inspect.jump.badAngle": "Zakretanje i propinjanje moraju biti brojevi, u stepenima.",
   "heat.inspect.jump.hint": "Koordinate su svjetske, iste kao u očitanju i u pozi iznad. {key} otvara polje za to preko prikaza.",
-  "heat.inspect.jump.hintDataFrame": "Koordinate su u vlastitom sistemu učitanih podataka, kao u njihovoj tabeli - iste kao u očitanju i u pozi iznad. {key} otvara polje za to preko prikaza."
+  "heat.inspect.jump.hintDataFrame": "Koordinate su u vlastitom sistemu učitanih podataka, kao u njihovoj tabeli - iste kao u očitanju i u pozi iznad. {key} otvara polje za to preko prikaza.",
+  "heat.inspect.latLon": "Širina / dužina"
 }

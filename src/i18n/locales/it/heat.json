@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "dimensione reale",
   "heat.teamPanel.weapons": "Armi, colpi e centri",
-  "heat.teamPanel.weaponsTitle": "Armi in volo con fumo, traccianti, impatti, colpi a segno e abbattimenti. I traccianti dedotti da un colpo sono tratteggiati."
+  "heat.teamPanel.weaponsTitle": "Armi in volo con fumo, traccianti, impatti, colpi a segno e abbattimenti. I traccianti dedotti da un colpo sono tratteggiati.",
+  "heat.timeline.reverseKey": "Riproduci all’indietro ({key})",
+  "heat.heatPanel.followExposure": "Segui la vista",
+  "heat.heatPanel.followExposureHint": "Rimisura l’esposizione ogni volta che la telecamera si ferma, così una regione in cui entri in volo usa tutta la rampa del calore invece della scala misurata per l’intera mappa. Le piccole variazioni vengono ignorate e la scala scorre invece di saltare. Deselezionalo per bloccare la scala e confrontare luoghi su un’unica scala; anche trascinare il punto di saturazione la blocca.",
+  "heat.heatPanel.zoomInvariant": "Stessa densità a ogni zoom",
+  "heat.heatPanel.zoomInvariantHint": "Un colore indica lo stesso numero di righe per area di terreno, a qualunque distanza tu sia. Uno sprite che i limiti in pixel ingrandiscono (da lontano) o rimpiccioliscono (da vicino) mantiene il calore che aggiungerebbe la sua dimensione reale, così un’immagine esposta da lontano non sbiadisce più mentre ci voli dentro. Se disattivato, uno sprite limitato aggiunge tutto il suo peso alla dimensione limitata.",
+  "heat.splitPanel.sides": "<b>+</b> {plus} righe · <b>−</b> {minus} righe nella finestra",
+  "heat.splitPanel.sidesApprox": "<b>+</b> circa {plus} righe · <b>−</b> circa {minus} righe nella finestra (contate su un campione)",
+  "heat.splitPanel.noSides": "Nessun valore è su uno dei due lati, quindi la differenza non disegna nulla. Metti almeno un valore su <b>+</b> o <b>−</b>.",
+  "heat.splitPanel.wrongKind": "{column} non può essere suddivisa in questo modo, quindi la differenza non disegna nulla. Scegli di nuovo la colonna.",
+  "heat.splitPanel.positiveEmpty": "Nessuna riga nella finestra è sul lato <b>+</b>, quindi viene disegnato solo il lato <b>−</b>: l’immagine non è una differenza.",
+  "heat.splitPanel.negativeEmpty": "Nessuna riga nella finestra è sul lato <b>−</b>, quindi viene disegnato solo il lato <b>+</b>: l’immagine non è una differenza.",
+  "heat.splitPanel.skipped": "La colonna di suddivisione non è entrata nella memoria GPU per {skipped} di {total} blocchi di righe, e quelle righe non vengono disegnate. Aumenta il budget GPU in Prestazioni → Budget delle risorse oppure carica meno righe.",
+  "heat.splitPanel.shares": "Confronta quote, non conteggi",
+  "heat.splitPanel.sharesHint": "Pesa ogni lato per uno diviso il proprio numero di righe, così un lato con cinque volte le righe non copre più la mappa solo per quantità. Il colore mostra allora dove ciascun lato è proporzionalmente più frequente dell’altro.",
+  "heat.teamsList.columnSplitHint": "La differenza è suddivisa per <b>{column}</b>, quindi qui i gruppi decidono solo cosa viene disegnato, non su quale lato contano."
 }

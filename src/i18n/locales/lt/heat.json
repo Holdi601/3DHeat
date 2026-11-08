@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "tikras dydis",
   "heat.teamPanel.weapons": "Ginklai, šūviai ir pataikymai",
-  "heat.teamPanel.weaponsTitle": "Skrendantys ginklai su dūmais, trasuojančiomis kulkomis, sprogimais, pataikymais ir numušimais. Iš pataikymo numanomos trasos punktyrinės."
+  "heat.teamPanel.weaponsTitle": "Skrendantys ginklai su dūmais, trasuojančiomis kulkomis, sprogimais, pataikymais ir numušimais. Iš pataikymo numanomos trasos punktyrinės.",
+  "heat.timeline.reverseKey": "Groti atgal ({key})",
+  "heat.heatPanel.followExposure": "Sekti vaizdą",
+  "heat.heatPanel.followExposureHint": "Iš naujo išmatuoja ekspoziciją kaskart, kai kamera sustoja, kad sritis, į kurią įskrendate, naudotų visą šilumos skalę, o ne visam žemėlapiui išmatuotą skalę. Maži pokyčiai nepaisomi, o skalė keičiasi sklandžiai, be šuolių. Nuimkite žymę, kad užfiksuotumėte skalę ir lygintumėte vietas pagal vieną skalę; įsotinimo taško vilkimas ją taip pat užfiksuoja.",
+  "heat.heatPanel.zoomInvariant": "Vienodas tankis bet kokiu mastu",
+  "heat.heatPanel.zoomInvariantHint": "Spalva reiškia tą patį eilučių skaičių žemės ploto vienetui, kad ir kaip arti būtumėte. Spraitas, kurį pikselių ribos padidina (iš toli) arba sumažina (iš arti), išlaiko tą šilumą, kurią pridėtų jo tikrasis dydis, todėl iš toli eksponuotas vaizdas nebeblunka, kai į jį įskrendate. Išjungus apribotas spraitas prideda visą savo svorį apribotu dydžiu.",
+  "heat.splitPanel.sides": "Eilutės lange: <b>+</b> {plus} · <b>−</b> {minus}",
+  "heat.splitPanel.sidesApprox": "Eilutės lange: <b>+</b> apie {plus} · <b>−</b> apie {minus} (suskaičiuota iš imties)",
+  "heat.splitPanel.noSides": "Nė viena reikšmė nepriskirta jokiai pusei, todėl skirtumas nieko nepiešia. Priskirkite bent vieną reikšmę <b>+</b> arba <b>−</b> pusei.",
+  "heat.splitPanel.wrongKind": "Stulpelio {column} negalima taip skaidyti, todėl skirtumas nieko nepiešia. Pasirinkite stulpelį iš naujo.",
+  "heat.splitPanel.positiveEmpty": "Nė viena lango eilutė nėra <b>+</b> pusėje, todėl piešiama tik <b>−</b> pusė: vaizdas nėra skirtumas.",
+  "heat.splitPanel.negativeEmpty": "Nė viena lango eilutė nėra <b>−</b> pusėje, todėl piešiama tik <b>+</b> pusė: vaizdas nėra skirtumas.",
+  "heat.splitPanel.skipped": "Skaidymo stulpelis netilpo į GPU atmintį {skipped} iš {total} eilučių blokų, ir tos eilutės nepiešiamos. Padidinkite GPU biudžetą skiltyje Našumas → Išteklių biudžetai arba įkelkite mažiau eilučių.",
+  "heat.splitPanel.shares": "Lyginti dalis, ne kiekius",
+  "heat.splitPanel.sharesHint": "Kiekvienai pusei suteikia svorį, lygų vienetui, padalytam iš jos pačios eilučių skaičiaus, todėl pusė su penkis kartus daugiau eilučių nebeuždengia žemėlapio vien kiekiu. Tada spalva rodo, kur kiekviena pusė proporcingai dažnesnė už kitą.",
+  "heat.teamsList.columnSplitHint": "Skirtumas suskaidytas pagal <b>{column}</b>, todėl grupės čia lemia tik tai, kas piešiama, o ne kurioje pusėje jos skaičiuojamos."
 }

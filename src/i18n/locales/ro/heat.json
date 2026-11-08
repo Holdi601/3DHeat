@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "mărime reală",
   "heat.teamPanel.weapons": "Arme, trageri și lovituri",
-  "heat.teamPanel.weaponsTitle": "Arme în zbor cu fum, trasoare, impacturi, lovituri și doborâri. Trasoarele deduse dintr-o lovitură sunt punctate."
+  "heat.teamPanel.weaponsTitle": "Arme în zbor cu fum, trasoare, impacturi, lovituri și doborâri. Trasoarele deduse dintr-o lovitură sunt punctate.",
+  "heat.timeline.reverseKey": "Redare înapoi ({key})",
+  "heat.heatPanel.followExposure": "Urmărește vederea",
+  "heat.heatPanel.followExposureHint": "Măsoară din nou expunerea de fiecare dată când camera se oprește, astfel încât o regiune în care intrați în zbor folosește toată rampa căldurii în loc de scara măsurată pentru întreaga hartă. Schimbările mici sunt ignorate, iar scara alunecă în loc să sară. Debifați pentru a bloca scara și a compara locuri pe aceeași scară; tragerea punctului de saturație o blochează și ea.",
+  "heat.heatPanel.zoomInvariant": "Aceeași densitate la orice zoom",
+  "heat.heatPanel.zoomInvariantHint": "O culoare înseamnă același număr de rânduri pe unitatea de suprafață a solului, oricât de aproape ați fi. Un sprite pe care limitele de pixeli îl măresc (de departe) sau îl micșorează (de aproape) păstrează căldura pe care ar adăuga-o mărimea sa reală, astfel că o imagine expusă de departe nu mai pălește când intrați în ea. Dezactivat, un sprite limitat își adaugă toată greutatea la mărimea limitată.",
+  "heat.splitPanel.sides": "Rânduri în fereastră: <b>+</b> {plus} · <b>−</b> {minus}",
+  "heat.splitPanel.sidesApprox": "Rânduri în fereastră: <b>+</b> aproximativ {plus} · <b>−</b> aproximativ {minus} (numărate dintr-un eșantion)",
+  "heat.splitPanel.noSides": "Nicio valoare nu se află în vreuna dintre părți, așa că diferența nu desenează nimic. Puneți cel puțin o valoare pe <b>+</b> sau <b>−</b>.",
+  "heat.splitPanel.wrongKind": "{column} nu poate fi împărțită în acest fel, așa că diferența nu desenează nimic. Alegeți din nou coloana.",
+  "heat.splitPanel.positiveEmpty": "Niciun rând din fereastră nu este în partea <b>+</b>, așa că se desenează doar partea <b>−</b>: imaginea nu este o diferență.",
+  "heat.splitPanel.negativeEmpty": "Niciun rând din fereastră nu este în partea <b>−</b>, așa că se desenează doar partea <b>+</b>: imaginea nu este o diferență.",
+  "heat.splitPanel.skipped": "Coloana de împărțire nu a încăput în memoria GPU pentru {skipped} din {total} blocuri de rânduri, iar acele rânduri nu sunt desenate. Măriți bugetul GPU în Performanță → Bugete de resurse sau încărcați mai puține rânduri.",
+  "heat.splitPanel.shares": "Compară ponderi, nu numărători",
+  "heat.splitPanel.sharesHint": "Ponderează fiecare parte cu unu împărțit la propriul număr de rânduri, astfel încât o parte cu de cinci ori mai multe rânduri nu mai acoperă harta doar prin număr. Culoarea arată atunci unde fiecare parte este proporțional mai frecventă decât cealaltă.",
+  "heat.teamsList.columnSplitHint": "Diferența este împărțită după <b>{column}</b>, așa că grupurile de aici decid doar ce se desenează, nu în ce parte contează."
 }

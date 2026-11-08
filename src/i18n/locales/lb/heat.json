@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "echt Gréisst",
   "heat.teamPanel.weapons": "Waffen, Schëss an Treffer",
-  "heat.teamPanel.weaponsTitle": "Waffen am Fluch mat Damp, Leuchtspuer, Aschléi, Treffer an Ofschëss. Leuchtspuer, déi aus engem Treffer ofgeleet ass, ass gestrichelt."
+  "heat.teamPanel.weaponsTitle": "Waffen am Fluch mat Damp, Leuchtspuer, Aschléi, Treffer an Ofschëss. Leuchtspuer, déi aus engem Treffer ofgeleet ass, ass gestrichelt.",
+  "heat.timeline.reverseKey": "Réckwäerts ofspillen ({key})",
+  "heat.heatPanel.followExposure": "Der Usiicht nogoen",
+  "heat.heatPanel.followExposureHint": "Moosst d’Beliichtung all Kéier nei, wann d’Kamera zur Rou kënnt, sou datt eng Regioun, an déi s de eraflitts, de ganzen Heat-Verlaf notzt amplaz vun der Skala, déi fir déi ganz Kaart gemooss gouf. Kleng Ännerunge ginn ignoréiert, an d’Skala gläit amplaz ze sprangen. Huel den Haken ewech, fir d’Skala ze fixéieren a Plazen op enger Skala ze vergläichen; Zéien um Sättegungspunkt fixéiert se och.",
+  "heat.heatPanel.zoomInvariant": "Selwecht Dicht bei all Zoom",
+  "heat.heatPanel.zoomInvariantHint": "Eng Faarf bedeit déi selwecht Zuel u Zeilen pro Buedemfläch, egal wéi no s de bass. E Sprite, deen d’Pixelgrenzen vergréisseren (vu wäitem) oder verklengeren (vu no), behält d’Heat, déi seng richteg Gréisst bäidréit, sou datt e Bild, dat vu wäitem beliicht gouf, net méi verbléckt, wann s de eraflitts. Aus: E begrenzte Sprite dréit säi vollt Gewiicht a senger begrenzter Gréisst bäi.",
+  "heat.splitPanel.sides": "<b>+</b> {plus} Zeilen · <b>−</b> {minus} Zeilen an der Fënster",
+  "heat.splitPanel.sidesApprox": "<b>+</b> ongeféier {plus} Zeilen · <b>−</b> ongeféier {minus} Zeilen an der Fënster (aus enger Stéchprouf gezielt)",
+  "heat.splitPanel.noSides": "Kee Wäert ass op enger vun de Säiten, dofir zeechent d’Differenz näischt. Setz mindestens ee Wäert op <b>+</b> oder <b>−</b>.",
+  "heat.splitPanel.wrongKind": "{column} kann net esou opgedeelt ginn, dofir zeechent d’Differenz näischt. Wiel d’Kolonn nach eng Kéier.",
+  "heat.splitPanel.positiveEmpty": "Keng Zeil an der Fënster ass op der <b>+</b>-Säit, dofir gëtt nëmmen d’<b>−</b>-Säit gezeechent: d’Bild ass keng Differenz.",
+  "heat.splitPanel.negativeEmpty": "Keng Zeil an der Fënster ass op der <b>−</b>-Säit, dofir gëtt nëmmen d’<b>+</b>-Säit gezeechent: d’Bild ass keng Differenz.",
+  "heat.splitPanel.skipped": "D’Opdeelungskolonn huet bei {skipped} vun {total} Zeileblocken net an de GPU-Späicher gepasst, an déi Zeile ginn net gezeechent. Setz de GPU-Budget ënner Performance → Ressourcebudgeten erop, oder lued manner Zeilen.",
+  "heat.splitPanel.shares": "Undeeler vergläichen, net Zuelen",
+  "heat.splitPanel.sharesHint": "Gewiicht all Säit mat eent duerch hir eegen Zeilenzuel, sou datt eng Säit mat fënnef Mol esou vill Zeilen d’Kaart net méi eleng duerch d’Zuel bedeckt. D’Faarf weist dann, wou all Säit proportional méi heefeg ass wéi déi aner.",
+  "heat.teamsList.columnSplitHint": "D’Differenz ass no <b>{column}</b> opgedeelt, dofir decidéieren d’Gruppen hei nëmmen, wat gezeechent gëtt, net op wéi enger Säit se zielen."
 }

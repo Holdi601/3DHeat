@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "rzeczywisty rozmiar",
   "heat.teamPanel.weapons": "Broń, strzały i trafienia",
-  "heat.teamPanel.weaponsTitle": "Broń w locie z dymem, smugaczami, wybuchami, trafieniami i zestrzeleniami. Smugacze wywnioskowane z trafienia są przerywane."
+  "heat.teamPanel.weaponsTitle": "Broń w locie z dymem, smugaczami, wybuchami, trafieniami i zestrzeleniami. Smugacze wywnioskowane z trafienia są przerywane.",
+  "heat.timeline.reverseKey": "Odtwórz wstecz ({key})",
+  "heat.heatPanel.followExposure": "Podążaj za widokiem",
+  "heat.heatPanel.followExposureHint": "Ponownie mierzy ekspozycję za każdym razem, gdy kamera się zatrzyma, aby obszar, w który wlatujesz, wykorzystywał cały gradient ciepła zamiast skali zmierzonej dla całej mapy. Drobne zmiany są pomijane, a skala zmienia się płynnie zamiast skakać. Odznacz, aby zablokować skalę i porównywać miejsca na jednej skali; przeciągnięcie punktu nasycenia także ją blokuje.",
+  "heat.heatPanel.zoomInvariant": "Ta sama gęstość przy każdym powiększeniu",
+  "heat.heatPanel.zoomInvariantHint": "Kolor oznacza tę samą liczbę wierszy na jednostkę powierzchni terenu, niezależnie od odległości. Sprite, który ograniczenia pikseli powiększają (z daleka) lub pomniejszają (z bliska), zachowuje ciepło, jakie dodałby jego prawdziwy rozmiar, więc obraz naświetlony z daleka nie blednie już, gdy w niego wlatujesz. Po wyłączeniu ograniczony sprite dodaje całą swoją wagę w ograniczonym rozmiarze.",
+  "heat.splitPanel.sides": "Wiersze w oknie: <b>+</b> {plus} · <b>−</b> {minus}",
+  "heat.splitPanel.sidesApprox": "Wiersze w oknie: <b>+</b> około {plus} · <b>−</b> około {minus} (policzone z próbki)",
+  "heat.splitPanel.noSides": "Żadna wartość nie jest po żadnej stronie, więc różnica niczego nie rysuje. Umieść co najmniej jedną wartość po stronie <b>+</b> lub <b>−</b>.",
+  "heat.splitPanel.wrongKind": "Kolumny {column} nie można podzielić w ten sposób, więc różnica niczego nie rysuje. Wybierz kolumnę ponownie.",
+  "heat.splitPanel.positiveEmpty": "Żaden wiersz w oknie nie jest po stronie <b>+</b>, więc rysowana jest tylko strona <b>−</b>: obraz nie jest różnicą.",
+  "heat.splitPanel.negativeEmpty": "Żaden wiersz w oknie nie jest po stronie <b>−</b>, więc rysowana jest tylko strona <b>+</b>: obraz nie jest różnicą.",
+  "heat.splitPanel.skipped": "Kolumna podziału nie zmieściła się w pamięci GPU dla {skipped} z {total} bloków wierszy i te wiersze nie są rysowane. Zwiększ budżet GPU w Wydajność → Budżety zasobów lub wczytaj mniej wierszy.",
+  "heat.splitPanel.shares": "Porównuj udziały, nie liczebności",
+  "heat.splitPanel.sharesHint": "Waży każdą stronę jedynką podzieloną przez jej własną liczbę wierszy, więc strona z pięciokrotnie większą liczbą wierszy nie pokrywa już mapy samą liczebnością. Kolor pokazuje wtedy, gdzie każda strona jest proporcjonalnie częstsza od drugiej.",
+  "heat.teamsList.columnSplitHint": "Różnica jest podzielona według <b>{column}</b>, więc grupy tutaj decydują tylko o tym, co jest rysowane, a nie po której stronie się liczą."
 }

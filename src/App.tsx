@@ -26,6 +26,7 @@ import { ReplayExtras } from './ui/replay/ReplayExtras';
 import { ReplayPanel } from './ui/replay/ReplayPanel';
 import { UnitCard } from './ui/replay/UnitCard';
 import { OverlayPanel, useFigureOverlay } from './ui/replay/FigureOverlay';
+import { LeanOverlayPanel } from './ui/overlay/LeanOverlayPanel';
 import { GameOverview, MatchPicker } from './ui/match/MatchPicker';
 import { matchesAreSessions } from './match/matches';
 import { useReplayStore } from './state/replayStore';
@@ -59,6 +60,8 @@ import { useInspectStore } from './state/inspectStore';
 import { Timeline } from './ui/Timeline';
 import { LinePanel } from './ui/panels/LinePanel';
 import { UpdateBanner } from './ui/UpdateBanner';
+import { VehiclePanel } from './ui/vehicle/VehiclePanel';
+import { VehicleOverlay } from './ui/vehicle/VehicleOverlay';
 
 /** The view modes, in the viewer's language: a function, so the words are looked up when shown. */
 const modes = (): Array<{ value: ViewMode; label: string; title: string }> => [
@@ -114,6 +117,7 @@ export function App() {
   const raceTab = tab === 'race';
   const matchTab = tab === 'match';
   const planTab = tab === 'plan';
+  const vehicleTab = tab === 'vehicle';
   const raceCharts = useRaceStore((s) => s.view.charts);
   const lang = useLang();
 
@@ -295,6 +299,8 @@ export function App() {
         }
         if (ev.code.startsWith('Digit')) return;
       }
+      // The vehicle heatmap has no timeline and no heat modes: only framing (F) and the help keys reach it.
+      if (race.tab === 'vehicle' && ev.code !== 'KeyF') return;
       if (race.tab === 'race') {
         // The race tab's own transport; the heat modes' number keys do nothing here.
         if (ev.code === 'KeyK') {
@@ -370,7 +376,7 @@ export function App() {
 
   return (
     <EngineContext.Provider value={engine}>
-      <div className={`app${raceTab ? ' race' : ''}${matchTab ? ' match' : ''}${raceTab && !raceCharts ? ' no-charts' : ''}`}>
+      <div className={`app${raceTab ? ' race' : ''}${matchTab ? ' match' : ''}${vehicleTab ? ' vehicle' : ''}${raceTab && !raceCharts ? ' no-charts' : ''}`}>
         <aside className="sidebar">
           <div className="brand">
             <h1>3DHeat</h1>
@@ -399,9 +405,21 @@ export function App() {
             <button role="tab" aria-selected={planTab} className={planTab ? 'on' : ''} onClick={() => setTab('plan')} title={t('app.tab.planTitle')}>
               {t('app.tab.plan')}
             </button>
+            <button role="tab" aria-selected={vehicleTab} className={vehicleTab ? 'on' : ''} onClick={() => setTab('vehicle')} title={t('vehicle.tab.title')}>
+              {t('vehicle.tab.label')}
+            </button>
           </div>
 
-          {planTab ? (
+          {vehicleTab ? (
+            <>
+              <div style={{ padding: '12px 16px 0' }}>
+                <SoftwareRenderingWarning />
+              </div>
+              <VehiclePanel />
+              <SourcePanel />
+              <CameraPanel />
+            </>
+          ) : planTab ? (
             <>
               <TacticsPanel />
               <LevelPanel />
@@ -480,6 +498,7 @@ export function App() {
           </div>
 
           <SourcePanel />
+          <LeanOverlayPanel />
           <DatasetPanel />
           {mode === 'heat-lines' && <LinePanel />}
           {mode === 'team' ? (
@@ -507,10 +526,10 @@ export function App() {
         <div
           className="stage"
           onDragOver={(e) => {
-            if (raceTab || matchTab) e.preventDefault();
+            if (raceTab || matchTab || vehicleTab) e.preventDefault();
           }}
           onDrop={(e) => {
-            if (matchTab) {
+            if (matchTab || vehicleTab) {
               e.preventDefault();
               void useMatchStore.getState().load(Array.from(e.dataTransfer.files));
               return;
@@ -537,7 +556,7 @@ export function App() {
             </div>
           ) : (
             <>
-              {planTab ? <BoardLabels /> : raceTab ? (
+              {vehicleTab ? <VehicleOverlay /> : planTab ? <BoardLabels /> : raceTab ? (
                 <>
                   <RaceLabels />
                   <RaceWheelLabels />
@@ -571,7 +590,7 @@ export function App() {
           )}
         </div>
 
-        <div className="timeline-bar">{planTab ? <BoardBar /> : raceTab ? <RaceBar /> : <Timeline />}</div>
+        <div className="timeline-bar">{vehicleTab ? null : planTab ? <BoardBar /> : raceTab ? <RaceBar /> : <Timeline />}</div>
       </div>
     </EngineContext.Provider>
   );

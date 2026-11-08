@@ -658,5 +658,20 @@
   "heat.teamPanel.pixels": "{value} px",
   "heat.teamPanel.trueSize": "prava velikost",
   "heat.teamPanel.weapons": "Orožje, streli in zadetki",
-  "heat.teamPanel.weaponsTitle": "Orožje v letu z dimom, sledilnimi naboji, udarci, zadetki in sestrelitvami. Sledilni naboji, sklepani iz zadetka, so črtkani."
+  "heat.teamPanel.weaponsTitle": "Orožje v letu z dimom, sledilnimi naboji, udarci, zadetki in sestrelitvami. Sledilni naboji, sklepani iz zadetka, so črtkani.",
+  "heat.timeline.reverseKey": "Predvajaj nazaj ({key})",
+  "heat.heatPanel.followExposure": "Sledi pogledu",
+  "heat.heatPanel.followExposureHint": "Znova izmeri osvetlitev vsakič, ko se kamera ustavi, tako da območje, v katero priletite, uporabi celotno lestvico toplote namesto lestvice, izmerjene za ves zemljevid. Majhne spremembe so prezrte, lestvica pa drsi, namesto da bi skakala. Počistite potrditev, da zaklenete lestvico in primerjate kraje na eni lestvici; zaklene jo tudi vlečenje točke nasičenja.",
+  "heat.heatPanel.zoomInvariant": "Enaka gostota pri vsaki povečavi",
+  "heat.heatPanel.zoomInvariantHint": "Barva pomeni enako število vrstic na površino tal, ne glede na to, kako blizu ste. Sprajt, ki ga omejitve slikovnih pik povečajo (od daleč) ali pomanjšajo (od blizu), ohrani toploto, ki bi jo dodala njegova prava velikost, zato slika, osvetljena od daleč, ne zbledi več, ko priletite vanjo. Izklopljeno: omejeni sprajt doda svojo polno težo pri omejeni velikosti.",
+  "heat.splitPanel.sides": "Vrstice v oknu: <b>+</b> {plus} · <b>−</b> {minus}",
+  "heat.splitPanel.sidesApprox": "Vrstice v oknu: <b>+</b> približno {plus} · <b>−</b> približno {minus} (prešteto iz vzorca)",
+  "heat.splitPanel.noSides": "Nobena vrednost ni na nobeni strani, zato razlika ne nariše ničesar. Postavite vsaj eno vrednost na <b>+</b> ali <b>−</b>.",
+  "heat.splitPanel.wrongKind": "Stolpca {column} ni mogoče razdeliti na ta način, zato razlika ne nariše ničesar. Znova izberite stolpec.",
+  "heat.splitPanel.positiveEmpty": "Nobena vrstica v oknu ni na strani <b>+</b>, zato je narisana le stran <b>−</b>: slika ni razlika.",
+  "heat.splitPanel.negativeEmpty": "Nobena vrstica v oknu ni na strani <b>−</b>, zato je narisana le stran <b>+</b>: slika ni razlika.",
+  "heat.splitPanel.skipped": "Stolpec delitve se pri {skipped} od {total} blokov vrstic ni prilegal v pomnilnik GPU, zato te vrstice niso narisane. Povečajte proračun GPU v Zmogljivost → Proračuni virov ali naložite manj vrstic.",
+  "heat.splitPanel.shares": "Primerjaj deleže, ne števil",
+  "heat.splitPanel.sharesHint": "Vsako stran uteži z ena, deljeno z njenim lastnim številom vrstic, tako da stran s petkrat več vrsticami ne prekrije več zemljevida zgolj s številom. Barva nato pokaže, kje je katera stran sorazmerno pogostejša od druge.",
+  "heat.teamsList.columnSplitHint": "Razlika je razdeljena po <b>{column}</b>, zato skupine tukaj določajo le, kaj se nariše, ne pa, na kateri strani štejejo."
 }

@@ -2,7 +2,9 @@ import { int } from '../i18n';
 import { describe, expect, it } from 'vitest';
 import {
   datasetCapabilities,
+  categoryRowCounts,
   defaultColumnSplit,
+  defaultSplitRule,
   modeBlockedReason,
   splitHasTwoSides,
   validateMapping,
@@ -941,6 +943,38 @@ describe('difference mode on a column split', () => {
     expect(st.split).toEqual({ kind: 'categories', column: 'Source file', positive: [0], negative: [1] });
     expect(modeBlockedReason('heat-difference', datasetCapabilities(st.dataset), splitHasTwoSides(st.split, st.dataset))).toBeNull();
     useStore.getState().setDataset(null);
+  });
+});
+
+describe('the default split of a category column', () => {
+  // Dictionary-encoded columns keep the empty string as their first value
+  // whether or not any row is empty. A default putting it on one side left that
+  // side empty, and the toggles made the real comparison easy to lose.
+  const events: AttributeColumn = {
+    name: 'event',
+    kind: 'category',
+    data: new Uint32Array([2, 2, 2, 1, 2, 1]),
+    min: 0,
+    max: 2,
+    categories: ['', 'killed', 'killer'],
+  };
+
+  it('counts rows per value', () => {
+    expect([...categoryRowCounts(events)!]).toEqual([0, 2, 4]);
+    expect(categoryRowCounts({ ...events, data: new Uint32Array(0) })).toBeNull();
+  });
+
+  it('puts the first two values rows actually have on the two sides', () => {
+    expect(defaultSplitRule(events)).toEqual({ kind: 'categories', column: 'event', positive: [1], negative: [2] });
+  });
+
+  it('falls back to the first two values when the rows are not at hand', () => {
+    expect(defaultSplitRule({ ...events, data: new Uint32Array(0) })).toEqual({
+      kind: 'categories',
+      column: 'event',
+      positive: [0],
+      negative: [1],
+    });
   });
 });
 
