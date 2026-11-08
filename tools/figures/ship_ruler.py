@@ -66,7 +66,9 @@ def main() -> None:
         sx, sy = (float(v) for v in a.stern.split(","))
     # Level the waterline: rotate about the bow so the stern lies on the bow's row.
     ang = math.degrees(math.atan2(by - sy, bx - sx)) if bx > sx else math.degrees(math.atan2(sy - by, sx - bx))
-    im = im.rotate(-ang, resample=Image.BICUBIC, center=(bx, by), expand=False, fillcolor=(255, 255, 255))
+    # PIL turns counter-clockwise as seen (rows run down the image), so turning by +ang, not -ang, brings the stern
+    # onto the bow's row (the sign was the wrong way before: it doubled a tilted scan's slope).
+    im = im.rotate(ang, resample=Image.BICUBIC, center=(bx, by), expand=False, fillcolor=(255, 255, 255))
     span = math.hypot(bx - sx, by - sy)
     ppm = span / a.length
     facing = 1 if bx > sx else -1  # the bow to screen right

@@ -467,34 +467,43 @@ A['rafale-b'] = { ...rafale(true), cls: 'multirole' };
 
 // Typhoon: canards far forward under the cockpit, the "smile" chin intake, a cranked delta well back, one fin
 // (15.96 x 10.95 x 5.28 m); the two-seat T the same length with the rear seat raised under a longer canopy.
+// Digitised from a public-domain four-view line drawing (Inductiveload, see sources.md; tools/figures/jetview.py)
+// at the published length and span, heights from the radome's tip: the body's side profile and plan, the chin
+// intake, canards, wing (with the ESM pods at its tips), fin, canopy, nozzles and tail cone; the wing's height
+// and its slight dihedral from the head-on view.
 function typhoon(two: boolean): FixedWingSpec {
   return {
     length: 15.96, span: 10.95, height: 5.28, bodyWidth: 1.7, bodyHeight: 1.7,
-    // Measured against a published 3-view (estimates; heights from the radome tip): canopy top +1.5, spine +1.13
-    // behind the canopy, intake 2.2 m wide with its floor -0.88, belly -0.45, nozzles' centres +0.3; the figure
-    // matches within 0.05 m. A slim radome, the cockpit, the raised spine over the airbrake, the body widening to the
-    // two engines (estimates).
+    // The upper body: the radome, the cockpit's deck, the high spine behind the canopy falling to the fin, and the
+    // engine bay, as wide as the two engines side by side.
     fuselage: {
-      top: [[7.98, -0.1], [6.9, 0.24], [5.68, 0.56], [two ? 1.4 : 1.78, two ? 1.1 : 1.03], [-0.8, 0.85], [-5.8, 0.48], [-7.6, 0.4]],
-      bottom: [[7.98, -0.16], [6.9, -0.34], [5.6, -0.42], [4.0, -0.5], [0, -0.6], [-4.5, -0.78], [-6.5, -0.62], [-7.6, -0.35]],
-      plan: [[7.98, 0.04], [6.9, 0.36], [5.6, 0.5], [4.0, 0.58], [1.0, 0.7], [-4, 0.85], [-7.6, 0.7]],
-      round: [[8, 2.2], [4, 2.4], [0, 3], [-7.6, 3]],
+      top: [[7.98, 0.016], [7.33, 0.3], [6.75, 0.5], [6.15, 0.66], [5.73, 0.75], [4.0, 1.05], [2.6, 1.24], [1.88, 1.24], [0.72, 1.07], [-0.48, 0.96], [-3.15, 0.79], [-6.9, 0.85]],
+      bottom: [[7.98, -0.016], [7.33, -0.19], [6.57, -0.28], [5.0, -0.3], [3.9, -0.3], [1.0, -0.45], [-1.5, -0.6], [-2.7, -0.86], [-4.6, -0.8], [-5.77, -0.72], [-6.3, -0.64], [-6.9, -0.47]],
+      plan: [[7.98, 0.015], [7.66, 0.154], [7.0, 0.338], [6.14, 0.49], [5.56, 0.553], [4.5, 0.65], [3.6, 0.74], [3.3, 0.89], [2.33, 0.95], [-4.0, 0.95], [-5.73, 0.97], [-6.31, 0.968], [-6.9, 0.86]],
+      round: [[8, 2.2], [4, 2.4], [0, 3], [-6.9, 3]],
+      // Head on: the narrow spine widening to the wing root's shoulders, the engine bay rounded below.
+      section: [[-1, 0.7], [-0.7, 0.95], [-0.2, 1], [0.2, 1], [0.45, 0.88], [0.7, 0.62], [0.88, 0.45], [1, 0.25]],
       stations: 24,
     },
-    // The chin intake about 1.7 m wide under the cockpit's rear, its lower lip curving up at the corners (the
-    // "smile"), the duct fairing into the belly behind the wing's leading edge (estimates).
     bodies: [
-      pod(-2.4, -5.0, 0.12, 5.48, -0.2, 0.25),
-      { top: [[3.7, -0.2], [-3, -0.2], [-5.6, -0.25]], bottom: [[3.7, -0.56], [3.3, -0.98], [-1.5, -0.98], [-4.5, -0.7], [-5.6, -0.5]], plan: [[3.7, 1.0], [0, 1.05], [-3, 0.95], [-5.6, 0.6]], round: [[3.7, 3], [-1, 4], [-5.6, 4]], stations: 14 },
+      // The ESM pods at the wing tips.
+      pod(-2.85, -5.39, 0.12, 5.36, -0.37, 0.25),
+      // The chin intake under the cockpit's rear, about 1.9 m wide, narrowing to its floor (the "smile"), the duct
+      // running back under the wing to the engine bay.
+      { top: [[3.5, -0.2], [-3.2, -0.2], [-4.6, -0.3]], bottom: [[3.5, -0.41], [3.28, -0.785], [3.13, -0.94], [3.0, -1.0], [2.87, -0.99], [-1.44, -0.895], [-2.54, -0.958], [-3.2, -0.86], [-4.6, -0.8]], plan: [[3.5, 0.8], [3.0, 0.93], [0, 0.95], [-3.2, 0.9], [-4.6, 0.6]], round: 3, section: [[-1, 0.62], [-0.6, 0.9], [0, 1], [1, 1]], stations: 14 },
+      // The tail cone between the nozzles.
+      { top: [[-6.6, 0.3], [-7.97, 0.25]], bottom: [[-6.6, 0.1], [-7.97, 0.15]], plan: [[-6.6, 0.1], [-7.97, 0.03]], round: 2, stations: 4 },
     ],
-    wing: { x: -2.6, span: 10.95, rootChord: 7.4, tipChord: 0.9, sweep: 53, mount: -0.2 },
-    wingPlan: [[1.4, 0], [1.4, 0.9], [-1.2, 2.8], [-4.0, 5.3], [-5.0, 5.3], [-5.7, 0.9], [-5.9, 0]],
-    canard: { x: 4.7, span: 4.4, chord: 1.3 },
-    tail: { kind: 'single', tailSpan: 0, tailChord: 0, finHeight: 3.3, finChord: 3.6, finBase: 0.1 },
-    finPlan: [[-3.4, 0], [-7.2, 0], [-7.6, 3.3], [-6.5, 3.3]],
-    engines: { kind: 'internal', count: 2, diameter: 0.9, nozzles: [[-7.98, -0.47, 0.2], [-7.98, 0.47, 0.2]] },
+    wing: { x: -1.9, span: 10.95, rootChord: 8.2, tipChord: 1.5, sweep: 53, mount: -0.66, dihedral: 1 },
+    wingPlan: [[2.216, 0], [2.216, 0.995], [2.06, 1.093], [1.715, 1.214], [0.11, 2.475], [-3.226, 5.0], [-3.4, 5.25], [-4.85, 5.25], [-4.902, 5.0], [-5.075, 1.382], [-5.552, 1.214], [-5.717, 1.02], [-5.999, 0.995], [-5.999, 0]],
+    // The canards drooped from the intake's shoulders (the head-on view).
+    canard: { x: 4.4, span: 3.86, chord: 2.2, up: 0.1, dihedral: -17 },
+    // The fin from its dorsal fillet, its trailing edge raked forward down to the body's end.
+    tail: { kind: 'single', tailSpan: 0, tailChord: 0, finHeight: 2.8, finChord: 4.0, finBase: 0 },
+    finPlan: [[-3.15, 0.75], [-3.18, 1.1], [-3.73, 1.14], [-7.01, 3.5], [-7.22, 3.57], [-7.53, 3.57], [-7.97, 3.49], [-7.82, 3.06], [-6.89, 1.12], [-6.8, 0.75]],
+    engines: { kind: 'internal', count: 2, diameter: 0.86, nozzles: [[-6.95, -0.43, 0.2], [-6.95, 0.43, 0.2]] },
     canopy: two ? { x: 3.6, length: 3.8, kind: 'tandem' } : { x: 4.0, length: 2.8, kind: 'bubble' },
-    glass: [two ? tandem(5.68, 1.2, 1.36, 1.5, 0.6, 1.1, 0.45) : bubble(5.68, 2.0, 1.4, 0.6, 1.03, 0.45)],
+    glass: [two ? tandem(5.73, 1.6, 1.45, 1.6, 0.75, 1.2, 0.45) : bubble(5.73, 2.4, 1.54, 0.75, 1.2, 0.45)],
   };
 }
 A['eurofighter-typhoon'] = { ...typhoon(false), cls: 'multirole' };

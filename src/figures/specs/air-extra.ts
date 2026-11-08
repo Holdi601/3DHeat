@@ -736,20 +736,25 @@ A['d-371'] = fig({
 // ---------------------------------------------------------------- floatplanes and flying boats
 
 // He 115 (C-1, and the A-2 that Sweden flew as the T 2): a slim body with the glazed nose and a long canopy, a mid
-// wing tapered on its leading edge, two BMW radials, two long floats on struts, a tall fin (17.3 x 22.28 x 6.6 m).
+// wing with a straight trailing edge and its leading edge tapered, two BMW radials over the two long floats, a tall
+// fin (17.3 x 22.28 x 6.6 m). Measured on FM 30-30 (1943), sheet "Heinkel He. 115" (scaled to the published length
+// and span): the body's profile and plan, the long greenhouse, the wing's edges, the floats' length, place and depth,
+// the tailplane and fin, the heights of the wing, tailplane and floats (the head-on view lined up with the side view
+// by the floats' keels; it agrees with the body's underside); the nacelles' length an estimate (they hide over the
+// floats in the plan view).
 A['he-115'] = fig({
   cls: 'seaplane', length: 17.3, span: 22.28, height: 6.6,
-  body: [[8.65, 0.0, -0.5, 0.25], [8.2, 0.5, -0.8, 0.6], [7.0, 0.85, -0.95, 0.72], [5.6, 0.95, -1.0, 0.75], [2, 0.95, -1.0, 0.72], [-2, 0.8, -0.8, 0.6], [-6, 0.55, -0.25, 0.35], [-8.65, 0.4, 0.15, 0.1]],
-  wing: planOf([[0, 2.2, -1.4], [11.14, 0.4, -1.0]], 0.6), wingUp: 0.1, dihedral: 3,
-  fin: [[-5.0, 0], [-8.2, 0], [-8.8, 2.6], [-8.2, 3.0], [-7.4, 3.0]], finBase: 0.4,
-  tail: [[-6.0, 0.3], [-6.4, 3.6], [-7.6, 3.6], [-8.0, 0.3]], planeUp: 0.9,
+  body: [[8.65, 0.03, -0.34, 0.12], [8.14, 0.34, -0.8, 0.27], [7.62, 0.43, -0.96, 0.5], [7.12, 0.62, -0.93, 0.52], [6.1, 0.74, -0.9, 0.53], [5.1, 0.85, -0.88, 0.53], [3.0, 0.85, -0.85, 0.53], [0.5, 0.88, -0.78, 0.53], [-1.0, 0.95, -0.68, 0.53], [-2.0, 0.95, -0.56, 0.52], [-3.04, 0.93, -0.46, 0.49], [-4.05, 0.87, -0.34, 0.45], [-5.08, 0.8, -0.22, 0.38], [-6.1, 0.74, -0.09, 0.3], [-7.12, 0.69, 0.06, 0.22], [-8.14, 0.63, 0.12, 0.14], [-8.65, 0.6, 0.3, 0.05]],
+  wing: planOf([[0, 5.12, 0.03], [3.28, 5.15, 0.03], [4.27, 4.83, 0.03], [5.57, 4.42, 0.02], [6.87, 4.04, 0.16], [8.17, 3.69, 0.35], [9.47, 3.31, 0.51], [10.14, 3.08, 0.6], [10.46, 2.99, 0.73], [10.81, 2.7, 1.02], [11.14, 2.0, 1.6]]), wingUp: 0.04, dihedral: 3.5,
+  fin: [[-5.3, 0.75], [-8.6, 0.6], [-8.6, 3.1], [-8.35, 3.4], [-7.3, 3.42], [-7.0, 3.3], [-6.6, 2.87], [-6.1, 2.01], [-5.58, 1.05]], finBase: 0,
+  tail: planOf([[0.4, -5.92, -8.59], [2.3, -6.23, -8.55], [3.6, -6.49, -8.4], [4.27, -6.93, -8.11], [4.45, -7.4, -7.7]]), planeUp: 0.94,
   bodies: [
-    nac(3.1, -1.8, 0.62, 3.4, 0.05),
-    float(4.4, -5.2, -2.2, -3.0, 0.5, 2.9),
-    post(2.4, 2.2, -0.1, -2.2, 0.04, 3.2), post(-0.8, -1.0, -0.1, -2.2, 0.04, 3.2), post(1.0, 0.85, -0.6, -2.2, 0.04, 1.6),
+    nac(6.6, -1.6, 0.62, 2.45, 0.0),
+    float(8.6, -1.65, -2.1, -3.37, 0.63, 2.45),
+    post(4.3, 4.1, -0.3, -2.1, 0.04, 2.45), post(0.9, 0.7, -0.3, -2.1, 0.04, 2.45), post(3.0, 2.85, -0.6, -2.1, 0.04, 1.4),
   ],
-  props: [[3.2, 3.4, 0.05, 3.3, 3]],
-  glass: [pod(8.75, 7.2, 0.6, 0, -0.1, 0.5), bubble(5.8, 2.6, 1.25, 0.9, 0.85, 0.42)],
+  props: [[6.7, 2.45, 0.0, 3.3, 3]],
+  glass: [pod(8.7, 7.1, 0.55, 0, -0.2, 0.5), bubble(5.1, -0.5, 1.2, 0.8, 0.9, 0.42)],
 });
 
 // Late 298: a single-engined torpedo floatplane, the Hispano's pointed nose, a long glazed canopy, a straight

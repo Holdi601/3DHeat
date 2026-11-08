@@ -321,7 +321,10 @@ G['ztz-96b'] = { cls: 'mbt', ...ZTZ96, turret: turret(0.2, [[-2.2, 1.1], [-1.4, 
 // ---------------------------------------------------------------- light tanks and gun carriers
 
 // PT-76 (1951): a long boat hull, six road wheels and no return rollers, the small conical turret far forward, the 76 mm (7.63 x 3.15 m, 2.26 m).
-G['pt-76'] = { cls: 'light-tank', chassis: 'tracked', length: 6.91, width: 3.15, hullHeight: 1.55, roadWheels: 6, roadWheelRadius: 0.35, trackProfile: run(7.2, 0.85, [3.5, 0.55], [-3.6, 0.62], -3.0, 3.0), running: { wheels: [-2.75, -1.65, -0.55, 0.55, 1.65, 2.75] }, hullOutline: { top: [[-3.8, 1.35], [-3.6, 1.55], [1.6, 1.55], [3.8, 0.95]], bottom: [[-3.8, 0.75], [2.6, 0.7], [3.8, 0.95]], plan: [[-3.8, 1.5], [2.8, 1.55], [3.8, 1.2]], round: 8, stations: 12 }, turret: turret(1.2, [[-1.0, 0.7], [-0.7, 1.0], [0.5, 1.05], [1.0, 0.7]], [[-1.0, 0.5], [0.6, 0.6], [1.0, 0.45]], 2.6, 1.0), guns: [{ mount: 'turret', length: 3.4, calibre: 0.076, muzzle: true, extractor: 0.7, at: 0.5 }] };
+// Side profile, the turret's place and slopes, wheel, idler and sprocket places digitised from the flank drawing in
+// USAREUR Pam 30-60-1 (1973), the turret's plan from its top view; the 0.36 m tracks, 4.08 m on the ground, from its table.
+G['pt-76'] = { cls: 'light-tank', chassis: 'tracked', length: 6.91, width: 3.14, hullHeight: 1.47, roadWheels: 6, roadWheelRadius: 0.335, trackWidth: 0.36, trackProfile: [[-1.86, 0], [2.21, 0], [3.25, 0.5], [2.95, 0.83], [-2.65, 0.81], [-2.95, 0.45]], running: { wheels: [2.21, 1.41, 0.63, -0.16, -0.95, -1.86] }, hullOutline: { top: [[-3.455, 1.0], [-3.43, 1.47], [2.28, 1.47], [3.455, 1.24]], bottom: [[-3.455, 0.88], [3.2, 0.88], [3.455, 1.2]], plan: [[-3.455, 1.5], [2.6, 1.55], [3.455, 1.2]], round: 8, stations: 12 },
+  turret: turret(0.565, [[-1.155, 0.3], [-1.0, 0.6], [-0.6, 1.0], [0, 1.16], [0.6, 1.0], [1.0, 0.6], [1.155, 0.3]], [[-1.155, 0.05], [-0.78, 0.67], [0.73, 0.67], [1.155, 0.05]], 2.6, 1.05), guns: [{ mount: 'turret', length: 3.4, calibre: 0.076, muzzle: true, extractor: 0.7, at: 0.63, elevation: 0 }] };
 // FV101 Scorpion (1972): a small aluminium hull, five big road wheels, a small box turret with the short 76 mm (4.79 x 2.2 m, 2.1 m);
 // FV107 Scimitar the same with the long thin 30 mm RARDEN.
 const CVRT: GroundSpec = { chassis: 'tracked', length: 4.79, width: 2.2, hullHeight: 1.35, roadWheels: 5, roadWheelRadius: 0.3, trackProfile: run(4.6, 0.8, [2.3, 0.55], [-2.3, 0.6], -1.8, 1.9), running: { wheels: [-1.6, -0.8, 0, 0.8, 1.6] }, hullOutline: { top: [[-2.4, 1.1], [-2.3, 1.35], [0.7, 1.35], [2.4, 0.85]], bottom: [[-2.4, 0.6], [2.0, 0.6], [2.4, 0.85]], plan: [[-2.4, 1.1], [2.4, 1.0]], round: 10, stations: 10 }, turret: turret(-0.3, [[-0.9, 0.8], [-0.6, 0.95], [0.6, 0.95], [0.95, 0.7]], [[-0.9, 0.55], [0.6, 0.6], [0.95, 0.4]], 8, 0.9) };
@@ -384,8 +387,9 @@ G['bmd-3'] = { cls: 'ifv', ...BMD3, turret: { ...BMP2_TURRET, x: 0.2 }, guns: [G
 // BMD-4 (2004): the BMD-3 hull with the BMP-3's 100 mm + 30 mm module.
 G['bmd-4'] = { cls: 'ifv', ...BMD3, length: 6.1, turret: { ...BMP3_TURRET, x: 0.1 }, ...BMP3_WEAPONS, addOns: [barrel(1.1, 0.35, 0.32, 2.9)] };
 // BTR-D (1974): the BMD-1 stretched to six road wheels, no turret, a raised troop compartment (6.36 x 2.63 m).
-G['btr-d'] = { cls: 'apc-tracked', ...BMD, length: 6.36, roadWheels: 6, trackProfile: run(6.1, 0.75, [3.0, 0.5], [-3.05, 0.55], -2.6, 2.55), running: { wheels: [-2.3, -1.4, -0.5, 0.4, 1.3, 2.2], rollers: [-1.2, 1.0] }, hullOutline: { top: [[-3.18, 1.55], [-3.0, 1.62], [0.4, 1.62], [1.6, 1.3], [3.18, 0.7]], bottom: [[-3.18, 0.7], [2.6, 0.62], [3.18, 0.7]], plan: [[-3.18, 1.25], [1.8, 1.3], [3.18, 0.45]], round: 8, stations: 12 } };
-
+// BTR-D: the BMD's hull lengthened by a road wheel, its raised roof over the troop compartment (5.88 x 2.63 m, 1.67 m
+// published).
+G['btr-d'] = { cls: 'apc-tracked', ...BMD, length: 5.88, roadWheels: 6, trackProfile: run(5.64, 0.75, [2.77, 0.5], [-2.82, 0.55], -2.4, 2.36), running: { wheels: [-2.13, -1.29, -0.46, 0.37, 1.2, 2.03], rollers: [-1.1, 0.92] }, hullOutline: { top: [[-2.94, 1.55], [-2.77, 1.62], [0.37, 1.62], [1.48, 1.3], [2.94, 0.7]], bottom: [[-2.94, 0.7], [2.4, 0.62], [2.94, 0.7]], plan: [[-2.94, 1.25], [1.66, 1.3], [2.94, 0.45]], round: 8, stations: 12 } };
 // ---------------------------------------------------------------- BTR
 
 // BTR 8x8s: a boat hull with sides sloping in, the axles in pairs with a gap between; the BPU-1 cone turret with the 14.5 mm
@@ -1341,8 +1345,10 @@ G['c-ram-phalanx'] = { cls: 'spaa', chassis: 'wheeled', length: 14.5, width: 2.6
 ] };
 // ZSU-57-2 (1957): the T-54's hull thinned and shortened onto four big road wheels (6.22 x 3.27 m hull, 2.75 m), the big
 // open-topped turret with its sloped walls and the twin 57 mm S-68 with their pepperpot brakes.
-G['zsu-57-2'] = { cls: 'spaa', chassis: 'tracked', length: 6.22, width: 3.27, hullHeight: 1.4, roadWheels: 4, roadWheelRadius: 0.4, trackProfile: run(6.0, 0.85, [3.05, 0.6], [-3.05, 0.65], -2.45, 2.4), running: { wheels: [-2.05, -0.7, 0.65, 2.0] }, hullOutline: hull(6.22, 3.27, 1.4, 0.85, 1.6, 0.95, 0.15),
-  turret: { x: 0.55, length: 1.0, width: 1.0, height: 0.75, shape: 'box' }, guns: [{ mount: 'turret', count: 2, length: 4.4, calibre: 0.057, spread: 0.42, elevation: 0.2, at: 0.75, muzzle: true }], addOns: [
+// The 0.58 m tracks, 3.84 m on the ground, and the guns level with their bores 2.05 m up as USAREUR Pam 30-60-1
+// (1973) gives them.
+G['zsu-57-2'] = { cls: 'spaa', chassis: 'tracked', length: 6.22, width: 3.27, hullHeight: 1.4, roadWheels: 4, roadWheelRadius: 0.4, trackWidth: 0.58, trackProfile: run(6.0, 0.85, [3.05, 0.6], [-3.05, 0.65], -1.95, 1.9), running: { wheels: [-1.95, -0.66, 0.62, 1.9] }, hullOutline: hull(6.22, 3.27, 1.4, 0.85, 1.6, 0.95, 0.15),
+  turret: { x: 0.55, length: 1.0, width: 1.0, height: 0.75, shape: 'box' }, guns: [{ mount: 'turret', count: 2, length: 4.4, calibre: 0.057, spread: 0.42, elevation: 0, at: 0.87, muzzle: true }], addOns: [
     sl([0, 1.4, 1.4], [[-2.3, 0], [1.4, 0], [1.15, 1.15], [-2.3, 1.15]], 0.06, 'side', M), sl([1.35, 0, 1.95], rect(1.4, 0.55), 0.06, 'front', { pitch: 0.25 }),
     sl([-2.3, 0, 1.95], rect(1.4, 0.55), 0.06, 'front'), sl([-0.45, 0, 1.45], rect(1.8, 1.35), 0.04, 'plan', DARK),
   ] };
@@ -1391,6 +1397,8 @@ G['zu-23-2'] = { cls: 'towed-aa', chassis: 'towed', bare: true, length: 4.57, wi
   ...zu23(-0.15, 0, 0.5),
 ] };
 // Ural-375 with a ZU-23-2 on its bed: the low drop sides, the mount standing in the middle of the bed.
+// BTR-ZD (1980s): the BTR-D carrying a ZU-23-2 on its roof over the troop compartment, the guns level at rest.
+G['btr-zd'] = { ...G['btr-d'], cls: 'spaa', addOns: zu23(-1.0, 0, 1.62, 0) };
 G['ural-375-zu-23'] = { cls: 'spaa', ...URAL_4320, bed: 'none', turret: undefined, guns: undefined, addOns: [...cargo(-3.685, 0.25, 2.4, 1.3, 0.5), ...zu23(-1.7, 0, 1.3)] };
 /** A pickup's load bed behind its double cab: the floor, the sides, the tailgate. */
 const PICKUP_BED = cargo(-2.65, -1.15, 1.8, 0.85, 0.45);
@@ -1955,8 +1963,16 @@ G['type-60-sprg'] = { cls: 'tank-destroyer', chassis: 'tracked', length: 4.3, wi
 G['type-60-atm'] = { ...G['type-60-sprg'], cls: 'atgm', addOns: [hb(-0.5, 0, 1.25, 1.2, 1.6, 0.3), ...[-1, 1].flatMap((s) => [s * 0.45, s * 0.75].map((y) => beam([-0.9, y, 1.45], 0.15, 1.0, 0.12, 0.12, LT)))] };
 // BTR-152 (1950; the 6x6 armoured lorry, 6.55 x 2.32 m, 2.04 m): the long bonnet and the open box body on three axles;
 // BTR-152A with the ZPTU-2 twin 14.5 mm mount in the body, BTR-152D with the four-barrelled ZPTU-4.
-const BTR152: GroundSpec = { chassis: 'wheeled', length: 6.55, width: 2.32, hullHeight: 2.0, axles: 3, axleAt: [0.72, -0.32, -0.7], wheelRadius: 0.5, hullOutline: { top: [[-3.27, 1.95], [-3.1, 2.0], [0.9, 2.0], [1.3, 1.65], [3.0, 1.55], [3.27, 1.3]], bottom: [[-3.27, 0.8], [3.27, 0.8]], plan: [[-3.27, 1.12], [0.9, 1.16], [1.3, 0.8], [3.27, 0.7]], round: 12, stations: 12 }, openTop: true };
-G['btr-152a'] = { ...BTR152, cls: 'spaa', turret: turret(-1.0, circle6(0.75), [[-0.75, 0.45], [0.75, 0.45]], 4, 0.6, { up: -0.4 }), guns: [{ mount: 'turret', count: 2, spread: 0.3, length: 1.6, calibre: 0.0145, elevation: 0.3, at: 0.9 }] };
+// Side profile, axle places (3.3 + 1.13 m apart) and body heights digitised from the flank drawing in USAREUR Pam
+// 30-60-1 vol. IV (1973); the twin mount's bore 2.35 m up as that pamphlet's table gives it.
+const BTR152: GroundSpec = { chassis: 'wheeled', length: 6.55, width: 2.32, hullHeight: 2.0, axles: 3, axleAt: [0.76, -0.25, -0.6], wheelRadius: 0.5, hullOutline: { top: [[-3.27, 1.97], [-3.2, 1.99], [1.2, 1.99], [1.55, 1.53], [2.95, 1.42], [3.1, 1.19], [3.27, 0.95]], bottom: [[-3.27, 0.72], [-2.75, 0.72], [-2.6, 0.64], [1.9, 0.64], [2.1, 1.0], [3.0, 1.0], [3.27, 0.7]], plan: [[-3.27, 1.12], [1.2, 1.16], [1.55, 0.8], [3.27, 0.7]], round: 12, stations: 12 }, openTop: true };
+G['btr-152a'] = { ...BTR152, cls: 'spaa', turret: turret(-1.0, circle6(0.75), [[-0.75, 0.6], [0.75, 0.6]], 4, 0.6, { up: -0.2 }), guns: [{ mount: 'turret', count: 2, spread: 0.3, length: 1.6, calibre: 0.0145, elevation: 0.3, at: 0.92 }] };
+// M53/59 Praga (1959): the twin 30 mm on an armoured Praga V3S 6x6 - a long angular armoured body with the sloped
+// bonnet and the armoured cab, the gun mount over the back on its turntable. 6.98 m long on a 3.58 + 1.12 m
+// wheelbase, 2.41 m wide, the bores 2.41 m up (USAREUR Pam 30-60-1, 1973); 8.25-20 tyres; the body's breaks judged
+// from that pamphlet's photos (general proportions).
+G['m53-59'] = { cls: 'spaa', chassis: 'wheeled', length: 6.98, width: 2.41, hullHeight: 1.6, axles: 3, axleAt: [0.656, -0.37, -0.69], wheelRadius: 0.48, hullOutline: { top: [[-3.49, 1.55], [-3.4, 1.6], [0.7, 1.6], [0.95, 1.95], [1.55, 1.95], [2.1, 1.5], [3.25, 1.35], [3.49, 1.0]], bottom: [[-3.49, 0.7], [3.2, 0.62], [3.49, 0.62]], plan: [[-3.49, 1.18], [1.55, 1.2], [2.4, 0.95], [3.49, 0.85]], round: 10, stations: 12 },
+  turret: turret(-1.7, [[-0.75, 0.55], [-0.55, 0.75], [0.55, 0.75], [0.75, 0.55]], [[-0.75, 0.6], [0.75, 0.85]], 8, 0.7), guns: [{ mount: 'turret', count: 2, spread: 0.36, length: 2.9, calibre: 0.03, muzzle: true, elevation: 0, at: 0.95 }] };
 G['btr-152d'] = { ...BTR152, cls: 'spaa', turret: turret(-1.0, circle6(0.8), [[-0.8, 0.5], [0.8, 0.5]], 4, 0.6, { up: -0.4 }), guns: [{ mount: 'turret', count: 4, spread: 0.3, length: 1.6, calibre: 0.0145, elevation: 0.3, at: 1.0 }] };
 // R3 T20 FA-HS (1980s; the R3 Capraia 4x4): the small scout car with a one-man turret and its 20 mm.
 G['r3-t20'] = { ...G['r3-t106'], addOns: undefined, turret: turret(-0.6, [[-0.6, 0.5], [-0.45, 0.6], [0.4, 0.6], [0.6, 0.42]], [[-0.6, 0.42], [0.4, 0.5], [0.6, 0.35]], 6, 0.6), guns: [{ mount: 'turret', length: 1.8, calibre: 0.02, at: 0.5 }] };

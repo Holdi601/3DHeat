@@ -93,9 +93,11 @@ export interface NavalSpec {
   /**
    * Masts: pole (default), tripod (two legs splayed aft), lattice (a tapering
    * truss); yard, the yardarm's span (default a third of the beam); base, the
-   * height its foot stands on over the deck (a mast stepped on a bridge).
+   * height its foot stands on over the deck (a mast stepped on a bridge);
+   * rake, how far its top stands aft per metre of height (a modern
+   * destroyer's raked mast).
    */
-  masts?: { x: number; height: number; side?: number; kind?: 'pole' | 'tripod' | 'lattice'; yard?: number; base?: number }[];
+  masts?: { x: number; height: number; side?: number; kind?: 'pole' | 'tripod' | 'lattice'; yard?: number; base?: number; rake?: number }[];
   /**
    * Missile launchers: forward position, length, width. vls: flush cells, a
    * grid of hatches (default). box: a raised armoured box. tubes: canisters
@@ -123,6 +125,8 @@ export interface NavalSpec {
   bodies?: Outline[];
   /** The deck's rise to the bow above the freeboard (default a third of it). */
   sheer?: number;
+  /** How far the stem's foot at the waterline lies aft of the bow's tip on deck, m (0 a plumb stem; default from the hull's form). */
+  stem?: number;
   /** A raised forecastle (or a flush deck's break): where it ends, forward of the middle, and how far the deck steps down aft of it. */
   forecastle?: { x: number; step: number };
   /** The stern's width at the transom as a share of the beam (default 0.55; a cruiser stern narrower). */
@@ -607,7 +611,7 @@ function buildNavalAt(spec: NavalSpec): Template {
     if (round < 6) {
       // A rounded hull - a turtle-backed boat, a sampan, a hovercraft's skirt - keeps its lofted shape.
       outlineBody(cls === 'hovercraft' ? k.fixed : k.team, k.fr, hullO, cls === 'hovercraft' ? PAINT.dark : HULL, 14);
-    } else hullLoft(k, hullO, formOf(spec, kind, hullO), deckCol);
+    } else hullLoft(k, hullO, spec.stem === undefined ? formOf(spec, kind, hullO) : { ...formOf(spec, kind, hullO), rake: spec.stem }, deckCol);
     if (kind === 'carrier' && !spec.decks?.length) {
       // A flight deck wider than the hull, overhanging to the left.
       const plan: P2[] = [[half - L * 0.02, -b * 1.6], [-half, -b * 1.6], [-half, b * 1.15], [half - L * 0.02, b * 0.9]];
@@ -1249,21 +1253,29 @@ function mast(k: Kit, mt: NonNullable<NavalSpec['masts']>[number], side: number,
     plate(k.fixed, k.fr, [[mt.x + a1 * 1.6, side - a1 * 1.6], [mt.x - a1 * 1.6, side - a1 * 1.6], [mt.x - a1 * 1.6, side + a1 * 1.6], [mt.x + a1 * 1.6, side + a1 * 1.6]], tz, 0.15, PAINT.metal);
     rod([mt.x, side, tz], [mt.x, side, top], 0.15, 0.06);
   } else {
-    rod([mt.x, side, foot], [mt.x, side, top], Math.max(0.12, mt.height * 0.03), Math.max(0.06, mt.height * 0.008), detail(8, 5));
+    // A raked mast leans aft along its whole height: x at height z.
+    const r = mt.rake ?? 0;
+    const xa = (z: number) => mt.x - r * (z - foot);
+    rod([mt.x, side, foot], [xa(top), side, top], Math.max(0.12, mt.height * 0.03), Math.max(0.06, mt.height * 0.008), detail(8, 5));
     if (kind === 'pole' && h >= 12) {
       // A tall pole carries a platform for its lights and aerials and a second, shorter yard near the top.
       const p = Math.max(0.8, h * 0.04);
-      plate(k.fixed, k.fr, [[mt.x + p, side - p], [mt.x - p, side - p], [mt.x - p, side + p], [mt.x + p, side + p]], foot + h * 0.58, 0.12, PAINT.metal);
+      const xp = xa(foot + h * 0.58);
+      plate(k.fixed, k.fr, [[xp + p, side - p], [xp - p, side - p], [xp - p, side + p], [xp + p, side + p]], foot + h * 0.58, 0.12, PAINT.metal);
       const y2 = (mt.yard ?? Math.max(1.5, beam * 0.35)) * 0.55;
-      rod([mt.x, side - y2 / 2, foot + h * 0.9], [mt.x, side + y2 / 2, foot + h * 0.9], 0.06, 0.06, 4);
+      rod([xa(foot + h * 0.9), side - y2 / 2, foot + h * 0.9], [xa(foot + h * 0.9), side + y2 / 2, foot + h * 0.9], 0.06, 0.06, 4);
     }
     if (kind === 'tripod') {
-      for (const sd of [-1, 1]) rod([mt.x - h * 0.2, side + sd * h * 0.12, foot], [mt.x, side, foot + h * 0.62], Math.max(0.1, h * 0.022), 0.08);
+      // The legs splay aft of the mast's foot (a raked mast's further: they meet it where it leans over them).
+      const zj = foot + h * 0.62;
+      const xj = xa(zj);
+      for (const sd of [-1, 1]) rod([Math.min(mt.x, xj) - h * 0.2, side + sd * h * 0.12, foot], [xj, side, zj], Math.max(0.1, h * 0.022), 0.08);
       // The tripod's top: a small platform where its legs meet.
-      plate(k.fixed, k.fr, [[mt.x + 1, side - 1], [mt.x - 1.4, side - 1], [mt.x - 1.4, side + 1], [mt.x + 1, side + 1]].map(([x, s]) => [x, s] as P2), foot + h * 0.62, 0.15, PAINT.metal);
+      plate(k.fixed, k.fr, [[xj + 1, side - 1], [xj - 1.4, side - 1], [xj - 1.4, side + 1], [xj + 1, side + 1]].map(([x, s]) => [x, s] as P2), zj, 0.15, PAINT.metal);
     }
   }
   const yard = mt.yard ?? Math.max(1.5, beam * 0.35);
-  rod([mt.x, side - yard / 2, yardAt], [mt.x, side + yard / 2, yardAt], 0.08, 0.08, 4);
+  const xy = kind === 'lattice' ? mt.x : mt.x - (mt.rake ?? 0) * (yardAt - foot);
+  rod([xy, side - yard / 2, yardAt], [xy, side + yard / 2, yardAt], 0.08, 0.08, 4);
   m.emit(k.fixed);
 }

@@ -41,6 +41,11 @@ export interface WingSpec {
   /** A gull wing (Corsair, Stuka): the inner part bent down. */
   gull?: boolean;
   /**
+   * A gull's bend measured on a head-on drawing: `at` metres out from the centre line, the wing's middle there
+   * `drop` metres below its root's (default a third of the half span and three tenths of the body's height).
+   */
+  gullBend?: { at: number; drop: number };
+  /**
    * A swing wing's fixed glove: the moving wing pivots `span / 2` out from
    * the centreline, and the glove's leading edge starts `chord` ahead of the
    * wing's root leading edge at the fuselage (F-14, Tornado, MiG-23, B-1).
@@ -139,7 +144,7 @@ export interface FixedWingSpec {
   /** More wings: a triplane's middle wing, a sesquiplane's or a big biplane's extra planes. */
   extraWings?: WingSpec[];
   /** Canards; `up` is their height above the axis (default 15% of the half body height), for canards set high on the intakes. */
-  canard?: { x: number; span: number; chord: number; up?: number };
+  canard?: { x: number; span: number; chord: number; up?: number; dihedral?: number };
   tail: {
     kind: 'single' | 'twin' | 'v' | 't' | 'h' | 'none';
     /** Height of the fin's root (with `finPlan`; default the fuselage's upper side). */
@@ -204,6 +209,8 @@ export interface FixedWingSpec {
   sting?: number;
   /** Fixed main wheels in spats (Stuka, Val, biplanes, light aircraft). */
   fixedGear?: boolean;
+  /** Where a drawing puts the fixed main wheels: the wheel's middle forward and out, the spat's bottom (up from the axis). */
+  gearAt?: { x: number; side: number; bottom: number };
   /** Two floats under the wing (seaplanes). */
   floats?: boolean;
   /**
@@ -214,9 +221,9 @@ export interface FixedWingSpec {
    * tailplane's half planform (forward, out from the centre line) and the
    * fin's (forward, up from its root).
    */
-  fuselage?: Outline;
+  fuselage?: Body;
   /** A body with `oneSide: true` is drawn where it is, not mirrored, though off the centre line (the A-4's offset refuelling probe). */
-  bodies?: (Outline & { oneSide?: boolean })[];
+  bodies?: (Body & { oneSide?: boolean })[];
   wingPlan?: P2[];
   /** A swing wing: the outer panel turned about its pivot; `wingPlan` is then the fixed glove. */
   swing?: SwingWing;
@@ -234,6 +241,15 @@ export interface FixedWingSpec {
   /** The fins' thickness (default 5 % of the fin plan's chord, at least 0.1 m), so they show from the front. */
   finThickness?: number;
 }
+
+/**
+ * A body's outlines, optionally with its cross-section as a front view
+ * shows it: (height, half width) with the height from -1 at the bottom to 1
+ * at the top and the half width a share of the plan's there, the same shape
+ * at every station (a Me 262's triangle, a Bf 109's narrow top). Without it
+ * the sections are `round`'s superellipses.
+ */
+export type Body = Outline & { section?: P2[] };
 
 /**
  * A radial engine's open cowl, what tells a radial from an inline head on:
@@ -294,8 +310,8 @@ export function buildFixedWing(spec: FixedWingSpec): Template {
     const dih = Math.tan(((spec.wing.dihedral ?? 0) * Math.PI) / 180);
     // A gull wing (Stuka, Corsair: inverted) bends down over its inner third, then climbs with the dihedral.
     const half = spec.wing.span / 2;
-    const bend = half * 0.33;
-    const drop = -spec.bodyHeight * 0.3;
+    const bend = spec.wing.gullBend?.at ?? half * 0.33;
+    const drop = spec.wing.gullBend ? -spec.wing.gullBend.drop : -spec.bodyHeight * 0.3;
     // An outer panel with its own dihedral bends `at` out; the planform is cut there so the bend is an edge.
     const ob = spec.wing.outerDihedral;
     const outer = ob ? Math.tan((ob.deg * Math.PI) / 180) : 0;
@@ -329,7 +345,9 @@ export function buildFixedWing(spec: FixedWingSpec): Template {
     const c = spec.canard;
     const cu = c.up ?? bh * 0.15;
     const plan: P2[] = [[c.x + c.chord / 2, bw * 0.8], [c.x - c.chord / 2, bw * 0.8], [c.x - c.chord / 2, c.span / 2], [c.x - c.chord * 0.1, c.span / 2]];
-    for (const side of [-1, 1]) foil(k.team, k.fr, plan, (a, b) => [a, side * b, cu], [0, 0, 1], Math.max(0.06, c.chord * 0.06), grey(0.84));
+    // Drooped canards (Typhoon) fall from their root.
+    const ct = Math.tan(((c.dihedral ?? 0) * Math.PI) / 180);
+    for (const side of [-1, 1]) foil(k.team, k.fr, plan, (a, b) => [a, side * b, cu + (b - bw * 0.8) * ct], [0, 0, 1], Math.max(0.06, c.chord * 0.06), grey(0.84));
   }
   if (spec.booms) {
     const b = spec.booms;
@@ -399,6 +417,7 @@ function loft(out: FigBuffer, o: Outline, col: Rgb, segments = 14, topCol?: Rgb)
   const big = Math.max(...o.plan.map((p) => p[1]), ...o.top.map((p) => p[1]).map((t, i) => (t - (o.bottom[Math.min(i, o.bottom.length - 1)]?.[1] ?? 0)) / 2));
   const n = detail(big > 0.9 ? 20 : big > 0.35 ? 16 : 12, 8) - (segments <= 12 ? 2 : 0);
   const m = new Mesh();
+  const sec = (o as Body).section;
   const rows = sorted.map((x) => {
     const w = Math.max(1e-3, lerpPoly(o.plan, x));
     const t = lerpPoly(o.top, x);
@@ -411,6 +430,8 @@ function loft(out: FigBuffer, o: Outline, col: Rgb, segments = 14, topCol?: Rgb)
       const a = (i / n) * Math.PI * 2;
       const c = Math.cos(a);
       const sn = Math.sin(a);
+      // A drawn cross-section: the half width at each height as the front view has it (a Me 262's triangle).
+      if (sec) return m.v(at(LOCAL, x, side + w * Math.sign(c) * lerpPoly(sec, sn), z + h * sn), topCol && sn > 0.35 ? topCol : col);
       return m.v(at(LOCAL, x, side + w * Math.sign(c) * Math.abs(c) ** e, z + h * Math.sign(sn) * Math.abs(sn) ** e), topCol && sn > 0.35 ? topCol : col);
     });
   });
@@ -452,10 +473,11 @@ function straight(k: Kit, o: Outline, col: Rgb): void {
 /** Fixed main wheels in their spats under the wing roots, and a tail wheel. */
 function gear(k: Kit, spec: FixedWingSpec): void {
   const bh = spec.bodyHeight / 2;
-  const x = spec.wing.x + spec.wing.rootChord * 0.15;
-  const s = Math.max(spec.bodyWidth * 0.75, spec.span * 0.12);
-  const down = bh + Math.max(0.6, spec.height * 0.25);
+  const at = spec.gearAt;
+  const x = at?.x ?? spec.wing.x + spec.wing.rootChord * 0.15;
+  const s = at?.side ?? Math.max(spec.bodyWidth * 0.75, spec.span * 0.12);
   const r = Math.max(0.25, spec.height * 0.09);
+  const down = at ? -at.bottom - r * 0.05 : bh + Math.max(0.6, spec.height * 0.25);
   for (const side of [-1, 1]) {
     tube(k.fixed, k.fr, [x, side * s * 0.6, -bh * 0.5], [x, side * s, -down + r], 0.06, 0.05, PAINT.dark, 4);
     blob(k.team, k.fr, [x, side * s, -down + r], [r * 1.7, r * 0.55, r * 1.05], grey(0.82));
@@ -578,7 +600,12 @@ function tail(k: Kit, spec: FixedWingSpec): void {
     const base = t.finBase ?? top;
     const fins = spec.finPlan ?? [];
     const fh = fins.length ? Math.max(...fins.map((p) => p[1])) : 0;
-    const ft = spec.finThickness ?? (fins.length ? Math.max(0.1, (Math.max(...fins.map((p) => p[0])) - Math.min(...fins.map((p) => p[0]))) * 0.05) : 0.1);
+    const ft0 = spec.finThickness ?? (fins.length ? Math.max(0.1, (Math.max(...fins.map((p) => p[0])) - Math.min(...fins.map((p) => p[0]))) * 0.05) : 0.1);
+    // As thick as given where the fin is deepest, thinning with its chord to the tip as a real fin's section does
+    // (seen head on, a fin as thick at its tip as at its root stands out as a slab).
+    const lo = fins.length ? Math.min(...fins.map((p) => p[1])) : 0;
+    const deepest = fins.length ? Math.max(...Array.from({ length: 13 }, (_, i) => chordAt(fins, lo + ((fh - lo) * i) / 12))) : 1;
+    const ft = (h: number) => Math.max(MIN_THICKNESS, (ft0 * chordAt(fins, h)) / Math.max(1e-6, deepest));
     if (fins.length && (t.kind === 'single' || t.kind === 't')) foil(k.team, k.fr, fins, (a, h) => [a, 0, base + h], [0, 1, 0], ft, grey(0.82));
     if (fins.length && (t.kind === 'twin' || t.kind === 'h')) {
       const sp = (spec.booms?.spacing ?? t.spacing ?? spec.bodyWidth * 0.8) / 2;
@@ -594,7 +621,7 @@ function tail(k: Kit, spec: FixedWingSpec): void {
       for (const side of [-1, 1]) foil(k.team, k.fr, spec.tailPlan, (a, b) => [a, side * b, up + (b - root) * tan], [0, 0, 1], 0.12, grey(0.84), { under: UNDER });
     }
     if (t.kind === 'v' && fins.length) {
-      for (const side of [-1, 1]) foil(k.team, k.fr, fins, (a, h) => [a, side * h * 0.8, base + h * 0.6], unit([0, side * 0.6, -0.8]), ft * 0.8, grey(0.8));
+      for (const side of [-1, 1]) foil(k.team, k.fr, fins, (a, h) => [a, side * h * 0.8, base + h * 0.6], unit([0, side * 0.6, -0.8]), (h) => ft(h) * 0.8, grey(0.8));
     }
     return;
   }
