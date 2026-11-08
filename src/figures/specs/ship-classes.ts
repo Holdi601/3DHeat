@@ -1003,6 +1003,17 @@ N['yorktown'] = carrier({
   turrets: level('100,13.8:1/127 92,13.8:1/127 -102,13.8:1/127b -110,13.8:1/127b', 13, 14),
   more: { bodies: [blockOf(105, 87, 11.5, 13, 2.2, 0, 0, 13.4), blockOf(-97, -115, 11.5, 13, 2.2, 0, 0, 13.4)] },
 });
+// Wasp (CV-7): a smaller Yorktown on a narrower hull, the island to starboard with its tall funnel, the deck-edge lift
+// folding out on the port side forward of the middle, the 5-inch singles in galleries at the deck's four corners
+// (225.9 m overall, 24.6 m beam on the waterline; deck height an estimate).
+N['wasp-cv7'] = carrier({
+  cls: 'carrier', L: 215, B: 24.6, deck: 14.5,
+  plan: [[111, -8], [111, 8], [105, 12.5], [-104, 14], [-110, 12], [-110, -12], [-104, -14], [-4, -14], [-4, -17.5], [10, -17.5], [10, -13.8], [105, -12.5]],
+  island: [[10, -18, 21, 13.2, 2.6, 1], [6, -6, 25, 13.2, 2.2, 1], [-6, -18, 32, 13.4, 3.4, 3]],
+  masts: [[2, 22, 13.2]],
+  turrets: level('96,12.6:1/127 88,12.6:1/127 -92,12.6:1/127b -100,12.6:1/127b', 12.5, 13.5),
+  more: { bodies: [blockOf(101, 83, 11, 12.5, 2.0, 0, 0, 12.8), blockOf(-87, -105, 11, 12.5, 2.0, 0, 0, 12.8)] },
+});
 // Shokaku: a long flight deck, a small island well forward to starboard, the two funnels curving down and out over the
 // starboard side amidships, twin 12.7 cm mounts in sponsons along both sides (257.5 m long, 26 m beam on the
 // waterline; 32,105 t full).
@@ -2678,8 +2689,8 @@ const ALIASES: Record<string, string> = {
   'ijn_cvl_ryujo': 'ryujo',
   'uss_cv_enterprise': 'yorktown',
   'uss_cv_enterprise_story': 'yorktown',
-  'uss_cv_wasp': 'yorktown',
-  'uss_cv_wasp_story': 'yorktown',
+  'uss_cv_wasp': 'wasp-cv7',
+  'uss_cv_wasp_story': 'wasp-cv7',
   'uss_cv_immortal': 'yorktown',
   'uss_cv_lexington': 'lexington-cv2',
   'uss_cv_lexington_story': 'lexington-cv2',
