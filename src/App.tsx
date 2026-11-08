@@ -339,6 +339,10 @@ export function App() {
         setPlaying(!useStore.getState().timeline.playing);
       } else if (ev.code === 'KeyF') {
         engine?.frameDataset();
+      } else if (ev.code === 'KeyT' && !ev.ctrlKey && !ev.metaKey && !ev.altKey) {
+        // The tactical display, on and off.
+        const r = useReplayStore.getState();
+        r.setLook({ on: !r.look.on });
       } else if (ev.code === 'KeyC' && !ev.ctrlKey && !ev.metaKey && !ev.altKey) {
         // The camera's pose to the clipboard, as the readout over the view says it.
         void copyCameraPose(engine);

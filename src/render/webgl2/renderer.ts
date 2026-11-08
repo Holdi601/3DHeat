@@ -1,5 +1,6 @@
 import { VOL_CFG, VOL_INFO, VOL_M, VOL_POLY, VOLUME_BLOCK_FLOATS, type VolumeDraw } from '../../volumes/gpu';
 import { GlFigures } from './figures';
+import { GlPost } from './post';
 import { GlTracks } from './tracks';
 import { ATLAS_MIP_LEVELS } from '../../data/atlas';
 import { packLineStarts, type LineData } from '../../data/lines';
@@ -163,6 +164,9 @@ interface GlMesh {
   tile: boolean;
 }
 
+/** The scene pass's background; the tactical display swaps exactly this for its own. */
+const SCENE_CLEAR = [0.086, 0.09, 0.102] as const;
+
 export class Webgl2Renderer implements Renderer {
   readonly kind: BackendKind = 'webgl2';
 
@@ -274,6 +278,8 @@ export class Webgl2Renderer implements Renderer {
   private triVao: WebGLVertexArrayObject;
   /** Instanced figures, made on first use. */
   private figures: GlFigures | null = null;
+  /** The tactical display's screen pass; made the first time it is asked for. */
+  private post: GlPost | null = null;
   /** Every unit of a large dataset placed on the GPU (transform feedback): `tracks.ts`. */
   private tracks: GlTracks | null = null;
   private triBuf: WebGLBuffer;
@@ -1245,7 +1251,13 @@ export class Webgl2Renderer implements Renderer {
       if (params.mode !== 'team') this.drawHeat(params);
       else this.clearHeat();
     }
-    this.composite(params, signed);
+    const post = params.post ?? null;
+    const postFbo = post ? (this.post ??= new GlPost(gl)).begin(this.width, this.height, post.quality) : null;
+    this.composite(params, signed, postFbo);
+    if (post && this.post && this.sceneDepth) {
+      this.post.run(params, post, this.sceneDepth, SCENE_CLEAR, this.emptyVao);
+      this.readCapture();
+    }
 
     return { gpuMs: null };
   }
@@ -1258,7 +1270,7 @@ export class Webgl2Renderer implements Renderer {
     gl.enable(gl.DEPTH_TEST);
     gl.depthMask(true);
     gl.depthFunc(gl.LEQUAL);
-    gl.clearColor(0.086, 0.09, 0.102, 1);
+    gl.clearColor(SCENE_CLEAR[0], SCENE_CLEAR[1], SCENE_CLEAR[2], 1);
     gl.clearDepth(1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -2251,9 +2263,9 @@ export class Webgl2Renderer implements Renderer {
     gl.depthMask(true);
   }
 
-  private composite(params: FrameParams, signed: boolean): void {
+  private composite(params: FrameParams, signed: boolean, target: WebGLFramebuffer | null = null): void {
     const gl = this.gl;
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, target);
     gl.viewport(0, 0, this.width, this.height);
     gl.disable(gl.BLEND);
     gl.disable(gl.DEPTH_TEST);
@@ -2303,6 +2315,12 @@ export class Webgl2Renderer implements Renderer {
     // function called between frames returns whatever the driver happens to
     // leave behind — black on some, the previous frame on others, the right
     // answer often enough to look correct in testing.
+    if (!target) this.readCapture();
+  }
+
+  /** The capture readback, after the last pass into the canvas. */
+  private readCapture(): void {
+    const gl = this.gl;
     if (this.captureWanted) {
       const rgba = new Uint8Array(this.width * this.height * 4);
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -2856,6 +2874,7 @@ export class Webgl2Renderer implements Renderer {
   dispose(): void {
     const gl = this.gl;
     this.figures?.dispose();
+    this.post?.dispose();
     this.figures = null;
     this.tracks?.dispose();
     this.tracks = null;

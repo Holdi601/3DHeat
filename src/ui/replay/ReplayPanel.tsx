@@ -11,6 +11,7 @@ import { UnitList } from './UnitList';
 import { EventList } from './EventList';
 import { BookmarkPanel } from './BookmarkPanel';
 import { DisplayPanel } from './DisplayPanel';
+import { TacticalLookPanel } from './TacticalLookPanel';
 import { StatsPanel } from './StatsPanel';
 import { ToolsPanels } from './ToolsPanel';
 import { num, t } from '../../i18n';
@@ -32,6 +33,7 @@ export function ReplayPanel() {
       <UnitList />
       <EventList />
       <BookmarkPanel />
+      <TacticalLookPanel />
       <DisplayPanel />
       <StatsPanel />
       <ToolsPanels />

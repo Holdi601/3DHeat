@@ -508,6 +508,40 @@ export interface FrameParams {
    * inside them, or only those outside. Null or absent filters nothing.
    */
   volumes?: VolumeDraw | null;
+  /**
+   * The tactical display's screen pass (`post/tacticalPost.ts`): the composited
+   * picture re-drawn as a glowing telemetry display. Null or absent: the
+   * composite goes straight to the canvas, as always.
+   */
+  post?: PostDraw | null;
+}
+
+/** The tactical display look, as the renderers draw it (`post/tacticalPost.ts` packs it). */
+export interface PostDraw {
+  /** 0 low (one pass, no glow), 1 medium (quarter-res glow), 2 high (half-res glow, team-coloured edges, chroma). */
+  quality: 0 | 1 | 2;
+  bloom: number;
+  edges: number;
+  contours: number;
+  grid: number;
+  scanlines: number;
+  chroma: number;
+  vignette: number;
+  noise: number;
+  /** How far terrain is turned into the display's monochrome, 0..1. */
+  terrain: number;
+  /** The display's colour, linear 0..1. */
+  tint: [number, number, number];
+  /** World units between contour lines and between grid lines. */
+  contourSpacing: number;
+  gridSpacing: number;
+  /** World distances over which the scene fades into the background. */
+  fogNear: number;
+  fogFar: number;
+  /** Seconds, for the scan band. */
+  time: number;
+  /** A camera cut's flash, 1 at the cut falling to 0. */
+  flash: number;
 }
 
 export interface DofDraw {

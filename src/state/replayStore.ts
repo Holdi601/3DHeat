@@ -8,6 +8,7 @@
  * The choices of what to show are the viewer's own and kept in this browser.
  */
 
+import { DEFAULT_LOOK, readLook, type TacticalLook } from '../render/tacticalLook';
 import { create } from 'zustand';
 import type { UnitPrefs } from '../units/units';
 
@@ -179,6 +180,8 @@ interface Saved {
   limits: AltitudeLimits;
   /** The match replay's buildings, where the level paints them: solid in their colours, or see-through shells as the heat views draw them. */
   buildings: 'solid' | 'seeThrough';
+  /** The tactical display look (`render/tacticalLook.ts`): off unless asked. */
+  look: TacticalLook;
 }
 
 const KEY = 'heat3d.replay';
@@ -206,6 +209,7 @@ function saved(): Saved {
     geo: DEFAULT_GEO,
     limits: DEFAULT_LIMITS,
     buildings: 'solid',
+    look: DEFAULT_LOOK,
   };
   try {
     const v = JSON.parse(localStorage.getItem(KEY) ?? 'null');
@@ -233,6 +237,7 @@ function saved(): Saved {
       geo: readGeo(v.geo),
       limits: readLimits(v.limits),
       buildings: v.buildings === 'seeThrough' ? 'seeThrough' : 'solid',
+      look: readLook(v.look),
     };
   } catch {
     return fallback;
@@ -373,6 +378,7 @@ interface ReplayState extends Saved {
   setChart: (p: Partial<ChartSettings>) => void;
   setGeo: (p: Partial<GeoSettings>) => void;
   setLimits: (p: Partial<AltitudeLimits>) => void;
+  setLook: (p: Partial<TacticalLook>) => void;
 }
 
 export const useReplayStore = create<ReplayState>((set, get) => {
@@ -401,6 +407,7 @@ export const useReplayStore = create<ReplayState>((set, get) => {
       geo: s.geo,
       limits: s.limits,
       buildings: s.buildings,
+      look: s.look,
     });
     set(p);
   };
@@ -432,6 +439,7 @@ export const useReplayStore = create<ReplayState>((set, get) => {
     setChart: (p) => keep({ chart: { ...get().chart, ...p } }),
     setGeo: (p) => keep({ geo: { ...get().geo, ...p } }),
     setLimits: (p) => keep({ limits: { ...get().limits, ...p } }),
+    setLook: (p) => keep({ look: { ...get().look, ...p } }),
     setOverlay: (p) => set({ overlay: { ...get().overlay, ...p } }),
     setDropLines: (dropLines) => set({ dropLines }),
     patchSaved: keep,
