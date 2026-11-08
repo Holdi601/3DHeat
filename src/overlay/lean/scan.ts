@@ -358,6 +358,8 @@ export interface Pass1Result {
   samples: Uint32Array;
   /** Per unit: min x, y, z, max x, y, z, first and last time of its own samples. */
   box: Float64Array;
+  /** Per unit: the time of its first death row, Infinity for none (a wreck from then on, `data/deaths.ts`). */
+  death: Float64Array;
   /** Per unit and level of `levels`, keys kept. */
   keys: Uint32Array;
   levels: number[];
@@ -425,6 +427,7 @@ export function scanPass1(cols: Columns, n: number, s: LeanSpec, rowBase: number
   }
   const firstRow = new Float64Array(U).fill(-1);
   const lastRow = new Float64Array(U).fill(-1);
+  const death = new Float64Array(U).fill(Infinity);
   const firstOwn = new Int32Array(U).fill(-1);
   const samples = new Uint32Array(U);
   const G = p.groups.length;
@@ -452,6 +455,7 @@ export function scanPass1(cols: Columns, n: number, s: LeanSpec, rowBase: number
     if (u < 0) continue;
     if (firstRow[u] < 0) firstRow[u] = rowBase + i;
     lastRow[u] = rowBase + i;
+    if (p.death[i] && t[i] < death[u]) death[u] = t[i];
     if (!p.own[i]) continue;
     // Out of time order within the job: left out, so a track's keys only go forwards.
     const pr = th.prev[u];
@@ -487,6 +491,7 @@ export function scanPass1(cols: Columns, n: number, s: LeanSpec, rowBase: number
     lastRow,
     samples,
     box,
+    death,
     keys: th.count,
     levels: [...levels],
     meta,

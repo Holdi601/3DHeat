@@ -15,7 +15,8 @@ import { FADE_FROM, farLook, WEAPON_PX } from '../symbols/lod';
 import { INSTANCE_STRIDE, NO_PITCH, type FigureBatch } from '../../figures/instances';
 import { aimOf, type AimNow } from '../../figures/aim';
 import { emptyPose, evaluateTrack } from './evaluate';
-import { keyTime, TRACK_U32, type GpuTrackStore } from './store';
+import { keyTime, TRACK_U32, trackDeadAt, type GpuTrackStore } from './store';
+import { wreckColour } from '../../figures/wreck';
 import { isShown } from './visibility';
 
 interface Boxes {
@@ -150,7 +151,7 @@ export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): Figu
     const meshes = s.trackData[i * TRACK_U32 + 3];
     let mesh = meshes & 0xffff;
     if (trueLen < f.fullPx) mesh = meshes >>> 16;
-    if (trueLen < f.fullPx / 3) mesh = s.trackData[i * TRACK_U32 + 6];
+    if (trueLen < f.fullPx / 3) mesh = s.trackData[i * TRACK_U32 + 6] & 0xffff;
     const scale = look.trueSize ? f.scale : Math.max(f.scale, (f.minPixels * pxSize) / f32[i * TRACK_U32 + 4]);
     const c = s.trackData[i * TRACK_U32 + 2];
     const out = runs.add(mesh);
@@ -170,6 +171,14 @@ export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): Figu
     out[12] = (c & 255) / 255;
     out[13] = ((c >>> 8) & 255) / 255;
     out[14] = ((c >>> 16) & 255) / 255;
+    // A wreck now (`store.ts` setDeadSpan): its charred colour, negated (`figures/wreck.ts`), as the place shader has it.
+    const t0 = b.span[i * 2];
+    if (trackDeadAt(s.trackData, i, (f.t - t0) / Math.max(b.span[i * 2 + 1] - t0, 1e-6))) {
+      const w = wreckColour([out[12], out[13], out[14]]);
+      out[12] = -w[0];
+      out[13] = -w[1];
+      out[14] = -w[2];
+    }
     out[15] = aim && Number.isFinite(aimNow.pitch) ? aimNow.pitch : NO_PITCH;
     n++;
   }

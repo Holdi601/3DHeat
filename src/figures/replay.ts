@@ -28,7 +28,9 @@ import type { Frame3, Vec3 } from '../race/geometry';
 import { frameOfQuat, MotionModel } from './motion';
 import { figureFor } from './match';
 import { SWING_MACH } from './specs/swing';
-import { classify, Domain, isEffectDomain, packWord, WORD_BASE, WORD_MOVING } from './symbolClass';
+import { classify, Domain, isEffectDomain, packWord, WORD_BASE, WORD_DEAD, WORD_MOVING } from './symbolClass';
+import { deadAt, deathsOf } from '../data/deaths';
+import { wreckColour } from './wreck';
 import { chaffMetres, decoyAlpha, farLook, glyphPx } from '../render/symbols/lod';
 import { dartMesh } from '../render/symbols/darts';
 
@@ -334,6 +336,8 @@ export class FigureReplay {
     const far = o.farMode ?? -1;
     // A recorded camera is drawn as a camera with the display aids, not as a figure.
     const cams = cameraTracks(d);
+    // Wrecks: drawn charred from the death the data says until the unit is gone (`data/deaths.ts`).
+    const deaths = o.time !== undefined && d.personId ? deathsOf(d) : null;
     for (let i = 0; i < count; i++) {
       const c = i * CUBE_STRIDE;
       const row = rows[i];
@@ -365,11 +369,16 @@ export class FigureReplay {
       }
       if (!kind && o.unknown === 'soldier') kind = 'soldier';
       if (kind) kind = this.sweptKind(d, row, kind);
+      const dead = !!deaths && deaths.any && row >= 0 && deadAt(deaths, d.personId![row], o.time!);
+      // A wreck's colour, and the dead bit that crosses out its symbol; an instance carries the colour negated.
+      const wreck = dead ? wreckColour([cubes[c + 3], cubes[c + 4], cubes[c + 5]]) : null;
+      const shown: [number, number, number] = wreck ? wreck : [cubes[c + 3], cubes[c + 4], cubes[c + 5]];
+      const deadBit = dead ? WORD_DEAD : 0;
       const t = kind ? this.template(kind) : null;
       this.kindsDrawn[i] = t ? kind! : '';
       if (!t && far === 2 && o.pixelSize && dom !== Domain.Marker) {
         const yaw = cubes[c + 6];
-        this.glyph(cubes[c], cubes[c + 1], cubes[c + 2], glyphPx(dom, o.symbolPx ?? 28, far), [Math.sin(yaw), 0, -Math.cos(yaw)], 1, [0, 1, 0], [cubes[c + 3], cubes[c + 4], cubes[c + 5]], word);
+        this.glyph(cubes[c], cubes[c + 1], cubes[c + 2], glyphPx(dom, o.symbolPx ?? 28, far), [Math.sin(yaw), 0, -Math.cos(yaw)], 1, [0, 1, 0], shown, (word | deadBit) >>> 0);
         continue;
       }
       if (!t) {
@@ -407,7 +416,7 @@ export class FigureReplay {
         if (need > scale) scale = need;
       }
       if (row >= 0 && d.personId) this.drawnScale.set(d.personId[row], scale / Math.max(1e-9, o.scale));
-      const team: [number, number, number] = [cubes[c + 3], cubes[c + 4], cubes[c + 5]];
+      const team: [number, number, number] = wreck ? [-wreck[0], -wreck[1], -wreck[2]] : shown;
       // Ground figures keep level; aircraft and missiles take the pitch, and the roll where the data has one.
       const air = t.anchor === 'centre';
       let fr: Frame3;
@@ -434,16 +443,16 @@ export class FigureReplay {
       const drawn = small ? (t.coarse?.() ?? t) : t;
       if (look && (look.glyph > 0 || look.dart)) {
         const moving = dom !== Domain.Person && dom !== Domain.Static && dom !== Domain.Unknown;
-        const w = (word | (moving ? WORD_MOVING : 0)) >>> 0;
+        const w = (word | (moving && !dead ? WORD_MOVING : 0) | deadBit) >>> 0;
         if (look.dart) this.batches.add(DARTS, relativeFrame(fr, o.origin), Math.max(o.scale, ((o.minPixels ?? 0) * ps) || o.scale), team, 1, 0, -WORD_BASE - w);
-        if (look.glyph > 0) this.glyph(fr.o[0], fr.o[1], fr.o[2], glyphPx(dom, o.symbolPx ?? 28, far), fr.f, look.glyph, fr.u, team, w);
+        if (look.glyph > 0) this.glyph(fr.o[0], fr.o[1], fr.o[2], glyphPx(dom, o.symbolPx ?? 28, far), fr.f, look.glyph, fr.u, shown, w);
         if (look.figure <= 0) {
           this.placed.push({ box: i, row, kind: kind!, fr, scale, min: t.min, max: t.max });
           continue;
         }
       }
       const alpha = look ? look.figure : 1;
-      if (this.cpuPlace) placeFrame(this.tris, drawn, fr, scale, team);
+      if (this.cpuPlace) placeFrame(this.tris, drawn, fr, scale, shown);
       else if (aim && o.time !== undefined && hasJoints(drawn)) {
         // Its turret turned and its gun raised as the data has them now.
         aim.at(row, o.time, aimNow);

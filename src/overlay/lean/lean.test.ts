@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { AttributeColumn, Dataset } from '../../state/types';
-import { decodeKey, gpuTrackStore, TRACK_U32, FLAG_WEAPON, type GpuTrackStore } from '../../render/gpuTracks/store';
+import { decodeKey, gpuTrackStore, TRACK_U32, FLAG_WEAPON, trackDeadAt, type GpuTrackStore } from '../../render/gpuTracks/store';
 import { emptyPose, evaluateTrack } from '../../render/gpuTracks/evaluate';
 import { poseFrame } from '../../figures/kit';
 import { quatOfFrame } from '../../figures/motion';
@@ -289,6 +289,12 @@ describe('lean overlay loader', () => {
     expect(store.trackData[missile * TRACK_U32 + 5] & FLAG_WEAPON).toBeTruthy();
     const tank = b.dataset.personLabels.findIndex((l) => l.startsWith('u1 #1'));
     expect(store.trackData[tank * TRACK_U32 + 5] & FLAG_WEAPON).toBe(0);
+    // Killed at its last sample: a wreck from there on (`data/deaths.ts`), whatever the colours, and the others never.
+    expect(trackDeadAt(store.trackData, tank, 0.5)).toBe(false);
+    expect(trackDeadAt(store.trackData, tank, 1)).toBe(true);
+    expect(trackDeadAt(leanStore(b, 'group').trackData, tank, 1)).toBe(true);
+    const other = b.dataset.personLabels.findIndex((l) => l.startsWith('u0 #1'));
+    expect(trackDeadAt(store.trackData, other, 1)).toBe(false);
     // Its row in the standing-in dataset says what it is.
     const kind = b.dataset.attrs.find((a) => a.name === 'kind')!;
     expect(kind.categories![(kind.data as Uint32Array)[b.trackRow[tank]]]).toBe('tank');

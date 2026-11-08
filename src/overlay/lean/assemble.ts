@@ -19,7 +19,8 @@
 import { DatasetBuilder, type BlockAttr, type SourceBlock } from '../../data/builder';
 import { Dictionary } from '../../data/growable';
 import type { Dataset } from '../../state/types';
-import { TRACK_U32 } from '../../render/gpuTracks/store';
+import { setDeadSpan, TRACK_U32 } from '../../render/gpuTracks/store';
+import { packDeadSpan } from '../../data/deaths';
 import { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32, encodeChunk } from '../../render/gpuTracks/chunks';
 import { BOX, KEY_LEVELS, SPAN, STEPS, type LeanSpec, type Pass1Result, type Pass2Result } from './scan';
 import { holdFor } from '../../data/despawn';
@@ -144,6 +145,8 @@ export class LeanAssembler {
   private readonly uBox = new Column((n) => new Float64Array(n), NaN);
   private readonly uFirst = new Column((n) => new Float64Array(n), Infinity);
   private readonly uLast = new Column((n) => new Float64Array(n), -Infinity);
+  /** Its first death row's time in file seconds, Infinity for none. */
+  private readonly uDeath = new Column((n) => new Float64Array(n), Infinity);
   /** The job whose first own row of the unit came first, for what the unit is. */
   private readonly uMetaJob = new Column((n) => new Int32Array(n), 0x7fffffff);
   private readonly uMeta: Column<Uint32Array>[];
@@ -229,7 +232,7 @@ export class LeanAssembler {
       if (g === undefined) {
         g = this.units++;
         this.unitIndex.set(key, g);
-        for (const c of [this.uFile, this.uGroup, this.uSamples, this.uFirst, this.uLast, this.uMetaJob, this.uTeam, ...this.uMeta]) c.ensure(this.units);
+        for (const c of [this.uFile, this.uGroup, this.uSamples, this.uFirst, this.uLast, this.uDeath, this.uMetaJob, this.uTeam, ...this.uMeta]) c.ensure(this.units);
         this.uBox.ensure(this.units * BOX);
         this.uFile.data[g] = file;
         this.uGroup.data[g] = this.groupOf(file, r.match[u]);
@@ -239,6 +242,7 @@ export class LeanAssembler {
       ids[u] = g;
       this.uFirst.data[g] = Math.min(this.uFirst.data[g], r.firstRow[u]);
       this.uLast.data[g] = Math.max(this.uLast.data[g], r.lastRow[u]);
+      this.uDeath.data[g] = Math.min(this.uDeath.data[g], r.death[u]);
       if (!r.samples[u]) continue;
       this.uSamples.data[g] += r.samples[u];
       const b = this.uBox.data;
@@ -527,6 +531,9 @@ export class LeanAssembler {
       const cs = (k: number) => trackData[tr + 7] - head + ((k - first) >> CHUNK_SHIFT) * CHUNK_U32;
       // Held past its last key a few of its own sample intervals (`data/despawn.ts`), plus one.
       f32[tr + 14] = holdFor(keyInterval(keysA, CT, trackData[tr + 7] - head, first, n)) + 1;
+      // A wreck from its death on, across its own samples' times (`data/deaths.ts`).
+      const dt = this.uDeath.data[g];
+      if (dt < Infinity) setDeadSpan(trackData, tr, packDeadSpan(dt, Infinity, this.uBox.data[g * BOX + 6], this.uBox.data[g * BOX + 7]));
       for (let e = 0; e < 2; e++) {
         const k = e === 0 ? first : first + Math.max(0, n - 1);
         const r = i * 2 + e;
