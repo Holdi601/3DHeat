@@ -13,6 +13,7 @@
     "test:watch": "vitest",
     "smoke": "node tools/smoke.mjs",
     "smoke:f16": "node tools/smoke.mjs \"http://127.0.0.1:5273/?heat=f16\"",
+    "check:visual": "node tools/check-visual.mjs",
     "bench": "node tools/run-tagged.mjs BENCH src/data/bench.test.ts",
     "test:heavy": "node tools/run-tagged.mjs HEAVY src/data/realdata.test.ts",
     "inspect": "node tools/inspect-parquet.mjs"
