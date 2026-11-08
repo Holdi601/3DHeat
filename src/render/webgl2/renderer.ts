@@ -903,17 +903,39 @@ export class Webgl2Renderer implements Renderer {
       this.tileMeshes.delete(id);
       this.tileSources.delete(id);
     }
+    // Queued, and made a few at a time between frames; see the WebGPU renderer.
     for (const tile of added) {
+      this.tileSources.set(tile.id, tile);
+      this.tileQueue.push(tile);
+    }
+    if (this.tileMeshes.size === 0 && this.tileQueue.length === 0) this.tileBytes = 0;
+  }
+
+  /** Tiles set but not yet made; see `flushTiles`. */
+  private tileQueue: WorldTile[] = [];
+
+  /** Whether world tiles are still waiting to be made; the engine redraws the scene when they are. */
+  get uploadsPending(): boolean {
+    return this.tileQueue.length > 0;
+  }
+
+  /** Make queued tiles for up to `TILE_UPLOAD_MS` a frame, at least one. */
+  private flushTiles(): void {
+    const until = performance.now() + TILE_UPLOAD_MS;
+    let made = 0;
+    while (this.tileQueue.length > 0 && (made === 0 || performance.now() < until)) {
+      const tile = this.tileQueue.shift()!;
+      // Removed or replaced while it waited.
+      if (this.tileSources.get(tile.id) !== tile || this.tileMeshes.has(tile.id)) continue;
       const mesh = this.uploadMesh(tile, tile.bounds, true);
       if (tile.image && tile.uvs) {
         mesh.texture = this.uploadTileImage(tile.image);
         if (mesh.texture) mesh.bytes += textureBytes(tile.image.width, tile.image.height, true);
       }
       this.tileMeshes.set(tile.id, mesh);
-      this.tileSources.set(tile.id, tile);
       this.tileBytes += mesh.bytes;
+      made++;
     }
-    if (this.tileMeshes.size === 0) this.tileBytes = 0;
   }
 
   /**
@@ -1313,6 +1335,7 @@ export class Webgl2Renderer implements Renderer {
 
   render(params: FrameParams): FrameResult {
     const gl = this.gl;
+    this.flushTiles();
     this.flushDataUpload();
     // The line heat program, compiled off the frame rather than on the first
     // frame of line heat.
@@ -3244,6 +3267,8 @@ function timeQuantum(ds: Dataset, start: number, rows: number) {
 
 /** Milliseconds a frame spends packing and writing a dataset that is arriving; see `flushDataUpload`. */
 const DATA_UPLOAD_MS = 3;
+/** Milliseconds a frame spends making queued world tiles; see `flushTiles`. */
+const TILE_UPLOAD_MS = 3;
 /** Rows read or packed between checks of the clock: whole texture rows, few of them, as the first slices run before the code is optimised. */
 const DATA_SLICE_ROWS = 2 * ROW_TEX_WIDTH;
 
