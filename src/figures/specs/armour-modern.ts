@@ -342,8 +342,9 @@ G['chieftain-mk3'] = { cls: 'mbt', ...CHIEFTAIN, addOns: [SEARCHLIGHT] };
 const STILLBREW = tb(1.0, 0.95, 0.42, 0.9, 0.7, 0.6, { ...M, yaw: -0.45 });
 G['chieftain-mk10'] = { cls: 'mbt', ...CHIEFTAIN, addOns: [SEARCHLIGHT, STILLBREW] };
 G['chieftain-mk11'] = { cls: 'mbt', ...CHIEFTAIN, addOns: [STILLBREW, tb(0.1, 1.68, 0.5, 1.4, 0.42, 0.55)] };
-// T-84 Oplot-M (2009): the T-80UD hull with a welded turret under Nizh ERA and a large bustle box (hull 7.08 x 3.78 m).
-G['t-84-oplot-m'] = { cls: 'mbt', ...T80, length: 7.08, width: 3.78, turret: turret(0.2, [[-2.3, 1.2], [-1.6, 1.45], [0.5, 1.62], [1.6, 1.55], [2.0, 1.0], [2.1, 0.5]], [[-2.3, 0.62], [-1.6, 0.7], [0.6, 0.84], [1.6, 0.82], [2.1, 0.5]], 8, 1.95), addOns: [...T80_GLACIS(0.24), ...skirtBoxes(0.3, 3.4, 1.9, 0.6, 0.5, 4, 0.16), { on: 'turret', kind: 'drum', at: [-0.2, 0.75, 1.1], size: [0.4, 0.4, 0.5] }, hb(-2.4, 0, 1.5, 2.0, 2.9, 0.22)] };
+// T-84 Oplot-M (2009): the T-80UD hull with a welded turret under Nizh ERA and a large bustle box (hull 7.08 x 3.78 m);
+// the turret ring where the T-80's is (see `T80`), the bustle over the engine deck.
+G['t-84-oplot-m'] = { cls: 'mbt', ...T80, length: 7.08, width: 3.78, turret: turret(-0.8, [[-2.3, 1.2], [-1.6, 1.45], [0.5, 1.62], [1.6, 1.55], [2.0, 1.0], [2.1, 0.5]], [[-2.3, 0.62], [-1.6, 0.7], [0.6, 0.84], [1.6, 0.82], [2.1, 0.5]], 8, 1.95), addOns: [...T80_GLACIS(0.24), ...skirtBoxes(0.3, 3.4, 1.9, 0.6, 0.5, 4, 0.16), { on: 'turret', kind: 'drum', at: [-0.2, 0.75, 1.1], size: [0.4, 0.4, 0.5] }, hb(-2.4, 0, 1.5, 2.0, 2.9, 0.22)] };
 // ZTZ-96 (1997): a T-72-like hull, a welded turret with an upright front; ZTZ-96B (2016) arrowhead ERA on the front, a bustle box.
 // Its own running gear and gun mount, not the T-72's measured ones: the track run and gun height stay estimates.
 const ZTZ96 = { ...T72, hullOutline: hull(6.86, 3.59, 1.4, 0.8, 1.9, 0.95, 0.15), length: 6.9, width: 3.5, trackProfile: run(6.7, 0.88, [3.35, 0.62], [-3.35, 0.7], -2.75, 2.7), guns: [{ ...T72.guns![0], at: 0.42 }] };
@@ -529,8 +530,9 @@ G['aav-7a1'] = { cls: 'apc-tracked', chassis: 'tracked', length: 7.94, width: 3.
 // BMPT (2011): the T-72 hull with Relikt on the glacis and the screens and slat armour round the back, a grenade
 // launcher pod on each front fender, and the unmanned weapon module raised on a collar - a broad box turret, the twin
 // 2A42 30 mm in an armoured housing on its roof, two armoured Ataka launchers each side, the commander's sight on its
-// post at the rear right (7.2 x 3.8 m over the screens, 3.44 m). Module shapes are estimates from public photographs.
-const BMPT_TURRET = (up: number) => turret(0.2, [[-1.5, 0.95], [-1.3, 1.15], [0.9, 1.2], [1.4, 0.9], [1.5, 0.5]], [[-1.5, 0.62], [0.9, 0.8], [1.5, 0.45]], 10, 1.5, { up });
+// post at the rear right (7.2 x 3.8 m over the screens, 3.44 m). Module shapes are estimates from public photographs;
+// the module on the T-72's turret ring behind the hull's middle (a parade photograph, CC BY 2.0, sources.md).
+const BMPT_TURRET = (up: number) => turret(-0.8, [[-1.5, 0.95], [-1.3, 1.15], [0.9, 1.2], [1.4, 0.9], [1.5, 0.5]], [[-1.5, 0.62], [0.9, 0.8], [1.5, 0.45]], 10, 1.5, { up });
 const BMPT_GUNS: GunSpec[] = [{ mount: 'turret', count: 2, length: 2.3, calibre: 0.03, spread: 0.45, at: 1.25 }];
 const BMPT_MODULE = (launcher: number): AddOn[] => [
   tb(0.45, 0, 1.0, 1.8, 0.95, 0.42),
@@ -538,11 +540,11 @@ const BMPT_MODULE = (launcher: number): AddOn[] => [
   { on: 'turret', kind: 'drum', at: [-1.1, 0.7, 1.13], size: [0.3, 0.3, 0.7] },
   tb(-1.1, 0.7, 1.63, 0.5, 0.45, 0.32, DARK),
 ];
-G['bmpt-terminator'] = { cls: 'ifv', ...T72, turret: BMPT_TURRET(0.25), guns: BMPT_GUNS, addOns: [...BMPT_MODULE(0.42), hb(0.2, 0, 1.52, 2.6, 2.2, 0.25),
+G['bmpt-terminator'] = { cls: 'ifv', ...T72, turret: BMPT_TURRET(0.25), guns: BMPT_GUNS, addOns: [...BMPT_MODULE(0.42), hb(-0.8, 0, 1.52, 2.6, 2.2, 0.25),
   ...T72_GLACIS(0.26), ...skirtBoxes(-2.0, 3.2, 1.82, 0.62, 0.55, 5, 0.18), hb(2.7, 1.55, 1.05, 0.9, 0.45, 0.45, M), ...slats(-3.3, -2.0, 1.9, 1.15, 0.95)] };
 // BMPT-72 "Terminator 2" (2013): the module on a T-72's own hull - no grenade launcher pods, the launchers in thicker
 // armoured boxes, a lower collar, slat armour down the back of the sides and round the rear (3.6 m wide, 3.33 m).
-G['bmpt-72'] = { cls: 'ifv', ...T72, turret: BMPT_TURRET(0.14), guns: BMPT_GUNS, addOns: [...BMPT_MODULE(0.52), hb(0.2, 0, 1.47, 2.6, 2.2, 0.14),
+G['bmpt-72'] = { cls: 'ifv', ...T72, turret: BMPT_TURRET(0.14), guns: BMPT_GUNS, addOns: [...BMPT_MODULE(0.52), hb(-0.8, 0, 1.47, 2.6, 2.2, 0.14),
   ...T72_GLACIS(0.22), ...skirtBoxes(1.0, 3.2, 1.78, 0.62, 0.42, 3), ...slats(-3.3, -1.3, 1.85, 1.15, 0.95)] };
 // HS.30 / SPz 12-3 (1959): a low hull on five road wheels, the small 20 mm turret offset right (5.56 x 2.54 m, 1.85 m).
 G['spz-12-3'] = { cls: 'ifv', chassis: 'tracked', length: 5.56, width: 2.54, hullHeight: 1.45, roadWheels: 5, roadWheelRadius: 0.32, trackProfile: run(5.4, 0.8, [2.65, 0.55], [-2.7, 0.55], -2.1, 2.1), running: { wheels: [-1.8, -0.9, 0, 0.9, 1.8] }, hullOutline: { top: [[-2.78, 1.3], [-2.6, 1.45], [0.8, 1.45], [2.78, 0.85]], bottom: [[-2.78, 0.75], [2.5, 0.75], [2.78, 0.85]], plan: [[-2.78, 1.25], [2.78, 1.2]], round: 10, stations: 10 }, turret: turret(0.6, [[-0.55, 0.45], [0.5, 0.45], [0.6, 0.3]], [[-0.55, 0.42], [0.6, 0.3]], 6, 0.6, { side: 0.5 }), guns: [{ mount: 'turret', length: 1.8, calibre: 0.02, at: 0.5 }] };
