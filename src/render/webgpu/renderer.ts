@@ -65,6 +65,8 @@ import { t } from '../../i18n';
 /** Largest block index texture we size the per-frame buffer for. */
 const MAX_BLOCKS = MAX_PLAN_BLOCKS;
 const BLOCK_SHIFT = Math.log2(SAMPLE_BLOCK);
+/** Milliseconds a frame spends making queued world tiles; see `flushTiles`. */
+const TILE_UPLOAD_MS = 3;
 /** Milliseconds a frame spends packing and writing a dataset that is arriving; see `flushDataUpload`. */
 const DATA_UPLOAD_MS = 3;
 /** Rows read or packed between checks of the clock: small, as the first slices run before the code is optimised. */
@@ -625,7 +627,7 @@ export class WebgpuRenderer implements Renderer {
 
   /** Whether geometry is still on its way; the engine redraws the scene when it lands. */
   get uploadsPending(): boolean {
-    return this.uploading.size > 0;
+    return this.uploading.size > 0 || this.tileQueue.length > 0;
   }
 
   /** Whether all of a mesh's geometry has arrived. */
@@ -1565,14 +1567,33 @@ export class WebgpuRenderer implements Renderer {
       this.tileMeshes.delete(id);
       this.tileSources.delete(id);
     }
+    // Queued, and made a few at a time between frames: a streaming burst of
+    // tiles, each with its geometry and a full-size image copy, was a frame
+    // lost whenever the view moved over new ground.
     for (const tile of added) {
+      this.tileSources.set(tile.id, tile);
+      this.tileQueue.push(tile);
+    }
+    if (this.tileMeshes.size === 0 && this.tileQueue.length === 0) this.tileBytes = 0;
+  }
+
+  /** Tiles set but not yet made; see `flushTiles`. */
+  private tileQueue: WorldTile[] = [];
+
+  /** Make queued tiles for up to `TILE_UPLOAD_MS` a frame, at least one. */
+  private flushTiles(): void {
+    const until = performance.now() + TILE_UPLOAD_MS;
+    let made = 0;
+    while (this.tileQueue.length > 0 && (made === 0 || performance.now() < until)) {
+      const tile = this.tileQueue.shift()!;
+      // Removed or replaced while it waited.
+      if (this.tileSources.get(tile.id) !== tile || this.tileMeshes.has(tile.id)) continue;
       const mesh = this.uploadMesh(tile, tile.bounds, true, `tile ${tile.id}`);
       this.tileMeshes.set(tile.id, mesh);
-      this.tileSources.set(tile.id, tile);
       this.tileBytes += mesh.bytes;
       if (tile.image && tile.uvs) this.uploadTileImage(tile.image, mesh, tile.id);
+      made++;
     }
-    if (this.tileMeshes.size === 0) this.tileBytes = 0;
   }
 
   /**
@@ -1894,6 +1915,7 @@ export class WebgpuRenderer implements Renderer {
     // Uniform slots are handed out fresh each frame, which keeps the bind-group
     // cache keys stable rather than growing without bound.
     this.uniforms.reset();
+    this.flushTiles();
     this.flushUploads();
     this.flushDataUpload();
     this.prewarm();
