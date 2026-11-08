@@ -506,16 +506,17 @@ A['c-47'] = mp(C47);
 A['li-2'] = mp({ ...C47, length: 19.65, span: 28.81, height: 5.15, extra: [dome(0.6, 1.25, 0.5, 1.2)] });
 
 // Ju 52/3m: a slab-sided corrugated box, a thick low wing tapered both ways, three radials (one in the nose), fixed
-// main wheels under the nacelles, a round-topped fin (18.9 x 29.25 x 4.5 m).
+// main wheels under the nacelles, a round-topped fin (18.9 x 29.25 x 4.5 m). The wing's planform, the nacelles and the
+// tailplane measured on FM 30-30 (1943), sheet "Ju. 52" (tools/figures/twinview.py).
 A['ju-52'] = mp({
   cls: 'transport', length: 18.9, span: 29.25, height: 4.5,
   body: [[9.45, -0.1, -0.85, 0.35], [9.0, 0.35, -1.1, 0.7], [8.3, 0.4, -1.15, 0.72], [7.6, 0.7, -1.15, 0.8], [6.6, 1.25, -1.15, 0.95], [5.6, 1.4, -1.15, 0.95], [-3, 1.35, -1.0, 0.9], [-6.5, 1.1, -0.3, 0.65], [-9.45, 0.85, 0.4, 0.15]], round: [[9.4, 2.2], [7.5, 3.5], [-9.45, 4]],
-  wing: [[0, 3.6, -2.0], [14.6, 1.0, -0.3]], tipR: 0.5, wingUp: -0.55, dihedral: 4,
-  nacelles: [{ y: 4.6, x: 5.0, back: 0.6, r: 0.6, z: -0.55, kind: 'radial' }],
+  wing: [[0, 5.78, 0.59], [2.72, 5.74, 0.61], [7.31, 5.02, 1.2], [12.65, 4.21, 1.88], [14.1, 3.97, 2.05], [14.6, 3.5, 2.4]], tipR: 0.5, wingUp: -0.55, dihedral: 4,
+  nacelles: [{ y: 3.69, x: 7.25, back: 0.75, r: 0.6, z: -0.55, kind: 'radial' }],
   noseProp: 9.55,
   prop: [3.4, 3],
   fin: [[-5.8, 1.1], [-7.2, 1.5], [-8.0, 3.0], [-8.6, 3.2], [-9.2, 2.9], [-9.5, 0.8]],
-  tail: [[0, -7.6, -9.3], [3.6, -8.0, -9.2]], tailR: 0.4, tailUp: 0.7,
+  tail: [[0, -7.18, -9.25], [2.95, -7.35, -9.28], [4.66, -8.47, -9.1]], tailR: 0.4, tailUp: 0.7,
   extra: [...wheel(2.6, 2.6, -0.8, -2.6, 0.5, true)],
 });
 
@@ -1525,9 +1526,11 @@ A['ba-349-natter'] = { ...jet({ cls: 'rocket-plane', length: 6.02, span: 4.0, he
 // ---------------------------------------------------------------- four-engined bombers and the Hampden
 
 // Short Stirling: a long slab-sided body, a short broad mid wing with four Hercules, a tall single fin (26.59 x 30.2 x 6.93 m).
-A['stirling'] = mp({ hood: { front: 10.6, back: 8.4 }, glazed: 12.0, cls: 'ww2-heavy-bomber', length: 26.59, span: 30.2, height: 6.93, body: [[13.3, 0.3, -0.6, 0.5], [12.6, 1.0, -1.1, 0.9], [11.0, 1.4, -1.4, 1.0], [9.8, 1.75, -1.45, 1.0], [-6, 1.6, -1.45, 1.0], [-11, 1.2, -0.6, 0.75], [-13.3, 0.8, 0.2, 0.4]], round: 3.2, wing: [[0, 3.0, -2.8], [15.1, 1.0, -0.6]], tipR: 0.5, wingUp: -0.2, dihedral: 4, nacelles: [{ y: 4.4, x: 4.6, back: -2.6, r: 0.75, z: -0.2, kind: 'radial', below: 0.4 }, { y: 8.4, x: 4.0, back: -2.0, r: 0.75, z: 0.1, kind: 'radial', below: 0.4 }], prop: [4.0, 3], fin: [[-7, 1.6], [-9.6, 2.5], [-11.6, 5.4], [-12.8, 5.6], [-13.4, 5.0], [-13.3, 1.0]], tail: [[0, -10.2, -13.0], [5.6, -11.4, -12.9]], tailR: 0.4, tailUp: 0.8, extra: [dome(-1.5, 1.6, 0.5, 1.2)] });
+// The Stirling's wing planform, nacelles and tailplane measured on FM 30-30 (1943), sheet "Stirling" (tools/figures/twinview.py).
+A['stirling'] = mp({ hood: { front: 10.6, back: 8.4 }, glazed: 12.0, cls: 'ww2-heavy-bomber', length: 26.59, span: 30.2, height: 6.93, body: [[13.3, 0.3, -0.6, 0.5], [12.6, 1.0, -1.1, 0.9], [11.0, 1.4, -1.4, 1.0], [9.8, 1.75, -1.45, 1.0], [-6, 1.6, -1.45, 1.0], [-11, 1.2, -0.6, 0.75], [-13.3, 0.8, 0.2, 0.4]], round: 3.2, wing: [[0, 6.41, 0.31], [3.03, 6.35, 0.42], [6.03, 6.1, 1.01], [9.24, 5.82, 1.66], [13.05, 5.49, 2.43], [15.1, 4.7, 3.5]], tipR: 0.5, wingUp: -0.2, dihedral: 4, nacelles: [{ y: 4.1, x: 8.95, back: 1.0, r: 0.75, z: -0.2, kind: 'radial', below: 0.4 }, { y: 8.2, x: 8.5, back: 1.5, r: 0.75, z: 0.1, kind: 'radial', below: 0.4 }], prop: [4.0, 3], fin: [[-7, 1.6], [-9.6, 2.5], [-11.6, 5.4], [-12.8, 5.6], [-13.4, 5.0], [-13.3, 1.0]], tail: [[0, -9.3, -11.73], [4.24, -9.72, -11.48], [6.48, -10.41, -10.94]], tailR: 0.4, tailUp: 0.8, extra: [dome(-1.5, 1.6, 0.5, 1.2)] });
 // Handley Page Halifax B Mk III: a deep body with the nose glazing, four Hercules, big square twin fins (21.82 x 31.75 x 6.32 m).
-A['halifax'] = mp({ hood: { front: 8.6, back: 6.6 }, glazed: 9.6, cls: 'ww2-heavy-bomber', length: 21.82, span: 31.75, height: 6.32, body: [[10.91, 0.0, -0.5, 0.4], [10.3, 0.8, -0.9, 0.85], [9.0, 1.2, -1.2, 0.95], [7.8, 1.55, -1.3, 0.98], [-4, 1.45, -1.3, 0.95], [-8.5, 1.1, -0.6, 0.7], [-10.91, 0.8, 0.1, 0.35]], round: 3, wing: [[0, 3.0, -2.4], [15.88, 0.6, -0.8]], tipR: 0.5, wingUp: -0.1, dihedral: 4, nacelles: [{ y: 3.8, x: 4.4, back: -2.8, r: 0.72, z: -0.1, kind: 'radial', below: 0.2 }, { y: 7.8, x: 3.8, back: -2.4, r: 0.72, z: 0.2, kind: 'radial', below: 0.2 }], prop: [3.9, 3], fin: [[-8.3, -0.8], [-8.4, 2.2], [-8.8, 2.5], [-10.4, 2.5], [-10.6, 2.1], [-10.6, -0.8], [-10.2, -1.1], [-8.6, -1.1]], twin: 7.6, tail: [[0, -8.0, -10.4], [3.8, -8.2, -10.4]], tailUp: 0.6, extra: [dome(-1.0, 1.45, 0.55, 1.2)] });
+// The Halifax's wing planform, nacelles, tailplane and fins' spacing measured on FM 30-30 (1943), sheet "Halifax" (tools/figures/twinview.py).
+A['halifax'] = mp({ hood: { front: 8.6, back: 6.6 }, glazed: 9.6, cls: 'ww2-heavy-bomber', length: 21.82, span: 31.75, height: 6.32, body: [[10.91, 0.0, -0.5, 0.4], [10.3, 0.8, -0.9, 0.85], [9.0, 1.2, -1.2, 0.95], [7.8, 1.55, -1.3, 0.98], [-4, 1.45, -1.3, 0.95], [-8.5, 1.1, -0.6, 0.7], [-10.91, 0.8, 0.1, 0.35]], round: 3, wing: [[0, 4.28, -0.61], [5.7, 4.1, -0.53], [9.76, 3.4, -0.19], [14.28, 2.72, 0.3], [15.88, 2.2, 1.0]], tipR: 0.5, wingUp: -0.1, dihedral: 4, nacelles: [{ y: 4.04, x: 6.77, back: -0.99, r: 0.72, z: -0.1, kind: 'radial', below: 0.2 }, { y: 8.18, x: 5.79, back: -0.32, r: 0.72, z: 0.2, kind: 'radial', below: 0.2 }], prop: [3.9, 3], fin: [[-8.3, -0.8], [-8.4, 2.2], [-8.8, 2.5], [-10.4, 2.5], [-10.6, 2.1], [-10.6, -0.8], [-10.2, -1.1], [-8.6, -1.1]], twin: 9.5, tail: [[0, -6.61, -9.65], [3.26, -7.65, -9.79], [4.95, -7.85, -9.38]], tailUp: 0.6, extra: [dome(-1.0, 1.45, 0.55, 1.2)] });
 // Pe-8: four inlines in long nacelles, the inboard pair deep with the radiators under them, a mid wing, a long raised
 // greenhouse from the cockpit back to the dorsal turret, a tall single fin (23.59 x 39.13 x 6.2 m). Outlines measured on
 // the U.S. Army-Navy Journal of Recognition (Jan. 1944), sheet "TB-7" (scaled to the published length and span): the
