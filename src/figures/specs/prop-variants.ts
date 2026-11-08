@@ -1775,7 +1775,8 @@ A['ia-58'] = { ...A['ia-58'], tail: { ...A['ia-58'].tail, planeUp: 0.4 + 2.7 } }
 
 // Twin-engined bombers.
 // Il-4 (DB-3F): a long pointed glazed nose, the stepped cockpit, radials, a single fin (14.8 x 21.44 x 4.1 m).
-A['il-4'] = tw({ cls: 'ww2-bomber', length: 14.8, span: 21.44, height: 4.1, w: 0.62, h: 0.8, nose: 'stepped', cockpit: 3.2, hoodLen: 1.8, radial: true, nacR: 0.72, nacBack: 1.0, wingZ: -0.1, finH: 2.0, prop: [3.25, 3], turrets: [-1.6] });
+// The wing's root leading edge and chords and the nacelles measured on the Journal of Recognition's sheet "DB-3F" (Jan. 1944).
+A['il-4'] = tw({ cls: 'ww2-bomber', length: 14.8, span: 21.44, height: 4.1, w: 0.62, h: 0.8, nose: 'stepped', cockpit: 3.2, hoodLen: 1.8, radial: true, nacR: 0.75, nacY: 0.225, nacBack: 0.98, le: 4.2, root: 4.25, tip: 1.5, wingZ: -0.1, finH: 2.0, prop: [3.25, 3], turrets: [-1.6] });
 // SB-2: a slim body with the glazed nose, the cockpit on top, inline engines with frontal radiators, a single fin (12.27 x 20.33 x 3.6 m); the Ar-2 dive bomber is its development.
 A['sb-2'] = tw({ cls: 'ww2-bomber', length: 12.27, span: 20.33, height: 3.6, w: 0.5, h: 0.7, nose: 'stepped', cockpit: 2.6, hoodLen: 1.5, nacR: 0.55, nacBack: 0.9, wingZ: 0, finH: 1.9, prop: [3.25, 3], turrets: [-1.5] });
 // Er-2: a long body with the cockpit offset forward, inline engines at the low bend of an inverted gull wing (the
