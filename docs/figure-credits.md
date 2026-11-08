@@ -12,3 +12,4 @@ Some figure outlines were measured on drawings published under CC BY; their auth
 - Figure proportions checked on: "Terminator (41971831011)" by Dmitriy Fomin, CC BY 2.0, https://commons.wikimedia.org/wiki/File:Terminator_(41971831011).jpg
 - Figure proportions checked on: "Flickr - Israel Defense Forces - 188th Brigade Training Day, March 2008" by Neil Cohen, Israel Defense Forces, CC BY 2.0, https://commons.wikimedia.org/wiki/File:Flickr_-_Israel_Defense_Forces_-_188th_Brigade_Training_Day,_March_2008.jpg
 - Figure proportions checked on: "Merkeva Mk 3D - Israeli Tanks 2019-04-21 IZE-36" by Zachi Evenor, CC BY 2.0, https://commons.wikimedia.org/wiki/File:Merkeva_Mk_3D_-_Israeli_Tanks_2019-04-21_IZE-36.jpg
+- Figure proportions checked on: "TankBiatlon2021 18" by the Ministry of Defence of the Russian Federation (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:TankBiatlon2021_18.jpg

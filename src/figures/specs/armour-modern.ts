@@ -361,7 +361,10 @@ G['t-84-oplot-m'] = { cls: 'mbt', ...T80, length: 7.08, width: 3.78, turret: tur
 // Its own running gear and gun mount, not the T-72's measured ones: the track run and gun height stay estimates.
 const ZTZ96 = { ...T72, hullOutline: hull(6.86, 3.59, 1.4, 0.8, 1.9, 0.95, 0.15), length: 6.9, width: 3.5, trackProfile: run(6.7, 0.88, [3.35, 0.62], [-3.35, 0.7], -2.75, 2.7), guns: [{ ...T72.guns![0], at: 0.42 }] };
 G['ztz-96'] = { cls: 'mbt', ...ZTZ96, turret: turret(0.2, [[-1.8, 1.0], [-1.4, 1.45], [0.5, 1.55], [1.5, 1.45], [1.85, 0.9], [1.95, 0.45]], [[-1.8, 0.5], [-1.2, 0.75], [0.6, 0.8], [1.95, 0.45]], 8, 1.85) };
-G['ztz-96b'] = { cls: 'mbt', ...ZTZ96, turret: turret(0.2, [[-2.2, 1.1], [-1.4, 1.45], [0.5, 1.55], [1.4, 1.35], [2.1, 0.8], [2.3, 0.4]], [[-2.2, 0.55], [-1.2, 0.75], [0.6, 0.82], [2.3, 0.38]], 8, 2.1), addOns: [...glacis(6.86, 1.4, 1.9, 0.95, 0.2, 2.9, 1, 1), tb(-0.3, 0.7, 0.95, 0.4, 0.4, 0.3)] };
+// ZTZ-96B: the roof flat 0.71 m over the deck from the bustle box, 1.9 m behind the hull's middle, to the wedge, whose
+// top slopes down over 1.95 m to its point 1.9 m ahead of the middle, 0.25 m over the deck (Tank Biathlon broadside,
+// Russian MoD, CC BY 4.0, scaled by the hull's length).
+G['ztz-96b'] = { cls: 'mbt', ...ZTZ96, turret: turret(0.2, [[-2.1, 1.1], [-1.4, 1.45], [0.0, 1.55], [0.9, 1.35], [1.5, 0.8], [1.69, 0.4]], [[-2.1, 0.6], [-1.3, 0.71], [-0.25, 0.71], [1.69, 0.25]], 8, 1.65), addOns: [...glacis(6.86, 1.4, 1.9, 0.95, 0.2, 2.9, 1, 1), tb(-0.3, 0.7, 0.95, 0.4, 0.4, 0.3)] };
 // ZTZ-99A (2011; hull 7.6 x 3.5 m, 11.0 m with the gun): the ZTZ-99's long hull with reactive bricks over the glacis and
 // the front of the skirts, the larger turret whose arrow-shaped front armour comes to a point well ahead of the mantlet
 // (its roof sloping down to the point) over the deep bustle, the commander's panoramic sight on the roof.
@@ -2454,7 +2457,7 @@ for (const n of ['t-72b3', 't-72b3-arena-m']) {
 more('t-80ue1', [drums(-3.75, 1.2, 0.85), ditchBeam(-3.62, 0.8, 2.9), panel(-3.53, 0, 1.05, 0.04, 2.1, 0.3, DARK)], (g) => [...g, roofMg(-0.3, 0.6)]);
 more('t-80uk', [drums(-3.75, 1.2, 0.85), ditchBeam(-3.62, 0.8, 2.9), panel(-3.53, 0, 1.05, 0.04, 2.1, 0.3, DARK)], (g) => [...g, roofMg(-0.2, 0.6)]);
 // ZTZ-96B: the gunner's and the commander's sights, four smoke tubes a side, the bustle basket, the 12.7 mm.
-more('ztz-96b', [...sight(1.3, -0.6, 0.92, 0.55, 0.4, 0.22), ...pano(0.4, 0.7, 0.82, 0.32, 0.38), ...smokeRow(1.2, 1.45, 0.62, 4), ...basket(-2.45, 0.46, 0.45, 2.4, 0.42)], (g) => [...g, roofMg(-0.3, -0.65)]);
+more('ztz-96b', [...sight(-0.05, -0.6, 0.82, 0.55, 0.4, 0.22), ...pano(-0.5, 0.7, 0.71, 0.32, 0.38), ...smokeRow(0.3, 1.45, 0.45, 4)], (g) => [...g, roofMg(-0.3, -0.65)]);
 // ZTZ-99A, ZTZ-99 with ERA and WZ1001: the gunner's sight, the laser warning and dazzler head behind the commander,
 // five smoke tubes a side on the turret's back, the bustle basket, the remote 12.7 mm on the roof.
 more('ztz-99a', [...sight(1.6, -0.8, 0.98, 0.6, 0.42, 0.22), tb(-1.0, 0.62, 1.04, 0.4, 0.32, 0.32, DARK), ...smokeRow(-1.6, 1.7, 0.62, 5, 0.12), ...basket(-2.95, 0.5, 0.45, 2.8, 0.45)],
@@ -2519,7 +2522,7 @@ for (const n of ['t-72b3', 't-72b3-arena-m']) more(n, [...k5Lids(0.45, 1.88, 0.8
 more('t-80ue1', [...k5Lids(0.85, 1.9, 0.62, 0.6, 1.5, 4), ...glacisJoints(7.0, 1.4, 1.95, 0.95, 0.22, 2.9, 3)]);
 more('t-80uk', [...k5Lids(0.8, 1.85, 0.61, 0.6, 1.52, 4), ...glacisJoints(7.0, 1.4, 1.95, 0.95, 0.22, 2.9, 3)]);
 // ZTZ-96B: FY-4 on the wedge's front faces; ZTZ-99A: on the arrow's outer front faces.
-more('ztz-96b', faceBricks(1.4, 1.35, 2.1, 0.8, 0.12, 3, 2));
+more('ztz-96b', faceBricks(0.9, 1.35, 1.5, 0.8, 0.06, 3, 1));
 more('ztz-99a', faceBricks(2.0, 1.3, 3.0, 0.42, 0.14, 3, 2));
 
 export const ARMOUR_MODERN: SpecSet = { ground: G, aliases: ALIASES };
