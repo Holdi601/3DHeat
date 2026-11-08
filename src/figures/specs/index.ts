@@ -35,6 +35,7 @@ import { ARMOUR_WW2 } from './armour-ww2';
 import { PROP_VARIANTS } from './prop-variants';
 import { SHIP_CLASSES } from './ship-classes';
 import { swingStates } from './swing';
+import { groundReach } from './ground-reach';
 
 export type Named<T> = Record<string, T & { cls: string }>;
 
@@ -54,3 +55,5 @@ export interface SpecSet {
 export const SPEC_SETS: SpecSet[] = [GENERIC, AIR_DEFENCE, GROUND_MODERN, GROUND_WW2, TANKS, PROPS, HELIS, AIRCRAFT, SHIPS, JET_VARIANTS, JET_VARIANTS_WORLD, JET_ATTACK, HELI_VARIANTS, ARMOUR_MODERN, ARMOUR_WW2, PROP_VARIANTS, AIR_EXTRA, SHIP_CLASSES, MUNITIONS, DCS_ALIASES, BF_ALIASES, WT_ALIASES, IL2_ALIASES];
 // Swing wings at their sweeps, from the figures as the sets above leave them.
 SPEC_SETS.push(swingStates(SPEC_SETS));
+// Gun armed ground figures ended at their published length with the gun forward.
+SPEC_SETS.push(groundReach(SPEC_SETS));

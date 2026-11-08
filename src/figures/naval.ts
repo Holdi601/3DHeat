@@ -69,6 +69,8 @@ export interface NavalRadar {
   kind: 'array' | 'dish' | 'dome' | 'panel' | 'faces';
   size: number;
   side?: number;
+  /** faces: only the pair looking forward or only the pair looking aft (a cruiser's two deckhouses each carry one pair). */
+  look?: 'fwd' | 'aft';
 }
 
 export interface NavalSpec {
@@ -1040,7 +1042,7 @@ function radar(k: Kit, r: NavalRadar, deck: number, side: number, boxes: Box[], 
         const back = f > 0 ? a0.xf - a1.xf : a1.xb - a0.xb;
         return Math.atan((back + (a0.w - a1.w)) / (Math.SQRT2 * h));
       };
-      for (const f of [-1, 1]) {
+      for (const f of r.look === 'fwd' ? [1] : r.look === 'aft' ? [-1] : [-1, 1]) {
         for (const sd of [-1, 1]) {
           const df = f / Math.SQRT2;
           const ds = sd / Math.SQRT2;

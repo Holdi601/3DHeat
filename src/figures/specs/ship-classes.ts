@@ -210,7 +210,8 @@ N['arleigh-burke'] = {
   hullOutline: hullOf([[77.65, 9.5, 0.2], [70, 9.0, 3.5], [55, 8.3, 7.8], [35, 7.6, 9.8], [0, 7.2, 10.05], [-45, 6.8, 9.8], [-70, 6.4, 8.6], [-77.65, 6.3, 7.4]]),
   bodies: [blockOf(36, 4, 7.0, 15.5, 7.0, 3.5), blockOf(31, 15, 15.5, 19.5, 5.2, 2), blockOf(6, -1, 7.0, 21, 2.6, 0, 1.2), blockOf(-13, -20, 6.8, 19.5, 2.6, 0, 1.2), blockOf(4, -8, 7.0, 11, 4.2), blockOf(-6, -48, 6.8, 14.5, 7.0, 1.5)],
   turrets: [{ x: 58, size: 4.5, barrels: 1, length: 7, calibre: 0.127, kind: 'mount' }],
-  masts: [{ x: 13, height: 26 }],
+  // The raked tripod mast over the bridge.
+  masts: [{ x: 13, height: 26, kind: 'tripod' }],
   // The cells flush with the deck where it is (it rises to the bow and falls to the stern).
   launchers: [{ x: 46, length: 13, width: 8, up: 0.78 }, { x: -56, length: 10, width: 8, up: -0.58 }],
   radars: [{ x: 24, up: 9, kind: 'faces', size: 4 }],
@@ -392,7 +393,8 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'hawkins': { cls: 'heavy-cruiser', L: 184.4, B: 19.8, fb: 8, fc: [-30, 2.4], guns: '58:1/190 48:1/190^2 -48:1/190^2b -58:1/190b 4,8:1/190', funnels: [[12, 12, 5], [-2, 12, 5]], blocks: [[34, 24, 20, 5, 1]], masts: [[28, 28], [-22, 22]] },
   'emerald': { cls: 'light-cruiser', L: 173.7, B: 16.6, fb: 7, fc: [-30, 2.4], guns: '60:2/152 48:1/152^2 -48:1/152b -60:1/152b', funnels: [[16, 12, 4], [6, 12, 4], [-4, 12, 4]], blocks: [[36, 26, 18, 5, 1]], masts: [[30, 26], [-28, 20]] },
   'arethusa': { cls: 'light-cruiser', L: 154.2, B: 15.5, fb: 7, fc: [-28, 2.2], guns: '52:2/152 42:2/152^2.5 -50:2/152b', funnels: [[0, 11, 4]], blocks: [[28, 18, 18, 5, 1]], masts: [[22, 24], [-16, 20]] },
-  'leander': { cls: 'light-cruiser', L: 169.0, B: 17.0, fb: 7, fc: [-30, 2.2], guns: '58:2/152 47:2/152^2.5 -46:2/152^2.5b -58:2/152b', funnels: [[2, 12, 6]], blocks: [[32, 20, 20, 5, 1]], masts: [[24, 26], [-16, 22]] },
+  // Leander: deck line, the single broad stack, tripods, turrets and blocks from the ONI 201 profile and its published heights (sources.md).
+  'leander': { cls: 'light-cruiser', L: 169.0, B: 17.0, fb: 7.3, fc: [0, 2.0], sheer: 1.0, guns: '47:2/152^1.2 38.5:2/152^5 -45:2/152^4.4b -56:2/152^0.2b', funnels: [[5, 12.4, 8.5, 5.5]], blocks: [[31, 15, 17.3, 4.5, 1.5], [15, 0, 10.9, 4.0], [-2, -25, 7.6, 4.5], [-28, -42, 7.0, 4.0]], raised: [[-31.5, -37, 7, 13.4, 1.8]], masts: [[19.5, 30.7, 't'], [-35, 29.7, 't']] },
   'dido': { cls: 'light-cruiser', L: 156.1, B: 15.4, fb: 7, fc: [-30, 2.2], guns: '54:2/133 46:2/133^2.5 38:2/133^5 -42:2/133^2.5b -52:2/133b', funnels: [[8, 11, 4], [-4, 11, 4]], blocks: [[30, 18, 18, 5, 1]], masts: [[22, 24], [-14, 20]] },
   'kent': { cls: 'heavy-cruiser', L: 192.0, B: 20.8, fb: 10, guns: '64:2/203 52:2/203^2.5 -52:2/203^2.5b -64:2/203b', funnels: [[16, 13, 4], [6, 13, 4], [-4, 13, 4]], blocks: [[36, 24, 22, 6, 1]], masts: [[28, 30], [-26, 24]] },
   'london-1941': { cls: 'heavy-cruiser', L: 192.8, B: 20.1, fb: 10, guns: '64:2/203 52:2/203^2.5 -52:2/203^2.5b -64:2/203b', funnels: [[8, 13, 5], [-8, 13, 5]], blocks: [[36, 20, 26, 7, 2]], masts: [[16, 30], [-24, 24]] },
@@ -432,9 +434,11 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
 
   // ---------------------------------------------------------------- destroyers by class
   // United States.
-  'clemson': { cls: 'destroyer', L: 95.8, B: 9.4, fb: 4.5, sheer: 2.5, guns: '40:1/102 -42:1/102b 8,4:1/102', funnels: [[16, 7, 2], [10, 7, 2], [4, 7, 2], [-2, 7, 2]], blocks: [[30, 24, 9, 2.4, 1]], masts: [[22, 14], [-28, 10]] },
+  // Clemson: deck line, deckhouses, the four stacks and the tall masts from the Bureau of Ships outboard profile (sources.md).
+  'clemson': { cls: 'destroyer', L: 95.8, B: 9.4, fb: 3.8, sheer: 1.6, guns: '29:1/102^1.0 6,3.6:1/102^1.8 -37:1/102^1.4b -45:1/76b', funnels: [[14.5, 7.6, 2.4], [9, 7.6, 2.4], [1.5, 7.7, 2.4], [-3.5, 7.5, 2.4]], blocks: [[26.5, 18.5, 9.3, 2.2, 1], [17, -7, 5.6, 2.2], [-27, -42, 5.3, 2.4]], raised: [[25, 19, 9.3, 10.8, 2.6], [-13.5, -16, 3.5, 10.0, 1.2]], masts: [[17.5, 26.5], [-31.5, 12.2]] },
   'farragut': { cls: 'destroyer', L: 104.0, B: 10.4, fb: 5.4, fc: [-14, 1.4], guns: '38:1/127 31:1/127^2 -24:1/127^2b -34:1/127b -44:1/127b', funnels: [[8, 7, 2.8], [-4, 7, 2.8]], blocks: [[24, 18, 11, 3, 1]], masts: [[17, 16]] },
-  'mahan': { cls: 'destroyer', L: 104.0, B: 10.5, fb: 5.4, fc: [-14, 1.4], guns: '38:1/127 31:1/127^2 -26:1/127^2b -36:1/127b -46:1/127b', funnels: [[10, 7, 2.6], [-2, 7, 2.6]], blocks: [[24, 18, 11, 3, 1], [-12, -18, 8, 2.4]], masts: [[17, 16], [-14, 10]] },
+  // Mahan: deck line, deckhouses, funnels and mast from the Bureau of Ships outboard profile of Dunlap, her near sister (sources.md).
+  'mahan': { cls: 'destroyer', L: 104.0, B: 10.5, fb: 6.0, fc: [9, 2.1], sheer: 0.6, guns: '37:1/127e 28:1/127e^2.4 -27:1/127^2.7b -37:1/127^2.7b -45:1/127b', funnels: [[7.5, 11.4, 3.4], [-6, 9.7, 3.4]], blocks: [[26, 12.5, 12.8, 3.2, 1], [32, 24, 8.4, 3.0], [3, -12, 5.6, 2.2], [-21, -41, 6.6, 3.0]], masts: [[11.5, 21.5, 't']] },
   'bagley': { cls: 'destroyer', L: 104.0, B: 10.9, fb: 5.4, fc: [-12, 1.4], guns: '38:1/127 31:1/127^2 -30:1/127^2b -42:1/127b', funnels: [[2, 7.5, 3.2]], blocks: [[24, 18, 11, 3, 1]], masts: [[16, 16]] },
   'porter': { cls: 'destroyer', L: 116.2, B: 11.1, fb: 5.6, fc: [-14, 1.4], guns: '44:2/127 36:2/127^2 -34:2/127^2b -46:2/127b', funnels: [[8, 8, 3], [-4, 8, 3]], blocks: [[28, 22, 13, 3.5, 1]], masts: [[20, 18]] },
   'somers': { cls: 'destroyer', L: 116.2, B: 11.0, fb: 5.6, fc: [-14, 1.4], guns: '44:2/127 36:2/127^2 -34:2/127^2b -46:2/127b', funnels: [[2, 8, 3.6]], blocks: [[28, 22, 13, 3.5, 1]], masts: [[20, 18]] },
@@ -444,9 +448,12 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'forrest-sherman': { cls: 'destroyer', L: 127.4, B: 13.7, fb: 6, sheer: 3, guns: '46:1/127m -40:1/127^2bm -52:1/127mb', funnels: [[8, 8, 3.2], [-10, 8, 3.2]], blocks: [[32, 16, 13, 4, 1]], masts: [[18, 20]] },
   'charles-f-adams': { cls: 'destroyer', L: 133.2, B: 14.3, fb: 6, sheer: 3, guns: '50:1/127m -54:1/127mb', funnels: [[10, 8, 3.2], [-10, 8, 3.2]], blocks: [[34, 16, 13, 4, 1], [-12, -22, 11, 4]], masts: [[16, 20], [-4, 18]], launchers: [{ x: -42, length: 5, width: 4, kind: 'box' }] },
   // Germany.
-  'raubtier': { cls: 'destroyer', L: 92.6, B: 8.6, fb: 5, fc: [16, 1.6], guns: '36:1/105 -30:1/105b -42:1/105b', funnels: [[6, 6, 2.4], [-4, 6, 2.4]], blocks: [[24, 18, 9, 2.4, 1]], masts: [[18, 12]] },
-  'type-1934a': { cls: 'destroyer', L: 119.0, B: 11.3, fb: 6, sheer: 2, guns: '48:1/127 40:1/127^2 -32:1/127^2b -44:1/127b -54:1/127b', funnels: [[10, 8, 3], [-4, 8, 3]], blocks: [[30, 22, 13, 3.5, 1]], masts: [[20, 18]] },
-  'type-1936': { cls: 'destroyer', L: 123.4, B: 11.8, fb: 6, sheer: 3, guns: '50:1/127 42:1/127^2 -34:1/127^2b -46:1/127b -56:1/127b', funnels: [[10, 8, 3], [-4, 8, 3]], blocks: [[32, 24, 13, 3.5, 1]], masts: [[22, 18]] },
+  // Raubtier (Wolf, Möwe): layout, deck line, funnels and masts from the ONI 204 profile (sources.md).
+  'raubtier': { cls: 'destroyer', L: 92.6, B: 8.6, fb: 4.7, fc: [15, 2.0], sheer: 0.5, guns: '28:1/105 -26:1/105^1.5b -38:1/105b', funnels: [[12.5, 10.1, 4.6, 3.2, 0.05], [-6, 7.8, 3.2, 2.6]], blocks: [[23, 15, 9.0, 2.6, 0.5]], raised: [[21, 16, 9, 10.4, 2.0]], masts: [[14.5, 22.3]] },
+  // Type 1934 and 1934A (Maass): low flush hull, layout, funnels and masts from the ONI 204 profile (sources.md).
+  'type-1934a': { cls: 'destroyer', L: 119.0, B: 11.3, fb: 3.2, sheer: 1.2, guns: '47:1/127^0.7 38:1/127^2.9 -30:1/127^3.2b -39:1/127^2.2b -48:1/127b', funnels: [[17.5, 12.6, 5.0, 3.8, 0.08], [-1.5, 10.6, 4.5, 3.5, 0.06]], blocks: [[29.5, 14.5, 9.6, 3.0, 1.5], [3, -11, 7.7, 2.6], [-24, -48, 5.4, 3.0], [15, 10, 6.8, 2.0]], raised: [[28, 21, 9.6, 12, 2.0], [-27, -33, 5.4, 6.2, 2.4]], masts: [[21.5, 28.5]] },
+  // Type 1936 (Karl Galster): flush hull, layout, funnels and masts from the ONI 204 profile (sources.md).
+  'type-1936': { cls: 'destroyer', L: 123.4, B: 11.8, fb: 5.2, sheer: 1.4, guns: '51:1/127 42:1/127^0.5 -31:1/127^1.2b -40:1/127^0.8b -55:1/127b', funnels: [[15, 7.9, 5.0, 3.8, 0.06], [-5, 6.1, 4.0, 3.2]], blocks: [[30, 14.5, 10.5, 3.0, 1.5], [-1, -12, 7.8, 2.6], [-27, -49, 6.7, 3.0]], raised: [[28, 20, 10.5, 12.5, 2.0]], masts: [[18.5, 24.6]] },
   'type-1936a': { cls: 'destroyer', L: 127.0, B: 12.0, fb: 6, sheer: 3, guns: '50:2/150 -34:1/150^2b -46:1/150b -56:1/150b', funnels: [[10, 8, 3], [-4, 8, 3]], blocks: [[32, 24, 13, 4, 1]], masts: [[22, 18]] },
   'type-1936c': { cls: 'destroyer', L: 127.0, B: 12.2, fb: 6, sheer: 3, guns: '50:2/128 -38:2/128^2b -52:2/128b', funnels: [[10, 8, 3], [-4, 8, 3]], blocks: [[32, 24, 13, 4, 1]], masts: [[22, 18]] },
   'type-1939': { cls: 'destroyer', L: 102.5, B: 10.0, fb: 5.4, fc: [-6, 1.4], guns: '40:1/105 -30:1/105^2b -42:1/105b', funnels: [[6, 7, 3], [-6, 7, 3]], blocks: [[26, 20, 10, 3, 1]], masts: [[18, 14]] },
@@ -463,14 +470,19 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'kotlin': { cls: 'destroyer', L: 126.1, B: 12.7, fb: 6, sheer: 2, guns: '48:2/130 -44:2/130b 34:4/45 -34:4/45^2b', funnels: [[8, 8, 3.4], [-8, 8, 3.4]], blocks: [[32, 20, 13, 4, 1]], masts: [[20, 18], [-2, 14]] },
   'project-41': { cls: 'destroyer', L: 133.8, B: 13.6, fb: 6, sheer: 2, guns: '50:2/130 -48:2/130b', funnels: [[10, 9, 3.6], [-8, 9, 3.6]], blocks: [[34, 22, 14, 4, 1]], masts: [[22, 20]] },
   // Britain.
-  'v-class': { cls: 'destroyer', L: 95.1, B: 9.0, fb: 4.6, fc: [16, 1.2], guns: '36:1/102 30:1/102^2 -30:1/102^2b -38:1/102b', funnels: [[8, 7, 3], [-2, 7, 2.6]], blocks: [[24, 20, 9, 2.6, 1]], masts: [[18, 14], [-14, 10]] },
-  'g-class': { cls: 'destroyer', L: 98.5, B: 10.1, fb: 5, fc: [12, 1.3], guns: '38:1/120 32:1/120^2 -32:1/120^2b -42:1/120b', funnels: [[8, 7, 3], [-2, 7, 3]], blocks: [[26, 20, 10, 3, 1]], masts: [[18, 15]] },
-  's-class': { cls: 'destroyer', L: 110.5, B: 10.9, fb: 5.2, fc: [12, 1.3], guns: '42:1/120 35:1/120^2 -36:1/120^2b -46:1/120b', funnels: [[2, 7.5, 3.4]], blocks: [[28, 22, 11, 3, 1]], masts: [[20, 16]] },
+  // V and W (as the AA "Wair" conversions, Vega among them): layout from the ONI 201-I silhouette (sources.md).
+  'v-class': { cls: 'destroyer', L: 95.1, B: 9.0, fb: 6.2, fc: [10, 2.4], sheer: 0.5, guns: '29:2/102 -36:2/102^1.6b', funnels: [[12, 5.9, 3.0], [2.7, 5.5, 3.2]], blocks: [[24, 14, 10.3, 2.6, 1], [-24, -40, 6.0, 2.6], [-5, -10, 6.7, 2.0]], raised: [[21, 16, 10.3, 12.5, 1.6], [-14.5, -17, 3.8, 8.7, 1.0]], masts: [[14.8, 16.6]] },
+  // A to I classes (G among them): layout from the ONI 201-I silhouette (sources.md).
+  'g-class': { cls: 'destroyer', L: 98.5, B: 10.1, fb: 5.3, fc: [9, 1.9], sheer: 0.9, guns: '37:1/120 25:1/120^2.2 -33:1/120^2.6b -42:1/120b', funnels: [[8, 7.6, 3.6], [-4.5, 6.5, 3.0]], blocks: [[23, 9.5, 11.8, 2.6, 1], [-27, -41, 6.0, 2.8], [3, -1, 6.6, 2.0]], raised: [[-17, -21, 3.4, 8.2, 1.4]], masts: [[10, 20.2, 't']] },
+  // Q to W classes (S, Saumarez): layout from the ONI 201-I silhouette (sources.md).
+  's-class': { cls: 'destroyer', L: 110.5, B: 10.9, fb: 6.2, fc: [6, 2.2], sheer: 1.8, guns: '36:1/120 26:1/120^2.1 -19:1/120^2.5b -39:1/120^1.8b', funnels: [[2, 9.0, 5.0]], blocks: [[22, 8, 13.0, 3.0, 1], [-14, -22, 6.7, 2.4], [-32, -45, 6.0, 2.6], [-1, -7, 7.0, 2.0]], masts: [[8.5, 21.1, 'l'], [-29.5, 14.5]] },
   'hunt-ii': { cls: 'destroyer', L: 85.3, B: 9.6, fb: 4.8, fc: [-6, 1.2], guns: '34:2/102 27:2/102^2 -34:2/102b', funnels: [[0, 6, 2.8]], blocks: [[22, 14, 9, 3, 1]], masts: [[14, 13]] },
   'hunt-iii': { cls: 'destroyer', L: 85.3, B: 9.6, fb: 4.8, fc: [-6, 1.2], guns: '34:2/102 -34:2/102b', funnels: [[0, 6, 2.8]], blocks: [[24, 14, 9, 3, 1]], masts: [[14, 13]] },
   'hunt-iv': { cls: 'destroyer', L: 90.2, B: 10.4, fb: 5, guns: '36:2/102 28:2/102^2 -36:2/102b', funnels: [[2, 6.5, 3]], blocks: [[24, 14, 9.5, 3.2, 1]], masts: [[14, 14]] },
-  'tribal': { cls: 'destroyer', L: 115.1, B: 11.1, fb: 5.4, fc: [16, 1.4], guns: '44:2/120 37:2/120^2 -36:2/120^2b -46:2/120b', funnels: [[10, 7.5, 3], [-2, 7.5, 3]], blocks: [[28, 22, 12, 3.5, 1]], masts: [[20, 16]] },
-  'j-class': { cls: 'destroyer', L: 108.7, B: 10.9, fb: 5.2, fc: [12, 1.3], guns: '42:2/120 35:2/120^2 -44:2/120b', funnels: [[2, 7.5, 3.6]], blocks: [[28, 22, 11, 3.4, 1]], masts: [[20, 16]] },
+  // Tribal: layout from the ONI 201-I silhouette (sources.md).
+  'tribal': { cls: 'destroyer', L: 115.1, B: 11.1, fb: 6.1, fc: [9.5, 2.7], sheer: 1.4, guns: '41:2/120 32:2/120^2.2 -36:2/120^3.8b -50.5:2/120b', funnels: [[6.5, 9.7, 3.8], [-7, 7.9, 3.5]], blocks: [[24.5, 10, 12.7, 3.0, 1], [36, 26, 8.6, 2.8], [-19, -46, 7.2, 3.0], [0, -20, 4.9, 1.6]], raised: [[-25, -28, 7.2, 11.3, 1.2]], masts: [[10, 20.7, 't']] },
+  // J, K and N: layout from the ONI 201-I silhouette (sources.md).
+  'j-class': { cls: 'destroyer', L: 108.7, B: 10.9, fb: 6.0, fc: [7, 2.7], sheer: 1.8, guns: '38:2/120 29:2/120^2 -38:2/120^3.1b', funnels: [[3, 9.5, 4.8]], blocks: [[23, 10, 12.5, 2.8, 1], [-26, -48, 6.4, 2.8], [0, -6, 6.0, 2.0]], raised: [[-19, -22, 3.3, 9.0, 1.0]], masts: [[7.5, 20.7, 't']] },
   'battle': { cls: 'destroyer', L: 115.5, B: 12.3, fb: 5.6, fc: [6, 1.3], guns: '44:2/114 36:2/114^2', funnels: [[0, 8, 3.6]], blocks: [[28, 18, 13, 4, 1]], masts: [[10, 16]] },
   'daring': { cls: 'destroyer', L: 118.9, B: 13.1, fb: 6, sheer: 2, guns: '44:2/114m 36:2/114^2m -46:2/114mb', funnels: [[0, 7, 4]], blocks: [[28, 14, 13, 4, 1]], masts: [[10, 18]] },
   // Japan.
@@ -483,7 +495,8 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'matsu': { cls: 'destroyer', L: 100.0, B: 9.4, fb: 5, fc: [16, 1.3], guns: '36:1/127 -36:2/127b', funnels: [[8, 6.5, 2.6], [-2, 6.5, 2.6]], blocks: [[26, 22, 10, 2.8, 1]], masts: [[20, 14]] },
   'shimakaze': { cls: 'destroyer', L: 129.5, B: 11.2, fb: 5.6, fc: [22, 1.5], guns: '50:2/127 -38:2/127^2b -50:2/127b', funnels: [[12, 7.5, 3], [0, 7.5, 3]], blocks: [[34, 28, 12, 3.2, 1]], masts: [[26, 16]] },
   // Italy.
-  'turbine': { cls: 'destroyer', L: 93.2, B: 9.2, fb: 4.8, fc: [12, 1.2], guns: '36:2/120 -36:2/120b', funnels: [[6, 6.5, 2.6], [-4, 6.5, 2.6]], blocks: [[24, 18, 9, 3, 1]], masts: [[16, 13]] },
+  // Turbine: deck line, bridge, funnels and masts measured on the broadside photo in ONI 202 (sources.md).
+  'turbine': { cls: 'destroyer', L: 93.2, B: 9.2, fb: 5.2, fc: [24, 1.3], sheer: 0.8, guns: '39:2/120 -26:2/120^1.6b', funnels: [[20.5, 8.6, 4.4, 3.4], [12, 7.1, 3.6, 2.9]], blocks: [[37, 25, 12, 3.0, 1]], masts: [[25, 20.6]] },
   'freccia': { cls: 'destroyer', L: 96.2, B: 9.8, fb: 5, fc: [10, 1.2], guns: '38:2/120 -38:2/120b', funnels: [[2, 6.5, 3.4]], blocks: [[24, 16, 10, 3, 1]], masts: [[14, 14]] },
   'maestrale': { cls: 'destroyer', L: 106.7, B: 10.2, fb: 5.2, fc: [12, 1.2], guns: '40:2/120 -34:2/120^2b', funnels: [[2, 7, 3.4]], blocks: [[26, 18, 11, 3, 1]], masts: [[16, 15]] },
   'soldati': { cls: 'destroyer', L: 106.7, B: 10.2, fb: 5.2, fc: [12, 1.2], guns: '40:2/120 -34:2/120^2b 0:1/120', funnels: [[4, 7, 3.4]], blocks: [[26, 18, 11, 3, 1]], masts: [[16, 15]] },
@@ -491,7 +504,8 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'leone': { cls: 'destroyer', L: 113.4, B: 10.4, fb: 5.2, fc: [18, 1.3], guns: '42:2/120 35:2/120^2 -35:2/120^2b -44:2/120b', funnels: [[12, 7, 2.6], [4, 7, 2.6], [-4, 7, 2.6]], blocks: [[28, 22, 11, 3, 1]], masts: [[20, 15]] },
   'medaglie-d-oro': { cls: 'destroyer', L: 120.7, B: 12.1, fb: 5.6, sheer: 2, guns: '46:1/135 39:1/135^2 -40:1/135^2b -50:1/135b', funnels: [[2, 8, 3.6]], blocks: [[30, 22, 12, 3.6, 1]], masts: [[20, 17]] },
   'impetuoso': { cls: 'destroyer', L: 127.6, B: 13.2, fb: 6, sheer: 2, guns: '50:2/127m -50:2/127mb', funnels: [[8, 7, 3.6], [-8, 7, 3.6]], blocks: [[32, 14, 13, 4, 1]], masts: [[16, 20], [-2, 16]] },
-  'vifor': { cls: 'destroyer', L: 94.7, B: 9.5, fb: 5, fc: [20, 1.3], guns: '36:1/120 -10:1/120 -36:1/120b', funnels: [[12, 7, 2.6], [4, 7, 2.6], [-4, 7, 2.6]], blocks: [[26, 22, 10, 2.8, 1]], masts: [[20, 14]] },
+  // Vifor (Aquila, Nibbio in Italian service): deck line, three widely spaced funnels and masts measured on a broadside photo, NH 55784 (sources.md).
+  'vifor': { cls: 'destroyer', L: 94.7, B: 9.5, fb: 4.7, fc: [20, 0.8], guns: '36:1/120 -10:1/120 -36:1/120b', funnels: [[13.5, 6.6, 2.8], [1.5, 6.4, 2.8], [-11.5, 6.0, 2.8]], blocks: [[30, 21, 9.5, 2.8, 1]], masts: [[20, 21]] },
   // France.
   'bourrasque': { cls: 'destroyer', L: 105.8, B: 9.6, fb: 5, fc: [16, 1.3], guns: '40:1/130 33:1/130^2 -34:1/130^2b -44:1/130b', funnels: [[12, 7, 2.6], [4, 7, 2.6], [-4, 7, 2.6]], blocks: [[26, 20, 10, 3, 1]], masts: [[18, 14]] },
   'jaguar-1923': { cls: 'destroyer', L: 126.8, B: 11.4, fb: 5.6, fc: [20, 1.3], guns: '48:1/130 41:1/130^2 -34:1/130^2b -46:1/130b -56:1/130b', funnels: [[18, 8, 2.6], [12, 8, 2.6], [2, 8, 2.6], [-4, 8, 2.6]], blocks: [[32, 26, 12, 3.4, 1]], masts: [[24, 18]] },
@@ -504,7 +518,7 @@ const TT: Record<string, [number, number]> = {
   'clemson': [2, 3], 'farragut': [2, 4], 'mahan': [3, 4], 'bagley': [2, 4], 'porter': [2, 4], 'somers': [3, 4], 'sumner': [2, 5], 'gearing': [2, 5],
   'raubtier': [2, 3], 'type-1934a': [2, 4], 'type-1936': [2, 4], 'type-1936a': [2, 4], 'type-1936c': [2, 4], 'type-1939': [2, 3],
   'novik': [3, 3], 'opytny': [3, 3], 'type-7u': [2, 3], 'leningrad': [2, 4], 'regele-ferdinand': [2, 3], 'project-30bis': [2, 5], 'project-48': [2, 3], 'kotlin': [2, 5], 'project-41': [2, 5],
-  'v-class': [2, 3], 'g-class': [2, 4], 's-class': [2, 4], 'hunt-iii': [1, 2], 'tribal': [1, 4], 'j-class': [2, 5], 'battle': [2, 4], 'daring': [2, 5],
+  'g-class': [2, 4], 's-class': [2, 4], 'hunt-iii': [1, 2], 'tribal': [1, 4], 'j-class': [2, 5], 'battle': [2, 4], 'daring': [2, 5],
   'momi': [2, 2], 'kamikaze': [2, 2], 'mutsuki': [2, 3], 'hatsuharu': [2, 3], 'shiratsuyu': [2, 4], 'kagero': [2, 4], 'matsu': [1, 4], 'shimakaze': [3, 5],
   'turbine': [2, 3], 'freccia': [2, 3], 'maestrale': [2, 3], 'soldati': [2, 3], 'navigatori': [2, 3], 'leone': [2, 3], 'medaglie-d-oro': [2, 3],
   'bourrasque': [2, 3], 'jaguar-1923': [2, 3], 'guepard': [2, 3], 'le-fantasque': [3, 3], 'mogador': [2, 3],
@@ -610,7 +624,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   'hawkins': { blocks: [[-20, -30, 11, 3.5]], dirs: [[-26, 14]], masts: [[28, 28, 't'], [-22, 22]] },
   'emerald': { blocks: [[-22, -32, 11, 3.5]], dirs: [[-28, 14]], masts: [[30, 26, 't'], [-28, 20]] },
   'arethusa': { blocks: [[-10, -24, 12, 4], [-12, -20, 14, 3]], dirs: [[-18, 17]], masts: [[22, 24, 't'], [-16, 20]] },
-  'leander': { blocks: [[-12, -28, 12, 4.5], [-16, -24, 14.5, 3]], dirs: [[-22, 17]], masts: [[24, 26, 't'], [-16, 22]] },
+  'leander': { masts: [[19.5, 30.7, 't'], [-35, 29.7, 't']] },
   'dido': { blocks: [[-12, -26, 12, 4], [-14, -22, 14, 3]], dirs: [[-20, 17]] },
   'kent': { blocks: [[-14, -28, 14.5, 5], [-18, -26, 17, 3.5]], dirs: [[-24, 20]], masts: [[28, 30, 't'], [-26, 24]] },
   'london-1941': { blocks: [[-14, -32, 15, 6], [-18, -28, 18, 4]], dirs: [[-26, 21]], masts: [[16, 30, 't'], [-24, 24]] },
@@ -649,9 +663,9 @@ const AFT: Record<string, Partial<ShipO>> = {
   'la-galissoniere': { blocks: [[-14, -30, 12, 4.5], [-18, -26, 14.5, 3]], dirs: [[-24, 17]] },
 
   // United States destroyers: the 5-inch/38 in enclosed gunhouses forward.
-  'clemson': { guns: '40:1/102 -38:1/102^2.2b 8,4:1/102', blocks: [[-34, -42, 6.6, 2.4]], masts: [[22, 14], [-28, 10]] },
+  'clemson': { masts: [[17.5, 26.5], [-31.5, 12.2]] },
   'farragut': { guns: '38:1/127e 31:1/127e^2 -24:1/127^2b -34:1/127b -44:1/127b', blocks: [[-20, -29, 7.6, 2.6]], masts: [[17, 16, 't'], [-14, 10]] },
-  'mahan': { guns: '38:1/127e 31:1/127e^2 -26:1/127^2b -36:1/127b -46:1/127b', masts: [[17, 16, 't'], [-14, 10]] },
+  'mahan': { masts: [[11.5, 21.5, 't'], [-16.5, 7.3]] },
   'bagley': { guns: '38:1/127e 31:1/127e^2 -30:1/127^2b -42:1/127b', masts: [[16, 16, 't']] },
   'porter': { masts: [[20, 18, 't'], [-16, 10]] },
   'somers': { masts: [[20, 18, 't']] },
@@ -661,9 +675,9 @@ const AFT: Record<string, Partial<ShipO>> = {
   'forrest-sherman': { blocks: [[-14, -34, 10, 4]], masts: [[18, 20, 't'], [-2, 14, 'l']] },
   'charles-f-adams': { masts: [[16, 20, 'l'], [-4, 18, 'l']] },
   // German destroyers.
-  'raubtier': { masts: [[18, 12], [-14, 9]] },
-  'type-1934a': { blocks: [[-20, -26, 8.4, 2.4]], masts: [[20, 18, 't'], [-22, 10]] },
-  'type-1936': { blocks: [[-22, -28, 8.4, 2.4]], masts: [[22, 18, 't'], [-24, 10]] },
+  'raubtier': { masts: [[14.5, 22.3], [-7.5, 13.1]] },
+  'type-1934a': { masts: [[21.5, 28.5], [-24, 11.5]] },
+  'type-1936': { masts: [[18.5, 24.6], [-35, 9.6]] },
   'type-1936a': { blocks: [[-22, -28, 8.4, 2.4]], masts: [[22, 18, 't'], [-24, 10]] },
   'type-1936c': { blocks: [[-24, -30, 8.4, 2.4]], masts: [[22, 18, 't'], [-22, 10]] },
   'type-1939': { masts: [[18, 14, 't']] },
@@ -678,13 +692,13 @@ const AFT: Record<string, Partial<ShipO>> = {
   'kotlin': { masts: [[20, 18, 't'], [-2, 14, 't']] },
   'project-41': { masts: [[22, 20, 't'], [-10, 14]] },
   // British destroyers.
-  'g-class': { masts: [[18, 15, 't'], [-14, 9]] },
-  's-class': { masts: [[20, 16, 'l']] },
+  'g-class': { masts: [[10, 20.2, 't']] },
+  's-class': { masts: [[8.5, 21.1, 'l'], [-29.5, 14.5]] },
   'hunt-ii': { masts: [[14, 13, 't']] },
   'hunt-iii': { masts: [[14, 13, 't']] },
   'hunt-iv': { masts: [[14, 14, 't']] },
-  'tribal': { masts: [[20, 16, 't'], [-14, 10]] },
-  'j-class': { masts: [[20, 16, 't']] },
+  'tribal': { masts: [[10, 20.7, 't']] },
+  'j-class': { masts: [[7.5, 20.7, 't']] },
   'battle': { blocks: [[-14, -24, 8.6, 3]], dirs: [[-20, 10.6, 1.2]], masts: [[10, 16, 'l']] },
   'daring': { masts: [[10, 18, 'l']] },
   // Japanese destroyers: the funnels raked, the foremast a tripod, a short mainmast aft.
@@ -697,14 +711,14 @@ const AFT: Record<string, Partial<ShipO>> = {
   'matsu': { masts: [[20, 14, 't'], [-20, 9]], rake: 0.1 },
   'shimakaze': { masts: [[26, 16, 't'], [-30, 10]], rake: 0.14 },
   // Italian destroyers.
-  'turbine': { masts: [[16, 13, 't'], [-18, 8]] },
+  'turbine': { masts: [[25, 20.6], [-18, 24]] },
   'freccia': { masts: [[14, 14, 't'], [-18, 8]] },
   'maestrale': { masts: [[16, 15, 't'], [-20, 9]] },
   'soldati': { masts: [[16, 15, 't'], [-20, 9]] },
   'navigatori': { masts: [[16, 15, 't'], [-22, 9]] },
   'leone': { masts: [[20, 15, 't'], [-24, 10]] },
   'medaglie-d-oro': { masts: [[20, 17, 't']] },
-  'vifor': { masts: [[20, 14, 't'], [-20, 9]] },
+  'vifor': { masts: [[20, 21], [-23, 16]] },
   // French destroyers.
   'bourrasque': { masts: [[18, 14, 't'], [-22, 9]] },
   'jaguar-1923': { masts: [[24, 18, 't'], [-28, 10]] },
@@ -1093,7 +1107,8 @@ const M: Record<string, ShipO> = {
     blocks: [[42, 6, 17, 7, 2.5], [36, 16, 21.5, 5, 1.5], [4, -4, 21, 2.6], [-6, -40, 15.5, 6.8, 1], [-10, -24, 19.5, 5.2], [-24, -32, 22, 2.6]],
     masts: [[14, 31], [-17, 25]],
     launchers: [{ x: 51, length: 10, width: 7 }, { x: -55, length: 10, width: 7 }],
-    radars: [{ x: 29, up: 10.5, kind: 'faces', size: 3.8 }, { x: -16, up: 9, kind: 'faces', size: 3.8 }, { x: 14, up: 24, kind: 'array', size: 5 }],
+    // Four SPY-1 faces in all: the forward deckhouse's pair looks forward, the aft deckhouse's pair aft.
+    radars: [{ x: 29, up: 10.5, kind: 'faces', size: 3.8, look: 'fwd' }, { x: -16, up: 9, kind: 'faces', size: 3.8, look: 'aft' }, { x: 14, up: 24, kind: 'array', size: 5 }],
   },
   // Oliver Hazard Perry: the long box superstructure, the Mk 13 arm on the forecastle, the 76 mm gun on the roof aft of
   // the single square stack, the lattice mast with its big search array, twin hangars and the flight deck (135.6 x
@@ -1344,7 +1359,7 @@ N['arleigh-burke-flight-i'] = {
   hullOutline: hullOf([[76.95, 9.5, 0.2], [69.3, 9.0, 3.5], [54.3, 8.3, 7.8], [34.3, 7.6, 9.8], [-0.7, 7.2, 10.05], [-45.7, 6.8, 9.8], [-69.3, 6.4, 8.6], [-76.95, 6.3, 7.4]]),
   bodies: [blockOf(35.3, 3.3, 7.0, 15.5, 7.0, 3.5), blockOf(30.3, 14.3, 15.5, 19.5, 5.2, 2), blockOf(5.3, -1.7, 7.0, 21, 2.6, 0, 1.2), blockOf(-13.7, -20.7, 6.8, 19.5, 2.6, 0, 1.2), blockOf(3.3, -8.7, 7.0, 11, 4.2), blockOf(-6.7, -28, 6.8, 12.5, 6.0, 1.5)],
   turrets: [{ x: 57.3, size: 4.5, barrels: 1, length: 7, calibre: 0.127, kind: 'mount' }, { x: 36, size: 2.6, barrels: 1, length: 1.2, calibre: 0.02, kind: 'mount', up: 8.4 }, { x: -24, size: 2.6, barrels: 1, length: 1.2, calibre: 0.02, kind: 'mount', up: 5.5, back: true }],
-  masts: [{ x: 12.3, height: 26 }],
+  masts: [{ x: 12.3, height: 26, kind: 'tripod' }],
   launchers: [{ x: 45.3, length: 13, width: 8, up: 0.76 }, { x: -38, length: 10, width: 8, up: -0.33 }],
   radars: [{ x: 23.3, up: 9, kind: 'faces', size: 4 }],
   helideck: true,
@@ -1532,7 +1547,8 @@ const W: Record<string, ShipO> = {
     cls: 'attack-boat', L: 15.9, B: 3.8, fb: 1.6, sheer: 0.4, transom: 0.9,
     guns: '-1:1/13s^1.9 5.5:1/13s',
     blocks: [[3, -4, 3.4, 1.7, 0.6]],
-    extra: [blockOf(8.2, 7.6, 1.0, 2.2, 0.8)],
+    // The bow ramp, raised, standing on the bow inside the stem.
+    extra: [blockOf(7.4, 6.8, 1.0, 2.0, 0.7)],
   },
   // PBR Mk II: a fibreglass river boat, the twin .50 guns in the bow tub, the canopied coxswain's flat, a .50 aft
   // (9.8 x 3.5 m; 7.3 t).
@@ -2080,7 +2096,7 @@ for (const t of N['krivak'].turrets ?? []) if (t.calibre === 0.1) t.height = 2.9
 N['arleigh-burke-flight-iii'] = {
   ...N['arleigh-burke'],
   bodies: [blockOf(36, 3, 7.0, 16.6, 7.4, 3.5), blockOf(31, 13, 16.6, 21.2, 5.8, 2), blockOf(6, -1, 7.0, 21.5, 2.6, 0, 1.2), blockOf(-13, -20, 6.8, 19.5, 2.6, 0, 1.2), blockOf(4, -9, 7.0, 13, 4.6), blockOf(-6, -48, 6.8, 14.5, 7.0, 1.5)],
-  masts: [{ x: 12, height: 25 }],
+  masts: [{ x: 12, height: 25, kind: 'tripod' }],
   radars: [{ x: 24, up: 10.2, kind: 'faces', size: 4.6 }],
 };
 
@@ -2331,7 +2347,6 @@ const ALIASES: Record<string, string> = {
   'fr_type40k_vedette': 'vtb-boat',
   'fr_mtb96_vosper': 'vosper-mtb',
   'fr_flower_class_aconit': 'flower-corvette',
-  'fr_adroit_class': 'bourrasque',
   'fr_lcg_m_l9059': 'lcg-m',
   'fr_arras_class_arras': 'arras-aviso',
   'fr_marne_class_marne': 'arras-aviso',
@@ -2345,6 +2360,103 @@ const ALIASES: Record<string, string> = {
   'fr_frigate_corse_class_corse': 'le-corse-e50',
   'fr_p730_combattante': 'la-combattante',
   'fr_frigate_corse_class_brestois': 'le-corse-e50',
+  // The 1950s Adroit-class coastal escorts (L'Intrépide, 53 m): the size and layout of the US PC-461 sub-chaser.
+  'fr_adroit_class': 'pc-subchaser',
+  // Mission, AI and target ships (scripted or story units, models without or with fewer guns) drawn by their class, or by
+  // the nearest figure of their kind and size where the class has none: a carrier as a carrier, never a destroyer.
+  'germ_bb_tirpitz': 'bismarck-battleship',
+  'ijn_bb_yamato': 'yamato',
+  'ijn_bb_yamato_story': 'yamato',
+  'ijn_bb_nagato': 'nagato',
+  'ijn_bb_nagato_story': 'nagato',
+  'uss_bb_arizona': 'pennsylvania',
+  'uss_bb_arizona_story': 'pennsylvania',
+  'ijn_ca_myoko': 'myoko',
+  'ijn_ca_nagara': 'nagara',
+  'uss_brooklyn': 'brooklyn',
+  'uss_ca_sanfrancisco': 'new-orleans',
+  'hms_leander': 'leander',
+  'hms_leander_noguns': 'leander',
+  'germ_dd_z28': 'type-1936a',
+  'germ_dd_z28_noguns': 'type-1936a',
+  'ijn_dd_shiratsuyu': 'shiratsuyu',
+  'ijn_dd_shiratsuyu_light': 'shiratsuyu',
+  'ijn_dd_shiratsuyu_noguns': 'shiratsuyu',
+  'uss_dd_georgetown': 'clemson',
+  'uss_dd_sims': 'bagley',
+  'uss_dd_sims_guns': 'bagley',
+  'uss_dd_sims_noguns': 'bagley',
+  'uss_dd_sims_test': 'bagley',
+  'uss_dd_sims_test_gun_main': 'bagley',
+  'uss_dd_sims_test_gun_sec': 'bagley',
+  'uss_dd_versus': 'fletcher',
+  'uss_dd_versus_less_weapon': 'fletcher',
+  'ussr_destroyer_rckt_pr956': 'sovremenny',
+  'us_cruiser_rckt_california': 'ticonderoga',
+  'jp_aircraftcarrier_shokaku': 'shokaku',
+  'jp_aircraftcarrier_shokaku_ai': 'shokaku',
+  'ijn_cv_zuikaku': 'shokaku',
+  'ijn_cv_zuikaku_story': 'shokaku',
+  'ijn_cv_akagi': 'shokaku',
+  'ijn_cv_akagi_story': 'shokaku',
+  'ijn_cv_hiryu': 'shokaku',
+  'ijn_cv_hiryu_story': 'shokaku',
+  'ijn_cv_soryu': 'shokaku',
+  'ijn_cv_soryu_story': 'shokaku',
+  'ijn_cv_soryu_immortal': 'shokaku',
+  'ijn_cvl_ryujo': 'shokaku',
+  'uss_cv_enterprise': 'yorktown',
+  'uss_cv_enterprise_story': 'yorktown',
+  'uss_cv_wasp': 'yorktown',
+  'uss_cv_wasp_story': 'yorktown',
+  'uss_cv_immortal': 'yorktown',
+  'uss_cv_lexington': 'essex',
+  'uss_cv_lexington_story': 'essex',
+  'hms_cv_illustrious': 'yorktown',
+  'ital_cv_aquila': 'yorktown',
+  'us_aircraftcarrier_enterprise': 'nimitz-carrier',
+  'us_aircraftcarrier_enterprise_ai': 'nimitz-carrier',
+  'us_aircraftcarrier_saratoga': 'forrestal',
+  'us_aircraftcarrier_saratoga_ai': 'forrestal',
+  'us_aircraftcarrier_lexington': 'essex',
+  'us_aircraftcarrier_lexington_ai': 'essex',
+  'uk_aircraftcarrier_illustrious': 'invincible',
+  'uk_aircraftcarrier_illustrious_ai': 'invincible',
+  'uk_aircraftcarrier_ark_royal': 'colossus',
+  'uk_aircraftcarrier_ark_royal_ai': 'colossus',
+  'fr_aircraftcarrier_foch': 'colossus',
+  'fr_aircraftcarrier_foch_ai': 'colossus',
+  'ussr_aircraftcarrier_admiral_kuznetsov': 'kuznetsov',
+  'ussr_aircraftcarrier_admiral_kuznetsov_ai': 'kuznetsov',
+  'ussr_aircraftcarrier_baku': 'kuznetsov',
+  'ussr_aircraftcarrier_baku_ai': 'kuznetsov',
+  'germ_cargo_ship_goldenfels': 'cargo-ship',
+  'germ_cargo_ship_goldenfels_ec': 'cargo-ship',
+  'hms_cargo_ship': 'cargo-ship',
+  'ijn_cargo_ship': 'cargo-ship',
+  'ijn_cargo_ship_heavy': 'cargo-ship',
+  'uss_cargo_ship': 'cargo-ship',
+  'jp_cargo_ship_kashino': 'cargo-ship',
+  'jp_cargo_ship_kashino_ec': 'cargo-ship',
+  'uk_cargo_ship_liberty': 'liberty-ship',
+  'uk_cargo_ship_liberty_ec': 'liberty-ship',
+  'us_cargo_ship_liberty': 'liberty-ship',
+  'us_cargo_ship_liberty_damaged': 'liberty-ship',
+  'us_cargo_ship_liberty_ec': 'liberty-ship',
+  'ussr_cargo_ship_liberty': 'liberty-ship',
+  'uss_lst': 'lst-mk2',
+  'uss_lst_heavy': 'lst-mk2',
+  'uss_lst_includes': 'lst-mk2',
+  'uss_lcvp': 'lca',
+  'uss_lcvp_includes': 'lca',
+  'uss_lcvp_lite': 'lca',
+  'ijn_lcvp': 'lca',
+  'ijn_lcvp_lite': 'lca',
+  'jp_daihatsu_landing_craft': 'daihatsu',
+  'uss_pt_109': 'elco-80',
+  'uss_pt_109_lite': 'elco-80',
+  'ussr_tb_g5': 'g-5-torpedo-boat',
+  'ussr_tb_g5_lite': 'g-5-torpedo-boat',
 };
 
 export const SHIP_CLASSES: SpecSet = { naval: N, aliases: ALIASES };

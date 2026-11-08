@@ -29,6 +29,10 @@ import { AMBIENT, GROUND_COLOR, SHEEN_BASE, SHEEN_COLOR, SHEEN_UP, SKY_COLOR, SU
  */
 export class FigBuffer extends VertexBuffer {
   nrm = new Float32Array(4 * 4096);
+  /** Per vertex, the joint it moves with: 0 the hull, j + 1 the kit's joint j (see `Joint`). */
+  jnt = new Uint8Array(4096);
+  /** The joint the next vertices are written into (set by `into`). */
+  joint = 0;
 
   override vertex(x: number, y: number, z: number, r: number, g: number, b: number, a: number): void {
     super.vertex(x, y, z, r, g, b, a);
@@ -47,6 +51,12 @@ export class FigBuffer extends VertexBuffer {
       next.set(this.nrm);
       this.nrm = next;
     }
+    if (i >= this.jnt.length) {
+      const next = new Uint8Array(Math.max(this.jnt.length * 2, i + 1));
+      next.set(this.jnt);
+      this.jnt = next;
+    }
+    this.jnt[i] = this.joint;
     const o = i * 4;
     this.nrm[o] = x;
     this.nrm[o + 1] = y;
@@ -139,6 +149,38 @@ export interface Kit {
   team: FigBuffer;
   fixed: FigBuffer;
   fr: Frame3;
+  /** The figure's moving parts, in the order they were added (`joint`). */
+  joints: Joint[];
+}
+
+/**
+ * A moving part of a figure, for replay to turn a turret or raise a gun: a
+ * turret turns about the vertical through `pivot` (`yaw`), a gun about the
+ * horizontal through its trunnion `pivot` (`pitch`), carried round by its
+ * turret (`parent`, -1 for a hull or casemate gun).
+ */
+export interface Joint {
+  kind: 'yaw' | 'pitch';
+  /** In the template frame (x forward, y up, z right), metres. */
+  pivot: Vec3;
+  /** The yaw joint a pitch joint rides on, an index into `joints`; -1 for none. */
+  parent: number;
+  /** The yaw the part was built facing, radians, right (+z) positive: 0 forward, PI aft (a ship's after turret). */
+  rest: number;
+  /** For a gun: the elevation it was built at, radians, up positive. */
+  pitch?: number;
+}
+
+/** Adds a moving part to the kit and returns its index (vertices go into it with `into`). */
+export function joint(k: Kit, j: Joint): number {
+  k.joints.push(j);
+  return k.joints.length - 1;
+}
+
+/** Writes the next vertices of both parts into joint `j` (an index from `joint`), or back into the hull with -1. */
+export function into(k: Kit, j: number): void {
+  k.team.joint = j + 1;
+  k.fixed.joint = j + 1;
 }
 
 /** A built figure, ready to place. */
@@ -160,6 +202,10 @@ export interface Template {
   anchor: Anchor;
   /** Triangles in all, for budgets. */
   triangles: number;
+  /** The moving parts (turrets, guns), and per vertex which one it moves with: 0 the hull, j + 1 joint j. Coarse and far builds have the same joints in the same order. */
+  joints?: Joint[];
+  teamJ?: Uint8Array;
+  fixedJ?: Uint8Array;
   /** The same figure built coarse, for when it is small on screen (`withCoarse`); same bounds. */
   coarse?: () => Template;
   /** Coarser still, for crowds of figures far off (`withCoarse`); same bounds. */
@@ -167,7 +213,7 @@ export interface Template {
 }
 
 export function newKit(): Kit {
-  return { team: new FigBuffer(), fixed: new FigBuffer(), fr: LOCAL };
+  return { team: new FigBuffer(), fixed: new FigBuffer(), fr: LOCAL, joints: [] };
 }
 
 /** Freezes what a kit holds into a template. */
@@ -191,7 +237,13 @@ export function finish(k: Kit, anchor: Anchor): Template {
   const mid: Vec3 = [(min[0] + max[0]) / 2, (min[1] + max[1]) / 2, (min[2] + max[2]) / 2];
   const teamN = normalsOf(team, k.team.nrm.slice(0, k.team.count * 4), mid);
   const fixedN = normalsOf(fixed, k.fixed.nrm.slice(0, k.fixed.count * 4), mid);
-  return { team, fixed, teamN, fixedN, min, max, anchor, triangles: (k.team.count + k.fixed.count) / 3 };
+  const t: Template = { team, fixed, teamN, fixedN, min, max, anchor, triangles: (k.team.count + k.fixed.count) / 3 };
+  if (k.joints.length) {
+    t.joints = k.joints.map((j) => ({ ...j, pivot: [...j.pivot] as Vec3 }));
+    t.teamJ = k.team.jnt.slice(0, k.team.count);
+    t.fixedJ = k.fixed.jnt.slice(0, k.fixed.count);
+  }
+  return t;
 }
 
 /**

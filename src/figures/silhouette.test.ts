@@ -2,7 +2,7 @@
  * Guards the figures' silhouettes from all round against unintended change:
  * for a fixed set of figures (the reference types and a fifth of the rest,
  * picked by name), each view's projected width and height and covered area
- * are kept in `silhouette.snap.tsv`, and a build that moves one by more than
+ * are kept in `silhouette.snap.txt`, and a build that moves one by more than
  * the tolerance fails. After an intended change, rewrite the snapshot with
  * `SIL_UPDATE=1 npx vitest run src/figures/silhouette.test.ts` and look at
  * the random-angle sheets (`FIGSIL=random`) before keeping it.
@@ -14,7 +14,7 @@ import { describe, expect, it } from 'vitest';
 import { CATALOG } from './catalog';
 import { iou, silhouette, SIL_VIEWS } from './silhouette';
 
-const SNAP = fileURLToPath(new URL('./silhouette.snap.tsv', import.meta.url));
+const SNAP = fileURLToPath(new URL('./silhouette.snap.txt', import.meta.url));
 
 /** Types every check includes; the rest are sampled by a hash of the name. */
 const ALWAYS = ['f-16c', 'f-a-18c', 'f-15c', 'su-27', 'mig-29a', 'a-10c', 'mi-24p-hind', 'ah-64d-apache', 't-72b', 'm1a2-abrams', 'leopard-2a6', 'arleigh-burke', 'bf-109-g6', 'spitfire-mk-ix', 'la-7', 'b-17g'];
