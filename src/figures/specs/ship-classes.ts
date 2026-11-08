@@ -426,10 +426,15 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
 
   // ---------------------------------------------------------------- cruisers by class
   // United States.
-  'omaha': { cls: 'light-cruiser', L: 169.4, B: 16.9, fb: 8, fc: [-30, 2.4], guns: '62:2/152 -62:2/152b', funnels: [[22, 11, 3], [14, 11, 3], [6, 11, 3], [-2, 11, 3]], blocks: [[38, 28, 16, 4, 1]], masts: [[34, 26], [-30, 20]] },
+  // Omaha from FM 30-50 (1941), "Light cruisers, Omaha class" (profile): the forecastle 9 m to the mainmast, the low
+  // quarterdeck; the four funnels in two pairs, the twin 6-inch turrets fore and on the after deckhouse, the bridge, the
+  // fore and main tripods.
+  'omaha': { cls: 'light-cruiser', L: 169.4, B: 16.9, fb: 9.0, fc: [-40, 4.5], guns: '62.3:2/152^0.4 -46.2:2/152^6b', funnels: [[22.4, 11.1, 4], [12.7, 11.1, 4], [-6.1, 11.1, 4], [-15.3, 11.1, 4]], blocks: [[51.5, 33, 15.4, 4.5]], raised: [[46, 35, 15.4, 17.9, 3]], masts: [[40, 25.6], [-34.8, 27.5]] },
   'northampton': { cls: 'heavy-cruiser', L: 182.9, B: 20.1, fb: 8, fc: [-24, 2.4], guns: '56:3/203 44:3/203^2.5 -52:3/203b', funnels: [[6, 12, 4], [-8, 12, 4]], blocks: [[32, 22, 20, 5, 1]], masts: [[26, 30], [-20, 24]] },
   'portland': { cls: 'heavy-cruiser', L: 186.0, B: 20.1, fb: 8, fc: [-24, 2.4], guns: '58:3/203 46:3/203^2.5 -54:3/203b', funnels: [[6, 12, 4], [-8, 12, 4]], blocks: [[34, 20, 22, 6, 1]], masts: [[26, 32], [-20, 26]] },
-  'pensacola': { cls: 'heavy-cruiser', L: 178.5, B: 19.9, fb: 8, fc: [-24, 2.4], guns: '58:2/203 46:3/203^2.5 -44:3/203^2.5b -56:2/203b', funnels: [[4, 12, 4], [-8, 12, 4]], blocks: [[30, 22, 20, 6, 1]], masts: [[24, 30], [-18, 26]] },
+  // Pensacola from FM 30-50 (1941), "Heavy cruisers, Pensacola class" (profile): the triples superfiring over the twins,
+  // the two funnels 30 m apart, the tall fore tripod over the bridge, the main tripod; the deck stepping down at the mainmast.
+  'pensacola': { cls: 'heavy-cruiser', L: 178.5, B: 19.9, fb: 8, fc: [-40, 2.4], guns: '61.3:2/203^-0.7 45.8:3/203^3.8 -51:3/203^3.1b -64.6:2/203^-0.8b', funnels: [[17.4, 12.7, 6.5], [-13, 12, 6.2]], blocks: [[37.7, 23.7, 15, 5.5]], raised: [[34, 26, 15, 19.7, 3.5]], masts: [[30, 33], [-37.5, 23.4]] },
   // New Orleans: deck line and plan, turrets, funnels, towers, directors and masts measured on the Bureau of
   // Construction and Repair outboard profile and main deck plan of San Francisco (CA-38), as fitted about 1942 (sources.md).
   'new-orleans': {
@@ -769,12 +774,12 @@ const AFT: Record<string, Partial<ShipO>> = {
   'cavour-1915': { blocks: [[-20.7, -28.3, 13.1, 4]] },
   'dante-alighieri': { blocks: [[-21.5, -38.4, 9.8, 5]] },
   // United States cruisers.
-  'omaha': { blocks: [[-22, -32, 11, 3.5]], dirs: [[-27, 13.5]], sl: [[-12, 14]], masts: [[34, 26, 't'], [-30, 20, 't']], launchers: [{ x: -8, length: 5, width: 2.2, kind: 'tubes', count: 1, elevation: 0 }] },
+  'omaha': { blocks: [[-40, -52.5, 10.5, 4]], dirs: [[-27, 13.5]], sl: [[-12, 14]], masts: [[40, 25.6, 't'], [-34.8, 27.5, 't']], launchers: [{ x: -8, length: 5, width: 2.2, kind: 'tubes', count: 1, elevation: 0 }] },
   'northampton': { blocks: [[-12, -26, 14, 6.5], [-26, -34, 15.5, 4]], dirs: [[-30, 19]], sl: [[-1, 17]], masts: [[26, 30, 't'], [-20, 24, 't']] },
   'portland': { blocks: [[-12, -24, 14, 6.5], [-25, -34, 15.5, 4]], dirs: [[-30, 19]], sl: [[-1, 17]], masts: [[26, 32, 't'], [-20, 26, 't']] },
   // The searchlight platforms round the after funnel (CA-38 outboard profile).
   'new-orleans': { sl: [[6.5, 14.2]] },
-  'pensacola': { blocks: [[-12, -22, 13.5, 5], [-22, -32, 14, 4]], dirs: [[-28, 17]], sl: [[-2, 16]], masts: [[24, 30, 't'], [-18, 26, 't']] },
+  'pensacola': { blocks: [[-16.6, -24, 15.6, 4.5], [-34, -41, 13, 4]], dirs: [[-28, 17]], sl: [[-2, 16]], masts: [[30, 33, 't'], [-37.5, 23.4, 't']] },
   'brooklyn': { blocks: [[-10, -30, 13.5, 6], [-14, -26, 17, 4]], dirs: [[-24, 20]], sl: [[0, 16]] },
   'cleveland': { blocks: [[-12, -30, 13, 6.5]], dirs: [[-22, 19]], masts: [[16, 26, 't'], [-10, 22]] },
   'fargo': { blocks: [[-10, -30, 13, 6.5]], dirs: [[-22, 19]], masts: [[16, 26, 't'], [-10, 22]] },
