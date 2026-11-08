@@ -488,9 +488,17 @@ const MILAN = tb(-0.1, -1.05, 0.65, 1.2, 0.16, 0.16, DARK);
 G['marder-1a1'] = { cls: 'ifv', ...MARDER, addOns: [MILAN] };
 G['marder-1a3'] = { cls: 'ifv', ...MARDER, width: 3.38, addOns: [MILAN, hb(-0.3, 1.68, 1.55, 5.4, 0.16, 0.65, M), tb(0.0, 1.05, 0.25, 1.6, 0.14, 0.45, M)] };
 // Puma (2015): a broad flat box with side armour modules down to the skirts, six road wheels, the low unmanned turret with
-// the 30 mm and the Spike launcher on its side, the commander's periscope head on its post over the turret's rear (7.6 x
-// 3.9 m, 3.6 m to the periscope's top).
-G['puma'] = { cls: 'ifv', chassis: 'tracked', length: 7.6, width: 3.9, hullHeight: 2.35, roadWheels: 6, roadWheelRadius: 0.33, skirts: true, skirt: [[-3.7, 0.45], [3.5, 0.45], [3.7, 1.0], [3.7, 1.9], [-3.7, 1.9]], trackProfile: run(7.4, 1.0, [3.65, 0.7], [-3.65, 0.7], -3.0, 3.0), hullOutline: { top: [[-3.8, 2.2], [-3.6, 2.35], [1.4, 2.35], [3.8, 1.4]], bottom: [[-3.8, 1.0], [3.6, 1.0], [3.8, 1.2]], plan: [[-3.8, 1.95], [3.2, 1.95], [3.8, 1.6]], round: 12, stations: 12 }, turret: turret(0.1, [[-1.0, 0.8], [-0.8, 1.0], [0.9, 1.0], [1.2, 0.7]], [[-1.0, 0.5], [0.9, 0.55], [1.2, 0.4]], 10, 1.2), guns: [{ mount: 'turret', length: 3.0, calibre: 0.03, at: 0.5 }], addOns: [tb(-0.3, -1.15, 0.45, 1.1, 0.3, 0.35), { on: 'turret', kind: 'drum', at: [-0.65, -0.55, 0.78], size: [0.2, 0.2, 0.46] }, tb(-0.65, -0.55, 1.13, 0.42, 0.34, 0.24, DARK)] };
+// the 30 mm and the Spike launcher on its side, the commander's periscope head on its post (7.6 x 3.9 m).
+// Measured on a broadside photograph (Dirk Vorderstraße, CC BY 2.0, scaled by the 7.6 m hull, the roof checked against a soldier
+// beside the vehicle on a second one, sources.md): the roof 2.0 m up and flat to 0.75 m ahead of the middle, a long shallow
+// front falling to 1.42 m at the nose; the side modules end 0.8 m up. The turret box sits well behind the middle (2.5 to
+// 0.25 m behind it), 0.75 m over the roof, the narrow gun housing tapering 1.15 m ahead of it with its underside rising;
+// the sight head over the box's middle, 1.12 m over the roof.
+const PUMA_TURRET = (() => {
+  const t = turret(-1.35, [[-1.15, 0.78], [-1.0, 0.85], [1.09, 0.85], [1.25, 0.4], [2.23, 0.3]], [[-1.15, 0.66], [-1.05, 0.75], [1.09, 0.75], [2.23, 0.61]], 10, 2.23);
+  return { ...t, outline: { ...t.outline!, bottom: [[-1.15, 0], [1.09, 0], [2.23, 0.4]] as P2[] } };
+})();
+G['puma'] = { cls: 'ifv', chassis: 'tracked', length: 7.6, width: 3.9, hullHeight: 2.0, roadWheels: 6, roadWheelRadius: 0.33, skirts: true, skirt: [[-3.78, 0.8], [3.3, 0.8], [3.78, 1.15], [3.78, 1.42], [2.35, 1.74], [0.74, 1.98], [-3.78, 1.98]], trackProfile: run(7.0, 0.95, [3.07, 0.72], [-3.36, 0.6], -2.75, 2.45), hullOutline: { top: [[-3.8, 1.95], [-3.7, 2.0], [0.74, 2.0], [2.35, 1.76], [3.54, 1.49], [3.8, 1.42]], bottom: [[-3.8, 0.95], [3.3, 0.85], [3.8, 1.15]], plan: [[-3.8, 1.95], [3.2, 1.95], [3.8, 1.6]], round: 12, stations: 12 }, turret: PUMA_TURRET, guns: [{ mount: 'turret', length: 1.76, calibre: 0.03, at: 0.67 }], addOns: [tb(-0.3, -1.0, 0.4, 1.1, 0.3, 0.35), { on: 'turret', kind: 'drum', at: [0.17, -0.45, 0.84], size: [0.28, 0.28, 0.2] }, tb(0.17, -0.45, 1.02, 0.62, 0.36, 0.19, DARK), { on: 'turret', kind: 'tube', at: [2.23, 0, 0.5], to: [3.7, 0, 0.5], size: [0.13, 0.13, 0], metal: true }] };
 // CV90 (Strf 9040, 1993): a high box hull, seven road wheels, the two-man turret with the 40 mm in its shroud (6.47 x 3.1 m, 2.7 m);
 // CV9030 the 30 mm, CV9035 the longer 35 mm and a bustle, CV90120 / CV90105 a tank turret with the big gun.
 const CV90: GroundSpec = { chassis: 'tracked', length: 6.47, width: 3.1, hullHeight: 1.75, roadWheels: 7, roadWheelRadius: 0.3, skirts: true, trackProfile: run(6.3, 0.9, [3.15, 0.62], [-3.15, 0.65], -2.6, 2.55), hullOutline: { top: [[-3.24, 1.65], [-3.1, 1.75], [1.2, 1.75], [3.24, 1.0]], bottom: [[-3.24, 0.9], [3.0, 0.9], [3.24, 1.0]], plan: [[-3.24, 1.52], [3.24, 1.45]], round: 10, stations: 12 }, turret: turret(0.0, [[-1.3, 0.95], [-1.0, 1.15], [0.7, 1.2], [1.2, 0.9], [1.35, 0.55]], [[-1.3, 0.55], [0.7, 0.65], [1.35, 0.45]], 8, 1.3), guns: [{ mount: 'turret', length: 2.8, calibre: 0.04, sleeve: 0.75, at: 0.5 }] };
@@ -2018,7 +2026,12 @@ G['ush-405'] = { cls: 'scout-car', chassis: 'wheeled', length: 4.9, width: 2.15,
   addOns: [hb(-0.6, 0, 1.95, 0.6, 0.6, 0.2, DARK), ...[-1, 1].map((s) => beam([-1.5, s * 0.35, 2.15], 0.08, 1.8, 0.45, 0.45, DARK))] };
 // Eitan (2016; about 8.0 x 3.0 m, 2.6 m hull: estimates): the high 8x8 with its sloped nose and flat sides, the unmanned
 // turret with the 30 mm over the hull's middle.
-G['eitan'] = { cls: 'ifv', chassis: 'wheeled', length: 8.0, width: 3.0, hullHeight: 2.45, axles: 4, axleAt: [0.72, 0.4, -0.3, -0.62], wheelRadius: 0.62, hullOutline: wheeledHull(8.0, 2.45, 1.25, 1.5, 2.4, 0.65),
+// Stations from a front-quarter photograph (Zachi Evenor, CC BY 2.0, sources.md), taken off the hull's side plane with the
+// perspective undone from its vanishing point and scaled by the 8 m hull and the tyres: the axles 3.1 and 1.75 m behind the
+// middle, near it and 1.75 m ahead, leaving the long nose; the roof 2.52 m up to 2.0 m ahead of the middle, the upper glacis
+// falling to the beak 1.7 m up at the front, the lower nose back under it; the box of the upper hull overhangs the rear
+// wheels, its underside 1.42 m up at the back.
+G['eitan'] = { cls: 'ifv', chassis: 'wheeled', length: 8.0, width: 3.0, hullHeight: 2.52, axles: 4, axleAt: [0.44, 0.02, -0.44, -0.77], wheelRadius: 0.62, hullOutline: { top: [[-4.0, 2.45], [-3.9, 2.52], [1.96, 2.52], [4.0, 1.71]], bottom: [[-4.0, 1.42], [-2.96, 1.2], [-2.7, 0.65], [2.61, 0.78], [3.51, 1.1], [4.0, 1.66]], plan: [[-4.0, 1.4], [-3.6, 1.5], [2.6, 1.5], [4.0, 1.05]], round: 6, stations: 12 },
   turret: turret(0.0, [[-0.9, 0.7], [-0.7, 0.8], [0.5, 0.8], [0.85, 0.55]], [[-0.9, 0.5], [0.5, 0.55], [0.85, 0.35]], 10, 0.85), guns: [{ mount: 'turret', length: 3.0, calibre: 0.03, at: 0.5 }], addOns: [td(-0.3, 0.5, 0.65, 0.4, 0.3)] };
 // Type 62 (1962; 5.55 x 2.86 m, 2.25 m): the Type 59 scaled down - five road wheels with the gap behind the first, no
 // rollers - the small round turret well forward, the 85 mm with its evacuator near the muzzle.
@@ -2466,7 +2479,7 @@ for (const n of ['ztz-99-era', 'wz-1001']) {
   more(n, [...sight(1.3, -0.75, 0.92, 0.55, 0.4, 0.22), ...pano(0.0, 0.72, 0.82, 0.36, 0.42), ...smokeRow(-1.4, 1.58, 0.6, 5, 0.12), ...basket(-2.75, 0.48, 0.45, 2.6, 0.42)], (g) => [...g, roofMg(-0.5, -0.7)]);
 }
 // Puma: the MK30-2's armoured cradle and its muzzle device, four smoke tubes a side on the turret, the rear ramp.
-more('puma', [tb(1.35, 0, 0.3, 0.7, 0.36, 0.3), ...smokeRow(0.7, 1.0, 0.36, 4, 0.11, 0.6), panel(-3.81, 0, 1.75, 0.04, 1.7, 1.25)], mainGun({ muzzle: true }));
+more('puma', [...smokeRow(-0.75, 0.9, 0.45, 4, 0.11, 0.6), panel(-3.81, 0, 1.3, 0.04, 1.7, 1.2)], mainGun({ muzzle: true }));
 // Ajax: the commander's panoramic sight, the gunner's sight, smoke banks, the bustle basket, the remote machine gun.
 more('ajax', [...pano(0.1, 0.8, 0.85, 0.36, 0.45), ...sight(1.0, -0.75, 0.95, 0.5, 0.4, 0.22), ...smokeRow(0.6, 1.36, 0.62, 4), ...basket(-1.8, 0.5, 0.5, 2.3, 0.45)], (g) => [...g, roofMg(-0.4, -0.6, 0.0076)]);
 // Eitan: the Trophy radar panels at the hull's corners, the Spike launcher on the turret's side, the commander's sight.

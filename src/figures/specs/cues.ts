@@ -1839,9 +1839,9 @@ export const CUES: Record<string, CueEntry> = {
   'black-prince': ground('black-prince', [{ cue: 'wider hull and big turret with the 17-pounder', check: (s) => s.width > 3.3 && muzzle(s) && gunLen(3)(s) }]),
   puma: ground('puma', [
     { cue: 'six road wheels behind skirts', check: (s) => wheels(s) === 6 && skirted(s) },
-    { cue: 'low unmanned turret with the 30 mm', check: (s) => cal(0.03, 0.035)(s) && (s.turret?.height ?? 1) < 0.6 },
+    { cue: 'low unmanned turret with the 30 mm, set behind the middle', check: (s) => cal(0.03, 0.035)(s) && (s.turret?.height ?? 1) < 0.8 && (s.turret?.x ?? 0) < -1 },
     { cue: "Spike launcher on the turret's left side", check: (s) => (s.addOns ?? []).some((a) => a.on === 'turret' && a.kind === 'box' && a.at[1] <= -1) },
-    { cue: "commander's periscope head on its post over the turret's rear", check: (s) => adds('drum', 1, 'turret')(s) && (s.addOns ?? []).some((a) => a.on === 'turret' && a.metal && a.at[2] >= 1) },
+    { cue: "commander's periscope head on its post over the turret box's middle", check: (s) => adds('drum', 1, 'turret')(s) && (s.addOns ?? []).some((a) => a.on === 'turret' && a.metal && a.at[2] >= 1) },
   ]),
   'cckw-m45': ground('cckw-m45', [{ cue: 'quad .50 Maxson mount on the load bed', check: guns(2) }]),
   grant: ground('grant', [
