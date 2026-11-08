@@ -1674,6 +1674,21 @@ G['bulldozer'] = { cls: 'truck', chassis: 'tracked', length: 6.0, width: 3.0, hu
     sl([3.55, 0, 0.85], rect(1.7, 0.78), 0.12, 'front', { pitch: 0.12, curve: -0.25, ...MT }), ...[-1, 1].map((s) => rod([3.4, s * 1.3, 0.55], [-0.6, s * 1.55, 0.6], 0.2, MT)),
     beam([-2.4, 0, 1.0], Math.PI - 0.15, 1.0, 1.4, 0.25, DARK), rod([-3.2, 0, 1.15], [-3.4, 0, 0.1], 0.15, MT),
   ] };
+// The wartime Caterpillar D7 crawler tractor with its cable-worked dozer blade (published: tractor 4.12 x 2.46 m, hood 2.03 m,
+// 2.44 m over the stacks, gauge 1.87 m, 0.51 m shoes, 0.39 m clearance; 5.8 x 4.1 m with the dozer): the low-drive oval
+// track with the sprocket at the back, the narrow engine hood between the tracks, fuel tank and seat behind it, the
+// sheave mast over the radiator, the blade on its push arms outside the tracks and the cable control unit at the back.
+const D7: GroundSpec = { chassis: 'tracked', length: 4.12, width: 2.38, trackWidth: 0.51, hullHeight: 1.0, roadWheels: 5, roadWheelRadius: 0.16,
+  trackProfile: [[-1.3, 0], [1.35, 0], [1.85, 0.4], [1.55, 0.86], [-1.6, 0.9], [-1.98, 0.45]], running: { wheels: [-1.05, -0.5, 0.05, 0.6, 1.15] },
+  hullOutline: { top: [[-2.06, 0.95], [2.06, 0.95]], bottom: [[-2.06, 0.39], [2.06, 0.39]], plan: [[-2.06, 0.68], [2.06, 0.68]], round: 10, stations: 6 }, addOns: [
+    bx(-0.1, 2.06, 0, 0.95, 1.95, 1.0), sl([2.07, 0, 1.48], rect(0.5, 0.52), 0.04, 'front', DARK), rod([1.2, 0.25, 1.9], [1.2, 0.25, 2.44], 0.13, MT), rod([1.5, -0.25, 1.9], [1.5, -0.25, 2.3], 0.2, MT),
+    bx(-2.0, -1.25, 0, 0.95, 1.6, 1.9), bx(-1.25, -0.6, 0, 0.95, 1.35, 0.6, DARK), ...[-1, 1].map((s) => bx(-2.06, -0.1, s * 0.97, 0.92, 0.98, 0.56, DARK)),
+    bx(2.08, 2.22, 0, 1.0, 2.3, 0.25, MT), bx(-2.6, -2.06, 0, 0.7, 1.45, 0.9, DARK),
+    sl([3.14, 0, 0.55], rect(2.05, 0.55), 0.12, 'front', { pitch: 0.1, curve: -0.25, ...MT }), ...[-1, 1].map((s) => rod([3.0, s * 1.3, 0.5], [-0.3, s * 1.3, 0.55], 0.18, MT)),
+  ] };
+G['caterpillar-d7'] = { cls: 'truck', ...D7 };
+// The armoured D7 of 1944 (half-inch plate cab, 2.5 m): the same tractor with the closed box cab over the seat.
+G['caterpillar-d7-armoured'] = { cls: 'truck', ...D7, addOns: [...D7.addOns!, kung(-2.0, -0.05, 1.9, 0.95, 2.5, DARK), ...[-1, 1].map((s) => sl([-0.6, s * 0.96, 2.2], rect(0.5, 0.05), 0.02, 'side', DARK))] };
 // A civilian double-cab pickup (5.3 x 1.85 m) with its load bed.
 G['pickup'] = { cls: 'civilian-car', ...PICKUP, bed: 'none', addOns: PICKUP_BED };
 // A saloon car (est 4.6 x 1.8 m, 1.45 m): bonnet, glasshouse and boot.

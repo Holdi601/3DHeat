@@ -3143,6 +3143,12 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'tracked tractor with a dozer blade in front', check: (s) => chassisIs('tracked')(s) && adds('slab', 1, 'hull')(s) },
     { cue: 'no turret or gun', check: (s) => noTurret(s) && !s.guns?.length },
   ]),
+  'caterpillar-d7': ground(['caterpillar-d7', 'caterpillar-d7-armoured'], [
+    { cue: 'crawler tractor with a wide dozer blade on push arms', check: (s) => chassisIs('tracked')(s) && adds('slab', 1, 'hull')(s) },
+    { cue: 'low-drive oval track: no raised sprocket', check: (s) => (s.trackProfile ?? []).every((p) => p[1] < 1.0) },
+    { cue: 'five small track rollers', check: run(5) },
+    { cue: 'no turret or gun', check: (s) => noTurret(s) && !s.guns?.length },
+  ]),
   // Half-tracks.
   'sdkfz-7': ground(['sdkfz-7', 'sdkfz-7-flakvierling'], [
     { cue: 'half-track: front wheels, long interleaved track unit', check: (s) => chassisIs('halftrack')(s) && wheels(s) >= 6 },

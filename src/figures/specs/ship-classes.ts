@@ -2741,9 +2741,9 @@ const ALIASES: Record<string, string> = {
   'it_ms473_2a': 'ms-crda',
   'it_ms444': 'ms-crda',
   'it_mc_485': 'mc-gunboat',
-  'it_mc490_folgore': 'mc-gunboat',
+  'it_mc490_folgore': 'freccia-fpb', // Lampo-era fast attack craft, Freccia's size
   'it_ms473_2a_art': 'mc-gunboat',
-  'it_mc492_baleno': 'mc-gunboat',
+  'it_mc492_baleno': 'freccia-fpb',
   'it_gabbiano_class': 'gabbiano-corvette',
   'it_gabbiano_class_c16': 'gabbiano-corvette',
   'it_p493_freccia': 'freccia-fpb',
