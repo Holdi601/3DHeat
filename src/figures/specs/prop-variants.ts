@@ -2209,8 +2209,10 @@ A['iar-93'] = jet({ cls: 'attack', length: 13.2, span: 9.4, height: 4.52, w: 0.7
 // Guide to Airfoil Usage): Spitfire NACA 2213, Bf 109 NACA 2R1 14.2, Fw 190 and Ta 152 NACA 23015.3, Mustang NAA/NACA 45-100
 // (15.1 %), Corsair, Wildcat and Avenger NACA 23015, Hellcat NACA 23015.6, Zero NACA 2315, Yak-1 and Yak-3 Clark YH 14 %, Il-2
 // Clark YH 14 %, Tempest NACA 22 14.5, Typhoon NACA 22 19.5, Dauntless NACA 2415, B-25 NACA 23017, B-24 Davis 22 %, B-29
-// Boeing 117 22 %, Lancaster NACA 23018. The tips thin to three quarters of it.
-const ROOT_TC: [string, number][] = [['spitfire-mk-ix', 0.13], ['spitfire-mk-v', 0.13], ['spitfire-mk-xiv', 0.13], ['bf-109-e', 0.142], ['bf-109-g6', 0.142], ['bf-109-k4', 0.142], ['fw-190-a8', 0.153], ['fw-190-d9', 0.153], ['ta-152h', 0.153], ['p-51b', 0.151], ['p-51d-mustang', 0.151], ['f4u-corsair', 0.15], ['f6f-hellcat', 0.156], ['f4f-wildcat', 0.15], ['a6m-zero', 0.15], ['yak-3', 0.14], ['yak-1b', 0.14], ['il-2', 0.14], ['il-2-1941', 0.14], ['tempest-v', 0.145], ['typhoon', 0.195], ['sbd-dauntless', 0.15], ['tbf-avenger', 0.15], ['b-25h', 0.17], ['b-25', 0.17], ['b-24', 0.22], ['b-29', 0.22], ['lancaster', 0.18]];
+// Boeing 117 22 %, Lancaster NACA 23018, B-17 NACA 0018, A-20 NACA 23018, Helldiver NACA 23017, C-47 and Li-2 NACA 2215, Halifax
+// NACA 23021, MiG-3 Clark YH 14 %, LaGG-3 and La-5 NACA 23016, Bf 110 NACA 2R1 14.2, A-26 NACA 65,2-215. The tips thin to three
+// quarters of it.
+const ROOT_TC: [string, number][] = [['spitfire-mk-ix', 0.13], ['spitfire-mk-v', 0.13], ['spitfire-mk-xiv', 0.13], ['bf-109-e', 0.142], ['bf-109-g6', 0.142], ['bf-109-k4', 0.142], ['fw-190-a8', 0.153], ['fw-190-d9', 0.153], ['ta-152h', 0.153], ['p-51b', 0.151], ['p-51d-mustang', 0.151], ['f4u-corsair', 0.15], ['f6f-hellcat', 0.156], ['f4f-wildcat', 0.15], ['a6m-zero', 0.15], ['yak-3', 0.14], ['yak-1b', 0.14], ['il-2', 0.14], ['il-2-1941', 0.14], ['tempest-v', 0.145], ['typhoon', 0.195], ['sbd-dauntless', 0.15], ['tbf-avenger', 0.15], ['b-25h', 0.17], ['b-25', 0.17], ['b-24', 0.22], ['b-29', 0.22], ['lancaster', 0.18], ['b-17e', 0.18], ['a-20g', 0.18], ['sb2c-helldiver', 0.17], ['c-47', 0.15], ['li-2', 0.15], ['halifax', 0.21], ['mig-3', 0.14], ['lagg-3', 0.16], ['la-5', 0.16], ['bf-110g', 0.142], ['a-26c', 0.15]];
 for (const [k, r] of ROOT_TC) if (A[k]?.wing) A[k]!.wing.thicknessRatio = r;
 
 export const PROP_VARIANTS: SpecSet = { air: A, aliases: ALIASES };
