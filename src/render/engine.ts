@@ -296,6 +296,8 @@ export class Engine {
 
   private playhead = 0;
   private wasPlaying = false;
+  /** The playhead the team view's units were last placed at; NaN before the first. */
+  private teamDrawnAt = NaN;
   private lastSeekNonce = -1;
   private lastPublish = 0;
 
@@ -2257,6 +2259,12 @@ export class Engine {
       this.accumRowHi = planHi;
     }
 
+    // The team view's units move with the playhead even when no heat changes. In
+    // team mode the cumulative window has no rows to add, so the extend branch
+    // above calls the frame idle; without this the figures froze while playing
+    // and moved only when the camera did.
+    if (s.mode === 'team' && this.dataset && this.playhead !== this.teamDrawnAt) compositeOnly = false;
+
     if (plan === EMPTY_PLAN) submitted = 0;
     this.live.accumMode = compositeOnly ? 'skip' : accumMode;
 
@@ -2278,6 +2286,7 @@ export class Engine {
     // Skipped on an idle frame: nothing draws it, and rebuilding one cube per
     // person every frame while the view sits still is the one cost that would make
     // recompositing-when-idle worth avoiding.
+    if (s.mode === 'team' && !compositeOnly) this.teamDrawnAt = this.playhead;
     if (s.mode === 'team' && this.cursor && !compositeOnly && !gpuStore) {
       const visible = this.personVisibility(s.teamVisibility, s.filters);
       // `all` mode ignores the playhead, so the cursor is placed at the end and
