@@ -127,6 +127,9 @@ const N: Record<string, NavalSpec & { cls: string }> = {
   'lcac-hovercraft': { cls: 'hovercraft', length: 26.4, beam: 14.3, freeboard: 2.5, hull: 'hover' },
 };
 
+/** The specs built from a domain builder, the named sets merged over these below: for the recognition cues. */
+export const DOMAIN_SPECS = { ground: G, air: A, heli: H, naval: N };
+
 const MARKERS: Record<string, { kind: MarkerKind; radius?: number; height?: number }> = {
   'cs2-smoke': { kind: 'smoke', radius: 3.6, height: 3.4 },
   'cs2-flash': { kind: 'flash', radius: 2 },

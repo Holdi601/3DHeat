@@ -678,7 +678,7 @@ const SHIPS: [string, string, string][] = [
   ['4074747856', 'pbsa210_audacious', 'essex'],
   ['3762272208', 'pbsa508_indomitable', 'essex'],
   ['3760175056', 'pbsa510_malta', 'forrestal'],
-  ['3751786448', 'pbsa518_ark_royal', 'yorktown'],
+  ['3751786448', 'pbsa518_ark_royal', 'ark-royal-1937'],
   ['3741300688', 'pbsa528_colossus', 'colossus'],
   ['3550459856', 'pbsa710_ocean', 'colossus'],
   ['3542071248', 'pbsa718_theseus', 'colossus'],

@@ -1059,6 +1059,18 @@ N['ark-royal-1937'] = carrier({
   turrets: level('72,15.4:2/114 60,15.4:2/114 -70,15.4:2/114b -82,15.4:2/114b', 17.5, 19),
   more: { bodies: [blockOf(77, 55, 16.3, 17.5, 1.9, 0, 0, 15.4), blockOf(-65, -87, 16.3, 17.5, 1.9, 0, 0, 15.4)] },
 });
+// Ark Royal (R09) after her 1967-70 refit: the full 8.5 degree angled deck to port making the flight deck half again
+// as wide as the hull, the bridle-catcher horn over the port bow catapult, the long island on the starboard edge
+// amidships with the funnel in its middle and two masts, the forward one with the double search radar; no guns left
+// (257.6 m overall over the catcher, 34.4 m beam on the hull, 50.6 m over the flight deck; deck height, the island's
+// place and the masts' heights estimates from photos, general proportions only).
+N['ark-royal-r09'] = carrier({
+  cls: 'carrier', L: 230, B: 34.4, deck: 17,
+  plan: [[121, -11], [121, -7.5], [133, -7], [133, -5], [121, -4.5], [121, 9], [110, 15], [60, 18], [-110, 18], [-125, 15], [-125, -14], [-100, -18], [10, -32.6], [40, -32.6], [60, -27], [90, -18], [110, -15]],
+  island: [[16, -46, 27, 16.5, 3.6, 1], [12, -6, 31, 16.5, 3.0, 1], [0, -18, 35, 16.7, 3.4, 2]],
+  masts: [[8, 30, 16.5], [-32, 26, 16.5]],
+  radars: [{ x: 8, up: 24, kind: 'array', size: 8, side: 16.5 }],
+});
 // Illustrious (1940): the armoured-hangar carrier, the flight deck ending short of bow and stern with round-downs over
 // a hull longer than it, the island to starboard amidships with the funnel at its after end and the mast, eight twin
 // 4.5-inch turrets in pairs at the deck's corners, their roofs at flight-deck level (226.7 m overall, 29.2 m beam;
@@ -2704,8 +2716,8 @@ const ALIASES: Record<string, string> = {
   'us_aircraftcarrier_lexington_ai': 'essex',
   'uk_aircraftcarrier_illustrious': 'illustrious-1940',
   'uk_aircraftcarrier_illustrious_ai': 'illustrious-1940',
-  'uk_aircraftcarrier_ark_royal': 'ark-royal-1937',
-  'uk_aircraftcarrier_ark_royal_ai': 'ark-royal-1937',
+  'uk_aircraftcarrier_ark_royal': 'ark-royal-r09',
+  'uk_aircraftcarrier_ark_royal_ai': 'ark-royal-r09',
   'fr_aircraftcarrier_foch': 'clemenceau',
   'fr_aircraftcarrier_foch_ai': 'clemenceau',
   'ussr_aircraftcarrier_admiral_kuznetsov': 'kuznetsov',

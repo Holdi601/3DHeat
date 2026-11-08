@@ -10,17 +10,29 @@ import type { FigureEntry } from '../catalog';
 import type { Named, SpecSet } from './index';
 import type { GroundSpec } from '../ground';
 import type { FixedWingSpec, HeliSpec } from '../air';
-import { buildAirship, buildDrone, buildEmplacement, buildRide, buildWalker, type EmplacementKind, type RideKind } from '../small';
+import { buildAirship, buildDrone, buildEmplacement, buildRide, buildWalker, type AirshipSpec, type EmplacementKind, type EmplacementSpec, type RideKind } from '../small';
 
 const F: Record<string, FigureEntry> = {};
 
-const emplacement = (cls: string, kind: EmplacementKind, size?: { length: number; width?: number; height: number }): FigureEntry => ({ domain: 'ground', cls, build: () => buildEmplacement({ kind, ...size }) });
+/** The own-builder specs by figure name, for the recognition cues (`./cues.ts`). */
+export const EMPLACEMENTS: Record<string, EmplacementSpec> = {};
+export const AIRSHIPS: Record<string, AirshipSpec> = {};
+
+const emplacement = (cls: string, kind: EmplacementKind, size?: { length: number; width?: number; height: number }): FigureEntry => {
+  const spec: EmplacementSpec = { kind, ...size };
+  return { domain: 'ground', cls, build: () => buildEmplacement(spec) };
+};
+const airship = (name: string, cls: string, spec: AirshipSpec): FigureEntry => {
+  AIRSHIPS[name] = spec;
+  return { domain: 'air', cls, build: () => buildAirship(spec) };
+};
 const ride = (cls: string, kind: RideKind, length: number, width: number): FigureEntry => ({ domain: 'ground', cls, build: () => buildRide({ kind, length, width }) });
 
 F['emplacement-mg'] = emplacement('emplacement-mg', 'mg');
 F['emplacement-atgm'] = emplacement('emplacement-atgm', 'atgm');
 F['mortar'] = emplacement('mortar', 'mortar');
 F['searchlight'] = emplacement('searchlight', 'searchlight');
+EMPLACEMENTS['searchlight'] = { kind: 'searchlight' };
 F['manpads'] = emplacement('manpads', 'manpad');
 F['bunker'] = emplacement('building', 'bunker', { length: 4, width: 4, height: 2.2 });
 F['sandbag-ring'] = emplacement('building', 'sandbags', { length: 3, height: 1.0 });
@@ -38,13 +50,13 @@ F['horse'] = ride('cavalry', 'horse', 2.4, 0.65);
 F['quadcopter'] = { domain: 'heli', cls: 'drone-rotary', build: () => buildDrone({ rotors: 4, span: 0.5 }) };
 F['hexacopter'] = { domain: 'heli', cls: 'drone-rotary', build: () => buildDrone({ rotors: 6, span: 1.0 }) };
 // Zeppelin L 30 class (198 x 23.9 m), a C-class blimp (59 x 12 m), a barrage balloon (est 19 x 7.6 m), a WWI observation balloon (est 27 x 8.5 m).
-F['zeppelin'] = { domain: 'air', cls: 'airship', build: () => buildAirship({ length: 198, diameter: 23.9, gondolas: 3 }) };
-F['blimp'] = { domain: 'air', cls: 'airship', build: () => buildAirship({ length: 59, diameter: 12, gondolas: 1 }) };
-F['barrage-balloon'] = { domain: 'air', cls: 'airship', build: () => buildAirship({ length: 19, diameter: 7.6, balloon: true }) };
-F['observation-balloon'] = { domain: 'air', cls: 'airship', build: () => buildAirship({ length: 27, diameter: 8.5, balloon: true }) };
+F['zeppelin'] = airship('zeppelin', 'airship', { length: 198, diameter: 23.9, gondolas: 3 });
+F['blimp'] = airship('blimp', 'airship', { length: 59, diameter: 12, gondolas: 1 });
+F['barrage-balloon'] = airship('barrage-balloon', 'airship', { length: 19, diameter: 7.6, balloon: true });
+F['observation-balloon'] = airship('observation-balloon', 'airship', { length: 27, diameter: 8.5, balloon: true });
 // Game-invented classes: generic shapes only.
 F['walker'] = { domain: 'ground', cls: 'walker', build: () => buildWalker(8) };
-F['titan'] = { domain: 'air', cls: 'titan', build: () => buildAirship({ length: 400, diameter: 80, gondolas: 0 }) };
+F['titan'] = airship('titan', 'titan', { length: 400, diameter: 80, gondolas: 0 });
 
 const G: Named<GroundSpec> = {
   // A plain building, a hangar and a concrete gun casemate with its gun (sizes est).
