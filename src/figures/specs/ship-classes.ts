@@ -1518,7 +1518,7 @@ const W: Record<string, ShipO> = {
     guns: '62:2/343 50:2/343^2.5 -8:2/343 -46:2/343^2.5b -60:2/343b',
     funnels: [[18, 14, 6], [6, 14, 6]],
     blocks: [[38, 26, 18, 6, 1], [34, 28, 22, 3.5]],
-    masts: [[28, 34], [-28, 22]],
+    masts: [[28, 34, 't'], [-28, 22]],
   },
   // A heavy and a light cruiser of the 1930s-40s, not of one class (estimates, 190 x 20 m and 170 x 17 m).
   'heavy-cruiser': {
@@ -1856,7 +1856,7 @@ function foils(rows: [number, number, number][], depth: number): Outline[] {
 const R: Record<string, ShipO> = {
   // Fubuki ("special type"): the long forecastle, three twin 12.7 cm gunhouses (one forward, two aft), two funnels
   // the forward one the larger, three triple torpedo mounts (118.4 x 10.4 m; 2,090 t full).
-  'fubuki': { cls: 'destroyer', L: 118.4, B: 10.4, fb: 5.4, fc: [16, 1.5], guns: '44:2/127m -32:2/127mb^2 -43:2/127mb', funnels: [[9, 7.5, 3.6], [-4, 7, 3]], blocks: [[30, 22, 12.5, 3.2, 1], [-27, -36, 6.4, 2.6]], masts: [[22, 16], [-20, 10]], tt: [2, 3] },
+  'fubuki': { cls: 'destroyer', L: 118.4, B: 10.4, fb: 5.4, fc: [16, 1.5], guns: '44:2/127m -32:2/127mb^2 -43:2/127mb', funnels: [[9, 7.5, 3.6], [-4, 7, 3]], blocks: [[30, 22, 12.5, 3.2, 1], [-27, -36, 6.4, 2.6]], masts: [[22, 16], [-20, 10]], tt: [3, 3], ttAt: [6, 13] },
   // Yugumo: Kagero's improved sister, three twin 12.7 cm turrets, two funnels, two quadruple torpedo mounts (119.2 x
   // 10.8 m; 2,520 t full).
   'yugumo': { cls: 'destroyer', L: 119.2, B: 10.8, fb: 5.4, fc: [18, 1.4], guns: '45:2/127m -32:2/127mb^2 -45:2/127mb', funnels: [[10, 7.5, 3.2], [-2, 7.5, 3]], blocks: [[32, 24, 12, 3.4, 2.5], [29.5, 24.5, 14.2, 2.4, 2]], masts: [[22, 16]], tt: [2, 4] },
