@@ -22,5 +22,7 @@
   "far.weaponMarks": "Linhas ao solo e rótulos em armas",
   "far.weaponMarksTitle": "As armas em voo recebem linhas ao solo e nomes como as unidades.",
   "far.decoys": "Iscos e projéteis ({count})",
-  "far.decoysTitle": "Flares, chaff, projéteis e destroços nas listas."
+  "far.decoysTitle": "Flares, chaff, projéteis e destroços nas listas.",
+  "far.fires": "Incêndios nas unidades",
+  "far.firesTitle": "Chamas e fumo onde arde uma parte de uma unidade, desde que pega fogo até se apagar, destroços incluídos."
 }

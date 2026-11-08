@@ -22,5 +22,7 @@
   "far.weaponMarks": "Línte ingearacha agus lipéid ar airm",
   "far.weaponMarksTitle": "Faigheann airm ag eitilt línte ingearacha agus ainmneacha mar na haonaid.",
   "far.decoys": "Mealltaí agus sliogáin ({count})",
-  "far.decoysTitle": "Bladhairí, cáith, sliogáin agus smionagar sna liostaí."
+  "far.decoysTitle": "Bladhairí, cáith, sliogáin agus smionagar sna liostaí.",
+  "far.fires": "Tinte ar aonaid",
+  "far.firesTitle": "Lasracha agus deatach san áit a bhfuil cuid d'aonad ar lasadh, ón uair a théann sé trí thine go dtí go múchtar é, raiceanna san áireamh."
 }

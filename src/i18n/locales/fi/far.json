@@ -22,5 +22,7 @@
   "far.weaponMarks": "Luotiviivat ja nimet aseisiin",
   "far.weaponMarksTitle": "Lennossa olevat aseet saavat luotiviivat ja nimet kuten yksiköt.",
   "far.decoys": "Harhautteet ja ammukset ({count})",
-  "far.decoysTitle": "Soihdut, silpu, ammukset ja romu luetteloissa."
+  "far.decoysTitle": "Soihdut, silpu, ammukset ja romu luetteloissa.",
+  "far.fires": "Palot yksiköissä",
+  "far.firesTitle": "Liekit ja savu siellä, missä yksikön osa palaa, syttymisestä sammumiseen, myös hylyissä."
 }

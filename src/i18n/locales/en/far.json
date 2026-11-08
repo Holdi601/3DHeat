@@ -22,5 +22,7 @@
   "far.weaponMarks": "Drop lines and labels on weapons",
   "far.weaponMarksTitle": "Weapons in flight get drop lines and name labels like the units.",
   "far.decoys": "Decoys and shells ({count})",
-  "far.decoysTitle": "Flares, chaff, shells and debris in the lists."
+  "far.decoysTitle": "Flares, chaff, shells and debris in the lists.",
+  "far.fires": "Fires on units",
+  "far.firesTitle": "Flames and smoke where a unit's part burns, from when it catches fire until it is out, wrecks included."
 }

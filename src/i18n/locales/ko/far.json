@@ -22,5 +22,7 @@
   "far.weaponMarks": "무장에도 수직선과 라벨",
   "far.weaponMarksTitle": "비행 중인 무장도 유닛처럼 수직선과 이름을 받습니다.",
   "far.decoys": "기만체와 포탄 ({count})",
-  "far.decoysTitle": "플레어, 채프, 포탄, 파편을 목록에 표시합니다."
+  "far.decoysTitle": "플레어, 채프, 포탄, 파편을 목록에 표시합니다.",
+  "far.fires": "유닛 화재",
+  "far.firesTitle": "유닛의 부위가 불타는 곳에 불이 붙은 순간부터 꺼질 때까지 불꽃과 연기를 표시합니다. 잔해 포함."
 }

@@ -22,5 +22,7 @@
   "far.weaponMarks": "Linie pionowe i etykiety przy uzbrojeniu",
   "far.weaponMarksTitle": "Uzbrojenie w locie dostaje linie pionowe i nazwy jak jednostki.",
   "far.decoys": "Wabiki i pociski ({count})",
-  "far.decoysTitle": "Flary, dipole, pociski i szczątki na listach."
+  "far.decoysTitle": "Flary, dipole, pociski i szczątki na listach.",
+  "far.fires": "Pożary na jednostkach",
+  "far.firesTitle": "Płomienie i dym tam, gdzie płonie część jednostki, od zapłonu do ugaszenia, także na wrakach."
 }

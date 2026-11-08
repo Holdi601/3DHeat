@@ -22,5 +22,7 @@
   "far.weaponMarks": "Vertikāles un nosaukumi ieročiem",
   "far.weaponMarksTitle": "Ieroči lidojumā saņem vertikāles un nosaukumus kā vienības.",
   "far.decoys": "Mānekļi un šāviņi ({count})",
-  "far.decoysTitle": "Signālraķetes, dipoli, šāviņi un atlūzas sarakstos."
+  "far.decoysTitle": "Signālraķetes, dipoli, šāviņi un atlūzas sarakstos.",
+  "far.fires": "Ugunsgrēki vienībās",
+  "far.firesTitle": "Liesmas un dūmi vietā, kur deg vienības daļa, no aizdegšanās līdz nodzēšanai, ieskaitot vrakus."
 }

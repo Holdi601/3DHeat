@@ -80,6 +80,17 @@ function velocity(s: GpuTrackStore, b: number, j: number, at: number[], first: n
   } else out[0] = out[1] = out[2] = 0;
 }
 
+// The track table's float view, kept: evaluated for many tracks a frame (the burning ones, `figures/fires.ts`).
+let viewOf: Uint32Array | null = null;
+let viewF32: Float32Array = new Float32Array(0);
+function floatsOf(T: Uint32Array): Float32Array {
+  if (viewOf !== T) {
+    viewOf = T;
+    viewF32 = new Float32Array(T.buffer, T.byteOffset, T.length);
+  }
+  return viewF32;
+}
+
 /** Track `i` at time `t` into `out`; false when it is not there (before its first key, or `stale` s past its last). */
 export function evaluateTrack(s: GpuTrackStore, i: number, t: number, stale: number, out: TrackPose): boolean {
   const T = s.trackData;
@@ -89,7 +100,7 @@ export function evaluateTrack(s: GpuTrackStore, i: number, t: number, stale: num
   const flags = T[b + 5];
   const last = first + count - 1;
   if (count === 0) return false;
-  const f32 = new Float32Array(T.buffer, T.byteOffset, T.length);
+  const f32 = floatsOf(T);
   const timeOf = (j: number) => keyTime(s, b, j);
   if (timeOf(first) > t) return false;
   // The last key at or before t.

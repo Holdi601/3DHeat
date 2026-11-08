@@ -12,6 +12,8 @@ import { FigureReplay } from '../figures/replay';
 import { EffectLayer } from '../figures/effects';
 import { emptySample, MotionModel, MotionRefiner } from '../figures/motion';
 import { WeaponLayer } from './weapons';
+import { FireLayer, type FirePose, type FireView } from '../figures/fires';
+import { FireBody, firesOf } from '../data/fires';
 import { gpuTrackStore, registeredGpuTrackStore, rowOfKey, TRACK_U32, type GpuTrackStore } from './gpuTracks/store';
 import { emptyPose, evaluateTrack } from './gpuTracks/evaluate';
 import { isShown, rayNearTrack, trackTimes, trackVisibility } from './gpuTracks/visibility';
@@ -508,6 +510,26 @@ export class Engine {
   /** Weapons, shots, hits and kills in box replay (render/weapons.ts). */
   private readonly weapons = new WeaponLayer();
   private readonly weaponTris = new VertexBuffer();
+  /** Fires burning on units, from the data's fire_on to fire_off (figures/fires.ts); the GPU tracks' own triangles. */
+  private readonly fireLayer = new FireLayer();
+  private readonly fireTris = new VertexBuffer();
+  /** Per person: the live track it is this frame (CPU path), valid where its stamp is this frame's. */
+  private fireSlot = new Int32Array(0);
+  private fireSeen = new Int32Array(0);
+  private fireStamp = 0;
+  private fireStore: GpuTrackStore | null = null;
+  private fireFigureScale = 1;
+  private fireF32Of: Uint32Array | null = null;
+  private fireF32: Float32Array = new Float32Array(0);
+  private fireMinPixels = 0;
+  private readonly fireTrackPose = emptyPose();
+  private readonly fireView: FireView = {
+    t: 0,
+    eye: [0, 0, 0],
+    pixelSize: () => 0,
+    units: 1,
+    poseOf: (p, body, out) => this.firePose(p, body, out),
+  };
   private smoothTrailBuf = new Float32Array(0);
   private figureTris: { data: Float32Array; count: number } | null = null;
   /** This frame's GPU tracks, when the GPU places the units (gpuTracks/). */
@@ -1545,6 +1567,98 @@ export class Engine {
       tracks.push({ person: p, row: rowOfKey(store, i, pose.key), x: pose.x, y: pose.y, z: pose.z, yaw: Math.atan2(f[0], -f[2]), pitch: Math.asin(Math.max(-1, Math.min(1, f[1]))), q: null });
     }
     this.liveTracks = tracks;
+    // Fires burning on the units: the burning ones only, placed on the CPU (figures/fires.ts).
+    if (s.team.fires && this.dataset) {
+      const ortho = persp ? 0 : this.camera.orthoHeight / hgt;
+      const eye = this.camPos;
+      this.drawFires(this.dataset, store, t, eye, ortho ? () => ortho : (x, y, z) => Math.hypot(x - eye[0], y - eye[1], z - eye[2]) / focal);
+    }
+  }
+
+  /**
+   * The fires burning at `t` into the frame's triangles: onto the figures' (or
+   * the weapons') where the CPU drew them, else their own (`store`: the GPU
+   * tracks place the units, the burning ones are evaluated here).
+   */
+  private drawFires(d: Dataset, store: GpuTrackStore | null, t: number, eye: ArrayLike<number>, pixelSize: (x: number, y: number, z: number) => number): void {
+    const fires = firesOf(d);
+    if (!fires.count) return;
+    this.fireStore = store;
+    if (!store) {
+      const n = d.personLabels.length;
+      if (this.fireSlot.length < n) {
+        this.fireSlot = new Int32Array(n);
+        this.fireSeen = new Int32Array(n);
+      }
+      const stamp = ++this.fireStamp;
+      const tracks = this.liveTracks;
+      for (let i = 0; i < tracks.length; i++) {
+        const p = tracks[i].person;
+        if (p >= 0 && p < n) {
+          this.fireSlot[p] = i;
+          this.fireSeen[p] = stamp;
+        }
+      }
+    }
+    const v = this.fireView;
+    const team = useStore.getState().team;
+    this.fireFigureScale = Math.max(0.01, team.figureScale);
+    this.fireMinPixels = team.figurePixels;
+    v.t = t;
+    v.eye = eye;
+    v.pixelSize = pixelSize;
+    v.units = unitsPerMetre(d);
+    const ft = this.figureTris;
+    const out = store || !ft ? this.fireTris : ft.data === this.weaponTris.data ? this.weaponTris : this.figureReplay.tris;
+    if (out === this.fireTris) out.reset();
+    if (this.fireLayer.build(fires, v, out) > 0 || ft) this.figureTris = out.count ? { data: out.data, count: out.count } : ft;
+  }
+
+  /** A person's pose for its fires (`drawFires`): the GPU tracks' evaluated on the CPU, or the live track's. */
+  private firePose(p: number, body: FireBody, out: FirePose): boolean {
+    const store = this.fireStore;
+    if (store) {
+      const i = store.trackOf[p] ?? -1;
+      const g = this.gpuTracksParams;
+      if (i < 0 || (g && !isShown(g.visible ?? null, i))) return false;
+      const pose = this.fireTrackPose;
+      if (!evaluateTrack(store, i, this.fireView.t, g ? g.stale : Infinity, pose)) return false;
+      out.x = pose.x;
+      out.y = pose.y;
+      out.z = pose.z;
+      out.f[0] = pose.f[0];
+      out.f[1] = pose.f[1];
+      out.f[2] = pose.f[2];
+      out.u[0] = pose.u[0];
+      out.u[1] = pose.u[1];
+      out.u[2] = pose.u[2];
+      // As the GPU tracks draw it: true size, or as big as it takes to stay `figurePixels` long on screen.
+      if (this.fireF32Of !== store.trackData) {
+        this.fireF32Of = store.trackData;
+        this.fireF32 = new Float32Array(store.trackData.buffer, store.trackData.byteOffset, store.trackData.length);
+      }
+      const longest = this.fireF32[i * TRACK_U32 + 4];
+      const ps = this.fireView.pixelSize(pose.x, pose.y, pose.z);
+      out.scale = Math.max(this.fireFigureScale, longest > 0 ? (this.fireMinPixels * ps) / (longest * this.fireView.units) : 0);
+      return true;
+    }
+    if (p < 0 || p >= this.fireSeen.length || this.fireSeen[p] !== this.fireStamp) return false;
+    const tr = this.liveTracks[this.fireSlot[p]];
+    out.scale = (this.figureReplay.drawnScale.get(p) ?? 1) * this.fireFigureScale;
+    // As the figure is placed (`figures/replay.ts`): heading, and the pitch for aircraft; ground figures keep level.
+    const yaw = Math.PI - tr.yaw;
+    const pitch = body === FireBody.Air && Number.isFinite(tr.pitch) ? tr.pitch : 0;
+    const sy = Math.sin(yaw), cy = Math.cos(yaw), sp = Math.sin(pitch), cp = Math.cos(pitch);
+    out.x = tr.x;
+    out.y = tr.y;
+    out.z = tr.z;
+    out.f[0] = sy * cp;
+    out.f[1] = sp;
+    out.f[2] = cy * cp;
+    out.u[0] = -sy * sp;
+    out.u[1] = cp;
+    out.u[2] = -cy * sp;
+    return true;
   }
 
   /** The largest buffer the GPU tracks may use on this backend, bytes (0: none). */
@@ -2813,6 +2927,8 @@ export class Engine {
         if (this.figureTris) this.figureTris = { data: fr.tris.data, count: fr.tris.count };
         else if (drawn > 0) this.figureTris = { data: this.weaponTris.data, count: this.weaponTris.count };
       }
+      // Fires burning on the units, onto the same triangles.
+      if (s.team.fires && this.dataset && !drawEverySample && this.liveTracks.length) this.drawFires(this.dataset, null, cursorAt, eye, pixelSize);
       if (s.team.trailSeconds > 0 && !drawEverySample) {
         // Along the same curves the boxes move on, where there is one; else sample to sample.
         const tr = motion && this.dataset ? this.smoothTrails(this.dataset, motion, cursorAt, s.team.trailSeconds, s.team.session) : this.cursor.buildTrails(cursorAt, s.team.trailSeconds, visible);

@@ -22,5 +22,7 @@
   "far.weaponMarks": "Lodlinjer och etiketter på vapen",
   "far.weaponMarksTitle": "Vapen i luften får lodlinjer och namn som enheterna.",
   "far.decoys": "Skenmål och granater ({count})",
-  "far.decoysTitle": "Facklor, remsor, granater och vrakdelar i listorna."
+  "far.decoysTitle": "Facklor, remsor, granater och vrakdelar i listorna.",
+  "far.fires": "Bränder på enheter",
+  "far.firesTitle": "Lågor och rök där en del av en enhet brinner, från att den fattar eld tills den är släckt, vrak inräknade."
 }

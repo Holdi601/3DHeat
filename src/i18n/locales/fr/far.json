@@ -22,5 +22,7 @@
   "far.weaponMarks": "Lignes de sol et étiquettes sur les armes",
   "far.weaponMarksTitle": "Les armes en vol reçoivent lignes de sol et noms comme les unités.",
   "far.decoys": "Leurres et obus ({count})",
-  "far.decoysTitle": "Leurres thermiques, paillettes, obus et débris dans les listes."
+  "far.decoysTitle": "Leurres thermiques, paillettes, obus et débris dans les listes.",
+  "far.fires": "Incendies sur les unités",
+  "far.firesTitle": "Flammes et fumée là où une partie d'une unité brûle, du départ du feu jusqu'à son extinction, épaves comprises."
 }

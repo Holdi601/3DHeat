@@ -22,5 +22,7 @@
   "far.weaponMarks": "Zvislice a popisky pri zbraniach",
   "far.weaponMarksTitle": "Zbrane v lete dostanú zvislice a mená ako jednotky.",
   "far.decoys": "Klamné ciele a strely ({count})",
-  "far.decoysTitle": "Svetlice, düppel, strely a trosky v zoznamoch."
+  "far.decoysTitle": "Svetlice, düppel, strely a trosky v zoznamoch.",
+  "far.fires": "Požiare na jednotkách",
+  "far.firesTitle": "Plamene a dym tam, kde horí časť jednotky, od vznietenia až po uhasenie, vrátane vrakov."
 }

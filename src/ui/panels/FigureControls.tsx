@@ -22,6 +22,7 @@ export function FigureControls({ toggle = true }: { toggle?: boolean }) {
   const others = useStore((s) => s.team.symbolOthers);
   const ticks = useStore((s) => s.team.symbolTicks);
   const weaponMarks = useStore((s) => s.team.weaponMarks);
+  const fires = useStore((s) => s.team.fires);
   const teams = useStore((s) => s.dataset?.teamLabels ?? null);
   const patchTeam = useStore((s) => s.patchTeam);
   return (
@@ -104,6 +105,7 @@ export function FigureControls({ toggle = true }: { toggle?: boolean }) {
             </>
           )}
           <Check label={t('far.weaponMarks')} checked={weaponMarks} onChange={(v) => patchTeam({ weaponMarks: v })} title={t('far.weaponMarksTitle')} />
+          <Check label={t('far.fires')} checked={fires} onChange={(v) => patchTeam({ fires: v })} title={t('far.firesTitle')} />
         </>
       )}
     </>

@@ -22,5 +22,7 @@
   "far.weaponMarks": "Vertikale i oznake na oružju",
   "far.weaponMarksTitle": "Oružje u letu dobija vertikale i imena kao jedinice.",
   "far.decoys": "Mamci i projektili ({count})",
-  "far.decoysTitle": "Baklje, pleva, projektili i krhotine na listama."
+  "far.decoysTitle": "Baklje, pleva, projektili i krhotine na listama.",
+  "far.fires": "Пожари на јединицама",
+  "far.firesTitle": "Пламен и дим где гори део јединице, од паљења до гашења, укључујући олупине."
 }

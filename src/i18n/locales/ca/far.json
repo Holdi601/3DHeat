@@ -22,5 +22,7 @@
   "far.weaponMarks": "Línies a terra i etiquetes a les armes",
   "far.weaponMarksTitle": "Les armes en vol reben línies a terra i noms com les unitats.",
   "far.decoys": "Esquers i projectils ({count})",
-  "far.decoysTitle": "Bengales, chaff, projectils i restes a les llistes."
+  "far.decoysTitle": "Bengales, chaff, projectils i restes a les llistes.",
+  "far.fires": "Incendis a les unitats",
+  "far.firesTitle": "Flames i fum on crema una part d'una unitat, des que s'encén fins que s'apaga, restes incloses."
 }

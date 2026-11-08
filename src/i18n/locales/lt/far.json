@@ -22,5 +22,7 @@
   "far.weaponMarks": "Statmenys ir užrašai ginklams",
   "far.weaponMarksTitle": "Skrendantys ginklai gauna statmenis ir pavadinimus kaip vienetai.",
   "far.decoys": "Masalai ir sviediniai ({count})",
-  "far.decoysTitle": "Šiluminiai masalai, dipoliai, sviediniai ir nuolaužos sąrašuose."
+  "far.decoysTitle": "Šiluminiai masalai, dipoliai, sviediniai ir nuolaužos sąrašuose.",
+  "far.fires": "Gaisrai vienetuose",
+  "far.firesTitle": "Liepsnos ir dūmai ten, kur dega vieneto dalis, nuo užsiliepsnojimo iki užgesimo, įskaitant nuolaužas."
 }
