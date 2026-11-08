@@ -74,6 +74,18 @@ const sideIntakes: Cue<Air> = { cue: 'intakes on the body sides, the nose closed
 const underPods = (n: number, cue = `${n * 2} engines in pods or nacelles on the wings`): Cue<Air> => ({ cue, check: (s) => pods(s) >= n });
 const tips: Cue<Air> = { cue: 'tip tanks', check: tipTanks };
 const glassNose: Cue<Air> = { cue: 'glazed nose', check: glazedNose };
+/** A second wing over the first: a body as wide as the span standing over the body (the builder draws a biplane's upper wing so). */
+const upperWing = (s: Air) => bodiesOf(s).find((b) => !b.side && halfWidth(b) >= s.span * 0.4);
+const biplane: Cue<Air> = { cue: 'biplane', check: (s) => !!upperWing(s) };
+/** A sesquiplane: the lower wing's chord well under the upper one's. */
+const sesqui: Cue<Air> = { cue: 'sesquiplane: the lower wing far narrower than the upper', check: (s) => { const u = upperWing(s); return !!u && s.wing.rootChord < (front(u) - back(u)) * 0.75; } };
+/** Interplane struts: thin posts out on the wings (each mirrored pair counts once). */
+const struts = (s: Air) => bodiesOf(s).filter((b) => halfWidth(b) <= 0.05 && out(b) >= 1).length;
+const bays = (n: number): Cue<Air> => ({ cue: n === 1 ? 'single-bay wings, one set of struts a side' : `${n}-bay wings, ${n} sets of struts a side`, check: (s) => struts(s) === n * 2 });
+const twoBlade: Cue<Air> = { cue: 'two-bladed propeller', check: blades(2) };
+const radial: Cue<Air> = { cue: 'radial engines', check: (s) => (s.cowls?.length ?? 0) > 0 };
+const twinProps: Cue<Air> = { cue: 'two engines with propellers on the wings', check: (s) => (s.props?.length ?? 0) === 2 && !!s.props?.every((p) => Math.abs(p.side) > s.bodyWidth / 2) };
+const harrier: Cue<Air>[] = [highWing, anhedral, droopTail, sideIntakes];
 
 export const MORE_AIR_CUES: Record<string, CueEntry> = {
   // Catalogue aircraft by unit count (round v5).
@@ -113,4 +125,60 @@ export const MORE_AIR_CUES: Record<string, CueEntry> = {
   'jf-17': air('jf-17', [E(1), sideIntakes, singleFin, bubble]),
   'h-6k': air('h-6k', [E(2), swept(30), singleFin, framed]),
   'mb-339': air('mb-339', [E(1), lowWing, straight(), tips, tandem]),
+  'nieuport-17': air('nieuport-17', [biplane, sesqui, bays(1), twoBlade]),
+  'bristol-f2b': air('bristol-f2b', [biplane, bays(2), { cue: 'body held clear between the wings', check: (s) => mount(s) < -1.5 }, twoBlade]),
+  'sopwith-strutter': air('sopwith-strutter', [biplane, twoBlade, singleFin]),
+  'spad-7': air('spad-7', [biplane, bays(2), twoBlade]),
+  'albatros-d3': air('albatros-d3', [biplane, sesqui, bays(1), twoBlade]),
+  'ssw-d4': air('ssw-d4', [biplane, { cue: 'four-bladed propeller', check: blades(4) }]),
+  'breguet-14': air('breguet-14', [biplane, bays(2), twoBlade]),
+  'halberstadt-cl2': air('halberstadt-cl2', [biplane, bays(1), twoBlade]),
+  'sopwith-camel': air('sopwith-camel', [biplane, bays(1), twoBlade]),
+  'gotha-g5': air('gotha-g5', [biplane, { cue: 'two pusher engines between the wings', check: (s) => (s.props?.length ?? 0) === 2 }, twoBlade]),
+  'ilya-muromets': air('ilya-muromets', [biplane, { cue: 'four engines on the lower wing', check: (s) => props(s) === 4 }]),
+  'fury-mk1': air('fury-mk1', [biplane, bays(1), twoBlade]),
+  'fury-mk2': air('fury-mk2', [biplane, bays(1), twoBlade]),
+  'c-101': air('c-101', [E(1), lowWing, straight(), tandem, singleFin]),
+  'yak-130': air('yak-130', [tandem, singleFin, swept(25)]),
+  'su-9-1946': air('su-9-1946', [underPods(1, 'two jets in nacelles under the wings'), raisedPlane, bubble]),
+  'yak-38': air('yak-38', [highWing, anhedral, sideIntakes, singleFin]),
+  's-3b': air('s-3b', [highWing, underPods(1, 'two engine pods under the wings'), singleFin]),
+  'il-76md': air('il-76md', [highWing, anhedral, { cue: 'T-tail, the tailplane on top of the fin', check: (s) => (s.tail.planeUp ?? 0) >= 5 }, underPods(2, 'four engines in pods under the wings')]),
+  'a-50': air('a-50', [{ cue: 'rotodome on struts over the body', check: (s) => !!s.rotodome }, highWing, anhedral, { cue: 'T-tail, the tailplane on top of the fin', check: (s) => (s.tail.planeUp ?? 0) >= 5 }, underPods(2, 'four engines in pods under the wings')]),
+  'kc-135': air('kc-135', [lowWing, swept(30), underPods(2, 'four engines in pods under the wings'), singleFin]),
+  'c-47': air('c-47', [twinProps, radial, lowWing, { cue: 'three-bladed propellers', check: blades(3) }]),
+  'a-26c': air('a-26c', [twinProps, radial, midWing, singleFin]),
+  'p-61': air('p-61', [twinProps, { cue: 'twin tail booms', check: (s) => s.tail.kind === 'h' }, { cue: 'four-bladed propellers', check: blades(4) }, tandem]),
+  'horten-ho-229': air('horten-ho-229', [{ cue: 'flying wing, no tail at all', check: (s) => s.tail.kind === 'none' }, swept(25)]),
+  'he-177': air('he-177', [twinProps, { cue: 'four-bladed propellers', check: blades(4) }, glassNose, singleFin]),
+  'vb-10': air('vb-10', [{ cue: 'contra-rotating propellers in the nose', check: (s) => (s.props?.length ?? 0) === 2 && !!s.props?.every((p) => p.side === 0) }, lowWing, singleFin]),
+  'me-163b': air('me-163b', [{ cue: 'tailless swept wing', check: (s) => s.tail.tailSpan <= 0.5 && sweepOf(s) >= 20 }, singleFin, bubble]),
+  'f-82e': air('f-82e', [{ cue: 'twin fuselages joined by the wing', check: (s) => bodiesOf(s).some((b) => out(b) >= 2 && front(b) - back(b) >= 8) }, { cue: 'a cockpit in each fuselage', check: (s) => (s.glass?.length ?? 0) === 2 }, { cue: 'four-bladed propellers', check: blades(4) }]),
+  'he-115': air('he-115', [twinProps, radial, { cue: 'two big floats', check: (s) => bodiesOf(s).some((b) => out(b) >= 1 && Math.min(...b.bottom.map((p) => p[1])) < bottomAt(s, 0) - 1) }, glassNose]),
+  'saab-t18b': air('saab-t18b', [twinProps, twinFins, { cue: 'three-bladed propellers', check: blades(3) }]),
+  j29f: air('j29f', [E(1), noseIntake, swept(25), bubble]),
+  attacker: air('attacker', [E(1), straight(), sideIntakes, bubble]),
+  'v-22-osprey': air('v-22-osprey', [{ cue: 'tilting prop rotors at the wing tips', check: (s) => s.engines?.kind === 'wing-props' && s.engines.count === 2 }, highWing, { cue: 'twin fins on the tailplane ends', check: (s) => s.tail.kind === 'h' }]),
+  'ju-87-d': air('ju-87-d', [{ cue: 'one propeller in the nose', check: (s) => s.engines?.kind === 'nose-prop' }, lowWing, framed, { cue: 'three-bladed propeller', check: blades(3) }]),
+  'ea-18g': air('ea-18g', [E(2), twinFins, tandem]),
+  'f-15d': air('f-15d', [E(2), twinFins, highWing, tandem]),
+  'f-16c-cft': air('f-16c-cft', [E(1), { cue: 'intake under the nose, the nose closed', check: (s) => !openNose(s) }, singleFin, bubble]),
+  'su-35': air('su-35', [E(2), twinFins, { cue: 'no canards (the Su-30MKI has them)', check: (s) => !s.canard }, bubble]),
+  'j-20': air('j-20', [canard, twinFins, E(2), { cue: 'delta wing, no tailplane', check: (s) => s.tail.tailSpan <= 0.5 }]),
+  'tu-160': air('tu-160', [swing, E(4), raisedPlane, singleFin]),
+  'tu-22m3': air('tu-22m3', [swing, E(2), sideIntakes, singleFin]),
+  'tu-95ms': air('tu-95ms', [{ cue: 'four turboprops with contra-rotating propellers', check: (s) => s.engines?.count === 4 && blades(8)(s) }, swept(30), singleFin, midWing]),
+  'tu-142': air('tu-142', [{ cue: 'four turboprops with contra-rotating propellers', check: (s) => s.engines?.count === 4 && blades(8)(s) }, swept(30), singleFin, midWing]),
+  'tu-95m': air('tu-95m', [{ cue: 'four turboprops with contra-rotating propellers', check: (s) => s.engines?.count === 4 && blades(8)(s) }, swept(30), singleFin, glassNose]),
+  'mig-31': air('mig-31', [E(2), twinFins, highWing, anhedral, tandem]),
+  'harrier-gr3': air('harrier-gr3', [...harrier, bubble]),
+  'sea-harrier-fa2': air('sea-harrier-fa2', [highWing, anhedral, droopTail, { cue: 'blunt radar nose ahead of the raised bubble canopy', check: (s) => s.canopy?.kind === 'bubble' && topAt(s, noseX(s) - 0.25) - bottomAt(s, noseX(s) - 0.25) >= 0.6 }]),
+  'harrier-t10': air('harrier-t10', [...harrier, tandem]),
+  'a-4m': air('a-4m', [E(1), lowWing, swept(30), sideIntakes, raisedPlane]),
+  'su-25ub': air('su-25ub', [E(2), highWing, tandem, singleFin]),
+  strikemaster: air('strikemaster', [E(1), lowWing, straight(), tips]),
+  'mb-326': air('mb-326', [E(1), lowWing, straight(), tips]),
+  'mb-326k': air('mb-326k', [E(1), lowWing, straight(), tips]),
+  't-38': air('t-38', [E(2), lowWing, tandem, singleFin]),
+  'yak-23': air('yak-23', [noseIntake, straight(), raisedPlane, bubble]),
 };
