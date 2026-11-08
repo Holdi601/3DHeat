@@ -274,12 +274,19 @@ const MK_105: GunSpec = { mount: 'turret', length: 5.4, calibre: 0.105, sleeve: 
 G['merkava-mk1'] = { ...MK4, turret: MK1_TURRET, guns: [MK_105] };
 // Mk 2 (1983): appliqué plates on the turret's sides, the chain curtain, the 60 mm mortar on the roof.
 G['merkava-mk2'] = { ...MK4, turret: MK1_TURRET, guns: [MK_105], addOns: [tb(-0.7, 1.45, 0.38, 1.8, 0.16, 0.55, M), { ...CHAINS, at: [-2.3, 0, 0.12] }, tb(-1.4, -0.6, 0.85, 0.7, 0.12, 0.12, DARK)] };
-// Mk 3 (1989): a bigger, squarer turret of bolt-on modules, the 120 mm, the curtain, skirt modules; its roof 2.66 m up.
+// Mk 3 (1989): a bigger, squarer turret of bolt-on modules, the 120 mm, the curtain, skirt modules. Its roof flat 0.75 m
+// over the deck back to the bustle's end, 3.6 m behind the hull's middle; the front 1.15 m sloping down to the wedge's
+// point 1.77 m ahead of it, whose underside rises from the deck to the point (broadside photograph, Israel Defense
+// Forces, CC BY 2.0, scaled by the 7.6 m hull, sources.md).
+const mk3Turret = (plan: P2[], top: P2[], bottom: P2[], gunX: number) => {
+  const t = turret(-1.1, plan, top, 12, gunX);
+  return { ...t, outline: { ...t.outline!, bottom } };
+};
 const MK3_ADD = [CHAINS, ...skirtBoxes(-1.0, 3.4, 1.93, 0.62, 0.55, 3, 0.12)];
-G['merkava-mk3'] = { ...MK4, turret: turret(-1.1, [[-2.6, 1.1], [-2.2, 1.58], [0.4, 1.62], [1.9, 1.05], [2.7, 0.35]], [[-2.6, 0.84], [-0.4, 0.96], [2.7, 0.34]], 12, 2.5), addOns: MK3_ADD };
+G['merkava-mk3'] = { ...MK4, turret: mk3Turret([[-2.5, 1.1], [-2.2, 1.58], [0.4, 1.62], [1.9, 1.05], [2.87, 0.35]], [[-2.5, 0.7], [-2.2, 0.75], [1.7, 0.75], [2.87, 0.52]], [[-2.5, 0], [1.6, 0], [1.95, 0.2], [2.87, 0.5]], 2.5), addOns: MK3_ADD };
 // Mk 3 Baz Dor Dalet (Mk 3D, 2000s): the new modular turret armour - the front faces swept back into a long wedge ahead of
 // the mantlet, as on the Mk 4, the roof modules sloping down to its point - and the Baz commander's sight head on the roof.
-G['merkava-mk3d'] = { ...MK4, turret: turret(-1.1, [[-2.6, 1.1], [-2.2, 1.6], [0.2, 1.68], [1.7, 1.22], [3.05, 0.32]], [[-2.6, 0.84], [-0.6, 0.96], [0.9, 0.84], [3.05, 0.3]], 12, 2.6), addOns: [...MK3_ADD, { on: 'turret', kind: 'drum', at: [-0.4, 0.72, 1.06], size: [0.42, 0.42, 0.36], metal: true }] };
+G['merkava-mk3d'] = { ...MK4, turret: mk3Turret([[-2.6, 1.1], [-2.2, 1.6], [0.2, 1.68], [1.7, 1.22], [3.05, 0.32]], [[-2.6, 0.66], [-0.6, 0.75], [0.9, 0.68], [3.05, 0.32]], [[-2.6, 0], [1.6, 0], [2.0, 0.15], [3.05, 0.3]], 2.6), addOns: [...MK3_ADD, { on: 'turret', kind: 'drum', at: [-0.4, 0.72, 0.93], size: [0.42, 0.42, 0.36], metal: true }] };
 // Mk 4 (2004): the long rounded arrowhead with its big bustle, the curtain, the commander's sight; Mk 4M adds Trophy.
 const MK4_ADD = [{ ...CHAINS, at: [-2.6, 0, 0.12] } as AddOn, { on: 'turret', kind: 'drum', at: [-0.3, 0.7, 0.95], size: [0.4, 0.4, 0.35] } as AddOn];
 G['merkava-mk4'] = { ...MK4, addOns: MK4_ADD };
@@ -2417,7 +2424,7 @@ more('leopard-2a4m-can', [tb(1.63, 0.72, 0.95, 0.024, 0.4, 0.08, { paint: 'glass
 // Merkava Mk 3 and 3D: the sleeved gun (no fume extractor) with its sensor, the 60 mm mortar on the roof's front left, the
 // gunner's sight, the smoke banks on the wedge's flanks, the two roof machine guns, the big rear door.
 for (const n of ['merkava-mk3', 'merkava-mk3d']) {
-  more(n, [{ on: 'turret', kind: 'tube', at: [0.2, -0.85, 1.0], to: [1.15, -0.85, 1.22], size: [0.11, 0.1, 0], metal: true }, ...sight(1.1, 0.72, 1.06, 0.55, 0.36, 0.2), ...smokeRow(1.0, 1.4, 0.72, 3, 0.13, 0.7), panel(-3.81, 0, 1.0, 0.04, 1.05, 1.25)],
+  more(n, [{ on: 'turret', kind: 'tube', at: [0.2, -0.85, 0.79], to: [1.15, -0.85, 1.01], size: [0.11, 0.1, 0], metal: true }, ...sight(1.1, 0.72, 0.85, 0.55, 0.36, 0.2), ...smokeRow(1.0, 1.4, 0.72, 3, 0.13, 0.7), panel(-3.81, 0, 1.0, 0.04, 1.05, 1.25)],
     (g) => [{ ...g[0], sleeve: 0.92, mrs: true }, roofMg(-0.4, 0.75, 0.0076), roofMg(-0.6, -0.7, 0.0076)]);
 }
 // Challenger 2: the L30's sleeve, extractor and sensor, the TOGS barbette over the gun, the five-tube smoke banks on
