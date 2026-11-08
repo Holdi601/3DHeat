@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "DCS-terep a játékból",
+  "heat.world.dcs.open": "DCS-pálya megnyitása…",
+  "heat.world.dcs.openTitle": "A .glb és a .json, amelyet a DCS-átalakító (heat3d-dcs-maps level) a saját telepítésedből írt: a játék terepe, hogy a felvett repülőgépek azon a talajon álljanak, amely felett repültek. Válaszd ki mindkét fájlt.",
+  "heat.world.dcs.detail": "Valós részletek felül",
+  "heat.world.dcs.detailTitle": "A játék terepe fölé streamelt légi felvételek, utak, épületek és felmért kifutók, a játék kifutóira tolva, és csak ott megjelenítve, ahol a partvonal és a magasságok egyeznek; máshol a játék saját talaja. Történelmi hadszíntereken alapból ki van kapcsolva, mert ott a városok és utak a játékéi.",
+  "heat.world.dcs.hint": "Előbb exportáld a területet: heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "Válaszd ki a pálya .json fájlját a .glb fájllal együtt: a .json megmondja, melyik hadszíntér a terep.",
+  "heat.world.dcs.unknown": "A(z) {theatre} nem olyan DCS-hadszíntér, amelynek vetületét a megjelenítő ismeri.",
+  "heat.world.dcs.otherTheatre": "A pálya {level}, de a felvétel ezen készült: {data}.",
+  "heat.world.dcs.loaded": "{theatre} a játékból: {triangles}, {towns} város, {airfields} repülőtér.",
+  "heat.world.dcs.status": "A játék talaján: {real} csempe mutatja a valós világot, {game} a játék saját talaját; a valós világot legfeljebb {shift} m-rel a játék kifutóira tolták.",
+  "heat.world.dcs.name": "{theatre} a játékból ({level})"
 }

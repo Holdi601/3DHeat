@@ -1,5 +1,5 @@
-import type { GeoReference } from '../state/types';
-import type { GeoBox } from './tiles';
+import type { AxisMapping, Bounds, GeoReference } from '../state/types';
+import { boxCentre, geoBoxOf, knownProjection, type GeoBox } from './tiles';
 
 /**
  * Known real-world theatres: the parts of the earth a game's map covers, so a
@@ -83,4 +83,35 @@ export function theatreAt(lat: number, lon: number): Theatre | undefined {
   return THEATRES.filter((t) => lat >= t.box.south && lat <= t.box.north && lon >= t.box.west && lon <= t.box.east).sort(
     (a, b) => area(a) - area(b),
   )[0];
+}
+
+/** DCS terrain folders (Mods/terrains/<folder>, as the DCS converter names a theatre) whose id here differs. */
+const DCS_FOLDERS: Record<string, string> = { GermanyColdWar: 'GermanyCW', MarianasWWII: 'MarianaIslandsWWII', Sinai: 'SinaiMap' };
+
+/** The theatre a DCS terrain folder is; undefined for one not listed. */
+export function theatreOfDcsFolder(folder: string): Theatre | undefined {
+  const th = theatreById(DCS_FOLDERS[folder] ?? folder);
+  return th?.game === 'dcs' ? th : undefined;
+}
+
+/**
+ * The theatre recorded data is on: the one holding the middle of the data's
+ * extent, else the one holding its reference. A Tacview file's reference is
+ * often a whole degree outside the map (a DCS Caucasus recording names 38 N
+ * 36 E, in the Turkish uplands), so the extent decides first.
+ */
+export function theatreOfData(geo: GeoReference, bounds: Bounds | null | undefined, axes: AxisMapping | null | undefined): Theatre | undefined {
+  // The Watcher's DCS tables name their theatre.
+  const named = geo.theatre ? theatreOfDcsFolder(geo.theatre) : undefined;
+  if (named) return named;
+  if (bounds && Number.isFinite(bounds.minX) && knownProjection(geo)) {
+    try {
+      const c = boxCentre(geoBoxOf(geo, bounds, axes, 0));
+      const th = theatreAt(c.lat, c.lon);
+      if (th) return th;
+    } catch {
+      // The reference decides.
+    }
+  }
+  return theatreAt(geo.lat0, geo.lon0);
 }

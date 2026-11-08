@@ -206,6 +206,11 @@ function worldLevelFrom(name: string, r: BackdropResult, placement: GeoPlacement
   return { ...worldLook(level, r.credits), placement, labels: r.labels };
 }
 
+/** A model loaded as a world backdrop (the DCS converter's level: the game's own terrain), placed on the earth. */
+function worldModelFrom(name: string, m: LoadedModel, placement: GeoPlacement): ModelLevel {
+  return { ...worldLook(modelLevelFrom(name, m), []), placement };
+}
+
 /** What makes a model level read as a world backdrop; see `worldLevelFrom`. */
 function worldLook(level: ModelLevel, credits: ModelLevel['credits']): ModelLevel {
   // Buildings as a map draws them, light grey and nearly solid: from altitude
@@ -583,7 +588,7 @@ export function LevelPanel() {
         </button>
       </div>
 
-      <WorldBackdrop busy={!!busy} toLevel={worldLevelFrom} setError={setError} setNote={setNote} />
+      <WorldBackdrop busy={!!busy} toLevel={worldLevelFrom} fromModel={worldModelFrom} setError={setError} setNote={setNote} />
 
       <div className="field">
         <div className="label">

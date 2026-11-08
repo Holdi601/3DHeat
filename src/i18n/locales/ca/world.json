@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "Terreny DCS del joc",
+  "heat.world.dcs.open": "Obre un nivell DCS…",
+  "heat.world.dcs.openTitle": "El .glb i el .json que el convertidor de DCS (heat3d-dcs-maps level) ha escrit a partir de la teva instal·lació: el terreny del joc, perquè els avions gravats reposin sobre el sòl que van sobrevolar. Tria els dos fitxers.",
+  "heat.world.dcs.detail": "Detall del món real a sobre",
+  "heat.world.dcs.detailTitle": "Imatges, carreteres, edificis i pistes topografiades transmesos sobre el terreny del joc, desplaçats a les pistes del joc i mostrats només on la costa i les altures coincideixen; a la resta, el sòl propi del joc. Desactivat per defecte als teatres històrics, les ciutats i carreteres dels quals són les del joc.",
+  "heat.world.dcs.hint": "Exporta primer la zona: heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "Tria el .json del nivell juntament amb el seu .glb: el .json indica de quin teatre és el terreny.",
+  "heat.world.dcs.unknown": "{theatre} no és un teatre de DCS la projecció del qual conegui el visor.",
+  "heat.world.dcs.otherTheatre": "El nivell és {level}, però la gravació és a {data}.",
+  "heat.world.dcs.loaded": "{theatre} del joc: {triangles}, {towns} ciutats, {airfields} aeròdroms.",
+  "heat.world.dcs.status": "Sobre el sòl del joc: {real} tessel·les mostren el món real, {game} el sòl propi del joc; el món real s’ha desplaçat fins a {shift} m cap a les pistes del joc.",
+  "heat.world.dcs.name": "{theatre} del joc ({level})"
 }

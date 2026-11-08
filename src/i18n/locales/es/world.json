@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "Terreno DCS del juego",
+  "heat.world.dcs.open": "Abrir nivel DCS…",
+  "heat.world.dcs.openTitle": "El .glb y el .json que el conversor de DCS (heat3d-dcs-maps level) escribió a partir de tu propia instalación: el terreno del juego, para que los aviones grabados se apoyen en el suelo sobre el que volaron. Elige ambos archivos.",
+  "heat.world.dcs.detail": "Detalle del mundo real encima",
+  "heat.world.dcs.detailTitle": "Imágenes, carreteras, edificios y pistas topografiadas transmitidos sobre el terreno del juego, desplazados a las pistas del juego y mostrados solo donde la costa y las alturas coinciden; en el resto, el suelo propio del juego. Desactivado por defecto en los teatros históricos, cuyas ciudades y carreteras son las del juego.",
+  "heat.world.dcs.hint": "Exporta primero la zona: heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "Elige el .json del nivel junto con su .glb: el .json indica de qué teatro es el terreno.",
+  "heat.world.dcs.unknown": "{theatre} no es un teatro de DCS cuya proyección conozca el visor.",
+  "heat.world.dcs.otherTheatre": "El nivel es {level}, pero la grabación está en {data}.",
+  "heat.world.dcs.loaded": "{theatre} del juego: {triangles}, {towns} ciudades, {airfields} aeródromos.",
+  "heat.world.dcs.status": "Sobre el suelo del juego: {real} teselas muestran el mundo real, {game} el suelo propio del juego; el mundo real se desplazó hasta {shift} m sobre las pistas del juego.",
+  "heat.world.dcs.name": "{theatre} del juego ({level})"
 }

@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "DCS-terräng från spelet",
+  "heat.world.dcs.open": "Öppna DCS-bana…",
+  "heat.world.dcs.openTitle": "Filerna .glb och .json som DCS-konverteraren (heat3d-dcs-maps level) skrev från din egen installation: spelets terräng, så att inspelade flygplan står på marken de flög över. Välj båda filerna.",
+  "heat.world.dcs.detail": "Verkliga detaljer ovanpå",
+  "heat.world.dcs.detailTitle": "Flygbilder, vägar, byggnader och inmätta landningsbanor som strömmas över spelets terräng, flyttas till spelets banor och bara visas där kust och höjder stämmer överens; på andra ställen spelets egen mark. Avstängt som standard för historiska krigsskådeplatser, vars städer och vägar är spelets egna.",
+  "heat.world.dcs.hint": "Exportera området först: heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "Välj banans .json tillsammans med dess .glb: .json talar om vilken krigsskådeplats terrängen är.",
+  "heat.world.dcs.unknown": "{theatre} är ingen DCS-krigsskådeplats vars projektion visaren känner till.",
+  "heat.world.dcs.otherTheatre": "Banan är {level}, men inspelningen ligger på {data}.",
+  "heat.world.dcs.loaded": "{theatre} från spelet: {triangles}, {towns} städer, {airfields} flygfält.",
+  "heat.world.dcs.status": "På spelets mark: {real} rutor visar den verkliga världen, {game} spelets egen mark; den verkliga världen flyttades upp till {shift} m till spelets banor.",
+  "heat.world.dcs.name": "{theatre} från spelet ({level})"
 }

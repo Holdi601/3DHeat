@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "遊戲中的 DCS 地形",
+  "heat.world.dcs.open": "開啟 DCS 關卡…",
+  "heat.world.dcs.openTitle": "DCS 轉換器（heat3d-dcs-maps level）從你自己的安裝中寫出的 .glb 和 .json：遊戲的地形，這樣錄製的飛機就停在它們飛越的地面上。請同時選擇這兩個檔案。",
+  "heat.world.dcs.detail": "疊加真實世界細節",
+  "heat.world.dcs.detailTitle": "在遊戲地形之上串流的影像、道路、建築和實測跑道，會被移到遊戲的跑道上，並且只在海岸線與高程相符的地方顯示；其他地方使用遊戲自己的地面。在城鎮和道路來自遊戲的歷史戰區，預設為關閉。",
+  "heat.world.dcs.hint": "請先匯出該區域：heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "請將關卡的 .json 與其 .glb 一起選擇：.json 說明該地形是哪個戰區。",
+  "heat.world.dcs.unknown": "{theatre} 不是檢視器已知其投影的 DCS 戰區。",
+  "heat.world.dcs.otherTheatre": "關卡是 {level}，但錄影位於 {data}。",
+  "heat.world.dcs.loaded": "遊戲中的 {theatre}：{triangles}，{towns} 座城鎮，{airfields} 個機場。",
+  "heat.world.dcs.status": "在遊戲地面上：{real} 個圖磚顯示真實世界，{game} 個顯示遊戲自己的地面；真實世界最多被移動了 {shift} m，以對準遊戲的跑道。",
+  "heat.world.dcs.name": "遊戲中的 {theatre}（{level}）"
 }

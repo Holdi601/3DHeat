@@ -62,5 +62,17 @@
   "heat.world.credit.mapterhorn": "Elevation: © Mapterhorn; produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA",
   "heat.world.credit.eox": "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0",
   "heat.world.credit.usgs": "Imagery: USDA, USGS The National Map: Orthoimagery (public domain)",
-  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0"
+  "heat.world.credit.ign": "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0",
+  "heat.world.dcs.label": "Tír-raon DCS ón gcluiche",
+  "heat.world.dcs.open": "Oscail leibhéal DCS…",
+  "heat.world.dcs.openTitle": "An .glb agus an .json a scríobh tiontaire DCS (heat3d-dcs-maps level) as do shuiteáil féin: tír-raon an chluiche, ionas go suífidh aerárthaigh thaifeadta ar an talamh a d’eitil siad os a chionn. Roghnaigh an dá chomhad.",
+  "heat.world.dcs.detail": "Mionsonraí den domhan fíor ar bharr",
+  "heat.world.dcs.detailTitle": "Íomhánna, bóithre, foirgnimh agus rúidbhealaí suirbhéaite sruthaithe thar thír-raon an chluiche, aistrithe go dtí rúidbhealaí an chluiche agus léirithe sna háiteanna ina gcomhoiriúnaíonn an cósta agus na hairde leis amháin; áit eile, talamh an chluiche féin. As de réir réamhshocraithe ar láithreacha catha stairiúla, a bhfuil a mbailte agus a mbóithre ón gcluiche.",
+  "heat.world.dcs.hint": "Easpórtáil an limistéar ar dtús: heat3d-dcs-maps level {folder} --around {lat} {lon} 50 -o levels",
+  "heat.world.dcs.needJson": "Roghnaigh .json an leibhéil in éineacht lena .glb: insíonn an .json cén láthair chatha an tír-raon.",
+  "heat.world.dcs.unknown": "Ní láthair chatha DCS é {theatre} a bhfuil a tuartheilgean ar eolas ag an amharcóir.",
+  "heat.world.dcs.otherTheatre": "Is é {level} an leibhéal, ach tá an taifeadadh ar {data}.",
+  "heat.world.dcs.loaded": "{theatre} ón gcluiche: {triangles}, {towns} baile, {airfields} aerfort.",
+  "heat.world.dcs.status": "Ar thalamh an chluiche: léiríonn {real} tíl an domhan fíor, {game} talamh an chluiche féin; aistríodh an domhan fíor suas le {shift} m go rúidbhealaí an chluiche.",
+  "heat.world.dcs.name": "{theatre} ón gcluiche ({level})"
 }

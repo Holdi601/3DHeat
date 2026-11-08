@@ -1,5 +1,6 @@
 /// <reference lib="webworker" />
 import { cachedFetch } from './cache';
+import { DcsGround, type DcsGroundData } from './dcsGround';
 import { buildTile, type BuiltTile, type TileRequest } from './tileBuild';
 
 /**
@@ -11,13 +12,18 @@ import { buildTile, type BuiltTile, type TileRequest } from './tileBuild';
  * answered, and the streamer decides whether it is still of use.
  */
 
-export type StreamWorkerRequest = { kind: 'build'; id: number; req: TileRequest } | { kind: 'drop'; ids: number[] };
+export type StreamWorkerRequest =
+  | { kind: 'build'; id: number; req: TileRequest }
+  | { kind: 'drop'; ids: number[] }
+  | { kind: 'dcs'; ground: DcsGroundData | null };
 
 export type StreamWorkerResponse = { id: number; kind: 'done'; tile: BuiltTile } | { id: number; kind: 'error'; message: string };
 
 const scope = self as unknown as DedicatedWorkerGlobalScope;
 const queue: Array<{ id: number; req: TileRequest }> = [];
 let running = 0;
+/** The DCS theatre's own ground for the hybrid backdrop, indexed once. */
+let dcs: DcsGround | null = null;
 const PARALLEL = 4;
 
 const decodeImage = async (bytes: ArrayBuffer, type: string) => {
@@ -54,6 +60,7 @@ function pump(): void {
         });
         return canvas.transferToImageBitmap();
       },
+      dcs,
     })
       .then((tile) => {
         const m = tile.mesh;
@@ -72,6 +79,15 @@ function pump(): void {
 
 scope.onmessage = (ev: MessageEvent<StreamWorkerRequest>) => {
   const m = ev.data;
+  if (m.kind === 'dcs') {
+    try {
+      dcs = m.ground ? new DcsGround(m.ground) : null;
+    } catch (err) {
+      console.warn(`DCS ground: ${err instanceof Error ? err.message : String(err)}`);
+      dcs = null;
+    }
+    return;
+  }
   if (m.kind === 'drop') {
     const gone = new Set(m.ids);
     for (let i = queue.length - 1; i >= 0; i--) if (gone.has(queue[i].id)) queue.splice(i, 1);
