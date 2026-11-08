@@ -2266,7 +2266,7 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'welded angular turret with the 125 mm', check: (s) => angular(s) && cal(0.125)(s) },
   ]),
   'ztz-96b': ground('ztz-96b', [
-    { cue: 'arrow-head add-on armour on the turret front', check: (s) => turretL(4.3)(s) && adds('box', 1, 'turret')(s) },
+    { cue: 'arrow-head add-on armour on the turret front', check: (s) => turretL(3.7)(s) && adds('box', 1, 'turret')(s) },
     { cue: 'short T-72-like hull, six road wheels behind skirts', check: (s) => run(6)(s) && skirted(s) && !longHull(7.2)(s) },
     { cue: 'add-on plate over the upper glacis', check: (s) => (s.addOns ?? []).filter((a) => a.on === 'hull' && a.kind === 'box' && (a.pitch ?? 0) < 0).length >= 1 },
     { cue: '125 mm with an evacuator', check: (s) => cal(0.125)(s) && evacuator(s) },
