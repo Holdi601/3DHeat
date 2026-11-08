@@ -138,6 +138,7 @@
   "data.filePick.notData": "ei csv- tai parquet-tiedosto",
   "data.filePick.empty": "tyhjä (0 tavua)",
   "data.filePick.notMovement": "ei liiketiedosto, ja tässä kansiossa on liiketiedostoja",
+  "data.filePick.sidecar": "muuntimen sivutiedosto (raakadata taulukon vieressä); avaa se yksinään ladataksesi sen",
   "data.filePick.nothing": "mitään ei valittu",
   "data.filePick.filesIn": "{root} ({count, plural, one {# tiedosto} other {# tiedostoa}})",
   "data.filePick.files": "{count, plural, one {# tiedosto} other {# tiedostoa}}",

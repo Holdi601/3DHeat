@@ -138,6 +138,7 @@
   "data.filePick.notData": "kee CSV-/Parquet-Fichier",
   "data.filePick.empty": "eidel (0 Bytes)",
   "data.filePick.notMovement": "kee Beweegungsfichier, an an dësem Dossier gëtt et Beweegungsfichieren",
+  "data.filePick.sidecar": "Niewendatei vun engem Konverter (Rohdaten nieft enger Tabell); eenzel opmaachen, fir se ze lueden",
   "data.filePick.nothing": "näischt ausgewielt",
   "data.filePick.filesIn": "{root} ({count, plural, one {# Fichier} other {# Fichieren}})",
   "data.filePick.files": "{count, plural, one {# Fichier} other {# Fichieren}}",

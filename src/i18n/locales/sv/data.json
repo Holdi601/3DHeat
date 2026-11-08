@@ -138,6 +138,7 @@
   "data.filePick.notData": "inte en csv-/parquet-fil",
   "data.filePick.empty": "tom (0 byte)",
   "data.filePick.notMovement": "inte en rörelsefil, och den här mappen har rörelsefiler",
+  "data.filePick.sidecar": "en konverterares sidofil (rådata bredvid en tabell); öppna den ensam för att läsa in den",
   "data.filePick.nothing": "inget valt",
   "data.filePick.filesIn": "{root} ({count, plural, one {# fil} other {# filer}})",
   "data.filePick.files": "{count, plural, one {# fil} other {# filer}}",

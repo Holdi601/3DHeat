@@ -138,6 +138,7 @@
   "data.filePick.notData": "не е csv/parquet файл",
   "data.filePick.empty": "празен (0 байта)",
   "data.filePick.notMovement": "не е файл с движение, а в тази папка има файлове с движение",
+  "data.filePick.sidecar": "придружаващ файл на конвертор (сурови данни до таблица); отворете го отделно, за да го заредите",
   "data.filePick.nothing": "нищо не е избрано",
   "data.filePick.filesIn": "{root} ({count, plural, one {# файл} other {# файла}})",
   "data.filePick.files": "{count, plural, one {# файл} other {# файла}}",

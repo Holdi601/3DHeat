@@ -138,6 +138,7 @@
   "data.filePick.notData": "ní comhad csv/parquet é",
   "data.filePick.empty": "folamh (0 beart)",
   "data.filePick.notMovement": "ní comhad gluaiseachta é, agus tá comhaid ghluaiseachta san fhillteán seo",
+  "data.filePick.sidecar": "comhad taobh tiontaire (sonraí amha in aice le tábla); oscail leis féin é chun é a lódáil",
   "data.filePick.nothing": "níor roghnaíodh aon rud",
   "data.filePick.filesIn": "{root} ({count, plural, one {# chomhad} two {# chomhad} few {# chomhad} many {# gcomhad} other {# comhad}})",
   "data.filePick.files": "{count, plural, one {# chomhad} two {# chomhad} few {# chomhad} many {# gcomhad} other {# comhad}}",

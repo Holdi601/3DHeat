@@ -138,6 +138,7 @@
   "data.filePick.notData": "geen csv-/parquet-bestand",
   "data.filePick.empty": "leeg (0 bytes)",
   "data.filePick.notMovement": "geen bewegingsbestand, terwijl deze map wel bewegingsbestanden bevat",
+  "data.filePick.sidecar": "bijbestand van een converter (ruwe data naast een tabel); open het apart om het te laden",
   "data.filePick.nothing": "niets geselecteerd",
   "data.filePick.filesIn": "{root} ({count, plural, one {# bestand} other {# bestanden}})",
   "data.filePick.files": "{count, plural, one {# bestand} other {# bestanden}}",

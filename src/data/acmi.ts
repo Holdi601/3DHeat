@@ -37,6 +37,13 @@
  * else - a bookmark, a message to all - at the reference point, as the
  * object "(recording)". An object's removal (`-id`) is an event, "Removed",
  * where it was last.
+ *
+ * Nothing of the file is left out (docs/converters.md): the header's
+ * FileType and FileVersion go into the recording's properties, a comment
+ * line is an event "Comment" of the recording, an object that never gets a
+ * position is a row "Unplaced" at the reference point with all its
+ * properties, and U and V are columns whenever any row has them (NaN where
+ * not). `completeness` counts the file's lines by kind.
  */
 
 const EARTH = 6378137;
@@ -58,6 +65,8 @@ export interface AcmiTable {
   flatWorld: boolean;
   /** The recording's own properties (object 0's), as they stood at its end. */
   globals: Record<string, string>;
+  /** The self-check of docs/converters.md: the file's lines by kind, and where each went. */
+  completeness: Record<string, { seen: number; decoded: number; partial: number; raw: number; lost: number }>;
 }
 
 interface ObjState {
@@ -165,20 +174,38 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
   let info = '';
   const NO_PROPS = new Map<string, string>();
 
+  const kinds: Record<string, number> = {};
+  const count = (kind: string) => {
+    kinds[kind] = (kinds[kind] ?? 0) + 1;
+  };
+  const AT_REFERENCE = (props: Map<string, string>): ObjState => ({ lon: 0, lat: 0, alt: 0, roll: NaN, pitch: NaN, yaw: NaN, u: NaN, v: NaN, heading: NaN, props, seen: true });
   const sample = (id: string, o: ObjState, event: string, objects = '') => {
     samples.push({ id, t, lon: o.lon, lat: o.lat, alt: o.alt, roll: o.roll, pitch: o.pitch, yaw: o.yaw, u: o.u, v: o.v, heading: o.heading, props: o.props, event, objects, info });
   };
 
   for (const line of logical) {
-    if (!line || line.startsWith('//')) continue;
-    if (line.startsWith('FileType=') || line.startsWith('FileVersion=')) continue;
+    if (!line) continue;
+    if (line.startsWith('//')) {
+      count('comment');
+      sample('', AT_REFERENCE(NO_PROPS), `Comment: ${line.slice(2).trim()}`);
+      continue;
+    }
+    if (line.startsWith('FileType=') || line.startsWith('FileVersion=')) {
+      count('header');
+      const eq = line.indexOf('=');
+      globals[line.slice(0, eq)] = line.slice(eq + 1);
+      info = JSON.stringify(globals);
+      continue;
+    }
     const c0 = line.charCodeAt(0);
     if (c0 === 0x23 /* # */) {
+      count('time');
       const v = Number(line.slice(1));
       if (Number.isFinite(v)) t = v;
       continue;
     }
     if (c0 === 0x2d /* - */) {
+      count('removed');
       const gone = line.slice(1).trim().toLowerCase();
       // The object leaves: an event where it was last.
       const o = objects.get(gone);
@@ -189,6 +216,7 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
     const fields = splitFields(line);
     const id = fields[0].trim().toLowerCase();
     if (id === '0') {
+      count(/(^|,)Event=/.test(line) ? 'event' : 'global');
       for (const f of fields.slice(1)) {
         const eq = f.indexOf('=');
         if (eq < 0) continue;
@@ -215,7 +243,7 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
           if (at) sample(at, objects.get(at)!, label, ids.join(' '));
           else {
             // About no object seen: at the reference point, as the recording's own.
-            sample('', { lon: 0, lat: 0, alt: 0, roll: NaN, pitch: NaN, yaw: NaN, u: NaN, v: NaN, heading: NaN, props: NO_PROPS, seen: true }, label, ids.join(' '));
+            sample('', AT_REFERENCE(NO_PROPS), label, ids.join(' '));
           }
         } else {
           if (key === 'Title') title = value;
@@ -273,12 +301,22 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
       }
     }
     if (moved && Number.isFinite(o.lon) && Number.isFinite(o.lat)) {
+      count('position');
       o.seen = true;
       sample(id, o, '');
-    }
+    } else count('properties');
+  }
+  // Objects that never got a position: their properties at the reference point, not lost.
+  let unplaced = 0;
+  for (const [id, o] of objects) {
+    if (o.seen) continue;
+    unplaced++;
+    sample(id, AT_REFERENCE(o.props), 'Unplaced');
   }
 
   const flatWorld = samples.length > 0 && samples.every((s) => Number.isFinite(s.u) && Number.isFinite(s.v));
+  // U and V as columns whenever any row has them; flatWorld says whether every row does.
+  const hasUV = samples.some((s) => Number.isFinite(s.u) && Number.isFinite(s.v));
   const n = samples.length;
   const X = new Float64Array(n);
   const Y = new Float64Array(n);
@@ -343,9 +381,9 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
     });
   }
   const recording = new Array<string>(n).fill(title);
-  const flat = flatWorld ? ['U', 'V'] : [];
+  const flat = hasUV ? ['U', 'V'] : [];
   const columns = ['Time', 'X', 'Y', 'Altitude', 'Object', 'Coalition', 'Heading', 'Pitch', 'Roll', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Latitude', 'Longitude', 'Recording', 'EventObjects', 'RecordingInfo', ...flat, ...extraKeys, ...textExtra];
-  const data: (Float64Array | string[])[] = [TIME, X, Y, ALT, strCols.Object, strCols.Coalition, HEAD, PITCH, ROLL, strCols.Type, strCols.Name, strCols.Pilot, strCols.Group, strCols.Country, strCols.Color, strCols.Event, LAT, LON, recording, strCols.EventObjects, strCols.RecordingInfo, ...(flatWorld ? [U, V] : []), ...extraKeys.map((_, j) => extra[j]), ...textCols];
+  const data: (Float64Array | string[])[] = [TIME, X, Y, ALT, strCols.Object, strCols.Coalition, HEAD, PITCH, ROLL, strCols.Type, strCols.Name, strCols.Pilot, strCols.Group, strCols.Country, strCols.Color, strCols.Event, LAT, LON, recording, strCols.EventObjects, strCols.RecordingInfo, ...(hasUV ? [U, V] : []), ...extraKeys.map((_, j) => extra[j]), ...textCols];
   return {
     columns,
     data,
@@ -356,7 +394,23 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
     reference: { lon: refLon, lat: refLat },
     flatWorld,
     globals: { ...globals },
+    completeness: acmiCompleteness(kinds, unplaced),
   };
+}
+
+/**
+ * Every line kind read whole into the table or the recording's properties;
+ * a property line without a position is read in part (its values reach the
+ * object's next row, or its "Unplaced" row), none is lost.
+ */
+function acmiCompleteness(lines: Record<string, number>, unplaced: number): AcmiTable['completeness'] {
+  const out: AcmiTable['completeness'] = {};
+  for (const [kind, n] of Object.entries(lines)) {
+    const part = kind === 'properties' ? n : 0;
+    out[kind] = { seen: n, decoded: n - part, partial: part, raw: 0, lost: 0 };
+  }
+  if (unplaced) out.unplacedObjects = { seen: unplaced, decoded: unplaced, partial: 0, raw: 0, lost: 0 };
+  return out;
 }
 
 /**

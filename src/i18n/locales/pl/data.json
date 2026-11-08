@@ -138,6 +138,7 @@
   "data.filePick.notData": "to nie plik csv/parquet",
   "data.filePick.empty": "pusty (0 bajtów)",
   "data.filePick.notMovement": "to nie plik ruchu, a ten folder zawiera pliki ruchu",
+  "data.filePick.sidecar": "plik poboczny konwertera (surowe dane obok tabeli); otwórz go osobno, aby go wczytać",
   "data.filePick.nothing": "nic nie wybrano",
   "data.filePick.filesIn": "{root} ({count, plural, one {# plik} few {# pliki} many {# plików} other {# pliku}})",
   "data.filePick.files": "{count, plural, one {# plik} few {# pliki} many {# plików} other {# pliku}}",

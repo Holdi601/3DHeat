@@ -138,6 +138,7 @@
   "data.filePick.notData": "nav csv/parquet fails",
   "data.filePick.empty": "tukšs (0 baitu)",
   "data.filePick.notMovement": "nav kustības fails, bet šajā mapē ir kustības faili",
+  "data.filePick.sidecar": "pārveidotāja blakusfails (neapstrādāti dati blakus tabulai); atveriet to atsevišķi, lai ielādētu",
   "data.filePick.nothing": "nekas nav atlasīts",
   "data.filePick.filesIn": "{root} ({count, plural, zero {# failu} one {# fails} other {# faili}})",
   "data.filePick.files": "{count, plural, zero {# failu} one {# fails} other {# faili}}",

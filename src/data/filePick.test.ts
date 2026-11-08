@@ -63,6 +63,30 @@ describe('filterDataFiles', () => {
     expect(skipped).toHaveLength(0);
   });
 
+  it('leaves converter sidecars out of a folder', () => {
+    const { accepted, skipped } = filterDataFiles([
+      pick('out/de_mirage/a.parquet'),
+      pick('out/de_mirage/a.events.parquet'),
+      pick('out/de_mirage/a.props.parquet'),
+      pick('out/wt/b.messages.parquet'),
+      pick('out/wt/b.flight.parquet'),
+      pick('out/wt/b.parquet'),
+      pick('sessions/dota/heat.parquet'),
+      pick('sessions/dota/heat.raw.parquet'),
+      pick('dota/123.combatlog.parquet'),
+      pick('dota/123.units.parquet'),
+    ]);
+    expect(accepted.map((f) => f.file.name)).toEqual(['a.parquet', 'b.parquet', 'heat.parquet']);
+    expect(skipped).toHaveLength(7);
+    expect(skipped[0].reason).toMatch(/sidecar/);
+  });
+
+  it('opens sidecars chosen on their own', () => {
+    const { accepted, skipped } = filterDataFiles([pick('b.messages.parquet'), pick('b.match.json')]);
+    expect(accepted.map((f) => f.file.name)).toEqual(['b.messages.parquet']);
+    expect(skipped).toHaveLength(1);
+  });
+
   it('still drops empty files and non-data files', () => {
     const { accepted, skipped } = filterDataFiles([
       pick('a/movement.parquet'),

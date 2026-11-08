@@ -138,6 +138,7 @@
   "data.filePick.notData": "nem csv/parquet fájl",
   "data.filePick.empty": "üres (0 bájt)",
   "data.filePick.notMovement": "nem mozgásfájl, és ebben a mappában vannak mozgásfájlok",
+  "data.filePick.sidecar": "konverter melléklete (nyers adatok egy tábla mellett); külön megnyitva betölthető",
   "data.filePick.nothing": "nincs kiválasztva semmi",
   "data.filePick.filesIn": "{root} ({count, plural, one {# fájl} other {# fájl}})",
   "data.filePick.files": "{count, plural, one {# fájl} other {# fájl}}",

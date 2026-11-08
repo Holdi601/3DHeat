@@ -138,6 +138,7 @@
   "data.filePick.notData": "није csv/parquet датотека",
   "data.filePick.empty": "празна (0 бајтова)",
   "data.filePick.notMovement": "није датотека кретања, а ова фасцикла садржи датотеке кретања",
+  "data.filePick.sidecar": "пратећа датотека конвертора (сирови подаци уз табелу); отворите је засебно да бисте је учитали",
   "data.filePick.nothing": "ништа није изабрано",
   "data.filePick.filesIn": "{root} ({count, plural, one {# датотека} few {# датотеке} other {# датотека}})",
   "data.filePick.files": "{count, plural, one {# датотека} few {# датотеке} other {# датотека}}",

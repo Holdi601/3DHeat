@@ -138,6 +138,7 @@
   "data.filePick.notData": "不是 csv／parquet 檔案",
   "data.filePick.empty": "空的（0 位元組）",
   "data.filePick.notMovement": "不是移動資料檔案，而此資料夾中有移動資料檔案",
+  "data.filePick.sidecar": "轉換器的附屬檔案（表格旁的原始資料）；單獨開啟即可載入",
   "data.filePick.nothing": "未選取任何項目",
   "data.filePick.filesIn": "{root}（{count, plural, other {# 個檔案}}）",
   "data.filePick.files": "{count, plural, other {# 個檔案}}",

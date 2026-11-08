@@ -138,6 +138,7 @@
   "data.filePick.notData": "není soubor csv/parquet",
   "data.filePick.empty": "prázdný (0 bajtů)",
   "data.filePick.notMovement": "není soubor pohybu, a tato složka soubory pohybu obsahuje",
+  "data.filePick.sidecar": "doprovodný soubor převodníku (surová data vedle tabulky); otevřete jej samostatně, chcete-li jej načíst",
   "data.filePick.nothing": "nic nevybráno",
   "data.filePick.filesIn": "{root} ({count, plural, one {# soubor} few {# soubory} many {# souboru} other {# souborů}})",
   "data.filePick.files": "{count, plural, one {# soubor} few {# soubory} many {# souboru} other {# souborů}}",

@@ -138,6 +138,7 @@
   "data.filePick.notData": "pole csv/parquet-fail",
   "data.filePick.empty": "tühi (0 baiti)",
   "data.filePick.notMovement": "pole liikumisfail, kuigi selles kaustas on liikumisfaile",
+  "data.filePick.sidecar": "teisendaja kõrvalfail (toorandmed tabeli kõrval); laadimiseks avage see eraldi",
   "data.filePick.nothing": "midagi pole valitud",
   "data.filePick.filesIn": "{root} ({count, plural, one {# fail} other {# faili}})",
   "data.filePick.files": "{count, plural, one {# fail} other {# faili}}",

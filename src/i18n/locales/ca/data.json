@@ -138,6 +138,7 @@
   "data.filePick.notData": "no és un fitxer csv/parquet",
   "data.filePick.empty": "buit (0 bytes)",
   "data.filePick.notMovement": "no és un fitxer de moviment, i aquesta carpeta en té",
+  "data.filePick.sidecar": "fitxer auxiliar d'un convertidor (dades en brut al costat d'una taula); obriu-lo sol per carregar-lo",
   "data.filePick.nothing": "no s'ha seleccionat res",
   "data.filePick.filesIn": "{root} ({count, plural, one {# fitxer} other {# fitxers}})",
   "data.filePick.files": "{count, plural, one {# fitxer} other {# fitxers}}",

@@ -138,6 +138,7 @@
   "data.filePick.notData": "csv/parquet 파일이 아님",
   "data.filePick.empty": "비어 있음(0 bytes)",
   "data.filePick.notMovement": "이동 파일이 아니며, 이 폴더에는 이동 파일이 있음",
+  "data.filePick.sidecar": "변환기의 사이드카 파일(테이블 옆의 원시 데이터). 불러오려면 따로 여세요",
   "data.filePick.nothing": "선택된 것 없음",
   "data.filePick.filesIn": "{root}({count, plural, other {파일 #개}})",
   "data.filePick.files": "{count, plural, other {파일 #개}}",
