@@ -137,44 +137,49 @@ G['ztz-99'] = {
 export function sovietHull(L: number, W: number): Outline {
   return hull(L, W, 1.4, 0.8, 1.9, 0.95, 0.15);
 }
-// T-72A / T-72B: big road wheels (0.75 m), the domed cast turret well forward; the B with thick "Dolly Parton" cheeks (6.86 x 3.59 m, 2.23 m).
+// T-72A / T-72B: big road wheels (0.75 m), the domed cast turret over the hull's middle; the B with thick "Dolly Parton" cheeks (6.86 x 3.59 m, 2.23 m).
+// Turret place and glacis measured on two T-72B3 broadside photographs (Russian MoD, CC BY 4.0, sources.md), scaled by
+// the road wheels' 0.85 m pitch: the K-5 brow's tip 1.1 m ahead of the hull's middle, so the turret centre sits 0.75 m
+// behind it (the gun's 9.53 m length forward agrees); the upper glacis 1.4 m long from the deck down to the nose.
 export const T72: GroundSpec = {
   chassis: 'tracked', length: 6.86, width: 3.59, hullHeight: 1.4, roadWheels: 6, roadWheelRadius: 0.375, skirts: true,
   // Track on the ground 4.25 m (first to last road wheel centre, GlobalSecurity T-72 mobility data).
   trackProfile: run(6.7, 0.88, [3.35, 0.62], [-3.35, 0.7], -2.34, 2.29),
-  hullOutline: sovietHull(6.86, 3.59),
-  turret: turret(0.25, [[-1.55, 0.85], [-1.2, 1.3], [-0.3, 1.45], [0.7, 1.4], [1.25, 1.05], [1.55, 0.45]], [[-1.55, 0.4], [-1.0, 0.72], [0.1, 0.8], [0.9, 0.68], [1.55, 0.3]], 2.4, 1.4),
+  hullOutline: hull(6.86, 3.59, 1.4, 0.8, 1.4, 0.95, 0.15),
+  turret: turret(-0.75, [[-1.55, 0.85], [-1.2, 1.3], [-0.3, 1.45], [0.7, 1.4], [1.25, 1.05], [1.55, 0.45]], [[-1.55, 0.4], [-1.0, 0.72], [0.1, 0.8], [0.9, 0.68], [1.55, 0.3]], 2.4, 1.4),
   // The gun's axis about 0.2 m over the hull roof, 0.6 m under the turret roof (side photograph of a T-72B3).
   guns: [{ mount: 'turret', length: 6.0, calibre: 0.125, sleeve: 0.55, extractor: 0.62, at: 0.26 }],
   cupola: true,
 };
 G['t-72a'] = { cls: 'mbt', ...T72 };
-export const T72B_TURRET = turret(0.25, [[-1.55, 0.85], [-1.2, 1.3], [-0.3, 1.47], [0.8, 1.5], [1.4, 1.2], [1.7, 0.5]], [[-1.55, 0.4], [-1.0, 0.72], [0.2, 0.84], [1.1, 0.76], [1.7, 0.32]], 2.6, 1.55);
+export const T72B_TURRET = turret(-0.75, [[-1.55, 0.85], [-1.2, 1.3], [-0.3, 1.47], [0.8, 1.5], [1.4, 1.2], [1.7, 0.5]], [[-1.55, 0.4], [-1.0, 0.72], [0.2, 0.84], [1.1, 0.76], [1.7, 0.32]], 2.6, 1.55);
 G['t-72b'] = { cls: 'mbt', ...T72, turret: T72B_TURRET };
 // T-72B3: the B with Relikt bricks squaring its cheeks and the Sosna-U sight box on the roof.
-G['t-72b3'] = { cls: 'mbt', ...T72, turret: turret(0.25, [[-1.55, 0.85], [-1.2, 1.3], [-0.3, 1.5], [1.0, 1.55], [1.6, 1.3], [1.8, 0.55]], [[-1.55, 0.4], [-1.0, 0.72], [0.2, 0.86], [1.4, 0.8], [1.8, 0.4]], 3.4, 1.65), turrets: [{ x: 1.0, length: 0.5, width: 0.45, height: 0.45, shape: 'box', side: -0.6, up: 0.8 }] };
+G['t-72b3'] = { cls: 'mbt', ...T72, turret: turret(-0.75, [[-1.55, 0.85], [-1.2, 1.3], [-0.3, 1.5], [1.0, 1.55], [1.6, 1.3], [1.8, 0.55]], [[-1.55, 0.4], [-1.0, 0.72], [0.2, 0.86], [1.4, 0.8], [1.8, 0.4]], 3.4, 1.65), turrets: [{ x: 0.0, length: 0.5, width: 0.45, height: 0.45, shape: 'box', side: -0.6, up: 0.8 }] };
 // T-90A: the welded turret - flat roof, angled faceted sides, Kontakt-5 wedges on the front forming a squared nose - and the Shtora lamps either side of the gun (6.86 x 3.78 m, 2.23 m).
-G['t-90a'] = { cls: 'mbt', ...T72, width: 3.78, turret: turret(0.15, [[-1.75, 1.05], [-1.35, 1.45], [0.5, 1.55], [1.35, 1.45], [1.75, 0.9], [1.85, 0.5]], [[-1.75, 0.55], [-1.3, 0.75], [0.9, 0.78], [1.85, 0.42]], 9, 1.7), turrets: [{ x: 1.85, length: 0.3, width: 0.38, height: 0.28, shape: 'box', side: 0.62, up: 0.42 }, { x: 1.85, length: 0.3, width: 0.38, height: 0.28, shape: 'box', side: -0.62, up: 0.42 }] };
+G['t-90a'] = { cls: 'mbt', ...T72, width: 3.78, turret: turret(-0.85, [[-1.75, 1.05], [-1.35, 1.45], [0.5, 1.55], [1.35, 1.45], [1.75, 0.9], [1.85, 0.5]], [[-1.75, 0.55], [-1.3, 0.75], [0.9, 0.78], [1.85, 0.42]], 9, 1.7), turrets: [{ x: 0.85, length: 0.3, width: 0.38, height: 0.28, shape: 'box', side: 0.62, up: 0.42 }, { x: 0.85, length: 0.3, width: 0.38, height: 0.28, shape: 'box', side: -0.62, up: 0.42 }] };
 // T-90M: the T-90A with Relikt and a box bustle at the back of the turret.
-G['t-90m'] = { ...G['t-90a'], turret: turret(0.15, [[-2.3, 1.2], [-1.5, 1.4], [0.5, 1.6], [1.5, 1.5], [1.95, 1.0], [2.05, 0.5]], [[-2.3, 0.6], [-1.6, 0.68], [-1.4, 0.78], [1.0, 0.82], [2.05, 0.45]], 9, 1.9) };
+G['t-90m'] = { ...G['t-90a'], turret: turret(-0.85, [[-2.3, 1.2], [-1.5, 1.4], [0.5, 1.6], [1.5, 1.5], [1.95, 1.0], [2.05, 0.5]], [[-2.3, 0.6], [-1.6, 0.68], [-1.4, 0.78], [1.0, 0.82], [2.05, 0.45]], 9, 1.9) };
 // T-90 (1992): the T-72-style cast dome with Kontakt-5 and the Shtora lamps.
 G['t-90'] = { cls: 'mbt', ...T72, width: 3.78, turret: T72B_TURRET, turrets: [{ x: 1.75, length: 0.3, width: 0.38, height: 0.28, shape: 'box', side: 0.62, up: 0.4 }, { x: 1.75, length: 0.3, width: 0.38, height: 0.28, shape: 'box', side: -0.62, up: 0.4 }] };
 // T-80B: a longer hull (the turbine) with smaller road wheels (0.67 m) and return rollers; a T-64-like cast turret (7.0 x 3.58 m, 2.2 m).
+// The turret's centre 0.7 m behind the hull's middle, the T-80U's K-5 brow 1.2 m ahead of it (a T-80U broadside
+// photograph, Russian MoD, CC BY 4.0, and the gun's 9.65 m length forward).
 export const T80: GroundSpec = {
   chassis: 'tracked', length: 7.0, width: 3.58, hullHeight: 1.4, roadWheels: 6, roadWheelRadius: 0.335, skirts: true,
   // Track on the ground 4.3 m (first to last road wheel centre, T-80U data sheet).
   trackProfile: run(6.85, 0.85, [3.42, 0.58], [-3.42, 0.68], -2.34, 2.29),
   hullOutline: hull(7.0, 3.58, 1.4, 0.78, 1.95, 0.95, 0.1),
-  turret: turret(0.3, [[-1.5, 0.8], [-1.15, 1.25], [-0.2, 1.42], [0.7, 1.38], [1.25, 1.0], [1.5, 0.45]], [[-1.5, 0.38], [-0.9, 0.7], [0.1, 0.76], [0.9, 0.64], [1.5, 0.3]], 2.4, 1.35),
+  turret: turret(-0.7, [[-1.5, 0.8], [-1.15, 1.25], [-0.2, 1.42], [0.7, 1.38], [1.25, 1.0], [1.5, 0.45]], [[-1.5, 0.38], [-0.9, 0.7], [0.1, 0.76], [0.9, 0.64], [1.5, 0.3]], 2.4, 1.35),
   guns: [{ mount: 'turret', length: 6.0, calibre: 0.125, sleeve: 0.55, extractor: 0.62, at: 0.42 }],
   cupola: true,
 };
 G['t-80b'] = { cls: 'mbt', ...T80 };
 // T-80U / T-80UD: the cast dome behind a horseshoe of Kontakt-5 bricks that squares the front, their tops sloping from
 // the roof down about 0.35 m to the nose over the front 0.8 m (side photograph of a T-80U, Russian MoD, CC BY 4.0).
-G['t-80u'] = { cls: 'mbt', ...T80, turret: turret(0.3, [[-1.5, 0.8], [-1.15, 1.25], [-0.2, 1.48], [0.6, 1.62], [1.55, 1.6], [1.85, 1.15], [1.9, 0.5]], [[-1.5, 0.38], [-0.9, 0.7], [-0.1, 0.78], [1.1, 0.77], [1.9, 0.45]], 5, 1.75) };
+G['t-80u'] = { cls: 'mbt', ...T80, turret: turret(-0.7, [[-1.5, 0.8], [-1.15, 1.25], [-0.2, 1.48], [0.6, 1.62], [1.55, 1.6], [1.85, 1.15], [1.9, 0.5]], [[-1.5, 0.38], [-0.9, 0.7], [-0.1, 0.78], [1.1, 0.77], [1.9, 0.45]], 5, 1.75) };
 // T-64BV: small road wheels (0.55 m) close together, a low small turret with Kontakt-1 (6.54 x 3.42 m, 2.17 m).
-G['t-64bv'] = { cls: 'mbt', ...T80, length: 6.54, width: 3.42, roadWheelRadius: 0.28, trackProfile: run(6.4, 0.85, [3.2, 0.58], [-3.2, 0.66], -2.75, 2.7), hullOutline: hull(6.54, 3.42, 1.4, 0.78, 1.8, 0.95, 0.1), turret: turret(0.35, [[-1.4, 0.8], [-1.1, 1.2], [-0.2, 1.35], [0.8, 1.38], [1.3, 1.1], [1.55, 0.45]], [[-1.4, 0.35], [-0.8, 0.66], [0.2, 0.72], [1.0, 0.64], [1.55, 0.32]], 3, 1.45) };
+G['t-64bv'] = { cls: 'mbt', ...T80, length: 6.54, width: 3.42, roadWheelRadius: 0.28, trackProfile: run(6.4, 0.85, [3.2, 0.58], [-3.2, 0.66], -2.75, 2.7), hullOutline: hull(6.54, 3.42, 1.4, 0.78, 1.8, 0.95, 0.1), turret: turret(-0.65, [[-1.4, 0.8], [-1.1, 1.2], [-0.2, 1.35], [0.8, 1.38], [1.3, 1.1], [1.55, 0.45]], [[-1.4, 0.35], [-0.8, 0.66], [0.2, 0.72], [1.0, 0.64], [1.55, 0.32]], 3, 1.45) };
 // T-55 / T-54: five big road wheels with a gap behind the first, no return rollers; the round "frying pan" turret well forward (6.2 x 3.27 m, 2.35 m).
 G['t-55a'] = {
   cls: 'mbt', chassis: 'tracked', length: 6.2, width: 3.27, hullHeight: 1.45, roadWheels: 5, roadWheelRadius: 0.41,
