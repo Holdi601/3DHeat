@@ -74,16 +74,23 @@ export function heatMeshOf(t: Template, targetTriangles = 90_000, maxCut = 24, s
   // The surface's area, for the edge length that gives about the target count.
   let area = 0;
   for (let v = 0; v + 2 < n; v += 3) area += triArea(src, v);
-  const edge = Math.max(0.01, Math.sqrt((4 * area) / (Math.sqrt(3) * Math.max(1000, targetTriangles))));
+  let edge = Math.max(0.01, Math.sqrt((4 * area) / (Math.sqrt(3) * Math.max(1000, targetTriangles))));
 
-  // How many cuts each triangle needs, so the arrays are made once at their size.
+  // How many cuts each triangle needs, so the arrays are made once at their size. Long thin triangles (a
+  // hull's side) cut by their longest edge make far more than their area says: the edge grows until the
+  // count is near the target.
   const cuts = new Uint8Array(n / 3);
   let total = 0;
-  for (let v = 0, tri = 0; v + 2 < n; v += 3, tri++) {
-    const longest = Math.max(dist(src, v, v + 1), dist(src, v + 1, v + 2), dist(src, v + 2, v));
-    const c = Math.min(maxCut, Math.max(1, Math.ceil(longest / edge)));
-    cuts[tri] = c;
-    total += c * c * 3;
+  for (let round = 0; round < 6; round++) {
+    total = 0;
+    for (let v = 0, tri = 0; v + 2 < n; v += 3, tri++) {
+      const longest = Math.max(dist(src, v, v + 1), dist(src, v + 1, v + 2), dist(src, v + 2, v));
+      const c = Math.min(maxCut, Math.max(1, Math.ceil(longest / edge)));
+      cuts[tri] = c;
+      total += c * c * 3;
+    }
+    if (total / 3 <= Math.max(targetTriangles, n / 3) * 1.5) break;
+    edge *= Math.sqrt(total / 3 / targetTriangles);
   }
   const pos = new Float32Array(total * 3);
   const nrm = new Float32Array(total * 3);
@@ -206,8 +213,10 @@ export interface Splat {
  * Moves each hit onto the surface: the nearest vertex within `reach` whose
  * normal does not face along the shot (it was hit from outside), else the
  * nearest at all; a hit further than `reach` from the figure keeps its place.
+ * A hit with a `tag` goes only onto vertices of that tag in `tags` (a body
+ * part: a point the game says is on the arm stays on the figure's arm).
  */
-export function snapHits(mesh: HeatMesh, hits: { p: Vec3; dir: Vec3 | null; weight: number }[], reach: number): Splat[] {
+export function snapHits(mesh: HeatMesh, hits: { p: Vec3; dir: Vec3 | null; weight: number; tag?: number }[], reach: number, tags?: Uint8Array | null): Splat[] {
   if (!hits.length || mesh.count === 0) return [];
   const cell = Math.max(mesh.edge * 2, reach / 3);
   const grid = gridOf(mesh, cell);
@@ -217,10 +226,12 @@ export function snapHits(mesh: HeatMesh, hits: { p: Vec3; dir: Vec3 | null; weig
     let best = -1;
     let bestScore = Infinity;
     const [x, y, z] = h.p;
-    grid.near(x, y, z, rings, (i) => {
+    const tag = tags && h.tag !== undefined ? h.tag : -1;
+    grid.near(x, y, z, tag >= 0 ? rings * 2 : rings, (i) => {
+      if (tag >= 0 && tags![i] !== tag) return;
       const ex = mesh.pos[i * 3] - x, ey = mesh.pos[i * 3 + 1] - y, ez = mesh.pos[i * 3 + 2] - z;
       const d = Math.hypot(ex, ey, ez);
-      if (d > reach) return;
+      if (d > (tag >= 0 ? reach * 2 : reach)) return;
       let score = d;
       if (h.dir) {
         // A surface facing along the shot is its far side: only taken when nothing else is near.

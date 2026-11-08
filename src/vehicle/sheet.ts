@@ -57,7 +57,7 @@ export function drawSide(
   scale: number,
   shade = 0,
   outline = false,
-): void {
+): Float32Array {
   const v = VIEW[side];
   const [ua, us] = v.u;
   const [va, vs] = v.v;
@@ -112,6 +112,27 @@ export function drawSide(
     }
   }
   if (outline) outlineCell(data, W, depth, cell, (max[la] - min[la]) * 0.04);
+  return depth;
+}
+
+/**
+ * Where a point of the figure falls in a side's cell, as `drawSide` draws
+ * it: pixel x, y and its depth (smaller nearer); and whether a surface with
+ * normal `n` there faces the eye.
+ */
+export function sidePoint(side: SheetSide, p: Vec3, n: Vec3 | null, min: Vec3, max: Vec3, cell: { x: number; y: number; w: number; h: number }, scale: number): { x: number; y: number; z: number; facing: boolean } {
+  const v = VIEW[side];
+  const [ua, us] = v.u;
+  const [va, vs] = v.v;
+  const [la, ls] = v.look;
+  const cu = (min[ua] + max[ua]) / 2;
+  const cv = (min[va] + max[va]) / 2;
+  return {
+    x: cell.x + cell.w / 2 + (p[ua] - cu) * us * scale,
+    y: cell.y + cell.h / 2 - (p[va] - cv) * vs * scale,
+    z: p[la] * ls,
+    facing: n === null || n[la] * ls < 0,
+  };
 }
 
 /**

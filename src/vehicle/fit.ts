@@ -139,13 +139,42 @@ export function offsetFor(t: Template, hits: { local: Vec3 | null }[]): Vec3 {
 
 const shiftedCache = new WeakMap<object, { key: string; out: unknown[] }>();
 
-/** The hits with their points moved by `o` (the same array when `o` is zero); kept per array and offset. */
-export function shiftHits<H extends { local: Vec3 | null }>(hits: H[], o: Vec3): H[] {
+/** The hits with their points (and exits) moved by `o` (the same array when `o` is zero); kept per array and offset. */
+export function shiftHits<H extends { local: Vec3 | null; exit?: Vec3 | null }>(hits: H[], o: Vec3): H[] {
   if (o[0] === 0 && o[1] === 0 && o[2] === 0) return hits;
   const key = o.join(',');
   const c = shiftedCache.get(hits);
   if (c && c.key === key) return c.out as H[];
-  const out = hits.map((h) => (h.local ? { ...h, local: [h.local[0] + o[0], h.local[1] + o[1], h.local[2] + o[2]] as Vec3 } : h));
+  const move = (p: Vec3): Vec3 => [p[0] + o[0], p[1] + o[1], p[2] + o[2]];
+  const out = hits.map((h) => (h.local ? { ...h, local: move(h.local), exit: h.exit ? move(h.exit) : h.exit } : h));
   shiftedCache.set(hits, { key, out });
   return out;
+}
+
+/** How well a vehicle's hits lie on its figure once moved: the median distance to the surface (m) and the share within a few cells. */
+export interface FitResidual {
+  median: number;
+  /** Share of the hits within three of the field's cells (a hundredth of the figure each) of the surface. */
+  near: number;
+  hits: number;
+}
+
+const residuals = new WeakMap<Template, WeakMap<object, Map<string, FitResidual>>>();
+
+/** The fit's residual for a figure and a vehicle's hits moved by `o` (null with no hits). */
+export function fitResidual(t: Template, hits: { local: Vec3 | null }[], o: Vec3): FitResidual | null {
+  const pts = hits.map((h) => h.local).filter((p): p is Vec3 => p !== null);
+  if (!pts.length) return null;
+  let byHits = residuals.get(t);
+  if (!byHits) residuals.set(t, (byHits = new WeakMap()));
+  let byOffset = byHits.get(hits);
+  if (!byOffset) byHits.set(hits, (byOffset = new Map()));
+  const cached = byOffset.get(o.join(','));
+  if (cached) return cached;
+  let f = fields.get(t);
+  if (!f) fields.set(t, (f = distanceField(t)));
+  const ds = pts.map((p) => distanceAt(f!, p[0] + o[0], p[1] + o[1], p[2] + o[2])).sort((a, b) => a - b);
+  const r: FitResidual = { median: ds[Math.floor(ds.length / 2)], near: ds.filter((d) => d <= 3 * f!.cell).length / ds.length, hits: ds.length };
+  byOffset.set(o.join(','), r);
+  return r;
 }
