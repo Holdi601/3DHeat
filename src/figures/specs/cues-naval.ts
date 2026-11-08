@@ -1382,4 +1382,217 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
     { cue: 'kingposts and booms fore and aft for the landing craft', check: (s) => (s.masts?.length ?? 0) >= 4 },
     { cue: '5-inch gun aft, 3-inch forward', check: (s) => turrets(s).some((t) => t.calibre === 0.127 && t.x < 0) && turrets(s).some((t) => t.calibre === 0.076 && t.x > 0) },
   ]),
+  marinefahrprahm: naval('marinefahrprahm', [
+    { cue: 'flat-bottomed ferry barge with a bow ramp', check: (s) => s.cls === 'landing-craft' && s.length / s.beam < 8 },
+    { cue: '8.8 cm gun on the deck aft', check: (s) => turrets(s).some((t) => t.calibre === 0.088 && t.x < 0) },
+    { cue: '20 mm gun on a raised stern platform', check: (s) => turrets(s).some((t) => t.calibre === 0.02 && t.x < 0 && (t.up ?? 0) > 2) },
+  ]),
+  'x-lighter': naval('x-lighter', [
+    { cue: 'barge hull with a bow ramp', check: (s) => s.cls === 'landing-craft' },
+    { cue: 'wheelhouse and mast aft', check: (s) => (s.masts ?? []).some((m) => m.x < 0) },
+    { cue: 'unarmed', check: (s) => turrets(s).length === 0 },
+  ]),
+  cb90: naval('cb90', [
+    { cue: 'heavy machine guns on the cabin roof and in the bow', check: (s) => turrets(s).filter((t) => t.calibre === 0.013).length === 2 },
+    { cue: 'waterjet assault boat, about 16 m', check: (s) => s.length < 17 },
+  ]),
+  pbr: naval('pbr', [
+    { cue: 'twin .50 machine guns in the bow tub', check: (s) => turrets(s).some((t) => t.barrels === 2 && t.x > 0) },
+    { cue: 'single .50 aft', check: (s) => turrets(s).some((t) => t.barrels === 1 && t.x < 0) },
+    { cue: 'small fibreglass hull under 10 m', check: (s) => s.length < 10 },
+  ]),
+  'armed-speedboat': naval('armed-speedboat', [
+    { cue: 'one heavy machine gun forward', check: (s) => turrets(s).length === 1 && turrets(s)[0].x > 0 },
+    { cue: 'small open speedboat, about 11 m', check: (s) => s.length < 12 },
+  ]),
+  bulker: naval('bulker', [
+    { cue: 'bridge and funnel right aft', check: (s) => funnels(s) === 1 && s.funnels![0].x < -s.length / 3 },
+    { cue: 'cranes between the hatches', check: (s) => (s.masts?.length ?? 0) === 4 },
+    { cue: 'long flat deck of hatch covers', check: (s) => (s.bodies ?? []).length >= 6 },
+  ]),
+  'river-cargo-ship': naval('river-cargo-ship', [
+    { cue: 'funnel and wheelhouse aft', check: (s) => funnels(s) === 1 && s.funnels![0].x < -s.length / 4 },
+    { cue: 'low river hull', check: (s) => s.freeboard < 3 },
+    { cue: 'cargo mast forward', check: (s) => (s.masts ?? []).some((m) => m.x > 0) },
+  ]),
+  helgoland: naval('helgoland', [
+    { cue: 'six twin 30.5 cm turrets in a hexagon: fore, aft and two on each beam', check: (s) => fwd(s, 0.3).length === 1 && aft(s, 0.3).length === 1 && mains(s, 0.3).filter((t) => !!t.side).length === 4 },
+    { cue: 'three funnels', check: (s) => funnels(s) === 3 },
+    { cue: 'pole masts fore and aft', check: (s) => mastCount('pole')(s) === 2 },
+  ]),
+  southampton: naval('southampton', [
+    { cue: 'four triple 6-inch turrets, superfiring pairs fore and aft', check: (s) => battery(s, 0.15, 2, 2, 3) && superfires(fwd(s, 0.15)) && superfires(aft(s, 0.15)) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+    { cue: 'tripod masts fore and aft', check: (s) => mastCount('tripod')(s) === 2 },
+  ]),
+  'type-7u': naval('type-7u', [
+    { cue: 'four single 130 mm guns: two forward, two aft, superfiring', check: (s) => battery(s, 0.1, 2, 2, 1) && superfires(fwd(s, 0.1)) && superfires(aft(s, 0.1)) },
+    { cue: 'two funnels (the Type 7 had one)', check: (s) => funnels(s) === 2 },
+    { cue: 'two triple torpedo tube mounts', check: (s) => tubeMounts(s).filter((t) => t.barrels === 3).length === 2 },
+    { cue: 'tripod foremast', check: mastKind('tripod') },
+  ]),
+  'r-boot': naval('r-boot', [
+    { cue: '20 mm gun forward, 37 mm aft', check: (s) => turrets(s).some((t) => t.calibre === 0.02 && t.x > 0) && turrets(s).some((t) => t.calibre === 0.037 && t.x < 0) },
+    { cue: 'small funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'mast on the wheelhouse', check: (s) => (s.masts?.length ?? 0) === 1 },
+  ]),
+  'type-143-fac': naval('type-143-fac', [
+    { cue: '76 mm guns fore and aft', check: (s) => turrets(s).filter((t) => t.calibre === 0.076).length === 2 },
+    { cue: 'Exocet box launchers aft', check: (s) => (s.launchers ?? []).some((l) => l.kind === 'box' && l.x < 0) },
+    { cue: 'mast on the bridge', check: (s) => (s.masts?.length ?? 0) === 1 },
+  ]),
+  'flower-corvette': naval('flower-corvette', [
+    { cue: '4-inch gun on the forecastle', check: (s) => turrets(s).some((t) => t.calibre === 0.102 && t.x > 0) },
+    { cue: 'one short funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'short whaler hull with a raised forecastle', check: (s) => forecastle(s) && s.length < 65 },
+    { cue: 'pom-pom aft', check: (s) => turrets(s).some((t) => t.calibre === 0.04 && t.x < 0) },
+  ]),
+  'gabbiano-corvette': naval('gabbiano-corvette', [
+    { cue: '100 mm gun forward', check: (s) => turrets(s).some((t) => t.calibre === 0.1 && t.x > 0) },
+    { cue: 'one funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'flush deck with sheer forward', check: (s) => flush(s) && (s.sheer ?? 0) >= 1 },
+  ]),
+  'hiburi-kaibokan': naval('hiburi-kaibokan', [
+    { cue: 'single 12 cm gun forward, twin aft', check: (s) => turrets(s).some((t) => t.calibre === 0.12 && t.barrels === 1 && t.x > 0) && turrets(s).some((t) => t.calibre === 0.12 && t.barrels === 2 && t.x < 0) },
+    { cue: 'one funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'raised forecastle', check: forecastle },
+  ]),
+  'river-frigate': naval('river-frigate', [
+    { cue: 'twin 4-inch forward, single aft', check: (s) => turrets(s).some((t) => t.calibre === 0.102 && t.barrels === 2 && t.x > 0) && turrets(s).some((t) => t.calibre === 0.102 && t.barrels === 1 && t.x < 0) },
+    { cue: 'one funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'raised forecastle', check: forecastle },
+  ]),
+  'koln-frigate': naval('koln-frigate', [
+    { cue: 'four single 100 mm guns: two forward, two aft', check: (s) => battery(s, 0.09, 2, 2, 1) },
+    { cue: 'two funnels', check: (s) => funnels(s) === 2 },
+    { cue: 'flush deck with sheer', check: (s) => flush(s) && (s.sheer ?? 0) >= 2 },
+  ]),
+  'gunboat-1124-mrls': naval('gunboat-1124-mrls', [
+    { cue: '76 mm tank turret forward', check: (s) => turrets(s).some((t) => t.calibre === 0.076 && t.x > 0) },
+    { cue: 'rocket launcher aft', check: (s) => (s.launchers ?? []).some((l) => l.x < 0) },
+    { cue: 'small armoured river boat, about 25 m', check: (s) => s.length < 27 },
+  ]),
+  nagara: naval('nagara', [
+    { cue: 'three funnels', check: (s) => funnels(s) === 3 },
+    { cue: 'single 14 cm guns: two forward, two aft and on the beams', check: (s) => singles(s) && fwd(s).length === 2 && aft(s).length === 2 && beamGuns(s) },
+    { cue: 'raised forecastle', check: forecastle },
+    { cue: 'quadruple torpedo tube mounts', check: (s) => tubeMounts(s).filter((t) => t.barrels === 4).length === 2 },
+  ]),
+  'asheville-pg': naval('asheville-pg', [
+    { cue: '3-inch gun forward, 40 mm aft', check: (s) => turrets(s).some((t) => t.calibre === 0.076 && t.x > 0) && turrets(s).some((t) => t.calibre === 0.04 && t.x < 0) },
+    { cue: 'mast with a search radar', check: (s) => (s.radars?.length ?? 0) >= 1 },
+  ]),
+  'nasty-ptf': naval('nasty-ptf', [
+    { cue: '20 mm forward, 40 mm aft', check: (s) => turrets(s).some((t) => t.calibre === 0.02 && t.x > 0) && turrets(s).some((t) => t.calibre === 0.04 && t.x < 0) },
+    { cue: 'small fast boat, about 25 m', check: (s) => s.length < 26 },
+  ]),
+  parchim: naval('parchim', [
+    { cue: 'twin 30 mm forward, twin 57 mm aft', check: (s) => turrets(s).some((t) => t.calibre === 0.03 && t.x > 0) && turrets(s).some((t) => t.calibre === 0.057 && t.barrels === 2 && t.x < 0) },
+    { cue: 'mast with a search radar', check: (s) => (s.radars?.length ?? 0) >= 1 },
+  ]),
+  'whitby-type-12': naval('whitby-type-12', [
+    { cue: 'twin 4.5-inch turret forward', check: (s) => battery(s, 0.1, 1, 0, 2) },
+    { cue: 'one funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'flush deck with a strong sheer to the bow', check: (s) => flush(s) && (s.sheer ?? 0) >= 3 },
+  ]),
+  'le-corse-e50': naval('le-corse-e50', [
+    { cue: 'three twin 57 mm mounts: two forward, one aft', check: (s) => turrets(s).filter((t) => t.calibre === 0.057 && t.x > 0).length === 2 && turrets(s).filter((t) => t.calibre === 0.057 && t.x < 0).length === 1 },
+    { cue: 'triple torpedo tube mount', check: (s) => tubeMounts(s).some((t) => t.barrels === 3) },
+    { cue: 'one funnel', check: (s) => funnels(s) === 1 },
+  ]),
+  'albatros-corvette': naval('albatros-corvette', [
+    { cue: '76 mm guns fore and aft', check: (s) => turrets(s).filter((t) => t.calibre === 0.076).length === 2 },
+    { cue: 'one funnel', check: (s) => funnels(s) === 1 },
+  ]),
+  'peacock-pc': naval('peacock-pc', [
+    { cue: '76 mm gun forward', check: (s) => turrets(s).some((t) => t.calibre === 0.076 && t.x > 0) },
+    { cue: 'no funnel', check: (s) => funnels(s) === 0 },
+    { cue: 'mast with a search radar', check: (s) => (s.radars?.length ?? 0) >= 1 },
+  ]),
+  'brave-fpb': naval('brave-fpb', [
+    { cue: '40 mm guns fore and aft', check: (s) => turrets(s).filter((t) => t.calibre === 0.04).length === 2 },
+    { cue: 'torpedo tubes', check: (s) => tubes(s) >= 1 },
+    { cue: 'broad planing hull, about 30 m', check: (s) => s.length < 31 && s.beam / s.length > 0.2 },
+  ]),
+  'siebel-ferry': naval('siebel-ferry', [
+    { cue: 'twin pontoons with a platform across them', check: (s) => s.beam / s.length > 0.5 },
+    { cue: 'five 8.8 cm guns on the platform', check: (s) => turrets(s).filter((t) => t.calibre === 0.088).length === 5 },
+  ]),
+  komsomolets: naval('komsomolets', [
+    { cue: 'twin heavy machine-gun turrets fore and aft', check: (s) => turrets(s).filter((t) => t.barrels === 2).length === 2 },
+    { cue: 'torpedo tubes', check: (s) => tubes(s) >= 1 },
+    { cue: 'small boat under 20 m', check: (s) => s.length < 20 },
+  ]),
+  'd-3': naval('d-3', [
+    { cue: 'machine guns fore and aft', check: (s) => turrets(s).filter((t) => t.calibre === 0.013).length === 2 },
+    { cue: 'small wooden boat, about 22 m', check: (s) => s.length < 23 },
+  ]),
+  'mo-4': naval('mo-4', [
+    { cue: '45 mm guns fore and aft', check: (s) => turrets(s).filter((t) => t.calibre === 0.045).length === 2 },
+    { cue: 'small wooden hunter, about 27 m', check: (s) => s.length < 28 },
+  ]),
+  shmel: naval('shmel', [
+    { cue: '76 mm tank turret forward', check: (s) => turrets(s).some((t) => t.calibre === 0.076 && t.x > 0) },
+    { cue: 'twin 25 mm aft', check: (s) => turrets(s).some((t) => t.calibre === 0.025 && t.barrels === 2 && t.x < 0) },
+    { cue: 'rocket launcher amidships', check: (s) => (s.launchers?.length ?? 0) >= 1 },
+  ]),
+  'pr-191': naval('pr-191', [
+    { cue: '85 mm tank turret forward', check: (s) => turrets(s).some((t) => t.calibre === 0.085 && t.x > 0) },
+    { cue: 'twin 25 mm aft', check: (s) => turrets(s).some((t) => t.calibre === 0.025 && t.barrels === 2 && t.x < 0) },
+  ]),
+  'mbk-161': naval('mbk-161', [
+    { cue: 'two 85 mm tank turrets, fore and aft', check: (s) => turrets(s).filter((t) => t.calibre === 0.085).length === 2 },
+    { cue: '37 mm guns on the deckhouses', check: (s) => turrets(s).filter((t) => t.calibre === 0.037).length === 2 },
+  ]),
+  'mbk-186': naval('mbk-186', [
+    { cue: 'two 85 mm tank turrets, fore and aft', check: (s) => turrets(s).filter((t) => t.calibre === 0.085).length === 2 },
+    { cue: '37 mm guns on the deckhouses', check: (s) => turrets(s).filter((t) => t.calibre === 0.037).length === 2 },
+  ]),
+  'so-1': naval('so-1', [
+    { cue: 'twin 25 mm mounts fore and aft', check: (s) => turrets(s).filter((t) => t.calibre === 0.025 && t.barrels === 2).length === 2 },
+    { cue: 'small funnel', check: (s) => funnels(s) === 1 },
+  ]),
+  pauk: naval('pauk', [
+    { cue: '76 mm gun forward', check: (s) => turrets(s).some((t) => t.calibre === 0.076 && t.x > 0) },
+    { cue: '30 mm gatling aft', check: (s) => turrets(s).some((t) => t.calibre === 0.03 && t.x < 0) },
+    { cue: 'lattice mast with a radome', check: (s) => mastKind('lattice')(s) && (s.radars ?? []).some((r) => r.kind === 'dome') },
+    { cue: 'torpedo tubes aft', check: (s) => tubes(s) >= 1 },
+  ]),
+  sgb: naval('sgb', [
+    { cue: '3-inch gun aft, 40 mm forward', check: (s) => turrets(s).some((t) => t.calibre === 0.076 && t.x < 0) && turrets(s).some((t) => t.calibre === 0.04 && t.x > 0) },
+    { cue: 'small funnel', check: (s) => funnels(s) === 1 },
+  ]),
+  'ab-tei': naval('ab-tei', [
+    { cue: '37 mm gun forward, machine gun aft', check: (s) => turrets(s).some((t) => t.calibre === 0.037 && t.x > 0) && turrets(s).some((t) => t.x < 0) },
+    { cue: 'small boat, about 17 m', check: (s) => s.length < 18 },
+  ]),
+  kusentei: naval('kusentei', [
+    { cue: '40 mm gun forward', check: (s) => turrets(s).some((t) => t.calibre === 0.04 && t.x > 0) },
+    { cue: 'raised forecastle', check: forecastle },
+    { cue: 'tripod mast', check: mastKind('tripod') },
+    { cue: 'small funnel', check: (s) => funnels(s) === 1 },
+  ]),
+  sparviero: naval('sparviero', [
+    { cue: 'hydrofoils under the hull', check: (s) => (s.bodies ?? []).some((b) => Math.max(...b.top.map((p) => p[1])) < 0) },
+    { cue: '76 mm gun forward', check: (s) => turrets(s).some((t) => t.calibre === 0.076 && t.x > 0) },
+    { cue: 'missile launchers aft', check: (s) => tubes(s) >= 1 },
+  ]),
+  'elco-77': naval('elco-77', [
+    { cue: 'twin .50 turrets beside the bridge', check: (s) => wings(s, 0.013, 2) === 2 },
+    { cue: 'torpedo tubes along the sides', check: (s) => tubes(s) >= 1 },
+  ]),
+  'huckins-78': naval('huckins-78', [
+    { cue: 'twin .50 turrets beside the bridge', check: (s) => wings(s, 0.013, 2) === 2 },
+    { cue: 'torpedo tubes along the sides', check: (s) => tubes(s) >= 1 },
+    { cue: '20 mm gun aft', check: (s) => turrets(s).some((t) => t.calibre === 0.02 && t.x < 0) },
+  ]),
+  'bpb-60': naval('bpb-60', [
+    { cue: 'twin machine guns on both sides', check: (s) => wings(s, 0.008, 2) === 2 },
+    { cue: 'small boat under 19 m', check: (s) => s.length < 19 },
+  ]),
+  'r-301': naval('r-301', [
+    { cue: '37 mm gun forward', check: (s) => turrets(s).some((t) => t.calibre === 0.037 && t.x > 0) },
+    { cue: 'quadruple 20 mm aft', check: (s) => turrets(s).some((t) => t.calibre === 0.02 && t.barrels === 4 && t.x < 0) },
+    { cue: 'twin 20 mm on the deckhouse', check: (s) => turrets(s).some((t) => t.calibre === 0.02 && t.barrels === 2) },
+  ]),
 };
