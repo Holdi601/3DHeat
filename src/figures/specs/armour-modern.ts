@@ -715,7 +715,7 @@ Object.assign(ALIASES, {
   uk_vickers_mbt_mk_1: 'vickers-mbt-mk1', uk_vijayanta: 'vickers-mbt-mk1', uk_vickers_mbt_mk_3: 'vickers-mbt-mk3', uk_vickers_mk_11: 'vickers-mk11', uk_vickers_mk7: 'vickers-mk7', uk_falcon: 'falcon', uk_tracked_rapier: 'tracked-rapier',
   uk_badger: 'badger-ifv', uk_vfm_5: 'vfm-5', uk_ttd: 'ttd', uk_ajax: 'ajax', uk_challenger_1_mk_3_gulf: 'challenger-ds',
   jp_type_75_mlrs: 'type-75-mlrs', jp_type_16_mcv_prot: 'type-16-mcv', jp_type_16_mod: 'type-16-mcv', jp_type_16: 'type-16-mcv', jp_btr_3e1: 'btr-3e1', jp_icv_ifv_prototype: 'type-24-icv', jp_icv_prototype: 'type-25-rcv',
-  jp_harimau: 'harimau', jp_type_03_chusam_fcs: 'nasams-mpq-64-sentinel', jp_type_03_chusam_launcher: 'sky-sabre-launcher',
+  jp_harimau: 'harimau', jp_type_03_chusam_fcs: 'patriot-mpq-53', jp_type_03_chusam_launcher: 'sky-sabre-launcher',
   cn_zts_63_1980: 'type-63-amphibious', cn_type_86: 'bmp-1', cn_wz_305: 'wz-305', cn_ztz_59a: 'ztz-59a', cn_type_59d: 'ztz-59d1', cn_cm_25: 'm113-tow', cn_ptz_89: 'ptz-89', cn_ztz_88b: 'ztz-88', cn_ztz_88a: 'ztz-88',
   cn_ptl_02: 'ptl-02', cn_hj_9: 'aft09', cn_cm11: 'cm-11', cn_cm_34: 'cm-34', cn_object_122tm: 'object-122mt', cn_wma_301: 'wma-301', cn_type_69_2g: 'type-69-2', cn_mbt2000: 'mbt-2000', cn_mbt2000_sm: 'mbt-2000',
   cn_antelope_tc_1l_ads: 'antelope', cn_ztl_11: 'ztl-11', cn_qn506: 'qn506', cn_vt_5: 'vt-5', cn_wz_1001: 'wz-1001',
