@@ -8,7 +8,7 @@ import { t, useLang } from '../../i18n';
 import { useAnimationFrame, useEngine } from '../EngineContext';
 import { datasetFields, fieldName, fieldShort, fieldText, inFieldOrder } from './fields';
 import { FieldPicker } from './FieldPicker';
-import { personAt, unitsOf, type Unit } from './units';
+import { personAt, unitsOf, vehicleOf, type Unit } from './units';
 import { groundProbe, teamName } from './replayView';
 import { unitsPerMetre } from './replayData';
 import { selectAndFollow } from './ReplayOverlay';
@@ -168,7 +168,7 @@ function UnitCardView({ unitKey, second }: { unitKey: string; second: boolean })
         </span>
       </div>
       <div className="uc-sub">
-        {[unit.vehicle, unit.team >= 0 ? teamName(dataset, unit.team) : '', t(`replay.kind.${unit.kind}`)].filter(Boolean).join(' · ')}
+        {[vehicleOf(unit, personAt(unit, playhead())), unit.team >= 0 ? teamName(dataset, unit.team) : '', t(`replay.kind.${unit.kind}`)].filter(Boolean).join(' · ')}
       </div>
       {following && !second && (
         <label className="uc-look" title={t('replay.lookAt.pickTitle')}>

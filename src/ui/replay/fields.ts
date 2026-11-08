@@ -13,7 +13,7 @@ import { num, t } from '../../i18n';
 import type { Dataset } from '../../state/types';
 import type { UnitSystem } from '../../state/replayStore';
 import { formatIn } from '../../units/format';
-import type { Unit } from './units';
+import { vehicleOf, type Unit } from './units';
 import { useReplayStore } from '../../state/replayStore';
 import { geoFrame } from '../../world/geoFrame';
 import { formatLatLon, toMgrs } from '../../world/mgrs';
@@ -194,8 +194,11 @@ export function fieldText(c: FieldContext, id: string, teamLabel: (team: number)
   switch (id) {
     case 'name':
       return c.unit.name;
-    case 'vehicle':
-      return c.unit.vehicle && c.unit.vehicle !== c.unit.name && !c.unit.name.startsWith(c.unit.vehicle) ? c.unit.vehicle : '';
+    case 'vehicle': {
+      // The vehicle of the life on show: a player who switched from a tank to an SPAA is named by the SPAA.
+      const v = vehicleOf(c.unit, c.person);
+      return v && v !== c.unit.name && !c.unit.name.startsWith(v) ? v : '';
+    }
     case 'team':
       return c.unit.team >= 0 ? teamLabel(c.unit.team) : '';
     case 'kind':
