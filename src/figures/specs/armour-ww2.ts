@@ -2141,10 +2141,11 @@ G['challenger-a30'] = ww2({
   gun: { length: 3.3, calibre: 0.076, muzzle: true, at: 0.5 },
 });
 // Type 1 Ho-Ni I: the Chi-Ha chassis with the Type 90 75 mm behind an open, three-sided shield; Ho-Ni III the same in
-// a closed casemate (5.9 x 2.33 m, 2.39 m). Type 5 Na-To: the gun on an open platform over a lengthened chassis.
+// a closed casemate (5.9 x 2.33 m with the gun, 2.39 m; the Ho-Ni I on the Chi-Ha's own 5.52 m hull). Type 5 Na-To:
+// the gun on an open platform over a lengthened chassis.
 {
   const m = mantlet(1.55, 0.6, 0.85, 1.75, 0.25, 0.18);
-  G['ho-ni-i'] = ww2({ ...CHIHA, cls: 'tank-destroyer', L: 5.9, turret: m, guns: [fire(m, 2.6, 0.075, { muzzle: true })], parts: [compartment(1.55, -0.4, 0.75, 2.39, 1.05, 1.5)] });
+  G['ho-ni-i'] = ww2({ ...CHIHA, cls: 'tank-destroyer', turret: m, guns: [fire(m, 2.6, 0.075, { muzzle: true })], parts: [compartment(1.55, -0.4, 0.75, 2.39, 1.05, 1.5)] });
   G['ho-ni-iii'] = ww2({ ...CHIHA, cls: 'tank-destroyer', L: 5.9, top: [[-2.95, 1.3], [-2.85, 1.5], [-0.6, 1.5], [-0.5, 2.39], [0.6, 2.39], [1.2, 1.55], [2.3, 1.15], [2.95, 0.95]], turret: m, guns: [fire(m, 2.6, 0.075, { muzzle: true })] });
   const n = mantlet(1.4, -0.3, -0.05, 2.1, 0.22, 0.16);
   G['na-to'] = ww2({ ...CHIHA, cls: 'tank-destroyer', L: 6.2, deck: 1.4, top: [[-3.1, 1.2], [-3.0, 1.4], [1.0, 1.4], [3.1, 0.95]], wheels: even(7, -2.3, 2.3), turret: n, guns: [fire(n, 3.0, 0.075)], parts: [compartment(1.4, -1.4, 0.2, 2.35, 1.1, 1.4)] });
