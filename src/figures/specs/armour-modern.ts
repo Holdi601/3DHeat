@@ -640,6 +640,8 @@ G['vab'] = { cls: 'apc-wheeled', ...VAB, addOns: [hb(0.6, 0, 2.2, 0.6, 0.6, 0.25
 G['vab-mephisto'] = { cls: 'atgm', ...VAB, addOns: [hb(-0.6, 0, 2.6, 1.4, 1.0, 0.6), hb(-0.6, 0, 2.25, 0.3, 0.3, 0.3, DARK)] };
 // WZ-551 (1995): a 6x6 boat hull with the 25 mm turret (6.65 x 2.8 m, 2.85 m).
 G['wz-551'] = { cls: 'apc-wheeled', chassis: 'wheeled', length: 6.65, width: 2.8, hullHeight: 2.15, axles: 3, axleAt: [0.6, 0.0, -0.55], wheelRadius: 0.58, hullOutline: wheeledHull(6.65, 2.15, 1.2, 1.4, 1.8), turret: wheeledTurret(0.2, 1.5, 0.8, 0.6), guns: [{ mount: 'turret', length: 2.3, calibre: 0.025, at: 0.5 }] };
+// Type 87 RCV: a smaller 6x6 with its 25 mm turret (5.99 x 2.48 m, 2.8 m).
+G['type-87-rcv'] = { ...G['wz-551'], length: 5.99, width: 2.48, hullHeight: 1.95, hullOutline: wheeledHull(5.99, 1.95, 1.2, 1.4, 1.8) };
 // ZBD-04A (2011): a BMP-3-like hull with the 100 mm + 30 mm turret; ZBD-05 (2006) a long amphibious hull with its planing bow (9.5 x 3.6 m) and a 30 mm turret.
 // The A's armoured skirts over the upper run and the bolted plates on the hull's sides above them.
 // Its own hull, not the BMP-3's: the engine at the front, the tall box 2.15 m to the roof with the steep bow carrying the trim
