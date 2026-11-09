@@ -11,8 +11,9 @@
  *   gouge    it did not, and struck at a glancing angle (more than 70
  *            degrees off the surface's normal): a long gouge along the shot,
  *            most likely a ricochet - the data does not tell one apart
- *   bullet   the data does not say what it did (aircraft, ships): a bullet
- *            or cannon hole
+ *   bullet   the data does not say what it did (aircraft, ships; in a War
+ *            Thunder client replay every unit's hits but the recording
+ *            player's own): a bullet or cannon hole
  *   scorch   an explosive round (HE, HEAT, HESH; War Thunder's `ammoType`),
  *            whatever it did: a dark soot star round a lighter centre,
  *            blackened in the middle where it got through
@@ -790,9 +791,11 @@ export class HitMarkLayer {
         if (kill) this.ring(r * 4.7, r * 5.2, step, col, alpha);
         return r * (kill ? 5.2 : 4.4);
       default:
+        // Ringed like the others (in the plain hit's colour): a machine-gun round's hole is a pixel or two at play distance.
         this.ellipse(r * 1.5, r * 1.5, 0, RIM, 0.9 * alpha);
         this.ellipse(r, r, step, BLACK, alpha);
-        return r * 1.5;
+        this.ring(r * 1.5, r * 2.1, step, col, alpha);
+        return r * 2.1;
     }
   }
 
