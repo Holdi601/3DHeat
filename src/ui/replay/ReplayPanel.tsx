@@ -6,7 +6,7 @@ import { FOLLOW_MODES, LABEL_CATEGORIES, labelFieldsFor, useReplayStore, type Fo
 import { dropLinesOn } from './replayData';
 import { datasetFields, inFieldOrder } from './fields';
 import { FieldPicker } from './FieldPicker';
-import { personAt, unitsOf } from './units';
+import { personAt, unitsOf, vehicleOf } from './units';
 import { UnitList } from './UnitList';
 import { lookTargets } from './pair';
 import { EventList } from './EventList';
@@ -159,7 +159,7 @@ function CameraPanel() {
                 {targets.map((u) => (
                   <option key={u.key} value={u.key}>
                     {u.name}
-                    {u.vehicle && !u.name.startsWith(u.vehicle) ? ` · ${u.vehicle}` : ''}
+                    {((v) => (v && !u.name.startsWith(v) ? ` · ${v}` : ''))(vehicleOf(u, personAt(u, now)))}
                   </option>
                 ))}
               </select>

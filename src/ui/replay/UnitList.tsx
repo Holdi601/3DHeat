@@ -1,3 +1,4 @@
+import { hiddenAt, hiddenSpans } from '../../data/acmiFlags';
 import { useMemo, useState } from 'react';
 import { useStore } from '../../state/store';
 import { useReplayStore } from '../../state/replayStore';
@@ -6,7 +7,7 @@ import { rgbToCss, teamBaseColor } from '../../render/colors';
 import { int, t } from '../../i18n';
 import { Check, Section } from '../controls';
 import { usePlayhead } from './hooks';
-import { personAt, sortUnits, unitsInPlay, unitsOf, type Unit, type UnitKind } from './units';
+import { personAt, sortUnits, unitsInPlay, unitsOf, vehicleOf, type Unit, type UnitKind } from './units';
 import { teamName } from './replayView';
 import { selectAndFollow } from './ReplayOverlay';
 import { clearLook, lookAtUnit } from './pair';
@@ -58,7 +59,7 @@ export function UnitList() {
   const groups = useMemo(() => {
     if (!index) return null;
     const q = query.trim().toLowerCase();
-    const match = (u: Unit) => (!inPlay || inPlay.has(u.key)) && (!q || u.name.toLowerCase().includes(q) || u.vehicle.toLowerCase().includes(q));
+    const match = (u: Unit) => (!inPlay || inPlay.has(u.key)) && (!q || u.name.toLowerCase().includes(q) || u.vehicles.some((v) => v.toLowerCase().includes(q)));
     const by = (k: UnitKind) => sortUnits(index.units.filter((u) => u.kind === k && match(u) && (decoys || !u.decoy)));
     return { player: by('player'), ai: by('ai'), weapon: by('weapon'), decoys: index.units.reduce((n, u) => n + (u.decoy && match(u) ? 1 : 0), 0) };
   }, [index, query, inPlay, decoys]);
@@ -94,7 +95,11 @@ export function UnitList() {
       >
         <span className="swatch" style={{ background: color }} />
         <span className="who">{u.name}</span>
-        {u.vehicle && !u.name.startsWith(u.vehicle) && <span className="veh">{u.vehicle}</span>}
+        {(() => {
+          // The vehicle the player is in at the playhead: a respawn in another vehicle shows the new one.
+          const v = vehicleOf(u, personAt(u, now));
+          return v && !u.name.startsWith(v) ? <span className="veh">{v}</span> : null;
+        })()}
         {follow && follow !== u.key && (
           <button
             className={`look${target === u.key ? ' on' : ''}`}
@@ -122,7 +127,10 @@ export function UnitList() {
     );
   };
 
-  const block = (kind: UnitKind, list: Unit[], open: boolean) => {
+  // Hidden by the recording now (ACMI Visible 0): out of the list while it is, as it is out of the view.
+  const unhidden = (u: Unit) => !hiddenSpans(dataset) || !u.persons.every((p) => hiddenAt(dataset, p, now));
+  const block = (kind: UnitKind, all: Unit[], open: boolean) => {
+    const list = hiddenSpans(dataset) ? all.filter(unhidden) : all;
     if (!list.length) return null;
     const persons = list.flatMap((u) => u.persons);
     const anyShown = list.some(visible);

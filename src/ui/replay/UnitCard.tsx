@@ -217,7 +217,7 @@ function UnitCardView({ unitKey, second }: { unitKey: string; second: boolean })
             {lookTargets(index, followUnit, now).map((u) => (
               <option key={u.key} value={u.key}>
                 {u.name}
-                {u.vehicle && !u.name.startsWith(u.vehicle) ? ` · ${u.vehicle}` : ''}
+                {((v) => (v && !u.name.startsWith(v) ? ` · ${v}` : ''))(vehicleOf(u, personAt(u, playhead())))}
               </option>
             ))}
           </select>
