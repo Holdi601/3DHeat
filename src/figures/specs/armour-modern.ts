@@ -2116,6 +2116,11 @@ G['charioteer'] = { cls: 'tank-destroyer', chassis: 'tracked', length: 6.4, widt
 // FV4004 Conway (1951; the Centurion Mk 3's hull, 7.82 x 3.39 m, about 3.6 m: estimate): the very tall slab-sided box
 // turret on the Centurion, its 120 mm L1 with the evacuator.
 G['conway'] = { ...base('centurion'), cls: 'tank-destroyer', turret: turret(-0.4, [[-1.8, 1.3], [-1.6, 1.5], [0.9, 1.55], [1.4, 1.35], [1.5, 0.75]], [[-1.8, 1.45], [-1.6, 1.6], [1.0, 1.6], [1.5, 1.1]], 14, 1.45), guns: [{ mount: 'turret', length: 6.6, calibre: 0.12, extractor: 0.55, at: 0.55 }], cupola: false, addOns: [td(-0.8, 0.75, 1.72, 0.6, 0.25)] };
+// FV4005 Stage II (1955; the Centurion Mk 3's hull, 7.82 x 3.39 m): the huge thin-walled box turret, almost as tall as
+// the hull and half its length, set behind the middle, its front face stepping in over the 183 mm L4 low in the face.
+// Measured on two photographs of the one at Bovington (sources.md): the box about 3.85 m long, 2.2 m wide and 1.6 m
+// tall, its roof rising slightly to the back; the gun's length is an estimate (its muzzle about 2.9 m past the nose).
+G['fv4005'] = { ...base('centurion'), cls: 'tank-destroyer', turret: turret(-0.17, [[-1.925, 1.05], [1.75, 1.1], [1.925, 1.0]], [[-1.925, 1.6], [-1.6, 1.62], [1.25, 1.37], [1.75, 1.15], [1.925, 0.75]], 14, 1.92), guns: [{ mount: 'turret', length: 5.0, calibre: 0.183, at: 0.33 }], cupola: false };
 // AMX-30 AuF1 (1977; the AMX-30's hull, 6.7 x 3.15 m, 3.25 m): the big box turret over the middle with its flat sides and
 // back, the 155 mm GCT with its brake and evacuator, the 7.62 mm on the roof.
 G['amx-30-auf1'] = { ...base('amx-30'), cls: 'sp-artillery', length: 6.7, width: 3.15, cupola: false, turret: turret(-0.4, [[-2.0, 1.45], [1.6, 1.55], [2.0, 1.2], [2.1, 0.65]], [[-2.0, 1.45], [1.6, 1.55], [2.1, 1.0]], 14, 2.05), guns: [{ mount: 'turret', length: 6.2, calibre: 0.155, muzzle: true, extractor: 0.55, at: 0.5, elevation: 0.05 }], addOns: [td(-0.6, 0.85, 1.65, 0.5, 0.2)] };

@@ -1043,6 +1043,23 @@ G['m3a3-stuart'] = ww2({
   const tGrant = turret(-0.1, [[-1.05, 0.5], [-0.85, 0.7], [0.5, 0.74], [0.75, 0.5]], [[-1.05, 0.55], [0.75, 0.58]], 3, 0.7, -0.3);
   G['grant'] = ww2({ ...lee, turret: tGrant, guns });
 }
+// M2 / M2A1 medium (1939-40): the Lee's ancestor on three VVSS bogies a side, the front sprocket and the idler raised at
+// the back; the tall riveted box over the fighting compartment with a machine gun in each bevelled corner, the small
+// eight-sided turret with the 37 mm on its roof, the low engine deck behind with the bullet deflectors at its end
+// (5.38 x 2.62 m, 2.82 m). Measured on the Ordnance Department's side photograph of the M2 (sources.md), heights fitted
+// to the published 2.82 m.
+{
+  const m2m: Ww2 = {
+    cls: 'medium-tank', L: 5.38, W: 2.62, deck: 2.3, fender: 1.11,
+    top: [[-2.69, 1.3], [-2.6, 1.77], [-0.87, 1.77], [-0.85, 2.3], [0.94, 2.3], [0.98, 1.3], [2.0, 1.25], [2.35, 0.95], [2.69, 0.75]],
+    plan: [[-2.69, 1.25], [-0.87, 1.31], [0.75, 1.31], [0.94, 1.15], [2.69, 1.1]], hullRound: 12,
+    track: [[-1.9, 0], [2.15, 0], [2.69, 0.68], [2.45, 1.11], [-2.3, 1.08], [-2.62, 0.76], [-2.3, 0.45]],
+    wheels: pairs([-1.25, 0.15, 1.52], 0.68), r: 0.27,
+    parts: [...vvss(2.62, [-1.25, 0.15, 1.52], 2.3), part(2.3, [[-2.69, 0.9], [-2.5, 0.9]], [[-2.69, 1.92], [-2.5, 1.85]], 1.77, 6)],
+  };
+  const t = turret(-0.05, [[-0.7, 0.45], [-0.5, 0.68], [0.45, 0.68], [0.7, 0.45]], [[-0.7, 0.5], [0.7, 0.52]], 8, 0.7);
+  G['m2-medium'] = ww2({ ...m2m, turret: t, gun: { length: 1.3, calibre: 0.037, at: 0.35 } });
+}
 // M24 Chaffee: five road wheels on torsion bars, three return rollers, the sloped glacis, the turret with its thin
 // 75 mm (hull 4.99 x 2.95 m, 2.47 m; 5.56 m with the gun).
 // The 1.53 m deck falling to the back, the nose 1.11 m up, the turret roof 2.23 m and its bustle, the high-set rear idler
@@ -1716,7 +1733,11 @@ G['centaur-cs'] = { ...G['cromwell'], guns: [{ mount: 'turret', length: 1.0, cal
 // Pz IV Ausf. E (and C/D): the short 75 mm, the narrower tracks, the bolted plate on the driver's half of the front.
 G['pz-iv-e'] = ww2({ ...PZ4, W: 2.84, turret: { ...PZ4_T, gunX: 0.97 }, gun: { length: 1.3, calibre: 0.075, at: 0.45 }, parts: [...PZ4.parts!, part(1.68, [[1.95, 0.6], [2.03, 0.6]], [[1.95, 1.7], [2.03, 1.7]], 1.3, 16, -0.6)], turretParts: (t) => [pz4Cupola(t), ...pz4Hatches(t)] });
 // Panther II: the Panther's hull lengthened on unstaggered steel wheels (overlapping in two rows, as the Tiger II's), the Schmalturm with the 88 mm L/71 (7.0 x 3.27 m).
-G['panther-ii'] = ww2({ ...PANTHER, L: 7.0, top: [[-3.5, 1.35], [-3.2, 1.9], [1.5, 1.9], [3.5, 0.92]], track: trk(3.42, 1.05, 0.7, 0.62, 2.1), wheels: even(7, -2.1, 2.1), rows: 'overlap', turret: SCHMALTURM, gun: { length: 4.9, calibre: 0.088, muzzle: true, at: 0.42 }, parts: [...pantherSkirts, ...pantherExhaust(0.16, 1.35)], turretParts: (t) => [saukopf(t, 1.38, 1.68, 0.32, 0.2, 0.36), cupola(t, -0.95, -0.5, 0.34, 0.15)] });
+const PANTHER_II: Ww2 = { ...PANTHER, L: 7.0, top: [[-3.5, 1.35], [-3.2, 1.9], [1.5, 1.9], [3.5, 0.92]], track: trk(3.42, 1.05, 0.7, 0.62, 2.1), wheels: even(7, -2.1, 2.1), rows: 'overlap' };
+G['panther-ii'] = ww2({ ...PANTHER_II, turret: SCHMALTURM, gun: { length: 4.9, calibre: 0.088, muzzle: true, at: 0.42 }, parts: [...pantherSkirts, ...pantherExhaust(0.16, 1.35)], turretParts: (t) => [saukopf(t, 1.38, 1.68, 0.32, 0.2, 0.36), cupola(t, -0.95, -0.5, 0.34, 0.15)] });
+// The one Panther II hull finished (1945, now at Fort Knox) carries a standard Ausf. G turret with the 75 mm L/70 and
+// its muzzle brake, the ball machine gun in the glacis: the hull and wheels as above, the turret as the G's.
+G['panther-ii-g'] = ww2({ ...PANTHER_II, parts: [...pantherSkirts, ...pantherExhaust(0.16, 1.35), pantherBallMg], turretParts: (t) => [pantherMantlet(t, true), cupola(t, -0.5, -0.5, 0.36, 0.22)] });
 // Type 5 Chi-Ri: the Chi-To lengthened to eight road wheels, a bigger turret with the long 75 mm and a 37 mm low in
 // the hull front (7.3 x 3.05 m, 3.05 m).
 {
@@ -2984,7 +3005,7 @@ const WT_WW2: Record<string, string> = {
   'uk_mark_v': 'mark-v-male',
   'fr_lorraine_155': 'lorraine-40t',
   'fr_lorraine_37l': 'lorraine-37l',
-  'us_m2_medium': 'm2a4',
+  'us_m2_medium': 'm2-medium',
   'us_lvt_a_1': 'lvt-a1',
   'us_lvt_a_1_trb': 'lvt-a1',
   'us_lvt_a_4': 'lvt-a1',
