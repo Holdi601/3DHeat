@@ -216,7 +216,7 @@ function Game({ g, dataset, onKill }: { g: GameMatch; dataset: Dataset | null; o
                     <td className="who">
                       {p.clan ? <span className="dim">{p.clan} </span> : null}
                       {p.name}
-                      {u?.vehicle ? <span className="dim"> · {u.vehicle}</span> : null}
+                      {u && u.vehicles.some(Boolean) ? <span className="dim"> · {[...new Set(u.vehicles.filter(Boolean))].join(', ')}</span> : null}
                     </td>
                     <td>{int(p.air)}</td>
                     <td>{int(p.ground)}</td>
