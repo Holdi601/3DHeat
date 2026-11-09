@@ -993,9 +993,13 @@ const M3_HULL: Ww2 = {
   plan: [[-2.265, 1.1], [2.265, 1.1]], tw: 0.295, belly: 0.42,
   parts: vvss(2.24, [-0.95, 0.55], 1.72), turret: M3_T,
 };
+// The combination mount's rounded rotor shield standing out of the turret front round the 37 mm and its coaxial
+// machine gun, about half the turret's width and two thirds its height (public-domain 1942 Fort Knox photographs,
+// sources.md).
+const m3Shield = (t: TurretSpec): TurretSpec => on(t, [[0.7, 0.32], [0.86, 0.31], [1.0, 0.22]], [[0.7, 0.49], [0.86, 0.47], [1.0, 0.4]], [[0.7, 0.1], [0.86, 0.11], [1.0, 0.17]], 2.4);
 // The AA machine gun on the cupola's pintle: its barrel just over the cupola, the gun's top at TM 9-726's 104 in.
 G['m3-stuart'] = ww2({
-  ...M3_HULL, turretParts: (t) => [cupola(t, -0.2, 0, 0.3, 0.25)],
+  ...M3_HULL, turretParts: (t) => [cupola(t, -0.2, 0, 0.3, 0.25), m3Shield(t)],
   guns: [{ mount: 'turret', length: 1.25, calibre: 0.037, at: 0.45 }, { mount: 'top', length: 1.0, calibre: 0.0076, x: -0.2, up: 0.28 }],
 });
 // The M3A1's AA machine gun stands in its cradle on the pintle bracket on the turret's right side (the mount's top at
@@ -1007,6 +1011,9 @@ G['m3a1-stuart'] = ww2({ ...M3_HULL, guns: [{ mount: 'turret', length: 1.25, cal
 // deck behind the turret, the steep front plate down to the low nose, the turret's undercut radio bustle.
 const M5A1_T: TurretSpec = { ...turret(0.0, [[-0.85, 0.5], [-0.65, 0.72], [0.5, 0.78], [0.9, 0.55]], [[-0.85, 0.64], [-0.5, 0.7], [0.5, 0.68], [0.9, 0.55]], 5, 0.9) };
 M5A1_T.outline = { ...M5A1_T.outline!, bottom: [[-0.85, 0.17], [-0.45, 0.17], [-0.4, 0], [0.9, 0]] };
+// The M44 combination mount's curved rotor shield standing out of the inclined front plate (FM 30-40's side and front
+// views: about 0.65 m across, 0.4 m high, a third of a metre proud of the plate).
+const m5Shield = (t: TurretSpec): TurretSpec => on(t, [[0.84, 0.33], [1.0, 0.33], [1.18, 0.27]], [[0.84, 0.52], [1.0, 0.5], [1.18, 0.44]], [[0.84, 0.12], [1.0, 0.13], [1.18, 0.19]], 2.4);
 G['m5a1-stuart'] = ww2({
   ...M2, L: 4.84, W: 2.29, deck: 1.68, fender: 1.0,
   top: [[-2.42, 1.26], [-2.38, 1.57], [-2.2, 1.72], [-1.95, 1.79], [-1.2, 1.8], [-0.95, 1.68], [1.0, 1.7], [1.45, 1.59], [1.7, 1.41], [1.95, 1.25], [2.42, 1.24]],
@@ -1014,6 +1021,7 @@ G['m5a1-stuart'] = ww2({
   track: [[-2.2, 0.0], [1.65, 0], [2.45, 0.72], [2.15, 0.98], [-1.6, 0.98], [-2.45, 0.35]],
   parts: vvss(2.29, [-0.95, 0.65], 1.68), wheels: pairs([-0.95, 0.65], 0.52),
   turret: M5A1_T,
+  turretParts: (t) => [m5Shield(t)],
   guns: [{ mount: 'turret', length: 1.6, calibre: 0.037, at: 0.29 }, { mount: 'top', length: 1.0, calibre: 0.0076, x: -0.2, side: 0.62, up: 0.17 }],
 });
 // M3A3 Stuart: the M5's welded hull with its sloped glacis and sloped sponson sides on the M3's radial-engined chassis
@@ -1026,6 +1034,7 @@ G['m3a3-stuart'] = ww2({
   track: [[-2.25, 0.0], [1.7, 0], [2.5, 0.72], [2.2, 0.98], [-1.65, 0.98], [-2.5, 0.35]],
   parts: vvss(2.4, [-0.95, 0.65], 1.68), wheels: pairs([-0.95, 0.65], 0.52),
   turret: M5A1_T,
+  turretParts: (t) => [m5Shield(t)],
   guns: [{ mount: 'turret', length: 1.6, calibre: 0.037, at: 0.29 }, { mount: 'top', length: 1.0, calibre: 0.0076, x: -0.2, side: 0.62, up: 0.17 }],
 });
 
