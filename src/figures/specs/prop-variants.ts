@@ -19,6 +19,7 @@ import type { SpecSet } from './index';
 import { cowlLip, hood, type Cowl, type FixedWingSpec } from '../air';
 import type { Outline, P2 } from '../parts';
 import { AIRCRAFT, DRAWN, F4U, jet, piston, sister, type Piston } from './aircraft';
+import { pod } from './jet-variants';
 
 type Spec = FixedWingSpec & { cls: string };
 
@@ -1378,6 +1379,14 @@ A['gladiator'] = ww1({ length: 8.36, span: 9.83, height: 3.53, chord: 1.55, gap:
 // Watts' CC0 three-view (sources.md).
 A['cr-42'] = ww1({ length: 8.25, span: 9.7, height: 3.06, lower: 6.5, lowerChord: 1.05, chord: 1.65, gap: 1.47, stagger: 0.16, wingX: 2.35, engine: 'rotary', rudder: 'round', half: 0.5, depth: 1.1, spats: true, prop: 2.9, cowl: 0.6, cylinders: 7 });
 A['swordfish'] = ww1({ cls: 'biplane-two-seat', length: 10.87, span: 13.87, height: 3.76, chord: 1.75, gap: 1.9, stagger: 0.4, engine: 'rotary', rudder: 'round', crew: 2, bays: 2, depth: 1.25, half: 0.5, prop: 3.2, blades: 3, cowl: 0.74 });
+// Float biplanes: the main float on the centre line `up` metres under the body's axis from `x0` back to `x1`, and a
+// small float under each lower wing `side` metres out; struts not drawn.
+function onFloats(s: Spec, x0: number, x1: number, r: number, up: number, side: number, tipUp: number): Spec {
+  return { ...s, bodies: [...(s.bodies ?? []), pod(x0, x1, r, 0, up, 0.25), pod(0.9, -0.9, 0.18, side, tipUp, 0.3)] };
+}
+// E8N2 (8.81 x 10.98 x 3.84 m, 26.5 m2): a two-seat float biplane with a radial, the main float under the body and a
+// float under each wingtip; chords from the wing area, floats estimated.
+A['e8n2'] = onFloats(ww1({ cls: 'biplane-two-seat', length: 8.81, span: 10.98, height: 3.84, chord: 1.2, gap: 1.5, stagger: 0.4, engine: 'rotary', rudder: 'round', crew: 2, bays: 1, depth: 1.1, half: 0.45, prop: 2.9, blades: 2, cowl: 0.6, retract: true }), 3.3, -2.8, 0.4, -1.9, 4.3, -1.0);
 A['he-51'] = ww1({ length: 8.4, span: 11.0, height: 3.2, chord: 1.6, gap: 1.6, stagger: 0.4, engine: 'inline', rudder: 'round', bays: 2, depth: 1.05, prop: 2.9 });
 
 // ---------------------------------------------------------------- more War Thunder types with their own silhouettes
@@ -1816,6 +1825,8 @@ A['whirlwind'] = { ...A['whirlwind'], tail: { ...A['whirlwind'].tail, planeUp: 1
 A['hornet'] = tw({ cls: 'ww2-heavy-fighter', length: 11.18, span: 13.72, height: 4.32, w: 0.5, h: 0.65, nose: 'solid', cockpit: 3.0, hoodLen: 1.4, nacR: 0.55, nacY: 0.33, nacBack: 1.2, root: 3.3, tip: 1.4, wingZ: -0.3, finH: 1.9, tailSpan: 5.2, prop: [3.66, 4] });
 // XF5F-1 Skyrocket: two Cyclones on a wing the stubby body barely passes, twin fins (8.75 x 12.8 x 3.45 m).
 A['xf5f'] = tw({ cls: 'ww2-heavy-fighter', length: 8.75, span: 12.8, height: 3.45, w: 0.5, h: 0.65, nose: 'solid', cockpit: 1.2, hoodLen: 1.3, radial: true, nacR: 0.65, nacY: 0.3, nacBack: 1.2, wingZ: -0.2, twinTail: true, finH: 1.4, tailSpan: 4.6, prop: [3.05, 3] });
+// XP-50: the XF5F's layout for the Army, a long pointed nose over the nose wheel (9.73 x 12.8 x 3.66 m).
+A['xp-50'] = tw({ cls: 'ww2-heavy-fighter', length: 9.73, span: 12.8, height: 3.66, w: 0.5, h: 0.65, nose: 'solid', cockpit: 1.6, hoodLen: 1.3, radial: true, nacR: 0.65, nacY: 0.3, nacBack: 1.2, wingZ: -0.2, twinTail: true, finH: 1.4, tailSpan: 4.6, prop: [3.05, 3] });
 // Welkin: a very long, narrow wing, the pressure cabin's small bubble, Merlins, a single fin (12.67 x 21.34 x 4.83 m).
 A['welkin'] = tw({ cls: 'ww2-heavy-fighter', length: 12.67, span: 21.34, height: 4.83, w: 0.55, h: 0.7, nose: 'solid', cockpit: 3.2, hoodLen: 1.4, nacR: 0.58, nacY: 0.22, root: 2.9, tip: 1.0, wingZ: 0.2, finH: 2.1, prop: [3.5, 4] });
 // Ta 154: a high wing, annular-cowled Jumos, the cockpit at the front of a slim body, a single fin (12.45 x 16.3 x 3.5 m).
@@ -1960,6 +1971,8 @@ A['mb-5'] = one({ cls: 'ww2-fighter', length: 11.5, span: 10.67, height: 3.4, w:
 A['d-510'] = one({ cls: 'ww2-fighter', length: 7.94, span: 12.09, height: 2.42, w: 0.5, h: 0.62, wing: 'round', le: 1.2, root: 2.4, tip: 1.0, sweep: 3, dihedral: 4, fin: 1.2, finRoot: 1.2, roundFin: true, tailSpan: 3.4, tailRoot: 0.9, canopy: { x: -0.4, length: 0.8, kind: 'framed' }, hood: 0.3, prop: 2.9, blades: 3, gear: true, scoop: [2.6, 1.0, 0.35] });
 // A-35 Vengeance: a big radial dive bomber with the long greenhouse and the W-shaped wing (12.12 x 14.63 x 4.67 m).
 A['vengeance'] = one({ cls: 'ww2-attack', length: 12.12, span: 14.63, height: 4.67, w: 0.68, h: 0.9, radial: true, wing: 'tapered', le: 2.0, root: 3.4, tip: 1.3, sweep: -4, mount: -0.2, dihedral: 2, fin: 2.0, finRoot: 2.2, tailSpan: 5.4, tailRoot: 1.4, canopy: { x: 0.2, length: 4.0, kind: 'framed' }, prop: 3.6, blades: 3, draw: DRAWN['vengeance'] });
+// Vultee V-11 (and the V-12 grown from it): the Vengeance's forerunner, a shorter body on a 50 ft wing (11.43 x 15.24 m).
+A['v-11'] = one({ cls: 'ww2-attack', length: 11.43, span: 15.24, height: 3.05, w: 0.68, h: 0.9, radial: true, wing: 'tapered', le: 2.0, root: 3.4, tip: 1.3, sweep: -4, mount: -0.2, dihedral: 2, fin: 2.0, finRoot: 2.2, tailSpan: 5.4, tailRoot: 1.4, canopy: { x: 0.2, length: 4.0, kind: 'framed' }, prop: 3.6, blades: 3, draw: sister(DRAWN['vengeance'], { plug: -0.69, at: -1.5, span: 15.24 / 14.63 }) });
 // VG-33: a small inline fighter of wood, the radiator under the body, the framed hood on a razorback (8.55 x 10.8 x 3.31 m).
 A['vg-33'] = one({ cls: 'ww2-fighter', length: 8.55, span: 10.8, height: 3.31, w: 0.46, h: 0.6, wing: 'tapered', le: 1.3, root: 2.3, tip: 1.0, sweep: 3, dihedral: 6, fin: 1.2, finRoot: 1.3, roundFin: true, tailSpan: 3.4, tailRoot: 0.9, canopy: { x: -0.3, length: 1.5, kind: 'framed' }, razor: true, prop: 3.0, blades: 3, scoop: [-0.3, 1.4, 0.3] });
 // Saab 17: a radial dive bomber with the long two-seat greenhouse, the big main-gear fairings under the wing (9.8 x 13.7 x 4.0 m); the S 17BS on floats.
