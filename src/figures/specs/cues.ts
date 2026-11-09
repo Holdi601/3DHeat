@@ -705,6 +705,7 @@ const PROP_CUES: Record<string, CueEntry> = {
   'ar-196': air('ar-196', [radialN(3), FLOATS, { cue: 'long greenhouse', check: longHood(2.5) }]),
   os2u: air('os2u', [radialN(2), FLOATS]),
   n1k1: air('n1k1', [radialN(3), FLOATS]),
+  e8n2: air('e8n2', [BIPLANE, FLOATS, radialN(2), { cue: 'a float under each wingtip', check: (s) => bodiesOf(s).some((b) => Math.abs(b.side ?? 0) >= s.span * 0.3 && lowest(b) < 0) }]),
   'il-10': air('il-10', [inlineN(4), FRAMED, { cue: 'deep armoured nose', check: (s) => depthAt(s, noseX(s) - 1.6) >= 1.0 }]),
   'su-6': air(['su-6', 'su-6-2'], [radialN(4), FRAMED, LOW]),
   'su-6-am42': air('su-6-am42', [inlineN(4), FRAMED, LOW]),

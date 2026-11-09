@@ -697,7 +697,9 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   // Shiratsuyu: deck line, forecastle break, bridge and director, funnels, masts and gun places measured on the
   // ONI 222-J profile of the Hatsuharu-Shigure class (sources.md); both after mounts stand level there.
   'shiratsuyu': { cls: 'destroyer', L: 107.5, B: 9.9, fb: 4.8, fc: [16, 1.7], sheer: 0.8, guns: '40:2/127 -31:1/127^1b -39:2/127^1b', funnels: [[12.4, 9, 3], [-3, 8.4, 3]], blocks: [[29, 22, 12.8, 3, 1]], raised: [[27.5, 23.5, 12.8, 14.6, 2]], sl: [[-10, 8.5]], masts: [[19, 16]] },
-  'kagero': { cls: 'destroyer', L: 118.5, B: 10.8, fb: 5.4, fc: [18, 1.4], guns: '44:2/127 -32:2/127^2b -44:2/127b', funnels: [[10, 7.5, 3], [-2, 7.5, 3]], blocks: [[30, 24, 12, 3.2, 1]], masts: [[22, 16]] },
+  // Kagero (Asashio-Kagero): forecastle break, the low main deck, gun and tube places, funnels, bridge and masts from
+  // the ONI 222-J profile with its height scale (sources.md).
+  'kagero': { cls: 'destroyer', L: 118.5, B: 10.8, fb: 4.8, fc: [24.7, 2.15], sheer: 1.3, guns: '42:2/127 -26:2/127^1.4b -33.6:2/127b', funnels: [[16.6, 8.8, 4.2, 2.8], [1.0, 7.6, 3.2, 2.4]], blocks: [[36.2, 26.8, 7.4, 3.2, 1]], masts: [[23.1, 20.8]] },
   // Matsu: the forecastle ending at the long low bridge, the widely spaced upright stacks, the quadruple tubes between
   // them, the aft deckhouse and the twin 5-inch on the stern, measured on the ONI 222-J profile (sources.md; its
   // height scale for the heights, the length published).
@@ -930,7 +932,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   'mutsuki': { rake: 0.1 },
   'hatsuharu': { masts: [[18.6, 17.1, 't'], [-23.0, 12.0]], rake: 0.15, sl: [[-6.5, 7.7]], ttAt: [7.4, 16.6] },
   'shiratsuyu': { masts: [[19, 16, 't'], [-24, 13, 't']], rake: 0.15 },
-  'kagero': { funnels: [[10, 7.5, 3.8, 2.8], [-2, 7.5, 3, 2.4]], masts: [[22, 16, 't'], [-24, 10]], rake: 0.14, blocks: [[28.5, 24.5, 13.2, 2.6]] },
+  'kagero': { funnels: [[16.6, 8.8, 4.2, 2.8], [1.0, 7.6, 3.2, 2.4]], masts: [[23.1, 20.8, 't'], [-18.4, 12.8]], rake: 0.14, blocks: [[32, 26.3, 13.3, 2.6]], sl: [[-3.0, 8.8]], ttAt: [11.6, 17.2] },
   'matsu': { rake: 0.02, sl: [[-12.6, 7.1]] },
   'shimakaze': { masts: [[26, 16, 't'], [-30, 10]], rake: 0.14 },
   // Italian destroyers.
