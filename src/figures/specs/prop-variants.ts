@@ -583,7 +583,7 @@ A['b-24j'] = b24([[10.3, 0.35, -0.75, 0.5], [9.8, 0.65, -1.3, 0.85], [9.0, 0.95,
 // Avro Lancaster: a deep fuselage with a big canopy and turrets, a long straight wing, four inline engines, twin oval
 // fins on the tailplane's tips (21.18 x 31.09 x 6.25 m). Outlines digitised from FM 30-30 (1943), sheet "Lancaster",
 // with tools/figures/twinview.py.
-A['lancaster'] = mp({
+const LANC: Parameters<typeof mp>[0] = {
   cls: 'ww2-heavy-bomber', length: 21.18, span: 31.09, height: 6.25,
   hood: { front: 6.6, back: 4.3 },
   body: [[10.59, 0.11, -0.15, 0.09], [9.81, 1.21, -0.77, 0.7], [9.02, 1.21, -0.84, 0.87], [8.24, 1.71, -0.92, 0.89], [7.45, 1.87, -0.99, 0.89], [6.67, 1.87, -1.03, 0.89], [5.88, 1.83, -1.1, 0.89], [5.1, 1.8, -1.25, 0.89], [4.31, 1.5, -1.25, 0.89], [3.53, 1.4, -1.21, 0.89], [2.75, 1.5, -1.25, 0.9], [1.96, 1.4, -1.21, 0.9], [1.18, 1.54, -1.21, 0.9], [0.39, 1.54, -1.2, 0.91], [-0.39, 1.54, -1.18, 0.89], [-1.18, 1.54, -1.18, 0.89], [-1.96, 1.54, -1.14, 0.89], [-2.75, 2.19, -1.11, 0.87], [-3.53, 2.12, -0.91, 0.85], [-4.31, 1.65, -0.7, 0.83], [-5.1, 1.54, -0.62, 0.78], [-5.88, 1.5, -0.55, 0.74], [-6.67, 1.47, -0.44, 0.7], [-7.45, 1.32, -1.21, 0.7], [-8.24, 1.11, -0.37, 0.7], [-9.02, 0.89, -0.22, 0.7], [-9.81, 0.67, -0.15, 0.5], [-10.59, 0.45, 0.4, 0]], round: 2.4,
@@ -592,7 +592,24 @@ A['lancaster'] = mp({
   prop: [4.0,3],
   fin: [[-6.94, 1.47], [-7.3, 2.94], [-7.56, 3.12], [-7.89, 3.12], [-8.15, 3.01], [-8.33, 2.75], [-8.48, 2.28], [-8.59, 1.43], [-8.85, 1.43], [-8.99, 1.36], [-9.36, 1.36], [-9.43, 1.43], [-10.06, 1.43], [-10.31, 1.21], [-10.39, 1.03], [-10.43, 0.55], [-10.57, 0.48], [-10.57, 0.4], [-10.43, 0.4], [-10.39, 0.07], [-9.98, -0.15], [-8.41, -0.22], [-8.26, -0.37], [-8.04, -0.44], [-7.96, -1.06], [-7.86, -1.21], [-7.75, -1.25], [-7.53, -1.25], [-7.34, -1.1], [-7.27, -0.4], [-6.94, -0.44]], twin: 10.02,
   tail: [[0, -6.67, -9.21], [0.76, -6.67, -9.21], [0.87, -6.67, -9.19], [1.2, -6.69, -9.16], [1.73, -6.7, -9.04], [2.43, -6.77, -8.98], [3.27, -6.78, -8.81], [4.21, -6.84, -8.7], [5.19, -7.41, -7.41]], tailUp: 1.09,
-});
+};
+A['lancaster'] = mp(LANC);
+// Avro Lincoln B.1/B.2: the Lancaster stretched (23.86 x 36.58 m): the body 2.68 m longer ahead of the cockpit, the
+// wing's half span 18.29 m on the same chords with the engines spread with it.
+{
+  const plug = 23.86 - 21.18;
+  const k = 36.58 / 31.09;
+  const sx = (x: number) => x - plug / 2;
+  A['lincoln'] = mp({
+    ...LANC, length: 23.86, span: 36.58,
+    hood: { front: sx(LANC.hood!.front), back: sx(LANC.hood!.back) },
+    body: LANC.body.map(([x, ...r]) => [x > 7 ? x + plug / 2 : sx(x), ...r] as typeof LANC.body[number]),
+    wing: LANC.wing.map(([y, a, b]) => [y * k, sx(a), sx(b)] as typeof LANC.wing[number]),
+    nacelles: LANC.nacelles!.map((n) => ({ ...n, y: n.y * k, x: sx(n.x), plan: n.plan?.map(([x, w]) => [sx(x), w] as [number, number]) })),
+    fin: LANC.fin!.map(([x, z]) => [sx(x), z] as [number, number]),
+    tail: LANC.tail!.map(([y, a, b]) => [y, sx(a), sx(b)] as typeof LANC.tail[number]),
+  });
+}
 
 // B-29 Superfortress: a long round tube with the stepless glazed nose, a high-aspect mid wing, four radials in long
 // nacelles, remote turret blisters top and bottom and the great fin with its dorsal fillet (30.18 x 43.05 x 8.46 m).

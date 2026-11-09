@@ -755,7 +755,7 @@ const PROP_CUES: Record<string, CueEntry> = {
   // Four-engined bombers, trimotors and flying boats.
   'b-29': air('b-29', [FOUR, { cue: 'radials on a long, slender wing', check: (s) => radial(s) && s.span / s.length >= 1.35 }, { cue: 'glazed round nose without a step', check: glazedNose }, FIN]),
   'b-17': air(['b-17g', 'b-17e'], [FOUR, FIN, { cue: 'big fin with a long dorsal fillet', check: (s) => finTop(s) >= 3 }]),
-  lancaster: air(['lancaster', 'halifax'], [FOUR, TWIN_FINS]),
+  lancaster: air(['lancaster', 'lincoln', 'halifax'], [FOUR, TWIN_FINS]),
   'lancaster-nose': air('lancaster', [{ cue: 'nose turret over the bomb-aimer blister', modelled: false, note: 'the nose is drawn solid' }]),
   halifax: air(['halifax', 'stirling'], [GLASS_NOSE]),
   stirling: air('stirling', [FOUR, FIN, { cue: 'very tall stance, the fin high', check: (s) => finTop(s) >= 3 }]),
