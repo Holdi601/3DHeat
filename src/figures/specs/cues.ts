@@ -898,6 +898,9 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'M5 Stuart hull: sloped glacis, four road wheels a side', check: (s) => wheels(s) === 4 },
   ]),
   stuart: ground(['m5a1-stuart', 'm3a3-stuart', 'm3a1-stuart', 'm3-stuart'], STUART),
+  'stuart-shield': ground(['m5a1-stuart', 'm3a3-stuart', 'm3-stuart'], [
+    { cue: 'rounded gun shield standing out of the turret front', check: (s) => partsOf(s).some((p) => p.x === s.turret?.x && (p.outline?.plan[0][0] ?? 0) > 0.6 && p.width > 0.4 && p.width < 0.8) },
+  ]),
   'm3-stuart': ground('m3-stuart', [
     { cue: 'drum cupola on the turret roof (the M3A1 has none)', check: (s) => partTop(s) > 2.45 },
     { cue: 'upright riveted box hull, sponsons over the tracks', check: hullShape },
