@@ -1660,9 +1660,13 @@ G['m2a1-halftrack'] = { ...G['m3-halftrack'], length: 5.96 };
 // M3 GMC: the 75 mm on its pedestal in the body behind the cab, inside the box-shaped gun shield whose top stands
 // 0.65 m over the body (8 ft 2 in = 2.5 m overall).
 G['m3-gmc'] = { ...G['m3-halftrack'], cls: 'tank-destroyer', turrets: [...G['m3-halftrack'].turrets!, part(1.85, [[-0.85, 0.6], [-0.1, 0.62]], [[-0.85, 2.38], [-0.1, 2.5]], 1.55, 16)], guns: [{ mount: 'hull', length: 2.6, calibre: 0.075, x: -0.2, at: 1.15 }] };
+// T48 GMC (the Soviet SU-57): the M3 GMC's layout with the 57 mm M1 (50 calibres, 2.85 m) behind the shield.
+G['t48-gmc'] = { ...G['m3-gmc'], guns: [{ mount: 'hull', length: 2.85, calibre: 0.057, x: -0.2, at: 1.15 }] };
 // M16: the M45 quad mount in the back of the body, its shields 0.6 m over the body's top (FM 30-40, "Multiple Gun
 // Motor Carriage, M16": the mount's place and height on the side view).
 G['m16-mgmc'] = { ...G['m3-halftrack'], cls: 'spaa', turret: { x: -1.7, length: 1.1, width: 0.9, height: 0.6, shape: 'box' }, guns: [{ mount: 'turret-side', count: 2, length: 1.6, calibre: 0.013, at: 0.55, spread: 0.2 }] };
+// M13: the M33 mount's two .50s, one a side.
+G['m13-mgmc'] = { ...G['m16-mgmc'], guns: [{ mount: 'turret-side', count: 1, length: 1.6, calibre: 0.013, at: 0.55 }] };
 // Sd.Kfz. 234/2 "Puma": eight wheels under a double-ended hull sloped fore and aft, faceted at its waist; the oval
 // turret with sloped faces and the 50 mm in a Saukopf (hull 6.0 x 2.33 m, 2.38 m, 6.80 m with the gun). The profile -
 // the long glacis up to the raised roof the turret stands on, ahead of its middle, the lower engine deck behind - the
@@ -1815,6 +1819,8 @@ G['arl-44'] = ww2({
 
 // AB 41 armoured car: four big wheels, the hull sloped fore and aft, the small turret with the 20 mm (5.2 x 1.92 m, 2.48 m).
 G['ab-41'] = { cls: 'scout-car', chassis: 'wheeled', length: 5.2, width: 1.92, hullHeight: 1.85, axles: 2, wheelRadius: 0.5, hullOutline: bodyOf([[-2.6, 1.45], [-2.3, 1.85], [1.2, 1.85], [2.6, 1.2]], [[-2.6, 0.6], [2.6, 0.6]], [[-2.6, 0.8], [0, 0.95], [2.6, 0.75]], 6), turret: turret(-0.2, [[-0.7, 0.55], [-0.55, 0.68], [0.5, 0.68], [0.7, 0.5]], [[-0.7, 0.6], [0.7, 0.6]], 6, 0.75), guns: [{ mount: 'turret', length: 1.2, calibre: 0.02, at: 0.5 }] };
+// AB 43: the AB 41's hull under a lower turret with the 47/40 (5.2 x 1.92 m, 2.38 m over the AB 41's 2.48).
+G['ab-43'] = { ...G['ab-41'], turret: turret(-0.2, [[-0.7, 0.55], [-0.55, 0.68], [0.5, 0.68], [0.7, 0.5]], [[-0.7, 0.5], [0.7, 0.5]], 6, 0.75), guns: [{ mount: 'turret', length: 1.6, calibre: 0.047, at: 0.5 }] };
 // Semovente M41 75/18 and M43 105/25: a wide, low casemate on the M13/M15 running gear, the gun right of the centre
 // (M43 5.1 x 2.4 m, 1.75 m).
 {
