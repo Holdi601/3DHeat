@@ -26,7 +26,15 @@
   "far.fires": "Požari na enotah",
   "far.firesTitle": "Plameni in dim, kjer gori del enote, od vžiga do pogasitve, vključno z razbitinami.",
   "far.hitMarks": "Zadetki na enotah",
-  "far.hitMarksTitle": "Oznaka, kjer je vsak strel zadel enoto, obarvana glede na učinek, ki se premika z enoto; pokažite nanjo, da vidite, kdo je streljal.",
+  "far.hitMarksTitle": "Sled vsakega strela na enoti, na njeni površini, kjer je zadel, velika po kalibru in oblikovana po učinku, se premika z enoto; pokažite nanjo, da vidite, kdo je streljal.",
   "far.hitMarkSeconds": "Zadetki ostanejo",
-  "far.hitMarkWhole": "Celotna tekma"
+  "far.hitMarkWhole": "Vse življenje",
+  "far.hitMarkFloat": "Lebdeče oznake",
+  "far.hitMarkFloatTitle": "Še oznaka nad vsakim svežim zadetkom, obrnjena k vam, 10 s.",
+  "far.hitLookHole": "Luknja: prebil",
+  "far.hitLookSplash": "Svetel madež: ni prebil",
+  "far.hitLookGouge": "Brazda: zdrsnil (verjetno odboj)",
+  "far.hitLookBullet": "Luknja: izid neznan",
+  "far.hitLookRing": "Obroč: kaj je storil",
+  "far.hitCalibre": "Kaliber"
 }

@@ -26,7 +26,15 @@
   "far.fires": "Incendii pe unități",
   "far.firesTitle": "Flăcări și fum acolo unde arde o parte a unei unități, de la aprindere până la stingere, inclusiv epavele.",
   "far.hitMarks": "Lovituri pe unități",
-  "far.hitMarksTitle": "Un semn unde fiecare proiectil a lovit o unitate, colorat după efect, care se mișcă odată cu unitatea; indicați-l pentru a vedea cine a tras.",
+  "far.hitMarksTitle": "Urma lăsată de fiecare proiectil pe o unitate, pe suprafața ei unde a lovit, cu mărimea după calibru și forma după efect, care se mișcă odată cu unitatea; indicați-o pentru a vedea cine a tras.",
   "far.hitMarkSeconds": "Loviturile rămân",
-  "far.hitMarkWhole": "Tot meciul"
+  "far.hitMarkWhole": "Toată viața",
+  "far.hitMarkFloat": "Marcaje plutitoare",
+  "far.hitMarkFloatTitle": "Și un marcaj deasupra fiecărei lovituri noi, întors spre tine, timp de 10 s.",
+  "far.hitLookHole": "Gaură: a penetrat",
+  "far.hitLookSplash": "Stropire lucioasă: nu a penetrat",
+  "far.hitLookGouge": "Șanț: a alunecat (probabil un ricoșeu)",
+  "far.hitLookBullet": "Gaură: efect necunoscut",
+  "far.hitLookRing": "Inel: ce a făcut",
+  "far.hitCalibre": "Calibru"
 }

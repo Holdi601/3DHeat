@@ -26,7 +26,15 @@
   "far.fires": "유닛 화재",
   "far.firesTitle": "유닛의 부위가 불타는 곳에 불이 붙은 순간부터 꺼질 때까지 불꽃과 연기를 표시합니다. 잔해 포함.",
   "far.hitMarks": "유닛 피격",
-  "far.hitMarksTitle": "각 탄이 유닛에 맞은 위치에 결과별 색의 표시가 유닛과 함께 움직입니다. 포인터를 올리면 누가 쐈는지 보입니다.",
+  "far.hitMarksTitle": "각 탄이 유닛에 남긴 흔적을 맞은 표면에 구경에 맞는 크기와 결과에 맞는 모양으로 그리며 유닛과 함께 움직입니다. 포인터를 올리면 누가 쐈는지 보입니다.",
   "far.hitMarkSeconds": "피격 표시 시간",
-  "far.hitMarkWhole": "경기 전체"
+  "far.hitMarkWhole": "파괴될 때까지",
+  "far.hitMarkFloat": "떠 있는 표시",
+  "far.hitMarkFloatTitle": "새 피격 위에도 화면을 향한 표시를 10초간 띄웁니다.",
+  "far.hitLookHole": "구멍: 관통",
+  "far.hitLookSplash": "밝은 자국: 비관통",
+  "far.hitLookGouge": "홈: 미끄러짐 (도탄 가능성)",
+  "far.hitLookBullet": "구멍: 결과 모름",
+  "far.hitLookRing": "고리: 결과 색",
+  "far.hitCalibre": "구경"
 }

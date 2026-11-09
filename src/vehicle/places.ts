@@ -12,7 +12,7 @@
 
 import type { Dataset } from '../state/types';
 import type { Vec3 } from '../race/geometry';
-import type { HitSet, VehicleHit } from './hits';
+import { drain, type HitSet, type VehicleHit } from './hits';
 import { personRows } from '../data/flight';
 import { unitsOf } from '../ui/replay/units';
 import { trackName, unitsPerMetre } from '../ui/replay/replayData';
@@ -56,9 +56,14 @@ const cache = new WeakMap<HitSet, HitPlaces>();
 
 /** The places of a hit set's hits, once. */
 export function placesOf(d: Dataset, set: HitSet): HitPlaces {
+  return drain(placesSteps(d, set));
+}
+
+/** `placesOf` in steps (`findPlacesSteps`), worked out once whichever way it is asked for. */
+export function* placesSteps(d: Dataset, set: HitSet): Generator<void, HitPlaces, void> {
   let p = cache.get(set);
   if (!p) {
-    p = findPlaces(d, set.hits);
+    p = yield* findPlacesSteps(d, set.hits);
     cache.set(set, p);
   }
   return p;
@@ -72,6 +77,11 @@ export function placeOf(p: HitPlaces, h: VehicleHit, who: 'victim' | 'shooter'):
 }
 
 export function findPlaces(d: Dataset, hits: VehicleHit[]): HitPlaces {
+  return drain(findPlacesSteps(d, hits));
+}
+
+/** `findPlaces` in steps: it yields every 256 hits, and once the names are indexed. */
+export function* findPlacesSteps(d: Dataset, hits: VehicleHit[]): Generator<void, HitPlaces, void> {
   const n = hits.reduce((m, h) => Math.max(m, h.id + 1), 0);
   const xyz = new Float32Array(n * 6).fill(NaN);
   const at2 = new Int32Array(n * 2).fill(-1);
@@ -134,7 +144,9 @@ export function findPlaces(d: Dataset, hits: VehicleHit[]): HitPlaces {
   };
   const k = unitsPerMetre(d);
   let victims = 0, shooters = 0;
+  let step = 0;
   for (const h of hits) {
+    if (++step % 256 === 0) yield;
     if (h.id >= n) continue;
     const o = h.id * 6;
     const session = d.sessionId && h.row >= 0 && h.row < d.count ? d.sessionId[h.row] : -1;

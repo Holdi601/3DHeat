@@ -1,34 +1,50 @@
 import { describe, expect, it } from 'vitest';
-import { VertexBuffer } from '../race/geometry';
+import { VertexBuffer, type Vec3 } from '../race/geometry';
 import type { Dataset } from '../state/types';
 import { OUTCOMES, type Outcome } from '../vehicle/hits';
 import { OUTCOME_COLOURS } from '../vehicle/scene';
-import { HitMarkLayer, lastAtOrBefore, type HitMarks, type MarkPose, type MarkView } from './hitmarks';
+import { finish, newKit } from './kit';
+import { HitMarkLayer, holeRadius, indexByUnit, lastAtOrBefore, Look, lookOf, type HitMarks, type MarkPose, type MarkView } from './hitmarks';
+import { snapToFigure, SNAP_STRIDE } from './snap';
 
-/** Marks on units standing at x = 10 * person, facing +x: [time, person, outcome, killing, session]. */
+/** Marks on units standing at x = 10 * person, facing +x, on their roofs: [time, person, outcome, killing, session]. */
 function marks(list: [number, number, Outcome, boolean, number][]): HitMarks {
   const n = list.length;
-  return {
+  const normal = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) normal[i * 3 + 1] = 1;
+  const m: HitMarks = {
     count: n,
     time: Float64Array.from(list, (m) => m[0]),
     person: Int32Array.from(list, (m) => m[1]),
     session: Int32Array.from(list, (m) => m[4]),
     local: new Float32Array(n * 3).fill(0.5),
+    normal,
+    dir: new Float32Array(n * 3).fill(NaN),
+    calibre: new Float32Array(n).fill(120),
     outcome: Uint8Array.from(list, (m) => OUTCOMES.indexOf(m[2])),
     kill: Uint8Array.from(list, (m) => (m[3] ? 1 : 0)),
     body: new Uint8Array(n),
+    look: Uint8Array.from(list, (m) => lookOf(m[2], 1)),
     turret: new Float32Array(n * 3).fill(NaN),
+    yawHit: new Float32Array(n).fill(NaN),
     hit: Int32Array.from(list, (_, i) => 100 + i),
     row: new Int32Array(n).fill(-1),
     vehicle: new Int32Array(n),
-    vehicles: [{ figure: '', marks: [], done: true }],
+    vehicles: [{ figure: '', marks: [], done: true, asked: true }],
+    persons: new Int32Array(0),
+    start: new Int32Array(1),
+    marks: new Int32Array(0),
+    largest: new Float32Array(0),
   };
+  indexByUnit(m);
+  return m;
 }
 
-function view(t: number, seconds: number, session = -1): MarkView {
+function view(t: number, seconds: number, session = -1, float = false): MarkView {
   return {
     t,
     seconds,
+    float,
     session,
     eye: [0, 50, 200],
     pixelSize: () => 0.001,
@@ -72,7 +88,19 @@ describe('hit marks', () => {
     expect(lastAtOrBefore(t, 4, 9)).toBe(3);
   });
 
-  it('draws the hits in the window only, newest first, in their outcome colours', () => {
+  it('looks like what the hit did', () => {
+    expect(lookOf('damage', 1)).toBe(Look.Hole);
+    expect(lookOf('kill', NaN)).toBe(Look.Hole);
+    expect(lookOf('nodamage', 0.9)).toBe(Look.Splash);
+    expect(lookOf('nodamage', 0.2)).toBe(Look.Gouge);
+    expect(lookOf('nodamage', NaN)).toBe(Look.Splash);
+    expect(lookOf('hit', 1)).toBe(Look.Bullet);
+    // Sized by the calibre: a 120 mm hole is ten times a 12 mm one.
+    expect(holeRadius(120, 0) / holeRadius(12, 0)).toBeCloseTo(10, 5);
+    expect(holeRadius(NaN, 1)).toBeLessThan(holeRadius(NaN, 0));
+  });
+
+  it('leaves the hits on the unit for as long as it is there, newest first, ringed in their outcome colours', () => {
     const m = marks([
       [1, 0, 'damage', false, -1],
       [8, 1, 'critical', false, -1],
@@ -81,35 +109,36 @@ describe('hit marks', () => {
     ]);
     const layer = new HitMarkLayer();
     const out = new VertexBuffer();
-    expect(layer.build(m, view(10, 5), out)).toBe(2);
-    // Newest first: the one at 9 s, then 8 s; the one at 12 s is still to come, the one at 1 s long gone.
-    expect(Array.from(layer.drawn.hit.subarray(0, 2))).toEqual([102, 101]);
+    expect(layer.build(m, view(10, Infinity), out)).toBe(3);
+    // The nearest unit's first (unit 0, then 1, then 2); the one at 12 s is still to come.
+    expect(Array.from(layer.drawn.hit.subarray(0, 3))).toEqual([100, 101, 102]);
     const c = colours(out);
     expect(c.has(key(OUTCOME_COLOURS.critical))).toBe(true);
-    expect(c.has(key(OUTCOME_COLOURS.nodamage))).toBe(true);
-    expect(c.has(key(OUTCOME_COLOURS.damage))).toBe(false);
-    // On the unit: unit 2 stands at x = 20, the point half a metre forward, brought out towards the eye a little.
-    expect(layer.drawn.xyz[0]).toBeGreaterThan(20.3);
-    expect(layer.drawn.xyz[0]).toBeLessThan(20.7);
+    expect(c.has(key(OUTCOME_COLOURS.damage))).toBe(true);
+    // On the roof of unit 2 (x = 20, half a metre up), a little above it.
+    expect(layer.drawn.xyz[6]).toBeCloseTo(20.5, 3);
+    expect(layer.drawn.xyz[7]).toBeGreaterThan(0.5);
+    expect(layer.drawn.xyz[7]).toBeLessThan(0.6);
+    // In a 5 s window only the two newest.
+    out.reset();
+    expect(layer.build(m, view(10, 5), out)).toBe(2);
   });
 
-  it('fades a mark at the end of its time, keeps it the whole match, and rings the killing shot', () => {
+  it('fades a mark at the end of a set time, and draws the floating marker of a fresh killing shot', () => {
     const m = marks([[0, 0, 'kill', true, -1]]);
     const layer = new HitMarkLayer();
     const out = new VertexBuffer();
     layer.build(m, view(1, 10), out);
     const fresh = colours(out).get(key(OUTCOME_COLOURS.kill))!;
-    // White ring round it.
-    expect([...colours(out).keys()].some((k) => k.startsWith('1.60'))).toBe(true);
     out.reset();
     layer.build(m, view(9.5, 10), out);
-    const old = colours(out).get(key(OUTCOME_COLOURS.kill))!;
-    expect(old).toBeLessThan(fresh);
+    expect(colours(out).get(key(OUTCOME_COLOURS.kill))!).toBeLessThan(fresh);
     out.reset();
     expect(layer.build(m, view(11, 10), out)).toBe(0);
     out.reset();
-    expect(layer.build(m, view(500, Infinity), out)).toBe(1);
-    expect(colours(out).get(key(OUTCOME_COLOURS.kill))).toBe(1);
+    layer.build(m, view(1, Infinity, -1, true), out);
+    // The floating marker's white ring round the killing shot.
+    expect([...colours(out).keys()].some((k) => k.startsWith('1.60'))).toBe(true);
   });
 
   it('keeps to the round shown and to units that are drawn', () => {
@@ -124,5 +153,28 @@ describe('hit marks', () => {
     expect(layer.drawn.hit[0]).toBe(101);
     out.reset();
     expect(layer.build(m, view(5, 10), out)).toBe(2);
+  });
+
+  it('puts a point onto the nearest surface of the figure, turned to it', () => {
+    // A box 4 m long, 2 m high, 2 m wide.
+    const k = newKit();
+    const c: Vec3[] = [];
+    for (const x of [-2, 2]) for (const y of [0, 2]) for (const z of [-1, 1]) c.push([x, y, z]);
+    const quad = (a: number, b: number, cc: number, d: number) => {
+      for (const i of [a, b, cc, a, cc, d]) k.team.vn(c[i], [0, 0, 0], [1, 1, 1]);
+    };
+    quad(0, 1, 3, 2);
+    quad(4, 6, 7, 5);
+    quad(0, 4, 5, 1);
+    quad(2, 3, 7, 6);
+    quad(1, 5, 7, 3);
+    quad(0, 2, 6, 4);
+    const t = finish(k, 'ground');
+    // Above the roof, and off the right side with the shot going left.
+    const out = snapToFigure(t, Float32Array.of(0.5, 2.4, 0.2, 0.3, 1, 1.5), Float32Array.of(NaN, NaN), Float32Array.of(NaN, NaN, NaN, 0, 0, -1));
+    expect(out[1]).toBeCloseTo(2, 5);
+    expect(out[4]).toBeCloseTo(1, 5);
+    expect(out[SNAP_STRIDE + 2]).toBeCloseTo(1, 5);
+    expect(out[SNAP_STRIDE + 5]).toBeCloseTo(1, 5);
   });
 });

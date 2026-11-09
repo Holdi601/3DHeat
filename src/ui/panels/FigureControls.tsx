@@ -29,6 +29,7 @@ export function FigureControls({ toggle = true }: { toggle?: boolean }) {
   const fires = useStore((s) => s.team.fires);
   const hitMarks = useStore((s) => s.team.hitMarks);
   const hitMarkSeconds = useStore((s) => s.team.hitMarkSeconds);
+  const hitMarkFloat = useStore((s) => s.team.hitMarkFloat);
   const teams = useStore((s) => s.dataset?.teamLabels ?? null);
   const patchTeam = useStore((s) => s.patchTeam);
   return (
@@ -124,7 +125,17 @@ export function FigureControls({ toggle = true }: { toggle?: boolean }) {
                 onChange={(v) => patchTeam({ hitMarkSeconds: v >= 299 ? 0 : Math.round(v) })}
                 format={(v) => (v >= 299 ? t('far.hitMarkWhole') : `${num(v, 0)} s`)}
               />
+              <Check label={t('far.hitMarkFloat')} checked={hitMarkFloat} onChange={(v) => patchTeam({ hitMarkFloat: v })} title={t('far.hitMarkFloatTitle')} />
+              <div className="hit-mark-legend looks">
+                {(['Hole', 'Splash', 'Gouge', 'Bullet'] as const).map((l) => (
+                  <span key={l}>
+                    <i className={`hit-look ${l.toLowerCase()}`} />
+                    {t(`far.hitLook${l}`)}
+                  </span>
+                ))}
+              </div>
               <div className="hit-mark-legend">
+                <span className="hit-mark-legend-head">{t('far.hitLookRing')}</span>
                 {OUTCOMES.map((o) => (
                   <span key={o} title={t(`vehicle.outcome.${o}Title`)}>
                     <i className={o === 'kill' ? 'hit-mark-swatch ring' : 'hit-mark-swatch'} style={{ background: swatch(OUTCOME_COLOURS[o]) }} />

@@ -26,7 +26,15 @@
   "far.fires": "單位起火",
   "far.firesTitle": "在單位部件燃燒處顯示火焰和煙霧，從起火到熄滅，包括殘骸。",
   "far.hitMarks": "單位中彈",
-  "far.hitMarksTitle": "在每發彈藥命中單位的位置顯示依結果著色的標記，並隨單位移動；指向標記可查看射擊者。",
+  "far.hitMarksTitle": "每發彈藥在單位上留下的痕跡，位於命中處的表面，大小取決於口徑，形狀取決於結果，並隨單位移動；指向它可查看射擊者。",
   "far.hitMarkSeconds": "中彈標記保留",
-  "far.hitMarkWhole": "整場比賽"
+  "far.hitMarkWhole": "整個生命週期",
+  "far.hitMarkFloat": "浮動標記",
+  "far.hitMarkFloatTitle": "同時在每個新命中上方顯示朝向你的標記，持續10秒。",
+  "far.hitLookHole": "彈孔：擊穿",
+  "far.hitLookSplash": "亮斑：未擊穿",
+  "far.hitLookGouge": "溝痕：滑開（可能是跳彈）",
+  "far.hitLookBullet": "彈孔：結果未知",
+  "far.hitLookRing": "圓環：命中結果",
+  "far.hitCalibre": "口徑"
 }

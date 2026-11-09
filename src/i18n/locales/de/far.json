@@ -26,7 +26,15 @@
   "far.fires": "Brände an Einheiten",
   "far.firesTitle": "Flammen und Rauch, wo ein Teil einer Einheit brennt, vom Entzünden bis zum Erlöschen, auch an Wracks.",
   "far.hitMarks": "Treffer an Einheiten",
-  "far.hitMarksTitle": "Eine Markierung, wo jeder Schuss eine Einheit traf, gefärbt nach seiner Wirkung, die mit der Einheit mitfährt; mit dem Zeiger darauf steht, wer schoss.",
+  "far.hitMarksTitle": "Die Spur jedes Schusses an einer Einheit, auf ihrer Oberfläche, wo er traf, nach Kaliber bemessen und nach Wirkung geformt, fährt mit der Einheit mit; mit dem Zeiger darauf steht, wer schoss.",
   "far.hitMarkSeconds": "Treffer bleiben",
-  "far.hitMarkWhole": "Ganzes Match"
+  "far.hitMarkWhole": "Ganzes Leben",
+  "far.hitMarkFloat": "Schwebende Marker",
+  "far.hitMarkFloatTitle": "Zusätzlich ein Marker über jedem frischen Treffer, zu dir gewandt, 10 s lang.",
+  "far.hitLookHole": "Loch: durchgeschlagen",
+  "far.hitLookSplash": "Heller Spritzer: nicht durchgeschlagen",
+  "far.hitLookGouge": "Furche: abgeglitten (wohl ein Abpraller)",
+  "far.hitLookBullet": "Loch: Wirkung unbekannt",
+  "far.hitLookRing": "Ring: was er bewirkte",
+  "far.hitCalibre": "Kaliber"
 }

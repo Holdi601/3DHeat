@@ -26,7 +26,15 @@
   "far.fires": "Bränder på enheter",
   "far.firesTitle": "Lågor och rök där en del av en enhet brinner, från att den fattar eld tills den är släckt, vrak inräknade.",
   "far.hitMarks": "Träffar på enheter",
-  "far.hitMarksTitle": "En markering där varje skott träffade en enhet, färgad efter vad det gjorde, som följer med enheten; peka på den för att se vem som sköt.",
+  "far.hitMarksTitle": "Märket varje skott lämnade på en enhet, på ytan där det träffade, stort efter kalibern och format efter verkan, som följer med enheten; peka på det för att se vem som sköt.",
   "far.hitMarkSeconds": "Träffar ligger kvar",
-  "far.hitMarkWhole": "Hela matchen"
+  "far.hitMarkWhole": "Hela livet",
+  "far.hitMarkFloat": "Svävande markeringar",
+  "far.hitMarkFloatTitle": "Även en markering över varje färsk träff, vänd mot dig, i 10 s.",
+  "far.hitLookHole": "Hål: gick igenom",
+  "far.hitLookSplash": "Ljust stänk: gick inte igenom",
+  "far.hitLookGouge": "Fåra: gled av (troligen en rikoschett)",
+  "far.hitLookBullet": "Hål: utfall okänt",
+  "far.hitLookRing": "Ring: vad det gjorde",
+  "far.hitCalibre": "Kaliber"
 }

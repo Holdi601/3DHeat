@@ -26,7 +26,15 @@
   "far.fires": "Požiare na jednotkách",
   "far.firesTitle": "Plamene a dym tam, kde horí časť jednotky, od vznietenia až po uhasenie, vrátane vrakov.",
   "far.hitMarks": "Zásahy jednotiek",
-  "far.hitMarksTitle": "Značka tam, kde každá strela zasiahla jednotku, zafarbená podľa účinku, pohybuje sa s jednotkou; ukážte na ňu a uvidíte, kto strieľal.",
+  "far.hitMarksTitle": "Stopa každej strely na jednotke, na jej povrchu v mieste zásahu, veľkosťou podľa kalibru a tvarom podľa účinku, pohybuje sa s jednotkou; ukážte na ňu a uvidíte, kto strieľal.",
   "far.hitMarkSeconds": "Zásahy zostávajú",
-  "far.hitMarkWhole": "Celý zápas"
+  "far.hitMarkWhole": "Celý život",
+  "far.hitMarkFloat": "Plávajúce značky",
+  "far.hitMarkFloatTitle": "Navyše značka nad každým čerstvým zásahom, otočená k vám, na 10 s.",
+  "far.hitLookHole": "Diera: prebil",
+  "far.hitLookSplash": "Jasná stopa: neprebil",
+  "far.hitLookGouge": "Ryha: skĺzol (asi odraz)",
+  "far.hitLookBullet": "Diera: výsledok neznámy",
+  "far.hitLookRing": "Krúžok: čo spôsobil",
+  "far.hitCalibre": "Kaliber"
 }

@@ -26,7 +26,15 @@
   "far.fires": "Tulekahjud üksustel",
   "far.firesTitle": "Leegid ja suits seal, kus üksuse osa põleb, süttimisest kustumiseni, ka vrakkidel.",
   "far.hitMarks": "Tabamused üksustel",
-  "far.hitMarksTitle": "Märk kohas, kus iga lask üksust tabas, värvitud selle järgi, mida see tegi, liigub üksusega kaasa; osuta sellele, et näha, kes tulistas.",
+  "far.hitMarksTitle": "Jälg, mille iga lask üksusele jättis, selle pinnal tabamuskohas, suurus kaliibri ja kuju mõju järgi, liigub üksusega; osuta sellele, et näha, kes tulistas.",
   "far.hitMarkSeconds": "Tabamused püsivad",
-  "far.hitMarkWhole": "Kogu mäng"
+  "far.hitMarkWhole": "Kogu elu",
+  "far.hitMarkFloat": "Hõljuvad märgid",
+  "far.hitMarkFloatTitle": "Lisaks märk iga värske tabamuse kohal, sinu poole, 10 s.",
+  "far.hitLookHole": "Auk: läks läbi",
+  "far.hitLookSplash": "Hele pritse: ei läinud läbi",
+  "far.hitLookGouge": "Vagu: libises (tõenäoliselt rikošett)",
+  "far.hitLookBullet": "Auk: tulemus teadmata",
+  "far.hitLookRing": "Rõngas: mida see tegi",
+  "far.hitCalibre": "Kaliiber"
 }

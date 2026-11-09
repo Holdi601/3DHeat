@@ -26,7 +26,15 @@
   "far.fires": "Pożary na jednostkach",
   "far.firesTitle": "Płomienie i dym tam, gdzie płonie część jednostki, od zapłonu do ugaszenia, także na wrakach.",
   "far.hitMarks": "Trafienia w jednostki",
-  "far.hitMarksTitle": "Znacznik w miejscu, gdzie każdy pocisk trafił jednostkę, w kolorze zależnym od skutku, poruszający się z jednostką; wskaż go, by zobaczyć, kto strzelał.",
+  "far.hitMarksTitle": "Ślad, jaki każdy pocisk zostawił na jednostce, na jej powierzchni w miejscu trafienia, wielkości wg kalibru i kształtu wg skutku, poruszający się z jednostką; wskaż go, by zobaczyć, kto strzelał.",
   "far.hitMarkSeconds": "Trafienia pozostają",
-  "far.hitMarkWhole": "Cały mecz"
+  "far.hitMarkWhole": "Całe życie",
+  "far.hitMarkFloat": "Pływające znaczniki",
+  "far.hitMarkFloatTitle": "Także znacznik nad każdym świeżym trafieniem, zwrócony do ciebie, przez 10 s.",
+  "far.hitLookHole": "Otwór: przebił",
+  "far.hitLookSplash": "Jasny ślad: nie przebił",
+  "far.hitLookGouge": "Bruzda: ześlizgnął się (pewnie rykoszet)",
+  "far.hitLookBullet": "Otwór: skutek nieznany",
+  "far.hitLookRing": "Pierścień: co zrobił",
+  "far.hitCalibre": "Kaliber"
 }

@@ -14,7 +14,7 @@ import { emptySample, MotionModel, MotionRefiner } from '../figures/motion';
 import { WeaponLayer } from './weapons';
 import { FireLayer, type FirePose, type FireView } from '../figures/fires';
 import { FireBody, firesOf } from '../data/fires';
-import { HitMarkLayer, hitMarksOf, type MarkPose, type MarkView } from '../figures/hitmarks';
+import { HitMarkLayer, hitMarksStep, stepStats, type MarkPose, type MarkView } from '../figures/hitmarks';
 import { gpuTrackStore, registeredGpuTrackStore, rowOfKey, TRACK_U32, type GpuTrackStore } from './gpuTracks/store';
 import { emptyPose, evaluateTrack } from './gpuTracks/evaluate';
 import { isShown, rayNearTrack, trackTimes, trackVisibility } from './gpuTracks/visibility';
@@ -85,6 +85,9 @@ import { postDrawFor, tacticalLevel, tacticalLines, LOOK_TINT, type LookTrack, t
 import type { PostDraw } from './types';
 import { unitCategory } from '../ui/replay/objectType';
 import { unitsOf } from '../ui/replay/units';
+
+/** Milliseconds a frame may spend working out the hit marks until they are ready. */
+const HIT_MARK_BUDGET_MS = 2;
 
 export interface LiveReadout {
   playhead: number;
@@ -588,6 +591,8 @@ export class Engine {
   };
   /** Marks where shots struck the units (figures/hitmarks.ts), onto the same triangles as the fires. */
   private readonly hitMarkLayer = new HitMarkLayer();
+  /** The longest frame's share of the hit marks, ms: working them out, drawing them; frames they were not ready. */
+  readonly hitMarkStats = { steps: stepStats, workMs: 0, drawMs: 0, pending: 0, marks: 0, vehicles: 0, placed: 0, draws: new Float32Array(2048), n: 0 };
   /** Per person: the figure it was placed as this frame (CPU path), valid where its stamp is this frame's. */
   private markSlot = new Int32Array(0);
   private markSeen = new Int32Array(0);
@@ -596,7 +601,8 @@ export class Engine {
   private poseRow = -1;
   private readonly markView: MarkView = {
     t: 0,
-    seconds: 10,
+    seconds: Infinity,
+    float: false,
     session: -1,
     eye: [0, 0, 0],
     pixelSize: () => 0,
@@ -1736,9 +1742,23 @@ export class Engine {
    * those are this frame's).
    */
   private drawHitMarks(d: Dataset, store: GpuTrackStore | null, t: number, eye: ArrayLike<number>, pixelSize: (x: number, y: number, z: number) => number): void {
-    const marks = hitMarksOf(d);
     this.hitMarkLayer.drawn.count = 0;
+    const t0 = performance.now();
+    // Worked out a few milliseconds a frame: the marks appear once they are ready, no frame waits for them.
+    const marks = hitMarksStep(d, HIT_MARK_BUDGET_MS);
+    const st = this.hitMarkStats;
+    if (!marks) {
+      st.workMs = Math.max(st.workMs, performance.now() - t0);
+      st.pending++;
+      this.invalidate(2);
+      return;
+    }
     if (!marks.count) return;
+    st.marks = marks.count;
+    st.vehicles = marks.vehicles.length;
+    let placed = 0;
+    for (const veh of marks.vehicles) if (veh.done) placed++;
+    st.placed = placed;
     this.posesFor(d, store, t, eye, pixelSize);
     const team = useStore.getState().team;
     // The CPU figures as placed this frame, with their roll and their drawn size.
@@ -1762,6 +1782,7 @@ export class Engine {
     const v = this.markView;
     v.t = t;
     v.seconds = team.hitMarkSeconds > 0 ? team.hitMarkSeconds : Infinity;
+    v.float = team.hitMarkFloat;
     v.session = team.session;
     v.eye = eye;
     v.pixelSize = pixelSize;
@@ -1772,6 +1793,9 @@ export class Engine {
     const out = own || store || !ft ? this.fireTris : ft.data === this.weaponTris.data ? this.weaponTris : this.figureReplay.tris;
     if (out === this.fireTris && !own) out.reset();
     if (this.hitMarkLayer.build(marks, v, out) > 0 || ft) this.figureTris = out.count ? { data: out.data, count: out.count } : ft;
+    const ms = performance.now() - t0;
+    st.drawMs = Math.max(st.drawMs, ms);
+    st.draws[st.n++ & 2047] = ms;
   }
 
   /** A unit's pose for its hit marks: the CPU figure as placed, else as the fires take it. */

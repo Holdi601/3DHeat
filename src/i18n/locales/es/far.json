@@ -26,7 +26,15 @@
   "far.fires": "Incendios en unidades",
   "far.firesTitle": "Llamas y humo donde arde una parte de una unidad, desde que se prende hasta que se apaga, restos incluidos.",
   "far.hitMarks": "Impactos en unidades",
-  "far.hitMarksTitle": "Una marca donde cada disparo alcanzó a una unidad, coloreada según lo que hizo, que se mueve con la unidad; señálela para ver quién disparó.",
+  "far.hitMarksTitle": "La marca que dejó cada disparo en una unidad, en su superficie donde impactó, con tamaño según el calibre y forma según el efecto, que se mueve con la unidad; señálela para ver quién disparó.",
   "far.hitMarkSeconds": "Los impactos duran",
-  "far.hitMarkWhole": "Toda la partida"
+  "far.hitMarkWhole": "Toda la vida",
+  "far.hitMarkFloat": "Marcadores flotantes",
+  "far.hitMarkFloatTitle": "También un marcador sobre cada impacto reciente, mirando hacia usted, durante 10 s.",
+  "far.hitLookHole": "Agujero: penetró",
+  "far.hitLookSplash": "Salpicadura brillante: no penetró",
+  "far.hitLookGouge": "Surco: resbaló (probablemente un rebote)",
+  "far.hitLookBullet": "Agujero: resultado desconocido",
+  "far.hitLookRing": "Anillo: lo que hizo",
+  "far.hitCalibre": "Calibre"
 }

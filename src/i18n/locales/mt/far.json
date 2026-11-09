@@ -26,7 +26,15 @@
   "far.fires": "Nirien fuq l-unitajiet",
   "far.firesTitle": "Fjammi u duħħan fejn taqbad parti minn unità, minn meta tieħu n-nar sakemm jintefa, inklużi l-fdalijiet.",
   "far.hitMarks": "Laqtiet fuq l-unitajiet",
-  "far.hitMarksTitle": "Marka fejn kull tir laqat unità, ikkulurita skont x’għamel, li timxi mal-unità; ipponta fuqha biex tara min spara.",
+  "far.hitMarksTitle": "Il-marka li ħalla kull tir fuq unità, fuq il-wiċċ tagħha fejn laqat, daqs skont il-kalibru u forma skont l-effett, li timxi mal-unità; ipponta fuqha biex tara min spara.",
   "far.hitMarkSeconds": "Il-laqtiet jibqgħu",
-  "far.hitMarkWhole": "Il-logħba kollha"
+  "far.hitMarkWhole": "Il-ħajja kollha",
+  "far.hitMarkFloat": "Markaturi jżommu f’wiċċ l-arja",
+  "far.hitMarkFloatTitle": "Ukoll markatur fuq kull laqta friska, iħares lejk, għal 10 s.",
+  "far.hitLookHole": "Toqba: għaddiet",
+  "far.hitLookSplash": "Tixrid jleqq: ma għaddietx",
+  "far.hitLookGouge": "Kanal: żelqet (x’aktarx rikoxett)",
+  "far.hitLookBullet": "Toqba: riżultat mhux magħruf",
+  "far.hitLookRing": "Ċirku: x’għamlet",
+  "far.hitCalibre": "Kalibru"
 }

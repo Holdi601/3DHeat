@@ -26,7 +26,15 @@
   "far.fires": "Brande på enheder",
   "far.firesTitle": "Flammer og røg, hvor en del af en enhed brænder, fra den antændes, til den er slukket, også vragdele.",
   "far.hitMarks": "Træffere på enheder",
-  "far.hitMarksTitle": "Et mærke hvor hvert skud ramte en enhed, farvet efter hvad det gjorde, og som følger enheden; peg på det for at se, hvem der skød.",
+  "far.hitMarksTitle": "Mærket hvert skud satte på en enhed, på dens overflade hvor det ramte, i størrelse efter kaliber og form efter virkning, og som følger enheden; peg på det for at se, hvem der skød.",
   "far.hitMarkSeconds": "Træffere bliver",
-  "far.hitMarkWhole": "Hele kampen"
+  "far.hitMarkWhole": "Hele livet",
+  "far.hitMarkFloat": "Svævende mærker",
+  "far.hitMarkFloatTitle": "Også et mærke over hvert friskt træf, vendt mod dig, i 10 s.",
+  "far.hitLookHole": "Hul: gik igennem",
+  "far.hitLookSplash": "Lyst stænk: gik ikke igennem",
+  "far.hitLookGouge": "Rille: gled af (nok en rikochet)",
+  "far.hitLookBullet": "Hul: udfald ukendt",
+  "far.hitLookRing": "Ring: hvad det gjorde",
+  "far.hitCalibre": "Kaliber"
 }

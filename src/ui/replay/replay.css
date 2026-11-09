@@ -932,3 +932,34 @@
 .hit-mark-legend .ring {
   box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(0, 0, 0, 0.6);
 }
+
+/* The looks of the hit marks (figures/hitmarks.ts), drawn as they are on the units. */
+.hit-mark-legend.looks {
+  flex-direction: column;
+}
+.hit-mark-legend-head {
+  flex-basis: 100%;
+}
+.hit-look {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: -1px;
+}
+.hit-look.hole {
+  background: radial-gradient(circle, #050505 0 38%, #2a231c 40% 100%);
+}
+.hit-look.splash {
+  background: radial-gradient(circle, #6b6b66 0 35%, #d8d8cc 38% 100%);
+}
+.hit-look.gouge {
+  width: 18px;
+  height: 6px;
+  vertical-align: 1px;
+  background: linear-gradient(#d8d8cc 0 30%, #6b6b66 35% 65%, #d8d8cc 70%);
+}
+.hit-look.bullet {
+  background: radial-gradient(circle, #050505 0 55%, #8c8c87 60% 100%);
+}

@@ -26,7 +26,15 @@
   "far.fires": "Eldar á einingum",
   "far.firesTitle": "Logar og reykur þar sem hluti einingar brennur, frá því að kviknar í honum þar til eldurinn slokknar, flök meðtalin.",
   "far.hitMarks": "Hittni á einingar",
-  "far.hitMarksTitle": "Merki þar sem hvert skot hæfði einingu, litað eftir því hvað það gerði, og fylgir einingunni; bentu á það til að sjá hver skaut.",
+  "far.hitMarksTitle": "Merkið sem hvert skot skildi eftir á einingu, á yfirborði hennar þar sem það hæfði, stærð eftir hlaupvídd og lögun eftir áhrifum, fylgir einingunni; bentu á það til að sjá hver skaut.",
   "far.hitMarkSeconds": "Hittni helst",
-  "far.hitMarkWhole": "Allur leikurinn"
+  "far.hitMarkWhole": "Allt lífið",
+  "far.hitMarkFloat": "Fljótandi merki",
+  "far.hitMarkFloatTitle": "Einnig merki yfir hverri nýrri hittni, snúið að þér, í 10 s.",
+  "far.hitLookHole": "Gat: fór í gegn",
+  "far.hitLookSplash": "Bjart skvett: fór ekki í gegn",
+  "far.hitLookGouge": "Rák: rann af (líklega endurkast)",
+  "far.hitLookBullet": "Gat: útkoma óþekkt",
+  "far.hitLookRing": "Hringur: hvað það gerði",
+  "far.hitCalibre": "Hlaupvídd"
 }

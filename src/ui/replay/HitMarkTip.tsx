@@ -56,6 +56,7 @@ export function HitMarkTip() {
       [t('vehicle.card.shooter'), h.shooter || '-'],
       [t('vehicle.card.weapon'), weaponOf(h) || '-'],
     ];
+    if (h.calibre !== null) rows.push([t('far.hitCalibre'), `${num(h.calibre, h.calibre < 20 ? 1 : 0)} mm`]);
     if (h.damage !== null) rows.push([t('vehicle.card.damage'), num(h.damage, 0)]);
     if (h.modules > 0) rows.push([t('vehicle.card.modules'), String(h.modules)]);
     const what = h.killingShot ? t('vehicle.card.killingShot') : t(`vehicle.outcome.${h.outcome}`);
