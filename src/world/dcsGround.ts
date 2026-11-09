@@ -13,14 +13,17 @@ import { latToMy, mxToLon, myToLat } from './tiles';
  * agree:
  *
  * - **Shift.** Where the game's runway lies beside the surveyed one
- *   (OurAirports), the real-world layer near it is moved sideways by the
- *   difference, so imagery, roads and the surveyed runway lie where the
- *   recorded aircraft roll.
+ *   (OurAirports), or short of or past its ends, the real-world layer near
+ *   it is moved by the difference, so imagery, roads and the surveyed
+ *   runway lie where the recorded aircraft roll.
  * - **Judge.** Each tile compares the real terrain with the game's at its
  *   grid points: the coast (land on one, sea on the other) and the height.
  *   Where they agree, imagery and map features are draped on the game's
  *   ground; where they do not, the tile shows the game's own ground in its
  *   class colours instead, so nothing floats or sinks.
+ * - **Buildings.** Where the level carries the game's own buildings (boxes
+ *   from its scene), those stand in the town instead of the mapped ones:
+ *   the game's town is the one the pilot flew over.
  */
 
 export interface DcsGroundData {
@@ -33,6 +36,28 @@ export interface DcsGroundData {
   /** Land triangles, and the flat sea's. */
   ground: Uint32Array;
   water: Uint32Array;
+  /** The game's buildings, BUILDING_STRIDE floats each (see dcsBuildings); absent when the level has none. */
+  buildings?: Float32Array | null;
+}
+
+/** Floats per building: x, z, base, height, half x, half z, heading (radians), kind. */
+export const BUILDING_STRIDE = 8;
+
+/**
+ * The level's buildings (its .json `buildings.rows`: x, z, base, height,
+ * half_x, half_z, heading_deg, kind) packed for the stream worker, the
+ * heading in radians; null when there are none.
+ */
+export function dcsBuildings(rows: number[][] | null | undefined): Float32Array | null {
+  if (!rows?.length) return null;
+  const out = new Float32Array(rows.length * BUILDING_STRIDE);
+  let n = 0;
+  for (const r of rows) {
+    if (r.length < 8 || !r.slice(0, 8).every(Number.isFinite)) continue;
+    out.set([r[0], r[1], r[2], r[3], r[4], r[5], (r[6] * Math.PI) / 180, r[7]], n * BUILDING_STRIDE);
+    n++;
+  }
+  return n ? out.slice(0, n * BUILDING_STRIDE) : null;
 }
 
 /** The converter's runway class colour (heat3d_ext_dcs COLOURS.runway), 0..255. */
@@ -50,6 +75,7 @@ export function dcsGroundFrom(
   colours: Float32Array | null,
   ground: Uint32Array,
   water: Uint32Array,
+  buildings: Float32Array | null = null,
 ): DcsGroundData {
   const n = vertices.length / 6;
   const positions = new Float32Array(n * 3);
@@ -63,7 +89,7 @@ export function dcsGroundFrom(
     rgb = new Uint8Array(n * 3);
     for (let i = 0; i < n * 3; i++) rgb[i] = Math.max(0, Math.min(255, Math.round(colours[i] * 255)));
   }
-  return { theatre, positions, colours: rgb, ground, water };
+  return { theatre, positions, colours: rgb, ground, water, buildings };
 }
 
 export interface DcsSample {
@@ -110,6 +136,8 @@ export interface RunwayShift {
   airport: string;
   /** Sideways distance, metres, signed. */
   lateral: number;
+  /** Along the runway (low end toward high), metres, signed: how far the game's ends lie past the surveyed ones. */
+  along?: number;
 }
 
 /** Height a coast is told at: land on one side above it, sea on the other at or below a metre. */
@@ -148,6 +176,67 @@ export function judge(real: Float32Array, game: Float32Array, sea: Uint8Array, c
   return { covered: n, agree, bias, median, p90, coast: share };
 }
 
+/** Numbers per runway triangle in findShifts: its middle x, z, its area, its corners' x, z. */
+const CENT = 9;
+/** Steps along a runway, and the margin before and after its surveyed ends, metres. */
+const ALONG_STEP = 10;
+const ALONG_MARGIN = 600;
+
+/**
+ * How far the game's runway lies along the surveyed one (see findShifts):
+ * `cents` holds each runway-coloured triangle's middle x, z, its area and
+ * its corners' x, z; the strip from `s0` to `s1` metres beside the surveyed
+ * axis (the low end at `ax`, `az`, `len` long) is the game's runway.
+ */
+export function alongOffset(
+  cents: number[],
+  ax: number,
+  az: number,
+  ux: number,
+  uz: number,
+  nx: number,
+  nz: number,
+  len: number,
+  s0: number,
+  s1: number,
+  width: number,
+): number {
+  const n = Math.ceil((len + 2 * ALONG_MARGIN) / ALONG_STEP);
+  const bins = new Float64Array(n);
+  for (let k = 0; k < cents.length; k += CENT) {
+    const side = (cents[k] - ax) * nx + (cents[k + 1] - az) * nz;
+    if (side < s0 || side >= s1) continue;
+    let a0 = Infinity;
+    let a1 = -Infinity;
+    for (let v = 3; v < 9; v += 2) {
+      const al = (cents[k + v] - ax) * ux + (cents[k + v + 1] - az) * uz + ALONG_MARGIN;
+      a0 = Math.min(a0, al);
+      a1 = Math.max(a1, al);
+    }
+    const area = cents[k + 2];
+    if (!(a1 > a0)) {
+      const i = Math.floor(a0 / ALONG_STEP);
+      if (i >= 0 && i < n) bins[i] += area;
+      continue;
+    }
+    for (let i = Math.max(0, Math.floor(a0 / ALONG_STEP)); i <= Math.min(n - 1, Math.floor(a1 / ALONG_STEP)); i++) {
+      const over = Math.min(a1, (i + 1) * ALONG_STEP) - Math.max(a0, i * ALONG_STEP);
+      if (over > 0) bins[i] += (area * over) / (a1 - a0);
+    }
+  }
+  const full = (i: number) => bins[i] >= 0.5 * ALONG_STEP * Math.min(width, s1 - s0);
+  const mid = Math.floor((len / 2 + ALONG_MARGIN) / ALONG_STEP);
+  if (!full(mid)) return 0;
+  let lo = mid;
+  let hi = mid;
+  while (lo > 0 && full(lo - 1)) lo--;
+  while (hi < n - 1 && full(hi + 1)) hi++;
+  const loEnd = lo > 1 ? lo * ALONG_STEP - ALONG_MARGIN : null;
+  const hiEnd = hi < n - 2 ? (hi + 1) * ALONG_STEP - ALONG_MARGIN - len : null;
+  if (loEnd === null && hiEnd === null) return 0;
+  return loEnd === null ? hiEnd! : hiEnd === null ? loEnd : (loEnd + hiEnd) / 2;
+}
+
 export class DcsGround {
   readonly proj: DcsProjection;
   private pos: Float32Array;
@@ -164,6 +253,10 @@ export class DcsGround {
   private ids: Uint32Array = new Uint32Array(0);
   /** Runway shifts found so far; null until the surveyed runways were read. */
   shifts: RunwayShift[] | null = null;
+  /** The game's buildings (BUILDING_STRIDE floats each), and a grid of them by x and z. */
+  readonly buildings: Float32Array;
+  private bCell = 500;
+  private bGrid = new Map<number, number[]>();
 
   constructor(d: DcsGroundData) {
     const proj = DCS_PROJECTIONS[d.theatre];
@@ -176,6 +269,35 @@ export class DcsGround {
     this.tris.set(d.water, d.ground.length);
     this.landCount = d.ground.length / 3;
     this.index();
+    this.buildings = d.buildings ?? new Float32Array(0);
+    for (let i = 0; i < this.buildings.length / BUILDING_STRIDE; i++) {
+      const k = this.bKey(Math.floor(this.buildings[i * BUILDING_STRIDE] / this.bCell), Math.floor(this.buildings[i * BUILDING_STRIDE + 1] / this.bCell));
+      const list = this.bGrid.get(k);
+      if (list) list.push(i);
+      else this.bGrid.set(k, [i]);
+    }
+  }
+
+  private bKey(a: number, b: number): number {
+    return (a + 100_000) * 200_000 + (b + 100_000);
+  }
+
+  /** The buildings whose middle lies in the DCS box (x0..x1, z0..z1), by index. */
+  buildingsIn(x0: number, z0: number, x1: number, z1: number): number[] {
+    const out: number[] = [];
+    if (!this.buildings.length) return out;
+    const c = this.bCell;
+    const B = this.buildings;
+    for (let a = Math.floor(x0 / c); a <= Math.floor(x1 / c); a++) {
+      for (let b = Math.floor(z0 / c); b <= Math.floor(z1 / c); b++) {
+        for (const i of this.bGrid.get(this.bKey(a, b)) ?? []) {
+          const x = B[i * BUILDING_STRIDE];
+          const z = B[i * BUILDING_STRIDE + 1];
+          if (x >= x0 && x <= x1 && z >= z0 && z <= z1) out.push(i);
+        }
+      }
+    }
+    return out;
   }
 
   /** A uniform grid over x and z listing the triangles touching each cell. */
@@ -283,8 +405,16 @@ export class DcsGround {
    * runway-coloured ground along the middle of the surveyed one, its
    * area summed in 5 m strips across it, and the runway's width of strips
    * holding most of it taken as the game's runway. Taxiways and aprons
-   * beside it are narrower or shorter and lose to the runway itself. Only
-   * the sideways distance is told; along the runway its ends are left be.
+   * beside it are narrower or shorter and lose to the runway itself.
+   *
+   * Along the runway, the same strips are summed in 10 m steps from 600 m
+   * before its low end to 600 m past its high end, each triangle's area
+   * spread over the stretch it spans (the game draws a runway in triangles
+   * hundreds of metres long); the run of steps mostly
+   * covered that holds the runway's middle is the game's runway, and its
+   * ends against the surveyed ones tell how far it lies along. An end that
+   * runs on into the margin (a taxiway carrying on, an apron) tells
+   * nothing; with both such, the runway is moved sideways only.
    */
   findShifts(runways: Runway[]): RunwayShift[] {
     const out: RunwayShift[] = [];
@@ -297,7 +427,7 @@ export class DcsGround {
       const b = t[i * 3 + 1] * 3;
       const c = t[i * 3 + 2] * 3;
       const area = Math.abs((p[b] - p[a]) * (p[c + 2] - p[a + 2]) - (p[c] - p[a]) * (p[b + 2] - p[a + 2])) / 2;
-      cents.push((p[a] + p[b] + p[c]) / 3, (p[a + 2] + p[b + 2] + p[c + 2]) / 3, area);
+      cents.push((p[a] + p[b] + p[c]) / 3, (p[a + 2] + p[b + 2] + p[c + 2]) / 3, area, p[a], p[a + 2], p[b], p[b + 2], p[c], p[c + 2]);
     }
     if (!cents.length) return out;
     const BIN = 5;
@@ -312,7 +442,7 @@ export class DcsGround {
       const nx = -uz;
       const nz = ux;
       const bins = new Float64Array((2 * REACH) / BIN);
-      for (let k = 0; k < cents.length; k += 3) {
+      for (let k = 0; k < cents.length; k += CENT) {
         const rx = cents[k] - a.x;
         const rz = cents[k + 1] - a.z;
         const along = rx * ux + rz * uz;
@@ -337,7 +467,16 @@ export class DcsGround {
       let m = 0;
       for (let j = best; j < best + w; j++) m += bins[j] * ((j + 0.5) * BIN - REACH);
       const lateral = m / bestSum;
-      out.push({ x: (a.x + b.x) / 2, z: (a.z + b.z) / 2, dx: nx * lateral, dz: nz * lateral, airport: r.airport, lateral });
+      const along = alongOffset(cents, a.x, a.z, ux, uz, nx, nz, len, best * BIN - REACH, (best + w) * BIN - REACH, Math.max(20, r.width));
+      out.push({
+        x: (a.x + b.x) / 2,
+        z: (a.z + b.z) / 2,
+        dx: nx * lateral + ux * along,
+        dz: nz * lateral + uz * along,
+        airport: r.airport,
+        lateral,
+        along,
+      });
     }
     return out;
   }
@@ -359,6 +498,7 @@ export class DcsGround {
       dz += r.dz * w;
     }
     const fade = Math.max(0, 1 - near / SHIFT_REACH);
+    if (!fade) return { dx: 0, dz: 0 };
     return { dx: (dx / wsum) * fade, dz: (dz / wsum) * fade };
   }
 

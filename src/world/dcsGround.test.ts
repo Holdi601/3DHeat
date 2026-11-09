@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DcsGround, dcsGroundFrom, judge } from './dcsGround';
+import { alongOffset, DcsGround, dcsBuildings, dcsGroundFrom, judge } from './dcsGround';
 import { DCS_PROJECTIONS, fromDcs, toDcs } from './dcsProjection';
 import type { Runway } from './runways';
 import { latToMy, lonToMx } from './tiles';
@@ -108,6 +108,42 @@ describe('dcsGround', () => {
     g.shifts = s;
     expect(g.shiftAt(O.x, O.z).dz).toBeCloseTo(s[0].dz, 5);
     expect(g.shiftAt(O.x + 70_000, O.z)).toEqual({ dx: 0, dz: 0 });
+  });
+
+  it("tells how far along the surveyed runway the game's lies", () => {
+    // Runway-coloured cells 5 m square, 40 m wide, along x from a0 to a1 (the surveyed runway runs 0..3000 m).
+    const strip = (a0: number, a1: number, out: number[] = []) => {
+      for (let a = a0; a < a1; a += 5) for (let s = -20; s < 20; s += 5) out.push(a + 2.5, s + 2.5, 25, a, s, a + 5, s, a + 5, s + 5);
+      return out;
+    };
+    const along = (cents: number[]) => alongOffset(cents, 0, 0, 1, 0, 0, 1, 3000, -30, 30, 45);
+    expect(along(strip(-100, 2900))).toBeCloseTo(-100, -1);
+    expect(along(strip(60, 3060))).toBeCloseTo(60, -1);
+    // Shorter at both ends by the same: in place.
+    expect(along(strip(50, 2950))).toBeCloseTo(0, -1);
+    // A taxiway running on past the high end: the low end alone tells.
+    expect(along(strip(-80, 3700))).toBeCloseTo(-80, -1);
+    // Nothing under the middle: no move.
+    expect(along(strip(0, 1000))).toBe(0);
+    // Drawn in two triangles the runway's length, as the game does: the area spread along them.
+    const long = [1400, 0, 1500 * 40, -100, -20, 2900, -20, 2900, 20, 1400, 0, 1500 * 40, -100, -20, 2900, 20, -100, 20];
+    expect(along(long)).toBeCloseTo(-100, -1);
+  });
+
+  it("packs and finds the level's buildings", () => {
+    const rows = [
+      [O.x + 100, O.z + 100, 120, 8, 10, 5, 90, 0],
+      [O.x - 900, O.z + 1500, 110, 20, 15, 15, 0, 1],
+      [Number.NaN, 0, 0, 0, 0, 0, 0, 0],
+    ];
+    const b = dcsBuildings(rows)!;
+    expect(b.length).toBe(16);
+    expect(b[6]).toBeCloseTo(Math.PI / 2, 5);
+    expect(dcsBuildings([])).toBeNull();
+    const g = new DcsGround({ ...level(), buildings: b });
+    expect(g.buildingsIn(O.x, O.z, O.x + 200, O.z + 200)).toEqual([0]);
+    expect(g.buildingsIn(O.x - 1000, O.z, O.x + 200, O.z + 2000).sort()).toEqual([0, 1]);
+    expect(g.buildingsIn(O.x + 300, O.z + 300, O.x + 400, O.z + 400)).toEqual([]);
   });
 
   it('samples a tile grid on the moved points and judges it', () => {

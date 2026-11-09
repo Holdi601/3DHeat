@@ -15,7 +15,8 @@ import {
   type WorldLabel,
 } from './backdrop';
 import type { FetchMode } from './cache';
-import type { DcsGround, TileVerdict } from './dcsGround';
+import { BUILDING_STRIDE, type DcsGround, type TileVerdict } from './dcsGround';
+import { fromDcs, toDcs } from './dcsProjection';
 import { clipLine, drapePolygon, extrudeBuilding, MeshBuilder, ribbon, type BuiltMesh } from './mesh';
 import { decodeTile, inflateIfGzip } from './mvt';
 import { OURAIRPORTS_RUNWAYS, parseRunways, runwaysIn, type Runway } from './runways';
@@ -459,12 +460,20 @@ export async function buildTile(req: TileRequest, io: TileIo): Promise<BuiltTile
     }
   }
 
-  // ---- buildings, largest first, within the tile's share
+  // ---- buildings, largest first, within the tile's share; where the game's level carries its own, those instead
+  const gameTown = game && io.dcs?.buildings.length ? io.dcs : null;
+  const onGame = (px: number, py: number) => {
+    const i = Math.max(0, Math.min(GRID - 1, Math.round((px - px0) / dx)));
+    const j = Math.max(0, Math.min(GRID - 1, Math.round((py - py0) / dx)));
+    return game!.covered[j * GRID + i] === 1;
+  };
+  if (gameTown && z >= GAME_BUILDINGS_ZOOM) drawGameBuildings(mb, gameTown, box, S, px0, py0, smx, smy, at);
   if (features?.buildings.length) {
     mb.begin('structure', 'building');
     features.buildings.sort((a, b) => b.area - a.area);
     for (const bd of features.buildings) {
       if (mb.triangles('structure') > TILE_STRUCTURE_BUDGET) break;
+      if (gameTown && onGame(bd.rings[0].ring[0], bd.rings[0].ring[1])) continue;
       let base = Infinity;
       const outer = bd.rings[0].ring;
       for (let i = 0; i < outer.length; i += 2) base = Math.min(base, at(outer[i], outer[i + 1]));
@@ -478,6 +487,84 @@ export async function buildTile(req: TileRequest, io: TileIo): Promise<BuiltTile
   for (let i = skirtFirst; i < skirtEnd; i++) mesh.vertices.set([0, 1, 0], i * 6 + 3);
   const dcs = game ? { ...game.verdict, shift: Math.hypot(smx, smy) * 40_075_016 * Math.cos((centreLat * Math.PI) / 180) } : undefined;
   return { key: key(z, x, y), mesh, uvs, image, labels, sources, downloaded, notes: [], ...(dcs ? { dcs } : {}) };
+}
+
+/** The game's buildings show from this zoom on (a tile about 10 km across). */
+const GAME_BUILDINGS_ZOOM = 12;
+/** Per kind (heat3d_ext_dcs buildings.KINDS): house, block, industrial, airfield, tower, other. */
+const GAME_BUILDING_RGB: Array<[number, number, number]> = [
+  [0.88, 0.82, 0.74],
+  [0.84, 0.83, 0.81],
+  [0.76, 0.76, 0.74],
+  [0.72, 0.76, 0.72],
+  [0.82, 0.78, 0.72],
+  [0.86, 0.81, 0.75],
+];
+
+/**
+ * The game's buildings whose middle lies in the tile, as boxes standing on
+ * the drawn ground: from the lower of their own base and the ground under
+ * their corners, to their top. The real layer is moved by (smx, smy) onto
+ * the game's; these are the game's already, so they are moved back first.
+ */
+function drawGameBuildings(
+  mb: MeshBuilder,
+  dcs: DcsGround,
+  box: { south: number; north: number; west: number; east: number },
+  S: number,
+  px0: number,
+  py0: number,
+  smx: number,
+  smy: number,
+  at: (x: number, y: number) => number,
+): void {
+  const corners = [
+    toDcs(dcs.proj, box.south, box.west),
+    toDcs(dcs.proj, box.south, box.east),
+    toDcs(dcs.proj, box.north, box.west),
+    toDcs(dcs.proj, box.north, box.east),
+  ];
+  const pad = 200;
+  const ids = dcs.buildingsIn(
+    Math.min(...corners.map((c) => c.x)) - pad,
+    Math.min(...corners.map((c) => c.z)) - pad,
+    Math.max(...corners.map((c) => c.x)) + pad,
+    Math.max(...corners.map((c) => c.z)) + pad,
+  );
+  if (!ids.length) return;
+  const B = dcs.buildings;
+  const toPx = (x: number, z: number): [number, number] => {
+    const [lat, lon] = fromDcs(dcs.proj, x, z);
+    return [(lonToMx(lon) - smx) * S, (latToMy(lat) - smy) * S];
+  };
+  mb.begin('structure', 'building');
+  // Largest first, as the mapped ones, so a full tile keeps its big buildings.
+  ids.sort((a, b) => B[b * BUILDING_STRIDE + 4] * B[b * BUILDING_STRIDE + 5] - B[a * BUILDING_STRIDE + 4] * B[a * BUILDING_STRIDE + 5]);
+  for (const i of ids) {
+    if (mb.triangles('structure') > TILE_STRUCTURE_BUDGET) break;
+    const o = i * BUILDING_STRIDE;
+    const [x, z, base, height, hx, hz, heading, kind] = B.subarray(o, o + BUILDING_STRIDE);
+    const [mx, my] = toPx(x, z);
+    if (mx < px0 || mx >= px0 + 256 || my < py0 || my >= py0 + 256) continue;
+    const ux = Math.cos(heading);
+    const uz = Math.sin(heading);
+    const ring: number[] = [];
+    for (const [sx, sz] of [
+      [-1, -1],
+      [1, -1],
+      [1, 1],
+      [-1, 1],
+    ]) {
+      ring.push(...toPx(x + ux * sx * hx - uz * sz * hz, z + uz * sx * hx + ux * sz * hz));
+    }
+    // Clockwise on screen (the tile's y runs south), as extrudeBuilding wants.
+    let area = 0;
+    for (let k = 0; k < 4; k++) area += ring[k * 2] * ring[((k + 1) % 4) * 2 + 1] - ring[((k + 1) % 4) * 2] * ring[k * 2 + 1];
+    if (area < 0) for (const [a, b] of [[2, 6], [3, 7]]) [ring[a], ring[b]] = [ring[b], ring[a]];
+    let ground = base;
+    for (let k = 0; k < 4; k++) ground = Math.min(ground, at(ring[k * 2], ring[k * 2 + 1]));
+    extrudeBuilding(mb, [{ ring, cut: new Uint8Array(4) }], ground, 0, base + height - ground, GAME_BUILDING_RGB[kind] ?? GAME_BUILDING_RGB[5]);
+  }
 }
 
 /** A runway from threshold to threshold, with side stripes, a dashed centre line and threshold bars. */
