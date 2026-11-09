@@ -2771,7 +2771,7 @@ export const CUES: Record<string, CueEntry> = {
   // BMP, BMD and Chinese IFVs.
   'bmp-2': ground(['bmp-2', 'bmp-2m'], [
     { cue: 'six road wheels, three return rollers', check: run(6, 3) },
-    { cue: 'pointed ribbed bow, turret just ahead of the middle', check: (s) => hullShape(s) && turretAt(0.2)(s) },
+    { cue: 'pointed ribbed bow high at the front, the turret a little behind the middle', check: (s) => hullShape(s) && turretAt(-0.8, 0)(s) },
     { cue: 'long thin 30 mm 2A42', check: (s) => cal(0.03, 0.031)(s) && gunLen(2.5)(s) },
   ]),
   'bmp-2-atgm': ground('bmp-2', [{ cue: 'Konkurs launcher on the turret roof', check: adds('box', 1, 'turret') }]),
