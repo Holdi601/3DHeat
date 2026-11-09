@@ -275,7 +275,7 @@ const AIR_CUES: Record<string, CueEntry> = {
     { cue: 'swept wing, low on the body with slight dihedral', check: (s) => leSweep(s) >= 30 && s.wing.mount! < 0 && dihedral(s) > 0 },
     { cue: 'bubble canopy', check: bubbleHood },
     { cue: 'single jet, nozzle under the tail', check: jets(1) },
-    { cue: 'tailplane with dihedral low on the fin', check: (s) => (s.tail.planeDihedral ?? 0) >= 5 && (s.tail.planeUp ?? 0) < 1 },
+    { cue: 'flat tailplane low on the fin, over the afterburner', check: (s) => (s.tail.planeDihedral ?? 0) === 0 && (s.tail.planeUp ?? 0) < 1 },
   ]),
   'f-86f': air('f-86f', [
     { cue: 'open oval nose intake', check: (s) => noseIntake(s) && !radomeChin(s) },

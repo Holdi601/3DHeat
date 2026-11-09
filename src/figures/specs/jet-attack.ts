@@ -748,13 +748,35 @@ const SABRE: Fig = {
   glass: [bubble(4.33, 1.67, 1.0, 0.46, 0.54, 0.36)],
 };
 A['f-86f'] = fig(SABRE);
-// F-86K: the F-86D's radome over its chin intake, 0.83 m longer in the nose; the same body behind the cockpit.
+// F-86K: the F-86D's body - the radome over its chin intake, a deeper and wider fuselage than the F's, the long
+// canopy fairing back into the spine, the afterburner's nozzle out behind the fin, a bigger flat tailplane (12.27 x
+// 11.31 x 4.57 m). Drawn from the dimensioned F-86D three-view of T.O. 1F-86D-3 (see sources.md) at the published
+// length, heights over the drawing's fuselage reference line (the radome's tip 0.12 m up): the wing's leading edge
+// meets the centre line 3.44 m behind the nose, its root chord 10.3 ft; the drawing's span is 3% over the published
+// 37.1 ft, so the wing's stations are pulled in to it. The tailplane as drawn in plan (4.5 m; the sheet's figure says
+// 16.6 ft, its front view about 11.5 ft).
 A['f-86k'] = fig({
-  ...SABRE, length: 12.27,
-  body: [[6.135, 0.18, 0.06, 0.05], [5.8, 0.38, -0.12, 0.3], [5.4, 0.5, -0.35, 0.45], [5.08, 0.52, -0.8, 0.5], [4.6, 0.5, -0.86, 0.55], [4.0, 0.47, -0.88, 0.6], ...SABRE_REAR.map(([x, t, b, w]) => [x - 0.415, t, b, w] as Row)],
-  wing: SABRE.wing.map(([x, y]) => [x - 0.415, y] as P2), fin: SABRE.fin!.map(([x, y]) => [x - 0.415, y] as P2), tail: SABRE.tail!.map(([x, y]) => [x - 0.415, y] as P2),
-  nozzles: [[-5.265, 0, 0.27]],
-  glass: [bubble(3.92, 1.26, 1.0, 0.47, 0.54, 0.36)],
+  ...SABRE, length: 12.27, height: 4.57,
+  body: [
+    [6.135, 0.17, 0.06, 0.05], [5.97, 0.35, -0.09, 0.21], [5.67, 0.49, -0.19, 0.33], [5.28, 0.6, -0.26, 0.44], [5.05, 0.64, -0.62, 0.48], [4.88, 0.69, -0.7, 0.51],
+    [4.49, 0.75, -0.75, 0.57], [4.09, 0.8, -0.79, 0.63], [3.6, 0.78, -0.81, 0.68], [3.1, 0.75, -0.83, 0.73], [2.11, 0.75, -0.83, 0.77], [1.13, 0.85, -0.82, 0.77],
+    [0.4, 0.91, -0.82, 0.77], [-0.5, 0.91, -0.8, 0.77], [-1.34, 0.91, -0.74, 0.76], [-2.33, 0.91, -0.65, 0.72], [-3.32, 0.9, -0.55, 0.66], [-4.01, 0.9, -0.48, 0.61],
+    [-4.6, 0.9, -0.35, 0.54], [-5.3, 0.88, -0.1, 0.45], [-5.65, 0.86, 0.0, 0.32],
+  ],
+  wing: [[2.12, 0], [2.12, 0.75], [-1.43, 5.37], [-1.68, 5.56], [-1.82, 5.655], [-3.0, 5.655], [-3.12, 5.37], [-0.81, 0.75], [-0.81, 0]], wingUp: -0.66,
+  fin: [
+    [-2.2, 0], [-2.43, 0.09], [-2.83, 0.19], [-3.22, 0.3], [-3.62, 0.4], [-4.01, 0.54], [-4.31, 0.78], [-5.69, 2.26], [-5.79, 2.31], [-6.28, 2.33],
+    [-5.99, 1.28], [-5.69, 0.29], [-5.6, -0.1], [-2.2, -0.1],
+  ], finBase: 0.9,
+  tail: [[-4.0, 0], [-4.0, 0.36], [-5.33, 2.17], [-5.44, 2.25], [-5.8, 2.25], [-5.98, 2.17], [-5.18, 0.33], [-5.18, 0]], planeUp: 0.92, planeDihedral: 0,
+  nozzles: [[-5.7, 0, 0.4]], nozzle: 0.7,
+  glass: [{
+    top: [[0.75, 0.91], [1.13, 1.08], [1.52, 1.23], [1.92, 1.33], [2.3, 1.4], [2.7, 1.38], [2.9, 1.32], [3.3, 1.14], [3.69, 0.93], [3.95, 0.8]],
+    bottom: [[0.75, 0.6], [3.95, 0.5]],
+    plan: [[0.75, 0.15], [1.5, 0.38], [2.4, 0.45], [3.3, 0.38], [3.95, 0.15]],
+    round: 2.2,
+    stations: 14,
+  }],
 });
 A['fj-4'] = fig({
   ...SABRE, length: 11.08, span: 11.92, height: 4.24,
