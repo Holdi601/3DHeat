@@ -758,7 +758,7 @@ const ALIASES: Record<string, string> = {
   'fr_m10': 'm10-gmc',
   'fr_b1_ter': 'b1-bis',
   'fr_lvt_bofors': 'lvt-4-zis-2',
-  'fr_amx_13_chaffee': 'amx-13-chaffee',
+  'fr_amx_13_chaffee': 'amx-13',
   'fr_amx_13_fl_11': 'amx-13',
   'fr_m4a4_sherman': 'm4a4-sherman',
   'fr_arl_44_acl1': 'arl-44',

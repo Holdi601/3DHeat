@@ -995,9 +995,6 @@ G['m24-chaffee'] = ww2({
   turret: M24_T, gun: { length: 2.1, calibre: 0.075, at: 0.45 },
   turretParts: (t) => [cupola(t, -0.3, -0.45, 0.3, 0.18)],
 });
-// AMX Chaffee: French M24s re-armed with the AMX-13's FL-10 oscillating turret and its long 75 mm on the M24's ring -
-// the M24's hull and running gear, not the AMX-13's (the turret as the amx-13 figure draws it).
-G['amx-13-chaffee'] = { ...G['m24-chaffee'], turret: turret(-0.2, [[-1.6, 0.8], [-1.2, 1.0], [0.6, 1.0], [1.2, 0.6]], [[-1.6, 0.85], [0.6, 0.9], [1.2, 0.5]], 6, 1.15), turrets: undefined, guns: [{ mount: 'turret', length: 3.5, calibre: 0.075, muzzle: true, at: 0.45 }] };
 // M26 Pershing: six road wheels and five return rollers, the rear sprocket, the long hull with its sloped glacis,
 // the big cast turret with the 90 mm and its brake (hull 6.33 x 3.51 m, 2.78 m; 8.65 m with the gun).
 const M26_T = turret(-0.3, [[-1.85, 0.75], [-1.6, 1.15], [0.6, 1.25], [1.25, 0.95], [1.45, 0.6]], [[-1.85, 0.5], [-1.4, 0.75], [0.6, 0.8], [1.45, 0.5]], 3, 1.5);
@@ -1091,9 +1088,7 @@ G['m4a3e2-76'] = sherman({ L: 5.9, W: 2.97, glacisX: 1.1, deck: 1.95, turret: JU
     track: [[-3.3, 0], [3.2, 0], [3.95, 1.1], [3.6, 1.65], [-3.7, 1.65], [-3.98, 0.9]],
     wheels: [], r: 0.2, solid: true,
   };
-  // The LVT(A)-1 on the LVT-2's armoured hull, its roof as high as the LVT-4's (2.49 m published), the turret on it to
-  // 3.07 m (10 ft 1 in; the LVT(A)-4 3.11 m) - not the LVT-4's cargo walls with the turret on them.
-  G['lvt-a1'] = ww2({ ...lvt, cls: 'light-tank', deck: 2.47, top: [[-3.98, 2.05], [-3.9, 2.47], [2.8, 2.47], [3.98, 1.25]], turret: turret(0.6, [[-0.85, 0.55], [-0.6, 0.75], [0.55, 0.78], [0.85, 0.55]], [[-0.85, 0.58], [0.85, 0.6]], 4, 0.9), gun: { length: 1.4, calibre: 0.037, at: 0.45 } });
+  G['lvt-a1'] = ww2({ ...lvt, cls: 'light-tank', turret: turret(0.6, [[-0.85, 0.55], [-0.6, 0.75], [0.55, 0.78], [0.85, 0.55]], [[-0.85, 0.58], [0.85, 0.6]], 4, 0.9), gun: { length: 1.4, calibre: 0.037, at: 0.45 } });
   const m = mantlet(2.0, 1.5, 1.75, 2.45, 0.2, 0.15);
   G['lvt-4-zis-2'] = ww2({ ...lvt, turret: m, guns: [fire(m, 2.8, 0.057)], parts: [part(2.0, [[1.65, 0.75], [1.72, 0.75]], [[1.65, 2.75], [1.72, 2.75]], 2.0, 16)] });
 }
