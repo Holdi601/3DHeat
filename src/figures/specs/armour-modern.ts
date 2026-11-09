@@ -318,13 +318,17 @@ G['ariete-amv'] = { ...ARIETE, addOns: [tb(-0.2, 0.7, 0.95, 0.4, 0.4, 0.4), tb(1
 
 // Open running gear, no skirts: six road wheels, the return rollers above (M48 five, M60 three; estimates), the idler
 // at the front and the sprocket high at the back (M48 hull 6.82 x 3.63 m; M60 6.95 x 3.63 m).
-const PATTON_RUN = run(6.8, 1.02, [3.3, 0.68], [-3.4, 0.78], -2.55, 2.5);
-const PATTON_WHEELS = [-2.3, -1.42, -0.54, 0.34, 1.22, 2.1];
+// Track on the ground between the end wheels: M60 4.23 m, M48 4.0 m (afvdatabase.com, from the TMs); the 0.66 m wheels
+// evenly between, the ground run ending half a wheel radius past them.
+const PATTON_RUN = run(6.8, 1.02, [3.3, 0.68], [-3.4, 0.78], -2.38, 2.18);
+const PATTON_WHEELS = [-2.22, -1.37, -0.52, 0.32, 1.17, 2.02];
+const M48_WHEELS = [-2.1, -1.3, -0.5, 0.3, 1.1, 1.9];
+const M48_RUN = run(6.8, 1.02, [3.3, 0.68], [-3.4, 0.78], -2.27, 2.07);
 const M19_CUPOLA: AddOn[] = [{ on: 'turret', kind: 'drum', at: [-0.4, 0.68, 1.12], size: [0.9, 0.9, 0.48] }, tb(0.0, 0.68, 1.2, 0.9, 0.07, 0.07, DARK)];
 const PATTON: GroundSpec = { chassis: 'tracked', length: 6.95, width: 3.63, hullHeight: 1.65, roadWheels: 6, roadWheelRadius: 0.33, trackProfile: PATTON_RUN, running: { wheels: PATTON_WHEELS, rollers: [-1.6, 0, 1.6] }, hullOutline: { top: [[-3.47, 1.35], [-3.3, 1.65], [1.4, 1.65], [3.0, 1.15], [3.47, 0.9]], bottom: [[-3.47, 1.0], [3.2, 1.0], [3.47, 0.9]], plan: [[-3.47, 1.55], [2.6, 1.6], [3.47, 1.15]], round: 4, stations: 14 } };
 const M48_TURRET = turret(0.1, [[-1.9, 0.8], [-1.5, 1.3], [0.2, 1.5], [1.2, 1.3], [1.75, 0.8], [1.9, 0.45]], [[-1.9, 0.4], [-1.3, 0.8], [0.0, 0.9], [1.2, 0.65], [1.9, 0.35]], 2.4, 1.85);
 // M48 Patton (1953): the round "turtle" cast turret, five return rollers, the 90 mm with its blast deflector; M48A5 the 105.
-G['m48-patton'] = { cls: 'mbt', ...PATTON, length: 6.82, running: { wheels: PATTON_WHEELS, rollers: [-2.0, -1.0, 0, 1.0, 2.0] }, turret: M48_TURRET, guns: [{ mount: 'turret', length: 4.4, calibre: 0.09, muzzle: true, extractor: 0.75, at: 0.45 }], addOns: M19_CUPOLA };
+G['m48-patton'] = { cls: 'mbt', ...PATTON, length: 6.82, trackProfile: M48_RUN, running: { wheels: M48_WHEELS, rollers: [-2.0, -1.0, 0, 1.0, 2.0] }, turret: M48_TURRET, guns: [{ mount: 'turret', length: 4.4, calibre: 0.09, muzzle: true, extractor: 0.75, at: 0.45 }], addOns: M19_CUPOLA };
 const M60A1_TURRET = turret(0.0, [[-2.1, 0.85], [-1.6, 1.35], [0.2, 1.55], [1.1, 1.35], [2.0, 0.7], [2.35, 0.4]], [[-2.1, 0.45], [-1.4, 0.85], [0.1, 0.92], [1.2, 0.7], [2.35, 0.35]], 2.8, 2.3);
 const M60_GUN: GunSpec = { mount: 'turret', length: 5.4, calibre: 0.105, extractor: 0.6, at: 0.45 };
 const M60_RACK = tb(-2.35, 0, 0.45, 0.45, 2.0, 0.4, DARK);
@@ -1867,12 +1871,12 @@ const collar = (x: number, r: number, h: number) => turret(x, [[-r, r * 0.6], [-
 // T54E1 (1956; the M48's hull and running gear, 6.82 x 3.63 m, about 3.1 m high: estimate): the oscillating turret - a low
 // collar on the ring, the long narrow upper body pivoting on it with the autoloader's bustle far out over the engine deck -
 // and the long 120 mm T123E6 with its bore evacuator.
-G['t54e1'] = { cls: 'mbt', ...PATTON, length: 6.82, running: { wheels: PATTON_WHEELS, rollers: [-2.0, -1.0, 0, 1.0, 2.0] }, turret: collar(0.15, 1.45, 0.48),
+G['t54e1'] = { cls: 'mbt', ...PATTON, length: 6.82, trackProfile: M48_RUN, running: { wheels: M48_WHEELS, rollers: [-2.0, -1.0, 0, 1.0, 2.0] }, turret: collar(0.15, 1.45, 0.48),
   turrets: [turret(-0.45, [[-3.0, 0.7], [-2.5, 0.92], [-0.6, 1.05], [0.9, 1.05], [1.7, 0.75], [2.15, 0.4]], [[-3.0, 0.3], [-2.5, 0.6], [-0.3, 0.82], [1.0, 0.75], [2.15, 0.32]], 3, 2.1, { up: 0.25 })],
   guns: [{ mount: 'turret', turret: 1, length: 5.9, calibre: 0.12, extractor: 0.6, at: 0.42 }], addOns: [td(-0.6, 0.6, 1.32, 0.7, 0.35), tb(-0.3, 0.6, 1.38, 0.8, 0.07, 0.07, DARK)] };
 // T54E2 (1957; the M48's hull, about 3.0 m high: estimate): a conventional cast turret, its long rounded bustle holding the
 // autoloader overhanging the engine deck, the same 120 mm with its evacuator.
-G['t54e2'] = { cls: 'mbt', ...PATTON, length: 6.82, running: { wheels: PATTON_WHEELS, rollers: [-2.0, -1.0, 0, 1.0, 2.0] },
+G['t54e2'] = { cls: 'mbt', ...PATTON, length: 6.82, trackProfile: M48_RUN, running: { wheels: M48_WHEELS, rollers: [-2.0, -1.0, 0, 1.0, 2.0] },
   turret: turret(0.05, [[-2.95, 0.75], [-2.5, 1.05], [-1.2, 1.35], [0.3, 1.5], [1.3, 1.3], [1.95, 0.7]], [[-2.95, 0.4], [-2.4, 0.72], [-1.0, 0.92], [0.3, 1.0], [1.3, 0.72], [1.95, 0.4]], 2.6, 1.9),
   guns: [{ mount: 'turret', length: 5.9, calibre: 0.12, extractor: 0.6, at: 0.45 }], addOns: [ringOf(2.3), td(-0.5, 0.65, 1.12, 0.75, 0.35), tb(-0.2, 0.65, 1.2, 0.8, 0.07, 0.07, DARK)] };
 // M103 hull (6.98 x 3.76 m): seven road wheels and six return rollers, the rounded cast nose.

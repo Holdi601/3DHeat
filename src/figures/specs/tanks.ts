@@ -194,18 +194,37 @@ G['t-80b'] = { cls: 'mbt', ...T80 };
 G['t-80u'] = { cls: 'mbt', ...T80, turret: turret(-0.7, [[-1.5, 0.8], [-1.15, 1.25], [-0.2, 1.48], [0.6, 1.62], [1.55, 1.6], [1.85, 1.15], [1.9, 0.5]], [[-1.5, 0.38], [-0.9, 0.7], [-0.1, 0.78], [0.6, 0.77], [0.8, 0.62], [1.85, 0.6], [1.9, 0.22]], 5, 1.75) };
 // T-64BV: small road wheels (0.55 m) close together, a low small turret with Kontakt-1 (6.54 x 3.42 m, 2.17 m).
 G['t-64bv'] = { cls: 'mbt', ...T80, length: 6.54, width: 3.42, roadWheelRadius: 0.28, trackProfile: run(6.4, 0.85, [3.2, 0.58], [-3.2, 0.66], -2.75, 2.7), hullOutline: hull(6.54, 3.42, 1.4, 0.78, 1.8, 0.95, 0.1), turret: turret(-0.65, [[-1.4, 0.8], [-1.1, 1.2], [-0.2, 1.35], [0.8, 1.38], [1.3, 1.1], [1.55, 0.45]], [[-1.4, 0.35], [-0.8, 0.66], [0.2, 0.72], [1.0, 0.64], [1.55, 0.32]], 3, 1.45) };
-// T-55 / T-54: five big road wheels with a gap behind the first, no return rollers; the round "frying pan" turret well forward (6.2 x 3.27 m, 2.35 m).
+// T-55 / T-54: five big road wheels with a gap behind the first, no return rollers; the round "frying pan" turret well forward (6.2 x 3.27 m, 2.40 m).
+// The wheel places (the space behind the first), the idler and sprocket, the short upper glacis and the dome's place
+// and profile from the T-54 flank drawing in USAREUR Pam 30-60-1, Vol. III (1973), scaled by its tabulated 3.84 m of
+// track on the ground; the 2.40 m height (over the cupola), 0.425 m clearance and 1.75 m bore from its table (public
+// domain). The 0.83 m wheels as published.
 G['t-55a'] = {
   cls: 'mbt', chassis: 'tracked', length: 6.2, width: 3.27, hullHeight: 1.45, roadWheels: 5, roadWheelRadius: 0.41,
-  trackProfile: run(6.0, 0.85, [3.0, 0.62], [-3.0, 0.68], -2.4, 2.35),
-  hullOutline: hull(6.2, 3.27, 1.45, 0.8, 1.6, 0.95, 0.2),
-  turret: turret(0.45, [[-1.3, 0.7], [-1.0, 1.1], [-0.1, 1.25], [0.8, 1.15], [1.25, 0.75], [1.4, 0.35]], [[-1.3, 0.35], [-0.8, 0.7], [0.0, 0.82], [0.8, 0.66], [1.4, 0.25]], 2.2, 1.25),
-  guns: [{ mount: 'turret', length: 5.4, calibre: 0.1, extractor: 0.88, at: 0.4 }],
+  trackProfile: run(6.0, 0.85, [3.09, 0.71], [-2.94, 0.75], -2.1, 2.13),
+  running: { wheels: [1.93, 0.75, -0.14, -1.03, -1.9], rollers: [] },
+  hullOutline: hull(6.2, 3.27, 1.45, 0.8, 1.0, 1.05, 0.2),
+  turret: turret(0.27, [[-1.42, 0.7], [-1.1, 1.1], [-0.1, 1.25], [0.8, 1.15], [1.25, 0.75], [1.42, 0.35]], [[-1.42, 0.3], [-1.37, 0.54], [-1.22, 0.72], [-0.77, 0.78], [-0.17, 0.81], [0.43, 0.78], [0.93, 0.66], [1.23, 0.44], [1.42, 0.16]], 2.2, 1.25),
+  guns: [{ mount: 'turret', length: 5.4, calibre: 0.1, extractor: 0.88, at: 0.37 }],
+  cupola: true,
 };
-G['t-54'] = { ...G['t-55a'] };
-G['type-59'] = { ...G['t-55a'] };
+// T-54 / Type 59: the T-55 with the loader's cupola on the right, the dome ventilator in front of it and the 12.7 mm
+// DShK (1.63 m) on the loader's hatch (FM 100-2-3, public domain); the cupola's and the dome's sizes are estimates.
+G['t-54'] = {
+  ...G['t-55a'],
+  addOns: [
+    { on: 'turret', kind: 'drum', at: [-0.57, 0.55, 0.86], size: [0.6, 0.6, 0.16] },
+    { on: 'turret', kind: 'drum', at: [0.08, 0.55, 0.87], size: [0.3, 0.3, 0.14] },
+    { on: 'turret', kind: 'box', at: [-0.57, 0.55, 1.05], size: [0.12, 0.12, 0.26] },
+    { on: 'turret', kind: 'tube', at: [-0.97, 0.55, 1.18], to: [0.66, 0.55, 1.18], size: [0.07, 0.04, 0.07] },
+  ],
+};
+G['type-59'] = { ...G['t-54'] };
 // T-62: longer hull, the turret further back, the 115 mm with its extractor a third back from the muzzle (6.63 x 3.52 m, 2.4 m).
-G['t-62'] = { ...G['t-55a'], length: 6.63, width: 3.52, trackProfile: run(6.45, 0.85, [3.22, 0.62], [-3.22, 0.68], -2.6, 2.55), hullOutline: hull(6.63, 3.52, 1.45, 0.8, 1.7, 0.95, 0.2), turret: turret(0.2, [[-1.4, 0.75], [-1.05, 1.2], [-0.1, 1.38], [0.85, 1.25], [1.3, 0.8], [1.45, 0.35]], [[-1.4, 0.35], [-0.85, 0.72], [0.0, 0.84], [0.85, 0.68], [1.45, 0.25]], 2.2, 1.3), guns: [{ mount: 'turret', length: 5.6, calibre: 0.115, extractor: 0.68, at: 0.4 }] };
+// The three front road wheels close together, large gaps before the fourth and fifth, the egg-shaped dome over the
+// third, the idler, sprocket and short upper glacis from the T-62 left-flank drawing in USAREUR Pam 30-60-1, Vol. III
+// (1973), scaled by its tabulated 4.15 m of track on the ground; 2.40 m over the cupola from its table (public domain).
+G['t-62'] = { ...G['t-55a'], length: 6.63, width: 3.52, trackProfile: run(6.45, 0.85, [3.08, 0.7], [-3.16, 0.79], -2.32, 2.23), running: { wheels: [2.03, 1.06, 0.1, -1.01, -2.12], rollers: [] }, hullOutline: hull(6.63, 3.52, 1.45, 0.8, 1.1, 1.04, 0.2), turret: turret(0.21, [[-1.33, 0.75], [-1.0, 1.2], [-0.1, 1.38], [0.8, 1.25], [1.2, 0.8], [1.32, 0.35]], [[-1.33, 0.12], [-1.16, 0.44], [-0.81, 0.71], [-0.31, 0.82], [0.19, 0.84], [0.69, 0.76], [0.99, 0.64], [1.32, 0.26]], 2.2, 1.3), guns: [{ mount: 'turret', length: 5.6, calibre: 0.115, extractor: 0.68, at: 0.52 }] };
 G['t-62m'] = { ...G['t-62'], turrets: [{ x: 1.25, length: 0.4, width: 1.6, height: 0.4, shape: 'box', up: 0.3 }] };
 
 // ---------------------------------------------------------------- Second World War
@@ -344,14 +363,19 @@ G['strv-103'] = {
 // M41 Walker Bulldog: a light tank with a long boxy turret and bustle (hull 5.82 x 3.2 m, 2.73 m). Its open running
 // gear: five 0.65 m road wheels and three return rollers a side, the sprocket at the back and the idler at the front
 // both clear of the ground; about 3.1 m of track on the ground (the published 10.2 psi on two 21 in tracks at 23.5 t).
-G['m41'] = { ...G['leopard-1a3'], cls: 'light-tank', length: 5.82, width: 3.2, roadWheels: 5, roadWheelRadius: 0.32, trackProfile: run(5.7, 0.9, [2.85, 0.6], [-2.85, 0.65], -1.55, 1.55), running: { wheels: [1.42, 0.71, 0, -0.71, -1.42], rollers: [1.05, 0, -1.05] }, hullOutline: hull(5.82, 3.2, 1.6, 0.86, 1.2, 1.15, 0.2, 8), turret: turret(-0.1, [[-1.9, 0.95], [-1.4, 1.25], [0.8, 1.3], [1.4, 1.05], [1.6, 0.6]], [[-1.9, 0.55], [-1.3, 0.85], [0.8, 0.9], [1.6, 0.55]], 6, 1.6), guns: [{ mount: 'turret', length: 3.6, calibre: 0.076, extractor: 0.6, muzzle: true, at: 0.45 }] };
+// M41: 3.23 m of track on the ground between the end wheels, 0.65 m wheels, three return rollers (afvdatabase.com, from the TMs).
+G['m41'] = { ...G['leopard-1a3'], cls: 'light-tank', length: 5.82, width: 3.2, roadWheels: 5, roadWheelRadius: 0.32, trackProfile: run(5.7, 0.9, [2.85, 0.6], [-2.85, 0.65], -1.78, 1.78), running: { wheels: [1.615, 0.81, 0, -0.81, -1.615], rollers: [1.05, 0, -1.05] }, hullOutline: hull(5.82, 3.2, 1.6, 0.86, 1.2, 1.15, 0.2, 8), turret: turret(-0.1, [[-1.9, 0.95], [-1.4, 1.25], [0.8, 1.3], [1.4, 1.05], [1.6, 0.6]], [[-1.9, 0.55], [-1.3, 0.85], [0.8, 0.9], [1.6, 0.55]], 6, 1.6), guns: [{ mount: 'turret', length: 3.6, calibre: 0.076, extractor: 0.6, muzzle: true, at: 0.45 }] };
 // M103 (hull 6.98 x 3.76 m) and Conqueror (hull 7.72 x 3.99 m): heavy tanks with very long cast turrets and big guns,
 // each on its own hull: the M103's cast hull on seven road wheels with no skirts, the Conqueror's welded hull on four
 // Horstmann pairs (eight road wheels) under its skirt plates.
 G['m103'] = { ...G['centurion'], cls: 'heavy-tank', length: 6.98, width: 3.76, roadWheels: 7, skirts: false, trackProfile: run(6.8, 1.0, [3.4, 0.7], [-3.4, 0.7], -2.75, 2.7), hullOutline: hull(6.98, 3.76, 1.8, 0.95, 1.9, 1.1, 0.25, 4), turret: turret(0.1, [[-2.6, 1.0], [-2.0, 1.6], [0.6, 1.7], [1.5, 1.4], [1.9, 0.7]], [[-2.6, 0.55], [-1.6, 1.0], [0.6, 1.05], [1.9, 0.5]], 2.6, 1.85), guns: [{ mount: 'turret', length: 7.0, calibre: 0.12, extractor: 0.55, at: 0.45 }] };
 G['conqueror'] = { ...G['m103'], length: 7.72, width: 3.99, roadWheels: 8, skirts: true, trackProfile: run(7.55, 1.0, [3.8, 0.75], [-3.8, 0.7], -3.05, 3.0), hullOutline: hull(7.72, 3.99, 1.8, 0.95, 1.9, 1.15, 0.25, 8), turret: turret(-0.2, [[-2.8, 1.2], [-2.2, 1.65], [0.6, 1.7], [1.5, 1.35], [1.9, 0.7]], [[-2.8, 0.75], [-2.0, 1.05], [0.6, 1.1], [1.9, 0.6]], 4, 1.85) };
-// T-10M: the IS-family hull lengthened, seven road wheels, a flatter cast turret, the long 122 mm (hull 7.25 x 3.38 m, 2.59 m).
-G['t-10m'] = { ...G['is-2'], length: 7.25, width: 3.38, roadWheels: 7, trackProfile: run(7.1, 0.95, [3.55, 0.66], [-3.55, 0.66], -2.9, 2.85), hullOutline: hull(7.25, 3.38, 1.6, 0.9, 1.7, 1.0, 0.25, 6), turret: turret(0.0, [[-1.7, 0.85], [-1.2, 1.4], [0.6, 1.45], [1.5, 1.0], [1.7, 0.5]], [[-1.7, 0.45], [-0.9, 0.85], [0.6, 0.9], [1.7, 0.45]], 2.4, 1.7), guns: [{ mount: 'turret', length: 6.0, calibre: 0.122, muzzle: true, extractor: 0.75, at: 0.45 }] };
+// T-10M: the IS-family hull lengthened, seven small road wheels and three return rollers, a flatter cast turret, the long
+// 122 mm. The wheel, roller, idler and sprocket places, the hull's deck, fender line and nose and the turret's place
+// and side profile from the T-10M flank drawing in USAREUR Pam 30-60-1, Vol. III (1973), scaled by its tabulated
+// 4.6 m of track on the ground; 7.04 x 3.566 m without the gun, 2.43 m to the turret roof, 0.72 m tracks, 0.43 m
+// clearance and the bore 1.83 m up from its table (public domain).
+G['t-10m'] = { ...G['is-2'], length: 7.04, width: 3.566, hullHeight: 1.54, roadWheels: 7, roadWheelRadius: 0.3, trackWidth: 0.72, trackProfile: run(7.0, 1.02, [3.36, 0.74], [-3.37, 0.63], -2.46, 2.44), running: { wheels: [2.29, 1.51, 0.75, -0.01, -0.77, -1.54, -2.31], rollers: [1.11, -0.41, -1.92], rollerRadius: 0.19 }, hullOutline: hull(7.04, 3.566, 1.54, 1.0, 1.38, 1.16, 0.25, 6), turret: turret(0.57, [[-1.55, 0.85], [-1.1, 1.4], [0.4, 1.45], [1.2, 1.0], [1.57, 0.5]], [[-1.55, 0.3], [-1.51, 0.51], [-1.0, 0.89], [0.51, 0.87], [0.85, 0.76], [1.57, 0.34]], 2.4, 1.6), guns: [{ mount: 'turret', length: 6.0, calibre: 0.122, muzzle: true, extractor: 0.75, at: 0.33 }] };
 // Maus: the super-heavy - a huge box hull, skirts to the ground, a massive turret (hull 9.03 x 3.67 m, 3.63 m).
 G['maus'] = {
   cls: 'heavy-tank', chassis: 'tracked', length: 9.03, width: 3.67, hullHeight: 2.3, roadWheels: 12, roadWheelRadius: 0.27, skirts: true,

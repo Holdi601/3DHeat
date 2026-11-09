@@ -82,6 +82,8 @@ export const OVERALL: Record<string, number> = {
   'm60a3': 9.44,
   'magach-6': 9.44,
   'magach-7': 9.44,
+  'm46-patton': 8.48,
+  'm47-patton': 8.51,
   'm48-patton': 8.69,
   'm103': 11.32,
   'm41': 8.21,
