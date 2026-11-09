@@ -790,6 +790,8 @@ G['pz-38t'] = ww2({ ...PZ38, turret: PZ38_T, gun: { length: 1.0, calibre: 0.037,
     wheels: even(4, -1.35, 1.35), r: 0.41, rollers: [0],
     turret: m,
     guns: [fire(m, 1.85, 0.075, { muzzle: true })],
+    // The remote-fired MG 34 behind its shield on the roof over the loader (left), to the 2.17 m overall.
+    parts: [part(1.85, [[-0.55, 0.17], [-0.1, 0.17]], [[-0.55, 2.17], [-0.1, 2.17]], 1.84, 6, -0.45)],
   });
 }
 // Marder III Ausf. H: the PaK 40 behind its shield in an open compartment in the middle of the 38(t) hull

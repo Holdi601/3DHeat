@@ -397,8 +397,10 @@ G['pt-76'] = { cls: 'light-tank', chassis: 'tracked', length: 6.91, width: 3.14,
 // FV101 Scorpion (1972): a small aluminium hull, five big road wheels, a small box turret with the short 76 mm (4.79 x 2.2 m, 2.1 m);
 // FV107 Scimitar the same with the long thin 30 mm RARDEN.
 const CVRT: GroundSpec = { chassis: 'tracked', length: 4.79, width: 2.2, hullHeight: 1.35, roadWheels: 5, roadWheelRadius: 0.3, trackProfile: run(4.6, 0.8, [2.3, 0.55], [-2.3, 0.6], -1.8, 1.9), running: { wheels: [-1.6, -0.8, 0, 0.8, 1.6] }, hullOutline: { top: [[-2.4, 1.1], [-2.3, 1.35], [0.7, 1.35], [2.4, 0.85]], bottom: [[-2.4, 0.6], [2.0, 0.6], [2.4, 0.85]], plan: [[-2.4, 1.1], [2.4, 1.0]], round: 10, stations: 10 }, turret: turret(-0.3, [[-0.9, 0.8], [-0.6, 0.95], [0.6, 0.95], [0.95, 0.7]], [[-0.9, 0.55], [0.6, 0.6], [0.95, 0.4]], 8, 0.9) };
-G['fv101-scorpion'] = { cls: 'light-tank', ...CVRT, guns: [{ mount: 'turret', length: 1.6, calibre: 0.076, at: 0.45 }] };
-G['fv107-scimitar'] = { cls: 'light-tank', ...CVRT, guns: [{ mount: 'turret', length: 2.6, calibre: 0.03, at: 0.45 }] };
+// The commander's periscope cupola on the turret's left, to 2.096 m overall (published for Scorpion and Scimitar).
+const CVRT_CUPOLA: AddOn = { on: 'turret', kind: 'drum', at: [-0.15, -0.35, 0.648], size: [0.6, 0.6, 0.196] };
+G['fv101-scorpion'] = { cls: 'light-tank', ...CVRT, guns: [{ mount: 'turret', length: 1.6, calibre: 0.076, at: 0.45 }], addOns: [CVRT_CUPOLA] };
+G['fv107-scimitar'] = { cls: 'light-tank', ...CVRT, guns: [{ mount: 'turret', length: 2.6, calibre: 0.03, at: 0.45 }], addOns: [CVRT_CUPOLA] };
 // M551 Sheridan (1967): a light aluminium hull, five road wheels, the turret with the short fat 152 mm and the shielded cupola (6.3 x 2.82 m, 2.95 m).
 G['m551-sheridan'] = { cls: 'light-tank', chassis: 'tracked', length: 6.3, width: 2.82, hullHeight: 1.6, roadWheels: 5, roadWheelRadius: 0.38, trackProfile: run(6.0, 0.9, [3.0, 0.6], [-3.0, 0.65], -2.4, 2.4), running: { wheels: [-2.1, -1.05, 0, 1.05, 2.1] }, hullOutline: hull(6.3, 2.82, 1.6, 0.9, 1.6, 1.0, 0.2, 6), turret: turret(-0.1, [[-1.5, 0.9], [-1.1, 1.2], [0.6, 1.25], [1.25, 0.9], [1.4, 0.5]], [[-1.5, 0.5], [-0.9, 0.75], [0.6, 0.78], [1.4, 0.45]], 4, 1.35), guns: [{ mount: 'turret', length: 1.5, calibre: 0.152, at: 0.45 }], addOns: [{ on: 'turret', kind: 'drum', at: [-0.3, 0.55, 0.98], size: [0.7, 0.7, 0.4] }, tb(0.15, 0.55, 1.05, 0.08, 0.9, 0.55)] };
 // 2S25 Sprut-SD (2005): a long airborne hull, seven road wheels, a low welded turret with the long 125 mm (7.08 x 3.15 m, 2.72 m).
@@ -494,7 +496,9 @@ const TOW_BOX = tb(-0.1, -1.3, 0.5, 1.3, 0.45, 0.5);
 const BRADLEY_A2 = { ...BRADLEY, width: 3.6 };
 const APPLIQUE = [hb(-0.7, 1.72, 1.5, 5.0, 0.14, 0.7, M), tb(1.25, 0, 0.42, 0.25, 1.9, 0.55), ...skirtBoxes(-3.0, 3.0, 1.82, 0.62, 0.62, 5, 0.12)];
 // M2 (A0, 1981): plain hull sides, light skirts.
-G['m2-bradley'] = { cls: 'ifv', ...BRADLEY, addOns: [TOW_BOX] };
+// The commander's hatch ring with its periscopes on the turret's right rear, 2.97 m over it (117 in, afvdatabase).
+const BRADLEY_HATCH: AddOn = { on: 'turret', kind: 'drum', at: [-0.4, 0.45, 0.83], size: [0.75, 0.75, 0.18] };
+G['m2-bradley'] = { cls: 'ifv', ...BRADLEY, addOns: [TOW_BOX, BRADLEY_HATCH] };
 // M2A2 (1988): bolted appliqué over the hull's sides and the turret's front, heavy skirts; the ODS with the laser rangefinder and stowage.
 G['m2a2-bradley'] = { cls: 'ifv', ...BRADLEY_A2, addOns: [TOW_BOX, ...APPLIQUE] };
 G['m2a2-ods-bradley'] = { cls: 'ifv', ...BRADLEY_A2, addOns: [TOW_BOX, ...APPLIQUE, tb(0.9, 0.7, 0.85, 0.4, 0.35, 0.25), hb(-2.6, 0, 2.15, 1.0, 2.6, 0.2, DARK)] };

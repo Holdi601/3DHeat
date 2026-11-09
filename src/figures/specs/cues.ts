@@ -1147,6 +1147,7 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'low hull sloped on every side', check: (s) => hullShape(s) && s.hullHeight < 2 },
     { cue: 'gun right of the centre in a Saukopf in the glacis', check: (s) => saukopf(s) && (s.turret?.side ?? 0) > 0 },
     { cue: 'four large road wheels a side', check: (s) => wheels(s) === 4 },
+    { cue: 'remote MG with its shield on the roof', check: (s) => partTop(s) > 2.1 },
   ]),
   ferdinand: ground(['ferdinand', 'elefant'], [
     { cue: 'six road wheels in three Porsche bogies', check: (s) => wheels(s) === 6 },
