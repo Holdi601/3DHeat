@@ -1564,10 +1564,6 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'six road wheels, three return rollers', check: run(6, 3) },
     { cue: 'sloped hull sides above the tracks', check: lean(0.25) },
   ]),
-  'amx-13-chaffee': ground('amx-13-chaffee', [
-    { cue: "the M24's five road wheels and three return rollers", check: (s) => wheels(s) === 5 && rollers(s) === 3 },
-    { cue: 'long FL-10 turret with its bustle, the long 75 mm with a muzzle brake', check: (s) => muzzle(s) && cal(0.075, 0.076)(s) && (s.turret?.length ?? 0) > 2.5 },
-  ]),
   'amx-13': ground('amx-13', [
     { cue: 'oscillating turret set far back', check: turretAt(-9, -0.5) },
     { cue: 'long 75 mm with a muzzle brake', check: (s) => muzzle(s) && gunLen(4)(s) },

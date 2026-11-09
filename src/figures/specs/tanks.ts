@@ -204,7 +204,7 @@ G['t-55a'] = {
   trackProfile: run(6.0, 0.85, [3.09, 0.71], [-2.94, 0.75], -2.1, 2.13),
   running: { wheels: [1.93, 0.75, -0.14, -1.03, -1.9], rollers: [] },
   hullOutline: hull(6.2, 3.27, 1.45, 0.8, 1.0, 1.05, 0.2),
-  turret: turret(0.27, [[-1.42, 0.7], [-1.1, 1.1], [-0.1, 1.25], [0.8, 1.15], [1.25, 0.75], [1.42, 0.35]], [[-1.42, 0.3], [-1.37, 0.54], [-1.22, 0.72], [-0.77, 0.78], [-0.17, 0.81], [0.43, 0.78], [0.93, 0.66], [1.23, 0.44], [1.42, 0.16]], 2.2, 1.25),
+  turret: turret(0.27, [[-1.52, 0.6], [-1.2, 1.1], [-0.1, 1.25], [0.8, 1.15], [1.25, 0.75], [1.42, 0.35]], [[-1.52, 0.06], [-1.39, 0.24], [-1.28, 0.56], [-1.08, 0.8], [-0.77, 0.85], [0.04, 0.87], [0.45, 0.77], [0.86, 0.67], [1.27, 0.52], [1.42, 0.3]], 2.2, 1.25),
   guns: [{ mount: 'turret', length: 5.4, calibre: 0.1, extractor: 0.88, at: 0.37 }],
   cupola: true,
   // The gunner's IR searchlight over the gun's right, its lens forward (place and size from the flank drawing).
@@ -227,7 +227,7 @@ G['type-59'] = { ...G['t-54'] };
 // The three front road wheels close together, large gaps before the fourth and fifth, the egg-shaped dome over the
 // third, the idler, sprocket and short upper glacis from the T-62 left-flank drawing in USAREUR Pam 30-60-1, Vol. III
 // (1973), scaled by its tabulated 4.15 m of track on the ground; 2.40 m over the cupola from its table (public domain).
-G['t-62'] = { ...G['t-55a'], length: 6.63, width: 3.52, trackProfile: run(6.45, 0.85, [3.08, 0.7], [-3.16, 0.79], -2.32, 2.23), running: { wheels: [2.03, 1.06, 0.1, -1.01, -2.12], rollers: [] }, hullOutline: hull(6.63, 3.52, 1.45, 0.8, 1.1, 1.04, 0.2), turret: turret(0.21, [[-1.33, 0.75], [-1.0, 1.2], [-0.1, 1.38], [0.8, 1.25], [1.2, 0.8], [1.32, 0.35]], [[-1.33, 0.12], [-1.16, 0.44], [-0.81, 0.71], [-0.31, 0.82], [0.19, 0.84], [0.69, 0.76], [0.99, 0.64], [1.32, 0.26]], 2.2, 1.3), guns: [{ mount: 'turret', length: 5.6, calibre: 0.115, extractor: 0.68, at: 0.52 }], addOns: [{ on: 'turret', kind: 'tube', at: [1.09, 0.35, 0.79], to: [1.37, 0.35, 0.79], size: [0.34, 0.34, 0.34] }] };
+G['t-62'] = { ...G['t-55a'], length: 6.63, width: 3.52, trackProfile: run(6.45, 0.85, [3.08, 0.7], [-3.16, 0.79], -2.32, 2.23), running: { wheels: [2.03, 1.06, 0.1, -1.01, -2.12], rollers: [] }, hullOutline: hull(6.63, 3.52, 1.45, 0.8, 1.1, 1.04, 0.2), turret: turret(0.21, [[-1.38, 0.7], [-1.05, 1.2], [-0.1, 1.38], [0.8, 1.25], [1.2, 0.8], [1.32, 0.35]], [[-1.38, 0.15], [-1.29, 0.43], [-1.18, 0.55], [-1.06, 0.63], [-0.95, 0.7], [-0.83, 0.77], [-0.51, 0.84], [0.07, 0.84], [0.3, 0.82], [0.53, 0.79], [0.76, 0.74], [0.98, 0.66], [1.19, 0.5], [1.32, 0.26]], 2.2, 1.3), guns: [{ mount: 'turret', length: 5.6, calibre: 0.115, extractor: 0.68, at: 0.52 }], addOns: [{ on: 'turret', kind: 'tube', at: [1.09, 0.35, 0.79], to: [1.37, 0.35, 0.79], size: [0.34, 0.34, 0.34] }] };
 G['t-62m'] = { ...G['t-62'], turrets: [{ x: 1.25, length: 0.4, width: 1.6, height: 0.4, shape: 'box', up: 0.3 }] };
 
 // ---------------------------------------------------------------- Second World War
@@ -378,7 +378,7 @@ G['conqueror'] = { ...G['m103'], length: 7.72, width: 3.99, roadWheels: 8, skirt
 // and side profile from the T-10M flank drawing in USAREUR Pam 30-60-1, Vol. III (1973), scaled by its tabulated
 // 4.6 m of track on the ground; 7.04 x 3.566 m without the gun, 2.43 m to the turret roof, 0.72 m tracks, 0.43 m
 // clearance and the bore 1.83 m up from its table (public domain).
-G['t-10m'] = { ...G['is-2'], length: 7.04, width: 3.566, hullHeight: 1.54, roadWheels: 7, roadWheelRadius: 0.3, trackWidth: 0.72, trackProfile: run(7.0, 1.02, [3.36, 0.74], [-3.37, 0.63], -2.46, 2.44), running: { wheels: [2.29, 1.51, 0.75, -0.01, -0.77, -1.54, -2.31], rollers: [1.11, -0.41, -1.92], rollerRadius: 0.19 }, hullOutline: hull(7.04, 3.566, 1.54, 1.0, 1.38, 1.16, 0.25, 6), turret: turret(0.57, [[-1.55, 0.85], [-1.1, 1.4], [0.4, 1.45], [1.2, 1.0], [1.57, 0.5]], [[-1.55, 0.3], [-1.51, 0.51], [-1.0, 0.89], [0.51, 0.87], [0.85, 0.76], [1.57, 0.34]], 2.4, 1.6), guns: [{ mount: 'turret', length: 6.0, calibre: 0.122, muzzle: true, extractor: 0.75, at: 0.33 }] };
+G['t-10m'] = { ...G['is-2'], length: 7.04, width: 3.566, hullHeight: 1.54, roadWheels: 7, roadWheelRadius: 0.3, trackWidth: 0.72, trackProfile: run(7.0, 1.02, [3.36, 0.74], [-3.37, 0.63], -2.46, 2.44), running: { wheels: [2.29, 1.51, 0.75, -0.01, -0.77, -1.54, -2.31], rollers: [1.11, -0.41, -1.92], rollerRadius: 0.19 }, hullOutline: hull(7.04, 3.566, 1.54, 0.88, 1.38, 1.16, 0.25, 6), turret: turret(0.57, [[-1.55, 0.85], [-1.1, 1.4], [0.4, 1.45], [1.2, 1.0], [1.57, 0.5]], [[-1.55, 0.3], [-1.51, 0.51], [-1.0, 0.89], [0.51, 0.87], [0.85, 0.76], [1.57, 0.34]], 2.4, 1.6), guns: [{ mount: 'turret', length: 6.0, calibre: 0.122, muzzle: true, extractor: 0.75, at: 0.33 }] };
 // Maus: the super-heavy - a huge box hull, skirts to the ground, a massive turret (hull 9.03 x 3.67 m, 3.63 m).
 G['maus'] = {
   cls: 'heavy-tank', chassis: 'tracked', length: 9.03, width: 3.67, hullHeight: 2.3, roadWheels: 12, roadWheelRadius: 0.27, skirts: true,
