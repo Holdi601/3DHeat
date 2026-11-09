@@ -3167,7 +3167,7 @@ const WT_WW2: Record<string, string> = {
   'sw_strv_m39': 'strv-m39',
   'sw_strv_m39_td': 'strv-m39',
   'sw_strv_m40l': 'strv-m40l',
-  'sw_lago_1': 'landsverk-l60',
+  'sw_lago_1': 'strv-m42', // the 15 t Lago I was the Strv m/42's forerunner on its longer six-wheel hull
   'sw_vickers_mk_e_37': 't-26',
   'sw_bt_42': 'bt-42',
   'sw_sav_m43_1944': 'sav-m43-1944',
