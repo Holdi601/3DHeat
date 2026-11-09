@@ -416,13 +416,17 @@ G['centauro-2'] = { cls: 'tank-destroyer', ...CENTAURO, length: 8.26, axleAt: [0
 const barrel = (x: number, s: number, u: number, l: number, d = 0.07): AddOn => tb(x + l / 2, s, u, l, d, d, DARK);
 // BMP-1 / BMP-2 hull (6.74 x 2.94 m): the long ribbed glacis running back from a sharp bow to the turret, six road wheels
 // and three return rollers, the troop compartment's roof behind; the BMP-2 a little wider (3.15 m).
-const BMP_HULL = { top: [[-3.37, 1.5], [-3.2, 1.62], [0.2, 1.65], [3.37, 0.82]], bottom: [[-3.37, 0.85], [2.9, 0.75], [3.37, 0.82]], plan: [[-3.37, 1.42], [2.6, 1.47], [3.37, 1.05]], round: 8, stations: 12 } as GroundSpec['hullOutline'];
-const BMP: GroundSpec = { chassis: 'tracked', length: 6.74, width: 2.94, hullHeight: 1.65, roadWheels: 6, roadWheelRadius: 0.33, trackProfile: run(6.6, 0.9, [3.25, 0.62], [-3.3, 0.62], -2.75, 2.7), running: { wheels: [-2.45, -1.5, -0.55, 0.4, 1.35, 2.3], rollers: [-1.5, 0, 1.5] }, hullOutline: BMP_HULL };
-const BMP1_TURRET = turret(0.55, [[-0.9, 0.8], [-0.6, 1.0], [0.5, 1.0], [0.9, 0.7]], [[-0.9, 0.42], [0.3, 0.55], [0.9, 0.35]], 2.2, 0.9);
-const BMP2_TURRET = turret(0.4, [[-1.0, 0.95], [-0.7, 1.2], [0.5, 1.2], [1.0, 0.85]], [[-1.0, 0.55], [0.3, 0.7], [1.0, 0.45]], 2.4, 1.0);
-const GUN_73: GunSpec = { mount: 'turret', length: 1.4, calibre: 0.073, at: 0.5 };
+// The side profile (the bow's point 1.39 m up, the deck at 1.55 m from 2.0 m behind it, the sponsons' undersides), the
+// six close road wheels, the three rollers, the front sprocket and rear idler, the BMP-1 turret's place and profile
+// (its roof 2.0 m up), the 73 mm's and the Sagger rail's places from the BMP flank drawing in USAREUR Pam 30-60-1,
+// Vol. IV, scaled by its table's 3.6 m of track on the ground (public domain). The BMP-2 turret on the same ring.
+const BMP_HULL = { top: [[-3.37, 1.47], [-3.2, 1.55], [2.04, 1.55], [3.37, 1.39]], bottom: [[-3.37, 0.75], [-3.0, 0.95], [2.35, 0.95], [2.45, 0.8], [3.37, 1.36]], plan: [[-3.37, 1.42], [2.6, 1.47], [3.37, 1.05]], round: 8, stations: 12 } as GroundSpec['hullOutline'];
+const BMP: GroundSpec = { chassis: 'tracked', length: 6.74, width: 2.94, hullHeight: 1.55, roadWheels: 6, roadWheelRadius: 0.32, trackWidth: 0.3, trackProfile: run(6.6, 0.95, [2.55, 0.77], [-2.93, 0.69], -2.08, 1.83), running: { wheels: [-1.92, -1.09, -0.38, 0.29, 0.99, 1.67], rollers: [-1.59, 0, 1.32] }, hullOutline: BMP_HULL };
+const BMP1_TURRET = turret(-0.42, [[-0.73, 0.8], [-0.5, 1.0], [0.5, 1.0], [0.73, 0.7]], [[-0.73, 0.1], [-0.5, 0.46], [0.52, 0.46], [0.73, 0.1]], 2.2, 0.75);
+const BMP2_TURRET = turret(-0.42, [[-1.0, 0.95], [-0.7, 1.2], [0.5, 1.2], [1.0, 0.85]], [[-1.0, 0.55], [0.3, 0.7], [1.0, 0.45]], 2.4, 1.0);
+const GUN_73: GunSpec = { mount: 'turret', length: 1.55, calibre: 0.073, at: 0.72 };
 const GUN_2A42: GunSpec = { mount: 'turret', length: 2.9, calibre: 0.03, at: 0.5, elevation: 0.05 };
-const MALYUTKA = tb(0.85, 0, 0.72, 0.85, 0.14, 0.14, DARK);
+const MALYUTKA = tb(1.28, 0, 0.65, 1.0, 0.14, 0.14, DARK);
 const KONKURS = tb(-0.1, 0.18, 0.88, 1.25, 0.18, 0.18, DARK);
 // BMP-1 (1966): the small cone turret with the short 73 mm and the Malyutka rail over it.
 G['bmp-1'] = { cls: 'ifv', ...BMP, turret: BMP1_TURRET, guns: [GUN_73], addOns: [MALYUTKA] };
