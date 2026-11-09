@@ -234,16 +234,17 @@ N['fletcher'] = ship({
 });
 // Bismarck: the Atlantic bow with its sheer, four twin 38 cm turrets (Anton and Bruno forward, Caesar and Dora aft),
 // the tall forward tower, the single big funnel, the aft superstructure, six twin 15 cm turrets on the sides
-// (251 x 36 m).
+// (251 x 36 m). Deck line, turret places and heights, tower, funnel, aft superstructure and masts from the ONI 204
+// Tirpitz profile with its height scale (sources.md).
 N['bismarck-battleship'] = {
-  cls: 'battleship', length: 251, beam: 36, freeboard: 10,
-  hullOutline: hullOf([[125.5, 15.5, 0.3], [115, 14.0, 6.5], [95, 12.0, 14.5], [70, 10.5, 17.5], [0, 10.0, 18], [-70, 9.8, 17.5], [-105, 9.6, 13.5], [-125.5, 9.6, 8.0]]),
-  bodies: [blockOf(42, 16, 10, 22, 8, 2), blockOf(38, 22, 22, 32, 5, 2), blockOf(33, 26, 32, 39, 3), blockOf(-12, -42, 10, 21, 7.5, 0, 2), blockOf(-18, -30, 21, 27, 3.5)],
-  funnels: [{ x: 4, height: 16, diameter: 10 }],
-  masts: [{ x: 29, height: 40 }, { x: -24, height: 30 }],
+  cls: 'battleship', length: 251, beam: 36, freeboard: 7.1,
+  hullOutline: hullOf([[125.5, 9.6, 0.3], [115, 9.0, 6.5], [95, 8.1, 14.5], [70, 7.4, 17.5], [0, 7.1, 18], [-70, 7.0, 17.5], [-105, 6.9, 13.5], [-125.5, 6.8, 8.0]]),
+  bodies: [blockOf(39, 9, 7, 19.5, 8, 2), blockOf(27, 19, 19.5, 23, 5, 2), blockOf(18, 12, 23, 31.2, 3), blockOf(-15, -48, 7, 16.2, 7.5, 0, 2), blockOf(-19, -30, 16.2, 22, 3.5), blockOf(-34.5, -37.5, 16.2, 26.8, 1.5)],
+  funnels: [{ x: 0.5, height: 19.9, diameter: 10 }],
+  masts: [{ x: 7.6, height: 34 }, { x: -19.9, height: 40 }],
   turrets: [
-    { x: 82, size: 14, barrels: 2, length: 20, calibre: 0.38, kind: 'box' }, { x: 64, size: 14, barrels: 2, length: 20, calibre: 0.38, up: 4, kind: 'box' },
-    { x: -54, size: 14, barrels: 2, length: 20, calibre: 0.38, up: 4, back: true, kind: 'box' }, { x: -72, size: 14, barrels: 2, length: 20, calibre: 0.38, back: true, kind: 'box' },
+    { x: 64.5, size: 14, barrels: 2, length: 20, calibre: 0.38, kind: 'box' }, { x: 48.5, size: 14, barrels: 2, length: 20, calibre: 0.38, up: 4, kind: 'box' },
+    { x: -57, size: 14, barrels: 2, length: 20, calibre: 0.38, up: 4, back: true, kind: 'box' }, { x: -73.5, size: 14, barrels: 2, length: 20, calibre: 0.38, back: true, kind: 'box' },
     ...[30, 12, -6].flatMap((x) => [-1, 1].map((s) => ({ x, size: 6, barrels: 2, length: 8, calibre: 0.15, up: 3, side: s * 11, kind: 'box' as const, back: x < 0 }))),
   ],
 };
@@ -466,7 +467,9 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   // Pillau: the funnels' and masts' places and heights from the sketch of her as the Russian Mooraviev Amursky in Jane's
   // Fighting Ships 1914 (marked building; the guns as completed for Germany are estimates).
   'pillau': { cls: 'light-cruiser', L: 135.3, B: 13.6, fb: 7, fc: [-10, 2.4], guns: '48:1/150 -48:1/150b 20,5:1/150 -10,5:1/150b', funnels: [[21.2, 9.6, 3], [4.3, 9.6, 3], [-11.5, 9.6, 3]], blocks: [[30, 24, 14, 3, 1]], masts: [[17.4, 33], [-37.5, 33]] },
-  'emden-1925': { cls: 'light-cruiser', L: 155.1, B: 14.3, fb: 7, fc: [-20, 2.2], guns: '50:1/150 -50:1/150b 20,6:1/150 6,6:1/150 -10,6:1/150b', funnels: [[12, 11, 4], [0, 11, 4]], blocks: [[30, 22, 16, 4, 1]], masts: [[24, 22], [-20, 18]] },
+  // Emden: forecastle to the aft guns, deck line, gun places, bridge and tower, the two funnels, masts from the ONI 204
+  // profile with its height scale (sources.md).
+  'emden-1925': { cls: 'light-cruiser', L: 155.1, B: 14.3, fb: 6.3, fc: [-57, 2.4], sheer: 1.7, guns: '52:1/150 -46:1/150b 20,6:1/150 6,6:1/150 -58.5,6:1/150b', funnels: [[9.7, 12.0, 4.6], [-3.6, 12.2, 4.6]], blocks: [[34, 14, 14.5, 4, 1]], raised: [[20, 15, 14.5, 20.3, 1.8]], masts: [[17, 23.4]] },
   // Königsberg (Köln): the long forecastle to the aft turrets, deck line, turret places, bridge tower, funnels and masts
   // from the ONI 204 profile with its height scale (sources.md).
   'konigsberg': { cls: 'light-cruiser', L: 174.0, B: 15.3, fb: 6.4, fc: [-43.5, 2.2], sheer: 1.9, guns: '57.5:3/150^0.4 -36.4:3/150^0.9b -50.6:3/150^0.9b', funnels: [[29.4, 11.9, 4.7, 3.8], [7.5, 13.7, 4.7, 3.8]], blocks: [[51.7, 33, 12.3, 5.0, 1.5]], raised: [[42, 35, 12.3, 19.8, 2.5]], masts: [[37, 24.6]] },
@@ -829,7 +832,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   'des-moines': { blocks: [[-14, -36, 14.5, 7.5], [-18, -30, 18, 5.5]], dirs: [[-28, 21]], masts: [[10, 30, 't'], [-18, 24]] },
   // German cruisers.
   'pillau': { blocks: [[-18, -28, 10.5, 2.5]], sl: [[-6, 12.5]] },
-  'emden-1925': { blocks: [[-18, -26, 10.5, 3]], sl: [[-8, 13]], masts: [[24, 22, 't'], [-20, 18]] },
+  'emden-1925': { blocks: [[-24, -40, 10.8, 3.5]], sl: [[-8, 13]], masts: [[17, 23.4, 't'], [-34, 18.3]] },
   'konigsberg': { blocks: [[-5.2, -17.7, 11.2, 4.5]], dirs: [[-11.5, 13.4, 1.4]], masts: [[37, 24.6, 'p', 13.4], [-5.2, 23.6]], launchers: [{ x: -2, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
   'leipzig': { blocks: [[-5.8, -22.6, 10.4, 5]], dirs: [[-8.7, 15.2, 1.6]], masts: [[36, 25.6, 'p', 20.8], [8.5, 25.6]], launchers: [{ x: -8, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
   'deutschland': { blocks: [[-12, -26, 13.5, 5.5]], dirs: [[26, 31, 2.0], [-20, 14.8, 1.6]], masts: [[26, 25.3, 'p', 21.8], [-2, 26.3]] },
