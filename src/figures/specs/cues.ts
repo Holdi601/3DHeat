@@ -457,6 +457,11 @@ const AIR_CUES: Record<string, CueEntry> = {
     { cue: 'short broad wing', check: (s) => chordAt(s, 0.5) >= 1.8 },
     { cue: 'small open or framed cockpit', check: framedHood },
   ]),
+  'i-180': air('i-180', [
+    { cue: 'stubby body behind a big radial, longer than the I-16', check: (s) => radial(s) && s.length / s.span < 0.8 && s.length > 6.5 },
+    { cue: 'short broad wing', check: (s) => chordAt(s, 0.5) >= 1.8 },
+    { cue: 'small framed cockpit', check: framedHood },
+  ]),
   'p-40e': air('p-40e', [
     { cue: 'deep chin radiator under the nose', check: (s) => bump(s.fuselage?.bottom, noseX(s) - 0.2, noseX(s) - 3, -1) || depthAt(s, noseX(s) - 1.2) >= 1.2 },
     { cue: 'framed hood, inline nose, three blades', check: (s) => framedHood(s) && inline(s) && blades(3)(s) },

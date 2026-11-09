@@ -114,6 +114,12 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
     { cue: 'lattice mast with the radar dome', check: (s) => mastKind('lattice')(s) && !!s.radars?.some((r) => r.kind === 'dome') },
     { cue: 'long low deckhouse over most of the deck', check: (s) => (s.bodies?.length ?? 0) >= 1 },
   ]),
+  'project-206m': naval('project-206m', [
+    { cue: 'twin 57 mm turret aft', check: (s) => aft(s, 0.057).length === 1 && fwd(s, 0.057).length === 0 && twins(s, 0.057) },
+    { cue: 'open twin 25 mm mount forward', check: (s) => fwd(s, 0.025).length === 1 },
+    { cue: 'four torpedo tubes along the sides of the deckhouse', check: (s) => tubes(s) >= 2 },
+    { cue: 'lattice mast with the radar dome', check: (s) => mastKind('lattice')(s) && !!s.radars?.some((r) => r.kind === 'dome') },
+  ]),
   raubtier: naval('raubtier', [
     { cue: 'two funnels, the fore one much larger', check: (s) => funnels(s) === 2 && s.funnels![0].diameter > s.funnels![1].diameter * 1.2 },
     { cue: 'three single 10.5 cm: one forward, two aft', check: (s) => singles(s) && fwd(s).length === 1 && aft(s).length === 2 },
