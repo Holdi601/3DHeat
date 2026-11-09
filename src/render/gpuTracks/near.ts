@@ -18,6 +18,7 @@ import { emptyPose, evaluateTrack } from './evaluate';
 import { keyTime, TRACK_U32, trackDeadAt, type GpuTrackStore } from './store';
 import { wreckColour } from '../../figures/wreck';
 import { isGreyed, isShown, visWords } from './visibility';
+import type { SliceJob } from '../../data/slices';
 
 interface Boxes {
   /** Per track: box centre x, y, z, half-diagonal. */
@@ -30,14 +31,23 @@ interface Boxes {
 const boxes = new WeakMap<GpuTrackStore, Boxes>();
 
 function boxesOf(s: GpuTrackStore): Boxes {
-  let b = boxes.get(s);
+  const b = boxes.get(s);
   if (b) return b;
+  const g = boxesSteps(s);
+  while (!g.next().done);
+  return boxes.get(s)!;
+}
+
+/** `boxesOf` in steps, run with the store's own building (`gpuTrackStoreSliced`), so the first frame finds them made. */
+export function* boxesSteps(s: GpuTrackStore): SliceJob<void> {
+  if (boxes.has(s)) return;
   const T = s.tracks;
   const f32 = new Float32Array(s.trackData.buffer, s.trackData.byteOffset, s.trackData.length);
   const sphere = new Float32Array(T * 4);
   const span = new Float32Array(T * 2);
   const longest = new Float32Array(T);
   for (let i = 0; i < T; i++) {
+    if ((i & 1023) === 1023) yield;
     const o = i * TRACK_U32;
     const size = 65535 * f32[o + 11];
     sphere[i * 4] = f32[o + 8] + size / 2;
@@ -50,9 +60,7 @@ function boxesOf(s: GpuTrackStore): Boxes {
     span[i * 2 + 1] = keyTime(s, o, first + Math.max(0, n - 1));
     longest[i] = s.trackData[o + 3] ? f32[o + 4] : 0;
   }
-  b = { sphere, span, longest };
-  boxes.set(s, b);
-  return b;
+  boxes.set(s, { sphere, span, longest });
 }
 
 export interface NearFrame {

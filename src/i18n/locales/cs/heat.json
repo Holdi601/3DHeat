@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Sloupec rozdělení se nevešel do paměti GPU u {skipped} z {total} bloků řádků a tyto řádky se nevykreslí. Zvyšte rozpočet GPU v části Výkon → Rozpočty prostředků nebo načtěte méně řádků.",
   "heat.splitPanel.shares": "Porovnávat podíly, ne počty",
   "heat.splitPanel.sharesHint": "Váží každou stranu jedničkou dělenou jejím vlastním počtem řádků, takže strana s pětinásobkem řádků už nepokrývá mapu jen díky počtu. Barva pak ukazuje, kde je která strana poměrně častější než ta druhá.",
-  "heat.teamsList.columnSplitHint": "Rozdíl je rozdělen podle <b>{column}</b>, takže skupiny zde určují jen to, co se vykreslí, ne na které straně se počítají."
+  "heat.teamsList.columnSplitHint": "Rozdíl je rozdělen podle <b>{column}</b>, takže skupiny zde určují jen to, co se vykreslí, ne na které straně se počítají.",
+  "heat.sourcePanel.indexing": "Indexování jednotek"
 }

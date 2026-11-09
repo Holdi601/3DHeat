@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "La colonne de répartition n’a pas tenu en mémoire GPU pour {skipped} des {total} blocs de lignes, et ces lignes ne sont pas dessinées. Augmentez le budget GPU dans Performances → Budgets de ressources, ou chargez moins de lignes.",
   "heat.splitPanel.shares": "Comparer les proportions, pas les effectifs",
   "heat.splitPanel.sharesHint": "Pondère chaque côté par l’inverse de son propre nombre de lignes, pour qu’un côté cinq fois plus fourni ne couvre plus la carte par le seul nombre. La couleur montre alors où chaque côté est proportionnellement plus fréquent que l’autre.",
-  "heat.teamsList.columnSplitHint": "La différence est répartie selon <b>{column}</b> : les groupes ici décident seulement de ce qui est dessiné, pas du côté où ils comptent."
+  "heat.teamsList.columnSplitHint": "La différence est répartie selon <b>{column}</b> : les groupes ici décident seulement de ce qui est dessiné, pas du côté où ils comptent.",
+  "heat.sourcePanel.indexing": "Indexation des unités"
 }

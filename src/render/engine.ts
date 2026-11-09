@@ -3,6 +3,8 @@ import { estimateSaturation, horizontalExtent } from '../data/calibrate';
 import { buildLines, heatModeFor, lineSettingsKey, type LineData } from '../data/lines';
 import { playbackRange } from '../data/sessions';
 import { sliceBudget, slicePending } from '../data/slices';
+import { boxesSteps } from './gpuTracks/near';
+import { warmSymbolAtlas } from './symbols/atlas';
 import { CUBE_STRIDE, TrackCursor } from '../data/tracks';
 import { HEAT_RESPONSE_CODE, snapshot, useStore, type HeatSettings } from '../state/store';
 import { raceClock, raceHover, replayLength, useRaceStore, type RaceState } from '../state/raceStore';
@@ -714,6 +716,8 @@ export class Engine {
     this.budget = new BudgetController(snapshot().budget.splatsPerFrame);
     // Work too big for a frame (the GPU tracks, the motion model) goes a slice a frame from now on.
     sliceBudget.ms = SLICE_MS;
+    // The far-off glyphs' atlas drawn in a worker now, not on the first frame that shows one.
+    warmSymbolAtlas();
     this.detachInput = this.camera.attach(canvas);
     this.detachMeasure = this.attachMeasureInput(canvas);
     // The tactics board: its gizmo keys while something is selected, shift-drag for a box.
@@ -1694,7 +1698,7 @@ export class Engine {
     const force = gpuTracksForced();
     if (force === false || (d.personLabels.length < GPU_TRACKS_FROM && !force)) return null;
     if (s.team.session >= 0 && d.sessionId && d.sessionLabels.length > 1) return null;
-    return gpuTrackStoreSliced(d, { maxKeys: Math.floor(max / 8) });
+    return gpuTrackStoreSliced(d, { maxKeys: Math.floor(max / 8) }, boxesSteps);
   }
 
   /**

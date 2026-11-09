@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Delingskolonnen fikk ikke plass i GPU-minnet for {skipped} av {total} blokker med rader, og de radene tegnes ikke. Øk GPU-budsjettet under Ytelse → Ressursbudsjetter, eller last inn færre rader.",
   "heat.splitPanel.shares": "Sammenlign andeler, ikke antall",
   "heat.splitPanel.sharesHint": "Vekter hver side med én delt på sitt eget antall rader, slik at en side med fem ganger så mange rader ikke lenger dekker kartet bare i kraft av antallet. Fargen viser da hvor hver side forholdsmessig er vanligere enn den andre.",
-  "heat.teamsList.columnSplitHint": "Differansen er delt etter <b>{column}</b>, så gruppene her bestemmer bare hva som tegnes, ikke hvilken side de teller på."
+  "heat.teamsList.columnSplitHint": "Differansen er delt etter <b>{column}</b>, så gruppene her bestemmer bare hva som tegnes, ikke hvilken side de teller på.",
+  "heat.sourcePanel.indexing": "Indekserer enheter"
 }

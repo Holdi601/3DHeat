@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Sadalījuma kolonna neietilpa GPU atmiņā {skipped} no {total} rindu blokiem, un šīs rindas netiek zīmētas. Palielini GPU budžetu sadaļā Veiktspēja → Resursu budžeti vai ielādē mazāk rindu.",
   "heat.splitPanel.shares": "Salīdzināt daļas, nevis skaitu",
   "heat.splitPanel.sharesHint": "Katrai pusei piešķir svaru viens, dalīts ar tās pašas rindu skaitu, lai puse ar piecreiz vairāk rindām vairs nepārklātu karti tikai skaita dēļ. Tad krāsa rāda, kur katra puse ir proporcionāli biežāka par otru.",
-  "heat.teamsList.columnSplitHint": "Starpība ir sadalīta pēc <b>{column}</b>, tāpēc grupas šeit nosaka tikai to, kas tiek zīmēts, nevis kurā pusē tās tiek skaitītas."
+  "heat.teamsList.columnSplitHint": "Starpība ir sadalīta pēc <b>{column}</b>, tāpēc grupas šeit nosaka tikai to, kas tiek zīmēts, nevis kurā pusē tās tiek skaitītas.",
+  "heat.sourcePanel.indexing": "Vienību indeksēšana"
 }

@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Stolpec delitve se pri {skipped} od {total} blokov vrstic ni prilegal v pomnilnik GPU, zato te vrstice niso narisane. Povečajte proračun GPU v Zmogljivost → Proračuni virov ali naložite manj vrstic.",
   "heat.splitPanel.shares": "Primerjaj deleže, ne števil",
   "heat.splitPanel.sharesHint": "Vsako stran uteži z ena, deljeno z njenim lastnim številom vrstic, tako da stran s petkrat več vrsticami ne prekrije več zemljevida zgolj s številom. Barva nato pokaže, kje je katera stran sorazmerno pogostejša od druge.",
-  "heat.teamsList.columnSplitHint": "Razlika je razdeljena po <b>{column}</b>, zato skupine tukaj določajo le, kaj se nariše, ne pa, na kateri strani štejejo."
+  "heat.teamsList.columnSplitHint": "Razlika je razdeljena po <b>{column}</b>, zato skupine tukaj določajo le, kaj se nariše, ne pa, na kateri strani štejejo.",
+  "heat.sourcePanel.indexing": "Indeksiranje enot"
 }

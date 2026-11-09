@@ -25,6 +25,7 @@ import { useStore } from '../../state/store';
 import { TIME_UNIT_LABELS, type ColumnMapping, type TimeUnit } from '../../state/types';
 import { Check, Rich, Section, Select } from '../controls';
 import { list, num, t } from '../../i18n';
+import { prepareUnits } from '../replay/units';
 
 const delimiterOptions = (): Array<{ value: string; label: string }> => [
   { value: ',', label: t('heat.sourcePanel.delimiter.comma') },
@@ -172,6 +173,9 @@ export function SourcePanel() {
         size?.rows ?? 0,
         onProgress,
       );
+      // The unit index a few milliseconds a frame, before the first render would build it all at once.
+      setLoad({ active: true, label: t('heat.sourcePanel.indexing'), fraction: null, rowsSoFar: ds.count, error: null });
+      await prepareUnits(ds);
       setDataset(ds);
       setLoad({ active: false, label: '', fraction: null, rowsSoFar: ds.count, error: null });
     } catch (err) {

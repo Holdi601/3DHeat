@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Skaidymo stulpelis netilpo į GPU atmintį {skipped} iš {total} eilučių blokų, ir tos eilutės nepiešiamos. Padidinkite GPU biudžetą skiltyje Našumas → Išteklių biudžetai arba įkelkite mažiau eilučių.",
   "heat.splitPanel.shares": "Lyginti dalis, ne kiekius",
   "heat.splitPanel.sharesHint": "Kiekvienai pusei suteikia svorį, lygų vienetui, padalytam iš jos pačios eilučių skaičiaus, todėl pusė su penkis kartus daugiau eilučių nebeuždengia žemėlapio vien kiekiu. Tada spalva rodo, kur kiekviena pusė proporcingai dažnesnė už kitą.",
-  "heat.teamsList.columnSplitHint": "Skirtumas suskaidytas pagal <b>{column}</b>, todėl grupės čia lemia tik tai, kas piešiama, o ne kurioje pusėje jos skaičiuojamos."
+  "heat.teamsList.columnSplitHint": "Skirtumas suskaidytas pagal <b>{column}</b>, todėl grupės čia lemia tik tai, kas piešiama, o ne kurioje pusėje jos skaičiuojamos.",
+  "heat.sourcePanel.indexing": "Vienetų indeksavimas"
 }

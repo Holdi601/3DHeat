@@ -61,6 +61,8 @@ if (import.meta.env.DEV) {
         stride,
         size.rows,
       );
+      const { prepareUnits } = await import('./ui/replay/units');
+      await prepareUnits(dataset);
       useStore.getState().setDataset(dataset);
       return {
         rows: dataset.count,

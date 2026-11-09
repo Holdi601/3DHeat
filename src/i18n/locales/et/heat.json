@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Jaotusveerg ei mahtunud GPU mällu {skipped} reaplokis {total}-st ning neid ridu ei joonistata. Suurenda GPU eelarvet jaotises Jõudlus → Ressursieelarved või laadi vähem ridu.",
   "heat.splitPanel.shares": "Võrdle osakaale, mitte arve",
   "heat.splitPanel.sharesHint": "Kaalub kumbagi poolt ühega jagatuna tema enda ridade arvuga, nii et viis korda rohkemate ridadega pool ei kata kaarti enam lihtsalt arvu poolest. Värv näitab siis, kus kumbki pool on proportsionaalselt sagedasem kui teine.",
-  "heat.teamsList.columnSplitHint": "Erinevus on jaotatud veeru <b>{column}</b> järgi, seega rühmad siin otsustavad ainult, mida joonistatakse, mitte seda, kummale poolele nad loetakse."
+  "heat.teamsList.columnSplitHint": "Erinevus on jaotatud veeru <b>{column}</b> järgi, seega rühmad siin otsustavad ainult, mida joonistatakse, mitte seda, kummale poolele nad loetakse.",
+  "heat.sourcePanel.indexing": "Üksuste indekseerimine"
 }

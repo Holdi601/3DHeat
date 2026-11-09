@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Kolona podjele nije stala u GPU memoriju za {skipped} od {total} blokova redova, i ti redovi se ne crtaju. Povećajte GPU budžet pod Performanse → Budžeti resursa ili učitajte manje redova.",
   "heat.splitPanel.shares": "Uporedi udjele, ne brojeve",
   "heat.splitPanel.sharesHint": "Ponderira svaku stranu s jedan kroz njen broj redova, pa strana s pet puta više redova više ne prekriva mapu samim brojem. Boja tada pokazuje gdje je koja strana srazmjerno češća od druge.",
-  "heat.teamsList.columnSplitHint": "Razlika je podijeljena po <b>{column}</b>, pa grupe ovdje određuju samo šta se crta, a ne na kojoj se strani broje."
+  "heat.teamsList.columnSplitHint": "Razlika je podijeljena po <b>{column}</b>, pa grupe ovdje određuju samo šta se crta, a ne na kojoj se strani broje.",
+  "heat.sourcePanel.indexing": "Indeksiranje jedinica"
 }

@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Coloana de împărțire nu a încăput în memoria GPU pentru {skipped} din {total} blocuri de rânduri, iar acele rânduri nu sunt desenate. Măriți bugetul GPU în Performanță → Bugete de resurse sau încărcați mai puține rânduri.",
   "heat.splitPanel.shares": "Compară ponderi, nu numărători",
   "heat.splitPanel.sharesHint": "Ponderează fiecare parte cu unu împărțit la propriul număr de rânduri, astfel încât o parte cu de cinci ori mai multe rânduri nu mai acoperă harta doar prin număr. Culoarea arată atunci unde fiecare parte este proporțional mai frecventă decât cealaltă.",
-  "heat.teamsList.columnSplitHint": "Diferența este împărțită după <b>{column}</b>, așa că grupurile de aici decid doar ce se desenează, nu în ce parte contează."
+  "heat.teamsList.columnSplitHint": "Diferența este împărțită după <b>{column}</b>, așa că grupurile de aici decid doar ce se desenează, nu în ce parte contează.",
+  "heat.sourcePanel.indexing": "Indexarea unităților"
 }

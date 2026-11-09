@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "在 {total} 个行块中，有 {skipped} 个的拆分列无法放入 GPU 显存，这些行不会被绘制。请在“性能 → 资源预算”中提高 GPU 预算，或加载更少的行。",
   "heat.splitPanel.shares": "比较占比，而非计数",
   "heat.splitPanel.sharesHint": "以各侧自身行数的倒数为权重，这样行数多五倍的一侧不再仅凭数量覆盖地图。颜色随后显示每一侧在何处按比例比另一侧更常见。",
-  "heat.teamsList.columnSplitHint": "差值按 <b>{column}</b> 拆分，因此这里的分组只决定绘制哪些内容，而不决定它们计入哪一侧。"
+  "heat.teamsList.columnSplitHint": "差值按 <b>{column}</b> 拆分，因此这里的分组只决定绘制哪些内容，而不决定它们计入哪一侧。",
+  "heat.sourcePanel.indexing": "正在索引单位"
 }

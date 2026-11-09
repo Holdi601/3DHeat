@@ -24,8 +24,11 @@ export const sliceStats = { longest: 0, steps: 0 };
  */
 export const FRESH = 1;
 
-/** A job: yields at its checkpoints, `FRESH` before a big step it cannot split. */
-export type SliceJob<T> = Generator<void | typeof FRESH, T, void>;
+/** What a job yields while it waits for something elsewhere (a worker): the slice ends, the next frame asks again. */
+export const WAIT = 2;
+
+/** A job: yields at its checkpoints, `FRESH` before a big step it cannot split, `WAIT` while it waits. */
+export type SliceJob<T> = Generator<void | typeof FRESH | typeof WAIT, T, void>;
 
 /** Runs `g` for what is left of this frame's budget: its value when done, else `undefined` (more next frame). */
 export function runSlice<T>(g: SliceJob<T>): { value: T } | undefined {
@@ -33,6 +36,7 @@ export function runSlice<T>(g: SliceJob<T>): { value: T } | undefined {
     for (;;) {
       const r = g.next();
       if (r.done) return { value: r.value };
+      // Nothing to wait for without a frame loop: the jobs that wait only do so in the viewer.
     }
   }
   const now = performance.now();
@@ -53,7 +57,7 @@ export function runSlice<T>(g: SliceJob<T>): { value: T } | undefined {
       spent += t - now;
       return { value: r.value };
     }
-    if (t >= end || (r.value === FRESH && t - now > 1)) break;
+    if (t >= end || r.value === WAIT || (r.value === FRESH && t - now > 1)) break;
   }
   spent += t - now;
   return undefined;

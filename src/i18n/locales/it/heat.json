@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "La colonna di suddivisione non è entrata nella memoria GPU per {skipped} di {total} blocchi di righe, e quelle righe non vengono disegnate. Aumenta il budget GPU in Prestazioni → Budget delle risorse oppure carica meno righe.",
   "heat.splitPanel.shares": "Confronta quote, non conteggi",
   "heat.splitPanel.sharesHint": "Pesa ogni lato per uno diviso il proprio numero di righe, così un lato con cinque volte le righe non copre più la mappa solo per quantità. Il colore mostra allora dove ciascun lato è proporzionalmente più frequente dell’altro.",
-  "heat.teamsList.columnSplitHint": "La differenza è suddivisa per <b>{column}</b>, quindi qui i gruppi decidono solo cosa viene disegnato, non su quale lato contano."
+  "heat.teamsList.columnSplitHint": "La differenza è suddivisa per <b>{column}</b>, quindi qui i gruppi decidono solo cosa viene disegnato, non su quale lato contano.",
+  "heat.sourcePanel.indexing": "Indicizzazione delle unità"
 }

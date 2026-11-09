@@ -8,6 +8,7 @@ import { Check, Section, Segmented } from '../controls';
 import { useEngine } from '../EngineContext';
 import { leanBudget, leanOverlayOf, loadLeanOverlay, overlayFiles, recolour, type LeanColour } from '../../overlay/lean/load';
 import { useLeanStore } from '../../overlay/lean/leanState';
+import { prepareUnits } from '../replay/units';
 
 const MB = 1e6;
 
@@ -93,6 +94,8 @@ export function LeanOverlayPanel() {
     try {
       const o = await handle.promise;
       markOverlay(o.built.dataset);
+      // The unit index a few milliseconds a frame, before the first render would build it all at once.
+      await prepareUnits(o.built.dataset);
       const s = useStore.getState();
       s.setDataset(o.built.dataset);
       useRaceStore.getState().setTab('heat');

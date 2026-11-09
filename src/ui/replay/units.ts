@@ -17,7 +17,7 @@
 
 import { classOfType, isEffectDomain } from '../../figures/symbolClass';
 import type { AttributeColumn, Dataset } from '../../state/types';
-import { personRows } from '../../data/flight';
+import { personRows, personRowsSteps } from '../../data/flight';
 import { trackName } from './replayData';
 import { isOverlay } from '../../match/overlay';
 import { cameraTracks } from '../../render/lookAids';
@@ -89,13 +89,82 @@ export function prettyVehicle(id: string): string {
   return id.replace(COUNTRY, '').replace(/_+/g, ' ').trim() || id;
 }
 
+/**
+ * Indices of `keys` in order, a merge sort in steps: an overlay has hundreds
+ * of thousands of units, more than a frame sorts.
+ */
+function* sortSteps(keys: string[]): Generator<void, Int32Array, void> {
+  const n = keys.length;
+  let a = new Int32Array(n);
+  let b = new Int32Array(n);
+  for (let i = 0; i < n; i++) a[i] = i;
+  const RUN = 2048;
+  const cmp = (x: number, y: number) => (keys[x] < keys[y] ? -1 : keys[x] > keys[y] ? 1 : x - y);
+  for (let i = 0; i < n; i += RUN) {
+    a.subarray(i, Math.min(n, i + RUN)).sort(cmp);
+    yield;
+  }
+  let work = 0;
+  for (let w = RUN; w < n; w *= 2) {
+    for (let lo = 0; lo < n; lo += 2 * w) {
+      const mid = Math.min(n, lo + w);
+      const hi = Math.min(n, lo + 2 * w);
+      let i = lo;
+      let j = mid;
+      let k = lo;
+      while (i < mid && j < hi) b[k++] = cmp(a[i], a[j]) <= 0 ? a[i++] : a[j++];
+      while (i < mid) b[k++] = a[i++];
+      while (j < hi) b[k++] = a[j++];
+      work += hi - lo;
+      if (work > 1 << 15) {
+        work = 0;
+        yield;
+      }
+    }
+    [a, b] = [b, a];
+  }
+  return a;
+}
+
 const WEAPON_TYPE = /(weapon|missile|rocket|bomb|shell|projectile|torpedo|bullet|grenade|decoy|flare|chaff)/i;
 
 export function unitsOf(d: Dataset): UnitIndex {
   const hit = cache.get(d);
   if (hit) return hit;
+  const g = unitsSteps(d);
+  for (;;) {
+    const r = g.next();
+    if (r.done) return r.value;
+  }
+}
+
+/** Milliseconds `prepareUnits` works before it lets a frame through. */
+const PREPARE_SLICE_MS = 5;
+
+/**
+ * The unit index worked out a few milliseconds at a time, frames drawn in
+ * between, before the dataset is handed to the viewer: tens of milliseconds
+ * for a recording of thousands of units, which the first render would
+ * otherwise spend in one frame. The loaders await it ("indexing").
+ */
+export async function prepareUnits(d: Dataset): Promise<void> {
+  if (cache.has(d)) return;
+  const g = unitsSteps(d);
+  for (;;) {
+    const end = performance.now() + PREPARE_SLICE_MS;
+    for (;;) {
+      if (g.next().done) return;
+      if (performance.now() >= end) break;
+    }
+    await new Promise((r) => setTimeout(r, 0));
+  }
+}
+
+function* unitsSteps(d: Dataset): Generator<void, UnitIndex, void> {
+  const hit = cache.get(d);
+  if (hit) return hit;
   const persons = d.personLabels.length;
-  const idx = personRows(d);
+  const idx = yield* personRowsSteps(d);
   const player = attr(d, ['player', 'Pilot', 'playerName', 'player_name']);
   const display = attr(d, ['VehicleName', 'vehicleName', 'vehicle_name', 'vehicleDisplayName']);
   const vehicleRaw = attr(d, ['Vehicle', 'vehicle', 'Name', 'unitType']);
@@ -119,6 +188,7 @@ export function unitsOf(d: Dataset): UnitIndex {
   // What a type and kind are, worked out once each: an overlay has millions of tracks but few types.
   const effects = new Map<string, boolean>();
   for (let p = 0; p < persons; p++) {
+    if ((p & 1023) === 1023) yield;
     let first = -1;
     let last = -1;
     if (idx && idx.start[p + 1] > idx.start[p]) {
@@ -192,7 +262,9 @@ export function unitsOf(d: Dataset): UnitIndex {
     personUnit[p] = unitIndex.get(u)!;
   }
   // Each unit's tracks in time order, so the "current life" is the last one started.
+  let n = 0;
   for (const u of units) {
+    if ((++n & 4095) === 0) yield;
     if (u.persons.length === 1) {
       if (u.vehicles[0]) u.vehicle = u.vehicles[0];
       continue;
@@ -204,10 +276,12 @@ export function unitsOf(d: Dataset): UnitIndex {
     if (u.vehicles[0]) u.vehicle = u.vehicles[0];
   }
   // Each unit's place in name order, worked out once: lists sort by it, with no sort key kept per unit.
-  const keys = units.map(sortKey);
-  const order = new Int32Array(units.length);
-  for (let i = 0; i < order.length; i++) order[i] = i;
-  order.sort((a, b) => (keys[a] < keys[b] ? -1 : keys[a] > keys[b] ? 1 : 0));
+  const keys: string[] = new Array(units.length);
+  for (let i = 0; i < units.length; i++) {
+    if ((i & 8191) === 8191) yield;
+    keys[i] = sortKey(units[i]);
+  }
+  const order = yield* sortSteps(keys);
   for (let r = 0; r < order.length; r++) units[order[r]].rank = r;
   const out: UnitIndex = { units, byKey, personUnit, aiFrom };
   cache.set(d, out);

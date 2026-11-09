@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "De verdeelkolom paste voor {skipped} van {total} blokken rijen niet in het GPU-geheugen, en die rijen worden niet getekend. Verhoog het GPU-budget onder Prestaties → Resourcebudgetten, of laad minder rijen.",
   "heat.splitPanel.shares": "Aandelen vergelijken, geen aantallen",
   "heat.splitPanel.sharesHint": "Weegt elke kant met één gedeeld door zijn eigen aantal rijen, zodat een kant met vijf keer zoveel rijen de kaart niet meer puur door aantallen bedekt. De kleur toont dan waar elke kant naar verhouding vaker voorkomt dan de andere.",
-  "heat.teamsList.columnSplitHint": "Het verschil is verdeeld op <b>{column}</b>, dus de groepen hier bepalen alleen wat er wordt getekend, niet aan welke kant ze meetellen."
+  "heat.teamsList.columnSplitHint": "Het verschil is verdeeld op <b>{column}</b>, dus de groepen hier bepalen alleen wat er wordt getekend, niet aan welke kant ze meetellen.",
+  "heat.sourcePanel.indexing": "Eenheden indexeren"
 }
