@@ -953,7 +953,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   // Destroyers of the later lists.
   'gleaves': { guns: '38:1/127e 31:1/127e^2 -31:1/127^2b -42:1/127b', masts: [[18, 17]] },
   'akizuki': { masts: [[16.5, 15.5, 't'], [-19, 10.5]], rake: 0.16, sl: [[-9, 11]] },
-  'fubuki': { masts: [[22, 16, 't'], [-20, 10]], rake: 0.12 },
+  'fubuki': { masts: [[20.1, 20.3, 't'], [-29.2, 14.4]], rake: 0.12, sl: [[-6.6, 9.9]] },
   'yugumo': { masts: [[20.5, 15, 't'], [-23.5, 13]], rake: 0.14, funnels: [[13, 9.5, 3.6, 2.8], [-2.6, 8.2, 3, 2.4]] },
   'tashkent': { masts: [[24, 20, 't'], [-24, 14]] },
   'abdiel': { masts: [[17, 20, 't'], [-26, 12]] },
@@ -2068,7 +2068,9 @@ function foils(rows: [number, number, number][], depth: number): Outline[] {
 const R: Record<string, ShipO> = {
   // Fubuki ("special type"): the long forecastle, three twin 12.7 cm gunhouses (one forward, two aft), two funnels
   // the forward one the larger, three triple torpedo mounts (118.4 x 10.4 m; 2,090 t full).
-  'fubuki': { cls: 'destroyer', L: 118.4, B: 10.4, fb: 5.4, fc: [16, 1.5], guns: '44:2/127m -32:2/127mb^2 -43:2/127mb', funnels: [[9, 7.5, 3.6], [-4, 7, 3]], blocks: [[30, 22, 12.5, 3.2, 1], [-27, -36, 6.4, 2.6]], masts: [[22, 16], [-20, 10]], tt: [3, 3], ttAt: [6, 13] },
+  // Fubuki: forecastle break, the low main deck, gun, tube and funnel places, bridge and masts from the ONI 222-J profile
+  // with its height scale (sources.md).
+  'fubuki': { cls: 'destroyer', L: 118.4, B: 10.4, fb: 4.8, fc: [14.0, 1.9], sheer: 2.2, guns: '40.7:2/127m^1.0 -32.5:2/127mb^3.5 -42.2:2/127mb^0.8', funnels: [[15.3, 9.75, 5.0], [-1.4, 11.1, 4.3]], blocks: [[30.7, 21.6, 12.5, 3.2, 1], [-27.7, -38.4, 5.3, 2.4]], masts: [[20.1, 20.3], [-29.2, 14.4]], tt: [3, 3], ttAt: [12.5, 15.6] },
   // Yugumo: Kagero's improved sister, three twin 12.7 cm turrets, two funnels, two quadruple torpedo mounts (119.2 x
   // 10.8 m; 2,520 t full).
   // Yugumo: deck line, funnels, masts, gun and torpedo mount places measured on the ONI 222-J profile of the Takanami
