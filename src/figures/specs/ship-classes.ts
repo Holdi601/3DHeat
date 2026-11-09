@@ -487,18 +487,30 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'chapayev': { cls: 'light-cruiser', L: 201.0, B: 19.7, fb: 8, sheer: 3, guns: '64:3/152 52:3/152^2.5 -52:3/152^2.5b -64:3/152b', funnels: [[8, 12, 5], [-10, 12, 5]], blocks: [[36, 22, 22, 6, 2]], masts: [[30, 28], [-18, 22]] },
   'sverdlov': { cls: 'light-cruiser', L: 210.0, B: 22.0, fb: 8, sheer: 4, guns: '68:3/152 56:3/152^2.5 -56:3/152^2.5b -68:3/152b', funnels: [[8, 12, 6], [-12, 12, 6]], blocks: [[38, 22, 24, 7, 2]], masts: [[22, 28], [-20, 24]] },
   // Britain.
-  'hawkins': { cls: 'heavy-cruiser', L: 184.4, B: 19.8, fb: 8, fc: [-30, 2.4], guns: '58:1/190 48:1/190^2 -48:1/190^2b -58:1/190b 4,8:1/190', funnels: [[12, 12, 5], [-2, 12, 5]], blocks: [[34, 24, 20, 5, 1]], masts: [[28, 28], [-22, 22]] },
+  // Hawkins (Frobisher): forecastle to the aft deckhouse, deck line, gun places, the two broad stacks, bridge tower,
+  // masts from the ONI 201 profile, heights scaled to the sheet's figures (W.L. to stack 62.5 ft, to foretop 90 ft).
+  'hawkins': { cls: 'heavy-cruiser', L: 184.4, B: 19.8, fb: 5.65, fc: [-42, 1.15], sheer: 1.85, guns: '65.5:1/190 45.1:1/190^2.4 -45.8:1/190b -71.7:1/190b 4,8:1/190', funnels: [[22.8, 13.4, 6.0, 4.4], [4.6, 13.3, 6.0, 4.4]], blocks: [[40.5, 29.7, 16.1, 4.5, 1]], raised: [[38, 31, 16.1, 26.5, 2.0]], masts: [[30.1, 30.7]] },
   'emerald': { cls: 'light-cruiser', L: 173.7, B: 16.6, fb: 7, fc: [-30, 2.4], guns: '60:2/152 48:1/152^2 -48:1/152b -60:1/152b', funnels: [[16, 12, 4], [6, 12, 4], [-4, 12, 4]], blocks: [[36, 26, 18, 5, 1]], masts: [[30, 26], [-28, 20]] },
-  'arethusa': { cls: 'light-cruiser', L: 154.2, B: 15.5, fb: 7, fc: [-28, 2.2], guns: '52:2/152 42:2/152^2.5 -50:2/152b', funnels: [[0, 11, 4]], blocks: [[28, 18, 18, 5, 1]], masts: [[22, 24], [-16, 20]] },
+  // Arethusa: forecastle to the aft turret, deck line, turret places, bridge, the two stacks, masts from the ONI 201
+  // profile, heights scaled to the sheet's published figures (W.L. to first stack 62 ft, to director 68 ft).
+  'arethusa': { cls: 'light-cruiser', L: 154.2, B: 15.5, fb: 7.0, fc: [-48, 2.1], sheer: 1.5, guns: '47.2:2/152 38.7:2/152^3.4 -55.3:2/152^0.4b', funnels: [[4.9, 11.9, 5.2], [-22.1, 10.8, 5.2]], blocks: [[33.3, 12, 11.7, 5, 1.5], [-0.8, -18.9, 8.6, 4]], raised: [[26, 18, 11.7, 18.3, 2.5]], dirs: [[23.5, 20.7, 1.4]], masts: [[13.3, 27.7]] },
   // Leander: deck line, the single broad stack, tripods, turrets and blocks from the ONI 201 profile and its published heights (sources.md).
   'leander': { cls: 'light-cruiser', L: 169.0, B: 17.0, fb: 7.3, fc: [0, 2.0], sheer: 1.0, guns: '47:2/152^1.2 38.5:2/152^5 -45:2/152^4.4b -56:2/152^0.2b', funnels: [[5, 12.4, 8.5, 5.5]], blocks: [[31, 15, 17.3, 4.5, 1.5], [15, 0, 10.9, 4.0], [-2, -25, 7.6, 4.5], [-28, -42, 7.0, 4.0]], raised: [[-31.5, -37, 7, 13.4, 1.8]], masts: [[19.5, 30.7, 't'], [-35, 29.7, 't']] },
-  'dido': { cls: 'light-cruiser', L: 156.1, B: 15.4, fb: 7, fc: [-30, 2.2], guns: '54:2/133 46:2/133^2.5 38:2/133^5 -42:2/133^2.5b -52:2/133b', funnels: [[8, 11, 4], [-4, 11, 4]], blocks: [[30, 18, 18, 5, 1]], masts: [[22, 24], [-14, 20]] },
-  'kent': { cls: 'heavy-cruiser', L: 192.0, B: 20.8, fb: 10, guns: '64:2/203 52:2/203^2.5 -52:2/203^2.5b -64:2/203b', funnels: [[16, 13, 4], [6, 13, 4], [-4, 13, 4]], blocks: [[36, 24, 22, 6, 1]], masts: [[28, 30], [-26, 24]] },
+  // Dido: forecastle to the aft turrets, deck line, the three forward and two aft turrets, bridge, the raked stacks,
+  // masts from the ONI 201 profile, heights checked against the sheet's figures (W.L. to first stack 62 ft).
+  'dido': { cls: 'light-cruiser', L: 156.1, B: 15.4, fb: 6.6, fc: [-45, 2.5], sheer: 2.0, guns: '53.4:2/133^0.6 45.1:2/133^2.3 36.6:2/133^4.6 -42.4:2/133^0.2b -50.2:2/133^0.4b', funnels: [[4.6, 12.2, 4.6, 3.7, 0.15], [-18.8, 12.2, 4.6, 3.7, 0.15]], blocks: [[28.2, 12.6, 12.9, 5, 1.5], [48, 28, 8.8, 4.5]], raised: [[27, 14, 12.9, 17.0, 3]], dirs: [[23.5, 22.3, 1.4]], masts: [[10.7, 25.8]] },
+  // Kent: the high flush deck, turret places, the three tall stacks, bridge, aft director tower, masts from the ONI 201
+  // profile, heights scaled to the sheet's figures (W.L. to stack 79 ft, foc'sle deck to stack 53.5 ft).
+  'kent': { cls: 'heavy-cruiser', L: 192.0, B: 20.8, fb: 7.8, sheer: 1.8, guns: '62.1:2/203 49.4:2/203^3.8 -48.2:2/203^4.4b -61.7:2/203b', funnels: [[19.9, 16.7, 4.5], [8.7, 16.5, 4.5], [-3.6, 15.9, 4.5]], blocks: [[41, 23.5, 14.8, 5.5, 1]], raised: [[39, 26.5, 14.8, 19.4, 3.5], [34.5, 31.3, 19.4, 22.6, 1.2]], masts: [[26.7, 24.0]] },
   'london-1941': { cls: 'heavy-cruiser', L: 192.8, B: 20.1, fb: 10, guns: '64:2/203 52:2/203^2.5 -52:2/203^2.5b -64:2/203b', funnels: [[8, 13, 5], [-8, 13, 5]], blocks: [[36, 20, 26, 7, 2]], masts: [[16, 30], [-24, 24]] },
   'york': { cls: 'heavy-cruiser', L: 175.3, B: 17.4, fb: 10, guns: '56:2/203 45:2/203^2.5 -56:2/203b', funnels: [[8, 12, 4], [-4, 12, 4]], blocks: [[32, 20, 22, 6, 1]], masts: [[24, 28], [-18, 22]] },
-  'southampton': { cls: 'light-cruiser', L: 180.3, B: 19.3, fb: 8, sheer: 3, guns: '60:3/152 49:3/152^2.5 -50:3/152^2.5b -62:3/152b', funnels: [[10, 12, 5], [-6, 12, 5]], blocks: [[34, 22, 22, 6, 1], [2, -2, 16, 6]], masts: [[26, 28], [-18, 24]] },
+  // Southampton: forecastle to the aft turrets, deck line, turret places, bridge, the two raked stacks, hangar, masts
+  // from the ONI 201 profile, heights scaled to the sheet's published figures (W.L. to first stack 76 ft).
+  'southampton': { cls: 'light-cruiser', L: 180.3, B: 19.3, fb: 7.2, fc: [-51.4, 2.45], sheer: 2.0, guns: '59.3:3/152 49.2:3/152^4.5 -46.8:3/152^1.45b -57.8:3/152b', funnels: [[17.5, 15.7, 5.5, 4.4], [-8.1, 12.8, 5.5, 4.4]], blocks: [[42, 21.7, 13.5, 5.5, 1.5], [-12, -24, 9.8, 6]], raised: [[38, 22.4, 13.5, 18.5, 3.5]], dirs: [[30, 27.4, 1.5]], masts: [[22.4, 32.3]] },
   'belfast': { cls: 'light-cruiser', L: 187.0, B: 19.3, fb: 8, sheer: 3, guns: '62:3/152 51:3/152^2.5 -52:3/152^2.5b -64:3/152b', funnels: [[8, 12, 5], [-10, 12, 5]], blocks: [[36, 22, 24, 7, 2], [0, -4, 16, 6]], masts: [[22, 30], [-20, 26]] },
-  'fiji': { cls: 'light-cruiser', L: 169.3, B: 18.9, fb: 8, sheer: 3, transom: 0.8, guns: '56:3/152 45:3/152^2.5 -46:3/152^2.5b -58:3/152b', funnels: [[8, 12, 5], [-6, 12, 5]], blocks: [[32, 20, 22, 6, 2]], masts: [[24, 28], [-16, 24]] },
+  // Fiji: forecastle to the aft turrets, deck line, turret places, the big bridge block round the first stack, hangar,
+  // masts from the ONI 201 profile, heights checked against the sheet's figures (W.L. to first stack 74 ft).
+  'fiji': { cls: 'light-cruiser', L: 169.3, B: 18.9, fb: 7.0, fc: [-50.5, 2.2], sheer: 2.4, transom: 0.8, guns: '56.1:3/152 45.8:3/152^2.3 -48.1:3/152^0.3b -58:3/152b', funnels: [[14.6, 15.7, 5.0, 4.0], [-10.2, 12.9, 5.0, 4.0]], blocks: [[41, 10.7, 15.6, 6, 1], [-12.5, -26.6, 9.3, 6]], raised: [[38.2, 22, 15.6, 19.5, 4]], dirs: [[30, 22.0, 1.5]], masts: [[22, 28.4]] },
   'tiger-1959': { cls: 'light-cruiser', L: 169.3, B: 19.5, fb: 8, sheer: 3, guns: '56:2/152m -54:2/152mb 44:2/76m -42,6:2/76mb', funnels: [[6, 10, 5], [-10, 10, 5]], blocks: [[34, 16, 22, 7, 2], [-4, -26, 16, 6]], masts: [[18, 26], [-6, 22]] },
   // Japan.
   // Kuma: gun places, the bridge, the three funnels and the masts measured on the ONI 41-42 (Aug. 1942) recognition-model
@@ -830,17 +842,17 @@ const AFT: Record<string, Partial<ShipO>> = {
   'chapayev': { blocks: [[-14, -34, 12, 5.5], [-18, -30, 15, 4]], dirs: [[-26, 18]], masts: [[30, 28, 't'], [-18, 22]] },
   'sverdlov': { blocks: [[-16, -40, 12.5, 6], [-20, -34, 15.5, 4.5]], dirs: [[-30, 19, 1.6]], masts: [[22, 28, 't'], [-20, 24, 't']], launchers: [{ x: -6, length: 7, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
   // British cruisers.
-  'hawkins': { blocks: [[-20, -30, 11, 3.5]], dirs: [[-26, 14]], masts: [[28, 28, 't'], [-22, 22]] },
+  'hawkins': { blocks: [[-28.2, -42, 9.3, 4]], dirs: [[-35, 11.5, 1.2]], masts: [[30.1, 30.7, 't'], [-20.4, 29.2, 't']] },
   'emerald': { blocks: [[-22, -32, 11, 3.5]], dirs: [[-28, 14]], masts: [[30, 26, 't'], [-28, 20]] },
-  'arethusa': { blocks: [[-10, -24, 12, 4], [-12, -20, 14, 3]], dirs: [[-18, 17]], masts: [[22, 24, 't'], [-16, 20]] },
+  'arethusa': { blocks: [[-25.3, -47.2, 8.8, 4]], dirs: [[-46.5, 11.6, 1.2]], masts: [[13.3, 27.7, 't'], [-41.4, 25.9, 't']] },
   'leander': { masts: [[19.5, 30.7, 't'], [-35, 29.7, 't']] },
-  'dido': { blocks: [[-12, -26, 12, 4], [-14, -22, 14, 3]], dirs: [[-20, 17]] },
-  'kent': { blocks: [[-14, -28, 14.5, 5], [-18, -26, 17, 3.5]], dirs: [[-24, 20]], masts: [[28, 30, 't'], [-26, 24]] },
+  'dido': { blocks: [[-22, -33, 10.5, 4]], dirs: [[-31, 13, 1.2]], masts: [[10.7, 25.8, 't'], [-29.5, 25.8, 't']] },
+  'kent': { blocks: [[-23.5, -55, 10.1, 5]], dirs: [[-29, 20.2, 1.4]], masts: [[26.7, 24.0, 't'], [-38.6, 23.3, 't']] },
   'london-1941': { blocks: [[-14, -32, 15, 6], [-18, -28, 18, 4]], dirs: [[-26, 21]], masts: [[16, 30, 't'], [-24, 24]] },
   'york': { blocks: [[-12, -26, 14, 4.5], [-16, -24, 16.5, 3]], dirs: [[-22, 19]] },
-  'southampton': { blocks: [[-10, -30, 13, 5.5], [-14, -26, 15.5, 4]], dirs: [[-22, 18]], masts: [[26, 28, 't'], [-18, 24, 't']] },
+  'southampton': { blocks: [[-25.8, -39.3, 10.5, 5]], dirs: [[-37, 19.3, 1.4]], masts: [[22.4, 32.3, 't'], [-28, 26.9, 't']] },
   'belfast': { blocks: [[-12, -32, 13, 6], [-16, -28, 15.5, 4.5]], dirs: [[-24, 18]], masts: [[22, 30, 't'], [-20, 26, 't']] },
-  'fiji': { blocks: [[-10, -30, 13, 5.5], [-14, -26, 15.5, 4]], dirs: [[-22, 18]], masts: [[24, 28, 't'], [-16, 24, 't']] },
+  'fiji': { blocks: [[-26.6, -42.8, 11.4, 5]], dirs: [[-41, 14.5, 1.4]], masts: [[22, 28.4, 't'], [-33, 27.6, 't']] },
   'tiger-1959': { masts: [[18, 26, 'l'], [-6, 22, 'l']] },
   // Japanese cruisers: the funnels raked.
   'kuma': { blocks: [[-17.5, -38, 9, 3]], sl: [[-13.8, 11]], masts: [[34.6, 25, 't'], [-45, 20.3]], rake: 0.1 },

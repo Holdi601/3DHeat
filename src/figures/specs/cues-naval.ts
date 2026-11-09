@@ -504,7 +504,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
   kent: naval('kent', [
     { cue: 'three tall funnels evenly spaced', check: (s) => funnels(s) === 3 },
     { cue: 'four twin 8-inch turrets, superfiring pairs fore and aft', check: (s) => battery(s, 0.2, 2, 2, 2) && superfires(fwd(s, 0.2)) && superfires(aft(s, 0.2)) },
-    { cue: 'very high flush-sided hull', check: (s) => s.freeboard >= 9 && flush(s) },
+    { cue: 'very high flush-sided hull', check: (s) => s.freeboard >= 0.35 * s.beam && flush(s) },
     { cue: 'tripod foremast', check: mastKind('tripod') },
   ]),
   belfast: naval('belfast', [
@@ -654,7 +654,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
   ]),
   arethusa: naval('arethusa', [
     { cue: 'three twin 6-inch turrets: two forward, one aft', check: (s) => battery(s, 0.15, 2, 1, 2) },
-    { cue: 'one funnel', check: (s) => funnels(s) === 1 },
+    { cue: 'two widely separated upright stacks', check: (s) => funnels(s) === 2 && Math.abs(s.funnels![0].x - s.funnels![1].x) > 20 },
     { cue: 'long raised forecastle', check: forecastle },
     { cue: 'tripod foremast', check: mastKind('tripod') },
   ]),
@@ -1030,7 +1030,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
   'london-1941': naval('london-1941', [
     { cue: 'four twin 8-inch turrets, superfiring pairs fore and aft', check: (s) => battery(s, 0.2, 2, 2, 2) && superfires(fwd(s, 0.2)) && superfires(aft(s, 0.2)) },
     { cue: 'two funnels (as rebuilt)', check: (s) => funnels(s) === 2 },
-    { cue: 'very high flush-sided hull', check: (s) => s.freeboard >= 9 && flush(s) },
+    { cue: 'very high flush-sided hull', check: (s) => s.freeboard >= 0.35 * s.beam && flush(s) },
   ]),
   impetuoso: naval('impetuoso', [
     { cue: 'twin 127 mm mounts, one forward, one aft', check: (s) => battery(s, 0.1, 1, 1, 2) },
@@ -1211,7 +1211,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
   york: naval('york', [
     { cue: 'three twin 8-inch turrets: two forward, one aft', check: (s) => battery(s, 0.2, 2, 1, 2) },
     { cue: 'two funnels', check: (s) => funnels(s) === 2 },
-    { cue: 'very high flush-sided hull', check: (s) => s.freeboard >= 9 && flush(s) },
+    { cue: 'very high flush-sided hull', check: (s) => s.freeboard >= 0.35 * s.beam && flush(s) },
   ]),
   trento: naval('trento', [
     { cue: 'four twin 203 mm turrets, superfiring pairs fore and aft', check: (s) => battery(s, 0.2, 2, 2, 2) && superfires(fwd(s, 0.2)) && superfires(aft(s, 0.2)) },
