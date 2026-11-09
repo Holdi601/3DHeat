@@ -997,20 +997,24 @@ G['m24-chaffee'] = ww2({
 });
 // M26 Pershing: six road wheels and five return rollers, the rear sprocket, the long hull with its sloped glacis,
 // the big cast turret with the 90 mm and its brake (hull 6.33 x 3.51 m, 2.78 m; 8.65 m with the gun).
-const M26_T = turret(-0.3, [[-1.85, 0.75], [-1.6, 1.15], [0.6, 1.25], [1.25, 0.95], [1.45, 0.6]], [[-1.85, 0.5], [-1.4, 0.75], [0.6, 0.8], [1.45, 0.5]], 3, 1.5);
+// The turret from 1.1 m behind the hull's middle to its mantlet 1.8 m ahead (set well forward, as the sheet says), its
+// roof 1.0 m over the 1.6 m deck, the long rear deck, the front fenders, the high front idler and low rear sprocket,
+// the six road wheels (the front one set further out) and five rollers from the M26 side silhouette in FM 30-40
+// (1943, changes to 1945), scaled by the 6.33 m hull and the 2.78 m height (public domain).
+const M26_T = turret(0.7, [[-1.85, 0.75], [-1.6, 1.15], [0.4, 1.25], [0.95, 0.95], [1.12, 0.6]], [[-1.85, 0.63], [-1.6, 0.95], [-0.1, 0.98], [0.5, 0.83], [0.8, 0.62], [1.12, 0.54]], 3, 1.15);
 const M26: Ww2 = {
-  cls: 'heavy-tank', L: 6.33, W: 3.51, deck: 1.85, fender: 1.0,
-  top: [[-3.165, 1.5], [-3.0, 1.85], [1.0, 1.85], [2.85, 0.95], [3.165, 0.85]],
+  cls: 'heavy-tank', L: 6.33, W: 3.51, deck: 1.6, fender: 1.0,
+  top: [[-3.165, 1.4], [-3.0, 1.55], [-1.5, 1.58], [1.42, 1.6], [2.9, 1.25], [3.165, 1.15]],
   plan: [[-3.165, 1.72], [3.165, 1.72]], hullRound: 10,
-  // 3.85-3.95 m of track on the ground (151.5 in left, 155.5 in right): the end wheels 3.9 m apart.
-  track: trk(3.1, 1.0, 0.6, 0.66, 1.95),
-  wheels: even(6, -1.95, 1.95), r: 0.33, rollers: even(5, -2.0, 2.0),
+  // 3.85-3.95 m of track on the ground (151.5 in left, 155.5 in right): the end wheels 3.95 m apart.
+  track: [[-1.98, 0], [2.29, 0], [3.0, 0.81], [2.7, 1.05], [-2.55, 1.05], [-2.86, 0.67]],
+  wheels: [-1.82, -1.05, -0.3, 0.46, 1.21, 2.13], r: 0.33, rollers: [-1.38, -0.64, 0.11, 0.83, 1.58],
   turret: M26_T,
 };
 G['m26-pershing'] = ww2({ ...M26, gun: { length: 4.25, calibre: 0.09, muzzle: true, at: 0.45 }, turretParts: (t) => [cupola(t, -0.6, 0.5, 0.32, 0.15)] });
 // T26E4 "Super Pershing": the long 90 mm T15E2 balanced by a counterweight on the turret's back, and the boiler-plate
 // armour bolted in a V over the hull front and the mantlet.
-G['m26-super-pershing'] = ww2({ ...M26, gun: { length: 5.7, calibre: 0.09, muzzle: true, at: 0.45 }, parts: [part(1.85, [[1.2, 1.4], [3.2, 1.0]], [[1.2, 1.95], [3.2, 1.0]], [[1.2, 1.7], [3.2, 0.75]], 6)], turretParts: (t) => [cupola(t, -0.6, 0.5, 0.32, 0.15), on(t, [[-2.4, 0.45], [-1.85, 0.45]], [[-2.4, 0.55], [-1.85, 0.55]], 0.15, 8), on(t, [[1.45, 0.95], [1.75, 0.5]], [[1.45, 0.85], [1.75, 0.7]], 0.05, 6)] });
+G['m26-super-pershing'] = ww2({ ...M26, gun: { length: 5.7, calibre: 0.09, muzzle: true, at: 0.45 }, parts: [part(1.6, [[1.2, 1.4], [3.2, 1.0]], [[1.2, 1.95], [3.2, 1.0]], [[1.2, 1.7], [3.2, 0.75]], 6)], turretParts: (t) => [cupola(t, -0.6, 0.5, 0.32, 0.15), on(t, [[-2.4, 0.45], [-1.85, 0.45]], [[-2.4, 0.55], [-1.85, 0.55]], 0.15, 8), on(t, [[1.45, 0.95], [1.75, 0.5]], [[1.45, 0.85], [1.75, 0.7]], 0.05, 6)] });
 // M46 Patton: the M26's hull and turret with the new engine deck, its 90 mm M3A1 with a bore evacuator behind a
 // single-baffle brake (6.36 x 3.51 m without the gun, 2.12 m of gun ahead of the hull; 3.78-3.88 m of track on the
 // ground, five return rollers; afvdatabase.com from the TMs). Not the M48's cast boat hull.
@@ -1018,7 +1022,7 @@ G['m46-patton'] = ww2({ ...M26, cls: 'mbt', gun: { length: 4.25, calibre: 0.09, 
 // M47 Patton: the M46 hull (its sharper glacis not drawn) and three return rollers under the T42's long narrow turret, its
 // bustle over the engine deck and 0.15 m taller (3.33 m over the AA MG against the M46's 3.18 m), the 90 mm M36
 // with its evacuator (6.36 x 3.51 m, 2.15 m of gun ahead; afvdatabase.com). The bustle's length is an estimate.
-const M47_T = turret(-0.3, [[-2.3, 0.7], [-2.0, 1.05], [0.6, 1.2], [1.3, 0.9], [1.55, 0.5]], [[-2.3, 0.62], [-1.8, 0.9], [0.6, 0.95], [1.55, 0.55]], 3, 1.6);
+const M47_T = turret(0.7, [[-2.3, 0.7], [-2.0, 1.05], [0.6, 1.2], [1.3, 0.9], [1.55, 0.5]], [[-2.3, 0.87], [-1.8, 1.15], [0.6, 1.2], [1.55, 0.8]], 3, 1.6);
 G['m47-patton'] = ww2({ ...M26, cls: 'mbt', rollers: [-1.6, 0, 1.6], turret: M47_T, gun: { length: 4.3, calibre: 0.09, muzzle: true, extractor: 0.8, at: 0.45 }, turretParts: (t) => [cupola(t, -0.9, 0.5, 0.32, 0.18)] });
 // M6A1 heavy tank: a tall welded hull on four paired bogies, the big cast turret with the 3-inch gun (7.54 x 3.12 m, 2.95 m; 8.43 m with the gun).
 G['m6a1'] = ww2({
@@ -1452,12 +1456,14 @@ G['type-95-ha-go'] = ww2({
 
 // Fiat M13/40 (and M14/41): eight small road wheels in two four-wheel bogies, a riveted box hull, the turret with the
 // 47/32 (4.92 x 2.2 m, 2.37 m).
+// The rear deck falling from the superstructure to the low overhanging tail, the nose, and the track's 3.0 m on the
+// ground from the M14 side silhouette in FM 30-40 (1943), scaled by its 16.2 ft length (public domain).
 G['fiat-m13-40'] = ww2({
   cls: 'medium-tank', L: 4.92, W: 2.2, deck: 1.55, fender: 0.72,
-  top: [[-2.46, 1.3], [-2.35, 1.5], [0.9, 1.55], [1.4, 1.4], [2.0, 1.25], [2.46, 0.95]],
+  top: [[-2.46, 0.95], [-2.2, 1.1], [-1.99, 1.27], [-1.35, 1.47], [-1.2, 1.55], [0.9, 1.55], [1.4, 1.4], [2.0, 1.25], [2.24, 1.24], [2.35, 1.06], [2.46, 0.92]],
   plan: [[-2.46, 1.08], [2.46, 1.08]], hullRound: 14,
-  track: trk(2.42, 0.75, 0.55, 0.42, 1.75),
-  wheels: [-1.6, -1.22, -0.8, -0.42, 0.42, 0.8, 1.22, 1.6], r: 0.17, rollers: [-1.2, 0, 1.2],
+  track: trk(2.42, 0.75, 0.55, 0.42, 1.53),
+  wheels: [-1.4, -1.07, -0.7, -0.37, 0.37, 0.7, 1.07, 1.4], r: 0.17, rollers: [-1.2, 0, 1.2],
   turret: turret(0.15, [[-0.95, 0.6], [-0.8, 0.72], [0.55, 0.75], [0.85, 0.55]], [[-0.95, 0.58], [0.85, 0.6]], 10, 0.9),
   gun: { length: 1.2, calibre: 0.047, at: 0.45 },
 });
@@ -1715,15 +1721,22 @@ G['ab-41'] = { cls: 'scout-car', chassis: 'wheeled', length: 5.2, width: 1.92, h
 // (M43 5.1 x 2.4 m, 1.75 m).
 {
   // `w`: the hull's half-width (the M41 and M42 on the narrower M13/M14/M15 hull, 2.23 m; the M43 2.4 m).
-  const sem = (gun: number, cal: number, w = 1.2) => {
+  // `m14`: the M41/M42 on the M14/M15 chassis, profile from the "75-mm SP gun (on M14 tank chassis)" side silhouette in
+  // FM 30-40 (1943), scaled by its 16.2 ft length (public domain): the low tail, the rear deck 1.3-1.38 m, the casemate
+  // roof rising from 1.6 m to 1.75 m at its front, the low front deck; the M13's 3.0 m of track on the ground.
+  const sem = (gun: number, cal: number, w = 1.2, m14 = false) => {
     const m = mantlet(1.75, 1.55, 1.8, 1.4, 0.3, 0.2, 0.2);
-    return ww2({ cls: 'assault-gun', L: 5.1, W: 2 * w, deck: 1.75, fender: 0.72, top: [[-2.55, 1.3], [-2.45, 1.5], [-1.0, 1.5], [-0.9, 1.75], [1.2, 1.75], [2.1, 1.2], [2.55, 0.95]], plan: [[-2.55, w - 0.02], [2.55, w]], hullRound: 10, track: trk(2.5, 0.75, 0.55, 0.42, 1.75), wheels: [-1.6, -1.22, -0.8, -0.42, 0.42, 0.8, 1.22, 1.6], r: 0.17, rollers: [-1.2, 0, 1.2], turret: m, guns: [fire(m, gun, cal, { muzzle: cal > 0.1 })] });
+    const top: P2[] = m14
+      ? [[-2.55, 0.6], [-2.36, 0.78], [-2.24, 1.11], [-2.12, 1.18], [-1.95, 1.2], [-1.89, 1.3], [-1.43, 1.38], [-0.62, 1.38], [-0.5, 1.6], [1.0, 1.75], [1.2, 1.3], [2.15, 1.13], [2.38, 0.92], [2.55, 0.8]]
+      : [[-2.55, 1.3], [-2.45, 1.5], [-1.0, 1.5], [-0.9, 1.75], [1.2, 1.75], [2.1, 1.2], [2.55, 0.95]];
+    const run = m14 ? { track: trk(2.5, 0.75, 0.55, 0.42, 1.53), wheels: [-1.4, -1.07, -0.7, -0.37, 0.37, 0.7, 1.07, 1.4] } : { track: trk(2.5, 0.75, 0.55, 0.42, 1.75), wheels: [-1.6, -1.22, -0.8, -0.42, 0.42, 0.8, 1.22, 1.6] };
+    return ww2({ cls: 'assault-gun', L: 5.1, W: 2 * w, deck: 1.75, fender: 0.72, top, plan: [[-2.55, w - 0.02], [2.55, w]], hullRound: 10, ...run, r: 0.17, rollers: [-1.2, 0, 1.2], turret: m, guns: [fire(m, gun, cal, { muzzle: cal > 0.1 })] });
   };
   G['semovente-m43'] = sem(1.4, 0.105);
-  G['semovente-75-18'] = sem(0.9, 0.075);
+  G['semovente-75-18'] = sem(0.9, 0.075, 1.2, true);
   // Semovente M42 75/34: the casemate on the M15/42 hull (5.06 x 2.23 m) with the long 75 mm (34 calibres, 2.55 m),
   // about 2 m of it out past the mantlet.
-  G['semovente-75-34'] = sem(2.0, 0.075, 1.115);
+  G['semovente-75-34'] = sem(2.0, 0.075, 1.115, true);
 }
 // Type 89 I-Go: a long hull with girders over its nine small wheels, the front idler high, the tail skid behind, the
 // cylindrical turret with the short 57 mm (5.75 x 2.18 m, 2.56 m).
