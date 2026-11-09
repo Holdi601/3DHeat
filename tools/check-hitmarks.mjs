@@ -24,6 +24,10 @@
  * one at 20 s (a critical hit, APFSDS) and kills it at 40 s (HEAT), both 120 mm. Starts its own dev
  * server on port 5299 and renders in software (SwiftShader).
  *
+ * Placement: shots from ahead whose points lie inside the tank near its
+ * roof land on its front plate, not the nearer roof; shots from the right on
+ * its right side, each along its own line.
+ *
  *   node tools/check-hitmarks.mjs                 WebGL2
  *   node tools/check-hitmarks.mjs --webgpu        also WebGPU
  *   --url=http://127.0.0.1:5299/   against a server already running
@@ -167,6 +171,87 @@ async function loadTanks(page) {
     s.patchTeam({ trailSeconds: 0, figureScale: 2, showLookDirection: false, fires: false, weapons: false, hitMarks: true, hitMarkSeconds: 10 });
     if (globalThis.__3dheat.useStore.getState().showGrid) s.toggle('showGrid');
     globalThis.__3dheat_replay.getState().setDropLines?.(false);
+  });
+}
+
+/**
+ * Placement: the red tank (facing +x, right +z) hit three times from ahead
+ * (travelling -x) at points inside it near the roof, and three times from
+ * its right (travelling -z) near its middle. Where the marks are drawn,
+ * world (data) metres from the tank's middle, by the shot's way.
+ */
+async function placement(page) {
+  return page.evaluate(async () => {
+    const shots = [
+      // [time, local x y z, dir x y z]
+      [10, 1.2, 1.4, -0.5, -1, 0, 0],
+      [11, 1.2, 1.4, 0, -1, 0, 0],
+      [12, 1.2, 1.4, 0.5, -1, 0, 0],
+      [20, -1, 1, 0.6, 0, 0, -1],
+      [21, 0, 1, 0.6, 0, 0, -1],
+      [22, 1, 1, 0.6, 0, 0, -1],
+    ];
+    const rows = [];
+    for (let p = 0; p < 2; p++) for (let t = 0; t <= 40; t += 0.5) rows.push({ p, t, s: -1 });
+    shots.forEach((s, i) => rows.push({ p: 0, t: s[0], s: i }));
+    rows.sort((a, b) => a.t - b.t || a.s - b.s);
+    const n = rows.length;
+    const X = [-20, 20];
+    const cat = (name, vals, of) => ({ name, kind: 'category', data: Uint32Array.from(rows, of), min: 0, max: vals.length - 1, categories: vals });
+    const num = (name, of) => ({ name, kind: 'number', data: Float32Array.from(rows, of), min: 0, max: 1 });
+    const col = (k) => (r) => (r.s >= 0 ? shots[r.s][k] : NaN);
+    const shot = (r) => r.s >= 0;
+    const st = globalThis.__3dheat.useStore;
+    const s = st.getState();
+    s.setLevel?.(null);
+    s.setDataset({
+      id: 'visual-hitmarks-placement', name: 'hit mark placement', count: n,
+      px: Float32Array.from(rows, (r) => X[r.p]), py: new Float32Array(n), pz: new Float32Array(n),
+      time: Float32Array.from(rows, (r) => r.t), epochMs: null, lifetime: null, maxLifetimeGap: 0, personShared: null,
+      yaw: Float32Array.from(rows, () => Math.PI / 2), pitch: new Float32Array(n),
+      personId: Uint32Array.from(rows, (r) => r.p), teamId: Uint16Array.from(rows, (r) => r.p),
+      personLabels: ['blue tank', 'red tank'], teamLabels: ['blue', 'red'],
+      sessionId: null, sessionLabels: [], sessionRows: null, sessionStart: null, sessionEnd: null,
+      personTeam: Uint16Array.of(0, 1), personSlot: null, teamSizes: Uint32Array.of(1, 1),
+      attrs: [
+        cat('kind', ['tank'], () => 0),
+        cat('event', ['position', 'shot'], (r) => (shot(r) ? 1 : 0)),
+        cat('player', ['blue tank', 'red tank'], (r) => r.p),
+        cat('Vehicle', ['tank-blue', 'tank-red'], (r) => r.p),
+        cat('other', ['', 'red tank'], (r) => (shot(r) ? 1 : 0)),
+        cat('otherVehicle', ['', 'tank-red'], (r) => (shot(r) ? 1 : 0)),
+        num('calibre', (r) => (shot(r) ? 120 : NaN)),
+        num('hitLocalX', col(1)), num('hitLocalY', col(2)), num('hitLocalZ', col(3)),
+        num('hitDirX', col(4)), num('hitDirY', col(5)), num('hitDirZ', col(6)),
+      ],
+      warnings: [],
+      bounds: { minX: -30, minY: 0, minZ: -10, maxX: 30, maxY: 4, maxZ: 10 },
+      timeRange: [0, 40], timeSorted: true,
+    });
+    s.setMode('team');
+    s.patchTimeline({ mode: 'play', window: 'cumulative', playing: false, speed: 1 });
+    s.patchTeam({ trailSeconds: 0, figureScale: 1, showLookDirection: false, fires: false, weapons: false, hitMarks: true, hitMarkSeconds: 0 });
+    st.getState().seek(30);
+    const eng = globalThis.__3dheat_engine;
+    eng.placeCamera({ x: 28, y: 6, z: 8 }, { x: 20, y: 1, z: 0 });
+    const hm = eng.hitMarkStats;
+    for (let i = 0; i < 600 && !(hm.vehicles > 0 && hm.placed === hm.vehicles); i++) {
+      eng.invalidate(2);
+      await new Promise((r) => requestAnimationFrame(() => r()));
+    }
+    for (let i = 0; i < 12; i++) {
+      eng.invalidate(2);
+      await new Promise((r) => requestAnimationFrame(() => r()));
+    }
+    const { hitsOf } = await import('/src/vehicle/hits.ts');
+    const hits = hitsOf(st.getState().dataset).hits;
+    const dr = eng.hitMarkLayer.drawn;
+    const out = [];
+    for (let i = 0; i < dr.count; i++) {
+      const h = hits[dr.hit[i]];
+      out.push({ ahead: h.time < 15, given: h.local, at: [dr.xyz[i * 3] - 20, dr.xyz[i * 3 + 1], dr.xyz[i * 3 + 2]] });
+    }
+    return out;
   });
 }
 
@@ -438,6 +523,23 @@ for (const backend of backends) {
       }
     }
     continue;
+  }
+  if (backend === backends[0]) {
+    // Where the marks land: the same work on either backend, looked at once.
+    const { browser, page } = await open(backend, '&gputracks=0');
+    try {
+      const marks = await placement(page);
+      if (opt('shot')) await page.screenshot({ path: `${opt('shot')}/hitmarks-placement.png` });
+      const ahead = marks.filter((m) => m.ahead), right = marks.filter((m) => !m.ahead);
+      const f = (v) => v.map((x) => x.toFixed(2)).join(' ');
+      // Each moved along its own shot only: forward of its point onto the front, out to the right side.
+      const onFront = ahead.every((m) => m.at[0] > m.given[0] + 0.3 && Math.abs(m.at[2] - m.given[2]) < 0.12 && Math.abs(m.at[1] - m.given[1]) < 0.12);
+      const onRight = right.every((m) => m.at[2] > m.given[2] + 0.3 && Math.abs(m.at[0] - m.given[0]) < 0.12 && Math.abs(m.at[1] - m.given[1]) < 0.12);
+      report('placement, shots from ahead on the front', ahead.length === 3 && onFront, ahead.map((m) => `(${f(m.given)}) -> (${f(m.at)})`).join(', ') || 'none drawn');
+      report('placement, shots from the right on its right side', right.length === 3 && onRight, right.map((m) => `(${f(m.given)}) -> (${f(m.at)})`).join(', ') || 'none drawn');
+    } finally {
+      await browser.close();
+    }
   }
   for (const path of ['cpu', 'gpu']) {
     const { browser, page } = await open(backend, `&gputracks=${path === 'gpu' ? 1 : 0}`);
