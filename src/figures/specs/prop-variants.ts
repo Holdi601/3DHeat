@@ -1354,7 +1354,10 @@ A['he-51'] = ww1({ length: 8.4, span: 11.0, height: 3.2, chord: 1.6, gap: 1.6, s
 // Drawn from FM 30-30's "Nate" sheet (DRAWN): the body, the wing with its straight leading edge, the elliptical tailplane.
 A['ki-27'] = one({ cls: 'ww2-fighter', length: 7.53, span: 11.31, height: 3.25, w: 0.55, h: 0.62, radial: true, wing: 'round', le: 1.3, root: 2.2, tip: 0.9, sweep: 4, dihedral: 4, fin: 1.3, finRoot: 1.3, roundFin: true, tailSpan: 3.4, tailRoot: 0.9, canopy: { x: -0.2, length: 1.6, kind: 'framed' }, razor: true, prop: 2.9, blades: 2, gear: true, draw: DRAWN['ki-27'] });
 // F2A Buffalo: a barrel body behind the radial, a mid-low round-tipped wing, the framed canopy on a razorback (8.03 x 10.67 x 3.66 m).
-A['f2a-buffalo'] = one({ cls: 'ww2-fighter', length: 8.03, span: 10.67, height: 3.66, w: 0.7, h: 0.8, radial: true, wing: 'round', le: 1.4, root: 2.4, tip: 1.2, sweep: 3, mount: -0.3, dihedral: 5, fin: 1.4, finRoot: 1.3, roundFin: true, tailSpan: 4.2, tailRoot: 1.1, canopy: { x: 0.0, length: 1.8, kind: 'framed' }, razor: true, prop: 3.15, blades: 3 });
+// The planform from the U.S. Navy's F2A-3 three-side view (Naval Aviation News, August 1976; sources.md): the leading
+// edge straight across (2.4 m ahead of the middle), the taper all in the trailing edge, chords about 2.27 m at the centre
+// line and 1.5 m where the round tips begin (the published 209 sq ft); the elliptical tailplane 3.9 m across.
+A['f2a-buffalo'] = one({ cls: 'ww2-fighter', length: 8.03, span: 10.67, height: 3.66, w: 0.7, h: 0.8, radial: true, wing: 'round', le: 1.32, root: 2.27, tip: 1.5, sweep: -2, mount: -0.3, dihedral: 5, fin: 1.4, finRoot: 1.3, roundFin: true, tailSpan: 3.9, tailRoot: 0.92, canopy: { x: 0.0, length: 1.8, kind: 'framed' }, razor: true, prop: 3.15, blades: 3 });
 // Sea Fury: the big radial, five blades, a near-elliptic wing, the bubble and a dorsal fillet (10.57 x 11.7 x 4.84 m).
 A['sea-fury'] = one({ cls: 'ww2-fighter', length: 10.57, span: 11.7, height: 4.84, w: 0.68, h: 0.8, radial: true, wing: 'elliptic', le: 1.7, root: 2.9, tip: 0.6, fin: 1.75, finRoot: 1.7, tailSpan: 4.6, tailRoot: 1.2, canopy: { x: -0.3, length: 1.6, kind: 'bubble' }, prop: 3.81, blades: 5, finOutline: filletFin(10.57, 1.7, 1.0, 1.75, 0.8) });
 
