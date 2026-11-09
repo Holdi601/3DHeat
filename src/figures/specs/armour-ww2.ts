@@ -536,7 +536,9 @@ G['m4a3-76'] = sherman({ L: 5.88, glacisX: 1.45, turret: SHERMAN_T23, gun: GUN_7
 // M4A3E8 "Easy Eight": HVSS - the wider track (2.99 m), paired wheels on open bogies, the rollers apart - with the
 // T23 turret and the 76 mm M1A2 (7.54 m with the gun).
 // The commander's all-round vision cupola on the right of the T23's roof (sizes estimated).
-G['m4a3e8'] = sherman({ L: 5.9, W: 2.99, glacisX: 1.45, hvss: true, bogies: [-1.55, 0, 1.55], turret: SHERMAN_T23, gun: GUN_76, turretParts: (t) => [cupola(t, -0.45, 0.42, 0.33, 0.2)] });
+// The T23 turret's vision cupola: 2.97 m over it on the (76)W Shermans (117 in, Hunnicutt via afvdatabase).
+const T23_CUPOLA = (t: TurretSpec) => cupola(t, -0.45, 0.42, 0.33, 0.33);
+G['m4a3e8'] = sherman({ L: 5.9, W: 2.99, glacisX: 1.45, hvss: true, bogies: [-1.55, 0, 1.55], turret: SHERMAN_T23, gun: GUN_76, turretParts: (t) => [T23_CUPOLA(t)] });
 // M4A3E2 "Jumbo" (2.97 m high, 2.97 m wide): the extra glacis plate, a new heavy turret with upright sides and a thick
 // mantlet, the wider end connectors; the 75 mm.
 const JUMBO_T = turret(-0.2, [[-1.25, 0.8], [-1.1, 1.0], [0.5, 1.05], [0.85, 0.98], [1.0, 0.75]], [[-1.25, 0.62], [1.0, 0.72]], 8, 1.15);
@@ -920,7 +922,8 @@ const PZ2: Ww2 = {
   track: trk(2.35, 0.78, 0.5, 0.45, 1.55),
   wheels: even(5, -1.55, 1.55), r: 0.275, rollers: [-1.2, -0.4, 0.4, 1.2],
 };
-G['pz-ii'] = ww2({ ...PZ2, turret: turret(0.3, [[-0.8, 0.55], [-0.7, 0.68], [0.6, 0.68], [0.75, 0.55]], [[-0.8, 0.52], [0.75, 0.55]], 12, 0.78, -0.12), gun: { length: 0.9, calibre: 0.02, at: 0.45 } });
+// The commander's cupola with its eight periscopes on the turret's rear roof (Ausf F, the C refitted), to 2.15 m overall.
+G['pz-ii'] = ww2({ ...PZ2, turret: turret(0.3, [[-0.8, 0.55], [-0.7, 0.68], [0.6, 0.68], [0.75, 0.55]], [[-0.8, 0.52], [0.75, 0.55]], 12, 0.78, -0.12), gun: { length: 0.9, calibre: 0.02, at: 0.45 } , turretParts: (t) => [cupola(t, -0.35, 0, 0.27, 0.2)] });
 {
   const m = mantlet(1.45, 0.25, 0.45, 1.8, 0.25, 0.2);
   // The compartment at the back is the hull's sides carried up to 2.2 m, open above.
@@ -1065,14 +1068,16 @@ const M26: Ww2 = {
   wheels: [-1.82, -1.05, -0.3, 0.46, 1.21, 2.13], r: 0.33, rollers: [-1.38, -0.64, 0.11, 0.83, 1.58],
   turret: M26_T,
 };
-G['m26-pershing'] = ww2({ ...M26, gun: { length: 4.25, calibre: 0.09, muzzle: true, at: 0.45 }, turretParts: (t) => [cupola(t, -0.6, 0.5, 0.32, 0.15)] });
+// The M26's vision cupola stands to 2.779 m over its top (109.4 in, Hunnicutt via afvdatabase), the same on the T26E4 and M46.
+const M26_CUPOLA = 0.24;
+G['m26-pershing'] = ww2({ ...M26, gun: { length: 4.25, calibre: 0.09, muzzle: true, at: 0.45 }, turretParts: (t) => [cupola(t, -0.6, 0.5, 0.32, M26_CUPOLA)] });
 // T26E4 "Super Pershing": the long 90 mm T15E2 balanced by a counterweight on the turret's back, and the boiler-plate
 // armour bolted in a V over the hull front and the mantlet.
-G['m26-super-pershing'] = ww2({ ...M26, gun: { length: 5.7, calibre: 0.09, muzzle: true, at: 0.45 }, parts: [part(1.6, [[1.2, 1.4], [3.2, 1.0]], [[1.2, 1.95], [3.2, 1.0]], [[1.2, 1.7], [3.2, 0.75]], 6)], turretParts: (t) => [cupola(t, -0.6, 0.5, 0.32, 0.15), on(t, [[-2.4, 0.45], [-1.85, 0.45]], [[-2.4, 0.55], [-1.85, 0.55]], 0.15, 8), on(t, [[1.45, 0.95], [1.75, 0.5]], [[1.45, 0.85], [1.75, 0.7]], 0.05, 6)] });
+G['m26-super-pershing'] = ww2({ ...M26, gun: { length: 5.7, calibre: 0.09, muzzle: true, at: 0.45 }, parts: [part(1.6, [[1.2, 1.4], [3.2, 1.0]], [[1.2, 1.95], [3.2, 1.0]], [[1.2, 1.7], [3.2, 0.75]], 6)], turretParts: (t) => [cupola(t, -0.6, 0.5, 0.32, M26_CUPOLA), on(t, [[-2.4, 0.45], [-1.85, 0.45]], [[-2.4, 0.55], [-1.85, 0.55]], 0.15, 8), on(t, [[1.45, 0.95], [1.75, 0.5]], [[1.45, 0.85], [1.75, 0.7]], 0.05, 6)] });
 // M46 Patton: the M26's hull and turret with the new engine deck, its 90 mm M3A1 with a bore evacuator behind a
 // single-baffle brake (6.36 x 3.51 m without the gun, 2.12 m of gun ahead of the hull; 3.78-3.88 m of track on the
 // ground, five return rollers; afvdatabase.com from the TMs). Not the M48's cast boat hull.
-G['m46-patton'] = ww2({ ...M26, cls: 'mbt', gun: { length: 4.25, calibre: 0.09, muzzle: true, extractor: 0.8, at: 0.45 }, turretParts: (t) => [cupola(t, -0.6, 0.5, 0.32, 0.15)] });
+G['m46-patton'] = ww2({ ...M26, cls: 'mbt', gun: { length: 4.25, calibre: 0.09, muzzle: true, extractor: 0.8, at: 0.45 }, turretParts: (t) => [cupola(t, -0.6, 0.5, 0.32, M26_CUPOLA)] });
 // M47 Patton: the M46 hull (its sharper glacis not drawn) and three return rollers under the T42's long narrow turret, its
 // bustle over the engine deck and 0.15 m taller (3.33 m over the AA MG against the M46's 3.18 m), the 90 mm M36
 // with its evacuator (6.36 x 3.51 m, 2.15 m of gun ahead; afvdatabase.com). The bustle's length is an estimate.
@@ -1131,8 +1136,8 @@ G['m18-hellcat'] = ww2({
   guns: [{ mount: 'turret', length: 2.65, calibre: 0.076, muzzle: true, at: 0.44 }, { mount: 'top', length: 1.65, calibre: 0.0127, x: -1.05, side: 0, up: 0.18 }],
 });
 // More Shermans: the 76 mm T23 turret on the cast M4A1 hull and the welded M4A2; the M4A3 with the short 105 mm howitzer; the Jumbo with the 76 mm.
-G['m4a1-76'] = sherman({ L: 5.84, glacisX: 1.1, cast: true, turret: SHERMAN_T23, gun: GUN_76 });
-G['m4a2-76'] = sherman({ L: 5.94, glacisX: 1.45, turret: SHERMAN_T23, gun: GUN_76, extra: [-1, 1].map((s) => part(1.9, [[-3.12, 0.3], [-2.97, 0.3]], [[-3.12, 1.25], [-2.97, 1.25]], 0.85, 6, s * 0.6)) });
+G['m4a1-76'] = sherman({ L: 5.84, glacisX: 1.1, cast: true, turret: SHERMAN_T23, gun: GUN_76, turretParts: (t) => [T23_CUPOLA(t)] });
+G['m4a2-76'] = sherman({ L: 5.94, glacisX: 1.45, turret: SHERMAN_T23, gun: GUN_76, turretParts: (t) => [T23_CUPOLA(t)], extra: [-1, 1].map((s) => part(1.9, [[-3.12, 0.3], [-2.97, 0.3]], [[-3.12, 1.25], [-2.97, 1.25]], 0.85, 6, s * 0.6)) });
 // The howitzer's M52 mount: a thicker cast mantlet, wider and deeper than the 75 mm's, rounded over its face.
 G['m4a3-105'] = sherman({ L: 5.88, glacisX: 1.45, turret: SHERMAN_T75, gun: { length: 1.8, calibre: 0.105, at: 0.27 }, extra: [-1, 1].map((s) => part(1.9, [[1.3, 0.32], [1.75, 0.32]], [[1.3, 2.02], [1.75, 1.95]], 1.85, 6, s * 0.55)), turretParts: (t) => [on(t, [[0.86, 0.5], [1.02, 0.48], [1.16, 0.36]], [[0.86, 0.6], [1.02, 0.58], [1.16, 0.5]], [[0.86, 0.04], [1.02, 0.06], [1.16, 0.14]], 2.4)] });
 G['m4a3e2-76'] = sherman({ L: 5.9, W: 2.97, glacisX: 1.1, deck: 1.95, turret: JUMBO_T, gun: GUN_76, extra: [jumboPlate], turretParts: (t) => [jumboMantlet(t)] });

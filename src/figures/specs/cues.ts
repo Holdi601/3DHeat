@@ -1136,6 +1136,7 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'five road wheels on leaf springs, four return rollers', check: (s) => wheels(s) === 5 && rollers(s) === 4 },
     { cue: 'small turret offset to the left with the 20 mm', check: (s) => (s.turret?.side ?? 0) < 0 && (mainGun(s)?.calibre ?? 1) <= 0.02 },
     { cue: 'low box hull with a short sloped nose', check: (s) => hullShape(s) && s.hullHeight < 1.6 },
+    { cue: 'periscope cupola on the turret rear roof', check: (s) => partTop(s) > 2.1 },
   ]),
   'sturmpanzer-ii': ground('sturmpanzer-ii', [
     { cue: 'six road wheels on the lengthened Pz II hull, four return rollers', check: (s) => wheels(s) === 6 && rollers(s) === 4 },
@@ -1228,6 +1229,7 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'long 90 mm with a muzzle brake', check: (s) => muzzle(s) && (mainGun(s)?.calibre ?? 0) >= 0.09 },
     { cue: 'big cast turret', check: castTurret },
     { cue: 'long flat hull with a sloped glacis', check: (s) => hullShape(s) && s.length / s.width > 1.7 },
+    { cue: 'vision cupola on the right rear of the turret', check: (s) => partTop(s) > 2.7 },
   ]),
   'm46-patton': ground('m46-patton', [
     { cue: 'six road wheels, five return rollers (M26 running gear)', check: (s) => wheels(s) === 6 && rollers(s) === 5 },
@@ -1600,6 +1602,7 @@ export const CUES: Record<string, CueEntry> = {
   'm4a1-sherman': ground(['m4a1-sherman', 'm4a1-76'], [{ cue: 'cast hull with rounded edges', check: castHull }]),
   'm4a1-sherman-gun': ground('m4a1-sherman', [{ cue: 'short 75 mm in the rounded cast turret', check: (s) => castTurret(s) && gunLen(0, 2.6)(s) }]),
   'm4a1-76': ground('m4a1-76', [{ cue: 'T23 turret with the 76 mm and its muzzle brake', check: (s) => castTurret(s) && muzzle(s) }]),
+  't23-cupola': ground(['m4a1-76', 'm4a2-76'], [{ cue: 'commander vision cupola on the T23 turret roof', check: (s) => partTop(s) > 2.9 }]),
   't-34-100': ground('t-34-100', [{ cue: 'T-34-85 turret with the long 100 mm and its muzzle brake', check: (s) => castTurret(s) && muzzle(s) && cal(0.1)(s) }]),
   'm53-59': ground('m53-59', [
     { cue: 'six-wheeled Praga with a sloped armoured cab', check: (s) => axles(3)(s) && hullShape(s) },
@@ -2388,6 +2391,7 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'squared passive armour shell round the turret', check: (s) => angular(s) && (s.turret?.width ?? 0) >= 3.3 },
     { cue: 'side skirts', check: skirted },
   ]),
+  'm60-cupola': ground(['m60', 'm60a1', 'm60a3', 'm60a2'], [{ cue: 'tall cupola standing well over the turret roof', check: (s) => (s.addOns ?? []).some((a) => a.kind === 'drum' && a.at[2] + a.size[2] / 2 > 1.45) }]),
   'm60a2': ground('m60a2', [
     { cue: 'narrow "Starship" turret with a stub 152 mm', check: (s) => cal(0.15)(s) && gunLen(0, 3)(s) && (s.turret?.width ?? 9) < 2.8 },
   ]),
