@@ -70,7 +70,7 @@ const ALIASES: Record<string, string> = {
   'us_m56_scorpion': 'm56-scorpion',
   'us_m46_patton': 'm46-patton',
   'us_t34': 't34-heavy',
-  'us_m18_super_hellcat': 'm18-hellcat',
+  'us_m18_super_hellcat': 'm18-super-hellcat',
   'us_m551_76': 'm551-sheridan',
   'us_m26_t99': 'm26-pershing',
   'us_t30': 't30',
@@ -215,7 +215,7 @@ const ALIASES: Record<string, string> = {
   'germ_panzerjager_tiger_p_elefant': 'elefant',
   'germ_pzkpfw_vi_ausf_b_tiger_iih_sla': 'tiger-ii-h',
   'germ_panther_ii': 'panther-ii-g',
-  'germ_pzkpfw_vi_ausf_b_tiger_iih_kwk46': 'tiger-ii-h',
+  'germ_pzkpfw_vi_ausf_b_tiger_iih_kwk46': 'tiger-ii-105',
   'germ_panzerjager_panther_g2': 'jagdpanther',
   'germ_ru251': 'ru-251',
   'germ_marder_1a1': 'marder-1a1',
@@ -324,7 +324,7 @@ const ALIASES: Record<string, string> = {
   'ussr_valentine_mk_9': 'valentine-ix',
   'ussr_su_85a': 'su-76m', // light open SPG of the SU-76 size, not the SU-85 casemate
   'ussr_t_34_1941_57': 't-34-57',
-  'ussr_kv_1_zis_5': 'kv-1',
+  'ussr_kv_1_zis_5': 'kv-1-zis-5',
   'ussr_kv_85': 'kv-85',
   'ussr_asu_57': 'asu-57',
   'ussr_su_152': 'su-152',
@@ -461,7 +461,7 @@ const ALIASES: Record<string, string> = {
   'uk_17_pdr_m10_achilles': 'm10-gmc',
   'uk_crusader_mk_2_the_saint': 'crusader-ii',
   'uk_mk1_grant': 'grant',
-  'uk_armored_car_aec_mk_2': 'staghound', // 5.2 m heavy 4x4: nearest counterpart
+  'uk_armored_car_aec_mk_2': 'aec-mk2',
   'uk_matilda_hedgehog': 'matilda-ii',
   'uk_churchill_avre': 'churchill-avre',
   'uk_a27m_cromwell_5': 'cromwell',
@@ -570,7 +570,7 @@ const ALIASES: Record<string, string> = {
   'jp_type_5_chi_ri': 'type-5-chi-ri',
   'jp_m36b2_jgsdf': 'm36-jackson',
   'jp_m41_walker_bulldog': 'm41',
-  'jp_type_75': 'm109',
+  'jp_type_75': 'type-75-sph',
   'jp_type_61': 'type-61',
   'jp_pzkpfw_vi_ausf_e_tiger': 'tiger-i-e',
   'jp_type_61_mod': 'type-61',
@@ -1488,11 +1488,11 @@ const ALIASES: Record<string, string> = {
   'fury_mk1': 'fury-mk1',
   'fury_mk2': 'fury-mk2',
   'gladiator_mk2_france': 'gladiator',
-  'nimrod_mk1': 'fury-mk1', // the naval Fury
+  'nimrod_mk1': 'nimrod-mk1',
   'v_156_b1': 'sb2u',
   'hp_12': 'handley-page-o400', // H.P.12 is the O/400's maker's type number
   'gladiator_mk2_silver': 'gladiator',
-  'nimrod_mk2': 'fury-mk2', // the naval Fury
+  'nimrod_mk2': 'nimrod-mk2',
   'blenheim_mkiv': 'blenheim-iv',
   'beaufort_mkviii': 'beaufort', // the figure is the Beaufort I: the Australian Mk VIII's Twin Wasps and taller fin not drawn
   'swordfish_mk1': 'swordfish',
