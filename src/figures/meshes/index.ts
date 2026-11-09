@@ -14,7 +14,8 @@
  * collapse; the coarse and far ones carry each side's running gear as its
  * outline. Where the model's wheels don't survive that (most), the figure is
  * a hybrid (`hull: 'built'`): the built hull and running gear with the
- * model's turret and gun on the built turret ring (Pz IV G). Judged on
+ * model's turret and gun on the built turret ring (or where the model has
+ * it, `ring: 'own'`), set down on the built deck. Judged on
  * compare renders against the built figure and the published size; still to
  * be measured with the silhouette checker.
  */
@@ -23,9 +24,15 @@ import type { MeshFigureData } from '../meshfig';
 import { CROMWELL } from './cromwell';
 import { PZ_IV_G } from './pz-iv-g';
 import { T_34_1941 } from './t-34-1941';
+import { PZ_III_L } from './pz-iii-l';
+import { TIGER_I_E } from './tiger-i-e';
+import { KV_1 } from './kv-1';
 
 export const MESH_FIGURES: Record<string, MeshFigureData> = {
   cromwell: CROMWELL,
   'pz-iv-g': PZ_IV_G,
   't-34-1941': T_34_1941,
+  'pz-iii-l': PZ_III_L,
+  'tiger-i-e': TIGER_I_E,
+  'kv-1': KV_1,
 };

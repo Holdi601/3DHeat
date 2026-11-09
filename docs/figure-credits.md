@@ -23,3 +23,6 @@ Some figure outlines were measured on drawings published under CC BY; their auth
 - Figure model derived from: "Cromwell | British Tank" by Tank 3D, CC BY 4.0, https://www.printables.com/model/1151231-cromwell-british-tank
 - Figure model derived from: "Panzer IV (G) Detailed Version | German Tank" by Tank 3D, CC BY 4.0, https://www.printables.com/model/1077613-panzer-iv-g-detailed-version-german-tank
 - Figure model derived from: "T-34 (1941) Detailed Version | Russian Tank" by Tank 3D, CC BY 4.0, https://www.printables.com/model/1108727-t-34-1941-detailed-version-russian-tank
+- Figure turret and gun derived from: "Tiger I (PzKpfw VI Ausf. E)" by M1RON, CC BY 4.0, https://sketchfab.com/3d-models/5dde7ae017584613a823784f744935fc
+- Figure turret and gun derived from: "Panzer 3L low-poly" by jimhatama, CC BY 4.0, https://sketchfab.com/3d-models/edeb4c4cbb3543a98526a9fdbf9c11c0
+- Figure turret and gun derived from: "Kv-1 (КВ-1)" by Artem.Goyko, CC BY 4.0, https://sketchfab.com/3d-models/f23cf9b8822a4ad48f068a2c51c44848

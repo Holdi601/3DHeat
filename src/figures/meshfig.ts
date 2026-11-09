@@ -49,6 +49,11 @@ export interface MeshFigureData {
    */
   hull?: 'built';
   /**
+   * A hybrid's turret: on the built turret's ring (default), or `own` - where the model has it, as both are scaled
+   * to the published size about the hull's middle (when the built ring sits off the model's, by the overall length).
+   */
+  ring?: 'own';
+  /**
    * Full, coarse and far builds, base64: u16 part count, per part u16 vertex and triangle counts, then per part its
    * positions (u16 x, y, z over `box`) and triangles (u16 vertex indices).
    */
@@ -114,18 +119,50 @@ function copyFree(dst: FigBuffer, d: Float32Array, n: Float32Array | undefined, 
   }
 }
 
+/**
+ * The built hull's top under a turret (its x, z box shrunk to the middle half, moved by `shift`): where a hybrid's
+ * turret, cut at the model's deck, is set down, so it neither floats nor sinks on a hull of another height.
+ */
+function deckUnder(t: Template, p: Float32Array, shift: Vec3): number {
+  let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity;
+  for (let v = 0; v < p.length; v += 3) {
+    x0 = Math.min(x0, p[v]);
+    x1 = Math.max(x1, p[v]);
+    z0 = Math.min(z0, p[v + 2]);
+    z1 = Math.max(z1, p[v + 2]);
+  }
+  const cx = (x0 + x1) / 2 + shift[0];
+  const cz = (z0 + z1) / 2 + shift[2];
+  const hx = (x1 - x0) / 4;
+  const hz = (z1 - z0) / 4;
+  let deck = -Infinity;
+  const d = t.team;
+  for (let v = 0; v < d.length / 7; v++) {
+    if (t.teamJ?.[v]) continue;
+    if (Math.abs(d[v * 7] - cx) < hx && Math.abs(d[v * 7 + 2] - cz) < hz) deck = Math.max(deck, d[v * 7 + 1]);
+  }
+  return Number.isFinite(deck) ? deck : t.joints?.find((q) => q.kind === 'yaw')?.pivot[1] ?? 0;
+}
+
 function buildLod(m: MeshFigureData, lod: number, base?: Template): Template {
   const k = newKit();
   const parts = decodeLod(m, lod);
   const joints: number[] = [];
   // A hybrid: the built hull, and this model's turret moved onto the built turret's ring.
   const hybrid = m.hull === 'built' && base !== undefined;
-  let shift: Vec3 = [0, 0, 0];
+  const shift: Vec3 = [0, 0, 0];
   if (hybrid) {
     copyHull(k, base);
+  }
+  const ti = m.parts.findIndex((q) => q.joint === 'yaw');
+  if (hybrid && ti >= 0) {
+    const own = m.parts[ti].pivot;
     const ringOf = base.joints?.find((q) => q.kind === 'yaw' && q.parent < 0);
-    const own = m.parts.find((q) => q.joint === 'yaw');
-    if (ringOf && own) shift = [ringOf.pivot[0] - own.pivot[0], ringOf.pivot[1] - own.pivot[1], ringOf.pivot[2] - own.pivot[2]];
+    if (ringOf && m.ring !== 'own') {
+      shift[0] = ringOf.pivot[0] - own[0];
+      shift[2] = ringOf.pivot[2] - own[2];
+    }
+    shift[1] = deckUnder(base, parts[ti].p, shift) - own[1];
   }
   m.parts.forEach((part, i) => {
     if (hybrid && !part.joint) return;
