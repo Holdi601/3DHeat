@@ -983,6 +983,23 @@ const C: Record<string, Parameters<typeof ship>[0]> = {
   'koln-frigate': { cls: 'frigate', L: 109.9, B: 11.0, fb: 5.5, sheer: 2, guns: '42:1/100m 30:1/100^1.5m -32:1/100^1.5bm -42:1/100bm', funnels: [[6, 5, 3], [-8, 5, 3]], blocks: [[26, 14, 12, 4, 1], [-2, -18, 10, 4]], masts: [[12, 16]] },
 };
 for (const [name, o] of Object.entries(C)) N[name] = ship(o);
+// Project 206M (Turya): the Shershen's layout on the longer, wider hull of the hydrofoil boat (39.6 x 7.6 m over the
+// hull; the bow foil sits under water at rest), the twin 57 mm AK-725 turret aft and the open twin 25 mm forward.
+{
+  const o = C['project-206'];
+  const k = 39.6 / 34.7;
+  const kb = 7.6 / 6.7;
+  N['project-206m'] = ship({
+    ...o, L: 39.6, B: 7.6,
+    hull: o.hull!.map(([x, h, b]) => [x * k, h, b * kb]),
+    guns: '9.1:2/25s^0.3 -12.7:2/57bm^0.3',
+    blocks: o.blocks!.map(([a, b, ...r]) => [a * k, b * k, ...r]),
+    raised: o.raised!.map(([a, b, ...r]) => [a * k, b * k, ...r]),
+    masts: o.masts!.map(([x, ...r]) => [x * k, ...r]),
+    radars: o.radars!.map((r) => ({ ...r, x: r.x * k })),
+    launchers: o.launchers!.map((l) => ({ ...l, x: l.x! * k, side: l.side! * kb })),
+  } as typeof o);
+}
 
 // ---------------------------------------------------------------- carriers and big-deck amphibious ships
 
@@ -2656,7 +2673,7 @@ const ALIASES: Record<string, string> = {
   'ussr_pr_206': 'project-206',
   'ussr_skr_pr50_jenot': 'riga-frigate',
   'ussr_mpk_pr12412': 'pauk',
-  'ussr_pr_206m': 'project-206',
+  'ussr_pr_206m': 'project-206m',
   'ussr_mpk_pr1331m': 'parchim',
   'ussr_mpk_pr11451': 'mukha',
   'ussr_skr_pr159': 'petya',

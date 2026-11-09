@@ -1360,7 +1360,7 @@ const ALIASES: Record<string, string> = {
   'p-40e_ussr': 'p-40e',
   'il_2_m82': 'il-2',
   'hurricanemkii_ussr': 'hurricane',
-  'i_180': 'i-185',
+  'i_180': 'i-180',
   'i-153p': 'i-153',
   'lagg-3-34': 'lagg-3',
   'i-16_type28': 'i-16',
