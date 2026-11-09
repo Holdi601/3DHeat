@@ -23,9 +23,11 @@
  * facing the eye.
  *
  * Where it hit: the point the data gives in the unit's frame (forward, up,
- * right; metres), put onto the figure's nearest surface by a worker
- * (`snap.ts`, `markWorker.ts`): on the turret as it stood at the hit, the
- * mark turns with the turret after.
+ * right; metres), put onto the figure by a worker (`snap.ts`,
+ * `markWorker.ts`) where the shot's line through it first meets the figure
+ * (else its nearest surface): on the turret as it stood at the hit, the mark
+ * turns with the turret after. The ground units' points are first brought
+ * to the figures' scale, found from the battle's own shots (`fitScale`).
  *
  * Built on the CPU into the scene's triangles (both backends draw them), for
  * the hits in the time window only, at most `MAX_MARKS` a frame, newest
@@ -41,7 +43,7 @@ import { drain, explosiveAmmo, hitsOfSteps, OUTCOMES, type HitSet, type VehicleH
 import { placesOf, placesSteps, type HitPlaces } from '../vehicle/places';
 import { figureOfVehicle, OUTCOME_COLOURS, templateOfFigure } from '../vehicle/scene';
 import { turretOf, type TurretBox } from './turret';
-import { snapToFigure, SNAP_STRIDE } from './snap';
+import { fitScale, snapToFigure, SNAP_STRIDE } from './snap';
 import { aimOf, aimSteps, type AimNow } from './aim';
 import { matchIndexSteps } from './match';
 import { bodyOf, FireBody } from '../data/fires';
@@ -118,6 +120,9 @@ export interface HitMarks {
   marks: Int32Array;
   /** Per unit hit: its marks' largest hole (m), to leave a unit out whose marks would all be below a pixel. */
   largest: Float32Array;
+  /** The ground units' points times this are in the figures' metres (`fitScale`); NaN until found, and whether that was asked for. */
+  scale: number;
+  scaleAsked: boolean;
 }
 
 function empty(n: number): HitMarks {
@@ -145,6 +150,8 @@ function empty(n: number): HitMarks {
     start: new Int32Array(1),
     marks: new Int32Array(0),
     largest: new Float32Array(0),
+    scale: NaN,
+    scaleAsked: false,
   };
 }
 
@@ -334,6 +341,8 @@ interface Placed {
   id: number;
   box: TurretBox | null;
   snapped: Float32Array | null;
+  /** The answer to a scale's fit (`askScale`) instead. */
+  scale?: number;
 }
 
 function markWorker(): Worker | null {
@@ -344,6 +353,12 @@ function markWorker(): Worker | null {
         const job = pending.get(e.data.id);
         if (!job) return;
         pending.delete(e.data.id);
+        if (e.data.scale !== undefined) {
+          job.m.scale = e.data.scale;
+          // Every vehicle's marks onto its figure now, at that scale.
+          for (let v = 0; v < job.m.vehicles.length; v++) placeOnFigure(job.m, v);
+          return;
+        }
         applyPlaced(job.m, job.v, e.data.box, e.data.snapped);
       });
     } catch {
@@ -351,6 +366,26 @@ function markWorker(): Worker | null {
     }
   }
   return worker;
+}
+
+/** Ground hits a scale's fit looks at, at most, from the vehicles hit most. */
+const FIT_HITS = 400;
+
+/** The vehicles a scale's fit looks at (`fitScale`): the ground ones hit most, with their shots' points and ways. */
+function fitRequest(m: HitMarks): { figure: string; pts: Float32Array; dir: Float32Array }[] {
+  const order = m.vehicles
+    .map((x, v) => ({ v, n: x.marks.filter((k) => m.body[k] === FireBody.Ground && Number.isFinite(m.dir[k * 3])).length }))
+    .filter((x) => x.n > 0)
+    .sort((a, b) => b.n - a.n);
+  const out: { figure: string; pts: Float32Array; dir: Float32Array }[] = [];
+  let taken = 0;
+  for (const { v } of order) {
+    if (taken >= FIT_HITS) break;
+    const list = m.vehicles[v].marks.filter((k) => m.body[k] === FireBody.Ground && Number.isFinite(m.dir[k * 3])).slice(0, FIT_HITS - taken);
+    taken += list.length;
+    out.push({ figure: m.vehicles[v].figure, pts: Float32Array.from(list.flatMap((k) => [m.local[k * 3], m.local[k * 3 + 1], m.local[k * 3 + 2]])), dir: Float32Array.from(list.flatMap((k) => [m.dir[k * 3], m.dir[k * 3 + 1], m.dir[k * 3 + 2]])) });
+  }
+  return out;
 }
 
 /** The points, turret yaws and shot ways of a vehicle's marks, for the snap. */
@@ -379,29 +414,55 @@ export function placeOnFigure(m: HitMarks, v: number): boolean {
   if (veh.done) return true;
   const w = markWorker();
   if (w) {
+    // The scale first (the worker answers it before any vehicle), then each vehicle at it.
+    if (!Number.isFinite(m.scale)) {
+      if (!m.scaleAsked) {
+        m.scaleAsked = true;
+        const id = nextId++;
+        pending.set(id, { m, v: -1 });
+        w.postMessage({ id, fit: fitRequest(m) });
+      }
+      return false;
+    }
     if (!veh.asked) {
       veh.asked = true;
       const id = nextId++;
       pending.set(id, { m, v });
       const r = request(m, v);
-      w.postMessage({ id, figure: veh.figure, ...r }, [r.pts.buffer, r.yaw.buffer, r.dir.buffer]);
+      const scale = scaleOf(m, v);
+      w.postMessage({ id, figure: veh.figure, ...r, scale }, [r.pts.buffer, r.yaw.buffer, r.dir.buffer]);
     }
     return false;
   }
+  if (!Number.isFinite(m.scale)) {
+    const fit = fitRequest(m).flatMap((f) => {
+      const t = templateOfFigure(f.figure);
+      return t ? [{ t, pts: f.pts, dir: f.dir }] : [];
+    });
+    m.scale = fitScale(fit);
+  }
   const t = templateOfFigure(veh.figure);
   const r = request(m, v);
-  applyPlaced(m, v, t ? turretOf(t) : null, t ? snapToFigure(t, r.pts, r.yaw, r.dir) : null);
+  applyPlaced(m, v, t ? turretOf(t) : null, t ? snapToFigure(t, r.pts, r.yaw, r.dir, scaleOf(m, v)) : null);
   return true;
+}
+
+/** The scale a vehicle's points take: the battle's for a ground unit's, else as they are. */
+function scaleOf(m: HitMarks, v: number): number {
+  const k = m.vehicles[v].marks[0];
+  return k !== undefined && m.body[k] === FireBody.Ground && Number.isFinite(m.scale) ? m.scale : 1;
 }
 
 /** A vehicle's marks as snapped (`snapToFigure`): the point, the normal, the turret, the look. */
 function applyPlaced(m: HitMarks, v: number, box: TurretBox | null, snapped: Float32Array | null): void {
   const veh = m.vehicles[v];
   veh.done = true;
+  const scale = scaleOf(m, v);
   veh.marks.forEach((k, i) => {
     const o = i * SNAP_STRIDE;
     if (!snapped || !Number.isFinite(snapped[o])) {
-      // No figure to put it on: where the data says, facing up.
+      // No figure to put it on: where the data says (at the battle's scale), facing up.
+      for (let a = 0; a < 3; a++) m.local[k * 3 + a] *= scale;
       m.normal[k * 3 + 1] = 1;
       m.normal[k * 3] = m.normal[k * 3 + 2] = 0;
       return;

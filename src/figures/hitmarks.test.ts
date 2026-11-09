@@ -5,7 +5,7 @@ import { explosiveAmmo, OUTCOMES, type Outcome } from '../vehicle/hits';
 import { OUTCOME_COLOURS } from '../vehicle/scene';
 import { finish, newKit } from './kit';
 import { HitMarkLayer, holeRadius, indexByUnit, lastAtOrBefore, Look, lookOf, type HitMarks, type MarkPose, type MarkView } from './hitmarks';
-import { snapToFigure, SNAP_STRIDE } from './snap';
+import { fitScale, snapToFigure, SNAP_STRIDE } from './snap';
 
 /** Marks on units standing at x = 10 * person, facing +x, on their roofs: [time, person, outcome, killing, session]. */
 function marks(list: [number, number, Outcome, boolean, number][]): HitMarks {
@@ -36,6 +36,8 @@ function marks(list: [number, number, Outcome, boolean, number][]): HitMarks {
     start: new Int32Array(1),
     marks: new Int32Array(0),
     largest: new Float32Array(0),
+    scale: 1,
+    scaleAsked: true,
   };
   indexByUnit(m);
   return m;
@@ -197,5 +199,28 @@ describe('hit marks', () => {
     expect(out[4]).toBeCloseTo(1, 5);
     expect(out[SNAP_STRIDE + 2]).toBeCloseTo(1, 5);
     expect(out[SNAP_STRIDE + 5]).toBeCloseTo(1, 5);
+    // Just inside the right side near the front, the shot coming from ahead: on the front, not the nearer side.
+    const front = snapToFigure(t, Float32Array.of(1.5, 1, 0.9), Float32Array.of(NaN), Float32Array.of(-1, 0, 0));
+    expect(front[0]).toBeCloseTo(2, 5);
+    expect(front[2]).toBeCloseTo(0.9, 5);
+    expect(front[3]).toBeCloseTo(1, 5);
+    // Points on the front, the sides and the roof, sent 1.6 times too far out: the scale found brings them back.
+    const pts: number[] = [];
+    const dir: number[] = [];
+    for (let i = 0; i < 30; i++) {
+      const a = (i % 7) / 7 - 0.4, b = (i % 5) / 5;
+      const [p, d] = [
+        [[2, 0.2 + b * 1.6, a * 2], [-1, 0, 0]],
+        [[a * 3.5, 0.2 + b * 1.6, 1], [0, 0, -1]],
+        [[a * 3.5, 2, a * 1.5], [0, -1, 0]],
+      ][i % 3];
+      pts.push(...p.map((v) => v * 1.6));
+      dir.push(...d);
+    }
+    const scale = fitScale([{ t, pts: Float32Array.from(pts), dir: Float32Array.from(dir) }]);
+    expect(scale).toBeGreaterThan(0.6);
+    expect(scale).toBeLessThan(0.65);
+    // In the figure's metres already: left as they are.
+    expect(fitScale([{ t, pts: Float32Array.from(pts, (v) => v / 1.6), dir: Float32Array.from(dir) }])).toBe(1);
   });
 });
