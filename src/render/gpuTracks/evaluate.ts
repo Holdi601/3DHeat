@@ -10,7 +10,7 @@
  * velocity (fully above 40 m/s, not below 25), its up axis kept square to it.
  */
 
-import { decodeKey, keyTime, FLAG_AIR, FLAG_ATTITUDE, TRACK_U32, type GpuTrackStore } from './store';
+import { decodeKey, keyTime, trackFloats, FLAG_AIR, FLAG_ATTITUDE, TRACK_U32, type GpuTrackStore } from './store';
 
 export interface TrackPose {
   x: number;
@@ -80,17 +80,6 @@ function velocity(s: GpuTrackStore, b: number, j: number, at: number[], first: n
   } else out[0] = out[1] = out[2] = 0;
 }
 
-// The track table's float view, kept: evaluated for many tracks a frame (the burning ones, `figures/fires.ts`).
-let viewOf: Uint32Array | null = null;
-let viewF32: Float32Array = new Float32Array(0);
-function floatsOf(T: Uint32Array): Float32Array {
-  if (viewOf !== T) {
-    viewOf = T;
-    viewF32 = new Float32Array(T.buffer, T.byteOffset, T.length);
-  }
-  return viewF32;
-}
-
 /** Track `i` at time `t` into `out`; false when it is not there (before its first key, or `stale` s past its last). */
 export function evaluateTrack(s: GpuTrackStore, i: number, t: number, stale: number, out: TrackPose): boolean {
   const T = s.trackData;
@@ -100,15 +89,14 @@ export function evaluateTrack(s: GpuTrackStore, i: number, t: number, stale: num
   const flags = T[b + 5];
   const last = first + count - 1;
   if (count === 0) return false;
-  const f32 = floatsOf(T);
-  const timeOf = (j: number) => keyTime(s, b, j);
-  if (timeOf(first) > t) return false;
+  const f32 = trackFloats(T);
+  if (keyTime(s, b, first) > t) return false;
   // The last key at or before t.
   let lo = first;
   let hi = last + 1;
   while (hi - lo > 1) {
     const mid = (lo + hi) >> 1;
-    if (timeOf(mid) <= t) lo = mid;
+    if (keyTime(s, b, mid) <= t) lo = mid;
     else hi = mid;
   }
   const k = lo;

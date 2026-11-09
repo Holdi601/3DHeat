@@ -11,7 +11,7 @@
  */
 
 import type { Dataset, FilterSpec } from '../../state/types';
-import { keyTime, TRACK_U32, type GpuTrackStore } from './store';
+import { keyTime, trackFloats, TRACK_U32, type GpuTrackStore } from './store';
 
 /** The row a track is judged by. */
 export function trackRowOf(s: GpuTrackStore, i: number): number {
@@ -93,7 +93,7 @@ export function trackTimes(s: GpuTrackStore, i: number): [number, number] {
  */
 export function rayNearTrack(s: GpuTrackStore, i: number, o: ArrayLike<number>, d: ArrayLike<number>, fixed: number, perDistance: number): boolean {
   const b = i * TRACK_U32;
-  const f32 = new Float32Array(s.trackData.buffer, s.trackData.byteOffset, s.trackData.length);
+  const f32 = trackFloats(s.trackData);
   const size = 65535 * f32[b + 11];
   const cx = f32[b + 8] + size / 2 - o[0];
   const cy = f32[b + 9] + size / 2 - o[1];
@@ -108,11 +108,10 @@ export function rayNearTrack(s: GpuTrackStore, i: number, o: ArrayLike<number>, 
       if (o[c] < min || o[c] > max) return false;
       continue;
     }
-    let a = (min - o[c]) / d[c];
-    let e = (max - o[c]) / d[c];
-    if (a > e) [a, e] = [e, a];
-    lo = Math.max(lo, a);
-    hi = Math.min(hi, e);
+    const a = (min - o[c]) / d[c];
+    const e = (max - o[c]) / d[c];
+    lo = Math.max(lo, Math.min(a, e));
+    hi = Math.min(hi, Math.max(a, e));
     if (lo > hi) return false;
   }
   return true;

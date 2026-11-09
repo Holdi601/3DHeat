@@ -301,7 +301,7 @@ export function ReplayOverlay() {
     const card = hover.current;
     if (card) {
       const at = cursor.current;
-      const hit = at ? nearestTrack(engine, at.x, at.y, out) : null;
+      const hit = at ? nearestTrack(engine, at.x, at.y, out, true) : null;
       const tr = hit !== null ? pos.get(hit) : undefined;
       const unit = hit !== null ? ui.units[ui.personUnit[hit]] : undefined;
       if (at && hit !== null && tr && unit) {
@@ -414,14 +414,17 @@ function defaultKindsOf(labels: string[]): string[] {
   return k;
 }
 
-/** The live track under a canvas point: a label there, else the figure drawn there, else the nearest unit within reach. */
-function nearestTrack(engine: Engine, x: number, y: number, labels: Placed[]): number | null {
+/**
+ * The live track under a canvas point: a label there, else the figure drawn there, else the nearest unit within reach.
+ * A `hover`, asked each frame, may answer from a pick a few frames old (`Engine.figureAt`).
+ */
+function nearestTrack(engine: Engine, x: number, y: number, labels: Placed[], hover = false): number | null {
   for (let i = labels.length - 1; i >= 0; i--) {
     const l = labels[i];
     if (x >= l.x0 && x <= l.x1 && y >= l.y0 && y <= l.y1) return l.person;
   }
   // The figure as drawn - turned, and grown to its smallest size on screen - that the pointer is on.
-  const onFigure = engine.figureAt(x, y);
+  const onFigure = engine.figureAt(x, y, hover);
   if (onFigure !== null) return onFigure;
   let best: number | null = null;
   let bestD = HIT_PX;

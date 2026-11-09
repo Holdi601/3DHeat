@@ -42,6 +42,8 @@ export interface Unit {
   persons: number[];
   /** When each of `persons` starts and ends, seconds. */
   spans: [number, number][];
+  /** Its place in its index's name order (`sortUnits`), where `unitsOf` made it. */
+  rank?: number;
 }
 
 export interface UnitIndex {
@@ -148,8 +150,15 @@ export function unitsOf(d: Dataset): UnitIndex {
     // A recorded camera is a unit of its own, not another life of the player it belongs to.
     const camera = cams.persons[p] === 1;
     const key = !weapon && !camera && who && !overlay ? who : `#${p}`;
+    const t0 = d.time && first >= 0 ? d.time[first] : 0;
+    const t1 = d.time && last >= 0 ? d.time[last] : 0;
     let u = byKey.get(key);
-    if (!u) {
+    if (u) {
+      if (!u.vehicle && vehicle) u.vehicle = vehicle;
+      u.persons.push(p);
+      u.vehicles.push(vehicle);
+      u.spans.push([t0, t1]);
+    } else {
       let name: string;
       if (camera) name = d.personLabels[p]?.replace(/\s*#\w+$/, '') || trackName(d, p, first);
       else if (weapon) name = trackName(d, p, first);
@@ -170,20 +179,16 @@ export function unitsOf(d: Dataset): UnitIndex {
         kind: weapon ? 'weapon' : ai ? 'ai' : 'player',
         ...(effect ? { decoy: true } : {}),
         team: d.personTeam ? d.personTeam[p] : -1,
-        persons: [],
-        spans: [],
-        vehicles: [],
+        // Made at their size, not grown by a push: a push's spare room, three arrays a unit,
+        // was most of a million-unit overlay's heap.
+        persons: [p],
+        spans: [[t0, t1]],
+        vehicles: [vehicle],
       };
       byKey.set(key, u);
       unitIndex.set(u, units.length);
       units.push(u);
     }
-    if (!u.vehicle && vehicle) u.vehicle = vehicle;
-    u.persons.push(p);
-    u.vehicles.push(vehicle);
-    const t0 = d.time && first >= 0 ? d.time[first] : 0;
-    const t1 = d.time && last >= 0 ? d.time[last] : 0;
-    u.spans.push([t0, t1]);
     personUnit[p] = unitIndex.get(u)!;
   }
   // Each unit's tracks in time order, so the "current life" is the last one started.
@@ -198,6 +203,12 @@ export function unitsOf(d: Dataset): UnitIndex {
     u.vehicles = order.map((i) => u.vehicles[i]);
     if (u.vehicles[0]) u.vehicle = u.vehicles[0];
   }
+  // Each unit's place in name order, worked out once: lists sort by it, with no sort key kept per unit.
+  const keys = units.map(sortKey);
+  const order = new Int32Array(units.length);
+  for (let i = 0; i < order.length; i++) order[i] = i;
+  order.sort((a, b) => (keys[a] < keys[b] ? -1 : keys[a] > keys[b] ? 1 : 0));
+  for (let r = 0; r < order.length; r++) units[order[r]].rank = r;
   const out: UnitIndex = { units, byKey, personUnit, aiFrom };
   cache.set(d, out);
   return out;
@@ -225,27 +236,21 @@ export function personAt(u: Unit, time: number): number {
 
 /** Units sorted for a list: by name, as the language sorts, numbers by value. */
 export function sortUnits(units: Unit[]): Unit[] {
-  // A plain string key per unit, made once, instead of a locale compare per comparison: a
-  // collator over a million units of a large overlay took seconds.
+  if (units.every((u) => u.rank !== undefined)) return units.slice().sort((a, b) => a.rank! - b.rank!);
+  // A plain string key per unit instead of a locale compare per comparison: a collator over a
+  // million units of a large overlay took seconds.
   const keyed = units.map((u) => [sortKey(u), u] as const);
   keyed.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
   return keyed.map((k) => k[1]);
 }
 
-const sortKeys = new WeakMap<Unit, string>();
-
 /** A unit's name for sorting: case and accents ignored, numbers in number order ("Unit 9" before "Unit 10"). */
 export function sortKey(u: Unit): string {
-  let k = sortKeys.get(u);
-  if (k === undefined) {
-    k = u.name
-      .normalize('NFD')
-      .replace(/\p{M}/gu, '')
-      .toLowerCase()
-      .replace(/\d+/g, (d) => d.replace(/^0+(?=\d)/, '').padStart(12, '0'));
-    sortKeys.set(u, k);
-  }
-  return k;
+  return u.name
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .replace(/\d+/g, (d) => d.replace(/^0+(?=\d)/, '').padStart(12, '0'));
 }
 
 const uidCache = new WeakMap<Dataset, Map<number, Unit>>();

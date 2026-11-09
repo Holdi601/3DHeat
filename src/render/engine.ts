@@ -15,9 +15,9 @@ import { WeaponLayer } from './weapons';
 import { FireLayer, type FirePose, type FireView } from '../figures/fires';
 import { FireBody, firesOf } from '../data/fires';
 import { HitMarkLayer, hitMarksStep, stepStats, type MarkPose, type MarkView } from '../figures/hitmarks';
-import { gpuTrackStore, registeredGpuTrackStore, rowOfKey, TRACK_U32, type GpuTrackStore } from './gpuTracks/store';
+import { gpuTrackStore, keyTime, registeredGpuTrackStore, rowOfKey, trackFloats, TRACK_U32, type GpuTrackStore } from './gpuTracks/store';
 import { emptyPose, evaluateTrack } from './gpuTracks/evaluate';
-import { isShown, rayNearTrack, trackTimes, trackVisibility } from './gpuTracks/visibility';
+import { isShown, rayNearTrack, trackVisibility } from './gpuTracks/visibility';
 import { markerSeconds } from '../overlay/lean/leanState';
 import type { FigureBatch } from '../figures/instances';
 import { VertexBuffer } from '../race/geometry';
@@ -141,6 +141,17 @@ if (import.meta.env.DEV && typeof window !== 'undefined') (window as unknown as 
 
 /** From this many tracked things the GPU places the units (where it can). */
 const GPU_TRACKS_FROM = 3000;
+
+/** Units a hover looks at in one frame for the one under the pointer (about a millisecond). */
+const PICK_SLICE = 1 << 17;
+
+/** A pass through the GPU units for the one under the pointer: where it is, and the nearest so far. */
+interface PickScan {
+  store: GpuTrackStore;
+  next: number;
+  best: number;
+  bestT: number;
+}
 
 /**
  * Time constants of the follow cameras' easing, seconds: how long a change takes
@@ -1571,11 +1582,11 @@ export class Engine {
    * drawn (turned, and grown to its on-screen minimum), so a click on a wing
    * is that aircraft, not whichever track's centre lies nearest the pointer.
    */
-  figureAt(cssX: number, cssY: number): number | null {
+  figureAt(cssX: number, cssY: number, hover = false): number | null {
     const d = this.dataset;
     const ray = this.rayAt(cssX, cssY);
     if (!d?.personId || !ray) return null;
-    if (this.gpuTracksParams) return this.gpuUnitAt(ray, cssX, cssY);
+    if (this.gpuTracksParams) return this.gpuUnitAt(ray, cssX, cssY, hover);
     if (!this.figureBatches) return null;
     const box = this.figureReplay.hit([ray.origin.x, ray.origin.y, ray.origin.z], [ray.dir.x, ray.dir.y, ray.dir.z]);
     const row = box >= 0 && this.cursor ? this.cursor.cubeRows[box] : -1;
@@ -1587,50 +1598,80 @@ export class Engine {
    * playhead (the shader's arithmetic, evaluate.ts), the nearest whose drawn
    * size the ray passes within. Asked again for the same pixel, playhead and
    * view it answers from the last time, so a hover does not redo it each frame.
+   * A `hover` over more units than one frame should look at goes through them
+   * a slice a frame and answers from the last whole pass meanwhile: a million
+   * units looked at in one frame were a dropped frame each frame the view moved.
    */
-  private gpuUnitAt(ray: { origin: { x: number; y: number; z: number }; dir: { x: number; y: number; z: number } }, cssX: number, cssY: number): number | null {
+  private gpuUnitAt(ray: { origin: { x: number; y: number; z: number }; dir: { x: number; y: number; z: number } }, cssX: number, cssY: number, hover: boolean): number | null {
     const p = this.gpuTracksParams!;
+    const st = p.store;
     const key = `${Math.round(cssX)},${Math.round(cssY)},${p.t.toFixed(3)},${this.viewProjArr.join(',')}`;
     if (this.gpuPick && this.gpuPick.key === key) return this.gpuPick.person;
-    const st = p.store;
-    const pose = emptyPose();
+    let scan = this.gpuScan;
+    if (!hover || st.tracks <= PICK_SLICE) scan = { store: st, next: 0, best: -1, bestT: Infinity };
+    else if (!scan || scan.store !== st) scan = this.gpuScan = { store: st, next: 0, best: -1, bestT: Infinity };
+    const to = hover ? Math.min(st.tracks, scan.next + PICK_SLICE) : st.tracks;
+    this.pickRange(p, ray, scan, to);
+    if (scan.next < st.tracks) return this.gpuPick?.person ?? null;
+    const person = scan.best >= 0 ? st.personOf[scan.best] : null;
+    this.gpuPick = { key, person };
+    if (scan === this.gpuScan) this.gpuScan = null;
+    return person;
+  }
+
+  /** Tracks `scan.next` up to `to` looked at for the unit under the ray, `scan` kept up to date. */
+  private pickRange(p: GpuTracksParams, ray: { origin: { x: number; y: number; z: number }; dir: { x: number; y: number; z: number } }, scan: PickScan, to: number): void {
+    const st = scan.store;
+    const pose = this.pickPose;
     const o = ray.origin;
     const dir = ray.dir;
-    let best = -1;
-    let bestT = Infinity;
-    const f32 = new Float32Array(st.trackData.buffer, st.trackData.byteOffset, st.trackData.length);
-    const oa = [o.x, o.y, o.z];
-    const da = [dir.x, dir.y, dir.z];
+    const f32 = trackFloats(st.trackData);
+    const T = st.trackData;
+    const oa = this.pickO;
+    const da = this.pickD;
+    oa[0] = o.x;
+    oa[1] = o.y;
+    oa[2] = o.z;
+    da[0] = dir.x;
+    da[1] = dir.y;
+    da[2] = dir.z;
     // Near enough to matter: the longest figure at true size, or the pixel minimum at the box's distance.
     const fixed = 200 * p.scale + (p.focalPx > 0 ? 0 : Math.max(p.minPixels, 8) * p.orthoPx);
     const perDistance = p.focalPx > 0 ? Math.max(p.minPixels, 8) / p.focalPx : 0;
-    for (let i = 0; i < st.tracks; i++) {
-      if (!isShown(p.visible ?? null, i)) continue;
-      const [ta, tb] = trackTimes(st, i);
-      if (p.t < ta || p.t > tb + p.stale) continue;
+    const visible = p.visible ?? null;
+    let i = scan.next;
+    for (; i < to; i++) {
+      if (!isShown(visible, i)) continue;
+      const b = i * TRACK_U32;
+      const n = T[b + 1];
+      if (n === 0 || p.t < keyTime(st, b, T[b])) continue;
+      if (p.t > keyTime(st, b, T[b] + n - 1) + p.stale) continue;
       if (!rayNearTrack(st, i, oa, da, fixed, perDistance)) continue;
       if (!evaluateTrack(st, i, p.t, p.stale, pose)) continue;
       const dx = pose.x - o.x;
       const dy = pose.y - o.y;
       const dz = pose.z - o.z;
       const along = dx * dir.x + dy * dir.y + dz * dir.z;
-      if (along <= 0 || along > bestT) continue;
+      if (along <= 0 || along > scan.bestT) continue;
       const off = Math.hypot(dx - dir.x * along, dy - dir.y * along, dz - dir.z * along);
       // Its drawn half length: true size, or the pixel minimum at that distance.
-      const longest = f32[i * TRACK_U32 + 4];
+      const longest = f32[b + 4];
       const px = p.focalPx > 0 ? along / p.focalPx : p.orthoPx;
       const half = Math.max(longest * p.scale, p.minPixels * px) / 2;
       if (off <= Math.max(half, 4 * px)) {
-        bestT = along;
-        best = i;
+        scan.bestT = along;
+        scan.best = i;
       }
     }
-    const person = best >= 0 ? st.personOf[best] : null;
-    this.gpuPick = { key, person };
-    return person;
+    scan.next = i;
   }
 
   private gpuPick: { key: string; person: number | null } | null = null;
+  /** A hover's pass through the units, a slice a frame (`gpuUnitAt`). */
+  private gpuScan: PickScan | null = null;
+  private readonly pickPose = emptyPose();
+  private readonly pickO = [0, 0, 0];
+  private readonly pickD = [0, 0, 0];
 
   /**
    * The GPU tracks for the loaded dataset, when it has so many units that
