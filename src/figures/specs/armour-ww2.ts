@@ -756,6 +756,10 @@ const pz3Parts = (t: TurretSpec, mantletBox = true, spaced = false): TurretSpec[
 ];
 // Ausf. E/F: the 37 mm in the internal mantlet.
 G['pz-iii-e'] = ww2({ ...PZ3, turret: { ...PZ3_T, gunX: 0.92 }, gun: { length: 1.55, calibre: 0.037, at: 0.37, elevation: 0 }, turretParts: (t) => pz3Parts(t, false) });
+// Ausf. B (1937, 15 built): the E's hull and 37 mm turret on the earlier running gear, eight small road wheels a side
+// hung in pairs on four bogies under two long leaf springs (5.67 x 2.81 m, published). The wheel size and the bogie
+// spacing are estimates; the deck and turret are the E's.
+G['pz-iii-b'] = ww2({ ...PZ3, L: 5.67, W: 2.81, top: PZ3.top.map(([x, z]): P2 => [x * 1.027, z]), plan: [[-2.835, 1.405], [2.835, 1.405]], track: PZ3.track.map(([x, z]): P2 => [x * 1.027, z]), wheels: pairs([-1.2, -0.42, 0.42, 1.2], 0.44), r: 0.2, turret: { ...PZ3_T, gunX: 0.92 }, gun: { length: 1.55, calibre: 0.037, at: 0.37, elevation: 0 }, turretParts: (t) => pz3Parts(t, false) });
 // Ausf. H/J: the 50 mm L/42 in the external mantlet.
 G['pz-iii-h'] = ww2({ ...PZ3, gun: { length: 1.65, calibre: 0.05, at: 0.37, elevation: 0 }, turretParts: (t) => pz3Parts(t) });
 // Ausf. J1/L: the long 50 mm L/60 (6.41 m with the gun), the spaced plate before the mantlet.
@@ -2355,7 +2359,10 @@ const bedMount = (x: number, bed: number, cab: number, plan: P2[], top: number):
 G['morris-c9b'] = { ...truck('spaa', 5.2, 2.2, 0.48, [0.62, -0.55], 1.3, 1.35, 0.6, 2.0, 1.1, 0), turret: bedMount(-1.2, 1.1, 2.0, [[-0.6, 0.5], [0.6, 0.5]], 0.85), guns: [{ mount: 'turret', length: 2.8, calibre: 0.04, elevation: 0.45, muzzle: true, at: 0.8 }] };
 // GAZ-AA with the quadruple Maxim, GAZ-MM and ZiS-5 with the 25 mm 72-K, the Type 94 with a twin 25 mm.
 G['gaz-aa-aa'] = { ...truck('spaa', 5.34, 2.04, 0.42, [0.72, -0.53], 1.35, 1.4, 0.35, 1.97, 1.35, 0), turret: bedMount(-1.2, 1.35, 1.97, [[-0.3, 0.3], [0.3, 0.3]], 0.9), guns: [{ mount: 'turret', count: 4, length: 1.0, calibre: 0.008, elevation: 0, spread: 0.18, at: 0.95 }] };
-G['zis-5-72k'] = { ...truck('spaa', 6.06, 2.24, 0.45, [0.6, -0.5], 1.6, 1.5, 0.45, 2.16, 1.45, 0), turret: bedMount(-1.3, 1.45, 2.16, [[-0.5, 0.45], [0.5, 0.45]], 0.7), guns: [{ mount: 'turret', length: 2.0, calibre: 0.025, elevation: 0, at: 0.8 }] };
+{
+  const m72 = bedMount(-1.3, 1.45, 2.16, [[-0.5, 0.45], [0.5, 0.45]], 0.7);
+  G['zis-5-72k'] = { ...truck('spaa', 6.06, 2.24, 0.45, [0.6, -0.5], 1.6, 1.5, 0.45, 2.16, 1.45, 0), turret: m72, turrets: [aaShield(m72, 0.5, 0.75, 0.2, 1.2)], guns: [{ mount: 'turret', length: 2.0, calibre: 0.025, elevation: 0, at: 0.8 }] };
+}
 // The GAZ-AA's 3.34 m wheelbase (the Ford AA's), its front axle 0.75 m behind the bumper; the six-wheeled GAZ-AAA's two
 // driven rear axles 0.94 m apart, their middle 3.2 m behind the front axle; the ZiS-12, the ZiS-5 on a 4.42 m wheelbase
 // (6.68 x 2.24 m, 2.16 m) (published). With the 72-K or the DShK the bed's sides are let down level as the crew's
@@ -2364,7 +2371,10 @@ G['zis-5-72k'] = { ...truck('spaa', 6.06, 2.24, 0.45, [0.6, -0.5], 1.6, 1.5, 0.4
   const lowered = (cab: number, x0: number, x1: number, w: number, u: number): TurretSpec[] => [-1, 1].map((s) => part(cab, [[x0, 0.22], [x1, 0.22]], [[x0, u + 0.04], [x1, u + 0.04]], u, 16, s * (w + 0.22)));
   const gaz = (axles: number[]) => ({ ...truck('spaa', 5.34, 2.04, 0.42, axles, 1.35, 1.4, 0.35, 1.97, 1.1, 0), turrets: lowered(1.97, -2.6, 0.05, 1.0, 1.06) });
   // GAZ-MM with the 25 mm 72-K; GAZ-AAA with the quadruple Maxim (4M) or a DShK; ZiS-12 with the twin 25 mm 94-KM.
-  G['gaz-mm-72k'] = { ...gaz([0.72, -0.53]), turret: bedMount(-1.2, 1.1, 1.97, [[-0.5, 0.45], [0.5, 0.45]], 0.75), guns: [{ mount: 'turret', length: 2.0, calibre: 0.025, elevation: 0, at: 0.8 }] };
+  // The 72-K keeps its shield on the truck as on its own carriage (72-k-25mm above).
+  const mm = gaz([0.72, -0.53]);
+  const m72 = bedMount(-1.2, 1.1, 1.97, [[-0.5, 0.45], [0.5, 0.45]], 0.75);
+  G['gaz-mm-72k'] = { ...mm, turret: m72, turrets: [...mm.turrets, aaShield(m72, 0.5, 0.75, 0.2, 1.2)], guns: [{ mount: 'turret', length: 2.0, calibre: 0.025, elevation: 0, at: 0.8 }] };
   G['gaz-aaa-4m'] = { ...truck('spaa', 5.34, 2.04, 0.42, [0.72, -0.3, -0.65], 1.35, 1.4, 0.35, 1.97, 1.35, 0), turret: bedMount(-1.2, 1.35, 1.97, [[-0.3, 0.3], [0.3, 0.3]], 0.9), guns: [{ mount: 'turret', count: 4, length: 1.0, calibre: 0.008, elevation: 0, spread: 0.18, at: 0.95 }] };
   G['gaz-aaa-dshk'] = { ...gaz([0.72, -0.3, -0.65]), turret: bedMount(-1.2, 1.1, 1.97, [[-0.2, 0.2], [0.2, 0.2]], 1.0), guns: [{ mount: 'turret', length: 1.6, calibre: 0.0127, elevation: 0, at: 0.95 }] };
   G['zis-12-94km'] = { ...truck('spaa', 6.68, 2.24, 0.45, [0.76, -0.56], 1.9, 1.5, 0.76, 2.16, 1.45, 0), turret: bedMount(-1.6, 1.45, 2.16, [[-0.55, 0.5], [0.55, 0.5]], 0.75), guns: [{ mount: 'turret', count: 2, spread: 0.3, length: 2.0, calibre: 0.025, elevation: 0, at: 0.8 }] };

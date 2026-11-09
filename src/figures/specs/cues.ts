@@ -1045,6 +1045,10 @@ export const CUES: Record<string, CueEntry> = {
   ]),
   'pz-iii': ground(['pz-iii-e', 'pz-iii-h', 'pz-iii-l'], PZ_III),
   'pz-iii-e': ground('pz-iii-e', [{ cue: '37 mm in the internal twin mantlet', check: (s) => (mainGun(s)?.calibre ?? 1) < 0.04 }]),
+  'pz-iii-b': ground('pz-iii-b', [
+    { cue: 'eight small road wheels a side in pairs on leaf-spring bogies', check: (s) => wheels(s) === 8 },
+    { cue: '37 mm in the internal twin mantlet', check: (s) => (mainGun(s)?.calibre ?? 1) < 0.04 },
+  ]),
   'pz-iii-h': ground('pz-iii-h', [{ cue: 'short 50 mm L/42', check: (s) => (mainGun(s)?.length ?? 9) < 2.5 }]),
   'pz-iii-l': ground('pz-iii-l', [
     { cue: 'long 50 mm L/60', check: (s) => (mainGun(s)?.length ?? 0) > 2.5 },

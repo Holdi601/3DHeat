@@ -136,7 +136,7 @@ const ALIASES: Record<string, string> = {
   'germ_sturmpanzer_ii': 'sturmpanzer-ii',
   'germ_sdkfz_221_s_pz_b_41': 'sdkfz-222',
   'germ_pzkpfw_iii_ausf_e': 'pz-iii-e',
-  'germ_pzkpfw_iii_ausf_b': 'pz-iii-l',
+  'germ_pzkpfw_iii_ausf_b': 'pz-iii-b',
   'germ_pzkpfw_iv_ausf_c': 'pz-iv-f1',
   'germ_sdkfz_222': 'sdkfz-222',
   'germ_sdkfz_251_9': 'sdkfz-251-9',
