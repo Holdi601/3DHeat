@@ -1828,6 +1828,21 @@ G['tram'] = { cls: 'rail', chassis: 'rail', bare: true, length: 18.11, width: 2.
   bx(-0.35, 0.35, 0, 0.75, 2.95, 1.9, DARK),
   rod([2.7, 0, 3.1], [3.6, 0, 3.75], 0.05, MT), rod([4.5, 0, 3.1], [3.6, 0, 3.75], 0.05, MT), hb(3.6, 0, 3.8, 0.15, 1.5, 0.06, DARK),
 ] };
+// A two-axle street tram (length x width over the body, height to the roof): one short body with rounded ends, the
+// window band down both sides, the clerestory on the roof and the bow collector, on one truck of two axles 3 m apart.
+const twoAxleTram = (L: number, W: number, roof: number): GroundSpec & { cls: string } => {
+  const h = L / 2, s = W / 2;
+  return { cls: 'rail', chassis: 'rail', bare: true, length: L, width: W, hullHeight: 0.9, wheelRadius: 0.4, bogieAt: [0], bogieAxles: 2, axleSpacing: 3.0, addOns: [
+    ...railFrame(h, 0.9, W - 0.2),
+    ob({ top: [[-h, roof - 0.4], [-h + 0.6, roof], [h - 0.6, roof], [h, roof - 0.4]], bottom: [[-h, 0.75], [h, 0.75]], plan: [[-h, s - 0.4], [-h + 0.9, s], [h - 0.9, s], [h, s - 0.4]], round: 6, stations: 10 }),
+    sl([0, s + 0.01, roof - 1.0], rect(h - 1.1, 0.45), 0.03, 'side', { ...GL, ...M }), sl([h - 0.05, 0, roof - 0.95], rect(0.6, 0.4), 0.03, 'front', { ...GL, pitch: 0.2 }),
+    hb(0, 0, roof + 0.12, L - 2.6, 0.9, 0.24, DARK), rod([0.7, 0, roof + 0.25], [-0.5, 0, roof + 1.2], 0.04, MT), hb(-0.5, 0, roof + 1.24, 0.1, 1.2, 0.05, DARK),
+  ] };
+};
+// Two-axle trams as War Thunder's levels place them (burnt-out wrecks in town streets), at the sizes of the game's own:
+// 8.38 x 2.2 m and 9.7 x 2.56 m.
+G['tram-two-axle'] = twoAxleTram(8.38, 2.2, 3.2);
+G['tram-two-axle-large'] = twoAxleTram(9.7, 2.56, 3.45);
 
 
 // ---------------------------------------------------------------- War Thunder prototypes and rarities with their own silhouette
