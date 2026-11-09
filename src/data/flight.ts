@@ -278,25 +278,47 @@ const rowIndexCache = new WeakMap<Dataset, { start: Uint32Array; rows: Uint32Arr
 
 /** Each person's rows, in time order (the dataset's own order), as one CSR index. */
 export function personRows(d: Dataset): { start: Uint32Array; rows: Uint32Array } | null {
+  const g = personRowsSteps(d);
+  for (;;) {
+    const r = g.next();
+    if (r.done) return r.value;
+  }
+}
+
+/** Rows a step of `personRowsSteps` goes through: well under a millisecond. */
+const ROWS_STEP = 1 << 17;
+
+/** `personRows` in steps of `ROWS_STEP` rows (and a person's sort each), for work spread over frames. */
+export function* personRowsSteps(d: Dataset): Generator<void, { start: Uint32Array; rows: Uint32Array } | null, void> {
   if (!d.personId) return null;
   const hit = rowIndexCache.get(d);
   if (hit) return hit;
   const persons = Math.max(d.personLabels.length, 1);
   const start = new Uint32Array(persons + 1);
   const pid = d.personId;
-  for (let i = 0; i < d.count; i++) start[pid[i] + 1]++;
+  for (let i = 0; i < d.count; i++) {
+    if ((i & (ROWS_STEP - 1)) === ROWS_STEP - 1) yield;
+    start[pid[i] + 1]++;
+  }
   for (let p = 0; p < persons; p++) start[p + 1] += start[p];
   const fill = start.slice(0, persons);
   const rows = new Uint32Array(d.count);
   // Rows are stored in time order; a dataset that is not (timeSorted false) gets each person's sorted below.
-  for (let i = 0; i < d.count; i++) rows[fill[pid[i]]++] = i;
+  for (let i = 0; i < d.count; i++) {
+    if ((i & (ROWS_STEP - 1)) === ROWS_STEP - 1) yield;
+    rows[fill[pid[i]]++] = i;
+  }
   if (!d.timeSorted && d.time) {
     const time = d.time;
     for (let p = 0; p < persons; p++) {
+      yield;
       const part = rows.subarray(start[p], start[p + 1]);
       part.sort((a, b) => time[a] - time[b]);
     }
   }
+  // Another caller may have built it meanwhile: one index per dataset.
+  const again = rowIndexCache.get(d);
+  if (again) return again;
   const out = { start, rows };
   rowIndexCache.set(d, out);
   return out;

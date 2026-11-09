@@ -42,7 +42,8 @@ import { placesOf, placesSteps, type HitPlaces } from '../vehicle/places';
 import { figureOfVehicle, OUTCOME_COLOURS, templateOfFigure } from '../vehicle/scene';
 import { turretOf, type TurretBox } from './turret';
 import { snapToFigure, SNAP_STRIDE } from './snap';
-import { aimOf, type AimNow } from './aim';
+import { aimOf, aimSteps, type AimNow } from './aim';
+import { matchIndexSteps } from './match';
 import { bodyOf, FireBody } from '../data/fires';
 import type { FirePose } from './fires';
 
@@ -200,8 +201,11 @@ export function* marksSteps(d: Dataset): Generator<void, HitMarks, void> {
   if (!set.hits.length) return NONE;
   const places = yield* placesSteps(d, set);
   yield;
-  // The turrets' aim, worked out once for the dataset: a step of its own.
-  aimOf(d);
+  // The turrets' aim, worked out once for the dataset, in steps of its own.
+  yield* aimSteps(d);
+  yield;
+  // The catalogue's names, for each vehicle's figure below.
+  yield* matchIndexSteps();
   yield;
   return yield* marksFromSteps(d, set, places);
 }
