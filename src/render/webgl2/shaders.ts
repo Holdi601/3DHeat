@@ -10,6 +10,7 @@ import {
   TILE_TABLE_WIDTH,
 } from '../types';
 import { VOLUME_GLSL } from '../../volumes/gpu';
+import { SEE_THROUGH_BELOW } from '../figureShaders';
 
 /**
  * GLSL ES 3.00 sources for the WebGL2 backend.
@@ -1370,8 +1371,11 @@ in vec3 vWorld;
 uniform vec3  uCameraPos;
 uniform float uFadeStart;
 uniform float uFadeEnd;
+// 0 every triangle, 1 the solid ones only, 2 the see-through ones only (SEE_THROUGH_BELOW).
+uniform float uAlphaPass;
 layout(location = 0) out vec4 outColor;
 void main() {
+  if (uAlphaPass > 0.5 && (uAlphaPass < 1.5) != (vColor.a >= ${SEE_THROUGH_BELOW})) discard;
   float d = distance(vWorld, uCameraPos);
   float fade = 1.0 - smoothstep(uFadeStart, uFadeEnd, d);
   if (fade <= 0.001) discard;

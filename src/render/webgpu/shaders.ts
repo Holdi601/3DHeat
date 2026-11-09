@@ -2,6 +2,7 @@ import { CURVE_U0, CURVE_U1 } from '../../state/curve';
 import { TEAM_CHROMA, TEAM_LIGHTNESS } from '../colors';
 import { FILTER_MASK_CAPACITY } from '../types';
 import { volumeWgsl } from '../../volumes/gpu';
+import { SEE_THROUGH_BELOW } from '../figureShaders';
 
 /**
  * WGSL sources for the WebGPU backend.
@@ -1100,8 +1101,12 @@ fn vsLine(
   return out;
 }
 
+// 0 every triangle, 1 the solid ones only, 2 the see-through ones only (SEE_THROUGH_BELOW): a constant of the pipeline.
+override alphaPass : f32 = 0.0;
+
 @fragment
 fn fsLine(in : LineOut) -> @location(0) vec4<f32> {
+  if (alphaPass > 0.5 && (alphaPass < 1.5) != (in.colour.a >= ${SEE_THROUGH_BELOW})) { discard; }
   let d = distance(in.world, u.camera.xyz);
   let fade = 1.0 - smoothstep(u.cfg.x, u.cfg.y, d);
   if (fade <= 0.001) { discard; }
