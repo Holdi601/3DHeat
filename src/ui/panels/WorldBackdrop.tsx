@@ -11,7 +11,7 @@ import type { BackdropRequest, BackdropResult } from '../../world/backdrop';
 import { backdropLoader } from '../../world/backdropLoader';
 import { clearCache } from '../../world/cache';
 import type { WorldLabel } from '../../world/backdrop';
-import { dcsGroundFrom, type DcsGroundData } from '../../world/dcsGround';
+import { dcsBuildings, dcsGroundFrom, type DcsGroundData } from '../../world/dcsGround';
 import { DCS_PROJECTIONS, fromDcs } from '../../world/dcsProjection';
 import { THEATRES, theatreById, theatreGeo, theatreOfData, theatreOfDcsFolder, type Theatre } from '../../world/theatres';
 import { boxAround } from '../../world/tiles';
@@ -39,6 +39,8 @@ interface DcsLevelMeta {
   level?: string;
   towns?: Array<{ name: string; x?: number; z?: number; ground?: number | null }>;
   airfields?: Array<{ name: string; x: number; z: number; ground?: number | null }>;
+  /** The game's buildings as boxes: x, z, base, height, half_x, half_z, heading_deg, kind per row. */
+  buildings?: { rows?: number[][] } | null;
 }
 
 /** The DCS level's place names, in its own metres (x north, y up, z east): the game's towns and airfields. */
@@ -283,7 +285,7 @@ export function WorldBackdrop({
       const b = m.bounds;
       const [cLat, cLon] = fromDcs(proj, (b.minX + b.maxX) / 2, (b.minZ + b.maxZ) / 2);
       if (gameDetail) {
-        const dcs = dcsGroundFrom(meta.theatre, m.vertices, m.colours, m.indices, m.waterIndices);
+        const dcs = dcsGroundFrom(meta.theatre, m.vertices, m.colours, m.indices, m.waterIndices, dcsBuildings(meta.buildings?.rows));
         streamTheatre({ th, dcs, labels, name, centre: { lat: cLat, lon: cLon } });
       } else {
         const placement: GeoPlacement = { geo: { lat0: th.origin.lat, lon0: th.origin.lon, projection: 'dcs-tm', theatre: meta.theatre }, axes: null };
