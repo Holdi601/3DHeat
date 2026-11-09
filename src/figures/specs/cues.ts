@@ -1229,6 +1229,16 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'big cast turret', check: castTurret },
     { cue: 'long flat hull with a sloped glacis', check: (s) => hullShape(s) && s.length / s.width > 1.7 },
   ]),
+  'm46-patton': ground('m46-patton', [
+    { cue: 'six road wheels, five return rollers (M26 running gear)', check: (s) => wheels(s) === 6 && rollers(s) === 5 },
+    { cue: '90 mm with a bore evacuator and a muzzle brake', check: (s) => muzzle(s) && evacuator(s) },
+    { cue: 'big cast M26 turret on the flat M26 hull', check: (s) => castTurret(s) && hullShape(s) },
+  ]),
+  'm47-patton': ground('m47-patton', [
+    { cue: 'six road wheels, three return rollers', check: (s) => wheels(s) === 6 && rollers(s) === 3 },
+    { cue: '90 mm with a bore evacuator and a muzzle brake', check: (s) => muzzle(s) && evacuator(s) },
+    { cue: 'long narrow turret with its bustle over the engine deck', check: castTurret },
+  ]),
   t29: ground('t29', [
     { cue: 'very long 105 mm without a muzzle brake', check: (s) => noMuzzle(s) && (mainGun(s)?.length ?? 0) > 5 },
     { cue: 'rangefinder ears on the turret sides', check: (s) => !!s.turrets?.some((t) => Math.abs(t.side ?? 0) > 1.3) },
@@ -2170,9 +2180,14 @@ export const CUES: Record<string, CueEntry> = {
   // ---------------------------------------------------------------- catalogue pass: remaining ground figures
   // Soviet and Chinese MBTs: T-54/55 and Type 59/69, T-62, T-64, T-72, T-80, T-90.
   't-54-55': ground(['t-55a', 'to-55', 'type-69-2', 'ztz-59a', 'ztz-59d1'], [
-    { cue: 'five evenly spaced road wheels, no return rollers', check: (s) => run(5, 0)(s) },
+    { cue: 'five road wheels, a space behind the first, no return rollers', check: (s) => run(5, 0)(s) && (!s.running || s.running.wheels[0] - s.running.wheels[1] > 1.15 * (s.running.wheels[1] - s.running.wheels[2])) },
     { cue: 'low cast dome turret', check: castTurret },
     { cue: 'long gun with a fume extractor near the muzzle', check: (s) => evacuator(s) && gunLen(5)(s) },
+  ]),
+  't-54': ground(['t-54', 'type-59'], [
+    { cue: 'five road wheels, a space behind the first, no return rollers', check: (s) => run(5, 0)(s) },
+    { cue: "loader's cupola and the dome ventilator in front of it on the turret roof's right", check: (s) => adds('drum', 2, 'turret')(s) },
+    { cue: "12.7 mm DShK on the loader's hatch", check: (s) => adds('tube', 1, 'turret')(s) },
   ]),
   't-55a': ground('t-55a', [{ cue: 'D-10T 100 mm, no skirts', check: (s) => cal(0.1, 0.105)(s) && !skirted(s) }]),
   'to-55': ground('to-55', [
@@ -2190,7 +2205,7 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'rifled 105 mm with a thermal sleeve', check: (s) => cal(0.105, 0.11)(s) && sleeved(s) },
   ]),
   't-62': ground(['t-62', 'it-1'], [
-    { cue: 'five road wheels, wider gaps toward the rear, no return rollers', check: run(5, 0) },
+    { cue: 'five road wheels, wider gaps toward the rear, no return rollers', check: (s) => run(5, 0)(s) && (!s.running || s.running.wheels[3] - s.running.wheels[4] > 1.1 * (s.running.wheels[0] - s.running.wheels[1])) },
     { cue: 'round cast turret further back than the T-55', check: castTurret },
   ]),
   't-62-gun': ground('t-62', [{ cue: '115 mm smoothbore with an evacuator part way along', check: (s) => cal(0.115, 0.12)(s) && evacuator(s) }]),

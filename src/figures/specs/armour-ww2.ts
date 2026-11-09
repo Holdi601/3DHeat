@@ -1011,6 +1011,15 @@ G['m26-pershing'] = ww2({ ...M26, gun: { length: 4.25, calibre: 0.09, muzzle: tr
 // T26E4 "Super Pershing": the long 90 mm T15E2 balanced by a counterweight on the turret's back, and the boiler-plate
 // armour bolted in a V over the hull front and the mantlet.
 G['m26-super-pershing'] = ww2({ ...M26, gun: { length: 5.7, calibre: 0.09, muzzle: true, at: 0.45 }, parts: [part(1.85, [[1.2, 1.4], [3.2, 1.0]], [[1.2, 1.95], [3.2, 1.0]], [[1.2, 1.7], [3.2, 0.75]], 6)], turretParts: (t) => [cupola(t, -0.6, 0.5, 0.32, 0.15), on(t, [[-2.4, 0.45], [-1.85, 0.45]], [[-2.4, 0.55], [-1.85, 0.55]], 0.15, 8), on(t, [[1.45, 0.95], [1.75, 0.5]], [[1.45, 0.85], [1.75, 0.7]], 0.05, 6)] });
+// M46 Patton: the M26's hull and turret with the new engine deck, its 90 mm M3A1 with a bore evacuator behind a
+// single-baffle brake (6.36 x 3.51 m without the gun, 2.12 m of gun ahead of the hull; 3.78-3.88 m of track on the
+// ground, five return rollers; afvdatabase.com from the TMs). Not the M48's cast boat hull.
+G['m46-patton'] = ww2({ ...M26, cls: 'mbt', gun: { length: 4.25, calibre: 0.09, muzzle: true, extractor: 0.8, at: 0.45 }, turretParts: (t) => [cupola(t, -0.6, 0.5, 0.32, 0.15)] });
+// M47 Patton: the M46 hull (its sharper glacis not drawn) and three return rollers under the T42's long narrow turret, its
+// bustle over the engine deck and 0.15 m taller (3.33 m over the AA MG against the M46's 3.18 m), the 90 mm M36
+// with its evacuator (6.36 x 3.51 m, 2.15 m of gun ahead; afvdatabase.com). The bustle's length is an estimate.
+const M47_T = turret(-0.3, [[-2.3, 0.7], [-2.0, 1.05], [0.6, 1.2], [1.3, 0.9], [1.55, 0.5]], [[-2.3, 0.62], [-1.8, 0.9], [0.6, 0.95], [1.55, 0.55]], 3, 1.6);
+G['m47-patton'] = ww2({ ...M26, cls: 'mbt', rollers: [-1.6, 0, 1.6], turret: M47_T, gun: { length: 4.3, calibre: 0.09, muzzle: true, extractor: 0.8, at: 0.45 }, turretParts: (t) => [cupola(t, -0.9, 0.5, 0.32, 0.18)] });
 // M6A1 heavy tank: a tall welded hull on four paired bogies, the big cast turret with the 3-inch gun (7.54 x 3.12 m, 2.95 m; 8.43 m with the gun).
 G['m6a1'] = ww2({
   cls: 'heavy-tank', L: 7.54, W: 3.12, deck: 2.1, fender: 1.05,
