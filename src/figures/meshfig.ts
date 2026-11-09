@@ -15,7 +15,7 @@
  */
 
 import type { Frame3, Rgb, Vec3 } from '../race/geometry';
-import { atDetail, COARSE, FAR, finish, into, joint, newKit, PAINT, type Anchor, type Template } from './kit';
+import { atDetail, COARSE, FAR, finish, into, joint, newKit, PAINT, type Anchor, type FigBuffer, type Kit, type Template } from './kit';
 import { Mesh } from './mesh';
 import { ring } from './parts';
 
@@ -42,6 +42,12 @@ export interface MeshFigureData {
   prop?: { at: Vec3; diameter: number };
   /** Crease angle for the normals, degrees. */
   crease?: number;
+  /**
+   * `built`: a hybrid - the built figure's hull and running gear (its road wheels, return rollers and track, which a
+   * few thousand triangles of a free model lose) with this model's turret and gun, set on the built turret's ring;
+   * the packed hull part is then empty.
+   */
+  hull?: 'built';
   /**
    * Full, coarse and far builds, base64: u16 part count, per part u16 vertex and triangle counts, then per part its
    * positions (u16 x, y, z over `box`) and triangles (u16 vertex indices).
@@ -90,17 +96,45 @@ export function decodeLod(m: MeshFigureData, lod: number): { p: Float32Array; id
   return out;
 }
 
-function buildLod(m: MeshFigureData, lod: number): Template {
+/** The built figure's hull triangles (every vertex on no joint: hull and running gear), copied with their paint and normals. */
+function copyHull(k: Kit, t: Template): void {
+  into(k, -1);
+  copyFree(k.team, t.team, t.teamN, t.teamJ);
+  copyFree(k.fixed, t.fixed, t.fixedN, t.fixedJ);
+}
+
+function copyFree(dst: FigBuffer, d: Float32Array, n: Float32Array | undefined, jn: Uint8Array | undefined): void {
+  for (let v = 0; v + 2 < d.length / 7; v += 3) {
+    if (jn && (jn[v] || jn[v + 1] || jn[v + 2])) continue;
+    for (let i = v; i < v + 3; i++) {
+      const o = i * 7;
+      const q = i * 4;
+      dst.vn([d[o], d[o + 1], d[o + 2]], n ? [n[q], n[q + 1], n[q + 2]] : [0, 0, 0], [d[o + 3], d[o + 4], d[o + 5]], d[o + 6], n ? n[q + 3] : 0);
+    }
+  }
+}
+
+function buildLod(m: MeshFigureData, lod: number, base?: Template): Template {
   const k = newKit();
   const parts = decodeLod(m, lod);
   const joints: number[] = [];
+  // A hybrid: the built hull, and this model's turret moved onto the built turret's ring.
+  const hybrid = m.hull === 'built' && base !== undefined;
+  let shift: Vec3 = [0, 0, 0];
+  if (hybrid) {
+    copyHull(k, base);
+    const ringOf = base.joints?.find((q) => q.kind === 'yaw' && q.parent < 0);
+    const own = m.parts.find((q) => q.joint === 'yaw');
+    if (ringOf && own) shift = [ringOf.pivot[0] - own.pivot[0], ringOf.pivot[1] - own.pivot[1], ringOf.pivot[2] - own.pivot[2]];
+  }
   m.parts.forEach((part, i) => {
+    if (hybrid && !part.joint) return;
     let j = -1;
     if (part.joint) {
       const parent = part.parent !== undefined ? (joints[part.parent] ?? -1) : -1;
       j = joint(k, {
         kind: part.joint,
-        pivot: [...part.pivot] as Vec3,
+        pivot: [part.pivot[0] + shift[0], part.pivot[1] + shift[1], part.pivot[2] + shift[2]],
         parent,
         rest: 0,
         ...(part.joint === 'pitch' ? { pitch: 0 } : {}),
@@ -115,8 +149,9 @@ function buildLod(m: MeshFigureData, lod: number): Template {
     const team = new Mesh();
     const fixed = new Mesh();
     for (let v = 0; v < p.length; v += 3) {
-      team.v([p[v], p[v + 1], p[v + 2]], body);
-      fixed.v([p[v], p[v + 1], p[v + 2]], PAINT.track);
+      const at: Vec3 = [p[v] + shift[0], p[v + 1] + shift[1], p[v + 2] + shift[2]];
+      team.v(at, body);
+      fixed.v(at, PAINT.track);
     }
     const gear = !part.joint ? m.gear : undefined;
     for (let t = 0; t < idx.length; t += 3) {
@@ -135,13 +170,18 @@ function buildLod(m: MeshFigureData, lod: number): Template {
   return finish(k, m.anchor);
 }
 
-/** A mesh figure's template, its coarse and far builds made when first asked for, with the full one's bounds. */
-export function buildMeshFigure(m: MeshFigureData): Template {
-  const t = buildLod(m, 0);
+/**
+ * A mesh figure's template, its coarse and far builds made when first asked for, with the full one's bounds. A
+ * hybrid (`hull: 'built'`) takes its hull from `built` (the catalogue's own builder for the name), level by level.
+ */
+export function buildMeshFigure(m: MeshFigureData, built?: () => Template): Template {
+  const base = m.hull === 'built' && built ? built() : undefined;
+  const t = buildLod(m, 0, base);
   let c: Template | undefined;
   let f: Template | undefined;
   const lod = (i: number): Template => {
-    const x = atDetail(i === 1 ? COARSE : FAR, () => buildLod(m, Math.min(i, m.lods.length - 1)));
+    const b = base && ((i === 1 ? base.coarse?.() : base.far?.()) ?? base);
+    const x = atDetail(i === 1 ? COARSE : FAR, () => buildLod(m, Math.min(i, m.lods.length - 1), b));
     x.min = t.min;
     x.max = t.max;
     return x;

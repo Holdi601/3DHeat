@@ -94,6 +94,22 @@ describe('mesh figures', () => {
     expect(tb.max[0]).toBeCloseTo(1, 2);
   });
 
+  it('keep the built hull and set their turret on its ring when a hybrid', () => {
+    const built = CATALOG['m4a3-105'].build;
+    const hybrid: MeshFigureData = { ...TANK, hull: 'built', lods: TANK.lods.map(() => pack([[], [TURRET], [GUN]], LO, HI)) };
+    const ring = (built().joints ?? []).find((j) => j.kind === 'yaw' && j.parent < 0)!;
+    const t = buildMeshFigure(hybrid, built);
+    const own = t.joints!.find((j) => j.kind === 'yaw')!;
+    expect(own.pivot).toEqual(ring.pivot);
+    const gun = t.joints!.find((j) => j.kind === 'pitch')!;
+    expect(gun.pivot[0] - own.pivot[0]).toBeCloseTo(0.6, 3);
+    // the built hull's running gear (track paint) is kept; the mesh turret moves with its joint
+    expect(t.fixed.length).toBeGreaterThan(0);
+    expect(t.teamJ!.some((j) => j === 1)).toBe(true);
+    expect(t.coarse!().joints!.length).toBe(2);
+    expect(t.far!().triangles).toBeLessThan(t.triangles);
+  });
+
   it('draw a propeller disc where one is given', () => {
     const plane: MeshFigureData = {
       anchor: 'centre',

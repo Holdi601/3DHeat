@@ -11,8 +11,10 @@
  * Prepared from the model's own geometry: its pieces closed and united into
  * one body (hidden insides drop out), cut at the turret ring and the gun,
  * and each level of detail decimated from that body by quadric edge
- * collapse; the coarse and far ones (and the full one where the wheels come
- * out lumpy) carry each side's running gear as its outline. Judged on
+ * collapse; the coarse and far ones carry each side's running gear as its
+ * outline. Where the model's wheels don't survive that (most), the figure is
+ * a hybrid (`hull: 'built'`): the built hull and running gear with the
+ * model's turret and gun on the built turret ring (Pz IV G). Judged on
  * compare renders against the built figure and the published size; still to
  * be measured with the silhouette checker.
  */
