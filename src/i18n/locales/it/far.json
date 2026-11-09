@@ -40,5 +40,8 @@
   "far.hitCalibre": "Calibro",
   "far.hitAmmo": "Munizione",
   "far.ammoExplosive": "esplosiva",
-  "far.ammoKinetic": "cinetica"
+  "far.ammoKinetic": "cinetica",
+  "far.aimLines": "Linee di mira e torretta",
+  "far.aimLinesTitle": "Da ogni veicolo: dove guarda il suo giocatore (tratteggiata) e dove punta il cannone della torretta (continua), dove i dati lo indicano.",
+  "far.aimLinesLegend": "Tratteggiata: dove guarda il giocatore. Continua: il cannone; tenue dove i dati non hanno la torretta e segue la mira."
 }

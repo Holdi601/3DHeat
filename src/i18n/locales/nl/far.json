@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kaliber",
   "far.hitAmmo": "Munitie",
   "far.ammoExplosive": "explosief",
-  "far.ammoKinetic": "kinetisch"
+  "far.ammoKinetic": "kinetisch",
+  "far.aimLines": "Kijk- en koepellijnen",
+  "far.aimLinesTitle": "Vanaf elk voertuig: waar de speler kijkt (gestreept) en waar het kanon van de koepel wijst (doorgetrokken), waar de gegevens het zeggen.",
+  "far.aimLinesLegend": "Gestreept: waar de speler kijkt. Doorgetrokken: het kanon; vaag waar de gegevens geen koepel hebben en hij het richten volgt."
 }

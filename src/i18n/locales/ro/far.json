@@ -40,5 +40,8 @@
   "far.hitCalibre": "Calibru",
   "far.hitAmmo": "Muniție",
   "far.ammoExplosive": "explozivă",
-  "far.ammoKinetic": "cinetică"
+  "far.ammoKinetic": "cinetică",
+  "far.aimLines": "Linii de privire și de turelă",
+  "far.aimLinesTitle": "De la fiecare vehicul: încotro privește jucătorul său (punctat) și încotro țintește tunul turelei (continuu), unde datele o spun.",
+  "far.aimLinesLegend": "Punctat: încotro privește jucătorul. Continuu: tunul; palid unde datele nu au turelă și aceasta urmează ținta."
 }

@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kaliber",
   "far.hitAmmo": "Lőszer",
   "far.ammoExplosive": "robbanó",
-  "far.ammoKinetic": "kinetikus"
+  "far.ammoKinetic": "kinetikus",
+  "far.aimLines": "Nézési és toronyvonalak",
+  "far.aimLinesTitle": "Minden járműből: merre néz a játékosa (szaggatott) és merre mutat a tornya ágyúja (folytonos), ahol az adatok megmondják.",
+  "far.aimLinesLegend": "Szaggatott: merre néz a játékos. Folytonos: az ágyú; halvány, ahol az adatokban nincs torony, és az a célzást követi."
 }

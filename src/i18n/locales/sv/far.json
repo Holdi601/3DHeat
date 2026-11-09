@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kaliber",
   "far.hitAmmo": "Ammunition",
   "far.ammoExplosive": "explosiv",
-  "far.ammoKinetic": "kinetisk"
+  "far.ammoKinetic": "kinetisk",
+  "far.aimLines": "Sikt- och tornlinjer",
+  "far.aimLinesTitle": "Från varje fordon: vart spelaren tittar (streckad) och vart tornets kanon pekar (heldragen), där datan säger det.",
+  "far.aimLinesLegend": "Streckad: vart spelaren tittar. Heldragen: kanonen; blek där datan saknar torn och den följer siktet."
 }

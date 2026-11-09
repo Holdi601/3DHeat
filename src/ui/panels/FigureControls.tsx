@@ -30,6 +30,7 @@ export function FigureControls({ toggle = true }: { toggle?: boolean }) {
   const hitMarks = useStore((s) => s.team.hitMarks);
   const hitMarkSeconds = useStore((s) => s.team.hitMarkSeconds);
   const hitMarkFloat = useStore((s) => s.team.hitMarkFloat);
+  const aimLines = useStore((s) => s.team.aimLines);
   const teams = useStore((s) => s.dataset?.teamLabels ?? null);
   const patchTeam = useStore((s) => s.patchTeam);
   return (
@@ -145,6 +146,8 @@ export function FigureControls({ toggle = true }: { toggle?: boolean }) {
               </div>
             </>
           )}
+          <Check label={t('far.aimLines')} checked={aimLines} onChange={(v) => patchTeam({ aimLines: v })} title={t('far.aimLinesTitle')} />
+          {aimLines && <div className="hint">{t('far.aimLinesLegend')}</div>}
         </>
       )}
     </>

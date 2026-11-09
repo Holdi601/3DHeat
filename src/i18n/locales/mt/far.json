@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kalibru",
   "far.hitAmmo": "Munizzjon",
   "far.ammoExplosive": "splussiva",
-  "far.ammoKinetic": "kinetika"
+  "far.ammoKinetic": "kinetika",
+  "far.aimLines": "Linji tal-ħarsa u tat-turretta",
+  "far.aimLinesTitle": "Minn kull vettura: fejn qed iħares il-plejer tagħha (bil-qatgħat) u fejn qed jipponta l-kanun tat-turretta (sħiħa), fejn id-data tgħid hekk.",
+  "far.aimLinesLegend": "Bil-qatgħat: fejn qed iħares il-plejer. Sħiħa: il-kanun; ċara fejn id-data m'għandhiex turretta u ssegwi l-immirar."
 }

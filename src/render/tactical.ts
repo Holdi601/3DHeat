@@ -348,6 +348,8 @@ export function locksAt(d: Dataset, row: number): { persons: number[]; range: nu
 /** A recorded camera's horizontal field of view at a zoom of 1, degrees, where the data gives only the zoom. */
 const CAMERA_FOV = 80;
 const CAMERA_COLOUR = [1, 0.85, 0.3];
+/** Where a vehicle's player looks (`aimLines`): dashed, near white. */
+const VIEW_COLOUR = [0.92, 0.94, 0.97];
 
 const zoomCols = new WeakMap<Dataset, Float32Array | null>();
 
@@ -441,6 +443,7 @@ export class TacticalLayer {
     length: number,
     t: number,
     axesNow: () => { fwd: Vec3; up: Vec3; right: Vec3 },
+    lines = false,
   ): void {
     void i;
     const aspect = 16 / 9;
@@ -456,6 +459,7 @@ export class TacticalLayer {
       for (const [x, y] of cameraGlyph(fr, h, aspect, 1.6 * k, Math.max(12 * k, length))) this.line(x, y, CAMERA_COLOUR, 0.95);
       return;
     }
+    if (lines && aim && tr.row >= 0 && this.aimLines(tr, p, colour, k, aim, length, t, axesNow)) return;
     if (gun && aim && tr.row >= 0) {
       aim.at(tr.row, t, this.aimNow);
       if (Number.isFinite(this.aimNow.yaw) || Number.isFinite(this.aimNow.pitch)) {
@@ -485,6 +489,49 @@ export class TacticalLayer {
   }
 
   /**
+   * A vehicle's two lines (the figures' `aimLines`): its turret's gun, solid
+   * (fainter where the turret is taken from the view, `Aim.derived`), and
+   * where its player looks, dashed; both from about the turret ring. False
+   * where the data says neither now.
+   */
+  private aimLines(
+    tr: TacticalTrack,
+    p: Vec3,
+    colour: ArrayLike<number>,
+    k: number,
+    aim: NonNullable<ReturnType<typeof aimOf>>,
+    length: number,
+    t: number,
+    axesNow: () => { fwd: Vec3; up: Vec3; right: Vec3 },
+  ): boolean {
+    const now = this.aimNow;
+    aim.at(tr.row, t, now);
+    const ty = now.yaw, tp = now.pitch;
+    let vy = NaN, vp = NaN;
+    if (aim.view) {
+      aim.view.at(tr.row, t, now);
+      vy = now.yaw;
+      vp = now.pitch;
+    }
+    const turret = Number.isFinite(ty) || Number.isFinite(tp);
+    const view = Number.isFinite(vy) || Number.isFinite(vp);
+    if (!turret && !view) return false;
+    const a = axesNow();
+    const o: Vec3 = [p[0] + a.up[0] * 2.2 * k, p[1] + a.up[1] * 2.2 * k, p[2] + a.up[2] * 2.2 * k];
+    const len = Math.max(100 * k, length);
+    const deg = (v: number) => ((Number.isFinite(v) ? v : 0) * 180) / Math.PI;
+    if (turret) {
+      const dir = bodyDirection(a, deg(ty), deg(tp));
+      this.line(o, [o[0] + dir[0] * len, o[1] + dir[1] * len, o[2] + dir[2] * len], colour, aim.derived?.[tr.person] === 1 ? 0.4 : 0.95);
+    }
+    if (view) {
+      const dir = bodyDirection(a, deg(vy), deg(vp));
+      this.dashed(o, [o[0] + dir[0] * len, o[1] + dir[1] * len, o[2] + dir[2] * len], VIEW_COLOUR, 0.85, len / 40);
+    }
+    return true;
+  }
+
+  /**
    * The aids for this frame, after the `baseCount` vertices of `base`; null
    * when none is drawn (the caller keeps its own buffer).
    * `colorOf(i)` is the i-th track's colour.
@@ -506,7 +553,7 @@ export class TacticalLayer {
     // Where people look: view cones (with the team panel's look direction on), turrets' aim, the recorded camera.
     const team = useStore.getState().team;
     const lookOn = team.showLookDirection && wanted(aids.look);
-    const aim = wanted(aids.aim) ? aimOf(d) : null;
+    const aim = wanted(aids.aim) || team.aimLines ? aimOf(d) : null;
     const cams = cameraTracks(d);
     const lookAids = lookOn || !!aim || (aids.camera && cams.any);
     if (!tracks.length || (!motionAids && !cols.any && !lookAids)) return null;
@@ -609,7 +656,7 @@ export class TacticalLayer {
       }
 
       // ---- where it looks: the recorded camera, a turret's gun, a player's eyes
-      if (lookAids) this.look(d, tr, i, p, bright, k, cams, aim, lookOn && inScope(aids.look, tr), !!aim && inScope(aids.aim, tr), aids.camera, aids.lookFov, team.lookLength, t, axesNow);
+      if (lookAids) this.look(d, tr, i, p, bright, k, cams, aim, lookOn && inScope(aids.look, tr), !!aim && inScope(aids.aim, tr), aids.camera, aids.lookFov, team.lookLength, t, axesNow, team.aimLines);
 
       const row = tr.row;
       if (row < 0 || !cols.any) continue;

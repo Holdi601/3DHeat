@@ -12,10 +12,16 @@
  *   gun          `gunPitch` / `gun_pitch` / `gunElevation` - degrees;
  *                World of Tanks' `gunStep` (0-63 across the gun's limits, which
  *                the replay does not carry: taken as +20Â° to -8Â°, a typical gun's)
- *   or, where a row has neither, `aimHeading` / `aimPitch`: where the gun
- *                points in the world, degrees (War Thunder's server replays
- *                write these for every vehicle and the turret only for a few),
- *                less the hull's own heading and pitch
+ *   view         `viewYaw` / `viewPitch`, else `aimHeading` / `aimPitch`:
+ *                where the player looks (the camera, the sight) in the world,
+ *                compass degrees and degrees up, less the hull's own heading
+ *                and pitch (`Aim.view`)
+ *
+ * A vehicle whose rows have no turret column takes its turret from the view
+ * (`Aim.derived`): War Thunder's server replays converted so far write the
+ * view for every vehicle and the turret for a few. One that has turret rows
+ * turns its turret by them only, never by the view, which runs ahead of a
+ * turret that traverses at its own speed.
  */
 
 import type { AttributeColumn, Dataset } from '../state/types';
@@ -24,8 +30,8 @@ import { personRowsSteps } from '../data/flight';
 const YAW_NAMES = ['turretYaw', 'turret_yaw', 'TurretYaw', 'turretHeading'];
 const PITCH_NAMES = ['gunPitch', 'gun_pitch', 'GunPitch', 'gunElevation', 'gun_elevation'];
 const STEP_NAMES = ['gunStep'];
-const AIM_HEADING_NAMES = ['aimHeading'];
-const AIM_PITCH_NAMES = ['aimPitch'];
+const VIEW_YAW_NAMES = ['viewYaw', 'viewHeading', 'aimHeading'];
+const VIEW_PITCH_NAMES = ['viewPitch', 'aimPitch'];
 /** A World of Tanks gun step's range: step 0 the most it raises, 63 the most it dips, degrees. */
 const STEP_UP = 20;
 const STEP_DOWN = -8;
@@ -59,6 +65,10 @@ export class Aim {
   /** Per row, radians; NaN where the row has none. */
   readonly yaw: Float32Array | null;
   readonly pitch: Float32Array | null;
+  /** Where the player looks, the same way (relative to the hull); null where the data does not say. */
+  view: Aim | null = null;
+  /** Per person: 1 where its turret is taken from the view (it has no turret rows); null for none so taken. */
+  derived: Uint8Array | null = null;
   /** Per row, the person's last row at or before it with an aim, and the next one after it (-1: none). */
   private readonly prev: Int32Array;
   private readonly next: Int32Array;
@@ -154,21 +164,58 @@ function* mapSteps(v: Float32Array, f: (x: number) => number): Generator<void, F
   return out;
 }
 
-/**
- * `own` (radians, relative to the hull) with its gaps filled from `world`
- * (degrees) less `hull` (radians), wrapped to a half turn either way.
- */
-function* fromWorld(own: Float32Array | null, world: Float32Array, hull: Float32Array): Generator<void, Float32Array, void> {
-  const out = own ? own.slice() : new Float32Array(world.length).fill(NaN);
+/** `world` (degrees) less `hull` (radians) per row, wrapped to a half turn either way; NaN where either is missing. */
+function* fromWorld(world: Float32Array, hull: Float32Array): Generator<void, Float32Array, void> {
+  const out = new Float32Array(world.length).fill(NaN);
   for (let r = 0; r < out.length; r++) {
     if ((r & (STEP - 1)) === STEP - 1) yield;
-    if (Number.isFinite(out[r]) || !Number.isFinite(world[r]) || !Number.isFinite(hull[r])) continue;
+    if (!Number.isFinite(world[r]) || !Number.isFinite(hull[r])) continue;
     let a = (world[r] * DEG - hull[r]) % (2 * Math.PI);
     if (a > Math.PI) a -= 2 * Math.PI;
     if (a < -Math.PI) a += 2 * Math.PI;
     out[r] = a;
   }
   return out;
+}
+
+/**
+ * The turret's yaw and pitch with the rows of every person that has no
+ * turret row filled from the view: those persons marked in the answer's
+ * `derived` (null where none is).
+ */
+function* fillFromView(
+  d: Dataset,
+  yaw: Float32Array | null,
+  pitch: Float32Array | null,
+  vy: Float32Array | null,
+  vp: Float32Array | null,
+): Generator<void, { yaw: Float32Array | null; pitch: Float32Array | null; derived: Uint8Array | null }, void> {
+  if (!vy && !vp) return { yaw, pitch, derived: null };
+  const n = Math.max(d.personLabels.length, 1);
+  const own = new Uint8Array(n);
+  const pid = d.personId;
+  if (yaw || pitch) {
+    for (let r = 0; r < d.count; r++) {
+      if ((r & (STEP - 1)) === STEP - 1) yield;
+      if ((yaw && Number.isFinite(yaw[r])) || (pitch && Number.isFinite(pitch[r]))) own[pid ? pid[r] : 0] = 1;
+    }
+  }
+  const derived = new Uint8Array(n);
+  let any = false;
+  const y = yaw ? yaw.slice() : vy ? new Float32Array(d.count).fill(NaN) : null;
+  const pt = pitch ? pitch.slice() : vp ? new Float32Array(d.count).fill(NaN) : null;
+  for (let r = 0; r < d.count; r++) {
+    if ((r & (STEP - 1)) === STEP - 1) yield;
+    const p = pid ? pid[r] : 0;
+    if (own[p]) continue;
+    const a = vy ? vy[r] : NaN, b = vp ? vp[r] : NaN;
+    if (!Number.isFinite(a) && !Number.isFinite(b)) continue;
+    if (y) y[r] = a;
+    if (pt) pt[r] = b;
+    derived[p] = 1;
+    any = true;
+  }
+  return { yaw: y, pitch: pt, derived: any ? derived : null };
 }
 
 /** The aim of a dataset's vehicles, or null where it has no turret or gun column. Worked out once. */
@@ -205,12 +252,17 @@ export function* aimSteps(d: Dataset): Generator<void, Aim | null, void> {
     const v = sc.data as Float32Array;
     pitch = yield* mapSteps(v, (s) => (Number.isFinite(s) ? (STEP_UP + ((STEP_DOWN - STEP_UP) * s) / 63) * DEG : NaN));
   }
-  // The world aim, less the hull, for every row the turret columns leave empty.
-  const ah = column(d, AIM_HEADING_NAMES);
-  if (ah && d.yaw) yaw = yield* fromWorld(yaw, ah.data as Float32Array, d.yaw);
-  const ap = column(d, AIM_PITCH_NAMES);
-  if (ap && d.pitch) pitch = yield* fromWorld(pitch, ap.data as Float32Array, d.pitch);
-  const out = yaw || pitch ? yield* Aim.build(d, yaw, pitch) : null;
+  // Where the player looks, less the hull; the turret of a vehicle without turret rows taken from it.
+  const vh = column(d, VIEW_YAW_NAMES);
+  const vy = vh && d.yaw ? yield* fromWorld(vh.data as Float32Array, d.yaw) : null;
+  const vpc = column(d, VIEW_PITCH_NAMES);
+  const vp = vpc && d.pitch ? yield* fromWorld(vpc.data as Float32Array, d.pitch) : null;
+  const filled = yield* fillFromView(d, yaw, pitch, vy, vp);
+  const out = filled.yaw || filled.pitch ? yield* Aim.build(d, filled.yaw, filled.pitch) : null;
+  if (out) {
+    out.derived = filled.derived;
+    if (vy || vp) out.view = yield* Aim.build(d, vy, vp);
+  }
   // Another caller may have worked it out meanwhile: one aim per dataset.
   const again = cache.get(d);
   if (again !== undefined) return again;

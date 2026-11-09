@@ -129,4 +129,33 @@ describe('aim from the data', () => {
   it('has none where the data has no turret', () => {
     expect(aimOf(tanks({ speed: [1] }, [0]))).toBeNull();
   });
+
+  it('keeps the turret and the view apart, the turret from the view only where a vehicle has no turret rows', () => {
+    // Two tanks heading east (90 degrees); the first has its turret, the second only where its player looks.
+    const d = {
+      ...tanks({ turretYaw: [10, NaN], gunPitch: [2, NaN], aimHeading: [150, 120], aimPitch: [5, 4] }, [0, 0]),
+      personId: Uint32Array.of(0, 1),
+      personLabels: ['A', 'B'],
+      yaw: Float32Array.of(Math.PI / 2, Math.PI / 2),
+      pitch: new Float32Array(2),
+    } as Dataset;
+    const aim = aimOf(d)!;
+    const now = { yaw: 0, pitch: 0 };
+    const deg = (v: number) => (v * Math.PI) / 180;
+    // The first's turret by its own column, not by where its player looks (60 degrees right of the hull).
+    aim.at(0, 0, now);
+    expect(now.yaw).toBeCloseTo(deg(10));
+    expect(now.pitch).toBeCloseTo(deg(2));
+    aim.view!.at(0, 0, now);
+    expect(now.yaw).toBeCloseTo(deg(60));
+    // The second's turret from its view, marked so.
+    aim.at(1, 0, now);
+    expect(now.yaw).toBeCloseTo(deg(30));
+    expect(now.pitch).toBeCloseTo(deg(4));
+    expect(Array.from(aim.derived!)).toEqual([0, 1]);
+    // `viewYaw` before the older `aimHeading`.
+    const v = aimOf({ ...d, attrs: [...d.attrs, { name: 'viewYaw', kind: 'number', data: Float32Array.of(100, 100), min: 0, max: 1 } as AttributeColumn] } as Dataset)!;
+    v.view!.at(1, 0, now);
+    expect(now.yaw).toBeCloseTo(deg(10));
+  });
 });

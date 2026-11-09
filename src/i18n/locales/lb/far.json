@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kaliber",
   "far.hitAmmo": "Munitioun",
   "far.ammoExplosive": "explosiv",
-  "far.ammoKinetic": "kinetesch"
+  "far.ammoKinetic": "kinetesch",
+  "far.aimLines": "Bléck- an Tuermlinnen",
+  "far.aimLinesTitle": "Vun all Gefier aus: wouhi säi Spiller kuckt (gestrachelt) a wouhi d'Kanoun vu sengem Tuerm weist (duerchgezunn), wou d'Donnéeë et soen.",
+  "far.aimLinesLegend": "Gestrachelt: wouhi de Spiller kuckt. Duerchgezunn: d'Kanoun; blass, wou d'Donnéeë keen Tuerm hunn an en dem Bléck nogeet."
 }

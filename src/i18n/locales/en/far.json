@@ -40,5 +40,8 @@
   "far.hitCalibre": "Calibre",
   "far.hitAmmo": "Ammunition",
   "far.ammoExplosive": "explosive",
-  "far.ammoKinetic": "kinetic"
+  "far.ammoKinetic": "kinetic",
+  "far.aimLines": "Aim and turret lines",
+  "far.aimLinesTitle": "From each vehicle: where its player looks (dashed) and where its turret's gun points (solid), where the data says.",
+  "far.aimLinesLegend": "Dashed: where the player looks. Solid: the gun; faint where the data has no turret and it follows the aim."
 }

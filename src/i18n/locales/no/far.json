@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kaliber",
   "far.hitAmmo": "Ammunisjon",
   "far.ammoExplosive": "eksplosiv",
-  "far.ammoKinetic": "kinetisk"
+  "far.ammoKinetic": "kinetisk",
+  "far.aimLines": "Sikte- og tårnlinjer",
+  "far.aimLinesTitle": "Fra hvert kjøretøy: hvor spilleren ser (stiplet) og hvor tårnets kanon peker (heltrukket), der dataene sier det.",
+  "far.aimLinesLegend": "Stiplet: hvor spilleren ser. Heltrukket: kanonen; svak der dataene ikke har tårn og den følger siktet."
 }

@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kalibre",
   "far.hitAmmo": "Mühimmat",
   "far.ammoExplosive": "patlayıcı",
-  "far.ammoKinetic": "kinetik"
+  "far.ammoKinetic": "kinetik",
+  "far.aimLines": "Bakış ve taret çizgileri",
+  "far.aimLinesTitle": "Her araçtan: oyuncusunun nereye baktığı (kesikli) ve taretinin topunun nereyi gösterdiği (düz), verinin söylediği yerde.",
+  "far.aimLinesLegend": "Kesikli: oyuncunun baktığı yer. Düz: top; verilerde taret yoksa ve nişanı izliyorsa soluk."
 }

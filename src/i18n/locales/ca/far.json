@@ -40,5 +40,8 @@
   "far.hitCalibre": "Calibre",
   "far.hitAmmo": "Munició",
   "far.ammoExplosive": "explosiva",
-  "far.ammoKinetic": "cinètica"
+  "far.ammoKinetic": "cinètica",
+  "far.aimLines": "Línies de mira i de torreta",
+  "far.aimLinesTitle": "Des de cada vehicle: cap on mira el seu jugador (discontínua) i cap on apunta el canó de la torreta (contínua), on les dades ho diuen.",
+  "far.aimLinesLegend": "Discontínua: cap on mira el jugador. Contínua: el canó; tènue on les dades no tenen torreta i segueix la mira."
 }

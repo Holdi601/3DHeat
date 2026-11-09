@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kaliiber",
   "far.hitAmmo": "Laskemoon",
   "far.ammoExplosive": "lõhkav",
-  "far.ammoKinetic": "kineetiline"
+  "far.ammoKinetic": "kineetiline",
+  "far.aimLines": "Vaate- ja tornijooned",
+  "far.aimLinesTitle": "Igast sõidukist: kuhu selle mängija vaatab (katkendjoon) ja kuhu torni kahur sihib (pidev), kus andmed seda ütlevad.",
+  "far.aimLinesLegend": "Katkendjoon: kuhu mängija vaatab. Pidev: kahur; kahvatu, kus andmetes torni pole ja see järgib sihtimist."
 }
