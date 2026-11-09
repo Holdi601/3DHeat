@@ -1035,6 +1035,11 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'narrow Schmalturm turret with rangefinder ears', check: (s) => turretShape(s) && partsOf(s).some((t) => t.outline?.plan.length === 3 && Math.abs(t.side ?? 0) > 0.9) },
     { cue: 'small conical Saukopf mantlet, the L/70 without a muzzle brake', check: (s) => saukopf(s) && noMuzzle(s) },
   ]),
+  'panther-ii': ground(['panther-ii', 'panther-ii-g'], [
+    { cue: 'seven unstaggered overlapping steel wheel stations a side', check: (s) => interleave('overlap')(s) && wheels(s) === 7 },
+    { cue: 'longer Panther hull with the sloped sides', check: (s) => s.length >= 7 && lean(0.4)(s) },
+  ]),
+  'panther-ii-g': ground('panther-ii-g', [{ cue: 'standard Ausf. G turret: chin mantlet, 75 mm with a muzzle brake', check: muzzle }]),
   'is-2': ground(['is-2', 'is-2-1943'], IS_2),
   'is-2-1943': ground('is-2-1943', [{ cue: 'stepped cast nose (the 1944 has a straight glacis)', check: glacisStep }]),
   'is-2-1944': ground('is-2', [{ cue: 'straight one-piece glacis (the 1943 has a stepped nose)', check: (s) => hullShape(s) && !glacisStep(s) }]),
@@ -1398,6 +1403,11 @@ export const CUES: Record<string, CueEntry> = {
   'su-100p': ground('su-100p', [
     { cue: 'six road wheels, three return rollers', check: run(6, 3) },
     { cue: 'gun house at the back, the 100 mm with a muzzle brake over the hull', check: (s) => turretAt(-9, -1)(s) && muzzle(s) },
+  ]),
+  'm2-medium': ground('m2-medium', [
+    { cue: 'six road wheels in three VVSS bogies, the idler raised', check: run(6) },
+    { cue: 'tall riveted box over the fighting compartment, low engine deck behind', check: tall(2.2) },
+    { cue: 'small eight-sided turret with the 37 mm on the box', check: cal(0.03, 0.04) },
   ]),
   m2a4: ground('m2a4', [
     { cue: 'four road wheels in two VVSS bogies, the idler raised', check: run(4) },
@@ -1813,6 +1823,11 @@ export const CUES: Record<string, CueEntry> = {
   conway: ground('conway', [
     { cue: 'Centurion hull, six road wheels behind skirts', check: (s) => wheels(s) === 6 && skirted(s) },
     { cue: 'huge tall box turret with the 120 mm', check: (s) => turretH(1.5)(s) && cal(0.12)(s) },
+  ]),
+  fv4005: ground('fv4005', [
+    { cue: 'Centurion hull, six road wheels behind skirts', check: (s) => wheels(s) === 6 && skirted(s) },
+    { cue: 'huge box turret set behind the middle, half the hull long', check: (s) => turretH(1.5)(s) && (s.turret?.length ?? 0) > s.length * 0.45 },
+    { cue: 'very large 183 mm gun low in the turret face', check: cal(0.18) },
   ]),
   'm40-rr': ground('m40-rr', [{ cue: '106 mm recoilless rifle on its tripod', check: (s) => s.chassis === 'static' && !!s.addOns?.length }]),
   'm7-priest': ground('m7-priest', [
