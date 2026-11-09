@@ -1748,7 +1748,10 @@ export const CUES: Record<string, CueEntry> = {
   ]),
   tortoise: ground('tortoise', [
     { cue: 'huge casemate, the 32-pounder in a ball mount', check: (s) => casemate(s) && cal(0.09)(s) },
-    { cue: 'tracks running round the hull, two track units a side', check: wrapTracks },
+    { cue: 'two track units a side under deep armoured skirts', check: wrapTracks },
+    { cue: 'cast casemate set in from the skirts, its roof domed', check: (s) => partsOf(s).some((p) => p.width > 3 && p.width < s.width - 0.4 && typeof p.outline?.round === 'number' && p.outline.round < 5) },
+    { cue: 'Besa ball mount in the front plate beside the gun', check: (s) => (s.guns ?? []).some((g) => g.turret === 2 && g.calibre < 0.01) },
+    { cue: 'machine-gun turret and two hatch rings on the roof', check: (s) => partsOf(s).filter((p) => p.width < 1.1 && p.outline && Math.max(...p.outline.top.map((q) => q[1])) > 2.7).length >= 3 },
   ]),
   'valentine-ix': ground('valentine-ix', [{ cue: 'turret with the 6-pounder', check: cal(0.057, 0.06) }]),
   'pz-35t': ground('pz-35t', [

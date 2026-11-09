@@ -157,7 +157,7 @@ export const OVERALL: Record<string, number> = {
   'chieftain-900': 10.8,
   'centurion': 9.85,
   'conqueror': 11.58,
-  'tortoise': 10.0,
+  'tortoise': 10.06,
   'comet': 7.66,
   'vickers-mbt-mk1': 9.79,
   'vickers-mbt-mk3': 9.79,
