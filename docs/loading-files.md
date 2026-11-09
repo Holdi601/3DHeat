@@ -17,7 +17,7 @@ Files are loaded in the **Source** panel at the top of the Heatmap tab's sidebar
 | **Files…** | A file picker that accepts several files. |
 | **Folder…** | A folder picker (the browser's `webkitdirectory` picker); every file in the folder tree is offered. |
 
-The pickers accept `.parquet`, `.pq`, `.csv`, `.tsv` and `.txt`. A file whose name ends in `.parquet` or `.pq` is read as Parquet; everything else is read as delimited text (see [Data formats reference](data-formats.md)).
+The pickers accept `.parquet`, `.pq`, `.csv`, `.tsv` and `.txt`, and `.3dheat` match containers, which load as the tables they hold ([One file a match](container.md)); a container that cannot be read is skipped as *not a csv/parquet file*. A file whose name ends in `.parquet` or `.pq` is read as Parquet; everything else is read as delimited text (see [Data formats reference](data-formats.md)).
 
 Dropped folders are walked to a depth of 12 levels and at most 20,000 files, as a guard against symlink loops and runaway trees.
 

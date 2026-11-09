@@ -7,6 +7,7 @@
 import { create } from 'zustand';
 import { parseMatchDoc, type MatchDoc } from '../match/matchDoc';
 import { isWtMatch, parseWtMatch, type GameMatch } from '../match/wtMatch';
+import { isContainer, openContainer } from '../data/container';
 
 /** `ALL` as the open match: every loaded match together. */
 export const ALL = '';
@@ -39,9 +40,11 @@ export const useMatchStore = create<MatchState>((set, get) => ({
     const games = [...get().games];
     const errors: string[] = [];
     for (const file of files) {
-      if (!/\.json$/i.test(file.name)) continue;
+      const packed = isContainer(file.name);
+      if (!/\.json$/i.test(file.name) && !packed) continue;
       try {
-        const text = await file.text();
+        // A `.3dheat` container: its match document, nothing else read (docs/container.md).
+        const text = packed ? JSON.stringify(await (await openContainer(file)).json('match')) : await file.text();
         let json: unknown = null;
         try {
           json = JSON.parse(text);

@@ -8,6 +8,7 @@ import { Check, Section, Segmented } from '../controls';
 import { useEngine } from '../EngineContext';
 import { leanBudget, leanOverlayOf, loadLeanOverlay, overlayFiles, recolour, type LeanColour } from '../../overlay/lean/load';
 import { useLeanStore } from '../../overlay/lean/leanState';
+import { expandContainerFiles } from '../../data/container';
 import { prepareUnits } from '../replay/units';
 
 const MB = 1e6;
@@ -42,7 +43,8 @@ export function LeanOverlayPanel() {
   const start = async (list: FileList | null) => {
     const add = adding.current;
     adding.current = false;
-    const fresh = Array.from(list ?? []);
+    // A `.3dheat` container stands for its match's table, read in place (docs/container.md).
+    const fresh = await expandContainerFiles(Array.from(list ?? []));
     const kept = add ? (leanOverlayOf(useStore.getState().dataset)?.files ?? []) : [];
     // A file picked twice (the same folder again) counts once.
     const seen = new Set(kept.map((f) => `${f.name}${f.size}`));
@@ -134,7 +136,7 @@ export function LeanOverlayPanel() {
   return (
     <>
       {/* Outside the section, so the pickers are there while it is folded too. */}
-      <input ref={files} data-lean="files" type="file" accept=".parquet" multiple hidden onChange={(e) => void start(e.target.files).finally(() => (e.target.value = ''))} />
+      <input ref={files} data-lean="files" type="file" accept=".parquet,.3dheat" multiple hidden onChange={(e) => void start(e.target.files).finally(() => (e.target.value = ''))} />
       <input
         ref={(el) => {
           folder.current = el;

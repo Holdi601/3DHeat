@@ -10,6 +10,7 @@ import { useTelemetry } from '../../tactics/telemetryClient';
 import type { Region, TravelStats } from '../../tactics/telemetry';
 import { figureLabel } from '../../tactics/names';
 import { num, t } from '../../i18n';
+import { expandContainerFiles } from '../../data/container';
 
 const DEG = 180 / Math.PI;
 
@@ -396,11 +397,12 @@ export function TelemetryPanel() {
         ref={fileRef}
         type="file"
         multiple
-        accept=".parquet"
+        accept=".parquet,.3dheat"
         style={{ display: 'none' }}
         onChange={(e) => {
-          tele.loadFiles([...(e.target.files ?? [])]);
+          const files = [...(e.target.files ?? [])];
           e.target.value = '';
+          void expandContainerFiles(files).then((f) => tele.loadFiles(f));
         }}
       />
       <div className="hint">
