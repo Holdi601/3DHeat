@@ -207,12 +207,15 @@ G['t-55a'] = {
   turret: turret(0.27, [[-1.42, 0.7], [-1.1, 1.1], [-0.1, 1.25], [0.8, 1.15], [1.25, 0.75], [1.42, 0.35]], [[-1.42, 0.3], [-1.37, 0.54], [-1.22, 0.72], [-0.77, 0.78], [-0.17, 0.81], [0.43, 0.78], [0.93, 0.66], [1.23, 0.44], [1.42, 0.16]], 2.2, 1.25),
   guns: [{ mount: 'turret', length: 5.4, calibre: 0.1, extractor: 0.88, at: 0.37 }],
   cupola: true,
+  // The gunner's IR searchlight over the gun's right, its lens forward (place and size from the flank drawing).
+  addOns: [{ on: 'turret', kind: 'tube', at: [0.98, 0.35, 0.85], to: [1.26, 0.35, 0.85], size: [0.34, 0.34, 0.34] }],
 };
 // T-54 / Type 59: the T-55 with the loader's cupola on the right, the dome ventilator in front of it and the 12.7 mm
 // DShK (1.63 m) on the loader's hatch (FM 100-2-3, public domain); the cupola's and the dome's sizes are estimates.
 G['t-54'] = {
   ...G['t-55a'],
   addOns: [
+    ...G['t-55a'].addOns!,
     { on: 'turret', kind: 'drum', at: [-0.57, 0.55, 0.86], size: [0.6, 0.6, 0.16] },
     { on: 'turret', kind: 'drum', at: [0.08, 0.55, 0.87], size: [0.3, 0.3, 0.14] },
     { on: 'turret', kind: 'box', at: [-0.57, 0.55, 1.05], size: [0.12, 0.12, 0.26] },
@@ -224,7 +227,7 @@ G['type-59'] = { ...G['t-54'] };
 // The three front road wheels close together, large gaps before the fourth and fifth, the egg-shaped dome over the
 // third, the idler, sprocket and short upper glacis from the T-62 left-flank drawing in USAREUR Pam 30-60-1, Vol. III
 // (1973), scaled by its tabulated 4.15 m of track on the ground; 2.40 m over the cupola from its table (public domain).
-G['t-62'] = { ...G['t-55a'], length: 6.63, width: 3.52, trackProfile: run(6.45, 0.85, [3.08, 0.7], [-3.16, 0.79], -2.32, 2.23), running: { wheels: [2.03, 1.06, 0.1, -1.01, -2.12], rollers: [] }, hullOutline: hull(6.63, 3.52, 1.45, 0.8, 1.1, 1.04, 0.2), turret: turret(0.21, [[-1.33, 0.75], [-1.0, 1.2], [-0.1, 1.38], [0.8, 1.25], [1.2, 0.8], [1.32, 0.35]], [[-1.33, 0.12], [-1.16, 0.44], [-0.81, 0.71], [-0.31, 0.82], [0.19, 0.84], [0.69, 0.76], [0.99, 0.64], [1.32, 0.26]], 2.2, 1.3), guns: [{ mount: 'turret', length: 5.6, calibre: 0.115, extractor: 0.68, at: 0.52 }] };
+G['t-62'] = { ...G['t-55a'], length: 6.63, width: 3.52, trackProfile: run(6.45, 0.85, [3.08, 0.7], [-3.16, 0.79], -2.32, 2.23), running: { wheels: [2.03, 1.06, 0.1, -1.01, -2.12], rollers: [] }, hullOutline: hull(6.63, 3.52, 1.45, 0.8, 1.1, 1.04, 0.2), turret: turret(0.21, [[-1.33, 0.75], [-1.0, 1.2], [-0.1, 1.38], [0.8, 1.25], [1.2, 0.8], [1.32, 0.35]], [[-1.33, 0.12], [-1.16, 0.44], [-0.81, 0.71], [-0.31, 0.82], [0.19, 0.84], [0.69, 0.76], [0.99, 0.64], [1.32, 0.26]], 2.2, 1.3), guns: [{ mount: 'turret', length: 5.6, calibre: 0.115, extractor: 0.68, at: 0.52 }], addOns: [{ on: 'turret', kind: 'tube', at: [1.09, 0.35, 0.79], to: [1.37, 0.35, 0.79], size: [0.34, 0.34, 0.34] }] };
 G['t-62m'] = { ...G['t-62'], turrets: [{ x: 1.25, length: 0.4, width: 1.6, height: 0.4, shape: 'box', up: 0.3 }] };
 
 // ---------------------------------------------------------------- Second World War

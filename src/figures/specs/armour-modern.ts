@@ -851,7 +851,8 @@ G['2s9-nona'] = { ...G['btr-d'], cls: 'sp-artillery', turret: turret(-0.2, [[-1.
 // Wiesel 1 (1989): a tiny air-portable tracked carrier, the driver at the front left, the TOW or 20 mm on a mount at the
 // right (3.55 x 1.82 m, 1.83 m); Wiesel 2 longer with five road wheels (4.78 m).
 const WIESEL: GroundSpec = { chassis: 'tracked', length: 3.55, width: 1.82, hullHeight: 1.1, roadWheels: 4, roadWheelRadius: 0.22, trackProfile: run(3.45, 0.6, [1.72, 0.42], [-1.72, 0.45], -1.35, 1.35), running: { wheels: [-1.15, -0.4, 0.35, 1.1] }, hullOutline: { top: [[-1.78, 0.95], [-1.65, 1.1], [0.6, 1.1], [1.78, 0.6]], bottom: [[-1.78, 0.5], [1.5, 0.5], [1.78, 0.6]], plan: [[-1.78, 0.9], [1.78, 0.85]], round: 10, stations: 10 } };
-G['wiesel'] = { cls: 'light-tank', ...WIESEL, turret: { x: -0.2, length: 0.8, width: 0.6, height: 0.4, shape: 'box', side: 0.3 }, guns: [{ mount: 'turret', length: 1.6, calibre: 0.02 }] };
+// The 20 mm mount reaching the published 1.83 m (the hull roof 1.1 m up).
+G['wiesel'] = { cls: 'light-tank', ...WIESEL, turret: { x: -0.2, length: 0.8, width: 0.6, height: 0.73, shape: 'box', side: 0.3 }, guns: [{ mount: 'turret', length: 1.6, calibre: 0.02 }] };
 // M50 Ontos (1956): a small high box on three road wheels, six 106 mm recoilless rifles clustered on its small turret (3.83 x 2.6 m, 2.13 m).
 G['m50-ontos'] = { cls: 'tank-destroyer', chassis: 'tracked', length: 3.83, width: 2.6, hullHeight: 1.45, roadWheels: 3, roadWheelRadius: 0.3, trackProfile: run(3.7, 0.75, [1.85, 0.5], [-1.85, 0.45], -1.35, 1.3), running: { wheels: [-1.0, 0.0, 1.0] }, hullOutline: { top: [[-1.92, 1.4], [0.9, 1.45], [1.92, 0.75]], bottom: [[-1.92, 0.6], [1.6, 0.6], [1.92, 0.75]], plan: [[-1.92, 1.25], [1.92, 1.2]], round: 12, stations: 10 }, turret: { x: -0.3, length: 0.9, width: 0.8, height: 0.4, shape: 'box' }, guns: [{ mount: 'turret-side', count: 3, length: 3.4, calibre: 0.106, spread: 0.25, at: 0.6 }] };
 
