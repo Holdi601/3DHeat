@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Flew or drove: {vehicles}. Click to follow in the replay.",
   "match.game.kills": "{count, plural, one {# kill} other {# kills}}: click one to go to it",
   "match.game.crash": "crash",
-  "match.game.noData": "Load the replay's table under Source to see the match played back."
+  "match.game.noData": "Load the replay's table under Source to see the match played back.",
+  "match.recording.section": "Recording",
+  "match.recording.title": "Title",
+  "match.recording.category": "Category",
+  "match.recording.author": "Author",
+  "match.recording.source": "Source",
+  "match.recording.recorder": "Recorder",
+  "match.recording.start": "Starts",
+  "match.recording.recorded": "Recorded",
+  "match.recording.briefing": "Briefing",
+  "match.recording.debriefing": "Debriefing",
+  "match.recording.comments": "Comments"
 }

@@ -17,6 +17,7 @@ import { unitPrefs } from '../../state/unitsStore';
 import { RELATIVE_FIELDS } from './relative';
 import { clearLook, lookAtUnit, lookTargets } from './pair';
 import { usePlayhead } from './hooks';
+import { personRows } from '../../data/flight';
 
 /**
  * The selected unit's live data, top left of the view: the fields the viewer
@@ -52,6 +53,28 @@ const isRelative = (f: string) => (RELATIVE_FIELDS as readonly string[]).include
  * A unit's card. The first is the selected unit's; `second` is B's, compact,
  * its values from A in the strip above it rather than again in the card.
  */
+/** An ACMI flag's value at a row (Visible, Disabled); NaN where the recording does not say. */
+function flagAt(d: Dataset, name: string, row: number): number {
+  const a = d.attrs.find((x) => x.kind === 'number' && x.name === name);
+  return a ? (a.data as Float32Array)[row] : NaN;
+}
+
+/** A person's last row at or before `time`; -1 for none. */
+function rowAt(d: Dataset, person: number, time: number): number {
+  if (person < 0 || !d.time || !d.attrs.some((x) => x.name === 'Visible' || x.name === 'Disabled')) return -1;
+  const idx = personRows(d);
+  if (!idx) return -1;
+  let lo = idx.start[person];
+  let hi = idx.start[person + 1];
+  if (hi <= lo || d.time[idx.rows[lo]] > time) return -1;
+  while (hi - lo > 1) {
+    const mid = (lo + hi) >> 1;
+    if (d.time[idx.rows[mid]] <= time) lo = mid;
+    else hi = mid;
+  }
+  return idx.rows[lo];
+}
+
 function UnitCardView({ unitKey, second }: { unitKey: string; second: boolean }) {
   const engine = useEngine();
   const dataset = useStore((s) => s.dataset);
@@ -114,7 +137,16 @@ function UnitCardView({ unitKey, second }: { unitKey: string; second: boolean })
       if (rawBody.current.innerHTML !== rawHtml) rawBody.current.innerHTML = rawHtml;
     }
     if (status.current) {
-      const s = tr ? '' : t(now < unit.spans[0][0] ? 'replay.card.notYet' : 'replay.card.gone');
+      // Tacview's Visible 0 and Disabled 1 at the unit's row now: hidden or out of combat, not destroyed.
+      const at = tr ? tr.row : rowAt(dataset, personAt(unit, now), now);
+      const s =
+        at >= 0 && flagAt(dataset, 'Visible', at) < 0.5
+          ? t('replay.card.hidden')
+          : at >= 0 && flagAt(dataset, 'Disabled', at) >= 0.5
+            ? t('replay.card.disabled')
+            : tr
+              ? ''
+              : t(now < unit.spans[0][0] ? 'replay.card.notYet' : 'replay.card.gone');
       if (status.current.textContent !== s) status.current.textContent = s;
     }
   }, on);

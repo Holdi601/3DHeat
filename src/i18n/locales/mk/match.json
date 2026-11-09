@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Летал или возел: {vehicles}. Кликнете за да го следите во повторувањето.",
   "match.game.kills": "{count, plural, one {# убиство} other {# убиства}}: кликнете на едно за да одите до него",
   "match.game.crash": "пад",
-  "match.game.noData": "Вчитајте ја табелата на повторувањето под „Извор“ за да го видите мечот репродуциран."
+  "match.game.noData": "Вчитајте ја табелата на повторувањето под „Извор“ за да го видите мечот репродуциран.",
+  "match.recording.section": "Снимка",
+  "match.recording.title": "Наслов",
+  "match.recording.category": "Категорија",
+  "match.recording.author": "Автор",
+  "match.recording.source": "Извор",
+  "match.recording.recorder": "Снимач",
+  "match.recording.start": "Почеток",
+  "match.recording.recorded": "Снимено",
+  "match.recording.briefing": "Брифинг",
+  "match.recording.debriefing": "Дебрифинг",
+  "match.recording.comments": "Коментари"
 }

@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Lidoja vai brauca: {vehicles}. Noklikšķini, lai sekotu atskaņojumā.",
   "match.game.kills": "{count, plural, zero {# nogalinājumu} one {# nogalinājums} other {# nogalinājumi}}: noklikšķini uz viena, lai uz to pārietu",
   "match.game.crash": "avārija",
-  "match.game.noData": "Ielādē atskaņojuma tabulu sadaļā „Avots”, lai redzētu maču atskaņotu."
+  "match.game.noData": "Ielādē atskaņojuma tabulu sadaļā „Avots”, lai redzētu maču atskaņotu.",
+  "match.recording.section": "Ieraksts",
+  "match.recording.title": "Nosaukums",
+  "match.recording.category": "Kategorija",
+  "match.recording.author": "Autors",
+  "match.recording.source": "Avots",
+  "match.recording.recorder": "Ierakstītājs",
+  "match.recording.start": "Sākums",
+  "match.recording.recorded": "Ierakstīts",
+  "match.recording.briefing": "Instruktāža",
+  "match.recording.debriefing": "Izvērtēšana",
+  "match.recording.comments": "Komentāri"
 }

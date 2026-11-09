@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B verluer",
   "replay.lookAt.stripTitle": "Tëscht der verfollegter Eenheet an där, op déi gekuckt gëtt",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Message",
+  "replay.events.kind.bookmark": "Lieszeechen",
+  "replay.events.kind.debug": "Debug",
+  "replay.events.kind.leftArea": "Gebitt verlooss",
+  "replay.events.kind.destroyed": "Zerstéiert",
+  "replay.events.kind.takenOff": "Opgestart",
+  "replay.events.kind.landed": "Gelant",
+  "replay.events.kind.timeout": "Waffereesultat",
+  "replay.events.kind.removed": "Ewechgeholl",
+  "replay.events.kind.comment": "Kommentar",
+  "replay.events.kind.unplaced": "Ouni Positioun",
+  "replay.card.hidden": "Vun der Opnam elo verstoppt (net zerstéiert).",
+  "replay.card.disabled": "Ausser Gefecht (desaktivéiert), net zerstéiert."
 }

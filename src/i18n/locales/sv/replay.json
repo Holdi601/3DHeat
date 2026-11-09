@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B förlorad",
   "replay.lookAt.stripTitle": "Mellan den följda enheten och den som betraktas",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Meddelande",
+  "replay.events.kind.bookmark": "Bokmärke",
+  "replay.events.kind.debug": "Felsökning",
+  "replay.events.kind.leftArea": "Lämnade området",
+  "replay.events.kind.destroyed": "Förstörd",
+  "replay.events.kind.takenOff": "Lyfte",
+  "replay.events.kind.landed": "Landade",
+  "replay.events.kind.timeout": "Vapenresultat",
+  "replay.events.kind.removed": "Borttagen",
+  "replay.events.kind.comment": "Kommentar",
+  "replay.events.kind.unplaced": "Utan position",
+  "replay.card.hidden": "Dold av inspelningen just nu (inte förstörd).",
+  "replay.card.disabled": "Ur strid (inaktiverad), inte förstörd."
 }

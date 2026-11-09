@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B e humbur",
   "replay.lookAt.stripTitle": "Midis njësisë së ndjekur dhe asaj që shikohet",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Mesazh",
+  "replay.events.kind.bookmark": "Faqeshënues",
+  "replay.events.kind.debug": "Korrigjim",
+  "replay.events.kind.leftArea": "U largua nga zona",
+  "replay.events.kind.destroyed": "U shkatërrua",
+  "replay.events.kind.takenOff": "U ngrit",
+  "replay.events.kind.landed": "U ul",
+  "replay.events.kind.timeout": "Rezultati i armës",
+  "replay.events.kind.removed": "U hoq",
+  "replay.events.kind.comment": "Koment",
+  "replay.events.kind.unplaced": "Pa pozicion",
+  "replay.card.hidden": "I fshehur nga regjistrimi në këtë moment (jo i shkatërruar).",
+  "replay.card.disabled": "Jashtë luftimit (i çaktivizuar), jo i shkatërruar."
 }

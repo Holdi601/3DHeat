@@ -182,7 +182,8 @@ async function convert(job, theatres) {
       yaw: 'Heading',
       pitch: 'Pitch',
       angleUnit: 'degrees',
-      extra: ['Type', 'Name', 'Pilot', 'Group', 'Country', 'Event', 'Altitude', 'Roll', 'Latitude', 'Longitude', 'EventObjects', ...columns.slice(order.length).map((c) => c.name)],
+      // As the viewer's own reading (`acmiHints`): RecordingInfo for the Match tab's title, briefing and comments.
+      extra: ['Type', 'Name', 'Pilot', 'Group', 'Country', 'Event', 'Altitude', 'Roll', 'Latitude', 'Longitude', 'EventObjects', 'RecordingInfo', ...columns.slice(order.length).map((c) => c.name)],
     },
     geo: { lat0: origin.lat, lon0: origin.lon, projection: 'tangent-plane', east: 'X', north: 'Y', up: 'Altitude' },
   };

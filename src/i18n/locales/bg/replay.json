@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B изгубена",
   "replay.lookAt.stripTitle": "Между следената единица и тази, към която се гледа",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Съобщение",
+  "replay.events.kind.bookmark": "Отметка",
+  "replay.events.kind.debug": "Отстраняване на грешки",
+  "replay.events.kind.leftArea": "Напусна зоната",
+  "replay.events.kind.destroyed": "Унищожен",
+  "replay.events.kind.takenOff": "Излетя",
+  "replay.events.kind.landed": "Кацна",
+  "replay.events.kind.timeout": "Резултат от оръжието",
+  "replay.events.kind.removed": "Премахнат",
+  "replay.events.kind.comment": "Коментар",
+  "replay.events.kind.unplaced": "Без позиция",
+  "replay.card.hidden": "Скрит от записа в момента (не е унищожен).",
+  "replay.card.disabled": "Извън бой (деактивиран), не е унищожен."
 }

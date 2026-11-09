@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Flaug eða ók: {vehicles}. Smelltu til að fylgja í endurspiluninni.",
   "match.game.kills": "{count, plural, one {# dráp} other {# dráp}}: smelltu á eitt til að fara þangað",
   "match.game.crash": "brotlending",
-  "match.game.noData": "Hladdu töflu endurspilunarinnar undir Uppruni til að sjá leikinn spilaðan."
+  "match.game.noData": "Hladdu töflu endurspilunarinnar undir Uppruni til að sjá leikinn spilaðan.",
+  "match.recording.section": "Upptaka",
+  "match.recording.title": "Titill",
+  "match.recording.category": "Flokkur",
+  "match.recording.author": "Höfundur",
+  "match.recording.source": "Uppruni",
+  "match.recording.recorder": "Upptökutæki",
+  "match.recording.start": "Hefst",
+  "match.recording.recorded": "Tekið upp",
+  "match.recording.briefing": "Kynning",
+  "match.recording.debriefing": "Úttekt",
+  "match.recording.comments": "Athugasemdir"
 }

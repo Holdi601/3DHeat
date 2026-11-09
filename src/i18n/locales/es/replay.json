@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B perdida",
   "replay.lookAt.stripTitle": "Entre la unidad seguida y la observada",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Mensaje",
+  "replay.events.kind.bookmark": "Marcador",
+  "replay.events.kind.debug": "Depuración",
+  "replay.events.kind.leftArea": "Salió de la zona",
+  "replay.events.kind.destroyed": "Destruido",
+  "replay.events.kind.takenOff": "Despegó",
+  "replay.events.kind.landed": "Aterrizó",
+  "replay.events.kind.timeout": "Resultado del arma",
+  "replay.events.kind.removed": "Retirado",
+  "replay.events.kind.comment": "Comentario",
+  "replay.events.kind.unplaced": "Sin posición",
+  "replay.card.hidden": "Oculto por la grabación en este momento (no destruido).",
+  "replay.card.disabled": "Fuera de combate (desactivado), no destruido."
 }

@@ -150,5 +150,16 @@
   "match.game.playerTitle": "使用した機体・車両：{vehicles}。クリックするとリプレイで追従します。",
   "match.game.kills": "{count, plural, other {#キル}}：クリックするとその場面に移動します",
   "match.game.crash": "墜落",
-  "match.game.noData": "マッチの再生を見るには、「ソース」でリプレイのテーブルを読み込んでください。"
+  "match.game.noData": "マッチの再生を見るには、「ソース」でリプレイのテーブルを読み込んでください。",
+  "match.recording.section": "記録",
+  "match.recording.title": "タイトル",
+  "match.recording.category": "カテゴリ",
+  "match.recording.author": "作成者",
+  "match.recording.source": "ソース",
+  "match.recording.recorder": "レコーダー",
+  "match.recording.start": "開始",
+  "match.recording.recorded": "記録日時",
+  "match.recording.briefing": "ブリーフィング",
+  "match.recording.debriefing": "デブリーフィング",
+  "match.recording.comments": "コメント"
 }

@@ -17,7 +17,7 @@ import { FireBody, firesOf } from '../data/fires';
 import { HitMarkLayer, hitMarksStep, stepStats, type MarkPose, type MarkView } from '../figures/hitmarks';
 import { gpuTrackStore, keyTime, registeredGpuTrackStore, rowOfKey, trackFloats, TRACK_U32, type GpuTrackStore } from './gpuTracks/store';
 import { emptyPose, evaluateTrack } from './gpuTracks/evaluate';
-import { isShown, rayNearTrack, trackVisibility } from './gpuTracks/visibility';
+import { isShown, rayNearTrack, trackVisibility, withHidden } from './gpuTracks/visibility';
 import { markerSeconds } from '../overlay/lean/leanState';
 import type { FigureBatch } from '../figures/instances';
 import { VertexBuffer } from '../race/geometry';
@@ -1723,7 +1723,8 @@ export class Engine {
       trailSeconds: s.team.trailSeconds,
       // Drop lines as the CPU path draws them (below): to the data's floor.
       dropFloor: this.dataset && dropLinesOn(this.dataset, useReplayStore.getState().dropLines) ? this.dataset.bounds.minY : null,
-      visible: this.dataset ? trackVisibility(store, this.dataset, s.teamVisibility, s.filters) : null,
+      // The team toggles and filters, and what the recording itself hides now (ACMI Visible=0).
+      visible: this.dataset ? withHidden(store, this.dataset, trackVisibility(store, this.dataset, s.teamVisibility, s.filters), t) : null,
       weapons: s.team.weapons ? 1.5 : 0,
       markerSeconds: markerSeconds(),
       farMode: FAR_MODE_ID[s.team.farMode],

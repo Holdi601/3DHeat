@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B mitlufa",
   "replay.lookAt.stripTitle": "Bejn l-unità segwita u dik li qed tħares lejha",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Messaġġ",
+  "replay.events.kind.bookmark": "Bookmark",
+  "replay.events.kind.debug": "Debugging",
+  "replay.events.kind.leftArea": "Telaq miż-żona",
+  "replay.events.kind.destroyed": "Meqrud",
+  "replay.events.kind.takenOff": "Tela' fl-ajru",
+  "replay.events.kind.landed": "Niżel",
+  "replay.events.kind.timeout": "Riżultat tal-arma",
+  "replay.events.kind.removed": "Imneħħi",
+  "replay.events.kind.comment": "Kumment",
+  "replay.events.kind.unplaced": "Mingħajr pożizzjoni",
+  "replay.card.hidden": "Moħbi mir-reġistrazzjoni f'dan il-mument (mhux meqrud).",
+  "replay.card.disabled": "Barra mill-ġlieda (diżattivat), mhux meqrud."
 }

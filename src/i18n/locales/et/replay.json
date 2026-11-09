@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B kadunud",
   "replay.lookAt.stripTitle": "Jälgitava ja vaadatava üksuse vahel",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Sõnum",
+  "replay.events.kind.bookmark": "Järjehoidja",
+  "replay.events.kind.debug": "Silumine",
+  "replay.events.kind.leftArea": "Lahkus alalt",
+  "replay.events.kind.destroyed": "Hävitatud",
+  "replay.events.kind.takenOff": "Tõusis õhku",
+  "replay.events.kind.landed": "Maandus",
+  "replay.events.kind.timeout": "Relva tulemus",
+  "replay.events.kind.removed": "Eemaldatud",
+  "replay.events.kind.comment": "Kommentaar",
+  "replay.events.kind.unplaced": "Asukohata",
+  "replay.card.hidden": "Salvestis peidab selle praegu (pole hävitatud).",
+  "replay.card.disabled": "Lahingust väljas (keelatud), pole hävitatud."
 }

@@ -116,3 +116,87 @@ export function rayNearTrack(s: GpuTrackStore, i: number, o: ArrayLike<number>, 
   }
   return true;
 }
+
+/** Tacview's Visible=0 (ACMI 2.2) in a store: the tracks it hides for a while, and from when to when (seconds, pairs). */
+interface HideSpans {
+  tracks: Int32Array;
+  spans: Float64Array[];
+}
+
+const hideCache = new WeakMap<GpuTrackStore, HideSpans | null>();
+
+/**
+ * The spans a track is hidden by the recording: from a key whose row says
+ * Visible 0 to the next that shows it again. Worked out once a store, and
+ * only where the Visible column ever hides anything - every other load
+ * costs nothing.
+ */
+function hideSpans(s: GpuTrackStore, d: Dataset): HideSpans | null {
+  if (hideCache.has(s)) return hideCache.get(s)!;
+  let out: HideSpans | null = null;
+  const a = d.attrs.find((x) => x.kind === 'number' && x.name === 'Visible');
+  if (a && !(a.min >= 0.5) && s.keyRow) {
+    const v = a.data as Float32Array;
+    const T = s.trackData;
+    const tracks: number[] = [];
+    const spans: Float64Array[] = [];
+    for (let i = 0; i < s.tracks; i++) {
+      const b = i * TRACK_U32;
+      const first = T[b];
+      const end = first + T[b + 1];
+      let list: number[] | null = null;
+      let from = NaN;
+      for (let k = first; k < end; k++) {
+        const r = s.keyRow[k];
+        const hidden = r >= 0 && v[r] < 0.5;
+        if (hidden && Number.isNaN(from)) from = keyTime(s, b, k);
+        else if (!hidden && !Number.isNaN(from)) {
+          (list ??= []).push(from, keyTime(s, b, k));
+          from = NaN;
+        }
+      }
+      if (!Number.isNaN(from)) (list ??= []).push(from, Infinity);
+      if (list) {
+        tracks.push(i);
+        spans.push(Float64Array.from(list));
+      }
+    }
+    if (tracks.length) out = { tracks: Int32Array.from(tracks), spans };
+  }
+  hideCache.set(s, out);
+  return out;
+}
+
+const hiddenNow = new WeakMap<GpuTrackStore, { base: Uint32Array | null; key: string; bits: Uint32Array | null }>();
+
+/**
+ * `base` (`trackVisibility`) with the tracks the recording hides at `t`
+ * cleared: a new array only when the hidden set changes, so the GPU is sent
+ * the bits again only then (the renderers compare by identity).
+ */
+export function withHidden(s: GpuTrackStore, d: Dataset, base: Uint32Array | null, t: number): Uint32Array | null {
+  const h = hideSpans(s, d);
+  if (!h) return base;
+  let key = '';
+  for (let j = 0; j < h.tracks.length; j++) {
+    const sp = h.spans[j];
+    for (let k = 0; k < sp.length; k += 2) {
+      if (t < sp[k]) break;
+      if (t < sp[k + 1]) {
+        key += `${h.tracks[j]},`;
+        break;
+      }
+    }
+  }
+  if (!key) return base;
+  const c = hiddenNow.get(s);
+  if (c && c.base === base && c.key === key) return c.bits;
+  const bits = base ? base.slice() : new Uint32Array(Math.max(1, Math.ceil(s.tracks / 32))).fill(0xffffffff);
+  for (const i of key.split(',')) {
+    if (!i) continue;
+    const n = Number(i);
+    bits[n >>> 5] &= ~(1 << (n & 31));
+  }
+  hiddenNow.set(s, { base, key, bits });
+  return bits;
+}

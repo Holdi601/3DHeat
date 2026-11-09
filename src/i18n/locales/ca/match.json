@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Va pilotar o conduir: {vehicles}. Fes clic per seguir-lo a la repetició.",
   "match.game.kills": "{count, plural, one {# baixa} other {# baixes}}: fes clic en una per anar-hi",
   "match.game.crash": "estavellat",
-  "match.game.noData": "Carrega la taula de la repetició a «Origen» per veure la partida reproduïda."
+  "match.game.noData": "Carrega la taula de la repetició a «Origen» per veure la partida reproduïda.",
+  "match.recording.section": "Enregistrament",
+  "match.recording.title": "Títol",
+  "match.recording.category": "Categoria",
+  "match.recording.author": "Autor",
+  "match.recording.source": "Font",
+  "match.recording.recorder": "Enregistrador",
+  "match.recording.start": "Inici",
+  "match.recording.recorded": "Enregistrat",
+  "match.recording.briefing": "Briefing",
+  "match.recording.debriefing": "Debriefing",
+  "match.recording.comments": "Comentaris"
 }

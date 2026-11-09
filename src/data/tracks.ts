@@ -25,6 +25,14 @@ export class TrackCursor {
   private readonly prevStamp: Int32Array;
   private readonly nextStamp: Int32Array;
   private readonly colors: Float32Array;
+  /**
+   * Tacview's Visible and Disabled (ACMI 2.2), per row where the recording
+   * writes them: Visible 0 hides an object that is still there (a fog of war,
+   * a virtual object), Disabled 1 is out of combat but not destroyed - drawn
+   * greyed. Neither ends it; NaN is unsaid, visible and active.
+   */
+  private readonly visibleCol: Float32Array | null;
+  private readonly disabledCol: Float32Array | null;
 
   /** First row with time > playhead. */
   private head = 0;
@@ -72,6 +80,13 @@ export class TrackCursor {
     this.prevStamp = new Int32Array(this.persons).fill(-1);
     this.nextStamp = new Int32Array(this.persons).fill(-1);
     this.maxScan = Math.max(1 << 20, this.persons * 512);
+
+    const flag = (name: string) => {
+      const a = dataset.attrs.find((x) => x.kind === 'number' && x.name === name);
+      return a ? (a.data as Float32Array) : null;
+    };
+    this.visibleCol = flag('Visible');
+    this.disabledCol = flag('Disabled');
 
     this.colors = new Float32Array(this.persons * 3);
     const { personTeam, personSlot, teamSizes } = dataset;
@@ -223,12 +238,16 @@ export class TrackCursor {
     }
     if (this.cubeRows.length < this.persons) this.cubeRows = new Int32Array(this.persons);
     const out = this.cubeBuf;
+    const shown = this.visibleCol;
+    const disabled = this.disabledCol;
     let n = 0;
 
     for (let p = 0; p < this.persons; p++) {
       const a = this.prevRow[p];
       if (a < 0) continue;
       if (!visible(p)) continue;
+      // Hidden by the recording (Visible=0) until a row shows it again.
+      if (shown && shown[a] < 0.5) continue;
       const b = this.nextRow[p];
       const ta = time[a];
 
@@ -286,6 +305,10 @@ export class TrackCursor {
       out[o + 3] = this.colors[p * 3];
       out[o + 4] = this.colors[p * 3 + 1];
       out[o + 5] = this.colors[p * 3 + 2];
+      if (disabled && disabled[a] >= 0.5) {
+        // Out of combat: its colour half way to grey.
+        for (let c = 3; c < 6; c++) out[o + c] = out[o + c] * 0.5 + 0.25;
+      }
       out[o + 6] = yw;
       out[o + 7] = pt;
       this.cubeRows[n] = a;

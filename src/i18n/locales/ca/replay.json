@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B perduda",
   "replay.lookAt.stripTitle": "Entre la unitat seguida i la mirada",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Missatge",
+  "replay.events.kind.bookmark": "Marcador",
+  "replay.events.kind.debug": "Depuració",
+  "replay.events.kind.leftArea": "Ha sortit de la zona",
+  "replay.events.kind.destroyed": "Destruït",
+  "replay.events.kind.takenOff": "Ha enlairat",
+  "replay.events.kind.landed": "Ha aterrat",
+  "replay.events.kind.timeout": "Resultat de l'arma",
+  "replay.events.kind.removed": "Retirat",
+  "replay.events.kind.comment": "Comentari",
+  "replay.events.kind.unplaced": "Sense posició",
+  "replay.card.hidden": "Amagat per l'enregistrament en aquest moment (no destruït).",
+  "replay.card.disabled": "Fora de combat (desactivat), no destruït."
 }

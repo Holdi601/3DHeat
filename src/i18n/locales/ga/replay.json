@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B caillte",
   "replay.lookAt.stripTitle": "Idir an t-aonad atá á leanúint agus an ceann a bhfuiltear ag féachaint air",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Teachtaireacht",
+  "replay.events.kind.bookmark": "Leabharmharc",
+  "replay.events.kind.debug": "Dífhabhtú",
+  "replay.events.kind.leftArea": "D'fhág an limistéar",
+  "replay.events.kind.destroyed": "Scriosta",
+  "replay.events.kind.takenOff": "D'éirigh de thalamh",
+  "replay.events.kind.landed": "Tháinig i dtír",
+  "replay.events.kind.timeout": "Toradh an airm",
+  "replay.events.kind.removed": "Bainte",
+  "replay.events.kind.comment": "Trácht",
+  "replay.events.kind.unplaced": "Gan suíomh",
+  "replay.card.hidden": "I bhfolach ag an taifeadadh faoi láthair (níl sé scriosta).",
+  "replay.card.disabled": "As an gcomhrac (díchumasaithe), níl sé scriosta."
 }

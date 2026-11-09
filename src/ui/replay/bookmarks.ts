@@ -75,7 +75,7 @@ export function autoBookmarks(d: Dataset): AutoBookmark[] {
         if (was !== undefined && Math.abs(t - was) < 3) continue;
         lastDeath.set(p, t);
       }
-      out.push({ kind, time: t, row, label: ev.labels[i] });
+      out.push({ kind, time: t, row, label: ev.texts[i] ? `${ev.labels[i]}: ${ev.texts[i]}` : ev.labels[i] });
     }
   }
   autoCache.set(d, out);

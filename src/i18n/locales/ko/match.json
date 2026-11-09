@@ -150,5 +150,16 @@
   "match.game.playerTitle": "사용한 기체·차량: {vehicles}. 클릭하면 리플레이에서 추적합니다.",
   "match.game.kills": "{count, plural, other {#킬}}: 하나를 클릭하면 해당 시점으로 이동",
   "match.game.crash": "추락",
-  "match.game.noData": "매치 재생을 보려면 ‘소스’에서 리플레이의 테이블을 불러오세요."
+  "match.game.noData": "매치 재생을 보려면 ‘소스’에서 리플레이의 테이블을 불러오세요.",
+  "match.recording.section": "기록",
+  "match.recording.title": "제목",
+  "match.recording.category": "분류",
+  "match.recording.author": "작성자",
+  "match.recording.source": "출처",
+  "match.recording.recorder": "기록 장치",
+  "match.recording.start": "시작",
+  "match.recording.recorded": "기록 시각",
+  "match.recording.briefing": "브리핑",
+  "match.recording.debriefing": "디브리핑",
+  "match.recording.comments": "설명"
 }

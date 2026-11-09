@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B prarastas",
   "replay.lookAt.stripTitle": "Tarp sekamo vieneto ir to, į kurį žiūrima",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Pranešimas",
+  "replay.events.kind.bookmark": "Žymė",
+  "replay.events.kind.debug": "Derinimas",
+  "replay.events.kind.leftArea": "Paliko zoną",
+  "replay.events.kind.destroyed": "Sunaikintas",
+  "replay.events.kind.takenOff": "Pakilo",
+  "replay.events.kind.landed": "Nusileido",
+  "replay.events.kind.timeout": "Ginklo rezultatas",
+  "replay.events.kind.removed": "Pašalintas",
+  "replay.events.kind.comment": "Komentaras",
+  "replay.events.kind.unplaced": "Be padėties",
+  "replay.card.hidden": "Įrašas jį šiuo metu slepia (nesunaikintas).",
+  "replay.card.disabled": "Išvestas iš kovos (išjungtas), nesunaikintas."
 }

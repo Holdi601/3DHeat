@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Лятаў або ехаў на: {vehicles}. Пстрыкніце, каб сачыць у паўторы.",
   "match.game.kills": "{count, plural, one {# забойства} few {# забойствы} many {# забойстваў} other {# забойства}}: пстрыкніце адно, каб перайсці да яго",
   "match.game.crash": "крушэнне",
-  "match.game.noData": "Загрузіце табліцу паўтору ў «Крыніца», каб убачыць прайграванне матча."
+  "match.game.noData": "Загрузіце табліцу паўтору ў «Крыніца», каб убачыць прайграванне матча.",
+  "match.recording.section": "Запіс",
+  "match.recording.title": "Назва",
+  "match.recording.category": "Катэгорыя",
+  "match.recording.author": "Аўтар",
+  "match.recording.source": "Крыніца",
+  "match.recording.recorder": "Рэгістратар",
+  "match.recording.start": "Пачатак",
+  "match.recording.recorded": "Запісана",
+  "match.recording.briefing": "Брыфінг",
+  "match.recording.debriefing": "Разбор",
+  "match.recording.comments": "Каментарыі"
 }

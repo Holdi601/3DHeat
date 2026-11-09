@@ -150,5 +150,16 @@
   "match.game.playerTitle": "A piloté ou conduit : {vehicles}. Cliquez pour le suivre dans le replay.",
   "match.game.kills": "{count, plural, one {# kill} other {# kills}} : cliquez sur l’un d’eux pour y aller",
   "match.game.crash": "crash",
-  "match.game.noData": "Chargez la table du replay dans « Source » pour voir le match rejoué."
+  "match.game.noData": "Chargez la table du replay dans « Source » pour voir le match rejoué.",
+  "match.recording.section": "Enregistrement",
+  "match.recording.title": "Titre",
+  "match.recording.category": "Catégorie",
+  "match.recording.author": "Auteur",
+  "match.recording.source": "Source",
+  "match.recording.recorder": "Enregistreur",
+  "match.recording.start": "Début",
+  "match.recording.recorded": "Enregistré",
+  "match.recording.briefing": "Briefing",
+  "match.recording.debriefing": "Débriefing",
+  "match.recording.comments": "Commentaires"
 }

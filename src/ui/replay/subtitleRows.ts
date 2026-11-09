@@ -37,9 +37,10 @@ export function subtitlesOf(d: Dataset): Subtitle[] {
     const ev = eventRows(d);
     if (ev)
       ev.labels.forEach((label, i) => {
-        const colon = label.indexOf(':');
+        // The kind and its text, as `eventRows` splits "Kind: text"; a label it left whole split at its colon.
+        const colon = ev.texts[i] ? -1 : label.indexOf(':');
         const kind = (colon < 0 ? label : label.slice(0, colon)).trim();
-        const text = colon < 0 ? '' : label.slice(colon + 1).trim();
+        const text = ev.texts[i] || (colon < 0 ? '' : label.slice(colon + 1).trim());
         if (!SPOKEN.test(kind) || !text) return;
         const row = ev.rows[i];
         out.push({ time: time[row], who: who(row), text, session: d.sessionId ? d.sessionId[row] : -1 });

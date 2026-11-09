@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Letel ali vozil: {vehicles}. Kliknite, da mu sledite v predvajanju.",
   "match.game.kills": "{count, plural, one {# uboj} two {# uboja} few {# uboji} other {# ubojev}}: kliknite enega, da skočite nanj",
   "match.game.crash": "strmoglavljenje",
-  "match.game.noData": "Naložite tabelo posnetka pod »Vir«, da vidite predvajano tekmo."
+  "match.game.noData": "Naložite tabelo posnetka pod »Vir«, da vidite predvajano tekmo.",
+  "match.recording.section": "Posnetek",
+  "match.recording.title": "Naslov",
+  "match.recording.category": "Kategorija",
+  "match.recording.author": "Avtor",
+  "match.recording.source": "Vir",
+  "match.recording.recorder": "Snemalnik",
+  "match.recording.start": "Začetek",
+  "match.recording.recorded": "Posneto",
+  "match.recording.briefing": "Brifing",
+  "match.recording.debriefing": "Debrifing",
+  "match.recording.comments": "Komentarji"
 }

@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B izgubljena",
   "replay.lookAt.stripTitle": "Med sledeno enoto in tisto, v katero gleda",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Sporočilo",
+  "replay.events.kind.bookmark": "Zaznamek",
+  "replay.events.kind.debug": "Razhroščevanje",
+  "replay.events.kind.leftArea": "Zapustil območje",
+  "replay.events.kind.destroyed": "Uničen",
+  "replay.events.kind.takenOff": "Vzletel",
+  "replay.events.kind.landed": "Pristal",
+  "replay.events.kind.timeout": "Izid orožja",
+  "replay.events.kind.removed": "Odstranjen",
+  "replay.events.kind.comment": "Komentar",
+  "replay.events.kind.unplaced": "Brez položaja",
+  "replay.card.hidden": "Posnetek ga ta trenutek skriva (ni uničen).",
+  "replay.card.disabled": "Izven boja (onemogočen), ni uničen."
 }

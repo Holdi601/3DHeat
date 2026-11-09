@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B kadonnut",
   "replay.lookAt.stripTitle": "Seuratun ja katsotun yksikön välillä",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Viesti",
+  "replay.events.kind.bookmark": "Kirjanmerkki",
+  "replay.events.kind.debug": "Vianetsintä",
+  "replay.events.kind.leftArea": "Poistui alueelta",
+  "replay.events.kind.destroyed": "Tuhottu",
+  "replay.events.kind.takenOff": "Nousi",
+  "replay.events.kind.landed": "Laskeutui",
+  "replay.events.kind.timeout": "Aseen tulos",
+  "replay.events.kind.removed": "Poistettu",
+  "replay.events.kind.comment": "Kommentti",
+  "replay.events.kind.unplaced": "Ei sijaintia",
+  "replay.card.hidden": "Tallenne piilottaa tämän juuri nyt (ei tuhottu).",
+  "replay.card.disabled": "Poissa taistelusta (pois käytöstä), ei tuhottu."
 }

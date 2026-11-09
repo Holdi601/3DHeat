@@ -22,6 +22,7 @@ import {
 import { ALL, useMatchStore } from '../../state/matchStore';
 import { useStore } from '../../state/store';
 import { Section } from '../controls';
+import { RecordingInfoSection } from './RecordingInfo';
 
 /** How a round ended: its mark in the round strip, and the message that says it. */
 const REASON: Record<MatchRound['reason'], { mark: string; words: string }> = {
@@ -610,6 +611,7 @@ export function MatchPanel() {
   const agg = useMemo(() => (docs.length && !doc ? aggregate(docs) : null), [docs, doc]);
   return (
     <>
+      <RecordingInfoSection />
       <MatchesSection />
       {doc && (
         <Section title={t('match.panel.match')} defaultOpen right={<span className="count">{doc.map}</span>}>

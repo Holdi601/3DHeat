@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B pierdută",
   "replay.lookAt.stripTitle": "Între unitatea urmărită și cea privită",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Mesaj",
+  "replay.events.kind.bookmark": "Marcaj",
+  "replay.events.kind.debug": "Depanare",
+  "replay.events.kind.leftArea": "A părăsit zona",
+  "replay.events.kind.destroyed": "Distrus",
+  "replay.events.kind.takenOff": "A decolat",
+  "replay.events.kind.landed": "A aterizat",
+  "replay.events.kind.timeout": "Rezultatul armei",
+  "replay.events.kind.removed": "Eliminat",
+  "replay.events.kind.comment": "Comentariu",
+  "replay.events.kind.unplaced": "Fără poziție",
+  "replay.card.hidden": "Ascuns de înregistrare în acest moment (nu distrus).",
+  "replay.card.disabled": "Scos din luptă (dezactivat), nu distrus."
 }

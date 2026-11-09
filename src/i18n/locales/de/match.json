@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Geflogen oder gefahren: {vehicles}. Klicke, um im Replay zu folgen.",
   "match.game.kills": "{count, plural, one {# Kill} other {# Kills}}: Klicke einen an, um dorthin zu springen",
   "match.game.crash": "Absturz",
-  "match.game.noData": "Lade die Tabelle des Replays unter „Quelle“, um das Match abgespielt zu sehen."
+  "match.game.noData": "Lade die Tabelle des Replays unter „Quelle“, um das Match abgespielt zu sehen.",
+  "match.recording.section": "Aufzeichnung",
+  "match.recording.title": "Titel",
+  "match.recording.category": "Kategorie",
+  "match.recording.author": "Autor",
+  "match.recording.source": "Quelle",
+  "match.recording.recorder": "Aufgezeichnet mit",
+  "match.recording.start": "Beginn",
+  "match.recording.recorded": "Aufgenommen",
+  "match.recording.briefing": "Briefing",
+  "match.recording.debriefing": "Debriefing",
+  "match.recording.comments": "Kommentare"
 }

@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "Η B χάθηκε",
   "replay.lookAt.stripTitle": "Μεταξύ της παρακολουθούμενης μονάδας και αυτής που κοιτάζεται",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Μήνυμα",
+  "replay.events.kind.bookmark": "Σελιδοδείκτης",
+  "replay.events.kind.debug": "Αποσφαλμάτωση",
+  "replay.events.kind.leftArea": "Έφυγε από την περιοχή",
+  "replay.events.kind.destroyed": "Καταστράφηκε",
+  "replay.events.kind.takenOff": "Απογειώθηκε",
+  "replay.events.kind.landed": "Προσγειώθηκε",
+  "replay.events.kind.timeout": "Αποτέλεσμα όπλου",
+  "replay.events.kind.removed": "Αφαιρέθηκε",
+  "replay.events.kind.comment": "Σχόλιο",
+  "replay.events.kind.unplaced": "Χωρίς θέση",
+  "replay.card.hidden": "Κρυμμένο από την καταγραφή αυτή τη στιγμή (όχι κατεστραμμένο).",
+  "replay.card.disabled": "Εκτός μάχης (απενεργοποιημένο), όχι κατεστραμμένο."
 }

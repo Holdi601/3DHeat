@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B mistet",
   "replay.lookAt.stripTitle": "Mellom den fulgte enheten og den det ses på",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Melding",
+  "replay.events.kind.bookmark": "Bokmerke",
+  "replay.events.kind.debug": "Feilsøking",
+  "replay.events.kind.leftArea": "Forlot området",
+  "replay.events.kind.destroyed": "Ødelagt",
+  "replay.events.kind.takenOff": "Lettet",
+  "replay.events.kind.landed": "Landet",
+  "replay.events.kind.timeout": "Våpenresultat",
+  "replay.events.kind.removed": "Fjernet",
+  "replay.events.kind.comment": "Kommentar",
+  "replay.events.kind.unplaced": "Uten posisjon",
+  "replay.card.hidden": "Skjult av opptaket akkurat nå (ikke ødelagt).",
+  "replay.card.disabled": "Ute av kamp (deaktivert), ikke ødelagt."
 }

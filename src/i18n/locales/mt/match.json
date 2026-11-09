@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Tajjar jew saq: {vehicles}. Ikklikkja biex issegwih fir-replay.",
   "match.game.kills": "{count, plural, one {# kill} two {# kills} few {# kills} many {# kill} other {# kill}}: ikklikkja fuq wieħed biex tmur għalih",
   "match.game.crash": "ħabta",
-  "match.game.noData": "Għabbi t-tabella tar-replay taħt Sors biex tara l-partita tindaqq."
+  "match.game.noData": "Għabbi t-tabella tar-replay taħt Sors biex tara l-partita tindaqq.",
+  "match.recording.section": "Reġistrazzjoni",
+  "match.recording.title": "Titlu",
+  "match.recording.category": "Kategorija",
+  "match.recording.author": "Awtur",
+  "match.recording.source": "Sors",
+  "match.recording.recorder": "Reġistratur",
+  "match.recording.start": "Bidu",
+  "match.recording.recorded": "Irreġistrat",
+  "match.recording.briefing": "Briefing",
+  "match.recording.debriefing": "Debriefing",
+  "match.recording.comments": "Kummenti"
 }

@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B потерян",
   "replay.lookAt.stripTitle": "Между сопровождаемым объектом и тем, на который смотрит камера",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Сообщение",
+  "replay.events.kind.bookmark": "Закладка",
+  "replay.events.kind.debug": "Отладка",
+  "replay.events.kind.leftArea": "Покинул район",
+  "replay.events.kind.destroyed": "Уничтожен",
+  "replay.events.kind.takenOff": "Взлетел",
+  "replay.events.kind.landed": "Приземлился",
+  "replay.events.kind.timeout": "Результат оружия",
+  "replay.events.kind.removed": "Удалён",
+  "replay.events.kind.comment": "Комментарий",
+  "replay.events.kind.unplaced": "Без позиции",
+  "replay.card.hidden": "Скрыт записью в этот момент (не уничтожен).",
+  "replay.card.disabled": "Выведен из боя (отключён), не уничтожен."
 }

@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Skrido arba važiavo: {vehicles}. Spustelėkite, kad sektumėte pakartojime.",
   "match.game.kills": "{count, plural, one {# nužudymas} few {# nužudymai} many {# nužudymo} other {# nužudymų}}: spustelėkite vieną, kad pereitumėte prie jo",
   "match.game.crash": "katastrofa",
-  "match.game.noData": "Įkelkite pakartojimo lentelę skiltyje „Šaltinis“, kad pamatytumėte atkuriamas rungtynes."
+  "match.game.noData": "Įkelkite pakartojimo lentelę skiltyje „Šaltinis“, kad pamatytumėte atkuriamas rungtynes.",
+  "match.recording.section": "Įrašas",
+  "match.recording.title": "Pavadinimas",
+  "match.recording.category": "Kategorija",
+  "match.recording.author": "Autorius",
+  "match.recording.source": "Šaltinis",
+  "match.recording.recorder": "Įrašymo įrenginys",
+  "match.recording.start": "Pradžia",
+  "match.recording.recorded": "Įrašyta",
+  "match.recording.briefing": "Instruktažas",
+  "match.recording.debriefing": "Aptarimas",
+  "match.recording.comments": "Komentarai"
 }

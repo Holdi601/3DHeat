@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B 已遺失",
   "replay.lookAt.stripTitle": "跟隨單位與被看向單位之間",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "訊息",
+  "replay.events.kind.bookmark": "書籤",
+  "replay.events.kind.debug": "除錯",
+  "replay.events.kind.leftArea": "離開區域",
+  "replay.events.kind.destroyed": "被摧毀",
+  "replay.events.kind.takenOff": "起飛",
+  "replay.events.kind.landed": "降落",
+  "replay.events.kind.timeout": "武器結果",
+  "replay.events.kind.removed": "已移除",
+  "replay.events.kind.comment": "註解",
+  "replay.events.kind.unplaced": "無位置",
+  "replay.card.hidden": "此刻被記錄隱藏(未被摧毀)。",
+  "replay.card.disabled": "退出戰鬥(已停用),未被摧毀。"
 }

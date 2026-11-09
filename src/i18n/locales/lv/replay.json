@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B pazaudēta",
   "replay.lookAt.stripTitle": "Starp sekoto vienību un to, uz kuru skatās",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Ziņojums",
+  "replay.events.kind.bookmark": "Grāmatzīme",
+  "replay.events.kind.debug": "Atkļūdošana",
+  "replay.events.kind.leftArea": "Pameta apgabalu",
+  "replay.events.kind.destroyed": "Iznīcināts",
+  "replay.events.kind.takenOff": "Pacēlās",
+  "replay.events.kind.landed": "Nolaidās",
+  "replay.events.kind.timeout": "Ieroča rezultāts",
+  "replay.events.kind.removed": "Noņemts",
+  "replay.events.kind.comment": "Komentārs",
+  "replay.events.kind.unplaced": "Bez pozīcijas",
+  "replay.card.hidden": "Ieraksts to šobrīd slēpj (nav iznīcināts).",
+  "replay.card.disabled": "Ārpus kaujas (atspējots), nav iznīcināts."
 }

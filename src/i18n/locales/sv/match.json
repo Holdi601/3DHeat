@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Flög eller körde: {vehicles}. Klicka för att följa i reprisen.",
   "match.game.kills": "{count, plural, one {# kill} other {# kills}}: klicka på en för att gå dit",
   "match.game.crash": "krasch",
-  "match.game.noData": "Läs in reprisens tabell under Källa för att se matchen uppspelad."
+  "match.game.noData": "Läs in reprisens tabell under Källa för att se matchen uppspelad.",
+  "match.recording.section": "Inspelning",
+  "match.recording.title": "Titel",
+  "match.recording.category": "Kategori",
+  "match.recording.author": "Författare",
+  "match.recording.source": "Källa",
+  "match.recording.recorder": "Inspelare",
+  "match.recording.start": "Start",
+  "match.recording.recorded": "Inspelad",
+  "match.recording.briefing": "Genomgång",
+  "match.recording.debriefing": "Utvärdering",
+  "match.recording.comments": "Kommentarer"
 }

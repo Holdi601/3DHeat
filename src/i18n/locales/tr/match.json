@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Uçtuğu ya da sürdüğü: {vehicles}. Tekrarda takip etmek için tıklayın.",
   "match.game.kills": "{count, plural, one {# öldürme} other {# öldürme}}: gitmek için birine tıklayın",
   "match.game.crash": "düşme",
-  "match.game.noData": "Maçın oynatıldığını görmek için tekrarın tablosunu Kaynak altında yükleyin."
+  "match.game.noData": "Maçın oynatıldığını görmek için tekrarın tablosunu Kaynak altında yükleyin.",
+  "match.recording.section": "Kayıt",
+  "match.recording.title": "Başlık",
+  "match.recording.category": "Kategori",
+  "match.recording.author": "Yazar",
+  "match.recording.source": "Kaynak",
+  "match.recording.recorder": "Kaydedici",
+  "match.recording.start": "Başlangıç",
+  "match.recording.recorded": "Kaydedildi",
+  "match.recording.briefing": "Brifing",
+  "match.recording.debriefing": "Değerlendirme",
+  "match.recording.comments": "Yorumlar"
 }

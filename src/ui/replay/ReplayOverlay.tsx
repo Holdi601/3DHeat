@@ -4,7 +4,7 @@ import { braa, useReplayStore } from '../../state/replayStore';
 import { useInspectStore } from '../../state/inspectStore';
 import { rgbToCss, teamBaseColor } from '../../render/colors';
 import { useAnimationFrame, useEngine } from '../EngineContext';
-import { defaultEventKinds, eventRows, markedInView, unitsPerMetre } from './replayData';
+import { defaultEventKinds, eventRows, eventWords, markedInView, unitsPerMetre } from './replayData';
 import { allFields, fieldName, fieldShort, fieldText, isNumeric, type FieldContext } from './fields';
 import { personAt, unitsOf, type Unit } from './units';
 import { groundProbe, teamName } from './replayView';
@@ -380,7 +380,8 @@ export function ReplayOverlay() {
         if (!el) {
           el = document.createElement('div');
           el.className = 'replay-event';
-          el.textContent = ev.labels[i];
+          const words = eventWords(ev.texts[i] ? `${ev.labels[i]}: ${ev.texts[i]}` : ev.labels[i]);
+          el.textContent = words.length > 60 ? `${words.slice(0, 59)}…` : words;
           host.appendChild(el);
           events.current.set(row, el);
         }

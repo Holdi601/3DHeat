@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B kayboldu",
   "replay.lookAt.stripTitle": "İzlenen birim ile bakılan birim arasında",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Mesaj",
+  "replay.events.kind.bookmark": "Yer imi",
+  "replay.events.kind.debug": "Hata ayıklama",
+  "replay.events.kind.leftArea": "Bölgeden ayrıldı",
+  "replay.events.kind.destroyed": "İmha edildi",
+  "replay.events.kind.takenOff": "Kalktı",
+  "replay.events.kind.landed": "İndi",
+  "replay.events.kind.timeout": "Silah sonucu",
+  "replay.events.kind.removed": "Kaldırıldı",
+  "replay.events.kind.comment": "Yorum",
+  "replay.events.kind.unplaced": "Konumsuz",
+  "replay.card.hidden": "Kayıt şu anda gizliyor (imha edilmedi).",
+  "replay.card.disabled": "Savaş dışı (devre dışı), imha edilmedi."
 }

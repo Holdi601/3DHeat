@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B kwijt",
   "replay.lookAt.stripTitle": "Tussen de gevolgde eenheid en die waarnaar gekeken wordt",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Bericht",
+  "replay.events.kind.bookmark": "Bladwijzer",
+  "replay.events.kind.debug": "Debug",
+  "replay.events.kind.leftArea": "Gebied verlaten",
+  "replay.events.kind.destroyed": "Vernietigd",
+  "replay.events.kind.takenOff": "Opgestegen",
+  "replay.events.kind.landed": "Geland",
+  "replay.events.kind.timeout": "Wapenresultaat",
+  "replay.events.kind.removed": "Verwijderd",
+  "replay.events.kind.comment": "Opmerking",
+  "replay.events.kind.unplaced": "Zonder positie",
+  "replay.card.hidden": "Op dit moment verborgen door de opname (niet vernietigd).",
+  "replay.card.disabled": "Uitgeschakeld (buiten gevecht), niet vernietigd."
 }

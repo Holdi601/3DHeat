@@ -5,6 +5,7 @@
  */
 
 import type { Dataset } from '../../state/types';
+import { t } from '../../i18n';
 
 const nameCache = new WeakMap<Dataset, (string | undefined)[]>();
 
@@ -29,7 +30,10 @@ export function trackName(d: Dataset, person: number, row: number): string {
 
 export interface EventRows {
   rows: Uint32Array;
+  /** Each event's kind: the label, or its first word where the label is "Kind: text" (an ACMI event). */
   labels: string[];
+  /** What the event says after its kind ("" for none): a message, a bookmark's note, a weapon's result. */
+  texts: string[];
   /** The person each event is about. */
   persons: Int32Array;
 }
@@ -38,6 +42,50 @@ const eventCache = new WeakMap<Dataset, EventRows | null>();
 
 /** Labels an event column uses for rows that are only samples. */
 const NOT_EVENTS = /^(position|positions|pos|sample|move|movement|tick|frame|state|alive|none|-)$/i;
+
+/**
+ * An event label as its kind and its text: ACMI events read "Kind: text"
+ * (`acmi.ts`), a Timeout's text its named fields ("AmmoType:FOX2|Outcome:Kill").
+ * A label without a one-word kind before ": " is all kind.
+ */
+export function splitEvent(label: string): { kind: string; text: string } {
+  const m = /^([A-Za-z][\w-]*): ([\s\S]*)$/.exec(label);
+  return m ? { kind: m[1], text: m[2].trim() } : { kind: label, text: '' };
+}
+
+/** An event's text to read: a Timeout's fields as "FOX2 · Kill", the ids left out (the units say who). */
+export function eventText(text: string): string {
+  if (!/^\w+\s*:/.test(text) || !text.includes('|')) return text;
+  return text
+    .split('|')
+    .filter((f) => !/^\s*(SourceId|TargetId)\s*:/i.test(f))
+    .map((f) => f.slice(f.indexOf(':') + 1).trim())
+    .filter(Boolean)
+    .join(' · ');
+}
+
+/** Tacview's event kinds (ACMI 2.2), and the parser's own (`acmi.ts`), by the message that names them. */
+const ACMI_KINDS: Record<string, string> = {
+  message: 'message',
+  bookmark: 'bookmark',
+  debug: 'debug',
+  leftarea: 'leftArea',
+  destroyed: 'destroyed',
+  takenoff: 'takenOff',
+  landed: 'landed',
+  timeout: 'timeout',
+  removed: 'removed',
+  comment: 'comment',
+  unplaced: 'unplaced',
+};
+
+/** An event kind as words - "hit_critical" -> "hit critical", Tacview's own in the viewer's language - and its text after. */
+export function eventWords(label: string): string {
+  const { kind, text } = splitEvent(label);
+  const key = ACMI_KINDS[kind.toLowerCase()];
+  const name = key ? t(`replay.events.kind.${key}`) : kind.replace(/[_-]+/g, ' ');
+  return text ? `${name}: ${eventText(text)}` : name;
+}
 
 export function eventRows(d: Dataset): EventRows | null {
   if (eventCache.has(d)) return eventCache.get(d)!;
@@ -52,9 +100,12 @@ export function eventRows(d: Dataset): EventRows | null {
   const rows: number[] = [];
   for (let i = 0; i < d.count; i++) if (isEvent[ids[i]]) rows.push(i);
   if (d.time) rows.sort((a, b) => d.time![a] - d.time![b]);
+  // "Message: Maverick has violated ATC directives" is a Message, its words apart: one kind, not one per text.
+  const kinds = col.categories.map((c) => splitEvent(c));
   const out: EventRows = {
     rows: Uint32Array.from(rows),
-    labels: rows.map((r) => col.categories![ids[r]]),
+    labels: rows.map((r) => kinds[ids[r]].kind),
+    texts: rows.map((r) => kinds[ids[r]].text),
     persons: Int32Array.from(rows.map((r) => (d.personId ? d.personId[r] : -1))),
   };
   eventCache.set(d, out);
@@ -85,7 +136,8 @@ export function dropLinesOn(d: Dataset, setting: boolean | null): boolean {
  * Event kinds too frequent to list or mark by default: each shell burst, gun
  * shot and flak puff is a row, thousands a match. Still a chip away.
  */
-const NOISY_EVENTS = /^(explosions?|flak|gun_?shots?|shots? ?fired|fire_?stop|reload(ed)?|bullet_?rearm|tracer|impact|smoke_?puff)$/i;
+// An ACMI recording's Removed (every shell, flare and chaff leaving), Unplaced and Debug (Tacview shows those only when asked) too.
+const NOISY_EVENTS = /^(explosions?|flak|gun_?shots?|shots? ?fired|fire_?stop|reload(ed)?|bullet_?rearm|tracer|impact|smoke_?puff|removed|unplaced|debug)$/i;
 
 /**
  * Kinds left out of the floating labels in the view whatever the list shows:
@@ -123,7 +175,7 @@ export function eventBursts(d: Dataset, ev: EventRows, idx: number[], keyOf: (i:
   const open = new Map<string, { b: EventBurst; last: number }>();
   for (const i of idx) {
     const t = d.time ? d.time[ev.rows[i]] : 0;
-    const key = `${ev.labels[i]}|${keyOf(i)}`;
+    const key = `${ev.labels[i]}|${ev.texts[i]}|${keyOf(i)}`;
     const o = open.get(key);
     if (o && t - o.last <= gap) {
       o.b.count++;

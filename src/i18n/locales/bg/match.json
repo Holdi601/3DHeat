@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Летял или карал: {vehicles}. Щракнете, за да го следвате в повторението.",
   "match.game.kills": "{count, plural, one {# убийство} other {# убийства}}: щракнете върху някое, за да отидете на него",
   "match.game.crash": "катастрофа",
-  "match.game.noData": "Заредете таблицата на повторението в „Източник“, за да видите мача възпроизведен."
+  "match.game.noData": "Заредете таблицата на повторението в „Източник“, за да видите мача възпроизведен.",
+  "match.recording.section": "Запис",
+  "match.recording.title": "Заглавие",
+  "match.recording.category": "Категория",
+  "match.recording.author": "Автор",
+  "match.recording.source": "Източник",
+  "match.recording.recorder": "Записващо устройство",
+  "match.recording.start": "Начало",
+  "match.recording.recorded": "Записано",
+  "match.recording.briefing": "Брифинг",
+  "match.recording.debriefing": "Дебрифинг",
+  "match.recording.comments": "Коментари"
 }

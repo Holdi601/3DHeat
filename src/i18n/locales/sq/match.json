@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Fluturoi ose drejtoi: {vehicles}. Kliko për ta ndjekur në riluajtje.",
   "match.game.kills": "{count, plural, one {# vrasje} other {# vrasje}}: kliko njërën për të shkuar te ajo",
   "match.game.crash": "përplasje",
-  "match.game.noData": "Ngarko tabelën e riluajtjes te Burimi për ta parë ndeshjen të riluajtur."
+  "match.game.noData": "Ngarko tabelën e riluajtjes te Burimi për ta parë ndeshjen të riluajtur.",
+  "match.recording.section": "Regjistrim",
+  "match.recording.title": "Titulli",
+  "match.recording.category": "Kategoria",
+  "match.recording.author": "Autori",
+  "match.recording.source": "Burimi",
+  "match.recording.recorder": "Regjistruesi",
+  "match.recording.start": "Fillimi",
+  "match.recording.recorded": "Regjistruar",
+  "match.recording.briefing": "Brifingu",
+  "match.recording.debriefing": "Analiza pas misionit",
+  "match.recording.comments": "Komente"
 }

@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Летал или ездил на: {vehicles}. Щёлкните, чтобы следовать за ним в повторе.",
   "match.game.kills": "{count, plural, one {# убийство} few {# убийства} many {# убийств} other {# убийства}}: щёлкните по одному, чтобы перейти к нему",
   "match.game.crash": "крушение",
-  "match.game.noData": "Загрузите таблицу повтора в разделе «Источник», чтобы увидеть воспроизведение матча."
+  "match.game.noData": "Загрузите таблицу повтора в разделе «Источник», чтобы увидеть воспроизведение матча.",
+  "match.recording.section": "Запись",
+  "match.recording.title": "Название",
+  "match.recording.category": "Категория",
+  "match.recording.author": "Автор",
+  "match.recording.source": "Источник",
+  "match.recording.recorder": "Регистратор",
+  "match.recording.start": "Начало",
+  "match.recording.recorded": "Записано",
+  "match.recording.briefing": "Брифинг",
+  "match.recording.debriefing": "Разбор",
+  "match.recording.comments": "Комментарии"
 }

@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Stroje: {vehicles}. Kliknutím ho budete sledovat v přehrávání.",
   "match.game.kills": "{count, plural, one {# kill} few {# killy} many {# killu} other {# killů}}: kliknutím na některý na něj přejdete",
   "match.game.crash": "havárie",
-  "match.game.noData": "Načtěte tabulku záznamu v části Zdroj a uvidíte zápas přehraný."
+  "match.game.noData": "Načtěte tabulku záznamu v části Zdroj a uvidíte zápas přehraný.",
+  "match.recording.section": "Záznam",
+  "match.recording.title": "Název",
+  "match.recording.category": "Kategorie",
+  "match.recording.author": "Autor",
+  "match.recording.source": "Zdroj",
+  "match.recording.recorder": "Záznamník",
+  "match.recording.start": "Začátek",
+  "match.recording.recorded": "Zaznamenáno",
+  "match.recording.briefing": "Briefing",
+  "match.recording.debriefing": "Debriefing",
+  "match.recording.comments": "Komentáře"
 }

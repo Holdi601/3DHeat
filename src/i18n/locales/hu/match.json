@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Repült vagy vezetett: {vehicles}. Kattints a követéshez a visszajátszásban.",
   "match.game.kills": "{count, plural, one {# ölés} other {# ölés}}: kattints egyre, hogy odaugorj",
   "match.game.crash": "lezuhanás",
-  "match.game.noData": "Töltsd be a visszajátszás tábláját a Forrás alatt, hogy lásd a meccs visszajátszását."
+  "match.game.noData": "Töltsd be a visszajátszás tábláját a Forrás alatt, hogy lásd a meccs visszajátszását.",
+  "match.recording.section": "Felvétel",
+  "match.recording.title": "Cím",
+  "match.recording.category": "Kategória",
+  "match.recording.author": "Szerző",
+  "match.recording.source": "Forrás",
+  "match.recording.recorder": "Rögzítő",
+  "match.recording.start": "Kezdés",
+  "match.recording.recorded": "Rögzítve",
+  "match.recording.briefing": "Eligazítás",
+  "match.recording.debriefing": "Kiértékelés",
+  "match.recording.comments": "Megjegyzések"
 }

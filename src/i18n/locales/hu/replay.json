@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B elveszett",
   "replay.lookAt.stripTitle": "A követett és a nézett egység között",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Üzenet",
+  "replay.events.kind.bookmark": "Könyvjelző",
+  "replay.events.kind.debug": "Hibakeresés",
+  "replay.events.kind.leftArea": "Elhagyta a területet",
+  "replay.events.kind.destroyed": "Megsemmisült",
+  "replay.events.kind.takenOff": "Felszállt",
+  "replay.events.kind.landed": "Leszállt",
+  "replay.events.kind.timeout": "Fegyver eredménye",
+  "replay.events.kind.removed": "Eltávolítva",
+  "replay.events.kind.comment": "Megjegyzés",
+  "replay.events.kind.unplaced": "Pozíció nélkül",
+  "replay.card.hidden": "A felvétel most elrejti (nem semmisült meg).",
+  "replay.card.disabled": "Harcképtelen (letiltva), nem semmisült meg."
 }
