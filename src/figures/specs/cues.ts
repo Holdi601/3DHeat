@@ -1661,6 +1661,7 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'five road wheels, three return rollers', check: run(5, 3) },
     { cue: 'light 75 mm in a rounded turret', check: (s) => castTurret(s) && cal(0.075, 0.08)(s) },
     { cue: 'wide low hull with sloped plates', check: (s) => hullShape(s) && s.width > 2.8 },
+    { cue: '.50 AA gun on a pedestal at the turret rear', check: (s) => (s.guns ?? []).some((g) => g.mount === 'top' && g.calibre >= 0.0127) },
   ]),
   'object-416': ground('object-416', [
     { cue: 'very low hull with the turret at the back', check: (s) => low(1.2)(s) && turretAt(-9, -1)(s) },
