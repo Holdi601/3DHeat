@@ -610,7 +610,8 @@ G['is-3'] = ww2({
 // ---------------------------------------------------------------- Churchill
 
 // Churchill: the tracks run round the whole hull side over the panniers, eleven small bogies a side hidden behind the
-// pannier plates, the track horns high at the front; the turret forward of the middle.
+// pannier plates, the track horns high at the front; the turret's front face 0.95 m ahead of the hull's middle, its
+// stowage bin hung on the back (side silhouette in FM 30-40, 1943, scaled by the hull; public domain).
 // Hull 7.44 x 3.25 m, 2.49 m high (Mk VII 2.74 m).
 const CHURCHILL: Ww2 = {
   cls: 'heavy-tank', L: 7.44, W: 3.25, deck: 1.75, fender: 0.45,
@@ -620,16 +621,16 @@ const CHURCHILL: Ww2 = {
   wheels: [], r: 0.13, solid: true,
 };
 // Mk I: a small cast turret with the 2-pounder and a 3-inch howitzer in the hull nose.
-const CH1_T = turret(0.55, [[-0.95, 0.6], [-0.75, 0.85], [0.5, 0.88], [0.9, 0.65], [1.0, 0.45]], [[-0.95, 0.45], [-0.6, 0.68], [0.5, 0.7], [1.0, 0.42]], 2.6, 1.0);
+const CH1_T = turret(-0.1, [[-0.95, 0.6], [-0.75, 0.85], [0.5, 0.88], [0.9, 0.65], [1.0, 0.45]], [[-0.95, 0.45], [-0.6, 0.68], [0.5, 0.7], [1.0, 0.42]], 2.6, 1.0);
 G['churchill-i'] = ww2({ ...CHURCHILL, turret: CH1_T, guns: [{ mount: 'turret', length: 1.5, calibre: 0.04, at: 0.5 }, { mount: 'hull', x: 3.25, at: 0.55, length: 0.55, calibre: 0.076 }] });
 // Mk III: the welded, slab-sided square turret with the 6-pounder.
-const CH3_T = turret(0.55, [[-0.95, 0.82], [0.95, 0.82]], [[-0.95, 0.72], [0.95, 0.72]], 16, 0.95);
+const CH3_T = turret(-0.1, [[-0.95, 0.82], [0.95, 0.82]], [[-0.95, 0.72], [0.95, 0.72]], 16, 0.95);
 G['churchill-iii'] = ww2({ ...CHURCHILL, turret: CH3_T, gun: { length: 2.0, calibre: 0.057, at: 0.5 } });
 // Mk IV: a cast, rounded turret of the same size.
-const CH4_T = turret(0.55, [[-1.0, 0.7], [-0.8, 0.9], [0.6, 0.92], [0.95, 0.72], [1.05, 0.5]], [[-1.0, 0.5], [-0.7, 0.72], [0.6, 0.74], [1.05, 0.45]], 2.8, 1.05);
+const CH4_T = turret(-0.1, [[-1.0, 0.7], [-0.8, 0.9], [0.6, 0.92], [0.95, 0.72], [1.05, 0.5]], [[-1.0, 0.5], [-0.7, 0.72], [0.6, 0.74], [1.05, 0.45]], 2.8, 1.05);
 G['churchill-iv'] = ww2({ ...CHURCHILL, turret: CH4_T, gun: { length: 2.0, calibre: 0.057, at: 0.5 } });
 // Mk VII (2.74 m): the composite turret with cast curved sides and a flat roof, its cupola, the 75 mm; the heavier hull.
-const CH7_T = turret(0.5, [[-1.05, 0.6], [-0.85, 0.98], [0.55, 1.02], [1.0, 0.8], [1.12, 0.55]], [[-1.05, 0.82], [1.12, 0.82]], 6, 1.12);
+const CH7_T = turret(-0.1, [[-1.05, 0.6], [-0.85, 0.98], [0.55, 1.02], [1.0, 0.8], [1.12, 0.55]], [[-1.05, 0.82], [1.12, 0.82]], 6, 1.12);
 G['churchill-vii'] = ww2({ ...CHURCHILL, plan: [[-3.6, 1.08], [3.35, 1.08]], turret: CH7_T, gun: { length: 1.9, calibre: 0.075, at: 0.5 }, turretParts: (t) => [cupola(t, -0.4, -0.4, 0.3, 0.14)] });
 G['churchill'] = G['churchill-vii'];
 
@@ -984,13 +985,15 @@ G['m3a3-stuart'] = ww2({
 }
 // M24 Chaffee: five road wheels on torsion bars, three return rollers, the sloped glacis, the turret with its thin
 // 75 mm (hull 4.99 x 2.95 m, 2.47 m; 5.56 m with the gun).
-const M24_T = turret(-0.2, [[-1.25, 0.62], [-1.05, 0.85], [0.55, 0.88], [1.0, 0.62], [1.1, 0.45]], [[-1.25, 0.5], [-0.9, 0.72], [0.5, 0.75], [1.1, 0.45]], 3.5, 1.15);
+// The 1.53 m deck falling to the back, the nose 1.11 m up, the turret roof 2.23 m and its bustle, the high-set rear idler
+// from the M24 side silhouette in FM 30-40 (1943, changes to 1945), scaled by its 16.4 ft hull (public domain).
+const M24_T = turret(-0.2, [[-1.25, 0.62], [-1.05, 0.85], [0.55, 0.88], [1.0, 0.62], [1.1, 0.45]], [[-1.25, 0.59], [-0.9, 0.7], [0.5, 0.7], [1.1, 0.45]], 3.5, 1.15);
 G['m24-chaffee'] = ww2({
-  cls: 'light-tank', L: 4.99, W: 2.95, deck: 1.7, fender: 0.95,
-  top: [[-2.5, 1.45], [-2.4, 1.68], [0.4, 1.7], [2.2, 0.95], [2.5, 0.85]],
+  cls: 'light-tank', L: 4.99, W: 2.95, deck: 1.53, fender: 0.95,
+  top: [[-2.5, 1.31], [-1.84, 1.44], [-1.4, 1.53], [0.8, 1.53], [1.9, 1.38], [2.5, 1.11]],
   plan: [[-2.5, 1.45], [2.5, 1.45]], hullRound: 10,
   // 2.85 m of track on the ground (112.25 in): the five wheels close together, the end ones 2.85 m apart.
-  track: trk(2.45, 0.95, 0.66, 0.55, 1.425),
+  track: trk(2.45, 0.95, 0.66, 0.71, 1.425),
   wheels: even(5, -1.425, 1.425), r: 0.32, rollers: [-1.2, 0, 1.2],
   turret: M24_T, gun: { length: 2.1, calibre: 0.075, at: 0.45 },
   turretParts: (t) => [cupola(t, -0.3, -0.45, 0.3, 0.18)],
@@ -1092,7 +1095,10 @@ G['m4a3e2-76'] = sherman({ L: 5.9, W: 2.97, glacisX: 1.1, deck: 1.95, turret: JU
     track: [[-3.3, 0], [3.2, 0], [3.95, 1.1], [3.6, 1.65], [-3.7, 1.65], [-3.98, 0.9]],
     wheels: [], r: 0.2, solid: true,
   };
-  G['lvt-a1'] = ww2({ ...lvt, cls: 'light-tank', turret: turret(0.6, [[-0.85, 0.55], [-0.6, 0.75], [0.55, 0.78], [0.85, 0.55]], [[-0.85, 0.58], [0.85, 0.6]], 4, 0.9), gun: { length: 1.4, calibre: 0.037, at: 0.45 } });
+  // LVT(A)(1): the armoured cab raised to 2.37 m round the turret (0.7 m behind the middle to 1.5 m ahead, sloping to
+  // 2.04 m at 2.8 m), the M5-type turret on it in the middle to 3.05 m (side silhouette in FM 30-40, 1943 with changes
+  // to Feb. 1945, scaled by its 26.0 ft length and 10.0 ft height; public domain).
+  G['lvt-a1'] = ww2({ ...lvt, cls: 'light-tank', deck: 2.37, top: [[-3.98, 1.6], [-3.9, 2.0], [-0.8, 2.03], [-0.74, 2.37], [1.53, 2.37], [2.79, 2.04], [3.98, 1.65]], turret: turret(0.0, [[-0.65, 0.55], [-0.5, 0.75], [0.45, 0.78], [0.65, 0.55]], [[-0.65, 0.63], [0.65, 0.63]], 4, 0.7), gun: { length: 1.4, calibre: 0.037, at: 0.45 } });
   const m = mantlet(2.0, 1.5, 1.75, 2.45, 0.2, 0.15);
   G['lvt-4-zis-2'] = ww2({ ...lvt, turret: m, guns: [fire(m, 2.8, 0.057)], parts: [part(2.0, [[1.65, 0.75], [1.72, 0.75]], [[1.65, 2.75], [1.72, 2.75]], 2.0, 16)] });
 }
