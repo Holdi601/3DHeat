@@ -26,7 +26,15 @@
   "far.fires": "Zjarre në njësi",
   "far.firesTitle": "Flakë dhe tym aty ku digjet një pjesë e një njësie, nga ndezja deri në shuarje, përfshirë rrënojat.",
   "far.hitMarks": "Goditje mbi njësitë",
-  "far.hitMarksTitle": "Një shenjë aty ku çdo e shtënë goditi një njësi, e ngjyrosur sipas efektit, që lëviz me njësinë; drejtojeni treguesin për të parë kush qëlloi.",
+  "far.hitMarksTitle": "Shenja që la çdo e shtënë mbi një njësi, mbi sipërfaqen e saj ku goditi, me madhësi sipas kalibrit dhe formë sipas efektit, që lëviz me njësinë; drejtojeni treguesin për të parë kush qëlloi.",
   "far.hitMarkSeconds": "Goditjet qëndrojnë",
-  "far.hitMarkWhole": "E gjithë ndeshja"
+  "far.hitMarkWhole": "Gjithë jeta",
+  "far.hitMarkFloat": "Shenja pluskuese",
+  "far.hitMarkFloatTitle": "Edhe një shenjë mbi çdo goditje të freskët, e kthyer nga ju, për 10 s.",
+  "far.hitLookHole": "Vrimë: depërtoi",
+  "far.hitLookSplash": "Spërkatje e ndritshme: nuk depërtoi",
+  "far.hitLookGouge": "Brazdë: rrëshqiti (ndoshta rikoshet)",
+  "far.hitLookBullet": "Vrimë: rezultat i panjohur",
+  "far.hitLookRing": "Unazë: çfarë bëri",
+  "far.hitCalibre": "Kalibër"
 }

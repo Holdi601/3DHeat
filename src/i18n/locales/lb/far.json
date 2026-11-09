@@ -26,7 +26,15 @@
   "far.fires": "Bränn op Eenheeten",
   "far.firesTitle": "Flamen a Damp, wou en Deel vun enger Eenheet brennt, vum Ufänken bis zum Ausgoen, och op Wracken.",
   "far.hitMarks": "Treffer op Eenheeten",
-  "far.hitMarksTitle": "Eng Markéierung, wou all Schoss eng Eenheet getraff huet, gefierft no senger Wierkung, déi mat der Eenheet matfiert; mam Zeiger drop gesitt Dir, wien geschoss huet.",
+  "far.hitMarksTitle": "D'Spuer vun all Schoss op enger Eenheet, op hirer Uewerfläch wou en getraff huet, no Kaliber gemooss an no Wierkung geformt, fiert mat der Eenheet mat; mam Zeiger drop gesitt Dir, wien geschoss huet.",
   "far.hitMarkSeconds": "Treffer bleiwen",
-  "far.hitMarkWhole": "De ganze Match"
+  "far.hitMarkWhole": "Ganzt Liewen",
+  "far.hitMarkFloat": "Schwiewend Markéierungen",
+  "far.hitMarkFloatTitle": "Och eng Markéierung iwwer all frëschen Treffer, zu Iech gedréint, 10 s laang.",
+  "far.hitLookHole": "Lach: duerchgeschloen",
+  "far.hitLookSplash": "Hellen Sprëtzer: net duerchgeschloen",
+  "far.hitLookGouge": "Fur: ofgeglidden (wahrscheinlech en Ofpraller)",
+  "far.hitLookBullet": "Lach: Wierkung onbekannt",
+  "far.hitLookRing": "Rank: wat en gemaach huet",
+  "far.hitCalibre": "Kaliber"
 }

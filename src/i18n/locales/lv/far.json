@@ -26,7 +26,15 @@
   "far.fires": "Ugunsgrēki vienībās",
   "far.firesTitle": "Liesmas un dūmi vietā, kur deg vienības daļa, no aizdegšanās līdz nodzēšanai, ieskaitot vrakus.",
   "far.hitMarks": "Trāpījumi vienībām",
-  "far.hitMarksTitle": "Atzīme vietā, kur katrs šāviens trāpīja vienībai, iekrāsota pēc tā iedarbības, un kustas līdz ar vienību; norādiet uz to, lai redzētu, kas šāva.",
+  "far.hitMarksTitle": "Pēda, ko katrs šāviens atstāja vienībai, uz tās virsmas trāpījuma vietā, lielums pēc kalibra un forma pēc iedarbības, kustas līdz ar vienību; norādiet uz to, lai redzētu, kas šāva.",
   "far.hitMarkSeconds": "Trāpījumi paliek",
-  "far.hitMarkWhole": "Visa spēle"
+  "far.hitMarkWhole": "Visa dzīve",
+  "far.hitMarkFloat": "Peldošas atzīmes",
+  "far.hitMarkFloatTitle": "Vēl atzīme virs katra svaiga trāpījuma, pavērsta pret jums, 10 s.",
+  "far.hitLookHole": "Caurums: caursita",
+  "far.hitLookSplash": "Spožs plankums: necaursita",
+  "far.hitLookGouge": "Grope: noslīdēja (visticamāk rikošets)",
+  "far.hitLookBullet": "Caurums: iznākums nav zināms",
+  "far.hitLookRing": "Gredzens: ko tas izdarīja",
+  "far.hitCalibre": "Kalibrs"
 }

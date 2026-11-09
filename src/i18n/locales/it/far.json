@@ -26,7 +26,15 @@
   "far.fires": "Incendi sulle unità",
   "far.firesTitle": "Fiamme e fumo dove brucia una parte di un'unità, da quando prende fuoco a quando si spegne, relitti compresi.",
   "far.hitMarks": "Colpi sulle unità",
-  "far.hitMarksTitle": "Un segno dove ogni colpo ha raggiunto un’unità, colorato secondo l’effetto, che si muove con l’unità; puntalo per vedere chi ha sparato.",
+  "far.hitMarksTitle": "Il segno lasciato da ogni colpo su un’unità, sulla sua superficie dove ha colpito, grande secondo il calibro e formato secondo l’effetto, che si muove con l’unità; puntalo per vedere chi ha sparato.",
   "far.hitMarkSeconds": "I colpi restano",
-  "far.hitMarkWhole": "Tutta la partita"
+  "far.hitMarkWhole": "Tutta la vita",
+  "far.hitMarkFloat": "Indicatori fluttuanti",
+  "far.hitMarkFloatTitle": "Anche un indicatore sopra ogni colpo recente, rivolto verso di te, per 10 s.",
+  "far.hitLookHole": "Foro: è penetrato",
+  "far.hitLookSplash": "Schizzo lucente: non è penetrato",
+  "far.hitLookGouge": "Solco: è scivolato (probabilmente un rimbalzo)",
+  "far.hitLookBullet": "Foro: esito sconosciuto",
+  "far.hitLookRing": "Anello: cosa ha fatto",
+  "far.hitCalibre": "Calibro"
 }

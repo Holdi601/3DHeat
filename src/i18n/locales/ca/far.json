@@ -26,7 +26,15 @@
   "far.fires": "Incendis a les unitats",
   "far.firesTitle": "Flames i fum on crema una part d'una unitat, des que s'encén fins que s'apaga, restes incloses.",
   "far.hitMarks": "Impactes a les unitats",
-  "far.hitMarksTitle": "Una marca on cada tret ha tocat una unitat, acolorida segons el que ha fet, que es mou amb la unitat; passeu-hi el punter per veure qui ha disparat.",
+  "far.hitMarksTitle": "La marca que cada tret ha deixat en una unitat, a la seva superfície on ha tocat, de mida segons el calibre i forma segons l'efecte, que es mou amb la unitat; passeu-hi el punter per veure qui ha disparat.",
   "far.hitMarkSeconds": "Els impactes queden",
-  "far.hitMarkWhole": "Tota la partida"
+  "far.hitMarkWhole": "Tota la vida",
+  "far.hitMarkFloat": "Marcadors flotants",
+  "far.hitMarkFloatTitle": "També un marcador sobre cada impacte recent, de cara a vós, durant 10 s.",
+  "far.hitLookHole": "Forat: ha penetrat",
+  "far.hitLookSplash": "Esquitx brillant: no ha penetrat",
+  "far.hitLookGouge": "Solc: ha lliscat (probablement un rebot)",
+  "far.hitLookBullet": "Forat: resultat desconegut",
+  "far.hitLookRing": "Anell: què ha fet",
+  "far.hitCalibre": "Calibre"
 }

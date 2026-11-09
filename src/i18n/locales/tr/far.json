@@ -26,7 +26,15 @@
   "far.fires": "Birimlerdeki yangınlar",
   "far.firesTitle": "Bir birimin bir parçasının yandığı yerde, tutuştuğu andan sönene dek alev ve duman; enkazlar dahil.",
   "far.hitMarks": "Birimlere isabetler",
-  "far.hitMarksTitle": "Her atışın bir birime isabet ettiği yerde, etkisine göre renklenen ve birimle birlikte hareket eden bir işaret; kimin ateş ettiğini görmek için üzerine gelin.",
+  "far.hitMarksTitle": "Her atışın birimde bıraktığı iz, isabet ettiği yüzeyde, kalibreye göre boyutta ve etkiye göre biçimde, birimle birlikte hareket eder; kimin ateş ettiğini görmek için üzerine gelin.",
   "far.hitMarkSeconds": "İsabetler kalır",
-  "far.hitMarkWhole": "Tüm maç"
+  "far.hitMarkWhole": "Tüm ömür",
+  "far.hitMarkFloat": "Yüzen işaretler",
+  "far.hitMarkFloatTitle": "Her taze isabetin üstünde size dönük bir işaret de, 10 sn boyunca.",
+  "far.hitLookHole": "Delik: deldi",
+  "far.hitLookSplash": "Parlak iz: delmedi",
+  "far.hitLookGouge": "Oyuk: sekti (büyük olasılıkla sekme)",
+  "far.hitLookBullet": "Delik: sonuç bilinmiyor",
+  "far.hitLookRing": "Halka: ne yaptığı",
+  "far.hitCalibre": "Kalibre"
 }

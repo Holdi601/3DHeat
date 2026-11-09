@@ -26,7 +26,15 @@
   "far.fires": "Branner på enheter",
   "far.firesTitle": "Flammer og røyk der en del av en enhet brenner, fra den tar fyr til den er slukket, vrak inkludert.",
   "far.hitMarks": "Treff på enheter",
-  "far.hitMarksTitle": "Et merke der hvert skudd traff en enhet, farget etter hva det gjorde, som følger enheten; pek på det for å se hvem som skjøt.",
+  "far.hitMarksTitle": "Merket hvert skudd satte på en enhet, på overflaten der det traff, i størrelse etter kaliber og form etter virkning, som følger enheten; pek på det for å se hvem som skjøt.",
   "far.hitMarkSeconds": "Treff blir stående",
-  "far.hitMarkWhole": "Hele kampen"
+  "far.hitMarkWhole": "Hele livet",
+  "far.hitMarkFloat": "Svevende merker",
+  "far.hitMarkFloatTitle": "Også et merke over hvert ferskt treff, vendt mot deg, i 10 s.",
+  "far.hitLookHole": "Hull: gikk gjennom",
+  "far.hitLookSplash": "Lyst sprut: gikk ikke gjennom",
+  "far.hitLookGouge": "Fure: gled av (trolig en rikosjett)",
+  "far.hitLookBullet": "Hull: utfall ukjent",
+  "far.hitLookRing": "Ring: hva det gjorde",
+  "far.hitCalibre": "Kaliber"
 }

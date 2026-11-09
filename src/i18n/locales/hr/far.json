@@ -26,7 +26,15 @@
   "far.fires": "Požari na jedinicama",
   "far.firesTitle": "Plamen i dim gdje gori dio jedinice, od zapaljenja do gašenja, uključujući olupine.",
   "far.hitMarks": "Pogoci na jedinicama",
-  "far.hitMarksTitle": "Oznaka gdje je svaki hitac pogodio jedinicu, obojena prema učinku, kreće se s jedinicom; pokažite na nju da vidite tko je pucao.",
+  "far.hitMarksTitle": "Trag svakog hica na jedinici, na njezinoj površini gdje je pogodio, veličine po kalibru i oblika po učinku, kreće se s jedinicom; pokažite na njega da vidite tko je pucao.",
   "far.hitMarkSeconds": "Pogoci ostaju",
-  "far.hitMarkWhole": "Cijeli meč"
+  "far.hitMarkWhole": "Cijeli život",
+  "far.hitMarkFloat": "Plutajuće oznake",
+  "far.hitMarkFloatTitle": "I oznaka iznad svakog svježeg pogotka, okrenuta prema vama, 10 s.",
+  "far.hitLookHole": "Rupa: probijeno",
+  "far.hitLookSplash": "Svijetli trag: nije probijeno",
+  "far.hitLookGouge": "Brazda: okliznuo (vjerojatno rikošet)",
+  "far.hitLookBullet": "Rupa: ishod nepoznat",
+  "far.hitLookRing": "Prsten: što je učinio",
+  "far.hitCalibre": "Kalibar"
 }

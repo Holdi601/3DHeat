@@ -26,7 +26,15 @@
   "far.fires": "Incendies sur les unités",
   "far.firesTitle": "Flammes et fumée là où une partie d'une unité brûle, du départ du feu jusqu'à son extinction, épaves comprises.",
   "far.hitMarks": "Impacts sur les unités",
-  "far.hitMarksTitle": "Une marque là où chaque tir a touché une unité, colorée selon son effet, qui suit l’unité ; pointez-la pour voir qui a tiré.",
+  "far.hitMarksTitle": "La marque laissée par chaque tir sur une unité, à sa surface là où il a touché, de taille selon le calibre et de forme selon l’effet, qui suit l’unité ; pointez-la pour voir qui a tiré.",
   "far.hitMarkSeconds": "Durée des impacts",
-  "far.hitMarkWhole": "Tout le match"
+  "far.hitMarkWhole": "Toute la vie",
+  "far.hitMarkFloat": "Marqueurs flottants",
+  "far.hitMarkFloatTitle": "Aussi un marqueur au-dessus de chaque impact récent, tourné vers vous, pendant 10 s.",
+  "far.hitLookHole": "Trou : a pénétré",
+  "far.hitLookSplash": "Éclat brillant : n’a pas pénétré",
+  "far.hitLookGouge": "Sillon : a glissé (sans doute un ricochet)",
+  "far.hitLookBullet": "Trou : effet inconnu",
+  "far.hitLookRing": "Anneau : ce qu’il a fait",
+  "far.hitCalibre": "Calibre"
 }

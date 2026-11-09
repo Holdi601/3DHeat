@@ -26,7 +26,15 @@
   "far.fires": "Gaisrai vienetuose",
   "far.firesTitle": "Liepsnos ir dūmai ten, kur dega vieneto dalis, nuo užsiliepsnojimo iki užgesimo, įskaitant nuolaužas.",
   "far.hitMarks": "Pataikymai į vienetus",
-  "far.hitMarksTitle": "Žymė ten, kur kiekvienas šūvis pataikė į vienetą, nuspalvinta pagal poveikį ir judanti kartu su vienetu; užveskite žymeklį, kad pamatytumėte, kas šovė.",
+  "far.hitMarksTitle": "Žymė, kurią kiekvienas šūvis paliko vienete, jo paviršiuje pataikymo vietoje, dydis pagal kalibrą ir forma pagal poveikį, juda kartu su vienetu; užveskite žymeklį, kad pamatytumėte, kas šovė.",
   "far.hitMarkSeconds": "Pataikymai lieka",
-  "far.hitMarkWhole": "Visos rungtynės"
+  "far.hitMarkWhole": "Visas gyvenimas",
+  "far.hitMarkFloat": "Plaukiojančios žymės",
+  "far.hitMarkFloatTitle": "Dar žymė virš kiekvieno naujo pataikymo, atsukta į jus, 10 s.",
+  "far.hitLookHole": "Skylė: pramušė",
+  "far.hitLookSplash": "Ryškus pėdsakas: nepramušė",
+  "far.hitLookGouge": "Vaga: nuslydo (greičiausiai rikošetas)",
+  "far.hitLookBullet": "Skylė: rezultatas nežinomas",
+  "far.hitLookRing": "Žiedas: ką padarė",
+  "far.hitCalibre": "Kalibras"
 }

@@ -26,7 +26,15 @@
   "far.fires": "Branden op eenheden",
   "far.firesTitle": "Vlammen en rook waar een deel van een eenheid brandt, vanaf het vlamvatten tot het gedoofd is, wrakken inbegrepen.",
   "far.hitMarks": "Treffers op eenheden",
-  "far.hitMarksTitle": "Een markering waar elk schot een eenheid trof, gekleurd naar wat het deed, die met de eenheid meebeweegt; wijs ernaar om te zien wie schoot.",
+  "far.hitMarksTitle": "Het spoor dat elk schot op een eenheid achterliet, op het oppervlak waar het trof, groot naar het kaliber en gevormd naar wat het deed, dat met de eenheid meebeweegt; wijs ernaar om te zien wie schoot.",
   "far.hitMarkSeconds": "Treffers blijven",
-  "far.hitMarkWhole": "Hele wedstrijd"
+  "far.hitMarkWhole": "Heel het leven",
+  "far.hitMarkFloat": "Zwevende markeringen",
+  "far.hitMarkFloatTitle": "Ook een markering boven elke verse treffer, naar je toe gedraaid, 10 s lang.",
+  "far.hitLookHole": "Gat: ging erdoor",
+  "far.hitLookSplash": "Heldere spat: ging er niet door",
+  "far.hitLookGouge": "Groef: gleed af (waarschijnlijk een ricochet)",
+  "far.hitLookBullet": "Gat: uitkomst onbekend",
+  "far.hitLookRing": "Ring: wat het deed",
+  "far.hitCalibre": "Kaliber"
 }

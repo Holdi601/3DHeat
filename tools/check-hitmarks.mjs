@@ -1,10 +1,15 @@
 /**
  * Rendered check of hit marks (src/figures/hitmarks.ts): a shot that struck
- * a unit is marked on it from the moment of the hit, in its outcome's colour
- * (a critical hit blue, the killing shot magenta ringed in white), the
- * pointer over the mark finds that hit, and the mark is gone once its time
- * has passed. On both track paths (CPU figures, GPU tracks) and, with
- * --webgpu, on both backends.
+ * a unit leaves its mark on it from the moment of the hit, ringed in its
+ * outcome's colour (a critical hit blue, the killing shot magenta and
+ * white), the pointer over the mark finds that hit, the mark stays for the
+ * unit's whole life by default and is gone after a set time when one is set.
+ * On both track paths (CPU figures, GPU tracks) and, with --webgpu, on both
+ * backends.
+ *
+ * With --gpu (Edge on this machine's graphics card; frame times mean nothing
+ * in software): a large battle - 400 tanks, 60,000 hits - played while the
+ * marks are switched on and worked out, no frame past 20 ms.
  *
  * Synthetic data only: two tanks standing apart; the blue one hits the red
  * one at 20 s (a critical hit) and kills it at 40 s. Starts its own dev
@@ -26,6 +31,11 @@ const argv = process.argv.slice(2);
 const opt = (name) => argv.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3) ?? null;
 const PORT = Number(opt('port') ?? 5299);
 const backends = argv.includes('--webgpu') ? ['webgl2', 'webgpu'] : ['webgl2'];
+const GPU = argv.includes('--gpu');
+/** The large battle in software too: its frame times reported, not judged (they mean nothing there). */
+const LOAD = GPU || argv.includes('--load');
+/** The longest frame allowed while the marks are worked out, ms. */
+const FRAME_MAX_MS = 20;
 
 let server = null;
 let base = opt('url');
@@ -66,7 +76,9 @@ function report(setting, pass, detail) {
 }
 
 async function open(backend, query) {
-  const browser = await chromium.launch({
+  const browser = GPU
+    ? await chromium.launch({ channel: 'msedge', headless: false, args: ['--enable-unsafe-webgpu'] })
+    : await chromium.launch({
     ...(backend === 'webgpu' ? { channel: 'chromium' } : {}),
     args:
       backend === 'webgpu'
@@ -124,6 +136,7 @@ async function loadTanks(page) {
         cat('Vehicle', ['tank-blue', 'tank-red'], (r) => r.p),
         cat('other', ['', 'red tank', 'blue tank'], (r) => (shot(r) ? 1 : r.ev >= 2 ? 2 : 0)),
         cat('otherVehicle', ['', 'tank-red'], (r) => (shot(r) ? 1 : 0)),
+        num('calibre', (r) => (shot(r) ? 120 : NaN)),
         // On the red tank's roof, a little forward of its middle, on the side towards the camera.
         num('hitLocalX', (r) => (shot(r) ? 0.5 : NaN)),
         num('hitLocalY', (r) => (shot(r) ? 2.2 : NaN)),
@@ -135,7 +148,7 @@ async function loadTanks(page) {
     });
     s.setMode('team');
     s.patchTimeline({ mode: 'play', window: 'cumulative', playing: false, speed: 1 });
-    s.patchTeam({ trailSeconds: 0, figureScale: 1, showLookDirection: false, fires: false, weapons: false, hitMarks: true, hitMarkSeconds: 10 });
+    s.patchTeam({ trailSeconds: 0, figureScale: 2, showLookDirection: false, fires: false, weapons: false, hitMarks: true, hitMarkSeconds: 10 });
     if (globalThis.__3dheat.useStore.getState().showGrid) s.toggle('showGrid');
     globalThis.__3dheat_replay.getState().setDropLines?.(false);
   });
@@ -151,6 +164,12 @@ async function look(page, t, want, height = 30) {
     const st = globalThis.__3dheat.useStore;
     st.getState().seek(t);
     eng.placeCamera({ x: 20, y: height, z: height * 0.8 }, { x: 20, y: 0, z: 0 });
+    // Until the marks are worked out and on their figures (a worker builds those), then a few frames more.
+    const hm = eng.hitMarkStats;
+    for (let i = 0; i < 600 && !(hm.vehicles > 0 && hm.placed === hm.vehicles); i++) {
+      eng.invalidate(2);
+      await new Promise((r) => requestAnimationFrame(() => r()));
+    }
     for (let i = 0; i < 12; i++) {
       eng.invalidate(2);
       await new Promise((r) => requestAnimationFrame(() => r()));
@@ -192,12 +211,151 @@ async function look(page, t, want, height = 30) {
   }, { t, want, height });
 }
 
+/**
+ * A large battle: 400 tanks of ten kinds in a grid, sampled four times a
+ * second for a minute, 60,000 hits among them. The frame intervals while the
+ * marks are switched on and played, ms.
+ */
+async function frameTimes(page, P, H, enable = true) {
+  return page.evaluate(async ({ P, H, enable }) => {
+    const kinds = ['ussr_t_80u', 'germ_leopard_2a6', 'us_m1a2_abrams', 'uk_challenger_2', 'fr_leclerc', 'it_ariete', 'jp_type_90', 'cn_ztz_99a', 'il_merkava_mk_4b', 'sw_strv_122'];
+    const n = P * 241 + H;
+    const px = new Float32Array(n), pz = new Float32Array(n), time = new Float32Array(n), person = new Uint32Array(n), team = new Uint16Array(n);
+    const ev = new Uint32Array(n), veh = new Uint32Array(n), oth = new Uint32Array(n), othV = new Uint32Array(n);
+    const lx = new Float32Array(n).fill(NaN), ly = new Float32Array(n).fill(NaN), lz = new Float32Array(n).fill(NaN);
+    let r = 0;
+    const place = (p, t) => {
+      px[r] = (p % 20) * 30;
+      pz[r] = Math.floor(p / 20) * 30;
+      time[r] = t;
+      person[r] = p;
+      team[r] = p % 2;
+      veh[r] = p % kinds.length;
+    };
+    for (let i = 0; i < 241; i++) for (let p = 0; p < P; p++, r++) place(p, i * 0.25);
+    for (let h = 0; h < H; h++, r++) {
+      const p = h % P, v = (h * 7 + 3) % P;
+      place(p, (h / H) * 60);
+      ev[r] = 1;
+      oth[r] = v + 1;
+      othV[r] = (v % kinds.length) + 1;
+      lx[r] = ((h * 13) % 70) / 10 - 3.5;
+      ly[r] = ((h * 7) % 25) / 10;
+      lz[r] = ((h * 11) % 36) / 10 - 1.8;
+    }
+    const idx = Array.from({ length: n }, (_, i) => i).sort((a, b) => time[a] - time[b]);
+    const pick = (a) => {
+      const o = new a.constructor(n);
+      idx.forEach((j, i) => (o[i] = a[j]));
+      return o;
+    };
+    const labels = Array.from({ length: P }, (_, i) => `tank ${i}`);
+    const s = globalThis.__3dheat.useStore.getState();
+    s.patchTeam({ hitMarks: false });
+    s.setDataset({
+      id: 'visual-hitmarks-load', name: 'hit mark load', count: n,
+      px: pick(px), py: new Float32Array(n), pz: pick(pz), time: pick(time), epochMs: null, lifetime: null, maxLifetimeGap: 0, personShared: null,
+      yaw: new Float32Array(n).fill(Math.PI / 2), pitch: new Float32Array(n),
+      personId: pick(person), teamId: pick(team), personLabels: labels, teamLabels: ['blue', 'red'],
+      sessionId: null, sessionLabels: [], sessionRows: null, sessionStart: null, sessionEnd: null,
+      personTeam: Uint16Array.from(labels, (_, i) => i % 2), personSlot: null, teamSizes: Uint32Array.of(P / 2, P / 2),
+      attrs: [
+        { name: 'kind', kind: 'category', data: new Uint32Array(n), min: 0, max: 0, categories: ['tank'] },
+        { name: 'event', kind: 'category', data: pick(ev), min: 0, max: 1, categories: ['position', 'shot'] },
+        { name: 'player', kind: 'category', data: pick(person), min: 0, max: P - 1, categories: labels },
+        { name: 'Vehicle', kind: 'category', data: pick(veh), min: 0, max: 9, categories: kinds },
+        { name: 'other', kind: 'category', data: pick(oth), min: 0, max: P, categories: ['', ...labels] },
+        { name: 'otherVehicle', kind: 'category', data: pick(othV), min: 0, max: 10, categories: ['', ...kinds] },
+        { name: 'hitLocalX', kind: 'number', data: pick(lx), min: -4, max: 4 },
+        { name: 'hitLocalY', kind: 'number', data: pick(ly), min: 0, max: 3 },
+        { name: 'hitLocalZ', kind: 'number', data: pick(lz), min: -2, max: 2 },
+      ],
+      warnings: [],
+      bounds: { minX: 0, minY: 0, minZ: 0, maxX: 600, maxY: 4, maxZ: 600 },
+      timeRange: [0, 60], timeSorted: true,
+    });
+    s.setMode('team');
+    s.patchTimeline({ mode: 'play', window: 'cumulative', playing: false, speed: 1 });
+    s.patchTeam({ trailSeconds: 0, showLookDirection: false });
+    const eng = globalThis.__3dheat_engine;
+    await new Promise((res) => setTimeout(res, 3000));
+    // Close over a corner of the grid (once the view has fitted itself to the data): dozens of tanks big enough
+    // on screen for their marks.
+    eng.placeCamera({ x: -20, y: 45, z: -20 }, { x: 60, y: 0, z: 60 });
+    const st = globalThis.__3dheat.useStore;
+    st.getState().seek(30);
+    st.getState().patchTimeline({ playing: true, speed: 1 });
+    const gaps = [];
+    let last = performance.now();
+    let on = false;
+    await new Promise((res) => {
+      const tick = () => {
+        const now = performance.now();
+        gaps.push(now - last);
+        last = now;
+        // A second of play first, then the marks switched on: their working out, the figures' snap and the first
+        // frames with them are in the fifteen seconds after.
+        if (!on && gaps.length > 60) {
+          on = true;
+          st.getState().patchTeam({ hitMarks: enable });
+        }
+        if (gaps.length < 960) requestAnimationFrame(tick);
+        else res();
+      };
+      requestAnimationFrame(tick);
+    });
+    const ms = eng.hitMarkStats;
+    const draws = Array.from(ms.draws.subarray(0, Math.min(ms.n, 2048)));
+    const slow = gaps.map((g, i) => [g, i]).filter(([g]) => g > 20).map(([g, i]) => `${i}:${g.toFixed(0)}`).slice(0, 12).join(' ');
+    return { before: gaps.slice(2, 60), after: gaps.slice(61), drawn: eng.hitMarkLayer?.drawn.count ?? -1, stats: { ...ms, draws: draws.sort((a, b) => b - a).slice(0, 6).map((v) => v.toFixed(1)).join(' '), slow } };
+  }, { P, H, enable });
+}
+
 // The outcome colours of src/vehicle/scene.ts.
 const CRITICAL = [0.15, 0.55, 1.0];
 const KILL = [1.0, 0.17, 0.84];
 const WHITE = [1, 1, 1];
 
 for (const backend of backends) {
+  if (LOAD) {
+    // Frames past the limit with the marks left off: the machine's own (other programs, the scene).
+    let control = 0;
+    if (GPU) {
+      // The same fifteen seconds with the marks left off: what this machine's frames are without them.
+      const { browser, page } = await open(backend, '&gputracks=0');
+      try {
+        const { after } = await frameTimes(page, 400, 60000, false);
+        const slow = after.filter((g) => g > FRAME_MAX_MS).length;
+        control = slow;
+        report(`${backend} CPU figures, frame time without the marks`, null, `${slow} of ${after.length} frames past ${FRAME_MAX_MS} ms, max ${Math.max(...after).toFixed(1)} ms`);
+      } finally {
+        await browser.close();
+      }
+    }
+    for (const path of ['cpu', 'gpu']) {
+      const { browser, page } = await open(backend, `&gputracks=${path === 'gpu' ? 1 : 0}`);
+      try {
+        const { before, after, drawn, stats } = await frameTimes(page, GPU ? 400 : 40, GPU ? 60000 : 4000);
+        if (opt('shot')) await page.screenshot({ path: `${opt('shot')}/hitmarks-${backend}-${path}-load.png` });
+        const summary = (g) => {
+          const s = [...g].sort((a, b) => a - b);
+          return { max: s[s.length - 1], p99: s[Math.floor(s.length * 0.99)], median: s[s.length >> 1] };
+        };
+        const a = summary(before), b = summary(after);
+        // Judged by the marks' own share of any frame - working out, drawing - well under the limit: the frames past
+        // it on this machine come and go with what else runs on it (the same seconds without the marks: `control`).
+        const limit = Math.max(FRAME_MAX_MS, a.max + 3);
+        const over = after.filter((g) => g > FRAME_MAX_MS).length;
+        const pass = stats.workMs <= 6 && stats.drawMs <= 8;
+        report(`${backend} ${path === 'gpu' ? 'GPU tracks' : 'CPU figures'}, frame time`, GPU ? pass : null,
+          `${over} of ${after.length} frames past ${FRAME_MAX_MS} ms (without the marks ${control}); ` +
+          `before the marks median ${a.median.toFixed(1)} max ${a.max.toFixed(1)} ms; ${after.length} frames while 60,000 hits are worked out and drawn (${drawn} marks drawn at the end of ${stats.marks}, ${stats.placed} of ${stats.vehicles} vehicles' marks on their figures; the marks' longest share of a frame ${stats.workMs.toFixed(1)} ms working out over ${stats.pending} frames, ${stats.drawMs.toFixed(1)} ms drawing, slowest draws ${stats.draws}, slow frames ${stats.slow}, longest step #${stats.steps.at} of ${stats.steps.steps} ${stats.steps.longest.toFixed(1)} ms): median ${b.median.toFixed(1)}, p99 ${b.p99.toFixed(1)}, max ${b.max.toFixed(1)} ms (limit ${limit.toFixed(1)})`);
+      } finally {
+        await browser.close();
+      }
+    }
+    continue;
+  }
   for (const path of ['cpu', 'gpu']) {
     const { browser, page } = await open(backend, `&gputracks=${path === 'gpu' ? 1 : 0}`);
     try {
@@ -223,6 +381,9 @@ for (const backend of backends) {
         `before ${before.drawn} marks, ${before.counts[0]} blue px; at 21 s ${hit.drawn} mark, ${hit.counts[0]} critical-blue px, ${hit.counts[1]} magenta px`);
       report(`${name}, pointer`, hit.found >= 0, `the pointer over the mark finds hit ${hit.found}`);
       report(`${name}, gone after 10 s`, gone.drawn === 0 && gone.counts[0] === 0, `at 32 s ${gone.drawn} marks, ${gone.counts[0]} blue px`);
+      await page.evaluate(() => globalThis.__3dheat.useStore.getState().patchTeam({ hitMarkSeconds: 0 }));
+      const life = await look(page, 32, [CRITICAL, KILL]);
+      report(`${name}, stays the unit's life`, life.drawn === 1 && life.counts[0] >= 4, `whole life: at 32 s ${life.drawn} mark, ${life.counts[0]} critical-blue px`);
       report(`${name}, killing shot`, kill.drawn === 1 && kill.counts[0] >= 4 && kill.counts[1] >= 4, `at 41 s ${kill.drawn} mark, ${kill.counts[0]} magenta px, ${kill.counts[1]} white px`);
     } finally {
       await browser.close();

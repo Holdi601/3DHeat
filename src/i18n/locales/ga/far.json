@@ -26,7 +26,15 @@
   "far.fires": "Tinte ar aonaid",
   "far.firesTitle": "Lasracha agus deatach san áit a bhfuil cuid d'aonad ar lasadh, ón uair a théann sé trí thine go dtí go múchtar é, raiceanna san áireamh.",
   "far.hitMarks": "Buillí ar aonaid",
-  "far.hitMarksTitle": "Marc san áit ar bhuail gach urchar aonad, daite de réir a ndearna sé, ag gluaiseacht leis an aonad; dírigh air chun a fheiceáil cé a scaoil é.",
+  "far.hitMarksTitle": "An marc a d'fhág gach urchar ar aonad, ar a dhromchla san áit ar bhuail sé, de mhéid de réir an chalabra agus de chruth de réir a ndearna sé, ag gluaiseacht leis an aonad; dírigh air chun a fheiceáil cé a scaoil.",
   "far.hitMarkSeconds": "Fanann na buillí",
-  "far.hitMarkWhole": "An cluiche ar fad"
+  "far.hitMarkWhole": "An saol ar fad",
+  "far.hitMarkFloat": "Marcóirí ar snámh",
+  "far.hitMarkFloatTitle": "Marcóir freisin os cionn gach buille úir, iompaithe chugat, ar feadh 10 s.",
+  "far.hitLookHole": "Poll: chuaigh tríd",
+  "far.hitLookSplash": "Splais gheal: níor chuaigh tríd",
+  "far.hitLookGouge": "Clais: shleamhnaigh (preabadh is dócha)",
+  "far.hitLookBullet": "Poll: toradh anaithnid",
+  "far.hitLookRing": "Fáinne: a ndearna sé",
+  "far.hitCalibre": "Calabra"
 }

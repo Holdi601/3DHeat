@@ -26,7 +26,15 @@
   "far.fires": "Palot yksiköissä",
   "far.firesTitle": "Liekit ja savu siellä, missä yksikön osa palaa, syttymisestä sammumiseen, myös hylyissä.",
   "far.hitMarks": "Osumat yksiköihin",
-  "far.hitMarksTitle": "Merkki kohdassa, johon kukin laukaus osui yksikköön, väritetty sen vaikutuksen mukaan, ja se liikkuu yksikön mukana; osoita sitä nähdäksesi ampujan.",
+  "far.hitMarksTitle": "Jälki, jonka kukin laukaus jätti yksikköön, sen pinnalle osumakohtaan, kooltaan kaliiperin ja muodoltaan vaikutuksen mukaan, liikkuu yksikön mukana; osoita sitä nähdäksesi ampujan.",
   "far.hitMarkSeconds": "Osumat näkyvät",
-  "far.hitMarkWhole": "Koko ottelu"
+  "far.hitMarkWhole": "Koko elinaika",
+  "far.hitMarkFloat": "Kelluvat merkit",
+  "far.hitMarkFloatTitle": "Lisäksi merkki jokaisen tuoreen osuman yllä, sinuun päin, 10 s ajan.",
+  "far.hitLookHole": "Reikä: läpäisi",
+  "far.hitLookSplash": "Kirkas roiske: ei läpäissyt",
+  "far.hitLookGouge": "Ura: kimposi (luultavasti rikošetti)",
+  "far.hitLookBullet": "Reikä: tulos ei tiedossa",
+  "far.hitLookRing": "Rengas: mitä se teki",
+  "far.hitCalibre": "Kaliiperi"
 }

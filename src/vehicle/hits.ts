@@ -119,6 +119,8 @@ export interface VehicleHit {
   toDeath: number | null;
   /** The killing shot's share of all the damage that life took (0..1); null where damage is not known. */
   share: number | null;
+  /** The shell's calibre, mm, where the data says (War Thunder: where a kill names a hit of the same shell). */
+  calibre: number | null;
   /** Modules destroyed right after it (War Thunder). */
   modules: number;
   kind: HitKind;
@@ -204,6 +206,8 @@ const WOWS_IMPACT = /^impact$/i;
 const MODULE = /^module_destroyed$/i;
 const MARK = /^hit_(critical|severe)$/i;
 const PART = /(\d+)\s*$/;
+/** The War Thunder converter's `hitOutcome` as an outcome: a penetration did damage, a non-penetration none. */
+const WT_OUTCOME: Record<string, Outcome> = { kill: 'kill', critical: 'critical', penetration: 'damage', nonpenetration: 'nodamage' };
 
 /** A unit vector from three columns at a row, or null. */
 function unit(a: Num, b: Num, c: Num, r: number): Vec3 | null {
@@ -217,6 +221,25 @@ function unit(a: Num, b: Num, c: Num, r: number): Vec3 | null {
  * the rows; nothing is kept of rows that are not hits.
  */
 export function hitsFromDataset(d: Dataset): HitSet {
+  return drain(hitsSteps(d));
+}
+
+/** Runs a generator of steps to its end. */
+export function drain<T>(g: Generator<void, T, void>): T {
+  for (;;) {
+    const r = g.next();
+    if (r.done) return r.value;
+  }
+}
+
+/** Rows a step of `hitsSteps` goes through before it yields. */
+const STEP_ROWS = 2048;
+
+/**
+ * `hitsFromDataset` in steps: it yields every `STEP_ROWS` rows, so a caller
+ * that must keep its frames short can spread the work over several.
+ */
+export function* hitsSteps(d: Dataset): Generator<void, HitSet, void> {
   const event = text(d, 'event', 'events', 'event type', 'eventType');
   const player = text(d, 'player', 'name');
   const other = text(d, 'other');
@@ -242,6 +265,9 @@ export function hitsFromDataset(d: Dataset): HitSet {
   const dz = num(d, 'hitDirZ') ?? NONE;
   const partCol = num(d, 'hitPart') ?? NONE;
   const flagCol = num(d, 'hitFlag') ?? NONE;
+  // War Thunder's converter: what the hit did, as the server sent it, and the shell's calibre.
+  const wtOutcome = text(d, 'hitOutcome');
+  const calibreCol = num(d, 'calibre') ?? NONE;
   const comp = num(d, 'hitComponent') ?? NONE;
   const bu = num(d, 'hitU') ?? NONE, bv = num(d, 'hitV') ?? NONE, bw = num(d, 'hitW') ?? NONE;
   const eu = num(d, 'hitExitU') ?? NONE, ev_ = num(d, 'hitExitV') ?? NONE, ew = num(d, 'hitExitW') ?? NONE;
@@ -290,6 +316,7 @@ export function hitsFromDataset(d: Dataset): HitSet {
     // 1: a row seen, 2: a row with the name seen.
     const seen = new Uint8Array(vehicleAttr.categories!.length);
     for (let r = 0; r < d.count; r++) {
+      if (r % STEP_ROWS === STEP_ROWS - 1) yield;
       const id = ids[r];
       if (seen[id] === 2) continue;
       const v = vehicleAttr.categories![id];
@@ -325,6 +352,7 @@ export function hitsFromDataset(d: Dataset): HitSet {
     armorDamage: null,
     healthAfter: null,
     outcome: 'hit',
+    calibre: null,
     fatal: false,
     killingShot: false,
     toDeath: null,
@@ -343,6 +371,7 @@ export function hitsFromDataset(d: Dataset): HitSet {
 
   // A Tacview recording's hits are found apart (`acmiHits.ts`): the rows go round once there.
   for (let r = 0; r < (acmi ? 0 : d.count); r++) {
+    if (r % STEP_ROWS === STEP_ROWS - 1) yield;
     const ev = event(r);
     const t = time ? time[r] : 0;
     if (ocap) {
@@ -575,10 +604,13 @@ export function hitsFromDataset(d: Dataset): HitSet {
       local,
       part: fin(part),
       code: wt ? (Number.isFinite(flag) ? String(flag) : Number.isFinite(part) ? String(Math.floor(part / 256)) : '') : reason(r),
+      outcome: wt ? (WT_OUTCOME[wtOutcome(r)] ?? 'hit') : 'hit',
+      calibre: fin(calibreCol(r)),
     });
     sources.add(wt ? 'warthunder' : WOWS_IMPACT.test(ev) ? 'wows' : 'generic');
   }
 
+  yield;
   if (acmi) {
     const found = acmiHits(d);
     for (const h of found.hits) hits.push(h);
@@ -586,11 +618,14 @@ export function hitsFromDataset(d: Dataset): HitSet {
     if (found.hits.length) sources.add('acmi');
   }
 
+  yield;
   // Hits by life (or by victim where lives are not named), in time order, for deaths, marks and modules.
   const byLife = new Map<string, VehicleHit[]>();
   const byVictim = new Map<string, VehicleHit[]>();
   const keyOf = (lifeId: string, victim: string, m: string) => (lifeId ? `L${m}\u0000${lifeId}` : `V${m}\u0000${victim}`);
+  let step = 0;
   for (const h of hits) {
+    if (++step % STEP_ROWS === 0) yield;
     for (const [map, k] of [
       [byLife, keyOf(h.life, h.victim, h.match)],
       [byVictim, `${h.match}\u0000${h.victim}`],
@@ -600,8 +635,19 @@ export function hitsFromDataset(d: Dataset): HitSet {
       list.push(h);
     }
   }
-  for (const list of byLife.values()) list.sort((a, b) => a.time - b.time);
-  for (const list of byVictim.values()) list.sort((a, b) => a.time - b.time);
+  // Sorted a few thousand hits a step: many lives' sorts at once are too long for one.
+  let sorted = 0;
+  for (const map of [byLife, byVictim]) {
+    for (const list of map.values()) {
+      list.sort((a, b) => a.time - b.time);
+      sorted += list.length;
+      if (sorted >= STEP_ROWS) {
+        sorted = 0;
+        yield;
+      }
+    }
+  }
+  yield;
   const better = (h: VehicleHit, o: Outcome) => {
     if (RANK[o] < RANK[h.outcome]) h.outcome = o;
   };
@@ -699,9 +745,12 @@ export function hitsFromDataset(d: Dataset): HitSet {
     }
   }
 
+  yield;
   hits.forEach((h, i) => (h.id = i));
   const vehicles = new Map<string, VehicleInfo>();
+  let counted = 0;
   for (const h of hits) {
+    if (++counted % STEP_ROWS === 0) yield;
     if (!h.vehicle) continue;
     let v = vehicles.get(h.vehicle);
     if (!v) {
@@ -781,9 +830,14 @@ const cache = new WeakMap<Dataset, HitSet>();
 
 /** `hitsFromDataset`, once per dataset. */
 export function hitsOf(d: Dataset): HitSet {
+  return drain(hitsOfSteps(d));
+}
+
+/** `hitsOf` in steps (`hitsSteps`): the dataset's hits, worked out once whichever way they are asked for. */
+export function* hitsOfSteps(d: Dataset): Generator<void, HitSet, void> {
   let s = cache.get(d);
   if (!s) {
-    s = hitsFromDataset(d);
+    s = yield* hitsSteps(d);
     cache.set(d, s);
   }
   return s;

@@ -26,7 +26,15 @@
   "far.fires": "ユニットの火災",
   "far.firesTitle": "ユニットの部位が燃えている場所に、発火から鎮火まで炎と煙を表示します。残骸も含みます。",
   "far.hitMarks": "ユニットへの命中",
-  "far.hitMarksTitle": "各弾がユニットに当たった位置に、その結果で色分けした印をユニットと一緒に表示します。ポインターを合わせると撃った相手がわかります。",
+  "far.hitMarksTitle": "各弾がユニットに残した痕を、命中した表面に口径に応じた大きさと結果に応じた形で表示し、ユニットと一緒に動きます。ポインターを合わせると撃った相手がわかります。",
   "far.hitMarkSeconds": "命中の表示時間",
-  "far.hitMarkWhole": "試合全体"
+  "far.hitMarkWhole": "撃破まで",
+  "far.hitMarkFloat": "浮かぶマーカー",
+  "far.hitMarkFloatTitle": "新しい命中の上にもこちらを向いたマーカーを10秒間表示します。",
+  "far.hitLookHole": "穴: 貫通",
+  "far.hitLookSplash": "明るい痕: 非貫通",
+  "far.hitLookGouge": "溝: 滑った (跳弾の可能性)",
+  "far.hitLookBullet": "穴: 結果不明",
+  "far.hitLookRing": "輪: 結果の色",
+  "far.hitCalibre": "口径"
 }

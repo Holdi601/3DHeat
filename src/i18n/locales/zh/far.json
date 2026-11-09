@@ -26,7 +26,15 @@
   "far.fires": "单位起火",
   "far.firesTitle": "在单位部件燃烧处显示火焰和烟雾，从起火到熄灭，包括残骸。",
   "far.hitMarks": "单位中弹",
-  "far.hitMarksTitle": "在每发弹药命中单位的位置显示按结果着色的标记，并随单位移动；指向标记可查看射击者。",
+  "far.hitMarksTitle": "每发弹药在单位上留下的痕迹，位于命中处的表面，大小取决于口径，形状取决于结果，并随单位移动；指向它可查看射击者。",
   "far.hitMarkSeconds": "中弹标记保留",
-  "far.hitMarkWhole": "整场比赛"
+  "far.hitMarkWhole": "整个生命周期",
+  "far.hitMarkFloat": "浮动标记",
+  "far.hitMarkFloatTitle": "同时在每个新命中上方显示朝向你的标记，持续10秒。",
+  "far.hitLookHole": "弹孔：击穿",
+  "far.hitLookSplash": "亮斑：未击穿",
+  "far.hitLookGouge": "沟痕：滑开（可能是跳弹）",
+  "far.hitLookBullet": "弹孔：结果未知",
+  "far.hitLookRing": "圆环：命中结果",
+  "far.hitCalibre": "口径"
 }

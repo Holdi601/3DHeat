@@ -26,7 +26,15 @@
   "far.fires": "Fires on units",
   "far.firesTitle": "Flames and smoke where a unit's part burns, from when it catches fire until it is out, wrecks included.",
   "far.hitMarks": "Hits on units",
-  "far.hitMarksTitle": "A mark where each shot struck a unit, coloured by what it did, riding with the unit; point at one for who fired it.",
+  "far.hitMarksTitle": "The mark each shot left on a unit, on its surface where it struck, sized by the calibre and shaped by what it did, riding with the unit; point at one for who fired it.",
   "far.hitMarkSeconds": "Hits stay",
-  "far.hitMarkWhole": "Whole match"
+  "far.hitMarkWhole": "Whole life",
+  "far.hitMarkFloat": "Floating markers",
+  "far.hitMarkFloatTitle": "A marker over each fresh hit as well, facing you, for 10 s.",
+  "far.hitLookHole": "Hole: got through",
+  "far.hitLookSplash": "Bright splash: did not get through",
+  "far.hitLookGouge": "Gouge: glanced off (likely a ricochet)",
+  "far.hitLookBullet": "Hole: outcome not known",
+  "far.hitLookRing": "Ring: what it did",
+  "far.hitCalibre": "Calibre"
 }
