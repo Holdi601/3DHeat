@@ -1071,6 +1071,8 @@ const SPIT = { cls: 'ww2-fighter', span: 11.23, w: 0.45, h: 0.62, spinner: 0.32,
 A['spitfire-mk-v'] = one({ ...SPIT, length: 9.12, height: 3.02, le: 1.2, canopy: { x: -0.3, length: 1.5, kind: 'framed' }, razor: true, prop: 3.25, blades: 3, rads: [0.75, 1.55, 1.2, 0.2], draw: DRAWN['spitfire-mk-v'] });
 A['spitfire-mk-ix'] = one({ ...SPIT, length: 9.47, height: 3.86, canopy: { x: -0.3, length: 1.5, kind: 'framed' }, razor: true, prop: 3.3, blades: 4, rads: [0.95, 1.55, 1.35, 0.26], draw: DRAWN['spitfire-mk-ix'] });
 A['spitfire-mk-xiv'] = one({ ...SPIT, length: 9.96, height: 3.86, le: 1.6, fin: 1.6, finRoot: 1.5, canopy: { x: -0.4, length: 1.5, kind: 'bubble' }, prop: 3.15, blades: 5, rads: [1.05, 1.55, 1.45, 0.3], draw: DRAWN['spitfire-mk-xiv'], bodies: [bulge(3.6, 2.4, 0.4, 0.12, 0.1, 0.36)] });
+// Seafire F/FR 47: the Griffon 87 turning contra-rotating propellers in a nose 0.5 m longer (10.46 x 11.25 x 3.88 m).
+A['seafire-47'] = one({ ...SPIT, length: 10.46, span: 11.25, height: 3.88, le: 1.6, fin: 1.6, finRoot: 1.5, canopy: { x: -0.4, length: 1.5, kind: 'bubble' }, prop: 3.15, blades: 6, rads: [1.05, 1.55, 1.45, 0.3], draw: sister(DRAWN['spitfire-mk-xiv'], { plug: 0.5, at: 2.0, span: 11.25 / 11.23 }), bodies: [bulge(3.6, 2.4, 0.4, 0.12, 0.1, 0.36)] });
 
 // P-51 Mustang: the belly radiator scoop, a straight square-tipped laminar wing. B: the razorback and the framed
 // (Malcolm) hood (9.83 x 11.28 x 4.16 m); D: the cut-down deck, the bubble and a dorsal fin fillet (9.83 x 11.28 x 4.08 m).
@@ -1809,6 +1811,11 @@ A['ki-83'] = tw({ cls: 'ww2-heavy-fighter', length: 12.5, span: 15.5, height: 4.
 // Whirlwind: a slim body with the bubble hood, Peregrines in long low nacelles, the tailplane high on the fin (9.83 x 13.72 x 3.2 m).
 A['whirlwind'] = tw({ cls: 'ww2-heavy-fighter', length: 9.83, span: 13.72, height: 3.2, w: 0.48, h: 0.62, nose: 'solid', cockpit: 3.3, hoodLen: 1.5, nacR: 0.5, nacY: 0.24, nacBack: 1.1, wingZ: -0.4, finH: 1.7, tailSpan: 4.4, prop: [3.2, 3] });
 A['whirlwind'] = { ...A['whirlwind'], tail: { ...A['whirlwind'].tail, planeUp: 1.6 } };
+// de Havilland Hornet F.3: two Merlins with 12 ft propellers on a slim wooden body, the bubble ahead of the wing,
+// the tailplane on the body (11.18 x 13.72 x 4.32 m; chords from the 33.5 m2 wing area).
+A['hornet'] = tw({ cls: 'ww2-heavy-fighter', length: 11.18, span: 13.72, height: 4.32, w: 0.5, h: 0.65, nose: 'solid', cockpit: 3.0, hoodLen: 1.4, nacR: 0.55, nacY: 0.33, nacBack: 1.2, root: 3.3, tip: 1.4, wingZ: -0.3, finH: 1.9, tailSpan: 5.2, prop: [3.66, 4] });
+// XF5F-1 Skyrocket: two Cyclones on a wing the stubby body barely passes, twin fins (8.75 x 12.8 x 3.45 m).
+A['xf5f'] = tw({ cls: 'ww2-heavy-fighter', length: 8.75, span: 12.8, height: 3.45, w: 0.5, h: 0.65, nose: 'solid', cockpit: 1.2, hoodLen: 1.3, radial: true, nacR: 0.65, nacY: 0.3, nacBack: 1.2, wingZ: -0.2, twinTail: true, finH: 1.4, tailSpan: 4.6, prop: [3.05, 3] });
 // Welkin: a very long, narrow wing, the pressure cabin's small bubble, Merlins, a single fin (12.67 x 21.34 x 4.83 m).
 A['welkin'] = tw({ cls: 'ww2-heavy-fighter', length: 12.67, span: 21.34, height: 4.83, w: 0.55, h: 0.7, nose: 'solid', cockpit: 3.2, hoodLen: 1.4, nacR: 0.58, nacY: 0.22, root: 2.9, tip: 1.0, wingZ: 0.2, finH: 2.1, prop: [3.5, 4] });
 // Ta 154: a high wing, annular-cowled Jumos, the cockpit at the front of a slim body, a single fin (12.45 x 16.3 x 3.5 m).

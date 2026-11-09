@@ -689,6 +689,20 @@ A['f-82e'] = fig({
   glass: [aside(bubble(1.4, -0.4, 1.02, 0.62, 0.62, 0.32), -TWIN_MUSTANG_SIDE), aside(bubble(1.4, -0.4, 1.02, 0.62, 0.62, 0.32), TWIN_MUSTANG_SIDE)],
 });
 
+// Bf 109 Z Zwilling: two Bf 109 F bodies joined by a new wing centre section and one tailplane, the pilot in the left
+// one (8.92 x 13.27 m; the bodies' spacing from the F's 4.4 m outer wing panels, the rest from the F).
+const ZWILLING_SIDE = 1.8;
+A['bf-109z'] = fig({
+  cls: 'ww2-heavy-fighter', length: 8.92, span: 13.27, height: 2.6,
+  body: [[0.4, 0.04, -0.04, 0.04], [0, 0.04, -0.04, 0.04]],
+  wing: [[1.55, 0], [1.55, 2.25], [1.0, 6.635], [-0.2, 6.635], [-0.6, 2.25], [-0.6, 0]], wingUp: -0.4, dihedral: 6,
+  fin: [[-3.0, 0], [-4.4, 0], [-4.3, 1.0], [-3.9, 1.2], [-3.5, 1.0]], finBase: 0.4, twin: 2 * ZWILLING_SIDE,
+  tail: [[-3.3, 0], [-3.3, 2.0], [-3.6, 3.3], [-4.2, 3.3], [-4.4, 2.0], [-4.4, 0]], planeUp: 0.4,
+  bodies: [{ ...fus([[4.46, 0.0, -0.1, 0.12], [4.2, 0.45, -0.45, 0.4], [3.0, 0.55, -0.6, 0.45], [1.5, 0.6, -0.62, 0.45], [0.5, 0.75, -0.6, 0.42], [-1.0, 0.55, -0.5, 0.38], [-2.5, 0.42, -0.35, 0.28], [-4.0, 0.32, -0.05, 0.12], [-4.46, 0.3, 0.1, 0.05]], 2.4, 22), side: ZWILLING_SIDE }],
+  props: [[4.55, ZWILLING_SIDE, -0.05, 3.0, 3]],
+  glass: [aside(bubble(1.0, -0.5, 0.95, 0.55, 0.55, 0.3), -ZWILLING_SIDE)],
+});
+
 // ---------------------------------------------------------------- biplanes and parasols
 
 // Hawker Fury Mk.I: the slim pointed Kestrel nose with the radiator under it, a staggered single-bay biplane with
@@ -1332,6 +1346,18 @@ A['mystere-iv'] = fig({
   nozzles: [[-6.425, 0, 0]], nozzle: 0.75,
   bodies: [spine(1.9, -4.0, 0.86, 0.12, 0.2)],
   glass: [bubble(3.7, 1.9, 1.38, 0.82, 0.88, 0.36)],
+});
+// Mystère II C: the Ouragan's slimmer body on a 30-degree wing (11.7 x 11.13 x 4.25 m, 30.3 m2), the Mystère IV's
+// layout otherwise.
+A['mystere-2'] = fig({
+  cls: 'fighter', length: 11.7, span: 11.13, height: 4.25,
+  body: [[5.85, 0.43, -0.43, 0.43], [5.28, 0.57, -0.59, 0.55], [4.19, 0.68, -0.71, 0.62], [3.1, 0.78, -0.76, 0.66], [1.37, 0.84, -0.78, 0.68], [-0.46, 0.81, -0.76, 0.68], [-2.28, 0.71, -0.66, 0.62], [-4.1, 0.57, -0.52, 0.49], [-5.85, 0.43, -0.38, 0.4]], round: 2,
+  wing: [[1.0, 0], [1.0, 0.72], [-1.8, 5.565], [-2.8, 5.565], [-3.1, 0.72], [-3.1, 0]], wingUp: 0,
+  fin: [[-2.37, 0], [-5.46, 0], [-6.28, 2.3], [-5.28, 2.35]], finBase: 0.5,
+  tail: [[-4.55, 0], [-5.28, 1.85], [-6.01, 1.85], [-6.1, 0]], planeUp: 1.3,
+  nozzles: [[-5.85, 0, 0]], nozzle: 0.7,
+  bodies: [spine(1.7, -3.6, 0.8, 0.12, 0.2)],
+  glass: [bubble(3.4, 1.7, 1.3, 0.78, 0.84, 0.36)],
 });
 A['mystere'] = fig({
   cls: 'fighter', length: 14.13, span: 10.52, height: 4.6,

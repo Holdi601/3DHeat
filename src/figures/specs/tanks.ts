@@ -349,6 +349,9 @@ G['amx-13'] = {
   turret: turret(-0.8, [[-1.6, 0.8], [-1.2, 1.0], [0.6, 1.0], [1.2, 0.6]], [[-1.6, 0.85], [0.6, 0.9], [1.2, 0.5]], 6, 1.15),
   guns: [{ mount: 'turret', length: 4.2, calibre: 0.075, muzzle: true, at: 0.45 }],
 };
+// AMX-VCI with an anti-aircraft turret: the AMX-13's running gear under the carrier's longer, taller hull (5.7 x
+// 2.51 m, the roof about 2.0 m), a small turret with twin 30 mm (turret estimated).
+G['amx-vci-dca'] = { ...G['amx-13'], cls: 'spaa', length: 5.7, hullHeight: 2.0, trackProfile: run(5.55, 0.78, [2.8, 0.6], [-2.8, 0.55], -2.3, 2.3), hullOutline: hull(5.7, 2.51, 2.0, 0.72, 1.6, 1.0, 0.1, 6), turret: turret(-0.6, [[-0.8, 0.7], [0.6, 0.75], [0.8, 0.5]], [[-0.8, 0.55], [0.6, 0.6], [0.8, 0.4]], 8, 0.7), guns: [{ mount: 'turret', count: 2, length: 2.4, calibre: 0.03, spread: 0.9, at: 0.5 }] };
 // Type 61 (hull 6.3 x 2.95 m, 2.49 m), Type 74 (hull 6.7 x 3.18 m, 2.25 m, a low cast dome), Type 90 (hull 7.5 x 3.43 m, 2.3 m, a slab box turret), Type 10 (hull 7.5 x 3.24 m, 2.3 m, an angular wedge).
 // Type 61: its own 6.3 m hull (not the AMX-30's) on six road wheels a side with three return rollers.
 G['type-61'] = { ...G['amx-30'], length: 6.3, width: 2.95, hullHeight: 1.6, roadWheels: 6, roadWheelRadius: 0.33, trackProfile: run(6.1, 0.9, [3.05, 0.62], [-3.05, 0.66], -2.45, 2.4), hullOutline: hull(6.3, 2.95, 1.6, 0.85, 1.5, 0.95, 0.15, 6), turret: turret(0.0, [[-1.6, 0.9], [-1.2, 1.25], [0.6, 1.3], [1.3, 0.95], [1.5, 0.5]], [[-1.6, 0.55], [-1.0, 0.85], [0.5, 0.9], [1.5, 0.45]], 2.6, 1.45), guns: [{ mount: 'turret', length: 4.4, calibre: 0.09, muzzle: true, at: 0.45 }] };

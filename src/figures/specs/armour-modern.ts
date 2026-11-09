@@ -609,6 +609,8 @@ G['brdm-2-malyutka'] = { cls: 'atgm', ...BRDM, missiles: [{ mount: 'hull', rows:
 G['brdm-1'] = { cls: 'scout-car', ...BRDM, length: 5.7, width: 2.25, hullHeight: 1.6, openTop: true, hullOutline: wheeledHull(5.7, 1.6, 1.0, 1.12, 1.6) };
 // AML-90 / Eland-90 (1961): a small 4x4 with the big H-90 turret and its 90 mm (3.79 x 1.97 m, 2.07 m).
 G['aml-90'] = { cls: 'scout-car', chassis: 'wheeled', length: 3.79, width: 1.97, hullHeight: 1.35, axles: 2, axleAt: [0.55, -0.55], wheelRadius: 0.48, hullOutline: wheeledHull(3.79, 1.35, 0.9, 0.98, 1.0, 0.45), turret: wheeledTurret(-0.1, 1.6, 0.85, 0.7), guns: [{ mount: 'turret', length: 2.8, calibre: 0.09, muzzle: true, at: 0.5 }] };
+// Eland 90 Mk 7: the AML-90 built under licence on a hull lengthened to 4.04 m and widened to 2.01 m.
+G['eland-90'] = { ...G['aml-90'], length: 4.04, width: 2.01, hullOutline: wheeledHull(4.04, 1.35, 0.9, 1.0, 1.0, 0.45) };
 // Panhard EBR (1951): a long 8x8 pointed at both ends, the oscillating FL-11 turret with its long gun (6.15 x 2.42 m, 2.32 m).
 G['panhard-ebr'] = { cls: 'scout-car', chassis: 'wheeled', length: 6.15, width: 2.42, hullHeight: 1.5, axles: 4, axleAt: [0.75, 0.25, -0.25, -0.75], wheelRadius: 0.6, hullOutline: { top: [[-3.07, 1.0], [-2.3, 1.5], [2.3, 1.5], [3.07, 1.0]], bottom: [[-3.07, 0.8], [-2.3, 0.55], [2.3, 0.55], [3.07, 0.8]], plan: [[-3.07, 0.8], [-2.3, 1.2], [2.3, 1.2], [3.07, 0.8]], round: 6, stations: 12 }, turret: turret(0.0, [[-1.1, 0.8], [-0.8, 1.0], [0.8, 1.0], [1.1, 0.75]], [[-1.1, 0.5], [0.8, 0.7], [1.1, 0.5]], 4, 1.05), guns: [{ mount: 'turret', length: 3.8, calibre: 0.075, muzzle: true, at: 0.55 }] };
 // AMX-10RC (1981): a boxy 6x6 with a big turret and the 105 mm (6.36 x 2.95 m, 2.66 m).

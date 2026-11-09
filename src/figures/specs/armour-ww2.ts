@@ -2259,6 +2259,8 @@ const barrel = (length: number, calibre: number, up: number, extra: Partial<GunS
 G['pak-40'] = { ...towed('towed-gun', 6.2, 2.08, 0.45, 0.9, [1.0, 0.3, 1.2], barrel(3.4, 0.075, 0.85, { muzzle: true }), true), trailSpread: 65 };
 // Pak 38: the curved shield, the 50 mm L/60 with its brake (4.75 x 1.85 m, 1.05 m).
 G['pak-38'] = { ...towed('towed-gun', 4.75, 1.85, 0.4, 0.9, [0.9, 0.25, 1.05], barrel(2.8, 0.05, 0.75, { muzzle: true }), true), trailSpread: 65 };
+// Type 1 47 mm anti-tank gun: the 47 mm of 53.7 calibres (2.52 m) on a split-trail carriage of the Pak 38's size.
+G['type-1-47mm'] = { ...towed('towed-gun', 4.47, 1.85, 0.4, 0.9, [0.9, 0.25, 1.05], barrel(2.52, 0.047, 0.75, { muzzle: true }), true), trailSpread: 65 };
 // Pak 36: the small shield and the short 37 mm (3.4 x 1.65 m, 1.0 m).
 G['pak-36'] = { ...towed('towed-gun', 3.4, 1.65, 0.35, 0.9, [0.75, 0.25, 1.0], barrel(1.6, 0.037, 0.7)), trailSpread: 60 };
 // ZiS-3: the shield with its sloped top half, the 76 mm with its brake (6.1 x 1.6 m, 1.37 m); ZiS-2 the long 57 mm
