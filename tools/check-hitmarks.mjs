@@ -14,7 +14,13 @@
  * in software): a large battle - 400 tanks, 60,000 hits - played while the
  * marks are switched on and worked out, no frame past 20 ms.
  *
- * Synthetic data only: two tanks standing apart; the blue one hits the red
+ * With --data=<file>: a real battle (a converted replay, kept local) loaded
+ * through the app, played while the marks are switched on and worked out;
+ * judged by the marks' longest step and their share of any frame (the work
+ * goes in slices of at most 2 ms), with the frames past 20 ms beside the same
+ * seconds without the marks.
+ *
+ * Otherwise synthetic data only: two tanks standing apart; the blue one hits the red
  * one at 20 s (a critical hit, APFSDS) and kills it at 40 s (HEAT), both 120 mm. Starts its own dev
  * server on port 5299 and renders in software (SwiftShader).
  *
@@ -23,11 +29,13 @@
  *   --url=http://127.0.0.1:5299/   against a server already running
  *   --port=<n>                     its own server on another port
  *   --shot=<dir>                   save the frames looked at
+ *   --data=<file>                  the real battle's frame times (above)
  *
  * The pure half (the window, the fade, the colours) is
  * src/figures/hitmarks.test.ts.
  */
 import { spawn } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { chromium } from 'playwright';
 
 const argv = process.argv.slice(2);
@@ -39,6 +47,9 @@ const GPU = argv.includes('--gpu');
 const LOAD = GPU || argv.includes('--load');
 /** The longest frame allowed while the marks are worked out, ms. */
 const FRAME_MAX_MS = 20;
+/** A real battle to play (`--data`), and the longest step of the marks' working out allowed on it, ms. */
+const DATA = opt('data');
+const STEP_MAX_MS = 2.5;
 
 let server = null;
 let base = opt('url');
@@ -322,12 +333,73 @@ async function frameTimes(page, P, H, enable = true) {
   }, { P, H, enable });
 }
 
+/**
+ * The real battle (`--data`), loaded through the app, played from its middle:
+ * the frame intervals before and after the marks are switched on (or, with
+ * `enable` false, the same seconds without them), and the marks' own costs.
+ */
+async function battleTimes(page, enable) {
+  const body = readFileSync(DATA);
+  await page.route('**/__hitprobe/battle.parquet', (r) => r.fulfill({ body, contentType: 'application/octet-stream' }));
+  return page.evaluate(async (enable) => {
+    const h = globalThis.__3dheat;
+    await h.loadUrls(['/__hitprobe/battle.parquet']);
+    const st = h.useStore;
+    st.getState().setMode('team');
+    st.getState().patchTeam({ figures: true, hitMarks: false, trailSeconds: 0 });
+    await new Promise((res) => setTimeout(res, 3000));
+    const d = st.getState().dataset;
+    st.getState().seek((d.timeRange[0] + d.timeRange[1]) / 2);
+    st.getState().patchTimeline({ mode: 'play', window: 'cumulative', playing: true, speed: 1 });
+    const eng = globalThis.__3dheat_engine;
+    const gaps = [];
+    let last = performance.now();
+    let on = false;
+    await new Promise((res) => {
+      const tick = () => {
+        const now = performance.now();
+        gaps.push(now - last);
+        last = now;
+        if (!on && gaps.length > 60) {
+          on = true;
+          st.getState().patchTeam({ hitMarks: enable });
+        }
+        if (gaps.length < 900) requestAnimationFrame(tick);
+        else res();
+      };
+      requestAnimationFrame(tick);
+    });
+    const ms = eng.hitMarkStats;
+    return { rows: d.count, before: gaps.slice(2, 60), after: gaps.slice(61), stats: { workMs: ms.workMs, pending: ms.pending, marks: ms.marks, vehicles: ms.vehicles, placed: ms.placed, longest: ms.steps.longest, at: ms.steps.at, steps: ms.steps.steps } };
+  }, enable);
+}
+
 // The outcome colours of src/vehicle/scene.ts.
 const CRITICAL = [0.15, 0.55, 1.0];
 const KILL = [1.0, 0.17, 0.84];
 const WHITE = [1, 1, 1];
 
 for (const backend of backends) {
+  if (DATA) {
+    const runs = {};
+    for (const enable of [false, true]) {
+      const { browser, page } = await open(backend, '&gputracks=0');
+      try {
+        runs[enable] = await battleTimes(page, enable);
+      } finally {
+        await browser.close();
+      }
+    }
+    const off = runs[false], on = runs[true];
+    const over = (g) => g.filter((v) => v > FRAME_MAX_MS).length;
+    const max = (g) => Math.max(...g).toFixed(1);
+    const s = on.stats;
+    report(`${backend} real battle, the marks' work`, s.marks > 0 && s.longest <= STEP_MAX_MS && s.workMs <= STEP_MAX_MS + 2.5,
+      `${on.rows} rows, ${s.marks} marks on ${s.placed} of ${s.vehicles} vehicles; longest step ${s.longest.toFixed(1)} ms (#${s.at} of ${s.steps}), the marks' longest share of a frame ${s.workMs.toFixed(1)} ms over ${s.pending} frames`);
+    report(`${backend} real battle, frames past ${FRAME_MAX_MS} ms`, GPU ? over(on.after) <= over(off.after) : null,
+      `with the marks ${over(on.after)} of ${on.after.length} (max ${max(on.after)} ms), without ${over(off.after)} of ${off.after.length} (max ${max(off.after)} ms)`);
+    continue;
+  }
   if (LOAD) {
     // Frames past the limit with the marks left off: the machine's own (other programs, the scene).
     let control = 0;

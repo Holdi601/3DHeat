@@ -13,7 +13,7 @@
 import type { Dataset } from '../state/types';
 import type { Vec3 } from '../race/geometry';
 import { drain, type HitSet, type VehicleHit } from './hits';
-import { personRows } from '../data/flight';
+import { personRowsSteps } from '../data/flight';
 import { unitsOf } from '../ui/replay/units';
 import { trackName, unitsPerMetre } from '../ui/replay/replayData';
 
@@ -85,7 +85,7 @@ export function* findPlacesSteps(d: Dataset, hits: VehicleHit[]): Generator<void
   const n = hits.reduce((m, h) => Math.max(m, h.id + 1), 0);
   const xyz = new Float32Array(n * 6).fill(NaN);
   const at2 = new Int32Array(n * 2).fill(-1);
-  const rows = personRows(d);
+  const rows = yield* personRowsSteps(d);
   const time = d.time;
   // Tracks by every name they go by: the player, the unit's name, the label, the label without its id.
   let names: Map<string, number[]> | null = null;

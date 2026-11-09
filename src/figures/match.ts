@@ -15,17 +15,40 @@ let index: Map<string, string> | null = null;
 let byClass: Map<string, string> | null = null;
 
 function build(): void {
-  index = new Map();
-  byClass = new Map();
+  const g = matchIndexSteps();
+  while (!g.next().done);
+}
+
+/** Names a step of `matchIndexSteps` indexes: well under a millisecond. */
+const NAMES_STEP = 1000;
+
+/**
+ * The index of the catalogue's names and aliases, built in steps for work
+ * spread over frames (`figures/hitmarks.ts`): the whole takes several
+ * milliseconds. Taken into use only once it is whole.
+ */
+export function* matchIndexSteps(): Generator<void, void, void> {
+  if (index) return;
+  const ix = new Map<string, string>();
+  const cl = new Map<string, string>();
+  let n = 0;
   for (const name of Object.keys(CATALOG)) {
-    index.set(norm(name), name);
+    if (++n % NAMES_STEP === 0) yield;
+    ix.set(norm(name), name);
     const cls = CATALOG[name].cls;
-    if (!byClass.has(cls)) byClass.set(cls, name);
+    if (!cl.has(cls)) cl.set(cls, name);
   }
   // A catalogue name keeps its own key: an alias spelt like another figure's name never takes it over.
-  const own = new Set(index.keys());
+  const own = new Set(ix.keys());
   // Domain aliases ("air:ariete") are looked up only by `figureFor`, never by spelling.
-  for (const [alias, name] of Object.entries(ALIASES)) if (CATALOG[name] && !alias.includes(':') && !own.has(norm(alias))) index.set(norm(alias), name);
+  for (const [alias, name] of Object.entries(ALIASES)) {
+    if (++n % NAMES_STEP === 0) yield;
+    if (CATALOG[name] && !alias.includes(':') && !own.has(norm(alias))) ix.set(norm(alias), name);
+  }
+  // Built meanwhile by a caller that could not wait: that one stands.
+  if (index) return;
+  index = ix;
+  byClass = cl;
 }
 
 /** The catalogue figure a name stands for: exact, by alias, or by the longest known prefix of it. */

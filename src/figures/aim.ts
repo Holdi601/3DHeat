@@ -11,7 +11,7 @@
  *                Tanks' (it has `gunStep`)
  *   gun          `gunPitch` / `gun_pitch` / `gunElevation` - degrees;
  *                World of Tanks' `gunStep` (0-63 across the gun's limits, which
- *                the replay does not carry: taken as +20° to -8°, a typical gun's)
+ *                the replay does not carry: taken as +20Â° to -8Â°, a typical gun's)
  *   or, where a row has neither, `aimHeading` / `aimPitch`: where the gun
  *                points in the world, degrees (War Thunder's server replays
  *                write these for every vehicle and the turret only for a few),
@@ -19,7 +19,7 @@
  */
 
 import type { AttributeColumn, Dataset } from '../state/types';
-import { personRows } from '../data/flight';
+import { personRowsSteps } from '../data/flight';
 
 const YAW_NAMES = ['turretYaw', 'turret_yaw', 'TurretYaw', 'turretHeading'];
 const PITCH_NAMES = ['gunPitch', 'gun_pitch', 'GunPitch', 'gunElevation', 'gun_elevation'];
@@ -67,28 +67,46 @@ export class Aim {
     private readonly d: Dataset,
     yaw: Float32Array | null,
     pitch: Float32Array | null,
+    prev: Int32Array,
+    next: Int32Array,
   ) {
     this.yaw = yaw;
     this.pitch = pitch;
-    this.prev = new Int32Array(d.count).fill(-1);
-    this.next = new Int32Array(d.count).fill(-1);
-    const idx = personRows(d);
-    if (!idx) return;
-    const has = (r: number) => (yaw ? Number.isFinite(yaw[r]) : false) || (pitch ? Number.isFinite(pitch[r]) : false);
-    for (let p = 0; p + 1 < idx.start.length; p++) {
-      let last = -1;
-      for (let k = idx.start[p]; k < idx.start[p + 1]; k++) {
-        const r = idx.rows[k];
-        if (has(r)) last = r;
-        this.prev[r] = last;
-      }
-      let after = -1;
-      for (let k = idx.start[p + 1] - 1; k >= idx.start[p]; k--) {
-        const r = idx.rows[k];
-        this.next[r] = after;
-        if (has(r)) after = r;
+    this.prev = prev;
+    this.next = next;
+  }
+
+  /** The aim of `d` from its turret and gun per row: each person's rows linked to their last and next aim, in steps. */
+  static *build(d: Dataset, yaw: Float32Array | null, pitch: Float32Array | null): Generator<void, Aim, void> {
+    const prev = new Int32Array(d.count).fill(-1);
+    const next = new Int32Array(d.count).fill(-1);
+    const idx = yield* personRowsSteps(d);
+    if (idx) {
+      let n = 0;
+      for (let p = 0; p + 1 < idx.start.length; p++) {
+        let last = -1;
+        for (let k = idx.start[p]; k < idx.start[p + 1]; k++) {
+          if (++n === STEP) {
+            n = 0;
+            yield;
+          }
+          const r = idx.rows[k];
+          if ((yaw !== null && Number.isFinite(yaw[r])) || (pitch !== null && Number.isFinite(pitch[r]))) last = r;
+          prev[r] = last;
+        }
+        let after = -1;
+        for (let k = idx.start[p + 1] - 1; k >= idx.start[p]; k--) {
+          if (++n === STEP) {
+            n = 0;
+            yield;
+          }
+          const r = idx.rows[k];
+          next[r] = after;
+          if ((yaw !== null && Number.isFinite(yaw[r])) || (pitch !== null && Number.isFinite(pitch[r]))) after = r;
+        }
       }
     }
+    return new Aim(d, yaw, pitch, prev, next);
   }
 
   /** The aim of the thing whose row (at or before `t`) is `row`, at time `t`, into `out`. */
@@ -123,14 +141,27 @@ export function lerpAngle(a: number, b: number, f: number): number {
 }
 
 const cache = new WeakMap<Dataset, Aim | null>();
+/** Rows a step of the working out goes through: well under a millisecond. */
+const STEP = 1 << 15;
+
+/** `out[r] = f(v[r])` for every row, in steps. */
+function* mapSteps(v: Float32Array, f: (x: number) => number): Generator<void, Float32Array, void> {
+  const out = new Float32Array(v.length);
+  for (let r = 0; r < v.length; r++) {
+    if ((r & (STEP - 1)) === STEP - 1) yield;
+    out[r] = f(v[r]);
+  }
+  return out;
+}
 
 /**
  * `own` (radians, relative to the hull) with its gaps filled from `world`
  * (degrees) less `hull` (radians), wrapped to a half turn either way.
  */
-function fromWorld(own: Float32Array | null, world: Float32Array, hull: Float32Array): Float32Array {
-  const out = own ? Float32Array.from(own) : new Float32Array(world.length).fill(NaN);
+function* fromWorld(own: Float32Array | null, world: Float32Array, hull: Float32Array): Generator<void, Float32Array, void> {
+  const out = own ? own.slice() : new Float32Array(world.length).fill(NaN);
   for (let r = 0; r < out.length; r++) {
+    if ((r & (STEP - 1)) === STEP - 1) yield;
     if (Number.isFinite(out[r]) || !Number.isFinite(world[r]) || !Number.isFinite(hull[r])) continue;
     let a = (world[r] * DEG - hull[r]) % (2 * Math.PI);
     if (a > Math.PI) a -= 2 * Math.PI;
@@ -142,6 +173,18 @@ function fromWorld(own: Float32Array | null, world: Float32Array, hull: Float32A
 
 /** The aim of a dataset's vehicles, or null where it has no turret or gun column. Worked out once. */
 export function aimOf(d: Dataset): Aim | null {
+  const g = aimSteps(d);
+  for (;;) {
+    const r = g.next();
+    if (r.done) return r.value;
+  }
+}
+
+/**
+ * `aimOf` in steps of a fraction of a millisecond, for work spread over
+ * frames (`figures/hitmarks.ts`): a large battle's aim takes tens of them.
+ */
+export function* aimSteps(d: Dataset): Generator<void, Aim | null, void> {
   const hit = cache.get(d);
   if (hit !== undefined) return hit;
   const yc = column(d, YAW_NAMES);
@@ -153,21 +196,24 @@ export function aimOf(d: Dataset): Aim | null {
     // World of Tanks writes radians (and has its gun steps); War Thunder degrees. A column past a turn of radians is degrees whatever.
     const v = yc.data as Float32Array;
     const radians = !!column(d, STEP_NAMES) && maxAbs(v) <= 2 * Math.PI + 0.01;
-    yaw = radians ? v : Float32Array.from(v, (x) => x * DEG);
+    yaw = radians ? v : yield* mapSteps(v, (x) => x * DEG);
   }
   if (pc) {
     const v = pc.data as Float32Array;
-    pitch = Float32Array.from(v, (x) => x * DEG);
+    pitch = yield* mapSteps(v, (x) => x * DEG);
   } else if (sc) {
     const v = sc.data as Float32Array;
-    pitch = Float32Array.from(v, (s) => (Number.isFinite(s) ? (STEP_UP + ((STEP_DOWN - STEP_UP) * s) / 63) * DEG : NaN));
+    pitch = yield* mapSteps(v, (s) => (Number.isFinite(s) ? (STEP_UP + ((STEP_DOWN - STEP_UP) * s) / 63) * DEG : NaN));
   }
   // The world aim, less the hull, for every row the turret columns leave empty.
   const ah = column(d, AIM_HEADING_NAMES);
-  if (ah && d.yaw) yaw = fromWorld(yaw, ah.data as Float32Array, d.yaw);
+  if (ah && d.yaw) yaw = yield* fromWorld(yaw, ah.data as Float32Array, d.yaw);
   const ap = column(d, AIM_PITCH_NAMES);
-  if (ap && d.pitch) pitch = fromWorld(pitch, ap.data as Float32Array, d.pitch);
-  const out = yaw || pitch ? new Aim(d, yaw, pitch) : null;
+  if (ap && d.pitch) pitch = yield* fromWorld(pitch, ap.data as Float32Array, d.pitch);
+  const out = yaw || pitch ? yield* Aim.build(d, yaw, pitch) : null;
+  // Another caller may have worked it out meanwhile: one aim per dataset.
+  const again = cache.get(d);
+  if (again !== undefined) return again;
   cache.set(d, out);
   return out;
 }
