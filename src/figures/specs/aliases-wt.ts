@@ -298,7 +298,7 @@ const ALIASES: Record<string, string> = {
   'ussr_t_28e': 't-28',
   'ussr_t_80': 't-80-light',
   'ussr_zis_30': 'zis-30',
-  'ussr_su_57b': 't48-gmc',
+  'ussr_su_57b': 'su-76m', // GAZ's 1944 57 mm SPG on the SU-76M chassis, not the lend-lease T48
   'ussr_gaz_mm_72k': 'gaz-mm-72k',
   'ussr_t_34_1941_l_11': 't-34-1940',
   'ussr_t_34_1941': 't-34-1941',
