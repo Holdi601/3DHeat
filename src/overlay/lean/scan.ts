@@ -598,8 +598,6 @@ function packQuat(q: ArrayLike<number>): number {
   return (b(q[0]) | (b(q[1]) << 8) | (b(q[2]) << 16) | (b(q[3]) << 24)) >>> 0;
 }
 
-const s8 = (v: number) => ((v & 0xff) << 24) >> 24;
-
 /**
  * Pass 2 of a job: each unit's kept rows as keys, a span each `CHUNK_KEYS`
  * of its run, at tolerance level `level` (an index into `KEY_LEVELS`), times
@@ -691,11 +689,8 @@ export function scanPass2(cols: Columns, n: number, s: LeanSpec, base: Float64Ar
       q[0] = q[1] = q[2] = 0;
       q[3] = 1;
     }
-    // The same hemisphere as the key before, so a slerp takes the short arc.
-    if (used[u] > 1) {
-      const pb = keysB[key - 1];
-      if (s8(pb) * q[0] + s8(pb >>> 8) * q[1] + s8(pb >>> 16) * q[2] + s8(pb >>> 24) * q[3] < 0) for (let c = 0; c < 4; c++) q[c] = -q[c];
-    }
+    // w kept 0 or more: its byte's top bit is the GPU tracks' gap bit (`gpuTracks/store.ts` GAP_BIT); the slerps take the short arc either way.
+    if (q[3] < 0) for (let c = 0; c < 4; c++) q[c] = -q[c];
     keysB[key] = packQuat(q);
   };
   const th = new Thinner(U, [level], s.units, p);

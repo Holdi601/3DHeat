@@ -171,7 +171,8 @@ export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): Figu
     out[4] = pose.f[0];
     out[5] = pose.f[1];
     out[6] = pose.f[2];
-    out[7] = look.figure;
+    // Faded out where a gap in its samples begins (`data/gaps.ts`).
+    out[7] = look.figure * pose.alpha;
     out[8] = pose.u[0];
     out[9] = pose.u[1];
     out[10] = pose.u[2];

@@ -37,6 +37,7 @@ import type { Dataset } from '../state/types';
 import type { Frame3, Vec3 } from '../race/geometry';
 import { poseFrame } from './kit';
 import { sliced, type SliceJob } from '../data/slices';
+import { gapFade, markGaps } from '../data/gaps';
 
 /** Above this many rows nothing is precomputed: the cursor's straight lines are used. */
 const ROW_LIMIT = 8_000_000;
@@ -86,8 +87,12 @@ export class MotionModel {
   start!: Int32Array;
   /** Knot times, a copy for the binary search. */
   times!: Float64Array;
-  /** 1 where the curve does not go on to the next knot (another session, a shared name, the end). */
+  /** 1 where the curve does not go on to the next knot (another session, a shared name, a gap, the end). */
   end!: Uint8Array;
+  /** 1 where a gap in the samples follows the knot (`data/gaps.ts`): faded out, hidden till the next. */
+  gap!: Uint8Array;
+  /** How many gaps there are. */
+  gapCount!: number;
   /** Velocity at each knot, data units a second. */
   vel!: Float32Array;
   /** Attitude at each knot, x y z w; null without a heading in the data. */
@@ -313,7 +318,33 @@ export class MotionModel {
         end[k] = last || (shared && shared[p]) || (session && session[knots[k]] !== session[knots[k + 1]]) ? 1 : 0;
       }
     }
+    // Gaps in the samples (all of them, a client's guesses too: it heard from the unit then), on the knot before
+    // each: the curve does not cross them.
+    const gapRaw = new Uint8Array(raw.length);
+    let rawGaps = 0;
+    for (let p = 0; p < persons; p++) {
+      if ((p & 1023) === 1023) yield;
+      rawGaps += markGaps(raw, counts[p], counts[p + 1], t, px, py, pz, this.units, gapRaw);
+    }
+    const gap = new Uint8Array(n);
+    let gaps = 0;
+    if (rawGaps) {
+      let kn = 0;
+      for (let p = 0; p < persons; p++) {
+        let cur = -1;
+        for (let k = counts[p]; k < counts[p + 1]; k++) {
+          if (keep[k] === 1) cur = kn++;
+          if (gapRaw[k] && cur >= 0 && cur < start[p + 1] - 1 && !gap[cur]) {
+            gap[cur] = 1;
+            end[cur] = 1;
+            gaps++;
+          }
+        }
+      }
+    }
     this.end = end;
+    this.gap = gap;
+    this.gapCount = gaps;
 
     // Velocity at each knot: the three-point estimate where both neighbours join, else the one step there is.
     const vel = new Float32Array(n * 3);
@@ -447,6 +478,18 @@ export class MotionModel {
       else hi = mid;
     }
     return lo;
+  }
+
+  /**
+   * How much of person `p` shows at `t`: 1, less once an update is late
+   * across a gap in its samples, 0 while it is hidden in one (`data/gaps.ts`).
+   */
+  fadeAt(p: number, t: number): number {
+    if (!this.gapCount) return 1;
+    const k = this.knotAt(p, t);
+    if (k < 0 || !this.gap[k]) return 1;
+    const before = k > this.start[p] && !this.end[k - 1] ? this.times[k] - this.times[k - 1] : NaN;
+    return gapFade(t - this.times[k], before);
   }
 
   /**
@@ -781,6 +824,8 @@ export class MotionRefiner {
       if (p >= 0 && m.hasEvents && m.start[p] === m.start[p + 1]) continue;
       // Over and gone on as another track of the same unit.
       if (p >= 0 && t >= m.next[p]) continue;
+      // Hidden in a gap in its samples, once faded out (`data/gaps.ts`).
+      if (p >= 0 && m.gapCount && m.fadeAt(p, t) <= 0) continue;
       if (w !== r) {
         cubes.copyWithin(w * stride, r * stride, r * stride + stride);
         rows[w] = row;

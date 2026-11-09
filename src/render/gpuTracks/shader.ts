@@ -11,7 +11,8 @@
  * after the tracks where the store has them, `store.ts`).
  */
 
-import { CHUNK_SHIFT, CHUNK_U32, KEYS_PER_BUFFER, TRACK_U32 } from './store';
+import { CHUNK_SHIFT, CHUNK_U32, FLAG_GAPS, KEYS_PER_BUFFER, TRACK_U32 } from './store';
+import { GAP_FADE_WGSL } from '../../data/gaps';
 import { dartIndex as dartIndexOf } from '../symbols/darts';
 import { WRECK_GREY, WRECK_TINT } from '../../figures/wreck';
 import { C_AGM, C_SAM, C_SHIP, D_BOMB, D_CHAFF, D_FLARE, D_GROUND, D_HELI, D_MARKER, D_MISC, D_MISSILE, D_ROCKET, D_SHELL, D_STATIC, FADE_FROM_F, FALLBACK_AIR, FALLBACK_GROUND, WEAPON_PX_F, WORD_BASE, WORD_DEAD, WORD_MOVING } from '../symbols/shaderConsts';
@@ -60,8 +61,14 @@ fn unpackQ(v : u32) -> vec4<f32> {
     f32(i32(v << 24u) >> 24u) / 127.0,
     f32(i32(v << 16u) >> 24u) / 127.0,
     f32(i32(v << 8u) >> 24u) / 127.0,
-    f32(i32(v) >> 24u) / 127.0);
+    f32(i32(v & 0x7fffffffu) >> 24u) / 127.0);
 }
+
+// A gap in the samples follows key j (\`store.ts\` GAP_BIT, the top bit of its attitude word; w is 0 or more).
+fn gapAfter(j : u32) -> bool {
+  return (keysB[j] & 0x80000000u) != 0u;
+}
+${GAP_FADE_WGSL}
 
 fn rot(q : vec4<f32>, v : vec3<f32>) -> vec3<f32> {
   let t = 2.0 * cross(q.xyz, v);
@@ -96,8 +103,15 @@ fn keyAt(j : u32) -> vec4<f32> {
   return vec4<f32>(O + vec3<f32>(f32(k.x & 0xffffu), f32(k.x >> 16u), f32(k.y & 0xffffu)) * bitcast<f32>(tracks[o + 3u]), t);
 }
 
-fn vel(j : u32, first : u32, last : u32) -> vec3<f32> {
+fn vel(j : u32, first0 : u32, last0 : u32, gaps : bool) -> vec3<f32> {
   let o = keyAt(j);
+  // A gap ends the track there, either way.
+  var first = first0;
+  var last = last0;
+  if (gaps) {
+    if (j < last && gapAfter(j)) { last = j; }
+    if (j > first && gapAfter(j - 1u)) { first = j; }
+  }
   if (j > first && j < last) {
     let p = keyAt(j - 1u);
     let n = keyAt(j + 1u);
@@ -255,19 +269,32 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
   var V : vec3<f32>;
   var sP = 0.0;
   var kb = k;
-  if (k == last) {
+  // A gap in its samples after this key (\`data/gaps.ts\`): held there, faded out once its next update is late, then hidden.
+  let gaps = (flags & ${FLAG_GAPS}u) != 0u;
+  let inGap = gaps && k < last && gapAfter(k);
+  var gapA = 1.0;
+  if (inGap) {
+    var before = -1.0;
+    if (k > first && !gapAfter(k - 1u)) { before = A0.w - timeAt(k - 1u); }
+    gapA = gapFade(t - A0.w, before);
+    if (gapA <= 0.0) { return; }
+  }
+  if (inGap) {
+    P = A0.xyz;
+    V = vel(k, first, last, true);
+  } else if (k == last) {
     let hold = bitcast<f32>(tracks[b + 14u]);
     if (hold < 1e8 && t - A0.w > select(u.px.w, min(u.px.w, hold - 1.0), hold > 0.5)) { return; }
     P = A0.xyz;
-    V = vel(k, first, last);
+    V = vel(k, first, last, gaps);
   } else {
     kb = k + 1u;
     let A1 = keyAt(k + 1u);
     let h = A1.w - A0.w;
     let s = clamp((t - A0.w) / h, 0.0, 1.0);
     sP = s;
-    let va = vel(k, first, last);
-    let vb = vel(k + 1u, first, last);
+    let va = vel(k, first, last, gaps);
+    let vb = vel(k + 1u, first, last, gaps);
     let C = A1.xyz - A0.xyz;
     let cap = 1.5 * length(C);
     var m0 = length(va) * h;
@@ -400,7 +427,7 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
         }
       }
       inst[o] = vec4<f32>(P, scale);
-      inst[o + 1u] = vec4<f32>(f, look.x);
+      inst[o + 1u] = vec4<f32>(f, look.x * gapA);
       inst[o + 2u] = vec4<f32>(up, tYaw);
       inst[o + 3u] = vec4<f32>(team * tsign, gPitch);
     } else if (u.sym.x > 1.5 || look.w > 0.5) {
@@ -417,14 +444,14 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
     if (slot < runs[dm].y) {
       let o = (runs[dm].x + slot) * 4u;
       inst[o] = vec4<f32>(P, max(u.lod.y, u.px.z * pxSize));
-      inst[o + 1u] = vec4<f32>(f, 1.0);
+      inst[o + 1u] = vec4<f32>(f, gapA);
       inst[o + 2u] = vec4<f32>(up, 0.0);
       inst[o + 3u] = vec4<f32>(team * tsign, tag);
     }
   }
   if (glyphA > 0.0) {
     var gpx = glyphPx(dom);
-    var ga = glyphA;
+    var ga = glyphA * gapA;
     if (dom == ${D_FLARE}u || dom == ${D_CHAFF}u) {
       let life = timeAt(last) + age;
       ga = ga * decoyAlpha(dom, age, life, f32(i));
@@ -474,6 +501,8 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
     loop {
       if (j <= first || segs >= u.n.w) { break; }
       if (timeAt(j) < t - W) { break; }
+      // It breaks where a gap in the samples was.
+      if (gaps && gapAfter(j - 1u)) { break; }
       j = j - 1u;
       segs = segs + 1u;
     }

@@ -52,6 +52,7 @@ import { aimOf, type AimNow } from '../../figures/aim';
 import { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32 } from './chunks';
 import { dartIndex, dartMeshes } from '../symbols/darts';
 import { classify, Domain, isEffectDomain, isWeaponDomain, packWord } from '../../figures/symbolClass';
+import { markGaps } from '../../data/gaps';
 
 export { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32, encodeChunk } from './chunks';
 
@@ -78,6 +79,14 @@ export const FLAG_WEAPON = 4;
 export const HOLD_ON = 2e9;
 /** The track has turret and gun keys (`keysAim`). */
 export const FLAG_AIM = 8;
+/** The track has gaps in its samples: a key with `GAP_BIT` set in its attitude word is followed by one (`data/gaps.ts`). */
+export const FLAG_GAPS = 16;
+/**
+ * In a key's attitude word (`keysB`): a gap follows the key. The attitude's w
+ * is kept 0 or more (the slerps take the short arc whichever sign a key has),
+ * so its byte's top bit is free.
+ */
+export const GAP_BIT = 0x80000000;
 /** A packed aim half that is not there. */
 export const AIM_NONE = 0xffff;
 
@@ -543,6 +552,7 @@ function* buildSteps(d: Dataset, o: BuildOptions): SliceJob<GpuTrackStore | null
   const chunkData = new Uint32Array(chunkCount * CHUNK_U32);
   const chunkF = new Float32Array(chunkData.buffer);
   const kept = new Int32Array(samples);
+  const gapMark = new Uint8Array(samples);
   let chunkAt = 0;
   const keysA = new Uint32Array(keys * KEY_U32);
   const keysB = new Uint32Array(keys);
@@ -611,18 +621,25 @@ function* buildSteps(d: Dataset, o: BuildOptions): SliceJob<GpuTrackStore | null
       if (d.yaw) {
         const rl = roll ? (roll[r] * Math.PI) / 180 : 0;
         quatOfFrame(poseFrame({ x: 0, y: 0, z: 0, yaw: Math.PI - d.yaw[r], pitch: d.pitch ? d.pitch[r] || 0 : 0, roll: Number.isFinite(rl) ? rl : 0 }), q);
-        // The same hemisphere as the key before, so the shader's slerp takes the short arc.
-        if (key > first) {
-          const pb = keysB[key - 1];
-          const s8 = (v: number) => ((v & 0xff) << 24) >> 24;
-          const dot = s8(pb) * q[0] + s8(pb >>> 8) * q[1] + s8(pb >>> 16) * q[2] + s8(pb >>> 24) * q[3];
-          if (dot < 0) for (let i = 0; i < 4; i++) q[i] = -q[i];
-        }
+        // w kept 0 or more, its byte's top bit free for `GAP_BIT`; the shader's slerp takes the short arc either way.
+        if (q[3] < 0) for (let i = 0; i < 4; i++) q[i] = -q[i];
         keysB[key] = packQuat(q);
       }
       key++;
     }
     if (key === first) continue;
+    // Gaps in its samples (all of them, as the motion model finds them): a bit on the key before each.
+    let gaps = markGaps(rows, a, b, time, px, py, pz, units, gapMark);
+    if (gaps) {
+      gaps = 0;
+      for (let k = a, cur = -1, n = 0; k < b; k++) {
+        if (keep[k]) cur = n++;
+        if (gapMark[k] && cur >= 0 && cur < m - 1 && !(keysB[first + cur] & GAP_BIT)) {
+          keysB[first + cur] = (keysB[first + cur] | GAP_BIT) >>> 0;
+          gaps++;
+        }
+      }
+    }
     // The figure, from the track's first own row.
     const o8 = tracks * TRACK_U32;
     trackData[o8] = first;
@@ -630,6 +647,7 @@ function* buildSteps(d: Dataset, o: BuildOptions): SliceJob<GpuTrackStore | null
     trackData[o8 + 7] = firstChunk + 1;
     yield* figures.prepare(figures.kindAt(rows[a]));
     figures.place(trackData, f32, o8, p, rows[a], !!d.yaw);
+    if (gaps) trackData[o8 + 5] |= FLAG_GAPS;
     f32[o8 + 8] = x0;
     f32[o8 + 9] = y0;
     f32[o8 + 10] = z0;
