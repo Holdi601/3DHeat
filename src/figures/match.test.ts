@@ -99,3 +99,21 @@ describe('name matching, exact before prefix', () => {
     expect(figureForName('H-6K')).toBe('h-6k');
   });
 });
+
+describe('rail vehicles by type', () => {
+  it('maps trams, wagons, coaches and locomotives to the nearest rail figure', () => {
+    expect(figureForType('tram')).toBe('tram');
+    expect(figureForType('unit_loader+tram_car')).toBe('tram');
+    expect(figureForType('train')).toBe('rail-boxcar');
+    expect(figureForType('unit_loader+rail_wagon')).toBe('rail-boxcar');
+    expect(figureForType('rail_tank_wagon')).toBe('rail-tank-car');
+    expect(figureForType('flat_car')).toBe('rail-flat-car');
+    expect(figureForType('passenger_coach')).toBe('rail-passenger-car');
+    expect(figureForType('locomotive')).toBe('diesel-locomotive');
+    // Not rail: a truck trailer, a trainer aircraft, a tank.
+    expect(figureForType('trailer') ?? '').not.toMatch(/^rail|tram/);
+    expect(figureForType('Trainer') ?? '').not.toMatch(/^rail|tram/);
+    expect(figureForType('MediumTank')).toBe(figureForType('tank'));
+    expect(figureFor([], ['train'])).toBe('rail-boxcar');
+  });
+});

@@ -1818,6 +1818,16 @@ G['rail-passenger-car'] = { cls: 'rail', chassis: 'rail', bare: true, length: 24
   ...railFrame(12.0, 1.3, 2.9), ob({ top: [[-11.6, 4.0], [-11.4, 4.25], [11.4, 4.25], [11.6, 4.0]], bottom: [[-11.6, 1.3], [11.6, 1.3]], plan: [[-11.6, 1.5], [11.6, 1.5]], round: 5, stations: 6 }),
   sl([0, 1.52, 2.65], rect(9.8, 0.45), 0.03, 'side', { ...GL, ...M }), ...[-1, 1].map((e) => bx(e * 11.8 - 0.25, e * 11.8 + 0.25, 0, 1.4, 3.7, 1.4, DARK)),
 ] };
+// An articulated street tram (the Tatra KT4: 18.11 x 2.2 m, 3.1 m to the roof): two low carbodies with rounded, raked
+// ends and the window band, joined by the bellows, the pantograph folded on the front roof, each body on its bogie.
+G['tram'] = { cls: 'rail', chassis: 'rail', bare: true, length: 18.11, width: 2.2, hullHeight: 0.9, wheelRadius: 0.35, bogieAt: [4.6, -4.6], bogieAxles: 2, axleSpacing: 1.9, addOns: [
+  ...railFrame(9.05, 0.9, 2.0),
+  ob({ top: [[0.35, 3.05], [8.3, 3.1], [9.05, 2.45]], bottom: [[0.35, 0.6], [9.05, 0.6]], plan: [[0.35, 1.1], [8.2, 1.1], [9.05, 0.7]], round: 6, stations: 12 }),
+  ob({ top: [[-9.05, 2.45], [-8.3, 3.1], [-0.35, 3.05]], bottom: [[-9.05, 0.6], [-0.35, 0.6]], plan: [[-9.05, 0.7], [-8.2, 1.1], [-0.35, 1.1]], round: 6, stations: 12 }),
+  ...[-1, 1].map((e) => sl([e * 4.4, 1.11, 2.2], rect(3.7, 0.5), 0.03, 'side', { ...GL, ...M })), sl([8.85, 0, 2.3], rect(0.75, 0.5), 0.03, 'front', { ...GL, pitch: 0.45 }),
+  bx(-0.35, 0.35, 0, 0.75, 2.95, 1.9, DARK),
+  rod([2.7, 0, 3.1], [3.6, 0, 3.75], 0.05, MT), rod([4.5, 0, 3.1], [3.6, 0, 3.75], 0.05, MT), hb(3.6, 0, 3.8, 0.15, 1.5, 0.06, DARK),
+] };
 
 
 // ---------------------------------------------------------------- War Thunder prototypes and rarities with their own silhouette
