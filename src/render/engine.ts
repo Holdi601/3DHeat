@@ -25,6 +25,9 @@ import { markerSeconds } from '../overlay/lean/leanState';
 import type { FigureBatch } from '../figures/instances';
 import { VertexBuffer } from '../race/geometry';
 import { useReplayStore } from '../state/replayStore';
+import { useMatchStore } from '../state/matchStore';
+import { useObjectivesStore } from '../state/objectivesStore';
+import { ObjectiveLayerDraw, objectiveSources, stateKey, type ObjectiveSource } from './objectives';
 import { dropLinesOn, unitsPerMetre } from '../ui/replay/replayData';
 import { FollowRig, type RigMode } from './followRig';
 import { nearForFollow } from './followNear';
@@ -56,6 +59,7 @@ import {
 } from './level';
 import { appendCross, buildOverlay, screenToPlane, type MeasureState } from './measure';
 import { endsOf } from '../data/despawn';
+import { deadAt, deathsOf } from '../data/deaths';
 import { BudgetController, candidateRange, HeatLevel, nextExactCap, nextHeatCap, planFrame } from './sampling';
 import { Inspector, type PickContext } from './inspector';
 import type { DrawnRows } from './pick';
@@ -649,6 +653,10 @@ export class Engine {
   private rigNear = 0;
   /** Velocity vectors, radar cones, locks and engagement domes (`tactical.ts`). */
   private readonly tactical = new TacticalLayer();
+  /** The battles' objectives on the ground (`objectives.ts`); its labels are the page's. */
+  readonly objectiveDraw = new ObjectiveLayerDraw();
+  /** The objectives' lines over the heat, between frames that build them. */
+  private objectiveTop: { data: Float32Array; count: number } | null = null;
   /** The follow camera as it last set the view (display space): the eased unit, its heading, the orbit, the pose. */
   private followCam: { person: number; fx: number; fy: number; fz: number; head: number; rel: number; yaw: number; pitch: number; px: number; py: number; pz: number } | null = null;
   /** Trails and drop lines together, reused frame to frame. */
@@ -1989,10 +1997,22 @@ export class Engine {
     let pz = 0;
     let pa = 0;
     const seen = new Set<number>();
+    const deaths = deathsOf(d);
+    // Less than this between the trail's points: the thing stayed put, and draws none.
+    const still = motion.units;
     for (const tr of tracks) {
       const p = tr.person;
       if (seen.has(p) || (d.personShared && d.personShared[p])) continue;
       seen.add(p);
+      // A wreck leaves no trail.
+      if (deaths.any && deadAt(deaths, p, t)) continue;
+      const from = v;
+      let x0 = Infinity;
+      let x1 = -Infinity;
+      let y0 = Infinity;
+      let y1 = -Infinity;
+      let z0 = Infinity;
+      let z1 = -Infinity;
       // Chaff, shells and debris leave no trail; a flare a short one of smoke (`symbolClass.ts`).
       const dom = this.domainOfRow(tr.row);
       if (dom === Domain.Chaff || dom === Domain.Shell || dom === Domain.Misc) continue;
@@ -2024,10 +2044,64 @@ export class Engine {
         py = sm.y;
         pz = sm.z;
         pa = a;
+        if (sm.x < x0) x0 = sm.x;
+        if (sm.x > x1) x1 = sm.x;
+        if (sm.y < y0) y0 = sm.y;
+        if (sm.y > y1) y1 = sm.y;
+        if (sm.z < z0) z0 = sm.z;
+        if (sm.z > z1) z1 = sm.z;
         return true;
       });
+      // Its samples may wobble (a burnt-out tram rocked by a shell): no trail for that.
+      if (x1 - x0 < still && y1 - y0 < still && z1 - z0 < still) v = from;
     }
     return { data: out, count: v };
+  }
+
+  /** Who the sample-to-sample trails are drawn for: the visible, wrecks not (`smoothTrails` the same). */
+  private trailVisible(visible: (p: number) => boolean, t: number): (p: number) => boolean {
+    const d = this.dataset;
+    const deaths = d ? deathsOf(d) : null;
+    if (!deaths || !deaths.any) return visible;
+    return (p) => visible(p) && !deadAt(deaths, p, t);
+  }
+
+  /** The objectives' lines for this frame, after `base`: coloured by the replay's teams, laid on the level. */
+  private frameObjectives(s: ReturnType<typeof snapshot>, sources: ObjectiveSource[], base: Float32Array | null, baseCount: number): { data: Float32Array | null; count: number } {
+    const d = this.dataset!;
+    const level = s.level;
+    const top = level?.kind === 'model' ? level.bounds.maxY + 50 : 1e5;
+    const ray = { origin: { x: 0, y: top, z: 0 }, dir: { x: 0, y: -1, z: 0 } };
+    const ground = level
+      ? (x: number, z: number) => {
+          ray.origin.x = x;
+          ray.origin.z = z;
+          return this.inspector.surfaceHit(ray)?.y ?? null;
+        }
+      : null;
+    return this.objectiveDraw.build(
+      {
+        sources,
+        axes: d.axes ?? null,
+        layers: useObjectivesStore.getState().layers,
+        t: this.playhead,
+        // A replay's team (1, 2) in the colour its units have.
+        teamColor: (team) => {
+          const i = d.teamLabels.indexOf(String(team));
+          return i >= 0 ? teamMemberColor(i, 0, 1) : [0.86, 0.86, 0.82];
+        },
+        ground,
+        ready: () => {
+          if (level?.kind !== 'model') return true;
+          // Asking starts the level's index; it is built a slice a frame.
+          if (!this.inspector.surfaceState.ready) this.inspector.surfaceHit(ray);
+          return this.inspector.surfaceState.ready;
+        },
+        groundKey: level,
+      },
+      base,
+      baseCount,
+    );
   }
 
   /** A world point as the camera sees it, or back: the mirror is its own inverse. */
@@ -2808,6 +2882,14 @@ export class Engine {
       volumeSig = `${this.volumeRev}|${volGest.version}`;
     }
     const volumeDraw = raceTab ? null : this.frameVolumes();
+    // The battles' objectives: which, and the zones' state at the playhead, which redraws the scene when it changes
+    // (every frame while they are being laid on the ground).
+    const objectives = useObjectivesStore.getState();
+    const objectiveSrc: ObjectiveSource[] =
+      !raceTab && objectives.on && this.dataset ? objectiveSources(this.dataset, useMatchStore.getState().games, objectives.timelines, s.filters, s.team.session) : [];
+    if (!objectiveSrc.length) this.objectiveDraw.clear();
+    if (this.objectiveDraw.pending) this.invalidate(2);
+    const objectiveSig = objectiveSrc.length ? `${objectives.rev}|${objectiveSrc.map((o) => o.match).join(',')}|${stateKey(objectiveSrc, this.playhead)}|${this.objectiveDraw.pending ? now : ''}` : '';
 
     // ---- what invalidates the accumulation buffer
     const groundY = this.dataset ? this.dataset.bounds.minY : 0;
@@ -2925,6 +3007,7 @@ export class Engine {
       marker ? `${marker.x},${marker.y},${marker.z}` : '',
       // The volumes' outlines and handles, likewise.
       volumeSig,
+      objectiveSig,
     ].join('|');
 
     // A level arriving a slice a frame is drawn once all of it is there, and the
@@ -3393,7 +3476,7 @@ export class Engine {
       else this.hitMarkLayer.drawn.count = 0;
       if (s.team.trailSeconds > 0 && !drawEverySample) {
         // Along the same curves the boxes move on, where there is one; else sample to sample.
-        const tr = motion && this.dataset ? this.smoothTrails(this.dataset, motion, cursorAt, s.team.trailSeconds, s.team.session) : this.cursor.buildTrails(cursorAt, s.team.trailSeconds, visible);
+        const tr = motion && this.dataset ? this.smoothTrails(this.dataset, motion, cursorAt, s.team.trailSeconds, s.team.session) : this.cursor.buildTrails(cursorAt, s.team.trailSeconds, this.trailVisible(visible, cursorAt));
         trailVerts = tr.data;
         trailVertCount = tr.count;
       }
@@ -3444,6 +3527,21 @@ export class Engine {
         trailVerts = lines.data;
         trailVertCount = lines.count;
       }
+    }
+
+    // The battles' objectives: in the replay on the ground with the trails, in the heatmap over the heat
+    // (kept for the idle frames, which draw them again over the same picture).
+    if (!objectiveSrc.length || raceBuilt) this.objectiveTop = null;
+    else if (s.mode === 'team') {
+      this.objectiveTop = null;
+      if (!compositeOnly) {
+        const ob = this.frameObjectives(s, objectiveSrc, trailVerts, trailVertCount);
+        trailVerts = ob.data;
+        trailVertCount = ob.count;
+      }
+    } else if (!compositeOnly || !this.objectiveTop) {
+      const ob = this.frameObjectives(s, objectiveSrc, null, 0);
+      this.objectiveTop = ob.data && ob.count ? { data: ob.data, count: ob.count } : null;
     }
 
     let sceneTris: Float32Array | null = null;
@@ -3614,6 +3712,8 @@ export class Engine {
       symbols: !raceBuilt && s.mode === 'team' && s.team.figures ? this.symbolParams(s) : null,
       overlayVerts,
       overlayVertCount,
+      topVerts: this.objectiveTop?.data ?? null,
+      topVertCount: this.objectiveTop?.count ?? 0,
       level: vehicleTab ? null : lookOn ? tacticalLevel(buildLevelDraw(s.level)) : buildLevelDraw(s.level),
       post: lookOn ? this.lookPost(s) : null,
       // Auto-focus uses whatever the view was last framed on, which is the only

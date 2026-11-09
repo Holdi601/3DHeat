@@ -449,6 +449,8 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
   if (tl.x >= 0.0) { tc = tl.xyz; }
   if (tl.w >= 0.0) { W = min(max(W, 0.001), tl.w); }
   if (dom == ${D_CHAFF}u || dom == ${D_MISC}u) { W = 0.0; }
+  // A wreck leaves no trail.
+  if ((word & ${WORD_DEAD}u) != 0u) { W = 0.0; }
   let ta0 = trailAlpha(dom, cls, age);
   // Its drop line, as Tacview draws it: straight down to the data's floor; none for weapons (unless asked) and decoys.
   let floorY = bitcast<f32>(u.m.w);
@@ -492,10 +494,14 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
   for (var n = 0u; n < segs; n = n + 1u) {
     let key = keyAt(kk);
     let v = (base + n * 2u) * 2u;
+    // A piece within a metre of where the unit is, at both ends, is not drawn: a thing that stays put
+    // (a parked tank, a burnt-out tram) draws nothing, however its samples wobble.
+    let near = distance(a, P) < u.lod.x && distance(key.xyz, P) < u.lod.x;
+    let fade = select(1.0, 0.0, near);
     trail[v] = vec4<f32>(a, 1.0);
-    trail[v + 1u] = vec4<f32>(tc, ta0 * clamp(1.0 - (t - ta) / W, 0.0, 1.0));
+    trail[v + 1u] = vec4<f32>(tc, fade * ta0 * clamp(1.0 - (t - ta) / W, 0.0, 1.0));
     trail[v + 2u] = vec4<f32>(key.xyz, 1.0);
-    trail[v + 3u] = vec4<f32>(tc, ta0 * clamp(1.0 - (t - key.w) / W, 0.0, 1.0));
+    trail[v + 3u] = vec4<f32>(tc, fade * ta0 * clamp(1.0 - (t - key.w) / W, 0.0, 1.0));
     a = key.xyz;
     ta = key.w;
     if (kk > first) { kk = kk - 1u; }

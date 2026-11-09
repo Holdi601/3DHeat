@@ -1,0 +1,33 @@
+/* The objectives' labels over the view (ObjectiveLabels.tsx). */
+.objective-labels {
+  position: absolute;
+  z-index: var(--z-units);
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.objective-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  font-size: 11px;
+  line-height: 16px;
+  padding: 0 5px;
+  border-radius: 3px;
+  background: rgba(12, 14, 18, 0.72);
+  border: 1px solid var(--c, #ddd);
+  color: var(--c, #ddd);
+  font-variant-numeric: tabular-nums;
+}
+.objective-label.zone {
+  min-width: 22px;
+  height: 22px;
+  line-height: 20px;
+  padding: 0;
+  border-radius: 50%;
+  border-width: 2px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+}

@@ -294,6 +294,9 @@ export class WebgpuRenderer implements Renderer {
   private lineSignature = '';
   private trailBuffer: GPUBuffer | null = null;
   private overlayBuffer: GPUBuffer | null = null;
+  /** The lines over the picture (`FrameParams.topVerts`) and their pipeline, made when first asked for. */
+  private topBuffer: GPUBuffer | null = null;
+  private topPipeline: GPURenderPipeline | null = null;
   private triBuffer: GPUBuffer | null = null;
   /** Instanced figures, made on first use. */
   private figures: GpuFigures | null = null;
@@ -2772,6 +2775,9 @@ export class WebgpuRenderer implements Renderer {
       ],
     );
 
+    // Lines over the picture, the heat included (`FrameParams.topVerts`): in the same pass, after it.
+    const top = params.topVerts && params.topVertCount ? this.topLines(params, params.topVerts, params.topVertCount) : null;
+
     const target = this.context.getCurrentTexture();
     this.debug.compositeTarget = `${target.width}x${target.height} ${target.format}`;
 
@@ -2797,6 +2803,12 @@ export class WebgpuRenderer implements Renderer {
         pass.setPipeline(this.compositePipeline);
         pass.setBindGroup(0, group);
         pass.draw(3);
+        if (top) {
+          pass.setPipeline(top.pipeline);
+          pass.setBindGroup(0, top.group);
+          pass.setVertexBuffer(0, top.buffer);
+          pass.draw(top.count);
+        }
       }
       pass.end();
     };
@@ -3246,6 +3258,35 @@ export class WebgpuRenderer implements Renderer {
     return this.cubeInstanceBuffer;
   }
 
+  /** The lines over the picture: uploaded, with a pipeline into the canvas without depth. */
+  private topLines(params: FrameParams, data: Float32Array, count: number): { pipeline: GPURenderPipeline; group: GPUBindGroup; buffer: GPUBuffer; count: number } {
+    if (!this.topPipeline) {
+      const module = this.device.createShaderModule({ label: 'top lines', code: LINE_WGSL });
+      this.topPipeline = this.device.createRenderPipeline({
+        label: 'top lines',
+        layout: 'auto',
+        vertex: {
+          module,
+          entryPoint: 'vsLine',
+          buffers: [
+            {
+              arrayStride: 28,
+              attributes: [
+                { shaderLocation: 0, offset: 0, format: 'float32x3' },
+                { shaderLocation: 1, offset: 12, format: 'float32x4' },
+              ],
+            },
+          ],
+        },
+        fragment: { module, entryPoint: 'fsLine', targets: [{ format: this.canvasFormat, blend: alphaBlend() }] },
+        primitive: { topology: 'line-list' },
+      });
+    }
+    this.topBuffer = this.uploadLines(this.topBuffer, data, count, 'top lines');
+    const offset = this.pushSceneUniform(params, 1e9, 1e9 + 1, 0, 1);
+    return { pipeline: this.topPipeline, group: this.sceneBindGroup(this.topPipeline, 'top', offset), buffer: this.topBuffer, count };
+  }
+
   private uploadLines(
     existing: GPUBuffer | null,
     data: Float32Array,
@@ -3644,6 +3685,7 @@ export class WebgpuRenderer implements Renderer {
     this.lineBuffer?.destroy();
     this.trailBuffer?.destroy();
     this.overlayBuffer?.destroy();
+    this.topBuffer?.destroy();
     this.triBuffer?.destroy();
     this.symbols?.dispose();
     this.symbols = null;

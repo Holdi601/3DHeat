@@ -290,6 +290,8 @@ export class Webgl2Renderer implements Renderer {
   private overlayVao: WebGLVertexArrayObject;
   private overlayBuf: WebGLBuffer;
   private overlayCapacity = 0;
+  /** The lines over the picture (`FrameParams.topVerts`), made when first asked for. */
+  private top: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number } | null = null;
   private triVao: WebGLVertexArrayObject;
   /** Instanced figures, made on first use. */
   private figures: GlFigures | null = null;
@@ -2541,7 +2543,38 @@ export class Webgl2Renderer implements Renderer {
     // function called between frames returns whatever the driver happens to
     // leave behind — black on some, the previous frame on others, the right
     // answer often enough to look correct in testing.
+    if (params.topVerts && params.topVertCount) this.drawTop(params, params.topVerts, params.topVertCount);
     if (!target) this.readCapture();
+  }
+
+  /** Lines over the composited picture, heat and all, without depth (`FrameParams.topVerts`). */
+  private drawTop(params: FrameParams, data: Float32Array, count: number): void {
+    const gl = this.gl;
+    if (!this.top) {
+      const buf = mustBuffer(gl);
+      this.top = { buf, vao: this.buildLineVao(buf), capacity: 0 };
+    }
+    const top = this.top;
+    gl.bindBuffer(gl.ARRAY_BUFFER, top.buf);
+    if (top.capacity < count * 7) {
+      top.capacity = Math.max(count * 7 * 2, 8192 * 7);
+      gl.bufferData(gl.ARRAY_BUFFER, top.capacity * 4, gl.DYNAMIC_DRAW);
+    }
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, data, 0, count * 7);
+    const { prog, u } = this.lineProg;
+    gl.useProgram(prog);
+    u.mat4('uViewProj', params.viewProj);
+    u.f3('uCameraPos', params.cameraPos[0], params.cameraPos[1], params.cameraPos[2]);
+    u.f1('uFadeStart', 1e9);
+    u.f1('uFadeEnd', 1e9 + 1);
+    gl.disable(gl.DEPTH_TEST);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.bindVertexArray(top.vao);
+    gl.drawArrays(gl.LINES, 0, count);
+    gl.bindVertexArray(null);
+    gl.disable(gl.BLEND);
+    gl.enable(gl.DEPTH_TEST);
   }
 
   /** The capture readback, after the last pass into the canvas. */
