@@ -1051,7 +1051,9 @@ G['m24-chaffee'] = ww2({
   // 2.85 m of track on the ground (112.25 in): the five wheels close together, the end ones 2.85 m apart.
   track: trk(2.45, 0.95, 0.66, 0.71, 1.425),
   wheels: even(5, -1.425, 1.425), r: 0.32, rollers: [-1.2, 0, 1.2],
-  turret: M24_T, gun: { length: 2.1, calibre: 0.075, at: 0.45 },
+  turret: M24_T,
+  // The .50 on its pedestal at the turret's rear, 2.77 m over it (109 in, Hunnicutt via afvdatabase; 1.85 m fire height).
+  guns: [{ mount: 'turret', length: 2.1, calibre: 0.075, at: 0.45 }, { mount: 'top', length: 1.6, calibre: 0.0127, x: -0.9, side: 0, up: 0.44 }],
   turretParts: (t) => [cupola(t, -0.3, -0.45, 0.3, 0.18)],
 });
 // M26 Pershing: six road wheels and five return rollers, the rear sprocket, the long hull with its sloped glacis,
