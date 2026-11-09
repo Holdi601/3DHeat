@@ -1428,8 +1428,9 @@ export class Webgl2Renderer implements Renderer {
 
     this.frameMeshes = this.meshesInView(params);
     // Level geometry first, with depth writes on, so heat sprites behind a wall
-    // are correctly hidden by it.
-    if (params.level) this.drawLevel(params, params.level);
+    // are correctly hidden by it. Its see-through shells come after the figures
+    // and everything else in the scene (`drawLevel`).
+    if (params.level) this.drawLevel(params, params.level, false);
 
     if (params.showGrid || params.showAxes) {
       this.ensureGrid(params);
@@ -1484,15 +1485,18 @@ export class Webgl2Renderer implements Renderer {
       this.tracks ??= new GlTracks(this.gl);
       this.tracks.draw(params.gpuTracks, params.viewProj, params.cameraPos, this.figures, { viewProj: params.viewProjRel, camera: this.relCamera, origin: o });
     }
+    if (params.sceneTris && params.sceneTriVertCount > 0) this.drawSceneTris(params, params.sceneTris, params.sceneTriVertCount);
+    if (params.trailVerts && params.trailVertCount > 0) {
+      this.drawDynamicLines(params, params.trailVerts, params.trailVertCount, this.trailVao, this.trailBuf, 'trail');
+    }
+    // The see-through structures over all of it: a figure behind one shows
+    // through it as the ground behind it does, and one in front hides it.
+    if (params.level?.kind === 'model') this.drawLevel(params, params.level, true);
     // The far-off glyphs: map symbols, weapons, decoys (`symbols/`), over everything in the scene.
     if (params.symbols) {
       this.symbols ??= new GlSymbols(this.gl);
       if (params.gpuTracks && this.tracks) this.tracks.drawGlyphs(this.symbols, params.symbols, params.viewProj, params.cameraPos, this.width, this.height);
       this.symbols.draw(params.symbols, params.viewProj, params.cameraPos, this.width, this.height);
-    }
-    if (params.sceneTris && params.sceneTriVertCount > 0) this.drawSceneTris(params, params.sceneTris, params.sceneTriVertCount);
-    if (params.trailVerts && params.trailVertCount > 0) {
-      this.drawDynamicLines(params, params.trailVerts, params.trailVertCount, this.trailVao, this.trailBuf, 'trail');
     }
     if (params.overlayVerts && params.overlayVertCount > 0) {
       // Overlay last and without depth testing: the ruler has to stay visible
@@ -1770,7 +1774,17 @@ export class Webgl2Renderer implements Renderer {
     gl.disable(gl.BLEND);
   }
 
-  private drawLevel(params: FrameParams, level: NonNullable<FrameParams['level']>): void {
+  /**
+   * The level: with `shells` false what stands solid in it (the ground, the
+   * water, structures drawn opaque), drawn first; with `shells` true its
+   * see-through structures and their edges, drawn after everything else in
+   * the scene. Drawn first as they used to be, they wrote no depth, so a
+   * figure drawn after stood over them at full strength wherever it was (and
+   * the WebGPU renderer's depth seal, drawn with them, hid it altogether):
+   * now one behind a shell is seen through it like the ground behind it, and
+   * one in front of it, having written its depth, is not covered.
+   */
+  private drawLevel(params: FrameParams, level: NonNullable<FrameParams['level']>, shells: boolean): void {
     const gl = this.gl;
     const translucent = level.opacity < 0.999;
     if (translucent) {
@@ -1781,7 +1795,7 @@ export class Webgl2Renderer implements Renderer {
       gl.depthMask(false);
     }
 
-    if (level.kind === 'image' && this.mapTex) {
+    if (level.kind === 'image' && this.mapTex && !shells) {
       const { prog, u } = this.mapProg;
       gl.useProgram(prog);
       u.mat4('uViewProj', params.viewProj);
@@ -1799,7 +1813,7 @@ export class Webgl2Renderer implements Renderer {
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       gl.bindVertexArray(null);
     } else if (level.kind === 'model') {
-      this.drawLevelMesh(params, level);
+      this.drawLevelMesh(params, level, shells);
     }
 
     if (translucent) {
@@ -1813,7 +1827,7 @@ export class Webgl2Renderer implements Renderer {
    * the level and every world tile in view before the next begins.
    *
    * Order and depth state matter. The ground is opaque and writes depth so it
-   * occludes heat below it. Structures are translucent and must not write depth,
+   * occludes heat below it. Structures are translucent (drawn last, `shells`) and must not write depth,
    * or their front faces would hide their own back faces and the heat inside
    * them — which is exactly what the transparency exists to reveal. That is also
    * why the passes go set by set rather than mesh by mesh: a tile's ground drawn
@@ -1824,14 +1838,14 @@ export class Webgl2Renderer implements Renderer {
    * whether it has water or structures at all - is taken from `level.tiles`
    * instead, which carries the user's switches unresolved.
    */
-  private drawLevelMesh(params: FrameParams, level: NonNullable<FrameParams['level']>): void {
+  private drawLevelMesh(params: FrameParams, level: NonNullable<FrameParams['level']>, shells: boolean): void {
     const gl = this.gl;
     const { prog, u } = this.meshProg;
     const s = level.structure;
     const look = level.tiles;
     const meshes = this.frameMeshes;
 
-    const grounds = meshes.filter((m) => m.vao && m.groundIbo && m.groundCount > 0);
+    const grounds = shells ? [] : meshes.filter((m) => m.vao && m.groundIbo && m.groundCount > 0);
     if (grounds.length > 0) {
       gl.useProgram(prog);
       u.mat4('uViewProj', params.viewProj);
@@ -1893,7 +1907,7 @@ export class Webgl2Renderer implements Renderer {
     // sits in. Depth-writing, because it is a surface — heat under a lake should
     // be hidden by it the same way heat under a hill is.
     const w = level.water;
-    const waters = meshes.filter((m) => m.waterIbo && m.waterCount > 0 && (m.tile ? look.water : w.show));
+    const waters = shells ? [] : meshes.filter((m) => m.waterIbo && m.waterCount > 0 && (m.tile ? look.water : w.show));
     if (waters.length > 0) {
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -1922,12 +1936,13 @@ export class Webgl2Renderer implements Renderer {
       gl.disable(gl.BLEND);
     }
 
-    const faces = meshes.filter((m) => m.structIbo && m.structCount > 0 && (m.tile ? look.faces : s.showFaces));
+    // Textured and fully opaque is a surface like the ground: it writes depth,
+    // so a guardrail's far side cannot draw over its near side, and is drawn
+    // with it. Anything less is a shell, blended and depth-neutral as below,
+    // drawn with the shells.
+    const solid = s.textured && s.faceOpacity >= 0.999;
+    const faces = solid === shells ? [] : meshes.filter((m) => m.structIbo && m.structCount > 0 && (m.tile ? look.faces : s.showFaces));
     if (faces.length > 0) {
-      // Textured and fully opaque is a surface like the ground: it writes depth,
-      // so a guardrail's far side cannot draw over its near side. Anything less
-      // is a shell, blended and depth-neutral as below.
-      const solid = s.textured && s.faceOpacity >= 0.999;
       if (!solid) {
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -1959,7 +1974,7 @@ export class Webgl2Renderer implements Renderer {
       gl.disable(gl.BLEND);
     }
 
-    const wires = meshes.filter((m) => m.wireIbo && m.wireCount > 0 && (m.tile ? look.wire : s.showWire));
+    const wires = shells ? meshes.filter((m) => m.wireIbo && m.wireCount > 0 && (m.tile ? look.wire : s.showWire)) : [];
     if (wires.length > 0) {
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);

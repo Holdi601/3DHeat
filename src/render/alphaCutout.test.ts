@@ -121,7 +121,9 @@ describe('alpha cut-out in the depth-only passes', () => {
     // pushSceneUniform takes the mode as given; the callers pass it only for a
     // mesh whose texture is there.
     expect(method(file, 'pushSceneUniform')).toContain('u[47] = texture ? (texture === 2 ? 2 : 1) : 0;');
-    const level = method(file, 'drawLevel');
+    // The seal, last in the scene pass (after the figures, which it would otherwise hide).
+    const level = method(file, 'sealStructures');
+    expect(method(file, 'drawScene')).toContain('if (model && slots) this.sealStructures(pass, slots);');
     expect(level).toContain(
       "this.sceneBindGroup(this.structDepthPipeline, 'structdepth', slots.seal[m.texture !== null ? 1 : 0])",
     );
@@ -154,7 +156,9 @@ describe('alpha cut-out in the depth-only passes', () => {
     const gl = readFileSync(resolve(__dirname, 'webgl2/renderer.ts'), 'utf8');
     expect(gl).toContain('this.bindAtlas(u, m, s.textured, 2);');
     const gpu = readFileSync(resolve(__dirname, 'webgpu/renderer.ts'), 'utf8').replace(/\r\n/g, '\n');
-    expect(gpu).toMatch(/solid \? 'struct-solid' : 'struct',\s*slots\.struct\[m\.texture !== null \? 1 : 0\],/);
+    expect(gpu).toContain('this.sceneBindGroup(pipeline, key, slots.struct[m.texture !== null ? 1 : 0])');
+    expect(gpu).toContain("if (solid) this.drawStructureFaces(pass, level, slots, this.meshPipeline, 'struct-solid');");
+    expect(gpu).toContain("if (!solid) this.drawStructureFaces(pass, level, slots, this.structPipeline, 'struct');");
     expect(gpu).toContain('s.textured && textured ? 2 : false,');
   });
 });

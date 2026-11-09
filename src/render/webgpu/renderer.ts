@@ -1990,7 +1990,7 @@ export class WebgpuRenderer implements Renderer {
       },
     });
 
-    if (params.level) this.drawLevel(pass, params.level, mapOffset, slots);
+    if (params.level) this.drawLevel(pass, params.level, mapOffset, slots, false);
 
     if (params.showGrid || params.showAxes) {
       this.ensureGrid(params);
@@ -2035,13 +2035,6 @@ export class WebgpuRenderer implements Renderer {
         this.tracks.drawTrails(pass, this.cachedBindGroup(`scene:trackTrail:${plainOffset}`, this.tracks.trailLayout, () => [{ binding: 0, resource: this.uniforms.binding(plainOffset, SCENE_UNIFORM_BYTES) }]));
       }
     }
-    // The far-off glyphs: map symbols, weapons, decoys (`symbols/`), over everything in the scene.
-    if (params.symbols) {
-      this.symbols ??= new GpuSymbols(this.device, SCENE_FORMAT, DEPTH_FORMAT);
-      if (params.gpuTracks && this.tracks) this.tracks.drawGlyphs(pass, this.symbols, params.symbols, params.viewProj, params.cameraPos, this.width, this.height);
-      this.symbols.draw(pass, params.symbols, params.viewProj, params.cameraPos, this.width, this.height);
-    }
-
     if (params.sceneTris && params.sceneTriVertCount > 0) {
       this.triBuffer = this.uploadLines(this.triBuffer, params.sceneTris, params.sceneTriVertCount, 'scene triangles');
       pass.setPipeline(this.triPipeline);
@@ -2063,6 +2056,16 @@ export class WebgpuRenderer implements Renderer {
       pass.draw(params.trailVertCount);
     }
 
+    // The see-through structures over all of it (see `drawLevel`).
+    if (model) this.drawLevel(pass, model, mapOffset, slots, true);
+
+    // The far-off glyphs: map symbols, weapons, decoys (`symbols/`), over everything in the scene.
+    if (params.symbols) {
+      this.symbols ??= new GpuSymbols(this.device, SCENE_FORMAT, DEPTH_FORMAT);
+      if (params.gpuTracks && this.tracks) this.tracks.drawGlyphs(pass, this.symbols, params.symbols, params.viewProj, params.cameraPos, this.width, this.height);
+      this.symbols.draw(pass, params.symbols, params.viewProj, params.cameraPos, this.width, this.height);
+    }
+
     if (params.overlayVerts && params.overlayVertCount > 0) {
       this.overlayBuffer = this.uploadLines(
         this.overlayBuffer,
@@ -2076,7 +2079,31 @@ export class WebgpuRenderer implements Renderer {
       pass.draw(params.overlayVertCount);
     }
 
+    // Last in the pass, and depth only: the colour of this frame is already
+    // decided, and what changes is the depth texture the heat pass samples.
+    // Without this the structures are absent from it and nothing is ever
+    // occluded by a building - see `sealStructureDepth` in the WebGL2 renderer.
+    // It used to close `drawLevel`, before the figures: every figure behind a
+    // see-through structure failed the depth test against it and was gone.
+    if (model && slots) this.sealStructures(pass, slots);
+
     pass.end();
+  }
+
+  /** The structures' depth, colour untouched (`structDepthPipeline`). */
+  private sealStructures(pass: GPURenderPassEncoder, slots: MeshSlots): void {
+    for (const m of this.frameMeshes) {
+      if (!m.structBuffer || m.structCount === 0) continue;
+      pass.setPipeline(this.structDepthPipeline);
+      pass.setBindGroup(
+        0,
+        this.sceneBindGroup(this.structDepthPipeline, 'structdepth', slots.seal[m.texture !== null ? 1 : 0]),
+      );
+      pass.setBindGroup(1, this.atlasBindGroup(this.structDepthPipeline, m));
+      this.setMeshBuffers(pass, m);
+      pass.setIndexBuffer(m.structBuffer, 'uint32');
+      pass.drawIndexed(m.structCount);
+    }
   }
 
   private pushMapUniform(
@@ -2218,13 +2245,22 @@ export class WebgpuRenderer implements Renderer {
     );
   }
 
+  /**
+   * The level: with `shells` false what stands solid in it (the ground, the
+   * water, structures drawn opaque), first in the scene pass; with `shells`
+   * true its see-through structures and their edges, after everything else,
+   * so a figure behind one is seen through it like the ground behind it, and
+   * one in front, having written its depth, is not covered.
+   */
   private drawLevel(
     pass: GPURenderPassEncoder,
     level: NonNullable<FrameParams['level']>,
     mapOffset: number,
     slots: MeshSlots | null,
+    shells: boolean,
   ): void {
     if (level.kind === 'image' && this.mapTexture) {
+      if (shells) return;
       pass.setPipeline(this.mapPipeline);
       pass.setBindGroup(
         0,
@@ -2248,6 +2284,24 @@ export class WebgpuRenderer implements Renderer {
     // level resolved from its own contents comes from `level.tiles` instead.
     const meshes = this.frameMeshes;
     const look = level.tiles;
+
+    const s = level.structure;
+    // Textured and fully opaque is a surface like the ground, so it takes the
+    // ground's depth-writing pipeline and is drawn with it: a guardrail's far
+    // side must not draw over its near side. Anything less is a shell.
+    const solid = s.textured && s.faceOpacity >= 0.999;
+    if (shells) {
+      if (!solid) this.drawStructureFaces(pass, level, slots, this.structPipeline, 'struct');
+      for (const m of meshes) {
+        if (!m.wireBuffer || m.wireCount === 0 || !(m.tile ? look.wire : s.showWire)) continue;
+        pass.setPipeline(this.wirePipeline);
+        pass.setBindGroup(0, this.sceneBindGroup(this.wirePipeline, 'wire', slots.wire));
+        this.setMeshBuffers(pass, m);
+        pass.setIndexBuffer(m.wireBuffer, 'uint32');
+        pass.drawIndexed(m.wireCount);
+      }
+      return;
+    }
 
     // Ground first: opaque, writes depth, so it occludes heat beneath it.
     const groundPipeline = level.wireframe ? this.meshWirePipeline : this.meshPipeline;
@@ -2292,51 +2346,25 @@ export class WebgpuRenderer implements Renderer {
       pass.drawIndexed(m.waterCount);
     }
 
+    if (solid) this.drawStructureFaces(pass, level, slots, this.meshPipeline, 'struct-solid');
+  }
+
+  /** The level's structure faces with `pipeline`, `key` its bind groups' cache key. */
+  private drawStructureFaces(
+    pass: GPURenderPassEncoder,
+    level: NonNullable<FrameParams['level']>,
+    slots: MeshSlots,
+    pipeline: GPURenderPipeline,
+    key: string,
+  ): void {
     const s = level.structure;
-    // Textured and fully opaque is a surface like the ground, so it takes the
-    // ground's depth-writing pipeline: a guardrail's far side must not draw
-    // over its near side. Anything less is a shell.
-    const solid = s.textured && s.faceOpacity >= 0.999;
-    const structPipeline = solid ? this.meshPipeline : this.structPipeline;
-    for (const m of meshes) {
-      if (!m.structBuffer || m.structCount === 0 || !(m.tile ? look.faces : s.showFaces)) continue;
-      pass.setPipeline(structPipeline);
+    for (const m of this.frameMeshes) {
+      if (!m.structBuffer || m.structCount === 0 || !(m.tile ? level.tiles.faces : s.showFaces)) continue;
+      pass.setPipeline(pipeline);
       // Its own cache key per pipeline: a bind group made from one pipeline's
       // automatic layout is not valid with another's, however alike they are.
-      pass.setBindGroup(
-        0,
-        this.sceneBindGroup(
-          structPipeline,
-          solid ? 'struct-solid' : 'struct',
-          slots.struct[m.texture !== null ? 1 : 0],
-        ),
-      );
-      pass.setBindGroup(1, this.atlasBindGroup(structPipeline, m));
-      this.setMeshBuffers(pass, m);
-      pass.setIndexBuffer(m.structBuffer, 'uint32');
-      pass.drawIndexed(m.structCount);
-    }
-    for (const m of meshes) {
-      if (!m.wireBuffer || m.wireCount === 0 || !(m.tile ? look.wire : s.showWire)) continue;
-      pass.setPipeline(this.wirePipeline);
-      pass.setBindGroup(0, this.sceneBindGroup(this.wirePipeline, 'wire', slots.wire));
-      this.setMeshBuffers(pass, m);
-      pass.setIndexBuffer(m.wireBuffer, 'uint32');
-      pass.drawIndexed(m.wireCount);
-    }
-
-    // Last in the pass, and depth only: the colour of this frame is already
-    // decided, and what changes is the depth texture the heat pass samples.
-    // Without this the structures are absent from it and nothing is ever
-    // occluded by a building — see `sealStructureDepth` in the WebGL2 renderer.
-    for (const m of meshes) {
-      if (!m.structBuffer || m.structCount === 0) continue;
-      pass.setPipeline(this.structDepthPipeline);
-      pass.setBindGroup(
-        0,
-        this.sceneBindGroup(this.structDepthPipeline, 'structdepth', slots.seal[m.texture !== null ? 1 : 0]),
-      );
-      pass.setBindGroup(1, this.atlasBindGroup(this.structDepthPipeline, m));
+      pass.setBindGroup(0, this.sceneBindGroup(pipeline, key, slots.struct[m.texture !== null ? 1 : 0]));
+      pass.setBindGroup(1, this.atlasBindGroup(pipeline, m));
       this.setMeshBuffers(pass, m);
       pass.setIndexBuffer(m.structBuffer, 'uint32');
       pass.drawIndexed(m.structCount);
