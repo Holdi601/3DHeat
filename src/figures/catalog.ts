@@ -16,6 +16,8 @@ import { buildFixedWing, buildHeli, buildMissile, type FixedWingSpec, type HeliS
 import { buildNaval, type NavalSpec } from './naval';
 import { buildMarker, type MarkerKind } from './markers';
 import { SPEC_SETS } from './specs';
+import { buildMeshFigure } from './meshfig';
+import { MESH_FIGURES } from './meshes';
 
 export type FigureDomain = 'person' | 'ground' | 'air' | 'heli' | 'missile' | 'sea' | 'marker';
 
@@ -179,6 +181,9 @@ export const CATALOG: Record<string, FigureEntry> = {
 
 // Vehicles carry a coarse build of themselves, for when they are small on screen (ground and naval builders wrap their own; people and markers are small already).
 for (const e of Object.values(CATALOG)) if (e.domain === 'air' || e.domain === 'heli' || e.domain === 'missile') e.build = withCoarse(e.build);
+
+// Mesh figures (free models adopted where truer, `meshfig.ts`) in place of the built ones of the same name; each carries its own coarse and far builds.
+for (const [n, m] of Object.entries(MESH_FIGURES)) if (CATALOG[n]) CATALOG[n] = { ...CATALOG[n], build: () => buildMeshFigure(m) };
 
 /** Every figure's builder by name: what the contact sheet and the tests walk. */
 export const FIGURES: Record<string, () => Template> = Object.fromEntries(Object.entries(CATALOG).map(([n, e]) => [n, e.build]));
