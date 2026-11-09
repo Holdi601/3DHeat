@@ -600,7 +600,7 @@ const ALIASES: Record<string, string> = {
   'jp_tkx_prot': 'type-10',
   'jp_type_81_tansam_fcs': 'patriot-mpq-53', // nearest: a truck-borne array radar of its size
   // The Re.2002 Ariete fighter, whose id is spelt like the Italian tank's figure: taken only where the data says aircraft.
-  'air:ariete': 're-2000',
+  'air:ariete': 'sagittario-2', // the Aerfer Ariete jet, a Sagittario 2 with a booster jet
   'jp_type_81_tansam_launcher': 'type-81-tansam-launcher',
   'jp_oplot_t': 't-84-oplot-m',
   'cn_m8_greyhound': 'm8-greyhound',
