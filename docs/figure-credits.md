@@ -20,3 +20,6 @@ Some figure outlines were measured on drawings published under CC BY; their auth
 - Figure proportions checked on: "Italian Army - Regiment 'Lancieri di Aosta' (6th) Centauro tank destroyer during exercise Capricorno 5-2025" by the Italian Army, CC BY 2.5, https://commons.wikimedia.org/wiki/File:Italian_Army_-_Regiment_%22Lancieri_di_Aosta%22_(6th)_Centauro_tank_destroyer_during_exercise_Capricorno_5-2025.jpg
 - Figure outlines derived from: "Tank Museum (3666528568)" by Simon Q (Flickr), CC BY 2.0, https://commons.wikimedia.org/wiki/File:Tank_Museum_(3666528568).jpg
 - Figure proportions checked on: "Tankfest 2012 (7528101810)" by Simon Q (Flickr), CC BY 2.0, https://commons.wikimedia.org/wiki/File:Tankfest_2012_(7528101810).jpg
+- Figure model derived from: "Cromwell | British Tank" by Tank 3D, CC BY 4.0, https://www.printables.com/model/1151231-cromwell-british-tank
+- Figure model derived from: "Panzer IV (G) Detailed Version | German Tank" by Tank 3D, CC BY 4.0, https://www.printables.com/model/1077613-panzer-iv-g-detailed-version-german-tank
+- Figure model derived from: "T-34 (1941) Detailed Version | Russian Tank" by Tank 3D, CC BY 4.0, https://www.printables.com/model/1108727-t-34-1941-detailed-version-russian-tank
