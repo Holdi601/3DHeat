@@ -708,18 +708,19 @@ A['bf-109z'] = fig({
 // Hawker Fury Mk.I: the slim pointed Kestrel nose with the radiator under it, a staggered single-bay biplane with
 // the lower wing a little shorter, the open cockpit, Hawker's round fin (8.15 x 9.14 x 3.1 m). Mk.2: the wheels in
 // spats (estimate: same size).
-function fury(spats: boolean): Spec {
+function fury(spats: boolean, span = 9.14): Spec {
   const ground = -1.9;
+  const k = span / 9.14;
   return fig({
-    cls: 'biplane', length: 8.15, span: 9.14, height: 3.1,
+    cls: 'biplane', length: 8.15, span, height: 3.1,
     body: [[4.08, 0.05, -0.15, 0.12], [3.7, 0.38, -0.4, 0.38], [2.6, 0.5, -0.5, 0.45], [1.2, 0.5, -0.55, 0.45], [0, 0.5, -0.55, 0.43], [-1.5, 0.4, -0.4, 0.32], [-3.2, 0.25, -0.15, 0.15], [-4.08, 0.2, 0.0, 0.05]], round: [[4, 2.4], [3, 3.4], [-4, 3.4]],
-    wing: planOf([[0, 1.55, 0.15], [4.1, 1.55, 0.15]], 0.4), wingUp: -0.5, dihedral: 3,
+    wing: planOf([[0, 1.55, 0.15], [4.1 * k, 1.55, 0.15]], 0.4), wingUp: -0.5, dihedral: 3,
     fin: [[-3.0, 0], [-4.1, 0], [-4.15, 0.6], [-3.95, 0.9], [-3.6, 0.95], [-3.3, 0.7]], finBase: 0.2,
     tail: [[-3.1, 0.15], [-3.3, 1.6], [-3.9, 1.6], [-4.0, 0.15]], planeUp: 0.25,
     bodies: [
-      plane([[0, 2.15, 0.65], [4.57, 2.15, 0.65]], 1.15, 0.12, 0.45),
+      plane([[0, 2.15, 0.65], [4.57 * k, 2.15, 0.65]], 1.15, 0.12, 0.45),
       belly(1.9, 0.9, -0.5, -0.85, 0.28),
-      post(2.0, 1.92, 1.15, -0.45, 0.03, 2.7, -0.1), post(0.9, 0.82, 1.15, -0.4, 0.03, 2.7, -0.1),
+      post(2.0, 1.92, 1.15, -0.45, 0.03, 2.7 * k, -0.1), post(0.9, 0.82, 1.15, -0.4, 0.03, 2.7 * k, -0.1),
       post(1.8, 1.74, 1.15, 0.45, 0.03, 0.42, 0.1), post(0.9, 0.84, 1.15, 0.45, 0.03, 0.42, 0.1),
       ...wheel(1.5, 0.75, -0.5, ground, 0.33, spats),
     ],
@@ -729,6 +730,9 @@ function fury(spats: boolean): Spec {
 }
 A['fury-mk1'] = fury(false);
 A['fury-mk2'] = fury(true);
+// Hawker Nimrod: the naval Fury on a wider wing (8.09 x 10.23 x 3.0 m); the Mk II's wheels in spats as the Fury Mk.2's.
+A['nimrod-mk1'] = fury(false, 10.23);
+A['nimrod-mk2'] = fury(true, 10.23);
 
 // Dewoitine D.371 (and the D.371 HS9 and the naval D.373, of the same outline): a radial in a long-chord cowl, a
 // slim body with the open cockpit, the parasol wing on struts above it, fixed wheels, Dewoitine's round fin

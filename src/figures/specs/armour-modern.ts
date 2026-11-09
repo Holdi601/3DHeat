@@ -671,6 +671,8 @@ G['m109'] = { cls: 'sp-artillery', ...M109, guns: [{ mount: 'turret', length: 3.
 G['m109a1'] = { cls: 'sp-artillery', ...M109, guns: [{ mount: 'turret', length: 6.0, calibre: 0.155, muzzle: true, extractor: 0.45, at: 0.4, elevation: 0.05 }] };
 // PLZ-45: the M109's layout with the 155 mm of 45 calibres (6.98 m), 3.24 m wide.
 G['plz-45'] = { cls: 'sp-artillery', ...M109, width: 3.24, guns: [{ mount: 'turret', length: 6.95, calibre: 0.155, muzzle: true, extractor: 0.45, at: 0.4, elevation: 0.05 }] };
+// Type 75 155 mm SPH: the M109's layout with the 155 mm of 30 calibres (4.65 m), 3.09 m wide.
+G['type-75-sph'] = { cls: 'sp-artillery', ...M109, width: 3.09, guns: [{ mount: 'turret', length: 4.6, calibre: 0.155, muzzle: true, extractor: 0.45, at: 0.4, elevation: 0.05 }] };
 G['m109-paladin'] = { cls: 'sp-artillery', ...M109, turret: turret(-1.0, [[-2.4, 1.45], [1.6, 1.55], [2.0, 1.2]], [[-2.4, 1.4], [1.5, 1.5], [2.0, 1.15]], 12, 1.95), guns: [{ mount: 'turret', length: 6.1, calibre: 0.155, muzzle: true, at: 0.4, elevation: 0.05 }], addOns: [tb(0.2, 1.55, 0.55, 2.4, 0.12, 0.8, M)] };
 // M44 (1953): the howitzer in an open-topped box over the back (6.16 x 3.24 m); the M41's parts turned round, the sprocket
 // at the front, six road wheels a side, the last doubling as the idler, so only 3.80 m of track bears from the front
