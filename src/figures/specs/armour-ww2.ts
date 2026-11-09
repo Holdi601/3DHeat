@@ -1246,13 +1246,16 @@ G['kv-122'] = ww2({ ...KV, W: 3.25, deck: 1.6, top: G['kv-1s'].hullOutline!.top,
 }
 // T-70: five road wheels, three return rollers, a sloped glacis, the small turret offset left with the 45 mm
 // (4.29 x 2.32 m, 2.04 m); T-60: four road wheels, the turret with the 20 mm (4.1 x 2.3 m, 1.75 m).
+// The T-70's superstructure roof at 1.54 m, the low turret over the middle, the glacis, the five road wheels on
+// 2.5 m, the rollers, the front sprocket and rear idler from the "Light Tanks" (T70) side silhouette in FM 30-40
+// (1943), scaled by the 4.29 m hull (public domain).
 G['t-70'] = ww2({
-  cls: 'light-tank', L: 4.29, W: 2.32, deck: 1.45, fender: 0.75,
-  top: [[-2.145, 1.25], [-2.05, 1.42], [0.5, 1.45], [1.6, 1.05], [2.145, 0.85]],
+  cls: 'light-tank', L: 4.29, W: 2.32, deck: 1.54, fender: 0.75,
+  top: [[-2.145, 1.3], [-1.78, 1.35], [-1.66, 1.45], [-1.1, 1.55], [0.96, 1.54], [2.03, 1.1], [2.145, 1.0]],
   plan: [[-2.145, 1.12], [2.145, 1.12]], hullRound: 12,
-  track: trk(2.1, 0.78, 0.5, 0.45, 1.55),
-  wheels: even(5, -1.55, 1.55), r: 0.26, rollers: [-1.0, 0, 1.0],
-  turret: turret(0.2, [[-0.8, 0.6], [-0.65, 0.72], [0.55, 0.72], [0.8, 0.55]], [[-0.8, 0.55], [0.8, 0.55]], 10, 0.85, -0.25),
+  track: [[-1.35, 0], [1.5, 0], [2.1, 0.65], [1.84, 0.9], [-1.82, 0.78], [-2.11, 0.47]],
+  wheels: [-1.19, -0.53, 0.07, 0.7, 1.33], r: 0.24, rollers: [-0.86, 0.31, 1.19],
+  turret: turret(0.03, [[-0.8, 0.6], [-0.65, 0.72], [0.55, 0.72], [0.8, 0.55]], [[-0.8, 0.42], [0.8, 0.42]], 10, 0.85, -0.25),
   gun: { length: 1.4, calibre: 0.045, at: 0.45 },
 });
 // T-80 (1942, the light tank): the T-70's hull and running gear, wider (2.5 m) with the taller two-man turret and its
