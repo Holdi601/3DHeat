@@ -329,6 +329,9 @@ const PATTON_WHEELS = [-2.22, -1.37, -0.52, 0.32, 1.17, 2.02];
 const M48_WHEELS = [-2.1, -1.3, -0.5, 0.3, 1.1, 1.9];
 const M48_RUN = run(6.8, 1.02, [3.3, 0.68], [-3.4, 0.78], -2.27, 2.07);
 const M19_CUPOLA: AddOn[] = [{ on: 'turret', kind: 'drum', at: [-0.4, 0.68, 1.12], size: [0.9, 0.9, 0.48] }, tb(0.0, 0.68, 1.2, 0.9, 0.07, 0.07, DARK)];
+// The M19 cupola on the M60s: the 0.9 m drum standing about 0.6 m over the roof with its hatch and periscope on top, to
+// the published height over the cupola periscope (M60 3.213 m, M60A1 3.256 m, M60A3 3.282 m, Hunnicutt via afvdatabase).
+const M19_TO = (top: number): AddOn[] => [{ on: 'turret', kind: 'drum', at: [-0.4, 0.68, 1.19], size: [0.9, 0.9, 0.62] }, tb(-0.4, 0.68, (1.5 + top - 1.65) / 2, 0.5, 0.45, top - 1.65 - 1.5), tb(0.0, 0.68, 1.2, 0.9, 0.07, 0.07, DARK)];
 const PATTON: GroundSpec = { chassis: 'tracked', length: 6.95, width: 3.63, hullHeight: 1.65, roadWheels: 6, roadWheelRadius: 0.33, trackProfile: PATTON_RUN, running: { wheels: PATTON_WHEELS, rollers: [-1.6, 0, 1.6] }, hullOutline: { top: [[-3.47, 1.35], [-3.3, 1.65], [1.4, 1.65], [3.0, 1.15], [3.47, 0.9]], bottom: [[-3.47, 1.0], [3.2, 1.0], [3.47, 0.9]], plan: [[-3.47, 1.55], [2.6, 1.6], [3.47, 1.15]], round: 4, stations: 14 } };
 const M48_TURRET = turret(0.1, [[-1.9, 0.8], [-1.5, 1.3], [0.2, 1.5], [1.2, 1.3], [1.75, 0.8], [1.9, 0.45]], [[-1.9, 0.4], [-1.3, 0.8], [0.0, 0.9], [1.2, 0.65], [1.9, 0.35]], 2.4, 1.85);
 // M48 Patton (1953): the round "turtle" cast turret, five return rollers, the 90 mm with its blast deflector; M48A5 the 105.
@@ -337,13 +340,14 @@ const M60A1_TURRET = turret(0.0, [[-2.1, 0.85], [-1.6, 1.35], [0.2, 1.55], [1.1,
 const M60_GUN: GunSpec = { mount: 'turret', length: 5.4, calibre: 0.105, extractor: 0.6, at: 0.45 };
 const M60_RACK = tb(-2.35, 0, 0.45, 0.45, 2.0, 0.4, DARK);
 // M60 (1960): the Patton-style turret on the new hull, the 105.
-G['m60'] = { cls: 'mbt', ...PATTON, turret: M48_TURRET, guns: [M60_GUN], addOns: M19_CUPOLA };
+G['m60'] = { cls: 'mbt', ...PATTON, turret: M48_TURRET, guns: [M60_GUN], addOns: M19_TO(3.213) };
 // M60A1 (1962): the long "needle nose" turret.
-G['m60a1'] = { cls: 'mbt', ...PATTON, turret: M60A1_TURRET, guns: [M60_GUN], addOns: [...M19_CUPOLA, M60_RACK] };
+G['m60a1'] = { cls: 'mbt', ...PATTON, turret: M60A1_TURRET, guns: [M60_GUN], addOns: [...M19_TO(3.256), M60_RACK] };
 // M60A3 (TTS): the A1 with the thermal sleeve, the laser rangefinder and smoke dischargers on the turret's sides.
-G['m60a3'] = { cls: 'mbt', ...PATTON, turret: M60A1_TURRET, guns: [{ ...M60_GUN, sleeve: 0.8 }], addOns: [...M19_CUPOLA, M60_RACK, tb(0.7, 1.4, 0.55, 0.5, 0.2, 0.3, { ...M, ...DARK, yaw: 0.4 })] };
-// M60A2 "Starship" (1974): a low, narrow, very long turret with the big cupola on top and the short 152 mm gun-launcher.
-G['m60a2'] = { cls: 'mbt', ...PATTON, turret: turret(-0.3, [[-2.6, 0.8], [-2.0, 1.2], [0.0, 1.35], [1.2, 1.0], [1.9, 0.45]], [[-2.6, 0.45], [-1.6, 0.7], [0.4, 0.72], [1.9, 0.32]], 6, 1.85), guns: [{ mount: 'turret', length: 2.4, calibre: 0.152, at: 0.45 }], addOns: [{ on: 'turret', kind: 'drum', at: [-0.6, 0, 0.98], size: [1.05, 1.05, 0.55] }, tb(-0.1, 0, 1.1, 1.0, 0.07, 0.07, DARK)] };
+G['m60a3'] = { cls: 'mbt', ...PATTON, turret: M60A1_TURRET, guns: [{ ...M60_GUN, sleeve: 0.8 }], addOns: [...M19_TO(3.282), M60_RACK, tb(0.7, 1.4, 0.55, 0.5, 0.2, 0.3, { ...M, ...DARK, yaw: 0.4 })] };
+// M60A2 "Starship" (1974): a low, narrow, very long turret with the big cupola on top and the short 152 mm gun-launcher;
+// 3.31 m over the cupola periscope (Hunnicutt via afvdatabase).
+G['m60a2'] = { cls: 'mbt', ...PATTON, turret: turret(-0.3, [[-2.6, 0.8], [-2.0, 1.2], [0.0, 1.35], [1.2, 1.0], [1.9, 0.45]], [[-2.6, 0.45], [-1.6, 0.7], [0.4, 0.72], [1.9, 0.32]], 6, 1.85), guns: [{ mount: 'turret', length: 2.4, calibre: 0.152, at: 0.45 }], addOns: [{ on: 'turret', kind: 'drum', at: [-0.6, 0, 1.1025], size: [1.05, 1.05, 0.795] }, tb(-0.6, 0, 1.58, 0.55, 0.5, 0.16), tb(-0.1, 0, 1.1, 1.0, 0.07, 0.07, DARK)] };
 // Magach 6 (Blazer): the M60A1 with Blazer ERA bricks round the turret's front and sides and in rows on the glacis.
 const BLAZER: AddOn[] = [];
 for (const [x, s, yaw] of [[2.0, 0.45, -0.6], [1.6, 0.85, -0.6], [1.15, 1.2, -0.35], [0.6, 1.45, -0.1], [0.0, 1.55, 0], [-0.6, 1.5, 0], [-1.2, 1.35, 0.2]] as const) BLAZER.push(tb(x, s, 0.55, 0.5, 0.18, 0.4, { ...M, yaw }));
