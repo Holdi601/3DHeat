@@ -406,6 +406,12 @@ G['panther-f'] = ww2({
 // view of the G draws them (src/figures/specs/sources.md), heights scaled to the published 2.68 m.
 const PZ4_T = turret(-0.38, [[-1.15, 0.7], [-1.0, 0.9], [0.75, 0.92], [0.95, 0.78]], [[-1.15, 0.72], [0.3, 0.76], [0.95, 0.62]], 10, 1.15);
 const PZ4_F1_T = { ...PZ4_T, gunX: 0.97 };
+// H and J (under their turret skirts): the turret's plan, side profile and front section as the CC-BY Pz IV G model
+// (sources.md) has them - the rear corners cut back to a narrow rear wall, the widest just ahead of the ring, the
+// sides leaning in above the vision ports, the roof falling to the front plate. (Measured, the earlier turrets keep
+// their wider estimate for now: on them this body lost more in the front view than it gained.)
+const PZ4_TM: TurretSpec = { ...turret(-0.38, [[-0.93, 0.38], [-0.66, 0.66], [-0.1, 0.8], [0.4, 0.8], [0.94, 0.7], [0.99, 0.55]], [[-0.93, 0.72], [0.35, 0.72], [0.99, 0.58]], 10, 1.15) };
+PZ4_TM.outline = { ...PZ4_TM.outline!, section: [[0, 1], [0.41, 0.93], [0.49, 0.84], [0.72, 0.76]], sectionAbs: true };
 const PZ4: Ww2 = {
   cls: 'medium-tank', L: 5.65, W: 2.88, deck: 1.68, fender: 0.95, horns: true,
   top: [[-2.825, 1.4], [-2.75, 1.62], [-0.95, 1.62], [-0.905, 1.68], [1.74, 1.68], [1.775, 1.3], [2.43, 1.22], [2.825, 1.0]],
@@ -433,17 +439,19 @@ G['pz-iv-g'] = ww2({ ...PZ4, gun: { length: 2.45, calibre: 0.075, muzzle: true, 
 // the big transverse muffler on the back.
 G['pz-iv-h'] = ww2({
   ...PZ4,
+  turret: PZ4_TM,
   gun: { length: 2.85, calibre: 0.075, muzzle: true, at: 0.45, elevation: 0 },
   parts: [drumX(1.68, -3.12, -2.86, 0, 1.1, 0.2), part(1.68, [[-3.12, 0.55], [-2.86, 0.55]], [[-3.12, 1.3], [-2.86, 1.3]], 0.9, 2), ...pz4HullSkirts],
-  turretParts: (t) => [pz4Cupola(t), pz4Mantlet(t), pz4Bin(t), ...pz4TurretSkirts(t)],
+  turretParts: (t) => [cupola(t, -0.54, 0, 0.33, 0.27), pz4Mantlet(t), pz4Bin(t), ...pz4TurretSkirts(t)],
 });
 // Ausf. J (1944-45): the H without the auxiliary engine's muffler, two upright flame-damping exhausts, three return rollers.
 G['pz-iv-j'] = ww2({
   ...PZ4,
+  turret: PZ4_TM,
   rollers: [-1.3, 0, 1.3],
   gun: { length: 2.85, calibre: 0.075, muzzle: true, at: 0.45, elevation: 0 },
   parts: [pipe(1.68, -2.91, -0.42, 0.09, 0.95, 1.8), pipe(1.68, -2.91, 0.42, 0.09, 0.95, 1.8), ...pz4HullSkirts],
-  turretParts: (t) => [pz4Cupola(t), pz4Mantlet(t), pz4Bin(t), ...pz4TurretSkirts(t)],
+  turretParts: (t) => [cupola(t, -0.54, 0, 0.33, 0.27), pz4Mantlet(t), pz4Bin(t), ...pz4TurretSkirts(t)],
 });
 
 // ---------------------------------------------------------------- StuG III
