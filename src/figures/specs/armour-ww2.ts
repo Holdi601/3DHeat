@@ -2121,11 +2121,40 @@ G['tog-ii'] = ww2({
   turret: turret(0.2, [[-1.4, 0.8], [-1.2, 1.05], [0.8, 1.08], [1.1, 0.85]], [[-1.4, 0.85], [1.1, 0.85]], 14, 1.15),
   gun: { length: 3.3, calibre: 0.076, muzzle: true, at: 0.45 },
 });
-// A39 Tortoise: a casemate over the whole hull, the 32-pounder in its ball mount in the front, a machine-gun turret on
-// the roof, the double tracks under skirts (7.24 x 3.91 m, 3.05 m; 10.0 m with the gun).
+// A39 Tortoise (7.24 x 3.91 m, 3.05 m; 10.06 m with the gun): the two track units a side under deep armoured skirts,
+// the full width up to the 1.48 m skirt tops; on them the cast casemate, set in from the skirts, its sloped front with
+// the 32-pounder's ball mount in the middle and the Besa's ball to its left, the roof domed at its edges and falling
+// steeply at the back onto a low box on the left rear; the Besa turret on the roof, the two hatch rings. Places and
+// heights read off the public-domain 1945 trials photographs (side view and the left-front views, sources.md), scaled
+// by the published length and height; the widths across judged from the front views.
 {
-  const m = mantlet(2.0, 3.45, 3.8, 1.95, 0.45, 0.32, 0.2, 2);
-  G['tortoise'] = ww2({ cls: 'tank-destroyer', L: 7.24, W: 3.91, deck: 2.0, fender: 0.6, top: [[-3.62, 2.3], [-3.5, 2.85], [2.6, 2.85], [3.62, 1.7]], plan: [[-3.62, 1.35], [3.62, 1.3]], hullRound: 12, track: [[-3.0, 0], [3.0, 0], [3.62, 0.8], [3.35, 1.25], [-3.35, 1.25], [-3.62, 0.8]], wheels: [], r: 0.2, solid: true, turret: m, guns: [fire(m, 2.95, 0.094)], parts: [roofCupola(2.0, 0.6, -0.7, 2.85, 0.42, 0.25)] });
+  const m = mantlet(1.48, 1.95, 2.72, 1.9, 0.42, 0.32, 0, 2.2);
+  const besa = mantlet(1.48, 2.1, 2.42, 2.15, 0.2, 0.16, -1.0, 2.2);
+  const casemate: TurretSpec = {
+    ...part(1.48, [[-2.32, 1.45], [-2.0, 1.6], [2.2, 1.62], [2.55, 1.5], [2.72, 1.25]], [[-2.32, 1.95], [-1.75, 2.05], [-1.3, 2.6], [-1.0, 2.8], [1.0, 2.8], [2.02, 2.63], [2.72, 1.45]], 1.4, 3),
+  };
+  casemate.outline = { ...casemate.outline!, section: [[1.4, 1], [2.3, 0.96], [2.65, 0.86], [2.82, 0.62]], sectionAbs: true, stations: 14 };
+  G['tortoise'] = ww2({
+    cls: 'tank-destroyer', L: 7.24, W: 3.91, tw: 1.05, deck: 1.48, fender: 0.44,
+    top: [[-3.62, 1.2], [-3.52, 1.46], [3.45, 1.5], [3.62, 1.28]],
+    under: [[-3.62, 0.62], [-3.45, 0.44], [3.45, 0.44], [3.62, 0.66]],
+    plan: [[-3.62, 1.94], [3.62, 1.94]], hullRound: 12,
+    track: [[-3.15, 0], [3.15, 0], [3.58, 0.55], [3.4, 1.2], [-3.4, 1.2], [-3.6, 0.55]],
+    wheels: [], r: 0.2, solid: true,
+    turret: m,
+    guns: [fire(m, 3.75, 0.094, { muzzle: true }), { ...fire(besa, 0.45, 0.0079), turret: 2 }],
+    parts: [
+      casemate,
+      // The Besa ball in the front plate, left of the gun.
+      besa,
+      // The Besa turret, the hatch ring at the front left and the one at the back right.
+      roofCupola(1.48, -0.66, 0.35, 2.8, 0.48, 0.25),
+      roofCupola(1.48, 1.05, -0.95, 2.74, 0.36, 0.1),
+      roofCupola(1.48, -1.25, 0.85, 2.62, 0.4, 0.1),
+      // The low box on the left rear behind the casemate.
+      part(1.48, [[-3.45, 0.55], [-2.3, 0.55]], [[-3.45, 1.92], [-2.3, 1.92]], 1.4, 12, -1.25),
+    ],
+  });
 }
 // A43 Black Prince: the Churchill VII's layout widened (3.44 m) with a big turret and the 17-pounder (8.81 m with the gun, 2.74 m).
 G['black-prince'] = ww2({ ...CHURCHILL, W: 3.44, plan: [[-3.6, 1.12], [3.35, 1.12]], turret: turret(0.4, [[-1.4, 0.75], [-1.2, 1.15], [0.6, 1.2], [1.2, 0.9], [1.3, 0.6]], [[-1.4, 0.85], [1.3, 0.85]], 8, 1.3), gun: { length: 3.4, calibre: 0.076, muzzle: true, at: 0.5 }, turretParts: (t) => [cupola(t, -0.5, -0.45, 0.3, 0.14)] });
