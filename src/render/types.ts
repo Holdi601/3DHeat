@@ -511,6 +511,13 @@ export interface FrameParams {
    */
   overlayVerts: Float32Array | null;
   overlayVertCount: number;
+  /**
+   * Lines over the finished picture, the heat included, without depth (seven
+   * floats a vertex, as the trails): the battles' objectives in the heatmap,
+   * which the heat would otherwise cover. Drawn on every frame, idle ones too.
+   */
+  topVerts?: Float32Array | null;
+  topVertCount?: number;
 
   /** Appearance of the background map or level mesh. Null draws neither. */
   level: LevelDraw | null;

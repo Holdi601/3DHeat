@@ -4,6 +4,8 @@
  * results and the kills, for the match tab's scoreboard and kill feed.
  */
 
+import { battleMode, parseObjectives, type Objective } from './objectives';
+
 export interface GamePlayer {
   name: string;
   team: string;
@@ -44,6 +46,11 @@ export interface GameMatch {
   kills: GameKill[];
   /** Every unit's display name by its id, those without a track too (bunkers, guns). */
   unitNames: Map<number, string>;
+  /** The battle's mode ("Conq1", "Dom"; '' when unknown) and its name ("Conquest #1"). */
+  mode?: string;
+  modeName?: string;
+  /** What the battle is fought over (`objectives.ts`); empty for a summary without. */
+  objectives?: Objective[];
 }
 
 const n = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
@@ -89,6 +96,8 @@ export function parseWtMatch(j: Record<string, unknown>): GameMatch {
   }
   return {
     unitNames,
+    ...battleMode(j),
+    objectives: parseObjectives(j.objectives),
     game: 'warthunder',
     match: s(j.match),
     map: s(j.map),

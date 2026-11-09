@@ -20,6 +20,7 @@ import { usePlayhead } from './hooks';
 import './replay.css';
 import { UnitsSettings } from '../UnitsPicker';
 import { FigureControls } from '../panels/FigureControls';
+import { ObjectivesPanel } from '../match/ObjectivesPanel';
 import { applyBuildings } from './buildings';
 
 /**
@@ -30,6 +31,7 @@ export function ReplayPanel() {
   return (
     <>
       <FigurePanel />
+      <ObjectivesPanel />
       <CameraPanel />
       <UnitList />
       <EventList />

@@ -20,6 +20,7 @@ import {
   type Side,
 } from '../../match/matchDoc';
 import { ALL, useMatchStore } from '../../state/matchStore';
+import { loadObjectiveFiles } from '../../state/objectivesStore';
 import { useStore } from '../../state/store';
 import { Section } from '../controls';
 import { RecordingInfoSection } from './RecordingInfo';
@@ -130,12 +131,14 @@ function MatchesSection() {
           ref={input}
           type="file"
           multiple
-          accept=".json,.3dheat"
+          accept=".json,.3dheat,.parquet"
           style={{ display: 'none' }}
           onChange={(e) => {
             const files = Array.from(e.target.files ?? []);
             e.target.value = '';
             void store.load(files);
+            // The battles' capture zones over time (`<match>.objectives.parquet`), chosen with them.
+            void loadObjectiveFiles(files);
           }}
         />
       </div>

@@ -376,6 +376,7 @@ uniform mat4 uViewProj;
 uniform vec4 uCam;      // camera xyz, playhead t
 uniform vec4 uTrail;    // trail seconds (0: none), 1 for drop lines, the floor's height, segments
 uniform float uDropWeapons;   // 1: drop lines under weapons too
+uniform float uUnits;   // data units a metre
 out vec4 vColor;
 out vec3 vWorld;
 
@@ -391,6 +392,8 @@ void main() {
   uint dom = iTeam.w <= -999.5 ? (uint(-iTeam.w - 999.5) >> 16u) & 15u : 0u;
   bool weapon = dom >= ${D_MISSILE}u && dom <= ${D_ROCKET}u;
   bool effect = dom >= ${D_FLARE}u && dom != ${D_MARKER}u;
+  // A wreck leaves no trail (\`shader.ts\`).
+  bool dead = iTeam.w <= -999.5 && (uint(-iTeam.w - 999.5) & ${WORD_DEAD}u) != 0u;
   vec3 P = iOrigin.xyz;
   vec4 clip = uViewProj * vec4(P, 1.0);
   if (clip.w <= 0.0) return;
@@ -407,7 +410,7 @@ void main() {
     a = end ? 0.15 : 0.55;
   } else {
     float W = uTrail.x;
-    if (W <= 0.0 || weapon || effect) return;
+    if (W <= 0.0 || weapon || effect || dead) return;
     int i = gl_InstanceID;
     uvec4 t0 = texelFetch(uTracks, at(i * 4), 0);
     uvec4 t1 = texelFetch(uTracks, at(i * 4 + 1), 0);
@@ -427,6 +430,10 @@ void main() {
     int k = lo;
     if (n > 0 && (k - n < first || timeAt(k - n + 1) < t - W)) return;
     vec4 key = end ? keyAt(k - n) : (n == 0 ? vec4(P, t) : keyAt(k - n + 1));
+    // A piece within a metre of where the unit is, at both ends, is not drawn: a thing that stays put
+    // (a parked tank, a burnt-out tram) draws nothing, however its samples wobble.
+    vec4 other = end ? (n == 0 ? vec4(P, t) : keyAt(k - n + 1)) : keyAt(k - n);
+    if (distance(key.xyz, P) < uUnits && distance(other.xyz, P) < uUnits) return;
     p = key.xyz;
     a = 0.8 * clamp(1.0 - (t - key.w) / W, 0.0, 1.0);
   }

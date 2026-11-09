@@ -313,6 +313,7 @@ export class GlTracks {
       gl.uniform1f(T.loc('uTLo'), p.t - Math.fround(p.t));
       gl.uniform4f(T.loc('uTrail'), p.trailSeconds, drop === null ? 0 : 1, drop ?? 0, TRAIL_SEGMENTS_GL);
       gl.uniform1f(T.loc('uDropWeapons'), p.weaponDrops ? 1 : 0);
+      gl.uniform1f(T.loc('uUnits'), s.units);
       T.f3('uCameraPos', camera[0], camera[1], camera[2]);
       T.f1('uFadeStart', 1e9);
       T.f1('uFadeEnd', 1e9 + 1);

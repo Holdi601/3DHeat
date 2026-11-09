@@ -18,6 +18,9 @@ import { RaceLabels } from './ui/race/RaceLabels';
 import { RacePanel } from './ui/race/RacePanel';
 import './ui/race/race.css';
 import { useMatchStore } from './state/matchStore';
+import { loadObjectiveFiles } from './state/objectivesStore';
+import { ObjectivesPanel } from './ui/match/ObjectivesPanel';
+import { ObjectiveLabels } from './ui/match/ObjectiveLabels';
 import { MatchPanel } from './ui/match/MatchPanel';
 import { BoardBar, TacticsPanel } from './ui/tactics/TacticsPanel';
 import { BoardLabels } from './ui/tactics/BoardLabels';
@@ -493,7 +496,10 @@ export function App() {
                   <TeamPanel />
                 </>
               ) : (
-                <HeatPanel />
+                <>
+                  <HeatPanel />
+                  <ObjectivesPanel />
+                </>
               )}
               <MatchPanel />
               {dataset && <SourcePanel />}
@@ -566,7 +572,10 @@ export function App() {
           onDrop={(e) => {
             if (matchTab || vehicleTab) {
               e.preventDefault();
-              void useMatchStore.getState().load(Array.from(e.dataTransfer.files));
+              const files = Array.from(e.dataTransfer.files);
+              void useMatchStore.getState().load(files);
+              // The battles' capture zones over time, dropped with them.
+              void loadObjectiveFiles(files);
               return;
             }
             if (!raceTab) return;
@@ -600,6 +609,7 @@ export function App() {
                 </>
               ) : (
                 <>
+              <ObjectiveLabels />
               <ReplayOverlay />
               <ReplayExtras />
               <HitMarkTip />

@@ -11,6 +11,11 @@ import { defaultEventKinds, eventBursts, eventRows, eventText, eventWords } from
 import { clock } from './hooks';
 import { partyName, sortUnits, unitsOf } from './units';
 import { flyTo } from './replayView';
+import { useObjectivesStore } from '../../state/objectivesStore';
+import { captureMarks, objectiveSources } from '../../render/objectives';
+
+/** The chip of the battles' captures (`objectives.ts`), apart from the data's own event kinds. */
+const CAPTURE = '@capture';
 
 /** Lines the list shows at most; the filters narrow the rest. */
 const MAX_ROWS = 600;
@@ -39,15 +44,19 @@ export function EventList() {
   const kinds = useReplayStore((s) => s.eventKinds);
   const unitKey = useReplayStore((s) => s.eventUnit);
   const games = useMatchStore((s) => s.games);
+  const timelines = useObjectivesStore((s) => s.timelines);
   const events = useMemo(() => (dataset ? eventRows(dataset) : null), [dataset]);
+  // The battles' captures: zone, side, moment, of the matches played.
+  const captures = useMemo(() => (dataset ? captureMarks(dataset, objectiveSources(dataset, games, timelines, filters, session)) : []), [dataset, games, timelines, filters, session]);
   const index = useMemo(() => (dataset ? unitsOf(dataset) : null), [dataset]);
 
   // Every kind and how often it happens, for the chips.
   const counts = useMemo(() => {
     const m = new Map<string, number>();
     if (events) for (const l of events.labels) m.set(l, (m.get(l) ?? 0) + 1);
+    if (captures.length) m.set(CAPTURE, captures.length);
     return [...m.entries()].sort((a, b) => b[1] - a[1]);
-  }, [events]);
+  }, [events, captures.length]);
 
   // The units that have events, for the unit filter.
   const actors = useMemo(() => {
@@ -57,7 +66,7 @@ export function EventList() {
     return sortUnits(index.units.filter((u) => keys.has(u.key)));
   }, [events, index]);
 
-  const defaults = useMemo(() => (events ? defaultEventKinds(events.labels) : []), [events]);
+  const defaults = useMemo(() => [...(events ? defaultEventKinds(events.labels) : []), ...(captures.length ? [CAPTURE] : [])], [events, captures.length]);
   const effective = kinds ?? defaults;
 
   const pauseOnEvent = useReplayStore((s) => s.pauseOnEvent);
@@ -86,6 +95,7 @@ export function EventList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataset, events, index, filters, session, effective.join('|'), unitKey]);
   const shown = listed.bursts;
+  const capturesShown = effective.includes(CAPTURE) ? captures : [];
 
   if (!dataset || !events || events.rows.length === 0 || !dataset.time || !index) return null;
   // Names of the units a summary knows that have no track: what a bomb destroyed.
@@ -106,11 +116,11 @@ export function EventList() {
   };
 
   return (
-    <Section title={t('replay.events.title')} defaultOpen right={<span className="count">{int(shown.length)}</span>}>
+    <Section title={t('replay.events.title')} defaultOpen right={<span className="count">{int(shown.length + capturesShown.length)}</span>}>
       <div className="chips">
         {counts.map(([k, n]) => (
           <button key={k} className={`chip${effective.includes(k) ? ' on' : ''}`} onClick={() => toggleKind(k)} title={t('replay.events.kindTitle')}>
-            {eventWords(k)} <span className="dim">{int(n)}</span>
+            {k === CAPTURE ? t('objectives.events.chip') : eventWords(k)} <span className="dim">{int(n)}</span>
           </button>
         ))}
         {effective.length < counts.length && (
@@ -163,7 +173,26 @@ export function EventList() {
         </button>
       </div>
       <div className="replay-events event-list">
-        {shown.slice(0, MAX_ROWS).map((b) => {
+        {mergeByTime(shown.slice(0, MAX_ROWS), (b) => time[events.rows[b.first]], capturesShown, (c) => c.t).map((item) => {
+          if ('zone' in item) {
+            const c = item;
+            return (
+              <button
+                key={`capture-${c.match}-${c.zone}-${c.t}`}
+                onClick={() => {
+                  useStore.getState().seek(c.t);
+                  if (engine && Number.isFinite(c.x)) flyTo(engine, dataset, { x: c.x, y: c.y, z: c.z }, 400);
+                }}
+                title={t('replay.jump')}
+              >
+                <span>{clock(c.t - start)}</span>
+                <span>
+                  <b>{t(c.kind === 'captured' ? 'objectives.events.captured' : 'objectives.events.neutralised', { zone: c.zone, team: t('replay.team', { n: c.team }) })}</b>
+                </span>
+              </button>
+            );
+          }
+          const b = item;
           const i = b.first;
           const row = events.rows[i];
           const p = events.persons[i];
@@ -189,8 +218,20 @@ export function EventList() {
           );
         })}
         {shown.length > MAX_ROWS && <div className="hint">{t('replay.events.more', { count: shown.length - MAX_ROWS })}</div>}
-        {shown.length === 0 && <div className="hint">{t('replay.events.none')}</div>}
+        {shown.length === 0 && capturesShown.length === 0 && <div className="hint">{t('replay.events.none')}</div>}
       </div>
     </Section>
   );
+}
+
+/** Two lists, each in time order, as one in time order. */
+function mergeByTime<A, B>(a: A[], ta: (x: A) => number, b: B[], tb: (x: B) => number): (A | B)[] {
+  const out: (A | B)[] = [];
+  let i = 0;
+  let j = 0;
+  while (i < a.length || j < b.length) {
+    if (j >= b.length || (i < a.length && ta(a[i]) <= tb(b[j]))) out.push(a[i++]);
+    else out.push(b[j++]);
+  }
+  return out;
 }
