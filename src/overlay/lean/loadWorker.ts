@@ -15,6 +15,8 @@ import { leanSpec, sharedGeo, specFor } from './spec';
 import type { LeanSpec } from './scan';
 
 export type LoadRequest = { files: File[]; maxKeys: number; threads: number; name: string };
+/** The page took a piece in (`kind: 'piece'`): the next may come. */
+export type PieceAck = { kind: 'ack'; part: ArrayBuffer };
 
 export type LoadProgress = {
   phase: 'footers' | 'scan' | 'keys' | 'build';
@@ -40,6 +42,12 @@ export type BigKey = 'keysA' | 'keysB' | 'trackData';
  * page (postMessage throws), while the keys of a large load are up to 4 GiB.
  */
 export const PIECE = 1 << 30;
+/**
+ * Bytes a piece carries: the page copies each into its whole as it comes,
+ * and a gigabyte copied at once held a frame for half a second (a fresh
+ * page's first touch makes a copy slow: 32 MiB still took 60 ms).
+ */
+const PART = 4 << 20;
 
 /** Bytes the decodes in flight may hold together, and what one row takes while decoded. */
 const DECODE_BYTES = 1.6e9;
@@ -127,7 +135,24 @@ class Pool {
   }
 }
 
-ctx.onmessage = async (ev: MessageEvent<LoadRequest>) => {
+/** Pieces the page has not taken in yet, at most: they queue in its memory, and a burst of them held its frames. */
+const PIECES_AHEAD = 4;
+let unacked = 0;
+let onAck: (() => void) | null = null;
+/**
+ * Pieces' buffers the page gave back, to send the next pieces in: a large
+ * load's thousand buffers left behind took the page's garbage collector half
+ * a second of one frame to free.
+ */
+const spare: ArrayBuffer[] = [];
+
+ctx.onmessage = async (ev: MessageEvent<LoadRequest | PieceAck>) => {
+  if ('kind' in ev.data) {
+    if (ev.data.part.byteLength === PART) spare.push(ev.data.part);
+    unacked--;
+    onAck?.();
+    return;
+  }
   const { files, maxKeys, threads, name } = ev.data;
   const post = (r: LoadResponse, transfer?: Transferable[]) => ctx.postMessage(r, transfer ?? []);
   const ms: Record<string, number> = {};
@@ -241,8 +266,15 @@ ctx.onmessage = async (ev: MessageEvent<LoadRequest>) => {
     for (const key of ['keysA', 'keysB', 'trackData'] as const) {
       const a = built[key];
       if (a.byteLength <= PIECE) continue;
-      for (let o = 0; o < a.byteLength; o += PIECE) {
-        const part = new Uint8Array(a.buffer, a.byteOffset + o, Math.min(PIECE, a.byteLength - o)).slice();
+      for (let o = 0; o < a.byteLength; o += PART) {
+        while (unacked >= PIECES_AHEAD) await new Promise<void>((res) => (onAck = res));
+        onAck = null;
+        unacked++;
+        const n = Math.min(PART, a.byteLength - o);
+        const src = new Uint8Array(a.buffer, a.byteOffset + o, n);
+        const buf = n === PART ? spare.pop() : undefined;
+        const part = buf ? new Uint8Array(buf) : src.slice();
+        if (buf) part.set(src);
         post({ kind: 'piece', key, total: a.byteLength, offset: o, part }, [part.buffer]);
       }
       built[key] = new Uint32Array(0);

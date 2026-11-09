@@ -393,6 +393,23 @@ describe('lean overlay hand-over', () => {
     expect(b.dataset.personLabels).toEqual(labels);
     expect(b.trackMatch).toEqual(match);
   });
+
+  it('sends long lists of strings as one string each and splits them again as they were', () => {
+    const b = load(rows());
+    const many = Array.from({ length: 10_000 }, (_, i) => (i % 7 === 0 ? '' : `name ${i} · ünï`));
+    const keys = Array.from({ length: 5000 }, (_, i) => `u${i} #1`);
+    const cat = b.dataset.attrs.find((a) => a.kind === 'category')!;
+    cat.categories = [...many];
+    b.trackKey = [...keys];
+    stripTrackStrings(b);
+    expect(cat.categories).toEqual([]);
+    expect(b.trackKey).toEqual([]);
+    // Through a structured clone, as the worker's message goes.
+    const c = structuredClone(b);
+    restoreTrackStrings(c);
+    expect(c.dataset.attrs.find((a) => a.name === cat.name)!.categories).toEqual(many);
+    expect(c.trackKey).toEqual(keys);
+  });
 });
 
 describe('lean overlay garbage positions', () => {

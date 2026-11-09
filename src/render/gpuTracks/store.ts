@@ -252,6 +252,16 @@ export class TrackFigures {
     return i;
   }
 
+  /** Asks the model worker for a kind's models now, so they are built while other work goes on. */
+  request(kind: string | null): void {
+    if (kind) kindModels(kind);
+  }
+
+  /** Forgets which tracks draw with which mesh, so the tracks can be placed again (a recolour); the meshes stay. */
+  unplace(): void {
+    this.meshTracks.fill(0);
+  }
+
   /** The figure kind for a dataset row (null: a dart). */
   kindAt(row: number): string | null {
     return this.fr.kindOf(this.d, row) ?? (this.knows ? null : 'soldier');
@@ -371,6 +381,19 @@ export function rowOfKey(s: GpuTrackStore, track: number, key: number): number {
 /** Whether a figure kind is a weapon in flight (a missile, rocket or bomb). */
 export function isWeaponKind(kind: string | null): boolean {
   return !!kind && CATALOG[kind.replace(/@.*$/, '')]?.domain === 'missile';
+}
+
+/** A job that may place figures run to its end here and now: models it lacks are built on this thread, never waited for. */
+export function wholeHere<T>(g: SliceJob<T>): T {
+  syncBuild++;
+  try {
+    for (;;) {
+      const r = g.next();
+      if (r.done) return r.value;
+    }
+  } finally {
+    syncBuild--;
+  }
 }
 
 export function gpuTrackStore(d: Dataset, o: BuildOptions): GpuTrackStore | null {

@@ -671,6 +671,14 @@ export class WebgpuRenderer implements Renderer {
         // A device lost meanwhile: the pipelines are built on use as before.
       }
     }, 0);
+    // The figures' pipeline too, a task of its own: made on first use, it took part of the frame a load ends in.
+    setTimeout(() => {
+      try {
+        this.figures ??= new GpuFigures(this.device, SCENE_FORMAT, DEPTH_FORMAT, alphaBlend());
+      } catch {
+        // As above.
+      }
+    }, 0);
   }
 
   private lineHeatPipelineFor(format: GPUTextureFormat): GPURenderPipeline {
