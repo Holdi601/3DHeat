@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Kommentaar",
   "replay.events.kind.unplaced": "Asukohata",
   "replay.card.hidden": "Salvestis peidab selle praegu (pole hävitatud).",
-  "replay.card.disabled": "Lahingust väljas (keelatud), pole hävitatud."
+  "replay.card.disabled": "Lahingust väljas (keelatud), pole hävitatud.",
+  "replay.aids.links": "Seosed",
+  "replay.aids.linksTitle": "Relv selle kandjani (katkendjoon) ja teekonnapunkt järgmiseni, Parent ja Next järgi"
 }

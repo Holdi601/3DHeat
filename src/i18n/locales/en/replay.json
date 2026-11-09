@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Comment",
   "replay.events.kind.unplaced": "No position",
   "replay.card.hidden": "Hidden by the recording at this moment (not destroyed).",
-  "replay.card.disabled": "Out of combat (disabled), not destroyed."
+  "replay.card.disabled": "Out of combat (disabled), not destroyed.",
+  "replay.aids.links": "Links",
+  "replay.aids.linksTitle": "A weapon to its launcher (dashed) and a waypoint to the next, from Parent and Next"
 }

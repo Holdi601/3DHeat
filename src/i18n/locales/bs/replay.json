@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Komentar",
   "replay.events.kind.unplaced": "Bez položaja",
   "replay.card.hidden": "Snimak ga trenutno skriva (nije uništen).",
-  "replay.card.disabled": "Izvan borbe (onemogućen), nije uništen."
+  "replay.card.disabled": "Izvan borbe (onemogućen), nije uništen.",
+  "replay.aids.links": "Veze",
+  "replay.aids.linksTitle": "Oružje do lansera (isprekidano) i tačka rute do sljedeće, iz Parent i Next"
 }

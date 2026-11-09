@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Athugasemd",
   "replay.events.kind.unplaced": "Engin staðsetning",
   "replay.card.hidden": "Falið af upptökunni núna (ekki eyðilagt).",
-  "replay.card.disabled": "Úr leik (óvirkt), ekki eyðilagt."
+  "replay.card.disabled": "Úr leik (óvirkt), ekki eyðilagt.",
+  "replay.aids.links": "Tengingar",
+  "replay.aids.linksTitle": "Vopn að skotpalli sínum (brotalína) og leiðarpunktur að þeim næsta, úr Parent og Next"
 }

@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Comentário",
   "replay.events.kind.unplaced": "Sem posição",
   "replay.card.hidden": "Oculto pela gravação neste momento (não destruído).",
-  "replay.card.disabled": "Fora de combate (desativado), não destruído."
+  "replay.card.disabled": "Fora de combate (desativado), não destruído.",
+  "replay.aids.links": "Ligações",
+  "replay.aids.linksTitle": "Uma arma até ao seu lançador (tracejada) e um ponto de passagem até ao seguinte, a partir de Parent e Next"
 }

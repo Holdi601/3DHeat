@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Коментар",
   "replay.events.kind.unplaced": "Без положаја",
   "replay.card.hidden": "Снимак га тренутно скрива (није уништен).",
-  "replay.card.disabled": "Ван борбе (онемогућен), није уништен."
+  "replay.card.disabled": "Ван борбе (онемогућен), није уништен.",
+  "replay.aids.links": "Везе",
+  "replay.aids.linksTitle": "Оружје до лансера (испрекидано) и тачка руте до следеће, из Parent и Next"
 }

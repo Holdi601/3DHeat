@@ -36,6 +36,7 @@
 import type { Dataset } from '../state/types';
 import type { Frame3, Vec3 } from '../race/geometry';
 import { poseFrame } from './kit';
+import { sliced, type SliceJob } from '../data/slices';
 
 /** Above this many rows nothing is precomputed: the cursor's straight lines are used. */
 const ROW_LIMIT = 8_000_000;
@@ -76,43 +77,64 @@ export function emptySample(): MotionSample {
 }
 
 const cache = new WeakMap<Dataset, MotionModel | null>();
+const jobs = new WeakMap<Dataset, SliceJob<MotionModel | null>>();
 
 export class MotionModel {
   /** Kept sample rows, grouped by person, in time order within each. */
-  readonly knots: Int32Array;
+  knots!: Int32Array;
   /** Per person, where its knots start; `start[p + 1]` is where they end. */
-  readonly start: Int32Array;
+  start!: Int32Array;
   /** Knot times, a copy for the binary search. */
-  readonly times: Float64Array;
+  times!: Float64Array;
   /** 1 where the curve does not go on to the next knot (another session, a shared name, the end). */
-  readonly end: Uint8Array;
+  end!: Uint8Array;
   /** Velocity at each knot, data units a second. */
-  readonly vel: Float32Array;
+  vel!: Float32Array;
   /** Attitude at each knot, x y z w; null without a heading in the data. */
-  readonly quat: Float32Array | null;
+  quat!: Float32Array | null;
   /** -1 when the data's roll counts left wing down. */
-  readonly rollSign: number;
+  rollSign!: number;
   /** How many samples were left out as dead reckoning. */
-  readonly reckoned: number;
+  reckoned!: number;
   /** How many samples were left out for jumping off the track and back. */
-  readonly outliers: number;
+  outliers!: number;
   /** How many samples' attitudes were put between their neighbours' as glitches. */
-  readonly glitches: number;
+  glitches!: number;
   /** Data units in a metre. */
-  readonly units: number;
+  units!: number;
   /** Per person, when the same unit goes on as another track (Infinity: it does not). */
-  readonly next: Float64Array;
+  next!: Float64Array;
   /** Whether the rows say which are positions (an event column): a person with none is no moving thing. */
-  readonly hasEvents: boolean;
+  hasEvents!: boolean;
 
   static of(d: Dataset): MotionModel | null {
     if (cache.has(d)) return cache.get(d)!;
-    const m = d.time && d.personId && d.count > 1 && d.count <= ROW_LIMIT ? new MotionModel(d) : null;
-    cache.set(d, m);
+    if (!(d.time && d.personId && d.count > 1 && d.count <= ROW_LIMIT)) {
+      cache.set(d, null);
+      return null;
+    }
+    // A slice a frame in the viewer (`data/slices.ts`): null - linear motion - until it is ready.
+    return sliced(cache, jobs, d, () => MotionModel.steps(d)) ?? null;
+  }
+
+  private static *steps(d: Dataset): Generator<void, MotionModel | null, void> {
+    const m = new MotionModel(d, true);
+    yield* m.fill();
     return m;
   }
 
-  constructor(readonly d: Dataset) {
+  constructor(
+    readonly d: Dataset,
+    deferred = false,
+  ) {
+    if (deferred) return;
+    const g = this.fill();
+    while (!g.next().done);
+  }
+
+  /** Works the model out, yielding now and then so it can go a slice a frame. */
+  private *fill(): Generator<void, void, void> {
+    const d = this.d;
     const { time, personId, px, py, pz, count } = d;
     const t = time!;
     const pid = personId!;
@@ -126,11 +148,17 @@ export class MotionModel {
 
     // Rows per person, in time order (the rows are in time order already).
     const counts = new Int32Array(persons + 1);
-    for (let r = 0; r < count; r++) if (take(r)) counts[pid[r] + 1]++;
+    for (let r = 0; r < count; r++) {
+      if ((r & 0xffff) === 0) yield;
+      if (take(r)) counts[pid[r] + 1]++;
+    }
     for (let p = 0; p < persons; p++) counts[p + 1] += counts[p];
     const raw = new Int32Array(counts[persons]);
     const fill = counts.slice(0, persons);
-    for (let r = 0; r < count; r++) if (take(r)) raw[fill[pid[r]]++] = r;
+    for (let r = 0; r < count; r++) {
+      if ((r & 0xffff) === 0) yield;
+      if (take(r)) raw[fill[pid[r]]++] = r;
+    }
 
     // Drop samples at the same time as the one before (a re-timed or doubled row), and dead reckoning.
     const keep = new Uint8Array(raw.length);
@@ -141,9 +169,15 @@ export class MotionModel {
     // A converter that knows which samples were the client's guesses says so.
     const guessCol = d.attrs.find((a) => a.kind !== 'category' && /^extrapolated$/i.test(a.name.trim()));
     const guessed = guessCol ? (guessCol.data as Float32Array) : null;
+    let since = 0;
     for (let p = 0; p < persons; p++) {
       const a = counts[p];
       const b = counts[p + 1];
+      since += b - a;
+      if (since > 0x4000) {
+        since = 0;
+        yield;
+      }
       let last = -1;
       for (let k = a; k < b; k++) {
         const r = raw[k];
@@ -213,6 +247,11 @@ export class MotionModel {
     const lim = 6 * this.units;
     const list: number[] = [];
     for (let p = 0; p < persons; p++) {
+      since += counts[p + 1] - counts[p];
+      if (since > 0x2000) {
+        since = 0;
+        yield;
+      }
       list.length = 0;
       for (let k = counts[p]; k < counts[p + 1]; k++) if (keep[k] === 1) list.push(k);
       const devs = new Float64Array(list.length);
@@ -257,6 +296,7 @@ export class MotionModel {
     const knots = new Int32Array(n);
     n = 0;
     for (let k = 0; k < raw.length; k++) if (keep[k] === 1) knots[n++] = raw[k];
+    yield;
     this.knots = knots;
     this.start = start;
     const times = new Float64Array(n);
@@ -278,6 +318,7 @@ export class MotionModel {
     // Velocity at each knot: the three-point estimate where both neighbours join, else the one step there is.
     const vel = new Float32Array(n * 3);
     for (let k = 0; k < n; k++) {
+      if ((k & 0x7fff) === 0) yield;
       const r = knots[k];
       const before = k > 0 && !end[k - 1] && pid[knots[k - 1]] === pid[r];
       const after = !end[k];
@@ -348,12 +389,14 @@ export class MotionModel {
     const rollCol = d.attrs.find((a) => a.kind !== 'category' && /^roll$/i.test(a.name.trim()));
     const roll = rollCol ? (rollCol.data as Float32Array) : null;
     this.rollSign = roll ? rollSignOf(this, roll) : 1;
+    yield;
 
     let glitches = 0;
     if (d.yaw) {
       const quat = new Float32Array(n * 4);
       const q: [number, number, number, number] = [0, 0, 0, 1];
       for (let k = 0; k < n; k++) {
+        if ((k & 0x1fff) === 0) yield;
         const r = knots[k];
         const rl = roll ? (roll[r] * Math.PI) / 180 : 0;
         const fr = poseFrame({ x: 0, y: 0, z: 0, yaw: Math.PI - d.yaw[r], pitch: d.pitch ? d.pitch[r] || 0 : 0, roll: Number.isFinite(rl) ? this.rollSign * rl : 0 });
@@ -372,6 +415,7 @@ export class MotionModel {
       const off = (60 * Math.PI) / 180;
       const mid = new Float32Array(4);
       for (let k = 1; k + 1 < n; k++) {
+        if ((k & 0x3fff) === 0) yield;
         if (end[k - 1] || end[k]) continue;
         const a = (k - 1) * 4;
         const b = k * 4;

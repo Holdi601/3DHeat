@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Коментар",
   "replay.events.kind.unplaced": "Без позиция",
   "replay.card.hidden": "Скрит от записа в момента (не е унищожен).",
-  "replay.card.disabled": "Извън бой (деактивиран), не е унищожен."
+  "replay.card.disabled": "Извън бой (деактивиран), не е унищожен.",
+  "replay.aids.links": "Връзки",
+  "replay.aids.linksTitle": "Оръжие към носителя му (пунктир) и точка от маршрута към следващата, от Parent и Next"
 }

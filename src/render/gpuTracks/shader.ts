@@ -33,7 +33,7 @@ struct U {
   n : vec4<u32>,     // tracks, meshes, trail vertex room, most trail segments a unit
   trail : vec4<f32>, // trail seconds (0: none), weapon streak seconds (<0: weapons hidden), marker seconds, marker px
   m : vec4<u32>,     // markers, 1 when every track is shown, 1 for drop lines, the floor's height (f32 bits)
-  x : vec4<u32>,     // the playhead's remainder below cam.w (f32 bits), where the aim keys start in tracks
+  x : vec4<u32>,     // the playhead's remainder below cam.w (f32 bits), where the aim keys start in tracks, where the greyed bits start in vis (0: none)
   sym : vec4<f32>,   // far mode (0 figure, 1 arrow, 2 symbol), symbol threshold px, symbol px, 1: drop lines on weapons
 };
 @group(0) @binding(0) var<uniform> u : U;
@@ -344,6 +344,8 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
   let age = -timeAt(first);
   let c = tracks[b + 2u];
   var team = vec3<f32>(f32(c & 255u) / 255.0, f32((c >> 8u) & 255u) / 255.0, f32((c >> 16u) & 255u) / 255.0);
+  // Out of combat, not destroyed (ACMI Disabled, \`visibility.ts\` withHidden): its colour half way to grey.
+  if (u.x.z != 0u && ((vis[u.x.z + (i >> 5u)] >> (i & 31u)) & 1u) != 0u) { team = team * 0.5 + 0.25; }
   // A wreck between its death and its return to life (\`store.ts\` setDeadSpan, as fractions of its keys): charred grey,
   // which its model's instance carries negated (\`figures/wreck.ts\`), and its symbol crossed out.
   var tsign = 1.0;

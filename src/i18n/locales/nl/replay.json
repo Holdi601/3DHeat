@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Opmerking",
   "replay.events.kind.unplaced": "Zonder positie",
   "replay.card.hidden": "Op dit moment verborgen door de opname (niet vernietigd).",
-  "replay.card.disabled": "Uitgeschakeld (buiten gevecht), niet vernietigd."
+  "replay.card.disabled": "Uitgeschakeld (buiten gevecht), niet vernietigd.",
+  "replay.aids.links": "Koppelingen",
+  "replay.aids.linksTitle": "Een wapen naar zijn lanceerder (gestreept) en een routepunt naar het volgende, uit Parent en Next"
 }

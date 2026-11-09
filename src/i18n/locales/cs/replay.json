@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Komentář",
   "replay.events.kind.unplaced": "Bez polohy",
   "replay.card.hidden": "Záznam jej teď skrývá (nezničen).",
-  "replay.card.disabled": "Vyřazen z boje (neaktivní), nezničen."
+  "replay.card.disabled": "Vyřazen z boje (neaktivní), nezničen.",
+  "replay.aids.links": "Vazby",
+  "replay.aids.linksTitle": "Zbraň k jejímu nosiči (čárkovaně) a bod trasy k dalšímu, podle Parent a Next"
 }

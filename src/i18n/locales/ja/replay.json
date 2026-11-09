@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "コメント",
   "replay.events.kind.unplaced": "位置なし",
   "replay.card.hidden": "この時点では記録により非表示(撃破されていません)。",
-  "replay.card.disabled": "戦闘不能(無効)、撃破されていません。"
+  "replay.card.disabled": "戦闘不能(無効)、撃破されていません。",
+  "replay.aids.links": "リンク",
+  "replay.aids.linksTitle": "兵装から発射母機へ(破線)、ウェイポイントから次へ(Parent と Next より)"
 }

@@ -105,7 +105,7 @@ uniform mat4 uViewProj;
 uniform vec4 uCam;            // camera xyz, playhead t
 uniform vec4 uPx;             // focal px (0: orthographic), px size when orthographic, min px, stale s
 uniform vec4 uLod;            // units a metre, scale at true size, full figure from px, figure (not dart) from px
-uniform vec4 uOpt;            // weapon streak s (<0: weapons hidden), 1 when every track is shown
+uniform vec4 uOpt;            // weapon streak s (<0: weapons hidden), 1 when every track is shown, 1 when greyed bits follow, the shown bits' words
 uniform vec4 uSym;            // far mode (0 figure, 1 arrow, 2 symbol), symbol threshold px, symbol px, -
 out vec4 oOrigin;
 out vec4 oForward;
@@ -266,6 +266,8 @@ void main() {
   if (speed > 0.5 * uLod.x) word |= ${WORD_MOVING}u;
   float age = -timeAt(first);
   vec3 team = vec3(float(c & 255u) / 255.0, float((c >> 8u) & 255u) / 255.0, float((c >> 16u) & 255u) / 255.0);
+  // Out of combat, not destroyed (ACMI Disabled, \`visibility.ts\` withHidden): its colour half way to grey.
+  if (uOpt.z > 0.5 && ((texelFetch(uVis, at(int(uOpt.w) + (i >> 5)), 0).x >> uint(i & 31)) & 1u) != 0u) team = team * 0.5 + 0.25;
   // A wreck between its death and its return to life (\`store.ts\` setDeadSpan): charred grey, negated for its
   // model (\`figures/wreck.ts\`; the glyphs and trails take its size), its symbol crossed out.
   uint dA = t1.y >> 16u;
