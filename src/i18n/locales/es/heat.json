@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "La columna de división no cupo en la memoria de la GPU en {skipped} de {total} bloques de filas, y esas filas no se dibujan. Sube el presupuesto de GPU en Rendimiento → Presupuestos de recursos o carga menos filas.",
   "heat.splitPanel.shares": "Comparar proporciones, no recuentos",
   "heat.splitPanel.sharesHint": "Pondera cada lado por uno entre su propio número de filas, para que un lado con cinco veces más filas ya no cubra el mapa solo por cantidad. El color muestra entonces dónde cada lado es proporcionalmente más frecuente que el otro.",
-  "heat.teamsList.columnSplitHint": "La diferencia se divide por <b>{column}</b>, así que los grupos de aquí solo deciden qué se dibuja, no en qué lado cuentan."
+  "heat.teamsList.columnSplitHint": "La diferencia se divide por <b>{column}</b>, así que los grupos de aquí solo deciden qué se dibuja, no en qué lado cuentan.",
+  "heat.sourcePanel.indexing": "Indexando unidades"
 }

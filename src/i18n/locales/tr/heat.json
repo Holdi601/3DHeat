@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Ayırma sütunu {total} satır bloğunun {skipped} tanesinde GPU belleğine sığmadı ve bu satırlar çizilmiyor. Performans → Kaynak bütçeleri altında GPU bütçesini artırın veya daha az satır yükleyin.",
   "heat.splitPanel.shares": "Sayıları değil, payları karşılaştır",
   "heat.splitPanel.sharesHint": "Her tarafı kendi satır sayısının tersiyle ağırlıklandırır; böylece beş kat fazla satırı olan bir taraf haritayı artık yalnızca sayısıyla kaplamaz. Renk bu durumda her tarafın diğerine göre orantılı olarak nerede daha yaygın olduğunu gösterir.",
-  "heat.teamsList.columnSplitHint": "Fark <b>{column}</b> ölçütüne göre ayrılmıştır; bu yüzden buradaki gruplar yalnızca neyin çizileceğini belirler, hangi tarafta sayılacaklarını değil."
+  "heat.teamsList.columnSplitHint": "Fark <b>{column}</b> ölçütüne göre ayrılmıştır; bu yüzden buradaki gruplar yalnızca neyin çizileceğini belirler, hangi tarafta sayılacaklarını değil.",
+  "heat.sourcePanel.indexing": "Birimler dizinleniyor"
 }

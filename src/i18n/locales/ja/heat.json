@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "{total}個の行チャンクのうち{skipped}個で分割列がGPUメモリに収まらず、それらの行は描画されません。パフォーマンス → リソース予算でGPU予算を増やすか、読み込む行を減らしてください。",
   "heat.splitPanel.shares": "件数ではなく割合を比較",
   "heat.splitPanel.sharesHint": "各側をそれぞれの行数の逆数で重み付けするので、行数が5倍ある側が数だけでマップを覆うことはなくなります。色は、各側がもう一方より相対的に多い場所を示します。",
-  "heat.teamsList.columnSplitHint": "差分は<b>{column}</b>で分割されているため、ここのグループは描画するものを決めるだけで、どちらの側に数えるかは決めません。"
+  "heat.teamsList.columnSplitHint": "差分は<b>{column}</b>で分割されているため、ここのグループは描画するものを決めるだけで、どちらの側に数えるかは決めません。",
+  "heat.sourcePanel.indexing": "ユニットを索引付け中"
 }

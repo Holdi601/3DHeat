@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "A felosztó oszlop {total} sorblokkból {skipped} esetén nem fért el a GPU-memóriában, és ezek a sorok nem rajzolódnak ki. Emeld a GPU-keretet a Teljesítmény → Erőforráskeretek alatt, vagy tölts be kevesebb sort.",
   "heat.splitPanel.shares": "Arányok összevetése darabszámok helyett",
   "heat.splitPanel.sharesHint": "Minden oldalt egy osztva a saját sorszámával súlyoz, így egy ötször annyi sort tartalmazó oldal már nem pusztán a mennyiségével borítja be a térképet. A szín ekkor azt mutatja, hol gyakoribb az egyik oldal arányaiban a másiknál.",
-  "heat.teamsList.columnSplitHint": "A különbség a(z) <b>{column}</b> szerint van felosztva, így az itteni csoportok csak azt döntik el, mi rajzolódik ki, azt nem, hogy melyik oldalon számítanak."
+  "heat.teamsList.columnSplitHint": "A különbség a(z) <b>{column}</b> szerint van felosztva, így az itteni csoportok csak azt döntik el, mi rajzolódik ki, azt nem, hogy melyik oldalon számítanak.",
+  "heat.sourcePanel.indexing": "Egységek indexelése"
 }

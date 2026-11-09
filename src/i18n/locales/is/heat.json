@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Skiptingardálkurinn komst ekki fyrir í GPU-minni fyrir {skipped} af {total} blokkum af röðum, og þær raðir eru ekki teiknaðar. Hækkaðu GPU-heimildina undir Afköst → Auðlindaheimildir, eða hladdu inn færri röðum.",
   "heat.splitPanel.shares": "Bera saman hlutföll, ekki fjölda",
   "heat.splitPanel.sharesHint": "Vegur hverja hlið með einum deilt með eigin raðafjölda, svo hlið með fimmfalt fleiri raðir þekur kortið ekki lengur einungis vegna fjöldans. Liturinn sýnir þá hvar hvor hlið er hlutfallslega algengari en hin.",
-  "heat.teamsList.columnSplitHint": "Mismuninum er skipt eftir <b>{column}</b>, svo hóparnir hér ráða aðeins hvað er teiknað, ekki á hvorri hlið þeir teljast."
+  "heat.teamsList.columnSplitHint": "Mismuninum er skipt eftir <b>{column}</b>, svo hóparnir hér ráða aðeins hvað er teiknað, ekki á hvorri hlið þeir teljast.",
+  "heat.sourcePanel.indexing": "Skrái einingar"
 }

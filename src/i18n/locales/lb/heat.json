@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "D’Opdeelungskolonn huet bei {skipped} vun {total} Zeileblocken net an de GPU-Späicher gepasst, an déi Zeile ginn net gezeechent. Setz de GPU-Budget ënner Performance → Ressourcebudgeten erop, oder lued manner Zeilen.",
   "heat.splitPanel.shares": "Undeeler vergläichen, net Zuelen",
   "heat.splitPanel.sharesHint": "Gewiicht all Säit mat eent duerch hir eegen Zeilenzuel, sou datt eng Säit mat fënnef Mol esou vill Zeilen d’Kaart net méi eleng duerch d’Zuel bedeckt. D’Faarf weist dann, wou all Säit proportional méi heefeg ass wéi déi aner.",
-  "heat.teamsList.columnSplitHint": "D’Differenz ass no <b>{column}</b> opgedeelt, dofir decidéieren d’Gruppen hei nëmmen, wat gezeechent gëtt, net op wéi enger Säit se zielen."
+  "heat.teamsList.columnSplitHint": "D’Differenz ass no <b>{column}</b> opgedeelt, dofir decidéieren d’Gruppen hei nëmmen, wat gezeechent gëtt, net op wéi enger Säit se zielen.",
+  "heat.sourcePanel.indexing": "Eenheeten ginn indexéiert"
 }

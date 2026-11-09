@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Uppdelningskolumnen fick inte plats i GPU-minnet för {skipped} av {total} block med rader, och de raderna ritas inte. Höj GPU-budgeten under Prestanda → Resursbudgetar, eller läs in färre rader.",
   "heat.splitPanel.shares": "Jämför andelar, inte antal",
   "heat.splitPanel.sharesHint": "Viktar varje sida med ett delat med dess eget antal rader, så att en sida med fem gånger så många rader inte längre täcker kartan bara genom antalet. Färgen visar då var varje sida är proportionellt vanligare än den andra.",
-  "heat.teamsList.columnSplitHint": "Differensen är uppdelad efter <b>{column}</b>, så grupperna här avgör bara vad som ritas, inte vilken sida de räknas till."
+  "heat.teamsList.columnSplitHint": "Differensen är uppdelad efter <b>{column}</b>, så grupperna här avgör bara vad som ritas, inte vilken sida de räknas till.",
+  "heat.sourcePanel.indexing": "Indexerar enheter"
 }

@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "La columna de divisió no ha cabut a la memòria de la GPU per a {skipped} de {total} blocs de files, i aquestes files no es dibuixen. Augmenta el pressupost de GPU a Rendiment → Pressupostos de recursos o carrega menys files.",
   "heat.splitPanel.shares": "Compara proporcions, no recomptes",
   "heat.splitPanel.sharesHint": "Pondera cada costat per u dividit pel seu propi nombre de files, de manera que un costat amb cinc vegades més files ja no cobreix el mapa només per quantitat. Llavors el color mostra on cada costat és proporcionalment més freqüent que l'altre.",
-  "heat.teamsList.columnSplitHint": "La diferència es divideix per <b>{column}</b>, de manera que aquí els grups només decideixen què es dibuixa, no a quin costat compten."
+  "heat.teamsList.columnSplitHint": "La diferència es divideix per <b>{column}</b>, de manera que aquí els grups només decideixen què es dibuixa, no a quin costat compten.",
+  "heat.sourcePanel.indexing": "Indexant unitats"
 }

@@ -675,5 +675,6 @@
   "heat.teamPanel.trueSize": "true size",
   "heat.teamPanel.weapons": "Weapons, shots and hits",
   "heat.teamPanel.weaponsTitle": "Weapons in flight with smoke, tracers, impacts, hits and kills. Tracers inferred from a hit are dashed.",
-  "heat.timeline.reverseKey": "Play backwards ({key})"
+  "heat.timeline.reverseKey": "Play backwards ({key})",
+  "heat.sourcePanel.indexing": "Indexing units"
 }

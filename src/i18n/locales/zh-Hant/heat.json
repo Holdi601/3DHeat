@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "在 {total} 個資料列區塊中，有 {skipped} 個的分割欄位無法放入 GPU 記憶體，這些資料列不會被繪製。請在「效能 → 資源預算」中提高 GPU 預算，或載入更少的資料列。",
   "heat.splitPanel.shares": "比較占比，而非計數",
   "heat.splitPanel.sharesHint": "以各側自身資料列數的倒數作為權重，讓資料列多五倍的一側不再只憑數量覆蓋地圖。顏色接著會顯示每一側在何處按比例比另一側更常見。",
-  "heat.teamsList.columnSplitHint": "差異依 <b>{column}</b> 分割，因此這裡的群組只決定繪製哪些內容，而不決定它們計入哪一側。"
+  "heat.teamsList.columnSplitHint": "差異依 <b>{column}</b> 分割，因此這裡的群組只決定繪製哪些內容，而不決定它們計入哪一側。",
+  "heat.sourcePanel.indexing": "正在索引單位"
 }

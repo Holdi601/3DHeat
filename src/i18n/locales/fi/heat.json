@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Jakosarake ei mahtunut GPU-muistiin {skipped}/{total} rivilohkossa, eikä niitä rivejä piirretä. Nosta GPU-budjettia kohdassa Suorituskyky → Resurssibudjetit tai lataa vähemmän rivejä.",
   "heat.splitPanel.shares": "Vertaa osuuksia, ei määriä",
   "heat.splitPanel.sharesHint": "Painottaa kumpaakin puolta yhdellä jaettuna sen omalla rivimäärällä, jotta puoli, jolla on viisinkertainen määrä rivejä, ei enää peitä karttaa pelkällä määrällään. Väri näyttää silloin, missä kumpikin puoli on suhteellisesti yleisempi kuin toinen.",
-  "heat.teamsList.columnSplitHint": "Erotus on jaettu sarakkeen <b>{column}</b> mukaan, joten ryhmät tässä ratkaisevat vain, mitä piirretään, eivät sitä, kummalle puolelle ne lasketaan."
+  "heat.teamsList.columnSplitHint": "Erotus on jaettu sarakkeen <b>{column}</b> mukaan, joten ryhmät tässä ratkaisevat vain, mitä piirretään, eivät sitä, kummalle puolelle ne lasketaan.",
+  "heat.sourcePanel.indexing": "Indeksoidaan yksiköitä"
 }

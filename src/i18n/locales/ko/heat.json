@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "행 청크 {total}개 중 {skipped}개에서 분할 열이 GPU 메모리에 들어가지 않아 해당 행이 그려지지 않습니다. 성능 → 리소스 예산에서 GPU 예산을 늘리거나 행을 더 적게 불러오세요.",
   "heat.splitPanel.shares": "개수가 아닌 비율 비교",
   "heat.splitPanel.sharesHint": "각 쪽에 자기 행 수의 역수만큼 가중치를 주므로, 행이 다섯 배 많은 쪽이 수만으로 맵을 덮지 않습니다. 그러면 색은 각 쪽이 다른 쪽보다 비율상 더 흔한 곳을 보여 줍니다.",
-  "heat.teamsList.columnSplitHint": "차이가 <b>{column}</b> 기준으로 분할되어 있으므로, 여기 그룹은 무엇을 그릴지만 정하고 어느 쪽에 셀지는 정하지 않습니다."
+  "heat.teamsList.columnSplitHint": "차이가 <b>{column}</b> 기준으로 분할되어 있으므로, 여기 그룹은 무엇을 그릴지만 정하고 어느 쪽에 셀지는 정하지 않습니다.",
+  "heat.sourcePanel.indexing": "유닛 색인 중"
 }

@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Die Aufteilungsspalte passte bei {skipped} von {total} Zeilenblöcken nicht in den GPU-Speicher; diese Zeilen werden nicht gezeichnet. Erhöhe das GPU-Budget unter Leistung → Ressourcenbudgets oder lade weniger Zeilen.",
   "heat.splitPanel.shares": "Anteile statt Anzahlen vergleichen",
   "heat.splitPanel.sharesHint": "Gewichtet jede Seite mit eins durch ihre eigene Zeilenzahl, sodass eine Seite mit fünfmal so vielen Zeilen die Karte nicht mehr allein durch ihre Menge bedeckt. Die Farbe zeigt dann, wo jede Seite anteilig häufiger ist als die andere.",
-  "heat.teamsList.columnSplitHint": "Die Differenz ist nach <b>{column}</b> aufgeteilt, daher bestimmen die Gruppen hier nur, was gezeichnet wird, nicht auf welcher Seite sie zählen."
+  "heat.teamsList.columnSplitHint": "Die Differenz ist nach <b>{column}</b> aufgeteilt, daher bestimmen die Gruppen hier nur, was gezeichnet wird, nicht auf welcher Seite sie zählen.",
+  "heat.sourcePanel.indexing": "Einheiten werden erfasst"
 }

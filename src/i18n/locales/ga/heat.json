@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Níor luigh an colún scoilte i gcuimhne an GPU do {skipped} as {total} bloc rónna, agus ní tharraingítear na rónna sin. Ardaigh buiséad an GPU faoi Feidhmíocht → Buiséid acmhainní, nó lódáil níos lú rónna.",
   "heat.splitPanel.shares": "Cuir codanna i gcomparáid, ní líonta",
   "heat.splitPanel.sharesHint": "Ualaíonn sé gach taobh le haon roinnte ar a líon rónna féin, ionas nach gclúdaíonn taobh a bhfuil cúig oiread rónna aige an léarscáil de bharr líon amháin a thuilleadh. Taispeánann an dath ansin cá bhfuil gach taobh níos coitianta go comhréireach ná an taobh eile.",
-  "heat.teamsList.columnSplitHint": "Tá an difríocht scoilte de réir <b>{column}</b>, mar sin ní shocraíonn na grúpaí anseo ach cad a tharraingítear, ní cén taobh a gcomhairtear iad air."
+  "heat.teamsList.columnSplitHint": "Tá an difríocht scoilte de réir <b>{column}</b>, mar sin ní shocraíonn na grúpaí anseo ach cad a tharraingítear, ní cén taobh a gcomhairtear iad air.",
+  "heat.sourcePanel.indexing": "Aonaid á n-innéacsú"
 }

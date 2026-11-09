@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Kolumna podziału nie zmieściła się w pamięci GPU dla {skipped} z {total} bloków wierszy i te wiersze nie są rysowane. Zwiększ budżet GPU w Wydajność → Budżety zasobów lub wczytaj mniej wierszy.",
   "heat.splitPanel.shares": "Porównuj udziały, nie liczebności",
   "heat.splitPanel.sharesHint": "Waży każdą stronę jedynką podzieloną przez jej własną liczbę wierszy, więc strona z pięciokrotnie większą liczbą wierszy nie pokrywa już mapy samą liczebnością. Kolor pokazuje wtedy, gdzie każda strona jest proporcjonalnie częstsza od drugiej.",
-  "heat.teamsList.columnSplitHint": "Różnica jest podzielona według <b>{column}</b>, więc grupy tutaj decydują tylko o tym, co jest rysowane, a nie po której stronie się liczą."
+  "heat.teamsList.columnSplitHint": "Różnica jest podzielona według <b>{column}</b>, więc grupy tutaj decydują tylko o tym, co jest rysowane, a nie po której stronie się liczą.",
+  "heat.sourcePanel.indexing": "Indeksowanie jednostek"
 }

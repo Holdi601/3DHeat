@@ -606,6 +606,28 @@ export function drawAtlas(make: () => Ctx2D): Uint8Array {
 let cached: Uint8Array | null = null;
 
 /** The atlas, drawn the first time it is asked for (null where there is no canvas). */
+let warming = false;
+
+/**
+ * The atlas drawn in a worker ahead of its first use (the engine starts it):
+ * twenty milliseconds of canvas text off the main thread. `symbolAtlas`
+ * still draws it here if asked before the worker is done.
+ */
+export function warmSymbolAtlas(): void {
+  if (cached || warming || typeof Worker === 'undefined' || typeof OffscreenCanvas === 'undefined') return;
+  warming = true;
+  try {
+    const w = new Worker(new URL('./atlasWorker.ts', import.meta.url), { type: 'module' });
+    w.onmessage = (e: MessageEvent<Uint8Array | null>) => {
+      if (!cached && e.data) cached = e.data;
+      w.terminate();
+    };
+    w.onerror = () => w.terminate();
+  } catch {
+    // Drawn on first use instead.
+  }
+}
+
 export function symbolAtlas(): Uint8Array | null {
   if (cached) return cached;
   const make = (): Ctx2D | null => {

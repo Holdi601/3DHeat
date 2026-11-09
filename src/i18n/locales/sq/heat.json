@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Kolona e ndarjes nuk u nxu në kujtesën e GPU-së për {skipped} nga {total} blloqe rreshtash, dhe ato rreshta nuk vizatohen. Rrite buxhetin e GPU-së te Performanca → Buxhetet e burimeve, ose ngarko më pak rreshta.",
   "heat.splitPanel.shares": "Krahaso përqindjet, jo sasitë",
   "heat.splitPanel.sharesHint": "Peshon secilën anë me një pjesëtuar me numrin e vet të rreshtave, që një anë me pesëfish më shumë rreshta të mos e mbulojë më hartën vetëm me numër. Ngjyra tregon atëherë ku secila anë është proporcionalisht më e shpeshtë se tjetra.",
-  "heat.teamsList.columnSplitHint": "Diferenca ndahet sipas <b>{column}</b>, ndaj grupet këtu vendosin vetëm çfarë vizatohet, jo në cilën anë numërohen."
+  "heat.teamsList.columnSplitHint": "Diferenca ndahet sipas <b>{column}</b>, ndaj grupet këtu vendosin vetëm çfarë vizatohet, jo në cilën anë numërohen.",
+  "heat.sourcePanel.indexing": "Po indeksohen njësitë"
 }

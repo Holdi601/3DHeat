@@ -675,5 +675,6 @@
   "heat.splitPanel.skipped": "Opdelingskolonnen kunne ikke være i GPU-hukommelsen for {skipped} af {total} blokke af rækker, og de rækker tegnes ikke. Hæv GPU-budgettet under Ydeevne → Ressourcebudgetter, eller indlæs færre rækker.",
   "heat.splitPanel.shares": "Sammenlign andele, ikke antal",
   "heat.splitPanel.sharesHint": "Vægter hver side med én divideret med sit eget antal rækker, så en side med fem gange så mange rækker ikke længere dækker kortet alene i kraft af antallet. Farven viser så, hvor hver side forholdsmæssigt er mere almindelig end den anden.",
-  "heat.teamsList.columnSplitHint": "Forskellen er opdelt efter <b>{column}</b>, så grupperne her afgør kun, hvad der tegnes, ikke hvilken side de tæller på."
+  "heat.teamsList.columnSplitHint": "Forskellen er opdelt efter <b>{column}</b>, så grupperne her afgør kun, hvad der tegnes, ikke hvilken side de tæller på.",
+  "heat.sourcePanel.indexing": "Indekserer enheder"
 }

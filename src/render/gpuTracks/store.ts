@@ -45,7 +45,8 @@ import { poseFrame } from '../../figures/kit';
 import { positionRows, quatOfFrame } from '../../figures/motion';
 import { CATALOG } from '../../figures/catalog';
 import { endsOf, holdAfterKeys } from '../../data/despawn';
-import { FRESH, sliced, type SliceJob } from '../../data/slices';
+import { FRESH, sliceBudget, sliced, WAIT, type SliceJob } from '../../data/slices';
+import type { ModelAnswer } from '../../figures/modelWorker';
 import { deadInSpan, deathsOf, lastDeadSpan, packDeadSpan } from '../../data/deaths';
 import { aimOf, type AimNow } from '../../figures/aim';
 import { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32 } from './chunks';
@@ -173,6 +174,61 @@ function rgba8(r: number, g: number, b: number): number {
  * columns), its full, coarse and far meshes, longest side and flags, and its
  * team colour (or a colour of its own group's, where asked) - slots 2 to 6.
  */
+/** A kind's models as the model worker built them, once a session: pure geometry, the same for every load. */
+interface KindModels {
+  full: FigureMesh;
+  coarse: FigureMesh | null;
+  far: FigureMesh | null;
+  longest: number;
+  air: boolean;
+}
+
+/** Ids for the meshes the worker built: far above the ones `meshOf` counts up from, so the two never meet. */
+let workerMeshId = 1 << 30;
+/** Above 0 while a store is built whole (`gpuTrackStore`): the kinds are built on this thread then. */
+let syncBuild = 0;
+let modelWorker: Worker | null | undefined;
+const kindJobs = new Map<string, { done: boolean; value: KindModels | null; failed: boolean }>();
+
+/**
+ * A kind's models from the worker (`figures/modelWorker.ts`), asked for once:
+ * done when they are back. Null where there is no worker (tests, tools) or
+ * work is not sliced - the caller builds them itself.
+ */
+function kindModels(kind: string): { done: boolean; value: KindModels | null; failed: boolean } | null {
+  if (sliceBudget.ms === Infinity || syncBuild > 0) return null;
+  const hit = kindJobs.get(kind);
+  if (hit) return hit;
+  if (modelWorker === undefined) {
+    try {
+      modelWorker = typeof Worker === 'undefined' ? null : new Worker(new URL('../../figures/modelWorker.ts', import.meta.url), { type: 'module' });
+    } catch {
+      modelWorker = null;
+    }
+    if (modelWorker) {
+      modelWorker.onmessage = (e: MessageEvent<ModelAnswer>) => {
+        const job = kindJobs.get(e.data.kind);
+        if (!job) return;
+        const m = e.data.models;
+        const adopt = (x: { data: Float32Array; count: number } | null): FigureMesh | null => (x ? { id: workerMeshId++, data: x.data, count: x.count } : null);
+        job.value = m ? { full: adopt(m.full)!, coarse: adopt(m.coarse), far: adopt(m.far), longest: m.longest, air: m.air } : null;
+        job.failed = !!e.data.error;
+        job.done = true;
+      };
+      // A worker that cannot start: every kind asked of it is built here instead.
+      modelWorker.onerror = () => {
+        for (const job of kindJobs.values()) if (!job.done) Object.assign(job, { done: true, failed: true });
+        modelWorker = null;
+      };
+    }
+  }
+  if (!modelWorker) return null;
+  const job = { done: false, value: null as KindModels | null, failed: false };
+  kindJobs.set(kind, job);
+  modelWorker.postMessage({ kind });
+  return job;
+}
+
 export class TrackFigures {
   readonly meshes: FigureMesh[] = [...DARTS];
   /** Per mesh, the tracks that may draw with it. */
@@ -213,6 +269,21 @@ export class TrackFigures {
    */
   *prepare(kind: string | null): SliceJob<void> {
     if (!kind || this.kindMeshes.has(kind)) return;
+    // From the model worker where there is one: this thread only waits.
+    const job = kindModels(kind);
+    if (job) {
+      while (!job.done) yield WAIT;
+      if (!job.failed) {
+        const v = job.value;
+        if (!v) this.kindMeshes.set(kind, null);
+        else {
+          const full = this.meshFor(v.full);
+          const coarse = v.coarse ? this.meshFor(v.coarse) : full;
+          this.kindMeshes.set(kind, { full, coarse, far: v.far ? this.meshFor(v.far) : coarse, longest: v.longest, air: v.air });
+        }
+        return;
+      }
+    }
     yield FRESH;
     const t = this.fr.templateOf(kind);
     if (!t) {
@@ -305,10 +376,17 @@ export function isWeaponKind(kind: string | null): boolean {
 export function gpuTrackStore(d: Dataset, o: BuildOptions): GpuTrackStore | null {
   const hit = cache.get(d);
   if (hit) return hit;
-  const g = buildSteps(d, o);
-  let r = g.next();
-  while (!r.done) r = g.next();
-  const s = r.value;
+  // Whole, here and now: no waiting on the model worker.
+  syncBuild++;
+  let s: GpuTrackStore | null;
+  try {
+    const g = buildSteps(d, o);
+    let r = g.next();
+    while (!r.done) r = g.next();
+    s = r.value;
+  } finally {
+    syncBuild--;
+  }
   if (s) cache.set(d, s);
   return s;
 }
@@ -322,10 +400,15 @@ const slicedJobs = new WeakMap<Dataset, SliceJob<GpuTrackStore | null>>();
  * built - a recording of thousands of units takes half a second, and no
  * frame may wait for it.
  */
-export function gpuTrackStoreSliced(d: Dataset, o: BuildOptions): GpuTrackStore | null | undefined {
+export function gpuTrackStoreSliced(d: Dataset, o: BuildOptions, after?: (s: GpuTrackStore) => SliceJob<void>): GpuTrackStore | null | undefined {
   const hit = cache.get(d);
   if (hit) return hit;
-  const s = sliced(slicedCache, slicedJobs, d, () => buildSteps(d, o));
+  const s = sliced(slicedCache, slicedJobs, d, function* () {
+    const s = yield* buildSteps(d, o);
+    // What the first frames would work out on it (`after`): done in the same slices.
+    if (s && after) yield* after(s);
+    return s;
+  });
   if (s) cache.set(d, s);
   return s;
 }
@@ -414,6 +497,15 @@ function* buildSteps(d: Dataset, o: BuildOptions): SliceJob<GpuTrackStore | null
 
   // What each track is drawn as.
   const figures = new TrackFigures(d);
+  // Every kind asked of the model worker at once, so it builds them while the keys are worked out.
+  for (let p = 0; p < persons; p++) {
+    if ((p & 255) === 255) yield;
+    const a = start[p];
+    if (a < start[p + 1]) {
+      const kind = figures.kindAt(rows[a]);
+      if (kind) kindModels(kind);
+    }
+  }
   const rollCol = d.attrs.find((a) => a.kind !== 'category' && /^roll$/i.test(a.name.trim()));
   const roll = rollCol ? (rollCol.data as Float32Array) : null;
 
