@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "注释",
   "replay.events.kind.unplaced": "无位置",
   "replay.card.hidden": "此刻被记录隐藏(未被摧毁)。",
-  "replay.card.disabled": "退出战斗(已停用),未被摧毁。"
+  "replay.card.disabled": "退出战斗(已停用),未被摧毁。",
+  "replay.aids.links": "关联",
+  "replay.aids.linksTitle": "武器到其发射平台(虚线)以及航路点到下一个航路点,来自 Parent 和 Next"
 }

@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Kommentti",
   "replay.events.kind.unplaced": "Ei sijaintia",
   "replay.card.hidden": "Tallenne piilottaa tämän juuri nyt (ei tuhottu).",
-  "replay.card.disabled": "Poissa taistelusta (pois käytöstä), ei tuhottu."
+  "replay.card.disabled": "Poissa taistelusta (pois käytöstä), ei tuhottu.",
+  "replay.aids.links": "Linkit",
+  "replay.aids.linksTitle": "Ase laukaisijaansa (katkoviiva) ja reittipiste seuraavaan, Parent- ja Next-tiedoista"
 }

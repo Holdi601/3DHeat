@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Σχόλιο",
   "replay.events.kind.unplaced": "Χωρίς θέση",
   "replay.card.hidden": "Κρυμμένο από την καταγραφή αυτή τη στιγμή (όχι κατεστραμμένο).",
-  "replay.card.disabled": "Εκτός μάχης (απενεργοποιημένο), όχι κατεστραμμένο."
+  "replay.card.disabled": "Εκτός μάχης (απενεργοποιημένο), όχι κατεστραμμένο.",
+  "replay.aids.links": "Συνδέσεις",
+  "replay.aids.linksTitle": "Ένα όπλο προς τον εκτοξευτή του (διακεκομμένη) και ένα σημείο διαδρομής προς το επόμενο, από Parent και Next"
 }

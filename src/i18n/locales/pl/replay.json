@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Komentarz",
   "replay.events.kind.unplaced": "Bez pozycji",
   "replay.card.hidden": "Ukryty przez nagranie w tej chwili (nie zniszczony).",
-  "replay.card.disabled": "Wyłączony z walki, nie zniszczony."
+  "replay.card.disabled": "Wyłączony z walki, nie zniszczony.",
+  "replay.aids.links": "Powiązania",
+  "replay.aids.linksTitle": "Uzbrojenie do wyrzutni (przerywana) i punkt trasy do następnego, z Parent i Next"
 }

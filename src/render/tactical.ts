@@ -216,6 +216,9 @@ interface Columns {
   /** LockedTarget, LockedTarget2..9: hex object ids. */
   locked: AttributeColumn[];
   focused: AttributeColumn | null;
+  /** Parent (a weapon's launcher) and Next (the following waypoint): hex object ids. */
+  parent: AttributeColumn | null;
+  next: AttributeColumn | null;
   engage: { mode: Float32Array | null; range: Float32Array; vertical: Float32Array | null }[];
   /** Where the pilot looks, against the unit's axes (PilotHeadYaw, PilotHeadPitch, or a head or view yaw and pitch). */
   headYaw: Float32Array | null;
@@ -290,13 +293,15 @@ function columnsOf(d: Dataset): Columns {
     lockRange: num('LockedTargetRange'),
     locked,
     focused: cat('FocusedTarget'),
+    parent: cat('Parent'),
+    next: cat('Next'),
     engage,
     headYaw: num('PilotHeadYaw') ?? num('HeadYaw') ?? num('ViewYaw') ?? num('LookYaw'),
     headPitch: num('PilotHeadPitch') ?? num('HeadPitch') ?? num('ViewPitch') ?? num('LookPitch'),
     byId,
     any: false,
   };
-  c.any = !!(c.radarRange || c.lockAz || locked.length || c.focused || engage.length || c.headYaw);
+  c.any = !!(c.radarRange || c.lockAz || locked.length || c.focused || engage.length || c.headYaw || c.parent || c.next);
   colCache.set(d, c);
   return c;
 }
@@ -305,6 +310,7 @@ function columnsOf(d: Dataset): Columns {
 export function tacticalColumns(d: Dataset): {
   radar: boolean;
   locks: boolean;
+  links: boolean;
   engagement: boolean;
   sight: boolean;
 } {
@@ -312,6 +318,7 @@ export function tacticalColumns(d: Dataset): {
   return {
     radar: !!c.radarRange,
     locks: !!(c.locked.length || c.focused || c.lockAz),
+    links: !!(c.parent || c.next),
     engagement: c.engage.length > 0,
     sight: !!c.headYaw,
   };
@@ -681,6 +688,19 @@ export class TacticalLayer {
               }
             }
           }
+        }
+      }
+
+      // ---- links: a weapon to its launcher (Parent, dashed), a waypoint to the next (Next), where both are there now
+      if (inScope(aids.links, tr)) {
+        for (const col of [cols.parent, cols.next]) {
+          if (!col) continue;
+          const id = (col.categories?.[(col.data as Uint32Array)[row]] ?? '').trim().toLowerCase();
+          const other = id ? cols.byId.get(id) : undefined;
+          const q = other !== undefined ? pos.get(other) : undefined;
+          if (!q) continue;
+          if (col === cols.parent) this.dashed(p, q, [0.7, 0.78, 0.9], 0.7, Math.max(5 * k, Math.hypot(q[0] - p[0], q[1] - p[1], q[2] - p[2]) / 30));
+          else this.line(p, q, [0.45, 0.9, 0.6], 0.85, 0.85);
         }
       }
 

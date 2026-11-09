@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Kommentar",
   "replay.events.kind.unplaced": "Ohne Position",
   "replay.card.hidden": "Von der Aufzeichnung gerade ausgeblendet (nicht zerstört).",
-  "replay.card.disabled": "Außer Gefecht (deaktiviert), nicht zerstört."
+  "replay.card.disabled": "Außer Gefecht (deaktiviert), nicht zerstört.",
+  "replay.aids.links": "Verknüpfungen",
+  "replay.aids.linksTitle": "Eine Waffe zu ihrem Träger (gestrichelt) und ein Wegpunkt zum nächsten, aus Parent und Next"
 }

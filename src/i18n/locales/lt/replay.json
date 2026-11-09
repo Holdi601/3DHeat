@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Komentaras",
   "replay.events.kind.unplaced": "Be padėties",
   "replay.card.hidden": "Įrašas jį šiuo metu slepia (nesunaikintas).",
-  "replay.card.disabled": "Išvestas iš kovos (išjungtas), nesunaikintas."
+  "replay.card.disabled": "Išvestas iš kovos (išjungtas), nesunaikintas.",
+  "replay.aids.links": "Ryšiai",
+  "replay.aids.linksTitle": "Ginklas iki jo nešėjo (punktyru) ir maršruto taškas iki kito, pagal Parent ir Next"
 }

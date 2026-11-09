@@ -20,7 +20,8 @@ import { dartMesh } from '../symbols/darts';
 /** Every domain's dart in one mesh: each feedback row keeps its own shape (`symbols/darts.ts`). */
 const DART_ALL = dartMesh();
 import type { GlFigures } from './figures';
-import { compileProgram, GlError, UniformCache } from './glutil';
+import { compileProgram, UniformCache } from './glutil';
+import { visWords } from '../gpuTracks/visibility';
 import { LINE_FS } from './shaders';
 
 /** Pixels across a death's marker. */
@@ -81,25 +82,7 @@ export class GlTracks {
   }
 
   private feedbackProgram(): WebGLProgram {
-    const gl = this.gl;
-    const sh = (type: number, src: string) => {
-      const s = gl.createShader(type)!;
-      gl.shaderSource(s, src);
-      gl.compileShader(s);
-      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new GlError(`track eval: ${gl.getShaderInfoLog(s)}`);
-      return s;
-    };
-    const p = gl.createProgram()!;
-    const vs = sh(gl.VERTEX_SHADER, EVAL_GLSL_VS);
-    const fs = sh(gl.FRAGMENT_SHADER, EVAL_GLSL_FS);
-    gl.attachShader(p, vs);
-    gl.attachShader(p, fs);
-    gl.transformFeedbackVaryings(p, ['oOrigin', 'oForward', 'oUp', 'oTeam'], gl.INTERLEAVED_ATTRIBS);
-    gl.linkProgram(p);
-    gl.deleteShader(vs);
-    gl.deleteShader(fs);
-    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new GlError(`track eval link: ${gl.getProgramInfoLog(p)}`);
-    return p;
+    return compileProgram(this.gl, EVAL_GLSL_VS, EVAL_GLSL_FS, 'track eval', ['oOrigin', 'oForward', 'oUp', 'oTeam']);
   }
 
   /** An integer texture `width` wide holding `data` (`comps` u32 a texel), its last row padded. */
@@ -152,7 +135,8 @@ export class GlTracks {
     const tracks = this.texture(s.trackData, 4, width);
     const keysA = this.texture(s.keysA, 2, width);
     const keysB = this.texture(s.keysB.length ? s.keysB : new Uint32Array(1), 1, width);
-    const vis = this.texture(new Uint32Array(Math.max(1, Math.ceil(s.tracks / 32))), 1, width);
+    // The shown bits, and as many again for the greyed ones (`visibility.ts` withHidden).
+    const vis = this.texture(new Uint32Array(2 * visWords(s)), 1, width);
     const instances = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, instances);
     gl.bufferData(gl.ARRAY_BUFFER, Math.max(1, s.tracks) * INSTANCE_STRIDE * 4, gl.DYNAMIC_COPY);
@@ -265,7 +249,8 @@ export class GlTracks {
     gl.uniform1f(U.loc('uTLo'), p.t - Math.fround(p.t));
     gl.uniform4f(U.loc('uPx'), p.focalPx, p.orthoPx, p.minPixels, p.stale);
     gl.uniform4f(U.loc('uLod'), s.units, p.scale, p.fullPx, p.dartPx);
-    gl.uniform4f(U.loc('uOpt'), weapons > 0 ? weapons : -1, visible ? 0 : 1, 0, 0);
+    const words = visWords(s);
+    gl.uniform4f(U.loc('uOpt'), weapons > 0 ? weapons : -1, visible ? 0 : 1, visible && visible.length > words ? 1 : 0, words);
     gl.uniform4f(U.loc('uSym'), p.farMode ?? 0, p.symbolThreshold ?? 36, p.symbolPx ?? 28, 0);
     gl.bindVertexArray(this.emptyVao);
     gl.enable(gl.RASTERIZER_DISCARD);

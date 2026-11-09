@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Trácht",
   "replay.events.kind.unplaced": "Gan suíomh",
   "replay.card.hidden": "I bhfolach ag an taifeadadh faoi láthair (níl sé scriosta).",
-  "replay.card.disabled": "As an gcomhrac (díchumasaithe), níl sé scriosta."
+  "replay.card.disabled": "As an gcomhrac (díchumasaithe), níl sé scriosta.",
+  "replay.aids.links": "Naisc",
+  "replay.aids.linksTitle": "Arm go dtí a lainseálaí (briste) agus pointe slí go dtí an chéad cheann eile, ó Parent agus Next"
 }

@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Comentariu",
   "replay.events.kind.unplaced": "Fără poziție",
   "replay.card.hidden": "Ascuns de înregistrare în acest moment (nu distrus).",
-  "replay.card.disabled": "Scos din luptă (dezactivat), nu distrus."
+  "replay.card.disabled": "Scos din luptă (dezactivat), nu distrus.",
+  "replay.aids.links": "Legături",
+  "replay.aids.linksTitle": "O armă către lansatorul ei (punctat) și un punct de rută către următorul, din Parent și Next"
 }

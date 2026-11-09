@@ -45,6 +45,7 @@ import { poseFrame } from '../../figures/kit';
 import { positionRows, quatOfFrame } from '../../figures/motion';
 import { CATALOG } from '../../figures/catalog';
 import { endsOf, holdAfterKeys } from '../../data/despawn';
+import { FRESH, sliced, type SliceJob } from '../../data/slices';
 import { deadInSpan, deathsOf, lastDeadSpan, packDeadSpan } from '../../data/deaths';
 import { aimOf, type AimNow } from '../../figures/aim';
 import { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32 } from './chunks';
@@ -205,6 +206,32 @@ export class TrackFigures {
    * dataset row `row`. `colour` overrides the team colour (rgb 0..1); `weapon`
    * marks a weapon its figure does not say is one.
    */
+  /**
+   * A kind's models built ahead of `place`, a piece a step: the template, its
+   * full, coarse and far meshes - each up to tens of milliseconds for a ship,
+   * each a slice's step of its own (`data/slices.ts` FRESH).
+   */
+  *prepare(kind: string | null): SliceJob<void> {
+    if (!kind || this.kindMeshes.has(kind)) return;
+    yield FRESH;
+    const t = this.fr.templateOf(kind);
+    if (!t) {
+      this.kindMeshes.set(kind, null);
+      return;
+    }
+    yield FRESH;
+    const full = this.meshFor(meshOf(t));
+    yield FRESH;
+    const c = t.coarse?.();
+    yield FRESH;
+    const coarse = c ? this.meshFor(meshOf(c)) : full;
+    yield FRESH;
+    const fa = t.far?.();
+    yield FRESH;
+    const far = fa ? this.meshFor(meshOf(fa)) : coarse;
+    this.kindMeshes.set(kind, { full, coarse, far, longest: Math.max(t.max[0] - t.min[0], t.max[1] - t.min[1], t.max[2] - t.min[2], 0.1), air: t.anchor === 'centre' });
+  }
+
   place(trackData: Uint32Array, f32: Float32Array, o8: number, p: number, row: number, attitude: boolean, colour?: [number, number, number] | null, weapon = false): void {
     const d = this.d;
     let kind = row >= 0 ? this.kindAt(row) : null;
@@ -278,12 +305,32 @@ export function isWeaponKind(kind: string | null): boolean {
 export function gpuTrackStore(d: Dataset, o: BuildOptions): GpuTrackStore | null {
   const hit = cache.get(d);
   if (hit) return hit;
-  const s = build(d, o);
+  const g = buildSteps(d, o);
+  let r = g.next();
+  while (!r.done) r = g.next();
+  const s = r.value;
   if (s) cache.set(d, s);
   return s;
 }
 
-function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
+const slicedCache = new WeakMap<Dataset, GpuTrackStore | null>();
+const slicedJobs = new WeakMap<Dataset, SliceJob<GpuTrackStore | null>>();
+
+/**
+ * `gpuTrackStore` worked out a slice a frame (`data/slices.ts`): the store
+ * (or null: none for this data) once built, `undefined` while it is being
+ * built - a recording of thousands of units takes half a second, and no
+ * frame may wait for it.
+ */
+export function gpuTrackStoreSliced(d: Dataset, o: BuildOptions): GpuTrackStore | null | undefined {
+  const hit = cache.get(d);
+  if (hit) return hit;
+  const s = sliced(slicedCache, slicedJobs, d, () => buildSteps(d, o));
+  if (s) cache.set(d, s);
+  return s;
+}
+
+function* buildSteps(d: Dataset, o: BuildOptions): SliceJob<GpuTrackStore | null> {
   const t0 = performance.now();
   const { time, personId, px, py, pz, count } = d;
   if (!time || !personId) return null;
@@ -293,21 +340,35 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
 
   // Rows per person, in time order (the rows are), own positions only.
   const start = new Int32Array(persons + 1);
-  for (let r = 0; r < count; r++) if ((!own || own[ids![r]]) && Number.isFinite(px[r])) start[personId[r] + 1]++;
+  for (let r = 0; r < count; r++) {
+    if ((r & 0xffff) === 0) yield;
+    if ((!own || own[ids![r]]) && Number.isFinite(px[r])) start[personId[r] + 1]++;
+  }
   for (let p = 0; p < persons; p++) start[p + 1] += start[p];
   const rows = new Int32Array(start[persons]);
   const fill = start.slice(0, persons);
-  for (let r = 0; r < count; r++) if ((!own || own[ids![r]]) && Number.isFinite(px[r])) rows[fill[personId[r]]++] = r;
+  for (let r = 0; r < count; r++) {
+    if ((r & 0xffff) === 0) yield;
+    if ((!own || own[ids![r]]) && Number.isFinite(px[r])) rows[fill[personId[r]]++] = r;
+  }
   const samples = rows.length;
+  yield;
 
   /** Marks the rows kept as keys at a tolerance (0: all but doubled times); returns how many. */
   const held = heldSamples(rows, start, persons, px, py, pz, time, units);
+  yield;
   const keep = new Uint8Array(samples);
-  const choose = (tol: number): number => {
+  const choose = function* (tol: number): Generator<void, number, void> {
     let n = 0;
     const tolU = tol * units;
+    let since = 0;
     for (let p = 0; p < persons; p++) {
       const a = start[p];
+      since += start[p + 1] - a;
+      if (since > 0x8000) {
+        since = 0;
+        yield;
+      }
       const b = start[p + 1];
       let last = -1;
       let vx = 0, vy = 0, vz = 0;
@@ -343,11 +404,11 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
     return n;
   };
   let tolerance = 0;
-  let keys = choose(0);
+  let keys = yield* choose(0);
   for (const tol of TOLERANCES) {
     if (keys <= o.maxKeys) break;
     tolerance = tol;
-    keys = choose(tol);
+    keys = yield* choose(tol);
   }
   if (keys > o.maxKeys) return null;
 
@@ -374,15 +435,26 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
   const personOf = new Int32Array(persons);
   const trackOf = new Int32Array(persons).fill(-1);
   const ends = endsOf(d);
+  yield;
   const deaths = deathsOf(d);
+  yield;
   const q: [number, number, number, number] = [0, 0, 0, 1];
   let tracks = 0;
   let key = 0;
+  let meshesBefore = figures.meshes.length;
+  let since = 0;
   for (let p = 0; p < persons; p++) {
     const a = start[p];
     const b = start[p + 1];
     if (a >= b) continue;
     if (d.personShared && d.personShared[p]) continue;
+    // A slice's end now and then; and after a figure, which may have built its model (`TrackFigures.place`).
+    since += b - a;
+    if (since > 0x4000 || figures.meshes.length !== meshesBefore) {
+      since = 0;
+      meshesBefore = figures.meshes.length;
+      yield;
+    }
     const first = key;
     // The span of the kept keys: where the 16-bit steps are counted from, and how big one is.
     let x0 = Infinity, y0 = Infinity, z0 = Infinity, x1 = -Infinity, y1 = -Infinity, z1 = -Infinity, t0k = Infinity, t1k = -Infinity;
@@ -441,6 +513,7 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
     trackData[o8] = first;
     trackData[o8 + 1] = key - first;
     trackData[o8 + 7] = firstChunk + 1;
+    yield* figures.prepare(figures.kindAt(rows[a]));
     figures.place(trackData, f32, o8, p, rows[a], !!d.yaw);
     f32[o8 + 8] = x0;
     f32[o8 + 9] = y0;
@@ -464,6 +537,7 @@ function build(d: Dataset, o: BuildOptions): GpuTrackStore | null {
   table.set(trackData.subarray(0, head));
   table.set(chunkData.subarray(0, chunkAt), head);
   for (let i = 0; i < tracks; i++) table[i * TRACK_U32 + 7] += head - 1;
+  yield;
   return {
     dataset: d,
     tracks,

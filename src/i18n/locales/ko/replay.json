@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "주석",
   "replay.events.kind.unplaced": "위치 없음",
   "replay.card.hidden": "지금은 기록에 의해 숨겨짐(파괴되지 않음).",
-  "replay.card.disabled": "전투 불능(비활성), 파괴되지 않음."
+  "replay.card.disabled": "전투 불능(비활성), 파괴되지 않음.",
+  "replay.aids.links": "연결",
+  "replay.aids.linksTitle": "무장에서 발사 플랫폼으로(점선), 웨이포인트에서 다음 지점으로 (Parent, Next 기준)"
 }

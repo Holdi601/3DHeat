@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Komentar",
   "replay.events.kind.unplaced": "Brez položaja",
   "replay.card.hidden": "Posnetek ga ta trenutek skriva (ni uničen).",
-  "replay.card.disabled": "Izven boja (onemogočen), ni uničen."
+  "replay.card.disabled": "Izven boja (onemogočen), ni uničen.",
+  "replay.aids.links": "Povezave",
+  "replay.aids.linksTitle": "Orožje do izstrelišča (črtkano) in točka poti do naslednje, iz Parent in Next"
 }

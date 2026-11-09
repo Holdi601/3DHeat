@@ -17,7 +17,7 @@ import { aimOf, type AimNow } from '../../figures/aim';
 import { emptyPose, evaluateTrack } from './evaluate';
 import { keyTime, TRACK_U32, trackDeadAt, type GpuTrackStore } from './store';
 import { wreckColour } from '../../figures/wreck';
-import { isShown } from './visibility';
+import { isGreyed, isShown, visWords } from './visibility';
 
 interface Boxes {
   /** Per track: box centre x, y, z, half-diagonal. */
@@ -110,6 +110,7 @@ const aimNow: AimNow = { yaw: NaN, pitch: NaN };
 export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): FigureBatch[] {
   const ox = f.origin ? f.origin[0] : 0, oy = f.origin ? f.origin[1] : 0, oz = f.origin ? f.origin[2] : 0;
   const b = boxesOf(s);
+  const words = visWords(s);
   const runs = new Runs();
   const f32 = new Float32Array(s.trackData.buffer, s.trackData.byteOffset, s.trackData.length);
   const cx = f.camera[0], cy = f.camera[1], cz = f.camera[2];
@@ -171,6 +172,8 @@ export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): Figu
     out[12] = (c & 255) / 255;
     out[13] = ((c >>> 8) & 255) / 255;
     out[14] = ((c >>> 16) & 255) / 255;
+    // Out of combat (ACMI Disabled): half way to grey, as the place pass has it.
+    if (isGreyed(f.visible, words, i)) for (let j = 12; j < 15; j++) out[j] = out[j] * 0.5 + 0.25;
     // A wreck now (`store.ts` setDeadSpan): its charred colour, negated (`figures/wreck.ts`), as the place shader has it.
     const t0 = b.span[i * 2];
     if (trackDeadAt(s.trackData, i, (f.t - t0) / Math.max(b.span[i * 2 + 1] - t0, 1e-6))) {

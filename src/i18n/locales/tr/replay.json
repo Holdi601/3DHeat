@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Yorum",
   "replay.events.kind.unplaced": "Konumsuz",
   "replay.card.hidden": "Kayıt şu anda gizliyor (imha edilmedi).",
-  "replay.card.disabled": "Savaş dışı (devre dışı), imha edilmedi."
+  "replay.card.disabled": "Savaş dışı (devre dışı), imha edilmedi.",
+  "replay.aids.links": "Bağlantılar",
+  "replay.aids.linksTitle": "Bir silahtan atıcısına (kesikli) ve bir yol noktasından bir sonrakine, Parent ve Next'ten"
 }

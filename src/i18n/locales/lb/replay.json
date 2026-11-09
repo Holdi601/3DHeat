@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Kommentar",
   "replay.events.kind.unplaced": "Ouni Positioun",
   "replay.card.hidden": "Vun der Opnam elo verstoppt (net zerstéiert).",
-  "replay.card.disabled": "Ausser Gefecht (desaktivéiert), net zerstéiert."
+  "replay.card.disabled": "Ausser Gefecht (desaktivéiert), net zerstéiert.",
+  "replay.aids.links": "Verbindungen",
+  "replay.aids.linksTitle": "Eng Waff bei hiren Dréier (gestréchelt) an e Wee-Punkt bei deen nächsten, aus Parent an Next"
 }

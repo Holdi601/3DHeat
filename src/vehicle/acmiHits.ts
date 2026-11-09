@@ -67,6 +67,15 @@ interface Track {
 }
 
 export function acmiHits(d: Dataset): { hits: VehicleHit[]; kinds: Map<string, string> } {
+  const g = acmiHitsSteps(d);
+  for (;;) {
+    const r = g.next();
+    if (r.done) return r.value;
+  }
+}
+
+/** `acmiHits` in steps, for work spread over frames (`hits.ts`): a recording of thousands of weapons takes tens of milliseconds. */
+export function* acmiHitsSteps(d: Dataset): Generator<void, { hits: VehicleHit[]; kinds: Map<string, string> }, void> {
   const hits: VehicleHit[] = [];
   const kinds = new Map<string, string>();
   const rows = personRows(d);
@@ -87,6 +96,7 @@ export function acmiHits(d: Dataset): { hits: VehicleHit[]; kinds: Map<string, s
   const tracks: Track[] = [];
   const byId = new Map<string, Track>();
   for (let p = 0; p < persons; p++) {
+    if ((p & 511) === 511) yield;
     const a = rows.start[p], b = rows.start[p + 1];
     if (b <= a) continue;
     const first = rows.rows[a];
@@ -196,8 +206,10 @@ export function acmiHits(d: Dataset): { hits: VehicleHit[]; kinds: Map<string, s
   // ---- weapons that ended at a unit
   const targets = tracks.filter((tr) => tr.target);
   const reach = PROXIMITY * k;
+  let weapons = 0;
   for (const w of tracks) {
     if (!w.weapon) continue;
+    if ((++weapons & 63) === 0) yield;
     const endIndex = rows.start[w.person + 1] - 1;
     const end = rows.rows[endIndex];
     const t = time[end];
@@ -250,6 +262,7 @@ export function acmiHits(d: Dataset): { hits: VehicleHit[]; kinds: Map<string, s
   const evCol = attr(d, 'Event');
   if (evCol?.kind === 'category') {
     for (let r = 0; r < d.count; r++) {
+      if ((r & 0xffff) === 0xffff) yield;
       const label = event(r);
       if (!label) continue;
       if (/^Destroyed\b/i.test(label)) {
@@ -286,8 +299,10 @@ export function acmiHits(d: Dataset): { hits: VehicleHit[]; kinds: Map<string, s
 
   // ---- falls of health
   if (health) {
+    yield;
     for (const tr of tracks) {
       if (tr.weapon) continue;
+      if ((tr.person & 255) === 0) yield;
       let prev = NaN;
       for (let i = rows.start[tr.person]; i < rows.start[tr.person + 1]; i++) {
         const r = rows.rows[i];

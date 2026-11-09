@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Koment",
   "replay.events.kind.unplaced": "Pa pozicion",
   "replay.card.hidden": "I fshehur nga regjistrimi në këtë moment (jo i shkatërruar).",
-  "replay.card.disabled": "Jashtë luftimit (i çaktivizuar), jo i shkatërruar."
+  "replay.card.disabled": "Jashtë luftimit (i çaktivizuar), jo i shkatërruar.",
+  "replay.aids.links": "Lidhjet",
+  "replay.aids.linksTitle": "Një armë te lëshuesi i saj (me vija) dhe një pikë rruge te tjetra, nga Parent dhe Next"
 }

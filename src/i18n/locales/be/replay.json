@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Каментарый",
   "replay.events.kind.unplaced": "Без пазіцыі",
   "replay.card.hidden": "Схаваны запісам у гэты момант (не знішчаны).",
-  "replay.card.disabled": "Выведзены з бою (адключаны), не знішчаны."
+  "replay.card.disabled": "Выведзены з бою (адключаны), не знішчаны.",
+  "replay.aids.links": "Сувязі",
+  "replay.aids.linksTitle": "Зброя да яе носьбіта (пункцір) і пункт маршруту да наступнага, паводле Parent і Next"
 }

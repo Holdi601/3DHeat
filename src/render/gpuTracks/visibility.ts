@@ -117,25 +117,26 @@ export function rayNearTrack(s: GpuTrackStore, i: number, o: ArrayLike<number>, 
   return true;
 }
 
-/** Tacview's Visible=0 (ACMI 2.2) in a store: the tracks it hides for a while, and from when to when (seconds, pairs). */
-interface HideSpans {
+/** An ACMI flag's spans in a store (Visible 0, Disabled 1): the tracks it is on for a while, and from when to when (seconds, pairs). */
+interface FlagSpans {
   tracks: Int32Array;
   spans: Float64Array[];
 }
 
-const hideCache = new WeakMap<GpuTrackStore, HideSpans | null>();
+const spanCache = new WeakMap<GpuTrackStore, Map<string, FlagSpans | null>>();
 
 /**
- * The spans a track is hidden by the recording: from a key whose row says
- * Visible 0 to the next that shows it again. Worked out once a store, and
- * only where the Visible column ever hides anything - every other load
- * costs nothing.
+ * The spans a flag column is on for a track: from a key whose row says so to
+ * the next that does not. Worked out once a store, and only where the column
+ * is ever on - every other load costs nothing.
  */
-function hideSpans(s: GpuTrackStore, d: Dataset): HideSpans | null {
-  if (hideCache.has(s)) return hideCache.get(s)!;
-  let out: HideSpans | null = null;
-  const a = d.attrs.find((x) => x.kind === 'number' && x.name === 'Visible');
-  if (a && !(a.min >= 0.5) && s.keyRow) {
+function flagSpans(s: GpuTrackStore, d: Dataset, name: string, on: (v: number) => boolean): FlagSpans | null {
+  let per = spanCache.get(s);
+  if (!per) spanCache.set(s, (per = new Map()));
+  if (per.has(name)) return per.get(name)!;
+  let out: FlagSpans | null = null;
+  const a = d.attrs.find((x) => x.kind === 'number' && x.name === name);
+  if (a && s.keyRow && (on(a.min) || on(a.max) || !Number.isFinite(a.min))) {
     const v = a.data as Float32Array;
     const T = s.trackData;
     const tracks: number[] = [];
@@ -148,9 +149,9 @@ function hideSpans(s: GpuTrackStore, d: Dataset): HideSpans | null {
       let from = NaN;
       for (let k = first; k < end; k++) {
         const r = s.keyRow[k];
-        const hidden = r >= 0 && v[r] < 0.5;
-        if (hidden && Number.isNaN(from)) from = keyTime(s, b, k);
-        else if (!hidden && !Number.isNaN(from)) {
+        const hit = r >= 0 && on(v[r]);
+        if (hit && Number.isNaN(from)) from = keyTime(s, b, k);
+        else if (!hit && !Number.isNaN(from)) {
           (list ??= []).push(from, keyTime(s, b, k));
           from = NaN;
         }
@@ -163,39 +164,69 @@ function hideSpans(s: GpuTrackStore, d: Dataset): HideSpans | null {
     }
     if (tracks.length) out = { tracks: Int32Array.from(tracks), spans };
   }
-  hideCache.set(s, out);
+  per.set(name, out);
   return out;
+}
+
+/** The tracks of `f` whose flag is on at `t`, as "i,i,...," ('' for none). */
+function onAt(f: FlagSpans | null, t: number): string {
+  if (!f) return '';
+  let key = '';
+  for (let j = 0; j < f.tracks.length; j++) {
+    const sp = f.spans[j];
+    for (let k = 0; k < sp.length; k += 2) {
+      if (t < sp[k]) break;
+      if (t < sp[k + 1]) {
+        key += `${f.tracks[j]},`;
+        break;
+      }
+    }
+  }
+  return key;
+}
+
+/** Words of shown bits in a store's visibility; the greyed bits (`withHidden`) follow as many again. */
+export function visWords(s: GpuTrackStore): number {
+  return Math.max(1, Math.ceil(s.tracks / 32));
+}
+
+/** Whether track `i` is greyed (ACMI Disabled: out of combat, not destroyed) in `bits` from `withHidden`. */
+export function isGreyed(bits: Uint32Array | null, words: number, i: number): boolean {
+  return !!bits && bits.length > words && ((bits[words + (i >>> 5)] >>> (i & 31)) & 1) === 1;
 }
 
 const hiddenNow = new WeakMap<GpuTrackStore, { base: Uint32Array | null; key: string; bits: Uint32Array | null }>();
 
 /**
- * `base` (`trackVisibility`) with the tracks the recording hides at `t`
- * cleared: a new array only when the hidden set changes, so the GPU is sent
- * the bits again only then (the renderers compare by identity).
+ * `base` (`trackVisibility`) with what the recording says now: the tracks it
+ * hides at `t` (Visible 0) cleared, and the ones out of combat (Disabled 1)
+ * set in a second run of words after the first (`visWords`), which the place
+ * pass draws greyed. A new array only when either set changes, so the GPU is
+ * sent the bits again only then (the renderers compare by identity).
  */
 export function withHidden(s: GpuTrackStore, d: Dataset, base: Uint32Array | null, t: number): Uint32Array | null {
-  const h = hideSpans(s, d);
-  if (!h) return base;
-  let key = '';
-  for (let j = 0; j < h.tracks.length; j++) {
-    const sp = h.spans[j];
-    for (let k = 0; k < sp.length; k += 2) {
-      if (t < sp[k]) break;
-      if (t < sp[k + 1]) {
-        key += `${h.tracks[j]},`;
-        break;
-      }
-    }
-  }
-  if (!key) return base;
+  const hide = flagSpans(s, d, 'Visible', (v) => v < 0.5);
+  const grey = flagSpans(s, d, 'Disabled', (v) => v >= 0.5);
+  if (!hide && !grey) return base;
+  const h = onAt(hide, t);
+  const g = onAt(grey, t);
+  if (!h && !g) return base;
+  const key = `${h}|${g}`;
   const c = hiddenNow.get(s);
   if (c && c.base === base && c.key === key) return c.bits;
-  const bits = base ? base.slice() : new Uint32Array(Math.max(1, Math.ceil(s.tracks / 32))).fill(0xffffffff);
-  for (const i of key.split(',')) {
+  const words = visWords(s);
+  const bits = new Uint32Array(g ? 2 * words : words);
+  if (base) bits.set(base.subarray(0, words));
+  else bits.fill(0xffffffff, 0, words);
+  for (const i of h.split(',')) {
     if (!i) continue;
     const n = Number(i);
     bits[n >>> 5] &= ~(1 << (n & 31));
+  }
+  for (const i of g.split(',')) {
+    if (!i) continue;
+    const n = Number(i);
+    bits[words + (n >>> 5)] |= 1 << (n & 31);
   }
   hiddenNow.set(s, { base, key, bits });
   return bits;

@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Commentaire",
   "replay.events.kind.unplaced": "Sans position",
   "replay.card.hidden": "Masqué par l'enregistrement en ce moment (pas détruit).",
-  "replay.card.disabled": "Hors de combat (désactivé), pas détruit."
+  "replay.card.disabled": "Hors de combat (désactivé), pas détruit.",
+  "replay.aids.links": "Liens",
+  "replay.aids.linksTitle": "Une arme vers son lanceur (en tirets) et un point de passage vers le suivant, d'après Parent et Next"
 }

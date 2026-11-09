@@ -47,7 +47,7 @@
 import type { AttributeColumn, Dataset } from '../state/types';
 import type { Vec3 } from '../race/geometry';
 import { regionOf } from './regions';
-import { acmiHits, isAcmiData } from './acmiHits';
+import { acmiHitsSteps, isAcmiData } from './acmiHits';
 import { localFromWorld } from './places';
 
 export type HitKind = 'hit' | 'module';
@@ -626,7 +626,7 @@ export function* hitsSteps(d: Dataset): Generator<void, HitSet, void> {
 
   yield;
   if (acmi) {
-    const found = acmiHits(d);
+    const found = yield* acmiHitsSteps(d);
     for (const h of found.hits) hits.push(h);
     for (const [k, v] of found.kinds) if (!typeOf.has(k)) typeOf.set(k, v);
     if (found.hits.length) sources.add('acmi');

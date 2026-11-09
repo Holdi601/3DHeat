@@ -4,7 +4,10 @@ import { endsOf } from './despawn';
 import { CUBE_STRIDE, TrackCursor } from './tracks';
 import { parseAcmi } from './acmi';
 import { gpuTrackStore } from '../render/gpuTracks/store';
-import { isShown, withHidden } from '../render/gpuTracks/visibility';
+import { isGreyed, isShown, visWords, withHidden } from '../render/gpuTracks/visibility';
+import { hiddenAt } from './acmiFlags';
+import { sliceBudget } from './slices';
+import { MotionModel } from '../figures/motion';
 import { defaultEventKinds, eventRows, eventText, splitEvent } from '../ui/replay/replayData';
 import { recordingInfo } from '../ui/match/RecordingInfo';
 
@@ -118,7 +121,37 @@ describe("ACMI's Visible and Disabled", () => {
     expect(isShown(a, track0)).toBe(false);
     expect(isShown(a, Array.from(s.personOf).indexOf(2))).toBe(true);
     expect(withHidden(s, d, null, 4.5)).toBe(a);
-    expect(withHidden(s, d, null, 7)).toBeNull();
+    // From 5 s P1 is out of combat: greyed bits after the shown ones, P1's set.
+    const g = withHidden(s, d, null, 7)!;
+    const words = visWords(s);
+    expect(g.length).toBe(2 * words);
+    expect(isGreyed(g, words, Array.from(s.personOf).indexOf(1))).toBe(true);
+    expect(isGreyed(g, words, track0)).toBe(false);
+    expect(isShown(g, track0)).toBe(true);
+    expect(withHidden(s, d, null, 2)).toBeNull();
+  });
+
+  it('knows on the CPU when a person is hidden, for the unit list', () => {
+    expect(hiddenAt(d, 0, 2)).toBe(false);
+    expect(hiddenAt(d, 0, 4)).toBe(true);
+    expect(hiddenAt(d, 0, 7)).toBe(false);
+    expect(hiddenAt(d, 1, 4)).toBe(false);
+  });
+
+  it('builds the motion model a slice a frame once the viewer asks it to, the same model in the end', () => {
+    const whole = new MotionModel(d);
+    sliceBudget.ms = 0;
+    try {
+      const big = dataset([...track(0, 0, 400, 0.01), ...track(1, 0, 400, 0.01)], 2);
+      let m = MotionModel.of(big);
+      let frames = 1;
+      for (; !m && frames < 10000; frames++) m = MotionModel.of(big);
+      expect(frames).toBeGreaterThan(1);
+      expect(m!.knots.length).toBe(new MotionModel(big).knots.length);
+    } finally {
+      sliceBudget.ms = Infinity;
+    }
+    expect(whole.knots.length).toBeGreaterThan(0);
   });
 });
 

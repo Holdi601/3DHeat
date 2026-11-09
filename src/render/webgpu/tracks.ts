@@ -10,6 +10,7 @@ import { INSTANCE_STRIDE } from '../../figures/instances';
 import { KEY_U32, KEYS_PER_BUFFER, sameKeys, type GpuTrackStore } from '../gpuTracks/store';
 import { FINISH_WGSL, MARKS_WGSL, PLACE_WGSL, TRAIL_WGSL } from '../gpuTracks/shader';
 import { TRAIL_SEGMENTS_GL } from '../gpuTracks/glsl';
+import { visWords } from '../gpuTracks/visibility';
 import { DART_MESHES } from '../symbols/darts';
 import type { GpuFigures } from './figures';
 import type { GpuSymbols } from './symbols';
@@ -215,7 +216,8 @@ export class GpuTracks {
     const instances = dev.createBuffer({ label: 'track instances', size: Math.max(64, total * INSTANCE_STRIDE * 4), usage: S | GPUBufferUsage.VERTEX });
     const trail = dev.createBuffer({ label: 'track trails', size: TRAIL_ROOM * 32, usage: S | GPUBufferUsage.VERTEX });
     const trailArgs = buf('track trail draw', new Uint32Array([0, 1, 0, 0]), S | GPUBufferUsage.INDIRECT);
-    const vis = dev.createBuffer({ label: 'track visibility', size: Math.max(16, Math.ceil(s.tracks / 32) * 4), usage: S | GPUBufferUsage.COPY_DST });
+    // The shown bits, and as many again for the greyed ones (`visibility.ts` withHidden).
+    const vis = dev.createBuffer({ label: 'track visibility', size: Math.max(16, 2 * visWords(s) * 4), usage: S | GPUBufferUsage.COPY_DST });
     const mk = s.markers && s.markers.count ? s.markers : null;
     const marks = mk ? buf('track marks', mk.data, S) : null;
     const markColour = mk ? buf('track mark colours', mk.colour, S) : null;
@@ -322,6 +324,7 @@ export class GpuTracks {
     // The playhead past what its f32 holds (2 ms at five hours: half a metre at 250 m/s), and where the aim keys start.
     fl[40] = f.t - fl[19];
     ui[41] = s.trackData.length;
+    ui[42] = f.visible && f.visible.length > visWords(s) ? visWords(s) : 0;
     fl[44] = f.farMode ?? 0;
     fl[45] = f.symbolThreshold ?? 36;
     fl[46] = f.symbolPx ?? 28;

@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Megjegyzés",
   "replay.events.kind.unplaced": "Pozíció nélkül",
   "replay.card.hidden": "A felvétel most elrejti (nem semmisült meg).",
-  "replay.card.disabled": "Harcképtelen (letiltva), nem semmisült meg."
+  "replay.card.disabled": "Harcképtelen (letiltva), nem semmisült meg.",
+  "replay.aids.links": "Kapcsolatok",
+  "replay.aids.linksTitle": "Fegyver az indítójáig (szaggatott) és útpont a következőig, a Parent és Next alapján"
 }

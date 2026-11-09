@@ -120,6 +120,13 @@ export function DisplayPanel() {
         missing={!has.locks}
       />
       <ScopeSelect
+        label={t('replay.aids.links')}
+        title={t('replay.aids.linksTitle')}
+        value={aids.links}
+        onChange={(v) => set({ links: v })}
+        missing={!has.links}
+      />
+      <ScopeSelect
         label={t('replay.aids.engagement')}
         title={t('replay.aids.engagementTitle')}
         value={aids.engagement}

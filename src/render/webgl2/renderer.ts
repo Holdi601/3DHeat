@@ -37,6 +37,7 @@ import {
   GlError,
   probeFloatSupport,
   UniformCache,
+  warmPrograms,
   type FloatTargetSupport,
 } from './glutil';
 import {
@@ -487,6 +488,15 @@ export class Webgl2Renderer implements Renderer {
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
     gl.bindVertexArray(null);
+    // The figures', the GPU tracks' and the glyphs' programs, started now and linked in the background: the
+    // first frame of a replay would otherwise wait for them (a quarter of a second for the tracks' place pass).
+    warmPrograms(gl, () => {
+      new GlFigures(gl);
+      new GlTracks(gl);
+      new GlSymbols(gl);
+    });
+    gl.bindVertexArray(null);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
   }
 
   private makeProg(vs: string, fs: string, label: string): Prog {

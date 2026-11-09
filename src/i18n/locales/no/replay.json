@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Kommentar",
   "replay.events.kind.unplaced": "Uten posisjon",
   "replay.card.hidden": "Skjult av opptaket akkurat nå (ikke ødelagt).",
-  "replay.card.disabled": "Ute av kamp (deaktivert), ikke ødelagt."
+  "replay.card.disabled": "Ute av kamp (deaktivert), ikke ødelagt.",
+  "replay.aids.links": "Koblinger",
+  "replay.aids.linksTitle": "Et våpen til avfyreren (stiplet) og et veipunkt til det neste, fra Parent og Next"
 }

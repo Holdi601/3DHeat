@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Commento",
   "replay.events.kind.unplaced": "Senza posizione",
   "replay.card.hidden": "Nascosto dalla registrazione in questo momento (non distrutto).",
-  "replay.card.disabled": "Fuori combattimento (disattivato), non distrutto."
+  "replay.card.disabled": "Fuori combattimento (disattivato), non distrutto.",
+  "replay.aids.links": "Collegamenti",
+  "replay.aids.linksTitle": "Un'arma verso il suo lanciatore (tratteggiata) e un waypoint verso il successivo, da Parent e Next"
 }

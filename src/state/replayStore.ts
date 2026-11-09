@@ -70,6 +70,8 @@ export interface DisplayAids {
   radar: Scope;
   /** Lines to locked and focused targets (LockedTarget, FocusedTarget, LockedTargetAzimuth...). */
   locks: Scope;
+  /** ACMI links: a weapon to its launcher (Parent), a waypoint to the next (Next). */
+  links: Scope;
   /** Engagement domes (EngagementRange, VerticalEngagementRange). */
   engagement: Scope;
   /** The measured pair's line drawn red where the ground is between them. */
@@ -99,6 +101,7 @@ export const DEFAULT_AIDS: DisplayAids = {
   attitudeLines: 'off',
   radar: 'all',
   locks: 'all',
+  links: 'off',
   engagement: 'all',
   lineOfSight: true,
   pilotSight: 'selected',
@@ -274,6 +277,7 @@ export function readAids(v: unknown): DisplayAids {
     attitudeLines: scopeOf(a.attitudeLines, d.attitudeLines),
     radar: scopeOf(a.radar, d.radar),
     locks: scopeOf(a.locks, d.locks),
+    links: scopeOf(a.links, d.links),
     engagement: scopeOf(a.engagement, d.engagement),
     lineOfSight: a.lineOfSight !== false,
     pilotSight: scopeOf(a.pilotSight, d.pilotSight),

@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Коментар",
   "replay.events.kind.unplaced": "Без позиција",
   "replay.card.hidden": "Снимката моментално го крие (не е уништен).",
-  "replay.card.disabled": "Надвор од борба (оневозможен), не е уништен."
+  "replay.card.disabled": "Надвор од борба (оневозможен), не е уништен.",
+  "replay.aids.links": "Врски",
+  "replay.aids.linksTitle": "Оружје до лансерот (испрекинато) и точка на рута до следната, од Parent и Next"
 }

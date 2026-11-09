@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Kommentar",
   "replay.events.kind.unplaced": "Utan position",
   "replay.card.hidden": "Dold av inspelningen just nu (inte förstörd).",
-  "replay.card.disabled": "Ur strid (inaktiverad), inte förstörd."
+  "replay.card.disabled": "Ur strid (inaktiverad), inte förstörd.",
+  "replay.aids.links": "Länkar",
+  "replay.aids.linksTitle": "Ett vapen till sin avfyrare (streckad) och en brytpunkt till nästa, från Parent och Next"
 }

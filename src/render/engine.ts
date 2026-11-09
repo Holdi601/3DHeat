@@ -2,6 +2,7 @@ import { Matrix4, Vector3 } from 'three';
 import { estimateSaturation, horizontalExtent } from '../data/calibrate';
 import { buildLines, heatModeFor, lineSettingsKey, type LineData } from '../data/lines';
 import { playbackRange } from '../data/sessions';
+import { sliceBudget, slicePending } from '../data/slices';
 import { CUBE_STRIDE, TrackCursor } from '../data/tracks';
 import { HEAT_RESPONSE_CODE, snapshot, useStore, type HeatSettings } from '../state/store';
 import { raceClock, raceHover, replayLength, useRaceStore, type RaceState } from '../state/raceStore';
@@ -15,7 +16,7 @@ import { WeaponLayer } from './weapons';
 import { FireLayer, type FirePose, type FireView } from '../figures/fires';
 import { FireBody, firesOf } from '../data/fires';
 import { HitMarkLayer, hitMarksStep, stepStats, type MarkPose, type MarkView } from '../figures/hitmarks';
-import { gpuTrackStore, keyTime, registeredGpuTrackStore, rowOfKey, trackFloats, TRACK_U32, type GpuTrackStore } from './gpuTracks/store';
+import { gpuTrackStoreSliced, keyTime, registeredGpuTrackStore, rowOfKey, trackFloats, TRACK_U32, type GpuTrackStore } from './gpuTracks/store';
 import { emptyPose, evaluateTrack } from './gpuTracks/evaluate';
 import { isShown, rayNearTrack, trackVisibility, withHidden } from './gpuTracks/visibility';
 import { markerSeconds } from '../overlay/lean/leanState';
@@ -85,6 +86,9 @@ import { postDrawFor, tacticalLevel, tacticalLines, LOOK_TINT, type LookTrack, t
 import type { PostDraw } from './types';
 import { unitCategory } from '../ui/replay/objectType';
 import { unitsOf } from '../ui/replay/units';
+
+/** Milliseconds a frame may spend on work done a slice a frame (`data/slices.ts`). */
+const SLICE_MS = 5;
 
 /** Milliseconds a frame may spend working out the hit marks until they are ready. */
 const HIT_MARK_BUDGET_MS = 2;
@@ -708,6 +712,8 @@ export class Engine {
 
   constructor(readonly canvas: HTMLCanvasElement) {
     this.budget = new BudgetController(snapshot().budget.splatsPerFrame);
+    // Work too big for a frame (the GPU tracks, the motion model) goes a slice a frame from now on.
+    sliceBudget.ms = SLICE_MS;
     this.detachInput = this.camera.attach(canvas);
     this.detachMeasure = this.attachMeasureInput(canvas);
     // The tactics board: its gizmo keys while something is selected, shift-drag for a box.
@@ -1675,9 +1681,10 @@ export class Engine {
 
   /**
    * The GPU tracks for the loaded dataset, when it has so many units that
-   * the GPU places them (and the backend can): built once, null otherwise.
+   * the GPU places them (and the backend can): built once, a slice a frame
+   * (`undefined` until it is ready), null otherwise.
    */
-  private gpuStoreFor(s: ReturnType<typeof snapshot>, renderer: Renderer): GpuTrackStore | null {
+  private gpuStoreFor(s: ReturnType<typeof snapshot>, renderer: Renderer): GpuTrackStore | null | undefined {
     const d = this.dataset;
     const max = renderer.gpuTracksMaxBytes ?? 0;
     if (!d || !max || !d.time || !d.personId) return null;
@@ -1687,7 +1694,7 @@ export class Engine {
     const force = gpuTracksForced();
     if (force === false || (d.personLabels.length < GPU_TRACKS_FROM && !force)) return null;
     if (s.team.session >= 0 && d.sessionId && d.sessionLabels.length > 1) return null;
-    return gpuTrackStore(d, { maxKeys: Math.floor(max / 8) });
+    return gpuTrackStoreSliced(d, { maxKeys: Math.floor(max / 8) });
   }
 
   /**
@@ -3202,7 +3209,11 @@ export class Engine {
     let trailVertCount = 0;
     // A dataset of many thousands of units (an overlay of many matches): every
     // unit placed by the GPU, the CPU only sets the playhead (gpuTracks/).
-    const gpuStore = s.mode === 'team' && !showAll && !s.team.showRawSamples && s.team.figures ? this.gpuStoreFor(s, renderer) : null;
+    const gpuAsked = s.mode === 'team' && !showAll && !s.team.showRawSamples && s.team.figures ? this.gpuStoreFor(s, renderer) : null;
+    // Still being built (a slice a frame): neither path draws the units yet, and frames keep coming until it is done.
+    const gpuPending = gpuAsked === undefined;
+    if (gpuPending || slicePending()) this.invalidate(2);
+    const gpuStore = gpuAsked ?? null;
     if (!compositeOnly) this.gpuTracksParams = null;
     if (gpuStore && !compositeOnly) {
       this.figureTris = null;
@@ -3214,7 +3225,7 @@ export class Engine {
     // person every frame while the view sits still is the one cost that would make
     // recompositing-when-idle worth avoiding.
     if (s.mode === 'team' && !compositeOnly) this.teamDrawnAt = this.playhead;
-    if (s.mode === 'team' && this.cursor && !compositeOnly && !gpuStore) {
+    if (s.mode === 'team' && this.cursor && !compositeOnly && !gpuStore && !gpuPending) {
       const visible = this.personVisibility(s.teamVisibility, s.filters);
       // `all` mode ignores the playhead, so the cursor is placed at the end and
       // every sample in range is drawn rather than one live position per person.

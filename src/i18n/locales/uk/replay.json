@@ -541,5 +541,7 @@
   "replay.events.kind.comment": "Коментар",
   "replay.events.kind.unplaced": "Без позиції",
   "replay.card.hidden": "Прихований записом зараз (не знищений).",
-  "replay.card.disabled": "Виведений з бою (вимкнений), не знищений."
+  "replay.card.disabled": "Виведений з бою (вимкнений), не знищений.",
+  "replay.aids.links": "Зв'язки",
+  "replay.aids.linksTitle": "Зброя до її носія (пунктир) і точка маршруту до наступної, за Parent і Next"
 }
