@@ -2053,7 +2053,8 @@ A['su-6-am42'] = one({ ...SU6, radial: false, w: 0.6, canopy: { x: -0.6, length:
 // BTD Destroyer: the R-3350 radial on a mid-wing dive bomber, the bubble over the nose (11.77 x 14.64 x 5.05 m).
 A['btd-1'] = one({ cls: 'ww2-attack', length: 11.77, span: 14.64, height: 5.05, w: 0.72, h: 0.9, radial: true, wing: 'tapered', le: 1.8, root: 3.2, tip: 1.4, sweep: 3, mount: -0.2, dihedral: 4, fin: 2.0, finRoot: 2.1, tailSpan: 5.6, tailRoot: 1.4, canopy: { x: 1.2, length: 1.8, kind: 'bubble' }, prop: 4.0, blades: 4 });
 // A2D Skyshark: the Skyraider's shape around a turboprop with a six-bladed contra-rotating propeller, the bubble, a taller fin (12.55 x 15.24 x 5.21 m).
-A['a2d'] = one({ cls: 'attack', length: 12.55, span: 15.24, height: 5.21, w: 0.66, h: 0.85, wing: 'tapered', le: 1.8, root: 3.3, tip: 1.4, sweep: 3, dihedral: 6, fin: 2.4, finRoot: 2.4, tailSpan: 5.8, tailRoot: 1.4, canopy: { x: 0.9, length: 1.8, kind: 'bubble' }, spinner: 0.4, prop: 4.3, blades: 6 });
+// Drawn from BuAer's SAC three-view (DRAWN).
+A['a2d'] = one({ cls: 'attack', length: 12.55, span: 15.24, height: 5.21, w: 0.72, h: 0.85, wing: 'tapered', le: 1.8, root: 3.3, tip: 1.4, sweep: 3, dihedral: 4.8, fin: 2.4, finRoot: 2.4, tailSpan: 6.15, tailRoot: 1.4, canopy: { x: 0.9, length: 1.8, kind: 'bubble' }, spinner: 0.4, prop: 4.3, blades: 6, draw: DRAWN['a2d'] });
 // Ki-87: a big Ha-219 radial fighter, four blades, the turbo-supercharger in the rear body (11.82 x 13.423 x 4.503 m).
 A['ki-87'] = one({ ...SM, length: 11.82, span: 13.423, height: 4.503, w: 0.72, h: 0.85, radial: true, wing: 'tapered', le: 1.8, root: 2.8, tip: 1.2, sweep: 3, dihedral: 6, fin: 1.8, finRoot: 1.9, tailSpan: 4.6, tailRoot: 1.2, canopy: { x: -0.4, length: 1.7, kind: 'framed' }, razor: true, prop: 3.6, blades: 4, bodies: [belly(-0.8, -2.6, -0.6, -1.0, 0.3)] });
 // Ki-94-II: a high-altitude fighter with the Ha-219 radial, the pressure cabin's small hood well back, a long wing (12.0 x 14.0 x 4.65 m).
