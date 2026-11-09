@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kalibras",
   "far.hitAmmo": "Šaudmuo",
   "far.ammoExplosive": "sprogstamasis",
-  "far.ammoKinetic": "kinetinis"
+  "far.ammoKinetic": "kinetinis",
+  "far.aimLines": "Žvilgsnio ir bokšto linijos",
+  "far.aimLinesTitle": "Nuo kiekvienos mašinos: kur žiūri jos žaidėjas (punktyrinė) ir kur nukreiptas bokšto pabūklas (ištisinė), kur tai nurodo duomenys.",
+  "far.aimLinesLegend": "Punktyrinė: kur žiūri žaidėjas. Ištisinė: pabūklas; blanki, kur duomenyse nėra bokšto ir jis seka taikymą."
 }

@@ -40,5 +40,8 @@
   "far.hitCalibre": "Ráže",
   "far.hitAmmo": "Munice",
   "far.ammoExplosive": "výbušná",
-  "far.ammoKinetic": "kinetická"
+  "far.ammoKinetic": "kinetická",
+  "far.aimLines": "Čáry pohledu a věže",
+  "far.aimLinesTitle": "Od každého vozidla: kam se jeho hráč dívá (čárkovaně) a kam míří kanon jeho věže (plně), kde to data uvádějí.",
+  "far.aimLinesLegend": "Čárkovaně: kam se hráč dívá. Plně: kanon; slabě tam, kde data nemají věž a ta sleduje míření."
 }

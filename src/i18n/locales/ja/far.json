@@ -40,5 +40,8 @@
   "far.hitCalibre": "口径",
   "far.hitAmmo": "弾薬",
   "far.ammoExplosive": "炸薬弾",
-  "far.ammoKinetic": "運動エネルギー弾"
+  "far.ammoKinetic": "運動エネルギー弾",
+  "far.aimLines": "視線と砲塔の線",
+  "far.aimLinesTitle": "各車両から、データがある場合に、プレイヤーの視線（破線）と砲塔の砲の向き（実線）を表示します。",
+  "far.aimLinesLegend": "破線：プレイヤーの視線。実線：砲。データに砲塔がなく照準に従う場合は薄く表示。"
 }

@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kaliber",
   "far.hitAmmo": "Amunicja",
   "far.ammoExplosive": "wybuchowa",
-  "far.ammoKinetic": "kinetyczna"
+  "far.ammoKinetic": "kinetyczna",
+  "far.aimLines": "Linie celowania i wieży",
+  "far.aimLinesTitle": "Od każdego pojazdu: gdzie patrzy jego gracz (przerywana) i gdzie celuje działo wieży (ciągła), tam gdzie dane to podają.",
+  "far.aimLinesLegend": "Przerywana: gdzie patrzy gracz. Ciągła: działo; blada tam, gdzie dane nie mają wieży i podąża ona za celowaniem."
 }

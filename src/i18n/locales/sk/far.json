@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kaliber",
   "far.hitAmmo": "Munícia",
   "far.ammoExplosive": "výbušná",
-  "far.ammoKinetic": "kinetická"
+  "far.ammoKinetic": "kinetická",
+  "far.aimLines": "Čiary pohľadu a veže",
+  "far.aimLinesTitle": "Od každého vozidla: kam sa jeho hráč pozerá (prerušovane) a kam mieri kanón jeho veže (plne), kde to dáta uvádzajú.",
+  "far.aimLinesLegend": "Prerušovane: kam sa hráč pozerá. Plne: kanón; slabo tam, kde dáta nemajú vežu a tá sleduje mierenie."
 }

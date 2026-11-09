@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kalibrs",
   "far.hitAmmo": "Munīcija",
   "far.ammoExplosive": "sprāgstoša",
-  "far.ammoKinetic": "kinētiska"
+  "far.ammoKinetic": "kinētiska",
+  "far.aimLines": "Skata un torņa līnijas",
+  "far.aimLinesTitle": "No katra transportlīdzekļa: kur skatās tā spēlētājs (raustīta) un kur vērsts torņa lielgabals (nepārtraukta), kur to saka dati.",
+  "far.aimLinesLegend": "Raustīta: kur skatās spēlētājs. Nepārtraukta: lielgabals; bāla, kur datos nav torņa un tas seko tēmēšanai."
 }

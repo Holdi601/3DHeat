@@ -40,5 +40,8 @@
   "far.hitCalibre": "Calibre",
   "far.hitAmmo": "Munition",
   "far.ammoExplosive": "explosive",
-  "far.ammoKinetic": "cinétique"
+  "far.ammoKinetic": "cinétique",
+  "far.aimLines": "Lignes de visée et de tourelle",
+  "far.aimLinesTitle": "Depuis chaque véhicule : où regarde son joueur (en tirets) et où pointe le canon de sa tourelle (trait plein), là où les données le disent.",
+  "far.aimLinesLegend": "Tirets : où regarde le joueur. Trait plein : le canon ; pâle là où les données n'ont pas de tourelle et qu'elle suit la visée."
 }

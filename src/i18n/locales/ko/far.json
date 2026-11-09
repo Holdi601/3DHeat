@@ -40,5 +40,8 @@
   "far.hitCalibre": "구경",
   "far.hitAmmo": "탄약",
   "far.ammoExplosive": "폭발성",
-  "far.ammoKinetic": "운동에너지탄"
+  "far.ammoKinetic": "운동에너지탄",
+  "far.aimLines": "시선 및 포탑 선",
+  "far.aimLinesTitle": "각 차량에서, 데이터가 있는 경우 플레이어가 보는 방향(점선)과 포탑 포가 가리키는 방향(실선)을 표시합니다.",
+  "far.aimLinesLegend": "점선: 플레이어가 보는 방향. 실선: 포; 데이터에 포탑이 없어 조준을 따르는 경우 흐리게 표시."
 }

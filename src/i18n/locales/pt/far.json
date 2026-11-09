@@ -40,5 +40,8 @@
   "far.hitCalibre": "Calibre",
   "far.hitAmmo": "Munição",
   "far.ammoExplosive": "explosiva",
-  "far.ammoKinetic": "cinética"
+  "far.ammoKinetic": "cinética",
+  "far.aimLines": "Linhas de mira e de torre",
+  "far.aimLinesTitle": "A partir de cada veículo: para onde o jogador olha (tracejada) e para onde aponta o canhão da torre (contínua), onde os dados o indicam.",
+  "far.aimLinesLegend": "Tracejada: para onde o jogador olha. Contínua: o canhão; ténue onde os dados não têm torre e segue a mira."
 }

@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kaliiperi",
   "far.hitAmmo": "Ammus",
   "far.ammoExplosive": "räjähtävä",
-  "far.ammoKinetic": "kineettinen"
+  "far.ammoKinetic": "kineettinen",
+  "far.aimLines": "Katse- ja tornilinjat",
+  "far.aimLinesTitle": "Jokaisesta ajoneuvosta: minne pelaaja katsoo (katkoviiva) ja minne tornin tykki osoittaa (yhtenäinen), missä data sen kertoo.",
+  "far.aimLinesLegend": "Katkoviiva: minne pelaaja katsoo. Yhtenäinen: tykki; haalea, missä datassa ei ole tornia ja se seuraa tähtäystä."
 }

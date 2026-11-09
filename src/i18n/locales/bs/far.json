@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kalibar",
   "far.hitAmmo": "Municija",
   "far.ammoExplosive": "eksplozivna",
-  "far.ammoKinetic": "kinetička"
+  "far.ammoKinetic": "kinetička",
+  "far.aimLines": "Linije pogleda i kupole",
+  "far.aimLinesTitle": "Od svakog vozila: kuda gleda njegov igrač (isprekidano) i kuda cilja top kupole (puno), gdje podaci to kažu.",
+  "far.aimLinesLegend": "Isprekidano: kuda igrač gleda. Puno: top; blijedo gdje podaci nemaju kupolu pa ona prati ciljanje."
 }

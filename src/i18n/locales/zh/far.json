@@ -40,5 +40,8 @@
   "far.hitCalibre": "口径",
   "far.hitAmmo": "弹药",
   "far.ammoExplosive": "爆炸弹",
-  "far.ammoKinetic": "动能弹"
+  "far.ammoKinetic": "动能弹",
+  "far.aimLines": "视线与炮塔线",
+  "far.aimLinesTitle": "从每辆载具出发，在数据提供时显示玩家的视线（虚线）和炮塔火炮的指向（实线）。",
+  "far.aimLinesLegend": "虚线：玩家的视线。实线：火炮；数据中没有炮塔、炮塔跟随瞄准时显示为淡色。"
 }

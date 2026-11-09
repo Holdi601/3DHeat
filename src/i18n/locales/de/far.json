@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kaliber",
   "far.hitAmmo": "Munition",
   "far.ammoExplosive": "explosiv",
-  "far.ammoKinetic": "kinetisch"
+  "far.ammoKinetic": "kinetisch",
+  "far.aimLines": "Blick- und Turmlinien",
+  "far.aimLinesTitle": "Von jedem Fahrzeug aus: wohin sein Spieler schaut (gestrichelt) und wohin die Kanone seines Turms zeigt (durchgezogen), wo die Daten es sagen.",
+  "far.aimLinesLegend": "Gestrichelt: wohin der Spieler schaut. Durchgezogen: die Kanone; blass, wo die Daten keinen Turm haben und er dem Blick folgt."
 }

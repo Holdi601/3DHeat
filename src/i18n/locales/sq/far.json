@@ -40,5 +40,8 @@
   "far.hitCalibre": "Kalibër",
   "far.hitAmmo": "Municion",
   "far.ammoExplosive": "shpërthyese",
-  "far.ammoKinetic": "kinetike"
+  "far.ammoKinetic": "kinetike",
+  "far.aimLines": "Vija të shikimit dhe të frëngjisë",
+  "far.aimLinesTitle": "Nga çdo mjet: ku shikon lojtari i tij (me ndërprerje) dhe ku synon topi i frëngjisë (e plotë), aty ku të dhënat e thonë.",
+  "far.aimLinesLegend": "Me ndërprerje: ku shikon lojtari. E plotë: topi; e zbehtë aty ku të dhënat nuk kanë frëngji dhe ajo ndjek shënjestrimin."
 }

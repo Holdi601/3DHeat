@@ -40,5 +40,8 @@
   "far.hitCalibre": "Hlaupvídd",
   "far.hitAmmo": "Skotfæri",
   "far.ammoExplosive": "sprengiskot",
-  "far.ammoKinetic": "hreyfiorkuskot"
+  "far.ammoKinetic": "hreyfiorkuskot",
+  "far.aimLines": "Mið- og turnlínur",
+  "far.aimLinesTitle": "Frá hverju farartæki: hvert leikmaðurinn horfir (strikalína) og hvert fallbyssa turnsins bendir (heil lína), þar sem gögnin segja til.",
+  "far.aimLinesLegend": "Strikalína: hvert leikmaðurinn horfir. Heil lína: fallbyssan; dauf þar sem gögnin hafa engan turn og hún fylgir miðinu."
 }

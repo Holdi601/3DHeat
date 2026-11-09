@@ -40,5 +40,8 @@
   "far.hitCalibre": "Calabra",
   "far.hitAmmo": "Armlón",
   "far.ammoExplosive": "pléascach",
-  "far.ammoKinetic": "cinéiteach"
+  "far.ammoKinetic": "cinéiteach",
+  "far.aimLines": "Línte radhairc agus túirín",
+  "far.aimLinesTitle": "Ó gach feithicil: cá bhfuil a himreoir ag féachaint (briste) agus cá bhfuil gunna an túirín dírithe (lán), áit a ndeir na sonraí é.",
+  "far.aimLinesLegend": "Briste: cá bhfuil an t-imreoir ag féachaint. Lán: an gunna; fann áit nach bhfuil túirín sna sonraí agus go leanann sé an aimsiú."
 }
