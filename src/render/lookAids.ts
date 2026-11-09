@@ -94,24 +94,36 @@ const camCache = new WeakMap<Dataset, { persons: Uint8Array; fov: AttributeColum
 
 /** The persons of a dataset that are a recorded camera, and its field-of-view column; worked out once. */
 export function cameraTracks(d: Dataset): { persons: Uint8Array; fov: AttributeColumn | null; any: boolean } {
-  let hit = camCache.get(d);
-  if (!hit) {
+  if (!camCache.has(d)) {
+    const g = cameraTracksSteps(d);
+    while (!g.next().done);
+  }
+  const hit = camCache.get(d)!;
+  return { ...hit, any: hit.persons.some((v) => v === 1) };
+}
+
+/** `cameraTracks` worked out in steps, ahead of the first frame that asks: a large load's million labels took a frame. */
+export function* cameraTracksSteps(d: Dataset): Generator<void, void, void> {
+  if (camCache.has(d)) return;
+  {
     const labels = d.personLabels ?? [];
     const persons = new Uint8Array(Math.max(1, labels.length));
-    labels.forEach((l, p) => {
-      if (/(^|[\s_:(·-])camera\)?$/i.test(l.trim())) persons[p] = 1;
-    });
+    for (let p = 0; p < labels.length; p++) {
+      if ((p & 8191) === 8191) yield;
+      if (/(^|[\s_:(·-])camera\)?$/i.test(labels[p].trim())) persons[p] = 1;
+    }
     const kind = d.attrs.find((a) => a.kind === 'category' && /^(kind|type|class)$/i.test(a.name.trim()) && a.categories?.some((c) => /^camera$/i.test(c.trim())));
     if (kind && d.personId) {
       const cam = kind.categories!.map((c) => /^camera$/i.test(c.trim()));
       const ids = kind.data as Uint32Array;
-      for (let r = 0; r < d.count; r++) if (cam[ids[r]] && d.personId[r] < persons.length) persons[d.personId[r]] = 1;
+      for (let r = 0; r < d.count; r++) {
+        if ((r & 65535) === 65535) yield;
+        if (cam[ids[r]] && d.personId[r] < persons.length) persons[d.personId[r]] = 1;
+      }
     }
     const fov = d.attrs.find((a) => a.kind === 'number' && /^(fov|cameraFov|camFov|fieldOfView)$/i.test(a.name.trim())) ?? null;
-    hit = { persons, fov };
-    camCache.set(d, hit);
+    camCache.set(d, { persons, fov });
   }
-  return { ...hit, any: hit.persons.some((v) => v === 1) };
 }
 
 /** A recorded field of view at a row, degrees (horizontal), or NaN; radians in the data are taken as such. */

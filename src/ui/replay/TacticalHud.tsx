@@ -167,10 +167,19 @@ export function TacticalHud() {
     }
   }, [look.director]);
 
+  // Whether a person flies, worked out the first time the director asks: for every unit at once it held the frame a load ends in.
   const air = useMemo(() => {
-    if (!dataset) return new Uint8Array(0);
-    const index = unitsOf(dataset);
-    return Uint8Array.from(index.personUnit, (u) => (index.units[u] && unitCategory(dataset, index.units[u]) === 'air' ? 1 : 0));
+    let known: Int8Array | null = null;
+    return (p: number): boolean => {
+      if (!dataset) return false;
+      const index = unitsOf(dataset);
+      known ??= new Int8Array(index.personUnit.length).fill(-1);
+      if (known[p] < 0) {
+        const u = index.units[index.personUnit[p]];
+        known[p] = u && unitCategory(dataset, u) === 'air' ? 1 : 0;
+      }
+      return known[p] === 1;
+    };
   }, [dataset]);
 
   const marks = useMemo(() => {
@@ -203,10 +212,11 @@ export function TacticalHud() {
         const m = MotionModel.of(dataset);
         const session = useStore.getState().team.session;
         const units = engine.liveTracks.map((x) => {
-          const ok = m && air[x.person] && m.at(x.person, now, session, sample);
+          const flies = air(x.person);
+          const ok = m && flies && m.at(x.person, now, session, sample);
           return {
             person: x.person,
-            air: air[x.person] === 1,
+            air: flies,
             speed: ok ? Math.hypot(sample.vx, sample.vy, sample.vz) : NaN,
           };
         });
@@ -217,7 +227,7 @@ export function TacticalHud() {
         }
         shotRef.current = next;
       }
-      if (shotRef.current) film(engine, dataset, shotRef.current, fly.current, dt, air[shotRef.current.person] === 1);
+      if (shotRef.current) film(engine, dataset, shotRef.current, fly.current, dt, air(shotRef.current.person));
     }
 
     const n = countUpTo(events, now);

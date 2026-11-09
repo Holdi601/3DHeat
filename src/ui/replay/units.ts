@@ -98,7 +98,7 @@ function* sortSteps(keys: string[]): Generator<void, Int32Array, void> {
   let a = new Int32Array(n);
   let b = new Int32Array(n);
   for (let i = 0; i < n; i++) a[i] = i;
-  const RUN = 2048;
+  const RUN = 512;
   const cmp = (x: number, y: number) => (keys[x] < keys[y] ? -1 : keys[x] > keys[y] ? 1 : x - y);
   for (let i = 0; i < n; i += RUN) {
     a.subarray(i, Math.min(n, i + RUN)).sort(cmp);
@@ -112,14 +112,16 @@ function* sortSteps(keys: string[]): Generator<void, Int32Array, void> {
       let i = lo;
       let j = mid;
       let k = lo;
-      while (i < mid && j < hi) b[k++] = cmp(a[i], a[j]) <= 0 ? a[i++] : a[j++];
+      // Within a merge too: the last ones merge every unit at once, a tenth of a second of one step.
+      while (i < mid && j < hi) {
+        b[k++] = cmp(a[i], a[j]) <= 0 ? a[i++] : a[j++];
+        if (++work > 1 << 15) {
+          work = 0;
+          yield;
+        }
+      }
       while (i < mid) b[k++] = a[i++];
       while (j < hi) b[k++] = a[j++];
-      work += hi - lo;
-      if (work > 1 << 15) {
-        work = 0;
-        yield;
-      }
     }
     [a, b] = [b, a];
   }
@@ -278,7 +280,7 @@ function* unitsSteps(d: Dataset): Generator<void, UnitIndex, void> {
   // Each unit's place in name order, worked out once: lists sort by it, with no sort key kept per unit.
   const keys: string[] = new Array(units.length);
   for (let i = 0; i < units.length; i++) {
-    if ((i & 8191) === 8191) yield;
+    if ((i & 1023) === 1023) yield;
     keys[i] = sortKey(units[i]);
   }
   const order = yield* sortSteps(keys);
@@ -310,7 +312,22 @@ export function personAt(u: Unit, time: number): number {
 
 /** Units sorted for a list: by name, as the language sorts, numbers by value. */
 export function sortUnits(units: Unit[]): Unit[] {
-  if (units.every((u) => u.rank !== undefined)) return units.slice().sort((a, b) => a.rank! - b.rank!);
+  if (units.every((u) => u.rank !== undefined)) {
+    // Each in its place by rank: sorting a large overlay's units took a frame of its own.
+    let top = 0;
+    for (const u of units) if (u.rank! > top) top = u.rank!;
+    const at = new Int32Array(top + 1).fill(-1);
+    let clash = false;
+    for (let i = 0; i < units.length; i++) {
+      if (at[units[i].rank!] >= 0) clash = true;
+      at[units[i].rank!] = i;
+    }
+    // Ranks of two indexes meet: sorted as before.
+    if (clash) return units.slice().sort((a, b) => a.rank! - b.rank!);
+    const out: Unit[] = [];
+    for (let r = 0; r <= top; r++) if (at[r] >= 0) out.push(units[at[r]]);
+    return out;
+  }
   // A plain string key per unit instead of a locale compare per comparison: a collator over a
   // million units of a large overlay took seconds.
   const keyed = units.map((u) => [sortKey(u), u] as const);

@@ -121,6 +121,8 @@ export interface LeanBuilt {
   trackRows: Float64Array;
   /** Per track: its unit's track value (what its rows carry in the track column) and match value. */
   trackKey: string[];
+  /** Long string lists sent to the page as one string each (`stripTrackStrings`), until `restoreTrackStringsSteps` splits them. */
+  packed?: { trackKey: Packed; categories: [number, Packed][] };
   trackMatch: string[];
   groups: string[];
   /** Per group, its match's own value in the files ('' for a file that is one match). */
@@ -691,14 +693,62 @@ function keyInterval(keysA: Uint32Array, CT: Float32Array, cb: number, first: nu
 export function stripTrackStrings(b: LeanBuilt): void {
   b.dataset.personLabels = [];
   b.trackMatch = [];
+  // Long lists of strings as one string each: a structured clone of a million strings held the page's frame for half a second, one string is a copy.
+  const trackKey = pack(b.trackKey);
+  const categories: [number, Packed][] = [];
+  b.dataset.attrs.forEach((a, i) => {
+    const p = a.categories && a.categories.length > PACK_MIN ? pack(a.categories) : null;
+    if (p) {
+      categories.push([i, p]);
+      a.categories = [];
+    }
+  });
+  if (trackKey) b.trackKey = [];
+  b.packed = { trackKey: trackKey ?? { n: -1, text: '' }, categories };
+}
+
+/** Strings a list has before it is sent as one. */
+const PACK_MIN = 4096;
+const SEP = '\u0000';
+
+type Packed = { n: number; text: string };
+
+function pack(list: string[]): Packed | null {
+  if (list.length <= PACK_MIN) return null;
+  for (const x of list) if (typeof x !== 'string' || x.includes(SEP)) return null;
+  return { n: list.length, text: list.join(SEP) };
+}
+
+function* unpack(p: Packed): Generator<void, string[], void> {
+  const out: string[] = new Array(p.n);
+  let from = 0;
+  for (let i = 0; i < p.n; i++) {
+    if ((i & 16383) === 16383) yield;
+    const at = i === p.n - 1 ? p.text.length : p.text.indexOf(SEP, from);
+    out[i] = p.text.slice(from, at);
+    from = at + 1;
+  }
+  return out;
 }
 
 /** The strings `stripTrackStrings` left out, made again from each track's key and match, as `finish` makes them. */
 export function restoreTrackStrings(b: LeanBuilt): void {
+  const g = restoreTrackStringsSteps(b);
+  while (!g.next().done);
+}
+
+/** `restoreTrackStrings` in steps: a large load's million tracks took half a second. */
+export function* restoreTrackStringsSteps(b: LeanBuilt): Generator<void, void, void> {
+  if (b.packed) {
+    if (b.packed.trackKey.n >= 0) b.trackKey = yield* unpack(b.packed.trackKey);
+    for (const [i, p] of b.packed.categories) b.dataset.attrs[i].categories = yield* unpack(p);
+    delete b.packed;
+  }
   const T = b.tracks;
   const labels: string[] = new Array(T);
   const match: string[] = new Array(T);
   for (let i = 0; i < T; i++) {
+    if ((i & 8191) === 8191) yield;
     const g = b.trackGroup[i];
     labels[i] = `${b.trackKey[i]} · ${b.groups[g]}`;
     match[i] = b.groupMatch[g];

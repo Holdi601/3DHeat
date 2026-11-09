@@ -11,10 +11,13 @@
 
 import { parquetMetadataAsync } from 'hyparquet';
 import type { Dataset } from '../../state/types';
-import { registerGpuTrackStore, TRACK_U32, TrackFigures, type GpuTrackStore } from '../../render/gpuTracks/store';
+import { registerGpuTrackStore, TRACK_U32, TrackFigures, wholeHere, type GpuTrackStore } from '../../render/gpuTracks/store';
+import { WAIT, type SliceJob } from '../../data/slices';
+import { matchIndexSteps } from '../../figures/match';
 import { teamHeatColor, teamMemberColor } from '../../render/colors';
-import { restoreTrackStrings, type LeanBuilt } from './assemble';
-import type { LoadProgress, LoadRequest, LoadResponse } from './loadWorker';
+import { restoreTrackStringsSteps, type LeanBuilt } from './assemble';
+import { cameraTracksSteps } from '../../render/lookAids';
+import type { LoadProgress, LoadRequest, LoadResponse, PieceAck } from './loadWorker';
 import { asyncBuffer, readColumns } from './columns';
 import { MAX_TAB_ARRAY_BYTES } from '../../data/memory';
 
@@ -97,18 +100,63 @@ export function leanOverlayOf(d: Dataset | null): LeanOverlay | null {
 
 const WEAPON_WORD = /missile|rocket|bomb|torpedo|shell|projectile|bullet|grenade|weapon/i;
 
-/** Each track's colour, figure and flags, and the deaths in team colours: the store the GPU draws. */
-export function leanStore(b: LeanBuilt, colour: LeanColour, t0 = performance.now()): GpuTrackStore {
+/** Each track's colour, figure and flags, and the deaths in team colours: the store the GPU draws, built whole. */
+export function leanStore(b: LeanBuilt, colour: LeanColour, figures?: TrackFigures): GpuTrackStore {
+  return wholeHere(leanStoreSteps(b, colour, figures));
+}
+
+/** Main-thread work a step of the many-match load may take before it lets a frame through, ms. */
+const STEP_MS = 4;
+
+/**
+ * A job a few milliseconds at a time, waiting for the model worker where it
+ * says so: the hand-over of a load never holds a frame.
+ */
+async function runSliced<T>(g: SliceJob<T>): Promise<T> {
+  // Not in the task that took the worker's answer.
+  await new Promise((res) => setTimeout(res, 0));
+  for (;;) {
+    const end = performance.now() + STEP_MS;
+    for (;;) {
+      const r = g.next();
+      if (r.done) return r.value;
+      // Waiting on the worker: let frames through until it answers.
+      if (r.value === WAIT) {
+        await new Promise((res) => setTimeout(res, 8));
+        break;
+      }
+      if (performance.now() >= end) {
+        await new Promise((res) => setTimeout(res, 0));
+        break;
+      }
+    }
+  }
+}
+
+function* leanStoreSteps(b: LeanBuilt, colour: LeanColour, figures = new TrackFigures(b.dataset)): SliceJob<GpuTrackStore> {
+  const t0 = performance.now();
   const d = b.dataset;
   const T = b.tracks;
   const trackData = b.trackData;
   const f32 = new Float32Array(trackData.buffer, trackData.byteOffset, trackData.length);
-  const figures = new TrackFigures(d);
+  figures.unplace();
+  // The catalogue's name index, which naming the first kind would otherwise build at once.
+  yield* matchIndexSteps();
   const kinds = d.attrs.filter((a) => a.kind === 'category' && /^(kind|type|class|category)$/i.test(a.name.trim()));
+  // Every kind asked of the model worker first, so it builds them all while the tracks are placed.
+  const kindOf: (string | null)[] = new Array(T);
+  for (let i = 0; i < T; i++) {
+    // A kind met for the first time is matched against the catalogue: well under a millisecond, a few hundred a step.
+    if ((i & 127) === 127) yield;
+    kindOf[i] = b.trackRow[i] >= 0 ? figures.kindAt(b.trackRow[i]) : null;
+    figures.request(kindOf[i]);
+  }
   const personOf = new Int32Array(T);
   const trackOf = new Int32Array(T);
   const G = b.groups.length;
   for (let i = 0; i < T; i++) {
+    if ((i & 255) === 255) yield;
+    yield* figures.prepare(kindOf[i]);
     const row = b.trackRow[i];
     const weapon = row >= 0 && kinds.some((a) => WEAPON_WORD.test(a.categories![(a.data as Uint32Array)[row]] ?? ''));
     figures.place(trackData, f32, i * TRACK_U32, i, row, b.keysB.length > 0, colour === 'group' ? teamHeatColor(b.trackGroup[i], G) : null, weapon);
@@ -118,6 +166,7 @@ export function leanStore(b: LeanBuilt, colour: LeanColour, t0 = performance.now
   const M = b.markers.count;
   const mc = new Uint32Array(M);
   for (let i = 0; i < M; i++) {
+    if ((i & 4095) === 4095) yield;
     const team = b.markers.team[i];
     const [r, g, bl] = team === 0xffff ? [1, 1, 1] : colour === 'group' ? teamHeatColor(b.markers.group[i], G) : teamMemberColor(team, 0, 1);
     const c = (x: number) => Math.round(Math.max(0, Math.min(1, x)) * 255);
@@ -147,9 +196,21 @@ export function leanStore(b: LeanBuilt, colour: LeanColour, t0 = performance.now
   return store;
 }
 
+const figuresOf = new WeakMap<LeanBuilt, TrackFigures>();
+
+/** What the page makes of a load the worker handed over, in steps: the tracks' strings, the camera tracks, the store. */
+function* handover(b: LeanBuilt): SliceJob<GpuTrackStore> {
+  yield* restoreTrackStringsSteps(b);
+  yield* cameraTracksSteps(b.dataset);
+  const figures = new TrackFigures(b.dataset);
+  figuresOf.set(b, figures);
+  return yield* leanStoreSteps(b, 'team', figures);
+}
+
 /** Recolours a loaded overlay (team or group): a new store over the same keys, so the GPU takes it anew. */
 export function recolour(o: LeanOverlay, colour: LeanColour): LeanOverlay {
-  const next = { ...o, colour, store: leanStore(o.built, colour) };
+  // The figures the load prepared: their models are made, only the colours change.
+  const next = { ...o, colour, store: leanStore(o.built, colour, figuresOf.get(o.built)) };
   registerGpuTrackStore(o.built.dataset, next.store);
   overlays.set(o.built.dataset, next);
   return next;
@@ -165,6 +226,7 @@ export function loadLeanOverlay(files: File[], name: string, budget: LeanBudget,
   const t0 = performance.now();
   const w = new Worker(new URL('./loadWorker.ts', import.meta.url), { type: 'module' });
   let reject: (e: Error) => void = () => {};
+  let cancelled = false;
   // The arrays too big to come in one message, put together again from their pieces.
   const big = new Map<string, Uint8Array>();
   const promise = new Promise<LeanOverlay>((resolve, rej) => {
@@ -175,6 +237,9 @@ export function loadLeanOverlay(files: File[], name: string, budget: LeanBudget,
         let whole = big.get(r.key);
         if (!whole) big.set(r.key, (whole = new Uint8Array(r.total)));
         whole.set(r.part, r.offset);
+        // Taken in: the next piece may come, in a task of its own.
+        // Its buffer goes back for the next piece.
+        w.postMessage({ kind: 'ack', part: r.part.buffer as ArrayBuffer } satisfies PieceAck, [r.part.buffer as ArrayBuffer]);
       } else if (r.kind === 'progress') onProgress(r.progress);
       else if (r.kind === 'planned') onProgress({ phase: 'planned', samples: r.samples, keys: r.keys, level: r.level });
       else if (r.kind === 'error') {
@@ -184,12 +249,14 @@ export function loadLeanOverlay(files: File[], name: string, budget: LeanBudget,
         w.terminate();
         for (const [key, whole] of big) r.built[key as 'keysA' | 'keysB' | 'trackData'] = new Uint32Array(whole.buffer);
         big.clear();
-        restoreTrackStrings(r.built);
-        const store = leanStore(r.built, 'team');
-        registerGpuTrackStore(r.built.dataset, store);
-        const o: LeanOverlay = { built: r.built, store, files, skipped: r.skipped, ms: r.ms, loadMs: performance.now() - t0, budget, colour: 'team' };
-        overlays.set(r.built.dataset, o);
-        resolve(o);
+        // The rest a few milliseconds at a time: the figures' models alone took seconds of one frame.
+        void runSliced(handover(r.built)).then((store) => {
+          if (cancelled) return;
+          registerGpuTrackStore(r.built.dataset, store);
+          const o: LeanOverlay = { built: r.built, store, files, skipped: r.skipped, ms: r.ms, loadMs: performance.now() - t0, budget, colour: 'team' };
+          overlays.set(r.built.dataset, o);
+          resolve(o);
+        }, rej);
       }
     };
     w.onerror = (ev) => {
@@ -203,6 +270,7 @@ export function loadLeanOverlay(files: File[], name: string, budget: LeanBudget,
   return {
     promise,
     cancel: () => {
+      cancelled = true;
       w.terminate();
       reject(new Error('cancelled'));
     },
