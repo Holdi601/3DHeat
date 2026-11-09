@@ -1,4 +1,3 @@
-import { hiddenAt, hiddenSpans } from '../../data/acmiFlags';
 import { useMemo, useState } from 'react';
 import { useStore } from '../../state/store';
 import { useReplayStore } from '../../state/replayStore';
@@ -127,10 +126,7 @@ export function UnitList() {
     );
   };
 
-  // Hidden by the recording now (ACMI Visible 0): out of the list while it is, as it is out of the view.
-  const unhidden = (u: Unit) => !hiddenSpans(dataset) || !u.persons.every((p) => hiddenAt(dataset, p, now));
-  const block = (kind: UnitKind, all: Unit[], open: boolean) => {
-    const list = hiddenSpans(dataset) ? all.filter(unhidden) : all;
+  const block = (kind: UnitKind, list: Unit[], open: boolean) => {
     if (!list.length) return null;
     const persons = list.flatMap((u) => u.persons);
     const anyShown = list.some(visible);
