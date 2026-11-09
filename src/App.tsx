@@ -67,6 +67,7 @@ import { LinePanel } from './ui/panels/LinePanel';
 import { UpdateBanner } from './ui/UpdateBanner';
 import { VehiclePanel } from './ui/vehicle/VehiclePanel';
 import { VehicleOverlay } from './ui/vehicle/VehicleOverlay';
+import { guardBrowserKeys } from './ui/browserKeys';
 
 /** The view modes, in the viewer's language: a function, so the words are looked up when shown. */
 const modes = (): Array<{ value: ViewMode; label: string; title: string }> => [
@@ -135,6 +136,8 @@ export function App() {
   const lastHeat = useRef<ViewMode>('heat-simple');
   /** The heatmap tab's own mode, the figure overlay among them, kept while the match tab borrows the setting. */
   const heatTabMode = useRef<ViewMode>('heat-simple');
+  // Browser shortcuts (Ctrl+S, Ctrl+P, F5...) don't fire while flying, and closing the tab with data loaded asks first.
+  useEffect(() => guardBrowserKeys(), []);
   useEffect(() => {
     if (mode !== 'team') lastHeat.current = mode;
     if (useRaceStore.getState().tab === 'heat') heatTabMode.current = mode;
