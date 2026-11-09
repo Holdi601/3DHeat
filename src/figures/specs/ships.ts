@@ -141,6 +141,9 @@ N['passenger-launch'] = { cls: 'merchant', length: 25, beam: 5, freeboard: 1.8, 
 N['tanker'] = { cls: 'merchant', length: 130, beam: 20, freeboard: 6, hull: 'merchant', superstructure: [{ x: -55, length: 14, width: 18, height: 12 }], funnels: [{ x: -60, height: 8, diameter: 4 }] };
 N['bulker'] = { cls: 'merchant', length: 180, beam: 30, freeboard: 8, hull: 'merchant', superstructure: [{ x: -78, length: 16, width: 26, height: 16 }], funnels: [{ x: -82, height: 8, diameter: 5 }] };
 N['cargo-ship'] = { cls: 'merchant', length: 130, beam: 19, freeboard: 7, hull: 'merchant', superstructure: [{ x: -10, length: 18, width: 16, height: 12 }], funnels: [{ x: -14, height: 8, diameter: 4 }], masts: [{ x: 35, height: 18 }, { x: -45, height: 16 }] };
+// Black Marlin: a semi-submersible heavy-lift ship, the long open deck behind the accommodation block on the bow
+// (217.8 x 42 m; the deck's 3.3 m over the water from its 13.3 m depth and 10.1 m draught, the block estimated).
+N['black-marlin'] = { cls: 'merchant', length: 217.8, beam: 42, freeboard: 3.3, hull: 'merchant', superstructure: [{ x: 94, length: 22, width: 40, height: 16 }], masts: [{ x: 96, height: 10 }] };
 N['container-ship'] = { cls: 'merchant', length: 212, beam: 31, freeboard: 10, hull: 'merchant', superstructure: [{ x: -80, length: 16, width: 28, height: 18 }, { x: 10, length: 140, width: 28, height: 8 }], funnels: [{ x: -86, height: 8, diameter: 5 }] };
 N['supertanker'] = { cls: 'merchant', length: 458.5, beam: 68.8, freeboard: 14, hull: 'merchant', superstructure: [{ x: -205, length: 24, width: 50, height: 26 }], funnels: [{ x: -212, height: 12, diameter: 8 }] };
 // A 1940s cargo ship (Liberty type, 134.6 m, 17.3 m beam) and armed tanker (est 150 m).

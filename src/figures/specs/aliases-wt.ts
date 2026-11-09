@@ -576,7 +576,7 @@ const ALIASES: Record<string, string> = {
   'jp_type_61_mod': 'type-61',
   'jp_type_87_rcv_prot': 'type-87-rcv',
   'jp_m47_patton_ii': 'm47-patton',
-  'jp_type_99': 'pzh-2000', // nearest: a 155 mm tracked howitzer with a big turret of its size
+  'jp_type_99': 'type-99-sph',
   'jp_m163_vulcan': 'm163-vulcan',
   'jp_st_b1': 'type-74',
   'jp_type_74_c': 'type-74',
@@ -639,7 +639,7 @@ const ALIASES: Record<string, string> = {
   'cn_su_100_1945': 'su-100',
   'cn_type_63_i': 'pt-76',
   'cn_plz_83': '2s3-akatsiya',
-  'cn_plz_45': 'm109a1',
+  'cn_plz_45': 'plz-45',
   'cn_t_34_85_zis_53_no215': 't-34-85',
   'cn_is_2_1943_no402': 'is-2-1943',
   'cn_m48a1_patton_iii': 'm48-patton',
@@ -759,7 +759,7 @@ const ALIASES: Record<string, string> = {
   'fr_b1_ter': 'b1-bis',
   'fr_lvt_bofors': 'lvt-4-zis-2',
   'fr_amx_13_chaffee': 'amx-13',
-  'fr_amx_13_fl_11': 'amx-13',
+  'fr_amx_13_fl_11': 'amx-13-fl-11',
   'fr_m4a4_sherman': 'm4a4-sherman',
   'fr_arl_44_acl1': 'arl-44',
   'fr_amx_13_dca_40': 'amx-13',
@@ -1011,7 +1011,7 @@ const ALIASES: Record<string, string> = {
   'pbm_5a': 'pbm',
   'xp-55': 'xp-55',
   'p-61a_1': 'p-61',
-  'xp-50': 'whirlwind', // nearest: a twin-engined single-seat fighter
+  'xp-50': 'xp-50',
   'pv_2d': 'pv-2',
   'bf-109f-4_usa': 'bf-109-f',
   'p-63c-5_kingcobra_animal_version': 'p-63',
@@ -1772,10 +1772,10 @@ const ALIASES: Record<string, string> = {
   'ki_43_3_ko': 'ki-43',
   'i-16_chung_28': 'i-16',
   'i-16_type5_1935_china': 'i-16',
-  'v_11g': 'vengeance', // nearest: a single-radial Vultee attack monoplane with a long canopy
+  'v_11g': 'v-11',
   'cw_21': 'cw-21',
   'i-153_m62_china': 'i-153',
-  'v_12d': 'vengeance', // nearest: a single-radial Vultee attack monoplane with a long canopy
+  'v_12d': 'v-11',
   'hawk_iii': 'bf2c', // the export BF2C Goshawk
   'h-75m_china': 'p-36',
   'p-66': 'p-36', // same size and layout as the P-36
@@ -2865,7 +2865,7 @@ const ALIASES: Record<string, string> = {
   'aichi_e13a': 'e13a',
   'sc_1': 'ar-196', // nearest: a low-wing float monoplane
   'e7k2': 'swordfish', // nearest: a two-seat biplane of its size
-  'e8n2': 'swordfish', // nearest: a two-seat biplane of its size
+  'e8n2': 'e8n2',
   'ro_43': 'swordfish', // nearest: a two-seat biplane of its size
   'kor_1': 'swordfish', // nearest: a two-seat biplane of its size
   'soc_1': 'swordfish', // nearest: a two-seat biplane of its size
@@ -2888,7 +2888,7 @@ const ALIASES: Record<string, string> = {
   'ucav_mq_1_predator_usa_killstreak': 'mq-1-predator',
   'ucav_wing_loong_i': 'wing-loong',
   'ucav_wing_loong_i_killstreak': 'wing-loong',
-  'heavy_load_carrier_black_marlin': 'cargo-ship', // nearest: a big merchant hull
+  'heavy_load_carrier_black_marlin': 'black-marlin',
   'ucav_orion': 'mq-1-predator', // nearest: a MALE drone of its layout
   'ucav_orion_killstreak': 'mq-1-predator', // nearest: a MALE drone of its layout
   'ussr_ai_tbm_9k79_tochka': 'iskander-tel', // nearest: a wheeled ballistic-missile launcher

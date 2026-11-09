@@ -352,6 +352,9 @@ G['amx-13'] = {
 // AMX-VCI with an anti-aircraft turret: the AMX-13's running gear under the carrier's longer, taller hull (5.7 x
 // 2.51 m, the roof about 2.0 m), a small turret with twin 30 mm (turret estimated).
 G['amx-vci-dca'] = { ...G['amx-13'], cls: 'spaa', length: 5.7, hullHeight: 2.0, trackProfile: run(5.55, 0.78, [2.8, 0.6], [-2.8, 0.55], -2.3, 2.3), hullOutline: hull(5.7, 2.51, 2.0, 0.72, 1.6, 1.0, 0.1, 6), turret: turret(-0.6, [[-0.8, 0.7], [0.6, 0.75], [0.8, 0.5]], [[-0.8, 0.55], [0.6, 0.6], [0.8, 0.4]], 8, 0.7), guns: [{ mount: 'turret', count: 2, length: 2.4, calibre: 0.03, spread: 0.9, at: 0.5 }] };
+// AMX-13 FL-11: the hull under the EBR's smaller FL-11 oscillating turret with the short 75 mm SA 49 (36 calibres,
+// 2.7 m).
+G['amx-13-fl-11'] = { ...G['amx-13'], turret: turret(-0.6, [[-1.3, 0.7], [-1.0, 0.85], [0.5, 0.85], [1.0, 0.5]], [[-1.3, 0.75], [0.5, 0.8], [1.0, 0.45]], 6, 0.95), guns: [{ mount: 'turret', length: 2.3, calibre: 0.075, at: 0.45 }] };
 // Type 61 (hull 6.3 x 2.95 m, 2.49 m), Type 74 (hull 6.7 x 3.18 m, 2.25 m, a low cast dome), Type 90 (hull 7.5 x 3.43 m, 2.3 m, a slab box turret), Type 10 (hull 7.5 x 3.24 m, 2.3 m, an angular wedge).
 // Type 61: its own 6.3 m hull (not the AMX-30's) on six road wheels a side with three return rollers.
 G['type-61'] = { ...G['amx-30'], length: 6.3, width: 2.95, hullHeight: 1.6, roadWheels: 6, roadWheelRadius: 0.33, trackProfile: run(6.1, 0.9, [3.05, 0.62], [-3.05, 0.66], -2.45, 2.4), hullOutline: hull(6.3, 2.95, 1.6, 0.85, 1.5, 0.95, 0.15, 6), turret: turret(0.0, [[-1.6, 0.9], [-1.2, 1.25], [0.6, 1.3], [1.3, 0.95], [1.5, 0.5]], [[-1.6, 0.55], [-1.0, 0.85], [0.5, 0.9], [1.5, 0.45]], 2.6, 1.45), guns: [{ mount: 'turret', length: 4.4, calibre: 0.09, muzzle: true, at: 0.45 }] };
@@ -399,6 +402,9 @@ G['maus'] = {
 G['arjun'] = { ...G['leopard-2a4'], length: 7.7, width: 3.85, turret: turret(-0.3, [[-2.3, 1.35], [-1.9, 1.65], [1.5, 1.7], [1.95, 1.5], [2.0, 0.7]], [[-2.3, 0.78], [1.7, 0.85], [2.0, 0.62]], 12, 2.0) };
 // PzH 2000: a long hull, a big box turret over the back with the 155 mm L52 (hull 7.87 x 3.58 m, 3.06 m); AS90 (hull 7.2 x 3.4 m, 3.0 m).
 G['pzh-2000'] = { cls: 'sp-artillery', chassis: 'tracked', length: 7.87, width: 3.58, hullHeight: 1.6, roadWheels: 7, roadWheelRadius: 0.33, skirts: true, trackProfile: run(7.7, 0.9, [3.85, 0.65], [-3.85, 0.6], -3.1, 3.05), hullOutline: hull(7.87, 3.58, 1.6, 0.85, 2.0, 1.05, 0.15), turret: turret(-1.3, [[-2.3, 1.55], [2.0, 1.6], [2.3, 1.2], [2.35, 0.7]], [[-2.3, 1.3], [2.0, 1.35], [2.35, 0.9]], 12, 2.3), guns: [{ mount: 'turret', length: 8.0, calibre: 0.155, muzzle: true, extractor: 0.55, at: 0.5, elevation: 0.05 }] };
+// Type 99 155 mm SPH: the same 52-calibre gun in a tall turret on a narrower six-wheel hull (11.3 m with the gun,
+// 3.2 m wide; the hull's 7.5 m from the PzH 2000's gun overhang, the turret's height estimated).
+G['type-99-sph'] = { ...G['pzh-2000'], length: 7.5, width: 3.2, hullHeight: 1.8, roadWheels: 6, trackProfile: run(7.35, 0.9, [3.67, 0.65], [-3.67, 0.6], -2.95, 2.9), hullOutline: hull(7.5, 3.2, 1.8, 0.85, 1.9, 1.1, 0.15), turret: turret(-1.2, [[-2.2, 1.4], [1.9, 1.45], [2.2, 1.1], [2.25, 0.65]], [[-2.2, 1.6], [1.9, 1.65], [2.25, 1.2]], 12, 2.2) };
 G['as90'] = { ...G['pzh-2000'], length: 7.2, width: 3.4, roadWheels: 6, guns: [{ mount: 'turret', length: 6.0, calibre: 0.155, muzzle: true, extractor: 0.55, at: 0.5, elevation: 0.05 }] };
 // M42 Duster: an open turret with twin 40 mm on the M41 hull (5.82 x 3.22 m, 2.85 m).
 G['m42-duster'] = { ...G['m41'], cls: 'spaa', turret: { x: -0.4, length: 2.4, width: 2.4, height: 0.8, shape: 'open' }, guns: [{ mount: 'turret', count: 2, length: 2.6, calibre: 0.04, spread: 0.5, elevation: 0.35, at: 0.7 }] };
