@@ -7,7 +7,7 @@
 
 import type { FigureBatch, FigureMesh } from '../../figures/instances';
 import { INSTANCE_STRIDE, MESH_STRIDE } from '../../figures/instances';
-import { figureWgsl } from '../figureShaders';
+import { figureWgsl, seeThrough } from '../figureShaders';
 
 /** Figure mesh bytes written in one frame at most; see `meshFor`. */
 const MESH_BYTES_PER_FRAME = 2 * 1024 * 1024;
@@ -15,11 +15,29 @@ const MESH_BYTES_PER_FRAME = 2 * 1024 * 1024;
 interface MeshGpu {
   buf: GPUBuffer;
   count: number;
+  /** Whether any of it is see-through (a propeller's disc, a canopy): drawn again in the see-through pass. */
+  see: boolean;
   used: number;
 }
 
+/** A see-through draw recorded in the solid pass, to be drawn again after everything solid. */
+interface SeeDraw {
+  m: MeshGpu;
+  instances: GPUBuffer;
+  /** Byte offset of the run in `instances`. */
+  offset: number;
+  group: GPUBindGroup;
+  /** Instance count, or with `args` the byte offset of its indirect arguments. */
+  count: number;
+  args: GPUBuffer | null;
+}
+
 export class GpuFigures {
+  /** The solid parts, writing depth. Its bind group layout is the see-through pipeline's too. */
   readonly pipeline: GPURenderPipeline;
+  /** The see-through parts, after everything solid, not writing depth (`SEE_THROUGH_BELOW`). */
+  private readonly seePipeline: GPURenderPipeline;
+  private readonly seeDraws: SeeDraw[] = [];
   private readonly meshes = new Map<number, MeshGpu>();
   private instances: GPUBuffer | null = null;
   private staging = new Float32Array(0);
@@ -34,9 +52,18 @@ export class GpuFigures {
     const module = device.createShaderModule({ label: 'figures', code: figureWgsl() });
     const M = MESH_STRIDE * 4;
     const I = INSTANCE_STRIDE * 4;
-    this.pipeline = device.createRenderPipeline({
-      label: 'figures',
-      layout: 'auto',
+    // One layout for both, so a bind group made for `pipeline` serves the see-through pass too.
+    const layout = device.createPipelineLayout({
+      bindGroupLayouts: [
+        device.createBindGroupLayout({
+          label: 'figures',
+          entries: [{ binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } }],
+        }),
+      ],
+    });
+    const pipeline = (alphaPass: number, depthWriteEnabled: boolean): GPURenderPipeline => device.createRenderPipeline({
+      label: alphaPass === 2 ? 'figures see-through' : 'figures',
+      layout,
       vertex: {
         module,
         entryPoint: 'vsFigure',
@@ -66,10 +93,12 @@ export class GpuFigures {
           },
         ],
       },
-      fragment: { module, entryPoint: 'fsFigure', targets: [{ format: colorFormat, blend }] },
+      fragment: { module, entryPoint: 'fsFigure', constants: { alphaPass }, targets: [{ format: colorFormat, blend }] },
       primitive: { topology: 'triangle-list' },
-      depthStencil: { format: depthFormat, depthWriteEnabled: true, depthCompare: 'less-equal' },
+      depthStencil: { format: depthFormat, depthWriteEnabled, depthCompare: 'less-equal' },
     });
+    this.pipeline = pipeline(1, true);
+    this.seePipeline = pipeline(2, false);
   }
 
   /** Mesh bytes written this frame, and the frame they count for; see `meshFor`. */
@@ -93,7 +122,7 @@ export class GpuFigures {
     this.uploadedBytes += mesh.data.byteLength;
     const buf = this.device.createBuffer({ label: `figure mesh ${mesh.id}`, size: Math.max(16, mesh.data.byteLength), usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
     this.device.queue.writeBuffer(buf, 0, mesh.data.buffer, mesh.data.byteOffset, mesh.data.byteLength);
-    m = { buf, count: mesh.count, used: 0 };
+    m = { buf, count: mesh.count, see: seeThrough(mesh.data), used: 0 };
     this.meshes.set(mesh.id, m);
     return m;
   }
@@ -115,7 +144,25 @@ export class GpuFigures {
       pass.setVertexBuffer(0, m.buf);
       pass.setVertexBuffer(1, instances, first[i] * INSTANCE_STRIDE * 4);
       pass.drawIndirect(args, i * 16);
+      if (m.see) this.seeDraws.push({ m, instances, offset: first[i] * INSTANCE_STRIDE * 4, group: bindGroup, count: i * 16, args });
     }
+  }
+
+  /**
+   * The see-through parts (propeller discs) of what `draw` and `drawIndirect` drew
+   * this frame, from the same instances: after everything solid, not writing depth.
+   */
+  drawSeeThrough(pass: GPURenderPassEncoder): void {
+    if (!this.seeDraws.length) return;
+    pass.setPipeline(this.seePipeline);
+    for (const d of this.seeDraws) {
+      pass.setBindGroup(0, d.group);
+      pass.setVertexBuffer(0, d.m.buf);
+      pass.setVertexBuffer(1, d.instances, d.offset);
+      if (d.args) pass.drawIndirect(d.args, d.count);
+      else pass.draw(d.m.count, d.count);
+    }
+    this.seeDraws.length = 0;
   }
 
   /**
@@ -162,6 +209,7 @@ export class GpuFigures {
       pass.setVertexBuffer(0, m.buf);
       pass.setVertexBuffer(1, this.instances, first * INSTANCE_STRIDE * 4);
       pass.draw(m.count, b.count);
+      if (m.see) this.seeDraws.push({ m, instances: this.instances, offset: first * INSTANCE_STRIDE * 4, group: bindGroup, count: b.count, args: null });
       first += b.count;
     }
     if (this.frame % 600 === 0) {

@@ -13,9 +13,24 @@
  * lit colour and the triangle's feature edges (`figureEdge`).
  */
 
-import { NO_PITCH_BELOW } from '../figures/instances';
+import { MESH_STRIDE, NO_PITCH_BELOW } from '../figures/instances';
 import { WRECK_BASE, WRECK_GAIN } from '../figures/wreck';
 import { AMBIENT, GROUND_COLOR, KNEE, SHEEN_BASE, SHEEN_COLOR, SHEEN_UP, SKY_COLOR, SUN_COLOR, SUN_DIR, UNLIT } from '../figures/light';
+
+/**
+ * A part, or a triangle of the scene, at least this opaque is drawn solid: in
+ * the first pass, writing its depth. Below it (a propeller's disc, a canopy,
+ * smoke, fire, a blast, a glow) it is see-through and drawn in a pass of its
+ * own after everything solid and the see-through structures, depth tested but
+ * not writing depth: what is behind it must still be drawn, and seen through it.
+ */
+export const SEE_THROUGH_BELOW = 0.995;
+
+/** Whether a figure mesh (`MESH_STRIDE` floats a vertex, alpha the seventh) has a see-through part. */
+export function seeThrough(data: Float32Array): boolean {
+  for (let i = 6; i < data.length; i += MESH_STRIDE) if (data[i] < SEE_THROUGH_BELOW) return true;
+  return false;
+}
 
 const f = (v: number) => {
   const s = String(Number(v.toPrecision(9)));
@@ -128,12 +143,16 @@ precision highp float;
 in vec4 vColor;
 in vec3 vWorld;
 in vec3 vEdge;
+flat in float vSolid;
 uniform vec3  uCameraPos;
 uniform float uFadeStart;
 uniform float uFadeEnd;
+// 0 every part, 1 the solid parts only, 2 the see-through ones only (SEE_THROUGH_BELOW).
+uniform float uAlphaPass;
 layout(location = 0) out vec4 outColor;
 ${glslEdgeShade()}
 void main() {
+  if (uAlphaPass > 0.5 && (uAlphaPass < 1.5) != (vSolid > 0.5)) discard;
   float k = edgeShade(vEdge);
   float d = distance(vWorld, uCameraPos);
   float fade = 1.0 - smoothstep(uFadeStart, uFadeEnd, d);
@@ -221,6 +240,7 @@ uniform mat4 uViewProj;
 out vec4 vColor;
 out vec3 vWorld;
 out vec3 vEdge;
+flat out float vSolid;
 ${glslShade()}
 ${glslEdgeOf()}
 ${glslArticulate()}
@@ -234,6 +254,7 @@ void main() {
     vColor = vec4(0.0);
     vWorld = vec3(0.0);
     vEdge = vec3(1.0);
+    vSolid = 1.0;
     return;
   }
   vec3 f = iForward.xyz;
@@ -249,6 +270,7 @@ void main() {
   vColor = vec4(shadeFigure(base, n, aNormal.w), aColor.a * iForward.w);
   vWorld = world;
   vEdge = edgeOf(aArt2.z);
+  vSolid = aColor.a >= ${f(SEE_THROUGH_BELOW)} ? 1.0 : 0.0;
   gl_Position = uViewProj * vec4(world, 1.0);
 }
 `;
@@ -268,7 +290,10 @@ struct FigureOut {
   @location(0) colour : vec4<f32>,
   @location(1) world : vec3<f32>,
   @location(2) edge : vec3<f32>,
+  @location(3) @interpolate(flat) solid : f32,
 };
+// 0 every part, 1 the solid parts only, 2 the see-through ones only (SEE_THROUGH_BELOW): a constant of the pipeline.
+override alphaPass : f32 = 0.0;
 ${wgslShade()}
 ${wgslEdgeOf()}
 ${wgslEdgeShade()}
@@ -298,6 +323,7 @@ fn vsFigure(
     out.colour = vec4<f32>(0.0);
     out.world = vec3<f32>(0.0);
     out.edge = vec3<f32>(1.0);
+    out.solid = 1.0;
     return out;
   }
   let f = forward.xyz;
@@ -314,12 +340,14 @@ fn vsFigure(
   out.colour = vec4<f32>(shadeFigure(base, n, normal.w), colour.a * forward.w);
   out.world = world;
   out.edge = edgeOf(art2.z);
+  out.solid = select(0.0, 1.0, colour.a >= ${f(SEE_THROUGH_BELOW)});
   out.pos = u.viewProj * vec4<f32>(world, 1.0);
   return out;
 }
 
 @fragment
 fn fsFigure(in : FigureOut) -> @location(0) vec4<f32> {
+  if (alphaPass > 0.5 && (alphaPass < 1.5) != (in.solid > 0.5)) { discard; }
   let k = edgeShade(in.edge);
   let d = distance(in.world, u.camera.xyz);
   let fade = 1.0 - smoothstep(u.cfg.x, u.cfg.y, d);

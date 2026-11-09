@@ -1480,20 +1480,28 @@ export class Webgl2Renderer implements Renderer {
     this.relCamera[2] = params.cameraPos[2] - o[2];
     if (params.figureBatches && params.figureBatches.length) {
       this.figures ??= new GlFigures(this.gl);
-      this.figures.draw(params.figureBatches, params.viewProjRel, this.relCamera);
+      this.figures.draw(params.figureBatches, params.viewProjRel, this.relCamera, null, 1);
     }
     if (params.gpuTracks) {
       this.figures ??= new GlFigures(this.gl);
       this.tracks ??= new GlTracks(this.gl);
       this.tracks.draw(params.gpuTracks, params.viewProj, params.cameraPos, this.figures, { viewProj: params.viewProjRel, camera: this.relCamera, origin: o });
     }
-    if (params.sceneTris && params.sceneTriVertCount > 0) this.drawSceneTris(params, params.sceneTris, params.sceneTriVertCount);
+    if (params.sceneTris && params.sceneTriVertCount > 0) this.drawSceneTris(params, params.sceneTris, params.sceneTriVertCount, 1);
     if (params.trailVerts && params.trailVertCount > 0) {
       this.drawDynamicLines(params, params.trailVerts, params.trailVertCount, this.trailVao, this.trailBuf, 'trail');
     }
     // The see-through structures over all of it: a figure behind one shows
     // through it as the ground behind it does, and one in front hides it.
     if (params.level?.kind === 'model') this.drawLevel(params, params.level, true);
+    // Then what is see-through - propeller discs, smoke, fire, blasts, glows - over all of
+    // that, depth tested but not writing depth (`SEE_THROUGH_BELOW`): drawn among the solid,
+    // each wrote its depth where it was faint and hid whatever came after it behind it.
+    if (params.figureBatches && params.figureBatches.length && this.figures) {
+      this.figures.draw(params.figureBatches, params.viewProjRel, this.relCamera, null, 2);
+    }
+    if (params.gpuTracks && this.tracks && this.figures) this.tracks.drawSeeThrough(this.figures);
+    if (params.sceneTris && params.sceneTriVertCount > 0) this.drawSceneTris(params, params.sceneTris, params.sceneTriVertCount, 2);
     // The far-off glyphs: map symbols, weapons, decoys (`symbols/`), over everything in the scene.
     if (params.symbols) {
       this.symbols ??= new GlSymbols(this.gl);
@@ -1716,29 +1724,38 @@ export class Webgl2Renderer implements Renderer {
     return out;
   }
 
-  /** Upload and draw coloured world-space triangles, depth-tested and written. */
-  private drawSceneTris(params: FrameParams, data: Float32Array, vertCount: number): void {
+  /**
+   * Coloured world-space triangles, depth-tested: pass 1 uploads them and draws
+   * the solid ones, writing depth; pass 2 the see-through ones from the same
+   * upload, not writing it (`SEE_THROUGH_BELOW`).
+   */
+  private drawSceneTris(params: FrameParams, data: Float32Array, vertCount: number, pass: 1 | 2): void {
     const gl = this.gl;
     const needed = vertCount * 7;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.triBuf);
-    if (this.triCapacity < needed) {
-      const next = Math.max(needed * 1.5, 8192 * 7) | 0;
-      gl.bufferData(gl.ARRAY_BUFFER, next * 4, gl.DYNAMIC_DRAW);
-      this.triCapacity = next;
+    if (pass === 1) {
+      if (this.triCapacity < needed) {
+        const next = Math.max(needed * 1.5, 8192 * 7) | 0;
+        gl.bufferData(gl.ARRAY_BUFFER, next * 4, gl.DYNAMIC_DRAW);
+        this.triCapacity = next;
+      }
+      gl.bufferSubData(gl.ARRAY_BUFFER, 0, data, 0, needed);
     }
-    gl.bufferSubData(gl.ARRAY_BUFFER, 0, data, 0, needed);
     const { prog, u } = this.lineProg;
     gl.useProgram(prog);
     u.mat4('uViewProj', params.viewProj);
     u.f3('uCameraPos', params.cameraPos[0], params.cameraPos[1], params.cameraPos[2]);
     u.f1('uFadeStart', 1e9);
     u.f1('uFadeEnd', 1e9 + 1);
+    u.f1('uAlphaPass', pass);
     gl.enable(gl.BLEND);
     gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    gl.depthMask(true);
+    gl.depthMask(pass === 1);
     gl.bindVertexArray(this.triVao);
     gl.drawArrays(gl.TRIANGLES, 0, vertCount);
     gl.disable(gl.BLEND);
+    gl.depthMask(true);
+    u.f1('uAlphaPass', 0);
   }
 
   /** Upload and draw a dynamic line list with no distance fade. */

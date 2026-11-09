@@ -7,13 +7,15 @@
 
 import type { FigureBatch } from '../../figures/instances';
 import { INSTANCE_STRIDE, MESH_STRIDE } from '../../figures/instances';
-import { figureGlslFs, figureGlslVs } from '../figureShaders';
+import { figureGlslFs, figureGlslVs, seeThrough } from '../figureShaders';
 import { compileProgram, UniformCache } from './glutil';
 
 interface MeshGl {
   buf: WebGLBuffer;
   vao: WebGLVertexArrayObject;
   count: number;
+  /** Whether any of it is see-through (a propeller's disc, a canopy): drawn again in the see-through pass. */
+  see: boolean;
   /** The frame it was last drawn, to free meshes nobody draws any more. */
   used: number;
 }
@@ -26,6 +28,7 @@ export class GlFigures {
   private capacity = 0;
   private staging = new Float32Array(0);
   private frame = 0;
+  private readonly seeBatches: FigureBatch[] = [];
 
   constructor(private readonly gl: WebGL2RenderingContext) {
     this.prog = compileProgram(gl, figureGlslVs(), figureGlslFs(), 'figures');
@@ -64,7 +67,7 @@ export class GlFigures {
       gl.vertexAttribDivisor(4 + k, 1);
     }
     gl.bindVertexArray(null);
-    m = { buf, vao, count: batch.mesh.count, used: 0 };
+    m = { buf, vao, count: batch.mesh.count, see: seeThrough(batch.mesh.data), used: 0 };
     this.meshes.set(batch.mesh.id, m);
     return m;
   }
@@ -73,10 +76,20 @@ export class GlFigures {
    * Draws `batches`. With `origin`, their positions are absolute and are moved
    * relative to it here, for a `viewProj` relative to the same point (see
    * FrameParams.viewProjRel); without, they already are.
+   *
+   * `pass` 1 draws their solid parts, writing depth; 2 their see-through parts
+   * (only the meshes that have any), not writing it, after everything solid
+   * (`SEE_THROUGH_BELOW`); 0 all of it at once.
    */
-  draw(batches: FigureBatch[], viewProj: Float32Array, cameraPos: ArrayLike<number>, origin: ArrayLike<number> | null = null): void {
+  draw(batches: FigureBatch[], viewProj: Float32Array, cameraPos: ArrayLike<number>, origin: ArrayLike<number> | null = null, pass: 0 | 1 | 2 = 0): void {
     const gl = this.gl;
-    this.frame++;
+    if (pass === 2) {
+      const see = this.seeBatches;
+      see.length = 0;
+      for (const b of batches) if (b.count && this.meshes.get(b.mesh.id)?.see) see.push(b);
+      if (!see.length) return;
+      batches = see;
+    } else this.frame++;
     let total = 0;
     for (const b of batches) total += b.count;
     if (!total) return;
@@ -108,9 +121,10 @@ export class GlFigures {
     this.u.f3('uCameraPos', cameraPos[0], cameraPos[1], cameraPos[2]);
     this.u.f1('uFadeStart', 1e9);
     this.u.f1('uFadeEnd', 1e9 + 1);
+    this.u.f1('uAlphaPass', pass);
     gl.enable(gl.BLEND);
     gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    gl.depthMask(true);
+    gl.depthMask(pass !== 2);
     const S = INSTANCE_STRIDE * 4;
     let first = 0;
     for (const b of batches) {
@@ -126,6 +140,7 @@ export class GlFigures {
     }
     gl.bindVertexArray(null);
     gl.disable(gl.BLEND);
+    gl.depthMask(true);
     // Meshes not drawn for a while (another dataset's figures) are let go.
     if (this.frame % 600 === 0) {
       for (const [id, m] of this.meshes) {

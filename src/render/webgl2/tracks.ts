@@ -8,7 +8,7 @@
  * instanced draw. The CPU does nothing per unit beyond a box test.
  */
 
-import { INSTANCE_STRIDE, MESH_STRIDE } from '../../figures/instances';
+import { INSTANCE_STRIDE, MESH_STRIDE, type FigureBatch } from '../../figures/instances';
 import { figureGlslVs } from '../figureShaders';
 import { EVAL_GLSL_FS, EVAL_GLSL_VS, MARK_GLSL_VS, STREAK_GLSL_VS, TRAIL_GLSL_VS, TRAIL_SEGMENTS_GL } from '../gpuTracks/glsl';
 import { nearFigures } from '../gpuTracks/near';
@@ -279,7 +279,8 @@ export class GlTracks {
 
     // The figures, near enough to be more than darts.
     const near = nearFigures(s, { t: p.t, viewProj, camera, focalPx: p.focalPx, orthoPx: p.orthoPx, minPixels: p.minPixels, stale: p.stale, scale: p.scale, fullPx: p.fullPx, dartPx: p.dartPx, visible, noWeapons: weapons <= 0, farMode: p.farMode ?? 0, symbolThreshold: p.symbolThreshold ?? 36, origin: rel.origin });
-    if (near.length) figures.draw(near, rel.viewProj, rel.camera);
+    if (near.length) figures.draw(near, rel.viewProj, rel.camera, null, 1);
+    this.near = near.length ? { near, viewProj: rel.viewProj, camera: rel.camera } : null;
 
     // Weapons' streaks and the deaths, as lines over the figures.
     gl.enable(gl.BLEND);
@@ -335,6 +336,14 @@ export class GlTracks {
     gl.bindVertexArray(null);
     gl.depthMask(true);
     gl.disable(gl.BLEND);
+  }
+
+  /** This frame's near figures, for their see-through parts (`drawSeeThrough`). */
+  private near: { near: FigureBatch[]; viewProj: Float32Array; camera: ArrayLike<number> } | null = null;
+
+  /** The see-through parts of this frame's near figures (propeller discs), after everything solid. */
+  drawSeeThrough(figures: GlFigures): void {
+    if (this.near) figures.draw(this.near.near, this.near.viewProj, this.near.camera, null, 2);
   }
 
   /** The glyphs (symbols, weapons, decoys) from this frame's placed rows: one instanced quad draw. */

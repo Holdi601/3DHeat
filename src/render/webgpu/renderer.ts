@@ -245,6 +245,8 @@ export class WebgpuRenderer implements Renderer {
   private readonly overlayPipeline: GPURenderPipeline;
   /** The line shader over a triangle list: the race tab's coloured geometry. */
   private readonly triPipeline: GPURenderPipeline;
+  /** The scene triangles' see-through ones (smoke, fire, blasts, glows), not writing depth. */
+  private readonly triSeePipeline: GPURenderPipeline;
   private readonly cubePipeline: GPURenderPipeline;
   private readonly lookPipeline: GPURenderPipeline;
   private readonly mapPipeline: GPURenderPipeline;
@@ -567,7 +569,8 @@ export class WebgpuRenderer implements Renderer {
     this.compositePipeline = this.buildCompositePipeline();
     this.linePipeline = this.buildLinePipeline();
     this.overlayPipeline = this.buildLinePipeline('line-list', 'always');
-    this.triPipeline = this.buildLinePipeline('triangle-list');
+    this.triPipeline = this.buildLinePipeline('triangle-list', 'less-equal', 1);
+    this.triSeePipeline = this.buildLinePipeline('triangle-list', 'less-equal', 2);
     this.cubePipeline = this.buildCubePipeline();
     this.lookPipeline = this.buildLookPipeline();
     this.mapPipeline = this.buildMapPipeline();
@@ -818,14 +821,19 @@ export class WebgpuRenderer implements Renderer {
     });
   }
 
+  /**
+   * Lines, or with `triangle-list` the scene triangles: `alphaPass` 1 the solid
+   * ones, writing depth, 2 the see-through ones, not (`SEE_THROUGH_BELOW`).
+   */
   private buildLinePipeline(
     topology: GPUPrimitiveTopology = 'line-list',
     depthCompare: GPUCompareFunction = 'less-equal',
+    alphaPass = 0,
   ): GPURenderPipeline {
     const module = this.device.createShaderModule({ label: 'line', code: LINE_WGSL });
     const tris = topology === 'triangle-list';
     return this.device.createRenderPipeline({
-      label: tris ? 'tris' : 'line',
+      label: tris ? (alphaPass === 2 ? 'tris see-through' : 'tris') : 'line',
       layout: 'auto',
       vertex: {
         module,
@@ -843,10 +851,11 @@ export class WebgpuRenderer implements Renderer {
       fragment: {
         module,
         entryPoint: 'fsLine',
+        constants: { alphaPass },
         targets: [{ format: SCENE_FORMAT, blend: alphaBlend() }],
       },
       primitive: { topology },
-      depthStencil: { format: DEPTH_FORMAT, depthWriteEnabled: tris, depthCompare },
+      depthStencil: { format: DEPTH_FORMAT, depthWriteEnabled: tris && alphaPass !== 2, depthCompare },
     });
   }
 
@@ -2069,6 +2078,16 @@ export class WebgpuRenderer implements Renderer {
 
     // The see-through structures over all of it (see `drawLevel`).
     if (model) this.drawLevel(pass, model, mapOffset, slots, true);
+    // Then what is see-through - propeller discs, smoke, fire, blasts, glows - over all of
+    // that, depth tested but not writing depth (`SEE_THROUGH_BELOW`): drawn among the solid,
+    // each wrote its depth where it was faint and hid whatever came after it behind it.
+    this.figures?.drawSeeThrough(pass);
+    if (params.sceneTris && params.sceneTriVertCount > 0 && this.triBuffer) {
+      pass.setPipeline(this.triSeePipeline);
+      pass.setBindGroup(0, this.sceneBindGroup(this.triSeePipeline, 'trisSee', plainOffset));
+      pass.setVertexBuffer(0, this.triBuffer);
+      pass.draw(params.sceneTriVertCount);
+    }
 
     // The far-off glyphs: map symbols, weapons, decoys (`symbols/`), over everything in the scene.
     if (params.symbols) {
