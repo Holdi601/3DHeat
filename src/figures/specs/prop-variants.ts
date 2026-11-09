@@ -346,6 +346,29 @@ function stretch(rows: Row[], front: number, rear: number, fwd: number, aft: num
   return rows.map(([x, t, b, w]) => [x > front ? x + fwd : x < rear ? x - aft : x, t, b, w]);
 }
 const shiftP = (p: P2[], dx: number): P2[] => p.map(([x, z]) => [x + dx, z]);
+/**
+ * A sister type on its relative's outlines at its own published length, span and height: every station, nacelle,
+ * fin and tailplane point forward scaled by the length, the wing's and nacelles' places out by the span (chords
+ * kept in proportion to the length, as a drawing scaled whole).
+ */
+function mpAt(o: MP, length: number, span: number, height: number): MP {
+  const k = length / o.length;
+  const q = span / o.span;
+  const px = (p: P2[]): P2[] => p.map(([x, v]) => [x * k, v]);
+  const ol = (b: Outline): Outline => ({ ...b, top: px(b.top), bottom: px(b.bottom), plan: px(b.plan) });
+  return {
+    ...o, length, span, height,
+    body: o.body.map(([x, t, b, w]) => [x * k, t, b, w]),
+    wing: o.wing.map(([y, l, t]) => [y * q, l * k, t * k]),
+    nacelles: o.nacelles?.map((n) => ({ ...n, y: n.y * q, x: n.x * k, back: n.back * k, propX: n.propX && n.propX * k, plan: n.plan && px(n.plan) })),
+    noseProp: o.noseProp && o.noseProp * k,
+    fin: px(o.fin),
+    tail: o.tail.map(([y, l, t]) => [y, l * k, t * k]),
+    extra: o.extra?.map(ol),
+    hood: o.hood && { ...o.hood, front: o.hood.front * k, back: o.hood.back * k },
+    glazed: o.glazed && o.glazed * k,
+  };
+}
 const shiftE = (e: Edge[], dx: number): Edge[] => e.map(([y, l, t]) => [y, l + dx, t + dx]);
 
 // ---------------------------------------------------------------- tactical transports
@@ -887,7 +910,7 @@ A['bf-110g'] = mp({
 // Me 410 Hornisse: the glazed cockpit at the front of a short nose, the remote barbettes bulging from the body's
 // sides, inline engines in annular cowls, a single fin (12.48 x 16.35 x 4.28 m). Outlines from FM 30-30's Me 210
 // sheet (the same airframe) at the Me 410's length, digitised with tools/figures/twinview.py.
-A['me-410'] = mp({
+const ME410: MP = {
   cls: 'ww2-heavy-fighter', length: 12.48, span: 16.35, height: 4.28,
   hood: { front: 4.65, back: 3.02 },
   body: [[6.24, 0.01, -0.01, 0], [5.78, 0.73, -0.35, 0.35], [5.32, 1.1, -0.48, 0.48], [4.85, 1.44, -0.62, 0.5], [4.39, 1.53, -0.62, 0.5], [3.93, 1.55, -0.56, 0.52], [3.47, 1.53, -0.54, 0.55], [3, 1.47, -0.48, 0.57], [2.54, 1.4, -0.43, 0.6], [2.08, 1.3, -0.25, 0.63], [1.62, 1.23, -0.26, 0.65], [1.16, 1.11, -0.22, 0.68], [0.69, 1, -0.14, 0.62], [0.23, 0.98, -0.16, 0.64], [-0.23, 0.98, -0.11, 0.48], [-0.69, 0.96, -0.2, 0.41], [-1.16, 0.96, -0.12, 0.39], [-1.62, 0.94, -0.1, 0.37], [-2.08, 0.94, -0.07, 0.35], [-2.54, 0.92, -0.01, 0.31], [-3, 0.94, 0.16, 0.3], [-3.47, 0.9, 0.18, 0.26], [-3.93, 0.91, 0.22, 0.23], [-4.39, 0.89, 0.29, 0.19], [-4.85, 0.88, 0.33, 0.14], [-5.32, 0.86, 0.41, 0.08], [-5.78, 0.84, 0.48, 0.03], [-6.24, 0.82, 0.77, 0]], round: 2.4,
@@ -897,7 +920,10 @@ A['me-410'] = mp({
   fin: [[-3.64, 0.92], [-4.67, 2.86], [-4.99, 3.11], [-5.43, 3.15], [-5.62, 3.11], [-5.79, 2.98], [-5.95, 2.65], [-6.23, 0.81]],
   tail: [[0, -4.05, -5.97], [0.21, -4.05, -5.97], [0.28, -4.5, -5.96], [0.49, -4.55, -6.04], [0.83, -4.62, -6.06], [1.27, -4.69, -6.03], [1.81, -4.79, -5.98], [2.4, -4.89, -5.9], [3.03, -5.34, -5.34]], tailUp: 0.77,
   extra: [{ top: [[-0.6, 0.85], [-2.8, 0.75]], bottom: [[-0.6, 0.3], [-2.8, 0.4]], plan: [[-0.6, 0.05], [-1.2, 0.25], [-2.8, 0.05]], side: 0.5, round: 2, stations: 6 }],
-});
+};
+A['me-410'] = mp(ME410);
+// Me 210 A: the FM 30-30 sheet's own aircraft, the short-bodied Me 210 at its published 11.2 m (16.4 x 4.3 m).
+A['me-210'] = mp(mpAt(ME410, 11.2, 16.4, 4.3));
 
 // Hs 129B: a small triangular-section body with the armoured nose drooping to its tip, the tiny cockpit, Gnome-Rhone
 // radials whose spinners stand in line with the nose, a low wing with a straight unswept leading edge and its
@@ -1754,7 +1780,7 @@ A['j1n1'] = tw({ cls: 'ww2-heavy-fighter', length: 12.18, span: 16.98, height: 4
 // Ki-45 Toryu: a slim body under a long two-seat greenhouse, radials, a single fin (11.0 x 15.02 x 3.7 m); the Ki-96, Ki-102 and Ki-109 are its family.
 // Outlines digitised from the U.S. Army-Navy Journal of Recognition, Jan. 1944, "Nick, Type 2" (a provisional silhouette), with
 // tools/figures/twinview.py.
-A['ki-45'] = mp({
+const KI45: MP = {
   cls: 'ww2-heavy-fighter', length: 11, span: 15.02, height: 3.7,
   hood: { front: 3.94, back: 1.04 },
   body: [[5.5, 0.06, -0.06, 0], [5.09, 0.33, -0.4, 0.24], [4.68, 0.55, -0.54, 0.34], [4.28, 0.65, -0.8, 0.4], [3.87, 0.8, -0.82, 0.44], [3.46, 0.99, -0.94, 0.48], [3.06, 1.01, -0.88, 0.51], [2.65, 1.01, -0.9, 0.54], [2.24, 1.01, -0.88, 0.57], [1.83, 0.99, -0.84, 0.6], [1.43, 0.99, -0.77, 0.62], [1.02, 0.97, -0.73, 0.65], [0.61, 0.97, -0.71, 0.68], [0.2, 0.92, -0.69, 0.69], [-0.2, 0.75, -0.67, 0.41], [-0.61, 0.58, -0.67, 0.4], [-1.02, 0.56, -0.62, 0.38], [-1.43, 0.52, -0.6, 0.36], [-1.83, 0.49, -0.56, 0.34], [-2.24, 0.47, -0.52, 0.31], [-2.65, 0.43, -0.47, 0.28], [-3.06, 0.41, -0.43, 0.25], [-3.46, 0.41, -0.39, 0.22], [-3.87, 0.35, -0.32, 0.2], [-4.28, 0.27, -0.28, 0.2], [-4.68, 0.19, -0.21, 0.2], [-5.09, 0.11, -0.15, 0.2], [-5.5, 0.03, -0.02, 0]], round: 2.4,
@@ -1763,7 +1789,10 @@ A['ki-45'] = mp({
   prop: [3.0,3],
   fin: [[-3.49, 0.43], [-4.37, 1.55], [-4.63, 1.76], [-4.87, 1.76], [-5.17, 1.65], [-5.38, 1.35], [-5.42, 0.11], [-5.49, 0]],
   tail: [[0, -3.29, -5.31], [0.21, -3.29, -5.31], [0.28, -3.36, -5.28], [0.45, -3.81, -5.27], [0.74, -3.89, -5.25], [1.12, -4.01, -5.22], [1.57, -4.14, -5.19], [2.08, -4.29, -5.13], [2.61, -4.72, -4.72]], tailUp: 0.45,
-});
+};
+A['ki-45'] = mp(KI45);
+// Ki-102 (and its single-seat forerunner Ki-96, the pressurised Ki-108): the Ki-45's layout grown to 11.45 x 15.57 m (Ki-102 Otsu).
+A['ki-102'] = mp(mpAt(KI45, 11.45, 15.57, 3.7));
 // Ki-83: a long slim fighter, the cockpit far forward, big radials, a single fin (12.5 x 15.5 x 4.6 m).
 A['ki-83'] = tw({ cls: 'ww2-heavy-fighter', length: 12.5, span: 15.5, height: 4.6, w: 0.55, h: 0.7, nose: 'solid', cockpit: 2.6, hoodLen: 2.2, radial: true, nacR: 0.68, nacBack: 1.1, wingZ: -0.3, finH: 2.1, prop: [3.4, 4] });
 // Whirlwind: a slim body with the bubble hood, Peregrines in long low nacelles, the tailplane high on the fin (9.83 x 13.72 x 3.2 m).
@@ -1952,6 +1981,9 @@ A['os2u'] = one({ cls: 'ww2-recon', length: 10.31, span: 10.95, height: 4.61, w:
   bodies: [{ top: [[4.0, -1.55], [3.2, -1.3], [-1.6, -1.35], [-3.0, -1.55]], bottom: [[4.0, -1.7], [3.2, -2.1], [0.2, -2.15], [-3.0, -1.7]], plan: [[4.0, 0.1], [3.2, 0.42], [-1.6, 0.35], [-3.0, 0.08]], round: 3, stations: 8 }, post(1.6, 1.2, -0.6, -1.4, 0.05), post(-0.2, -0.6, -0.6, -1.4, 0.05), { top: [[1.4, -0.9], [0.9, -0.75], [-0.6, -0.8]], bottom: [[1.4, -1.0], [0.9, -1.15], [-0.6, -0.95]], plan: [[1.4, 0.04], [0.9, 0.18], [-0.6, 0.04]], side: 4.6, round: 3, stations: 6 }, post(1.0, 0.7, 0.1, -0.85, 0.03, 4.6)] });
 // Ar 196: a radial scout on two big floats, the long greenhouse (11.0 x 12.4 x 4.45 m).
 A['ar-196'] = { ...one({ cls: 'ww2-recon', length: 11.0, span: 12.4, height: 4.45, w: 0.58, h: 0.75, radial: true, wing: 'tapered', le: 1.6, root: 2.4, tip: 1.2, sweep: 2, mount: -0.3, dihedral: 4, fin: 1.6, finRoot: 1.7, roundFin: true, tailSpan: 4.2, tailRoot: 1.1, canopy: { x: -0.2, length: 3.2, kind: 'framed' }, prop: 3.0, blades: 3 }), floats: true };
+// Aichi E13A: the same low-wing twin-float layout grown to three seats under a longer greenhouse (11.3 x 14.5 x 4.7 m), the wing's
+// chords from its 36 m2 (the Ar 196's 28.4 over 12.4 m).
+A['e13a'] = { ...one({ cls: 'ww2-recon', length: 11.3, span: 14.5, height: 4.7, w: 0.6, h: 0.78, radial: true, wing: 'tapered', le: 1.7, root: 2.7, tip: 1.35, sweep: 2, mount: -0.3, dihedral: 4, fin: 1.7, finRoot: 1.8, roundFin: true, tailSpan: 4.6, tailRoot: 1.2, canopy: { x: -0.3, length: 4.0, kind: 'framed' }, prop: 3.2, blades: 3 }), floats: true };
 // N1K1 Kyofu: a radial fighter on one big central float and two wing floats, the framed hood (10.59 x 12.0 x 4.75 m).
 A['n1k1'] = one({ cls: 'ww2-fighter', length: 10.59, span: 12.0, height: 4.75, w: 0.65, h: 0.72, radial: true, wing: 'tapered', le: 1.6, root: 2.5, tip: 1.1, sweep: 3, mount: -0.3, dihedral: 5, fin: 1.6, finRoot: 1.6, tailSpan: 4.2, tailRoot: 1.1, canopy: { x: -0.3, length: 1.7, kind: 'framed' }, razor: true, prop: 3.3, blades: 3,
   bodies: [{ top: [[4.2, -1.55], [3.4, -1.3], [-1.8, -1.35], [-3.2, -1.55]], bottom: [[4.2, -1.7], [3.4, -2.1], [0.2, -2.15], [-3.2, -1.7]], plan: [[4.2, 0.1], [3.4, 0.42], [-1.8, 0.35], [-3.2, 0.08]], round: 3, stations: 8 }, post(1.8, 1.4, -0.6, -1.4, 0.05), post(-0.2, -0.6, -0.6, -1.4, 0.05), { top: [[1.6, -0.9], [1.1, -0.75], [-0.5, -0.8]], bottom: [[1.6, -1.0], [1.1, -1.15], [-0.5, -0.95]], plan: [[1.6, 0.04], [1.1, 0.18], [-0.5, 0.04]], side: 5.0, round: 3, stations: 6 }, post(1.2, 0.9, 0.2, -0.85, 0.03, 5.0)] });

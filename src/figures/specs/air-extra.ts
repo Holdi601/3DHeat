@@ -1117,18 +1117,20 @@ A['f-8e'] = crusader(true);
 
 // Gloster Meteor: a slim body with the cockpit ahead of the straight wing, the two engines in big round nacelles
 // through it, the cruciform tail. F.8: the nose 0.76 m longer, the bubble canopy, the squarer fin, clipped tips
-// (13.59 x 11.32 x 3.96 m). F.3 / F.4: the short body, the framed canopy, the rounded fin (12.57 m). NF.11 to NF.14:
+// (13.59 x 11.32 x 3.96 m). F.3 / F.4: the short body, the framed canopy, the rounded fin (12.57 m); the F.3 the long
+// 13.11 m wing and Derwent 1 nacelles, the F.4 the wing clipped to 11.33 m and the bigger Derwent 5 nacelles. NF.11 to NF.14:
 // the long radar nose, two seats under a long framed canopy, the long-span wing (14.78 x 13.11 m).
-function meteor(kind: 'f3' | 'f8' | 'nf'): Spec {
+function meteor(kind: 'f3' | 'f4' | 'f8' | 'nf'): Spec {
   const nf = kind === 'nf';
+  const long = nf || kind === 'f3';
   const front: Row[] = nf
     ? [[7.985, 0.05, -0.14, 0.08], [7.3, 0.36, -0.46, 0.45], [6.2, 0.56, -0.66, 0.58], [5.0, 0.66, -0.73, 0.62], [3.6, 0.69, -0.75, 0.62]]
     : kind === 'f8'
       ? [[6.795, 0.0, -0.15, 0.06], [6.2, 0.3, -0.45, 0.38], [5.0, 0.55, -0.65, 0.55], [3.6, 0.66, -0.73, 0.6]]
       : [[5.775, 0.0, -0.15, 0.06], [5.2, 0.3, -0.45, 0.38], [4.0, 0.55, -0.65, 0.55], [2.9, 0.66, -0.73, 0.6]];
-  const h = nf ? 6.555 : 5.66;
+  const h = long ? 6.555 : 5.66;
   return fig({
-    cls: nf ? 'fighter' : 'fighter', length: nf ? 14.78 : kind === 'f8' ? 13.59 : 12.57, span: nf ? 13.11 : 11.32, height: 3.96,
+    cls: nf ? 'fighter' : 'fighter', length: nf ? 14.78 : kind === 'f8' ? 13.59 : 12.57, span: long ? 13.11 : 11.32, height: 3.96,
     body: [...front, [2.0, 0.7, -0.75, 0.62], [0, 0.68, -0.72, 0.6], [-2.0, 0.6, -0.58, 0.5], [-4.0, 0.48, -0.4, 0.38], [-6.795, 0.35, -0.22, 0.25]], round: 2.1,
     wing: [[1.5, 0], [1.5, 2.4], [0.85, h], [-0.3, h], [-1.5, 2.4], [-1.6, 0]], wingUp: -0.05, dihedral: 3, thick: 0.1,
     fin: kind === 'f8' ? [[-4.5, 0], [-6.6, 0], [-6.95, 2.2], [-5.9, 2.25]] : [[-4.6, 0], [-6.6, 0], [-6.75, 1.3], [-6.5, 1.9], [-6.0, 2.05], [-5.4, 1.6]], finBase: 0.3,
@@ -1139,6 +1141,7 @@ function meteor(kind: 'f3' | 'f8' | 'nf'): Spec {
   });
 }
 A['meteor-f3'] = meteor('f3');
+A['meteor-f4'] = meteor('f4');
 A['meteor'] = meteor('f8');
 A['meteor-nf'] = meteor('nf');
 
@@ -1480,7 +1483,7 @@ const ALIASES: Record<string, string> = {
   'f-8e(fn)': 'f-8e',
   'f-8a': 'f-8c',
   'f8u-1': 'f-8c',
-  'meteor f.4': 'meteor-f3',
+  'meteor f.4': 'meteor-f4',
   'meteor nf.11': 'meteor-nf',
   'meteor nf.12': 'meteor-nf',
   'meteor nf.14': 'meteor-nf',

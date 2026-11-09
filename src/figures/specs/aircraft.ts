@@ -861,6 +861,30 @@ function atLength(d: Drawn, k: number): Drawn {
   const s = (p?: P2[]): P2[] | undefined => p?.map(([x, v]) => [x * k, v] as P2);
   return { ...d, top: s(d.top)!, bottom: s(d.bottom)!, plan: s(d.plan)!, wing: s(d.wing)!, tail: s(d.tail), fin: s(d.fin), canopy: s(d.canopy), gear: d.gear && { ...d.gear, x: d.gear.x * k } };
 }
+/**
+ * A sister type on its relative's drawing, from the sister's published dimensions: the body parted at `at`
+ * (forward) and its ends moved apart by `plug` metres (a fuselage plug; negative takes one out), the whole kept
+ * centred on the new length; the wing's half span scaled by `span` (its chords by `chord`, about the root's
+ * middle) or clipped square `clip` metres out; the fin `fin` metres taller over its root; the tailplane's
+ * span scaled by `tail`. Wing, tailplane, fin and canopy move whole with the end they stand on.
+ */
+export function sister(d: Drawn, o: { plug?: number; at?: number; span?: number; chord?: number; clip?: number; fin?: number; tail?: number }): Drawn {
+  const g = o.plug ?? 0;
+  const at = o.at ?? 0;
+  const mx = (x: number) => (x > at ? x + g / 2 : x - g / 2);
+  const body = (p: P2[]) => p.filter(([x]) => g >= 0 || Math.abs(x - at) >= -g / 2).map(([x, v]) => [mx(x), v] as P2);
+  const mid = (p: P2[]) => p.reduce((a, q) => a + q[0], 0) / p.length;
+  const whole = (p?: P2[]) => p && p.map(([x, v]) => [x + mx(mid(p)) - mid(p), v] as P2);
+  const r0 = Math.min(...d.wing.map((q) => q[1]));
+  const xm = mid(d.wing.filter((q) => q[1] <= r0 + 0.05));
+  const kc = o.chord ?? 1;
+  const wing = whole(d.wing.map(([x, y]) => [xm + (x - xm) * kc, Math.min(y * (o.span ?? 1), o.clip ?? Infinity)] as P2))!;
+  const zb = d.fin ? Math.min(...d.fin.map((q) => q[1])) : 0;
+  const fh = d.fin ? Math.max(...d.fin.map((q) => q[1])) - zb : 1;
+  const fin = d.fin && whole(d.fin.map(([x, z]) => [x, zb + ((z - zb) * (fh + (o.fin ?? 0))) / fh] as P2));
+  const tail = d.tail && whole(d.tail.map(([x, y]) => [x, y * (o.tail ?? 1)] as P2));
+  return { ...d, top: body(d.top), bottom: body(d.bottom), plan: body(d.plan), wing, tail, fin, canopy: whole(d.canopy), gear: d.gear && { ...d.gear, x: mx(d.gear.x), side: d.gear.side * (o.span ?? 1) } };
+}
 // The Ju 87 D on the B's drawing at its own length (11.5 m against 11.1).
 DRAWN['ju-87-d'] = atLength(DRAWN['ju-87-b'], 11.5 / 11.1);
 DRAWN['il-2-1941'] = { ...DRAWN['il-2'],canopy: [[2.109, 0.57], [1.954, 1.121], [1.6, 1.121], [1.3, 1.121], [1.1, 1.0], [1.0, 0.75]], razor: true };
@@ -880,22 +904,30 @@ DRAWN['a2d'] = {
 };
 
 // Bf 109 E: the square-tipped wing. From the Me 109 F's drawing with the E's square tips (DRAWN); its small oil cooler under the nose (estimate).
-A['bf-109-e'] = piston({ cls: 'ww2-fighter', length: 8.64, span: 9.87, height: 2.5, w: 0.45, h: 0.58, wing: 'square', le: 1.3, root: 2.15, tip: 1.2, sweep: 3, fin: 1.2, finRoot: 1.25, roundFin: true, tailSpan: 3.0, tailRoot: 0.9, canopy: { x: 0.5, length: 1.6, kind: 'framed' }, prop: 3.0, blades: 3, spinner: 0.28, rads: [0.9, 1.3, 1.1, 0.17], draw: DRAWN['bf-109-e'] });
+const BF109E: Piston = { cls: 'ww2-fighter', length: 8.64, span: 9.87, height: 2.5, w: 0.45, h: 0.58, wing: 'square', le: 1.3, root: 2.15, tip: 1.2, sweep: 3, fin: 1.2, finRoot: 1.25, roundFin: true, tailSpan: 3.0, tailRoot: 0.9, canopy: { x: 0.5, length: 1.6, kind: 'framed' }, prop: 3.0, blades: 3, spinner: 0.28, rads: [0.9, 1.3, 1.1, 0.17] };
+A['bf-109-e'] = piston({ ...BF109E, draw: DRAWN['bf-109-e'] });
 A['bf-109-e'].bodies!.push({ top: [[3.2, -0.3], [2.5, -0.3]], bottom: [[3.2, -0.6], [3.0, -0.7], [2.7, -0.68], [2.5, -0.45]], plan: [[3.2, 0.12], [3.0, 0.16], [2.5, 0.08]], round: 3, stations: 6 });
 // The E's strut under each tailplane half (the F dropped them), from the tailplane's front spar down to the body's
 // side; drawn upright half way between its ends (estimate).
 A['bf-109-e'].bodies!.push({ top: [[-2.95, 0.62], [-3.05, 0.62]], bottom: [[-2.95, 0.24], [-3.05, 0.24]], plan: [[-2.95, 0.025], [-3.05, 0.025]], side: 0.4, round: 4, stations: 2 });
+// Bf 109 T: the E's carrier version, its wing lengthened to 11.08 m and the body to 8.76 m (the hook in a short plug aft).
+A['bf-109-t'] = piston({ ...BF109E, length: 8.76, span: 11.08, draw: sister(DRAWN['bf-109-e'], { plug: 0.12, at: -2.0, span: 11.08 / 9.87 }) });
+A['bf-109-t'].bodies!.push(...A['bf-109-e'].bodies!.slice(-2).map((b, i) => ({ ...b, top: b.top.map(([x, z]) => [x + (i ? -0.06 : 0.06), z] as P2), bottom: b.bottom.map(([x, z]) => [x + (i ? -0.06 : 0.06), z] as P2), plan: b.plan.map(([x, z]) => [x + (i ? -0.06 : 0.06), z] as P2) })));
 // Fw 190 A: the big round radial cowl, a straight-tapered wing, a bulged bubble hood (9.0 x 10.5 x 3.95 m).
 A['fw-190-a8'] = piston({ cls: 'ww2-fighter', length: 9.0, span: 10.5, height: 3.95, w: 0.62, h: 0.68, radial: true, wing: 'tapered', le: 1.6, root: 2.3, tip: 1.05, sweep: 5, fin: 1.25, finRoot: 1.3, roundFin: true, tailSpan: 3.65, tailRoot: 0.95, canopy: { x: 0.575, length: 2.15, kind: 'bubble' }, prop: 3.3, blades: 3, draw: DRAWN['fw-190-a8'] });
 // Fw 190 D-9: the long annular-cowled inline nose and a stretched tail (10.19 m).
 // Drawn from the Journal of Recognition's provisional three-view (DRAWN); the hood where that drawing has it.
 A['fw-190-d9'] = piston({ cls: 'ww2-fighter', length: 10.19, span: 10.5, height: 3.36, w: 0.6, h: 0.66, radial: true, wing: 'tapered', le: 1.3, root: 2.3, tip: 1.05, sweep: 5, fin: 1.35, finRoot: 1.5, roundFin: true, tailSpan: 3.65, tailRoot: 0.95, canopy: { x: 0.37, length: 1.75, kind: 'bubble' }, prop: 3.5, blades: 3, draw: DRAWN['fw-190-d9'] });
+// Ta 152 C: the D-9's drawing with the DB 603's longer nose (10.82 m, a 0.63 m plug ahead of the wing) and the C's 11.0 m wing.
+A['ta-152c'] = piston({ cls: 'ww2-fighter', length: 10.82, span: 11.0, height: 3.38, w: 0.6, h: 0.66, radial: true, wing: 'tapered', le: 1.3, root: 2.3, tip: 1.05, sweep: 5, fin: 1.35, finRoot: 1.5, roundFin: true, tailSpan: 3.65, tailRoot: 0.95, canopy: { x: 0.06, length: 1.75, kind: 'bubble' }, prop: 3.6, blades: 3, draw: sister(DRAWN['fw-190-d9'], { plug: 0.63, at: 2.6, span: 11.0 / 10.5 }) });
 // A6M Zero: a slim radial fighter, a long canopy, a wide round-tipped wing (9.06 x 12.0 x 3.05 m).
 A['a6m-zero'] = piston({ cls: 'ww2-fighter', length: 9.06, span: 12.0, height: 3.05, w: 0.55, h: 0.6, radial: true, wing: 'round', le: 1.6, root: 2.5, tip: 1.1, sweep: 4, fin: 1.2, finRoot: 1.5, tailSpan: 4.8, tailRoot: 1.1, canopy: { x: -0.1, length: 2.4, kind: 'framed' }, prop: 2.9, blades: 3, draw: DRAWN['a6m-zero'] });
 // F4U Corsair: the inverted gull wing, a very long nose with the cockpit far back (10.2 x 12.5 x 4.5 m).
 export const F4U = { cls: 'ww2-fighter', length: 10.2, span: 12.5, height: 4.5, w: 0.65, h: 0.75, radial: true, wing: 'round' as const, le: 1.5, root: 2.7, tip: 1.3, sweep: 3, gull: true, mount: -0.9, dihedral: 9, fin: 1.6, finRoot: 1.6, roundFin: true, tailSpan: 5.1, tailRoot: 1.2, canopy: { x: -1.2, length: 1.8, kind: 'bubble' as const }, prop: 4.0, blades: 3 };
 // Drawn from FM 30-30's F4U-1 (DRAWN): the rudder set forward of the projecting fuselage tip.
 A['f4u-corsair'] = piston({ ...F4U, draw: DRAWN['f4u-corsair'] });
+// Corsair II of the Fleet Air Arm: the F4U-1's wing clipped 8 in at each tip to fit British hangar decks (12.09 m span).
+A['corsair-fmk2'] = piston({ ...F4U, span: 12.09, draw: sister(DRAWN['f4u-corsair'], { clip: 12.09 / 2 }) });
 // Il-2: an armoured nose, a long two-seat canopy, a tapered wing with swept outer leading edges (11.6 x 14.6 x 4.2 m).
 A['il-2'] = piston({ cls: 'ww2-attack', length: 11.6, span: 14.6, height: 4.2, w: 0.65, h: 0.8, wing: 'tapered', le: 1.8, root: 3.2, tip: 1.2, sweep: 12, fin: 1.4, finRoot: 1.7, roundFin: true, tailSpan: 4.6, tailRoot: 1.3, canopy: { x: 0.1, length: 2.8, kind: 'framed' }, prop: 3.6, blades: 3, scoop: [0.5, 1.6, 0.25], draw: DRAWN['il-2'] });
 // Ju 87 Stuka: the inverted gull wing, the fixed spatted gear, the long greenhouse, a square fin (11.5 x 13.8 x 3.88 m).
@@ -991,6 +1023,10 @@ A['d-520'] = piston({ cls: 'ww2-fighter', length: 8.76, span: 10.18, height: 2.5
 A['ms-406'] = piston({ cls: 'ww2-fighter', length: 8.17, span: 10.62, height: 2.71, w: 0.5, h: 0.62, wing: 'round', le: 1.2, root: 2.4, tip: 1.1, sweep: 4, fin: 1.3, finRoot: 1.3, roundFin: true, tailSpan: 3.6, tailRoot: 0.9, canopy: { x: 0.0, length: 2.0, kind: 'framed' }, prop: 3.0, blades: 3 });
 // Fiat G.55 / Macchi C.200 / Reggiane Re.2001 class Italian fighters share the MC.202 look; P-36 / Hawk 75 a radial with a long canopy (8.69 x 11.38 x 2.82 m).
 A['p-36'] = piston({ cls: 'ww2-fighter', length: 8.69, span: 11.38, height: 2.82, w: 0.6, h: 0.7, radial: true, wing: 'round', le: 1.4, root: 2.6, tip: 1.2, sweep: 3, fin: 1.4, finRoot: 1.4, roundFin: true, tailSpan: 4.0, tailRoot: 1.0, canopy: { x: 0.0, length: 2.0, kind: 'framed' }, prop: 3.0, blades: 3 });
+// CAC Wirraway: the NA-16 trainer's two-seat airframe, the long framed tandem canopy, a straight-tapered wing (8.48 x 13.11 x 2.66 m);
+// CAC Boomerang: the Wirraway's wing on a short stubby body behind a big Twin Wasp (7.77 x 10.97 x 2.92 m). Published dimensions; chords from the wing areas (23.8 and 20.9 m2).
+A['wirraway'] = piston({ cls: 'ww2-fighter', length: 8.48, span: 13.11, height: 2.66, w: 0.55, h: 0.7, radial: true, wing: 'tapered', le: 1.4, root: 2.45, tip: 1.05, sweep: 4, dihedral: 5, fin: 1.4, finRoot: 1.4, roundFin: true, tailSpan: 4.4, tailRoot: 1.1, canopy: { x: 0.0, length: 3.2, kind: 'framed' }, prop: 2.9, blades: 2 });
+A['boomerang'] = piston({ cls: 'ww2-fighter', length: 7.77, span: 10.97, height: 2.92, w: 0.65, h: 0.72, radial: true, wing: 'tapered', le: 1.4, root: 2.6, tip: 1.15, sweep: 4, dihedral: 5, fin: 1.4, finRoot: 1.4, roundFin: true, tailSpan: 4.0, tailRoot: 1.0, canopy: { x: -0.1, length: 1.6, kind: 'framed' }, prop: 3.4, blades: 3 });
 
 // The wings' thickness at the root as a share of the chord, from the published root sections (D. Lednicer, The Incomplete
 // Guide to Airfoil Usage): Spitfire NACA 2213, Bf 109 NACA 2R1 14.2, Fw 190 and Ta 152 NACA 23015.3, Mustang NAA/NACA 45-100

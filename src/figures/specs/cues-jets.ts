@@ -94,7 +94,7 @@ export const JET_CUES: Record<string, CueEntry> = {
   'jet-g-91': jet('g-91', [engines(1), noseIntake, swept(30)]),
   'jet-g-91y': jet('g-91y', [engines(2), noseIntake, swept(30)]),
   'jet-jh-7': jet('jh-7', [engines(2), highWing, sideIntakes, tandem]),
-  'jet-meteors': jet(['meteor', 'meteor-f3', 'meteor-nf'], [engines(2), straight()]),
+  'jet-meteors': jet(['meteor', 'meteor-f3', 'meteor-f4', 'meteor-nf'], [engines(2), straight()]),
   'jet-mysteres': jet(['mystere', 'mystere-iv'], [engines(1), noseIntake, swept(30)]),
   'jet-ouragan': jet('ouragan', [engines(1), noseIntake, straight('nearly straight wing')]),
   'jet-flankers': jet(['su-27', 'su-34'], [engines(2), twinFins, underIntakes, lerx]),
