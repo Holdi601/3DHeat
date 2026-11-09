@@ -73,12 +73,18 @@ so the viewer leaves it out when a whole folder is loaded.
 | `units` | per-unit state outside the position table | Dota 2 |
 | `combatlog` | a combat log, every entry with every field | Dota 2 |
 | `strings` | every entry of every string table | CS2, Dota 2 |
+| `objectives` | capture zones and objectives, each change with its time | War Thunder |
 | `raw` | a live feed: every packet, line, API document or memory read received, whole | the watcher's sessions (`heat.raw.parquet`), the game capture tool's lap recorders (`<stamp>_<game>.raw.parquet`), the watcher's osu!, LoL and Valorant replay files |
 
 The viewer's folder loading skips every `*.<what>.parquet` of this list, and
 every `*.match.json`, `*.meta.json`, `*.summary.json` and the other JSON
 sidecars; opening one of them on its own, by picking or dropping just that
 file, loads it like any other table (see [Loading files](loading-files.md)).
+
+These are the files as a converter writes them with `--loose`. By default the
+War Thunder, CS2 and Tacview converters pack a match's table, document and
+sidecars into one file, `<match>.3dheat`, under the same names (see
+[One file a match](container.md)); everything here holds for each member.
 
 ### Columns
 

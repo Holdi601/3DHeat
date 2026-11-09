@@ -4,7 +4,7 @@
  * folder at a time, for the many-match overlay: one Parquet file per
  * recording, the folder tree kept, so a map or a scenario loads as one folder.
  *
- *   node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force]
+ *   node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
  *
  * Each recording is read twice as a stream (`src/data/acmiStream.ts`, the
  * same reading as the viewer's own ACMI loader): first for its properties
@@ -31,6 +31,10 @@
  * footer says how to read the file; the `acmi` footer holds the recording's
  * properties, its theatre and the count of its lines by kind.
  *
+ * The files of a recording are then packed into one, `<name>.3dheat`
+ * (docs/container.md, read back whole before the loose files go); --loose
+ * keeps them as separate files.
+ *
  * A file already converted (output newer than the recording) is skipped
  * unless --force. Outputs are written under a temporary name and renamed when
  * whole, so a stopped run leaves no half file.
@@ -42,6 +46,7 @@ import os from 'node:os';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { Worker, isMainThread, parentPort, workerData } from 'node:worker_threads';
+import { describe, verifyContainer, writeContainer } from './container.mjs';
 
 const SELF = fileURLToPath(import.meta.url);
 const ROOT = path.resolve(path.dirname(SELF), '..');
@@ -388,6 +393,19 @@ async function convert(job, theatres) {
   const effectsWrote = effects.finish(kv);
   const sideRows = side.finish(kv);
   if (!sideRows) fs.rmSync(`${sideFile}.part`, { force: true });
+  if (job.container && fs.existsSync(job.output)) {
+    const members = [
+      ['table', job.output],
+      ['effects', job.output.replace(/\.parquet$/, '.effects.parquet')],
+      ['events', sideFile],
+    ]
+      .filter(([, file]) => fs.existsSync(file))
+      .map(([role, file]) => ({ role, file }));
+    const about = await describe(members);
+    await writeContainer(job.container, members, { ...about, game: theatre?.game ?? about.game, converter: { name: 'acmi-to-parquet', version: job.version } });
+    await verifyContainer(job.container);
+    for (const m of members) fs.rmSync(m.file);
+  }
   return { rows: wrote, sideRows: sideRows + effectsWrote, theatre: theatre?.id ?? null, ms: performance.now() - t0, columns: columns.length };
 }
 
@@ -432,11 +450,16 @@ async function cli() {
   };
   const force = args.includes('--force');
   if (force) args.splice(args.indexOf('--force'), 1);
+  // Containers are the default; --container says so explicitly.
+  if (args.includes('--container')) args.splice(args.indexOf('--container'), 1);
+  const loose = args.includes('--loose');
+  if (loose) args.splice(args.indexOf('--loose'), 1);
+  const version = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')).version ?? null;
   const jobsArg = flag('--jobs');
   const theatre = flag('--theatre') ?? null;
   const [inDir, outDir] = args;
   if (!inDir || !outDir) {
-    console.error('usage: node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force]');
+    console.error('usage: node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]');
     process.exit(2);
   }
   const theatres = await theatreList();
@@ -450,11 +473,13 @@ async function cli() {
   for (const input of inputs) {
     const rel = path.relative(path.resolve(inDir), input);
     const output = path.join(path.resolve(outDir), path.dirname(rel), `${stemOf(path.basename(rel))}.parquet`);
-    if (!force && fs.existsSync(output) && fs.statSync(output).mtimeMs >= fs.statSync(input).mtimeMs) {
+    const container = loose ? null : output.replace(/\.parquet$/, '.3dheat');
+    const done = [output, container].find((f) => f && fs.existsSync(f));
+    if (!force && done && fs.statSync(done).mtimeMs >= fs.statSync(input).mtimeMs) {
       skipped++;
       continue;
     }
-    jobs.push({ input, output, theatre, bytes: fs.statSync(input).size });
+    jobs.push({ input, output, container, version, theatre, bytes: fs.statSync(input).size });
   }
   // The biggest first, so the last to finish is a small one.
   jobs.sort((a, b) => b.bytes - a.bytes);

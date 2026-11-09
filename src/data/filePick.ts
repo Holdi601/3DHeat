@@ -45,7 +45,7 @@ export function isDataFile(name: string): boolean {
  * any table.
  */
 const SIDECAR_PARQUET =
-  /\.(messages|flight|packets|events|entities|props|units|combatlog|strings|raw)\.(parquet|pq)$/i;
+  /\.(messages|flight|packets|events|entities|props|units|combatlog|strings|raw|objectives)\.(parquet|pq)$/i;
 
 export function isSidecar(name: string): boolean {
   return SIDECAR_PARQUET.test(name);
@@ -112,7 +112,7 @@ export function openPicker(directory: boolean, multiple = true): Promise<PickedF
       input.setAttribute('directory', '');
     } else {
       input.multiple = multiple;
-      input.accept = '.parquet,.pq,.csv,.tsv,.txt,.acmi,.json,.gz,.gpx,.kml,.kmz,.nmea,.nma,.igc,.fit';
+      input.accept = '.3dheat,.parquet,.pq,.csv,.tsv,.txt,.acmi,.json,.gz,.gpx,.kml,.kmz,.nmea,.nma,.igc,.fit';
     }
     input.style.display = 'none';
     document.body.appendChild(input);

@@ -69,7 +69,7 @@ export type LeanColour = 'team' | 'group';
  * units, and the effects when they are picked alone.
  */
 export function overlayFiles(files: File[]): File[] {
-  const parquet = files.filter((f) => /\.parquet$/i.test(f.name) && !/\.(flight|messages|events|chat)\.parquet$/i.test(f.name));
+  const parquet = files.filter((f) => /\.parquet$/i.test(f.name) && !/\.(flight|messages|events|chat|objectives)\.parquet$/i.test(f.name));
   const units = parquet.filter((f) => !/\.effects\.parquet$/i.test(f.name));
   return (units.length ? units : parquet).sort((a, b) => a.name.localeCompare(b.name));
 }

@@ -8,6 +8,7 @@ import {
   totalBytes,
   type PickedFile,
 } from '../../data/filePick';
+import { expandContainers } from '../../data/container';
 import { loader, type LoaderProgress } from '../../data/loader';
 import type { SelectionSize, SourcePreview } from '../../data/sourcePreview';
 import { DELIMITERS } from '../../data/csv';
@@ -86,8 +87,11 @@ export function SourcePanel() {
     setMapping((m) => (m ? { ...m, ...p } : m));
 
   const accept = useCallback(
-    async (raw: PickedFile[], delimiter?: string) => {
+    async (chosen: PickedFile[], delimiter?: string) => {
+      // A `.3dheat` container stands for its match's table (docs/container.md).
+      const { files: raw, failed } = await expandContainers(chosen);
       const { accepted, skipped: bad } = filterDataFiles(raw);
+      for (const name of failed) bad.push({ name, reason: t('data.filePick.notData') });
       setSkipped(bad);
       setPicked(accepted);
       setPreview(null);

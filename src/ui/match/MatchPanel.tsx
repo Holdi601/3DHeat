@@ -130,7 +130,7 @@ function MatchesSection() {
           ref={input}
           type="file"
           multiple
-          accept=".json"
+          accept=".json,.3dheat"
           style={{ display: 'none' }}
           onChange={(e) => {
             const files = Array.from(e.target.files ?? []);
