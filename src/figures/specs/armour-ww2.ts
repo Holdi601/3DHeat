@@ -335,7 +335,10 @@ G['tiger-ii-h'] = G['tiger-ii'];
 // Tiger II with the 10.5 cm KwK L/68 proposed for it (7.14 m, 0.89 m longer than the 8.8 cm L/71).
 G['tiger-ii-105'] = ww2({ ...KT, gun: { ...KT.gun!, length: 5.64, calibre: 0.105 }, turret: KT_H, turretParts: (t) => [saukopf(t, 1.9, 2.4, 0.33, 0.19, 0.33), cupola(t, -0.35, -0.62, 0.35, 0.29)] });
 // Porsche turret (the first 50): the curved front, the roof falling to it, and the bulge in the left side for the cupola.
-const KT_P = bustle(turret(-0.3, [[-1.85, 0.95], [-1.56, 1.2], [0.6, 1.24], [1.27, 1.05], [1.65, 0.7], [1.82, 0.32]], [[-1.89, 0.35], [-1.69, 0.61], [-1.49, 0.77], [-1.29, 0.85], [-0.5, 0.88], [0.7, 0.88], [1.11, 0.77], [1.51, 0.68], [1.71, 0.58], [1.82, 0.42]], 4, 1.82), -1.6, 0.11);
+// Welded of bent rolled plate, not cast: its sides lean in at 30 degrees (80 mm at 30, the published armour layout)
+// to a flat roof, so its section narrows from the base to a little under 0.6 of its width at the roof.
+const KT_P0 = bustle(turret(-0.3, [[-1.85, 0.95], [-1.56, 1.2], [0.6, 1.24], [1.27, 1.05], [1.65, 0.7], [1.82, 0.32]], [[-1.89, 0.35], [-1.69, 0.61], [-1.49, 0.77], [-1.29, 0.85], [-0.5, 0.88], [0.7, 0.88], [1.11, 0.77], [1.51, 0.68], [1.71, 0.58], [1.82, 0.42]], 4, 1.82), -1.6, 0.11);
+const KT_P: TurretSpec = { ...KT_P0, outline: { ...KT_P0.outline!, section: [[-1, 1], [0.9, 0.62], [1, 0.57]] } };
 G['tiger-ii-p'] = ww2({
   ...KT,
   turret: KT_P,
@@ -486,9 +489,14 @@ G['stug-iii-g'] = ww2({
 // (The sheets' side and front views agree with each other at one scale, 10 % taller than the sheets' rounded 9.5 ft;
 // the views are taken as drawn.)
 const SHERMAN_T75 = turret(-0.2, [[-0.95, 0.62], [-0.75, 0.9], [-0.2, 0.98], [0.4, 0.95], [0.85, 0.75], [0.95, 0.55]], [[-0.95, 0.55], [-0.7, 0.79], [0.2, 0.84], [0.7, 0.68], [0.95, 0.46]], 2.4, 0.95);
+// Its casting across, as the M4A3 (75) sheet's rear view draws it: the walls nearly upright for the lower half, then
+// rounding over broad shoulders into the flat roof, still 0.8 of the base's width at the top (not a low dome).
+SHERMAN_T75.outline = { ...SHERMAN_T75.outline!, section: [[-1, 1], [0.2, 1], [0.58, 0.95], [0.78, 0.9], [1, 0.8]] };
 // The T23 turret of the 76 mm Shermans: longer, with the undercut radio bustle.
 const SHERMAN_T23: TurretSpec = { ...turret(-0.2, [[-1.3, 0.55], [-0.85, 0.85], [-0.6, 0.97], [0.3, 0.97], [0.8, 0.85], [1.05, 0.6]], [[-1.3, 0.66], [-0.8, 0.73], [-0.3, 0.79], [0.5, 0.77], [1.05, 0.66]], 2.6, 1.05) };
-SHERMAN_T23.outline = { ...SHERMAN_T23.outline!, bottom: [[-1.3, 0.28], [-0.8, 0.11], [-0.72, 0], [1.05, 0]] };
+// Its section from the M4A3 (76) sheet's rear view: straight walls leaning in a little (1.96 m across at the base,
+// 1.80 m at the roof) to a flat roof with a narrow rounded edge.
+SHERMAN_T23.outline = { ...SHERMAN_T23.outline!, bottom: [[-1.3, 0.28], [-0.8, 0.11], [-0.72, 0], [1.05, 0]], section: [[-1, 1], [0.86, 0.92], [1, 0.86]] };
 /** A welded hull's top line from the rear, the glacis starting at `glacisX` (56 degrees from upright, straight to the nose; the 47-degree late hulls start further forward and steepen to it). */
 const shermanTop = (h: number, glacisX: number, deck = 1.9): P2[] => [[-h, 1.5], [-h + 0.15, 1.56], [-2.45, 1.7], [-1.5, 1.81], [-1.0, deck - 0.02], [glacisX, deck], ...(glacisX > 1.2 ? ([[2.0, deck - 0.1], [2.25, 1.65]] as P2[]) : []), [2.45, 1.27], [2.7, 1.19], [h, 1.08]];
 /** VVSS bogie brackets: the block between each bogie's two wheels up to its return roller. */
@@ -532,7 +540,8 @@ G['m4a4-sherman'] = sherman({ L: 6.06, glacisX: 0.95, bogies: [-1.72, -0.08, 1.5
 // The French M4A4 rearmed with the long 75 mm SA 50 (L/57, the AMX-13's gun) and its muzzle brake.
 G['m4a4-cn-75-50'] = sherman({ L: 6.06, glacisX: 0.95, bogies: [-1.72, -0.08, 1.52], turret: SHERMAN_T75, gun: { length: 3.9, calibre: 0.075, muzzle: true, at: 0.3 } });
 // Sherman VC Firefly: the M4A4 with the long 17-pounder (7.77 m with the gun) and the armoured radio box on the turret's back.
-G['m4a4-firefly'] = sherman({ L: 6.06, glacisX: 0.95, bogies: [-1.72, -0.08, 1.52], turret: SHERMAN_T75, gun: { length: 3.25, calibre: 0.076, muzzle: true, at: 0.48 }, turretParts: (t) => [on(t, [[-1.75, 0.5], [-1.2, 0.5]], [[-1.75, 0.62], [-1.2, 0.68]], 0.12, 10)] });
+// The box is welded to the turret's back over the cut-out it covers (it stood 0.25 m clear of the turret before).
+G['m4a4-firefly'] = sherman({ L: 6.06, glacisX: 0.95, bogies: [-1.72, -0.08, 1.52], turret: SHERMAN_T75, gun: { length: 3.25, calibre: 0.076, muzzle: true, at: 0.48 }, turretParts: (t) => [on(t, [[-1.45, 0.5], [-0.88, 0.5]], [[-1.45, 0.62], [-0.88, 0.68]], 0.12, 10)] });
 // M4A3(76)W: the 47-degree hull and the T23 turret with the 76 mm.
 // With the T23's vision cupola (T23_CUPOLA below, written out here as it is defined later).
 G['m4a3-76'] = sherman({ L: 5.88, glacisX: 1.45, turret: SHERMAN_T23, gun: GUN_76, turretParts: (t) => [cupola(t, -0.45, 0.42, 0.33, 0.33)], extra: [-1, 1].map((s) => part(1.9, [[1.3, 0.32], [1.75, 0.32]], [[1.3, 2.02], [1.75, 1.95]], 1.85, 6, s * 0.55)) });
@@ -577,9 +586,12 @@ function t34(L: number, turretSpec: TurretSpec, gun: Ww2['gun'], tanks: boolean,
   });
 }
 // The early turret (1940-41): rolled or cast, overhanging at the back, with one big hatch.
-const T34_EARLY = turret(0.45, [[-1.0, 0.62], [-0.8, 0.82], [0.65, 0.86], [0.92, 0.62], [1.0, 0.4]], [[-1.0, 0.55], [-0.8, 0.76], [0.8, 0.8], [1.0, 0.5]], 6, 1.0);
+// Its side plates lean in at 30 degrees (45 mm at 30, the published armour layout): the FM 30-40 (1943) sheet's rear
+// view draws it 1.73 m across at its base and 0.92 m at the roof, 0.76 m higher (scaled by the 9.8 ft over the tracks).
+const T34_EARLY: TurretSpec = { ...turret(0.45, [[-1.0, 0.62], [-0.8, 0.82], [0.65, 0.86], [0.92, 0.62], [1.0, 0.4]], [[-1.0, 0.55], [-0.8, 0.76], [0.8, 0.8], [1.0, 0.5]], 6, 1.0), slope: 0.23 };
 // The hexagonal "nut" turret (1942 on): wider and shorter, no overhang, two round hatches.
-const T34_HEX = turret(0.5, [[-0.95, 0.7], [-0.7, 1.1], [0.55, 1.1], [0.9, 0.72], [1.0, 0.48]], [[-0.95, 0.76], [0.9, 0.8], [1.0, 0.52]], 8, 1.0);
+// Its side faces lean in at 20 degrees (52 mm at 20, the published armour layout): 0.29 m over its 0.8 m height.
+const T34_HEX: TurretSpec = { ...turret(0.5, [[-0.95, 0.7], [-0.7, 1.1], [0.55, 1.1], [0.9, 0.72], [1.0, 0.48]], [[-0.95, 0.76], [0.9, 0.8], [1.0, 0.52]], 8, 1.0), slope: 0.13 };
 const F34 = { length: 1.75, calibre: 0.076, at: 0.45, elevation: 0 };
 // 1940: the short L-11 with its armoured recoil sleeve under the barrel.
 G['t-34-1940'] = t34(5.92, T34_EARLY, { length: 1.5, calibre: 0.076, at: 0.48 }, false, () => [], true);
@@ -593,7 +605,10 @@ G['t-34-76-1943'] = t34(5.92, T34_HEX, F34, true, (t) => [cupola(t, -0.45, -0.5,
 // T-34-85: the big cast three-man turret with its cupola, the long 85 mm (8.15 m with the gun).
 // Its length, roof and cupola heights from the broadside photo (USAREUR Pam 30-60-1): from 0.8 m behind the turret
 // ring to the mantlet 1.9 m ahead of the hull's middle, the roof 0.85 m over the hull's, the bore 2.05 m up.
-const T34_85 = turret(0.5, [[-1.32, 0.85], [-1.05, 1.2], [0.6, 1.28], [1.1, 1.0], [1.25, 0.6]], [[-1.32, 0.6], [-1.2, 0.8], [-0.95, 0.85], [0.25, 0.85], [0.75, 0.72], [1.1, 0.55], [1.25, 0.48]], 3, 1.25);
+// The casting as the pamphlet's photographs show it: the broad lip at its foot, the sides leaning in to a flat roof with
+// a tight rounded edge, the back a flat plate bending round into the sides, the cheeks drawn in to the mantlet.
+const T34_85_0 = turret(0.5, [...roundEnd(-1.32, 1.22, 0.5, 1), [0.6, 1.28], [1.1, 1.0], [1.25, 0.6]], [[-1.32, 0.6], [-1.2, 0.8], [-0.95, 0.85], [0.25, 0.85], [0.75, 0.72], [1.1, 0.55], [1.25, 0.48]], 3, 1.25);
+const T34_85: TurretSpec = { ...T34_85_0, outline: { ...T34_85_0.outline!, section: [[-1, 0.97], [-0.8, 1], [-0.6, 0.97], [0.75, 0.84], [0.92, 0.76], [1, 0.62]] } };
 G['t-34-85'] = t34(6.1, T34_85, { length: 3.25, calibre: 0.085, at: 0.59, elevation: 0 }, true, (t) => [cupola(t, -0.33, -0.45, 0.32, 0.25), on(t, [[1.2, 0.45], [1.42, 0.4]], [[1.2, 0.72], [1.42, 0.68]], [[1.2, 0.3], [1.42, 0.34]], 4)]);
 // Type 65 SPAA: the T-34-85 hull under an open-topped box turret with twin 37 mm (the 61-K pattern guns, 2.6 m); turret
 // size estimated from public photographs, nearest counterpart.
@@ -633,7 +648,10 @@ G['kv-2'] = ww2({ ...KV, turret: KV2_T, gun: { length: 1.85, calibre: 0.152, at:
 
 // IS-1 and IS-2: the long hull with six road wheels and three return rollers, the rounded cast turret.
 // Hull 6.77 x 3.07 m, 2.73 m high; IS-2 9.83 m with the 122 mm, IS-1 8.56 m with the 85 mm.
-const IS_T = turret(0.15, [[-1.5, 0.8], [-1.1, 1.25], [0.6, 1.3], [1.3, 0.92], [1.45, 0.55]], [[-1.5, 0.5], [-0.8, 0.9], [0.6, 0.95], [1.45, 0.5]], 2.4, 1.55);
+const IS_T0 = turret(0.15, [[-1.5, 0.8], [-1.1, 1.25], [0.6, 1.3], [1.3, 0.92], [1.45, 0.55]], [[-1.5, 0.5], [-0.8, 0.9], [0.6, 0.95], [1.45, 0.5]], 2.4, 1.55);
+// The casting across, as the head-on photograph in USAREUR Pam 30-60-1 shows it: the walls leaning in only a little
+// for the lower half, then rounding over into a broad flat roof (a casting's shoulders, not a low dome).
+const IS_T: TurretSpec = { ...IS_T0, outline: { ...IS_T0.outline!, section: [[-1, 1], [0.3, 0.95], [0.7, 0.85], [0.9, 0.74], [1, 0.6]] } };
 const IS: Ww2 = {
   // The 0.65 m tracks 2.41 m apart, 4.63 m on the ground, 0.46 m under the belly and the bore 2.0 m up, as USAREUR
   // Pam 30-60-1 (1973) gives them; the upper hull's sides lean in over the tracks.
@@ -683,12 +701,17 @@ const CHURCHILL: Ww2 = {
 // Mk I: a small cast turret with the 2-pounder and a 3-inch howitzer in the hull nose.
 const CH1_T = turret(-0.1, [[-0.95, 0.6], [-0.75, 0.85], [0.5, 0.88], [0.9, 0.65], [1.0, 0.45]], [[-0.95, 0.45], [-0.6, 0.68], [0.5, 0.7], [1.0, 0.42]], 2.6, 1.0);
 G['churchill-i'] = ww2({ ...CHURCHILL, turret: CH1_T, guns: [{ mount: 'turret', length: 1.5, calibre: 0.04, at: 0.5 }, { mount: 'hull', x: 3.25, at: 0.55, length: 0.55, calibre: 0.076 }] });
-// Mk III: the welded, slab-sided square turret with the 6-pounder.
-const CH3_T = turret(-0.1, [[-0.95, 0.82], [0.95, 0.82]], [[-0.95, 0.72], [0.95, 0.72]], 16, 0.95);
-G['churchill-iii'] = ww2({ ...CHURCHILL, turret: CH3_T, gun: { length: 2.0, calibre: 0.057, at: 0.5 } });
+// Mk III: the welded, slab-sided turret with the 6-pounder. FM 30-40 (1943) describes and draws it: upright front and
+// rear plates, each side two upright plates meeting in a flat V at the widest point just behind the middle (the plan
+// view: the back 0.69 and the front 0.81 of that width), the flat roof, and the rectangular stowage bin on the back
+// (0.45 m deep, 0.95 m across, its top just under the roof). (It was drawn as a plain box without the bin.)
+const CH3_T: TurretSpec = turret(-0.1, [[-0.95, 0.57], [-0.28, 0.82], [0.95, 0.66]], [[-0.95, 0.72], [0.95, 0.72]], 16, 0.95);
+CH3_T.outline = { ...CH3_T.outline!, section: [[-1, 1], [0.95, 1], [1, 0.97]] };
+const ch3Bin = (t: TurretSpec): TurretSpec => on(t, [[-1.4, 0.48], [-0.93, 0.48]], [[-1.4, 0.64], [-0.93, 0.64]], 0.2, 12);
+G['churchill-iii'] = ww2({ ...CHURCHILL, turret: CH3_T, gun: { length: 2.0, calibre: 0.057, at: 0.5 }, turretParts: (t) => [ch3Bin(t)] });
 // Churchill AVRE: the Mk III/IV hull and turret with the 290 mm Petard spigot mortar's short, fat barrel (its length
 // estimated).
-G['churchill-avre'] = ww2({ ...CHURCHILL, turret: CH3_T, gun: { length: 0.7, calibre: 0.29, at: 0.5 } });
+G['churchill-avre'] = ww2({ ...CHURCHILL, turret: CH3_T, gun: { length: 0.7, calibre: 0.29, at: 0.5 }, turretParts: (t) => [ch3Bin(t)] });
 // Mk IV: a cast, rounded turret of the same size.
 const CH4_T = turret(-0.1, [[-1.0, 0.7], [-0.8, 0.9], [0.6, 0.92], [0.95, 0.72], [1.05, 0.5]], [[-1.0, 0.5], [-0.7, 0.72], [0.6, 0.74], [1.05, 0.45]], 2.8, 1.05);
 G['churchill-iv'] = ww2({ ...CHURCHILL, turret: CH4_T, gun: { length: 2.0, calibre: 0.057, at: 0.5 } });
@@ -1483,8 +1506,11 @@ G['matilda-ii'] = ww2({
   plan: [[-2.8, 0.85], [2.8, 0.85]], hullRound: 4,
   track: [[-2.3, 0], [2.3, 0], [2.8, 0.7], [2.5, 1.18], [-2.5, 1.18], [-2.8, 0.7]],
   wheels: [], r: 0.2, solid: true,
-  turret: turret(0.25, [[-1.0, 0.6], [-0.8, 0.82], [0.6, 0.85], [0.95, 0.6]], [[-1.0, 0.6], [0.95, 0.6]], 4, 1.0),
-  gun: { length: 1.3, calibre: 0.04, at: 0.45 },
+  // The casting's roof 0.85 m over the deck and the low cupola on it reach the published 2.52 m (the turret was drawn
+  // 0.25 m too low before).
+  turret: turret(0.25, [[-1.0, 0.6], [-0.8, 0.82], [0.6, 0.85], [0.95, 0.6]], [[-1.0, 0.85], [0.95, 0.85]], 4, 1.0),
+  turretParts: (t) => [cupola(t, -0.3, -0.3, 0.3, 0.08)],
+  gun: { length: 1.3, calibre: 0.04, at: 0.4 },
 });
 // Valentine: six road wheels in two three-wheel bogies, three return rollers, the low hull and the small turret
 // (5.41 x 2.63 m, 2.27 m); 2-pounder (Mk I-VII), 6-pounder (Mk IX), 75 mm (Mk XI). Archer: its chassis with the
