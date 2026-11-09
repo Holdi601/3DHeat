@@ -29,13 +29,25 @@ export const SHEEN_BASE = 0.07;
 export const SHEEN_UP = 0.3;
 export const SHEEN_COLOR: Rgb3 = [0.78, 0.88, 1.0];
 
+/**
+ * Where bright colours start to roll off instead of clipping: over it a lit
+ * channel eases toward 1, so a pale team's sunlit roof, its sides and the
+ * add-on boxes on them stay apart rather than all coming out the same white.
+ */
+export const KNEE = 0.7;
+
+/** A lit channel through the knee: itself up to `KNEE`, then easing toward 1 (slope 1 at the knee, never over 1). */
+export function knee(x: number): number {
+  return x <= KNEE ? x : KNEE + (1 - KNEE) * (1 - Math.exp(-(x - KNEE) / (1 - KNEE)));
+}
+
 /** Normal 0, 0, 0: unlit, drawn at this share of its colour (rotor and propeller discs, markers, effects). */
 export const UNLIT = 1.0;
 
 /**
  * A colour under the figures' light: `base` (already tinted), `n` the
  * world normal (unit; 0 0 0 for unlit), `gloss` 0 paint to 1 glass.
- * Each channel is clamped to 1.
+ * Unlit, each channel is clamped to 1; lit, it goes through `knee`.
  */
 export function shade(base: Rgb3, n: Vec3n, gloss: number): Rgb3 {
   const nx = n[0];
@@ -50,7 +62,7 @@ export function shade(base: Rgb3, n: Vec3n, gloss: number): Rgb3 {
   const out: Rgb3 = [0, 0, 0];
   for (let c = 0; c < 3; c++) {
     const light = AMBIENT + GROUND_COLOR[c] + (SKY_COLOR[c] - GROUND_COLOR[c]) * h + SUN_COLOR[c] * sun;
-    out[c] = Math.min(1, base[c] * light + sheen * SHEEN_COLOR[c]);
+    out[c] = knee(base[c] * light + sheen * SHEEN_COLOR[c]);
   }
   return out;
 }

@@ -13,7 +13,8 @@
  * colour), then how it moves (`articulate`): kind (0 fixed, 1 a turret, 2 a
  * gun on a turret, 3 a gun on the hull), the turret's pivot x and z and the
  * yaw it was built facing, the gun's trunnion x, y, z and the yaw it was
- * built pointing, the elevation it was built at, and three zeros.
+ * built pointing, the elevation it was built at, a spare (a dart's shape,
+ * `symbols/darts.ts`), the edge code (`markEdges`) and a zero.
  *
  * Instance (16 floats): o.x, o.y, o.z, scale, f.x, f.y, f.z, alpha, u.x, u.y,
  * u.z, turret yaw (radians from the hull's forward, right positive), team r,
@@ -84,9 +85,82 @@ export function meshOf(t: Template): FigureMesh {
       o += MESH_STRIDE;
     }
   }
+  markEdges(data, count);
   m = { id: nextId++, data, count };
   meshes.set(t, m);
   return m;
+}
+
+/** Where a mesh vertex keeps its edge code (`markEdges`), the third of the three spare floats. */
+export const EDGE_AT = 22;
+
+/**
+ * Marks each triangle's feature edges - where the shading breaks: a crease
+ * (the two triangles' normals at the edge's ends differ), or an edge no
+ * other triangle shares (a part's open rim, a plate's border) - so the
+ * fragment shader can draw them as a thin dark line, the way a recognition
+ * drawing outlines each plate, box and brick. A quad's diagonal and the seams
+ * of a smooth loft are not features. Per vertex one float: 0 none, else 1 +
+ * its corner (0-2) + 3 times a mask whose bit k says the side facing corner
+ * k is no feature (`figureShaders.ts` turns it back into a barycentric).
+ */
+export function markEdges(data: Float32Array, count: number): void {
+  const nt = Math.floor(count / 3);
+  if (!nt) return;
+  // Weld corners by position: a grid fine enough for the figure's size, 17 bits an axis.
+  let ext = 1e-6;
+  for (let v = 0; v < count; v++) for (let a = 0; a < 3; a++) ext = Math.max(ext, Math.abs(data[v * MESH_STRIDE + a]));
+  const q = 65535 / ext;
+  const ids = new Int32Array(count);
+  const weld = new Map<number, number>();
+  for (let v = 0; v < count; v++) {
+    const p = v * MESH_STRIDE;
+    const key = (Math.round(data[p] * q) + 65536) * 17179869184 + (Math.round(data[p + 1] * q) + 65536) * 131072 + (Math.round(data[p + 2] * q) + 65536);
+    let id = weld.get(key);
+    if (id === undefined) weld.set(key, (id = weld.size));
+    ids[v] = id;
+  }
+  const nid = weld.size;
+  // Side j of a triangle: from corner j+1 to corner j+2, facing corner j. 1: a feature until a smooth neighbour says not.
+  const feature = new Uint8Array(nt * 3).fill(1);
+  const unlit = (v: number) => data[v * MESH_STRIDE + 7] === 0 && data[v * MESH_STRIDE + 8] === 0 && data[v * MESH_STRIDE + 9] === 0;
+  const same = (a: number, b: number) => {
+    const pa = a * MESH_STRIDE + 7;
+    const pb = b * MESH_STRIDE + 7;
+    return data[pa] * data[pb] + data[pa + 1] * data[pb + 1] + data[pa + 2] * data[pb + 2] > 0.985;
+  };
+  const first = new Map<number, number>();
+  for (let t = 0; t < nt; t++) {
+    const v0 = t * 3;
+    if (unlit(v0) || ids[v0] === ids[v0 + 1] || ids[v0 + 1] === ids[v0 + 2] || ids[v0] === ids[v0 + 2]) {
+      feature[v0] = feature[v0 + 1] = feature[v0 + 2] = 0;
+      continue;
+    }
+    for (let j = 0; j < 3; j++) {
+      const a = v0 + ((j + 1) % 3);
+      const b = v0 + ((j + 2) % 3);
+      const ia = ids[a];
+      const ib = ids[b];
+      const key = ia < ib ? ia * nid + ib : ib * nid + ia;
+      const s = first.get(key);
+      if (s === undefined) {
+        first.set(key, v0 + j);
+        continue;
+      }
+      // The other triangle's corners on this edge, matched by position.
+      const u0 = s - (s % 3);
+      const sj = s % 3;
+      const c = u0 + ((sj + 1) % 3);
+      const d = u0 + ((sj + 2) % 3);
+      const [ca, cb] = ids[c] === ia ? [c, d] : [d, c];
+      if (same(a, ca) && same(b, cb)) feature[v0 + j] = feature[s] = 0;
+    }
+  }
+  for (let t = 0; t < nt; t++) {
+    const v0 = t * 3;
+    const mask = (feature[v0] ? 0 : 1) | (feature[v0 + 1] ? 0 : 2) | (feature[v0 + 2] ? 0 : 4);
+    for (let k = 0; k < 3; k++) data[(v0 + k) * MESH_STRIDE + EDGE_AT] = mask === 7 ? 0 : 1 + k + 3 * mask;
+  }
 }
 
 /** Whether a template has parts that turn (a turret, a gun). */

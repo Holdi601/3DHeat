@@ -2624,5 +2624,11 @@ more('t-80uk', [...k5Lids(0.8, 1.85, 0.61, 0.6, 1.52, 4), ...glacisJoints(7.0, 1
 // ZTZ-96B: FY-4 on the wedge's front faces; ZTZ-99A: on the arrow's outer front faces.
 more('ztz-96b', faceBricks(0.9, 1.35, 1.5, 0.8, 0.06, 3, 1));
 more('ztz-99a', faceBricks(2.0, 1.3, 3.0, 0.42, 0.14, 3, 2));
+// T-80U: the K-5 lids on its horseshoe brow and the joints across its K-5 glacis, drawn as on the T-80UE-1's.
+more('t-80u', [...k5Lids(0.85, 1.85, 0.62, 0.61, 1.5, 4), ...glacisJoints(7.0, 1.4, 1.95, 0.95, 0.22, 2.9, 3)]);
+// Leopard 2A4M CAN: the add-on modules as blocks of their own on the turret body - a cheek module either side of the
+// recessed mantlet, standing a little proud of the front and swept back toward the outside, its top falling to the
+// front, and the module along each side - so they read as the add-on armour they are (sizes within the measured body).
+more('leopard-2a4m-can', [tb(2.27, 1.17, 0.45, 0.62, 1.0, 0.76, { ...M, yaw: 0.12, pitch: -0.12 }), tb(0.95, 1.66, 0.42, 2.1, 0.12, 0.64, M)]);
 
 export const ARMOUR_MODERN: SpecSet = { ground: G, aliases: ALIASES };
