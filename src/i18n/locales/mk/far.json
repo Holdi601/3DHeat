@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Светол траг: не е пробиено",
   "far.hitLookGouge": "Бразда: се лизнал (веројатно рикошет)",
   "far.hitLookBullet": "Дупка: исходот непознат",
+  "far.hitLookScorch": "Ѕвезда од чад: експлозивен проектил (HE, HEAT, HESH)",
   "far.hitLookRing": "Прстен: што направил",
-  "far.hitCalibre": "Калибар"
+  "far.hitCalibre": "Калибар",
+  "far.hitAmmo": "Муниција",
+  "far.ammoExplosive": "експлозивна",
+  "far.ammoKinetic": "кинетичка"
 }

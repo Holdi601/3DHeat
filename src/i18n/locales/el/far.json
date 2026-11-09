@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Λαμπερό ίχνος: δεν διαπέρασε",
   "far.hitLookGouge": "Αυλάκι: γλίστρησε (μάλλον εποστρακισμός)",
   "far.hitLookBullet": "Οπή: άγνωστο αποτέλεσμα",
+  "far.hitLookScorch": "Αστέρι αιθάλης: εκρηκτικό βλήμα (HE, HEAT, HESH)",
   "far.hitLookRing": "Δακτύλιος: τι έκανε",
-  "far.hitCalibre": "Διαμέτρημα"
+  "far.hitCalibre": "Διαμέτρημα",
+  "far.hitAmmo": "Πυρομαχικό",
+  "far.ammoExplosive": "εκρηκτικό",
+  "far.ammoKinetic": "κινητικό"
 }

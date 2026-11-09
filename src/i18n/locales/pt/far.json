@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Salpico brilhante: não penetrou",
   "far.hitLookGouge": "Sulco: resvalou (provavelmente um ricochete)",
   "far.hitLookBullet": "Furo: resultado desconhecido",
+  "far.hitLookScorch": "Estrela de fuligem: projétil explosivo (HE, HEAT, HESH)",
   "far.hitLookRing": "Anel: o que fez",
-  "far.hitCalibre": "Calibre"
+  "far.hitCalibre": "Calibre",
+  "far.hitAmmo": "Munição",
+  "far.ammoExplosive": "explosiva",
+  "far.ammoKinetic": "cinética"
 }

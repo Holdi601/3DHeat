@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Stropire lucioasă: nu a penetrat",
   "far.hitLookGouge": "Șanț: a alunecat (probabil un ricoșeu)",
   "far.hitLookBullet": "Gaură: efect necunoscut",
+  "far.hitLookScorch": "Stea de funingine: proiectil exploziv (HE, HEAT, HESH)",
   "far.hitLookRing": "Inel: ce a făcut",
-  "far.hitCalibre": "Calibru"
+  "far.hitCalibre": "Calibru",
+  "far.hitAmmo": "Muniție",
+  "far.ammoExplosive": "explozivă",
+  "far.ammoKinetic": "cinetică"
 }

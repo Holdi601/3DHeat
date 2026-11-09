@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Parlak iz: delmedi",
   "far.hitLookGouge": "Oyuk: sekti (büyük olasılıkla sekme)",
   "far.hitLookBullet": "Delik: sonuç bilinmiyor",
+  "far.hitLookScorch": "İs yıldızı: patlayıcı mermi (HE, HEAT, HESH)",
   "far.hitLookRing": "Halka: ne yaptığı",
-  "far.hitCalibre": "Kalibre"
+  "far.hitCalibre": "Kalibre",
+  "far.hitAmmo": "Mühimmat",
+  "far.ammoExplosive": "patlayıcı",
+  "far.ammoKinetic": "kinetik"
 }

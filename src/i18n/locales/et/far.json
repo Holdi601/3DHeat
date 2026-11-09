@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Hele pritse: ei läinud läbi",
   "far.hitLookGouge": "Vagu: libises (tõenäoliselt rikošett)",
   "far.hitLookBullet": "Auk: tulemus teadmata",
+  "far.hitLookScorch": "Tahmatäht: lõhkemürsk (HE, HEAT, HESH)",
   "far.hitLookRing": "Rõngas: mida see tegi",
-  "far.hitCalibre": "Kaliiber"
+  "far.hitCalibre": "Kaliiber",
+  "far.hitAmmo": "Laskemoon",
+  "far.ammoExplosive": "lõhkav",
+  "far.ammoKinetic": "kineetiline"
 }

@@ -186,6 +186,9 @@ export function acmiHits(d: Dataset): { hits: VehicleHit[]; kinds: Map<string, s
     toDeath: null,
     share: null,
     calibre: null,
+    ammoType: null,
+    ammoName: null,
+    ammoSlot: null,
     modules: 0,
     kind: 'hit',
   });

@@ -119,8 +119,13 @@ export interface VehicleHit {
   toDeath: number | null;
   /** The killing shot's share of all the damage that life took (0..1); null where damage is not known. */
   share: number | null;
-  /** The shell's calibre, mm, where the data says (War Thunder: where a kill names a hit of the same shell). */
+  /** The shell's calibre, mm, where the data says (War Thunder: per shot). */
   calibre: number | null;
+  /** The round's type where the data says: a specific one (APFSDS, HEAT, HESH...), else 'explosive' or 'kinetic'; null when not known. */
+  ammoType: string | null;
+  /** The round's own name in the game (War Thunder: e.g. 125mm_3bm46), and the slot it was loaded in; null when not known. */
+  ammoName: string | null;
+  ammoSlot: string | null;
   /** Modules destroyed right after it (War Thunder). */
   modules: number;
   kind: HitKind;
@@ -268,6 +273,9 @@ export function* hitsSteps(d: Dataset): Generator<void, HitSet, void> {
   // War Thunder's converter: what the hit did, as the server sent it, and the shell's calibre.
   const wtOutcome = text(d, 'hitOutcome');
   const calibreCol = num(d, 'calibre') ?? NONE;
+  const ammoTypeCol = text(d, 'ammoType');
+  const ammoNameCol = text(d, 'ammoName');
+  const ammoSlotCol = text(d, 'ammoSlot');
   const comp = num(d, 'hitComponent') ?? NONE;
   const bu = num(d, 'hitU') ?? NONE, bv = num(d, 'hitV') ?? NONE, bw = num(d, 'hitW') ?? NONE;
   const eu = num(d, 'hitExitU') ?? NONE, ev_ = num(d, 'hitExitV') ?? NONE, ew = num(d, 'hitExitW') ?? NONE;
@@ -353,6 +361,9 @@ export function* hitsSteps(d: Dataset): Generator<void, HitSet, void> {
     healthAfter: null,
     outcome: 'hit',
     calibre: null,
+    ammoType: null,
+    ammoName: null,
+    ammoSlot: null,
     fatal: false,
     killingShot: false,
     toDeath: null,
@@ -606,6 +617,9 @@ export function* hitsSteps(d: Dataset): Generator<void, HitSet, void> {
       code: wt ? (Number.isFinite(flag) ? String(flag) : Number.isFinite(part) ? String(Math.floor(part / 256)) : '') : reason(r),
       outcome: wt ? (WT_OUTCOME[wtOutcome(r)] ?? 'hit') : 'hit',
       calibre: fin(calibreCol(r)),
+      ammoType: ammoTypeCol(r) || null,
+      ammoName: ammoNameCol(r) || null,
+      ammoSlot: ammoSlotCol(r) || null,
     });
     sources.add(wt ? 'warthunder' : WOWS_IMPACT.test(ev) ? 'wows' : 'generic');
   }
@@ -895,6 +909,18 @@ export function sectorOf(dir: Vec3): Sector {
 }
 
 export const SECTORS: Sector[] = ['front', 'rear', 'left', 'right', 'above', 'below'];
+
+/**
+ * Whether a round's type (`VehicleHit.ammoType`) is one that bursts on the
+ * surface or blasts through it: high explosive, HEAT, HESH, fragmentation,
+ * rockets, missiles, bombs. Armour piercing rounds are kinetic, those with a
+ * filler (APHE, APCBC) too: they burst inside, past the plate, not on it.
+ */
+export function explosiveAmmo(type: string | null): boolean {
+  if (!type) return false;
+  if (/^(kinetic|AP|ball|solid|shot|shrapnel)/i.test(type)) return false;
+  return /explosive|HE|frag|ATGM|missile|rocket|bomb|mine|torpedo|grenade/i.test(type);
+}
 
 /** Whether an outcome says the shell got through (did damage or more); null when the data does not say. */
 export function penetrated(o: Outcome): boolean | null {

@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Kirkas roiske: ei läpäissyt",
   "far.hitLookGouge": "Ura: kimposi (luultavasti rikošetti)",
   "far.hitLookBullet": "Reikä: tulos ei tiedossa",
+  "far.hitLookScorch": "Nokitähti: räjähtävä ammus (HE, HEAT, HESH)",
   "far.hitLookRing": "Rengas: mitä se teki",
-  "far.hitCalibre": "Kaliiperi"
+  "far.hitCalibre": "Kaliiperi",
+  "far.hitAmmo": "Ammus",
+  "far.ammoExplosive": "räjähtävä",
+  "far.ammoKinetic": "kineettinen"
 }

@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Ярко петно: не е пробито",
   "far.hitLookGouge": "Бразда: отплъзнал (вероятно рикошет)",
   "far.hitLookBullet": "Дупка: резултатът не е известен",
+  "far.hitLookScorch": "Звезда от сажди: експлозивен снаряд (HE, HEAT, HESH)",
   "far.hitLookRing": "Пръстен: какво е направил",
-  "far.hitCalibre": "Калибър"
+  "far.hitCalibre": "Калибър",
+  "far.hitAmmo": "Боеприпас",
+  "far.ammoExplosive": "експлозивен",
+  "far.ammoKinetic": "кинетичен"
 }

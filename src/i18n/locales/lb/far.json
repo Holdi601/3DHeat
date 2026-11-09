@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Hellen Sprëtzer: net duerchgeschloen",
   "far.hitLookGouge": "Fur: ofgeglidden (wahrscheinlech en Ofpraller)",
   "far.hitLookBullet": "Lach: Wierkung onbekannt",
+  "far.hitLookScorch": "Rousstär: Sprenggeschoss (HE, HEAT, HESH)",
   "far.hitLookRing": "Rank: wat en gemaach huet",
-  "far.hitCalibre": "Kaliber"
+  "far.hitCalibre": "Kaliber",
+  "far.hitAmmo": "Munitioun",
+  "far.ammoExplosive": "explosiv",
+  "far.ammoKinetic": "kinetesch"
 }

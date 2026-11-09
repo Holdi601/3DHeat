@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Splais gheal: níor chuaigh tríd",
   "far.hitLookGouge": "Clais: shleamhnaigh (preabadh is dócha)",
   "far.hitLookBullet": "Poll: toradh anaithnid",
+  "far.hitLookScorch": "Réalta súiche: diúracán pléascach (HE, HEAT, HESH)",
   "far.hitLookRing": "Fáinne: a ndearna sé",
-  "far.hitCalibre": "Calabra"
+  "far.hitCalibre": "Calabra",
+  "far.hitAmmo": "Armlón",
+  "far.ammoExplosive": "pléascach",
+  "far.ammoKinetic": "cinéiteach"
 }

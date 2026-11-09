@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Яркий след: не пробил",
   "far.hitLookGouge": "Борозда: соскользнул (скорее всего рикошет)",
   "far.hitLookBullet": "Пробоина: результат неизвестен",
+  "far.hitLookScorch": "Звезда копоти: разрывной снаряд (HE, HEAT, HESH)",
   "far.hitLookRing": "Кольцо: что он сделал",
-  "far.hitCalibre": "Калибр"
+  "far.hitCalibre": "Калибр",
+  "far.hitAmmo": "Боеприпас",
+  "far.ammoExplosive": "разрывной",
+  "far.ammoKinetic": "кинетический"
 }

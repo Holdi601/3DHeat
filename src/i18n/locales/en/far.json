@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Bright splash: did not get through",
   "far.hitLookGouge": "Gouge: glanced off (likely a ricochet)",
   "far.hitLookBullet": "Hole: outcome not known",
+  "far.hitLookScorch": "Soot star: explosive round (HE, HEAT, HESH)",
   "far.hitLookRing": "Ring: what it did",
-  "far.hitCalibre": "Calibre"
+  "far.hitCalibre": "Calibre",
+  "far.hitAmmo": "Ammunition",
+  "far.ammoExplosive": "explosive",
+  "far.ammoKinetic": "kinetic"
 }

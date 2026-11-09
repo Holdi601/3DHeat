@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { VertexBuffer, type Vec3 } from '../race/geometry';
 import type { Dataset } from '../state/types';
-import { OUTCOMES, type Outcome } from '../vehicle/hits';
+import { explosiveAmmo, OUTCOMES, type Outcome } from '../vehicle/hits';
 import { OUTCOME_COLOURS } from '../vehicle/scene';
 import { finish, newKit } from './kit';
 import { HitMarkLayer, holeRadius, indexByUnit, lastAtOrBefore, Look, lookOf, type HitMarks, type MarkPose, type MarkView } from './hitmarks';
@@ -22,6 +22,7 @@ function marks(list: [number, number, Outcome, boolean, number][]): HitMarks {
     dir: new Float32Array(n * 3).fill(NaN),
     calibre: new Float32Array(n).fill(120),
     outcome: Uint8Array.from(list, (m) => OUTCOMES.indexOf(m[2])),
+    explosive: new Uint8Array(n),
     kill: Uint8Array.from(list, (m) => (m[3] ? 1 : 0)),
     body: new Uint8Array(n),
     look: Uint8Array.from(list, (m) => lookOf(m[2], 1)),
@@ -95,9 +96,29 @@ describe('hit marks', () => {
     expect(lookOf('nodamage', 0.2)).toBe(Look.Gouge);
     expect(lookOf('nodamage', NaN)).toBe(Look.Splash);
     expect(lookOf('hit', 1)).toBe(Look.Bullet);
+    // An explosive round's blast, whatever it did; armour piercing ones, filled or not, by what they did.
+    expect(lookOf('nodamage', 0.2, true)).toBe(Look.Scorch);
+    expect(lookOf('kill', 1, explosiveAmmo('HEAT-FS'))).toBe(Look.Scorch);
+    for (const e of ['explosive', 'HE', 'HESH', 'HEAT', 'SAPHEI', 'ATGM']) expect(explosiveAmmo(e)).toBe(true);
+    for (const k of ['kinetic', 'APFSDS', 'APDS', 'APHE', 'APCBC', 'HVAP', '', null]) expect(explosiveAmmo(k)).toBe(false);
     // Sized by the calibre: a 120 mm hole is ten times a 12 mm one.
     expect(holeRadius(120, 0) / holeRadius(12, 0)).toBeCloseTo(10, 5);
     expect(holeRadius(NaN, 1)).toBeLessThan(holeRadius(NaN, 0));
+  });
+
+  it("draws an explosive round's blast wider than a kinetic round's splash of the same calibre", () => {
+    const m = marks([
+      [1, 0, 'nodamage', false, -1],
+      [1, 1, 'nodamage', false, -1],
+    ]);
+    m.explosive[1] = 1;
+    m.look[1] = Look.Scorch;
+    const layer = new HitMarkLayer();
+    const out = new VertexBuffer();
+    expect(layer.build(m, view(10, Infinity), out)).toBe(2);
+    expect(Array.from(layer.drawn.hit.subarray(0, 2))).toEqual([100, 101]);
+    expect(layer.drawn.radius[1]).toBeGreaterThan(layer.drawn.radius[0] * 1.8);
+    expect(colours(out).has(key(OUTCOME_COLOURS.nodamage))).toBe(true);
   });
 
   it('leaves the hits on the unit for as long as it is there, newest first, ringed in their outcome colours', () => {

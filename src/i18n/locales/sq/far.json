@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Spërkatje e ndritshme: nuk depërtoi",
   "far.hitLookGouge": "Brazdë: rrëshqiti (ndoshta rikoshet)",
   "far.hitLookBullet": "Vrimë: rezultat i panjohur",
+  "far.hitLookScorch": "Yll blozë: predhë shpërthyese (HE, HEAT, HESH)",
   "far.hitLookRing": "Unazë: çfarë bëri",
-  "far.hitCalibre": "Kalibër"
+  "far.hitCalibre": "Kalibër",
+  "far.hitAmmo": "Municion",
+  "far.ammoExplosive": "shpërthyese",
+  "far.ammoKinetic": "kinetike"
 }

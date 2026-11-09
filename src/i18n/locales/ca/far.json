@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Esquitx brillant: no ha penetrat",
   "far.hitLookGouge": "Solc: ha lliscat (probablement un rebot)",
   "far.hitLookBullet": "Forat: resultat desconegut",
+  "far.hitLookScorch": "Estrella de sutge: projectil explosiu (HE, HEAT, HESH)",
   "far.hitLookRing": "Anell: què ha fet",
-  "far.hitCalibre": "Calibre"
+  "far.hitCalibre": "Calibre",
+  "far.hitAmmo": "Munició",
+  "far.ammoExplosive": "explosiva",
+  "far.ammoKinetic": "cinètica"
 }

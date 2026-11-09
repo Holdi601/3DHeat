@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Ryškus pėdsakas: nepramušė",
   "far.hitLookGouge": "Vaga: nuslydo (greičiausiai rikošetas)",
   "far.hitLookBullet": "Skylė: rezultatas nežinomas",
+  "far.hitLookScorch": "Suodžių žvaigždė: sprogstamasis sviedinys (HE, HEAT, HESH)",
   "far.hitLookRing": "Žiedas: ką padarė",
-  "far.hitCalibre": "Kalibras"
+  "far.hitCalibre": "Kalibras",
+  "far.hitAmmo": "Šaudmuo",
+  "far.ammoExplosive": "sprogstamasis",
+  "far.ammoKinetic": "kinetinis"
 }

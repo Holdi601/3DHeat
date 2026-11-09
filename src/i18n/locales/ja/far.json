@@ -35,6 +35,10 @@
   "far.hitLookSplash": "明るい痕: 非貫通",
   "far.hitLookGouge": "溝: 滑った (跳弾の可能性)",
   "far.hitLookBullet": "穴: 結果不明",
+  "far.hitLookScorch": "すすの星形: 炸薬弾 (HE, HEAT, HESH)",
   "far.hitLookRing": "輪: 結果の色",
-  "far.hitCalibre": "口径"
+  "far.hitCalibre": "口径",
+  "far.hitAmmo": "弾薬",
+  "far.ammoExplosive": "炸薬弾",
+  "far.ammoKinetic": "運動エネルギー弾"
 }

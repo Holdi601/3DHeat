@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Яскравий слід: не пробив",
   "far.hitLookGouge": "Борозна: зісковзнув (найімовірніше рикошет)",
   "far.hitLookBullet": "Пробоїна: результат невідомий",
+  "far.hitLookScorch": "Зірка кіптяви: розривний снаряд (HE, HEAT, HESH)",
   "far.hitLookRing": "Кільце: що він зробив",
-  "far.hitCalibre": "Калібр"
+  "far.hitCalibre": "Калібр",
+  "far.hitAmmo": "Боєприпас",
+  "far.ammoExplosive": "розривний",
+  "far.ammoKinetic": "кінетичний"
 }

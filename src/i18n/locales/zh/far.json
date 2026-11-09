@@ -35,6 +35,10 @@
   "far.hitLookSplash": "亮斑：未击穿",
   "far.hitLookGouge": "沟痕：滑开（可能是跳弹）",
   "far.hitLookBullet": "弹孔：结果未知",
+  "far.hitLookScorch": "烟灰星形：爆炸弹（HE、HEAT、HESH）",
   "far.hitLookRing": "圆环：命中结果",
-  "far.hitCalibre": "口径"
+  "far.hitCalibre": "口径",
+  "far.hitAmmo": "弹药",
+  "far.ammoExplosive": "爆炸弹",
+  "far.ammoKinetic": "动能弹"
 }
