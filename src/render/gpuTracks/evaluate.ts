@@ -10,7 +10,8 @@
  * velocity (fully above 40 m/s, not below 25), its up axis kept square to it.
  */
 
-import { decodeKey, keyTime, trackFloats, FLAG_AIR, FLAG_ATTITUDE, TRACK_U32, type GpuTrackStore } from './store';
+import { decodeKey, keyTime, trackFloats, FLAG_AIR, FLAG_ATTITUDE, FLAG_GAPS, GAP_BIT, TRACK_U32, type GpuTrackStore } from './store';
+import { gapFade } from '../../data/gaps';
 
 export interface TrackPose {
   x: number;
@@ -24,10 +25,12 @@ export interface TrackPose {
   u: [number, number, number];
   /** The key at or before the time: its index. */
   key: number;
+  /** How much of it shows: below 1 while it fades out in a gap in its samples (`data/gaps.ts`). */
+  alpha: number;
 }
 
 export function emptyPose(): TrackPose {
-  return { x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, f: [1, 0, 0], u: [0, 1, 0], key: -1 };
+  return { x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, f: [1, 0, 0], u: [0, 1, 0], key: -1, alpha: 1 };
 }
 
 const s8 = (v: number) => ((v & 0xff) << 24) >> 24;
@@ -36,7 +39,13 @@ function unpack(v: number, out: number[]): void {
   out[0] = s8(v) / 127;
   out[1] = s8(v >>> 8) / 127;
   out[2] = s8(v >>> 16) / 127;
-  out[3] = s8(v >>> 24) / 127;
+  // The top bit is the gap bit (`store.ts` GAP_BIT): w is 0 or more.
+  out[3] = s8((v >>> 24) & 0x7f) / 127;
+}
+
+/** Whether a gap in the samples follows key `j` (`store.ts` GAP_BIT). */
+function gapAfter(s: GpuTrackStore, j: number): boolean {
+  return (s.keysB[j] & GAP_BIT) !== 0;
 }
 
 function rotate(q: number[], x: number, y: number, z: number, out: [number, number, number]): void {
@@ -59,8 +68,12 @@ const K1 = [0, 0, 0, 0];
 const KP = [0, 0, 0, 0];
 const KN = [0, 0, 0, 0];
 
-/** The velocity at key `j` (decoded into `at`), the three-point estimate from its neighbours. */
-function velocity(s: GpuTrackStore, b: number, j: number, at: number[], first: number, last: number, out: number[]): void {
+/** The velocity at key `j` (decoded into `at`), the three-point estimate from its neighbours; a gap ends the track there (`gaps`). */
+function velocity(s: GpuTrackStore, b: number, j: number, at: number[], first: number, last: number, out: number[], gaps = false): void {
+  if (gaps) {
+    if (j < last && gapAfter(s, j)) last = j;
+    if (j > first && gapAfter(s, j - 1)) first = j;
+  }
   if (j > first && j < last) {
     decodeKey(s, b, j - 1, KP);
     decodeKey(s, b, j + 1, KN);
@@ -101,8 +114,25 @@ export function evaluateTrack(s: GpuTrackStore, i: number, t: number, stale: num
   }
   const k = lo;
   out.key = k;
+  out.alpha = 1;
   decodeKey(s, b, k, K0);
   let sP = 0;
+  const gaps = (flags & FLAG_GAPS) !== 0;
+  if (gaps && k < last && gapAfter(s, k)) {
+    // A gap in its samples follows: held at its last key, faded out once its next update is late, then hidden.
+    const before = k > first && !gapAfter(s, k - 1) ? K0[3] - keyTime(s, b, k - 1) : NaN;
+    out.alpha = gapFade(t - K0[3], before);
+    if (out.alpha <= 0) return false;
+    out.x = K0[0];
+    out.y = K0[1];
+    out.z = K0[2];
+    velocity(s, b, k, K0, first, last, va, true);
+    out.vx = va[0];
+    out.vy = va[1];
+    out.vz = va[2];
+    frame(s, k, k, 0, flags, out);
+    return true;
+  }
   if (k === last) {
     // Held past its last key as long as its own sample rate says (slot 14, plus one), never past `stale`.
     const hold = f32[b + 14];
@@ -110,7 +140,7 @@ export function evaluateTrack(s: GpuTrackStore, i: number, t: number, stale: num
     out.x = K0[0];
     out.y = K0[1];
     out.z = K0[2];
-    velocity(s, b, k, K0, first, last, va);
+    velocity(s, b, k, K0, first, last, va, gaps);
     out.vx = va[0];
     out.vy = va[1];
     out.vz = va[2];
@@ -119,8 +149,8 @@ export function evaluateTrack(s: GpuTrackStore, i: number, t: number, stale: num
     const h = K1[3] - K0[3];
     const sv = Math.min(1, Math.max(0, (t - K0[3]) / h));
     sP = sv;
-    velocity(s, b, k, K0, first, last, va);
-    velocity(s, b, k + 1, K1, first, last, vb);
+    velocity(s, b, k, K0, first, last, va, gaps);
+    velocity(s, b, k + 1, K1, first, last, vb, gaps);
     const cx = K1[0] - K0[0], cy = K1[1] - K0[1], cz = K1[2] - K0[2];
     const cap = 1.5 * Math.hypot(cx, cy, cz);
     let m0 = Math.hypot(va[0], va[1], va[2]) * h;

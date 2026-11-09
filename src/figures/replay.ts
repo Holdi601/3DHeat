@@ -405,6 +405,10 @@ export class FigureReplay {
           yaw = seen.yaw;
         }
       }
+      // Fading out where its samples have a gap (`data/gaps.ts`); hidden in it, the motion model leaves its box out.
+      const gm = o.time !== undefined && row >= 0 && d.personId ? MotionModel.of(d) : null;
+      const fade = gm && gm.gapCount ? gm.fadeAt(d.personId![row], o.time!) : 1;
+      if (fade <= 0) continue;
       // How it is drawn by its size on screen (`render/symbols/lod.ts`).
       const ps = o.pixelSize ? o.pixelSize(cubes[c], cubes[c + 1], cubes[c + 2]) : 0;
       const trueLen = ps > 0 ? (longest(t) * o.scale) / ps : Infinity;
@@ -444,14 +448,14 @@ export class FigureReplay {
       if (look && (look.glyph > 0 || look.dart)) {
         const moving = dom !== Domain.Person && dom !== Domain.Static && dom !== Domain.Unknown;
         const w = (word | (moving && !dead ? WORD_MOVING : 0) | deadBit) >>> 0;
-        if (look.dart) this.batches.add(DARTS, relativeFrame(fr, o.origin), Math.max(o.scale, ((o.minPixels ?? 0) * ps) || o.scale), team, 1, 0, -WORD_BASE - w);
-        if (look.glyph > 0) this.glyph(fr.o[0], fr.o[1], fr.o[2], glyphPx(dom, o.symbolPx ?? 28, far), fr.f, look.glyph, fr.u, shown, w);
+        if (look.dart) this.batches.add(DARTS, relativeFrame(fr, o.origin), Math.max(o.scale, ((o.minPixels ?? 0) * ps) || o.scale), team, fade, 0, -WORD_BASE - w);
+        if (look.glyph > 0) this.glyph(fr.o[0], fr.o[1], fr.o[2], glyphPx(dom, o.symbolPx ?? 28, far), fr.f, look.glyph * fade, fr.u, shown, w);
         if (look.figure <= 0) {
           this.placed.push({ box: i, row, kind: kind!, fr, scale, min: t.min, max: t.max });
           continue;
         }
       }
-      const alpha = look ? look.figure : 1;
+      const alpha = (look ? look.figure : 1) * fade;
       if (this.cpuPlace) placeFrame(this.tris, drawn, fr, scale, shown);
       else if (aim && o.time !== undefined && hasJoints(drawn)) {
         // Its turret turned and its gun raised as the data has them now.

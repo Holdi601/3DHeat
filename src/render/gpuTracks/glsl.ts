@@ -13,11 +13,14 @@
  * up + weapon speed (-1: no streak), team colour.
  */
 
-import { CHUNK_SHIFT } from './store';
+import { CHUNK_SHIFT, FLAG_GAPS } from './store';
+import { GAP_FADE_GLSL } from '../../data/gaps';
 import { WRECK_GREY, WRECK_TINT } from '../../figures/wreck';
 import { C_AGM, C_SAM, C_SHIP, D_BOMB, D_CHAFF, D_FLARE, D_GROUND, D_HELI, D_MARKER, D_MISC, D_MISSILE, D_ROCKET, D_SHELL, D_STATIC, FADE_FROM_F, FALLBACK_AIR, FALLBACK_GROUND, WEAPON_PX_F, WORD_BASE, WORD_DEAD, WORD_MOVING } from '../symbols/shaderConsts';
 
 const f = (x: number) => (Number.isInteger(x) ? `${x}.0` : `${x}`);
+/** `TRAIL_SEGMENTS_GL`, for the shaders above it. */
+const TRAIL_SEGMENTS = 48;
 
 /**
  * \`symbols/lod.ts\` in GLSL, as the WebGPU place shader has it (\`shader.ts\`):
@@ -117,15 +120,23 @@ uvec4 trackTexel(int i, int k) { return texelFetch(uTracks, at(i * 4 + k), 0); }
 ${SPAN_GLSL}
 ${FAR_GLSL}
 vec4 unpackQ(uint v) {
-  ivec4 b = ivec4(int(v << 24u) >> 24, int(v << 16u) >> 24, int(v << 8u) >> 24, int(v) >> 24);
+  ivec4 b = ivec4(int(v << 24u) >> 24, int(v << 16u) >> 24, int(v << 8u) >> 24, int(v & 0x7fffffffu) >> 24);
   return vec4(b) / 127.0;
 }
+// A gap in the samples follows key j (\`store.ts\` GAP_BIT, the top bit of its attitude word; w is 0 or more).
+bool gapAfter(int j) { return (texelFetch(uKeysB, at(j), 0).x & 0x80000000u) != 0u; }
+${GAP_FADE_GLSL}
 vec3 rot(vec4 q, vec3 v) {
   vec3 t = 2.0 * cross(q.xyz, v);
   return v + q.w * t + cross(q.xyz, t);
 }
-vec3 vel(int j, int first, int last) {
+vec3 vel(int j, int first, int last, bool gaps) {
   vec4 o = keyAt(j);
+  // A gap ends the track there, either way.
+  if (gaps) {
+    if (j < last && gapAfter(j)) last = j;
+    if (j > first && gapAfter(j - 1)) first = j;
+  }
   if (j > first && j < last) {
     vec4 p = keyAt(j - 1);
     vec4 n = keyAt(j + 1);
@@ -202,19 +213,29 @@ void main() {
   vec3 V;
   float sP = 0.0;
   int kb = k;
-  if (k == last) {
+  // A gap in its samples after this key (\`data/gaps.ts\`): held there, faded out once its next update is late, then hidden.
+  bool gaps = (flags & ${FLAG_GAPS}u) != 0u;
+  bool inGap = gaps && k < last && gapAfter(k);
+  float gapA = 1.0;
+  if (inGap) {
+    float before = k > first && !gapAfter(k - 1) ? A0.w - timeAt(k - 1) : -1.0;
+    gapA = gapFade(t - A0.w, before);
+    if (gapA <= 0.0) return;
+    P = A0.xyz;
+    V = vel(k, first, last, true);
+  } else if (k == last) {
     float hold = uintBitsToFloat(t3.z);
     if (hold < 1e8 && t - A0.w > (hold > 0.5 ? min(uPx.w, hold - 1.0) : uPx.w)) return;
     P = A0.xyz;
-    V = vel(k, first, last);
+    V = vel(k, first, last, gaps);
   } else {
     kb = k + 1;
     vec4 A1 = keyAt(k + 1);
     float h = A1.w - A0.w;
     float s = clamp((t - A0.w) / h, 0.0, 1.0);
     sP = s;
-    vec3 va = vel(k, first, last);
-    vec3 vb = vel(k + 1, first, last);
+    vec3 va = vel(k, first, last, gaps);
+    vec3 vb = vel(k + 1, first, last, gaps);
     vec3 C = A1.xyz - A0.xyz;
     float cap = 1.5 * length(C);
     float m0 = length(va) * h;
@@ -280,10 +301,19 @@ void main() {
     }
   }
   oTeam = vec4(team, -${WORD_BASE}.0 - float(word));
-  oForward = vec4(f, 1.0);
+  oForward = vec4(f, gapA);
   // The streak's speed; past a motor's burn, a million more (thin smoke).
   float sp = weapon && uOpt.x > 0.0 ? speed : -1.0;
   if (sp >= 0.0 && (dom == ${D_MISSILE}u || dom == ${D_ROCKET}u) && age >= burnSeconds(dom, cls)) sp += 1e6;
+  // No streak: how many of its keys back its trail may go before a gap in its samples, as -2 less that (\`TRAIL_GLSL_VS\`).
+  if (sp < 0.0 && gaps) {
+    int back = 0;
+    for (int it = 0; it < ${TRAIL_SEGMENTS}; it++) {
+      if (k - back <= first || gapAfter(k - back - 1)) break;
+      back++;
+    }
+    if (back < ${TRAIL_SEGMENTS}) sp = -2.0 - float(back);
+  }
   oUp = vec4(up, sp);
   oOrigin = vec4(P, 0.0);
   // Off screen: neither dart nor glyph (its streak may still show).
@@ -301,7 +331,7 @@ void main() {
     oOrigin.w = max(uLod.y, uPx.z * pxSize);
   } else if (look.y > 0.0) {
     float gpx = glyphPx(dom);
-    float ga = look.y;
+    float ga = look.y * gapA;
     if (dom == ${D_FLARE}u || dom == ${D_CHAFF}u) {
       ga *= decoyAlpha(dom, age, timeAt(last) + age, float(i));
       if (dom == ${D_CHAFF}u) gpx = clamp(chaffMetres(age) * uLod.x / pxSize, 3.0, 96.0);
@@ -352,7 +382,7 @@ void main() {
 `;
 
 /** Most trail segments a unit, as on WebGPU (`webgpu/tracks.ts`). */
-export const TRAIL_SEGMENTS_GL = 48;
+export const TRAIL_SEGMENTS_GL = TRAIL_SEGMENTS;
 
 /**
  * Trails and drop lines, as the WebGPU place shader writes them (`shader.ts`):
@@ -362,12 +392,15 @@ export const TRAIL_SEGMENTS_GL = 48;
  * its key k - n + 1 back to key k - n, kept while that key is no older than
  * the trail seconds, fading with age; the last line is the drop line, straight
  * down to the data's floor. Units off screen draw neither, as on WebGPU.
+ * A trail stops where a gap in the unit's samples was: the eval pass gives
+ * how many keys back it may go as its streak speed, -2 less that.
  */
 export const TRAIL_GLSL_VS = `#version 300 es
 precision highp float;
 precision highp int;
 precision highp usampler2D;
 layout(location = 4) in vec4 iOrigin;
+layout(location = 6) in vec4 iUp;
 layout(location = 7) in vec4 iTeam;
 uniform usampler2D uTracks;
 uniform usampler2D uKeysA;
@@ -429,6 +462,8 @@ void main() {
     }
     int k = lo;
     if (n > 0 && (k - n < first || timeAt(k - n + 1) < t - W)) return;
+    // Not back across a gap in its samples (the eval pass's count, \`EVAL_GLSL_VS\`).
+    if (n > 0 && iUp.w <= -1.5 && n > int(-iUp.w - 1.5)) return;
     vec4 key = end ? keyAt(k - n) : (n == 0 ? vec4(P, t) : keyAt(k - n + 1));
     // A piece within a metre of where the unit is, at both ends, is not drawn: a thing that stays put
     // (a parked tank, a burnt-out tram) draws nothing, however its samples wobble.

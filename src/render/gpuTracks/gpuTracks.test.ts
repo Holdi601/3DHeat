@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { AttributeColumn, Dataset } from '../../state/types';
 import { emptySample, MotionModel } from '../../figures/motion';
-import { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32, decodeKey, gpuTrackStore, TRACK_U32 } from './store';
+import { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32, decodeKey, FLAG_GAPS, GAP_BIT, gpuTrackStore, TRACK_U32 } from './store';
 import { emptyPose, evaluateTrack } from './evaluate';
 import { PLACE_WGSL, FINISH_WGSL } from './shader';
 import { EVAL_GLSL_VS, TRAIL_GLSL_VS, TRAIL_SEGMENTS_GL } from './glsl';
+import { GAP_FADE_S } from '../../data/gaps';
 
 /** Synthetic aircraft circling, each its own radius and start, sampled at 4 Hz. */
 function dataset(n: number, seconds = 60): Dataset {
@@ -212,5 +213,71 @@ describe('GPU tracks', () => {
     expect(TRAIL_GLSL_VS).toContain('a = 0.8 * clamp(1.0 - (t - key.w) / W, 0.0, 1.0);');
     // The eval pass marks a placed unit with a gun elevation below -99 (what it is, `symbolClass.ts`), which the trail pass keys on.
     expect(EVAL_GLSL_VS).toContain('-1000.0 - float(word));');
+  });
+
+  it('fades a unit out in a gap in its samples, hides it there and brings it back where the next sample is', () => {
+    // Unit 0 drives along x at 10 m/s (weaving: not a client's straight guess), sampled 4 times a second, unheard of from 10 s to 20 s; unit 1 stands still,
+    // sampled the same way with the same silence; unit 2 is sampled every 5 s all along.
+    const rows: { p: number; t: number; x: number; y: number; z: number }[] = [];
+    const X = (t: number) => Math.fround(10 * t + 3 * Math.sin(1.3 * t));
+    for (let t = 0; t <= 30; t += 0.25) {
+      if (t > 10 && t < 20) continue;
+      rows.push({ p: 0, t, x: X(t), y: 0, z: 4 * Math.cos(0.7 * t) }, { p: 1, t, x: 0, y: 0, z: 50 });
+    }
+    for (let t = 0; t <= 30; t += 5) rows.push({ p: 2, t, x: 3 * t, y: 0, z: 100 });
+    rows.sort((a, b) => a.t - b.t || a.p - b.p);
+    const d = plain(rows, 3);
+    const s = gpuTrackStore(d, { maxKeys: 1e9 })!;
+    const flags = (i: number) => s.trackData[i * TRACK_U32 + 5];
+    expect(flags(s.trackOf[0]) & FLAG_GAPS).toBe(FLAG_GAPS);
+    expect(flags(s.trackOf[1]) & FLAG_GAPS).toBe(0);
+    expect(flags(s.trackOf[2]) & FLAG_GAPS).toBe(0);
+    // One gap bit, on the key at 10 s.
+    const i = s.trackOf[0];
+    const first = s.trackData[i * TRACK_U32];
+    const marked: number[] = [];
+    for (let k = first; k < first + s.trackData[i * TRACK_U32 + 1]; k++) if (s.keysB[k] & GAP_BIT) marked.push(k - first);
+    expect(marked).toEqual([40]);
+    const m = MotionModel.of(d)!;
+    expect(m.gapCount).toBe(1);
+    const p = emptyPose();
+    const cpu = emptySample();
+    // Up to the first missed update (10.25 s): where the last sample was, whole; then fading; then gone.
+    for (const [t, alpha] of [[10.1, 1], [10.25 + GAP_FADE_S / 2, 0.5]] as const) {
+      expect(evaluateTrack(s, i, t, 60, p)).toBe(true);
+      expect(p.alpha).toBeCloseTo(alpha, 2);
+      expect(p.x).toBeCloseTo(X(10), 1);
+      expect(m.fadeAt(0, t)).toBeCloseTo(alpha, 2);
+      m.at(0, t, -1, cpu);
+      expect(cpu.x).toBeCloseTo(X(10), 1);
+    }
+    for (const t of [10.6, 15, 19.9]) {
+      expect(evaluateTrack(s, i, t, 60, p)).toBe(false);
+      expect(m.fadeAt(0, t)).toBe(0);
+    }
+    // Back at once where the next sample has it, and on its own curve from there (not from before the gap).
+    expect(evaluateTrack(s, i, 20.01, 60, p)).toBe(true);
+    expect(p.alpha).toBe(1);
+    expect(p.x).toBeCloseTo(X(20.01), 0);
+    expect(evaluateTrack(s, i, 20.1, 60, p)).toBe(true);
+    expect(Math.abs(p.vx - (X(20.25) - X(20)) / 0.25)).toBeLessThan(2);
+    expect(m.fadeAt(0, 20.1)).toBe(1);
+    // The one standing still and the one sampled seldom stay.
+    expect(evaluateTrack(s, s.trackOf[1], 15, 60, p)).toBe(true);
+    expect(evaluateTrack(s, s.trackOf[2], 12, 60, p)).toBe(true);
+    expect(m.fadeAt(1, 15)).toBe(1);
+    // The CPU trail breaks at the gap: no piece of it across 10 s to 20 s.
+    const pts: [number, boolean][] = [];
+    m.trail(0, 5, 25, 0.5, cpu, (q, t, join) => {
+      pts.push([t, join]);
+      return true;
+    });
+    for (let n = 1; n < pts.length; n++) if (pts[n][1]) expect(pts[n][0] - pts[n - 1][0]).toBeLessThan(1);
+    // The shaders: the gap bit kept off the attitude's w, the fade, the trail stopping there.
+    expect(PLACE_WGSL).toContain('fn gapAfter(j : u32) -> bool');
+    expect(PLACE_WGSL).toContain('if (gaps && gapAfter(j - 1u)) { break; }');
+    expect(PLACE_WGSL).toContain('f32(i32(v & 0x7fffffffu) >> 24u) / 127.0');
+    expect(EVAL_GLSL_VS).toContain('gapA = gapFade(t - A0.w, before);');
+    expect(TRAIL_GLSL_VS).toContain('n > int(-iUp.w - 1.5)');
   });
 });
