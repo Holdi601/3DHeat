@@ -340,8 +340,10 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'mackensen': { cls: 'battlecruiser', L: 223.0, B: 30.4, fb: 8, sheer: 4, guns: '80:2/350 67:2/350^2.5 -58:2/350^2.5b -72:2/350b', funnels: [[22, 14, 6], [4, 14, 6]], blocks: [[50, 36, 20, 6, 1]], masts: [[44, 28], [-14, 24]] },
   'ersatz-yorck': { cls: 'battlecruiser', L: 227.8, B: 30.4, fb: 8, sheer: 4, guns: '80:2/380 67:2/380^2.5 -60:2/380^2.5b -74:2/380b', funnels: [[10, 15, 8]], blocks: [[48, 34, 22, 6, 1]], masts: [[42, 28], [-14, 24]] },
   'bayern': { cls: 'battleship', L: 180.0, B: 30.0, fb: 8, guns: '63:2/380 51:2/380^2.5 -50:2/380^2.5b -63:2/380b', funnels: [[12, 14, 6], [2, 14, 6]], blocks: [[38, 26, 20, 6, 1]], masts: [[32, 30], [-18, 22]] },
-  'scharnhorst': { cls: 'battleship', L: 235.0, B: 30.0, fb: 9, sheer: 6, guns: '76:3/283 60:3/283^3 -66:3/283b 28,10:2/150^3 12,10:2/150^3 -30,10:1/150^3b', funnels: [[4, 14, 8]], blocks: [[44, 16, 30, 7, 2], [38, 26, 40, 3]], masts: [[-8, 28]] },
-  'gneisenau-380': { cls: 'battleship', L: 235.0, B: 30.0, fb: 9, sheer: 6, guns: '76:2/380 60:2/380^3 -66:2/380b 28,10:2/150^3 12,10:2/150^3 -30,10:1/150^3b', funnels: [[4, 14, 8]], blocks: [[44, 16, 30, 7, 2], [38, 26, 40, 3]], masts: [[-8, 28]] },
+  // Scharnhorst (and Gneisenau re-gunned): the deck line with its Atlantic bow, turret places, tower, funnel, aft
+  // superstructure and masts from the ONI 204 profile with its height scale (sources.md).
+  'scharnhorst': { cls: 'battleship', L: 235.0, B: 30.0, fb: 5.6, hull: [[117.5, 8.5, 0.45], [108.1, 7.9, 5.25], [89.3, 6.7, 10.5], [51.7, 5.8, 14.55], [23.5, 5.6, 15], [-65.8, 5.6, 15], [-101, 5.5, 12.75], [-117.5, 5.4, 8.25]], guns: '53.7:3/283 38.5:3/283^3 -62.3:3/283b 28,10:2/150^3 12,10:2/150^3 -30,10:1/150^3b', funnels: [[-7, 16.3, 8.5]], blocks: [[30.9, 5.4, 13.2, 8.8, 2]], raised: [[18.5, 6.2, 13.2, 28.3, 3.5]], masts: [[6, 30.4]] },
+  'gneisenau-380': { cls: 'battleship', L: 235.0, B: 30.0, fb: 5.6, hull: [[117.5, 8.5, 0.45], [108.1, 7.9, 5.25], [89.3, 6.7, 10.5], [51.7, 5.8, 14.55], [23.5, 5.6, 15], [-65.8, 5.6, 15], [-101, 5.5, 12.75], [-117.5, 5.4, 8.25]], guns: '53.7:2/380 38.5:2/380^3 -62.3:2/380b 28,10:2/150^3 12,10:2/150^3 -30,10:1/150^3b', funnels: [[-7, 16.3, 8.5]], blocks: [[30.9, 5.4, 13.2, 8.8, 2]], raised: [[18.5, 6.2, 13.2, 28.3, 3.5]], masts: [[6, 30.4]] },
   // Russia and the Soviet Union.
   // Gangut from Jane's Fighting Ships 1914 (profile and plan): four triple turrets on the centre line on a flush deck 6 m,
   // the two funnels and pole masts as built (topmasts 48.3 and 42.3 m over the waterline).
@@ -465,10 +467,18 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   // Fighting Ships 1914 (marked building; the guns as completed for Germany are estimates).
   'pillau': { cls: 'light-cruiser', L: 135.3, B: 13.6, fb: 7, fc: [-10, 2.4], guns: '48:1/150 -48:1/150b 20,5:1/150 -10,5:1/150b', funnels: [[21.2, 9.6, 3], [4.3, 9.6, 3], [-11.5, 9.6, 3]], blocks: [[30, 24, 14, 3, 1]], masts: [[17.4, 33], [-37.5, 33]] },
   'emden-1925': { cls: 'light-cruiser', L: 155.1, B: 14.3, fb: 7, fc: [-20, 2.2], guns: '50:1/150 -50:1/150b 20,6:1/150 6,6:1/150 -10,6:1/150b', funnels: [[12, 11, 4], [0, 11, 4]], blocks: [[30, 22, 16, 4, 1]], masts: [[24, 22], [-20, 18]] },
-  'konigsberg': { cls: 'light-cruiser', L: 174.0, B: 15.3, fb: 7, guns: '56:3/150 -44:3/150^2.5b -58:3/150b', funnels: [[8, 11, 4], [-6, 11, 4]], blocks: [[32, 20, 18, 5, 1]], masts: [[26, 22], [-14, 18]] },
-  'leipzig': { cls: 'light-cruiser', L: 177.0, B: 16.3, fb: 7, guns: '58:3/150 -46:3/150^2.5b -60:3/150b', funnels: [[2, 12, 5]], blocks: [[34, 20, 20, 5, 1]], masts: [[28, 24], [-16, 18]] },
-  'deutschland': { cls: 'heavy-cruiser', L: 186.0, B: 21.7, fb: 8, sheer: 4, guns: '60:3/283 -60:3/283b 10,9:1/150 -6,9:1/150b', funnels: [[0, 12, 6]], blocks: [[36, 16, 26, 6, 2], [32, 20, 34, 3]], masts: [[-14, 22]] },
-  'hipper': { cls: 'heavy-cruiser', L: 202.8, B: 21.3, fb: 8, sheer: 5, guns: '68:2/203 56:2/203^2.5 -54:2/203^2.5b -66:2/203b', funnels: [[4, 13, 6]], blocks: [[38, 18, 26, 6, 2], [34, 22, 34, 3]], masts: [[-14, 24]] },
+  // Königsberg (Köln): the long forecastle to the aft turrets, deck line, turret places, bridge tower, funnels and masts
+  // from the ONI 204 profile with its height scale (sources.md).
+  'konigsberg': { cls: 'light-cruiser', L: 174.0, B: 15.3, fb: 6.4, fc: [-43.5, 2.2], sheer: 1.9, guns: '57.5:3/150^0.4 -36.4:3/150^0.9b -50.6:3/150^0.9b', funnels: [[29.4, 11.9, 4.7, 3.8], [7.5, 13.7, 4.7, 3.8]], blocks: [[51.7, 33, 12.3, 5.0, 1.5]], raised: [[42, 35, 12.3, 19.8, 2.5]], masts: [[37, 24.6]] },
+  // Leipzig (and Nürnberg): the forecastle to the aft turrets, deck line, turret places, bridge tower, funnel and masts
+  // from the ONI 204 profile with its height scale (sources.md).
+  'leipzig': { cls: 'light-cruiser', L: 177.0, B: 16.3, fb: 7.0, fc: [-50.6, 2.3], sheer: 2.2, guns: '58.4:3/150^0.5 -41:3/150^0.5b -55:3/150^0.45b', funnels: [[12.2, 12.7, 7.5, 5.5]], blocks: [[53.6, 35.6, 15.2, 5, 1.5], [39, 27.5, 9.2, 4]], raised: [[41.8, 37, 15.2, 27.8, 2.2]], masts: [[36, 25.6]] },
+  // Deutschland (Lützow): the nearly level main deck stepping down aft, turret places, tower, funnel and masts from the
+  // ONI 204 profile with its height scale (sources.md).
+  'deutschland': { cls: 'heavy-cruiser', L: 186.0, B: 21.7, fb: 7.2, fc: [-57, 2.4], sheer: 0.5, guns: '47:3/283^0.5 -40:3/283^0.9b 10,9:1/150 -6,9:1/150b', funnels: [[2.2, 15.5, 7.0]], blocks: [[42, 18, 15.5, 6.5, 2], [20, -6, 13.6, 6]], raised: [[30, 22, 15.5, 29.0, 3.0]], masts: [[26, 25.3]] },
+  // Admiral Hipper: the flush deck and its sheer, turret places, tower, funnel, aft superstructure and masts from the
+  // ONI 204 profile with its height scale (sources.md).
+  'hipper': { cls: 'heavy-cruiser', L: 202.8, B: 21.3, fb: 5.6, hull: [[101.4, 7.8, 0.32], [93.3, 7.0, 3.7], [77.1, 6.0, 7.5], [44.6, 5.7, 10.3], [20.3, 5.6, 10.65], [-56.8, 5.5, 10.65], [-87.2, 5.3, 9.05], [-101.4, 5.3, 5.86]], guns: '56:2/203 47.5:2/203^1.8 -47.5:2/203^1.8b -56.5:2/203b', funnels: [[9.6, 17.1, 8.0, 6.4]], blocks: [[44, 16.5, 14.8, 6.5, 2], [5, -16, 12.3, 5.5]], raised: [[26, 17.5, 14.8, 28.0, 3.0]], masts: [[-15.5, 39.9]] },
   // Soviet Union.
   'krasny-kavkaz': { cls: 'light-cruiser', L: 169.5, B: 15.7, fb: 7, fc: [-20, 2.2], guns: '56:1/180 46:1/180^2 -48:1/180^2b -58:1/180b', funnels: [[14, 11, 4], [0, 11, 4]], blocks: [[32, 24, 18, 4, 1]], masts: [[28, 24], [-20, 20]] },
   'svetlana': { cls: 'light-cruiser', L: 158.4, B: 15.4, fb: 7, fc: [-14, 2.4], guns: '52:1/130 -52:1/130b 20,6:1/130 -10,6:1/130b', funnels: [[16, 11, 3], [6, 11, 3], [-4, 11, 3]], blocks: [[32, 24, 15, 4, 1]], masts: [[28, 22], [-28, 18]] },
@@ -580,7 +590,9 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   'type-1934a': { cls: 'destroyer', L: 119.0, B: 11.3, fb: 3.2, sheer: 1.2, guns: '47:1/127^0.7 38:1/127^2.9 -30:1/127^3.2b -39:1/127^2.2b -48:1/127b', funnels: [[17.5, 12.6, 5.0, 3.8, 0.08], [-1.5, 10.6, 4.5, 3.5, 0.06]], blocks: [[29.5, 14.5, 9.6, 3.0, 1.5], [3, -11, 7.7, 2.6], [-24, -48, 5.4, 3.0], [15, 10, 6.8, 2.0]], raised: [[28, 21, 9.6, 12, 2.0], [-27, -33, 5.4, 6.2, 2.4]], masts: [[21.5, 28.5]] },
   // Type 1936 (Karl Galster): flush hull, layout, funnels and masts from the ONI 204 profile (sources.md).
   'type-1936': { cls: 'destroyer', L: 123.4, B: 11.8, fb: 5.2, sheer: 1.4, guns: '51:1/127 42:1/127^0.5 -31:1/127^1.2b -40:1/127^0.8b -55:1/127b', funnels: [[15, 7.9, 5.0, 3.8, 0.06], [-5, 6.1, 4.0, 3.2]], blocks: [[30, 14.5, 10.5, 3.0, 1.5], [-1, -12, 7.8, 2.6], [-27, -49, 6.7, 3.0]], raised: [[28, 20, 10.5, 12.5, 2.0]], masts: [[18.5, 24.6]] },
-  'type-1936a': { cls: 'destroyer', L: 127.0, B: 12.0, fb: 6, sheer: 3, guns: '50:2/150 -34:1/150^2b -46:1/150b -56:1/150b', funnels: [[10, 8, 3], [-4, 8, 3]], blocks: [[32, 24, 13, 4, 1]], masts: [[22, 18]] },
+  // Type 1936A (Narvik): forecastle to aft of the first funnel, layout, funnels, masts and gun places from the ONI 204
+  // profile (sources.md); the twin 15 cm turret forward where the sheet's single gun stands.
+  'type-1936a': { cls: 'destroyer', L: 127.0, B: 12.0, fb: 4.9, fc: [13.6, 1.6], sheer: 1.8, guns: '40.6:2/150 -28.1:1/150^2b -39.3:1/150^2b -46.7:1/150b', funnels: [[16.2, 9.0, 5.4, 3.8, 0.06], [-2.3, 8.4, 3.9, 3.0]], blocks: [[36.2, 29, 8.8, 3.0, 1], [30.1, 20, 10.5, 3.2, 1], [-23, -43.2, 5.6, 3.0], [0.5, -11, 7.1, 3.2]], raised: [[30, 23.3, 10.5, 12.6, 2.0]], masts: [[20.6, 22.5]] },
   'type-1936c': { cls: 'destroyer', L: 127.0, B: 12.2, fb: 6, sheer: 3, guns: '50:2/128 -38:2/128^2b -52:2/128b', funnels: [[10, 8, 3], [-4, 8, 3]], blocks: [[32, 24, 13, 4, 1]], masts: [[22, 18]] },
   'type-1939': { cls: 'destroyer', L: 102.5, B: 10.0, fb: 5.4, fc: [-6, 1.4], guns: '40:1/105 -30:1/105^2b -42:1/105b', funnels: [[6, 7, 3], [-6, 7, 3]], blocks: [[26, 20, 10, 3, 1]], masts: [[18, 14]] },
   'z51': { cls: 'destroyer', L: 114.3, B: 11.0, fb: 6, sheer: 3, guns: '44:1/128 36:1/128^2 -36:1/128^2b -46:1/128b', funnels: [[2, 8, 3.5]], blocks: [[28, 20, 12, 3.4, 1]], masts: [[18, 18]] },
@@ -664,7 +676,9 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
     ttAt: [-2.6, 12],
     more: { stem: 1.5 },
   },
-  'hatsuharu': { cls: 'destroyer', L: 109.5, B: 10.0, fb: 5, fc: [16, 1.4], guns: '40:2/127 33:2/127^2 -38:2/127b', funnels: [[10, 7, 3], [-2, 7, 3]], blocks: [[28, 22, 12, 3, 1]], masts: [[20, 15]] },
+  // Hatsuharu: deck line, forecastle, funnels, bridge, masts and tube places from the ONI 222-J profile with its
+  // height scale (sources.md); the guns as built.
+  'hatsuharu': { cls: 'destroyer', L: 109.5, B: 10.0, fb: 4.7, fc: [17.8, 1.4], sheer: 1.15, guns: '39.1:2/127 32:2/127^2 -36.5:2/127b', funnels: [[12.7, 8.4, 4.0, 3.0], [-3.1, 8.0, 3.4, 2.6]], blocks: [[29.4, 21.8, 11.7, 3.0, 1], [-16.8, -24.9, 5.6, 2.4]], raised: [[27.3, 22.0, 11.7, 14.3, 1.8]], masts: [[18.6, 17.1]] },
   // Shiratsuyu: deck line, forecastle break, bridge and director, funnels, masts and gun places measured on the
   // ONI 222-J profile of the Hatsuharu-Shigure class (sources.md); both after mounts stand level there.
   'shiratsuyu': { cls: 'destroyer', L: 107.5, B: 9.9, fb: 4.8, fc: [16, 1.7], sheer: 0.8, guns: '40:2/127 -31:1/127^1b -39:2/127^1b', funnels: [[12.4, 9, 3], [-3, 8.4, 3]], blocks: [[29, 22, 12.8, 3, 1]], raised: [[27.5, 23.5, 12.8, 14.6, 2]], sl: [[-10, 8.5]], masts: [[19, 16]] },
@@ -688,8 +702,12 @@ const S: Record<string, Parameters<typeof ship>[0]> = {
   // Turbine: deck line, bridge, funnels and masts measured on the broadside photo in ONI 202 (sources.md).
   'turbine': { cls: 'destroyer', L: 93.2, B: 9.2, fb: 5.2, fc: [24, 1.3], sheer: 0.8, guns: '39:2/120 -26:2/120^1.6b', funnels: [[20.5, 8.6, 4.4, 3.4], [12, 7.1, 3.6, 2.9]], blocks: [[37, 25, 12, 3.0, 1]], masts: [[25, 20.6]] },
   'freccia': { cls: 'destroyer', L: 96.2, B: 9.8, fb: 5, fc: [10, 1.2], guns: '38:2/120 -38:2/120b', funnels: [[2, 6.5, 3.4]], blocks: [[24, 16, 10, 3, 1]], masts: [[14, 14]] },
-  'maestrale': { cls: 'destroyer', L: 106.7, B: 10.2, fb: 5.2, fc: [12, 1.2], guns: '40:2/120 -34:2/120^2b', funnels: [[2, 7, 3.4]], blocks: [[26, 18, 11, 3, 1]], masts: [[16, 15]] },
-  'soldati': { cls: 'destroyer', L: 106.7, B: 10.2, fb: 5.2, fc: [12, 1.2], guns: '40:2/120 -34:2/120^2b 0:1/120', funnels: [[4, 7, 3.4]], blocks: [[26, 18, 11, 3, 1]], masts: [[16, 15]] },
+  // Maestrale (Grecale): forecastle to aft of the bridge, the low main deck, the big trunked funnel, bridge tower, gun
+  // and tube places from the ONI 202 profile with its height scale (sources.md).
+  'maestrale': { cls: 'destroyer', L: 106.7, B: 10.2, fb: 4.0, fc: [10.3, 1.8], sheer: 1.1, guns: '31:2/120 -33.2:2/120^2b', funnels: [[7.4, 8.5, 5.4, 3.6]], blocks: [[25.2, 13.4, 9.4, 3.0, 1], [-28.5, -39.8, 4.1, 2.6], [-14.4, -18.1, 5.0, 1.8], [1.3, -3.2, 5.1, 2.2]], raised: [[16.0, 13.4, 9.4, 14.4, 1.4]], masts: [[13.2, 13.4]] },
+  // Soldati: the Oriani/Maestrale hull (106.7 x 10.2 m, the same lines), laid out as the Maestrale sheet; the fifth
+  // gun (star shell) between the tube mounts.
+  'soldati': { cls: 'destroyer', L: 106.7, B: 10.2, fb: 4.0, fc: [10.3, 1.8], sheer: 1.1, guns: '31:2/120 -33.2:2/120^2b -16.2:1/120', funnels: [[7.4, 8.5, 5.4, 3.6]], blocks: [[25.2, 13.4, 9.4, 3.0, 1], [-28.5, -39.8, 4.1, 2.6], [1.3, -3.2, 5.1, 2.2]], raised: [[16.0, 13.4, 9.4, 14.4, 1.4]], masts: [[13.2, 13.4]] },
   'navigatori': { cls: 'destroyer', L: 107.3, B: 10.2, fb: 5.2, fc: [14, 1.2], guns: '40:2/120 -2:2/120 -40:2/120b', funnels: [[10, 7, 3], [-12, 7, 3]], blocks: [[26, 18, 11, 3, 1]], masts: [[16, 15]] },
   'leone': { cls: 'destroyer', L: 113.4, B: 10.4, fb: 5.2, fc: [18, 1.3], guns: '42:2/120 35:2/120^2 -35:2/120^2b -44:2/120b', funnels: [[12, 7, 2.6], [4, 7, 2.6], [-4, 7, 2.6]], blocks: [[28, 22, 11, 3, 1]], masts: [[20, 15]] },
   'medaglie-d-oro': { cls: 'destroyer', L: 120.7, B: 12.1, fb: 5.6, sheer: 2, guns: '46:1/135 39:1/135^2 -40:1/135^2b -50:1/135b', funnels: [[2, 8, 3.6]], blocks: [[30, 22, 12, 3.6, 1]], masts: [[20, 17]] },
@@ -745,8 +763,8 @@ const AFT: Record<string, Partial<ShipO>> = {
   'mackensen': { blocks: [[-20, -44, 13, 4]], masts: [[44, 28, 't'], [-14, 24]] },
   'ersatz-yorck': { blocks: [[-20, -46, 13.5, 4]], masts: [[42, 28, 't'], [-14, 24]] },
   'bayern': { blocks: [[-14, -38, 13.5, 4]], masts: [[32, 30, 't'], [-18, 22]] },
-  'scharnhorst': { blocks: [[-14, -48, 15, 6], [-24, -40, 19, 4]], dirs: [[-34, 23, 1.8]] },
-  'gneisenau-380': { blocks: [[-14, -48, 15, 6], [-24, -40, 19, 4]], dirs: [[-34, 23, 1.8]] },
+  'scharnhorst': { blocks: [[-13.6, -49.4, 12.5, 7]], raised: [[-24.7, -37, 12.5, 13.8, 4]], dirs: [[-30, 14.5, 1.8]], masts: [[6, 30.4, 'p', 22.7], [-39.5, 38.4]] },
+  'gneisenau-380': { blocks: [[-13.6, -49.4, 12.5, 7]], raised: [[-24.7, -37, 12.5, 13.8, 4]], dirs: [[-30, 14.5, 1.8]], masts: [[6, 30.4, 'p', 22.7], [-39.5, 38.4]] },
   'gangut': { blocks: [[-42.3, -46.2, 14.2, 3]] },
   'imperatritsa-mariya': { blocks: [[-32, -44, 12.5, 3.5]] },
   'izmail': { blocks: [[-40, -52, 12.5, 3.5]] },
@@ -800,10 +818,10 @@ const AFT: Record<string, Partial<ShipO>> = {
   // German cruisers.
   'pillau': { blocks: [[-18, -28, 10.5, 2.5]], sl: [[-6, 12.5]] },
   'emden-1925': { blocks: [[-18, -26, 10.5, 3]], sl: [[-8, 13]], masts: [[24, 22, 't'], [-20, 18]] },
-  'konigsberg': { blocks: [[-12, -30, 12, 5], [-16, -26, 14.5, 3.5]], dirs: [[-22, 17]], launchers: [{ x: -2, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
-  'leipzig': { blocks: [[-12, -30, 12, 5], [-16, -26, 14.5, 3.5]], dirs: [[-22, 17]], launchers: [{ x: -8, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
-  'deutschland': { blocks: [[-12, -36, 13, 6], [-18, -30, 17, 4]], dirs: [[-26, 21, 1.6]], masts: [[-18, 22]] },
-  'hipper': { blocks: [[-12, -36, 13.5, 6], [-16, -30, 17.5, 4]], dirs: [[-28, 22, 1.6]], masts: [[-20, 24]], launchers: [{ x: -6, length: 7, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
+  'konigsberg': { blocks: [[-5.2, -17.7, 11.2, 4.5]], dirs: [[-11.5, 13.4, 1.4]], masts: [[37, 24.6, 'p', 13.4], [-5.2, 23.6]], launchers: [{ x: -2, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
+  'leipzig': { blocks: [[-5.8, -22.6, 10.4, 5]], dirs: [[-8.7, 15.2, 1.6]], masts: [[36, 25.6, 'p', 20.8], [8.5, 25.6]], launchers: [{ x: -8, length: 6, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
+  'deutschland': { blocks: [[-12, -26, 13.5, 5.5]], dirs: [[26, 31, 2.0], [-20, 14.8, 1.6]], masts: [[26, 25.3, 'p', 21.8], [-2, 26.3]] },
+  'hipper': { blocks: [[-19, -41, 10.8, 6]], raised: [[-28, -36, 10.8, 15.9, 3.5]], dirs: [[21.5, 30.5, 2.0], [-32, 16.6, 1.6]], masts: [[17.3, 31.2, 'p', 22.4], [-15.5, 39.9]], launchers: [{ x: -6, length: 7, width: 2.4, kind: 'tubes', count: 1, elevation: 0 }] },
   // Soviet cruisers.
   'krasny-kavkaz': { blocks: [[-22, -32, 10.5, 3]], sl: [[-8, 13]] },
   'svetlana': { blocks: [[-20, -30, 10, 2.5]], sl: [[-10, 12]] },
@@ -868,7 +886,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   'raubtier': { masts: [[14.5, 22.3], [-7.5, 13.1]] },
   'type-1934a': { masts: [[21.5, 28.5], [-24, 11.5]] },
   'type-1936': { masts: [[18.5, 24.6], [-35, 9.6]] },
-  'type-1936a': { blocks: [[-22, -28, 8.4, 2.4]], masts: [[22, 18, 't'], [-24, 10]] },
+  'type-1936a': { masts: [[20.6, 22.5, 't'], [-33.8, 10.9, 'p', 2.2]], sl: [[-5.7, 10.5]], ttAt: [10.4, 27.4] },
   'type-1936c': { blocks: [[-24, -30, 8.4, 2.4]], masts: [[22, 18, 't'], [-22, 10]] },
   'type-1939': { masts: [[18, 14, 't']] },
   // Soviet destroyers.
@@ -895,7 +913,7 @@ const AFT: Record<string, Partial<ShipO>> = {
   'momi': { rake: 0.02, sl: [[-5.9, 5.2]] },
   'kamikaze': { rake: 0.1 },
   'mutsuki': { rake: 0.1 },
-  'hatsuharu': { masts: [[20, 15, 't'], [-22, 9]], rake: 0.15 },
+  'hatsuharu': { masts: [[18.6, 17.1, 't'], [-23.0, 12.0]], rake: 0.15, sl: [[-6.5, 7.7]], ttAt: [7.4, 16.6] },
   'shiratsuyu': { masts: [[19, 16, 't'], [-24, 13, 't']], rake: 0.15 },
   'kagero': { funnels: [[10, 7.5, 3.8, 2.8], [-2, 7.5, 3, 2.4]], masts: [[22, 16, 't'], [-24, 10]], rake: 0.14, blocks: [[28.5, 24.5, 13.2, 2.6]] },
   'matsu': { rake: 0.02, sl: [[-12.6, 7.1]] },
@@ -903,8 +921,8 @@ const AFT: Record<string, Partial<ShipO>> = {
   // Italian destroyers.
   'turbine': { masts: [[25, 20.6], [-18, 24]] },
   'freccia': { masts: [[14, 14, 't'], [-18, 8]] },
-  'maestrale': { masts: [[16, 15, 't'], [-20, 9]] },
-  'soldati': { masts: [[16, 15, 't'], [-20, 9]] },
+  'maestrale': { masts: [[13.2, 13.4, 't'], [-28.2, 15.2]], ttAt: [-5.9, 13.8] },
+  'soldati': { masts: [[13.2, 13.4, 't'], [-28.2, 15.2]], ttAt: [-5.9, 13.8] },
   'navigatori': { masts: [[16, 15, 't'], [-22, 9]] },
   'leone': { masts: [[20, 15, 't'], [-24, 10]] },
   'medaglie-d-oro': { masts: [[20, 17, 't']] },

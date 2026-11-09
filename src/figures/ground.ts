@@ -519,10 +519,16 @@ function densify(poly: P2[], step: number): P2[] {
   return out;
 }
 
+/**
+ * An add-on's shade of the team colour unless its spec says: a step darker than the hull and turret plates (0.9), so
+ * add-on armour, bricks, bins and sight boxes read as parts of their own on the body they sit on, not as bumps in it.
+ */
+const ADD_ON_SHADE = 0.76;
+
 /** Draws an add-on about its origin (the main turret's centre and base, or the hull's middle on the ground). */
 function addOn(k: Kit, a: AddOn, o: Vec3): void {
   const buf = a.metal || a.paint ? k.fixed : k.team;
-  const col = a.paint ? PAINT[a.paint] : a.metal ? PAINT.metal : grey(a.shade ?? 0.86);
+  const col = a.paint ? PAINT[a.paint] : a.metal ? PAINT.metal : grey(a.shade ?? ADD_ON_SHADE);
   const turnedAt = (c: Vec3, sd: number) => turned(k.fr, c, a.roll ?? 0, a.pitch ?? 0, a.yaw ?? 0, sd);
   for (const sd of a.mirror ? [1, -1] : [1]) {
     const c: Vec3 = [o[0] + a.at[0], o[1] + a.at[1] * sd, o[2] + a.at[2]];

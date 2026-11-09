@@ -9,13 +9,13 @@
  * moves) and the instance (origin + scale, forward + alpha, up + turret yaw,
  * team colour + gun elevation); moving parts as `articulate` in
  * `figures/instances.ts` moves them. Output: the
- * world position (for the distance fade the other scene geometry has) and
- * the lit colour.
+ * world position (for the distance fade the other scene geometry has), the
+ * lit colour and the triangle's feature edges (`figureEdge`).
  */
 
 import { NO_PITCH_BELOW } from '../figures/instances';
 import { WRECK_BASE, WRECK_GAIN } from '../figures/wreck';
-import { AMBIENT, GROUND_COLOR, SHEEN_BASE, SHEEN_COLOR, SHEEN_UP, SKY_COLOR, SUN_COLOR, SUN_DIR, UNLIT } from '../figures/light';
+import { AMBIENT, GROUND_COLOR, KNEE, SHEEN_BASE, SHEEN_COLOR, SHEEN_UP, SKY_COLOR, SUN_COLOR, SUN_DIR, UNLIT } from '../figures/light';
 
 const f = (v: number) => {
   const s = String(Number(v.toPrecision(9)));
@@ -34,7 +34,8 @@ vec3 shadeFigure(vec3 base, vec3 n, float gloss) {
   float sheen = gloss * (${f(SHEEN_BASE)} + ${f(SHEEN_UP)} * up * up);
   vec3 ground = ${v3('vec3', GROUND_COLOR)};
   vec3 light = ${f(AMBIENT)} + ground + (${v3('vec3', SKY_COLOR)} - ground) * h + ${v3('vec3', SUN_COLOR)} * sun;
-  return min(vec3(1.0), base * light + sheen * ${v3('vec3', SHEEN_COLOR)});
+  vec3 c = base * light + sheen * ${v3('vec3', SHEEN_COLOR)};
+  return min(c, vec3(${f(KNEE)})) + ${f(1 - KNEE)} * (1.0 - exp(-max(c - ${f(KNEE)}, vec3(0.0)) / ${f(1 - KNEE)}));
 }`;
 }
 
@@ -49,11 +50,100 @@ fn shadeFigure(base : vec3<f32>, n : vec3<f32>, gloss : f32) -> vec3<f32> {
   let sheen = gloss * (${f(SHEEN_BASE)} + ${f(SHEEN_UP)} * up * up);
   let ground = ${v3('vec3<f32>', GROUND_COLOR)};
   let light = ${f(AMBIENT)} + ground + (${v3('vec3<f32>', SKY_COLOR)} - ground) * h + ${v3('vec3<f32>', SUN_COLOR)} * sun;
-  return min(vec3<f32>(1.0), base * light + sheen * ${v3('vec3<f32>', SHEEN_COLOR)});
+  let c = base * light + sheen * ${v3('vec3<f32>', SHEEN_COLOR)};
+  return min(c, vec3<f32>(${f(KNEE)})) + ${f(1 - KNEE)} * (1.0 - exp(-max(c - vec3<f32>(${f(KNEE)}), vec3<f32>(0.0)) / ${f(1 - KNEE)}));
 }`;
 }
 
-/** `articulate` in GLSL ES 3.0: a gun raised about its trunnion, then carried round with its turret. */
+/**
+ * The feature edges (`markEdges` in `figures/instances.ts`): a thin dark line
+ * along each crease and rim, a pixel wide whatever the distance, so add-on
+ * armour, bricks, bins and sight heads stand out from the plates they sit on
+ * the way they do in a recognition drawing. Faded out on triangles only a few
+ * pixels across, so a small or far figure keeps its colour instead of turning
+ * into lines. The vertex shader turns the edge code into a barycentric
+ * (a side that is no feature held at 1); the fragment shader reads how many
+ * pixels the fragment is from the nearest feature side and how big its
+ * triangle is on screen.
+ */
+export const EDGE_DARK = 0.5;
+/** Triangles under the first size (pixels, across) get no lines, over the second full ones. */
+export const EDGE_FADE: readonly [number, number] = [3, 9];
+
+function glslEdgeOf(): string {
+  return `
+vec3 edgeOf(float code) {
+  if (code < 0.5) return vec3(1.0);
+  float c = code - 1.0;
+  float k = mod(c, 3.0);
+  float m = floor(c / 3.0 + 0.01);
+  vec3 b = vec3(k < 0.5 ? 1.0 : 0.0, abs(k - 1.0) < 0.5 ? 1.0 : 0.0, k > 1.5 ? 1.0 : 0.0);
+  return max(b, vec3(mod(m, 2.0) > 0.5 ? 1.0 : 0.0, mod(floor(m / 2.0), 2.0) > 0.5 ? 1.0 : 0.0, m > 3.5 ? 1.0 : 0.0));
+}`;
+}
+
+function wgslEdgeOf(): string {
+  return `
+fn edgeOf(code : f32) -> vec3<f32> {
+  if (code < 0.5) { return vec3<f32>(1.0); }
+  let c = u32(code - 0.5);
+  let k = c % 3u;
+  let m = c / 3u;
+  let b = vec3<f32>(select(0.0, 1.0, k == 0u), select(0.0, 1.0, k == 1u), select(0.0, 1.0, k == 2u));
+  return max(b, vec3<f32>(f32(m & 1u), f32((m >> 1u) & 1u), f32((m >> 2u) & 1u)));
+}`;
+}
+
+/** How dark the feature line makes a fragment: 1 none, \`EDGE_DARK\` on a line of a big triangle. Derivatives: call in uniform flow. */
+function glslEdgeShade(): string {
+  return `
+float edgeShade(vec3 e) {
+  vec3 w = max(fwidth(e), vec3(1e-6));
+  vec3 px = e / w;
+  float near = min(px.x, min(px.y, px.z));
+  vec3 across = mix(1.0 / w, vec3(1e6), step(0.999, e));
+  float size = min(across.x, min(across.y, across.z));
+  float line = (1.0 - smoothstep(0.35, 1.35, near)) * smoothstep(${f(EDGE_FADE[0])}, ${f(EDGE_FADE[1])}, size);
+  return 1.0 - ${f(EDGE_DARK)} * line;
+}`;
+}
+
+function wgslEdgeShade(): string {
+  return `
+fn edgeShade(e : vec3<f32>) -> f32 {
+  let w = max(fwidth(e), vec3<f32>(1e-6));
+  let px = e / w;
+  let near = min(px.x, min(px.y, px.z));
+  let across = mix(1.0 / w, vec3<f32>(1e6), step(vec3<f32>(0.999), e));
+  let size = min(across.x, min(across.y, across.z));
+  let line = (1.0 - smoothstep(0.35, 1.35, near)) * smoothstep(${f(EDGE_FADE[0])}, ${f(EDGE_FADE[1])}, size);
+  return 1.0 - ${f(EDGE_DARK)} * line;
+}`;
+}
+
+/** The figures' fragment shader in GLSL ES 3.0: the scene's distance fade, the feature lines. */
+export function figureGlslFs(): string {
+  return `#version 300 es
+precision highp float;
+in vec4 vColor;
+in vec3 vWorld;
+in vec3 vEdge;
+uniform vec3  uCameraPos;
+uniform float uFadeStart;
+uniform float uFadeEnd;
+layout(location = 0) out vec4 outColor;
+${glslEdgeShade()}
+void main() {
+  float k = edgeShade(vEdge);
+  float d = distance(vWorld, uCameraPos);
+  float fade = 1.0 - smoothstep(uFadeStart, uFadeEnd, d);
+  if (fade <= 0.001) discard;
+  outColor = vec4(vColor.rgb * k, vColor.a * fade);
+}
+`;
+}
+
+/** \`articulate\` in GLSL ES 3.0: a gun raised about its trunnion, then carried round with its turret. */
 function glslArticulate(): string {
   return `
 vec3 articulate(vec3 v, float yaw, float pitch, bool point) {
@@ -130,7 +220,9 @@ layout(location = 10) in vec4 aArt2;    // gun built elevation
 uniform mat4 uViewProj;
 out vec4 vColor;
 out vec3 vWorld;
+out vec3 vEdge;
 ${glslShade()}
+${glslEdgeOf()}
 ${glslArticulate()}
 void main() {
   // Not drawn: no instance here (scale 0, the WebGL2 tracks' rows that are glyphs), or a dart's vertex of another
@@ -141,6 +233,7 @@ void main() {
     gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
     vColor = vec4(0.0);
     vWorld = vec3(0.0);
+    vEdge = vec3(1.0);
     return;
   }
   vec3 f = iForward.xyz;
@@ -155,6 +248,7 @@ void main() {
   if (iTeam.r < 0.0) base = -iTeam.rgb * (${f(WRECK_BASE)} + ${f(WRECK_GAIN)} * dot(aColor.rgb, vec3(0.299, 0.587, 0.114)));
   vColor = vec4(shadeFigure(base, n, aNormal.w), aColor.a * iForward.w);
   vWorld = world;
+  vEdge = edgeOf(aArt2.z);
   gl_Position = uViewProj * vec4(world, 1.0);
 }
 `;
@@ -173,8 +267,11 @@ struct FigureOut {
   @builtin(position) pos : vec4<f32>,
   @location(0) colour : vec4<f32>,
   @location(1) world : vec3<f32>,
+  @location(2) edge : vec3<f32>,
 };
 ${wgslShade()}
+${wgslEdgeOf()}
+${wgslEdgeShade()}
 ${wgslArticulate()}
 
 @vertex
@@ -200,6 +297,7 @@ fn vsFigure(
     out.pos = vec4<f32>(2.0, 2.0, 2.0, 1.0);
     out.colour = vec4<f32>(0.0);
     out.world = vec3<f32>(0.0);
+    out.edge = vec3<f32>(1.0);
     return out;
   }
   let f = forward.xyz;
@@ -215,16 +313,18 @@ fn vsFigure(
   if (team.r < 0.0) { base = -team.rgb * (${f(WRECK_BASE)} + ${f(WRECK_GAIN)} * dot(colour.rgb, vec3<f32>(0.299, 0.587, 0.114))); }
   out.colour = vec4<f32>(shadeFigure(base, n, normal.w), colour.a * forward.w);
   out.world = world;
+  out.edge = edgeOf(art2.z);
   out.pos = u.viewProj * vec4<f32>(world, 1.0);
   return out;
 }
 
 @fragment
 fn fsFigure(in : FigureOut) -> @location(0) vec4<f32> {
+  let k = edgeShade(in.edge);
   let d = distance(in.world, u.camera.xyz);
   let fade = 1.0 - smoothstep(u.cfg.x, u.cfg.y, d);
   if (fade <= 0.001) { discard; }
-  return vec4<f32>(in.colour.rgb, in.colour.a * fade);
+  return vec4<f32>(in.colour.rgb * k, in.colour.a * fade);
 }
 `;
 }

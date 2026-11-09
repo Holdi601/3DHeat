@@ -18,7 +18,7 @@
  */
 
 import { VertexBuffer, type Frame3, type Rgb, type Vec3 } from '../race/geometry';
-import { AMBIENT, GROUND_COLOR, SHEEN_BASE, SHEEN_COLOR, SHEEN_UP, SKY_COLOR, SUN_COLOR, SUN_DIR, UNLIT } from './light';
+import { AMBIENT, GROUND_COLOR, knee, SHEEN_BASE, SHEEN_COLOR, SHEEN_UP, SKY_COLOR, SUN_COLOR, SUN_DIR, UNLIT } from './light';
 
 /**
  * A kit's vertex buffer: the usual seven floats a vertex, and beside them the
@@ -425,9 +425,9 @@ function lit(out: VertexBuffer, d: Float32Array, n: Float32Array, fr: Frame3, k:
       const h = 0.5 + 0.5 * wy;
       const up = wy > 0 ? wy : 0;
       const sheen = n[j + 3] * (sheenBase + sheenUp * up * up);
-      cr = br * (g0 + k0 * h + s0 * sun) + sheen * h0;
-      cg = bg * (g1 + k1 * h + s1 * sun) + sheen * h1;
-      cb = bb * (g2 + k2 * h + s2 * sun) + sheen * h2;
+      cr = knee(br * (g0 + k0 * h + s0 * sun) + sheen * h0);
+      cg = knee(bg * (g1 + k1 * h + s1 * sun) + sheen * h1);
+      cb = knee(bb * (g2 + k2 * h + s2 * sun) + sheen * h2);
     }
     out.vertex(
       o[0] + f[0] * a + u[0] * b + r[0] * c,

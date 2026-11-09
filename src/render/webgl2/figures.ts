@@ -7,8 +7,7 @@
 
 import type { FigureBatch } from '../../figures/instances';
 import { INSTANCE_STRIDE, MESH_STRIDE } from '../../figures/instances';
-import { figureGlslVs } from '../figureShaders';
-import { LINE_FS } from './shaders';
+import { figureGlslFs, figureGlslVs } from '../figureShaders';
 import { compileProgram, UniformCache } from './glutil';
 
 interface MeshGl {
@@ -29,7 +28,7 @@ export class GlFigures {
   private frame = 0;
 
   constructor(private readonly gl: WebGL2RenderingContext) {
-    this.prog = compileProgram(gl, figureGlslVs(), LINE_FS, 'figures');
+    this.prog = compileProgram(gl, figureGlslVs(), figureGlslFs(), 'figures');
     this.u = new UniformCache(gl, this.prog);
     const b = gl.createBuffer();
     if (!b) throw new Error('createBuffer failed (figure instances)');

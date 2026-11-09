@@ -25,6 +25,13 @@ const aft = (s: NavalSpec, min?: number) => mains(s, min).filter((t) => t.x < 0 
 /** A gun standing higher than the one ahead of it on that end (B or X superfiring). */
 const superfires = (ts: NavalTurret[]) => ts.some((t) => ts.some((u) => Math.abs(u.x) > Math.abs(t.x) && (t.up ?? 0) - (u.up ?? 0) >= 1));
 const funnels = (s: NavalSpec) => s.funnels?.length ?? 0;
+/** The deck's rise from the middle to the bow: the hull outline's when drawn from stations, else the sheer. */
+const bowRise = (s: NavalSpec) => {
+  const t = s.hullOutline?.top;
+  if (!t) return s.sheer ?? 0;
+  const mid = t.reduce((a, p) => (Math.abs(p[0]) < Math.abs(a[0]) ? p : a));
+  return Math.max(...t.map((p) => p[1])) - mid[1];
+};
 const mastKind = (k: 'pole' | 'tripod' | 'lattice') => (s: NavalSpec) => !!s.masts?.some((m) => (m.kind ?? 'pole') === k);
 const twins = (s: NavalSpec, min?: number) => mains(s, min).every((t) => t.barrels === 2);
 const singles = (s: NavalSpec, min?: number) => mains(s, min).every((t) => t.barrels === 1);
@@ -623,7 +630,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
     { cue: 'three triple 28 cm turrets: two forward, one aft', check: (s) => battery(s, 0.25, 2, 1, 3) },
     { cue: 'B turret superfiring over A', check: (s) => superfires(fwd(s, 0.25)) },
     { cue: 'one funnel', check: (s) => funnels(s) === 1 },
-    { cue: 'Atlantic bow with a strong sheer', check: (s) => (s.sheer ?? 0) >= 5 },
+    { cue: 'Atlantic bow with a strong sheer', check: (s) => bowRise(s) >= 2.5 },
     { cue: 'twin 15 cm turrets on the beams', check: (s) => wings(s, 0.15, 2) >= 4 },
   ]),
   fiji: naval('fiji', [
@@ -980,7 +987,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
     { cue: 'long forecastle stepping down aft', check: forecastle },
   ]),
   soldati: naval('soldati', [
-    { cue: 'twin 120 mm mounts forward and aft, a single amidships', check: (s) => fwd(s, 0.1).filter((t) => t.barrels === 2).length === 1 && aft(s, 0.1).length === 1 && mains(s, 0.1).some((t) => t.barrels === 1) },
+    { cue: 'twin 120 mm mounts forward and aft, a single amidships', check: (s) => fwd(s, 0.1).filter((t) => t.barrels === 2).length === 1 && aft(s, 0.1).filter((t) => t.barrels === 2).length === 1 && mains(s, 0.1).some((t) => t.barrels === 1) },
     { cue: 'one funnel', check: (s) => funnels(s) === 1 },
     { cue: 'raised forecastle', check: forecastle },
   ]),
@@ -1134,7 +1141,7 @@ export const NAVAL_CUES: Record<string, CueEntry> = {
     { cue: 'three twin 38 cm turrets: two forward, one aft', check: (s) => battery(s, 0.3, 2, 1, 2) },
     { cue: 'B turret superfiring over A', check: (s) => superfires(fwd(s, 0.3)) },
     { cue: 'one funnel', check: (s) => funnels(s) === 1 },
-    { cue: 'Atlantic bow with a strong sheer', check: (s) => (s.sheer ?? 0) >= 5 },
+    { cue: 'Atlantic bow with a strong sheer', check: (s) => bowRise(s) >= 2.5 },
   ]),
   'imperatritsa-mariya': naval('imperatritsa-mariya', [
     { cue: 'four triple 305 mm turrets spread along the deck, none superfiring', check: (s) => mains(s, 0.3).length === 4 && mains(s, 0.3).every((t) => t.barrels === 3) && !superfires(fwd(s, 0.3)) && !superfires(aft(s, 0.3)) },
