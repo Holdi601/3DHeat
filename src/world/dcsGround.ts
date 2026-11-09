@@ -1,3 +1,4 @@
+import type { LoadedModel } from '../data/modelLoader';
 import { DCS_PROJECTIONS, fromDcs, toDcs, type DcsProjection } from './dcsProjection';
 import type { Runway } from './runways';
 import { latToMy, mxToLon, myToLat } from './tiles';
@@ -63,6 +64,105 @@ export function dcsBuildings(rows: number[][] | null | undefined): Float32Array 
 /** The converter's runway class colour (heat3d_ext_dcs COLOURS.runway), 0..255. */
 const RUNWAY_RGB = [26, 26, 26];
 const SEA_RGB: readonly [number, number, number] = [0.24, 0.45, 0.72];
+
+/**
+ * Several DCS areas of one theatre as one level: the converter writes each in
+ * the theatre's own metres, so they need no placing, only joining. Vertices,
+ * index sets, parts and their runs are appended in order, each set's indices
+ * moved past the vertices before it. Copied one area at a time, yielding
+ * between them, so a few hundred MB never block the page in one piece.
+ * Textured models (an atlas) are not joined: DCS levels are vertex-coloured.
+ */
+export async function mergeDcsModels(models: LoadedModel[], yieldNow: () => Promise<void> = () => new Promise((r) => setTimeout(r, 0))): Promise<LoadedModel> {
+  if (models.length === 1) return models[0];
+  if (models.some((m) => m.atlas || m.uvs)) throw new Error('textured levels cannot be joined');
+  const sum = (f: (m: LoadedModel) => number) => models.reduce((a, m) => a + f(m), 0);
+  const nVert = sum((m) => m.vertices.length / 6);
+  const vertices = new Float32Array(nVert * 6);
+  const allColours = models.every((m) => m.colours);
+  const colours = allColours ? new Float32Array(nVert * 3) : null;
+  type SetName = 'indices' | 'structureIndices' | 'structureEdges' | 'waterIndices' | 'navIndices';
+  const sets: SetName[] = ['indices', 'structureIndices', 'structureEdges', 'waterIndices', 'navIndices'];
+  const out = Object.fromEntries(sets.map((s) => [s, new Uint32Array(sum((m) => m[s]?.length ?? 0))])) as Record<SetName, Uint32Array>;
+  const fill = Object.fromEntries(sets.map((s) => [s, 0])) as Record<SetName, number>;
+  type RunName = 'ground' | 'structure' | 'water' | 'nav';
+  const runOf: Record<RunName, SetName> = { ground: 'indices', structure: 'structureIndices', water: 'waterIndices', nav: 'navIndices' };
+  const runs = Object.fromEntries(
+    (Object.keys(runOf) as RunName[]).map((r) => [r, models.every((m) => m.partRuns?.[r]) ? new Uint32Array(sum((m) => m.partRuns?.[r]?.length ?? 0)) : null]),
+  ) as Record<RunName, Uint32Array | null>;
+  const runFill: Record<RunName, number> = { ground: 0, structure: 0, water: 0, nav: 0 };
+  const withBounds = models.every((m) => m.partBounds);
+  const partBounds = withBounds ? new Float32Array(sum((m) => m.partBounds!.length)) : undefined;
+  const bounds = { minX: Infinity, minY: Infinity, minZ: Infinity, maxX: -Infinity, maxY: -Infinity, maxZ: -Infinity };
+  const groundBand = { minY: Infinity, maxY: -Infinity };
+  const partNames: string[] = [];
+  const partClasses: LoadedModel['partClasses'] = [];
+  const partReasons: string[] = [];
+  let v0 = 0;
+  for (const m of models) {
+    const p0 = partNames.length;
+    vertices.set(m.vertices, v0 * 6);
+    if (colours) colours.set(m.colours!, v0 * 3);
+    for (const r of Object.keys(runOf) as RunName[]) {
+      const src = m.partRuns?.[r];
+      const dst = runs[r];
+      if (!src || !dst) continue;
+      const t0 = fill[runOf[r]] / (runOf[r] === 'structureEdges' ? 2 : 3);
+      for (let i = 0; i < src.length; i += 2) {
+        dst[runFill[r] + i] = src[i] + p0;
+        dst[runFill[r] + i + 1] = src[i + 1] + t0;
+      }
+      runFill[r] += src.length;
+    }
+    for (const s of sets) {
+      const src = m[s];
+      if (!src) continue;
+      const dst = out[s];
+      const at = fill[s];
+      for (let i = 0; i < src.length; i++) dst[at + i] = src[i] + v0;
+      fill[s] += src.length;
+    }
+    if (partBounds) partBounds.set(m.partBounds!, p0 * 6);
+    partNames.push(...m.partNames);
+    partClasses.push(...m.partClasses);
+    partReasons.push(...m.partReasons);
+    const b = m.bounds;
+    bounds.minX = Math.min(bounds.minX, b.minX);
+    bounds.minY = Math.min(bounds.minY, b.minY);
+    bounds.minZ = Math.min(bounds.minZ, b.minZ);
+    bounds.maxX = Math.max(bounds.maxX, b.maxX);
+    bounds.maxY = Math.max(bounds.maxY, b.maxY);
+    bounds.maxZ = Math.max(bounds.maxZ, b.maxZ);
+    groundBand.minY = Math.min(groundBand.minY, m.groundBand.minY);
+    groundBand.maxY = Math.max(groundBand.maxY, m.groundBand.maxY);
+    v0 += m.vertices.length / 6;
+    await yieldNow();
+  }
+  return {
+    vertices,
+    colours,
+    uvs: null,
+    atlas: null,
+    indices: out.indices,
+    structureIndices: out.structureIndices,
+    structureEdges: out.structureEdges,
+    waterIndices: out.waterIndices,
+    ...(models.some((m) => m.navIndices) ? { navIndices: out.navIndices } : {}),
+    triangles: sum((m) => m.triangles),
+    structureTriangles: sum((m) => m.structureTriangles),
+    waterTriangles: sum((m) => m.waterTriangles),
+    sourceTriangles: sum((m) => m.sourceTriangles),
+    sourceStructureTriangles: sum((m) => m.sourceStructureTriangles),
+    error: Math.max(...models.map((m) => m.error)),
+    partNames,
+    partClasses,
+    partReasons,
+    partRuns: runs,
+    ...(partBounds ? { partBounds } : {}),
+    bounds,
+    groundBand,
+  };
+}
 
 /**
  * The ground of a loaded level for the streamer: positions out of the

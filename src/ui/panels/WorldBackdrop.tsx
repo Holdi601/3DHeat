@@ -11,7 +11,7 @@ import type { BackdropRequest, BackdropResult } from '../../world/backdrop';
 import { backdropLoader } from '../../world/backdropLoader';
 import { clearCache } from '../../world/cache';
 import type { WorldLabel } from '../../world/backdrop';
-import { dcsBuildings, dcsGroundFrom, type DcsGroundData } from '../../world/dcsGround';
+import { dcsBuildings, dcsGroundFrom, mergeDcsModels, type DcsGroundData } from '../../world/dcsGround';
 import { DCS_PROJECTIONS, fromDcs } from '../../world/dcsProjection';
 import { THEATRES, theatreById, theatreGeo, theatreOfData, theatreOfDcsFolder, type Theatre } from '../../world/theatres';
 import { boxAround } from '../../world/tiles';
@@ -256,17 +256,29 @@ export function WorldBackdrop({
   const openDcs = async (files: File[]) => {
     setError(null);
     setNote(null);
-    const glb = files.find((f) => /[.](glb|gltf)$/i.test(f.name));
-    const json = files.find((f) => /[.]json$/i.test(f.name));
-    if (!glb || !json) {
+    // Several areas of one theatre may be picked at once: each .glb with the
+    // .json of the same name (one of each pairs whatever their names).
+    const stem = (f: File) => f.name.replace(/[.][^.]+$/, '');
+    const glbs = files.filter((f) => /[.](glb|gltf)$/i.test(f.name));
+    const jsons = files.filter((f) => /[.]json$/i.test(f.name));
+    const pairs =
+      glbs.length === 1 && jsons.length === 1
+        ? [{ glb: glbs[0], json: jsons[0] }]
+        : glbs.map((g) => ({ glb: g, json: jsons.find((j) => stem(j) === stem(g)) }));
+    if (!pairs.length || pairs.some((p) => !p.json)) {
       setError(t('heat.world.dcs.needJson'));
       return;
     }
-    let meta: DcsLevelMeta;
+    const metas: DcsLevelMeta[] = [];
     try {
-      meta = JSON.parse(await json.text()) as DcsLevelMeta;
+      for (const p of pairs) metas.push(JSON.parse(await p.json!.text()) as DcsLevelMeta);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
+      return;
+    }
+    const meta = metas[0];
+    if (metas.some((m) => m.theatre !== meta.theatre)) {
+      setError(t('heat.world.dcs.mixed', { theatres: [...new Set(metas.map((m) => String(m.theatre)))].join(', ') }));
       return;
     }
     const proj = DCS_PROJECTIONS[meta.theatre];
@@ -279,13 +291,21 @@ export function WorldBackdrop({
     const dataTheatre = geo ? theatreOfData(geo, dataset?.bounds, dataset?.axes) : undefined;
     setWorld({ label: t('heat.levelPanel.reading'), fraction: null });
     try {
-      const m = await modelLoader.load(glb, Infinity, (p) => setWorld({ label: p.label, fraction: p.fraction }));
-      const name = t('heat.world.dcs.name', { theatre: th.name, level: meta.level ?? glb.name });
-      const labels = dcsLabels(meta);
+      // One area after another (the loader takes one at a time), then joined.
+      const parts: LoadedModel[] = [];
+      for (const [i, p] of pairs.entries()) {
+        const prefix = pairs.length > 1 ? `${i + 1}/${pairs.length} ` : '';
+        parts.push(await modelLoader.load(p.glb, Infinity, (pr) => setWorld({ label: prefix + pr.label, fraction: pr.fraction })));
+      }
+      const m = await mergeDcsModels(parts);
+      parts.length = 0;
+      const name = t('heat.world.dcs.name', { theatre: th.name, level: metas.map((x, i) => x.level ?? pairs[i].glb.name).join(' + ') });
+      const labels = metas.flatMap(dcsLabels);
       const b = m.bounds;
       const [cLat, cLon] = fromDcs(proj, (b.minX + b.maxX) / 2, (b.minZ + b.maxZ) / 2);
       if (gameDetail) {
-        const dcs = dcsGroundFrom(meta.theatre, m.vertices, m.colours, m.indices, m.waterIndices, dcsBuildings(meta.buildings?.rows));
+        const rows = metas.flatMap((x) => x.buildings?.rows ?? []);
+        const dcs = dcsGroundFrom(meta.theatre, m.vertices, m.colours, m.indices, m.waterIndices, dcsBuildings(rows));
         streamTheatre({ th, dcs, labels, name, centre: { lat: cLat, lon: cLon } });
       } else {
         const placement: GeoPlacement = { geo: { lat0: th.origin.lat, lon0: th.origin.lon, projection: 'dcs-tm', theatre: meta.theatre }, axes: null };
@@ -296,8 +316,8 @@ export function WorldBackdrop({
           t('heat.world.dcs.loaded', {
             theatre: th.name,
             triangles: formatTriangles(m.triangles + m.waterTriangles),
-            towns: int(meta.towns?.length ?? 0),
-            airfields: int(meta.airfields?.length ?? 0),
+            towns: int(metas.reduce((a, x) => a + (x.towns?.length ?? 0), 0)),
+            airfields: int(metas.reduce((a, x) => a + (x.airfields?.length ?? 0), 0)),
           }),
           ...(dataTheatre && dataTheatre.id !== th.id ? [t('heat.world.dcs.otherTheatre', { level: th.name, data: dataTheatre.name })] : []),
         ].join(' '),

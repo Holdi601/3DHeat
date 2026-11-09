@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { alongOffset, DcsGround, dcsBuildings, dcsGroundFrom, judge } from './dcsGround';
+import type { LoadedModel } from '../data/modelLoader';
+import { alongOffset, DcsGround, dcsBuildings, dcsGroundFrom, judge, mergeDcsModels } from './dcsGround';
 import { DCS_PROJECTIONS, fromDcs, toDcs } from './dcsProjection';
 import type { Runway } from './runways';
 import { latToMy, lonToMx } from './tiles';
@@ -193,5 +194,49 @@ describe('theatreOfData', () => {
     expect(theatreOfData(geo, bounds, null)?.id).toBe('Caucasus');
     expect(theatreOfData(geo, null, null)).toBeUndefined();
     expect(theatreOfData({ lat0: 13, lon0: 145, projection: 'dcs-tm', theatre: 'MarianasWWII' }, null, null)?.id).toBe('MarianaIslandsWWII');
+  });
+});
+
+describe('mergeDcsModels', () => {
+  const model = (x: number, parts: string[]) => {
+    const vertices = new Float32Array([x, 0, 0, 0, 1, 0, x + 1, 0, 0, 0, 1, 0, x, 0, 1, 0, 1, 0, x + 1, 5, 1, 0, 1, 0]);
+    return {
+      vertices,
+      colours: new Float32Array(12).fill(0.5),
+      uvs: null,
+      atlas: null,
+      indices: new Uint32Array([0, 1, 2]),
+      structureIndices: new Uint32Array([1, 2, 3]),
+      structureEdges: new Uint32Array([1, 2]),
+      waterIndices: new Uint32Array(0),
+      triangles: 1,
+      structureTriangles: 1,
+      waterTriangles: 0,
+      sourceTriangles: 1,
+      sourceStructureTriangles: 1,
+      error: 0,
+      partNames: parts,
+      partClasses: parts.map(() => 'ground' as const),
+      partReasons: parts.map(() => ''),
+      partRuns: { ground: new Uint32Array([0, 1]), structure: new Uint32Array([1, 1]), water: new Uint32Array(0), nav: null },
+      bounds: { minX: x, minY: 0, minZ: 0, maxX: x + 1, maxY: 5, maxZ: 1 },
+      groundBand: { minY: 0, maxY: 5 },
+    } as unknown as LoadedModel;
+  };
+
+  it('joins areas of one theatre: indices, parts and runs past the ones before', async () => {
+    const m = await mergeDcsModels([model(0, ['g:a', 's:a']), model(100, ['g:b', 's:b'])], async () => {});
+    expect(m.vertices.length).toBe(48);
+    expect([...m.indices]).toEqual([0, 1, 2, 4, 5, 6]);
+    expect([...m.structureIndices]).toEqual([1, 2, 3, 5, 6, 7]);
+    expect([...m.structureEdges]).toEqual([1, 2, 5, 6]);
+    expect(m.partNames).toEqual(['g:a', 's:a', 'g:b', 's:b']);
+    expect([...m.partRuns!.ground!]).toEqual([0, 1, 2, 2]);
+    expect([...m.partRuns!.structure!]).toEqual([1, 1, 3, 2]);
+    expect(m.partRuns!.nav).toBeNull();
+    expect(m.triangles).toBe(2);
+    expect(m.bounds.minX).toBe(0);
+    expect(m.bounds.maxX).toBe(101);
+    expect(m.colours!.length).toBe(24);
   });
 });
