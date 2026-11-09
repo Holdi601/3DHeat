@@ -137,9 +137,60 @@ interface Ww2 {
   parts?: TurretSpec[];
   /** Parts built on the turret once it is known. */
   turretParts?: (t: TurretSpec) => TurretSpec[];
+  /**
+   * The published overall height, where the drawing the heights were read from falls short of it (a recognition
+   * sheet's silhouette scaled by its length): what stands over the track run's top (`fender`) is stretched up to it.
+   */
+  height?: number;
 }
 
-function ww2(v: Ww2): GroundSpec & { cls: string } {
+/**
+ * Heights over the pivot `fender` stretched so the highest point of the hull, the turret and its parts reaches the
+ * published height; the running gear and what is below the pivot keep their sizes. In a turret's own frame (up from
+ * its base on the deck) every height is over the pivot, so all of them stretch alike; a part in the vehicle's frame
+ * (`part`, up = -deck) keeps its heights below the pivot.
+ */
+function stretch(v: Ww2, height: number): Ww2 {
+  const f = v.fender;
+  const peak = (t: TurretSpec) => v.deck + (t.up ?? 0) + Math.max(...t.outline!.top.map((p) => p[1]));
+  const own = v.turret && v.turretParts ? v.turretParts(v.turret) : [];
+  const tall = [...(v.turret ? [v.turret] : []), ...own].filter((t) => t.outline);
+  const k = (height - f) / (Math.max(...v.top.map((p) => p[1]), ...tall.map(peak)) - f);
+  const s = (y: number) => (y > f ? f + (y - f) * k : y);
+  const sv = (ps: P2[]) => ps.map(([x, y]) => [x, s(y)] as P2);
+  const sk = (ps: P2[]) => ps.map(([x, y]) => [x, y * k] as P2);
+  const turretFrame = (t: TurretSpec): TurretSpec => {
+    const o = t.outline;
+    const sec = o?.section && o.sectionAbs ? o.section.map((e) => (Array.isArray(e) ? ([e[0] * k, e[1]] as P2) : { ...e, shape: e.shape.map(([u, w]) => [u * k, w] as P2) })) : o?.section;
+    return { ...t, up: (t.up ?? 0) * k, height: t.height * k, outline: o && { ...o, top: sk(o.top), bottom: sk(o.bottom), section: sec as typeof o.section } };
+  };
+  const any = (t: TurretSpec): TurretSpec => {
+    if (t.up !== -v.deck || !t.outline) return turretFrame(t);
+    const top = sv(t.outline.top);
+    const bottom = sv(t.outline.bottom);
+    return { ...t, up: -s(v.deck), height: Math.max(...top.map((p) => p[1])) - Math.min(...bottom.map((p) => p[1])), outline: { ...t.outline, top, bottom } };
+  };
+  const tp = v.turretParts;
+  const t = v.turret && any(v.turret);
+  // A gun from a mantlet in the vehicle's frame (`fire`) keeps its true height there, its share of the new height.
+  const flat = v.turret && t && v.turret.up === -v.deck;
+  const guns = v.guns?.map((g) => (flat && (g.turret ?? 0) === 0 && g.at !== undefined ? { ...g, at: s(g.at * v.turret!.height) / t.height } : g));
+  return {
+    ...v,
+    height: undefined,
+    guns,
+    deck: s(v.deck),
+    top: sv(v.top),
+    under: v.under && sv(v.under),
+    turret: t,
+    turretParts: tp && v.turret ? () => tp(v.turret!).map(any) : undefined,
+    parts: v.parts?.map(any),
+    hullSection: v.hullSection && { bottom: sv(v.hullSection.bottom), section: v.hullSection.section.map(([y, w]) => [s(y), w] as P2) },
+  };
+}
+
+function ww2(v0: Ww2): GroundSpec & { cls: string } {
+  const v = v0.height ? stretch(v0, v0.height) : v0;
   const h = v.L / 2;
   const tw = v.tw ?? Math.max(0.3, v.W * 0.17);
   // The turret's parts first, so a gun can name its mount by index (1 = the first of them).
@@ -1432,11 +1483,11 @@ const CHIHA: Ww2 = {
 };
 G['type-97-chi-ha'] = ww2({ ...CHIHA, turret: turret(0.05, [[-0.65, 0.6], [-0.45, 0.75], [0.4, 0.78], [0.65, 0.6]], [[-0.65, 0.5], [-0.3, 0.6], [0.3, 0.62], [0.65, 0.5]], 6, 0.65, 0.2), gun: { length: 0.95, calibre: 0.057, at: 0.37 }, turretParts: (t) => [cupola(t, -0.2, 0, 0.3, 0.18)] });
 const CHIHA_KAI_T = turret(-0.05, [[-1.2, 0.6], [-1.0, 0.8], [0.55, 0.82], [0.85, 0.6]], [[-1.2, 0.6], [0.85, 0.62]], 8, 0.9, 0.2);
-G['type-97-chi-ha-kai'] = ww2({ ...CHIHA, turret: CHIHA_KAI_T, gun: { length: 1.6, calibre: 0.047, at: 0.37 } });
+G['type-97-chi-ha-kai'] = ww2({ ...CHIHA, turret: CHIHA_KAI_T, gun: { length: 1.6, calibre: 0.047, at: 0.37 }});
 // Type 1 Chi-He: the welded, angular hull with its single sloped front and the Kai's turret (5.73 x 2.33 m, 2.38 m).
 // Type 3 Chi-Nu: the Chi-He with a big hexagonal turret and the 75 mm (2.61 m).
 const CHIHE: Ww2 = { ...CHIHA, L: 5.73, deck: 1.6, top: [[-2.865, 1.35], [-2.75, 1.6], [1.0, 1.62], [2.865, 0.95]], track: trk(2.82, 0.85, 0.6, 0.45, 2.05) };
-G['type-1-chi-he'] = ww2({ ...CHIHE, turret: CHIHA_KAI_T, gun: { length: 1.6, calibre: 0.047, at: 0.45 } });
+G['type-1-chi-he'] = ww2({ ...CHIHE, turret: CHIHA_KAI_T, gun: { length: 1.6, calibre: 0.047, at: 0.45 }});
 G['type-3-chi-nu'] = ww2({ ...CHIHE, turret: turret(0.1, [[-1.25, 0.7], [-0.9, 1.0], [0.6, 1.0], [1.0, 0.7]], [[-1.25, 0.72], [1.0, 0.72]], 16, 1.05), gun: { length: 2.5, calibre: 0.075, at: 0.45 }, turretParts: (t) => [cupola(t, -0.4, 0.4, 0.3, 0.15)] });
 // Type 4 Chi-To: seven road wheels, a big welded turret with the long 75 mm (6.42 x 2.87 m, 2.87 m).
 G['type-4-chi-to'] = ww2({
@@ -1468,7 +1519,7 @@ G['type-95-ha-go'] = ww2({
 // The rear deck falling from the superstructure to the low overhanging tail, the nose, and the track's 3.0 m on the
 // ground from the M14 side silhouette in FM 30-40 (1943), scaled by its 16.2 ft length (public domain).
 G['fiat-m13-40'] = ww2({
-  cls: 'medium-tank', L: 4.92, W: 2.2, deck: 1.55, fender: 0.72,
+  cls: 'medium-tank', L: 4.92, W: 2.2, deck: 1.55, fender: 0.72, height: 2.37,
   top: [[-2.46, 0.95], [-2.2, 1.1], [-1.99, 1.27], [-1.35, 1.47], [-1.2, 1.55], [0.9, 1.55], [1.4, 1.4], [2.0, 1.25], [2.24, 1.24], [2.35, 1.06], [2.46, 0.92]],
   plan: [[-2.46, 1.08], [2.46, 1.08]], hullRound: 14,
   track: trk(2.42, 0.75, 0.55, 0.42, 1.53),
@@ -1640,10 +1691,11 @@ G['centaur-cs'] = { ...G['cromwell'], guns: [{ mount: 'turret', length: 1.0, cal
   const m = mantlet(1.75, 2.95, 3.2, 2.0, 0.25, 0.18);
   G['churchill-gun-carrier'] = ww2({ ...CHURCHILL, cls: 'tank-destroyer', top: [[-3.6, 1.25], [-3.45, 1.75], [0.3, 1.75], [0.4, 2.35], [2.5, 2.35], [3.05, 1.75], [3.35, 1.3]], turret: m, guns: [fire(m, 1.6, 0.076)] });
 }
-// Fiat M11/39: the M13's running gear with a 37 mm low in the hull's right front and a small machine-gun turret offset left.
+// Fiat M11/39: the M13's running gear with a 37 mm low in the hull's right front and a small machine-gun turret offset left
+// (2.30 m overall, published, over the M13's hull).
 {
   const m13 = G['fiat-m13-40'];
-  G['fiat-m11-39'] = { ...m13, cls: 'light-tank', length: 4.73, turret: turret(-0.1, [[-0.6, 0.45], [-0.5, 0.55], [0.4, 0.55], [0.6, 0.45]], [[-0.6, 0.5], [0.6, 0.5]], 6, 0.6, -0.25), guns: [{ mount: 'turret', length: 0.7, calibre: 0.008, at: 0.5 }, { mount: 'hull', length: 1.0, calibre: 0.037, side: 0.4, at: 0.65, x: 2.0 }] };
+  G['fiat-m11-39'] = { ...m13, cls: 'light-tank', length: 4.73, turret: turret(-0.1, [[-0.6, 0.45], [-0.5, 0.55], [0.4, 0.55], [0.6, 0.45]], [[-0.6, 0.62], [0.6, 0.62]], 6, 0.6, -0.25), guns: [{ mount: 'turret', length: 0.7, calibre: 0.008, at: 0.5 }, { mount: 'hull', length: 1.0, calibre: 0.037, side: 0.4, at: 0.65, x: 2.0 }] };
 }
 
 // ---------------------------------------------------------------- late-war and prototype heavies
@@ -1733,16 +1785,16 @@ G['ab-41'] = { cls: 'scout-car', chassis: 'wheeled', length: 5.2, width: 1.92, h
   // `m14`: the M41/M42 on the M14/M15 chassis, profile from the "75-mm SP gun (on M14 tank chassis)" side silhouette in
   // FM 30-40 (1943), scaled by its 16.2 ft length (public domain): the low tail, the rear deck 1.3-1.38 m, the casemate
   // roof rising from 1.6 m to 1.75 m at its front, the low front deck; the M13's 3.0 m of track on the ground.
-  const sem = (gun: number, cal: number, w = 1.2, m14 = false) => {
+  const sem = (gun: number, cal: number, w = 1.2, m14 = false, height?: number) => {
     const m = mantlet(1.75, 1.55, 1.8, 1.4, 0.3, 0.2, 0.2);
     const top: P2[] = m14
       ? [[-2.55, 0.6], [-2.36, 0.78], [-2.24, 1.11], [-2.12, 1.18], [-1.95, 1.2], [-1.89, 1.3], [-1.43, 1.38], [-0.62, 1.38], [-0.5, 1.6], [1.0, 1.75], [1.2, 1.3], [2.15, 1.13], [2.38, 0.92], [2.55, 0.8]]
       : [[-2.55, 1.3], [-2.45, 1.5], [-1.0, 1.5], [-0.9, 1.75], [1.2, 1.75], [2.1, 1.2], [2.55, 0.95]];
     const run = m14 ? { track: trk(2.5, 0.75, 0.55, 0.42, 1.53), wheels: [-1.4, -1.07, -0.7, -0.37, 0.37, 0.7, 1.07, 1.4] } : { track: trk(2.5, 0.75, 0.55, 0.42, 1.75), wheels: [-1.6, -1.22, -0.8, -0.42, 0.42, 0.8, 1.22, 1.6] };
-    return ww2({ cls: 'assault-gun', L: 5.1, W: 2 * w, deck: 1.75, fender: 0.72, top, plan: [[-2.55, w - 0.02], [2.55, w]], hullRound: 10, ...run, r: 0.17, rollers: [-1.2, 0, 1.2], turret: m, guns: [fire(m, gun, cal, { muzzle: cal > 0.1 })] });
+    return ww2({ cls: 'assault-gun', L: 5.1, W: 2 * w, deck: 1.75, fender: 0.72, top, plan: [[-2.55, w - 0.02], [2.55, w]], hullRound: 10, ...run, r: 0.17, rollers: [-1.2, 0, 1.2], turret: m, guns: [fire(m, gun, cal, { muzzle: cal > 0.1 })], height });
   };
   G['semovente-m43'] = sem(1.4, 0.105);
-  G['semovente-75-18'] = sem(0.9, 0.075, 1.2, true);
+  G['semovente-75-18'] = sem(0.9, 0.075, 1.2, true, 1.85);
   // Semovente M42 75/34: the casemate on the M15/42 hull (5.06 x 2.23 m) with the long 75 mm (34 calibres, 2.55 m),
   // about 2 m of it out past the mantlet.
   G['semovente-75-34'] = sem(2.0, 0.075, 1.115, true);

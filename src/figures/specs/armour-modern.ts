@@ -241,9 +241,13 @@ G['abrams-x'] = { cls: 'mbt', ...ABRAMS_PLAIN, turret: turret(-0.4, [[-2.3, 1.25
 
 // ---------------------------------------------------------------- Challenger
 
+// The No. 15 commander's cupola on the turret's right rear: a 0.8 m drum standing about 0.32 m over the roof with the
+// GPMG on it, 2.895 m overall (published; the roof 2.43 m, Challenger 1's 2.5 m under 2.95 m overall).
+const NO15 = (roof: number): AddOn => ({ on: 'turret', kind: 'drum', at: [-0.45, 0.6, roof + 0.14], size: [0.8, 0.8, 0.36] });
+const NO15_MG: GunSpec = { mount: 'top', length: 1.0, calibre: 0.0076, x: -0.3, side: 0.6, up: 0.45 };
 const CR2 = base('challenger-2');
 // Challenger 1 (1983): the slab Chobham turret with the TOGS thermal barbette on its right, the L11 rifled gun.
-G['challenger-1'] = { ...CR2, guns: [{ mount: 'turret', length: 5.6, calibre: 0.12, sleeve: 0.8, extractor: 0.5, at: 0.45 }], addOns: [tb(0.3, 1.85, 0.5, 1.5, 0.45, 0.55)] };
+G['challenger-1'] = { ...CR2, cupola: false, guns: [{ mount: 'turret', length: 5.6, calibre: 0.12, sleeve: 0.8, extractor: 0.5, at: 0.45 }, NO15_MG], addOns: [tb(0.3, 1.85, 0.5, 1.5, 0.45, 0.55), NO15(0.75)] };
 // Challenger 2 (1998): the commander's VS 580 sight head on the roof's left, the gunner's sight on the right front.
 G['challenger-2'] = { ...CR2, addOns: [{ on: 'turret', kind: 'drum', at: [0.9, -0.62, 0.99], size: [0.42, 0.42, 0.4] }, tb(1.35, 0.62, 0.88, 0.5, 0.4, 0.2)] };
 // Challenger 2 TES "Megatron" (2008; 4.2 m wide with the armour): the Dorchester packs hung along the hull's sides over the
@@ -354,11 +358,12 @@ G['magach-7'] = { cls: 'mbt', ...PATTON, skirts: true, turret: turret(0.0, [[-2.
 // over the running gear, the L11 (hull 7.52 x 3.5 m, 2.9 m). Mk 3 / 5 with the IR searchlight box on the turret's left.
 const CHIEFTAIN: GroundSpec = { chassis: 'tracked', length: 7.52, width: 3.5, hullHeight: 1.55, roadWheels: 6, roadWheelRadius: 0.32, skirts: true, trackProfile: run(7.3, 0.95, [3.65, 0.62], [-3.65, 0.72], -3.0, 2.95), hullOutline: hull(7.52, 3.5, 1.55, 0.88, 2.2, 0.95, 0.15), turret: turret(-0.2, [[-2.3, 0.95], [-1.8, 1.45], [0.2, 1.55], [1.3, 1.25], [2.1, 0.6], [2.3, 0.35]], [[-2.3, 0.5], [-1.6, 0.82], [0.2, 0.88], [1.3, 0.6], [2.3, 0.25]], 3, 2.2), guns: [{ mount: 'turret', length: 5.6, calibre: 0.12, sleeve: 0.8, extractor: 0.5, at: 0.4 }], cupola: true };
 const SEARCHLIGHT = tb(0.0, -1.62, 0.55, 1.2, 0.36, 0.66);
-G['chieftain-mk3'] = { cls: 'mbt', ...CHIEFTAIN, addOns: [SEARCHLIGHT] };
+const CHIEFTAIN_C: GroundSpec = { ...CHIEFTAIN, cupola: false, guns: [...CHIEFTAIN.guns!, NO15_MG] };
+G['chieftain-mk3'] = { cls: 'mbt', ...CHIEFTAIN_C, addOns: [SEARCHLIGHT, NO15(0.86)] };
 // Mk 10 / 11: Stillbrew armour - thick blocks on the turret's front cheeks; the Mk 11 the TOGS barbette in place of the searchlight.
 const STILLBREW = tb(1.0, 0.95, 0.42, 0.9, 0.7, 0.6, { ...M, yaw: -0.45 });
-G['chieftain-mk10'] = { cls: 'mbt', ...CHIEFTAIN, addOns: [SEARCHLIGHT, STILLBREW] };
-G['chieftain-mk11'] = { cls: 'mbt', ...CHIEFTAIN, addOns: [STILLBREW, tb(0.1, 1.68, 0.5, 1.4, 0.42, 0.55)] };
+G['chieftain-mk10'] = { cls: 'mbt', ...CHIEFTAIN_C, addOns: [SEARCHLIGHT, STILLBREW, NO15(0.86)] };
+G['chieftain-mk11'] = { cls: 'mbt', ...CHIEFTAIN_C, addOns: [STILLBREW, tb(0.1, 1.68, 0.5, 1.4, 0.42, 0.55), NO15(0.86)] };
 // T-84 Oplot-M (2009): the T-80UD hull with a welded turret under Nizh ERA and a large bustle box (hull 7.08 x 3.78 m);
 // the turret ring where the T-80's is (see `T80`), the bustle over the engine deck.
 G['t-84-oplot-m'] = { cls: 'mbt', ...T80, length: 7.08, width: 3.78, turret: turret(-0.8, [[-2.3, 1.2], [-1.6, 1.45], [0.5, 1.62], [1.6, 1.55], [2.0, 1.0], [2.1, 0.5]], [[-2.3, 0.62], [-1.6, 0.7], [0.6, 0.84], [1.6, 0.82], [2.1, 0.5]], 8, 1.95), addOns: [...T80_GLACIS(0.24), ...skirtBoxes(0.3, 3.4, 1.9, 0.6, 0.5, 4, 0.16), { on: 'turret', kind: 'drum', at: [-0.2, 0.75, 1.1], size: [0.4, 0.4, 0.5] }, hb(-2.4, 0, 1.5, 2.0, 2.9, 0.22)] };
