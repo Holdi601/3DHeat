@@ -39,8 +39,8 @@ describe('matching data to figures', () => {
     // A bare helicopter type is a plain helicopter, not an attack one.
     expect(CATALOG[figureFor(['Mi-290 Taru'], ['Helicopter'])!].cls).not.toBe('heli-attack');
     expect(CATALOG[figureFor([], ['Mortar'])!].domain).toBe('ground');
-    // A name that is a tank's figure may have its own figure in the air: the Re.2002 Ariete.
-    expect(figureFor(['ariete'], ['aircraft'])).toBe('re-2000');
+    // A name that is a tank's figure may have its own figure in the air: the Aerfer Ariete jet.
+    expect(figureFor(['ariete'], ['aircraft'])).toBe('sagittario-2');
     expect(figureFor(['ariete'], ['tank'])).toBe('ariete');
   });
 
