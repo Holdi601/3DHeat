@@ -339,6 +339,8 @@ G['amx-30'] = {
 // AMX-40: the AMX-30's layout grown to a 6.8 x 3.36 m hull on six road wheels a side, the 120 mm of 52 calibres (6.24 m;
 // about 5.8 m of it past the turret's face), 2.38 m to the turret roof over the AMX-30's 2.29.
 G['amx-40'] = { ...G['amx-30'], length: 6.8, width: 3.36, hullHeight: 1.59, roadWheels: 6, trackProfile: run(6.6, 0.88, [3.3, 0.62], [-3.3, 0.66], -2.7, 2.65), hullOutline: hull(6.8, 3.36, 1.59, 0.82, 1.65, 0.95, 0.15, 6), guns: [{ mount: 'turret', length: 5.8, calibre: 0.12, sleeve: 0.8, at: 0.45 }] };
+// AMX-32: the AMX-30's hull widened to 3.24 m under the welded turret.
+G['amx-32'] = { ...G['amx-30'], width: 3.24, hullOutline: hull(6.59, 3.24, 1.5, 0.82, 1.6, 0.95, 0.15, 6) };
 // AMX-13: a light hull with the oscillating turret set far back and its long gun (hull 4.88 x 2.51 m, 2.35 m).
 G['amx-13'] = {
   cls: 'light-tank', chassis: 'tracked', length: 4.88, width: 2.51, hullHeight: 1.3, roadWheels: 5, roadWheelRadius: 0.3,
