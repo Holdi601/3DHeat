@@ -532,7 +532,8 @@ G['m4a4-cn-75-50'] = sherman({ L: 6.06, glacisX: 0.95, bogies: [-1.72, -0.08, 1.
 // Sherman VC Firefly: the M4A4 with the long 17-pounder (7.77 m with the gun) and the armoured radio box on the turret's back.
 G['m4a4-firefly'] = sherman({ L: 6.06, glacisX: 0.95, bogies: [-1.72, -0.08, 1.52], turret: SHERMAN_T75, gun: { length: 3.25, calibre: 0.076, muzzle: true, at: 0.48 }, turretParts: (t) => [on(t, [[-1.75, 0.5], [-1.2, 0.5]], [[-1.75, 0.62], [-1.2, 0.68]], 0.12, 10)] });
 // M4A3(76)W: the 47-degree hull and the T23 turret with the 76 mm.
-G['m4a3-76'] = sherman({ L: 5.88, glacisX: 1.45, turret: SHERMAN_T23, gun: GUN_76, extra: [-1, 1].map((s) => part(1.9, [[1.3, 0.32], [1.75, 0.32]], [[1.3, 2.02], [1.75, 1.95]], 1.85, 6, s * 0.55)) });
+// With the T23's vision cupola (T23_CUPOLA below, written out here as it is defined later).
+G['m4a3-76'] = sherman({ L: 5.88, glacisX: 1.45, turret: SHERMAN_T23, gun: GUN_76, turretParts: (t) => [cupola(t, -0.45, 0.42, 0.33, 0.33)], extra: [-1, 1].map((s) => part(1.9, [[1.3, 0.32], [1.75, 0.32]], [[1.3, 2.02], [1.75, 1.95]], 1.85, 6, s * 0.55)) });
 // M4A3E8 "Easy Eight": HVSS - the wider track (2.99 m), paired wheels on open bogies, the rollers apart - with the
 // T23 turret and the 76 mm M1A2 (7.54 m with the gun).
 // The commander's all-round vision cupola on the right of the T23's roof (sizes estimated).
@@ -544,7 +545,9 @@ G['m4a3e8'] = sherman({ L: 5.9, W: 2.99, glacisX: 1.45, hvss: true, bogies: [-1.
 const JUMBO_T = turret(-0.2, [[-1.25, 0.8], [-1.1, 1.0], [0.5, 1.05], [0.85, 0.98], [1.0, 0.75]], [[-1.25, 0.62], [1.0, 0.72]], 8, 1.15);
 const jumboMantlet = (t: TurretSpec): TurretSpec => on(t, [[1.0, 0.62], [1.22, 0.58]], [[1.0, 0.6], [1.22, 0.56]], 0.06, 8);
 const jumboPlate = part(1.95, [[1.1, 1.2], [2.6, 1.2]], [[1.1, 2.0], [2.6, 1.3]], 1.35, 10);
-G['m4a3e2-jumbo'] = sherman({ L: 5.9, W: 2.97, glacisX: 1.1, deck: 1.95, turret: JUMBO_T, gun: GUN_75, extra: [jumboPlate], turretParts: (t) => [jumboMantlet(t)] });
+// The commander's vision cupola on the right of the roof, as on the T23, its top at the published 2.97 m.
+const JUMBO_CUPOLA = (t: TurretSpec) => cupola(t, -0.45, 0.42, 0.33, 0.39);
+G['m4a3e2-jumbo'] = sherman({ L: 5.9, W: 2.97, glacisX: 1.1, deck: 1.95, turret: JUMBO_T, gun: GUN_75, extra: [jumboPlate], turretParts: (t) => [jumboMantlet(t), JUMBO_CUPOLA(t)] });
 
 // ---------------------------------------------------------------- T-34
 
@@ -1165,7 +1168,7 @@ G['m4a1-76'] = sherman({ L: 5.84, glacisX: 1.1, cast: true, turret: SHERMAN_T23,
 G['m4a2-76'] = sherman({ L: 5.94, glacisX: 1.45, turret: SHERMAN_T23, gun: GUN_76, turretParts: (t) => [T23_CUPOLA(t)], extra: [-1, 1].map((s) => part(1.9, [[-3.12, 0.3], [-2.97, 0.3]], [[-3.12, 1.25], [-2.97, 1.25]], 0.85, 6, s * 0.6)) });
 // The howitzer's M52 mount: a thicker cast mantlet, wider and deeper than the 75 mm's, rounded over its face.
 G['m4a3-105'] = sherman({ L: 5.88, glacisX: 1.45, turret: SHERMAN_T75, gun: { length: 1.8, calibre: 0.105, at: 0.27 }, extra: [-1, 1].map((s) => part(1.9, [[1.3, 0.32], [1.75, 0.32]], [[1.3, 2.02], [1.75, 1.95]], 1.85, 6, s * 0.55)), turretParts: (t) => [on(t, [[0.86, 0.5], [1.02, 0.48], [1.16, 0.36]], [[0.86, 0.6], [1.02, 0.58], [1.16, 0.5]], [[0.86, 0.04], [1.02, 0.06], [1.16, 0.14]], 2.4)] });
-G['m4a3e2-76'] = sherman({ L: 5.9, W: 2.97, glacisX: 1.1, deck: 1.95, turret: JUMBO_T, gun: GUN_76, extra: [jumboPlate], turretParts: (t) => [jumboMantlet(t)] });
+G['m4a3e2-76'] = sherman({ L: 5.9, W: 2.97, glacisX: 1.1, deck: 1.95, turret: JUMBO_T, gun: GUN_76, extra: [jumboPlate], turretParts: (t) => [jumboMantlet(t), JUMBO_CUPOLA(t)] });
 // LVT-4 and LVT(A)-1 amphibians: the long boat hull with the grousered tracks run round its sides, the track's front
 // rising like a bow (7.97 x 3.25 m, 2.5 m); the LVT(A)-1 with a turret and its 37 mm, the LVT-4 here with a ZiS-2 on top.
 {
