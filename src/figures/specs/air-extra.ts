@@ -1094,6 +1094,19 @@ A['f-84f'] = fig({
   glass: [bubble(3.8, 1.9, 1.38, 0.84, 0.9, 0.36)],
 });
 
+// F2H-2 Banshee: a slim body, the two J34s buried in the wing roots, a straight wing with tip tanks, the tailplane a
+// third of the way up the swept fin (12.24 x 13.67 x 4.42 m; chords from the 27.3 m2 wing area, the rest estimated).
+A['f2h-2'] = fig({
+  cls: 'fighter', length: 12.24, span: 13.67, height: 4.42,
+  body: [[6.12, 0.0, -0.25, 0.12], [5.6, 0.45, -0.55, 0.5], [4.6, 0.6, -0.7, 0.6], [3.4, 0.7, -0.75, 0.65], [1.5, 0.72, -0.78, 0.68], [0, 0.7, -0.75, 0.66], [-2.0, 0.6, -0.55, 0.55], [-4.0, 0.45, -0.35, 0.4], [-6.12, 0.3, -0.2, 0.2]], round: 2,
+  wing: [[1.3, 0], [1.3, 0.7], [0.7, 6.835], [-0.7, 6.835], [-1.3, 0.7], [-1.3, 0]], wingUp: -0.2, dihedral: 3, thick: 0.09,
+  fin: [[-3.2, 0], [-5.9, 0], [-6.1, 2.3], [-5.2, 2.35]], finBase: 0.5,
+  tail: [[-4.5, 0], [-5.1, 2.6], [-5.9, 2.6], [-6.0, 0]], planeUp: 1.0,
+  nozzles: [[-2.4, -1.05, -0.1], [-2.4, 1.05, -0.1]], nozzle: 0.5,
+  bodies: [jetNac(2.0, -2.4, 0.5, 1.05, -0.1), pod(1.5, -2.4, 0.33, 6.9, 0.0, 0.3)],
+  glass: [bubble(3.9, 2.4, 1.15, 0.6, 0.66, 0.36)],
+});
+
 // F-8 Crusader: the radome over the wide-mouthed chin intake, a long body, the bubble faired into a spine, the
 // shoulder wing with 5 degrees of anhedral and the dogtooth at the fold, the big fin, tailplanes low on the body,
 // ventral strakes (16.53 x 10.87 x 4.8 m). F-8C (F8U-2): the slim early radome. F-8E: the fatter radome for the

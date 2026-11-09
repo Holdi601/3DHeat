@@ -110,6 +110,8 @@ G['sdkfz-10-flak'] = { ...G['sdkfz-10'], cls: 'spaa', turret: { x: -1.0, length:
 G['sdkfz-222'] = { cls: 'scout-car', chassis: 'wheeled', length: 4.8, width: 1.95, hullHeight: 1.5, axles: 2, wheelRadius: 0.45, hull: 'boat', turret: { x: -0.2, length: 1.4, width: 1.4, height: 0.45, shape: 'open' }, guns: [{ mount: 'turret', length: 1.4, calibre: 0.02, elevation: 0.1 }] };
 // Sd.Kfz. 234/2 Puma: eight wheels, the long hull, a closed turret with the 50 mm (6.8 x 2.33 x 2.38 m).
 G['sdkfz-234-puma'] = { cls: 'scout-car', chassis: 'wheeled', length: 6.0, width: 2.33, hullHeight: 1.65, axles: 4, wheelRadius: 0.5, hull: 'boat', turret: { x: 0.0, length: 1.9, width: 1.6, height: 0.7, shape: 'sloped', slope: 0.18 }, guns: [{ mount: 'turret', length: 2.3, calibre: 0.05 }] };
+// Sd.Kfz. 232 (8-Rad): the older eight-wheeler, shorter and narrower, a small turret with the 20 mm KwK 30 (5.85 x 2.2 x 2.35 m).
+G['sdkfz-232'] = { ...G['sdkfz-234-puma'], length: 5.85, width: 2.2, turret: { x: 0.0, length: 1.5, width: 1.4, height: 0.7, shape: 'sloped', slope: 0.18 }, guns: [{ mount: 'turret', length: 1.0, calibre: 0.02 }] };
 // Kettenkrad: see the ride figures. Kübelwagen, Schwimmwagen, Horch staff car.
 G['kubelwagen'] = { cls: 'jeep', chassis: 'wheeled', length: 3.74, width: 1.6, hullHeight: 1.0, axles: 2, hull: 'open', open: true, wheelRadius: 0.36 };
 G['schwimmwagen'] = { cls: 'jeep', chassis: 'wheeled', length: 3.83, width: 1.48, hullHeight: 1.0, axles: 2, hull: 'boat', open: true, wheelRadius: 0.34 };

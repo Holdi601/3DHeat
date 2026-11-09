@@ -18,7 +18,7 @@
 import type { SpecSet } from './index';
 import { cowlLip, hood, type Cowl, type FixedWingSpec } from '../air';
 import type { Outline, P2 } from '../parts';
-import { AIRCRAFT, DRAWN, F4U, jet, piston, type Piston } from './aircraft';
+import { AIRCRAFT, DRAWN, F4U, jet, piston, sister, type Piston } from './aircraft';
 
 type Spec = FixedWingSpec & { cls: string };
 
@@ -820,7 +820,7 @@ A['wellington'] = mp({
 
 // Do 217: the "flying pencil" with a bulbous glazed cockpit, a shoulder wing, BMW 801 radials, twin square fins (17.3 x 19.0 x 4.97 m).
 // Outlines digitised from FM 30-30 (1943), sheet "Dornier Do. 217" (a Do 217 E), with tools/figures/twinview.py.
-A['do-217'] = mp({
+const DO217: MP = {
   cls: 'ww2-bomber', length: 17.3, span: 19, height: 4.97,
   glazed: 6.2,
   body: [[8.65, 0.03, -0.01, 0], [8.01, 0.66, -0.34, 0.49], [7.37, 1.07, -0.73, 0.6], [6.73, 1.18, -0.71, 0.69], [6.09, 1.31, -0.77, 0.77], [5.45, 1.18, -0.85, 0.81], [4.81, 1.42, -0.87, 0.85], [4.17, 1.26, -0.81, 0.86], [3.52, 0.93, -0.6, 0.86], [2.88, 0.97, -0.58, 0.86], [2.24, 0.91, -0.56, 0.86], [1.6, 0.95, -0.52, 0.87], [0.96, 0.93, -0.52, 0.87], [0.32, 0.93, -0.5, 0.87], [-0.32, 0.95, -0.46, 0.86], [-0.96, 0.93, -0.43, 0.84], [-1.6, 0.93, -0.4, 0.83], [-2.24, 0.93, -0.3, 0.78], [-2.88, 0.95, -0.23, 0.74], [-3.52, 0.93, -0.17, 0.68], [-4.17, 0.93, -0.07, 0.61], [-4.81, 0.93, 0.01, 0.54], [-5.45, 0.88, 0.15, 0.46], [-6.09, 0.86, 0.3, 0.38], [-6.73, 0.84, 0.44, 0.32], [-7.37, 0.95, 0.44, 0.31], [-8.01, 0.97, 0.42, 0.3], [-8.65, 0.91, 0.73, 0]], round: 2.4,
@@ -829,7 +829,10 @@ A['do-217'] = mp({
   prop: [3.8,3],
   fin: [[-5.05, 0.89], [-5.37, 1.99], [-5.47, 2.06], [-5.72, 2.06], [-5.78, 2.18], [-6.37, 2.18], [-6.51, 2.06], [-6.72, 0.93], [-7.04, 0.95], [-7.04, 0.44], [-6.45, 0.46], [-6.41, 0.34], [-5.96, 0.3], [-5.78, 0.17], [-5.33, 0.15], [-5.06, 0.05]], twin: 5.9,
   tail: [[0, -4.37, -6.59], [0.59, -4.37, -6.59], [0.66, -4.92, -6.59], [0.85, -4.94, -6.58], [1.16, -4.99, -6.55], [1.58, -5.05, -6.51], [2.08, -5.12, -6.46], [2.63, -5.21, -6.41], [3.22, -5.85, -5.85]], tailUp: 0.11,
-});
+};
+A['do-217'] = mp(DO217);
+// Ju 288 C: the same layout grown, the glazed cockpit, two radials, twin fins (18.15 x 22.66 m), on the Do 217's outlines.
+A['ju-288'] = mp(mpAt(DO217, 18.15, 22.66, 4.97));
 
 // SM.79 Sparviero: three radials (one in the nose), the "hunchback" fairing behind the cockpit, the ventral
 // gondola, a low wing, a single fin (16.2 x 21.2 x 4.6 m).
@@ -1149,6 +1152,8 @@ A['typhoon'] = one({ cls: 'ww2-fighter', length: 9.73, span: 12.67, height: 4.66
 // outlines from the Journal of Recognition's sheet (DRAWN), the bubble where the Typhoon's sheet puts its cockpit, the
 // Tempest's longer nose added (estimate).
 A['tempest-v'] = one({ cls: 'ww2-fighter', length: 10.26, span: 12.5, height: 4.9, w: 0.6, h: 0.78, wing: 'elliptic', le: 1.7, root: 2.9, tip: 0.5, fin: 1.75, finRoot: 1.8, tailSpan: 4.6, tailRoot: 1.2, canopy: { x: 0.9, length: 1.7, kind: 'bubble' }, prop: 4.3, blades: 4, draw: DRAWN['tempest-v'] });
+// Tempest II: the Tempest V's airframe behind the Centaurus radial, the nose 0.23 m longer (10.49 x 12.5 m).
+A['tempest-2'] = one({ cls: 'ww2-fighter', length: 10.49, span: 12.5, height: 4.9, w: 0.6, h: 0.78, wing: 'elliptic', le: 1.7, root: 2.9, tip: 0.5, fin: 1.75, finRoot: 1.8, tailSpan: 4.6, tailRoot: 1.2, canopy: { x: 0.9, length: 1.7, kind: 'bubble' }, prop: 4.3, blades: 4, radial: true, draw: sister(DRAWN['tempest-v'], { plug: 0.23, at: 2.5 }) });
 // MC.202 Folgore: a slim inline, the radiator under the body, a razorback (8.85 x 10.58 x 3.49 m).
 A['mc-202'] = one({ cls: 'ww2-fighter', length: 8.85, span: 10.58, height: 3.49, w: 0.48, h: 0.62, wing: 'round', le: 1.4, root: 2.3, tip: 1.1, sweep: 3, fin: 1.3, finRoot: 1.3, roundFin: true, tailSpan: 3.2, tailRoot: 0.9, canopy: { x: -0.3, length: 1.4, kind: 'framed' }, razor: true, prop: 3.05, blades: 3, scoop: [0.0, 1.2, 0.3] });
 // IAR 80: a long radial fighter with the cockpit set well back (8.97 x 10.5 x 3.6 m).
@@ -1608,6 +1613,8 @@ A['ki-100'] = one({ ...SM, length: 8.82, span: 12.0, height: 3.75, w: 0.6, h: 0.
 A['ki-44'] = one({ ...SM, length: 8.84, span: 9.45, height: 3.25, w: 0.62, h: 0.68, radial: true, wing: 'tapered', le: 1.4, root: 2.2, tip: 1.0, sweep: 3, dihedral: 6, fin: 1.3, finRoot: 1.3, tailSpan: 3.4, tailRoot: 0.95, canopy: { x: -0.2, length: 1.5, kind: 'bubble' }, prop: 2.95, blades: 3, draw: DRAWN['ki-44'] });
 // N1K2-J Shiden-Kai: a radial with a mid wing and the framed canopy on a raised spine (9.38 x 11.99 x 3.96 m).
 A['n1k2'] = one({ ...SM, length: 9.38, span: 11.99, height: 3.96, w: 0.65, h: 0.72, radial: true, wing: 'tapered', le: 1.6, root: 2.5, tip: 1.1, sweep: 3, mount: -0.3, dihedral: 5, fin: 1.5, finRoot: 1.5, tailSpan: 4.2, tailRoot: 1.1, canopy: { x: -0.3, length: 1.6, kind: 'framed' }, razor: true, prop: 3.3, blades: 4, draw: DRAWN['n1k2'] });
+// N1K1-J Shiden: the mid-winged forerunner, its body 0.5 m shorter (8.885 x 11.99 x 4.06 m).
+A['n1k1-j'] = one({ ...SM, length: 8.885, span: 11.99, height: 4.06, w: 0.65, h: 0.72, radial: true, wing: 'tapered', le: 1.6, root: 2.5, tip: 1.1, sweep: 3, mount: -0.3, dihedral: 5, fin: 1.5, finRoot: 1.5, tailSpan: 4.2, tailRoot: 1.1, canopy: { x: -0.3, length: 1.6, kind: 'framed' }, razor: true, prop: 3.3, blades: 4, draw: sister(DRAWN['n1k2'], { plug: -0.5, at: -2.0 }) });
 // J2M Raiden: a fat body behind a long radial cowl, the small canopy set well back (9.95 x 10.8 x 3.95 m).
 A['j2m'] = one({ ...SM, length: 9.95, span: 10.8, height: 3.95, w: 0.72, h: 0.8, radial: true, wing: 'tapered', le: 1.6, root: 2.4, tip: 1.1, sweep: 3, dihedral: 6, fin: 1.45, finRoot: 1.5, tailSpan: 4.2, tailRoot: 1.1, canopy: { x: -1.0, length: 1.4, kind: 'framed' }, razor: true, prop: 3.3, blades: 4 });
 // A7M Reppu: the Zero's big successor, a long wing and the bubble (10.99 x 14.0 x 4.28 m).
@@ -1755,7 +1762,7 @@ function tw(o: Tw): Spec {
 
 // Twin-engined fighters and fighter-bombers. Me 210: the Me 410's forerunner, mapped to it.
 // Do 335 Pfeil: push-pull, one engine in the nose and one driving the tail propeller behind the cruciform tail (13.85 x 13.8 x 5.0 m).
-A['do-335'] = mp({
+const DO335: MP = {
   cls: 'ww2-heavy-fighter', length: 13.85, span: 13.8, height: 5.0,
   body: [[6.92, 0.55, -0.55, 0.55], [6.5, 0.65, -0.7, 0.62], [5.0, 0.7, -0.8, 0.65], [3.6, 0.72, -0.8, 0.62], [3.1, 1.15, -0.8, 0.6], [1.4, 1.1, -0.8, 0.6], [0.8, 0.72, -0.8, 0.62], [-2.5, 0.65, -0.65, 0.58], [-5.4, 0.45, -0.4, 0.4], [-6.6, 0.35, -0.3, 0.3]],
   hood: { front: 3.2, back: 1.3 },
@@ -1765,7 +1772,11 @@ A['do-335'] = mp({
   prop: [3.5, 3],
   fin: [[-4.6, -1.6], [-5.6, -1.7], [-6.2, -0.6], [-6.2, 0.6], [-5.6, 1.9], [-4.6, 1.8], [-4.4, 0.0]],
   tail: [[0, -4.4, -6.0], [2.6, -5.0, -5.9]], tailR: 0.3, tailUp: 0,
-});
+};
+A['do-335'] = mp(DO335);
+// Fokker D.XXIII: push-pull too, engines fore and aft of the cockpit, on the Do 335's outlines at its own published
+// size (10.2 x 11.5 x 3.8 m); its tail on two booms is not drawn.
+A['fokker-d23'] = mp(mpAt(DO335, 10.2, 11.5, 3.8));
 // F7F Tigercat: a slim body with the cockpit over the wing's leading edge, big radials in long nacelles, a tall single fin (13.83 x 15.7 x 4.83 m).
 // The wing's root leading edge and chords, the nacelles' place and the hood measured on the Journal of Recognition's
 // "New and revised airplane silhouettes" (January 1945), F7F-2, with tools/figures/twinview.py.

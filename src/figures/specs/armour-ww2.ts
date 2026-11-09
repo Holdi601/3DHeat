@@ -682,6 +682,9 @@ G['churchill-i'] = ww2({ ...CHURCHILL, turret: CH1_T, guns: [{ mount: 'turret', 
 // Mk III: the welded, slab-sided square turret with the 6-pounder.
 const CH3_T = turret(-0.1, [[-0.95, 0.82], [0.95, 0.82]], [[-0.95, 0.72], [0.95, 0.72]], 16, 0.95);
 G['churchill-iii'] = ww2({ ...CHURCHILL, turret: CH3_T, gun: { length: 2.0, calibre: 0.057, at: 0.5 } });
+// Churchill AVRE: the Mk III/IV hull and turret with the 290 mm Petard spigot mortar's short, fat barrel (its length
+// estimated).
+G['churchill-avre'] = ww2({ ...CHURCHILL, turret: CH3_T, gun: { length: 0.7, calibre: 0.29, at: 0.5 } });
 // Mk IV: a cast, rounded turret of the same size.
 const CH4_T = turret(-0.1, [[-1.0, 0.7], [-0.8, 0.9], [0.6, 0.92], [0.95, 0.72], [1.05, 0.5]], [[-1.0, 0.5], [-0.7, 0.72], [0.6, 0.74], [1.05, 0.45]], 2.8, 1.05);
 G['churchill-iv'] = ww2({ ...CHURCHILL, turret: CH4_T, gun: { length: 2.0, calibre: 0.057, at: 0.5 } });
@@ -1523,7 +1526,7 @@ const CHIHE: Ww2 = { ...CHIHA, L: 5.73, deck: 1.6, top: [[-2.865, 1.35], [-2.75,
 G['type-1-chi-he'] = ww2({ ...CHIHE, turret: CHIHA_KAI_T, gun: { length: 1.6, calibre: 0.047, at: 0.45 }});
 G['type-3-chi-nu'] = ww2({ ...CHIHE, turret: turret(0.1, [[-1.25, 0.7], [-0.9, 1.0], [0.6, 1.0], [1.0, 0.7]], [[-1.25, 0.72], [1.0, 0.72]], 16, 1.05), gun: { length: 2.5, calibre: 0.075, at: 0.45 }, turretParts: (t) => [cupola(t, -0.4, 0.4, 0.3, 0.15)] });
 // Type 4 Chi-To: seven road wheels, a big welded turret with the long 75 mm (6.42 x 2.87 m, 2.87 m).
-G['type-4-chi-to'] = ww2({
+const CHITO: Ww2 = {
   cls: 'medium-tank', L: 6.42, W: 2.87, deck: 1.85, fender: 0.92,
   top: [[-3.21, 1.55], [-3.1, 1.85], [1.0, 1.85], [3.21, 1.0]],
   plan: [[-3.21, 1.4], [3.21, 1.4]], hullRound: 12,
@@ -1532,6 +1535,16 @@ G['type-4-chi-to'] = ww2({
   turret: turret(-0.1, [[-1.5, 0.85], [-1.2, 1.15], [0.7, 1.2], [1.2, 0.85], [1.3, 0.6]], [[-1.5, 0.85], [1.3, 0.82]], 12, 1.35),
   gun: { length: 3.6, calibre: 0.075, at: 0.45 },
   turretParts: (t) => [cupola(t, -0.6, -0.5, 0.32, 0.17)],
+};
+G['type-4-chi-to'] = ww2(CHITO);
+// Type 5 Chi-Ri: the Chi-To grown to eight road wheels a side under a longer, wider hull with the same 75 mm
+// (7.3 x 3.07 m, 3.05 m); its 37 mm in the hull front is not drawn.
+G['type-5-chi-ri'] = ww2({
+  ...CHITO, L: 7.3, W: 3.07, height: 3.05,
+  top: [[-3.65, 1.55], [-3.54, 1.85], [1.15, 1.85], [3.65, 1.0]],
+  plan: [[-3.65, 1.5], [3.65, 1.5]],
+  track: trk(3.58, 0.92, 0.6, 0.55, 2.9),
+  wheels: even(8, -2.85, 2.85), rollers: [-1.8, 0, 1.8],
 });
 // Type 95 Ha-Go: four road wheels in two bell-crank pairs, two return rollers, the small turret left of the centre
 // with its 37 mm (4.38 x 2.06 m, 2.13 m).
