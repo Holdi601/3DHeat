@@ -13,6 +13,6 @@
  * built figure is.
  */
 
-import type { MeshFigureData } from "../meshfig";
+import type { MeshFigureData } from '../meshfig';
 
 export const MESH_FIGURES: Record<string, MeshFigureData> = {};

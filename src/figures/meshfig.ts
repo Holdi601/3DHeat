@@ -14,28 +14,17 @@
  * model worker (`modelWorker.ts`) like any other build.
  */
 
-import type { Frame3, Rgb, Vec3 } from "../race/geometry";
-import {
-  atDetail,
-  COARSE,
-  FAR,
-  finish,
-  into,
-  joint,
-  newKit,
-  PAINT,
-  type Anchor,
-  type Template,
-} from "./kit";
-import { Mesh } from "./mesh";
-import { ring } from "./parts";
+import type { Frame3, Rgb, Vec3 } from '../race/geometry';
+import { atDetail, COARSE, FAR, finish, into, joint, newKit, PAINT, type Anchor, type Template } from './kit';
+import { Mesh } from './mesh';
+import { ring } from './parts';
 
 /** One part of a mesh figure: the hull (no joint), a turret (`yaw`) or a gun (`pitch` on the turret `parent`). */
 export interface MeshPart {
   name: string;
   /** A turret's ring centre, a gun's trunnion; template frame, metres. */
   pivot: Vec3;
-  joint?: "yaw" | "pitch";
+  joint?: 'yaw' | 'pitch';
   /** The joint (index among the jointed parts) a gun rides on. */
   parent?: number;
   /** The team colour's shade on this part (default `HULL_TONE`). */
@@ -80,10 +69,7 @@ function bytesOf(b64: string): Uint16Array {
 }
 
 /** The parts of one level of detail: positions in metres and triangles, per part. */
-export function decodeLod(
-  m: MeshFigureData,
-  lod: number,
-): { p: Float32Array; idx: Uint16Array }[] {
+export function decodeLod(m: MeshFigureData, lod: number): { p: Float32Array; idx: Uint16Array }[] {
   const d = bytesOf(m.lods[lod]);
   const n = d[0];
   let o = 1 + n * 2;
@@ -111,14 +97,13 @@ function buildLod(m: MeshFigureData, lod: number): Template {
   m.parts.forEach((part, i) => {
     let j = -1;
     if (part.joint) {
-      const parent =
-        part.parent !== undefined ? (joints[part.parent] ?? -1) : -1;
+      const parent = part.parent !== undefined ? (joints[part.parent] ?? -1) : -1;
       j = joint(k, {
         kind: part.joint,
         pivot: [...part.pivot] as Vec3,
         parent,
         rest: 0,
-        ...(part.joint === "pitch" ? { pitch: 0 } : {}),
+        ...(part.joint === 'pitch' ? { pitch: 0 } : {}),
       });
       joints.push(j);
     }
@@ -138,12 +123,7 @@ function buildLod(m: MeshFigureData, lod: number): Template {
       const a = idx[t],
         b = idx[t + 1],
         c = idx[t + 2];
-      const dst =
-        gear &&
-        (p[a * 3 + 1] + p[b * 3 + 1] + p[c * 3 + 1]) / 3 < gear.top &&
-        Math.abs(p[a * 3 + 2] + p[b * 3 + 2] + p[c * 3 + 2]) / 3 > gear.inner
-          ? fixed
-          : team;
+      const dst = gear && (p[a * 3 + 1] + p[b * 3 + 1] + p[c * 3 + 1]) / 3 < gear.top && Math.abs(p[a * 3 + 2] + p[b * 3 + 2] + p[c * 3 + 2]) / 3 > gear.inner ? fixed : team;
       dst.tri(a, b, c);
     }
     const crease = m.crease ?? CREASE;
@@ -151,18 +131,7 @@ function buildLod(m: MeshFigureData, lod: number): Template {
     if (fixed.idx.length) fixed.emit(k.fixed, { crease, wound: true });
   });
   into(k, -1);
-  if (m.prop)
-    ring(
-      k.fixed,
-      FACING_FORWARD,
-      m.prop.at[1],
-      m.prop.at[2],
-      m.prop.at[0] - 0.02,
-      m.prop.diameter / 2,
-      PAINT.rotor,
-      0.18,
-      28,
-    );
+  if (m.prop) ring(k.fixed, FACING_FORWARD, m.prop.at[1], m.prop.at[2], m.prop.at[0] - 0.02, m.prop.diameter / 2, PAINT.rotor, 0.18, 28);
   return finish(k, m.anchor);
 }
 
@@ -172,9 +141,7 @@ export function buildMeshFigure(m: MeshFigureData): Template {
   let c: Template | undefined;
   let f: Template | undefined;
   const lod = (i: number): Template => {
-    const x = atDetail(i === 1 ? COARSE : FAR, () =>
-      buildLod(m, Math.min(i, m.lods.length - 1)),
-    );
+    const x = atDetail(i === 1 ? COARSE : FAR, () => buildLod(m, Math.min(i, m.lods.length - 1)));
     x.min = t.min;
     x.max = t.max;
     return x;
