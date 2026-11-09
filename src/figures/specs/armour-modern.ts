@@ -619,6 +619,9 @@ G['rooikat'] = { cls: 'tank-destroyer', chassis: 'wheeled', length: 7.09, width:
 G['fv721-fox'] = { cls: 'scout-car', chassis: 'wheeled', length: 4.2, width: 2.13, hullHeight: 1.5, axles: 2, axleAt: [0.55, -0.55], wheelRadius: 0.48, hullOutline: wheeledHull(4.2, 1.5, 1.0, 1.06, 1.2, 0.45), turret: wheeledTurret(-0.2, 1.4, 0.8, 0.6), guns: [{ mount: 'turret', length: 2.6, calibre: 0.03, at: 0.5 }] };
 // Fiat 6616 (1977): a 4x4 with a two-man turret, the 20 mm or (Cockerill) a 90 mm (5.37 x 2.5 m, 2.03 m).
 G['fiat-6616'] = { cls: 'scout-car', chassis: 'wheeled', length: 5.37, width: 2.5, hullHeight: 1.5, axles: 2, axleAt: [0.55, -0.5], wheelRadius: 0.55, hullOutline: wheeledHull(5.37, 1.5, 1.0, 1.25, 1.4), turret: wheeledTurret(-0.2, 1.5, 0.85, 0.55), guns: [{ mount: 'turret', length: 1.9, calibre: 0.02, at: 0.5 }] };
+// Fiat 6614: the 6616's running gear under the taller 4x4 carrier's hull (5.86 x 2.5 x 1.78 m), here with the
+// 106 mm recoilless rifle (3.4 m) on a pintle mount over the roof.
+G['fiat-6614'] = { ...G['fiat-6616'], length: 5.86, hullHeight: 1.78, hullOutline: wheeledHull(5.86, 1.78, 1.1, 1.25, 1.4), turret: wheeledTurret(-0.3, 0.8, 0.35, 0.35), guns: [{ mount: 'turret', length: 3.4, calibre: 0.106, at: 0.6 }] };
 // Ratel (1976): a tall 6x6 box with the turret forward, the 20 mm, 90 mm or ZT3 missiles (7.21 x 2.52 m, 2.92 m).
 G['ratel'] = { cls: 'ifv', chassis: 'wheeled', length: 7.21, width: 2.52, hullHeight: 2.35, axles: 3, axleAt: [0.6, -0.1, -0.6], wheelRadius: 0.6, hullOutline: wheeledHull(7.21, 2.35, 1.5, 1.26, 1.8, 0.7), turret: wheeledTurret(0.3, 1.6, 0.85, 0.6), guns: [{ mount: 'turret', length: 2.0, calibre: 0.02, at: 0.5 }] };
 // Luchs (1975): a boat-shaped 8x8 with the 20 mm turret over the middle, the rear steering station (7.74 x 2.98 m, 2.84 m);
@@ -757,6 +760,9 @@ G['plz-05'] = { cls: 'sp-artillery', chassis: 'tracked', length: 7.3, width: 3.4
 // ShKH vz. 77 DANA (1980): a Tatra 8x8 with the armoured cab in front, the split gun housing amidships with the 152 mm
 // laid forward over the cab, the engine at the back (about 8.9 x 2.8 m hull, 2.85 m; estimates).
 G['dana-vz77'] = { cls: 'sp-artillery', chassis: 'wheeled', length: 8.87, width: 2.8, hullHeight: 2.0, axles: 4, axleAt: [0.75, 0.42, -0.35, -0.68], wheelRadius: 0.6, hullOutline: { top: [[-4.43, 1.9], [-4.2, 2.0], [2.6, 2.0], [3.4, 2.3], [4.0, 2.3], [4.43, 1.4]], bottom: [[-4.43, 0.75], [4.1, 0.75], [4.43, 1.0]], plan: [[-4.43, 1.35], [4.43, 1.35]], round: 10, stations: 14 }, turret: turret(-0.6, [[-1.8, 1.25], [1.6, 1.3], [1.8, 1.0]], [[-1.8, 0.85], [1.5, 0.9], [1.8, 0.65]], 10, 1.75), guns: [{ mount: 'turret', length: 5.0, calibre: 0.152, muzzle: true, at: 0.6, elevation: 0.04 }] };
+// G6 Rhino: a 6x6 with the driver's cab in the front centre, the big turret aft with the 155 mm of 45 calibres
+// (hull 9.2 x 3.4 m, 10.34 m with the gun forward, 3.3 m to the turret roof); tyres 21.00-25 (1.6 m).
+G['g6-rhino'] = { cls: 'sp-artillery', chassis: 'wheeled', length: 9.2, width: 3.4, hullHeight: 2.2, axles: 3, axleAt: [0.6, -0.15, -0.55], wheelRadius: 0.78, hullOutline: { top: [[-4.6, 1.9], [-4.5, 2.2], [1.5, 2.2], [4.0, 1.6], [4.6, 1.2]], bottom: [[-4.6, 0.75], [4.3, 0.75], [4.6, 1.0]], plan: [[-4.6, 1.65], [4.6, 1.65]], round: 10, stations: 14 }, turret: turret(-1.6, [[-1.7, 1.3], [1.4, 1.4], [1.7, 1.1]], [[-1.7, 1.05], [1.4, 1.1], [1.7, 0.85]], 10, 1.7), guns: [{ mount: 'turret', length: 5.6, calibre: 0.155, muzzle: true, at: 0.6, elevation: 0.04 }] };
 
 // ---------------------------------------------------------------- War Thunder odd units
 
