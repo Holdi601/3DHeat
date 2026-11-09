@@ -567,16 +567,30 @@ export function spanOfKey(trackData: Uint32Array, b: number, j: number): number 
   return c ? c + ((j - trackData[b]) >>> CHUNK_SHIFT) * CHUNK_U32 : b + 8;
 }
 
+// The track table's float view, kept: made anew per key it was a million views a frame
+// (a pick over every unit), garbage that the collector then paused frames for.
+let viewOf: Uint32Array | null = null;
+let viewF32: Float32Array = new Float32Array(0);
+
+/** `trackData` read as floats (the spans' slots): one view per table, not one per call. */
+export function trackFloats(T: Uint32Array): Float32Array {
+  if (viewOf !== T) {
+    viewOf = T;
+    viewF32 = new Float32Array(T.buffer, T.byteOffset, T.length);
+  }
+  return viewF32;
+}
+
 /** The time of key `j` of the track at u32 offset `b`. */
 export function keyTime(s: GpuTrackStore, b: number, j: number): number {
-  const f = new Float32Array(s.trackData.buffer, s.trackData.byteOffset, s.trackData.length);
+  const f = trackFloats(s.trackData);
   const o = spanOfKey(s.trackData, b, j);
   return f[o + 4] + (s.keysA[j * KEY_U32 + 1] >>> 16) * f[o + 5];
 }
 
 /** Key `j` of the track at u32 offset `b` of `trackData`, decoded into `out` (x, y, z, t). */
 export function decodeKey(s: GpuTrackStore, b: number, j: number, out: number[]): void {
-  const f = new Float32Array(s.trackData.buffer, s.trackData.byteOffset, s.trackData.length);
+  const f = trackFloats(s.trackData);
   const o = spanOfKey(s.trackData, b, j);
   const a = s.keysA[j * KEY_U32];
   const c = s.keysA[j * KEY_U32 + 1];
