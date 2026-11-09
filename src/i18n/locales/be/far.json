@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Яркі пырск: не прабіў",
   "far.hitLookGouge": "Барозна: слізгануў (хутчэй рыкашэт)",
   "far.hitLookBullet": "Адтуліна: вынік невядомы",
+  "far.hitLookScorch": "Зорка сажы: выбуховы снарад (HE, HEAT, HESH)",
   "far.hitLookRing": "Кольца: што ён зрабіў",
-  "far.hitCalibre": "Калібр"
+  "far.hitCalibre": "Калібр",
+  "far.hitAmmo": "Боепрыпас",
+  "far.ammoExplosive": "выбуховы",
+  "far.ammoKinetic": "кінетычны"
 }

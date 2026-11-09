@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Heller Spritzer: nicht durchgeschlagen",
   "far.hitLookGouge": "Furche: abgeglitten (wohl ein Abpraller)",
   "far.hitLookBullet": "Loch: Wirkung unbekannt",
+  "far.hitLookScorch": "Rußstern: Sprenggeschoss (HE, HEAT, HESH)",
   "far.hitLookRing": "Ring: was er bewirkte",
-  "far.hitCalibre": "Kaliber"
+  "far.hitCalibre": "Kaliber",
+  "far.hitAmmo": "Munition",
+  "far.ammoExplosive": "explosiv",
+  "far.ammoKinetic": "kinetisch"
 }

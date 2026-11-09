@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Éclat brillant : n’a pas pénétré",
   "far.hitLookGouge": "Sillon : a glissé (sans doute un ricochet)",
   "far.hitLookBullet": "Trou : effet inconnu",
+  "far.hitLookScorch": "Étoile de suie : obus explosif (HE, HEAT, HESH)",
   "far.hitLookRing": "Anneau : ce qu’il a fait",
-  "far.hitCalibre": "Calibre"
+  "far.hitCalibre": "Calibre",
+  "far.hitAmmo": "Munition",
+  "far.ammoExplosive": "explosive",
+  "far.ammoKinetic": "cinétique"
 }

@@ -13,6 +13,9 @@
  *            most likely a ricochet - the data does not tell one apart
  *   bullet   the data does not say what it did (aircraft, ships): a bullet
  *            or cannon hole
+ *   scorch   an explosive round (HE, HEAT, HESH; War Thunder's `ammoType`),
+ *            whatever it did: a dark soot star round a lighter centre,
+ *            blackened in the middle where it got through
  *
  * A thin ring round each in the hit analysis' outcome colour
  * (`vehicle/scene.ts`), so this view and the Vehicles tab agree; the killing
@@ -34,7 +37,7 @@
 
 import type { VertexBuffer } from '../race/geometry';
 import type { Dataset } from '../state/types';
-import { drain, hitsOfSteps, OUTCOMES, type HitSet, type VehicleHit } from '../vehicle/hits';
+import { drain, explosiveAmmo, hitsOfSteps, OUTCOMES, type HitSet, type VehicleHit } from '../vehicle/hits';
 import { placesOf, placesSteps, type HitPlaces } from '../vehicle/places';
 import { figureOfVehicle, OUTCOME_COLOURS, templateOfFigure } from '../vehicle/scene';
 import { turretOf, type TurretBox } from './turret';
@@ -62,11 +65,13 @@ const KILL_SIZE = 1.4;
 const POP_S = 0.3;
 /** The share of its time a mark spends fading out at the end. */
 const FADE = 0.3;
+/** Outcomes up to this index in `OUTCOMES` got through (kill .. damage): an explosive round's blast has a hole. */
+const HOLE_OUTCOMES = OUTCOMES.indexOf('damage');
 /** A shot this far off the surface's normal or more glances off (cosine of 70 degrees). */
 const GLANCING = 0.34;
 
 /** What a mark looks like (see the top). */
-export const Look = { Hole: 0, Splash: 1, Gouge: 2, Bullet: 3 } as const;
+export const Look = { Hole: 0, Splash: 1, Gouge: 2, Bullet: 3, Scorch: 4 } as const;
 export type Look = (typeof Look)[keyof typeof Look];
 
 export interface HitMarks {
@@ -87,6 +92,8 @@ export interface HitMarks {
   calibre: Float32Array;
   /** Index into `OUTCOMES`. */
   outcome: Uint8Array;
+  /** 1: an explosive round (`explosiveAmmo`). */
+  explosive: Uint8Array;
   /** 1: the killing shot. */
   kill: Uint8Array;
   body: Uint8Array;
@@ -123,6 +130,7 @@ function empty(n: number): HitMarks {
     dir: new Float32Array(n * 3).fill(NaN),
     calibre: new Float32Array(n).fill(NaN),
     outcome: new Uint8Array(n),
+    explosive: new Uint8Array(n),
     kill: new Uint8Array(n),
     body: new Uint8Array(n),
     look: new Uint8Array(n),
@@ -235,9 +243,10 @@ function* marksFromSteps(d: Dataset, set: HitSet, places: HitPlaces): Generator<
     out.hit[k] = h.id;
     out.row[k] = row;
     if (h.calibre !== null) out.calibre[k] = h.calibre;
+    out.explosive[k] = explosiveAmmo(h.ammoType) ? 1 : 0;
     const info = set.vehicles.get(h.vehicle);
     out.body[k] = bodyOf(info?.kind || h.vehicle);
-    out.look[k] = lookOf(OUTCOMES[out.outcome[k]], NaN);
+    out.look[k] = lookOf(OUTCOMES[out.outcome[k]], NaN, out.explosive[k] === 1);
     if (aim && row >= 0 && out.body[k] === FireBody.Ground) out.yawHit[k] = aim.at(row, h.time, now).yaw;
     let v = index.get(h.vehicle);
     if (v === undefined) {
@@ -287,8 +296,12 @@ function* indexSteps(m: HitMarks): Generator<void, void, void> {
   }
 }
 
-/** What a mark looks like by what the hit did and how square the shot struck (|cos| to the normal; NaN unknown). */
-export function lookOf(outcome: string | undefined, square: number): Look {
+/**
+ * What a mark looks like by what the hit did and how square the shot struck
+ * (|cos| to the normal; NaN unknown); an explosive round's is its blast, whatever it did.
+ */
+export function lookOf(outcome: string | undefined, square: number, explosive = false): Look {
+  if (explosive) return Look.Scorch;
   switch (outcome) {
     case 'kill':
     case 'module':
@@ -403,7 +416,7 @@ function applyPlaced(m: HitMarks, v: number, box: TurretBox | null, snapped: Flo
       m.dir[k * 3 + 2] = dx * s + dz * c;
     }
     const sq = Math.abs(m.dir[k * 3] * snapped[o + 3] + m.dir[k * 3 + 1] * snapped[o + 4] + m.dir[k * 3 + 2] * snapped[o + 5]);
-    m.look[k] = lookOf(OUTCOMES[m.outcome[k]], sq);
+    m.look[k] = lookOf(OUTCOMES[m.outcome[k]], sq, m.explosive[k] === 1);
   });
 }
 
@@ -455,6 +468,15 @@ const SCORCH: [number, number, number] = [0.11, 0.09, 0.07];
 const METAL: [number, number, number] = [0.85, 0.85, 0.8];
 const DENT: [number, number, number] = [0.42, 0.42, 0.4];
 const RIM: [number, number, number] = [0.55, 0.55, 0.53];
+/** An explosive round's blast: soot, and the lighter, burnt-off centre. */
+const SOOT: [number, number, number] = [0.05, 0.045, 0.04];
+const ASH: [number, number, number] = [0.36, 0.32, 0.27];
+/** The soot star's corners: eight points out, eight in between, round the unit circle. */
+const STAR = Array.from({ length: 17 }, (_, i) => {
+  const a = (i * Math.PI) / 8;
+  const r = i % 2 ? 0.45 : 1;
+  return [Math.cos(a) * r, Math.sin(a) * r];
+});
 
 export class HitMarkLayer {
   private readonly pose: MarkPose = { x: 0, y: 0, z: 0, f: [1, 0, 0], u: [0, 1, 0], scale: 1, row: -1 };
@@ -628,7 +650,7 @@ export class HitMarkLayer {
       const nb = m.normal[k * 3 + 1], db = m.dir[k * 3 + 1];
       const nx = fx * na + ux * nb + rx * nc, ny = fy * na + uy * nb + ry * nc, nz = fz * na + uz * nb + rz * nc;
       const sx = fx * da + ux * db + rx * dc, sy = fy * da + uy * db + ry * dc, sz = fz * da + uz * db + rz * dc;
-      shown = this.decal(m.look[k] as Look, x, y, z, nx, ny, nz, sx, sy, sz, hole, ps, col, kill, alpha);
+      shown = this.decal(m.look[k] as Look, x, y, z, nx, ny, nz, sx, sy, sz, hole, ps, col, kill, alpha, m.outcome[k] <= HOLE_OUTCOMES);
     }
     if (float) shown = Math.max(shown, this.marker(x, y, z, v, scale, ps, age, kill, col, alpha));
     if (shown <= 0) return;
@@ -645,7 +667,7 @@ export class HitMarkLayer {
    * known): its look's layers, each a little off the surface, in the plane
    * across the normal (the gouge long along the shot). Returns its radius.
    */
-  private decal(look: Look, x: number, y: number, z: number, nx: number, ny: number, nz: number, sx: number, sy: number, sz: number, hole: number, ps: number, col: readonly number[], kill: boolean, alpha: number): number {
+  private decal(look: Look, x: number, y: number, z: number, nx: number, ny: number, nz: number, sx: number, sy: number, sz: number, hole: number, ps: number, col: readonly number[], kill: boolean, alpha: number, through: boolean): number {
     const r = Math.max(hole, DECAL_MIN_PX * ps);
     // Across the surface: along the shot where it is known, else any way.
     let tx = sx - nx * (sx * nx + sy * ny + sz * nz), ty = sy - ny * (sx * nx + sy * ny + sz * nz), tz = sz - nz * (sx * nx + sy * ny + sz * nz);
@@ -694,6 +716,14 @@ export class HitMarkLayer {
         this.ellipse(r * 2.8, r * 0.35, step, DENT, alpha);
         this.ring(r * 3.5, r * 4.0, step, col, alpha, r * 0.9, r * 1.3);
         return r * 4;
+      case Look.Scorch:
+        // The blast reaches well past the round's own width; a hole in the middle where it got through.
+        this.star(r * 4, 0, SOOT, 0.85 * alpha);
+        this.ellipse(r * 1.4, r * 1.4, step, ASH, 0.9 * alpha);
+        if (through) this.ellipse(r * 0.6, r * 0.6, step * 2, BLACK, alpha);
+        this.ring(r * 4, r * (kill ? 4.7 : 4.4), step, kill ? WHITE : col, alpha);
+        if (kill) this.ring(r * 4.7, r * 5.2, step, col, alpha);
+        return r * (kill ? 5.2 : 4.4);
       default:
         this.ellipse(r * 1.5, r * 1.5, 0, RIM, 0.9 * alpha);
         this.ellipse(r, r, step, BLACK, alpha);
@@ -745,6 +775,19 @@ export class HitMarkLayer {
       o.vertex(x, y, z, r, g, b, alpha);
       o.vertex(x + this.bx * c0[0] * a + this.ux * c0[1] * bb, y + this.by * c0[0] * a + this.uy * c0[1] * bb, z + this.bz * c0[0] * a + this.uz * c0[1] * bb, r, g, b, alpha);
       o.vertex(x + this.bx * c1[0] * a + this.ux * c1[1] * bb, y + this.by * c1[0] * a + this.uy * c1[1] * bb, z + this.bz * c1[0] * a + this.uz * c1[1] * bb, r, g, b, alpha);
+    }
+  }
+
+  /** The soot star round the centre, its points `a` out, sixteen triangles, `lift` off it. */
+  private star(a: number, lift: number, col: readonly number[], alpha: number): void {
+    const o = this.out!;
+    const r = col[0], g = col[1], b = col[2];
+    const x = this.cx + this.ex * lift, y = this.cy + this.ey * lift, z = this.cz + this.ez * lift;
+    for (let i = 0; i < 16; i++) {
+      const c0 = STAR[i], c1 = STAR[i + 1];
+      o.vertex(x, y, z, r, g, b, alpha);
+      o.vertex(x + (this.bx * c0[0] + this.ux * c0[1]) * a, y + (this.by * c0[0] + this.uy * c0[1]) * a, z + (this.bz * c0[0] + this.uz * c0[1]) * a, r, g, b, alpha);
+      o.vertex(x + (this.bx * c1[0] + this.ux * c1[1]) * a, y + (this.by * c1[0] + this.uy * c1[1]) * a, z + (this.bz * c1[0] + this.uz * c1[1]) * a, r, g, b, alpha);
     }
   }
 

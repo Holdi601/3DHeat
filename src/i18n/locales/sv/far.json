@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Ljust stänk: gick inte igenom",
   "far.hitLookGouge": "Fåra: gled av (troligen en rikoschett)",
   "far.hitLookBullet": "Hål: utfall okänt",
+  "far.hitLookScorch": "Sotstjärna: explosiv granat (HE, HEAT, HESH)",
   "far.hitLookRing": "Ring: vad det gjorde",
-  "far.hitCalibre": "Kaliber"
+  "far.hitCalibre": "Kaliber",
+  "far.hitAmmo": "Ammunition",
+  "far.ammoExplosive": "explosiv",
+  "far.ammoKinetic": "kinetisk"
 }

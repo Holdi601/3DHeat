@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Spožs plankums: necaursita",
   "far.hitLookGouge": "Grope: noslīdēja (visticamāk rikošets)",
   "far.hitLookBullet": "Caurums: iznākums nav zināms",
+  "far.hitLookScorch": "Kvēpu zvaigzne: sprāgstošs šāviņš (HE, HEAT, HESH)",
   "far.hitLookRing": "Gredzens: ko tas izdarīja",
-  "far.hitCalibre": "Kalibrs"
+  "far.hitCalibre": "Kalibrs",
+  "far.hitAmmo": "Munīcija",
+  "far.ammoExplosive": "sprāgstoša",
+  "far.ammoKinetic": "kinētiska"
 }

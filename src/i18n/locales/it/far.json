@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Schizzo lucente: non è penetrato",
   "far.hitLookGouge": "Solco: è scivolato (probabilmente un rimbalzo)",
   "far.hitLookBullet": "Foro: esito sconosciuto",
+  "far.hitLookScorch": "Stella di fuliggine: proiettile esplosivo (HE, HEAT, HESH)",
   "far.hitLookRing": "Anello: cosa ha fatto",
-  "far.hitCalibre": "Calibro"
+  "far.hitCalibre": "Calibro",
+  "far.hitAmmo": "Munizione",
+  "far.ammoExplosive": "esplosiva",
+  "far.ammoKinetic": "cinetica"
 }

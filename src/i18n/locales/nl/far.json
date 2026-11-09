@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Heldere spat: ging er niet door",
   "far.hitLookGouge": "Groef: gleed af (waarschijnlijk een ricochet)",
   "far.hitLookBullet": "Gat: uitkomst onbekend",
+  "far.hitLookScorch": "Roetster: explosieve granaat (HE, HEAT, HESH)",
   "far.hitLookRing": "Ring: wat het deed",
-  "far.hitCalibre": "Kaliber"
+  "far.hitCalibre": "Kaliber",
+  "far.hitAmmo": "Munitie",
+  "far.ammoExplosive": "explosief",
+  "far.ammoKinetic": "kinetisch"
 }

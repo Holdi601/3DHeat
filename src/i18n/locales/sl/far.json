@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Svetel madež: ni prebil",
   "far.hitLookGouge": "Brazda: zdrsnil (verjetno odboj)",
   "far.hitLookBullet": "Luknja: izid neznan",
+  "far.hitLookScorch": "Zvezda saj: eksplozivni izstrelek (HE, HEAT, HESH)",
   "far.hitLookRing": "Obroč: kaj je storil",
-  "far.hitCalibre": "Kaliber"
+  "far.hitCalibre": "Kaliber",
+  "far.hitAmmo": "Strelivo",
+  "far.ammoExplosive": "eksplozivno",
+  "far.ammoKinetic": "kinetično"
 }

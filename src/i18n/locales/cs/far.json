@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Jasný otisk: neprobito",
   "far.hitLookGouge": "Rýha: sklouzlo (nejspíš odraz)",
   "far.hitLookBullet": "Díra: výsledek neznámý",
+  "far.hitLookScorch": "Hvězda sazí: výbušný náboj (HE, HEAT, HESH)",
   "far.hitLookRing": "Kroužek: co způsobil",
-  "far.hitCalibre": "Ráže"
+  "far.hitCalibre": "Ráže",
+  "far.hitAmmo": "Munice",
+  "far.ammoExplosive": "výbušná",
+  "far.ammoKinetic": "kinetická"
 }

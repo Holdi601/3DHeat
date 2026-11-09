@@ -127,7 +127,7 @@ export function FigureControls({ toggle = true }: { toggle?: boolean }) {
               />
               <Check label={t('far.hitMarkFloat')} checked={hitMarkFloat} onChange={(v) => patchTeam({ hitMarkFloat: v })} title={t('far.hitMarkFloatTitle')} />
               <div className="hit-mark-legend looks">
-                {(['Hole', 'Splash', 'Gouge', 'Bullet'] as const).map((l) => (
+                {(['Hole', 'Splash', 'Gouge', 'Bullet', 'Scorch'] as const).map((l) => (
                   <span key={l}>
                     <i className={`hit-look ${l.toLowerCase()}`} />
                     {t(`far.hitLook${l}`)}

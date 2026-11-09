@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Lyst stænk: gik ikke igennem",
   "far.hitLookGouge": "Rille: gled af (nok en rikochet)",
   "far.hitLookBullet": "Hul: udfald ukendt",
+  "far.hitLookScorch": "Sodstjerne: eksplosiv granat (HE, HEAT, HESH)",
   "far.hitLookRing": "Ring: hvad det gjorde",
-  "far.hitCalibre": "Kaliber"
+  "far.hitCalibre": "Kaliber",
+  "far.hitAmmo": "Ammunition",
+  "far.ammoExplosive": "eksplosiv",
+  "far.ammoKinetic": "kinetisk"
 }

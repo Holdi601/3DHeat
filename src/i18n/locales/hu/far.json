@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Fényes folt: nem ütötte át",
   "far.hitLookGouge": "Barázda: lecsúszott (valószínűleg gellert kapott)",
   "far.hitLookBullet": "Lyuk: hatás ismeretlen",
+  "far.hitLookScorch": "Koromcsillag: robbanó lövedék (HE, HEAT, HESH)",
   "far.hitLookRing": "Gyűrű: mit tett",
-  "far.hitCalibre": "Kaliber"
+  "far.hitCalibre": "Kaliber",
+  "far.hitAmmo": "Lőszer",
+  "far.ammoExplosive": "robbanó",
+  "far.ammoKinetic": "kinetikus"
 }

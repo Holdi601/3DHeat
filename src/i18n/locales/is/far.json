@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Bjart skvett: fór ekki í gegn",
   "far.hitLookGouge": "Rák: rann af (líklega endurkast)",
   "far.hitLookBullet": "Gat: útkoma óþekkt",
+  "far.hitLookScorch": "Sótstjarna: sprengikúla (HE, HEAT, HESH)",
   "far.hitLookRing": "Hringur: hvað það gerði",
-  "far.hitCalibre": "Hlaupvídd"
+  "far.hitCalibre": "Hlaupvídd",
+  "far.hitAmmo": "Skotfæri",
+  "far.ammoExplosive": "sprengiskot",
+  "far.ammoKinetic": "hreyfiorkuskot"
 }

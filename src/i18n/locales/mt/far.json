@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Tixrid jleqq: ma għaddietx",
   "far.hitLookGouge": "Kanal: żelqet (x’aktarx rikoxett)",
   "far.hitLookBullet": "Toqba: riżultat mhux magħruf",
+  "far.hitLookScorch": "Stilla tas-sinġ: qoxra splussiva (HE, HEAT, HESH)",
   "far.hitLookRing": "Ċirku: x’għamlet",
-  "far.hitCalibre": "Kalibru"
+  "far.hitCalibre": "Kalibru",
+  "far.hitAmmo": "Munizzjon",
+  "far.ammoExplosive": "splussiva",
+  "far.ammoKinetic": "kinetika"
 }

@@ -35,6 +35,10 @@
   "far.hitLookSplash": "밝은 자국: 비관통",
   "far.hitLookGouge": "홈: 미끄러짐 (도탄 가능성)",
   "far.hitLookBullet": "구멍: 결과 모름",
+  "far.hitLookScorch": "그을음 별: 폭발성 탄 (HE, HEAT, HESH)",
   "far.hitLookRing": "고리: 결과 색",
-  "far.hitCalibre": "구경"
+  "far.hitCalibre": "구경",
+  "far.hitAmmo": "탄약",
+  "far.ammoExplosive": "폭발성",
+  "far.ammoKinetic": "운동에너지탄"
 }

@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Svijetli trag: nije probijeno",
   "far.hitLookGouge": "Brazda: okliznuo (vjerovatno rikošet)",
   "far.hitLookBullet": "Rupa: ishod nepoznat",
+  "far.hitLookScorch": "Zvijezda čađi: eksplozivni projektil (HE, HEAT, HESH)",
   "far.hitLookRing": "Prsten: šta je učinio",
-  "far.hitCalibre": "Kalibar"
+  "far.hitCalibre": "Kalibar",
+  "far.hitAmmo": "Municija",
+  "far.ammoExplosive": "eksplozivna",
+  "far.ammoKinetic": "kinetička"
 }

@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Salpicadura brillante: no penetró",
   "far.hitLookGouge": "Surco: resbaló (probablemente un rebote)",
   "far.hitLookBullet": "Agujero: resultado desconocido",
+  "far.hitLookScorch": "Estrella de hollín: proyectil explosivo (HE, HEAT, HESH)",
   "far.hitLookRing": "Anillo: lo que hizo",
-  "far.hitCalibre": "Calibre"
+  "far.hitCalibre": "Calibre",
+  "far.hitAmmo": "Munición",
+  "far.ammoExplosive": "explosiva",
+  "far.ammoKinetic": "cinética"
 }

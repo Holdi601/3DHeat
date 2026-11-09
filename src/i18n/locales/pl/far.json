@@ -35,6 +35,10 @@
   "far.hitLookSplash": "Jasny ślad: nie przebił",
   "far.hitLookGouge": "Bruzda: ześlizgnął się (pewnie rykoszet)",
   "far.hitLookBullet": "Otwór: skutek nieznany",
+  "far.hitLookScorch": "Gwiazda sadzy: pocisk wybuchowy (HE, HEAT, HESH)",
   "far.hitLookRing": "Pierścień: co zrobił",
-  "far.hitCalibre": "Kaliber"
+  "far.hitCalibre": "Kaliber",
+  "far.hitAmmo": "Amunicja",
+  "far.ammoExplosive": "wybuchowa",
+  "far.ammoKinetic": "kinetyczna"
 }

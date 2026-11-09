@@ -4,6 +4,9 @@
  * outcome's colour (a critical hit blue, the killing shot magenta and
  * white), the pointer over the mark finds that hit, the mark stays for the
  * unit's whole life by default and is gone after a set time when one is set.
+ * An explosive round (HEAT) leaves its soot star, far more dark surface than
+ * a kinetic round's hole of the same calibre, and the card under the pointer
+ * names the round and its type.
  * On both track paths (CPU figures, GPU tracks) and, with --webgpu, on both
  * backends.
  *
@@ -12,7 +15,7 @@
  * marks are switched on and worked out, no frame past 20 ms.
  *
  * Synthetic data only: two tanks standing apart; the blue one hits the red
- * one at 20 s (a critical hit) and kills it at 40 s. Starts its own dev
+ * one at 20 s (a critical hit, APFSDS) and kills it at 40 s (HEAT), both 120 mm. Starts its own dev
  * server on port 5299 and renders in software (SwiftShader).
  *
  *   node tools/check-hitmarks.mjs                 WebGL2
@@ -137,6 +140,8 @@ async function loadTanks(page) {
         cat('other', ['', 'red tank', 'blue tank'], (r) => (shot(r) ? 1 : r.ev >= 2 ? 2 : 0)),
         cat('otherVehicle', ['', 'tank-red'], (r) => (shot(r) ? 1 : 0)),
         num('calibre', (r) => (shot(r) ? 120 : NaN)),
+        cat('ammoType', ['', 'APFSDS', 'HEAT'], (r) => (shot(r) ? (r.t < 30 ? 1 : 2) : 0)),
+        cat('ammoName', ['', '120mm_test_apfsds', '120mm_test_heat'], (r) => (shot(r) ? (r.t < 30 ? 1 : 2) : 0)),
         // On the red tank's roof, a little forward of its middle, on the side towards the camera.
         num('hitLocalX', (r) => (shot(r) ? 0.5 : NaN)),
         num('hitLocalY', (r) => (shot(r) ? 2.2 : NaN)),
@@ -181,10 +186,13 @@ async function look(page, t, want, height = 30) {
     if (!p) return null;
     const r = 70;
     const counts = want.map(() => 0);
+    // Dark pixels: a hole's and a blast's soot (less the unit's own shade, from a look before the hit).
+    let dark = 0;
     for (let y = Math.max(0, Math.floor((p.y - r) * sx)); y <= Math.min(f.height - 1, Math.ceil((p.y + r) * sx)); y++) {
       for (let x = Math.max(0, Math.floor((p.x - r) * sx)); x <= Math.min(f.width - 1, Math.ceil((p.x + r) * sx)); x++) {
         const i = (y * f.width + x) * 4;
         const px = [f.rgba[i], f.rgba[i + 1], f.rgba[i + 2]];
+        if (Math.max(...px) < 50) dark++;
         want.forEach((w, k) => {
           // Hue near: the colour's channels in the same order and spread, whatever the light.
           const m = Math.max(...px);
@@ -203,11 +211,14 @@ async function look(page, t, want, height = 30) {
     // The pointer over the mark: where the hit point is drawn.
     const dr = eng.hitMarkLayer?.drawn;
     let found = -1;
+    let at = null;
     if (dr && dr.count > 0) {
       const s = eng.toScreen(dr.xyz[0], dr.xyz[1], dr.xyz[2]);
       if (s) found = eng.hitMarkAt(s[0], s[1]);
+      const box = eng.canvas.getBoundingClientRect();
+      if (s) at = [box.left + s[0], box.top + s[1]];
     }
-    return { counts, drawn: dr ? dr.count : -1, found };
+    return { counts, dark, drawn: dr ? dr.count : -1, found, at };
   }, { t, want, height });
 }
 
@@ -385,6 +396,21 @@ for (const backend of backends) {
       const life = await look(page, 32, [CRITICAL, KILL]);
       report(`${name}, stays the unit's life`, life.drawn === 1 && life.counts[0] >= 4, `whole life: at 32 s ${life.drawn} mark, ${life.counts[0]} critical-blue px`);
       report(`${name}, killing shot`, kill.drawn === 1 && kill.counts[0] >= 4 && kill.counts[1] >= 4, `at 41 s ${kill.drawn} mark, ${kill.counts[0]} magenta px, ${kill.counts[1]} white px`);
+      // The HEAT round's soot star against the APFSDS round's hole, the same calibre: its dark surface several times as much.
+      const soot = (l) => l.dark - before.dark;
+      report(`${name}, explosive round`, soot(hit) > 0 && soot(kill) > 2.5 * soot(hit),
+        `dark px over the unit's own: APFSDS hole ${soot(hit)}, HEAT soot star ${soot(kill)}`);
+      // Both shots struck the same point: the killing shot's card with the earlier mark gone again.
+      await page.evaluate(() => globalThis.__3dheat.useStore.getState().patchTeam({ hitMarkSeconds: 10 }));
+      const last = await look(page, 41, [KILL, WHITE]);
+      let card = '';
+      if (last.at) {
+        await page.mouse.move(last.at[0] + 40, last.at[1] + 40);
+        await page.mouse.move(last.at[0], last.at[1], { steps: 4 });
+        await page.waitForTimeout(400);
+        card = await page.evaluate(() => document.querySelector('.hit-mark-tip')?.textContent ?? '');
+      }
+      report(`${name}, card names the round`, card.includes('120mm_test_heat') && card.includes('HEAT') && card.includes('120 mm'), `the card: ${card.slice(0, 160)}`);
     } finally {
       await browser.close();
     }

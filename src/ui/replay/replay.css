@@ -963,3 +963,13 @@
 .hit-look.bullet {
   background: radial-gradient(circle, #050505 0 55%, #8c8c87 60% 100%);
 }
+.hit-look.scorch {
+  width: 12px;
+  height: 12px;
+  border-radius: 0;
+  margin-left: -1px;
+  margin-right: 5px;
+  vertical-align: -2px;
+  background: radial-gradient(circle, #5c5245 0 30%, #0d0b0a 34% 100%);
+  clip-path: polygon(50% 0, 59% 29%, 85% 15%, 71% 41%, 100% 50%, 71% 59%, 85% 85%, 59% 71%, 50% 100%, 41% 71%, 15% 85%, 29% 59%, 0 50%, 29% 41%, 15% 15%, 41% 29%);
+}
