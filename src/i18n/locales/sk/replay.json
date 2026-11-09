@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B stratená",
   "replay.lookAt.stripTitle": "Medzi sledovanou jednotkou a tou, na ktorú sa pozerá",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Správa",
+  "replay.events.kind.bookmark": "Záložka",
+  "replay.events.kind.debug": "Ladenie",
+  "replay.events.kind.leftArea": "Opustil oblasť",
+  "replay.events.kind.destroyed": "Zničený",
+  "replay.events.kind.takenOff": "Vzlietol",
+  "replay.events.kind.landed": "Pristál",
+  "replay.events.kind.timeout": "Výsledok zbrane",
+  "replay.events.kind.removed": "Odstránený",
+  "replay.events.kind.comment": "Komentár",
+  "replay.events.kind.unplaced": "Bez polohy",
+  "replay.card.hidden": "Záznam ho teraz skrýva (nezničený).",
+  "replay.card.disabled": "Vyradený z boja (neaktívny), nezničený."
 }

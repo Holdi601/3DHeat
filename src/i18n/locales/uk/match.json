@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Літав або їздив на: {vehicles}. Клацніть, щоб стежити в повторі.",
   "match.game.kills": "{count, plural, one {# вбивство} few {# вбивства} many {# вбивств} other {# вбивства}}: клацніть одне, щоб перейти до нього",
   "match.game.crash": "аварія",
-  "match.game.noData": "Завантажте таблицю повтору в розділі «Джерело», щоб побачити відтворення матчу."
+  "match.game.noData": "Завантажте таблицю повтору в розділі «Джерело», щоб побачити відтворення матчу.",
+  "match.recording.section": "Запис",
+  "match.recording.title": "Назва",
+  "match.recording.category": "Категорія",
+  "match.recording.author": "Автор",
+  "match.recording.source": "Джерело",
+  "match.recording.recorder": "Реєстратор",
+  "match.recording.start": "Початок",
+  "match.recording.recorded": "Записано",
+  "match.recording.briefing": "Брифінг",
+  "match.recording.debriefing": "Розбір",
+  "match.recording.comments": "Коментарі"
 }

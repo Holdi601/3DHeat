@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Pilotou ou conduziu: {vehicles}. Clique para o seguir na repetição.",
   "match.game.kills": "{count, plural, one {# kill} other {# kills}}: clique numa para ir até ela",
   "match.game.crash": "despenhou-se",
-  "match.game.noData": "Carregue a tabela da repetição em «Origem» para ver a partida reproduzida."
+  "match.game.noData": "Carregue a tabela da repetição em «Origem» para ver a partida reproduzida.",
+  "match.recording.section": "Gravação",
+  "match.recording.title": "Título",
+  "match.recording.category": "Categoria",
+  "match.recording.author": "Autor",
+  "match.recording.source": "Fonte",
+  "match.recording.recorder": "Gravador",
+  "match.recording.start": "Início",
+  "match.recording.recorded": "Gravado",
+  "match.recording.briefing": "Briefing",
+  "match.recording.debriefing": "Debriefing",
+  "match.recording.comments": "Comentários"
 }

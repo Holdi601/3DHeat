@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Fløj eller kørte: {vehicles}. Klik for at følge i replayet.",
   "match.game.kills": "{count, plural, one {# kill} other {# kills}}: klik på et for at gå til det",
   "match.game.crash": "styrt",
-  "match.game.noData": "Indlæs replayets tabel under Kilde for at se kampen afspillet."
+  "match.game.noData": "Indlæs replayets tabel under Kilde for at se kampen afspillet.",
+  "match.recording.section": "Optagelse",
+  "match.recording.title": "Titel",
+  "match.recording.category": "Kategori",
+  "match.recording.author": "Forfatter",
+  "match.recording.source": "Kilde",
+  "match.recording.recorder": "Optager",
+  "match.recording.start": "Start",
+  "match.recording.recorded": "Optaget",
+  "match.recording.briefing": "Briefing",
+  "match.recording.debriefing": "Debriefing",
+  "match.recording.comments": "Kommentarer"
 }

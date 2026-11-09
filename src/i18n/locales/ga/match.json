@@ -150,5 +150,16 @@
   "match.game.playerTitle": "D'eitil nó thiomáin: {vehicles}. Cliceáil chun é a leanúint san athsheinm.",
   "match.game.kills": "{count, plural, one {# mharú} two {# mharú} few {# mharú} many {# marú} other {# marú}}: cliceáil ar cheann chun dul chuige",
   "match.game.crash": "tuairteáil",
-  "match.game.noData": "Lódáil tábla na hathsheinme faoi Foinse chun an cluiche a fheiceáil á sheinm."
+  "match.game.noData": "Lódáil tábla na hathsheinme faoi Foinse chun an cluiche a fheiceáil á sheinm.",
+  "match.recording.section": "Taifeadadh",
+  "match.recording.title": "Teideal",
+  "match.recording.category": "Catagóir",
+  "match.recording.author": "Údar",
+  "match.recording.source": "Foinse",
+  "match.recording.recorder": "Taifeadán",
+  "match.recording.start": "Tús",
+  "match.recording.recorded": "Taifeadta",
+  "match.recording.briefing": "Mionteagasc",
+  "match.recording.debriefing": "Athbhreithniú",
+  "match.recording.comments": "Tuairimí"
 }

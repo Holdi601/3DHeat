@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Fløy eller kjørte: {vehicles}. Klikk for å følge i reprisen.",
   "match.game.kills": "{count, plural, one {# drap} other {# drap}}: klikk på ett for å gå til det",
   "match.game.crash": "krasj",
-  "match.game.noData": "Last inn reprisens tabell under Kilde for å se kampen spilt av."
+  "match.game.noData": "Last inn reprisens tabell under Kilde for å se kampen spilt av.",
+  "match.recording.section": "Opptak",
+  "match.recording.title": "Tittel",
+  "match.recording.category": "Kategori",
+  "match.recording.author": "Forfatter",
+  "match.recording.source": "Kilde",
+  "match.recording.recorder": "Opptaker",
+  "match.recording.start": "Start",
+  "match.recording.recorded": "Tatt opp",
+  "match.recording.briefing": "Brifing",
+  "match.recording.debriefing": "Debrifing",
+  "match.recording.comments": "Kommentarer"
 }

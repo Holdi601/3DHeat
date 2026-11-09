@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B lost",
   "replay.lookAt.stripTitle": "Between the followed unit and the one looked at",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Message",
+  "replay.events.kind.bookmark": "Bookmark",
+  "replay.events.kind.debug": "Debug",
+  "replay.events.kind.leftArea": "Left the area",
+  "replay.events.kind.destroyed": "Destroyed",
+  "replay.events.kind.takenOff": "Took off",
+  "replay.events.kind.landed": "Landed",
+  "replay.events.kind.timeout": "Weapon result",
+  "replay.events.kind.removed": "Removed",
+  "replay.events.kind.comment": "Comment",
+  "replay.events.kind.unplaced": "No position",
+  "replay.card.hidden": "Hidden by the recording at this moment (not destroyed).",
+  "replay.card.disabled": "Out of combat (disabled), not destroyed."
 }

@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Πέταξε ή οδήγησε: {vehicles}. Κάντε κλικ για ακολούθηση στην αναπαραγωγή.",
   "match.game.kills": "{count, plural, one {# εξόντωση} other {# εξοντώσεις}}· κάντε κλικ σε μία για να μεταβείτε σε αυτή",
   "match.game.crash": "συντριβή",
-  "match.game.noData": "Φορτώστε τον πίνακα της αναπαραγωγής στην «Πηγή» για να δείτε την αναπαραγωγή του αγώνα."
+  "match.game.noData": "Φορτώστε τον πίνακα της αναπαραγωγής στην «Πηγή» για να δείτε την αναπαραγωγή του αγώνα.",
+  "match.recording.section": "Καταγραφή",
+  "match.recording.title": "Τίτλος",
+  "match.recording.category": "Κατηγορία",
+  "match.recording.author": "Συντάκτης",
+  "match.recording.source": "Πηγή",
+  "match.recording.recorder": "Καταγραφέας",
+  "match.recording.start": "Έναρξη",
+  "match.recording.recorded": "Καταγράφηκε",
+  "match.recording.briefing": "Ενημέρωση",
+  "match.recording.debriefing": "Απολογισμός",
+  "match.recording.comments": "Σχόλια"
 }

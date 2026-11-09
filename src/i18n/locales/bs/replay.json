@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B izgubljena",
   "replay.lookAt.stripTitle": "Između praćene jedinice i one u koju se gleda",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Poruka",
+  "replay.events.kind.bookmark": "Oznaka",
+  "replay.events.kind.debug": "Otklanjanje grešaka",
+  "replay.events.kind.leftArea": "Napustio područje",
+  "replay.events.kind.destroyed": "Uništen",
+  "replay.events.kind.takenOff": "Poletio",
+  "replay.events.kind.landed": "Sletio",
+  "replay.events.kind.timeout": "Ishod oružja",
+  "replay.events.kind.removed": "Uklonjen",
+  "replay.events.kind.comment": "Komentar",
+  "replay.events.kind.unplaced": "Bez položaja",
+  "replay.card.hidden": "Snimak ga trenutno skriva (nije uništen).",
+  "replay.card.disabled": "Izvan borbe (onemogućen), nije uništen."
 }

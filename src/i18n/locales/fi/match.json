@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Lensi tai ajoi: {vehicles}. Napsauta seurataksesi toistossa.",
   "match.game.kills": "{count, plural, one {# tappo} other {# tappoa}}: siirry tappoon napsauttamalla sitä",
   "match.game.crash": "maahansyöksy",
-  "match.game.noData": "Lataa toiston taulukko kohdassa Lähde nähdäksesi ottelun toistettuna."
+  "match.game.noData": "Lataa toiston taulukko kohdassa Lähde nähdäksesi ottelun toistettuna.",
+  "match.recording.section": "Tallenne",
+  "match.recording.title": "Otsikko",
+  "match.recording.category": "Luokka",
+  "match.recording.author": "Tekijä",
+  "match.recording.source": "Lähde",
+  "match.recording.recorder": "Tallennin",
+  "match.recording.start": "Alkaa",
+  "match.recording.recorded": "Tallennettu",
+  "match.recording.briefing": "Ennakkokäsky",
+  "match.recording.debriefing": "Jälkipuinti",
+  "match.recording.comments": "Kommentit"
 }

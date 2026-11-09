@@ -150,5 +150,16 @@
   "match.game.playerTitle": "A zburat sau a condus: {vehicles}. Faceți clic pentru a-l urmări în reluare.",
   "match.game.kills": "{count, plural, one {# eliminare} few {# eliminări} other {# de eliminări}}: faceți clic pe una pentru a merge la ea",
   "match.game.crash": "prăbușire",
-  "match.game.noData": "Încărcați tabelul reluării în „Sursă” pentru a vedea meciul redat."
+  "match.game.noData": "Încărcați tabelul reluării în „Sursă” pentru a vedea meciul redat.",
+  "match.recording.section": "Înregistrare",
+  "match.recording.title": "Titlu",
+  "match.recording.category": "Categorie",
+  "match.recording.author": "Autor",
+  "match.recording.source": "Sursă",
+  "match.recording.recorder": "Înregistrator",
+  "match.recording.start": "Început",
+  "match.recording.recorded": "Înregistrat",
+  "match.recording.briefing": "Briefing",
+  "match.recording.debriefing": "Debriefing",
+  "match.recording.comments": "Comentarii"
 }

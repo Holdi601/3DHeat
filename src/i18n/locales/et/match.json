@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Lendas või sõitis: {vehicles}. Klõpsa, et jälgida korduses.",
   "match.game.kills": "{count, plural, one {# tapmine} other {# tapmist}}: klõpsa ühel, et sinna minna",
   "match.game.crash": "allakukkumine",
-  "match.game.noData": "Laadi korduse tabel jaotises „Allikas“, et näha matši esitatuna."
+  "match.game.noData": "Laadi korduse tabel jaotises „Allikas“, et näha matši esitatuna.",
+  "match.recording.section": "Salvestis",
+  "match.recording.title": "Pealkiri",
+  "match.recording.category": "Kategooria",
+  "match.recording.author": "Autor",
+  "match.recording.source": "Allikas",
+  "match.recording.recorder": "Salvesti",
+  "match.recording.start": "Algus",
+  "match.recording.recorded": "Salvestatud",
+  "match.recording.briefing": "Brifing",
+  "match.recording.debriefing": "Kokkuvõte",
+  "match.recording.comments": "Kommentaarid"
 }

@@ -150,5 +150,16 @@
   "match.game.playerTitle": "駕駛過：{vehicles}。點選即可在重播中跟隨。",
   "match.game.kills": "{count, plural, other {# 次擊殺}}：點選其中一個即可跳轉",
   "match.game.crash": "墜毀",
-  "match.game.noData": "在「來源」中載入重播的資料表，即可觀看對戰重播。"
+  "match.game.noData": "在「來源」中載入重播的資料表，即可觀看對戰重播。",
+  "match.recording.section": "記錄",
+  "match.recording.title": "標題",
+  "match.recording.category": "類別",
+  "match.recording.author": "作者",
+  "match.recording.source": "來源",
+  "match.recording.recorder": "記錄器",
+  "match.recording.start": "開始",
+  "match.recording.recorded": "記錄時間",
+  "match.recording.briefing": "簡報",
+  "match.recording.debriefing": "任務講評",
+  "match.recording.comments": "備註"
 }

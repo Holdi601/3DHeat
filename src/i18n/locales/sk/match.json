@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Stroje: {vehicles}. Kliknutím ho budete sledovať v prehrávaní.",
   "match.game.kills": "{count, plural, one {# zabitie} few {# zabitia} many {# zabitia} other {# zabití}}: kliknutím na niektoré naň prejdete",
   "match.game.crash": "havária",
-  "match.game.noData": "Načítajte tabuľku záznamu v časti Zdroj a uvidíte prehraný zápas."
+  "match.game.noData": "Načítajte tabuľku záznamu v časti Zdroj a uvidíte prehraný zápas.",
+  "match.recording.section": "Záznam",
+  "match.recording.title": "Názov",
+  "match.recording.category": "Kategória",
+  "match.recording.author": "Autor",
+  "match.recording.source": "Zdroj",
+  "match.recording.recorder": "Záznamník",
+  "match.recording.start": "Začiatok",
+  "match.recording.recorded": "Zaznamenané",
+  "match.recording.briefing": "Brífing",
+  "match.recording.debriefing": "Debrífing",
+  "match.recording.comments": "Komentáre"
 }

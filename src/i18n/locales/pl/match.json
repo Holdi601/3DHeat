@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Pojazdy: {vehicles}. Kliknij, aby śledzić w powtórce.",
   "match.game.kills": "{count, plural, one {# zabójstwo} few {# zabójstwa} many {# zabójstw} other {# zabójstwa}}: kliknij jedno, aby do niego przejść",
   "match.game.crash": "rozbicie",
-  "match.game.noData": "Wczytaj tabelę powtórki w sekcji Źródło, aby zobaczyć odtworzony mecz."
+  "match.game.noData": "Wczytaj tabelę powtórki w sekcji Źródło, aby zobaczyć odtworzony mecz.",
+  "match.recording.section": "Nagranie",
+  "match.recording.title": "Tytuł",
+  "match.recording.category": "Kategoria",
+  "match.recording.author": "Autor",
+  "match.recording.source": "Źródło",
+  "match.recording.recorder": "Rejestrator",
+  "match.recording.start": "Początek",
+  "match.recording.recorded": "Nagrano",
+  "match.recording.briefing": "Odprawa",
+  "match.recording.debriefing": "Omówienie",
+  "match.recording.comments": "Komentarze"
 }

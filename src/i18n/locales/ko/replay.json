@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B 놓침",
   "replay.lookAt.stripTitle": "추적 중인 유닛과 주시 중인 유닛 사이",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "메시지",
+  "replay.events.kind.bookmark": "책갈피",
+  "replay.events.kind.debug": "디버그",
+  "replay.events.kind.leftArea": "구역 이탈",
+  "replay.events.kind.destroyed": "파괴됨",
+  "replay.events.kind.takenOff": "이륙",
+  "replay.events.kind.landed": "착륙",
+  "replay.events.kind.timeout": "무장 결과",
+  "replay.events.kind.removed": "제거됨",
+  "replay.events.kind.comment": "주석",
+  "replay.events.kind.unplaced": "위치 없음",
+  "replay.card.hidden": "지금은 기록에 의해 숨겨짐(파괴되지 않음).",
+  "replay.card.disabled": "전투 불능(비활성), 파괴되지 않음."
 }

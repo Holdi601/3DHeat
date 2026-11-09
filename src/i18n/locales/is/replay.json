@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B týnd",
   "replay.lookAt.stripTitle": "Milli einingarinnar sem fylgt er og þeirrar sem horft er á",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Skilaboð",
+  "replay.events.kind.bookmark": "Bókamerki",
+  "replay.events.kind.debug": "Villuleit",
+  "replay.events.kind.leftArea": "Fór af svæðinu",
+  "replay.events.kind.destroyed": "Eyðilagt",
+  "replay.events.kind.takenOff": "Hóf sig á loft",
+  "replay.events.kind.landed": "Lenti",
+  "replay.events.kind.timeout": "Niðurstaða vopns",
+  "replay.events.kind.removed": "Fjarlægt",
+  "replay.events.kind.comment": "Athugasemd",
+  "replay.events.kind.unplaced": "Engin staðsetning",
+  "replay.card.hidden": "Falið af upptökunni núna (ekki eyðilagt).",
+  "replay.card.disabled": "Úr leik (óvirkt), ekki eyðilagt."
 }

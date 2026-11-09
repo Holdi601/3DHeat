@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Летео или возио: {vehicles}. Кликните да бисте га пратили у репризи.",
   "match.game.kills": "{count, plural, one {# убиство} few {# убиства} other {# убистава}}: кликните једно да бисте отишли до њега",
   "match.game.crash": "пад",
-  "match.game.noData": "Учитајте табелу репризе под „Извор“ да бисте видели репродукцију меча."
+  "match.game.noData": "Учитајте табелу репризе под „Извор“ да бисте видели репродукцију меча.",
+  "match.recording.section": "Снимак",
+  "match.recording.title": "Наслов",
+  "match.recording.category": "Категорија",
+  "match.recording.author": "Аутор",
+  "match.recording.source": "Извор",
+  "match.recording.recorder": "Снимач",
+  "match.recording.start": "Почетак",
+  "match.recording.recorded": "Снимљено",
+  "match.recording.briefing": "Брифинг",
+  "match.recording.debriefing": "Дебрифинг",
+  "match.recording.comments": "Коментари"
 }

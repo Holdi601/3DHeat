@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B втрачено",
   "replay.lookAt.stripTitle": "Між супроводжуваним об'єктом і тим, на який дивиться камера",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Повідомлення",
+  "replay.events.kind.bookmark": "Закладка",
+  "replay.events.kind.debug": "Налагодження",
+  "replay.events.kind.leftArea": "Залишив район",
+  "replay.events.kind.destroyed": "Знищений",
+  "replay.events.kind.takenOff": "Злетів",
+  "replay.events.kind.landed": "Приземлився",
+  "replay.events.kind.timeout": "Результат зброї",
+  "replay.events.kind.removed": "Видалений",
+  "replay.events.kind.comment": "Коментар",
+  "replay.events.kind.unplaced": "Без позиції",
+  "replay.card.hidden": "Прихований записом зараз (не знищений).",
+  "replay.card.disabled": "Виведений з бою (вимкнений), не знищений."
 }

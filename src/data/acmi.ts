@@ -227,17 +227,20 @@ export function parseAcmi(text: string, name = 'recording'): AcmiTable {
         else if (key === 'ReferenceTime') {
           const ms = Date.parse(value);
           if (Number.isFinite(ms)) refTime = ms / 1000;
+          // Kept as written too: the mission's start, for the Match tab.
+          globals[key] = value;
+          info = JSON.stringify(globals);
         } else if (key === 'Event') {
           // Kind|id|id...|text: the ids are all but the last field, the text the last.
           const parts = value.split('|');
-          const kind = parts[0];
+          const kind = parts[0].trim();
           // Named fields instead (Timeout: SourceId:507|AmmoType:FOX2|TargetId:201|Outcome:Kill): the ids are
           // SourceId's and TargetId's, the text all the fields as written.
           const named = parts.length > 2 && parts.slice(1).every((x) => !x.trim() || /^\s*[A-Za-z]+\s*:/.test(x));
           const ids = named
             ? parts.slice(1).filter((x) => /^\s*(SourceId|TargetId)\s*:/i.test(x)).map((x) => x.slice(x.indexOf(':') + 1).trim().toLowerCase()).filter(Boolean)
             : parts.slice(1, Math.max(1, parts.length - 1)).map((x) => x.trim().toLowerCase()).filter(Boolean);
-          const text = named ? parts.slice(1).filter((x) => x.trim()).join('|') : parts.length > 1 ? parts[parts.length - 1] : '';
+          const text = named ? parts.slice(1).map((x) => x.trim()).filter(Boolean).join('|') : parts.length > 1 ? parts[parts.length - 1] : '';
           const label = kind + (text ? `: ${text}` : '');
           const at = ids.find((x) => objects.get(x)?.seen);
           if (at) sample(at, objects.get(at)!, label, ids.join(' '));
@@ -457,7 +460,8 @@ export function acmiHints(t: AcmiTable): {
   axes: { up: 'z'; flipY: boolean };
   columns: Record<string, unknown>;
 } {
-  const extra = ['Type', 'Name', 'Pilot', 'Group', 'Country', 'Event', 'Altitude', 'Roll', 'Latitude', 'Longitude', 'EventObjects', ...t.columns.slice(ACMI_FIXED_COLUMNS)];
+  // RecordingInfo too: the Match tab reads the recording's title, briefing and comments from it.
+  const extra = ['Type', 'Name', 'Pilot', 'Group', 'Country', 'Event', 'Altitude', 'Roll', 'Latitude', 'Longitude', 'EventObjects', 'RecordingInfo', ...t.columns.slice(ACMI_FIXED_COLUMNS)];
   return {
     // Y north becomes the world's -Z, so a heading of 0 looks north as box yaw does.
     axes: { up: 'z', flipY: true },

@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Geflunn oder gefuer: {vehicles}. Klickt, fir am Replay ze verfollegen.",
   "match.game.kills": "{count, plural, one {# Kill} other {# Kills}}: klickt op een, fir dohin ze sprangen",
   "match.game.crash": "Ofstuerz",
-  "match.game.noData": "Luet d’Tabell vum Replay ënner „Quell“, fir de Match ofgespillt ze gesinn."
+  "match.game.noData": "Luet d’Tabell vum Replay ënner „Quell“, fir de Match ofgespillt ze gesinn.",
+  "match.recording.section": "Opnam",
+  "match.recording.title": "Titel",
+  "match.recording.category": "Kategorie",
+  "match.recording.author": "Auteur",
+  "match.recording.source": "Quell",
+  "match.recording.recorder": "Opnamgerät",
+  "match.recording.start": "Ufank",
+  "match.recording.recorded": "Opgeholl",
+  "match.recording.briefing": "Briefing",
+  "match.recording.debriefing": "Debriefing",
+  "match.recording.comments": "Kommentarer"
 }

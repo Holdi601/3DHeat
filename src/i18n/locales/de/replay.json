@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B verloren",
   "replay.lookAt.stripTitle": "Zwischen der verfolgten und der angeblickten Einheit",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Nachricht",
+  "replay.events.kind.bookmark": "Lesezeichen",
+  "replay.events.kind.debug": "Debug",
+  "replay.events.kind.leftArea": "Gebiet verlassen",
+  "replay.events.kind.destroyed": "Zerstört",
+  "replay.events.kind.takenOff": "Gestartet",
+  "replay.events.kind.landed": "Gelandet",
+  "replay.events.kind.timeout": "Waffenergebnis",
+  "replay.events.kind.removed": "Entfernt",
+  "replay.events.kind.comment": "Kommentar",
+  "replay.events.kind.unplaced": "Ohne Position",
+  "replay.card.hidden": "Von der Aufzeichnung gerade ausgeblendet (nicht zerstört).",
+  "replay.card.disabled": "Außer Gefecht (deaktiviert), nicht zerstört."
 }

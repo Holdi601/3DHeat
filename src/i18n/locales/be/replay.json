@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B страчаны",
   "replay.lookAt.stripTitle": "Паміж суправаджаемым аб'ектам і тым, на які глядзіць камера",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "Паведамленне",
+  "replay.events.kind.bookmark": "Закладка",
+  "replay.events.kind.debug": "Адладка",
+  "replay.events.kind.leftArea": "Пакінуў раён",
+  "replay.events.kind.destroyed": "Знішчаны",
+  "replay.events.kind.takenOff": "Узляцеў",
+  "replay.events.kind.landed": "Прызямліўся",
+  "replay.events.kind.timeout": "Вынік зброі",
+  "replay.events.kind.removed": "Выдалены",
+  "replay.events.kind.comment": "Каментарый",
+  "replay.events.kind.unplaced": "Без пазіцыі",
+  "replay.card.hidden": "Схаваны запісам у гэты момант (не знішчаны).",
+  "replay.card.disabled": "Выведзены з бою (адключаны), не знішчаны."
 }

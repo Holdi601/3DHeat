@@ -528,5 +528,18 @@
   "replay.lookAt.lost": "B を見失いました",
   "replay.lookAt.stripTitle": "追従中のユニットと注視中のユニットの間",
   "replay.short.altDiff": "ΔALT",
-  "replay.lookAt.b": "B"
+  "replay.lookAt.b": "B",
+  "replay.events.kind.message": "メッセージ",
+  "replay.events.kind.bookmark": "ブックマーク",
+  "replay.events.kind.debug": "デバッグ",
+  "replay.events.kind.leftArea": "エリア離脱",
+  "replay.events.kind.destroyed": "撃破",
+  "replay.events.kind.takenOff": "離陸",
+  "replay.events.kind.landed": "着陸",
+  "replay.events.kind.timeout": "兵装の結果",
+  "replay.events.kind.removed": "削除",
+  "replay.events.kind.comment": "コメント",
+  "replay.events.kind.unplaced": "位置なし",
+  "replay.card.hidden": "この時点では記録により非表示(撃破されていません)。",
+  "replay.card.disabled": "戦闘不能(無効)、撃破されていません。"
 }

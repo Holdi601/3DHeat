@@ -315,15 +315,17 @@ export class AcmiStreamReader {
       else if (key === 'ReferenceTime') {
         const ms = Date.parse(value);
         if (Number.isFinite(ms)) this.refTime = ms / 1000;
+        // Kept as written too: the mission's start, for the Match tab.
+        this.setGlobal(key, value);
       } else if (key === 'Event') {
         // Kind|id|id...|text, or named fields (SourceId:507|TargetId:201|...), as `parseAcmi` reads them.
         const parts = value.split('|');
-        const kind = parts[0];
+        const kind = parts[0].trim();
         const named = parts.length > 2 && parts.slice(1).every((x) => !x.trim() || /^\s*[A-Za-z]+\s*:/.test(x));
         const ids = named
           ? parts.slice(1).filter((x) => /^\s*(SourceId|TargetId)\s*:/i.test(x)).map((x) => x.slice(x.indexOf(':') + 1).trim().toLowerCase()).filter(Boolean)
           : parts.slice(1, Math.max(1, parts.length - 1)).map((x) => x.trim().toLowerCase()).filter(Boolean);
-        const text = named ? parts.slice(1).filter((x) => x.trim()).join('|') : parts.length > 1 ? parts[parts.length - 1] : '';
+        const text = named ? parts.slice(1).map((x) => x.trim()).filter(Boolean).join('|') : parts.length > 1 ? parts[parts.length - 1] : '';
         const label = kind + (text ? `: ${text}` : '');
         const at = ids.find((x) => this.objects.get(x)?.seen);
         if (at) this.emit(at, this.objects.get(at)!, label, ids.join(' '));

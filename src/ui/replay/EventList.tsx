@@ -7,7 +7,7 @@ import { int, t } from '../../i18n';
 import { Check, Section } from '../controls';
 import { download, eventsCsv } from './stats';
 import { useEngine } from '../EngineContext';
-import { defaultEventKinds, eventBursts, eventRows } from './replayData';
+import { defaultEventKinds, eventBursts, eventRows, eventText, eventWords } from './replayData';
 import { clock } from './hooks';
 import { partyName, sortUnits, unitsOf } from './units';
 import { flyTo } from './replayView';
@@ -24,10 +24,7 @@ function textAt(a: AttributeColumn | undefined, row: number): string {
   return a.categories[(a.data as Uint32Array)[row]] ?? '';
 }
 
-/** An event kind as a word: "hit_critical" -> "hit critical". */
-export function eventWords(kind: string): string {
-  return kind.replace(/[_-]+/g, ' ');
-}
+export { eventWords };
 
 /**
  * The recording's events, in time order: a click goes to the moment and flies
@@ -152,7 +149,7 @@ export function EventList() {
                   const p = events.persons[i];
                   return {
                     time: time[row] - start,
-                    event: events.labels[i],
+                    event: events.texts[i] ? `${events.labels[i]}: ${events.texts[i]}` : events.labels[i],
                     unit: p >= 0 ? (index.units[index.personUnit[p]]?.name ?? '') : '',
                     other: partyName(dataset, textAt(other, row), known),
                     weapon: textAt(weaponName, row).trim() || textAt(weapon, row),
@@ -171,7 +168,7 @@ export function EventList() {
           const row = events.rows[i];
           const p = events.persons[i];
           const u = p >= 0 ? index.units[index.personUnit[p]] : undefined;
-          const extra = [textAt(weaponName, row).trim() || textAt(weapon, row), partyName(dataset, textAt(other, row), known)].filter(Boolean);
+          const extra = [eventText(events.texts[i]), textAt(weaponName, row).trim() || textAt(weapon, row), partyName(dataset, textAt(other, row), known)].filter(Boolean);
           return (
             <button
               key={row}

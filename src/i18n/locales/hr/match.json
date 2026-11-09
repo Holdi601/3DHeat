@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Letio ili vozio: {vehicles}. Kliknite za praćenje u reprodukciji.",
   "match.game.kills": "{count, plural, one {# ubojstvo} few {# ubojstva} other {# ubojstava}}: kliknite jedno da biste otišli do njega",
   "match.game.crash": "pad",
-  "match.game.noData": "Učitajte tablicu snimke pod „Izvor” da biste vidjeli reprodukciju meča."
+  "match.game.noData": "Učitajte tablicu snimke pod „Izvor” da biste vidjeli reprodukciju meča.",
+  "match.recording.section": "Snimka",
+  "match.recording.title": "Naslov",
+  "match.recording.category": "Kategorija",
+  "match.recording.author": "Autor",
+  "match.recording.source": "Izvor",
+  "match.recording.recorder": "Snimač",
+  "match.recording.start": "Početak",
+  "match.recording.recorded": "Snimljeno",
+  "match.recording.briefing": "Brifing",
+  "match.recording.debriefing": "Debrifing",
+  "match.recording.comments": "Komentari"
 }

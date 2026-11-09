@@ -150,5 +150,16 @@
   "match.game.playerTitle": "Vloog of reed: {vehicles}. Klik om te volgen in de replay.",
   "match.game.kills": "{count, plural, one {# kill} other {# kills}}: klik op een om ernaartoe te gaan",
   "match.game.crash": "crash",
-  "match.game.noData": "Laad de tabel van de replay onder Bron om de match afgespeeld te zien."
+  "match.game.noData": "Laad de tabel van de replay onder Bron om de match afgespeeld te zien.",
+  "match.recording.section": "Opname",
+  "match.recording.title": "Titel",
+  "match.recording.category": "Categorie",
+  "match.recording.author": "Auteur",
+  "match.recording.source": "Bron",
+  "match.recording.recorder": "Recorder",
+  "match.recording.start": "Begin",
+  "match.recording.recorded": "Opgenomen",
+  "match.recording.briefing": "Briefing",
+  "match.recording.debriefing": "Debriefing",
+  "match.recording.comments": "Opmerkingen"
 }

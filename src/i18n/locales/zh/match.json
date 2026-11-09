@@ -150,5 +150,16 @@
   "match.game.playerTitle": "驾驶过：{vehicles}。点击可在回放中跟随。",
   "match.game.kills": "{count, plural, other {# 次击杀}}：点击某个即可跳转",
   "match.game.crash": "坠毁",
-  "match.game.noData": "在“数据源”中加载回放的数据表，即可观看对局回放。"
+  "match.game.noData": "在“数据源”中加载回放的数据表，即可观看对局回放。",
+  "match.recording.section": "记录",
+  "match.recording.title": "标题",
+  "match.recording.category": "类别",
+  "match.recording.author": "作者",
+  "match.recording.source": "来源",
+  "match.recording.recorder": "记录器",
+  "match.recording.start": "开始",
+  "match.recording.recorded": "记录时间",
+  "match.recording.briefing": "简报",
+  "match.recording.debriefing": "任务讲评",
+  "match.recording.comments": "备注"
 }

@@ -25,7 +25,7 @@ export const MAX_HOLD = 3;
 export const HOLD_INTERVALS = 3;
 
 /** Event labels that end a thing then and there. */
-export const REMOVED_EVENT = /^(removed?|despawn(ed)?|deleted?|left|leave|disconnect(ed)?|gone|end_of_life|eol)$/i;
+export const REMOVED_EVENT = /^(removed?|despawn(ed)?|deleted?|left|leave|left_?area|disconnect(ed)?|gone|end_of_life|eol)$/i;
 
 export interface Ends {
   /** Per person, seconds held past its last row with no row after it; Infinity: until the next row, whenever (the data says when things end). */
@@ -68,7 +68,8 @@ export function endsOf(d: Dataset): Ends {
   const idx = personRows(d);
   const time = d.time;
   const ev = d.attrs.find((a) => a.kind === 'category' && a.categories && /^events?$/i.test(a.name.trim()));
-  const removed = ev ? ev.categories!.map((c) => REMOVED_EVENT.test(c.trim())) : null;
+  // An ACMI LeftArea carries its text after its kind: "LeftArea: Viper 1 has left".
+  const removed = ev ? ev.categories!.map((c) => REMOVED_EVENT.test(c.trim()) || REMOVED_EVENT.test(c.split(': ')[0].trim())) : null;
   const explicit = !!removed && removed.some((v) => v);
   if (idx && time) {
     const { own, ids } = positionRows(d);
