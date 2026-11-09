@@ -1,8 +1,9 @@
 /**
  * pz-iv-g: a free model adopted as the figure: "Panzer IV (G) Detailed Version | German Tank" by Tank 3D, CC-BY
- * (https://www.printables.com/model/1077613-panzer-iv-g-detailed-version-german-tank), its pieces united into one
- * body and simplified to 1360 triangles and scaled to the published size; credited in docs/figure-credits.md. Packed
- * by the local packer (pack_mesh.py): 16-bit positions over `box`, 16-bit indices, per part, full / coarse / far.
+ * (https://www.printables.com/model/1077613-panzer-iv-g-detailed-version-german-tank), its turret and gun (set on
+ * the built hull and running gear) united from its pieces and simplified to 1360 triangles and scaled to the
+ * published size; credited in docs/figure-credits.md. Packed by the local packer (pack_mesh.py): 16-bit positions
+ * over `box`, 16-bit indices, per part, full / coarse / far.
  */
 
 import type { MeshFigureData } from '../meshfig';
