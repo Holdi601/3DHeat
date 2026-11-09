@@ -820,7 +820,7 @@ const ALIASES: Record<string, string> = {
   'fr_samp_t_fcs': 'patriot-mpq-53', // nearest: a truck-borne array radar of its size
   'fr_samp_t_launcher': 'samp-t-launcher',
   'fr_leclerc_azur': 'leclerc-xlr',
-  'sw_pvlvv_fm42': 'm42-duster',
+  'sw_pvlvv_fm42': 'landsverk-l60', // the 20 mm on the L-120 light tank's chassis, the L-60's export sister
   'sw_ikv_72': 'ikv-72',
   'sw_t_28': 't-28',
   'sw_vickers_mk_e_45': 't-26',
