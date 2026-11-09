@@ -81,9 +81,11 @@ export class Mesh {
 
   /**
    * Writes the triangles with their normals into `out`. Outward is found from
-   * the volume, or for a flat part (`facing`) as the side that direction is on.
+   * the volume, or for a flat part (`facing`) as the side that direction is on;
+   * `wound`: the triangles are wound with their fronts outward already (a
+   * piece of a closed solid, whose own volume says nothing).
    */
-  emit(out: FigBuffer, opts: { alpha?: number; gloss?: number; crease?: number; facing?: Vec3; axis?: [Vec3, Vec3, boolean?]; unlit?: boolean } = {}): void {
+  emit(out: FigBuffer, opts: { alpha?: number; gloss?: number; crease?: number; facing?: Vec3; axis?: [Vec3, Vec3, boolean?]; unlit?: boolean; wound?: boolean } = {}): void {
     const { alpha = 1, gloss = 0, crease = CREASE, unlit = false } = opts;
     const p = this.p;
     const idx = this.idx;
@@ -131,7 +133,7 @@ export class Mesh {
         s += fn[t * 3] * (cx - along * d[0]) + fn[t * 3 + 1] * (cy - along * d[1]) + fn[t * 3 + 2] * (cz - along * d[2]);
       }
       sign = (s < 0 ? -1 : 1) * (inward ? -1 : 1);
-    } else sign = this.volume() < 0 ? -1 : 1;
+    } else if (!opts.wound) sign = this.volume() < 0 ? -1 : 1;
     // The faces round each vertex.
     const nv = p.length / 3;
     const start = new Int32Array(nv + 1);
