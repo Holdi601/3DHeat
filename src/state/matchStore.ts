@@ -8,6 +8,7 @@ import { create } from 'zustand';
 import { parseMatchDoc, type MatchDoc } from '../match/matchDoc';
 import { isWtMatch, parseWtMatch, type GameMatch } from '../match/wtMatch';
 import { isContainer, openContainer } from '../data/container';
+import { isObjectivesFile, loadObjectiveFiles } from './objectivesStore';
 
 /** `ALL` as the open match: every loaded match together. */
 export const ALL = '';
@@ -21,7 +22,8 @@ export interface MatchState {
   round: number | null;
   error: string | null;
   notice: string | null;
-  load: (files: File[]) => Promise<void>;
+  /** With `quiet`, a container without a match document is passed over, and nothing is reported. */
+  load: (files: File[], quiet?: boolean) => Promise<void>;
   setOpen: (match: string) => void;
   setRound: (round: number | null) => void;
   setNotice: (notice: string | null) => void;
@@ -35,7 +37,7 @@ export const useMatchStore = create<MatchState>((set, get) => ({
   round: null,
   error: null,
   notice: null,
-  load: async (files) => {
+  load: async (files, quiet = false) => {
     const docs = [...get().docs];
     const games = [...get().games];
     const errors: string[] = [];
@@ -44,7 +46,9 @@ export const useMatchStore = create<MatchState>((set, get) => ({
       if (!/\.json$/i.test(file.name) && !packed) continue;
       try {
         // A `.3dheat` container: its match document, nothing else read (docs/container.md).
-        const text = packed ? JSON.stringify(await (await openContainer(file)).json('match')) : await file.text();
+        const packedJson = packed ? await (await openContainer(file)).json('match') : undefined;
+        if (quiet && packed && packedJson === null) continue;
+        const text = packed ? JSON.stringify(packedJson) : await file.text();
         let json: unknown = null;
         try {
           json = JSON.parse(text);
@@ -69,6 +73,10 @@ export const useMatchStore = create<MatchState>((set, get) => ({
     docs.sort((a, b) => a.map.localeCompare(b.map) || a.match.localeCompare(b.match));
     games.sort((a, b) => a.started.localeCompare(b.started) || a.match.localeCompare(b.match));
     const open = docs.length === 1 ? docs[0].match : get().open;
+    if (quiet) {
+      set({ docs, games, open });
+      return;
+    }
     set({ docs, games, open, round: null, error: errors.length ? errors.join('\n') : null });
   },
   setOpen: (open) => set({ open, round: null, notice: null }),
@@ -76,3 +84,18 @@ export const useMatchStore = create<MatchState>((set, get) => ({
   setNotice: (notice) => set({ notice }),
   clear: () => set({ docs: [], games: [], open: ALL, round: null, error: null, notice: null }),
 }));
+
+/**
+ * The match documents and the capture zones over time that come with data
+ * loaded for the heatmap or the replay: each `.3dheat` container's, and a
+ * loose `<match>.match.json` or `<match>.objectives.parquet` beside the
+ * tables. Before, a battle's objectives were drawn only once its files had
+ * also been picked in the match tab. Quiet: data without a match document is
+ * nothing to report.
+ */
+export async function loadMatchesBeside(files: File[]): Promise<void> {
+  const docs = files.filter((f) => isContainer(f.name) || /\.match\.json$/i.test(f.name));
+  if (docs.length) await useMatchStore.getState().load(docs, true);
+  const sidecars = files.filter((f) => isContainer(f.name) || isObjectivesFile(f.name));
+  if (sidecars.length) await loadObjectiveFiles(sidecars);
+}

@@ -98,6 +98,8 @@ const SLICE_MS = 5;
 
 /** Milliseconds a frame may spend working out the hit marks until they are ready. */
 const HIT_MARK_BUDGET_MS = 2;
+/** The replay's objectives over the picture, where the ground hides them: this much of their alpha. */
+const OBJECTIVE_XRAY = 0.4;
 
 export interface LiveReadout {
   playhead: number;
@@ -657,6 +659,8 @@ export class Engine {
   readonly objectiveDraw = new ObjectiveLayerDraw();
   /** The objectives' lines over the heat, between frames that build them. */
   private objectiveTop: { data: Float32Array; count: number } | null = null;
+  /** The replay's objectives faintly over the picture (`objectiveXray`). */
+  private xrayVerts = new Float32Array(0);
   /** The follow camera as it last set the view (display space): the eased unit, its heading, the orbit, the pose. */
   private followCam: { person: number; fx: number; fy: number; fz: number; head: number; rel: number; yaw: number; pitch: number; px: number; py: number; pz: number } | null = null;
   /** Trails and drop lines together, reused frame to frame. */
@@ -2067,6 +2071,17 @@ export class Engine {
   }
 
   /** The objectives' lines for this frame, after `base`: coloured by the replay's teams, laid on the level. */
+  /** The objectives' vertices (`from` to `to` of `data`) at a fraction of their alpha, to draw over the picture. */
+  private objectiveXray(data: Float32Array | null, from: number, to: number): { data: Float32Array; count: number } | null {
+    const n = to - from;
+    if (!data || n <= 0) return null;
+    if (this.xrayVerts.length < n * 7) this.xrayVerts = new Float32Array(Math.ceil(n * 1.5) * 7);
+    const out = this.xrayVerts;
+    out.set(data.subarray(from * 7, to * 7));
+    for (let i = 6; i < n * 7; i += 7) out[i] *= OBJECTIVE_XRAY;
+    return { data: out, count: n };
+  }
+
   private frameObjectives(s: ReturnType<typeof snapshot>, sources: ObjectiveSource[], base: Float32Array | null, baseCount: number): { data: Float32Array | null; count: number } {
     const d = this.dataset!;
     const level = s.level;
@@ -3530,12 +3545,14 @@ export class Engine {
     }
 
     // The battles' objectives: in the replay on the ground with the trails, in the heatmap over the heat
-    // (kept for the idle frames, which draw them again over the same picture).
+    // (kept for the idle frames, which draw them again over the same picture). In the replay faintly over
+    // everything as well: laid on the ground a point every few metres, a line between two of them dips
+    // under every rise of it, and a ring behind a hill was gone; now what the ground hides still shows.
     if (!objectiveSrc.length || raceBuilt) this.objectiveTop = null;
     else if (s.mode === 'team') {
-      this.objectiveTop = null;
       if (!compositeOnly) {
         const ob = this.frameObjectives(s, objectiveSrc, trailVerts, trailVertCount);
+        this.objectiveTop = this.objectiveXray(ob.data, trailVertCount, ob.count);
         trailVerts = ob.data;
         trailVertCount = ob.count;
       }
