@@ -672,7 +672,8 @@ G['kv-2'] = ww2({ ...KV, turret: KV2_T, gun: { length: 1.85, calibre: 0.152, at:
 
 // IS-1 and IS-2: the long hull with six road wheels and three return rollers, the rounded cast turret.
 // Hull 6.77 x 3.07 m, 2.73 m high; IS-2 9.83 m with the 122 mm, IS-1 8.56 m with the 85 mm.
-const IS_T0 = turret(0.15, [[-1.5, 0.8], [-1.1, 1.25], [0.6, 1.3], [1.3, 0.92], [1.45, 0.55]], [[-1.5, 0.5], [-0.8, 0.9], [0.6, 0.95], [1.45, 0.5]], 2.4, 1.55);
+// The turret's place, 0.55 m ahead of the hull's middle, fitted to the WT reference.
+const IS_T0 = turret(0.55, [[-1.5, 0.8], [-1.1, 1.25], [0.6, 1.3], [1.3, 0.92], [1.45, 0.55]], [[-1.5, 0.5], [-0.8, 0.9], [0.6, 0.95], [1.45, 0.5]], 2.4, 1.55);
 // The casting across, as the head-on photograph in USAREUR Pam 30-60-1 shows it: the walls leaning in only a little
 // for the lower half, then rounding over into a broad flat roof (a casting's shoulders, not a low dome).
 const IS_T: TurretSpec = { ...IS_T0, outline: { ...IS_T0.outline!, section: [[-1, 1], [0.3, 0.95], [0.7, 0.85], [0.9, 0.74], [1, 0.6]] } };

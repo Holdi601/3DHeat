@@ -279,3 +279,4 @@ themselves are never stored in this repository.
 | m3a1-stuart (turret place) | the turret 0.25 m further forward than the M3's, kept where it fitted the WT reference better (fitted to WT reference) | - | - | - | - |
 | m5a1-stuart, m3a3-stuart (turret place) | the turret 0.2 m ahead of the hull's middle, kept where it fitted the WT reference better (fitted to WT reference) | - | - | - | - |
 | amd-35 (turret place and height) | the turret 0.4 m ahead of the middle and 0.65 m tall, kept where it fitted the WT reference better (fitted to WT reference) | - | - | - | - |
+| is-1, is-2, is-2-1943, kv-85, kv-122 (turret place) | the cast turret 0.55 m ahead of the hull's middle (0.4 m further forward than estimated), kept where it fitted the WT reference better (fitted to WT reference) | - | - | - | - |
