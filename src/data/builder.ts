@@ -2,6 +2,7 @@ import { TrackTable } from './trackTable';
 import { Dictionary, GrowableF32, GrowableU32 } from './growable';
 import { msg, MsgError, sayDataset, type Msg } from './msg';
 import { radixSortIndices } from './sort';
+import { canonicalColumns, type CategoryInput } from './canonical';
 import { MAX_GROUPS } from '../render/types';
 import type { AttributeColumn, Dataset, GeoReference } from '../state/types';
 import { emptyBounds } from '../state/types';
@@ -118,6 +119,9 @@ export class DatasetBuilder {
   private rows = 0;
   private rejected = 0;
   private sources = 0;
+  /** Each block's first row and its one session (-1: none, or several), for `alignRecordings`. */
+  private readonly blockStarts: number[] = [];
+  private readonly blockSession: number[] = [];
   /**
    * The blocks' shared geographic reference: undefined before the first block,
    * null once two blocks disagree or one has none, since positions projected
@@ -188,13 +192,21 @@ export class DatasetBuilder {
       padU32(this.person, n);
     }
 
+    this.blockStarts.push(base);
     if (block.sessionIds) {
       this.session ??= zeroFilledU32(base, this.capacity());
       const remap = remapDictionary(block.sessionLabels, this.sessionDict);
-      for (let i = 0; i < n; i++) this.session.push(remap[block.sessionIds[i]]);
+      let one = -2;
+      for (let i = 0; i < n; i++) {
+        const v = remap[block.sessionIds[i]];
+        this.session.push(v);
+        one = one === -2 || one === v ? v : -1;
+      }
+      this.blockSession.push(one < 0 ? -1 : one);
     } else if (this.session) {
       padU32(this.session, n);
     }
+    if (this.blockSession.length < this.blockStarts.length) this.blockSession.push(-1);
 
     if (block.teamIds) {
       this.team ??= zeroFilledU32(base, this.capacity());
@@ -254,6 +266,56 @@ export class DatasetBuilder {
   }
 
   /**
+   * Recordings far apart in time, each its own match, started together.
+   *
+   * A folder of separate recordings - one Tacview file or one replay a match,
+   * flown on different days or (DCS) on mission dates decades apart - put on
+   * one absolute clock spans years: a float32 second then resolves minutes,
+   * so every track is torn, and the playhead is in one match at a time while
+   * the rest wait their turn years away. When every file holds exactly one
+   * session of its own and the files' spans are mostly gaps (together they
+   * cover under a quarter of the time from the first to the last), each file
+   * is moved to start at zero, as the match overlay does. Files of one
+   * evening, one recording in pieces, or telemetry files of many matches each
+   * keep their clock. Returns how many were moved (0: none).
+   */
+  private alignRecordings(n: number): number {
+    const B = this.blockStarts.length;
+    if (B < 2 || !this.time || !this.session) return 0;
+    const seen = new Set<number>();
+    for (const s of this.blockSession) {
+      if (s < 0 || seen.has(s)) return 0;
+      seen.add(s);
+    }
+    const lo = new Float64Array(B).fill(Infinity);
+    const hi = new Float64Array(B).fill(-Infinity);
+    for (let b = 0; b < B; b++) {
+      const end = b + 1 < B ? this.blockStarts[b + 1] : n;
+      for (let i = this.blockStarts[b]; i < end; i++) {
+        const v = this.time[i];
+        if (v < lo[b]) lo[b] = v;
+        if (v > hi[b]) hi[b] = v;
+      }
+    }
+    let first = Infinity;
+    let last = -Infinity;
+    let covered = 0;
+    for (let b = 0; b < B; b++) {
+      if (!(hi[b] >= lo[b])) continue;
+      first = Math.min(first, lo[b]);
+      last = Math.max(last, hi[b]);
+      covered += hi[b] - lo[b];
+    }
+    if (!(last - first > 4 * Math.max(covered, 1))) return 0;
+    for (let b = 0; b < B; b++) {
+      if (!(hi[b] >= lo[b])) continue;
+      const end = b + 1 < B ? this.blockStarts[b + 1] : n;
+      for (let i = this.blockStarts[b]; i < end; i++) this.time[i] -= lo[b];
+    }
+    return B;
+  }
+
+  /**
    * @param onPhase Called as each step of the build begins.
    *
    * The build is not one step, and pretending it is caused a bug report. The
@@ -288,6 +350,7 @@ export class DatasetBuilder {
     let time: Float32Array | null = null;
     let epochMs: number | null = null;
     let timeOrigin = 0;
+    const aligned = this.time && this.timeLen === n ? this.alignRecordings(n) : 0;
     if (this.time && this.timeLen === n) {
       let min = Infinity;
       for (let i = 0; i < n; i++) {
@@ -300,13 +363,14 @@ export class DatasetBuilder {
           const v = this.time[i];
           time[i] = Number.isFinite(v) ? v - min : 0;
         }
-        if (this.timeAbsolute) epochMs = min * 1000;
+        if (this.timeAbsolute && !aligned) epochMs = min * 1000;
         else timeOrigin = min;
       }
     }
 
     const warnings: Msg[] = [];
     const attrsRaw: AttributeColumn[] = [];
+    const allCats: CategoryInput[] = [];
     for (const attrName of this.attrOrder) {
       const num = this.numberAttrs.get(attrName);
       if (num) {
@@ -323,6 +387,9 @@ export class DatasetBuilder {
         // bytes a row and a dictionary the size of the dataset to make a list
         // nobody can scroll and a mask that silently rejects everything past its
         // end. The rows themselves are untouched.
+        const data = cat.out.finish();
+        // Every category column, kept or not, for the columns the load adds (`canonical.ts`).
+        allCats.push({ name: attrName, data, labels: cat.dict.labels });
         if (cat.dict.size > MAX_GROUPS) {
           warnings.push(
             msg('data.builder.columnDropped', {
@@ -337,7 +404,7 @@ export class DatasetBuilder {
         attrsRaw.push({
           name: attrName,
           kind: 'category',
-          data: cat.out.finish(),
+          data,
           min: 0,
           max: Math.max(0, cat.dict.size - 1),
           categories: cat.dict.labels,
@@ -348,6 +415,7 @@ export class DatasetBuilder {
     // Release the float64 time accumulator now that the f32 relative column
     // exists: it is 8 bytes per row and nothing below needs it.
     this.time = null;
+
 
     // Concatenated files are essentially never globally time-ordered, so this
     // sort is the normal path rather than an exception.
@@ -360,6 +428,21 @@ export class DatasetBuilder {
     const sessionRaw = this.session ? this.session.finish() : null;
     let teamRaw = this.team ? this.team.finish() : null;
     const attrs: AttributeColumn[] = attrsRaw;
+    // The same questions asked of every source: event type, player or AI, vehicle class (`canonical.ts`).
+    attrsRaw.push(
+      ...canonicalColumns({
+        n,
+        cats: allCats,
+        person: personRaw,
+        session: sessionRaw,
+        time,
+        px,
+        py,
+        pz,
+        // Tacview is the source that needs it, in metres.
+        units: 1,
+      }),
+    );
 
     // A column with more distinct values than can be grouped by is not a group,
     // it is an id — one value per player, per match, per row. The rows are
@@ -443,6 +526,7 @@ export class DatasetBuilder {
       timeRange: time ? [time[0], time[n - 1]] : [0, 0],
       timeSorted: true,
       ...(this.geo ? { geo: { ...this.geo } } : {}),
+      ...(aligned ? { recordingsAligned: aligned } : {}),
     };
 
     phase('data.builder.phase.extent');
@@ -561,6 +645,7 @@ export class DatasetBuilder {
     const notes: Msg[] = [msg('data.builder.rows', { count: n })];
     if (this.sources > 1) notes.push(msg('data.builder.files', { count: this.sources }));
     if (this.rejected > 0) notes.push(msg('data.builder.rejected', { count: this.rejected }));
+    if (aligned) notes.push(msg('data.builder.recordingsAligned', { count: aligned }));
     // Said here and again on the main thread, in the viewer's language (see data/msg).
     dataset.said = { name, notes, warnings };
     sayDataset(dataset);

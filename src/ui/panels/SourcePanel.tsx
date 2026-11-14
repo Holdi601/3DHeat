@@ -184,6 +184,8 @@ export function SourcePanel() {
       setLoad({ active: true, label: t('heat.sourcePanel.indexing'), fraction: null, rowsSoFar: ds.count, error: null });
       await prepareUnits(ds);
       setDataset(ds);
+      // Recordings the load started together (`recordingsAligned`) are watched together, not the busiest alone.
+      if (ds.recordingsAligned) useStore.getState().patchTeam({ session: -1 });
       setLoad({ active: false, label: '', fraction: null, rowsSoFar: ds.count, error: null });
     } catch (err) {
       setLoad({

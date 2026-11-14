@@ -16,6 +16,7 @@
  */
 
 import { classOfType, isEffectDomain } from '../../figures/symbolClass';
+import { CANON } from '../../data/canonical';
 import type { AttributeColumn, Dataset } from '../../state/types';
 import { personRows, personRowsSteps } from '../../data/flight';
 import { trackName } from './replayData';
@@ -177,8 +178,10 @@ function* unitsSteps(d: Dataset): Generator<void, UnitIndex, void> {
   const playerFlag = attr(d, ['isPlayer', 'is_player', 'human']);
   const userId = attr(d, ['userId', 'user_id', 'steamid', 'steamId']);
   const acmi = !!attr(d, ['Pilot']) && !!attr(d, ['Coalition', 'EventObjects']);
+  // The load's own answer where it gave one (`data/canonical.ts`): it saw the columns too many-valued to keep.
+  const canon = attr(d, [CANON.actor]);
   const cams = cameraTracks(d);
-  const aiFrom: UnitIndex['aiFrom'] = aiCol || playerFlag ? 'column' : userId ? 'userId' : acmi ? 'pilot' : 'none';
+  const aiFrom: UnitIndex['aiFrom'] = aiCol || playerFlag ? 'column' : userId ? 'userId' : acmi || canon ? 'pilot' : 'none';
 
   const units: Unit[] = [];
   const byKey = new Map<string, Unit>();
@@ -211,7 +214,9 @@ function* unitsSteps(d: Dataset): Generator<void, UnitIndex, void> {
     let ai: boolean;
     const flag = text(aiCol, first);
     const pf = text(playerFlag, first);
-    if (aiCol && TRUE.test(flag)) ai = true;
+    const said = text(canon, first);
+    if (said) ai = said === 'ai';
+    else if (aiCol && TRUE.test(flag)) ai = true;
     else if (aiCol && FALSE.test(flag)) ai = false;
     else if (playerFlag && TRUE.test(pf)) ai = false;
     else if (playerFlag && FALSE.test(pf)) ai = true;

@@ -14,6 +14,7 @@
   "data.builder.rows": "{count, plural, one {# row} other {# rows}}",
   "data.builder.files": "{count, plural, one {# file} other {# files}}",
   "data.builder.rejected": "{count, plural, other {# rejected}}",
+  "data.builder.recordingsAligned": "{count, plural, one {# recording} other {# recordings}} far apart in time, each played from its own start",
   "data.ingestFiles.fileStep": "[{file}/{files}] {step}",
   "data.ingestFiles.emptyFile": "file is empty (0 bytes)",
   "data.ingestFiles.fileFailed": "{file}: {reason}",

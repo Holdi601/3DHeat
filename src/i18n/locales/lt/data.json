@@ -14,6 +14,7 @@
   "data.builder.rows": "{count, plural, one {# eilutė} few {# eilutės} many {# eilutės} other {# eilučių}}",
   "data.builder.files": "{count, plural, one {# failas} few {# failai} many {# failo} other {# failų}}",
   "data.builder.rejected": "{count, plural, other {# atmesta}}",
+  "data.builder.recordingsAligned": "{count, plural, one {# įrašas} few {# įrašai} many {# įrašo} other {# įrašų}} laike toli viena nuo kitos, kiekvienas leidžiamas nuo savo pradžios",
   "data.ingestFiles.fileStep": "[{file}/{files}] {step}",
   "data.ingestFiles.emptyFile": "failas tuščias (0 baitų)",
   "data.ingestFiles.fileFailed": "{file}: {reason}",

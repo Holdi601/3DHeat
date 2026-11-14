@@ -14,6 +14,7 @@
   "data.builder.rows": "{count, plural, other {#行}}",
   "data.builder.files": "{count, plural, other {#ファイル}}",
   "data.builder.rejected": "{count, plural, other {#件を除外}}",
+  "data.builder.recordingsAligned": "{count, plural, other {# 件の記録}}、時間的に離れており、それぞれ自身の開始位置から再生",
   "data.ingestFiles.fileStep": "[{file}/{files}] {step}",
   "data.ingestFiles.emptyFile": "ファイルが空です（0バイト）",
   "data.ingestFiles.fileFailed": "{file}：{reason}",

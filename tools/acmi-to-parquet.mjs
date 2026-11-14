@@ -14,7 +14,9 @@
  *                          event or removal at the object it names - with the
  *                          columns of the viewer's ACMI table and a column for
  *                          every property the recording carries; object by
- *                          object, each object's rows in time order
+ *                          object, each object's rows in time order. `Actor`
+ *                          (player or ai) and `Launcher` (a weapon's: the unit
+ *                          nearest where it appeared) are worked out here
  *   <name>.effects.parquet the same for shells, bullets, shrapnel, flares and
  *                          chaff (`EFFECT`): millions of objects a server
  *                          evening, kept apart so a folder loads its units
@@ -62,6 +64,107 @@ const EFFECT = /(^|\+)(Shell|Bullet|Shrapnel|Decoy|Flare|Chaff)(\+|$)/i;
 
 function stemOf(name) {
   return name.replace(/\.(zip|txt)\.acmi$/i, '').replace(/\.acmi$/i, '');
+}
+
+/** What a weapon is by its Tacview type (a decoy is not one: it is dropped, not aimed). */
+const WEAPON = /(^|\+)(Weapon|Missile|Rocket|Bomb|Torpedo|Projectile|Shell|Bullet|Grenade)(\+|$)/i;
+/** What is no one's: decoys, debris, map objects. */
+const NO_ONE = /Decoy|Flare|Chaff|Shrapnel|Debris|Container|Bullseye|Navaid|Waypoint|Misc/i;
+/** How far (m) and how long (s) from a weapon's first sample its launcher may have been. */
+const LAUNCH_REACH_M = 1500;
+const LAUNCH_WINDOW_S = 3;
+/** How near (m) a unit not sampled within the window must be. */
+const STILL_REACH_M = 400;
+const CELL_M = 2000;
+
+/**
+ * Player or AI for every row, and a weapon's launcher: Tacview names neither.
+ * A DCS AI's pilot is its group's name with a number ("Senaki-patrol-Cap-01")
+ * or its own name; a player's is the player's. A weapon is given to the unit
+ * nearest where it appeared, within a few seconds and 1.5 km (each unit's
+ * last place kept in 2 km cells), and is that unit's player or AI.
+ */
+class Launchers {
+  constructor() {
+    /** id -> { x, y, alt, t, label, actor, cell } of the units seen. */
+    this.units = new Map();
+    this.cells = new Map();
+    /** weapon id -> { launcher, actor } */
+    this.weapons = new Map();
+  }
+
+  static actorOf(p) {
+    const pilot = (p.get('Pilot') ?? '').trim();
+    if (!pilot) return 'ai';
+    // Ships and fixed objects are the mission's, whatever their pilot field says ("Blue Stennis").
+    if (/(^|\+)(Sea|Watercraft|Static|Building|Bullseye)(\+|$)/i.test(p.get('Type') ?? '')) return 'ai';
+    const g = (p.get('Group') ?? '').trim().toLowerCase();
+    const pl = pilot.toLowerCase();
+    if ((g && pl.startsWith(g)) || pl === (p.get('Name') ?? '').trim().toLowerCase()) return 'ai';
+    return 'player';
+  }
+
+  row(row, p, label, x, y, t) {
+    if (!row.id) return { actor: '', launcher: '' };
+    const type = p.get('Type') ?? '';
+    if (WEAPON.test(type)) {
+      let w = this.weapons.get(row.id);
+      if (!w) {
+        w = this.nearest(x, y, row.alt, t) ?? { launcher: '', actor: '' };
+        this.weapons.set(row.id, w);
+      }
+      if (row.event === 'Removed') this.weapons.delete(row.id);
+      return w;
+    }
+    const actor = NO_ONE.test(type) ? '' : Launchers.actorOf(p);
+    if (row.event === 'Removed') this.forget(row.id);
+    else if (actor && Number.isFinite(x) && Number.isFinite(y)) this.place(row.id, { x, y, alt: Number.isFinite(row.alt) ? row.alt : 0, t, label, actor });
+    return { actor, launcher: '' };
+  }
+
+  place(id, u) {
+    const cell = `${Math.floor(u.x / CELL_M)},${Math.floor(u.y / CELL_M)}`;
+    const old = this.units.get(id);
+    if (old && old.cell !== cell) this.cells.get(old.cell)?.delete(id);
+    if (!old || old.cell !== cell) {
+      let c = this.cells.get(cell);
+      if (!c) this.cells.set(cell, (c = new Set()));
+      c.add(id);
+    }
+    u.cell = cell;
+    this.units.set(id, u);
+  }
+
+  forget(id) {
+    const old = this.units.get(id);
+    if (old) this.cells.get(old.cell)?.delete(id);
+    this.units.delete(id);
+  }
+
+  nearest(x, y, alt, t) {
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+    const cx = Math.floor(x / CELL_M);
+    const cy = Math.floor(y / CELL_M);
+    let best = null;
+    let score = Infinity;
+    for (let i = -1; i <= 1; i++)
+      for (let j = -1; j <= 1; j++)
+        for (const id of this.cells.get(`${cx + i},${cy + j}`) ?? []) {
+          const u = this.units.get(id);
+          if (!u) continue;
+          const d = Math.hypot(u.x - x, u.y - y, u.alt - (Number.isFinite(alt) ? alt : u.alt));
+          const dt = Math.abs(t - u.t);
+          // A unit not sampled lately stands where it was (a SAM launcher is written once): only close by.
+          if (d > (dt > LAUNCH_WINDOW_S ? STILL_REACH_M : LAUNCH_REACH_M)) continue;
+          // Nearer in time counts as nearer in place: a fast aircraft's samples are far apart.
+          const s = d + Math.min(dt, LAUNCH_WINDOW_S * 10) * 100;
+          if (s < score) {
+            score = s;
+            best = u;
+          }
+        }
+    return best ? { launcher: best.label, actor: best.actor } : null;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -158,7 +261,7 @@ async function convert(job, theatres) {
 
   // The columns: the viewer's ACMI table, then every property.
   const FIXED_NUM = ['Time', 'X', 'Y', 'Altitude', 'Heading', 'Pitch', 'Roll', 'Latitude', 'Longitude'];
-  const FIXED_TEXT = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo'];
+  const FIXED_TEXT = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher'];
   const OWN_TEXT = new Set(['Type', 'Name', 'Pilot', 'Group', 'Country', 'Coalition', 'Color']);
   const hasUV = r1.rowsWithUV > 0;
   const taken = new Set([...FIXED_NUM, ...FIXED_TEXT, ...(hasUV ? ['U', 'V'] : [])]);
@@ -166,7 +269,7 @@ async function convert(job, theatres) {
   const colName = (k) => (taken.has(k) ? `${k} (property)` : k);
   const numKeys = [...r1.numericKeys].filter((k) => !r1.textKeys.has(k)).sort();
   const textKeys = [...r1.textKeys].filter((k) => !OWN_TEXT.has(k)).sort();
-  const order = ['Time', 'X', 'Y', 'Altitude', 'Object', 'Coalition', 'Heading', 'Pitch', 'Roll', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Latitude', 'Longitude', 'Recording', 'EventObjects', 'RecordingInfo', ...(hasUV ? ['U', 'V'] : [])];
+  const order = ['Time', 'X', 'Y', 'Altitude', 'Object', 'Coalition', 'Heading', 'Pitch', 'Roll', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Latitude', 'Longitude', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...(hasUV ? ['U', 'V'] : [])];
   const numeric = new Set([...FIXED_NUM, 'U', 'V']);
   const columns = [...order.map((c) => ({ name: c, num: numeric.has(c) })), ...numKeys.map((k) => ({ name: colName(k), num: true, prop: k })), ...textKeys.map((k) => ({ name: colName(k), num: false, prop: k }))];
 
@@ -188,7 +291,7 @@ async function convert(job, theatres) {
       pitch: 'Pitch',
       angleUnit: 'degrees',
       // As the viewer's own reading (`acmiHints`): RecordingInfo for the Match tab's title, briefing and comments.
-      extra: ['Type', 'Name', 'Pilot', 'Group', 'Country', 'Event', 'Altitude', 'Roll', 'Latitude', 'Longitude', 'EventObjects', 'RecordingInfo', ...columns.slice(order.length).map((c) => c.name)],
+      extra: ['Type', 'Name', 'Pilot', 'Group', 'Country', 'Event', 'Altitude', 'Roll', 'Latitude', 'Longitude', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...columns.slice(order.length).map((c) => c.name)],
     },
     geo: { lat0: origin.lat, lon0: origin.lon, projection: 'tangent-plane', east: 'X', north: 'Y', up: 'Altitude' },
   };
@@ -303,7 +406,8 @@ async function convert(job, theatres) {
   const at = Object.fromEntries(columns.map((c, j) => [c.name, j]));
   const J = (k) => at[k];
   const [jT, jX, jY, jA, jH, jP, jR, jLat, jLon, jU, jV] = ['Time', 'X', 'Y', 'Altitude', 'Heading', 'Pitch', 'Roll', 'Latitude', 'Longitude', 'U', 'V'].map(J);
-  const [jObj, jCo, jTy, jNa, jPi, jGr, jCn, jCl, jEv, jRec, jEvo, jInfo] = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo'].map(J);
+  const [jObj, jCo, jTy, jNa, jPi, jGr, jCn, jCl, jEv, jRec, jEvo, jInfo, jAct, jLau] = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher'].map(J);
+  const launchers = new Launchers();
   const props = columns.map((c, j) => [j, c]).filter(([, c]) => c.prop);
   let infoVersion = -1;
   const labels = new WeakMap();
@@ -347,6 +451,10 @@ async function convert(job, theatres) {
     b[jRec][i] = recording;
     b[jEvo][i] = row.objects;
     b[jInfo][i] = '';
+    // Player or AI, a weapon its launcher's: the unit nearest where it appeared (a recording names none).
+    const own = launchers.row(row, p, label, x, y, (reader.refTime ?? 0) + row.t);
+    b[jAct][i] = own.actor;
+    b[jLau][i] = own.launcher;
     for (const [j, c] of props) {
       const v = p.get(c.prop);
       b[j][i] = c.num ? (v === undefined || v === '' ? NaN : Number(v)) : (v ?? '');
@@ -367,6 +475,8 @@ async function convert(job, theatres) {
     sb[jEv][k] = 'RecordingInfo';
     sb[jRec][k] = recording;
     sb[jInfo][k] = JSON.stringify(reader.globals);
+    sb[jAct][k] = '';
+    sb[jLau][k] = '';
     sb[jLat][k] = reader.refLat;
     sb[jLon][k] = reader.refLon;
     [sb[jX][k], sb[jY][k]] = project(reader.refLat, reader.refLon);

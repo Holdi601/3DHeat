@@ -14,6 +14,7 @@
   "data.builder.rows": "{count, plural, one {# ред} few {# реда} other {# редова}}",
   "data.builder.files": "{count, plural, one {# датотека} few {# датотеке} other {# датотека}}",
   "data.builder.rejected": "{count, plural, one {# одбијен} few {# одбијена} other {# одбијених}}",
+  "data.builder.recordingsAligned": "{count, plural, one {# снимак} few {# снимка} other {# снимака}} временски далеко једна од друге, свака се репродукује од свог почетка",
   "data.ingestFiles.fileStep": "[{file}/{files}] {step}",
   "data.ingestFiles.emptyFile": "датотека је празна (0 бајтова)",
   "data.ingestFiles.fileFailed": "{file}: {reason}",

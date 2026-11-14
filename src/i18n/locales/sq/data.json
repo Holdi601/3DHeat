@@ -14,6 +14,7 @@
   "data.builder.rows": "{count, plural, one {# rresht} other {# rreshta}}",
   "data.builder.files": "{count, plural, one {# skedar} other {# skedarë}}",
   "data.builder.rejected": "{count, plural, other {# të refuzuar}}",
+  "data.builder.recordingsAligned": "{count, plural, one {# regjistrim} other {# regjistrime}} larg njëra-tjetrës në kohë, secila luhet nga fillimi i vet",
   "data.ingestFiles.fileStep": "[{file}/{files}] {step}",
   "data.ingestFiles.emptyFile": "skedari është bosh (0 bajte)",
   "data.ingestFiles.fileFailed": "{file}: {reason}",

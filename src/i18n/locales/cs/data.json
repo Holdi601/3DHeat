@@ -14,6 +14,7 @@
   "data.builder.rows": "{count, plural, one {# řádek} few {# řádky} many {# řádku} other {# řádků}}",
   "data.builder.files": "{count, plural, one {# soubor} few {# soubory} many {# souboru} other {# souborů}}",
   "data.builder.rejected": "{count, plural, one {# odmítnutý} few {# odmítnuté} many {# odmítnutého} other {# odmítnutých}}",
+  "data.builder.recordingsAligned": "{count, plural, one {# nahrávka} few {# nahrávky} many {# nahrávky} other {# nahrávek}} daleko od sebe v čase, každá přehrávaná od vlastního začátku",
   "data.ingestFiles.fileStep": "[{file}/{files}] {step}",
   "data.ingestFiles.emptyFile": "soubor je prázdný (0 bajtů)",
   "data.ingestFiles.fileFailed": "{file}: {reason}",

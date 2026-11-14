@@ -14,6 +14,7 @@
   "data.builder.rows": "{count, plural, one {# строка} few {# строки} many {# строк} other {# строки}}",
   "data.builder.files": "{count, plural, one {# файл} few {# файла} many {# файлов} other {# файла}}",
   "data.builder.rejected": "{count, plural, one {# отклонена} few {# отклонены} many {# отклонено} other {# отклонено}}",
+  "data.builder.recordingsAligned": "{count, plural, one {# запись} few {# записи} many {# записей} other {# записи}}, далеко друг от друга по времени, каждая воспроизводится со своего начала",
   "data.ingestFiles.fileStep": "[{file}/{files}] {step}",
   "data.ingestFiles.emptyFile": "файл пуст (0 байт)",
   "data.ingestFiles.fileFailed": "{file}: {reason}",

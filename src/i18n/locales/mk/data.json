@@ -14,6 +14,7 @@
   "data.builder.rows": "{count, plural, one {# ред} other {# реда}}",
   "data.builder.files": "{count, plural, one {# датотека} other {# датотеки}}",
   "data.builder.rejected": "{count, plural, one {# одбиен} other {# одбиени}}",
+  "data.builder.recordingsAligned": "{count, plural, one {# снимка} other {# снимки}} временски далеку една од друга, секоја пуштена од својот почеток",
   "data.ingestFiles.fileStep": "[{file}/{files}] {step}",
   "data.ingestFiles.emptyFile": "датотеката е празна (0 бајти)",
   "data.ingestFiles.fileFailed": "{file}: {reason}",

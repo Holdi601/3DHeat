@@ -399,6 +399,12 @@ export interface Dataset {
    * was subtracted, and unused when `epochMs` is set.
    */
   timeOrigin?: number;
+  /**
+   * How many recordings the load moved to start together (`DatasetBuilder`,
+   * `alignRecordings`): separate matches far apart in time, overlaid from
+   * their starts. Absent when the files kept their own clock.
+   */
+  recordingsAligned?: number;
 }
 
 /**

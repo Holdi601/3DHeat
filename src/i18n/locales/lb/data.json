@@ -14,6 +14,7 @@
   "data.builder.rows": "{count, plural, one {# Zeil} other {# Zeilen}}",
   "data.builder.files": "{count, plural, one {# Fichier} other {# Fichieren}}",
   "data.builder.rejected": "{count, plural, other {# refuséiert}}",
+  "data.builder.recordingsAligned": "{count, plural, one {# Opnam} other {# Opnamen}} zäitlech wäit auserneen, all ofgespillt vu sengem eegene Start",
   "data.ingestFiles.fileStep": "[{file}/{files}] {step}",
   "data.ingestFiles.emptyFile": "de Fichier ass eidel (0 Bytes)",
   "data.ingestFiles.fileFailed": "{file}: {reason}",

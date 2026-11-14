@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { useStore } from '../../state/store';
+import { CANON, isCanonical } from '../../data/canonical';
 import { filterSlots } from '../../render/filterTables';
 import { MAX_FILTER_SLOTS } from '../../render/types';
 import type { AttributeColumn, FilterSpec } from '../../state/types';
@@ -75,7 +77,7 @@ export function FilterPanel() {
       <div className="hint">{t('heat.filterPanel.hint')}</div>
       {personSlot && <div className="hint">{t('heat.filterPanel.personSlot')}</div>}
 
-      {dataset.attrs.map((attr) => (
+      {[...dataset.attrs].sort((a, b) => Number(isCanonical(b.name)) - Number(isCanonical(a.name))).map((attr) => (
         <FilterRow
           key={attr.name}
           attr={{ ...attr, data: NO_ROWS }}
@@ -107,6 +109,8 @@ function FilterRow({
 }) {
   const active = !!spec;
   const overflowed = slot >= MAX_FILTER_SLOTS;
+  const [query, setQuery] = useState('');
+  const title = columnLabel(attr.name);
 
   if (attr.kind === 'number') {
     const min = spec && spec.kind === 'range' ? spec.min : attr.min;
@@ -116,7 +120,7 @@ function FilterRow({
       <div className="field">
         <div className="label">
           <span style={{ opacity: overflowed ? 0.45 : 1 }}>
-            {overflowed ? t('heat.filterPanel.notApplied', { column: attr.name }) : attr.name}
+            {overflowed ? t('heat.filterPanel.notApplied', { column: title }) : title}
           </span>
           <span className="val">
             {active ? `${fmt(min)} … ${fmt(max)}` : `${fmt(attr.min)} … ${fmt(attr.max)}`}
@@ -176,7 +180,7 @@ function FilterRow({
         </div>
         {active && (
           <button className="del" onClick={() => onChange(null)}>
-            {t('heat.filterPanel.reset', { column: attr.name })}
+            {t('heat.filterPanel.reset', { column: title })}
           </button>
         )}
       </div>
@@ -191,6 +195,8 @@ function FilterRow({
     if (next.size === categories.length) onChange(null);
     else onChange({ kind: 'categories', column: attr.name, allowed: [...next] });
   };
+  const q = query.trim().toLowerCase();
+  const shown = (label: string) => !q || label.toLowerCase().includes(q) || valueLabel(attr.name, label).toLowerCase().includes(q);
 
   return (
     <div className="field">
@@ -202,8 +208,11 @@ function FilterRow({
           {allowed.size}/{categories.length}
         </span>
       </div>
+      {categories.length > SEARCH_FROM && (
+        <input type="text" placeholder={t('heat.filterPanel.search', { count: categories.length })} value={query} onChange={(e) => setQuery(e.target.value)} />
+      )}
       <div className="team-list" style={{ maxHeight: 150 }}>
-        {categories.map((label, i) => (
+        {categories.map((label, i) => (shown(label) ? (
           <div className="team-row" key={i}>
             <input
               type="checkbox"
@@ -216,19 +225,48 @@ function FilterRow({
               }}
             />
             <span className="name" title={label || t('heat.filterPanel.empty')}>
-              {label || <em style={{ opacity: 0.5 }}>{t('heat.filterPanel.empty')}</em>}
+              {label ? valueLabel(attr.name, label) : <em style={{ opacity: 0.5 }}>{t('heat.filterPanel.empty')}</em>}
             </span>
           </div>
-        ))}
+        ) : null))}
       </div>
       <div className="row">
         <button onClick={() => setAllowed(new Set(categories.map((_, i) => i)))}>
           {t('heat.filterPanel.all')}
         </button>
         <button onClick={() => setAllowed(new Set())}>{t('heat.filterPanel.none')}</button>
+        {query && (
+          <button onClick={() => setAllowed(new Set(categories.flatMap((l, i) => (shown(l) ? [i] : []))))}>{t('heat.filterPanel.onlyShown')}</button>
+        )}
       </div>
     </div>
   );
+}
+
+/** Lists longer than this get a search box. */
+const SEARCH_FROM = 12;
+
+/** The message key part for each column the load adds (`data/canonical.ts`). */
+const CANON_KEY: Record<string, string> = {
+  [CANON.event]: 'event',
+  [CANON.actor]: 'actor',
+  [CANON.vehicleClass]: 'vehicleClass',
+  [CANON.targetClass]: 'vehicleClass',
+};
+
+/** A column's name as the panel says it: an added column's in the viewer's language. */
+export function columnLabel(name: string): string {
+  if (name === CANON.event) return t('heat.filterPanel.col.event');
+  if (name === CANON.actor) return t('heat.filterPanel.col.actor');
+  if (name === CANON.vehicleClass) return t('heat.filterPanel.col.vehicleClass');
+  if (name === CANON.targetClass) return t('heat.filterPanel.col.targetClass');
+  return name;
+}
+
+/** A value as the panel says it: an added column's in the viewer's language, else as the data has it. */
+export function valueLabel(column: string, value: string): string {
+  const k = CANON_KEY[column];
+  return k && value ? t(`heat.filterPanel.${k}.${value}`) : value;
 }
 
 function fmt(v: number): string {

@@ -6,9 +6,12 @@ import { useStore } from '../../state/store';
 import type { FilterSpec } from '../../state/types';
 import { Section } from '../controls';
 import { int, t } from '../../i18n';
+import { unitsOf, type Unit } from '../replay/units';
 
 /** Rows rendered at once. The real datasets have tens of thousands of entities. */
 const PAGE = 200;
+/** Players past this many: only those in play at the playhead are listed (a search still finds all). */
+const MANY_PLAYERS = 40;
 
 /**
  * Isolate specific people or entities.
@@ -24,6 +27,9 @@ const PAGE = 200;
  * enough for those tens of thousands. Taking a slot means it can be crowded out
  * by column filters, and then the panel says so rather than leaving the heat to
  * quietly show everyone.
+ *
+ * Listed as people name them (`replay/units.ts`): the players, and when there
+ * are many only those in play at the playhead; the AI folded away beneath.
  */
 export function EntityPanel() {
   const dataset = useStore((s) => s.dataset);
@@ -37,29 +43,45 @@ export function EntityPanel() {
     [personFilter],
   );
 
-  const matches = useMemo(() => {
-    if (!dataset) return [];
-    const q = query.trim().toLowerCase();
-    const out: number[] = [];
-    for (let i = 0; i < dataset.personLabels.length; i++) {
-      if (q && !dataset.personLabels[i].toLowerCase().includes(q)) continue;
-      out.push(i);
+  // Players and AI as the replay's unit list tells them (`units.ts`); weapons are their launchers'.
+  const index = useMemo(() => (dataset ? unitsOf(dataset) : null), [dataset]);
+  const [players, ai] = useMemo(() => {
+    const p: Unit[] = [];
+    const a: Unit[] = [];
+    for (const u of index?.units ?? []) if (u.kind === 'player') p.push(u);
+    else if (u.kind === 'ai') a.push(u);
+    return [p, a];
+  }, [index]);
+  const many = players.length > MANY_PLAYERS && !!dataset?.time;
+  // Whole seconds, so a playing timeline re-lists once a second at most.
+  const now = useStore((s) => (many ? Math.floor(s.timeline.playhead) : 0));
+  const q = query.trim().toLowerCase();
+  const hit = (u: Unit) => !q || u.name.toLowerCase().includes(q) || u.vehicle.toLowerCase().includes(q);
+  const shownPlayers = useMemo(() => {
+    const out: Unit[] = [];
+    for (const u of players) {
+      if (!hit(u)) continue;
+      // Many players: those in play now (a search lists all it finds).
+      if (many && !q && !u.spans.some(([a, b]) => a <= now + 1 && b >= now)) continue;
+      out.push(u);
       if (out.length >= PAGE) break;
     }
     return out;
-  }, [dataset, query]);
-
-  // Counted before the early return: hooks cannot be called conditionally.
-  const matchCount = useMemo(() => {
-    if (!dataset) return 0;
-    const q = query.trim().toLowerCase();
-    if (!q) return dataset.personLabels.length;
-    let n = 0;
-    for (const label of dataset.personLabels) {
-      if (label.toLowerCase().includes(q)) n++;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [players, q, many, now]);
+  const [aiOpen, setAiOpen] = useState(false);
+  const shownAi = useMemo(() => {
+    if (!aiOpen && !q) return [];
+    const out: Unit[] = [];
+    for (const u of ai) {
+      if (!hit(u)) continue;
+      out.push(u);
+      if (out.length >= PAGE) break;
     }
-    return n;
-  }, [dataset, query]);
+    return out;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ai, q, aiOpen]);
+  const matchCount = shownPlayers.length + shownAi.length;
 
   if (!dataset || dataset.personLabels.length === 0) return null;
   const total = dataset.personLabels.length;
@@ -74,12 +96,26 @@ export function EntityPanel() {
     setFilters(next.size === 0 ? rest : [...rest, { kind: 'persons', allowed: [...next] } as FilterSpec]);
   };
 
-  const toggle = (i: number) => {
+  const isOn = (u: Unit) => u.persons.some((p) => selected.has(p));
+  const toggle = (u: Unit) => {
     const next = new Set(selected);
-    if (next.has(i)) next.delete(i);
-    else next.add(i);
+    const on = isOn(u);
+    for (const p of u.persons) {
+      if (on) next.delete(p);
+      else next.add(p);
+    }
     setSelection(next);
   };
+  const personsOf = (list: Unit[]) => list.flatMap((u) => u.persons);
+  const row = (u: Unit) => (
+    <div className="team-row" key={u.key}>
+      <input type="checkbox" checked={isOn(u)} onChange={() => toggle(u)} />
+      <span className="swatch" style={{ background: colourOf(u.persons[0]) }} />
+      <span className="name" title={u.vehicle ? `${u.name} · ${u.vehicle}` : u.name}>
+        {u.name || <em style={{ opacity: 0.5 }}>{t('heat.entityPanel.unnamed')}</em>}
+      </span>
+    </div>
+  );
 
   const colourOf = (p: number): string => {
     const team = dataset.personTeam ? dataset.personTeam[p] : 0;
@@ -107,43 +143,44 @@ export function EntityPanel() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      {query && (
+      {many && !q && <div className="hint">{t('heat.entityPanel.inPlay', { count: players.length })}</div>}
+      {q && (
         <div className="hint">
-          {matchCount > PAGE
+          {matchCount >= PAGE
             ? t('heat.entityPanel.matchesFirst', { count: matchCount, page: int(PAGE) })
             : t('heat.entityPanel.matches', { count: matchCount })}
         </div>
       )}
 
       <div className="team-list" style={{ maxHeight: 260 }}>
-        {matches.map((i) => (
-          <div className="team-row" key={i}>
-            <input type="checkbox" checked={selected.has(i)} onChange={() => toggle(i)} />
-            <span className="swatch" style={{ background: colourOf(i) }} />
-            <span className="name" title={dataset.personLabels[i]}>
-              {dataset.personLabels[i] || <em style={{ opacity: 0.5 }}>{t('heat.entityPanel.unnamed')}</em>}
-            </span>
-          </div>
-        ))}
-        {matches.length === 0 && (
+        {shownPlayers.map(row)}
+        {matchCount === 0 && q && (
           <div className="hint" style={{ opacity: 0.7 }}>
             {t('heat.entityPanel.noMatch', { query })}
           </div>
         )}
       </div>
+      {ai.length > 0 && (
+        <details open={aiOpen || !!q} onToggle={(e) => setAiOpen((e.target as HTMLDetailsElement).open)}>
+          <summary>{t('heat.entityPanel.ai', { count: ai.length })}</summary>
+          <div className="team-list" style={{ maxHeight: 220 }}>
+            {shownAi.map(row)}
+          </div>
+        </details>
+      )}
 
       <div className="row">
         <button
-          disabled={matches.length === 0}
+          disabled={matchCount === 0}
           title={t('heat.entityPanel.addShownTitle')}
-          onClick={() => setSelection(new Set([...selected, ...matches]))}
+          onClick={() => setSelection(new Set([...selected, ...personsOf(shownPlayers), ...personsOf(shownAi)]))}
         >
           {t('heat.entityPanel.addShown')}
         </button>
         <button
-          disabled={matches.length === 0}
+          disabled={matchCount === 0}
           title={t('heat.entityPanel.onlyShownTitle')}
-          onClick={() => setSelection(new Set(matches))}
+          onClick={() => setSelection(new Set([...personsOf(shownPlayers), ...personsOf(shownAi)]))}
         >
           {t('heat.entityPanel.onlyShown')}
         </button>

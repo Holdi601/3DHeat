@@ -14,6 +14,7 @@
   "data.builder.rows": "{count, plural, one {# linha} other {# linhas}}",
   "data.builder.files": "{count, plural, one {# ficheiro} other {# ficheiros}}",
   "data.builder.rejected": "{count, plural, one {# rejeitada} other {# rejeitadas}}",
+  "data.builder.recordingsAligned": "{count, plural, one {# gravação} other {# gravações}} muito distantes no tempo, cada uma reproduzida desde o seu próprio início",
   "data.ingestFiles.fileStep": "[{file}/{files}] {step}",
   "data.ingestFiles.emptyFile": "o ficheiro está vazio (0 bytes)",
   "data.ingestFiles.fileFailed": "{file}: {reason}",

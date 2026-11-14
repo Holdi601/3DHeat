@@ -14,6 +14,7 @@
   "data.builder.rows": "{count, plural, one {# εγγραφή} other {# εγγραφές}}",
   "data.builder.files": "{count, plural, one {# αρχείο} other {# αρχεία}}",
   "data.builder.rejected": "{count, plural, one {# απορρίφθηκε} other {# απορρίφθηκαν}}",
+  "data.builder.recordingsAligned": "{count, plural, one {# εγγραφή} other {# εγγραφές}} μακριά μεταξύ τους στον χρόνο, η καθεμία παίζει από τη δική της αρχή",
   "data.ingestFiles.fileStep": "[{file}/{files}] {step}",
   "data.ingestFiles.emptyFile": "το αρχείο είναι κενό (0 byte)",
   "data.ingestFiles.fileFailed": "{file}: {reason}",

@@ -1,0 +1,362 @@
+/**
+ * The same questions asked of every source: what a row is (a position, a
+ * shot, a launch, a kill...), whether a player or the AI did it, and what
+ * kind of vehicle it was. Each game names these its own way (War Thunder's
+ * `event` and `ai`, Tacview's `Event`, `Pilot` and `Type`, CS2's, the tank
+ * and ship games', Squad's); the load adds columns that say them one way, so
+ * one filter works on all of them. The source's own columns stay as they are.
+ *
+ *   Event type    the row's event in the taxonomy below (`EVENT_KINDS`);
+ *                 a Tacview weapon's first sample is its launch
+ *   Player or AI  `player` or `ai`; a weapon is its launcher's (War Thunder
+ *                 says so, a Tacview weapon is given to the unit it left)
+ *   Vehicle class the row's vehicle by the figure catalogue's class
+ *                 (`VEHICLE_CLASSES`): with the event, the vehicle a player
+ *                 was in, killed with or died in
+ *   Target class  the vehicle on the other end of a kill or hit, where the
+ *                 source names it (`otherVehicle`)
+ *
+ * Worked out once in the load (`DatasetBuilder.finish`, in a worker) from the
+ * dictionaries: a value is mapped once, a row costs a table lookup. The
+ * columns are ordinary category columns, so they filter on the GPU like any.
+ */
+
+import { figureFor } from '../figures/match';
+import { classify, type SymbolClass } from '../figures/symbolClass';
+import type { AttributeColumn } from '../state/types';
+
+/** The names the added columns take (said in the viewer's language by the panels, `canonicalLabel`). */
+export const CANON = {
+  event: 'Event type',
+  actor: 'Player or AI',
+  vehicleClass: 'Vehicle class',
+  targetClass: 'Target class',
+} as const;
+
+export const EVENT_KINDS = ['position', 'fire', 'launch', 'hit', 'explosion', 'damage', 'kill', 'death', 'destroyed', 'spawn', 'despawn', 'takeoff', 'landing', 'capture', 'decoy', 'message', 'other'] as const;
+export type EventKind = (typeof EVENT_KINDS)[number];
+
+export const ACTORS = ['player', 'ai'] as const;
+
+export const VEHICLE_CLASSES = ['fighter', 'attack', 'bomber', 'otherAir', 'helicopter', 'tank', 'armoured', 'spaa', 'artillery', 'truck', 'ship', 'submarine', 'infantry', 'weapon', 'decoy', 'structure', 'other'] as const;
+export type VehicleClass = (typeof VEHICLE_CLASSES)[number];
+
+/** Whether a column is one this module added. */
+export function isCanonical(name: string): boolean {
+  return name === CANON.event || name === CANON.actor || name === CANON.vehicleClass || name === CANON.targetClass;
+}
+
+/** Each game's event names, lower case, to the taxonomy; anything else is `other`. */
+const EVENT_MAP: Record<string, EventKind> = {
+  '': 'position', position: 'position', pos: 'position', sample: 'position', move: 'position', vehicle: 'position', grenade: 'position',
+  shot: 'fire', gun_shot: 'fire', fire: 'fire', fire_start: 'fire', fire_stop: 'fire', weapon_fire: 'fire', slash: 'fire', hasfired: 'fire', shoot: 'fire', fired: 'fire', tracer: 'fire',
+  launch: 'launch', launched: 'launch', torpedo: 'launch', throw: 'launch', release: 'launch',
+  hit: 'hit', hit_critical: 'hit', hit_severe: 'hit', struck: 'hit', impact: 'hit', hasbeenhitby: 'hit',
+  explosion: 'explosion', flak: 'explosion', he: 'explosion', molotov: 'explosion', inferno: 'explosion', smoke: 'explosion', flash: 'explosion', explode: 'explosion',
+  hurt: 'damage', damage: 'damage', damaged: 'damage', module_destroyed: 'damage', wounded: 'damage', fire_on: 'damage', blind: 'damage',
+  kill: 'kill', kills: 'kill',
+  death: 'death', dead: 'death', died: 'death', killed: 'death',
+  destroyed: 'destroyed',
+  spawn: 'spawn', respawn: 'spawn', revived: 'spawn', created: 'spawn',
+  despawn: 'despawn', removed: 'despawn', leftarea: 'despawn', timeout: 'despawn', bailout: 'despawn',
+  takenoff: 'takeoff', takeoff: 'takeoff', landed: 'landing', landing: 'landing',
+  captured: 'capture', capture: 'capture', neutralised: 'capture', neutralized: 'capture', plant: 'capture', defuse: 'capture',
+  flare: 'decoy', chaff: 'decoy', decoy: 'decoy', countermeasure: 'decoy',
+  chat: 'message', message: 'message', command: 'message', bookmark: 'message', debug: 'message', comment: 'message',
+};
+
+/** A source's event name in the taxonomy. Tacview's `Destroyed` is the object's death. */
+export function eventKindOf(raw: string): EventKind {
+  if (raw === 'Destroyed') return 'death';
+  return EVENT_MAP[raw.trim().toLowerCase()] ?? 'other';
+}
+
+/** The figure catalogue's symbol class to the filter's vehicle class. */
+const BY_SYMBOL: Partial<Record<SymbolClass, VehicleClass>> = {
+  fighter: 'fighter', attack: 'attack', bomber: 'bomber',
+  transport: 'otherAir', tanker: 'otherAir', recon: 'otherAir', trainer: 'otherAir', uav: 'otherAir',
+  rotary: 'helicopter', 'rotary-attack': 'helicopter', 'uav-rotary': 'helicopter',
+  'missile-aam': 'weapon', 'missile-sam': 'weapon', 'missile-agm': 'weapon', 'missile-ship': 'weapon', bomb: 'weapon', 'guided-bomb': 'weapon', rocket: 'weapon', missile: 'weapon', shell: 'weapon',
+  armour: 'tank', 'anti-tank': 'tank',
+  'mech-inf': 'armoured', 'motor-inf': 'armoured', 'recon-ground': 'armoured',
+  'air-defence': 'spaa', radar: 'spaa',
+  artillery: 'artillery', 'rocket-artillery': 'artillery',
+  'transport-ground': 'truck',
+  installation: 'structure',
+  infantry: 'infantry', medic: 'infantry', 'at-infantry': 'infantry', parachutist: 'infantry',
+  carrier: 'ship', combatant: 'ship', 'small-boat': 'ship', amphibious: 'ship', merchant: 'ship', 'mine-warfare': 'ship',
+  submarine: 'submarine',
+  flare: 'decoy', chaff: 'decoy',
+};
+
+/** A vehicle's class by its names (most telling first) and type texts, as the figures match it. */
+export function vehicleClassOf(names: string[], types: string[]): VehicleClass {
+  const kind = names.some(Boolean) || types.some(Boolean) ? figureFor(names, types) : null;
+  return BY_SYMBOL[classify(kind, types.filter(Boolean).join('+')).cls] ?? 'other';
+}
+
+const NAME_COLUMN = /^(name|vehicle|vehicle.?name|unit|unit.?type|model|aircraft|plane|tank|ship|craft|loadout|kit|figure)$/i;
+const TYPE_COLUMN = /^(type|class|kind|category|icon|role|domain|vehicle.?type|vehicle.?class)$/i;
+const EVENT_COLUMN = /^(events?|event.?type|event.?name)$/i;
+const OTHER_NAME = /^(other.?vehicle|target.?vehicle|victim.?vehicle|other.?name)$/i;
+const OTHER_TYPE = /^(other.?type|target.?type|victim.?type|other.?kind)$/i;
+const AI_COLUMN = /^(ai|is.?ai|bot|is.?bot|actor)$/i;
+const PLAYER_FLAG = /^(is.?player|human)$/i;
+const USER_ID = /^(user.?id|steam.?id)$/i;
+const TRUE = /^(1|1\.0|true|yes|y|ai|bot)$/i;
+const FALSE = /^(0|0\.0|false|no|n|player|human)$/i;
+const WEAPON_TYPE = /(weapon|missile|rocket|bomb(?!er)|shell|projectile|torpedo|bullet|grenade)/i;
+
+export interface CategoryInput {
+  name: string;
+  data: Uint32Array;
+  labels: string[];
+}
+
+export interface CanonicalInput {
+  n: number;
+  /** Every category column the load read, those too many-valued to keep among them. */
+  cats: CategoryInput[];
+  person: Uint32Array | null;
+  session: Uint32Array | null;
+  /** Seconds, row-aligned (any order). */
+  time: Float32Array | null;
+  px: Float32Array;
+  py: Float32Array;
+  pz: Float32Array;
+  /** World units a metre is, for how near a launcher must be. */
+  units: number;
+}
+
+/** A per-row index over a few category columns, a value worked out once per distinct combination. */
+function perRow<T extends string>(n: number, cols: CategoryInput[], labelsOf: readonly T[], of: (values: string[]) => T | null): Uint32Array | null {
+  const out = new Uint32Array(n);
+  const index = new Map<T, number>(labelsOf.map((l, i) => [l, i]));
+  // A combination as one number: each column's index times the product of the label counts before it.
+  const mult: number[] = [];
+  let span = 1;
+  for (const c of cols) {
+    mult.push(span);
+    span *= Math.max(1, c.labels.length + 1);
+  }
+  if (span > 2 ** 52) return null;
+  const memo = new Map<number, number>();
+  let lastKey = -1;
+  let last = -1;
+  let any = false;
+  for (let r = 0; r < n; r++) {
+    let key = 0;
+    for (let c = 0; c < cols.length; c++) key += cols[c].data[r] * mult[c];
+    if (key !== lastKey) {
+      let v = memo.get(key);
+      if (v === undefined) {
+        const k = of(cols.map((c) => c.labels[c.data[r]] ?? ''));
+        v = k === null ? 0xffffffff : index.get(k)!;
+        memo.set(key, v);
+      }
+      lastKey = key;
+      last = v;
+    }
+    if (last === 0xffffffff) out[r] = 0xffffffff;
+    else {
+      out[r] = last;
+      any = true;
+    }
+  }
+  return any ? out : null;
+}
+
+/** As a category column of the values that occur, in the taxonomy's order; unknown rows (0xffffffff) an empty label at the end. */
+function column(name: string, data: Uint32Array, labels: readonly string[]): AttributeColumn {
+  const count = new Uint32Array(labels.length + 1);
+  for (let r = 0; r < data.length; r++) count[data[r] === 0xffffffff ? labels.length : data[r]]++;
+  const remap = new Uint32Array(labels.length + 1);
+  const categories: string[] = [];
+  for (let i = 0; i <= labels.length; i++)
+    if (count[i]) {
+      remap[i] = categories.length;
+      categories.push(i < labels.length ? labels[i] : '');
+    }
+  for (let r = 0; r < data.length; r++) data[r] = remap[data[r] === 0xffffffff ? labels.length : data[r]];
+  return { name, kind: 'category', data, min: 0, max: Math.max(0, categories.length - 1), categories };
+}
+
+/** Whether a row's player-or-AI is known from its own columns: `player`, `ai`, or null. */
+function actorFrom(cols: { ai?: number; flag?: number; uid?: number; pilot?: number; group?: number; name?: number; type?: number }, v: string[]): 'player' | 'ai' | null {
+  if (cols.ai !== undefined) {
+    if (TRUE.test(v[cols.ai])) return 'ai';
+    if (FALSE.test(v[cols.ai])) return 'player';
+  }
+  if (cols.flag !== undefined) {
+    if (TRUE.test(v[cols.flag])) return 'player';
+    if (FALSE.test(v[cols.flag])) return 'ai';
+  }
+  if (cols.uid !== undefined) {
+    const u = v[cols.uid].trim();
+    return u && u !== '0' ? 'player' : 'ai';
+  }
+  if (cols.pilot !== undefined) {
+    // Tacview from DCS: an AI's pilot is its group's name with a number ("Senaki-patrol-Cap-01"), or its own name.
+    const p = v[cols.pilot].trim();
+    if (!p) return null;
+    const g = cols.group !== undefined ? v[cols.group].trim().toLowerCase() : '';
+    const nm = cols.name !== undefined ? v[cols.name].trim().toLowerCase() : '';
+    const pl = p.toLowerCase();
+    // Ships and fixed objects are the mission's, whatever their pilot field says ("Blue Stennis").
+    if (cols.type !== undefined && /(^|\+)(Sea|Watercraft|Static|Building|Bullseye)(\+|$)/i.test(v[cols.type])) return 'ai';
+    if ((g && pl.startsWith(g)) || pl === nm) return 'ai';
+    return 'player';
+  }
+  return null;
+}
+
+/** The columns `CANON` names that the data can answer (none it already has). */
+export function canonicalColumns(inp: CanonicalInput): AttributeColumn[] {
+  const { n, cats } = inp;
+  const out: AttributeColumn[] = [];
+  if (n === 0 || cats.some((c) => isCanonical(c.name))) return out;
+  const find = (re: RegExp) => cats.find((c) => re.test(c.name.trim())) ?? null;
+  const types = cats.filter((c) => TYPE_COLUMN.test(c.name.trim()));
+  const names = cats.filter((c) => NAME_COLUMN.test(c.name.trim()));
+
+  // Weapons by their type text (Tacview, War Thunder's kind).
+  let weapon: Uint8Array | null = null;
+  if (types.length) {
+    const w = perRow(n, types, ['1'] as const, (v) => (v.some((x) => WEAPON_TYPE.test(x)) ? '1' : null));
+    if (w) {
+      weapon = new Uint8Array(n);
+      for (let r = 0; r < n; r++) weapon[r] = w[r] === 0 ? 1 : 0;
+    }
+  }
+  // A track: a person within a session.
+  let sessions = 1;
+  if (inp.session) for (let r = 0; r < n; r++) if (inp.session[r] >= sessions) sessions = inp.session[r] + 1;
+  const track = (r: number) => (inp.person ? inp.person[r] : 0) * sessions + (inp.session ? inp.session[r] : 0);
+  // Each weapon track's first row: its launch.
+  const launchRow = new Map<number, number>();
+  if (weapon && inp.time && inp.person) {
+    for (let r = 0; r < n; r++) {
+      if (!weapon[r]) continue;
+      const k = track(r);
+      const f = launchRow.get(k);
+      if (f === undefined || inp.time[r] < inp.time[f]) launchRow.set(k, r);
+    }
+  }
+
+  // Event type.
+  const ev = find(EVENT_COLUMN);
+  if (ev) {
+    const data = ev ? perRow(n, [ev], EVENT_KINDS, (v) => eventKindOf(v[0])) : new Uint32Array(n);
+    if (data) {
+      const launch = EVENT_KINDS.indexOf('launch');
+      // A Tacview weapon's appearance is its launch, unless its first row says something else.
+      if (!ev.labels.some((l) => eventKindOf(l) === 'launch')) for (const r of launchRow.values()) if (data[r] === 0) data[r] = launch;
+      const seen = new Set<number>();
+      for (let r = 0; r < n && seen.size < 2; r++) seen.add(data[r]);
+      if (seen.size > 1) out.push(column(CANON.event, data, EVENT_KINDS));
+    }
+  }
+
+  // Player or AI.
+  const ai = find(AI_COLUMN);
+  const flag = find(PLAYER_FLAG);
+  const uid = find(USER_ID);
+  const pilot = cats.find((c) => /^pilot$/i.test(c.name.trim())) ?? null;
+  const group = cats.find((c) => /^group$/i.test(c.name.trim())) ?? null;
+  const nameCol = cats.find((c) => /^name$/i.test(c.name.trim())) ?? null;
+  const actorCols: CategoryInput[] = [];
+  const at: { ai?: number; flag?: number; uid?: number; pilot?: number; group?: number; name?: number; type?: number } = {};
+  const add = (key: keyof typeof at, c: CategoryInput | null) => {
+    if (!c) return;
+    at[key] = actorCols.length;
+    actorCols.push(c);
+  };
+  add('ai', ai);
+  add('flag', flag);
+  if (!ai && !flag) add('uid', uid);
+  if (!ai && !flag && !uid && pilot) {
+    add('pilot', pilot);
+    add('group', group);
+    add('name', nameCol);
+    add('type', cats.find((c) => /^type$/i.test(c.name.trim())) ?? null);
+  }
+  if (actorCols.length) {
+    const data = perRow(n, actorCols, ACTORS, (v) => actorFrom(at, v));
+    if (data) {
+      // A Tacview weapon names no pilot: it is its launcher's.
+      if (!ai && pilot && weapon && launchRow.size) giveToLaunchers(inp, weapon, launchRow, data, track);
+      out.push(column(CANON.actor, data, ACTORS));
+    }
+  }
+
+  // Vehicle class, and the other side's.
+  if (names.length || types.length) {
+    const cols = [...names, ...types];
+    const data = perRow(n, cols, VEHICLE_CLASSES, (v) => vehicleClassOf(v.slice(0, names.length), v.slice(names.length)));
+    if (data) out.push(column(CANON.vehicleClass, data, VEHICLE_CLASSES));
+  }
+  const otherName = find(OTHER_NAME);
+  const otherType = find(OTHER_TYPE);
+  if (otherName || otherType) {
+    const cols = [otherName, otherType].filter((c): c is CategoryInput => !!c);
+    const data = perRow(n, cols, VEHICLE_CLASSES, (v) => {
+      const nm = otherName ? v[0] : '';
+      const ty = otherType ? v[cols.length - 1] : '';
+      return nm || ty ? vehicleClassOf([nm], [ty]) : null;
+    });
+    if (data) out.push(column(CANON.targetClass, data, VEHICLE_CLASSES));
+  }
+  return out;
+}
+
+/** Seconds either side of a launch a launcher's sample may be, and how far from it (metres). */
+const LAUNCH_WINDOW_S = 2;
+const LAUNCH_REACH_M = 1500;
+
+/**
+ * Each weapon track's rows given the player-or-AI of the unit nearest where
+ * and when it appeared (its launcher: a Tacview recording names none). One
+ * pass over the rows against the launches sorted by time.
+ */
+function giveToLaunchers(inp: CanonicalInput, weapon: Uint8Array, launchRow: Map<number, number>, actor: Uint32Array, track: (r: number) => number): void {
+  const { n, time, px, py, pz } = inp;
+  if (!time) return;
+  const launches = [...launchRow.entries()].sort((a, b) => time[a[1]] - time[b[1]]);
+  const W = launches.length;
+  const lt = Float64Array.from(launches, (l) => time[l[1]]);
+  const best = new Float64Array(W).fill(Infinity);
+  const owner = new Int32Array(W).fill(-1);
+  const reach = LAUNCH_REACH_M * inp.units;
+  for (let r = 0; r < n; r++) {
+    if (weapon[r] || actor[r] === 0xffffffff) continue;
+    const t = time[r];
+    // The first launch at or after t - window.
+    let lo = 0;
+    let hi = W;
+    while (lo < hi) {
+      const m = (lo + hi) >> 1;
+      if (lt[m] < t - LAUNCH_WINDOW_S) lo = m + 1;
+      else hi = m;
+    }
+    for (let w = lo; w < W && lt[w] <= t + LAUNCH_WINDOW_S; w++) {
+      const lr = launches[w][1];
+      if (inp.session && inp.session[lr] !== inp.session[r]) continue;
+      const d = Math.hypot(px[r] - px[lr], py[r] - py[lr], pz[r] - pz[lr]);
+      if (d > reach) continue;
+      // Nearer in time counts as nearer in place: a fast aircraft's samples are far apart.
+      const score = d + Math.abs(t - lt[w]) * 100 * inp.units;
+      if (score < best[w]) {
+        best[w] = score;
+        owner[w] = r;
+      }
+    }
+  }
+  const given = new Map<number, number>();
+  for (let w = 0; w < W; w++) if (owner[w] >= 0) given.set(launches[w][0], actor[owner[w]]);
+  if (!given.size) return;
+  for (let r = 0; r < n; r++) {
+    if (!weapon[r]) continue;
+    const a = given.get(track(r));
+    if (a !== undefined) actor[r] = a;
+  }
+}

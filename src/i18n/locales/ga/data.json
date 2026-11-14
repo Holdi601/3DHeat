@@ -14,6 +14,7 @@
   "data.builder.rows": "{count, plural, one {# ró} two {# ró} few {# ró} many {# ró} other {# ró}}",
   "data.builder.files": "{count, plural, one {# chomhad} two {# chomhad} few {# chomhad} many {# gcomhad} other {# comhad}}",
   "data.builder.rejected": "{count, plural, other {# diúltaithe}}",
+  "data.builder.recordingsAligned": "{count, plural, one {# taifeadadh} two {# thaifeadadh} few {# thaifeadadh} many {# dtaifeadadh} other {# taifeadadh}} i bhfad óna chéile in am, gach ceann seinnte óna thús féin",
   "data.ingestFiles.fileStep": "[{file}/{files}] {step}",
   "data.ingestFiles.emptyFile": "tá an comhad folamh (0 beart)",
   "data.ingestFiles.fileFailed": "{file}: {reason}",

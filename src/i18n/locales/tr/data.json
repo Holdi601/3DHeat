@@ -14,6 +14,7 @@
   "data.builder.rows": "{count, plural, one {# satır} other {# satır}}",
   "data.builder.files": "{count, plural, one {# dosya} other {# dosya}}",
   "data.builder.rejected": "{count, plural, other {# reddedildi}}",
+  "data.builder.recordingsAligned": "{count, plural, one {# kayıt} other {# kayıt}} zamanda birbirinden uzak, her biri kendi başından oynatılır",
   "data.ingestFiles.fileStep": "[{file}/{files}] {step}",
   "data.ingestFiles.emptyFile": "dosya boş (0 bayt)",
   "data.ingestFiles.fileFailed": "{file}: {reason}",

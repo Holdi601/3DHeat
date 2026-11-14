@@ -14,6 +14,7 @@
   "data.builder.rows": "{count, plural, one {# ringiela} two {# ringieli} few {# ringieli} many {# ringiela} other {# ringiela}}",
   "data.builder.files": "{count, plural, one {# fajl} two {# fajls} few {# fajls} many {# fajl} other {# fajl}}",
   "data.builder.rejected": "{count, plural, other {# miċħuda}}",
+  "data.builder.recordingsAligned": "{count, plural, one {# reġistrazzjoni} two {# reġistrazzjonijiet} few {# reġistrazzjonijiet} many {# reġistrazzjoni} other {# reġistrazzjonijiet}} 'il bogħod minn xulxin fiż-żmien, kull waħda mdawra mill-bidu tagħha",
   "data.ingestFiles.fileStep": "[{file}/{files}] {step}",
   "data.ingestFiles.emptyFile": "il-fajl huwa vojt (0 bytes)",
   "data.ingestFiles.fileFailed": "{file}: {reason}",
