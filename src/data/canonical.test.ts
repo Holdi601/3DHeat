@@ -83,6 +83,42 @@ describe('canonical columns in a load', () => {
     expect(labelsOf(d, CANON.vehicleClass).slice(0, 3)).toEqual(['fighter', 'fighter', 'weapon']);
   });
 
+  it('never takes a thrown object for its thrower: a flight starts with a launch, the rest are not positions', () => {
+    expect(eventKindOf('grenade')).toBe('other');
+    expect(eventKindOf('projectile')).toBe('other');
+    // One thrower: walking, a grenade's flight (3 samples), walking, a second flight a while later.
+    const ev = ['position', 'grenade', 'grenade', 'grenade', 'position', 'grenade', 'grenade'];
+    const labels = [...new Set(ev)];
+    const out = canonicalColumns({
+      n: ev.length,
+      cats: [{ name: 'event', data: Uint32Array.from(ev, (v) => labels.indexOf(v)), labels }],
+      person: new Uint32Array(ev.length),
+      session: null,
+      time: Float32Array.from([0, 0.1, 0.2, 0.3, 0.4, 5, 5.1]),
+      px: new Float32Array(ev.length),
+      py: new Float32Array(ev.length),
+      pz: new Float32Array(ev.length),
+      units: 1,
+    });
+    const col = out.find((c) => c.name === CANON.event)!;
+    expect(Array.from(col.data as Uint32Array, (i) => col.categories![i])).toEqual(['position', 'launch', 'other', 'other', 'position', 'launch', 'other']);
+    // Where the source logs its throws, the flights stay out of both.
+    const ev2 = ['position', 'throw', 'grenade', 'grenade'];
+    const l2 = [...new Set(ev2)];
+    const c2 = canonicalColumns({
+      n: 4,
+      cats: [{ name: 'event', data: Uint32Array.from(ev2, (v) => l2.indexOf(v)), labels: l2 }],
+      person: new Uint32Array(4),
+      session: null,
+      time: Float32Array.from([0, 1, 1, 1.1]),
+      px: new Float32Array(4),
+      py: new Float32Array(4),
+      pz: new Float32Array(4),
+      units: 1,
+    }).find((c) => c.name === CANON.event)!;
+    expect(Array.from(c2.data as Uint32Array, (i) => c2.categories![i])).toEqual(['position', 'launch', 'other', 'other']);
+  });
+
   it('leaves the columns out where the data says nothing', () => {
     expect(canonicalColumns({ n: 2, cats: [], person: null, session: null, time: null, px: new Float32Array(2), py: new Float32Array(2), pz: new Float32Array(2), units: 1 })).toEqual([]);
   });

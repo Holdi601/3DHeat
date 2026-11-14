@@ -48,7 +48,10 @@ export function isCanonical(name: string): boolean {
 
 /** Each game's event names, lower case, to the taxonomy; anything else is `other`. */
 const EVENT_MAP: Record<string, EventKind> = {
-  '': 'position', position: 'position', pos: 'position', sample: 'position', move: 'position', vehicle: 'position', grenade: 'position',
+  '': 'position', position: 'position', pos: 'position', sample: 'position', move: 'position', vehicle: 'position',
+  // A thrown or fired object's own flight samples, logged under its thrower's name (CS2's `grenade`):
+  // never the thrower's position. Each flight's first sample is its launch where the source logs none.
+  grenade: 'other', projectile: 'other', nade: 'other', thrown: 'other', flight: 'other',
   shot: 'fire', gun_shot: 'fire', fire: 'fire', fire_start: 'fire', fire_stop: 'fire', weapon_fire: 'fire', slash: 'fire', hasfired: 'fire', shoot: 'fire', fired: 'fire', tracer: 'fire',
   launch: 'launch', launched: 'launch', torpedo: 'launch', throw: 'launch', release: 'launch',
   hit: 'hit', hit_critical: 'hit', hit_severe: 'hit', struck: 'hit', impact: 'hit', hasbeenhitby: 'hit',
@@ -64,6 +67,9 @@ const EVENT_MAP: Record<string, EventKind> = {
   flare: 'decoy', chaff: 'decoy', decoy: 'decoy', countermeasure: 'decoy',
   chat: 'message', message: 'message', command: 'message', bookmark: 'message', debug: 'message', comment: 'message',
 };
+
+/** Event names that are a thrown or fired object's flight samples (see `EVENT_MAP`). */
+const FLIGHT = /^(grenade|projectile|nade|thrown|flight)$/i;
 
 /** A source's event name in the taxonomy. Tacview's `Destroyed` is the object's death. */
 export function eventKindOf(raw: string): EventKind {
@@ -166,6 +172,26 @@ function perRow<T extends string>(n: number, cols: CategoryInput[], labelsOf: re
   return any ? out : null;
 }
 
+/** Seconds between two flight samples of one thrower past which they are two flights. */
+const FLIGHT_GAP = 1;
+
+/** Mark each flight's first sample a launch: per thrower (a track), a new flight after a gap. */
+function flightLaunches(inp: CanonicalInput, raw: Uint32Array, flight: boolean[], data: Uint32Array, launch: number, track: (r: number) => number): void {
+  const rows: number[] = [];
+  for (let r = 0; r < inp.n; r++) if (flight[raw[r]]) rows.push(r);
+  const time = inp.time;
+  if (!time) {
+    if (rows.length) data[rows[0]] = launch;
+    return;
+  }
+  rows.sort((a, b) => track(a) - track(b) || time[a] - time[b]);
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    const p = i > 0 ? rows[i - 1] : -1;
+    if (p < 0 || track(p) !== track(r) || time[r] - time[p] > FLIGHT_GAP) data[r] = launch;
+  }
+}
+
 /** As a category column of the values that occur, in the taxonomy's order; unknown rows (0xffffffff) an empty label at the end. */
 function column(name: string, data: Uint32Array, labels: readonly string[]): AttributeColumn {
   const count = new Uint32Array(labels.length + 1);
@@ -250,7 +276,11 @@ export function canonicalColumns(inp: CanonicalInput): AttributeColumn[] {
     if (data) {
       const launch = EVENT_KINDS.indexOf('launch');
       // A Tacview weapon's appearance is its launch, unless its first row says something else.
-      if (!ev.labels.some((l) => eventKindOf(l) === 'launch')) for (const r of launchRow.values()) if (data[r] === 0) data[r] = launch;
+      const sourceLaunches = ev.labels.some((l) => eventKindOf(l) === 'launch');
+      if (!sourceLaunches) for (const r of launchRow.values()) if (data[r] === 0) data[r] = launch;
+      // Flight samples under the thrower's name: each flight's first is its launch, where the source logs none.
+      const flight = ev.labels.map((l) => FLIGHT.test(l.trim()));
+      if (!sourceLaunches && flight.some(Boolean)) flightLaunches(inp, ev.data, flight, data, launch, track);
       const seen = new Set<number>();
       for (let r = 0; r < n && seen.size < 2; r++) seen.add(data[r]);
       if (seen.size > 1) out.push(column(CANON.event, data, EVENT_KINDS));
