@@ -436,6 +436,41 @@ describe('DatasetBuilder', () => {
     expect(ds.lifetime![0]).toBe(-1);
   });
 
+  it('asks only the movement samples whether a name is worn twice', () => {
+    const b = new DatasetBuilder();
+    b.append(
+      block({
+        rows: 8,
+        // A player with two grenades in the air under their name, and two bots sharing one.
+        //          player  nade    nade    player  bot     bot     bot     bot
+        px: new Float32Array([0, 400, 900, 1, 0, 600, 1, 601]),
+        time: new Float64Array([0, 0, 0, 1, 2, 2, 3, 3]),
+        personIds: new Uint32Array([0, 0, 0, 0, 1, 1, 1, 1]),
+        personLabels: ['player', 'BOT'],
+        attrs: [{ name: 'event', kind: 'category', data: new Uint32Array([0, 1, 1, 0, 0, 0, 0, 0]), categories: ['position', 'grenade'] }],
+      }),
+    );
+    const ds = b.finish('grenades');
+    expect(ds.personShared![0]).toBe(0);
+    expect(ds.personShared![1]).toBe(1);
+  });
+
+  it('keeps one person whose lives do not overlap: a rejoin, a side switch', () => {
+    const b = new DatasetBuilder();
+    b.append(
+      block({
+        rows: 4,
+        px: new Float32Array([0, 1, 900, 901]),
+        time: new Float64Array([0, 1, 100, 101]),
+        personIds: new Uint32Array([0, 0, 0, 0]),
+        personLabels: ['player'],
+        teamIds: new Uint32Array([0, 0, 1, 1]),
+        teamLabels: ['T', 'CT'],
+      }),
+    );
+    expect(b.finish('rejoin').personShared![0]).toBe(0);
+  });
+
   it('does not mistake a row logged twice for two things', () => {
     const b = new DatasetBuilder();
     b.append(

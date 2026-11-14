@@ -2,7 +2,7 @@ import { TrackTable } from './trackTable';
 import { Dictionary, GrowableF32, GrowableU32 } from './growable';
 import { msg, MsgError, sayDataset, type Msg } from './msg';
 import { radixSortIndices } from './sort';
-import { canonicalColumns, type CategoryInput } from './canonical';
+import { CANON, canonicalColumns, type CategoryInput } from './canonical';
 import { MAX_GROUPS } from '../render/types';
 import type { AttributeColumn, Dataset, GeoReference } from '../state/types';
 import { emptyBounds } from '../state/types';
@@ -581,6 +581,14 @@ export class DatasetBuilder {
           const sep = diag * 0.01;
           return sep * sep;
         })(),
+        // Where the data says which rows are movement samples, only those can
+        // show a name worn twice: a grenade, a shell or a hit logged under the
+        // thrower's name is somewhere else at the same instant by nature.
+        (() => {
+          const ev = attrs.find((a) => a.name === CANON.event);
+          const id = ev?.categories?.indexOf('position') ?? -1;
+          return ev && id >= 0 ? { data: ev.data as Uint32Array, id } : null;
+        })(),
       );
       dataset.lifetime = life.lifetime;
       dataset.maxLifetimeGap = life.maxGap;
@@ -707,9 +715,13 @@ function computeLifetimes(
    * depend on the axis mapping.
    */
   minSeparationSq: number,
+  /** The movement samples (`Event type` position), or null to take every row as one. */
+  position: { data: Uint32Array; id: number } | null = null,
 ): { lifetime: Float32Array; maxGap: number; shared: Uint8Array; sharedCount: number } {
   const lifetime = new Float32Array(rows).fill(-1);
   const tracks = new TrackTable(personCount);
+  // Each track's last movement sample, when only those are compared.
+  const moves = position ? new TrackTable(personCount) : null;
   const shared = new Uint8Array(Math.max(1, personCount));
   const cats = categories.length;
   let maxGap = 0;
@@ -725,6 +737,41 @@ function computeLifetimes(
     // Per match and not per person, because matches interleave: see `TrackTable`.
     const track = tracks.track(p, sessionId ? sessionId[i] : 0);
     const prev = tracks.last[track];
+    // The row a name collision is looked for against: the last row, or the last movement sample.
+    let other = prev;
+    let mtrack = -1;
+    if (moves) {
+      if (position!.data[i] === position!.id) {
+        mtrack = moves.track(p, sessionId ? sessionId[i] : 0);
+        other = moves.last[mtrack];
+      } else other = -1;
+    }
+    if (other >= 0 && shared[p] === 0 && time[i] === time[other]) {
+      // Two places at one instant, the same kind of record, far enough apart:
+      // the name itself is worn by more than one thing. Both qualifiers are
+      // what make the conclusion safe: over two files, the bare test marked
+      // most names, each qualifier alone still left far too many, and together
+      // they leave a handful. See `Dataset.personShared` for the table and for
+      // what that handful is. A name whose lives do not overlap (a rejoin, a
+      // side switch) is never at two places at one instant, so it stays one.
+      const dx = px[i] - px[other];
+      const dy = py[i] - py[other];
+      const dz = pz[i] - pz[other];
+      if (dx * dx + dy * dy + dz * dz > minSeparationSq) {
+        let sameKind = true;
+        for (let c = 0; c < cats; c++) {
+          if (categories[c][i] !== categories[c][other]) {
+            sameKind = false;
+            break;
+          }
+        }
+        if (sameKind) {
+          shared[p] = 1;
+          sharedCount++;
+        }
+      }
+    }
+    if (mtrack >= 0) moves!.last[mtrack] = i;
     if (prev >= 0) {
       const gap = time[i] - time[prev];
       if (gap === 0 && (px[i] !== px[prev] || py[i] !== py[prev] || pz[i] !== pz[prev])) {
@@ -740,30 +787,7 @@ function computeLifetimes(
         // records of different kinds, and two different kinds of record say
         // nothing about identity, so they mark nobody.
         //
-        // When the two rows are the same kind of record *and* far enough apart
-        // to be two places, the name itself is worn by more than one thing.
-        // Both qualifiers are what make the conclusion safe: over two files,
-        // the bare test marked most names, each qualifier alone still left far
-        // too many, and together they leave a handful. See
-        // `Dataset.personShared` for the table and for what that handful is.
-        if (shared[p] === 0) {
-          const dx = px[i] - px[prev];
-          const dy = py[i] - py[prev];
-          const dz = pz[i] - pz[prev];
-          if (dx * dx + dy * dy + dz * dz > minSeparationSq) {
-            let sameKind = true;
-            for (let c = 0; c < cats; c++) {
-              if (categories[c][i] !== categories[c][prev]) {
-                sameKind = false;
-                break;
-              }
-            }
-            if (sameKind) {
-              shared[p] = 1;
-              sharedCount++;
-            }
-          }
-        }
+        // Whether the name is worn by more than one thing is asked above.
       } else {
         lifetime[prev] = gap;
         if (gap > maxGap) maxGap = gap;
