@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { autoMap, parseHints } from './automap';
+import { autoMap, factorColumns, parseHints } from './automap';
 
 /**
  * Auto-mapping only has to beat a blank form, so these tests cover the guesses
@@ -225,5 +225,17 @@ describe('autoMap — how big one tracked thing is', () => {
     expect(calibrate({ ...base, entitySize: 32 }).cubeSize).toBe(32);
     expect(calibrate({ ...base, entitySize: 32 }).lookLength).toBe(128);
     expect(calibrate(base).cubeSize).toBe(8);
+  });
+});
+
+describe('factor columns', () => {
+  it('loads state, active, result and list columns past the hints, less the constant ones', () => {
+    const columns = ['x', 'y', 'z', 'time', 'player', 'state_helmet', 'active_ult', 'won', 'round', 'inventory', 'state_flat', 'helmet'];
+    expect(factorColumns(columns, ['state_flat'])).toEqual(['state_helmet', 'active_ult', 'won', 'round', 'inventory']);
+    const rows = [['1', '2', '3', '0', 'a', '1', '0', '1', '1', 'Knife', '0', '1']];
+    const m = autoMap({ columns, rows, numeric: columns.map((c) => c !== 'player' && c !== 'inventory'), constant: ['state_flat'], hints: { columns: { extra: ['player'] } } });
+    expect(m.extra).toEqual(expect.arrayContaining(['state_helmet', 'active_ult', 'won', 'inventory']));
+    expect(m.extra).not.toContain('state_flat');
+    expect(m.extra).not.toContain('helmet');
   });
 });

@@ -31,6 +31,8 @@ export interface SourcePreview {
   logicalTypes: Record<string, string>;
   /** The file's own reading instructions, from a Parquet footer's `heat3d` entry. */
   hints: MappingHints | null;
+  /** Columns known to hold one value throughout (Parquet statistics); absent where unknown. */
+  constant?: string[];
 }
 
 export function detectFormat(name: string): SourceFormat {
@@ -57,6 +59,7 @@ export async function previewSource(file: File, delimiterOverride?: string): Pro
       delimiter: ',',
       logicalTypes: logicalTypesOf(p.metadata),
       hints: parseHints(p.metadata.key_value_metadata?.find((kv) => kv.key === 'heat3d')?.value),
+      constant: p.constant,
     };
   }
 

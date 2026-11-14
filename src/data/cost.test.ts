@@ -107,6 +107,11 @@ describe('the cost model', () => {
     expect(sum(col(cs, 'earn_cs2'))).toBe(300);
     expect(sum(col(cs, 'cost_spent_cs2'))).toBe(2700);
     expect(sum(col(cs, 'net_cs2'))).toBe(300 - 2700);
+    // A converter's exact round income replaces only the table's round, plant and defuse income.
+    const exact = valueColumns(input(rows, { nums: [{ name: 'cashSpentTotal', data: Float32Array.of(0, 2700) }, { name: 'earn_round_cs2', data: Float32Array.of(1900, 0) }], game: 'cs2' }));
+    expect(sum(col(exact, 'earn_cs2'))).toBe(300);
+    expect(sum(col(exact, 'cost_spent_cs2'))).toBe(2700);
+    expect(sum(col(exact, 'net_cs2'))).toBe(1900 + 300 - 2700);
   });
 
   it('keeps resources apart and combines them by the exchange weights', () => {

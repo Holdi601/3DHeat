@@ -120,6 +120,7 @@ export function SourcePanel() {
             numeric: p.numeric,
             logicalTypes: p.logicalTypes,
             hints: p.hints,
+            constant: p.constant,
             // The preview samples one file, so the mapping has to be told how many
             // are coming: a column holding one value per file — which region, which
             // test run — looks constant in that sample and would be dropped as

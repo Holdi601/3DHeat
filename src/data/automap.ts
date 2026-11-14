@@ -41,6 +41,12 @@ export interface AutoMapInput {
    * named column exists.
    */
   hints?: MappingHints | null;
+  /**
+   * Columns the file's own statistics show hold one value (or none) in every
+   * row (Parquet row-group min/max). Factor columns (`factorColumns`) are
+   * loaded unless listed here.
+   */
+  constant?: string[];
 }
 
 /**
@@ -134,12 +140,28 @@ export function parseHints(text: string | undefined | null): MappingHints | null
 
 const ROLE_COLUMNS = ['x', 'y', 'z', 'time', 'personId', 'teamId', 'sessionId', 'yaw', 'pitch', 'dirX', 'dirY', 'dirZ'] as const;
 
+const FACTOR_COLUMN = /^(state|active)_./i;
+const RESULT_COLUMN = /^(won|win|is.?win(ner)?|victory|round.?won|match.?won|round|round.?num(ber)?|round.?index|round.?no)$/i;
+const LIST_FACTOR_COLUMN = /^(inventory|loadout|perks|buffs|debuffs|abilities|attachments|modules|modifications|upgrades)$/i;
+
+/**
+ * The columns the breakdown's factors and results read (docs/breakdown.md):
+ * `state_*`, `active_*`, `won`, `round` and the list columns, of those a
+ * source has, less those known to hold one value throughout - each loaded one
+ * is 4 bytes a row, and a constant one measures nothing.
+ */
+export function factorColumns(columns: readonly string[], constant: readonly string[] = []): string[] {
+  const skip = new Set(constant);
+  return columns.filter((c) => !skip.has(c) && (FACTOR_COLUMN.test(c) || RESULT_COLUMN.test(c.trim()) || LIST_FACTOR_COLUMN.test(c.trim())));
+}
+
 /** Lay a file's hints over a guessed mapping. Names that are not columns of the file are ignored. */
 export function applyHints(
   mapping: ColumnMapping,
   hints: MappingHints,
   columns: string[],
   numeric: boolean[],
+  constant: readonly string[] = [],
 ): ColumnMapping {
   const out: ColumnMapping = { ...mapping, axes: { ...mapping.axes }, extra: [...mapping.extra], extraNumeric: { ...mapping.extraNumeric } };
   const has = (c: unknown): c is string => typeof c === 'string' && columns.includes(c);
@@ -157,6 +179,8 @@ export function applyHints(
     out.extra = h.extra.filter((c) => has(c) && !roles.has(c));
     // The cost model's columns as well (see autoMap): a converter's list names what to filter on.
     for (const c of costColumns(columns)) if (!roles.has(c) && !out.extra.includes(c)) out.extra.push(c);
+    // And the breakdown's factor and result columns (factorColumns).
+    for (const c of factorColumns(columns, constant)) if (!roles.has(c) && !out.extra.includes(c)) out.extra.push(c);
     out.extraNumeric = {};
     for (const c of out.extra) out.extraNumeric[c] = !!numeric[columns.indexOf(c)];
   } else {
@@ -607,9 +631,15 @@ export function autoMap(input: AutoMapInput): ColumnMapping {
     mapping.extra.push(c);
     mapping.extraNumeric[c] = !!numeric[columns.indexOf(c)];
   }
+  // The breakdown's factors and results, past the handful too.
+  for (const c of factorColumns(columns, input.constant)) {
+    if (used.has(c) || noise.has(c) || mapping.extra.includes(c)) continue;
+    mapping.extra.push(c);
+    mapping.extraNumeric[c] = !!numeric[columns.indexOf(c)];
+  }
 
   mapping.axes = { ...DEFAULT_AXIS_MAPPING, up: guessUpAxis(rows, columns, mapping) };
-  return input.hints ? applyHints(mapping, input.hints, columns, numeric) : mapping;
+  return input.hints ? applyHints(mapping, input.hints, columns, numeric, input.constant) : mapping;
 }
 
 /**

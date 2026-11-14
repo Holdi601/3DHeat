@@ -161,7 +161,6 @@ export function valueColumns(inp: ValueInput): AttributeColumn[] {
     const p = parseValueColumn(c.name);
     return p ? [{ ...p, data: c.data }] : [];
   });
-  const fileCur = new Set(fileCols.map((c) => c.currency));
   const out: AttributeColumn[] = [];
 
   const ownCols = cats.filter((c) => OWN_COL.test(c.name.trim())).sort((a, b) => rank(OWN_COL, a.name) - rank(OWN_COL, b.name));
@@ -169,12 +168,17 @@ export function valueColumns(inp: ValueInput): AttributeColumn[] {
   for (const c of [...ownCols, ...cats.filter((c) => WEAPON_COL.test(c.name.trim()))]) for (const l of c.labels) if (l) names.add(l);
   const game = (inp.game && COST_TABLES.find((t) => t.id === inp.game)) || detectGame(names, [...existing]);
   const resources = game.resources ?? [game.currency];
-  const tableWanted = !resources.some((r) => fileCur.has(r)) && !fileCur.has(game.currency);
+  // A file's plain income or any cost of its own in the game's currency replaces
+  // the table. Income by kind alone (`earn_round_cs2`, a converter's exact round
+  // rewards) replaces only that kind's: the table still prices the rest.
+  const ours = (c: ValueColumn) => resources.includes(c.currency) || c.currency === game.currency;
+  const tableWanted = !fileCols.some((c) => ours(c) && (c.flow !== 'earn' || !c.kind));
+  const skipEarn = new Set(fileCols.filter((c) => ours(c) && c.flow === 'earn' && c.kind).flatMap((c) => (c.kind === 'round' ? ['round', 'plant', 'defuse'] : [c.kind!])));
 
   const derived: { kind: string; flow: 'cost' | 'earn'; res: string; data: Float32Array }[] = [];
   let source: Uint32Array | null = null;
   if (tableWanted) {
-    const r = priceRows(inp, game, ownCols);
+    const r = priceRows(inp, game, ownCols, skipEarn);
     derived.push(...r.cols);
     source = r.source;
   }
@@ -274,7 +278,7 @@ const SRC_CLASS = 2;
 const SRC_EST = 3;
 
 /** The table's prices per row, one array per kind and resource. */
-function priceRows(inp: ValueInput, game: GameCosts, ownCols: CategoryInput[]) {
+function priceRows(inp: ValueInput, game: GameCosts, ownCols: CategoryInput[], skipEarn: ReadonlySet<string> = new Set()) {
   const { n, cats, nums } = inp;
   const found: Priced[] = [];
   const lp = (cols: CategoryInput[]) => cols.map((c) => new LabelPrices(c, game, found));
@@ -393,6 +397,7 @@ function priceRows(inp: ValueInput, game: GameCosts, ownCols: CategoryInput[]) {
 
   const cols = new Map<string, { kind: string; flow: 'cost' | 'earn'; res: string; data: Float32Array }>();
   const add = (flow: 'cost' | 'earn', kind: string, r: number, price: Price, scale = 1) => {
+    if (flow === 'earn' && skipEarn.has(kind)) return;
     for (const [res, v] of parts(game, price)) {
       const x = v * scale;
       if (!(x !== 0 && Number.isFinite(x))) continue;

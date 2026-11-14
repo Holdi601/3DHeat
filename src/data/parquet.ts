@@ -31,6 +31,8 @@ export interface ParquetPreview {
   numeric: boolean[];
   metadata: FileMetaData;
   file: AsyncBuffer;
+  /** Columns whose statistics show one value (or none) in every row group. */
+  constant: string[];
 }
 
 export async function previewParquet(file: File): Promise<ParquetPreview> {
@@ -66,7 +68,40 @@ export async function previewParquet(file: File): Promise<ParquetPreview> {
     return numbers / seen > 0.9;
   });
 
-  return { columns, rows, numRows, fileBytes: file.size, numeric, metadata, file: buf };
+  return { columns, rows, numRows, fileBytes: file.size, numeric, metadata, file: buf, constant: constantColumns(metadata) };
+}
+
+/**
+ * Top-level columns whose row-group statistics show a single value, or only
+ * nulls, throughout. A column without statistics in any group is not listed.
+ */
+export function constantColumns(metadata: FileMetaData): string[] {
+  const seen = new Map<string, string | null>();
+  const varies = new Set<string>();
+  for (const group of metadata.row_groups) {
+    for (const chunk of group.columns) {
+      const md = chunk.meta_data;
+      if (!md || md.path_in_schema.length !== 1) continue;
+      const name = md.path_in_schema[0];
+      if (varies.has(name)) continue;
+      const st = md.statistics;
+      const nulls = st?.null_count;
+      let one: string | null;
+      if (nulls !== undefined && BigInt(nulls) === BigInt(md.num_values)) one = null;
+      else {
+        const lo = st?.min_value ?? st?.min;
+        const hi = st?.max_value ?? st?.max;
+        if (lo === undefined || hi === undefined || displayValue(lo) !== displayValue(hi)) {
+          varies.add(name);
+          continue;
+        }
+        one = displayValue(lo);
+      }
+      if (!seen.has(name) || seen.get(name) === null) seen.set(name, one);
+      else if (one !== null && seen.get(name) !== one) varies.add(name);
+    }
+  }
+  return [...seen.keys()].filter((c) => !varies.has(c));
 }
 
 /** Column names straight from the schema, for a file with zero rows. */

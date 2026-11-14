@@ -50,6 +50,7 @@ if (import.meta.env.DEV) {
         numeric: preview.numeric,
         logicalTypes: preview.logicalTypes,
         hints: preview.hints,
+        constant: preview.constant,
         fileCount: files.length,
       });
       const size = await loader.measure(files);
