@@ -85,6 +85,7 @@ uniform vec3  uAabbMin;
 uniform vec3  uAabbSize;
 uniform int   uMinRow;
 uniform int   uMaxRow;
+uniform int   uBandBase;       // first chunk row of the bound position and time band
 uniform int   uBlockShift;     // log2(SAMPLE_BLOCK)
 uniform int   uGroundProjected;
 uniform float uGroundY;
@@ -286,7 +287,10 @@ void main() {
   bool reject = (row < uMinRow || row >= uMaxRow);
 
   ivec2 tc = ivec2(row & uTexMask, row >> uTexShift);
-  uvec4 q = texelFetch(uPosTex, tc, 0);
+  // Positions and times come in bands of their own (BAND_ROWS), the rest per chunk.
+  int bandRow = row - uBandBase;
+  ivec2 tb = ivec2(bandRow & uTexMask, bandRow >> uTexShift);
+  uvec4 q = texelFetch(uPosTex, tb, 0);
   vec3 p = uAabbMin + vec3(q.xyz) * (1.0 / 65535.0) * uAabbSize;
   // Inside or outside the volumes, at the row's true height: before the ground
   // projection flattens it.
@@ -377,7 +381,7 @@ void main() {
 
   float fade = 1.0;
   if (uUseLifetime == 1) {
-    uvec2 tl = texelFetch(uTimeTex, tc, 0).rg;
+    uvec2 tl = texelFetch(uTimeTex, tb, 0).rg;
     float rowTime = uChunkTimeMin + float(tl.r) * uTimeScale;
     // 65535 is the "no following sample" sentinel, not a duration.
     float life = (tl.g == 65535u) ? uDefaultLifetime : float(tl.g) * uLifeScale;
@@ -552,7 +556,7 @@ uniform usampler2D uPosTex;`,
   float fadeA = 1.0;
   float fadeB = 1.0;
   if (uTrail > 0.0) {
-    float tB = uChunkTimeMin + float(texelFetch(uTimeTex, tc, 0).r) * uTimeScale;
+    float tB = uChunkTimeMin + float(texelFetch(uTimeTex, tb, 0).r) * uTimeScale;
     float seconds = uintBitsToFloat(ls.z);
     float tA = tB - seconds;
     if (tA >= uTrailNow) reject = true;

@@ -99,12 +99,15 @@ interface PendingChunk {
   packing: boolean;
   min: [number, number, number];
   max: [number, number, number];
-  posTex: WebGLTexture | null;
-  timeTex: WebGLTexture | null;
+  /** Its position bands made so far (BAND_ROWS rows each), one a frame; see `makeBand`. */
+  posTex: WebGLTexture[];
+  /** The time bands beside them, when the dataset has row times and lifetimes. */
+  timeTex: WebGLTexture[] | null;
 }
 
 interface GpuChunk {
-  posTex: WebGLTexture;
+  /** Positions in bands of BAND_ROWS rows, each its own texture; see `makeBand`. */
+  posTex: WebGLTexture[];
   /** First dataset row in this chunk. */
   start: number;
   /**
@@ -117,7 +120,7 @@ interface GpuChunk {
    * time and a person column, since a lifetime is undefined without both — and
    * at 2 bytes per row per channel it is not worth carrying speculatively.
    */
-  timeTex: WebGLTexture | null;
+  timeTex: WebGLTexture[] | null;
   /** One bearing byte a row (R8UI, laid out like `posTex`), made when the heat pass first wants it. */
   dirTex: WebGLTexture | null;
   rows: number;
@@ -585,8 +588,8 @@ export class Webgl2Renderer implements Renderer {
   setDataset(dataset: Dataset | null): void {
     const gl = this.gl;
     for (const c of this.chunks) {
-      gl.deleteTexture(c.posTex);
-      if (c.timeTex) gl.deleteTexture(c.timeTex);
+      for (const t of c.posTex) gl.deleteTexture(t);
+      for (const t of c.timeTex ?? []) gl.deleteTexture(t);
       if (c.lineTex) gl.deleteTexture(c.lineTex);
       if (c.dirTex) gl.deleteTexture(c.dirTex);
     }
@@ -595,8 +598,8 @@ export class Webgl2Renderer implements Renderer {
     this.dirAngles = null;
     this.chunks = [];
     for (const j of this.pendingChunks) {
-      if (j.posTex) gl.deleteTexture(j.posTex);
-      if (j.timeTex) gl.deleteTexture(j.timeTex);
+      for (const t of j.posTex) gl.deleteTexture(t);
+      for (const t of j.timeTex ?? []) gl.deleteTexture(t);
     }
     this.pendingChunks = [];
     this.dataGeneration++;
@@ -640,7 +643,7 @@ export class Webgl2Renderer implements Renderer {
           break;
         }
         rows = Math.min(rows, partial);
-        this.pendingChunks.push(pendingChunk(start, rows));
+        this.pendingChunks.push(pendingChunk(start, rows, bytesPerRow > 8));
         this.gpuBytesUsed += cost(rows);
         this.residentRows += rows;
         this.droppedRows = dataset.count - start - rows;
@@ -648,7 +651,7 @@ export class Webgl2Renderer implements Renderer {
       }
 
       // Queued rather than packed here; see `flushDataUpload`.
-      this.pendingChunks.push(pendingChunk(start, rows));
+      this.pendingChunks.push(pendingChunk(start, rows, bytesPerRow > 8));
       this.gpuBytesUsed += cost(rows);
       this.residentRows += rows;
     }
@@ -1223,32 +1226,16 @@ export class Webgl2Renderer implements Renderer {
     const gl = this.gl;
     const { px, py, pz, teamId } = ds;
     const until = performance.now() + DATA_UPLOAD_MS;
+    let banded = false;
     while (this.pendingChunks.length > 0 && performance.now() < until) {
       const j = this.pendingChunks[0];
       const end = j.start + j.rows;
       const stop = Math.min(end, j.cursor + DATA_SLICE_ROWS);
-      if (!j.posTex) {
-        // A chunk's textures are tens of megabytes, and making them is a stall of
-        // its own in some drivers: a frame of its own, with nothing else to do.
-        const texHeight = Math.ceil(j.rows / ROW_TEX_WIDTH);
-        j.posTex = createTexture(gl, {
-          width: ROW_TEX_WIDTH,
-          height: texHeight,
-          internalFormat: gl.RGBA16UI,
-          format: gl.RGBA_INTEGER,
-          type: gl.UNSIGNED_SHORT,
-        });
-        if (ds.time && ds.lifetime) {
-          j.timeTex = createTexture(gl, {
-            width: ROW_TEX_WIDTH,
-            height: texHeight,
-            internalFormat: gl.RG16UI,
-            format: gl.RG_INTEGER,
-            type: gl.UNSIGNED_SHORT,
-          });
-        }
-        gl.bindTexture(gl.TEXTURE_2D, null);
-        return;
+      // One band of textures a frame, made and touched ahead of the rows that fill
+      // it (see `makeBand`), while the bounds pass keeps the CPU busy and the GPU free.
+      if (!banded && j.posTex.length < Math.ceil(j.rows / BAND_ROWS)) {
+        this.makeBand(j);
+        banded = true;
       }
       if (!j.packing) {
         const mn = j.min;
@@ -1271,10 +1258,12 @@ export class Webgl2Renderer implements Renderer {
         }
         continue;
       }
-      // Whole texture rows a slice, the last one padded.
+      // Whole texture rows a slice, the last one padded; a slice never crosses a band.
+      const b = (j.cursor - j.start) >> BAND_SHIFT;
+      if (b >= j.posTex.length) break;
       const n = stop - j.cursor;
       const band = Math.ceil(n / ROW_TEX_WIDTH);
-      const y0 = (j.cursor - j.start) / ROW_TEX_WIDTH;
+      const y0 = (j.cursor - j.start - b * BAND_ROWS) / ROW_TEX_WIDTH;
       if (this.posScratch.length < DATA_SLICE_ROWS * 4) this.posScratch = new Uint16Array(DATA_SLICE_ROWS * 4);
       const data = this.posScratch;
       const sx = 65535 / Math.max(1e-6, j.max[0] - j.min[0]);
@@ -1290,7 +1279,7 @@ export class Webgl2Renderer implements Renderer {
         data[o + 3] = teamId ? teamId[r] : 0;
       }
       data.fill(0, n * 4, band * ROW_TEX_WIDTH * 4);
-      gl.bindTexture(gl.TEXTURE_2D, j.posTex);
+      gl.bindTexture(gl.TEXTURE_2D, j.posTex[b]);
       gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, y0, ROW_TEX_WIDTH, band, gl.RGBA_INTEGER, gl.UNSIGNED_SHORT, data, 0);
       if (j.timeTex && ds.time && ds.lifetime) {
         const q = timeQuantum(ds, j.start, j.rows);
@@ -1304,7 +1293,7 @@ export class Webgl2Renderer implements Renderer {
           tl[o + 1] = life < 0 ? 65535 : Math.min(65534, clampU16(life * q.invLife));
         }
         tl.fill(0, n * 2, band * ROW_TEX_WIDTH * 2);
-        gl.bindTexture(gl.TEXTURE_2D, j.timeTex);
+        gl.bindTexture(gl.TEXTURE_2D, j.timeTex[b]);
         gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, y0, ROW_TEX_WIDTH, band, gl.RG_INTEGER, gl.UNSIGNED_SHORT, tl, 0);
       }
       gl.bindTexture(gl.TEXTURE_2D, null);
@@ -1317,6 +1306,29 @@ export class Webgl2Renderer implements Renderer {
     }
   }
 
+  /**
+   * The next band of a chunk's position (and time) textures, touched with one
+   * texel row. A texture's first write has the driver zero all of it first, on
+   * the GPU: a whole chunk's 67 MB position texture took 22-46 ms of GPU time,
+   * a dropped frame. A band is an eighth of that, made a frame apart.
+   */
+  private makeBand(j: PendingChunk): void {
+    const gl = this.gl;
+    const b = j.posTex.length;
+    const height = Math.ceil(Math.min(BAND_ROWS, j.rows - b * BAND_ROWS) / ROW_TEX_WIDTH);
+    if (this.zeroRow.length === 0) this.zeroRow = new Uint16Array(ROW_TEX_WIDTH * 4);
+    const pos = createTexture(gl, { width: ROW_TEX_WIDTH, height, internalFormat: gl.RGBA16UI, format: gl.RGBA_INTEGER, type: gl.UNSIGNED_SHORT });
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, ROW_TEX_WIDTH, 1, gl.RGBA_INTEGER, gl.UNSIGNED_SHORT, this.zeroRow, 0);
+    j.posTex.push(pos);
+    if (j.timeTex) {
+      const time = createTexture(gl, { width: ROW_TEX_WIDTH, height, internalFormat: gl.RG16UI, format: gl.RG_INTEGER, type: gl.UNSIGNED_SHORT });
+      gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, ROW_TEX_WIDTH, 1, gl.RG_INTEGER, gl.UNSIGNED_SHORT, this.zeroRow, 0);
+      j.timeTex.push(time);
+    }
+    gl.bindTexture(gl.TEXTURE_2D, null);
+  }
+
+  private zeroRow = new Uint16Array(0);
   private posScratch = new Uint16Array(0);
   private timeScratch = new Uint16Array(0);
 
@@ -1332,7 +1344,7 @@ export class Webgl2Renderer implements Renderer {
       lifeScale = q.lifeCap / 65534;
     }
     const chunk: GpuChunk = {
-      posTex: j.posTex!,
+      posTex: j.posTex,
       start: j.start,
       lineTex: null,
       timeTex: j.timeTex,
@@ -2557,8 +2569,6 @@ export class Webgl2Renderer implements Renderer {
         staging,
       );
 
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, chunk.posTex);
       if (lineProg) {
         gl.activeTexture(gl.TEXTURE0 + LINE_UNIT);
         gl.bindTexture(gl.TEXTURE_2D, chunk.lineTex ?? this.ensureDummyUint());
@@ -2579,8 +2589,11 @@ export class Webgl2Renderer implements Renderer {
       // only the ones actually read, so leaving this unit holding whatever the
       // previous pass left — the composite's depth texture, say — rejects the
       // entire draw with no error visible anywhere except a missing heatmap.
-      gl.activeTexture(gl.TEXTURE3);
-      gl.bindTexture(gl.TEXTURE_2D, useLifetime || trail ? chunk.timeTex : this.ensureDummyUint());
+      const timeBands = useLifetime || trail ? chunk.timeTex : null;
+      if (!timeBands) {
+        gl.activeTexture(gl.TEXTURE3);
+        gl.bindTexture(gl.TEXTURE_2D, this.ensureDummyUint());
+      }
       if (useLifetime || trail) {
         u.f1('uChunkTimeMin', chunk.timeMin);
         u.f1('uTimeScale', chunk.timeScale);
@@ -2614,11 +2627,31 @@ export class Webgl2Renderer implements Renderer {
 
       u.f3('uAabbMin', chunk.aabbMin[0], chunk.aabbMin[1], chunk.aabbMin[2]);
       u.f3('uAabbSize', chunk.aabbSize[0], chunk.aabbSize[1], chunk.aabbSize[2]);
-      u.i1('uMinRow', plan.minRow);
-      u.i1('uMaxRow', Math.min(plan.maxRow, chunk.rows));
-
-      gl.drawArrays(gl.TRIANGLES, 0, blocks * SAMPLE_BLOCK * vertsPerRow);
-      drawn++;
+      // One draw a band of positions (BAND_ROWS): the blocks are in row order, so
+      // a band's are a run of them; a block across a band edge is drawn in both,
+      // each draw rejecting the rows outside its band.
+      const lo = plan.minRow;
+      const hi = Math.min(plan.maxRow, chunk.rows);
+      let first = 0;
+      for (let b = lo >> BAND_SHIFT; b < chunk.posTex.length && b * BAND_ROWS < hi; b++) {
+        const bandLo = b * BAND_ROWS;
+        const bandHi = Math.min(hi, bandLo + BAND_ROWS);
+        while (first < blocks && plan.blockStarts[first] + SAMPLE_BLOCK <= bandLo) first++;
+        let last = first;
+        while (last < blocks && plan.blockStarts[last] < bandHi) last++;
+        if (last === first) continue;
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, chunk.posTex[b]);
+        if (timeBands) {
+          gl.activeTexture(gl.TEXTURE3);
+          gl.bindTexture(gl.TEXTURE_2D, timeBands[b]);
+        }
+        u.i1('uBandBase', bandLo);
+        u.i1('uMinRow', Math.max(lo, bandLo));
+        u.i1('uMaxRow', bandHi);
+        gl.drawArrays(gl.TRIANGLES, first * SAMPLE_BLOCK * vertsPerRow, (last - first) * SAMPLE_BLOCK * vertsPerRow);
+        drawn++;
+      }
       sprites += blocks * SAMPLE_BLOCK;
     }
 
@@ -3425,8 +3458,8 @@ export class Webgl2Renderer implements Renderer {
   dispose(): void {
     const gl = this.gl;
     for (const j of this.pendingChunks) {
-      if (j.posTex) gl.deleteTexture(j.posTex);
-      if (j.timeTex) gl.deleteTexture(j.timeTex);
+      for (const t of j.posTex) gl.deleteTexture(t);
+      for (const t of j.timeTex ?? []) gl.deleteTexture(t);
     }
     this.pendingChunks = [];
     this.symbols?.dispose();
@@ -3437,8 +3470,8 @@ export class Webgl2Renderer implements Renderer {
     this.tracks?.dispose();
     this.tracks = null;
     for (const c of this.chunks) {
-      gl.deleteTexture(c.posTex);
-      if (c.timeTex) gl.deleteTexture(c.timeTex);
+      for (const t of c.posTex) gl.deleteTexture(t);
+      for (const t of c.timeTex ?? []) gl.deleteTexture(t);
       if (c.lineTex) gl.deleteTexture(c.lineTex);
       if (c.dirTex) gl.deleteTexture(c.dirTex);
     }
@@ -3508,7 +3541,7 @@ export class Webgl2Renderer implements Renderer {
 }
 
 /** A chunk queued for `flushDataUpload`. */
-function pendingChunk(start: number, rows: number): PendingChunk {
+function pendingChunk(start: number, rows: number, times: boolean): PendingChunk {
   return {
     start,
     rows,
@@ -3516,8 +3549,8 @@ function pendingChunk(start: number, rows: number): PendingChunk {
     packing: false,
     min: [Infinity, Infinity, Infinity],
     max: [-Infinity, -Infinity, -Infinity],
-    posTex: null,
-    timeTex: null,
+    posTex: [],
+    timeTex: times ? [] : null,
   };
 }
 
@@ -3531,6 +3564,9 @@ function timeQuantum(ds: Dataset, start: number, rows: number) {
 
 /** Milliseconds a frame spends packing and writing a dataset that is arriving; see `flushDataUpload`. */
 const DATA_UPLOAD_MS = 3;
+/** Rows in a band of a chunk's position and time textures: each band its own texture, 8 MB of positions. */
+const BAND_SHIFT = 20;
+const BAND_ROWS = 1 << BAND_SHIFT;
 /** Milliseconds a frame spends making queued world tiles; see `flushTiles`. */
 const TILE_UPLOAD_MS = 3;
 /** Rows read or packed between checks of the clock: whole texture rows, few of them, as the first slices run before the code is optimised. */
