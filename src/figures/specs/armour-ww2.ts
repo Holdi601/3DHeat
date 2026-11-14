@@ -1236,7 +1236,8 @@ const M18: Ww2 = {
   turret: { x: 0, gunX: 1.2, length: 2.82, width: 2.08, height: 0.8, outline: { plan: [[-1.62, 0.45], [-1.3, 0.8], [-0.9, 1.0], [-0.2, 1.04], [0.4, 1.0], [0.75, 0.85], [1.0, 0.62], [1.2, 0.3]], top: [[-1.62, 0.71], [-0.9, 0.76], [-0.4, 0.8], [0.45, 0.8], [0.55, 0.7], [0.9, 0.65], [1.2, 0.54]], bottom: [[-1.62, 0.3], [-0.95, 0.3], [-0.9, 0], [1.2, 0]], round: 8, stations: 14 }, well: { rear: -1.5, front: 0.45, floor: 0.35 } },
   guns: [{ mount: 'turret', length: 2.65, calibre: 0.076, muzzle: true, at: 0.44 }, { mount: 'top', length: 1.65, calibre: 0.0127, x: -1.05, side: 0, up: 0.18 }],
 };
-G['m18-hellcat'] = ww2(M18);
+// Its turret's walls 0.1 m lower than the sheet draws them, fitted to the WT reference (on the 90 mm variant they lost).
+G['m18-hellcat'] = ww2({ ...M18, turret: { ...M18.turret!, height: 0.704, outline: { ...M18.turret!.outline!, top: M18.turret!.outline!.top.map(([x, y]): P2 => [x, +(y * 0.88).toFixed(3)]) } } });
 // M18 with the 90 mm M3 (53 calibres, 4.73 m; 0.77 m longer than the 76 mm M1).
 G['m18-super-hellcat'] = ww2({ ...M18, guns: [{ mount: 'turret', length: 3.42, calibre: 0.09, muzzle: true, at: 0.44 }, M18.guns![1]] });
 // More Shermans: the 76 mm T23 turret on the cast M4A1 hull and the welded M4A2; the M4A3 with the short 105 mm howitzer; the Jumbo with the 76 mm.
