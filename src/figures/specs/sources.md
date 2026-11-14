@@ -277,3 +277,5 @@ themselves are never stored in this repository.
 | m41 (turret height) | the turret's walls 12 % taller than the earlier estimate, kept where it fitted the WT reference better (fitted to WT reference) | - | - | - | - |
 | crusader-ii (hull machine-gun turret) | the auxiliary machine-gun turret at the front left, often removed in service, left off where that fitted the WT reference better (fitted to WT reference) | - | - | - | - |
 | m3a1-stuart (turret place) | the turret 0.25 m further forward than the M3's, kept where it fitted the WT reference better (fitted to WT reference) | - | - | - | - |
+| m5a1-stuart, m3a3-stuart (turret place) | the turret 0.2 m ahead of the hull's middle, kept where it fitted the WT reference better (fitted to WT reference) | - | - | - | - |
+| amd-35 (turret place and height) | the turret 0.4 m ahead of the middle and 0.65 m tall, kept where it fitted the WT reference better (fitted to WT reference) | - | - | - | - |

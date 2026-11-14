@@ -1067,7 +1067,8 @@ G['m3a1-stuart'] = ww2({ ...M3_HULL, turret: { ...M3_T, x: 0.3 }, guns: [{ mount
 // 2.3 m to the turret roof, 2.57 m over the .30 cal AA machine gun on its bracket on the turret's right side).
 // Measured on FM 30-40's sheet (sources.md; its side view's heights fitted to its front view's): the raised engine
 // deck behind the turret, the steep front plate down to the low nose, the turret's undercut radio bustle.
-const M5A1_T: TurretSpec = { ...turret(0.0, [[-0.85, 0.5], [-0.65, 0.72], [0.5, 0.78], [0.9, 0.55]], [[-0.85, 0.64], [-0.5, 0.7], [0.5, 0.68], [0.9, 0.55]], 5, 0.9) };
+// Its place 0.2 m ahead of the hull's middle fitted to the WT reference.
+const M5A1_T: TurretSpec = { ...turret(0.2, [[-0.85, 0.5], [-0.65, 0.72], [0.5, 0.78], [0.9, 0.55]], [[-0.85, 0.64], [-0.5, 0.7], [0.5, 0.68], [0.9, 0.55]], 5, 0.9) };
 M5A1_T.outline = { ...M5A1_T.outline!, bottom: [[-0.85, 0.17], [-0.45, 0.17], [-0.4, 0], [0.9, 0]] };
 // The M44 combination mount's curved rotor shield standing out of the inclined front plate (FM 30-40's side and front
 // views: about 0.65 m across, 0.4 m high, a third of a metre proud of the plate).
@@ -2281,7 +2282,8 @@ G['marmon-herrington-vi'] = { cls: 'scout-car', chassis: 'wheeled', length: 6.3,
 // fighting compartment from 0.75 m behind the middle to 1.0 m ahead, its front falling straight to the 1.1 m nose, the
 // long low engine deck behind it, the axles 1.58 m ahead of and 1.46 m behind the middle; the narrow lower hull
 // between the wheels down to the published 0.35 m ground clearance, the body over the wheels from their tops up.
-G['amd-35'] = { cls: 'scout-car', chassis: 'wheeled', length: 4.79, width: 2.01, hullHeight: 1.8, axles: 2, axleAt: [0.66, -0.61], wheelRadius: 0.45, hullOutline: { ...bodyOf([[-2.395, 1.22], [-2.3, 1.3], [-0.75, 1.38], [-0.45, 1.8], [1.05, 1.8], [2.27, 1.12], [2.395, 1.06]], [[-2.395, 0.78], [-2.1, 0.4], [1.95, 0.35], [2.395, 0.72]], [[-2.4, 0.85], [0.2, 0.95], [2.4, 0.6]], 6), section: [[0, 0.6], [0.85, 0.6], [0.85, 1], [2.5, 1]], sectionAbs: true }, turret: turret(0.15, [[-0.75, 0.55], [-0.6, 0.7], [0.55, 0.7], [0.75, 0.5]], [[-0.75, 0.55], [0.75, 0.55]], 6, 0.8), guns: [{ mount: 'turret', length: 1.2, calibre: 0.025, at: 0.45 }] };
+// Its turret's place and height (0.65 m) fitted to the WT reference.
+G['amd-35'] = { cls: 'scout-car', chassis: 'wheeled', length: 4.79, width: 2.01, hullHeight: 1.8, axles: 2, axleAt: [0.66, -0.61], wheelRadius: 0.45, hullOutline: { ...bodyOf([[-2.395, 1.22], [-2.3, 1.3], [-0.75, 1.38], [-0.45, 1.8], [1.05, 1.8], [2.27, 1.12], [2.395, 1.06]], [[-2.395, 0.78], [-2.1, 0.4], [1.95, 0.35], [2.395, 0.72]], [[-2.4, 0.85], [0.2, 0.95], [2.4, 0.6]], 6), section: [[0, 0.6], [0.85, 0.6], [0.85, 1], [2.5, 1]], sectionAbs: true }, turret: turret(0.4, [[-0.75, 0.55], [-0.6, 0.7], [0.55, 0.7], [0.75, 0.5]], [[-0.75, 0.65], [0.75, 0.65]], 6, 0.8), guns: [{ mount: 'turret', length: 1.2, calibre: 0.025, at: 0.45 }] };
 // Renault D2: a long, low box hull with the track run behind skirts, the APX 1 turret with the 47 mm (5.46 x 2.22 m, 2.66 m).
 G['renault-d2'] = ww2({ cls: 'medium-tank', L: 5.46, W: 2.22, deck: 1.9, fender: 0.5, top: [[-2.73, 1.55], [-2.6, 1.9], [1.8, 1.9], [2.5, 1.45], [2.73, 1.2]], plan: [[-2.73, 0.85], [2.73, 0.82]], hullRound: 12, track: [[-2.3, 0], [2.3, 0], [2.73, 0.75], [2.5, 1.2], [-2.5, 1.2], [-2.73, 0.7]], wheels: [], r: 0.2, solid: true, turret: apx(0.3, 0.65, 0.65), gun: { length: 1.2, calibre: 0.047, at: 0.45 }, turretParts: (t) => [cupola(t, -0.25, 0, 0.3, 0.2)] });
 // FCM 36: a welded hull and turret all of flat facets, the turret a truncated pyramid, skirts over the bogies, the
