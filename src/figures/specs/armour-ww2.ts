@@ -1475,7 +1475,8 @@ G['t-26'] = ww2({
     plan: [[-3.72, 1.04], [3.72, 1.02]], hullRound: 12,
     track: [[-3.0, 0], [3.0, 0], [3.7, 0.8], [3.4, 1.3], [-3.5, 1.3], [-3.72, 0.75]],
     wheels: [], r: 0.2, solid: true,
-    turret: turret(0.0, [[-1.4, 0.6], [-1.1, 1.0], [0.7, 1.05], [1.15, 0.65]], [[-1.4, 0.85], [1.15, 0.85]], 4, 1.2),
+    // The main turret's place along the hull fitted to the WT reference (no public drawing to take it from).
+    turret: turret(0.75, [[-1.4, 0.6], [-1.1, 1.0], [0.7, 1.05], [1.15, 0.65]], [[-1.4, 0.85], [1.15, 0.85]], 4, 1.2),
     gun: { length: 1.1, calibre: 0.076, at: 0.45 },
     turretParts: () => [mg(2.3, -0.65, 0.42, 0.62), mg(2.3, 0.65, 0.42, 0.62)].map((t) => ({ ...t, up: 0 })),
   });
