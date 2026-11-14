@@ -20,6 +20,7 @@ import { fitTurrets } from './specs/turret-fit';
 import { fitHulls } from './specs/hull-fit';
 import { fitAircraft } from './specs/air-fit';
 import { fitOutlines } from './specs/outline-fit';
+import { fitDetails } from './specs/detail-fit';
 import { buildMeshFigure } from './meshfig';
 import { MESH_FIGURES } from './meshes';
 
@@ -170,6 +171,8 @@ fitHulls(G);
 fitAircraft(A);
 // Then the outlines' shapes (specs/outline-fit.ts).
 fitOutlines(G, A);
+// And the details: running gear, gun, roof and wing tips (specs/detail-fit.ts).
+fitDetails(G, A);
 
 /** Names in data (lower case) mapped to catalogue entries, from every spec set. */
 export const ALIASES: Record<string, string> = Object.assign({}, ...SPEC_SETS.map((s) => s.aliases ?? {}));

@@ -268,6 +268,12 @@ export interface GroundSpec {
   /** Road wheel radius (default from the run and count). */
   roadWheelRadius?: number;
   /**
+   * The running gear's fitted scales (specs/detail-fit.ts): `wheel` the road wheels' radius, `end` the sprocket's and
+   * idler's, `band` the track's thickness; `spread` and `shift` the road wheels' places about their middle (a share)
+   * and forward (metres); `front` and `rear` stretch the track's run forward and back from its middle (metres at its end).
+   */
+  gearFit?: { wheel?: number; end?: number; band?: number; spread?: number; shift?: number; front?: number; rear?: number };
+  /**
    * Open running gear, so a tank is known by its wheels from the side: the
    * track drawn as a band round its run (light shows between the wheels and
    * under the hull), solid road wheels at `wheels` (forward from the middle),
@@ -781,7 +787,8 @@ function tracks(k: Kit, spec: GroundSpec): void {
   // The run of the track: low at the back, the drive or idler raised at the
   // front; on a rhomboid the track climbs to a high front horn and runs back
   // over the top.
-  const profile: P2[] = spec.trackProfile
+  const gf = spec.gearFit;
+  const profile0: P2[] = spec.trackProfile
     ? spec.trackProfile
     : rhomboid
     ? [
@@ -800,6 +807,7 @@ function tracks(k: Kit, spec: GroundSpec): void {
         [x0 - half + 0.15, th * 0.92],
         [x0 - half, th * 0.55],
       ];
+  const profile: P2[] = gf?.front || gf?.rear ? profile0.map(([x, u]): P2 => [x > x0 ? x + ((gf.front ?? 0) * (x - x0)) / half : x + ((gf.rear ?? 0) * (x - x0)) / half, u]) : profile0;
   if (rhomboid) {
     for (const side of [-1, 1]) {
       const outer = side * (spec.width / 2);
@@ -816,17 +824,21 @@ function tracks(k: Kit, spec: GroundSpec): void {
   let r: number;
   if (run) {
     wheelsAt = run.wheels;
-    r = spec.roadWheelRadius ?? Math.min(0.42, th * 0.38);
+    r = (spec.roadWheelRadius ?? Math.min(0.42, th * 0.38)) * (gf?.wheel ?? 1);
   } else {
     // Evenly along the ground run, the end wheels a little in from where the track leaves the ground.
     const n = Math.max(3, spec.roadWheels ?? Math.round(L / 1.0));
-    r = spec.roadWheelRadius ?? Math.min(0.42, (L - 0.9) / n / 2.1, th * 0.38);
+    r = (spec.roadWheelRadius ?? Math.min(0.42, (L - 0.9) / n / 2.1, th * 0.38)) * (gf?.wheel ?? 1);
     const ground = profile.filter((p) => p[1] < th * 0.08).map((p) => p[0]);
     const g0 = ground.length > 1 ? Math.min(...ground) + r * 0.5 : x0 - half + 0.45 + r;
     const g1 = ground.length > 1 ? Math.max(...ground) - r * 0.5 : x0 + half - 0.45 - r;
     wheelsAt = Array.from({ length: n }, (_, i) => g0 + ((g1 - g0) * i) / Math.max(1, n - 1));
   }
-  runningGear(k, spec, profile, th, tw, wheelsAt, r, run?.rollers ?? [], run?.band ?? 0.1, run?.rollerRadius, run?.interleave, run?.wheelWidth);
+  if (gf?.spread || gf?.shift) {
+    const m = wheelsAt.reduce((a, x) => a + x, 0) / Math.max(1, wheelsAt.length);
+    wheelsAt = wheelsAt.map((x) => m + (x - m) * (1 + (gf.spread ?? 0)) + (gf.shift ?? 0));
+  }
+  runningGear(k, spec, profile, th, tw, wheelsAt, r, run?.rollers ?? [], (run?.band ?? 0.1) * (gf?.band ?? 1), run?.rollerRadius, run?.interleave, run?.wheelWidth);
 }
 
 /** The steel of the track's shoes, a little lighter than the rubber and shadow between them, so the links show. */
@@ -847,7 +859,7 @@ function runningGear(k: Kit, spec: GroundSpec, profile: P2[], th: number, tw: nu
     return pts.reduce((s, p) => s + p[1], 0) / pts.length;
   };
   // Sprocket and idler: each end of the run wraps round a wheel whose outside reaches the run's furthest point.
-  const re = Math.max(0.18, Math.min(0.4, th * 0.3));
+  const re = Math.max(0.18, Math.min(0.4, th * 0.3)) * (spec.gearFit?.end ?? 1);
   const endCentre = (x: number, sign: number): [number, number] => [x - sign * re, Math.max(re + 0.02, Math.min(th - re, endAt(x)))];
   const [fx, fu] = endCentre(xf, 1);
   const [bx, bu] = endCentre(xb, -1);
