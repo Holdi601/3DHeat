@@ -23,6 +23,7 @@ import { fitOutlines } from './specs/outline-fit';
 import { fitDetails } from './specs/detail-fit';
 import { buildMeshFigure } from './meshfig';
 import { MESH_FIGURES } from './meshes';
+import { fetchFigurePack, installFigurePack } from './figurepack';
 
 export type FigureDomain = 'person' | 'ground' | 'air' | 'heli' | 'missile' | 'sea' | 'marker';
 
@@ -205,3 +206,10 @@ for (const [n, m] of Object.entries(MESH_FIGURES)) {
 
 /** Every figure's builder by name: what the contact sheet and the tests walk. */
 export const FIGURES: Record<string, () => Template> = Object.fromEntries(Object.entries(CATALOG).map(([n, e]) => [n, e.build]));
+
+/**
+ * The local figure pack (`figurepack.ts`) when the page's server has one, put in place of the figures of the same
+ * names; resolves with how many it replaced (0 in tests and tools, which install a pack themselves).
+ */
+export const figurePackReady: Promise<number> =
+  typeof location === 'undefined' ? Promise.resolve(0) : fetchFigurePack().then((p) => (p ? installFigurePack(CATALOG, p, FIGURES) : 0));

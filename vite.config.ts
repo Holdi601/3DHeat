@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 import { execFile, execFileSync } from 'node:child_process';
 import os from 'node:os';
+import { existsSync, readFileSync } from 'node:fs';
 
 /**
  * The GPU's memory, which no web API will report at any precision.
@@ -124,6 +125,44 @@ function hostMemory(): Plugin {
   };
 }
 
+/** Where the page asks for the local figure pack (src/figures/figurepack.ts). */
+const FIGURE_PACK_ROUTE = '/__heat3d/figure-pack';
+
+/**
+ * The local figure pack: figures kept on this machine only (never in the
+ * repository) that replace the catalogue's of the same names. Its path comes
+ * from the `HEAT3D_FIGURE_PACK` environment variable or the `figurePack` entry
+ * of the git-ignored `tools/local-data.json`; without one, or when the file is
+ * missing, the route answers 404 and the viewer keeps its own figures. Read
+ * on each request, so a re-carved pack shows on the next page load.
+ */
+function figurePack(): Plugin {
+  const where = (): string | null => {
+    if (process.env.HEAT3D_FIGURE_PACK) return process.env.HEAT3D_FIGURE_PACK;
+    try {
+      const local = fileURLToPath(new URL('./tools/local-data.json', import.meta.url));
+      const p = existsSync(local) ? (JSON.parse(readFileSync(local, 'utf8')) as { figurePack?: string }).figurePack : undefined;
+      return p ?? null;
+    } catch {
+      return null;
+    }
+  };
+  const handler = (server: ViteDevServer | { middlewares: ViteDevServer['middlewares'] }) => {
+    server.middlewares.use(FIGURE_PACK_ROUTE, (_req, res) => {
+      const p = where();
+      if (!p || !existsSync(p)) {
+        res.statusCode = 404;
+        res.end();
+        return;
+      }
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Cache-Control', 'no-store');
+      res.end(readFileSync(p));
+    });
+  };
+  return { name: 'heat3d-figure-pack', configureServer: handler, configurePreviewServer: handler };
+}
+
 /** Where the page asks whether a newer version is out, and asks for it. */
 export const UPDATE_ROUTE = '/__heat3d/update';
 
@@ -221,7 +260,7 @@ function selfUpdate(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), hostMemory(), selfUpdate()],
+  plugins: [react(), hostMemory(), selfUpdate(), figurePack()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

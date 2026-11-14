@@ -126,3 +126,8 @@ Thumbs.db
 # Conversations with assistants and their logs never belong in the repository.
 .claude/
 *.jsonl
+
+# Local figure packs (src/figures/figurepack.ts) stay on the machine that made them.
+local-pack/
+figure-pack*.json
+*.figpack.json

@@ -18,6 +18,17 @@ What a person is comes from the data's own columns:
 
 The match is cached per label, so a frame costs only the placing. A data unit is a metre unless the data says how big one tracked thing is (the CS2 export says a player is 32 units across); figures are scaled to match.
 
+### A local figure pack
+
+Figures that may not be published (for example ones prepared on your own machine from material you may use but not share) can live in a local figure pack: one JSON file, `{ "version": 1, "figures": { "<figure name>": <mesh figure>, ... } }`, in the format of the mesh figures in `src/figures/meshes` (each with its hull, a turret that turns about its ring and a gun that raises about its trunnion, and its own coarse and far builds). While the viewer finds a pack, its figures replace the catalogue's of the same names; without one, nothing changes.
+
+The dev server (`npm run dev`) and the preview server (`npm run preview`) hand the pack to the page. Tell them where it is in either of two ways:
+
+- the environment variable `HEAT3D_FIGURE_PACK` set to the file's full path before starting the server, or
+- a `"figurePack": "<full path>"` entry in `tools/local-data.json` (git-ignored).
+
+The file is read again on every page load, so a changed pack shows after a reload. A build served any other way has no pack. Keep the pack outside the repository: `local-pack/`, `figure-pack*.json` and `*.figpack.json` are git-ignored, and a test fails if a pack or a figure from one is ever tracked.
+
 ## Effects
 
 Event rows that leave something behind for a while are drawn where they happened for as long as it lasts, in the colour of whoever caused them: a smoke (about 18 s), a molotov or incendiary (7 s), a flash and an HE burst (about a second), a decoy (15 s), a planted bomb (40 s). They come from an event column (Event, Events) whose label is `smoke`, `molotov`, `incendiary`, `flash`, `he`, `decoy` or `plant` - the CS2 export writes them at the detonation.

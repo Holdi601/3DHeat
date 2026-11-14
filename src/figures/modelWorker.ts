@@ -6,7 +6,7 @@
  * (`render/gpuTracks/store.ts` TrackFigures).
  */
 
-import { CATALOG } from './catalog';
+import { CATALOG, figurePackReady } from './catalog';
 import { TemplateCache } from './kit';
 import { meshOf, type FigureMesh } from './instances';
 
@@ -29,9 +29,11 @@ export interface ModelAnswer {
 const templates = new TemplateCache();
 const plain = (m: FigureMesh | null): ModelMesh | null => (m ? { data: m.data, count: m.count } : null);
 
-self.onmessage = (e: MessageEvent<ModelAsk>) => {
+self.onmessage = async (e: MessageEvent<ModelAsk>) => {
   const kind = e.data.kind;
   const post = (a: ModelAnswer) => (self as unknown as Worker).postMessage(a);
+  // A local figure pack (`figurepack.ts`), when there is one, is in place before the first build.
+  await figurePackReady;
   try {
     const entry = CATALOG[kind];
     const t = entry ? templates.get(kind, entry.build) : null;
