@@ -378,7 +378,8 @@ G['strv-103'] = {
 // gear: five 0.65 m road wheels and three return rollers a side, the sprocket at the back and the idler at the front
 // both clear of the ground; about 3.1 m of track on the ground (the published 10.2 psi on two 21 in tracks at 23.5 t).
 // M41: 3.23 m of track on the ground between the end wheels, 0.65 m wheels, three return rollers (afvdatabase.com, from the TMs).
-G['m41'] = { ...G['leopard-1a3'], cls: 'light-tank', length: 5.82, width: 3.2, roadWheels: 5, roadWheelRadius: 0.32, trackProfile: run(5.7, 0.9, [2.85, 0.6], [-2.85, 0.65], -1.78, 1.78), running: { wheels: [1.615, 0.81, 0, -0.81, -1.615], rollers: [1.05, 0, -1.05] }, hullOutline: hull(5.82, 3.2, 1.6, 0.86, 1.2, 1.15, 0.2, 8), turret: turret(-0.1, [[-1.9, 0.95], [-1.4, 1.25], [0.8, 1.3], [1.4, 1.05], [1.6, 0.6]], [[-1.9, 0.55], [-1.3, 0.85], [0.8, 0.9], [1.6, 0.55]], 6, 1.6), guns: [{ mount: 'turret', length: 3.6, calibre: 0.076, extractor: 0.6, muzzle: true, at: 0.45 }] };
+// The M41's turret walls 12 % taller than estimated before, fitted to the WT reference.
+G['m41'] = { ...G['leopard-1a3'], cls: 'light-tank', length: 5.82, width: 3.2, roadWheels: 5, roadWheelRadius: 0.32, trackProfile: run(5.7, 0.9, [2.85, 0.6], [-2.85, 0.65], -1.78, 1.78), running: { wheels: [1.615, 0.81, 0, -0.81, -1.615], rollers: [1.05, 0, -1.05] }, hullOutline: hull(5.82, 3.2, 1.6, 0.86, 1.2, 1.15, 0.2, 8), turret: turret(-0.1, [[-1.9, 0.95], [-1.4, 1.25], [0.8, 1.3], [1.4, 1.05], [1.6, 0.6]], [[-1.9, 0.616], [-1.3, 0.952], [0.8, 1.008], [1.6, 0.616]], 6, 1.6), guns: [{ mount: 'turret', length: 3.6, calibre: 0.076, extractor: 0.6, muzzle: true, at: 0.45 }] };
 // M103 (hull 6.98 x 3.76 m) and Conqueror (hull 7.72 x 3.99 m): heavy tanks with very long cast turrets and big guns,
 // each on its own hull: the M103's cast hull on seven road wheels with no skirts, the Conqueror's welded hull on four
 // Horstmann pairs (eight road wheels) under its skirt plates.
