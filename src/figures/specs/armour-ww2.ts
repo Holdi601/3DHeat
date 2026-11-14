@@ -1447,7 +1447,9 @@ const BT: Ww2 = {
   wheels: even(4, -1.95, 1.75), r: 0.41,
   gun: { length: 1.6, calibre: 0.045, at: 0.45 },
 };
-G['bt-7'] = ww2({ ...BT, turret: turret(0.35, [[-1.25, 0.5], [-1.0, 0.85], [0.6, 0.92], [0.95, 0.75], [1.05, 0.55]], [[-1.25, 0.5], [-0.8, 0.62], [0.6, 0.65], [1.05, 0.55]], 3, 1.05) });
+// The BT-7's turret, the T-26's 45 mm turret with its bustle: 1.66 m across, 2.0 m long with the bustle, its length
+// fitted to the WT reference.
+G['bt-7'] = ww2({ ...BT, turret: turret(0.35, [[-1.05, 0.45], [-0.85, 0.76], [0.5, 0.83], [0.85, 0.68], [0.95, 0.5]], [[-1.05, 0.5], [-0.65, 0.62], [0.5, 0.65], [0.95, 0.55]], 3, 0.95) });
 G['bt-5'] = ww2({ ...BT, turret: turret(0.35, [[-1.25, 0.5], [-1.0, 0.85], [0.6, 0.92], [0.95, 0.75], [1.05, 0.55]], [[-1.25, 0.62], [1.05, 0.62]], 7, 1.05) });
 // T-26 (1939): eight small road wheels in leaf-sprung pairs, four return rollers, the turret with its bustle and the
 // 45 mm (4.65 x 2.44 m, 2.33 m).
