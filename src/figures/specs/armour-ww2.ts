@@ -780,7 +780,11 @@ const compartment = (deck: number, x0: number, x1: number, hi: number, w: number
 // Hull 5.52 x 2.95 m, 2.5 m high over the cupola, ground clearance 0.385 m. The deck's height, the turret's place and
 // profile, the six evenly spaced wheel stations, the driver's plate and the track run as Marseille77's public-domain side
 // view of the L draws them (src/figures/specs/sources.md), heights scaled to the published 2.5 m.
-const PZ3_T = turret(-0.1, [[-1.05, 0.72], [-0.9, 0.9], [0.75, 0.92], [0.9, 0.78]], [[-1.05, 0.55], [0.3, 0.57], [0.9, 0.48]], 10, 1.1);
+// The turret's plan (rear corners cut back to a narrow rear wall, widest over the ring, the front corners cut), its side
+// profile with the roof falling to the front plate, the sides leaning in, its ring's place and the cupola at its back as
+// the CC-BY Pz III L model has them (sources.md).
+const PZ3_T: TurretSpec = turret(0.224, [[-0.97, 0.4], [-0.92, 0.47], [-0.85, 0.56], [-0.7, 0.69], [-0.4, 0.78], [0, 0.855], [0.7, 0.82], [0.9, 0.75], [1.0, 0.63], [1.03, 0.45]], [[-0.97, 0.58], [0.3, 0.55], [0.35, 0.52], [0.8, 0.47], [0.9, 0.43], [1.03, 0.38]], 10, 1.15);
+PZ3_T.outline = { ...PZ3_T.outline!, section: [[0, 1], [0.12, 1], [0.28, 0.95], [0.36, 0.91], [0.44, 0.86], [0.52, 0.79], [0.58, 0.77]], sectionAbs: true };
 const PZ3: Ww2 = {
   cls: 'medium-tank', L: 5.52, W: 2.95, deck: 1.65, fender: 0.92, belly: 0.385, horns: true,
   top: [[-2.76, 1.25], [-2.68, 1.62], [1.78, 1.65], [1.85, 1.48], [2.2, 1.4], [2.45, 1.32], [2.76, 1.05]],
@@ -789,26 +793,30 @@ const PZ3: Ww2 = {
   wheels: even(6, -1.49, 1.47), r: 0.26, rollers: [-1.1, 0, 1.1],
   turret: PZ3_T,
 };
-const pz3Parts = (t: TurretSpec, mantletBox = true, spaced = false): TurretSpec[] => [
-  cupola(t, -0.18, 0, 0.33, 0.33),
-  ...(mantletBox ? [on(t, [[0.9, 0.42], [1.1, 0.42]], [[0.9, 0.56], [1.1, 0.56]], 0.12, 10)] : []),
+const pz3Parts = (t: TurretSpec, mantletBox = true, spaced = false, bin = true): TurretSpec[] => [
+  cupola(t, -0.55, 0, 0.36, 0.29),
+  ...(mantletBox ? [on(t, [[1.02, 0.31], [1.14, 0.31]], [[1.02, 0.38], [1.14, 0.38]], 0.13, 10)] : []),
   // The spaced plate hung in front of the mantlet (Ausf. L, M).
-  ...(spaced ? [on(t, [[1.12, 0.48], [1.18, 0.48]], [[1.12, 0.62], [1.18, 0.62]], 0.08, 16)] : []),
+  ...(spaced ? [on(t, [[1.14, 0.46], [1.2, 0.46]], [[1.14, 0.4], [1.2, 0.4]], 0.11, 16)] : []),
+  // The stowage bin on the turret's back (from the G on, standard on the later turrets).
+  ...(bin ? [on(t, [[-1.55, 0.3], [-1.5, 0.47], [-0.95, 0.47]], [[-1.55, 0.58], [-0.95, 0.64]], 0.13, 14)] : []),
 ];
+// The turret's skirts (M, N): plates either side and round the back, behind the bin.
+const pz3TurretSkirts = (t: TurretSpec): TurretSpec[] => [...[-1, 1].map((s) => on(t, [[-1.25, 0.025], [0.7, 0.025]], [[-1.25, 0.62], [0.7, 0.62]], 0.1, 16, s * 1.1)), on(t, [[-1.68, 1.1], [-1.64, 1.1]], [[-1.68, 0.62], [-1.64, 0.62]], 0.1, 16)];
 // Ausf. E/F: the 37 mm in the internal mantlet.
-G['pz-iii-e'] = ww2({ ...PZ3, turret: { ...PZ3_T, gunX: 0.92 }, gun: { length: 1.55, calibre: 0.037, at: 0.37, elevation: 0 }, turretParts: (t) => pz3Parts(t, false) });
+G['pz-iii-e'] = ww2({ ...PZ3, turret: { ...PZ3_T, gunX: 1.0 }, gun: { length: 1.15, calibre: 0.037, at: 0.37, elevation: 0 }, turretParts: (t) => pz3Parts(t, false, false, false) });
 // Ausf. B (1937, 15 built): the E's hull and 37 mm turret on the earlier running gear, eight small road wheels a side
 // hung in pairs on four bogies under two long leaf springs (5.67 x 2.81 m, published). The wheel size and the bogie
 // spacing are estimates; the deck and turret are the E's.
-G['pz-iii-b'] = ww2({ ...PZ3, L: 5.67, W: 2.81, top: PZ3.top.map(([x, z]): P2 => [x * 1.027, z]), plan: [[-2.835, 1.405], [2.835, 1.405]], track: PZ3.track.map(([x, z]): P2 => [x * 1.027, z]), wheels: pairs([-1.2, -0.42, 0.42, 1.2], 0.44), r: 0.2, turret: { ...PZ3_T, gunX: 0.92 }, gun: { length: 1.55, calibre: 0.037, at: 0.37, elevation: 0 }, turretParts: (t) => pz3Parts(t, false) });
+G['pz-iii-b'] = ww2({ ...PZ3, L: 5.67, W: 2.81, top: PZ3.top.map(([x, z]): P2 => [x * 1.027, z]), plan: [[-2.835, 1.405], [2.835, 1.405]], track: PZ3.track.map(([x, z]): P2 => [x * 1.027, z]), wheels: pairs([-1.2, -0.42, 0.42, 1.2], 0.44), r: 0.2, turret: { ...PZ3_T, gunX: 1.0 }, gun: { length: 1.15, calibre: 0.037, at: 0.37, elevation: 0 }, turretParts: (t) => pz3Parts(t, false, false, false) });
 // Ausf. H/J: the 50 mm L/42 in the external mantlet.
-G['pz-iii-h'] = ww2({ ...PZ3, gun: { length: 1.65, calibre: 0.05, at: 0.37, elevation: 0 }, turretParts: (t) => pz3Parts(t) });
+G['pz-iii-h'] = ww2({ ...PZ3, gun: { length: 1.28, calibre: 0.05, at: 0.37, elevation: 0 }, turretParts: (t) => pz3Parts(t) });
 // Ausf. J1/L: the long 50 mm L/60 (6.41 m with the gun), the spaced plate before the mantlet.
-G['pz-iii-l'] = ww2({ ...PZ3, gun: { length: 3.0, calibre: 0.05, at: 0.37, elevation: 0 }, turretParts: (t) => pz3Parts(t, true, true) });
+G['pz-iii-l'] = ww2({ ...PZ3, gun: { length: 2.63, calibre: 0.05, at: 0.37, elevation: 0 }, turretParts: (t) => pz3Parts(t, true, true) });
 // Ausf. M: the L with skirts on the hull and round the turret.
-G['pz-iii-m'] = ww2({ ...PZ3, gun: { length: 3.0, calibre: 0.05, at: 0.37, elevation: 0 }, parts: skirtPair(1.65, -2.2, 1.8, 1.53, 0.5, 1.4), turretParts: (t) => [...pz3Parts(t, true, true), ...pz4TurretSkirts(t)] });
+G['pz-iii-m'] = ww2({ ...PZ3, gun: { length: 2.63, calibre: 0.05, at: 0.37, elevation: 0 }, parts: skirtPair(1.65, -2.2, 1.8, 1.53, 0.5, 1.4), turretParts: (t) => [...pz3Parts(t, true, true), ...pz3TurretSkirts(t)] });
 // Ausf. N: the short 75 mm L/24 and skirts.
-G['pz-iii-n'] = ww2({ ...PZ3, gun: { length: 1.3, calibre: 0.075, at: 0.37, elevation: 0 }, parts: skirtPair(1.65, -2.2, 1.8, 1.53, 0.5, 1.4), turretParts: (t) => [...pz3Parts(t), ...pz4TurretSkirts(t)] });
+G['pz-iii-n'] = ww2({ ...PZ3, gun: { length: 1.08, calibre: 0.075, at: 0.37, elevation: 0 }, parts: skirtPair(1.65, -2.2, 1.8, 1.53, 0.5, 1.4), turretParts: (t) => [...pz3Parts(t), ...pz3TurretSkirts(t)] });
 
 // ---------------------------------------------------------------- Pz 38(t), Hetzer, Marder III, Flakpanzer 38(t)
 
