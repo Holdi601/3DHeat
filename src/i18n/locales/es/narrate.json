@@ -7,7 +7,7 @@
   "insights.debrief.nothing": "Nada destaca: con una tasa de falsos descubrimientos de {fdr}, todo aquí queda dentro de lo que explica el azar. Más partidas afinan la imagen.",
   "insights.debrief.headline": "Lo más claro ({conf}): {text}.",
   "insights.debrief.tactics": "Para la táctica: {text}.",
-  "insights.debrief.balance": "Para el equilibrio: {text}.",
+  "insights.debrief.balance": "Para el balance del juego: {text}.",
   "insights.debrief.group": "{group}: {list}.",
   "insights.debrief.more": "{list} y {n} más",
   "insights.debrief.weak": "{n} de ellos se apoyan en pruebas más débiles: pistas por comprobar, no hechos.",
