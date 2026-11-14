@@ -835,7 +835,9 @@ G['pz-iii-n'] = ww2({ ...PZ3, gun: { length: 1.08, calibre: 0.075, at: 0.37, ele
 
 // Pz.Kpfw. 38(t): four big road wheels in two leaf-sprung pairs, two return rollers, a riveted box hull, the small
 // turret with its 37 mm and a low cupola. Hull 4.61 x 2.14 m, 2.4 m high.
-const PZ38_T = turret(0.15, [[-0.85, 0.62], [-0.75, 0.72], [0.65, 0.72], [0.8, 0.6]], [[-0.85, 0.58], [0.8, 0.6]], 14, 0.85);
+// The turret's plan (the back drawn in by its angled rear plates, the front plate narrower than the middle), its upright
+// sides, roof heights, place and the cupola's place as the CC-BY Panzer 38t model has them (sources.md).
+const PZ38_T = turret(0.22, [[-1.0, 0.33], [-0.8, 0.37], [-0.7, 0.42], [-0.5, 0.505], [-0.3, 0.595], [-0.1, 0.66], [0.3, 0.66], [0.5, 0.58], [0.6, 0.5], [0.85, 0.5], [0.9, 0.4]], [[-1.0, 0.58], [0.3, 0.6], [0.6, 0.62], [0.85, 0.62], [0.9, 0.56]], 14, 0.9);
 const PZ38: Ww2 = {
   cls: 'light-tank', L: 4.61, W: 2.14, deck: 1.67, fender: 0.88, horns: true,
   top: [[-2.3, 1.35], [-2.25, 1.6], [1.45, 1.67], [1.55, 1.4], [2.3, 1.05]],
@@ -843,7 +845,7 @@ const PZ38: Ww2 = {
   track: trk(2.25, 0.92, 0.55, 0.55, 1.45),
   wheels: pairs([-0.95, 0.95], 0.84), r: 0.38, rollers: [-0.55, 0.65],
 };
-G['pz-38t'] = ww2({ ...PZ38, turret: PZ38_T, gun: { length: 1.0, calibre: 0.037, at: 0.45 }, turretParts: (t) => [cupola(t, -0.4, -0.15, 0.27, 0.13)] });
+G['pz-38t'] = ww2({ ...PZ38, turret: PZ38_T, gun: { length: 0.88, calibre: 0.037, at: 0.45 }, turretParts: (t) => [cupola(t, 0.15, -0.3, 0.28, 0.22)] });
 // Jagdpanzer 38(t) "Hetzer": a low hull sloped on every side, the gun right of the centre in a Saukopf in the glacis,
 // four 0.825 m wheels (hull 4.87 x 2.63 m, 2.17 m high, 6.38 m with the gun).
 {

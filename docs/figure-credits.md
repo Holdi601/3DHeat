@@ -27,3 +27,4 @@ Some figure outlines were measured on drawings published under CC BY; their auth
 - Figure turret and gun derived from: "Panzer 3L low-poly" by jimhatama, CC BY 4.0, https://sketchfab.com/3d-models/edeb4c4cbb3543a98526a9fdbf9c11c0
 - Figure turret and gun derived from: "Kv-1 (КВ-1)" by Artem.Goyko, CC BY 4.0, https://sketchfab.com/3d-models/f23cf9b8822a4ad48f068a2c51c44848
 - Figure turret shape measured on: "T-34-85" by neominigan, CC BY 4.0, https://sketchfab.com/3d-models/71442c66ad92427c98a14ddd7206cc91
+- Figure turret shape measured on: "Panzer 38t" by _JooL_, CC BY 4.0, https://sketchfab.com/3d-models/9ed2f71d2e8247d9beb12d65ce1e87f7
