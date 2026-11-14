@@ -1,0 +1,111 @@
+/* Insights: a ranked list in the sidebar, one sentence a finding. */
+
+.ins-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 52vh;
+  overflow-y: auto;
+}
+
+.ins-item {
+  border: 1px solid var(--line-soft);
+  border-radius: 6px;
+  background: var(--bg);
+}
+
+.ins-item.open {
+  border-color: var(--accent-dim);
+}
+
+.ins-head {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  background: none;
+  color: var(--text);
+  text-align: left;
+  font-size: 12px;
+  line-height: 1.35;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  height: auto;
+  cursor: pointer;
+}
+
+.ins-head:hover {
+  background: var(--line-soft);
+}
+
+.ins-bar {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--line);
+}
+
+.ins-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.ins-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  color: var(--text-faint);
+  font-size: 11px;
+}
+
+.ins-conf.high {
+  color: var(--good);
+}
+
+.ins-conf.medium {
+  color: var(--accent);
+}
+
+.ins-details {
+  padding: 4px 8px 8px;
+  color: var(--text-dim);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ins-details dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 12px;
+}
+
+.ins-details dl > div {
+  display: contents;
+}
+
+.ins-details dt {
+  font-family: var(--mono);
+  color: var(--text-faint);
+}
+
+.ins-details dd {
+  margin: 0;
+  text-align: right;
+}
+
+.ins-details button {
+  align-self: flex-start;
+}

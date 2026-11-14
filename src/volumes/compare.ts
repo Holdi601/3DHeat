@@ -288,7 +288,7 @@ function closeVisit(a: Acc, p: number): void {
   a.visitAcc![p] = 0;
 }
 
-function rowShown(sc: CompareScope, ch: CompareChunk, j: number): boolean {
+export function rowShown(sc: CompareScope, ch: CompareChunk, j: number): boolean {
   if (ch.time) {
     const t = ch.time[j];
     if (sc.lifetimeNow !== null) {
