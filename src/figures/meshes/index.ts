@@ -27,6 +27,8 @@ import { T_34_1941 } from './t-34-1941';
 import { PZ_III_L } from './pz-iii-l';
 import { TIGER_I_E } from './tiger-i-e';
 import { KV_1 } from './kv-1';
+import { M1_ABRAMS } from './m1-abrams';
+import { TORTOISE } from './tortoise';
 
 export const MESH_FIGURES: Record<string, MeshFigureData> = {
   cromwell: CROMWELL,
@@ -35,4 +37,6 @@ export const MESH_FIGURES: Record<string, MeshFigureData> = {
   'pz-iii-l': PZ_III_L,
   'tiger-i-e': TIGER_I_E,
   'kv-1': KV_1,
+  'm1-abrams': M1_ABRAMS,
+  tortoise: TORTOISE,
 };

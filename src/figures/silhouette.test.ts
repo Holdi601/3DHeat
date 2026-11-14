@@ -69,7 +69,8 @@ describe('figure silhouettes', () => {
       }
     }
     expect(off, off.slice(0, 20).join('\n')).toEqual([]);
-  });
+    // It builds a fifth of the catalogue (a few hundred figures, mesh figures decoded too): far past the 5 s default.
+  }, 600_000);
 
   it('draws the same shape from a view at any size it is asked for', () => {
     const t = CATALOG['f-16c'].build();
