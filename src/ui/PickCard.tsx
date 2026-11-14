@@ -10,6 +10,7 @@ import { coord, copyText, rowFields } from './inspectFormat';
 import { formatLength } from '../render/measure';
 import { useUnits } from '../state/unitsStore';
 import { DirectionSpot } from './DirectionSpot';
+import { BreakdownButton } from './breakdown/BreakdownPanel';
 
 /**
  * Eye height for "stand here" on a surface, in world units (metres): standing
@@ -176,6 +177,7 @@ export function PickCard() {
           >
             {t('heat.inspect.standHere')}
           </button>
+          {pick.point && <BreakdownButton region="pick" label={t('breakdown.here')} />}
         </div>
       </div>
     </>

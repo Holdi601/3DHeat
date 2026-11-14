@@ -8,6 +8,7 @@ import { gpuVolumeFit } from '../../volumes/gpu';
 import { computeStatsAsync, SELECTION_ID, type ColumnStats, type StatsResult, type VolumeStats } from '../../volumes/stats';
 import { currentScope, scopeKey } from '../../volumes/scope';
 import { CompareButton, CompareWindow } from '../compare/ComparePanel';
+import { BreakdownButton } from '../breakdown/BreakdownPanel';
 import { downloadBlob, exportTest, saveSink, selectRows, statsCsv, statsJson, writeRows, type ExportFormat } from '../../volumes/export';
 import { shapeHeights, volumesFromJson, volumesToJson, withHeights, type Volume, type VolumeFilter } from '../../volumes/volume';
 
@@ -221,6 +222,7 @@ export function VolumePanel() {
           />
           <div className="row" style={{ marginTop: 6 }}>
             <CompareButton />
+            <BreakdownButton region="volume" volumeId={sel?.id ?? null} />
           </div>
           {progress !== null && <div className="hint">{t('volumes.stats.counting', { pct: num(progress * 100, 0) })}</div>}
           {stats && statsLayout === 'compare' && <CompareTable stats={stats} />}

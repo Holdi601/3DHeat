@@ -1,0 +1,58 @@
+/* The breakdown: the volume comparison's window (compare.css), its own lists and table marks. */
+
+.brk-controls {
+  align-items: center;
+  gap: 6px 14px;
+}
+
+.brk-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.brk-field select {
+  width: auto;
+  max-width: 220px;
+}
+
+.brk-field input[type='number'] {
+  width: 72px;
+}
+
+.brk-lists {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  margin-bottom: 10px;
+}
+
+.brk-list {
+  min-width: 200px;
+}
+
+.brk-list-title {
+  color: var(--text-dim);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.brk-list ol {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.brk-list li span {
+  margin-left: 10px;
+  color: var(--text-dim);
+}
+
+.brk-table tr.brk-on td {
+  background: rgba(57, 135, 229, 0.18);
+}
+
+.brk-table th.brk-sorted {
+  text-decoration: underline;
+}
