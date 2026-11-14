@@ -225,7 +225,7 @@ function targetsOf(volumes: readonly Volume[], ds: Dataset): Target[] {
 }
 
 /** A typical gap between one track's samples, for capping dwell across long gaps (a death, a disconnect). */
-function dwellCapOf(ds: Dataset): number {
+export function dwellCapOf(ds: Dataset): number {
   const life = ds.lifetime;
   if (!life) return Infinity;
   const sample: number[] = [];

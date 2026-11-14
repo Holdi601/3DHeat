@@ -44,8 +44,14 @@ export interface Volume {
 /** How the volumes filter what is drawn: not at all, only the selection, or all but it. */
 export type VolumeFilter = 'off' | 'inside' | 'outside';
 
-/** The palette new volumes cycle through: distinct from the heat ramp and the team hues' first picks. */
-export const VOLUME_COLORS = ['#38bdf8', '#f472b6', '#a3e635', '#fbbf24', '#c084fc', '#2dd4bf', '#fb7185', '#e2e8f0'];
+/**
+ * The colours new volumes take, in this order: a categorical palette checked
+ * for colour-blind and normal-vision separation of neighbours and contrast on
+ * the dark surface, so the comparison charts can colour each volume as the
+ * view does (ui/compare). The earlier palette's lime and amber neighbours could
+ * not be told apart in a chart.
+ */
+export const VOLUME_COLORS = ['#3987e5', '#d95926', '#199e70', '#c98500', '#d55181', '#008300', '#9085e9', '#e66767'];
 
 // ---------------------------------------------------------------------------
 // Compiled form: one world->unit transform per volume, for fast tests.

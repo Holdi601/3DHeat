@@ -7,6 +7,7 @@ import { selectedVolume, useVolumeStore, type DrawKind } from '../../volumes/sto
 import { gpuVolumeFit } from '../../volumes/gpu';
 import { computeStatsAsync, SELECTION_ID, type ColumnStats, type StatsResult, type VolumeStats } from '../../volumes/stats';
 import { currentScope, scopeKey } from '../../volumes/scope';
+import { CompareButton, CompareWindow } from '../compare/ComparePanel';
 import { downloadBlob, exportTest, saveSink, selectRows, statsCsv, statsJson, writeRows, type ExportFormat } from '../../volumes/export';
 import { shapeHeights, volumesFromJson, volumesToJson, withHeights, type Volume, type VolumeFilter } from '../../volumes/volume';
 
@@ -146,6 +147,8 @@ export function VolumePanel() {
   const shownStats = stats?.volumes.filter((s) => (statsLayout === 'compare' ? true : s.id === (sel?.id ?? (stats.volumes.length > 1 ? SELECTION_ID : stats.volumes[0]?.id)))) ?? [];
 
   return (
+    <>
+    <CompareWindow />
     <Section key={focusNonce} title={t('volumes.title')} defaultOpen={focusNonce > 0 || volumes.length > 0}>
       {!dataset && <div className="hint">{t('volumes.noData')}</div>}
       <div className="row" style={{ flexWrap: 'wrap', gap: 4 }}>
@@ -216,6 +219,9 @@ export function VolumePanel() {
             ]}
             onChange={vs.setStatsLayout}
           />
+          <div className="row" style={{ marginTop: 6 }}>
+            <CompareButton />
+          </div>
           {progress !== null && <div className="hint">{t('volumes.stats.counting', { pct: num(progress * 100, 0) })}</div>}
           {stats && statsLayout === 'compare' && <CompareTable stats={stats} />}
           {stats && statsLayout === 'selected' && shownStats.map((s) => <StatsView key={s.id} s={s} stats={stats} />)}
@@ -257,6 +263,7 @@ export function VolumePanel() {
       )}
       {exportMsg && <div className="hint">{exportMsg}</div>}
     </Section>
+    </>
   );
 }
 

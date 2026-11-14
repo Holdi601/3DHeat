@@ -1,0 +1,277 @@
+/* Comparing volumes: a window over the bottom of the view. */
+
+.cmp-window {
+  --cmp-surface: #14171c;
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  height: min(56%, 560px);
+  min-height: 260px;
+  z-index: var(--z-panel);
+  display: flex;
+  flex-direction: column;
+  background: var(--cmp-surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  color: var(--text);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cmp-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line-soft);
+  flex-wrap: wrap;
+}
+
+.cmp-status {
+  flex: 1;
+  color: var(--text-dim);
+  font-size: 11px;
+  min-width: 0;
+}
+
+.cmp-close {
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px 8px;
+}
+
+.cmp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.cmp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cmp-chip.off {
+  opacity: 0.5;
+}
+
+.cmp-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+}
+
+.cmp-link:hover {
+  text-decoration: underline;
+}
+
+.cmp-glyph {
+  flex: none;
+  display: inline-block;
+}
+
+.cmp-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.cmp-scroll {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  padding: 8px 12px 12px;
+}
+
+.cmp-empty {
+  padding: 24px 12px;
+  color: var(--text-dim);
+}
+
+.cmp-hint {
+  margin: 0 0 8px;
+  color: var(--text-faint);
+  font-size: 11px;
+}
+
+.cmp-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+  color: var(--text-dim);
+}
+
+.cmp-table {
+  border-collapse: collapse;
+  min-width: 100%;
+}
+
+.cmp-table th,
+.cmp-table td {
+  padding: 3px 10px;
+  text-align: right;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.cmp-table th:first-child,
+.cmp-table td:first-child {
+  text-align: left;
+  position: sticky;
+  left: 0;
+  background: var(--cmp-surface);
+}
+
+.cmp-table thead th {
+  position: sticky;
+  top: -8px;
+  background: var(--cmp-surface);
+  font-weight: 600;
+  z-index: 1;
+}
+
+.cmp-vh {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cmp-sortable {
+  cursor: pointer;
+}
+
+.cmp-sortable.on {
+  text-decoration: underline;
+}
+
+.cmp-group td {
+  color: var(--text-dim);
+  font-size: 11px;
+  padding-top: 10px;
+  text-transform: none;
+  font-weight: 600;
+}
+
+.cmp-mlabel {
+  color: var(--text-dim);
+}
+
+.cmp-delta {
+  color: var(--text-faint);
+  font-size: 10.5px;
+}
+
+.cmp-svg {
+  display: block;
+  overflow: visible;
+}
+
+.cmp-grid {
+  stroke: var(--line-soft);
+  stroke-width: 1;
+}
+
+.cmp-base {
+  stroke: var(--text-faint);
+  stroke-width: 1;
+}
+
+.cmp-cross {
+  stroke: var(--text-dim);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.cmp-axis {
+  fill: var(--text-faint);
+  font-size: 10px;
+}
+
+.cmp-label {
+  fill: var(--text-dim);
+  font-size: 11px;
+}
+
+.cmp-axis-title {
+  color: var(--text-faint);
+  font-size: 10.5px;
+  text-align: center;
+  margin-top: 2px;
+}
+
+.cmp-hit {
+  cursor: pointer;
+}
+
+.cmp-grid-multi {
+  display: grid;
+  gap: 12px;
+}
+
+.cmp-cell {
+  stroke: var(--line-soft);
+  stroke-width: 1;
+}
+
+.cmp-cell-text {
+  fill: var(--text);
+  font-size: 10.5px;
+  pointer-events: none;
+}
+
+.cmp-cell-dark {
+  fill: #0b0d10;
+  font-size: 10.5px;
+  pointer-events: none;
+}
+
+.cmp-ribbon {
+  opacity: 0.45;
+}
+
+.cmp-ribbon:hover {
+  opacity: 0.8;
+}
+
+.cmp-flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.cmp-sub {
+  color: var(--text-dim);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.cmp-tip {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  background: rgba(12, 14, 18, 0.94);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 9px;
+  font-size: 11px;
+  color: var(--text-dim);
+  max-width: 340px;
+  white-space: nowrap;
+}
+
+.cmp-tip-head {
+  color: var(--text);
+  font-weight: 600;
+}
