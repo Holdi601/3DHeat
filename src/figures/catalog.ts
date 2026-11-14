@@ -17,6 +17,8 @@ import { buildNaval, type NavalSpec } from './naval';
 import { buildMarker, type MarkerKind } from './markers';
 import { SPEC_SETS } from './specs';
 import { fitTurrets } from './specs/turret-fit';
+import { fitHulls } from './specs/hull-fit';
+import { fitAircraft } from './specs/air-fit';
 import { buildMeshFigure } from './meshfig';
 import { MESH_FIGURES } from './meshes';
 
@@ -160,8 +162,11 @@ for (const set of SPEC_SETS) {
   Object.assign(N, set.naval ?? {});
 }
 
-// Turret places fitted to the reference where the sources leave them open (specs/turret-fit.ts).
+// Turret places fitted to the reference where the sources leave them open (specs/turret-fit.ts), then the hulls' heights and lengths (specs/hull-fit.ts).
 fitTurrets(G);
+fitHulls(G);
+// Wings and tails fitted the same way (specs/air-fit.ts).
+fitAircraft(A);
 
 /** Names in data (lower case) mapped to catalogue entries, from every spec set. */
 export const ALIASES: Record<string, string> = Object.assign({}, ...SPEC_SETS.map((s) => s.aliases ?? {}));
