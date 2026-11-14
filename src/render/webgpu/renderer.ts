@@ -1,3 +1,4 @@
+import { GpuZones } from './zones';
 import { GpuPost } from './post';
 import { GpuDirField } from './dirField';
 import { VOLUME_BLOCK_BYTES, VOLUME_BLOCK_FLOATS } from '../../volumes/gpu';
@@ -311,6 +312,8 @@ export class WebgpuRenderer implements Renderer {
   private topTriPipeline: GPURenderPipeline | null = null;
   private topTriData: Float32Array | null = null;
   private topTriCount = 0;
+  /** The capture zones' discs (`FrameParams.objectiveZones`), made on first use. */
+  private zones: GpuZones | null = null;
   /** The see-through triangles on the ground (`FrameParams.groundTris`) and which array they last were. */
   private groundTriBuffer: GPUBuffer | null = null;
   private groundTriData: Float32Array | null = null;
@@ -2243,6 +2246,11 @@ export class WebgpuRenderer implements Renderer {
       pass.setVertexBuffer(0, this.groundTriBuffer);
       pass.draw(params.groundTriCount);
     }
+    if (params.objectiveZones?.ground) {
+      this.zones ??= new GpuZones(this.device, SCENE_FORMAT, DEPTH_FORMAT, this.canvasFormat);
+      this.zones.prepare(params, params.objectiveZones, true);
+      this.zones.draw(pass, params.objectiveZones, true);
+    }
 
     // The far-off glyphs: map symbols, weapons, decoys (`symbols/`), over everything in the scene.
     if (params.symbols) {
@@ -2979,6 +2987,11 @@ export class WebgpuRenderer implements Renderer {
     // Lines over the picture, the heat included (`FrameParams.topVerts`): in the same pass, after it.
     const top = params.topVerts && params.topVertCount ? this.topLines(params, params.topVerts, params.topVertCount) : null;
     const topTris = params.topTris && params.topTriCount ? this.topTriangles(params, params.topTris, params.topTriCount) : null;
+    const zones = params.objectiveZones;
+    if (zones) {
+      this.zones ??= new GpuZones(this.device, SCENE_FORMAT, DEPTH_FORMAT, this.canvasFormat);
+      this.zones.prepare(params, zones, false);
+    }
 
     const target = this.context.getCurrentTexture();
     this.debug.compositeTarget = `${target.width}x${target.height} ${target.format}`;
@@ -3012,6 +3025,7 @@ export class WebgpuRenderer implements Renderer {
           pass.setVertexBuffer(0, topTris.buffer);
           pass.draw(topTris.count);
         }
+        if (zones && this.zones) this.zones.draw(pass, zones, false);
         if (top) {
           pass.setPipeline(top.pipeline);
           pass.setBindGroup(0, top.group);
@@ -3902,6 +3916,7 @@ export class WebgpuRenderer implements Renderer {
   }
 
   dispose(): void {
+    this.zones?.dispose();
     for (const j of this.pendingChunks) {
       j.positions?.destroy();
       j.times?.destroy();

@@ -1,3 +1,4 @@
+import { GlZones } from './zones';
 import { VOL_CFG, VOL_INFO, VOL_M, VOL_POLY, VOLUME_BLOCK_FLOATS, type VolumeDraw } from '../../volumes/gpu';
 import { GlFigures } from './figures';
 import { GlSymbols } from './symbols';
@@ -307,6 +308,8 @@ export class Webgl2Renderer implements Renderer {
   private top: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number } | null = null;
   /** The triangles over the picture (`FrameParams.topTris`) and which array they last were. */
   private topTris: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number; data: Float32Array | null; count: number } | null = null;
+  /** The capture zones' discs (`FrameParams.objectiveZones`), made on first use. */
+  private zones: GlZones | null = null;
   /** The see-through triangles on the ground (`FrameParams.groundTris`), the same. */
   private groundTris: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number; data: Float32Array | null; count: number } | null = null;
   private triVao: WebGLVertexArrayObject;
@@ -1666,6 +1669,7 @@ export class Webgl2Renderer implements Renderer {
     if (params.gpuTracks && this.tracks && this.figures) this.tracks.drawSeeThrough(this.figures);
     if (params.sceneTris && params.sceneTriVertCount > 0) this.drawSceneTris(params, params.sceneTris, params.sceneTriVertCount, 2);
     if (params.groundTris && params.groundTriCount) this.drawTopTris(params, params.groundTris, params.groundTriCount, true);
+    if (params.objectiveZones?.ground) (this.zones ??= new GlZones(this.gl)).draw(params, params.objectiveZones, true);
     // The far-off glyphs: map symbols, weapons, decoys (`symbols/`), over everything in the scene.
     if (params.symbols) {
       this.symbols ??= new GlSymbols(this.gl);
@@ -2792,6 +2796,7 @@ export class Webgl2Renderer implements Renderer {
     // answer often enough to look correct in testing.
     if (params.mode !== 'team') this.dirField?.draw(params, this.width, this.height, this.emptyVao);
     if (params.topTris && params.topTriCount) this.drawTopTris(params, params.topTris, params.topTriCount);
+    if (params.objectiveZones) (this.zones ??= new GlZones(this.gl)).draw(params, params.objectiveZones, false);
     if (params.topVerts && params.topVertCount) this.drawTop(params, params.topVerts, params.topVertCount);
     if (!target) this.readCapture();
   }
@@ -3524,6 +3529,7 @@ export class Webgl2Renderer implements Renderer {
     }
     this.pendingChunks = [];
     this.symbols?.dispose();
+    this.zones?.dispose();
     this.symbols = null;
     this.figures?.dispose();
     this.post?.dispose();

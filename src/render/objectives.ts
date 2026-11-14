@@ -23,6 +23,7 @@ import { matchesOf, pickedMatches } from '../match/matches';
 import { SOURCE_COLUMN } from '../data/builder';
 import { OBJECTIVE_LAYERS as OBJECTIVE_LAYER_LIST, toWorld, zoneAt, type Objective, type ObjectiveLayer, type ObjectiveTimeline, type Vec3 } from '../match/objectives';
 import { runSlice, WAIT, type SliceJob } from '../data/slices';
+import { MAX_ZONES, ZONE_PART, ZONE_STATE_FLOATS, ZONE_VERTEX_FLOATS } from './zoneShaders';
 
 /** One battle's objectives and where its replay seconds are on the dataset's clock. */
 export interface ObjectiveSource {
@@ -67,7 +68,6 @@ interface Placed {
 
 /** A zone's disc from just outside its edge in: a dark rim (it reads on any ground), the edge band, the progress band, then the fill. */
 const ZONE_STEPS = [1.05, 1, 0.88, 0.77, 0.6, 0.4, 0.2, 0];
-const RIM: [number, number, number] = [0.04, 0.05, 0.07];
 /** A spawn's or a marker's: the edge band, then the fill. */
 const MARK_STEPS = [1, 0.72, 0.35, 0];
 /** The triangles' height above the ground, over the lines' (the triangles between two points cut a rise less). */
@@ -221,9 +221,49 @@ function middle(pts: Float32Array): [number, number, number] {
   return [x, y, z];
 }
 
-/** `appendBand` for the pieces `from` to `to` only. */
-function appendBandFrom(out: Float32Array, v: number, a: Float32Array, b: Float32Array, from: number, to: number, rgb: readonly number[], alpha: number): number {
-  return appendBand(out, v, a.subarray(from * 3), b.subarray(from * 3), to - from, rgb, alpha);
+/**
+ * The zones' discs as `zoneShaders.ts` reads them: the rim, the band, the
+ * capture band and the fill between their shrunk outlines (`ZONE_STEPS`),
+ * each point with its zone's middle, part, angle, zone and radius.
+ */
+function zoneVerts(zones: Placed[]): Float32Array {
+  let need = 0;
+  for (const p of zones) for (const d of p.discs) need += (d.length - 1) * (d[0].length / 3 - 1) * 6;
+  const out = new Float32Array(need * ZONE_VERTEX_FLOATS);
+  let v = 0;
+  zones.forEach((p, zi) => {
+    for (const d of p.discs) {
+      const n = d[0].length / 3 - 1;
+      const mid = d[d.length - 1];
+      const mx = mid[0];
+      const my = mid[1];
+      const mz = mid[2];
+      let r = 0;
+      for (let i = 0; i < n; i++) r = Math.max(r, Math.hypot(d[1][i * 3] - mx, d[1][i * 3 + 2] - mz));
+      for (let k = 0; k + 1 < d.length; k++) {
+        const part = k === 0 ? ZONE_PART.rim : k === 1 ? ZONE_PART.band : k === 2 ? ZONE_PART.capture : ZONE_PART.fill;
+        const a = d[k];
+        const b = d[k + 1];
+        for (let i = 0; i < n; i++) {
+          for (const [q, j] of [[a, i], [b, i], [a, i + 1], [a, i + 1], [b, i], [b, i + 1]] as const) {
+            const o = v * ZONE_VERTEX_FLOATS;
+            out[o] = q[j * 3];
+            out[o + 1] = q[j * 3 + 1];
+            out[o + 2] = q[j * 3 + 2];
+            out[o + 3] = mx;
+            out[o + 4] = my;
+            out[o + 5] = mz;
+            out[o + 6] = part;
+            out[o + 7] = j / n;
+            out[o + 8] = zi;
+            out[o + 9] = r;
+            v++;
+          }
+        }
+      }
+    }
+  });
+  return out;
 }
 
 /** Appends the triangles between two shrunk outlines (`a` outer, `b` inner), the first `upTo` pieces of them; the vertex count after. */
@@ -386,6 +426,11 @@ function* place(sources: ObjectiveSource[], axes: Dataset['axes'] | null, ground
   return out;
 }
 
+/** Whether an objective is drawn as lines: the areas and the targets' crosses; the rest are discs. */
+function linesOf(o: Objective): boolean {
+  return o.layer === 'areas' || o.layer === 'targets';
+}
+
 /** Appends the line pieces of a run of points (xyz) to `out` from vertex `v`; the vertex count after. */
 function appendRun(out: Float32Array, v: number, pts: Float32Array, count: number, rgb: readonly number[], a: number): number {
   for (let i = 0; i + 1 < count; i++) {
@@ -448,12 +493,15 @@ export class ObjectiveLayerDraw {
    */
   ground: ObjectiveTris | null = null;
   top: ObjectiveTris | null = null;
-  private trisKey = '';
-  private trisFor: unknown[] = [];
-  /** The markers' shapes (everything but the zones), and what they were made for. */
-  private marks: { ground: ObjectiveTris | null; top: ObjectiveTris | null } = { ground: null, top: null };
+  /** What the markers' shapes were made for. */
   private markFor: Placed[] | null = null;
   private markKey = '';
+  /**
+   * The zones' discs (`zoneShaders.ts`): their vertices made once a battle,
+   * `ZONE_VERTEX_FLOATS` each; their state at the playhead, `ZONE_STATE_FLOATS` a zone.
+   */
+  zones: { verts: Float32Array; count: number; state: Float32Array } | null = null;
+  private zoneFor: Placed[] | null = null;
 
   /**
    * The objectives' lines appended to `base` (its first `baseCount`
@@ -479,17 +527,15 @@ export class ObjectiveLayerDraw {
     // Room for every point twice, as line pieces, plus what is there.
     let need = baseCount;
     for (const p of placed) {
-      if (!f.layers[p.o.layer]) continue;
+      if (!f.layers[p.o.layer] || !linesOf(p.o)) continue;
       for (const o of p.outlines) need += (o.pts.length / 3) * 2;
     }
     const labels: ObjectiveLabel[] = [];
-    if (need === baseCount) {
-      this.setLabels(labels);
-      return { data: base, count: baseCount };
-    }
-    if (this.buf.length < need * 7) this.buf = new Float32Array(need * 7 * 1.5);
+    // No lines to add (the zones are only discs): the labels, and `base` as it is.
+    const lines = need > baseCount;
+    if (lines && this.buf.length < need * 7) this.buf = new Float32Array(need * 7 * 1.5);
     const out = this.buf;
-    if (base && baseCount) out.set(base.subarray(0, baseCount * 7));
+    if (lines && base && baseCount) out.set(base.subarray(0, baseCount * 7));
     let v = baseCount;
     for (const p of placed) {
       const o = p.o;
@@ -499,7 +545,6 @@ export class ObjectiveLayerDraw {
         // Its owner and the capture at the playhead: the replay's, when one battle is shown.
         const st = this.zoneState(o, f, one);
         const rgb = st.owner ? f.teamColor(st.owner) : NEUTRAL;
-        for (const ol of p.outlines) v = appendRun(out, v, ol.pts, ol.pts.length / 3, rgb, 0.95);
         // A capture under way: how far it has come and by whom, for the letter's ring.
         const by = st.progress > 0 ? 2 : st.progress < 0 ? 1 : 0;
         const capturing = by && (Math.abs(st.progress) < 100 || st.owner !== by);
@@ -518,7 +563,7 @@ export class ObjectiveLayerDraw {
       }
       const rgb = o.layer === 'areas' ? (o.type === 'battle_area' ? AREA : teamRgb) : o.layer === 'targets' ? TARGET : teamRgb;
       const a = o.layer === 'areas' ? (o.type === 'battle_area' ? 0.7 : 0.45) : 0.9;
-      for (const ol of p.outlines) v = appendRun(out, v, ol.pts, ol.pts.length / 3, rgb, a);
+      if (linesOf(o)) for (const ol of p.outlines) v = appendRun(out, v, ol.pts, ol.pts.length / 3, rgb, a);
       if (o.layer === 'spawns') {
         // How many began there; a spawn nobody used (an air spawn in a ground battle) says nothing.
         if (o.used)
@@ -554,7 +599,7 @@ export class ObjectiveLayerDraw {
       }
     }
     this.setLabels(labels);
-    return { data: out, count: v };
+    return lines ? { data: out, count: v } : { data: base, count: baseCount };
   }
 
   /** Nothing drawn: the labels go too. */
@@ -562,8 +607,9 @@ export class ObjectiveLayerDraw {
     if (this.labels.length) this.setLabels([]);
     this.ground = null;
     this.top = null;
-    this.trisKey = '';
     this.markFor = null;
+    this.zones = null;
+    this.zoneFor = null;
   }
 
   /** A zone's owner and capture at the playhead: the replay's, when one battle is shown. */
@@ -572,9 +618,10 @@ export class ObjectiveLayerDraw {
   }
 
   /**
-   * The filled shapes (`ground`, `top`), when what they show has changed: the
-   * markers' only with the layers or the colours, the zones' with their state
-   * as well, the two copied together.
+   * The filled shapes: the markers' (`ground`, `top`) made again only with
+   * the layers or the colours; the zones' (`zones`) only with the battles,
+   * their state - owner, capture - a few floats a zone a frame, which the
+   * shaders read (`zoneShaders.ts`).
    */
   private buildTris(f: ObjectiveFrame, placed: Placed[], one: ObjectiveSource | null): void {
     const layers = OBJECTIVE_LAYER_LIST.map((l) => (f.layers[l] ? 1 : 0)).join('');
@@ -582,34 +629,38 @@ export class ObjectiveLayerDraw {
     if (this.markFor !== placed || this.markKey !== look) {
       this.markFor = placed;
       this.markKey = look;
-      this.marks = this.trisOf(f, placed.filter((p) => p.o.layer !== 'zones'), one);
-      this.trisKey = '';
+      const marks = this.trisOf(f, placed.filter((p) => p.o.layer !== 'zones'));
+      this.ground = marks.ground;
+      this.top = marks.top;
     }
-    let key = look;
-    const zones = placed.filter((p) => p.o.layer === 'zones');
-    for (const p of zones) if (f.layers.zones) {
-      const st = this.zoneState(p.o, f, one);
-      key += `|${st.owner}:${Math.round(st.progress)}`;
+    const zones = f.layers.zones ? placed.filter((p) => p.o.layer === 'zones' && p.discs.length).slice(0, MAX_ZONES) : [];
+    if (this.zoneFor !== placed || (this.zones !== null) !== zones.length > 0) {
+      this.zoneFor = placed;
+      this.zones = zones.length ? { verts: zoneVerts(zones), count: 0, state: new Float32Array(MAX_ZONES * ZONE_STATE_FLOATS) } : null;
+      if (this.zones) this.zones.count = this.zones.verts.length / ZONE_VERTEX_FLOATS;
     }
-    const forWhat = [placed, ...f.sources.map((s) => s.timeline)];
-    if (key === this.trisKey && forWhat.length === this.trisFor.length && forWhat.every((k, i) => k === this.trisFor[i])) return;
-    this.trisKey = key;
-    this.trisFor = forWhat;
-    const z = this.trisOf(f, zones, one);
-    const join = (a: ObjectiveTris | null, b: ObjectiveTris | null): ObjectiveTris | null => {
-      if (!a || !b) return a ?? b;
-      const data = new Float32Array((a.count + b.count) * 7);
-      data.set(a.data.subarray(0, a.count * 7));
-      data.set(b.data.subarray(0, b.count * 7), a.count * 7);
-      return { data, count: a.count + b.count };
-    };
-    // Zones last: their discs over a spawn's where both are.
-    this.ground = join(this.marks.ground, z.ground);
-    this.top = join(this.marks.top, z.top);
+    if (!this.zones) return;
+    const st = this.zones.state;
+    zones.forEach((p, i) => {
+      const z = this.zoneState(p.o, f, one);
+      const rgb = z.owner ? f.teamColor(z.owner) : NEUTRAL;
+      const by = z.progress > 0 ? 2 : z.progress < 0 ? 1 : 0;
+      const capturing = by && (Math.abs(z.progress) < 100 || z.owner !== by);
+      const cap = by ? f.teamColor(by) : NEUTRAL;
+      const o = i * ZONE_STATE_FLOATS;
+      st[o] = rgb[0];
+      st[o + 1] = rgb[1];
+      st[o + 2] = rgb[2];
+      st[o + 3] = z.owner ? 1 : 0;
+      st[o + 4] = cap[0];
+      st[o + 5] = cap[1];
+      st[o + 6] = cap[2];
+      st[o + 7] = capturing ? Math.min(1, Math.abs(z.progress) / 100) : 0;
+    });
   }
 
   /** The filled shapes of `placed`, on the ground and over everything. */
-  private trisOf(f: ObjectiveFrame, placed: Placed[], one: ObjectiveSource | null): { ground: ObjectiveTris | null; top: ObjectiveTris | null } {
+  private trisOf(f: ObjectiveFrame, placed: Placed[]): { ground: ObjectiveTris | null; top: ObjectiveTris | null } {
     let need = 0;
     for (const p of placed) {
       if (!f.layers[p.o.layer]) continue;
@@ -623,29 +674,6 @@ export class ObjectiveLayerDraw {
     for (const p of placed) {
       const o = p.o;
       if (!f.layers[o.layer] || !p.discs.length) continue;
-      if (o.layer === 'zones') {
-        const st = this.zoneState(o, f, one);
-        const rgb = st.owner ? f.teamColor(st.owner) : NEUTRAL;
-        const by = st.progress > 0 ? 2 : st.progress < 0 ? 1 : 0;
-        const capturing = by && (Math.abs(st.progress) < 100 || st.owner !== by);
-        for (const d of p.discs) {
-          const n = d[0].length / 3 - 1;
-          // The edge, heavy, in the owner's colour (a neutral zone's lighter).
-          gv = appendBand(g, gv, d[0], d[1], n, RIM, 0.6);
-          gv = appendBand(g, gv, d[1], d[2], n, rgb, 0.9);
-          tv = appendBand(t, tv, d[1], d[2], n, rgb, 0.9 * f.xray);
-          // The progress band: as far round as the capture has come, in the capturing side's colour.
-          const upTo = capturing ? Math.max(1, Math.round(n * Math.min(1, Math.abs(st.progress) / 100))) : 0;
-          if (upTo) {
-            gv = appendBand(g, gv, d[2], d[3], upTo, f.teamColor(by), 0.9);
-            tv = appendBand(t, tv, d[2], d[3], upTo, f.teamColor(by), 0.9 * f.xray);
-          }
-          if (upTo < n) gv = appendBandFrom(g, gv, d[2], d[3], upTo, n, RIM, 0.35);
-          // The fill.
-          for (let i = 3; i + 1 < d.length; i++) gv = appendBand(g, gv, d[i], d[i + 1], n, rgb, st.owner ? 0.25 : 0.16);
-        }
-        continue;
-      }
       const rgb = o.layer === 'targets' ? TARGET : o.team ? f.teamColor(o.team) : NEUTRAL;
       for (const d of p.discs) {
         const n = d[0].length / 3 - 1;

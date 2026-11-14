@@ -132,22 +132,17 @@ describe('objectives', () => {
         0,
       );
     const before = frame(5);
-    const beforeTop = draw.top!.count;
+    const verts = draw.zones!.verts;
     expect(draw.labels[0].progress).toBe(0);
-    const during = frame(20);
-    // The edge line at the zone's height; half a progress band more, in team 2's colour, filled on the ground.
-    expect(during.data![1]).toBeCloseTo(11.2, 3);
-    expect(draw.top!.count).toBeGreaterThan(beforeTop);
-    const top = draw.top!;
-    const last = (top.count - 1) * 7;
-    expect([...top.data.subarray(last + 3, last + 6)]).toEqual([0, 0, 1]);
-    expect(top.data[last + 6]).toBeCloseTo(0.45, 5);
-    expect(draw.ground!.data[1]).toBeCloseTo(11.2, 3);
+    expect(draw.zones!.state[7]).toBe(0);
+    frame(20);
+    // The disc at the zone's height, made once; the capture only in its state: half way, by team 2.
+    expect(draw.zones!.verts).toBe(verts);
+    expect(verts[1]).toBeCloseTo(11.2, 3);
+    expect(verts[9]).toBeCloseTo(140, 0);
+    expect([...draw.zones!.state.subarray(4, 8)]).toEqual([0, 0, 1, 0.5]);
     expect(draw.labels.map((l) => [l.kind, l.text, l.progress])).toEqual([['zone', 'A', 0.5]]);
-    // Unchanged state: the same arrays, nothing made again.
-    const ground = draw.ground;
-    frame(21);
-    expect(draw.ground).toBe(ground);
     expect(frame(5).count).toBe(before.count);
+    expect(draw.zones!.state[7]).toBe(0);
   });
 });

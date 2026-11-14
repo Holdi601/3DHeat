@@ -562,6 +562,13 @@ export interface FrameParams {
    */
   groundTris?: Float32Array | null;
   groundTriCount?: number;
+  /**
+   * The capture zones' discs (`zoneShaders.ts`): vertices made once a battle
+   * (uploaded only when they are a new array), each zone's state a frame in
+   * the uniforms. `ground`: on the ground with the scene's see-through
+   * triangles as well; always over the finished picture at `xray` of their alpha.
+   */
+  objectiveZones?: { verts: Float32Array; count: number; state: Float32Array; ground: boolean; xray: number } | null;
   /** Directional heat: wedge sprites and the direction field. Null or absent draws neither. */
   direction?: DirectionDraw | null;
 

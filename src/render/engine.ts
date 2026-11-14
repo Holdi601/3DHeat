@@ -105,6 +105,8 @@ const SLICE_MS = 5;
 const HIT_MARK_BUDGET_MS = 2;
 /** The replay's objectives over the picture, where the ground hides them: this much of their alpha. */
 const OBJECTIVE_XRAY = 0.4;
+/** The replay's objective lines (areas, targets), over the picture only: this much of their alpha. */
+const OBJECTIVE_LINES = 0.8;
 
 export interface LiveReadout {
   playhead: number;
@@ -2101,13 +2103,13 @@ export class Engine {
   }
 
   /** The objectives' vertices (`from` to `to` of `data`) at a fraction of their alpha, to draw over the picture. */
-  private objectiveXray(data: Float32Array | null, from: number, to: number): { data: Float32Array; count: number } | null {
+  private objectiveXray(data: Float32Array | null, from: number, to: number, share = OBJECTIVE_XRAY): { data: Float32Array; count: number } | null {
     const n = to - from;
     if (!data || n <= 0) return null;
     if (this.xrayVerts.length < n * 7) this.xrayVerts = new Float32Array(Math.ceil(n * 1.5) * 7);
     const out = this.xrayVerts;
     out.set(data.subarray(from * 7, to * 7));
-    for (let i = 6; i < n * 7; i += 7) out[i] *= OBJECTIVE_XRAY;
+    for (let i = 6; i < n * 7; i += 7) out[i] *= share;
     return { data: out, count: n };
   }
 
@@ -3608,11 +3610,10 @@ export class Engine {
       this.objectiveTopTris = null;
     } else if (s.mode === 'team') {
       if (!compositeOnly) {
-        const ob = this.frameObjectives(s, objectiveSrc, trailVerts, trailVertCount);
-        this.objectiveTop = this.objectiveXray(ob.data, trailVertCount, ob.count);
+        // The lines (areas, targets' crosses) only over the picture: not copied in with the trails every frame.
+        const ob = this.frameObjectives(s, objectiveSrc, null, 0);
+        this.objectiveTop = this.objectiveXray(ob.data, 0, ob.count, OBJECTIVE_LINES);
         this.objectiveTopTris = this.objectiveDraw.top;
-        trailVerts = ob.data;
-        trailVertCount = ob.count;
       }
     } else if (!compositeOnly || !this.objectiveTop) {
       const ob = this.frameObjectives(s, objectiveSrc, null, 0);
@@ -3795,6 +3796,10 @@ export class Engine {
       topVertCount: this.directions.top(this.objectiveTop)?.count ?? 0,
       topTris: this.objectiveTopTris?.data ?? null,
       groundTris: objGround?.data ?? null,
+      objectiveZones:
+        !raceBuilt && objectiveSrc.length && this.objectiveDraw.zones
+          ? { ...this.objectiveDraw.zones, ground: s.mode === 'team', xray: s.mode === 'team' ? OBJECTIVE_XRAY : 1 }
+          : null,
       groundTriCount: objGround?.count ?? 0,
       topTriCount: this.objectiveTopTris?.count ?? 0,
       direction: raceTab || s.mode === 'team' ? null : this.directions.frame(window.devicePixelRatio || 1, now),
