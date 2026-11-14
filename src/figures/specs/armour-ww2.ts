@@ -615,9 +615,16 @@ G['t-34-76-1943'] = t34(5.92, T34_HEX, F34, true, (t) => [cupola(t, -0.45, -0.5,
 // ring to the mantlet 1.9 m ahead of the hull's middle, the roof 0.85 m over the hull's, the bore 2.05 m up.
 // The casting as the pamphlet's photographs show it: the broad lip at its foot, the sides leaning in to a flat roof with
 // a tight rounded edge, the back a flat plate bending round into the sides, the cheeks drawn in to the mantlet.
-const T34_85_0 = turret(0.5, [...roundEnd(-1.32, 1.22, 0.5, 1), [0.6, 1.28], [1.1, 1.0], [1.25, 0.6]], [[-1.32, 0.6], [-1.2, 0.8], [-0.95, 0.85], [0.25, 0.85], [0.75, 0.72], [1.1, 0.55], [1.25, 0.48]], 3, 1.25);
-const T34_85: TurretSpec = { ...T34_85_0, outline: { ...T34_85_0.outline!, section: [[-1, 0.97], [-0.8, 1], [-0.6, 0.97], [0.75, 0.84], [0.92, 0.76], [1, 0.62]] } };
-G['t-34-85'] = t34(6.1, T34_85, { length: 3.25, calibre: 0.085, at: 0.59, elevation: 0 }, true, (t) => [cupola(t, -0.33, -0.45, 0.32, 0.25), on(t, [[1.2, 0.45], [1.42, 0.4]], [[1.2, 0.72], [1.42, 0.68]], [[1.2, 0.3], [1.42, 0.34]], 4)]);
+// Its plan (the back rounded off, widest just behind the ring, the cheeks drawn in to the mantlet) and its section (the
+// foot drawn in under the widest point a third of the way up, the sides leaning in to the roof's rounded edge) as the
+// CC0 T-34 model and the CC-BY T-34-85 model both have them (sources.md): 2.1 m across, not the 2.5 m estimated before.
+const T34_85_0 = turret(0.5, [[-1.3, 0.45], [-1.25, 0.8], [-1.15, 0.92], [-1.0, 0.98], [-0.6, 1.03], [-0.3, 1.055], [0, 1.04], [0.2, 0.99], [0.6, 0.89], [1.0, 0.78], [1.2, 0.7], [1.25, 0.6]], [[-1.32, 0.62], [-1.2, 0.84], [-0.95, 0.9], [0.25, 0.9], [0.75, 0.76], [1.1, 0.58], [1.25, 0.5]], 3, 1.25);
+const T34_85: TurretSpec = { ...T34_85_0, outline: { ...T34_85_0.outline!, section: [[0, 0.9], [0.1, 0.97], [0.26, 1], [0.4, 1], [0.53, 0.97], [0.69, 0.925], [0.79, 0.84], [0.9, 0.7]], sectionAbs: true } };
+const t3485Parts = (t: TurretSpec): TurretSpec[] => [cupola(t, -0.33, -0.45, 0.32, 0.25), on(t, [[1.2, 0.45], [1.42, 0.4]], [[1.2, 0.72], [1.42, 0.68]], [[1.2, 0.3], [1.42, 0.34]], 4)];
+G['t-34-85'] = t34(6.1, T34_85, { length: 3.25, calibre: 0.085, at: 0.59, elevation: 0 }, true, t3485Parts);
+// The T-34-100's turret, widened at the front for the 100 mm: the broader, lower casting estimated before.
+const T34_100_0 = turret(0.5, [...roundEnd(-1.32, 1.22, 0.5, 1), [0.6, 1.28], [1.1, 1.0], [1.25, 0.6]], [[-1.32, 0.6], [-1.2, 0.8], [-0.95, 0.85], [0.25, 0.85], [0.75, 0.72], [1.1, 0.55], [1.25, 0.48]], 3, 1.25);
+const T34_100_T: TurretSpec = { ...T34_100_0, outline: { ...T34_100_0.outline!, section: [[-1, 0.97], [-0.8, 1], [-0.6, 0.97], [0.75, 0.84], [0.92, 0.76], [1, 0.62]] } };
 // Type 65 SPAA: the T-34-85 hull under an open-topped box turret with twin 37 mm (the 61-K pattern guns, 2.6 m); turret
 // size estimated from public photographs, nearest counterpart.
 G['type-65-spaa'] = { ...G['t-34-85'], cls: 'spaa', cupola: false, turret: { x: 0.3, length: 2.6, width: 2.5, height: 0.8, shape: 'open' }, turrets: [], guns: [{ mount: 'turret', count: 2, length: 2.6, calibre: 0.037, spread: 0.5, elevation: 0.2, at: 0.6 }] };
@@ -1375,7 +1382,7 @@ G['t-44'] = ww2({
 G['t-44-100'] = { ...G['t-44'], guns: [{ ...G['t-44'].guns![0], length: 4.3, calibre: 0.1 }] };
 G['t-44-122'] = { ...G['t-44'], guns: [{ ...G['t-44'].guns![0], length: 4.55, calibre: 0.122, muzzle: true }] };
 // T-34-100 (1945 trials): the T-34-85 with the long 100 mm LB-1 (L/56) and its muzzle brake.
-G['t-34-100'] = { ...G['t-34-85'], guns: [{ ...G['t-34-85'].guns![0], length: 4.2, calibre: 0.1, muzzle: true }] };
+G['t-34-100'] = t34(6.1, T34_100_T, { length: 4.2, calibre: 0.1, muzzle: true, at: 0.59, elevation: 0 }, true, t3485Parts);
 // KV-85 and KV-122: the IS turret on the KV-1S hull, with the 85 mm or the 122 mm.
 G['kv-85'] = ww2({ ...KV, W: 3.25, deck: 1.6, top: G['kv-1s'].hullOutline!.top, turret: IS_T, gun: { length: 3.4, calibre: 0.085, at: 0.45 }, turretParts: isParts });
 G['kv-122'] = ww2({ ...KV, W: 3.25, deck: 1.6, top: G['kv-1s'].hullOutline!.top, turret: IS_T, gun: { length: 4.7, calibre: 0.122, muzzle: true, at: 0.45 }, turretParts: isParts });

@@ -26,3 +26,4 @@ Some figure outlines were measured on drawings published under CC BY; their auth
 - Figure turret and gun derived from: "Tiger I (PzKpfw VI Ausf. E)" by M1RON, CC BY 4.0, https://sketchfab.com/3d-models/5dde7ae017584613a823784f744935fc
 - Figure turret and gun derived from: "Panzer 3L low-poly" by jimhatama, CC BY 4.0, https://sketchfab.com/3d-models/edeb4c4cbb3543a98526a9fdbf9c11c0
 - Figure turret and gun derived from: "Kv-1 (КВ-1)" by Artem.Goyko, CC BY 4.0, https://sketchfab.com/3d-models/f23cf9b8822a4ad48f068a2c51c44848
+- Figure turret shape measured on: "T-34-85" by neominigan, CC BY 4.0, https://sketchfab.com/3d-models/71442c66ad92427c98a14ddd7206cc91
