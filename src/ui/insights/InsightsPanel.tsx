@@ -8,6 +8,7 @@
  */
 
 import { useEffect, useMemo, useRef } from 'react';
+import { create } from 'zustand';
 import { CANON } from '../../data/canonical';
 import { insightText, labelOf } from './say';
 import { showInsight, volumeFor } from '../../insights/apply';
@@ -17,19 +18,56 @@ import type { Insight } from '../../insights/types';
 import { int, num, t, useLang } from '../../i18n';
 import { useStore } from '../../state/store';
 import { currentScope, scopeKey } from '../../volumes/scope';
-import { Section } from '../controls';
+import { Section, Segmented } from '../controls';
+import { Caster } from './Caster';
+import { Debrief } from './Debrief';
 import { useEngine } from '../EngineContext';
 import './insights.css';
+
+type Tab = 'findings' | 'debrief' | 'caster';
+/** Outside the panel: the sidebar is rebuilt when the replay opens, and the tab stays. */
+const useTab = create<{ tab: Tab }>(() => ({ tab: 'findings' }));
 
 export function InsightsPanel() {
   useLang();
   const dataset = useStore((s) => s.dataset);
+  const tab = useTab((s) => s.tab);
+  const setTab = (v: Tab) => useTab.setState({ tab: v });
   if (!dataset) return null;
   return (
     <Section title={t('insights.title')}>
-      <InsightsBody />
+      <Segmented
+        value={tab}
+        onChange={setTab}
+        options={[
+          { value: 'findings', label: t('insights.tab.findings') },
+          { value: 'debrief', label: t('insights.tab.debrief') },
+          { value: 'caster', label: t('insights.tab.caster') },
+        ]}
+      />
+      {/* Kept mounted: opening the panel counts, whichever tab is shown. */}
+      <div style={tab === 'findings' ? undefined : { display: 'none' }}>
+        <InsightsBody />
+      </div>
+      {tab === 'debrief' && <DebriefTab />}
+      {tab === 'caster' && <Caster />}
     </Section>
   );
+}
+
+/** Show an insight: its filters over those from before the first one shown, the camera on it. */
+function pickInsight(ins: Insight, engine: ReturnType<typeof useEngine>) {
+  const s = useInsights.getState();
+  const before = s.before ?? useStore.getState().filters;
+  s.set({ selected: ins.id, before });
+  showInsight(ins, engine, before);
+}
+
+function DebriefTab() {
+  const engine = useEngine();
+  const report = useInsights((s) => s.report);
+  if (!report) return <div className="hint">{t('insights.debrief.notCounted')}</div>;
+  return <Debrief report={report} onPick={(ins) => pickInsight(ins, engine)} />;
 }
 
 function useAnalysisKey(): string {
@@ -79,12 +117,7 @@ function InsightsBody() {
 
   const r = st.report;
   const stale = !!r && st.key !== key && st.before === null;
-  const pick = (ins: Insight) => {
-    const s = useInsights.getState();
-    const before = s.before ?? useStore.getState().filters;
-    s.set({ selected: ins.id, before });
-    showInsight(ins, engine, before);
-  };
+  const pick = (ins: Insight) => pickInsight(ins, engine);
   const restore = () => {
     const s = useInsights.getState();
     if (s.before) useStore.getState().setFilters(s.before);

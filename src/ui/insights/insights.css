@@ -109,3 +109,91 @@
 .ins-details button {
   align-self: flex-start;
 }
+
+/* Debrief and caster. */
+
+.ins-debrief p {
+  margin: 6px 0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.ins-cite {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  margin-left: 2px;
+  font-size: 10px;
+  line-height: 16px;
+  vertical-align: 1px;
+  border-radius: 9px;
+}
+
+.ins-ai {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ins-ai-anchor {
+  position: relative;
+}
+
+.ins-ai-dialog {
+  left: 0;
+  right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ins-ai-dialog input,
+.ins-ai-dialog select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ins-ai-q {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  font: inherit;
+  font-size: 12px;
+}
+
+.ins-ai-out {
+  white-space: pre-wrap;
+  font-size: 12px;
+  line-height: 1.45;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.ins-err {
+  color: var(--warm);
+}
+
+.ins-cast-now {
+  margin: 8px 0 4px;
+  padding: 6px 8px;
+  border-left: 3px solid var(--accent);
+  background: var(--bg);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.ins-moment.on {
+  border-color: var(--accent);
+}
+
+.ins-moment-kind {
+  font-weight: 600;
+}
+
+.ins-moment-time {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
+}

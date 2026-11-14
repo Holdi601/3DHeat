@@ -1,5 +1,5 @@
 /**
- * Where the later stages plug in, not built yet: an external model that
+ * Where the narrators plug in (`narrate.ts` built in, `ai/` external): a model that
  * narrates the report (any provider - Claude, ChatGPT, a local
  * OpenAI-compatible server, a multi-host router - the key stays with the
  * user), and the caster for single replays. Both take the report as it is:
