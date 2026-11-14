@@ -1,12 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { rgbToCss, teamMemberColor } from '../../render/colors';
 import { filterSlots } from '../../render/filterTables';
 import { MAX_FILTER_SLOTS } from '../../render/types';
 import { useStore } from '../../state/store';
-import type { FilterSpec } from '../../state/types';
+import type { Dataset, FilterSpec } from '../../state/types';
 import { Section } from '../controls';
 import { int, t } from '../../i18n';
-import { unitsOf, type Unit } from '../replay/units';
+import { prepareUnits, unitsReady, type Unit } from '../replay/units';
 
 /** Rows rendered at once. The real datasets have tens of thousands of entities. */
 const PAGE = 200;
@@ -44,7 +44,22 @@ export function EntityPanel() {
   );
 
   // Players and AI as the replay's unit list tells them (`units.ts`); weapons are their launchers'.
-  const index = useMemo(() => (dataset ? unitsOf(dataset) : null), [dataset]);
+  // The panel is always mounted, so a dataset handed over without its index
+  // (any setDataset that skipped `prepareUnits`) has it worked out a few
+  // milliseconds a frame here, not in one long render.
+  const [prepared, setPrepared] = useState<Dataset | null>(null);
+  useEffect(() => {
+    if (!dataset || unitsReady(dataset)) return;
+    let live = true;
+    // A slice a frame from the frame after this commit, which the new dataset already fills.
+    void prepareUnits(dataset, true).then(() => {
+      if (live) setPrepared(dataset);
+    });
+    return () => {
+      live = false;
+    };
+  }, [dataset]);
+  const index = useMemo(() => (dataset ? unitsReady(dataset) : null), [dataset, prepared]);
   const [players, ai] = useMemo(() => {
     const p: Unit[] = [];
     const a: Unit[] = [];

@@ -123,7 +123,45 @@ function vectorBearing(x: number, y: number, z: number, axes: AxisMapping | null
   return bearingOf(w.x, w.z);
 }
 
-const pause = () => new Promise<void>((r) => setTimeout(r, 0));
+/** Milliseconds a scan works before it hands the thread back until the next frame is drawn. */
+const SCAN_SLICE_MS = 2;
+
+/** Just after the next frame is drawn; without frames (a hidden page, tests) soon after. */
+function afterFrame(): Promise<void> {
+  return new Promise((done) => {
+    if (typeof requestAnimationFrame !== 'function') {
+      setTimeout(done, 0);
+      return;
+    }
+    const timer = setTimeout(done, 100);
+    requestAnimationFrame(() => {
+      clearTimeout(timer);
+      setTimeout(done, 0);
+    });
+  });
+}
+
+/**
+ * A long scan's pacing: `slice()` is false while this frame's few milliseconds
+ * last, else waits for the frame after and is true. Back-to-back timeouts
+ * would let a slice run into a frame; one slice a frame, just after it is
+ * drawn, leaves the frame its whole budget.
+ */
+function pacer(): { start: () => Promise<void>; slice: () => Promise<boolean> } {
+  let since = performance.now();
+  return {
+    async start() {
+      await afterFrame();
+      since = performance.now();
+    },
+    async slice() {
+      if (performance.now() - since < SCAN_SLICE_MS) return false;
+      await afterFrame();
+      since = performance.now();
+      return true;
+    },
+  };
+}
 
 /**
  * Every row's bearing from `source`.
@@ -133,8 +171,10 @@ const pause = () => new Promise<void>((r) => setTimeout(r, 0));
  * same session; the other party is that person's sample nearest in time
  * (`LINK_MAX_GAP`), found by one pass forwards and one backwards, so a kill
  * points from killer to victim, a death from victim to killer and a hit from
- * whoever's row it is towards the other side. `yieldRows` hands the thread back
- * every so many rows, so a load of hundreds of millions does not drop frames.
+ * whoever's row it is towards the other side. With `yieldRows` it starts after
+ * the next frame and, every so many rows, hands the thread back until the
+ * frame after once a few milliseconds have gone, so a load of hundreds of
+ * millions does not drop frames.
  */
 export async function computeDirections(
   ds: Dataset,
@@ -142,16 +182,21 @@ export async function computeDirections(
   opts: { yieldRows?: number; cancelled?: () => boolean; by?: Record<string, DirSource> } = {},
 ): Promise<DirectionData | null> {
   const n = ds.count;
+  const every = opts.yieldRows ?? 0;
+  const pace = pacer();
+  if (every > 0) {
+    await pace.start();
+    if (opts.cancelled?.()) return null;
+  }
   const angles = new Uint8Array(n).fill(DIR_NONE);
   const counts = { view: 0, aim: 0, movement: 0, other: 0 };
-  const every = opts.yieldRows ?? 0;
   let budget = every;
   const tick = async (k: number): Promise<boolean> => {
     if (every <= 0) return false;
     budget -= k;
     if (budget > 0) return false;
     budget = every;
-    await pause();
+    if (!(await pace.slice())) return false;
     return opts.cancelled?.() ?? false;
   };
   // Per event kind (`opts.by`, keyed by the event column's labels): a kind
@@ -475,12 +520,12 @@ export async function spotDirections(
   const inc = new DirAccumulator();
   let rows = 0;
   const every = opts.yieldRows ?? 0;
+  const pace = pacer();
   let since = 0;
   for (let i = rowLo; i < rowHi; i++) {
     if (every > 0 && ++since >= every) {
       since = 0;
-      await pause();
-      if (opts.cancelled?.()) return null;
+      if ((await pace.slice()) && opts.cancelled?.()) return null;
     }
     if (!inside(i) || !drawn(i)) continue;
     rows++;

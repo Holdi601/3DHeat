@@ -21,8 +21,8 @@ import {
 /** A wedge sprite's cost against a disc's, at least: its vertex work does not shrink with it. */
 const WEDGE_COST_FLOOR = 0.15;
 
-/** Rows a scan handles before it hands the thread back: a few milliseconds' worth. */
-const YIELD_ROWS = 1 << 18;
+/** Rows a scan handles between looks at the clock, about a millisecond's worth; it hands the thread back after a few. */
+const YIELD_ROWS = 1 << 16;
 
 /** What the controller needs from the engine. */
 export interface DirectionHost {

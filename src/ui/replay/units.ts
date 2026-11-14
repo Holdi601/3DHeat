@@ -141,26 +141,51 @@ export function unitsOf(d: Dataset): UnitIndex {
   }
 }
 
+/** The unit index if it has been worked out already, else null; never works it out. */
+export function unitsReady(d: Dataset): UnitIndex | null {
+  return cache.get(d) ?? null;
+}
+
 /** Milliseconds `prepareUnits` works before it lets a frame through. */
 const PREPARE_SLICE_MS = 5;
+/** The same once a frame, beside the other work that follows a new dataset (uploads, scans). */
+const PREPARE_FRAME_SLICE_MS = 2;
 
 /**
  * The unit index worked out a few milliseconds at a time, frames drawn in
  * between, before the dataset is handed to the viewer: tens of milliseconds
  * for a recording of thousands of units, which the first render would
  * otherwise spend in one frame. The loaders await it ("indexing").
+ *
+ * `perFrame`: one slice a frame, each just after a frame is drawn, the first
+ * too, for work behind a dataset already on screen; back-to-back slices can
+ * run into the next frame.
  */
-export async function prepareUnits(d: Dataset): Promise<void> {
+export async function prepareUnits(d: Dataset, perFrame = false): Promise<void> {
   if (cache.has(d)) return;
   const g = unitsSteps(d);
+  const pace = perFrame && typeof requestAnimationFrame === 'function';
   for (;;) {
-    const end = performance.now() + PREPARE_SLICE_MS;
+    if (pace) await afterFrame();
+    if (cache.has(d)) return;
+    const end = performance.now() + (pace ? PREPARE_FRAME_SLICE_MS : PREPARE_SLICE_MS);
     for (;;) {
       if (g.next().done) return;
       if (performance.now() >= end) break;
     }
-    await new Promise((r) => setTimeout(r, 0));
+    if (!pace) await new Promise((r) => setTimeout(r, 0));
   }
+}
+
+/** Just after the next frame is drawn; a hidden page, which draws none, a tenth of a second on. */
+function afterFrame(): Promise<void> {
+  return new Promise((done) => {
+    const timer = setTimeout(done, 100);
+    requestAnimationFrame(() => {
+      clearTimeout(timer);
+      setTimeout(done, 0);
+    });
+  });
 }
 
 function* unitsSteps(d: Dataset): Generator<void, UnitIndex, void> {
