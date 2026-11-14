@@ -1522,7 +1522,8 @@ const CRUSADER: Ww2 = {
   wheels: even(5, -2.0, 2.0), r: 0.4,
   turret: turret(0.1, [[-1.05, 0.6], [-0.85, 0.85], [0.35, 0.9], [0.9, 0.7], [1.05, 0.4]], [[-1.05, 0.55], [0.4, 0.65], [1.05, 0.45]], 10, 1.05),
 };
-G['crusader-ii'] = ww2({ ...CRUSADER, gun: { length: 1.5, calibre: 0.04, at: 0.45 }, parts: [part(1.5, circle(2.0, 0.38), [[1.62, 1.95], [2.38, 1.95]], 1.4, 5, -0.55)] });
+// The Mk II's machine-gun turret at the front left, often taken off in service, left off (fitted to the WT reference).
+G['crusader-ii'] = ww2({ ...CRUSADER, gun: { length: 1.5, calibre: 0.04, at: 0.45 } });
 G['crusader-iii'] = ww2({ ...CRUSADER, gun: { length: 2.2, calibre: 0.057, at: 0.45 } });
 // Crusader AA Mk I (FM 30-40's sheet, drawn scale): the very tall open box turret tapering upward, set forward of the
 // middle, the 40 mm Bofors through the deep cut in its front.
