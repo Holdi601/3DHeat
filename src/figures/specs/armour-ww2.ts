@@ -596,13 +596,19 @@ function t34(L: number, turretSpec: TurretSpec, gun: Ww2['gun'], tanks: boolean,
 // The early turret (1940-41): rolled or cast, overhanging at the back, with one big hatch.
 // Its side plates lean in at 30 degrees (45 mm at 30, the published armour layout): the FM 30-40 (1943) sheet's rear
 // view draws it 1.73 m across at its base and 0.92 m at the roof, 0.76 m higher (scaled by the 9.8 ft over the tracks).
-const T34_EARLY: TurretSpec = { ...turret(0.45, [[-1.0, 0.62], [-0.8, 0.82], [0.65, 0.86], [0.92, 0.62], [1.0, 0.4]], [[-1.0, 0.55], [-0.8, 0.76], [0.8, 0.8], [1.0, 0.5]], 6, 1.0), slope: 0.23 };
+// The 1940's: the plan and profile estimated before (on it the model's body lost more than it gained).
+const T34_1940_T: TurretSpec = { ...turret(0.45, [[-1.0, 0.62], [-0.8, 0.82], [0.65, 0.86], [0.92, 0.62], [1.0, 0.4]], [[-1.0, 0.55], [-0.8, 0.76], [0.8, 0.8], [1.0, 0.5]], 6, 1.0), slope: 0.23 };
+// Its plan (narrowing to the back, widest just behind the ring), the back plate leaning in over the overhang and the
+// sides' lean as the CC-BY T-34 (1941) model has them (sources.md), scaled to the sheet's 1.73 m base, 0.92 m roof, 0.8 m;
+// its place fitted to the WT reference.
+const T34_EARLY_0 = turret(0.7, [[-1.37, 0.502], [-1.3, 0.624], [-1.2, 0.658], [-1.0, 0.708], [-0.8, 0.764], [-0.6, 0.814], [-0.4, 0.853], [-0.2, 0.864], [0, 0.859], [0.2, 0.831], [0.4, 0.786], [0.6, 0.747], [0.8, 0.708], [0.88, 0.647], [0.92, 0.446]], [[-1.37, 0.03], [-1.3, 0.27], [-1.2, 0.5], [-1.1, 0.71], [-0.8, 0.74], [-0.3, 0.8], [0.2, 0.74], [0.85, 0.7], [0.92, 0.59]], 6, 0.92);
+const T34_EARLY: TurretSpec = { ...T34_EARLY_0, outline: { ...T34_EARLY_0.outline!, section: [[0, 1], [0.3, 0.83], [0.6, 0.66], [0.8, 0.55]], sectionAbs: true } };
 // The hexagonal "nut" turret (1942 on): wider and shorter, no overhang, two round hatches.
 // Its side faces lean in at 20 degrees (52 mm at 20, the published armour layout): 0.29 m over its 0.8 m height.
 const T34_HEX: TurretSpec = { ...turret(0.5, [[-0.95, 0.7], [-0.7, 1.1], [0.55, 1.1], [0.9, 0.72], [1.0, 0.48]], [[-0.95, 0.76], [0.9, 0.8], [1.0, 0.52]], 8, 1.0), slope: 0.13 };
 const F34 = { length: 1.75, calibre: 0.076, at: 0.45, elevation: 0 };
 // 1940: the short L-11 with its armoured recoil sleeve under the barrel.
-G['t-34-1940'] = t34(5.92, T34_EARLY, { length: 1.5, calibre: 0.076, at: 0.48 }, false, () => [], true);
+G['t-34-1940'] = t34(5.92, T34_1940_T, { length: 1.5, calibre: 0.076, at: 0.48 }, false, () => [], true);
 // 1941: the early turret with the longer F-34.
 G['t-34-1941'] = t34(5.92, T34_EARLY, F34, false);
 // 1942 (and the T-34-76 in general): the hexagonal turret, the fuel drums on the sides.
