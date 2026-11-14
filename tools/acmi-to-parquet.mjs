@@ -20,6 +20,14 @@
  *   <name>.effects.parquet the same for shells, bullets, shrapnel, flares and
  *                          chaff (`EFFECT`): millions of objects a server
  *                          evening, kept apart so a folder loads its units
+ *                          The events the recording leaves unsaid - launch,
+ *                          gun burst, hit, miss, damage, kill, death, crash,
+ *                          take-off, landing, touch and go, stop, rearm,
+ *                          ejection, spawn - are worked out as Tacview's
+ *                          debriefing does (`src/data/acmiEvents.ts`), each a
+ *                          row of its own at its object (`Inferred`), with
+ *                          Shooter, Target, Weapon, OtherVehicle, OtherType,
+ *                          Airfield, Detail and Rounds
  *   <name>.events.parquet  the rows at no place: comments, events about no
  *                          object seen, objects that never got a position, and
  *                          a row each time the recording's own properties
@@ -69,7 +77,7 @@ function stemOf(name) {
 /** What a weapon is by its Tacview type (a decoy is not one: it is dropped, not aimed). */
 const WEAPON = /(^|\+)(Weapon|Missile|Rocket|Bomb|Torpedo|Projectile|Shell|Bullet|Grenade)(\+|$)/i;
 /** What is no one's: decoys, debris, map objects. */
-const NO_ONE = /Decoy|Flare|Chaff|Shrapnel|Debris|Container|Bullseye|Navaid|Waypoint|Misc/i;
+const NO_ONE = /Decoy|Flare|Chaff|Shrapnel|Debris|Container|Bullseye|Navaid|Waypoint|Misc|Aerodrome|FARP/i;
 /** How far (m) and how long (s) from a weapon's first sample its launcher may have been. */
 const LAUNCH_REACH_M = 1500;
 const LAUNCH_WINDOW_S = 3;
@@ -105,12 +113,12 @@ class Launchers {
   }
 
   row(row, p, label, x, y, t) {
-    if (!row.id) return { actor: '', launcher: '' };
+    if (!row.id) return { actor: '', launcher: '', id: null };
     const type = p.get('Type') ?? '';
     if (WEAPON.test(type)) {
       let w = this.weapons.get(row.id);
       if (!w) {
-        w = this.nearest(x, y, row.alt, t) ?? { launcher: '', actor: '' };
+        w = this.nearest(x, y, row.alt, t) ?? { launcher: '', actor: '', id: null };
         this.weapons.set(row.id, w);
       }
       if (row.event === 'Removed') this.weapons.delete(row.id);
@@ -118,8 +126,8 @@ class Launchers {
     }
     const actor = NO_ONE.test(type) ? '' : Launchers.actorOf(p);
     if (row.event === 'Removed') this.forget(row.id);
-    else if (actor && Number.isFinite(x) && Number.isFinite(y)) this.place(row.id, { x, y, alt: Number.isFinite(row.alt) ? row.alt : 0, t, label, actor });
-    return { actor, launcher: '' };
+    else if (actor && Number.isFinite(x) && Number.isFinite(y)) this.place(row.id, { id: row.id, x, y, alt: Number.isFinite(row.alt) ? row.alt : 0, t, label, actor });
+    return { actor, launcher: '', id: null };
   }
 
   place(id, u) {
@@ -163,7 +171,7 @@ class Launchers {
             best = u;
           }
         }
-    return best ? { launcher: best.label, actor: best.actor } : null;
+    return best ? { launcher: best.label, actor: best.actor, id: best.id } : null;
   }
 }
 
@@ -225,6 +233,7 @@ async function readText(file, push) {
 
 async function convert(job, theatres) {
   const { AcmiStreamReader, acmiObjectLabel, tangentPlane } = await import(new URL('../src/data/acmiStream.ts', import.meta.url).href);
+  const { AcmiEventFinder } = await import(new URL('../src/data/acmiEvents.ts', import.meta.url).href);
   const t0 = performance.now();
   const name = stemOf(path.basename(job.input));
 
@@ -260,8 +269,9 @@ async function convert(job, theatres) {
   const project = tangentPlane(origin.lat, origin.lon);
 
   // The columns: the viewer's ACMI table, then every property.
-  const FIXED_NUM = ['Time', 'X', 'Y', 'Altitude', 'Heading', 'Pitch', 'Roll', 'Latitude', 'Longitude'];
-  const FIXED_TEXT = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher'];
+  const EVENT_TEXT = ['Shooter', 'Target', 'Weapon', 'OtherVehicle', 'OtherType', 'Airfield', 'Detail', 'Inferred'];
+  const FIXED_NUM = ['Time', 'X', 'Y', 'Altitude', 'Heading', 'Pitch', 'Roll', 'Latitude', 'Longitude', 'Rounds'];
+  const FIXED_TEXT = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT];
   const OWN_TEXT = new Set(['Type', 'Name', 'Pilot', 'Group', 'Country', 'Coalition', 'Color']);
   const hasUV = r1.rowsWithUV > 0;
   const taken = new Set([...FIXED_NUM, ...FIXED_TEXT, ...(hasUV ? ['U', 'V'] : [])]);
@@ -269,7 +279,7 @@ async function convert(job, theatres) {
   const colName = (k) => (taken.has(k) ? `${k} (property)` : k);
   const numKeys = [...r1.numericKeys].filter((k) => !r1.textKeys.has(k)).sort();
   const textKeys = [...r1.textKeys].filter((k) => !OWN_TEXT.has(k)).sort();
-  const order = ['Time', 'X', 'Y', 'Altitude', 'Object', 'Coalition', 'Heading', 'Pitch', 'Roll', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Latitude', 'Longitude', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...(hasUV ? ['U', 'V'] : [])];
+  const order = ['Time', 'X', 'Y', 'Altitude', 'Object', 'Coalition', 'Heading', 'Pitch', 'Roll', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Latitude', 'Longitude', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT, 'Rounds', ...(hasUV ? ['U', 'V'] : [])];
   const numeric = new Set([...FIXED_NUM, 'U', 'V']);
   const columns = [...order.map((c) => ({ name: c, num: numeric.has(c) })), ...numKeys.map((k) => ({ name: colName(k), num: true, prop: k })), ...textKeys.map((k) => ({ name: colName(k), num: false, prop: k }))];
 
@@ -291,7 +301,7 @@ async function convert(job, theatres) {
       pitch: 'Pitch',
       angleUnit: 'degrees',
       // As the viewer's own reading (`acmiHints`): RecordingInfo for the Match tab's title, briefing and comments.
-      extra: ['Type', 'Name', 'Pilot', 'Group', 'Country', 'Event', 'Altitude', 'Roll', 'Latitude', 'Longitude', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...columns.slice(order.length).map((c) => c.name)],
+      extra: ['Type', 'Name', 'Pilot', 'Group', 'Country', 'Event', 'Altitude', 'Roll', 'Latitude', 'Longitude', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT, 'Rounds', ...columns.slice(order.length).map((c) => c.name)],
     },
     geo: { lat0: origin.lat, lon0: origin.lon, projection: 'tangent-plane', east: 'X', north: 'Y', up: 'Altitude' },
   };
@@ -351,7 +361,7 @@ async function convert(job, theatres) {
    * order read): a track's rows lie together, so the overlay reads a track from one piece of the file
    * and a picked unit's rows from a few row groups, not from all of them.
    */
-  const outByObject = (file, keyCol) => {
+  const outByObject = (file, keyCol, timeCol) => {
     let cap = 1 << 16;
     let bufs = columns.map((c) => (c.num ? (c.float ? new Float32Array(cap) : new Float64Array(cap)) : new Array(cap)));
     let n = 0;
@@ -385,6 +395,14 @@ async function convert(job, theatres) {
         for (let k = 0; k < index.size; k++) start[k + 1] += start[k];
         const order = new Uint32Array(n);
         for (let i = 0; i < n; i++) order[start[of[i]]++] = i;
+        // Within an object, time order (an event found later than it happened, as a touchdown, comes back to its place).
+        const time = bufs[timeCol];
+        for (let k = 0, a = 0; k < index.size; a = start[k++]) {
+          const b = start[k];
+          let sorted = true;
+          for (let i = a + 1; i < b && sorted; i++) if (time[order[i]] < time[order[i - 1]]) sorted = false;
+          if (!sorted) order.set(Array.from(order.subarray(a, b)).sort((p, q) => time[p] - time[q] || p - q), a);
+        }
         const w = out(file);
         for (let i = 0; i < n; i++) {
           const r = w.next();
@@ -399,15 +417,79 @@ async function convert(job, theatres) {
 
   fs.mkdirSync(path.dirname(job.output), { recursive: true });
   const at0 = columns.findIndex((c) => c.name === 'Object');
-  const main = outByObject(job.output, at0);
+  const atT = columns.findIndex((c) => c.name === 'Time');
+  const main = outByObject(job.output, at0, atT);
   const sideFile = job.output.replace(/\.parquet$/, '.events.parquet');
-  const effects = outByObject(job.output.replace(/\.parquet$/, '.effects.parquet'), at0);
+  const effects = outByObject(job.output.replace(/\.parquet$/, '.effects.parquet'), at0, atT);
   const side = out(sideFile);
   const at = Object.fromEntries(columns.map((c, j) => [c.name, j]));
   const J = (k) => at[k];
   const [jT, jX, jY, jA, jH, jP, jR, jLat, jLon, jU, jV] = ['Time', 'X', 'Y', 'Altitude', 'Heading', 'Pitch', 'Roll', 'Latitude', 'Longitude', 'U', 'V'].map(J);
   const [jObj, jCo, jTy, jNa, jPi, jGr, jCn, jCl, jEv, jRec, jEvo, jInfo, jAct, jLau] = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher'].map(J);
+  const [jSh, jTg, jWp, jOv, jOt, jAf, jDt, jInf, jRnd] = [...EVENT_TEXT, 'Rounds'].map(J);
   const launchers = new Launchers();
+  /** Per object now in the recording, what an event row of its says of it (`AcmiEventFinder` keeps it past its end). */
+  const snaps = new Map();
+  let eventRows = 0;
+  let eventsLost = 0;
+  const nameOf = (info) => (info ? (info.p.get('Name') ?? '') : '');
+  const typeOf = (info) => (info ? (info.p.get('Type') ?? '') : '');
+  const finder = new AcmiEventFinder((e) => {
+    const s = e.subjectInfo;
+    // An object's row after its end would bring it back: the event stays on the other side's row.
+    if (e.subjectGone) {
+      eventsLost++;
+      return;
+    }
+    const o = s.effect ? effects : main;
+    const i = o.next();
+    const b = o.bufs;
+    b[jT][i] = (reader.refTime ?? 0) + e.t;
+    b[jX][i] = e.x;
+    b[jY][i] = e.y;
+    b[jA][i] = e.z;
+    b[jH][i] = s.head;
+    b[jP][i] = s.pitch;
+    b[jR][i] = s.roll;
+    // Near its object's last sample: its latitude and longitude moved by the metres between.
+    const lat = s.lat + (e.y - s.y) / 111320;
+    b[jLat][i] = lat;
+    b[jLon][i] = s.lon + (e.x - s.x) / (111320 * Math.max(0.01, Math.cos((lat * Math.PI) / 180)));
+    if (hasUV) b[jU][i] = b[jV][i] = NaN;
+    const p = s.p;
+    b[jObj][i] = s.label;
+    b[jCo][i] = p.get('Coalition') ?? p.get('Color') ?? '';
+    b[jTy][i] = p.get('Type') ?? '';
+    b[jNa][i] = p.get('Name') ?? '';
+    b[jPi][i] = p.get('Pilot') ?? '';
+    b[jGr][i] = p.get('Group') ?? '';
+    b[jCn][i] = p.get('Country') ?? '';
+    b[jCl][i] = p.get('Color') ?? '';
+    b[jEv][i] = e.kind;
+    b[jRec][i] = recording;
+    b[jEvo][i] = '';
+    b[jInfo][i] = '';
+    b[jAct][i] = s.actor;
+    b[jLau][i] = s.launcher;
+    for (const [j, c] of props) {
+      const v = p.get(c.prop);
+      b[j][i] = c.num ? (v === undefined || v === '' ? NaN : Number(v)) : (v ?? '');
+    }
+    b[jSh][i] = e.shooterInfo?.label ?? '';
+    b[jTg][i] = e.targetInfo?.label ?? '';
+    b[jWp][i] = nameOf(e.weaponInfo);
+    // The vehicle on the other end: the target's for its shooter and for the weapon, the shooter's for its target.
+    const other = e.subject === e.target ? e.shooterInfo : e.targetInfo;
+    b[jOv][i] = nameOf(other);
+    b[jOt][i] = typeOf(other);
+    b[jAf][i] = nameOf(e.airfieldInfo);
+    b[jDt][i] = e.detail;
+    b[jInf][i] = 'inferred';
+    b[jRnd][i] = e.rounds || NaN;
+    eventRows++;
+    if (o === main) mainRows++;
+    else effectRows++;
+  });
   const props = columns.map((c, j) => [j, c]).filter(([, c]) => c.prop);
   let infoVersion = -1;
   const labels = new WeakMap();
@@ -459,6 +541,29 @@ async function convert(job, theatres) {
       const v = p.get(c.prop);
       b[j][i] = c.num ? (v === undefined || v === '' ? NaN : Number(v)) : (v ?? '');
     }
+    b[jSh][i] = b[jTg][i] = b[jWp][i] = b[jOv][i] = b[jOt][i] = b[jAf][i] = b[jDt][i] = b[jInf][i] = '';
+    b[jRnd][i] = NaN;
+    // What the recording leaves unsaid, from how things move, appear and end.
+    if (row.placed && row.id) {
+      if (row.event === 'Removed') {
+        finder.removed(row.id, null, row.t);
+        snaps.delete(row.id);
+      } else if (!row.event) {
+        let s = snaps.get(row.id);
+        if (!s) snaps.set(row.id, (s = { p, label, effect: o === effects, actor: '', launcher: '', lat: 0, lon: 0, x: 0, y: 0, head: NaN, pitch: NaN, roll: NaN }));
+        s.p = p;
+        s.actor = own.actor;
+        s.launcher = own.launcher;
+        s.lat = row.lat;
+        s.lon = row.lon;
+        s.x = x;
+        s.y = y;
+        s.head = head;
+        s.pitch = row.pitch;
+        s.roll = row.roll;
+        finder.sample(row.id, null, row.t, x, y, row.alt, p.get('Type') ?? '', s, own.id ?? null, Number(p.get('AGL') ?? NaN));
+      }
+    }
     if (o === main) mainRows++;
     else if (o === effects) effectRows++;
     info(row.t);
@@ -484,6 +589,7 @@ async function convert(job, theatres) {
   };
   await readText(job.input, (s) => reader.push(s));
   reader.end();
+  finder.finish();
   info(reader.lastTime);
   const meta = {
     title: reader.title,
@@ -493,7 +599,9 @@ async function convert(job, theatres) {
     reference: { lat: reader.refLat, lon: reader.refLon, time: reader.refTime },
     globals: reader.globals,
     completeness: reader.completeness(),
-    rows: { placed: mainRows, effects: effectRows, other: reader.rows - mainRows - effectRows },
+    rows: { placed: mainRows, effects: effectRows, other: reader.rows + eventRows - mainRows - effectRows },
+    // The events worked out (`Inferred`), by kind, and those left out (their object already gone).
+    inferred: { ...finder.counts, lost: eventsLost },
   };
   const kv = [
     { key: 'heat3d', value: JSON.stringify(hints) },

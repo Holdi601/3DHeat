@@ -7,7 +7,9 @@
  * samples, the box and time span they lie in, how many keys it would keep at
  * each tolerance of `KEY_LEVELS`, the rows it spans in the file, and what it
  * is (its first own row's name and type columns); per match its first time;
- * and every death, as a marker.
+ * every death, as a marker; and every event worth a filter (`KEEP_EVENT`: a
+ * launch, hit, kill, death, take-off...) as a row of the overlay's dataset,
+ * so the event type filter and heat on events work as on a full load.
  *
  * Pass 2 reads the same rows again, with the attitude, and writes each unit's
  * kept samples straight as GPU keys (`gpuTracks/store.ts`): x, y, z and t in
@@ -59,7 +61,13 @@ const POSITION_LIKE = /^(position|pos|move|sample|state|tick)$/i;
 /** Event labels whose rows are somewhere else: what was fired, where it struck. */
 const ELSEWHERE_EVENT = /^(shot|shots|tracer|impact|impacts|torpedo|explosion|flak|projectile|bullet|shell|weapon_fire|fire|fired)$/i;
 /** Event labels of a thing's end: where it died is a marker. */
-const DEATH_EVENT = /^(death|dead|died|killed|destroyed)$/i;
+const DEATH_EVENT = /^(death|dead|died|killed|destroyed|crash|crashed)$/i;
+/**
+ * Event labels kept as rows of their own (as `data/canonical.ts` names them):
+ * not the positions, shots (millions), spawns (a track's first row) or removals
+ * (its last). An event row is no sample of its unit's track, but a death.
+ */
+export const KEEP_EVENT = /^(launch|launched|release|torpedo|burst|hit|hit_critical|hit_severe|struck|impact|hasbeenhitby|miss|missed|hurt|damage|damaged|module_destroyed|kill|kills|death|dead|died|killed|destroyed|crash|crashed|eject|ejected|bailout|takenoff|takeoff|landed|landing|touchdown|touch_and_go|stop|parked|rearm|rearmed|refuel|refuelled|refueled|repair|repaired|captured|capture|neutralised|neutralized)$/i;
 
 export interface LeanAxes {
   up: 'y' | 'z';
@@ -151,6 +159,8 @@ export interface Prepared {
   own: Uint8Array;
   /** 1: the row is a death. */
   death: Uint8Array;
+  /** 1: the row is an event kept as a row of its own (`KEEP_EVENT`). */
+  event: Uint8Array;
   units: number;
   track: string[];
   match: string[];
@@ -177,6 +187,7 @@ export function prepare(cols: Columns, n: number, s: LeanSpec): Prepared {
   const group = new Int32Array(n).fill(-1);
   const own = new Uint8Array(n);
   const death = new Uint8Array(n);
+  const event = new Uint8Array(n);
   const sc = s.axes.scale || 1;
   const fx = (s.axes.flipX ? -1 : 1) * sc;
   const fy = (s.axes.flipY ? -1 : 1) * sc;
@@ -185,14 +196,18 @@ export function prepare(cols: Columns, n: number, s: LeanSpec): Prepared {
   // Own rows by the event column: its position rows when it has them, else whatever was not fired.
   let ownOf: (label: string) => boolean = () => true;
   const deathOf = new Map<string, boolean>();
+  const eventOf = new Map<string, boolean>();
   if (ev) {
     const labels = new Set<string>();
     for (let i = 0; i < n; i++) labels.add(toText(ev[i]).trim());
     const positions = [...labels].some((l) => POSITION_LIKE.test(l));
     const memo = new Map<string, boolean>();
     for (const l of labels) {
-      memo.set(l, positions ? POSITION_EVENT.test(l) : !ELSEWHERE_EVENT.test(l));
-      deathOf.set(l, DEATH_EVENT.test(l));
+      const keep = KEEP_EVENT.test(l);
+      const dies = DEATH_EVENT.test(l);
+      memo.set(l, positions ? POSITION_EVENT.test(l) : !ELSEWHERE_EVENT.test(l) && (!keep || dies));
+      deathOf.set(l, dies);
+      eventOf.set(l, keep);
     }
     ownOf = (l) => memo.get(l) ?? false;
   }
@@ -234,6 +249,7 @@ export function prepare(cols: Columns, n: number, s: LeanSpec): Prepared {
     }
     const e = ev ? toText(ev[i]).trim() : '';
     if (ev && deathOf.get(e)) death[i] = 1;
+    if (ev && eventOf.get(e) && placed(x[i], y[i], z[i])) event[i] = 1;
     const k = tr ? toText(tr[i]) : '';
     if (k === '') continue;
     const units = perGroup[lastG];
@@ -247,7 +263,7 @@ export function prepare(cols: Columns, n: number, s: LeanSpec): Prepared {
     unit[i] = u;
     if (ownOf(e) && placed(x[i], y[i], z[i])) own[i] = 1;
   }
-  return { n, t, x, y, z, unit, group, own, death, units: track.length, track, match, groups };
+  return { n, t, x, y, z, unit, group, own, death, event, units: track.length, track, match, groups };
 }
 
 /**
@@ -356,6 +372,20 @@ export interface Markers {
   team: string[];
 }
 
+/** The events kept as rows (`KEEP_EVENT`): where and when, which match and unit, and the label. */
+export interface LeanEvents {
+  count: number;
+  pos: Float32Array;
+  /** Seconds, as in the file. */
+  t: Float64Array;
+  group: Uint32Array;
+  /** Local unit, -1 for none. */
+  unit: Int32Array;
+  /** Index into `labels`. */
+  label: Uint16Array;
+  labels: string[];
+}
+
 export interface Pass1Result {
   rows: number;
   units: number;
@@ -382,6 +412,7 @@ export interface Pass1Result {
   groupStart: Float64Array;
   groupRows: Uint32Array;
   markers: Markers;
+  events: LeanEvents;
 }
 
 export const BOX = 8;
@@ -449,6 +480,14 @@ export function scanPass1(cols: Columns, n: number, s: LeanSpec, rowBase: number
   const mT: number[] = [];
   const mG: number[] = [];
   const mRow: number[] = [];
+  const ePos: number[] = [];
+  const eT: number[] = [];
+  const eG: number[] = [];
+  const eU: number[] = [];
+  const eL: number[] = [];
+  const eLabels: string[] = [];
+  const eLabelIdx = new Map<string, number>();
+  const evc = s.event ? cols[s.event] : undefined;
   const { t, x, y, z } = p;
   for (let i = 0; i < n; i++) {
     const g = p.group[i];
@@ -462,6 +501,20 @@ export function scanPass1(cols: Columns, n: number, s: LeanSpec, rowBase: number
       mRow.push(i);
     }
     const u = p.unit[i];
+    if (p.event[i]) {
+      const l = toText(evc![i]).trim();
+      let k = eLabelIdx.get(l);
+      if (k === undefined) {
+        k = eLabels.length;
+        eLabels.push(l);
+        eLabelIdx.set(l, k);
+      }
+      ePos.push(x[i], y[i], z[i]);
+      eT.push(t[i]);
+      eG.push(g);
+      eU.push(u);
+      eL.push(k);
+    }
     if (u < 0) continue;
     if (firstRow[u] < 0) firstRow[u] = rowBase + i;
     lastRow[u] = rowBase + i;
@@ -510,6 +563,7 @@ export function scanPass1(cols: Columns, n: number, s: LeanSpec, rowBase: number
     groupStart,
     groupRows,
     markers: { count: mT.length, pos: Float32Array.from(mPos), t: Float64Array.from(mT), group: Uint32Array.from(mG), team: markerTeam },
+    events: { count: eT.length, pos: Float32Array.from(ePos), t: Float64Array.from(eT), group: Uint32Array.from(eG), unit: Int32Array.from(eU), label: Uint16Array.from(eL), labels: eLabels },
   };
 }
 

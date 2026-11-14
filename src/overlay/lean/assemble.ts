@@ -2,9 +2,11 @@
  * The lean overlay's coordinator: plans the jobs, merges what pass 1 found,
  * chooses how much to thin (nothing, when it fits), lays the keys out, takes
  * pass 2's keys into place and builds the small dataset that stands for the
- * overlay - two rows a unit, its first and last place, with what it is - so
- * the viewer's panels, filters, cards and timeline have something to read
- * while the GPU draws the units from the keys.
+ * overlay - two rows a unit, its first and last place, with what it is, and
+ * a row each event worth a filter (`KEEP_EVENT`), labelled in the file's event
+ * column - so the viewer's panels, filters (the event type among them, on the
+ * GPU like any), heat, cards and timeline have something to read while the
+ * GPU draws the units from the keys.
  *
  * The keys of a unit are written run by run, one run a job, each into room
  * pass 1 measured, in 16 bits of a span each 64 keys of the run
@@ -169,6 +171,13 @@ export class LeanAssembler {
   private readonly mT: number[] = [];
   private readonly mGroup: number[] = [];
   private readonly mTeam: string[] = [];
+  /** Events kept as rows: x, y, z, file seconds, group, global unit and label. */
+  private readonly ePos: number[] = [];
+  private readonly eT: number[] = [];
+  private readonly eGroup: number[] = [];
+  private readonly eUnit: number[] = [];
+  private readonly eLabel: number[] = [];
+  private readonly eDict = new Dictionary();
   /** Per job, after pass 1: its local units' global ids and keys a level. */
   private readonly jobUnits: (Int32Array | null)[];
   private readonly jobKeys: (Uint32Array | null)[];
@@ -205,6 +214,7 @@ export class LeanAssembler {
       return d;
     });
     this.teamDict.intern('');
+    this.eDict.intern('');
     this.jobUnits = jobs.map(() => null);
     this.jobKeys = jobs.map(() => null);
   }
@@ -275,6 +285,17 @@ export class LeanAssembler {
       this.mT.push(mk.t[i]);
       this.mGroup.push(gl[mk.group[i]]);
       this.mTeam.push(mk.team[i]);
+    }
+    const ev = r.events;
+    const lab = ev.labels.map((l) => this.eDict.intern(l));
+    for (let i = 0; i < ev.count; i++) {
+      const u = ev.unit[i];
+      if (u < 0) continue;
+      this.ePos.push(ev.pos[i * 3], ev.pos[i * 3 + 1], ev.pos[i * 3 + 2]);
+      this.eT.push(ev.t[i]);
+      this.eGroup.push(gl[ev.group[i]]);
+      this.eUnit.push(ids[u]);
+      this.eLabel.push(lab[ev.label[i]]);
     }
     this.jobUnits[j] = ids;
     this.jobKeys[j] = r.keys;
@@ -521,7 +542,11 @@ export class LeanAssembler {
     const order = this.order!;
     const spans = this.spans!;
     const groupStart = this.groupStart.map((v) => (Number.isFinite(v) ? v : 0));
-    const rows = T * 2;
+    // The events of units with a track, after the tracks' rows.
+    const trackOf = this.trackOfUnit!;
+    const evRows: number[] = [];
+    for (let e = 0; e < this.eT.length; e++) if (trackOf[this.eUnit[e]] >= 0) evRows.push(e);
+    const rows = T * 2 + evRows.length;
     const px = new Float32Array(rows);
     const py = new Float32Array(rows);
     const pz = new Float32Array(rows);
@@ -587,11 +612,29 @@ export class LeanAssembler {
       trackKey[i] = this.uKey[g];
       trackMatch[i] = this.uMatch[g];
     }
+    const eventIds = evRows.length && this.spec.event ? new Uint32Array(rows) : null;
+    for (let k = 0; k < evRows.length; k++) {
+      const e = evRows[k];
+      const i = trackOf[this.eUnit[e]];
+      const g = this.order![i];
+      const grp = this.eGroup[e];
+      const r = T * 2 + k;
+      px[r] = this.ePos[e * 3];
+      py[r] = this.ePos[e * 3 + 1];
+      pz[r] = this.ePos[e * 3 + 2];
+      time[r] = this.eT[e] - groupStart[grp];
+      personIds[r] = i;
+      teamIds[r] = this.uTeam.data[g];
+      groupIds[r] = grp;
+      for (let m = 0; m < metaIds.length; m++) metaIds[m][r] = this.uMeta[m].data[g];
+      if (eventIds) eventIds[r] = this.eLabel[e];
+    }
     const groupCol = this.spec.match ?? 'match';
     const attrs: BlockAttr[] = this.spec.meta
       .map((m, k): BlockAttr => ({ name: m, kind: 'category', data: metaIds[k], categories: this.metaDict[k].labels }))
       .filter((a) => a.name !== groupCol && a.name !== this.spec.team);
     attrs.push({ name: groupCol, kind: 'category', data: groupIds, categories: [...this.groupLabel] });
+    if (eventIds && this.spec.event) attrs.push({ name: this.spec.event, kind: 'category', data: eventIds, categories: [...this.eDict.labels] });
     const block: SourceBlock = {
       rows,
       px,

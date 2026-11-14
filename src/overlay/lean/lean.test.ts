@@ -9,6 +9,7 @@ import { LeanAssembler, planJobs, restoreTrackStrings, stripTrackStrings, type L
 import { leanSpec, sharedGeo } from './spec';
 import { LOAD_HEADROOM, PEAK_KEY_BYTES, leanBudget, leanStore, overlayFiles } from './load';
 import { MAX_TAB_ARRAY_BYTES } from '../../data/memory';
+import { CANON } from '../../data/canonical';
 
 /** A file's rows: aircraft circling and tanks driving, in two matches, with shots and deaths among them, in time order. */
 function rows(opts: { matches?: number; units?: number; seconds?: number; hz?: number } = {}) {
@@ -299,6 +300,20 @@ describe('lean overlay loader', () => {
     // Its row in the standing-in dataset says what it is.
     const kind = b.dataset.attrs.find((a) => a.name === 'kind')!;
     expect(kind.categories![(kind.data as Uint32Array)[b.trackRow[tank]]]).toBe('tank');
+  });
+
+  it('keeps each event worth a filter as a row of the dataset, for the event type filter and heat on events', () => {
+    const b = load(rows());
+    const type = b.dataset.attrs.find((x) => x.name === CANON.event)!;
+    const kinds = Array.from(type.data as Uint32Array, (k) => type.categories![k]);
+    // The two deaths, after the tracks' two rows each; shots (millions in a server evening) stay out.
+    expect(b.dataset.count).toBe(b.tracks * 2 + 2);
+    expect(kinds.filter((k) => k === 'death')).toHaveLength(2);
+    expect(b.dataset.attrs.find((x) => x.name === 'event')!.categories).not.toContain('shot');
+    // Each on its unit's track, where it died.
+    const tank = b.dataset.personLabels.findIndex((l) => l.startsWith('u1 #1'));
+    for (let r = 0; r < b.dataset.count; r++) if (kinds[r] === 'death') expect(b.dataset.personLabels[b.dataset.personId![r]].startsWith('u1 #1')).toBe(true);
+    expect(tank).toBeGreaterThanOrEqual(0);
   });
 
   it('turns heading, pitch and roll into the quaternion the figures use', () => {

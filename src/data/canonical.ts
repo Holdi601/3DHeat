@@ -7,7 +7,11 @@
  * one filter works on all of them. The source's own columns stay as they are.
  *
  *   Event type    the row's event in the taxonomy below (`EVENT_KINDS`);
- *                 a Tacview weapon's first sample is its launch
+ *                 a Tacview weapon's first sample is its launch; a Tacview
+ *                 recording converted before its events were worked out
+ *                 (`acmiEvents.ts`) has them found here, on the rows they
+ *                 stand on (a weapon's end its hit, miss or kill, a removal
+ *                 a death or crash, a sample a take-off or landing...)
  *   Player or AI  `player` or `ai`; a weapon is its launcher's (War Thunder
  *                 says so, a Tacview weapon is given to the unit it left)
  *   Vehicle class the row's vehicle by the figure catalogue's class
@@ -24,6 +28,7 @@
 import { figureFor } from '../figures/match';
 import { classify, type SymbolClass } from '../figures/symbolClass';
 import type { AttributeColumn } from '../state/types';
+import { AcmiEventFinder, acmiKindOf } from './acmiEvents';
 
 /** The names the added columns take (said in the viewer's language by the panels, `canonicalLabel`). */
 export const CANON = {
@@ -33,7 +38,7 @@ export const CANON = {
   targetClass: 'Target class',
 } as const;
 
-export const EVENT_KINDS = ['position', 'fire', 'launch', 'hit', 'explosion', 'damage', 'kill', 'death', 'destroyed', 'spawn', 'despawn', 'takeoff', 'landing', 'capture', 'decoy', 'message', 'other'] as const;
+export const EVENT_KINDS = ['position', 'fire', 'launch', 'hit', 'miss', 'explosion', 'damage', 'kill', 'death', 'destroyed', 'crash', 'eject', 'spawn', 'despawn', 'takeoff', 'landing', 'touchdown', 'stop', 'rearm', 'capture', 'decoy', 'message', 'other'] as const;
 export type EventKind = (typeof EVENT_KINDS)[number];
 
 export const ACTORS = ['player', 'ai'] as const;
@@ -52,17 +57,22 @@ const EVENT_MAP: Record<string, EventKind> = {
   // A thrown or fired object's own flight samples, logged under its thrower's name (CS2's `grenade`):
   // never the thrower's position. Each flight's first sample is its launch where the source logs none.
   grenade: 'other', projectile: 'other', nade: 'other', thrown: 'other', flight: 'other',
-  shot: 'fire', gun_shot: 'fire', fire: 'fire', fire_start: 'fire', fire_stop: 'fire', weapon_fire: 'fire', slash: 'fire', hasfired: 'fire', shoot: 'fire', fired: 'fire', tracer: 'fire',
+  burst: 'fire', shot: 'fire', gun_shot: 'fire', fire: 'fire', fire_start: 'fire', fire_stop: 'fire', weapon_fire: 'fire', slash: 'fire', hasfired: 'fire', shoot: 'fire', fired: 'fire', tracer: 'fire',
   launch: 'launch', launched: 'launch', torpedo: 'launch', throw: 'launch', release: 'launch',
   hit: 'hit', hit_critical: 'hit', hit_severe: 'hit', struck: 'hit', impact: 'hit', hasbeenhitby: 'hit',
+  miss: 'miss', missed: 'miss',
   explosion: 'explosion', flak: 'explosion', he: 'explosion', molotov: 'explosion', inferno: 'explosion', smoke: 'explosion', flash: 'explosion', explode: 'explosion',
   hurt: 'damage', damage: 'damage', damaged: 'damage', module_destroyed: 'damage', wounded: 'damage', fire_on: 'damage', blind: 'damage',
   kill: 'kill', kills: 'kill',
   death: 'death', dead: 'death', died: 'death', killed: 'death',
   destroyed: 'destroyed',
+  crash: 'crash', crashed: 'crash',
+  eject: 'eject', ejected: 'eject', bailout: 'eject', bailedout: 'eject',
   spawn: 'spawn', respawn: 'spawn', revived: 'spawn', created: 'spawn',
-  despawn: 'despawn', removed: 'despawn', leftarea: 'despawn', timeout: 'despawn', bailout: 'despawn',
+  despawn: 'despawn', removed: 'despawn', leftarea: 'despawn', timeout: 'despawn',
   takenoff: 'takeoff', takeoff: 'takeoff', landed: 'landing', landing: 'landing',
+  touchdown: 'touchdown', touch_and_go: 'touchdown', stop: 'stop', parked: 'stop',
+  rearm: 'rearm', rearmed: 'rearm', refuel: 'rearm', refuelled: 'rearm', refueled: 'rearm', repair: 'rearm', repaired: 'rearm',
   captured: 'capture', capture: 'capture', neutralised: 'capture', neutralized: 'capture', plant: 'capture', defuse: 'capture',
   flare: 'decoy', chaff: 'decoy', decoy: 'decoy', countermeasure: 'decoy',
   chat: 'message', message: 'message', command: 'message', bookmark: 'message', debug: 'message', comment: 'message',
@@ -75,6 +85,43 @@ const FLIGHT = /^(grenade|projectile|nade|thrown|flight)$/i;
 export function eventKindOf(raw: string): EventKind {
   if (raw === 'Destroyed') return 'death';
   return EVENT_MAP[raw.trim().toLowerCase()] ?? 'other';
+}
+
+/** Labels the converter writes for the events it worked out (`acmiEvents.ts`): a file with them needs no second look. */
+const INFERRED = /^(kill|hit|miss|takeoff|landing|burst)$/;
+const TACVIEW_TYPE = /^(Air|Ground|Sea|Weapon|Misc|Projectile|Navaid)\+/;
+/** Which event a row keeps when several fall on it. */
+const RANK: Partial<Record<EventKind, number>> = { spawn: 1, launch: 1, eject: 2, takeoff: 2, landing: 2, touchdown: 2, stop: 2, rearm: 2, hit: 3, miss: 3, death: 4, crash: 4, kill: 5 };
+
+/**
+ * The events a Tacview recording leaves unsaid (`acmiEvents.ts`), on the rows
+ * they stand on: a weapon's removal its hit, miss or (killing) kill, a unit's
+ * removal its death or crash, a sample its take-off, landing, stop, rearm or
+ * spawn, a parachutist's first its ejection. Bursts and damage stand on no row
+ * of their own and wait for the file to be converted again.
+ */
+function inferAcmiEvents(inp: CanonicalInput, ev: CategoryInput, type: CategoryInput, data: Uint32Array, track: (r: number) => number): void {
+  const time = inp.time!;
+  const removed = ev.labels.indexOf('Removed');
+  const sample = ev.labels.map((l) => eventKindOf(l) === 'position');
+  const wanted = type.labels.map((l) => acmiKindOf(l) !== 'other');
+  const rows: number[] = [];
+  for (let r = 0; r < inp.n; r++) if (wanted[type.data[r]] && (ev.data[r] === removed || sample[ev.data[r]]) && Number.isFinite(time[r])) rows.push(r);
+  // In time order, a frame's samples before its removals.
+  rows.sort((a, b) => time[a] - time[b] || Number(ev.data[a] === removed) - Number(ev.data[b] === removed) || a - b);
+  const u = inp.units || 1;
+  const rank = (k: number) => RANK[EVENT_KINDS[k]] ?? 0;
+  const finder = new AcmiEventFinder<number, number, null>((e) => {
+    if (e.ref === null) return;
+    const k = EVENT_KINDS.indexOf(eventKindOf(e.kind));
+    if (k >= 0 && rank(k) >= rank(data[e.ref])) data[e.ref] = k;
+  });
+  for (const r of rows) {
+    // Metres, level x and y, height z (the dataset's y is up).
+    if (ev.data[r] === removed) finder.removed(track(r), r, time[r]);
+    else finder.sample(track(r), r, time[r], inp.px[r] / u, inp.pz[r] / u, inp.py[r] / u, type.labels[type.data[r]], null);
+  }
+  finder.finish();
 }
 
 /** The figure catalogue's symbol class to the filter's vehicle class. */
@@ -281,6 +328,10 @@ export function canonicalColumns(inp: CanonicalInput): AttributeColumn[] {
       // Flight samples under the thrower's name: each flight's first is its launch, where the source logs none.
       const flight = ev.labels.map((l) => FLIGHT.test(l.trim()));
       if (!sourceLaunches && flight.some(Boolean)) flightLaunches(inp, ev.data, flight, data, launch, track);
+      // A Tacview recording converted before its events were worked out: found here, on the rows they stand on.
+      const type = cats.find((c) => /^type$/i.test(c.name.trim())) ?? null;
+      if (type && inp.time && inp.person && ev.labels.includes('Removed') && !ev.labels.some((l) => INFERRED.test(l)) && type.labels.some((l) => TACVIEW_TYPE.test(l)))
+        inferAcmiEvents(inp, ev, type, data, track);
       const seen = new Set<number>();
       for (let r = 0; r < n && seen.size < 2; r++) seen.add(data[r]);
       if (seen.size > 1) out.push(column(CANON.event, data, EVENT_KINDS));
