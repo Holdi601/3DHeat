@@ -20,7 +20,7 @@ The match is cached per label, so a frame costs only the placing. A data unit is
 
 ### A local figure pack
 
-Figures that may not be published (for example ones prepared on your own machine from material you may use but not share) can live in a local figure pack: one JSON file, `{ "version": 1, "figures": { "<figure name>": <mesh figure>, ... } }`, in the format of the mesh figures in `src/figures/meshes` (each with its hull, a turret that turns about its ring and a gun that raises about its trunnion, and its own coarse and far builds). While the viewer finds a pack, its figures replace the catalogue's of the same names; without one, nothing changes.
+Figures that may not be published (for example ones prepared on your own machine from material you may use but not share) can live in a local figure pack: one JSON file, `{ "version": 1, "figures": { "<figure name>": <mesh figure>, ... } }`, in the format of the mesh figures in `src/figures/meshes` (each with its hull, a turret that turns about its ring and a gun that raises about its trunnion, and its own coarse and far builds). While the viewer finds a pack, its figures replace the catalogue's of the same names; without one, nothing changes. Where one catalogue figure stands for game units of different shapes, the pack can carry a figure per unit: a `"units": { "<unit id>": "<figure>@<variant>" }` map draws those units as the variant figures `<figure>@<variant>` of the pack, which join the catalogue as kin of `<figure>` (same domain and class) while the pack is installed.
 
 The dev server (`npm run dev`) and the preview server (`npm run preview`) hand the pack to the page. Tell them where it is in either of two ways:
 

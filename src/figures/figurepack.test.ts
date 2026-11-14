@@ -2,8 +2,9 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { CATALOG, FIGURES } from './catalog';
+import { ALIASES, CATALOG, FIGURES } from './catalog';
 import { installFigurePack, removeFigurePack, type FigurePack } from './figurepack';
+import { figureForName } from './match';
 import type { MeshFigureData } from './meshfig';
 
 const REPO = fileURLToPath(new URL('../..', import.meta.url));
@@ -32,6 +33,24 @@ describe('the local figure pack', () => {
       removeFigurePack(CATALOG, FIGURES);
     }
     expect(CATALOG[name].build().triangles).toBe(before.triangles);
+  });
+
+  it('draws a unit of another shape as its own variant while installed', () => {
+    const name = 'tiger-i-e';
+    const variant = `${name}@test-unit`;
+    const pack: FigurePack = { version: 1, figures: { [variant]: boxFigure() }, units: { 'Test_Unit_X': variant, 'test_unit_y': 'no-such@figure' } };
+    expect(installFigurePack(CATALOG, pack, FIGURES, ALIASES)).toBe(1);
+    try {
+      expect(CATALOG[variant].domain).toBe(CATALOG[name].domain);
+      expect(CATALOG[variant].build().triangles).toBe(12);
+      expect(figureForName('test_unit_x')).toBe(variant);
+      expect(ALIASES['test_unit_y']).toBeUndefined();
+    } finally {
+      removeFigurePack(CATALOG, FIGURES);
+    }
+    expect(CATALOG[variant]).toBeUndefined();
+    expect(FIGURES[variant]).toBeUndefined();
+    expect(ALIASES['test_unit_x']).toBeUndefined();
   });
 
   it('ignores what is not a pack', () => {

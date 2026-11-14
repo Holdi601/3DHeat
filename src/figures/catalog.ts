@@ -209,7 +209,7 @@ export const FIGURES: Record<string, () => Template> = Object.fromEntries(Object
 
 /**
  * The local figure pack (`figurepack.ts`) when the page's server has one, put in place of the figures of the same
- * names; resolves with how many it replaced (0 in tests and tools, which install a pack themselves).
+ * names (its units drawn as its figures); resolves with how many it replaced (0 in tests and tools, which install a pack themselves).
  */
 export const figurePackReady: Promise<number> =
-  typeof location === 'undefined' ? Promise.resolve(0) : fetchFigurePack().then((p) => (p ? installFigurePack(CATALOG, p, FIGURES) : 0));
+  typeof location === 'undefined' ? Promise.resolve(0) : fetchFigurePack().then((p) => (p ? installFigurePack(CATALOG, p, FIGURES, ALIASES) : 0));
