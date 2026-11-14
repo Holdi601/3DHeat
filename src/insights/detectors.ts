@@ -14,6 +14,7 @@
 import { APPROACH, COARSE, EARLY, MID, speedEdge, SPEED_BINS, type InsightJob } from './pass';
 import { bhAdjust, confidenceLevel, quantileSorted, rateTest, shareTest, strengthOf, type RateTest, type ShareTest } from './stats';
 import type { DetectorId, Insight, InsightFilter, InsightPlace, InsightSubject } from './types';
+import { currencyUnit, parseValueColumn } from '../data/costs/columns';
 
 /** Names the detectors speak in: the taxonomies and the canonical columns (kept out of the worker's imports). */
 export interface InsightNames {
@@ -895,4 +896,103 @@ const flow: Detector = {
   },
 };
 
-export const DETECTOR_LIST: readonly Detector[] = [power, zones, cover, spawn, classPlace, players, flow];
+// ---------------------------------------------------------------------------
+// Value: where the most was paid or earned (data/cost.ts)
+
+/** Per currency, the column of what was paid (all of it where there is a total) and of what was earned. */
+function valueTargets(cols: readonly string[]): { c: number; earned: boolean; currency: string }[] {
+  const out: { c: number; earned: boolean; currency: string }[] = [];
+  const parsed = cols.map((name) => parseValueColumn(name));
+  const currencies = new Set(parsed.flatMap((p) => (p ? [p.currency] : [])));
+  const PAID = ['total', 'lost', 'spent', 'fired', 'fuel'];
+  for (const cur of currencies) {
+    for (const kind of PAID) {
+      const c = parsed.findIndex((p) => p && p.flow === 'cost' && p.currency === cur && p.kind === kind);
+      if (c >= 0) {
+        out.push({ c, earned: false, currency: cur });
+        break;
+      }
+    }
+    const e = parsed.findIndex((p) => p && p.flow === 'earn' && p.currency === cur);
+    if (e >= 0) out.push({ c: e, earned: true, currency: cur });
+  }
+  return out;
+}
+
+const value: Detector = {
+  id: 'value',
+  skip: (ctx) => (!ctx.job.meta.values?.length ? 'insights.skip.noValue' : ctx.job.presence <= 0 ? 'insights.skip.noTime' : null),
+  run: (ctx) => {
+    const { job } = ctx;
+    const g = job.meta.grid;
+    const M = g.mx * g.mz;
+    const T = job.presence;
+    const cols = job.meta.values ?? [];
+    const tests: { t: number; mi: number; test: RateTest }[] = [];
+    const targets = valueTargets(cols);
+    targets.forEach((tg, t) => {
+      const tot = job.valRows[tg.c];
+      if (tot < 20) return;
+      for (let mi = 0; mi < M; mi++) {
+        const pres = job.mPres[mi];
+        if (!(pres > 0) || pres >= T) continue;
+        const a = job.mValN[tg.c * M + mi];
+        const r = rateTest(a, pres, tot - a, T - pres);
+        if (a >= 3 || r.expected >= 3) tests.push({ t, mi, test: r });
+      }
+    });
+    const q = bhAdjust(tests.map((x) => x.test.p));
+    const groups = new Map<number, { cells: number[]; q: Map<number, number> }>();
+    tests.forEach((x, i) => {
+      if (!(q[i] < ctx.fdr) || x.test.shrunk < LARGE) return;
+      let gr = groups.get(x.t);
+      if (!gr) groups.set(x.t, (gr = { cells: [], q: new Map() }));
+      gr.cells.push(x.mi);
+      gr.q.set(x.mi, q[i]);
+    });
+    const out: Insight[] = [];
+    for (const [t, gr] of groups) {
+      const tg = targets[t];
+      const tot = job.valRows[tg.c];
+      const sum = job.valTotal[tg.c];
+      const found = components(gr.cells, g.mx).map((cells) => {
+        let a = 0;
+        let pres = 0;
+        let v = 0;
+        let qq = 1;
+        for (const c of cells) {
+          a += job.mValN[tg.c * M + c];
+          v += job.mVal[tg.c * M + c];
+          pres += job.mPres[c];
+          qq = Math.min(qq, gr.q.get(c)!);
+        }
+        const r = rateTest(a, pres, tot - a, T - pres);
+        const place = groupPlace(ctx, cells, (c) => Math.abs(job.mVal[tg.c * M + c]));
+        const share = sum !== 0 ? round((v / sum) * 100, 1) : 0;
+        const ins = build({
+          detector: 'value',
+          kind: tg.earned ? 'value.earned' : 'value.lost',
+          key: `${cols[tg.c]}:${placeKey(place)}`,
+          test: r,
+          q: qq,
+          tests: tests.length,
+          oneSided: true,
+          measure: 'rateRatio',
+          method: 'exact Poisson rate ratio of valued rows per presence vs rest of map, BH; adjacent cells merged',
+          params: { value: Math.round(v), unit: currencyUnit(tg.currency), share },
+          evidence: { rows: a, expected: round(r.expected, 1), value: Math.round(v), share, presence: round(pres, 1), cells: cells.length, column: cols[tg.c] },
+          place,
+          filters: [],
+        });
+        // Ranked by the money as much as by the rate: a big share is the finding.
+        ins.strength = round(ins.strength * (0.5 + Math.min(1, Math.abs(share) / 20)), 4);
+        return ins;
+      });
+      found.sort((a, b) => b.strength - a.strength);
+      out.push(...found.slice(0, 4));
+    }
+    return { insights: out, tests: tests.length };
+  },
+};
+
+export const DETECTOR_LIST: readonly Detector[] = [power, zones, cover, spawn, classPlace, players, flow, value];

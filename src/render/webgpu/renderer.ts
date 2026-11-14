@@ -129,6 +129,8 @@ interface GpuChunk {
   filterSlots: number;
   /** Slot holding the difference split's column, or -1 when there is none. */
   splitSlot: number;
+  /** Slot holding the value column the heat is weighed by, or -1 (`RenderParams.weightColumn`). */
+  weightSlot: number;
   /** One bearing byte a row, four to a word (`setDirections`); made when the heat pass first wants it. */
   dirs: GPUBuffer | null;
 }
@@ -1433,6 +1435,7 @@ export class WebgpuRenderer implements Renderer {
       filterKey: '',
       filterSlots: 0,
       splitSlot: -1,
+      weightSlot: -1,
     };
     // Routes set while it was on its way get their starts now.
     if (this.lines) {
@@ -1462,13 +1465,14 @@ export class WebgpuRenderer implements Renderer {
     chunkIndex: number,
     filters: ActiveFilter[],
     splitColumn: string | null,
+    weightColumn: string | null = null,
   ): { slots: number; splitSlot: number } {
     const chunk = this.chunks[chunkIndex];
     const ds = this.dataset;
     if (!chunk || !ds) return { slots: 0, splitSlot: -1 };
 
     const columns = filters.map((f) => f.column);
-    const key = `${columns.join('|')}#${splitColumn ?? ''}`;
+    const key = `${columns.join('|')}#${splitColumn ?? ''}#${weightColumn ?? ''}`;
     if (chunk.filterKey === key) {
       return { slots: chunk.filterSlots, splitSlot: chunk.splitSlot };
     }
@@ -1476,6 +1480,7 @@ export class WebgpuRenderer implements Renderer {
     chunk.filterKey = key;
     chunk.filterSlots = 0;
     chunk.splitSlot = -1;
+    chunk.weightSlot = -1;
 
     // A retained column, or the person ids for the person filter's slot.
     const resolved = columns
@@ -1486,6 +1491,10 @@ export class WebgpuRenderer implements Renderer {
     // Appended even when it duplicates a filtered column: one extra column is
     // cheaper than making the slot mapping depend on which columns coincide.
     if (splitData) resolved.push(splitData);
+    // The value weight after it, the same way.
+    const weightData = weightColumn ? filterColumnData(ds, weightColumn) : null;
+    const weightSlot = weightData ? resolved.length : -1;
+    if (weightData) resolved.push(weightData);
     // The same size as the old values: written over them, with no new buffer or bind group.
     const old = chunk.filterValues;
     const bytes = resolved.length * chunk.rows * 4;
@@ -1519,6 +1528,7 @@ export class WebgpuRenderer implements Renderer {
     this.gpuBytesUsed += cost;
     chunk.filterSlots = filterCount;
     chunk.splitSlot = splitData ? filterCount : -1;
+    chunk.weightSlot = weightSlot;
     return { slots: filterCount, splitSlot: chunk.splitSlot };
   }
 
@@ -2789,6 +2799,7 @@ export class WebgpuRenderer implements Renderer {
         plan.chunk,
         filters,
         params.splitMode === 0 ? null : params.splitColumn,
+        params.weightColumn,
       );
       // A column split whose column is not on the GPU for this chunk - it would
       // not fit, or the split has no column it can draw - leaves the chunk out
@@ -2908,7 +2919,8 @@ export class WebgpuRenderer implements Renderer {
   }
 
   private composite(encoder: GPUCommandEncoder, params: FrameParams): void {
-    const signed = params.mode === 'heat-difference';
+    // Heat weighed by a net value is signed too (render/valueWeight.ts).
+    const signed = params.mode === 'heat-difference' || params.heat.signed;
     const u = this.scratchFor(COMPOSITE_UNIFORM_BYTES);
     // Every accumulation mode stores the estimate itself rather than a running
     // total, so the only thing left to undo is the half-float range scaling.
@@ -3306,6 +3318,9 @@ export class WebgpuRenderer implements Renderer {
     u[98] = dir && !fieldSize ? dir.norm : 1;
     u[99] = fieldSize ? 1 : 0;
     u[100] = dir && !fieldSize ? dir.centroid : 0;
+    // Heat weighed by value: the weight's slot in the packed filter values (-1 off) and its scale.
+    u[101] = params.weightColumn && chunk.weightSlot >= 0 ? chunk.weightSlot : -1;
+    u[102] = params.weightScale;
     return this.uniforms.push(u, HEAT_UNIFORM_BYTES);
   }
 

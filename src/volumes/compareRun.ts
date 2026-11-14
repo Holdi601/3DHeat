@@ -12,6 +12,7 @@
 
 import { ACTORS, CANON, EVENT_KINDS, VEHICLE_CLASSES } from '../data/canonical';
 import { filterColumnData } from '../render/filterTables';
+import { valueColumnsOf } from '../data/cost';
 import { lowerBound } from '../render/sampling';
 import type { Dataset } from '../state/types';
 import { createCompare, finishCompare, packYaw, stepCompare, type CompareChunk, type CompareMeta, type CompareResult, type CompareScope } from './compare';
@@ -69,6 +70,7 @@ export function prepareCompare(ds: Dataset, volumes: readonly Volume[], scope: C
     hasTime: !!ds.time,
     hasLife: !!ds.lifetime,
     hasDir: !!(dir && dir.length === ds.count) || !!ds.yaw,
+    values: valueColumnsOf(ds.attrs).map((c) => c.name),
   };
   // Follow tracks on movement samples only when there are any.
   const pos = EVENT_KINDS.indexOf('position');
@@ -135,6 +137,7 @@ export function chunkAt(p: ComparePrep, lo: number, n: number): { chunk: Compare
       const d = filterColumnData(ds, f.column);
       return d ? cut(d as Float32Array | Uint32Array) : null;
     }),
+    values: (p.meta.values ?? []).map((name) => cut(ds.attrs.find((a) => a.name === name)?.data as Float32Array | undefined)),
   };
   return { chunk, transfer };
 }

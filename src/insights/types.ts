@@ -10,7 +10,7 @@
  * viewer says it in the viewer's language, a narrator can say it in its own.
  */
 
-export const DETECTORS = ['power', 'zones', 'cover', 'spawn', 'classPlace', 'players', 'flow'] as const;
+export const DETECTORS = ['power', 'zones', 'cover', 'spawn', 'classPlace', 'players', 'flow', 'value'] as const;
 export type DetectorId = (typeof DETECTORS)[number];
 
 /** What the effect measures. All are ratios: 1 is "like the rest of the map". */
@@ -106,6 +106,15 @@ export interface DetectorRun {
   ms: number;
 }
 
+export interface InsightValue {
+  column: string;
+  total: number;
+  rows: number;
+  byTeam: Record<string, number>;
+  /** The largest by magnitude; `person` is filled in on the main thread. */
+  topPlayers: { personIndex: number; person?: string; value: number }[];
+}
+
 export interface InsightReport {
   schema: 'heat3d.insights/1';
   dataset: {
@@ -123,6 +132,11 @@ export interface InsightReport {
   grid: { x0: number; z0: number; fine: number; mid: number; coarse: number; nx: number; nz: number };
   /** Totals the rates are measured against. */
   baseline: { presence: number; kills: number; deaths: number; spawns: number; crossings: number };
+  /**
+   * What was paid, lost and earned (`data/cost.ts`), per value column: the total,
+   * by group, and the players who account for the most. Absent without value columns.
+   */
+  values?: InsightValue[];
   detectors: DetectorRun[];
   insights: Insight[];
   /** Was the false discovery rate controlled at. */

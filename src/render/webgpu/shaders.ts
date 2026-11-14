@@ -227,7 +227,8 @@ struct HeatUniforms {
   // softness of its sides, both radians; z the norm that keeps a wedge's heat
   // its disc's; w 1 for the direction-field pass (see DirectionDraw).
   dirCfg        : vec4<f32>,
-  // x: the wedge's heat centroid ahead of the row, fraction of radius. yzw spare.
+  // x: the wedge's heat centroid ahead of the row, fraction of radius.
+  // y: slot of the value weight in the packed filter values, negative off; z its scale. w spare.
   dirCfg2       : vec4<f32>,
 };
 
@@ -490,6 +491,13 @@ fn vsHeat(@builtin(vertex_index) vid : u32) -> VsOut {
     if (sgn == 0.0) { reject = true; }
     // Each side normalised to its own total, when asked: see sideScales.
     if (sgn > 0.0) { sgn = sgn * u.teamCfg.z; } else { sgn = sgn * u.teamCfg.w; }
+  }
+  if (u.dirCfg2.y >= 0.0) {
+    // Heat weighed by value (render/valueWeight.ts). A row worth nothing draws
+    // nothing; a net value carries its sign.
+    let w = filterValues[u32(u.dirCfg2.y) * u.filterCfg.x + row] * u.dirCfg2.z;
+    if (!(abs(w) > 0.0)) { reject = true; }
+    sgn = sgn * w;
   }
   out.sign = sgn;
   out.dir = vec4<f32>(0.0);

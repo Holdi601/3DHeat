@@ -1,3 +1,4 @@
+import { valueWeight } from './valueWeight';
 import { Matrix4, Vector3 } from 'three';
 import { estimateSaturation, horizontalExtent } from '../data/calibrate';
 import { buildLines, heatModeFor, lineSettingsKey, type LineData } from '../data/lines';
@@ -2744,6 +2745,8 @@ export class Engine {
     // The person filter is one of these: a slot over the person ids, so the heat
     // shows the selected people as the box replay does.
     const activeFilters = buildActiveFilters(this.dataset, s.filters, this.filterCache);
+    // Heat weighed by a value column (render/valueWeight.ts).
+    const weight = valueWeight(this.dataset, s.heat.weightBy);
     const splitScale = this.updateSideCounts(
       now,
       heatMode === 'heat-difference' && !raceTab && s.mode !== 'team',
@@ -3008,6 +3011,8 @@ export class Engine {
       `${split.mode}:${split.column ?? ''}:${split.sign ? split.sign.join(',') : ''}:${split.positiveRange.join(',')}:${split.negativeRange.join(',')}`,
       // Each side's weight, when the sides are normalised to their totals.
       splitScale.join(','),
+      // So does weighing rows by value.
+      weight ? `${weight.column}:${weight.scale}` : '',
       // Switching between all/play or changing the expiry rule invalidates the
       // accumulated field outright, so these belong here rather than in the
       // window signature that only triggers a blend.
@@ -3698,7 +3703,7 @@ export class Engine {
         zoomInvariant: h.zoomInvariant,
         groundProjected: h.groundProjected,
         groundY,
-        signed: heatMode === 'heat-difference',
+        signed: heatMode === 'heat-difference' || !!weight?.signed,
         teamColors: heatMode === 'heat-teams' && (this.dataset?.teamLabels.length ?? 0) > 0,
         // Every group, including the hidden ones. See HeatUniforms.teamCount.
         teamCount: Math.max(1, this.dataset?.teamLabels.length ?? 1),
@@ -3747,6 +3752,8 @@ export class Engine {
       splitPositive: split.positiveRange,
       splitNegative: split.negativeRange,
       splitScale,
+      weightColumn: weight?.column ?? null,
+      weightScale: weight?.scale ?? 1,
       filters: activeFilters,
       cubes,
       cubeCount,

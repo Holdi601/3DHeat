@@ -20,6 +20,8 @@ import { useStore } from '../../state/store';
 import { currentScope, scopeKey } from '../../volumes/scope';
 import { Section, Segmented } from '../controls';
 import { Caster } from './Caster';
+import { parseValueColumn } from '../../data/costs/columns';
+import { valueColumnLabel } from '../panels/ValueSection';
 import { Debrief } from './Debrief';
 import { useEngine } from '../EngineContext';
 import './insights.css';
@@ -150,6 +152,15 @@ function InsightsBody() {
           <div className="hint">
             {t('insights.summary', { n: int(r.insights.length), rows: int(r.dataset.shownRows), matches: int(r.dataset.matches) })}
           </div>
+          {r.values?.map((v) => {
+            const col = parseValueColumn(v.column);
+            const top = v.topPlayers[0];
+            return col ? (
+              <div className="hint" key={v.column}>
+                {t('value.insightTotal', { kind: valueColumnLabel(col), total: int(v.total), player: top?.person ?? '—', value: int(top?.value ?? 0) })}
+              </div>
+            ) : null;
+          })}
           {r.insights.length === 0 && <div className="hint">{t('insights.none', { fdr: `${num(r.fdr * 100)}%` })}</div>}
           <ol className="ins-list">
             {r.insights.map((ins) => (

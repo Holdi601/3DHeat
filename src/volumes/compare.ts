@@ -81,6 +81,8 @@ export interface CompareMeta {
   hasTime: boolean;
   hasLife: boolean;
   hasDir: boolean;
+  /** Value columns to total (`data/cost.ts`: cost_*, earn_*, net_*), by name. */
+  values?: string[];
 }
 
 /** Which rows show: the volume statistics' `Scope` with the time already applied by the chunking. */
@@ -112,6 +114,8 @@ export interface CompareChunk {
   dir: Uint8Array | null;
   /** One per scope filter, its column's slice (null: the column is missing, nothing shows). */
   filt: (ArrayLike<number> | null)[];
+  /** One per `CompareMeta.values`, its column's slice. */
+  values?: (Float32Array | null)[];
 }
 
 export interface VisitStats {
@@ -155,6 +159,8 @@ export interface VolumeCompare {
   perMatch: { n: number; mean: number[]; sd: number[] } | null;
   /** Per match values, `SESSION_METRICS` major then match, for paired comparisons. */
   matchValues: Float64Array | null;
+  /** Each value column's total inside, and by group and vehicle class (`CompareMeta.values`). */
+  values: { name: string; total: number; byTeam: number[]; byClass: number[] }[] | null;
 }
 
 export interface CompareResult {
@@ -201,6 +207,10 @@ interface Acc {
   visitAcc: Float32Array | null;
   /** Per person: the session + 1 it was last counted in for `persons` per match. */
   seen: Int32Array | null;
+  /** Value totals: per column, then per column x group and column x class. */
+  val: Float64Array;
+  teamVal: Float64Array;
+  clsVal: Float64Array;
 }
 
 export interface CompareJob {
@@ -252,6 +262,9 @@ export function createCompare(meta: CompareMeta, volumes: readonly Volume[], sco
     last: tracks ? new Uint8Array(P) : null,
     visitAcc: tracks ? new Float32Array(P) : null,
     seen: P > 0 && S > 0 ? new Int32Array(P) : null,
+    val: new Float64Array(meta.values?.length ?? 0),
+    teamVal: new Float64Array((meta.values?.length ?? 0) * meta.teams),
+    clsVal: new Float64Array((meta.values?.length ?? 0) * meta.vehicleClasses),
   }));
   const n = volumes.length;
   return {
@@ -345,6 +358,10 @@ export function stepCompare(job: CompareJob, ch: CompareChunk): void {
   const KILL = meta.kill;
   const DEATH = meta.death;
   const { px, py, pz, time, life, person, team, session, event, actor, cls, dir } = ch;
+  const vals = ch.values ?? [];
+  const NV = Math.min(vals.length, meta.values?.length ?? 0);
+  const T = meta.teams;
+  const VC = meta.vehicleClasses;
   for (let j = 0; j < ch.n; j++) {
     const x = px[j];
     const y = py[j];
@@ -457,6 +474,17 @@ export function stepCompare(job: CompareJob, ch: CompareChunk): void {
       if (dir) {
         const q = dir[j];
         if (q < DIR_STEPS) acc.dir[Math.floor(((q / DIR_STEPS) * DIR_SECTORS + 0.5) % DIR_SECTORS)]++;
+      }
+      for (let c = 0; c < NV; c++) {
+        const col = vals[c];
+        const v = col ? col[j] : 0;
+        if (v === 0 || v !== v) continue;
+        acc.val[c] += v;
+        if (team && team[j] < T) acc.teamVal[c * T + team[j]] += v;
+        if (cls && meta.classMap) {
+          const k = meta.classMap[cls[j]] ?? -1;
+          if (k >= 0) acc.clsVal[c * VC + k] += v;
+        }
       }
       if (acc.sess && s >= 0 && s < S) {
         const m = acc.sess;
@@ -573,6 +601,14 @@ export function finishCompare(job: CompareJob, complete = true): CompareResult {
       dir: meta.hasDir ? Array.from(acc.dir) : null,
       perMatch,
       matchValues,
+      values: meta.values?.length
+        ? meta.values.map((name, c) => ({
+            name,
+            total: acc.val[c],
+            byTeam: Array.from(acc.teamVal.subarray(c * meta.teams, (c + 1) * meta.teams)),
+            byClass: Array.from(acc.clsVal.subarray(c * meta.vehicleClasses, (c + 1) * meta.vehicleClasses)),
+          }))
+        : null,
     };
   });
   return {

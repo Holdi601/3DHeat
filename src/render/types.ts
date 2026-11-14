@@ -472,6 +472,12 @@ export interface FrameParams {
    * unless each side is normalised to its own total (`sideScales`).
    */
   splitScale: [number, number];
+  /**
+   * A value column weighing each row (render/valueWeight.ts), times `weightScale`;
+   * a row of weight 0 is not drawn. Null counts rows, as always.
+   */
+  weightColumn: string | null;
+  weightScale: number;
   /** Column filters, up to MAX_FILTER_SLOTS. Evaluated per row in the shader. */
   filters: ActiveFilter[];
 

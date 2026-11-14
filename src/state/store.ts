@@ -184,6 +184,13 @@ export interface HeatSettings {
   dirFieldSpacing: number;
   /** Answer a click with the directions at that spot: the resultant arrow and the polar chart. */
   dirOnClick: boolean;
+  /**
+   * Weigh each row by a value column (`data/cost.ts`: cost_*, earn_*, net_*)
+   * rather than count it: where the most was spent, lost or earned. Null counts.
+   */
+  weightBy: string | null;
+  /** Real-world money shown in dollars or euros (`EUR_PER_USD`). */
+  money: 'usd' | 'eur';
 }
 
 /**
@@ -703,6 +710,8 @@ export const useStore = create<AppState>((set) => ({
     dirFieldAnimate: true,
     dirFieldSpacing: 28,
     dirOnClick: false,
+    weightBy: null,
+    money: 'usd',
   },
   slice: {
     enabled: false,

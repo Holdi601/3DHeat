@@ -9,6 +9,7 @@ import {
   type TimeUnit,
 } from '../state/types';
 import { DCS_PROJECTIONS } from '../world/dcsProjection';
+import { costColumns } from './costs/columns';
 
 /**
  * Guess a column mapping from column names and sampled values.
@@ -154,6 +155,8 @@ export function applyHints(
   const roles = new Set(ROLE_COLUMNS.map((r) => out[r]).filter(Boolean));
   if (Array.isArray(h.extra)) {
     out.extra = h.extra.filter((c) => has(c) && !roles.has(c));
+    // The cost model's columns as well (see autoMap): a converter's list names what to filter on.
+    for (const c of costColumns(columns)) if (!roles.has(c) && !out.extra.includes(c)) out.extra.push(c);
     out.extraNumeric = {};
     for (const c of out.extra) out.extraNumeric[c] = !!numeric[columns.indexOf(c)];
   } else {
@@ -596,6 +599,13 @@ export function autoMap(input: AutoMapInput): ColumnMapping {
   for (const cand of candidates.slice(0, MAX_AUTO_FILTER_COLUMNS)) {
     mapping.extra.push(cand.name);
     mapping.extraNumeric[cand.name] = cand.isNumeric;
+  }
+  // What the cost model reads (data/cost.ts), past the handful: a weapon or
+  // fuel column left out of the load prices nothing.
+  for (const c of costColumns(columns)) {
+    if (used.has(c) || noise.has(c) || mapping.extra.includes(c)) continue;
+    mapping.extra.push(c);
+    mapping.extraNumeric[c] = !!numeric[columns.indexOf(c)];
   }
 
   mapping.axes = { ...DEFAULT_AXIS_MAPPING, up: guessUpAxis(rows, columns, mapping) };

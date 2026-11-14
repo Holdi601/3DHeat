@@ -7,6 +7,7 @@ import { DEFAULT_NEGATIVE_RAMP, DEFAULT_POSITIVE_RAMP } from '../../state/types'
 import { Check, Rich, Section, Segmented, Slider } from '../controls';
 import { CurveEditor } from '../CurveEditor';
 import { DirectionSection } from './DirectionSection';
+import { ValueSection } from './ValueSection';
 import { useEngine } from '../EngineContext';
 import { RampEditor } from '../RampEditor';
 import { int, num, t } from '../../i18n';
@@ -235,6 +236,7 @@ export function HeatPanel() {
       </Section>
 
       <DirectionSection />
+      <ValueSection />
 
       <Section title={t('heat.heatPanel.colours')}>
         {teams && (

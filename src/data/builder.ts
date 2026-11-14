@@ -3,9 +3,11 @@ import { Dictionary, GrowableF32, GrowableU32 } from './growable';
 import { msg, MsgError, sayDataset, type Msg } from './msg';
 import { radixSortIndices } from './sort';
 import { CANON, canonicalColumns, type CategoryInput } from './canonical';
+import { valueColumns } from './cost';
 import { MAX_GROUPS } from '../render/types';
 import type { AttributeColumn, Dataset, GeoReference } from '../state/types';
 import { emptyBounds } from '../state/types';
+import { extentOf } from './extent';
 
 /**
  * Most sessions worth *listing*.
@@ -443,6 +445,28 @@ export class DatasetBuilder {
         units: 1,
       }),
     );
+    // What each row cost or earned, for heat weighed by value and the totals (`cost.ts`).
+    {
+      const canon = (name: string) => {
+        const a = attrsRaw.find((c) => c.name === name && c.kind === 'category');
+        return a ? { name, data: a.data as Uint32Array, labels: a.categories ?? [] } : null;
+      };
+      attrsRaw.push(
+        ...valueColumns({
+          n,
+          cats: allCats,
+          nums: attrsRaw.flatMap((c) => (c.kind === 'number' ? [{ name: c.name, data: c.data as Float32Array }] : [])),
+          event: canon(CANON.event),
+          vehicleClass: canon(CANON.vehicleClass),
+          targetClass: canon(CANON.targetClass),
+          person: personRaw,
+          personLabels: this.personDict.labels,
+          session: sessionRaw,
+          time,
+          order,
+        }),
+      );
+    }
 
     // A column with more distinct values than can be grouped by is not a group,
     // it is an id — one value per player, per match, per row. The rows are
@@ -530,16 +554,7 @@ export class DatasetBuilder {
     };
 
     phase('data.builder.phase.extent');
-    const b = dataset.bounds;
-    const { px: fx, py: fy, pz: fz } = dataset;
-    for (let i = 0; i < n; i++) {
-      if (fx[i] < b.minX) b.minX = fx[i];
-      if (fx[i] > b.maxX) b.maxX = fx[i];
-      if (fy[i] < b.minY) b.minY = fy[i];
-      if (fy[i] > b.maxY) b.maxY = fy[i];
-      if (fz[i] < b.minZ) b.minZ = fz[i];
-      if (fz[i] > b.maxZ) b.maxZ = fz[i];
-    }
+    extentOf(dataset.px, dataset.py, dataset.pz, n, dataset.bounds);
 
     phase('data.builder.phase.roster');
     const roster = buildRoster(dataset.personId, dataset.teamId, this.personDict.size, teamCount, n);

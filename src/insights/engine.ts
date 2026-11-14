@@ -5,7 +5,7 @@
 
 import { DETECTOR_LIST, type DetectContext, type InsightNames } from './detectors';
 import { COARSE, MID, type InsightJob } from './pass';
-import type { DetectorRun, Insight, InsightReport } from './types';
+import type { DetectorRun, Insight, InsightReport, InsightValue } from './types';
 
 /** False discovery rate every detector holds its findings to. */
 export const FDR = 0.05;
@@ -97,9 +97,35 @@ export function finishInsights(job: InsightJob, names: InsightNames, info: Repor
       spawns: job.lives.n,
       crossings,
     },
+    ...(m.values?.length ? { values: valuesOf(job, names) } : {}),
     detectors: runs,
     insights: ranked.slice(0, MAX_INSIGHTS),
     fdr: FDR,
     elapsedMs: Math.round(now() - t0),
   };
+}
+
+/** Each value column's totals: by group, and the ten players with the most. */
+function valuesOf(job: InsightJob, names: InsightNames): InsightValue[] {
+  const cols = job.meta.values ?? [];
+  const T = job.teamVal.length / Math.max(1, cols.length);
+  const P = job.meta.persons;
+  return cols.map((column, c) => {
+    const byTeam: Record<string, number> = {};
+    for (let g = 0; g < T; g++) {
+      const v = job.teamVal[c * T + g];
+      if (v !== 0) byTeam[names.teams[g] ?? `#${g}`] = Math.round(v);
+    }
+    const top: { personIndex: number; value: number }[] = [];
+    for (let p = 0; p < P; p++) {
+      const v = job.personVal[c * P + p];
+      if (v === 0) continue;
+      if (top.length < 10 || Math.abs(v) > Math.abs(top[top.length - 1].value)) {
+        top.push({ personIndex: p, value: Math.round(v) });
+        top.sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
+        if (top.length > 10) top.pop();
+      }
+    }
+    return { column, total: Math.round(job.valTotal[c]), rows: job.valRows[c], byTeam, topPlayers: top };
+  });
 }

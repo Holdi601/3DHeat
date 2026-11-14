@@ -38,6 +38,8 @@ import { volumeBounds, type Volume } from '../../volumes/volume';
 import { Segmented } from '../controls';
 import { useEngine } from '../EngineContext';
 import { valueLabel } from '../panels/FilterPanel';
+import { valueColumnLabel } from '../panels/ValueSection';
+import { parseValueColumn, shownValue } from '../../data/cost';
 import './compare.css';
 
 type View = 'table' | 'bars' | 'time' | 'visits' | 'flow';
@@ -465,6 +467,25 @@ function measures(c: ChartCtx): Measure[] {
     add('kd', t('compare.m.kd'), (v) => (v.kills !== null && v.deaths ? v.kills / v.deaths : null), fmtDec);
     if (has((v) => v.presence))
       add('kpm', t('compare.m.kpm'), (v) => (v.kills !== null && v.presence ? v.kills / (v.presence / 60) : null), fmtDec);
+  }
+  // What was paid, lost and earned inside (data/cost.ts), in total and by group.
+  const money = useStore.getState().heat.money ?? 'usd';
+  for (const name of c.vols.find((v) => v.values)?.values?.map((x) => x.name) ?? []) {
+    const col = parseValueColumn(name);
+    if (!col) continue;
+    const label = valueColumnLabel(col, money);
+    const fmt = (x: number | null) => fmtInt(x === null ? null : shownValue(x, col.currency, money));
+    const of = (v: Vol) => v.values?.find((x) => x.name === name) ?? null;
+    const group = t('value.compareGroup');
+    add(`value.${name}`, label, (v) => of(v)?.total ?? null, fmt, undefined, group);
+    c.ds.teamLabels.forEach((team, g) => {
+      if (c.vols.some((v) => (of(v)?.byTeam[g] ?? 0) !== 0))
+        add(`value.${name}.${g}`, t('value.byTeam', { kind: label, team: String(team) }), (v) => of(v)?.byTeam[g] ?? null, fmt, undefined, group);
+    });
+    VEHICLE_CLASSES.forEach((k, i) => {
+      if (c.vols.some((v) => (of(v)?.byClass[i] ?? 0) !== 0))
+        add(`value.${name}.c${i}`, t('value.byTeam', { kind: label, team: valueLabel(CANON.vehicleClass, k) }), (v) => of(v)?.byClass[i] ?? null, fmt, undefined, group);
+    });
   }
   const dims: [Dim, string][] = [
     ['events', t('compare.group.events')],

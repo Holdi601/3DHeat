@@ -128,6 +128,9 @@ uniform int       uSignWidth;   // entries per row of uTeamSignTex, for clamping
 uniform vec2      uSplitPos;    // positive range, mode 2
 uniform vec2      uSplitNeg;    // negative range, mode 2
 uniform vec2      uSideScale;   // weight of a positive row, of a negative one
+// Heat weighed by value (render/valueWeight.ts): x 1 on, y the scale.
+uniform sampler2D uWeightTex;   // per-row value of the weight column
+uniform vec2      uWeightCfg;
 uniform vec3  uCamPos;
 uniform vec3  uCamFwd;         // unit view axis, for the planar cull
 uniform vec2  uDistCull;       // (near, far) world units; far <= 0 disables
@@ -352,6 +355,12 @@ void main() {
     if (sgn == 0.0) reject = true;
     // Each side normalised to its own total, when asked: see sideScales.
     sgn *= sgn > 0.0 ? uSideScale.x : uSideScale.y;
+  }
+  if (uWeightCfg.x > 0.5) {
+    // A row worth nothing draws nothing; a net value carries its sign.
+    float w = texelFetch(uWeightTex, tc, 0).r * uWeightCfg.y;
+    if (!(abs(w) > 0.0)) reject = true;
+    sgn *= w;
   }
   vSign = sgn;
   vDir = vec4(0.0);

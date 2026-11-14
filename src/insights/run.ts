@@ -98,6 +98,7 @@ function resolve(r: InsightReport, ds: Dataset): InsightReport {
     if ('player' in ins.sentence.params) ins.sentence.params.player = name;
     for (const f of ins.filters) if (f.by === 'person') f.values = [name];
   }
+  for (const v of r.values ?? []) for (const p of v.topPlayers) p.person = ds.personLabels[p.personIndex] ?? `#${p.personIndex}`;
   return r;
 }
 

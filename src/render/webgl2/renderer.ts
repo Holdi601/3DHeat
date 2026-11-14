@@ -87,6 +87,8 @@ const LINE_UNIT = 16;
 const TILE_UNIT = 17;
 /** The heat pass's bearing texture (`setDirections`). */
 const DIR_UNIT = 18;
+/** The heat pass's per-row weight, when heat is weighed by value (`RenderParams.weightColumn`). */
+const WEIGHT_UNIT = 19;
 /** Rows of bearings uploaded a frame at most, a whole number of texture rows: half a megabyte. */
 const DIR_SLICE_ROWS = 64 * ROW_TEX_WIDTH;
 
@@ -1549,7 +1551,8 @@ export class Webgl2Renderer implements Renderer {
       this.updateTeamSign(params.teamSign, params.splitMode === 1 ? params.splitSign : null);
     }
 
-    const signed = params.mode === 'heat-difference';
+    // Heat weighed by a net value is signed too (render/valueWeight.ts).
+    const signed = params.mode === 'heat-difference' || params.heat.signed;
     // An idle frame recomposites the buffers it already has. They are our own
     // framebuffers and retain reliably; the canvas does not, so the composite has
     // to run every frame regardless.
@@ -2460,6 +2463,7 @@ export class Webgl2Renderer implements Renderer {
     u.f2('uSplitPos', params.splitPositive[0], params.splitPositive[1]);
     u.f2('uSplitNeg', params.splitNegative[0], params.splitNegative[1]);
     u.f2('uSideScale', params.splitScale[0], params.splitScale[1]);
+    u.i1('uWeightTex', WEIGHT_UNIT);
     if (filters.some((f) => f.kind === 'categories')) {
       gl.activeTexture(gl.TEXTURE0 + 4 + MAX_FILTER_SLOTS);
       gl.bindTexture(gl.TEXTURE_2D, this.ensureFilterMask(filters));
@@ -2618,6 +2622,12 @@ export class Webgl2Renderer implements Renderer {
       gl.activeTexture(gl.TEXTURE0 + 6 + MAX_FILTER_SLOTS);
       gl.bindTexture(gl.TEXTURE_2D, splitTex ?? this.ensureDummy());
       u.i1('uSplitMode', params.splitMode);
+      // The weight rides the filters' per-chunk column textures too. Bound either
+      // way (see the lifetime texture); off where it could not be put on the GPU.
+      const weightTex = params.weightColumn ? this.filterTexture(plan.chunk, params.weightColumn, filters, params.splitColumn) : null;
+      gl.activeTexture(gl.TEXTURE0 + WEIGHT_UNIT);
+      gl.bindTexture(gl.TEXTURE_2D, weightTex ?? this.ensureDummy());
+      u.f2('uWeightCfg', weightTex ? 1 : 0, params.weightScale);
 
       // Bearings, bound either way (see the lifetime texture above).
       const dirTex = wantDirs ? this.chunkDirs(chunk) : null;

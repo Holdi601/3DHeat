@@ -281,6 +281,16 @@ export interface InsightJob {
   pSess: Int32Array | null;
   pSlot: Int32Array | null;
   tracks: Tracks | null;
+  /**
+   * Value columns (`CompareMeta.values`): totals, and per column the sum and the
+   * rows carrying a value per mid cell, per group and per person.
+   */
+  valTotal: Float64Array;
+  valRows: Float64Array;
+  mVal: Float64Array;
+  mValN: Float64Array;
+  teamVal: Float64Array;
+  personVal: Float64Array;
 }
 
 export function createInsightJob(meta: InsightMeta, scope: CompareScope): InsightJob {
@@ -291,6 +301,7 @@ export function createInsightJob(meta: InsightMeta, scope: CompareScope): Insigh
   const P = meta.persons;
   const T = Math.max(1, meta.teams);
   const K = meta.vehicleClasses;
+  const V = meta.values?.length ?? 0;
   const tracks = P > 0;
   return {
     meta,
@@ -326,6 +337,12 @@ export function createInsightJob(meta: InsightMeta, scope: CompareScope): Insigh
     pSess: tracks ? new Int32Array(P).fill(-2) : null,
     pSlot: tracks ? new Int32Array(P).fill(-1) : null,
     tracks: tracks ? new Tracks(P) : null,
+    valTotal: new Float64Array(V),
+    valRows: new Float64Array(V),
+    mVal: new Float64Array(V * M),
+    mValN: new Float64Array(V * M),
+    teamVal: new Float64Array(V * T),
+    personVal: new Float64Array(V * P),
   };
 }
 
@@ -369,6 +386,10 @@ export function stepInsight(job: InsightJob, ch: InsightChunk): void {
   const cap = meta.dwellCap;
   const hasLife = meta.hasLife;
   const { px, py, pz, time, life, person, team, session, event, actor, cls, target } = ch;
+  const vals = ch.values ?? [];
+  const V = Math.min(vals.length, meta.values?.length ?? 0);
+  const TV = job.teamVal.length / Math.max(1, meta.values?.length ?? 1);
+  const PV = meta.persons;
   const shared = meta.personShared;
   const pairs = job.pairs;
   for (let j = 0; j < ch.n; j++) {
@@ -398,6 +419,19 @@ export function stepInsight(job: InsightJob, ch: InsightChunk): void {
     job.fN[fi]++;
     job.mPres[mi] += d;
     job.presence += d;
+    for (let c = 0; c < V; c++) {
+      const col = vals[c];
+      const v = col ? col[j] : 0;
+      if (v === 0 || v !== v) continue;
+      job.valTotal[c] += v;
+      job.valRows[c]++;
+      job.mVal[c * M + mi] += v;
+      job.mValN[c * M + mi]++;
+      const tg = team ? team[j] : -1;
+      if (tg >= 0 && tg < TV) job.teamVal[c * TV + tg] += v;
+      const pp = person ? person[j] : -1;
+      if (pp >= 0 && pp < PV) job.personVal[c * PV + pp] += v;
+    }
     const k = cls && meta.classMap ? meta.classMap[cls[j]] ?? -1 : -1;
     const ac = actor && meta.actorMap ? meta.actorMap[actor[j]] ?? -1 : -1;
     const tm = team ? team[j] : -1;
