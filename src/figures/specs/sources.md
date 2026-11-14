@@ -276,3 +276,4 @@ themselves are never stored in this repository.
 | m18-hellcat (turret height) | the turret's walls 0.1 m lower than the FM 30-40 sheet draws them, kept where it fitted the WT reference better (fitted to WT reference) | - | - | - | - |
 | m41 (turret height) | the turret's walls 12 % taller than the earlier estimate, kept where it fitted the WT reference better (fitted to WT reference) | - | - | - | - |
 | crusader-ii (hull machine-gun turret) | the auxiliary machine-gun turret at the front left, often removed in service, left off where that fitted the WT reference better (fitted to WT reference) | - | - | - | - |
+| m3a1-stuart (turret place) | the turret 0.25 m further forward than the M3's, kept where it fitted the WT reference better (fitted to WT reference) | - | - | - | - |

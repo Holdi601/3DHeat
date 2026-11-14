@@ -1061,7 +1061,8 @@ G['m3-stuart'] = ww2({
 });
 // The M3A1's AA machine gun stands in its cradle on the pintle bracket on the turret's right side (the mount's top at
 // 2.39 m, the gun over it).
-G['m3a1-stuart'] = ww2({ ...M3_HULL, guns: [{ mount: 'turret', length: 1.25, calibre: 0.037, at: 0.45 }, { mount: 'top', length: 1.0, calibre: 0.0076, x: -0.3, side: 0.62, up: 0.25 }] });
+// Its turret 0.25 m further forward than the M3's, fitted to the WT reference.
+G['m3a1-stuart'] = ww2({ ...M3_HULL, turret: { ...M3_T, x: 0.3 }, guns: [{ mount: 'turret', length: 1.25, calibre: 0.037, at: 0.45 }, { mount: 'top', length: 1.0, calibre: 0.0076, x: -0.3, side: 0.62, up: 0.25 }] });
 // M5A1 Stuart: the new hull with its sloped glacis and raised engine deck, the turret with a radio bustle (4.84 x 2.29 m,
 // 2.3 m to the turret roof, 2.57 m over the .30 cal AA machine gun on its bracket on the turret's right side).
 // Measured on FM 30-40's sheet (sources.md; its side view's heights fitted to its front view's): the raised engine
