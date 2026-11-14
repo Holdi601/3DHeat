@@ -21,7 +21,7 @@ import type { Dataset, FilterSpec } from '../state/types';
 import type { GameMatch } from '../match/wtMatch';
 import { matchesOf, pickedMatches } from '../match/matches';
 import { SOURCE_COLUMN } from '../data/builder';
-import { toWorld, zoneAt, type Objective, type ObjectiveLayer, type ObjectiveTimeline, type Vec3 } from '../match/objectives';
+import { OBJECTIVE_LAYERS as OBJECTIVE_LAYER_LIST, toWorld, zoneAt, type Objective, type ObjectiveLayer, type ObjectiveTimeline, type Vec3 } from '../match/objectives';
 import { runSlice, WAIT, type SliceJob } from '../data/slices';
 
 /** One battle's objectives and where its replay seconds are on the dataset's clock. */
@@ -44,6 +44,9 @@ export interface ObjectiveLabel {
   rgb: [number, number, number];
   /** Higher first when labels would cover each other. */
   priority: number;
+  /** A zone's capture under way, 0..1, and the capturing side's colour. */
+  progress?: number;
+  by?: [number, number, number];
 }
 
 /** The shapes of one objective, laid on the ground. */
@@ -54,11 +57,21 @@ interface Placed {
   anchor: Vec3;
   /** Its outlines, each a closed (or, `open`, an open) run of points. */
   outlines: { pts: Float32Array; closed: boolean }[];
-  /** A zone's inner rings, the faint fill. */
-  fill: Float32Array[];
-  /** A zone's progress ring: points round from north, the first again at the end. */
-  ring: Float32Array[] | null;
+  /**
+   * Its filled shapes, as triangles: each the outline shrunk toward its middle
+   * step by step (`ZONE_STEPS`, `MARK_STEPS`), every point laid on the ground,
+   * so a zone's disc follows the hill it lies on.
+   */
+  discs: Float32Array[][];
 }
+
+/** A zone's disc from just outside its edge in: a dark rim (it reads on any ground), the edge band, the progress band, then the fill. */
+const ZONE_STEPS = [1.05, 1, 0.88, 0.77, 0.6, 0.4, 0.2, 0];
+const RIM: [number, number, number] = [0.04, 0.05, 0.07];
+/** A spawn's or a marker's: the edge band, then the fill. */
+const MARK_STEPS = [1, 0.72, 0.35, 0];
+/** The triangles' height above the ground, over the lines' (the triangles between two points cut a rise less). */
+const TRI_LIFT = 2;
 
 /** Points round a circle. */
 const CIRCLE = 72;
@@ -173,6 +186,66 @@ function path(corners: Vec3[], closed: boolean, ground: GroundAt | null, lift: n
   return Float32Array.from(pts);
 }
 
+/**
+ * A closed outline (xyz, the first point again at the end) shrunk toward
+ * (`cx`, `cz`) by each of `steps`, each laid on the ground; off the ground
+ * (`ground` null) the heights go from the outline's to `cy`.
+ */
+function shrunk(outline: Float32Array, cx: number, cy: number, cz: number, steps: number[], ground: GroundAt | null, lift: number): Float32Array[] {
+  const n = outline.length / 3;
+  return steps.map((s) => {
+    const out = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) {
+      const x = cx + (outline[i * 3] - cx) * s;
+      const z = cz + (outline[i * 3 + 2] - cz) * s;
+      const g = ground ? ground(x, z) : null;
+      out[i * 3] = x;
+      out[i * 3 + 1] = g !== null ? g + lift : cy + (outline[i * 3 + 1] - cy) * Math.min(1, s);
+      out[i * 3 + 2] = z;
+    }
+    return out;
+  });
+}
+
+/** A closed outline's middle (its points', the repeated last one left out). */
+function middle(pts: Float32Array): [number, number, number] {
+  const n = Math.max(1, pts.length / 3 - 1);
+  let x = 0;
+  let y = 0;
+  let z = 0;
+  for (let i = 0; i < n; i++) {
+    x += pts[i * 3] / n;
+    y += pts[i * 3 + 1] / n;
+    z += pts[i * 3 + 2] / n;
+  }
+  return [x, y, z];
+}
+
+/** `appendBand` for the pieces `from` to `to` only. */
+function appendBandFrom(out: Float32Array, v: number, a: Float32Array, b: Float32Array, from: number, to: number, rgb: readonly number[], alpha: number): number {
+  return appendBand(out, v, a.subarray(from * 3), b.subarray(from * 3), to - from, rgb, alpha);
+}
+
+/** Appends the triangles between two shrunk outlines (`a` outer, `b` inner), the first `upTo` pieces of them; the vertex count after. */
+function appendBand(out: Float32Array, v: number, a: Float32Array, b: Float32Array, upTo: number, rgb: readonly number[], alpha: number): number {
+  const n = Math.min(upTo, a.length / 3 - 1);
+  for (let i = 0; i < n; i++) {
+    const j = i + 1;
+    for (const [p, k] of [[a, i], [b, i], [a, j], [a, j], [b, i], [b, j]] as const) {
+      const o = v * 7;
+      out[o] = p[k * 3];
+      out[o + 1] = p[k * 3 + 1];
+      out[o + 2] = p[k * 3 + 2];
+      out[o + 3] = rgb[0];
+      out[o + 4] = rgb[1];
+      out[o + 5] = rgb[2];
+      out[o + 6] = alpha;
+      v++;
+    }
+  }
+  return v;
+}
+
 /** Lays one battle's objectives on the ground, yielding now and then. */
 function* place(sources: ObjectiveSource[], axes: Dataset['axes'] | null, ground: GroundAt | null, ready: () => boolean): SliceJob<Placed[]> {
   // The level's surface is indexed a slice a frame too: until it is, nothing is laid.
@@ -198,9 +271,9 @@ function* place(sources: ObjectiveSource[], axes: Dataset['axes'] | null, ground
         match: src.match,
         anchor: [c[0], baseY + lift, c[2]],
         outlines: [],
-        fill: [],
-        ring: null,
+        discs: [],
       };
+      const tl = TRI_LIFT * scale;
       if (o.shape === 'points' && o.points.length) {
         const seenPt = new Set<string>();
         for (const q of o.points) {
@@ -208,10 +281,10 @@ function* place(sources: ObjectiveSource[], axes: Dataset['axes'] | null, ground
           if (seenPt.has(k)) continue;
           seenPt.add(k);
           const w = toWorld(q, axes);
-          p.outlines.push({
-            pts: ring(w[0], w[1], w[2], Math.max(4 * scale, Math.min(r || 10 * scale, 25 * scale)), SMALL, gr, lift),
-            closed: true,
-          });
+          const pr = Math.max(4 * scale, Math.min(r || 10 * scale, 25 * scale));
+          const pts = ring(w[0], w[1], w[2], pr, SMALL, gr, lift);
+          p.outlines.push({ pts, closed: true });
+          p.discs.push(shrunk(pts, w[0], w[1], w[2], MARK_STEPS, gr, tl));
         }
         // The label over the middle of them.
         let sx = 0;
@@ -253,15 +326,7 @@ function* place(sources: ObjectiveSource[], axes: Dataset['axes'] | null, ground
           pts: ring(c[0], baseY, c[2], r, n, gr, lift),
           closed: true,
         });
-        if (o.layer === 'zones') {
-          // A heavier edge, a faint fill, and the progress ring inside it.
-          p.outlines.push({
-            pts: ring(c[0], baseY, c[2], Math.max(0, r - 0.8 * scale), n, gr, lift),
-            closed: true,
-          });
-          for (const f of [0.2, 0.38, 0.56]) p.fill.push(ring(c[0], baseY, c[2], r * f, Math.max(24, Math.round(n * f)), gr, lift));
-          p.ring = [0.78, 0.8, 0.82, 0.84].map((f) => ring(c[0], baseY, c[2], r * f, n, gr, lift));
-        }
+        // A zone's fill, heavy edge and progress band are triangles (`discs`); its line is the edge seen through the ground.
         if (o.layer === 'targets') {
           p.outlines.push({
             pts: path(
@@ -308,6 +373,12 @@ function* place(sources: ObjectiveSource[], axes: Dataset['axes'] | null, ground
           closed: true,
         });
       }
+      // The filled shapes: a zone's disc (whatever its outline), a marker's, a target's; not an area's.
+      if (o.layer !== 'areas' && !p.discs.length && p.outlines.length && p.outlines[0].closed) {
+        const edge = p.outlines[0].pts;
+        const m = o.shape === 'outline' || o.shape === 'box' ? middle(edge) : [c[0], baseY, c[2]];
+        p.discs.push(shrunk(edge, m[0], m[1], m[2], o.layer === 'zones' ? ZONE_STEPS : MARK_STEPS, gr, tl));
+      }
       out.push(p);
       yield;
     }
@@ -346,6 +417,14 @@ export interface ObjectiveFrame {
   ready: () => boolean;
   /** Something that makes the ground ask again: the level, the axes. */
   groundKey: unknown;
+  /** The share of their alpha the filled shapes' edges keep over everything (`top`): faint in the replay, whole over the heat. */
+  xray: number;
+}
+
+/** Triangles, seven floats a vertex (xyz, rgba). */
+export interface ObjectiveTris {
+  data: Float32Array;
+  count: number;
 }
 
 /** The objectives' lines, kept between frames. */
@@ -361,6 +440,20 @@ export class ObjectiveLayerDraw {
   }
   /** Bumped when the labels change. */
   rev = 0;
+  /**
+   * The filled shapes, made again only when what they show changes (a zone's
+   * owner or capture, the layers, the battles), each time in new arrays: on
+   * the ground (`ground`, depth tested), and their edges over everything
+   * (`top`), so a zone behind a hill still shows.
+   */
+  ground: ObjectiveTris | null = null;
+  top: ObjectiveTris | null = null;
+  private trisKey = '';
+  private trisFor: unknown[] = [];
+  /** The markers' shapes (everything but the zones), and what they were made for. */
+  private marks: { ground: ObjectiveTris | null; top: ObjectiveTris | null } = { ground: null, top: null };
+  private markFor: Placed[] | null = null;
+  private markKey = '';
 
   /**
    * The objectives' lines appended to `base` (its first `baseCount`
@@ -382,13 +475,12 @@ export class ObjectiveLayerDraw {
     }
     const placed = this.placed ?? [];
     const one = f.sources.length === 1 ? f.sources[0] : null;
+    this.buildTris(f, placed, one);
     // Room for every point twice, as line pieces, plus what is there.
     let need = baseCount;
     for (const p of placed) {
       if (!f.layers[p.o.layer]) continue;
       for (const o of p.outlines) need += (o.pts.length / 3) * 2;
-      for (const r of p.fill) need += (r.length / 3) * 2;
-      if (p.ring) for (const r of p.ring) need += (r.length / 3) * 2;
     }
     const labels: ObjectiveLabel[] = [];
     if (need === baseCount) {
@@ -405,18 +497,15 @@ export class ObjectiveLayerDraw {
       const teamRgb = o.team ? f.teamColor(o.team) : NEUTRAL;
       if (o.layer === 'zones') {
         // Its owner and the capture at the playhead: the replay's, when one battle is shown.
-        const st =
-          one && one.timeline ? zoneAt(one.timeline.zones.get(o.letter), f.t + one.offset, o.ownerAtStart) : { owner: one ? o.ownerAtStart : 0, progress: 0 };
+        const st = this.zoneState(o, f, one);
         const rgb = st.owner ? f.teamColor(st.owner) : NEUTRAL;
         for (const ol of p.outlines) v = appendRun(out, v, ol.pts, ol.pts.length / 3, rgb, 0.95);
-        for (const r of p.fill) v = appendRun(out, v, r, r.length / 3, rgb, st.owner ? 0.35 : 0.2);
-        // A capture under way: the ring filled as far as it has come, in the capturing side's colour.
+        // A capture under way: how far it has come and by whom, for the letter's ring.
         const by = st.progress > 0 ? 2 : st.progress < 0 ? 1 : 0;
-        if (p.ring && by && (Math.abs(st.progress) < 100 || st.owner !== by)) {
-          const frac = Math.min(1, Math.abs(st.progress) / 100);
-          for (const r of p.ring) v = appendRun(out, v, r, Math.max(2, Math.round((r.length / 3 - 1) * frac) + 1), f.teamColor(by), 1);
-        }
+        const capturing = by && (Math.abs(st.progress) < 100 || st.owner !== by);
         labels.push({
+          progress: capturing ? Math.min(1, Math.abs(st.progress) / 100) : 0,
+          by: capturing ? f.teamColor(by) : undefined,
           x: p.anchor[0],
           y: p.anchor[1],
           z: p.anchor[2],
@@ -471,6 +560,101 @@ export class ObjectiveLayerDraw {
   /** Nothing drawn: the labels go too. */
   clear(): void {
     if (this.labels.length) this.setLabels([]);
+    this.ground = null;
+    this.top = null;
+    this.trisKey = '';
+    this.markFor = null;
+  }
+
+  /** A zone's owner and capture at the playhead: the replay's, when one battle is shown. */
+  private zoneState(o: Objective, f: ObjectiveFrame, one: ObjectiveSource | null): { owner: number; progress: number } {
+    return one && one.timeline ? zoneAt(one.timeline.zones.get(o.letter), f.t + one.offset, o.ownerAtStart) : { owner: one ? o.ownerAtStart : 0, progress: 0 };
+  }
+
+  /**
+   * The filled shapes (`ground`, `top`), when what they show has changed: the
+   * markers' only with the layers or the colours, the zones' with their state
+   * as well, the two copied together.
+   */
+  private buildTris(f: ObjectiveFrame, placed: Placed[], one: ObjectiveSource | null): void {
+    const layers = OBJECTIVE_LAYER_LIST.map((l) => (f.layers[l] ? 1 : 0)).join('');
+    const look = `${layers}|${f.xray}|${f.teamColor(1).join(',')}|${f.teamColor(2).join(',')}`;
+    if (this.markFor !== placed || this.markKey !== look) {
+      this.markFor = placed;
+      this.markKey = look;
+      this.marks = this.trisOf(f, placed.filter((p) => p.o.layer !== 'zones'), one);
+      this.trisKey = '';
+    }
+    let key = look;
+    const zones = placed.filter((p) => p.o.layer === 'zones');
+    for (const p of zones) if (f.layers.zones) {
+      const st = this.zoneState(p.o, f, one);
+      key += `|${st.owner}:${Math.round(st.progress)}`;
+    }
+    const forWhat = [placed, ...f.sources.map((s) => s.timeline)];
+    if (key === this.trisKey && forWhat.length === this.trisFor.length && forWhat.every((k, i) => k === this.trisFor[i])) return;
+    this.trisKey = key;
+    this.trisFor = forWhat;
+    const z = this.trisOf(f, zones, one);
+    const join = (a: ObjectiveTris | null, b: ObjectiveTris | null): ObjectiveTris | null => {
+      if (!a || !b) return a ?? b;
+      const data = new Float32Array((a.count + b.count) * 7);
+      data.set(a.data.subarray(0, a.count * 7));
+      data.set(b.data.subarray(0, b.count * 7), a.count * 7);
+      return { data, count: a.count + b.count };
+    };
+    // Zones last: their discs over a spawn's where both are.
+    this.ground = join(this.marks.ground, z.ground);
+    this.top = join(this.marks.top, z.top);
+  }
+
+  /** The filled shapes of `placed`, on the ground and over everything. */
+  private trisOf(f: ObjectiveFrame, placed: Placed[], one: ObjectiveSource | null): { ground: ObjectiveTris | null; top: ObjectiveTris | null } {
+    let need = 0;
+    for (const p of placed) {
+      if (!f.layers[p.o.layer]) continue;
+      for (const d of p.discs) need += (d.length - 1) * (d[0].length / 3 - 1) * 6;
+    }
+    if (!need) return { ground: null, top: null };
+    const g = new Float32Array(need * 7);
+    const t = new Float32Array(need * 7);
+    let gv = 0;
+    let tv = 0;
+    for (const p of placed) {
+      const o = p.o;
+      if (!f.layers[o.layer] || !p.discs.length) continue;
+      if (o.layer === 'zones') {
+        const st = this.zoneState(o, f, one);
+        const rgb = st.owner ? f.teamColor(st.owner) : NEUTRAL;
+        const by = st.progress > 0 ? 2 : st.progress < 0 ? 1 : 0;
+        const capturing = by && (Math.abs(st.progress) < 100 || st.owner !== by);
+        for (const d of p.discs) {
+          const n = d[0].length / 3 - 1;
+          // The edge, heavy, in the owner's colour (a neutral zone's lighter).
+          gv = appendBand(g, gv, d[0], d[1], n, RIM, 0.6);
+          gv = appendBand(g, gv, d[1], d[2], n, rgb, 0.9);
+          tv = appendBand(t, tv, d[1], d[2], n, rgb, 0.9 * f.xray);
+          // The progress band: as far round as the capture has come, in the capturing side's colour.
+          const upTo = capturing ? Math.max(1, Math.round(n * Math.min(1, Math.abs(st.progress) / 100))) : 0;
+          if (upTo) {
+            gv = appendBand(g, gv, d[2], d[3], upTo, f.teamColor(by), 0.9);
+            tv = appendBand(t, tv, d[2], d[3], upTo, f.teamColor(by), 0.9 * f.xray);
+          }
+          if (upTo < n) gv = appendBandFrom(g, gv, d[2], d[3], upTo, n, RIM, 0.35);
+          // The fill.
+          for (let i = 3; i + 1 < d.length; i++) gv = appendBand(g, gv, d[i], d[i + 1], n, rgb, st.owner ? 0.25 : 0.16);
+        }
+        continue;
+      }
+      const rgb = o.layer === 'targets' ? TARGET : o.team ? f.teamColor(o.team) : NEUTRAL;
+      for (const d of p.discs) {
+        const n = d[0].length / 3 - 1;
+        gv = appendBand(g, gv, d[0], d[1], n, rgb, 0.85);
+        tv = appendBand(t, tv, d[0], d[1], n, rgb, 0.85 * f.xray);
+        for (let i = 1; i + 1 < d.length; i++) gv = appendBand(g, gv, d[i], d[i + 1], n, rgb, 0.3);
+      }
+    }
+    return { ground: gv ? { data: g, count: gv } : null, top: tv ? { data: t, count: tv } : null };
   }
 
   private setLabels(labels: ObjectiveLabel[]): void {
@@ -478,7 +662,7 @@ export class ObjectiveLayerDraw {
       labels.length === this.labels.length &&
       labels.every((l, i) => {
         const m = this.labels[i];
-        return m.text === l.text && m.x === l.x && m.y === l.y && m.z === l.z && m.rgb[0] === l.rgb[0] && m.rgb[1] === l.rgb[1] && m.rgb[2] === l.rgb[2];
+        return m.text === l.text && m.progress === l.progress && m.by?.[0] === l.by?.[0] && m.x === l.x && m.y === l.y && m.z === l.z && m.rgb[0] === l.rgb[0] && m.rgb[1] === l.rgb[1] && m.rgb[2] === l.rgb[2];
       });
     if (same) return;
     this.labels = labels;

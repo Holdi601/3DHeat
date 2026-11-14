@@ -29,5 +29,7 @@
   "objectives.label.target": "kohde",
   "objectives.events.chip": "valtaukset",
   "objectives.events.captured": "{team} valtasi alueen {zone}",
-  "objectives.events.neutralised": "{team} menetti alueen {zone}"
+  "objectives.events.neutralised": "{team} menetti alueen {zone}",
+  "objectives.legend.neutral": "neutraali",
+  "objectives.legend.capturing": "valloitetaan"
 }

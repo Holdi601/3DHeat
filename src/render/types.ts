@@ -547,6 +547,21 @@ export interface FrameParams {
    */
   topVerts?: Float32Array | null;
   topVertCount?: number;
+  /**
+   * Triangles over the finished picture as `topVerts` (seven floats a
+   * vertex): the objectives' zone edges and markers, faint in the replay,
+   * where the ground would hide them. The same array again is not uploaded again.
+   */
+  topTris?: Float32Array | null;
+  topTriCount?: number;
+  /**
+   * See-through triangles laid on the ground (seven floats a vertex): the
+   * objectives' zone discs and markers. Drawn with the see-through part of
+   * `sceneTris`, depth tested, not writing depth; the same array again is not
+   * uploaded again, so they cost nothing while they do not change.
+   */
+  groundTris?: Float32Array | null;
+  groundTriCount?: number;
   /** Directional heat: wedge sprites and the direction field. Null or absent draws neither. */
   direction?: DirectionDraw | null;
 

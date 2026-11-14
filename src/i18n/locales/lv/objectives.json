@@ -29,5 +29,7 @@
   "objectives.label.target": "mērķis",
   "objectives.events.chip": "ieņemšanas",
   "objectives.events.captured": "{team} ieņēma {zone}",
-  "objectives.events.neutralised": "{team} zaudēja {zone}"
+  "objectives.events.neutralised": "{team} zaudēja {zone}",
+  "objectives.legend.neutral": "neitrāla",
+  "objectives.legend.capturing": "tiek ieņemta"
 }

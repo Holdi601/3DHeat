@@ -29,5 +29,7 @@
   "objectives.label.target": "sprioc",
   "objectives.events.chip": "gabhálacha",
   "objectives.events.captured": "{zone} gafa ag {team}",
-  "objectives.events.neutralised": "{zone} caillte ag {team}"
+  "objectives.events.neutralised": "{zone} caillte ag {team}",
+  "objectives.legend.neutral": "neodrach",
+  "objectives.legend.capturing": "á ghabháil"
 }

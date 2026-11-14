@@ -673,6 +673,8 @@ export class Engine {
   private objectiveTop: { data: Float32Array; count: number } | null = null;
   /** The replay's objectives faintly over the picture (`objectiveXray`). */
   private xrayVerts = new Float32Array(0);
+  /** The objectives' filled shapes' edges over the picture (`ObjectiveLayerDraw.top`), between frames that build them. */
+  private objectiveTopTris: { data: Float32Array; count: number } | null = null;
   private gamesMerged: { games: unknown[]; lite: unknown[]; list: { match: string; objectives?: Objective[] }[] } | null = null;
   /** The follow camera as it last set the view (display space): the eased unit, its heading, the orbit, the pose. */
   private followCam: { person: number; fx: number; fy: number; fz: number; head: number; rel: number; yaw: number; pitch: number; px: number; py: number; pz: number } | null = null;
@@ -2140,6 +2142,7 @@ export class Engine {
           return this.inspector.surfaceState.ready;
         },
         groundKey: level,
+        xray: s.mode === 'team' ? OBJECTIVE_XRAY : 1,
       },
       base,
       baseCount,
@@ -3598,17 +3601,23 @@ export class Engine {
     // (kept for the idle frames, which draw them again over the same picture). In the replay faintly over
     // everything as well: laid on the ground a point every few metres, a line between two of them dips
     // under every rise of it, and a ring behind a hill was gone; now what the ground hides still shows.
-    if (!objectiveSrc.length || raceBuilt) this.objectiveTop = null;
-    else if (s.mode === 'team') {
+    // Their filled shapes - zones' discs, edges and capture bands, spawns', markers' - are triangles made only
+    // when a zone changes: on the ground with the figures in the replay, their edges over everything as well.
+    if (!objectiveSrc.length || raceBuilt) {
+      this.objectiveTop = null;
+      this.objectiveTopTris = null;
+    } else if (s.mode === 'team') {
       if (!compositeOnly) {
         const ob = this.frameObjectives(s, objectiveSrc, trailVerts, trailVertCount);
         this.objectiveTop = this.objectiveXray(ob.data, trailVertCount, ob.count);
+        this.objectiveTopTris = this.objectiveDraw.top;
         trailVerts = ob.data;
         trailVertCount = ob.count;
       }
     } else if (!compositeOnly || !this.objectiveTop) {
       const ob = this.frameObjectives(s, objectiveSrc, null, 0);
       this.objectiveTop = ob.data && ob.count ? { data: ob.data, count: ob.count } : null;
+      this.objectiveTopTris = this.objectiveDraw.top;
     }
 
     let sceneTris: Float32Array | null = null;
@@ -3617,6 +3626,7 @@ export class Engine {
       sceneTris = this.figureTris.data;
       sceneTriVertCount = this.figureTris.count;
     }
+    const objGround = !raceBuilt && s.mode === 'team' && objectiveSrc.length ? this.objectiveDraw.ground : null;
     if (raceBuilt) {
       plan = EMPTY_PLAN;
       submitted = 0;
@@ -3783,6 +3793,10 @@ export class Engine {
       overlayVertCount,
       topVerts: this.directions.top(this.objectiveTop)?.data ?? null,
       topVertCount: this.directions.top(this.objectiveTop)?.count ?? 0,
+      topTris: this.objectiveTopTris?.data ?? null,
+      groundTris: objGround?.data ?? null,
+      groundTriCount: objGround?.count ?? 0,
+      topTriCount: this.objectiveTopTris?.count ?? 0,
       direction: raceTab || s.mode === 'team' ? null : this.directions.frame(window.devicePixelRatio || 1, now),
       level: vehicleTab ? null : lookOn ? tacticalLevel(buildLevelDraw(s.level)) : buildLevelDraw(s.level),
       post: lookOn ? this.lookPost(s) : null,

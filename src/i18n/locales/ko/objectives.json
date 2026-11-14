@@ -29,5 +29,7 @@
   "objectives.label.target": "목표",
   "objectives.events.chip": "점령",
   "objectives.events.captured": "{team}이(가) {zone} 점령",
-  "objectives.events.neutralised": "{team}이(가) {zone} 상실"
+  "objectives.events.neutralised": "{team}이(가) {zone} 상실",
+  "objectives.legend.neutral": "중립",
+  "objectives.legend.capturing": "점령 중"
 }

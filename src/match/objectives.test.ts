@@ -126,18 +126,28 @@ describe('objectives', () => {
           ground: null,
           ready: () => true,
           groundKey: null,
+          xray: 0.5,
         },
         null,
         0,
       );
     const before = frame(5);
+    const beforeTop = draw.top!.count;
+    expect(draw.labels[0].progress).toBe(0);
     const during = frame(20);
-    // Half a ring more, in team 2's colour, on the ground at the zone's height.
-    expect(during.count).toBeGreaterThan(before.count);
-    const last = (during.count - 1) * 7;
-    expect([...during.data!.subarray(last + 3, last + 6)]).toEqual([0, 0, 1]);
-    expect(during.data![last + 1]).toBeCloseTo(11.2, 3);
-    expect(draw.labels.map((l) => [l.kind, l.text])).toEqual([['zone', 'A']]);
+    // The edge line at the zone's height; half a progress band more, in team 2's colour, filled on the ground.
+    expect(during.data![1]).toBeCloseTo(11.2, 3);
+    expect(draw.top!.count).toBeGreaterThan(beforeTop);
+    const top = draw.top!;
+    const last = (top.count - 1) * 7;
+    expect([...top.data.subarray(last + 3, last + 6)]).toEqual([0, 0, 1]);
+    expect(top.data[last + 6]).toBeCloseTo(0.45, 5);
+    expect(draw.ground!.data[1]).toBeCloseTo(11.2, 3);
+    expect(draw.labels.map((l) => [l.kind, l.text, l.progress])).toEqual([['zone', 'A', 0.5]]);
+    // Unchanged state: the same arrays, nothing made again.
+    const ground = draw.ground;
+    frame(21);
+    expect(draw.ground).toBe(ground);
     expect(frame(5).count).toBe(before.count);
   });
 });

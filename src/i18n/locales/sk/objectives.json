@@ -29,5 +29,7 @@
   "objectives.label.target": "cieľ",
   "objectives.events.chip": "obsadenia",
   "objectives.events.captured": "{zone} obsadil(a) {team}",
-  "objectives.events.neutralised": "{zone} stratil(a) {team}"
+  "objectives.events.neutralised": "{zone} stratil(a) {team}",
+  "objectives.legend.neutral": "neutrálna",
+  "objectives.legend.capturing": "obsadzuje sa"
 }

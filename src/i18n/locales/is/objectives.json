@@ -29,5 +29,7 @@
   "objectives.label.target": "skotmark",
   "objectives.events.chip": "hertökur",
   "objectives.events.captured": "{team} hertók {zone}",
-  "objectives.events.neutralised": "{team} missti {zone}"
+  "objectives.events.neutralised": "{team} missti {zone}",
+  "objectives.legend.neutral": "hlutlaust",
+  "objectives.legend.capturing": "verið að taka"
 }

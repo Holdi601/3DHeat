@@ -29,5 +29,7 @@
   "objectives.label.target": "Ziel",
   "objectives.events.chip": "Eroberungen",
   "objectives.events.captured": "{zone} von {team} erobert",
-  "objectives.events.neutralised": "{zone} von {team} verloren"
+  "objectives.events.neutralised": "{zone} von {team} verloren",
+  "objectives.legend.neutral": "neutral",
+  "objectives.legend.capturing": "wird erobert"
 }

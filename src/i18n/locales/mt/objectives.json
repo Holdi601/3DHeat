@@ -29,5 +29,7 @@
   "objectives.label.target": "mira",
   "objectives.events.chip": "qbid",
   "objectives.events.captured": "{zone} maqbuda minn {team}",
-  "objectives.events.neutralised": "{zone} mitlufa minn {team}"
+  "objectives.events.neutralised": "{zone} mitlufa minn {team}",
+  "objectives.legend.neutral": "newtrali",
+  "objectives.legend.capturing": "qed tinqabad"
 }

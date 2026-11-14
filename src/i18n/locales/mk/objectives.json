@@ -29,5 +29,7 @@
   "objectives.label.target": "цел",
   "objectives.events.chip": "освојувања",
   "objectives.events.captured": "{zone} освоена од {team}",
-  "objectives.events.neutralised": "{zone} изгубена од {team}"
+  "objectives.events.neutralised": "{zone} изгубена од {team}",
+  "objectives.legend.neutral": "неутрална",
+  "objectives.legend.capturing": "се освојува"
 }

@@ -29,5 +29,7 @@
   "objectives.label.target": "mål",
   "objectives.events.chip": "erövringar",
   "objectives.events.captured": "{zone} erövrad av {team}",
-  "objectives.events.neutralised": "{zone} förlorad av {team}"
+  "objectives.events.neutralised": "{zone} förlorad av {team}",
+  "objectives.legend.neutral": "neutral",
+  "objectives.legend.capturing": "intas"
 }

@@ -29,5 +29,7 @@
   "objectives.label.target": "hedef",
   "objectives.events.chip": "ele geçirmeler",
   "objectives.events.captured": "{zone}, {team} tarafından ele geçirildi",
-  "objectives.events.neutralised": "{zone}, {team} tarafından kaybedildi"
+  "objectives.events.neutralised": "{zone}, {team} tarafından kaybedildi",
+  "objectives.legend.neutral": "tarafsız",
+  "objectives.legend.capturing": "ele geçiriliyor"
 }

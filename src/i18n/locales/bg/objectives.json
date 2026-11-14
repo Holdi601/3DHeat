@@ -29,5 +29,7 @@
   "objectives.label.target": "цел",
   "objectives.events.chip": "превземания",
   "objectives.events.captured": "{zone} превзета от {team}",
-  "objectives.events.neutralised": "{zone} загубена от {team}"
+  "objectives.events.neutralised": "{zone} загубена от {team}",
+  "objectives.legend.neutral": "неутрална",
+  "objectives.legend.capturing": "превзема се"
 }

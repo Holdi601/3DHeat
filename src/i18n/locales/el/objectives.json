@@ -29,5 +29,7 @@
   "objectives.label.target": "στόχος",
   "objectives.events.chip": "καταλήψεις",
   "objectives.events.captured": "{zone}: κατάληψη από {team}",
-  "objectives.events.neutralised": "{zone}: χάθηκε από {team}"
+  "objectives.events.neutralised": "{zone}: χάθηκε από {team}",
+  "objectives.legend.neutral": "ουδέτερη",
+  "objectives.legend.capturing": "καταλαμβάνεται"
 }

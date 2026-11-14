@@ -29,5 +29,7 @@
   "objectives.label.target": "目標",
   "objectives.events.chip": "占領",
   "objectives.events.captured": "{zone} を {team} が占領",
-  "objectives.events.neutralised": "{zone} を {team} が喪失"
+  "objectives.events.neutralised": "{zone} を {team} が喪失",
+  "objectives.legend.neutral": "中立",
+  "objectives.legend.capturing": "占領中"
 }

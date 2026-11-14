@@ -29,5 +29,7 @@
   "objectives.label.target": "țintă",
   "objectives.events.chip": "capturări",
   "objectives.events.captured": "{zone} capturată de {team}",
-  "objectives.events.neutralised": "{zone} pierdută de {team}"
+  "objectives.events.neutralised": "{zone} pierdută de {team}",
+  "objectives.legend.neutral": "neutră",
+  "objectives.legend.capturing": "în curs de capturare"
 }

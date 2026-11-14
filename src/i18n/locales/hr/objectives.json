@@ -29,5 +29,7 @@
   "objectives.label.target": "cilj",
   "objectives.events.chip": "osvajanja",
   "objectives.events.captured": "{zone} osvojio {team}",
-  "objectives.events.neutralised": "{zone} izgubio {team}"
+  "objectives.events.neutralised": "{zone} izgubio {team}",
+  "objectives.legend.neutral": "neutralna",
+  "objectives.legend.capturing": "osvaja se"
 }

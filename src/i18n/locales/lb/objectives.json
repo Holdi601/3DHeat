@@ -29,5 +29,7 @@
   "objectives.label.target": "Zil",
   "objectives.events.chip": "Eruewerungen",
   "objectives.events.captured": "{zone} vun {team} eruewert",
-  "objectives.events.neutralised": "{zone} vun {team} verluer"
+  "objectives.events.neutralised": "{zone} vun {team} verluer",
+  "objectives.legend.neutral": "neutral",
+  "objectives.legend.capturing": "gëtt eruewert"
 }

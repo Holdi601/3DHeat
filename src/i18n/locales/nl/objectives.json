@@ -29,5 +29,7 @@
   "objectives.label.target": "doel",
   "objectives.events.chip": "veroveringen",
   "objectives.events.captured": "{zone} veroverd door {team}",
-  "objectives.events.neutralised": "{zone} verloren door {team}"
+  "objectives.events.neutralised": "{zone} verloren door {team}",
+  "objectives.legend.neutral": "neutraal",
+  "objectives.legend.capturing": "wordt veroverd"
 }

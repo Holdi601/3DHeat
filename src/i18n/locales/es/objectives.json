@@ -29,5 +29,7 @@
   "objectives.label.target": "objetivo",
   "objectives.events.chip": "capturas",
   "objectives.events.captured": "{zone} capturada por {team}",
-  "objectives.events.neutralised": "{zone} perdida por {team}"
+  "objectives.events.neutralised": "{zone} perdida por {team}",
+  "objectives.legend.neutral": "neutral",
+  "objectives.legend.capturing": "en captura"
 }

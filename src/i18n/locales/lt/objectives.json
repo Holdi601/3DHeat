@@ -29,5 +29,7 @@
   "objectives.label.target": "taikinys",
   "objectives.events.chip": "užėmimai",
   "objectives.events.captured": "{team} užėmė {zone}",
-  "objectives.events.neutralised": "{team} prarado {zone}"
+  "objectives.events.neutralised": "{team} prarado {zone}",
+  "objectives.legend.neutral": "neutrali",
+  "objectives.legend.capturing": "užimama"
 }

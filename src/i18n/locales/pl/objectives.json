@@ -29,5 +29,7 @@
   "objectives.label.target": "cel",
   "objectives.events.chip": "przejęcia",
   "objectives.events.captured": "{zone} przejęta przez {team}",
-  "objectives.events.neutralised": "{zone} utracona przez {team}"
+  "objectives.events.neutralised": "{zone} utracona przez {team}",
+  "objectives.legend.neutral": "neutralna",
+  "objectives.legend.capturing": "przejmowana"
 }

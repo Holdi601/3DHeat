@@ -29,5 +29,7 @@
   "objectives.label.target": "bersaglio",
   "objectives.events.chip": "catture",
   "objectives.events.captured": "{zone} catturata da {team}",
-  "objectives.events.neutralised": "{zone} persa da {team}"
+  "objectives.events.neutralised": "{zone} persa da {team}",
+  "objectives.legend.neutral": "neutrale",
+  "objectives.legend.capturing": "in conquista"
 }

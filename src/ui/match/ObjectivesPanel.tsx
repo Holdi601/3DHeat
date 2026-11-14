@@ -10,6 +10,10 @@ import type { GameMatch } from '../../match/wtMatch';
 import type { Dataset } from '../../state/types';
 import { Check, Section } from '../controls';
 import { useEngine } from '../EngineContext';
+import { teamMemberColor } from '../../render/colors';
+import './objectives.css';
+
+const swatch = (rgb: readonly number[]) => `rgb(${Math.round(rgb[0] * 255)},${Math.round(rgb[1] * 255)},${Math.round(rgb[2] * 255)})`;
 
 /** Each loaded match's mode (`Conq1`, `Dom`) and its name, from its summary or else its file name. */
 export function matchModes(d: Dataset, games: GameMatch[]): { index: number; mode: string; name: string }[] {
@@ -109,6 +113,25 @@ export function ObjectivesPanel() {
               <button className={`chip${labels ? ' on' : ''}`} onClick={() => store.setLabels(!labels)} title={t('objectives.labelsTitle')}>
                 {t('objectives.labels')}
               </button>
+            </div>
+          )}
+          {on && layers.zones && (
+            // What the colours say: a zone in its owner's, grey nobody's, its ring filling in the capturing side's.
+            <div className="objective-legend">
+              {dataset.teamLabels.slice(0, 4).map((label, i) => (
+                <span key={label} className="objective-legend-item">
+                  <i className="objective-legend-zone" style={{ background: swatch(teamMemberColor(i, 0, 1)) }} />
+                  {/^\d+$/.test(label) ? t('replay.team', { n: Number(label) }) : label}
+                </span>
+              ))}
+              <span className="objective-legend-item">
+                <i className="objective-legend-zone" style={{ background: swatch([0.86, 0.86, 0.82]) }} />
+                {t('objectives.legend.neutral')}
+              </span>
+              <span className="objective-legend-item">
+                <i className="objective-legend-zone capturing" />
+                {t('objectives.legend.capturing')}
+              </span>
             </div>
           )}
           {withTimeline === 0 && (

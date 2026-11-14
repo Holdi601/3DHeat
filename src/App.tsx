@@ -65,6 +65,7 @@ import { WorldOverlay } from './ui/WorldOverlay';
 import { clearLook } from './ui/replay/pair';
 import { CameraReadout, copyCameraPose } from './ui/CameraReadout';
 import { PickCard } from './ui/PickCard';
+import { BreakdownWindow } from './ui/breakdown/BreakdownPanel';
 import { useInspectStore } from './state/inspectStore';
 import { Timeline } from './ui/Timeline';
 import { LinePanel } from './ui/panels/LinePanel';
@@ -494,6 +495,7 @@ export function App() {
               {matchView === 'replay' ? (
                 <>
                   <ReplayPanel />
+                  <ObjectivesPanel />
                   <TeamPanel />
                 </>
               ) : (
@@ -656,6 +658,7 @@ function InspectHud() {
       {showCamera && <CameraReadout />}
       <UnitCard />
       <PickCard />
+      <BreakdownWindow />
     </div>
   );
 }

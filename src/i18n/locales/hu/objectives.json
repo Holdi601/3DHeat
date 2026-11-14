@@ -29,5 +29,7 @@
   "objectives.label.target": "célpont",
   "objectives.events.chip": "elfoglalások",
   "objectives.events.captured": "{zone} – elfoglalta: {team}",
-  "objectives.events.neutralised": "{zone} – elvesztette: {team}"
+  "objectives.events.neutralised": "{zone} – elvesztette: {team}",
+  "objectives.legend.neutral": "semleges",
+  "objectives.legend.capturing": "foglalás alatt"
 }

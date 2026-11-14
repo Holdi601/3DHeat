@@ -29,5 +29,7 @@
   "objectives.label.target": "objektiv",
   "objectives.events.chip": "pushtime",
   "objectives.events.captured": "{zone} u pushtua nga {team}",
-  "objectives.events.neutralised": "{zone} u humb nga {team}"
+  "objectives.events.neutralised": "{zone} u humb nga {team}",
+  "objectives.legend.neutral": "neutrale",
+  "objectives.legend.capturing": "po kapet"
 }

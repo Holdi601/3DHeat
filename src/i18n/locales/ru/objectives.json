@@ -29,5 +29,7 @@
   "objectives.label.target": "цель",
   "objectives.events.chip": "захваты",
   "objectives.events.captured": "{zone} захвачена командой {team}",
-  "objectives.events.neutralised": "{zone} потеряна командой {team}"
+  "objectives.events.neutralised": "{zone} потеряна командой {team}",
+  "objectives.legend.neutral": "нейтральная",
+  "objectives.legend.capturing": "захватывается"
 }

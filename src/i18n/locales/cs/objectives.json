@@ -29,5 +29,7 @@
   "objectives.label.target": "cíl",
   "objectives.events.chip": "obsazení",
   "objectives.events.captured": "{zone} obsadil(a) {team}",
-  "objectives.events.neutralised": "{zone} ztratil(a) {team}"
+  "objectives.events.neutralised": "{zone} ztratil(a) {team}",
+  "objectives.legend.neutral": "neutrální",
+  "objectives.legend.capturing": "obsazuje se"
 }

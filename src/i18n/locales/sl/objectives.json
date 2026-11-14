@@ -29,5 +29,7 @@
   "objectives.label.target": "cilj",
   "objectives.events.chip": "zavzetja",
   "objectives.events.captured": "{zone} je zavzela ekipa {team}",
-  "objectives.events.neutralised": "{zone} je izgubila ekipa {team}"
+  "objectives.events.neutralised": "{zone} je izgubila ekipa {team}",
+  "objectives.legend.neutral": "nevtralna",
+  "objectives.legend.capturing": "se zavzema"
 }

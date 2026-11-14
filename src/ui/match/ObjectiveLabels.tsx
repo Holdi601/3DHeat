@@ -53,8 +53,8 @@ export function ObjectiveLabels() {
       const p = engine.project(l.x, l.y, l.z);
       if (!p || p.x < -40 || p.y < -40 || p.x > W + 40 || p.y > H + 40) continue;
       const s = textOf(l);
-      const w = l.kind === 'zone' ? 24 : 12 + s.length * 6.5;
-      const h = l.kind === 'zone' ? 24 : 18;
+      const w = l.kind === 'zone' ? 30 : 26 + s.length * 6.5;
+      const h = l.kind === 'zone' ? 30 : 18;
       // A zone's letter sits on it; the rest a little above their place.
       const y = l.kind === 'zone' ? p.y : p.y - 12;
       const hit = placed.some((q) => Math.abs(q.x - p.x) * 2 < q.w + w + GAP * 2 && Math.abs(q.y - y) * 2 < q.h + h + GAP * 2);
@@ -80,6 +80,13 @@ export function ObjectiveLabels() {
       if (el.textContent !== q.s) el.textContent = q.s;
       const c = css(q.l.rgb);
       if (el.style.getPropertyValue('--c') !== c) el.style.setProperty('--c', c);
+      // A zone's capture under way: its ring filled as far as it has come, in the capturing side's colour.
+      if (q.l.kind === 'zone') {
+        const f = (q.l.progress ?? 0).toFixed(3);
+        if (el.style.getPropertyValue('--f') !== f) el.style.setProperty('--f', f);
+        const p = q.l.by ? css(q.l.by) : 'transparent';
+        if (el.style.getPropertyValue('--p') !== p) el.style.setProperty('--p', p);
+      }
       el.style.transform = `translate(${q.x.toFixed(1)}px, ${q.y.toFixed(1)}px) translate(-50%, -50%)`;
     });
   }, on && !!engine);

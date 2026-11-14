@@ -305,6 +305,10 @@ export class Webgl2Renderer implements Renderer {
   private overlayCapacity = 0;
   /** The lines over the picture (`FrameParams.topVerts`), made when first asked for. */
   private top: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number } | null = null;
+  /** The triangles over the picture (`FrameParams.topTris`) and which array they last were. */
+  private topTris: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number; data: Float32Array | null; count: number } | null = null;
+  /** The see-through triangles on the ground (`FrameParams.groundTris`), the same. */
+  private groundTris: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number; data: Float32Array | null; count: number } | null = null;
   private triVao: WebGLVertexArrayObject;
   /** Instanced figures, made on first use. */
   private figures: GlFigures | null = null;
@@ -1661,6 +1665,7 @@ export class Webgl2Renderer implements Renderer {
     }
     if (params.gpuTracks && this.tracks && this.figures) this.tracks.drawSeeThrough(this.figures);
     if (params.sceneTris && params.sceneTriVertCount > 0) this.drawSceneTris(params, params.sceneTris, params.sceneTriVertCount, 2);
+    if (params.groundTris && params.groundTriCount) this.drawTopTris(params, params.groundTris, params.groundTriCount, true);
     // The far-off glyphs: map symbols, weapons, decoys (`symbols/`), over everything in the scene.
     if (params.symbols) {
       this.symbols ??= new GlSymbols(this.gl);
@@ -2786,8 +2791,54 @@ export class Webgl2Renderer implements Renderer {
     // leave behind — black on some, the previous frame on others, the right
     // answer often enough to look correct in testing.
     if (params.mode !== 'team') this.dirField?.draw(params, this.width, this.height, this.emptyVao);
+    if (params.topTris && params.topTriCount) this.drawTopTris(params, params.topTris, params.topTriCount);
     if (params.topVerts && params.topVertCount) this.drawTop(params, params.topVerts, params.topVertCount);
     if (!target) this.readCapture();
+  }
+
+  /**
+   * Triangles over the composited picture, without depth (`FrameParams.topTris`), or,
+   * `ground`, among the scene's see-through ones, depth tested (`groundTris`); uploaded
+   * only when they are new.
+   */
+  private drawTopTris(params: FrameParams, data: Float32Array, count: number, ground = false): void {
+    const gl = this.gl;
+    const slot = ground ? this.groundTris : this.topTris;
+    let top = slot;
+    if (!top) {
+      const buf = mustBuffer(gl);
+      top = { buf, vao: this.buildLineVao(buf), capacity: 0, data: null, count: 0 };
+      if (ground) this.groundTris = top;
+      else this.topTris = top;
+    }
+    if (top.data !== data || top.count !== count) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, top.buf);
+      if (top.capacity < count * 7) {
+        top.capacity = Math.max(count * 7 * 2, 8192 * 7);
+        gl.bufferData(gl.ARRAY_BUFFER, top.capacity * 4, gl.DYNAMIC_DRAW);
+      }
+      gl.bufferSubData(gl.ARRAY_BUFFER, 0, data, 0, count * 7);
+      top.data = data;
+      top.count = count;
+    }
+    const { prog, u } = this.lineProg;
+    gl.useProgram(prog);
+    u.mat4('uViewProj', params.viewProj);
+    u.f3('uCameraPos', params.cameraPos[0], params.cameraPos[1], params.cameraPos[2]);
+    u.f1('uFadeStart', 1e9);
+    u.f1('uFadeEnd', 1e9 + 1);
+    u.f1('uAlphaPass', 0);
+    if (ground) gl.depthMask(false);
+    else gl.disable(gl.DEPTH_TEST);
+    gl.enable(gl.BLEND);
+    if (ground) gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    else gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.bindVertexArray(top.vao);
+    gl.drawArrays(gl.TRIANGLES, 0, count);
+    gl.bindVertexArray(null);
+    gl.disable(gl.BLEND);
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthMask(true);
   }
 
   /** Lines over the composited picture, heat and all, without depth (`FrameParams.topVerts`). */

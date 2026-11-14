@@ -306,6 +306,15 @@ export class WebgpuRenderer implements Renderer {
   /** The lines over the picture (`FrameParams.topVerts`) and their pipeline, made when first asked for. */
   private topBuffer: GPUBuffer | null = null;
   private topPipeline: GPURenderPipeline | null = null;
+  /** The triangles over the picture (`FrameParams.topTris`), their pipeline, and which array they last were. */
+  private topTriBuffer: GPUBuffer | null = null;
+  private topTriPipeline: GPURenderPipeline | null = null;
+  private topTriData: Float32Array | null = null;
+  private topTriCount = 0;
+  /** The see-through triangles on the ground (`FrameParams.groundTris`) and which array they last were. */
+  private groundTriBuffer: GPUBuffer | null = null;
+  private groundTriData: Float32Array | null = null;
+  private groundTriCount = 0;
   private triBuffer: GPUBuffer | null = null;
   /** Instanced figures, made on first use. */
   private figures: GpuFigures | null = null;
@@ -2223,6 +2232,17 @@ export class WebgpuRenderer implements Renderer {
       pass.setVertexBuffer(0, this.triBuffer);
       pass.draw(params.sceneTriVertCount);
     }
+    if (params.groundTris && params.groundTriCount) {
+      if (!this.groundTriBuffer || this.groundTriData !== params.groundTris || this.groundTriCount !== params.groundTriCount) {
+        this.groundTriBuffer = this.uploadLines(this.groundTriBuffer, params.groundTris, params.groundTriCount, 'ground triangles');
+        this.groundTriData = params.groundTris;
+        this.groundTriCount = params.groundTriCount;
+      }
+      pass.setPipeline(this.triSeePipeline);
+      pass.setBindGroup(0, this.sceneBindGroup(this.triSeePipeline, 'trisSee', plainOffset));
+      pass.setVertexBuffer(0, this.groundTriBuffer);
+      pass.draw(params.groundTriCount);
+    }
 
     // The far-off glyphs: map symbols, weapons, decoys (`symbols/`), over everything in the scene.
     if (params.symbols) {
@@ -2958,6 +2978,7 @@ export class WebgpuRenderer implements Renderer {
 
     // Lines over the picture, the heat included (`FrameParams.topVerts`): in the same pass, after it.
     const top = params.topVerts && params.topVertCount ? this.topLines(params, params.topVerts, params.topVertCount) : null;
+    const topTris = params.topTris && params.topTriCount ? this.topTriangles(params, params.topTris, params.topTriCount) : null;
 
     const target = this.context.getCurrentTexture();
     this.debug.compositeTarget = `${target.width}x${target.height} ${target.format}`;
@@ -2985,6 +3006,12 @@ export class WebgpuRenderer implements Renderer {
         pass.setBindGroup(0, group);
         pass.draw(3);
         if (params.mode !== 'team') this.dirField?.draw(pass, params, this.width, this.height);
+        if (topTris) {
+          pass.setPipeline(topTris.pipeline);
+          pass.setBindGroup(0, topTris.group);
+          pass.setVertexBuffer(0, topTris.buffer);
+          pass.draw(topTris.count);
+        }
         if (top) {
           pass.setPipeline(top.pipeline);
           pass.setBindGroup(0, top.group);
@@ -3486,6 +3513,39 @@ export class WebgpuRenderer implements Renderer {
     this.topBuffer = this.uploadLines(this.topBuffer, data, count, 'top lines');
     const offset = this.pushSceneUniform(params, 1e9, 1e9 + 1, 0, 1);
     return { pipeline: this.topPipeline, group: this.sceneBindGroup(this.topPipeline, 'top', offset), buffer: this.topBuffer, count };
+  }
+
+  /** `topLines` for triangles, uploaded only when they are a new array. */
+  private topTriangles(params: FrameParams, data: Float32Array, count: number): { pipeline: GPURenderPipeline; group: GPUBindGroup; buffer: GPUBuffer; count: number } {
+    if (!this.topTriPipeline) {
+      const module = this.device.createShaderModule({ label: 'top triangles', code: LINE_WGSL });
+      this.topTriPipeline = this.device.createRenderPipeline({
+        label: 'top triangles',
+        layout: 'auto',
+        vertex: {
+          module,
+          entryPoint: 'vsLine',
+          buffers: [
+            {
+              arrayStride: 28,
+              attributes: [
+                { shaderLocation: 0, offset: 0, format: 'float32x3' },
+                { shaderLocation: 1, offset: 12, format: 'float32x4' },
+              ],
+            },
+          ],
+        },
+        fragment: { module, entryPoint: 'fsLine', targets: [{ format: this.canvasFormat, blend: alphaBlend() }] },
+        primitive: { topology: 'triangle-list' },
+      });
+    }
+    if (!this.topTriBuffer || this.topTriData !== data || this.topTriCount !== count) {
+      this.topTriBuffer = this.uploadLines(this.topTriBuffer, data, count, 'top triangles');
+      this.topTriData = data;
+      this.topTriCount = count;
+    }
+    const offset = this.pushSceneUniform(params, 1e9, 1e9 + 1, 0, 1);
+    return { pipeline: this.topTriPipeline, group: this.sceneBindGroup(this.topTriPipeline, 'topTris', offset), buffer: this.topTriBuffer, count };
   }
 
   private uploadLines(

@@ -29,5 +29,7 @@
   "objectives.label.target": "sihtmärk",
   "objectives.events.chip": "vallutused",
   "objectives.events.captured": "{team} vallutas ala {zone}",
-  "objectives.events.neutralised": "{team} kaotas ala {zone}"
+  "objectives.events.neutralised": "{team} kaotas ala {zone}",
+  "objectives.legend.neutral": "neutraalne",
+  "objectives.legend.capturing": "vallutatakse"
 }
