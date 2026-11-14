@@ -405,7 +405,6 @@ G['panther-f'] = ww2({
 // (well back: its front over the hull's middle), its height and the driver's plate as Marseille77's public-domain side
 // view of the G draws them (src/figures/specs/sources.md), heights scaled to the published 2.68 m.
 const PZ4_T = turret(-0.38, [[-1.15, 0.7], [-1.0, 0.9], [0.75, 0.92], [0.95, 0.78]], [[-1.15, 0.72], [0.3, 0.76], [0.95, 0.62]], 10, 1.15);
-const PZ4_F1_T = { ...PZ4_T, gunX: 0.97 };
 // H and J (under their turret skirts): the turret's plan, side profile and front section as the CC-BY Pz IV G model
 // (sources.md) has them - the rear corners cut back to a narrow rear wall, the widest just ahead of the ring, the
 // sides leaning in above the vision ports, the roof falling to the front plate. (Measured, the earlier turrets keep
@@ -428,9 +427,13 @@ const pz4Bin = (t: TurretSpec): TurretSpec => on(t, [[-1.62, 0.55], [-1.15, 0.55
 const pz4TurretSkirts = (t: TurretSpec): TurretSpec[] => [...[-1, 1].map((s) => on(t, [[-1.3, 0.025], [0.7, 0.025]], [[-1.3, 0.66], [0.7, 0.66]], 0.05, 16, s * 1.22)), on(t, [[-1.72, 1.22], [-1.68, 1.22]], [[-1.72, 0.66], [-1.68, 0.66]], 0.05, 16)];
 const pz4HullSkirts = skirtPair(1.68, -2.2, 1.9, 1.6, 0.55, 1.55);
 /** The two-piece hatch doors in the turret's sides, just ahead of its middle. */
-const pz4Hatches = (t: TurretSpec): TurretSpec[] => [-1, 1].map((s) => on(t, [[-0.3, 0.02], [0.35, 0.02]], [[-0.3, 0.64], [0.35, 0.64]], 0.14, 16, s * 0.92));
+const pz4Hatches = (t: TurretSpec, out = 0.92): TurretSpec[] => [-1, 1].map((s) => on(t, [[-0.3, 0.02], [0.35, 0.02]], [[-0.3, 0.64], [0.35, 0.64]], 0.14, 16, s * out));
+// The E and F1: the model's body a tenth wider (fitted to the WT reference; the F2 keeps the estimate, on it this body lost).
+const PZ4_TW: TurretSpec = { ...PZ4_TM, outline: { ...PZ4_TM.outline!, plan: PZ4_TM.outline!.plan.map(([x, w]): P2 => [x, w * 1.1]) }, width: PZ4_TM.width * 1.1 };
+/** The earlier turrets on the model's body: its cupola, the hatch doors flush with its leaning sides. */
+const pz4TmParts = (t: TurretSpec): TurretSpec[] => [cupola(t, -0.54, 0, 0.33, 0.27), ...pz4Hatches(t, 0.86)];
 // Ausf. F1 (1941-42): the short 75 mm L/24 in the internal mantlet.
-G['pz-iv-f1'] = ww2({ ...PZ4, turret: PZ4_F1_T, gun: { length: 1.3, calibre: 0.075, at: 0.45, elevation: 0 }, turretParts: (t) => [pz4Cupola(t), ...pz4Hatches(t)] });
+G['pz-iv-f1'] = ww2({ ...PZ4, turret: { ...PZ4_TW, gunX: 0.97 }, gun: { length: 1.3, calibre: 0.075, at: 0.45, elevation: 0 }, turretParts: pz4TmParts });
 // Ausf. F2 (1942): the long L/43 with its ball-shaped single-baffle brake in an external mantlet (6.63 m with the gun).
 G['pz-iv-f2'] = ww2({ ...PZ4, gun: { length: 2.4, calibre: 0.075, muzzle: true, at: 0.45, elevation: 0 }, turretParts: (t) => [pz4Cupola(t), pz4Mantlet(t), ...pz4Hatches(t)] });
 // Ausf. G (1942-43): the F2 with the stowage bin on the turret's back and the double-baffle brake.
@@ -1830,7 +1833,7 @@ G['centaur-cs'] = { ...G['cromwell'], guns: [{ mount: 'turret', length: 1.0, cal
 // ---------------------------------------------------------------- late-war and prototype heavies
 
 // Pz IV Ausf. E (and C/D): the short 75 mm, the narrower tracks, the bolted plate on the driver's half of the front.
-G['pz-iv-e'] = ww2({ ...PZ4, W: 2.84, turret: { ...PZ4_T, gunX: 0.97 }, gun: { length: 1.3, calibre: 0.075, at: 0.45 }, parts: [...PZ4.parts!, part(1.68, [[1.95, 0.6], [2.03, 0.6]], [[1.95, 1.7], [2.03, 1.7]], 1.3, 16, -0.6)], turretParts: (t) => [pz4Cupola(t), ...pz4Hatches(t)] });
+G['pz-iv-e'] = ww2({ ...PZ4, W: 2.84, turret: { ...PZ4_TW, gunX: 0.97 }, gun: { length: 1.3, calibre: 0.075, at: 0.45 }, parts: [...PZ4.parts!, part(1.68, [[1.95, 0.6], [2.03, 0.6]], [[1.95, 1.7], [2.03, 1.7]], 1.3, 16, -0.6)], turretParts: pz4TmParts });
 // Panther II: the Panther's hull lengthened on unstaggered steel wheels (overlapping in two rows, as the Tiger II's), the Schmalturm with the 88 mm L/71 (7.0 x 3.27 m).
 const PANTHER_II: Ww2 = { ...PANTHER, L: 7.0, top: [[-3.5, 1.35], [-3.2, 1.9], [1.5, 1.9], [3.5, 0.92]], track: trk(3.42, 1.05, 0.7, 0.62, 2.1), wheels: even(7, -2.1, 2.1), rows: 'overlap' };
 G['panther-ii'] = ww2({ ...PANTHER_II, turret: SCHMALTURM, gun: { length: 4.9, calibre: 0.088, muzzle: true, at: 0.42 }, parts: [...pantherSkirts, ...pantherExhaust(0.16, 1.35)], turretParts: (t) => [saukopf(t, 1.38, 1.68, 0.32, 0.2, 0.36), cupola(t, -0.95, -0.5, 0.34, 0.15)] });
