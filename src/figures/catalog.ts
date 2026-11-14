@@ -23,7 +23,7 @@ import { fitOutlines } from './specs/outline-fit';
 import { fitDetails } from './specs/detail-fit';
 import { buildMeshFigure } from './meshfig';
 import { MESH_FIGURES } from './meshes';
-import { fetchFigurePack, installFigurePack } from './figurepack';
+import { fetchFigurePackIndex, installFigurePackIndex } from './figurepack';
 
 export type FigureDomain = 'person' | 'ground' | 'air' | 'heli' | 'missile' | 'sea' | 'marker';
 
@@ -210,6 +210,7 @@ export const FIGURES: Record<string, () => Template> = Object.fromEntries(Object
 /**
  * The local figure pack (`figurepack.ts`) when the page's server has one, put in place of the figures of the same
  * names (its units drawn as its figures); resolves with how many it replaced (0 in tests and tools, which install a pack themselves).
+ * Only the pack's index comes here: a figure's data is fetched when a thread is about to build it (`loadPackFigures`).
  */
 export const figurePackReady: Promise<number> =
-  typeof location === 'undefined' ? Promise.resolve(0) : fetchFigurePack().then((p) => (p ? installFigurePack(CATALOG, p, FIGURES, ALIASES) : 0));
+  typeof location === 'undefined' ? Promise.resolve(0) : fetchFigurePackIndex().then((p) => (p ? installFigurePackIndex(CATALOG, p, FIGURES, ALIASES) : 0));

@@ -3,7 +3,10 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 import { execFile, execFileSync } from 'node:child_process';
 import os from 'node:os';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { brotliCompressSync, constants as zlibConstants, gzipSync } from 'node:zlib';
+import { encodePackFigure, type PackFigure } from './src/figures/figurepackBin.ts';
 
 /**
  * The GPU's memory, which no web API will report at any precision.
@@ -128,13 +131,31 @@ function hostMemory(): Plugin {
 /** Where the page asks for the local figure pack (src/figures/figurepack.ts). */
 const FIGURE_PACK_ROUTE = '/__heat3d/figure-pack';
 
+/** A pack file as read: its figures, units, a tag per figure and the index, with each figure's compressed bodies once asked for. */
+interface LoadedPack {
+  key: string;
+  figures: Record<string, PackFigure>;
+  tags: Record<string, string>;
+  index: string;
+  indexTag: string;
+  bodies: Map<string, Buffer>;
+}
+
 /**
  * The local figure pack: figures kept on this machine only (never in the
  * repository) that replace the catalogue's of the same names. Its path comes
  * from the `HEAT3D_FIGURE_PACK` environment variable or the `figurePack` entry
  * of the git-ignored `tools/local-data.json`; without one, or when the file is
- * missing, the route answers 404 and the viewer keeps its own figures. Read
- * on each request, so a re-carved pack shows on the next page load.
+ * missing, the route answers 404 and the viewer keeps its own figures.
+ *
+ * The page never takes the pack file itself (tens of megabytes of JSON): the
+ * route answers with an index (each figure's name and a tag of its content, and
+ * the units), and `/f/<name>?v=<tag>` under it with one figure, binary
+ * (`src/figures/figurepackBin.ts`) and brotli- or gzip-compressed, made once
+ * and kept. The index is checked on every page load (ETag, a bodiless 304 when
+ * unchanged); a figure's URL changes with its content, so the browser keeps it
+ * for good. The file is read again when it changes on disk, so a re-carved pack
+ * shows on the next page load and only its changed figures are fetched anew.
  */
 function figurePack(): Plugin {
   const where = (): string | null => {
@@ -147,17 +168,74 @@ function figurePack(): Plugin {
       return null;
     }
   };
+  let held: LoadedPack | null = null;
+  const load = (p: string): LoadedPack | null => {
+    const st = statSync(p);
+    const key = `${p}|${st.size}|${st.mtimeMs}`;
+    if (held?.key === key) return held;
+    held = null;
+    const pack = JSON.parse(readFileSync(p, 'utf8')) as { version?: number; figures?: Record<string, PackFigure>; units?: Record<string, string> };
+    if (!pack || pack.version !== 1 || typeof pack.figures !== 'object') return null;
+    const tags: Record<string, string> = {};
+    for (const [n, m] of Object.entries(pack.figures)) tags[n] = createHash('sha1').update(JSON.stringify(m)).digest('hex').slice(0, 16);
+    const index = JSON.stringify({ version: 1, figures: tags, units: pack.units ?? {} });
+    const indexTag = `"${createHash('sha1').update(index).digest('hex').slice(0, 20)}"`;
+    held = { key, figures: pack.figures, tags, index, indexTag, bodies: new Map() };
+    return held;
+  };
   const handler = (server: ViteDevServer | { middlewares: ViteDevServer['middlewares'] }) => {
-    server.middlewares.use(FIGURE_PACK_ROUTE, (_req, res) => {
+    server.middlewares.use(FIGURE_PACK_ROUTE, (req, res) => {
       const p = where();
-      if (!p || !existsSync(p)) {
+      let pack: LoadedPack | null = null;
+      try {
+        pack = p && existsSync(p) ? load(p) : null;
+      } catch {
+        pack = null;
+      }
+      const url = new URL(req.url ?? '/', 'http://pack');
+      const fig = /^\/f\/(.+)$/.exec(url.pathname);
+      const name = fig ? decodeURIComponent(fig[1]) : null;
+      if (!pack || (fig && !(name! in pack.figures))) {
         res.statusCode = 404;
         res.end();
         return;
       }
-      res.setHeader('Content-Type', 'application/json');
-      res.setHeader('Cache-Control', 'no-store');
-      res.end(readFileSync(p));
+      const fresh = (tag: string) => {
+        res.setHeader('ETag', tag);
+        if (req.headers['if-none-match'] !== tag) return false;
+        res.statusCode = 304;
+        res.end();
+        return true;
+      };
+      if (!name) {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Cache-Control', 'no-cache');
+        if (fresh(pack.indexTag)) return;
+        res.end(pack.index);
+        return;
+      }
+      const tag = pack.tags[name];
+      // A URL that names the figure's current tag never changes; one without it is checked each time.
+      res.setHeader('Cache-Control', url.searchParams.get('v') === tag ? 'public, max-age=31536000, immutable' : 'no-cache');
+      res.setHeader('Content-Type', 'application/octet-stream');
+      res.setHeader('Vary', 'Accept-Encoding');
+      if (fresh(`"${tag}"`)) return;
+      const accept = String(req.headers['accept-encoding'] ?? '');
+      const enc = /\bbr\b/.test(accept) ? 'br' : /\bgzip\b/.test(accept) ? 'gzip' : '';
+      let body = pack.bodies.get(`${enc}|${name}`);
+      if (!body) {
+        const raw = Buffer.from(encodePackFigure(pack.figures[name]));
+        body =
+          enc === 'br'
+            ? brotliCompressSync(raw, { params: { [zlibConstants.BROTLI_PARAM_QUALITY]: 9, [zlibConstants.BROTLI_PARAM_SIZE_HINT]: raw.length } })
+            : enc === 'gzip'
+              ? gzipSync(raw, { level: 9 })
+              : raw;
+        pack.bodies.set(`${enc}|${name}`, body);
+      }
+      if (enc) res.setHeader('Content-Encoding', enc);
+      res.setHeader('Content-Length', body.length);
+      res.end(body);
     });
   };
   return { name: 'heat3d-figure-pack', configureServer: handler, configurePreviewServer: handler };

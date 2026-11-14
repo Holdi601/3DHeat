@@ -16,6 +16,7 @@
 
 import type { Frame3, Rgb, Vec3 } from '../race/geometry';
 import { atDetail, COARSE, FAR, finish, into, joint, newKit, PAINT, type Anchor, type FigBuffer, type Kit, type Template } from './kit';
+import { lodWords } from './figurepackBin';
 import { Mesh } from './mesh';
 import { ring } from './parts';
 
@@ -55,9 +56,10 @@ export interface MeshFigureData {
   ring?: 'own';
   /**
    * Full, coarse and far builds, base64: u16 part count, per part u16 vertex and triangle counts, then per part its
-   * positions (u16 x, y, z over `box`) and triangles (u16 vertex indices).
+   * positions (u16 x, y, z over `box`) and triangles (u16 vertex indices). A local figure pack's figures arrive as
+   * the 16-bit words themselves (`figurepackBin.ts`).
    */
-  lods: string[];
+  lods: (string | Uint16Array)[];
 }
 
 /** The team colour's shade on a mesh figure's body, as on a built hull. */
@@ -72,16 +74,9 @@ const FACING_FORWARD: Frame3 = {
   u: [1, 0, 0],
 };
 
-function bytesOf(b64: string): Uint16Array {
-  const s = atob(b64);
-  const u8 = new Uint8Array(s.length);
-  for (let i = 0; i < s.length; i++) u8[i] = s.charCodeAt(i);
-  return new Uint16Array(u8.buffer, 0, u8.length >> 1);
-}
-
 /** The parts of one level of detail: positions in metres and triangles, per part. */
 export function decodeLod(m: MeshFigureData, lod: number): { p: Float32Array; idx: Uint16Array }[] {
-  const d = bytesOf(m.lods[lod]);
+  const d = lodWords(m.lods[lod]);
   const n = d[0];
   let o = 1 + n * 2;
   const out: { p: Float32Array; idx: Uint16Array }[] = [];

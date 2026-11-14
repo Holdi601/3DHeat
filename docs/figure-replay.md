@@ -27,7 +27,7 @@ The dev server (`npm run dev`) and the preview server (`npm run preview`) hand t
 - the environment variable `HEAT3D_FIGURE_PACK` set to the file's full path before starting the server, or
 - a `"figurePack": "<full path>"` entry in `tools/local-data.json` (git-ignored).
 
-The file is read again on every page load, so a changed pack shows after a reload. A build served any other way has no pack. Keep the pack outside the repository: `local-pack/`, `figure-pack*.json` and `*.figpack.json` are git-ignored, and a test fails if a pack or a figure from one is ever tracked.
+The page never downloads the whole file. The server hands it a small index (each figure's name and a tag of its content, and the units), and the figures themselves one at a time, only those of the vehicles a loaded recording shows, each when it is first built: binary and compressed (about a fiftieth of the pack file for a recording's few dozen vehicles), at an address that changes with the figure, so the browser keeps each one and asks again only after it changed. The server reads the file again when it changes, so a changed pack shows after a reload. A build served any other way has no pack. Keep the pack outside the repository: `local-pack/`, `figure-pack*.json` and `*.figpack.json` are git-ignored, and a test fails if a pack or a figure from one is ever tracked.
 
 ## Effects
 

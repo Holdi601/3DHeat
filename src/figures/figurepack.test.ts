@@ -1,9 +1,10 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { ALIASES, CATALOG, FIGURES } from './catalog';
-import { installFigurePack, removeFigurePack, type FigurePack } from './figurepack';
+import { installFigurePack, installFigurePackIndex, loadPackFigures, packFigureLoaded, removeFigurePack, type FigurePack } from './figurepack';
+import { decodePackFigure, encodePackFigure, lodWords } from './figurepackBin';
 import { figureForName } from './match';
 import type { MeshFigureData } from './meshfig';
 
@@ -51,6 +52,51 @@ describe('the local figure pack', () => {
     expect(CATALOG[variant]).toBeUndefined();
     expect(FIGURES[variant]).toBeUndefined();
     expect(ALIASES['test_unit_x']).toBeUndefined();
+  });
+
+  it('sends a figure binary and gets the same figure back', () => {
+    const m = boxFigure();
+    const back = decodePackFigure(encodePackFigure(m)) as MeshFigureData;
+    expect(back.box).toEqual(m.box);
+    expect(back.parts).toEqual(m.parts);
+    for (let i = 0; i < m.lods.length; i++) expect(Array.from(lodWords(back.lods[i]))).toEqual(Array.from(lodWords(m.lods[i])));
+    // Two parts, positions jumping across the whole range and indices going back and forth: still bit for bit.
+    const words = [2, 3, 1, 2, 2, 0, 65535, 1, 65535, 0, 40000, 7, 7, 7, 2, 0, 1, 12, 65535, 0, 0, 65535, 9, 0, 1, 1, 0, 1, 1];
+    const odd = { ...m, lods: [new Uint16Array(words)] };
+    expect(Array.from(lodWords(decodePackFigure(encodePackFigure(odd))!.lods[0]))).toEqual(words);
+    expect(decodePackFigure(new Uint8Array(16))).toBeNull();
+  });
+
+  it('takes a figure from an index only once its data is fetched', async () => {
+    const name = 'tiger-i-e';
+    const variant = `${name}@test-lazy`;
+    const before = CATALOG[name].build().triangles;
+    const asked: string[] = [];
+    vi.stubGlobal('fetch', async (url: string) => {
+      asked.push(url);
+      return new Response(encodePackFigure(boxFigure()).slice().buffer, { status: 200 });
+    });
+    try {
+      expect(installFigurePackIndex(CATALOG, { version: 1, figures: { [name]: 'a1', [variant]: 'b2' }, units: { test_lazy_unit: variant } }, FIGURES, ALIASES)).toBe(2);
+      expect(figureForName('test_lazy_unit')).toBe(variant);
+      expect(asked).toEqual([]);
+      // Not here yet: the catalogue's own figure (the variant its kin's), and the data is asked for.
+      expect(CATALOG[variant].build().triangles).toBe(before);
+      await loadPackFigures([name, variant, 'not-in-the-index']);
+      expect(packFigureLoaded(name) && packFigureLoaded(variant)).toBe(true);
+      expect(asked.length).toBe(2);
+      expect(asked.every((u) => /\/f\/.+\?v=(a1|b2)$/.test(u))).toBe(true);
+      expect(CATALOG[name].build().triangles).toBe(12);
+      expect(CATALOG[variant].build().triangles).toBe(12);
+      await loadPackFigures([name]);
+      expect(asked.length).toBe(2);
+    } finally {
+      removeFigurePack(CATALOG, FIGURES);
+      vi.unstubAllGlobals();
+    }
+    expect(CATALOG[name].build().triangles).toBe(before);
+    expect(CATALOG[variant]).toBeUndefined();
+    expect(packFigureLoaded(name)).toBe(false);
   });
 
   it('ignores what is not a pack', () => {

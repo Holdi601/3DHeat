@@ -4,7 +4,8 @@
  * them and the figure's main turret; or finds the scale a battle's points
  * are in (`fitScale`) from the figures hit most. A figure is built once.
  */
-import { CATALOG } from './catalog';
+import { CATALOG, figurePackReady } from './catalog';
+import { loadPackFigures } from './figurepack';
 import type { Template } from './kit';
 import { fitScale, snapToFigure } from './snap';
 import { turretOf } from './turret';
@@ -30,8 +31,11 @@ interface Ask {
   fit?: { figure: string; pts: Float32Array; dir: Float32Array }[];
 }
 
-self.onmessage = (e: MessageEvent<Ask>) => {
+self.onmessage = async (e: MessageEvent<Ask>) => {
   const { id, figure, pts, yaw, dir, scale, fit } = e.data;
+  // The figures as the model worker draws them: a local figure pack's (`figurepack.ts`) when there is one.
+  await figurePackReady;
+  await loadPackFigures(fit ? fit.map((f) => f.figure) : [figure]);
   if (fit) {
     let s = 1;
     try {

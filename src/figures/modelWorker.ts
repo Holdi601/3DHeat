@@ -7,6 +7,7 @@
  */
 
 import { CATALOG, figurePackReady } from './catalog';
+import { loadPackFigures } from './figurepack';
 import { TemplateCache } from './kit';
 import { meshOf, type FigureMesh } from './instances';
 
@@ -32,8 +33,10 @@ const plain = (m: FigureMesh | null): ModelMesh | null => (m ? { data: m.data, c
 self.onmessage = async (e: MessageEvent<ModelAsk>) => {
   const kind = e.data.kind;
   const post = (a: ModelAnswer) => (self as unknown as Worker).postMessage(a);
-  // A local figure pack (`figurepack.ts`), when there is one, is in place before the first build.
+  // A local figure pack (`figurepack.ts`), when there is one, is in place before the first build, and the kind's data
+  // from it is here before the kind is built.
   await figurePackReady;
+  await loadPackFigures([kind]);
   try {
     const entry = CATALOG[kind];
     const t = entry ? templates.get(kind, entry.build) : null;
