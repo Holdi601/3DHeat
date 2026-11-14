@@ -32,6 +32,7 @@ import {
   type ModelLevel,
 } from '../../render/level';
 import { useStore } from '../../state/store';
+import { canResimplify, cancelResimplify, resimplifyLevel } from '../../render/levelSimplify';
 import { dotaLevel } from '../../tactics/dotaMap';
 import { Check, Section, Slider } from '../controls';
 import { int, num, t } from '../../i18n';
@@ -76,6 +77,9 @@ const STRUCTURE_DEFAULTS = {
  * for anyone who wants the edges back on a smaller area, or after slicing.
  */
 const WIRE_OFF_ABOVE_TRIANGLES = 300_000;
+
+/** The simplification target last chosen, kept while the panel is closed. */
+let chosenLod: LodPreset = IMPORT_DEFAULT_LOD;
 
 /** A simplification preset as the menu names it. */
 function lodLabel(lod: LodPreset): string {
@@ -267,7 +271,36 @@ export function LevelPanel() {
    * improve it. The ladder stays in the dropdown for raw art with no budgeting
    * behind it, which is what it was always for.
    */
-  const [lod, setLod] = useState<LodPreset>(IMPORT_DEFAULT_LOD);
+  const [lod, setLodState] = useState<LodPreset>(chosenLod);
+  const setLod = (v: LodPreset) => setLodState((chosenLod = v));
+  // The loaded level at the chosen target: simplified again in a worker from what it was loaded with (levelSimplify.ts).
+  const levelVertices = level?.kind === 'model' ? level.vertices : null;
+  useEffect(() => {
+    const now = useStore.getState().level;
+    if (now?.kind !== 'model' || !canResimplify(now)) return;
+    const vertices = now.vertices;
+    let live = true;
+    setBusy(t('heat.levelPanel.simplification'));
+    resimplifyLevel(now, lod)
+      .then(({ sets, source, error }) => {
+        const cur = useStore.getState().level;
+        if (!live || cur?.kind !== 'model' || cur.vertices !== vertices) return;
+        if (cur.indices === sets.indices && cur.structureIndices === sets.structureIndices) return;
+        patchLevel(sets);
+        const after = sets.triangles + (sets.structureTriangles ?? 0);
+        setNote(t('heat.levelPanel.imported', { source: formatTriangles(source), now: formatTriangles(after), deviation: num(error * 100, 2) }));
+      })
+      .catch((err: unknown) => {
+        if (live && !(err instanceof Error && err.message === 'cancelled')) setError(err instanceof Error ? err.message : String(err));
+      })
+      .finally(() => {
+        if (live) setBusy(null);
+      });
+    return () => {
+      live = false;
+      cancelResimplify();
+    };
+  }, [levelVertices, lod, patchLevel]);
   const [library, setLibrary] = useState<StoredLevelMeta[]>([]);
   const [usage, setUsage] = useState<{ usage: number; quota: number } | null>(null);
 

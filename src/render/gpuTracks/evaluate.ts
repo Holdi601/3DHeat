@@ -93,6 +93,12 @@ function velocity(s: GpuTrackStore, b: number, j: number, at: number[], first: n
   } else out[0] = out[1] = out[2] = 0;
 }
 
+/** Seconds the track at u32 offset `b` is held past its last key: as long as its own sample rate says (slot 14, plus one; a still unit for good), never past `stale`. */
+export function heldFor(f32: Float32Array, b: number, stale: number): number {
+  const hold = f32[b + 14];
+  return hold > 1e8 ? Infinity : hold > 0.5 ? Math.min(stale, hold - 1) : stale;
+}
+
 /** Track `i` at time `t` into `out`; false when it is not there (before its first key, or `stale` s past its last). */
 export function evaluateTrack(s: GpuTrackStore, i: number, t: number, stale: number, out: TrackPose): boolean {
   const T = s.trackData;
@@ -135,8 +141,7 @@ export function evaluateTrack(s: GpuTrackStore, i: number, t: number, stale: num
   }
   if (k === last) {
     // Held past its last key as long as its own sample rate says (slot 14, plus one), never past `stale`.
-    const hold = f32[b + 14];
-    if (t - K0[3] > (hold > 1e8 ? Infinity : hold > 0.5 ? Math.min(stale, hold - 1) : stale)) return false;
+    if (t - K0[3] > heldFor(f32, b, stale)) return false;
     out.x = K0[0];
     out.y = K0[1];
     out.z = K0[2];

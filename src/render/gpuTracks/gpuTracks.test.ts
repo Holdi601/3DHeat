@@ -268,7 +268,7 @@ describe('GPU tracks', () => {
     expect(m.fadeAt(1, 15)).toBe(1);
     // The CPU trail breaks at the gap: no piece of it across 10 s to 20 s.
     const pts: [number, boolean][] = [];
-    m.trail(0, 5, 25, 0.5, cpu, (q, t, join) => {
+    m.trail(0, 5, 25, 0.5, cpu, (_q, t, join) => {
       pts.push([t, join]);
       return true;
     });
