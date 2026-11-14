@@ -9,6 +9,7 @@ import { useAnimationFrame, useEngine } from './EngineContext';
 import { coord, copyText, rowFields } from './inspectFormat';
 import { formatLength } from '../render/measure';
 import { useUnits } from '../state/unitsStore';
+import { DirectionSpot } from './DirectionSpot';
 
 /**
  * Eye height for "stand here" on a surface, in world units (metres): standing
@@ -155,6 +156,7 @@ export function PickCard() {
             <b>{formatLength(pick.distance)}</b>
           </div>
         </div>
+        <DirectionSpot />
         <div className="pick-actions">
           <button onClick={copy} title={t('heat.inspect.copyPickTitle')}>
             {copied ? t('heat.inspect.copied') : t('heat.inspect.copy')}

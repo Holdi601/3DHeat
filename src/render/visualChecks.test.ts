@@ -496,3 +496,31 @@ describe('a dead unit is drawn as a wreck from its death on', () => {
     }
   });
 });
+
+// ------------------------------------------------------------------ wedges
+
+describe('directional heat keeps zoom invariance', () => {
+  it('a wedge adds what its disc adds at every drawn size, across the clamps and the wedge-to-disc blend', async () => {
+    const { wedgeUniforms, wedgeWeight, WEDGE_DISC_PX, WEDGE_FULL_PX } = await import('./direction');
+    const smooth = (a: number, b: number, x: number) => {
+      const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+      return t * t * (3 - 2 * t);
+    };
+    for (const [open, soft] of [[30, 0], [90, 0.3], [200, 1]] as const) {
+      const w = wedgeUniforms(open, soft);
+      for (const truePx of [0.2, 0.8, 1.5, 2.5, 4, 12, 80, 400]) {
+        const { px, weight } = pointSplat(truePx, 1, 96, true);
+        const blend = smooth(WEDGE_DISC_PX, WEDGE_FULL_PX, px);
+        let mean = 0;
+        const N = 1440;
+        for (let k = 0; k < N; k++) {
+          const off = -Math.PI + ((k + 0.5) / N) * 2 * Math.PI;
+          mean += (1 - blend) + blend * wedgeWeight(off, w.half, w.soft) * w.norm;
+        }
+        mean /= N;
+        // Per world area, the same as the disc's: the disc's weight times one.
+        expect((mean * weight * px * px) / (truePx * truePx)).toBeCloseTo(1, 3);
+      }
+    }
+  });
+});

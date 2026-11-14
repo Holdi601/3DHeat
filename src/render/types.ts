@@ -284,6 +284,29 @@ export interface CubeInstance {
 }
 
 /** Everything a backend needs to draw one frame. Rebuilt each frame, no allocations. */
+/**
+ * What the heat pass does with each row's direction (see render/direction.ts).
+ *
+ * The wedge is a uniform, not a rebuild: one byte a row says where the row
+ * points, and the splat shader keeps the part of its disc that faces that way.
+ */
+export interface DirectionDraw {
+  /** Half the wedge's opening, radians; PI draws every sprite as the disc. */
+  half: number;
+  /** Radians over which the wedge's sides fade. */
+  soft: number;
+  /** Heat multiplier that keeps a wedge's total equal to its disc's (`wedgeNorm`). */
+  norm: number;
+  /** Where its heat sits ahead of the row, as a fraction of the radius (`wedgeCentroid`). */
+  centroid: number;
+  /** The field over the heat: 0 off, 1 arrows, 2 streamlines, 3 both. */
+  field: number;
+  /** Screen pixels between the field's arrows; one field cell. */
+  cell: number;
+  /** Seconds, for the streamlines' flow; negative holds them still. */
+  time: number;
+}
+
 export interface FrameParams {
   viewProj: Float32Array;
   /**
@@ -518,6 +541,8 @@ export interface FrameParams {
    */
   topVerts?: Float32Array | null;
   topVertCount?: number;
+  /** Directional heat: wedge sprites and the direction field. Null or absent draws neither. */
+  direction?: DirectionDraw | null;
 
   /** Appearance of the background map or level mesh. Null draws neither. */
   level: LevelDraw | null;
@@ -774,6 +799,11 @@ export interface Renderer {
    * `data/lines.ts`), or null to free them. Called after `setDataset`.
    */
   setLines(lines: LineData | null): void;
+  /**
+   * Each row's bearing, one byte a row (`render/direction.ts`), or null to free
+   * them. Called after `setDataset`; uploaded per chunk as the heat pass needs it.
+   */
+  setDirections?(angles: Uint8Array | null): void;
   /** Upload background geometry. Pass null to clear it. */
   setLevel(level: Level | null): void;
   /**

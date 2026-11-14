@@ -1372,3 +1372,13 @@ button.link:disabled {
   font-size: 11px;
   padding: 2px 4px;
 }
+
+/* Directional heat: the polar chart of a clicked spot or a volume (DirectionSpot.tsx). */
+.direction-spot {
+  margin: 6px 0;
+}
+.direction-polar {
+  display: block;
+  margin: 4px auto;
+  color: var(--text);
+}

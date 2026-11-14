@@ -3,6 +3,7 @@ import { TEAM_CHROMA, TEAM_LIGHTNESS } from '../colors';
 import { FILTER_MASK_CAPACITY } from '../types';
 import { volumeWgsl } from '../../volumes/gpu';
 import { SEE_THROUGH_BELOW } from '../figureShaders';
+import { WEDGE_DISC_PX, WEDGE_FULL_PX, WEDGE_TIGHT_MAX } from '../direction';
 
 /**
  * WGSL sources for the WebGPU backend.
@@ -27,6 +28,8 @@ export const FLAG_USE_CURVE = 64;
 export const FLAG_TEAM_COLORS = 128;
 /** A clamped sprite keeps the heat its true size would add: `HeatUniforms.zoomInvariant`. */
 export const FLAG_CONSERVE = 256;
+/** This chunk's bearings are bound (`dirs`): directional heat, see render/direction.ts. */
+export const FLAG_HAS_DIRS = 512;
 
 /**
  * Bytes in the heat pass uniform buffer.
@@ -44,8 +47,10 @@ export const FLAG_CONSERVE = 256;
  *
  * 400 since line heat: two more vec4s for the box segment starts are quantised
  * to. Still inside the ring's 512-byte stride.
+ *
+ * 432 since directional heat: the wedge, two vec4s (`dirCfg`, `dirCfg2`). Still inside it.
  */
-export const HEAT_UNIFORM_BYTES = 400;
+export const HEAT_UNIFORM_BYTES = 432;
 
 /**
  * The level's atlas, its tiles, and how a fragment reads them: the bindings
@@ -218,9 +223,17 @@ struct HeatUniforms {
   // this chunk, since a segment can start in another chunk. w lanes spare.
   lineMin       : vec4<f32>,
   lineSize      : vec4<f32>,
+  // Directional heat: x half the wedge's opening (PI: the disc), y the
+  // softness of its sides, both radians; z the norm that keeps a wedge's heat
+  // its disc's; w 1 for the direction-field pass (see DirectionDraw).
+  dirCfg        : vec4<f32>,
+  // x: the wedge's heat centroid ahead of the row, fraction of radius. yzw spare.
+  dirCfg2       : vec4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> u : HeatUniforms;
+// One bearing byte a row, four to a word; 255 is "no direction".
+@group(0) @binding(16) var<storage, read> dirs : array<u32>;
 // The user's volumes, as a filter: see volumes/gpu.ts. A uniform block of its
 // own, written once a frame, rather than lanes of the per-chunk ring slot.
 ${volumeWgsl(15)}
@@ -361,6 +374,13 @@ struct VsOut {
    * is free.
    */
   @location(5) teamAB : vec2<f32>,
+  /**
+   * The row's direction on screen: xy a unit vector in pixels, z how far the
+   * sprite is a wedge rather than a disc, w 1 when the row has a direction.
+   */
+  @location(7) @interpolate(flat) dir : vec4<f32>,
+  /** The sprite's drawn radius in pixels, so the wedge's edge can be antialiased by the pixel. */
+  @location(8) @interpolate(flat) dirPx : f32,
 };
 
 fn passFilter(slot : u32, row : u32) -> bool {
@@ -472,6 +492,12 @@ fn vsHeat(@builtin(vertex_index) vid : u32) -> VsOut {
     if (sgn > 0.0) { sgn = sgn * u.teamCfg.z; } else { sgn = sgn * u.teamCfg.w; }
   }
   out.sign = sgn;
+  out.dir = vec4<f32>(0.0);
+  out.dirPx = 1.0;
+  var dirQ = 255u;
+  if ((flags & ${FLAG_HAS_DIRS}u) != 0u) { dirQ = (dirs[row >> 2u] >> ((row & 3u) * 8u)) & 0xffu; }
+  // The direction field counts only rows that point somewhere.
+  if (u.dirCfg.w > 0.5 && dirQ == 255u) { reject = true; }
 
   // Where this sprite's group sits on the Oklab colour plane.
   //
@@ -572,7 +598,47 @@ fn vsHeat(@builtin(vertex_index) vid : u32) -> VsOut {
     out.fade = out.fade * ratio * ratio;
   }
 
-  let c = SPRITE_CORNERS[corner];
+  // The row's bearing on screen: where a step along it from the row lands.
+  if (dirQ != 255u) {
+    let b = f32(dirQ) * (6.28318530718 / 255.0);
+    let c2 = u.viewProj * vec4<f32>(p + vec3<f32>(sin(b), 0.0, -cos(b)) * u.shape.x, 1.0);
+    if (c2.w > 0.0) {
+      let sd = (c2.xy / c2.w - clip.xy / clip.w) * viewport;
+      let sl = length(sd);
+      if (sl > 1e-3) {
+        var wedge = 0.0;
+        if (u.dirCfg.x < 3.14159) { wedge = smoothstep(${WEDGE_DISC_PX.toFixed(2)}, ${WEDGE_FULL_PX.toFixed(2)}, pixRadius); }
+        out.dir = vec4<f32>(sd / sl, wedge, 1.0);
+        out.dirPx = pixRadius;
+        // As far ahead as the wedge at its true size: see the GLSL copy.
+        if (u.dirCfg.x < 3.14159) {
+          let shift = u.dirCfg2.x * (trueRadius - wedge * pixRadius);
+          clip = vec4<f32>(clip.xy + (sd / sl) * shift * (2.0 / viewport) * clip.w, clip.z, clip.w);
+        }
+      }
+    }
+  }
+  if (u.dirCfg.w > 0.5 && out.dir.w == 0.0) {
+    out.pos = vec4<f32>(2.0, 2.0, 2.0, 1.0);
+    return out;
+  }
+
+  var c = SPRITE_CORNERS[corner];
+  // A narrow wedge drawn as the triangle round it: see the GLSL copy.
+  if (out.dir.z >= 1.0 && u.dirCfg.w < 0.5 && u.dirCfg.x + u.dirCfg.y < ${WEDGE_TIGHT_MAX}) {
+    let hs = u.dirCfg.x + u.dirCfg.y;
+    let w = 0.75 / pixRadius;
+    let sh = sin(hs);
+    let ch = cos(hs);
+    var loc = vec2<f32>(-w / sh, 0.0);
+    if (corner != 0u) {
+      let pp = (1.0 + w + w * sh) / ch;
+      var side = -1.0;
+      if (corner == 1u) { side = 1.0; }
+      loc = vec2<f32>(pp * ch - w * sh, side * (pp * sh + w * ch));
+    }
+    c = loc.x * out.dir.xy + loc.y * vec2<f32>(-out.dir.y, out.dir.x);
+  }
   out.local = c;
   clip = vec4<f32>(
     clip.xy + c * (pixRadius * 2.0 / viewport) * clip.w,
@@ -634,7 +700,23 @@ fn fsHeat(in : VsOut) -> @location(0) vec4<f32> {
     if ((u.rowCfg.w & ${FLAG_SMOOTH_RAMP}u) != 0u) { t = smoothstep(0.0, 1.0, t); }
   }
   let ramp = mix(u.shape.w, u.shape.z, t);
-  let v = ramp * u.shape2.y * in.sign * in.fade * visible;
+  var v = ramp * u.shape2.y * in.sign * in.fade * visible;
+  // The wedge: the part of the disc facing the row's direction, its angular
+  // weight scaled by the norm so it adds what the disc adds (wedgeWeight).
+  if (in.dir.z > 0.0 && d > 1e-4) {
+    let off = acos(clamp(dot(in.local / d, in.dir.xy), -1.0, 1.0));
+    // Never sharper than a pixel where it is: see the GLSL copy.
+    let aa = min(0.75 / max(d * in.dirPx, 1e-3), min(u.dirCfg.x, 3.14159265 - u.dirCfg.x));
+    let sw = max(u.dirCfg.y, aa);
+    let e = clamp((off - (u.dirCfg.x - sw)) / (2.0 * sw), 0.0, 1.0);
+    v = v * mix(1.0, (1.0 - e * e * (3.0 - 2.0 * e)) * u.dirCfg.z, in.dir.z);
+  }
+  if (u.dirCfg.w > 0.5) {
+    // The direction field: the row's screen direction weighted by its heat, and
+    // the weight, so a cell's mean is a division away.
+    let a = abs(v);
+    return vec4<f32>(a * in.dir.x, a * in.dir.y, a, 0.0);
+  }
   // Density in R, and the group's colour *weighted by that density* in G and B.
   //
   // Weighted, because what the composite wants is the mean group colour at the
@@ -692,7 +774,7 @@ function lineHeatWgsl(): string {
   // rather than one interpolated ratio: the body is a trapezoid wherever its
   // ends are at different depths, and only the pixel offset and the width are
   // affine across it.
-  s = swapOnce(s, '  @location(5) teamAB : vec2<f32>,\n};', '  @location(5) teamAB : vec2<f32>,\n  @location(6) width : f32,\n};', 'varyings');
+  s = swapOnce(s, '  @location(5) teamAB : vec2<f32>,\n', '  @location(5) teamAB : vec2<f32>,\n  @location(6) width : f32,\n', 'varyings');
   s = swapOnce(s, '  let d = length(in.local);', '  let d = length(vec2<f32>(in.local.x, in.local.y / max(in.width, 1e-6)));', 'fragment distance');
   const tailFrom = s.indexOf('  var clip = u.viewProj * vec4<f32>(p, 1.0);');
   const tailTo = s.indexOf('@fragment');

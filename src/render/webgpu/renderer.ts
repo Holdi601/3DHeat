@@ -1,4 +1,5 @@
 import { GpuPost } from './post';
+import { GpuDirField } from './dirField';
 import { VOLUME_BLOCK_BYTES, VOLUME_BLOCK_FLOATS } from '../../volumes/gpu';
 import { GpuFigures } from './figures';
 import { GpuTracks } from './tracks';
@@ -45,6 +46,7 @@ import {
   FLAG_SMOOTH_RAMP,
   FLAG_TEAM_COLORS,
   FLAG_CONSERVE,
+  FLAG_HAS_DIRS,
   FLAG_USE_CURVE,
   FLAG_USE_LIFETIME,
   FLAG_USE_TEAM_SIGN,
@@ -61,6 +63,7 @@ import {
   WIRE_WGSL,
 } from './shaders';
 import { t } from '../../i18n';
+import type { LevelIndexSets } from '../levelIndices';
 
 /** Largest block index texture we size the per-frame buffer for. */
 const MAX_BLOCKS = MAX_PLAN_BLOCKS;
@@ -126,6 +129,8 @@ interface GpuChunk {
   filterSlots: number;
   /** Slot holding the difference split's column, or -1 when there is none. */
   splitSlot: number;
+  /** One bearing byte a row, four to a word (`setDirections`); made when the heat pass first wants it. */
+  dirs: GPUBuffer | null;
 }
 
 /** The scene pass's background; the tactical display swaps exactly this for its own. */
@@ -631,9 +636,61 @@ export class WebgpuRenderer implements Renderer {
     }
   }
 
+  /** A level's new index sets on their way (`setLevelIndices`): the buffers, null for an empty set, and the sets. */
+  private levelIndices: { buffers: (GPUBuffer | null)[]; sets: Uint32Array[] } | null = null;
+
+  /**
+   * The loaded level's ground, structure and edge indices replaced over frames
+   * (src/render/levelIndices.ts): written a slice a frame like any spread
+   * upload, the old ones drawn until all of the new have arrived.
+   */
+  setLevelIndices(sets: LevelIndexSets): void {
+    this.dropLevelIndices();
+    if (!this.levelMesh) return;
+    const list = [sets.ground, sets.structure, sets.edges];
+    const what = ['ground', 'structures', 'edges'];
+    this.levelIndices = { buffers: list.map((d, i) => (d.length ? this.makeBuffer(d, GPUBufferUsage.INDEX, `level ${what[i]}`, true) : null)), sets: list };
+  }
+
+  private dropLevelIndices(): void {
+    if (!this.levelIndices) return;
+    for (const b of this.levelIndices.buffers) {
+      if (!b) continue;
+      this.uploading.delete(b);
+      b.destroy();
+    }
+    this.levelIndices = null;
+  }
+
+  /** The level's new indices put in place of the old once all of them have arrived. */
+  private settleLevelIndices(): void {
+    const job = this.levelIndices;
+    const m = this.levelMesh;
+    if (!job) return;
+    if (!m) return this.dropLevelIndices();
+    if (job.buffers.some((b) => b && this.uploading.has(b))) return;
+    this.levelIndices = null;
+    const [ground, struct, wire] = job.buffers;
+    const [g, st, w] = job.sets;
+    for (const b of [m.groundBuffer, m.structBuffer, m.wireBuffer, m.groundWireBuffer]) b?.destroy();
+    const was = (m.groundCount + m.structCount + m.wireCount + m.groundWireCount) * 4;
+    const now = g.byteLength + st.byteLength + w.byteLength;
+    m.bytes += now - was;
+    this.levelOwnBytes += now - was;
+    m.groundBuffer = ground;
+    m.structBuffer = struct;
+    m.wireBuffer = wire;
+    m.groundCount = g.length;
+    m.structCount = st.length;
+    m.wireCount = w.length;
+    m.groundIndices = g;
+    m.groundWireBuffer = null;
+    m.groundWireCount = 0;
+  }
+
   /** Whether geometry is still on its way; the engine redraws the scene when it lands. */
   get uploadsPending(): boolean {
-    return this.uploading.size > 0 || this.tileQueue.length > 0 || (this.tracks?.uploading ?? false);
+    return this.levelIndices !== null || this.uploading.size > 0 || this.tileQueue.length > 0 || (this.tracks?.uploading ?? false);
   }
 
   /** Whether all of a mesh's geometry has arrived. */
@@ -1087,8 +1144,10 @@ export class WebgpuRenderer implements Renderer {
       c.times?.destroy();
       c.filterValues?.destroy();
       c.lineStarts?.destroy();
+      c.dirs?.destroy();
     }
     this.chunks = [];
+    this.dirAngles = null;
     for (const j of this.pendingChunks) {
       j.positions?.destroy();
       j.times?.destroy();
@@ -1144,6 +1203,41 @@ export class WebgpuRenderer implements Renderer {
         break;
       }
     }
+  }
+
+  /** Each row's bearing, or null; see `Renderer.setDirections`. */
+  setDirections(angles: Uint8Array | null): void {
+    this.dropChunkBindGroups();
+    for (const c of this.chunks) {
+      if (c.dirs) {
+        c.dirs.destroy();
+        this.gpuBytesUsed -= align4(c.rows);
+      }
+      c.dirs = null;
+    }
+    this.dirAngles = angles && this.dataset && angles.length === this.dataset.count ? angles : null;
+  }
+
+  private dirAngles: Uint8Array | null = null;
+  private dirUploads = 0;
+  private dirField: GpuDirField | null = null;
+
+  /** This chunk's bearings, uploaded now if the frame still has room for them. */
+  private chunkDirs(chunk: GpuChunk): GPUBuffer | null {
+    if (chunk.dirs || !this.dirAngles) return chunk.dirs;
+    if (this.dirUploads >= 2) return null;
+    this.dirUploads++;
+    const bytes = align4(Math.max(4, chunk.rows));
+    const data = new Uint8Array(bytes).fill(255);
+    data.set(this.dirAngles.subarray(chunk.start, chunk.start + chunk.rows));
+    chunk.dirs = this.device.createBuffer({
+      label: `chunk ${chunk.start} bearings`,
+      size: bytes,
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+    });
+    this.device.queue.writeBuffer(chunk.dirs, 0, data as unknown as BufferSource);
+    this.gpuBytesUsed += bytes;
+    return chunk.dirs;
   }
 
   setLines(lines: LineData | null): void {
@@ -1303,6 +1397,7 @@ export class WebgpuRenderer implements Renderer {
       start: j.start,
       lineStarts: null,
       times: j.times,
+      dirs: null,
       rows: j.rows,
       aabbMin: [j.min[0], j.min[1], j.min[2]],
       aabbSize: [sizeX, sizeY, sizeZ],
@@ -1403,6 +1498,7 @@ export class WebgpuRenderer implements Renderer {
   }
 
   setLevel(level: Level | null): void {
+    this.dropLevelIndices();
     this.mapTexture?.destroy();
     this.mapTexture = null;
     // Invalidate any cached bind group that held a view of the old map.
@@ -1937,18 +2033,22 @@ export class WebgpuRenderer implements Renderer {
     this.uniforms.reset();
     this.flushTiles();
     this.flushUploads();
+    this.settleLevelIndices();
     this.flushDataUpload();
     this.prewarm();
     const encoder = this.device.createCommandEncoder({ label: 'frame' });
     // An idle frame recomposites the buffers it already has. They are our own
     // textures and retain reliably; the canvas surface does not, so the composite
     // has to run every frame regardless.
+    this.dirUploads = 0;
     if (!params.compositeOnly) {
       this.drawScene(encoder, params);
       this.renderStructureDepth(encoder, params);
       this.peelDepthLayers(encoder, params);
-      if (params.mode !== 'team') this.drawHeat(encoder, params);
-      else this.clearHeat(encoder);
+      if (params.mode !== 'team') {
+        this.drawHeat(encoder, params);
+        if (params.direction && params.direction.field > 0) this.drawHeat(encoder, params, true);
+      } else this.clearHeat(encoder);
     }
     this.composite(encoder, params);
     this.prof?.finish(encoder);
@@ -2564,22 +2664,36 @@ export class WebgpuRenderer implements Renderer {
     pass.end();
   }
 
-  private drawHeat(encoder: GPUCommandEncoder, params: FrameParams): void {
+  /**
+   * The heat pass, or with `dirPass` the same sprites into the direction field
+   * (see webgl2/dirField.ts): its own small target, accumulated the same way.
+   */
+  private drawHeat(encoder: GPUCommandEncoder, params: FrameParams, dirPass = false): void {
     const alpha = Math.min(1, Math.max(0, params.blendAlpha));
     const extend = params.accumMode === 'extend';
     // Alpha of zero means "hold what is there", so there is nothing to do.
     if (params.accumMode !== 'reset' && !extend && alpha <= 0) return;
+    const field = dirPass ? (this.dirField ??= new GpuDirField(this.device, this.canvasFormat, this.sampler)) : null;
+    if (field) field.ensure(params, this.heatWidth, this.heatHeight, this.height);
+    const format = field ? field.format : this.heatFormat;
 
     // A full-weight frame goes straight into the accumulator; a partial one is
     // rendered into the scratch target first and blended in afterwards. Splatting
     // a fractional frame directly would add each sprite's contribution to a total
     // 1/alpha times larger than it, which a half-float target rounds away — worse
     // the denser the pixel, which is what makes it look like the hot areas cooling.
-    const direct = extend || params.accumMode === 'reset' || alpha >= 1;
-    const target = direct ? this.heatView! : this.heatScratchView!;
+    // A field target just made holds nothing to merge into: written straight.
+    const fresh = field ? field.fresh : false;
+    if (field) field.fresh = false;
+    const direct = extend || params.accumMode === 'reset' || alpha >= 1 || fresh;
+    const target = field ? (direct ? field.view! : field.scratchView!) : direct ? this.heatView! : this.heatScratchView!;
+    const merge = () =>
+      field
+        ? this.mergeHeat(encoder, alpha, field.view!, field.scratchView!, field.format, `field${field.generation}`)
+        : this.mergeHeat(encoder, alpha);
     // Extending adds to what is already there, so it is the one mode that must not
     // clear first — that is the whole point of it.
-    if (!extend) {
+    if (!extend || fresh) {
       const clear = encoder.beginRenderPass({
         label: direct ? 'clear heat' : 'clear heat scratch',
         colorAttachments: [
@@ -2596,10 +2710,10 @@ export class WebgpuRenderer implements Renderer {
 
     const weight = params.sampleWeight * params.heatGain;
     if (params.plan.length === 0) {
-      this.splitSkippedChunks = 0;
+      if (!field) this.splitSkippedChunks = 0;
       // Nothing to splat. A partial frame still folds its (empty) estimate in, or
       // the history would not decay and a stale field would persist.
-      if (!direct) this.mergeHeat(encoder, alpha);
+      if (!direct) merge();
       return;
     }
 
@@ -2660,6 +2774,8 @@ export class WebgpuRenderer implements Renderer {
         uniformOffsets.push(-1);
         return;
       }
+      const wantDirs = field !== null || ((params.direction ?? null) !== null && params.direction!.half < Math.PI);
+      const hasDirs = wantDirs && this.chunkDirs(chunk) !== null;
       uniformOffsets.push(
         this.writeHeatUniform(
           params,
@@ -2670,33 +2786,35 @@ export class WebgpuRenderer implements Renderer {
           slots,
           splitSlot,
           startOffsets[index],
+          field ? [field.width, field.height] : null,
+          hasDirs,
         ),
       );
     });
 
     const pass = encoder.beginRenderPass({
-      label: 'heat',
+      label: field ? 'direction field' : 'heat',
       colorAttachments: [{ view: target, loadOp: 'load', storeOp: 'store' }],
-      timestampWrites: this.prof?.writes('heat'),
+      timestampWrites: field ? undefined : this.prof?.writes('heat'),
       // Colour only: the splat shader compares depth itself, reading the scene's
       // depth as a texture. See buildHeatPipeline.
     });
     // Line heat where there are routes to draw; points otherwise, not nothing.
-    const lines = params.lineHeat && this.lines !== null;
-    pass.setPipeline(lines ? this.lineHeatPipelineFor(this.heatFormat) : this.heatPipelineFor(this.heatFormat));
+    const lines = params.lineHeat && this.lines !== null && !field;
+    pass.setPipeline(lines ? this.lineHeatPipelineFor(format) : this.heatPipelineFor(format));
 
     params.plan.forEach((plan, index) => {
       const offset = uniformOffsets[index];
       if (offset < 0) return;
       const blocks = Math.min(plan.blockCount, MAX_BLOCKS);
       if (startOffsets[index] + blocks > MAX_BLOCKS) return;
-      pass.setBindGroup(0, this.heatBindGroup(plan.chunk, offset, lines));
+      pass.setBindGroup(0, this.heatBindGroup(plan.chunk, offset, lines, format));
       pass.draw(blocks * SAMPLE_BLOCK * (lines ? 18 : 3));
     });
     pass.end();
-    this.splitSkippedChunks = splitSkipped;
+    if (!field) this.splitSkippedChunks = splitSkipped;
 
-    if (!direct) this.mergeHeat(encoder, alpha);
+    if (!direct) merge();
   }
 
   /** See `Renderer.splitSkippedChunks`. */
@@ -2710,16 +2828,23 @@ export class WebgpuRenderer implements Renderer {
    * every sprite's contribution 1/n of the running total, and on a half-float
    * target those simply round away.
    */
-  private mergeHeat(encoder: GPUCommandEncoder, alpha: number): void {
+  private mergeHeat(
+    encoder: GPUCommandEncoder,
+    alpha: number,
+    view = this.heatView!,
+    scratch = this.heatScratchView!,
+    format = this.heatFormat,
+    key = 'heat',
+  ): void {
     // Decay what is already there.
     const decayU = this.scratchFor(16);
     decayU[0] = 1 - alpha;
     const decayOffset = this.uniforms.push(decayU, 16);
     const decay = encoder.beginRenderPass({
       label: 'heat decay',
-      colorAttachments: [{ view: this.heatView!, loadOp: 'load', storeOp: 'store' }],
+      colorAttachments: [{ view, loadOp: 'load', storeOp: 'store' }],
     });
-    const decayPipeline = this.decayPipelineFor(this.heatFormat);
+    const decayPipeline = this.decayPipelineFor(format);
     decay.setPipeline(decayPipeline);
     decay.setBindGroup(
       0,
@@ -2738,18 +2863,18 @@ export class WebgpuRenderer implements Renderer {
     const addOffset = this.uniforms.push(addU, 16);
     const add = encoder.beginRenderPass({
       label: 'heat merge',
-      colorAttachments: [{ view: this.heatView!, loadOp: 'load', storeOp: 'store' }],
+      colorAttachments: [{ view, loadOp: 'load', storeOp: 'store' }],
     });
-    const mergePipeline = this.mergePipelineFor(this.heatFormat);
+    const mergePipeline = this.mergePipelineFor(format);
     add.setPipeline(mergePipeline);
     add.setBindGroup(
       0,
       this.cachedBindGroup(
-        `merge:${addOffset}:${this.targetGeneration}`,
+        `merge:${key}:${format}:${addOffset}:${this.targetGeneration}`,
         mergePipeline.getBindGroupLayout(0),
         () => [
           { binding: 0, resource: this.uniforms.binding(addOffset, 16) },
-          { binding: 1, resource: this.heatScratchView! },
+          { binding: 1, resource: scratch },
         ],
       ),
     );
@@ -2822,6 +2947,7 @@ export class WebgpuRenderer implements Renderer {
         pass.setPipeline(this.compositePipeline);
         pass.setBindGroup(0, group);
         pass.draw(3);
+        if (params.mode !== 'team') this.dirField?.draw(pass, params, this.width, this.height);
         if (top) {
           pass.setPipeline(top.pipeline);
           pass.setBindGroup(0, top.group);
@@ -3015,18 +3141,25 @@ export class WebgpuRenderer implements Renderer {
     filterSlots: number,
     splitSlot: number,
     blockBase: number,
+    fieldSize: [number, number] | null = null,
+    hasDirs = false,
   ): number {
     const u = this.scratchFor(HEAT_UNIFORM_BYTES);
     const i = this.scratchU32;
     u.set(params.viewProj, 0);
-    u[16] = this.heatWidth;
-    u[17] = this.heatHeight;
+    const passW = fieldSize ? fieldSize[0] : this.heatWidth;
+    const passH = fieldSize ? fieldSize[1] : this.heatHeight;
+    u[16] = passW;
+    u[17] = passH;
     // The clamps are screen pixels, so in texels of a lower heat resolution
     // they shrink with it: a clamp in texels let a sprite grow on screen as the
     // resolution fell and made a coarser level no cheaper. Never below a texel,
     // or a sprite could fall between texels and lose its heat.
-    const texelsPerPixel = this.heatHeight / Math.max(1, this.height);
-    u[18] = Math.max(Math.min(1, params.heat.minPixelRadius), params.heat.minPixelRadius * texelsPerPixel);
+    const texelsPerPixel = passH / Math.max(1, this.height);
+    // A direction-field cell is many pixels: a sprite under most of one is held
+    // at three quarters of a cell, so it lands on a cell centre and keeps its
+    // heat by area rather than falling between them (see the WebGL2 renderer).
+    u[18] = fieldSize ? 0.75 : Math.max(Math.min(1, params.heat.minPixelRadius), params.heat.minPixelRadius * texelsPerPixel);
     u[19] = Math.max(1, params.heat.maxPixelRadius * texelsPerPixel);
     u[20] = chunk.aabbMin[0];
     u[21] = chunk.aabbMin[1];
@@ -3061,6 +3194,7 @@ export class WebgpuRenderer implements Renderer {
     if (params.heat.useCurve) flags |= FLAG_USE_CURVE;
     if (params.heat.teamColors) flags |= FLAG_TEAM_COLORS;
     if (params.heat.zoomInvariant) flags |= FLAG_CONSERVE;
+    if (hasDirs) flags |= FLAG_HAS_DIRS;
     i[40] = plan.minRow;
     i[41] = Math.min(plan.maxRow, chunk.rows);
     i[42] = BLOCK_SHIFT;
@@ -3140,6 +3274,13 @@ export class WebgpuRenderer implements Renderer {
     u[93] = box ? box.size[1] : 1;
     u[94] = box ? box.size[2] : 1;
     u[95] = trail ? trail.tail : 0;
+    // Directional heat: the field pass draws discs, the heat pass the wedge.
+    const dir = params.direction ?? null;
+    u[96] = dir && !fieldSize ? dir.half : Math.PI;
+    u[97] = dir && !fieldSize ? dir.soft : 0;
+    u[98] = dir && !fieldSize ? dir.norm : 1;
+    u[99] = fieldSize ? 1 : 0;
+    u[100] = dir && !fieldSize ? dir.centroid : 0;
     return this.uniforms.push(u, HEAT_UNIFORM_BYTES);
   }
 
@@ -3203,15 +3344,16 @@ export class WebgpuRenderer implements Renderer {
     ]);
   }
 
-  private heatBindGroup(chunkIndex: number, offset: number, lines = false): GPUBindGroup {
+  private heatBindGroup(chunkIndex: number, offset: number, lines = false, format = this.heatFormat): GPUBindGroup {
     const chunk = this.chunks[chunkIndex];
     // The depth view is part of the key: it is recreated on resize, and a cached
     // bind group holding the old one would read a destroyed texture.
-    const pipeline = lines ? this.lineHeatPipelineFor(this.heatFormat) : this.heatPipelineFor(this.heatFormat);
+    const pipeline = lines ? this.lineHeatPipelineFor(format) : this.heatPipelineFor(format);
     return this.cachedBindGroup(
-      `${lines ? 'lineheat' : 'heat'}:${chunkIndex}:${chunk.filterKey}:${offset}:${this.depthGeneration}`,
+      `${lines ? 'lineheat' : 'heat'}:${chunkIndex}:${chunk.filterKey}:${offset}:${this.depthGeneration}:${format}:${chunk.dirs ? 'd' : ''}`,
       pipeline.getBindGroupLayout(0),
       () => [
+        { binding: 16, resource: { buffer: chunk.dirs ?? this.emptyStorage } },
         // Line heat's segment starts; the point shader has no binding 14, and an
         // 'auto' layout holds only the bindings its shader uses.
         ...(lines ? [{ binding: 14, resource: { buffer: chunk.lineStarts ?? this.emptyStorage } }] : []),
@@ -3670,8 +3812,11 @@ export class WebgpuRenderer implements Renderer {
       c.times?.destroy();
       c.filterValues?.destroy();
       c.lineStarts?.destroy();
+      c.dirs?.destroy();
     }
     this.chunks = [];
+    this.dirField?.dispose();
+    this.dirField = null;
     this.setLevel(null);
     this.setWorldTiles([]);
     this.sceneTex?.destroy();

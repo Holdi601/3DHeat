@@ -11,6 +11,7 @@ import {
 } from '../types';
 import { VOLUME_GLSL } from '../../volumes/gpu';
 import { SEE_THROUGH_BELOW } from '../figureShaders';
+import { WEDGE_DISC_PX, WEDGE_FULL_PX, WEDGE_TIGHT_MAX } from '../direction';
 
 /**
  * GLSL ES 3.00 sources for the WebGL2 backend.
@@ -177,6 +178,12 @@ uniform usampler2D uPosTex;      // xyz quantised to the chunk AABB, w = teamId
 uniform isampler2D uBlockTex;    // per-frame block start rows
 uniform sampler2D  uTeamSignTex; // row 0 teamId -> {-1, 0, +1}, row 1 split category -> sign
 uniform usampler2D uTimeTex;     // r = row time, g = lifetime (65535 = no successor)
+// Directional heat (render/direction.ts): one bearing byte a row, 255 = none.
+uniform usampler2D uDirTex;
+uniform int   uHasDirs;          // 1 when this chunk's bearings are bound
+uniform vec2  uWedge;            // (half opening, softness), radians; half >= PI is the disc
+uniform float uWedgeShift;       // the wedge's heat centroid ahead of the row, fraction of radius
+uniform int   uDirOut;           // 1: the direction-field pass, see DirectionDraw
 
 uniform int   uUseLifetime;
 uniform float uNow;              // playhead, dataset seconds
@@ -240,6 +247,14 @@ out float vOccludeAt;
  * stage. Flat across the sprite, so the interpolation costs nothing.
  */
 out vec2  vTeamAB;
+/**
+ * The row's direction on screen: xy a unit vector in pixels, z how far the
+ * sprite is a wedge rather than a disc (0 for a disc, small sprites included,
+ * see WEDGE_DISC_PX), w 1 when the row has a direction at all.
+ */
+flat out vec4 vDir;
+/** The sprite's drawn radius in pixels, so the wedge's edge can be antialiased by the pixel. */
+flat out float vDirPx;
 
 const vec2 CORNERS[6] = vec2[6](
   vec2(-1.0, -1.0), vec2(1.0, -1.0), vec2(-1.0, 1.0),
@@ -335,6 +350,11 @@ void main() {
     sgn *= sgn > 0.0 ? uSideScale.x : uSideScale.y;
   }
   vSign = sgn;
+  vDir = vec4(0.0);
+  vDirPx = 1.0;
+  uint dirQ = uHasDirs == 1 ? texelFetch(uDirTex, tc, 0).r : 255u;
+  // The direction field counts only rows that point somewhere.
+  if (uDirOut == 1 && dirQ == 255u) reject = true;
 
   // Where this sprite's group sits on the Oklab colour plane: the *centre* of its
   // slice of the circle, (i + 0.5) / n. Edges would put group 0 at hue 0 and,
@@ -426,7 +446,50 @@ void main() {
     vFade = fade * ratio * ratio;
   }
 
+  // The row's bearing on screen: where a step along it from the row lands.
+  vec4 sdir = vec4(0.0);
+  if (dirQ != 255u) {
+    float b = float(dirQ) * (6.28318530718 / 255.0);
+    vec4 c2 = uViewProj * vec4(p + vec3(sin(b), 0.0, -cos(b)) * uRadius, 1.0);
+    if (c2.w > 0.0) {
+      vec2 sd = (c2.xy / c2.w - clip.xy / clip.w) * uViewport;
+      float sl = length(sd);
+      if (sl > 1e-3) {
+        float wedge = uWedge.x < 3.14159 ? smoothstep(${WEDGE_DISC_PX.toFixed(2)}, ${WEDGE_FULL_PX.toFixed(2)}, pixRadius) : 0.0;
+        sdir = vec4(sd / sl, wedge, 1.0);
+      }
+    }
+  }
+  vDir = sdir;
+  vDirPx = pixRadius;
+  // Its heat as far ahead of the row as the wedge at its true size puts it: a
+  // sprite the clamps or the disc blend shrank is moved by what it lost.
+  if (sdir.w > 0.0 && uWedge.x < 3.14159) {
+    float shift = uWedgeShift * (trueRadius - sdir.z * pixRadius);
+    clip.xy += sdir.xy * shift * (2.0 / uViewport) * clip.w;
+  }
+  if (uDirOut == 1 && sdir.w == 0.0) {
+    gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
+    return;
+  }
+
   vec2 c = SPRITE_CORNERS[corner];
+  // A narrow wedge drawn as the triangle round it rather than round the whole
+  // disc: the sector, its soft sides and the pixel's antialiasing band along
+  // each edge (see wedgeTriangle in render/direction.ts). A tenth of the
+  // fragments for a 30 degree wedge, so the same frame time draws more rows.
+  if (sdir.z >= 1.0 && uDirOut == 0 && uWedge.x + uWedge.y < ${WEDGE_TIGHT_MAX}) {
+    float hs = uWedge.x + uWedge.y;
+    float w = 0.75 / pixRadius;
+    float sh = sin(hs);
+    float ch = cos(hs);
+    vec2 loc = vec2(-w / sh, 0.0);
+    if (corner != 0) {
+      float pp = (1.0 + w + w * sh) / ch;
+      loc = vec2(pp * ch - w * sh, (corner == 1 ? 1.0 : -1.0) * (pp * sh + w * ch));
+    }
+    c = loc.x * sdir.xy + loc.y * vec2(-sdir.y, sdir.x);
+  }
   vLocal = c;
   clip.xy += c * (pixRadius * 2.0 / uViewport) * clip.w;
   gl_Position = clip;
@@ -594,6 +657,11 @@ in float vFade;
 in float vVisible;
 in float vOccludeAt;
 in vec2  vTeamAB;
+flat in vec4 vDir;
+flat in float vDirPx;
+uniform vec2  uWedge;
+uniform float uWedgeNorm;
+uniform int   uDirOut;
 
 // Occlusion against the scene the level was drawn into. The depth texture is
 // sampled here rather than in the vertex shader because a vertex-stage fetch of
@@ -730,6 +798,25 @@ ${Array.from(
   // Written in every mode. When the target is single-channel G and B are simply
   // discarded, which is what lets one program serve both.
   float v = ramp * uWeight * vSign * vFade * visible;
+  // The wedge: the part of the disc facing the row's direction, its angular
+  // weight scaled by uWedgeNorm so it adds what the disc adds (wedgeWeight).
+  if (vDir.z > 0.0 && d > 1e-4) {
+    float off = acos(clamp(dot(vLocal / d, vDir.xy), -1.0, 1.0));
+    // The edge never sharper than a pixel where it is: a hard edge a pixel
+    // could fall either side of would sparkle as the camera moved. Symmetric
+    // about the edge and kept off the other one, so the heat is the same.
+    float aa = min(0.75 / max(d * vDirPx, 1e-3), min(uWedge.x, 3.14159265 - uWedge.x));
+    float sw = max(uWedge.y, aa);
+    float e = clamp((off - (uWedge.x - sw)) / (2.0 * sw), 0.0, 1.0);
+    v *= mix(1.0, (1.0 - e * e * (3.0 - 2.0 * e)) * uWedgeNorm, vDir.z);
+  }
+  if (uDirOut == 1) {
+    // The direction field: the row's screen direction weighted by its heat, and
+    // the weight, so a cell's mean is a division away.
+    float a = abs(v);
+    outHeat = vec4(a * vDir.x, a * vDir.y, a, 0.0);
+    return;
+  }
   outHeat = vec4(v, v * vTeamAB.x, v * vTeamAB.y, 0.0);
 }
 `;

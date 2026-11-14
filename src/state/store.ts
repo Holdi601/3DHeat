@@ -7,6 +7,7 @@ import { datasetCapabilities, defaultColumnSplit, splitHasTwoSides } from '../da
 import { suggestLineSettings, suggestMaxJumpAsync, type LineSettings } from '../data/lines';
 import { DEFAULT_CURVE, normaliseCurve, type CurvePoint } from './curve';
 import type { Projection } from '../render/camera';
+import type { DirSource } from '../render/direction';
 import type { Keyframe, PathEasing } from '../render/campath';
 import { DEFAULT_GAMEPAD, type GamepadSettings } from '../render/gamepad';
 import type { ImageLevel, Level, ModelLevel } from '../render/level';
@@ -164,6 +165,23 @@ export interface HeatSettings {
    */
   teamBoost: number;
   scheme: HeatColorScheme;
+  /** Where each row's direction comes from, for wedges and the direction field (render/direction.ts). */
+  dirSource: DirSource;
+  /**
+   * Opening of each sprite's wedge, degrees, aimed along the row's direction.
+   * 360 is the disc; rows without a direction stay discs at any opening.
+   */
+  wedgeOpening: number;
+  /** How softly the wedge's sides fade, as a fraction of its half opening. 0 is a hard edge. */
+  wedgeSoftness: number;
+  /** The direction field over the heat: arrows, streamlines, both, or nothing. */
+  dirField: 'off' | 'arrows' | 'streams' | 'both';
+  /** Let the streamlines flow. */
+  dirFieldAnimate: boolean;
+  /** Screen pixels between the field's arrows. */
+  dirFieldSpacing: number;
+  /** Answer a click with the directions at that spot: the resultant arrow and the polar chart. */
+  dirOnClick: boolean;
 }
 
 /**
@@ -674,6 +692,14 @@ export const useStore = create<AppState>((set) => ({
       positive: DEFAULT_POSITIVE_RAMP.map((s) => ({ ...s })),
       negative: DEFAULT_NEGATIVE_RAMP.map((s) => ({ ...s })),
     },
+    dirSource: 'auto',
+    // The disc: directional heat is asked for, never imposed.
+    wedgeOpening: 360,
+    wedgeSoftness: 0.35,
+    dirField: 'off',
+    dirFieldAnimate: true,
+    dirFieldSpacing: 28,
+    dirOnClick: false,
   },
   slice: {
     enabled: false,

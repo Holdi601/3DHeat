@@ -3,6 +3,7 @@ import { GlFigures } from './figures';
 import { GlSymbols } from './symbols';
 import { GlPost } from './post';
 import { GlTracks } from './tracks';
+import { GlDirField } from './dirField';
 import { ATLAS_MIP_LEVELS } from '../../data/atlas';
 import { packLineStarts, type LineData } from '../../data/lines';
 import { CURVE_LUT_SIZE } from '../../state/curve';
@@ -65,6 +66,7 @@ import {
   SCALE_FS,
 } from './shaders';
 import { buildEdgeList, type Level } from '../level';
+import { IndexUpload, type LevelIndexSets } from '../levelIndices';
 import { boxOutsideFrustum, diffWorldTiles, frustumPlanes, textureBytes } from '../worldTiles';
 import type { WorldTile } from '../../world/tileSet';
 import { num, t } from '../../i18n';
@@ -83,6 +85,10 @@ const BLOCK_SHIFT = Math.log2(SAMPLE_BLOCK);
 const LINE_UNIT = 16;
 /** The tile table's texture unit; see `bindAtlas`. */
 const TILE_UNIT = 17;
+/** The heat pass's bearing texture (`setDirections`). */
+const DIR_UNIT = 18;
+/** Chunks of bearings uploaded a frame at most: eight megabytes each. */
+const DIR_UPLOADS_PER_FRAME = 2;
 
 /** A chunk on its way to the GPU, a slice a frame; see `flushDataUpload`. */
 interface PendingChunk {
@@ -112,6 +118,8 @@ interface GpuChunk {
    * at 2 bytes per row per channel it is not worth carrying speculatively.
    */
   timeTex: WebGLTexture | null;
+  /** One bearing byte a row (R8UI, laid out like `posTex`), made when the heat pass first wants it. */
+  dirTex: WebGLTexture | null;
   rows: number;
   aabbMin: [number, number, number];
   aabbSize: [number, number, number];
@@ -580,8 +588,10 @@ export class Webgl2Renderer implements Renderer {
       gl.deleteTexture(c.posTex);
       if (c.timeTex) gl.deleteTexture(c.timeTex);
       if (c.lineTex) gl.deleteTexture(c.lineTex);
+      if (c.dirTex) gl.deleteTexture(c.dirTex);
     }
     this.lines = null;
+    this.dirAngles = null;
     this.chunks = [];
     for (const j of this.pendingChunks) {
       if (j.posTex) gl.deleteTexture(j.posTex);
@@ -679,6 +689,7 @@ export class Webgl2Renderer implements Renderer {
    */
   setLevel(level: Level | null): void {
     const gl = this.gl;
+    this.dropLevelIndices();
     if (this.mapTex) {
       gl.deleteTexture(this.mapTex);
       this.mapTex = null;
@@ -926,9 +937,71 @@ export class Webgl2Renderer implements Renderer {
   /** Tiles set but not yet made; see `flushTiles`. */
   private tileQueue: WorldTile[] = [];
 
-  /** Whether world tiles are still waiting to be made; the engine redraws the scene when they are. */
+  /** Whether world tiles or a level's new indices are still on their way; the engine redraws the scene when they land. */
   get uploadsPending(): boolean {
-    return this.tileQueue.length > 0;
+    return this.tileQueue.length > 0 || this.levelIndices !== null;
+  }
+
+  /** A level's new index sets on their way, a slice a frame (src/render/levelIndices.ts). */
+  private levelIndices: IndexUpload<WebGLBuffer> | null = null;
+
+  /** The loaded level's ground, structure and edge indices replaced; the old ones drawn until the new are all up. */
+  setLevelIndices(sets: LevelIndexSets): void {
+    this.dropLevelIndices();
+    if (!this.levelMesh) return;
+    const gl = this.gl;
+    // No VAO current, or the buffer would become that VAO's element buffer.
+    gl.bindVertexArray(null);
+    this.levelIndices = new IndexUpload([sets.ground, sets.structure, sets.edges], (count) => {
+      const b = mustBuffer(gl);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, count * 4, gl.STATIC_DRAW);
+      return b;
+    });
+  }
+
+  private dropLevelIndices(): void {
+    if (!this.levelIndices) return;
+    for (const b of this.levelIndices.buffers) if (b) this.gl.deleteBuffer(b);
+    this.levelIndices = null;
+  }
+
+  /** A frame's slice of the level's new indices; once all are up, they replace the old. */
+  private flushLevelIndices(): void {
+    const job = this.levelIndices;
+    const m = this.levelMesh;
+    if (!job) return;
+    if (!m) return this.dropLevelIndices();
+    const gl = this.gl;
+    gl.bindVertexArray(null);
+    const done = job.step((b, at, data) => {
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b);
+      gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, at * 4, data);
+    });
+    if (!done) return;
+    this.levelIndices = null;
+    const [ground, struct, wire] = job.buffers;
+    const [g, st, w] = job.sets;
+    for (const b of [m.groundIbo, m.structIbo, m.wireIbo, m.groundWireIbo]) if (b) gl.deleteBuffer(b);
+    const was = (m.groundCount + m.structCount + m.wireCount + m.groundWireCount) * 4;
+    const now = g.byteLength + st.byteLength + w.byteLength;
+    m.bytes += now - was;
+    this.levelOwnBytes += now - was;
+    m.groundIbo = ground;
+    m.structIbo = struct;
+    m.wireIbo = wire;
+    m.groundCount = g.length;
+    m.structCount = st.length;
+    m.wireCount = w.length;
+    m.groundIndices = g;
+    m.groundWireIbo = null;
+    m.groundWireCount = 0;
+    // The VAOs hold their element buffers: the ground's in the shaded one, the edges' in the wire one.
+    gl.bindVertexArray(m.vao);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ground);
+    gl.bindVertexArray(m.wireVao);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, wire);
+    gl.bindVertexArray(null);
   }
 
   /** Make queued tiles for up to `TILE_UPLOAD_MS` a frame, at least one. */
@@ -1262,6 +1335,7 @@ export class Webgl2Renderer implements Renderer {
       start: j.start,
       lineTex: null,
       timeTex: j.timeTex,
+      dirTex: null,
       rows: j.rows,
       aabbMin: [j.min[0], j.min[1], j.min[2]],
       aabbSize: [
@@ -1324,6 +1398,46 @@ export class Webgl2Renderer implements Renderer {
     }
   }
 
+  /** Each row's bearing, or null; see `Renderer.setDirections`. */
+  setDirections(angles: Uint8Array | null): void {
+    const gl = this.gl;
+    for (const c of this.chunks) {
+      if (c.dirTex) {
+        gl.deleteTexture(c.dirTex);
+        this.gpuBytesUsed -= Math.ceil(c.rows / ROW_TEX_WIDTH) * ROW_TEX_WIDTH;
+      }
+      c.dirTex = null;
+    }
+    this.dirAngles = angles && this.dataset && angles.length === this.dataset.count ? angles : null;
+  }
+
+  private dirAngles: Uint8Array | null = null;
+  private dirUploads = 0;
+  private dirField: GlDirField | null = null;
+
+  /** This chunk's bearing texture, uploaded now if the frame still has room for one. */
+  private chunkDirs(chunk: GpuChunk): WebGLTexture | null {
+    if (chunk.dirTex || !this.dirAngles) return chunk.dirTex;
+    if (this.dirUploads >= DIR_UPLOADS_PER_FRAME) return null;
+    this.dirUploads++;
+    const gl = this.gl;
+    const texHeight = Math.ceil(chunk.rows / ROW_TEX_WIDTH);
+    const data = new Uint8Array(ROW_TEX_WIDTH * texHeight).fill(255);
+    data.set(this.dirAngles.subarray(chunk.start, chunk.start + chunk.rows));
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+    chunk.dirTex = createTexture(gl, {
+      width: ROW_TEX_WIDTH,
+      height: texHeight,
+      internalFormat: gl.R8UI,
+      format: gl.RED_INTEGER,
+      type: gl.UNSIGNED_BYTE,
+      data,
+    });
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+    this.gpuBytesUsed += ROW_TEX_WIDTH * texHeight;
+    return chunk.dirTex;
+  }
+
   private lineHeatQueued = false;
 
   /** The pixel buffer `readHeatField` reads into, its size, and whether a read is under way. */
@@ -1348,6 +1462,7 @@ export class Webgl2Renderer implements Renderer {
   render(params: FrameParams): FrameResult {
     const gl = this.gl;
     this.flushTiles();
+    this.flushLevelIndices();
     this.flushDataUpload();
     // The line heat program, compiled off the frame rather than on the first
     // frame of line heat.
@@ -1400,10 +1515,13 @@ export class Webgl2Renderer implements Renderer {
     // An idle frame recomposites the buffers it already has. They are our own
     // framebuffers and retain reliably; the canvas does not, so the composite has
     // to run every frame regardless.
+    this.dirUploads = 0;
     if (!params.compositeOnly) {
       this.drawScene(params);
-      if (params.mode !== 'team') this.timeHeat(params);
-      else this.clearHeat();
+      if (params.mode !== 'team') {
+        this.timeHeat(params);
+        if (params.direction && params.direction.field > 0) this.drawHeat(params, true);
+      } else this.clearHeat();
     }
     const post = params.post ?? null;
     const postFbo = post ? (this.post ??= new GlPost(gl)).begin(this.width, this.height, post.quality) : null;
@@ -2162,36 +2280,49 @@ export class Webgl2Renderer implements Renderer {
     return this.passMs;
   }
 
-  private drawHeat(params: FrameParams): void {
+  /**
+   * The heat pass, or with `dirPass` the same sprites into the direction field
+   * (see webgl2/dirField.ts): its own small target, accumulated the same way.
+   */
+  private drawHeat(params: FrameParams, dirPass = false): void {
     const gl = this.gl;
     const alpha = Math.min(1, Math.max(0, params.blendAlpha));
     const extend = params.accumMode === 'extend';
     // Alpha of zero means "hold what is there", so there is nothing to do.
     if (params.accumMode !== 'reset' && !extend && alpha <= 0) return;
+    const field = dirPass ? (this.dirField ??= new GlDirField(gl)) : null;
+    if (field) field.ensure(params, this.heatWidth, this.heatHeight, this.height);
+    const passW = field ? field.width : this.heatWidth;
+    const passH = field ? field.height : this.heatHeight;
 
     // A full-weight frame goes straight into the accumulator; a partial one is
     // rendered into the scratch target first and blended in afterwards. Splatting
     // a fractional frame directly would add each sprite's contribution to a total
     // 1/alpha times larger than it, which a half-float target rounds away — worse
     // the denser the pixel, which is what makes it look like the hot areas cooling.
-    const direct = extend || params.accumMode === 'reset' || alpha >= 1;
-    gl.bindFramebuffer(gl.FRAMEBUFFER, direct ? this.heatFbo : this.heatScratchFbo);
-    gl.viewport(0, 0, this.heatWidth, this.heatHeight);
+    // A field target just made holds nothing to merge into: written straight.
+    const fresh = field ? field.fresh : false;
+    const direct = extend || params.accumMode === 'reset' || alpha >= 1 || fresh;
+    if (field) field.fresh = false;
+    const target = field ? (direct ? field.fbo : field.scratchFbo) : direct ? this.heatFbo : this.heatScratchFbo;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, target);
+    gl.viewport(0, 0, passW, passH);
     gl.disable(gl.BLEND);
     gl.colorMask(true, true, true, true);
     // Extending adds to what is already there, so it is the one mode that must
     // not clear first — that is the whole point of it.
-    if (!extend) {
+    if (!extend || fresh) {
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
     }
 
     const weight = params.sampleWeight * params.heatGain;
+    const merge = () => (field ? this.mergeHeat(alpha, field.fbo, field.scratch, passW, passH) : this.mergeHeat(alpha));
     if (params.plan.length === 0) {
-      this.splitSkippedChunks = 0;
+      if (!field) this.splitSkippedChunks = 0;
       // Nothing to splat. A partial frame still has to fold its (empty) estimate
       // in, or the history would not decay and a stale field would persist.
-      if (!direct) this.mergeHeat(alpha);
+      if (!direct) merge();
       return;
     }
 
@@ -2209,7 +2340,7 @@ export class Webgl2Renderer implements Renderer {
 
     // Line heat where it has routes to draw and its program compiled; points
     // otherwise, rather than nothing.
-    const lineProg = params.lineHeat && this.lines ? this.lineHeat() : null;
+    const lineProg = params.lineHeat && this.lines && !field ? this.lineHeat() : null;
     const { prog, u } = lineProg ?? this.heatProg;
     gl.useProgram(prog);
     if (lineProg && this.lines) {
@@ -2219,17 +2350,29 @@ export class Webgl2Renderer implements Renderer {
     }
     const vertsPerRow = lineProg ? 18 : 3;
     u.mat4('uViewProj', params.viewProj);
-    u.f2('uViewport', this.heatWidth, this.heatHeight);
+    u.f2('uViewport', passW, passH);
     u.f1('uProj11', params.proj[5]);
     u.i1('uPerspective', params.perspective ? 1 : 0);
     u.f1('uRadius', params.heat.radius);
     // Screen pixels, in texels of the heat buffer; see the WebGPU renderer.
-    const texelsPerPixel = this.heatHeight / Math.max(1, this.height);
+    const texelsPerPixel = passH / Math.max(1, this.height);
     u.f2(
       'uPixelClamp',
-      Math.max(Math.min(1, params.heat.minPixelRadius), params.heat.minPixelRadius * texelsPerPixel),
+      // A field cell is many pixels: a sprite smaller than most of one is held
+      // at three quarters of a cell, so it lands on a cell centre and keeps its
+      // heat by area (zoom invariance) rather than falling between them.
+      field ? 0.75 : Math.max(Math.min(1, params.heat.minPixelRadius), params.heat.minPixelRadius * texelsPerPixel),
       Math.max(1, params.heat.maxPixelRadius * texelsPerPixel),
     );
+    // Directional heat. The field pass draws discs: it wants each row's
+    // direction where the row is, not the wedge's shape.
+    const dir = params.direction ?? null;
+    u.i1('uDirTex', DIR_UNIT);
+    u.i1('uDirOut', field ? 1 : 0);
+    u.f2('uWedge', dir && !field ? dir.half : Math.PI, dir && !field ? dir.soft : 0);
+    u.f1('uWedgeNorm', dir && !field ? dir.norm : 1);
+    u.f1('uWedgeShift', dir && !field ? dir.centroid : 0);
+    const wantDirs = field !== null || (dir !== null && dir.half < Math.PI);
     u.i1('uConserve', params.heat.zoomInvariant ? 1 : 0);
     u.i1('uTexMask', ROW_TEX_WIDTH - 1);
     u.i1('uTexShift', ROW_TEX_SHIFT);
@@ -2437,6 +2580,12 @@ export class Webgl2Renderer implements Renderer {
       gl.bindTexture(gl.TEXTURE_2D, splitTex ?? this.ensureDummy());
       u.i1('uSplitMode', params.splitMode);
 
+      // Bearings, bound either way (see the lifetime texture above).
+      const dirTex = wantDirs ? this.chunkDirs(chunk) : null;
+      u.i1('uHasDirs', dirTex ? 1 : 0);
+      gl.activeTexture(gl.TEXTURE0 + DIR_UNIT);
+      gl.bindTexture(gl.TEXTURE_2D, dirTex ?? this.ensureDummyUint());
+
       u.f3('uAabbMin', chunk.aabbMin[0], chunk.aabbMin[1], chunk.aabbMin[2]);
       u.f3('uAabbSize', chunk.aabbSize[0], chunk.aabbSize[1], chunk.aabbSize[2]);
       u.i1('uMinRow', plan.minRow);
@@ -2450,7 +2599,8 @@ export class Webgl2Renderer implements Renderer {
     gl.bindVertexArray(null);
     gl.depthMask(true);
     gl.disable(gl.BLEND);
-    if (!direct) this.mergeHeat(alpha);
+    if (!direct) merge();
+    if (field) return;
 
     // Record what the heat pass actually did. WebGL reports a rejected draw only
     // through `getError`, and a rejected heat draw is indistinguishable from a
@@ -2478,10 +2628,16 @@ export class Webgl2Renderer implements Renderer {
    * inside the splat instead makes every sprite's contribution 1/n of the running
    * total, and on a half-float target those simply round away.
    */
-  private mergeHeat(alpha: number): void {
+  private mergeHeat(
+    alpha: number,
+    fbo = this.heatFbo,
+    src = this.heatScratch,
+    w = this.heatWidth,
+    h = this.heatHeight,
+  ): void {
     const gl = this.gl;
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.heatFbo);
-    gl.viewport(0, 0, this.heatWidth, this.heatHeight);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.viewport(0, 0, w, h);
     gl.disable(gl.DEPTH_TEST);
     gl.depthMask(false);
     gl.bindVertexArray(this.emptyVao);
@@ -2500,7 +2656,7 @@ export class Webgl2Renderer implements Renderer {
     this.blendProg.u.i1('uSrc', 0);
     this.blendProg.u.f1('uScale', alpha);
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, this.heatScratch);
+    gl.bindTexture(gl.TEXTURE_2D, src);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     gl.bindVertexArray(null);
@@ -2560,6 +2716,7 @@ export class Webgl2Renderer implements Renderer {
     // function called between frames returns whatever the driver happens to
     // leave behind — black on some, the previous frame on others, the right
     // answer often enough to look correct in testing.
+    if (params.mode !== 'team') this.dirField?.draw(params, this.width, this.height, this.emptyVao);
     if (params.topVerts && params.topVertCount) this.drawTop(params, params.topVerts, params.topVertCount);
     if (!target) this.readCapture();
   }
@@ -3257,8 +3414,11 @@ export class Webgl2Renderer implements Renderer {
       gl.deleteTexture(c.posTex);
       if (c.timeTex) gl.deleteTexture(c.timeTex);
       if (c.lineTex) gl.deleteTexture(c.lineTex);
+      if (c.dirTex) gl.deleteTexture(c.dirTex);
     }
     this.chunks = [];
+    this.dirField?.dispose();
+    this.dirField = null;
     if (this.lineHeatProg) gl.deleteProgram(this.lineHeatProg.prog);
     for (const p of [
       this.heatProg,

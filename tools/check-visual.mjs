@@ -281,7 +281,9 @@ async function loadBlob(page, routes) {
     s.setDataset({
       id: 'visual-blob', name: 'visual check blob', count: n, px, py, pz,
       time, epochMs: null, lifetime: null, maxLifetimeGap: 0, personShared: null,
-      yaw: null, pitch: null, personId, teamId,
+      // A view per row for the wedges and the direction field: round the
+      // middle, as a swirl, so neighbours agree and the field has arrows to draw.
+      yaw: Float32Array.from(px, (x, r) => Math.atan2(x, -pz[r]) + Math.PI / 2 + ((personId[r] % 7) - 3) * 0.05), pitch: null, personId, teamId,
       personLabels: Array.from({ length: P }, (_, p) => `p${p}`), teamLabels: ['near', 'wide'],
       sessionId: null, sessionLabels: [], sessionRows: null, sessionStart: null, sessionEnd: null,
       personTeam, personSlot: null, teamSizes, attrs: [], warnings: [],
@@ -313,11 +315,17 @@ async function loadBlob(page, routes) {
 }
 
 /** The heat settings every check starts from: the defaults, with a sprite big enough to be smooth. */
-const HEAT_BASE = { radius: 16, followExposure: false, zoomInvariant: true, response: 'saturating', saturation: 30 };
+const HEAT_BASE = { radius: 16, followExposure: false, zoomInvariant: true, response: 'saturating', saturation: 30, wedgeOpening: 360, wedgeSoftness: 0.35, dirField: 'off' };
 const ALL = { mode: 'all', playing: false };
 
 /** Every setting the heat's look depends on, one at a time against the base. */
 const HEAT_SETTINGS = [
+  { name: 'wedge 90, view', mode: 'heat-simple', heat: { wedgeOpening: 90, wedgeSoftness: 0.3, dirSource: 'view' }, timeline: ALL },
+  { name: 'wedge 30 hard, view', mode: 'heat-simple', heat: { wedgeOpening: 30, wedgeSoftness: 0, dirSource: 'view' }, timeline: ALL },
+  // Every row every frame: what is left is the wedge's own geometry, not the sampling.
+  { name: 'wedge 30 hard, view, every row', mode: 'heat-simple', heat: { wedgeOpening: 30, wedgeSoftness: 0, dirSource: 'view' }, timeline: ALL, budget: { splatsPerFrame: 4_000_000, adaptive: false } },
+  { name: 'difference, wedge 60', mode: 'heat-difference', heat: { wedgeOpening: 60, dirSource: 'view' }, timeline: ALL },
+  { name: 'teams, wedge 120, movement', mode: 'heat-teams', heat: { wedgeOpening: 120, dirSource: 'movement' }, timeline: ALL },
   { name: 'simple, fixed exposure', mode: 'heat-simple', heat: {}, timeline: ALL },
   { name: 'simple, follow exposure', mode: 'heat-simple', heat: { followExposure: true }, timeline: ALL, follow: true },
   { name: 'simple, linear response', mode: 'heat-simple', heat: { response: 'linear' }, timeline: ALL },
@@ -548,6 +556,55 @@ async function checkFlicker(page, backend, pick) {
     const move = Math.max(...sat) / Math.min(...sat) - 1;
     report('flicker', `${backend} ${mode} follow exposure, nudge and rest`, move < 0.01, `exposure moved ${pct(move)} over 8 nudges`);
   }
+
+  // The direction field: re-estimated from scratch frame after frame under a
+  // still camera, its arrows must come out the same - an arrow that twitches
+  // or blinks between estimates is the flicker. Streamlines held still for it.
+  for (const field of ['arrows', 'both']) {
+    const cfg = { name: `direction field ${field}`, mode: 'heat-simple', heat: { dirField: field, dirFieldAnimate: false, dirSource: 'view' }, timeline: ALL };
+    if (!pick(cfg)) continue;
+    await applyHeat(page, cfg);
+    const diff = await page.evaluate(async () => {
+      const eng = globalThis.__3dheat_engine;
+      const vc = globalThis.__vc;
+      eng.placeCamera({ x: 0, y: 900, z: 1 }, { x: 0, y: 0, z: 0 });
+      await vc.settle();
+      const a = await eng.captureFrame();
+      // The field has to be there to be stable: against the same view without it.
+      const st = globalThis.__3dheat.useStore;
+      const was = st.getState().heat.dirField;
+      st.getState().patchHeat({ dirField: 'off' });
+      await vc.settle();
+      const bare = await eng.captureFrame();
+      st.getState().patchHeat({ dirField: was });
+      await vc.settle();
+      let shown = 0;
+      if (a && bare && a.rgba.length === bare.rgba.length) {
+        for (let i = 0; i < a.rgba.length; i += 4) if (Math.abs(a.rgba[i] - bare.rgba[i]) + Math.abs(a.rgba[i + 1] - bare.rgba[i + 1]) > 24) shown++;
+      }
+      shown /= a ? a.rgba.length / 4 : 1;
+      let worst = 0;
+      let moved = 0;
+      for (let k = 0; k < 6; k++) {
+        await vc.frames(3);
+        await vc.settle();
+        const b = await eng.captureFrame();
+        if (!a || !b || a.rgba.length !== b.rgba.length) return null;
+        let n = 0;
+        for (let i = 0; i < a.rgba.length; i += 4) {
+          const d = Math.max(Math.abs(a.rgba[i] - b.rgba[i]), Math.abs(a.rgba[i + 1] - b.rgba[i + 1]), Math.abs(a.rgba[i + 2] - b.rgba[i + 2]));
+          if (d > 24) n++;
+        }
+        moved = Math.max(moved, n / (a.rgba.length / 4));
+        worst = Math.max(worst, n);
+      }
+      return { moved, worst, shown };
+    });
+    const ok = diff !== null && diff.moved <= 0.002 && diff.shown >= 0.01;
+    report('flicker', `${backend} ${cfg.name}, re-estimated still`, ok, diff ? `field on ${pct(diff.shown)} of pixels; ${pct(diff.moved)} changed by more than 24/255` : 'no frame captured');
+    if (opt('shot')) await page.screenshot({ path: `${opt('shot')}/field-${field}.png` });
+  }
+  await applyHeat(page, { mode: 'heat-simple', heat: {}, timeline: ALL });
 }
 
 // ------------------------------------------------------------------ 3. jitter
