@@ -266,7 +266,7 @@
   "heat.levelPanel.dotaFailed": "Could not fetch the Dota 2 map: {reason}",
   "heat.levelPanel.dotaNotice": "Map drawing by OpenDota (opendota.com). Dota 2 and its map belong to Valve, who do not endorse this project.",
   "heat.levelPanel.simplification": "Simplification target",
-  "heat.levelPanel.simplificationHint": "Applied when a model is imported. Edge-collapse with quadric error, so silhouettes and hard edges survive — level geometry is a backdrop and does not need its full triangle count. Accepts {extensions}.",
+  "heat.levelPanel.simplificationHint": "Applied to the loaded level (simplified again from the triangles it came with, in the background) and to models imported. Edge-collapse with quadric error, so silhouettes and hard edges survive — level geometry is a backdrop and does not need its full triangle count. Accepts {extensions}.",
   "heat.levelPanel.busy": "{label}…",
   "heat.levelPanel.cancel": "Cancel",
   "heat.levelPanel.imageInfo": "{width}×{height} px · {x} × {z} m/px",

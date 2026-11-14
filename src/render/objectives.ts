@@ -84,7 +84,7 @@ export type GroundAt = (x: number, z: number) => number | null;
  */
 export function objectiveSources(
   d: Dataset | null,
-  games: GameMatch[],
+  games: Pick<GameMatch, 'match' | 'objectives'>[],
   timelines: Record<string, ObjectiveTimeline>,
   filters: FilterSpec[],
   session: number,

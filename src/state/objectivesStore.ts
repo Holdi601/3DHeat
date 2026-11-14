@@ -9,11 +9,11 @@
  */
 
 import { create } from 'zustand';
-import { parquetMetadataAsync, parquetReadObjects, type Compressors } from 'hyparquet';
-import { decompress as zstd } from 'fzstd';
-import { asyncBufferFromFile } from '../data/parquet';
 import { isContainer, openContainer } from '../data/container';
-import { buildTimeline, OBJECTIVE_LAYERS, type ObjectiveLayer, type ObjectiveRow, type ObjectiveTimeline } from '../match/objectives';
+import { OBJECTIVE_LAYERS, type Objective, type ObjectiveLayer, type ObjectiveTimeline } from '../match/objectives';
+import { isObjectivesFile, readObjectivesFile } from '../match/objectivesFile';
+
+export { isObjectivesFile, readObjectivesFile };
 
 export interface ObjectivesState {
   /** Everything at once: off hides every layer and label. */
@@ -22,6 +22,12 @@ export interface ObjectivesState {
   labels: boolean;
   /** Each battle's capture zones over time, by match name. */
   timelines: Record<string, ObjectiveTimeline>;
+  /**
+   * Objectives read on their own, without the rest of the match document: a
+   * many-match load's (`objectivesLazy.ts`), one read for every battle of a map
+   * and mode, under each of its battles' names.
+   */
+  lite: { match: string; objectives: Objective[] }[];
   /** Bumped on every change the drawing depends on. */
   rev: number;
   error: string | null;
@@ -29,6 +35,7 @@ export interface ObjectivesState {
   setLayer: (layer: ObjectiveLayer, on: boolean) => void;
   setLabels: (on: boolean) => void;
   addTimelines: (list: ObjectiveTimeline[]) => void;
+  addLite: (list: { match: string; objectives: Objective[] }[]) => void;
 }
 
 const KEY = '3dheat.objectives';
@@ -64,6 +71,7 @@ function save(s: ObjectivesState): void {
 export const useObjectivesStore = create<ObjectivesState>((set, get) => ({
   ...saved(),
   timelines: {},
+  lite: [],
   rev: 0,
   error: null,
   setOn: (on) => {
@@ -84,43 +92,12 @@ export const useObjectivesStore = create<ObjectivesState>((set, get) => ({
     for (const tl of list) timelines[tl.match] = tl;
     set({ timelines, rev: get().rev + 1 });
   },
+  addLite: (list) => {
+    if (!list.length) return;
+    const names = new Set(list.map((l) => l.match));
+    set({ lite: [...get().lite.filter((l) => !names.has(l.match)), ...list], rev: get().rev + 1 });
+  },
 }));
-
-const SIDECAR = /\.objectives\.(parquet|pq)$/i;
-
-export function isObjectivesFile(name: string): boolean {
-  return SIDECAR.test(name);
-}
-
-/** What the converter compresses its side tables with, besides what the reader knows. */
-const COMPRESSORS: Compressors = {
-  ZSTD: (input, outputLength) => zstd(input, new Uint8Array(outputLength)),
-};
-
-const num = (v: unknown) => (typeof v === 'number' ? v : typeof v === 'bigint' ? Number(v) : NaN);
-
-/** A battle's capture zones over time from its `<match>.objectives.parquet` (a few hundred rows). */
-export async function readObjectivesFile(file: File): Promise<ObjectiveTimeline> {
-  const buf = asyncBufferFromFile(file);
-  const metadata = await parquetMetadataAsync(buf);
-  const names = new Set(metadata.schema.map((s) => s.name));
-  if (!names.has('zone') || !names.has('time')) throw new Error(`${file.name}: no zone or time column`);
-  const columns = ['time', 'event', 'zone', 'owner', 'progress'].filter((c) => names.has(c));
-  const read = (await parquetReadObjects({
-    file: buf,
-    metadata,
-    columns,
-    compressors: COMPRESSORS,
-  })) as Record<string, unknown>[];
-  const rows: ObjectiveRow[] = read.map((r) => ({
-    time: num(r.time),
-    event: typeof r.event === 'string' ? r.event : '',
-    zone: typeof r.zone === 'string' ? r.zone : '',
-    owner: num(r.owner),
-    progress: num(r.progress),
-  }));
-  return buildTimeline(file.name.replace(SIDECAR, ''), rows);
-}
 
 /**
  * Reads the `<match>.objectives.parquet` among `files`, and the `objectives`

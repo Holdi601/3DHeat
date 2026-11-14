@@ -19,7 +19,8 @@ import { FireLayer, type FirePose, type FireView } from '../figures/fires';
 import { FireBody, firesOf } from '../data/fires';
 import { HitMarkLayer, hitMarksStep, stepStats, type MarkPose, type MarkView } from '../figures/hitmarks';
 import { gpuTrackStoreSliced, keyTime, registeredGpuTrackStore, rowOfKey, trackFloats, TRACK_U32, type GpuTrackStore } from './gpuTracks/store';
-import { emptyPose, evaluateTrack } from './gpuTracks/evaluate';
+import { emptyPose, evaluateTrack, heldFor } from './gpuTracks/evaluate';
+import { levelIndexSets, onlyIndicesChanged, type LevelIndexUploader } from './levelIndices';
 import { isShown, rayNearTrack, trackVisibility, withHidden } from './gpuTracks/visibility';
 import { markerSeconds } from '../overlay/lean/leanState';
 import type { FigureBatch } from '../figures/instances';
@@ -27,7 +28,10 @@ import { VertexBuffer } from '../race/geometry';
 import { useReplayStore } from '../state/replayStore';
 import { useMatchStore } from '../state/matchStore';
 import { useObjectivesStore } from '../state/objectivesStore';
+import { wantObjectives, wantTimeline } from '../state/objectivesLazy';
+import type { Objective } from '../match/objectives';
 import { ObjectiveLayerDraw, objectiveSources, stateKey, type ObjectiveSource } from './objectives';
+import { DirectionController } from './directionController';
 import { dropLinesOn, unitsPerMetre } from '../ui/replay/replayData';
 import { FollowRig, type RigMode } from './followRig';
 import { nearForFollow } from './followNear';
@@ -559,6 +563,13 @@ export class Engine {
   readonly inspector = new Inspector();
   /** Which heat rows the last frame drew, for answering a click on one. */
   private drawn: DrawnRows | null = null;
+  /** Directional heat: the rows' bearings, the wedge and field settings, a clicked spot's directions. */
+  private readonly directions = new DirectionController({
+    dataset: () => this.dataset,
+    drawn: () => this.drawn,
+    heat: () => useStore.getState().heat,
+    invalidate: () => this.invalidate(1),
+  });
   /** The box replay's boxes as last built, for the same. */
   private pickCubes: PickContext['cubes'] = null;
   /**
@@ -661,6 +672,7 @@ export class Engine {
   private objectiveTop: { data: Float32Array; count: number } | null = null;
   /** The replay's objectives faintly over the picture (`objectiveXray`). */
   private xrayVerts = new Float32Array(0);
+  private gamesMerged: { games: unknown[]; lite: unknown[]; list: { match: string; objectives?: Objective[] }[] } | null = null;
   /** The follow camera as it last set the view (display space): the eased unit, its heading, the orbit, the pose. */
   private followCam: { person: number; fx: number; fy: number; fz: number; head: number; rel: number; yaw: number; pitch: number; px: number; py: number; pz: number } | null = null;
   /** Trails and drop lines together, reused frame to frame. */
@@ -1295,6 +1307,7 @@ export class Engine {
 
   dispose(): void {
     this.disposed = true;
+    this.directions.dispose();
     this.stop();
     this.detachInput?.();
     this.detachMeasure?.();
@@ -1667,7 +1680,8 @@ export class Engine {
       const b = i * TRACK_U32;
       const n = T[b + 1];
       if (n === 0 || p.t < keyTime(st, b, T[b])) continue;
-      if (p.t > keyTime(st, b, T[b] + n - 1) + p.stale) continue;
+      // Held past its last key as the drawing holds it: a still unit's one key for good.
+      if (p.t > keyTime(st, b, T[b] + n - 1) + heldFor(f32, b, p.stale)) continue;
       if (!rayNearTrack(st, i, oa, da, fixed, perDistance)) continue;
       if (!evaluateTrack(st, i, p.t, p.stale, pose)) continue;
       const dx = pose.x - o.x;
@@ -2071,6 +2085,18 @@ export class Engine {
   }
 
   /** The objectives' lines for this frame, after `base`: coloured by the replay's teams, laid on the level. */
+  /** The match documents' battles and a many-match load's objectives (`objectivesLazy.ts`), as one list while neither changes. */
+  private objectiveGames(lite: { match: string; objectives: Objective[] }[]): { match: string; objectives?: Objective[] }[] {
+    const games = useMatchStore.getState().games;
+    if (!lite.length) return games;
+    if (!games.length) return lite;
+    const m = this.gamesMerged;
+    if (m && m.games === games && m.lite === lite) return m.list;
+    const list = [...games, ...lite];
+    this.gamesMerged = { games, lite, list };
+    return list;
+  }
+
   /** The objectives' vertices (`from` to `to` of `data`) at a fraction of their alpha, to draw over the picture. */
   private objectiveXray(data: Float32Array | null, from: number, to: number): { data: Float32Array; count: number } | null {
     const n = to - from;
@@ -2452,7 +2478,12 @@ export class Engine {
     }
 
     if (s.level !== this.level) {
-      if (!sameLevelUpload(this.level, s.level)) renderer.setLevel(s.level);
+      if (!sameLevelUpload(this.level, s.level)) {
+        // A new simplification of the same level: only its triangles go up, over frames (levelIndices.ts).
+        const swap = (renderer as Partial<LevelIndexUploader>).setLevelIndices;
+        if (swap && onlyIndicesChanged(this.level, s.level)) swap.call(renderer, levelIndexSets(s.level));
+        else renderer.setLevel(s.level);
+      }
       this.level = s.level;
       this.inspector.setLevel(s.level);
       this.geometrySig = '';
@@ -2493,6 +2524,9 @@ export class Engine {
         : null;
       this.geometrySig = '';
     }
+    // Each row's bearing, for wedges and the direction field: worked out a
+    // slice at a time when something wants it, then handed to the renderer.
+    this.directions.update(renderer);
 
     if (s.timeline.seekNonce !== this.lastSeekNonce) {
       this.lastSeekNonce = s.timeline.seekNonce;
@@ -2901,7 +2935,12 @@ export class Engine {
     // (every frame while they are being laid on the ground).
     const objectives = useObjectivesStore.getState();
     const objectiveSrc: ObjectiveSource[] =
-      !raceTab && objectives.on && this.dataset ? objectiveSources(this.dataset, useMatchStore.getState().games, objectives.timelines, s.filters, s.team.session) : [];
+      !raceTab && objectives.on && this.dataset ? objectiveSources(this.dataset, this.objectiveGames(objectives.lite), objectives.timelines, s.filters, s.team.session) : [];
+    // A many-match load's objectives, and the shown battle's capture zones, read when first wanted (`objectivesLazy.ts`).
+    if (!raceTab && objectives.on && this.dataset) {
+      wantObjectives();
+      if (objectiveSrc.length === 1 && !objectiveSrc[0].timeline) wantTimeline(objectiveSrc[0].match);
+    }
     if (!objectiveSrc.length) this.objectiveDraw.clear();
     if (this.objectiveDraw.pending) this.invalidate(2);
     const objectiveSig = objectiveSrc.length ? `${objectives.rev}|${objectiveSrc.map((o) => o.match).join(',')}|${stateKey(objectiveSrc, this.playhead)}|${this.objectiveDraw.pending ? now : ''}` : '';
@@ -2979,6 +3018,9 @@ export class Engine {
       activeFilters.map((f) => f.key).join(';'),
       // So does the volumes filter.
       volumeDraw ? volumeDraw.key : '',
+      // The wedge reshapes every sprite, and the direction field accumulates
+      // beside the heat: both start over when their settings or the bearings do.
+      this.directions.sig(),
     ].join('|');
     const windowSig =
       `${timeLo}|${timeHi}|` +
@@ -3729,8 +3771,9 @@ export class Engine {
       symbols: !raceBuilt && s.mode === 'team' && s.team.figures ? this.symbolParams(s) : null,
       overlayVerts,
       overlayVertCount,
-      topVerts: this.objectiveTop?.data ?? null,
-      topVertCount: this.objectiveTop?.count ?? 0,
+      topVerts: this.directions.top(this.objectiveTop)?.data ?? null,
+      topVertCount: this.directions.top(this.objectiveTop)?.count ?? 0,
+      direction: raceTab || s.mode === 'team' ? null : this.directions.frame(window.devicePixelRatio || 1, now),
       level: vehicleTab ? null : lookOn ? tacticalLevel(buildLevelDraw(s.level)) : buildLevelDraw(s.level),
       post: lookOn ? this.lookPost(s) : null,
       // Auto-focus uses whatever the view was last framed on, which is the only

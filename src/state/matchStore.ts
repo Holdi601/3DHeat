@@ -9,6 +9,7 @@ import { parseMatchDoc, type MatchDoc } from '../match/matchDoc';
 import { isWtMatch, parseWtMatch, type GameMatch } from '../match/wtMatch';
 import { isContainer, openContainer } from '../data/container';
 import { isObjectivesFile, loadObjectiveFiles } from './objectivesStore';
+import { registerLazyMatches } from './objectivesLazy';
 
 /** `ALL` as the open match: every loaded match together. */
 export const ALL = '';
@@ -91,10 +92,15 @@ export const useMatchStore = create<MatchState>((set, get) => ({
  * loose `<match>.match.json` or `<match>.objectives.parquet` beside the
  * tables. Before, a battle's objectives were drawn only once its files had
  * also been picked in the match tab. Quiet: data without a match document is
- * nothing to report.
+ * nothing to report. One match is read whole, as the match tab reads it; of
+ * more, only the objectives, when they are first shown (`objectivesLazy.ts`).
  */
 export async function loadMatchesBeside(files: File[]): Promise<void> {
   const docs = files.filter((f) => isContainer(f.name) || /\.match\.json$/i.test(f.name));
+  if (docs.length > 1) {
+    registerLazyMatches(files);
+    return;
+  }
   if (docs.length) await useMatchStore.getState().load(docs, true);
   const sidecars = files.filter((f) => isContainer(f.name) || isObjectivesFile(f.name));
   if (sidecars.length) await loadObjectiveFiles(sidecars);
