@@ -109,6 +109,7 @@ export const TURRET_FIT: Record<string, number | TurretFit> = {
   'su-100p': 0.3,
   'su-122': -0.15,
   'su-122-54': { dx: 0.3, dy: -0.08 },
+  'su-5-1': { kl: 0.924 },
   'su-76m': 0.15,
   't-26': -0.3,
   't-34-1940': { kh: 0.9 },

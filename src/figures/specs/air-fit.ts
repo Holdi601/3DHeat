@@ -4,7 +4,8 @@
  * aircraft), the figure may be fitted to the reference silhouette. `ks` scales the wing's span (its planform outward,
  * the upper wing's, propellers and nacelles set out on it), `kc` its chords (the planform about its root's middle),
  * `dx` moves the wing forward (+) or back (-) along the fuselage with what hangs on it, and `kt` scales the tailplane
- * and fin; `kb` scales the fuselage's height about its axis (its profile, the canopy and what rides on the centre line).
+ * and fin; `kb` scales the fuselage's height about its axis (its profile, the canopy and what rides on the centre line),
+ * `kw` its width (its plan and what rides on the centre line).
  * Found by measuring each figure at several settings and keeping the one that matched the top and side views
  * best; listed in sources.md as fitted to the WT reference.
  */
@@ -19,6 +20,7 @@ export interface AirFit {
   dx?: number;
   kt?: number;
   kb?: number;
+  kw?: number;
 }
 
 export const AIR_FIT: Record<string, AirFit> = {
@@ -147,7 +149,8 @@ export function scaleWing(s: FixedWingSpec, f: AirFit): FixedWingSpec {
   const dx = f.dx ?? 0;
   const kt = f.kt ?? 1;
   const kb = f.kb ?? 1;
-  const tall = (o: Outline): Outline => (kb === 1 ? o : { ...o, top: o.top.map(([x, y]): P2 => [x, y * kb]), bottom: o.bottom.map(([x, y]): P2 => [x, y * kb]) });
+  const kw = f.kw ?? 1;
+  const tall = (o: Outline): Outline => (kb === 1 && kw === 1 ? o : { ...o, top: o.top.map(([x, y]): P2 => [x, y * kb]), bottom: o.bottom.map(([x, y]): P2 => [x, y * kb]), plan: o.plan.map(([x, y]): P2 => [x, y * kw]) });
   const half = s.wing.span / 2;
   const x0 = s.wing.x;
   const wing = (w: WingSpec): WingSpec => ({ ...w, x: w.x + dx, span: w.span * ks, rootChord: w.rootChord * kc, tipChord: w.tipChord * kc });
@@ -158,6 +161,7 @@ export function scaleWing(s: FixedWingSpec, f: AirFit): FixedWingSpec {
   return {
     ...s,
     bodyHeight: s.bodyHeight * kb,
+    bodyWidth: s.bodyWidth * kw,
     ...(s.fuselage ? { fuselage: tall(s.fuselage) } : {}),
     ...(s.glass ? { glass: s.glass.map((g) => ({ ...g, ...tall(g) })) } : {}),
     span: s.span * ks,
