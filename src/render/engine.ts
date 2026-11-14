@@ -3241,10 +3241,12 @@ export class Engine {
       // See `PlanOptions.runFrame`.
       const fresh = mustReset || canExtend || growing || windowChanged;
       if (fresh || this.runSplats === 0) this.runSplats = splatBudget;
+      // The budget counts disc-sized sprites; a narrow wedge costs a share of one.
+      const share = this.directions.costShare();
       const r = planFrame({
         rowLo: planLo,
         rowHi: planHi,
-        splatsPerFrame: fresh ? splatBudget : this.runSplats,
+        splatsPerFrame: Math.min(MAX_PLAN_SPRITES, Math.round((fresh ? splatBudget : this.runSplats) / share)),
         frameIndex: this.frameIndex,
         // A frame that starts over, or a sliding window's, draws the run's first
         // share; the tail a growing window adds is drawn the old way, whole.
@@ -3343,7 +3345,8 @@ export class Engine {
     if (plan === EMPTY_PLAN) submitted = 0;
     // What the frame asked for, not what the plan's power-of-two thinning drew:
     // ramping from the drawn count never reached the next power of two.
-    if (submitted > 0 && !compositeOnly) this.prevSprites = Math.max(submitted, Math.min(splatBudget, candidateRows));
+    // In disc-sized sprites, the unit the cap ramps in (see `costShare`).
+    if (submitted > 0 && !compositeOnly) this.prevSprites = Math.max(submitted * this.directions.costShare(), Math.min(splatBudget, candidateRows));
     this.live.accumMode = compositeOnly ? 'skip' : accumMode;
 
     // ---- team viewer geometry

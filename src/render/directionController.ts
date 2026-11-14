@@ -18,8 +18,11 @@ import {
   type DirSource,
 } from './direction';
 
+/** A wedge sprite's cost against a disc's, at least: its vertex work does not shrink with it. */
+const WEDGE_COST_FLOOR = 0.15;
+
 /** Rows a scan handles before it hands the thread back: a few milliseconds' worth. */
-const YIELD_ROWS = 1 << 20;
+const YIELD_ROWS = 1 << 18;
 
 /** What the controller needs from the engine. */
 export interface DirectionHost {
@@ -122,6 +125,20 @@ export class DirectionController {
       cell: Math.max(8, h.dirFieldSpacing) * dpr,
       time: field & 2 && h.dirFieldAnimate ? (now / 1000) % 3600 : -1,
     };
+  }
+
+  /**
+   * What one sprite costs against a disc's, for the sprite budget: a wedge
+   * lights about its opening's share of the disc's pixels (it is drawn as its
+   * own tight triangle), but never below WEDGE_COST_FLOOR, since its vertices
+   * cost what a disc's do. The budget counts disc-sized sprites, so a narrow
+   * wedge draws that many times more rows in the same GPU time - fewer, heavier
+   * sprites are what makes a narrow wedge sparkle.
+   */
+  costShare(): number {
+    const h = this.host.heat();
+    if (!this.data || h.wedgeOpening >= 360) return 1;
+    return Math.max(WEDGE_COST_FLOOR, Math.min(1, h.wedgeOpening / 360));
   }
 
   /** Whether the frame has to be redrawn every frame: flowing streamlines. */

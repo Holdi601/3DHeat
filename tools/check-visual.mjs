@@ -28,6 +28,7 @@
  *   --setting=<regex>   only the heat settings whose name matches
  *   --follow=<mode>     only one follow view in the jitter check (null for the still camera)
  *   --full-res          hold the heat at full resolution (the adaptive budget otherwise lowers it)
+ *   --heat=<json>       heat settings over the frame-time check's, e.g. '{"wedgeOpening":30,"dirSource":"view"}'
  *   --verbose           the readings behind each line; --shot=<dir> and --dump=<dir> save frames
  *
  * Software rendering is slow: the whole run takes the better part of an hour.
@@ -320,12 +321,12 @@ const ALL = { mode: 'all', playing: false };
 
 /** Every setting the heat's look depends on, one at a time against the base. */
 const HEAT_SETTINGS = [
-  { name: 'wedge 90, view', mode: 'heat-simple', heat: { wedgeOpening: 90, wedgeSoftness: 0.3, dirSource: 'view' }, timeline: ALL },
-  { name: 'wedge 30 hard, view', mode: 'heat-simple', heat: { wedgeOpening: 30, wedgeSoftness: 0, dirSource: 'view' }, timeline: ALL },
+  { name: 'wedge 90, view', textured: true, mode: 'heat-simple', heat: { wedgeOpening: 90, wedgeSoftness: 0.3, dirSource: 'view' }, timeline: ALL },
+  { name: 'wedge 30 hard, view', textured: true, mode: 'heat-simple', heat: { wedgeOpening: 30, wedgeSoftness: 0, dirSource: 'view' }, timeline: ALL },
   // Every row every frame: what is left is the wedge's own geometry, not the sampling.
-  { name: 'wedge 30 hard, view, every row', mode: 'heat-simple', heat: { wedgeOpening: 30, wedgeSoftness: 0, dirSource: 'view' }, timeline: ALL, budget: { splatsPerFrame: 4_000_000, adaptive: false } },
-  { name: 'difference, wedge 60', mode: 'heat-difference', heat: { wedgeOpening: 60, dirSource: 'view' }, timeline: ALL },
-  { name: 'teams, wedge 120, movement', mode: 'heat-teams', heat: { wedgeOpening: 120, dirSource: 'movement' }, timeline: ALL },
+  { name: 'wedge 30 hard, view, every row', textured: true, mode: 'heat-simple', heat: { wedgeOpening: 30, wedgeSoftness: 0, dirSource: 'view' }, timeline: ALL, budget: { splatsPerFrame: 4_000_000, adaptive: false } },
+  { name: 'difference, wedge 60', textured: true, mode: 'heat-difference', heat: { wedgeOpening: 60, dirSource: 'view' }, timeline: ALL },
+  { name: 'teams, wedge 120, movement', textured: true, mode: 'heat-teams', heat: { wedgeOpening: 120, dirSource: 'movement' }, timeline: ALL },
   { name: 'simple, fixed exposure', mode: 'heat-simple', heat: {}, timeline: ALL },
   { name: 'simple, follow exposure', mode: 'heat-simple', heat: { followExposure: true }, timeline: ALL, follow: true },
   { name: 'simple, linear response', mode: 'heat-simple', heat: { response: 'linear' }, timeline: ALL },
@@ -372,6 +373,12 @@ const above = (page, height, cx = 0, cz = 0) =>
 const PROBE = [];
 for (let i = -2; i <= 2; i++) for (let j = -2; j <= 2; j++) PROBE.push([i * 15, 0, j * 15]);
 
+/**
+ * The probe points with a 3 x 3 of neighbours 4 m apart round each: their
+ * mean is the local mean heat, the same patch of world at every height.
+ */
+const PROBE_LOCAL = PROBE.flatMap(([x, y, z]) => [-4, 0, 4].flatMap((dx) => [-4, 0, 4].map((dz) => [x + dx, y, z + dz])));
+
 const rgbDiff = (a, b) => Math.max(...a.map((v, i) => Math.abs(v - b[i])));
 const pct = (v) => `${(v * 100).toFixed(1)}%`;
 
@@ -401,7 +408,7 @@ async function checkZoom(page, backend, pick) {
     for (const h of heights) {
       await above(page, h);
       await page.evaluate(() => globalThis.__vc.settle());
-      got.push(await page.evaluate((pts) => globalThis.__vc.sample(pts, true, 0), PROBE));
+      got.push(await page.evaluate((pts) => globalThis.__vc.sample(pts, true, 0), cfg.textured ? PROBE_LOCAL : PROBE));
       if (opt('shot') && verbose) await page.screenshot({ path: `${opt('shot')}/zoom-${cfg.name.replace(/\W+/g, '_')}-${h}.png` });
     }
     const heats = got.map((g) => g.heat).filter((v) => v !== null && v > 0);
@@ -413,8 +420,12 @@ async function checkZoom(page, backend, pick) {
     for (const g of got) rgb = Math.max(rgb, rgbDiff(g.rgb, got[0].rgb) - rgbDiff(g.bg, got[0].bg));
     // Teams mode accumulates colour, not one heat value, and may read no heat; the colour still has to hold.
     const heatOk = cfg.mode === 'heat-teams' ? !heats.length || spread <= ZOOM_HEAT : heats.length === got.length && spread <= ZOOM_HEAT;
-    const ok = heatOk && rgb <= ZOOM_RGB;
-    let detail = `heat spread ${heats.length ? pct(spread) : 'n/a'} over ${heights.join('/')} m, colour ${Math.max(0, rgb).toFixed(0)}/255 beyond the scene's change`;
+    // A narrow kernel's field is textured up close - needles a far view averages
+    // into one pixel - and a colour ramp's mean over a texture is not the colour
+    // of its mean. So a wedge is judged on the local mean heat (`blurPx`), what
+    // each view shows at its own resolution; a disc on the pixel's colour too.
+    const ok = heatOk && (cfg.textured || rgb <= ZOOM_RGB);
+    let detail = `${cfg.textured ? 'local mean ' : ''}heat spread ${heats.length ? pct(spread) : 'n/a'} over ${heights.join('/')} m, colour ${Math.max(0, rgb).toFixed(0)}/255 beyond the scene's change${cfg.textured ? ' (not judged: textured)' : ''}`;
     if (verbose) detail += ` [heat ${got.map((g) => (g.heat ?? NaN).toFixed(2)).join(' ')}; sat ${got.map((g) => g.sat.toFixed(1)).join(' ')}; rgb ${got.map((g) => g.rgb.map((v) => v.toFixed(0)).join(',')).join(' ')}; n ${got.map((g) => g.n).join(" ")}; scene ${got.map((g) => g.bg.map((v) => v.toFixed(0)).join(',')).join(' ')}; drawn ${got.map((g) => `${g.splats}/${g.candidates}`).join(' ')}]`;
     if (cfg.control) report('zoom', `${backend} ${cfg.name}`, null, `${detail} (must differ: ${ok ? 'NOT DETECTED' : 'detected'})`);
     else report('zoom', `${backend} ${cfg.name}`, ok, detail);
@@ -883,11 +894,11 @@ async function checkFrameTime(backend) {
   const { browser, page } = await open(backend, '', gpu);
   try {
     await loadBlob(page, false);
-    await page.evaluate(() => {
+    await page.evaluate((extra) => {
       const s = globalThis.__3dheat.useStore.getState();
-      s.patchHeat({ followExposure: true, radius: 16 });
+      s.patchHeat({ followExposure: true, radius: 16, ...extra });
       s.patchBudget({ adaptive: true });
-    });
+    }, opt('heat') ? JSON.parse(opt('heat')) : {});
     // A still view, after it has settled: nothing it controls may move, and
     // no frame may draw anything new.
     const still = await page.evaluate(async () => {

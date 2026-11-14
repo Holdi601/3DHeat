@@ -87,8 +87,8 @@ const LINE_UNIT = 16;
 const TILE_UNIT = 17;
 /** The heat pass's bearing texture (`setDirections`). */
 const DIR_UNIT = 18;
-/** Chunks of bearings uploaded a frame at most: eight megabytes each. */
-const DIR_UPLOADS_PER_FRAME = 2;
+/** Rows of bearings uploaded a frame at most, a whole number of texture rows: half a megabyte. */
+const DIR_SLICE_ROWS = 64 * ROW_TEX_WIDTH;
 
 /** A chunk on its way to the GPU, a slice a frame; see `flushDataUpload`. */
 interface PendingChunk {
@@ -591,6 +591,7 @@ export class Webgl2Renderer implements Renderer {
       if (c.dirTex) gl.deleteTexture(c.dirTex);
     }
     this.lines = null;
+    this.dropDirJobs();
     this.dirAngles = null;
     this.chunks = [];
     for (const j of this.pendingChunks) {
@@ -1408,7 +1409,16 @@ export class Webgl2Renderer implements Renderer {
       }
       c.dirTex = null;
     }
+    this.dropDirJobs();
     this.dirAngles = angles && this.dataset && angles.length === this.dataset.count ? angles : null;
+  }
+
+  private dropDirJobs(): void {
+    for (const [c, j] of this.dirJobs) {
+      this.gl.deleteTexture(j.tex);
+      this.gpuBytesUsed -= Math.ceil(c.rows / ROW_TEX_WIDTH) * ROW_TEX_WIDTH;
+    }
+    this.dirJobs.clear();
   }
 
   private dirAngles: Uint8Array | null = null;
@@ -1418,25 +1428,41 @@ export class Webgl2Renderer implements Renderer {
   /** This chunk's bearing texture, uploaded now if the frame still has room for one. */
   private chunkDirs(chunk: GpuChunk): WebGLTexture | null {
     if (chunk.dirTex || !this.dirAngles) return chunk.dirTex;
-    if (this.dirUploads >= DIR_UPLOADS_PER_FRAME) return null;
-    this.dirUploads++;
+    // A slice a frame, so bearings arriving for a large load never cost a frame.
+    if (this.dirUploads >= DIR_SLICE_ROWS) return null;
     const gl = this.gl;
     const texHeight = Math.ceil(chunk.rows / ROW_TEX_WIDTH);
-    const data = new Uint8Array(ROW_TEX_WIDTH * texHeight).fill(255);
-    data.set(this.dirAngles.subarray(chunk.start, chunk.start + chunk.rows));
+    let job = this.dirJobs.get(chunk);
+    if (!job) {
+      job = {
+        tex: createTexture(gl, { width: ROW_TEX_WIDTH, height: texHeight, internalFormat: gl.R8UI, format: gl.RED_INTEGER, type: gl.UNSIGNED_BYTE }),
+        done: 0,
+      };
+      this.dirJobs.set(chunk, job);
+      this.gpuBytesUsed += ROW_TEX_WIDTH * texHeight;
+    }
+    const band = Math.min(DIR_SLICE_ROWS, chunk.rows - job.done);
+    const texRows = Math.ceil(band / ROW_TEX_WIDTH);
+    if (this.dirScratch.length < texRows * ROW_TEX_WIDTH) this.dirScratch = new Uint8Array(texRows * ROW_TEX_WIDTH);
+    const data = this.dirScratch.subarray(0, texRows * ROW_TEX_WIDTH).fill(255);
+    data.set(this.dirAngles.subarray(chunk.start + job.done, chunk.start + job.done + band));
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-    chunk.dirTex = createTexture(gl, {
-      width: ROW_TEX_WIDTH,
-      height: texHeight,
-      internalFormat: gl.R8UI,
-      format: gl.RED_INTEGER,
-      type: gl.UNSIGNED_BYTE,
-      data,
-    });
+    gl.bindTexture(gl.TEXTURE_2D, job.tex);
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, job.done / ROW_TEX_WIDTH, ROW_TEX_WIDTH, texRows, gl.RED_INTEGER, gl.UNSIGNED_BYTE, data);
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
-    this.gpuBytesUsed += ROW_TEX_WIDTH * texHeight;
+    job.done += band;
+    this.dirUploads += band;
+    if (job.done < chunk.rows) return null;
+    this.dirJobs.delete(chunk);
+    chunk.dirTex = job.tex;
+    // The heat drawn meanwhile took this chunk's rows as discs: start it over.
+    this.dataGeneration++;
     return chunk.dirTex;
   }
+
+  /** Bearing textures still arriving, and how far. */
+  private dirJobs = new Map<GpuChunk, { tex: WebGLTexture; done: number }>();
+  private dirScratch = new Uint8Array(0);
 
   private lineHeatQueued = false;
 

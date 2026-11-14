@@ -1147,6 +1147,7 @@ export class WebgpuRenderer implements Renderer {
       c.dirs?.destroy();
     }
     this.chunks = [];
+    this.dropDirJobs();
     this.dirAngles = null;
     for (const j of this.pendingChunks) {
       j.positions?.destroy();
@@ -1215,6 +1216,7 @@ export class WebgpuRenderer implements Renderer {
       }
       c.dirs = null;
     }
+    this.dropDirJobs();
     this.dirAngles = angles && this.dataset && angles.length === this.dataset.count ? angles : null;
   }
 
@@ -1225,19 +1227,42 @@ export class WebgpuRenderer implements Renderer {
   /** This chunk's bearings, uploaded now if the frame still has room for them. */
   private chunkDirs(chunk: GpuChunk): GPUBuffer | null {
     if (chunk.dirs || !this.dirAngles) return chunk.dirs;
-    if (this.dirUploads >= 2) return null;
-    this.dirUploads++;
+    // A slice a frame, so bearings arriving for a large load never cost a frame.
+    const SLICE = 1 << 19;
+    if (this.dirUploads >= SLICE) return null;
     const bytes = align4(Math.max(4, chunk.rows));
-    const data = new Uint8Array(bytes).fill(255);
-    data.set(this.dirAngles.subarray(chunk.start, chunk.start + chunk.rows));
-    chunk.dirs = this.device.createBuffer({
-      label: `chunk ${chunk.start} bearings`,
-      size: bytes,
-      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
-    });
-    this.device.queue.writeBuffer(chunk.dirs, 0, data as unknown as BufferSource);
-    this.gpuBytesUsed += bytes;
+    let job = this.dirJobs.get(chunk);
+    if (!job) {
+      job = {
+        buf: this.device.createBuffer({ label: `chunk ${chunk.start} bearings`, size: bytes, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST }),
+        done: 0,
+      };
+      this.dirJobs.set(chunk, job);
+      this.gpuBytesUsed += bytes;
+    }
+    const band = Math.min(SLICE, bytes - job.done);
+    const data = new Uint8Array(band).fill(255);
+    data.set(this.dirAngles.subarray(chunk.start + job.done, chunk.start + Math.min(chunk.rows, job.done + band)));
+    this.device.queue.writeBuffer(job.buf, job.done, data as unknown as BufferSource);
+    job.done += band;
+    this.dirUploads += band;
+    if (job.done < bytes) return null;
+    this.dirJobs.delete(chunk);
+    chunk.dirs = job.buf;
+    // The heat drawn meanwhile took this chunk's rows as discs: start it over.
+    this.dataGeneration++;
     return chunk.dirs;
+  }
+
+  /** Bearing buffers still arriving, and how far. */
+  private dirJobs = new Map<GpuChunk, { buf: GPUBuffer; done: number }>();
+
+  private dropDirJobs(): void {
+    for (const [c, j] of this.dirJobs) {
+      j.buf.destroy();
+      this.gpuBytesUsed -= align4(Math.max(4, c.rows));
+    }
+    this.dirJobs.clear();
   }
 
   setLines(lines: LineData | null): void {
