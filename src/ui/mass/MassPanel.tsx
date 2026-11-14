@@ -1,0 +1,754 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { num, t, useLang } from '../../i18n';
+import { askMass, drillDown, openMass, useMass, type MassTab } from '../../mass/client';
+import { massReportForModel, type MassInsight, type MassReport } from '../../mass/detect';
+import type { Channel } from '../../mass/grids';
+import { MATCH_HIST, type BalanceBy, type BalanceRow, type BalanceSplit, type Bucket, type Overview, type Populations, type SideRow, type Trends } from '../../mass/store';
+import { GRID_KINDS } from '../../mass/types';
+import { Check, Section, Segmented } from '../controls';
+import { useEngine } from '../EngineContext';
+import '../compare/compare.css';
+import '../breakdown/breakdown.css';
+import './mass.css';
+
+const fmt = (v: number | null | undefined, d = 2) => (v === null || v === undefined || !Number.isFinite(v) ? '—' : num(v, Math.abs(v) >= 100 ? 0 : Math.abs(v) >= 10 ? 1 : d));
+const pct = (v: number | null | undefined) => (v === null || v === undefined || !Number.isFinite(v) ? '—' : `${num(v * 100, 0)}%`);
+const big = (v: number) => (v >= 1e9 ? `${num(v / 1e9, 1)} G` : v >= 1e6 ? `${num(v / 1e6, 1)} M` : v >= 1e4 ? `${num(v / 1e3, 0)} k` : num(v, 0));
+const day = (sec: number | null) => (sec === null ? '—' : new Date(sec * 1000).toISOString().slice(0, 10));
+const MAX_ROWS = 300;
+
+/** The sidebar's part: pick the matches, see what was found, open the window. */
+export function MassPanel() {
+  useLang();
+  const st = useMass();
+  const folder = useRef<HTMLInputElement>(null);
+  const filesIn = useRef<HTMLInputElement>(null);
+  const adding = useRef(false);
+  const pick = async (list: FileList | null) => {
+    const add = adding.current;
+    adding.current = false;
+    const files = Array.from(list ?? []).map((file) => ({ file, path: (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name }));
+    if (!files.length) return;
+    const ok = await openMass(files, add);
+    if (ok) useMass.getState().set({ open: true });
+  };
+  const s = st.stats;
+  return (
+    <Section title={t('mass.title')}>
+      <div className="hint">{t('mass.hint')}</div>
+      <div className="row" style={{ gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
+        <button onClick={() => folder.current?.click()}>{t('mass.folder')}</button>
+        <button onClick={() => filesIn.current?.click()}>{t('mass.files')}</button>
+        {st.facets && (
+          <button
+            onClick={() => {
+              adding.current = true;
+              folder.current?.click();
+            }}
+          >
+            {t('mass.addFolder')}
+          </button>
+        )}
+        {st.facets && <button onClick={() => st.set({ open: !st.open })}>{st.open ? t('mass.close') : t('mass.openWindow')}</button>}
+      </div>
+      <input ref={folder} type="file" hidden {...({ webkitdirectory: '' } as object)} onChange={(e) => void pick(e.target.files).finally(() => (e.target.value = ''))} />
+      <input ref={filesIn} type="file" hidden multiple accept=".3dheat,.parquet,.gz" onChange={(e) => void pick(e.target.files).finally(() => (e.target.value = ''))} />
+      {st.progress && (
+        <div className="hint" style={{ marginTop: 6 }}>
+          {t(`mass.phase.${st.progress.phase}`, { done: st.progress.done, total: st.progress.total })}
+        </div>
+      )}
+      {st.error && <div className="hint" style={{ color: 'var(--warm)' }}>{st.error}</div>}
+      {s && st.facets && (
+        <div className="hint" style={{ marginTop: 6 }}>
+          {t('mass.loaded', { matches: st.facets.matches, index: s.fromIndex, cache: s.fromCache, member: s.fromMember, computed: s.computed, failed: s.failed, secs: fmt(s.ms / 1000, 1), mb: fmt(s.storeBytes / 1e6, 1) })}
+        </div>
+      )}
+    </Section>
+  );
+}
+
+/** The window over the view (as the breakdown's), while open. */
+export function MassWindow() {
+  const open = useMass((s) => s.open && !!s.facets);
+  const [stage, setStage] = useState<Element | null>(null);
+  useEffect(() => setStage(document.querySelector('.stage')), [open]);
+  if (!open || !stage) return null;
+  return createPortal(<MassBody />, stage);
+}
+
+function MassBody() {
+  useLang();
+  const st = useMass();
+  const f = st.facets!;
+  const filter = st.filter;
+  const setFilter = (p: Partial<typeof filter>) => st.set({ filter: { ...filter, ...p } });
+  const one = (l?: string[]) => l?.[0] ?? '';
+  const maps = f.maps.filter((m) => !filter.games?.length || filter.games.includes(m.game));
+  const tabs: MassTab[] = ['overview', 'balance', 'trends', 'players', 'sides', 'map', 'insights'];
+  const dateValue = (sec: number | null | undefined) => (sec ? new Date(sec).toISOString().slice(0, 10) : '');
+  return (
+    <div className="cmp-window brk-window mass-window" role="dialog" aria-label={t('mass.title')}>
+      <div className="cmp-head">
+        <b>{t('mass.title')}</b>
+        <label className="brk-field">
+          {t('mass.game')}
+          <select value={one(filter.games)} onChange={(e) => setFilter({ games: e.target.value ? [e.target.value] : [], maps: [] })}>
+            <option value="">{t('mass.all')}</option>
+            {f.games.map((g) => (
+              <option key={g} value={g}>{g || '—'}</option>
+            ))}
+          </select>
+        </label>
+        <label className="brk-field">
+          {t('mass.map')}
+          <select value={one(filter.maps)} onChange={(e) => setFilter({ maps: e.target.value ? [e.target.value] : [] })}>
+            <option value="">{t('mass.all')}</option>
+            {maps.map((m) => (
+              <option key={m.map} value={m.map}>{`${m.map || '—'} (${m.matches})`}</option>
+            ))}
+          </select>
+        </label>
+        {f.modes.length > 0 && (
+          <label className="brk-field">
+            {t('mass.mode')}
+            <select value={one(filter.modes)} onChange={(e) => setFilter({ modes: e.target.value ? [e.target.value] : [] })}>
+              <option value="">{t('mass.all')}</option>
+              {f.modes.map((m) => (
+                <option key={m} value={m}>{m}</option>
+              ))}
+            </select>
+          </label>
+        )}
+        <label className="brk-field">
+          {t('mass.from')}
+          <input type="date" value={dateValue(filter.from)} onChange={(e) => setFilter({ from: e.target.value ? Date.parse(e.target.value) : null })} />
+        </label>
+        <label className="brk-field">
+          {t('mass.to')}
+          <input type="date" value={dateValue(filter.to)} onChange={(e) => setFilter({ to: e.target.value ? Date.parse(e.target.value) + 86_399_999 : null })} />
+        </label>
+        <Segmented<MassTab> value={st.tab} options={tabs.map((v) => ({ value: v, label: t(`mass.tab.${v}`) }))} onChange={(tab) => st.set({ tab })} />
+        <span className="cmp-status">
+          {st.drilling ? t('mass.drilling') : st.progress ? t(`mass.phase.${st.progress.phase}`, { done: st.progress.done, total: st.progress.total }) : ''}
+        </span>
+        <button className="cmp-close" title={t('mass.close')} onClick={() => st.set({ open: false })}>
+          ×
+        </button>
+      </div>
+      <div className="cmp-body">
+        <div className="cmp-scroll">
+          {st.tab === 'overview' && <OverviewTab />}
+          {st.tab === 'balance' && <BalanceTab />}
+          {st.tab === 'trends' && <TrendsTab />}
+          {st.tab === 'players' && <PlayersTab />}
+          {st.tab === 'sides' && <SidesTab />}
+          {st.tab === 'map' && <MapTab />}
+          {st.tab === 'insights' && <InsightsTab />}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** A query to the worker, asked again when the filter or the arguments change. */
+function useQuery<T>(make: () => Parameters<typeof askMass>[0], kind: string, deps: unknown[]): { data: T | null; ms: number | null; error: string | null } {
+  const filter = useMass((s) => s.filter);
+  const [state, setState] = useState<{ data: T | null; ms: number | null; error: string | null }>({ data: null, ms: null, error: null });
+  useEffect(() => {
+    let live = true;
+    const t0 = performance.now();
+    askMass<T>(make(), kind).then(
+      (data) => live && setState({ data, ms: Math.round(performance.now() - t0), error: null }),
+      (e: Error) => live && setState({ data: null, ms: null, error: e.message }),
+    );
+    return () => {
+      live = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(filter), ...deps]);
+  return state;
+}
+
+function Took({ ms }: { ms: number | null }) {
+  return ms === null ? null : <div className="hint mass-took">{t('mass.took', { ms })}</div>;
+}
+
+function OverviewTab() {
+  const filter = useMass((s) => s.filter);
+  const q = useQuery<Overview>(() => ({ type: 'query', filter, q: { kind: 'overview' } }), 'overview', []);
+  const ph = useQuery<Record<string, number[]>>(() => ({ type: 'query', filter, q: { kind: 'phases' } }), 'phases', []);
+  const o = q.data;
+  if (!o) return <div className="hint">{q.error ?? t('mass.working')}</div>;
+  const maxDay = Math.max(1, ...o.byDay.map((d) => d.matches));
+  return (
+    <div>
+      <div className="mass-stats">
+        {[
+          ['mass.stat.matches', big(o.matches)],
+          ['mass.stat.hours', fmt(o.hours, 1)],
+          ['mass.stat.players', big(o.players)],
+          ['mass.stat.units', big(o.units)],
+          ['mass.stat.ai', big(o.ai)],
+          ['mass.stat.rows', big(o.rows)],
+          ['mass.stat.span', `${day(o.first)} – ${day(o.last)}`],
+        ].map(([k, v]) => (
+          <div key={k}>
+            <span>{t(k)}</span>
+            <b>{v}</b>
+          </div>
+        ))}
+      </div>
+      {o.byDay.length > 1 && (
+        <div className="mass-days" title={t('mass.perDay')}>
+          {o.byDay.map((d) => (
+            <i key={d.day} style={{ height: `${(100 * d.matches) / maxDay}%` }} title={`${d.day}: ${d.matches}`} />
+          ))}
+        </div>
+      )}
+      <div className="brk-lists">
+        <CountList title={t('mass.byGame')} rows={o.byGame} />
+        <CountList title={t('mass.byMap')} rows={o.byMap} onPick={(k) => useMass.getState().set({ filter: { ...filter, maps: [k] } })} />
+        {o.byMode.some((m) => m.key) && <CountList title={t('mass.byMode')} rows={o.byMode} />}
+        <div className="brk-list">
+          <div className="brk-list-title">{t('mass.events')}</div>
+          <ol>
+            {Object.entries(o.events)
+              .sort((a, b) => b[1] - a[1])
+              .map(([k, v]) => (
+                <li key={k}>
+                  {k}
+                  <span>{big(v)}</span>
+                </li>
+              ))}
+          </ol>
+        </div>
+        {o.economy.length > 0 && (
+          <div className="brk-list">
+            <div className="brk-list-title">{t('mass.economy')}</div>
+            <ol>
+              {o.economy.map((e) => (
+                <li key={e.currency}>
+                  {t('mass.econLine', { currency: e.currency.toUpperCase(), earned: big(e.earned), spent: big(e.spent), matches: e.matches })}
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+      </div>
+      {ph.data && <PhaseBars data={ph.data} />}
+      <Took ms={q.ms} />
+    </div>
+  );
+}
+
+function CountList({ title, rows, onPick }: { title: string; rows: { key: string; matches: number; hours: number }[]; onPick?: (k: string) => void }) {
+  return (
+    <div className="brk-list">
+      <div className="brk-list-title">{title}</div>
+      <ol>
+        {rows.slice(0, 25).map((r) => (
+          <li key={r.key} className={onPick ? 'mass-pick' : undefined} onClick={onPick ? () => onPick(r.key) : undefined}>
+            {r.key || '—'}
+            <span>{t('mass.countLine', { matches: r.matches, hours: fmt(r.hours, 1) })}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function PhaseBars({ data }: { data: Record<string, number[]> }) {
+  const kinds = Object.entries(data).filter(([, v]) => v.some((x) => x > 0));
+  if (!kinds.length) return null;
+  return (
+    <div className="mass-phases">
+      <div className="brk-list-title">{t('mass.phases')}</div>
+      {kinds.map(([k, v]) => {
+        const max = Math.max(1, ...v);
+        return (
+          <div key={k} className="mass-phase-row">
+            <span>{k}</span>
+            <div className="mass-days">
+              {v.map((x, i) => (
+                <i key={i} style={{ height: `${(100 * x) / max}%` }} title={t('mass.phaseBin', { from: i * 5, to: i * 5 + 5, n: x })} />
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+type SortKey = keyof BalanceRow;
+
+function BalanceTab() {
+  const filter = useMass((s) => s.filter);
+  const engine = useEngine();
+  const [by, setBy] = useState<BalanceBy>('vehicle');
+  const [split, setSplit] = useState<BalanceSplit>('none');
+  const [minUnits, setMin] = useState(10);
+  const [players, setPlayers] = useState(true);
+  const [sort, setSort] = useState<{ k: SortKey; desc: boolean }>({ k: 'hours', desc: true });
+  const q = useQuery<BalanceRow[]>(() => ({ type: 'query', filter, q: { kind: 'balance', by, split, minUnits, players } }), 'balance', [by, split, minUnits, players]);
+  const rows = useMemo(() => {
+    const r = [...(q.data ?? [])];
+    r.sort((a, b) => {
+      const x = a[sort.k] as number | string | null;
+      const y = b[sort.k] as number | string | null;
+      const c = typeof x === 'string' || typeof y === 'string' ? String(x).localeCompare(String(y)) : (Number(x ?? -Infinity) || 0) - (Number(y ?? -Infinity) || 0);
+      return sort.desc ? -c : c;
+    });
+    return r;
+  }, [q.data, sort]);
+  const th = (k: SortKey, label: string, title?: string) => (
+    <th className={sort.k === k ? 'brk-sorted' : undefined} title={title} onClick={() => setSort({ k, desc: sort.k === k ? !sort.desc : true })}>
+      {label}
+    </th>
+  );
+  const drill = (r: BalanceRow) => {
+    const drillReq = by === 'vehicle' ? { vehicle: r.key } : by === 'class' ? { cls: r.key } : by === 'weapon' ? { weapon: r.key } : { team: r.key };
+    const extra = split === 'map' && r.split ? { maps: [r.split] } : split === 'mode' && r.split ? { modes: [r.split] } : {};
+    void drillDown(engine, { drill: drillReq, extra });
+  };
+  return (
+    <div>
+      <div className="row brk-controls" style={{ flexWrap: 'wrap', marginBottom: 6 }}>
+        <Segmented<BalanceBy> value={by} options={(['vehicle', 'class', 'weapon', 'team'] as const).map((v) => ({ value: v, label: t(`mass.by.${v}`) }))} onChange={setBy} />
+        <label className="brk-field">
+          {t('mass.split')}
+          <select value={split} onChange={(e) => setSplit(e.target.value as BalanceSplit)}>
+            {(['none', 'map', 'mode', 'tier', 'game'] as const).map((v) => (
+              <option key={v} value={v}>{t(`mass.split.${v}`)}</option>
+            ))}
+          </select>
+        </label>
+        <label className="brk-field">
+          {t('mass.minLives')}
+          <input type="number" min={1} value={minUnits} onChange={(e) => setMin(Math.max(1, Number(e.target.value) || 1))} />
+        </label>
+        {by !== 'weapon' && <Check label={t('mass.playersOnly')} checked={players} onChange={setPlayers} />}
+        <span className="hint">{t('mass.balanceHint')}</span>
+      </div>
+      {!q.data ? (
+        <div className="hint">{q.error ?? t('mass.working')}</div>
+      ) : (
+        <table className="cmp-table brk-table">
+          <thead>
+            <tr>
+              {th('label', t('mass.col.name'))}
+              {split !== 'none' && th('split', t(`mass.split.${split}`))}
+              {th('matches', t('mass.col.matches'))}
+              {th('units', by === 'weapon' ? t('mass.col.shots') : t('mass.col.lives'))}
+              {th('hours', t('mass.col.hours'))}
+              {th('kd', by === 'weapon' ? t('mass.col.killsPerMiss') : t('mass.col.kd'), t('mass.col.kdTitle'))}
+              {by !== 'weapon' && th('win', t('mass.col.win'), t('mass.col.winTitle'))}
+              {by !== 'weapon' && th('survival', t('mass.col.survival'))}
+              {th('kills', t('mass.col.kills'))}
+              {by !== 'weapon' && th('killsPerMin', t('mass.col.kpm'))}
+              {th('hits', t('mass.col.hits'))}
+              {by !== 'weapon' && th('earnPerMin', t('mass.col.earnPerMin'))}
+              {th('q', t('mass.col.q'), t('mass.col.qTitle'))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.slice(0, MAX_ROWS).map((r) => (
+              <tr key={`${r.key}|${r.split}`} className={r.q < 0.05 ? 'mass-sig' : undefined} onClick={() => drill(r)} title={t('mass.drillTitle')}>
+                <td>
+                  {r.label || r.key || '—'}
+                  {r.cls && by === 'vehicle' ? <span className="mass-dim"> {r.cls}</span> : null}
+                </td>
+                {split !== 'none' && <td>{r.split || '—'}</td>}
+                <td>{num(r.matches, 0)}</td>
+                <td>{num(r.units, 0)}</td>
+                <td>{fmt(r.hours, 1)}</td>
+                <td>
+                  {fmt(r.kd)} <span className="mass-dim">({fmt(r.kdLo)}–{fmt(r.kdHi)})</span>
+                </td>
+                {by !== 'weapon' && (
+                  <td>
+                    {pct(r.win)} {r.win !== null && <span className="mass-dim">({pct(r.winLo)}–{pct(r.winHi)})</span>}
+                  </td>
+                )}
+                {by !== 'weapon' && <td>{pct(r.survival)}</td>}
+                <td>{num(r.kills, 0)}</td>
+                {by !== 'weapon' && <td>{fmt(r.killsPerMin, 3)}</td>}
+                <td>{num(r.hits, 0)}</td>
+                {by !== 'weapon' && <td>{fmt(r.earnPerMin, 1)}</td>}
+                <td>{r.q < 0.001 ? '<0.001' : fmt(r.q, 3)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      {rows.length > MAX_ROWS && <div className="hint">{t('mass.more', { n: rows.length - MAX_ROWS })}</div>}
+      <Took ms={q.ms} />
+    </div>
+  );
+}
+
+function TrendsTab() {
+  const filter = useMass((s) => s.filter);
+  const engine = useEngine();
+  const [by, setBy] = useState<'vehicle' | 'class'>('vehicle');
+  const [bucket, setBucket] = useState<Bucket>('day');
+  const [metric, setMetric] = useState<'usage' | 'kd' | 'win'>('usage');
+  const q = useQuery<Trends>(() => ({ type: 'query', filter, q: { kind: 'trends', by, bucket } }), 'trends', [by, bucket]);
+  const d = q.data;
+  return (
+    <div>
+      <div className="row brk-controls" style={{ flexWrap: 'wrap', marginBottom: 6 }}>
+        <Segmented<'vehicle' | 'class'> value={by} options={(['vehicle', 'class'] as const).map((v) => ({ value: v, label: t(`mass.by.${v}`) }))} onChange={setBy} />
+        <Segmented<Bucket> value={bucket} options={(['day', 'week', 'month'] as const).map((v) => ({ value: v, label: t(`mass.bucket.${v}`) }))} onChange={setBucket} />
+        <Segmented<'usage' | 'kd' | 'win'> value={metric} options={(['usage', 'kd', 'win'] as const).map((v) => ({ value: v, label: t(`mass.metric.${v}`) }))} onChange={setMetric} />
+      </div>
+      {!d ? (
+        <div className="hint">{q.error ?? t('mass.working')}</div>
+      ) : !d.buckets.length ? (
+        <div className="hint">{t('mass.noDates')}</div>
+      ) : (
+        <table className="cmp-table brk-table">
+          <thead>
+            <tr>
+              <th>{t('mass.col.name')}</th>
+              {d.buckets.map((b, i) => (
+                <th key={b} title={t('mass.bucketMatches', { n: d.matches[i] })}>{b}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {d.series.map((s) => {
+              const vals = metric === 'usage' ? s.usage : metric === 'kd' ? s.kd : s.win.map((v) => v ?? NaN);
+              const max = Math.max(1e-9, ...vals.filter(Number.isFinite));
+              return (
+                <tr key={s.key} onClick={() => void drillDown(engine, { drill: by === 'vehicle' ? { vehicle: s.key } : { cls: s.key } })} title={t('mass.drillTitle')}>
+                  <td>{s.label || s.key}</td>
+                  {vals.map((v, i) => (
+                    <td key={i} style={{ background: Number.isFinite(v) ? `rgba(57,135,229,${(0.45 * v) / max})` : undefined }}>
+                      {metric === 'kd' ? fmt(v) : pct(v)}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
+      <Took ms={q.ms} />
+    </div>
+  );
+}
+
+function PlayersTab() {
+  const filter = useMass((s) => s.filter);
+  const engine = useEngine();
+  const q = useQuery<Populations>(() => ({ type: 'query', filter, q: { kind: 'populations' } }), 'populations', []);
+  const p = q.data;
+  if (!p) return <div className="hint">{q.error ?? t('mass.working')}</div>;
+  const max = Math.max(1, ...p.matchesHist);
+  return (
+    <div>
+      <div className="mass-stats">
+        <div>
+          <span>{t('mass.stat.players')}</span>
+          <b>{big(p.players)}</b>
+        </div>
+        <div>
+          <span>{t('mass.perMatch')}</span>
+          <b>{t('mass.quartiles', { q1: p.perMatch[0], med: p.perMatch[1], q3: p.perMatch[2] })}</b>
+        </div>
+      </div>
+      <div className="brk-list-title">{t('mass.matchesPerPlayer')}</div>
+      <div className="mass-hist">
+        {p.matchesHist.map((n, i) => (
+          <div key={i}>
+            <i style={{ width: `${(100 * n) / max}%` }} />
+            <span>{t('mass.histBin', { from: MATCH_HIST[i], to: i + 1 < MATCH_HIST.length ? MATCH_HIST[i + 1] - 1 : '∞', n })}</span>
+          </div>
+        ))}
+      </div>
+      <table className="cmp-table brk-table">
+        <thead>
+          <tr>
+            <th>{t('mass.col.player')}</th>
+            <th>{t('mass.col.matches')}</th>
+            <th>{t('mass.col.hours')}</th>
+            <th>{t('mass.col.kills')}</th>
+            <th>{t('mass.col.deaths')}</th>
+            <th>{t('mass.col.win')}</th>
+            <th>{t('mass.col.vehicle')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {p.top.map((r) => (
+            <tr key={r.id} onClick={() => void drillDown(engine, { drill: { player: r.id } })} title={t('mass.drillTitle')}>
+              <td>{r.name || r.id}</td>
+              <td>{r.matches}</td>
+              <td>{fmt(r.hours, 1)}</td>
+              <td>{num(r.kills, 0)}</td>
+              <td>{num(r.deaths, 0)}</td>
+              <td>{pct(r.win)}</td>
+              <td>{r.vehicle || '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <Took ms={q.ms} />
+    </div>
+  );
+}
+
+function SidesTab() {
+  const filter = useMass((s) => s.filter);
+  const engine = useEngine();
+  const q = useQuery<SideRow[]>(() => ({ type: 'query', filter, q: { kind: 'sides' } }), 'sides', []);
+  if (!q.data) return <div className="hint">{q.error ?? t('mass.working')}</div>;
+  return (
+    <div>
+      <div className="hint">{t('mass.sidesHint')}</div>
+      <table className="cmp-table brk-table">
+        <thead>
+          <tr>
+            <th>{t('mass.map')}</th>
+            <th>{t('mass.col.team')}</th>
+            <th>{t('mass.col.matches')}</th>
+            <th>{t('mass.col.win')}</th>
+            <th>{t('mass.col.kills')}</th>
+            <th>{t('mass.col.deaths')}</th>
+            <th>{t('mass.col.q')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {q.data.slice(0, MAX_ROWS).map((r) => (
+            <tr key={`${r.map}|${r.team}`} className={r.q < 0.05 ? 'mass-sig' : undefined} onClick={() => void drillDown(engine, { drill: { team: r.team }, extra: { maps: [r.map] } })} title={t('mass.drillTitle')}>
+              <td>{r.map || '—'}</td>
+              <td>{r.team}</td>
+              <td>{r.matches}</td>
+              <td>
+                {pct(r.win)} {r.win !== null && <span className="mass-dim">({pct(r.winLo)}–{pct(r.winHi)})</span>}
+              </td>
+              <td>{num(r.kills, 0)}</td>
+              <td>{num(r.deaths, 0)}</td>
+              <td>{r.q < 0.001 ? '<0.001' : fmt(r.q, 3)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <Took ms={q.ms} />
+    </div>
+  );
+}
+
+interface RasterData {
+  x0: number;
+  z0: number;
+  cell: number;
+  nx: number;
+  nz: number;
+  v: Float32Array;
+  d?: Float32Array;
+  max: number;
+  matches: number;
+  cells: number;
+  bytes: number;
+  teams: string[];
+}
+
+const CHANNELS: Channel[] = ['presence', 'kills', 'deaths', 'kd', 'stability', 'flow', 'events', ...GRID_KINDS.filter((k) => !['kill', 'death'].includes(k))];
+
+/** Heat colour of 0..1: dark blue to red to yellow to white. */
+function heat(f: number): [number, number, number] {
+  const stops: [number, number, number][] = [[20, 24, 60], [120, 30, 140], [230, 60, 40], [250, 200, 40], [255, 255, 230]];
+  const x = Math.max(0, Math.min(1, f)) * (stops.length - 1);
+  const i = Math.min(stops.length - 2, Math.floor(x));
+  const u = x - i;
+  return [0, 1, 2].map((c) => stops[i][c] + (stops[i + 1][c] - stops[i][c]) * u) as [number, number, number];
+}
+
+function MapTab() {
+  const filter = useMass((s) => s.filter);
+  const facets = useMass((s) => s.facets)!;
+  const engine = useEngine();
+  const maps = facets.maps.filter((m) => m.map && (!filter.games?.length || filter.games.includes(m.game)));
+  const [map, setMap] = useState<string>(filter.maps?.[0] ?? maps[0]?.map ?? '');
+  const [channel, setChannel] = useState<Channel>('presence');
+  const [level, setLevel] = useState(1);
+  const [team, setTeam] = useState<string | null>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    if (filter.maps?.[0]) setMap(filter.maps[0]);
+  }, [filter.maps]);
+  const q = useQuery<RasterData>(() => ({ type: 'grid', filter, map, channel, level, team }), 'grid', [map, channel, level, team]);
+  const r = q.data;
+  useEffect(() => {
+    const c = canvas.current;
+    if (!c || !r || !r.nx) return;
+    c.width = r.nx;
+    c.height = r.nz;
+    const g = c.getContext('2d')!;
+    const img = g.createImageData(r.nx, r.nz);
+    const ratio = channel === 'kd';
+    const lmax = Math.log1p(r.max);
+    for (let z = 0; z < r.nz; z++)
+      for (let x = 0; x < r.nx; x++) {
+        const v = r.v[z * r.nx + x];
+        const o = ((r.nz - 1 - z) * r.nx + x) * 4;
+        if (!Number.isFinite(v) || v <= 0) continue;
+        const f = ratio ? 0.5 + Math.log(v) / 4 : channel === 'stability' ? v : lmax > 0 ? Math.log1p(v) / lmax : 0;
+        const [cr, cg, cb] = heat(f);
+        img.data[o] = cr;
+        img.data[o + 1] = cg;
+        img.data[o + 2] = cb;
+        img.data[o + 3] = 255;
+      }
+    g.putImageData(img, 0, 0);
+    if (r.d) {
+      // Flow: a short line a cell where enough went by, along the summed direction.
+      g.strokeStyle = 'rgba(255,255,255,0.8)';
+      g.lineWidth = Math.max(0.15, r.nx / 600);
+      const step = Math.max(1, Math.floor(r.nx / 48));
+      for (let z = 0; z < r.nz; z += step)
+        for (let x = 0; x < r.nx; x += step) {
+          const i = z * r.nx + x;
+          const dx = r.d[i * 2], dz = r.d[i * 2 + 1];
+          const m = Math.hypot(dx, dz);
+          if (m < r.v[i] * 0.2 || m === 0) continue;
+          const len = step * 0.45;
+          const cx = x + 0.5, cy = r.nz - 1 - z + 0.5;
+          g.beginPath();
+          g.moveTo(cx - (dx / m) * len, cy + (dz / m) * len);
+          g.lineTo(cx + (dx / m) * len, cy - (dz / m) * len);
+          g.stroke();
+        }
+    }
+  }, [r, channel]);
+  const click = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!r || !r.nx) return;
+    const b = e.currentTarget.getBoundingClientRect();
+    const cx = Math.floor(((e.clientX - b.left) / b.width) * r.nx);
+    const cz = r.nz - 1 - Math.floor(((e.clientY - b.top) / b.height) * r.nz);
+    const x = r.x0 + (cx + 0.5) * r.cell;
+    const z = r.z0 + (cz + 0.5) * r.cell;
+    void drillDown(engine, { extra: { maps: [map] }, ...(team ? { drill: { team } } : {}), place: { x, y: 0, z, radius: r.cell * 2, grid: 'fine', cell: r.cell } });
+  };
+  return (
+    <div>
+      <div className="row brk-controls" style={{ flexWrap: 'wrap', marginBottom: 6 }}>
+        <label className="brk-field">
+          {t('mass.map')}
+          <select value={map} onChange={(e) => setMap(e.target.value)}>
+            {maps.map((m) => (
+              <option key={m.map} value={m.map}>{`${m.map} (${m.matches})`}</option>
+            ))}
+          </select>
+        </label>
+        <label className="brk-field">
+          {t('mass.channel')}
+          <select value={channel} onChange={(e) => setChannel(e.target.value as Channel)}>
+            {CHANNELS.map((c) => (
+              <option key={c} value={c}>{t(`mass.ch.${c}`)}</option>
+            ))}
+          </select>
+        </label>
+        <Segmented<string> value={String(level)} options={['1', '2', '4', '8'].map((v) => ({ value: v, label: `×${v}` }))} onChange={(v) => setLevel(Number(v))} />
+        <label className="brk-field">
+          {t('mass.col.team')}
+          <select value={team ?? ''} onChange={(e) => setTeam(e.target.value || null)}>
+            <option value="">{t('mass.all')}</option>
+            {(r?.teams ?? []).map((tm) => (
+              <option key={tm} value={tm}>{tm}</option>
+            ))}
+          </select>
+        </label>
+        {r && <span className="hint">{t('mass.gridInfo', { matches: r.matches, cell: fmt(r.cell, 1), cells: r.cells, mb: fmt(r.bytes / 1e6, 1) })}</span>}
+      </div>
+      {!r ? (
+        <div className="hint">{q.error ?? t('mass.working')}</div>
+      ) : (
+        <div className="mass-map">
+          <canvas ref={canvas} onClick={click} title={t('mass.mapClick')} />
+          <div className="hint">{t(`mass.chHint.${channel === 'kd' || channel === 'stability' || channel === 'flow' ? channel : 'count'}`, { max: fmt(r.max) })}</div>
+        </div>
+      )}
+      <Took ms={q.ms} />
+    </div>
+  );
+}
+
+function InsightsTab() {
+  const filter = useMass((s) => s.filter);
+  const engine = useEngine();
+  const [maps, setMaps] = useState(4);
+  const [report, setReport] = useState<MassReport | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [ms, setMs] = useState<number | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const run = async () => {
+    setBusy(true);
+    setErr(null);
+    const t0 = performance.now();
+    try {
+      setReport(await askMass<MassReport>({ type: 'insights', filter, maps }, 'insights'));
+      setMs(Math.round(performance.now() - t0));
+    } catch (e) {
+      setErr((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const say = (key: string, params: Record<string, number | string>) => t(key, params);
+  const copy = () => {
+    if (report) void navigator.clipboard?.writeText(JSON.stringify(massReportForModel(report, say), null, 1));
+  };
+  const text = (i: MassInsight) => (i.sentence.key.startsWith('mass.') ? t(i.sentence.key, i.sentence.params) : `${i.evidence.map ?? ''}: ${t(i.sentence.key, i.sentence.params)}`);
+  return (
+    <div>
+      <div className="row brk-controls" style={{ flexWrap: 'wrap', marginBottom: 6 }}>
+        <button disabled={busy} onClick={() => void run()}>
+          {busy ? t('mass.working') : t('mass.findInsights')}
+        </button>
+        <label className="brk-field">
+          {t('mass.insightMaps')}
+          <input type="number" min={0} max={20} value={maps} onChange={(e) => setMaps(Math.max(0, Math.min(20, Number(e.target.value) || 0)))} />
+        </label>
+        {report && <button onClick={copy}>{t('mass.copyReport')}</button>}
+        <span className="hint">{t('mass.insightsHint')}</span>
+      </div>
+      {err && <div className="hint" style={{ color: 'var(--warm)' }}>{err}</div>}
+      {report && (
+        <>
+          <div className="hint">
+            {t('mass.reportLine', { n: report.insights.length, matches: report.dataset.matches, tests: report.detectors.reduce((s, d) => s + d.tests, 0), fdr: report.fdr })}
+          </div>
+          <ol className="mass-insights">
+            {report.insights.map((i) => (
+              <li key={i.id}>
+                <span className={`mass-conf mass-conf-${i.confidence.level}`}>{t(`mass.conf.${i.confidence.level}`)}</span> {text(i)}
+                <span className="mass-dim"> q={i.confidence.q < 0.001 ? '<0.001' : fmt(i.confidence.q, 3)}</span>
+                <button className="small" onClick={() => void drillDown(engine, { insight: i })}>
+                  {t('mass.load')}
+                </button>
+              </li>
+            ))}
+          </ol>
+          <div className="hint">
+            {[...report.detectors
+              .filter((d) => d.id !== 'grid.all')
+              .reduce((m, d) => {
+                // The map detectors ran once a map: one line each, summed.
+                const o = m.get(d.id);
+                m.set(d.id, o ? { ...o, ran: o.ran || d.ran, tests: o.tests + d.tests, found: o.found + d.found } : d);
+                return m;
+              }, new Map<string, MassReport['detectors'][number]>())
+              .values()]
+              .map((d) => `${d.id}: ${d.ran ? t('mass.detRan', { tests: d.tests, found: d.found }) : t(d.skipped && d.skipped.startsWith('mass.') ? d.skipped : 'mass.skip.other')}`)
+              .join(' · ')}
+          </div>
+        </>
+      )}
+      <Took ms={ms} />
+    </div>
+  );
+}

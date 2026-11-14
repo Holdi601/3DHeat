@@ -10,6 +10,7 @@ import { leanBudget, leanOverlayOf, loadLeanOverlay, overlayFiles, recolour, typ
 import { useLeanStore } from '../../overlay/lean/leanState';
 import { expandContainerFiles } from '../../data/container';
 import { prepareUnits } from '../replay/units';
+import type { Engine } from '../../render/engine';
 
 const MB = 1e6;
 
@@ -44,77 +45,7 @@ export function LeanOverlayPanel() {
     const add = adding.current;
     adding.current = false;
     // A `.3dheat` container stands for its match's table, read in place (docs/container.md).
-    const fresh = await expandContainerFiles(Array.from(list ?? []));
-    const kept = add ? (leanOverlayOf(useStore.getState().dataset)?.files ?? []) : [];
-    // A file picked twice (the same folder again) counts once.
-    const seen = new Set(kept.map((f) => `${f.name}${f.size}`));
-    const picked = overlayFiles([...kept, ...fresh.filter((f) => !seen.has(`${f.name}${f.size}`))]);
-    if (!picked.length || picked.length === kept.length) return;
-    useLeanStore.getState().handle?.cancel();
-    const host = await probeHostMemory();
-    const budget = leanBudget({
-      gpuMaxBufferBytes: engine?.gpuTracksMaxBytes ?? 0,
-      vramBytes: host?.vramBytes ?? null,
-      freeBytes: host?.freeBytes ?? null,
-      totalBytes: host?.totalBytes ?? null,
-      deviceMemoryGB: (navigator as { deviceMemory?: number }).deviceMemory ?? null,
-    });
-    const startedMs = performance.now();
-    const name = picked.length === 1 ? picked[0].name.replace(/\.parquet$/i, '') : t('lean.name', { count: picked.length });
-    const handle = loadLeanOverlay(picked, name, budget, (p) => {
-      const prev = useLeanStore.getState().progress;
-      if (p.phase === 'planned')
-        useLeanStore.setState({
-          progress: {
-            ...(prev ?? {
-              done: 0,
-              total: 0,
-              rows: 0,
-              totalRows: 0,
-              startedMs,
-            }),
-            phase: 'planned',
-            samples: p.samples,
-            keys: p.keys,
-            level: p.level,
-          },
-        });
-      else useLeanStore.setState({ progress: { ...prev, ...p, startedMs } });
-    });
-    useLeanStore.setState({
-      handle,
-      error: null,
-      progress: {
-        phase: 'footers',
-        done: 0,
-        total: picked.length,
-        rows: 0,
-        totalRows: 0,
-        startedMs,
-      },
-    });
-    try {
-      const o = await handle.promise;
-      markOverlay(o.built.dataset);
-      // The unit index a few milliseconds a frame, before the first render would build it all at once.
-      await prepareUnits(o.built.dataset);
-      const s = useStore.getState();
-      s.setDataset(o.built.dataset);
-      useRaceStore.getState().setTab('heat');
-      s.setMode('team');
-      s.patchTeam({ figures: true });
-      // Played back, not every sample at once: the overlay keeps no samples but its keys on the GPU.
-      s.patchTimeline({ mode: 'play' });
-      s.seek(o.built.dataset.timeRange[0]);
-      useLeanStore.setState({ overlay: o, progress: null, handle: null });
-    } catch (e) {
-      const err = e as Error & { detail?: string };
-      useLeanStore.setState({
-        progress: null,
-        handle: null,
-        error: err.message === 'cancelled' ? null : { key: err.message, detail: err.detail },
-      });
-    }
+    await startLeanLoad(await expandContainerFiles(Array.from(list ?? [])), engine, add);
   };
 
   const info = overlay && engine ? engine.gpuTracksInfo() : null;
@@ -315,4 +246,84 @@ export function LeanOverlayPanel() {
       </Section>
     </>
   );
+}
+
+/**
+ * Loads tables as the many-match overlay (`fresh`, containers expanded
+ * already; `add` joins them to the matches loaded), as the panel's pickers
+ * and the mass analysis's drill-down do. Resolves true once the overlay shows.
+ */
+export async function startLeanLoad(fresh: File[], engine: Engine | null, add = false): Promise<boolean> {
+  const kept = add ? (leanOverlayOf(useStore.getState().dataset)?.files ?? []) : [];
+  // A file picked twice (the same folder again) counts once.
+  const seen = new Set(kept.map((f) => `${f.name}${f.size}`));
+  const picked = overlayFiles([...kept, ...fresh.filter((f) => !seen.has(`${f.name}${f.size}`))]);
+  if (!picked.length || picked.length === kept.length) return false;
+  useLeanStore.getState().handle?.cancel();
+  const host = await probeHostMemory();
+  const budget = leanBudget({
+    gpuMaxBufferBytes: engine?.gpuTracksMaxBytes ?? 0,
+    vramBytes: host?.vramBytes ?? null,
+    freeBytes: host?.freeBytes ?? null,
+    totalBytes: host?.totalBytes ?? null,
+    deviceMemoryGB: (navigator as { deviceMemory?: number }).deviceMemory ?? null,
+  });
+  const startedMs = performance.now();
+  const name = picked.length === 1 ? picked[0].name.replace(/\.parquet$/i, '') : t('lean.name', { count: picked.length });
+  const handle = loadLeanOverlay(picked, name, budget, (p) => {
+    const prev = useLeanStore.getState().progress;
+    if (p.phase === 'planned')
+      useLeanStore.setState({
+        progress: {
+          ...(prev ?? {
+            done: 0,
+            total: 0,
+            rows: 0,
+            totalRows: 0,
+            startedMs,
+          }),
+          phase: 'planned',
+          samples: p.samples,
+          keys: p.keys,
+          level: p.level,
+        },
+      });
+    else useLeanStore.setState({ progress: { ...prev, ...p, startedMs } });
+  });
+  useLeanStore.setState({
+    handle,
+    error: null,
+    progress: {
+      phase: 'footers',
+      done: 0,
+      total: picked.length,
+      rows: 0,
+      totalRows: 0,
+      startedMs,
+    },
+  });
+  try {
+    const o = await handle.promise;
+    markOverlay(o.built.dataset);
+    // The unit index a few milliseconds a frame, before the first render would build it all at once.
+    await prepareUnits(o.built.dataset);
+    const s = useStore.getState();
+    s.setDataset(o.built.dataset);
+    useRaceStore.getState().setTab('heat');
+    s.setMode('team');
+    s.patchTeam({ figures: true });
+    // Played back, not every sample at once: the overlay keeps no samples but its keys on the GPU.
+    s.patchTimeline({ mode: 'play' });
+    s.seek(o.built.dataset.timeRange[0]);
+    useLeanStore.setState({ overlay: o, progress: null, handle: null });
+  } catch (e) {
+    const err = e as Error & { detail?: string };
+    useLeanStore.setState({
+      progress: null,
+      handle: null,
+      error: err.message === 'cancelled' ? null : { key: err.message, detail: err.detail },
+    });
+    return false;
+  }
+  return useLeanStore.getState().overlay !== null && useLeanStore.getState().error === null;
 }

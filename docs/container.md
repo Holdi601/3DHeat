@@ -91,6 +91,7 @@ The members the converters write today, in this order:
 | `table` | `<match>.parquet` | yes |
 | `match` | `<match>.match.json` | no (deflated) |
 | `messages`, `flight`, `events`, `effects`, `objectives`, `packets`, `props`, `strings`, ... | `<match>.<role>.parquet` | yes |
+| `summary` | `<match>.summary.json`, the mass index's summary ([Mass analysis](mass-analysis.md)), added by `tools/3dheat-summarize.mjs` | no (deflated) |
 
 The table comes right after the manifest, so the reader's first read of the
 file's start covers the manifest and the table's local header together.

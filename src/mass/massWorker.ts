@@ -1,0 +1,438 @@
+/// <reference lib="webworker" />
+/**
+ * The mass analysis off the page's thread: takes the picked files, finds
+ * each match's summary - the folder's index (`3dheat-index.jsonl.gz`) when
+ * it is there and current, else the browser's cache, else the container's
+ * `summary` member, else worked out by a pool of `summarizeWorker`s and
+ * cached - keeps the heads as `MassStore` columns, and answers the panel's
+ * questions from them. Grids are never held for all matches: a map's are
+ * streamed into one `GridMerge` when the map is asked for.
+ */
+
+import { isContainer, openContainer } from '../data/container';
+import { massInsights, insightMatches, type MassInsight, type MassReport } from './detect';
+import { GridMerge, mergeCell, type Channel } from './grids';
+import {
+  MassStore, balance, drillMatches, overview, phases, populations, sides, storeBytes, trends,
+  type BalanceBy, type BalanceSplit, type Bucket, type MassDrill, type MassFilter,
+} from './store';
+import type { SummarizeRequest, SummarizeResponse } from './summarizeWorker';
+import { SUMMARY_FORMAT, SUMMARY_VERSION, type MatchSummary, type SummaryGrid, type SummaryHead } from './types';
+
+export type MassQuery =
+  | { kind: 'overview' }
+  | { kind: 'balance'; by: BalanceBy; split: BalanceSplit; minUnits: number; classes?: string[]; players?: boolean }
+  | { kind: 'trends'; by: 'vehicle' | 'class'; bucket: Bucket }
+  | { kind: 'populations' }
+  | { kind: 'sides' }
+  | { kind: 'phases' };
+
+export type MassRequest =
+  | { type: 'open'; files: { file: File; path: string }[]; add: boolean }
+  | { type: 'query'; id: number; filter: MassFilter; q: MassQuery }
+  | { type: 'grid'; id: number; filter: MassFilter; map: string; channel: Channel; level: number; team: string | null }
+  | { type: 'insights'; id: number; filter: MassFilter; maps: number }
+  | { type: 'drill'; id: number; filter: MassFilter; drill?: MassDrill; insight?: MassInsight };
+
+export interface MassFacets {
+  matches: number;
+  games: string[];
+  maps: { map: string; game: string; matches: number }[];
+  modes: string[];
+  from: number | null;
+  to: number | null;
+}
+
+export interface MassLoadStats {
+  files: number;
+  fromIndex: number;
+  fromCache: number;
+  fromMember: number;
+  computed: number;
+  failed: number;
+  ms: number;
+  /** Mean ms a computed summary took in its worker. */
+  computeMs: number;
+  storeBytes: number;
+}
+
+export type MassResponse =
+  | { type: 'progress'; done: number; total: number; phase: 'index' | 'summaries' | 'grids' }
+  | { type: 'ready'; facets: MassFacets; stats: MassLoadStats }
+  | { type: 'result'; id: number; data: unknown; ms: number }
+  | { type: 'error'; id?: number; message: string };
+
+const ctx = self as unknown as DedicatedWorkerGlobalScope;
+const post = (m: MassResponse) => ctx.postMessage(m);
+
+type GridRef = { kind: 'index'; gz: File; path: string } | { kind: 'idb'; key: string } | { kind: 'member' } | { kind: 'memory' } | { kind: 'none' };
+
+let store = new MassStore();
+/** Per match: its file, grid source and robust extent. */
+let files: (File | null)[] = [];
+let grids: GridRef[] = [];
+let extents: ([number, number, number, number] | null)[] = [];
+const memoryGrids = new Map<number, SummaryGrid>();
+let lastMerge: { key: string; merge: GridMerge } | null = null;
+
+// ---------------------------------------------------------------------------
+// The browser's cache: heads and grids by file name, size and time.
+
+let dbp: Promise<IDBDatabase | null> | null = null;
+function db(): Promise<IDBDatabase | null> {
+  dbp ??= new Promise((resolve) => {
+    try {
+      const r = indexedDB.open('3dheat-mass', 1);
+      r.onupgradeneeded = () => {
+        r.result.createObjectStore('heads');
+        r.result.createObjectStore('grids');
+      };
+      r.onsuccess = () => resolve(r.result);
+      r.onerror = () => resolve(null);
+    } catch {
+      resolve(null);
+    }
+  });
+  return dbp;
+}
+
+async function idbGet<T>(name: 'heads' | 'grids', key: string): Promise<T | undefined> {
+  const d = await db();
+  if (!d) return undefined;
+  return new Promise((resolve) => {
+    try {
+      const r = d.transaction(name).objectStore(name).get(key);
+      r.onsuccess = () => resolve(r.result as T | undefined);
+      r.onerror = () => resolve(undefined);
+    } catch {
+      resolve(undefined);
+    }
+  });
+}
+
+async function idbPut(name: 'heads' | 'grids', key: string, v: unknown): Promise<boolean> {
+  const d = await db();
+  if (!d) return false;
+  return new Promise((resolve) => {
+    try {
+      const tx = d.transaction(name, 'readwrite');
+      tx.objectStore(name).put(v, key);
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => resolve(false);
+    } catch {
+      resolve(false);
+    }
+  });
+}
+
+const cacheKey = (path: string, f: File) => `${path}|${f.size}|${f.lastModified}`;
+
+// ---------------------------------------------------------------------------
+// Reading
+
+async function* lines(file: Blob): AsyncGenerator<string> {
+  const reader = file.stream().pipeThrough(new DecompressionStream('gzip')).pipeThrough(new TextDecoderStream()).getReader();
+  let buf = '';
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buf += value;
+    let nl: number;
+    while ((nl = buf.indexOf('\n')) >= 0) {
+      const line = buf.slice(0, nl);
+      buf = buf.slice(nl + 1);
+      if (line) yield line;
+    }
+  }
+  if (buf.trim()) yield buf;
+}
+
+const INDEX = /(^|\/)3dheat-index\.jsonl\.gz$/i;
+const GRIDS = /(^|\/)3dheat-index\.grids\.jsonl\.gz$/i;
+/** A loose table, not a sidecar (`<match>.<role>.parquet`). */
+const TABLE = /^(?!.*\.(messages|flight|packets|events|entities|props|units|combatlog|strings|raw|effects|objectives|chat)\.parquet$).*\.parquet$/i;
+
+const valid = (s: { format?: string; version?: number } | null | undefined) => !!s && s.format === SUMMARY_FORMAT && s.version === SUMMARY_VERSION;
+
+class Pool {
+  private readonly idle: Worker[] = [];
+  private readonly all: Worker[] = [];
+  private readonly waiting: (() => void)[] = [];
+  private next = 1;
+  private readonly pending = new Map<number, (r: SummarizeResponse) => void>();
+  constructor(n: number) {
+    for (let i = 0; i < n; i++) {
+      const w = new Worker(new URL('./summarizeWorker.ts', import.meta.url), { type: 'module' });
+      w.onmessage = (ev: MessageEvent<SummarizeResponse>) => {
+        const p = this.pending.get(ev.data.id);
+        this.pending.delete(ev.data.id);
+        this.idle.push(w);
+        this.waiting.shift()?.();
+        p?.(ev.data);
+      };
+      this.all.push(w);
+      this.idle.push(w);
+    }
+  }
+  async run(req: Omit<SummarizeRequest, 'id'>): Promise<SummarizeResponse> {
+    while (!this.idle.length) await new Promise<void>((r) => this.waiting.push(r));
+    const w = this.idle.pop()!;
+    const id = this.next++;
+    return new Promise((resolve) => {
+      this.pending.set(id, resolve);
+      w.postMessage({ ...req, id });
+    });
+  }
+  close(): void {
+    for (const w of this.all) w.terminate();
+  }
+}
+
+function addMatch(path: string, file: File | null, head: SummaryHead, grid: GridRef): void {
+  store.add(path, head);
+  files.push(file);
+  grids.push(grid);
+  extents.push(head.extent ?? null);
+}
+
+async function open(list: { file: File; path: string }[], add: boolean): Promise<void> {
+  const t0 = performance.now();
+  if (!add) {
+    store = new MassStore();
+    files = [];
+    grids = [];
+    extents = [];
+    memoryGrids.clear();
+  }
+  lastMerge = null;
+  const stats: MassLoadStats = { files: 0, fromIndex: 0, fromCache: 0, fromMember: 0, computed: 0, failed: 0, ms: 0, computeMs: 0, storeBytes: 0 };
+  const dir = (p: string) => (p.includes('/') ? p.slice(0, p.lastIndexOf('/') + 1) : '');
+  const known = new Set(store.paths);
+  const matchFiles = new Map<string, File>();
+  for (const { file, path } of list) if ((isContainer(file.name) || TABLE.test(file.name)) && !known.has(path)) matchFiles.set(path, file);
+  stats.files = matchFiles.size;
+  const gzOf = new Map<string, File>();
+  for (const { file, path } of list) if (GRIDS.test(path)) gzOf.set(dir(path), file);
+  // 1. The folders' indexes: a line a match, taken when its file is here with the same size.
+  const indexes = list.filter((f) => INDEX.test(f.path));
+  let done = 0;
+  for (const ix of indexes) {
+    const base = dir(ix.path);
+    for await (const line of lines(ix.file)) {
+      let e: { path: string; size: number; head: SummaryHead };
+      try {
+        e = JSON.parse(line);
+      } catch {
+        continue;
+      }
+      const path = base + e.path;
+      const f = matchFiles.get(path);
+      if (!f || f.size !== e.size || !valid(e.head)) continue;
+      matchFiles.delete(path);
+      const gz = gzOf.get(base);
+      addMatch(path, f, e.head, gz ? { kind: 'index', gz, path: e.path } : { kind: 'member' });
+      stats.fromIndex++;
+      if (++done % 500 === 0) post({ type: 'progress', done, total: stats.files, phase: 'index' });
+    }
+  }
+  // 2. The rest: the cache, the container's member, or worked out.
+  const rest = [...matchFiles];
+  const threads = Math.max(1, Math.min(6, (navigator.hardwareConcurrency || 4) - 2));
+  let pool: Pool | null = null;
+  let next = 0;
+  let computeMs = 0;
+  const work = async () => {
+    for (;;) {
+      const i = next++;
+      if (i >= rest.length) return;
+      const [path, file] = rest[i];
+      const key = cacheKey(path, file);
+      try {
+        const cached = await idbGet<SummaryHead>('heads', key);
+        if (valid(cached)) {
+          addMatch(path, file, cached!, { kind: 'idb', key });
+          stats.fromCache++;
+        } else {
+          let s: MatchSummary | null = null;
+          if (isContainer(file.name)) {
+            const c = await openContainer(file);
+            if (c.manifest.roles?.summary) {
+              const m = (await c.json('summary')) as MatchSummary | null;
+              if (valid(m)) s = m;
+            }
+          }
+          if (s) {
+            const { grid, ...head } = s;
+            addMatch(path, file, head, { kind: 'member' });
+            stats.fromMember++;
+            void idbPut('heads', key, head).then((ok) => ok && grid && idbPut('grids', key, grid));
+          } else {
+            pool ??= new Pool(threads);
+            const r = await pool.run({ file, path });
+            if (!r.ok || !r.summary) throw new Error(r.ok ? 'no position, time or unit column' : r.error);
+            computeMs += r.ms;
+            const { grid, ...head } = r.summary;
+            const cachedOk = await idbPut('heads', key, head);
+            if (cachedOk && grid) await idbPut('grids', key, grid);
+            const idx = store.matches;
+            addMatch(path, file, head, cachedOk ? { kind: 'idb', key } : grid ? { kind: 'memory' } : { kind: 'none' });
+            if (!cachedOk && grid) memoryGrids.set(idx, grid);
+            stats.computed++;
+          }
+        }
+      } catch {
+        stats.failed++;
+      }
+      if (++done % 25 === 0 || done === stats.files) post({ type: 'progress', done, total: stats.files, phase: 'summaries' });
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(16, Math.max(1, rest.length)) }, work));
+  (pool as Pool | null)?.close();
+  stats.ms = Math.round(performance.now() - t0);
+  stats.computeMs = stats.computed ? Math.round(computeMs / stats.computed) : 0;
+  stats.storeBytes = storeBytes(store);
+  post({ type: 'ready', facets: facets(), stats });
+}
+
+function facets(): MassFacets {
+  const all = new Uint8Array(store.matches).fill(1);
+  const o = overview(store, all);
+  return {
+    matches: store.matches,
+    games: o.byGame.map((g) => g.key),
+    maps: o.byMap.map((m) => ({ map: m.key, game: m.game, matches: m.matches })),
+    modes: o.byMode.map((m) => m.key).filter(Boolean),
+    from: o.first,
+    to: o.last,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Grids
+
+async function gridOf(i: number): Promise<SummaryGrid | null> {
+  const g = grids[i];
+  if (g.kind === 'idb') return (await idbGet<SummaryGrid>('grids', g.key)) ?? null;
+  if (g.kind === 'memory') return memoryGrids.get(i) ?? null;
+  if (g.kind === 'member' && files[i] && isContainer(files[i]!.name)) {
+    const c = await openContainer(files[i]!);
+    const s = (await c.json('summary')) as MatchSummary | null;
+    return s?.grid ?? null;
+  }
+  return null;
+}
+
+function teamsOf(i: number): string[] {
+  const t0 = store.m.team0.get(i);
+  const n = store.m.teams.get(i);
+  return Array.from({ length: n }, (_, k) => store.str(store.t.name.a[t0 + k]));
+}
+
+/** The matches' grids summed (indexes streamed once each, the rest read one by one). */
+async function mergeOf(list: number[], team: string | null, progress: boolean): Promise<GridMerge> {
+  const merge = new GridMerge(mergeCell(list.map((i) => extents[i])));
+  const byGz = new Map<File, Map<string, number>>();
+  const other: number[] = [];
+  for (const i of list) {
+    const g = grids[i];
+    if (g.kind === 'index') {
+      let m = byGz.get(g.gz);
+      if (!m) byGz.set(g.gz, (m = new Map()));
+      m.set(g.path, i);
+    } else other.push(i);
+  }
+  let done = 0;
+  const tick = () => {
+    if (progress && ++done % 100 === 0) post({ type: 'progress', done, total: list.length, phase: 'grids' });
+  };
+  for (const [gz, want] of byGz) {
+    for await (const line of lines(gz)) {
+      // The path first: only the lines wanted are parsed.
+      const m = /^\{"path":"((?:[^"\\]|\\.)*)"/.exec(line);
+      const path = m ? JSON.parse(`"${m[1]}"`) : null;
+      const i = path === null ? undefined : want.get(path);
+      if (i === undefined) continue;
+      const e = JSON.parse(line) as { grid: SummaryGrid };
+      merge.add(e.grid, teamsOf(i), extents[i], team);
+      want.delete(path);
+      tick();
+      if (!want.size) break;
+    }
+    // Lines the index lacks: from the containers.
+    for (const i of want.values()) other.push(i);
+  }
+  let next = 0;
+  const work = async () => {
+    for (;;) {
+      const k = next++;
+      if (k >= other.length) return;
+      const i = other[k];
+      try {
+        const g = await gridOf(i);
+        if (g) merge.add(g, teamsOf(i), extents[i], team);
+      } catch {
+        // a file gone or unreadable: its grid is left out
+      }
+      tick();
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(8, other.length) }, work));
+  return merge;
+}
+
+const filterKey = (f: MassFilter) => JSON.stringify(f);
+
+// ---------------------------------------------------------------------------
+
+ctx.onmessage = async (ev: MessageEvent<MassRequest>) => {
+  const m = ev.data;
+  const t0 = performance.now();
+  try {
+    if (m.type === 'open') return await open(m.files, m.add);
+    if (m.type === 'query') {
+      const mask = store.matchMask(m.filter);
+      const q = m.q;
+      const data =
+        q.kind === 'overview' ? overview(store, mask)
+        : q.kind === 'balance' ? balance(store, mask, q.by, q.split, { minUnits: q.minUnits, classes: q.classes, players: q.players })
+        : q.kind === 'trends' ? trends(store, mask, q.by, q.bucket)
+        : q.kind === 'populations' ? populations(store, mask)
+        : q.kind === 'sides' ? sides(store, mask)
+        : phases(store, mask);
+      return post({ type: 'result', id: m.id, data, ms: performance.now() - t0 });
+    }
+    if (m.type === 'grid') {
+      const key = `${filterKey(m.filter)}|${m.map}|${m.team}`;
+      if (!lastMerge || lastMerge.key !== key) {
+        const mask = store.matchMask({ ...m.filter, maps: [m.map] });
+        const list: number[] = [];
+        for (let i = 0; i < mask.length; i++) if (mask[i]) list.push(i);
+        lastMerge = { key, merge: await mergeOf(list, m.team, true) };
+      }
+      const r = lastMerge.merge.raster(m.channel, m.level);
+      const data = { ...r, matches: lastMerge.merge.matches, cells: lastMerge.merge.ix.length, bytes: lastMerge.merge.bytes(), teams: lastMerge.merge.teams };
+      ctx.postMessage({ type: 'result', id: m.id, data, ms: performance.now() - t0 } satisfies MassResponse, [r.v.buffer, ...(r.d ? [r.d.buffer] : [])]);
+      return;
+    }
+    if (m.type === 'insights') {
+      const mask = store.matchMask(m.filter);
+      const o = overview(store, mask);
+      const merges = new Map<string, GridMerge>();
+      for (const mp of o.byMap.filter((x) => x.key).slice(0, m.maps)) {
+        const mm = store.matchMask({ ...m.filter, maps: [mp.key] });
+        const list: number[] = [];
+        for (let i = 0; i < mm.length; i++) if (mm[i]) list.push(i);
+        merges.set(mp.key, await mergeOf(list, null, false));
+      }
+      const report: MassReport = massInsights({ store, mask, filter: m.filter, grids: merges });
+      return post({ type: 'result', id: m.id, data: report, ms: performance.now() - t0 });
+    }
+    if (m.type === 'drill') {
+      const list = m.insight ? insightMatches(store, m.filter, m.insight) : drillMatches(store, store.matchMask(m.filter), m.drill ?? {});
+      const out = list.map((i) => files[i]).filter((f): f is File => !!f);
+      return post({ type: 'result', id: m.id, data: { files: out, matches: list.length }, ms: performance.now() - t0 });
+    }
+  } catch (e) {
+    post({ type: 'error', id: 'id' in m ? m.id : undefined, message: e instanceof Error ? e.message : String(e) });
+  }
+};

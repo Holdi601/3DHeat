@@ -1,0 +1,112 @@
+/* The mass analysis window: the breakdown's window (compare.css, breakdown.css) with its own stats, bars and map. */
+
+.mass-window {
+  height: min(70%, 720px);
+}
+
+.mass-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  margin-bottom: 8px;
+}
+
+.mass-stats div {
+  display: flex;
+  flex-direction: column;
+}
+
+.mass-stats span,
+.mass-dim {
+  color: var(--text-dim);
+}
+
+.mass-days {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 40px;
+  margin: 4px 0 10px;
+}
+
+.mass-days i {
+  flex: 1;
+  min-width: 1px;
+  background: rgba(57, 135, 229, 0.75);
+}
+
+.mass-phase-row {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  align-items: end;
+  gap: 8px;
+}
+
+.mass-phase-row .mass-days {
+  height: 26px;
+  margin: 2px 0;
+}
+
+.mass-hist div {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.mass-hist i {
+  display: block;
+  height: 10px;
+  background: rgba(57, 135, 229, 0.75);
+}
+
+.mass-hist div > i {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.mass-pick,
+.brk-table tbody tr {
+  cursor: pointer;
+}
+
+.brk-table tr.mass-sig td {
+  background: rgba(229, 160, 57, 0.14);
+}
+
+.mass-map canvas {
+  height: 46vh;
+  width: auto;
+  max-width: 100%;
+  image-rendering: pixelated;
+  background: #0b0d10;
+  border: 1px solid var(--line-soft);
+  cursor: crosshair;
+}
+
+.mass-insights li {
+  margin: 3px 0;
+}
+
+.mass-insights button {
+  margin-left: 8px;
+}
+
+.mass-conf {
+  font-size: 11px;
+  padding: 0 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mass-conf-high {
+  background: rgba(57, 180, 100, 0.3);
+}
+
+.mass-conf-medium {
+  background: rgba(229, 160, 57, 0.25);
+}
+
+.mass-took {
+  margin-top: 6px;
+}

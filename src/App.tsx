@@ -66,6 +66,7 @@ import { clearLook } from './ui/replay/pair';
 import { CameraReadout, copyCameraPose } from './ui/CameraReadout';
 import { PickCard } from './ui/PickCard';
 import { BreakdownWindow } from './ui/breakdown/BreakdownPanel';
+import { MassPanel, MassWindow } from './ui/mass/MassPanel';
 import { useInspectStore } from './state/inspectStore';
 import { Timeline } from './ui/Timeline';
 import { LinePanel } from './ui/panels/LinePanel';
@@ -561,6 +562,7 @@ export function App() {
           <SlicePanel />
           <VolumePanel />
           <InsightsPanel />
+          <MassPanel />
           <MeasurePanel />
           <PathPanel />
           <PerfPanel />
@@ -659,6 +661,7 @@ function InspectHud() {
       <UnitCard />
       <PickCard />
       <BreakdownWindow />
+      <MassWindow />
     </div>
   );
 }
