@@ -72,14 +72,14 @@ export class DirectionController {
     const ds = this.host.dataset();
     const h = this.host.heat();
     const want = ds !== null && DirectionController.wanted(h);
-    const key = want ? `${ds!.id}|${ds!.count}|${h.dirSource}` : '';
+    const key = want ? `${ds!.id}|${ds!.count}|${h.dirSource}|${JSON.stringify(h.dirSourceBy)}` : '';
     if (key !== this.key) {
       this.key = key;
       this.data = null;
       this.generation++;
       useDirectionStore.getState().set({ counts: null, spot: null });
       const job = ++this.job;
-      if (want) void this.compute(ds!, h.dirSource, job);
+      if (want) void this.compute(ds!, h.dirSource, h.dirSourceBy, job);
     }
     if (!this.applied || this.applied.renderer !== renderer || this.applied.data !== this.data) {
       renderer.setDirections?.(this.data ? this.data.angles : null);
@@ -87,8 +87,8 @@ export class DirectionController {
     }
   }
 
-  private async compute(ds: Dataset, source: DirSource, job: number): Promise<void> {
-    const data = await computeDirections(ds, source, { yieldRows: YIELD_ROWS, cancelled: () => job !== this.job });
+  private async compute(ds: Dataset, source: DirSource, by: Record<string, DirSource>, job: number): Promise<void> {
+    const data = await computeDirections(ds, source, { yieldRows: YIELD_ROWS, cancelled: () => job !== this.job, by });
     if (job !== this.job || !data) return;
     this.data = data;
     this.generation++;

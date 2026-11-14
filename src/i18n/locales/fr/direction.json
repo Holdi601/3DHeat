@@ -7,6 +7,8 @@
   "direction.src.movement": "Déplacement",
   "direction.src.other": "Autre partie",
   "direction.srcHint": "Autre partie : vers l'autre côté d'un événement, donc un kill va du tueur à la victime et une mort de la victime au tueur. Meilleure prend par ligne l'autre partie, sinon le vecteur de visée ou de tir, sinon la vue, sinon le déplacement.",
+  "direction.byEvent": "Par type de {column}",
+  "direction.src.inherit": "Comme ci-dessus",
   "direction.found": "{count} lignes avec une direction",
   "direction.none": "Aucune ligne n'a de direction depuis cette source.",
   "direction.working": "Calcul des directions…",

@@ -50,7 +50,8 @@ fn vsArrow(@builtin(vertex_index) vid : u32, @builtin(instance_index) inst : u32
   sum *= 0.1;
   let m = sum.xy / max(sum.z, 1e-12);
   let r = length(m);
-  let amount = sum.z * u.cfg.x / max(1e-9, u.cfg.y);
+  // Only where the cell itself carries heat: see the WebGL2 copy.
+  let amount = textureLoad(field, c, 0).z * u.cfg.x / max(1e-9, u.cfg.y);
   if (sum.z <= 0.0 || r < 0.03 || amount < 0.004) {
     out.pos = vec4<f32>(2.0, 2.0, 2.0, 1.0);
     out.alpha = 0.0;

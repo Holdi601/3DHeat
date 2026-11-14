@@ -7,6 +7,8 @@
   "direction.src.movement": "Moviment",
   "direction.src.other": "Altra part",
   "direction.srcHint": "Altra part: cap a l'altre costat d'un esdeveniment, així una baixa apunta de l'autor a la víctima i una mort de la víctima a l'autor. Millor pren per fila l'altra part, si no el vector de punteria o tret, si no la vista, si no el moviment.",
+  "direction.byEvent": "Per tipus de {column}",
+  "direction.src.inherit": "Com a dalt",
   "direction.found": "{count} files amb direcció",
   "direction.none": "Cap fila té direcció des d'aquesta font.",
   "direction.working": "Calculant direccions…",

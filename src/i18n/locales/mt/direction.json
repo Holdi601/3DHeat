@@ -7,6 +7,8 @@
   "direction.src.movement": "Moviment",
   "direction.src.other": "Il-parti l-oħra",
   "direction.srcHint": "Il-parti l-oħra: lejn in-naħa l-oħra ta' avveniment, għalhekk qtil jindika mill-qattiel lejn il-vittma u mewt mill-vittma lejn il-qattiel. L-aħjar jieħu għal kull ringiela l-parti l-oħra, jew inkella l-vettur tal-immirar jew tal-isparar, jew il-veduta, jew il-moviment.",
+  "direction.byEvent": "Skont it-tip ta' {column}",
+  "direction.src.inherit": "Bħal hawn fuq",
   "direction.found": "{count} ringieli b'direzzjoni",
   "direction.none": "L-ebda ringiela m'għandha direzzjoni minn din is-sors.",
   "direction.working": "Qed jiġu kkalkulati d-direzzjonijiet…",

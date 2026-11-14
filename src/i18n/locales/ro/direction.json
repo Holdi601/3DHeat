@@ -7,6 +7,8 @@
   "direction.src.movement": "Mișcare",
   "direction.src.other": "Cealaltă parte",
   "direction.srcHint": "Cealaltă parte: spre cealaltă parte a unui eveniment, deci o eliminare arată de la ucigaș la victimă, iar un deces de la victimă la ucigaș. Cea mai bună ia pentru fiecare rând cealaltă parte, altfel vectorul de țintire sau de tragere, altfel vederea, altfel mișcarea.",
+  "direction.byEvent": "Pe tip de {column}",
+  "direction.src.inherit": "Ca mai sus",
   "direction.found": "{count} rânduri cu direcție",
   "direction.none": "Niciun rând nu are direcție din această sursă.",
   "direction.working": "Se calculează direcțiile…",

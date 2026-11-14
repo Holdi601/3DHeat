@@ -7,6 +7,8 @@
   "direction.src.movement": "移動",
   "direction.src.other": "另一方",
   "direction.srcHint": "另一方：指向事件的另一側，因此擊殺從擊殺者指向受害者，死亡從受害者指向擊殺者。最佳依列依序取另一方、瞄準或射擊向量、視角、移動。",
+  "direction.byEvent": "按 {column} 類型",
+  "direction.src.inherit": "同上",
   "direction.found": "{count} 列有方向",
   "direction.none": "此來源中沒有任何列帶有方向。",
   "direction.working": "正在計算方向…",

@@ -7,6 +7,8 @@
   "direction.src.movement": "Movement",
   "direction.src.other": "Other party",
   "direction.srcHint": "Other party: towards the other side of an event, so a kill points from killer to victim and a death from victim to killer. Best takes per row the other party, else the aim or shot vector, else the view, else the movement.",
+  "direction.byEvent": "Per kind of {column}",
+  "direction.src.inherit": "As above",
   "direction.found": "{count} rows with a direction",
   "direction.none": "No row has a direction from this source.",
   "direction.working": "Working out directions…",

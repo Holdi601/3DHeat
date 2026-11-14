@@ -7,6 +7,8 @@
   "direction.src.movement": "Gluaiseacht",
   "direction.src.other": "An páirtí eile",
   "direction.srcHint": "An páirtí eile: i dtreo an taobh eile de imeacht, mar sin pointeálann marú ón marú chuig an íospartach agus bás ón íospartach chuig an marú. Roghnaíonn Is fearr an páirtí eile do gach róin, nó an veicteoir díriúcháin nó lámhaigh, nó an radharc, nó an ghluaiseacht.",
+  "direction.byEvent": "De réir cineáil {column}",
+  "direction.src.inherit": "Mar atá thuas",
   "direction.found": "{count} róin le treo",
   "direction.none": "Níl treo ag aon róin ón bhfoinse seo.",
   "direction.working": "Treoracha á ríomh…",

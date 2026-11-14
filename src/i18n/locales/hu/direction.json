@@ -7,6 +7,8 @@
   "direction.src.movement": "Mozgás",
   "direction.src.other": "Másik fél",
   "direction.srcHint": "Másik fél: egy esemény másik oldala felé, így egy kill a gyilkostól az áldozat felé mutat, egy halál az áldozattól a gyilkos felé. A Legjobb soronként a másik felet veszi, különben a célzási vagy lövésvektort, különben a nézetet, különben a mozgást.",
+  "direction.byEvent": "{column} fajtánként",
+  "direction.src.inherit": "Mint fent",
   "direction.found": "{count} sor iránnyal",
   "direction.none": "Egy sornak sincs iránya ebből a forrásból.",
   "direction.working": "Irányok számítása…",

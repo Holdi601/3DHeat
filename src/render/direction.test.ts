@@ -65,9 +65,9 @@ describe('directional heat', () => {
       const d = [s(t[0], t[1]), s(t[1], t[2]), s(t[2], t[0])];
       return (d[0] >= -1e-9 && d[1] >= -1e-9 && d[2] >= -1e-9) || (d[0] <= 1e-9 && d[1] <= 1e-9 && d[2] <= 1e-9);
     };
-    for (const [open, soft, px] of [[30, 0, 4], [30, 0, 40], [60, 0.35, 8], [90, 0.2, 200]] as const) {
+    for (const [open, soft, px, edge] of [[30, 0, 4, 0.75], [30, 0, 40, 3], [60, 0.35, 8, 1.5], [90, 0.2, 200, 0.75]] as const) {
       const w = wedgeUniforms(open, soft);
-      const tri = wedgeTriangle(w.half, w.soft, px);
+      const tri = wedgeTriangle(w.half, w.soft, px, edge);
       let lit = 0;
       for (let i = -60; i <= 60; i++) {
         for (let j = -60; j <= 60; j++) {
@@ -77,7 +77,7 @@ describe('directional heat', () => {
           if (d > 1 || d < 1e-4) continue;
           // The fragment stage's weight, its pixel antialiasing included.
           const off = Math.abs(Math.atan2(y, x));
-          const aa = Math.min(0.75 / Math.max(d * px, 1e-3), Math.min(w.half, Math.PI - w.half));
+          const aa = Math.min(edge / Math.max(d * px, 1e-3), Math.min(w.half, Math.PI - w.half));
           const sw = Math.max(w.soft, aa);
           const e = Math.min(1, Math.max(0, (off - (w.half - sw)) / (2 * sw)));
           if (e >= 1) continue;
@@ -127,6 +127,22 @@ describe('directional heat', () => {
     expect(unpackBearing(m.angles[1])).toBeCloseTo(0, 1);
     const v = (await computeDirections(d, 'auto'))!;
     expect(unpackBearing(v.angles[1])).toBeCloseTo(0.5, 1);
+  });
+
+  it('takes a source per event kind', async () => {
+    const d = ds(
+      [
+        { x: 0, z: 0, t: 0, p: 0, yaw: 1 },
+        { x: 10, z: 0, t: 0, p: 1, yaw: 1 },
+        { x: 0, z: 0, t: 1, p: 0, yaw: 1, other: 2 },
+      ],
+      ['a', 'b'],
+      ['', 'a', 'b'],
+    );
+    d.attrs.push({ name: 'event', kind: 'category', data: Uint32Array.of(0, 0, 1), min: 0, max: 1, categories: ['position', 'kill'] });
+    const r = (await computeDirections(d, 'view', { by: { kill: 'other' } }))!;
+    expect(unpackBearing(r.angles[0])).toBeCloseTo(1, 1);
+    expect(unpackBearing(r.angles[2])).toBeCloseTo(bearingOf(1, 0), 1);
   });
 
   it('shaders carry the wedge on both backends', () => {

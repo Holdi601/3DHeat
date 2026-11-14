@@ -7,6 +7,8 @@
   "direction.src.movement": "Liike",
   "direction.src.other": "Toinen osapuoli",
   "direction.srcHint": "Toinen osapuoli: tapahtuman toista puolta kohti, joten tappo osoittaa tappajasta uhriin ja kuolema uhrista tappajaan. Paras ottaa riviltä toisen osapuolen, muuten tähtäys- tai laukausvektorin, muuten näkymän, muuten liikkeen.",
+  "direction.byEvent": "Sarakkeen {column} lajeittain",
+  "direction.src.inherit": "Kuten yllä",
   "direction.found": "{count} riviä, joilla on suunta",
   "direction.none": "Yhdelläkään rivillä ei ole suuntaa tästä lähteestä.",
   "direction.working": "Lasketaan suuntia…",

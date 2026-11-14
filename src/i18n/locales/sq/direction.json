@@ -7,6 +7,8 @@
   "direction.src.movement": "Lëvizja",
   "direction.src.other": "Pala tjetër",
   "direction.srcHint": "Pala tjetër: drejt anës tjetër të një ngjarjeje, pra një vrasje tregon nga vrasësi te viktima dhe një vdekje nga viktima te vrasësi. Më i miri merr për çdo rresht palën tjetër, përndryshe vektorin e synimit ose të gjuajtjes, përndryshe pamjen, përndryshe lëvizjen.",
+  "direction.byEvent": "Sipas llojit të {column}",
+  "direction.src.inherit": "Si më sipër",
   "direction.found": "{count} rreshta me drejtim",
   "direction.none": "Asnjë rresht nuk ka drejtim nga ky burim.",
   "direction.working": "Po llogariten drejtimet…",

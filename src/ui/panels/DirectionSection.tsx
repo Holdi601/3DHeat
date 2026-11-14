@@ -1,5 +1,5 @@
 import { int, t, useLang } from '../../i18n';
-import { DIR_SOURCES } from '../../render/direction';
+import { DIR_SOURCES, eventColumn, type DirSource } from '../../render/direction';
 import { useDirectionStore } from '../../state/directionStore';
 import { useStore } from '../../state/store';
 import { selectedVolume, useVolumeStore } from '../../volumes/store';
@@ -17,6 +17,13 @@ export function DirectionSection() {
   const volume = useVolumeStore((s) => selectedVolume(s));
   const on = heat.wedgeOpening < 360 || heat.dirField !== 'off' || heat.dirOnClick;
   const found = counts ? Object.values(counts).reduce((a, b) => a + b, 0) : 0;
+  const events = dataset ? eventColumn(dataset) : null;
+  const setKind = (kind: string, v: string) => {
+    const by = { ...heat.dirSourceBy };
+    if (v === '') delete by[kind];
+    else by[kind] = v as DirSource;
+    patchHeat({ dirSourceBy: by });
+  };
   return (
     <Section title={t('direction.section')}>
       <div className="hint">{t('direction.hint')}</div>
@@ -26,6 +33,24 @@ export function DirectionSection() {
         onChange={(dirSource) => patchHeat({ dirSource })}
       />
       <div className="hint">{t('direction.srcHint')}</div>
+      {events && events.categories.length <= 40 && (
+        <details>
+          <summary>{t('direction.byEvent', { column: events.name })}</summary>
+          {events.categories.map((kind) => (
+            <div className="line" key={kind}>
+              <span>{kind || '—'}</span>
+              <select value={heat.dirSourceBy[kind] ?? ''} onChange={(e) => setKind(kind, e.target.value)}>
+                <option value="">{t('direction.src.inherit')}</option>
+                {DIR_SOURCES.map((s) => (
+                  <option key={s} value={s}>
+                    {t(`direction.src.${s}`)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+        </details>
+      )}
       {on && dataset && (
         <div className="hint">{counts ? (found ? t('direction.found', { count: int(found) }) : t('direction.none')) : t('direction.working')}</div>
       )}

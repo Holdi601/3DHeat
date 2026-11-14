@@ -7,6 +7,8 @@
   "direction.src.movement": "Hreyfing",
   "direction.src.other": "Hin hliðin",
   "direction.srcHint": "Hin hliðin: í átt að hinni hlið atburðar, svo dráp vísar frá drápara til fórnarlambs og dauði frá fórnarlambi til drápara. Best tekur fyrir hverja röð hina hliðina, annars miðunar- eða skotvigur, annars sýn, annars hreyfingu.",
+  "direction.byEvent": "Eftir tegund {column}",
+  "direction.src.inherit": "Eins og að ofan",
   "direction.found": "{count} raðir með stefnu",
   "direction.none": "Engin röð hefur stefnu úr þessari uppsprettu.",
   "direction.working": "Reikna stefnur…",

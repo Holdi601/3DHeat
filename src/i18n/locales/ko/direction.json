@@ -7,6 +7,8 @@
   "direction.src.movement": "이동",
   "direction.src.other": "상대편",
   "direction.srcHint": "상대편: 이벤트의 상대편을 향하므로 킬은 킬러에서 피해자로, 데스는 피해자에서 킬러로 향합니다. 최적은 행마다 상대편, 없으면 조준 또는 사격 벡터, 없으면 시점, 없으면 이동을 사용합니다.",
+  "direction.byEvent": "{column} 종류별",
+  "direction.src.inherit": "위와 같음",
   "direction.found": "방향이 있는 행 {count}개",
   "direction.none": "이 소스에는 방향이 있는 행이 없습니다.",
   "direction.working": "방향 계산 중…",

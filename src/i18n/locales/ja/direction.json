@@ -7,6 +7,8 @@
   "direction.src.movement": "移動",
   "direction.src.other": "相手側",
   "direction.srcHint": "相手側: イベントの相手側へ向かうため、キルは殺した側から倒された側へ、デスは倒された側から殺した側へ向きます。最適は行ごとに相手側、なければ照準または射撃ベクトル、なければ視点、なければ移動を使います。",
+  "direction.byEvent": "{column} の種類ごと",
+  "direction.src.inherit": "上と同じ",
   "direction.found": "方向のある行 {count} 件",
   "direction.none": "このソースに方向を持つ行はありません。",
   "direction.working": "方向を計算中…",

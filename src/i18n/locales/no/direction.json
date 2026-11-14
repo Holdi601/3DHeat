@@ -7,6 +7,8 @@
   "direction.src.movement": "Bevegelse",
   "direction.src.other": "Annen part",
   "direction.srcHint": "Annen part: mot den andre siden av en hendelse, så et drap peker fra drapsmannen til offeret og en død fra offeret til drapsmannen. Best tar per rad den andre parten, ellers sikte- eller skuddvektoren, ellers visningen, ellers bevegelsen.",
+  "direction.byEvent": "Per type {column}",
+  "direction.src.inherit": "Som ovenfor",
   "direction.found": "{count} rader med retning",
   "direction.none": "Ingen rad har en retning fra denne kilden.",
   "direction.working": "Beregner retninger…",

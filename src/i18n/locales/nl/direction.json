@@ -7,6 +7,8 @@
   "direction.src.movement": "Beweging",
   "direction.src.other": "Andere partij",
   "direction.srcHint": "Andere partij: naar de andere kant van een gebeurtenis, dus een kill wijst van de killer naar het slachtoffer en een dood van het slachtoffer naar de killer. Beste neemt per rij de andere partij, anders de richt- of schotvector, anders het zicht, anders de beweging.",
+  "direction.byEvent": "Per soort {column}",
+  "direction.src.inherit": "Zoals hierboven",
   "direction.found": "{count} rijen met een richting",
   "direction.none": "Geen enkele rij heeft een richting uit deze bron.",
   "direction.working": "Richtingen worden berekend…",

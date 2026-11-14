@@ -7,6 +7,8 @@
   "direction.src.movement": "Bewegung",
   "direction.src.other": "Gegenseite",
   "direction.srcHint": "Gegenseite: zur anderen Seite eines Ereignisses, ein Kill zeigt also vom Killer zum Opfer und ein Tod vom Opfer zum Killer. Beste nimmt pro Zeile die Gegenseite, sonst den Ziel- oder Schussvektor, sonst den Blick, sonst die Bewegung.",
+  "direction.byEvent": "Je Art von {column}",
+  "direction.src.inherit": "Wie oben",
   "direction.found": "{count} Zeilen mit Richtung",
   "direction.none": "Keine Zeile hat eine Richtung aus dieser Quelle.",
   "direction.working": "Richtungen werden berechnet…",

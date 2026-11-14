@@ -7,6 +7,8 @@
   "direction.src.movement": "Hareket",
   "direction.src.other": "Karşı taraf",
   "direction.srcHint": "Karşı taraf: bir olayın diğer tarafına doğru, yani bir öldürme katilden kurbana, bir ölüm kurbandan katile işaret eder. En iyi, satır başına karşı tarafı, yoksa nişan veya atış vektörünü, yoksa görünümü, yoksa hareketi alır.",
+  "direction.byEvent": "{column} türüne göre",
+  "direction.src.inherit": "Yukarıdaki gibi",
   "direction.found": "Yönü olan {count} satır",
   "direction.none": "Hiçbir satırın bu kaynaktan bir yönü yok.",
   "direction.working": "Yönler hesaplanıyor…",

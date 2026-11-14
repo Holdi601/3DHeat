@@ -7,6 +7,8 @@
   "direction.src.movement": "Judėjimas",
   "direction.src.other": "Kita pusė",
   "direction.srcHint": "Kita pusė: link kitos įvykio pusės, todėl nužudymas rodo nuo žudiko į auką, o mirtis nuo aukos į žudiką. Geriausia kiekvienai eilutei ima kitą pusę, kitaip taikymo ar šūvio vektorių, kitaip vaizdą, kitaip judėjimą.",
+  "direction.byEvent": "Pagal {column} rūšį",
+  "direction.src.inherit": "Kaip aukščiau",
   "direction.found": "{count} eilučių su kryptimi",
   "direction.none": "Nė viena eilutė neturi krypties iš šio šaltinio.",
   "direction.working": "Skaičiuojamos kryptys…",

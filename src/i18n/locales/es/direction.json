@@ -7,6 +7,8 @@
   "direction.src.movement": "Movimiento",
   "direction.src.other": "Otra parte",
   "direction.srcHint": "Otra parte: hacia el otro lado de un evento, así una baja apunta del autor a la víctima y una muerte de la víctima al autor. Mejor toma por fila la otra parte, si no el vector de puntería o disparo, si no la vista, si no el movimiento.",
+  "direction.byEvent": "Por tipo de {column}",
+  "direction.src.inherit": "Como arriba",
   "direction.found": "{count} filas con dirección",
   "direction.none": "Ninguna fila tiene dirección desde esta fuente.",
   "direction.working": "Calculando direcciones…",

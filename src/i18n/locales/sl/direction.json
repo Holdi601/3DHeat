@@ -7,6 +7,8 @@
   "direction.src.movement": "Gibanje",
   "direction.src.other": "Druga stran",
   "direction.srcHint": "Druga stran: proti drugi strani dogodka, zato uboj kaže od ubijalca k žrtvi, smrt pa od žrtve k ubijalcu. Najboljše vzame za vsako vrstico drugo stran, sicer vektor merjenja ali strela, sicer pogled, sicer gibanje.",
+  "direction.byEvent": "Po vrsti {column}",
+  "direction.src.inherit": "Kot zgoraj",
   "direction.found": "{count} vrstic s smerjo",
   "direction.none": "Nobena vrstica nima smeri iz tega vira.",
   "direction.working": "Izračun smeri …",

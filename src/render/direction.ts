@@ -104,6 +104,18 @@ export function otherColumn(ds: Dataset): { data: Uint32Array; person: Int32Arra
   return null;
 }
 
+/** Column names that say what kind of event a row is: the layers a source can be set per. */
+const EVENT_NAMES = [/^event$/i, /^event_?type$/i, /^type$/i, /^kind$/i, /^action$/i];
+
+/** The event-kind column, or null: a category column by one of `EVENT_NAMES`. */
+export function eventColumn(ds: Dataset): { name: string; data: Uint32Array; categories: string[] } | null {
+  for (const re of EVENT_NAMES) {
+    const c = ds.attrs.find((a) => a.kind === 'category' && re.test(a.name) && a.categories && a.categories.length > 0);
+    if (c) return { name: c.name, data: c.data as Uint32Array, categories: c.categories! };
+  }
+  return null;
+}
+
 /** World ground-plane bearing of a data-frame vector. NaN when it has no horizontal part. */
 function vectorBearing(x: number, y: number, z: number, axes: AxisMapping | null | undefined): number {
   const w = dataToWorld({ x, y, z }, axes);
@@ -127,7 +139,7 @@ const pause = () => new Promise<void>((r) => setTimeout(r, 0));
 export async function computeDirections(
   ds: Dataset,
   source: DirSource,
-  opts: { yieldRows?: number; cancelled?: () => boolean } = {},
+  opts: { yieldRows?: number; cancelled?: () => boolean; by?: Record<string, DirSource> } = {},
 ): Promise<DirectionData | null> {
   const n = ds.count;
   const angles = new Uint8Array(n).fill(DIR_NONE);
@@ -142,7 +154,27 @@ export async function computeDirections(
     await pause();
     return opts.cancelled?.() ?? false;
   };
-  const want = (s: Exclude<DirSource, 'auto'>) => source === 'auto' || source === s;
+  // Per event kind (`opts.by`, keyed by the event column's labels): a kind
+  // named there takes its own source, every other row `source`.
+  const ev = opts.by && Object.keys(opts.by).length > 0 ? eventColumn(ds) : null;
+  const kindSource = ev ? Uint8Array.from(ev.categories, (c) => (opts.by![c] ? DIR_SOURCES.indexOf(opts.by![c]) : 255)) : null;
+  const kinds = ev ? ev.data : null;
+  const fallback = DIR_SOURCES.indexOf(source);
+  const sourceOf = (i: number) => {
+    if (!kindSource) return fallback;
+    const c = kinds![i];
+    const k = c < kindSource.length ? kindSource[c] : 255;
+    return k === 255 ? fallback : k;
+  };
+  // Index 0 is `auto`, which takes every source in turn.
+  const want = (s: Exclude<DirSource, 'auto'>) => {
+    const k = DIR_SOURCES.indexOf(s);
+    return fallback === 0 || fallback === k || (kindSource !== null && kindSource.some((v) => v === 0 || v === k));
+  };
+  const ok = (i: number, s: Exclude<DirSource, 'auto'>) => {
+    const k = sourceOf(i);
+    return k === 0 || k === DIR_SOURCES.indexOf(s);
+  };
   const SLICE = 1 << 16;
 
   // Lowest priority first, so in `auto` a better source overwrites a worse one.
@@ -161,7 +193,7 @@ export async function computeDirections(
         if (ds.time && Math.abs(ds.time[i] - ds.time[j]) > MOVE_MAX_GAP) continue;
         const dx = ds.px[i] - ds.px[j];
         const dz = ds.pz[i] - ds.pz[j];
-        if (Math.abs(dx) + Math.abs(dz) < 1e-6) continue;
+        if (Math.abs(dx) + Math.abs(dz) < 1e-6 || !ok(i, 'movement')) continue;
         angles[i] = packBearing(bearingOf(dx, dz));
         counts.movement++;
       }
@@ -174,7 +206,7 @@ export async function computeDirections(
       const e = Math.min(n, s + SLICE);
       for (let i = s; i < e; i++) {
         const y = yaw[i];
-        if (!Number.isFinite(y)) continue;
+        if (!Number.isFinite(y) || !ok(i, 'view')) continue;
         angles[i] = packBearing(y);
         counts.view++;
       }
@@ -187,7 +219,7 @@ export async function computeDirections(
       const e = Math.min(n, s + SLICE);
       for (let i = s; i < e; i++) {
         const b = vectorBearing(aim.x[i], aim.y[i], aim.z ? aim.z[i] : 0, ds.axes);
-        if (Number.isNaN(b)) continue;
+        if (Number.isNaN(b) || !ok(i, 'aim')) continue;
         angles[i] = packBearing(b);
         counts.aim++;
       }
@@ -255,7 +287,7 @@ export async function computeDirections(
       const j = lo[t];
       const dx = ds.px[j] - ds.px[i];
       const dz = ds.pz[j] - ds.pz[i];
-      if (Math.abs(dx) + Math.abs(dz) < 1e-6) continue;
+      if (Math.abs(dx) + Math.abs(dz) < 1e-6 || !ok(i, 'other')) continue;
       angles[i] = packBearing(bearingOf(dx, dz));
       counts.other++;
     }
@@ -327,9 +359,9 @@ export const WEDGE_TIGHT_MAX = 1.2;
  * pixels) along each edge, the edge lines pushed out by it. The shaders build
  * the same three corners.
  */
-export function wedgeTriangle(half: number, soft: number, pixRadius: number): [number, number][] {
+export function wedgeTriangle(half: number, soft: number, pixRadius: number, edgePx = 0.75): [number, number][] {
   const hs = half + soft;
-  const w = 0.75 / pixRadius;
+  const w = edgePx / pixRadius;
   const sh = Math.sin(hs);
   const ch = Math.cos(hs);
   const pp = (1 + w + w * sh) / ch;

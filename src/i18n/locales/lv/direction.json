@@ -7,6 +7,8 @@
   "direction.src.movement": "Kustība",
   "direction.src.other": "Otra puse",
   "direction.srcHint": "Otra puse: uz notikuma otru pusi, tāpēc nogalināšana norāda no slepkavas uz upuri, bet nāve no upura uz slepkavu. Labākais katrai rindai ņem otru pusi, citādi tēmēšanas vai šāviena vektoru, citādi skatu, citādi kustību.",
+  "direction.byEvent": "Pēc {column} veida",
+  "direction.src.inherit": "Kā augstāk",
   "direction.found": "{count} rindas ar virzienu",
   "direction.none": "Nevienai rindai no šī avota nav virziena.",
   "direction.working": "Aprēķina virzienus…",

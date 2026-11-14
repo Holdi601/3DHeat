@@ -7,6 +7,8 @@
   "direction.src.movement": "Liikumine",
   "direction.src.other": "Teine pool",
   "direction.srcHint": "Teine pool: sündmuse teise poole poole, nii et tapmine osutab tapjalt ohvrile ja surm ohvrilt tapjale. Parim võtab rea kohta teise poole, muidu sihtimis- või lasuvektori, muidu vaate, muidu liikumise.",
+  "direction.byEvent": "Veeru {column} liigi kaupa",
+  "direction.src.inherit": "Nagu ülal",
   "direction.found": "{count} rida suunaga",
   "direction.none": "Üheski reas pole sellest allikast suunda.",
   "direction.working": "Suundade arvutamine…",

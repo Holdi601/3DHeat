@@ -167,6 +167,8 @@ export interface HeatSettings {
   scheme: HeatColorScheme;
   /** Where each row's direction comes from, for wedges and the direction field (render/direction.ts). */
   dirSource: DirSource;
+  /** Per event kind (label of the event column), a source of its own; kinds not named take `dirSource`. */
+  dirSourceBy: Record<string, DirSource>;
   /**
    * Opening of each sprite's wedge, degrees, aimed along the row's direction.
    * 360 is the disc; rows without a direction stay discs at any opening.
@@ -693,6 +695,7 @@ export const useStore = create<AppState>((set) => ({
       negative: DEFAULT_NEGATIVE_RAMP.map((s) => ({ ...s })),
     },
     dirSource: 'auto',
+    dirSourceBy: {},
     // The disc: directional heat is asked for, never imposed.
     wedgeOpening: 360,
     wedgeSoftness: 0.35,

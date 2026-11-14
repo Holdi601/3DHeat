@@ -7,6 +7,8 @@
   "direction.src.movement": "Bevægelse",
   "direction.src.other": "Anden part",
   "direction.srcHint": "Anden part: mod den anden side af en hændelse, så et drab peger fra drabsmanden til offeret og et dødsfald fra offeret til drabsmanden. Bedst tager pr. række den anden part, ellers sigte- eller skudvektoren, ellers visningen, ellers bevægelsen.",
+  "direction.byEvent": "Pr. type af {column}",
+  "direction.src.inherit": "Som ovenfor",
   "direction.found": "{count} rækker med en retning",
   "direction.none": "Ingen række har en retning fra denne kilde.",
   "direction.working": "Beregner retninger…",

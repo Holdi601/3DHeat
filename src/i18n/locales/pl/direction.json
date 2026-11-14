@@ -7,6 +7,8 @@
   "direction.src.movement": "Ruch",
   "direction.src.other": "Druga strona",
   "direction.srcHint": "Druga strona: w stronę drugiej strony zdarzenia, więc zabójstwo wskazuje od zabójcy do ofiary, a śmierć od ofiary do zabójcy. Najlepsze bierze dla wiersza drugą stronę, w przeciwnym razie wektor celowania lub strzału, potem widok, potem ruch.",
+  "direction.byEvent": "Według rodzaju {column}",
+  "direction.src.inherit": "Jak wyżej",
   "direction.found": "{count} wierszy z kierunkiem",
   "direction.none": "Żaden wiersz nie ma kierunku z tego źródła.",
   "direction.working": "Obliczanie kierunków…",

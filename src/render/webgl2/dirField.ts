@@ -45,7 +45,9 @@ void main() {
   sum *= 0.1;
   vec2 m = sum.xy / max(sum.z, 1e-12);
   float r = length(m);
-  float amount = sum.z * uGainInv / max(1e-9, uSaturation);
+  // Drawn only where the cell itself carries heat: the neighbourhood steadies
+  // the direction, it must not spread arrows onto empty ground beside the heat.
+  float amount = texelFetch(uField, c, 0).z * uGainInv / max(1e-9, uSaturation);
   if (sum.z <= 0.0 || r < 0.03 || amount < 0.004) {
     gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
     vAlpha = 0.0;

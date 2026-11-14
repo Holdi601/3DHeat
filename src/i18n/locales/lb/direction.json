@@ -7,6 +7,8 @@
   "direction.src.movement": "Beweegung",
   "direction.src.other": "Aner Partei",
   "direction.srcHint": "Aner Partei: Richtung déi aner Säit vun engem Evenement, also weist en Ofschoss vum Ofschéisser op d'Affer an en Doud vum Affer op den Ofschéisser. Bescht hëlt pro Zeil déi aner Partei, soss de Ziel- oder Schossvektor, soss d'Usiicht, soss d'Beweegung.",
+  "direction.byEvent": "No Aart vu {column}",
+  "direction.src.inherit": "Wéi uewen",
   "direction.found": "{count} Zeilen mat enger Richtung",
   "direction.none": "Keng Zeil huet eng Richtung aus dëser Quell.",
   "direction.working": "Richtunge ginn berechent…",

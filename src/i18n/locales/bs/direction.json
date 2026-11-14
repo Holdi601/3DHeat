@@ -7,6 +7,8 @@
   "direction.src.movement": "Kretanje",
   "direction.src.other": "Druga strana",
   "direction.srcHint": "Druga strana: prema drugoj strani događaja, pa ubistvo pokazuje od ubice prema žrtvi, a smrt od žrtve prema ubici. Najbolje uzima po redu drugu stranu, inače vektor ciljanja ili pucanja, inače pogled, inače kretanje.",
+  "direction.byEvent": "Po vrsti {column}",
+  "direction.src.inherit": "Kao gore",
   "direction.found": "{count} redova sa smjerom",
   "direction.none": "Nijedan red nema smjer iz ovog izvora.",
   "direction.working": "Izračunavanje smjerova…",

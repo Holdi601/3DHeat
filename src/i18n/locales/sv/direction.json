@@ -7,6 +7,8 @@
   "direction.src.movement": "Rörelse",
   "direction.src.other": "Andra parten",
   "direction.srcHint": "Andra parten: mot andra sidan av en händelse, så en kill pekar från dödaren till offret och en död från offret till dödaren. Bäst tar per rad andra parten, annars sikt- eller skottvektorn, annars vyn, annars rörelsen.",
+  "direction.byEvent": "Per typ av {column}",
+  "direction.src.inherit": "Som ovan",
   "direction.found": "{count} rader med riktning",
   "direction.none": "Ingen rad har en riktning från den här källan.",
   "direction.working": "Räknar ut riktningar…",

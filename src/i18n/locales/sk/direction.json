@@ -7,6 +7,8 @@
   "direction.src.movement": "Pohyb",
   "direction.src.other": "Druhá strana",
   "direction.srcHint": "Druhá strana: smerom k druhej strane udalosti, takže zabitie mieri od zabijaka k obeti a smrť od obete k zabijakovi. Najlepší berie pri každom riadku druhú stranu, inak vektor mierenia alebo výstrelu, inak pohľad, inak pohyb.",
+  "direction.byEvent": "Podľa druhu {column}",
+  "direction.src.inherit": "Ako vyššie",
   "direction.found": "{count} riadkov so smerom",
   "direction.none": "Žiadny riadok nemá z tohto zdroja smer.",
   "direction.working": "Počítajú sa smery…",
