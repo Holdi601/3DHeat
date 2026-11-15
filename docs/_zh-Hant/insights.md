@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "zh-Hant"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ outdated: false
 >
 > 區分贏下與輸掉回合的因素：T 守住 Mid 的 19 個回合中贏下 79%，沒有守住的 21 個回合中贏下 24%（55 個百分點，95%：26 至 74）（q 0.004），……
 >
-> 轉折點：第 17 回合 48 秒，CT 在 B 點的一次擊殺使其勝算從 31% 變為 58%，並贏下了該回合，…… 每個段落都有編號按鈕，可顯示其發現。**複製文字**會複製它。
+> 轉折點：第 17 回合 48 秒，CT 在 B 點的一次擊殺使其勝算從 31% 變為 58%，並贏下了該回合，……
+
+每個段落都有編號按鈕，可顯示其發現。**複製文字**會複製它。
 
 ![內建敘述者撰寫的總結](../assets/img/zh-Hant/debrief.webp)
 

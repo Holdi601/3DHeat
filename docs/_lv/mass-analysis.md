@@ -160,11 +160,11 @@ ne tikai siltuma attēliem:
   precīzi, vienā mačā un starp citu izmēru šūnu mačiem - un jebkurš reģions (kaste, gar līniju veidots koridors, gredzens) ir šūnu summa. Smalkākais līmenis ietilpst mača stabilajā apjomā (šūnas, kurās ir 99% klātbūtnes) 128 šūnās; ārpus tā esošie izkritumi tiek saglabāti.
 - **Iedarbība blakus katram skaitam.** Klātbūtnes sekundes uz šūnu, uz komandu (`pt`), uz transportlīdzekļa klasi (`pc`) un uz augstuma joslu (`ph`), tāpēc reģiona likme, sagaidāmā vērtība un attiecība tiek aprēķinātas jebkurai apakšgrupai.
 - **Augstums.** Joslas virs mača grīdas (augstuma 1. procentile): zem 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, virs; fails ar kolonnu `floor`/`storey`/`deck` joslās pēc savām stāvu grīdām. `y` ir katras šūnas vidējais augstums, `y0` - zemākais (tās stāva grīda augstumam virs tā).
-- **Notikumi** kā kortežas `[šūna, veids, komanda, klase, josla, skaits]`.
+- **Notikumi** kā kortežas `[cell, kind, team, class, band, count]`.
 - **Raundi pēc rezultāta** (2. versija, ar rezultāta kolonnu un diviem vai vairāk
   raundiem): `pw` kā `[cell, team, rounds won, rounds lost]` - raundi, kuros katra puse
   pavadīja šūnā sekundi vai vairāk, pēc tās rezultāta raundā.
-- **Laika griezumi** raupjā līmenī (8 šūnas uz pusi), pēc minūtes no mača sākuma: `[cx, cz, minūte, veids, vērtība]`, klātbūtnes sekundes kā veids `GRID_KINDS.length`; mača fāzes ir minūtes pār garumu.
+- **Laika griezumi** raupjā līmenī (8 šūnas uz pusi), pēc minūtes no mača sākuma: `[cx, cz, minute, kind, value]`, klātbūtnes sekundes kā veids `GRID_KINDS.length`; mača fāzes ir minūtes pār garumu.
 - Retināts, skaiti ir veseli skaitļi, sekundes līdz desmitdaļai: ierobežots ar to, kas notika.
 
 ### B posms: vietas un nišas {#stage-b-places-and-niches}

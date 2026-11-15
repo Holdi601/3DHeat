@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "zh"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ outdated: false
 >
 > 区分赢下与输掉回合的因素：T 守住 Mid 的 19 个回合中赢下 79%，没有守住的 21 个回合中赢下 24%（55 个百分点，95%：26 至 74）（q 0.004），……
 >
-> 转折点：第 17 回合 48 秒，CT 在 B 点的一次击杀使其胜算从 31% 变为 58%，并赢下了该回合，…… 每个段落都有编号按钮，用于显示其对应的发现。**复制文本**会复制它。
+> 转折点：第 17 回合 48 秒，CT 在 B 点的一次击杀使其胜算从 31% 变为 58%，并赢下了该回合，……
+
+每个段落都有编号按钮，用于显示其对应的发现。**复制文本**会复制它。
 
 ![The debrief written by the built-in narrator](../assets/img/zh/debrief.webp)
 

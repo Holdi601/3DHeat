@@ -133,9 +133,9 @@ Il-parti spazjali hija magħmula għal skans statistiku fuq reġjuni ta' kwalunk
 - **Piramida.** Iċ-ċelel huma setgħat ta' tnejn allinjati fl-unitajiet tad-dinja (x, z kif il-viewer jqegħdhom). Il-livell `k` huwa ċ-ċelel imqabbda bi `ix >> k, iz >> k` - eżatt, fil-partita u bejn partiti ta' daqsijiet oħra taċ-ċelel - u kwalunkwe reġjun (kaxxa, koridju tul linja, ċirku) huwa somma ta' ċelel. Il-livell l-aktar fin jaqbel mal-estensjoni robusta tal-partita (iċ-ċelel li jżommu 99% tal-preżenza) f'128 ċella; dawk barra minnha jinżammu.
 - **Esponiment ma' kull għadd.** Sekondi ta' preżenza għal kull ċella, għal kull tim (`pt`), għal kull klassi tal-vettura (`pc`) u għal kull fascia ta' għoli (`ph`), sabiex ir-rata, l-aspettattiva u l-proporzjon ta' reġjun jiġu mħaddma għal kull subgrupp.
 - **Għoli.** Fasċi ' fuq l-art tal-partita (l-1 perċentil tal-għoli): taħt 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, fuq; fajl b'kolonna `floor`/`storey`/`deck` jagħmel fasċi skont il-bnadar tiegħu minflok. `y` huwa l-għoli medju ta' kull ċella, `y0` l-aktar baxx tagħha (il-bnadar tagħha, għal għoli fuqu).
-- **Avvenimenti** bħala tuples `[ċella, tip, tim, klassi, fascia, għadd]`.
+- **Avvenimenti** bħala tuples `[cell, kind, team, class, band, count]`.
 - **Rawnds skont ir-riżultat** (verżjoni 2, b'kolonna tar-riżultat u żewġ rawnds jew aktar): `pw` bħala `[cell, team, rounds won, rounds lost]` - ir-rawnds li fihom kull naħa qattgħet sekonda jew aktar fiċ-ċellula, skont ir-riżultat tagħha fir-rawnd.
-- **Ħinijiet imqattgħin** f'livell kważi (8 ċelel kull naħa), skont il-minuta mill-bidu tal-partita: `[cx, cz, minuta, tip, valur]`, is-sekondi tal-preżenza bħala tip `GRID_KINDS.length`; il-fażijiet tal-partita huma minuti fuq it-tul.
+- **Ħinijiet imqattgħin** f'livell kważi (8 ċelel kull naħa), skont il-minuta mill-bidu tal-partita: `[cx, cz, minute, kind, value]`, is-sekondi tal-preżenza bħala tip `GRID_KINDS.length`; il-fażijiet tal-partita huma minuti fuq it-tul.
 - Imxerred, għadd sħiħ, sekondi sa għexxa: imqayyad minn dak li ġara.
 
 ### Stadju B: postijiet u nikek {#stage-b-places-and-niches}

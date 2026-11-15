@@ -172,12 +172,12 @@ tamanho e forma, e não só para imagens de calor:
   3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, acima; um ficheiro com uma coluna
   `floor`/`storey`/`deck` organiza as faixas pelos seus pisos. `y` é a altura média de cada
   célula, `y0` a mais baixa (o seu piso, para altura acima dele).
-- **Eventos** como tuplos `[célula, tipo, equipa, classe, faixa, contagem]`.
+- **Eventos** como tuplos `[cell, kind, team, class, band, count]`.
 - **Rondas por resultado** (versão 2, com uma coluna de resultado e duas rondas ou
   mais): `pw` como `[cell, team, rounds won, rounds lost]` - as rondas em que cada lado
   passou um segundo ou mais na célula, pelo seu resultado na ronda.
 - **Fatias de tempo** a um nível grosseiro (8 células por lado), por minuto desde o início
-  da partida: `[cx, cz, minuto, tipo, valor]`, segundos de presença como tipo
+  da partida: `[cx, cz, minute, kind, value]`, segundos de presença como tipo
   `GRID_KINDS.length`; as fases da partida são minutos sobre a duração.
 - Esparsa, contagens inteiras, segundos até uma décima: limitada pelo que aconteceu.
 

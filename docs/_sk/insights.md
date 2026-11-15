@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "sk"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Záložka **Zhrnutie** zapíše zistenia do krátkeho textu: úvod, najjasnejši
 >
 > Čo odlišovalo vyhraté kolá od prehraných: T vyhrala 79 % z 19 kôl, v ktorých držala Mid, oproti 24 % z 21 bez neho (55 bodov, 95 % od 26 do 74) (q 0,004), ...
 >
-> Zlomové okamihy: kolo 17 v 48 s, zabitie strany CT na mieste B zmenilo jej šancu z 31 % na 58 % a kolo vyhrala, ... Každý odsek má očíslované tlačidlá, ktoré ukazujú jeho zistenia. **Kopírovať text** ho skopíruje.
+> Zlomové okamihy: kolo 17 v 48 s, zabitie strany CT na mieste B zmenilo jej šancu z 31 % na 58 % a kolo vyhrala, ...
+
+Každý odsek má očíslované tlačidlá, ktoré ukazujú jeho zistenia. **Kopírovať text** ho skopíruje.
 
 ![Zhrnutie napísané vstavaným rozprávačom](../assets/img/sk/debrief.webp)
 

@@ -15,7 +15,7 @@ Vanlig varme sier **hvor** ting skjer. Retningsvarme sier også **hvilken vei**:
 
 ![Varme tegnet som kiler som peker i den veien hver rad vendte, med et felt av piler over](../assets/img/no/direction.webp)
 
-En vanlig sprite er en hel skive (360 grader). Med en **Kileåpning** på 70 grader blir den samme spriten en smal kile som peker i den veien raden vendte, og den legger til like mye varme totalt.
+En vanlig sprite er en hel skive (360 grader). Med en **Kilens åpning** på 70 grader blir den samme spriten en smal kile som peker i den veien raden vendte, og den legger til like mye varme totalt.
 
 ## Slik bruker du den {#how-to-use-it}
 
@@ -23,7 +23,7 @@ En vanlig sprite er en hel skive (360 grader). Med en **Kileåpning** på 70 gra
 2. Velg **Varme**, **Differanse** eller **Lagvarme** i modusraden.
 3. Åpne seksjonen **Retning** i sidepanelet.
 4. Velg en **kilde** (hvilken retning som skal brukes), og slå deretter på tegningen:
-   - senk **Kileåpning** under 360° for å tegne hver rad som en kile som peker den veien, i stedet for en skive;
+   - senk **Kilens åpning** under 360° for å tegne hver rad som en kile som peker den veien, i stedet for en skive;
    - velg et **Felt** for å tegne piler eller strømlinjer over varmen;
    - kryss av for **Retninger på et klikket sted** og klikk på varmen for å få et polardiagram for det stedet.
 
@@ -35,7 +35,7 @@ Statuslinjen sier hvor mange rader som har en retning fra den valgte kilden.
 |---|---|---|
 | Kilde: **Best**, **Visning**, **Sikte**, **Bevegelse**, **Annen part** | Best | Hvilken retning hver rad får. *Best* tar, per rad, den andre parten, ellers siktet, ellers visningen, ellers bevegelsen. |
 | **Per type hendelse** | som over | En egen kilde for hver hendelsestype, for eksempel *Annen part* for drap og *Visning* for posisjoner. Vises når dataene har en hendelseskolonne med høyst 40 verdier. |
-| **Kileåpning** | 360° | 360° er den vanlige skiven (av). Mindre er en smalere kile. En kile legger til like mye varme som skiven sin, så summer og forskjeller er fortsatt sammenlignbare. |
+| **Kilens åpning** | 360° | 360° er den vanlige skiven (av). Mindre er en smalere kile. En kile legger til like mye varme som skiven sin, så summer og forskjeller er fortsatt sammenlignbare. |
 | **Mykhet på kilekanten** | 0,35 | 0 er en kile med skarpe kanter, 1 en myk vifte. |
 | **Felt**: Ingen felt, Piler, Strømlinjer, Begge | Ingen felt | Piler: en pils lengde er hvor mye radene der er enige om én retning, og opasiteten viser hvor mye varme som er der. Piler vises bare der det er varme. |
 | **Pilavstand** | 28 px | Avstanden mellom piler på skjermen. |

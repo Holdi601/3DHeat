@@ -138,11 +138,11 @@ Het ruimtelijke deel is gemaakt voor scanstatistieken over regio's van elke groo
 - **Een piramide.** Cellen zijn uitgelijnde machten van twee in wereldeenheden (x, z zoals de viewer ze plaatst). Niveau `k` is de som van de cellen per `ix >> k, iz >> k`: exact, binnen een match en over matches met andere celgroottes heen. Elke regio (een box, een corridor langs een lijn, een ring) is een som van cellen. Het fijnste niveau past de robuuste omvang van de match (de cellen die 99% van de aanwezigheid bevatten) in 128 cellen; zwervers daarbuiten worden bewaard.
 - **Blootstelling naast elke telling.** Seconden aanwezigheid per cel, per team (`pt`), per voertuigklasse (`pc`) en per hoogteband (`ph`), zodat het percentage, de verwachting en de verhouding van een regio voor elke subgroep berekend kunnen worden.
 - **Hoogte.** Banden boven de vloer van de match (het 1e percentiel van de hoogte): onder 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, boven; een bestand met een kolom `floor`/`storey`/`deck` deelt in op zijn verdiepingen. `y` is de gemiddelde hoogte van elke cel, `y0` de laagste (zijn verdieping, voor hoogte erboven).
-- **Gebeurtenissen** als tupels `[cel, soort, team, klasse, band, aantal]`.
+- **Gebeurtenissen** als tupels `[cell, kind, team, class, band, count]`.
 - **Rondes per uitslag** (versie 2, met een uitkomstkolom en twee rondes of meer):
   `pw` als `[cell, team, rounds won, rounds lost]` - de rondes waarin elke kant een seconde
   of langer in de cel was, naar haar uitslag in de ronde.
-- **Tijdsneden** op een grof niveau (8 cellen per zijde), per minuut vanaf het begin van de match: `[cx, cz, minuut, soort, waarde]`, met de seconden aanwezigheid als soort `GRID_KINDS.length`; matchfasen zijn minuten over de lengte.
+- **Tijdsneden** op een grof niveau (8 cellen per zijde), per minuut vanaf het begin van de match: `[cx, cz, minute, kind, value]`, met de seconden aanwezigheid als soort `GRID_KINDS.length`; matchfasen zijn minuten over de lengte.
 - Schaars, tellingen als gehele getallen, seconden op een tiende: begrensd door wat er gebeurd is.
 
 ### Fase B: plekken en niches {#stage-b-places-and-niches}

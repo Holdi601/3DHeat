@@ -17,7 +17,7 @@ Dybde gjør at åser og vegger skjuler varmen bak seg, slik en ekte vegg skjuler
 
 ![Avskjæring etter avstand med Fjern på 400 m og Skjær også nivået på: en skive av kartet rundt kameraet](../assets/img/en/depth-and-culling-far.webp)
 
-Uten dybde er et varmekart over et 3D-[nivå](levels.md) bare et flatt overlegg: alt datasettet inneholder lyser gjennom hver vegg med full styrke, de dybdesignalene nivået gir, blir opphevet, og et varmepunkt inne i en bygning ser likt ut som et på taket. Delen **Dybde** får nivået til å skjule det som er bak det; **Avskjæring etter avstand** begrenser varmen til et skall eller en plate rundt kameraet; [Skiven](slice.md) skjærer en plate ut av verden. Alle tre gjelder varmemodusene og endrer hvilke rader som bidrar, så når du endrer dem, starter akkumuleringen på nytt.
+Uten dybde er et varmekart over et 3D-[nivå](levels.md) bare et flatt overlegg: alt datasettet inneholder lyser gjennom hver vegg med full styrke, de dybdesignalene nivået gir, blir opphevet, og et varmepunkt inne i en bygning ser likt ut som et på taket. Delen **Dybde** får nivået til å skjule det som er bak det; **Avstandsavskjæring** begrenser varmen til et skall eller en plate rundt kameraet; [Skiven](slice.md) skjærer en plate ut av verden. Alle tre gjelder varmemodusene og endrer hvilke rader som bidrar, så når du endrer dem, starter akkumuleringen på nytt.
 
 ## Dybde {#depth}
 
@@ -39,13 +39,13 @@ Se også [Nivåutseende](level-appearance.md).
 
 ## Avskjæring etter avstand {#distance-culling}
 
-**Avskjæring etter avstand** (lukket som standard) begrenser varmen til rader mellom en nær og en fjern grense fra kameraet. Sett en fjern grense for å lese tettheten inne i en bygning uten at den fjerne siden av kartet summerer seg oppå den; sett en nær grense for å fly *gjennom* et varmepunkt i stedet for inn i det.
+**Avstandsavskjæring** (lukket som standard) begrenser varmen til rader mellom en nær og en fjern grense fra kameraet. Sett en fjern grense for å lese tettheten inne i en bygning uten at den fjerne siden av kartet summerer seg oppå den; sett en nær grense for å fly *gjennom* et varmepunkt i stedet for inn i det.
 
 | Kontroll | Standard | Område (jog) | Betydning |
 |---|---|---|---|
 | **Nær** | av | 0,5–5000 m, logaritmisk; de nederste 5 % av sporet = av (200 000) | Rader som er nærmere enn dette, hoppes over. |
 | **Fjern** | av | 1–200 000 m, logaritmisk; nederst = av (10 000 000) | Rader som er lenger unna enn dette, hoppes over. |
-| **Kutt i et plan** | på | | Mål grensene langs synsaksen i stedet for fra øyet, slik at kuttet er et plan parallelt med skjermen i stedet for en kule rundt deg. Kanten på en kule buer bort over bildet og glir når du snur deg; et plan blir der du plasserte det. |
+| **Skjær ved et plan** | på | | Mål grensene langs synsaksen i stedet for fra øyet, slik at kuttet er et plan parallelt med skjermen i stedet for en kule rundt deg. Kanten på en kule buer bort over bildet og glir når du snur deg; et plan blir der du plasserte det. |
 | **Skjær også nivået** | på | | Skjær bakken, konstruksjonene og vannet ved de samme grensene. Med nivået helt igjen fjerner kuttet datapunktene og lar bygningen stå foran dem; med begge kuttet er det et snitt gjennom kartet, og punktene står mot veggene og gulvene sine. Denne endrer bare tegningen; den starter ikke akkumuleringen på nytt. |
 
 ### Tastatur {#keyboard}

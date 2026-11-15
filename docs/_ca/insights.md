@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "ca"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Què va decidir les rondes arriba en quatre paràgrafs: el marcador i d'on surte
 >
 > Què separava les rondes guanyades de les perdudes: T va guanyar el 79% de les 19 rondes en què va mantenir Mid, contra el 24% de 21 sense això (55 punts, 95% de 26 a 74) (q 0,004), ...
 >
-> Punts d'inflexió: ronda 17 a 48 s, una eliminació de CT al punt B va moure la seva probabilitat del 31% al 58%, i va guanyar la ronda, ... Cada paràgraf té botons numerats que mostren les seves troballes. **Copia el text** el copia.
+> Punts d'inflexió: ronda 17 a 48 s, una eliminació de CT al punt B va moure la seva probabilitat del 31% al 58%, i va guanyar la ronda, ...
+
+Cada paràgraf té botons numerats que mostren les seves troballes. **Copia el text** el copia.
 
 ![El resum escrit pel narrador integrat](../assets/img/ca/debrief.webp)
 

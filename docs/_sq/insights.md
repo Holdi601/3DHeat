@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "sq"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Skeda **Përmbledhja** i shkruan gjetjet në një tekst të shkurtër: një hyrj
 >
 > Çfarë i dalloi raundet e fituara nga ato të humbura: T fitoi 79% të 19 raundeve kur mbajti Mid, kundrejt 24% të 21 pa të (55 pikë, 95% nga 26 deri në 74) (q 0,004), ...
 >
-> Pikat e kthesës: raundi 17 në 48 s, një vrasje nga CT në B site ia çoi shansin nga 31% në 58%, dhe e mori raundin, ... Çdo paragraf ka butona të numëruar që shfaqin gjetjet e tij. **Kopjo tekstin** e kopjon.
+> Pikat e kthesës: raundi 17 në 48 s, një vrasje nga CT në B site ia çoi shansin nga 31% në 58%, dhe e mori raundin, ...
+
+Çdo paragraf ka butona të numëruar që shfaqin gjetjet e tij. **Kopjo tekstin** e kopjon.
 
 ![Përmbledhja e shkruar nga narratori i integruar](../assets/img/sq/debrief.webp)
 

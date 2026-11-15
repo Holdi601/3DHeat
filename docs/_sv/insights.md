@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "sv"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -71,7 +71,9 @@ Vad som avgjorde rundorna kommer i fyra stycken: ställningen och var vinstchans
 >
 > Vad som skiljde vunna från förlorade rundor: T vann 79 % av de 19 rundor då den höll Mid, mot 24 % av 21 utan (55 procentenheter, 95 % 26 till 74) (q 0,004), ...
 >
-> Vändpunkter: runda 17 vid 48 s, en dödning av CT vid B site flyttade dess chans från 31 % till 58 %, och den tog rundan, ... Varje stycke har numrerade knappar som visar dess fynd. **Kopiera text** kopierar den.
+> Vändpunkter: runda 17 vid 48 s, en dödning av CT vid B site flyttade dess chans från 31 % till 58 %, och den tog rundan, ...
+
+Varje stycke har numrerade knappar som visar dess fynd. **Kopiera text** kopierar den.
 
 ![Genomgången skriven av den inbyggda berättaren](../assets/img/sv/debrief.webp)
 

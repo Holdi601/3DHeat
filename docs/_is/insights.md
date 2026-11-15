@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "is"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -72,7 +72,9 @@ Hvað réð úrslitum í lotunum kemur í fjórum málsgreinum: staðan og hvað
 >
 > Hvað skildi unnar lotur frá töpuðum: T vann 79% af þeim 19 lotum sem hún hélt Mid, á móti 24% af 21 án þess (55 prósentustig, 95% 26 til 74) (q 0,004), ...
 >
-> Vendipunktar: lota 17 á 48 s, dráp CT við B site færði líkur hennar úr 31% í 58%, og hún vann lotuna, ... Hver málsgrein hefur tölusetta hnappa sem sýna niðurstöðurnar hennar. **Afrita texta** afritar hann.
+> Vendipunktar: lota 17 á 48 s, dráp CT við B site færði líkur hennar úr 31% í 58%, og hún vann lotuna, ...
+
+Hver málsgrein hefur tölusetta hnappa sem sýna niðurstöðurnar hennar. **Afrita texta** afritar hann.
 
 ![Samantektin sem innbyggði sögumaðurinn skrifaði](../assets/img/is/debrief.webp)
 

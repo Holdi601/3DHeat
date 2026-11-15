@@ -138,11 +138,11 @@ Część przestrzenna jest zrobiona pod statystyki skanowania regionów dowolnej
 - **Piramida.** Komórki są wyrównanymi potęgami dwójki w jednostkach świata (x, z tak, jak je umieszcza widz). Poziom `k` to komórki zsumowane przez `ix >> k, iz >> k` — dokładnie, w obrębie meczu i między meczami o innych rozmiarach komórek — a każdy region (pudełko, korytarz wzdłuż linii, pierścień) to suma komórek. Najdrobniejszy poziom mieści robustny zasięg meczu (komórki zawierające 99% obecności) w 128 komórkach; wartości poza nim są zachowane.
 - **Ekspozycja obok każdego zliczenia.** Sekundy obecności na komórkę, na drużynę (`pt`), na klasę pojazdu (`pc`) i na pasmo wysokości (`ph`), więc stopa, oczekiwanie i stosunek regionu są liczone dla dowolnej podgrupy.
 - **Wysokość.** Pasma powyżej poziomu zerowego meczu (1. percentyl wysokości): poniżej 3 m, 3–10, 10–30, 30–100, 100–300, 300–1000, 1000–3000, powyżej; plik z kolumną `floor`/`storey`/`deck` dzieli na pasma według pięter. `y` to średnia wysokość każdej komórki, `y0` jej najniższy punkt (jej piętro, dla wysokości nad nim).
-- **Zdarzenia** jako krotki `[komórka, rodzaj, drużyna, klasa, pasmo, liczba]`.
+- **Zdarzenia** jako krotki `[cell, kind, team, class, band, count]`.
 - **Rundy według wyniku** (wersja 2, z kolumną wyniku i co najmniej dwiema rundami):
   `pw` jako `[cell, team, rounds won, rounds lost]` — rundy, w których każda strona spędziła
   w komórce sekundę lub więcej, według jej wyniku w rundzie.
-- **Wycinki czasu** na zgrubnym poziomie (8 komórek na bok), według minuty od startu meczu: `[cx, cz, minuta, rodzaj, wartość]`, sekundy obecności jako rodzaj `GRID_KINDS.length`; fazy meczu to minuty na długości.
+- **Wycinki czasu** na zgrubnym poziomie (8 komórek na bok), według minuty od startu meczu: `[cx, cz, minute, kind, value]`, sekundy obecności jako rodzaj `GRID_KINDS.length`; fazy meczu to minuty na długości.
 - Rzadkie, liczby całkowite, sekundy co do dziesiątej: ograniczone tym, co się wydarzyło.
 
 ### Etap B: miejsca i nisze {#stage-b-places-and-niches}

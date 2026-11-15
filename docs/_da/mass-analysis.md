@@ -163,9 +163,9 @@ og form, ikke kun til varmebilleder:
 - **En pyramide.** Cellerne er rettede potenser af to i verdensenheder (x, z, som fremviseren placerer dem). Niveau `k` er cellerne summeret ved `ix >> k, iz >> k` - nøjagtigt, inden for en kamp og på tværs af kampe med andre cellestørrelser - og ethvert område (en boks, en korridor langs en linje, en ring) er en sum af celler. Det fineste niveau passer til kampens robuste udstrækning (cellerne, der har 99 % af tilstedeværelsen) i 128 celler; afvigere udenfor den holdes.
 - **Eksponering ved siden af hver tælling.** Tilstedeværelsessekunder pr. celle, pr. hold (`pt`), pr. køretøjsklasse (`pc`) og pr. højdebånd (`ph`), så et områdes rate, forventning og forhold kan udregnes for enhver undergruppe.
 - **Højde.** Bånd over kampens gulv (1. percentil af højden): under 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, over; en fil med en kolonne `floor`/`storey`/`deck` deler i bånd efter sine etager i stedet. `y` er hver celles middelhøjde, `y0` dens laveste (dens etage, for højde over den).
-- **Hændelser** som tupler `[celle, slags, hold, klasse, bånd, antal]`.
+- **Hændelser** som tupler `[cell, kind, team, class, band, count]`.
 - **Runder efter resultat** (version 2, med en resultatkolonne og to runder eller flere): `pw` som `[cell, team, rounds won, rounds lost]` - de runder, hver side brugte et sekund eller mere i cellen, efter dens resultat i runden.
-- **Tidsskiver** på et groft niveau (8 celler på hver side), efter minuttet fra kampstart: `[cx, cz, minut, slags, værdi]`, tilstedeværelsessekunder som slags `GRID_KINDS.length`; kampfaser er minutter over længden.
+- **Tidsskiver** på et groft niveau (8 celler på hver side), efter minuttet fra kampstart: `[cx, cz, minute, kind, value]`, tilstedeværelsessekunder som slags `GRID_KINDS.length`; kampfaser er minutter over længden.
 - Sparsomt, tællinger som hele tal, sekunder til en tiendedel: afgrænset af hvad der skete.
 
 ### Trin B: steder og nicher {#stage-b-places-and-niches}

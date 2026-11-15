@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "pl"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Co rozstrzygnęło rundy, opisują cztery akapity: wynik i skąd pochodzą szans
 >
 > Co odróżniało wygrane rundy od przegranych: T wygrało 79% z 19 rund, w których trzymało Mid, wobec 24% z 21 bez tego (55 punktów, 95% od 26 do 74) (q 0,004), ...
 >
-> Punkty zwrotne: runda 17 w 48 s, zabójstwo CT na B site zmieniło jego szansę z 31% na 58% i wygrało ono rundę, ... Każdy akapit ma ponumerowane przyciski pokazujące jego ustalenia. **Kopiuj tekst** kopiuje go.
+> Punkty zwrotne: runda 17 w 48 s, zabójstwo CT na B site zmieniło jego szansę z 31% na 58% i wygrało ono rundę, ...
+
+Każdy akapit ma ponumerowane przyciski pokazujące jego ustalenia. **Kopiuj tekst** kopiuje go.
 
 ![Podsumowanie napisane przez wbudowanego narratora](../assets/img/pl/debrief.webp)
 

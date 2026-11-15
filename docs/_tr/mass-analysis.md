@@ -133,9 +133,9 @@ Mekansal kısım, yalnızca ısı resimleri için değil, her boyut ve şekilde 
 - **Bir piramit.** Hücreler, dünya birimlerinde (x, z görüntüleyicinin yerleştirdiği gibi) hizalanmış ikinin kuvvetleridir. `k` seviyesi, `ix >> k, iz >> k` ile toplanan hücrelerdir — tam, bir maç içinde ve farklı hücre boyutlarındaki maçlar arasında — ve herhangi bir bölge (bir kutu, bir çizgi boyunca bir koridor, bir halka) hücrelerin toplamıdır. En ince seviye, maçın sağlam kapsamına (varlığın %99'unu tutan hücreler) 128 hücrede sığar; dışındaki dağınık hücreler tutulur.
 - **Her sayının yanında maruziyet.** Hücre başına varlık saniyeleri, takım başına (`pt`), araç sınıfı başına (`pc`) ve yükseklik bandı başına (`ph`), böylece bir bölgenin oranı, beklentisi ve oranı her alt grup için hesaplanabilir.
 - **Yükseklik.** Maç tabanının (yüksekliğin %1'lik dilimi) üzerindeki bantlar: 3 m'nin altı, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, üstü; `floor`/`storey`/`deck` sütunu olan bir dosya bunun yerine katlarına göre bantlanır. `y` her hücrenin ortalama yüksekliği, `y0` en düşüğüdür (kendi katı, üzerindeki yükseklik için).
-- **Olaylar** `[hücre, tür, takım, sınıf, bant, sayı]` demetleri olarak.
+- **Olaylar** `[cell, kind, team, class, band, count]` demetleri olarak.
 - **Sonuca göre turlar** (sürüm 2, bir sonuç sütunu ve iki ya da daha çok turla): `[cell, team, rounds won, rounds lost]` olarak `pw` — her tarafın hücrede bir saniye ya da daha uzun geçirdiği turlar, turdaki sonucuna göre.
-- **Zaman dilimleri** kaba bir seviyede (bir kenarda 8 hücre), maç başlangıcından itibaren dakikaya göre: `[cx, cz, dakika, tür, değer]`, varlık saniyeleri `GRID_KINDS.length` türü olarak; maç aşamaları uzunluk üzerinde dakikalardır.
+- **Zaman dilimleri** kaba bir seviyede (bir kenarda 8 hücre), maç başlangıcından itibaren dakikaya göre: `[cx, cz, minute, kind, value]`, varlık saniyeleri `GRID_KINDS.length` türü olarak; maç aşamaları uzunluk üzerinde dakikalardır.
 - Seyrek, sayılar tam sayı, saniyeler onda bire: olanların sınırladığı kadar.
 
 ### B Aşaması: yerler ve nişler {#stage-b-places-and-niches}

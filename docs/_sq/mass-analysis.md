@@ -144,9 +144,9 @@ Pjesa hapësinore është bërë për statistika skanimi mbi rajone të çdo mad
 - **Një piramidë.** Qelizat janë fuqi të plota të dyshe në njësi botërore (x, z ashtu si i vendos shikuesi). Niveli `k` është qelizat e mbledhura me `ix >> k, iz >> k` - saktë, brenda një ndeshjeje dhe mes ndeshjeve me madhësi të tjera qelize - dhe çdo rajon (një kuti, një korridor përgjatë një vije, një unazë) është një shumë qelizash. Niveli më i imët përshtatet me shtrirjen e fortë të ndeshjes (qelizat që mbajnë 99% të prezencës) në 128 qeliza; të hedhurat jashtë saj mbahen.
 - **Ekspozimi pranë çdo numërimi.** Sekonda prezence për qelizë, për ekip (`pt`), për klasë mjeti (`pc`) dhe për brez lartësie (`ph`), kështu që shkalla, pritja dhe raporti i një rajoni llogariten për çdo nënrrup.
 - **Lartësia.** Brezat mbi dyshemenë e ndeshjes (përqindja e 1-rë e lartësisë): nën 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, mbi; një skedar me kolonën `floor`/`storey`/`deck` i ndan sipas kateve të veta. `y` është lartësia mesatare e secilës qelizë, `y0` më e ulëta e saj (dyshemeja e saj, për lartësinë mbi të).
-- **Ngjarjet** si tupla `[qeliza, lloji, ekipi, klasa, brezi, numërimi]`.
+- **Ngjarjet** si tupla `[cell, kind, team, class, band, count]`.
 - **Raundet sipas rezultatit** (versioni 2, me një kolonë rezultati dhe dy raunde ose më shumë): `pw` si `[cell, team, rounds won, rounds lost]` - raundet në të cilat çdo palë kaloi një sekondë ose më shumë në qelizë, sipas rezultatit të saj në raund.
-- **Pjesë kohore** në një nivel të trashë (8 qeliza anash), sipas minutës nga fillimi i ndeshjes: `[cx, cz, minuta, lloji, vlera]`, sekondat e prezencës si lloj `GRID_KINDS.length`; fazat e ndeshjes janë minuta mbi gjatësinë.
+- **Pjesë kohore** në një nivel të trashë (8 qeliza anash), sipas minutës nga fillimi i ndeshjes: `[cx, cz, minute, kind, value]`, sekondat e prezencës si lloj `GRID_KINDS.length`; fazat e ndeshjes janë minuta mbi gjatësinë.
 - E rrallë, numërime të plota, sekonda deri në një të dhjetën: kufizohet nga ajo që ndodhi.
 
 ### Faza B: vende dhe nisha {#stage-b-places-and-niches}

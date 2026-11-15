@@ -138,11 +138,11 @@ Prostorová část je udělána pro statistiky skenování oblastí libovolné v
 - **Pyramida.** Buňky jsou zarovnané mocniny dvou ve světových jednotkách (x, z tak, jak je divák umisťuje). Úroveň `k` je součet buněk `ix >> k, iz >> k` – přesný, uvnitř zápasu i napříč zápasy jiných velikostí buněk – a každá oblast (obdélník, koridor podél čáry, prstenec) je součtem buněk. Nejjemnější úroveň se vejde do robustního rozsahu zápasu (buňky, které drží 99 % přítomnosti) do 128 buněk; zatoulané mimo něj se ponechají.
 - **Expozice vedle každého počtu.** Sekundy přítomnosti na buňku, na tým (`pt`), na třídu vozidla (`pc`) a na výškový pás (`ph`), takže míra, očekávání a poměr oblasti se spočítají pro libovolnou podskupinu.
 - **Výška.** Pásy nad podlahou zápasu (1. percentil výšky): pod 3 m, 3–10, 10–30, 30–100, 100–300, 300–1000, 1000–3000, nad; soubor se sloupcem `floor`/`storey`/`deck` se pásmuje podle svých podlaží. `y` je průměrná výška každé buňky, `y0` její nejnižší bod (její podlaží, pro výšku nad ním).
-- **Události** jako n-tice `[buňka, druh, tým, třída, pás, počet]`.
+- **Události** jako n-tice `[cell, kind, team, class, band, count]`.
 - **Kola podle výsledku** (verze 2, se sloupcem výsledku a dvěma nebo více koly):
   `pw` jako `[cell, team, rounds won, rounds lost]` – kola, ve kterých každá strana strávila
   v buňce sekundu nebo víc, podle jejího výsledku v kole.
-- **Časové řezy** na hrubé úrovni (8 buněk na stranu), podle minuty od začátku zápasu: `[cx, cz, minuta, druh, hodnota]`, sekundy přítomnosti jako druh `GRID_KINDS.length`; fáze zápasu jsou minuty z délky.
+- **Časové řezy** na hrubé úrovni (8 buněk na stranu), podle minuty od začátku zápasu: `[cx, cz, minute, kind, value]`, sekundy přítomnosti jako druh `GRID_KINDS.length`; fáze zápasu jsou minuty z délky.
 - Řídké, počty celá čísla, sekundy na desetinu: omezeno tím, co se stalo.
 
 ### Fáze B: místa a niky {#stage-b-places-and-niches}

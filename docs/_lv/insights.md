@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "lv"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -71,7 +71,9 @@ Kas izšķīra raundus, nāk četrās rindkopās: rezultāts un no kurienes nāk
 >
 > Kas šķīra uzvarētos raundus no zaudētajiem: T uzvarēja 79% no 19 raundiem, kuros noturēja Mid, pret 24% no 21 bez tā (55 procentpunkti, 95% 26 līdz 74) (q 0,004), ...
 >
-> Pagrieziena punkti: 17. raunds 48. s, CT nogalinājums pie B site mainīja tās iespēju no 31% uz 58%, un tā uzvarēja raundā, ... Katram rindkopas punktam ir numurētas pogas, kas parāda tās atradumus. **Kopēt tekstu** to kopē.
+> Pagrieziena punkti: 17. raunds 48. s, CT nogalinājums pie B site mainīja tās iespēju no 31% uz 58%, un tā uzvarēja raundā, ...
+
+Katram rindkopas punktam ir numurētas pogas, kas parāda tās atradumus. **Kopēt tekstu** to kopē.
 
 ![Kopsavilkums, ko uzrakstījis iebūvētais stāstītājs](../assets/img/lv/debrief.webp)
 

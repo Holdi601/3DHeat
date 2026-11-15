@@ -159,11 +159,11 @@ La parte spaziale è fatta per le statistiche di scansione su regioni di qualunq
 - **Una piramide.** Le celle sono potenze di due allineate in unità del mondo (x, z come li colloca il visualizzatore). Il livello `k` sono le celle sommate per `ix >> k, iz >> k` – esatte, dentro una partita e tra partite con altre dimensioni di cella – e qualunque regione (un riquadro, un corridoio lungo una linea, un anello) è una somma di celle. Il livello più fine si adatta all’estensione robusta della partita (le celle che contengono il 99% della presenza) in 128 celle; le celle isolate fuori di essa sono conservate.
 - **Esposizione accanto a ogni conteggio.** Secondi di presenza per cella, per squadra (`pt`), per classe di veicolo (`pc`) e per fascia di altezza (`ph`), così il tasso, l’aspettativa e il rapporto di una regione si calcolano per qualunque sottogruppo.
 - **Altezza.** Fasce sopra il piano della partita (il 1° percentile dell’altezza): sotto 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, sopra; un file con una colonna `floor`/`storey`/`deck` le divide per i suoi piani. `y` è l’altezza media di ogni cella, `y0` la più bassa (il suo piano, per l’altezza sopra di esso).
-- **Eventi** come tuple `[cella, tipo, squadra, classe, fascia, conteggio]`.
+- **Eventi** come tuple `[cell, kind, team, class, band, count]`.
 - **Round per risultato** (versione 2, con una colonna del risultato e due round o
   più): `pw` come `[cell, team, rounds won, rounds lost]` – i round in cui ogni lato ha
   passato un secondo o più nella cella, secondo il suo risultato nel round.
-- **Fette temporali** a un livello grossolano (8 celle per lato), per minuto dall’inizio della partita: `[cx, cz, minuto, tipo, valore]`, con i secondi di presenza come tipo `GRID_KINDS.length`; le fasi della partita sono minuti sulla durata.
+- **Fette temporali** a un livello grossolano (8 celle per lato), per minuto dall’inizio della partita: `[cx, cz, minute, kind, value]`, con i secondi di presenza come tipo `GRID_KINDS.length`; le fasi della partita sono minuti sulla durata.
 - Sparsi, conteggi interi, secondi al decimo: limitati da ciò che è successo.
 
 ### Fase B: luoghi e nicchie {#stage-b-places-and-niches}

@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "hu"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Hogy mi döntötte el a köröket, az négy bekezdésben jön: az állás, és h
 >
 > Ami megkülönböztette a megnyert köröket az elvesztettektől: a T megnyerte annak a 19 körnek a 79%-át, amelyben tartotta a Midet, szemben a nélküle lévő 21 kör 24%-ával (55 pont, 95%: 26–74) (q 0,004), ...
 >
-> Fordulópontok: a 17. körben 48 mp-nél a CT egy ölése a B site-on 31%-ról 58%-ra emelte az esélyét, és megnyerte a kört, ... Minden bekezdés számozott gombokat tartalmaz, amelyek a megállapításait mutatják. A **Szöveg másolása** lemásolja.
+> Fordulópontok: a 17. körben 48 mp-nél a CT egy ölése a B site-on 31%-ról 58%-ra emelte az esélyét, és megnyerte a kört, ...
+
+Minden bekezdés számozott gombokat tartalmaz, amelyek a megállapításait mutatják. A **Szöveg másolása** lemásolja.
 
 ![A beépített narrátor által írt összegzés](../assets/img/hu/debrief.webp)
 

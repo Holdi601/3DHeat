@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "sl"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Kaj je odločilo kroge, je zapisano v štirih odstavkih: izid in od kod prihajaj
 >
 > Kaj je ločilo dobljene kroge od izgubljenih: T je dobila 79 % od 19 krogov, v katerih je držala Mid, proti 24 % od 21 brez njega (55 točk, 95 % od 26 do 74) (q 0,004), ...
 >
-> Prelomnice: krog 17 ob 48 s, ubitje strani CT na mestu B je premaknilo njeno možnost z 31 % na 58 % in krog je dobila, ... Vsak odstavek ima oštevilčene gumbe, ki prikažejo njegove ugotovitve. **Kopiraj besedilo** ga kopira.
+> Prelomnice: krog 17 ob 48 s, ubitje strani CT na mestu B je premaknilo njeno možnost z 31 % na 58 % in krog je dobila, ...
+
+Vsak odstavek ima oštevilčene gumbe, ki prikažejo njegove ugotovitve. **Kopiraj besedilo** ga kopira.
 
 ![Povzetek, ki ga napiše vgrajeni pripovedovalec](../assets/img/sl/debrief.webp)
 

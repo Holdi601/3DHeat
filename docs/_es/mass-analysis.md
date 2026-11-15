@@ -154,11 +154,11 @@ La parte espacial está hecha para estadísticas de barrido sobre regiones de cu
 - **Una pirámide.** Las celdas son potencias de dos alineadas en unidades del mundo (x, z como las coloca el visor). El nivel `k` son las celdas sumadas por `ix >> k, iz >> k` - exacto, dentro de una partida y entre partidas de otros tamaños de celda - y cualquier región (una caja, un pasillo a lo largo de una línea, un anillo) es una suma de celdas. El nivel más fino encaja la extensión robusta de la partida (las celdas que contienen el 99 % de la presencia) en 128 celdas; los puntos perdidos fuera de ella se conservan.
 - **Exposición junto a cada recuento.** Segundos de presencia por celda, por equipo (`pt`), por clase de vehículo (`pc`) y por banda de altura (`ph`), así que la tasa, la esperanza y el cociente de una región se calculan para cualquier subgrupo.
 - **Altura.** Bandas por encima del suelo de la partida (el percentil 1 de la altura): menos de 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, más de eso; un archivo con una columna `floor`/`storey`/`deck` las agrupa por sus pisos. `y` es la altura media de cada celda, `y0` la más baja (su piso, para la altura por encima de ella).
-- **Eventos** como tuplas `[celda, tipo, equipo, clase, banda, recuento]`.
+- **Eventos** como tuplas `[cell, kind, team, class, band, count]`.
 - **Rondas por resultado** (versión 2, con una columna de resultado y dos rondas o
   más): `pw` como `[cell, team, rounds won, rounds lost]` - las rondas en que cada bando
   pasó un segundo o más en la celda, según su resultado en la ronda.
-- **Cortes de tiempo** a un nivel grueso (8 celdas por lado), por minuto desde el inicio de la partida: `[cx, cz, minuto, tipo, valor]`, con los segundos de presencia como tipo `GRID_KINDS.length`; las fases de la partida son minutos sobre la duración.
+- **Cortes de tiempo** a un nivel grueso (8 celdas por lado), por minuto desde el inicio de la partida: `[cx, cz, minute, kind, value]`, con los segundos de presencia como tipo `GRID_KINDS.length`; las fases de la partida son minutos sobre la duración.
 - Dispersa, recuentos enteros, segundos con una décima: acotada por lo que pasó.
 
 ### Etapa B: lugares y nichos {#stage-b-places-and-niches}

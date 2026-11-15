@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "fr"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Ce qui a décidé les manches tient en quatre paragraphes : le score et l'origin
 >
 > Ce qui a séparé les manches gagnées des perdues : T a gagné 79 % des 19 manches où il tenait Mid, contre 24 % des 21 sans (55 points, 95 % de 26 à 74) (q 0,004), ...
 >
-> Tournants : manche 17 à 48 s, un frag de CT à B site a fait passer sa chance de 31 % à 58 %, et il a pris la manche, ... Chaque paragraphe a des boutons numérotés qui montrent ses constats. **Copier le texte** le copie.
+> Tournants : manche 17 à 48 s, un frag de CT à B site a fait passer sa chance de 31 % à 58 %, et il a pris la manche, ...
+
+Chaque paragraphe a des boutons numérotés qui montrent ses constats. **Copier le texte** le copie.
 
 ![Le bilan rédigé par le narrateur intégré](../assets/img/fr/debrief.webp)
 

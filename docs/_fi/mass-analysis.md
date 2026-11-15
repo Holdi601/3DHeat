@@ -137,11 +137,11 @@ Avaruudellinen osa on tehty skannaustilastoille alueille, joilla on mikä tahans
 - **Pyramidi.** Solut ovat maailman yksiköissä kahden potensseja kohdistettuina (x ja z sellaisina kuin katsoja ne sijoittaa). Taso `k` on solut, jotka on summattu `ix >> k, iz >> k` -muodossa. Se on tarkka, saman ottelun sisällä ja eri solukokoisten otteluiden välillä. Mikä tahansa alue (laatikko, käytävä viivaa pitkin, rengas) on solujen summa. Hienoin taso sopii ottelun vankkaan ulottuvuuteen (solut, jotka pitävät 99 % läsnäolosta) 128 soluun. Sen ulkopuoliset harhautuneet pidetään.
 - **Altistus jokaisen luvun vieressä.** Läsnäolosekunnit per solu, per joukkue (`pt`), per ajoneuvoluokka (`pc`) ja per korkeuskaista (`ph`). Alueen nopeus, odotus ja suhde lasketaan siis mille tahansa alaryhmälle.
 - **Korkeus.** Kaistat ottelun lattian yläpuolella (korkeuden 1. persentiili): alle 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000 ja yli. Tiedosto, jossa on sarake `floor`, `storey` tai `deck`, jakaa kaistoihin kerrosten mukaan. `y` on kunkin solun keskikorkeus, `y0` sen alin kohta (sen kerros, kun korkeus on sen yläpuolella).
-- **Tapahtumat** monikkoina `[solu, tyyppi, joukkue, luokka, kaista, määrä]`.
+- **Tapahtumat** monikkoina `[cell, kind, team, class, band, count]`.
 - **Kierrokset tuloksen mukaan** (versio 2, tulossarakkeen ja vähintään kahden kierroksen
   kanssa): `pw` muodossa `[cell, team, rounds won, rounds lost]` – kierrokset, joilla kukin puoli
   oli solussa sekunnin tai kauemmin, kierroksen tuloksen mukaan.
-- **Aikaviipaleet** karkealla tasolla (8 solua sivulle), minuutin mukaan ottelun alusta: `[cx, cz, minuutti, tyyppi, arvo]`. Läsnäolosekunnit ovat tyyppi `GRID_KINDS.length`. Ottelun vaiheet ovat minuutteja pituuden yli.
+- **Aikaviipaleet** karkealla tasolla (8 solua sivulle), minuutin mukaan ottelun alusta: `[cx, cz, minute, kind, value]`. Läsnäolosekunnit ovat tyyppi `GRID_KINDS.length`. Ottelun vaiheet ovat minuutteja pituuden yli.
 - Harva, laskurit kokonaislukuja, sekunnit kymmenesosaan. Koko on rajattu sen mukaan, mitä tapahtui.
 
 ### Vaihe B: paikat ja lokerot {#stage-b-places-and-niches}

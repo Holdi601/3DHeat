@@ -127,7 +127,7 @@
   "mass.conf.high": "høy",
   "mass.conf.medium": "middels",
   "mass.conf.low": "lav",
-  "mass.load": "Last",
+  "mass.load": "Last inn",
   "mass.detRan": "{tests} tester, {found} funnet",
   "mass.skip.noVehicles": "ingen kjøretøy",
   "mass.skip.noGrids": "ingen kartrutenett",

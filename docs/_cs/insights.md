@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "cs"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Co rozhodlo kola, popisují čtyři odstavce: skóre a odkud pocházejí pravdě
 >
 > Co oddělilo vyhraná kola od prohraných: T vyhrálo 79 % z 19 kol, kdy drželo Mid, oproti 24 % z 21 bez něj (55 bodů, 95 % 26 až 74) (q 0,004), ...
 >
-> Zlomové okamžiky: kolo 17 ve 48 s, zabití od CT na B site posunulo jeho šanci z 31 % na 58 % a kolo získalo, ... Každý odstavec má očíslovaná tlačítka, která ukážou jeho zjištění. **Kopírovat text** ho zkopíruje.
+> Zlomové okamžiky: kolo 17 ve 48 s, zabití od CT na B site posunulo jeho šanci z 31 % na 58 % a kolo získalo, ...
+
+Každý odstavec má očíslovaná tlačítka, která ukážou jeho zjištění. **Kopírovat text** ho zkopíruje.
 
 ![Shrnutí napsané vestavěným vypravěčem](../assets/img/cs/debrief.webp)
 

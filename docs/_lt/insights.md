@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "lt"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -71,7 +71,9 @@ Kas lėmė raundus, pateikiama keturiomis pastraipomis: rezultatas ir iš kur at
 >
 > Kas skyrė laimėtus raundus nuo pralaimėtų: T laimėjo 79 % iš 19 raundų, kai laikė Mid, prieš 24 % iš 21 be to (55 procentiniai punktai, 95 % nuo 26 iki 74) (q 0,004), ...
 >
-> Lūžio taškai: 17 raundas, 48 s, CT nužudymas prie B site pakeitė jos galimybę nuo 31 % iki 58 %, ir ji laimėjo raundą, ... Kiekviena pastraipa turi numeruotus mygtukus, rodančius jos radinius. **Kopijuoti tekstą** jį nukopijuoja.
+> Lūžio taškai: 17 raundas, 48 s, CT nužudymas prie B site pakeitė jos galimybę nuo 31 % iki 58 %, ir ji laimėjo raundą, ...
+
+Kiekviena pastraipa turi numeruotus mygtukus, rodančius jos radinius. **Kopijuoti tekstą** jį nukopijuoja.
 
 ![Santrauka, parašyta įmontuoto pasakotojo](../assets/img/lt/debrief.webp)
 

@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "mt"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ X'iddeċieda r-rawnds jiġi f'erba' paragrafi: il-punteġġ u minn fejn ġejjin 
 >
 > X'iddistingwa r-rawnds mirbuħa minn dawk mitlufa: T rebħet 79% tad-19-il rawnd li fihom żammet Mid, kontra 24% tal-21 mingħajru (55 punt, 95% minn 26 sa 74) (q 0.004), ...
 >
-> Punti ta' bidla: rawnd 17 f'48 s, qtil minn CT f'B site ċaqlaq iċ-ċans tagħha minn 31% għal 58%, u ħadet ir-rawnd, ... Kull paragrafu għandu buttuni nnumerati li juru s-sejbiet tiegħu. **Ikkopja t-test** jikkopjah.
+> Punti ta' bidla: rawnd 17 f'48 s, qtil minn CT f'B site ċaqlaq iċ-ċans tagħha minn 31% għal 58%, u ħadet ir-rawnd, ...
+
+Kull paragrafu għandu buttuni nnumerati li juru s-sejbiet tiegħu. **Ikkopja t-test** jikkopjah.
 
 ![Is-sommarju miktub mill-narratur ta' ġewwa](../assets/img/mt/debrief.webp)
 

@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "pt"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ O que decidiu as rondas vem em quatro parágrafos: o resultado e de onde vêm as
 >
 > O que separou as rondas ganhas das perdidas: T ganhou 79% das 19 rondas em que manteve Mid, contra 24% de 21 sem ele (55 pontos, 95% de 26 a 74) (q 0,004), ...
 >
-> Pontos de viragem: ronda 17 aos 48 s, um abate de CT em B site mudou a sua hipótese de 31% para 58%, e ficou com a ronda, ... Cada parágrafo tem botões numerados que mostram as suas descobertas. **Copiar texto** copia-o.
+> Pontos de viragem: ronda 17 aos 48 s, um abate de CT em B site mudou a sua hipótese de 31% para 58%, e ficou com a ronda, ...
+
+Cada parágrafo tem botões numerados que mostram as suas descobertas. **Copiar texto** copia-o.
 
 ![O resumo escrito pelo narrador incorporado](../assets/img/pt/debrief.webp)
 

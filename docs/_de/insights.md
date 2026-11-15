@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "de"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Was die Runden entschied, kommt in vier Absätzen: der Spielstand und woher die 
 >
 > Was gewonnene von verlorenen Runden trennte: T gewann 79 % der 19 Runden, in denen es Mid hielt, gegen 24 % von 21 ohne (55 Punkte, 95 % 26 bis 74) (q 0,004), ...
 >
-> Wendepunkte: Runde 17 bei 48 s, ein Abschuss von CT an B site bewegte seine Chance von 31 % auf 58 %, und es holte die Runde, ... Jeder Absatz hat nummerierte Schaltflächen, die seine Befunde zeigen. **Text kopieren** kopiert ihn.
+> Wendepunkte: Runde 17 bei 48 s, ein Abschuss von CT an B site bewegte seine Chance von 31 % auf 58 %, und es holte die Runde, ...
+
+Jeder Absatz hat nummerierte Schaltflächen, die seine Befunde zeigen. **Text kopieren** kopiert ihn.
 
 ![Die Nachbesprechung, geschrieben vom eingebauten Erzähler](../assets/img/de/debrief.webp)
 

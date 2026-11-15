@@ -98,7 +98,7 @@ Det er en CSV bygget i minnet (`mistakeTable`), én rad per rutepunkt (hvert 2 m
 | `corner` | svingets etikett, `T3` |
 | `cost` | forekomstens kostnad, s |
 
-Den lastes gjennom varmekartets egen innlasting med kartleggingstips: Y opp, ingen akseomvending, skala 1; tid `elapsed` i sekunder; **person** = `car`, **gruppe** = `mistake`, **økt** = `lap`; ingen blikkretning; `car_class`, `corner` og `cost` beholdes som filterkolonner. Fanen går så over til **Varme** og rammer inn dataene. Bare klassene som er valgt i statistikken eksporteres.
+Den lastes gjennom varmekartets egen innlasting med kartleggingstips: Y opp, ingen akseomvending, skala 1; tid `elapsed` i sekunder; **person** = `car`, **gruppe** = `mistake`, **økt** = `lap`; ingen blikkretning; `car_class`, `corner` og `cost` beholdes som filterkolonner. Fanen går så over til **Varmekart** og rammer inn dataene. Bare klassene som er valgt i statistikken eksporteres.
 
 ## Baner fra flere spor {#courses-from-several-tracks}
 

@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "hr"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Kartica **Sažetak** piše nalaze kao kratak tekst: uvod, najjasniji nalaz, jeda
 >
 > Što je razdvajalo dobivene od izgubljenih rundi: T je dobila 79% od 19 rundi u kojima je držala Mid, naspram 24% od 21 bez toga (55 bodova, 95% od 26 do 74) (q 0,004), ...
 >
-> Prekretnice: runda 17 u 48 s, ubojstvo strane CT na mjestu B promijenilo je njezine izglede s 31% na 58%, i dobila je rundu, ... Svaki odlomak ima numerirane gumbe koji prikazuju njegove nalaze. **Kopiraj tekst** ga kopira.
+> Prekretnice: runda 17 u 48 s, ubojstvo strane CT na mjestu B promijenilo je njezine izglede s 31% na 58%, i dobila je rundu, ...
+
+Svaki odlomak ima numerirane gumbe koji prikazuju njegove nalaze. **Kopiraj tekst** ga kopira.
 
 ![Sažetak koji je napisao ugrađeni pripovjedač](../assets/img/hr/debrief.webp)
 

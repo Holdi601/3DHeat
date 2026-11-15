@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "fi"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -71,7 +71,9 @@ Mikä ratkaisi kierrokset tulee neljässä kappaleessa: tilanne ja mistä voiton
 >
 > Mikä erotti voitetut kierrokset hävityistä: T voitti 79 % niistä 19 kierroksesta, joilla se piti Midiä, ja 24 % niistä 21 kierroksesta, joilla ei (55 prosenttiyksikköä, 95 % 26–74) (q 0,004), ...
 >
-> Käännekohdat: kierros 17 kohdassa 48 s, CT:n tappo B sitellä nosti sen mahdollisuuden 31 %:sta 58 %:iin, ja se voitti kierroksen, ... Jokaisessa kappaleessa on numeroidut painikkeet, jotka näyttävät sen löydökset. **Kopioi teksti** kopioi sen.
+> Käännekohdat: kierros 17 kohdassa 48 s, CT:n tappo B sitellä nosti sen mahdollisuuden 31 %:sta 58 %:iin, ja se voitti kierroksen, ...
+
+Jokaisessa kappaleessa on numeroidut painikkeet, jotka näyttävät sen löydökset. **Kopioi teksti** kopioi sen.
 
 ![Sisäänrakennetun kertojan kirjoittama katsaus](../assets/img/fi/debrief.webp)
 

@@ -21,7 +21,7 @@ Skudd, treff, branner og vrak tegnes på enhetene og målene i banen. Kameraer, 
 ## Start et replay {#start-a-replay}
 
 1. Last inn et opptak med **Kilde → Filer…** eller ved å slippe det på panelet Kilde (en hvilken som helst tabell med en **person**- og en **tid**-kolonne, en Tacview-fil, et konvertert replay, en [`.3dheat`](container.md)-kamp). Se [Få inn data](getting-data-in.md).
-2. Åpne fanen **Kamp** og velg **Figurreplay**, eller velg **Figuroverlegg** i modusraden i fanen Varmekart.
+2. Åpne fanen **Kamp** og velg **Figuravspilling**, eller velg **Figuroverlegg** i modusraden i fanen Varmekart.
 3. Under **Kamper i reprisen** velger du én kamp, alle på én gang, eller flere.
 4. Trykk **Spill av** på tidslinjen (eller `K`). Dra tidslinjen for å hoppe.
 

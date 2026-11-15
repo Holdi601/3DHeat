@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "it"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Cosa ha deciso i round arriva in quattro paragrafi: il punteggio e da dove vengo
 >
 > Cosa ha separato i round vinti da quelli persi: T ha vinto il 79 % dei 19 round in cui ha tenuto Mid, contro il 24 % di 21 senza (55 punti, 95 % da 26 a 74) (q 0,004), ...
 >
-> Punti di svolta: round 17 a 48 s, un'uccisione di CT a B site ha spostato la sua possibilità dal 31 % al 58 %, e ha preso il round, ... Ogni paragrafo ha pulsanti numerati che mostrano le sue rilevazioni. **Copia il testo** lo copia.
+> Punti di svolta: round 17 a 48 s, un'uccisione di CT a B site ha spostato la sua possibilità dal 31 % al 58 %, e ha preso il round, ...
+
+Ogni paragrafo ha pulsanti numerati che mostrano le sue rilevazioni. **Copia il testo** lo copia.
 
 ![Il resoconto scritto dal narratore integrato](../assets/img/it/debrief.webp)
 

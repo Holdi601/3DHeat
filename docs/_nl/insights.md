@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "nl"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Wat de rondes besliste komt in vier alinea's: de stand en waar de winkansen vand
 >
 > Wat gewonnen van verloren rondes scheidde: T won 79% van de 19 rondes waarin het Mid hield, tegen 24% van 21 zonder (55 punten, 95% 26 tot 74) (q 0,004), ...
 >
-> Kantelpunten: ronde 17 op 48 s, een kill door CT bij B site verschoof zijn kans van 31% naar 58%, en het pakte de ronde, ... Elke alinea heeft genummerde knoppen die de bevindingen tonen. **Tekst kopiëren** kopieert hem.
+> Kantelpunten: ronde 17 op 48 s, een kill door CT bij B site verschoof zijn kans van 31% naar 58%, en het pakte de ronde, ...
+
+Elke alinea heeft genummerde knoppen die de bevindingen tonen. **Tekst kopiëren** kopieert hem.
 
 ![De nabespreking geschreven door de ingebouwde verteller](../assets/img/nl/debrief.webp)
 

@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "ro"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Ce a decis rundele vine în patru paragrafe: scorul și de unde vin probabilită
 >
 > Ce a deosebit rundele câștigate de cele pierdute: T a câștigat 79% din cele 19 runde în care a ținut Mid, față de 24% din 21 fără el (55 de puncte, 95% între 26 și 74) (q 0,004), ...
 >
-> Momente decisive: runda 17 la 48 s, o eliminare făcută de CT pe B site i-a schimbat șansa de la 31% la 58%, iar CT a luat runda, ... Fiecare paragraf are butoane numerotate care arată observațiile lui. **Copiază textul** îl copiază.
+> Momente decisive: runda 17 la 48 s, o eliminare făcută de CT pe B site i-a schimbat șansa de la 31% la 58%, iar CT a luat runda, ...
+
+Fiecare paragraf are butoane numerotate care arată observațiile lui. **Copiază textul** îl copiază.
 
 ![Rezumatul scris de naratorul integrat](../assets/img/ro/debrief.webp)
 

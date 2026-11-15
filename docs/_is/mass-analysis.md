@@ -140,11 +140,11 @@ Rúmfræðilegi hlutinn er gerður fyrir skannatölfræði yfir svæði af hvað
 - **Pýramídi.** Reitir eru jöfn veldi tveggja í heimseiningum (x, z eins og skoðarinn staðsetur þá). Stig `k` eru reitirnir sem summaðir eru með `ix >> k, iz >> k` - nákvæmt, innan leiks og yfir leiki með öðrum reitastærðum - og hvert svæði (kassi, gangur eftir línu, hringur) er summa reita. Fínasta stigið passar í þekkta útbreiðslu leiksins (reitirnir sem halda 99% viðverunnar) í 128 reitum; ráfarar utan þess eru geymdir.
 - **Útsetning við hliðina á hverri talningu.** Viðverusekúndur á hvern reit, fyrir hvert lið (`pt`), fyrir hvern flokk farartækis (`pc`) og fyrir hvert hæðarband (`ph`), svo að hlutfall, væntigildi og hlutfall svæðis sé reiknað fyrir hvaða undirhóp sem er.
 - **Hæð.** Bönd yfir lágmarki leiksins (1. hundraðshluti hæðar): undir 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, yfir; skrá með dálki `floor`/`storey`/`deck` setur í bönd eftir hæðum sínum í staðinn. `y` er meðalhæð hvers reits, `y0` sú lægsta (gólf hans, fyrir hæð fyrir ofan það).
-- **Atburðir** sem tvíundir `[reitur, tegund, lið, flokkur, band, fjöldi]`.
+- **Atburðir** sem tvíundir `[cell, kind, team, class, band, count]`.
 - **Lotur eftir úrslitum** (útgáfa 2, með úrslitadálki og tveimur lotum eða
   fleiri): `pw` sem `[cell, team, rounds won, rounds lost]` - loturnar sem hvor hlið
   var sekúndu eða lengur í reitnum, eftir úrslitum hennar í lotunni.
-- **Tímasneiðar** á grófu stigi (8 reitir á hlið), eftir mínútu frá byrjun leiksins: `[cx, cz, mínúta, tegund, gildi]`, viðverusekúndur sem tegund `GRID_KINDS.length`; fasar leiksins eru mínútur yfir lengdinni.
+- **Tímasneiðar** á grófu stigi (8 reitir á hlið), eftir mínútu frá byrjun leiksins: `[cx, cz, minute, kind, value]`, viðverusekúndur sem tegund `GRID_KINDS.length`; fasar leiksins eru mínútur yfir lengdinni.
 - Strjált, talningar heiltölur, sekúndur niður í tíunda hluta: takmarkað af því sem gerðist.
 
 ### Stig B: staðir og hólf {#stage-b-places-and-niches}

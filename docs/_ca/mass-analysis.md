@@ -140,9 +140,9 @@ La part espacial està feta per a estadístiques d'exploració sobre regions de 
 - **Una piràmide.** Les cel·les són potències de dos alineades en unitats del món (x, z tal com el visor les col·loca). El nivell `k` són les cel·les sumades per `ix >> k, iz >> k` - exacte, dins d'una partida i entre partides de mides de cel·la diferents - i qualsevol regió (una caixa, un corredor al llarg d'una línia, un anell) és una suma de cel·les. El nivell més fi s'ajusta a l'extensió robusta de la partida (les cel·les que contenen el 99% de la presència) en 128 cel·les; els valors fora queden guardats.
 - **Exposició al costat de cada recompte.** Segons de presència per cel·la, per equip (`pt`), per classe de vehicle (`pc`) i per franja d'altura (`ph`), de manera que la taxa, l'expectativa i la raó d'una regió es calculen per a qualsevol subgrup.
 - **Altura.** Franges per sobre del terra de la partida (el 1r percentil d'altura): menys de 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, per sobre; un fitxer amb una columna `floor`/`storey`/`deck` les agrupa per les seves plantes. `y` és l'altura mitjana de cada cel·la, `y0` la més baixa (la seva planta, per a l'altura per sobre d'ella).
-- **Esdeveniments** com a tuples `[cel·la, tipus, equip, classe, franja, recompte]`.
+- **Esdeveniments** com a tuples `[cell, kind, team, class, band, count]`.
 - **Rondes per resultat** (versió 2, amb una columna de resultat i dues rondes o més): `pw` com a `[cell, team, rounds won, rounds lost]` - les rondes en què cada bàndol va passar un segon o més a la cel·la, segons el seu resultat a la ronda.
-- **Llesques de temps** a un nivell gruixut (8 cel·les per costat), per minut des de l'inici de la partida: `[cx, cz, minut, tipus, valor]`, els segons de presència com a tipus `GRID_KINDS.length`; les fases de la partida són minuts sobre la durada.
+- **Llesques de temps** a un nivell gruixut (8 cel·les per costat), per minut des de l'inici de la partida: `[cx, cz, minute, kind, value]`, els segons de presència com a tipus `GRID_KINDS.length`; les fases de la partida són minuts sobre la durada.
 - Dispers, recomptes enters, segons a una desena: limitat pel que ha passat.
 
 ### Fase B: llocs i nínxols {#stage-b-places-and-niches}

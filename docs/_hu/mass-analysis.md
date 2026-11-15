@@ -133,9 +133,9 @@ A térbeli rész olyan szkennelési statisztikákhoz készült, amelyek bármily
 - **Piramis.** A cellák a világegységekben igazított kettő-hatványok (x, z ahogy a nézegető elhelyezi őket). A `k` szint azoknak a celláknak az összege, amelyeket `ix >> k, iz >> k` szerint csoportosítunk – pontos, egy meccsen belül és más cellaméretű meccsek között is –, és bármely régió (egy doboz, egy vonal menti folyosó, egy gyűrű) cellák összege. A legfinomabb szint a meccs robusztus kiterjedését (a jelenlét 99%-át tartó cellák) 128 cellába illeszti; a kívülük eső kóborlók megmaradnak.
 - **Expozíció minden szám mellett.** Jelenléti másodpercek cellánként, csapatonként (`pt`), járműosztályonként (`pc`) és magassági sávonként (`ph`), így egy régió aránya, várható értéke és hányadosa bármely részcsoportra kiszámolható.
 - **Magasság.** Sávok a meccs padlója (a magasság 1. percentilise) fölött: 3 m alatt, 3–10, 10–30, 30–100, 100–300, 300–1000, 1000–3000, fölötte. A `floor`/`storey`/`deck` oszloppal rendelkező fájl helyette az emeletei szerint sávoz. A `y` minden cella átlagos magassága, a `y0` a legalacsonyabbja (az emelete, a fölötte lévő magassághoz).
-- **Események** párokként: `[cella, fajta, csapat, osztály, sáv, szám]`.
+- **Események** párokként: `[cell, kind, team, class, band, count]`.
 - **Körök eredmény szerint** (2-es verzió, eredményoszloppal és legalább két körrel): `pw` mint `[cell, team, rounds won, rounds lost]` – azok a körök, amelyekben az egyes oldalak legalább egy másodpercet töltöttek a cellában, a kör eredménye szerint.
-- **Időszeletek** durva szinten (oldalanként 8 cella), a meccs kezdetétől számított perc szerint: `[cx, cz, perc, fajta, érték]`. A jelenléti másodpercek fajtaként `GRID_KINDS.length`; a meccs szakaszai percek a hosszon.
+- **Időszeletek** durva szinten (oldalanként 8 cella), a meccs kezdetétől számított perc szerint: `[cx, cz, minute, kind, value]`. A jelenléti másodpercek fajtaként `GRID_KINDS.length`; a meccs szakaszai percek a hosszon.
 - Ritka, a számlálók egészek, a másodpercek tizedre kerekítve: attól korlátozva, ami történt.
 
 ### B szakasz: helyek és fülkék {#stage-b-places-and-niches}

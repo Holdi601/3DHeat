@@ -85,8 +85,8 @@ Fanen **Steder** finner steder som skiller seg ut i tallene, men ikke i varmekar
 
 Der kampene sier hvem som vant hver runde ([utfallskolonnen](data-formats.md#outcome-columns) `won`), er resultatet et eget mål:
 
-- **Steder: vinnerandel.** For hver side andelen av rundene den hadde på et sted som den vant, mot andelen den vant i samme kamp hvor som helst – så kartets balanse, sidens og kampens egen er grunnlinjen, og bare steder der de som holder dem, vinner flere (eller færre) av rundene sine, skiller seg ut. Et oppdiktet eksempel: *«Dust: side T vinner flere av rundene sine når den er her: 61 % av 412 vunnet, mot 49 % ventet ut fra dens egen andel i de samme kampene (odds 1,6x; holdt i 31/48 kamper).»* Samme falske oppdagelsesrate og stabilitetskontroller som for alle steder; **Last** laster inn kampene det ble holdt i, og viser posisjonene til den siden.
-- **Nisjer: rundeseier.** Tabellen **Runder** har runden til hvert liv: kartet, siden, delen av kampen (runde 1–4, 5–8, ...), kjøretøyet (en operatør, en agent), våpenet det brukte mest, stedet det holdt lengst, kjøpet (eco, force, full) og om siden fikk det første drapet. En gruppe vurderes mot det siden vant i de samme kampene, så *T på Dust med en AWP* er en nisje bare når de rundene ble vunnet oftere enn Ts andre runder i de kampene. Et oppdiktet eksempel: *«m1 · T · AWP: vinner 80 % av 320 runder, mot 62 % ventet ut fra de samme sidene i de samme kampene (odds 2,3x; 40 kamper).»* Rangert etter løftet ganger støtten; **Last** laster inn kampene der rundene viser det mest.
+- **Steder: vinnerandel.** For hver side andelen av rundene den hadde på et sted som den vant, mot andelen den vant i samme kamp hvor som helst – så kartets balanse, sidens og kampens egen er grunnlinjen, og bare steder der de som holder dem, vinner flere (eller færre) av rundene sine, skiller seg ut. Et oppdiktet eksempel: *«Dust: side T vinner flere av rundene sine når den er her: 61 % av 412 vunnet, mot 49 % ventet ut fra dens egen andel i de samme kampene (odds 1,6x; holdt i 31/48 kamper).»* Samme falske oppdagelsesrate og stabilitetskontroller som for alle steder; **Last inn** laster kampene det ble holdt i, og viser posisjonene til den siden.
+- **Nisjer: rundeseier.** Tabellen **Runder** har runden til hvert liv: kartet, siden, delen av kampen (runde 1–4, 5–8, ...), kjøretøyet (en operatør, en agent), våpenet det brukte mest, stedet det holdt lengst, kjøpet (eco, force, full) og om siden fikk det første drapet. En gruppe vurderes mot det siden vant i de samme kampene, så *T på Dust med en AWP* er en nisje bare når de rundene ble vunnet oftere enn Ts andre runder i de kampene. Et oppdiktet eksempel: *«m1 · T · AWP: vinner 80 % av 320 runder, mot 62 % ventet ut fra de samme sidene i de samme kampene (odds 2,3x; 40 kamper).»* Rangert etter løftet ganger støtten; **Last inn** laster kampene der rundene viser det mest.
 
 Begge trenger sammendrag av versjon 2 (se [Få sammendragene](#getting-the-summaries)): eldre regnes ut på nytt.
 
@@ -170,12 +170,12 @@ og form, ikke bare for varmebilder:
 - **Høyde.** Bånd over kampens gulv (1. persentil av høyden): under 3 m, 3–10,
   10–30, 30–100, 100–300, 300–1000, 1000–3000, over; en fil med en kolonne `floor`/`storey`/`deck`
   deler inn etter etasjer i stedet. `y` er hver celles gjennomsnittlige høyde, `y0` dens laveste (dens etasje, for høyde over den).
-- **Hendelser** som tupler `[celle, type, lag, klasse, bånd, antall]`.
+- **Hendelser** som tupler `[cell, kind, team, class, band, count]`.
 - **Runder etter resultat** (versjon 2, med en resultatkolonne og to runder eller
   flere): `pw` som `[cell, team, rounds won, rounds lost]` – rundene hver side
   tilbrakte ett sekund eller mer i cellen, etter resultatet i runden.
 - **Tidsskiver** på et grovt nivå (8 celler per side), etter minutt fra kampstart:
-  `[cx, cz, minutt, type, verdi]`, tilstedeværelsessekunder som type
+  `[cx, cz, minute, kind, value]`, tilstedeværelsessekunder som type
   `GRID_KINDS.length`; kampfaser er minutter over lengden.
 - Sparsomt, tellinger som heltall, sekunder til en tiendedel: begrenset av det som skjedde.
 

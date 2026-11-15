@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "da"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Hvad der afgjorde runderne kommer i fire afsnit: stillingen og hvor vindersandsy
 >
 > Hvad der adskilte vundne fra tabte runder: T vandt 79 % af de 19 runder, hvor den holdt Mid, mod 24 % af 21 uden (55 point, 95 % 26 til 74) (q 0,004), ...
 >
-> Vendepunkter: runde 17 ved 48 s, et drab af CT ved B site flyttede dens chance fra 31 % til 58 %, og den tog runden, ... Hvert afsnit har nummererede knapper, der viser dets fund. **Kopiér tekst** kopierer den.
+> Vendepunkter: runde 17 ved 48 s, et drab af CT ved B site flyttede dens chance fra 31 % til 58 %, og den tog runden, ...
+
+Hvert afsnit har nummererede knapper, der viser dets fund. **Kopiér tekst** kopierer den.
 
 ![Gennemgangen skrevet af den indbyggede fortæller](../assets/img/da/debrief.webp)
 

@@ -82,7 +82,9 @@ What decided the rounds comes in four paragraphs: the score and where the win pr
 >
 > What separated won from lost rounds: T won 79% of the 19 rounds it held Mid, against 24% of 21 without it (55 points, 95% 26 to 74) (q 0.004), ...
 >
-> Turning points: round 17 at 48 s, a kill by CT at B site moved its chance from 31% to 58%, and it took the round, ... Each paragraph has numbered buttons that show its findings. **Copy text** copies it.
+> Turning points: round 17 at 48 s, a kill by CT at B site moved its chance from 31% to 58%, and it took the round, ...
+
+Each paragraph has numbered buttons that show its findings. **Copy text** copies it.
 
 ![The debrief written by the built-in narrator](assets/img/en/debrief.webp)
 

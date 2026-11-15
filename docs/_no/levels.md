@@ -27,7 +27,7 @@ Nivået deles av alle tre fanene: et løp lastet inn i Løpsanalyse-fanen er det
 
 1. Last inn dataene dine først ([Få inn data](getting-data-in.md)), slik at nivået tilpasses dem.
 2. Åpne **Bakgrunn / nivå** i sidepanelet.
-3. Trykk **Kartbilde…** for et bilde eller **3D-modell…** for et 3D-nivå, og velg filen. For et opptak fra den virkelige verden, bruk **Verdensbakgrunn** eller **Teater** i stedet.
+3. Trykk **Kartbilde…** for et bilde eller **3D-modell…** for et 3D-nivå, og velg filen. For et opptak fra den virkelige verden, bruk **Bakgrunn fra den virkelige verden** eller **Teater** i stedet.
 4. Vent til fremdriftslinjen er ferdig. En stor modell blir forenklet først (se **Forenklingsmål** nedenfor).
 5. Trykk **F** i visningen for å ramme inn alt. Bruk **Opasitet** og **Lysstyrke** til varmen skiller seg ut fra nivået.
 6. Trykk **Lagre i biblioteket** hvis du skal bruke nivået igjen ([Nivåbiblioteket](level-library.md)).
@@ -44,7 +44,7 @@ Nivået deles av alle tre fanene: et løp lastet inn i Løpsanalyse-fanen er det
 | Del | Detaljer |
 |---|---|
 | **Kartbilde…**, **3D-modell…** | Last inn ett; det erstatter gjeldende nivå. |
-| **Verdensbakgrunn**, **Glem kartfliser** | Bare for et datasett med geografisk referanse: bygg det virkelige stedet under det som nivå, eller slett de nedlastede flisene. [Verdensbakgrunn](world-backdrop.md) |
+| **Bakgrunn fra den virkelige verden**, **Glem kartfliser** | Bare for et datasett med geografisk referanse: bygg det virkelige stedet under det som nivå, eller slett de nedlastede flisene. [Verdensbakgrunn](world-backdrop.md) |
 | **Forenklingsmål** | Trekantbudsjettet for neste modellimport: *Full – ingen forenkling* (standard), *Høy – 8 M*, *Middels – 3 M*, *Lav – 800 k*, *Silhuett – 100 k*. [3D-nivåer](model-levels.md#simplification) |
 | Fremdrift og **Avbryt** | Mens dekoding eller import pågår. |
 | Importmerknad | Trekanter før og etter, delingen i bakke / strukturer / vann, og detaljnivået som ble brukt. |

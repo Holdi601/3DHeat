@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "et"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -71,7 +71,9 @@ Mis otsustas voorud, tuleb neljas lõigus: seis ja kust võidutõenäosused tule
 >
 > Mis lahutas võidetud voorud kaotatutest: T võitis 79% neist 19 voorust, kus ta hoidis Midi, võrreldes 24%-ga 21 voorust ilma selleta (55 protsendipunkti, 95% 26 kuni 74) (q 0,004), ...
 >
-> Pöördepunktid: voor 17 ajal 48 s, CT tapmine B site'is muutis tema võimalust 31%-lt 58%-le, ja ta võitis vooru, ... Igal lõigul on nummerdatud nupud, mis näitavad selle leide. **Kopeeri tekst** kopeerib selle.
+> Pöördepunktid: voor 17 ajal 48 s, CT tapmine B site'is muutis tema võimalust 31%-lt 58%-le, ja ta võitis vooru, ...
+
+Igal lõigul on nummerdatud nupud, mis näitavad selle leide. **Kopeeri tekst** kopeerib selle.
 
 ![Sisseehitatud jutustaja kirjutatud kokkuvõte](../assets/img/et/debrief.webp)
 

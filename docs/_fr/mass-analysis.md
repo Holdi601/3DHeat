@@ -153,9 +153,9 @@ La partie spatiale est faite pour les statistiques de balayage sur des régions 
 - **Une pyramide.** Les cases sont des puissances de deux alignées en unités du monde (x, z tels que la visionneuse les place). Le niveau `k` est la somme des cases `ix >> k, iz >> k` : exact, dans une partie comme entre des parties à d'autres tailles de case ; toute région (une boîte, un couloir le long d'une ligne, un anneau) est une somme de cases. Le niveau le plus fin tient l'étendue robuste de la partie (les cases qui portent 99 % de la présence) en 128 cases ; les écarts hors de là sont gardés.
 - **Exposition à côté de chaque compte.** Secondes de présence par case, par équipe (`pt`), par classe de véhicule (`pc`) et par tranche de hauteur (`ph`), pour que le taux, l'espérance et le rapport d'une région soient calculés pour tout sous-groupe.
 - **Hauteur.** Tranches au-dessus du plancher du match (le 1er centile de la hauteur) : moins de 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, au-delà ; un fichier avec une colonne `floor`/`storey`/`deck` le découpe selon ses étages. `y` est la hauteur moyenne de chaque case, `y0` la plus basse (son étage, pour la hauteur au-dessus).
-- **Événements** sous forme de tuples `[case, type, équipe, classe, tranche, compte]`.
+- **Événements** sous forme de tuples `[cell, kind, team, class, band, count]`.
 - **Manches par résultat** (version 2, avec une colonne de résultat et deux manches ou plus) : `pw` sous la forme `[cell, team, rounds won, rounds lost]` - les manches où chaque camp a passé une seconde ou plus dans la case, selon son résultat dans la manche.
-- **Tranches temporelles** à un niveau grossier (8 cases de côté), par minute depuis le début du match : `[cx, cz, minute, type, valeur]`, la présence en secondes avec le type `GRID_KINDS.length` ; les phases du match sont des minutes sur la durée.
+- **Tranches temporelles** à un niveau grossier (8 cases de côté), par minute depuis le début du match : `[cx, cz, minute, kind, value]`, la présence en secondes avec le type `GRID_KINDS.length` ; les phases du match sont des minutes sur la durée.
 - Creuse, comptes entiers, secondes au dixième : bornée par ce qui s'est passé.
 
 ### Étape B : lieux et niches {#stage-b-places-and-niches}

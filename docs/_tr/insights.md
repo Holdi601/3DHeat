@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "tr"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Turları neyin belirlediği dört paragrafta gelir: skor ve kazanma olasılıkla
 >
 > Kazanılan turları kaybedilenlerden ayıran: T, Mid'i tuttuğu 19 turun %79'unu kazandı; tutmadığı 21 turun ise %24'ünü (55 puan, %95: 26 ile 74 arası) (q 0,004), ...
 >
-> Dönüm noktaları: 17. tur, 48. sn; CT'nin B site'taki bir öldürmesi şansını %31'den %58'e çıkardı ve turu aldı, ... Her paragrafta, bulgularını gösteren numaralı düğmeler vardır. **Metni kopyala** onu kopyalar.
+> Dönüm noktaları: 17. tur, 48. sn; CT'nin B site'taki bir öldürmesi şansını %31'den %58'e çıkardı ve turu aldı, ...
+
+Her paragrafta, bulgularını gösteren numaralı düğmeler vardır. **Metni kopyala** onu kopyalar.
 
 ![Yerleşik anlatıcının yazdığı özet](../assets/img/tr/debrief.webp)
 

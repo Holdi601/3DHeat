@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "lb"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Wat d'Ronnen entscheed huet, kënnt a véier Absätz: de Score a vu wou d'Siegwa
 >
 > Wat gewonne vu verluerene Ronnen getrennt huet: T huet 79% vun den 19 Ronne gewonnen, an deenen et Mid gehalen huet, géint 24% vun 21 ouni (55 Punkten, 95% vun 26 bis 74) (q 0,004), ...
 >
-> Wendepunkten: Ronn 17 bei 48 s, e Kill vu CT um B-Site huet hir Chance vun 31% op 58% verréckelt, an si huet d'Ronn gewonnen, ... All Absatz huet nummeréiert Knäppchen, déi seng Resultater weisen. **Text kopéieren** kopéiert en.
+> Wendepunkten: Ronn 17 bei 48 s, e Kill vu CT um B-Site huet hir Chance vun 31% op 58% verréckelt, an si huet d'Ronn gewonnen, ...
+
+All Absatz huet nummeréiert Knäppchen, déi seng Resultater weisen. **Text kopéieren** kopéiert en.
 
 ![D'Zesummefaassung, vum agebaute Erzieler geschriwwen](../assets/img/lb/debrief.webp)
 

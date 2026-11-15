@@ -160,11 +160,11 @@ Partea spațială este făcută pentru scanări statistice peste regiuni de oric
 - **O piramidă.** Celulele sunt puteri alinite ale lui doi, în unități ale lumii (x, z așa cum le așază vizualizatorul). Nivelul `k` este suma celulelor `ix >> k, iz >> k` – exact, într-un meci și peste meciuri cu alte mărimi de celulă – iar orice regiune (o cutie, un coridor de-a lungul unei linii, un inel) este o sumă de celule. Cel mai fin nivel încape robust în întinderea meciului (celulele care țin 99% din prezență) în 128 de celule; cele rătăcite în afara lui sunt păstrate.
 - **Expunerea lângă fiecare numărare.** Secunde de prezență pe celulă, pe echipă (`pt`), pe clasă de vehicul (`pc`) și pe bandă de înălțime (`ph`), astfel încât rata, așteptarea și raportul unei regiuni se calculează pentru orice subgrup.
 - **Înălțimea.** Benzi peste nivelul minim al meciului (percentila 1 a înălțimii): sub 3 m, 3–10, 10–30, 30–100, 100–300, 300–1000, 1000–3000, peste; un fișier cu o coloană `floor`/`storey`/`deck` împarte în benzi după etaje. `y` este înălțimea medie a fiecărei celule, `y0` cea mai joasă (etajul ei, pentru înălțimea de deasupra lui).
-- **Evenimentele** ca tuple `[celulă, fel, echipă, clasă, bandă, număr]`.
+- **Evenimentele** ca tuple `[cell, kind, team, class, band, count]`.
 - **Runde după rezultat** (versiunea 2, cu o coloană de rezultat și două runde sau
   mai multe): `pw` ca `[cell, team, rounds won, rounds lost]` – rundele în care fiecare
   tabără a petrecut o secundă sau mai mult în celulă, după rezultatul lor.
-- **Felii de timp** la un nivel grosier (8 celule pe latură), pe minut de la începutul meciului: `[cx, cz, minut, fel, valoare]`, secundele de prezență ca fel `GRID_KINDS.length`; fazele meciului sunt minute peste lungime.
+- **Felii de timp** la un nivel grosier (8 celule pe latură), pe minut de la începutul meciului: `[cx, cz, minute, kind, value]`, secundele de prezență ca fel `GRID_KINDS.length`; fazele meciului sunt minute peste lungime.
 - Rare, numărări întregi, secunde la o zecime: mărginite de ce s-a întâmplat.
 
 ### Etapa B: locuri și nișe {#stage-b-places-and-niches}

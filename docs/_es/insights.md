@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "es"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Qué decidió las rondas llega en cuatro párrafos: el marcador y de dónde vien
 >
 > Qué separó las rondas ganadas de las perdidas: T ganó el 79 % de las 19 rondas en que mantuvo Mid, frente al 24 % de 21 sin él (55 puntos, 95 % de 26 a 74) (q 0,004), ...
 >
-> Puntos de inflexión: ronda 17 a los 48 s, una baja de CT en B site movió su posibilidad del 31 % al 58 %, y se llevó la ronda, ... Cada párrafo tiene botones numerados que muestran sus hallazgos. **Copiar texto** lo copia.
+> Puntos de inflexión: ronda 17 a los 48 s, una baja de CT en B site movió su posibilidad del 31 % al 58 %, y se llevó la ronda, ...
+
+Cada párrafo tiene botones numerados que muestran sus hallazgos. **Copiar texto** lo copia.
 
 ![El resumen redactado por el narrador integrado](../assets/img/es/debrief.webp)
 

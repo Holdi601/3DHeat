@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "no"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -56,8 +56,8 @@ Hvert sted eller hver gruppe testes mot resten av kartet (eksakte binomial- elle
 
 Der kampene sier hvem som vant hver runde ([utfallskolonnen](data-formats.md#outcome-columns) `won`), er resultatet et eget mål:
 
-- **Steder: vinnerandel.** For hver side andelen av rundene den hadde på et sted som den vant, mot andelen den vant i samme kamp hvor som helst – så kartets balanse, sidens og kampens egen er grunnlinjen, og bare steder der de som holder dem, vinner flere (eller færre) av rundene sine, skiller seg ut. Et oppdiktet eksempel: *«Dust: side T vinner flere av rundene sine når den er her: 61 % av 412 vunnet, mot 49 % ventet ut fra dens egen andel i de samme kampene (odds 1,6x; holdt i 31/48 kamper).»* Samme falske oppdagelsesrate og stabilitetskontroller som for alle steder; **Last** laster inn kampene det ble holdt i, og viser posisjonene til den siden.
-- **Nisjer: rundeseier.** Tabellen **Runder** har runden til hvert liv: kartet, siden, delen av kampen (runde 1–4, 5–8, ...), kjøretøyet (en operatør, en agent), våpenet det brukte mest, stedet det holdt lengst, kjøpet (eco, force, full) og om siden fikk det første drapet. En gruppe vurderes mot det siden vant i de samme kampene, så *T på Dust med en AWP* er en nisje bare når de rundene ble vunnet oftere enn Ts andre runder i de kampene. Et oppdiktet eksempel: *«m1 · T · AWP: vinner 80 % av 320 runder, mot 62 % ventet ut fra de samme sidene i de samme kampene (odds 2,3x; 40 kamper).»* Rangert etter løftet ganger støtten; **Last** laster inn kampene der rundene viser det mest.
+- **Steder: vinnerandel.** For hver side andelen av rundene den hadde på et sted som den vant, mot andelen den vant i samme kamp hvor som helst – så kartets balanse, sidens og kampens egen er grunnlinjen, og bare steder der de som holder dem, vinner flere (eller færre) av rundene sine, skiller seg ut. Et oppdiktet eksempel: *«Dust: side T vinner flere av rundene sine når den er her: 61 % av 412 vunnet, mot 49 % ventet ut fra dens egen andel i de samme kampene (odds 1,6x; holdt i 31/48 kamper).»* Samme falske oppdagelsesrate og stabilitetskontroller som for alle steder; **Last inn** laster kampene det ble holdt i, og viser posisjonene til den siden.
+- **Nisjer: rundeseier.** Tabellen **Runder** har runden til hvert liv: kartet, siden, delen av kampen (runde 1–4, 5–8, ...), kjøretøyet (en operatør, en agent), våpenet det brukte mest, stedet det holdt lengst, kjøpet (eco, force, full) og om siden fikk det første drapet. En gruppe vurderes mot det siden vant i de samme kampene, så *T på Dust med en AWP* er en nisje bare når de rundene ble vunnet oftere enn Ts andre runder i de kampene. Et oppdiktet eksempel: *«m1 · T · AWP: vinner 80 % av 320 runder, mot 62 % ventet ut fra de samme sidene i de samme kampene (odds 2,3x; 40 kamper).»* Rangert etter løftet ganger støtten; **Last inn** laster kampene der rundene viser det mest.
 
 Begge trenger sammendrag av versjon 2 (se [Få sammendragene](#getting-the-summaries)): eldre regnes ut på nytt.
 
@@ -71,7 +71,9 @@ Hva som avgjorde rundene, kommer i fire avsnitt: stillingen og hvor vinnersjanse
 >
 > Hva som skilte vunne fra tapte runder: T vant 79 % av de 19 rundene der den holdt Mid, mot 24 % av 21 uten (55 prosentpoeng, 95 % 26 til 74) (q 0,004), ...
 >
-> Vendepunkter: runde 17 ved 48 s, et drap av CT ved B site flyttet sjansen fra 31 % til 58 %, og den tok runden, ... Hvert avsnitt har nummererte knapper som viser funnene sine. **Kopier tekst** kopierer den.
+> Vendepunkter: runde 17 ved 48 s, et drap av CT ved B site flyttet sjansen fra 31 % til 58 %, og den tok runden, ...
+
+Hvert avsnitt har nummererte knapper som viser funnene sine. **Kopier tekst** kopierer den.
 
 ![Gjennomgangen skrevet av den innebygde fortelleren](../assets/img/no/debrief.webp)
 

@@ -4,7 +4,7 @@ nav_order: 7
 has_children: true
 lang: "ga"
 source: "insights.md"
-source_hash: "c8722ac44bfa"
+source_hash: "d09a8c07f701"
 translated: true
 outdated: false
 ---
@@ -87,7 +87,9 @@ Tagann cad a chinn na babhtaí i gceithre mhír: an scór agus cá as a dtagann 
 >
 > Cad a scar babhtaí buaite ó bhabhtaí caillte: bhuaigh T 79% de na 19 mbabhta inar choinnigh sé Mid, i gcomparáid le 24% de 21 gan é (55 pointe, 95% ó 26 go 74) (q 0.004), ...
 >
-> Pointí casaidh: babhta 17 ag 48 s, d'athraigh marú ag CT ag suíomh B a sheans ó 31% go 58%, agus bhuaigh sé an babhta, ... Tá cnaipí uimhrithe ag gach mír a thaispeánann a torthaí. Cóipeálann **Cóipeáil téacs** é.
+> Pointí casaidh: babhta 17 ag 48 s, d'athraigh marú ag CT ag suíomh B a sheans ó 31% go 58%, agus bhuaigh sé an babhta, ...
+
+Tá cnaipí uimhrithe ag gach mír a thaispeánann a torthaí. Cóipeálann **Cóipeáil téacs** é.
 
 ![An achoimre a scríobh an t-insealbhaitheoir ionsuite](../assets/img/ga/debrief.webp)
 
