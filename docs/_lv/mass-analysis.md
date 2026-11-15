@@ -3,9 +3,9 @@ title: "Masveida analīze"
 nav_order: 8
 lang: "lv"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Masveida analīze: tūkstošiem maču uzreiz
@@ -71,14 +71,24 @@ Izvēlieties mapi (vai failus; **Pievienot mapi...** pievieno vēl vienu). Logā
 | Spēlētāji | atšķirīgi spēlētāji, mači uz spēlētāju, spēlētāji uz maču, visbiežākie spēlētāji |
 | Puses | katra karšu puse: uzvarētie mači pret vienādu sadalījumu |
 | Tuvā cīņa | raundu dati: atvēršanas dueļi pēc puses un to konvertācija, tirdzniecība, izspiedējs pret turētāju, krustuguns, iešana ar zibgranātu, tēmēšana, bumbu uzstādīšana, vīru pārsvars un, **Pēc kartes**, vietas, kur nogalina spēlētājus, kas tajās ieiet - katrs kā daļa ar savu Wilson intervālu, no kopsavilkumu `cqb` skaitļiem ([Tuvā cīņa un raundi](close-quarters.md)) |
+| R6 virsmas | Rainbow Six Siege pēdas līmenī (ložu caurumi un tamlīdzīgi) pa līmeņa virsmām: pēdas, uz kartes raundu, telpa, daļa, kurai noteikts šāvējs; klikšķis atver pēdu veidus, šāvēju operatorus un ieroču klases, un to, kur uz virsmas ir pēdas (maza siltumkarte no ceturtdaļmetra šūnām); virsma saglabā savu id visos vienas kartes versijas mačos. No kopsavilkumu `marks` skaitiem |
 | Karte | kartes summētais režģis: klātbūtne, nogalinājumi, nāves, K/D, jebkurš notikums, plūsma un **karsts cik mačos** (stabilitāte); pēc komandas, ar 1, 2, 4 vai 8 reižu šūnu |
-| Vietas | vietas, kas izceļas skaitļos, bet ne siltumkartē (liels laukums, kas kopumā ir aizņemts, koridori, augstuma joslas); **Atrast vietas** |
-| Nišas | grupas, kas redzami labāk vai sliktāk par pārējiem (transportlīdzeklis vienā kartē, sektors vienā augstumā); **Atrast nišas** |
+| Vietas | vietas, kas izceļas skaitļos, bet ne siltumkartē (liels laukums, kas kopumā ir aizņemts, koridori, augstuma joslas), un vietas, kuru turētāji uzvar vairāk vai mazāk savu raundu; **Atrast vietas** |
+| Nišas | grupas, kas redzami labāk vai sliktāk par pārējiem (transportlīdzeklis vienā kartē, sektors vienā augstumā), un raundu grupas, kas uzvarētas vairāk, nekā to puse uzvarēja tajos pašos mačos; **Atrast nišas** |
 | Atziņas | masveida detektori un kartes detektori (zemāk); **Kopēt pārskatu (JSON)** dod JSON, ko lasa valodas modelis |
 
 ## Atziņas no daudziem mačiem {#insights-over-many-matches}
 
 Cilne **Vietas** atrod vietas, kas izceļas skaitļos, bet ne siltumkartē - liels laukums, kas kopumā ir aizņemts, koridors, augstuma josla, vieta, kas aizņemta tikai vienā mača daļā - atzīmē tās, ko parastā siltumkarte nerāda, kā **slēptas**, un iezīmē tās 3D skatā; **Ielādēt** aizlido uz turieni ar mačiem, kas tur bija. Cilne **Nišas** atrod grupas (transportlīdzeklis vienā kartē un pusē, sektors vienā augstumā), kas redzami manāmi labāk vai sliktāk par pārējiem; noklikšķiniet uz vienas, lai redzētu tās precizējumus.
+
+### Kas uzvarēja {#who-won}
+
+Kur mači pasaka, kas uzvarēja katrā raundā ([iznākuma kolonna](data-formats.md#outcome-columns) `won`), rezultāts ir atsevišķs mērķis:
+
+- **Vietas: uzvaru īpatsvars.** Katrai pusei tās raundu daļa vietā, kurus tā uzvarēja, pret daļu, ko tā uzvarēja tajā pašā mačā jebkur - tātad kartes, puses un paša mača balanss ir bāzes līnija, un izceļas tikai vietas, kuru turētāji uzvar vairāk (vai mazāk) savu raundu. Izdomāts piemērs: *„Dust: puse T uzvar vairāk savu raundu, kad tā ir šeit: uzvarēti 61% no 412, pret 49%, kas gaidīti pēc tās pašas līmeņa tajos pašos mačos (izredzes 1,6x; noturēta 31/48 mačos).”* Tāds pats viltus atklājumu līmenis un stabilitātes pārbaudes kā katrai vietai; **Ielādēt** ielādē mačus, kuros vieta tika noturēta, un parāda šīs puses pozīcijas.
+- **Nišas: raunda uzvara.** Tabulā **Raundi** ir katras dzīves raunds: karte, puse, mača daļa (raundi 1-4, 5-8, ...), transportlīdzeklis (operators, aģents), visvairāk izmantotais ierocis, visilgāk noturētā vieta, pirkums (eco, force, full) un vai tās puse izdarīja pirmo nogalinājumu. Grupu vērtē pret to, ko tās puse uzvarēja tajos pašos mačos, tāpēc *T uz Dust ar AWP* ir niša tikai tad, ja šie raundi tika uzvarēti biežāk nekā citi T raundi tajos mačos. Izdomāts piemērs: *„m1 · T · AWP: uzvar 80% no 320 raundiem, pret 62%, kas gaidīti no tām pašām pusēm tajos pašos mačos (izredzes 2,3x; 40 mači).”* Sarindots pēc pacēluma reizinājuma ar atbalstu; **Ielādēt** ielādē mačus, kuru raundos tas redzams visvairāk.
+
+Abiem vajag 2. versijas kopsavilkumus (skatiet [Kopsavilkumu iegūšana](#getting-the-summaries)): vecākie tiek aprēķināti no jauna.
 
 Cilne **Atziņas** visos mačos atrod transportlīdzekļus, kas tirgojas vai uzvar labāk vai sliktāk par pārējiem, vietas, kas karstas stabilā maču daļā, puses, kas uzvar vairāk nekā vienādā sadalījumā, transportlīdzekļus, kuru izmantošana mainās pa datumiem, un mača daļas, kurās ir vairāk nogalinājumu nekā vienmērīgā sadalījumā. Katrai atziņai ir tās skaitļi, efekts, intervāls un viltus atklāšanas līmenis (turēts 5%), un klikšķis ielādē tās mačus. Sīkāk: [Izstrādātājiem](#for-developers).
 
@@ -126,6 +136,11 @@ Vienkārša JSON (`src/mass/types.ts`), apmēram 5-30 KB saspiests uz maču:
   pēc kanoniskā veida, nogalinājumi pēc mērķa klases, uzvaras, nauda;
 - pa spēlētāju (pēc lietotāja ID, citādi pēc vārda): komanda, dzīvības, klātbūtne, nogalinājumi, nāves,
   trāpījumi, palaišanas, uzvarējis, transportlīdzekļi; pa ieroci: notikumi pēc veida;
+- ar rezultāta kolonnu (2. versija): uzvarētie un nospēlētie raundi pa komandām, transportlīdzekļiem
+  (`rw`, katrs viena dzīve un raunds), spēlētājiem un ieročiem (raundi, kuros puse to
+  izmantoja); katras dzīves raunds (`outcome.u`: raunds, puse, transportlīdzeklis, visvairāk
+  izmantotais ierocis, visilgāk noturētā vieta, pirkums, uzvarēts) un katra raunda
+  numurs, uzvarētājs un tā pirmā nogalinājuma puse (`outcome.r`);
 - ekonomikas kolonnas (`cost_*`, `earn_*`) un to kopsummas;
 - fāzes: notikumi pēc veida 20 mača garuma joslās un pēc minūtes;
 - uzvedība: mača kolektīvās uzvedības mēri (saskaņotība, maršruta ganīšana, joslas, pūļošanās, līderi, atpalikušie, lūzuma punkts, risks pēc zaudējumiem, sērijas, pirkumu vienošanās, nomākšana), katrs ar savu nulles modeli,
@@ -146,6 +161,9 @@ ne tikai siltuma attēliem:
 - **Iedarbība blakus katram skaitam.** Klātbūtnes sekundes uz šūnu, uz komandu (`pt`), uz transportlīdzekļa klasi (`pc`) un uz augstuma joslu (`ph`), tāpēc reģiona likme, sagaidāmā vērtība un attiecība tiek aprēķinātas jebkurai apakšgrupai.
 - **Augstums.** Joslas virs mača grīdas (augstuma 1. procentile): zem 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, virs; fails ar kolonnu `floor`/`storey`/`deck` joslās pēc savām stāvu grīdām. `y` ir katras šūnas vidējais augstums, `y0` - zemākais (tās stāva grīda augstumam virs tā).
 - **Notikumi** kā kortežas `[šūna, veids, komanda, klase, josla, skaits]`.
+- **Raundi pēc rezultāta** (2. versija, ar rezultāta kolonnu un diviem vai vairāk
+  raundiem): `pw` kā `[cell, team, rounds won, rounds lost]` - raundi, kuros katra puse
+  pavadīja šūnā sekundi vai vairāk, pēc tās rezultāta raundā.
 - **Laika griezumi** raupjā līmenī (8 šūnas uz pusi), pēc minūtes no mača sākuma: `[cx, cz, minūte, veids, vērtība]`, klātbūtnes sekundes kā veids `GRID_KINDS.length`; mača fāzes ir minūtes pār garumu.
 - Retināts, skaiti ir veseli skaitļi, sekundes līdz desmitdaļai: ierobežots ar to, kas notika.
 
@@ -165,9 +183,10 @@ Katras kartes mači tiek nolasīti divreiz, pa vienam mačam; atmiņā glabājas
 - **Mēri.** Notikuma likme uz klātbūtnes sekundi - nogalinājumi, nāves,
   trāpījumi, palaišanas, pārņemšanas, visām vienībām, pa klasēm (4 ar visvairāk
   notikumiem), pa augstuma joslām - un nogalinājumu daļa nogalinājumos un nāvēs (visi, pa pusēm,
-  pa joslām). Kuras klases un puses nāk no galvām (`planOf`).
+  pa joslām), un katras puses **uzvaru īpatsvars**: tās raundi šūnā uzvarēti pret zaudētiem (`pw`),
+  kur 8 vai vairāk kartes mači skaita raundus pēc rezultāta. Kuras klases un puses nāk no galvām (`planOf`).
 - **Sagaidāmā vērtība pēc mača.** Katra mača pašas likme, sadalīta pār tā pašu klātbūtni
-  šūnā, ir šūnas sagaidāmā vērtība (Kulldorff skenēšana ar kovariātēm, stratificēta pēc mača): daži asiņaini mači vai viens aizņemts serveris nerada vietu.
+  šūnā, ir šūnas sagaidāmā vērtība (Kulldorff skenēšana ar kovariātēm, stratificēta pēc mača): daži asiņaini mači vai viens aizņemts serveris nerada vietu. Uzvaru īpatsvaram sagaidāmā vērtība ir puses pašas uzvarēto raundu daļa tajā mačā, tāpēc kartes un puses balanss nekad nav vieta. Raunds vairākās apgabala šūnās skaitās katrā; izkliede, kas mērīta apgabala izmērā, to ņem vērā.
 - **Izkliedēšana.** Mači nesaskan daudz vairāk nekā Puasona sadalījums. Katra mača atlikumi tiek summēti blokos pa 1, 2, 4, 8, 16 šūnām; katra bloka izmēra izkliedēšana (kvadrātveida atlikumi, dalīti ar nulles dispersiju, apvienoti, sliktākie 5% bloku izslēgti) skalē katru reģiona izmēra testu: kvazi-iespējamības attiecība, Puasons likmēm, binomiāls daļām.
 - **Reģioni.** Apļi 0,75 līdz 18 šūnas; elipses sešos leņķos, 3 un 6 reizes garākas nekā platas, 3 līdz 18 šūnas (koridori; ass ir atziņas `place.path`); zonas, kas izaug šūna pa šūnai no spēcīgākajām lokālajām Getis-Ord Gi* šūnām, kamēr reģiona z aug (neregulāras formas) - audzētas uz vienas maču puses un pārbaudītas uz otras, tātad augšanas brīvība nemaksā ar viltus vietām; katra augstuma josla pret pārējām mača joslām visā kartē (kopu izturīga); telpas-laika cilindri: apļis vienā vai divās piektdaļās mača garuma, pret paša mača izkliedi starp tā notikumiem vietā un laikā (telpas-laika permutācijas skenēšana).
 - **Testēšana.** p no kvazi-iespējamības; Benjamini-Hochberg pār katru reģionu, kas izmēģināts katrā kartē (parasti 700 000 trīs kartēs), 5%. Tas, kas iztur, tiek apgriezts (reģions, kas galvenokārt ir iekšā spēcīgākā tā mēra reģionā, saka to pašu), tiek atkārtoti nolasīts par tā **stabilitāti** - mačiem, kas to redzēja, mačiem, kuros tas bija, tā virzienu piecās maču daļās - un testēts vēlreiz pie izkliedes, ko paši mači rāda (kopu izturīgs, mači kā kopas, nekad zem Puasona), BH atkal. Klusas vietas uz pamata (2% vai vairāk no kartes dzimšanām, pacelšanos un nolaišanos) tiek izlaistas.
@@ -182,6 +201,8 @@ Staru meklēšana (platums 24, dziļums 3) pār trim tabulām: **dzīvības** (s
 spēle, karte, režīms, klase, transportlīdzeklis, puse, līmenis, datumu ceturksnis, mača garumu trešdaļa; K/D, uzvara, nāve uz dzīvību, nogalinājumi stundā, ieņēmumi minūtē),
 **vietas** (nogalinājumi un nāves pēc kartes, režīma, datumiem, kartes sektora 4 x 4, klases, puses, joslas) un **fāzes** (sektors un mača garuma piektdaļa: K/D, nāves stundā klātbūtnē). Grupa tiek pārbaudīta pret visiem, mačiem kā kopām (tās atlikumu sendviča dispersija pēc mača), tās efekts - izredžu vai likmes attiecība, saraujot ar prioru 20 iznākumiem; tai vajag 30 iznākumus 8 mačos, precizējumam jābūt 10% spēcīgākam nekā tā vecākam, grupas, kur iznākums ir neviens vai visi (netiek ierakstīts viņiem), tiek izlaistas. Paturēts: BH zem 5% pār katru novērtēto grupu, saraujama attiecība vismaz 1,25 (vai 1/1,25), četras no piecām daļām piekrīt, precizējums, kas tikai atkārto savu vecāku, netiek ņemts. Cilne **Nišas** tās uzskaita; klikšķis parāda katru vienas nosacījuma precizējumu grupai (pētnieks), **Ielādēt** ielādē tās mačus. Ieroču komplekti (loadouts) vēl nav kopsavilkumos.
 
+Ceturtajai tabulai, **raundi** (`roundsTable`), mērķis ir raunda rezultāts: viena rinda uz katras dzīves raundu - karte, puse, mača daļa (raundi 1-4, 5-8, ...), transportlīdzeklis, visvairāk izmantotais ierocis, visilgāk noturētā vieta, pirkums, pirmais nogalinājums vai pirmā nāve - vērtēta pret savas puses uzvaru īpatsvaru savā mačā (Mantel-Haenszel stratificētā sagaidāmā vērtība: atlikums ir `won - e`, `e` puses daļa mačā), tāpēc niša nekad nav kartes vai puses balanss. Mači paliek klasteri. Tās z ir kalibrēts: tā pati staru meklēšana tiek palaista astoņas reizes ar rezultātiem, kas sajaukti starp katras puses raundiem katrā mačā (puses līmenis katrā mačā saglabāts), un šo nulles z izkliede virs standarta normālā sadalījuma - pēc nosacījumu skaita, no vidus (mediāna / 0,674) un astes (99. procentile / 2,576), lielākā, nekad zem 1 - dala īstos pirms to p un viltus atklājumu līmeņa (empīriskā nulle, Efron 2004). Dziļākas grupas saņem lielāko mērogu: stars patur precizējumus grupām, kas izvēlētas to lielā z dēļ. Nišas bāze ir tās pašas sagaidāmā vērtība, tās pacēlums - procentpunkti virs tās, un to sarindo pēc pacēluma reizinājuma ar tās raundu skaita kvadrātsakni, ko notur pierādījumi un locījumi (`wracc` ir atbalsts reiz pacēlums). Tā nes mačus, kuros tā izpaudās visvairāk (`matchIds`), un dažus to raundus (`rounds`, `[match, round]`) detalizētai izpētei.
+
 #### Tendences ar praktisku nozīmīgumu {#meta-shifts-with-practical-significance}
 
 Jauktos datumos binomiāls pēc dzīvībām atzīmēja gandrīz katru izmaiņu kā nozīmīgu. `meta` tagad testē kopu izturīgi (katra mača dzīvības ir kopa), paturot izmantošanas maiņu tikai ja tā ir 2 punkti un vismaz 25%, K/D maiņu 1,3 reizes, datumu ceturkšņus tendenci tajā pašā virzienā (Kendall tau vismaz 0,5) un, transportlīdzeklim vairākās kartēs, to pašu virzienu lielākajā daļā no tām. Tas atstāj tikai dažas maiņas testa kopā, kurā parastais tests atzīmēja gandrīz visas.
@@ -194,3 +215,4 @@ Jauktos datumos binomiāls pēc dzīvībām atzīmēja gandrīz katru izmaiņu k
 
 `scan.test.ts` ievieto izkliedētu laukumu (1,6 reizes nāves līmenis pār 22 šūnu apli, vāju katrā šūnā), koridoru, augstuma joslu un klasteri tikai vienā daļā 240 sintētiskos pārmērīgi izkliedētos mačos - visi tiek atrasti, izkliedētais slēpts - un palaiž astoņus nulles komplektus pa 60 mačiem: nekādas vietas.
 `niche.test.ts` atrod ievietotu transportlīdzekļa x kartes x puses grupu un neko piecās nulles tabulās.
+`outcome.test.ts` pārbauda 2. versijas kopsavilkumu (uzvarētie raundi pa pusēm, vienībām, spēlētājiem un ieročiem, `pw`, vienību raundi); ievieto joslu, kuras puse uzvar 70% savu raundu pret 35% (katram mačam savs balanss) - atrasta - un palaiž 20 nulles komplektus pa 50 mačiem, kur joslas neko nesaka: nekādas uzvaru īpatsvara vietas; ievieto AWP vienā kartē, kas uzvar savas puses raundus par 30 procentpunktiem vairāk - atrasts ar saviem mačiem un raundiem - un palaiž 30 nulles komplektus pa 80 mačiem, kur katram mačam savs balanss un viena puse ir stiprāka vienā kartē: nekādas nišas.

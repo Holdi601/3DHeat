@@ -3,9 +3,9 @@ title: "Match-Analyse (CS2)"
 nav_order: 10
 lang: "de"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Match-Analyse (Counter-Strike 2)
@@ -123,6 +123,16 @@ Fahr mit dem Zeiger über einen Spieler: Trade-Abschüsse, getradet-Male, Blendu
 - **Spieler**: die fünfzehn besten nach Abschüssen minus Tode, zusammengefasst über alle ihre Matches (zugeordnet über die Steam-ID): Matches, K-D, ADR und KAST, gewichtet nach gespielten Runden, HS-% gewichtet nach Abschüssen, Opening-Duelle. **Klick auf einen Spieler** für seine Abschüsse und Tode über alle Matches in der Heatmap.
 
 Die Schaltflächen In der Heatmap zeigen für alle geladenen Matches stehen darunter.
+
+## Was die Runden entschied {#what-decided-the-rounds}
+
+Der Tab zählt; [Erkenntnisse](insights.md#who-won-what-decided-the-rounds) erklärt. Ist die Heatmap-Tabelle eines Matches geladen (sie trägt die Spalte `won`), teilt **Erkenntnisse** die Runden jeder Seite danach auf, was in ihnen geschah – das Eröffnungsduell, der Kauf, ein vergoltener erster Tod, die Platzierung, Hilfsmittel, ein früher erster Kontakt, jeder gehaltene Ort und jeder in den ersten 25 s erreichte Ort – und sagt, was den Unterschied machte, mit der Differenz der Siegquoten, ihrem 95-%-Intervall und q, und *wenige Runden*, wo ein Zweig weniger als acht hat. Es nennt die Wendepunkte (die Abschüsse und Platzierungen, die die Siegwahrscheinlichkeit am meisten bewegten) und die Spieler und Orte, die am meisten hinzufügten oder kosteten, und die **Nachbesprechung** und der **Kommentator** beginnen damit. Ein erfundenes Beispiel:
+
+> T gewann 79 % der 19 Runden, in denen es Mid hielt, gegen 24 % von 21 ohne (55 Punkte, 95 % 26 bis 74) – q 0,004.
+>
+> Wendepunkte: Runde 17 bei 48 s, ein Abschuss von CT an B site bewegte seine Chance von 31 % auf 58 %, und es holte die Runde.
+
+Ein Match hat weniger als 30 Runden, daher kommen seine Siegwahrscheinlichkeiten aus einem festen Vorab-Modell aus den lebenden Spielern, der Platzierung und der Uhr; der Text sagt das. Über viele Matches stellt die [Massenanalyse](mass-analysis.md#who-won) dieselben Fragen.
 
 ## In der Heatmap zeigen {#show-in-the-heatmap}
 

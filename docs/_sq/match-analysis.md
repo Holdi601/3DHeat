@@ -3,9 +3,9 @@ title: "Analiza e ndeshjes (CS2)"
 nav_order: 10
 lang: "sq"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Analiza e ndeshjes (Counter-Strike 2)
@@ -121,6 +121,16 @@ Mbi çdo ndeshje të ngarkuar:
 - **Lojtarët**: pesëmbëdhjetë më të mirët sipas vrasjeve minus vdekjeve, të bashkuar mbi të gjitha ndeshjet e tyre (të përputhur sipas Steam ID): ndeshjet, K-D, ADR dhe KAST të peshuara me raundet e luajtura, HS% e peshuar me vrasjet, duelet hapëse. **Klikoni një lojtar** për vrasjet dhe vdekjet e tij në të gjitha ndeshjet, në hartën e nxehtësisë.
 
 Butonat Shfaq-në-hartën-e-nxehtësisë për të gjitha ndeshjet e ngarkuara janë nën të.
+
+## Çfarë vendosi raundet {#what-decided-the-rounds}
+
+Skeda numëron; [Vëzhgimet](insights.md#who-won-what-decided-the-rounds) shpjegojnë. Kur është ngarkuar tabela e hartës së nxehtësisë së një ndeshjeje (ajo ka kolonën `won`), **Vëzhgime** i ndan raundet e çdo pale sipas asaj që ndodhi në to - dueli hapës, blerja, një vdekje e parë e shkëmbyer, vendosja, pajisjet, një kontakt i parë i hershëm, çdo vend i mbajtur dhe çdo vend i arritur në 25 s e para - dhe thotë cili bëri diferencën, me diferencën e përqindjeve të fitoreve, intervalin e saj 95% dhe q-në, dhe *pak raunde* kur një degë ka më pak se tetë. Përmend pikat e kthesës (vrasjet dhe vendosjet që e lëvizën më shumë probabilitetin e fitores) dhe lojtarët dhe vendet që shtuan ose kushtuan më shumë, dhe **Përmbledhja** dhe **Komentuesi** nisin me to. Një shembull i sajuar:
+
+> T fitoi 79% të 19 raundeve kur mbajti Mid, kundrejt 24% të 21 pa të (55 pikë, 95% nga 26 deri në 74) - q 0,004.
+>
+> Pikat e kthesës: raundi 17 në 48 s, një vrasje nga CT në B site ia çoi shansin nga 31% në 58%, dhe e mori raundin.
+
+Një ndeshje ka më pak se 30 raunde, prandaj probabilitetet e saj të fitores vijnë nga një model paraprak i fiksuar i njerëzve gjallë, vendosjes dhe orës; teksti e thotë këtë. Për shumë ndeshje, të njëjtat pyetje i bën [analiza masive](mass-analysis.md#who-won).
 
 ## Shfaq në hartën e nxehtësisë {#show-in-the-heatmap}
 

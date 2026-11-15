@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "pl"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Wnioski
@@ -44,6 +44,7 @@ Linie na górze listy (na przykład sumy pieniędzy) streszczają cały zbiór d
 | **Gracze** | Gracze zabijający lub giniący znacznie częściej albo rzadziej niż inni w tej samej klasie | osoby i zabójstwa |
 | **Wąskie gardła i flanki** | Wąskie gardła (znacznie więcej przejść niż okoliczny teren) i trasy flankujące (rzadko używane, ale prowadzące do zabójstw) | osoby |
 | **Wartość** | *Kosztowny teren* i *Zarabiający teren* | [kolumny wartości](value-weighting.md) |
+| **Co rozstrzygnęło rundy** | Co odróżniało wygrane rundy od przegranych oraz gracze, którzy najbardziej zwiększyli lub zmniejszyli szansę na wygraną (zob. [Kto wygrał](#who-won-what-decided-the-rounds)) | rundy, zabójstwa i zgony oraz [kolumny wyniku](data-formats.md#outcome-columns) (`won`) |
 
 Detektory, których nie da się uruchomić na danych, są wypisane na dole z powodem.
 
@@ -51,9 +52,42 @@ Detektory, których nie da się uruchomić na danych, są wypisane na dole z pow
 
 Każde miejsce albo grupa jest testowane względem reszty mapy (dokładne testy dwumianowe albo współczynników). Stopa fałszywych odkryć jest utrzymywana na poziomie 5% (Benjamini-Hochberg). Przypadek potrafi wyglądać jak wzorzec; to ogranicza fałszywe alarmy: wśród pokazanych ustaleń spodziewany jest najwyżej mniej więcej jeden na dwadzieścia wynikający z przypadku. Efekty z małej liczby zdarzeń są przed uszeregowaniem przyciągane ku „brakowi efektu”. Wypisywanych jest najwyżej 60 ustaleń, a każdy detektor dostaje kilka miejsc blisko szczytu.
 
+### Kto wygrał: co rozstrzygnęło rundy {#who-won-what-decided-the-rounds}
+
+Gdy dane mówią, kto wygrał każdą rundę ([kolumna wyniku](data-formats.md#outcome-columns) `won`: CS2, Rainbow Six Siege, War Thunder ...), Wnioski dotyczą właśnie wyniku. Dla każdej strony dzielą rundy według tego, co się w nich stało, i porównują odsetki wygranych:
+
+| Czynnik | Rundy strony z nim | ... i bez niego |
+|---|---|---|
+| Pojedynek otwierający | zdobyła pierwsze zabójstwo | zginęła pierwsza |
+| Zakup | jej zakup był lepszy niż drugiej strony | gorszy |
+| Pomszczona pierwsza śmierć | jej pierwszą śmierć pomszczono w ciągu 5 s | niepomszczona |
+| Podłożenie | podłożyła | brak podłożenia |
+| Wyposażenie użytkowe | więcej granatów niż w jej zwykłej rundzie | mniej |
+| Wczesny kontakt | pierwszy pojedynek przyszedł przed medianą czasu meczu | później |
+| Utrzymane miejsce | gracz stał w miejscu 5 s lub dłużej | nikt |
+| Miejsce osiągnięte wcześnie | gracz dotarł tam w pierwszych 25 s (trasa) | nikt |
+
+Każde porównanie to różnica dwóch odsetków wygranych z jej 95-procentowym przedziałem (Newcombe), dokładnym p Fishera i q dla wszystkich sprawdzonych czynników (Benjamini-Hochberg). Ramię z mniej niż 8 rundami jest oznaczone *mało rund*. Te poniżej 5% odsetka fałszywych odkryć stają się ustaleniami; najsilniejsze plasują się wyżej niż ustalenia innych detektorów (ustalenie o wyniku waży 1,35 razy tyle, co ustalenie o tym samym efekcie i tych samych dowodach).
+
+Zmyślony przykład z 40 rund:
+
+> **T** wygrało 79% z 19 rund, w których trzymało **Mid**, wobec 24% z 21 bez tego (55 punktów, 95% od 26 do 74) - q 0,004.
+
+Śledzą też **szansę na wygraną** rundy - szansę, jaką każda strona miała w każdej chwili, wyliczoną z żywych graczy, podłożenia i zegara: dopasowaną do rund, gdy jest ich 30 lub więcej, a w przeciwnym razie stały model wstępny (tekst mówi, który). Z niej wynikają **punkty zwrotne** (zabójstwa i podłożenia, które najbardziej zmieniły szansę) oraz **dodana szansa na wygraną** każdego gracza: jego zabójstwa i podłożenia liczą się na jego korzyść, jego zgony przeciw niemu, w rundach w skali meczu, średnio na rundę z przedziałem, sprawdzone względem zera. Miejsca dostają ten sam bilans: która strona zyskała najwięcej w pojedynkach stoczonych właśnie tam.
+
+Dane muszą zawierać rundy, zabójstwa i zgony z obu stron oraz kolumnę `won`; nazwane miejsca (`place`) dla utrzymanych miejsc, kolumnę `buy` dla zakupu.
+
 ## Podsumowanie {#debrief}
 
-Zakładka **Podsumowanie** spisuje ustalenia jako krótki tekst: wstęp, najwyraźniejsze ustalenie, jedno o taktyce, jedno o równowadze, reszta pogrupowana według detektora oraz to, ile opiera się na słabszych dowodach. Każdy akapit ma ponumerowane przyciski pokazujące jego ustalenia. **Kopiuj tekst** kopiuje go.
+Zakładka **Podsumowanie** spisuje ustalenia jako krótki tekst: wstęp, najwyraźniejsze ustalenie, jedno o taktyce, jedno o równowadze, potem - gdy dane mówią, kto wygrał - co rozstrzygnęło rundy, reszta pogrupowana według detektora oraz to, ile opiera się na słabszych dowodach.
+
+Co rozstrzygnęło rundy, opisują cztery akapity: wynik i skąd pochodzą szanse na wygraną; najsilniejsze czynniki z liczbami, przedziałem i q (gdy żaden nie przechodzi progu odsetka fałszywych odkryć, tekst mówi *nic z tego nie jest jeszcze pewne* i mimo to nazywa najsilniejszy); trzy największe punkty zwrotne; oraz gracze, którzy najbardziej zwiększyli i zmniejszyli szansę na wygraną, z miejscami, które zyskały najwięcej. Zmyślony przykład:
+
+> T wygrało 23, a CT wygrało 17 z 40 rund o znanym wyniku (T: 58%, 95% od 42% do 72%). Szanse na wygraną pochodzą z modelu dopasowanego do tych rund.
+>
+> Co odróżniało wygrane rundy od przegranych: T wygrało 79% z 19 rund, w których trzymało Mid, wobec 24% z 21 bez tego (55 punktów, 95% od 26 do 74) (q 0,004), ...
+>
+> Punkty zwrotne: runda 17 w 48 s, zabójstwo CT na B site zmieniło jego szansę z 31% na 58% i wygrało ono rundę, ... Każdy akapit ma ponumerowane przyciski pokazujące jego ustalenia. **Kopiuj tekst** kopiuje go.
 
 ![Podsumowanie napisane przez wbudowanego narratora](../assets/img/pl/debrief.webp)
 
@@ -72,11 +106,13 @@ Wbudowany narrator działa offline, w Twoim języku. Nad nim jest pole **Soczewk
 | **Użyj zewnętrznej SI** | Domyślnie wyłączone |
 | **Wysyłaj nazwy graczy** | Domyślnie wyłączone: gracze są wysyłani jako P1, P2 ... |
 
-Potem wpisz opcjonalne pytanie i naciśnij **Napisz z pomocą SI**. Wysyłane są tylko ustalenia i ich liczby - nigdy wiersze Twoich danych. Odpowiedź napływa strumieniowo; cytowane ustalenia stają się przyciskami.
+Potem wpisz opcjonalne pytanie i naciśnij **Napisz z pomocą SI**. Wysyłane są tylko ustalenia i ich liczby - nigdy wiersze Twoich danych. Odpowiedź napływa strumieniowo; cytowane ustalenia stają się przyciskami. Gdy dane mówią, kto wygrał, model dostaje polecenie, by zacząć od tego, co rozstrzygnęło rundy, z przedziałem i q każdej liczby, i powiedzieć, gdy czynnik opiera się na małej liczbie rund albo szanse na wygraną pochodzą z modelu wstępnego.
 
 ## Komentator {#caster}
 
-Dla **jednego meczu** (wybierz go, jeśli wczytano kilka) **Komentator** znajduje momenty warte obejrzenia: pierwszą krew, wielokrotne zabójstwa, wymiany, clutche, zwroty przy celach, powroty, wyróżniających się graczy, długie strzały.
+Dla **jednego meczu** (wybierz go, jeśli wczytano kilka) **Komentator** znajduje momenty warte obejrzenia: pierwszą krew, wielokrotne zabójstwa, wymiany, clutche, zwroty przy celach, powroty, wyróżniających się graczy, długie strzały oraz **punkty zwrotne** - zabójstwa, które najbardziej zmieniły szansę strony na wygranie rundy (według graczy pozostałych przy życiu po każdej stronie, w rundach bez odrodzeń).
+
+Gdy dane mówią, kto wygrał każdą rundę, mówi to każdy moment: *„Anna eliminuje Bena: szansa T na wygranie rundy rośnie z 38% do 62% - i wygrywają rundę.”* Moment strony, która potem wygrała, liczy się bardziej, gdy komentator wybiera, które zachować, a powrót liczy się w wygranych rundach.
 
 ![Momenty komentatora z jednej rundy demo strzelanki](../assets/img/pl/caster.webp)
 

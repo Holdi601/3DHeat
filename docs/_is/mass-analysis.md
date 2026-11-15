@@ -3,9 +3,9 @@ title: "Fjöldagreining"
 nav_order: 8
 lang: "is"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Fjöldagreining: þúsundir leikja í einu
@@ -60,14 +60,24 @@ Veldu mappu (eða skrár; **Bæta við möppu…** bætir annarri við). Gluggin
 | Spilarar | mismunandi spilarar, leikir á spilara, spilarar á leik, algengustu spilararnir |
 | Liðshliðar | hvor hlið hvers korts: leikir unnir miðað við jafna skiptingu |
 | Nánir bardagar | umferðagögn: opnunareinvígi eftir hlið og hlutfall þeirra, skipti, sá sem kíkir á móti þeim sem heldur, krossskot, innkomur með blindu, markmið, sprengjur, mannayfirburðir og, **Eftir korti**, staðirnir sem drepa spilarana sem koma inn - hver sem hlutdeild með Wilson-bili sínu, úr `cqb`-tölum samantektanna ([Nánir bardagar og lotur](close-quarters.md)) |
+| R6-fletir | Ummerki Rainbow Six Siege á borðinu (kúlugöt og þess háttar) eftir fleti borðsins: ummerki, á hverja lotu kortsins, herbergið, hlutfallið þar sem skyttan var fundin út; smellur opnar tegundir ummerkjanna, stjórnendur og vopnaflokka skyttnanna, og hvar á fletinum ummerkin eru (lítið hitakort af reitum sem eru fjórðungur úr metra); flötur heldur auðkenni sínu yfir leiki í einni útgáfu kortsins. Úr `marks`-tölum samantektanna |
 | Kort | summað net korts: viðvera, dráp, dauðsföll, K/D, hvaða atburður sem er, flæði, og **heitt í hversu mörgum leikjum** (stöðugleiki); eftir liði, við 1, 2, 4 eða 8 sinnum reitinn |
-| Staðir | staðir sem skera sig úr í tölunum en ekki á hitakortinu (stórt svæði sem er líflegt í heild, gangar, hæðarbönd); **Finna staði** |
-| Hólf | hópar sem standa sig greinilega betur eða verr en hinir (farartæki á einu korti, geiri í einni hæð); **Finna hólf** |
+| Staðir | staðir sem skera sig úr í tölunum en ekki á hitakortinu (stórt svæði sem er líflegt í heild, gangar, hæðarbönd), og staðir þar sem þeir sem halda þeim vinna fleiri eða færri af lotum sínum; **Finna staði** |
+| Hólf | hópar sem standa sig greinilega betur eða verr en hinir (farartæki á einu korti, geiri í einni hæð), og hópar lotna sem unnust umfram það sem hlið þeirra vann í sömu leikjum; **Finna hólf** |
 | Innsýn | fjöldaskynjararnir og kortaskynjararnir (hér að neðan); **Afrita skýrslu (JSON)** gefur JSON sem málmódel les |
 
 ## Innsýn yfir marga leiki {#insights-over-many-matches}
 
 Flipinn **Staðir** finnur staði sem skera sig úr í tölunum en ekki á hitakortinu - stórt svæði sem er líflegt í heild, gangur, hæðarband, staður sem er aðeins líflegur í einum hluta leiksins - merkir þá sem hitakortið sýnir ekki sem **falda**, og dregur útlínur þeirra í 3D sýninni; **Hlaða** flýgur þangað með leikjunum sem hann hélt. Flipinn **Hólf** finnur hópa (farartæki á einu korti og hlið, geira í einni hæð) sem standa sig greinilega betur eða verr en hinir; smelltu á einn til að sjá nákvæmari skilgreiningar hans.
+
+### Hver vann {#who-won}
+
+Þar sem leikirnir segja hver vann hverja lotu ([úrslitadálkurinn](data-formats.md#outcome-columns) `won`) eru úrslitin markmið út af fyrir sig:
+
+- **Staðir: sigurhlutfall.** Fyrir hvora hlið hlutfall lotna hennar á stað sem hún vann, á móti hlutfallinu sem hún vann í sama leik hvar sem er - svo jafnvægi kortsins, hliðarinnar og leiksins sjálfs er grunnlínan, og aðeins staðir þar sem þeir sem halda þeim vinna fleiri (eða færri) af lotum sínum skera sig úr. Uppdiktað dæmi: *„Dust: hlið T vinnur fleiri af lotum sínum þegar hún er hér: 61% af 412 unnar, á móti 49% væntum út frá hennar eigin hlutfalli í sömu leikjum (líkur 1,6x; haldið í 31/48 leikjum).“* Sama hlutfall falskra uppgötvana og stöðugleikaathuganir og fyrir alla staði; **Hlaða** hleður leikjunum sem staðnum var haldið í og sýnir stöður þeirrar hliðar.
+- **Hólf: lotusigur.** Taflan **Lotur** geymir lotu hvers lífs: kortið, hliðina, hluta leiksins (lotur 1-4, 5-8, ...), farartækið (stjórnandi, agent), vopnið sem það notaði mest, staðinn sem það hélt lengst, kaupin (eco, force, full) og hvort hlið þess náði fyrsta drápinu. Hópur er metinn á móti því sem hlið hans vann í sömu leikjum, svo *T á Dust með AWP* er aðeins hólf þegar þær lotur unnust oftar en aðrar lotur T í þeim leikjum. Uppdiktað dæmi: *„m1 · T · AWP: vinnur 80% af 320 lotum, á móti 62% væntum út frá sömu hliðum í sömu leikjum (líkur 2,3x; 40 leikir).“* Raðað eftir lyftunni sinnum stuðningnum; **Hlaða** hleður leikjunum þar sem lotur sýna það mest.
+
+Hvort tveggja þarf samantektir af útgáfu 2 (sjá [Að fá samantektirnar](#getting-the-summaries)): eldri eru reiknaðar aftur.
 
 Flipinn **Innsýn** finnur, yfir alla leiki, farartæki sem skipta eða vinna betur eða verr en hin, staði sem eru heitir í stöðugu hlutfalli leikja, hlið sem vinna meira en jafna skiptingu, farartæki þar sem notkun þeirra breytist eftir dagsetningum, og hluta leiksins sem halda fleiri dráp en jöfn dreifing gefur. Hver niðurstaða ber með sér talningar sínar, áhrif, bil og hlutfall falskra uppgötvana (haldið í 5%), og smellur hleður leikjum hennar. Nánar: [Fyrir forritara](#for-developers).
 
@@ -111,6 +121,11 @@ Venjulegt JSON (`src/mass/types.ts`), um 5-30 KB þjöppuð á hvern leik:
   eftir staðlaðri tegund, dráp eftir flokki skotmarksins, sigrar, peningar;
 - eftir spilara (eftir notandaauðkenni, annars nafni): lið, líf, viðvera, dráp, dauðsföll,
   högg, skot, sigrar, farartæki; eftir vopni: atburðir eftir tegund;
+- með úrslitadálki (útgáfa 2): unnar og spilaðar lotur eftir liði, farartæki
+  (`rw`, eitt líf og ein lota hvert), leikmanni og vopni (loturnar sem hlið notaði það
+  í); lota hvers lífs (`outcome.u`: lota, hlið, farartæki, vopnið sem það
+  notaði mest, staðurinn sem það hélt lengst, kaupin, unnið) og númer
+  hverrar lotu, sigurvegari og hlið fyrsta dráps hennar (`outcome.r`);
 - dálkar hagkerfisins (`cost_*`, `earn_*`) og samtölur þeirra;
 - fasar: atburðir eftir tegund í 20 bilum eftir lengd leiksins og eftir mínútu;
 - hegðun: mælingar á sameiginlegri hegðun leiksins (röðun, hjarðhegðun eftir leiðum, akreinar, þröng, foringjar, eftirbátar, brotpunktur, áhætta eftir töp, rákir, samkomulag um kaup, bæling), hver með sitt eigið núlllíkan, p og q - sjá [Sameiginleg hegðun](collective-behaviour.md);
@@ -126,6 +141,9 @@ Rúmfræðilegi hlutinn er gerður fyrir skannatölfræði yfir svæði af hvað
 - **Útsetning við hliðina á hverri talningu.** Viðverusekúndur á hvern reit, fyrir hvert lið (`pt`), fyrir hvern flokk farartækis (`pc`) og fyrir hvert hæðarband (`ph`), svo að hlutfall, væntigildi og hlutfall svæðis sé reiknað fyrir hvaða undirhóp sem er.
 - **Hæð.** Bönd yfir lágmarki leiksins (1. hundraðshluti hæðar): undir 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, yfir; skrá með dálki `floor`/`storey`/`deck` setur í bönd eftir hæðum sínum í staðinn. `y` er meðalhæð hvers reits, `y0` sú lægsta (gólf hans, fyrir hæð fyrir ofan það).
 - **Atburðir** sem tvíundir `[reitur, tegund, lið, flokkur, band, fjöldi]`.
+- **Lotur eftir úrslitum** (útgáfa 2, með úrslitadálki og tveimur lotum eða
+  fleiri): `pw` sem `[cell, team, rounds won, rounds lost]` - loturnar sem hvor hlið
+  var sekúndu eða lengur í reitnum, eftir úrslitum hennar í lotunni.
 - **Tímasneiðar** á grófu stigi (8 reitir á hlið), eftir mínútu frá byrjun leiksins: `[cx, cz, mínúta, tegund, gildi]`, viðverusekúndur sem tegund `GRID_KINDS.length`; fasar leiksins eru mínútur yfir lengdinni.
 - Strjált, talningar heiltölur, sekúndur niður í tíunda hluta: takmarkað af því sem gerðist.
 
@@ -137,8 +155,8 @@ Stig B leitar að því sem skerst úr í tölunum án þess að grípa augað: 
 
 Leikir hvers korts eru lesnir tvisvar, einn leik í einu; minnið geymir summur á grind með að hámarki 64 reitum á hlið (16 fyrir rúm-tíma skönnunina), aldrei leikina sjálfa.
 
-- **Mælingar.** Tíðni atburðar á sekúndu viðveru - dráp, dauðsföll, högg, skot, yfirtökur, fyrir allar einingar, eftir flokki (þeir 4 með flesta atburði), eftir hæðarbandi - og hlutdeild drápa í drápum og dauðsföllum (öllum, eftir hlið, eftir bandi). Hvaða flokkar og hliðar koma úr hausunum (`planOf`).
-- **Væntigildi eftir leik.** Tíðni hvers leiks, dreifð yfir eigin viðveru hans í reit, er væntigildi reitsins (Kulldorff-skönnun aðlöguð að þekjandi breytum og lagskipt eftir leik): nokkrir blóðugir leikir eða einn upptekinn þjónn búa ekki til stað.
+- **Mælingar.** Tíðni atburðar á sekúndu viðveru - dráp, dauðsföll, högg, skot, yfirtökur, fyrir allar einingar, eftir flokki (þeir 4 með flesta atburði), eftir hæðarbandi - og hlutdeild drápa í drápum og dauðsföllum (öllum, eftir hlið, eftir bandi), og **sigurhlutfall** hvorrar hliðar: lotur hennar í reitnum unnar á móti töpuðum (`pw`), þar sem 8 leikir á kortinu eða fleiri telja lotur eftir úrslitum. Hvaða flokkar og hliðar koma úr hausunum (`planOf`).
+- **Væntigildi eftir leik.** Tíðni hvers leiks, dreifð yfir eigin viðveru hans í reit, er væntigildi reitsins (Kulldorff-skönnun aðlöguð að þekjandi breytum og lagskipt eftir leik): nokkrir blóðugir leikir eða einn upptekinn þjónn búa ekki til stað. Fyrir sigurhlutfallið er væntigildið eigið hlutfall hliðarinnar af unnum lotum í þeim leik, svo jafnvægi kortsins og hliðarinnar verður aldrei staður. Lota í mörgum reitum svæðis telst í hverjum; dreifingin sem mæld er við stærð svæðisins ber það.
 - **Dreifing.** Leikir eru ósammála langt umfram Poisson. Afgangar hvers leiks eru lagðir saman í blokkum af 1, 2, 4, 8, 16 reitum; dreifing hverrar blokkastærðar (afgangar í öðru veldi deilt með núlldreifingunni, sameinað, versta 5% blokkanna sleppt) skalar hverja prófun á svæði af þeirri stærð: quasi-líkindahlutfall, Poisson fyrir tíðni, tvíliða fyrir hlutdeild.
 - **Svæði.** Hringir frá 0,75 til 18 reitum; sporbaugar í sex hornum, 3 og 6 sinnum lengri en breiðir, 3 til 18 reitir (gangar; ásinn er `place.path` innsýnarinnar); belti sem vaxa reit fyrir reit frá sterkustu staðbundnu Getis-Ord Gi* reitunum á meðan svæðið stækkar (óreglulegar lögun) - vaxin á öðrum helmingi leikjanna og prófuð á hinum, svo að frelsi vaxtarins kostar engan falskan stað; hvert hæðarband gegn öðrum böndum leiksins yfir allt kortið (þyrpingaöruggt); rúmtíma-strokka: hringur á einum eða tveimur fimmtu hluta lengdar leiksins, gegn eigin dreifingu atburða leiksins í stað og tíma (rúmtíma-umröðunarskönnunin).
 - **Prófun.** p úr quasi-líkindahlutfallinu; Benjamini-Hochberg yfir hvert svæði sem reynt var á hverju korti (700.000 á þremur kortum er venjulegt) í 5%. Það sem stenst er skorið (svæði sem er að mestu innan sterkara svæðis af sömu mælingu segir það sama), lesið aftur fyrir **stöðugleika** sinn - leikir sem sáu það, leikir sem það hélt í, stefna þess í fimm foldum leikjanna - og prófað enn einu sinni við þá dreifingu sem leikirnir sjálfir sýna (þyrpingaöruggt, leikir sem þyrpingar, aldrei undir Poisson), BH aftur. Rólegir staðir á grunni (2% eða meira af hrygningum, flugtökum og lendingum kortsins) eru sleppt.
@@ -151,6 +169,26 @@ Flipinn **Staðir** listar þá (aðeins faldir sem sjálfgefið; eftir korti, l
 
 Geislaleit (breidd 24, dýpt 3) yfir þrjár töflur: **líf** (líf spilara: leikur, kort, hamur, flokkur, farartæki, hlið, þrep, ársfjórðungur dagsetninganna, þriðjungur lengdar leikjanna; K/D, sigur, dauði sem líf, dráp á klukkustund, unnið á mínútu), **staðir** (dráp og dauðsföll eftir korti, ham, dagsetningum, geira kortsins 4 x 4, flokki, hlið, bandi) og **fasar** (geiri og fimmti hluti leiksins: K/D, dauðsföll á klukkustund viðveru). Hópur er prófaður gegn heildinni með leikjum sem þyrpingum (samlokudreifing afganga hans eftir leik), áhrif hans eru hlutfall líkinda eða tíðni dregið saman með forgildi upp á 20 niðurstöður; hann þarf 30 niðurstöður í 8 leikjum, betrumbót verður að vera 10% sterkari en foreldri hennar, og hópar þar sem niðurstaðan er engin eða öll (ekki skráð fyrir þá) eru sleppt. Haldið: BH undir 5% yfir alla hópa sem metnir voru, dregið saman hlutfall upp á 1,25 (eða 1/1,25) að minnsta kosti, fjórir af fimm foldum sammála, og engin betrumbót sem endurtekur aðeins foreldri sitt. Flipinn **Hólf** listar þá; smellur sýnir hverja betrumbót með einu skilyrði hópsins (könnuðinn), **Hlaða** hleður leikjum hans. Útbúnaður er ekki í samantektunum enn.
 
+Fjórða taflan, **lotur** (`roundsTable`), hefur úrslit lotunnar sem
+markmið: ein lína fyrir lotu hvers lífs - kort, hlið, hluti leiksins (lotur 1-4,
+5-8, ...), farartæki, vopnið sem var mest notað, staðurinn sem var lengst haldið, kaup, fyrsta
+dráp eða fyrsti dauði - metin á móti sigurhlutfalli eigin hliðar í eigin
+leik (lagskipta væntigildið samkvæmt Mantel-Haenszel: leifin er
+`won - e`, `e` hlutfall hliðarinnar í leiknum), svo hólf er aldrei jafnvægi
+kortsins eða hliðarinnar. Leikirnir eru áfram klasarnir. z hennar er kvarðað: sama
+geislaleitin keyrir átta sinnum á úrslitunum stokkuðum milli
+lotna hvorrar hliðar í hverjum leik (hlutfalli hliðarinnar í hverjum leik haldið), og
+dreifing þessara núll-z umfram staðlaða normaldreifingu - eftir fjölda
+skilyrða, frá miðjunni (miðgildi / 0,674) og halanum (99. hundraðsmark /
+2,576), það stærra, aldrei undir 1 - deilir þeim raunverulegu áður en p þeirra og
+hlutfall falskra uppgötvana eru reiknuð (empírísk núlltilgáta, Efron 2004). Dýpri hópar fá
+stærri kvarðann: geislinn heldur fínstillingum hópa sem voru valdir vegna
+stórs z. Grunnur hólfs er eigið væntigildi þess, lyfta þess prósentustigin yfir
+því, og því er raðað eftir lyftunni sinnum kvaðratrótinni af lotum þess, haldið af
+sönnunargögnunum og brotunum (`wracc` er stuðningurinn sinnum lyftan). Það
+ber leikina þar sem það sást mest (`matchIds`) og nokkrar af lotum þeirra
+(`rounds`, `[match, round]`) til að kafa dýpra.
+
 #### Breytingar á meta með hagnýtri þýðingu {#meta-shifts-with-practical-significance}
 
 Á blönduðum dagsetningum taldi tvíliðan á lífum næstum allar breytingar marktækar. `meta` prófar nú þyrpingaöruggt (líf hvers leiks sem þyrping), heldur aðeins notkunarbreytingu sem er að minnsta kosti 2 stig og 25%, K/D-breytingu upp á 1,3 sinnum, að ársfjórðungar dagsetninganna þróist á sama veg (Kendall-tau að minnsta kosti 0,5) og, fyrir farartæki á nokkrum kortum, sömu stefnu á flestum þeirra. Eftir standa aðeins fáar breytingar á prófunarsetti þar sem venjulega prófunin merkti næstum allar.
@@ -162,3 +200,4 @@ Geislaleit (breidd 24, dýpt 3) yfir þrjár töflur: **líf** (líf spilara: le
 #### Athuganir {#checks}
 
 `scan.test.ts` setur inn dreifðu svæði (1,6 sinnum dauðsfallatíðnin yfir hring af 22 reitum, dauft í hverjum reit), gang, hæðarband og þyrpingu sem er aðeins í fasa í 240 tilbúnum ofdreifðum leikjum - allt fundið, það dreifða falið - og keyrir átta núllsett af 60 leikjum: enginn staður. `niche.test.ts` finnur innsettan hóp farartækis x korts x hliðar og ekkert í fimm núlltöflum.
+`outcome.test.ts` athugar samantekt útgáfu 2 (unnar lotur eftir hlið, einingu, leikmanni og vopni, `pw`, lotur eininga); setur inn braut þar sem hliðin vinnur 70% af lotum sínum á móti 35% (hver leikur með eigið jafnvægi) - fundið - og keyrir 20 núllsett af 50 leikjum þar sem brautirnar segja ekkert: enginn sigurhlutfallsstaður; setur inn AWP á einu korti sem vinnur lotur hliðar sinnar 30 prósentustigum oftar - fundið, með leikjum sínum og lotum - og keyrir 30 núllsett af 80 leikjum þar sem hver leikur hefur eigið jafnvægi og ein hlið er sterkari á einu korti: ekkert hólf.

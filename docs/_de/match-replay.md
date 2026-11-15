@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "de"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Match-Replay
@@ -90,6 +90,8 @@ Der Abschnitt **Taktische Anzeige** zeichnet, für keine Einheit, die gewählten
 ## Ziele {#objectives}
 
 Kommt ein Match mit seinen Zielen, zeichnet der Abschnitt **Ziele** sie auf das Level: Eroberungszonen (mit Besitzer und Eroberungsfortschritt), Spawns, Flugplätze, Gebiete und Bombenziele, jede Ebene einzeln umschaltbar, mit Beschriftungen. Sie sind durch den Boden hindurch zu sehen. Sind mehrere Spielmodi geladen, filtert **Modus** die Matches nach Modus. Die Ziele kommen aus der Match-Datei eines Konverters neben der Aufnahme oder aus einem [`.3dheat`](container.md)-Container.
+
+Rainbow-Six-Siege-Matches bringen ihre Bombenplätze mit: Die zwei Räume jedes Platzes werden als Umrisse mit ihren Namen auf ihren Boden gezeichnet, ermittelt daraus, wo die Spieler standen, während das Spiel den Raum nannte; ein Platz der Karte, der im Match nicht gespielt wurde, kommt als Kreis aus der Platztabelle des Konverters. Im Replay leuchtet der Platz der Runde am Abspielkopf bernsteinfarben, die anderen bleiben grau. Sie gehören zur Ebene der Eroberungszonen.
 
 ## Beschriftungen und Statistik {#labels-and-statistics}
 

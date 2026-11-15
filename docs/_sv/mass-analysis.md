@@ -3,9 +3,9 @@ title: "Massanalys"
 nav_order: 8
 lang: "sv"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Masanalys: tusentals matcher på en gång
@@ -71,14 +71,24 @@ Välj en mapp (eller filer; **Lägg till mapp…** lägger till en mapp till). F
 | Spelare | olika spelare, matcher per spelare, spelare per match, de vanligaste spelarna |
 | Sidor | varje sida på varje karta: matcher vunna jämfört med en jämn fördelning |
 | Närstrid | rundedata: öppningsdueller per sida och deras omvandling, byten, den som kikar mot den som håller, korseldar, blindade inträden, sikte, bombplantningar, mannaövertag och, **Per karta**, platserna som dödar spelarna som går in i dem – var och en en andel med sitt Wilson-intervall, från sammanfattningarnas `cqb`-räkningar ([Närstrid och rundor](close-quarters.md)) |
+| R6-ytor | Rainbow Six Sieges märken på banan (kulhål och liknande) per banyta: märken, per runda på kartan, rummet, andelen vars skytt har räknats fram; ett klick öppnar märkenas sorter, skyttarnas operatörer och vapenklasser, och var på ytan märkena finns (en liten värme av celler på en kvarts meter); en yta behåller sitt id över matcherna i en kartversion. Från sammanfattningarnas `marks`-räkningar |
 | Karta | en kartas summerade rutnät: närvaro, nedskjutningar, förluster, K/D, valfri händelse, flöde, och **het i hur många matcher** (stabilitet); per lag, vid 1, 2, 4 eller 8 gånger cellen |
-| Platser | platser som sticker ut i siffrorna men inte i värmen (ett stort område som är upptaget som helhet, korridorer, höjdband); **Hitta platser** |
-| Nischer | grupper som gör klart bättre eller sämre än resten (ett fordon på en karta, en sektor på en höjd); **Hitta nischer** |
+| Platser | platser som sticker ut i siffrorna men inte i värmen (ett stort område som är upptaget som helhet, korridorer, höjdband), och platser vars innehavare vinner fler eller färre av sina rundor; **Hitta platser** |
+| Nischer | grupper som gör klart bättre eller sämre än resten (ett fordon på en karta, en sektor på en höjd), och grupper av rundor vunna utöver vad deras sida vann i samma matcher; **Hitta nischer** |
 | Insikter | massdetektorerna och kartdetektorerna (nedan); **Kopiera rapport (JSON)** ger den JSON som en språkmodell läser |
 
 ## Insikter över många matcher {#insights-over-many-matches}
 
 Fliken **Platser** hittar platser som sticker ut i siffrorna men inte i värmen – ett stort område som är upptaget som helhet, en korridor, ett höjdband, en plats som bara är upptagen i en del av matchen – markerar de som den vanliga värmen inte visar som **dolda**, och ritar upp dem i 3D-vyn. **Läs in** flyger dit med de matcher den höll. Fliken **Nischer** hittar grupper (ett fordon på en karta och sida, en sektor på en höjd) som gör klart bättre eller sämre än resten; klicka på en för att se dess förfining.
+
+### Vem vann {#who-won}
+
+Där matcherna säger vem som vann varje runda ([utfallskolumnen](data-formats.md#outcome-columns) `won`) är resultatet ett eget mål:
+
+- **Platser: vinstandel.** För varje sida andelen av dess rundor på en plats som den vann, mot andelen den vann i samma match var som helst – så kartans balans, sidans och matchens egen är baslinjen, och bara platser vars innehavare vinner fler (eller färre) av sina rundor sticker ut. Ett påhittat exempel: *”Dust: sida T vinner fler av sina rundor när den är här: 61 % av 412 vunna, mot 49 % väntat utifrån dess egen andel i samma matcher (odds 1,6x; hölls i 31/48 matcher).”* Samma falska upptäcktsfrekvens och stabilitetskontroller som för varje plats; **Läs in** läser in de matcher den höll i och visar den sidans positioner.
+- **Nischer: rundseger.** Tabellen **Rundor** innehåller varje livs runda: kartan, sidan, delen av matchen (rundor 1–4, 5–8, ...), fordonet (en operatör, en agent), vapnet det använde mest, platsen det höll längst, köpet (eco, force, full) och om dess sida fick första nedskjutningen. En grupp bedöms mot vad dess sida vann i samma matcher, så *T på Dust med en AWP* är en nisch bara när de rundorna vanns oftare än T:s andra rundor i de matcherna. Ett påhittat exempel: *”m1 · T · AWP: vinner 80 % av 320 rundor, mot 62 % väntat utifrån samma sidor i samma matcher (odds 2,3x; 40 matcher).”* Rangordnas efter lyftet gånger stödet; **Läs in** läser in de matcher vars rundor visar det mest.
+
+Båda behöver sammanfattningar av version 2 (se [Få sammanfattningarna](#getting-the-summaries)): äldre räknas fram igen.
 
 Fliken **Insikter** hittar, över alla matcher, fordon som byter eller vinner bättre eller sämre än resten, platser som är heta i en stadig andel av matcherna, sidor som vinner mer än en jämn fördelning, fordon vars användning rör sig över datumen, och delar av matchen som har fler nedskjutningar än en jämn spridning. Varje fynd har sina räkningar, effekt, intervall och en falsk upptäcktsfrekvens (hållen på 5 %), och ett klick läser in dess matcher. Detaljer: [För utvecklare](#for-developers).
 
@@ -126,6 +136,11 @@ Vanlig JSON (`src/mass/types.ts`), ungefär 5–30 KB komprimerad per match:
   efter kanonisk sort, nedskjutningar efter målets klass, vinster, pengar;
 - per spelare (efter användar-id, annars namn): lag, liv, närvaro, nedskjutningar, förluster,
   träffar, uppskjutningar, vunnet, fordon; per vapen: händelser per sort;
+- med en resultatkolumn (version 2): rundor vunna och spelade per lag, fordon
+  (`rw`, ett liv och en runda vardera), spelare och vapen (rundorna en sida använde det
+  i); varje livs runda (`outcome.u`: runda, sida, fordon, vapnet det
+  använde mest, platsen det höll längst, köpet, vann) och varje rundas
+  nummer, vinnare och sidan för dess första nedskjutning (`outcome.r`);
 - ekonomins kolumner (`cost_*`, `earn_*`) och deras summor;
 - faser: händelser per sort i 20 fack av matchens längd och per minut;
 - beteende: matchens mått på kollektivt beteende (samordning, ruttstyrning, körfält,
@@ -147,6 +162,9 @@ Den rumsliga delen är gjord för skanningsstatistik över områden av vilken st
 - **Exponering vid varje räkning.** Närvarosekunder per cell, per lag (`pt`), per fordonsklass (`pc`) och per höjdband (`ph`), så att ett områdes takt, förväntan och kvot räknas ut för vilken undergrupp som helst.
 - **Höjd.** Band över matchens golv (1:a percentilen av höjden): under 3 m, 3–10, 10–30, 30–100, 100–300, 300–1000, 1000–3000, över; en fil med kolumnen `floor`/`storey`/`deck` delar i band efter sina våningar i stället. `y` är varje celles medelhöjd, `y0` dess lägsta (dess våning, för höjd över den).
 - **Händelser** som tupler `[cell, kind, team, class, band, count]`.
+- **Rundor efter resultat** (version 2, med en resultatkolumn och två rundor eller
+  fler): `pw` som `[cell, team, rounds won, rounds lost]` – rundorna varje sida
+  tillbringade en sekund eller mer i cellen, efter dess resultat i rundan.
 - **Tidsskivor** på en grov nivå (8 celler per sida), per minut från matchstarten: `[cx, cz, minute, kind, value]`, närvarosekunder som sort `GRID_KINDS.length`; matchfaser är minuter över längden.
 - Glest, räkningar som heltal, sekunder till en tiondel: begränsat av vad som hände.
 
@@ -166,10 +184,15 @@ Varje kartas matcher läses två gånger, en match i taget; minnet håller summo
 - **Mått.** En händelses takt per sekund av närvaro – nedskjutningar, förluster,
   träffar, uppskjutningar, erövringar, för alla enheter, per klass (de 4 med flest
   händelser), per höjdband – och andelen nedskjutningar i nedskjutningar och förluster
-  (alla, per sida, per band). Vilka klasser och sidor som räknas kommer från huvudena (`planOf`).
+  (alla, per sida, per band), och varje sidas **vinstandel**: dess rundor i
+  cellen vunna mot förlorade (`pw`), där 8 matcher på kartan eller fler räknar
+  rundor efter resultat. Vilka klasser och sidor som räknas kommer från huvudena (`planOf`).
 - **Förväntan per match.** Varje matchs egna takt, utspridd över dess egen närvaro i en
   cell, är cellens förväntan (en kovariatjusterad Kulldorff-skanning, stratifierad per match):
-  några blodiga matcher eller en upptagen server gör ingen plats.
+  några blodiga matcher eller en upptagen server gör ingen plats. För vinstandelen är förväntan
+  sidans egen andel vunna rundor i den matchen, så kartans och sidans balans blir
+  aldrig en plats. En runda i flera celler i ett område räknas i varje; spridningen
+  mätt vid områdets storlek bär det.
 - **Spridning.** Matcher skiljer sig långt mer än Poisson. Varje matchs residualer summeras i
   block om 1, 2, 4, 8, 16 celler; spridningen för varje blockstorlek (kvadrerade residualer
   över nollvariansen, sammanslagna, de värsta 5 % av blocken utelämnade) skalar varje test av ett
@@ -214,6 +237,26 @@ utfall i 8 matcher, en förfining måste vara 10 % starkare än sin förälder, 
 (eller 1/1,25), fyra av fem veck i överensstämmelse, inte en förfining som bara upprepar sin förälder. Fliken **Nischer** listar dem; ett klick visar varje
 enkelvillkorsförfining av gruppen (utforskaren), **Läs in** läser in dess matcher. Utrustningar finns inte i sammanfattningarna ännu.
 
+Den fjärde tabellen, **rundor** (`roundsTable`), har rundans resultat som sitt
+mål: en rad per livs runda – karta, sida, del av matchen (rundor 1–4,
+5–8, ...), fordon, vapnet som användes mest, platsen som hölls längst, köp, första
+kill eller första död – bedömd mot den egna sidans vinstandel i den egna
+matchen (den stratifierade förväntan enligt Mantel-Haenszel: residualen är
+`won - e`, `e` sidans andel i matchen), så en nisch är aldrig kartans
+eller sidans balans. Matcherna förblir klustren. Dess z är kalibrerat: samma
+strålsökning körs åtta gånger på resultaten blandade mellan
+rundorna för varje sida i varje match (sidans andel i varje match bevarad), och
+spridningen av dessa noll-z utöver en standardnormal – per antal
+villkor, från mitten (median / 0,674) och svansen (99:e percentilen /
+2,576), den större, aldrig under 1 – delar de verkliga före deras p och
+den falska upptäcktsfrekvensen (en empirisk nollfördelning, Efron 2004). Djupare grupper får
+den större skalan: strålen behåller förfiningar av grupper valda för sitt
+stora z. En nischs bas är dess egen förväntan, dess lyft procentenheterna över
+den, och den rangordnas efter lyftet gånger kvadratroten ur dess rundor, hållen av
+underlaget och veckningarna (`wracc` är stödet gånger lyftet). Den
+bär matcherna där den syntes mest (`matchIds`) och några av deras
+rundor (`rounds`, `[match, round]`) för att gå på djupet.
+
 #### Metaförskjutningar med praktisk betydelse {#meta-shifts-with-practical-significance}
 
 På blandade datum fångade binomialtestet på liv nästan varje förändring som signifikant. `meta` testar nu klusterrobust (varje matchs
@@ -232,3 +275,10 @@ på 22 celler, svagt i varje cell), en korridor, ett höjdband och ett kluster s
 gäller en fas i 240 syntetiska överspridda matcher – alla hittas, det diffusa dolt – och kör åtta nollmängder på 60 matcher: ingen plats.
 `niche.test.ts` hittar en planterad grupp fordon × karta × sida och ingenting i
 fem nolltabeller.
+`outcome.test.ts` kontrollerar sammanfattningen av version 2 (rundor vunna
+per sida, enhet, spelare och vapen, `pw`, enhetsrundorna); planterar en fil vars
+sida vinner 70 % av sina rundor mot 35 % (varje match sin egen balans) – hittas –
+och kör 20 nollmängder på 50 matcher där filerna inte säger något: ingen
+vinstandelsplats; planterar en AWP på en karta som vinner sin sidas rundor 30 procentenheter mer –
+hittas, med sina matcher och rundor – och kör 30 nollmängder på 80 matcher med
+varje match sin egen balans och en sida starkare på en karta: ingen nisch.

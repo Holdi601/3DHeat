@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "et"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Mängu taasesitus
@@ -90,6 +90,8 @@ Jaotis **Taktikaline kuva** joonistab ilma üksuseta valitud, kõik või ühe li
 ## Eesmärgid {#objectives}
 
 Kui matšiga tulevad kaasa selle eesmärgid, joonistab jaotis **Eesmärgid** need tasemele: vallutustsoonid (koos omaniku ja vallutamise edenemisega), spawnid, lennuväljad, alad ja pommitamise sihtmärgid, iga kiht lülitatav, siltidega. Need on nähtavad läbi maapinna. Kui on laaditud mitu mängurežiimi, filtreerib **Režiim** matše režiimi järgi. Eesmärgid tulevad salvestise kõrval olevast konverteri matšifailist või [`.3dheat`](container.md) konteinerist.
+
+Rainbow Six Siege'i matšidega tulevad kaasa nende pommikohad: iga koha kaks ruumi joonistatakse nende põrandale kontuuridena koos nimedega, mis arvutatakse välja sellest, kus mängijad seisid, kui mäng ruumi nimetas; kaardi koht, mida matšis ei mängitud, tuleb teisendaja kohtade tabelist ringina. Taasesituses süttib esituskoha vooru koht merevaiguvärvi, teised jäävad halliks. Need kuuluvad vallutusalade kihti.
 
 ## Sildid ja statistika {#labels-and-statistics}
 

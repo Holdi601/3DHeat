@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "cs"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Přehrání zápasu
@@ -90,6 +90,8 @@ Sekce **Taktický displej** kreslí, u žádné jednotky, u vybraných, u všech
 ## Cíle {#objectives}
 
 Když záznam přichází s cíli, sekce **Cíle** je nakreslí na level: zóny dobývání (s vlastníkem a postupem dobývání), spawny, letiště, oblasti a cíle bombardování; každou vrstvu lze přepnout a mají popisky. Vidí se skrz zemi. Když je načteno více herních režimů, **Režim** filtruje zápasy podle režimu. Cíle pocházejí ze souboru zápasu od převodníku vedle záznamu, nebo uvnitř kontejneru [`.3dheat`](container.md).
+
+Zápasy Rainbow Six Siege přinášejí svá místa pro bombu: dvě místnosti každého místa se kreslí na jejich podlahu jako obrysy s názvy, odvozené z toho, kde stáli hráči, zatímco hra místnost jmenovala; místo na mapě, které se v zápase nehrálo, pochází z tabulky míst převodníku jako kruh. V záznamu se místo kola na pozici přehrávání rozsvítí jantarově, ostatní zůstanou šedá. Patří do vrstvy zón k obsazení.
 
 ## Popisky a statistiky {#labels-and-statistics}
 

@@ -3,9 +3,9 @@ title: "Analyse de match (CS2)"
 nav_order: 10
 lang: "fr"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -124,6 +124,16 @@ Sur tous les matchs chargés :
 - **Joueurs** : les quinze meilleurs au frags moins morts, cumulés sur tous leurs matchs (identifiés par Steam ID) : matchs, K-D, ADR et KAST pondérés par les rounds joués, % HS pondéré par les frags, duels d'ouverture. **Cliquez sur un joueur** pour ses frags et ses morts sur tous les matchs dans la carte de chaleur.
 
 Les boutons Afficher dans la carte de chaleur de tous les matchs chargés se trouvent sous cette section.
+
+## Ce qui a décidé les manches {#what-decided-the-rounds}
+
+L'onglet compte ; les [Observations](insights.md#who-won-what-decided-the-rounds) expliquent. Avec la table de carte de chaleur d'un match chargée (elle porte la colonne `won`), **Observations** sépare les manches de chaque camp selon ce qui s'y est passé - le duel d'ouverture, l'achat, une première mort échangée, la pose, les utilitaires, un premier contact précoce, chaque lieu tenu et chaque lieu atteint dans les 25 premières s - et dit ce qui a fait la différence, avec la différence des taux de victoire, son intervalle à 95 % et q, et *peu de manches* là où un bras en a moins de huit. Elles nomment les tournants (les frags et les poses qui ont le plus fait bouger la probabilité de victoire) et les joueurs et les lieux qui ont ajouté ou coûté le plus, et le **Bilan** et le **Commentateur** commencent par eux. Un exemple inventé :
+
+> T a gagné 79 % des 19 manches où il tenait Mid, contre 24 % des 21 sans (55 points, 95 % de 26 à 74) - q 0,004.
+>
+> Tournants : manche 17 à 48 s, un frag de CT à B site a fait passer sa chance de 31 % à 58 %, et il a pris la manche.
+
+Un seul match a moins de 30 manches, donc ses probabilités de victoire viennent d'un modèle a priori fixe fondé sur les joueurs en vie, la pose et le chrono ; le texte le dit. Sur de nombreux matchs, l'[analyse de masse](mass-analysis.md#who-won) pose les mêmes questions.
 
 ## Afficher dans la carte de chaleur {#show-in-the-heatmap}
 

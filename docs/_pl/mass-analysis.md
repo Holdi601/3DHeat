@@ -3,9 +3,9 @@ title: "Analiza zbiorcza"
 nav_order: 8
 lang: "pl"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Analiza zbiorcza: tysiące meczów naraz
@@ -60,14 +60,24 @@ Wybierz folder (albo pliki; **Dodaj folder…** dołącza kolejny). Okno ma filt
 | Gracze | różni gracze, mecze gracza, gracze w meczu, najczęściej pojawiający się gracze |
 | Strony | każda strona każdej mapy: mecze wygrane wobec równego podziału |
 | Walki z bliska | dane z rund: otwierające pojedynki według strony i ich zamiana, wymiany, gracz broniący przeciwko atakującemu, crossfire, wejścia po oślepieniu, celność, podłożenia, przewaga liczebna i, **Według mapy**, miejsca, które zabijają graczy wchodzących do nich — każde jako udział z jego przedziałem Wilsona, z liczników `cqb` podsumowań ([Walki z bliska i rundy](close-quarters.md)) |
+| Powierzchnie R6 | ślady Rainbow Six Siege na poziomie (dziury po kulach i podobne) według powierzchni poziomu: ślady, na rundę mapy, pomieszczenie, udział tych, których strzelca ustalono; kliknięcie otwiera rodzaje śladów, operatorów i klasy broni strzelców oraz to, gdzie na powierzchni są ślady (mała mapa cieplna z komórek co ćwierć metra); powierzchnia zachowuje swój identyfikator w meczach jednej wersji mapy. Z liczników `marks` podsumowań |
 | Mapa | zsumowana siatka mapy: obecność, zabójstwa, zgony, K/D, dowolne zdarzenie, przepływ i **gorąca w ilu meczach** (stabilność); według drużyny, przy komórkach 1, 2, 4 albo 8 razy większych |
-| Miejsca | miejsca, które wyróżniają się w liczbach, ale nie w mapie cieplnej (duży obszar zajęty jako całość, korytarze, pasma wysokości); **Znajdź miejsca** |
-| Nisze | grupy wypadające wyraźnie lepiej albo gorzej niż reszta (pojazd na jednej mapie, sektor na jednej wysokości); **Znajdź nisze** |
+| Miejsca | miejsca, które wyróżniają się w liczbach, ale nie w mapie cieplnej (duży obszar zajęty jako całość, korytarze, pasma wysokości), oraz miejsca, w których trzymający je gracze wygrywają więcej lub mniej swoich rund; **Znajdź miejsca** |
+| Nisze | grupy wypadające wyraźnie lepiej albo gorzej niż reszta (pojazd na jednej mapie, sektor na jednej wysokości), oraz grupy rund wygranych ponad to, co ich strona wygrała w tych samych meczach; **Znajdź nisze** |
 | Wnioski | wykrywacze masowe i wykrywacze map (poniżej); **Kopiuj raport (JSON)** daje JSON, który czyta model językowy |
 
 ## Wnioski z wielu meczów {#insights-over-many-matches}
 
 Zakładka **Miejsca** znajduje miejsca, które wyróżniają się w liczbach, ale nie w mapie cieplnej — duży obszar zajęty jako całość, korytarz, pasmo wysokości, miejsce zajęte tylko w jednej części meczu. Zaznacza te, których zwykła mapa cieplna nie pokazuje, jako **ukryte**, i obrysowuje je w widoku 3D. **Wczytaj** leci tam razem z meczami, które je trzymały. Zakładka **Nisze** znajduje grupy (pojazd na jednej mapie i stronie, sektor na jednej wysokości) wypadające wyraźnie lepiej albo gorzej niż reszta; kliknij jedną, żeby zobaczyć jej doprecyzowania.
+
+### Kto wygrał {#who-won}
+
+Gdy mecze mówią, kto wygrał każdą rundę ([kolumna wyniku](data-formats.md#outcome-columns) `won`), wynik jest osobnym celem:
+
+- **Miejsca: odsetek wygranych.** Dla każdej strony udział jej rund w danym miejscu, które wygrała, wobec udziału, jaki wygrała gdziekolwiek w tym samym meczu — dzięki temu równowaga mapy, strony i samego meczu jest punktem odniesienia, a wyróżniają się tylko miejsca, w których trzymający je gracze wygrywają więcej (lub mniej) swoich rund. Zmyślony przykład: *„Dust: strona T wygrywa więcej swoich rund, gdy jest tutaj: 61% z 412 wygranych, wobec 49% oczekiwanych z jej własnego odsetka w tych samych meczach (szanse 1,6x; utrzymane w 31/48 meczach).”* Ten sam odsetek fałszywych odkryć i te same kontrole stabilności co dla każdego miejsca; **Wczytaj** wczytuje mecze, w których było utrzymane, pokazując pozycje tej strony.
+- **Nisze: wygrana runda.** Tabela **Rundy** zawiera rundę każdego życia: mapę, stronę, część meczu (rundy 1–4, 5–8, ...), pojazd (operator, agent), broń używaną najczęściej, miejsce utrzymywane najdłużej, zakup (eco, force, full) i to, czy jego strona zdobyła pierwsze zabójstwo. Grupa jest oceniana względem tego, co jej strona wygrała w tych samych meczach, więc *T na Dust z AWP* jest niszą tylko wtedy, gdy te rundy wygrywano częściej niż inne rundy T w tych meczach. Zmyślony przykład: *„m1 · T · AWP: wygrywa 80% z 320 rund, wobec 62% oczekiwanych od tych samych stron w tych samych meczach (szanse 2,3x; 40 meczów).”* Kolejność według przyrostu razy wsparcie; **Wczytaj** wczytuje mecze, których rundy pokazują to najmocniej.
+
+Oba wymagają podsumowań w wersji 2 (zob. [Pozyskiwanie podsumowań](#getting-the-summaries)): starsze są liczone od nowa.
 
 Zakładka **Wnioski** znajduje, we wszystkich meczach, pojazdy, które wymieniają się lub wygrywają lepiej albo gorzej niż reszta, miejsca gorące w stałym udziale meczów, strony wygrywające więcej niż równy podział, pojazdy, których użycie zmienia się w czasie, oraz części meczu, które mają więcej zabójstw niż równomierny rozkład. Każde odkrycie ma swoje liczby, efekt, przedział i współczynnik fałszywych odkryć (utrzymywany na 5%), a kliknięcie wczytuje jego mecze. Szczegóły: [Dla programistów](#for-developers).
 
@@ -108,6 +118,12 @@ Zwykły JSON (`src/mass/types.ts`), około 5–30 KB po kompresji na mecz:
 - mecz: gra, mapa, tryb, misja, start, długość, wiersze, życia, gracze, AI, drużyny (życia, gracze, obecność, zabójstwa, zgony, wygrana, pieniądze), zwycięzca;
 - na pojazd i drużynę: klasa, poziom, życia, życia graczy, obecność, zdarzenia według kanonicznego rodzaju, zabójstwa według klasy celu, wygrane, pieniądze;
 - na gracza (po identyfikatorze użytkownika, a gdy go nie ma, po nazwie): drużyna, życia, obecność, zabójstwa, zgony, trafienia, wystrzelenia, wygrana, pojazdy; na broń: zdarzenia według rodzaju;
+- z kolumną wyniku (wersja 2): rundy wygrane i rozegrane na drużynę, pojazd (`rw`, każdy
+  to jedno życie i jedna runda), gracza i broń (rundy, w których strona jej używała); runda
+  każdego życia (`outcome.u`: runda, strona, pojazd, najczęściej używana broń, miejsce
+  utrzymywane najdłużej, zakup, wygrana) oraz numer, zwycięzca i strona pierwszego zabójstwa
+  każdej rundy (`outcome.r`);
+
 - kolumny ekonomii (`cost_*`, `earn_*`) i ich sumy;
 - fazy: zdarzenia według rodzaju w 20 przedziałach długości meczu i według minuty;
 - zachowanie: miary zbiorowego zachowania meczu (zgodność, prowadzenie po trasie, pasy, tłok, liderzy, maruderzy, punkt załamania, ryzyko po stratach, serie, zgodność zakupów, tłumienie), każda z własnym modelem zerowym, p i q — zob. [Zachowanie zbiorowe](collective-behaviour.md);
@@ -123,6 +139,9 @@ Część przestrzenna jest zrobiona pod statystyki skanowania regionów dowolnej
 - **Ekspozycja obok każdego zliczenia.** Sekundy obecności na komórkę, na drużynę (`pt`), na klasę pojazdu (`pc`) i na pasmo wysokości (`ph`), więc stopa, oczekiwanie i stosunek regionu są liczone dla dowolnej podgrupy.
 - **Wysokość.** Pasma powyżej poziomu zerowego meczu (1. percentyl wysokości): poniżej 3 m, 3–10, 10–30, 30–100, 100–300, 300–1000, 1000–3000, powyżej; plik z kolumną `floor`/`storey`/`deck` dzieli na pasma według pięter. `y` to średnia wysokość każdej komórki, `y0` jej najniższy punkt (jej piętro, dla wysokości nad nim).
 - **Zdarzenia** jako krotki `[komórka, rodzaj, drużyna, klasa, pasmo, liczba]`.
+- **Rundy według wyniku** (wersja 2, z kolumną wyniku i co najmniej dwiema rundami):
+  `pw` jako `[cell, team, rounds won, rounds lost]` — rundy, w których każda strona spędziła
+  w komórce sekundę lub więcej, według jej wyniku w rundzie.
 - **Wycinki czasu** na zgrubnym poziomie (8 komórek na bok), według minuty od startu meczu: `[cx, cz, minuta, rodzaj, wartość]`, sekundy obecności jako rodzaj `GRID_KINDS.length`; fazy meczu to minuty na długości.
 - Rzadkie, liczby całkowite, sekundy co do dziesiątej: ograniczone tym, co się wydarzyło.
 
@@ -134,8 +153,8 @@ Etap B szuka tego, co wyróżnia się w liczbach, ale nie przyciąga wzroku: du�
 
 Mecze każdej mapy są czytane dwa razy, po jednym meczu naraz; pamięć trzyma sumy na rastrze o najwyżej 64 komórkach na bok (16 dla skanowania czasoprzestrzennego), nigdy mecze.
 
-- **Miary.** Stopa zdarzenia na sekundę obecności — zabójstwa, zgony, trafienia, wystrzelenia, przejęcia, dla wszystkich jednostek, na klasę (4 z największą liczbą zdarzeń), na pasmo wysokości — oraz udział zabójstw w zabójstwach i zgonach (wszystkie, na stronę, na pasmo). Które klasy i strony — ustalają nagłówki (`planOf`).
-- **Oczekiwanie według meczu.** Stopa każdego meczu rozłożona na jego własną obecność w komórce daje oczekiwanie komórki (skanowanie Kulldorffa skorygowane kowariatami, rozwarstwione według meczu): kilka krwawych meczów albo jeden zajęty serwer nie tworzy miejsca.
+- **Miary.** Stopa zdarzenia na sekundę obecności — zabójstwa, zgony, trafienia, wystrzelenia, przejęcia, dla wszystkich jednostek, na klasę (4 z największą liczbą zdarzeń), na pasmo wysokości — oraz udział zabójstw w zabójstwach i zgonach (wszystkie, na stronę, na pasmo), a także **odsetek wygranych** każdej strony: jej rundy w komórce wygrane wobec przegranych (`pw`), gdzie 8 lub więcej meczów na mapie liczy rundy według wyniku. Które klasy i strony — ustalają nagłówki (`planOf`).
+- **Oczekiwanie według meczu.** Stopa każdego meczu rozłożona na jego własną obecność w komórce daje oczekiwanie komórki (skanowanie Kulldorffa skorygowane kowariatami, rozwarstwione według meczu): kilka krwawych meczów albo jeden zajęty serwer nie tworzy miejsca. Dla odsetka wygranych oczekiwaniem jest własny udział wygranych rund strony w tym meczu, więc równowaga mapy i strony nigdy nie jest miejscem. Runda w kilku komórkach regionu liczy się w każdej z nich; uwzględnia to dyspersja mierzona w rozmiarze regionu.
 - **Rozproszenie.** Mecze różnią się znacznie bardziej, niż zakłada rozkład Poissona. Reszty każdego meczu są sumowane w blokach po 1, 2, 4, 8, 16 komórek; rozproszenie każdego rozmiaru bloku (kwadraty reszt przez wariancję zerową, połączone, bez najgorszych 5% bloków) skaluje każdy test regionu tej wielkości: iloraz wiarygodności quasi, Poisson dla stóp, dwumianowy dla udziałów.
 - **Regiony.** Koła od 0,75 do 18 komórek; elipsy pod sześcioma kątami, 3 i 6 razy dłuższe niż szerokie, od 3 do 18 komórek (korytarze; oś to `place.path` wniosku); strefy rosnące komórka po komórce od najsilniejszych lokalnych komórek Getis-Ord Gi*, dopóki rośnie statystyka regionu (kształty nieregularne) — rosną na jednej połowie meczów i testowane są na drugiej, więc swoboda wzrostu nie kosztuje fałszywych miejsc; każde pasmo wysokości przeciwko pozostałym pasmom meczu na całej mapie (odporne na skupienia); cylindry czasoprzestrzenne: koło w jednej albo dwóch piątych długości meczu, przeciwko własnemu rozkładowi zdarzeń meczu w miejscu i czasie (skanowanie permutacyjne czasoprzestrzeni).
 - **Testowanie.** p z ilorazu quasi-wiarygodności; Benjamini-Hochberg po każdym regionie sprawdzonym na każdej mapie (700 000 na trzech mapach to zwyczajnie) na poziomie 5%. Co przechodzi, jest przycinane (region w większości zawarty w silniejszym z tej samej miary mówi to samo), potem badane pod kątem **stabilności** — mecze, które go widziały, mecze, w których się utrzymał, jego kierunek w pięciu podziałach meczów — i testowane jeszcze raz przy wariancji, jaką same mecze pokazują (odporne na skupienia, mecze jako skupienia, nigdy przy Poissonie), BH jeszcze raz. Ciche miejsca na bazie (2% lub więcej odrodzeń, startów i lądowań mapy) są pomijane.
@@ -148,6 +167,8 @@ Zakładka **Miejsca** wymienia je (domyślnie tylko ukryte; według mapy, kszta�
 
 Przeszukiwanie wiązką (szerokość 24, głębokość 3) po trzech tabelach: **życia** (życia graczy: gra, mapa, tryb, klasa, pojazd, strona, poziom, kwartał dat, tercja długości meczów; K/D, wygrana, zgon jako życie, zabójstwa na godzinę, zarobek na minutę), **miejsca** (zabójstwa i zgony według mapy, trybu, dat, sektora mapy 4 × 4, klasy, strony, pasma) i **fazy** (sektor i piąta część meczu: K/D, zgony na godzinę obecności). Grupa jest testowana względem całości, z meczami jako skupieniami (wariancja sandwich reszt według meczu); jej efekt to iloraz szans lub stóp, skurczony przez prior 20 wyników; potrzebuje 30 wyników w 8 meczach, a udoskonalenie musi być o 10% silniejsze od swojego rodzica; grupy, w których wynik to nic albo wszystko (nie zapisany dla nich), są pomijane. Zachowane: BH poniżej 5% po każdej ocenionej grupie, skurczony iloraz co najmniej 1,25 (albo 1/1,25), cztery z pięciu podziałów zgodne, a nie udoskonalenie, które tylko powtarza swojego rodzica. Zakładka **Nisze** je wymienia; kliknięcie pokazuje każde doprecyzowanie grupy o jednym warunku (eksplorator), **Wczytaj** wczytuje jej mecze. Wyposażenia nie są jeszcze w podsumowaniach.
 
+Czwarta tabela, **rundy** (`roundsTable`), ma za cel wynik rundy: jeden wiersz na rundę życia — mapa, strona, część meczu (rundy 1–4, 5–8, ...), pojazd, najczęściej używana broń, miejsce utrzymywane najdłużej, zakup, pierwsze zabójstwo lub pierwszy zgon — oceniany względem odsetka wygranych własnej strony we własnym meczu (warstwowe oczekiwanie Mantela-Haenszela: reszta to `won - e`, `e` to udział strony w meczu), więc nisza nigdy nie jest równowagą mapy ani strony. Mecze pozostają klastrami. Jej z jest skalibrowane: to samo przeszukiwanie wiązkowe przebiega osiem razy na wynikach przetasowanych między rundami każdej strony każdego meczu (odsetek strony w każdym meczu zostaje zachowany), a rozrzut tych zerowych z ponad standardowy rozkład normalny — na liczbę warunków, ze środka (mediana / 0,674) i z ogona (99. percentyl / 2,576), większy z nich, nigdy poniżej 1 — dzieli prawdziwe przed ich p i odsetkiem fałszywych odkryć (empiryczne zero, Efron 2004). Głębsze grupy dostają większą skalę: wiązka zachowuje doprecyzowania grup wybranych ze względu na duże z. Podstawą niszy jest jej własne oczekiwanie, jej przyrostem punkty powyżej niego, a kolejność wyznacza przyrost razy pierwiastek z liczby jej rund, podtrzymany przez dowody i podziały (`wracc` to wsparcie razy przyrost). Nisza niesie mecze, w których najmocniej się pokazała (`matchIds`), i kilka ich rund (`rounds`, `[match, round]`) do szczegółowego wglądu.
+
 #### Zmiany mety o znaczeniu praktycznym {#meta-shifts-with-practical-significance}
 
 Przy mieszanych datach dwumianowy test na życiach oznaczał prawie każdą zmianę jako istotną. `meta` teraz testuje odporne na skupienia (życia każdego meczu jako skupienie), zachowuje zmianę użycia tylko przy 2 punktach i co najmniej 25%, zmianę K/D 1,3 razy, kwartały dat trendujące w tym samym kierunku (tau Kendalla co najmniej 0,5) i — dla pojazdu na kilku mapach — ten sam kierunek na większości z nich. Zostaje tylko kilka zmian na zbiorze testowym, na którym zwykły test oznaczał prawie wszystkie.
@@ -158,4 +179,4 @@ Przy mieszanych datach dwumianowy test na życiach oznaczał prawie każdą zmia
 
 #### Sprawdzenia {#checks}
 
-`scan.test.ts` zakłada rozlany obszar (1,6 razy wyższa stopa zgonów na kole o 22 komórkach, słaby w każdej komórce), korytarz, pasmo wysokości i skupisko tylko w fazie w 240 syntetycznych meczach o rozproszeniu — wszystkie znalezione, rozlany ukryty — i uruchamia osiem zerowych zestawów po 60 meczów: brak miejsca. `niche.test.ts` znajduje zaszczepioną grupę pojazd × mapa × strona i nic w pięciu zerowych tabelach.
+`scan.test.ts` zakłada rozlany obszar (1,6 razy wyższa stopa zgonów na kole o 22 komórkach, słaby w każdej komórce), korytarz, pasmo wysokości i skupisko tylko w fazie w 240 syntetycznych meczach o rozproszeniu — wszystkie znalezione, rozlany ukryty — i uruchamia osiem zerowych zestawów po 60 meczów: brak miejsca. `niche.test.ts` znajduje zaszczepioną grupę pojazd × mapa × strona i nic w pięciu zerowych tabelach. `outcome.test.ts` sprawdza podsumowanie w wersji 2 (rundy wygrane według strony, jednostki, gracza i broni, `pw`, rundy jednostek); zakłada tor, którego strona wygrywa 70% swoich rund wobec 35% (każdy mecz z własną równowagą) — znaleziony — i uruchamia 20 zerowych zestawów po 50 meczów, w których tory nic nie mówią: żadnego miejsca odsetka wygranych; zakłada AWP na jednej mapie, która wygrywa rundy swojej strony o 30 punktów częściej — znaleziona, z jej meczami i rundami — i uruchamia 30 zerowych zestawów po 80 meczów, każdy mecz z własną równowagą i jedną stroną silniejszą na jednej mapie: żadnej niszy.

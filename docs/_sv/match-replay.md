@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "sv"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Matchrepris
@@ -90,6 +90,8 @@ Avsnittet **Taktisk visning** ritar, för ingen enhet, de valda, alla, eller en 
 ## Mål {#objectives}
 
 När en match kommer med sina mål ritar avsnittet **Mål** dem på banan: erövringszoner (med ägare och erövringsförlopp), startpunkter, flygfält, områden och bombmål. Varje lager kan slås av eller på, och det finns etiketter. Målen syns genom marken. När flera spellägen är inlästa filtrerar **Läge** matcherna efter läge. Målen kommer från en konverterares matchfil bredvid inspelningen eller inuti en [`.3dheat`](container.md)-behållare.
+
+Rainbow Six Siege-matcher har med sig sina bombplatser: varje plats två rum ritas på sitt golv som konturer med sina namn, framräknade från var spelarna stod medan spelet namngav rummet; en plats på kartan som inte spelades i matchen kommer från konverterarens tabell över platser som en cirkel. I reprisen lyser platsen för rundan vid uppspelningspositionen i bärnsten, de andra förblir grå. De ingår i lagret för erövringszoner.
 
 ## Etiketter och statistik {#labels-and-statistics}
 

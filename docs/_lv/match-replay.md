@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "lv"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Spēles atkārtojums
@@ -90,6 +90,8 @@ Sadaļa **Taktiskais attēlojums** zīmē, nevienai vienībai, izvēlētās, vis
 ## Mērķi {#objectives}
 
 Kad mačs nāk ar saviem mērķiem, sadaļa **Mērķi** tos zīmē uz līmeņa: uztveršanas zonas (ar īpašnieku un uztveršanas progresu), atdzimšanas vietas, aerodromi, apgabali un bombardēšanas mērķi. Katrs slānis ir pārslēdzams, ar etiķetēm. Tie tiek redzēti caur zemi. Ar vairākiem spēles režīmiem ielādētus, **Režīms** filtrē mačus pēc režīma. Mērķi nāk no konvertētāja mača faila blakus ierakstam vai [`.3dheat`](container.md) konteinerā.
+
+Rainbow Six Siege mači atnes savas bumbas vietas: katras vietas divas telpas tiek uzzīmētas uz to grīdas kā kontūras ar nosaukumiem, noteiktas pēc tā, kur stāvēja spēlētāji, kamēr spēle nosauca telpu; kartes vieta, kas mačā netika spēlēta, nāk no pārveidotāja vietu tabulas kā aplis. Atkārtojumā raunda vieta pie atskaņošanas pozīcijas iedegas dzintara krāsā, pārējās paliek pelēkas. Tās ir daļa no ieņemšanas zonu slāņa.
 
 ## Etiķetes un statistika {#labels-and-statistics}
 

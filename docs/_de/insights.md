@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "de"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Erkenntnisse
@@ -44,6 +44,7 @@ Die Zeilen oben in der Liste (zum Beispiel die Geldsummen) fassen die gesamten D
 | **Spieler** | Spieler, die weit mehr oder weniger abschießen oder sterben als andere in derselben Klasse | Personen und Abschüsse |
 | **Engpässe und Flanken** | Engpässe (weit mehr Durchgänge als das Gelände drumherum) und Flankenrouten (selten genutzt, führen aber zu Abschüssen) | Personen |
 | **Wert** | *Teurer Boden* und *Ertragreicher Boden* | [Wertspalten](value-weighting.md) |
+| **Was die Runden entschied** | Was gewonnene von verlorenen Runden trennte, und die Spieler, die am meisten Siegwahrscheinlichkeit hinzufügten oder kosteten (siehe [Wer gewann](#who-won-what-decided-the-rounds)) | Runden, Abschüsse und Tode sowie die [Ergebnisspalten](data-formats.md#outcome-columns) (`won`) |
 
 Detektoren, die auf den Daten nicht laufen können, stehen unten mit dem Grund.
 
@@ -51,9 +52,42 @@ Detektoren, die auf den Daten nicht laufen können, stehen unten mit dem Grund.
 
 Jeder Ort und jede Gruppe wird gegen den Rest der Karte geprüft (exakte Binomial- oder Ratentests). Die Falsch-Entdeckungsrate wird bei 5 % gehalten (Benjamini-Hochberg). Zufall kann wie ein Muster aussehen; das hält Fehlalarme gering: Unter den gezeigten Befunden ist höchstens etwa einer von zwanzig als Zufall zu erwarten. Wirkungen aus wenigen Ereignissen werden vor dem Ordnen zu „keine Wirkung“ hingezogen. Höchstens 60 Befunde werden aufgelistet, und jeder Detektor bekommt ein paar Orte weit oben.
 
+### Wer gewann: was die Runden entschied {#who-won-what-decided-the-rounds}
+
+Wo die Daten sagen, wer jede Runde gewann (die [Ergebnisspalte](data-formats.md#outcome-columns) `won`: CS2, Rainbow Six Siege, War Thunder ...), geht es in den Erkenntnissen um das Ergebnis. Für jede Seite teilt es die Runden danach auf, was in ihnen geschah, und vergleicht die Siegquoten:
+
+| Faktor | Runden der Seite mit ihm | ... und ohne ihn |
+|---|---|---|
+| Eröffnungsduell | sie machte den ersten Abschuss | sie starb zuerst |
+| Kauf | ihr Kauf war besser als der der anderen Seite | schlechter |
+| Vergoltener erster Tod | ihr erster Tod wurde binnen 5 s vergolten | nicht vergolten |
+| Platzierung | sie platzierte | keine Platzierung |
+| Hilfsmittel | mehr Granaten als in ihrer üblichen Runde | weniger |
+| Früher Kontakt | das erste Duell kam vor der Medianzeit des Matches | später |
+| Ein gehaltener Ort | ein Spieler stand 5 s oder länger an dem Ort | niemand |
+| Ein früh erreichter Ort | ein Spieler kam in den ersten 25 s dorthin (die Route) | niemand |
+
+Jeder Vergleich ist eine Differenz zweier Siegquoten mit ihrem 95-%-Intervall (Newcombe), Fishers exaktem p und einem q über alle geprüften Faktoren (Benjamini-Hochberg). Ein Zweig mit weniger als 8 Runden ist als *wenige Runden* markiert. Die unter der Falsch-Entdeckungsrate von 5 % werden zu Befunden; die stärksten stehen über denen der anderen Detektoren (ein Ergebnisbefund wiegt 1,35-mal so viel wie einer mit derselben Wirkung und denselben Belegen).
+
+Ein erfundenes Beispiel über 40 Runden:
+
+> **T** gewann 79 % der 19 Runden, in denen es **Mid** hielt, gegen 24 % von 21 ohne (55 Punkte, 95 % 26 bis 74) – q 0,004.
+
+Es verfolgt auch die **Siegwahrscheinlichkeit** der Runde – die Chance, die jede Seite in jedem Moment hatte, aus den lebenden Spielern, der Platzierung und der Uhr: an die Runden angepasst, wenn es 30 oder mehr sind, sonst ein festes Vorab-Modell (und der Text sagt, welches). Daraus kommen die **Wendepunkte** (die Abschüsse und Platzierungen, die die Chance am meisten bewegten) und die **hinzugefügte Siegwahrscheinlichkeit** jedes Spielers: Die Abschüsse und Platzierungen, die er machte, zählen für ihn, seine Tode gegen ihn, in Runden über das Match gerechnet, eine Runde im Mittel mit ihrem Intervall, gegen null geprüft. Die Orte bekommen dieselbe Bilanz: welche Seite in den dort ausgetragenen Duellen am meisten gewann.
+
+Die Daten brauchen Runden, Abschüsse und Tode mit beiden Seiten und die Spalte `won`; benannte Orte (`place`) für gehaltene Orte, eine Spalte `buy` für den Kauf.
+
 ## Nachbesprechung {#debrief}
 
-Der Reiter **Nachbesprechung** schreibt die Befunde als kurzen Text auf: einen Einstieg, den klarsten Befund, einen für Taktik, einen für Balance, die übrigen gruppiert nach Detektor, und wie viele auf schwächeren Belegen beruhen. Jeder Absatz hat nummerierte Schaltflächen, die seine Befunde zeigen. **Text kopieren** kopiert ihn.
+Der Reiter **Nachbesprechung** schreibt die Befunde als kurzen Text auf: einen Einstieg, den klarsten Befund, einen für Taktik, einen für Balance, dann – wo die Daten sagen, wer gewann – was die Runden entschied, die übrigen gruppiert nach Detektor, und wie viele auf schwächeren Belegen beruhen.
+
+Was die Runden entschied, kommt in vier Absätzen: der Spielstand und woher die Siegwahrscheinlichkeiten kommen; die stärksten Faktoren mit ihren Zahlen, Intervall und q (wenn keiner die Falsch-Entdeckungsrate besteht, sagt der Text *nichts davon ist schon sicher* und nennt trotzdem den stärksten); die drei größten Wendepunkte; und die Spieler, die am meisten Siegwahrscheinlichkeit hinzufügten und kosteten, mit den Orten, die am meisten gewannen. Ein erfundenes Beispiel:
+
+> T gewann 23 und CT gewann 17 von 40 Runden mit bekanntem Ergebnis (T: 58 %, 95 % 42 % bis 72 %). Die Siegwahrscheinlichkeiten kommen aus einem an diese Runden angepassten Modell.
+>
+> Was gewonnene von verlorenen Runden trennte: T gewann 79 % der 19 Runden, in denen es Mid hielt, gegen 24 % von 21 ohne (55 Punkte, 95 % 26 bis 74) (q 0,004), ...
+>
+> Wendepunkte: Runde 17 bei 48 s, ein Abschuss von CT an B site bewegte seine Chance von 31 % auf 58 %, und es holte die Runde, ... Jeder Absatz hat nummerierte Schaltflächen, die seine Befunde zeigen. **Text kopieren** kopiert ihn.
 
 ![Die Nachbesprechung, geschrieben vom eingebauten Erzähler](../assets/img/de/debrief.webp)
 
@@ -72,11 +106,13 @@ Der eingebaute Erzähler arbeitet offline, in deiner Sprache. Der Auswahlschalte
 | **Eine externe KI verwenden** | Standardmäßig aus |
 | **Spielernamen senden** | Standardmäßig aus: Spieler werden als P1, P2 ... gesendet |
 
-Dann tippe optional eine Frage und drücke **Mit KI schreiben**. Gesendet werden nur die Befunde und ihre Zahlen – nie die Zeilen deiner Daten. Die Antwort kommt Stück für Stück, und zitierte Befunde werden zu Schaltflächen.
+Dann tippe optional eine Frage und drücke **Mit KI schreiben**. Gesendet werden nur die Befunde und ihre Zahlen – nie die Zeilen deiner Daten. Die Antwort kommt Stück für Stück, und zitierte Befunde werden zu Schaltflächen. Wo die Daten sagen, wer gewann, soll das Modell mit dem beginnen, was die Runden entschied, mit Intervall und q jeder Zahl, und sagen, wenn ein Faktor auf wenigen Runden beruht oder die Siegwahrscheinlichkeiten aus dem Vorab-Modell kommen.
 
 ## Kommentator {#caster}
 
-Für **ein Match** (wähle eines, wenn mehrere geladen sind) findet der **Kommentator** die Momente, die sich anzusehen lohnen: erstes Blut, Mehrfachabschüsse, Vergeltungen, Clutches, Wechsel bei Zielen, Comebacks, herausragende Spieler, weite Schüsse.
+Für **ein Match** (wähle eines, wenn mehrere geladen sind) findet der **Kommentator** die Momente, die sich anzusehen lohnen: erstes Blut, Mehrfachabschüsse, Vergeltungen, Clutches, Wechsel bei Zielen, Comebacks, herausragende Spieler, weite Schüsse und **Wendepunkte** – die Abschüsse, die die Chance einer Seite, die Runde zu gewinnen, am meisten bewegten (nach den auf jeder Seite noch lebenden Spielern, in Runden ohne Respawns).
+
+Wo die Daten sagen, wer jede Runde gewann, sagt es jeder Moment: *„Anna schaltet Ben aus: Die Chance von T, die Runde zu gewinnen, steigt von 38 % auf 62 % – und sie holen die Runde.“* Ein Moment der Seite, die danach gewann, zählt mehr, wenn der Kommentator auswählt, welche er behält, und ein Comeback wird in gewonnenen Runden gezählt.
 
 ![Die Momente des Kommentators für eine Runde der Shooter-Demo](../assets/img/de/caster.webp)
 

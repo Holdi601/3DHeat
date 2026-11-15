@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "ca"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Troballes
@@ -44,6 +44,7 @@ Les línies de dalt de la llista (per exemple els totals de diners) resumeixen e
 | **Jugadors** | Jugadors que maten o moren molt més o molt menys que els altres de la mateixa classe | persones i morts causades |
 | **Colls d'ampolla i flancs** | Colls d'ampolla (molts més passos que el terreny del voltant) i rutes de flanqueig (poc usades, però que porten a morts) | persones |
 | **Valor** | *Terreny car* i *Terreny rendible* | [columnes de valor](value-weighting.md) |
+| **Què va decidir les rondes** | Què separava les rondes guanyades de les perdudes, i els jugadors que més probabilitat de victòria van afegir o van costar (vegeu [Qui va guanyar](#who-won-what-decided-the-rounds)) | rondes, eliminacions i morts, i les [columnes de resultat](data-formats.md#outcome-columns) (`won`) |
 
 Els detectors que no poden funcionar amb les dades apareixen al final amb el motiu.
 
@@ -51,9 +52,42 @@ Els detectors que no poden funcionar amb les dades apareixen al final amb el mot
 
 Cada lloc o grup es prova contra la resta del mapa (proves binomials exactes o de taxa). La taxa de descobriments falsos es manté al 5% (Benjamini-Hochberg). El atzar pot semblar un patró; això manté baixes les falses alarmes: entre les troballes mostrades, s'espera que com a molt una de cada vint sigui atzar. Els efectes de pocs esdeveniments s'atreuen cap a «cap efecte» abans d'ordenar. Com a màxim es llisten 60 troballes, i cada detector té alguns llocs a la part alta.
 
+### Qui va guanyar: què va decidir les rondes {#who-won-what-decided-the-rounds}
+
+Quan les dades diuen qui va guanyar cada ronda (la [columna de resultat](data-formats.md#outcome-columns) `won`: CS2, Rainbow Six Siege, War Thunder ...), el resultat és el centre de les Troballes. Per a cada bàndol, divideix les rondes segons el que hi va passar i en compara les taxes de victòria:
+
+| Factor | Les rondes del bàndol amb això | ... i sense |
+|---|---|---|
+| Duel d'obertura | va fer la primera eliminació | va morir primer |
+| Compra | la seva compra era millor que la de l'altre bàndol | pitjor |
+| Primera mort compensada | la seva primera mort es va compensar en 5 s | no compensada |
+| Plantada | va plantar | cap plantada |
+| Utilitat | més granades que en una ronda normal seva | menys |
+| Contacte d'hora | el primer duel va arribar abans del temps mitjà de la partida | més tard |
+| Un lloc mantingut | un jugador va estar al lloc 5 s o més | ningú |
+| Un lloc assolit d'hora | un jugador hi va arribar en els primers 25 s (la ruta) | ningú |
+
+Cada comparació és una diferència de dues taxes de victòria amb el seu interval del 95% (Newcombe), la p exacta de Fisher i una q sobre tots els factors provats (Benjamini-Hochberg). Un grup amb menys de 8 rondes es marca amb *poques rondes*. Els que queden per sota de la taxa de falsos descobriments del 5% es converteixen en troballes; els més forts es classifiquen per sobre dels dels altres detectors (una troballa de resultat pesa 1,35 vegades una altra amb el mateix efecte i la mateixa evidència).
+
+Un exemple inventat sobre 40 rondes:
+
+> **T** va guanyar el 79% de les 19 rondes en què va mantenir **Mid**, contra el 24% de 21 sense això (55 punts, 95% de 26 a 74) - q 0,004.
+
+També segueix la **probabilitat de victòria** de la ronda - la possibilitat que tenia cada bàndol a cada moment, a partir dels jugadors vius, la plantada i el rellotge: ajustada a les rondes quan n'hi ha 30 o més, si no un model previ fix (i el text diu quin). D'aquí surten els **punts d'inflexió** (les eliminacions i plantades que més van moure la probabilitat) i la **probabilitat de victòria afegida** de cada jugador: les eliminacions i plantades que va fer compten a favor seu, les seves morts en contra, en valor de rondes al llarg de la partida, una ronda de mitjana amb el seu interval, provada contra zero. Els llocs reben el mateix balanç: quin bàndol va guanyar més en els duels que s'hi van lliurar.
+
+Les dades necessiten rondes, eliminacions i morts amb els dos bàndols, i la columna `won`; llocs amb nom (`place`) per als llocs mantinguts, una columna `buy` per a la compra.
+
 ## Resum {#debrief}
 
-La pestanya **Resum** escriu les troballes en un text curt: una entrada, la troballa més clara, una per a tàctica, una per a equilibri, la resta agrupada per detector, i quantes es basen en proves més febles. Cada paràgraf té botons numerats que mostren les seves troballes. **Copia el text** el copia.
+La pestanya **Resum** escriu les troballes en un text curt: una entrada, la troballa més clara, una per a la tàctica, una per a l'equilibri, després - quan les dades diuen qui va guanyar - què va decidir les rondes, la resta agrupada per detector, i quantes es basen en una evidència més feble.
+
+Què va decidir les rondes arriba en quatre paràgrafs: el marcador i d'on surten les probabilitats de victòria; els factors més forts amb els seus números, l'interval i la q (quan cap no passa la taxa de falsos descobriments el text diu *res és segur encara*, i igualment anomena el més fort); els tres punts d'inflexió més grans; i els jugadors que més probabilitat de victòria van afegir i van costar, amb els llocs que més van guanyar. Un exemple inventat:
+
+> T ha guanyat 23 i CT ha guanyat 17 de 40 rondes amb resultat conegut (T: 58%, 95% de 42% a 72%). Les probabilitats de victòria venen d'un model ajustat a aquestes rondes.
+>
+> Què separava les rondes guanyades de les perdudes: T va guanyar el 79% de les 19 rondes en què va mantenir Mid, contra el 24% de 21 sense això (55 punts, 95% de 26 a 74) (q 0,004), ...
+>
+> Punts d'inflexió: ronda 17 a 48 s, una eliminació de CT al punt B va moure la seva probabilitat del 31% al 58%, i va guanyar la ronda, ... Cada paràgraf té botons numerats que mostren les seves troballes. **Copia el text** el copia.
 
 ![El resum escrit pel narrador integrat](../assets/img/ca/debrief.webp)
 
@@ -72,11 +106,13 @@ El narrador integrat funciona sense connexió, en el teu idioma. El selector **L
 | **Fes servir una IA externa** | Desactivat per defecte |
 | **Envia els noms dels jugadors** | Desactivat per defecte: els jugadors s'envien com a P1, P2 ... |
 
-Després escriu una pregunta opcional i prem **Escriu amb IA**. Només s'envien les troballes i els seus números -mai les files de les dades. La resposta arriba a poc a poc; les troballes citades es converteixen en botons.
+Després escriu una pregunta opcional i prem **Escriu amb IA**. Només s'envien les troballes i els seus números -mai les files de les dades. La resposta arriba a poc a poc; les troballes citades es converteixen en botons. Quan les dades diuen qui va guanyar, es demana al model que comenci per què va decidir les rondes, amb l'interval i la q de cada número, i que digui quan un factor es basa en poques rondes o quan les probabilitats de victòria venen del model previ.
 
 ## Comentarista {#caster}
 
-Per a **una partida** (tria'n una si n'hi ha diverses carregades), el **Comentarista** troba els moments que val la pena mirar: primera sang, multimorts, represàlies, moments decisius, canvis d'objectiu, remuntades, jugadors destacats, tirs llargs.
+Per a **una partida** (tria'n una si n'hi ha diverses carregades), el **Comentarista** troba els moments que val la pena veure: la primera sang, les eliminacions múltiples, els intercanvis, els clutchs, els canvis d'objectiu, les remuntades, els jugadors destacats, els trets llargs, i els **punts d'inflexió** - les eliminacions que més van moure la probabilitat d'un bàndol de guanyar la ronda (segons els jugadors que queden vius a cada bàndol, en rondes sense reaparició).
+
+Quan les dades diuen qui va guanyar cada ronda, cada moment ho diu: *"Anna fa caure Ben: la probabilitat de T de guanyar la ronda passa del 38% al 62% - i guanyen la ronda."* Un moment del bàndol que després va guanyar compta més quan el comentarista tria quins es queda, i una remuntada es compta en rondes guanyades.
 
 ![Els moments del comentarista per a una ronda de la demostració de tiroteig](../assets/img/ca/caster.webp)
 

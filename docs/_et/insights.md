@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "et"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Tähelepanekud
@@ -44,6 +44,7 @@ Loetelu ülaosa read (näiteks rahasummad) kokkuvõtavad kogu andmeid enne leide
 | **Mängijad** | Mängijad, kes tapavad või surevad palju rohkem või vähem kui teised samas klassis | isikuid ja tapmisi |
 | **Kitsaskohad ja tiivad** | Kitsaskohad (palju rohkem ületusi kui ümbritsevas maas) ja tiivateed (harva kasutatud, aga viivad tapmisteni) | isikuid |
 | **Väärtus** | *Kulukas maa* ja *Teenistav maa* | [väärtuste veerud](value-weighting.md) |
+| **Mis otsustas voorud** | Mis lahutas võidetud voorud kaotatutest, ja mängijad, kes lisasid või maksid kõige rohkem võidutõenäosust (vt [Kes võitis](#who-won-what-decided-the-rounds)) | voorud, tapmised ja surmad ning [tulemuse veerud](data-formats.md#outcome-columns) (`won`) |
 
 Detektorid, mida andmed ei võimalda käivitada, on loetletud allservas koos põhjusega.
 
@@ -51,9 +52,26 @@ Detektorid, mida andmed ei võimalda käivitada, on loetletud allservas koos põ
 
 Iga koht või rühm testitakse võrreldes kogu ülejäänud kaardiga (täpsed binoomi- või määrade testid). Valede avastuste määr hoitakse 5% juures (Benjamini-Hochberg). Juhus võib välja näida nagu muster; see hoiab valehäired madalal: näidatud leidude seas on eeldatavasti kuni umbes üks kahekümnest juhuslik. Vähestest sündmustest tulenevad mõjud tõmmatakse enne järjestamist "mõju puudumise" poole. Loetelus on kuni 60 leidu ja iga detektor saab mõne koha tippude hulgas.
 
+### Kes võitis {#who-won-what-decided-the-rounds}
+
+Kui matšid ütlevad, kes iga vooru võitis ([tulemuse veerg](data-formats.md#outcome-columns) `won`), on tulemus omaette sihtmärk:
+
+- **Kohad: võiduprotsent.** Iga poole jaoks tema voorude osa kohas, mille ta võitis, võrreldes osaga, mille ta võitis samas matšis ükskõik kus – nii on kaardi, poole ja matši enda tasakaal baasjoon, ja silma paistavad ainult kohad, mille hoidjad võidavad rohkem (või vähem) oma voorudest. Väljamõeldud näide: *„Dust: pool T võidab siin olles rohkem oma voorudest: 61% 412-st võidetud, võrreldes 49%-ga, mida oodatakse tema enda määra järgi samades matšides (šansid 1,6x; hoitud 31/48 matšis).“* Sama valeavastuste määr ja stabiilsuskontrollid nagu igal kohal; **Laadi** laadib matšid, kus kohta hoiti, ja näitab selle poole asukohti.
+- **Nišid: vooruvõit.** Tabelis **Voorud** on iga elu voor: kaart, pool, matši osa (voorud 1–4, 5–8, ...), sõiduk (operaator, agent), kõige rohkem kasutatud relv, kõige kauem hoitud koht, ostud (eco, force, full) ja kas tema pool tegi esimese tapmise. Rühma hinnatakse selle järgi, mida tema pool samades matšides võitis, nii et *T Dustil AWP-ga* on niš ainult siis, kui need voorud võideti sagedamini kui T teised voorud neis matšides. Väljamõeldud näide: *„m1 · T · AWP: võidab 80% 320 voorust, võrreldes 62%-ga, mida oodatakse samadelt pooltelt samades matšides (šansid 2,3x; 40 matši).“* Järjestatud tõusu ja toe korrutise järgi; **Laadi** laadib matšid, mille voorudes see kõige rohkem ilmneb.
+
+Mõlemad vajavad versiooni 2 kokkuvõtteid (vt [Kokkuvõtete saamine](#getting-the-summaries)): vanemad arvutatakse uuesti.
+
 ## Kokkuvõte {#debrief}
 
-Vahekaart **Kokkuvõte** kirjutab leiud kokku lühikeseks tekstiks: juhtlause, selgeim leid, üks taktika kohta, üks tasakaalustamise kohta, ülejäänud detektorite kaupa rühmitatuna ning mitu neist põhineb nõrgematel tõenditel. Igal lõigul on nummerdatud nupud, mis näitavad selle leide. **Kopeeri tekst** kopeerib selle.
+Vahekaart **Kokkuvõte** kirjutab leiud kokku lühikeseks tekstiks: juhtlause, selgeim leid, üks taktika kohta, üks tasakaalustamise kohta, siis - kui andmed ütlevad, kes võitis - mis otsustas voorud, ülejäänud detektorite kaupa rühmitatuna ning mitu neist põhineb nõrgematel tõenditel.
+
+Mis otsustas voorud, tuleb neljas lõigus: seis ja kust võidutõenäosused tulevad; tugevaimad tegurid koos arvude, vahemiku ja q-ga (kui ükski ei läbi valeavastuste määra, ütleb tekst *miski pole veel kindel* ja nimetab siiski tugevaima); kolm suurimat pöördepunkti; ning mängijad, kes lisasid ja maksid kõige rohkem võidutõenäosust, koos kohtadega, mis võitsid kõige rohkem. Väljamõeldud näide:
+
+> T võitis 23 ja CT võitis 17 vooru 40-st teadaoleva tulemusega voorust (T: 58%, 95% 42% kuni 72%). Võidutõenäosused tulevad nendele voorudele sobitatud mudelist.
+>
+> Mis lahutas võidetud voorud kaotatutest: T võitis 79% neist 19 voorust, kus ta hoidis Midi, võrreldes 24%-ga 21 voorust ilma selleta (55 protsendipunkti, 95% 26 kuni 74) (q 0,004), ...
+>
+> Pöördepunktid: voor 17 ajal 48 s, CT tapmine B site'is muutis tema võimalust 31%-lt 58%-le, ja ta võitis vooru, ... Igal lõigul on nummerdatud nupud, mis näitavad selle leide. **Kopeeri tekst** kopeerib selle.
 
 ![Sisseehitatud jutustaja kirjutatud kokkuvõte](../assets/img/et/debrief.webp)
 
@@ -72,11 +90,13 @@ Sisseehitatud jutustaja töötab võrguühenduseta, sinu keeles. Selle kohal ole
 | **Kasuta välist tehisintellekti** | Vaikimisi väljas |
 | **Saada mängijate nimed** | Vaikimisi väljas: mängijad saadetakse kui P1, P2 ... |
 
-Seejärel kirjuta soovi korral küsimus ja vajuta **Kirjuta TI-ga**. Saadetakse ainult leiud ja nende arvud - mitte kunagi sinu andmete read. Vastus voolab sisse; viidatud leiud muutuvad nuppudeks.
+Seejärel kirjuta soovi korral küsimus ja vajuta **Kirjuta TI-ga**. Saadetakse ainult leiud ja nende arvud - mitte kunagi sinu andmete read. Vastus voolab sisse; viidatud leiud muutuvad nuppudeks. Kui andmed ütlevad, kes võitis, kästakse mudelil alustada sellest, mis otsustas voorud, iga arvu vahemiku ja q-ga, ning öelda, kui tegur põhineb vähestel voorudel või võidutõenäosused tulevad priormudelist.
 
 ## Kommentaator {#caster}
 
-**Ühe matši** jaoks (vali üks, kui on laetud mitu) leiab **Kommentaator** hetked, mis on jälgimist väärt: esimene veri, mitmiktapmised, vahetused, kriitilised lahingud, eesmärgi muutused, tagasitulekud, silmapaistvad mängijad, pikad lasud.
+**Ühe matši** jaoks (vali üks, kui on laetud mitu) leiab **Kommentaator** hetked, mis on jälgimist väärt: esimene veri, mitmiktapmised, vahetused, kriitilised lahingud, eesmärgi muutused, tagasitulekud, silmapaistvad mängijad, pikad lasud ja **pöördepunktid** - tapmised, mis muutsid poole võimalust vooru võita kõige rohkem (kummalgi poolel elus olevate mängijate järgi, voorudes ilma taassünnita).
+
+Kui andmed ütlevad, kes iga vooru võitis, ütleb iga hetk seda: *„Anna võtab Beni maha: T võimalus vooru võita tõuseb 38%-lt 62%-le - ja nad võidavad vooru.“* Lõpuks võitnud poole hetk loeb rohkem, kui kommentaator valib, milliseid hoida, ja tagasitulek loetakse võidetud voorudes.
 
 ![Kommentaatori hetked ühe vooru jaoks shooteri demol](../assets/img/et/caster.webp)
 

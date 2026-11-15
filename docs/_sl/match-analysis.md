@@ -3,9 +3,9 @@ title: "Analiza tekme (CS2)"
 nav_order: 10
 lang: "sl"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -177,6 +177,16 @@ igralca** za njegova ubitja in smrti na toplotnem zemljevidu (ta tekma).
   toplotnem zemljevidu.
 
 Gumbi Prikaži na toplotnem zemljevidu za vse naložene tekme so pod tem.
+
+## Kaj je odločilo kroge {#what-decided-the-rounds}
+
+Zavihek šteje; [Ugotovitve](insights.md#who-won-what-decided-the-rounds) pojasnijo. Ko je naložena tabela toplotnega zemljevida tekme (nosi stolpec `won`), **Ugotovitve** razdelijo kroge vsake strani po tem, kaj se je v njih zgodilo - uvodni dvoboj, nakup, izmenjana prva smrt, postavitev, pripomočki, zgodnji prvi stik, vsako držano mesto in vsako mesto, doseženo v prvih 25 s - in povedo, kaj je naredilo razliko, z razliko deležev zmag, njenim 95 % intervalom in q ter *malo krogov*, kjer ima veja manj kot osem krogov. Navedejo prelomnice (ubitja in postavitve, ki so najbolj premaknila verjetnost zmage) ter igralce in mesta, ki so največ dodali ali stali, **Povzetek** in **Komentator** pa začneta z njimi. Izmišljen primer:
+
+> T je dobila 79 % od 19 krogov, v katerih je držala Mid, proti 24 % od 21 brez njega (55 točk, 95 % od 26 do 74) - q 0,004.
+>
+> Prelomnice: krog 17 ob 48 s, ubitje strani CT na mestu B je premaknilo njeno možnost z 31 % na 58 % in krog je dobila.
+
+Ena tekma ima manj kot 30 krogov, zato njene verjetnosti zmage izhajajo iz fiksnega apriornega modela živih mož, postavitve in ure; besedilo to pove. Čez veliko tekem ista vprašanja zastavi [množična analiza](mass-analysis.md#who-won).
 
 ## Prikaz na toplotnem zemljevidu {#show-in-the-heatmap}
 

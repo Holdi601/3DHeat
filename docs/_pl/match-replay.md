@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "pl"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Powtórka meczu
@@ -90,6 +90,8 @@ Sekcja **Wyświetlanie taktyczne** rysuje, dla żadnej jednostki, zaznaczonych, 
 ## Cele {#objectives}
 
 Gdy mecz ma swoje cele, sekcja **Cele** rysuje je na poziomie: strefy przejęcia (z właścicielem i postępem przejęcia), punkty odrodzenia, lotniska, obszary i cele bombardowania. Każda warstwa może być włączona lub wyłączona, a cele mają etykiety. Widać je przez grunt. Gdy wczytano kilka trybów gry, **Tryb** filtruje mecze według trybu. Cele pochodzą z pliku meczu z konwertera, leżącego obok nagrania albo w środku kontenera [`.3dheat`](container.md).
+
+Mecze Rainbow Six Siege przynoszą swoje miejsca podłożenia bomby: dwa pomieszczenia każdego miejsca są rysowane na ich podłodze jako kontury z nazwami, ustalone na podstawie tego, gdzie stali gracze, gdy gra nazywała pomieszczenie; miejsce na mapie, którego nie rozegrano w meczu, pochodzi z tabeli miejsc konwertera jako okrąg. W powtórce miejsce rundy pod głowicą odtwarzania świeci na bursztynowo, pozostałe zostają szare. Należą do warstwy stref przejmowania.
 
 ## Etykiety i statystyki {#labels-and-statistics}
 

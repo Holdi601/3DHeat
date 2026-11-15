@@ -3,9 +3,9 @@ title: "Match-Analys (CS2)"
 nav_order: 10
 lang: "lb"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Match-Analys (CS2)
@@ -122,6 +122,16 @@ Iwwer all geluede Matcher:
 - **Spiller**: déi fofzéng beschten no Ofschëss minus Doudeger, zesummegezielt iwwer all hir Matcher (zouenee iwwer d'Steam-ID): Matcher, K-D, ADR a KAST gewiicht no gespillten Ronnen, HS% gewiicht no Ofschëss, Opening-Duellen. **Klickt en Spiller** fir seng Ofschëss a Dëtter iwwer all Matcher an der Heatmap.
 
 D'Knäppercher „An der Heatmap weisen" fir all geluede Matcher sinn drënner.
+
+## Wat d'Ronnen entscheed huet {#what-decided-the-rounds}
+
+Den Tab zielt; [Erkenntnisser](insights.md#who-won-what-decided-the-rounds) erkläert. Mat der geluedener Heatmap-Tabell vun engem Match (si huet d'Kolonn `won`) deelt **Erkenntnisser** d'Ronne vun all Säit no deem, wat an hinne geschitt ass - dat Ouverture-Duell, den Akaf, en getradeten éischten Doud, de Plant, Utility, e fréien éischte Kontakt, all gehale Plaz an all Plaz, déi an den éischten 25 s erreecht gouf - a seet, wat den Ënnerscheed gemaach huet, mat dem Ënnerscheed vun de Gewannquoten, sengem 95%-Intervall an q, an *wéineg Ronnen*, wann e Grupp manner wéi aacht huet. Et nennt d'Wendepunkten (d'Kills an d'Plants, déi d'Siegwahrscheinlechkeet am meeschte verréckelt hunn) an d'Spiller a Plazen, déi am meeschte bäigedroen oder kascht hunn, an d'**Zesummefaassung** an de **Kommentator** fänke mat hinnen un. En erfonnt Beispill:
+
+> T huet 79% vun den 19 Ronne gewonnen, an deenen et Mid gehalen huet, géint 24% vun 21 ouni (55 Punkten, 95% vun 26 bis 74) - q 0,004.
+>
+> Wendepunkten: Ronn 17 bei 48 s, e Kill vu CT um B-Site huet hir Chance vun 31% op 58% verréckelt, an si huet d'Ronn gewonnen.
+
+Ee Match huet manner wéi 30 Ronnen, dofir kommen seng Siegwahrscheinlechkeeten aus engem fixe Virab-Modell vun de Leit, déi nach liewen, dem Plant an der Auer; den Text seet dat. Iwwer vill Matcher stellt d'[Massenanalys](mass-analysis.md#who-won) déiselwecht Froen.
 
 ## An der Heatmap weisen {#show-in-the-heatmap}
 

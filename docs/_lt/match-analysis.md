@@ -3,9 +3,9 @@ title: "Rungtynių analizė (CS2)"
 nav_order: 10
 lang: "lt"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Rungtynių analizė (Counter-Strike 2)
@@ -122,6 +122,16 @@ Visose įkeltose rungtynėse:
 - **Žaidėjai**: penkiolika geriausių pagal nukovimus minus mirtis, sujungtų visose jų rungtynėse (sutapatinta pagal Steam ID): rungtynės, K-D, ADR ir KAST, svertiniai pagal sužaistus raundus, HS% svertinis pagal nukovimus, pirmosios dvikovos. **Spustelėkite žaidėją**, kad jo nukovimai ir mirtys per visas rungtynes būtų parodyti šilumos žemėlapyje.
 
 Po tuo yra mygtukai Rodyti šilumos žemėlapyje visoms įkeltoms rungtynėms.
+
+## Kas lėmė raundus {#what-decided-the-rounds}
+
+Skirtukas skaičiuoja; [Įžvalgos](insights.md#who-won-what-decided-the-rounds) paaiškina. Kai įkelta rungtynių šilumos žemėlapio lentelė (joje yra stulpelis `won`), **Įžvalgos** suskirsto kiekvienos pusės raundus pagal tai, kas juose įvyko – pradinė dvikova, pirkimas, atkeršyta pirmoji mirtis, bombos padėjimas, įranga, ankstyvas pirmas kontaktas, kiekviena išlaikyta vieta ir kiekviena per pirmąsias 25 s pasiekta vieta – ir pasako, kas lėmė skirtumą: pergalių dalių skirtumą, jo 95 % intervalą ir q, ir *mažai raundų*, kai šakoje yra mažiau nei aštuoni. Ji įvardija lūžio taškus (nužudymus ir padėjimus, kurie labiausiai pakeitė pergalės tikimybę) ir žaidėjus bei vietas, kurie daugiausia pridėjo ar kainavo, o **Santrauka** ir **Komentatorius** pradeda nuo jų. Išgalvotas pavyzdys:
+
+> T laimėjo 79 % iš 19 raundų, kai laikė Mid, prieš 24 % iš 21 be to (55 procentiniai punktai, 95 % nuo 26 iki 74) – q 0,004.
+>
+> Lūžio taškai: 17 raundas, 48 s, CT nužudymas prie B site pakeitė jos galimybę nuo 31 % iki 58 %, ir ji laimėjo raundą.
+
+Vienose rungtynėse yra mažiau nei 30 raundų, todėl jų pergalės tikimybės ateina iš fiksuoto prior modelio, paremto gyvais žaidėjais, bomba ir laikrodžiu; tekstas tai pasako. Daugelyje rungtynių tuos pačius klausimus užduoda [masinė analizė](mass-analysis.md#who-won).
 
 ## Rodyti šilumos žemėlapyje {#show-in-the-heatmap}
 

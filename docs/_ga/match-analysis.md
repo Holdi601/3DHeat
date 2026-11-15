@@ -3,9 +3,9 @@ title: "Anailís cluiche (CS2)"
 nav_order: 10
 lang: "ga"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Anailís cluiche (Counter-Strike 2)
@@ -121,6 +121,16 @@ Thar gach cluiche lódáilte:
 - **Imreoirí**: an cúigear déag is fearr de réir maruithe lúide básanna, comhcheangailte thar a gcluichí go léir (meaitseáilte de réir Steam ID): cluichí, K-D, ADR agus KAST meáite de réir babhtaí imeartha, HS% meáite de réir maruithe, céadchomhraic. **Cliceáil ar imreoir** chun a maruithe agus a básanna thar gach cluiche sa léarscáil teasa a fheiceáil.
 
 Suíonn cnaipí Taispeáin sa léarscáil teasa do gach cluiche lódáilte faoi.
+
+## Cad a chinn na babhtaí {#what-decided-the-rounds}
+
+Comhaireann an cluaisín; míníonn [Léargais](insights.md#who-won-what-decided-the-rounds). Nuair atá tábla léarscáil teasa cluiche lódáilte (tá an colún `won` ann), roinneann **Léargais** babhtaí gach taoibh de réir an méid a tharla iontu - an céadchomhrac, an ceannach, an chéad bhás trádáilte, an cur, áiseanna, an chéad teagmháil luath, gach áit coinnithe agus gach áit bainte amach sna chéad 25 s - agus deir sé cé acu a rinne an difríocht, le difríocht na rátaí buaite, a heatramh 95% agus q, agus *beagán babhtaí* nuair atá níos lú ná ocht mbabhta i lámh. Ainmníonn sé na pointí casaidh (na maruithe agus na cuir a d'athraigh dóchúlacht an bhua is mó) agus na himreoirí agus na háiteanna a chuir an méid is mó leis nó a chaill an méid is mó, agus tosaíonn an **Achoimre** agus an **Tráchtaire** leo. Sampla cumtha:
+
+> Bhuaigh T 79% de na 19 mbabhta inar choinnigh sé Mid, i gcomparáid le 24% de 21 gan é (55 pointe, 95% ó 26 go 74) - q 0.004.
+>
+> Pointí casaidh: babhta 17 ag 48 s, d'athraigh marú ag CT ag suíomh B a sheans ó 31% go 58%, agus bhuaigh sé an babhta.
+
+Tá níos lú ná 30 babhta i gcluiche amháin, mar sin tagann a dhóchúlachtaí bua ó mhúnla réamhshocraithe seasta de na fir beo, an cur agus an clog; deir an téacs é sin. Thar go leor cluichí cuireann an [anailís mhais](mass-analysis.md#who-won) na ceisteanna céanna.
 
 ## Taispeáin sa léarscáil teasa {#show-in-the-heatmap}
 

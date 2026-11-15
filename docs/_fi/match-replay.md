@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "fi"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Ottelun toisto
@@ -90,6 +90,8 @@ Osio **Taktinen näyttö** piirtää ei yhdellekään yksikölle, valituille, ka
 ## Tavoitteet {#objectives}
 
 Kun ottelu tulee tavoitteineen, osio **Tavoitteet** piirtää ne kentälle: valtausalueet (omistajan ja valtauksen edistymisen kanssa), tukikohdat, lentokentät, alueet ja pommituskohteet. Jokainen taso voidaan kytkeä päälle tai pois, ja niissä on nimiöt. Ne näkyvät maan läpi. Kun useita pelitiloja on ladattu, **Tila** suodattaa ottelut pelitilan mukaan. Tavoitteet tulevat muuntajan ottelutiedostosta, joka on tallenteen vieressä tai [`.3dheat`](container.md)-säilön sisällä.
+
+Rainbow Six Siege -otteluissa tulevat mukana pommipaikat: kunkin paikan kaksi huonetta piirretään lattialleen ääriviivoina nimineen. Ne päätellään siitä, missä pelaajat seisoivat, kun peli nimesi huoneen. Kartan paikka, jota ottelussa ei pelattu, tulee muuntimen paikkataulukosta ympyränä. Toistossa toistokohdan kierroksen paikka hehkuu meripihkan värisenä, muut pysyvät harmaina. Ne kuuluvat valtausalueiden tasoon.
 
 ## Nimiöt ja tilastot {#labels-and-statistics}
 

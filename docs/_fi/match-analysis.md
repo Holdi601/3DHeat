@@ -3,9 +3,9 @@ title: "Ottelun analyysi (CS2)"
 nav_order: 10
 lang: "fi"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Ottelun analyysi (CS2)
@@ -121,6 +121,16 @@ Kaikissa ladatuissa otteluissa:
 - **Pelaajat**: viisitoista parasta tappojen miinus kuolemien mukaan, yhdistettynä kaikista otteluista (yhdistetty Steam-tunnuksella): ottelut, K-D, ADR ja KAST painotettuna pelattujen erien mukaan, HS-% painotettuna tapoilla, avausduellit. **Napsauta pelaajaa** nähdäksesi hänen tapponsa ja kuolemansa kaikissa otteluissa lämpökartassa.
 
 Kaikkien ladattujen otteluiden Näytä lämpökartalla -painikkeet ovat sen alla.
+
+## Mikä ratkaisi kierrokset {#what-decided-the-rounds}
+
+Välilehti laskee; [Havainnot](insights.md#who-won-what-decided-the-rounds) selittää. Kun ottelun lämpökarttataulukko on ladattu (siinä on sarake `won`), **Havainnot** jakaa kunkin puolen kierrokset sen mukaan, mitä niissä tapahtui – avauskaksintaistelu, ostot, kostettu ensimmäinen kuolema, pommin asetus, varusteet, varhainen ensikontakti, jokainen hallussa pidetty paikka ja jokainen ensimmäisten 25 s aikana saavutettu paikka – ja kertoo, mikä teki eron: voittoprosenttien ero, sen 95 %:n väli ja q, ja *vähän kierroksia*, jos haarassa on alle kahdeksan kierrosta. Se nimeää käännekohdat (tapot ja asetukset, jotka muuttivat voiton todennäköisyyttä eniten) sekä pelaajat ja paikat, jotka lisäsivät tai maksoivat eniten, ja **Katsaus** ja **Selostaja** aloittavat niistä. Keksitty esimerkki:
+
+> T voitti 79 % niistä 19 kierroksesta, joilla se piti Midiä, ja 24 % niistä 21 kierroksesta, joilla ei (55 prosenttiyksikköä, 95 % 26–74) – q 0,004.
+>
+> Käännekohdat: kierros 17 kohdassa 48 s, CT:n tappo B sitellä nosti sen mahdollisuuden 31 %:sta 58 %:iin, ja se voitti kierroksen.
+
+Yhdessä ottelussa on alle 30 kierrosta, joten sen voiton todennäköisyydet tulevat kiinteästä priorimallista, joka käyttää elossa olevia pelaajia, pommia ja kelloa; teksti kertoo sen. Monen ottelun yli samat kysymykset kysyy [massa-analyysi](mass-analysis.md#who-won).
 
 ## Näytä lämpökartalla {#show-in-the-heatmap}
 

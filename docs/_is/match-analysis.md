@@ -3,9 +3,9 @@ title: "Leikgreining (CS2)"
 nav_order: 10
 lang: "is"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Leikgreining (Counter-Strike 2)
@@ -121,6 +121,16 @@ Yfir alla leiki sem eru hlaðnir:
 - **Leikmenn**: fimmtán bestu eftir fellingum mínus dauðsföllum, samanlagt yfir alla leiki þeirra (paraðir eftir Steam-auðkenni): leikir, K-D, ADR og KAST vegið eftir leiknum lotum, HS% vegið eftir fellingum, upphafseinvígi. **Smelltu á spilara** til að sjá fellingar hans og dauðsföll yfir alla leiki í hitakortinu.
 
 Hnapparnir Sýna-á-hitakortinu fyrir alla hlaðna leiki eru undir þessu.
+
+## Hvað réð úrslitum í lotunum {#what-decided-the-rounds}
+
+Flipinn telur; [Innsýn](insights.md#who-won-what-decided-the-rounds) útskýrir. Með hitakortstöflu leiks hlaðna (hún hefur dálkinn `won`) skiptir **Innsýn** lotum hvorrar hliðar eftir því sem gerðist í þeim - opnunareinvíginu, kaupunum, fyrsta dauða sem var hefnt, sprengjunni sem var sett, búnaði, snemmbúinni fyrstu snertingu, hverjum stað sem var haldið og hverjum stað sem náðist á fyrstu 25 s - og segir hvað skipti sköpum, með muninum á sigurhlutföllunum, 95% bili hans og q, og *fáar lotur* þar sem armur hefur færri en átta. Hún nefnir vendipunktana (fellingarnar og sprengjurnar sem færðu sigurlíkurnar mest) og leikmennina og staðina sem bættu við eða kostuðu mest, og **Samantekt** og **Lýsandi** byrja á þeim. Uppdiktað dæmi:
+
+> T vann 79% af þeim 19 lotum sem hún hélt Mid, á móti 24% af 21 án þess (55 prósentustig, 95% 26 til 74) - q 0,004.
+>
+> Vendipunktar: lota 17 á 48 s, felling CT við B site færði líkur hennar úr 31% í 58%, og hún vann lotuna.
+
+Einn leikur hefur færri en 30 lotur, svo sigurlíkur hans koma úr föstu forlíkani af mönnunum á lífi, sprengjunni og klukkunni; textinn segir það. Yfir marga leiki spyr [fjöldagreiningin](mass-analysis.md#who-won) sömu spurninga.
 
 ## Sýna á hitakortinu {#show-in-the-heatmap}
 

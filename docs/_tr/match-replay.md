@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "tr"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Maç tekrarı
@@ -90,6 +90,8 @@ Bir birime ya da etiketine tıklayarak onu **takip** edin; **Tekrar** bölümü 
 ## Hedefler {#objectives}
 
 Bir maçla birlikte hedefler geldiğinde, **Hedefler** bölümü bunları seviyenin üzerine çizer: ele geçirme bölgeleri (sahip ve ele geçirme ilerlemesiyle), doğuş noktaları, havalimanları, alanlar ve bombalama hedefleri; her katman ayrı ayrı açılıp kapanabilir, etiketleriyle birlikte. Hedefler zemine saydam olarak görünür. Birden çok oyun modu yüklüyse **Mod** maçları moda göre süzer. Hedefler, kaydın yanındaki bir dönüştürücü maç dosyasından ya da bir [`.3dheat`](container.md) kapsayıcısının içinden gelir.
+
+Rainbow Six Siege maçları bomba noktalarını getirir: her noktanın iki odası, oyun odanın adını söylerken oyuncuların durduğu yerden çıkarılarak, kendi zeminlerine adlarıyla birlikte dış hat olarak çizilir; haritanın maçta oynanmayan bir noktası, dönüştürücünün nokta tablosundan bir daire olarak gelir. Tekrarda oynatma başındaki turun noktası kehribar renginde yanar, diğerleri gri kalır. Bunlar ele geçirme bölgesi katmanının parçasıdır.
 
 ## Etiketler ve istatistikler {#labels-and-statistics}
 

@@ -4,9 +4,9 @@ parent: "Filtres i eines"
 nav_order: 1
 lang: "ca"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtres
@@ -41,6 +41,10 @@ Només s'enumeren els tipus que apareixen. Les columnes de valor (`cost_*`, `ear
 Una llista de categories amb més de 12 valors té un quadre de cerca (*Cerca entre n valors*) i un botó **Només aquests** que permet exactament els valors que coincideixen.
 
 Quines columnes es poden filtrar es decideix en carregar, perquè cal llegir-les llavors. Sense cap columna retinguda, el panell ho diu i indica *Mantén per filtrar*.
+
+## Filtres ràpids de Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Amb una partida de Rainbow Six Siege carregada, el panell comença amb botons que posen els filtres amb un clic: **Forats de bala i marques** (les marques que queden al nivell), **Marques amb tirador** i **Marques amb classe d'arma** (aquelles per a les quals s'ha deduït un tirador, o una arma de l'eliminació del tirador en el mateix moment; dividiu-les o filtreu-les més per `byOperator` o `byItemClass`), **Intents de col·locar i desactivar**, **Intents interromputs** (començats i no acabats, on el jugador es va aturar) i **Reforços** (on es va reforçar una paret o una trapa, al defensor que dedueix el convertidor). Cada botó substitueix el filtre de la columna d'esdeveniment i manté la resta; **Esborra tots els filtres** ho desfà. Les columnes es descriuen a la documentació del convertidor.
 
 ## Columnes numèriques (interval) {#numeric-columns-range}
 

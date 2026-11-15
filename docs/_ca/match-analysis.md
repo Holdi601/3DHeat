@@ -3,9 +3,9 @@ title: "Anàlisi de partides (CS2)"
 nav_order: 10
 lang: "ca"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Anàlisi de partides (Counter-Strike 2)
@@ -121,6 +121,16 @@ Sobre totes les partides carregades:
 - **Jugadors**: els quinze millors per baixes menys morts, combinats sobre totes les seves partides (identificats per l'ID de Steam): partides, K-D, ADR i KAST ponderats per les rondes jugades, HS% ponderat per baixes, duels d'obertura. **Fes clic en un jugador** per veure les seves baixes i morts en totes les partides al mapa de calor.
 
 Els botons Mostra al mapa de calor de totes les partides carregades es troben sota.
+
+## Què va decidir les rondes {#what-decided-the-rounds}
+
+La pestanya compta; [Troballes](insights.md#who-won-what-decided-the-rounds) explica. Amb la taula del mapa de calor d'una partida carregada (porta la columna `won`), **Troballes** divideix les rondes de cada bàndol segons el que hi va passar - el duel d'obertura, la compra, una primera mort compensada, la plantada, la utilitat, un primer contacte d'hora, cada lloc mantingut i cada lloc assolit en els primers 25 s - i diu què va marcar la diferència, amb la diferència de les taxes de victòria, el seu interval del 95% i la q, i *poques rondes* quan un grup en té menys de vuit. Anomena els punts d'inflexió (les eliminacions i plantades que més van moure la probabilitat de victòria) i els jugadors i llocs que més van afegir o costar, i el **Resum** i el **Comentarista** comencen per ells. Un exemple inventat:
+
+> T va guanyar el 79% de les 19 rondes en què va mantenir Mid, contra el 24% de 21 sense això (55 punts, 95% de 26 a 74) - q 0,004.
+>
+> Punts d'inflexió: ronda 17 a 48 s, una eliminació de CT al punt B va moure la seva probabilitat del 31% al 58%, i va guanyar la ronda.
+
+Una partida té menys de 30 rondes, així que les seves probabilitats de victòria venen d'un model previ fix dels jugadors vius, la plantada i el rellotge; el text ho diu. Sobre moltes partides, l'[anàlisi massiva](mass-analysis.md#who-won) fa les mateixes preguntes.
 
 ## Mostra al mapa de calor {#show-in-the-heatmap}
 

@@ -3,9 +3,9 @@ title: "Množinska analiza"
 nav_order: 8
 lang: "sl"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Množična analiza: na tisoče tekem naenkrat
@@ -72,14 +72,24 @@ Izberite mapo (ali datoteke; **Dodaj mapo...** doda še eno). Okno ima filtre **
 | Igralci | različni igralci, tekme na igralca, igralci na tekmo, najpogostejši igralci |
 | Strani | vsaka stran vsakega zemljevida: tekme, dobljene proti enakomerni delitvi |
 | Zapleteni položaji | podatki o krogih: uvodni dvoboji po strani in njihova pretvorba, izmenjave, tisti, ki pokuka, proti tistemu, ki drži, križni ognji, vstopi pod bliskom, cilj, postavitve, prednost moštva in, **Po zemljevidu**, mesta, kjer umrejo igralci, ki tam vstopajo – vsak kot delež z Wilsonovim intervalom iz števil `cqb` v povzetkih ([Zapleteni položaji in krogi](close-quarters.md)) |
+| Površine R6 | sledi Rainbow Six Siege na ravni (luknje od krogel in podobno) po površini ravni: sledi, na krog zemljevida, prostor, delež sledi z ugotovljenim strelcem; klik odpre vrste sledi, operaterje in razrede orožja strelcev ter kje na površini so sledi (majhna toplotna karta iz celic po četrt metra); površina obdrži svoj id čez tekme ene različice zemljevida. Iz števil `marks` v povzetkih |
 | Zemljevid | seštet mreža zemljevida: prisotnost, ubitja, smrti, K/D, vsak dogodek, tok in **vroče v koliko tekmah** (stabilnost); po ekipi, pri 1, 2, 4 ali 8-kratniku celice |
-| Mesta | mesta, ki izstopajo v številkah, a ne v toplotni karti (velik prostor, ki je zaseden kot celota, koridorji, višinski pasovi); **Poišči mesta** |
-| Niše | skupine, ki gredo občutno bolje ali slabše od ostalih (vozilo na enem zemljevidu, sektor na eni višini); **Poišči niše** |
+| Mesta | mesta, ki izstopajo v številkah, a ne v toplotni karti (velik prostor, ki je zaseden kot celota, koridorji, višinski pasovi) in mesta, katerih držalci dobijo več ali manj svojih krogov; **Poišči mesta** |
+| Niše | skupine, ki gredo občutno bolje ali slabše od ostalih (vozilo na enem zemljevidu, sektor na eni višini) in skupine krogov, dobljenih nad tem, kar je njihova stran dobila v istih tekmah; **Poišči niše** |
 | Ugotovitve | množični detektorji in detektorji zemljevidov (spodaj); **Kopiraj poročilo (JSON)** da JSON, ki ga bere jezikovni model |
 
 ## Ugotovitve čez mnogo tekem {#insights-over-many-matches}
 
 Zavihek **Mesta** najde mesta, ki izstopajo v številkah, a ne v toplotni karti – velik prostor, zaseden kot celota, koridor, višinski pas, mesto, zaseden samo v enem delu tekme –, označi tiste, ki jih navadna toplotna karta ne pokaže, kot **skrite**, in jih obriše v 3D pogledu; **Naloži** tja poleti s tekmami, ki jih je hranil. Zavihek **Niše** najde skupine (vozilo na enem zemljevidu in strani, sektor na eni višini), ki gredo občutno bolje ali slabše od ostalih; kliknite eno, da vidite njene natančnejše podskupine.
+
+### Kdo je zmagal {#who-won}
+
+Kjer tekme povedo, kdo je dobil vsak krog ([stolpec izida](data-formats.md#outcome-columns) `won`), je izid samostojen cilj:
+
+- **Mesta: delež zmag.** Za vsako stran delež njenih krogov na mestu, ki jih je dobila, proti deležu, ki ga je dobila kjer koli v isti tekmi - tako je osnova uravnoteženost zemljevida, strani in tekme same, izstopajo pa le mesta, katerih držalci dobijo več (ali manj) svojih krogov. Izmišljen primer: *»Dust: stran T dobi več svojih krogov, ko je tu: dobljenih 61 % od 412, proti 49 %, pričakovanim iz njene lastne stopnje v istih tekmah (obeti 1,6×; držano v 31/48 tekmah).«* Enaka stopnja lažnih odkritij in preverjanja stabilnosti kot pri vsakem mestu; **Naloži** naloži tekme, v katerih je veljalo, in prikaže položaje te strani.
+- **Niše: zmaga v krogu.** Tabela **Krogi** hrani krog vsakega življenja: zemljevid, stran, del tekme (krogi 1-4, 5-8, ...), vozilo (operater, agent), orožje, ki ga je uporabljal največ, mesto, ki ga je držal najdlje, nakup (eco, force, full) in ali je njegova stran dosegla prvo ubitje. Skupina se presoja proti temu, kar je njena stran dobila v istih tekmah, zato je *T na Dust z AWP* niša le, kadar so bili ti krogi dobljeni pogosteje kot drugi krogi strani T v teh tekmah. Izmišljen primer: *»m1 · T · AWP: dobi 80 % od 320 krogov, proti 62 %, pričakovanim od istih strani v istih tekmah (obeti 2,3×; 40 tekem).«* Razvrščeno po dvigu, pomnoženem s podporo; **Naloži** naloži tekme, katerih krogi to najbolj kažejo.
+
+Oboje potrebuje povzetke različice 2 (glejte [Pridobitev povzetkov](#getting-the-summaries)): starejši se izračunajo znova.
 
 Zavihek **Ugotovitve** najde čez vse tekme vozila, ki trgujejo ali zmagujejo bolje ali slabše od ostalih, mesta, vroča v stalnem deležu tekem, strani, ki zmagajo več kot enakomerna delitev, vozila, katerih uporaba se spreminja z datumi, in dele tekme, ki zadržijo več ubitij, kot bi jih dala enakomerna razporeditev. Vsaka ugotovitev ima svoje števce, učinek, interval in lažno stopnjo odkritij (držana na 5 %), klik pa naloži njene tekme. Podrobnosti: [Za razvijalce](#for-developers).
 
@@ -129,6 +139,11 @@ Navaden JSON (`src/mass/types.ts`), približno 5–30 KB stisnjen na tekmo:
   po kanonični vrsti, ubitja po razredu tarče, zmage, denar;
 - na igralca (po id-ju uporabnika, sicer po imenu): ekipa, življenja, prisotnost, ubitja, smrti,
   zadetki, izstrelitve, zmage, vozila; na orožje: dogodki po vrsti;
+- s stolpcem izida (različica 2): dobljeni in odigrani krogi na ekipo, vozilo
+  (`rw`, vsako življenje in krog), igralca in orožje (krogi, v katerih ga je
+  stran uporabila); krog vsakega življenja (`outcome.u`: krog, stran, vozilo,
+  največ uporabljeno orožje, najdlje držano mesto, nakup, zmaga) ter številka,
+  zmagovalec in stran prvega ubitja vsakega kroga (`outcome.r`);
 - stolpci gospodarstva (`cost_*`, `earn_*`) in njihove vsote;
 - faze: dogodki po vrsti v 20 predelkih dolžine tekme in po minuti;
 - vedenje: merila skupnega vedenja tekme (poravnava, vodenje na poti, pasovi, gneča,
@@ -160,6 +175,9 @@ oblike, ne samo za slike toplotne karte:
   razvrsti po nadstropjih. `y` je srednja višina vsake celice, `y0` njena najnižja
   (njeno nadstropje, za višino nad njim).
 - **Dogodki** kot torke `[cell, kind, team, class, band, count]`.
+- **Krogi po izidu** (različica 2, s stolpcem izida in vsaj dvema krogoma):
+  `pw` kot `[cell, team, rounds won, rounds lost]` - krogi, v katerih je vsaka
+  stran preživela v celici sekundo ali več, po njenem izidu v krogu.
 - **Časovni rezi** na grobi stopnji (8 celic na stran), po minuti od začetka tekme:
   `[cx, cz, minute, kind, value]`, sekunde prisotnosti kot vrsta `GRID_KINDS.length`;
   faze tekme so minute čez dolžino.
@@ -183,11 +201,16 @@ tekem.
 - **Merila.** Stopnja dogodka na sekundo prisotnosti – ubitja, smrti,
   zadetki, izstrelitve, zajetja, za vse enote, na razred (4 z največ
   dogodki), na višinski pas – in delež ubitij v ubitjih in smrteh (vse, na stran,
-  na pas). Kateri razredi in strani pridejo iz glav (`planOf`).
+  na pas) ter **delež zmag** vsake strani: njeni krogi v celici, dobljeni proti
+  izgubljenim (`pw`), kjer se pri 8 ali več tekmah zemljevida štejejo krogi po
+  izidu. Kateri razredi in strani pridejo iz glav (`planOf`).
 - **Pričakovanje na tekmo.** Stopnja vsake tekme, razporejena po njeni lastni
   prisotnosti v celici, je pričakovanje celice (Kulldorffovo skeniranje, prilagojeno
   kovariatam in razslojeno po tekmi): nekaj krvavih tekem ali en zaseden strežnik ne
-  naredi mesta.
+  naredi mesta. Za delež zmag je pričakovanje lastni delež dobljenih krogov
+  strani v tej tekmi, zato uravnoteženost zemljevida in strani nikoli ni mesto.
+  Krog v več celicah območja šteje v vsaki; to upošteva razpršenost, izmerjena
+  pri velikosti območja.
 - **Razpršenost.** Tekme se močno razlikujejo od Poissonove porazdelitve. Ostanki
   vsake tekme se seštejejo v blokih 1, 2, 4, 8, 16 celic; razpršenost vsake velikosti
   bloka (kvadrirani ostanki, deljeni z ničelno varianco, združeni, najslabših 5 %
@@ -244,6 +267,25 @@ svojega starša, ni ohranjena. Zavihek **Niše** jih našteje; klik pokaže vsak
 skupine z enim pogojem (raziskovalec), **Naloži** naloži njene tekme. Nabori orožja
 še niso v povzetkih.
 
+Četrta tabela, **krogi** (`roundsTable`), ima za cilj izid kroga: ena vrstica
+je krog enega življenja - zemljevid, stran, del tekme (krogi 1-4, 5-8, ...),
+vozilo, največ uporabljeno orožje, najdlje držano mesto, nakup, prvo ubitje ali
+prva smrt - presojano proti deležu zmag lastne strani v lastni tekmi
+(razslojeno pričakovanje Mantel-Haenszel: ostanek je `won - e`, `e` delež strani
+v tekmi), zato niša nikoli ni uravnoteženost zemljevida ali strani. Gruče
+ostajajo tekme. Njen z je umerjen: isto iskanje s snopom teče osemkrat na
+izidih, premešanih med krogi vsake strani vsake tekme (delež strani v vsaki
+tekmi ostane), in razpršenost teh ničelnih z nad standardno normalno
+porazdelitvijo - za vsako število pogojev, iz sredine (mediana / 0,674) in iz
+repa (99. percentil / 2,576), večja od obeh, nikoli pod 1 - deli prave z pred
+njihovim p in stopnjo lažnih odkritij (empirična ničelna, Efron 2004). Globlje
+skupine dobijo večje merilo: snop obdrži izpopolnitve skupin, izbranih zaradi
+velikega z. Osnova niše je njeno lastno pričakovanje, njen dvig so točke nad
+njim, razvrsti pa se po dvigu, pomnoženem s kvadratnim korenom števila njenih
+krogov, ob izpolnjenih dokazih in pregibih (`wracc` je podpora, pomnožena z
+dvigom). Nosi tekme, kjer se je pokazala najbolj (`matchIds`), in nekaj
+njihovih krogov (`rounds`, `[match, round]`) za podroben pogled.
+
 #### Premiki mete s praktičnim pomenom {#meta-shifts-with-practical-significance}
 
 Pri mešanih datumih je binomska na življenjih skoraj vsako spremembo označila kot
@@ -267,4 +309,12 @@ pristope: njihove vrste so `place.*` in `niche.*`.
 240 sintetičnih tekmah s presežno razpršenostjo – vse najdeno, razpršeno skrito – in
 zažene osem ničelnih naborov po 60 tekem: nobenega mesta. `niche.test.ts` najde
 zasajeno skupino vozilo x zemljevid x stran in ničesar v petih ničelnih tabelah.
+`outcome.test.ts` preveri povzetek različice 2 (dobljeni krogi po strani,
+enoti, igralcu in orožju, `pw`, krogi enot); zasadi pas, katerega stran dobi
+70 % svojih krogov proti 35 % (vsaka tekma s svojo uravnoteženostjo) - najden -
+in zažene 20 ničelnih naborov po 50 tekem, kjer pasovi ne povedo ničesar:
+nobenega mesta deleža zmag; zasadi AWP na enem zemljevidu, ki dobi kroge svoje
+strani za 30 točk več - najden, z njegovimi tekmami in krogi - in zažene 30
+ničelnih naborov po 80 tekem, kjer ima vsaka tekma svojo uravnoteženost in je
+ena stran močnejša na enem zemljevidu: nobene niše.
 

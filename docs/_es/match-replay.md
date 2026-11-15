@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "es"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Repetición de partida
@@ -90,6 +90,8 @@ La sección **Pantalla táctica** dibuja, sin unidad alguna, las seleccionadas, 
 ## Objetivos {#objectives}
 
 Cuando una partida trae sus objetivos, la sección **Objetivos** los dibuja sobre el nivel: zonas de captura (con su dueño y el progreso de captura), puntos de aparición, aeródromos, áreas y objetivos de bombardeo, cada capa con su interruptor, y con etiquetas. Se ven a través del suelo. Cuando hay varios modos de juego cargados, **Modo** filtra las partidas por modo. Los objetivos vienen del archivo de partida de un conversor, junto a la grabación o dentro de un contenedor [`.3dheat`](container.md).
+
+Las partidas de Rainbow Six Siege traen sus puntos de bomba: las dos salas de cada punto se dibujan sobre su suelo como contornos con sus nombres, deducidos de dónde estaban los jugadores mientras el juego nombraba la sala; un punto del mapa que no se jugó en la partida viene de la tabla de puntos del conversor, como un círculo. En la repetición, el punto de la ronda en el cabezal de reproducción se ilumina en ámbar, los demás quedan en gris. Forman parte de la capa de zonas de captura.
 
 ## Etiquetas y estadísticas {#labels-and-statistics}
 

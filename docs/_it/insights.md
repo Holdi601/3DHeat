@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "it"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Rilevamenti
@@ -44,6 +44,7 @@ Le righe in cima all'elenco (per esempio i totali di denaro) riassumono l'intero
 | **Giocatori** | Giocatori che uccidono o muoiono molto più o meno di altri nella stessa classe | persone e uccisioni |
 | **Strozzature e fianchi** | Punti di strozzatura (molti più attraversamenti del terreno intorno) e percorsi di fianco (usati raramente, ma che portano a uccisioni) | persone |
 | **Valore** | *Terreno costoso* e *Terreno che rende* | [colonne di valore](value-weighting.md) |
+| **Cosa ha deciso i round** | Cosa ha separato i round vinti da quelli persi, e i giocatori che hanno aggiunto o tolto più probabilità di vittoria (vedi [Chi ha vinto](#who-won-what-decided-the-rounds)) | round, uccisioni e morti, e le [colonne del risultato](data-formats.md#outcome-columns) (`won`) |
 
 I rilevatori che non possono girare sui dati sono elencati in fondo con il motivo.
 
@@ -51,9 +52,42 @@ I rilevatori che non possono girare sui dati sono elencati in fondo con il motiv
 
 Ogni luogo o gruppo viene confrontato con il resto della mappa (test binomiali esatti o test di frequenza). Il tasso di false scoperte (false discovery rate) è tenuto al 5% (Benjamini-Hochberg). Il caso può sembrare uno schema; questo mantiene bassi i falsi allarmi: tra le rilevazioni mostrate, ci si aspetta al massimo circa una su venti dovuta al caso. Gli effetti basati su pochi eventi vengono tirati verso "nessun effetto" prima dell'ordinamento. Vengono elencate al massimo 60 rilevazioni, e ogni rilevatore ottiene qualche luogo vicino alla cima.
 
+### Chi ha vinto: cosa ha deciso i round {#who-won-what-decided-the-rounds}
+
+Dove i dati dicono chi ha vinto ogni round (la [colonna del risultato](data-formats.md#outcome-columns) `won`: CS2, Rainbow Six Siege, War Thunder ...), il risultato è il tema di Rilevamenti. Per ogni lato divide i round secondo ciò che è successo in essi e confronta i tassi di vittoria:
+
+| Fattore | I round del lato con esso | ... e senza |
+|---|---|---|
+| Duello d'apertura | ha fatto la prima uccisione | è morto per primo |
+| Acquisto | il suo acquisto era migliore di quello dell'altro lato | peggiore |
+| Prima morte scambiata | la sua prima morte è stata scambiata entro 5 s | non scambiata |
+| Piazzamento | ha piazzato | nessun piazzamento |
+| Utility | più granate del suo round abituale | meno |
+| Contatto precoce | il primo duello è arrivato prima del tempo mediano della partita | più tardi |
+| Un luogo tenuto | un giocatore è rimasto nel luogo 5 s o più | nessuno |
+| Un luogo raggiunto presto | un giocatore ci è arrivato nei primi 25 s (il percorso) | nessuno |
+
+Ogni confronto è una differenza di due tassi di vittoria con il suo intervallo al 95 % (Newcombe), il p esatto di Fisher e un q su tutti i fattori provati (Benjamini-Hochberg). Un ramo con meno di 8 round è segnato *pochi round*. Quelli sotto il tasso di falsa scoperta del 5 % diventano rilevazioni; le più forti si collocano sopra quelle degli altri rilevatori (una rilevazione sul risultato pesa 1,35 volte una con lo stesso effetto e le stesse prove).
+
+Un esempio inventato su 40 round:
+
+> **T** ha vinto il 79 % dei 19 round in cui ha tenuto **Mid**, contro il 24 % di 21 senza (55 punti, 95 % da 26 a 74) - q 0,004.
+
+Segue anche la **probabilità di vittoria** del round - la possibilità che ogni lato aveva in ogni momento, dai giocatori vivi, dal piazzamento e dal tempo: adattata ai round quando sono 30 o più, altrimenti un modello a priori fisso (e il testo dice quale). Da essa vengono i **punti di svolta** (le uccisioni e i piazzamenti che hanno spostato di più la possibilità) e la **probabilità di vittoria aggiunta** di ogni giocatore: le uccisioni e i piazzamenti che ha fatto contano a suo favore, le sue morti contro, in round sull'intera partita, un round in media con il suo intervallo, verificato rispetto a zero. I luoghi ricevono lo stesso bilancio: quale lato ha guadagnato di più nei duelli combattuti lì.
+
+I dati devono avere round, uccisioni e morti con entrambi i lati, e la colonna `won`; luoghi con nome (`place`) per i luoghi tenuti, una colonna `buy` per l'acquisto.
+
 ## Resoconto {#debrief}
 
-La scheda **Resoconto** scrive le rilevazioni come un breve testo: un'introduzione, la rilevazione più chiara, una per la tattica, una per l'equilibrio, le altre raggruppate per rilevatore, e quante poggiano su prove più deboli. Ogni paragrafo ha pulsanti numerati che mostrano le sue rilevazioni. **Copia il testo** lo copia.
+La scheda **Resoconto** scrive le rilevazioni come un breve testo: un'introduzione, la rilevazione più chiara, una per la tattica, una per l'equilibrio, poi - dove i dati dicono chi ha vinto - cosa ha deciso i round, le altre raggruppate per rilevatore, e quante poggiano su prove più deboli.
+
+Cosa ha deciso i round arriva in quattro paragrafi: il punteggio e da dove vengono le probabilità di vittoria; i fattori più forti con i loro numeri, intervallo e q (quando nessuno supera il tasso di falsa scoperta il testo dice *niente di tutto questo è ancora certo*, e nomina comunque il più forte); i tre punti di svolta più grandi; e i giocatori che hanno aggiunto e tolto più probabilità di vittoria, con i luoghi che hanno guadagnato di più. Un esempio inventato:
+
+> T ha vinto 23 e CT ha vinto 17 di 40 round con un risultato noto (T: 58 %, 95 % da 42 % a 72 %). Le probabilità di vittoria vengono da un modello adattato a questi round.
+>
+> Cosa ha separato i round vinti da quelli persi: T ha vinto il 79 % dei 19 round in cui ha tenuto Mid, contro il 24 % di 21 senza (55 punti, 95 % da 26 a 74) (q 0,004), ...
+>
+> Punti di svolta: round 17 a 48 s, un'uccisione di CT a B site ha spostato la sua possibilità dal 31 % al 58 %, e ha preso il round, ... Ogni paragrafo ha pulsanti numerati che mostrano le sue rilevazioni. **Copia il testo** lo copia.
 
 ![Il resoconto scritto dal narratore integrato](../assets/img/it/debrief.webp)
 
@@ -72,11 +106,13 @@ Il narratore integrato funziona offline, nella tua lingua. Il selettore **Lente*
 | **Usa un'IA esterna** | Disattivato di default |
 | **Invia i nomi dei giocatori** | Disattivato di default: i giocatori vengono inviati come P1, P2 ... |
 
-Poi scrivi una domanda facoltativa e premi **Scrivi con l'IA**. Vengono inviate solo le rilevazioni e i loro numeri - mai le righe dei tuoi dati. La risposta arriva a pezzi; le rilevazioni citate diventano pulsanti.
+Poi scrivi una domanda facoltativa e premi **Scrivi con l'IA**. Vengono inviate solo le rilevazioni e i loro numeri - mai le righe dei tuoi dati. La risposta arriva a pezzi; le rilevazioni citate diventano pulsanti. Dove i dati dicono chi ha vinto, al modello si chiede di iniziare da cosa ha deciso i round, con l'intervallo e il q di ogni numero, e di dire quando un fattore poggia su pochi round o le probabilità di vittoria vengono dal modello a priori.
 
 ## Commentatore {#caster}
 
-Per **una partita** (sceglierne una se ne sono caricate diverse), il **Commentatore** trova i momenti che vale la pena guardare: primo sangue, multi-uccisioni, scambi, clutch, cambi di obiettivo, rimonte, giocatori in evidenza, tiri da lontano.
+Per **una partita** (sceglierne una se ne sono caricate diverse), il **Commentatore** trova i momenti che vale la pena guardare: primo sangue, multi-uccisioni, scambi, clutch, cambi di obiettivo, rimonte, giocatori in evidenza, tiri da lontano e **punti di svolta** - le uccisioni che hanno spostato di più la possibilità di un lato di vincere il round (in base ai giocatori rimasti vivi per lato, nei round senza respawn).
+
+Dove i dati dicono chi ha vinto ogni round, ogni momento lo dice: *«Anna abbatte Ben: la possibilità di T di vincere il round passa dal 38 % al 62 % - e prendono il round.»* Un momento del lato che poi ha vinto conta di più quando il commentatore sceglie quali tenere, e una rimonta si conta in round vinti.
 
 ![I momenti del commentatore per un round della demo dello sparatutto](../assets/img/it/caster.webp)
 

@@ -3,9 +3,9 @@ title: "Analisi della partita (CS2)"
 nav_order: 10
 lang: "it"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -125,6 +125,16 @@ Su ogni partita caricata:
 - **Giocatori**: i quindici migliori per uccisioni meno morti, sommati su tutte le loro partite (abbinati per Steam ID): partite, K-D, ADR e KAST ponderati sui round giocati, HS% ponderato sulle uccisioni, duelli d’apertura. **Clicca un giocatore** per le sue uccisioni e morti su tutte le partite nella mappa di calore.
 
 I pulsanti Mostra nella mappa di calore per tutte le partite caricate stanno sotto.
+
+## Cosa ha deciso i round {#what-decided-the-rounds}
+
+La scheda conta; [Rilevamenti](insights.md#who-won-what-decided-the-rounds) spiega. Con la tabella della heatmap di una partita caricata (contiene la colonna `won`), **Rilevamenti** divide i round di ogni lato secondo ciò che è successo in essi - il duello d'apertura, l'acquisto, una prima morte scambiata, il piazzamento, le utility, un primo contatto precoce, ogni luogo tenuto e ogni luogo raggiunto nei primi 25 s - e dice quale ha fatto la differenza, con la differenza dei tassi di vittoria, il suo intervallo al 95 % e q, e *pochi round* dove un ramo ne ha meno di otto. Nomina i punti di svolta (le uccisioni e i piazzamenti che hanno spostato di più la probabilità di vittoria) e i giocatori e i luoghi che hanno aggiunto o tolto di più, e il **Resoconto** e il **Commentatore** iniziano da questi. Un esempio inventato:
+
+> T ha vinto il 79 % dei 19 round in cui ha tenuto Mid, contro il 24 % di 21 senza (55 punti, 95 % da 26 a 74) - q 0,004.
+>
+> Punti di svolta: round 17 a 48 s, un'uccisione di CT a B site ha spostato la sua possibilità dal 31 % al 58 %, e ha preso il round.
+
+Una partita ha meno di 30 round, quindi le sue probabilità di vittoria vengono da un modello a priori fisso basato sui giocatori vivi, sul piazzamento e sul tempo; il testo lo dice. Su molte partite le stesse domande le pone l'[analisi di massa](mass-analysis.md#who-won).
 
 ## Mostra nella mappa di calore {#show-in-the-heatmap}
 

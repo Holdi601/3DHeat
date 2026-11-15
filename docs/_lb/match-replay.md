@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "lb"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Match-Replay
@@ -90,6 +90,8 @@ D'Sektioun **Taktesch Usiicht** zeechent fir keng Eenheet, fir déi gewielten, f
 ## Ziler {#objectives}
 
 Wann e Match mat sengen Zilen kënnt, zeechent d'Sektioun **Ziler** se op dem Level: Erueberungszonen (mat Besëtzer a Fortschrëtt), Spawnpunkten, Fluchhäfen, Beräicher a Bombenzilen, all Schicht schalt- an ausschaltbar, mat Beschrëftungen. Si ginn duerch de Buedem gesinn. Wann méi Spillmodi gelued sinn, filtréiert **Modus** d'Matcher no Modus. Ziler kommen aus enger Match-Datei vun engem Ëmwandler nieft der Opnam oder bannent engem [`.3dheat`](container.md)-Container.
+
+Rainbow-Six-Siege-Matcher bréngen hir Bomme-Sites mat: déi zwee Raim vun all Site ginn op hirem Buedem als Konturen mat hiren Nimm gezeechent, erausfonnt doraus, wou d'Spiller stoungen, während d'Spill de Raum genannt huet; e Site vun der Kaart, deen am Match net gespillt gouf, kënnt als Krees aus der Site-Tabell vum Konverter. Am Replay liicht de Site vun der Ronn beim Ofspillkapp an Amber, déi aner bleiwe gro. Si sinn Deel vun der Schicht vun den Erueberungszonen.
 
 ## Beschrëftungen a Statistiken {#labels-and-statistics}
 

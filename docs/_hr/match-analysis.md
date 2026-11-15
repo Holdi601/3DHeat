@@ -3,9 +3,9 @@ title: "Analiza utakmice (CS2)"
 nav_order: 10
 lang: "hr"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Analiza utakmice (Counter-Strike 2)
@@ -121,6 +121,16 @@ Nad svakom učitanom utakmicom:
 - **Igrači**: petnaest najboljih po ubojstvima minus smrtima, zbrojeno kroz sve njihove utakmice (uparivanje po Steam ID-u): utakmice, K-D, ADR i KAST ponderirani odigranim rundama, HS% ponderiran ubojstvima, dueli otvaranja. **Kliknite igrača** za njegova ubojstva i smrti kroz sve utakmice na toplinskoj karti.
 
 Gumbi Prikaži na toplinskoj karti za sve učitane utakmice nalaze se ispod.
+
+## Što je odlučilo runde {#what-decided-the-rounds}
+
+Kartica broji; [Uvidi](insights.md#who-won-what-decided-the-rounds) objašnjavaju. Kad je učitana tablica toplinske karte utakmice (nosi stupac `won`), **Uvidi** dijele runde svake strane prema onome što se u njima dogodilo - otvarajući dvoboj, kupnja, razmijenjena prva smrt, postavljanje, pomagala, rani prvi kontakt, svako držano mjesto i svako mjesto dosegnuto u prvih 25 s - i kažu što je napravilo razliku, s razlikom postotaka pobjeda, njezinim intervalom od 95% i q te *malo rundi* gdje grana ima manje od osam rundi. Navode prekretnice (ubojstva i postavljanja koja su najviše pomaknula vjerojatnost pobjede) te igrače i mjesta koji su najviše dodali ili stajali, a **Sažetak** i **Komentator** počinju s njima. Izmišljeni primjer:
+
+> T je dobila 79% od 19 rundi u kojima je držala Mid, naspram 24% od 21 bez toga (55 bodova, 95% od 26 do 74) - q 0,004.
+>
+> Prekretnice: runda 17 u 48 s, ubojstvo strane CT na mjestu B promijenilo je njezine izglede s 31% na 58%, i dobila je rundu.
+
+Jedna utakmica ima manje od 30 rundi, pa njezine vjerojatnosti pobjede dolaze iz fiksnog apriornog modela živih igrača, postavljanja i sata; tekst to kaže. Nad mnogo utakmica ista pitanja postavlja [masovna analiza](mass-analysis.md#who-won).
 
 ## Prikaži na toplinskoj karti {#show-in-the-heatmap}
 

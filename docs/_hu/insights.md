@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "hu"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Felismerések
@@ -44,6 +44,7 @@ A lista tetején lévő sorok (például a pénzösszegek) a megállapítások e
 | **Játékosok** | Játékosok, akik sokkal többet vagy kevesebbet ölnek vagy halnak, mint mások ugyanabban az osztályban | személyek és gyilkosságok |
 | **Szűk keresztmetszetek és szárnyak** | Szűk keresztmetszetek (sokkal több átkelés, mint a környező terepen) és oldalsó útvonalak (ritkán használtak, de gyilkossághoz vezetnek) | személyek |
 | **Érték** | *Költséges terep* és *Nyereséges terep* | [érték-oszlopok](value-weighting.md) |
+| **Mi döntötte el a köröket** | Mi különböztette meg a megnyert köröket az elvesztettektől, és mely játékosok adták hozzá vagy vesztették el a legtöbb győzelmi valószínűséget (lásd [Ki nyert](#who-won-what-decided-the-rounds)) | körök, ölések és halálok, valamint az [eredményoszlopok](data-formats.md#outcome-columns) (`won`) |
 
 Azok a detektorok, amelyek nem futhatnak az adatokon, az alján szerepelnek, az okukkal együtt.
 
@@ -51,9 +52,42 @@ Azok a detektorok, amelyek nem futhatnak az adatokon, az alján szerepelnek, az 
 
 Minden helyet vagy csoportot összevetünk a térkép többi részével (pontos binomiális vagy arányteszttel). A hamis felfedezési arány 5%-on van tartva (Benjamini–Hochberg). A véletlen mintázatnak tűnhet; ez alacsonyan tartja a téves riasztásokat: a látható megállapítások közül várhatóan legfeljebb körülbelül minden huszadik lehet véletlen. A kevés eseményből származó hatások a rangsorolás előtt a „nincs hatás” felé húzódnak. Legfeljebb 60 megállapítás jelenik meg, és minden detektor kap néhány helyet a lista élén.
 
+### Ki nyert: mi döntötte el a köröket {#who-won-what-decided-the-rounds}
+
+Ha az adatok megmondják, ki nyerte az egyes köröket (a `won` [eredményoszlop](data-formats.md#outcome-columns): CS2, Rainbow Six Siege, War Thunder ...), akkor a Felismerések az eredményről szólnak. Minden oldal köreit aszerint osztja fel, mi történt bennük, és összeveti a győzelmi arányokat:
+
+| Tényező | Az oldal körei vele | ... és nélküle |
+|---|---|---|
+| Nyitópárbaj | az oldal ölt elsőként | az oldal halt meg elsőként |
+| Vásárlás | jobban vásárolt, mint a másik oldal | rosszabbul |
+| Megbosszult első halál | az első halálát 5 mp-en belül megbosszulták | nem bosszulták meg |
+| Lerakás | lerakta a bombát | nem volt lerakás |
+| Eszközök | több gránát, mint egy szokásos körében | kevesebb |
+| Korai kontaktus | az első párbaj a meccs medián ideje előtt jött | később |
+| Megtartott hely | egy játékos 5 mp-ig vagy tovább állt a helyen | senki |
+| Korán elért hely | egy játékos az első 25 mp-ben odaért (az útvonal) | senki |
+
+Minden összevetés két győzelmi arány különbsége a 95%-os intervallumával (Newcombe), Fisher pontos p-értékével és egy q-val az összes kipróbált tényezőn (Benjamini–Hochberg). A 8-nál kevesebb körből álló ágat a *kevés kör* jelzi. Az 5%-os hamis felfedezési arány alattiak megállapítások lesznek; a legerősebbek a többi detektor megállapításai fölé kerülnek (egy eredmény-megállapítás 1,35-ször annyit nyom, mint egy ugyanakkora hatású és bizonyítékú másik).
+
+Egy kitalált példa 40 körre:
+
+> A **T** megnyerte annak a 19 körnek a 79%-át, amelyben tartotta a **Mid**et, szemben a nélküle lévő 21 kör 24%-ával (55 pont, 95%: 26–74) – q 0,004.
+
+A kör **győzelmi valószínűségét** is követi – minden oldal esélyét minden pillanatban, az életben lévő emberekből, a lerakásból és az órából: 30 vagy több kör esetén a körökre illesztve, különben egy rögzített a priori modellből (és a szöveg megmondja, melyikből). Ebből jönnek a **fordulópontok** (az ölések és lerakások, amelyek a legjobban megmozdították az esélyt), és minden játékos **hozzáadott győzelmi valószínűsége**: az ölései és lerakásai mellette, a halálai ellene szólnak, körökben számolva a meccsre, átlagosan egy körre az intervallumával, nullával szemben tesztelve. A helyek ugyanezt a mérleget kapják: melyik oldal nyert a legtöbbet az ott vívott párbajokban.
+
+Az adatoknak körök, ölések és halálok kellenek mindkét oldallal, valamint a `won` oszlop; a megtartott helyekhez elnevezett helyek (`place`), a vásárláshoz egy `buy` oszlop.
+
 ## Összegzés {#debrief}
 
-Az **Összegzés** fül a megállapításokat rövid szöveggé írja: egy bevezetőt, a legtisztább megállapítást, egyet a taktikáról, egyet az egyensúlyról, a többit detektor szerint csoportosítva, és azt, hány gyengébb bizonyítékon nyugszik. Minden bekezdés számozott gombokat tartalmaz, amelyek a megállapításait mutatják. A **Szöveg másolása** lemásolja.
+Az **Összegzés** fül a megállapításokat rövid szöveggé írja: egy bevezetőt, a legtisztább megállapítást, egyet a taktikáról, egyet az egyensúlyról, aztán – ha az adatok megmondják, ki nyert – azt, mi döntötte el a köröket, a többit detektor szerint csoportosítva, és azt, hány gyengébb bizonyítékon nyugszik.
+
+Hogy mi döntötte el a köröket, az négy bekezdésben jön: az állás, és honnan származnak a győzelmi valószínűségek; a legerősebb tényezők a számaikkal, intervallumukkal és q-jukkal (ha egyik sem megy át a hamis felfedezési arányon, a szöveg azt mondja: *egyelőre semmi sem biztos*, és mégis megnevezi a legerősebbet); a három legnagyobb fordulópont; és a játékosok, akik a legtöbb győzelmi valószínűséget hozzáadták és elvesztették, a legtöbbet nyerő helyekkel. Egy kitalált példa:
+
+> A T 23, a CT 17 kört nyert az ismert eredményű 40 körből (T: 58%, 95%: 42%–72%). A győzelmi valószínűségek egy ezekre a körökre illesztett modellből származnak.
+>
+> Ami megkülönböztette a megnyert köröket az elvesztettektől: a T megnyerte annak a 19 körnek a 79%-át, amelyben tartotta a Midet, szemben a nélküle lévő 21 kör 24%-ával (55 pont, 95%: 26–74) (q 0,004), ...
+>
+> Fordulópontok: a 17. körben 48 mp-nél a CT egy ölése a B site-on 31%-ról 58%-ra emelte az esélyét, és megnyerte a kört, ... Minden bekezdés számozott gombokat tartalmaz, amelyek a megállapításait mutatják. A **Szöveg másolása** lemásolja.
 
 ![A beépített narrátor által írt összegzés](../assets/img/hu/debrief.webp)
 
@@ -72,11 +106,13 @@ Az **MI-beállítások** lehetővé teszi, hogy a választott MI-modell írja me
 | **Külső MI használata** | Alapértelmezés szerint ki |
 | **Játékosnevek küldése** | Alapértelmezés szerint ki: a játékosok P1, P2 … néven mennek |
 
-Ezután írjon egy opcionális kérdést, és nyomja meg az **Írás MI-vel** gombot. Csak a megállapítások és a számaik mennek ki – az adatai sorai soha. A válasz folyamatosan érkezik; a hivatkozott megállapítások gombokká válnak.
+Ezután írjon egy opcionális kérdést, és nyomja meg az **Írás MI-vel** gombot. Csak a megállapítások és a számaik mennek ki – az adatai sorai soha. A válasz folyamatosan érkezik; a hivatkozott megállapítások gombokká válnak. Ha az adatok megmondják, ki nyert, a modell azt az utasítást kapja, hogy azzal kezdjen, mi döntötte el a köröket, minden szám intervallumával és q-jával, és mondja meg, ha egy tényező kevés körön alapul, vagy ha a győzelmi valószínűségek az a priori modellből származnak.
 
 ## Kommentátor {#caster}
 
-**Egy meccsre** (ha több van betöltve, válasszon egyet) a **Kommentátor** megtalálja a megnézésre érdemes pillanatokat: első vér, többszörös gyilkosságok, cserék, befejezések, cél-fordulatok, visszatérések, kiemelkedő játékosok, hosszú lövések.
+**Egy meccsre** (ha több van betöltve, válasszon egyet) a **Kommentátor** megtalálja a megnézésre érdemes pillanatokat: első vér, többszörös gyilkosságok, cserék, befejezések, cél-fordulatok, visszatérések, kiemelkedő játékosok, hosszú lövések és **fordulópontok** – azok az ölések, amelyek a legjobban megmozdították egy oldal esélyét a kör megnyerésére (az oldalanként életben maradt játékosok alapján, újraéledés nélküli körökben).
+
+Ha az adatok megmondják, ki nyerte az egyes köröket, minden pillanat kimondja: *„Anna leteríti Bent: T esélye a kör megnyerésére 38%-ról 62%-ra nő – és megnyerik a kört.”* A később győztes oldal pillanata többet ér, amikor a kommentátor kiválasztja, melyeket tartsa meg, és a visszatérést megnyert körökben számolja.
 
 ![A kommentátor pillanatai a lövöldözős demo egy körére](../assets/img/hu/caster.webp)
 

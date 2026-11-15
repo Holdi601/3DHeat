@@ -3,9 +3,9 @@ title: "Massa-analyysi"
 nav_order: 8
 lang: "fi"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Massa-analyysi: tuhansia otteluita kerralla
@@ -60,14 +60,24 @@ Valitse kansio (tai tiedostot; **Lisää kansio...** liittää toisen kansion). 
 | Pelaajat | eri pelaajat, ottelut pelaajaa kohti, pelaajat ottelua kohti, useimmin esiintyvät pelaajat |
 | Puolet | jokaisen kartan jokainen puoli: ottelut, jotka voitettiin, verrattuna tasaiseen jakoon |
 | Lähitaistelu | kierrosdata: avausduellit puolittain ja niiden muuttuminen, vaihdot, kurkkija vs. pitäjä, ristitulet, sokaistut sisäänmenot, tähtäys, pommin asetukset, miehen etu ja, **Kartan mukaan**, paikat, joissa pelaajat kuolevat niihin mennessään. Jokainen on osuus Wilsonin välillä. Ne tulevat yhteenvetojen `cqb`-laskureista ([Lähitaistelu ja kierrokset](close-quarters.md)) |
+| R6-pinnat | Rainbow Six Siegen jäljet tasossa (luodinreiät ja vastaavat) tason pinnoittain: jäljet, kartan kierrosta kohden, huone, osuus, jonka ampuja on päätelty; napsautus avaa jälkien tyypit, ampujien operaattorit ja aseluokat sekä sen, missä kohtaa pintaa jäljet ovat (pieni lämpökartta neljänneksen metrin soluista); pinta pitää tunnuksensa saman karttaversion otteluissa. Yhteenvetojen `marks`-määristä |
 | Kartta | kartan summattu ruudukko: läsnäolo, tappoja, kuolemia, K/D, mikä tahansa tapahtuma, virtaus ja **kuinka monessa ottelussa kuuma** (vakaus). Joukkueittain, 1, 2, 4 tai 8 kertaa solun koolla |
-| Paikat | paikat, jotka erottuvat luvuissa mutta eivät lämpökartassa (iso alue, joka on kiireinen kokonaisuutena, käytävät, korkeuskaistat); **Etsi paikkoja** |
-| Lokerot | ryhmät, jotka menevät selvästi paremmin tai huonommin kuin muut (ajoneuvo yhdellä kartalla, sektori yhdessä korkeudessa); **Etsi lokeroita** |
+| Paikat | paikat, jotka erottuvat luvuissa mutta eivät lämpökartassa (iso alue, joka on kiireinen kokonaisuutena, käytävät, korkeuskaistat), ja paikat, joiden haltijat voittavat enemmän tai vähemmän kierroksistaan; **Etsi paikkoja** |
+| Lokerot | ryhmät, jotka menevät selvästi paremmin tai huonommin kuin muut (ajoneuvo yhdellä kartalla, sektori yhdessä korkeudessa), ja kierrosten ryhmät, jotka voitettiin useammin kuin niiden puoli voitti samoissa otteluissa; **Etsi lokeroita** |
 | Havainnot | massa-ilmaisimet ja karttailmaisimet (alla); **Kopioi raportti (JSON)** antaa JSON:n, jota kielimalli lukee |
 
 ## Havainnot usean ottelun yli {#insights-over-many-matches}
 
 **Paikat**-välilehti löytää paikat, jotka erottuvat luvuissa mutta eivät lämpökartassa. Näitä ovat iso alue, joka on kiireinen kokonaisuutena, käytävä, korkeuskaista tai paikka, joka on kiireinen vain osassa ottelua. Se merkitsee **piilossa** ne, joita tavallinen lämpökartta ei näytä, ja piirtää ne 3D-näkymään. **Lataa** lentää paikkaan sen otteluilla, joita se piti hallussaan. **Lokerot**-välilehti löytää ryhmät (ajoneuvo yhdellä kartalla ja puolella, sektori yhdessä korkeudessa), jotka menevät selvästi paremmin tai huonommin kuin muut. Napsauta yhtä nähdäksesi sen tarkennukset.
+
+### Kuka voitti {#who-won}
+
+Kun ottelut kertovat, kuka voitti kunkin kierroksen ([tulossarake](data-formats.md#outcome-columns) `won`), tulos on oma kohteensa:
+
+- **Paikat: voittoprosentti.** Kullekin puolelle osuus sen kierroksista paikassa, jotka se voitti, verrattuna osuuteen, jonka se voitti samassa ottelussa missä tahansa – joten kartan, puolen ja ottelun oma tasapaino on lähtötaso, ja vain paikat, joiden haltijat voittavat enemmän (tai vähemmän) kierroksistaan, erottuvat. Keksitty esimerkki: *”Dust: puoli T voittaa enemmän kierroksistaan ollessaan täällä: 61 % 412:sta voitettu, odotettu 49 % sen omasta osuudesta samoissa otteluissa (kerroin 1,6x; hallussa 31/48 ottelussa).”* Sama väärien löydösten osuus ja vakaustarkistukset kuin kaikilla paikoilla; **Lataa** lataa ottelut, joissa paikka oli hallussa, ja näyttää sen puolen sijainnit.
+- **Lokerot: kierroksen voitto.** **Kierrokset**-taulukossa on jokaisen elämän kierros: kartta, puoli, ottelun osa (kierrokset 1–4, 5–8, ...), ajoneuvo (operaattori, agentti), eniten käytetty ase, pisimpään hallussa pidetty paikka, ostot (eco, force, full) ja se, tekikö sen puoli ensimmäisen tapon. Ryhmää verrataan siihen, mitä sen puoli voitti samoissa otteluissa, joten *T Dustilla AWP:llä* on lokero vain, kun ne kierrokset voitettiin useammin kuin T:n muut kierrokset niissä otteluissa. Keksitty esimerkki: *”m1 · T · AWP: voittaa 80 % 320 kierroksesta, odotettu 62 % samoista puolista samoissa otteluissa (kerroin 2,3x; 40 ottelua).”* Järjestetään nousun ja tuen tulon mukaan; **Lataa** lataa ottelut, joiden kierroksissa se näkyy eniten.
+
+Molemmat tarvitsevat version 2 yhteenvedot (katso [Yhteenvetojen luominen](#getting-the-summaries)): vanhemmat lasketaan uudelleen.
 
 **Havainnot**-välilehti löytää kaikista otteluista ajoneuvot, jotka vaihtavat tai voittavat muita paremmin tai huonommin. Se löytää paikat, jotka ovat kuumia tasaisessa osuudessa otteluita, puolet, jotka voittavat enemmän kuin tasainen jako, ajoneuvot, joiden käyttö muuttuu päivämäärien mukaan, ja osat ottelusta, joissa on enemmän tappoja kuin tasainen jako antaisi. Jokaisessa löydöksessä on sen luvut, vaikutus, väli ja väärien löytöjen osuus (pidetään 5 %:ssa), ja napsautus lataa sen ottelut. Yksityiskohdat: [Kehittäjille](#for-developers).
 
@@ -108,6 +118,11 @@ Tavallista JSONia (`src/mass/types.ts`), noin 5-30 KB pakattuna ottelua kohti:
 - ottelu: peli, kartta, tila, tehtävä, alku, pituus, rivit, elämät, pelaajat, tekoäly, joukkueet (elämät, pelaajat, läsnäolo, tappoja, kuolemia, voitto, raha) ja voittaja;
 - ajoneuvoittain ja joukkueittain: luokka, taso, elämät, pelaajaelämät, läsnäolo, tapahtumat kanonisen tyypin mukaan, tappoja kohteen luokan mukaan, voitot, raha;
 - pelaajittain (käyttäjätunnuksen mukaan, muuten nimen): joukkue, elämät, läsnäolo, tappoja, kuolemia, osumia, laukaisuja, voitto, ajoneuvot; aseittain: tapahtumat tyypin mukaan;
+- tulossarakkeen kanssa (versio 2): voitetut ja pelatut kierrokset joukkueittain, ajoneuvoittain
+  (`rw`, kukin yksi elämä ja kierros), pelaajittain ja aseittain (kierrokset, joilla puoli käytti
+  sitä); jokaisen elämän kierros (`outcome.u`: kierros, puoli, ajoneuvo, eniten käytetty ase,
+  pisimpään hallussa pidetty paikka, ostot, voitettu) ja jokaisen kierroksen
+  numero, voittaja ja sen ensimmäisen tapon puoli (`outcome.r`);
 - talouden sarakkeet (`cost_*`, `earn_*`) ja niiden summat;
 - vaiheet: tapahtumat tyypin mukaan 20 osassa ottelun pituutta ja minuutin mukaan;
 - käyttäytyminen: ottelun yhteiskäyttäytymisen mitat (linjautuminen, reittiohjaus, kaistat, ruuhkautuminen, johtajat, viimeiset, murtumispiste, riski tappioiden jälkeen, putket, ostojen sopimus, painostus), kukin omalla nollamallillaan, p ja q. Katso [Yhteiskäyttäytyminen](collective-behaviour.md);
@@ -123,6 +138,9 @@ Avaruudellinen osa on tehty skannaustilastoille alueille, joilla on mikä tahans
 - **Altistus jokaisen luvun vieressä.** Läsnäolosekunnit per solu, per joukkue (`pt`), per ajoneuvoluokka (`pc`) ja per korkeuskaista (`ph`). Alueen nopeus, odotus ja suhde lasketaan siis mille tahansa alaryhmälle.
 - **Korkeus.** Kaistat ottelun lattian yläpuolella (korkeuden 1. persentiili): alle 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000 ja yli. Tiedosto, jossa on sarake `floor`, `storey` tai `deck`, jakaa kaistoihin kerrosten mukaan. `y` on kunkin solun keskikorkeus, `y0` sen alin kohta (sen kerros, kun korkeus on sen yläpuolella).
 - **Tapahtumat** monikkoina `[solu, tyyppi, joukkue, luokka, kaista, määrä]`.
+- **Kierrokset tuloksen mukaan** (versio 2, tulossarakkeen ja vähintään kahden kierroksen
+  kanssa): `pw` muodossa `[cell, team, rounds won, rounds lost]` – kierrokset, joilla kukin puoli
+  oli solussa sekunnin tai kauemmin, kierroksen tuloksen mukaan.
 - **Aikaviipaleet** karkealla tasolla (8 solua sivulle), minuutin mukaan ottelun alusta: `[cx, cz, minuutti, tyyppi, arvo]`. Läsnäolosekunnit ovat tyyppi `GRID_KINDS.length`. Ottelun vaiheet ovat minuutteja pituuden yli.
 - Harva, laskurit kokonaislukuja, sekunnit kymmenesosaan. Koko on rajattu sen mukaan, mitä tapahtui.
 
@@ -134,8 +152,8 @@ Vaihe B etsii sitä, mikä erottuu luvuissa, mutta ei silmiin: iso alue, joka on
 
 Kunkin kartan ottelut luetaan kahdesti, yksi ottelu kerrallaan. Muisti pitää summia rasterilla, jossa on enintään 64 solua sivulle (16 aika-avaruusskannaukselle). Ottelut itse eivät jää muistiin.
 
-- **Mitat.** Tapahtuman nopeus läsnäoloa sekunnissa: tappoja, kuolemia, osumia, laukaisuja, valtauksia kaikille yksiköille, per luokka (4, joilla on eniten tapahtumia) ja per korkeuskaista. Sekä tappojen osuus tappoihin ja kuolemiin (kaikki, per puoli, per kaista). Mitkä luokat ja puolet otetaan, päättää `planOf`.
-- **Odotus ottelun mukaan.** Kunkin ottelun oma nopeus, joka jakautuu sen omalle läsnäololle solussa, on solun odotus (kovariaatilla säädetty Kulldorffin skannaus, jaettu ottelun mukaan). Muutama verinen ottelu tai yksi kiireinen palvelin ei tee paikkaa.
+- **Mitat.** Tapahtuman nopeus läsnäoloa sekunnissa: tappoja, kuolemia, osumia, laukaisuja, valtauksia kaikille yksiköille, per luokka (4, joilla on eniten tapahtumia) ja per korkeuskaista. Sekä tappojen osuus tappoihin ja kuolemiin (kaikki, per puoli, per kaista) ja kunkin puolen **voittoprosentti**: sen kierrokset solussa voitettuina hävittyjä vastaan (`pw`), kun kartalla on vähintään 8 ottelua, jotka laskevat kierrokset tuloksen mukaan. Mitkä luokat ja puolet otetaan, päättää `planOf`.
+- **Odotus ottelun mukaan.** Kunkin ottelun oma nopeus, joka jakautuu sen omalle läsnäololle solussa, on solun odotus (kovariaatilla säädetty Kulldorffin skannaus, jaettu ottelun mukaan). Muutama verinen ottelu tai yksi kiireinen palvelin ei tee paikkaa. Voittoprosentin odotus on puolen oma osuus voitetuista kierroksista siinä ottelussa, joten kartan ja puolen tasapaino ei ole koskaan paikka. Kierros alueen useassa solussa lasketaan jokaisessa; alueen koossa mitattu hajonta kantaa sen.
 - **Hajonta.** Ottelut eroavat paljon enemmän kuin Poisson antaisi. Kunkin ottelun jäännökset summataan lohkoissa, joissa on 1, 2, 4, 8 ja 16 solua. Kunkin lohkokoon hajonta (neliöidyt jäännökset jaettuna nollavarianssilla, yhdistetty, huonoin 5 % lohkoista pois jätettynä) skaalaa jokaisen kokoisen alueen testin. Tämä on quasi-likelihood-suhde: Poisson nopeuksille, binomi osuuksille.
 - **Alueet.** Ympyrät 0,75-18 solua; ellipsit kuudessa kulmassa, 3 ja 6 kertaa niin pitkiä kuin leveitä, 3-18 solua (käytävät; akseli on oivalluksen `place.path`); vyöhykkeet, jotka kasvatetaan solu kerrallaan voimakkaimmista paikallisista Getis-Ord Gi* -soluista, kun alueen z kasvaa (epäsäännölliset muodot). Kasvatus tehdään yhdellä puoliskolla otteluista ja testataan toisella, joten kasvatuksen vapaus ei tuota vääriä paikkoja. Kukin korkeuskaista verrataan ottelun muihin kaistoihin koko kartalla (klusterin kestävä). Aika-avaruussylinterit: ympyrä yhdessä tai kahdessa viidesosassa ottelun pituutta, verrattuna ottelun omaan tapahtumien leviämiseen paikassa ja ajassa (aika-avaruuden permutaatioskannaus).
 - **Testaus.** p quasi-likelihoodista. Benjamini-Hochberg kaikkien alueiden yli, joita kokeiltiin jokaisella kartalla (700 000 kolmella kartalla on tavallista), 5 %:ssa. Läpäisseet karsitaan (alue, joka on enimmäkseen vahvemman saman mitan alueen sisällä, sanoo saman asian). Ne luetaan uudelleen **vakauden** vuoksi: ottelut, jotka näkivät sen, ottelut, joissa se piti, sen suunta viidessä ottelujoukon taitoksessa. Ne testataan vielä kerran ottelujen oman hajonnan mukaan (klusterin kestävä, ottelut klustereina, ei koskaan Poisson), BH taas. Hiljaiset paikat perustasolla (2 % tai enemmän kartan synnyistä, lentoonlähdöistä ja laskuista) jätetään pois.
@@ -148,6 +166,8 @@ Kunkin kartan ottelut luetaan kahdesti, yksi ottelu kerrallaan. Muisti pitää s
 
 Säteihaku (leveys 24, syvyys 3) kolmen taulukon yli. **Elämät** (pelaajien elämät: peli, kartta, tila, luokka, ajoneuvo, puoli, taso, päivämäärien neljännes, ottelun pituuden kolmasosa; K/D, voitto, kuolema elämää kohden, tappoja tunnissa, ansio minuutissa). **Paikat** (tappoja ja kuolemia kartan, tilan, päivämäärien, kartan sektorin 4 x 4, luokan, puolen ja kaistan mukaan). **Vaiheet** (sektori ja ottelun viidesosa: K/D, kuolemia tunnissa läsnäoloa). Ryhmää verrataan koko aineistoon, ottelut klustereina (ryhmän jäännösten sandwich-varianssi ottelun mukaan). Sen vaikutus on kerroin tai nopeussuhde, kutistettu priorilla 20 lopputulosta. Se tarvitsee 30 lopputulosta 8 ottelussa. Tarkennuksen on oltava 10 % vahvempi kuin sen vanhempi. Ryhmät, joissa lopputulos on aina tai ei koskaan (ei tallennettu niille), jätetään pois. Säilytetään: BH alle 5 % kaikkien arvioitujen ryhmien yli, kutistettu suhde vähintään 1,25 (tai 1/1,25), neljä viidestä taitoksesta samaa mieltä, eikä tarkennusta, joka vain toistaa vanhempansa. **Lokerot**-välilehti luettelee ne. Napsautus näyttää jokaisen yhden ehdon tarkennuksen ryhmälle (tutkija), **Lataa** lataa sen ottelut. Varusteita ei ole vielä yhteenvedoissa.
 
+Neljännen taulukon, **kierrokset** (`roundsTable`), kohde on kierroksen tulos: yksi rivi jokaisen elämän kierrosta kohden – kartta, puoli, ottelun osa (kierrokset 1–4, 5–8, ...), ajoneuvo, eniten käytetty ase, pisimpään hallussa pidetty paikka, ostot, ensimmäinen tappo tai ensimmäinen kuolema – verrattuna oman puolen voittoprosenttiin omassa ottelussa (Mantel-Haenszelin ositettu odotus: jäännös on `won - e`, `e` puolen osuus ottelussa), joten lokero ei ole koskaan kartan tai puolen tasapaino. Ottelut pysyvät klustereina. Sen z kalibroidaan: sama sädehaku ajetaan kahdeksan kertaa tuloksilla, jotka on sekoitettu kunkin ottelun kunkin puolen kierrosten kesken (puolen osuus kussakin ottelussa säilyy), ja näiden nolla-z:iden hajonta standardinormaalin yli – ehtojen määrän mukaan, keskeltä (mediaani / 0,674) ja hännästä (99. persentiili / 2,576), suurempi, ei koskaan alle 1 – jakaa todelliset ennen niiden p:tä ja väärien löydösten osuutta (empiirinen nolla, Efron 2004). Syvemmät ryhmät saavat suuremman skaalan: säde pitää tarkennuksia ryhmistä, jotka on valittu suuren z:n takia. Lokeron perusta on sen oma odotus, sen nousu prosenttiyksiköt sen yli, ja se järjestetään nousun ja kierrosmäärän neliöjuuren tulon mukaan, näytön ja taitosten pitämänä (`wracc` on tuki kertaa nousu). Se kantaa ottelut, joissa se näkyi eniten (`matchIds`), ja muutaman niiden kierroksen (`rounds`, `[match, round]`) tarkempaa tarkastelua varten.
+
 #### Muutokset meta-tasolla, joilla on käytännön merkitystä {#meta-shifts-with-practical-significance}
 
 Sekavilla päivämäärillä binomitesti elämille merkitsi lähes jokaisen muutoksen merkitseväksi. `meta` testaa nyt klusterin kestävästi (kunkin ottelun elämät klusterina). Se säilyttää käyttömuutoksen vain, kun se on vähintään 2 pistettä ja 25 %, K/D-muutoksen vain, kun se on vähintään 1,3 kertaa, ja päivämäärien neljännekset trendaavat samaan suuntaan (Kendallin tau vähintään 0,5). Ajoneuvolle usealla kartalla sen on oltava sama suunta useimmilla. Jäljelle jää vain muutama muutos testijoukossa, jossa tavallinen testi merkitsi lähes kaikki.
@@ -159,3 +179,4 @@ Sekavilla päivämäärillä binomitesti elämille merkitsi lähes jokaisen muut
 #### Tarkistukset {#checks}
 
 `scan.test.ts` istuttaa hajanaisen alueen (1,6 kertaa kuolemanopeus 22 solun ympyrän yli, heikko jokaisessa solussa), käytävän, korkeuskaistan ja vain vaiheessa olevan klusterin 240 synteettiseen ylihajontaisen ottelun joukkoon. Kaikki löytyvät, hajanainen piilotetaan. Se ajaa kahdeksan nollajoukkoa, joissa on 60 ottelua: ei yhtään paikkaa. `niche.test.ts` löytää istutetun ajoneuvo x kartta x puoli -ryhmän eikä mitään viidessä nollataulukossa.
+`outcome.test.ts` tarkistaa version 2 yhteenvedon (voitetut kierrokset puolittain, yksiköittäin, pelaajittain ja aseittain, `pw`, yksikkökierrokset); istuttaa kaistan, jonka puoli voittaa 70 % kierroksistaan 35 %:a vastaan (jokaisella ottelulla oma tasapainonsa) – löytyy – ja ajaa 20 nollajoukkoa, joissa on 50 ottelua ja joissa kaistat eivät kerro mitään: ei voittoprosenttipaikkaa; istuttaa yhdelle kartalle AWP:n, joka voittaa puolensa kierroksia 30 prosenttiyksikköä enemmän – löytyy otteluineen ja kierroksineen – ja ajaa 30 nollajoukkoa, joissa on 80 ottelua, jokaisella ottelulla oma tasapainonsa ja yksi puoli vahvempi yhdellä kartalla: ei lokeroa.

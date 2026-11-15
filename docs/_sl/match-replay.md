@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "sl"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Predvajanje tekme
@@ -90,6 +90,8 @@ Razdelek **Taktični prikaz** nariše za nobeno enoto, izbrane, vse ali eno vrst
 ## Cilji {#objectives}
 
 Ko tekma pride s svojimi cilji, razdelek **Cilji** jih nariše na ravni: cone zajema (z lastnikom in napredkom zajema), spawne, letališča, območja in tarče bombardiranja. Vsak sloj se lahko preklopi, z oznakami. Vidni so skozi tla. Ko je naloženih več načinov igre, **Način** filtrira tekme po načinu. Cilji pridejo iz datoteke tekme pretvornika poleg posnetka ali znotraj vsebnika [`.3dheat`](container.md).
+
+Tekme Rainbow Six Siege prinesejo svoja mesta za bombo: dva prostora vsakega mesta sta narisana na njunih tleh kot obrisa z imeni, izpeljana iz tega, kje so igralci stali, medtem ko je igra prostor poimenovala; mesto zemljevida, ki se v tekmi ni igralo, pride iz pretvornikove tabele mest kot krog. V posnetku se mesto kroga na položaju predvajanja obarva jantarno, ostala ostanejo siva. So del sloja con zajema.
 
 ## Oznake in statistika {#labels-and-statistics}
 

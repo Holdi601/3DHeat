@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "mt"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Replay tal-partita
@@ -90,6 +90,8 @@ It-taqsima **Wiri taktiku** tiġbed, għal ebda unità, dawk magħżula, kollha,
 ## Għanijiet {#objectives}
 
 Meta partita tiġi bl-għanijiet tagħha, it-taqsima **Għanijiet** tiġbedhom fuq il-livell: żoni ta' qbid (bis-sid u l-progress tal-qbid), spawns, ajruporti, żoni u miri tal-bombardament, kull saff jista' jitfa' u bit-tikketti. Jidhru minn taħt l-art. Meta jkunu mgħobbija diversi modi tal-logħba, **Modalità** tfilter il-partiti skont il-modalità. L-għanijiet ġejjin mill-fajl tal-partita ta' konvertitur ħdejn ir-reġistrazzjoni jew ġewwa kontenitur [`.3dheat`](container.md).
+
+Il-partiti ta' Rainbow Six Siege iġibu s-siti tal-bomba tagħhom: iż-żewġ kmamar ta' kull sit jinġibdu fuq l-art tagħhom bħala kontorni bl-ismijiet tagħhom, misjuba minn fejn kienu l-plejers waqt li l-logħba kienet issemmi l-kamra; sit tal-mappa li ma ntlagħabx fil-partita jiġi mit-tabella tas-siti tal-konvertitur bħala ċirku. Fir-replay, is-sit tar-rawnd fil-playhead jixgħel kulur ambra, l-oħrajn jibqgħu griżi. Huma parti mis-saff taż-żoni ta' qbid.
 
 ## Tikketti u statistika {#labels-and-statistics}
 

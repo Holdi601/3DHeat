@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "pt"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -91,6 +91,8 @@ A secção **Visualização tática** desenha, para nenhuma unidade, para as sel
 ## Objetivos {#objectives}
 
 Quando uma partida traz os seus objetivos, a secção **Objetivos** desenha-os no nível: zonas de captura (com dono e progresso da captura), pontos de nascimento, aeródromos, áreas e alvos de bombardeamento, cada camada ligável ou desligável, com etiquetas. Vêem-se através do chão. Com vários modos de jogo carregados, **Modo** filtra as partidas por modo. Os objetivos vêm de um ficheiro de partida do conversor, ao lado da gravação ou dentro de um contentor [`.3dheat`](container.md).
+
+As partidas de Rainbow Six Siege trazem os seus locais de bomba: as duas salas de cada local são desenhadas no seu chão como contornos com os seus nomes, deduzidos de onde os jogadores estavam enquanto o jogo nomeava a sala; um local do mapa que não foi jogado na partida vem da tabela de locais do conversor, como um círculo. No replay, o local da ronda na cabeça de reprodução acende-se em âmbar, os outros ficam cinzentos. Fazem parte da camada de zonas de captura.
 
 ## Etiquetas e estatísticas {#labels-and-statistics}
 

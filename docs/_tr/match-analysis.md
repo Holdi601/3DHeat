@@ -3,9 +3,9 @@ title: "Maç analizi (CS2)"
 nav_order: 10
 lang: "tr"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Maç analizi (Counter-Strike 2)
@@ -121,6 +121,16 @@ Yüklü her maç üzerinden:
 - **Oyuncular**: öldürme eksi ölüm ile en iyi on beş, tüm maçlarında birleştirilmiş (Steam ID ile eşleştirilmiş): maçlar, K-D, oynanan raundlara göre ağırlıklı ADR ve KAST, öldürmelere göre ağırlıklı HS%, açılış düelloları. Bir **oyuncuya tıklayın**: tüm maçlar üzerinden ısı haritasında öldürmeleri ve ölümleri.
 
 Yüklü tüm maçlar için Isı haritasında göster düğmeleri bunun altında durur.
+
+## Turları ne belirledi {#what-decided-the-rounds}
+
+Sekme sayar; [İçgörüler](insights.md#who-won-what-decided-the-rounds) açıklar. Bir maçın ısı haritası tablosu yüklüyken (`won` sütununu taşır), **İçgörüler** her tarafın turlarını içlerinde ne olduğuna göre böler - açılış düellosu, satın alma, takaslanan bir ilk ölüm, kurulum, ekipman, erken bir ilk temas, tutulan her yer ve ilk 25 sn içinde varılan her yer - ve hangisinin fark yarattığını söyler: kazanma oranlarının farkı, %95 aralığı ve q ile; bir kolda sekizden az tur varsa *az tur* ile. Dönüm noktalarını (kazanma olasılığını en çok değiştiren öldürmeler ve kurulumlar) ve en çok ekleyen ya da kaybettiren oyuncuları ve yerleri adlandırır; **Özet** ve **Anlatıcı** bunlarla başlar. Uydurma bir örnek:
+
+> T, Mid'i tuttuğu 19 turun %79'unu kazandı; tutmadığı 21 turun ise %24'ünü (55 puan, %95: 26 ile 74 arası) - q 0,004.
+>
+> Dönüm noktaları: 17. tur, 48. sn; CT'nin B site'taki bir öldürmesi şansını %31'den %58'e çıkardı ve turu aldı.
+
+Tek bir maçta 30'dan az tur vardır, bu yüzden kazanma olasılıkları hayattaki adamlar, kurulum ve saatten oluşan sabit bir önsel modelden gelir; metin bunu söyler. Çok sayıda maç üzerinde aynı soruları [toplu analiz](mass-analysis.md#who-won) sorar.
 
 ## Isı haritasında göster {#show-in-the-heatmap}
 

@@ -4,9 +4,9 @@ parent: "Filtre a nástroje"
 nav_order: 1
 lang: "sk"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtre
@@ -41,6 +41,10 @@ Vypísané sú len druhy, ktoré sa vyskytujú. Stĺpce hodnôt (`cost_*`, `earn
 Kategóriový zoznam s viac ako 12 hodnotami dostane vyhľadávacie pole (*Hľadať n hodnôt*) a tlačidlo **Len tieto**, ktoré povolí presne zodpovedajúce hodnoty.
 
 Ktoré stĺpce sa dajú filtrovať, sa rozhoduje pri načítaní, pretože sa musia vtedy prečítať. Ak nie je ponechaný žiadny stĺpec, panel to povie a odkáže na *Ponechať na filtrovanie*.
+
+## Rýchle filtre pre Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Keď je načítaný zápas Rainbow Six Siege, panel začína tlačidlami, ktoré nastavia filtre jedným kliknutím: **Diery po guľkách a stopy** (stopy, ktoré zostali na leveli), **Stopy so strelcom** a **Stopy s triedou zbrane** (tie, pre ktoré sa podarilo zistiť strelca alebo zbraň zo strelcovho zabitia v tom istom okamihu; ďalej ich rozdeľte alebo filtrujte podľa `byOperator` alebo `byItemClass`), **Pokusy o položenie a zneškodnenie**, **Prerušené pokusy** (začaté, nedokončené, tam, kde hráč prestal) a **Zosilnenia** (kde bola zosilnená stena alebo poklop, pri obrancovi, ktorého odvodí konvertor). Každé tlačidlo nahradí filter na stĺpci udalostí a ostatné ponechá; **Zrušiť všetky filtre** to vráti späť. Stĺpce sú opísané v dokumentácii konvertora.
 
 ## Číselné stĺpce (rozsah) {#numeric-columns-range}
 

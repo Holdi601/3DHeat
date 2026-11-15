@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "ga"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -91,6 +91,8 @@ Athraíonn `T` (nó an scoránach **Taispeáin mar thaispeáint thaictiúil**) a
 ## Cuspóirí {#objectives}
 
 Nuair a thagann cluiche lena chuspóirí, tarraingíonn an chuid **Cuspóirí** iad ar an leibhéal: criosanna gabhála (le húinéir agus dul chun cinn na gabhála), spawns, aerpháirceanna, limistéir agus spriocanna buamála, gach sraith in-athraithe, le lipéid. Feictear iad tríd an talamh. Nuair a bhíonn roinnt modhanna cluiche luchtaithe, scagann **Mód** na cluichí de réir mhód. Tagann cuspóirí ó chomhad cluiche tiontaire in aice leis an taifeadadh nó laistigh de [choimeádán `.3dheat`](container.md).
+
+Tugann cluichí Rainbow Six Siege a suíomhanna buama leo: tarraingítear dhá sheomra gach suímh ar a n-urlár mar imlínte lena n-ainmneacha, oibrithe amach ón áit a raibh na himreoirí ina seasamh nuair a d'ainmnigh an cluiche an seomra; tagann suíomh den léarscáil nár imríodh sa chluiche ó thábla suíomhanna an tiontaire mar chiorcal. San athsheinm lasann suíomh an bhabhta ag an gceann seinnte in ómra, agus fanann na cinn eile liath. Is cuid de shraith na gcriosanna gabhála iad.
 
 ## Lipéid agus staitisticí {#labels-and-statistics}
 

@@ -3,9 +3,9 @@ title: "Hromadná analýza"
 nav_order: 8
 lang: "cs"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Hromadná analýza: tisíce zápasů najednou
@@ -60,14 +60,24 @@ Vyberte složku (nebo soubory; **Přidat složku…** připojí další). Okno m
 | Hráči | různí hráči, zápasy na hráče, hráči na zápas, nejčastější hráči |
 | Strany | každá strana každé mapy: zápasy vyhrané oproti rovnoměrnému rozdělení |
 | Boj zblízka | data z kol: otevírací souboje podle strany a jejich přeměna, výměny, hráč na pozici proti držiteli, křížová palba, vstupy po zábleskech, míření, zakládání (plants), převaha v počtu a, **Podle mapy**, místa, která zabíjejí hráče, kteří do nich vstupují – každé jako podíl s jeho intervalem Wilson, z počtů `cqb` v souhrnech ([Boj zblízka a kola](close-quarters.md)) |
+| Povrchy R6 | stopy Rainbow Six Siege na úrovni (díry po kulkách a podobně) podle povrchu úrovně: stopy, na kolo mapy, místnost, podíl s určeným střelcem; kliknutí otevře druhy stop, operátory a třídy zbraní střelců a to, kde na povrchu stopy jsou (malá teplotní mapa z buněk po čtvrt metru); povrch si drží své id napříč zápasy jedné verze mapy. Z počtů `marks` v souhrnech |
 | Mapa | sečtená mřížka mapy: přítomnost, zabití, smrti, K/D, libovolná událost, tok a **horká v kolika zápasech** (stabilita); podle týmu, při 1, 2, 4 nebo 8násobku buňky |
-| Místa | místa, která vynikají v číslech, ale ne v teplotní mapě (velká oblast, která je celkově rušná, koridory, výškové pásy); **Najít místa** |
-| Niky | skupiny, které si vedou výrazně lépe nebo hůře než zbytek (vozidlo na jedné mapě, sektor v jedné výšce); **Najít niky** |
+| Místa | místa, která vynikají v číslech, ale ne v teplotní mapě (velká oblast, která je celkově rušná, koridory, výškové pásy), a místa, jejichž držitelé vyhrávají víc nebo méně svých kol; **Najít místa** |
+| Niky | skupiny, které si vedou výrazně lépe nebo hůře než zbytek (vozidlo na jedné mapě, sektor v jedné výšce), a skupiny kol vyhraných nad to, co jejich strana vyhrála ve stejných zápasech; **Najít niky** |
 | Zjištění | detektory přes mnoho zápasů a detektory map (níže); **Kopírovat zprávu (JSON)** dá JSON, který čte jazykový model |
 
 ## Zjištění přes mnoho zápasů {#insights-over-many-matches}
 
 Karta **Místa** najde místa, která vynikají v číslech, ale ne v teplotní mapě: velkou oblast, která je celkově rušná, koridor, výškový pás, místo rušné jen v jedné části zápasu. Ta místa, která prostý tepelný obraz neukazuje, označí jako **skrytá** a obrysuje je v 3D pohledu. **Načíst** tam přeletí se zápasy, které v sobě drželo. Karta **Niky** najde skupiny (vozidlo na jedné mapě a straně, sektor v jedné výšce), které si vedou výrazně lépe nebo hůře než zbytek; kliknutím na jednu uvidíte její zpřesnění.
+
+### Kdo vyhrál {#who-won}
+
+Kde zápasy říkají, kdo vyhrál každé kolo ([sloupec výsledku](data-formats.md#outcome-columns) `won`), je výsledek samostatným cílem:
+
+- **Místa: podíl výher.** Pro každou stranu podíl jejích kol na místě, která vyhrála, oproti podílu, který vyhrála kdekoli ve stejném zápase – takže vyváženost mapy, strany i samotného zápasu je základ, a vyniknou jen místa, jejichž držitelé vyhrávají víc (nebo méně) svých kol. Vymyšlený příklad: *„Dust: strana T vyhrává víc svých kol, když je tady: 61 % z 412 vyhraných, oproti 49 % očekávaným podle jejího vlastního podílu ve stejných zápasech (šance 1,6x; drženo v 31/48 zápasech).“* Stejná míra falešných objevů a stejné kontroly stability jako u každého místa; **Načíst** načte zápasy, ve kterých bylo drženo, a ukáže pozice té strany.
+- **Niky: výhra kola.** Tabulka **Kola** obsahuje kolo každého života: mapu, stranu, část zápasu (kola 1–4, 5–8, ...), vozidlo (operátor, agent), zbraň, kterou použil nejvíc, místo, které držel nejdéle, nákup (eco, force, full) a to, zda jeho strana získala první zabití. Skupina se posuzuje podle toho, co její strana vyhrála ve stejných zápasech, takže *T na Dust s AWP* je nika jen tehdy, když se tato kola vyhrávala častěji než ostatní kola T v těch zápasech. Vymyšlený příklad: *„m1 · T · AWP: vyhrává 80 % z 320 kol, oproti 62 % očekávaným od stejných stran ve stejných zápasech (šance 2,3x; 40 zápasů).“* Řazeno podle nárůstu krát podpora; **Načíst** načte zápasy, jejichž kola to ukazují nejvíc.
+
+Obojí potřebuje souhrny verze 2 (viz [Získání souhrnů](#getting-the-summaries)): starší se spočítají znovu.
 
 Karta **Zjištění** najde přes všechny zápasy vozidla, která se vymění nebo vyhrají lépe či hůře než zbytek, místa horká v pravidelném podílu zápasů, strany, které vyhrávají víc než rovnoměrné rozdělení, vozidla, jejichž použití se mění s daty, a části zápasu, které drží víc zabití, než by byla rovnoměrně rozložena. Každé zjištění nese své počty, účinek, interval a míru falešných objevů (držená na 5 %). Klik načte jeho zápasy. Podrobnosti: [Pro vývojáře](#for-developers).
 
@@ -108,6 +118,12 @@ Prostý JSON (`src/mass/types.ts`), asi 5 až 30 KB komprimovaně na zápas:
 - zápas: hra, mapa, režim, mise, začátek, délka, řádky, životy, hráči, AI, týmy (životy, hráči, přítomnost, zabití, smrti, výhra, peníze), vítěz;
 - na vozidlo a tým: třída, úroveň, životy, životy hráčů, přítomnost, události podle kanonického druhu, zabití podle třídy cíle, výhry, peníze;
 - na hráče (podle uživatelského ID, jinak podle jména): tým, životy, přítomnost, zabití, smrti, zásahy, starty, výhry, vozidla; na zbraň: události podle druhu;
+- se sloupcem výsledku (verze 2): vyhraná a odehraná kola podle týmu, vozidla (`rw`,
+  vždy jeden život a jedno kolo), hráče a zbraně (kola, ve kterých ji strana použila);
+  kolo každého života (`outcome.u`: kolo, strana, vozidlo, nejpoužívanější zbraň, nejdéle
+  držené místo, nákup, výhra) a číslo, vítěz a strana prvního zabití každého kola
+  (`outcome.r`);
+
 - sloupce ekonomiky (`cost_*`, `earn_*`) a jejich součty;
 - fáze: události podle druhu ve 20 pásech délky zápasu a podle minuty;
 - chování: měření kolektivního chování zápasu (shoda, stádní chování podle trasy, pruhy, shlukování, vůdci, opozdilci, bod zlomu, riziko po ztrátách, série, shoda na nákupech, potlačení), každé se svým vlastním nulovým modelem, p a q – viz [Kolektivní chování](collective-behaviour.md);
@@ -123,6 +139,9 @@ Prostorová část je udělána pro statistiky skenování oblastí libovolné v
 - **Expozice vedle každého počtu.** Sekundy přítomnosti na buňku, na tým (`pt`), na třídu vozidla (`pc`) a na výškový pás (`ph`), takže míra, očekávání a poměr oblasti se spočítají pro libovolnou podskupinu.
 - **Výška.** Pásy nad podlahou zápasu (1. percentil výšky): pod 3 m, 3–10, 10–30, 30–100, 100–300, 300–1000, 1000–3000, nad; soubor se sloupcem `floor`/`storey`/`deck` se pásmuje podle svých podlaží. `y` je průměrná výška každé buňky, `y0` její nejnižší bod (její podlaží, pro výšku nad ním).
 - **Události** jako n-tice `[buňka, druh, tým, třída, pás, počet]`.
+- **Kola podle výsledku** (verze 2, se sloupcem výsledku a dvěma nebo více koly):
+  `pw` jako `[cell, team, rounds won, rounds lost]` – kola, ve kterých každá strana strávila
+  v buňce sekundu nebo víc, podle jejího výsledku v kole.
 - **Časové řezy** na hrubé úrovni (8 buněk na stranu), podle minuty od začátku zápasu: `[cx, cz, minuta, druh, hodnota]`, sekundy přítomnosti jako druh `GRID_KINDS.length`; fáze zápasu jsou minuty z délky.
 - Řídké, počty celá čísla, sekundy na desetinu: omezeno tím, co se stalo.
 
@@ -134,8 +153,8 @@ Fáze B hledá to, co v číslech vyniká, aniž by to upoutalo oko: velkou obla
 
 Zápasy každé mapy se čtou dvakrát, jeden zápas po druhém. Paměť drží součty na rastru nejvýš 64 buněk na stranu (16 pro prostor-čas skenování), nikdy ne zápasy.
 
-- **Míry.** Míra události na sekundu přítomnosti – zabití, smrti, zásahy, starty, zajetí, u všech jednotek, na třídu (4 s nejvíce událostmi), na výškový pás – a podíl zabití na zabitích a smrtích (všech, na stranu, na pás). Které třídy a strany se berou, určují hlavičky (`planOf`).
-- **Očekávání podle zápasu.** Míra každého zápasu zvlášť, rozložená přes jeho vlastní přítomnost v buňce, je očekávání buňky (Kulldorffovo skenování upravené o kovariáty, stratifikované podle zápasu): několik krvavých zápasů nebo jeden přeplněný server nevytvoří žádné místo.
+- **Míry.** Míra události na sekundu přítomnosti – zabití, smrti, zásahy, starty, zajetí, u všech jednotek, na třídu (4 s nejvíce událostmi), na výškový pás – a podíl zabití na zabitích a smrtích (všech, na stranu, na pás), a **podíl výher** každé strany: její kola v buňce vyhraná oproti prohraným (`pw`), kde 8 a více zápasů mapy počítá kola podle výsledku. Které třídy a strany se berou, určují hlavičky (`planOf`).
+- **Očekávání podle zápasu.** Míra každého zápasu zvlášť, rozložená přes jeho vlastní přítomnost v buňce, je očekávání buňky (Kulldorffovo skenování upravené o kovariáty, stratifikované podle zápasu): několik krvavých zápasů nebo jeden přeplněný server nevytvoří žádné místo. Pro podíl výher je očekáváním vlastní podíl vyhraných kol strany v daném zápase, takže vyváženost mapy a strany nikdy není místem. Kolo ve více buňkách oblasti se počítá v každé z nich; rozptyl měřený ve velikosti oblasti to zohledňuje.
 - **Rozptýlení.** Zápasy se od Poissona liší daleko víc. Rezidua každého zápasu se sečtou v blocích 1, 2, 4, 8, 16 buněk; rozptýlení každé velikosti bloku (čtverce reziduí / rozptyl při nulové hypotéze, sdružené, nejhorších 5 % bloků vynecháno) škáluje každý test oblasti té velikosti: poměr věrohodnosti kvazi, pro míry Poisson, pro podíly binomický.
 - **Oblasti.** Kruhy o 0,75 až 18 buňkách; elipsy pod šesti úhly, 3 a 6krát delší než široké, 3 až 18 buněk (koridory; osa je `place.path` zjištění); zóny rostoucí po buňkách od nejsilnějších lokálních buněk Getis-Ord Gi\*, dokud roste výsledek oblasti (nepravidelné tvary) – rostou na jedné polovině zápasů a testují se na druhé, takže volnost růstu nestojí žádné falešné místo; každý výškový pás proti ostatním pásům zápasu přes celou mapu (robustní vůči shlukům); prostor-časové válce: kruh v jedné nebo dvou pětinách délky zápasu, proti vlastnímu rozptylu událostí zápasu v místě a čase (permutační skenování prostor-čas).
 - **Testování.** p z kvazi věrohodnosti; Benjamini-Hochberg přes každou oblast zkoušenou na každé mapě (700 000 na třech mapách je obvyklé) na 5 %. Co projde, se pročistí (oblast z větší části uvnitř silnější oblasti stejné míry říká totéž), znovu se přečte pro svou **stabilitu** – zápasy, které ji viděly, zápasy, které ji držely, její směr v pěti foldech zápasů – a otestuje se ještě jednou při rozptylu, který samy zápasy ukazují (robustní vůči shlukům, zápasy jako shluky, nikdy ne pod Poissonem), znovu BH. Klidná místa na základně (2 % a víc spawnů, vzletů a přistání mapy) se vynechají.
@@ -148,6 +167,8 @@ Karta **Místa** je vypíše (ve výchozím nastavení jen skrytá; podle mapy, 
 
 Beam search (šířka 24, hloubka 3) přes tři tabulky: **životy** (životy hráčů: hra, mapa, režim, třída, vozidlo, strana, úroveň, čtvrtletí dat, třetina délek zápasů; K/D, výhra, smrt jako život, zabití za hodinu, výdělek za minutu), **místa** (zabití a smrti podle mapy, režimu, dat, sektoru mapy 4 × 4, třídy, strany, pásu) a **fáze** (sektor a pětina zápasu: K/D, smrti za hodinu přítomnosti). Skupina se testuje proti celku se zápasy jako shluky (sendvičový rozptyl jejích reziduí podle zápasu), její účinek je poměr šancí nebo míry smrštěný priorem 20 výsledků. Potřebuje 30 výsledků v 8 zápasech; zpřesnění musí být o 10 % silnější než jeho rodič; skupiny, kde je výsledek nula nebo všechno (u nich se to nezaznamenává), se vynechají. Ponecháno: BH pod 5 % přes každou vyhodnocenou skupinu, smrštěný poměr alespoň 1,25 (nebo 1/1,25), čtyři z pěti foldů souhlasí, a ne zpřesnění, které jen opakuje svého rodiče. Karta **Niky** je vypíše; klik ukáže každé zpřesnění skupiny o jedné podmínce (průzkumník), **Načíst** načte její zápasy. Výbavy zatím nejsou v souhrnech.
 
+Čtvrtá tabulka, **kola** (`roundsTable`), má za cíl výsledek kola: jeden řádek na kolo jednoho života – mapa, strana, část zápasu (kola 1–4, 5–8, ...), vozidlo, nejpoužívanější zbraň, nejdéle držené místo, nákup, první zabití nebo první smrt – posuzovaný podle podílu výher vlastní strany ve vlastním zápase (stratifikované očekávání podle Mantela-Haenszela: reziduum je `won - e`, `e` podíl strany v zápase), takže nika nikdy není vyváženost mapy ani strany. Zápasy zůstávají shluky. Její z je kalibrované: stejné paprskové hledání běží osmkrát na výsledcích zamíchaných mezi koly každé strany každého zápasu (podíl strany v každém zápase zůstává zachován), a rozptyl těchto nulových z nad standardní normální rozdělení – podle počtu podmínek, ze středu (medián / 0,674) a z chvostu (99. percentil / 2,576), větší z nich, nikdy pod 1 – vydělí skutečná z před jejich p a mírou falešných objevů (empirická nula, Efron 2004). Hlubší skupiny dostanou větší měřítko: paprsek ponechává zpřesnění skupin vybraných pro jejich velké z. Základem niky je její vlastní očekávání, jejím nárůstem body nad ním, a řadí se podle nárůstu krát odmocnina z jejích kol, podepřená důkazy a částmi (`wracc` je podpora krát nárůst). Nese zápasy, kde se projevila nejvíc (`matchIds`), a několik jejich kol (`rounds`, `[match, round]`) pro podrobný pohled.
+
 #### Úniky z meta s praktickou významností {#meta-shifts-with-practical-significance}
 
 Na smíšených datech binomický test na životech označil skoro každou změnu za významnou. `meta` nyní testuje robustně vůči shlukům (životy každého zápasu jsou shluk), ponechá posun použití jen při 2 bodech a aspoň 25 %, posun K/D 1,3násobný, čtvrtletí dat, která se hýbou stejným směrem (Kendallovo tau alespoň 0,5), a u vozidla na více mapách stejný směr na většině z nich. Zůstane jen několik posunů na testovací sadě, kde prostý test označil skoro všechny.
@@ -158,4 +179,4 @@ Na smíšených datech binomický test na životech označil skoro každou změn
 
 #### Kontroly {#checks}
 
-`scan.test.ts` zasadí rozptýlenou oblast (1,6násobek míry smrti přes kruh 22 buněk, slabá v každé buňce), koridor, výškový pás a shluk jen v jedné fázi do 240 syntetických přerozptýlených zápasů – všechny se najdou, rozptýlená je skrytá – a spustí osm nulových sad po 60 zápasech: žádné místo. `niche.test.ts` najde zasazenou skupinu vozidlo × mapa × strana a v pěti nulových tabulkách nic.
+`scan.test.ts` zasadí rozptýlenou oblast (1,6násobek míry smrti přes kruh 22 buněk, slabá v každé buňce), koridor, výškový pás a shluk jen v jedné fázi do 240 syntetických přerozptýlených zápasů – všechny se najdou, rozptýlená je skrytá – a spustí osm nulových sad po 60 zápasech: žádné místo. `niche.test.ts` najde zasazenou skupinu vozidlo × mapa × strana a v pěti nulových tabulkách nic. `outcome.test.ts` kontroluje souhrn verze 2 (vyhraná kola podle strany, jednotky, hráče a zbraně, `pw`, kola jednotek); zasadí koridor, jehož strana vyhrává 70 % svých kol oproti 35 % (každý zápas s vlastní vyvážeností) – nalezen – a spustí 20 nulových sad po 50 zápasech, kde koridory nic neříkají: žádné místo podílu výher; zasadí AWP na jednu mapu, která vyhrává kola své strany o 30 bodů častěji – nalezena, s jejími zápasy a koly – a spustí 30 nulových sad po 80 zápasech, každý zápas s vlastní vyvážeností a jednou stranou silnější na jedné mapě: žádná nika.

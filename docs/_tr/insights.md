@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "tr"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # İçgörüler
@@ -44,6 +44,7 @@ Listenin en üstündeki satırlar (örneğin para toplamları) bulgulardan önce
 | **Oyuncular** | Aynı sınıftaki diğerlerinden çok daha fazla ya da az öldüren ya da ölen oyuncular | kişiler ve öldürmeler |
 | **Dar geçitler ve kanatlar** | Dar geçitler (çevredeki zemine göre çok daha fazla geçiş) ve kanat güzergâhları (nadiren kullanılan ama öldürmelere çıkan) | kişiler |
 | **Değer** | *Pahalı zemin* ve *Kazançlı zemin* | [değer sütunları](value-weighting.md) |
+| **Turları ne belirledi** | Kazanılan turları kaybedilenlerden ne ayırdı ve en çok kazanma olasılığı ekleyen ya da kaybettiren oyuncular (bkz. [Kim kazandı](#who-won-what-decided-the-rounds)) | turlar, öldürmeler ve ölümler ile [sonuç sütunları](data-formats.md#outcome-columns) (`won`) |
 
 Veride çalışamayan dedektörler, nedeniyle birlikte en altta listelenir.
 
@@ -51,9 +52,42 @@ Veride çalışamayan dedektörler, nedeniyle birlikte en altta listelenir.
 
 Her yer ya da grup haritanın geri kalanına karşı sınanır (kesin ikili ya da oran testleri). Yanlış keşif oranı %5'te tutulur (Benjamini-Hochberg). Şans bir örüntü gibi görünebilir; bu, yanlış alarmları düşük tutar: gösterilen bulguların en fazla yirmide birinin şans olması beklenir. Az olaydan gelen etkiler sıralamadan önce "etki yok"a doğru çekilir. En fazla 60 bulgu listelenir ve her dedektör en üstte birkaç yer alır.
 
+### Kim kazandı: turları ne belirledi {#who-won-what-decided-the-rounds}
+
+Veri her turu kimin kazandığını söylüyorsa (`won` [sonuç sütunu](data-formats.md#outcome-columns): CS2, Rainbow Six Siege, War Thunder ...), İçgörüler sonucu konu alır. Her taraf için turları içlerinde ne olduğuna göre böler ve kazanma oranlarını karşılaştırır:
+
+| Etken | Tarafın bu etkenle turları | ... ve bu etken olmadan |
+|---|---|---|
+| Açılış düellosu | ilk öldürmeyi taraf yaptı | ilk taraf öldü |
+| Satın alma | satın alması diğer taraftan iyiydi | daha kötü |
+| Takaslanan ilk ölüm | ilk ölümü 5 sn içinde takaslandı | takaslanmadı |
+| Kurulum | bombayı kurdu | kurulum yok |
+| Ekipman | olağan turundan daha çok bomba | daha az |
+| Erken temas | ilk düello maçın medyan zamanından önce geldi | daha geç |
+| Tutulan bir yer | bir oyuncu yerde 5 sn ya da daha uzun durdu | kimse durmadı |
+| Erken varılan bir yer | bir oyuncu oraya ilk 25 sn içinde vardı (rota) | kimse varmadı |
+
+Her karşılaştırma, iki kazanma oranının farkıdır; %95 aralığı (Newcombe), Fisher'ın kesin p'si ve denenen tüm etkenler üzerinden bir q (Benjamini-Hochberg) ile birlikte. 8'den az turu olan bir kol *az tur* olarak işaretlenir. %5 yanlış keşif oranının altında kalanlar bulgu olur; en güçlüleri diğer dedektörlerin bulgularının üstünde sıralanır (bir sonuç bulgusu, aynı etki ve kanıta sahip bir bulgunun 1,35 katı ağırlık taşır).
+
+40 tur üzerinde uydurma bir örnek:
+
+> **T**, **Mid**'i tuttuğu 19 turun %79'unu kazandı; tutmadığı 21 turun ise %24'ünü (55 puan, %95: 26 ile 74 arası) - q 0,004.
+
+Turun **kazanma olasılığını** da izler - her tarafın her andaki şansı; hayattaki adamlardan, kurulumdan ve saatten: 30 ya da daha fazla tur varsa turlara uydurulur, yoksa sabit bir önsel modelden gelir (ve metin hangisi olduğunu söyler). Buradan **dönüm noktaları** (şansı en çok değiştiren öldürmeler ve kurulumlar) ve her oyuncunun **eklenen kazanma olasılığı** çıkar: yaptığı öldürmeler ve kurulumlar lehine, ölümleri aleyhine sayılır; maç boyunca tur değeri olarak, tur başına ortalama aralığıyla birlikte, sıfıra karşı sınanır. Yerler de aynı dengeyi alır: orada yapılan düellolarda hangi taraf en çok kazandı.
+
+Verinin her iki tarafla turlar, öldürmeler ve ölümler ile `won` sütununa ihtiyacı vardır; tutulan yerler için adlı yerler (`place`), satın alma için bir `buy` sütunu.
+
 ## Özet {#debrief}
 
-**Özet** sekmesi bulguları kısa bir metne yazar: bir giriş, en net bulgu, taktik için bir tane, dengeleme için bir tane, geri kalanı dedektöre göre gruplanmış ve kaçının daha zayıf kanıta dayandığı. Her paragrafta, bulgularını gösteren numaralı düğmeler vardır. **Metni kopyala** onu kopyalar.
+**Özet** sekmesi bulguları kısa bir metne yazar: bir giriş, en net bulgu, taktik için bir tane, dengeleme için bir tane, sonra - veri kimin kazandığını söylüyorsa - turları neyin belirlediği, geri kalanı dedektöre göre gruplanmış ve kaçının daha zayıf kanıta dayandığı.
+
+Turları neyin belirlediği dört paragrafta gelir: skor ve kazanma olasılıklarının nereden geldiği; sayıları, aralığı ve q'su ile en güçlü etkenler (hiçbiri yanlış keşif oranını geçmezse metin *henüz hiçbiri kesin değil* der ve yine de en güçlüsünü adlandırır); en büyük üç dönüm noktası; ve en çok kazanma olasılığı ekleyen ve kaybettiren oyuncular, en çok kazanan yerlerle birlikte. Uydurma bir örnek:
+
+> Sonucu bilinen 40 turun 23'ünü T, 17'sini CT kazandı (T: %58, %95: %42 ile %72 arası). Kazanma olasılıkları bu turlara uydurulmuş bir modelden gelir.
+>
+> Kazanılan turları kaybedilenlerden ayıran: T, Mid'i tuttuğu 19 turun %79'unu kazandı; tutmadığı 21 turun ise %24'ünü (55 puan, %95: 26 ile 74 arası) (q 0,004), ...
+>
+> Dönüm noktaları: 17. tur, 48. sn; CT'nin B site'taki bir öldürmesi şansını %31'den %58'e çıkardı ve turu aldı, ... Her paragrafta, bulgularını gösteren numaralı düğmeler vardır. **Metni kopyala** onu kopyalar.
 
 ![Yerleşik anlatıcının yazdığı özet](../assets/img/tr/debrief.webp)
 
@@ -72,11 +106,13 @@ Yerleşik anlatıcı çevrimdışı çalışır, sizin dilinizde. Üstündeki **
 | **Harici yapay zekâ kullan** | Varsayılan kapalı |
 | **Oyuncu adlarını gönder** | Varsayılan kapalı: oyuncular P1, P2 ... olarak gönderilir |
 
-Sonra isteğe bağlı bir soru yazın ve **Yapay zekâ ile yaz**'a basın. Yalnızca bulgular ve sayıları gönderilir - veri satırlarınız hiçbir zaman. Yanıt akarak gelir; atıf yapılan bulgular düğmeye dönüşür.
+Sonra isteğe bağlı bir soru yazın ve **Yapay zekâ ile yaz**'a basın. Yalnızca bulgular ve sayıları gönderilir - veri satırlarınız hiçbir zaman. Yanıt akarak gelir; atıf yapılan bulgular düğmeye dönüşür. Veri kimin kazandığını söylüyorsa modele, turları neyin belirlediğiyle, her sayının aralığı ve q'su ile başlaması ve bir etken az tura dayanıyorsa ya da kazanma olasılıkları önsel modelden geliyorsa bunu söylemesi bildirilir.
 
 ## Anlatıcı {#caster}
 
-**Tek bir maç** için (birkaç tane yüklüyse birini seçin), **Anlatıcı** izlemeye değer anları bulur: ilk kan, çoklu öldürmeler, takaslar, son adam savaşları, hedef değişimleri, geri dönüşler, öne çıkan oyuncular, uzun atışlar.
+**Tek bir maç** için (birkaç tane yüklüyse birini seçin), **Anlatıcı** izlemeye değer anları bulur: ilk kan, çoklu öldürmeler, takaslar, son adam savaşları, hedef değişimleri, geri dönüşler, öne çıkan oyuncular, uzun atışlar ve **dönüm noktaları** - bir tarafın turu kazanma şansını en çok değiştiren öldürmeler (her tarafta hayatta kalan oyunculara göre, yeniden doğuşsuz turlarda).
+
+Veri her turu kimin kazandığını söylüyorsa her an bunu da söyler: *"Anna, Ben'i indiriyor: T'nin turu kazanma şansı %38'den %62'ye çıkıyor - ve turu alıyorlar."* Sonradan kazanan tarafın bir anı, anlatıcı hangilerini tutacağını seçerken daha çok sayılır ve bir geri dönüş kazanılan turlarla sayılır.
 
 ![Shooter demosunun bir turu için anlatıcının anları](../assets/img/tr/caster.webp)
 

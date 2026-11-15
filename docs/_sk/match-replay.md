@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "sk"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Prehranie zápasu
@@ -90,6 +90,8 @@ Sekcia **Taktické zobrazenie** kreslí, pre žiadnu jednotku, vybrané, všetky
 ## Ciele {#objectives}
 
 Keď zápas prichádza s cieľmi, sekcia **Ciele** ich kreslí na mape: zóny dobytia (s vlastníkom a priebehom dobývania), miesta odrodenia, letiská, oblasti a ciele bombardovania, každú vrstvu možno zapnúť alebo vypnúť, s popiskami. Sú vidno cez zem. Pri načítaných viacerých herných režimoch **Režim** filtruje zápasy podľa režimu. Ciele pochádzajú zo zápasového súboru prekonvertéra vedľa záznamu alebo vo vnútri kontajnera [`.3dheat`](container.md).
+
+Zápasy Rainbow Six Siege prinášajú svoje miesta bomby: dve miestnosti každého miesta sa kreslia na ich podlahe ako obrysy s názvami, odvodené z toho, kde hráči stáli, kým hra miestnosť pomenúvala; miesto mapy, ktoré sa v zápase nehralo, pochádza z tabuľky miest konvertora ako kruh. V prehrávaní sa miesto kola na pozícii prehrávania rozsvieti jantárovo, ostatné zostanú sivé. Sú súčasťou vrstvy zón dobytia.
 
 ## Popisy a štatistiky {#labels-and-statistics}
 

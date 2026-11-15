@@ -3,9 +3,9 @@ title: "Kampanalyse (CS2)"
 nav_order: 10
 lang: "da"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Kampanalyse (Counter-Strike 2)
@@ -167,6 +167,16 @@ Over alle indlæste kampe:
 - **Spillere**: de femten bedste efter drab minus dødsfald, samlet over alle deres kampe (matchet efter Steam-ID): kampe, K-D, ADR og KAST vægtet efter spillede runder, HS% vægtet efter drab, åbningsdueller. **Klik på en spiller** for deres drab og dødsfald på tværs af alle kampe i heatmappet.
 
 Knapperne Vis i heatmappet for alle indlæste kampe står under den.
+
+## Hvad der afgjorde runderne {#what-decided-the-rounds}
+
+Fanen tæller; [Indsigter](insights.md#who-won-what-decided-the-rounds) forklarer. Med en kamps heatmap-tabel indlæst (den har kolonnen `won`) deler **Indsigter** hver sides runder efter, hvad der skete i dem – åbningsduellen, købet, en byttet første død, plantningen, udstyr, en tidlig første kontakt, hvert sted holdt og hvert sted nået i de første 25 s – og siger, hvad der gjorde forskellen, med forskellen mellem vinderaterne, dens 95 %-interval og q, og *få runder*, hvor en arm har færre end otte. Den nævner vendepunkterne (de drab og plantninger, der flyttede vindersandsynligheden mest) og de spillere og steder, der tilføjede eller kostede mest, og **Gennemgang** og **Kommentator** begynder med dem. Et opdigtet eksempel:
+
+> T vandt 79 % af de 19 runder, hvor den holdt Mid, mod 24 % af 21 uden (55 point, 95 % 26 til 74) – q 0,004.
+>
+> Vendepunkter: runde 17 ved 48 s, et drab af CT ved B site flyttede dens chance fra 31 % til 58 %, og den tog runden.
+
+Én kamp har færre end 30 runder, så dens vindersandsynligheder kommer fra en fast prior-model ud fra de levende mænd, plantningen og uret; teksten siger det. Over mange kampe stilles de samme spørgsmål af [masseanalysen](mass-analysis.md#who-won).
 
 ## Vis i heatmappet {#show-in-the-heatmap}
 

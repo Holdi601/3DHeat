@@ -3,9 +3,9 @@ title: "Analiza meciului (CS2)"
 nav_order: 10
 lang: "ro"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Analiza meciului (Counter-Strike 2)
@@ -127,6 +127,16 @@ Peste fiecare meci încărcat:
 - **Jucători**: cei cincisprezece cei mai buni după eliminări minus morți, adunați peste toate meciurile lor (potrivite după Steam ID): meciuri, K-D, ADR și KAST ponderate după rundele jucate, HS% ponderat după eliminări, duelurile de deschidere. **Apasă pe un jucător** ca să-i vezi eliminările și morțile din toate meciurile pe harta termică.
 
 Butoanele Arată pe harta termică pentru toate meciurile încărcate stau sub el.
+
+## Ce a decis rundele {#what-decided-the-rounds}
+
+Fila numără; [Observațiile](insights.md#who-won-what-decided-the-rounds) explică. Cu tabelul hărții termice al unui meci încărcat (are coloana `won`), **Observații** împarte rundele fiecărei tabere după ce s-a întâmplat în ele - duelul de deschidere, cumpărarea, o primă moarte răzbunată, plantarea, utilitarele, un prim contact timpuriu, fiecare loc ținut și fiecare loc atins în primele 25 s - și spune care a făcut diferența, cu diferența ratelor de victorie, intervalul ei de 95% și q, și *puține runde* acolo unde o ramură are mai puțin de opt. Numește momentele decisive (eliminările și plantările care au schimbat cel mai mult probabilitatea de victorie) și jucătorii și locurile care au adăugat sau au costat cel mai mult, iar **Rezumat** și **Comentator** încep cu ele. Un exemplu inventat:
+
+> T a câștigat 79% din cele 19 runde în care a ținut Mid, față de 24% din 21 fără el (55 de puncte, 95% între 26 și 74) - q 0,004.
+>
+> Momente decisive: runda 17 la 48 s, o eliminare făcută de CT pe B site i-a schimbat șansa de la 31% la 58%, iar CT a luat runda.
+
+Un singur meci are mai puțin de 30 de runde, așa că probabilitățile lui de victorie vin dintr-un model a priori fix al oamenilor în viață, plantării și ceasului; textul spune asta. Pentru multe meciuri, aceleași întrebări le pune [analiza în masă](mass-analysis.md#who-won).
 
 ## Arată pe harta termică {#show-in-the-heatmap}
 

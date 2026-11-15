@@ -3,9 +3,9 @@ title: "Análisis de partida (CS2)"
 nav_order: 10
 lang: "es"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Análisis de partida (Counter-Strike 2)
@@ -123,6 +123,16 @@ Sobre cada partida cargada:
 - **Jugadores**: los quince mejores según bajas menos muertes, sumados en todas sus partidas (emparejados por Steam ID): partidas, K-D, ADR y KAST ponderados por las rondas jugadas, % de HS ponderado por bajas, duelos de apertura. **Haz clic en un jugador** para ver sus bajas y muertes en todas las partidas en el mapa de calor.
 
 Los botones de Mostrar en el mapa de calor de todas las partidas cargadas están debajo.
+
+## Qué decidió las rondas {#what-decided-the-rounds}
+
+La pestaña cuenta; [Hallazgos](insights.md#who-won-what-decided-the-rounds) explica. Con la tabla de mapa de calor de una partida cargada (lleva la columna `won`), **Hallazgos** divide las rondas de cada bando según lo que pasó en ellas - el duelo de apertura, la compra, una primera muerte intercambiada, la colocación, la utilidad, un primer contacto temprano, cada lugar mantenido y cada lugar alcanzado en los primeros 25 s - y dice cuál marcó la diferencia, con la diferencia de las tasas de victoria, su intervalo del 95 % y q, y *pocas rondas* donde un brazo tiene menos de ocho. Nombra los puntos de inflexión (las bajas y colocaciones que más movieron la probabilidad de victoria) y los jugadores y lugares que más sumaron o costaron, y el **Resumen** y el **Comentarista** empiezan por ellos. Un ejemplo inventado:
+
+> T ganó el 79 % de las 19 rondas en que mantuvo Mid, frente al 24 % de 21 sin él (55 puntos, 95 % de 26 a 74) - q 0,004.
+>
+> Puntos de inflexión: ronda 17 a los 48 s, una baja de CT en B site movió su posibilidad del 31 % al 58 %, y se llevó la ronda.
+
+Una partida tiene menos de 30 rondas, así que sus probabilidades de victoria vienen de un modelo previo fijo basado en los jugadores vivos, la colocación y el reloj; el texto lo dice. Sobre muchas partidas, el [análisis masivo](mass-analysis.md#who-won) hace las mismas preguntas.
 
 ## Mostrar en el mapa de calor {#show-in-the-heatmap}
 

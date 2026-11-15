@@ -4,9 +4,9 @@ parent: "Filters en hulpmiddelen"
 nav_order: 1
 lang: "nl"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filters
@@ -41,6 +41,10 @@ Alleen de soorten die voorkomen worden getoond. Waardekolommen (`cost_*`, `earn_
 Een categorielijst met meer dan 12 waarden krijgt een zoekvak (*n waarden zoeken*) en een knop **Alleen deze** die precies de passende waarden toestaat.
 
 Welke kolommen filterbaar zijn wordt bij het laden bepaald, omdat ze dan gelezen moeten worden. Zonder bewaarde kolom zegt het paneel dat, en verwijst naar *Bewaren voor filteren*.
+
+## Snelfilters voor Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Met een Rainbow Six Siege-wedstrijd geladen begint het paneel met knoppen die de filters met één klik instellen: **Kogelgaten en sporen** (de sporen die op het level achterblijven), **Sporen met schutter** en **Sporen met wapenklasse** (die waarvoor een schutter, of een wapen uit de kill van de schutter op hetzelfde moment, is afgeleid; splits of filter ze verder op `byOperator` of `byItemClass`), **Plant- en ontmantelpogingen**, **Onderbroken pogingen** (begonnen, niet afgemaakt, waar de speler stopte) en **Versterkingen** (waar een muur of luik werd versterkt, bij de verdediger die de converter afleidt). Elke knop vervangt het filter op de gebeurteniskolom en houdt de rest; **Alle filters wissen** maakt het ongedaan. De kolommen staan beschreven in de documentatie van de converter.
 
 ## Getalkolommen (bereik) {#numeric-columns-range}
 

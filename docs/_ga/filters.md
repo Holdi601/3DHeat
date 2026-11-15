@@ -4,9 +4,9 @@ parent: "Scagairí agus uirlisí"
 nav_order: 1
 lang: "ga"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Scagairí
@@ -41,6 +41,10 @@ Ní liostaítear ach na cineálacha a tharlaíonn. Is féidir colúin luacha (`c
 Faigheann liosta catagóire le níos mó ná 12 luach bosca cuardaigh (*Cuardaigh n luach*) agus cnaipe **Seo amháin** a cheadaíonn go díreach na luachanna a mheaitseálann.
 
 Cinntear cé na colúin is féidir a scagadh ag am an lódála, toisc go gcaithfear iad a léamh ansin. Gan colún coinnithe ar bith insíonn an painéal sin agus treoraíonn sé chuig *Coinnigh le haghaidh scagtha*.
+
+## Mearscagairí Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Nuair atá cluiche Rainbow Six Siege lódáilte, tosaíonn an painéal le cnaipí a shocraíonn na scagairí le cliceáil amháin: **Poill piléar agus marcanna** (na marcanna a fágadh ar an leibhéal), **Marcanna le lámhachóir** agus **Marcanna le haicme airm** (na marcanna ar oibríodh amach lámhachóir dóibh, nó arm ó mharú an lámhachóra ag an nóiméad céanna; roinn nó scag iad tuilleadh de réir `byOperator` nó `byItemClass`), **Iarrachtaí cur agus díghníomhachtaithe**, **Iarrachtaí briste** (tosaithe, gan chríochnú, san áit ar stop an t-imreoir) agus **Treisithe** (san áit ar treisíodh balla nó haiste, ag an gcosantóir a thuigeann an tiontaire). Cuireann gach ceann acu scagaire nua in áit an scagaire ar an gcolún imeachta agus coinníonn sé an chuid eile; cealaíonn **Glan na scagairí go léir** é. Tá cur síos ar na colúin i gcáipéisíocht an tiontaire.
 
 ## Colúin uimhriúla (raon) {#numeric-columns-range}
 

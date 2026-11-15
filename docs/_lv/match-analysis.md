@@ -3,9 +3,9 @@ title: "Spēles analīze (CS2)"
 nav_order: 10
 lang: "lv"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Spēles analīze (Counter-Strike 2)
@@ -127,6 +127,16 @@ Pār visiem ielādētajiem mačiem:
 - **Spēlētāji**: piecpadsmit labākie pēc nogalinājumiem mīnus nāvēm, apvienoti pār visiem viņu mačiem (sasaistīti pēc Steam ID): mači, K-D, ADR un KAST, svērti pēc nospēlētajiem raundiem, HS% svērts pēc nogalinājumiem, pirmie dueļi. **Noklikšķiniet uz spēlētāja**, lai redzētu viņa nogalinājumus un nāves visos mačos siltumkartē.
 
 Pogas Rādīt siltumkartē visiem ielādētajiem mačiem atrodas zem tā.
+
+## Kas izšķīra raundus {#what-decided-the-rounds}
+
+Cilne skaita; [Atziņas](insights.md#who-won-what-decided-the-rounds) izskaidro. Kad ir ielādēta mača siltumkartes tabula (tajā ir kolonna `won`), **Atziņas** sadala katras puses raundus pēc tā, kas tajos notika - atklāšanas duelis, pirkums, atriebta pirmā nāve, bumbas uzstādīšana, ekipējums, agrs pirmais kontakts, katra noturētā vieta un katra vieta, kas sasniegta pirmajās 25 s - un pasaka, kas radīja atšķirību, ar uzvaru īpatsvaru starpību, tās 95% intervālu un q, un *maz raundu*, ja zarā ir mazāk nekā astoņi. Tā nosauc pagrieziena punktus (nogalinājumus un uzstādīšanas, kas visvairāk mainīja uzvaras varbūtību) un spēlētājus un vietas, kas pievienoja vai maksāja visvairāk, un **Kopsavilkums** un **Komentētājs** sāk ar tiem. Izdomāts piemērs:
+
+> T uzvarēja 79% no 19 raundiem, kuros noturēja Mid, pret 24% no 21 bez tā (55 procentpunkti, 95% 26 līdz 74) - q 0,004.
+>
+> Pagrieziena punkti: 17. raunds 48. s, CT nogalinājums pie B site mainīja tās iespēju no 31% uz 58%, un tā uzvarēja raundā.
+
+Vienā mačā ir mazāk nekā 30 raundu, tāpēc tā uzvaras varbūtības nāk no fiksēta priora modeļa, kas balstās uz dzīvajiem vīriem, bumbu un pulksteni; teksts to pasaka. Daudzos mačos tos pašus jautājumus uzdod [masveida analīze](mass-analysis.md#who-won).
 
 ## Rādīt siltumkartē {#show-in-the-heatmap}
 

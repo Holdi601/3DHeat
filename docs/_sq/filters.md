@@ -4,9 +4,9 @@ parent: "Filtrat dhe mjetet"
 nav_order: 1
 lang: "sq"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtrat
@@ -41,6 +41,10 @@ Listohen vetëm llojet që ndodhin. Kolonat e vlerave (`cost_*`, `earn_*`, `net_
 Një listë kategorish me më shumë se 12 vlera merr një kuti kërkimi (*Kërko n vlera*) dhe një buton **Vetëm këto**, që lejon saktësisht vlerat që përputhen.
 
 Cilat kolona mund të filtrohen vendoset gjatë ngarkimit, sepse duhet të lexohen atëherë. Pa asnjë kolonë të mbajtur, paneli e thotë këtë dhe të drejton te *Mbaje për filtrim*.
+
+## Filtrat e shpejtë të Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Kur është ngarkuar një ndeshje Rainbow Six Siege, paneli fillon me butona që i vendosin filtrat me një klikim: **Vrima plumbash dhe shenja** (shenjat e lëna në nivel), **Shenja me qitës** dhe **Shenja me klasë arme** (ato për të cilat u nxor një qitës, ose një armë nga vrasja e qitësit në të njëjtin çast; ndajini ose filtrojini më tej sipas `byOperator` ose `byItemClass`), **Përpjekje për vendosje dhe çaktivizim**, **Përpjekje të ndërprera** (të nisura, por jo të përfunduara, aty ku lojtari u ndal) dhe **Përforcime** (ku u përforcua një mur ose një kapak, te mbrojtësi që nxjerr konvertuesi). Secili zëvendëson filtrin në kolonën e ngjarjeve dhe ruan të tjerët; **Pastro të gjithë filtrat** e zhbën. Kolonat përshkruhen në dokumentacionin e konvertuesit.
 
 ## Kolonat numerike (interval) {#numeric-columns-range}
 

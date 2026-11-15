@@ -3,9 +3,9 @@ title: "Analiza masive"
 nav_order: 8
 lang: "sq"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Analiza masive: mijëra ndeshje njëherësh
@@ -64,14 +64,24 @@ Zgjidhni një dosje (ose skedarë; **Shto dosje...** shton një tjetër). Dritar
 | Lojtarët | lojtarë të veçantë, ndeshje për lojtar, lojtarë për ndeshje, lojtarët më të shpeshtë |
 | Palët | secila palë e secilës hartë: ndeshje të fituara kundrejt një ndarjeje të barabartë |
 | Luftim nga afër | të dhëna të raundeve: duele hapëse sipas palës dhe konvertimi i tyre, shkëmbime, hyrës kundrejt mbajtësit, zjarr i kryqëzuar, hyrje të verbuara, synim, vendosje bombash, avantazh njerëzish dhe, **Sipas hartës**, vendet ku vriten lojtarët që hyjnë në to - çdo njëri një pjesë me intervalin e vet Wilson, nga numërimet `cqb` të përmbledhjeve ([Luftimi nga afër dhe raundet](close-quarters.md)) |
+| Sipërfaqet R6 | shenjat e Rainbow Six Siege në nivel (vrima plumbash e të ngjashme) për çdo sipërfaqe të nivelit: shenja, për raund të hartës, dhoma, pjesa e atyre që iu nxor qitësi; një klikim hap llojet e shenjave, operatorët dhe klasat e armëve të qitësve, dhe ku janë shenjat në sipërfaqe (një nxehtësi e vogël me qeliza çerek metri); një sipërfaqe e ruan id-në e saj nëpër ndeshjet e një versioni harte. Nga numërimet `marks` të përmbledhjeve |
 | Harta | rrjeti i përmbledhur i një harte: prezenca, vrasjet, vdekjet, K/D, çdo ngjarje, rrjedha, dhe **e nxehtë në sa ndeshje** (qëndrueshmëria); sipas ekipit, me 1, 2, 4 ose 8 herë qelizën |
-| Vende | vende që dalin në numra, por jo në harta e nxehtësisë (një zonë e madhe e zënë në tërësi, korridore, brez lartësish); **Gjej vende** |
-| Nisha | grupe që bëjnë qartë më mirë ose më keq se pjesa tjetër (një mjet në një hartë, një sektor në një lartësi); **Gjej nisha** |
+| Vende | vende që dalin në numra, por jo në harta e nxehtësisë (një zonë e madhe e zënë në tërësi, korridore, brez lartësish), dhe vende ku mbajtësit fitojnë më shumë ose më pak nga raundet e tyre; **Gjej vende** |
+| Nisha | grupe që bëjnë qartë më mirë ose më keq se pjesa tjetër (një mjet në një hartë, një sektor në një lartësi), dhe grupe raundesh të fituara përtej asaj që fitoi pala e tyre në të njëjtat ndeshje; **Gjej nisha** |
 | Vëzhgime | zbuluesit masivë dhe zbuluesit e hartës (më poshtë); **Kopjo raportin (JSON)** jep JSON që e lexon një model gjuhësor |
 
 ## Vëzhgime mbi shumë ndeshje {#insights-over-many-matches}
 
 Skeda **Vende** gjen vende që dalin në numra, por jo në harta e nxehtësisë - një zonë e madhe e zënë në tërësi, një korridor, një brez lartësie, një vend i zënë vetëm në një pjesë të ndeshjes - shënon ato që harta e thjeshtë e nxehtësisë nuk i tregon si **të fshehura**, dhe i konturon në pamjen 3D; **Ngarko** fluturon atje me ndeshjet që i mbante. Skeda **Nisha** gjen grupe (një mjet në një hartë dhe palë, një sektor në një lartësi) që bëjnë qartë më mirë ose më keq se pjesa tjetër; klikoni një të tillë për të parë çdo përafrim të tij.
+
+### Kush fitoi {#who-won}
+
+Kur ndeshjet thonë kush fitoi çdo raund ([kolona e rezultatit](data-formats.md#outcome-columns) `won`), rezultati bëhet objektiv më vete:
+
+- **Vende: përqindja e fitoreve.** Për çdo palë, pjesa e raundeve të saj në një vend që i fitoi, kundrejt pjesës që fitoi në të njëjtën ndeshje kudo - kështu balanca e hartës, e palës dhe e vetë ndeshjes janë baza, dhe dallohen vetëm vendet ku mbajtësit fitojnë më shumë (ose më pak) nga raundet e tyre. Një shembull i sajuar: *"Dust: pala T fiton më shumë nga raundet e saj kur është këtu: 61% e 412 të fituara, kundrejt 49% të pritur nga përqindja e saj në të njëjtat ndeshje (shanset 1,6x; mbajtur në 31/48 ndeshje)."* Të njëjtat kontrolle të shkallës së zbulimit të rremë dhe të qëndrueshmërisë si për çdo vend; **Ngarko** ngarkon ndeshjet ku u mbajt, duke treguar pozicionet e asaj pale.
+- **Nisha: fitorja e raundit.** Tabela **Raunde** mban raundin e çdo jete: hartën, palën, pjesën e ndeshjes (raundet 1-4, 5-8, ...), mjetin (një operator, një agjent), armën që përdori më shumë, vendin që mbajti më gjatë, blerjen (eco, force, full) dhe nëse pala e saj bëri vrasjen e parë. Një grup gjykohet kundrejt asaj që fitoi pala e tij në të njëjtat ndeshje, kështu që *T në Dust me AWP* është nishë vetëm kur ato raunde u fituan më shpesh se raundet e tjera të T në ato ndeshje. Një shembull i sajuar: *"m1 · T · AWP: fiton 80% të 320 raundeve, kundrejt 62% të pritur nga të njëjtat palë në të njëjtat ndeshje (shanset 2,3x; 40 ndeshje)."* Renditen sipas rritjes herë mbështetjen; **Ngarko** ngarkon ndeshjet raundet e të cilave e tregojnë më shumë.
+
+Të dyja kanë nevojë për përmbledhje të versionit 2 (shih [Marrja e përmbledhjeve](#getting-the-summaries)): të vjetrat llogariten sërish.
 
 Skeda **Vëzhgime** gjen, mbi të gjitha ndeshjet, mjete që shkëmbejnë ose fitojnë më mirë ose më keq se pjesa tjetër, vende të nxehta në një pjesë të qëndrueshme të ndeshjeve, palë që fitojnë më shumë se një ndarje e barabartë, mjete të cilëve përdorimi u lëviz me datat, dhe pjesë të ndeshjes që mbajnë më shumë vrasje sesa një shpërndarje e barabartë. Çdo gjetje mban numërimet e veta, efektin, intervalin dhe një shkallë rreziku të rremë (mbahet në 5%), dhe një klik ngarkon ndeshjet e saj. Detajet: [Për zhvilluesit](#for-developers).
 
@@ -119,6 +129,7 @@ JSON i thjeshtë (`src/mass/types.ts`), rreth 5-30 KB të ngjeshur për ndeshje:
   sipas llojit kanonik, vrasjet sipas klasës së objektivit, fitoret, paratë;
 - për lojtar (sipas id-së së përdoruesit, përndryshe emrit): ekipi, jetët, prezenca, vrasjet, vdekjet,
   goditjet, lëshimet, fitoi, mjetet; për armë: ngjarjet sipas llojit;
+- me një kolonë rezultati (versioni 2): raundet e fituara dhe të luajtura për ekip, mjet (`rw`, secila një jetë dhe një raund), lojtar dhe armë (raundet në të cilat një palë e përdori); raundi i çdo jete (`outcome.u`: raundi, pala, mjeti, arma e përdorur më shumë, vendi i mbajtur më gjatë, blerja, fitorja) dhe numri, fituesi dhe pala e vrasjes së parë të çdo raundi (`outcome.r`);
 - kolonat e ekonomisë (`cost_*`, `earn_*`) dhe totalet e tyre;
 - fazat: ngjarjet sipas llojit në 20 kosha të gjatësisë së ndeshjes dhe sipas minutës;
 - sjellja: masat e sjelljes kolektive të ndeshjes (lidhja, prirja e grupeve drejt një rruge, korsitë, mbushja, udhëheqësit, ata që mbeten pas, pika e thyerjes, rreziku pas humbjeve, seritë, marrëveshja e blerjes, shtypja), secila me modelin e vet nul, p dhe q - shih [Sjellja kolektive](collective-behaviour.md);
@@ -134,6 +145,7 @@ Pjesa hapësinore është bërë për statistika skanimi mbi rajone të çdo mad
 - **Ekspozimi pranë çdo numërimi.** Sekonda prezence për qelizë, për ekip (`pt`), për klasë mjeti (`pc`) dhe për brez lartësie (`ph`), kështu që shkalla, pritja dhe raporti i një rajoni llogariten për çdo nënrrup.
 - **Lartësia.** Brezat mbi dyshemenë e ndeshjes (përqindja e 1-rë e lartësisë): nën 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, mbi; një skedar me kolonën `floor`/`storey`/`deck` i ndan sipas kateve të veta. `y` është lartësia mesatare e secilës qelizë, `y0` më e ulëta e saj (dyshemeja e saj, për lartësinë mbi të).
 - **Ngjarjet** si tupla `[qeliza, lloji, ekipi, klasa, brezi, numërimi]`.
+- **Raundet sipas rezultatit** (versioni 2, me një kolonë rezultati dhe dy raunde ose më shumë): `pw` si `[cell, team, rounds won, rounds lost]` - raundet në të cilat çdo palë kaloi një sekondë ose më shumë në qelizë, sipas rezultatit të saj në raund.
 - **Pjesë kohore** në një nivel të trashë (8 qeliza anash), sipas minutës nga fillimi i ndeshjes: `[cx, cz, minuta, lloji, vlera]`, sekondat e prezencës si lloj `GRID_KINDS.length`; fazat e ndeshjes janë minuta mbi gjatësinë.
 - E rrallë, numërime të plota, sekonda deri në një të dhjetën: kufizohet nga ajo që ndodhi.
 
@@ -146,8 +158,8 @@ një zonë e madhe e zënë në tërësi pa qelizë të nxehtë brenda, një rap
 
 Ndeshjet e çdo harte lexohen dy herë, një ndeshje për herë; memoria mban shuma mbi një rrjet me të shumtën 64 qeliza anash (16 për skanimin hapësirë-kohë), kurrë ndeshjet.
 
-- **Masat.** Shkalla e një ngjarjeje për sekondë prezence - vrasje, vdekje, goditje, lëshime, kapje, për të gjitha njësitë, për klasë (4 me më shumë ngjarje), për brez lartësie - dhe pjesa e vrasjeve në vrasje dhe vdekje (e gjitha, për palë, për brez). Cilat klasa dhe palë merren nga kokat (`planOf`).
-- **Pritja sipas ndeshjes.** Shkalla e secilës ndeshje, e shpërndarë mbi prezencën e vet në një qelizë, është pritja e qelizës (një skanim Kulldorff i rregulluar me kovariatë, i ndarë sipas ndeshjes): disa ndeshje gjakatare ose një server i zënë nuk bëjnë vend.
+- **Masat.** Shkalla e një ngjarjeje për sekondë prezence - vrasje, vdekje, goditje, lëshime, kapje, për të gjitha njësitë, për klasë (4 me më shumë ngjarje), për brez lartësie - dhe pjesa e vrasjeve në vrasje dhe vdekje (e gjitha, për palë, për brez), dhe **përqindja e fitoreve** e çdo pale: raundet e saj në qelizë të fituara kundrejt të humburave (`pw`), ku 8 ndeshje të hartës ose më shumë numërojnë raundet sipas rezultatit. Cilat klasa dhe palë merren nga kokat (`planOf`).
+- **Pritja sipas ndeshjes.** Shkalla e secilës ndeshje, e shpërndarë mbi prezencën e vet në një qelizë, është pritja e qelizës (një skanim Kulldorff i rregulluar me kovariatë, i ndarë sipas ndeshjes): disa ndeshje gjakatare ose një server i zënë nuk bëjnë vend. Për përqindjen e fitoreve, pritshmëria është pjesa e vetë palës e raundeve të fituara në atë ndeshje, kështu që balanca e hartës dhe e palës nuk bëhet kurrë vend. Një raund në disa qeliza të një rajoni numërohet në secilën; shpërndarja e matur në madhësinë e rajonit e mbart këtë.
 - **Shpërndarja.** Ndeshjet nuk pajtohen shumë më tej nga Poisson. Mbetjet e secilës ndeshje mblidhen në blloqe prej 1, 2, 4, 8, 16 qelizash; shpërndarja e çdo madhësie blloku (katrorët e mbetjeve mbi variancën nul, të mbledhura, pa 5% më të keqijat blloqe) shkallëzon çdo provë të një rajoni të tillë madhësie: një raport i gjasës kuazi, Poisson për shkallë, binomial për pjesë.
 - **Rajonet.** Rrathë prej 0,75 deri 18 qeliza; elipsa në gjashtë kënde, 3 dhe 6 herë më të gjatë sesa të gjerë, 3 deri 18 qeliza (korridore; boshti është `place.path` i vëzhgimit); zona të rritura qelizë pas qelize nga qelizat më të forta lokale Getis-Ord Gi* ndërsa rritet z-ja e rajonit (forma të parregullta) - të rritura mbi gjysmën e ndeshjeve dhe të provuara mbi gjysmën tjetër, që rritja e tyre të mos kushtojë asnjë vend të rremë; secili brez lartësie kundrejt brezave të tjerë të ndeshjes mbi të gjithë hartën (i qëndrueshëm ndaj grupimit); cilindra hapësirë-kohë: një rreth në një ose dy të pesatat e gjatësisë së ndeshjes, kundrejt shpërndarjes së vet të ngjarjeve të ndeshjes në vend dhe në kohë (skanimi i permutimit hapësirë-kohë).
 - **Provimi.** p nga raporti i gjasës kuazi; Benjamini-Hochberg mbi çdo rajon të provuar në çdo hartë (700.000 në tre harta është e zakonshme) në 5%. Ajo që kalon shkurtohet (një rajon që është kryesisht brenda një më të fortit të masës së vet thotë të njëjtën gjë), lexohet përsëri për **qëndrueshmërinë** e tij - ndeshjet që e panë, ndeshjet ku ishte, drejtimi i tij në pesë palë të ndeshjeve - dhe provohet edhe një herë me variancën që vetë ndeshjet tregojnë (e qëndrueshme ndaj grupimit, ndeshjet si grupe, asnjëherë nën Poisson), BH sërish. Vende të qeta mbi një bazë (2% ose më shumë e ngjarjeve të hartës: spawn-e, ngritje dhe ulje) lihen jashtë.
@@ -160,6 +172,8 @@ Skeda **Vende** i liston (vetëm të fshehurat si parazgjedhje; sipas hartës, f
 
 Kërkim rreze (gjerësia 24, thellësia 3) mbi tre tabela: **jetët** (jetët e lojtarëve: loja, harta, modaliteti, klasa, mjeti, palë, niveli, tremujori i datave, e treta e gjatësisë së ndeshjeve; K/D, fitorja, vdekja një jetë, vrasjet në orë, fitimet në minutë), **vendet** (vrasjet dhe vdekjet sipas hartës, modalitetit, datave, sektorit të hartës 4 x 4, klasës, palës, brezit) dhe **fazat** (sektori dhe e pesta e ndeshjes: K/D, vdekjet në orë prezence). Një grup provohet kundrejt të tërës me ndeshjet si grupe (variancë sanduiç e mbetjeve të tij sipas ndeshjes), efekti i tij është raport gjasash ose shkalle i tkurrur me një paraprak prej 20 rezultatesh; i duhen 30 rezultate në 8 ndeshje, një përafrim duhet të jetë 10% më i fortë se prindi i vet, grupet ku rezultati është asnjë ose i gjithë (nuk u regjistrua për ta) lihen jashtë. Mbahen: BH nën 5% mbi çdo grup i vlerësuar, një raport i tkurruar prej 1,25 (ose 1/1,25) të paktën, katër nga pesë palët pajtohen, jo një përafrim që vetëm përsërit prindin. Skeda **Nisha** i liston; një klik shfaq çdo përafrim me një kusht të grupit (eksploruesi), **Ngarko** ngarkon ndeshjet e tij. Ngarkesat nuk janë ende në përmbledhje.
 
+Tabela e katërt, **raunde** (`roundsTable`), ka si objektiv rezultatin e raundit: një rresht për raundin e një jete - harta, pala, pjesa e ndeshjes (raundet 1-4, 5-8, ...), mjeti, arma e përdorur më shumë, vendi i mbajtur më gjatë, blerja, vrasja e parë ose vdekja e parë - gjykuar kundrejt përqindjes së fitoreve të palës së vet në ndeshjen e vet (pritshmëria e shtresëzuar e Mantel-Haenszel: mbetja është `won - e`, `e` pjesa e palës në ndeshje), kështu që një nishë nuk është kurrë balanca e hartës ose e palës. Ndeshjet mbeten grupimet. z-ja e saj kalibrohet: i njëjti kërkim me tufë ekzekutohet tetë herë mbi rezultatet e përziera mes raundeve të çdo pale të çdo ndeshjeje (përqindja e palës në çdo ndeshje ruhet), dhe shpërndarja e këtyre z-ve nul përtej një normaleje standarde - sipas numrit të kushteve, nga mesi (mediana / 0,674) dhe bishti (përqindëshi i 99-të / 2,576), më e madhja, kurrë nën 1 - i pjesëton të vërtetat para p-së së tyre dhe shkallës së zbulimit të rremë (një nul empirik, Efron 2004). Grupet më të thella marrin shkallën më të madhe: tufa ruan përpunime të grupeve të zgjedhura për z-në e tyre të madhe. Baza e një nishe është pritshmëria e vet, rritja e saj pikët mbi të, dhe ajo renditet sipas rritjes herë rrënjën katrore të raundeve të saj, e mbajtur nga provat dhe palosjet (`wracc` është mbështetja herë rritjen). Ajo mbart ndeshjet ku u shfaq më shumë (`matchIds`) dhe disa nga raundet e tyre (`rounds`, `[match, round]`) për zbërthimin.
+
 #### Ndryshimet e meta-s me rëndësi praktike {#meta-shifts-with-practical-significance}
 
 Me data të përziera, binomiali mbi jetë quante pothuajse çdo ndryshim domethënës. `meta` tani provohet i qëndrueshëm ndaj grupimit (jetët e secilës ndeshje një grup), mban vetëm një zhvendosje përdorimi prej të paktën 2 pikësh dhe 25%, një zhvendosje K/D prej 1,3 herë, tremujorët e datave që trendojnë në të njëjtën mënyrë (tau i Kendall-it të paktën 0,5), dhe, për një mjet në disa harta, të njëjtën drejtim në shumicën e tyre. Kjo lë vetëm pak zhvendosje mbi një grup provash ku testi i thjeshtë shënonte pothuajse të gjitha.
@@ -171,4 +185,4 @@ Me data të përziera, binomiali mbi jetë quante pothuajse çdo ndryshim dometh
 #### Kontrollet {#checks}
 
 `scan.test.ts` mbjell një zonë të shpërndarë (1,6 herë shkalla e vdekjes mbi një rreth prej 22 qelizash, e lehtë në çdo qelizë), një korridor, një brez lartësie dhe një grumbull vetëm-faze në 240 ndeshje sintetike të mbi-shpërndara - të gjitha gjenden, ajo e shpërndarë fshihet - dhe ekzekuton tetë grupe nul prej 60 ndeshjesh: asnjë vend.
-`niche.test.ts` gjen një grup të mbjellë mjet x hartë x palë dhe asgjë në pesë tabela nul.
+`niche.test.ts` gjen një grup të mbjellë mjet x hartë x palë dhe asgjë në pesë tabela nul. `outcome.test.ts` kontrollon përmbledhjen e versionit 2 (raundet e fituara sipas palës, njësisë, lojtarit dhe armës, `pw`, raundet e njësive); mbjell një korsi, pala e së cilës fiton 70% të raundeve kundrejt 35% (çdo ndeshje me balancën e vet) - gjendet - dhe ekzekuton 20 grupe nul me 50 ndeshje ku korsitë nuk thonë asgjë: asnjë vend përqindjeje fitoresh; mbjell një AWP në një hartë që i fiton raundet e palës së vet 30 pikë më shumë - gjendet, me ndeshjet dhe raundet e tij - dhe ekzekuton 30 grupe nul me 80 ndeshje, ku çdo ndeshje ka balancën e vet dhe një palë është më e fortë në një hartë: asnjë nishë.

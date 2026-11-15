@@ -4,9 +4,9 @@ parent: "Filtres et outils"
 nav_order: 1
 lang: "fr"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtres
@@ -41,6 +41,10 @@ Seuls les types qui apparaissent sont listés. Les colonnes de valeur (`cost_*`,
 Une liste de catégories de plus de 12 valeurs reçoit une zone de recherche (*Rechercher n valeurs*) et un bouton **Seulement ceux-ci** qui n'autorise que les valeurs correspondantes.
 
 Les colonnes qui peuvent être filtrées sont déterminées au chargement, car elles doivent être lues à ce moment-là. Sans colonne conservée, le panneau l'indique et renvoie à *Garder pour le filtrage*.
+
+## Filtres rapides de Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Avec un match de Rainbow Six Siege chargé, le panneau commence par des boutons qui règlent les filtres en un clic : **Impacts de balles et traces** (les traces laissées sur le niveau), **Traces avec tireur** et **Traces avec classe d'arme** (celles pour lesquelles un tireur, ou une arme tirée du frag du tireur au même moment, a été déterminé ; séparez-les ou filtrez-les encore par `byOperator` ou `byItemClass`), **Tentatives de pose et de désamorçage**, **Tentatives interrompues** (commencées, pas terminées, là où le joueur s'est arrêté) et **Renforcements** (là où un mur ou une trappe a été renforcé, au défenseur que le convertisseur déduit). Chacun remplace le filtre sur la colonne d'événement et garde le reste ; **Effacer tous les filtres** l'annule. Les colonnes sont décrites dans la documentation du convertisseur.
 
 ## Colonnes numériques (intervalle) {#numeric-columns-range}
 

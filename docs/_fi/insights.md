@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "fi"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Havainnot
@@ -44,6 +44,7 @@ Luettelon yläosan rivit (esimerkiksi rahasummat) tiivistävät koko datan ennen
 | **Pelaajat** | Pelaajat, jotka tappavat tai kuolevat paljon enemmän tai vähemmän kuin muut samassa luokassa | henkilöt ja tappot |
 | **Pullonkaulat ja sivustat** | Pullonkaulat (paljon enemmän ylityksiä kuin ympäröivä maa) ja sivustareitit (harvoin käytettyjä, mutta johtavat tappoihin) | henkilöt |
 | **Arvo** | *Kallis maasto* ja *Ansaitseva maasto* | [arvosarakkeet](value-weighting.md) |
+| **Mikä ratkaisi kierrokset** | Mikä erotti voitetut kierrokset hävityistä, ja pelaajat, jotka lisäsivät tai maksoivat eniten voiton todennäköisyyttä (katso [Kuka voitti](#who-won-what-decided-the-rounds)) | kierrokset, tapot ja kuolemat sekä [tulossarakkeet](data-formats.md#outcome-columns) (`won`) |
 
 Tunnistimet, joita data ei voi ajaa, luetellaan alareunassa syineen.
 
@@ -51,9 +52,26 @@ Tunnistimet, joita data ei voi ajaa, luetellaan alareunassa syineen.
 
 Jokaista paikkaa tai ryhmää verrataan muuhun karttaan (tarkat binomi- tai nopeustestit). Väärien löydösten osuus pidetään 5 %:ssa (Benjamini-Hochberg). Sattuma voi näyttää kuviolta; tämä pitää väärät hälytykset vähäisinä: näytettyjen löydösten joukossa odotetaan enintään noin yksi kahdestakymmenestä sattumaksi. Vähäisistä tapahtumista syntyvät vaikutukset vedetään kohti "ei vaikutusta" ennen järjestämistä. Luettelossa on enintään 60 löydöstä, ja jokaiselle tunnistimelle varataan muutama paikka kärkipäästä.
 
+### Kuka voitti {#who-won-what-decided-the-rounds}
+
+Kun ottelut kertovat, kuka voitti kunkin kierroksen ([tulossarake](data-formats.md#outcome-columns) `won`), tulos on oma kohteensa:
+
+- **Paikat: voittoprosentti.** Kullekin puolelle osuus sen kierroksista paikassa, jotka se voitti, verrattuna osuuteen, jonka se voitti samassa ottelussa missä tahansa – joten kartan, puolen ja ottelun oma tasapaino on lähtötaso, ja vain paikat, joiden haltijat voittavat enemmän (tai vähemmän) kierroksistaan, erottuvat. Keksitty esimerkki: *”Dust: puoli T voittaa enemmän kierroksistaan ollessaan täällä: 61 % 412:sta voitettu, odotettu 49 % sen omasta osuudesta samoissa otteluissa (kerroin 1,6x; hallussa 31/48 ottelussa).”* Sama väärien löydösten osuus ja vakaustarkistukset kuin kaikilla paikoilla; **Lataa** lataa ottelut, joissa paikka oli hallussa, ja näyttää sen puolen sijainnit.
+- **Lokerot: kierroksen voitto.** **Kierrokset**-taulukossa on jokaisen elämän kierros: kartta, puoli, ottelun osa (kierrokset 1–4, 5–8, ...), ajoneuvo (operaattori, agentti), eniten käytetty ase, pisimpään hallussa pidetty paikka, ostot (eco, force, full) ja se, tekikö sen puoli ensimmäisen tapon. Ryhmää verrataan siihen, mitä sen puoli voitti samoissa otteluissa, joten *T Dustilla AWP:llä* on lokero vain, kun ne kierrokset voitettiin useammin kuin T:n muut kierrokset niissä otteluissa. Keksitty esimerkki: *”m1 · T · AWP: voittaa 80 % 320 kierroksesta, odotettu 62 % samoista puolista samoissa otteluissa (kerroin 2,3x; 40 ottelua).”* Järjestetään nousun ja tuen tulon mukaan; **Lataa** lataa ottelut, joiden kierroksissa se näkyy eniten.
+
+Molemmat tarvitsevat version 2 yhteenvedot (katso [Yhteenvetojen luominen](#getting-the-summaries)): vanhemmat lasketaan uudelleen.
+
 ## Katsaus {#debrief}
 
-**Katsaus**-välilehti kirjoittaa löydökset lyhyeksi tekstiksi: johdanto, selkein löydös, yksi taktiikasta, yksi tasapainotuksesta, loput tunnistimittain ryhmiteltyinä ja kuinka moni nojaa heikompaan näyttöön. Jokaisessa kappaleessa on numeroidut painikkeet, jotka näyttävät sen löydökset. **Kopioi teksti** kopioi sen.
+**Katsaus**-välilehti kirjoittaa löydökset lyhyeksi tekstiksi: johdanto, selkein löydös, yksi taktiikasta, yksi tasapainotuksesta, sitten – kun data kertoo, kuka voitti – mikä ratkaisi kierrokset, loput tunnistimittain ryhmiteltyinä ja kuinka moni nojaa heikompaan näyttöön.
+
+Mikä ratkaisi kierrokset tulee neljässä kappaleessa: tilanne ja mistä voiton todennäköisyydet tulevat; vahvimmat tekijät lukuineen, väleineen ja q:ineen (kun mikään ei läpäise väärien löydösten osuutta, teksti sanoo *mikään ei ole vielä varmaa* ja nimeää silti vahvimman); kolme suurinta käännekohtaa; ja pelaajat, jotka lisäsivät ja maksoivat eniten voiton todennäköisyyttä, sekä paikat, jotka hyötyivät eniten. Keksitty esimerkki:
+
+> T voitti 23 ja CT voitti 17 niistä 40 kierroksesta, joiden tulos tiedetään (T: 58 %, 95 % 42 %–72 %). Voiton todennäköisyydet tulevat näihin kierroksiin sovitetusta mallista.
+>
+> Mikä erotti voitetut kierrokset hävityistä: T voitti 79 % niistä 19 kierroksesta, joilla se piti Midiä, ja 24 % niistä 21 kierroksesta, joilla ei (55 prosenttiyksikköä, 95 % 26–74) (q 0,004), ...
+>
+> Käännekohdat: kierros 17 kohdassa 48 s, CT:n tappo B sitellä nosti sen mahdollisuuden 31 %:sta 58 %:iin, ja se voitti kierroksen, ... Jokaisessa kappaleessa on numeroidut painikkeet, jotka näyttävät sen löydökset. **Kopioi teksti** kopioi sen.
 
 ![Sisäänrakennetun kertojan kirjoittama katsaus](../assets/img/fi/debrief.webp)
 
@@ -72,11 +90,13 @@ Sisäänrakennettu kertoja toimii offline-tilassa, kielelläsi. Sen yläpuolella
 | **Käytä ulkoista tekoälyä** | Oletuksena pois |
 | **Lähetä pelaajien nimet** | Oletuksena pois: pelaajat lähetetään nimellä P1, P2 ... |
 
-Kirjoita sitten halutessasi kysymys ja paina **Kirjoita tekoälyllä**. Lähetetään vain löydökset ja niiden luvut, ei koskaan datasi rivejä. Vastaus virtaa sisään, ja viitatut löydökset muuttuvat painikkeiksi.
+Kirjoita sitten halutessasi kysymys ja paina **Kirjoita tekoälyllä**. Lähetetään vain löydökset ja niiden luvut, ei koskaan datasi rivejä. Vastaus virtaa sisään, ja viitatut löydökset muuttuvat painikkeiksi. Kun data kertoo, kuka voitti, mallia käsketään aloittamaan siitä, mikä ratkaisi kierrokset, kertomaan kunkin luvun väli ja q sekä sanomaan, kun tekijä nojaa vain muutamaan kierrokseen tai voiton todennäköisyydet tulevat priorimallista.
 
 ## Selostaja {#caster}
 
-Yhdelle **ottelulle** (valitse yksi, jos useita on ladattu) **Selostaja** löytää hetket, jotka kannattaa katsoa: ensimmäinen tappo, monitappot, vaihtokaupat, ratkaisevat tilanteet, tavoitteiden käännökset, paluut, silmään pistävät pelaajat, pitkät laukaukset.
+Yhdelle **ottelulle** (valitse yksi, jos useita on ladattu) **Selostaja** löytää hetket, jotka kannattaa katsoa: ensimmäinen tappo, monitappot, vaihtokaupat, ratkaisevat tilanteet, tavoitteiden käännökset, paluut, silmään pistävät pelaajat, pitkät laukaukset ja **käännekohdat** – tapot, jotka muuttivat puolen mahdollisuutta voittaa kierros eniten (kummallakin puolella elossa olevien pelaajien perusteella, kierroksilla ilman uudelleensyntymistä).
+
+Kun data kertoo, kuka voitti kunkin kierroksen, jokainen hetki sanoo sen: *”Anna kaataa Benin: T:n mahdollisuus voittaa kierros nousee 38 %:sta 62 %:iin – ja he voittavat kierroksen.”* Lopulta voittaneen puolen hetki painaa enemmän, kun selostaja valitsee, mitkä pidetään, ja paluu lasketaan voitettuina kierroksina.
 
 ![Selostajan hetket yhdelle kierrokselle ampujaesimerkissä](../assets/img/fi/caster.webp)
 

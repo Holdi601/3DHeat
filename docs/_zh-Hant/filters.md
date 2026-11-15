@@ -4,9 +4,9 @@ parent: "篩選與工具"
 nav_order: 1
 lang: "zh-Hant"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 篩選
@@ -41,6 +41,10 @@ outdated: true
 類別清單超過 12 個值時，會出現搜尋方塊（*搜尋 n 個值*）與**僅這些**按鈕，後者只允許符合條件的值。
 
 哪些欄位可以篩選，是在載入時決定的，因為必須在那時讀取它們。若沒有任何保留的欄位，面板會說明此情況，並指向*保留以供篩選*。
+
+## Rainbow Six Siege 快速篩選 {#rainbow-six-siege-quick-filters}
+
+載入 Rainbow Six Siege 對戰後，面板開頭有一排按鈕，按一下就能設好篩選：**彈孔與痕跡**（留在關卡上的痕跡）、**有射手的痕跡**與**有武器類別的痕跡**（推算出射手的痕跡，或由射手同一時刻的擊殺推算出武器的痕跡；可再依 `byOperator` 或 `byItemClass` 拆分或篩選）、**安放與拆除嘗試**、**中斷的嘗試**（開始了但沒完成，位置是玩家停下的地方）以及**加固**（牆或活板門被加固的地方，位置是轉換器推斷出的防守方）。每個按鈕都會取代事件欄位上的篩選，其餘篩選保持不變；**清除所有篩選**可以復原。這些欄位的說明見轉換器的文件。
 
 ## 數值欄位（範圍） {#numeric-columns-range}
 

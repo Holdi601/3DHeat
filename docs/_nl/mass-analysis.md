@@ -3,9 +3,9 @@ title: "Massa-analyse"
 nav_order: 8
 lang: "nl"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Massa-analyse: duizenden matches tegelijk
@@ -60,14 +60,24 @@ Kies een map (of bestanden; **Map toevoegen…** voegt er nog een toe). Het vens
 | Spelers | verschillende spelers, matches per speler, spelers per match, de vaakst voorkomende spelers |
 | Kanten | elke kant van elke kaart: gewonnen matches tegenover een gelijke verdeling |
 | Nabije gevechten | gegevens over rondes: openingsduels per kant en hun omzetting, trades, peeker tegenover holder, kruisvuur, geflitste intrede, aim, plants, manvoordeel en, **Per kaart**, de plekken die de spelers doden die ze betreden. Elk is een aandeel met zijn Wilson-interval, uit de `cqb`-tellingen van de samenvattingen ([Nabije gevechten en rondes](close-quarters.md)) |
+| R6-oppervlakken | de sporen van Rainbow Six Siege op het level (kogelgaten en dergelijke) per leveloppervlak: sporen, per ronde van de kaart, de kamer, het aandeel waarvan de schutter is afgeleid; een klik opent de soorten sporen, de operators en wapenklassen van de schutters, en waar op het oppervlak de sporen zitten (een kleine warmte van cellen van een kwart meter); een oppervlak houdt zijn id over de matches van één kaartversie. Uit de `marks`-tellingen van de samenvattingen |
 | Kaart | de opgetelde raster van een kaart: aanwezigheid, kills, doden, K/D, elke gebeurtenis, stroming, en **heet in hoeveel matches** (stabiliteit); per team, bij 1, 2, 4 of 8 keer de cel |
-| Plekken | plekken die in de cijfers opvallen maar niet in de warmte (een groot gebied dat als geheel druk is, corridors, hoogtebanden); **Plekken zoeken** |
-| Niches | groepen die duidelijk beter of slechter doen dan de rest (een voertuig op één kaart, een sector op één hoogte); **Niches zoeken** |
+| Plekken | plekken die in de cijfers opvallen maar niet in de warmte (een groot gebied dat als geheel druk is, corridors, hoogtebanden), en plekken waarvan de houders meer of minder van hun rondes winnen; **Plekken zoeken** |
+| Niches | groepen die duidelijk beter of slechter doen dan de rest (een voertuig op één kaart, een sector op één hoogte), en groepen rondes die meer gewonnen werden dan hun kant in dezelfde matches won; **Niches zoeken** |
 | Inzichten | de massadetectoren en de kaartdetectoren (hieronder); **Rapport kopiëren (JSON)** geeft de JSON die een taalmodel leest |
 
 ## Inzichten over veel matches {#insights-over-many-matches}
 
 Het tabblad **Plekken** vindt plekken die in de cijfers opvallen maar niet in de warmte: een groot gebied dat als geheel druk is, een corridor, een hoogteband, een plek die alleen in één deel van de match druk is. Het markeert de plekken die de gewone warmte niet laat zien als **verborgen**, en tekent ze om in de 3D-weergave. **Laden** vliegt er heen met de matches die het bevatte. Het tabblad **Niches** vindt groepen (een voertuig op één kaart en kant, een sector op één hoogte) die duidelijk beter of slechter doen dan de rest. Klik op een groep om zijn verfijningen te zien.
+
+### Wie won {#who-won}
+
+Waar de matches zeggen wie elke ronde won (de [uitkomstkolom](data-formats.md#outcome-columns) `won`), is de uitslag een eigen doel:
+
+- **Plekken: winpercentage.** Voor elke kant het aandeel van haar rondes op een plek dat ze won, tegen het aandeel dat ze ergens in dezelfde match won - zo zijn de balans van de kaart, die van de kant en die van de match zelf de basis, en vallen alleen plekken op waarvan de houders meer (of minder) van hun rondes winnen. Een verzonnen voorbeeld: *"Dust: kant T wint meer van haar rondes als ze hier is: 61% van 412 gewonnen, tegen 49% verwacht uit haar eigen percentage in dezelfde matches (odds 1,6x; gehouden in 31/48 matches)."* Dezelfde foutieve-ontdekkingsratio en stabiliteitscontroles als bij elke plek; **Laden** laadt de matches waarin de plek gehouden werd, met de posities van die kant.
+- **Niches: rondewinst.** De tabel **Rondes** bevat de ronde van elk leven: de kaart, de kant, het deel van de match (rondes 1-4, 5-8, ...), het voertuig (een operator, een agent), het wapen dat het meest gebruikt werd, de plek die het langst gehouden werd, de aankoop (eco, force, full) en of de kant de eerste kill maakte. Een groep wordt gemeten aan wat haar kant in dezelfde matches won, dus *T op Dust met een AWP* is alleen een niche als die rondes vaker gewonnen werden dan de andere rondes van T in die matches. Een verzonnen voorbeeld: *"m1 · T · AWP: wint 80% van 320 rondes, tegen 62% verwacht van dezelfde kanten in dezelfde matches (odds 2,3x; 40 matches)."* Gerangschikt op de winst maal de steun; **Laden** laadt de matches waarvan de rondes het het sterkst tonen.
+
+Beide hebben samenvattingen van versie 2 nodig (zie [De samenvattingen krijgen](#getting-the-summaries)): oudere worden opnieuw berekend.
 
 Het tabblad **Inzichten** vindt, over alle matches, voertuigen die beter of slechter ruilen of winnen dan de rest, plekken die in een stabiel aandeel van de matches heet zijn, kanten die vaker winnen dan een gelijke verdeling, voertuigen waarvan het gebruik met de datums verschuift, en delen van de match die meer kills bevatten dan een gelijkmatige spreiding. Elke bevinding heeft zijn tellingen, effect, interval en een false discovery rate (gehouden op 5%), en een klik laadt de matches. Details: [Voor ontwikkelaars](#for-developers).
 
@@ -108,6 +118,12 @@ Gewoon JSON (`src/mass/types.ts`), ongeveer 5-30 KB gecomprimeerd per match:
 - de match: spel, kaart, modus, missie, start, lengte, rijen, levens, spelers, AI, teams (levens, spelers, aanwezigheid, kills, doden, gewonnen, geld), winnaar;
 - per voertuig en team: klasse, tier, levens, spelerslevens, aanwezigheid, gebeurtenissen per canonieke soort, kills per klasse van het doel, winsten, geld;
 - per speler (op gebruikers-id, anders op naam): team, levens, aanwezigheid, kills, doden, treffers, lanceringen, gewonnen, voertuigen; per wapen: gebeurtenissen per soort;
+- met een uitkomstkolom (versie 2): gewonnen en gespeelde rondes per team, voertuig
+  (`rw`, elk een leven en een ronde), speler en wapen (de rondes waarin een kant het gebruikte);
+  de ronde van elk leven (`outcome.u`: ronde, kant, voertuig, het meest gebruikte wapen, de
+  langst gehouden plek, de aankoop, gewonnen) en het nummer, de winnaar en de kant van de
+  eerste kill van elke ronde (`outcome.r`);
+
 - de kolommen van de economie (`cost_*`, `earn_*`) en hun totalen;
 - fasen: gebeurtenissen per soort in 20 banden van de matchlengte en per minuut;
 - gedrag: de collectieve-gedragsmaten van de match (uitlijning, routekudden, banen, drukte, leiders, achterblijvers, breekpunt, risico na verliezen, reeksen, koopovereenstemming, onderdrukking), elk met zijn eigen nulmodel, p en q; zie [Collectief gedrag](collective-behaviour.md);
@@ -123,6 +139,9 @@ Het ruimtelijke deel is gemaakt voor scanstatistieken over regio's van elke groo
 - **Blootstelling naast elke telling.** Seconden aanwezigheid per cel, per team (`pt`), per voertuigklasse (`pc`) en per hoogteband (`ph`), zodat het percentage, de verwachting en de verhouding van een regio voor elke subgroep berekend kunnen worden.
 - **Hoogte.** Banden boven de vloer van de match (het 1e percentiel van de hoogte): onder 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, boven; een bestand met een kolom `floor`/`storey`/`deck` deelt in op zijn verdiepingen. `y` is de gemiddelde hoogte van elke cel, `y0` de laagste (zijn verdieping, voor hoogte erboven).
 - **Gebeurtenissen** als tupels `[cel, soort, team, klasse, band, aantal]`.
+- **Rondes per uitslag** (versie 2, met een uitkomstkolom en twee rondes of meer):
+  `pw` als `[cell, team, rounds won, rounds lost]` - de rondes waarin elke kant een seconde
+  of langer in de cel was, naar haar uitslag in de ronde.
 - **Tijdsneden** op een grof niveau (8 cellen per zijde), per minuut vanaf het begin van de match: `[cx, cz, minuut, soort, waarde]`, met de seconden aanwezigheid als soort `GRID_KINDS.length`; matchfasen zijn minuten over de lengte.
 - Schaars, tellingen als gehele getallen, seconden op een tiende: begrensd door wat er gebeurd is.
 
@@ -134,8 +153,8 @@ Fase B zoekt wat in de cijfers opvalt zonder het oog te trekken: een groot gebie
 
 De matches van elke kaart worden twee keer gelezen, één match tegelijk. Het geheugen houdt sommen bij op een raster van hooguit 64 cellen per zijde (16 voor de ruimte-tijdscan), nooit de matches zelf.
 
-- **Maten.** De snelheid van een gebeurtenis per seconde aanwezigheid (kills, doden, treffers, lanceringen, veroveringen, voor alle eenheden, per klasse (de 4 met de meeste gebeurtenissen), per hoogteband) en het aandeel van de kills in kills en doden (alles, per kant, per band). Welke klassen en kanten meetellen, komt uit de koppen (`planOf`).
-- **Verwachting per match.** De eigen snelheid van elke match, verdeeld over zijn eigen aanwezigheid in een cel, is de verwachting van die cel (een door covariaten gecorrigeerde Kulldorff-scan, gestratificeerd per match): een paar bloedige matches of één drukke server maken geen plek.
+- **Maten.** De snelheid van een gebeurtenis per seconde aanwezigheid (kills, doden, treffers, lanceringen, veroveringen, voor alle eenheden, per klasse (de 4 met de meeste gebeurtenissen), per hoogteband) en het aandeel van de kills in kills en doden (alles, per kant, per band), en het **winpercentage** van elke kant: haar rondes in de cel gewonnen tegen verloren (`pw`), waar 8 matches van de kaart of meer rondes per uitslag tellen. Welke klassen en kanten meetellen, komt uit de koppen (`planOf`).
+- **Verwachting per match.** De eigen snelheid van elke match, verdeeld over zijn eigen aanwezigheid in een cel, is de verwachting van die cel (een door covariaten gecorrigeerde Kulldorff-scan, gestratificeerd per match): een paar bloedige matches of één drukke server maken geen plek. Voor het winpercentage is de verwachting het eigen aandeel gewonnen rondes van de kant in die match, zodat de balans van de kaart en van de kant nooit een plek zijn. Een ronde in meerdere cellen van een regio telt in elke cel mee; de spreiding gemeten op de grootte van de regio vangt dat op.
 - **Spreiding.** Matches verschillen veel meer dan Poisson. De residuen van elke match worden opgeteld in blokken van 1, 2, 4, 8, 16 cellen; de spreiding van elke blokgrootte (gekwadrateerde residuen gedeeld door de nulvariantie, gepoold, de slechtste 5% van de blokken weggelaten) schaalt elke toets van een regio van die grootte: een quasi-likelihood-ratio, Poisson voor snelheden, binomiaal voor aandelen.
 - **Regio's.** Cirkels van 0,75 tot 18 cellen; ellipsen onder zes hoeken, 3 en 6 keer zo lang als breed, 3 tot 18 cellen (corridors; de as is `place.path` van het inzicht); zones die cel voor cel groeien vanuit de sterkste lokale Getis-Ord Gi*-cellen zolang de z van de regio groeit (onregelmatige vormen). Ze groeien op de ene helft van de matches en worden op de andere getoetst, zodat de vrijheid van het groeien geen valse plekken oplevert. Elke hoogteband tegenover de andere banden van de match over de hele kaart (clusterrobuust). Ruimte-tijdcilinders: een cirkel in een of twee vijfde van de matchlengte, tegen de eigen spreiding van de gebeurtenissen van de match over plaats en tijd (de ruimte-tijdpermutatiescan).
 - **Toetsen.** p uit de quasi-likelihood; Benjamini-Hochberg over elke regio die op elke kaart is geprobeerd (700.000 op drie kaarten is gebruikelijk), op 5%. Wat slaagt, wordt gesnoeid (een regio die grotendeels binnen een sterkere regio van dezelfde maat ligt, zegt hetzelfde), opnieuw gelezen op zijn **stabiliteit** (matches die hem zagen, matches waarin hij zat, zijn richting in vijf folds van de matches), en nog eens getoetst bij de spreiding die de matches zelf laten zien (clusterrobuust, matches als clusters, nooit onder Poisson), opnieuw BH. Stille plekken op een basis (2% of meer van de spawns, opstijgingen en landingen van de kaart) worden weggelaten.
@@ -148,6 +167,8 @@ Het tabblad **Plekken** toont ze (standaard alleen verborgen; op kaart, vorm, ri
 
 Bundelzoeken (breedte 24, diepte 3) over drie tabellen: **levens** (levens van spelers: spel, kaart, modus, klasse, voertuig, kant, tier, kwartaal van de datums, derde van de matchlengtes; K/D, winst, dood per leven, kills per uur, verdiensten per minuut), **plekken** (kills en doden per kaart, modus, datums, sector van de kaart 4 x 4, klasse, kant, band) en **fasen** (sector en vijfde van de match: K/D, doden per uur aanwezigheid). Een groep wordt getoetst tegen het geheel, met matches als clusters (de sandwich-variantie van zijn residuen per match). Het effect is een odds- of snelheidsverhouding, geschrompeld door een prior van 20 uitkomsten. Er zijn 30 uitkomsten in 8 matches nodig; een verfijning moet 10% sterker zijn dan zijn ouder; groepen waarin de uitkomst nooit of altijd voorkomt (niet voor hen geregistreerd), vallen af. Bewaard: BH onder 5% over elke geëvalueerde groep, een geschrompelde verhouding van minstens 1,25 (of 1/1,25), vier van de vijf folds die het eens zijn, en geen verfijning die alleen zijn ouder herhaalt. Het tabblad **Niches** toont ze; een klik toont elke verfijning met één voorwaarde van de groep (de verkenner), **Laden** laadt zijn matches. Uitrustingen staan nog niet in de samenvattingen.
 
+De vierde tabel, **rondes** (`roundsTable`), heeft de uitslag van de ronde als doel: één rij per ronde van een leven - kaart, kant, deel van de match (rondes 1-4, 5-8, ...), voertuig, het meest gebruikte wapen, de langst gehouden plek, aankoop, eerste kill of eerste dood - gemeten aan het winpercentage van de eigen kant in de eigen match (de gestratificeerde verwachting van Mantel-Haenszel: het residu is `won - e`, `e` het aandeel van de kant in de match), zodat een niche nooit de balans van de kaart of de kant is. Matches blijven de clusters. Zijn z is gekalibreerd: dezelfde beam search draait acht keer op de uitslagen, geschud tussen de rondes van elke kant van elke match (het percentage van de kant in elke match blijft gelijk), en de spreiding van die nul-z voorbij een standaardnormale verdeling - per aantal voorwaarden, uit het midden (mediaan / 0,674) en de staart (99e percentiel / 2,576), de grootste, nooit onder 1 - deelt de echte vóór hun p en de foutieve-ontdekkingsratio (een empirische nul, Efron 2004). Diepere groepen krijgen de grotere schaal: de beam houdt verfijningen van groepen die om hun grote z gekozen zijn. De basis van een niche is haar eigen verwachting, haar winst de punten erboven, en ze wordt gerangschikt op de winst maal de wortel van haar rondes, gedragen door het bewijs en de folds (`wracc` is de steun maal de winst). Ze draagt de matches waarin ze het sterkst naar voren kwam (`matchIds`) en een paar van hun rondes (`rounds`, `[match, round]`) om in te zoomen.
+
 #### Metaverschuivingen met praktische betekenis {#meta-shifts-with-practical-significance}
 
 Bij gemengde datums noemde de binomiale toets op levens bijna elke verandering significant. `meta` toetst nu clusterrobuust (de levens van elke match een cluster), houdt een gebruiksverschuiving alleen aan als ze minstens 2 punten en 25% is, een K/D-verschuiving van 1,3 keer, de kwartalen van de datums die dezelfde kant op trenden (Kendall's tau van minstens 0,5), en voor een voertuig op meerdere kaarten dezelfde richting op de meeste ervan. Dat laat op een testset waarop de gewone toets bijna alles aanmerkte, nog maar enkele verschuivingen over.
@@ -158,4 +179,4 @@ Bij gemengde datums noemde de binomiale toets op levens bijna elke verandering s
 
 #### Controles {#checks}
 
-`scan.test.ts` plant een verspreid gebied (1,6 keer het sterftecijfer over een cirkel van 22 cellen, in elke cel zwak), een corridor, een hoogteband en een cluster dat alleen in een fase zit, in 240 synthetische overgedispergeerde matches. Alles wordt gevonden, het verspreide gebied verborgen, en acht nulsets van 60 matches draaien: geen plek. `niche.test.ts` vindt een geplante groep voertuig x kaart x kant en niets in vijf nultabellen.
+`scan.test.ts` plant een verspreid gebied (1,6 keer het sterftecijfer over een cirkel van 22 cellen, in elke cel zwak), een corridor, een hoogteband en een cluster dat alleen in een fase zit, in 240 synthetische overgedispergeerde matches. Alles wordt gevonden, het verspreide gebied verborgen, en acht nulsets van 60 matches draaien: geen plek. `niche.test.ts` vindt een geplante groep voertuig x kaart x kant en niets in vijf nultabellen. `outcome.test.ts` controleert de samenvatting van versie 2 (gewonnen rondes per kant, eenheid, speler en wapen, `pw`, de eenheid-rondes); plant een baan waarvan de kant 70% van haar rondes wint tegen 35% (elke match met een eigen balans) - gevonden - en draait 20 nulsets van 50 matches waarin de banen niets zeggen: geen winpercentage-plek; plant een AWP op één kaart die de rondes van zijn kant 30 punten vaker wint - gevonden, met zijn matches en rondes - en draait 30 nulsets van 80 matches, elke match met een eigen balans en één kant sterker op één kaart: geen niche.

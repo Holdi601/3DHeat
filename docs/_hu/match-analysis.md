@@ -3,9 +3,9 @@ title: "Meccselemzés (CS2)"
 nav_order: 10
 lang: "hu"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Meccselemzés (Counter-Strike 2)
@@ -121,6 +121,16 @@ Minden betöltött meccsen át:
 - **Játékosok**: a tizenöt legjobb ölés mínusz halál szerint, összesítve minden meccsükön (a Steam-azonosító alapján párosítva): a meccsek, K-D, ADR és KAST a lejátszott körökkel súlyozva, HS% az ölésekkel súlyozva, és a nyitópárbajok. **Kattints egy játékosra**, hogy lásd az ölési és halálozási adatait az összes meccsén a hőtérképen.
 
 A Megjelenítés a hőtérképen gombok az összes betöltött meccsre ez alatt vannak.
+
+## Mi döntötte el a köröket {#what-decided-the-rounds}
+
+A fül számol; a [Felismerések](insights.md#who-won-what-decided-the-rounds) magyaráznak. Ha egy meccs hőtérkép-táblázata be van töltve (benne van a `won` oszlop), a **Felismerések** minden oldal köreit aszerint osztja fel, mi történt bennük – a nyitópárbaj, a vásárlás, egy megbosszult első halál, a lerakás, az eszközök, egy korai első kontaktus, minden megtartott hely és minden, az első 25 mp-ben elért hely –, és megmondja, mi hozta a különbséget: a győzelmi arányok különbségét, annak 95%-os intervallumát és q-ját, és *kevés kör*, ahol egy ágban nyolcnál kevesebb van. Megnevezi a fordulópontokat (az ölések és lerakások, amelyek a legjobban megmozdították a győzelmi valószínűséget), valamint a legtöbbet hozzáadó vagy elvesztő játékosokat és helyeket, és az **Összegzés** és a **Kommentátor** ezekkel kezd. Egy kitalált példa:
+
+> A T megnyerte annak a 19 körnek a 79%-át, amelyben tartotta a Midet, szemben a nélküle lévő 21 kör 24%-ával (55 pont, 95%: 26–74) – q 0,004.
+>
+> Fordulópontok: a 17. körben 48 mp-nél a CT egy ölése a B site-on 31%-ról 58%-ra emelte az esélyét, és megnyerte a kört.
+
+Egy meccsben 30-nál kevesebb kör van, így a győzelmi valószínűségei egy rögzített a priori modellből származnak, amely az életben lévő emberekre, a lerakásra és az órára épül; a szöveg ezt meg is mondja. Sok meccsen ugyanezeket a kérdéseket a [tömeges elemzés](mass-analysis.md#who-won) teszi fel.
 
 ## Megjelenítés a hőtérképen {#show-in-the-heatmap}
 

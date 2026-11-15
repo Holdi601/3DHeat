@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "zh-Hant"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 對戰重播
@@ -90,6 +90,8 @@ outdated: true
 ## 目標 {#objectives}
 
 當對戰附帶其目標時，**目標**區段會把它們繪製在關卡上：佔領區（含擁有者與佔領進度）、出生點、機場、區域與轟炸目標，每一層都可以開關，並附有標籤。它們會透過地面顯示出來。若載入了多種遊戲模式，**模式**會依模式篩選對戰。目標來自錄影旁邊的轉換器對戰檔案，或來自 [`.3dheat`](container.md) 容器之內。
+
+Rainbow Six Siege 對戰會帶上它們的炸彈點：每個炸彈點的兩個房間以帶名稱的輪廓畫在各自的地板上，這些輪廓是根據遊戲顯示房間名稱時玩家所站的位置推算出來的；對戰中沒有打到的地圖炸彈點，則取自轉換器的炸彈點表，畫成一個圓。在重播中，播放頭所在回合的炸彈點以琥珀色亮起，其他保持灰色。它們屬於佔領區圖層。
 
 ## 標籤與統計 {#labels-and-statistics}
 

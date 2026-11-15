@@ -4,9 +4,9 @@ parent: "Suodattimet ja työkalut"
 nav_order: 1
 lang: "fi"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Suodattimet
@@ -41,6 +41,10 @@ Vain esiintyvät tyypit luetellaan. Arvosarakkeet (`cost_*`, `earn_*`, `net_*` j
 Luokkaluettelo, jossa on yli 12 arvoa, saa hakukentän (*Hae n arvoa*) ja painikkeen **Vain nämä**, joka sallii täsmälleen täsmäävät arvot.
 
 Se, mitkä sarakkeet voi suodattaa, päätetään latauksessa, koska ne täytyy lukea silloin. Jos mitään sarakettä ei ole säilytetty, paneeli kertoo siitä ja ohjaa kohtaan *Säilytä suodatusta varten*.
+
+## Rainbow Six Siegen pikasuodattimet {#rainbow-six-siege-quick-filters}
+
+Kun Rainbow Six Siege -ottelu on ladattu, paneelin alussa on painikkeita, jotka asettavat suodattimet yhdellä napsautuksella: **Luodinreiät ja jäljet** (tasoon jääneet jäljet), **Jäljet, joilla ampuja** ja **Jäljet, joilla aseluokka** (ne, joille ampuja tai ampujan samanhetkisen tapon ase on päätelty; jaa tai suodata niitä edelleen sarakkeella `byOperator` tai `byItemClass`), **Asetus- ja purkuyritykset**, **Keskeytyneet yritykset** (aloitettu, ei viety loppuun, siinä missä pelaaja lopetti) ja **Vahvistukset** (missä seinä tai luukku vahvistettiin, sen puolustajan kohdalla, jonka muunnin päättelee). Kukin painike korvaa tapahtumasarakkeen suodattimen ja pitää muut; **Tyhjennä kaikki suodattimet** kumoaa sen. Sarakkeet kuvataan muuntimen ohjeissa.
 
 ## Numeerisat sarakkeet (väli) {#numeric-columns-range}
 

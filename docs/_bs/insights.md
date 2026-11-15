@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "bs"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Uvidi
@@ -44,6 +44,7 @@ Redovi na vrhu spiska (na primjer ukupni iznosi novca) sažimaju cijele podatke 
 | **Igrači** | Igrači koji ubijaju ili umiru mnogo češće ili rjeđe od drugih u istoj klasi | osobe i ubistva |
 | **Uska grla i bokovi** | Uska grla (mnogo više prelazaka nego okolnog tla) i bočne rute (rijetko korištene, ali vode do ubistava) | osobe |
 | **Vrijednost** | *Skupo tlo* i *Tlo koje donosi* | [kolone vrijednosti](value-weighting.md) |
+| **Šta je odlučilo runde** | Šta je razdvajalo dobijene od izgubljenih rundi i igrači koji su dodali ili koštali najviše vjerovatnoće pobjede (vidi [Ko je pobijedio](#who-won-what-decided-the-rounds)) | runde, ubistva i smrti te [kolone ishoda](data-formats.md#outcome-columns) (`won`) |
 
 Detektori koji ne mogu raditi na podacima navedeni su na dnu, s razlogom.
 
@@ -51,9 +52,42 @@ Detektori koji ne mogu raditi na podacima navedeni su na dnu, s razlogom.
 
 Svako mjesto ili grupa poredi se s ostatkom mape (tačni binomni testovi ili testovi stope). Stopa lažnih otkrića drži se na 5 % (Benjamini-Hochberg). Slučajnost može izgledati kao obrazac; ovo drži lažne uzbune niskim: među prikazanim nalazima očekuje se najviše otprilike jedan od dvadeset slučajnih. Efekti iz malo događaja povlače se prema „nema efekta” prije rangiranja. Najviše 60 nalaza se navodi, a svaki detektor dobija nekoliko mjesta pri vrhu.
 
+### Ko je pobijedio: šta je odlučilo runde {#who-won-what-decided-the-rounds}
+
+Gdje podaci kažu ko je dobio svaku rundu ([kolona ishoda](data-formats.md#outcome-columns) `won`: CS2, Rainbow Six Siege, War Thunder ...), Uvidi se vrte oko rezultata. Za svaku stranu dijele runde prema onome što se u njima desilo i porede procente pobjeda:
+
+| Faktor | Runde strane s njim | ... i bez njega |
+|---|---|---|
+| Otvarajući dvoboj | strana je ostvarila prvo ubistvo | strana je prva poginula |
+| Kupovina | njena kupovina je bila bolja od kupovine druge strane | lošija |
+| Razmijenjena prva smrt | njena prva smrt je razmijenjena unutar 5 s | nije razmijenjena |
+| Postavljanje | strana je postavila bombu | bez postavljanja |
+| Pomagala | više granata nego u njenoj uobičajenoj rundi | manje |
+| Rani kontakt | prvi dvoboj je došao prije medijane vremena meča | kasnije |
+| Držano mjesto | igrač je stajao na mjestu 5 s ili duže | niko |
+| Rano dosegnuto mjesto | igrač je tamo stigao u prvih 25 s (ruta) | niko |
+
+Svako poređenje je razlika dva procenta pobjeda s njenim intervalom od 95% (Newcombe), Fisherovim egzaktnim p i q preko svih isprobanih faktora (Benjamini-Hochberg). Grana s manje od 8 rundi označena je s *malo rundi*. One ispod stope lažnih otkrića od 5% postaju nalazi; najjači se rangiraju iznad nalaza ostalih detektora (nalaz o ishodu teži 1,35 puta više od nalaza s istim efektom i dokazima).
+
+Izmišljeni primjer iz 40 rundi:
+
+> **T** je dobila 79% od 19 rundi u kojima je držala **Mid**, naspram 24% od 21 bez toga (55 bodova, 95% od 26 do 74) - q 0,004.
+
+Prati i **vjerovatnoću pobjede** runde - šansu koju je svaka strana imala u svakom trenutku, prema živim igračima, postavljanju i satu: prilagođenu rundama kada ih je 30 ili više, inače iz fiksnog apriornog modela (i tekst kaže iz kojeg). Iz nje dolaze **prekretnice** (ubistva i postavljanja koja su najviše pomjerila šansu) i **dodana vjerovatnoća pobjede** svakog igrača: ubistva i postavljanja koja je napravio broje mu se u korist, njegove smrti protiv njega, u vrijednosti rundi kroz meč, u prosjeku po rundi s intervalom, testirano naspram nule. Mjesta dobijaju isti bilans: koja je strana najviše dobila u dvobojima vođenim tamo.
+
+Podaci trebaju runde, ubistva i smrti s obje strane te kolonu `won`; imenovana mjesta (`place`) za držana mjesta, kolonu `buy` za kupovinu.
+
 ## Sažetak {#debrief}
 
-Kartica **Sažetak** piše nalaze kao kratak tekst: uvod, najjasniji nalaz, jedan za taktiku, jedan za balansiranje, ostali grupisani po detektoru, i koliko ih se oslanja na slabije dokaze. Svaki pasus ima numerisana dugmad koja pokazuju njegove nalaze. **Kopiraj tekst** ga kopira.
+Kartica **Sažetak** piše nalaze kao kratak tekst: uvod, najjasniji nalaz, jedan za taktiku, jedan za balansiranje, zatim - gdje podaci kažu ko je pobijedio - šta je odlučilo runde, ostali grupisani po detektoru, i koliko ih se oslanja na slabije dokaze.
+
+Šta je odlučilo runde dolazi u četiri pasusa: rezultat i odakle dolaze vjerovatnoće pobjede; najjači faktori s brojevima, intervalom i q (kada nijedan ne prođe stopu lažnih otkrića, tekst kaže *za sada ništa nije sigurno* i ipak navodi najjače); tri najveće prekretnice; te igrači koji su dodali i koštali najviše vjerovatnoće pobjede, s mjestima koja su najviše dobila. Izmišljeni primjer:
+
+> T je dobila 23, a CT 17 od 40 rundi sa poznatim ishodom (T: 58%, 95% od 42% do 72%). Vjerovatnoće pobjede dolaze iz modela prilagođenog ovim rundama.
+>
+> Šta je razdvajalo dobijene od izgubljenih rundi: T je dobila 79% od 19 rundi u kojima je držala Mid, naspram 24% od 21 bez toga (55 bodova, 95% od 26 do 74) (q 0,004), ...
+>
+> Prekretnice: runda 17 u 48 s, ubistvo strane CT na mjestu B promijenilo je njene izglede sa 31% na 58%, i dobila je rundu, ... Svaki pasus ima numerisana dugmad koja pokazuju njegove nalaze. **Kopiraj tekst** ga kopira.
 
 ![Sažetak koji je napisao ugrađeni pripovjedač](../assets/img/bs/debrief.webp)
 
@@ -72,11 +106,13 @@ Ugrađeni pripovjedač radi offline, na vašem jeziku. Birač **Leća** iznad nj
 | **Koristi vanjski AI** | Podrazumijevano isključeno |
 | **Šalji imena igrača** | Podrazumijevano isključeno: igrači se šalju kao P1, P2 ... |
 
-Zatim unesite opcionalno pitanje i pritisnite **Napiši uz AI**. Šalju se samo nalazi i njihovi brojevi - nikada redovi vaših podataka. Odgovor se ispisuje postepeno; citirani nalazi postaju dugmad.
+Zatim unesite opcionalno pitanje i pritisnite **Napiši uz AI**. Šalju se samo nalazi i njihovi brojevi - nikada redovi vaših podataka. Odgovor se ispisuje postepeno; citirani nalazi postaju dugmad. Gdje podaci kažu ko je pobijedio, model dobija uputu da počne s onim što je odlučilo runde, s intervalom i q svakog broja, i da kaže kada se faktor oslanja na malo rundi ili kada vjerovatnoće pobjede dolaze iz apriornog modela.
 
 ## Komentator {#caster}
 
-Za **jedan meč** (izaberite jedan ako ih je učitano više), **Komentator** pronalazi trenutke vrijedne gledanja: prvu krv, višestruka ubistva, razmjene, zaokrete, promjene ciljeva, povratke, istaknute igrače, dugačke hitce.
+Za **jedan meč** (izaberite jedan ako ih je učitano više), **Komentator** pronalazi trenutke vrijedne gledanja: prvu krv, višestruka ubistva, razmjene, zaokrete, promjene ciljeva, povratke, istaknute igrače, dugačke hitce i **prekretnice** - ubistva koja su najviše pomjerila šansu strane da dobije rundu (prema igračima koji su ostali živi na svakoj strani, u rundama bez ponovnog pojavljivanja).
+
+Gdje podaci kažu ko je dobio svaku rundu, to kaže svaki trenutak: *„Anna obara Bena: šansa strane T da dobije rundu mijenja se sa 38% na 62% - i dobijaju rundu.”* Trenutak strane koja je potom pobijedila vrijedi više kada komentator bira koje trenutke zadržava, a povratak se broji u dobijenim rundama.
 
 ![Trenuci komentatora za jedan krug demo shootera](../assets/img/bs/caster.webp)
 

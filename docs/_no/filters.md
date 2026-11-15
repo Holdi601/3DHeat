@@ -4,9 +4,9 @@ parent: "Filtre og verktøy"
 nav_order: 1
 lang: "no"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtre
@@ -41,6 +41,10 @@ Bare typene som finnes listes. Verdikolonner (`cost_*`, `earn_*`, `net_*` og *Ko
 En kategoriliste med mer enn 12 verdier får en søkeboks (*Søk i n verdier*) og en knapp **Bare disse** som tillater nøyaktig de verdiene som passer.
 
 Hvilke kolonner som kan filtreres, avgjøres ved innlasting, fordi de må leses da. Uten noen beholdt kolonne sier panelet det og peker på *Behold for filtrering*.
+
+## Hurtigfiltre for Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Når en Rainbow Six Siege-kamp er lastet inn, starter panelet med knapper som setter filtrene med ett klikk: **Kulehull og merker** (merkene som er etterlatt på banen), **Merker med skytter** og **Merker med våpenklasse** (de der en skytter, eller et våpen fra skytterens drap i samme øyeblikk, ble funnet ut; del eller filtrer dem videre etter `byOperator` eller `byItemClass`), **Forsøk på å plante og desarmere**, **Avbrutte forsøk** (startet, ikke fullført, der spilleren stoppet) og **Forsterkninger** (der en vegg eller luke ble forsterket, ved forsvareren som konvertereren utleder). Hver knapp erstatter filteret på hendelseskolonnen og beholder resten; **Fjern alle filtre** angrer det. Kolonnene er beskrevet i konvertererens dokumentasjon.
 
 ## Tallkolonner (område) {#numeric-columns-range}
 

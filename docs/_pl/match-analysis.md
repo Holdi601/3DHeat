@@ -3,9 +3,9 @@ title: "Analiza meczu (CS2)"
 nav_order: 10
 lang: "pl"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -122,6 +122,16 @@ Ze wszystkich wczytanych meczów:
 - **Gracze**: piętnastu najlepszych według zabójstw minus zgony, połączonych ze wszystkich ich meczów (dopasowanie po Steam ID): mecze, K-D, ADR i KAST ważone rozegranymi rundami, HS% ważone zabójstwami, pojedynki otwierające. **Kliknij gracza**, by zobaczyć jego zabójstwa i zgony ze wszystkich meczów na mapie cieplnej.
 
 Przyciski Pokaż na mapie cieplnej dla wszystkich wczytanych meczów są pod tym.
+
+## Co rozstrzygnęło rundy {#what-decided-the-rounds}
+
+Ta karta liczy; [Wnioski](insights.md#who-won-what-decided-the-rounds) wyjaśniają. Gdy wczytana jest tabela mapy cieplnej meczu (zawiera kolumnę `won`), **Wnioski** dzielą rundy każdej strony według tego, co się w nich stało - pojedynek otwierający, zakup, pomszczona pierwsza śmierć, podłożenie, wyposażenie użytkowe, wczesny pierwszy kontakt, każde utrzymane miejsce i każde miejsce osiągnięte w pierwszych 25 s - i mówią, co zrobiło różnicę, z różnicą odsetków wygranych, jej 95-procentowym przedziałem i q, oraz *mało rund*, gdy ramię ma mniej niż osiem. Wskazują punkty zwrotne (zabójstwa i podłożenia, które najbardziej zmieniły szansę na wygraną) oraz graczy i miejsca, które najwięcej dodały lub odebrały, a **Podsumowanie** i **Komentator** zaczynają od nich. Zmyślony przykład:
+
+> T wygrało 79% z 19 rund, w których trzymało Mid, wobec 24% z 21 bez tego (55 punktów, 95% od 26 do 74) - q 0,004.
+>
+> Punkty zwrotne: runda 17 w 48 s, zabójstwo CT na B site zmieniło jego szansę z 31% na 58% i wygrało ono rundę.
+
+Jeden mecz ma mniej niż 30 rund, więc jego szanse na wygraną pochodzą ze stałego modelu wstępnego opartego na żywych graczach, podłożeniu i zegarze; tekst to mówi. W wielu meczach te same pytania zadaje [analiza masowa](mass-analysis.md#who-won).
 
 ## Pokaż na mapie cieplnej {#show-in-the-heatmap}
 

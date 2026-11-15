@@ -4,9 +4,9 @@ parent: "Filtri in orodja"
 nav_order: 1
 lang: "sl"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtri
@@ -41,6 +41,10 @@ Naštete so le vrste, ki se pojavijo. Stolpci vrednosti (`cost_*`, `earn_*`, `ne
 Seznam kategorij z več kot 12 vrednostmi dobi iskalno polje (*Išči n vrednosti*) in gumb **Samo ti**, ki dovoli natanko ujemajoče vrednosti.
 
 Kateri stolpci se lahko filtrirajo, se odloči ob nalaganju, ker jih je treba takrat prebrati. Brez ohranjenega stolpca plošča to pove in napoti na *Ohrani za filtriranje*.
+
+## Hitri filtri za Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Ko je naložena tekma Rainbow Six Siege, se plošča začne z gumbi, ki nastavijo filtre z enim klikom: **Luknje od krogel in sledi** (sledi, ki ostanejo na ravni), **Sledi s strelcem** in **Sledi z razredom orožja** (tiste, za katere je bil ugotovljen strelec ali orožje iz strelčevega ubitja v istem trenutku; naprej jih razdelite ali filtrirajte po `byOperator` ali `byItemClass`), **Poskusi postavitve in razorožitve**, **Prekinjeni poskusi** (začeti, ne dokončani, tam, kjer je igralec nehal) in **Ojačitve** (kjer je bila stena ali loputa ojačana, pri branilcu, ki ga sklepa pretvornik). Vsak gumb zamenja filter na stolpcu dogodkov in ohrani ostale; **Počisti vse filtre** to razveljavi. Stolpci so opisani v dokumentaciji pretvornika.
 
 ## Številski stolpci (razpon) {#numeric-columns-range}
 

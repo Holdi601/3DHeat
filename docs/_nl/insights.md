@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "nl"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Inzichten
@@ -44,6 +44,7 @@ De regels bovenaan de lijst (bijvoorbeeld de geldtotalen) vatten de volledige da
 | **Spelers** | Spelers die veel meer of minder doden of sterven dan anderen in dezelfde klasse | personen en kills |
 | **Knelpunten en flanken** | Knelpunten (veel meer doorgangen dan de grond eromheen) en flankroutes (zelden gebruikt, maar leiden tot kills) | personen |
 | **Waarde** | *Kostbare grond* en *Opbrengende grond* | [waardekolommen](value-weighting.md) |
+| **Wat de rondes besliste** | Wat gewonnen van verloren rondes scheidde, en de spelers die de meeste winkans toevoegden of kostten (zie [Wie won](#who-won-what-decided-the-rounds)) | rondes, kills en doden, en de [uitkomstkolommen](data-formats.md#outcome-columns) (`won`) |
 
 Detectors die niet op de data kunnen draaien staan onderaan met de reden.
 
@@ -51,9 +52,42 @@ Detectors die niet op de data kunnen draaien staan onderaan met de reden.
 
 Elke plek of groep wordt getoetst tegen de rest van de kaart (exacte binomiale of snelheidstoetsen). Het vals-ontdekkingspercentage wordt op 5% gehouden (Benjamini-Hochberg). Toeval kan op een patroon lijken; dit houdt valse alarmen laag: onder de getoonde bevindingen wordt verwacht dat hooguit ongeveer één op de twintig op toeval berust. Effecten uit weinig gebeurtenissen worden vóór het rangschikken naar "geen effect" toe getrokken. Er worden hoogstens 60 bevindingen getoond, en elke detector krijgt een paar plekken bovenaan.
 
+### Wie won: wat de rondes besliste {#who-won-what-decided-the-rounds}
+
+Waar de data zegt wie elke ronde won (de [uitkomstkolom](data-formats.md#outcome-columns) `won`: CS2, Rainbow Six Siege, War Thunder ...), draait Inzichten om de uitslag. Voor elke kant splitst het de rondes op naar wat er in gebeurde en vergelijkt het de winpercentages:
+
+| Factor | De rondes van de kant mét | ... en zonder |
+|---|---|---|
+| Openingsduel | ze maakte de eerste kill | ze stierf als eerste |
+| Aankoop | haar aankoop was beter dan die van de andere kant | slechter |
+| Gewroken eerste dood | haar eerste dood werd binnen 5 s gewroken | niet gewroken |
+| Plant | ze plantte | geen plant |
+| Utility | meer granaten dan in haar gewone ronde | minder |
+| Vroeg contact | het eerste duel kwam vóór de mediane tijd van de wedstrijd | later |
+| Een vastgehouden plek | een speler stond 5 s of langer op de plek | niemand |
+| Een vroeg bereikte plek | een speler kwam er in de eerste 25 s (de route) | niemand |
+
+Elke vergelijking is een verschil van twee winpercentages met zijn 95%-interval (Newcombe), Fishers exacte p en een q over alle geprobeerde factoren (Benjamini-Hochberg). Een tak met minder dan 8 rondes krijgt het label *weinig rondes*. Wat onder de foutieve-ontdekkingsratio van 5% blijft, wordt een bevinding; de sterkste staan boven die van de andere detectors (een uitkomstbevinding weegt 1,35 keer zoveel als een met hetzelfde effect en bewijs).
+
+Een verzonnen voorbeeld over 40 rondes:
+
+> **T** won 79% van de 19 rondes waarin het **Mid** hield, tegen 24% van 21 zonder (55 punten, 95% 26 tot 74) - q 0,004.
+
+Het volgt ook de **winkans** van de ronde - de kans die elke kant op elk moment had, uit de levende spelers, de plant en de klok: aangepast aan de rondes als het er 30 of meer zijn, anders een vast voorafmodel (en de tekst zegt welk). Daaruit komen de **kantelpunten** (de kills en plants die de kans het meest verschoven) en de **toegevoegde winkans** van elke speler: de kills en plants die hij maakte tellen voor hem, zijn doden tegen hem, in rondes over de wedstrijd, een ronde gemiddeld met zijn interval, getoetst tegen nul. De plekken krijgen dezelfde balans: welke kant het meest won in de duels die daar werden uitgevochten.
+
+De data heeft rondes, kills en doden met beide kanten nodig, en de kolom `won`; benoemde plekken (`place`) voor vastgehouden plekken, een kolom `buy` voor de aankoop.
+
 ## Nabespreking {#debrief}
 
-Het tabblad **Nabespreking** schrijft de bevindingen uit als korte tekst: een inleiding, de duidelijkste bevinding, één voor tactiek, één voor balans, de rest gegroepeerd per detector, en hoeveel er op zwakker bewijs rusten. Elke alinea heeft genummerde knoppen die de bevindingen tonen. **Tekst kopiëren** kopieert hem.
+Het tabblad **Nabespreking** schrijft de bevindingen uit als korte tekst: een inleiding, de duidelijkste bevinding, één voor tactiek, één voor balans, dan - waar de data zegt wie won - wat de rondes besliste, de rest gegroepeerd per detector, en hoeveel er op zwakker bewijs rusten.
+
+Wat de rondes besliste komt in vier alinea's: de stand en waar de winkansen vandaan komen; de sterkste factoren met hun getallen, interval en q (als er geen door de foutieve-ontdekkingsratio komt, zegt de tekst *niets daarvan is al zeker*, en noemt toch de sterkste); de drie grootste kantelpunten; en de spelers die de meeste winkans toevoegden en kostten, met de plekken die het meest wonnen. Een verzonnen voorbeeld:
+
+> T won 23 en CT won 17 van 40 rondes met een bekende uitslag (T: 58%, 95% 42% tot 72%). De winkansen komen uit een model dat aan deze rondes is aangepast.
+>
+> Wat gewonnen van verloren rondes scheidde: T won 79% van de 19 rondes waarin het Mid hield, tegen 24% van 21 zonder (55 punten, 95% 26 tot 74) (q 0,004), ...
+>
+> Kantelpunten: ronde 17 op 48 s, een kill door CT bij B site verschoof zijn kans van 31% naar 58%, en het pakte de ronde, ... Elke alinea heeft genummerde knoppen die de bevindingen tonen. **Tekst kopiëren** kopieert hem.
 
 ![De nabespreking geschreven door de ingebouwde verteller](../assets/img/nl/debrief.webp)
 
@@ -72,11 +106,13 @@ De ingebouwde verteller werkt offline, in jouw taal. De keuzelijst **Lens** erbo
 | **Een externe AI gebruiken** | Standaard uit |
 | **Spelersnamen meesturen** | Standaard uit: spelers worden als P1, P2 ... gestuurd |
 
-Typ daarna eventueel een vraag en druk op **Schrijven met AI**. Alleen de bevindingen en hun getallen worden verstuurd - nooit de rijen van je data. Het antwoord komt binnen als stroom; genoemde bevindingen worden knoppen.
+Typ daarna eventueel een vraag en druk op **Schrijven met AI**. Alleen de bevindingen en hun getallen worden verstuurd - nooit de rijen van je data. Het antwoord komt binnen als stroom; genoemde bevindingen worden knoppen. Waar de data zegt wie won, krijgt het model de opdracht te beginnen met wat de rondes besliste, met het interval en de q van elk getal, en te zeggen wanneer een factor op weinig rondes rust of de winkansen uit het voorafmodel komen.
 
 ## Commentator {#caster}
 
-Voor **één wedstrijd** (kies er één als er meerdere geladen zijn) zoekt de **Commentator** de momenten die het waard zijn om te bekijken: eerste bloed, multi-kills, ruilen, clutches, wendingen bij doelen, comebacks, opvallende spelers, lange schoten.
+Voor **één wedstrijd** (kies er één als er meerdere geladen zijn) zoekt de **Commentator** de momenten die het waard zijn om te bekijken: eerste bloed, multi-kills, ruilen, clutches, wendingen bij doelen, comebacks, opvallende spelers, lange schoten en **kantelpunten** - de kills die de kans van een kant om de ronde te winnen het meest verschoven (naar de spelers die aan elke kant nog leven, in rondes zonder respawns).
+
+Waar de data zegt wie elke ronde won, zegt elk moment het: *"Anna schakelt Ben uit: de kans van T om de ronde te winnen gaat van 38% naar 62% - en ze pakken de ronde."* Een moment van de kant die daarna won telt zwaarder als de commentator kiest welke hij houdt, en een comeback wordt geteld in gewonnen rondes.
 
 ![De momenten van de commentator voor één ronde van de schietdemo](../assets/img/nl/caster.webp)
 

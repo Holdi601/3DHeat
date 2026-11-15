@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "sq"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -91,6 +91,8 @@ Seksioni **Pamja taktike** vizaton, për asnjë njësi, të zgjedhurat, të gjit
 ## Objektivat {#objectives}
 
 Kur një ndeshje vjen me objektivat e saj, seksioni **Objektivat** i vizaton mbi nivel: zonat e kapjes (me pronarin dhe progresin e kapjes), spawn-et, aeroportet, zonat dhe objektivat e bombardimit. Të gjitha mund të shfaqen ose fshihen veç e veç, me etiketa. Shihen edhe nëpër tokë. Kur janë ngarkuar disa mënyra loje, **Modaliteti** i filtron ndeshjet sipas mënyrës. Objektivat vijnë nga skedari i ndeshjes i një konvertuesi, që ndodhet pranë regjistrimit ose brenda një kontejneri [`.3dheat`](container.md).
+
+Ndeshjet Rainbow Six Siege sjellin vendet e tyre të bombës: dy dhomat e çdo vendi vizatohen në dyshemenë e tyre si kontura me emrat e tyre, të nxjerra nga vendi ku qëndronin lojtarët ndërsa loja e emërtonte dhomën; një vend i hartës që nuk u luajt në ndeshje vjen nga tabela e vendeve e konvertuesit si rreth. Në riluajtje, vendi i raundit te koka e luajtjes ndriçon në ngjyrë qelibari, të tjerët mbeten gri. Ato janë pjesë e shtresës së zonave të kapjes.
 
 ## Etiketat dhe statistikat {#labels-and-statistics}
 

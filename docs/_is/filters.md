@@ -4,9 +4,9 @@ parent: "Síur og verkfæri"
 nav_order: 1
 lang: "is"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -42,6 +42,10 @@ Aðeins þær tegundir sem koma fyrir eru skráðar. Gildisdálkar (`cost_*`, `e
 Listi flokka með fleiri en 12 gildi fær leitarreit (*Leita í n gildum*) og hnappinn **Aðeins þessi**, sem leyfir nákvæmlega þau gildi sem passa.
 
 Hvaða dálka má sía er ákveðið við hleðslu, því þá þarf að lesa þá. Án geymds dálks segir spjaldið það og vísar á *Keep for filtering*.
+
+## Flýtisíur fyrir Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Þegar Rainbow Six Siege-leikur er hlaðinn byrjar spjaldið á hnöppum sem stilla síurnar með einum smelli: **Kúlugöt og ummerki** (ummerkin sem eru skilin eftir á borðinu), **Ummerki með skyttu** og **Ummerki með vopnaflokki** (þau þar sem skytta, eða vopn úr drápi skyttunnar á sama augnabliki, var fundið út; skiptu þeim eða síaðu þau frekar eftir `byOperator` eða `byItemClass`), **Tilraunir til að planta og aftengja**, **Truflaðar tilraunir** (hafnar, ekki kláraðar, þar sem leikmaðurinn hætti) og **Styrkingar** (þar sem veggur eða lúga var styrkt, hjá varnarmanninum sem breytirinn ályktar). Hver hnappur kemur í stað síunnar á atburðadálkinum og heldur restinni; **Hreinsa allar síur** afturkallar það. Dálkunum er lýst í skjölun breytisins.
 
 ## Talnadálkar (bil) {#numeric-columns-range}
 

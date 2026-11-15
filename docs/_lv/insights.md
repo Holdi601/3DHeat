@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "lv"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Atziņas
@@ -44,6 +44,7 @@ Saraksta augšā esošās rindas (piemēram, naudas kopsummas) apkopo visus datu
 | **Spēlētāji** | Spēlētāji, kas nogalina vai mirst daudz vairāk vai mazāk nekā citi tajā pašā klasē | personas un nogalinājumi |
 | **Šaurumi un flangi** | Sašaurinājumi (daudz vairāk šķērsojumu nekā apkārtējā zemē) un flangu maršruti (reti izmantoti, bet ved uz nogalinājumiem) | personas |
 | **Vērtība** | *Dārga zeme* un *Ienesīga zeme* | [vērtības kolonnas](value-weighting.md) |
+| **Kas izšķīra raundus** | Kas šķīra uzvarētos raundus no zaudētajiem, un spēlētāji, kas pievienoja vai maksāja visvairāk uzvaras varbūtības (skatiet [Kas uzvarēja](#who-won-what-decided-the-rounds)) | raundi, nogalinājumi un nāves, un [iznākuma kolonnas](data-formats.md#outcome-columns) (`won`) |
 
 Detektori, ko dati nevar palaist, ir uzskaitīti apakšā ar iemeslu.
 
@@ -51,9 +52,26 @@ Detektori, ko dati nevar palaist, ir uzskaitīti apakšā ar iemeslu.
 
 Katra vieta vai grupa tiek pārbaudīta pret pārējo karti (precīzi binomiālie vai ātruma testi). Viltus atklājumu līmenis tiek turēts 5% (Benjamini-Hochberg). Nejaušība var izskatīties pēc parauga; tas samazina viltus trauksmes: starp parādītajiem atradumiem sagaidāms, ka ne vairāk kā aptuveni viens no divdesmit ir nejaušība. Efekti no maza notikumu skaita pirms sarindošanas tiek vilkti uz "nav efekta". Ne vairāk kā 60 atradumi tiek uzskaitīti, un katrs detektors iegūst dažas vietas augšā.
 
+### Kas uzvarēja {#who-won-what-decided-the-rounds}
+
+Kur mači pasaka, kas uzvarēja katrā raundā ([iznākuma kolonna](data-formats.md#outcome-columns) `won`), rezultāts ir atsevišķs mērķis:
+
+- **Vietas: uzvaru īpatsvars.** Katrai pusei tās raundu daļa vietā, kurus tā uzvarēja, pret daļu, ko tā uzvarēja tajā pašā mačā jebkur - tātad kartes, puses un paša mača balanss ir bāzes līnija, un izceļas tikai vietas, kuru turētāji uzvar vairāk (vai mazāk) savu raundu. Izdomāts piemērs: *„Dust: puse T uzvar vairāk savu raundu, kad tā ir šeit: uzvarēti 61% no 412, pret 49%, kas gaidīti pēc tās pašas līmeņa tajos pašos mačos (izredzes 1,6x; noturēta 31/48 mačos).”* Tāds pats viltus atklājumu līmenis un stabilitātes pārbaudes kā katrai vietai; **Ielādēt** ielādē mačus, kuros vieta tika noturēta, un parāda šīs puses pozīcijas.
+- **Nišas: raunda uzvara.** Tabulā **Raundi** ir katras dzīves raunds: karte, puse, mača daļa (raundi 1-4, 5-8, ...), transportlīdzeklis (operators, aģents), visvairāk izmantotais ierocis, visilgāk noturētā vieta, pirkums (eco, force, full) un vai tās puse izdarīja pirmo nogalinājumu. Grupu vērtē pret to, ko tās puse uzvarēja tajos pašos mačos, tāpēc *T uz Dust ar AWP* ir niša tikai tad, ja šie raundi tika uzvarēti biežāk nekā citi T raundi tajos mačos. Izdomāts piemērs: *„m1 · T · AWP: uzvar 80% no 320 raundiem, pret 62%, kas gaidīti no tām pašām pusēm tajos pašos mačos (izredzes 2,3x; 40 mači).”* Sarindots pēc pacēluma reizinājuma ar atbalstu; **Ielādēt** ielādē mačus, kuru raundos tas redzams visvairāk.
+
+Abiem vajag 2. versijas kopsavilkumus (skatiet [Kopsavilkumu iegūšana](#getting-the-summaries)): vecākie tiek aprēķināti no jauna.
+
 ## Kopsavilkums {#debrief}
 
-Cilnē **Kopsavilkums** atradumi tiek uzrakstīti kā īss teksts: ievads, skaidrākais atradums, viens par taktiku, viens par balansēšanu, pārējie grupēti pēc detektora, un cik no tiem balstās uz vājākiem pierādījumiem. Katram rindkopas punktam ir numurētas pogas, kas parāda tās atradumus. **Kopēt tekstu** to kopē.
+Cilnē **Kopsavilkums** atradumi tiek uzrakstīti kā īss teksts: ievads, skaidrākais atradums, viens par taktiku, viens par balansēšanu, tad - kur dati pasaka, kas uzvarēja - kas izšķīra raundus, pārējie grupēti pēc detektora, un cik no tiem balstās uz vājākiem pierādījumiem.
+
+Kas izšķīra raundus, nāk četrās rindkopās: rezultāts un no kurienes nāk uzvaras varbūtības; spēcīgākie faktori ar to skaitļiem, intervālu un q (ja neviens neiztur viltus atklājumu līmeni, teksts saka *nekas no tā vēl nav drošs* un tomēr nosauc spēcīgāko); trīs lielākie pagrieziena punkti; un spēlētāji, kas pievienoja un maksāja visvairāk uzvaras varbūtības, ar vietām, kas ieguva visvairāk. Izdomāts piemērs:
+
+> T uzvarēja 23 un CT uzvarēja 17 no 40 raundiem ar zināmu rezultātu (T: 58%, 95% 42% līdz 72%). Uzvaras varbūtības nāk no modeļa, kas pielāgots šiem raundiem.
+>
+> Kas šķīra uzvarētos raundus no zaudētajiem: T uzvarēja 79% no 19 raundiem, kuros noturēja Mid, pret 24% no 21 bez tā (55 procentpunkti, 95% 26 līdz 74) (q 0,004), ...
+>
+> Pagrieziena punkti: 17. raunds 48. s, CT nogalinājums pie B site mainīja tās iespēju no 31% uz 58%, un tā uzvarēja raundā, ... Katram rindkopas punktam ir numurētas pogas, kas parāda tās atradumus. **Kopēt tekstu** to kopē.
 
 ![Kopsavilkums, ko uzrakstījis iebūvētais stāstītājs](../assets/img/lv/debrief.webp)
 
@@ -72,11 +90,13 @@ Iebūvētais stāstītājs darbojas bezsaistē, jūsu valodā. Virs tā esošais
 | **Izmantot ārējo MI** | Pēc noklusējuma izslēgts |
 | **Sūtīt spēlētāju vārdus** | Pēc noklusējuma izslēgts: spēlētāji tiek sūtīti kā P1, P2 ... |
 
-Pēc tam ierakstiet neobligātu jautājumu un nospiediet **Rakstīt ar MI**. Tiek nosūtīti tikai atradumi un to skaitļi - nekad jūsu datu rindas. Atbilde ienāk pa daļām; citētie atradumi kļūst par pogām.
+Pēc tam ierakstiet neobligātu jautājumu un nospiediet **Rakstīt ar MI**. Tiek nosūtīti tikai atradumi un to skaitļi - nekad jūsu datu rindas. Atbilde ienāk pa daļām; citētie atradumi kļūst par pogām. Kur dati pasaka, kas uzvarēja, modelim tiek likts sākt ar to, kas izšķīra raundus, ar katra skaitļa intervālu un q, un pateikt, kad faktors balstās uz maz raundiem vai uzvaras varbūtības nāk no priora modeļa.
 
 ## Komentētājs {#caster}
 
-Vienai **spēlei** (izvēlieties vienu, ja ielādētas vairākas) **Komentētājs** atrod mirkļus, kas vērti skatīšanās: pirmo asiņu, vairāku nogalinājumu, apmaiņas, izdzīvošanas, mērķa svārstības, atgriešanās, izcilus spēlētājus, tālus šāvienus.
+Vienai **spēlei** (izvēlieties vienu, ja ielādētas vairākas) **Komentētājs** atrod mirkļus, kas vērti skatīšanās: pirmo asiņu, vairāku nogalinājumu, apmaiņas, izdzīvošanas, mērķa svārstības, atgriešanās, izcilus spēlētājus, tālus šāvienus un **pagrieziena punktus** - nogalinājumus, kas visvairāk mainīja puses iespēju uzvarēt raundā (pēc katrā pusē dzīvi palikušajiem spēlētājiem, raundos bez atdzimšanas).
+
+Kur dati pasaka, kas uzvarēja katrā raundā, katrs mirklis to pasaka: *„Anna nogāž Benu: T iespēja uzvarēt raundā pieaug no 38% uz 62% - un viņi uzvar raundā.”* Tās puses mirklis, kas beigās uzvarēja, skaitās vairāk, kad komentētājs izvēlas, kurus paturēt, un atgriešanās tiek skaitīta uzvarētos raundos.
 
 ![Komentētāja mirkļi vienam raundam šāvēja demonstrācijā](../assets/img/lv/caster.webp)
 

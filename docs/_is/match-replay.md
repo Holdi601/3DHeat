@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "is"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Endurspilun leiks
@@ -90,6 +90,8 @@ Hlutinn **Hernaðarsýn** teiknar, fyrir enga einingu, þær sem eru valdar, all
 ## Markmið {#objectives}
 
 Þegar leikur kemur með markmiðum sínum, teiknar hlutinn **Markmið** þau á borðinu: landvinningasvæði (með eiganda og framvindu landvinninga), upphafsstaði, flugvelli, svæði og sprengjuskotmörk, þar sem hvert lag er hægt að kveikja og slökkva á, með merkingum. Þau sjást í gegnum jörðina. Þegar nokkrar leikjastillingar eru hlaðnar síar **Hamur** leikina eftir stillingu. Markmiðin koma úr leikjaskrá umbreytis sem liggur við upptökuna eða inni í [`.3dheat`](container.md)-íláti.
+
+Rainbow Six Siege-leikir koma með sprengjustaðina sína: tvö herbergi hvers staðar eru teiknuð á gólfið sitt sem útlínur með nöfnum sínum, fundin út frá því hvar leikmennirnir stóðu meðan leikurinn nefndi herbergið; staður á kortinu sem var ekki spilaður í leiknum kemur úr töflu breytisins yfir staði sem hringur. Í endurspiluninni lýsist staður lotunnar við spilunarstöðuna í gulbrúnu, hinir haldast gráir. Þeir eru hluti af laginu fyrir yfirtökusvæði.
 
 ## Merkingar og tölfræði {#labels-and-statistics}
 

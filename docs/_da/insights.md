@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "da"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Indsigter
@@ -44,6 +44,7 @@ Linjerne øverst på listen (for eksempel pengetotalerne) opsummerer hele datas�
 | **Spillere** | Spillere, der dræber eller dør langt oftere eller sjældnere end andre i samme klasse | personer og drab |
 | **Flaskehalse og flanker** | Flaskehalse (langt flere passager end terrænet omkring) og flankeruter (sjældent brugt, men fører til drab) | personer |
 | **Værdi** | *Dyrt terræn* og *Indbringende terræn* | [værdikolonner](value-weighting.md) |
+| **Hvad der afgjorde runderne** | Hvad der adskilte vundne fra tabte runder, og de spillere, der tilføjede eller kostede mest vindersandsynlighed (se [Hvem vandt](#who-won-what-decided-the-rounds)) | runder, drab og dødsfald, og [udfaldskolonnerne](data-formats.md#outcome-columns) (`won`) |
 
 Detektorer, der ikke kan køre på dataene, listes nederst med grunden.
 
@@ -51,9 +52,42 @@ Detektorer, der ikke kan køre på dataene, listes nederst med grunden.
 
 Hvert sted eller hver gruppe testes mod resten af kortet (eksakte binomial- eller rate-tests). Den falske opdagelsesrate holdes på 5 % (Benjamini-Hochberg). Tilfældigheder kan ligne et mønster; dette holder falske alarmer nede: blandt de viste fund forventes højst omkring én ud af tyve at være tilfældighed. Effekter fra få hændelser trækkes mod "ingen effekt", før rangeringen. Højst 60 fund vises, og hver detektor får nogle steder højt på listen.
 
+### Hvem vandt: hvad der afgjorde runderne {#who-won-what-decided-the-rounds}
+
+Hvor dataene siger, hvem der vandt hver runde ([udfaldskolonnen](data-formats.md#outcome-columns) `won`: CS2, Rainbow Six Siege, War Thunder ...), handler Indsigter om resultatet. For hver side deler den runderne efter, hvad der skete i dem, og sammenligner vinderaterne:
+
+| Faktor | Sidens runder med det | ... og uden det |
+|---|---|---|
+| Åbningsduel | den fik det første drab | den døde først |
+| Køb | dens køb var bedre end den anden sides | dårligere |
+| Byttet første død | dens første død blev byttet inden for 5 s | ikke byttet |
+| Plantning | den plantede | ingen plantning |
+| Udstyr | flere granater end i dens sædvanlige runde | færre |
+| Tidlig kontakt | den første duel kom før kampens mediantid | senere |
+| Et sted holdt | en spiller stod på stedet 5 s eller mere | ingen gjorde |
+| Et sted nået tidligt | en spiller kom derhen i de første 25 s (ruten) | ingen gjorde |
+
+Hver sammenligning er en forskel mellem to vinderater med sit 95 %-interval (Newcombe), Fishers eksakte p og et q over alle afprøvede faktorer (Benjamini-Hochberg). En arm med færre end 8 runder markeres *få runder*. Dem under falsk-opdagelsesraten på 5 % bliver til fund; de stærkeste rangeres over de andre detektorers (et udfaldsfund vejer 1,35 gange et fund med samme effekt og evidens).
+
+Et opdigtet eksempel over 40 runder:
+
+> **T** vandt 79 % af de 19 runder, hvor den holdt **Mid**, mod 24 % af 21 uden (55 point, 95 % 26 til 74) – q 0,004.
+
+Den følger også rundens **vindersandsynlighed** – den chance, hver side havde i hvert øjeblik, ud fra de levende mænd, plantningen og uret: tilpasset runderne, når der er 30 eller flere, ellers en fast prior-model (og teksten siger hvilken). Ud fra den kommer **vendepunkterne** (de drab og plantninger, der flyttede chancen mest) og hver spillers **tilføjede vindersandsynlighed**: de drab og plantninger, spilleren lavede, tæller for spilleren, dødsfaldene imod, i runders værdi over kampen, en runde i gennemsnit med sit interval, testet mod nul. Stederne får samme regnskab: hvilken side der vandt mest i duellerne, der blev udkæmpet der.
+
+Dataene skal have runder, drab og dødsfald med begge sider, og kolonnen `won`; navngivne steder (`place`) for holdte steder, en kolonne `buy` for købet.
+
 ## Gennemgang {#debrief}
 
-Fanen **Gennemgang** skriver fundene op som en kort tekst: en indledning, det tydeligste fund, ét om taktik, ét om balance, resten grupperet efter detektor, og hvor mange der hviler på svagere evidens. Hvert afsnit har nummererede knapper, der viser dets fund. **Kopiér tekst** kopierer den.
+Fanen **Gennemgang** skriver fundene op som en kort tekst: en indledning, det tydeligste fund, ét om taktik, ét om balance, derefter – hvor dataene siger, hvem der vandt – hvad der afgjorde runderne, resten grupperet efter detektor, og hvor mange der hviler på svagere evidens.
+
+Hvad der afgjorde runderne kommer i fire afsnit: stillingen og hvor vindersandsynlighederne kommer fra; de stærkeste faktorer med deres tal, interval og q (når ingen består falsk-opdagelsesraten, siger teksten *intet af det er sikkert endnu* og nævner stadig den stærkeste); de tre største vendepunkter; og de spillere, der tilføjede og kostede mest vindersandsynlighed, med de steder, der vandt mest. Et opdigtet eksempel:
+
+> T vandt 23 og CT vandt 17 af 40 runder med kendt resultat (T: 58 %, 95 % 42 % til 72 %). Vindersandsynlighederne kommer fra en model tilpasset disse runder.
+>
+> Hvad der adskilte vundne fra tabte runder: T vandt 79 % af de 19 runder, hvor den holdt Mid, mod 24 % af 21 uden (55 point, 95 % 26 til 74) (q 0,004), ...
+>
+> Vendepunkter: runde 17 ved 48 s, et drab af CT ved B site flyttede dens chance fra 31 % til 58 %, og den tog runden, ... Hvert afsnit har nummererede knapper, der viser dets fund. **Kopiér tekst** kopierer den.
 
 ![Gennemgangen skrevet af den indbyggede fortæller](../assets/img/da/debrief.webp)
 
@@ -72,11 +106,13 @@ Den indbyggede fortæller virker offline, på dit sprog. Vælgeren **Linse** ove
 | **Brug en ekstern AI** | Fra som standard |
 | **Send spillernavne** | Fra som standard: spillere sendes som P1, P2 ... |
 
-Skriv derefter et valgfrit spørgsmål, og tryk på **Skriv med AI**. Kun fundene og deres tal sendes – aldrig rækkerne i dine data. Svaret strømmer ind; citerede fund bliver til knapper.
+Skriv derefter et valgfrit spørgsmål, og tryk på **Skriv med AI**. Kun fundene og deres tal sendes – aldrig rækkerne i dine data. Svaret strømmer ind; citerede fund bliver til knapper. Hvor dataene siger, hvem der vandt, får modellen besked på at begynde med, hvad der afgjorde runderne, med hvert tals interval og q, og at sige det, når en faktor hviler på få runder, eller vindersandsynlighederne kommer fra prior-modellen.
 
 ## Kommentator {#caster}
 
-For **én kamp** (vælg en, hvis flere er indlæst) finder **Kommentatoren** de øjeblikke, der er værd at se: første blod, multidrab, byttehandler, clutches, skift i mål, comebacks, markante spillere, lange skud.
+For **én kamp** (vælg en, hvis flere er indlæst) finder **Kommentatoren** de øjeblikke, der er værd at se: første blod, multidrab, byttehandler, clutches, skift i mål, comebacks, markante spillere, lange skud og **vendepunkter** – de drab, der flyttede en sides chance for at vinde runden mest (ud fra de spillere, der er tilbage i live på hver side, i runder uden respawn).
+
+Hvor dataene siger, hvem der vandt hver runde, siger hvert øjeblik det: *"Anna nedlægger Ben: T's chance for at vinde runden går fra 38 % til 62 % – og de tager runden."* Et øjeblik for den side, der endte med at vinde, tæller mere, når kommentatoren vælger, hvilke der skal beholdes, og et comeback tælles i vundne runder.
 
 ![Kommentatorens øjeblikke for én runde af skyde-demoen](../assets/img/da/caster.webp)
 

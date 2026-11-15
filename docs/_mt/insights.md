@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "mt"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Għarfien
@@ -44,6 +44,7 @@ Il-linji fil-quċċata tal-lista (pereżempju t-totali tal-flus) jiġbru d-data 
 | **Plejers** | Plejers li jqatlu jew jmutu ħafna iktar jew inqas minn oħrajn fl-istess klassi | persuni u kills |
 | **Konġestjonijiet u ġnub** | Punti ta' konġestjoni (ħafna iktar traversi milli l-art madwarhom) u toroq ta' ġnub (użati ftit, imma jwasslu għal kills) | persuni |
 | **Valur** | *Art għalja* u *Art li tgħib* | [kolonni tal-valur](value-weighting.md) |
+| **X’iddeċieda r-rawnds** | X'iddistingwa r-rawnds mirbuħa minn dawk mitlufa, u l-plejers li żiedu jew swew l-aktar probabbiltà ta' rebħ (ara [Min rebaħ](#who-won-what-decided-the-rounds)) | rawnds, qtil u mwiet, u l-[kolonni tar-riżultat](data-formats.md#outcome-columns) (`won`) |
 
 Id-detectors li ma jistgħux jaħdmu fuq id-data jidhru f'isfel bir-raġuni.
 
@@ -51,9 +52,42 @@ Id-detectors li ma jistgħux jaħdmu fuq id-data jidhru f'isfel bir-raġuni.
 
 Kull post jew grupp jiġi ttestjat kontra l-bqija tal-mappa (testijiet binomjali eżatti jew tar-rata). Ir-rata ta' skoperta falza (false discovery rate) tinżamm fuq 5% (Benjamini-Hochberg). Il-każwalità tista' tidher bħala mudell; dan iżomm l-allarmi foloz baxxi: fost is-sejbiet murija, madwar wieħed minn kull għoxrin huwa mistenni li tkun każwali. Effetti minn ftit avvenimenti jinġibdu lejn "l-ebda effett" qabel ma jitqiegħdu. Jintwerew l-iktar 60 sejba, u kull detector jieħu ftit postijiet fuq nett.
 
+### Min rebaħ: x'iddeċieda r-rawnds {#who-won-what-decided-the-rounds}
+
+Meta d-dejta tgħid min rebaħ kull rawnd (il-[kolonna tar-riżultat](data-formats.md#outcome-columns) `won`: CS2, Rainbow Six Siege, War Thunder ...), ir-riżultat huwa dak li dwaru jitkellem l-Għarfien. Għal kull naħa jaqsam ir-rawnds skont x'ġara fihom u jqabbel ir-rati ta' rebħ:
+
+| Fattur | Ir-rawnds tan-naħa bih | ... u mingħajru |
+|---|---|---|
+| Duell tal-ftuħ | għamlet l-ewwel qtil | mietet l-ewwel |
+| Xiri | ix-xiri tagħha kien aħjar minn tan-naħa l-oħra | agħar |
+| L-ewwel mewt ivvindikata | l-ewwel mewt tagħha ġiet ivvindikata fi żmien 5 s | ma ġietx ivvindikata |
+| Plant | għamlet plant | l-ebda plant |
+| Utilità | aktar granati mir-rawnd tas-soltu tagħha | inqas |
+| Kuntatt kmieni | l-ewwel duell ġie qabel il-ħin medjan tal-partita | aktar tard |
+| Post miżmum | plejer qagħad fil-post 5 s jew aktar | ħadd |
+| Post milħuq kmieni | plejer wasal hemm fl-ewwel 25 s (ir-rotta) | ħadd |
+
+Kull tqabbil huwa differenza bejn żewġ rati ta' rebħ bl-intervall ta' 95% tagħha (Newcombe), il-p eżatt ta' Fisher, u q fuq kull fattur ittestjat (Benjamini-Hochberg). Fergħa b'inqas minn 8 rawnds hija mmarkata *ftit rawnds*. Dawk taħt ir-rata ta' skoperta falza ta' 5% isiru sejbiet; l-aktar b'saħħithom jitqiegħdu 'l fuq minn dawk tad-detectors l-oħra (sejba tar-riżultat tiżen 1.35 darbiet daqs waħda bl-istess effett u evidenza).
+
+Eżempju maħluq fuq 40 rawnd:
+
+> **T** rebħet 79% tad-19-il rawnd li fihom żammet **Mid**, kontra 24% tal-21 mingħajru (55 punt, 95% minn 26 sa 74) - q 0.004.
+
+Isegwi wkoll il-**probabbiltà ta' rebħ** tar-rawnd - iċ-ċans li kellha kull naħa f'kull mument, mill-irġiel ħajjin, il-plant u l-arloġġ: imqabbla mar-rawnds meta jkunu 30 jew aktar, inkella minn mudell a priori fiss (u t-test jgħid liema). Minnha jiġu l-**punti ta' bidla** (il-qtil u l-plants li ċċaqilqu l-aktar iċ-ċans) u l-**probabbiltà ta' rebħ miżjuda** ta' kull plejer: il-qtil u l-plants li għamel jgħoddu favurih, il-mwiet tiegħu kontrih, f'valur ta' rawnds matul il-partita, bħala medja għal kull rawnd bl-intervall tagħha, ittestjata kontra żero. Il-postijiet jieħdu l-istess bilanċ: liema naħa kisbet l-aktar fid-duelli li saru hemm.
+
+Id-dejta teħtieġ rawnds, qtil u mwiet biż-żewġ naħat, u l-kolonna `won`; postijiet bl-isem (`place`) għall-postijiet miżmuma, kolonna `buy` għax-xiri.
+
 ## Sommarju {#debrief}
 
-It-tab **Sommarju** jikteb is-sejbiet f'test qasir: introduzzjoni, l-iktar sejba ċara, waħda għat-tattika, waħda għall-bilanċ, il-bqija mqassma skont id-detector, u kemm minnhom jistrieħu fuq evidenza iktar dgħajfa. Kull paragrafu għandu buttuni nnumerati li juru s-sejbiet tiegħu. **Ikkopja t-test** jikkopjah.
+It-tab **Sommarju** jikteb is-sejbiet f'test qasir: introduzzjoni, l-iktar sejba ċara, waħda għat-tattika, waħda għall-bilanċ, imbagħad - meta d-dejta tgħid min rebaħ - x'iddeċieda r-rawnds, il-bqija mqassma skont id-detector, u kemm minnhom jistrieħu fuq evidenza iktar dgħajfa.
+
+X'iddeċieda r-rawnds jiġi f'erba' paragrafi: il-punteġġ u minn fejn ġejjin il-probabbiltajiet ta' rebħ; l-aktar fatturi b'saħħithom bin-numri, l-intervall u l-q tagħhom (meta ebda wieħed ma jgħaddi r-rata ta' skoperta falza, it-test jgħid *għadu xejn ċert* u xorta jsemmi l-aktar wieħed b'saħħtu); l-akbar tliet punti ta' bidla; u l-plejers li żiedu u swew l-aktar probabbiltà ta' rebħ, mal-postijiet li kisbu l-aktar. Eżempju maħluq:
+
+> T rebħet 23 u CT rebħet 17 minn 40 rawnd b'riżultat magħruf (T: 58%, 95% minn 42% sa 72%). Il-probabbiltajiet ta' rebħ ġejjin minn mudell imqabbel ma' dawn ir-rawnds.
+>
+> X'iddistingwa r-rawnds mirbuħa minn dawk mitlufa: T rebħet 79% tad-19-il rawnd li fihom żammet Mid, kontra 24% tal-21 mingħajru (55 punt, 95% minn 26 sa 74) (q 0.004), ...
+>
+> Punti ta' bidla: rawnd 17 f'48 s, qtil minn CT f'B site ċaqlaq iċ-ċans tagħha minn 31% għal 58%, u ħadet ir-rawnd, ... Kull paragrafu għandu buttuni nnumerati li juru s-sejbiet tiegħu. **Ikkopja t-test** jikkopjah.
 
 ![Is-sommarju miktub mill-narratur ta' ġewwa](../assets/img/mt/debrief.webp)
 
@@ -72,11 +106,13 @@ In-narratur ta' ġewwa jaħdem offline, fil-lingwa tiegħek. Is-selector **Lenti
 | **Uża AI esterna** | Mitfi b'mod predefinit |
 | **Ibgħat l-ismijiet tal-plejers** | Mitfi b'mod predefinit: il-plejers jintbagħtu bħala P1, P2 ... |
 
-Imbagħad ikteb mistoqsija fakultattiva u agħfas **Ikteb bl-AI**. Jintbagħtu biss is-sejbiet u n-numri tagħhom - qatt ir-ringieli tad-data tiegħek. It-tweġiba tidħol bil-mod, u s-sejbiet imsemmija isiru buttuni.
+Imbagħad ikteb mistoqsija fakultattiva u agħfas **Ikteb bl-AI**. Jintbagħtu biss is-sejbiet u n-numri tagħhom - qatt ir-ringieli tad-data tiegħek. It-tweġiba tidħol bil-mod, u s-sejbiet imsemmija isiru buttuni. Meta d-dejta tgħid min rebaħ, il-mudell jingħad jibda b'dak li ddeċieda r-rawnds, bl-intervall u l-q ta' kull numru, u jgħid meta fattur jistrieħ fuq ftit rawnds jew meta l-probabbiltajiet ta' rebħ ġejjin mill-mudell a priori.
 
 ## Kummentatur {#caster}
 
-Għal **partita waħda** (agħżel waħda jekk hemm diversi mgħobbijin), il-**Kummentatur** isib il-mumenti li jistħoqqilhom jiġu osservati: l-ewwel demm, multi-kills, trades, clutches, bidliet fl-għanijiet, rimonta, plejers li joqogħdu 'l fuq, tiri twil.
+Għal **partita waħda** (agħżel waħda jekk hemm diversi mgħobbijin), il-**Kummentatur** isib il-mumenti li jistħoqqilhom jiġu osservati: l-ewwel demm, multi-kills, trades, clutches, bidliet fl-għanijiet, rimonta, plejers li joqogħdu 'l fuq, tiri twil, u **punti ta' bidla** - il-qtil li ċċaqlaq l-aktar iċ-ċans ta' naħa li tirbaħ ir-rawnd (skont il-plejers li baqgħu ħajjin f'kull naħa, f'rawnds mingħajr respawn).
+
+Meta d-dejta tgħid min rebaħ kull rawnd, kull mument jgħidu: *"Anna twaqqa' lil Ben: iċ-ċans ta' T li tirbaħ ir-rawnd jitla' minn 38% għal 62% - u jieħdu r-rawnd."* Mument tan-naħa li wara rebħet jgħodd aktar meta l-kummentatur jagħżel liema jżomm, u rimonta tingħadd f'rawnds mirbuħa.
 
 ![Il-mumenti tal-kummentatur għal rawnd wieħed tad-demo tal-shooter](../assets/img/mt/caster.webp)
 

@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "sv"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Insikter
@@ -44,6 +44,7 @@ Raderna överst i listan (till exempel summorna för pengar) sammanfattar hela d
 | **Spelare** | Spelare som dödar eller dör långt oftare eller sällnare än andra i samma klass | **person** och dödningar |
 | **Flaskhalsar och flanker** | Flaskhalsar (långt fler passager än marken runt) och flankrutter (sällan använda, men leder till dödningar) | **person** |
 | **Värde** | *Dyr mark* och *Inbringande mark* | [värdekolumner](value-weighting.md) |
+| **Vad som avgjorde rundorna** | Vad som skilde vunna från förlorade rundor, och de spelare som lade till eller kostade mest vinstchans (se [Vem vann](#who-won-what-decided-the-rounds)) | rundor, dödningar och dödsfall, och [utfallskolumnerna](data-formats.md#outcome-columns) (`won`) |
 
 Detektorer som inte kan köras på datan listas längst ned, med skälet.
 
@@ -51,9 +52,26 @@ Detektorer som inte kan köras på datan listas längst ned, med skälet.
 
 Varje plats eller grupp testas mot resten av kartan (exakta binomial- eller frekvenstest). Andelen falska upptäckter hålls på 5 % (Benjamini-Hochberg). Slump kan se ut som ett mönster. Det här håller falsklarmen nere: bland de visade fynden väntas högst ungefär ett av tjugo bero på slump. Effekter från få händelser dras mot ”ingen effekt” före rangordningen. Högst 60 fynd listas, och varje detektor får några platser högst upp.
 
+### Vem vann {#who-won-what-decided-the-rounds}
+
+Där matcherna säger vem som vann varje runda ([utfallskolumnen](data-formats.md#outcome-columns) `won`) är resultatet ett eget mål:
+
+- **Platser: vinstandel.** För varje sida andelen av dess rundor på en plats som den vann, mot andelen den vann i samma match var som helst – så kartans balans, sidans och matchens egen är baslinjen, och bara platser vars innehavare vinner fler (eller färre) av sina rundor sticker ut. Ett påhittat exempel: *”Dust: sida T vinner fler av sina rundor när den är här: 61 % av 412 vunna, mot 49 % väntat utifrån dess egen andel i samma matcher (odds 1,6x; hölls i 31/48 matcher).”* Samma falska upptäcktsfrekvens och stabilitetskontroller som för varje plats; **Läs in** läser in de matcher den höll i och visar den sidans positioner.
+- **Nischer: rundseger.** Tabellen **Rundor** innehåller varje livs runda: kartan, sidan, delen av matchen (rundor 1–4, 5–8, ...), fordonet (en operatör, en agent), vapnet det använde mest, platsen det höll längst, köpet (eco, force, full) och om dess sida fick första nedskjutningen. En grupp bedöms mot vad dess sida vann i samma matcher, så *T på Dust med en AWP* är en nisch bara när de rundorna vanns oftare än T:s andra rundor i de matcherna. Ett påhittat exempel: *”m1 · T · AWP: vinner 80 % av 320 rundor, mot 62 % väntat utifrån samma sidor i samma matcher (odds 2,3x; 40 matcher).”* Rangordnas efter lyftet gånger stödet; **Läs in** läser in de matcher vars rundor visar det mest.
+
+Båda behöver sammanfattningar av version 2 (se [Få sammanfattningarna](#getting-the-summaries)): äldre räknas fram igen.
+
 ## Genomgång {#debrief}
 
-Fliken **Genomgång** skriver ner fynden som en kort text: en inledning, det tydligaste fyndet, ett för taktik, ett för balansering, resten grupperade efter detektor och hur många som bygger på svagare underlag. Varje stycke har numrerade knappar som visar dess fynd. **Kopiera text** kopierar den.
+Fliken **Genomgång** skriver ner fynden som en kort text: en inledning, det tydligaste fyndet, ett för taktik, ett för balansering, sedan – där datan säger vem som vann – vad som avgjorde rundorna, resten grupperade efter detektor och hur många som bygger på svagare underlag.
+
+Vad som avgjorde rundorna kommer i fyra stycken: ställningen och var vinstchanserna kommer ifrån; de starkaste faktorerna med sina siffror, intervall och q (när ingen klarar den falska upptäcktsfrekvensen säger texten *inget av det är säkert ännu* och nämner ändå den starkaste); de tre största vändpunkterna; och de spelare som lade till och kostade mest vinstchans, med de platser som vann mest. Ett påhittat exempel:
+
+> T vann 23 och CT vann 17 av 40 rundor med känt resultat (T: 58 %, 95 % 42 % till 72 %). Vinstchanserna kommer från en modell anpassad till dessa rundor.
+>
+> Vad som skiljde vunna från förlorade rundor: T vann 79 % av de 19 rundor då den höll Mid, mot 24 % av 21 utan (55 procentenheter, 95 % 26 till 74) (q 0,004), ...
+>
+> Vändpunkter: runda 17 vid 48 s, en dödning av CT vid B site flyttade dess chans från 31 % till 58 %, och den tog rundan, ... Varje stycke har numrerade knappar som visar dess fynd. **Kopiera text** kopierar den.
 
 ![Genomgången skriven av den inbyggda berättaren](../assets/img/sv/debrief.webp)
 
@@ -72,11 +90,13 @@ Den inbyggda berättaren fungerar offline, på ditt språk. Väljaren **Lins** o
 | **Använd en extern AI** | Av som standard |
 | **Skicka spelarnamn** | Av som standard: spelare skickas som P1, P2 ... |
 
-Skriv sedan en valfri fråga och tryck **Skriv med AI**. Bara fynden och deras siffror skickas, aldrig raderna i din data. Svaret strömmar in, och citerade fynd blir knappar.
+Skriv sedan en valfri fråga och tryck **Skriv med AI**. Bara fynden och deras siffror skickas, aldrig raderna i din data. Svaret strömmar in, och citerade fynd blir knappar. Där datan säger vem som vann får modellen besked att börja med vad som avgjorde rundorna, med varje siffras intervall och q, och att säga till när en faktor bygger på få rundor eller när vinstchanserna kommer från prior-modellen.
 
 ## Kommentator {#caster}
 
-För **en match** (välj en om flera är inlästa) hittar **Kommentatorn** de ögonblick som är värda att titta på: första blodet, multidödningar, byten, vändningar i slutspel, skiften i mål, comebacks, framträdande spelare och långskott.
+För **en match** (välj en om flera är inlästa) hittar **Kommentatorn** de ögonblick som är värda att titta på: första blodet, multidödningar, byten, vändningar i slutspel, skiften i mål, comebacks, framträdande spelare, långskott och **vändpunkter** – de dödningar som flyttade en sidas chans att vinna rundan mest (utifrån spelarna som är kvar i livet på varje sida, i rundor utan respawn).
+
+Där datan säger vem som vann varje runda säger varje ögonblick det: *”Anna tar ner Ben: T:s chans att vinna rundan går från 38 % till 62 % – och de tar rundan.”* Ett ögonblick för den sida som till slut vann räknas mer när kommentatorn väljer vilka som ska behållas, och en comeback räknas i vunna rundor.
 
 ![Kommentatorns ögonblick för en runda i skyttespelsdemon](../assets/img/sv/caster.webp)
 

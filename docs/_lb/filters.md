@@ -4,9 +4,9 @@ parent: "Filteren a Werkzeich"
 nav_order: 1
 lang: "lb"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filteren
@@ -41,6 +41,10 @@ Nëmmen d'Aarte, déi virkommen, ginn ugewisen. Wäertkolonnen (`cost_*`, `earn_
 Eng Kategorie-Lëscht mat méi wéi 12 Wäerter kritt e Sichkascht (*Search n values*) an e Knäppchen **Nëmmen dës**, deen genau d'Wäerter erlaabt, déi passen.
 
 Welch Kolonnen gefiltert kënne ginn, gëtt beim Lueden festgeluecht, well se dann gelies musse ginn. Ouni behalen Kolonn seet de Panel dat an verweist op *Fir Filteren behalen*.
+
+## Séierfilter fir Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Mat engem geluedenen Rainbow-Six-Siege-Match fänkt de Panel mat Knäppercher un, déi d'Filteren mat engem Klick setzen: **Kugellächer a Spueren** (d'Spueren, déi um Level bleiwen), **Spuere mat Schütz** a **Spuere mat Waffeklass** (déi, fir déi e Schütz erausfonnt gouf, oder eng Waff aus dem Kill vum Schütz am selwechte Moment; deelt oder filtert se weider no `byOperator` oder `byItemClass`), **Versich ze placéieren an ze entschäerfen**, **Ofgebrache Versich** (ugefaangen, net fäerdeg, do wou de Spiller opgehalen huet) a **Verstäerkungen** (wou eng Mauer oder eng Lucke verstäerkt gouf, beim Verteideger, deen de Konverter ofleet). All Knäppchen ersetzt de Filter op der Evenement-Kolonn a léisst de Rescht; **All Filtere läschen** mécht et réckgängeg. D'Kolonne sinn an der Dokumentatioun vum Konverter beschriwwen.
 
 ## Numeresch Kolonnen (Beräich) {#numeric-columns-range}
 

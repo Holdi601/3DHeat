@@ -4,9 +4,9 @@ parent: "筛选与工具"
 nav_order: 1
 lang: "zh"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 筛选
@@ -41,6 +41,10 @@ outdated: true
 类别列表超过 12 个值时会出现搜索框（*搜索 n 个值*），以及一个**仅这些**按钮，可以只允许与之匹配的值。
 
 哪些列可以筛选是在加载时决定的，因为必须在那时读取它们。如果没有保留的列，面板会说明这一点，并指向*保留用于筛选*。
+
+## Rainbow Six Siege 快捷筛选 {#rainbow-six-siege-quick-filters}
+
+加载 Rainbow Six Siege 对局后，面板开头有一排按钮，点一下就能设好筛选：**弹孔与痕迹**（留在关卡上的痕迹）、**有射手的痕迹**和**有武器类别的痕迹**（推算出了射手的痕迹，或从射手同一时刻的击杀推算出了武器的痕迹；可再按 `byOperator` 或 `byItemClass` 拆分或筛选）、**安放与拆除尝试**、**中断的尝试**（开始了但没完成，位置是玩家停下的地方）以及**加固**（墙或活板门被加固的地方，位置是转换器推断出的防守方）。每个按钮都会替换事件列上的筛选，其余筛选保持不变；**清除所有筛选**可以撤销。这些列的说明见转换器的文档。
 
 ## 数值列（范围）{#numeric-columns-range}
 

@@ -4,9 +4,9 @@ parent: "Filtre și instrumente"
 nav_order: 1
 lang: "ro"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtre
@@ -41,6 +41,10 @@ Sunt listate doar tipurile care apar. Coloanele de valoare (`cost_*`, `earn_*`, 
 O listă de categorii cu mai mult de 12 valori primește o casetă de căutare (*Caută n valori*) și un buton **Doar acestea**, care permite exact valorile care se potrivesc.
 
 Ce coloane pot fi filtrate se decide la încărcare, pentru că trebuie citite atunci. Fără nicio coloană păstrată, panoul o spune și trimite la *Păstrează pentru filtrare*.
+
+## Filtre rapide pentru Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Cu un meci Rainbow Six Siege încărcat, panoul începe cu butoane care setează filtrele dintr-un clic: **Găuri de glonț și urme** (urmele lăsate pe nivel), **Urme cu trăgător** și **Urme cu clasă de armă** (cele pentru care s-a dedus un trăgător sau o armă din eliminarea făcută de trăgător în același moment; împarte-le sau filtrează-le mai departe după `byOperator` sau `byItemClass`), **Încercări de plantare și dezamorsare**, **Încercări întrerupte** (începute, dar neterminate, acolo unde jucătorul s-a oprit) și **Ranforsări** (unde a fost ranforsat un perete sau o trapă, la apărătorul dedus de convertor). Fiecare înlocuiește filtrul de pe coloana de evenimente și le păstrează pe celelalte; **Șterge toate filtrele** anulează asta. Coloanele sunt descrise în documentația convertorului.
 
 ## Coloane numerice (interval) {#numeric-columns-range}
 

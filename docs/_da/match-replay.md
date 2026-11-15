@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "da"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Kamp-replay
@@ -90,6 +90,8 @@ Afsnittet **Taktisk visning** tegner for ingen enhed, de valgte, alle eller én 
 ## Mål {#objectives}
 
 Når en kamp kommer med sine mål, tegner afsnittet **Mål** dem på banen: erobringszoner (med ejer og erobringsfremskridt), spawnpunkter, flyvepladser, områder og bombemål, hvert lag kan tændes og slukkes, med etiketter. De ses gennem jorden. Når flere spiltilstande er indlæst, filtrerer **Tilstand** kampene efter tilstand. Mål kommer fra en konverters kampfil ved siden af optagelsen eller inde i en [`.3dheat`](container.md)-beholder.
+
+Rainbow Six Siege-kampe har deres bombepladser med: hver plads' to rum tegnes på deres gulv som omrids med deres navne, udledt af hvor spillerne stod, mens spillet navngav rummet; en plads på kortet, der ikke blev spillet i kampen, kommer fra konverterens tabel over pladser som en cirkel. I replayet lyser pladsen for runden ved afspilningspositionen ravgult, de andre forbliver grå. De hører til laget med erobringszoner.
 
 ## Etiketter og statistik {#labels-and-statistics}
 

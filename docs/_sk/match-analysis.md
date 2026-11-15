@@ -3,9 +3,9 @@ title: "Analýza zápasu (CS2)"
 nav_order: 10
 lang: "sk"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Analýza zápasu (Counter-Strike 2)
@@ -121,6 +121,16 @@ Cez každý načítaný zápas:
 - **Hráči**: pätnásť najlepších podľa zabití mínus smrti, spojených cez všetky ich zápasy (podľa Steam ID): zápasy, K-D, ADR a KAST vážené odohranými kolami, HS % vážené zabitiami, úvodné súboje. **Kliknutím na hráča** zobrazíte jeho zabitia a smrti vo všetkých zápasoch v heatmape.
 
 Tlačidlá Zobraziť v heatmape pre všetky načítané zápasy sú pod tým.
+
+## Čo rozhodlo kolá {#what-decided-the-rounds}
+
+Karta počíta; [Zistenia](insights.md#who-won-what-decided-the-rounds) vysvetľujú. Keď je načítaná tabuľka heatmapy zápasu (nesie stĺpec `won`), **Zistenia** rozdelia kolá každej strany podľa toho, čo sa v nich stalo - úvodný súboj, nákup, vymenená prvá smrť, položenie, vybavenie, skorý prvý kontakt, každé držané miesto a každé miesto dosiahnuté v prvých 25 s - a povedia, čo urobilo rozdiel, s rozdielom podielov výhier, jeho 95 % intervalom a q, a *málo kôl*, kde má vetva menej ako osem kôl. Vymenujú zlomové okamihy (zabitia a položenia, ktoré najviac posunuli pravdepodobnosť výhry) a hráčov a miesta, ktoré najviac pridali alebo stratili, a **Zhrnutie** aj **Komentátor** nimi začínajú. Vymyslený príklad:
+
+> T vyhrala 79 % z 19 kôl, v ktorých držala Mid, oproti 24 % z 21 bez neho (55 bodov, 95 % od 26 do 74) - q 0,004.
+>
+> Zlomové okamihy: kolo 17 v 48 s, zabitie strany CT na mieste B zmenilo jej šancu z 31 % na 58 % a kolo vyhrala.
+
+Jeden zápas má menej ako 30 kôl, takže jeho pravdepodobnosti výhry pochádzajú z pevného apriórneho modelu živých mužov, položenia a času; text to povie. Naprieč mnohými zápasmi kladie tie isté otázky [hromadná analýza](mass-analysis.md#who-won).
 
 ## Zobraziť v heatmape {#show-in-the-heatmap}
 

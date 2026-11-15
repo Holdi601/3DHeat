@@ -4,9 +4,9 @@ parent: "Filtri un rīki"
 nav_order: 1
 lang: "lv"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtri
@@ -41,6 +41,10 @@ Uzskaitīti tiek tikai veidi, kas ir sastopami. Vērtību kolonnas (`cost_*`, `e
 Kategoriju sarakstam ar vairāk nekā 12 vērtībām parādās meklēšanas lodziņš (*Meklēt n vērtības*) un poga **Tikai šie**, kas atļauj tieši tās vērtības, kas atbilst.
 
 Kuras kolonnas var filtrēt, tiek izlemts ielādes laikā, jo tās tad ir jānolasa. Ja nav saglabātas nevienas kolonnas, panelis to saka un norāda uz *Saglabāt filtrēšanai*.
+
+## Rainbow Six Siege ātrie filtri {#rainbow-six-siege-quick-filters}
+
+Kad ir ielādēts Rainbow Six Siege mačs, panelis sākas ar pogām, kas iestata filtrus ar vienu klikšķi: **Ložu caurumi un pēdas** (uz līmeņa atstātās pēdas), **Pēdas ar šāvēju** un **Pēdas ar ieroču klasi** (tās, kurām ir noteikts šāvējs vai ierocis no šāvēja nogalinājuma tajā pašā brīdī; sadaliet vai filtrējiet tās tālāk pēc `byOperator` vai `byItemClass`), **Uzstādīšanas un atmīnēšanas mēģinājumi**, **Pārtraukti mēģinājumi** (sākti, nepabeigti, tur, kur spēlētājs apstājās) un **Pastiprinājumi** (kur siena vai lūka tika pastiprināta, pie aizstāvja, ko secina pārveidotājs). Katra poga aizstāj filtru notikumu kolonnā un saglabā pārējos; **Notīrīt visus filtrus** to atsauc. Kolonnas ir aprakstītas pārveidotāja dokumentācijā.
 
 ## Skaitliskās kolonnas (diapazons) {#numeric-columns-range}
 

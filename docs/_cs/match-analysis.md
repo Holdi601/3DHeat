@@ -3,9 +3,9 @@ title: "Analýza zápasu (CS2)"
 nav_order: 10
 lang: "cs"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Analýza zápasu (Counter-Strike 2)
@@ -121,6 +121,16 @@ Přes každý načtený zápas:
 - **Hráči**: patnáct nejlepších podle zabití minus smrti, sloučeno přes všechny jejich zápasy (spojeno podle Steam ID): zápasy, K-D, ADR a KAST vážené odehranými koly, HS % vážené zabitími, úvodní duely. **Klik na hráče** ukáže jeho zabití a smrti přes všechny zápasy v teplotní mapě.
 
 Tlačítka Zobrazit v teplotní mapě pro všechny načtené zápasy jsou pod tím.
+
+## Co rozhodlo kola {#what-decided-the-rounds}
+
+Záložka počítá; [Zjištění](insights.md#who-won-what-decided-the-rounds) vysvětlují. Když je načtená tabulka teplotní mapy zápasu (nese sloupec `won`), **Zjištění** rozdělí kola každé strany podle toho, co se v nich stalo - otevírací souboj, nákup, oplacená první smrt, položení, granáty a vybavení, brzký první kontakt, každé držené místo a každé místo dosažené během prvních 25 s - a řeknou, co udělalo rozdíl, s rozdílem podílů výher, jeho 95% intervalem a q, a *málo kol*, kde má větev méně než osm. Jmenují zlomové okamžiky (zabití a položení, která nejvíc posunula pravděpodobnost výhry) a hráče a místa, která nejvíc přidala nebo ubrala, a **Shrnutí** a **Komentátor** jimi začínají. Vymyšlený příklad:
+
+> T vyhrálo 79 % z 19 kol, kdy drželo Mid, oproti 24 % z 21 bez něj (55 bodů, 95 % 26 až 74) - q 0,004.
+>
+> Zlomové okamžiky: kolo 17 ve 48 s, zabití od CT na B site posunulo jeho šanci z 31 % na 58 % a kolo získalo.
+
+Jeden zápas má méně než 30 kol, takže jeho pravděpodobnosti výhry pocházejí z pevného předem daného modelu podle živých hráčů, položení a času; text to řekne. Přes mnoho zápasů klade stejné otázky [hromadná analýza](mass-analysis.md#who-won).
 
 ## Zobrazit v teplotní mapě {#show-in-the-heatmap}
 

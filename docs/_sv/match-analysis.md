@@ -3,9 +3,9 @@ title: "Matchanalys (CS2)"
 nav_order: 10
 lang: "sv"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Matchanalys (Counter-Strike 2)
@@ -122,6 +122,16 @@ Håll musen över en spelare: trade-fällningar, gånger tradad, flash-assist, f
 - **Spelare**: de femton bästa efter fällningar minus dödsfall, sammanslagna över alla deras matcher (matchade efter Steam-ID): matcher, K-D, ADR och KAST viktade efter spelade rundor, HS-% viktad efter fällningar, öppningsdueller. **Klicka på en spelare** för dess fällningar och dödsfall över alla matcher i värmekartan.
 
 Knapparna Visa i värmekartan för alla inlästa matcher sitter under den.
+
+## Vad som avgjorde rundorna {#what-decided-the-rounds}
+
+Fliken räknar; [Insikter](insights.md#who-won-what-decided-the-rounds) förklarar. Med en matchs värmekartetabell inläst (den har kolumnen `won`) delar **Insikter** upp varje sidas rundor efter vad som hände i dem – öppningsduellen, köpet, en bytt första död, planteringen, utrustningen, en tidig första kontakt, varje plats som hölls och varje plats som nåddes under de första 25 s – och säger vad som gjorde skillnaden, med skillnaden mellan vinstandelarna, dess 95 %-intervall och q, och *få rundor* där en arm har färre än åtta. Den nämner vändpunkterna (de kills och planteringar som flyttade vinstchansen mest) och de spelare och platser som lade till eller kostade mest, och **Genomgång** och **Kommentator** börjar med dem. Ett påhittat exempel:
+
+> T vann 79 % av de 19 rundor då den höll Mid, mot 24 % av 21 utan (55 procentenheter, 95 % 26 till 74) – q 0,004.
+>
+> Vändpunkter: runda 17 vid 48 s, en kill av CT vid B site flyttade dess chans från 31 % till 58 %, och den tog rundan.
+
+En match har färre än 30 rundor, så dess vinstchanser kommer från en fast prior-modell av de levande männen, planteringen och klockan; texten säger det. Över många matcher ställs samma frågor av [massanalysen](mass-analysis.md#who-won).
 
 ## Visa i värmekartan {#show-in-the-heatmap}
 

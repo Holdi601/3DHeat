@@ -3,9 +3,9 @@ title: "Wedstrijdanalyse (CS2)"
 nav_order: 10
 lang: "nl"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Wedstrijdanalyse (CS2)
@@ -122,6 +122,16 @@ Over alle geladen matches:
 - **Spelers**: de vijftien beste op kills min doden, samengevoegd over al hun matches (gekoppeld via de Steam-ID): matches, K-D, ADR en KAST gewogen naar gespeelde rondes, HS% gewogen naar kills, openingsduels. **Klik op een speler** voor zijn kills en doden over alle matches in de heatmap.
 
 De knoppen In de heatmap tonen voor alle geladen matches staan eronder.
+
+## Wat de rondes besliste {#what-decided-the-rounds}
+
+Het tabblad telt; [Inzichten](insights.md#who-won-what-decided-the-rounds) verklaart. Met de heatmaptabel van een wedstrijd geladen (die heeft de kolom `won`) splitst **Inzichten** de rondes van elke kant op naar wat er in gebeurde - het openingsduel, de aankoop, een gewroken eerste dood, de plant, utility, een vroeg eerste contact, elke vastgehouden plek en elke plek die in de eerste 25 s bereikt werd - en zegt welke het verschil maakte, met het verschil van de winpercentages, het 95%-interval en q, en *weinig rondes* waar een tak er minder dan acht heeft. Het noemt de kantelpunten (de kills en plants die de winkans het meest verschoven) en de spelers en plekken die het meest toevoegden of kostten, en de **Nabespreking** en de **Commentator** beginnen ermee. Een verzonnen voorbeeld:
+
+> T won 79% van de 19 rondes waarin het Mid hield, tegen 24% van 21 zonder (55 punten, 95% 26 tot 74) - q 0,004.
+>
+> Kantelpunten: ronde 17 op 48 s, een kill door CT bij B site verschoof zijn kans van 31% naar 58%, en het pakte de ronde.
+
+Eén wedstrijd heeft minder dan 30 rondes, dus komen de winkansen uit een vast voorafmodel van de levende spelers, de plant en de klok; de tekst zegt dat. Over veel wedstrijden stelt de [massa-analyse](mass-analysis.md#who-won) dezelfde vragen.
 
 ## In de heatmap tonen {#show-in-the-heatmap}
 

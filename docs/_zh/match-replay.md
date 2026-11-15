@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "zh"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -91,6 +91,8 @@ outdated: true
 ## 目标 {#objectives}
 
 如果一场对局附带了目标，**目标**区会在关卡上画出它们：占领区（带有归属方和占领进度）、出生点、机场、区域和轰炸目标，每一层都可以单独开关，并带有标签。它们可以透过地面看到。载入多种游戏模式时，**模式**会按模式筛选对局。目标来自录像旁边的转换器对局文件，或来自 [`.3dheat`](container.md) 容器内部。
+
+Rainbow Six Siege 对局会带上它们的炸弹点：每个炸弹点的两个房间以带名称的轮廓画在各自的地板上，这些轮廓是根据游戏显示房间名称时玩家所站的位置推算出来的；对局中没有打到的地图炸弹点，则从转换器的炸弹点表中取出，画成一个圆。在回放中，播放头所在回合的炸弹点以琥珀色亮起，其他保持灰色。它们属于占领区图层。
 
 ## 标签与统计 {#labels-and-statistics}
 

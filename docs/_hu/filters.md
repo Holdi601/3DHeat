@@ -4,9 +4,9 @@ parent: "Szűrők és eszközök"
 nav_order: 1
 lang: "hu"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Szűrők
@@ -41,6 +41,10 @@ Csak a ténylegesen előforduló fajták jelennek meg. Az érték-oszlopok (`cos
 A kategórialistában 12-nél több érték esetén keresőmező jelenik meg (*n érték keresése*), és egy **Csak ezek** gomb, amely pontosan az illeszkedő értékeket engedélyezi.
 
 Hogy mely oszlopok szűrhetők, azt a betöltés döntötte el, mert akkor kell beolvasni őket. Megtartott oszlop nélkül a panel ezt megmondja, és a *Megtartás szűréshez* beállításra mutat.
+
+## Rainbow Six Siege gyorsszűrők {#rainbow-six-siege-quick-filters}
+
+Ha Rainbow Six Siege meccs van betöltve, a panel gombokkal kezdődik, amelyek egy kattintással beállítják a szűrőket: **Golyónyomok és nyomok** (a pályán hagyott nyomok), **Nyomok lövővel** és **Nyomok fegyverosztállyal** (azok, amelyekhez sikerült kikövetkeztetni egy lövőt, vagy a lövő ugyanabban a pillanatban történt öléséből egy fegyvert; ezeket tovább bonthatja vagy szűrheti `byOperator` vagy `byItemClass` szerint), **Telepítési és hatástalanítási kísérletek**, **Megszakított kísérletek** (elkezdett, de be nem fejezett kísérletek, ott, ahol a játékos abbahagyta) és **Megerősítések** (ahol egy falat vagy csapóajtót megerősítettek, az átalakító által kikövetkeztetett védőnél). Mindegyik lecseréli az eseményoszlop szűrőjét, a többit megtartja; a **Minden szűrő törlése** visszavonja. Az oszlopokat az átalakító dokumentációja írja le.
 
 ## Számoszlopok (tartomány) {#numeric-columns-range}
 

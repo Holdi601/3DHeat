@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "lt"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Rungtynių pakartojimas
@@ -90,6 +90,8 @@ Skyrius **Taktinis rodymas** piešia, nors vienetų nepasirinkta, pasirinktus, v
 ## Tikslai {#objectives}
 
 Kai rungtynės pateikiamos su tikslais, skyrius **Tikslai** piešia juos ant lygio: užimamas zonas (su savininku ir užėmimo eiga), gimimo vietas, aerodromus, sritis ir bombardavimo taikinius, kiekvienas sluoksnis įjungiamas atskirai, su žymomis. Jie matomi per žemę. Įkėlus kelis žaidimo režimus, **Režimas** filtruoja rungtynes pagal režimą. Tikslai ateina iš konverterio rungtynių failo šalia įrašo arba iš [`.3dheat`](container.md) konteinerio.
+
+Rainbow Six Siege rungtynės atsineša savo bombos vietas: kiekvienos vietos du kambariai nupiešiami ant jų grindų kaip kontūrai su pavadinimais, nustatytais pagal tai, kur stovėjo žaidėjai, kai žaidimas įvardijo kambarį; žemėlapio vieta, kuri rungtynėse nebuvo žaista, ateina iš keitiklio vietų lentelės kaip apskritimas. Pakartojime raundo ties atkūrimo vieta bombos vieta užsidega gintaro spalva, kitos lieka pilkos. Jos yra užėmimo zonų sluoksnio dalis.
 
 ## Žymos ir statistika {#labels-and-statistics}
 

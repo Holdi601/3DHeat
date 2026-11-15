@@ -3,9 +3,9 @@ title: "Massanalyse"
 nav_order: 8
 lang: "no"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Masseanalyse: tusenvis av kamper samtidig
@@ -71,14 +71,24 @@ Velg en mappe (eller filer; **Legg til mappe...** legger til en ny). Vinduet har
 | Spillere | ulike spillere, kamper per spiller, spillere per kamp, de hyppigste spillerne |
 | Sider | hver side på hvert kart: kamper vunnet mot en jevn fordeling |
 | Nærkamp | rundedata: åpningsdueller etter side og hvor ofte de blir til noe, tradinger, den som kikker mot den som holder, krysningsild, blendede innganger, sikte, plantinger, mannsovervekt og, **Etter kart**, stedene som dreper spillerne som går inn i dem – hver med en andel og sitt Wilson-intervall, fra sammendragenes `cqb`-tall ([Nærkamp og runder](close-quarters.md)) |
+| R6-flater | Rainbow Six Sieges merker på banen (kulehull og lignende) per flate på banen: merker, per runde på kartet, rommet, andelen der skytteren ble funnet ut; et klikk åpner merkenes typer, skytternes operatører og våpenklasser, og hvor på flaten merkene er (et lite varmekart av celler på en kvart meter); en flate beholder id-en sin på tvers av kampene i én kartversjon. Fra sammendragenes `marks`-tall |
 | Kart | et karts summerte rutenett: tilstedeværelse, drap, dødsfall, K/D, enhver hendelse, flyt, og **varm i hvor mange kamper** (stabilitet); etter lag, i 1, 2, 4 eller 8 ganger cellen |
-| Steder | steder som skiller seg ut i tallene, men ikke i varmekartet (et stort område som er travelt som helhet, korridorer, høydebånd); **Finn steder** |
-| Nisjer | grupper som gjør det markert bedre eller dårligere enn resten (et kjøretøy på ett kart, en sektor i én høyde); **Finn nisjer** |
+| Steder | steder som skiller seg ut i tallene, men ikke i varmekartet (et stort område som er travelt som helhet, korridorer, høydebånd), og steder der de som holder dem, vinner flere eller færre av rundene sine; **Finn steder** |
+| Nisjer | grupper som gjør det markert bedre eller dårligere enn resten (et kjøretøy på ett kart, en sektor i én høyde), og grupper av runder vunnet utover det siden deres vant i de samme kampene; **Finn nisjer** |
 | Innsikter | massedetektorene og kartdetektorene (nedenfor); **Kopier rapport (JSON)** gir JSON-en en språkmodell leser |
 
 ## Innsikter over mange kamper {#insights-over-many-matches}
 
 Fanen **Steder** finner steder som skiller seg ut i tallene, men ikke i varmekartet: et stort område som er travelt som helhet, en korridor, et høydebånd, et sted som bare er travelt i en del av kampen. Den merker de som det vanlige varmekartet ikke viser, som **skjult**, og tegner dem opp i 3D-visningen. **Last inn** flyr dit med kampene det hadde. Fanen **Nisjer** finner grupper (et kjøretøy på ett kart og en side, en sektor i én høyde) som gjør det markert bedre eller dårligere enn resten. Klikk på en for å se finjusteringene.
+
+### Hvem vant {#who-won}
+
+Der kampene sier hvem som vant hver runde ([utfallskolonnen](data-formats.md#outcome-columns) `won`), er resultatet et eget mål:
+
+- **Steder: vinnerandel.** For hver side andelen av rundene den hadde på et sted som den vant, mot andelen den vant i samme kamp hvor som helst – så kartets balanse, sidens og kampens egen er grunnlinjen, og bare steder der de som holder dem, vinner flere (eller færre) av rundene sine, skiller seg ut. Et oppdiktet eksempel: *«Dust: side T vinner flere av rundene sine når den er her: 61 % av 412 vunnet, mot 49 % ventet ut fra dens egen andel i de samme kampene (odds 1,6x; holdt i 31/48 kamper).»* Samme falske oppdagelsesrate og stabilitetskontroller som for alle steder; **Last** laster inn kampene det ble holdt i, og viser posisjonene til den siden.
+- **Nisjer: rundeseier.** Tabellen **Runder** har runden til hvert liv: kartet, siden, delen av kampen (runde 1–4, 5–8, ...), kjøretøyet (en operatør, en agent), våpenet det brukte mest, stedet det holdt lengst, kjøpet (eco, force, full) og om siden fikk det første drapet. En gruppe vurderes mot det siden vant i de samme kampene, så *T på Dust med en AWP* er en nisje bare når de rundene ble vunnet oftere enn Ts andre runder i de kampene. Et oppdiktet eksempel: *«m1 · T · AWP: vinner 80 % av 320 runder, mot 62 % ventet ut fra de samme sidene i de samme kampene (odds 2,3x; 40 kamper).»* Rangert etter løftet ganger støtten; **Last** laster inn kampene der rundene viser det mest.
+
+Begge trenger sammendrag av versjon 2 (se [Få sammendragene](#getting-the-summaries)): eldre regnes ut på nytt.
 
 Fanen **Innsikter** finner over alle kamper kjøretøy som bytter eller vinner bedre eller dårligere enn resten, steder som er varme i en jevn andel av kampene, sider som vinner mer enn en jevn fordeling, kjøretøy der bruken endrer seg over datoene, og deler av kampen som har flere drap enn en jevn spredning. Hvert funn har sine tall, sin effekt, sitt intervall og en falsk-oppdagelsesrate (holdt under 5 %), og et klikk laster kampene. Detaljer: [For utviklere](#for-developers).
 
@@ -127,6 +137,11 @@ Vanlig JSON (`src/mass/types.ts`), omtrent 5–30 KB komprimert per kamp:
   etter kanonisk type, drap etter målets klasse, seire, penger;
 - per spiller (etter bruker-id, ellers navn): lag, liv, tilstedeværelse, drap, dødsfall,
   treff, oppskytinger, seier, kjøretøy; per våpen: hendelser etter type;
+- med en resultatkolonne (versjon 2): runder vunnet og spilt per lag, kjøretøy
+  (`rw`, ett liv og én runde hver), spiller og våpen (rundene en side brukte det
+  i); runden til hvert liv (`outcome.u`: runde, side, kjøretøy, våpenet det
+  brukte mest, stedet det holdt lengst, kjøpet, vunnet) og hver rundes
+  nummer, vinner og siden som fikk det første drapet (`outcome.r`);
 - økonomikolonnene (`cost_*`, `earn_*`) og deres totaler;
 - faser: hendelser etter type i 20 bolker av kamplengden og etter minutt;
 - atferd: kampens mål for kollektiv atferd (samstemthet, rutestyring, baner, trengsel,
@@ -156,6 +171,9 @@ og form, ikke bare for varmebilder:
   10–30, 30–100, 100–300, 300–1000, 1000–3000, over; en fil med en kolonne `floor`/`storey`/`deck`
   deler inn etter etasjer i stedet. `y` er hver celles gjennomsnittlige høyde, `y0` dens laveste (dens etasje, for høyde over den).
 - **Hendelser** som tupler `[celle, type, lag, klasse, bånd, antall]`.
+- **Runder etter resultat** (versjon 2, med en resultatkolonne og to runder eller
+  flere): `pw` som `[cell, team, rounds won, rounds lost]` – rundene hver side
+  tilbrakte ett sekund eller mer i cellen, etter resultatet i runden.
 - **Tidsskiver** på et grovt nivå (8 celler per side), etter minutt fra kampstart:
   `[cx, cz, minutt, type, verdi]`, tilstedeværelsessekunder som type
   `GRID_KINDS.length`; kampfaser er minutter over lengden.
@@ -178,10 +196,14 @@ med høyst 64 celler per side (16 for rom-tid-skanningen), aldri kampene.
 
 - **Mål.** En hendelses rate per sekund med tilstedeværelse – drap, dødsfall,
   treff, oppskytinger, erobringer, for alle enheter, per klasse (de 4 med flest
-  hendelser), per høydebånd – og andelen av drap i drap og dødsfall (alle, per side, per bånd). Hvilke klasser og sider som tas med, kommer fra hodene (`planOf`).
+  hendelser), per høydebånd – og andelen av drap i drap og dødsfall (alle, per side, per bånd),
+  og hver sides **vinnerandel**: rundene dens i cellen vunnet mot tapt (`pw`), der 8 kamper
+  på kartet eller flere teller runder etter resultat. Hvilke klasser og sider som tas med, kommer fra hodene (`planOf`).
 - **Forventning per kamp.** Hver kamps egen rate, fordelt over sin egen tilstedeværelse i en
   celle, er cellens forventning (en Kulldorff-skanning justert for kovariater og lagdelt etter kamp):
-  noen få blodige kamper eller én travel server gir ingen plass.
+  noen få blodige kamper eller én travel server gir ingen plass. For vinnerandelen er forventningen
+  sidens egen andel vunne runder i den kampen, så kartets og sidens balanse blir aldri et sted.
+  En runde i flere celler i et område teller i hver; spredningen målt ved områdets størrelse bærer det.
 - **Spredning.** Kampene er uenige langt mer enn Poisson. Hver kamps residualer
   summeres i blokker på 1, 2, 4, 8, 16 celler; spredningen for hver blokkstørrelse
   (kvadrerte residualer delt på nullvariansen, samlet, de verste 5 % av blokkene utelatt)
@@ -230,6 +252,26 @@ krympet forhold på minst 1,25 (eller 1/1,25), fire av fem foldinger enige, og i
 som bare gjentar sin forelder. Fanen **Nisjer** lister dem; et klikk viser hver
 én-betingelses-finjustering av gruppen (utforskeren), og **Last inn** laster kampene. Utstyr finnes ikke i sammendragene ennå.
 
+Den fjerde tabellen, **runder** (`roundsTable`), har rundens resultat som
+mål: én rad per livs runde – kart, side, del av kampen (runde 1–4,
+5–8, ...), kjøretøy, våpenet som ble brukt mest, stedet som ble holdt lengst, kjøp, første
+drap eller første død – vurdert mot sin egen sides vinnerandel i sin egen
+kamp (den lagdelte forventningen etter Mantel-Haenszel: residualen er
+`won - e`, `e` sidens andel i kampen), så en nisje er aldri kartets
+eller sidens balanse. Kampene forblir klyngene. z er kalibrert: det
+samme strålesøket kjøres åtte ganger på resultatene stokket mellom
+rundene for hver side i hver kamp (sidens andel i hver kamp beholdt), og
+spredningen av disse null-z utover en standard normalfordeling – per antall
+betingelser, fra midten (median / 0,674) og halen (99. persentil /
+2,576), den største, aldri under 1 – deler de ekte før p og
+den falske oppdagelsesraten (en empirisk nullfordeling, Efron 2004). Dypere grupper får
+den større skalaen: strålen beholder forfininger av grupper valgt for sin
+store z. En nisjes basis er dens egen forventning, løftet prosentpoengene over
+den, og den rangeres etter løftet ganger kvadratroten av rundene, holdt av
+bevisene og foldene (`wracc` er støtten ganger løftet). Den
+bærer kampene der den viste seg mest (`matchIds`), og noen av rundene deres
+(`rounds`, `[match, round]`) for å bore seg ned.
+
 #### Endringer i meta med praktisk betydning {#meta-shifts-with-practical-significance}
 
 På blandede datoer kalte den binomiske testen på liv nesten hver endring betydelig. `meta` testes nå klyngerobust (hver kamps
@@ -248,3 +290,10 @@ angrepsveier: typene deres er `place.*` og `niche.*`.
 på 22 celler, svakt i hver celle), en korridor, et høydebånd og en klynge som bare er i én fase, i 240 syntetiske overspredte kamper – alle funnet, det diffuse skjult – og kjører åtte nullsett på 60 kamper: ingen steder.
 `niche.test.ts` finner en plantet gruppe av kjøretøy × kart × side og ingenting i
 fem nulltabeller.
+`outcome.test.ts` sjekker sammendraget av versjon 2 (runder vunnet
+etter side, enhet, spiller og våpen, `pw`, enhetsrundene); planter en fil der
+siden vinner 70 % av rundene sine mot 35 % (hver kamp sin egen balanse) – funnet –
+og kjører 20 nullsett på 50 kamper der filene ikke sier noe: ingen
+vinnerandel-steder; planter en AWP på ett kart som vinner sidens runder 30 prosentpoeng mer –
+funnet, med kampene og rundene sine – og kjører 30 nullsett på 80 kamper med
+hver kamp sin egen balanse og én side sterkere på ett kart: ingen nisje.

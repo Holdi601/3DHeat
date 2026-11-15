@@ -4,9 +4,9 @@ parent: "Filter und Werkzeuge"
 nav_order: 1
 lang: "de"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filter
@@ -41,6 +41,10 @@ Nur Arten, die vorkommen, werden aufgelistet. Wertspalten (`cost_*`, `earn_*`, `
 Eine Kategorieliste mit mehr als 12 Werten bekommt ein Suchfeld (*N Werte suchen*) und eine Schaltfläche **Nur diese**, die genau die passenden Werte zulässt.
 
 Welche Spalten gefiltert werden können, wird beim Laden entschieden, weil sie dann gelesen werden müssen. Ohne behaltene Spalte sagt das Panel es und verweist auf *Zum Filtern behalten*.
+
+## Schnellfilter für Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Ist ein Rainbow-Six-Siege-Match geladen, beginnt das Panel mit Schaltflächen, die die Filter mit einem Klick setzen: **Einschusslöcher und Spuren** (die Spuren, die auf dem Level zurückbleiben), **Spuren mit Schütze** und **Spuren mit Waffenklasse** (die, für die ein Schütze oder eine Waffe aus dem Abschuss des Schützen im selben Moment ermittelt wurde; teile oder filtere sie weiter nach `byOperator` oder `byItemClass`), **Platzierungs- und Entschärfungsversuche**, **Abgebrochene Versuche** (begonnen, nicht beendet, dort, wo der Spieler aufhörte) und **Verstärkungen** (wo eine Wand oder Luke verstärkt wurde, beim Verteidiger, den der Konverter ableitet). Jede ersetzt den Filter auf der Ereignisspalte und behält den Rest; **Alle Filter entfernen** macht es rückgängig. Die Spalten sind in der Dokumentation des Konverters beschrieben.
 
 ## Zahlenspalten (Bereich) {#numeric-columns-range}
 

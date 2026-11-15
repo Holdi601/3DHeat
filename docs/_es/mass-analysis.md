@@ -3,9 +3,9 @@ title: "Análisis masivo"
 nav_order: 8
 lang: "es"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Análisis masivo: miles de partidas a la vez
@@ -68,14 +68,24 @@ Elige una carpeta (o archivos; **Añadir carpeta...** añade otra). La ventana t
 | Jugadores | jugadores distintos, partidas por jugador, jugadores por partida, los jugadores más frecuentes |
 | Bandos | cada bando de cada mapa: partidas ganadas frente a un reparto igual |
 | Combate cercano | datos de rondas: duelos de apertura por bando y su conversión, intercambios, quien se asoma frente a quien mantiene, fuegos cruzados, entradas cegadas, puntería, colocaciones de bomba, ventaja numérica y, **Por mapa**, los lugares que matan a los jugadores que entran en ellos - cada uno como una parte con su intervalo de Wilson, a partir de los recuentos `cqb` de los resúmenes ([Combate cercano y rondas](close-quarters.md)) |
+| Superficies R6 | las marcas de Rainbow Six Siege en el nivel (impactos de bala y similares) por superficie del nivel: marcas, por ronda del mapa, la sala, la parte cuyo tirador se dedujo; un clic abre los tipos de marca, los operadores y las clases de arma de los tiradores, y en qué parte de la superficie están las marcas (un pequeño mapa de calor de celdas de un cuarto de metro); una superficie conserva su id entre las partidas de una misma versión del mapa. A partir de los recuentos `marks` de los resúmenes |
 | Mapa | la rejilla sumada de un mapa: presencia, bajas, muertes, K/D, cualquier evento, flujo, y **activo en cuántas partidas** (estabilidad); por equipo, con la celda a 1, 2, 4 u 8 veces |
-| Lugares | sitios que destacan en los números pero no en el mapa de calor (un área grande ocupada en conjunto, pasillos, bandas de altura); **Buscar lugares** |
-| Nichos | grupos que van claramente mejor o peor que el resto (un vehículo en un mapa, un sector a una altura); **Buscar nichos** |
+| Lugares | sitios que destacan en los números pero no en el mapa de calor (un área grande ocupada en conjunto, pasillos, bandas de altura), y sitios cuyos ocupantes ganan más o menos de sus rondas; **Buscar lugares** |
+| Nichos | grupos que van claramente mejor o peor que el resto (un vehículo en un mapa, un sector a una altura), y grupos de rondas ganadas por encima de lo que su bando ganó en las mismas partidas; **Buscar nichos** |
 | Hallazgos | los detectores masivos y los detectores de mapa (abajo); **Copiar informe (JSON)** da el JSON que lee un modelo de lenguaje |
 
 ## Hallazgos sobre muchas partidas {#insights-over-many-matches}
 
 La pestaña **Lugares** encuentra sitios que destacan en los números pero no en el mapa de calor - un área grande ocupada en conjunto, un pasillo, una banda de altura, un sitio ocupado solo en una parte de la partida - marca como **ocultos** los que el mapa de calor normal no muestra, y los dibuja con borde en la vista 3D; **Cargar** vuela hasta allí con las partidas que contenía. La pestaña **Nichos** encuentra grupos (un vehículo en un mapa y un bando, un sector a una altura) que van claramente mejor o peor que el resto; haz clic en uno para ver sus precisiones.
+
+### Quién ganó {#who-won}
+
+Donde las partidas dicen quién ganó cada ronda (la [columna de resultado](data-formats.md#outcome-columns) `won`), el resultado es un objetivo propio:
+
+- **Lugares: tasa de victoria.** Para cada bando, la parte de sus rondas en un lugar que ganó, frente a la parte que ganó en cualquier sitio de la misma partida - así el equilibrio del mapa, el del bando y el de la propia partida son la referencia, y solo destacan los lugares cuyos ocupantes ganan más (o menos) de sus rondas. Un ejemplo inventado: *«Dust: el bando T gana más de sus rondas cuando está aquí: 61 % de 412 ganadas, frente al 49 % esperado según su propia tasa en las mismas partidas (probabilidades 1,6x; mantenido en 31/48 partidas).»* La misma tasa de falsos descubrimientos y las mismas comprobaciones de estabilidad que cualquier lugar; **Cargar** carga las partidas en que se mantuvo, mostrando las posiciones de ese bando.
+- **Nichos: victoria de ronda.** La tabla **Rondas** contiene la ronda de cada vida: el mapa, el bando, la parte de la partida (rondas 1-4, 5-8, ...), el vehículo (un operador, un agente), el arma que más usó, el lugar que mantuvo más tiempo, la compra (eco, force, full) y si su bando hizo la primera baja. Un grupo se juzga frente a lo que su bando ganó en las mismas partidas, así que *T en Dust con un AWP* solo es un nicho cuando esas rondas se ganaron más a menudo que las otras rondas de T en esas partidas. Un ejemplo inventado: *«m1 · T · AWP: gana el 80 % de 320 rondas, frente al 62 % esperado de los mismos bandos en las mismas partidas (probabilidades 2,3x; 40 partidas).»* Ordenados por la mejora por el soporte; **Cargar** carga las partidas cuyas rondas más lo muestran.
+
+Ambos necesitan resúmenes de la versión 2 (ver [Obtener los resúmenes](#getting-the-summaries)): los más antiguos se vuelven a calcular.
 
 La pestaña **Hallazgos** encuentra, sobre todas las partidas, vehículos que intercambian o ganan mejor o peor que el resto, sitios muy activos en una parte estable de las partidas, bandos que ganan más que un reparto igual, vehículos cuyo uso cambia con las fechas, y partes de la partida que concentran más bajas que un reparto uniforme. Cada hallazgo lleva sus recuentos, su efecto, su intervalo y una tasa de falsos descubrimientos (fijada en 5 %), y un clic carga sus partidas. Detalles: [Para desarrolladores](#for-developers).
 
@@ -123,6 +133,12 @@ JSON simple (`src/mass/types.ts`), de unos 5-30 KB comprimido por partida:
   por tipo canónico, bajas por clase del objetivo, victorias, dinero;
 - por jugador (por id de usuario, o si no por nombre): equipo, vidas, presencia, bajas, muertes,
   impactos, lanzamientos, victorias, vehículos; por arma: eventos por tipo;
+- con una columna de resultado (versión 2): rondas ganadas y jugadas por equipo, vehículo
+  (`rw`, una vida y una ronda cada uno), jugador y arma (las rondas en que un bando la usó);
+  la ronda de cada vida (`outcome.u`: ronda, bando, vehículo, el arma más usada, el lugar
+  mantenido más tiempo, la compra, ganada) y el número, el ganador y el bando de la primera
+  baja de cada ronda (`outcome.r`);
+
 - las columnas de la economía (`cost_*`, `earn_*`) y sus totales;
 - fases: eventos por tipo en 20 franjas de la duración de la partida y por minuto;
 - comportamiento: las medidas de comportamiento colectivo de la partida (alineación, manada en ruta, carriles, aglomeración, líderes, rezagados, punto de quiebre, riesgo tras pérdidas, rachas, acuerdo en las compras, supresión), cada una con su propio modelo nulo,
@@ -139,6 +155,9 @@ La parte espacial está hecha para estadísticas de barrido sobre regiones de cu
 - **Exposición junto a cada recuento.** Segundos de presencia por celda, por equipo (`pt`), por clase de vehículo (`pc`) y por banda de altura (`ph`), así que la tasa, la esperanza y el cociente de una región se calculan para cualquier subgrupo.
 - **Altura.** Bandas por encima del suelo de la partida (el percentil 1 de la altura): menos de 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, más de eso; un archivo con una columna `floor`/`storey`/`deck` las agrupa por sus pisos. `y` es la altura media de cada celda, `y0` la más baja (su piso, para la altura por encima de ella).
 - **Eventos** como tuplas `[celda, tipo, equipo, clase, banda, recuento]`.
+- **Rondas por resultado** (versión 2, con una columna de resultado y dos rondas o
+  más): `pw` como `[cell, team, rounds won, rounds lost]` - las rondas en que cada bando
+  pasó un segundo o más en la celda, según su resultado en la ronda.
 - **Cortes de tiempo** a un nivel grueso (8 celdas por lado), por minuto desde el inicio de la partida: `[cx, cz, minuto, tipo, valor]`, con los segundos de presencia como tipo `GRID_KINDS.length`; las fases de la partida son minutos sobre la duración.
 - Dispersa, recuentos enteros, segundos con una décima: acotada por lo que pasó.
 
@@ -153,8 +172,10 @@ Las partidas de cada mapa se leen dos veces, una partida a la vez; la memoria gu
 - **Medidas.** La tasa de un evento por segundo de presencia - bajas, muertes,
   impactos, lanzamientos, capturas, para todas las unidades, por clase (las 4 con más
   eventos), por banda de altura - y la parte de bajas en bajas y muertes (todas,
-  por bando, por banda). Qué clases y bandos cuentan lo deciden las cabeceras (`planOf`).
-- **Esperado por partida.** La tasa propia de cada partida repartida sobre su propia presencia en una celda es la esperanza de la celda (un barrido de Kulldorff ajustado por covariables, estratificado por partida): unas pocas partidas sangrientas o un servidor muy ocupado no crean un lugar.
+  por bando, por banda), y la **tasa de victoria** de cada bando: sus rondas en la
+  celda ganadas frente a perdidas (`pw`), donde 8 partidas del mapa o más cuentan
+  rondas por resultado. Qué clases y bandos cuentan lo deciden las cabeceras (`planOf`).
+- **Esperado por partida.** La tasa propia de cada partida repartida sobre su propia presencia en una celda es la esperanza de la celda (un barrido de Kulldorff ajustado por covariables, estratificado por partida): unas pocas partidas sangrientas o un servidor muy ocupado no crean un lugar. Para la tasa de victoria, la esperanza es la parte propia de rondas ganadas del bando en esa partida, así que el equilibrio del mapa y el del bando nunca son un lugar. Una ronda en varias celdas de una región cuenta en cada una; la dispersión medida al tamaño de la región lo recoge.
 - **Dispersión.** Las partidas difieren mucho más de lo que dice Poisson. Los residuos de cada partida se suman en bloques de 1, 2, 4, 8, 16 celdas; la dispersión de cada tamaño de bloque (residuos al cuadrado sobre la varianza nula, agrupados, dejando fuera el 5 % peor de los bloques) escala cada prueba de una región de ese tamaño: un cociente de verosimilitud cuasi, Poisson para las tasas, binomial para las partes.
 - **Regiones.** Círculos de 0,75 a 18 celdas; elipses en seis ángulos, de 3 y 6 veces su anchura, de 3 a 18 celdas (pasillos; el eje es el `place.path` del hallazgo); zonas que crecen celda a celda a partir de las celdas locales más fuertes de Getis-Ord Gi* mientras crece la z de la región (formas irregulares) - crecidas en una mitad de las partidas y probadas en la otra, así que la libertad de crecer no cuesta falsos lugares; cada banda de altura frente a las demás bandas de la partida en todo el mapa (robusto frente a agrupaciones); cilindros espacio-tiempo: un círculo en uno o dos quintos de la duración de la partida, frente a la dispersión propia de los eventos de la partida en lugar y tiempo (el barrido de permutación espacio-tiempo).
 - **Pruebas.** p a partir de la verosimilitud cuasi; Benjamini-Hochberg sobre cada región probada en cada mapa (lo habitual son 700.000 en tres mapas) al 5 %. Lo que pasa se poda (una región que está sobre todo dentro de otra más fuerte de su medida dice lo mismo), se vuelve a leer para su **estabilidad** - partidas que la vieron, partidas en las que estaba activa, su dirección en cinco particiones de las partidas - y se prueba una vez más con la varianza que muestran las propias partidas (robusta frente a agrupaciones, partidas como grupos, nunca bajo Poisson), BH otra vez. Los lugares tranquilos sobre una base (2 % o más de las apariciones, despegues y aterrizajes del mapa) se dejan fuera.
@@ -167,6 +188,8 @@ La pestaña **Lugares** los lista (ocultos solo por defecto; por mapa, forma, di
 
 Búsqueda en haz (anchura 24, profundidad 3) sobre tres tablas: **vidas** (vidas de los jugadores: juego, mapa, modo, clase, vehículo, bando, nivel, trimestre de las fechas, tercio de la duración de las partidas; K/D, victoria, muerte por vida, bajas por hora, ganancias por minuto), **lugares** (bajas y muertes por mapa, modo, fechas, sector del mapa 4 x 4, clase, bando, banda) y **fases** (sector y quinto de la partida: K/D, muertes por hora de presencia). Un grupo se prueba frente al conjunto con las partidas como grupos (la varianza sándwich de sus residuos por partida), su efecto es un cociente de probabilidades o de tasas reducido por una prior de 20 resultados; necesita 30 resultados en 8 partidas, un refinamiento debe ser un 10 % más fuerte que su padre, y se dejan fuera los grupos donde el resultado es nada o todo (no registrado para ellos). Se conserva: BH por debajo del 5 % sobre cada grupo evaluado, un cociente reducido de 1,25 (o 1/1,25) como mínimo, cuatro de cinco particiones de acuerdo, y no un refinamiento que solo repita a su padre. La pestaña **Nichos** los lista; un clic muestra cada refinamiento de una condición del grupo (el explorador), **Cargar** carga sus partidas. Los equipamientos aún no están en los resúmenes.
 
+La cuarta tabla, **rondas** (`roundsTable`), tiene como objetivo el resultado de la ronda: una fila por ronda de una vida - mapa, bando, parte de la partida (rondas 1-4, 5-8, ...), vehículo, el arma más usada, el lugar mantenido más tiempo, compra, primera baja o primera muerte - juzgada frente a la tasa de victoria de su propio bando en su propia partida (la esperanza estratificada de Mantel-Haenszel: el residuo es `won - e`, `e` la parte del bando en la partida), así que un nicho nunca es el equilibrio del mapa o del bando. Las partidas siguen siendo los conglomerados. Su z está calibrada: la misma búsqueda en haz se ejecuta ocho veces sobre los resultados barajados entre las rondas de cada bando de cada partida (se conserva la tasa del bando en cada partida), y la dispersión de esas z nulas más allá de una normal estándar - por número de condiciones, desde el centro (mediana / 0,674) y la cola (percentil 99 / 2,576), la mayor, nunca por debajo de 1 - divide las reales antes de su p y la tasa de falsos descubrimientos (un nulo empírico, Efron 2004). Los grupos más profundos reciben la escala mayor: el haz conserva refinamientos de grupos elegidos por su z grande. La base de un nicho es su propia esperanza, su mejora los puntos por encima, y se ordena por la mejora por la raíz cuadrada de sus rondas, sostenido por las pruebas y los pliegues (`wracc` es el soporte por la mejora). Lleva las partidas en que más se mostró (`matchIds`) y algunas de sus rondas (`rounds`, `[match, round]`) para el desglose.
+
 #### Los cambios de tendencia con significado práctico {#meta-shifts-with-practical-significance}
 
 Con fechas mezcladas, la binomial sobre las vidas marcaba casi todo cambio como significativo. `meta` ahora prueba de forma robusta frente a agrupaciones (las vidas de cada partida como grupo), y conserva un cambio de uso solo si es de 2 puntos y al menos un 25 %, un cambio de K/D de 1,3 veces, los trimestres de las fechas con una tendencia en el mismo sentido (tau de Kendall de al menos 0,5) y, para un vehículo en varios mapas, la misma dirección en la mayoría de ellos. Eso deja solo unos pocos cambios en un conjunto de prueba donde la prueba simple marcaba casi todos.
@@ -177,4 +200,4 @@ Con fechas mezcladas, la binomial sobre las vidas marcaba casi todo cambio como 
 
 #### Comprobaciones {#checks}
 
-`scan.test.ts` planta un área difusa (1,6 veces la tasa de muertes sobre un círculo de 22 celdas, tenue en cada celda), un pasillo, una banda de altura y un grupo solo de fase en 240 partidas sintéticas con dispersión - todos encontrados, el difuso oculto - y ejecuta ocho conjuntos nulos de 60 partidas: ningún lugar. `niche.test.ts` encuentra un grupo plantado de vehículo x mapa x bando y nada en cinco tablas nulas.
+`scan.test.ts` planta un área difusa (1,6 veces la tasa de muertes sobre un círculo de 22 celdas, tenue en cada celda), un pasillo, una banda de altura y un grupo solo de fase en 240 partidas sintéticas con dispersión - todos encontrados, el difuso oculto - y ejecuta ocho conjuntos nulos de 60 partidas: ningún lugar. `niche.test.ts` encuentra un grupo plantado de vehículo x mapa x bando y nada en cinco tablas nulas. `outcome.test.ts` comprueba el resumen de la versión 2 (rondas ganadas por bando, unidad, jugador y arma, `pw`, las rondas por unidad); planta un carril cuyo bando gana el 70 % de sus rondas frente al 35 % (cada partida con su propio equilibrio) - encontrado - y ejecuta 20 conjuntos nulos de 50 partidas en que los carriles no dicen nada: ningún lugar de tasa de victoria; planta un AWP en un mapa que hace ganar las rondas de su bando 30 puntos más - encontrado, con sus partidas y rondas - y ejecuta 30 conjuntos nulos de 80 partidas, cada partida con su propio equilibrio y un bando más fuerte en un mapa: ningún nicho.

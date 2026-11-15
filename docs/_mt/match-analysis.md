@@ -3,9 +3,9 @@ title: "Analiżi tal-partita (CS2)"
 nav_order: 10
 lang: "mt"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Analiżi tal-partita (Counter-Strike 2)
@@ -121,6 +121,16 @@ Fuq kull partita mgħobbija:
 - **Plejers**: l-ħmistax l-aħjar skont il-qtil nieqes il-mwiet, miġbura fuq il-partiti kollha tagħhom (imqabbda bl-ID tal-Steam): partiti, K-D, ADR u KAST miżjuda bir-rawnds miġjuba, HS% miżjud bil-qtil, duelli tal-ftuħ. **Ikklikkja plejer** għall-qtil u l-mwiet tiegħu fil-partiti kollha fil-heatmap.
 
 Il-buttuni Uri-fil-heatmap għall-partiti mgħobbija kollha jinsabu taħtha.
+
+## X’iddeċieda r-rawnds {#what-decided-the-rounds}
+
+It-tab jgħodd; l-[Għarfien](insights.md#who-won-what-decided-the-rounds) jispjega. Bit-tabella tal-heatmap ta' partita mgħobbija (fiha l-kolonna `won`), l-**Għarfien** jaqsam ir-rawnds ta' kull naħa skont x'ġara fihom - id-duell tal-ftuħ, ix-xiri, l-ewwel mewt ivvindikata, il-plant, l-utilità, l-ewwel kuntatt kmieni, kull post miżmum u kull post milħuq fl-ewwel 25 s - u jgħid liema għamel id-differenza, bid-differenza tar-rati ta' rebħ, l-intervall ta' 95% tagħha u q, u *ftit rawnds* fejn fergħa għandha inqas minn tmienja. Isemmi l-punti ta' bidla (il-qtil u l-plants li ċċaqilqu l-aktar il-probabbiltà ta' rebħ) u l-plejers u l-postijiet li żiedu jew swew l-aktar, u s-**Sommarju** u l-**Kummentatur** jibdew bihom. Eżempju maħluq:
+
+> T rebħet 79% tad-19-il rawnd li fihom żammet Mid, kontra 24% tal-21 mingħajru (55 punt, 95% minn 26 sa 74) - q 0.004.
+>
+> Punti ta' bidla: rawnd 17 f'48 s, qtil minn CT f'B site ċaqlaq iċ-ċans tagħha minn 31% għal 58%, u ħadet ir-rawnd.
+
+Partita waħda għandha inqas minn 30 rawnd, għalhekk il-probabbiltajiet ta' rebħ tagħha ġejjin minn mudell a priori fiss tal-irġiel ħajjin, il-plant u l-arloġġ; it-test jgħid hekk. Fuq ħafna partiti, l-istess mistoqsijiet jagħmilhom l-[analiżi tal-massa](mass-analysis.md#who-won).
 
 ## Uri fil-heatmap {#show-in-the-heatmap}
 

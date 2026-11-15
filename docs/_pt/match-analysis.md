@@ -3,9 +3,9 @@ title: "Análise de partida (CS2)"
 nav_order: 10
 lang: "pt"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Análise da partida (Counter-Strike 2)
@@ -179,6 +179,16 @@ Sobre todas as partidas carregadas:
   abates e mortes em todas as partidas no mapa de calor.
 
 Os botões Mostrar no mapa de calor para todas as partidas carregadas ficam por baixo.
+
+## O que decidiu as rondas {#what-decided-the-rounds}
+
+O separador conta; as [Descobertas](insights.md#who-won-what-decided-the-rounds) explicam. Com a tabela de mapa de calor de uma partida carregada (tem a coluna `won`), as **Descobertas** dividem as rondas de cada lado pelo que aconteceu nelas - o duelo de abertura, a compra, uma primeira morte trocada, o plant, os utilitários, um primeiro contacto cedo, cada lugar mantido e cada lugar alcançado nos primeiros 25 s - e dizem qual fez a diferença, com a diferença das taxas de vitória, o seu intervalo de 95% e q, e *poucas rondas* onde um braço tem menos de oito. Nomeiam os pontos de viragem (os abates e plants que mais mexeram na probabilidade de vitória) e os jogadores e lugares que mais acrescentaram ou custaram, e o **Resumo** e o **Comentarista** começam por eles. Um exemplo inventado:
+
+> T ganhou 79% das 19 rondas em que manteve Mid, contra 24% de 21 sem ele (55 pontos, 95% de 26 a 74) - q 0,004.
+>
+> Pontos de viragem: ronda 17 aos 48 s, um abate de CT em B site mudou a sua hipótese de 31% para 58%, e ficou com a ronda.
+
+Uma partida tem menos de 30 rondas, por isso as suas probabilidades de vitória vêm de um modelo prévio fixo a partir dos jogadores vivos, do plant e do relógio; o texto di-lo. Em muitas partidas, a [análise em massa](mass-analysis.md#who-won) faz as mesmas perguntas.
 
 ## Mostrar no mapa de calor {#show-in-the-heatmap}
 

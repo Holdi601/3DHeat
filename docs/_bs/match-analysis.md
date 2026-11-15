@@ -3,9 +3,9 @@ title: "Analiza meča (CS2)"
 nav_order: 10
 lang: "bs"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Analiza meča (Counter-Strike 2)
@@ -142,6 +142,16 @@ Preko svakog učitanog meča:
 - **Igrači**: petnaest najboljih po ubistvima minus smrti, zbrojeno preko svih njihovih mečeva (upareno po Steam ID-u): mečevi, K-D, ADR i KAST ponderisani odigranim rundama, HS% ponderisan ubistvima, otvarajući dueli. **Kliknite igrača** za njegova ubistva i smrti preko svih mečeva na toplotnoj mapi.
 
 Dugmad Prikaži na toplotnoj mapi za sve učitane mečeve su ispod toga.
+
+## Šta je odlučilo runde {#what-decided-the-rounds}
+
+Kartica broji; [Uvidi](insights.md#who-won-what-decided-the-rounds) objašnjavaju. Kada je učitana tabela toplotne mape meča (nosi kolonu `won`), **Uvidi** dijele runde svake strane prema onome što se u njima desilo - otvarajući dvoboj, kupovina, razmijenjena prva smrt, postavljanje, pomagala, rani prvi kontakt, svako držano mjesto i svako mjesto dosegnuto u prvih 25 s - i kažu šta je napravilo razliku, s razlikom procenata pobjeda, njenim intervalom od 95% i q te *malo rundi* gdje grana ima manje od osam rundi. Navode prekretnice (ubistva i postavljanja koja su najviše pomjerila vjerovatnoću pobjede) te igrače i mjesta koji su najviše dodali ili koštali, a **Sažetak** i **Komentator** počinju s njima. Izmišljeni primjer:
+
+> T je dobila 79% od 19 rundi u kojima je držala Mid, naspram 24% od 21 bez toga (55 bodova, 95% od 26 do 74) - q 0,004.
+>
+> Prekretnice: runda 17 u 48 s, ubistvo strane CT na mjestu B promijenilo je njene izglede sa 31% na 58%, i dobila je rundu.
+
+Jedan meč ima manje od 30 rundi, pa njegove vjerovatnoće pobjede dolaze iz fiksnog apriornog modela živih igrača, postavljanja i sata; tekst to kaže. Preko mnogo mečeva ista pitanja postavlja [masovna analiza](mass-analysis.md#who-won).
 
 ## Prikaži na toplotnoj mapi {#show-in-the-heatmap}
 

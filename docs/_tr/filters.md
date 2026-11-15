@@ -4,9 +4,9 @@ parent: "Filtreler ve araçlar"
 nav_order: 1
 lang: "tr"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtreler
@@ -41,6 +41,10 @@ Yalnızca oluşan türler listelenir. Değer sütunları (`cost_*`, `earn_*`, `n
 12'den fazla değeri olan bir kategori listesi bir arama kutusu (*n değeri ara*) ve yalnızca eşleşen değerlere izin veren bir **Yalnızca bunlar** düğmesi alır.
 
 Hangi sütunların süzülebileceği yükleme sırasında belirlenir, çünkü o sırada okunmaları gerekir. Hiç tutulan sütun yoksa panel bunu söyler ve *Filtreleme için tut*'a işaret eder.
+
+## Rainbow Six Siege hızlı filtreleri {#rainbow-six-siege-quick-filters}
+
+Bir Rainbow Six Siege maçı yüklüyken panel, filtreleri tek tıkla ayarlayan düğmelerle başlar: **Kurşun delikleri ve izler** (seviyede kalan izler), **Atıcısı olan izler** ve **Silah sınıfı olan izler** (bir atıcının ya da atıcının aynı andaki öldürmesinden bir silahın belirlenebildiği izler; bunları `byOperator` ya da `byItemClass` ile daha da bölün veya süzün), **Kurma ve etkisizleştirme girişimleri**, **Kesilen girişimler** (başlayıp bitmeyen, oyuncunun durduğu yerde) ve **Güçlendirmeler** (bir duvarın ya da kapağın güçlendirildiği yer, dönüştürücünün çıkardığı savunucuda). Her biri olay sütunundaki filtrenin yerini alır ve geri kalanını korur; **Tüm filtreleri temizle** bunu geri alır. Sütunlar dönüştürücünün belgelerinde açıklanır.
 
 ## Sayısal sütunlar (aralık) {#numeric-columns-range}
 

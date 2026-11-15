@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "hu"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Meccs-visszajátszás
@@ -90,6 +90,8 @@ A `T` (vagy a **Megjelenítés taktikai kijelzőként** kapcsoló) radarképerny
 ## Célok {#objectives}
 
 Ha egy meccs a céljaival érkezik, a **Célok** szakasz rajzolja ki őket a pályán: elfoglalási zónák (tulajdonossal és elfoglalási állapottal), kiindulópontok, repülőterek, területek és bombázási célpontok, mindegyik réteg külön kapcsolható, feliratokkal. A talajon át is láthatók. Ha több játékmód van betöltve, a **Mód** szűri a meccseket játékmód szerint. A célok a felvétel mellett lévő átalakító meccsfájljából jönnek, vagy egy [`.3dheat`](container.md) konténerben lévő meccsből.
+
+A Rainbow Six Siege meccsek hozzák a bombahelyeiket: minden hely két szobáját a padlójukra rajzolja körvonalként, a nevükkel, abból kikövetkeztetve, hol álltak a játékosok, amíg a játék megnevezte a szobát; a térkép egy, a meccsben nem játszott helye az átalakító helytáblázatából jön, körként. A visszajátszásban a lejátszófej körének helye borostyánsárgán világít, a többi szürke marad. Az elfoglalási zónák rétegéhez tartoznak.
 
 ## Feliratok és statisztika {#labels-and-statistics}
 

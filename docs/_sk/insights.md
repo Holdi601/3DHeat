@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "sk"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Zistenia
@@ -44,6 +44,7 @@ Riadky na vrchu zoznamu (napríklad súčty peňazí) zhrnú celé dáta pred zi
 | **Hráči** | Hráči, ktorí zabíjajú alebo umierajú oveľa viac alebo menej než ostatní v tej istej triede | osoby a zabitia |
 | **Úzke miesta a boky** | Úzke miesta (oveľa viac prechodov než okolitý terén) a bočné trasy (málo použité, no vedú k zabitiam) | osoby |
 | **Hodnota** | *Drahý terén* a *Zárobkový terén* | [stĺpce hodnôt](value-weighting.md) |
+| **Čo rozhodlo kolá** | Čo odlišovalo vyhraté kolá od prehraných a hráči, ktorí pridali alebo stratili najviac pravdepodobnosti výhry (pozri [Kto vyhral](#who-won-what-decided-the-rounds)) | kolá, zabitia a smrti a [stĺpce výsledku](data-formats.md#outcome-columns) (`won`) |
 
 Detektory, ktoré na dátach nemôžu bežať, sú dole v zozname s dôvodom.
 
@@ -51,9 +52,42 @@ Detektory, ktoré na dátach nemôžu bežať, sú dole v zozname s dôvodom.
 
 Každé miesto alebo skupina sa testuje voči zvyšku mapy (presné binomické alebo mierové testy). Miera falošných objavov je držaná na 5 % (Benjamini-Hochberg). Náhoda môže vyzerať ako vzor; toto drží falošné poplachy nízko: medzi zobrazenými zisteniami sa očakáva najviac asi jedno z dvadsiatich ako náhoda. Efekty z málo udalostí sa pred radením stiahnu k „žiadnemu efektu“. Zobrazí sa najviac 60 zistení a každý detektor dostane niekoľko miest pri vrchu.
 
+### Kto vyhral: čo rozhodlo kolá {#who-won-what-decided-the-rounds}
+
+Kde dáta hovoria, kto vyhral každé kolo ([stĺpec výsledku](data-formats.md#outcome-columns) `won`: CS2, Rainbow Six Siege, War Thunder ...), Zistenia sa točia okolo výsledku. Pre každú stranu rozdelia kolá podľa toho, čo sa v nich stalo, a porovnajú podiely výhier:
+
+| Faktor | Kolá strany s ním | ... a bez neho |
+|---|---|---|
+| Úvodný súboj | strana získala prvé zabitie | strana zomrela prvá |
+| Nákup | jej nákup bol lepší než nákup druhej strany | horší |
+| Vymenená prvá smrť | jej prvá smrť bola vymenená do 5 s | nevymenená |
+| Položenie | strana položila bombu | bez položenia |
+| Vybavenie | viac granátov než v jej bežnom kole | menej |
+| Skorý kontakt | prvý súboj prišiel pred mediánom času zápasu | neskôr |
+| Držané miesto | hráč stál na mieste 5 s alebo dlhšie | nikto |
+| Skoro dosiahnuté miesto | hráč sa tam dostal v prvých 25 s (trasa) | nikto |
+
+Každé porovnanie je rozdiel dvoch podielov výhier s jeho 95 % intervalom (Newcombe), Fisherovým presným p a q cez všetky vyskúšané faktory (Benjamini-Hochberg). Vetva s menej ako 8 kolami je označená *málo kôl*. Tie pod 5 % mierou falošných objavov sa stanú zisteniami; najsilnejšie sa radia nad zistenia ostatných detektorov (zistenie o výsledku váži 1,35-krát viac než zistenie s rovnakým účinkom a dôkazmi).
+
+Vymyslený príklad zo 40 kôl:
+
+> **T** vyhrala 79 % z 19 kôl, v ktorých držala **Mid**, oproti 24 % z 21 bez neho (55 bodov, 95 % od 26 do 74) - q 0,004.
+
+Sleduje aj **pravdepodobnosť výhry** kola - šancu, ktorú mala každá strana v každom okamihu, podľa živých mužov, položenia a času: prispôsobenú kolám, keď ich je 30 alebo viac, inak z pevného apriórneho modelu (a text povie, z ktorého). Z nej vychádzajú **zlomové okamihy** (zabitia a položenia, ktoré šancu posunuli najviac) a **pridaná pravdepodobnosť výhry** každého hráča: zabitia a položenia, ktoré urobil, sa mu počítajú k dobru, jeho smrti proti nemu, v hodnote kôl za zápas, v priemere na kolo s intervalom, testované voči nule. Miesta dostanú rovnakú bilanciu: ktorá strana získala najviac v súbojoch, ktoré sa tam odohrali.
+
+Dáta potrebujú kolá, zabitia a smrti s oboma stranami a stĺpec `won`; pomenované miesta (`place`) pre držané miesta, stĺpec `buy` pre nákup.
+
 ## Zhrnutie {#debrief}
 
-Záložka **Zhrnutie** zapíše zistenia do krátkeho textu: úvod, najjasnejšie zistenie, jedno o taktike, jedno o vyvažovaní, zvyšok zoskupený podľa detektora a koľko stojí na slabších dôkazoch. Každý odsek má očíslované tlačidlá, ktoré ukazujú jeho zistenia. **Kopírovať text** ho skopíruje.
+Záložka **Zhrnutie** zapíše zistenia do krátkeho textu: úvod, najjasnejšie zistenie, jedno o taktike, jedno o vyvažovaní, potom - kde dáta hovoria, kto vyhral - čo rozhodlo kolá, zvyšok zoskupený podľa detektora a koľko stojí na slabších dôkazoch.
+
+Čo rozhodlo kolá, prináša štyri odseky: skóre a odkiaľ pochádzajú pravdepodobnosti výhry; najsilnejšie faktory s ich číslami, intervalom a q (keď žiadny neprejde mierou falošných objavov, text povie *zatiaľ nič nie je isté* a aj tak vymenuje najsilnejšie); tri najväčšie zlomové okamihy; a hráči, ktorí pridali a stratili najviac pravdepodobnosti výhry, s miestami, ktoré získali najviac. Vymyslený príklad:
+
+> T vyhrala 23 a CT vyhrala 17 zo 40 kôl so známym výsledkom (T: 58 %, 95 % od 42 % do 72 %). Pravdepodobnosti výhry pochádzajú z modelu prispôsobeného týmto kolám.
+>
+> Čo odlišovalo vyhraté kolá od prehraných: T vyhrala 79 % z 19 kôl, v ktorých držala Mid, oproti 24 % z 21 bez neho (55 bodov, 95 % od 26 do 74) (q 0,004), ...
+>
+> Zlomové okamihy: kolo 17 v 48 s, zabitie strany CT na mieste B zmenilo jej šancu z 31 % na 58 % a kolo vyhrala, ... Každý odsek má očíslované tlačidlá, ktoré ukazujú jeho zistenia. **Kopírovať text** ho skopíruje.
 
 ![Zhrnutie napísané vstavaným rozprávačom](../assets/img/sk/debrief.webp)
 
@@ -72,11 +106,13 @@ Vstavaný rozprávač funguje offline, vo vašom jazyku. Výber **Optika** nad n
 | **Použiť externú AI** | Predvolene vypnuté |
 | **Posielať mená hráčov** | Predvolene vypnuté: hráči sa posielajú ako P1, P2 ... |
 
-Potom napíšte voliteľnú otázku a stlačte **Napísať pomocou AI**. Posielajú sa len zistenia a ich čísla - nikdy riadky vašich dát. Odpoveď sa postupne načíta; citované zistenia sa stanú tlačidlami.
+Potom napíšte voliteľnú otázku a stlačte **Napísať pomocou AI**. Posielajú sa len zistenia a ich čísla - nikdy riadky vašich dát. Odpoveď sa postupne načíta; citované zistenia sa stanú tlačidlami. Kde dáta hovoria, kto vyhral, model dostane pokyn začať tým, čo rozhodlo kolá, s intervalom a q každého čísla, a povedať, keď faktor stojí na málo kolách alebo keď pravdepodobnosti výhry pochádzajú z apriórneho modelu.
 
 ## Komentátor {#caster}
 
-Pre **jeden zápas** (ak je načítaných viac, vyberte jeden) **Komentátor** nájde momenty hodné pozornosti: prvú krv, viacnásobné zabitia, výmeny, záchrany v koncovke, zmeny pri cieľoch, návraty, vynikajúcich hráčov, dlhé výstrely.
+Pre **jeden zápas** (ak je načítaných viac, vyberte jeden) **Komentátor** nájde momenty hodné pozornosti: prvú krv, viacnásobné zabitia, výmeny, záchrany v koncovke, zmeny pri cieľoch, návraty, vynikajúcich hráčov, dlhé výstrely a **zlomové okamihy** - zabitia, ktoré najviac posunuli šancu strany vyhrať kolo (podľa hráčov, ktorí na každej strane zostali nažive, v kolách bez znovuzrodenia).
+
+Kde dáta hovoria, kto vyhral každé kolo, povie to každý moment: *„Anna zhodí Bena: šanca strany T vyhrať kolo sa mení z 38 % na 62 % - a kolo vyhrajú.“* Moment strany, ktorá potom vyhrala, má väčšiu váhu, keď komentátor vyberá, ktoré momenty ponechá, a návrat sa počíta vo vyhratých kolách.
 
 ![Momenty komentátora pre jedno kolo ukážky streľby](../assets/img/sk/caster.webp)
 

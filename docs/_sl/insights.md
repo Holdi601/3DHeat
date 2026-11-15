@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "sl"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Ugotovitve
@@ -44,6 +44,7 @@ Vrstice na vrhu seznama (na primer skupni zneski denarja) povzamejo celotne poda
 | **Igralci** | Igralci, ki ubijajo ali umirajo precej bolj ali manj kot drugi v istem razredu | osebe in ubitja |
 | **Ozka grla in boki** | Ozka grla (precej več prehodov kot okoliška tla) in bočne poti (redko uporabljene, a vodijo do ubitja) | osebe |
 | **Vrednost** | *Drago ozemlje* in *Donosno ozemlje* | [stolpci vrednosti](value-weighting.md) |
+| **Kaj je odločilo kroge** | Kaj je ločilo dobljene kroge od izgubljenih in igralci, ki so dodali ali stali največ verjetnosti zmage (glejte [Kdo je zmagal](#who-won-what-decided-the-rounds)) | krogi, ubitja in smrti ter [stolpci izida](data-formats.md#outcome-columns) (`won`) |
 
 Zaznavniki, ki na podatkih ne morejo delovati, so na dnu seznama z razlogom.
 
@@ -51,9 +52,42 @@ Zaznavniki, ki na podatkih ne morejo delovati, so na dnu seznama z razlogom.
 
 Vsako mesto ali skupina se preizkusi proti preostalemu zemljevidu (natančni binomski ali hitrostni testi). Stopnja lažnih odkritij je zadržana pri 5 % (Benjamini-Hochberg). Naključje lahko izgleda kot vzorec; to drži lažne alarme nizko: med prikazanimi ugotovitvami je pričakovano največ okoli ena od dvajsetih naključna. Učinki iz malo dogodkov so pred razvrščanjem potegnjeni proti »brez učinka«. Navedenih je največ 60 ugotovitev, vsak zaznavnik pa dobi nekaj mest blizu vrha.
 
+### Kdo je zmagal: kaj je odločilo kroge {#who-won-what-decided-the-rounds}
+
+Kjer podatki povedo, kdo je dobil vsak krog ([stolpec izida](data-formats.md#outcome-columns) `won`: CS2, Rainbow Six Siege, War Thunder ...), se Ugotovitve vrtijo okoli izida. Za vsako stran razdelijo kroge po tem, kaj se je v njih zgodilo, in primerjajo deleže zmag:
+
+| Dejavnik | Krogi strani z njim | ... in brez njega |
+|---|---|---|
+| Uvodni dvoboj | stran je dosegla prvo ubitje | stran je umrla prva |
+| Nakup | njen nakup je bil boljši od nakupa druge strani | slabši |
+| Izmenjana prva smrt | njena prva smrt je bila izmenjana v 5 s | ni bila izmenjana |
+| Postavitev | stran je postavila bombo | brez postavitve |
+| Pripomočki | več granat kot v njenem običajnem krogu | manj |
+| Zgodnji stik | prvi dvoboj je prišel pred mediano časa tekme | pozneje |
+| Držano mesto | igralec je stal na mestu 5 s ali dlje | nihče |
+| Zgodaj doseženo mesto | igralec je tja prišel v prvih 25 s (pot) | nihče |
+
+Vsaka primerjava je razlika dveh deležev zmag z njenim 95 % intervalom (Newcombe), Fisherjevim natančnim p in q čez vse preizkušene dejavnike (Benjamini-Hochberg). Veja z manj kot 8 krogi je označena z *malo krogov*. Tiste pod 5 % stopnjo lažnih odkritij postanejo ugotovitve; najmočnejše se uvrstijo nad ugotovitve drugih zaznavnikov (ugotovitev o izidu tehta 1,35-krat več kot ugotovitev z enakim učinkom in dokazi).
+
+Izmišljen primer iz 40 krogov:
+
+> **T** je dobila 79 % od 19 krogov, v katerih je držala **Mid**, proti 24 % od 21 brez njega (55 točk, 95 % od 26 do 74) - q 0,004.
+
+Spremlja tudi **verjetnost zmage** kroga - možnost, ki jo je imela vsaka stran v vsakem trenutku, glede na žive može, postavitev in uro: prilagojeno krogom, kadar jih je 30 ali več, sicer iz fiksnega apriornega modela (in besedilo pove, iz katerega). Iz nje izhajajo **prelomnice** (ubitja in postavitve, ki so možnost najbolj premaknile) in **dodana verjetnost zmage** vsakega igralca: ubitja in postavitve, ki jih je naredil, štejejo njemu v prid, njegove smrti proti njemu, v vrednosti krogov čez tekmo, v povprečju na krog z intervalom, preizkušeno proti ničli. Mesta dobijo enako bilanco: katera stran je največ pridobila v dvobojih, ki so se tam odvili.
+
+Podatki potrebujejo kroge, ubitja in smrti z obema stranema ter stolpec `won`; poimenovana mesta (`place`) za držana mesta, stolpec `buy` za nakup.
+
 ## Povzetek {#debrief}
 
-Zavihek **Povzetek** ugotovitve zapiše v kratko besedilo: uvod, najjasnejšo ugotovitev, eno za taktiko, eno za uravnoteženje, ostale razvrščene po zaznavniku in koliko jih temelji na šibkejših dokazih. Vsak odstavek ima oštevilčene gumbe, ki prikažejo njegove ugotovitve. **Kopiraj besedilo** ga kopira.
+Zavihek **Povzetek** ugotovitve zapiše v kratko besedilo: uvod, najjasnejšo ugotovitev, eno za taktiko, eno za uravnoteženje, nato - kjer podatki povedo, kdo je zmagal - kaj je odločilo kroge, ostale razvrščene po zaznavniku in koliko jih temelji na šibkejših dokazih.
+
+Kaj je odločilo kroge, je zapisano v štirih odstavkih: izid in od kod prihajajo verjetnosti zmage; najmočnejši dejavniki z njihovimi številkami, intervalom in q (ko noben ne prestane stopnje lažnih odkritij, besedilo reče *nič od tega še ni gotovo* in vseeno navede najmočnejše); tri največje prelomnice; ter igralci, ki so dodali in stali največ verjetnosti zmage, z mesti, ki so največ pridobila. Izmišljen primer:
+
+> T je dobila 23 in CT 17 od 40 krogov z znanim izidom (T: 58 %, 95 % od 42 % do 72 %). Verjetnosti zmage izhajajo iz modela, prilagojenega tem krogom.
+>
+> Kaj je ločilo dobljene kroge od izgubljenih: T je dobila 79 % od 19 krogov, v katerih je držala Mid, proti 24 % od 21 brez njega (55 točk, 95 % od 26 do 74) (q 0,004), ...
+>
+> Prelomnice: krog 17 ob 48 s, ubitje strani CT na mestu B je premaknilo njeno možnost z 31 % na 58 % in krog je dobila, ... Vsak odstavek ima oštevilčene gumbe, ki prikažejo njegove ugotovitve. **Kopiraj besedilo** ga kopira.
 
 ![Povzetek, ki ga napiše vgrajeni pripovedovalec](../assets/img/sl/debrief.webp)
 
@@ -72,11 +106,13 @@ Vgrajeni pripovedovalec deluje brez povezave, v vašem jeziku. Izbirnik **Leča*
 | **Uporabi zunanji UI** | Privzeto izklopljeno |
 | **Pošiljaj imena igralcev** | Privzeto izklopljeno: igralci se pošljejo kot P1, P2 ... |
 
-Nato vpišite neobvezno vprašanje in pritisnite **Napiši z UI**. Pošljejo se le ugotovitve in njihove številke - nikoli vrstice vaših podatkov. Odgovor se pretaka, navedene ugotovitve pa postanejo gumbi.
+Nato vpišite neobvezno vprašanje in pritisnite **Napiši z UI**. Pošljejo se le ugotovitve in njihove številke - nikoli vrstice vaših podatkov. Odgovor se pretaka, navedene ugotovitve pa postanejo gumbi. Kjer podatki povedo, kdo je zmagal, model dobi navodilo, naj začne s tem, kaj je odločilo kroge, z intervalom in q vsake številke, in naj pove, kadar dejavnik temelji na malo krogih ali kadar verjetnosti zmage izhajajo iz apriornega modela.
 
 ## Komentator {#caster}
 
-Za **eno tekmo** (izberite eno, če je naloženih več), **Komentator** najde trenutke, vredne ogleda: prvo kri, večkratna ubitja, zamenjave, zadnje preživele, premike pri ciljih, preobrate, izstopajoče igralce, dolge strele.
+Za **eno tekmo** (izberite eno, če je naloženih več), **Komentator** najde trenutke, vredne ogleda: prvo kri, večkratna ubitja, zamenjave, zadnje preživele, premike pri ciljih, preobrate, izstopajoče igralce, dolge strele in **prelomnice** - ubitja, ki so najbolj premaknila možnost strani, da dobi krog (glede na igralce, ki so ostali živi na vsaki strani, v krogih brez ponovnega oživljanja).
+
+Kjer podatki povedo, kdo je dobil vsak krog, to pove vsak trenutek: *»Anna podre Bena: možnost strani T, da dobi krog, se spremeni z 38 % na 62 % - in krog dobijo.«* Trenutek strani, ki je nato zmagala, šteje več, ko komentator izbira, katere trenutke obdrži, preobrat pa se šteje v dobljenih krogih.
 
 ![Trenutki komentatorja za en krog demo streljanja](../assets/img/sl/caster.webp)
 

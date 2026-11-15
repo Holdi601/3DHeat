@@ -4,9 +4,9 @@ parent: "Filtry a nástroje"
 nav_order: 1
 lang: "cs"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtry
@@ -41,6 +41,10 @@ Vypisují se jen druhy, které se vyskytují. Hodnotové sloupce (`cost_*`, `ear
 Seznam kategorie s více než 12 hodnotami dostane vyhledávací pole (*Hledat n hodnot*) a tlačítko **Jen tyto**, které povolí přesně hodnoty odpovídající hledání.
 
 To, které sloupce lze filtrovat, se rozhoduje při načítání, protože se musí přečíst tehdy. Bez ponechaného sloupce to panel řekne a odkáže na *Ponechat pro filtrování*.
+
+## Rychlé filtry pro Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Když je načtený zápas Rainbow Six Siege, panel začíná tlačítky, která nastaví filtry jedním kliknutím: **Díry po kulkách a stopy** (stopy, které zůstaly na úrovni), **Stopy se střelcem** a **Stopy s třídou zbraně** (ty, u kterých se podařilo určit střelce, nebo zbraň ze zabití střelce ve stejném okamžiku; rozdělte nebo filtrujte je dál podle `byOperator` nebo `byItemClass`), **Pokusy o položení a zneškodnění**, **Přerušené pokusy** (začaté, nedokončené, tam, kde hráč přestal) a **Zesílení** (kde byla zesílena zeď nebo poklop, u obránce, kterého odvodí převodník). Každé tlačítko nahradí filtr na sloupci událostí a ostatní ponechá; **Vymazat všechny filtry** to vrátí. Sloupce popisuje dokumentace převodníku.
 
 ## Číselné sloupce (rozsah) {#numeric-columns-range}
 

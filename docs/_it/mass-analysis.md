@@ -3,9 +3,9 @@ title: "Analisi di massa"
 nav_order: 8
 lang: "it"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -71,15 +71,25 @@ Scegli una cartella (o dei file; **Aggiungi cartella...** ne aggiunge un’altra
 | Giocatori | giocatori distinti, partite di un giocatore, giocatori di una partita, i giocatori più frequenti |
 | Schieramenti | ogni lato di ogni mappa: partite vinte rispetto a una divisione equa |
 | Combattimento ravvicinato | dati dei round: duelli d’apertura per lato e la loro conversione, trade, peeker contro holder, incroci di fuoco, ingressi accecati, mira, piazzamenti, vantaggio di uomini e, **Per mappa**, i luoghi che uccidono i giocatori che vi entrano – ciascuno come quota con il suo intervallo di Wilson, dai conteggi `cqb` dei riepiloghi ([Combattimento ravvicinato e round](close-quarters.md)) |
+| Superfici R6 | i segni di Rainbow Six Siege sul livello (fori di proiettile e simili) per superficie del livello: segni, per round della mappa, la stanza, la quota il cui tiratore è stato ricavato; un clic apre i tipi di segno, gli operatori e le classi d’arma dei tiratori, e dove sulla superficie si trovano i segni (un piccolo calore di celle da un quarto di metro); una superficie mantiene il suo id tra le partite di una stessa versione della mappa. Dai conteggi `marks` dei riepiloghi |
 | Mappa | la griglia sommata di una mappa: presenza, uccisioni, morti, K/D, qualsiasi evento, flusso, e **caldo in quante partite** (stabilità); per squadra, a 1, 2, 4 o 8 volte la cella |
-| Luoghi | luoghi che risaltano nei numeri ma non nel calore (un’area ampia occupata nel complesso, corridoi, fasce di altezza); **Trova luoghi** |
-| Nicchie | gruppi che fanno nettamente meglio o peggio del resto (un veicolo su una mappa, un settore a un’altezza); **Trova nicchie** |
+| Luoghi | luoghi che risaltano nei numeri ma non nel calore (un’area ampia occupata nel complesso, corridoi, fasce di altezza), e luoghi i cui occupanti vincono più o meno dei loro round; **Trova luoghi** |
+| Nicchie | gruppi che fanno nettamente meglio o peggio del resto (un veicolo su una mappa, un settore a un’altezza), e gruppi di round vinti oltre quanto il loro lato ha vinto nelle stesse partite; **Trova nicchie** |
 | Rilevamenti | i rilevatori di massa e i rilevatori di mappa (sotto); **Copia rapporto (JSON)** dà il JSON che legge un modello linguistico |
 
 
 ## Rilevamenti su molte partite {#insights-over-many-matches}
 
 La scheda **Luoghi** trova luoghi che risaltano nei numeri ma non nel calore – un’area ampia occupata nel complesso, un corridoio, una fascia di altezza, un luogo occupato solo in una parte della partita – segna come **nascosti** quelli che il calore semplice non mostra, e li delinea nella vista 3D; **Carica** vola lì con le partite che li contenevano. La scheda **Nicchie** trova gruppi (un veicolo su una mappa e un lato, un settore a un’altezza) che fanno nettamente meglio o peggio del resto; clicca su uno per vederne i raffinamenti.
+
+### Chi ha vinto {#who-won}
+
+Dove le partite dicono chi ha vinto ogni round (la [colonna del risultato](data-formats.md#outcome-columns) `won`), il risultato è un obiettivo a sé:
+
+- **Luoghi: tasso di vittoria.** Per ogni lato, la quota dei suoi round in un luogo che ha vinto, contro la quota che ha vinto ovunque nella stessa partita - così l’equilibrio della mappa, quello del lato e quello della partita stessa sono la base, e risaltano solo i luoghi i cui occupanti vincono più (o meno) dei loro round. Un esempio inventato: *«Dust: il lato T vince più dei suoi round quando è qui: 61 % di 412 vinti, contro il 49 % atteso dal suo stesso tasso nelle stesse partite (quote 1,6x; tenuto in 31/48 partite).»* Lo stesso tasso di falsa scoperta e gli stessi controlli di stabilità di ogni luogo; **Carica** carica le partite in cui è stato tenuto, mostrando le posizioni di quel lato.
+- **Nicchie: vittoria del round.** La tabella **Round** contiene il round di ogni vita: la mappa, il lato, la parte della partita (round 1-4, 5-8, ...), il veicolo (un operatore, un agente), l’arma che ha usato di più, il luogo che ha tenuto più a lungo, l’acquisto (eco, force, full) e se il suo lato ha fatto la prima uccisione. Un gruppo è giudicato rispetto a ciò che il suo lato ha vinto nelle stesse partite, quindi *T su Dust con un AWP* è una nicchia solo quando quei round sono stati vinti più spesso degli altri round di T in quelle partite. Un esempio inventato: *«m1 · T · AWP: vince l’80 % di 320 round, contro il 62 % atteso dagli stessi lati nelle stesse partite (quote 2,3x; 40 partite).»* Ordinate per il guadagno per il supporto; **Carica** carica le partite i cui round lo mostrano di più.
+
+Entrambi richiedono riepiloghi della versione 2 (vedi [Ottenere i riepiloghi](#getting-the-summaries)): quelli più vecchi vengono ricalcolati.
 
 La scheda **Rilevamenti** trova, su tutte le partite, veicoli che scambiano o vincono meglio o peggio del resto, luoghi caldi in una quota stabile di partite, lati che vincono più di una divisione equa, veicoli il cui uso cambia nel corso delle date, e parti della partita che contengono più uccisioni di una distribuzione uniforme. Ogni risultato porta i suoi conteggi, l’effetto, l’intervallo e un tasso di falsa scoperta (mantenuto al 5%), e un clic carica le sue partite. Dettagli: [Per gli sviluppatori](#for-developers).
 
@@ -127,6 +137,12 @@ JSON semplice (`src/mass/types.ts`), circa 5-30 KB compressi a partita:
   per tipo canonico, uccisioni per classe del bersaglio, vittorie, denaro;
 - per giocatore (per id utente, altrimenti per nome): squadra, vite, presenza, uccisioni, morti,
   colpi, lanci, vittorie, veicoli; per arma: eventi per tipo;
+- con una colonna del risultato (versione 2): round vinti e giocati per squadra, veicolo
+  (`rw`, una vita e un round ciascuno), giocatore e arma (i round in cui un lato l’ha usata);
+  il round di ogni vita (`outcome.u`: round, lato, veicolo, l’arma più usata, il luogo tenuto
+  più a lungo, l’acquisto, vinto) e il numero, il vincitore e il lato della prima uccisione
+  di ogni round (`outcome.r`);
+
 - le colonne dell’economia (`cost_*`, `earn_*`) e i loro totali;
 - fasi: eventi per tipo in 20 fasce della durata della partita e per minuto;
 - comportamento: le misure di comportamento collettivo della partita (allineamento, branco sulla rotta, corsie,
@@ -144,6 +160,9 @@ La parte spaziale è fatta per le statistiche di scansione su regioni di qualunq
 - **Esposizione accanto a ogni conteggio.** Secondi di presenza per cella, per squadra (`pt`), per classe di veicolo (`pc`) e per fascia di altezza (`ph`), così il tasso, l’aspettativa e il rapporto di una regione si calcolano per qualunque sottogruppo.
 - **Altezza.** Fasce sopra il piano della partita (il 1° percentile dell’altezza): sotto 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, sopra; un file con una colonna `floor`/`storey`/`deck` le divide per i suoi piani. `y` è l’altezza media di ogni cella, `y0` la più bassa (il suo piano, per l’altezza sopra di esso).
 - **Eventi** come tuple `[cella, tipo, squadra, classe, fascia, conteggio]`.
+- **Round per risultato** (versione 2, con una colonna del risultato e due round o
+  più): `pw` come `[cell, team, rounds won, rounds lost]` – i round in cui ogni lato ha
+  passato un secondo o più nella cella, secondo il suo risultato nel round.
 - **Fette temporali** a un livello grossolano (8 celle per lato), per minuto dall’inizio della partita: `[cx, cz, minuto, tipo, valore]`, con i secondi di presenza come tipo `GRID_KINDS.length`; le fasi della partita sono minuti sulla durata.
 - Sparsi, conteggi interi, secondi al decimo: limitati da ciò che è successo.
 
@@ -155,8 +174,8 @@ La Fase B cerca ciò che risalta nei numeri senza attirare l’occhio: un’area
 
 Le partite di ogni mappa sono lette due volte, una partita alla volta; la memoria tiene somme su una griglia di al massimo 64 celle per lato (16 per la scansione spazio-temporale), mai le partite.
 
-- **Misure.** Il tasso di un evento per secondo di presenza – uccisioni, morti, colpi, lanci, catture, per tutte le unità, per classe (le 4 con più eventi), per fascia di altezza – e la quota di uccisioni nelle uccisioni e nelle morti (tutte, per lato, per fascia). Quali classi e lati sono viene dalle teste (`planOf`).
-- **Aspettativa per partita.** Il tasso proprio di ogni partita distribuito sulla propria presenza in una cella è l’aspettativa della cella (una scansione di Kulldorff aggiustata per covariate, stratificata per partita): poche partite sanguinose o un server molto occupato non creano un luogo.
+- **Misure.** Il tasso di un evento per secondo di presenza – uccisioni, morti, colpi, lanci, catture, per tutte le unità, per classe (le 4 con più eventi), per fascia di altezza – e la quota di uccisioni nelle uccisioni e nelle morti (tutte, per lato, per fascia), e il **tasso di vittoria** di ogni lato: i suoi round nella cella vinti contro persi (`pw`), dove 8 partite della mappa o più contano i round per risultato. Quali classi e lati sono viene dalle teste (`planOf`).
+- **Aspettativa per partita.** Il tasso proprio di ogni partita distribuito sulla propria presenza in una cella è l’aspettativa della cella (una scansione di Kulldorff aggiustata per covariate, stratificata per partita): poche partite sanguinose o un server molto occupato non creano un luogo. Per il tasso di vittoria l’aspettativa è la quota propria del lato di round vinti in quella partita, così l’equilibrio della mappa e quello del lato non sono mai un luogo. Un round in più celle di una regione conta in ciascuna; la dispersione misurata alla dimensione della regione ne tiene conto.
 - **Dispersione.** Le partite si discostano molto più di quanto dica Poisson. I residui di ogni partita sono sommati in blocchi di 1, 2, 4, 8, 16 celle; la dispersione di ogni dimensione di blocco (residui al quadrato sulla varianza nulla, raggruppati, lasciando fuori il 5% peggiore dei blocchi) scala ogni test di una regione di quella dimensione: un rapporto di verosimiglianza quasi-quadratico, Poisson per i tassi, binomiale per le quote.
 - **Regioni.** Cerchi da 0,75 a 18 celle; ellissi a sei angoli, lunghe 3 e 6 volte la larghezza, da 3 a 18 celle (corridoi; l’asse è il `place.path` del rilevamento); zone fatte crescere cella per cella dalle celle locali più forti di Getis-Ord Gi* mentre la z della regione cresce (forme irregolari) – fatte crescere su una metà delle partite e testate sull’altra, così la libertà della crescita non costa falsi luoghi; ogni fascia di altezza contro le altre fasce della partita sull’intera mappa (robusta ai cluster); cilindri spazio-temporali: un cerchio in uno o due quinti della durata della partita, contro la dispersione propria della partita dei suoi eventi nello spazio e nel tempo (la scansione a permutazione spazio-temporale).
 - **Verifica.** p dalla verosimiglianza quasi-quadratica; Benjamini-Hochberg su ogni regione provata su ogni mappa (700.000 su tre mappe è normale) al 5%. Ciò che passa viene potato (una regione per lo più dentro una più forte del suo stesso misuratore dice la stessa cosa), riletto per la sua **stabilità** – partite che l’hanno vista, partite in cui era contenuta, la sua direzione in cinque fold delle partite – e testato un’altra volta alla varianza che le partite stesse mostrano (robusto ai cluster, partite come cluster, mai sotto Poisson), di nuovo BH. I luoghi silenziosi su una base (2% o più degli spawn, decolli e atterraggi della mappa) sono lasciati fuori.
@@ -169,6 +188,8 @@ La scheda **Luoghi** li elenca (nascosti solo per impostazione predefinita; per 
 
 Ricerca a fascio (larghezza 24, profondità 3) su tre tabelle: **vite** (vite dei giocatori: gioco, mappa, modalità, classe, veicolo, lato, livello, trimestre delle date, terzo della durata della partita; K/D, vittoria, morte una vita, uccisioni all’ora, guadagni al minuto), **luoghi** (uccisioni e morti per mappa, modalità, date, settore della mappa 4 x 4, classe, lato, fascia) e **fasi** (settore e quinto della partita: K/D, morti all’ora di presenza). Un gruppo è testato contro il totale con le partite come cluster (la varianza sandwich dei suoi residui per partita), il suo effetto un rapporto di quote o di tassi ridotto da un prior di 20 esiti; servono 30 esiti in 8 partite, un raffinamento deve essere più forte del 10% del suo genitore, e i gruppi in cui l’esito è nessuno o tutti (non registrato per loro) sono lasciati fuori. Tenuti: BH sotto il 5% su ogni gruppo valutato, un rapporto ridotto di almeno 1,25 (o 1/1,25), quattro fold su cinque d’accordo, e non un raffinamento che ripete soltanto il suo genitore. La scheda **Nicchie** li elenca; un clic mostra ogni raffinamento a una condizione del gruppo (l’esploratore), **Carica** carica le sue partite. Gli equipaggiamenti non sono ancora nei riepiloghi.
 
+La quarta tabella, **round** (`roundsTable`), ha come obiettivo il risultato del round: una riga per round di una vita – mappa, lato, parte della partita (round 1-4, 5-8, ...), veicolo, l’arma più usata, il luogo tenuto più a lungo, acquisto, prima uccisione o prima morte – giudicata rispetto al tasso di vittoria del proprio lato nella propria partita (l’aspettativa stratificata di Mantel-Haenszel: il residuo è `won - e`, `e` la quota del lato nella partita), così una nicchia non è mai l’equilibrio della mappa o del lato. Le partite restano i cluster. Il suo z è calibrato: la stessa ricerca a fascio gira otto volte sui risultati rimescolati tra i round di ogni lato di ogni partita (il tasso del lato in ogni partita mantenuto), e la dispersione di quegli z nulli oltre una normale standard – per numero di condizioni, dal centro (mediana / 0,674) e dalla coda (99° percentile / 2,576), il maggiore, mai sotto 1 – divide quelli reali prima del loro p e del tasso di falsa scoperta (un nullo empirico, Efron 2004). I gruppi più profondi ricevono la scala maggiore: il fascio tiene raffinamenti di gruppi scelti per il loro z grande. La base di una nicchia è la sua stessa aspettativa, il suo guadagno i punti sopra di essa, e si ordina per il guadagno per la radice quadrata dei suoi round, sostenuta dalle prove e dai fold (`wracc` è il supporto per il guadagno). Porta le partite in cui si è vista di più (`matchIds`) e alcuni dei loro round (`rounds`, `[match, round]`) per l’approfondimento.
+
 #### Le variazioni della meta con significato pratico {#meta-shifts-with-practical-significance}
 
 Con date miste la binomiale sulle vite segnalava quasi ogni cambiamento come significativo. Ora `meta` verifica in modo robusto ai cluster (le vite di ogni partita come cluster), tiene una variazione di uso solo se di almeno 2 punti e 25%, una variazione di K/D di 1,3 volte, i trimestri delle date che vanno nella stessa direzione (tau di Kendall di almeno 0,5) e, per un veicolo su più mappe, la stessa direzione sulla maggior parte di esse. Ne restano solo poche su un insieme di prova dove il test semplice segnalava quasi tutte.
@@ -179,4 +200,4 @@ Con date miste la binomiale sulle vite segnalava quasi ogni cambiamento come sig
 
 #### Verifiche {#checks}
 
-`scan.test.ts` inserisce un’area diffusa (1,6 volte il tasso di morte su un cerchio di 22 celle, tenue in ogni cella), un corridoio, una fascia di altezza e un cluster solo di fase in 240 partite sintetiche con dispersione – tutti trovati, quello diffuso nascosto – ed esegue otto insiemi nulli di 60 partite: nessun luogo. `niche.test.ts` trova un gruppo veicolo x mappa x lato inserito e nient’altro in cinque tabelle nulle.
+`scan.test.ts` inserisce un’area diffusa (1,6 volte il tasso di morte su un cerchio di 22 celle, tenue in ogni cella), un corridoio, una fascia di altezza e un cluster solo di fase in 240 partite sintetiche con dispersione – tutti trovati, quello diffuso nascosto – ed esegue otto insiemi nulli di 60 partite: nessun luogo. `niche.test.ts` trova un gruppo veicolo x mappa x lato inserito e nient’altro in cinque tabelle nulle. `outcome.test.ts` verifica il riepilogo della versione 2 (round vinti per lato, unità, giocatore e arma, `pw`, i round per unità); inserisce una corsia il cui lato vince il 70 % dei suoi round contro il 35 % (ogni partita con il proprio equilibrio) – trovata – ed esegue 20 insiemi nulli di 50 partite in cui le corsie non dicono nulla: nessun luogo di tasso di vittoria; inserisce un AWP su una mappa che fa vincere i round del suo lato 30 punti in più – trovato, con le sue partite e i suoi round – ed esegue 30 insiemi nulli di 80 partite, ogni partita con il proprio equilibrio e un lato più forte su una mappa: nessuna nicchia.

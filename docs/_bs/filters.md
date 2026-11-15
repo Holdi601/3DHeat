@@ -4,9 +4,9 @@ parent: "Filteri i alati"
 nav_order: 1
 lang: "bs"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filteri
@@ -41,6 +41,10 @@ Navode se samo vrste koje se pojavljuju. Kolone vrijednosti (`cost_*`, `earn_*`,
 Lista kategorija s više od 12 vrijednosti dobija polje za pretragu (*Pretraži n vrijednosti*) i dugme **Samo ovi** koje dozvoljava tačno one vrijednosti koje odgovaraju.
 
 Koje kolone se mogu filtrirati odlučuje se pri učitavanju, jer se tada moraju pročitati. Bez ijedne zadržane kolone panel to kaže i upućuje na *Zadrži za filtriranje*.
+
+## Brzi filteri za Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Kada je učitan meč Rainbow Six Siege, panel počinje dugmadima koja jednim klikom postavljaju filtere: **Rupe od metaka i tragovi** (tragovi ostavljeni na nivou), **Tragovi sa strijelcem** i **Tragovi s klasom oružja** (oni za koje je utvrđen strijelac ili oružje iz strijelčevog ubistva u istom trenutku; dalje ih podijelite ili filtrirajte po `byOperator` ili `byItemClass`), **Pokušaji postavljanja i deaktivacije**, **Prekinuti pokušaji** (započeti, nezavršeni, tamo gdje je igrač stao) i **Ojačanja** (gdje je zid ili otvor ojačan, kod branioca kojeg zaključuje konverter). Svako dugme zamjenjuje filter na koloni događaja i zadržava ostale; **Očisti sve filtere** to poništava. Kolone su opisane u dokumentaciji konvertera.
 
 ## Numeričke kolone (opseg) {#numeric-columns-range}
 

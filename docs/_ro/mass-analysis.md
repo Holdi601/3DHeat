@@ -3,9 +3,9 @@ title: "Analiză de masă"
 nav_order: 8
 lang: "ro"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Analiză în masă: mii de meciuri deodată
@@ -71,14 +71,24 @@ Alege un dosar (sau fișiere; **Adaugă dosar...** adaugă încă unul). Fereast
 | Jucători | jucători distincți, meciuri pe jucător, jucători pe meci, cei mai frecvenți jucători |
 | Tabere | fiecare tabără a fiecărei hărți: meciuri câștigate față de o împărțire egală |
 | Lupta corp la corp | date pe runde: duelurile de deschidere pe tabără și conversia lor, schimburile, cel care iese din ascunziș față de cel care ține poziția, încrucișările, intrările sub efectul flash-ului, țintirea, plasările de bombă, avantajul de oameni și, **Pe hartă**, locurile care ucid jucătorii care intră în ele – fiecare ca o parte, cu intervalul său Wilson, din numărările `cqb` ale rezumatelor ([Lupta corp la corp și rundele](close-quarters.md)) |
+| Suprafețe R6 | urmele Rainbow Six Siege pe nivel (găuri de glonț și altele asemenea) pe fiecare suprafață a nivelului: urme, pe rundă a hărții, camera, partea celor al căror trăgător a fost dedus; un clic deschide tipurile de urme, operatorii și clasele de armă ale trăgătorilor și unde sunt urmele pe suprafață (o mică hartă termică din celule de un sfert de metru); o suprafață își păstrează id-ul în meciurile aceleiași versiuni a hărții. Din numărările `marks` ale rezumatelor |
 | Hartă | grila însumată a unei hărți: prezență, uciderii, morți, K/D, orice eveniment, fluxul, și **fierbinte în câte meciuri** (stabilitatea); pe echipă, la 1, 2, 4 sau 8 ori celula |
-| Locuri | locuri care ies în evidență în cifre, dar nu în căldură (o zonă mare animată în ansamblu, coridoare, benzi de înălțime); **Găsește locuri** |
-| Nișe | grupuri care merg mult mai bine sau mai rău decât restul (un vehicul pe o hartă, un sector la o înălțime); **Găsește nișe** |
+| Locuri | locuri care ies în evidență în cifre, dar nu în căldură (o zonă mare animată în ansamblu, coridoare, benzi de înălțime) și locuri ai căror ocupanți câștigă mai multe sau mai puține dintre rundele lor; **Găsește locuri** |
+| Nișe | grupuri care merg mult mai bine sau mai rău decât restul (un vehicul pe o hartă, un sector la o înălțime) și grupuri de runde câștigate peste ce a câștigat tabăra lor în aceleași meciuri; **Găsește nișe** |
 | Observații | detectoarele de mase și detectoarele de hartă (mai jos); **Copiază raportul (JSON)** dă JSON-ul pe care-l citește un model de limbaj |
 
 ## Observații peste multe meciuri {#insights-over-many-matches}
 
 Fila **Locuri** găsește locuri care ies în evidență în cifre, dar nu în căldură – o zonă mare animată în ansamblu, un coridor, o bandă de înălțime, un loc animat doar într-o parte a meciului – marchează cu **ascuns** pe cele pe care harta simplă de căldură nu le arată și le conturează în vederea 3D; **Încarcă** zboară acolo cu meciurile pe care le ținea. Fila **Nișe** găsește grupuri (un vehicul pe o hartă și pe o tabără, un sector la o înălțime) care merg mult mai bine sau mai rău decât restul; apasă pe unul ca să vezi rafinările lui.
+
+### Cine a câștigat {#who-won}
+
+Când meciurile spun cine a câștigat fiecare rundă ([coloana de rezultat](data-formats.md#outcome-columns) `won`), rezultatul devine o țintă separată:
+
+- **Locuri: rata de victorie.** Pentru fiecare tabără, partea din rundele ei într-un loc pe care le-a câștigat, față de partea pe care a câștigat-o în același meci oriunde – astfel echilibrul hărții, al taberei și al meciului sunt baza și ies în evidență doar locurile ai căror ocupanți câștigă mai multe (sau mai puține) dintre rundele lor. Un exemplu inventat: *„Dust: tabăra T câștigă mai multe dintre rundele ei când este aici: 61% din 412 câștigate, față de 49% așteptat din propria ei rată în aceleași meciuri (cote 1,6x; ținut în 31/48 meciuri).”* Aceleași verificări de rată a falselor descoperiri și de stabilitate ca la orice loc; **Încarcă** încarcă meciurile în care a fost ținut, arătând pozițiile acelei tabere.
+- **Nișe: victoria în rundă.** Tabelul **Runde** conține runda fiecărei vieți: harta, tabăra, partea meciului (rundele 1-4, 5-8, ...), vehiculul (un operator, un agent), arma folosită cel mai mult, locul ținut cel mai mult, cumpărarea (eco, force, full) și dacă tabăra ei a făcut prima eliminare. Un grup este judecat față de ce a câștigat tabăra lui în aceleași meciuri, așa că *T pe Dust cu un AWP* este o nișă doar când acele runde au fost câștigate mai des decât celelalte runde ale lui T în acele meciuri. Un exemplu inventat: *„m1 · T · AWP: câștigă 80% din 320 de runde, față de 62% așteptat de la aceleași tabere în aceleași meciuri (cote 2,3x; 40 de meciuri).”* Ordonate după câștig înmulțit cu suportul; **Încarcă** încarcă meciurile ale căror runde îl arată cel mai mult.
+
+Ambele au nevoie de rezumate de versiunea 2 (vezi [Obținerea rezumatelor](#getting-the-summaries)): cele mai vechi sunt calculate din nou.
 
 Fila **Observații** găsește, peste toate meciurile, vehicule care fac schimburi sau câștigă mai bine sau mai rău decât restul, locuri fierbinți într-o parte stabilă a meciurilor, tabere care câștigă mai mult decât o împărțire egală, vehicule a căror folosire se mișcă în timp și părți ale meciului care țin mai multe uciderii decât o împărțire uniformă. Fiecare constatare vine cu numărările, efectul, intervalul și o rată a descoperirilor false (menținută la 5%), iar un clic încarcă meciurile ei. Detalii: [Pentru dezvoltatori](#for-developers).
 
@@ -126,6 +136,11 @@ JSON simplu (`src/mass/types.ts`), aproximativ 5–30 KB comprimat pe meci:
   după felul canonic, uciderii după clasa țintei, victorii, bani;
 - pe jucător (după id-ul de utilizator, altfel nume): echipă, vieți, prezență, uciderii, morți,
   lovituri, lansări, victorie, vehicule; pe armă: evenimente după fel;
+- cu o coloană de rezultat (versiunea 2): rundele câștigate și jucate pe echipă,
+  vehicul (`rw`, fiecare o viață și o rundă), jucător și armă (rundele în care o
+  tabără a folosit-o); runda fiecărei vieți (`outcome.u`: runda, tabăra, vehiculul,
+  arma folosită cel mai mult, locul ținut cel mai mult, cumpărarea, victoria) și
+  numărul, câștigătorul și tabăra primei eliminări ale fiecărei runde (`outcome.r`);
 - coloanele economiei (`cost_*`, `earn_*`) și totalurile lor;
 - faze: evenimente după fel, în 20 de intervale ale lungimii meciului și pe minut;
 - comportament: măsurile de comportament colectiv ale meciului (aliniere, conducerea
@@ -146,6 +161,9 @@ Partea spațială este făcută pentru scanări statistice peste regiuni de oric
 - **Expunerea lângă fiecare numărare.** Secunde de prezență pe celulă, pe echipă (`pt`), pe clasă de vehicul (`pc`) și pe bandă de înălțime (`ph`), astfel încât rata, așteptarea și raportul unei regiuni se calculează pentru orice subgrup.
 - **Înălțimea.** Benzi peste nivelul minim al meciului (percentila 1 a înălțimii): sub 3 m, 3–10, 10–30, 30–100, 100–300, 300–1000, 1000–3000, peste; un fișier cu o coloană `floor`/`storey`/`deck` împarte în benzi după etaje. `y` este înălțimea medie a fiecărei celule, `y0` cea mai joasă (etajul ei, pentru înălțimea de deasupra lui).
 - **Evenimentele** ca tuple `[celulă, fel, echipă, clasă, bandă, număr]`.
+- **Runde după rezultat** (versiunea 2, cu o coloană de rezultat și două runde sau
+  mai multe): `pw` ca `[cell, team, rounds won, rounds lost]` – rundele în care fiecare
+  tabără a petrecut o secundă sau mai mult în celulă, după rezultatul lor.
 - **Felii de timp** la un nivel grosier (8 celule pe latură), pe minut de la începutul meciului: `[cx, cz, minut, fel, valoare]`, secundele de prezență ca fel `GRID_KINDS.length`; fazele meciului sunt minute peste lungime.
 - Rare, numărări întregi, secunde la o zecime: mărginite de ce s-a întâmplat.
 
@@ -160,11 +178,13 @@ Meciurile fiecărei hărți sunt citite de două ori, câte un meci pe rând; me
 - **Măsurile.** Rata unui eveniment pe secundă de prezență – uciderii, morți,
   lovituri, lansări, capturi, pentru toate unitățile, pe clasă (cele 4 cu cele mai
   multe evenimente), pe bandă de înălțime – și partea din uciderii la uciderii și morți
-  (toate, pe tabără, pe bandă). Ce clase și ce tabere intră se iau din capete (`planOf`).
+  (toate, pe tabără, pe bandă), plus **rata de victorie** a fiecărei tabere: rundele ei
+  în celulă câștigate față de pierdute (`pw`), acolo unde 8 meciuri ale hărții sau mai
+  multe numără rundele după rezultat. Ce clase și ce tabere intră se iau din capete (`planOf`).
 - **Așteptarea după meci.** Rata proprie a fiecărui meci, împărțită pe prezența lui
   proprie într-o celulă, este așteptarea celulei (o scanare Kulldorff ajustată după
   covariate, stratificată pe meci): câteva meciuri sângeroase sau un server ocupat nu fac
-  un loc.
+  un loc. Pentru rata de victorie, așteptarea este partea proprie de runde câștigate a taberei în acel meci, așa că echilibrul hărții și al taberei nu devine niciodată un loc. O rundă în mai multe celule ale unei regiuni contează în fiecare; dispersia măsurată la mărimea regiunii ține cont de asta.
 - **Dispersia.** Meciurile nu se potrivesc cu mult peste Poisson. Reziduurile fiecărui
   meci sunt însumate în blocuri de 1, 2, 4, 8, 16 celule; dispersia fiecărei mărimi de
   bloc (reziduuri la pătrat peste varianța nulă, pusă laolaltă, cele mai rele 5% din
@@ -220,6 +240,25 @@ grup evaluat, un raport contractat de cel puțin 1,25 (sau 1/1,25), patru din ci
 rafinare cu o singură condiție a grupului (explorarea), **Încarcă** încarcă meciurile lui. Echipările
 nu sunt încă în rezumate.
 
+Al patrulea tabel, **runde** (`roundsTable`), are ca țintă rezultatul rundei: un
+rând pe runda unei vieți – harta, tabăra, partea meciului (rundele 1-4, 5-8, ...),
+vehiculul, arma folosită cel mai mult, locul ținut cel mai mult, cumpărarea, prima
+eliminare sau prima moarte – judecat față de rata de victorie a propriei tabere în
+propriul meci (așteptarea stratificată Mantel-Haenszel: reziduul este `won - e`, `e`
+partea taberei în meci), așa că o nișă nu este niciodată echilibrul hărții sau al
+taberei. Meciurile rămân clusterele. z-ul lui este calibrat: aceeași căutare în fascicul
+rulează de opt ori pe rezultatele amestecate între rundele fiecărei tabere din fiecare
+meci (rata taberei în fiecare meci se păstrează), iar împrăștierea acelor z nule peste o
+normală standard – pe număr de condiții, din mijloc (mediana / 0,674) și din coadă
+(percentila 99 / 2,576), cea mai mare, niciodată sub 1 – le împarte pe cele reale
+înainte de p-ul lor și de rata falselor descoperiri (un nul empiric, Efron 2004).
+Grupurile mai adânci primesc scara mai mare: fasciculul păstrează rafinări ale unor
+grupuri alese pentru z-ul lor mare. Baza unei nișe este propria ei așteptare, câștigul
+ei punctele peste ea, iar ea este ordonată după câștig înmulțit cu rădăcina pătrată a
+rundelor ei, susținută de dovezi și de pliuri (`wracc` este suportul înmulțit cu
+câștigul). Poartă meciurile în care s-a arătat cel mai mult (`matchIds`) și câteva
+dintre rundele lor (`rounds`, `[match, round]`) pentru detaliere.
+
 #### Schimbările de meta cu semnificație practică {#meta-shifts-with-practical-significance}
 
 Pe date amestecate, binomialul pe vieți declara aproape fiecare schimbare ca semnificativă. Acum `meta`
@@ -239,4 +278,4 @@ zone de ucidere și căi de apropiere: felurile lor sunt `place.*` și `niche.*`
 `scan.test.ts` plantează o zonă difuză (de 1,6 ori rata de moarte peste un cerc de 22 de celule, slabă în
 fiecare celulă), un coridor, o bandă de înălțime și un grup doar pe fază, în 240 de meciuri sintetice cu
 supradispersie – toate găsite, cea difuză ascunsă – și rulează opt seturi nule de 60 de meciuri: niciun loc.
-`niche.test.ts` găsește un grup plantat vehicul x hartă x tabără și nimic în cinci tabele nule.
+`niche.test.ts` găsește un grup plantat vehicul x hartă x tabără și nimic în cinci tabele nule. `outcome.test.ts` verifică rezumatul de versiunea 2 (rundele câștigate pe tabără, unitate, jucător și armă, `pw`, rundele unităților); plantează un culoar a cărui tabără câștigă 70% din runde față de 35% (fiecare meci cu propriul echilibru) – găsit – și rulează 20 de seturi nule de 50 de meciuri în care culoarele nu spun nimic: niciun loc de rată de victorie; plantează un AWP pe o hartă care câștigă rundele taberei sale cu 30 de puncte mai mult – găsit, cu meciurile și rundele lui – și rulează 30 de seturi nule de 80 de meciuri, fiecare meci cu propriul echilibru și o tabără mai puternică pe o hartă: nicio nișă.

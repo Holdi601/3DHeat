@@ -3,9 +3,9 @@ title: "Masseanalyse"
 nav_order: 8
 lang: "da"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Masseanalyse: tusindvis af kampe på én gang
@@ -71,14 +71,24 @@ Vælg en mappe (eller filer; **Tilføj mappe…** tilføjer en anden). Vinduet h
 | Spillere | forskellige spillere, kampe pr. spiller, spillere pr. kamp, de hyppigste spillere |
 | Sider | hver side på hvert kort: kampe vundet mod en jævn fordeling |
 | Tæt hold | rundedata: åbningsduelbeviser efter side og deres konvertering, byttehandler, udstikker mod holder, krydsild, blændede indgange, sigte, plantninger, mandefordel og, **Efter kort**, de steder, der dræber spillerne, som går ind i dem - hver en andel med sit Wilson-interval, ud fra resuméernes `cqb`-tal ([Tæt hold og runder](close-quarters.md)) |
+| R6-flader | Rainbow Six Siege's mærker på banen (skudhuller og lignende) pr. banens flade: mærker, pr. runde på kortet, rummet, andelen, hvis skytte blev fundet; et klik åbner mærkernes slags, skytternes operatører og våbenklasser, og hvor på fladen mærkerne er (et lille varmekort af celler på en kvart meter); en flade beholder sit id på tværs af kampene i én kortversion. Ud fra resuméernes `marks`-tal |
 | Kort | et kortets summerede gitter: tilstedeværelse, drab, dødsfald, K/D, enhver hændelse, strøm og **varm i hvor mange kampe** (stabilitet); efter hold, ved 1, 2, 4 eller 8 gange cellen |
-| Steder | steder, der skiller sig ud i tallene, men ikke i varmekortet (et stort område der er travlt som helhed, korridorer, højdebånd); **Find steder** |
-| Nicher | grupper, der klarer sig mærkbart bedre eller dårligere end resten (et køretøj på ét kort, en sektor i én højde); **Find nicher** |
+| Steder | steder, der skiller sig ud i tallene, men ikke i varmekortet (et stort område der er travlt som helhed, korridorer, højdebånd), og steder, hvis holdere vinder flere eller færre af deres runder; **Find steder** |
+| Nicher | grupper, der klarer sig mærkbart bedre eller dårligere end resten (et køretøj på ét kort, en sektor i én højde), og grupper af runder vundet ud over det, deres side vandt i de samme kampe; **Find nicher** |
 | Indsigter | masse-detektorerne og kort-detektorerne (nedenfor); **Kopiér rapport (JSON)** giver den JSON, en sprogmodel læser |
 
 ## Indsigter over mange kampe {#insights-over-many-matches}
 
 Fanen **Steder** finder steder, der skiller sig ud i tallene, men ikke i varmekortet - et stort område, der er travlt som helhed, en korridor, et højdebånd, et sted der kun er travlt i én del af kampen - og markerer dem, som det almindelige varmekort ikke viser, som **skjulte**, og tegner dem op i 3D-visningen; **Indlæs** flyver derhen med de kampe, det holdt. Fanen **Nicher** finder grupper (et køretøj på ét kort og én side, en sektor i én højde), der klarer sig mærkbart bedre eller dårligere end resten; klik på én for at se dens forfininger.
+
+### Hvem vandt {#who-won}
+
+Hvor kampene siger, hvem der vandt hver runde ([udfaldskolonnen](data-formats.md#outcome-columns) `won`), er resultatet et mål for sig:
+
+- **Steder: vindrate.** For hver side andelen af dens runder på et sted, som den vandt, mod den andel, den vandt i samme kamp overalt - så kortets balance, sidens og kampens egen er grundlinjen, og kun steder, hvis holdere vinder flere (eller færre) af deres runder, skiller sig ud. Et opdigtet eksempel: *"Dust: side T vinder flere af sine runder, når den er her: 61 % af 412 vundet, mod 49 % forventet ud fra dens egen rate i de samme kampe (odds 1,6x; holdt i 31/48 kampe)."* Samme falsk-opdagelsesrate og stabilitetskontroller som for alle steder; **Indlæs** indlæser de kampe, det holdt i, og viser sidens positioner.
+- **Nicher: rundesejr.** Tabellen **Runder** har hvert livs runde: kortet, siden, delen af kampen (runde 1-4, 5-8, ...), køretøjet (en operatør, en agent), det våben, den brugte mest, det sted, den holdt længst, købet (eco, force, full) og om dens side fik det første drab. En gruppe vurderes mod det, dens side vandt i de samme kampe, så *T på Dust med en AWP* er kun en niche, når de runder blev vundet oftere end T's andre runder i de kampe. Et opdigtet eksempel: *"m1 · T · AWP: vinder 80 % af 320 runder, mod 62 % forventet ud fra de samme sider i de samme kampe (odds 2,3x; 40 kampe)."* Rangeret efter løftet gange støtten; **Indlæs** indlæser de kampe, hvis runder viser det mest.
+
+Begge kræver resuméer af version 2 (se [Få resuméerne](#getting-the-summaries)): ældre udregnes igen.
 
 Fanen **Indsigter** finder over alle kampe køretøjer, der handler eller vinder bedre eller dårligere end resten, steder der er varme i en stabil andel af kampene, sider der vinder mere end en jævn fordeling, køretøjer, hvis brug flytter sig over datoerne, og dele af kampen, der har flere drab end en jævn spredning. Hver fund har sine tal, effekt, interval og en falsk-opdagelsesrate (holdt under 5 %), og et klik indlæser dens kampe. Detaljer: [Til udviklere](#for-developers).
 
@@ -127,6 +137,11 @@ Almindelig JSON (`src/mass/types.ts`), cirka 5-30 KB komprimeret pr. kamp:
   efter kanonisk slags, drab efter målets klasse, sejre, penge;
 - pr. spiller (efter bruger-id, ellers navn): hold, liv, tilstedeværelse, drab, dødsfald,
   træf, affyringer, sejr, køretøjer; pr. våben: hændelser efter slags;
+- med en resultatkolonne (version 2): runder vundet og spillet pr. hold, køretøj
+  (`rw`, et liv og en runde hver), spiller og våben (de runder, en side brugte det
+  i); hvert livs runde (`outcome.u`: runde, side, køretøj, det våben, den brugte
+  mest, det sted, den holdt længst, købet, vundet) og hver rundes
+  nummer, vinder og siden for dens første drab (`outcome.r`);
 - økonomiens kolonner (`cost_*`, `earn_*`) og deres summer;
 - faser: hændelser efter slags i 20 bidder af kamplængden og efter minut;
 - adfærd: kampens kollektive adfærdsmål (justering, rutestyring, baner,
@@ -149,6 +164,7 @@ og form, ikke kun til varmebilleder:
 - **Eksponering ved siden af hver tælling.** Tilstedeværelsessekunder pr. celle, pr. hold (`pt`), pr. køretøjsklasse (`pc`) og pr. højdebånd (`ph`), så et områdes rate, forventning og forhold kan udregnes for enhver undergruppe.
 - **Højde.** Bånd over kampens gulv (1. percentil af højden): under 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, over; en fil med en kolonne `floor`/`storey`/`deck` deler i bånd efter sine etager i stedet. `y` er hver celles middelhøjde, `y0` dens laveste (dens etage, for højde over den).
 - **Hændelser** som tupler `[celle, slags, hold, klasse, bånd, antal]`.
+- **Runder efter resultat** (version 2, med en resultatkolonne og to runder eller flere): `pw` som `[cell, team, rounds won, rounds lost]` - de runder, hver side brugte et sekund eller mere i cellen, efter dens resultat i runden.
 - **Tidsskiver** på et groft niveau (8 celler på hver side), efter minuttet fra kampstart: `[cx, cz, minut, slags, værdi]`, tilstedeværelsessekunder som slags `GRID_KINDS.length`; kampfaser er minutter over længden.
 - Sparsomt, tællinger som hele tal, sekunder til en tiendedel: afgrænset af hvad der skete.
 
@@ -169,12 +185,16 @@ på højst 64 celler pr. side (16 for rum-tids-scanningen), aldrig kampene.
 
 - **Mål.** En hændelses rate pr. sekund tilstedeværelse - drab, dødsfald,
   træf, affyringer, erobringer, for alle enheder, pr. klasse (de 4 med flest
-  hændelser), pr. højdebånd - og andelen af drab i drab og dødsfald (alle, pr. side, pr. bånd).
-  Hvilke klasser og sider der gælder, kommer fra hovederne (`planOf`).
+  hændelser), pr. højdebånd - og andelen af drab i drab og dødsfald (alle, pr. side, pr. bånd),
+  og hver sides **vindrate**: dens runder i cellen vundet mod tabt (`pw`), hvor 8 kampe
+  på kortet eller flere tæller runder efter resultat. Hvilke klasser og sider der gælder, kommer fra hovederne (`planOf`).
 - **Forventning pr. kamp.** Hver kamps egen rate, spredt over dens egen
   tilstedeværelse i en celle, er cellens forventning (en kovariatjusteret
   Kulldorff-scanning, opdelt efter kamp): et par blodige kampe eller én travl
-  server giver intet sted.
+  server giver intet sted. For vindraten er forventningen sidens egen andel af
+  vundne runder i den kamp, så kortets og sidens balance er aldrig et sted. En runde
+  i flere celler af et område tæller i hver; spredningen målt ved områdets størrelse
+  bærer det.
 - **Spredning.** Kampene er uenige langt ud over Poisson. Hver kamps residualer
   summeres i blokke af 1, 2, 4, 8, 16 celler; spredningen for hver blokstørrelse
   (kvadrerede residualer over nulvariansen, samlet, de værste 5 % af blokkene udeladt)
@@ -229,6 +249,26 @@ Beholdt: BH under 5 % over alle grupper vurderet, et krympet forhold på 1,25
 (eller 1/1,25) mindst, fire af fem folder enige, ikke en forfining, der kun gentager sin forælder. Fanen **Nicher** lister dem; et klik viser hver
 én-betingelses-forfining af gruppen (udforskeren), **Indlæs** indlæser dens kampe. Udstyr er endnu ikke i resuméerne.
 
+Den fjerde tabel, **runder** (`roundsTable`), har rundens resultat som sit
+mål: én række pr. livs runde - kort, side, del af kampen (runde 1-4,
+5-8, ...), køretøj, det våben, der blev brugt mest, det sted, der blev holdt længst, køb, første
+drab eller første dødsfald - vurderet mod sin egen sides vindrate i sin egen
+kamp (den stratificerede forventning fra Mantel-Haenszel: residualen er
+`won - e`, `e` sidens andel i kampen), så en niche er aldrig kortets
+eller sidens balance. Kampene forbliver klyngerne. Dens z er kalibreret: den
+samme stråle-søgning kører otte gange på resultaterne blandet mellem
+runderne for hver side i hver kamp (sidens rate i hver kamp bevaret), og
+spredningen af de nul-z ud over en standardnormal - pr. antal
+betingelser, fra midten (median / 0,674) og halen (99. percentil /
+2,576), den største, aldrig under 1 - dividerer de rigtige før deres p og
+falsk-opdagelsesraten (en empirisk nul, Efron 2004). Dybere grupper får
+den større skala: strålen beholder forfininger af grupper valgt for deres
+store z. En niches basis er dens egen forventning, dens løft pointene over
+den, og den rangeres efter løftet gange kvadratroden af dens runder, holdt af
+evidensen og folderne (`wracc` er støtten gange løftet). Den
+bærer de kampe, hvor den viste sig mest (`matchIds`), og nogle af deres
+runder (`rounds`, `[match, round]`) til at bore ned.
+
 #### Tendenser med praktisk betydning {#meta-shifts-with-practical-significance}
 
 Ved blandede datoer fandt binomialet på liv næsten alle ændringer betydningsfulde. `meta` tester nu klyngerobust (hver kamps
@@ -250,4 +290,10 @@ angrebsakser: deres slags er `place.*` og `niche.*`.
 af 22 celler, svagt i hver celle), en korridor, et højdebånd og en klynge kun i
 én fase i 240 syntetiske overdispergerede kampe - alle fundet, det diffuse skjult - og
 kører otte nulsæt på 60 kampe: intet sted. `niche.test.ts` finder en plantet køretøj x kort x side-gruppe og intet i
-fem nul-tabeller.
+fem nul-tabeller. `outcome.test.ts` kontrollerer resuméet af version 2 (runder vundet
+efter side, enhed, spiller og våben, `pw`, enhedsrunderne); planter en bane, hvis
+side vinder 70 % af sine runder mod 35 % (hver kamp sin egen balance) - fundet -
+og kører 20 nulsæt på 50 kampe, hvor banerne intet siger: intet vindrate-sted;
+planter en AWP på ét kort, der vinder sin sides runder 30 point mere -
+fundet, med sine kampe og runder - og kører 30 nulsæt på 80 kampe med
+hver kamp sin egen balance og én side stærkere på ét kort: ingen niche.

@@ -3,9 +3,9 @@ title: "Massanalüüs"
 nav_order: 8
 lang: "et"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Massanalüüs: tuhandeid matše korraga
@@ -71,14 +71,24 @@ Vali kaust (või failid; **Lisa kaust...** lisab veel ühe). Aknas on filtrid **
 | Mängijad | eristuvad mängijad, matšid mängija kohta, mängijad matši kohta, kõige sagedasemad mängijad |
 | Pooled | iga kaardi iga pool: matšid, mis võideti võrreldes ühtlase jaotusega |
 | Lähivõitlus | vooru andmed: avamisduellid poolte kaupa ja nende konversioon, vahetused, pealtvaataja versus kaitsja, ristlein, pimestatud sisenemised, sihtimine, paigaldused, meeste üleseis ja **Kaardi järgi** kohad, kus tapetakse sisenevaid mängijaid – igaüks osana oma Wilsoni vahemikuga, kokkuvõtete `cqb` loenduste põhjal ([Lähivõitlus ja ringid](close-quarters.md)) |
+| R6 pinnad | Rainbow Six Siege'i jäljed tasemel (kuuliaugud jms) tasemepinna kaupa: jäljed, kaardi vooru kohta, ruum, osa, mille laskja on välja arvutatud; klõps avab jälgede liigid, laskjate operaatorid ja relvaklassid ning selle, kus pinnal jäljed on (väike veerandmeetriste lahtrite kuumuskaart); pind säilitab oma id ühe kaardiversiooni matšide lõikes. Kokkuvõtete `marks`-loenditest |
 | Kaart | kaardi kokkuvõetud ruudustik: kohalolek, tapmised, surmad, K/D, mis tahes sündmus, voog ja **kuum mitmes matšis** (stabiilsus); tiimi kaupa, 1, 2, 4 või 8 korda lahtri suuruses |
-| Kohad | kohad, mis paistavad silma numbrites, mitte kuumuskaardil (suur ala, mis on tervikuna hõivatud, koridorid, kõrgusvööndid); **Leia kohti** |
-| Nišid | rühmad, kes teevad oluliselt paremini või halvemini kui ülejäänud (sõiduk ühel kaardil, sektor ühel kõrgusel); **Leia nišše** |
+| Kohad | kohad, mis paistavad silma numbrites, mitte kuumuskaardil (suur ala, mis on tervikuna hõivatud, koridorid, kõrgusvööndid), ja kohad, mille hoidjad võidavad rohkem või vähem oma voorudest; **Leia kohti** |
+| Nišid | rühmad, kes teevad oluliselt paremini või halvemini kui ülejäänud (sõiduk ühel kaardil, sektor ühel kõrgusel), ja voorude rühmad, mis võideti üle selle, mida nende pool samades matšides võitis; **Leia nišše** |
 | Järeldused | massidetektorid ja kaardidetektorid (allpool); **Kopeeri aruanne (JSON)** annab JSON-i, mida keelemudel loeb |
 
 ## Tähelepanekud mitme matši kohta {#insights-over-many-matches}
 
 Vahekaart **Kohad** leiab kohad, mis paistavad silma numbrites, mitte kuumuskaardil – suure ala, mis on tervikuna hõivatud, koridori, kõrgusvööndi, koha, mis on hõivatud ainult matši ühes osas. Need, mida tavaline kuumuskaart ei näita, märgib ta **varjatuks** ja joonistab 3D-vaates ääred; **Laadi** lendab sinna koos matšidega, mis seal olid. Vahekaart **Nišid** leiab rühmad (sõiduk ühel kaardil ja pool, sektor ühel kõrgusel), kes teevad oluliselt paremini või halvemini kui ülejäänud; klõps ühel näitab selle täpsustusi.
+
+### Kes võitis {#who-won}
+
+Kui matšid ütlevad, kes iga vooru võitis ([tulemuse veerg](data-formats.md#outcome-columns) `won`), on tulemus omaette sihtmärk:
+
+- **Kohad: võiduprotsent.** Iga poole jaoks tema voorude osa kohas, mille ta võitis, võrreldes osaga, mille ta võitis samas matšis ükskõik kus – nii on kaardi, poole ja matši enda tasakaal baasjoon, ja silma paistavad ainult kohad, mille hoidjad võidavad rohkem (või vähem) oma voorudest. Väljamõeldud näide: *„Dust: pool T võidab siin olles rohkem oma voorudest: 61% 412-st võidetud, võrreldes 49%-ga, mida oodatakse tema enda määra järgi samades matšides (šansid 1,6x; hoitud 31/48 matšis).“* Sama valeavastuste määr ja stabiilsuskontrollid nagu igal kohal; **Laadi** laadib matšid, kus kohta hoiti, ja näitab selle poole asukohti.
+- **Nišid: vooruvõit.** Tabelis **Voorud** on iga elu voor: kaart, pool, matši osa (voorud 1–4, 5–8, ...), sõiduk (operaator, agent), kõige rohkem kasutatud relv, kõige kauem hoitud koht, ostud (eco, force, full) ja kas tema pool tegi esimese tapmise. Rühma hinnatakse selle järgi, mida tema pool samades matšides võitis, nii et *T Dustil AWP-ga* on niš ainult siis, kui need voorud võideti sagedamini kui T teised voorud neis matšides. Väljamõeldud näide: *„m1 · T · AWP: võidab 80% 320 voorust, võrreldes 62%-ga, mida oodatakse samadelt pooltelt samades matšides (šansid 2,3x; 40 matši).“* Järjestatud tõusu ja toe korrutise järgi; **Laadi** laadib matšid, mille voorudes see kõige rohkem ilmneb.
+
+Mõlemad vajavad versiooni 2 kokkuvõtteid (vt [Kokkuvõtete saamine](#getting-the-summaries)): vanemad arvutatakse uuesti.
 
 Vahekaart **Järeldused** leiab kõigi matšide põhjal sõidukid, kes kaubelda või võita paremini või halvemini kui ülejäänud, kohad, mis on kuumad püsivas osas matšidest, pooled, kes võidavad rohkem kui ühtlase jaotuse, sõidukid, kelle kasutus liigub kuupäevade lõikes, ja matši osad, kus on rohkem tapmisi, kui ühtlane jaotus annaks. Igal leiul on oma loendid, mõju, vahemik ja väärt avastamise määr (hoitud 5% juures), ja klõps laadib selle matšid. Üksikasjad: [Arendajatele](#for-developers).
 
@@ -127,6 +137,11 @@ Lihtne JSON (`src/mass/types.ts`), umbes 5–30 KB tihendatuna matši kohta:
   kanoonilise liigi järgi, tapmised sihtmärgi klassi järgi, võidud, raha;
 - mängija kohta (kasutaja ID järgi, muidu nime järgi): tiim, elud, kohalolek, tapmised, surmad,
   tabamused, startid, võit, sõidukid; relva kohta: sündmused liigi järgi;
+- tulemuse veeruga (versioon 2): võidetud ja mängitud voorud meeskonna, sõiduki
+  (`rw`, igaüks üks elu ja voor), mängija ja relva kaupa (voorud, kus pool seda
+  kasutas); iga elu voor (`outcome.u`: voor, pool, sõiduk, kõige rohkem kasutatud relv,
+  kõige kauem hoitud koht, ostud, võidetud) ja iga vooru
+  number, võitja ja selle esimese tapmise pool (`outcome.r`);
 - majanduse veerud (`cost_*`, `earn_*`) ja nende summad;
 - faasid: sündmused liigi järgi 20 vahemikus matši pikkuse ja minuti järgi;
 - käitumine: matši kollektiivse käitumise näitajad (joondumine, marsruudi karjatamine, rajad,
@@ -146,6 +161,9 @@ Ruumiline osa on tehtud statistiliste skaneerimiste jaoks mis tahes suurusega ja
 - **Ekspositsioon koos iga loendiga.** Kohalolekusekundid lahtri kohta, tiimi kohta (`pt`), sõiduki klassi kohta (`pc`) ja kõrgusvööndi kohta (`ph`), nii et piirkonna määr, oodatav väärtus ja suhe arvutatakse iga alarühma jaoks.
 - **Kõrgus.** Vööndid matši põhjast kõrgemal (kõrguse 1. protsentiil): alla 3 m, 3–10, 10–30, 30–100, 100–300, 300–1000, 1000–3000, üle; fail, mille veerus on `floor`/`storey`/`deck`, jaotab vööndid selle korrusete järgi. `y` on iga lahtri keskmine kõrgus, `y0` on madalaim (selle korrus, kõrguse jaoks selle kohal).
 - **Sündmused** tuplitena `[cell, kind, team, class, band, count]`.
+- **Voorud tulemuse järgi** (versioon 2, tulemuse veeru ja vähemalt kahe vooruga):
+  `pw` kujul `[cell, team, rounds won, rounds lost]` – voorud, mil kumbki pool
+  veetis lahtris sekundi või rohkem, tema vooru tulemuse järgi.
 - **Ajalõigud** karmis tasemes (8 lahtrit külje kohta), minuti kaupa matši algusest: `[cx, cz, minute, kind, value]`, kohalolekusekundid liigina `GRID_KINDS.length`; matši faasid on minutid pikkuse üle.
 - Hõredad, loendid täisarvud, sekundid kümnendikeni: piiratud sellega, mis juhtus.
 
@@ -160,8 +178,10 @@ Iga kaardi matšid loetakse kaks korda, üks matš korraga; mälu hoiab summasid
 
 - **Mõõdikud.** Sündmuse määr kohaloleku sekundi kohta – tapmised, surmad,
   tabamused, startid, vallutused, kõigi üksuste kohta, klassi kohta (4, kellel on kõige rohkem
-  sündmusi), kõrgusvööndi kohta – ja tapmiste osa tapmistes ja surmades (kõik, poole kohta, vööndi kohta). Millised klassid ja pooled, tuleb päisest (`planOf`).
-- **Oodatav väärtus matši kaupa.** Iga matši enda määr, jaotatud tema enda kohalolekule lahtris, on lahtri oodatav väärtus (kovariaadiga kohandatud Kulldorffi skaneerimine, kihistatud matši järgi): mõned verised matšid või üks hõivatud server ei tee kohta.
+  sündmusi), kõrgusvööndi kohta – ja tapmiste osa tapmistes ja surmades (kõik, poole kohta, vööndi kohta),
+  ning iga poole **võiduprotsent**: tema voorud lahtris võidetud versus kaotatud (`pw`), kus kaardi 8 või
+  rohkem matši loevad voore tulemuse järgi. Millised klassid ja pooled, tuleb päisest (`planOf`).
+- **Oodatav väärtus matši kaupa.** Iga matši enda määr, jaotatud tema enda kohalolekule lahtris, on lahtri oodatav väärtus (kovariaadiga kohandatud Kulldorffi skaneerimine, kihistatud matši järgi): mõned verised matšid või üks hõivatud server ei tee kohta. Võiduprotsendi puhul on oodatav väärtus poole enda võidetud voorude osa selles matšis, nii et kaardi ja poole tasakaal ei ole kunagi koht. Voor, mis on ala mitmes lahtris, loeb igas neist; ala suuruses mõõdetud hajuvus kannab seda.
 - **Hajuvus.** Matšid lähevad Poissonist palju kaugemale. Iga matši jäägid summeeritakse plokkides 1, 2, 4, 8, 16 lahtrit; iga plokisuuruse hajuvus (ruudud jääkidest jagatud nullvariatsiooniga, koondatud, halvimad 5% plokke välja jäetud) skaleerib iga selle suurusega piirkonna testi: kvaasi-tõepära suhe, Poisson määrade jaoks, binoomne osade jaoks.
 - **Piirkonnad.** Ringid 0,75 kuni 18 lahtrit; ellipsid kuues nurgas, 3 ja 6 korda pikemad kui laiad, 3 kuni 18 lahtrit (koridorid; telg on tähelepaneku `place.path`); tsoonid, mis kasvavad lahter-lahtri haaval kõige tugevamatest kohalikest Getis-Ord Gi* lahtritest, kuni piirkonna z kasvab (ebakorrapärased kujud) – kasvatatud pooltel matšidel ja testitud teisel poolel, nii et kasvamise vabadus ei too kaasa valekohti; iga kõrgusvöönd võrreldes matši teiste vööndite kogu kaardiga (klastrikindel); ruum-aja silindrid: ring ühes või kahes viiendikus matši pikkusest, võrreldes matši enda sündmuste levikuga koha ja aja üle (ruum-aja permutatsiooni skaneerimine).
 - **Testimine.** p kvaasi-tõepärast; Benjamini-Hochberg kõigi piirkondade üle, mida proovitakse kõigil kaartidel (kolmel kaardil on tavaline 700 000), 5% juures. See, mis läbib, lõigatakse (piirkond, mis on enamasti tugevama sama mõõdiku piirkonna sees, ütleb sama), loetakse uuesti oma **stabiilsuse** jaoks – matšid, mis seda nägid, matšid, kus see hoiti, selle suund matšide viies voldis – ja testitakse veel kord matšide enda näidatud dispersioonil (klastrikindel, matšid klastritena, mitte kunagi Poisson), BH veel kord. Vaiksed kohad baasil (2% või rohkem kaardi tekkimistest, starttest ja maandumistest) jäetakse välja.
@@ -175,6 +195,8 @@ Iga kaardi matšid loetakse kaks korda, üks matš korraga; mälu hoiab summasid
 Kiirotsing (laius 24, sügavus 3) kolme tabeli kohal: **elud** (mängijate elud:
 mäng, kaart, režiim, klass, sõiduk, pool, tase, kuupäevade kvartal, matši pikkuste kolmandik; K/D, võit, surm elu kohta, tapmised tunni kohta, teenitud raha minutis), **kohad** (tapmised ja surmad kaardi, režiimi, kuupäevade, kaardi sektori 4 x 4, klassi, poole ja vööndi järgi) ning **faasid** (sektor ja matši viiendik: K/D, surmad kohalolekutunni kohta). Rühma testitakse terviku vastu, matšid klastritena (tema jääkide sandwich-variatsioon matši järgi), selle mõju on šansi- või määrasuhe, kahandatud 20 tulemuse eelneva järgi; ta vajab 30 tulemust 8 matšis, täpsustus peab olema 10% tugevam kui tema vanem, rühmad, kus tulemus on puudu või kõik (neile pole see salvestatud), jäetakse välja. Alles jäävad: BH alla 5% kõigi hinnatud rühmade üle, kahanenud suhe vähemalt 1,25 (või 1/1,25), neli viiest voldist nõustuvad, täpsustus, mis ainult kordab oma vanemat, ei ole alles. **Nišid** vahekaart loetleb need; klõps näitab kõiki rühma ühe tingimusega täpsustusi (uurija), **Laadi** laadib selle matšid. Varustust kokkuvõtetes veel pole.
 
+Neljanda tabeli, **voorud** (`roundsTable`), sihtmärk on vooru tulemus: üks rida iga elu vooru kohta – kaart, pool, matši osa (voorud 1–4, 5–8, ...), sõiduk, kõige rohkem kasutatud relv, kõige kauem hoitud koht, ostud, esimene tapmine või esimene surm – hinnatuna oma poole võiduprotsendi järgi oma matšis (Mantel-Haenszeli kihistatud oodatav väärtus: jääk on `won - e`, `e` poole osa matšis), nii et niš ei ole kunagi kaardi ega poole tasakaal. Matšid jäävad klastriteks. Selle z on kalibreeritud: sama kiirotsing käib kaheksa korda tulemustel, mis on segatud iga matši iga poole voorude vahel (poole määr igas matšis säilib), ja nende null-z-de hajuvus üle standardnormaaljaotuse – tingimuste arvu kaupa, keskelt (mediaan / 0,674) ja sabast (99. protsentiil / 2,576), suurem, mitte kunagi alla 1 – jagab tõelised enne nende p-d ja valeavastuste määra (empiiriline nulljaotus, Efron 2004). Sügavamad rühmad saavad suurema skaala: kiir hoiab alles täpsustusi rühmadest, mis on valitud nende suure z järgi. Niši alus on tema enda oodatav väärtus, tõus protsendipunktid selle kohal, ja see järjestatakse tõusu ja voorude arvu ruutjuure korrutise järgi, tõendite ja voltide toel (`wracc` on tugi korda tõus). See kannab matše, kus see kõige rohkem ilmnes (`matchIds`), ja mõnda nende vooru (`rounds`, `[match, round]`) süvitsi minekuks.
+
 #### Mõttes muutused praktilise olulisusega {#meta-shifts-with-practical-significance}
 
 Segakuupäevadel helistas binoomtest peaaegu iga muutust oluliseks. `meta` testib nüüd klastrikindlalt (iga matši elud on klaster), jätab alles kasutuse nihke ainult siis, kui see on vähemalt 2 punkti ja 25%, K/D nihke 1,3 korda, kuupäevade kvartalid kasvavad samas suunas (Kendalli tau vähemalt 0,5) ja mitme kaardi sõiduki puhul sama suund enamikul neist. See jätab testikomplektil, kus tavaline test märkis peaaegu kõik, vaid mõned nihked.
@@ -186,3 +208,4 @@ Segakuupäevadel helistas binoomtest peaaegu iga muutust oluliseks. `meta` testi
 #### Kontrollid {#checks}
 
 `scan.test.ts` istutab hajusa ala (1,6 korda surmamäär ringil 22 lahtrit, igas lahtris nõrk), koridori, kõrgusvööndi ja ainult faasi klastri 240 sünteetilises üledispersioonis matšis – kõik leitakse, hajus on varjatud – ning käivitab kaheksa nullkomplekti 60 matšiga: ükski koht. `niche.test.ts` leiab istutatud sõiduk x kaart x pool rühma ja mitte midagi viies nulltabelis.
+`outcome.test.ts` kontrollib versiooni 2 kokkuvõtet (võidetud voorud poole, üksuse, mängija ja relva kaupa, `pw`, üksuste voorud); istutab raja, mille pool võidab 70% oma voorudest võrreldes 35%-ga (igal matšil oma tasakaal) – leitakse – ja käivitab 20 nullkomplekti 50 matšiga, kus rajad ei ütle midagi: ükski võiduprotsendi koht; istutab ühele kaardile AWP, mis võidab oma poole voore 30 protsendipunkti rohkem – leitakse koos matšide ja voorudega – ja käivitab 30 nullkomplekti 80 matšiga, kus igal matšil on oma tasakaal ja üks pool on ühel kaardil tugevam: ükski niš.

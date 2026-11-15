@@ -4,9 +4,9 @@ parent: "Filtrid ja tööriistad"
 nav_order: 1
 lang: "et"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtrid
@@ -41,6 +41,10 @@ Loetletakse ainult esinevad liigid. Väärtuste veerud (`cost_*`, `earn_*`, `net
 Kategoorialoend, millel on rohkem kui 12 väärtust, saab otsingukasti (*Otsi n väärtust*) ja nupu **Ainult need**, mis lubab täpselt sobivad väärtused.
 
 Millised veerud on filtreeritavad, otsustatakse laadimisel, sest need tuleb siis lugeda. Kui alles hoitud veerge pole, ütleb paneel seda ja suunab valikule *Hoia filtreerimiseks*.
+
+## Rainbow Six Siege'i kiirfiltrid {#rainbow-six-siege-quick-filters}
+
+Kui Rainbow Six Siege'i matš on laaditud, algab paneel nuppudega, mis seavad filtrid ühe klõpsuga: **Kuuliaugud ja jäljed** (tasemele jäänud jäljed), **Laskjaga jäljed** ja **Relvaklassiga jäljed** (need, mille laskja või laskja samal hetkel tehtud tapmise relv on välja arvutatud; jaga või filtreeri neid edasi veeru `byOperator` või `byItemClass` järgi), **Paigaldus- ja demineerimiskatsed**, **Katkenud katsed** (alustatud, lõpetamata, seal, kus mängija peatus) ja **Tugevdused** (kus sein või luuk tugevdati, kaitsja juures, kelle teisendaja järeldab). Iga nupp asendab sündmuse veeru filtri ja jätab ülejäänud alles; **Tühjenda kõik filtrid** võtab selle tagasi. Veerud on kirjeldatud teisendaja dokumentatsioonis.
 
 ## Arvveerud (vahemik) {#numeric-columns-range}
 

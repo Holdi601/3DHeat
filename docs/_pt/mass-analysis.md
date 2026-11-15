@@ -3,9 +3,9 @@ title: "Análise em massa"
 nav_order: 8
 lang: "pt"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Análise em massa: milhares de partidas de uma vez
@@ -70,16 +70,26 @@ Escolha uma pasta (ou ficheiros; **Adicionar pasta...** junta outra). A janela t
 | Jogadores | jogadores distintos, partidas por jogador, jogadores por partida, os jogadores mais frequentes |
 | Lados | cada lado de cada mapa: partidas ganhas contra uma divisão igual |
 | Combate aproximado | dados de rondas: duelos de abertura por lado e a sua conversão, trocas, quem espreita contra quem defende, cruzamentos, entradas ofuscadas, pontaria, plantações, vantagem de homens e, **Por mapa**, os lugares que matam os jogadores que lá entram - cada um como uma parte com o seu intervalo de Wilson, a partir das contagens `cqb` dos resumos ([Combate aproximado e rondas](close-quarters.md)) |
+| Superfícies R6 | as marcas de Rainbow Six Siege no nível (buracos de bala e afins) por superfície do nível: marcas, por ronda do mapa, a sala, a parte cujo atirador foi determinado; um clique abre os tipos de marca, os operadores e as classes de arma dos atiradores, e onde na superfície estão as marcas (um pequeno mapa de calor de células de um quarto de metro); uma superfície mantém o seu id entre as partidas de uma versão do mapa. A partir das contagens `marks` dos resumos |
 | Mapa | a grelha somada de um mapa: presença, abates, mortes, K/D, qualquer evento, fluxo, e **quente em quantas partidas** (estabilidade); por equipa, a 1, 2, 4 ou 8 vezes a célula |
-| Lugares | lugares que se destacam nos números mas não no mapa de calor (uma grande área movimentada no conjunto, corredores, faixas de altura); **Encontrar lugares** |
-| Nichos | grupos que vão consideravelmente melhor ou pior do que os outros (um veículo num mapa, um setor numa altura); **Encontrar nichos** |
-| Insights | os detetores em massa e os detetores de mapa (abaixo); **Copiar relatório (JSON)** dá o JSON que um modelo de linguagem lê |
+| Lugares | lugares que se destacam nos números mas não no mapa de calor (uma grande área movimentada no conjunto, corredores, faixas de altura), e lugares cujos ocupantes ganham mais ou menos das suas rondas; **Encontrar lugares** |
+| Nichos | grupos que vão consideravelmente melhor ou pior do que os outros (um veículo num mapa, um setor numa altura), e grupos de rondas ganhas além do que o seu lado ganhou nas mesmas partidas; **Encontrar nichos** |
+| Descobertas | os detetores em massa e os detetores de mapa (abaixo); **Copiar relatório (JSON)** dá o JSON que um modelo de linguagem lê |
 
 ## Insights sobre muitas partidas {#insights-over-many-matches}
 
 O separador **Lugares** encontra lugares que se destacam nos números mas não no mapa de calor - uma grande área movimentada no conjunto, um corredor, uma faixa de altura, um lugar movimentado só numa parte da partida -, marca como **ocultos** os que o mapa de calor simples não mostra, e desenha o seu contorno na vista 3D; **Carregar** voa até lá com as partidas que tinha. O separador **Nichos** encontra grupos (um veículo num mapa e lado, um setor numa altura) que vão consideravelmente melhor ou pior do que os outros; clique num para ver os seus refinamentos.
 
-O separador **Insights** encontra, em todas as partidas, veículos que trocam ou ganham melhor ou pior do que os outros, lugares quentes numa parte estável das partidas, lados que ganham mais do que uma divisão igual, veículos cujo uso muda ao longo das datas, e partes da partida que têm mais abates do que uma distribuição igual. Cada achado traz as suas contagens, efeito, intervalo e uma taxa de falsas descobertas (mantida em 5%), e um clique carrega as suas partidas. Pormenores: [Para programadores](#for-developers).
+### Quem ganhou {#who-won}
+
+Onde as partidas dizem quem ganhou cada ronda (a [coluna de resultado](data-formats.md#outcome-columns) `won`), o resultado é um alvo próprio:
+
+- **Lugares: taxa de vitória.** Para cada lado, a parte das suas rondas num lugar que ganhou, contra a parte que ganhou em qualquer sítio na mesma partida - assim o equilíbrio do mapa, o do lado e o da própria partida são a base, e só se destacam os lugares cujos ocupantes ganham mais (ou menos) das suas rondas. Um exemplo inventado: *«Dust: o lado T ganha mais das suas rondas quando está aqui: 61% de 412 ganhas, contra 49% esperado pela sua própria taxa nas mesmas partidas (odds 1,6x; mantido em 31/48 partidas).»* A mesma taxa de falsas descobertas e as mesmas verificações de estabilidade que qualquer lugar; **Carregar** carrega as partidas em que foi mantido, mostrando as posições desse lado.
+- **Nichos: vitória da ronda.** A tabela **Rondas** guarda a ronda de cada vida: o mapa, o lado, a parte da partida (rondas 1-4, 5-8, ...), o veículo (um operador, um agente), a arma que mais usou, o lugar que manteve mais tempo, a compra (eco, force, full) e se o seu lado fez o primeiro abate. Um grupo é avaliado face ao que o seu lado ganhou nas mesmas partidas, por isso *T em Dust com uma AWP* só é um nicho quando essas rondas foram ganhas mais vezes do que as outras rondas de T nessas partidas. Um exemplo inventado: *«m1 · T · AWP: ganha 80% de 320 rondas, contra 62% esperado dos mesmos lados nas mesmas partidas (odds 2,3x; 40 partidas).»* Ordenados pelo ganho vezes o suporte; **Carregar** carrega as partidas cujas rondas mais o mostram.
+
+Ambos precisam de resumos da versão 2 (ver [Obter os resumos](#getting-the-summaries)): os mais antigos são calculados de novo.
+
+O separador **Descobertas** encontra, em todas as partidas, veículos que trocam ou ganham melhor ou pior do que os outros, lugares quentes numa parte estável das partidas, lados que ganham mais do que uma divisão igual, veículos cujo uso muda ao longo das datas, e partes da partida que têm mais abates do que uma distribuição igual. Cada achado traz as suas contagens, efeito, intervalo e uma taxa de falsas descobertas (mantida em 5%), e um clique carrega as suas partidas. Pormenores: [Para programadores](#for-developers).
 
 ## Escala {#scale}
 
@@ -125,6 +135,12 @@ JSON simples (`src/mass/types.ts`), cerca de 5-30 KB comprimido por partida:
   por tipo canónico, abates pela classe do alvo, vitórias, dinheiro;
 - por jogador (pelo id de utilizador, senão pelo nome): equipa, vidas, presença, abates, mortes,
   acertos, lançamentos, vitórias, veículos; por arma: eventos por tipo;
+- com uma coluna de resultado (versão 2): rondas ganhas e jogadas por equipa, veículo
+  (`rw`, uma vida e uma ronda cada), jogador e arma (as rondas em que um lado a usou);
+  a ronda de cada vida (`outcome.u`: ronda, lado, veículo, a arma mais usada, o lugar
+  mantido mais tempo, a compra, ganha) e o número, o vencedor e o lado do primeiro abate
+  de cada ronda (`outcome.r`);
+
 - as colunas da economia (`cost_*`, `earn_*`) e os seus totais;
 - fases: eventos por tipo em 20 intervalos da duração da partida e por minuto;
 - comportamento: as medidas de comportamento coletivo da partida (alinhamento, condução em rota,
@@ -157,6 +173,9 @@ tamanho e forma, e não só para imagens de calor:
   `floor`/`storey`/`deck` organiza as faixas pelos seus pisos. `y` é a altura média de cada
   célula, `y0` a mais baixa (o seu piso, para altura acima dele).
 - **Eventos** como tuplos `[célula, tipo, equipa, classe, faixa, contagem]`.
+- **Rondas por resultado** (versão 2, com uma coluna de resultado e duas rondas ou
+  mais): `pw` como `[cell, team, rounds won, rounds lost]` - as rondas em que cada lado
+  passou um segundo ou mais na célula, pelo seu resultado na ronda.
 - **Fatias de tempo** a um nível grosseiro (8 células por lado), por minuto desde o início
   da partida: `[cx, cz, minuto, tipo, valor]`, segundos de presença como tipo
   `GRID_KINDS.length`; as fases da partida são minutos sobre a duração.
@@ -179,11 +198,16 @@ grelha de no máximo 64 células por lado (16 para a varredura espaço-tempo), n
 - **Medidas.** A taxa de um evento por segundo de presença - abates, mortes,
   acertos, lançamentos, capturas, para todas as unidades, por classe (as 4 com mais
   eventos), por faixa de altura - e a parte de abates em abates e mortes (todos, por lado,
-  por faixa). Quais as classes e os lados vêm dos cabeçalhos (`planOf`).
+  por faixa), e a **taxa de vitória** de cada lado: as suas rondas na célula ganhas contra
+  perdidas (`pw`), onde 8 partidas do mapa ou mais contam rondas por resultado.
+  Quais as classes e os lados vêm dos cabeçalhos (`planOf`).
 - **Expectativa por partida.** A taxa de cada partida espalhada pela sua própria presença
   numa célula é a expectativa da célula (uma varredura de Kulldorff ajustada à covariável,
   estratificada por partida): algumas partidas sangrentas ou um servidor muito movimentado
-  não fazem lugar nenhum.
+  não fazem lugar nenhum. Para a taxa de vitória, a expectativa é a própria parte de rondas ganhas do lado
+  nessa partida, por isso o equilíbrio do mapa e o do lado nunca são um lugar. Uma ronda
+  em várias células de uma região conta em cada uma; a dispersão medida ao tamanho da
+  região tem isso em conta.
 - **Dispersão.** As partidas discordam muito para lá de Poisson. Os resíduos de cada partida
   são somados em blocos de 1, 2, 4, 8, 16 células; a dispersão de cada tamanho de bloco
   (resíduos ao quadrado sobre a variância nula, agregada, deixando de fora os 5% piores blocos)
@@ -238,6 +262,23 @@ cinco partições a concordar, e não um refinamento que só repete o seu pai. O
 um clique mostra cada refinamento de uma condição do grupo (o explorador), **Carregar** carrega as suas
 partidas. Os equipamentos ainda não estão nos resumos.
 
+A quarta tabela, **rondas** (`roundsTable`), tem como alvo o resultado da ronda: uma linha
+por ronda de uma vida - mapa, lado, parte da partida (rondas 1-4, 5-8, ...), veículo, a arma
+mais usada, o lugar mantido mais tempo, compra, primeiro abate ou primeira morte - avaliada
+face à taxa de vitória do seu próprio lado na sua própria partida (a expectativa estratificada
+de Mantel-Haenszel: o resíduo é `won - e`, `e` a parte do lado na partida), por isso um nicho
+nunca é o equilíbrio do mapa ou do lado. As partidas continuam a ser os aglomerados. O seu z é
+calibrado: a mesma pesquisa em feixe corre oito vezes sobre os resultados baralhados entre as
+rondas de cada lado de cada partida (mantendo a taxa do lado em cada partida), e a dispersão
+desses z nulos para lá de uma normal padrão - por número de condições, a partir do meio
+(mediana / 0,674) e da cauda (percentil 99 / 2,576), o maior, nunca abaixo de 1 - divide os
+reais antes do seu p e da taxa de falsas descobertas (um nulo empírico, Efron 2004). Os grupos
+mais profundos recebem a escala maior: o feixe guarda refinamentos de grupos escolhidos pelo seu
+z grande. A base de um nicho é a sua própria expectativa, o seu ganho os pontos acima dela, e é
+ordenado pelo ganho vezes a raiz quadrada das suas rondas, sustentado pelas provas e pelas
+partições (`wracc` é o suporte vezes o ganho). Leva as partidas onde mais se mostrou
+(`matchIds`) e algumas das suas rondas (`rounds`, `[match, round]`) para o detalhe.
+
 #### As mudanças de meta com significado prático {#meta-shifts-with-practical-significance}
 
 Em datas misturadas, a binomial sobre as vidas assinalava quase todas as mudanças como significativas. `meta` testa agora de forma robusta ao agrupamento (cada partida um aglomerado de vidas), mantém uma mudança de uso só de 2 pontos e 25% pelo menos, uma mudança de K/D de 1,3 vezes, os trimestres das datas a seguir a mesma tendência (tau de Kendall de pelo menos 0,5) e, para um veículo em vários mapas, a mesma direção na maioria deles. Isso deixa só algumas mudanças num conjunto de teste em que o teste simples assinalava quase todas.
@@ -255,4 +296,10 @@ e vias de aproximação: os seus tipos são `place.*` e `niche.*`.
 de 22 células, ténue em cada célula), um corredor, uma faixa de altura e um aglomerado só de fase em
 240 partidas sintéticas com dispersão - todos encontrados, o difuso oculto - e corre oito conjuntos
 nulos de 60 partidas: nenhum lugar. `niche.test.ts` encontra um grupo planeado veículo x mapa x lado
-e nada em cinco tabelas nulas.
+e nada em cinco tabelas nulas. `outcome.test.ts` verifica o resumo da versão 2 (rondas
+ganhas por lado, unidade, jogador e arma, `pw`, as rondas por unidade); planta uma faixa cujo
+lado ganha 70% das suas rondas contra 35% (cada partida com o seu próprio equilíbrio) -
+encontrada - e corre 20 conjuntos nulos de 50 partidas em que as faixas não dizem nada: nenhum
+lugar de taxa de vitória; planta uma AWP num mapa que faz ganhar as rondas do seu lado 30 pontos
+mais - encontrada, com as suas partidas e rondas - e corre 30 conjuntos nulos de 80 partidas,
+cada partida com o seu próprio equilíbrio e um lado mais forte num mapa: nenhum nicho.

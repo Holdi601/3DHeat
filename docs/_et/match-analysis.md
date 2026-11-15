@@ -3,9 +3,9 @@ title: "Matšianalüüs (CS2)"
 nav_order: 10
 lang: "et"
 source: "match-analysis.md"
-source_hash: "270f28c0f42b"
+source_hash: "0b9ab06a759f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Matšianalüüs (Counter-Strike 2)
@@ -154,6 +154,16 @@ abilise kahju ja mitme tapmise raundid ("2×3k"). **Klõpsa mängijal**, et näh
 - **Mängijad**: viisteist parimat tapmiste miinus surmade järgi, kokku kõigi nende matšide peale (sobitatud Steam ID järgi): matšid, K-D, ADR ja KAST kaalutud mängitud raundidega, HS% kaalutud tapmistega, avaduellid. **Klõpsa mängijal**, et näha tema tapmisi ja surmi kõigis matšides soojuskaardil.
 
 Nuppude Näita soojuskaardil kõigi laaditud matšide jaoks on selle all.
+
+## Mis otsustas voorud {#what-decided-the-rounds}
+
+Vahekaart loendab; [Tähelepanekud](insights.md#who-won-what-decided-the-rounds) selgitab. Kui matši soojuskaardi tabel on laaditud (sellel on veerg `won`), jagab **Tähelepanekud** iga poole voorud selle järgi, mis neis juhtus – avaduell, ostud, kättemaksetud esimene surm, pommi paigaldus, varustus, varajane esimene kontakt, iga hoitud koht ja iga esimese 25 s jooksul saavutatud koht – ning ütleb, mis tegi vahe, koos võiduprotsentide vahe, selle 95% vahemiku ja q-ga, ning *vähe voore*, kui harus on alla kaheksa vooru. See nimetab pöördepunktid (tapmised ja paigaldused, mis muutsid võidutõenäosust kõige rohkem) ning mängijad ja kohad, kes lisasid või maksid kõige rohkem, ning **Kokkuvõte** ja **Kommentaator** alustavad nendega. Väljamõeldud näide:
+
+> T võitis 79% neist 19 voorust, kus ta hoidis Midi, võrreldes 24%-ga 21 voorust ilma selleta (55 protsendipunkti, 95% 26 kuni 74) – q 0,004.
+>
+> Pöördepunktid: voor 17 ajal 48 s, CT tapmine B site'is muutis tema võimalust 31%-lt 58%-le, ja ta võitis vooru.
+
+Ühes matšis on alla 30 vooru, seega tulevad selle võidutõenäosused fikseeritud priormudelist, mis arvestab elus olevaid mehi, pommi ja kella; tekst ütleb seda. Paljude matšide kohta küsib samu küsimusi [massanalüüs](mass-analysis.md#who-won).
 
 ## Näita soojuskaardil {#show-in-the-heatmap}
 

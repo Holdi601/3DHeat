@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "nl"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Wedstrijdreplay
@@ -90,6 +90,8 @@ Het gedeelte **Tactische weergave** tekent, voor geen enkele eenheid, de geselec
 ## Doelen {#objectives}
 
 Als een match met zijn doelen komt, tekent het gedeelte **Doelen** ze op het niveau: veroveringszones (met eigenaar en voortgang van de verovering), spawns, vliegvelden, gebieden en bommendoelen, elke laag schakelbaar, met labels. Ze zijn door de grond heen zichtbaar. Met meerdere geladen speltypes filtert **Modus** de matches op speltype. Doelen komen uit het matchbestand van een converter naast de opname of in een [`.3dheat`](container.md)-container.
+
+Rainbow Six Siege-wedstrijden brengen hun bomlocaties mee: de twee kamers van elke locatie worden als omtrekken met hun namen op hun vloer getekend, afgeleid uit waar de spelers stonden terwijl het spel de kamer noemde; een locatie van de kaart die in de wedstrijd niet gespeeld werd, komt als cirkel uit de locatietabel van de converter. In de replay licht de locatie van de ronde bij de afspeelkop amber op, de andere blijven grijs. Ze horen bij de laag met veroveringszones.
 
 ## Labels en statistieken {#labels-and-statistics}
 

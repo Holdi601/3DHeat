@@ -4,9 +4,9 @@ parent: "Filtri i alati"
 nav_order: 1
 lang: "hr"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtri
@@ -41,6 +41,10 @@ Navode se samo vrste koje se pojavljuju. Stupci vrijednosti (`cost_*`, `earn_*`,
 Popis kategorija s više od 12 vrijednosti dobiva polje za pretragu (*Pretraži n vrijednosti*) i gumb **Samo ovi** koji dopušta točno one vrijednosti koje odgovaraju.
 
 Koji se stupci mogu filtrirati odlučuje se pri učitavanju, jer se tada moraju čitati. Bez i jednog zadržanog stupca panel to kaže i upućuje na *Zadrži za filtriranje*.
+
+## Brzi filtri za Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Kad je učitana utakmica Rainbow Six Siege, ploča počinje gumbima koji jednim klikom postavljaju filtre: **Rupe od metaka i tragovi** (tragovi ostavljeni na razini), **Tragovi sa strijelcem** i **Tragovi s klasom oružja** (oni za koje je utvrđen strijelac ili oružje iz strijelčevog ubojstva u istom trenutku; dalje ih podijelite ili filtrirajte po `byOperator` ili `byItemClass`), **Pokušaji postavljanja i deaktivacije**, **Prekinuti pokušaji** (započeti, nedovršeni, ondje gdje je igrač stao) i **Ojačanja** (gdje je zid ili otvor ojačan, kod branitelja kojeg zaključuje pretvarač). Svaki gumb zamjenjuje filtar na stupcu događaja i zadržava ostale; **Očisti sve filtre** to poništava. Stupci su opisani u dokumentaciji pretvarača.
 
 ## Brojčani stupci (raspon) {#numeric-columns-range}
 

@@ -3,9 +3,9 @@ title: "Toplu analiz"
 nav_order: 8
 lang: "tr"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Toplu analiz: aynı anda binlerce maç
@@ -60,14 +60,24 @@ Bir klasör seçin (ya da dosyalar; **Klasör ekle...** bir başkasını katar).
 | Oyuncular | ayrı oyuncular, oyuncu başına maç, maç başına oyuncu, en sık oyuncular |
 | Taraflar | her haritanın her tarafı: eşit bir paylaşımın üzerinde kazanılan maçlar |
 | Yakın çatışma | tur verisi: tarafa göre açılış düellolar ve bunların dönüşümü, takaslar, bekleyen ile tutan, çapraz ateşler, kör edilmiş girişler, nişan, kurulumlar, adam avantajı ve **Haritaya göre**, oraya giren oyuncuları öldüren yerler — her biri bir pay olarak Wilson aralığıyla, özetlerin `cqb` sayılarından ([Yakın çatışma ve turlar](close-quarters.md)) |
+| R6 yüzeyleri | Rainbow Six Siege'in seviyedeki izleri (kurşun delikleri ve benzerleri) seviye yüzeyi başına: izler, haritanın turu başına, oda, atıcısı belirlenmiş olanların payı; bir tıklama iz türlerini, atıcıların operatörlerini ve silah sınıflarını ve izlerin yüzeyde nerede olduğunu açar (çeyrek metrelik hücrelerden küçük bir ısı); bir yüzey, bir harita sürümünün maçları boyunca kimliğini korur. Özetlerin `marks` sayılarından |
 | Harita | bir haritanın toplanmış ızgarası: varlık, öldürmeler, ölümler, K/D, her olay, akış ve **kaç maçta sıcak** (kararlılık); takıma göre, hücrenin 1, 2, 4 ya da 8 katında |
-| Yerler | sayılarda öne çıkan ama ısıda öne çıkmayan yerler (geniş bir alan bütün olarak yoğun, koridorlar, yükseklik bantları); **Yer bul** |
-| Nişler | geri kalandan belirgin şekilde daha iyi ya da kötü yapan gruplar (bir haritada bir araç, bir yükseklikte bir sektör); **Niş bul** |
+| Yerler | sayılarda öne çıkan ama ısıda öne çıkmayan yerler (geniş bir alan bütün olarak yoğun, koridorlar, yükseklik bantları) ve tutanların turlarını daha çok ya da daha az kazandığı yerler; **Yer bul** |
+| Nişler | geri kalandan belirgin şekilde daha iyi ya da kötü yapan gruplar (bir haritada bir araç, bir yükseklikte bir sektör) ve taraflarının aynı maçlarda kazandığının ötesinde kazanılan tur grupları; **Niş bul** |
 | İçgörüler | toplu dedektörler ve harita dedektörleri (aşağıda); **Raporu kopyala (JSON)** bir dil modelinin okuduğu JSON'u verir |
 
 ## Birçok maç üzerinde içgörüler {#insights-over-many-matches}
 
 **Yerler** sekmesi, sayılarda öne çıkan ama ısıda çıkmayan yerleri bulur — bütün olarak yoğun geniş bir alan, bir koridor, bir yükseklik bandı, maçın yalnızca bir bölümünde yoğun bir yer — düz ısının göstermediklerini **gizli** olarak işaretler ve 3B görünümde ana hatlarını çizer; **Yükle** oraya, tuttuğu maçlarla birlikte uçar. **Nişler** sekmesi geri kalandan belirgin şekilde daha iyi ya da kötü yapan grupları (bir haritada ve tarafta bir araç, bir yükseklikte bir sektör) bulur; birine tıklayarak inceliklerini görün.
+
+### Kim kazandı {#who-won}
+
+Maçlar her turu kimin kazandığını söylüyorsa (`won` [sonuç sütunu](data-formats.md#outcome-columns)), sonuç kendi başına bir hedef olur:
+
+- **Yerler: kazanma oranı.** Her taraf için, bir yerdeki turlarından kazandığı pay, aynı maçta herhangi bir yerde kazandığı paya karşı — böylece haritanın, tarafın ve maçın kendi dengesi temel olur ve yalnızca tutanların turlarını daha çok (ya da daha az) kazandığı yerler öne çıkar. Uydurma bir örnek: *"Dust: T tarafı buradayken turlarının daha çoğunu kazanıyor: 412 turun %61'i kazanıldı, aynı maçlardaki kendi oranından beklenen %49'a karşı (oran 1,6x; 31/48 maçta tutuldu)."* Her yerdeki aynı yanlış keşif oranı ve kararlılık denetimleri; **Yükle** tutulduğu maçları yükler ve o tarafın konumlarını gösterir.
+- **Nişler: tur kazanma.** **Turlar** tablosu her canın turunu tutar: harita, taraf, maçın bölümü (1-4, 5-8, ... turlar), araç (bir operatör, bir ajan), en çok kullandığı silah, en uzun tuttuğu yer, satın alma (eco, force, full) ve tarafının ilk öldürmeyi yapıp yapmadığı. Bir grup, tarafının aynı maçlarda kazandığına karşı değerlendirilir; bu yüzden *Dust'ta AWP ile T* ancak bu turlar o maçlardaki T'nin diğer turlarından daha sık kazanıldıysa bir niştir. Uydurma bir örnek: *"m1 · T · AWP: 320 turun %80'ini kazanıyor, aynı maçlarda aynı taraflardan beklenen %62'ye karşı (oran 2,3x; 40 maç)."* Artış çarpı destek ile sıralanır; **Yükle** turları bunu en çok gösteren maçları yükler.
+
+İkisi de sürüm 2 özetlerine ihtiyaç duyar (bkz. [Özetleri almak](#getting-the-summaries)): eskileri yeniden hesaplanır.
 
 **İçgörüler** sekmesi, tüm maçlar üzerinden, geri kalana göre daha iyi ya da kötü takas eden ya da kazanan araçları, sabit bir pay maçta sıcak olan yerleri, eşit paylaşımın üzerinde kazanan tarafları, kullanımı tarihlerle değişen araçları ve eşit dağılımdan daha fazla öldürme tutan maç bölümlerini bulur. Her bulgu sayılarını, etkisini, aralığını ve yanlış keşif oranını (%5'te tutulan) taşır; tıklamak maçlarını yükler. Ayrıntılar: [Geliştiriciler için](#for-developers).
 
@@ -108,6 +118,7 @@ Düz JSON (`src/mass/types.ts`), maç başına sıkıştırılmış yaklaşık 5
 - maç: oyun, harita, mod, görev, başlangıç, uzunluk, satırlar, canlar, oyuncular, YZ, takımlar (canlar, oyuncular, varlık, öldürmeler, ölümler, kazanılan, para), kazanan;
 - araç ve takım başına: sınıf, kademe, canlar, oyuncu canları, varlık, kanonik türe göre olaylar, hedefin sınıfına göre öldürmeler, kazanılanlar, para;
 - oyuncu başına (kullanıcı kimliğine göre, yoksa ada göre): takım, canlar, varlık, öldürmeler, ölümler, isabetler, fırlatmalar, kazanılan, araçlar; silah başına: türe göre olaylar;
+- bir sonuç sütunuyla (sürüm 2): takım, araç (`rw`, her biri bir can ve bir tur), oyuncu ve silah (bir tarafın onu kullandığı turlar) başına kazanılan ve oynanan turlar; her canın turu (`outcome.u`: tur, taraf, araç, en çok kullandığı silah, en uzun tuttuğu yer, satın alma, kazandı) ve her turun numarası, kazananı ve ilk öldürmesinin tarafı (`outcome.r`);
 - ekonominin sütunları (`cost_*`, `earn_*`) ve toplamları;
 - aşamalar: maç uzunluğunun 20 bölmesinde ve dakikaya göre türe göre olaylar;
 - davranış: maçın toplu davranış ölçüleri (hizalanma, rota sürüklemesi, şeritler, kalabalıklaşma, liderler, geride kalanlar, kırılma noktası, kayıplardan sonra risk, seriler, satın alma uyumu, bastırma), her birinin kendi boş modeli, p ve q ile — bkz. [Toplu davranış](collective-behaviour.md);
@@ -123,6 +134,7 @@ Mekansal kısım, yalnızca ısı resimleri için değil, her boyut ve şekilde 
 - **Her sayının yanında maruziyet.** Hücre başına varlık saniyeleri, takım başına (`pt`), araç sınıfı başına (`pc`) ve yükseklik bandı başına (`ph`), böylece bir bölgenin oranı, beklentisi ve oranı her alt grup için hesaplanabilir.
 - **Yükseklik.** Maç tabanının (yüksekliğin %1'lik dilimi) üzerindeki bantlar: 3 m'nin altı, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, üstü; `floor`/`storey`/`deck` sütunu olan bir dosya bunun yerine katlarına göre bantlanır. `y` her hücrenin ortalama yüksekliği, `y0` en düşüğüdür (kendi katı, üzerindeki yükseklik için).
 - **Olaylar** `[hücre, tür, takım, sınıf, bant, sayı]` demetleri olarak.
+- **Sonuca göre turlar** (sürüm 2, bir sonuç sütunu ve iki ya da daha çok turla): `[cell, team, rounds won, rounds lost]` olarak `pw` — her tarafın hücrede bir saniye ya da daha uzun geçirdiği turlar, turdaki sonucuna göre.
 - **Zaman dilimleri** kaba bir seviyede (bir kenarda 8 hücre), maç başlangıcından itibaren dakikaya göre: `[cx, cz, dakika, tür, değer]`, varlık saniyeleri `GRID_KINDS.length` türü olarak; maç aşamaları uzunluk üzerinde dakikalardır.
 - Seyrek, sayılar tam sayı, saniyeler onda bire: olanların sınırladığı kadar.
 
@@ -134,8 +146,8 @@ B Aşaması, sayılarda göze çarpmadan öne çıkanı arar: bütünüyle yoğu
 
 Her haritanın maçları iki kez okunur, maç maç; bellek, en fazla 64 hücrelik bir ızgaranın (uzay-zaman taraması için 16) toplamlarını tutar, maçların kendisini asla değil.
 
-- **Ölçüler.** Bir olayın varlığın saniyesi başına oranı — öldürmeler, ölümler, isabetler, fırlatmalar, ele geçirmeler, tüm birimler için, sınıf başına (en çok olaylı 4 tanesi), yükseklik bandı başına — ve öldürmeler ile ölümlerdeki öldürme payı (hepsi, taraf başına, bant başına). Hangi sınıfların ve tarafların geldiği başlıklardan (`planOf`).
-- **Maç başına beklenti.** Her maçın kendi oranı, kendi varlığı üzerinden bir hücredeki beklentidir (maça göre tabakalanmış, kovaryatla düzeltilmiş bir Kulldorff taraması): birkaç kanlı maç ya da bir yoğun sunucu yer yaratmaz.
+- **Ölçüler.** Bir olayın varlığın saniyesi başına oranı — öldürmeler, ölümler, isabetler, fırlatmalar, ele geçirmeler, tüm birimler için, sınıf başına (en çok olaylı 4 tanesi), yükseklik bandı başına — ve öldürmeler ile ölümlerdeki öldürme payı (hepsi, taraf başına, bant başına) ve her tarafın **kazanma oranı**: hücredeki turlarının kazanılana karşı kaybedileni (`pw`); haritanın 8 ya da daha çok maçı olduğunda turlar sonuca göre sayılır. Hangi sınıfların ve tarafların geldiği başlıklardan (`planOf`).
+- **Maç başına beklenti.** Her maçın kendi oranı, kendi varlığı üzerinden bir hücredeki beklentidir (maça göre tabakalanmış, kovaryatla düzeltilmiş bir Kulldorff taraması): birkaç kanlı maç ya da bir yoğun sunucu yer yaratmaz. Kazanma oranı için beklenti, tarafın o maçta kazandığı turların kendi payıdır; böylece haritanın ve tarafın dengesi hiçbir zaman bir yer olmaz. Bir bölgenin birkaç hücresindeki bir tur her birinde sayılır; bölgenin boyutunda ölçülen dağılım bunu taşır.
 - **Aşırı dağılım.** Maçlar Poisson'un çok ötesinde ayrışır. Her maçın artıkları 1, 2, 4, 8, 16 hücrelik bloklarda toplanır; her blok boyutunun dağılımı (artıkların karesi bölü boş varyans, birleştirilmiş, en kötü %5 blok dışarıda bırakılmış) o boyuttaki bir bölgenin her testini ölçekler: bir kuasi-olabilirlik oranı, oranlar için Poisson, paylar için iki terimli.
 - **Bölgeler.** 0,75 ila 18 hücre arası daireler; altı açıda, genişliklerinin 3 ve 6 katı uzunlukta, 3 ila 18 hücre arası elipsler (koridorlar; eksen içgörünün `place.path`'idir); en güçlü yerel Getis-Ord Gi* hücrelerinden hücre hücre büyütülen bölgeler, bölgenin z'si büyüdükçe (düzensiz şekiller) — maçların bir yarısında büyütülüp diğer yarısında test edilir, böylece büyütmenin serbestliği sahte yer maliyeti getirmez; her yükseklik bandı, haritanın diğer bantlarına karşı tüm harita üzerinden (küme sağlam); uzay-zaman silindirleri: uzunluğun beşte birinde ya da beşte ikisinde bir daire, maçın kendi olaylarının yer ve zamana göre kendi yayılımına karşı (uzay-zaman permütasyon taraması).
 - **Test.** p kuasi-olabilirlikten; her haritada denenen her bölge üzerinden Benjamini-Hochberg (üç haritada 700.000 yaygındır), %5'te. Geçen şey budanır (güçlü bir bölgenin içinde çoğunlukla kalan bölge aynısını söyler), **kararlılığı** için yeniden okunur — onu gören maçlar, tuttuğu maçlar, beş katlamada maçların yönü — ve maçların kendi gösterdiği varyansta bir kez daha test edilir (küme sağlam, maçlar küme olarak, asla Poisson altında değil), yine BH. Bir taban üzerindeki sessiz yerler (haritanın doğuşlarının, kalkışlarının ve inişlerinin %2'si ya da daha fazlası) dışarıda bırakılır.
@@ -148,6 +160,8 @@ Her haritanın maçları iki kez okunur, maç maç; bellek, en fazla 64 hücreli
 
 Üç tablo üzerinde ışın araması (genişlik 24, derinlik 3): **canlar** (oyuncuların canları: oyun, harita, mod, sınıf, araç, taraf, kademe, tarihlerin çeyreği, maç uzunluklarının üçte biri; K/D, kazanma, bir canın ölümü, saatte öldürme, dakikada kazanç), **yerler** (haritaya, moda, tarihlere, haritanın 4 x 4 sektörüne, sınıfa, tarafa, bantlara göre öldürmeler ve ölümler) ve **aşamalar** (sektör ve maçın beşte biri: K/D, varlık saatinde ölümler). Bir grup bütüne karşı maçlar küme olarak test edilir (maç başına artıkların sandviç varyansı), etkisi 20 sonuçluk bir önceyle küçültülmüş bir odds ya da oran oranıdır; 8 maçta 30 sonuç gerekir, bir iyileştirme üst grubundan %10 daha güçlü olmalıdır, sonucun hiç ya da tamamen olmadığı gruplar (onlar için kaydedilmemiş) dışarıda bırakılır. Tutulanlar: değerlendirilen her grup üzerinden %5'in altında BH, en az 1,25 küçültülmüş oran (ya da 1/1,25), beş katlamadan dördünün uyumu, yalnızca üst grubunu tekrarlayan bir iyileştirme değil. **Nişler** sekmesi bunları listeler; bir tıklama grubun her tek koşullu iyileştirmesini gösterir (gezgin), **Yükle** maçlarını yükler. Donanımlar henüz özetlerde yok.
 
+Dördüncü tablo, **turlar** (`roundsTable`), hedef olarak turun sonucunu alır: bir canın turu başına bir satır — harita, taraf, maçın bölümü (1-4, 5-8, ... turlar), araç, en çok kullanılan silah, en uzun tutulan yer, satın alma, ilk öldürme ya da ilk ölüm — kendi maçında kendi tarafının kazanma oranına karşı değerlendirilir (Mantel-Haenszel'in tabakalı beklentisi: artık `won - e`, `e` tarafın maçtaki payı); böylece bir niş hiçbir zaman haritanın ya da tarafın dengesi olmaz. Kümeler maçlar olarak kalır. z'si kalibre edilir: aynı ışın araması, sonuçlar her maçın her tarafının turları arasında karıştırılarak (tarafın her maçtaki oranı korunur) sekiz kez çalışır ve bu boş z'lerin standart normalin ötesindeki yayılımı — koşul sayısı başına, ortadan (medyan / 0,674) ve kuyruktan (99. yüzdelik / 2,576), büyüğü, asla 1'in altında değil — gerçek olanları p'lerinden ve yanlış keşif oranından önce böler (ampirik boş, Efron 2004). Daha derin gruplar daha büyük ölçeği alır: ışın, büyük z'leri için seçilmiş grupların inceltmelerini tutar. Bir nişin tabanı kendi beklentisidir, artışı bunun üstündeki puanlardır ve artış çarpı turlarının karekökü ile sıralanır; kanıt ve katlarla desteklenir (`wracc` destek çarpı artıştır). En çok göründüğü maçları (`matchIds`) ve ayrıntıya inmek için bunların birkaç turunu (`rounds`, `[match, round]`) taşır.
+
 #### Eğilimler pratik anlamlılıkla {#meta-shifts-with-practical-significance}
 
 Karışık tarihlerde canlar üzerindeki iki terimli, neredeyse her değişikliği anlamlı buluyordu. `meta` şimdi küme sağlam test eder (her maçın canları bir küme), yalnızca 2 puan ve en az %25 kullanım kaymasını, 1,3 katı bir K/D kaymasını, tarihlerin çeyreklerinin aynı yönde eğilimini (Kendall'ın tau'su en az 0,5) ve birden çok haritadaki bir araç için çoğunda aynı yönü tutar. Düz testin neredeyse hepsini işaretlediği bir test kümesinde yalnızca birkaç kayma kalır.
@@ -158,4 +172,4 @@ Karışık tarihlerde canlar üzerindeki iki terimli, neredeyse her değişikli�
 
 #### Kontroller {#checks}
 
-`scan.test.ts`, 240 sentetik aşırı dağılımlı maçta, 22 hücrelik bir dairede 1,6 kat ölüm oranlı yayılmış bir alan (her hücrede silik), bir koridor, bir yükseklik bandı ve yalnızca bir aşamada bir küme yerleştirir — hepsi bulunur, yayılmış olan gizli — ve sekiz boş kümeyi, her biri 60 maçlık, çalıştırır: yer yok. `niche.test.ts`, yerleştirilmiş bir araç x harita x taraf grubunu bulur ve beş boş tabloda hiçbir şey bulmaz.
+`scan.test.ts`, 240 sentetik aşırı dağılımlı maçta, 22 hücrelik bir dairede 1,6 kat ölüm oranlı yayılmış bir alan (her hücrede silik), bir koridor, bir yükseklik bandı ve yalnızca bir aşamada bir küme yerleştirir — hepsi bulunur, yayılmış olan gizli — ve sekiz boş kümeyi, her biri 60 maçlık, çalıştırır: yer yok. `niche.test.ts`, yerleştirilmiş bir araç x harita x taraf grubunu bulur ve beş boş tabloda hiçbir şey bulmaz. `outcome.test.ts` sürüm 2 özetini denetler (taraf, birim, oyuncu ve silah başına kazanılan turlar, `pw`, birim turları); tarafı turlarının %35 yerine %70'ini kazanan bir şerit yerleştirir (her maç kendi dengesiyle) — bulunur — ve şeritlerin hiçbir şey söylemediği, her biri 50 maçlık 20 boş küme çalıştırır: kazanma oranı yeri yok; bir haritada tarafının turlarını 30 puan daha çok kazanan bir AWP yerleştirir — maçları ve turlarıyla birlikte bulunur — ve her maçın kendi dengesi olduğu ve bir tarafın bir haritada daha güçlü olduğu, her biri 80 maçlık 30 boş küme çalıştırır: niş yok.

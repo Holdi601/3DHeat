@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "no"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Kampreplay
@@ -90,6 +90,8 @@ Seksjonen **Taktisk visning** tegner, for ingen enhet, de valgte, alle, eller é
 ## Mål {#objectives}
 
 Når en kamp følger med sine mål, tegner seksjonen **Mål** dem på nivået: erobringssoner (med eier og erobringsfremdrift), spawnpunkter, flyplasser, områder og bombemål, hvert lag kan slås av og på, med etiketter. De sees gjennom bakken. Med flere spillmodi lastet inn filtrerer **Modus** kampene etter modus. Målene kommer fra en konverters kampfil ved siden av opptaket, eller inni en [`.3dheat`](container.md)-beholder.
+
+Rainbow Six Siege-kamper har med seg bombeplassene sine: hver plass sine to rom tegnes på gulvet sitt som omriss med navnene sine, funnet ut fra hvor spillerne sto mens spillet navnga rommet; en plass på kartet som ikke ble spilt i kampen, kommer fra konvertererens tabell over plasser som en sirkel. I replayet lyser plassen for runden ved avspillingsposisjonen i rav, de andre forblir grå. De er en del av laget med erobringssoner.
 
 ## Etiketter og statistikk {#labels-and-statistics}
 

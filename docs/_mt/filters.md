@@ -4,9 +4,9 @@ parent: "Filtri u għodod"
 nav_order: 1
 lang: "mt"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtri
@@ -41,6 +41,10 @@ Jiġu elenkati biss it-tipi li jidhru. Il-kolonni tal-valur (`cost_*`, `earn_*`,
 Lista ta' kategorija b'iktar minn 12-il valur tingħata kaxxa tat-tfittix (*Fittex n valuri*) u buttuna **Dawn biss** li tippermetti eżattament il-valuri li jaqblu.
 
 Liema kolonni jistgħu jiġu ffiltrati jiġi deċiż fil-ħin tat-tagħbija, għax iridu jinqraw dak il-ħin. Jekk ma tkun miżmuma l-ebda kolonna, il-pannell jgħid hekk u jindika lejn *Żomm għall-filtrar*.
+
+## Filtri rapidi għal Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Meta tkun mgħobbija partita ta' Rainbow Six Siege, il-pannell jibda b'buttuni li jissettjaw il-filtri bi klikk wieħed: **Toqob tal-balal u marki** (il-marki li jibqgħu fuq il-livell), **Marki b'min spara** u **Marki bil-klassi tal-arma** (dawk li għalihom instab min spara, jew arma mill-qtil ta' min spara fl-istess mument; qassamhom jew iffiltrahom aktar skont `byOperator` jew `byItemClass`), **Tentattivi ta' tqegħid u diżattivazzjoni**, **Tentattivi interrotti** (bdew iżda ma spiċċawx, fejn il-plejer waqaf) u **Rinforzi** (fejn ħajt jew bokkaporta ġew rinforzati, għand id-difensur li jsib il-konvertitur). Kull wieħed jissostitwixxi l-filtru fuq il-kolonna tal-avvenimenti u jżomm il-bqija; **Neħħi l-filtri kollha** jreġġgħu lura. Il-kolonni huma deskritti fid-dokumentazzjoni tal-konvertitur.
 
 ## Kolonni numeriċi (medda) {#numeric-columns-range}
 

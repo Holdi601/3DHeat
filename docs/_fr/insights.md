@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "fr"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Observations
@@ -44,6 +44,7 @@ Les lignes en haut de la liste (par exemple les totaux d'argent) résument l'ens
 | **Joueurs** | Joueurs qui éliminent ou meurent beaucoup plus ou moins que les autres de la même classe | personnes et éliminations |
 | **Goulets et flancs** | Points de goulot (bien plus de passages que le terrain autour) et itinéraires de flanc (rarement empruntés, mais menant à des éliminations) | personnes |
 | **Valeur** | *Terrain coûteux* et *Terrain rentable* | [colonnes de valeur](value-weighting.md) |
+| **Ce qui a décidé les manches** | Ce qui a séparé les manches gagnées des manches perdues, et les joueurs qui ont ajouté ou coûté le plus de probabilité de victoire (voir [Qui a gagné](#who-won-what-decided-the-rounds)) | manches, frags et morts, et les [colonnes de résultat](data-formats.md#outcome-columns) (`won`) |
 
 Les détecteurs qui ne peuvent pas tourner sur les données sont listés en bas avec la raison.
 
@@ -51,9 +52,42 @@ Les détecteurs qui ne peuvent pas tourner sur les données sont listés en bas 
 
 Chaque lieu ou groupe est testé par rapport au reste de la carte (tests binomiaux exacts ou tests de taux). Le taux de fausses découvertes est maintenu à 5 % (Benjamini-Hochberg). Le hasard peut ressembler à un motif ; cela garde les fausses alertes basses : parmi les constats affichés, environ un sur vingt devrait être dû au hasard au plus. Les effets issus de peu d'événements sont ramenés vers « aucun effet » avant le classement. Au plus 60 constats sont listés, et chaque détecteur obtient quelques lieux en haut de liste.
 
+### Qui a gagné : ce qui a décidé les manches {#who-won-what-decided-the-rounds}
+
+Là où les données disent qui a gagné chaque manche (la [colonne de résultat](data-formats.md#outcome-columns) `won` : CS2, Rainbow Six Siege, War Thunder ...), le résultat est le sujet des Observations. Pour chaque camp, elles séparent les manches selon ce qui s'y est passé et comparent les taux de victoire :
+
+| Facteur | Les manches du camp avec lui | ... et sans lui |
+|---|---|---|
+| Duel d'ouverture | il a fait le premier frag | il est mort en premier |
+| Achat | son achat était meilleur que celui de l'autre camp | moins bon |
+| Première mort échangée | sa première mort a été échangée en moins de 5 s | pas échangée |
+| Pose | il a posé | pas de pose |
+| Utilitaires | plus de grenades que dans sa manche habituelle | moins |
+| Contact précoce | le premier duel est venu avant le temps médian du match | plus tard |
+| Un lieu tenu | un joueur s'est tenu au lieu 5 s ou plus | personne |
+| Un lieu atteint tôt | un joueur y est arrivé dans les 25 premières s (la route) | personne |
+
+Chaque comparaison est une différence de deux taux de victoire avec son intervalle à 95 % (Newcombe), le p exact de Fisher, et un q sur tous les facteurs essayés (Benjamini-Hochberg). Un bras de moins de 8 manches est marqué *peu de manches*. Ceux qui passent sous le taux de fausses découvertes de 5 % deviennent des constats ; les plus forts se classent au-dessus de ceux des autres détecteurs (un constat de résultat pèse 1,35 fois un constat de même effet et de mêmes preuves).
+
+Un exemple inventé sur 40 manches :
+
+> **T** a gagné 79 % des 19 manches où il tenait **Mid**, contre 24 % des 21 sans (55 points, 95 % de 26 à 74) - q 0,004.
+
+Elles suivent aussi la **probabilité de victoire** de la manche - la chance de chaque camp à chaque instant, d'après les joueurs en vie, la pose et le chrono : ajustée aux manches quand il y en a 30 ou plus, sinon un modèle a priori fixe (et le texte dit lequel). On en tire les **tournants** (les frags et les poses qui ont le plus fait bouger la chance) et la **probabilité de victoire ajoutée** de chaque joueur : les frags et les poses qu'il a faits comptent pour lui, ses morts contre lui, en manches sur le match, une manche en moyenne avec son intervalle, testée contre zéro. Les lieux reçoivent le même bilan : quel camp a le plus gagné dans les duels livrés là.
+
+Les données ont besoin de manches, de frags et de morts avec les deux camps, et de la colonne `won` ; de lieux nommés (`place`) pour les lieux tenus, d'une colonne `buy` pour l'achat.
+
 ## Bilan {#debrief}
 
-L'onglet **Bilan** rédige les constats sous forme de court texte : une introduction, le constat le plus net, un pour la tactique, un pour l'équilibrage, le reste regroupé par détecteur, et le nombre de constats reposant sur des preuves plus faibles. Chaque paragraphe a des boutons numérotés qui montrent ses constats. **Copier le texte** le copie.
+L'onglet **Bilan** rédige les constats sous forme de court texte : une introduction, le constat le plus net, un pour la tactique, un pour l'équilibrage, puis - là où les données disent qui a gagné - ce qui a décidé les manches, le reste regroupé par détecteur, et le nombre de constats reposant sur des preuves plus faibles.
+
+Ce qui a décidé les manches tient en quatre paragraphes : le score et l'origine des probabilités de victoire ; les facteurs les plus forts avec leurs chiffres, leur intervalle et leur q (quand aucun ne passe le taux de fausses découvertes, le texte dit *rien de tout cela n'est encore sûr*, et nomme quand même le plus fort) ; les trois plus grands tournants ; et les joueurs qui ont ajouté et coûté le plus de probabilité de victoire, avec les lieux qui ont le plus gagné. Un exemple inventé :
+
+> T a gagné 23 et CT a gagné 17 des 40 manches au résultat connu (T : 58 %, 95 % de 42 % à 72 %). Les probabilités de victoire viennent d'un modèle ajusté à ces manches.
+>
+> Ce qui a séparé les manches gagnées des perdues : T a gagné 79 % des 19 manches où il tenait Mid, contre 24 % des 21 sans (55 points, 95 % de 26 à 74) (q 0,004), ...
+>
+> Tournants : manche 17 à 48 s, un frag de CT à B site a fait passer sa chance de 31 % à 58 %, et il a pris la manche, ... Chaque paragraphe a des boutons numérotés qui montrent ses constats. **Copier le texte** le copie.
 
 ![Le bilan rédigé par le narrateur intégré](../assets/img/fr/debrief.webp)
 
@@ -72,11 +106,13 @@ Le narrateur intégré fonctionne hors ligne, dans votre langue. Le sélecteur *
 | **Utiliser une IA externe** | Désactivé par défaut |
 | **Envoyer les noms des joueurs** | Désactivé par défaut : les joueurs sont envoyés sous les noms P1, P2 ... |
 
-Saisissez ensuite une question facultative et appuyez sur **Rédiger avec l'IA**. Seuls les constats et leurs chiffres sont envoyés - jamais les lignes de vos données. La réponse s'affiche au fil de l'écriture ; les constats cités deviennent des boutons.
+Saisissez ensuite une question facultative et appuyez sur **Rédiger avec l'IA**. Seuls les constats et leurs chiffres sont envoyés - jamais les lignes de vos données. La réponse s'affiche au fil de l'écriture ; les constats cités deviennent des boutons. Là où les données disent qui a gagné, le modèle doit commencer par ce qui a décidé les manches, avec l'intervalle et le q de chaque chiffre, et dire quand un facteur repose sur peu de manches ou quand les probabilités de victoire viennent du modèle a priori.
 
 ## Commentateur {#caster}
 
-Pour **un seul match** (choisissez-en un si plusieurs sont chargés), le **Commentateur** trouve les moments qui méritent d'être regardés : premier sang, multi-éliminations, échanges, situations désespérées remportées, bascules d'objectifs, retournements, joueurs qui se démarquent, tirs à longue distance.
+Pour **un seul match** (choisissez-en un si plusieurs sont chargés), le **Commentateur** trouve les moments qui méritent d'être regardés : premier sang, multi-éliminations, échanges, situations désespérées remportées, bascules d'objectifs, retournements, joueurs qui se démarquent, tirs à longue distance, et **tournants** - les frags qui ont le plus fait bouger la chance d'un camp de gagner la manche (d'après les joueurs restés en vie de chaque côté, dans les manches sans réapparition).
+
+Là où les données disent qui a gagné chaque manche, chaque moment le dit : *« Anna abat Ben : la chance de T de gagner la manche passe de 38 % à 62 % - et ils prennent la manche. »* Un moment du camp qui a fini par gagner compte davantage quand le commentateur choisit ceux à garder, et un retournement se compte en manches gagnées.
 
 ![Les moments du commentateur pour une manche de la démo de tireur](../assets/img/fr/caster.webp)
 

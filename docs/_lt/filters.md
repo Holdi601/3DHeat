@@ -4,9 +4,9 @@ parent: "Filtrai ir įrankiai"
 nav_order: 1
 lang: "lt"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtrai
@@ -41,6 +41,10 @@ Rodomos tik pasitaikančios rūšys. Vertės stulpeliai (`cost_*`, `earn_*`, `ne
 Kategorijų sąrašas su daugiau nei 12 reikšmių gauna paieškos laukelį (*Ieškoti n reikšmių*) ir mygtuką **Tik šie**, kuris leidžia tiksliai tas reikšmes, kurios atitinka.
 
 Kuriuos stulpelius galima filtruoti, nusprendžiama įkėlimo metu, nes tuomet juos reikia perskaityti. Jei neišsaugota nė vieno stulpelio, skiltis apie tai praneša ir nukreipia į *Išsaugoti filtravimui*.
+
+## Rainbow Six Siege greitieji filtrai {#rainbow-six-siege-quick-filters}
+
+Kai įkeltos Rainbow Six Siege rungtynės, skydelis prasideda mygtukais, kurie vienu spustelėjimu nustato filtrus: **Kulkų skylės ir žymės** (lygyje paliktos žymės), **Žymės su šauliu** ir **Žymės su ginklo klase** (tos, kurioms nustatytas šaulys arba ginklas iš to paties momento šaulio nužudymo; skaidykite arba filtruokite jas toliau pagal `byOperator` arba `byItemClass`), **Padėjimo ir nukenksminimo bandymai**, **Nutraukti bandymai** (pradėti, nebaigti, ten, kur žaidėjas sustojo) ir **Sustiprinimai** (kur siena ar liukas buvo sustiprinti, prie gynėjo, kurį nustato keitiklis). Kiekvienas mygtukas pakeičia įvykio stulpelio filtrą ir palieka kitus; **Išvalyti visus filtrus** tai atšaukia. Stulpeliai aprašyti keitiklio dokumentacijoje.
 
 ## Skaitiniai stulpeliai (intervalas) {#numeric-columns-range}
 

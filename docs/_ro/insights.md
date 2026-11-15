@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "ro"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Observații
@@ -44,6 +44,7 @@ Rândurile de deasupra listei (de exemplu totalurile de bani) rezumă toate date
 | **Jucători** | Jucători care elimină sau mor mult mai mult sau mai puțin decât alții din aceeași clasă | persoane și eliminări |
 | **Strangulări și flancuri** | Puncte de strangulare (mult mai multe traversări decât terenul din jur) și rute de flancare (rar folosite, dar care duc la eliminări) | persoane |
 | **Valoare** | *Teren costisitor* și *Teren care câștigă* | [coloane de valoare](value-weighting.md) |
+| **Ce a decis rundele** | Ce a deosebit rundele câștigate de cele pierdute și jucătorii care au adăugat sau au costat cea mai mare probabilitate de victorie (vezi [Cine a câștigat](#who-won-what-decided-the-rounds)) | runde, eliminări și morți și [coloanele de rezultat](data-formats.md#outcome-columns) (`won`) |
 
 Detectorii care nu pot rula pe date sunt listați jos, cu motivul.
 
@@ -51,9 +52,42 @@ Detectorii care nu pot rula pe date sunt listați jos, cu motivul.
 
 Fiecare loc sau grup este testat față de restul hărții (teste binomiale exacte sau de rată). Rata falselor descoperiri este ținută la 5% (Benjamini-Hochberg). Întâmplarea poate părea un tipar; asta ține alarmele false jos: dintre observațiile afișate, se așteaptă ca cel mult una din douăzeci să fie întâmplătoare. Efectele din puține evenimente sunt trase spre „niciun efect” înainte de ordonare. Sunt listate cel mult 60 de observații, iar fiecare detector primește câteva locuri în partea de sus.
 
+### Cine a câștigat: ce a decis rundele {#who-won-what-decided-the-rounds}
+
+Când datele spun cine a câștigat fiecare rundă ([coloana de rezultat](data-formats.md#outcome-columns) `won`: CS2, Rainbow Six Siege, War Thunder ...), rezultatul este subiectul Observațiilor. Pentru fiecare tabără, rundele sunt împărțite după ce s-a întâmplat în ele, iar ratele de victorie sunt comparate:
+
+| Factor | Rundele taberei cu el | ... și fără el |
+|---|---|---|
+| Duelul de deschidere | a făcut prima eliminare | a murit prima |
+| Cumpărarea | cumpărarea ei a fost mai bună decât a celeilalte tabere | mai slabă |
+| Prima moarte răzbunată | prima ei moarte a fost răzbunată în 5 s | nerăzbunată |
+| Plantarea | a plantat | fără plantare |
+| Utilitarele | mai multe grenade decât în runda ei obișnuită | mai puține |
+| Contact timpuriu | primul duel a venit înainte de timpul median al meciului | mai târziu |
+| Un loc ținut | un jucător a stat în loc 5 s sau mai mult | nimeni |
+| Un loc atins devreme | un jucător a ajuns acolo în primele 25 s (traseul) | nimeni |
+
+Fiecare comparație este o diferență între două rate de victorie, cu intervalul ei de 95% (Newcombe), p exact al lui Fisher și un q peste toți factorii încercați (Benjamini-Hochberg). O ramură cu mai puțin de 8 runde este marcată *puține runde*. Cele sub rata falselor descoperiri de 5% devin observații; cele mai puternice se clasează deasupra celor ale altor detectori (o observație despre rezultat cântărește de 1,35 ori cât una cu același efect și aceleași dovezi).
+
+Un exemplu inventat, pe 40 de runde:
+
+> **T** a câștigat 79% din cele 19 runde în care a ținut **Mid**, față de 24% din 21 fără el (55 de puncte, 95% între 26 și 74) - q 0,004.
+
+Urmărește și **probabilitatea de victorie** a rundei - șansa fiecărei tabere în fiecare moment, din oamenii în viață, plantare și ceas: ajustată pe runde când sunt 30 sau mai multe, altfel dintr-un model a priori fix (iar textul spune care). Din ea vin **momentele decisive** (eliminările și plantările care au schimbat cel mai mult șansa) și **probabilitatea de victorie adăugată** a fiecărui jucător: eliminările și plantările lui contează în favoarea lui, morțile împotrivă, în runde pe meci, o rundă în medie cu intervalul ei, testată față de zero. Locurile primesc același bilanț: care tabără a câștigat cel mai mult în duelurile purtate acolo.
+
+Datele au nevoie de runde, eliminări și morți cu ambele tabere și de coloana `won`; de locuri numite (`place`) pentru locurile ținute, de o coloană `buy` pentru cumpărare.
+
 ## Rezumat {#debrief}
 
-Fila **Rezumat** scrie observațiile ca un text scurt: o introducere, cea mai clară observație, una pentru tactică, una pentru echilibrare, restul grupate pe detector și câte se sprijină pe dovezi mai slabe. Fiecare paragraf are butoane numerotate care arată observațiile lui. **Copiază textul** îl copiază.
+Fila **Rezumat** scrie observațiile ca un text scurt: o introducere, cea mai clară observație, una pentru tactică, una pentru echilibrare, apoi - când datele spun cine a câștigat - ce a decis rundele, restul grupate pe detector și câte se sprijină pe dovezi mai slabe.
+
+Ce a decis rundele vine în patru paragrafe: scorul și de unde vin probabilitățile de victorie; cei mai puternici factori, cu cifrele, intervalul și q-ul lor (când niciunul nu trece de rata falselor descoperiri, textul spune *nimic sigur încă* și îl numește totuși pe cel mai puternic); cele mai mari trei momente decisive; și jucătorii care au adăugat și au costat cea mai mare probabilitate de victorie, cu locurile care au câștigat cel mai mult. Un exemplu inventat:
+
+> T a câștigat 23 și CT a câștigat 17 din 40 de runde cu rezultat cunoscut (T: 58%, 95% între 42% și 72%). Probabilitățile de victorie vin dintr-un model ajustat pe aceste runde.
+>
+> Ce a deosebit rundele câștigate de cele pierdute: T a câștigat 79% din cele 19 runde în care a ținut Mid, față de 24% din 21 fără el (55 de puncte, 95% între 26 și 74) (q 0,004), ...
+>
+> Momente decisive: runda 17 la 48 s, o eliminare făcută de CT pe B site i-a schimbat șansa de la 31% la 58%, iar CT a luat runda, ... Fiecare paragraf are butoane numerotate care arată observațiile lui. **Copiază textul** îl copiază.
 
 ![Rezumatul scris de naratorul integrat](../assets/img/ro/debrief.webp)
 
@@ -72,11 +106,13 @@ Naratorul integrat funcționează offline, în limba ta. Selectorul **Lentilă**
 | **Folosește o IA externă** | Oprit implicit |
 | **Trimite numele jucătorilor** | Oprit implicit: jucătorii sunt trimiși ca P1, P2 ... |
 
-Apoi scrie o întrebare opțională și apasă **Scrie cu IA**. Se trimit doar observațiile și cifrele lor - niciodată rândurile datelor tale. Răspunsul curge pe măsură ce vine; observațiile citate devin butoane.
+Apoi scrie o întrebare opțională și apasă **Scrie cu IA**. Se trimit doar observațiile și cifrele lor - niciodată rândurile datelor tale. Răspunsul curge pe măsură ce vine; observațiile citate devin butoane. Când datele spun cine a câștigat, modelului i se cere să înceapă cu ce a decis rundele, cu intervalul și q-ul fiecărei cifre, și să spună când un factor se sprijină pe puține runde sau când probabilitățile de victorie vin din modelul a priori.
 
 ## Comentator {#caster}
 
-Pentru **un singur meci** (alege unul dacă sunt mai multe încărcate), **Comentatorul** găsește momentele care merită urmărite: primul sânge, multi-eliminările, schimburile, clutch-urile, schimbările de obiectiv, revenirile, jucătorii care ies în evidență, loviturile de la distanță.
+Pentru **un singur meci** (alege unul dacă sunt mai multe încărcate), **Comentatorul** găsește momentele care merită urmărite: primul sânge, multi-eliminările, schimburile, clutch-urile, schimbările de obiectiv, revenirile, jucătorii care ies în evidență, loviturile de la distanță și **momentele decisive** - eliminările care au schimbat cel mai mult șansa unei tabere de a câștiga runda (după jucătorii rămași în viață în fiecare tabără, în rundele fără reapariție).
+
+Când datele spun cine a câștigat fiecare rundă, fiecare moment o spune: *„Anna îl doboară pe Ben: șansa lui T de a câștiga runda crește de la 38% la 62% - și o câștigă.”* Un moment al taberei care a câștigat apoi contează mai mult când comentatorul alege pe care să le păstreze, iar o revenire se numără în runde câștigate.
 
 ![Momentele comentatorului pentru o rundă din demonstrația de tragător](../assets/img/ro/caster.webp)
 

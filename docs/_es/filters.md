@@ -4,9 +4,9 @@ parent: "Filtros y herramientas"
 nav_order: 1
 lang: "es"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtros
@@ -41,6 +41,10 @@ Solo se listan los tipos que aparecen. Las columnas de valor (`cost_*`, `earn_*`
 Una lista de categorías con más de 12 valores tiene una caja de búsqueda (*Buscar n valores*) y un botón **Solo estos** que permite exactamente los valores que coinciden.
 
 Qué columnas se pueden filtrar se decide al cargar, porque hay que leerlas entonces. Sin ninguna columna conservada, el panel lo indica y remite a *Conservar para filtrar*.
+
+## Filtros rápidos de Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Con una partida de Rainbow Six Siege cargada, el panel empieza con botones que fijan los filtros con un clic: **Impactos de bala y marcas** (las marcas que quedan en el nivel), **Marcas con tirador** y **Marcas con clase de arma** (aquellas para las que se dedujo un tirador, o un arma a partir de la baja del tirador en el mismo momento; sepáralas o fíltralas más por `byOperator` o `byItemClass`), **Intentos de colocar y desactivar**, **Intentos interrumpidos** (empezados, no terminados, donde el jugador se detuvo) y **Refuerzos** (donde se reforzó una pared o una trampilla, en el defensor que deduce el conversor). Cada uno sustituye el filtro de la columna de eventos y mantiene el resto; **Quitar todos los filtros** lo deshace. Las columnas se describen en la documentación del conversor.
 
 ## Columnas numéricas (rango) {#numeric-columns-range}
 

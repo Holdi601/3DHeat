@@ -4,9 +4,9 @@ parent: "Filter och verktyg"
 nav_order: 1
 lang: "sv"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filter
@@ -41,6 +41,10 @@ Bara de slag som förekommer listas. Värdekolumner (`cost_*`, `earn_*`, `net_*`
 En kategorilista med fler än 12 värden får en sökruta (*Sök bland n värden*) och en knapp **Bara dessa**, som tillåter exakt de värden som matchar.
 
 Vilka kolumner som kan filtreras avgörs vid inläsningen, eftersom de måste läsas då. Utan någon behållen kolumn säger panelen det och pekar på *Behåll för filtrering*.
+
+## Snabbfilter för Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+När en Rainbow Six Siege-match är inläst börjar panelen med knappar som ställer in filtren med ett klick: **Kulhål och märken** (märkena som lämnats på banan), **Märken med skytt** och **Märken med vapenklass** (de där en skytt, eller ett vapen från skyttens dödning i samma ögonblick, har räknats fram; dela upp eller filtrera dem vidare efter `byOperator` eller `byItemClass`), **Försök att plantera och desarmera**, **Avbrutna försök** (påbörjade, inte slutförda, där spelaren slutade) och **Förstärkningar** (där en vägg eller lucka förstärktes, vid den försvarare som konverteraren härleder). Varje knapp ersätter filtret på händelsekolumnen och behåller resten; **Rensa alla filter** ångrar det. Kolumnerna beskrivs i konverterarens dokumentation.
 
 ## Talkolumner (intervall) {#numeric-columns-range}
 

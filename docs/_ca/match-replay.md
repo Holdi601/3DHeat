@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "ca"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -91,6 +91,8 @@ La secció **Pantalla tàctica** dibuixa, per a cap unitat, les seleccionades, t
 ## Objectius {#objectives}
 
 Quan una partida arriba amb els seus objectius, la secció **Objectius** els dibuixa sobre el nivell: zones de captura (amb propietari i progrés de captura), punts d'aparició, aeròdroms, àrees i objectius de bombardeig, cada capa es pot activar o desactivar, amb etiquetes. Es veuen a través del terra. Amb diversos modes de joc carregats, **Mode** filtra les partides per mode. Els objectius vénen del fitxer de partida d'un convertidor, al costat de la gravació o dins d'un contenidor [`.3dheat`](container.md).
+
+Les partides de Rainbow Six Siege porten els seus punts de bomba: les dues sales de cada punt es dibuixen al seu terra com a contorns amb els seus noms, deduïts d'on eren els jugadors mentre el joc anomenava la sala; un punt del mapa que no s'ha jugat a la partida surt de la taula de punts del convertidor com un cercle. A la repetició, el punt de la ronda al capçal de reproducció s'il·lumina en ambre i els altres queden en gris. Formen part de la capa de zones de captura.
 
 ## Etiquetes i estadístiques {#labels-and-statistics}
 

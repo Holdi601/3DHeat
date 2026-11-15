@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "fr"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Replay de match
@@ -90,6 +90,8 @@ La section **Affichage tactique** dessine, pour aucune unité, les unités séle
 ## Objectifs {#objectives}
 
 Quand un match arrive avec ses objectifs, la section **Objectifs** les dessine sur le niveau : zones de capture (avec le propriétaire et la progression de la capture), points de départ, aérodromes, zones et cibles de bombardement, chaque couche pouvant être affichée ou masquée, avec des étiquettes. Ils se voient à travers le sol. Quand plusieurs modes de jeu sont chargés, **Mode** filtre les matchs par mode. Les objectifs viennent d’un fichier de match du convertisseur placé à côté de l’enregistrement, ou à l’intérieur d’un conteneur [`.3dheat`](container.md).
+
+Les matchs de Rainbow Six Siege apportent leurs sites de bombe : les deux salles de chaque site sont dessinées sur leur sol sous forme de contours avec leurs noms, déduits de l'endroit où se tenaient les joueurs pendant que le jeu nommait la salle ; un site de la carte non joué dans le match vient de la table des sites du convertisseur, sous forme de cercle. Dans le replay, le site de la manche à la tête de lecture s'allume en ambre, les autres restent gris. Ils font partie de la couche des zones de capture.
 
 ## Étiquettes et statistiques {#labels-and-statistics}
 

@@ -3,9 +3,9 @@ title: "Massenanalyse"
 nav_order: 8
 lang: "de"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Massenanalyse: Tausende Matches auf einmal
@@ -68,14 +68,24 @@ Wähle einen Ordner (oder Dateien; **Ordner hinzufügen…** hängt einen weiter
 | Spieler | verschiedene Spieler, Matches je Spieler, Spieler je Match, die häufigsten Spieler |
 | Seiten | jede Seite jeder Karte: gewonnene Matches gegen eine gleichmäßige Aufteilung |
 | Nahkampf | Rundendaten: Eröffnungsduelle nach Seite und ihrer Umsetzung, Trades, Angreifer gegen Verteidiger, Kreuzfeuer, Einstiege nach Blendung, Zielen, Plants, Mann-Vorteil und, **Nach Karte**, die Orte, die die Spieler töten, die sie betreten – jeweils ein Anteil mit seinem Wilson-Intervall, aus den `cqb`-Zählungen der Zusammenfassungen ([Nahkampf und Runden](close-quarters.md)) |
+| R6-Flächen | die Spuren von Rainbow Six Siege auf dem Level (Einschusslöcher und Ähnliches) je Levelfläche: Spuren, je Runde der Karte, der Raum, der Anteil, dessen Schütze ermittelt wurde; ein Klick öffnet die Spurarten, die Operatoren und Waffenklassen der Schützen und wo auf der Fläche die Spuren sind (eine kleine Heatmap aus Viertelmeter-Zellen); eine Fläche behält ihre ID über die Matches einer Kartenversion. Aus den `marks`-Zählungen der Zusammenfassungen |
 | Karte | die summierte Raster einer Karte: Anwesenheit, Abschüsse, Tode, K/D, jedes Ereignis, Fluss, und **heiß in wie vielen Matches** (Stabilität); nach Team, bei 1-, 2-, 4- oder 8-facher Zellgröße |
-| Orte | Orte, die in den Zahlen auffallen, aber nicht in der Heatmap (ein großes Gebiet, das insgesamt belebt ist, Korridore, Höhenbänder); **Orte finden** |
-| Nischen | Gruppen, die deutlich besser oder schlechter abschneiden als der Rest (ein Fahrzeug auf einer Karte, ein Sektor in einer Höhe); **Nischen finden** |
+| Orte | Orte, die in den Zahlen auffallen, aber nicht in der Heatmap (ein großes Gebiet, das insgesamt belebt ist, Korridore, Höhenbänder), und Orte, deren Halter mehr oder weniger ihrer Runden gewinnen; **Orte finden** |
+| Nischen | Gruppen, die deutlich besser oder schlechter abschneiden als der Rest (ein Fahrzeug auf einer Karte, ein Sektor in einer Höhe), und Gruppen von Runden, die über das hinaus gewonnen wurden, was ihre Seite in denselben Matches gewann; **Nischen finden** |
 | Erkenntnisse | die Detektoren für viele Matches und die Kartendetektoren (unten); **Bericht kopieren (JSON)** gibt das JSON, das ein Sprachmodell liest |
 
 ## Erkenntnisse über viele Matches {#insights-over-many-matches}
 
 Der Tab **Orte** findet Orte, die in den Zahlen auffallen, aber nicht in der Heatmap – ein großes Gebiet, das insgesamt belebt ist, ein Korridor, ein Höhenband, ein Ort, der nur in einem Teil des Matches belebt ist. Er markiert die, die die einfache Heatmap nicht zeigt, als **verborgen**, und umrandet sie in der 3D-Ansicht; **Laden** fliegt dorthin mit den Matches, die er darin hielt. Der Tab **Nischen** findet Gruppen (ein Fahrzeug auf einer Karte und Seite, ein Sektor in einer Höhe), die deutlich besser oder schlechter abschneiden als der Rest; klick eine an, um ihre Verfeinerungen zu sehen.
+
+### Wer gewann {#who-won}
+
+Wo die Matches sagen, wer jede Runde gewann (die [Ergebnisspalte](data-formats.md#outcome-columns) `won`), ist das Ergebnis ein eigenes Ziel:
+
+- **Orte: Siegquote.** Für jede Seite der Anteil ihrer Runden an einem Ort, den sie gewann, gegen den Anteil, den sie im selben Match irgendwo gewann – so sind die Balance der Karte, der Seite und des Matches selbst die Grundlinie, und nur Orte, deren Halter mehr (oder weniger) ihrer Runden gewinnen, fallen auf. Ein erfundenes Beispiel: *„Dust: Seite T gewinnt mehr ihrer Runden, wenn sie hier ist: 61 % von 412 gewonnen, gegen 49 % erwartet aus ihrer eigenen Quote in denselben Matches (Chancen 1,6x; gehalten in 31/48 Matches).“* Dieselbe Falsch-Entdeckungsrate und dieselben Stabilitätsprüfungen wie bei jedem Ort; **Laden** lädt die Matches, in denen er hielt, und zeigt die Positionen dieser Seite.
+- **Nischen: Rundensieg.** Die Tabelle **Runden** hält die Runde jedes Lebens: die Karte, die Seite, den Teil des Matches (Runden 1–4, 5–8, ...), das Fahrzeug (ein Operator, ein Agent), die Waffe, die es am meisten benutzte, den Ort, den es am längsten hielt, den Kauf (eco, force, full) und ob seine Seite den ersten Abschuss machte. Eine Gruppe wird an dem gemessen, was ihre Seite in denselben Matches gewann, also ist *T auf Dust mit einer AWP* nur dann eine Nische, wenn diese Runden öfter gewonnen wurden als die anderen Runden von T in diesen Matches. Ein erfundenes Beispiel: *„m1 · T · AWP: gewinnt 80 % von 320 Runden, gegen 62 % erwartet von denselben Seiten in denselben Matches (Chancen 2,3x; 40 Matches).“* Geordnet nach dem Zuwachs mal der Unterstützung; **Laden** lädt die Matches, deren Runden es am stärksten zeigen.
+
+Beide brauchen Zusammenfassungen der Version 2 (siehe [Die Zusammenfassungen erhalten](#getting-the-summaries)): Ältere werden neu berechnet.
 
 Der Tab **Erkenntnisse** findet über alle Matches Fahrzeuge, die schlechter oder besser tauschen oder gewinnen als der Rest, Orte, die in einem gleichbleibenden Anteil der Matches heiß sind, Seiten, die mehr als eine gleichmäßige Aufteilung gewinnen, Fahrzeuge, deren Nutzung sich über die Daten verschiebt, und Teile des Matches, die mehr Abschüsse halten als eine gleichmäßige Verteilung. Jeder Fund trägt seine Zählungen, seine Wirkung, sein Intervall und eine Falschentdeckungsrate (auf 5 % begrenzt), und ein Klick lädt seine Matches. Einzelheiten: [Für Entwickler](#for-developers).
 
@@ -124,6 +134,11 @@ Einfaches JSON (`src/mass/types.ts`), etwa 5–30 KB komprimiert je Match:
   nach kanonischer Art, Abschüsse nach Klasse des Ziels, Siege, Geld;
 - je Spieler (nach Benutzer-ID, sonst Name): Team, Leben, Anwesenheit, Abschüsse, Tode,
   Treffer, Starts, gewonnen, Fahrzeuge; je Waffe: Ereignisse nach Art;
+- mit einer Ergebnisspalte (Version 2): gewonnene und gespielte Runden je Team, Fahrzeug
+  (`rw`, je ein Leben und eine Runde), Spieler und Waffe (die Runden, in denen eine Seite sie
+  benutzte); die Runde jedes Lebens (`outcome.u`: Runde, Seite, Fahrzeug, die am meisten
+  benutzte Waffe, der am längsten gehaltene Ort, der Kauf, gewonnen) und Nummer, Sieger
+  und die Seite des ersten Abschusses jeder Runde (`outcome.r`);
 - die Spalten der Wirtschaft (`cost_*`, `earn_*`) und ihre Summen;
 - Phasen: Ereignisse nach Art in 20 Abschnitten der Matchlänge und nach der Minute;
 - Verhalten: die Maße des kollektiven Verhaltens im Match (Ausrichtung, Routenherde, Spuren,
@@ -156,6 +171,9 @@ nicht nur für Heatmap-Bilder:
   bildet stattdessen Bänder nach ihren Stockwerken. `y` ist die mittlere Höhe jeder Zelle, `y0`
   ihre niedrigste (ihr Stockwerk, für die Höhe darüber).
 - **Ereignisse** als Tupel `[cell, kind, team, class, band, count]`.
+- **Runden nach Ergebnis** (Version 2, mit einer Ergebnisspalte und zwei oder mehr
+  Runden): `pw` als `[cell, team, rounds won, rounds lost]` – die Runden, in denen jede Seite
+  eine Sekunde oder mehr in der Zelle verbrachte, nach ihrem Ergebnis in der Runde.
 - **Zeitscheiben** auf einer groben Stufe (8 Zellen je Seite), nach der Minute ab
   dem Matchstart: `[cx, cz, minute, kind, value]`, Anwesenheitssekunden als Art
   `GRID_KINDS.length`; Matchphasen sind Minuten über die Länge.
@@ -180,12 +198,16 @@ Matches.
 - **Maße.** Die Rate eines Ereignisses je Sekunde Anwesenheit – Abschüsse, Tode,
   Treffer, Starts, Eroberungen, für alle Einheiten, je Klasse (die 4 mit den meisten
   Ereignissen), je Höhenband – und der Anteil der Abschüsse an Abschüssen und Toden
-  (alle, je Seite, je Band). Welche Klassen und Seiten gelten, kommt aus den Köpfen
-  (`planOf`).
+  (alle, je Seite, je Band), und die **Siegquote** jeder Seite: ihre Runden in
+  der Zelle gewonnen gegen verloren (`pw`), wobei ab 8 Matches der Karte Runden
+  nach Ergebnis zählen. Welche Klassen und Seiten gelten, kommt aus den Köpfen (`planOf`).
 - **Erwartung je Match.** Die eigene Rate jedes Matches, verteilt über seine eigene Anwesenheit
   in einer Zelle, ist der Erwartungswert der Zelle (ein durch Kovariaten bereinigter
   Kulldorff-Scan, nach Match geschichtet): ein paar blutige Matches oder ein stark
-  besuchter Server machen keinen Ort.
+  besuchter Server machen keinen Ort. Für die Siegquote ist der Erwartungswert der eigene
+  Anteil gewonnener Runden der Seite in diesem Match, sodass die Balance der Karte und der Seite
+  nie ein Ort sind. Eine Runde in mehreren Zellen einer Region zählt in jeder; die
+  in der Größe der Region gemessene Streuung trägt das.
 - **Streuung.** Matches weichen weit mehr voneinander ab, als Poisson erlaubt. Die Residuen
   jedes Matches werden in Blöcken von 1, 2, 4, 8, 16 Zellen summiert; die Streuung jeder
   Blockgröße (quadrierte Residuen geteilt durch die Nullvarianz, zusammengefasst, die schlechtesten
@@ -239,6 +261,26 @@ keine Verfeinerung, die nur ihr Elternteil wiederholt. Der Tab **Nischen** liste
 zeigt jede Verfeinerung der Gruppe um eine Bedingung (der Explorer), **Laden** lädt ihre Matches.
 Ausrüstungen sind noch nicht in den Zusammenfassungen.
 
+Die vierte Tabelle, **Runden** (`roundsTable`), hat das Ergebnis der Runde als
+Ziel: eine Zeile je Runde eines Lebens – Karte, Seite, Teil des Matches (Runden 1–4,
+5–8, ...), Fahrzeug, die meistbenutzte Waffe, der am längsten gehaltene Ort, Kauf, erster
+Abschuss oder erster Tod – gemessen an der Siegquote der eigenen Seite im eigenen
+Match (der geschichtete Erwartungswert nach Mantel-Haenszel: das Residuum ist
+`won - e`, `e` der Anteil der Seite im Match), sodass eine Nische nie die Balance der Karte
+oder der Seite ist. Die Matches bleiben die Cluster. Ihr z ist kalibriert: Dieselbe
+Strahlsuche läuft achtmal auf den Ergebnissen, gemischt zwischen den Runden jeder Seite
+jedes Matches (die Quote der Seite in jedem Match bleibt erhalten), und die Streuung
+dieser Null-z über eine Standardnormalverteilung hinaus – je Zahl der Bedingungen,
+aus der Mitte (Median / 0,674) und dem Rand (99. Perzentil / 2,576), der größere Wert,
+nie unter 1 – teilt die echten vor ihrem p und der Falsch-Entdeckungsrate (eine
+empirische Null, Efron 2004). Tiefere Gruppen bekommen den größeren Maßstab: Die Strahlsuche
+behält Verfeinerungen von Gruppen, die wegen ihres großen z gewählt wurden. Die Basis einer
+Nische ist ihr eigener Erwartungswert, ihr Zuwachs die Punkte darüber, und sie wird nach dem
+Zuwachs mal der Quadratwurzel ihrer Runden geordnet, gehalten von den Belegen und den Falten
+(`wracc` ist die Unterstützung mal dem Zuwachs). Sie trägt die Matches, in denen sie sich am
+stärksten zeigte (`matchIds`), und einige ihrer Runden (`rounds`, `[match, round]`) für das
+Aufschlüsseln.
+
 #### Verschiebungen im Meta mit praktischer Bedeutung {#meta-shifts-with-practical-significance}
 
 Bei gemischten Daten hat der Binomialtest auf Leben fast jede Änderung als bedeutsam gemeldet.
@@ -260,4 +302,10 @@ lesen: ihre Arten sind `place.*` und `niche.*`.
 von 22 Zellen, in jeder Zelle schwach), einen Korridor, ein Höhenband und einen
 nur-Phasen-Cluster – alle gefunden, der diffuse verborgen – und führt acht Nulldatensätze mit je 60 Matches aus: kein Ort.
 `niche.test.ts` findet eine eingepflanzte Gruppe Fahrzeug x Karte x Seite und nichts in
-fünf Null-Tabellen.
+fünf Null-Tabellen. `outcome.test.ts` prüft die Zusammenfassung der Version 2 (gewonnene Runden
+nach Seite, Einheit, Spieler und Waffe, `pw`, die Einheit-Runden); pflanzt eine Bahn, deren
+Seite 70 % ihrer Runden gegen 35 % gewinnt (jedes Match mit eigener Balance) – gefunden –
+und führt 20 Nulldatensätze mit je 50 Matches aus, in denen die Bahnen nichts sagen: kein
+Siegquoten-Ort; pflanzt eine AWP auf einer Karte, die die Runden ihrer Seite um 30 Punkte öfter
+gewinnt – gefunden, mit ihren Matches und Runden – und führt 30 Nulldatensätze mit je 80 Matches aus,
+jedes Match mit eigener Balance und einer Seite, die auf einer Karte stärker ist: keine Nische.

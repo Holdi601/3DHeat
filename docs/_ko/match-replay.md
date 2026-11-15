@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "ko"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 경기 리플레이
@@ -90,6 +90,8 @@ outdated: true
 ## 목표 {#objectives}
 
 경기에 목표가 딸려 올 때, **목표** 섹션은 레벨 위에 목표를 그립니다. 점령 구역(소유자와 점령 진행률 포함), 출현 지점, 비행장, 구역, 폭격 목표입니다. 각 층은 켜고 끌 수 있고, 라벨도 있습니다. 목표는 지면 너머로도 보입니다. 게임 모드가 여럿 불러와지면, **모드**가 모드별로 경기를 거릅니다. 목표는 기록 옆의 변환기 경기 파일이나, [`.3dheat`](container.md) 컨테이너 안에서 옵니다.
+
+Rainbow Six Siege 경기에는 폭탄 사이트가 함께 옵니다. 각 사이트의 두 방이 바닥 위에 이름이 붙은 윤곽선으로 그려집니다. 게임이 방 이름을 보여 주는 동안 플레이어가 서 있던 곳에서 알아낸 것입니다. 경기에서 쓰이지 않은 맵의 사이트는 변환기의 사이트 표에서 원으로 나옵니다. 리플레이에서는 재생 위치의 라운드 사이트가 호박색으로 빛나고, 나머지는 회색으로 남습니다. 이것들은 점령 구역 레이어에 속합니다.
 
 ## 라벨과 통계 {#labels-and-statistics}
 

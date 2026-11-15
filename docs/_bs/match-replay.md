@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "bs"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Reprodukcija meča
@@ -90,6 +90,8 @@ Odjeljak **Taktički prikaz** crta, za nijednu jedinicu, izabrane, sve, ili jedn
 ## Ciljevi {#objectives}
 
 Kada meč dolazi sa svojim ciljevima, odjeljak **Ciljevi** ih crta na nivou: zone zauzimanja (s vlasnikom i napretkom zauzimanja), mjesta pojavljivanja, aerodromi, područja i mete za bombardovanje, svaki sloj se može uključiti ili isključiti, sa oznakama. Vide se kroz tlo. Kada je učitano više režima igre, **Režim** filtrira mečeve po režimu. Ciljevi dolaze iz datoteke meča konvertera pored snimka ili unutar [`.3dheat`](container.md) kontejnera.
+
+Mečevi Rainbow Six Siege donose svoja mjesta za bombu: dvije prostorije svakog mjesta crtaju se na njihovom podu kao obrisi s imenima, izvedeni iz toga gdje su igrači stajali dok je igra imenovala prostoriju; mjesto mape koje se u meču nije igralo dolazi iz konverterove tabele mjesta kao krug. U snimku mjesto runde na poziciji reprodukcije svijetli ćilibarno, ostala ostaju siva. Dio su sloja zona zauzimanja.
 
 ## Oznake i statistika {#labels-and-statistics}
 

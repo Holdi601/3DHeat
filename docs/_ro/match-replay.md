@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "ro"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Reluarea meciului
@@ -90,6 +90,8 @@ Secțiunea **Afișaj tactic** desenează, pentru nicio unitate, pentru cele sele
 ## Obiective {#objectives}
 
 Când un meci vine cu obiectivele sale, secțiunea **Obiective** le desenează pe nivel: zone de capturare (cu proprietarul și progresul capturării), locuri de apariție, aerodromuri, zone și ținte de bombardament, fiecare strat putând fi comutat, cu etichete. Ele se văd prin teren. Când sunt încărcate mai multe moduri de joc, **Mod** filtrează meciurile după mod. Obiectivele vin din fișierul de meci al unui convertor, alături de înregistrare sau în interiorul unui container [`.3dheat`](container.md).
+
+Meciurile Rainbow Six Siege își aduc locurile de bombă: cele două camere ale fiecărui loc sunt desenate pe podeaua lor ca contururi cu numele lor, deduse din locul în care stăteau jucătorii în timp ce jocul numea camera; un loc al hărții care nu s-a jucat în meci vine din tabelul de locuri al convertorului, ca un cerc. În reluare, locul rundei de la capul de redare se aprinde în chihlimbariu, celelalte rămân gri. Ele fac parte din stratul zonelor de capturare.
 
 ## Etichete și statistici {#labels-and-statistics}
 

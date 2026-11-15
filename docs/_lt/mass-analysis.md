@@ -3,9 +3,9 @@ title: "Masinė analizė"
 nav_order: 8
 lang: "lt"
 source: "mass-analysis.md"
-source_hash: "88fad1d761e0"
+source_hash: "e65b729b5928"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Masinė analizė: tūkstančiai rungtynių iš karto
@@ -60,14 +60,24 @@ Pasirinkite aplanką (arba failus; **Pridėti aplanką...** prijungia kitą). La
 | Žaidėjai | skirtingi žaidėjai, rungtynės vienam žaidėjui, žaidėjai vienose rungtynėse, dažniausiai pasitaikantys žaidėjai |
 | Pusės | kiekviena kiekvieno žemėlapio pusė: rungtynės, laimėtos prieš lygų pasiskirstymą |
 | Artimoji kova | raundų duomenys: pirmosios dvikovos pagal pusę ir jų konversija, prekybos, besišliejantis prieš laikantįjį, kryžminės ugnys, akinamos įėjimai, taiklumas, padėjimai, skaičių pranašumas ir, **Pagal žemėlapį**, vietos, kurios nužudo žaidėjus, įeinančius į jas - kiekvienas kaip dalis su savo Wilson intervalu, iš santraukų `cqb` skaičių ([Artima kova ir raundai](close-quarters.md)) |
+| R6 paviršiai | Rainbow Six Siege žymės lygyje (kulkų skylės ir panašiai) pagal lygio paviršių: žymės, per žemėlapio raundą, kambarys, dalis, kurios šaulys nustatytas; spustelėjimas atveria žymių rūšis, šaulių operatorius ir ginklų klases bei tai, kur paviršiuje yra žymės (mažas ketvirčio metro ląstelių šilumos žemėlapis); paviršius išlaiko savo id visose vienos žemėlapio versijos rungtynėse. Iš santraukų `marks` skaičių |
 | Žemėlapis | žemėlapio sumuotas tinklelis: buvimas, nukovimai, mirtys, K/D, bet koks įvykis, srautas ir **karšta kiek rungtynių** (stabilumas); pagal komandą, 1, 2, 4 ar 8 kartus didesnėje ląstelėje |
-| Vietos | vietos, kurios išsiskiria skaičiuose, bet ne šilumos žemėlapyje (didelė sritis, užimta visumoje, koridoriai, aukščio juostos); **Rasti vietas** |
-| Nišos | grupės, kurios daro gerokai geriau ar blogiau nei kitos (technika viename žemėlapyje, sektorius vienoje aukštyje); **Rasti nišas** |
+| Vietos | vietos, kurios išsiskiria skaičiuose, bet ne šilumos žemėlapyje (didelė sritis, užimta visumoje, koridoriai, aukščio juostos), ir vietos, kurių laikytojai laimi daugiau ar mažiau savo raundų; **Rasti vietas** |
+| Nišos | grupės, kurios daro gerokai geriau ar blogiau nei kitos (technika viename žemėlapyje, sektorius vienoje aukštyje), ir raundų grupės, laimėtos daugiau, nei jų pusė laimėjo tose pačiose rungtynėse; **Rasti nišas** |
 | Įžvalgos | masiniai detektoriai ir žemėlapio detektoriai (žemiau); **Kopijuoti ataskaitą (JSON)** duoda JSON, kurį skaito kalbos modelis |
 
 ## Įžvalgos iš daugelio rungtynių {#insights-over-many-matches}
 
 Skirtukas **Vietos** randa vietas, kurios išsiskiria skaičiuose, bet ne šilumos žemėlapyje - didelę sritį, užimtą visumoje, koridorių, aukščio juostą, vietą, užimtą tik vienoje rungtynių dalyje - pažymi tas, kurių paprastas šilumos žemėlapis nerodo, kaip **paslėptas**, ir apibrėžia jas 3D vaizde; **Įkelti** nuskrenda ten su rungtynėmis, kurias ji laikė. Skirtukas **Nišos** randa grupes (technika viename žemėlapyje ir pusėje, sektorius vienoje aukštyje), kurios daro gerokai geriau ar blogiau nei kitos; spustelėkite vieną, kad pamatytumėte jos patikslinimus.
+
+### Kas laimėjo {#who-won}
+
+Kai rungtynės nurodo, kas laimėjo kiekvieną raundą ([baigties stulpelis](data-formats.md#outcome-columns) `won`), rezultatas yra atskiras tikslas:
+
+- **Vietos: pergalių dalis.** Kiekvienai pusei jos raundų vietoje dalis, kurią ji laimėjo, prieš dalį, kurią ji laimėjo tose pačiose rungtynėse bet kur - taigi žemėlapio, pusės ir pačių rungtynių balansas yra atskaitos linija, ir išsiskiria tik vietos, kurių laikytojai laimi daugiau (ar mažiau) savo raundų. Išgalvotas pavyzdys: *„Dust: pusė T laimi daugiau savo raundų, kai yra čia: laimėta 61 % iš 412, prieš 49 %, tikėtiną pagal jos pačios dažnį tose pačiose rungtynėse (šansai 1,6x; laikyta 31/48 rungtynėse).“* Tas pats klaidingų atradimų dažnis ir stabilumo patikrinimai kaip kiekvienai vietai; **Įkelti** įkelia rungtynes, kuriose vieta buvo laikoma, ir rodo tos pusės pozicijas.
+- **Nišos: raundo pergalė.** Lentelėje **Raundai** yra kiekvienos gyvybės raundas: žemėlapis, pusė, rungtynių dalis (raundai 1-4, 5-8, ...), technika (operatorius, agentas), daugiausia naudotas ginklas, ilgiausiai laikyta vieta, pirkimas (eco, force, full) ir ar jos pusė padarė pirmąjį nukovimą. Grupė vertinama pagal tai, ką jos pusė laimėjo tose pačiose rungtynėse, todėl *T Dust žemėlapyje su AWP* yra niša tik tada, kai tie raundai buvo laimėti dažniau nei kiti T raundai tose rungtynėse. Išgalvotas pavyzdys: *„m1 · T · AWP: laimi 80 % iš 320 raundų, prieš 62 %, tikėtiną iš tų pačių pusių tose pačiose rungtynėse (šansai 2,3x; 40 rungtynių).“* Rikiuojama pagal pakilimo ir paramos sandaugą; **Įkelti** įkelia rungtynes, kurių raunduose tai matyti labiausiai.
+
+Abiem reikia 2 versijos santraukų (žr. [Santraukų gavimas](#getting-the-summaries)): senesnės apskaičiuojamos iš naujo.
 
 Skirtukas **Įžvalgos** visose rungtynėse randa technikas, kurios prekiauja ar laimi geriau ar blogiau nei kitos, vietas, karštas stabiliai daliai rungtynių, puses, kurios laimi daugiau nei lygų pasiskirstymą, technikas, kurių naudojimas keičiasi per datas, ir rungtynių dalis, turinčias daugiau nukovimų nei lygus pasiskirstymas. Kiekviena išvada turi savo skaičius, efektą, intervalą ir klaidingų atradimų dažnį (laikomą 5%), o spustelėjimas įkelia jos rungtynes. Išsamiau: [Kūrėjams](#for-developers).
 
@@ -108,6 +118,11 @@ Paprastas JSON (`src/mass/types.ts`), apie 5-30 KB suspaustas vienoms rungtynėm
 - rungtynės: žaidimas, žemėlapis, režimas, misija, pradžia, trukmė, eilutės, gyvybės, žaidėjai, DI, komandos (gyvybės, žaidėjai, buvimas, nukovimai, mirtys, laimėjimas, pinigai), nugalėtojas;
 - pagal techniką ir komandą: klasė, lygis, gyvybės, žaidėjų gyvybės, buvimas, įvykiai pagal kanoninę rūšį, nukovimai pagal taikinio klasę, pergalės, pinigai;
 - pagal žaidėją (pagal vartotojo ID, kitu atveju pagal vardą): komanda, gyvybės, buvimas, nukovimai, mirtys, pataikymai, paleidimai, laimėjimas, technikos; pagal ginklą: įvykiai pagal rūšį;
+- su rezultato stulpeliu (2 versija): laimėti ir sužaisti raundai pagal komandą, techniką
+  (`rw`, kiekvienas po vieną gyvybę ir raundą), žaidėją ir ginklą (raundai, kuriuose pusė jį
+  naudojo); kiekvienos gyvybės raundas (`outcome.u`: raundas, pusė, technika, daugiausia
+  naudotas ginklas, ilgiausiai laikyta vieta, pirkimas, laimėta) ir kiekvieno raundo
+  numeris, laimėtojas ir jo pirmojo nukovimo pusė (`outcome.r`);
 - ekonomikos stulpeliai (`cost_*`, `earn_*`) ir jų sumos;
 - fazės: įvykiai pagal rūšį 20 rungtynių ilgio intervalų ir pagal minutę;
 - elgesys: rungtynių kolektyvinio elgesio matai (lygiavimas, maršruto ganymas, juostos, susigrūdimas, lyderiai, atsilikėliai, lūžio taškas, rizika po pralaimėjimų, serijos, pirkimo sutarimas, slopinimas), kiekvienas su savo nulinio modelio, p ir q - žr. [Kolektyvinis elgesys](collective-behaviour.md);
@@ -123,6 +138,9 @@ Erdvinė dalis sukurta statistikai apie regionus bet kokio dydžio ir formos, o 
 - **Ekspozicija šalia kiekvieno skaičiaus.** Buvimo sekundės kiekvienai ląstelei, kiekvienai komandai (`pt`), kiekvienai techninės klasės (`pc`) ir kiekvienai aukščio juostai (`ph`), todėl regiono dažnis, lūkestis ir santykis skaičiuojami bet kuriam pogrupiui.
 - **Aukštis.** Juostos virš rungtynių grindų (aukščio 1-asis procentilis): mažiau nei 3 m, 3-10, 10-30, 30-100, 100-300, 300-1000, 1000-3000, daugiau; failas su stulpeliu `floor`/`storey`/`deck` juostomis skirsto pagal savo aukštus. `y` yra kiekvienos ląstelės vidutinis aukštis, `y0` - žemiausias (jos aukštas, aukščiui virš jo).
 - **Įvykiai** kaip kortežai `[cell, kind, team, class, band, count]`.
+- **Raundai pagal rezultatą** (2 versija, su rezultato stulpeliu ir dviem ar daugiau
+  raundų): `pw` kaip `[cell, team, rounds won, rounds lost]` - raundai, kuriuos kiekviena pusė
+  praleido ląstelėje sekundę ar ilgiau, pagal jos rezultatą raunde.
 - **Laiko pjūviai** grubiame lygyje (8 ląstelės kiekvienoje pusėje), pagal minutę nuo rungtynių pradžios: `[cx, cz, minute, kind, value]`, buvimo sekundės kaip rūšis `GRID_KINDS.length`; rungtynių fazės yra minutės per trukmę.
 - Retas, skaičiai sveikieji, sekundės iki dešimtosios: apribotas tuo, kas įvyko.
 
@@ -134,8 +152,8 @@ B etapas ieško to, kas išsiskiria skaičiuose ir nepatraukia akies: didelė sr
 
 Kiekvieno žemėlapio rungtynės perskaitomos du kartus, po vienas kartas; atmintis laiko sumas rastre, ne daugiau nei 64 ląstelės kiekvienoje pusėje (16 erdvės ir laiko skenavimui), niekada ne pačias rungtynes.
 
-- **Matai.** Įvykio dažnis per buvimo sekundę - nukovimai, mirtys, pataikymai, paleidimai, perėmimai, visiems vienetams, pagal klasę (4 su daugiausiai įvykių), pagal aukščio juostą - ir nukovimų dalis nukovimuose bei mirtyse (visi, pagal pusę, pagal juostą). Kurios klasės ir pusės yra iš antraščių (`planOf`).
-- **Lūkestis pagal rungtynes.** Kiekvienų rungtynių dažnis, paskirstytas per tos ląstelės buvimą, yra ląstelės lūkestis (Kulldorff skenavimas su kovariatėmis, sluoksniuotas pagal rungtynes): keletas kruvinų rungtynių ar vienas užimtas serveris nesukuria vietos.
+- **Matai.** Įvykio dažnis per buvimo sekundę - nukovimai, mirtys, pataikymai, paleidimai, perėmimai, visiems vienetams, pagal klasę (4 su daugiausiai įvykių), pagal aukščio juostą - ir nukovimų dalis nukovimuose bei mirtyse (visi, pagal pusę, pagal juostą), ir kiekvienos pusės **pergalių dalis**: jos raundai ląstelėje laimėti prieš pralaimėtus (`pw`), kai 8 ar daugiau žemėlapio rungtynių skaičiuoja raundus pagal rezultatą. Kurios klasės ir pusės yra iš antraščių (`planOf`).
+- **Lūkestis pagal rungtynes.** Kiekvienų rungtynių dažnis, paskirstytas per tos ląstelės buvimą, yra ląstelės lūkestis (Kulldorff skenavimas su kovariatėmis, sluoksniuotas pagal rungtynes): keletas kruvinų rungtynių ar vienas užimtas serveris nesukuria vietos. Pergalių daliai lūkestis yra pačios pusės laimėtų raundų dalis tose rungtynėse, todėl žemėlapio ir pusės balansas niekada netampa vieta. Raundas keliose srities ląstelėse skaičiuojamas kiekvienoje; sklaida, išmatuota srities dydžiu, tai įvertina.
 - **Sklaida.** Rungtynės labai nesutampa daugiau nei Puasonas. Kiekvienų rungtynių liekanos sudedamos blokais po 1, 2, 4, 8, 16 ląstelių; kiekvieno bloko dydžio sklaida (kvadratinės liekanos per nulinę dispersiją, sujungtos, blogiausi 5% blokų išmetami) keičia kiekvieną to dydžio regiono testą: kvazi-tikėtinumo santykis, Puasonas dažniams, binominis dalims.
 - **Regionai.** Apskritimai nuo 0,75 iki 18 ląstelių; elipsės šešiuose kampuose, 3 ir 6 kartus ilgesnės nei pločio, 3-18 ląstelių (koridoriai; ašis yra įžvalgos `place.path`); zonos, išaugintos ląstelė po ląstelės nuo stipriausių vietinių Getis-Ord Gi* ląstelių, kol regiono z auga (netaisyklingos formos) - išaugintos vienoje rungtynių pusėje ir išbandytos kitoje, todėl augimo laisvė nekainuoja klaidingų vietų; kiekviena aukščio juosta, lyginama su kitomis rungtynių juostomis per visą žemėlapį (klasterių atsparumas); erdvės ir laiko cilindrai: apskritimas per vieną ar du penktadalius rungtynių trukmės, lyginamas su rungtynių savo įvykių išsibarstymu per vietą ir laiką (erdvės ir laiko permutacijos skenavimas).
 - **Testavimas.** p iš kvazi-tikėtinumo; Benjamini-Hochberg per kiekvieną išbandytą regioną kiekviename žemėlapyje (įprasta 700 000 trijuose žemėlapiuose) 5%. Tai, kas praeina, apkarpoma (regionas, didžiąja dalimi esantis stipresnio to paties matas viduje, sako tą patį), perskaitoma dėl savo **stabilumo** - rungtynės, kurios jį matė, rungtynės, kuriose jis laikė, jo kryptis penkiose rungtynių dalyse - ir dar kartą išbandoma tuo sklaidos lygiu, kurį rodo pačios rungtynės (klasterių atsparumas, rungtynės kaip klasteriai, niekada pagal Puasoną), BH dar kartą. Ramios vietos bazėje (2% ar daugiau žemėlapio atsiradimų, pakilimų ir nusileidimų) išbraukiamos.
@@ -148,6 +166,8 @@ Skirtukas **Vietos** juos išvardija (pagal numatytuosius paslėptos; pagal žem
 
 Pluošto paieška (plotis 24, gylis 3) per tris lenteles: **gyvybės** (žaidėjų gyvybės: žaidimas, žemėlapis, režimas, klasė, technika, pusė, lygis, datų ketvirtis, rungtynių trukmės trečdalis; K/D, pergalė, mirtis gyvybei, nukovimai per valandą, uždarbis per minutę), **vietos** (nukovimai ir mirtys pagal žemėlapį, režimą, datas, žemėlapio sektorių 4 x 4, klasę, pusę, juostą) ir **fazės** (sektorius ir rungtynių penktadalis: K/D, mirtys per valandą buvimo). Grupė lyginama su visu, rungtynės kaip klasteriai (sumuota liekanų dispersija pagal rungtynes), jos efektas - šansų ar dažnio santykis, sumažintas 20 rezultatų apriorine verte; reikia 30 rezultatų 8 rungtynėse, patikslinimas turi būti 10% stipresnis nei jo tėvas; grupės, kuriose rezultatas yra joks ar visas (jiems neįrašytas), išbraukiamos. Paliekama: BH mažesnis nei 5% per visas įvertintas grupes, sumažintas santykis bent 1,25 (ar 1/1,25), keturios iš penkių dalių sutinka, ir ne patikslinimas, kuris tik kartoja savo tėvą. Skirtukas **Nišos** jas išvardija; spustelėjimas parodo visus vienos sąlygos patikslinimus (naršyklė), **Įkelti** įkelia jos rungtynes. Įranga dar nėra santraukose.
 
+Ketvirtosios lentelės, **raundai** (`roundsTable`), tikslas yra raundo rezultatas: viena eilutė kiekvienos gyvybės raundui - žemėlapis, pusė, rungtynių dalis (raundai 1-4, 5-8, ...), technika, daugiausia naudotas ginklas, ilgiausiai laikyta vieta, pirkimas, pirmasis nukovimas ar pirmoji mirtis - vertinama pagal savo pusės pergalių dalį savo rungtynėse (Mantel-Haenszel sluoksniuotas lūkestis: liekana yra `won - e`, `e` pusės dalis rungtynėse), todėl niša niekada nėra žemėlapio ar pusės balansas. Rungtynės lieka klasteriais. Jos z kalibruojamas: ta pati spindulio paieška paleidžiama aštuonis kartus su rezultatais, sumaišytais tarp kiekvienų rungtynių kiekvienos pusės raundų (pusės dažnis kiekvienose rungtynėse išlaikomas), o šių nulinių z sklaida virš standartinio normaliojo skirstinio - pagal sąlygų skaičių, iš vidurio (mediana / 0,674) ir uodegos (99-asis procentilis / 2,576), didesnė, niekada ne mažiau nei 1 - padalija tikruosius prieš jų p ir klaidingų atradimų dažnį (empirinis nulis, Efron 2004). Gilesnės grupės gauna didesnę skalę: spindulys išlaiko patikslinimus grupių, atrinktų dėl didelio z. Nišos bazė yra jos pačios lūkestis, jos pakilimas - procentiniai punktai virš jo, ir ji rikiuojama pagal pakilimo ir jos raundų skaičiaus kvadratinės šaknies sandaugą, išlaikomą įrodymų ir dalių (`wracc` yra parama kart pakilimas). Ji neša rungtynes, kuriose ji labiausiai pasireiškė (`matchIds`), ir keletą jų raundų (`rounds`, `[match, round]`) išsamesnei peržiūrai.
+
 #### Metų pokyčiai su praktine reikšme {#meta-shifts-with-practical-significance}
 
 Mišriose datose binominis testas su gyvybėmis pažymėdavo beveik kiekvieną pokytį kaip reikšmingą. Dabar `meta` testuojamas klasterių atsparumu (kiekvienų rungtynių gyvybės - klasteris), palieka technikos pokytį tik jei jis siekia bent 2 procentinius punktus ir 25%, K/D pokytis - 1,3 karto, datų ketvirčiai juda ta pačia kryptimi (Kendall tau bent 0,5), o technikai keliuose žemėlapiuose - ta pati kryptis daugumoje jų. Tai palieka tik kelis pokyčius bandymų rinkinyje, kur paprastas testas pažymėjo beveik visus.
@@ -159,3 +179,4 @@ Mišriose datose binominis testas su gyvybėmis pažymėdavo beveik kiekvieną p
 #### Patikrinimai {#checks}
 
 `scan.test.ts` įdeda išsklaidytą sritį (1,6 karto didesnis mirties dažnis apskritime iš 22 ląstelių, silpna kiekvienoje ląstelėje), koridorių, aukščio juostą ir tik fazės klasterį į 240 sintetinių per-didelės sklaidos rungtynių - visi rasti, išsklaidyta paslėpta - ir paleidžia aštuonis nulinius rinkinius po 60 rungtynių: jokios vietos. `niche.test.ts` randa įdėtą techniką x žemėlapis x pusė grupę ir nieko penkiose nulinėse lentelėse.
+`outcome.test.ts` tikrina 2 versijos santrauką (laimėti raundai pagal pusę, vienetą, žaidėją ir ginklą, `pw`, vienetų raundai); įdeda juostą, kurios pusė laimi 70 % savo raundų prieš 35 % (kiekvienos rungtynės su savo balansu) - rasta - ir paleidžia 20 nulinių rinkinių po 50 rungtynių, kur juostos nieko nesako: jokios pergalių dalies vietos; įdeda AWP viename žemėlapyje, kuris laimi savo pusės raundus 30 procentinių punktų dažniau - rastas su savo rungtynėmis ir raundais - ir paleidžia 30 nulinių rinkinių po 80 rungtynių, kur kiekvienos rungtynės turi savo balansą, o viena pusė stipresnė viename žemėlapyje: jokios nišos.

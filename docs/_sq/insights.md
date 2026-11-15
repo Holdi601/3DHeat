@@ -4,9 +4,9 @@ nav_order: 7
 has_children: true
 lang: "sq"
 source: "insights.md"
-source_hash: "8232fe145807"
+source_hash: "c8722ac44bfa"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Vëzhgime
@@ -44,6 +44,7 @@ Rreshtat në krye të listës (për shembull totalet e parasë) përmbledhin gji
 | **Lojtarët** | Lojtarë që vrasin ose vdesin shumë më tepër ose më pak se të tjerët në të njëjtën klasë | persona dhe vrasje |
 | **Grykat dhe krahët** | Pika grykëzimi (shumë më tepër kalime sesa toka përreth) dhe rrugë krahu (përdoren rrallë, por çojnë në vrasje) | persona |
 | **Vlera** | *Tokë e kushtueshme* dhe *Tokë fituese* | [kolonat e vlerave](value-weighting.md) |
+| **Çfarë vendosi raundet** | Çfarë i dalloi raundet e fituara nga ato të humbura, dhe lojtarët që shtuan ose kushtuan më shumë probabilitet fitoreje (shih [Kush fitoi](#who-won-what-decided-the-rounds)) | raunde, vrasje dhe vdekje, dhe [kolonat e rezultatit](data-formats.md#outcome-columns) (`won`) |
 
 Detektorët që nuk mund të punojnë mbi të dhënat listohen në fund, me arsyen.
 
@@ -51,9 +52,42 @@ Detektorët që nuk mund të punojnë mbi të dhënat listohen në fund, me arsy
 
 Çdo vend ose grup testohet kundrejt pjesës tjetër të hartës (teste binomiale ose normash të sakta). Shkalla e zbulimit të rremë mbahet në 5% (Benjamini-Hochberg). Rastësia mund të duket si model; kjo i mban alarmet e rreme të ulëta: mes gjetjeve të shfaqura, pritet të jetë rastësi më së shumti rreth një në njëzet. Efektet nga pak ngjarje tërhiqen drejt "pa efekt" para renditjes. Listohen më së shumti 60 gjetje, dhe çdo detektor merr disa vende afër majës.
 
+### Kush fitoi: çfarë vendosi raundet {#who-won-what-decided-the-rounds}
+
+Kur të dhënat thonë kush fitoi çdo raund ([kolona e rezultatit](data-formats.md#outcome-columns) `won`: CS2, Rainbow Six Siege, War Thunder ...), rezultati është ajo për të cilën flasin Vëzhgimet. Për çdo palë, i ndan raundet sipas asaj që ndodhi në to dhe krahason përqindjet e fitoreve:
+
+| Faktori | Raundet e palës me të | ... dhe pa të |
+|---|---|---|
+| Dueli hapës | bëri vrasjen e parë | vdiq e para |
+| Blerja | blerja e saj ishte më e mirë se e palës tjetër | më e keqe |
+| Vdekja e parë e shkëmbyer | vdekja e saj e parë u shkëmbye brenda 5 s | nuk u shkëmbye |
+| Vendosja | e vendosi bombën | pa vendosje |
+| Pajisjet | më shumë granata se në raundin e saj të zakonshëm | më pak |
+| Kontakt i hershëm | dueli i parë erdhi para kohës mediane të ndeshjes | më vonë |
+| Një vend i mbajtur | një lojtar qëndroi në vend 5 s ose më shumë | askush |
+| Një vend i arritur herët | një lojtar arriti atje në 25 s e para (rruga) | askush |
+
+Çdo krahasim është një diferencë e dy përqindjeve të fitoreve me intervalin e saj 95% (Newcombe), p-në e saktë të Fisher-it dhe një q mbi të gjithë faktorët e provuar (Benjamini-Hochberg). Një degë me më pak se 8 raunde shënohet *pak raunde*. Ato nën shkallën 5% të zbulimit të rremë bëhen gjetje; më të fortat renditen mbi gjetjet e detektorëve të tjerë (një gjetje rezultati peshon 1,35 herë sa një me të njëjtin efekt dhe të njëjtat prova).
+
+Një shembull i sajuar me 40 raunde:
+
+> **T** fitoi 79% të 19 raundeve kur mbajti **Mid**, kundrejt 24% të 21 pa të (55 pikë, 95% nga 26 deri në 74) - q 0,004.
+
+Ndjek edhe **probabilitetin e fitores** të raundit - shansin që kishte çdo palë në çdo çast, nga njerëzit gjallë, vendosja dhe ora: i përshtatur me raundet kur janë 30 ose më shumë, përndryshe nga një model paraprak i fiksuar (dhe teksti thotë cili). Prej tij dalin **pikat e kthesës** (vrasjet dhe vendosjet që e lëvizën më shumë shansin) dhe **probabiliteti i shtuar i fitores** i çdo lojtari: vrasjet dhe vendosjet e tij numërohen për të, vdekjet kundër tij, në vlerë raundesh gjatë ndeshjes, mesatarisht për raund me intervalin e vet, testuar kundrejt zeros. Vendet marrin të njëjtin bilanc: cila palë fitoi më shumë në duelet e zhvilluara atje.
+
+Të dhënave u duhen raunde, vrasje dhe vdekje me të dyja palët, dhe kolona `won`; vende me emër (`place`) për vendet e mbajtura, një kolonë `buy` për blerjen.
+
 ## Përmbledhja {#debrief}
 
-Skeda **Përmbledhja** i shkruan gjetjet në një tekst të shkurtër: një hyrje, gjetja më e qartë, një për taktikat, një për balancimin, pjesa tjetër e grupuar sipas detektorit, dhe sa prej tyre mbështeten në prova më të dobëta. Çdo paragraf ka butona të numëruar që shfaqin gjetjet e tij. **Kopjo tekstin** e kopjon.
+Skeda **Përmbledhja** i shkruan gjetjet në një tekst të shkurtër: një hyrje, gjetja më e qartë, një për taktikat, një për balancimin, pastaj - kur të dhënat thonë kush fitoi - çfarë vendosi raundet, pjesa tjetër e grupuar sipas detektorit, dhe sa prej tyre mbështeten në prova më të dobëta.
+
+Çfarë vendosi raundet vjen në katër paragrafë: rezultati dhe nga vijnë probabilitetet e fitores; faktorët më të fortë me numrat, intervalin dhe q-në e tyre (kur asnjë nuk e kalon shkallën e zbulimit të rremë, teksti thotë *asgjë e sigurt ende* dhe prapë e përmend më të fortin); tri pikat më të mëdha të kthesës; dhe lojtarët që shtuan dhe kushtuan më shumë probabilitet fitoreje, me vendet që fituan më shumë. Një shembull i sajuar:
+
+> T fitoi 23 dhe CT fitoi 17 nga 40 raunde me rezultat të njohur (T: 58%, 95% nga 42% deri në 72%). Probabilitetet e fitores vijnë nga një model i përshtatur me këto raunde.
+>
+> Çfarë i dalloi raundet e fituara nga ato të humbura: T fitoi 79% të 19 raundeve kur mbajti Mid, kundrejt 24% të 21 pa të (55 pikë, 95% nga 26 deri në 74) (q 0,004), ...
+>
+> Pikat e kthesës: raundi 17 në 48 s, një vrasje nga CT në B site ia çoi shansin nga 31% në 58%, dhe e mori raundin, ... Çdo paragraf ka butona të numëruar që shfaqin gjetjet e tij. **Kopjo tekstin** e kopjon.
 
 ![Përmbledhja e shkruar nga narratori i integruar](../assets/img/sq/debrief.webp)
 
@@ -72,11 +106,13 @@ Narratori i integruar punon pa internet, në gjuhën tënde. Përzgjedhësi **Le
 | **Përdor një IA të jashtme** | Joaktiv si parazgjedhje |
 | **Dërgo emrat e lojtarëve** | Joaktiv si parazgjedhje: lojtarët dërgohen si P1, P2 ... |
 
-Pastaj shkruaj një pyetje opsionale dhe shtyp **Shkruaj me IA**. Dërgohen vetëm gjetjet dhe numrat e tyre - kurrë rreshtat e të dhënave të tua. Përgjigja rrjedh gradualisht, dhe gjetjet e cituara bëhen butona.
+Pastaj shkruaj një pyetje opsionale dhe shtyp **Shkruaj me IA**. Dërgohen vetëm gjetjet dhe numrat e tyre - kurrë rreshtat e të dhënave të tua. Përgjigja rrjedh gradualisht, dhe gjetjet e cituara bëhen butona. Kur të dhënat thonë kush fitoi, modelit i kërkohet të nisë me atë që vendosi raundet, me intervalin dhe q-në e çdo numri, dhe të thotë kur një faktor mbështetet në pak raunde ose kur probabilitetet e fitores vijnë nga modeli paraprak.
 
 ## Komentuesi {#caster}
 
-Për **një ndeshje** (zgjidh një nëse janë ngarkuar disa), **Komentuesi** gjen momentet që vlen të shihen: gjakun e parë, shumëvrasjet, shkëmbimet, kthimet në fund, luhatjet e objektivave, rikthimet, lojtarët që dallohen, të shtënat nga larg.
+Për **një ndeshje** (zgjidh një nëse janë ngarkuar disa), **Komentuesi** gjen momentet që vlen të shihen: gjakun e parë, shumëvrasjet, shkëmbimet, kthimet në fund, luhatjet e objektivave, rikthimet, lojtarët që dallohen, të shtënat nga larg, dhe **pikat e kthesës** - vrasjet që e lëvizën më shumë shansin e një pale për të fituar raundin (sipas lojtarëve që mbetën gjallë në çdo palë, në raunde pa rishfaqje).
+
+Kur të dhënat thonë kush fitoi çdo raund, çdo moment e thotë: *"Anna rrëzon Ben-in: shansi i T për të fituar raundin shkon nga 38% në 62% - dhe e marrin raundin."* Një moment i palës që fitoi më pas vlen më shumë kur komentuesi zgjedh cilat të mbajë, dhe një rikthim numërohet në raunde të fituara.
 
 ![Momentet e komentuesit për një raund të demos shooter](../assets/img/sq/caster.webp)
 

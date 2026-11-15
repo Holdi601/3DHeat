@@ -5,9 +5,9 @@ nav_order: 1
 has_children: true
 lang: "it"
 source: "match-replay.md"
-source_hash: "14a8aade5ff0"
+source_hash: "b02fd1676a6f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Replay della partita
@@ -90,6 +90,8 @@ La sezione **Display tattico** disegna, per nessuna unità, quelle selezionate, 
 ## Obiettivi {#objectives}
 
 Quando una partita arriva con i suoi obiettivi, la sezione **Obiettivi** li disegna sul livello: zone di cattura (con proprietario e avanzamento della cattura), punti di spawn, aeroporti, aree e bersagli di bombardamento, ciascun livello attivabile e disattivabile, con etichette. Si vedono attraverso il terreno. Con più modalità di gioco caricate, **Modalità** filtra le partite per modalità. Gli obiettivi vengono da un file di partita del convertitore accanto alla registrazione o dentro un contenitore [`.3dheat`](container.md).
+
+Le partite di Rainbow Six Siege portano i loro siti bomba: le due stanze di ogni sito sono disegnate sul loro pavimento come contorni con i loro nomi, ricavati da dove stavano i giocatori mentre il gioco nominava la stanza; un sito della mappa non giocato nella partita viene dalla tabella dei siti del convertitore, come un cerchio. Nel replay il sito del round alla testina di riproduzione si accende in ambra, gli altri restano grigi. Fanno parte del livello delle zone di cattura.
 
 ## Etichette e statistiche {#labels-and-statistics}
 

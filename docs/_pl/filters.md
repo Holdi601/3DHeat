@@ -4,9 +4,9 @@ parent: "Filtry i narzędzia"
 nav_order: 1
 lang: "pl"
 source: "filters.md"
-source_hash: "231d171c03ba"
+source_hash: "a6f683bf58c5"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtry
@@ -41,6 +41,10 @@ Wypisywane są tylko rodzaje, które występują. Kolumny wartości (`cost_*`, `
 Lista kategorii z więcej niż 12 wartościami dostaje pole wyszukiwania (*Szukaj n wartości*) i przycisk **Tylko te**, który pozwala dokładnie na pasujące wartości.
 
 To, które kolumny można filtrować, jest ustalane przy wczytaniu, bo wtedy trzeba je odczytać. Gdy nie ma żadnej zachowanej kolumny, panel to mówi i wskazuje *Zachowaj do filtrowania*.
+
+## Szybkie filtry Rainbow Six Siege {#rainbow-six-siege-quick-filters}
+
+Gdy wczytany jest mecz Rainbow Six Siege, panel zaczyna się od przycisków, które ustawiają filtry jednym kliknięciem: **Dziury po kulach i ślady** (ślady pozostawione na poziomie), **Ślady ze strzelcem** i **Ślady z klasą broni** (te, dla których ustalono strzelca albo broń z zabójstwa strzelca w tej samej chwili; podziel je lub filtruj dalej według `byOperator` albo `byItemClass`), **Próby podłożenia i rozbrojenia**, **Przerwane próby** (rozpoczęte, nieukończone, tam, gdzie gracz przerwał) oraz **Wzmocnienia** (gdzie wzmocniono ścianę lub właz, przy obrońcy, którego wskazuje konwerter). Każdy z nich zastępuje filtr w kolumnie zdarzeń i zachowuje resztę; **Wyczyść wszystkie filtry** to cofa. Kolumny są opisane w dokumentacji konwertera.
 
 ## Kolumny liczbowe (zakres) {#numeric-columns-range}
 
