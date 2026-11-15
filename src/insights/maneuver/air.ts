@@ -8,7 +8,7 @@
  */
 
 import { AIR, GROUND, SEA, SCALE } from './frame';
-import { at, centroid, countIn, dataT, emit, outcomeOf, outlineOf, pathOf, r0, r2, unitPath, type Ctx } from './context';
+import { at, centroid, countIn, dataT, emit, foughtBetween, outcomeOf, outlineOf, pathOf, r0, r2, unitPath, type Ctx } from './context';
 import { CLS_SPAA } from './types';
 
 const DEG = 180 / Math.PI;
@@ -69,6 +69,8 @@ export function missileDefence(ctx: Ctx): void {
       if (score < best) ((best = score), (tgt = u));
     }
     if (tgt < 0) continue;
+    // A missile fight: the target had the shooter within 60° of its nose at the launch (closing, as in BVR).
+    if (!(offBore(ctx, s, tgt, f.X[ks], f.Z[ks]) <= 60)) continue;
     // One answer per target per 20 s of launches.
     const lt = last.get(tgt);
     if (lt !== undefined && e.t - lt < 20) continue;
@@ -144,13 +146,18 @@ export function airPincer(ctx: Ctx): void {
   const air = airUnits(ctx);
   const L = SCALE[AIR].link * upm;
   const back = Math.round(180 / f.step);
-  const need = Math.max(2, Math.round(10 / f.step));
+  const need = Math.max(2, Math.round(20 / f.step));
   const runs = new Map<string, { s0: number; s1: number; u: number; w: number; e: number; sep: number }>();
   const done = new Set<string>();
   const flush = (key: string) => {
     const r = runs.get(key)!;
     runs.delete(key);
     if (r.s1 - r.s0 + 1 < need) return;
+    // Both arms at about the same range from the enemy at the end: a pincer closes together.
+    const ke0 = r.s1 * f.N + r.e;
+    const du = Math.hypot(f.X[r.s1 * f.N + r.u] - f.X[ke0], f.Z[r.s1 * f.N + r.u] - f.Z[ke0]);
+    const dw = Math.hypot(f.X[r.s1 * f.N + r.w] - f.X[ke0], f.Z[r.s1 * f.N + r.w] - f.Z[ke0]);
+    if (Math.max(du, dw) > 1.6 * Math.min(du, dw)) return;
     const dk = `${f.team[r.u]}:${r.e}:${Math.floor(r.s0 / back)}`;
     if (done.has(dk)) return;
     done.add(dk);
@@ -559,6 +566,40 @@ export function closeFights(ctx: Ctx): void {
       const slowed = speed / n <= 0.8 * entry;
       const kind = used < 500 && rate >= 8 && slowed ? 'anglesFight' : used >= 800 && climb >= 15 ? 'energyFight' : null;
       if (!kind) continue;
+      // A fight, not a pair flying together: their headings apart by 30° or more on average while close,
+      // and a shot, hit or kill by one of them.
+      const F0 = dataT(f, fi.s0);
+      const F1 = dataT(f, fi.s1) + 5;
+      if (![u, other].some((w) => countIn(ctx.firesBy.get(w), F0, F1) + countIn(ctx.killsBy.get(w), F0, F1) > 0)) continue;
+      let apart = 0;
+      let na = 0;
+      for (let s = fi.s0; s <= fi.s1; s++) {
+        const ka = s * f.N + u;
+        const kb = s * f.N + other;
+        if (!f.alive[ka] || !f.alive[kb]) continue;
+        let d = Math.atan2(ctx.G.VZ[ka], ctx.G.VX[ka]) - Math.atan2(ctx.G.VZ[kb], ctx.G.VX[kb]);
+        while (d > Math.PI) d -= 2 * Math.PI;
+        while (d < -Math.PI) d += 2 * Math.PI;
+        apart += Math.abs(d);
+        na++;
+      }
+      if (!na || (apart / na) * DEG < 30) continue;
+      // And they fought each other: a kill between them, or each in turn held the other within 30° of
+      // its nose inside 1.5 km for 4 s (a turning fight; a wingman in trail holds its leader, never back).
+      const noseRun = (a: number, b: number) => {
+        let run = 0;
+        let best = 0;
+        for (let s = fi.s0; s <= fi.s1; s++) {
+          const ka = s * f.N + a;
+          const kb = s * f.N + b;
+          const ok = f.alive[ka] && f.alive[kb] && Math.hypot(f.X[ka] - f.X[kb], f.Z[ka] - f.Z[kb], f.Y[ka] - f.Y[kb]) <= 1500 * upm && offBore(ctx, s, a, f.X[kb], f.Z[kb]) <= 30;
+          run = ok ? run + 1 : 0;
+          best = Math.max(best, run);
+        }
+        return best * f.step;
+      };
+      const decided = foughtBetween(ctx, [u], [other], F0, F1 + 10) > 0;
+      if (!decided && !(noseRun(u, other) >= 4 && noseRun(other, u) >= 4)) continue;
       const k = fi.s1 * f.N + u;
       const o = outcomeOf(ctx, [u], f.team[u], dataT(f, fi.s0), dataT(f, fi.s1), 30);
       emit(ctx, {
@@ -568,7 +609,9 @@ export function closeFights(ctx: Ctx): void {
         dom: AIR,
         s0: fi.s0,
         s1: fi.s1,
-        confidence: kind === 'anglesFight' ? 0.5 + 0.25 * clamp01((rate - 8) / 8) + 0.25 * clamp01((500 - used) / 500) : 0.5 + 0.25 * clamp01((used - 800) / 1500) + 0.25 * clamp01((climb - 15) / 30),
+        // Sure only when one killed the other: in a furball, mutual turning alone is as common between
+        // aircraft whose meeting a null model makes up (`nulls.ts`).
+        confidence: !decided ? 0.42 : kind === 'anglesFight' ? 0.5 + 0.25 * clamp01((rate - 8) / 8) + 0.25 * clamp01((500 - used) / 500) : 0.5 + 0.25 * clamp01((used - 800) / 1500) + 0.25 * clamp01((climb - 15) / 30),
         units: [u],
         place: { x: f.alive[k] ? f.X[k] : f.X[fi.s0 * f.N + u], y: f.alive[k] ? f.Y[k] : f.Y[fi.s0 * f.N + u], z: f.alive[k] ? f.Z[k] : f.Z[fi.s0 * f.N + u], radius: 3000 * upm },
         paths: [unitPath(f, u, fi.s0, fi.s1), unitPath(f, other, fi.s0, fi.s1)],

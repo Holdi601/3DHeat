@@ -24,7 +24,7 @@ import { ManeuverCollector } from '../insights/maneuver/collect';
 import { CqbCollector } from '../insights/cqb/summary';
 import { maneuverSection } from '../insights/maneuver/summary';
 import { BehaviourTap, tapColumns, type TapColumns } from '../insights/behaviour/summaryTap';
-import type { EvKind, ManeuverMatch } from '../insights/maneuver/types';
+import type { EvKind, ManeuverMatch, MatchTracks } from '../insights/maneuver/types';
 
 export const COMPRESSORS: Compressors = { ZSTD: (input, outputLength) => zstd(input, new Uint8Array(outputLength)) };
 
@@ -36,7 +36,7 @@ export interface SummaryInfo {
   doc?: Record<string, unknown> | null;
   by?: string;
   /** Handed the match's movement analysis in full (the summary keeps only its counts). */
-  onManeuvers?: (m: ManeuverMatch | null) => void;
+  onManeuvers?: (m: ManeuverMatch | null, tracks: MatchTracks | undefined) => void;
 }
 
 /** The canonical events the movement analysis reads (`insights/maneuver`). */
@@ -1001,7 +1001,7 @@ export class SummaryBuilder {
       this.mv.upm = this.upm;
       const [m] = this.mv.finish(this.teamNames.length);
       const r = m ? analyseMatch(m) : null;
-      this.info.onManeuvers?.(r);
+      this.info.onManeuvers?.(r, m);
       return maneuverSection(r);
     } catch {
       return null;

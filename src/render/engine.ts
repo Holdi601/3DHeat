@@ -675,6 +675,8 @@ export class Engine {
   readonly objectiveDraw = new ObjectiveLayerDraw();
   /** The objectives' lines over the heat, between frames that build them. */
   private objectiveTop: { data: Float32Array; count: number } | null = null;
+  /** The places' and maneuvers' lines as one array, with a version that moves only when either set changes. */
+  private staticTopCache: { lines: Float32Array | null; out: { data: Float32Array; count: number; version: number } | null; version: number } = { lines: null, out: null, version: 0 };
   /** The replay's objectives faintly over the picture (`objectiveXray`). */
   private xrayVerts = new Float32Array(0);
   /** The objectives' filled shapes' edges over the picture (`ObjectiveLayerDraw.top`), between frames that build them. */
@@ -2105,6 +2107,16 @@ export class Engine {
   }
 
   /** The objectives' vertices (`from` to `to` of `data`) at a fraction of their alpha, to draw over the picture. */
+  /** The top lines that change on a click, not a frame: the renderer uploads them only when their version moves. */
+  private staticTop(): { data: Float32Array; count: number; version: number } | null {
+    const lines = withManeuverLines(withPlaceLines(null));
+    const c = this.staticTopCache;
+    if ((lines?.data ?? null) === c.lines) return c.out;
+    c.lines = lines?.data ?? null;
+    c.out = lines ? { data: lines.data, count: lines.count, version: ++c.version } : null;
+    return c.out;
+  }
+
   private objectiveXray(data: Float32Array | null, from: number, to: number, share = OBJECTIVE_XRAY): { data: Float32Array; count: number } | null {
     const n = to - from;
     if (!data || n <= 0) return null;
@@ -3794,8 +3806,9 @@ export class Engine {
       symbols: !raceBuilt && s.mode === 'team' && s.team.figures ? this.symbolParams(s) : null,
       overlayVerts,
       overlayVertCount,
-      topVerts: withManeuverLines(withPlaceLines(this.directions.top(this.objectiveTop)))?.data ?? null,
-      topVertCount: withManeuverLines(withPlaceLines(this.directions.top(this.objectiveTop)))?.count ?? 0,
+      topVerts: this.directions.top(this.objectiveTop)?.data ?? null,
+      topVertCount: this.directions.top(this.objectiveTop)?.count ?? 0,
+      topStatic: this.staticTop(),
       topTris: this.objectiveTopTris?.data ?? null,
       groundTris: objGround?.data ?? null,
       objectiveZones:

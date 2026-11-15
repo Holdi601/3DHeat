@@ -63,6 +63,8 @@ export interface MatchTracks {
   teams: number;
   units: UnitTrack[];
   events: MEvent[];
+  /** Engagement range by domain (world units) to use instead of measuring it: a null model keeps its match's. */
+  ranges?: number[];
 }
 
 export const MANEUVER_KINDS = [

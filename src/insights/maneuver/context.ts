@@ -26,6 +26,10 @@ export interface Pair {
   killer: number;
   vTeam: number;
   kTeam: number;
+  /** Killer to victim just before, world units (NaN where either is not placed); where the victim was. */
+  d: number;
+  x: number;
+  z: number;
 }
 
 export interface Ctx {
@@ -92,7 +96,7 @@ export function buildCtx(m: MatchTracks): Ctx | null {
     }
   }
   const pairs = pairKills(f, ev);
-  const R = DOMAINS.map((_, d) => rangeOf(f, pairs, d));
+  const R = m.ranges ?? DOMAINS.map((_, d) => rangeOf(f, pairs, d));
   const ctx: Ctx = { f, G, R, near: new Map(), contacts: [], ev, killsBy, deathsOf, firesBy, captures, pairs, teamKills, teamLosses, origin: origins(f), out: [] };
   nearest(ctx);
   return ctx;
@@ -138,7 +142,13 @@ function pairKills(f: Frame, ev: MEvent[]): Pair[] {
       const d = Math.abs(kills[i].t - e.t);
       if (d < bd) ((bd = d), (best = k));
     }
-    if (best >= 0) out.push({ t: e.t, victim: v, killer: best, vTeam: f.team[v], kTeam: f.team[best] });
+    if (best >= 0) {
+      const s = Math.max(0, Math.min(f.S - 1, Math.round((e.t - f.start) / f.step) - 1));
+      const a = s * f.N + v;
+      const b = s * f.N + best;
+      const d = f.alive[a] && f.alive[b] ? Math.hypot(f.X[a] - f.X[b], f.Z[a] - f.Z[b], f.Y[a] - f.Y[b]) : NaN;
+      out.push({ t: e.t, victim: v, killer: best, vTeam: f.team[v], kTeam: f.team[best], d, x: f.alive[a] ? f.X[a] : NaN, z: f.alive[a] ? f.Z[a] : NaN });
+    }
   }
   return out;
 }
@@ -235,6 +245,43 @@ function nearest(ctx: Ctx): void {
     }
   }
   ctx.contacts.sort((a, b) => a.s - b.s);
+}
+
+/**
+ * Kills between these units and the other side in `[t0, t1]` (data seconds),
+ * either way round: a fight that really happened between them. Fire and hits
+ * name no target; a kill paired with its death does - and a null model that
+ * breaks the sides' interaction (`nulls.ts`) breaks these pairs too.
+ */
+export function fought(ctx: Ctx, units: Iterable<number>, t0: number, t1: number, against = -1): number {
+  const set = new Set(units);
+  let n = 0;
+  for (const p of ctx.pairs) {
+    if (p.t < t0 || p.t > t1) continue;
+    if (set.has(p.killer) && (against < 0 || p.vTeam === against)) n++;
+    else if (set.has(p.victim) && (against < 0 || p.kTeam === against)) n++;
+  }
+  return n;
+}
+
+/**
+ * Kills between two sets of units in `[t0, t1]`, either way round, the killer
+ * within two engagement ranges of its victim (a kill from across the map is
+ * not this fight; a null model that moves one side keeps the pair but not the
+ * distance).
+ */
+export function foughtBetween(ctx: Ctx, a: Iterable<number>, b: Iterable<number>, t0: number, t1: number, near?: { x: number; z: number; r: number }): number {
+  const A = new Set(a);
+  const B = new Set(b);
+  let n = 0;
+  for (const p of ctx.pairs) {
+    if (p.t < t0 || p.t > t1 || !((A.has(p.killer) && B.has(p.victim)) || (B.has(p.killer) && A.has(p.victim)))) continue;
+    if (!(p.d <= 2 * ctx.R[ctx.f.dom[p.victim]])) continue;
+    // Here: a person's earlier life, killed elsewhere just before, is not this fight.
+    if (near && !(Math.hypot(p.x - near.x, p.z - near.z) <= near.r)) continue;
+    n++;
+  }
+  return n;
 }
 
 /** Events in `[t0, t1]` (data seconds) of a list of times. */

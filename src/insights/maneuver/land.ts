@@ -14,7 +14,7 @@
  */
 
 import { AIR, INF, SEA, SCALE, surface, timeOf } from './frame';
-import { at, centroid, countIn, dataT, emit, move, outcomeOf, outlineOf, pathOf, r0, r2, secs, speedOf, unitPath, unitsNear, type Contact, type Ctx } from './context';
+import { at, centroid, countIn, dataT, emit, foughtBetween, move, outcomeOf, outlineOf, pathOf, r0, r2, secs, speedOf, unitPath, unitsNear, type Contact, type Ctx } from './context';
 import type { Group } from './groups';
 import { findGroups, stepAt } from './groups';
 
@@ -118,7 +118,9 @@ export function attacks(ctx: Ctx): Attack[] {
     const oc = centroid(f, others, c.s);
     if (oc) {
       n = norm(oc[0] - ec[0], oc[2] - ec[2]);
-      fixing = others.length;
+      // Fixing only when it fights the enemy body: kills either way between them in the minute around.
+      const T = dataT(f, c.s);
+      fixing = foughtBetween(ctx, others, unitsNear(ctx, c.s, ec[0], ec[2], 3 * R, g.team, fam), T - 60, T + 30, { x: ec[0], z: ec[2], r: 2 * R }) > 0 ? others.length : 0;
     } else {
       let vx = 0;
       let vz = 0;
@@ -214,7 +216,10 @@ export function approaches(ctx: Ctx, list: Attack[]): void {
       const ec: [number, number, number] = [(p.ec[0] + q.ec[0]) / 2, (p.ec[1] + q.ec[1]) / 2, (p.ec[2] + q.ec[2]) / 2];
       const units = [...new Set([...at(p.g, p.s)!.members, ...at(q.g, q.s)!.members])];
       const fixing = Math.max(p.fixing, q.fixing);
-      const conf = 0.55 + 0.2 * clamp01((sep - 100) / 60) + 0.15 * (fixing > 0 ? 1 : 0) + 0.1 * (Math.min(at(p.g, p.s)!.members.length, at(q.g, q.s)!.members.length) >= 2 ? 1 : 0);
+      // Both arms in the fight: kills either way between them and the enemy body.
+      const T = dataT(ctx.f, Math.max(p.s, q.s));
+      const engaged = foughtBetween(ctx, units, [...p.enemy, ...q.enemy], dataT(ctx.f, Math.min(p.s0, q.s0)), T + 90, { x: ec[0], z: ec[2], r: 2 * R }) > 0;
+      const conf = !engaged ? 0.42 : 0.55 + 0.2 * clamp01((sep - 100) / 60) + 0.15 * (fixing > 0 ? 1 : 0) + 0.1 * (Math.min(at(p.g, p.s)!.members.length, at(q.g, q.s)!.members.length) >= 2 ? 1 : 0);
       emit(ctx, {
         kind: 'pincer',
         team: p.g.team,
@@ -239,8 +244,13 @@ export function approaches(ctx: Ctx, list: Attack[]): void {
  * side (at least as many as are in it; it spread over half a range at most)
  * within 1.5 ranges, from two or more of that side's groups, whose
  * bearings from the pocket's centre leave no gap wider than 100°, for at
- * least 45 s (ground), the pocket not getting out (its centre moving less than
- * a range). Paid off when the pocket loses half its units or more.
+ * least a minute (ground), the pocket not getting out (its centre moving less
+ * than a range) and cut off - none of its own side between one and three
+ * ranges from it. Sure only when the ring closed in: its units came half a
+ * range nearer in the minute before. In a brawl the sides mix and every group
+ * has enemies all round; the cut-off and the closing are what a null model of
+ * the same match (`nulls.ts`) does not produce. Paid off when the pocket loses
+ * half its units or more.
  */
 export function encirclement(ctx: Ctx): void {
   const f = ctx.f;
@@ -249,7 +259,7 @@ export function encirclement(ctx: Ctx): void {
     const nr = ctx.near.get(E.id)!;
     const R = ctx.R[E.dom];
     const fam = surface(E.dom);
-    const need = stepsOf(ctx, E.dom, 45);
+    const need = stepsOf(ctx, E.dom, 60);
     let run: { s: number; cov: number; by: number[]; team: number }[] = [];
     const flush = () => {
       const a0 = run.length ? stepAt(E, run[0].s) : null;
@@ -268,7 +278,27 @@ export function encirclement(ctx: Ctx): void {
         for (const u of pocket) pocketLoss += countIn(ctx.deathsOf.get(u), dataT(f, s0), dataT(f, s1) + tail);
         const o = outcomeOf(ctx, by, team, dataT(f, s0), dataT(f, s1), tail);
         const cov = run.reduce((a, r) => a + r.cov, 0) / run.length;
-        const conf = 0.45 + 0.2 * clamp01((cov - 260) / 70) + 0.2 * clamp01((run.length - need) / (2 * need)) + 0.15 * clamp01((by.length - 3) / 3);
+        // Did the ring close in? Its units' mean distance to the pocket a minute before against at the start.
+        const before = Math.max(0, s0 - stepsOf(ctx, E.dom, 60));
+        const p0 = stepAt(E, s0)!;
+        let dB = 0;
+        let dA = 0;
+        let nB = 0;
+        for (const u of by) {
+          const kb = before * f.N + u;
+          const ka = s0 * f.N + u;
+          if (!f.alive[kb] || !f.alive[ka]) continue;
+          dB += Math.hypot(f.X[kb] - p0.cx, f.Z[kb] - p0.cz);
+          dA += Math.hypot(f.X[ka] - p0.cx, f.Z[ka] - p0.cz);
+          nB++;
+        }
+        const closed = nB ? (dB - dA) / nB : 0;
+        // And the pocket was fought: kills either way between ring and pocket while it held or just after.
+        const engaged = foughtBetween(ctx, by, pocket, dataT(f, s0) - 30, dataT(f, s1) + tail, { x: st.cx, z: st.cz, r: 2 * R }) > 0;
+        const conf =
+          closed >= 0.5 * R && engaged
+            ? 0.5 + 0.2 * clamp01((cov - 260) / 70) + 0.15 * clamp01((run.length - need) / (2 * need)) + 0.15 * clamp01((by.length - 3) / 3)
+            : 0.42;
         const groups = new Set<number>();
         for (const u of by) for (let s = s0; s <= s1; s++) if (ctx.G.at[s * f.N + u] >= 0) groups.add(ctx.G.at[s * f.N + u]);
         const back = stepsOf(ctx, E.dom, 60);
@@ -284,7 +314,7 @@ export function encirclement(ctx: Ctx): void {
           place: { x: st.cx, y: st.cy, z: st.cz, radius: 1.5 * R },
           paths: by.slice(0, 12).map((u) => unitPath(f, u, Math.max(0, s0 - back), s1)),
           outlines: [outlineOf(f, st.members, mid, R * 0.15)],
-          evidence: { coverageDeg: r0(cov), encirclers: by.length, pocket: pocket.length, pocketLosses: pocketLoss, secs: r0((s1 - s0) * f.step) },
+          evidence: { coverageDeg: r0(cov), encirclers: by.length, pocket: pocket.length, pocketLosses: pocketLoss, secs: r0((s1 - s0) * f.step), closedM: r0(closed / f.upm) },
           outcome: { ...o, paid: pocketLoss * 2 >= pocket.length ? 1 : o.paid },
         });
       }
@@ -305,6 +335,16 @@ export function encirclement(ctx: Ctx): void {
         flush();
         continue;
       }
+      // Cut off: none of its own side between one and three ranges out.
+      const relief = unitsNear(ctx, st.s, st.cx, st.cz, 3 * R, team, fam).filter((u) => {
+        if (f.team[u] !== E.team) return false;
+        const k = st.s * f.N + u;
+        return Math.hypot(f.X[k] - st.cx, f.Z[k] - st.cz) > R;
+      });
+      if (relief.length) {
+        flush();
+        continue;
+      }
       const b = ring.map((u) => Math.atan2(f.Z[st.s * f.N + u] - st.cz, f.X[st.s * f.N + u] - st.cx) * DEG).sort((p, q) => p - q);
       let gap = 360 - (b[b.length - 1] - b[0]);
       for (let k = 1; k < b.length; k++) gap = Math.max(gap, b[k] - b[k - 1]);
@@ -319,12 +359,14 @@ export function encirclement(ctx: Ctx): void {
 }
 
 /**
- * Penetration: a moving group with standing enemies ahead of it on both sides
+ * Penetration: a moving group with enemies ahead of it on both sides that
+ * have stood for 30 s, their side's centre beyond them (the enemy's own line)
  * (left and right of its heading, 0.25-1.5 ranges out, within a range
  * ahead, roughly abreast of each other - a line) that, within two minutes
  * (ground), has passed at least one of each side, 0.75 ranges or more on from
- * where it started - through the line, not round its end. A breakthrough
- * when it goes on a further range beyond the line.
+ * where it started - through the line, not round its end. Sure only when it
+ * gets half a range beyond the line and is still beyond it 20 s later; a
+ * breakthrough when it goes on a further range.
  */
 export function penetration(ctx: Ctx): void {
   const f = ctx.f;
@@ -357,6 +399,20 @@ export function penetration(ctx: Ctx): void {
         else if (cr <= -0.25 * R && cr >= -1.5 * R) right.push(u);
       }
       if (!left.length || !right.length) continue;
+      // A held line: its units stood the 30 s before; one of the enemy's own, its side's centre beyond it.
+      const hold = Math.round(30 / f.step);
+      const heldL = left.filter((u) => stood(ctx, u, st.s - hold, st.s));
+      const heldR = right.filter((u) => stood(ctx, u, st.s - hold, st.s));
+      if (!heldL.length || !heldR.length) continue;
+      left.length = 0;
+      left.push(...heldL);
+      right.length = 0;
+      right.push(...heldR);
+      const enemySide: number[] = [];
+      for (let u = 0; u < f.N; u++) if (f.team[u] === f.team[left[0]] && surface(f.dom[u]) === fam && f.alive[st.s * f.N + u]) enemySide.push(u);
+      const ec = centroid(f, enemySide, st.s);
+      const lineAt = [...left, ...right].reduce((a, u) => a + (f.X[st.s * f.N + u] - st.cx) * h[0] + (f.Z[st.s * f.N + u] - st.cz) * h[1], 0) / (left.length + right.length);
+      if (!ec || (ec[0] - st.cx) * h[0] + (ec[2] - st.cz) * h[1] <= lineAt) continue;
       // A line: some enemy on the left about abreast of some on the right.
       const alongOf = (u: number) => (f.X[st.s * f.N + u] - st.cx) * h[0] + (f.Z[st.s * f.N + u] - st.cz) * h[1];
       if (!left.some((a) => right.some((b) => Math.abs(alongOf(a) - alongOf(b)) < 0.5 * R))) continue;
@@ -391,7 +447,23 @@ export function penetration(ctx: Ctx): void {
             break;
           }
         }
-        const conf = 0.5 + 0.15 * (left.length >= 2 && right.length >= 2 ? 1 : 0) + 0.2 * (through ? 1 : 0) + 0.1 * (st.members.length >= 3 ? 1 : 0) + 0.05 * clamp01((pl.length + pr.length - 2) / 4);
+        // Deep and lasting: half a range or more beyond the line, and still beyond it (alive) 20 s after passing.
+        let held = 0;
+        let from = -1;
+        for (let q = j; q < g.steps.length && g.steps[q].s <= s2.s + W; q++) {
+          const s4 = g.steps[q];
+          const beyondLine = (s4.cx - st.cx) * h[0] + (s4.cz - st.cz) * h[1] >= line + 0.25 * R;
+          if (from < 0) {
+            if (beyondLine) from = s4.s;
+            continue;
+          }
+          if (!beyondLine) break;
+          held = (s4.s - from) * f.step;
+          if (held >= 20) break;
+        }
+        // And a fight: kills either way between the group and the enemies round the line while it went through.
+        const deep = beyond - line >= 0.5 * R && held >= 20 && foughtBetween(ctx, st.members, near, dataT(f, st.s) - 30, dataT(f, end) + 30, { x: st.cx + h[0] * line, z: st.cz + h[1] * line, r: 2 * R }) > 0;
+        const conf = deep ? 0.5 + 0.15 * (left.length >= 2 && right.length >= 2 ? 1 : 0) + 0.2 * (through ? 1 : 0) + 0.1 * (st.members.length >= 3 ? 1 : 0) + 0.05 * clamp01((pl.length + pr.length - 2) / 4) : 0.42;
         const lineUnits = [...left, ...right];
         const a = left[0];
         const b = right[0];
@@ -414,7 +486,7 @@ export function penetration(ctx: Ctx): void {
             [r2(f.X[ka]), r2(f.Z[ka])],
             [r2(f.X[kb]), r2(f.Z[kb])],
           ],
-          evidence: { left: left.length, right: right.length, passed: pl.length + pr.length, beyondM: r0(Math.max(0, beyond - line) / f.upm), units: st.members.length },
+          evidence: { left: left.length, right: right.length, passed: pl.length + pr.length, beyondM: r0(Math.max(0, beyond - line) / f.upm), heldBeyondS: r0(held), units: st.members.length },
         });
         until = end + W;
         break;
@@ -606,6 +678,7 @@ export function massing(ctx: Ctx): void {
         // Contact at the mass point within two minutes, and the local force ratio there.
         let ratio = 0;
         let contactS = -1;
+        let where: [number, number] = [b.x, b.z];
         for (let s = b.s; s < Math.min(f.S, b.s + Math.round(120 / f.step)); s++) {
           // Where the gathered units are now: they may still be closing.
           const mc = centroid(f, at2, s);
@@ -615,6 +688,7 @@ export function massing(ctx: Ctx): void {
             const own = unitsNear(ctx, s, mc[0], mc[2], 1.5 * R, team, fam, true);
             ratio = own.length / en.length;
             contactS = s;
+            where = [mc[0], mc[2]];
             break;
           }
         }
@@ -636,9 +710,13 @@ export function massing(ctx: Ctx): void {
           i++;
           continue;
         }
+        // A concentration for a blow: the gathered units fought there (kills either way) in the two minutes after.
+        const foes: number[] = [];
+        for (let u = 0; u < f.N; u++) if (f.team[u] !== team && f.team[u] >= 0) foes.push(u);
+        const struck = contactS >= 0 && foughtBetween(ctx, at2, foes, dataT(f, b.s), dataT(f, b.s) + 120, { x: where[0], z: where[1], r: 2 * R }) > 0;
         const conf =
           kind === 'concentration'
-            ? contactS < 0
+            ? !struck
               ? 0.42
               : 0.5 + 0.2 * clamp01((delta - 0.25) / 0.35) + 0.15 * clamp01((ratio - 1) / 2) + 0.15 * clamp01((moved - 1.5 * R) / (3 * R))
             : 0.45 + 0.25 * clamp01((delta - 0.3) / 0.4) + 0.15 * clamp01((a.alive - 4) / 6) + 0.15 * clamp01((moved - 1.5 * R) / (3 * R));
@@ -728,6 +806,8 @@ export function feint(ctx: Ctx): void {
       done.add(key);
       const conf = 0.45 + 0.15 * clamp01((drawn.length - 2) / 3) + 0.2 * (fromP2 > 0 ? 1 : 0) + 0.1 * (atP2Now < atP2Before ? 1 : 0) + 0.1 * (sm.members.length >= 2 * st.members.length ? 1 : 0);
       const back = stepsOf(ctx, g.dom, 60);
+      // The main effort fought there: kills either way with the enemy at P2.
+      if (!foughtBetween(ctx, sm.members, unitsNear(ctx, M.s, p2[0], p2[1], D, g.team, fam), dataT(f, M.s) - 10, dataT(f, M.s) + secs(g.dom, 90), { x: p2[0], z: p2[1], r: D })) continue;
       const main = outcomeOf(ctx, [...sm.members], g.team, dataT(f, M.s), dataT(f, M.s), secs(g.dom, 90));
       emit(ctx, {
         kind: 'feint',
@@ -751,8 +831,11 @@ export function feint(ctx: Ctx): void {
 
 /**
  * Withdrawal: a group of two or more in contact that, over at least 20 s
- * (ground), opens the distance to the enemy it met by a range or more, moving
- * on 70% of the steps and away from that enemy on average (cos >= 0.5). A rout
+ * (ground) and three minutes at most, opens the distance to the enemy it met by a range or more, moving
+ * on 70% of the steps and away from that enemy on average (cos >= 0.5); sure
+ * only under pressure - an enemy there killed one of the group in the minute
+ * before, and the group got two ranges from it and from where it fought, over
+ * 30 s or more (ground). A rout
  * when it lost half its units or more meanwhile. Pursuit: an enemy group
  * moving the same way (cos >= 0.6) through the withdrawal, whose distance to
  * the withdrawing group grows by less than half of the way it went.
@@ -766,7 +849,7 @@ export function withdrawal(ctx: Ctx): void {
     const fam = surface(g.dom);
     const mv = move(ctx, g.dom);
     const minW = stepsOf(ctx, g.dom, 20);
-    const maxW = stepsOf(ctx, g.dom, 120);
+    const maxW = stepsOf(ctx, g.dom, 180);
     let after = -1;
     for (let i0 = 0; i0 < g.steps.length; i0++) {
       const st0 = g.steps[i0];
@@ -833,7 +916,27 @@ export function withdrawal(ctx: Ctx): void {
       }
       const rout = lost * 2 >= units.length;
       const o = outcomeOf(ctx, units, g.team, T0, T1, 30);
-      const conf = 0.5 + 0.2 * clamp01((best.gain - R) / (2 * R)) + 0.15 * clamp01((best.away - 0.5) / 0.4) + 0.15 * (units.length >= 3 ? 1 : 0);
+      // A withdrawal from a fight: kills either way with that enemy body in the minute before it turned.
+      // Who was in it then: the group and the enemies within two ranges, now and a minute before.
+      const sBack = Math.max(0, st0.s - Math.round(60 / f.step));
+      const gBack = stepAt(g, sBack) ?? g.steps[0];
+      const mine = new Set([...units, ...gBack.members]);
+      const theirs = new Set([...enemy, ...unitsNear(ctx, sBack, gBack.cx, gBack.cz, 2 * R, g.team, fam).filter((u) => f.team[u] === enemyTeam)]);
+      // Under pressure: an enemy of that body killed one of the group in the minute before it turned, and the
+      // group got a range or more further from that killer - a retreat, not a group moving on after its own kill.
+      const killers = new Set<number>();
+      for (const p of ctx.pairs) {
+        if (p.t < T0 - 60 || p.t > T0 + 5 || !mine.has(p.victim) || !theirs.has(p.killer)) continue;
+        if (!(p.d <= 2 * R) || !(Math.hypot(p.x - st0.cx, p.z - st0.cz) <= 2 * R)) continue;
+        killers.add(p.killer);
+      }
+      const kc = centroid(f, [...killers], sStart);
+      const kd = (st: { cx: number; cz: number }) => (kc ? Math.hypot(st.cx - kc[0], st.cz - kc[2]) : 0);
+      const fromKiller = kc ? kd(end) - kd(st0) : 0;
+      // On foot (round-based shooters) a fall-back is as common in the null models of the same matches as in
+      // the matches themselves (docs/maneuver.md): listed there, never sure.
+      const pressed = g.dom !== INF && killers.size > 0 && fromKiller >= 2 * R && best.gain >= 2 * R && (end.s - st0.s) * f.step >= secs(g.dom, 30);
+      const conf = pressed ? 0.5 + 0.2 * clamp01((best.gain - R) / (2 * R)) + 0.15 * clamp01((best.away - 0.5) / 0.4) + 0.15 * (units.length >= 3 ? 1 : 0) : 0.42;
       const m = emit(ctx, {
         kind: 'withdrawal',
         ...(rout ? { variant: 'rout' } : {}),
@@ -874,7 +977,7 @@ export function withdrawal(ctx: Ctx): void {
         const db = Math.hypot(f.X[kb] - end.cx, f.Z[kb] - end.cz);
         return db - da < 0.5 * way;
       });
-      if (pursuers.length) {
+      if (pursuers.length && conf >= 0.5) {
         const po = outcomeOf(ctx, pursuers, enemyTeam, T0, T1, 30);
         emit(ctx, {
           kind: 'pursuit',
@@ -997,7 +1100,8 @@ export function defenceInDepth(ctx: Ctx): void {
       const firing = beltKills.filter((k) => k > 0).length;
       if (!firing) continue;
       const ordered = beltTimes.every((t, i) => i === 0 || !(t === t) || !(beltTimes[i - 1] === beltTimes[i - 1]) || t >= beltTimes[i - 1]);
-      const conf = 0.45 + 0.15 * (real.length >= 3 ? 1 : 0) + 0.2 * (firing >= 2 ? 1 : 0) + 0.1 * (firing >= 2 && ordered ? 1 : 0) + 0.1 * clamp01((depth - R) / R);
+      // Sure only when two belts or more fired: belts that never engage are a scatter of campers.
+      const conf = firing >= 2 ? 0.55 + 0.15 * (real.length >= 3 ? 1 : 0) + 0.15 * (ordered ? 1 : 0) + 0.15 * clamp01((depth - R) / R) : 0.42;
       const units = real.flatMap((b) => b.map((p) => p.w));
       emit(ctx, {
         kind: 'defenceInDepth',
@@ -1119,6 +1223,8 @@ export function ambush(ctx: Ctx): void {
     for (const u of st.members) lossA += countIn(ctx.deathsOf.get(u), T0, T1);
     for (const u of still) lossB += countIn(ctx.deathsOf.get(u), T0, T1);
     if (lossA < Math.min(2, Math.ceil(st.members.length / 2)) || lossA <= lossB) continue;
+    // The ambushers did the killing: kills paired with the victims' deaths.
+    if (!foughtBetween(ctx, still, st.members, T0, T1, { x: f.X[k], z: f.Z[k], r: 2 * R })) continue;
     const key = `${still.slice().sort().join(',')}:${Math.floor(c.s / Math.max(1, hold))}`;
     if (seen.has(key)) continue;
     seen.add(key);

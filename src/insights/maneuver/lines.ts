@@ -2,8 +2,8 @@
  * The maneuvers drawn in the 3D view: each group's way as a line with an
  * arrowhead (envelopment arcs are the arms' ways), the outlines of the groups
  * at the key moment, the enemy's front, and a short mast at the place - the
- * engine's top lines, seven floats a vertex, built once when the pick
- * changes and copied after the other top lines, so a frame costs nothing.
+ * engine's static top lines (`FrameParams.topStatic`), seven floats a
+ * vertex, built once when the pick changes and uploaded to the GPU only then.
  * The picked maneuver full, the match's others faint (when shown); sides in
  * their colours, the enemy's outlines in the other side's.
  */
@@ -24,8 +24,6 @@ const SIDES: [number, number, number][] = [
   [0.3, 0.9, 0.9],
 ];
 const NEUTRAL: [number, number, number] = [0.9, 0.9, 0.9];
-/** Faint maneuvers drawn besides the picked one at most. */
-const MAX_FAINT = 60;
 const FRONT: [number, number, number] = [1, 1, 1];
 
 const BLUE = /\b(blue|allies|allied|ct|nato|west|friendly|coalition)\b/i;
@@ -54,13 +52,10 @@ const ENEMY_OUTLINE: Partial<Record<ManeuverKind, number[]>> = {
 export function maneuverLines(list: Maneuver[], focus: string | null, teams: string[] = [], faint = 0.3): Lines {
   const out: number[] = [];
   const seg = (a: [number, number, number], b: [number, number, number], c: [number, number, number], alpha: number) => out.push(a[0], a[1], a[2], c[0], c[1], c[2], alpha, b[0], b[1], b[2], c[0], c[1], c[2], alpha);
-  // The others, faint, at most the 60 nearest the picked one in time, each with its first four ways
-  // thinned to 12 points and no outlines: the top lines are copied to the GPU every frame, so they stay small.
+  // The others faint, each with its first four ways thinned to 12 points and no outlines, so the
+  // picked one stands out. The engine hands the set to the GPU once (`FrameParams.topStatic`).
   const picked = list.find((m) => m.id === focus);
-  const rest = list
-    .filter((m) => m !== picked)
-    .sort((a, b) => (picked ? Math.abs(a.t0 - picked.t0) - Math.abs(b.t0 - picked.t0) : 0))
-    .slice(0, MAX_FAINT);
+  const rest = list.filter((m) => m !== picked);
   for (const m of picked ? [picked, ...rest] : rest) {
     const full = m === picked;
     const alpha = focus === null || focus === m.id ? 0.95 : faint;

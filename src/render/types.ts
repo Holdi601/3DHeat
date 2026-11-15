@@ -548,6 +548,12 @@ export interface FrameParams {
   topVerts?: Float32Array | null;
   topVertCount?: number;
   /**
+   * More lines over the picture, drawn as `topVerts` but kept on the GPU:
+   * uploaded only when `version` changes (the mass analysis' places, the
+   * movement analysis' maneuvers - sets that change on a click, not a frame).
+   */
+  topStatic?: { data: Float32Array; count: number; version: number } | null;
+  /**
    * Triangles over the finished picture as `topVerts` (seven floats a
    * vertex): the objectives' zone edges and markers, faint in the replay,
    * where the ground would hide them. The same array again is not uploaded again.

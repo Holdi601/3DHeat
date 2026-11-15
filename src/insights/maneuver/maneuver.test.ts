@@ -6,6 +6,7 @@ import { ManeuverCollector } from './collect';
 import { LINKS } from './kb';
 import { shapeOf } from './groups';
 import { scenarios } from './synth';
+import { nullMatch } from './nulls';
 import { maneuverSection, maneuverTable } from './summary';
 import { MANEUVER_KINDS, type Maneuver } from './types';
 
@@ -54,6 +55,26 @@ describe('the movement analysis on synthetic matches', () => {
     expect(amb.kb).toContain('concept.ambush');
     const pump = all.find(({ s }) => s.name === 'missile-pump')!.r!.maneuvers.find((m) => m.kind === 'pump')!;
     expect(pump.outcome.paid).toBe(1);
+  });
+});
+
+describe('null models of the same match', () => {
+  it('lose the interaction maneuvers when the sides no longer meet', () => {
+    const kinds = ['flank', 'pincer', 'encirclement', 'penetration', 'ambush', 'withdrawal'] as const;
+    const left: string[] = [];
+    for (const s of scenarios().filter((x) => x.planted.some((k) => (kinds as readonly string[]).includes(k)))) {
+      const real = analyseMatch(s.tracks)!;
+      const ranges = ['air', 'ground', 'sea', 'infantry'].map((d) => real.range[d as 'air'] ?? 1000);
+      // Either side moved in time; turned round the centre too, except where the defender sits at that very
+      // centre (a ring round it, a flank on it): turning the attackers round it keeps the maneuver whole.
+      const centred = s.name === 'encirclement' || s.name === 'flank';
+      const nulls: ['shift' | 'rotate', number][] = [['shift', 0], ['shift', 1], ...(centred ? [] : ([['rotate', 0], ['rotate', 1]] as ['rotate', number][]))];
+      for (const [kind, which] of nulls) {
+        const r = analyseMatch(nullMatch(s.tracks, kind, 7, ranges, which));
+        for (const m of reported(r?.maneuvers ?? [])) if (s.planted.includes(m.kind) && (kinds as readonly string[]).includes(m.kind)) left.push(`${s.name}/${kind}${which}: ${m.kind}`);
+      }
+    }
+    expect(left).toEqual([]);
   });
 });
 

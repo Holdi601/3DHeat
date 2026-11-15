@@ -306,6 +306,9 @@ export class WebgpuRenderer implements Renderer {
   private overlayBuffer: GPUBuffer | null = null;
   /** The lines over the picture (`FrameParams.topVerts`) and their pipeline, made when first asked for. */
   private topBuffer: GPUBuffer | null = null;
+  /** `FrameParams.topStatic` on the GPU, and the version written. */
+  private topStaticBuffer: GPUBuffer | null = null;
+  private topStaticVersion = -1;
   private topPipeline: GPURenderPipeline | null = null;
   /** The triangles over the picture (`FrameParams.topTris`), their pipeline, and which array they last were. */
   private topTriBuffer: GPUBuffer | null = null;
@@ -2986,6 +2989,7 @@ export class WebgpuRenderer implements Renderer {
 
     // Lines over the picture, the heat included (`FrameParams.topVerts`): in the same pass, after it.
     const top = params.topVerts && params.topVertCount ? this.topLines(params, params.topVerts, params.topVertCount) : null;
+    const topStatic = params.topStatic && params.topStatic.count ? this.topStaticLines(params, params.topStatic) : null;
     const topTris = params.topTris && params.topTriCount ? this.topTriangles(params, params.topTris, params.topTriCount) : null;
     const zones = params.objectiveZones;
     if (zones) {
@@ -3026,11 +3030,12 @@ export class WebgpuRenderer implements Renderer {
           pass.draw(topTris.count);
         }
         if (zones && this.zones) this.zones.draw(pass, zones, false);
-        if (top) {
-          pass.setPipeline(top.pipeline);
-          pass.setBindGroup(0, top.group);
-          pass.setVertexBuffer(0, top.buffer);
-          pass.draw(top.count);
+        for (const l of [top, topStatic]) {
+          if (!l) continue;
+          pass.setPipeline(l.pipeline);
+          pass.setBindGroup(0, l.group);
+          pass.setVertexBuffer(0, l.buffer);
+          pass.draw(l.count);
         }
       }
       pass.end();
@@ -3529,6 +3534,17 @@ export class WebgpuRenderer implements Renderer {
     return { pipeline: this.topPipeline, group: this.sceneBindGroup(this.topPipeline, 'top', offset), buffer: this.topBuffer, count };
   }
 
+  /** `topLines` for `FrameParams.topStatic`: written to the GPU only when its version moves. */
+  private topStaticLines(params: FrameParams, s: { data: Float32Array; count: number; version: number }): { pipeline: GPURenderPipeline; group: GPUBindGroup; buffer: GPUBuffer; count: number } {
+    // The pipeline and uniform of the other top lines (made there if not yet, with nothing written).
+    const base = this.topLines(params, s.data, 0);
+    if (this.topStaticVersion !== s.version || !this.topStaticBuffer) {
+      this.topStaticBuffer = this.uploadLines(this.topStaticBuffer, s.data, s.count, 'static top lines');
+      this.topStaticVersion = s.version;
+    }
+    return { ...base, buffer: this.topStaticBuffer, count: s.count };
+  }
+
   /** `topLines` for triangles, uploaded only when they are a new array. */
   private topTriangles(params: FrameParams, data: Float32Array, count: number): { pipeline: GPURenderPipeline; group: GPUBindGroup; buffer: GPUBuffer; count: number } {
     if (!this.topTriPipeline) {
@@ -3965,6 +3981,7 @@ export class WebgpuRenderer implements Renderer {
     this.trailBuffer?.destroy();
     this.overlayBuffer?.destroy();
     this.topBuffer?.destroy();
+    this.topStaticBuffer?.destroy();
     this.triBuffer?.destroy();
     this.symbols?.dispose();
     this.symbols = null;

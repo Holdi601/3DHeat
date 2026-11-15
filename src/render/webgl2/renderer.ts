@@ -306,6 +306,8 @@ export class Webgl2Renderer implements Renderer {
   private overlayCapacity = 0;
   /** The lines over the picture (`FrameParams.topVerts`), made when first asked for. */
   private top: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number } | null = null;
+  /** `FrameParams.topStatic` on the GPU, and the version uploaded. */
+  private topStatic: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number; version: number } | null = null;
   /** The triangles over the picture (`FrameParams.topTris`) and which array they last were. */
   private topTris: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number; data: Float32Array | null; count: number } | null = null;
   /** The capture zones' discs (`FrameParams.objectiveZones`), made on first use. */
@@ -2798,6 +2800,7 @@ export class Webgl2Renderer implements Renderer {
     if (params.topTris && params.topTriCount) this.drawTopTris(params, params.topTris, params.topTriCount);
     if (params.objectiveZones) (this.zones ??= new GlZones(this.gl)).draw(params, params.objectiveZones, false);
     if (params.topVerts && params.topVertCount) this.drawTop(params, params.topVerts, params.topVertCount);
+    if (params.topStatic && params.topStatic.count) this.drawTopStatic(params, params.topStatic);
     if (!target) this.readCapture();
   }
 
@@ -2860,6 +2863,31 @@ export class Webgl2Renderer implements Renderer {
       gl.bufferData(gl.ARRAY_BUFFER, top.capacity * 4, gl.DYNAMIC_DRAW);
     }
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, data, 0, count * 7);
+    this.drawTopLines(params, top.vao, count);
+  }
+
+  /** `drawTop` for `FrameParams.topStatic`: the buffer written only when its version moves. */
+  private drawTopStatic(params: FrameParams, s: { data: Float32Array; count: number; version: number }): void {
+    const gl = this.gl;
+    if (!this.topStatic) {
+      const buf = mustBuffer(gl);
+      this.topStatic = { buf, vao: this.buildLineVao(buf), capacity: 0, version: -1 };
+    }
+    const top = this.topStatic;
+    if (top.version !== s.version) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, top.buf);
+      if (top.capacity < s.count * 7) {
+        top.capacity = Math.max(s.count * 7, 8192 * 7);
+        gl.bufferData(gl.ARRAY_BUFFER, top.capacity * 4, gl.STATIC_DRAW);
+      }
+      gl.bufferSubData(gl.ARRAY_BUFFER, 0, s.data, 0, s.count * 7);
+      top.version = s.version;
+    }
+    this.drawTopLines(params, top.vao, s.count);
+  }
+
+  private drawTopLines(params: FrameParams, vao: WebGLVertexArrayObject, count: number): void {
+    const gl = this.gl;
     const { prog, u } = this.lineProg;
     gl.useProgram(prog);
     u.mat4('uViewProj', params.viewProj);
@@ -2869,7 +2897,7 @@ export class Webgl2Renderer implements Renderer {
     gl.disable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    gl.bindVertexArray(top.vao);
+    gl.bindVertexArray(vao);
     gl.drawArrays(gl.LINES, 0, count);
     gl.bindVertexArray(null);
     gl.disable(gl.BLEND);

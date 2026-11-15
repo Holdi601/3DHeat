@@ -156,7 +156,8 @@ export function scenarios(): Scenario[] {
     const b = line(1, TANK, 0, [-200, -100, 0, 100, 200]);
     const fix = line(0, TANK, -650, [-150, 0, 150]);
     const fl = group(0, TANK, way([[0, -3200, -1600], [150, -3200, 0], [330, -500, 0], [600, -500, 0]]), COL3.map(([x, z]) => [z, x] as [number, number]), []);
-    out.push({ name: 'flank', tracks: withDeaths(build([...b, ...fix, ...fl], [kill(340, fl[0]), kill(345, fl[1])], 600), [b[0], b[1]], [340, 345]), planted: ['flank'], allowed: ['formation'] });
+    const fixFire = fix.map((u, i) => ({ t: 310 + i * 5, kind: 'fire' as EvKind, unit: u.id }));
+    out.push({ name: 'flank', tracks: withDeaths(build([...b, ...fix, ...fl], [kill(340, fl[0]), kill(345, fl[1]), kill(325, fix[1]), ...fixFire], 600), [b[0], b[1], b[3]], [340, 345, 325]), planted: ['flank'], allowed: ['formation'] });
   }
   // Pincer: the same with a second group round the east end at the same time.
   {
@@ -164,8 +165,8 @@ export function scenarios(): Scenario[] {
     const fix = line(0, TANK, -650, [-150, 0, 150]);
     const w = group(0, TANK, way([[0, -3200, -1600], [150, -3200, 0], [330, -500, 0], [600, -500, 0]]), [[0, 0], [-50, 0], [-100, 0]]);
     const e = group(0, TANK, way([[0, 3200, -1600], [150, 3200, 0], [330, 500, 0], [600, 500, 0]]), [[0, 0], [50, 0], [100, 0]]);
-    const evs = [kill(335, w[0]), kill(338, e[0]), kill(352, w[1])];
-    out.push({ name: 'pincer', tracks: withDeaths(build([...b, ...fix, ...w, ...e], evs, 600), [b[0], b[4], b[1]], [335, 338, 352]), planted: ['pincer'], allowed: ['flank', 'formation', 'encirclement', 'concentration'] });
+    const evs = [kill(335, w[0]), kill(338, e[0]), kill(352, w[1]), kill(320, fix[1]), ...fix.map((u, i) => ({ t: 310 + i * 5, kind: 'fire' as EvKind, unit: u.id }))];
+    out.push({ name: 'pincer', tracks: withDeaths(build([...b, ...fix, ...w, ...e], evs, 600), [b[0], b[4], b[1], b[2]], [335, 338, 352, 320]), planted: ['pincer'], allowed: ['flank', 'formation', 'encirclement', 'concentration'] });
   }
   // Encirclement: six close in from all round on a group of three and hold the ring.
   {
@@ -179,9 +180,9 @@ export function scenarios(): Scenario[] {
   }
   // Penetration: a column drives through the gap in the middle of a standing line, on through.
   {
-    const b = line(1, TANK, 0, [-900, -600, -300, 300, 600, 900]);
+    const b = [...line(1, TANK, 0, [-900, -600, -300, 300, 600, 900]), ...line(1, TANK, 3500, [-200, 200])];
     const a = group(0, TANK, way([[0, 0, -2600], [500, 0, 1900]]), COL3);
-    out.push({ name: 'penetration', tracks: build([...a, ...b], [], 600), planted: ['penetration'], allowed: ['frontalAssault', 'formation'] });
+    out.push({ name: 'penetration', tracks: withDeaths(build([...a, ...b], [kill(280, a[0])], 600), [b[3]], [280]), planted: ['penetration'], allowed: ['frontalAssault', 'formation'] });
   }
   // Bounding overwatch: two pairs of infantry, one moves 8 s while the other covers it, eight times.
   {
@@ -231,7 +232,10 @@ export function scenarios(): Scenario[] {
   {
     const a = group(0, TANK, way([[0, 0, -500], [100, 0, -500], [300, 0, -2800], [400, 0, -2800]]), LINE3);
     const b = group(1, TANK, way([[0, 0, 0], [110, 0, 0], [300, 0, -1900], [400, 0, -1900]]), LINE3);
-    out.push({ name: 'withdrawal', tracks: build([...a, ...b], [], 400), planted: ['withdrawal', 'pursuit'], allowed: ['formation', 'frontalAssault'] });
+    // The group trades a kill for a loss, then turns away from its killer.
+    const fire = [{ t: 85, kind: 'fire' as EvKind, unit: a[0].id }, kill(92, a[1]), kill(96, b[0])];
+    const wb = [...b, ...line(1, TANK, 300, [600])];
+    out.push({ name: 'withdrawal', tracks: withDeaths(build([...a, ...wb], fire, 400), [wb[3], a[2]], [92, 96]), planted: ['withdrawal', 'pursuit'], allowed: ['formation', 'frontalAssault'] });
   }
   // Feint: one tank shows at P1; the enemy at P2 hurries over; the main body hits P2.
   {
@@ -242,7 +246,7 @@ export function scenarios(): Scenario[] {
     const main = group(0, TANK, way([[0, 2500, -3400], [100, 2500, -3400], [230, 2500, -600], [600, 2500, -600]]), [[-120, 0], [-60, 0], [0, 0], [60, 0], [120, 0]]);
     out.push({
       name: 'feint',
-      tracks: build([...p1, ...p2stay, ...p2go, ...f1, ...main], [], 600),
+      tracks: withDeaths(build([...p1, ...p2stay, ...p2go, ...f1, ...main], [kill(250, main[2])], 600), [p2stay[0]], [250]),
       planted: ['feint'],
       allowed: ['frontalAssault', 'flank', 'formation', 'concentration', 'dispersion', 'pursuit', 'withdrawal'],
     });
@@ -282,7 +286,7 @@ export function scenarios(): Scenario[] {
     ])
       a.push(...group(0, TANK, way([[0, x, z], [100, x, z], [280, 0, -900], [600, 0, -900]]), [[-40, 0], [40, 0]]));
     const b = line(1, TANK, 0, [-100, 0, 100]);
-    out.push({ name: 'concentration', tracks: build([...a, ...b], [], 600), planted: ['concentration'], allowed: ['frontalAssault', 'flank', 'pincer', 'encirclement', 'formation', 'penetration'] });
+    out.push({ name: 'concentration', tracks: withDeaths(build([...a, ...b], [kill(300, a[0])], 600), [b[1]], [300]), planted: ['concentration'], allowed: ['frontalAssault', 'flank', 'pincer', 'encirclement', 'formation', 'penetration'] });
   }
   // Missile defence: a launch at 40 km; the target cranks 50°, notches, drags or pumps.
   for (const kind of ['crank', 'notch', 'drag', 'pump'] as const) {
