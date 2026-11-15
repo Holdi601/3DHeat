@@ -4,7 +4,7 @@ parent: "Gegevens binnenhalen"
 nav_order: 2
 lang: "nl"
 source: "column-mapping.md"
-source_hash: "9d5e1f5e0c62"
+source_hash: "8ea2f450df99"
 translated: true
 outdated: false
 ---
@@ -73,7 +73,7 @@ De sessie wordt **na** de tijdas en **vóór** persoon en groep geclaimd, omdat 
 | Sessie | `session` / `session_id`, `match…`, `round…`, `raid…`, `game…`, `run…`, `replay…`, `instance…`, `lap…`, `stint…` (elk precies, eventueel met `_id`) |
 | Persoon | `name`, `…player…id/name…`, `…user…`, `…account…`, `persona…`, `…character…`, `victim`, `actor`, `…puuid…`, `…steam id…`, `subject…`, daarna `driver` / `driver_id` / `driver_name`, `car` / `car_id` / `car_name` (racedata: de auto is wat beweegt) |
 | Groep | `spawn_team`, `real_team`, `team` / `team_id` / `team_name`, `squad…`, `side`, `…faction…`, `clan…`, `party…`, `alliance…`, `car_class` |
-| Groep, terugval | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result`, `event_env`, `playtest_id` |
+| Groep, terugval | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result` |
 
 Een groepskandidaat die op de meeste gesamplede rijen een andere waarde heeft (meer dan max(48, 60% van het sample)) is een id, geen groep: hij wordt de persoonskolom als er geen gevonden werd, en niet als groep gebruikt. Als er helemaal geen groepskolom gevonden werd, wordt de niet-numerieke kolom met de minste verschillende waarden tussen 2 en 12 gebruikt.
 

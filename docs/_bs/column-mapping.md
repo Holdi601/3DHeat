@@ -4,7 +4,7 @@ parent: "Unos podataka"
 nav_order: 2
 lang: "bs"
 source: "column-mapping.md"
-source_hash: "9d5e1f5e0c62"
+source_hash: "8ea2f450df99"
 translated: true
 outdated: false
 ---
@@ -73,7 +73,7 @@ Sesija se preuzima **poslije** ose vremena i **prije** osobe i grupe, jer je kol
 | Sesija | `session` / `session_id`, `match…`, `round…`, `raid…`, `game…`, `run…`, `replay…`, `instance…`, `lap…`, `stint…` (svaki tačno, uz opcionalno `_id`) |
 | Osoba | `name`, `…player…id/name…`, `…user…`, `…account…`, `persona…`, `…character…`, `victim`, `actor`, `…puuid…`, `…steam id…`, `subject…`, zatim `driver` / `driver_id` / `driver_name`, `car` / `car_id` / `car_name` (podaci o trci: automobil je ono što se kreće) |
 | Grupa | `spawn_team`, `real_team`, `team` / `team_id` / `team_name`, `squad…`, `side`, `…faction…`, `clan…`, `party…`, `alliance…`, `car_class` |
-| Grupa, rezerva | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result`, `event_env`, `playtest_id` |
+| Grupa, rezerva | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result` |
 
 Kandidat za grupu koji ima različitu vrijednost u većini uzorkovanih redova (više od max(48, 60% uzorka)) je identifikator, a ne grupa: postaje kolona osobe ako nijedna nije nađena, i ne koristi se kao grupa. Ako uopšte nije nađena kolona grupe, koristi se nebrojčana kolona s najmanje različitih vrijednosti između 2 i 12.
 

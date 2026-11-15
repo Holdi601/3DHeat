@@ -4,7 +4,7 @@ parent: "Wczytywanie danych"
 nav_order: 2
 lang: "pl"
 source: "column-mapping.md"
-source_hash: "9d5e1f5e0c62"
+source_hash: "8ea2f450df99"
 translated: true
 outdated: false
 ---
@@ -97,7 +97,7 @@ Sesja jest przydzielana **po** osi czasu i **przed** osobą i grupą, bo kolumna
 | Sesja | `session` / `session_id`, `match…`, `round…`, `raid…`, `game…`, `run…`, `replay…`, `instance…`, `lap…`, `stint…` (każde dokładnie, opcjonalnie z `_id`) |
 | Osoba | `name`, `…player…id/name…`, `…user…`, `…account…`, `persona…`, `…character…`, `victim`, `actor`, `…puuid…`, `…steam id…`, `subject…`, potem `driver` / `driver_id` / `driver_name`, `car` / `car_id` / `car_name` (dane wyścigowe: to samochód się porusza) |
 | Grupa | `spawn_team`, `real_team`, `team` / `team_id` / `team_name`, `squad…`, `side`, `…faction…`, `clan…`, `party…`, `alliance…`, `car_class` |
-| Grupa, zapasowo | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result`, `event_env`, `playtest_id` |
+| Grupa, zapasowo | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result` |
 
 Kandydat na grupę, który przyjmuje różną wartość w większości próbkowanych wierszy (więcej niż max(48, 60% próbki)),
 jest identyfikatorem, a nie grupą: staje się kolumną osoby, jeśli żadnej nie znaleziono, i nie jest używany jako

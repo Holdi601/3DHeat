@@ -4,7 +4,7 @@ parent: "Внесување податоци"
 nav_order: 2
 lang: "mk"
 source: "column-mapping.md"
-source_hash: "9d5e1f5e0c62"
+source_hash: "8ea2f450df99"
 translated: true
 outdated: false
 ---
@@ -73,7 +73,7 @@ outdated: false
 | Сесија | `session` / `session_id`, `match…`, `round…`, `raid…`, `game…`, `run…`, `replay…`, `instance…`, `lap…`, `stint…` (секое точно, по избор со `_id`) |
 | Лице | `name`, `…player…id/name…`, `…user…`, `…account…`, `persona…`, `…character…`, `victim`, `actor`, `…puuid…`, `…steam id…`, `subject…`, па `driver` / `driver_id` / `driver_name`, `car` / `car_id` / `car_name` (податоци од трки: автомобилот е она што се движи) |
 | Група | `spawn_team`, `real_team`, `team` / `team_id` / `team_name`, `squad…`, `side`, `…faction…`, `clan…`, `party…`, `alliance…`, `car_class` |
-| Група, резерва | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result`, `event_env`, `playtest_id` |
+| Група, резерва | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result` |
 
 Кандидат за група што зема различна вредност на повеќето примерени редови (повеќе од max(48, 60% од примерокот)) е идентификатор, а не група: станува колона на лице ако таква не е најдена, и не се користи како група. Ако воопшто не е најдена колона на група, се користи колоната што не е нумеричка, со најмалку различни вредности меѓу 2 и 12.
 

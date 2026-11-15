@@ -4,7 +4,7 @@ parent: "Εισαγωγή δεδομένων"
 nav_order: 2
 lang: "el"
 source: "column-mapping.md"
-source_hash: "9d5e1f5e0c62"
+source_hash: "8ea2f450df99"
 translated: false
 outdated: false
 ---

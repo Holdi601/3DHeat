@@ -4,7 +4,7 @@ parent: "Ako dostať dáta dnu"
 nav_order: 2
 lang: "sk"
 source: "column-mapping.md"
-source_hash: "9d5e1f5e0c62"
+source_hash: "8ea2f450df99"
 translated: true
 outdated: false
 ---
@@ -86,7 +86,7 @@ Relácia sa prihlási **po** časovej osi a **pred** osobou a skupinou, lebo st�
 | Relácia | `session` / `session_id`, `match…`, `round…`, `raid…`, `game…`, `run…`, `replay…`, `instance…`, `lap…`, `stint…` (každý presne, voliteľne s `_id`) |
 | Osoba | `name`, `…player…id/name…`, `…user…`, `…account…`, `persona…`, `…character…`, `victim`, `actor`, `…puuid…`, `…steam id…`, `subject…`, potom `driver` / `driver_id` / `driver_name`, `car` / `car_id` / `car_name` (dáta závodov: pohybuje sa auto) |
 | Skupina | `spawn_team`, `real_team`, `team` / `team_id` / `team_name`, `squad…`, `side`, `…faction…`, `clan…`, `party…`, `alliance…`, `car_class` |
-| Skupina, záložná | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result`, `event_env`, `playtest_id` |
+| Skupina, záložná | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result` |
 
 Kandidát na skupinu, ktorý nadobúda inú hodnotu na väčšine vzorkovaných riadkov (viac ako max(48, 60 % vzorky)), je identifikátor, nie skupina: ak sa nenašiel
 žiadny stĺpec osoby, stane sa stĺpcom osoby, a ako skupina sa nepoužije. Ak sa nenašiel vôbec žiadny stĺpec skupiny, použije sa nečíselný stĺpec s najmenším počtom

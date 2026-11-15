@@ -4,7 +4,7 @@ parent: "Cargar datos"
 nav_order: 2
 lang: "es"
 source: "column-mapping.md"
-source_hash: "9d5e1f5e0c62"
+source_hash: "8ea2f450df99"
 translated: true
 outdated: false
 ---
@@ -98,7 +98,7 @@ sesión suele ser una marca de tiempo (el instante de inicio de la partida en ca
 | Sesión | `session` / `session_id`, `match…`, `round…`, `raid…`, `game…`, `run…`, `replay…`, `instance…`, `lap…`, `stint…` (cada uno exacto, opcionalmente con `_id`) |
 | Persona | `name`, `…player…id/name…`, `…user…`, `…account…`, `persona…`, `…character…`, `victim`, `actor`, `…puuid…`, `…steam id…`, `subject…`, luego `driver` / `driver_id` / `driver_name`, `car` / `car_id` / `car_name` (datos de carreras: el coche es lo que se mueve) |
 | Grupo | `spawn_team`, `real_team`, `team` / `team_id` / `team_name`, `squad…`, `side`, `…faction…`, `clan…`, `party…`, `alliance…`, `car_class` |
-| Grupo, de reserva | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result`, `event_env`, `playtest_id` |
+| Grupo, de reserva | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result` |
 
 Un candidato a grupo que toma un valor distinto en la mayoría de las filas muestreadas (más de max(48, el 60 %
 de la muestra)) es un id, no un grupo: pasa a ser la columna de persona si no se encontró ninguna, y no se

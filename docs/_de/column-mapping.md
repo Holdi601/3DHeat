@@ -4,7 +4,7 @@ parent: "Daten laden"
 nav_order: 2
 lang: "de"
 source: "column-mapping.md"
-source_hash: "9d5e1f5e0c62"
+source_hash: "8ea2f450df99"
 translated: true
 outdated: false
 ---
@@ -73,7 +73,7 @@ Die Sitzung wird **nach** der Zeitachse und **vor** Person und Gruppe beanspruch
 | Sitzung | `session` / `session_id`, `match…`, `round…`, `raid…`, `game…`, `run…`, `replay…`, `instance…`, `lap…`, `stint…` (jeweils genau, optional mit `_id`) |
 | Person | `name`, `…player…id/name…`, `…user…`, `…account…`, `persona…`, `…character…`, `victim`, `actor`, `…puuid…`, `…steam id…`, `subject…`, dann `driver` / `driver_id` / `driver_name`, `car` / `car_id` / `car_name` (Renndaten: das Auto ist das, was sich bewegt) |
 | Gruppe | `spawn_team`, `real_team`, `team` / `team_id` / `team_name`, `squad…`, `side`, `…faction…`, `clan…`, `party…`, `alliance…`, `car_class` |
-| Gruppe, Ersatz | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result`, `event_env`, `playtest_id` |
+| Gruppe, Ersatz | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result` |
 
 Ein Gruppenkandidat, der auf den meisten Stichprobenzeilen einen eigenen Wert annimmt (mehr als max(48, 60 % der Stichprobe)), ist eine Kennung, keine Gruppe: Er wird zur Personenspalte, falls keine gefunden wurde, und nicht als Gruppe verwendet. Wurde gar keine Gruppenspalte gefunden, wird die nicht numerische Spalte mit den wenigsten verschiedenen Werten zwischen 2 und 12 genommen.
 

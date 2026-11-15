@@ -4,7 +4,7 @@ parent: "Uvoz podatkov"
 nav_order: 2
 lang: "sl"
 source: "column-mapping.md"
-source_hash: "9d5e1f5e0c62"
+source_hash: "8ea2f450df99"
 translated: true
 outdated: false
 ---
@@ -73,7 +73,7 @@ Seja se prevzame **po** časovni osi in **pred** osebo in skupino, ker je stolpe
 | Seja | `session` / `session_id`, `match…`, `round…`, `raid…`, `game…`, `run…`, `replay…`, `instance…`, `lap…`, `stint…` (vsak natanko, po izbiri z `_id`) |
 | Oseba | `name`, `…player…id/name…`, `…user…`, `…account…`, `persona…`, `…character…`, `victim`, `actor`, `…puuid…`, `…steam id…`, `subject…`, nato `driver` / `driver_id` / `driver_name`, `car` / `car_id` / `car_name` (podatki dirk: premika se avto) |
 | Skupina | `spawn_team`, `real_team`, `team` / `team_id` / `team_name`, `squad…`, `side`, `…faction…`, `clan…`, `party…`, `alliance…`, `car_class` |
-| Skupina, rezerva | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result`, `event_env`, `playtest_id` |
+| Skupina, rezerva | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result` |
 
 Kandidat za skupino, ki na večini vzorčenih vrstic zavzame različno vrednost (več kot max(48, 60 % vzorca)), je ID, ne skupina: postane stolpec osebe, če ga ni bilo najti, in se ne uporabi kot skupina. Če sploh ni bilo najdenega stolpca skupine, se uporabi nenumerični stolpec z najmanj različnimi vrednostmi med 2 in 12.
 

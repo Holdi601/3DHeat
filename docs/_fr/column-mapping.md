@@ -4,7 +4,7 @@ parent: "Importer des données"
 nav_order: 2
 lang: "fr"
 source: "column-mapping.md"
-source_hash: "9d5e1f5e0c62"
+source_hash: "8ea2f450df99"
 translated: true
 outdated: false
 ---
@@ -73,7 +73,7 @@ La session est revendiquée **après** l'axe du temps et **avant** la personne e
 | Session | `session` / `session_id`, `match…`, `round…`, `raid…`, `game…`, `run…`, `replay…`, `instance…`, `lap…`, `stint…` (chacun exactement, éventuellement avec `_id`) |
 | Personne | `name`, `…player…id/name…`, `…user…`, `…account…`, `persona…`, `…character…`, `victim`, `actor`, `…puuid…`, `…steam id…`, `subject…`, puis `driver` / `driver_id` / `driver_name`, `car` / `car_id` / `car_name` (données de course : c'est la voiture qui bouge) |
 | Groupe | `spawn_team`, `real_team`, `team` / `team_id` / `team_name`, `squad…`, `side`, `…faction…`, `clan…`, `party…`, `alliance…`, `car_class` |
-| Groupe, de repli | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result`, `event_env`, `playtest_id` |
+| Groupe, de repli | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result` |
 
 Un candidat de groupe qui prend une valeur distincte sur la plupart des lignes échantillonnées (plus de max(48, 60 % de l'échantillon)) est un identifiant, pas un groupe : il devient la colonne de personne si aucune n'a été trouvée, et n'est pas utilisé comme groupe. Si aucune colonne de groupe n'est trouvée, la colonne non numérique qui a le moins de valeurs distinctes entre 2 et 12 est utilisée.
 

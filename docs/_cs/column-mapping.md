@@ -4,7 +4,7 @@ parent: "Jak nahrát data"
 nav_order: 2
 lang: "cs"
 source: "column-mapping.md"
-source_hash: "9d5e1f5e0c62"
+source_hash: "8ea2f450df99"
 translated: true
 outdated: false
 ---
@@ -73,7 +73,7 @@ Relace se obsadí **po** časové ose a **před** osobou a skupinou, protože sl
 | Relace | `session` / `session_id`, `match…`, `round…`, `raid…`, `game…`, `run…`, `replay…`, `instance…`, `lap…`, `stint…` (každý přesně, volitelně s `_id`) |
 | Osoba | `name`, `…player…id/name…`, `…user…`, `…account…`, `persona…`, `…character…`, `victim`, `actor`, `…puuid…`, `…steam id…`, `subject…`, pak `driver` / `driver_id` / `driver_name`, `car` / `car_id` / `car_name` (závodní data: pohybuje se auto) |
 | Skupina | `spawn_team`, `real_team`, `team` / `team_id` / `team_name`, `squad…`, `side`, `…faction…`, `clan…`, `party…`, `alliance…`, `car_class` |
-| Skupina, záložní | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result`, `event_env`, `playtest_id` |
+| Skupina, záložní | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result` |
 
 Kandidát na skupinu, který na většině vzorkovaných řádků nabývá různé hodnoty (více než max(48; 60 % vzorku)), je id, ne skupina: stane se sloupcem osoby, pokud žádný nebyl nalezen, a jako skupina se nepoužije. Když se vůbec nenašel žádný sloupec skupiny, použije se nečíselný sloupec s nejmenším počtem různých hodnot mezi 2 a 12.
 

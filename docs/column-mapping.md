@@ -68,7 +68,7 @@ The session is claimed **after** the time axis and **before** person and group, 
 | Session | `session` / `session_id`, `match…`, `round…`, `raid…`, `game…`, `run…`, `replay…`, `instance…`, `lap…`, `stint…` (each exactly, optionally with `_id`) |
 | Person | `name`, `…player…id/name…`, `…user…`, `…account…`, `persona…`, `…character…`, `victim`, `actor`, `…puuid…`, `…steam id…`, `subject…`, then `driver` / `driver_id` / `driver_name`, `car` / `car_id` / `car_name` (racing data: the car is what moves) |
 | Group | `spawn_team`, `real_team`, `team` / `team_id` / `team_name`, `squad…`, `side`, `…faction…`, `clan…`, `party…`, `alliance…`, `car_class` |
-| Group, fallback | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result`, `event_env`, `playtest_id` |
+| Group, fallback | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result` |
 
 A group candidate that takes a distinct value on most sampled rows (more than max(48, 60% of the sample)) is an id, not a group: it becomes the person column if none was found, and is not used as the group. If no group column was found at all, the non-numeric column with the fewest distinct values between 2 and 12 is used.
 

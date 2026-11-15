@@ -4,7 +4,7 @@ parent: "Унос података"
 nav_order: 2
 lang: "sr"
 source: "column-mapping.md"
-source_hash: "9d5e1f5e0c62"
+source_hash: "8ea2f450df99"
 translated: true
 outdated: false
 ---
@@ -95,7 +95,7 @@ outdated: false
 | Сесија | `session` / `session_id`, `match…`, `round…`, `raid…`, `game…`, `run…`, `replay…`, `instance…`, `lap…`, `stint…` (сваки тачно, по избору са `_id`) |
 | Особа | `name`, `…player…id/name…`, `…user…`, `…account…`, `persona…`, `…character…`, `victim`, `actor`, `…puuid…`, `…steam id…`, `subject…`, па `driver` / `driver_id` / `driver_name`, `car` / `car_id` / `car_name` (подаци о тркама: аутомобил је оно што се креће) |
 | Група | `spawn_team`, `real_team`, `team` / `team_id` / `team_name`, `squad…`, `side`, `…faction…`, `clan…`, `party…`, `alliance…`, `car_class` |
-| Група, резерва | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result`, `event_env`, `playtest_id` |
+| Група, резерва | `…victim_ai…`, `…killer_ai…`, `…is_ai/bot/npc…`, `target_type`, `survived`, `outcome`, `result` |
 
 Кандидат за групу који узима различиту вредност у већини узоркованих редова (више од max(48, 60% узорка))
 је ид, а не група: постаје колона особе ако ниједна није нађена, и не користи се као група. Ако колона групе
