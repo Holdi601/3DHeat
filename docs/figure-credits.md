@@ -9,7 +9,7 @@ nav_order: 1
 
 Outlines, proportions and some models are measured on or derived from works under these licences. Their authors are credited here. Works under CC0 need no credit and are not listed. Every source used is listed in [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
 
-The close-quarters soldiers and gadgets (drones, cameras, charges, traps and the like) are the viewer's own designs from general real-world sizes; no third-party work was used for them.
+The close-quarters soldiers, the Rainbow Six Siege operators and their gadgets (drones, cameras, charges, traps and the like) are the viewer's own simplified designs: the operators after their public descriptions and art, the rest from general real-world sizes. No model, texture or file of the game and no third-party work was used for them.
 
 - Figure outlines derived from: "Typenblatt-TS Boot 206" by Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Figure proportions checked on: "T-72B3 mod. 2011 in Mulino" by the Ministry of Defence of the Russian Federation (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg
