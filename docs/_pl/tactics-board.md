@@ -4,9 +4,9 @@ nav_order: 12
 has_children: true
 lang: "pl"
 source: "tactics-board.md"
-source_hash: "09172046f5ac"
+source_hash: "e89ef050b0f2"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Tablica taktyczna

@@ -1,7 +1,7 @@
 ---
 title: "Заслуги за фигурите"
 parent: "Фигури"
-grand_parent: "Replay"
+grand_parent: "Повторување"
 nav_order: 1
 lang: "mk"
 source: "figure-credits.md"

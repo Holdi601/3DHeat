@@ -3,10 +3,11 @@ title: "Glossário"
 nav_order: 21
 lang: "pt"
 source: "glossary.md"
-source_hash: "8766ecb57c96"
+source_hash: "235c4c0eec6b"
 translated: true
-outdated: true
+outdated: false
 ---
+
 
 # Glossário
 
@@ -82,10 +83,10 @@ Significados curtos das palavras usadas neste site, em linguagem simples. Cada e
 
 **Ronda.** Um combate curto dentro de uma partida. Um dos lados ganha, e a pontuação sobe um.
 
-**Eco, compra forçada, compra completa.** Quanto dinheiro um lado gasta em armas no início de uma ronda. Um eco poupa dinheiro e compra quase nada (menos de 1500 $ por jogador em média). Uma compra forçada gasta o que tem (menos de 4000 $). Uma compra completa compra tudo o que consegue. [Análise de partida](match-analysis.md)
+**Eco, compra forçada, compra completa.** Quanto dinheiro um lado gasta em armas no início de uma ronda. Um eco poupa dinheiro e compra quase nada (menos de 1500 $ por jogador em média). Uma compra forçada gasta o que tem (menos de 4000 $). Uma compra completa compra tudo o que consegue. [Análise de partida (CS2)](match-analysis.md)
 
-**Troca.** Um abate que paga um abate: é-lhe disparado, e um colega seu dispara contra quem o matou em 5 segundos. [Análise de partida](match-analysis.md)
+**Troca.** Um abate que paga um abate: é-lhe disparado, e um colega seu dispara contra quem o matou em 5 segundos. [Análise de partida (CS2)](match-analysis.md)
 
-**KAST.** A percentagem de rondas em que um jogador fez um abate, uma assistência, sobreviveu, ou foi trocado. Um número mais alto significa que o jogador ajudou em mais rondas. [Análise de partida](match-analysis.md)
+**KAST.** A percentagem de rondas em que um jogador fez um abate, uma assistência, sobreviveu, ou foi trocado. Um número mais alto significa que o jogador ajudou em mais rondas. [Análise de partida (CS2)](match-analysis.md)
 
-**ADR.** Dano médio por ronda: quanta vida um jogador tirou aos inimigos em cada ronda. [Análise de partida](match-analysis.md)
+**ADR.** Dano médio por ronda: quanta vida um jogador tirou aos inimigos em cada ronda. [Análise de partida (CS2)](match-analysis.md)

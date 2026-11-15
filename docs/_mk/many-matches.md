@@ -1,6 +1,6 @@
 ---
 title: "Многу натпревари одеднаш"
-parent: "Replay"
+parent: "Повторување"
 nav_order: 2
 lang: "mk"
 source: "many-matches.md"

@@ -3,9 +3,9 @@ title: "Slovar pojmov"
 nav_order: 21
 lang: "sl"
 source: "glossary.md"
-source_hash: "8766ecb57c96"
+source_hash: "235c4c0eec6b"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Slovar pojmov
@@ -16,7 +16,7 @@ Kratki pomeni besed, ki jih uporablja ta spletna stran, v preprostem jeziku. Vsa
 
 **Vrstica.** Ena vrstica vaših podatkov: ena stvar, ki se je zgodila na enem mestu in ob enem času, na primer »igralec 7 je bil tukaj ob 12. sekundi«. Pregledovalnik nariše vsako vrstico. [Podatkovni formati](data-formats.md)
 
-**Stolpec.** Ena vrsta vrednosti v vrsticah, na primer x, y, z, čas ali ekipa. Pregledovalnik ugiba, kateri stolpec je kateri, uganko pa lahko spremenite. [Preslikava stolpcev](column-mapping.md)
+**Stolpec.** Ena vrsta vrednosti v vrsticah, na primer x, y, z, čas ali ekipa. Pregledovalnik ugiba, kateri stolpec je kateri, to ugibanje pa lahko spremenite. [Preslikava stolpcev](column-mapping.md)
 
 **CSV.** Navadna besedilna tabela: ena vrstica na vrstico, vrednosti ločene z vejicami. Skoraj vsak program jo zna zapisati. [Nalaganje datotek](loading-files.md)
 

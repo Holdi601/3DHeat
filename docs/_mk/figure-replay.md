@@ -1,7 +1,7 @@
 ---
 title: "Фигури во преклопот"
 parent: "Фигури"
-grand_parent: "Replay"
+grand_parent: "Повторување"
 nav_order: 2
 lang: "mk"
 source: "figure-replay.md"

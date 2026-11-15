@@ -5,9 +5,9 @@ nav_order: 3
 has_children: true
 lang: "it"
 source: "figures.md"
-source_hash: "a2353c6a73bc"
+source_hash: "e86483d60237"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Figure
@@ -27,7 +27,7 @@ Ci sono circa 2.000 veicoli, aerei, navi, armi e soldati con nome, tutti costrui
 | Aria | caccia, aerei d'attacco, bombardieri, trasporti, elicotteri, dai biplani ai jet moderni |
 | Mare | navi da guerra per classe, portaerei, sottomarini, barche, mercantili |
 | Armi | missili, razzi, bombe, siluri, flare e chaff |
-| Marcatori | granate fumogene, flash e incendiarie, bombe piazzate, bandiere, comparse, punti di passaggio |
+| Marcatori | granate fumogene, flash e incendiarie, bombe piazzate, bandiere, punti di comparsa, punti di passaggio |
 
 ## Come sono fatte le figure {#how-the-figures-are-made}
 
@@ -41,7 +41,7 @@ Il visualizzatore guarda le colonne proprie dei dati:
 
 1. **Nomi** - le colonne chiamate *Name*, *Vehicle*, *Unit*, *Unit type*, *Model*, *Aircraft*, *Plane*, *Tank*, *Ship*, *Craft*, *Loadout*, *Kit* o *Figure* - vengono confrontate con il catalogo: esattamente, tramite circa 4.000 alias (id di unità di diversi giochi), per il più lungo inizio noto (`F-16C_50` è l'F-16C), oppure per il nome di figura più corto che inizia così.
 2. Un nome la cui figura non corrisponde al **tipo** dell'unità non viene usato (un camion chiamato *Typhoon* non è il caccia).
-3. **Tipi** - colonne chiamate *Type*, *Class*, *Kind*, *Category*, *Icon*, *Role* o *Domain* - danno una figura di classe: tag Tacview (`Air+FixedWing`, `Ground+Heavy+Armor+Vehicle+Tank`, `Sea+Watercraft+Warship`, `Weapon+Missile`), icone delle mappe o parole semplici (*tank*, *helicopter*, *infantry*).
+3. **Tipi** - colonne chiamate *Type*, *Class*, *Kind*, *Category*, *Icon*, *Role* o *Domain* - danno una figura di classe: tag Tacview (`Air+FixedWing`, `Ground+Heavy+Armor+Vehicle+Tank`, `Sea+Watercraft+Warship`, `Weapon+Missile`), icone delle mappe o parole semplici (tank, helicopter, infantry).
 4. I dati senza nessuno dei due sono dati di persone: ognuno è un soldato.
 
 Quindi il modo più semplice per avere le figure giuste è una colonna `vehicle` con i nomi reali, oppure una colonna `type` con i tag Tacview.

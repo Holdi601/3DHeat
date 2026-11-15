@@ -1,6 +1,6 @@
 ---
 title: "Анализа на погодоци (картичка Vehicles)"
-parent: "Replay"
+parent: "Повторување"
 nav_order: 4
 lang: "mk"
 source: "hit-analysis.md"

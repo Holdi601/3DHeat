@@ -4,9 +4,9 @@ nav_order: 11
 has_children: true
 lang: "pl"
 source: "race-analysis.md"
-source_hash: "63d7f4b85872"
+source_hash: "ab0531fa7bbd"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Analiza wyścigowa

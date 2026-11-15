@@ -3,7 +3,7 @@ title: "Referință pentru formatele de date"
 nav_order: 19
 lang: "ro"
 source: "data-formats.md"
-source_hash: "48e0b69045cc"
+source_hash: "2ffd2bfd6f0f"
 translated: false
 outdated: false
 ---

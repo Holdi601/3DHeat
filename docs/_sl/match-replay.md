@@ -1,13 +1,13 @@
 ---
 title: "Predvajanje tekme"
-parent: "Replay"
+parent: "Ponovitev"
 nav_order: 1
 has_children: true
 lang: "sl"
 source: "match-replay.md"
-source_hash: "9d61f24a5a04"
+source_hash: "14a8aade5ff0"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Predvajanje tekme
@@ -37,18 +37,18 @@ Figure nadomestijo kocke za vsako enoto, katere ime ali tip je znan (glejte [Fig
 |---|---|---|
 | **Figure namesto kock** | vklopljeno | Izklopljeno nariše preproste kocke. |
 | **Velikost figur** (kratno pravi velikosti) | 1 | 1 je prava velikost; 0,25 do 20-kratnik (logaritemska lestvica). Večja pomaga od daleč. |
-| **Najmanjša figura na zaslonu** | 36 px | Figure na daljavo rastejo, da ostanejo tako dolge, 0 do 200 px; 0 ohrani pravo velikost. |
+| **Najmanjša figura na zaslonu** | 36 px | Figure na daljavo rastejo, da ostanejo tako velike, 0 do 200 px; 0 ohrani pravo velikost. |
 | **Na daljavo**: Figura, Puščica, Simbol | Figura | Kaj postane enota na daljavi. |
 | **Simboli** | NATO (APP-6) | NATO (APP-6), ruski taktični znaki, ikone **Zemljevid igre** ali **Samo oblike (za barvno slepe)**. |
 | **Velikost simbola**, **Moja stran**, **Sovražna / Nevtralna**, **Oznake smeri** | 28 px (12 do 64), samodejno, sovražna, vklopljeno | Kako izgledajo simboli in katera stran je prijateljska. |
 | **Navpične črte** | vklopljeno | Črta od vsake enote naravnost do tal, da se višine berejo v 3D. |
-| **Navpičnice in oznake pri orožju** | izklopljeno | Črte do tal in oznake na raketah in bombah. |
+| **Navpične črte in oznake pri orožju** | izklopljeno | Črte do tal in oznake na raketah in bombah. |
 | **Požari na enotah** | vklopljeno | Plameni od trenutka, ko enota zagori, do pogasitve. |
 | **Zadetki na enotah** | vklopljeno | Oznake, kjer so streli zadeli (spodaj). **Zadetki ostanejo**: 1 do 300 sekund ali **Vse življenje**. **Lebdeče oznake**: oznake, narisane nad površino. |
 | **Črte pogleda in kupole** | izklopljeno | Črtkano: kam igralec gleda; polno: kam kaže top. |
 | **Stavbe** | polno | Polne ali prosojne stavbe, kadar jih raven prikaže. |
 
-### Simboli na daljavo {#symbols-at-a-distance}
+### Simboli na daljavi {#symbols-at-a-distance}
 
 Kadar bi bila enota manjša od **Najmanjša figura na zaslonu**, lahko postane simbol, ki ostane berljiv. Oblika pove vrsto (na primer zaobljena škatla z oznako gosenice za oklepna vozila); barva pove stran. Odprite meni **Simboli**, da spremenite slog.
 
@@ -67,33 +67,33 @@ Ob vklopljenem **Orožje, streli in zadetki** (razdelek Pregledovalnik ekip): ra
 
 ## Kamere {#cameras}
 
-Kliknite enoto ali njeno oznako, da ji **sledite**; razdelek **Predvajanje** ponuja **Zadaj**, **Orbita**, **Kokpit** (s prikazom na čelnem steklu, `H`), **Fiksno**, **Padlock**, **Cilj** in **Satelit**. `V` kroži med njimi, **Oddaljenost kamere** nastavi, kako daleč. Esc ustavi.
+Kliknite enoto ali njeno oznako, da ji **sledite**. Razdelek **Predvajanje** ponuja **Zadaj**, **Orbita**, **Kokpit** (s prikazom na čelnem steklu, `H`), **Fiksno**, **Padlock**, **Cilj** in **Satelit**. `V` kroži med njimi, **Oddaljenost kamere** nastavi, kako daleč. Esc ustavi.
 
 - **Pogled na dve enoti**: izberite **Cilj** (ali Ctrl/Alt-klik na enoto), da jo gledate iz sledene; **Zamenjaj** ju zamenja.
 - **Mera**: Shift-klik na dve enoti za smer, razdaljo in višinsko razliko med njima.
 - **2D-karta** (`M`): kot v kotu ali čez cel zaslon, s sledmi in imeni.
-- **Zaznamki** (`B`): shranijo trenutek in kamero; posnetkove lastne kills, smrti in oznake so prav tako našteti.
+- **Zaznamki** (`B`): shranijo trenutek in kamero; posnetkove lastne ubitja, smrti in oznake so prav tako našteti.
 - **Dogodki**: vsak dogodek v časovnem vrstnem redu; klik tja skoči. `Page Up` / `Page Down` skočita med dogodki; **Premor ob dogodku** se ustavi pri vsakem.
 
 ## Taktični prikaz {#tactical-display}
 
-![Zračni demo z videzom taktičnega prikaza (T): teren v žičnem okvirju, paneli kills in dogodkov](../assets/img/sl/replay-air-tactical.webp)
+![Zračni demo z videzom taktičnega prikaza (T): teren v žičnem okvirju, plošče z ubitji in dogodki](../assets/img/sl/replay-air-tactical.webp)
 
-Razdelek **Taktični prikaz** nariše za nobeno enoto, izbrane, vse ali eno vrsto (letala, kopno, ladje, orožje): vektorje hitrosti in pot naprej, črte nosa in dviga, stožce radarja, zaklepanja, podatkovne povezave, območja in črte angažiranja, črte vidnosti, kam igralci gledajo (stožci pogleda), nastavitev kupole in zabeleženo kamero.
+Razdelek **Taktični prikaz** nariše za nobeno enoto, izbrane, vse ali eno vrsto (letala, kopno, ladje, orožje): vektorje hitrosti in pot naprej, črte nosu in dviga, stožce radarja, zaklepanja, podatkovne povezave, območja in črte angažiranja, črte vidnosti, kam igralci gledajo (stožci pogleda), nastavitev kupole in zabeleženo kamero.
 
 ### Slog prikaza {#display-style}
 
-`T` (ali stikalo **Prikaži kot taktični zaslon**) preklopi videz v slog radarskega zaslona: sijaj, obrisi, višinske črte, mrežo za merjenje, skenirne črte, obroče dosega, lestvice višin, plošče s kills in dogodki ter **Režiserja**, ki kamero sam premakne k dogodkom.
+`T` (ali stikalo **Prikaži kot taktični zaslon**) preklopi videz v slog radarskega zaslona: sijaj, obrisi, višinske črte, mrežo za merjenje, skenirne črte, obroče dosega, lestvice višin, plošče z ubitji in dogodki ter **Režiserja**, ki kamero sam premakne k dogodkom.
 
 ![Isti zračni boj v običajnem videzu](../assets/img/sl/replay-air.webp)
 
 ## Cilji {#objectives}
 
-Ko tekma pride s svojimi cilji, razdelek **Cilji** jih nariše na ravni: cone zajema (z lastnikom in napredkom zajema), spawne, letališča, območja in tarče bombardiranja, vsak sloj se lahko preklopi, z oznakami. Vidni so skozi tla. Ob več naloženih načinih igre **Način** filtrira tekme po načinu. Cilji pridejo iz datoteke tekme pretvornika poleg posnetka ali znotraj vsebnika [`.3dheat`](container.md).
+Ko tekma pride s svojimi cilji, razdelek **Cilji** jih nariše na ravni: cone zajema (z lastnikom in napredkom zajema), spawne, letališča, območja in tarče bombardiranja. Vsak sloj se lahko preklopi, z oznakami. Vidni so skozi tla. Ko je naloženih več načinov igre, **Način** filtrira tekme po načinu. Cilji pridejo iz datoteke tekme pretvornika poleg posnetka ali znotraj vsebnika [`.3dheat`](container.md).
 
 ## Oznake in statistika {#labels-and-statistics}
 
-- **Oznake**: pravila za vsako vrsto (**Izbrane**, **Letala**, **Kopno**, **Ladje**, **Orožje**, **UI**): prikazana ali ne, katere vrednosti, in **Prednost** za to, kdo dobi prostor, kadar se oznake prekrivajo. **Razmakni oznake** premakne oznako ob njeni enoti, kadar bi prekrila drugo, in jo izpusti, kjer ni prostora. **Velikost oznak** je od 60 do 250 %. **Nazaj na ime, vozilo, višino in hitrost** ponastavi pravila.
+- **Oznake**: pravila za vsako vrsto (**Izbrane**, **Letala**, **Kopno**, **Ladje**, **Orožje**, **AI**): prikazana ali ne, katere vrednosti, in **Prednost** za to, kdo dobi prostor, kadar se oznake prekrivajo. **Razmakni oznake** premakne oznako ob njeni enoti, kadar bi prekrila drugo, in jo izpusti, kjer ni prostora. **Velikost oznak** je od 60 do 250 %. **Nazaj na ime, vozilo, višino in hitrost** ponastavi pravila.
   - Enote na kopnu začnejo z imenom, vozilom in hitrostjo.
   - Letala začnejo z imenom, vozilom, višino in hitrostjo.
   - Ladje začnejo z imenom, vozilom, hitrostjo in smerjo.
@@ -103,4 +103,4 @@ Ko tekma pride s svojimi cilji, razdelek **Cilji** jih nariše na ravni: cone za
 
 ## Veliko tekem hkrati {#many-matches-at-once}
 
-Da stisnete na stotine ali tisoče tekem čez drugo drugo, glejte [Veliko tekem hkrati](many-matches.md). Podrobnosti o figurah (dim, ogenj, drugi časovno omejeni učinki): [Figure v prekrivanju figur](figure-replay.md). Seznam zmožnosti Tacview: [Enakovrednost s Tacview](tacview-parity.md), podstran te strani.
+Za nalaganje stotin ali tisočev tekem čez drug drugega glejte [Veliko tekem hkrati](many-matches.md). Podrobnosti o figurah (dim, ogenj, drugi časovno omejeni učinki): [Figure v prekrivanju figur](figure-replay.md). Seznam zmožnosti Tacview: [Enakovrednost s Tacview](tacview-parity.md), podstran te strani.

@@ -4,9 +4,9 @@ parent: "Tryby ciepła"
 nav_order: 5
 lang: "pl"
 source: "difference.md"
-source_hash: "19f40abd7f5a"
+source_hash: "12fc27dc0616"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Różnica

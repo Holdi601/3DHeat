@@ -1,6 +1,6 @@
 ---
 title: "Фигури"
-parent: "Replay"
+parent: "Повторување"
 nav_order: 3
 has_children: true
 lang: "mk"

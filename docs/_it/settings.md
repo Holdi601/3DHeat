@@ -3,9 +3,9 @@ title: "Impostazioni, unità e tasti"
 nav_order: 16
 lang: "it"
 source: "settings.md"
-source_hash: "bd1062895abf"
+source_hash: "f25e4cbaf3bb"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Impostazioni, unità e tasti

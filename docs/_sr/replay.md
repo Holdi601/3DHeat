@@ -1,12 +1,20 @@
 ---
-title: "Replay"
+title: "Реприза"
 nav_order: 9
 has_children: true
 lang: "sr"
 source: "replay.md"
 source_hash: "da58a6589d3b"
-translated: false
+translated: true
 outdated: false
 ---
 
-{{ site.data.i18n[page.lang].ui.untranslatedBody | default: site.data.i18n.en.ui.untranslatedBody }} [{{ site.data.i18n[page.lang].ui.english | default: "English" }}](../replay.html)
+# Реприза
+
+Реприза пушта меч уназад у 3D, са сваком јединицом нацртаном као возило или особа коју представља. Користите
+је да гледате шта се десило, поредите много мечева, или видите ко је кога погодио.
+
+- [Реприза меча](match-replay.md): пушта један меч, с фигурама, трасерима, погоцима и камерама у стилу Tacview-а.
+- [Више мечева одједном](many-matches.md): слажите стотине мечева један преко другог.
+- [Фигуре](figures.md): облици коришћени за јединице и одакле долазе.
+- [Анализа погодака](hit-analysis.md): где је једно возило или војник погођен, и ко га је погодио.

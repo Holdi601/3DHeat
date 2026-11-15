@@ -3,9 +3,9 @@ title: "Einstellungen, Einheiten und Tasten"
 nav_order: 16
 lang: "de"
 source: "settings.md"
-source_hash: "bd1062895abf"
+source_hash: "f25e4cbaf3bb"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Einstellungen, Einheiten und Tasten
@@ -31,9 +31,9 @@ Zahlen, die du in ein Feld tippst, dürfen einen Punkt oder ein Komma haben (`0.
 
 1. Wähle eine Voreinstellung im Menü **Einheiten**. Alle Größen wechseln gemeinsam.
 2. Um nur eine Größe zu ändern, klicke auf die Schaltfläche **...** daneben und wähle eine Einheit für diese Größe. Das Menü zeigt dann ein `*` hinter der Voreinstellung.
-3. Eine Größe, die du nicht gesetzt hast, folgt der Voreinstellung. Wähle „Wie Voreinstellung“, um zurückzukehren.
+3. Eine Größe, die du nicht selbst eingestellt hast, folgt der Voreinstellung. Wähle „Wie Voreinstellung“, um zurückzukehren.
 
-| Größe | Metrisch (Voreinstellung) | Imperial | Luftfahrt | Nautisch |
+| Größe | Metrisch (Standard) | Imperial | Luftfahrt | Nautisch |
 |---|---|---|---|---|
 | Entfernung | km | mi | NM | NM |
 | Höhe, Länge | m | ft | ft | m |
@@ -41,37 +41,37 @@ Zahlen, die du in ein Feld tippst, dürfen einen Punkt oder ein Komma haben (`0.
 | Vertikalgeschwindigkeit | m/s | ft/min | ft/min | m/s |
 | Temperatur | °C | °F | °C | °C |
 | Druck | hPa | inHg | hPa | hPa |
-| Masse, Treibstoff | kg, l | lb, gal | lb, gal | t, m³ |
+| Masse, Kraftstoff | kg, l | lb, gal | lb, gal | t, m³ |
 | Winkel | Grad | Grad | Grad | Grad |
 
-Weitere Einheiten, die du für eine Größe wählen kannst: Entfernung km, mi, NM; Geschwindigkeit km/h, m/s, kt, mph; Vertikalgeschwindigkeit m/s, ft/min, m/min; Temperatur °C, °F, K; Druck hPa, inHg, mmHg, psi; Masse kg, lb, t; Winkel Grad oder NATO-Mil (6400 auf den Kreis). Die Einheiten sind im ganzen Viewer gleich: Beschriftungen, Karten, Diagramme, Statistiken.
+Weitere Einheiten, die du für eine Größe wählen kannst: Entfernung km, mi, NM; Geschwindigkeit km/h, m/s, kt, mph; Vertikalgeschwindigkeit m/s, ft/min, m/min; Temperatur °C, °F, K; Druck hPa, inHg, mmHg, psi; Masse kg, lb, t; Winkel Grad oder NATO-Mil (6400 auf den Kreis). Die Einheiten sind überall im Viewer gleich: Beschriftungen, Karten, Diagramme, Statistiken.
 
 ## Hilfemodus {#help-mode}
 
 ![Hilfemodus: was die Farben bedeuten](../assets/img/de/help.webp)
 
-Drücke `?` oder `F1` oder klicke auf die Schaltfläche **?**. Es zeigt *Was die Farben bedeuten*: Legenden für die 3D-Ansicht, die Intensitätsverläufe, Teamfarben, die Farben des Levels, die Statusfarben der Panels, das Match-Panel und die Rennansicht. Er bleibt an, bis du ihn ausschaltest. Im Tab Match erklärt er auch die Farben des Match-Panels.
+Drück `?` oder `F1` oder klick auf den Knopf **?**. Er zeigt *Was die Farben bedeuten*: Legenden für die 3D-Ansicht, die Intensitätsverläufe, Teamfarben, die Farben des Levels, die Statusfarben der Fenster, das Matchfenster und die Rennansicht. Er bleibt an, bis du ihn ausschaltest. Im Tab Match erklärt er auch die Farben des Matchfensters.
 
 ![Hilfemodus im Tab Match](../assets/img/de/settings-help-match.webp)
 
 ## Was der Browser sich merkt {#what-the-browser-remembers}
 
-Diese Einstellungen bleiben zwischen Besuchen im Browser erhalten (nichts wird irgendwohin gesendet):
+Diese Einstellungen werden zwischen den Besuchen in deinem Browser gespeichert (nichts wird irgendwohin gesendet):
 
 - die Sprache, die Einheiten und der Hilfemodus;
-- die Einstellungen des Replays für Figur, Symbol, Beschriftung, Kamera und taktische Anzeige;
-- die Wiedergabegeschwindigkeit und Spiegelung;
-- Lesezeichen pro Aufnahme, Volumen pro Datensatz, Zielebenen;
-- die Einstellungen der externen KI (der Schlüssel nur, wenn du *Schlüssel in diesem Browser merken* ankreuzt).
+- die Einstellungen der Wiedergabe für Figur, Symbol, Beschriftung, Kamera und taktische Anzeige;
+- die Abspielgeschwindigkeit und die Spiegelung;
+- Lesezeichen je Aufzeichnung, Lautstärken je Datensatz, Ebenen von Zielen;
+- die Einstellungen der externen KI (der Schlüssel nur, wenn du *Merken* ankreuzt).
 
-Intensitätseinstellungen, Filter und der Modus starten bei jedem Laden neu. Die vollständige, generierte Liste: [Gespeicherte Einstellungen](ref-settings-storage.md).
+Heatmap-Einstellungen, Filter und der Modus beginnen bei jedem Laden neu. Die vollständige, erzeugte Liste steht unter [Gespeicherte Einstellungen](ref-settings-storage.md).
 
 ## Tasten, die der Viewer vom Browser übernimmt {#keys-the-viewer-keeps-from-the-browser}
 
-Eine Sitzung mit großen Daten braucht Zeit zum Laden, daher verhindert der Viewer, dass der Browser sie versehentlich wegwirft:
+Eine Sitzung mit großen Daten braucht Zeit zum Laden. Deshalb verhindert der Viewer, dass der Browser sie versehentlich verwirft:
 
-- `Strg`/`Cmd` + Buchstaben, die drucken, speichern, öffnen, neu laden, schließen oder neue Fenster öffnen würden, tun außerhalb von Textfeldern nichts; `F1`, `F3`, `F5`, `F6` und `F7` tun nichts.
-- Das Schließen oder Neuladen des Tabs mit geladenen Daten oder einem Level fragt zuerst nach.
+- `Strg`/`Cmd` + Buchstaben, die drucken, speichern, öffnen, neu laden, schließen oder neue Fenster öffnen würden, tun außerhalb von Textfeldern nichts. `F1`, `F3`, `F5`, `F6` und `F7` tun nichts.
+- Beim Schließen oder Neuladen des Tabs mit geladenen Daten oder einem Level wird vorher nachgefragt.
 - Im Vollbild sperrt der Viewer die Tasten, die er nutzt (W, T, N, S, R, P, Q, Esc), damit der Browser sie nicht übernimmt.
 
 Die genaue Liste: [Browser-Tasten](ref-browser-keys.md). Alle eigenen Tasten des Viewers: [Tastatur- und Mausreferenz](keyboard-reference.md).

@@ -1,5 +1,5 @@
 ---
-title: "Knowledge catalogue"
+title: "Catálogo de conocimiento"
 parent: "La lente de conocimiento"
 nav_order: 2
 lang: "es"

@@ -4,9 +4,9 @@ parent: "Replay"
 nav_order: 2
 lang: "it"
 source: "many-matches.md"
-source_hash: "f2239cef5e91"
+source_hash: "a37a7b4cf8c2"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Molte partite insieme
@@ -19,7 +19,7 @@ Ogni partita inizia dal proprio inizio e le sue unità si muovono come figure. I
 
 ## Come si usa {#how-to-use-it}
 
-1. Apri **Molte partite insieme** nella barra laterale Mappa di calore.
+1. Apri **Molte partite insieme** nella barra laterale della Mappa di calore.
 2. Premi **File…** (scegli molti file), **Cartella…** (una cartella e le sue sottocartelle) oppure **Aggiungi cartella…** (aggiunge a ciò che è già caricato).
 3. Il visualizzatore passa alla sovrapposizione delle figure e parte dall'inizio. Premi **Riproduci**.
 

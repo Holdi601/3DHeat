@@ -5,8 +5,37 @@ nav_order: 6
 lang: "sr"
 source: "software-rendering.md"
 source_hash: "2ae9a1addecb"
-translated: false
+translated: true
 outdated: false
 ---
 
-{{ site.data.i18n[page.lang].ui.untranslatedBody | default: site.data.i18n.en.ui.untranslatedBody }} [{{ site.data.i18n[page.lang].ui.english | default: "English" }}](../software-rendering.html)
+# Откривање софтверског рендеровања
+
+Ако прегледач црта на главном процесору уместо на графичкој картици, приказивач је много пута спорији. Приказивач то примети и показује црвени оквир који каже шта треба укључити.
+
+Кад је хардверско убрзање у прегледачу искључено, или је његов драјвер на црној листи, прегледач црта WebGL и WebGPU на CPU-у. Све и даље ради, много пута спорије, а доживљај је „овај приказивач је са мојим подацима неупотребљиво спор”. То је симптом који указује на алат, а не на прекидач у прегледачу. Зато приказивач гледа име рендерера и то каже ([`gpuClass.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/gpuClass.ts)).
+
+## Банер {#the-banner}
+
+Кад се рендерер поуздано препозна као софтверски, на врху бочне траке (картице Топлотна мапа и Меч), изнад траке режима, појављује се црвени оквир:
+
+![Црвени банер: Ради без графичке картице](../assets/img/en/software-rendering-banner.webp)
+
+> **Ради без графичке картице.**
+> Овај прегледач црта на CPU-у, а не на графичкој картици. То је много пута спорије и неће поднети велике скупове података. Укључите хардверско убрзање у подешавањима прегледача (Chrome: Settings → System → "Use graphics acceleration when available", па поново покрените), и проверите да је драјвер графике ажуран.
+
+## За програмере {#for-developers}
+
+### Како одлучује {#how-it-decides}
+
+Низ рендерера (`UNMASKED_RENDERER_WEBGL` у WebGL2, или произвођач адаптера, архитектура и уређај у WebGPU-у) претвара се у мала слова и класификује се:
+
+- **software** кад садржи `swiftshader`, `llvmpipe`, `softpipe`, `swrast`, `microsoft basic render driver`, `apple software renderer` или `generic renderer`;
+- **hardware** кад садржи познатог произвођача или породицу GPU-а (`nvidia`, `geforce`, `rtx`, `quadro`, `amd`, `radeon`, `intel`, `arc`, `apple m`, `adreno`, `mali`, `powervr`, `xclipse`);
+- **unknown** иначе.
+
+Само *software* подиже банер. Непрепознат адаптер не говори ништа: слати некога с исправним GPU-ом да преподеси свој прегледач је гора грешка од промашеног случаја.
+
+### Кратко име {#the-short-name}
+
+Исти модул скраћује низ рендерера за приказ. Из ANGLE низа, као што је `ANGLE (Vendor, Vendor Model (0x0000ABCD) Direct3D11 vs_5_0 ps_5_0, D3D11)`, задржава поље уређаја, избацује PCI ид и крајњу верзију API-ја и shader модела, и приказује `Vendor Model`. Кратко име се појављује у **Буџети ресурса**, а пун низ је у његовом опису при задржавању миша. Процена меморије приказује пун низ.

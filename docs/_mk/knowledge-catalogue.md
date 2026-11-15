@@ -1,5 +1,5 @@
 ---
-title: "Knowledge catalogue"
+title: "Каталог на знаењето"
 parent: "Лебдечката леќа на знаењето"
 nav_order: 2
 lang: "mk"

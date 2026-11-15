@@ -41,17 +41,6 @@ x,y,z,t,player,team
 
 The columns map themselves ([Column mapping](column-mapping.md)).
 
-A smallest useful file, three rows:
-
-```
-x,y,z,t,player,team
-10.5,2.0,-30.2,0.00,Blue 1,Blue
-11.0,2.0,-29.8,0.25,Blue 1,Blue
--4.2,1.5,18.9,0.00,Red 3,Red
-```
-
-The columns map themselves ([Column mapping](column-mapping.md)).
-
 Parsed by a byte-level scanner that decodes only the mapped columns ([`csv.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/csv.ts)).
 
 | Aspect | Rule |

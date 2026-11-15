@@ -4,9 +4,9 @@ parent: "Modalità di calore"
 nav_order: 6
 lang: "it"
 source: "team-heat.md"
-source_hash: "e30b8372464b"
+source_hash: "e18e62600e3e"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Calore per squadra
@@ -36,11 +36,15 @@ Nella sezione **Colori del calore**:
 | **Separazione dei colori** | 1,4 | Quanto una miscela viene spinta lontano dal neutro, 0-4. 0 rende tutto grigio; 1 è la media vera; oltre circa 2 le miscele più chiare escono dalla gamma visualizzabile e vengono limitate per canale, cosa che sposta la loro tinta. |
 | **Rampa di opacità (il colore viene dal gruppo)** | la rampa del calore predefinita | Qui viene usato solo il canale **alfa** della rampa: trasparente dove non c'è nulla, opaco in cima. I suoi colori vengono ignorati. |
 
+Un gruppo la cui etichetta significa "nessun gruppo" (`0`, vuota, `none`, `unknown`, `null` o `-1`) viene disegnato in grigio.
+
 Tutti gli altri controlli del calore - forma, saturazione, risposta, calore minimo, profondità, esclusione - funzionano come in [Calore](heat.md).
 
 L'[Elenco delle squadre](teams-list.md) mostra in questa modalità il colore di calore per squadra di ogni gruppo come suo campione. Nascondere un gruppo lascia il colore di ogni altro gruppo dov'era: le tinte dipendono dal numero totale dei gruppi, non da quali sono accesi, così due immagini restano confrontabili.
 
-## La tavolozza {#the-palette}
+## Per gli sviluppatori {#for-developers}
+
+### La tavolozza {#the-palette}
 
 Da [`colors.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors.ts):
 
@@ -51,7 +55,7 @@ Da [`colors.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors.
 
 Il valore predefinito di separazione è 1,4 e non 1 perché, a 1, una miscela di cinque tinte distribuite uniformemente *è* grigia: corretta e illeggibile. Un po' sopra 1 mantiene onesti i pareggi rendendo visibile una suddivisione 60/40.
 
-## Come funziona {#how-it-works}
+### Come funziona {#how-it-works}
 
 Il bersaglio di calore ha quattro canali in questa modalità. Ogni sprite aggiunge la sua densità *v* al primo canale e *v* × le coordinate Oklab *a* e *b* del gruppo al secondo e al terzo. Al momento della composizione la miscela del pixel è la media pesata per densità: *a* = G / R, *b* = B / R, scalata dalla separazione dei colori e convertita in sRGB alla luminosità della tavolozza. Dividere per la densità accumulata mantiene la tinta indipendente da quanti dati ci sono, ed è per questo che ogni controllo della densità continua ad agire solo sull'opacità.
 

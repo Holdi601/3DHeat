@@ -1,12 +1,12 @@
 ---
 title: "Mnogo mečeva odjednom"
-parent: "Replay"
+parent: "Reprodukcija"
 nav_order: 2
 lang: "bs"
 source: "many-matches.md"
-source_hash: "f2239cef5e91"
+source_hash: "a37a7b4cf8c2"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Mnogo mečeva odjednom
@@ -21,7 +21,7 @@ Svaki meč počinje od svog početka, a jedinice se kreću kao figure. Datoteke 
 
 1. Otvorite **Mnogo mečeva odjednom** u bočnoj traci Toplotne mape.
 2. Pritisnite **Datoteke…** (izaberite mnogo datoteka), **Mapa…** (fascikla i njene podfascikle) ili **Dodaj folder…** (dodaje u ono što je učitano).
-3. Prikazivač prelazi na preklapanje figura i počinje od početka. Pritisnite **Reproduciraj**.
+3. Preglednik prelazi na sloj figura i počinje od početka. Pritisnite **Reproduciraj**.
 
 Svaka datoteka je jedan meč (ili ih sadrži nekoliko). Parquet datoteke i [`.3dheat`](container.md) kontejneri rade. Datoteka treba kolonu pozicije, vremena i jedinice; kolone imena, tipa i strane se zadržavaju. Ostale datoteke, i pomoćne datoteke konvertera (let, poruke, događaji, čet, ciljevi), preskaču se. Za običnu tabelu vidi [Unos podataka](getting-data-in.md).
 
@@ -34,10 +34,10 @@ Svaka datoteka je jedan meč (ili ih sadrži nekoliko). Parquet datoteke i [`.3d
 
 Panel prikazuje koliko je mečeva, jedinica, redova i pozicija pročitano, zauzetu memoriju i vrijeme učitavanja. *Mjesta za* je koliko još pozicija grafička kartica može primiti. *Figure od* je veličina na ekranu ispod koje se jedinica crta kao mala strelica umjesto svoje figure.
 
-Izgled figura koristi iste kontrole kao [reprodukcija meča](match-replay.md#figures): **Veličina figura**, **Najmanja figura na ekranu** i **Na daljinu**.
+Izgled figura koristi iste kontrole kao [replay meča](match-replay.md#figures): **Veličina figura**, **Najmanja figura na ekranu** i **Na daljinu**.
 
 ## Savjeti {#tips}
 
-- Kada sve ne bi stalo u memoriju, pozicije se prorjeđuju (čuva se samo pozicija na svakih nekoliko metara) i panel to kaže.
-- Načini toplote rade i na podacima preklapanja.
+- Kad sve ne bi stalo u memoriju, pozicije se prorjeđuju (čuva se samo pozicija na svakih nekoliko metara) i panel to kaže.
+- Režimi toplote također rade na podacima preklapanja.
 - Za statistiku nad hiljadama mečeva bez njihovog crtanja vidi [Masovnu analizu](mass-analysis.md).

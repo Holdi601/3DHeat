@@ -3,9 +3,9 @@ title: "Aktualizacje"
 nav_order: 18
 lang: "pl"
 source: "updates.md"
-source_hash: "674c07a79c56"
+source_hash: "0d33b694a31d"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Aktualizacje

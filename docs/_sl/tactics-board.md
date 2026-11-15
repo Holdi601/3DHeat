@@ -4,96 +4,96 @@ nav_order: 12
 has_children: true
 lang: "sl"
 source: "tactics-board.md"
-source_hash: "09172046f5ac"
+source_hash: "e89ef050b0f2"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Taktična tabla
 
-Zavihek **Taktika** je risalna tabla za načrt ekipe: na zemljevid postavite majhne figure, narišete puščice, kam gredo, in pritisnete predvajanje, da vidite, kako se stvar odvije. Uporabite ga za načrtovanje runde ali napada pred igro. Platno, kamero in [raven](levels.md) deli z drugimi zavihki, nič drugega; načrt ni podatek in ne riše toplote.
+Zavihek **Taktika** je tabla za risanje načrta ekipe: na zemljevid postavite majhne figure, narišete puščice, kamor gredo, in pritisnete predvajanje, da vidite, kako se to zgodi. Uporabite ga, da načrtujete krog ali napad, preden igrate. Deli platno, kamero in [nivo](levels.md) z drugimi zavihki in nič drugega; načrt ni podatek in ne riše toplote.
 
 ## Vaš prvi načrt {#your-first-plan}
 
-1. Odprite zavihek **Taktika**. Izberite **Igra** (na primer Counter-Strike 2) in za Valorant pritisnite **Naloži zemljevide Valoranta** ter izberite **Zemljevid**. Lahko pa prej naložite [raven](levels.md).
+1. Odprite zavihek **Taktika**. Izberite **Igro** (na primer Counter-Strike 2) in za Valorant pritisnite **Naloži zemljevide Valoranta** ter izberite **Zemljevid**. Lahko pa najprej naložite [nivo](levels.md).
 2. Izberite **Stran** (določi barvo) in pritisnite **Pogled od zgoraj**.
-3. Izberite **Postavi**, izberite figuro pod **Figure** (z **Iskanje figur** jo poiščite) in kliknite na zemljevid. Postavite dve ali tri.
+3. Izberite **Mesto**, v **Figure** izberite figuro (s **Iskanje figur** jo najdete) in kliknite na zemljevid. Postavite dve ali tri.
 4. Izberite **Puščica**, kliknite na figuro, kliknite vzdolž poti, po kateri naj gre, in pritisnite **Enter**, da končate puščico.
-5. Pod pogledom pritisnite **+**, da dodate korak 2. Vsaka figura se začne tam, kjer se je končala njena puščica. Tam narišite več puščic.
-6. Pritisnite **▶** (ali `K`), da predvajate načrt od prikazanega koraka do konca.
-7. Imenujte načrt v **Ime načrta** in pritisnite **Shrani**.
+5. Pritisnite **+** pod pogledom, da dodate korak 2. Vsaka figura se začne tam, kjer je končala njena puščica. Tam narišite več puščic.
+6. Pritisnite **▶** (ali `K`), da načrt predvajate od prikazanega koraka do konca.
+7. V **Ime načrta** vpišite ime in pritisnite **Shrani**.
 
-![Zavihek Taktika v pogledu od zgoraj: igra, strani in orodja levo, tri figure s puščicami Premik, lok metanja dima, območje in koraki ob dnu](../assets/img/sl/tactics.webp)
+![Zavihek Taktika v pogledu od zgoraj: igra, strani in orodja na levi, tri figure s puščicami Premakni, lok meta dima, območje in koraki ob spodnjem robu](../assets/img/sl/tactics.webp)
 
 ## Začetek načrta {#starting-a-plan}
 
 | Kontrola | Kaj naredi |
 |---|---|
-| **Igra** | Izbere strani in figure, ki jih ponuja paleta: Counter-Strike 2 (T, CT; igralci in pripomočki), Valorant (Napad, Obramba; igralci in splošne sposobnosti), Battlefield, Squad, Arma (pehota, kopenska vozila, letala, čolni), DCS / War Thunder / IL-2 (reaktivna letala, propelerska letala, helikopterji, protiletalska obramba, kopno, ladje, orožje) in Drugo. Načrt, ki že ima figure, ob spremembi igre ohrani svoje strani. |
+| **Igra** | Izbere strani in figure, ki jih ponuja paleta: Counter-Strike 2 (T, CT; igralci in pomožna sredstva), Valorant (Napad, Obramba; igralci in splošne sposobnosti), Battlefield, Squad, Arma (pehota, kopenska vozila, letala, čolni), DCS / War Thunder / IL-2 (reaktivna letala, propelerska letala, helikopterji, protizračna obramba, tla, ladje, orožje) in Drugo. Načrt, ki že ima figure, obdrži svoje strani, ko se igra spremeni. |
 | **Ime načrta** | Ime, pod katerim se načrt shrani. |
-| **Zemljevid**, **Naloži zemljevide Valoranta** | Z izbranim Valorantom: **Naloži zemljevide Valoranta** pridobi seznam zemljevidov z [valorant-api.com](https://valorant-api.com); **Zemljevid** nato položi minimap izbranega zemljevida kot raven, uokvirjeno od zgoraj. Slika se pridobi ob izbiri in nikoli ni priložena. Obvestilo Riot se prikaže, dokler je na zaslonu (glejte spodaj). |
-| **Stran** | Stran, ki pripada naslednji figuri, puščici ali območju; prevzame barvo strani. |
+| **Zemljevid**, **Naloži zemljevide Valoranta** | Ko je izbran Valorant: **Naloži zemljevide Valoranta** pridobi seznam zemljevidov z [valorant-api.com](https://valorant-api.com); **Zemljevid** nato izbrani zemljevid minimapa postavi kot nivo, uokvirjen od zgoraj. Slika se prenese ob izbiri in se nikoli ne pošlje skupaj z aplikacijo. Obvestilo Riot je prikazano, dokler je na zaslonu (glejte spodaj). |
+| **Stran** | Stran, ki ji pripada naslednja figura, puščica ali območje; prevzame barvo strani. |
 
-Brez ravni je tabla ravna tla. Ravnino naložite pod **Raven**, da načrtujete na pravem zemljevidu: zemljevid CS2, izvožen z orodjem CS2, raven iz knjižnice ali slika zemljevida.
+Brez nivoja je tabla ravna tla. Naložite nivo pod **Nivo**, če želite načrtovati na pravem zemljevidu: zemljevid CS2, izvožen z orodjem za CS2, nivo iz knjižnice ali slika zemljevida.
 
 ## Orodja {#tools}
 
 | Orodje | Klik | Opombe |
 |---|---|---|
-| **Izberi** | Figura, točka poti, puščica, območje ali opomba se izberejo. | Shift+klik doda ali odstrani; Shift+povlek nariše okvir okoli tega, kar dodate. Izbira dobi gizmo za preoblikovanje (glejte spodaj); `Delete` ali `Backspace` jo odstrani. `M` premakne izbrano figuro na naslednji klik. |
-| **Postavi** | Položi izbrano figuro. | Figura se izbere v paleti **Figure** (z **Iskanje figur**). Če nič ni izbrano, `R` obrne naslednjo figuro za 15° preden se postavi (`Shift+R` v drugo smer). |
-| **Puščica** | Vsak klik doda točko; Enter, dvojni klik ali desni klik konča, Esc jo opusti. | **Premik**, **Napad** (širša glava) ali **Opazovanje** (tanka črta na višini oči). Puščica, začeta na figuri, je pot te figure v tem koraku: ob predvajanju jo figura prehodi, naslednji korak pa se začne tam, kjer se je končala. |
-| **Met** | Metalec, nato kam pristane. | Črtkan lok od enega do drugega, izbrani pripomoček (dim, bliskavica, molotov ...) se pojavi tam, kjer pristane, in ostane od tega koraka naprej. |
+| **Izberi** | Figura, točka poti, puščica, območje ali opomba se izbere. | Shift+klik doda ali odstrani; Shift+vlečenje nariše okvir okoli tega, kar želite dodati. Izbrano dobi gizmo za preoblikovanje (glejte spodaj); `Delete` ali `Backspace` ga odstrani. `M` premakne izbrano figuro na naslednji klik. |
+| **Mesto** | Postavi izbrano figuro. | Figura se izbere v paleti **Figure** (s **Iskanje figur**). Ko nič ni izbrano, `R` obrne naslednjo figuro za 15° preden se postavi (`Shift+R` v drugo smer). |
+| **Puščica** | Vsak klik doda točko; Enter, dvojni klik ali desni klik jo konča, Esc jo zavrže. | **Premakni**, **Napad** (širša konica) ali **Opazovanje** (tanka črta na višini oči). Puščica, začeta na figuri, je pot te figure v tem koraku: pri predvajanju jo figura prehodi, naslednji korak pa se začne tam, kjer se je končala. |
+| **Met** | Metalec, nato kam pade. | Prekinjen lok od enega do drugega in izbrano pomožno sredstvo (dim, bliskavica, molotov ...) se pojavi tam, kjer pade, in ostane od tega koraka naprej. |
 | **Območje** | Središče, nato rob. | Krog v barvi strani. |
-| **Opomba** | Kam gre opomba; vpraša za besedilo. | Prikazana kot pribodalo, njeno besedilo je nad njim. |
-| **Izbriši** | Figura, puščica, območje ali opomba. | Odstrani jo od tega koraka naprej; na njenem prvem koraku jo odstrani povsem. |
+| **Opomba** | Kjer je opomba; vpraša za njeno besedilo. | Prikazana kot zatič, njeno besedilo nad njo. |
+| **Izbriši** | Figura, puščica, območje ali opomba. | Odstrani jo od tega koraka naprej; na njenem prvem koraku jo odstrani. |
 
-**Razveljavi** in **Uveljavi** (`Ctrl+Z`; `Ctrl+Y` ali `Ctrl+Shift+Z`) se premikata po vsaki spremembi. Črta pod načrtom pove, koliko figur, puščic in korakov ima. **Pogled od zgoraj** gleda naravnost navzdol (ortografsko), **3D-pogled** se vrne na perspektivo, **Uokviri** prilagodi načrt, ali raven, kadar je načrt prazen.
+**Razveljavi** in **Uveljavi** (`Ctrl+Z`; `Ctrl+Y` ali `Ctrl+Shift+Z`) se premikata skozi vsako spremembo. Črta pod načrtom pokaže, koliko figur, puščic in korakov ima. **Pogled od zgoraj** gleda naravnost navzdol (ortografsko), **3D-pogled** se vrne v perspektivo, **Sličica** prilagodi načrt, ali nivo, kadar je načrt prazen.
 
-**Velikost figur** skalira vsako figuro na tabli; 1× je prava velikost, kar je od zgoraj le nekaj pikslov za človeka.
+**Velikost figur** spremeni vse figure na tabli; 1× je prava velikost, kar je od zgoraj za osebo nekaj pikslov.
 
-## Premikanje, obračanje in skaliranje {#moving-turning-and-scaling}
+## Premikanje, obračanje in spreminjanje velikosti {#moving-turning-and-scaling}
 
-Vse na tabli se lahko premika kot v 3D urejevalniku: figure, pripomočki, oznake, posamezne točke poti in cele puščice, območja in opombe. Izbrano dobi gizmo na sredini:
+Vse na tabli se da premikati kot v 3D urejevalniku: figure, pomožna sredstva, oznake, posamezne točke poti in cele puščice, območja in opombe. Izbrano dobi gizmo na svoji sredini:
 
 | Način | Tipke | Ročaji |
 |---|---|---|
-| **Premik** | W (ali G) | Puščica za vsako os (X rdeča, Y zelena in navzgor, Z modra) se premakne vzdolž nje; kvadrat se premakne po svoji ravnini; središče se premakne čez raven pod kazalcem. |
-| **Zavrti** | E (ali R) | Obroč za vsako os se zavrti okoli nje. Obroči ene figure so njen lastni zasuk, nagib in naklon; skupina se zavrti okoli svetovnih osi okoli svoje sredine. |
-| **Prilagodi velikost** | R (ali S) | Razširi ali zbere izbiro iz sredine vzdolž osi ali na vse strani; polmer območja raste z njim. |
+| **Premakni** | W (ali G) | Puščica za vsako os (X rdeča, Y zelena in navzgor, Z modra) se premika vzdolž nje; kvadrat se premika čez svojo ravnino; središče se premika po nivoju pod kazalcem. |
+| **Zavrti** | E (ali R) | Obroč za vsako os se vrti okoli nje. Obroči ene figure so njen lasten zasuk, naklon in zvitek; skupina se vrti okoli osi sveta okoli svoje sredine. |
+| **Prilagodi velikost** | R (ali S) | Razširi ali zbere izbrano od sredine vzdolž osi ali na vse strani; polmer območja raste z njim. |
 
-**Tipke** preklopijo med W / E / R (Unity, Unreal) in G / R / S (Blender); tipke izberejo način samo, ko je nekaj izbrano, sicer leti kamera. Tako `R` pomeni **Prilagodi velikost** s tipkami W / E / R in **Zavrti** s tipkami G / R / S, ko je nekaj izbrano, in obrne naslednjo figuro za postavitev, ko nič ni. Vse tipke table so navedene v [pregledu tipkovnice](keyboard-reference.md#tactics-board). Med vlečenjem držite **Ctrl**, da premik pripnete na **Mrežo** (metri) ali obrat na **Korak kota**. **Pripni na tla** (privzeto vklopljeno) postavi premaknjene ljudi, vozila, oznake, točke poti in območja na površino ravni; letala in helikopterji ohranijo svojo višino, vlečenje po puščici Y pa se nikoli ne pripne. Vlečenje ročaja nikoli ne premakne kamere. **Esc** prekliče vlečenje, vsaka sprememba pa je en korak Razveljavi.
+**Tipke** preklapljajo med W / E / R (Unity, Unreal) in G / R / S (Blender); tipke izberejo način samo, ko je nekaj izbrano, sicer premikajo kamero. Tako `R` pomeni **Prilagodi velikost** pri tipkah W / E / R in **Zavrti** pri tipkah G / R / S, ko je nekaj izbrano, in obrne naslednjo figuro za postavitev, ko nič ni. Vse tipke table so navedene v [seznamu tipkovnice](keyboard-reference.md#tactics-board). Med vlečenjem držite **Ctrl**, da premik pripnete na **Mrežo** (metri) ali obračanje na **Korak kota**. **Pripni na tla** (privzeto vklopljeno) postavi premaknjene ljudi, vozila, oznake, točke poti in območja na površino nivoja; letala in helikopterji ohranijo svojo višino, vlečenje po puščici Y se nikoli ne pripne. Vlečenje ročaja nikoli ne premakne kamere. **Esc** prekine vlečenje, vsaka sprememba pa je en korak Razveljavi.
 
-Točke poti so prikazane kot pike na puščicah prikazanega koraka: kliknite jo, da jo izberete, povlecite, da jo premaknete, Delete, da jo odstranite. Razdelek **Izbrano** kaže mesto izbire v metrih, zasuk, nagib in naklon figure v stopinjah ter polmer območja, vsako za vpis.
+Točke poti so prikazane kot pike na puščicah prikazanega koraka: kliknite jo, da jo izberete, jo povlecite, da jo premaknete, Delete, da jo odstranite. Razdelek **Izbrane** prikaže mesto izbranega v metrih, zasuk, naklon in zvitek figure v stopinjah ter polmer območja, vse z možnostjo vpisa.
 
-## Časovna določitev {#timing}
+## Čas {#timing}
 
-Pot figure je časovno določena: vsak odsek traja svojo dolžino čez raven - vzorčeno na površini vsakih nekaj metrov, zato hrib ali stopnišče med dvema točkama šteje - s hitrostjo njenega **načina** gibanja za to figuro v tej igri, plus morebitni **počakaj** na točki poti. Pehota se plazi, počepne, hodi (tiho), teče ali sprinta; vozila in čolni se plazijo, gredo previdno, normalno ali hitro; letala in helikopterji letijo počasi, na križarski hitrosti, bojni hitrosti ali največji. Način, ki ga igra nima (CS2 nima sprinta), vzame najbližjega, ki ga ima. Kako strmina upočasni, je odvisno od igre: v CS2 in Valorantu šteje le vodoravna razdalja, kot v igrah; vojaški simulatorji upočasnijo pehoto v hrib (Toblerjeva funkcija hoje) in vozila po naklonu.
+Pot figure je časovno določena: vsak odsek traja svojo dolžino po nivoju - vzorčeno po površini vsakih nekaj metrov, zato se šteje hrib ali stopnišče med dvema točkama - pri hitrosti njenega **načina** gibanja za to figuro v tej igri, plus morebiten **čakalni** čas pri točki poti. Pehota se plazi, počepne, hodi (tiho), teče ali sprinta; vozila in čolni se plazijo, gredo previdno, normalno ali hitro; letala in helikopterji letijo počasi, s potovalno hitrostjo, s hitrostjo v boju ali največjo. Način, ki ga igra nima (CS2 nima sprinta), vzame najbližjega, ki ga ima. Kako klanec upočasni, je odvisno od igre: v CS2 in Valorantu se šteje samo vodoravna razdalja, kot v igrah; vojaški simulatorji upočasnijo pehoto v klancu (Toblerjeva funkcija pohodništva) in vozila glede na naklon.
 
-Hitrosti prihajajo iz tabel po igrah z viri (glejte [Hitrosti gibanja](tactics-speeds.md)): CS2 po orožju v rokah, iz definicij orožij igre; Valorant po orožju; Battlefield, Squad, Arma in letalske igre po tipu vozila in razredu. **Premika se kot** izbere profil figure (orožje, tip vozila); **Lastna (m/s)** preglasi kateri koli način za to figuro. Načini so poimenovani, kot jih prikazuje tabla: *Plazenje*, *Počep*, *Hoja (tiho)*, *Tek*, *Sprint*; *Previdno*, *Normalno*, *Hitro*; *Počasi*, *Križarjenje*, *Boj*, *Največ*.
+Hitrosti prihajajo iz tabel po igrah z viri (glejte [Hitrosti gibanja](tactics-speeds.md)): CS2 po orožju v rokah, iz definicij orožij igre; Valorant po orožju; Battlefield, Squad, Arma in zračne igre po tipu in razredu vozila. **Premika se kot** izbere profil figure (orožje, tip vozila); **Lastna (m/s)** prepiše kateri koli način za to figuro. Načini so poimenovani, kot jih prikaže tabla: *Plazenje*, *Počep*, *Hoja (tiho)*, *Tek*, *Sprint*; *Previdno*, *Normalno*, *Hitro*; *Počasi*, *Potovalno*, *Boj*, *Največ*.
 
-Vsaka točka poti kaže čas od zadnje in čas od začetka načrta (»+3,9 s · 0:12«). Pot izbrane figure našteje vsak odsek z njegovim načinom, dolžino in časom, čakanjem in prihodom. **Prihodi** pod **Časovno določitev** postavi vsako figuro z potjo na eno časovno os, prvi prihod na vrhu. S **Predvajaj v realnem času** (privzeto vklopljeno) korak traja, dokler ne pride najpočasnejša pot, vsaka figura pa se premika s svojo hitrostjo; **Sekunde** je tedaj najmanjša dolžina koraka. **Enot nivoja na meter** pove, v čem je raven: 39,37 za zemljevide CS2 (enote igre), 1 za zemljevide v metrih.
+Vsaka točka poti prikaže čas od zadnje in čas od začetka načrta („+3,9 s · 0:12”). Pot izbrane figure izpiše vsak odsek z njegovim načinom, dolžino in časom, čakanjem in prihodom. **Prihodi** pod **Čas** postavi vsako figuro s potjo na eno časovno os, prvi prihod na vrhu. Z **Predvajaj v realnem času** (privzeto vklopljeno) korak traja, dokler ne prispe njegova najpočasnejša pot, in vsaka figura se premika s svojo hitrostjo; **Sekunde** je potem najkrajša dolžina koraka. **Enot nivoja na meter** pove, kaj nivo je: 39,37 za zemljevide CS2 (enote igre), 1 za zemljevide v metrih.
 
 ## Primerjava s podatki tekem {#compare-with-match-data}
 
-**Naloži datoteke tekem…** prebere tabele tekem CS2 zemljevida (datoteke Parquet orodja CS2, kolikor jih želite; samo potrebni stolpci, v ozadju); **Uporabi naložene podatke** vzame podatke, naložene v pregledovalnik. Nato:
+**Naloži datoteke tekem…** prebere tabele tekem CS2 za zemljevid (datoteke Parquet orodja CS2, kolikor jih želite; samo potrebni stolpci, v ozadju); **Uporabi naložene podatke** vzame podatke, naložene v pregledovalniku. Nato:
 
-- **Najzgodnejši prihod na zemljevidu** obarva zemljevid s časom od začetka runde, ob katerem je igralec prvič prišel na vsako mesto - gumb **Najhitrejši** pokaže najhitrejše čez vse runde, **Tipičen (mediana)** srednjo rundo - zeleno zgodaj, rdeče pozno, za eno ali obe strani. Pokaže, kaj je mogoče in kdaj.
-- Izbrana pot se primerja s tem, kar so igralci dosegli od njenega začetka (ali od začetka runde) do njenega konca, vsak konec je krog nastavljenega polmera: »Najhitreje opaženo 14,2 s, p10 15,0 s, mediana 18,3 s v 41 tekih; vaš načrt 15,1 s«.
-- Hitrosti, s katerimi so se igralci dejansko premikali - tek, hoja, počep, iz stolpcev hoje in počepa tabel - v m/s.
+- **Najzgodnejši prihod na zemljevidu** pobarva zemljevid glede na čas od začetka runde, ko je igralec prvič prišel na vsako mesto - gumb **Najhitrejši** pokaže najhitrejšega čez vse runde, **Tipičen (mediana)** srednjo rundo - od zelene zgodaj do rdeče pozno, za eno stran ali obe. Pokaže, kaj je mogoče kdaj.
+- Izbrana pot se primerja s tem, kar so igralci dosegli od njenega začetka (ali od začetka runde) do njenega konca, vsak konec je krog z nastavljenim polmerom: „Najhitrejše opaženo 14,2 s, p10 15,0 s, mediana 18,3 s v 41 tekih; vaš načrt 15,1 s”.
+- Hitrosti, s katerimi so se igralci dejansko premikali - tek, hoja, počep, iz stolpcev hoje in počepa v tabelah - v m/s.
 
 ## Koraki {#steps}
 
-Vrstica pod pogledom vsebuje korake. Načrt se začne z enim; **+** doda enega, vsaka figura pa se začne tam, kjer se je končala njena pot v zadnjem koraku; **−** odstrani prikazanega. **Sekunde** so, koliko traja prikazani korak pri predvajanju. **▶** (K) predvaja od prikazanega koraka do konca: figure s potjo jo prehodijo, figure, premaknjene na novo mesto v naslednjem koraku, zdrsnejo tja, ostale stojijo. Medtem ko je korak prikazan, je mesto vsake figure v naslednjem koraku narisano kot bled duh, puščice zadnjega koraka pa bledo pod tem.
+Vrstica pod pogledom vsebuje korake. Načrt se začne z enim; **+** doda enega, in vsaka figura se v njem začne tam, kjer je končala pot v zadnjem koraku; **−** odstrani prikazanega. **Sekunde** so, koliko časa traja prikazani korak pri predvajanju. **▶** (K) predvaja od prikazanega koraka do konca: figure s potjo jo prehodijo, figure, premaknjene na novo mesto v naslednjem koraku, zdrsnejo tja, ostale stojijo. Ko je prikazan korak, je mesto vsake figure v naslednjem koraku narisano kot bled duh, puščice zadnjega koraka pa se bledo vidijo pod tem.
 
 ## Shranjevanje {#saving}
 
-Razdelek **Datoteka** vsebuje **Shrani**, **Odpri** in **Počisti**. **Shrani** zapiše načrt kot `<ime>.h3dplan.json` (navaden JSON: strani, koraki, figure z mestom na korak, puščice, območja, opombe); **Odpri** ga prebere nazaj. Datoteka druge različice ali tista, ki ni načrt, je zavrnjena z razlogom. **Počisti** izprazni načrt; Razveljavi ga povrne.
+Razdelek **Datoteka** vsebuje **Shrani**, **Odpri** in **Počisti**. **Shrani** zapiše načrt kot `<ime>.h3dplan.json` (navaden JSON: strani, koraki, figure z mestom na korak, puščice, območja, opombe); **Odpri** ga prebere nazaj. Datoteka druge različice ali tista, ki ni načrt, je zavrnjena z razlogom. **Počisti** izprazni načrt; Razveljavi ga vrne.
 
 ## Figure {#figures}
 
-Vsako figuro zgradi sam pregledovalnik: preproste oblike do objavljene velikosti tipa, z značilnostmi, ki jo ločijo od sosedov - kolesa in kupola tanka, topovi, rakete in radarji vozila protiletalske obrambe, tloris kril, rep in motorji letala, rotorji in kratka krila helikopterja. Nič ni vzeto iz igre. Oblika, ki jo je izumila igra, je prikazana kot splošna figura njenega razreda. Kako podatki najdejo svojo figuro, glejte [Figure](figures.md#which-figure-a-unit-gets).
+Vsako figuro zgradi sam pregledovalnik: preproste oblike na objavljeno velikost tipa, z značilnostmi, ki jo ločijo od sosedov - tankovske gosenice in stolp, topovi, rakete in radarji protizračnega vozila, tloris kril letala, rep in motorji, rotorji in kratka krilca helikopterja. Nič ni vzeto iz igre. Zasnova, ki jo je izumila igra, je prikazana kot splošna figura svojega razreda. Glejte [Figure](figures.md#which-figure-a-unit-gets), kako podatki najdejo svojo figuro.
 
 ## Obvestilo Riot {#riots-notice}
 
-Zemljevidi Valoranta so prikazani po politiki Riot Games »Legal Jibber Jabber«, ki dovoljuje brezplačnim skupnostnim projektom njihovo uporabo in zahteva to obvestilo, kjerkoli se pojavijo: *3DHeat je bil ustvarjen po politiki Riot Games »Legal Jibber Jabber« z uporabo sredstev, ki jih ima v lasti Riot Games. Riot Games tega projekta ne podpira in ni njegov sponzor.* Sposobnosti na tabli so splošne oblike, ne umetniška dela Riota.
+Zemljevidi Valoranta so prikazani po politiki Riot Games „Legal Jibber Jabber”, ki dovoljuje brezplačnim skupnostnim projektom njihovo uporabo in zahteva to obvestilo, kjer se pojavijo: *3DHeat je bil ustvarjen po politiki Riot Games „Legal Jibber Jabber” z uporabo sredstev, ki jih ima Riot Games. Riot Games tega projekta ne podpira in ni njegov sponzor.* Sposobnosti na tabli so splošne oblike, ne umetnina Riot.

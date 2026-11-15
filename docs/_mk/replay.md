@@ -1,12 +1,19 @@
 ---
-title: "Replay"
+title: "Повторување"
 nav_order: 9
 has_children: true
 lang: "mk"
 source: "replay.md"
 source_hash: "da58a6589d3b"
-translated: false
+translated: true
 outdated: false
 ---
 
-{{ site.data.i18n[page.lang].ui.untranslatedBody | default: site.data.i18n.en.ui.untranslatedBody }} [{{ site.data.i18n[page.lang].ui.english | default: "English" }}](../replay.html)
+# Повторување
+
+Повторувањето го пушта натпреварот назад во 3D, со секоја единица нацртана како возилото или лицето што е. Користете го за да гледате што се случило, да споредувате многу натпревари или да видите кој кого погодил.
+
+- [Повторување на натпревар](match-replay.md): пуштете еден натпревар, со фигури, трасери, погодоци и камери во стилот на Tacview.
+- [Многу натпревари одеднаш](many-matches.md): наложете стотици натпревари еден врз друг.
+- [Фигури](figures.md): обликите што се користат за единиците и од каде доаѓаат.
+- [Анализа на погодоци](hit-analysis.md): каде било погодено едно возило или војник, и од кого.

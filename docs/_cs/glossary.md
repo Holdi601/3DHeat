@@ -3,9 +3,9 @@ title: "Slovníček"
 nav_order: 21
 lang: "cs"
 source: "glossary.md"
-source_hash: "8766ecb57c96"
+source_hash: "235c4c0eec6b"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Slovníček
