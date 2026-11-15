@@ -5,7 +5,7 @@ lang: "pl"
 source: "index.md"
 source_hash: "b93bb646bdad"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 3DHeat

@@ -1,7 +1,7 @@
 ---
 title: "フィギュアのクレジット"
 parent: "フィギュア"
-grand_parent: "Replay"
+grand_parent: "リプレイ"
 nav_order: 1
 lang: "ja"
 source: "figure-credits.md"

@@ -1,6 +1,6 @@
 ---
 title: "フィギュア"
-parent: "Replay"
+parent: "リプレイ"
 nav_order: 3
 has_children: true
 lang: "ja"

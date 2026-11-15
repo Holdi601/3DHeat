@@ -1,6 +1,6 @@
 ---
 title: "被弾分析（車両タブ）"
-parent: "Replay"
+parent: "リプレイ"
 nav_order: 4
 lang: "ja"
 source: "hit-analysis.md"

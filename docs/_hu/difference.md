@@ -4,103 +4,103 @@ parent: "Hőmódok"
 nav_order: 5
 lang: "hu"
 source: "difference.md"
-source_hash: "19f40abd7f5a"
+source_hash: "12fc27dc0616"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Különbség
 
-Pirossal, ahol az A csapat volt többet jelen, zöldeskékkel, ahol a B, és semmi, ahol egyenlők voltak.
+Pirossal ott, ahol az A csapat volt többen; zöldkékkel ott, ahol a B csapat; semmi ott, ahol egyenlők voltak.
 
-A **Különbség** (2-es billentyű) előjeles hő. Az egyik népesség sorai hozzáadnak hőt, egy másik népesség sorai elvesznek belőle. Ahol a kettő egyenletesen átfedi egymást, az eredmény nulla és teljesen átlátszó; ahol az egyik dominál, annak az oldalnak a színeiben jelenik meg – alapértelmezés szerint melegen (átlátszó → piros → sárga → fehér) a **+** oldalnak, hűvösen (átlátszó → zöld → kék → lila) a **−** oldalnak.
+A **Különbség** (2-es gomb) előjeles hő. Az egyik populáció sorai hőt adnak hozzá, a másiké kivonják. Ahol a két populáció egyenletesen fedi egymást, az eredmény nulla és teljesen átlátszó; ahol az egyik dominál, abban az oldal színeiben látszik – alapértelmezetten melegen (átlátszó → piros → sárga → fehér) a **+** oldalnak, hűvösen (átlátszó → zöld → kék → lila) a **−** oldalnak.
 
-![Különbség-hő: piros, ahol a + oldal volt többet, zöld és kék, ahol a − oldal](../assets/img/hu/difference-split.webp)
+![Különbség-hő: piros, ahol a + oldal volt többen, zöld és kék, ahol a − oldal](../assets/img/hu/difference-split.webp)
 
 ## Használat {#how-to-use-it}
 
-1. Nyomja meg a `2`-t (vagy válassza a **Különbség** módot a módválasztó sávon).
-2. Nyissa meg a **Különbség-felosztás** részt az oldalsávban.
-3. Válassza ki, mi szerint **Felosztás eszerint**: általában *Csoportok*.
-4. Tegyen egy csoportot (vagy értéket) a **+** oldalra, egy másikat a **−** oldalra.
-5. Olvassa le a színeket: a meleg a + oldalt, a hűvös a − oldalt jelenti. A panel figyelmeztet, ha az egyik oldalon nincs sor (lásd [Üzenetek, amiket láthat](#messages-you-may-see)).
+1. Nyomd meg a `2`-t (vagy válaszd a **Különbség** gombot a módsávban).
+2. Nyisd meg a **Különbség-felosztás** részt az oldalsávban.
+3. Válaszd ki, mi szerint **Felosztás eszerint**: általában a *Csoportok*.
+4. Tegyél egy csoportot (vagy értéket) a **+**-ra, egy másikat a **−**-ra.
+5. Olvasd a színeket: a meleg a + oldal, a hűvös a − oldal. Ha az egyik oldalon nincs sor, a panel figyelmeztet (lásd [Az üzenetek, amelyeket láthatsz](#messages-you-may-see)).
 
-Az, hogy *melyik* két népesség, a teljes kérdés, így a felosztás bármely megtartott oszlop lehet, nem csak csoport. Azok a sorok, amelyek **egyik** oldalra sem esnek, **kimaradnak**, nem számítanak nullának: ettől pontosan a kiválasztott két értéket hasonlítja össze a felosztás, és kombinálható a [szűrőkkel](filters.md) – szűrjön le egy térképre, majd bontsa azt verzió szerint.
+*Melyik* két populáció a teljes kérdés, ezért a felosztás bármelyik megtartott oszlop lehet, nem csak csoport. Azok a sorok, amelyek **egyik** oldalra sem esnek, **kimaradnak**, nem számítanak nullának: ettől a sok érték közül két értéken végzett felosztás pontosan ezt a kettőt hasonlítja össze, és összeáll a [szűrőkkel](filters.md) – szűrj le egy térképre, majd bontsd azt verzió szerint.
 
-A módhoz két oldal kell: egy csoportoszlop legalább két csoporttal, vagy egy szűréshez megtartott oszlop szerinti felosztás. Olyan adaton, amelynek kevesebb mint két csoportja van, a betöltés egy oszlop-felosztással indul – többfájlos betöltésnél először a *Forrásfájl* oszlop, különben az első kategóriaoszlop két értékkel, különben az első számoszlop, amelynek van tartománya –, így a *két betöltés összehasonlítása* csoportok nélküli adaton is működik. Csak az az adat tesz elérhetetlenné a módot, amelynek egyik sem áll rendelkezésre; ugyanígy az a felosztás, amelynek az egyik oldalán nincs semmi.
+A módhoz két oldal kell: egy csoportoszlop legalább két csoporttal, vagy egy megtartott szűrőoszlopon végzett felosztás. Két csoportnál kevesebbet tartalmazó adatnál a betöltés oszlop-felosztással indul – először a többfájlos betöltés *Source file* oszlopa, különben az első kategóriaoszlop két értékkel, különben az első számoszlop terjedelemmel –, így a *két betöltés összehasonlítása* csoportok nélküli adatnál is működik. Csak olyan adatnál nem elérhető a mód, amelyben egyik sincs; és az sem, ha egy oszlop-felosztásnál az egyik oldalon nem marad semmi.
 
 ## A Különbség-felosztás panel {#the-difference-split-panel}
 
-Különbség módban látható, a hőpanelek alatt.
+A Különbség módban jelenik meg, a hőpanelek alatt.
 
-A **Felosztás eszerint** lehetőségei:
+A **Felosztás eszerint** a következőket kínálja:
 
-| Lehetőség | Így jelenik meg | Felosztási szabály |
+| Lehetőség | Így látszik | Felosztási szabály |
 |---|---|---|
-| Csoportok | *Csoport (N)* (ha van csoportoszlop) | Minden csoport a +, a − vagy egyik oldalra kerül, a [Csapatlistában](teams-list.md) beállítva |
-| Kategóriaoszlop | *oszlop (N érték)* | Az értékek a +, a − vagy egyik oldalra kerülnek |
-| Számoszlop | *oszlop (numerikus)* | Minden oldalnak egy értéktartomány |
-| A forrásfájl | *Forrásfájl – két betöltés összehasonlítása* (ha több fájl van betöltve) | A fájlok a +, a − vagy egyik oldalra kerülnek |
+| Csoportok | *Csoport (N)* (ha van csoportoszlop) | Minden csoport a +, a − vagy egyik oldalon, a [Csapatlistában](teams-list.md) beállítva |
+| Egy kategóriaoszlop | *oszlop (N érték)* | Az értékek a +, a − vagy egyik oldalon |
+| Egy számoszlop | *oszlop (szám)* | Egy értéktartomány mindkét oldalnak |
+| A származási fájl | *Source file – két betöltés összehasonlítása* (ha több fájl volt betöltve) | Fájlok a +, a − vagy egyik oldalon |
 
-Csak azok az oszlopok kínálkoznak, amelyek betöltéskor a *Megtartás szűréshez* alatt szerepeltek.
+Csak azok az oszlopok ajánlódnak fel, amelyeket betöltéskor a *Megtartás szűréshez* alatt megtartottunk.
 
-### Arányok összevetése, ne darabszámok {#compare-shares-not-counts}
+### Az arányokat hasonlítsd, ne a darabszámokat {#compare-shares-not-counts}
 
-Az **Arányok összevetése darabszámok helyett** (alapértelmezés szerint ki) minden oldalt az saját sorszámának reciprokával súlyoz, így az az oldal, amelynek ötször annyi sora van, nem nyer pusztán a számok miatt. A szín ekkor azt mutatja, hol fordul elő az egyik oldal arányosan gyakrabban, mint a másik. Akkor használja, ha a két oldalon nagyon eltér az adatmennyiség, például két, különböző hosszúságú munkamenet.
+Az **Arányokat hasonlítsd, ne a darabszámokat** (alapból ki) minden oldalt az saját sorszámának reciprokával súlyoz, így az az oldal, amelyiknek ötször annyi sora van, nem nyer pusztán a számok miatt. A szín ekkor azt mutatja, hol fordul elő arányosan gyakrabban az egyik oldal, mint a másik. Akkor használd, ha a két oldal adatmennyisége nagyon eltér, például két, eltérő hosszúságú munkamenet.
 
-### Üzenetek, amiket láthat {#messages-you-may-see}
+### Az üzenetek, amelyeket láthatsz {#messages-you-may-see}
 
-A panel figyelmeztet, ha a kép nem valódi különbség:
+A panel akkor figyelmeztet, ha a kép nem valódi különbség:
 
-| Üzenet | Jelentése |
+| Üzenet | Jelentés |
 |---|---|
-| *N + / M −* (vagy *N + / M − / K nincs használva*) | Hány érték van az egyes oldalakon (és egyiken sem). |
-| Az ablakban nincs sor a **+** oldalon | Csak a **−** oldal rajzolódik. Mozgassa az idővonal ablakát, vagy módosítsa a felosztást. |
+| *N + / M −* (vagy *N + / M − / K nincs használva*) | Hány érték van az egyes oldalon (és egyiken sem). |
+| Az ablakban nincs sor a **+** oldalon | Csak a **−** oldal rajzolódik. Mozgasd az idővonal ablakát, vagy változtasd a felosztást. |
 | Az ablakban nincs sor a **−** oldalon | Csak a **+** oldal rajzolódik. |
-| Egyik oldalon sincs érték | A különbség nem rajzol semmit. Tegyen legalább egy értéket a **+** vagy a **−** oldalra. |
-| *oszlop* nem osztható fel így | A kiválasztott oszlop nem illik a felosztáshoz. Válassza újra az oszlopot. |
-| A felosztási oszlop nem fért bele a GPU-memóriába N a M darabból | Ezek a sorok nem rajzolódnak. Emelje a GPU-keretet a Teljesítmény → Erőforráskeretek alatt, vagy töltsön be kevesebb sort. |
+| Egyik oldalon sincs érték | A különbség nem rajzol semmit. Tegyél legalább egy értéket a **+** vagy a **−** oldalra. |
+| *oszlop* nem osztható így | A választott oszlop nem illik a felosztáshoz. Válaszd újra az oszlopot. |
+| A felosztási oszlop N / M darabnál nem fért be a GPU-memóriába | Ezek a sorok nem rajzolódnak. Növeld a GPU-keretet a Teljesítmény → Erőforráskeretek alatt, vagy tölts be kevesebb sort. |
 
-### Csoportok szerint {#by-group}
+### Csoportonként {#by-group}
 
-A panel csak a [Csapatlistára](teams-list.md) mutat, ahol minden csoportnak van **+** és **−** gombja. Minden betöltésnél a csoportok első fele (felfelé kerekítve) a +-ra kerül, a többi a −-ra; a Csapatlista **Egyenletes felosztás** gombja ugyanezt újra elvégzi. Az egyik oldalra sem tartozó, vagy jelölőnégyzetével elrejtett csoport nem ad hozzá semmit.
+A panel csak a [Csapatlistára](teams-list.md) mutat, ahol minden csoportnak van egy **+** és egy **−** gombja. Minden betöltésnél a csoportok első fele (felfelé kerekítve) a +-ra kerül, a többi a −-ra; a Csapatlista **Egyenletes felosztás** gombja ugyanezt újra megteszi. Az egyik oldalon sem álló csoport, vagy amely a jelölőnégyzetével el van rejtve, nem járul hozzá semmivel.
 
-### Kategóriaértékek szerint {#by-category-values}
+### Kategóriaértékenként {#by-category-values}
 
-| Rész | Jelentése |
+| Rész | Jelentés |
 |---|---|
-| `a + / b − / c nincs használva` | Hány érték van az egyes oldalakon és egyiken sem. |
-| **Törlés** | Minden értéket az egyik oldalról sem tesz ki. |
-| Értéklista | Minden érték egy **+** és egy **−** gombbal (az aktívra újra kattintva kiveszi az adott oldalról). Egy üres értéket *(hiányzik)* néven sorol fel. |
-| Korlát-megjegyzés | Csak az első 200 érték látszik: *Az első 200 érték látszik, N-ből. Egy ilyen széles oszlopot jobb előbb szűréssel szűkíteni, vagy tartomány szerint felosztani, ha az értékei rendezettek.* |
+| `a + / b − / c nincs használva` | Hány érték van az egyes oldalon és egyiken sem. |
+| **Törlés** | Minden értéket egyik oldalra sem tesz. |
+| Értéklista | Minden értékhez egy **+** és egy **−** gomb (az aktívat újra megnyomva levehetjük az adott oldalról). Az üres érték *(hiányzik)* néven szerepel. |
+| Korlát-megjegyzés | Csak az első 200 érték látszik: *Az N érték első 200-a látszik. Ilyen széles oszlopot jobb előbb szűréssel leszűkíteni, vagy tartomány szerint felosztani, ha az értékei rendezettek.* |
 
-Az oszlop kiválasztásakor az első értéke a +-ra, a második a −-ra kerül. Ha egyik oldalon sincs érték, a felosztás csoportokra esik vissza, ahelyett hogy egy üres képet mutatna. A *Forrásfájl* ugyanígy működik, fájlonként egy értékkel – így hasonlítunk össze két exportot, két tesztfutást vagy két verziót.
+Az oszlop kiválasztásakor az első értéke a +-ra, a második a −-ra kerül. Ha egyik oldalon sincs érték, a felosztás csoportokra esik vissza, ahelyett hogy üres keretet mutatna. A *Source file* ugyanígy működik, fájlonként egy értékkel – így hasonlítunk össze két exportot, két tesztfuttatást vagy két buildet.
 
 ### Tartomány szerint {#by-range}
 
-| Rész | Jelentése |
+| Rész | Jelentés |
 |---|---|
 | Súgó | Az oszlop minimuma és maximuma. |
-| **Pozitív tartomány (+)**, **ettől** / **eddig** | Ebbe a tartományba eső értékű sorok adnak hozzá; mindkét végpont beleszámít. |
-| **Negatív tartomány (−)**, **ettől** / **eddig** | Ebbe a tartományba eső sorok elvesznek. |
-| **Felosztás a felezőpontnál** | A + tartományt [minimum, középső] értékre, a −-ot [középső, maximum] értékre állítja – az oszlop kiválasztása is ezt teszi. |
+| **Pozitív tartomány (+)**, **ettől** / **eddig** | Ebbe a tartományba eső értékű sorok adnak hozzá. Mindkét végén zárt. |
+| **Negatív tartomány (−)**, **ettől** / **eddig** | Ebbe a tartományba eső sorok kivonnak. |
+| **Felosztás a felezőpontnál** | A +-t [minimum, középső] értékre, a −-t [középső, maximum] értékre állítja – az oszlop kiválasztása is ezt teszi. |
 
-Az az érték, amely mindkét tartományba beleesik, +-nak számít. A tartományoknak nem kell lefedniük az oszlopot; az egyikbe sem eső értékek kimaradnak. *Az első két perc az utolsó két perc ellen* egy időszerű oszlop tartomány szerinti felosztása.
+Ha egy érték mindkét tartományban benne van, +-nak számít. A tartományoknak nem kell lefedniük az oszlopot; az egyikben sem lévő értékek kimaradnak. *Az első két perc az utolsó két perccel szemben* egy időszerű oszlop tartomány szerinti felosztása.
 
 ## Színek {#colours}
 
-A **Hőszínek** szakasz ebben a módban két skálaszerkesztőt mutat: **Pozitív (hozzáadó csapatok)** és **Negatív (kivonó csapatok)**, mindegyiknek saját visszaállító gombbal (*Visszaállítás: átlátszó → piros → sárga → fehér*, *Visszaállítás: átlátszó → zöld → kék → lila*). Az összeállítás a nettó hő abszolút értékét a [telítési ponton és válaszon](colour-and-exposure.md) keresztül viszi, és a negatív skálát választja, ahol a nettó érték nulla alatt van. Lásd [Szín és expozíció](colour-and-exposure.md#the-ramp-editor).
+A **Hőszínek** rész ebben a módban két skálaszerkesztőt mutat: **Pozitív (hozzáadó csapatok)** és **Negatív (kivonó csapatok)**, mindegyiknek saját visszaállító gombjával (*Visszaállítás: átlátszó → piros → sárga → fehér*, *Visszaállítás: átlátszó → zöld → kék → lila*). Az összetett kép a nettó hő abszolút értékét veszi a [telítettségi ponton és válaszon](colour-and-exposure.md) keresztül, és ahol a nettó kisebb nullánál, a negatív skálát választja. Lásd [Szín és expozíció](colour-and-exposure.md#the-ramp-editor).
 
-Ha a különbség nagysága számít, a *Lineáris* sűrűségválaszt használja: ez az egyetlen válasz, ahol az azonos szín azonos darabszámot jelent.
+Használd a *lineáris* sűrűségi választ, ha a különbség nagysága számít: ez az egyetlen válasz, amelyben az azonos szín azonos darabszámot jelent.
 
-## Hogyan működik {#how-it-works}
+## Fejlesztőknek {#for-developers}
 
-Minden sor előjelet kap, +1-et, -1-et vagy 0-t a csúcsshaderben ([`POINT_HEAT_VS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/shaders.ts)); a 0 a sort még a fragmensek rajzolása előtt elutasítja.
+Minden sor +1, −1 vagy 0 előjelet kap a csúcspont-shaderben ([`POINT_HEAT_VS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/shaders.ts)); a 0 a sort eldobja, mielőtt bármi kirajzolódna.
 
-- Csoportonként az előjel egy 4096 bejegyzéses csoporttáblából jön, a sor csoport-azonosítója szerint indexelve (a csoport-azonosító a sor pozícióstexelének negyedik csatornáján utazik).
-- Kategóriánként az előjel egy második, 4096 bejegyzéses táblából jön, amelyet kategóriaértékenként töltenek fel, a sor értékét pedig az oszlop szűrőtextúrájából olvassák; a tábla végét meghaladó értéket mindkét háttérrendszer elutasítja.
-- Tartományonként a sor értékét a két tartománnyal hasonlítjuk össze.
+- Csoportonként az előjel egy 4096 bejegyzéses csoporttáblából jön, amelyet a sor csoport-azonosítója indexel (a csoport-azonosító a sor pozíció-texelének negyedik csatornáján utazik).
+- Kategóriánként az előjel egy második, 4096 bejegyzéses táblából jön, amelyet kategóriaértékenként töltünk fel, a sor értékét pedig az oszlop szűrő-textúrájából olvassuk; a táblán túli értéket mindkét háttérrendszeren eldobjuk.
+- Tartomány szerint a sor értékét a két tartománnyal hasonlítjuk össze.
 
 A felosztás megváltoztatása újraindítja a halmozást.
 
-**A rejtett csoportok minden felosztásnál rejtve maradnak.** Oszlop szerinti felosztásnál a csoporttábla már nem hordoz előjeleket; a látható csoportnak 1-et, a rejtettnek 0-t tartalmaz ([`frameSignTables`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts)), és mindkét tábla egyszerre jut el a shaderbe – WebGL2-n egy előjel-textúra két sorában, WebGPU-n egy tárolópuffer két felében. Egy sort csak akkor rajzolunk, ha a csoportja látható *és* az oszlopértéke valamelyik oldalon van. Így a [Csapatlistában](teams-list.md) kijelölés nélkül hagyott csoport, vagy a Meccs fül oldalfókusza által kizárt csoport bárhogy is osztjuk a különbséget, nem ad hozzá semmit.
+**Az elrejtett csoportok minden felosztásnál rejtve maradnak.** Oszlop szerinti felosztásnál a csoporttábla már nem hordoz előjeleket; 1-et tartalmaz a látható csoportnak, 0-t a rejtettnek ([`frameSignTables`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts)), és mindkét tábla egyszerre jut el a shaderhez – két sor egy előjel-textúrában WebGL2-n, két fél egy tároló pufferben WebGPU-n. Egy sor csak akkor rajzolódik, ha a csoportja látható *és* az oszlopértéke valamelyik oldalon van. Így a [Csapatlistában](teams-list.md) kikapcsolt csoport, vagy a Meccs fül oldalfókuszából kimaradt csoport, bárhogyan osztjuk is a különbséget, semmivel sem járul hozzá.

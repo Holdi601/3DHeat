@@ -1,7 +1,7 @@
 ---
 title: "フィギュアオーバーレイ内のフィギュア"
 parent: "フィギュア"
-grand_parent: "Replay"
+grand_parent: "リプレイ"
 nav_order: 2
 lang: "ja"
 source: "figure-replay.md"

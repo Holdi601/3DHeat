@@ -1,6 +1,6 @@
 ---
 title: "多数の試合を一度に"
-parent: "Replay"
+parent: "リプレイ"
 nav_order: 2
 lang: "ja"
 source: "many-matches.md"

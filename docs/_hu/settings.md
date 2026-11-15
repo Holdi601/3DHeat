@@ -3,40 +3,40 @@ title: "Beállítások, mértékegységek és billentyűk"
 nav_order: 16
 lang: "hu"
 source: "settings.md"
-source_hash: "bd1062895abf"
+source_hash: "f25e4cbaf3bb"
 translated: true
-outdated: true
+outdated: false
 ---
 
-# Beállítások, mértékegységek és billentyűk
+# Beállítások, egységek és billentyűk
 
-A sáv tetején lévő kis vezérlők azt szabályozzák, hogyan szól Önhöz a megjelenítő: a nyelv, a mértékegységek (méter vagy láb, km/h vagy csomó), és egy súgómód, amely elmagyarázza a színeket. A választásait a böngészője megjegyzi.
+Az oldalsáv tetején lévő kis vezérlők megváltoztatják, hogyan szól hozzád a nézegető: a nyelvet, az egységeket (méter vagy láb, km/h vagy csomó) és egy súgó módot, amely elmagyarázza a színeket. A választásaidat a böngésződ megjegyzi.
 
 ## A fejléc {#the-header}
 
-A sáv tetején:
+Az oldalsáv tetején:
 
 | Vezérlő | Mit csinál |
 |---|---|
-| **?** | Súgómód: mit jelent minden szín (a `?` vagy `F1` is) |
-| **Egységek** menü | Metrikus, Angolszász, Repülési vagy Tengeri |
-| **...** gomb az **Egységek** mellett | Megnyitja a „Válasszon mértékegységet minden mennyiséghez” ablakot: egy legördülő mező mennyiségenként |
-| **Nyelv** menü | A megjelenítő nyelve: [40 nyelv](languages.md), vagy a böngészőé |
+| **?** | Súgó mód: mit jelent minden szín (`?` vagy `F1` billentyűvel is) |
+| **Egységek** menü | Metrikus, Imperiális, Repülési vagy Tengeri |
+| **...** gomb az **Egységek** mellett | Megnyitja a „Válassz egységet minden mennyiséghez” ablakot: mennyiségenként egy-egy legördülő lista |
+| **Nyelv** menü | A nézegető nyelve: [40 nyelv](languages.md), vagy a böngésző nyelve |
 
-![A fejléc a Mértékegységek menüvel és a mennyiségenkénti mértékegység-ablakkal](../assets/img/hu/settings-units.webp)
+![A fejléc az Egységek menüvel és a mennyiségenkénti egységablakkal](../assets/img/hu/settings-units.webp)
 
-A dobozba beírt számokban lehet pont vagy vessző is (`0.35` vagy `0,35`). A megjelenítő mindkettőt olvassa, és a számokat az Ön nyelvének szokása szerint mutatja.
+A dobozba beírt számokban használhatsz pontot vagy vesszőt is (`0.35` vagy `0,35`). A nézegető mindkettőt olvassa, és a számokat a nézegető nyelvének szokása szerint mutatja.
 
-## Mértékegységek {#units}
+## Egységek {#units}
 
-1. Válasszon előre beállított értéket az **Egységek** menüben. Minden mennyiség együtt vált.
-2. Csak egy mennyiség megváltoztatásához kattintson mellette a **...** gombra, és válasszon mértékegységet ahhoz a mennyiséghez. A menü ezután `*` jelet mutat az előre beállított érték után.
-3. Az Ön által be nem állított mennyiség követi az előre beállítást. A visszatéréshez válassza az „Előre beállított” lehetőséget.
+1. Válassz előre beállítottat az **Egységek** menüben. Minden mennyiség egyszerre vált.
+2. Ha csak egy mennyiséget akarsz változtatni, kattints a mellette lévő **...** gombra, és válassz egységet ahhoz a mennyiséghez. A menü ezután egy `*`-ot tesz az előre beállított után.
+3. Az olyan mennyiség, amelyet nem állítottál be, követi az előre beállítottat. Az „Előre beállított” választása visszaállít.
 
-| Mennyiség | Metrikus (alapértelmezés) | Angolszász | Repülési | Tengeri |
+| Mennyiség | Metrikus (alapértelmezés) | Imperiális | Repülési | Tengeri |
 |---|---|---|---|---|
 | Távolság | km | mi | NM | NM |
-| Magasság, hossz | m | ft | ft | m |
+| Magasság, hosszúság | m | ft | ft | m |
 | Sebesség | km/h | mph | kt | kt |
 | Függőleges sebesség | m/s | ft/min | ft/min | m/s |
 | Hőmérséklet | °C | °F | °C | °C |
@@ -44,34 +44,34 @@ A dobozba beírt számokban lehet pont vagy vessző is (`0.35` vagy `0,35`). A m
 | Tömeg, üzemanyag | kg, l | lb, gal | lb, gal | t, m³ |
 | Szög | fok | fok | fok | fok |
 
-Egy mennyiséghez további választható mértékegységek: távolság km, mi, NM; sebesség km/h, m/s, kt, mph; függőleges sebesség m/s, ft/min, m/min; hőmérséklet °C, °F, K; nyomás hPa, inHg, mmHg, psi; tömeg kg, lb, t; szög fok vagy NATO-mil (6400 a körben). A mértékegységek mindenhol ugyanazok a megjelenítőben: címkékben, kártyákon, diagramokon, statisztikákban.
+További egységek, amelyeket egy mennyiséghez választhatsz: távolság km, mi, NM; sebesség km/h, m/s, kt, mph; függőleges sebesség m/s, ft/min, m/min; hőmérséklet °C, °F, K; nyomás hPa, inHg, mmHg, psi; tömeg kg, lb, t; szög fok vagy NATO mil (6400 a körön). Az egységek mindenhol egyformák a nézegetőben: a feliratokban, a kártyákon, a grafikonokon és a statisztikákban.
 
-## Súgómód {#help-mode}
+## Súgó mód {#help-mode}
 
-![Súgómód: mit jelentenek a színek](../assets/img/hu/help.webp)
+![Súgó mód: mit jelentenek a színek](../assets/img/hu/help.webp)
 
-Nyomja meg a `?` vagy `F1` gombot, vagy kattintson a **?** gombra. Megjelenik a *Mit jelentenek a színek* panel: jelmagyarázatok a 3D-s nézethez, a hőskálákhoz, a csapatszínekhez, a pálya színeihez, a panelek állapotszíneihez, a meccspanelhez és a versenynézethez. Addig marad, amíg ki nem kapcsolja. A Meccs fülön a meccspanel színeit is elmagyarázza.
+Nyomd meg a `?` vagy az `F1` billentyűt, vagy kattints a **?** gombra. Megmutatja a *Mit jelentenek a színek* részt: a 3D-s nézet jelmagyarázatait, a hőskálákat, a csapatszíneket, a pálya színeit, a panelek állapotszíneit, a meccs-panelt és a versenynézetet. Addig marad bekapcsolva, amíg ki nem kapcsolod. A Meccs fülön a meccs-panel színeit is elmagyarázza.
 
-![Súgómód a Meccs fülön](../assets/img/hu/settings-help-match.webp)
+![Súgó mód a Meccs fülön](../assets/img/hu/settings-help-match.webp)
 
 ## Amit a böngésző megjegyez {#what-the-browser-remembers}
 
-Ezek a beállítások látogatások között megmaradnak a böngészőjében (semmit nem küldünk sehová):
+Ezek a beállítások a látogatások között a böngésződben maradnak meg (semmi sem megy sehová):
 
-- a nyelv, a mértékegységek és a súgómód;
-- a visszajátszás figura-, jel-, felirat-, kamera- és taktikai megjelenítési beállításai;
+- a nyelv, az egységek és a súgó mód;
+- a visszajátszás figura-, szimbólum-, címke-, kamera- és taktikai kijelzőbeállításai;
 - a lejátszási sebesség és a tükrözés;
-- a könyvjelzők felvételenként, a térfogatok adatkészletenként, a célrétegek;
-- a külső MI beállításai (a kulcs csak akkor, ha bejelölte a *Megjegyzés*-t).
+- könyvjelzők felvételenként, kötetek adathalmazonként, célrétegek;
+- a külső MI-beállítások (a kulcs csak akkor, ha bepipálod a *Megjegyzés* opciót).
 
-A hőbeállítások, a szűrők és a mód minden betöltéskor újrakezdődnek. A teljes, generált lista: [Mentett beállítások](ref-settings-storage.md).
+A hő-beállítások, a szűrők és a mód minden betöltéskor újra kezdődnek. A teljes, generált lista: [Tárolt beállítások](ref-settings-storage.md).
 
-## A böngészőtől megtartott billentyűk {#keys-the-viewer-keeps-from-the-browser}
+## Billentyűk, amelyeket a nézegető megtart a böngészőtől {#keys-the-viewer-keeps-from-the-browser}
 
-Nagy adattal a munkamenet betöltése időt vesz igénybe, ezért a megjelenítő megakadályozza, hogy a böngésző véletlenül eldobja:
+A nagy adattal dolgozó munkamenet betöltése időbe telik, ezért a nézegető megakadályozza, hogy a böngésző véletlenül eldobja:
 
-- A `Ctrl`/`Cmd` + betűk, amelyek nyomtatnának, mentenének, megnyitnának, újratöltenének, bezárnának vagy új ablakot nyitnának, a szövegdobozokon kívül nem csinálnak semmit; az `F1`, `F3`, `F5`, `F6` és `F7` sem.
-- Adattal vagy pályával betöltött lap bezárása vagy újratöltése előtt rákérdez.
-- Teljes képernyőn a megjelenítő zárolja a saját billentyűit (W, T, N, S, R, P, Q, Esc), hogy a böngésző ne vegye át őket.
+- A `Ctrl`/`Cmd` + azok a betűk, amelyek nyomtatnak, mentenek, megnyitnak, újratöltenek, bezárnak vagy új ablakot nyitnak, nem tesznek semmit a szövegmezőkön kívül; az `F1`, `F3`, `F5`, `F6` és `F7` sem tesz semmit.
+- Ha adat vagy pálya van betöltve, a fül bezárása vagy újratöltése először rákérdez.
+- Teljes képernyőn a nézegető zárolja a saját billentyűit (W, T, N, S, R, P, Q, Esc), hogy a böngésző ne vegye el őket.
 
-A pontos lista: [Böngészőbillentyűk](ref-browser-keys.md). A megjelenítő összes saját billentyűje: [Billentyűzet és egér](keyboard-reference.md).
+A teljes lista: [Böngésző-billentyűk](ref-browser-keys.md). A nézegető összes saját billentyűje: [Billentyűzet- és egérhivatkozás](keyboard-reference.md).

@@ -5,8 +5,61 @@ nav_order: 1
 lang: "el"
 source: "backends.md"
 source_hash: "435a9fedb9c2"
-translated: false
+translated: true
 outdated: false
 ---
 
-{{ site.data.i18n[page.lang].ui.untranslatedBody | default: site.data.i18n.en.ui.untranslatedBody }} [{{ site.data.i18n[page.lang].ui.english | default: "English" }}](../backends.html)
+# Οι δύο μηχανές απόδοσης
+
+Ένα πρόγραμμα περιήγησης μπορεί να αφήσει μια σελίδα να χρησιμοποιήσει την κάρτα γραφικών με δύο τρόπους: το WebGPU (νεότερο) και το WebGL2. Ο περιηγητής μπορεί να χρησιμοποιήσει και τα δύο και επιλέγει μόνος του τον καλύτερο, οπότε συνήθως δεν κάνετε τίποτα. Για να δείτε ποιον χρησιμοποιείτε, κοιτάξτε το **Backend** στο πάνελ στατιστικών (πάνω δεξιά στην προβολή).
+
+![Το πάνελ στατιστικών: Backend, FPS, Frame, Rows in window, Sprites / frame, Budget, Heat res, Coverage](../assets/img/en/performance-stats-overlay.webp)
+
+Ο περιηγητής έχει δύο πλήρεις μηχανές απόδοσης πίσω από μία κοινή διεπαφή ([`types.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)): το **WebGPU** ([`webgpu/`](https://github.com/Holdi601/3DHeat/tree/main/src/render/webgpu)) και το **WebGL2** ([`webgl2/`](https://github.com/Holdi601/3DHeat/tree/main/src/render/webgl2)). Και τα δύο σχεδιάζουν την ίδια εικόνα με τους ίδιους αλγορίθμους· οι shaders υπάρχουν και σε WGSL και σε GLSL ES 3.00, δίπλα δίπλα. Η πρώτη γραμμή του πάνελ στατιστικών, **Backend**, δείχνει ποια τρέχει. Αν την αφήσετε πάνω της με το ποντίκι, βλέπετε γιατί δεν χρησιμοποιήθηκε το WebGPU, όταν δεν χρησιμοποιήθηκε.
+
+## Για προγραμματιστές {#for-developers}
+
+### Πώς επιλέγεται η μία {#how-one-is-chosen}
+
+Ένα canvas μπορεί να κρατάει μόνο ένα είδος context, οπότε η επιλογή γίνεται μία φορά, πριν από οποιοδήποτε σχέδιο ([`createRenderer.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/createRenderer.ts)):
+
+1. Αν δεν έχει επιβληθεί το WebGL2: αν υπάρχει το `navigator.gpu`, ζητείται adapter με `powerPreference: 'high-performance'` και device, και δημιουργείται ο renderer WebGPU. Κάθε αποτυχία καταγράφεται ως αιτία.
+2. Αν έχει επιβληθεί το WebGPU και απέτυχε, σταματάμε: η προβολή δείχνει *Cannot initialise the renderer.* με την αιτία.
+3. Αλλιώς δημιουργείται ο renderer WebGL2 (ζητώντας και αυτός τον adapter υψηλής απόδοσης). Αν το WebGL2 δεν είναι διαθέσιμο, ή δεν μπορεί να σχεδιάσει σε float textures (`EXT_color_buffer_float`), η προβολή δείχνει το σφάλμα.
+
+Το `powerPreference: 'high-performance'` εμποδίζει έναν φορητό υπολογιστή με εναλλαγή γραφικών να δώσει στη σελίδα την ενσωματωμένη GPU. Πέρα από αυτό η σελίδα δεν έχει λόγο: η επιτάχυνση υλικού είναι ρύθμιση του προγράμματος περιήγησης.
+
+### Διακόπτες στη διεύθυνση URL {#url-switches}
+
+Προσθέστε τα στη διεύθυνση της σελίδας, για παράδειγμα `http://127.0.0.1:5273/?backend=webgl2`.
+
+| Παράμετρος | Αποτέλεσμα |
+|---|---|
+| `?backend=webgpu` | Χρήση του WebGPU, αλλιώς αποτυχία. |
+| `?backend=webgl2` | Χρήση του WebGL2 ακόμα και όπου υπάρχει το WebGPU· χωρίζει το «αυτό σχεδιάζεται λάθος» από το «αυτό σχεδιάζεται λάθος στο WebGPU». |
+| `?heat=f16` | Επιβολή της διαδρομής συσσώρευσης θερμότητας 16 bit σε οποιαδήποτε μηχανή ([Συσσώρευση half-float](half-float-accumulation.md)). |
+| `?glcheck` | WebGL2: διαβάζει σφάλματα GL κατά τη διάρκεια του frame και τα εμφανίζει στο `renderer.heatDebug`. Κλειστό από προεπιλογή, γιατί το `getError` σταματά τη ροή της pipeline. |
+| `?occdebug=<n>` | Βοήθημα για προγραμματιστές στο WebGL2: αντικαθιστά τη θερμότητα με τιμές αποσφαλμάτωσης occlusion. Όχι για κανονική χρήση. |
+
+### Διαφορές που μετρούν {#differences-that-matter}
+
+| | WebGPU | WebGL2 |
+|---|---|---|
+| Αποθήκευση γραμμών | Storage buffers: ένας δείκτης γραμμής είναι δείκτης πίνακα. Ζητά το μεγαλύτερο storage-buffer binding και τα μεγέθη buffer που δίνει ο adapter. | Ακέραιες textures (8.192 texels πλάτος) που προσπελαύνονται από το `gl_VertexID` μέσω μιας texture δεικτών μπλοκ ανά frame. |
+| Συσσώρευση θερμότητας 32 bit | Όταν ο adapter προσφέρει και το `float32-blendable` και το `float32-filterable` | Όταν υπάρχει το `EXT_float_blend` |
+| Αλλιώς | 16 bit (`r16float`) | 16 bit (`R16F`) |
+| Εύρος βάθους | [0, 1]· η μηχανή πολλαπλασιάζει εκ των προτέρων έναν μετασχηματισμό των πινάκων [-1, 1] του three.js. Χωρίς αυτόν, μια παράλληλη προβολή, της οποίας το βάθος είναι γραμμικό, πέφτει σχεδόν εξ ολοκλήρου κάτω από το 0 και κόβεται αθόρυβα. | [-1, 1], όπως είναι |
+| Uniforms | Ένας δακτύλιος από θέσεις ευθυγραμμισμένες στα 256 bytes, μία για κάθε σχέδιο, με δέσμευση μέσω offset. Το `queue.writeBuffer` εκτελείται με σειρά στην ουρά, οπότε ένα buffer που ξαναγράφεται σε κάθε σχέδιο θα έκανε κάθε σχέδιο να διαβάζει την τελευταία εγγραφή. Το μπλοκ uniform του pass θερμότητας είναι ακριβώς μία θέση των 256 bytes. | Κανονικά uniforms |
+| Στόχος θερμότητας κάτω από την ανάλυση του canvas | Παίρνει δική του texture βάθους (κάθε attachment σε ένα pass πρέπει να έχει το ίδιο μέγεθος) | |
+| Λήψη frame | Το `captureFrame()` σχεδιάζει ξανά τη σύνθεση σε εκτός οθόνης στόχο και τη διαβάζει (το headless Chromium σχεδιάζει WebGPU, αλλά ποτέ δεν συνθέτει το canvas του) | Διαβάζει το προεπιλεγμένο framebuffer στο επόμενο σχεδιασμένο frame |
+| Ανάγνωση | Ενδιάμεσα buffers που κρατιούνται και επαναχρησιμοποιούνται· ένας αναγνώστης κάθε φορά σε πτήση | `readPixels`, ρωτώντας τον οδηγό ποιος συνδυασμός μορφής/τύπου επιτρέπεται |
+
+Και οι δύο μηχανές ανεβάζουν τον πίνακα καμπύλης των sprites ως half floats. Το `queue.writeTexture` του WebGPU αντιγράφει ακατέργαστα bytes, οπότε τα δεδομένα κωδικοποιούνται πρώτα σε binary16 ([`half.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/half.ts)).
+
+#### Όρια textures {#texture-limits}
+
+Το `texStorage2D` πέρα από το `MAX_TEXTURE_SIZE` δεν πετάει σφάλμα: η δέσμευση χάνεται, τα επόμενα uploads αποτυγχάνουν και η δειγματοληψία επιστρέφει μηδέν. Η βοηθητική συνάρτηση του WebGL2 [`createTexture`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/glutil.ts) ελέγχει και τις δύο διαστάσεις με το όριο και σταματά με το μέγεθος· η texture δεικτών μπλοκ είναι δισδιάστατη (4.096 πλάτος), οπότε δεν μπορεί να ξεπεράσει ένα όριο· και το `src/render/limits.test.ts` κλειδώνει κάθε διάσταση texture απέναντι στα όρια που αξίζει να υποστηριχθούν. Ο renderer WebGL2 αρνείται επίσης μια συσκευή της οποίας το μέγιστο μέγεθος texture είναι μικρότερο από το πλάτος 8.192 της texture γραμμών.
+
+### Δοκιμή και των δύο {#testing-both}
+
+Το `npm run smoke` τρέχει την πραγματική εφαρμογή σε headless Chromium με WebGL2 (από προεπιλογή `http://127.0.0.1:5273/`)· δώστε `"http://127.0.0.1:5273/?backend=webgpu"` στο `node tools/smoke.mjs` για WebGPU, και `npm run smoke:f16` για τη διαδρομή half-float. Τα `tools/probe-webgpu.mjs` και `tools/probe-present.mjs` (αναφέρονται στα εργαλεία προγραμματιστών της σελίδας [Εργαλεία γραμμής εντολών](ref-tools.md)) ελέγχουν τη διαθεσιμότητα adapter και παρουσίασης σε headless προγράμματα περιήγησης.

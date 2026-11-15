@@ -4,96 +4,96 @@ nav_order: 12
 has_children: true
 lang: "hu"
 source: "tactics-board.md"
-source_hash: "09172046f5ac"
+source_hash: "e89ef050b0f2"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Taktikatábla
 
-A **Taktika** fül egy rajztábla csapattervekhez: kis figurákat helyez el a térképen, nyilakat rajzol arra, merre mennek, és lejátssza, ahogy történik. Egy kör vagy egy támadás megtervezésére használja, mielőtt játszik. A vásznat, a kamerát és a [pályát](levels.md) a többi fülrel osztja meg, másban nem; egy terv nem adat, és nem rajzol hőt.
+A **Taktika** fül egy rajztábla csapattervekhez: kis figurákat helyezel egy térképre, nyilakat húzol arra, hová mennek, és a lejátszással megnézed, mi történik. Azért használd, hogy egy kört vagy támadást megtervezz, mielőtt játszanál. A vásznat, a kamerát és a [pályát](levels.md) a többi fülrel osztja meg, mást nem; egy terv nem adat, és nem rajzol hőt.
 
-## Az első terve {#your-first-plan}
+## Az első terved {#your-first-plan}
 
-1. Nyissa meg a **Taktika** fület. Válassza ki a **Játék**et (például Counter-Strike 2), Valorant esetén nyomja meg a **Valorant-térképek betöltése** gombot, és válasszon egy **Térképet**. Vagy töltsön be előbb egy [pályát](levels.md).
-2. Válasszon egy **Oldalt** (ez adja a színt), és nyomja meg a **Felülnézet** gombot.
-3. Válassza a **Hely** eszközt, válasszon egy figurát a **Figurák** listából (a **Figurák keresése** segít megtalálni), és kattintson a térképre. Helyezzen el kettőt vagy hármat.
-4. Válassza a **Nyíl** eszközt, kattintson egy figurára, majd kattintson végig azon az úton, amelyen mennie kell, és az Enter megnyomásával zárja le a nyilat.
-5. Nyomja meg a **+** gombot a nézet alatt a 2. lépés hozzáadásához. Minden figura ott kezdi, ahol a nyila véget ért. Ott rajzoljon további nyilakat.
-6. Nyomja meg a **▶** gombot (vagy a `K`-t), hogy a tervet a mutatott lépéstől a végéig lejátssza.
-7. Nevezze el a tervet a **Terv neve** mezőben, és nyomja meg a **Mentés** gombot.
+1. Nyisd meg a **Taktika** fület. Válaszd ki a **Játék**et (például Counter-Strike 2), és Valorant esetén nyomd meg a **Valorant-térképek betöltése** gombot, majd válassz egy **Térképet**. Vagy előbb tölts be egy [pályát](levels.md).
+2. Válassz egy **Oldalt** (ez adja a színt), és nyomd meg a **Felülnézet** gombot.
+3. Válaszd a **Hely**et, válassz egy figurát a **Figurák** listából (a **Figurák keresése** segít megtalálni), és kattints a térképre. Helyezz el kettőt vagy hármat.
+4. Válaszd a **Nyíl**at, kattints egy figurára, kattints azokra a pontokra, amerre menjen, és nyomd meg az **Enter**-t a nyíl befejezéséhez.
+5. Nyomd meg a **+** gombot a nézet alatt, hogy hozzáadj egy 2. lépést. Minden figura ott kezd, ahol a nyila véget ért. Ott húzz további nyilakat.
+6. Nyomd meg a **▶** gombot (vagy a `K`-t), hogy a terv a mutatott lépéstől a végéig lejátsszon.
+7. Nevezd el a tervet a **Terv neve** mezőben, és nyomd meg a **Mentés** gombot.
 
-![A Taktika fül felülnézetben: játék, oldalak és eszközök balra, három figura Eltolás nyilakkal, egy füst Dobás ív, egy Terület, és a lépések alul](../assets/img/hu/tactics.webp)
+![A Taktika fül felülnézetben: játék, oldalak és eszközök a bal oldalon, három figura Mozgás nyilakkal, egy füst-dobás íve, egy Terület és a lépések az alján](../assets/img/hu/tactics.webp)
 
-## Terv indítása {#starting-a-plan}
+## A terv indítása {#starting-a-plan}
 
 | Vezérlő | Mit csinál |
 |---|---|
-| **Játék** | Kiválasztja az oldalakat és a figurákat, amelyeket a paletta kínál: Counter-Strike 2 (T, CT; játékosok és segédeszközök), Valorant (Támadó, Védő; játékosok és általános képességek), Battlefield, Squad, Arma (gyalogság, földi járművek, repülőgépek, csónakok), DCS / War Thunder / IL-2 (sugárhajtású gépek, légcsavaros gépek, helikopterek, légvédelem, szárazföld, hajók, fegyverek), és Egyéb. Egy már figurákat tartalmazó terv megtartja oldalait, ha a játék változik. |
-| **Terv neve** | Az a név, amelyen a terv mentődik. |
-| **Térkép**, **Valorant-térképek betöltése** | Valorant kiválasztásakor: a **Valorant-térképek betöltése** lekéri a térképek listáját a [valorant-api.com](https://valorant-api.com) oldalról; a **Térkép** ezután a kiválasztott térkép kistérképét pályaként teszi le, felülről keretezve. A képet a kiválasztáskor töltjük le, és soha nincs szállítva. A Riot közleménye látszik, amíg a képernyőn van (lásd lentebb). |
-| **Oldal** | Az a oldal, amelyhez a következő figura, nyíl vagy terület tartozik; felveszi az oldal színét. |
+| **Játék** | A palettán megjelenő oldalakat és figurákat választja ki: Counter-Strike 2 (T, CT; játékosok és segédeszközök), Valorant (Támadás, Védelem; játékosok és általános képességek), Battlefield, Squad, Arma (gyalogság, földi járművek, repülőgépek, hajók), DCS / War Thunder / IL-2 (sugárhajtású gépek, légcsavaros repülőgépek, helikopterek, légvédelem, föld, hajók, fegyverek), és Egyéb. Egy már figurákkal rendelkező terv megtartja az oldalait, ha a játék változik. |
+| **Terv neve** | Az a név, amelyen a terv mentésre kerül. |
+| **Térkép**, **Valorant-térképek betöltése** | Ha a Valorant van kiválasztva: a **Valorant-térképek betöltése** lekéri a térképek listáját a [valorant-api.com](https://valorant-api.com) oldalról; a **Térkép** aztán a kiválasztott térkép minitérképét teszi pályaként, felülről keretezve. A képet kiválasztáskor töltjük le, és soha nem szállítjuk. A Riot értesítése látszik, amíg a képernyőn van (lent). |
+| **Oldal** | Az oldal, amelyhez a következő figura, nyíl vagy terület tartozik; felveszi az oldal színét. |
 
-Pálya nélkül a tábla a sík talajsík. Egy valódi térképen tervezéshez töltsön be pályát a **Pálya** alatt: egy CS2-térképet a CS2 eszközzel exportálva, egy pályát a könyvtárból, vagy egy térképképet.
+Pálya nélkül a tábla a sík talaj. Egy pályát a **Pálya** alatt tölts be, hogy valódi térképen tervezz: egy CS2-térképet a CS2-eszközzel exportálva, egy pályát a könyvtárból, vagy egy térképképet.
 
 ## Eszközök {#tools}
 
 | Eszköz | Kattintás | Megjegyzések |
 |---|---|---|
-| **Kijelölés** | Egy figura, egy útpont, egy nyíl, egy terület vagy egy jegyzet kijelöli. | A Shift+kattintás hozzáad vagy elvesz; a Shift+húzás dobozt rajzol arra, amit hozzá szeretne adni. A kijelölésen átalakító gizmo jelenik meg (lent); a `Delete` vagy `Backspace` eltávolítja. Az `M` a kijelölt figurát a következő kattintásra mozgatja. |
-| **Hely** | Lerakja a kiválasztott figurát. | A figurát a **Figurák** paletta (a **Figurák keresése** mezővel) közül választja. Ha nincs kijelölés, az `R` a következő figurát 15°-kal elforgatja, mielőtt lerakja (a `Shift+R` az ellenkező irányba). |
-| **Nyíl** | Minden kattintás hozzáad egy pontot; az Enter, dupla kattintás vagy jobb kattintás lezárja, az Esc eldobja. | **Eltolás**, **Támadás** (szélesebb fej) vagy **Figyelés** (vékony vonal szemmagasságban). Egy figurán kezdett nyíl az a figura útvonala ebben a lépésben: lejátszáskor a figura végigjárja, a következő lépés pedig ott kezdődik, ahol véget ért. |
-| **Dobás** | A dobó, majd az, hová esik. | Szaggatott ív az egyikből a másikba, a kiválasztott segédeszköz (füst, villanás, molotov, ...) pedig ott jelenik meg, ahol landol, és ettől a lépéstől kezdve ott marad. |
-| **Terület** | A közepe, majd a széle. | Korong az oldal színében. |
-| **Jegyzet** | Ahová a jegyzet kerül; kéri a szövegét. | Tűként látszik, a szövege fölötte. |
-| **Törlés** | Egy figura, nyíl, terület vagy jegyzet. | Eltávolítja ettől a lépéstől kezdve; első lépésében eltávolítja mindenhonnan. |
+| **Kijelölés** | Egy figura, útpont, nyíl, terület vagy jegyzet kijelöli. | Shift+kattintás hozzáad vagy elvesz; Shift+húzás dobozt húz arra, amit hozzáadnál. A kijelölés transzformációs fogantyút kap (lent); a `Delete` vagy `Backspace` eltávolítja. Az `M` a kijelölt figurát a következő kattintásra mozgatja. |
+| **Hely** | Lerakja a kiválasztott figurát. | Figurát a **Figurák** palettán választasz (a **Figurák keresése** segítségével). Ha semmi sincs kijelölve, az `R` a következő figurát 15°-kal elfordítja, mielőtt lerakják (`Shift+R` az ellenkező irányba). |
+| **Nyíl** | Minden kattintás hozzáad egy pontot; az Enter, a dupla kattintás vagy a jobb kattintás befejezi, az Esc eldobja. | **Mozgás**, **Támadás** (szélesebb fej) vagy **Figyelés** (vékony vonal szemmagasságban). Egy figurán kezdett nyíl az a figura útvonala ebben a lépésben: lejátszáskor a figura bejárja, és a következő lépés ott kezdődik, ahol véget ért. |
+| **Dobás** | A dobó, majd az, hová esik. | Szaggatott ív az egyiktől a másikig, és a kiválasztott segédeszköz (füst, villanás, molotov …) ott jelenik meg, ahol landol, és ettől a lépéstől kezdve ott marad. |
+| **Terület** | A közép, majd a szél. | Korong az oldal színében. |
+| **Jegyzet** | Ahová a jegyzet kerül; megkérdezi a szövegét. | Tűként látszik, a szövege fölötte. |
+| **Törlés** | Egy figura, nyíl, terület vagy jegyzet. | Eltávolítja az adott lépéstől kezdve; az első lépésen pedig teljesen. |
 
-A **Visszavonás** és az **Újra** (`Ctrl+Z`; `Ctrl+Y` vagy `Ctrl+Shift+Z`) minden változáson végigmegy. A terv alatti sor megmutatja, hány figurája, nyila és lépése van. A **Felülnézet** egyenesen lefelé néz (ortografikus), a **3D nézet** visszaáll a perspektívára, a **Képkocka** a tervhez igazítja a nézetet, üres terv esetén a pályához.
+A **Visszavonás** és az **Újra** (`Ctrl+Z`; `Ctrl+Y` vagy `Ctrl+Shift+Z`) minden változáson végigmegy. A terv alatti sor megmutatja, hány figura, nyíl és lépés van benne. A **Felülnézet** egyenesen lefelé néz (ortografikus), a **3D-nézet** visszaáll perspektívára, a **Keret** a tervhez igazít, vagy üres tervnél a pályához.
 
-A **Figuraméret** a táblán lévő minden figurát skálázza; 1× a valódi méret, ami nagy magasságból néhány pixel egy embernek.
+A **Figuraméret** a táblán minden figurát skáláz; az 1× a valódi méret, ami magasról nézve egy személynél néhány pixel.
 
-## Mozgatás, forgatás és átméretezés {#moving-turning-and-scaling}
+## Mozgatás, forgatás és méretezés {#moving-turning-and-scaling}
 
-A tábla mindenen úgy mozgatható, mint egy 3D-s szerkesztőben: figurák, segédeszközök, jelölők, egyes útpontok és egész nyilak, területek és jegyzetek. A kijelölt elemek közepén gizmo jelenik meg:
+A táblán minden mozgatható, mint egy 3D-s szerkesztőben: figurák, segédeszközök, jelölők, egyedi útpontok és egész nyilak, területek és jegyzetek. A kijelölt elem a közepén fogantyút kap:
 
 | Mód | Billentyűk | Fogantyúk |
 |---|---|---|
-| **Eltolás** | W (vagy G) | Egy nyíl tengelyenként (X piros, Y zöld és felfelé, Z kék) mozgatja azon; egy négyzet a síkjában mozgatja; a közép a mutató alatti pálya fölött mozog. |
-| **Forgatás** | E (vagy R) | Egy gyűrű tengelyenként forgat körülötte. Egy figura gyűrűi a saját irány-, dőlés- és billenési szögei; csoport a világtengelyek körül forog a közepe körül. |
-| **Átméretezés** | R (vagy S) | Szétterít vagy összehúz a kijelölést a közepétől egy tengely mentén vagy minden irányban; egy terület sugara vele nő. |
+| **Mozgatás** | W (vagy G) | Tengelyenként egy nyíl (X piros, Y zöld és felfelé, Z kék) mentén mozgatja; egy négyzet a síkjában mozgat; a közép a mutató alatti pálya fölött mozog. |
+| **Forgatás** | E (vagy R) | Tengelyenként egy gyűrű körül forgat. Egy figura gyűrűi a saját elfordulását, dőlését és görgetését adják; csoport a világtengelyei körül forog a közepén. |
+| **Méretezés** | R (vagy S) | Szétterít vagy összehúz a kijelölést a közepéből egy tengely mentén vagy minden irányban; egy terület sugara ezzel nő. |
 
-A **Billentyűk** a W / E / R (Unity, Unreal) és a G / R / S (Blender) között vált; a billentyűk csak akkor választanak módot, ha van kijelölés, egyébként a kamerát repítik. Így az `R` kijelöléssel a W / E / R billentyűkkel **Átméretezés**, a G / R / S billentyűkkel **Forgatás**; kijelölés nélkül pedig a következő lerakandó figurát forgatja. Az összes táblabillentyű a [billentyűzeti referenciában](keyboard-reference.md#tactics-board) van. Húzás közben a **Ctrl** tartásával az eltolás a **Rács**ra (méterben), a forgatás az **Szög lépése**-re illeszkedik. A **Rögzítés a talajhoz** (alapértelmezés szerint be) a mozgatott embereket, járműveket, jelölőket, útpontokat és területeket a pálya felszínére teszi; a repülőgépek és helikopterek megtartják magasságukat, és az Y nyíl mentén húzás soha nem illeszkedik. A fogantyú húzása sosem mozgatja a kamerát. Az **Esc** megszakítja a húzást, és minden változás a Visszavonás egy lépése.
+A **Billentyűk** a W / E / R (Unity, Unreal) és a G / R / S (Blender) között váltanak; a billentyűk csak akkor választanak módot, ha valami ki van jelölve, egyébként a kamerát repítik. Így az `R` W / E / R billentyűkkel a **Méretezést**, G / R / S billentyűkkel a **Forgatást** jelenti, amíg valami ki van jelölve, és ha semmi, a következő lerakandó figurát fordítja el. Az összes táblabillentyű a [billentyűzet-hivatkozásban](keyboard-reference.md#tactics-board) van. Húzás közben tartsd lenyomva a **Ctrl**-t, hogy egy mozgatás a **Rács** (méter) szerint ugorjon, vagy egy fordulás a **Szögléptékhez** igazodjon. A **Rögzítés a talajhoz** (alapból be) a mozgatott embereket, járműveket, jelölőket, útpontokat és területeket a pálya felszínére teszi; a repülőgépek és helikopterek megtartják a magasságukat, és az Y nyíl mentén húzott mozgás soha nem ugrik. A fogantyú húzása soha nem mozgatja a kamerát. Az **Esc** megszakítja a húzást, és minden változás egy lépés a Visszavonásban.
 
-Az útpontok pontokként látszanak a látható lépés nyilain: kattintva kijelöli, húzva mozgatja, Delete-tel kiveszi. A **Kijelöltek** szakasz a kijelölés helyét méterben, egy figura irány-, dőlés- és billenési szögét fokban, egy terület sugarát pedig mindet beírható mezőként mutatja.
+Az útpontok pontokként látszanak a mutatott lépés nyilain: kattints rá a kijelöléshez, húzd a mozgatáshoz, Delete a kiveréshez. A **Kijelölt** rész megmutatja a kijelölés helyét méterben, egy figura elfordulását, dőlését és görgetését fokban, és egy terület sugarát, mindegyik beírható.
 
 ## Időzítés {#timing}
 
-Egy figura útvonala időzített: minden szakasz annyi ideig tart, amekkora a hossza a pályán – a felszínen néhány méterenként mintavételezve, így egy domb vagy egy lépcső két pont között is számít –, az adott figura **mozgási módjának** sebességével az adott játékban, plusz egy útponton tartott **várakozás**. A gyalogság kúszik, guggol, sétál (csendben), fut vagy sprintel; a járművek és csónakok lassan, óvatosan, normálisan vagy rohanva haladnak; a repülőgépek és helikopterek lassan, utazósebességgel, harci sebességgel vagy maximumon repülnek. Egy mód, amellyel a játék nem rendelkezik (a CS2-ben nincs sprint), a legközelebbi meglévőt kapja. Hogy a lejtő hogyan lassít, az játékfüggő: a CS2-ben és a Valorantban csak a vízszintes távolság számít, ahogy a játékokban is; a realisztikus szimulátorok a gyalogságot felfelé (Tobler túrázási függvénye), a járműveket pedig a meredekség szerint lassítják.
+Egy figura útvonala időzített: minden szakasz annyi ideig tart, amekkora a hossza a pályán – a felszínen néhány méterenként mintavételezve, így egy domb vagy egy lépcső két pont között beleszámít –, az adott játékban a figura mozgási **módjának** sebességén, plusz az útponton lévő bármilyen **várakozás**. A gyalogság lopakodik, guggol, sétál (csendben), fut vagy sprintel; a járművek és hajók lassan mennek, óvatosan, normálisan vagy rohannak; a repülőgépek és helikopterek lassan repülnek, utazósebességgel, harci sebességgel vagy maximumon. Egy mód, amelyet a játék nem ismer (a CS2-ben nincs sprint), a legközelebbit veszi, amelyik van. Hogy a lejtő hogyan lassít, a játéktól függ: a CS2-ben és a Valorantban csak a vízszintes távolság számít, ahogy a játékokban is; a katonai szimulátorokban a gyalogság felfelé lassul (Tobler túrázási függvénye), a járművek pedig a meredekség szerint.
 
-A sebességek játékonkénti táblázatokból jönnek a forrásaikkal (lásd [Mozgási sebességek](tactics-speeds.md)): a CS2 a tartott fegyver szerint, a játék fegyverdefinícióiból; a Valorant fegyver szerint; a Battlefield, Squad, Arma és a légi játékok járműtípus és -osztály szerint. Az **Így mozog** egy figura profilját választja (egy fegyver, egy járműtípus); a **Saját (m/s)** felülírja bármely módot az adott figurára. A módok a tábla szerinti nevükön szerepelnek: *Kúszás*, *Guggolás*, *Séta (csendben)*, *Futás*, *Sprint*; *Óvatos*, *Normál*, *Rohanás*; *Lassú*, *Utazósebesség*, *Harc*, *Maximum*.
+A sebességek játékonkénti táblázatokból jönnek, a forrásaikkal együtt (lásd [Mozgási sebességek](tactics-speeds.md)): a CS2-höz a kézben tartott fegyver szerint, a játék fegyverdefinícióiból; a Valorantnál fegyver szerint; a Battlefieldnél, Squadnál, Armánál és a légi játékoknál jármű-típus és osztály szerint. A **Így mozog** kiválaszt egy figura profilt (egy fegyvert, egy jármű-típust); az **Saját (m/s)** felülbírálja a módot az adott figurára. A módok a táblán látható nevükön szerepelnek: *Lopakodás*, *Guggolás*, *Séta (csendben)*, *Futás*, *Sprint*; *Óvatos*, *Normális*, *Rohanás*; *Lassú*, *Utazó*, *Harci*, *Maximális*.
 
-Minden útpont mutatja az előzőtől eltelt időt és a terv kezdete óta eltelt időt („+3,9 s · 0:12”). A kijelölt figura útvonala minden szakaszt felsorol a módjával, hosszával és idejével, a várakozással és az érkezéssel. Az **Időmérés** alatti **Érkezések** minden útvonalas figurát egy időtengelyre tesz, az első érkező felül. A **Valós időben lejátszás** (alapértelmezés szerint be) mellett egy lépés addig tart, amíg a leglassabb útvonal meg nem érkezik, és minden figura a saját sebességével mozog; a **Másodperc** ekkor a lépés legrövidebb hossza. A **Pályaegység méterenként** azt mondja meg, mi a pálya egysége: 39,37 a CS2-térképeknél (játékegységek), 1 a méteres térképeknél.
+Minden útpont mutatja az előzőtől eltelt időt és a terv kezdete óta eltelt időt („+3,9 s · 0:12"). A kiválasztott figura útvonala minden szakaszt felsorol a módjával, hosszával és idejével, a várakozással és az érkezéssel együtt. Az **Érkezések** az **Időzítés** alatt minden útvonalas figurát egy idővonalra tesz, a legkorábbi érkezés felül. A **Valós időben játszás** (alapból be) mellett egy lépés addig tart, amíg a leglassabb útvonal megérkezik, és minden figura a saját sebességével mozog; ekkor a **Másodperc** a lépés legrövidebb hossza. A **Pályaegység méterenként** megmondja, mi a pálya: 39,37 a CS2-térképeknél (játékegységek), 1 a méterrel dolgozó térképeknél.
 
-## Összehasonlítás meccsadatokkal {#compare-with-match-data}
+## Összevetés meccsadatokkal {#compare-with-match-data}
 
-A **Meccsfájlok betöltése…** a térkép CS2-meccstábláit olvassa (a CS2 eszköz Parquet-fájljait, tetszőleges számban; csak a szükséges oszlopokat, a háttérben); a **Betöltött adatok használata** a megjelenítőbe töltött adatot veszi. Ezután:
+A **Meccsfájlok betöltése…** beolvassa a térkép CS2-meccstábláit (a CS2-eszköz Parquet-fájljait, amennyi kell; csak a szükséges oszlopokat, a háttérben); a **Betöltött adatok használata** a megjelenítőbe betöltött adatot veszi. Ezután:
 
-- A **Legkorábbi érkezés a térképen** a térképet színezi azzal az idővel, amely alatt egy játékos először ért el az egyes pontokra a kör kezdete óta – a **Leggyorsabb** gomb az összes körön át a leggyorsabbat, a **Tipikus (medián)** a középső kört mutatja –, zöldtől a korai, pirosig a késői, egy vagy mindkét oldalra. Megmutatja, mi lehetséges, és mikor.
-- A kijelölt útvonalat összehasonlítja azzal, amit a játékosok a kezdetétől (vagy a kör kezdetétől) a végéig elértek; mindkét végpont a beállított sugarú korong: „Leggyorsabb megfigyelt 14,2 s, p10 15,0 s, medián 18,3 s 41 futásból; a terve 15,1 s”.
-- A játékosok valóban elért sebességei – futás, séta, guggolás, a táblázatok séta- és guggolóoszlopaiból –, m/s-ban.
+- A **Legkorábbi érkezés a térképen** színezi a térképet aszerint, mennyi idő telt el a forduló kezdete óta, mire egy játékos először elért minden helyet – a **Leggyorsabb** gomb a legrövidebbet mutatja minden fordulón át, a **Tipikus (medián)** a középsőt –, zölddel a korai, pirossal a késői érkezés, egy vagy mindkét oldalra. Azt mutatja, mi lehetséges, és mikor.
+- A kiválasztott útvonal összevethető azzal, amit a játékosok elértek annak kezdetétől (vagy a forduló kezdetétől) a végéig, mindegyik végpont a megadott sugarú korong: „Leggyorsabb megfigyelt 14,2 s, p10 15,0 s, medián 18,3 s 41 futamból; a tervedben 15,1 s".
+- A sebességek, amelyekkel a játékosok ténylegesen mozogtak – futás, séta, guggolás, a táblázatok séta- és guggolás-oszlopaiból –, m/s-ban.
 
 ## Lépések {#steps}
 
-A nézet alatti sáv tartalmazza a lépéseket. Egy terv egyel indul; a **+** hozzáad egyet, és minden figura ott kezdi, ahol az előző lépésben az útvonala véget ért; a **−** eltávolítja a látható lépést. A **Másodperc** azt mutatja, mennyi ideig tart a látható lépés lejátszva. A **▶** (K) a látható lépéstől a végéig játssza: az útvonallal rendelkező figurák végigjárják azt, a következő lépésben új helyre tett figurák oda csúsznak, a többiek állnak. Amíg egy lépés látszik, minden figura helye a következő lépésben halvány szellemként rajzolódik, az utolsó lépés nyilai pedig halványan a mostani alatt.
+A nézet alatti sáv tartalmazza a lépéseket. Egy terv egy lépéssel indul; a **+** hozzáad egyet, és minden figura ott kezd, ahol az utolsó lépésben az útvonala véget ért; a **−** eltávolítja a mutatott lépést. A **Másodperc** azt mutatja, mennyi ideig tart a mutatott lépés lejátszva. A **▶** (K) a mutatott lépéstől a végéig játszik: az útvonallal rendelkező figurák bejárják azt, a következő lépésben új helyre állított figurák oda csúsznak, a többiek állnak. Amíg egy lépés látszik, minden figura következő helyzete halvány árnyként rajzolódik, az előző lépés nyilai pedig halványan az aktuális alatt.
 
 ## Mentés {#saving}
 
-A **Fájl** szakasz tartalmazza a **Mentés**, **Nyitó** és **Törlés** gombokat. A **Mentés** a tervet `<név>.h3dplan.json` fájlként írja (egyszerű JSON: oldalak, lépések, figurák lépésenként egy hellyel, nyilak, területek, jegyzetek); a **Nyitó** visszaolvassa. Más verziójú vagy nem terv fájlt az ok megjelölésével visszautasítunk. A **Törlés** kiüríti a tervet; a Visszavonás visszahozza.
+A **Fájl** rész tartalmazza a **Mentés**, **Megnyitás** és **Törlés** gombokat. A **Mentés** a tervet `<név>.h3dplan.json` fájlba írja (sima JSON: oldalak, lépések, figurák lépésenként egy hellyel, nyilak, területek, jegyzetek); a **Megnyitás** visszatölt egyet. Más verziójú fájlt, vagy olyat, amely nem terv, az okával együtt visszautasítunk. A **Törlés** kiüríti a tervet; a Visszavonás visszahozza.
 
 ## Figurák {#figures}
 
-Minden figurát maga a megjelenítő épít: egyszerű alakok egy típus közzétett méretére, a szomszédaitól megkülönböztető jellemzőkkel – egy harckocsi úttest-kerekei és tornya, egy légvédelmi jármű fegyverei, rakétái és radarjai, egy repülőgép szárnyterve, farka és motorjai, egy helikopter rotorjai és csonka szárnyai. Semmi nem származik játékból. Egy játék által kitalált formát az osztálya általános figurájaként mutatunk. Hogyan találja meg az adat a figuráját: lásd [Figurák](figures.md#which-figure-a-unit-gets).
+Minden figurát maga a megjelenítő épít: egyszerű alakzatok a típus közzétett méretéhez, azokkal a jellemzőkkel, amelyek megkülönböztetik a szomszédaitól – egy tank úti kerekei és tornya, egy légvédelmi jármű fegyverei, rakétái és radarjai, egy repülőgép szárnyterve, farka és motorjai, egy helikopter rotorjai és csonkszárnyai. Semmit sem vesznek át egy játékból. Egy játék által kitalált tervet az osztályának általános figurája mutat. Azt, hogyan talál az adat a figurájára, lásd a [Figurák](figures.md#which-figure-a-unit-gets) részben.
 
-## A Riot közleménye {#riots-notice}
+## A Riot értesítése {#riots-notice}
 
-A Valorant-térképek a Riot Games „Legal Jibber Jabber” szabályzata szerint látszanak, amely a szabad közösségi projekteknek megengedi a használatukat, és ezt a közleményt kéri mindenhol, ahol megjelennek: *A 3DHeat a Riot Games „Legal Jibber Jabber” szabályzata alapján készült, a Riot Games tulajdonában lévő eszközöket használva. A Riot Games nem támogatja és nem szponzorálja ezt a projektet.* A táblán lévő képességek általános alakzatok, nem a Riot grafikái.
+A Valorant-térképeket a Riot Games „Legal Jibber Jabber" szabályzata alatt mutatjuk, amely lehetővé teszi, hogy a szabad közösségi projektek használják őket, és kéri ezt az értesítést mindenhol, ahol megjelennek: *A 3DHeat a Riot Games „Legal Jibber Jabber" szabályzata alatt készült, a Riot Games tulajdonában lévő eszközökkel. A Riot Games nem támogatja és nem szponzorálja ezt a projektet.* A táblán lévő képességek általános alakzatok, nem a Riot művészete.

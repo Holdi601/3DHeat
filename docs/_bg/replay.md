@@ -1,12 +1,19 @@
 ---
-title: "Replay"
+title: "Повторение"
 nav_order: 9
 has_children: true
 lang: "bg"
 source: "replay.md"
 source_hash: "da58a6589d3b"
-translated: false
+translated: true
 outdated: false
 ---
 
-{{ site.data.i18n[page.lang].ui.untranslatedBody | default: site.data.i18n.en.ui.untranslatedBody }} [{{ site.data.i18n[page.lang].ui.english | default: "English" }}](../replay.html)
+# Повторение
+
+Повторението пуска мач отново в 3D, като всяка единица е нарисувана като превозното средство или лицето, което е. Използвайте го, за да гледате какво се е случило, да сравнявате много мачове или да видите кой кого е ударил.
+
+- [Повторение на мач](match-replay.md): пуснете един мач, с фигури, трасиращи линии, попадения и камери в стил Tacview.
+- [Много мачове наведнъж](many-matches.md): наслагвайте стотици мачове един върху друг.
+- [Фигури](figures.md): формите, използвани за единиците, и откъде идват.
+- [Анализ на попаденията](hit-analysis.md): къде е бил уцелен едно превозно средство или войник и от кого.

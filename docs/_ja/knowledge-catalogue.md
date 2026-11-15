@@ -1,5 +1,5 @@
 ---
-title: "Knowledge catalogue"
+title: "ナレッジカタログ"
 parent: "ナレッジレンズ"
 nav_order: 2
 lang: "ja"

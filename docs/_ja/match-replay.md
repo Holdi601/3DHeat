@@ -1,6 +1,6 @@
 ---
 title: "試合のリプレイ"
-parent: "Replay"
+parent: "リプレイ"
 nav_order: 1
 has_children: true
 lang: "ja"

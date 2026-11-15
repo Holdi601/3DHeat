@@ -4,9 +4,9 @@ parent: "Moduri de căldură"
 nav_order: 6
 lang: "ro"
 source: "team-heat.md"
-source_hash: "e30b8372464b"
+source_hash: "e18e62600e3e"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Căldură pe echipe
@@ -30,29 +30,33 @@ Nu este [suprapunerea figurilor](box-replay.md): aceasta desenează o figură pe
 
 În secțiunea **Culorile căldurii**:
 
-| Comandă | Implicit | Înseamnă |
+| Control | Implicit | Înseamnă |
 |---|---|---|
-| Mostre | | Culoarea fiecărui grup, pentru primele 12 grupuri, apoi *+N în plus*. Treci cu cursorul ca să vezi numele grupului și culoarea. |
-| **Separarea culorilor** | 1,4 | Cât de departe este împins un amestec de neutru, între 0 și 4. 0 face totul gri; 1 este media adevărată; peste aproximativ 2 cele mai luminoase amestecuri ies din gama afișabilă și sunt limitate pe fiecare canal, ceea ce le schimbă nuanța. |
-| **Rampă de opacitate (culoarea vine de la grup)** | rampa implicită a căldurii | Aici se folosește doar **alfa** rampei: transparent unde nu este nimic, opac în vârf. Culorile ei sunt ignorate. |
+| Mostrele | | Culoarea fiecărui grup, pentru primele 12 grupuri, apoi *+N în plus*. Treci cu cursorul peste ele pentru numele grupului și culoare. |
+| **Separarea culorilor** | 1.4 | Cât de departe este împinsă un amestec de la neutru, 0-4. 0 face totul gri; 1 este media reală; peste aproximativ 2 cele mai luminoase amestecuri ies din intervalul afișabil și sunt limitate pe fiecare canal, ceea ce le schimbă nuanța. |
+| **Rampă de opacitate (culoarea vine de la grup)** | rampa implicită de căldură | Aici se folosește doar **alfa** rampei: transparentă acolo unde nu este nimic, opacă în vârf. Culorile ei sunt ignorate. |
 
-Toate celelalte comenzi ale căldurii - forma, saturația, răspunsul, căldura minimă, adâncimea, eliminarea - funcționează ca în [Căldură](heat.md).
+Un grup a cărui etichetă înseamnă „niciun grup" (`0`, gol, `none`, `unknown`, `null` sau `-1`) este desenat gri.
 
-[Lista echipelor](teams-list.md) arată culoarea de căldură pe echipe a fiecărui grup ca mostră în acest mod. Ascunderea unui grup lasă culoarea oricărui alt grup acolo unde era: nuanțele vin din numărul total de grupuri, nu din ce este pornit, așa că două imagini rămân comparabile.
+Toate celelalte comenzi de căldură - forma, saturația, răspunsul, căldura minimă, adâncimea, tăierea - funcționează ca la [Căldură](heat.md).
 
-## Paleta {#the-palette}
+[Lista echipelor](teams-list.md) arată culoarea căldurii pe echipe a fiecărui grup ca mostră în acest mod. Ascunderea unui grup lasă culoarea fiecărui alt grup unde era: nuanțele vin din numărul total de grupuri, nu din ce este pornit, astfel că două imagini rămân comparabile.
+
+## Pentru dezvoltatori {#for-developers}
+
+### Paleta {#the-palette}
 
 Din [`colors.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors.ts):
 
-- Culorile trăiesc în planul de culoare **Oklab** la o luminozitate fixă (0,7) și cromă fixă (0,115), astfel că fiecare grup are aceeași strălucire și un grup roșu nu pare mai fierbinte decât unul albastru.
-- Cu *n* grupuri, cercul nuanțelor se împarte în *n* părți egale, iar grupul *i* ia **centrul** părții lui, `(i + 0,5) / n` dintr-o rotație. Oricare două grupuri sunt cât de departe permite numărul, iar opusele rămân opuse indiferent de număr.
-- Se folosesc cel mult **16** nuanțe distincte. Cu mai multe grupuri, identificatorii se așază prin înjumătățiri repetate (identificatori cu biți inversați: 0, ½, ¼, ¾, ⅛, …) ca identificatorii vecini să nu aibă aceeași nuanță; grupurile de peste 16 împart neapărat nuanțe.
-- Un grup a cărui etichetă înseamnă „fără grup” - `0`, gol, `none`, `unknown`, `null` sau `-1`, fără a conta majusculele - este desenat **gri neutru**, în loc să ia o felie din cerc. Doar prima astfel de etichetă din lista grupurilor este tratată așa.
+- Culorile trăiesc pe planul de culoare **Oklab** la o luminozitate fixă (0,7) și cromă fixă (0,115), deci fiecare grup este la fel de luminos și un grup roșu nu pare mai fierbinte decât unul albastru.
+- Cu *n* grupuri, cercul de nuanțe este împărțit în *n* părți egale, iar grupul *i* ia **centrul** părții lui, `(i + 0,5) / n` dintr-o rotație. Oricare două grupuri sunt cât de departe permite numărul, iar cele opuse rămân opuse indiferent de număr.
+- Sunt folosite cel mult **16** nuanțe distincte. Cu mai multe grupuri, id-urile sunt plasate prin înjumătățiri repetate (id-uri cu biții inversați: 0, ½, ¼, ¾, ⅛, …) ca id-urile vecine să nu aibă aceeași nuanță; grupurile peste 16 împart neapărat.
+- Un grup a cărui etichetă înseamnă „niciun grup" - `0`, gol, `none`, `unknown`, `null` sau `-1`, fără a ține cont de majuscule - este desenat **gri neutru** în loc să ia o felie din cerc. Doar prima asemenea etichetă din lista de grupuri este tratată așa.
 
-Separarea implicită este 1,4 și nu 1, deoarece, la 1, un amestec de cinci nuanțe distribuite uniform *este* gri: corect și nelizibil. Puțin peste 1 păstrează egalitățile oneste și face vizibilă o împărțire de 60/40.
+Separarea implicită este 1,4 și nu 1, pentru că, la 1, un amestec de cinci nuanțe distribuite uniform *este* gri: corect și nelizibil. Un pic peste 1 păstrează egalitățile oneste, făcând în același timp vizibilă o împărțire de 60/40.
 
-## Cum funcționează {#how-it-works}
+### Cum funcționează {#how-it-works}
 
-Ținta de căldură are patru canale în acest mod. Fiecare sprite adaugă densitatea lui *v* la primul canal și *v* × coordonatele Oklab *a* și *b* ale grupului la al doilea și al treilea. La compunere, amestecul pixelului este media ponderată după densitate: *a* = G / R, *b* = B / R, scalat cu separarea culorilor și convertit în sRGB la luminozitatea paletei. Împărțirea la densitatea acumulată face ca nuanța să nu depindă de cât de multe date există și explică de ce fiecare comandă de densitate acționează doar asupra opacității.
+Ținta căldurii are patru canale în acest mod. Fiecare sprite adaugă densitatea lui *v* la primul canal și *v* × coordonatele Oklab *a* și *b* ale grupului la al doilea și al treilea. La compozit, amestecul pixelului este media ponderată cu densitatea: *a* = G / R, *b* = B / R, scalată cu separarea culorilor și convertită în sRGB la luminozitatea paletei. Împărțirea la densitatea acumulată face ca nuanța să fie independentă de cât de multe date există, și de aceea fiecare control al densității continuă să acționeze doar asupra opacității.
 
 Ținta cu patru canale costă de patru ori mai multă memorie GPU decât ținta de căldură cu un singur canal, la aceeași rezoluție.

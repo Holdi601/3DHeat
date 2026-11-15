@@ -4,125 +4,126 @@ nav_order: 11
 has_children: true
 lang: "sq"
 source: "race-analysis.md"
-source_hash: "63d7f4b85872"
+source_hash: "ab0531fa7bbd"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Analiza e garës
 
-E ke drejtuar të njëjtën pistë dy herë. Skeda **Analiza e garës** i luan të dy drejtimet bashkë në 3D, tregon ku u humb koha në një xhiro më të ngadaltë dhe të thotë pse. Nuk ka ende xhiro? Shtyp **Xhiro demo**.
+Keni vozitur të njëjtën pistë dy herë. Skeda **Analiza e garës** luan të dy vozitjet së bashku në 3D, tregon ku një xhiro ishte më e ngadaltë dhe ju thotë pse. Ende pa xhiro? Shtypni **Xhiro demo**.
 
 ![Skeda Analiza e garës me xhiro demo: shiriti anësor me Xhirot dhe Ku të përmirësohesh, makinat në pistë, grafikët nën pamje](../assets/img/sq/race-analysis-overview.webp)
 
-Skeda krahason dy ose më shumë xhiro të një pisteje. Ajo ndan me Harta e nxehtësisë vizën, kamerën dhe modelin e ngarkuar të pistës (**Sfondi / niveli**); gjithçka tjetër është e vetja: shiriti i vet anësor dhe shiriti i vet nën pamje. Fjalët si *xhiro*, *referencë* dhe *kulmi i kthesës* janë në [fjalor](glossary.md).
+Skeda krahason dy ose më shumë xhiro të një piste. Ajo ndan me Harta e nxehtësisë vizën, kamerën dhe modelin e pistës së ngarkuar (**Sfondi / niveli**); gjithçka tjetër është e vetja: shiriti i vet anësor dhe shiriti i vet nën pamje. Fjalë si *xhiro*, *referencë* dhe *maja e kthesës* janë në [fjalorthin](glossary.md).
 
 Kjo faqe është harta e skedës. Çdo pjesë ka faqen e vet:
 
 | Faqja | Çfarë mbulon |
 |---|---|
-| [Ngarkimi i xhirove](race-loading-laps.md) | çdo format skedari, dosjet dhe pistat, emrat e makinave, xhirot demo, lista e xhirove, referenca dhe fokusi |
-| [Riluajtja dhe skena 3D](race-replay-and-scene.md) | shiriti i transportit, tre modalitetet e riluajtjes, radhitja e makinave, kamera ndjekëse, vijat, hartat, makinat, etiketat, botët e pasqyruara |
-| [Grafikët dhe HUD](race-charts-and-hud.md) | grafikët e distancës, zgjedhësi i grafikëve, kalimi i miut dhe zoom, kartat e makinave, tabela e kanaleve |
-| [Ngjarjet e kontrollit të makinës](race-control-events.md) | bllokime, rrotullim i rrotave, nënkthim, rrotullime, nëntimon, goditje, përplasje, ABS/TC, frena dore, ajri - si zbulohet secila, me çdo prag |
-| [Analiza kthesë për kthesë](race-corner-analysis.md) | rreshtimi sipas distancës, kthesat dhe segmentet, llogaria kohore e një kthese, çdo shkak dhe radha në të cilën provohen, forma e linjës dhe këshilla |
+| [Ngarkimi i xhirove](race-loading-laps.md) | çdo format skedari, dosjet dhe pistat, emrat e makinave, xhiro demo, lista e xhirove, referenca dhe fokusi |
+| [Riluajtja dhe skena 3D](race-replay-and-scene.md) | shiriti i transportit, tre mënyrat e riluajtjes, vendosja e makinave njëra pas tjetrës, kamera ndjekëse, vijat, hartat, makinat, etiketat, botët e pasqyruara |
+| [Grafikët dhe HUD](race-charts-and-hud.md) | grafikët e distancës, zgjedhësi i grafikëve, kalimi i miut dhe zmadhimi, kartat e makinave, tabela e kanaleve |
+| [Ngjarjet e kontrollit të makinës](race-control-events.md) | bllokimet, rrotullimi i kotë, nënkthesimi, rrotullimet, nëntimonia, goditjet, përplasjet, ABS/TC, frena e dorës, ajri - si zbulohet secila, me çdo prag |
+| [Analiza kthesë pas kthese](race-corner-analysis.md) | përshtatja sipas distancës, kthesat dhe segmentet, llogaria kohore e një kthese, çdo shkak dhe radha në të cilën provohen, forma e linjës dhe këshilla |
 | [Profilet e makinave dhe krahasimi](race-car-profiles.md) | çfarë mund të bëjë secila makinë, e matur nga xhirot e saj; *Makinat e krahasuara*; çfarë vendos makina në çdo kthesë |
-| [Statistikat e pistës](race-course-statistics.md) | shumë xhiro të një pisteje: gabimet për kthesë dhe sipas llojit, harta e gabimeve, eksportimi i nxehtësisë, kufijtë e performancës |
-| [Analitika e garës: metoda](race-analytics.md) | kërkimi pas rregullave, me burimet |
-| [Lojëra të tjera garash](other-games.md) | çfarë bën shikuesi me xhiro nga çdo lojë: rrëshqitja dhe drifti të llogaritura aty ku loja nuk i dërgon, botët e pasqyruara, kanalet shtesë |
+| [Statistikat e pistës](race-course-statistics.md) | shumë xhiro të një piste: gabimet sipas kthesës dhe llojit, harta e gabimeve, eksportimi në hartën e nxehtësisë, kufijtë e performancës |
+| [Analiza e garave: metoda](race-analytics.md) | kërkimi pas rregullave, me burimet |
+| [Lojërat e tjera të garave](other-games.md) | çfarë bën shikuesi me xhiro nga secila lojë: rrëshqitja dhe drifti të llogaritura aty ku loja nuk i dërgon, botët e pasqyruara, kanalet shtesë |
 
 ## Ekrani {#the-screen}
 
 **Shiriti anësor**, nga lart poshtë (seksionet mund të palosen):
 
-1. **Xhirot** - ngarkim, listë, shfaq/fshih, referencë, fokus, ndjekje.
+1. **Xhirot** - ngarkimi, lista, shfaq/fshih, referenca, fokusi, ndjekja.
    Shih [Ngarkimi i xhirove](race-loading-laps.md).
-2. **Statistikat e pistës** - vetëm nga tre xhiro të ngarkuara e tutje.
+2. **Statistikat e pistës** - vetëm nga tre xhiro e tutje.
    Shih [Statistikat e pistës](race-course-statistics.md).
 3. **Ku të përmirësohesh** - gjetjet e xhiros së fokusuar, kthesë pas kthese.
-   Shih [Analiza kthesë për kthesë](race-corner-analysis.md).
-4. **Kthesë pas kthese** (ose *Kthesë pas kthese - klasa X* me disa klasa) - xhiro më e shpejtë nëpër çdo kthesë dhe linja e saj. Shfaqet me dy ose më shumë xhiro.
-5. **Kontrolli i makinës** - bllokimet, rrëshqitjet, shtytjet dhe goditjet e xhirosë së fokusuar.
+   Shih [Analiza kthesë pas kthese](race-corner-analysis.md).
+4. **Kthesë pas kthese** (ose *Kthesë pas kthese - klasa X* me disa klasa) - xhiroja më e shpejtë nëpër çdo kthesë dhe linja e saj. Shfaqet me dy ose më shumë xhiro.
+5. **Kontrolli i makinës** - bllokimet, rrëshqitjet, shtytjet dhe goditjet e xhiros së fokusuar.
    Shih [Ngjarjet e kontrollit të makinës](race-control-events.md).
 6. **Makinat e krahasuara** (ose **Makina** me një makinë) - shih
    [Profilet e makinave dhe krahasimi](race-car-profiles.md).
 7. **Pamja** - cila hartë vizatohet mbi pistë dhe çfarë vizatohet.
    Shih [Riluajtja dhe skena 3D](race-replay-and-scene.md).
-8. Panelet e përbashkëta **Niveli** dhe **Kamera & skena** (modeli i pistës, përmbysja e boshteve, kamera) - dokumentuar me Harta e nxehtësisë dhe [Kamera](camera.md).
+8. Panelet e përbashkëta **Niveli** dhe **Kamera & skena** (modeli i pistës, përmbysja e boshteve, kamera) - të dokumentuara me hartën e nxehtësisë dhe te [Kamera](camera.md).
 
-**Pamja** tregon pistën, linjat e përshkuara, hartën, makinat, etiketat e fiksuara në pistë, dhe deri në gjashtë karta makinash lart majtas (shih [Grafikët dhe HUD](race-charts-and-hud.md)). Pa xhiro të ngarkuar shkruan "Asnjë xhiro e ngarkuar - Lësho këtu dy ose më shumë skedarë xhiroje, ose ngarko xhirot demo nga shiriti anësor."
+**Pamja** shfaq pistën, vijat e vozitura, hartën, makinat, etiketat e fiksuara te pista, dhe deri në gjashtë karta makinash lart majtas (shih [Grafikët dhe HUD](race-charts-and-hud.md)). Pa xhiro të ngarkuar shkruan "Nuk ka xhiro të ngarkuara - Lëshoni këtu dy ose më shumë skedarë xhirosh, ose ngarkoni xhiro demo nga shiriti anësor."
 
 **Shiriti nën pamje** mban transportin e riluajtjes dhe, nëse nuk është fshehur, grafikët e distancës.
 
 ## Nisja e shpejtë {#quick-start}
 
-1. Hap skedën **Analiza e garës** (pranë **Harta e nxehtësisë** në krye të shiritit anësor).
-2. Fut xhiro. Shtyp **Xhiro demo** për të parë çfarë bën skeda me tre xhiro të shpikur. Për xhirot e tua, regjistroji së pari ([formatet e skedarëve dhe regjistruesit](race-loading-laps.md#file-formats)), pastaj shtyp **Ngarko skedarë xhirosh…** ose **Dosje…**, ose lësho skedarë ose dosje mbi pamjen.
-3. Xhiro më e shpejtë e plotë bëhet referenca; xhiro tjetër më e ngadaltë fokusohet. Kliko çdo xhiro në listë për ta fokusuar; ★ e bën një xhiro referencë.
-4. Lexo **Ku të përmirësohesh**. Kliko një gjetje: makinat rreshtohen 40 m përpara saj, kamera e kornizon, riluajtja kalon nëpër të, dhe matjet hapen.
-5. Kalo miun mbi grafikët për të zhvendosur çdo makinë në atë metër; Shift+klikim për t'i rreshtuar atje.
+1. Hapni skedën **Analiza e garës** (pranë **Harta e nxehtësisë** lart në shiritin anësor).
+2. Sillni xhirot. Shtypni **Xhiro demo** për të parë se çfarë bën skeda me tre xhiro të trilluara. Për xhirot tuaja, regjistrojini më parë ([formatet e skedarëve dhe regjistruesit](race-loading-laps.md#file-formats)), pastaj shtypni **Ngarko skedarë xhirosh…** ose **Dosje…**, ose lëshoni skedarë ose dosje mbi pamje.
+3. Xhiroja më e shpejtë e plotë bëhet referenca; xhiroja më e ngadaltë tjetër fokusohet. Klikoni çdo xhiro në listë për ta fokusuar; ★ e bën një xhiro referencë.
+4. Lexoni **Ku të përmirësohesh**. Klikoni një gjetje: makinat vendosen njëra pas tjetrës 40 m para saj, kamera e kornizon, riluajtja kalon nëpër të dhe hapen matjet.
+5. Kaloni miun mbi grafikët për ta çuar çdo makinë në atë metër; Shift+klikim për t'i vendosur njëra pas tjetrës atje.
 
-## Tastet {#keyboard}
+## Tastiera {#keyboard}
 
-Ndërsa skeda Analiza e garës është e hapur:
+Ndërsa skeda Garë është e hapur:
 
 | Tasti | Bën |
 |---|---|
-| **K** | luan / pauzon riluajtjen |
-| **Home** | kthehu te fillimi i riluajtjes |
-| tastet numerike | asgjë (te harta e nxehtësisë ndërrojnë modalitetet) |
+| **K** | luan / pauzë riluajtjen |
+| **Home** | kthehet te fillimi i riluajtjes |
+| tastet numerike | asgjë (te harta e nxehtësisë ndërrojnë mënyrat) |
 
-Tastet e shkruara në një fushë teksti ose menu zgjedhjeje injorohen. Tastet e kamerës punojnë si te harta e nxehtësisë (**W A S D**, **Space** lart, **Q** poshtë, **Shift** më shpejt, **Alt** më ngadalë, miu për të shikuar; të gjitha te [Kamera](camera.md)); **F** kornizon xhirot e ngarkuara (si bën ngarkimi i xhirove).
+Tastet e shkruara në një fushë teksti ose listë rënëse injorohen. Tastet e kamerës funksionojnë si te harta e nxehtësisë (**W A S D**, **Hapësirë** lart, **Q** poshtë, **Shift** më shpejt, **Alt** më ngadalë, miu për të parë; të gjitha te [Kamera](camera.md)); **F** kornizon xhirot e ngarkuara (si e bën ngarkimi i xhirove).
 
 ## Shumë xhiro {#many-laps}
 
-- Të gjitha xhirot e ngarkuara analizohen dhe numërohen; dhjetëra zgjasin një a dy sekonda.
-- Mbi **8** xhiro (`SHOW_ALL_UP_TO`), xhirot e shtuara vizatohen vetëm kur janë referenca, xhiroja e fokusuar, ose xhiroja më e mirë e klasës së xhirosë së fokusuar. *Shfaq të gjitha* / *Vetëm ato të shikuara* e ndërrojnë.
-- Mbi **10** makina të dukshme (`PLAIN_PAST`), xhirot që nuk shikohen (jo fokusi, makina e ndjekur ose referenca) vizatohen me linja të holluara në një pikë çdo 6 m në vend të 1.5 m, dhe makina të thjeshta.
-- Grafikët vizatojnë deri në **8** xhiro; HUD tregon deri në **6** karta.
+- Të gjitha xhirot e ngarkuara analizohen dhe numërohen; dhjetëra zgjasin një ose dy sekonda.
+- Mbi **8** xhiro (`SHOW_ALL_UP_TO`), xhirot e shtuara vizatohen vetëm kur janë referenca, xhiroja e fokusuar, ose xhiroja më e mirë e klasës së xhiros së fokusuar. *Shfaq të gjitha* / *Vetëm ato që shihen* ndërrojnë.
+- Mbi **10** makina të dukshme (`PLAIN_PAST`), xhirot që nuk shihen (jo fokusi, makina e ndjekur ose referenca) vizatohen me vija të holluara në një pikë çdo 6 m në vend të 1.5 m, dhe makina të thjeshta.
+- Grafikët vizatojnë të shumtën **8** xhiro; HUD shfaq të shumtën **6** karta.
 - Statistikat e pistës shfaqen nga **3** xhiro.
 
-Detajet: [Statistikat e pistës](race-course-statistics.md#performance-with-many-laps).
+Detaje: [Statistikat e pistës](race-course-statistics.md#performance-with-many-laps).
 
 ## Cilësimet e parazgjedhura të pamjes {#default-view-settings}
 
 | Cilësimi | Parazgjedhja |
 |---|---|
 | Harta | Harta e kohës |
-| Linjat e përshkuara, Makinat, Gomat dhe pezullimi, Etiketat, Pista nga xhirot | po |
-| Të gjitha vlerat në kartat | jashtë |
+| Vijat e vozitura, Makinat, Gomat dhe pezullimi, Etiketat, Pista nga xhirot | të ndezura |
+| Të gjitha vlerat te kartat | të fikura |
 | Madhësia e makinës | 1× |
 | Grafikët | të shfaqur |
-| Modaliteti i riluajtjes | Nga vija e nisjes |
+| Mënyra e riluajtjes | Nga linja |
 | Shpejtësia e riluajtjes | 1× |
-| Përsërit | po |
+| Përsëritja | e ndezur |
 
-Asnjëra nuk ruhet; rifreskimi rinis nga parazgjedhjet. Ajo që kujtohet në shfletues: gjuha, dhe emrat e makinave të mësuara nga skedarët e xhirove (shih [Ngarkimi i xhirove](race-loading-laps.md#car-names)).
+Asnjë prej tyre nuk ruhet; një ringarkim nis nga parazgjedhjet. Ajo që kujtohet në shfletues: gjuha, dhe emrat e makinave të mësuara nga skedarët e xhirove (shih [Ngarkimi i xhirove](race-loading-laps.md#car-names)).
 
 ## Për zhvilluesit {#for-developers}
 
 ### Çfarë ndodh kur ngarkohen xhirot {#what-happens-when-laps-are-loaded}
 
-Çdo herë që ndryshon bashkësia e xhirove, referenca ose gjuha, e gjithë analiza bëhet përsëri (`analyse` në [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
+Çdo herë që ndryshon grupi i xhirove, referenca ose gjuha, e tërë analiza bëhet përsëri (`analyse` te
+[`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
 
-1. Kanale të nxjerra shtohen te çdo xhiro aty ku loja nuk i dërgon: këndi i driftit, rrëshqitja e rrotave nga shpejtësitë e rrotave, në ajër, toka e lirshme, shpejtësia e rrotullimit ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
-2. Referenca zgjidhet dhe çdo xhiro projektohet mbi shtegun e saj dhe rinxirohet çdo 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
+1. Kanale të nxjerra shtohen te çdo xhiro aty ku loja nuk i dërgon ato: këndi i rrëshqitjes, rrëshqitja e rrotave nga shpejtësitë e rrotave, në ajër, toka e lirë, shpejtësia e rrotullimit ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
+2. Referenca zgjidhet dhe çdo xhiro projektohet mbi shtegun e saj dhe ri-mostrohet çdo 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
 3. Nga xhirot llogaritet nëse bota e lojës është e pasqyruar ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
-4. Kthesat gjenden te referenca, dhe grupohen në segmente nga një zonë frenimi deri te tjetra ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
-5. Për çdo makinë: zarfi i saj (aderenca, frenimi, tërheqja sipas shpejtësisë), profili, kurbat e gomave ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts), [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts), [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
+4. Kthesat gjenden te referenca dhe grupohen në segmente nga një zonë frenimi te tjetra ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
+5. Për çdo makinë: zarfi i saj (aderenca, frenimi, tërheqja sipas shpejtësisë), profili i saj, kurbat e gomave të saj ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts), [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts), [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
 6. Për çdo xhiro dhe segment: çfarë bëri (pika e frenimit, pika më e ngadaltë, gaz i plotë, ...) dhe linja që ndoqi ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
-7. Për çdo xhiro: ngjarjet e kontrollit të makinës, secila vendosur kundrejt xhiros me të cilën krahasohet aty.
-8. Për çdo xhiro dhe segment: llogaria kohore kundrejt xhiros së krahasimit dhe gjetja me fjalë.
-9. Harta e kohës dhe harta e shkaqeve për çdo xhiro.
+7. Për çdo xhiro: ngjarjet e kontrollit të makinës, secila e vendosur kundrejt xhirosë me të cilën krahasohet atje.
+8. Për çdo xhiro dhe segment: llogaria kohore kundrejt xhirosë së krahasimit dhe gjetja me fjalë.
+9. Harta e kohës dhe harta e shkakut për çdo xhiro.
 
-Tekstet prodhohen në gjuhën aktuale; ndërrimi i gjuhës e rinis analizën (dhe riemërton xhirot demo). Një dështim i analizës shfaqet nën butonat **Xhirot** si gabim, dhe xhirot mbeten të ngarkuar.
+Tekstet prodhohen në gjuhën aktuale; ndërrimi i gjuhës e ekzekuton përsëri analizën (dhe riemërton xhirot demo). Një dështim në analizë shfaqet nën butonat **Xhirot** si gabim dhe xhirot mbeten të ngarkuara.
 
 ### Skedarët burimorë {#source-files}
 
 | Skedari | Roli |
 |---|---|
 | `src/race/adapters.ts`, `ibt.ts` | leximi i skedarëve të xhirove |
-| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | lloji i xhiros, emërtimi, xhirot demo |
+| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | tipi i xhirove, emërtimi, xhiro demo |
 | `src/race/derive.ts`, `handedness.ts` | kanalet e nxjerra, botët e pasqyruara |
 | `src/race/align.ts`, `segments.ts`, `line.ts` | boshti i distancës, kthesat, linjat |
 | `src/race/analysis.ts` | kthesat e krahasuara, shkaqet, gjetjet |

@@ -1,12 +1,19 @@
 ---
-title: "Replay"
+title: "Αναπαραγωγή"
 nav_order: 9
 has_children: true
 lang: "el"
 source: "replay.md"
 source_hash: "da58a6589d3b"
-translated: false
+translated: true
 outdated: false
 ---
 
-{{ site.data.i18n[page.lang].ui.untranslatedBody | default: site.data.i18n.en.ui.untranslatedBody }} [{{ site.data.i18n[page.lang].ui.english | default: "English" }}](../replay.html)
+# Αναπαραγωγή
+
+Η αναπαραγωγή παίζει έναν αγώνα ξανά σε 3D, με κάθε μονάδα να σχεδιάζεται ως το όχημα ή το άτομο που είναι. Χρησιμοποιήστε την για να δείτε τι συνέβη, για να συγκρίνετε πολλούς αγώνες, ή για να δείτε ποιος χτύπησε ποιον.
+
+- [Αναπαραγωγή αγώνα](match-replay.md): παίξτε έναν αγώνα, με φιγούρες, ίχνη βλήματος, χτυπήματα και κάμερες σε στυλ Tacview.
+- [Πολλοί αγώνες μαζί](many-matches.md): βάλτε εκατοντάδες αγώνες ο ένας πάνω στον άλλο.
+- [Φιγούρες](figures.md): τα σχήματα που χρησιμοποιούνται για τις μονάδες, και από πού προέρχονται.
+- [Ανάλυση χτυπημάτων](hit-analysis.md): πού χτυπήθηκε ένα όχημα ή ένας στρατιώτης, και από ποιον.

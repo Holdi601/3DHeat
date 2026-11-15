@@ -7,7 +7,7 @@ nav_order: 1
 
 3DHeat shows where things happened in a game - where players went, fought and fell - as glowing colours you can fly through, or as little 3D figures that replay the match.
 
-Load positions - CSV, Parquet, Tacview recordings, converted replays, a single file, a folder or thousands of matches - and see them as a **heatmap you can fly through**, as **figures replaying the match**, as lines along the routes people took, or as one population against another. It finds what stands out by itself, and it runs entirely in your browser: nothing is uploaded anywhere.
+Load positions - CSV, Parquet, Tacview recordings, converted replays, a single file, a folder or thousands of matches - and see them as a **heatmap you can fly through**, as **figures replaying the match**, as lines along the routes people took, or as one population against another. It finds what stands out by itself, and it runs entirely in your browser: nothing is uploaded anywhere. 3DHeat and all its tools are free and open source under the [MIT licence](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Heat of ten tank matches over the demo valley](assets/img/en/heat-hero.webp)
 
@@ -39,6 +39,8 @@ The tabs sit at the top of the sidebar, under the name, the units and the langua
 | **Vehicles** | Where each unit was hit, by whom and with what. |
 
 ## Install and run
+
+3DHeat is free to use, change and share (MIT licence), and so is every tool listed under [Related repositories](#related-repositories).
 
 ### Windows, the easy way
 
