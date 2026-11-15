@@ -4,9 +4,9 @@ parent: "Filtri un rīki"
 nav_order: 7
 lang: "lv"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Sadalījums: kas un kur labāk darbojas
@@ -91,6 +91,6 @@ Konvertētājs pievieno faktoru, nosaucot tā kolonnu:
 | jau izplatītie aprīkojuma karodziņi (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | ieslēgts, kamēr nav nulle |
 | `ammoType`, `shellType`, `ammoName` | pēdējais izšautais kārtridžs |
 
-Rezultāti: 0/1 kolonna `won` (rindas puse uzvarēja raundā vai mačā) un kolonna `round`. Nauda: `earn_<currency>` un `cost_<kind>_<currency>`. Ienākums tikai pēc veida (`earn_round_cs2`, konvertētāja precīzās raunda atlīdzības) aizstāj tikai izmaksu modeļa ienākumu šim veidam (`round` aptver arī iestādīšanu un atmīnēšanu), un modelis apgrūtina pārējo.
+Rezultāti: 0/1 kolonna `won` (rindas puse uzvarēja raundā vai mačā) un kolonna `round` - [iznākuma kolonnas](data-formats.md#outcome-columns); ja failā ir gan `won`, gan `matchWon`, *Uzvaras %* skaita raundus. Nauda: `earn_<currency>` un `cost_<kind>_<currency>`. Ienākums tikai pēc veida (`earn_round_cs2`, konvertētāja precīzās raunda atlīdzības) aizstāj tikai izmaksu modeļa ienākumu šim veidam (`round` aptver arī iestādīšanu un atmīnēšanu), un modelis apgrūtina pārējo.
 
 Kartējums ielādē šīs kolonnas pats: katru `state_*`, `active_*`, `won`, `round` un saraksta kolonnu, izņemot tās, kuras Parquet faila statistika rāda kā vienu vērtību visā garumā (katra ielādētā kolonna ir 4 baiti uz rindu).

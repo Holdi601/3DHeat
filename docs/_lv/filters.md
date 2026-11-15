@@ -4,9 +4,9 @@ parent: "Filtri un rīki"
 nav_order: 1
 lang: "lv"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtri
@@ -33,6 +33,8 @@ Ielādējot skatītājs pats izveido četras kolonnas un uzskaita tās **pirmās
 | **Spēlētājs vai MI** | Spēlētājs, MI | kolonna `ai`, `is_ai`, `bot` vai `actor`; citādi `is_player` / `human`; citādi konta id (`user_id`, `steam_id`; tukšs vai 0 ir MI); Tacview ierakstiem - vai objektam ir pilots |
 | **Transportlīdzekļa klase** | 17 klases: Iznīcinātājs, Triecienlidmašīna, Bumbvedējs, Citas lidmašīnas, Helikopters, Tanks, Bruņutehnika, Pretgaisa aizsardzība, Artilērija, Kravas auto / auto, Kuģis, Zemūdene, Kājnieki, Ierocis, Mānekļis, Būve, Cits | transportlīdzekļa vai vienības nosaukums (salīdzināts ar [figūru katalogu](figures.md)) un tipa kolonnas |
 | **Mērķa klase** | tās pašas klases | otras puses transportlīdzeklis (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Tūlīt pēc tām nāk [iznākuma kolonnas](data-formats.md#outcome-columns), ja datos tās ir: **Raunda iznākums** un **Spēles iznākums** (*Jebkurš*, *Uzvarēts*, *Zaudēts*) un **Kā raunds beidzās**, tā vērtības tavā valodā. Filtrē pēc tām vai sadali siltumu pēc tām kā [uzvaru karti](win-rate.md).
 
 Uzskaitīti tiek tikai veidi, kas ir sastopami. Vērtību kolonnas (`cost_*`, `earn_*`, `net_*` un *Izmaksu avots*, skatiet [Vērtības svēršana](value-weighting.md)) var filtrēt kā jebkuru skaitļu kolonnu: piemēram, noņemiet atzīmi *estimate* sadaļā *Izmaksu avots*, lai paturētu tikai novērtētās rindas.
 

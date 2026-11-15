@@ -3,9 +3,9 @@ title: "Referenza tal-formati tad-data"
 nav_order: 19
 lang: "mt"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Referenza tal-formati tad-data
@@ -93,6 +93,37 @@ Pożizzjoni, ħin jew kolonna ta' ħarsa li fiha xi ħaġa ħlief numru tiddekod
 | Kolonna ta' filtru, *kategorija* | kwalunkwe; ikkodifikata b'dizzjunarju | le | ID ta' 32-bit | Sa 4,096 valur, inkella l-kolonna ma tinżammx. |
 
 Kolonna Parquet ta' `TIMESTAMP` miżmuma bħala kolonna ta' filtru hi *firxa* ta' millisekondi epoch - slider, mhux lista.
+
+## Kolonni tar-riżultat {#outcome-columns}
+
+Min rebaħ, f'kull ringiela, biex post, rotta jew mossa jkunu jistgħu jiġu ġġudikati minn kemm-il darba n-naħa tagħhom mbagħad rebħet ([Rata ta' rebħ](win-rate.md)). Il-viewer iżomm dawn il-kolonni waħdu, jelenkahom l-ewwel fil-[filtri](filters.md) fil-lingwa tal-viewer, u jaqrahom fil-[mappa tar-rata ta' rebħ](win-rate.md), fit-[tqassim](breakdown.md) u fl-[istatistika tal-volumi](volumes.md#statistics). Konvertitur għal logħba b'rawnds (CS2, Valorant, Rainbow Six Siege) jew b'partiti (War Thunder) jikteb l-erbgħa:
+
+| Kolonna | Tip | Tifsira |
+|---|---|---|
+| `won` | 0/1 (vojt fejn mhux magħruf) | in-naħa (tim) tar-ringiela rebħet **ir-rawnd**; f'logħba mingħajr rawnds, il-partita |
+| `matchWon` | 0/1 (vojt fejn mhux magħruf) | in-naħa (tim) tar-ringiela rebħet **il-partita**; vojt fejn ir-reġistrazzjoni ma turix it-tmiem |
+| `round` | numru sħiħ, minn 1 | ir-rawnd li tappartjeni għalih ir-ringiela; 1 matul kollox f'logħba b'partiti |
+| `roundEndReason` | test | kif intemm ir-rawnd (f'logħba b'partiti, il-partita), bil-kliem t'hawn taħt |
+
+`won` u `matchWon` huma tan-naħa tar-ringiela: ir-ringieli ta' plejer T iġorru r-riżultat tan-naħa T, ir-ringieli ta' unità AI dak tat-tim tagħha; ir-ringieli li ma jappartjenu għal ebda naħa jħalluhom vojta. Naħa li taqleb f'nofs il-ħin iżżomm il-`matchWon` tagħha u tieħu l-`won` ta' kull rawnd kif lagħbitu. Draw huwa 0 għaż-żewġ naħat.
+
+Ir-raġunijiet tat-tmiem, komuni għal kull logħba biex filtru wieħed jaħdem fuq kollha (il-kelma tal-logħba stess tiġi mmappjata fejn jista' jkun, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Tifsira | Logħob |
+|---|---|---|
+| `elimination` | il-plejers kollha ta' naħa waħda barra | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | il-bomba (spike, il-mira tad-difensur) splodiet | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | il-bomba (spike) ġiet diżattivata | CS2, Valorant, Rainbow Six Siege |
+| `time` | l-arloġġ tar-rawnd skada; War Thunder: deċiż b'biljetti li fadal fiż-żewġ naħat | kollha |
+| `surrender` | naħa ċediet | CS2, Valorant, Rainbow Six Siege |
+| `draw` | l-ebda rebbieħ | CS2 |
+| `objective` | għan meħud jew miżmum (ostaġġ meħud 'il barra, żona żgurata) | Rainbow Six Siege |
+| `capture` | il-biljetti spiċċaw waqt li r-rebbieħ żamm iż-żoni tal-qbid | War Thunder |
+| `tickets` | biljetti mitlufa minħabba qtil | War Thunder |
+| `destruction` | l-aħħar vetturi mitlufa f'daqqa, ħadd ma fadal biex jerġa' jidher | War Thunder |
+| `other` | kull ħaġa oħra | |
+
+Semmihom ukoll fil-lista `extra` tal-ħjiel `heat3d`, bħal kull kolonna oħra. L-ismijiet tal-kolonni `win`, `round_won`, `match_won`, `end_reason` u `win_reason` jinqraw bħala l-istess kolonni.
 
 ## Il-ħjiel `heat3d` {#the-heat3d-hints}
 

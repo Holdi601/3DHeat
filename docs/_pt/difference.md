@@ -4,9 +4,9 @@ parent: "Modos de calor"
 nav_order: 5
 lang: "pt"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Diferença
@@ -86,6 +86,10 @@ Escolher a coluna põe o seu primeiro valor em + e o segundo em −. Quando nenh
 | **Dividir no ponto médio** | Põe + em [mínimo, meio] e − em [meio, máximo] - é também o que acontece quando se escolhe a coluna. |
 
 Um valor nos dois intervalos conta como +. Os intervalos não têm de cobrir a coluna; os valores em nenhum dos dois ficam de fora. *Os primeiros dois minutos contra os últimos dois* é uma divisão por intervalo numa coluna do tipo tempo.
+
+## Parte de +: o mapa de taxa de vitória {#share-of--the-win-rate-map}
+
+**Diferença** / **Parte de +** no topo do painel escolhe o que é desenhado. *Parte de +* colore cada lugar pela parte do lado + entre as linhas de ambos os lados aí, face a essa parte sobre tudo o que é mostrado: quente acima, frio abaixo, nada onde é igual, e nada onde um lugar tem linhas a menos. Com as rondas ganhas em + e as perdidas em −, é um mapa de taxa de vitória. **Taxa de vitória por ronda** e **Taxa de vitória por partida** preparam-no com um clique quando os dados têm [colunas de resultado](data-formats.md#outcome-columns). Veja [Taxa de vitória](win-rate.md).
 
 ## Cores {#colours}
 

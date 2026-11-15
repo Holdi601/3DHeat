@@ -4,9 +4,9 @@ parent: "Filter och verktyg"
 nav_order: 6
 lang: "sv"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Volymer och jämförelse
@@ -63,6 +63,7 @@ GPU-filtret tar upp till 8 volymer med 64 konturpunkter sammanlagt. Ett ”!” 
 Området **Statistik** följer filtren, tidsfönstret och dolda grupper. *Vald* visar den valda volymen, och *Jämför alla* ställer alla volymer sida vid sida. Det visar:
 
 - **Rader inuti (visade)** och **Rader inuti (all data)**, **Spelare**, **Lag**, **Matcher**, **Tid inuti**, **In- / utgångar**, **Toppvärme**, **Medelvärme**, **Volym / yta** och ett histogram över **När**;
+- **Vinstandel**, där datan säger vem som vann ([resultatkolumner](data-formats.md#outcome-columns)): av ronderna med en spelare inuti, varje spelares rond räknad en gång, andelen som deras sida vann - dragen mot andelen över allt som visas med 4 ronder, som [uppdelningen](breakdown.md) gör - med de vunna och spelade ronderna och den totala andelen;
 - per kolumn: kategorier med **Lift** (andel inuti delat med andel i all visad data), och tal med spann, median och 5:e till 95:e percentilen.
 
 **Statistik som CSV / JSON** sparar dem. **Exportera datan inuti** skriver raderna inuti som CSV eller Parquet (*Bara de visade raderna* är på som standard). Det kan gälla en volym eller alla, med en kolumn som anger vilken volym varje rad hör till.

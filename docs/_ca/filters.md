@@ -4,9 +4,9 @@ parent: "Filtres i eines"
 nav_order: 1
 lang: "ca"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtres
@@ -33,6 +33,8 @@ En carregar, el visor calcula quatre columnes pròpies i les llista **primer**, 
 | **Jugador o IA** | Jugador, IA | una columna `ai`, `is_ai`, `bot` o `actor`; si no, `is_player` / `human`; si no, un identificador de compte (`user_id`, `steam_id`; buit o 0 és IA); per a gravacions de Tacview, si l'objecte té pilot |
 | **Classe de vehicle** | 17 classes: Caça, Avió d'atac, Bombarder, Altra aeronau, Helicòpter, Tanc, Vehicle blindat, Defensa antiaèria, Artilleria, Camió / cotxe, Vaixell, Submarí, Infanteria, Arma, Esquer, Estructura, Altre | el nom del vehicle o de la unitat (comparat amb el [catàleg de figures](figures.md)) i les columnes de tipus |
 | **Classe de l'objectiu** | les mateixes classes | el vehicle de l'altra part (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Just després venen les [columnes de resultat](data-formats.md#outcome-columns), si les dades les tenen: **Resultat de la ronda** i **Resultat de la partida** (*Qualsevol*, *Guanyada*, *Perduda*) i **Com va acabar la ronda**, amb els valors en el teu idioma. Filtra-hi, o divideix la calor segons aquestes columnes com a [mapa de taxa de victòria](win-rate.md).
 
 Només s'enumeren els tipus que apareixen. Les columnes de valor (`cost_*`, `earn_*`, `net_*` i *Font del cost*, vegeu [Ponderació de valors](value-weighting.md)) es poden filtrar com qualsevol columna numèrica: per exemple, desmarca *estimació* a *Font del cost* per quedar-te només amb les files amb preu.
 

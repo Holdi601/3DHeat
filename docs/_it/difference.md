@@ -4,9 +4,9 @@ parent: "Modalità di calore"
 nav_order: 5
 lang: "it"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Differenza
@@ -101,6 +101,10 @@ esportazioni, due prove o due versioni.
 Un valore in entrambi gli intervalli conta come +. Gli intervalli non devono coprire la
 colonna; i valori su nessuno dei due vengono lasciati fuori. *I primi due minuti contro gli
 ultimi due* è una suddivisione per intervallo su una colonna simile a un tempo.
+
+## Quota di +: la mappa delle percentuali di vittoria {#share-of--the-win-rate-map}
+
+**Differenza** / **Quota di +** in cima al pannello sceglie cosa viene disegnato. *Quota di +* colora ogni punto secondo la quota del lato + tra le righe di entrambi i lati lì, rispetto a quella quota su tutto ciò che è mostrato: caldo sopra, freddo sotto, niente dove è uguale, e niente dove un punto ha troppe poche righe. Con i round vinti su + e quelli persi su − è una mappa delle percentuali di vittoria. **Percentuale di vittorie per round** e **Percentuale di vittorie per partita** la impostano con un clic dove i dati hanno [colonne di esito](data-formats.md#outcome-columns). Vedi [Percentuale di vittorie](win-rate.md).
 
 ## Colori {#colours}
 

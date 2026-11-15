@@ -4,9 +4,9 @@ parent: "Mënyrat e nxehtësisë"
 nav_order: 5
 lang: "sq"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Diferencë
@@ -86,6 +86,10 @@ Zgjedhja e kolonës e vendos vlerën e saj të parë te + dhe të dytën te −.
 | **Ndaj në pikën e mesit** | Vendos + te [minimumi, mesi] dhe − te [mesi, maksimumi] - gjithashtu atë që bën zgjedhja e kolonës. |
 
 Një vlerë në të dy diapazonet numërohet si +. Diapazonet nuk duhet të mbulojnë kolonën; vlerat në asnjërin nuk lihen jashtë. *Dy minutat e para kundrejt dy minutave të fundit* është një ndarje diapazoni mbi një kolonë si koha.
+
+## Pjesa e +: harta e shkallës së fitoreve {#share-of--the-win-rate-map}
+
+**Diferencë** / **Pjesa e +** në krye të panelit zgjedh çfarë vizatohet. *Pjesa e +* ngjyros çdo vend sipas pjesës së palës + nga rreshtat e të dy palëve atje, krahasuar me atë pjesë në gjithçka që shfaqet: e ngrohtë mbi të, e ftohtë nën të, asgjë ku është njësoj, dhe asgjë ku një vend ka shumë pak rreshta. Me raundet e fituara te + dhe të humburat te − është një hartë e shkallës së fitoreve; **Shkalla e fitoreve për raund** dhe **Shkalla e fitoreve për ndeshje** e rregullojnë këtë me një shtypje ku të dhënat kanë [kolona rezultati](data-formats.md#outcome-columns). Shihni [Shkalla e fitoreve](win-rate.md).
 
 ## Ngjyrat {#colours}
 

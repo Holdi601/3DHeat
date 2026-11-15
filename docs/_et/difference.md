@@ -4,9 +4,9 @@ parent: "Soojusrežiimid"
 nav_order: 5
 lang: "et"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Erinevus
@@ -100,6 +100,10 @@ tühja raami. *Source file* töötab samamoodi, üks väärtus faili kohta - nii
 
 Väärtus, mis on mõlemas vahemikus, loetakse +. Vahemikud ei pea katma veergu; väärtused, mis jäävad kummalegi vahemikule, jäetakse välja.
 *Esimesed kaks minutit vs viimased kaks minutit* on aja-laadse veeru vahemikujaotus.
+
+## + osakaal: võitude kaart {#share-of--the-win-rate-map}
+
+**Erinevus** / **+ osakaal** paneeli ülaosas valib, mida joonistatakse. *+ osakaal* värvib iga koha + poole osakaalu järgi sealsetest mõlema poole ridadest, võrreldes selle osakaaluga kogu näidatu ulatuses: soe sellest kõrgemal, külm madalamal, mitte midagi, kus see on sama, ja mitte midagi, kus kohal on liiga vähe ridu. Kui võidetud raundid on + poolel ja kaotatud − poolel, on see võitude kaart; **Raundivõitude osakaal** ja **Mänguvõitude osakaal** seavad selle ühe vajutusega üles, kui andmetes on [tulemuse veerud](data-formats.md#outcome-columns). Vaata [Võitude osakaal](win-rate.md).
 
 ## Värvid {#colours}
 

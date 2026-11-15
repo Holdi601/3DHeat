@@ -4,9 +4,9 @@ parent: "Suodattimet ja työkalut"
 nav_order: 7
 lang: "fi"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Erittely: kuka ja mikä pärjää parhaiten missäkin
@@ -91,6 +91,6 @@ Muunnin lisää tekijän nimeämällä sen sarakkeen:
 | jo yleiset varustelliput (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | päällä, kun ei nolla |
 | `ammoType`, `shellType`, `ammoName` | viimeksi ammuttu kierros |
 
-Tulokset: 0/1-sarake `won` (rivin puoli voitti kierroksen tai ottelun) ja sarake `round`. Raha: `earn_<currency>` ja `cost_<kind>_<currency>`; pelkkä tulo lajin mukaan (`earn_round_cs2`, muuntimen tarkat kierrospalkkiot) korvaa vain kustannusmallin tulon kyseisestä lajista (`round` kattaa myös istutukset ja purkamiset), ja malli hinnoittelee loput.
+Tulokset: 0/1-sarake `won` (rivin puoli voitti kierroksen tai ottelun) ja sarake `round` - [tulossarakkeet](data-formats.md#outcome-columns); kun tiedostossa on sekä `won` että `matchWon`, *Voitto %* laskee eriä. Raha: `earn_<currency>` ja `cost_<kind>_<currency>`; pelkkä tulo lajin mukaan (`earn_round_cs2`, muuntimen tarkat kierrospalkkiot) korvaa vain kustannusmallin tulon kyseisestä lajista (`round` kattaa myös istutukset ja purkamiset), ja malli hinnoittelee loput.
 
 Kartoitus lataa nämä sarakkeet itse tiedoston omien luettelojen rinnalla: jokaisen `state_*`-, `active_*`-, `won`-, `round`- ja luettelosarakkeen, paitsi ne, jotka Parquet-tiedoston tilastot näyttävät pitävän yhtä arvoa koko ajan (jokainen ladattu sarake on 4 tavua per rivi).

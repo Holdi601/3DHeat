@@ -4,9 +4,9 @@ parent: "篩選與工具"
 nav_order: 1
 lang: "zh-Hant"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 篩選
@@ -33,6 +33,8 @@ outdated: true
 | **玩家或AI** | 玩家、AI | 名為 `ai`、`is_ai`、`bot` 或 `actor` 的欄位；否則為 `is_player` / `human`；否則為帳號 id（`user_id`、`steam_id`；空白或 0 即為 AI）；對於 Tacview 錄影，則看該物件是否有駕駛員 |
 | **載具類別** | 17 種類別：戰鬥機、攻擊機、轟炸機、其他飛機、直升機、戰車、裝甲車、防空、火砲、卡車／汽車、艦艇、潛艇、步兵、武器、誘餌、結構物、其他 | 載具或單位名稱（與[模型目錄](figures.md)比對）以及類型欄位 |
 | **目標類別** | 同上的類別 | 另一方的載具（`other_vehicle`、`target_vehicle`、`victim_type` 等） |
+
+緊接在後的是 [結果欄位](data-formats.md#outcome-columns)（如果資料中有）：**回合結果** 和 **比賽結果**（*任意*、*勝*、*負*）以及 **回合結束方式**，其值使用你的語言。可以依它們篩選，或依它們分割熱度，得到 [勝率地圖](win-rate.md)。
 
 只會列出實際出現的種類。數值欄位（`cost_*`、`earn_*`、`net_*` 與*成本來源*，見[數值加權](value-weighting.md)）與任何數字欄位一樣可以篩選：例如，在*成本來源*下取消勾選*估計*，即可只保留有定價的列。
 

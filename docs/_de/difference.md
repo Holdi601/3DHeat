@@ -4,9 +4,9 @@ parent: "Intensitätsmodi"
 nav_order: 5
 lang: "de"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Differenz
@@ -86,6 +86,10 @@ Die Wahl der Spalte setzt ihren ersten Wert auf + und ihren zweiten auf −. Hat
 | **In der Mitte teilen** | Setzt + auf [Minimum, Mitte] und − auf [Mitte, Maximum] – das passiert auch bei der Wahl der Spalte. |
 
 Ein Wert in beiden Bereichen zählt als +. Die Bereiche müssen die Spalte nicht abdecken; Werte in keinem bleiben weg. *Die ersten zwei Minuten gegen die letzten zwei* ist eine Bereichsaufteilung auf einer zeitartigen Spalte.
+
+## Anteil von +: die Siegquoten-Karte {#share-of--the-win-rate-map}
+
+**Differenz** / **Anteil von +** oben im Feld wählt, was gezeichnet wird. *Anteil von +* färbt jeden Ort nach dem Anteil der +-Seite an den Zeilen beider Seiten dort, verglichen mit diesem Anteil über alles Angezeigte: warm darüber, kalt darunter, nichts, wo er gleich ist, und nichts, wo ein Ort zu wenige Zeilen hat. Mit den gewonnenen Runden auf + und den verlorenen auf − ist es eine Siegquoten-Karte. **Rundensiegquote** und **Matchsiegquote** richten das mit einem Druck ein, wo die Daten [Ergebnisspalten](data-formats.md#outcome-columns) haben. Siehe [Siegquote](win-rate.md).
 
 ## Farben {#colours}
 

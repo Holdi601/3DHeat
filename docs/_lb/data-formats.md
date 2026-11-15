@@ -3,9 +3,9 @@ title: "Referenz vun de Datenformater"
 nav_order: 19
 lang: "lb"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Referenz vun de Datenformater
@@ -93,6 +93,37 @@ Eng Positiouns-, Zäit- oder Blécksspalt, déi eppes anescht wéi eng Zuel enth
 | Filterspalt, *Kategorie* | egal; Wierderbuch-kodéiert | nee | 32-Bit-ID | Bis 4.096 Wäerter, soss gëtt d'Spalt net behalen. |
 
 Eng Parquet-`TIMESTAMP`-Spalt, déi als Filterspalt behalen gëtt, ass e *Beräich* vu Epoch-Millisekonnen - en Schieber, keng Lëscht.
+
+## Resultatspalten {#outcome-columns}
+
+Wien gewonnen huet, op all Zeil, sou datt eng Plaz, e Wee oder e Spillzuch dono beurteelt ka ginn, wéi dacks seng Säit duerno gewonnen huet ([Gewannquot](win-rate.md)). De Viewer behält dës Spalte vu selwer, weist se als éischt an de [Filteren](filters.md) an der Sprooch vum Viewer, a liest se an der [Gewannquot-Kaart](win-rate.md), an der [Opschlësselung](breakdown.md) an an de [Statistike vun de Volumen](volumes.md#statistics). E Konverter fir e Spill mat Ronnen (CS2, Valorant, Rainbow Six Siege) oder mat Matcher (War Thunder) schreift all véier:
+
+| Spalt | Typ | Bedeitung |
+|---|---|---|
+| `won` | 0/1 (eidel, wou onbekannt) | d'Säit (Team) vun der Zeil huet **d'Ronn** gewonnen; an engem Spill ouni Ronnen de Match |
+| `matchWon` | 0/1 (eidel, wou onbekannt) | d'Säit (Team) vun der Zeil huet **de Match** gewonnen; eidel, wou d'Opnam d'Enn net weist |
+| `round` | ganz Zuel, vun 1 un | d'Ronn, zu där d'Zeil gehéiert; 1 duerch e ganze Match an engem Spill mat Matcher |
+| `roundEndReason` | Text | wéi d'Ronn opgehalen huet (an engem Spill mat Matcher de Match), mat de Wierder hei drënner |
+
+`won` a `matchWon` gehéieren der Säit vun der Zeil: d'Zeile vun engem T-Spiller droen d'Resultat vun der T-Säit, d'Zeile vun enger KI-Eenheet dat vun hirem Team; Zeilen, déi zu kenger Säit gehéieren, loossen se eidel. Eng Säit, déi zur Hallschent wiesselt, behält hiren eegene `matchWon` an hëlt de `won` vun all Ronn esou, wéi se se gespillt huet. En Onentschidden ass 0 fir béid Säiten.
+
+D'Grënn fir d'Enn, gemeinsam fir all Spill, sou datt ee Filter op all funktionéiert (d'Wuert vun engem Spill gëtt zougeuerdnet, wou et geet, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Bedeitung | Spiller |
+|---|---|---|
+| `elimination` | all Spiller vun enger Säit eraus | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | d'Bomm (Spike, d'Zil vum Defuser) ass explodéiert | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | d'Bomm (Spike) entschäerft | CS2, Valorant, Rainbow Six Siege |
+| `time` | d'Ronnenauer ass ofgelaf; War Thunder: entscheet, wärend béid Säiten nach Ticketen haten | all |
+| `surrender` | eng Säit huet opginn | CS2, Valorant, Rainbow Six Siege |
+| `draw` | kee Gewënner | CS2 |
+| `objective` | en Zil geholl oder gehal (Geisel erausbruecht, Beräich geséchert) | Rainbow Six Siege |
+| `capture` | keng Ticketen méi, wärend de Gewënner Eruewerungszone gehal huet | War Thunder |
+| `tickets` | Ticketen duerch Ofschëss verluer | War Thunder |
+| `destruction` | déi lescht Gefierer op eemol verluer, keen méi do fir ze spawnen | War Thunder |
+| `other` | alles anescht | |
+
+Nennt se och an der `extra`-Lëscht vun den `heat3d`-Hiweiser, wéi all aner Spalt. D'Spaltennimm `win`, `round_won`, `match_won`, `end_reason` a `win_reason` ginn als déiselwecht Spalte gelies.
 
 ## Den `heat3d`-Hiweiser {#the-heat3d-hints}
 

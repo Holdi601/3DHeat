@@ -4,9 +4,9 @@ parent: "Filteri i alati"
 nav_order: 6
 lang: "bs"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Zapremine i poređenje
@@ -63,6 +63,7 @@ GPU filter prima najviše 8 zapremina s 64 tačke obrisa ukupno; „!” označa
 Oblast **Statistika** prati filtere, vremenski prozor i sakrivene grupe. *Izabrano* prikazuje izabranu zapreminu, *Uporedi sve* stavlja svaku zapreminu jednu uz drugu. Prikazuje:
 
 - **Redova unutra (prikazanih)** i **Redova unutra (svi podaci)**, **Igrači**, **Timovi**, **Mečevi**, **Vrijeme unutra**, **Ulasci / izlasci**, **Vrh toplote**, **Prosječna toplota**, **Volumen / osnova** i histogram **Kada**;
+- **Procenat pobjeda**, ako podaci govore ko je pobijedio ([kolone ishoda](data-formats.md#outcome-columns)): od rundi s igračem unutra, runda svakog igrača brojana jednom, udio koji je njegova strana dobila - privučen prema udjelu u svemu prikazanom za 4 runde, kao što to radi [raščlamba](breakdown.md) - uz dobijene i odigrane runde i taj ukupni udio;
 - po koloni: kategorije s **Liftom** (udio unutra podijeljen s udjelom u svim prikazanim podacima), a brojevi s opsegom, medijanom i 5. do 95. percentilom.
 
 **Statistika kao CSV / JSON** ih čuva. **Izvezi podatke unutra** upisuje redove unutra kao CSV ili Parquet (*Samo prikazani redovi* uključeno podrazumijevano), jednu zapreminu ili sve, s kolonom koja kaže kojoj zapremini pripada svaki red.

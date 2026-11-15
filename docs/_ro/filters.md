@@ -4,9 +4,9 @@ parent: "Filtre și instrumente"
 nav_order: 1
 lang: "ro"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtre
@@ -33,6 +33,8 @@ La încărcare vizualizatorul stabilește patru coloane proprii și le listează
 | **Jucător sau IA** | Jucător, IA | o coloană `ai`, `is_ai`, `bot` sau `actor`; altfel `is_player` / `human`; altfel un identificator de cont (`user_id`, `steam_id`; gol sau 0 înseamnă IA); pentru înregistrările Tacview, dacă obiectul are un pilot |
 | **Clasa vehiculului** | 17 clase: Avion de vânătoare, Avion de atac, Bombardier, Alte aeronave, Elicopter, Tanc, Vehicul blindat, Apărare aeriană, Artilerie, Camion / mașină, Navă, Submarin, Infanterie, Armă, Momeală, Construcție, Altele | numele vehiculului sau al unității (potrivit cu [catalogul de figuri](figures.md)) și coloanele de tip |
 | **Clasa țintei** | aceleași clase | vehiculul celeilalte părți (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Imediat după ele vin [coloanele de rezultat](data-formats.md#outcome-columns), acolo unde datele le au: **Rezultatul rundei** și **Rezultatul meciului** (*Oricare*, *Câștigat*, *Pierdut*) și **Cum s-a încheiat runda**, cu valorile în limba dvs. Filtrați după ele sau împărțiți căldura după ele ca [hartă a ratei de victorie](win-rate.md).
 
 Sunt listate doar tipurile care apar. Coloanele de valoare (`cost_*`, `earn_*`, `net_*` și *Sursa costului*, vezi [Ponderarea valorilor](value-weighting.md)) se pot filtra ca orice coloană numerică: de exemplu, debifează *estimare* la *Sursa costului* ca să păstrezi doar rândurile cu preț.
 

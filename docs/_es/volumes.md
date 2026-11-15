@@ -4,9 +4,9 @@ parent: "Filtros y herramientas"
 nav_order: 6
 lang: "es"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Volúmenes y comparación
@@ -63,6 +63,7 @@ El filtro de GPU admite hasta 8 volúmenes con 64 puntos de contorno en total; u
 El área de **Estadísticas** sigue los filtros, la ventana de tiempo y los grupos ocultos. *Seleccionado* muestra el volumen elegido, *Comparar todos* pone cada volumen uno al lado del otro. Muestra:
 
 - **Filas dentro (mostradas)** y **Filas dentro (todos los datos)**, **Jugadores**, **Equipos**, **Partidas**, **Tiempo dentro**, **Entradas / salidas**, **Calor máximo**, **Calor medio**, **Volumen / huella** y un histograma de **Cuándo**;
+- **Tasa de victoria**, cuando los datos dicen quién ganó ([columnas de resultado](data-formats.md#outcome-columns)): de las rondas con un jugador dentro, contando la ronda de cada jugador una vez, la proporción que ganó su lado, atraída 4 rondas hacia la tasa sobre todo lo mostrado, como hace el [desglose](breakdown.md), con las rondas ganadas y jugadas y esa tasa global;
 - por columna: categorías con **Lift** (proporción dentro dividida entre la proporción en todos los datos mostrados), y números con rango, mediana y percentiles 5 y 95.
 
 **Estadísticas como CSV / JSON** las guarda. **Exportar los datos de dentro** escribe las filas de dentro en CSV o Parquet (*Solo las filas mostradas* activado por defecto), de un volumen o de todos, con una columna que indica qué volumen contiene cada fila.

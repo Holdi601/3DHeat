@@ -4,9 +4,9 @@ parent: "Šilumos režimai"
 nav_order: 5
 lang: "lt"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Skirtumas
@@ -98,6 +98,10 @@ Pasirinkus stulpelį, jo pirmoji reikšmė padedama ant +, antroji - ant −. Ka
 | **Skaidyti per vidurį** | Nustato + į [mažiausia, vidurys] ir − į [vidurys, didžiausia] - tą patį daro ir pasirinkus stulpelį. |
 
 Reikšmė abiejuose ruožuose skaičiuojama kaip +. Ruožai nebūtinai padengia visą stulpelį; reikšmės, nepatenkančios į nė vieną, paliekamos. *Pirmosios dvi minutės prieš paskutines dvi* yra ruožo skaidymas pagal laiko tipo stulpelį.
+
+## + dalis: laimėjimų žemėlapis {#share-of--the-win-rate-map}
+
+**Skirtumas** / **+ dalis** skydelio viršuje pasirenka, kas piešiama. *+ dalis* nuspalvina kiekvieną vietą pagal + pusės dalį abiejų pusių eilučių ten, palyginti su ta dalimi visame rodomame: šilta virš jos, šalta žemiau, nieko, kur ji tokia pati, ir nieko, kur vietoje per mažai eilučių. Kai laimėti raundai yra ant +, o pralaimėti ant −, tai laimėjimų žemėlapis; **Laimėtų raundų dalis** ir **Laimėtų mačų dalis** jį nustato vienu paspaudimu, kai duomenyse yra [rezultato stulpeliai](data-formats.md#outcome-columns). Žr. [Laimėjimų dalis](win-rate.md).
 
 ## Spalvos {#colours}
 

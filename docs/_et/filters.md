@@ -4,9 +4,9 @@ parent: "Filtrid ja tööriistad"
 nav_order: 1
 lang: "et"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtrid
@@ -33,6 +33,8 @@ Laadimisel leiab vaatur neli oma veergu ja loetleb need **esimesena**, nimed ja 
 | **Mängija või tehisintellekt** | Mängija, TI | veerg `ai`, `is_ai`, `bot` või `actor`; muidu `is_player` / `human`; muidu konto-id (`user_id`, `steam_id`; tühi või 0 on TI); Tacview salvestistel, kas objektil on piloot |
 | **Sõidukiklass** | 17 klassi: Hävitaja, Rünnakulennuk, Pommitaja, Muu lennuk, Helikopter, Tank, Soomukk, Õhutõrje, Suurtükivägi, Veok / auto, Laev, Allveelaev, Jalavägi, Relv, Lõks, Ehitis, Muu | sõiduki või üksuse nimi (sobitatakse [kujude kataloogiga](figures.md)) ja tüübiveerud |
 | **Sihtmärgi klass** | samad klassid | teise osapoole sõiduk (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Kohe nende järel tulevad [tulemuse veerud](data-formats.md#outcome-columns), kui andmetes need on: **Raundi tulemus** ja **Mängu tulemus** (*Mis tahes*, *Võidetud*, *Kaotatud*) ning **Kuidas raund lõppes**, väärtused sinu keeles. Filtreeri nende järgi või jaota soojus nende järgi [võitude kaardiks](win-rate.md).
 
 Loetletakse ainult esinevad liigid. Väärtuste veerud (`cost_*`, `earn_*`, `net_*` ja *Kulu allikas*, vt [Väärtuskaalumine](value-weighting.md)) on filtreeritavad nagu iga arvveerg: näiteks eemalda linnuke *hinnang* jaotises *Kulu allikas*, et jätta alles ainult hinnastatud read.
 

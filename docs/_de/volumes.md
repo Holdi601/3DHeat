@@ -4,9 +4,9 @@ parent: "Filter und Werkzeuge"
 nav_order: 6
 lang: "de"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Volumen und Vergleich
@@ -63,6 +63,7 @@ Der GPU-Filter nimmt bis zu 8 Volumen mit insgesamt 64 Umrisspunkten; ein „!�
 Der Bereich **Statistik** folgt den Filtern, dem Zeitfenster und den ausgeblendeten Gruppen. *Gewählt* zeigt das gewählte Volumen, *Alle vergleichen* stellt jedes Volumen nebeneinander. Er zeigt:
 
 - **Zeilen innen (angezeigt)** und **Zeilen innen (alle Daten)**, **Spieler**, **Teams**, **Matches**, **Zeit darin**, **Eintritte / Austritte**, **Spitzenwärme**, **Mittlere Wärme**, **Volumen / Grundfläche** und ein Histogramm **Wann**;
+- **Siegquote**, wo die Daten sagen, wer gewonnen hat ([Ergebnisspalten](data-formats.md#outcome-columns)): von den Runden mit einem Spieler im Volumen, die Runde jedes Spielers einmal gezählt, der Anteil, den seine Seite gewonnen hat – um 4 Runden zur Quote über alles Angezeigte gezogen, wie es die [Aufschlüsselung](breakdown.md) tut –, mit den gewonnenen und gespielten Runden und dieser Gesamtquote;
 - pro Spalte: Kategorien mit **Lift** (Anteil innen geteilt durch den Anteil in allen angezeigten Daten), und Zahlen mit Spanne, Median und dem 5.-95.-Perzentil.
 
 **Statistik als CSV / JSON** speichert sie. **Daten innen exportieren** schreibt die Zeilen innen als CSV oder Parquet (standardmäßig *Nur die angezeigten Zeilen* an), ein Volumen oder alle, mit einer Spalte, die sagt, welches Volumen jede Zeile enthält.

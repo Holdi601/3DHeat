@@ -4,9 +4,9 @@ parent: "Filteri i alati"
 nav_order: 1
 lang: "bs"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filteri
@@ -33,6 +33,8 @@ Pri učitavanju prikazivač sam izvodi četiri sopstvene kolone i navodi ih **pr
 | **Igrač ili AI** | Igrač, AI | kolona `ai`, `is_ai`, `bot` ili `actor`; inače `is_player` / `human`; inače id naloga (`user_id`, `steam_id`; prazno ili 0 je AI); za Tacview snimke, da li objekat ima pilota |
 | **Klasa vozila** | 17 klasa: Lovac, Jurišni avion, Bombarder, Ostali avioni, Helikopter, Tenk, Oklopno vozilo, Protivvazdušna odbrana, Artiljerija, Kamion / auto, Brod, Podmornica, Pješadija, Oružje, Mamac, Građevina, Ostalo | naziv vozila ili jedinice (upoređen s [katalogom figura](figures.md)) i kolone tipa |
 | **Klasa cilja** | iste klase | vozilo druge strane (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Odmah nakon njih dolaze [kolone ishoda](data-formats.md#outcome-columns), ako ih podaci imaju: **Ishod runde** i **Ishod meča** (*Bilo koji*, *Pobjeda*, *Poraz*) te **Kako je runda završila**, s vrijednostima na vašem jeziku. Filtrirajte po njima ili po njima podijelite toplotu kao [mapu procenta pobjeda](win-rate.md).
 
 Navode se samo vrste koje se pojavljuju. Kolone vrijednosti (`cost_*`, `earn_*`, `net_*` i *Izvor troška*, vidi [Ponderisanje vrijednosti](value-weighting.md)) mogu se filtrirati kao svaka numerička kolona: na primjer, odznačite *procjena* pod *Izvor troška* da zadržite samo redove s cijenom.
 

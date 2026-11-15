@@ -4,9 +4,9 @@ parent: "Filtres et outils"
 nav_order: 7
 lang: "fr"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Détail : qui et quoi réussit le mieux, et où
@@ -91,6 +91,6 @@ Un convertisseur ajoute un facteur en nommant sa colonne :
 | indicateurs d’équipement déjà courants (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | actif tant qu’il est non nul |
 | `ammoType`, `shellType`, `ammoName` | le projectile tiré en dernier |
 
-Résultats : une colonne `won` à 0/1 (le camp de la ligne a gagné la manche ou le match) et une colonne `round`. Argent : `earn_<monnaie>` et `cost_<type>_<monnaie>` ; un revenu par type seul (`earn_round_cs2`, les récompenses exactes de manche d’un convertisseur) ne remplace que le revenu de ce type dans le modèle de coût (`round` couvre aussi les poses et désamorçages), et le modèle chiffre le reste.
+Résultats : une colonne `won` à 0/1 (le camp de la ligne a gagné la manche ou le match) et une colonne `round` – les [colonnes de résultat](data-formats.md#outcome-columns) ; quand un fichier a à la fois `won` et `matchWon`, *Victoires %* compte les manches. Argent : `earn_<monnaie>` et `cost_<type>_<monnaie>` ; un revenu par type seul (`earn_round_cs2`, les récompenses exactes de manche d’un convertisseur) ne remplace que le revenu de ce type dans le modèle de coût (`round` couvre aussi les poses et désamorçages), et le modèle chiffre le reste.
 
 Le mappage charge ces colonnes par lui-même, à côté de la liste propre du fichier : chaque colonne `state_*`, `active_*`, `won`, `round` et de liste, sauf celles que les statistiques d’un fichier Parquet montrent à valeur unique tout du long (chaque colonne chargée occupe 4 octets par ligne).

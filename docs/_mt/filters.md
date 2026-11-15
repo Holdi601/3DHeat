@@ -4,9 +4,9 @@ parent: "Filtri u għodod"
 nav_order: 1
 lang: "mt"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtri
@@ -33,6 +33,8 @@ Fit-tagħbija l-viewer jaħdem erba' kolonni tiegħu stess u jelenkhom **l-ewwel
 | **Plejer jew AI** | Plejer, AI | kolonna `ai`, `is_ai`, `bot` jew `actor`; inkella `is_player` / `human`; inkella ID tal-kont (`user_id`, `steam_id`; vojt jew 0 ifisser AI); għal reġistrazzjonijiet Tacview, jekk l-oġġett għandux pilota |
 | **Klassi tal-vettura** | 17-il klassi: Ġellieda, Inġenju tal-attakk, Bomber, Inġenji oħra, Helicopter, Tank, Vettura blindata, Difiża tal-ajru, Artillerija, Trakk / karozza, Vapur, Sottomarin, Infanterija, Arma, Decoy, Struttura, Oħrajn | l-isem tal-vettura jew tal-unità (jitqabbel mal-[katalgu tal-figuri](figures.md)) u l-kolonni tat-tip |
 | **Klassi tal-mira** | l-istess klassijiet | il-vettura tal-parti l-oħra (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Eżatt warajhom jiġu l-[kolonni tar-riżultat](data-formats.md#outcome-columns), fejn id-dejta għandha minnhom: **Riżultat tar-rawnd** u **Riżultat tal-partita** (*Kwalunkwe*, *Mirbuħ*, *Mitluf*) u **Kif intemm ir-rawnd**, bil-valuri tiegħu fil-lingwa tiegħek. Iffiltra fuqhom, jew aqsam is-sħana skonthom bħala [mappa tar-rata ta' rebħ](win-rate.md).
 
 Jiġu elenkati biss it-tipi li jidhru. Il-kolonni tal-valur (`cost_*`, `earn_*`, `net_*` u *Sors tal-kost*, ara [Piż tal-valuri](value-weighting.md)) jistgħu jiġu ffiltrati bħal kwalunkwe kolonna numerika: pereżempju neħħi l-kaxxa ta' *estimate* taħt *Sors tal-kost* biex iżżomm biss ringieli bi prezz.
 

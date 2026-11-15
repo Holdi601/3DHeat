@@ -4,9 +4,9 @@ parent: "Filtres i eines"
 nav_order: 7
 lang: "ca"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Desglossament: qui i què va millor on
@@ -91,6 +91,6 @@ Un convertidor afegeix un factor anomenant-ne la columna:
 | indicadors d'equipament ja habituals (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | actiu mentre no sigui zero |
 | `ammoType`, `shellType`, `ammoName` | la munició disparada per última vegada |
 
-Resultats: una columna `won` de 0/1 (el bàndol de la fila va guanyar la ronda o la partida) i una columna `round`. Diners: `earn_<currency>` i `cost_<kind>_<currency>`; un ingrés només per tipus (`earn_round_cs2`, les recompenses exactes de ronda d'un convertidor) substitueix només l'ingrés del model de cost d'aquell tipus (`round` també cobreix plantades i desactivacions), i el model encara valora la resta.
+Resultats: una columna `won` de 0/1 (el bàndol de la fila va guanyar la ronda o la partida) i una columna `round` - les [columnes de resultat](data-formats.md#outcome-columns); quan un fitxer té `won` i `matchWon` alhora, *Victòries %* compta rondes. Diners: `earn_<currency>` i `cost_<kind>_<currency>`; un ingrés només per tipus (`earn_round_cs2`, les recompenses exactes de ronda d'un convertidor) substitueix només l'ingrés del model de cost d'aquell tipus (`round` també cobreix plantades i desactivacions), i el model encara valora la resta.
 
 El mapatge carrega aquestes columnes per si mateix, al costat de la llista pròpia del fitxer: totes les columnes `state_*`, `active_*`, `won`, `round` i de llista, excepte les que les estadístiques d'un fitxer Parquet mostren que tenen un sol valor en tot el conjunt (cada columna carregada són 4 bytes per fila).

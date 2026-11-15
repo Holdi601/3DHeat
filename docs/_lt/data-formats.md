@@ -3,9 +3,9 @@ title: "Duomenų formatų nuoroda"
 nav_order: 19
 lang: "lt"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Duomenų formatų nuoroda
@@ -93,6 +93,37 @@ Padėties, laiko ar žvilgsnio stulpelis, kuriame yra ne skaičius, iššifruoja
 | Filtro stulpelis, *kategorija* | bet koks; žodyne užkoduotas | ne | 32 bitų id | Iki 4 096 reikšmių, kitaip stulpelis nelaikomas. |
 
 Parquet `TIMESTAMP` stulpelis, paliktas kaip filtro stulpelis, yra *intervalas* epochos milisekundėmis – slankiklis, o ne sąrašas.
+
+## Rezultato stulpeliai {#outcome-columns}
+
+Kas laimėjo, kiekvienoje eilutėje, kad vietą, maršrutą ar ėjimą būtų galima įvertinti pagal tai, kaip dažnai jo pusė galiausiai laimėjo ([Laimėjimų dalis](win-rate.md)). Peržiūros programa šiuos stulpelius pasilieka pati, rodo juos pirmus [filtruose](filters.md) peržiūros programos kalba ir skaito juos [laimėjimų žemėlapyje](win-rate.md), [išskaidyme](breakdown.md) ir [tūrių statistikoje](volumes.md#statistics). Raundais paremto žaidimo (CS2, Valorant, Rainbow Six Siege) arba mačais paremto žaidimo (War Thunder) konverteris rašo visus keturis:
+
+| Stulpelis | Tipas | Reikšmė |
+|---|---|---|
+| `won` | 0/1 (tuščia, kur nežinoma) | eilutės pusė (komanda) laimėjo **raundą**; žaidime be raundų - mačą |
+| `matchWon` | 0/1 (tuščia, kur nežinoma) | eilutės pusė (komanda) laimėjo **mačą**; tuščia, kur įrašas nerodo pabaigos |
+| `round` | sveikasis skaičius, nuo 1 | raundas, kuriam priklauso eilutė; mačais paremtame žaidime visą laiką 1 |
+| `roundEndReason` | tekstas | kaip baigėsi raundas (mačais paremtame žaidime - mačas), žemiau pateiktais žodžiais |
+
+`won` ir `matchWon` priklauso eilutės pusei: T žaidėjo eilutės turi T pusės rezultatą, AI vieneto eilutės - jo komandos; eilutėse, kurios nepriklauso jokiai pusei, jie lieka tušti. Pusė, kuri keičiasi per kėlinių pertrauką, išlaiko savo `matchWon` ir kiekvieno raundo `won` ima taip, kaip jį žaidė. Lygiosios abiem pusėms yra 0.
+
+Pabaigos priežastys bendros visiems žaidimams, todėl vienas filtras veikia visuose (žaidimo savas žodis susiejamas su jomis, kur įmanoma, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Reikšmė | Žaidimai |
+|---|---|---|
+| `elimination` | visi vienos pusės žaidėjai iškrito | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | bomba (spike, nukenksmintojo taikinys) sprogo | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | bomba (spike) nukenksminta | CS2, Valorant, Rainbow Six Siege |
+| `time` | baigėsi raundo laikas; War Thunder: nuspręsta, kai abi pusės dar turėjo bilietų | visi |
+| `surrender` | viena pusė pasidavė | CS2, Valorant, Rainbow Six Siege |
+| `draw` | nugalėtojo nėra | CS2 |
+| `objective` | tikslas užimtas arba išlaikytas (įkaitas išvestas, zona užtikrinta) | Rainbow Six Siege |
+| `capture` | baigėsi bilietai, kol nugalėtojas laikė užėmimo zonas | War Thunder |
+| `tickets` | bilietai prarasti dėl numušimų | War Thunder |
+| `destruction` | paskutinės transporto priemonės prarastos iš karto, nebeliko kam atsirasti | War Thunder |
+| `other` | visa kita | |
+
+Nurodykite juos ir `heat3d` užuominų `extra` sąraše, kaip bet kurį kitą stulpelį. Stulpelių pavadinimai `win`, `round_won`, `match_won`, `end_reason` ir `win_reason` skaitomi kaip tie patys stulpeliai.
 
 ## `heat3d` užuominos {#the-heat3d-hints}
 

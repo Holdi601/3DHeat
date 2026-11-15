@@ -4,9 +4,9 @@ parent: "Varmetilstande"
 nav_order: 5
 lang: "da"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Forskel
@@ -86,6 +86,10 @@ Når kolonnen vælges, sættes dens første værdi på + og dens anden på −. 
 | **Del ved midtpunktet** | Sætter + til [mindste, midt] og − til [midt, største] - det samme som valget af kolonnen gør. |
 
 En værdi i begge intervaller tæller som +. Intervallerne behøver ikke dække kolonnen; værdier i ingen af dem udelades. *De første to minutter mod de sidste to minutter* er en intervalopdeling på en tidslignende kolonne.
+
+## Andel +: sejrsandelskortet {#share-of--the-win-rate-map}
+
+**Forskel** / **Andel +** øverst i panelet vælger, hvad der tegnes. *Andel +* farver hvert sted efter + sidens andel af rækkerne på begge sider der, set mod den andel over alt det viste: varmt over den, koldt under, intet, hvor den er den samme, og intet, hvor et sted har for få rækker. Med de vundne runder på + og de tabte på − er det et sejrsandelskort; **Sejrsandel pr. runde** og **Sejrsandel pr. kamp** sætter det op med ét tryk, hvor dataene har [resultatkolonner](data-formats.md#outcome-columns). Se [Sejrsandel](win-rate.md).
 
 ## Farver {#colours}
 

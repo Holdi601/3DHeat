@@ -4,9 +4,9 @@ parent: "Isı modları"
 nav_order: 5
 lang: "tr"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Fark
@@ -86,6 +86,10 @@ Sütunu seçmek, ilk değerini + ya da ikincisini − tarafına koyar. İki tara
 | **Orta noktadan ayır** | + aralığını [en küçük, orta] ve − aralığını [orta, en büyük] olarak ayarlar - sütunu seçmenin de yaptığı şey. |
 
 İki aralıkta da olan bir değer + sayılır. Aralıkların sütunu kapsaması gerekmez; hiçbirinde olmayan değerler dışarıda bırakılır. *İlk iki dakika ile son iki dakika* zamana benzer bir sütun üzerinde bir aralık ayrımıdır.
+
+## + payı: kazanma oranı haritası {#share-of--the-win-rate-map}
+
+Panelin üstündeki **Fark** / **+ payı** neyin çizileceğini seçer. *+ payı* her yeri, oradaki iki tarafın satırları içinde + tarafının payına göre, gösterilen her şeydeki o paya kıyasla renklendirir: üstündeyse sıcak, altındaysa soğuk, aynıysa hiçbir şey, ve bir yerde çok az satır varsa hiçbir şey. Kazanılan rauntlar + tarafında ve kaybedilenler − tarafında olunca bu bir kazanma oranı haritasıdır; verinin [sonuç sütunları](data-formats.md#outcome-columns) olduğunda **Raunt kazanma oranı** ve **Maç kazanma oranı** bunu tek basışta kurar. Bkz. [Kazanma oranı](win-rate.md).
 
 ## Renkler {#colours}
 

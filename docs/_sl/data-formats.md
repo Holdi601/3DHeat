@@ -3,9 +3,9 @@ title: "Pregled podatkovnih formatov"
 nav_order: 19
 lang: "sl"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Pregled podatkovnih formatov
@@ -94,6 +94,37 @@ Stolpec položaja, časa ali pogleda, ki vsebuje kaj drugega kot število, se de
 
 Stolpec `TIMESTAMP` Parquet, ohranjen kot filtrirni stolpec, je *razpon* milisekund
 epohe – drsnik, ne seznam.
+
+## Stolpci izida {#outcome-columns}
+
+Kdo je zmagal, v vsaki vrstici, da lahko mesto, pot ali potezo ocenite po tem, kako pogosto je njena stran nato zmagala ([Delež zmag](win-rate.md)). Pregledovalnik te stolpce obdrži sam, jih navede prve v [filtrih](filters.md) v jeziku pregledovalnika in jih bere v [zemljevidu deleža zmag](win-rate.md), v [razčlenitvi](breakdown.md) in v [statistiki prostornin](volumes.md#statistics). Pretvornik za igro s krogi (CS2, Valorant, Rainbow Six Siege) ali s tekmami (War Thunder) zapiše vse štiri:
+
+| Stolpec | Tip | Pomen |
+|---|---|---|
+| `won` | 0/1 (prazno, kjer ni znano) | stran (ekipa) vrstice je zmagala **krog**; v igri brez krogov tekmo |
+| `matchWon` | 0/1 (prazno, kjer ni znano) | stran (ekipa) vrstice je zmagala **tekmo**; prazno, kjer posnetek ne pokaže konca |
+| `round` | celo število, od 1 | krog, h kateremu spada vrstica; v igri s tekmami povsod 1 |
+| `roundEndReason` | besedilo | kako se je krog končal (v igri s tekmami tekma), z besedami spodaj |
+
+`won` in `matchWon` pripadata strani vrstice: vrstice igralca T nosijo izid strani T, vrstice enote AI izid njene ekipe; vrstice, ki ne pripadajo nobeni strani, ju pustijo prazna. Stran, ki ob polčasu zamenja stran, obdrži svoj `matchWon` in vzame `won` vsakega kroga tako, kot ga je igrala. Neodločen izid je 0 za obe strani.
+
+Razlogi za konec so skupni vsem igram, da en filter deluje na vseh (lastna beseda igre se preslika, kjer se da, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Pomen | Igre |
+|---|---|---|
+| `elimination` | izpadli so vsi igralci ene strani | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | bomba (spike, cilj razoroževalca) je eksplodirala | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | bomba (spike) je razorožena | CS2, Valorant, Rainbow Six Siege |
+| `time` | čas kroga je potekel; War Thunder: odločeno, ko sta obe strani še imeli vstopnice | vse |
+| `surrender` | stran se je predala | CS2, Valorant, Rainbow Six Siege |
+| `draw` | brez zmagovalca | CS2 |
+| `objective` | cilj zavzet ali zadržan (talec izpeljan, območje zavarovano) | Rainbow Six Siege |
+| `capture` | vstopnice so pošle, medtem ko je zmagovalec držal cone za zavzetje | War Thunder |
+| `tickets` | vstopnice izgubljene zaradi ubojev | War Thunder |
+| `destruction` | zadnja vozila izgubljena naenkrat, nihče ne more več vstopiti | War Thunder |
+| `other` | karkoli drugega | |
+
+Navedite jih tudi v seznamu `extra` v namigih `heat3d`, kot vsak drug stolpec. Imena stolpcev `win`, `round_won`, `match_won`, `end_reason` in `win_reason` se berejo kot isti stolpci.
 
 ## Namigi `heat3d` {#the-heat3d-hints}
 

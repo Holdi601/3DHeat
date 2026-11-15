@@ -3,9 +3,9 @@ title: "Andmevormingute viide"
 nav_order: 19
 lang: "et"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Andmevormingute viide
@@ -93,6 +93,37 @@ Asukoha, aja või vaatamise veerg, mis sisaldab muud kui arvu, dekodeeritakse pu
 | Filtriveerg, *kategooria* | mis tahes; sõnastikukodeeritud | ei | 32-bitine id | Kuni 4096 väärtust, muidu veergu ei hoita. |
 
 Parquet-i `TIMESTAMP`-veerg, mida hoitakse filtriveerguna, on *vahemik* epoch-millisekundites: liugur, mitte loend.
+
+## Tulemuse veerud {#outcome-columns}
+
+Kes võitis, igal real, et kohta, marsruuti või käiku saaks hinnata selle järgi, kui tihti selle pool lõpuks võitis ([Võitude osakaal](win-rate.md)). Vaataja hoiab need veerud ise alles, loetleb need [filtrites](filters.md) esimesena vaataja keeles ja loeb neid [võitude kaardil](win-rate.md), [jaotuses](breakdown.md) ja [mahu statistikas](volumes.md#statistics). Raundipõhise mängu (CS2, Valorant, Rainbow Six Siege) või mängupõhise mängu (War Thunder) konverter kirjutab kõik neli:
+
+| Veerg | Tüüp | Tähendus |
+|---|---|---|
+| `won` | 0/1 (tühi, kus teadmata) | rea pool (meeskond) võitis **raundi**; raundideta mängus mängu |
+| `matchWon` | 0/1 (tühi, kus teadmata) | rea pool (meeskond) võitis **mängu**; tühi, kus salvestis lõppu ei näita |
+| `round` | täisarv, alates 1 | raund, kuhu rida kuulub; mängupõhises mängus kogu aeg 1 |
+| `roundEndReason` | tekst | kuidas raund lõppes (mängupõhises mängus mäng), allolevate sõnadega |
+
+`won` ja `matchWon` kuuluvad rea poolele: T-mängija ridadel on T-poole tulemus, AI-üksuse ridadel tema meeskonna oma; ridadel, mis ei kuulu ühelegi poolele, jäävad need tühjaks. Pool, mis poolajal vahetab, hoiab oma `matchWon` ja võtab iga raundi `won` nii, nagu ta seda mängis. Viik on mõlemale poolele 0.
+
+Lõpu põhjused on kõigil mängudel ühised, nii et üks filter töötab kõigil (mängu enda sõna seotakse nendega, kus võimalik, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Tähendus | Mängud |
+|---|---|---|
+| `elimination` | ühe poole kõik mängijad väljas | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | pomm (spike, desarmeerija sihtmärk) plahvatas | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | pomm (spike) desarmeeriti | CS2, Valorant, Rainbow Six Siege |
+| `time` | raundi kell sai otsa; War Thunder: otsustatud, kui mõlemal poolel oli pileteid alles | kõik |
+| `surrender` | üks pool andis alla | CS2, Valorant, Rainbow Six Siege |
+| `draw` | võitjat pole | CS2 |
+| `objective` | eesmärk võetud või hoitud (pantvang välja viidud, ala kindlustatud) | Rainbow Six Siege |
+| `capture` | piletid said otsa, kui võitja hoidis vallutustsoone | War Thunder |
+| `tickets` | piletid kaotatud mahalaskmistega | War Thunder |
+| `destruction` | viimased sõidukid kaotatud korraga, kedagi pole enam ilmumas | War Thunder |
+| `other` | kõik muu | |
+
+Nimeta need ka `heat3d` vihjete `extra` loendis, nagu iga teist veergu. Veerunimesid `win`, `round_won`, `match_won`, `end_reason` ja `win_reason` loetakse samade veergudena.
 
 ## `heat3d` vihjed {#the-heat3d-hints}
 

@@ -3,9 +3,9 @@ title: "Datu formātu uzziņa"
 nav_order: 19
 lang: "lv"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Datu formātu uzziņa
@@ -93,6 +93,37 @@ Pozīcijas, laika vai skatienu kolonna, kurā ir kaut kas cits, nevis skaitlis, 
 | Filtra kolonna, *kategorija* | jebkas; vārdnīcas kodēts | nē | 32 bitu id | Līdz 4 096 vērtībām, citādi kolonna netiek saglabāta. |
 
 Parquet `TIMESTAMP` kolonna, kas saglabāta kā filtra kolonna, ir *diapazons* epohas milisekundēs — slīdnis, nevis saraksts.
+
+## Iznākuma kolonnas {#outcome-columns}
+
+Kurš uzvarēja, katrā rindā, lai vietu, maršrutu vai gājienu varētu vērtēt pēc tā, cik bieži tā puse beigās uzvarēja ([Uzvaru daļa](win-rate.md)). Skatītājs pats patur šīs kolonnas, uzskaita tās pirmās [filtros](filters.md) skatītāja valodā un nolasa tās [uzvaru kartē](win-rate.md), [sadalījumā](breakdown.md) un [tilpumu statistikā](volumes.md#statistics). Konvertētājs raundu spēlei (CS2, Valorant, Rainbow Six Siege) vai spēlei, kas notiek kā viens mačs (War Thunder), raksta visas četras:
+
+| Kolonna | Tips | Nozīme |
+|---|---|---|
+| `won` | 0/1 (tukša, ja nav zināms) | rindas puse (komanda) uzvarēja **raundā**; spēlē bez raundiem - mačā |
+| `matchWon` | 0/1 (tukša, ja nav zināms) | rindas puse (komanda) uzvarēja **mačā**; tukša, ja ieraksts nerāda beigas |
+| `round` | vesels skaitlis, no 1 | raunds, kuram rinda pieder; spēlē bez raundiem visu laiku 1 |
+| `roundEndReason` | teksts | kā raunds beidzās (spēlē bez raundiem - mačs), ar zemāk esošajiem vārdiem |
+
+`won` un `matchWon` pieder rindas pusei: T spēlētāja rindām ir T puses iznākums, AI vienības rindām - tās komandas; rindām, kas nepieder nevienai pusei, tās paliek tukšas. Puse, kas mainās puslaikā, patur savu `matchWon` un ņem katra raunda `won` tā, kā to spēlēja. Neizšķirts ir 0 abām pusēm.
+
+Beigu iemesli ir kopīgi visām spēlēm, lai viens filtrs darbotos visās (spēles paša vārds tiek piesaistīts tiem, kur iespējams, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Nozīme | Spēles |
+|---|---|---|
+| `elimination` | visi vienas puses spēlētāji ārā | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | bumba (spike, atmīnētāja mērķis) uzsprāga | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | bumba (spike) atmīnēta | CS2, Valorant, Rainbow Six Siege |
+| `time` | raunda pulkstenis beidzās; War Thunder: izšķirts, kad abām pusēm vēl bija biļetes | visas |
+| `surrender` | puse padevās | CS2, Valorant, Rainbow Six Siege |
+| `draw` | nav uzvarētāja | CS2 |
+| `objective` | mērķis ieņemts vai noturēts (ķīlnieks izvests, zona nodrošināta) | Rainbow Six Siege |
+| `capture` | biļetes beidzās, kamēr uzvarētājs turēja ieņemšanas zonas | War Thunder |
+| `tickets` | biļetes zaudētas notriekšanās | War Thunder |
+| `destruction` | pēdējie transportlīdzekļi zaudēti uzreiz, neviena, kas varētu parādīties no jauna | War Thunder |
+| `other` | viss cits | |
+
+Nosauc tās arī `heat3d` norāžu `extra` sarakstā, kā jebkuru citu kolonnu. Kolonnu nosaukumi `win`, `round_won`, `match_won`, `end_reason` un `win_reason` tiek nolasīti kā tās pašas kolonnas.
 
 ## `heat3d` norādes {#the-heat3d-hints}
 

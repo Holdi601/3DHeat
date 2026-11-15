@@ -3,9 +3,9 @@ title: "資料格式參考"
 nav_order: 19
 lang: "zh-Hant"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 資料格式參考
@@ -93,6 +93,37 @@ x,y,z,t,player,team
 | 篩選欄位，*類別* | 任何型別；字典編碼 | 否 | 32 位元 ID | 最多 4,096 個值，否則不保留該欄位。 |
 
 作為篩選欄位保留的 Parquet `TIMESTAMP` 欄位，會是以紀元毫秒表示的*範圍*——是一個滑桿，而不是清單。
+
+## 結果欄位 {#outcome-columns}
+
+誰獲勝，記在每一列上，這樣就能依一個位置、一條路線或一次戰術所屬的一方之後多常獲勝來評判它（[勝率](win-rate.md)）。檢視器會自行保留這些欄位，用檢視器的語言把它們列在 [篩選](filters.md) 的最前面，並在 [勝率地圖](win-rate.md)、[明細](breakdown.md) 和 [體積統計](volumes.md#statistics) 中讀取它們。回合制遊戲（CS2、Valorant、Rainbow Six Siege）或以比賽計的遊戲（War Thunder）的轉換器會寫入全部四個欄位：
+
+| 欄位 | 類型 | 意義 |
+|---|---|---|
+| `won` | 0/1（未知時為空） | 該列所屬的一方（隊伍）贏下了**回合**；在沒有回合的遊戲中為比賽 |
+| `matchWon` | 0/1（未知時為空） | 該列所屬的一方（隊伍）贏下了**比賽**；錄影沒有顯示結尾時為空 |
+| `round` | 整數，從 1 開始 | 該列所屬的回合；在以比賽計的遊戲中整場都是 1 |
+| `roundEndReason` | 文字 | 回合（在以比賽計的遊戲中為比賽）如何結束，用下面的詞 |
+
+`won` 和 `matchWon` 屬於該列所屬的一方：T 玩家的列帶有 T 方的結果，AI 單位的列帶有其隊伍的結果；不屬於任何一方的列留空。半場換邊的一方保留自己的 `matchWon`，而每個回合的 `won` 依它在該回合所打的一方來取。平手對雙方都是 0。
+
+結束原因由所有遊戲共用，這樣一個篩選就能用於所有遊戲（遊戲自己的詞會盡可能對應過來，[`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)）：
+
+| `roundEndReason` | 意義 | 遊戲 |
+|---|---|---|
+| `elimination` | 一方的所有玩家都已出局 | CS2、Valorant、Rainbow Six Siege |
+| `bomb` | 炸彈（spike，拆除者的目標）爆炸 | CS2、Valorant、Rainbow Six Siege |
+| `defuse` | 炸彈（spike）被拆除 | CS2、Valorant、Rainbow Six Siege |
+| `time` | 回合時間耗盡；War Thunder：雙方都還有票數時決出 | 全部 |
+| `surrender` | 一方投降 | CS2、Valorant、Rainbow Six Siege |
+| `draw` | 沒有勝者 | CS2 |
+| `objective` | 奪取或守住了目標（救出人質、確保區域） | Rainbow Six Siege |
+| `capture` | 勝者佔領著佔領區時票數被耗盡 | War Thunder |
+| `tickets` | 因擊殺而失去票數 | War Thunder |
+| `destruction` | 最後的載具同時損失，沒有人可以再重生 | War Thunder |
+| `other` | 其他任何情況 | |
+
+也像其他欄位一樣，把它們寫進 `heat3d` 提示的 `extra` 清單。欄位名稱 `win`、`round_won`、`match_won`、`end_reason` 和 `win_reason` 會被讀作相同的欄位。
 
 ## `heat3d` 提示 {#the-heat3d-hints}
 

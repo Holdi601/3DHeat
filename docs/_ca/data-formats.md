@@ -3,9 +3,9 @@ title: "Referència de formats de dades"
 nav_order: 19
 lang: "ca"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Referència de formats de dades
@@ -93,6 +93,37 @@ Una columna de posició, de temps o de mirada que conté quelcom que no és un n
 | Columna de filtre, *categoria* | qualsevol; codificat per diccionari | no | identificador de 32 bits | Fins a 4.096 valors; si no, la columna no es conserva. |
 
 Una columna Parquet `TIMESTAMP` conservada com a columna de filtre és un *rang* de mil·lisegons d'època: un control lliscant, no una llista.
+
+## Columnes de resultat {#outcome-columns}
+
+Qui va guanyar, a cada fila, perquè un lloc, una ruta o una jugada es pugui jutjar per la freqüència amb què el seu bàndol va acabar guanyant ([Taxa de victòria](win-rate.md)). El visor conserva aquestes columnes pel seu compte, les mostra primer als [filtres](filters.md) en l'idioma del visor i les llegeix al [mapa de taxa de victòria](win-rate.md), al [desglossament](breakdown.md) i a les [estadístiques dels volums](volumes.md#statistics). Un convertidor per a un joc per rondes (CS2, Valorant, Rainbow Six Siege) o per partides (War Thunder) les escriu totes quatre:
+
+| Columna | Tipus | Significat |
+|---|---|---|
+| `won` | 0/1 (buida si no se sap) | el bàndol (equip) de la fila va guanyar **la ronda**; en un joc sense rondes, la partida |
+| `matchWon` | 0/1 (buida si no se sap) | el bàndol (equip) de la fila va guanyar **la partida**; buida si l'enregistrament no mostra el final |
+| `round` | nombre enter, des d'1 | la ronda a què pertany la fila; 1 durant tota una partida en un joc per partides |
+| `roundEndReason` | text | com va acabar la ronda (en un joc per partides, la partida), amb les paraules de sota |
+
+`won` i `matchWon` són del bàndol de la fila: les files d'un jugador T porten el resultat del bàndol T, les d'una unitat d'IA el del seu equip; les files que no pertanyen a cap bàndol les deixen buides. Un bàndol que canvia a la mitja part conserva el seu propi `matchWon` i pren el `won` de cada ronda tal com la va jugar. Un empat és 0 per als dos bàndols.
+
+Els motius de final, compartits per tots els jocs perquè un sol filtre funcioni en tots (la paraula pròpia d'un joc s'hi fa correspondre quan es pot, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Significat | Jocs |
+|---|---|---|
+| `elimination` | tots els jugadors d'un bàndol fora | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | la bomba (spike, l'objectiu del desactivador) va esclatar | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | la bomba (spike) desactivada | CS2, Valorant, Rainbow Six Siege |
+| `time` | el rellotge de la ronda es va acabar; War Thunder: decidida amb tiquets als dos bàndols | tots |
+| `surrender` | un bàndol es va rendir | CS2, Valorant, Rainbow Six Siege |
+| `draw` | cap guanyador | CS2 |
+| `objective` | un objectiu pres o mantingut (ostatge extret, zona assegurada) | Rainbow Six Siege |
+| `capture` | sense tiquets mentre el guanyador mantenia zones de captura | War Thunder |
+| `tickets` | tiquets perduts per baixes | War Thunder |
+| `destruction` | els últims vehicles perduts alhora, ningú no queda per reaparèixer | War Thunder |
+| `other` | qualsevol altra cosa | |
+
+Anomena-les també a la llista `extra` de les pistes `heat3d`, com qualsevol altra columna. Els noms de columna `win`, `round_won`, `match_won`, `end_reason` i `win_reason` es llegeixen com aquestes mateixes columnes.
 
 ## Les pistes `heat3d` {#the-heat3d-hints}
 

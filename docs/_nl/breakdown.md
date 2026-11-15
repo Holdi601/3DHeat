@@ -4,9 +4,9 @@ parent: "Filters en hulpmiddelen"
 nav_order: 7
 lang: "nl"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Uitsplitsing: wie en wat doet het waar het beste
@@ -91,6 +91,6 @@ Een converter voegt een factor toe door zijn kolom te benoemen:
 | vlaggen van uitrusting die al gangbaar zijn (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | aan zolang het niet nul is |
 | `ammoType`, `shellType`, `ammoName` | de laatst afgevuurde munitie |
 
-Resultaten: een kolom `won` met 0/1 (de kant van de rij won de ronde of match) en een kolom `round`. Geld: `earn_<valuta>` en `cost_<soort>_<valuta>`; een inkomen per soort alleen (`earn_round_cs2`, de exacte rondebeloningen van een converter) vervangt alleen het inkomen van het kostenmodel voor die soort (`round` dekt ook plantingen en ontmantelingen), en het model prijst de rest.
+Resultaten: een kolom `won` met 0/1 (de kant van de rij won de ronde of match) en een kolom `round`, de [uitslagkolommen](data-formats.md#outcome-columns); als een bestand zowel `won` als `matchWon` heeft, telt *Winst %* rondes. Geld: `earn_<valuta>` en `cost_<soort>_<valuta>`; een inkomen per soort alleen (`earn_round_cs2`, de exacte rondebeloningen van een converter) vervangt alleen het inkomen van het kostenmodel voor die soort (`round` dekt ook plantingen en ontmantelingen), en het model prijst de rest.
 
 De koppeling laadt deze kolommen zelf, naast de eigen lijst van het bestand: elke `state_*`-, `active_*`-, `won`-, `round`- en lijstkolom, behalve die welke de statistiek van een Parquet-bestand als één waarde overal toont (elke geladen kolom kost 4 bytes per rij).

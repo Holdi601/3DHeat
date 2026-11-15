@@ -3,9 +3,9 @@ title: "Tietomuotojen viite"
 nav_order: 19
 lang: "fi"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Tietomuotojen viite
@@ -93,6 +93,37 @@ Sijainti-, aika- tai katsesarake, jossa on muuta kuin numero, puretaan puuttuvak
 | Suodatinsarake, *luokka* | mikä tahansa; sanakirjakoodattu | ei | 32-bittinen tunniste | Enintään 4 096 arvoa, muuten saraketta ei säilytetä. |
 
 Parquet-sarake `TIMESTAMP`, joka on säilytetty suodatinsarakkeena, on *alue* epookin millisekunteja - liukusäädin, ei lista.
+
+## Tulossarakkeet {#outcome-columns}
+
+Kuka voitti, jokaisella rivillä, jotta paikkaa, reittiä tai siirtoa voidaan arvioida sen mukaan, kuinka usein sen puoli lopulta voitti ([Voittojen osuus](win-rate.md)). Katselin säilyttää nämä sarakkeet itse, luettelee ne ensimmäisinä [suodattimissa](filters.md) katselimen kielellä ja lukee ne [voittokartassa](win-rate.md), [erittelyssä](breakdown.md) ja [tilavuuksien tilastoissa](volumes.md#statistics). Eräpohjaisen pelin (CS2, Valorant, Rainbow Six Siege) tai ottelupohjaisen pelin (War Thunder) muunnin kirjoittaa kaikki neljä:
+
+| Sarake | Tyyppi | Merkitys |
+|---|---|---|
+| `won` | 0/1 (tyhjä, jos tuntematon) | rivin puoli (joukkue) voitti **erän**; pelissä, jossa ei ole eriä, ottelun |
+| `matchWon` | 0/1 (tyhjä, jos tuntematon) | rivin puoli (joukkue) voitti **ottelun**; tyhjä, jos tallenne ei näytä loppua |
+| `round` | kokonaisluku, alkaen 1:stä | erä, johon rivi kuuluu; 1 koko ottelupohjaisen pelin ajan |
+| `roundEndReason` | teksti | miten erä päättyi (ottelupohjaisessa pelissä ottelu), alla olevin sanoin |
+
+`won` ja `matchWon` ovat rivin puolen: T-pelaajan riveillä on T-puolen tulos, tekoälyyksikön riveillä sen joukkueen tulos; riveillä, jotka eivät kuulu millekään puolelle, ne jäävät tyhjiksi. Puoliajalla vaihtava puoli pitää oman `matchWon`-arvonsa ja ottaa kunkin erän `won`-arvon sen mukaan, miten se pelasi sen. Tasapeli on 0 molemmille puolille.
+
+Päättymissyyt ovat yhteiset kaikille peleille, joten yksi suodatin toimii kaikissa (pelin oma sana yhdistetään niihin, kun mahdollista, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Merkitys | Pelit |
+|---|---|---|
+| `elimination` | toisen puolen kaikki pelaajat poissa | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | pommi (spike, purkajan kohde) räjähti | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | pommi (spike) purettiin | CS2, Valorant, Rainbow Six Siege |
+| `time` | erän kello loppui; War Thunder: ratkaistu, kun kummallakin puolella oli pisteitä jäljellä | kaikki |
+| `surrender` | puoli luovutti | CS2, Valorant, Rainbow Six Siege |
+| `draw` | ei voittajaa | CS2 |
+| `objective` | tavoite vallattu tai pidetty (panttivanki pelastettu, alue varmistettu) | Rainbow Six Siege |
+| `capture` | pisteet valuivat loppuun, kun voittaja piti valtausalueita | War Thunder |
+| `tickets` | pisteet menetetty tuhoissa | War Thunder |
+| `destruction` | viimeiset ajoneuvot menetetty kerralla, kukaan ei voi enää syntyä | War Thunder |
+| `other` | kaikki muu | |
+
+Mainitse ne myös `heat3d`-vihjeiden `extra`-luettelossa, kuten minkä tahansa muun sarakkeen. Sarakenimet `win`, `round_won`, `match_won`, `end_reason` ja `win_reason` luetaan samoina sarakkeina.
 
 ## `heat3d`-vihjeet {#the-heat3d-hints}
 

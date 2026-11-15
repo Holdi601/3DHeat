@@ -4,9 +4,9 @@ parent: "Filteren a Werkzeich"
 nav_order: 6
 lang: "lb"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Volumen a Verglach
@@ -63,6 +63,7 @@ De GPU-Filter huet bis zu 8 Volumen mat insgesamt 64 Ëmrësspunkten; e "!" mark
 De Bereich **Statistiken** follegt de Filteren, dem Zäitfënster an de verstoppte Gruppen. *Gewielt* weist dat gewielte Volumen, *Alles vergläichen* stellt all Volumen niewenee. Et weist:
 
 - **Zeilen dobannen (gewisen)** an **Zeilen dobannen (all Daten)**, **Spiller**, **Teams**, **Matcher**, **Zäit dobannen**, **Androen / Ausgäng**, **Spëtzewäermt**, **Mëttel Wäermt**, **Volume / Grondfläch** an en Histogramm **Wéini**;
+- **Gewannquot**, wou d'Daten soen, wien gewonnen huet ([Resultatspalten](data-formats.md#outcome-columns)): vun de Ronne mat engem Spiller dobannen, d'Ronn vun all Spiller eemol gezielt, den Undeel, deen hir Säit gewonnen huet - mat 4 Ronnen zur Quot iwwer alles Gewisent gezunn, wéi d'[Opschlësselung](breakdown.md) et mécht - mat de gewonnenen a gespillte Ronnen an där Gesamtquot;
 - pro Kolonn: Kategorien mat **Lift** (Undeel dobannen geteelt duerch den Undeel an allen gewisenen Daten), a Zuelen mat Beräich, Median a den 5.-95.-Perzentilen.
 
 **Statistiken als CSV / JSON** späicheren si. **Daten dobannen exportéieren** schreift d'Zeilen dobannen als CSV oder Parquet (*Nëmmen d'gewisen Zeilen* ass standardméisseg un), ee Volumen oder all, mat enger Kolonn, déi seet, zu welchem Volumen all Zeil gehéiert.

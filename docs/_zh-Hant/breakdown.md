@@ -4,9 +4,9 @@ parent: "篩選與工具"
 nav_order: 7
 lang: "zh-Hant"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 明細：誰與什麼在何處表現最好
@@ -91,6 +91,6 @@ outdated: true
 | 已常見的裝備旗標（`helmet`、`defuser`、`armor`、`scoped`、`airborne`、`duck`、`flashed`……） | 非零時開啟 |
 | `ammoType`、`shellType`、`ammoName` | 最後發射的彈藥 |
 
-結果：一個 0/1 的 `won` 欄位（該列所屬的一方贏得回合或對戰），以及一個 `round` 欄位。金錢：`earn_<currency>` 與 `cost_<kind>_<currency>`；僅以類型計算的收入（`earn_round_cs2`，即轉換器精確的回合獎勵）只會取代該類型的成本模型收入（`round` 也涵蓋安裝與拆除），其餘部分仍由模型計價。
+結果：一個 0/1 的 `won` 欄位（該列所屬的一方贏得回合或對戰），以及一個 `round` 欄位 - 即 [結果欄位](data-formats.md#outcome-columns)；檔案同時有 `won` 和 `matchWon` 時，*勝率 %* 以回合計數。金錢：`earn_<currency>` 與 `cost_<kind>_<currency>`；僅以類型計算的收入（`earn_round_cs2`，即轉換器精確的回合獎勵）只會取代該類型的成本模型收入（`round` 也涵蓋安裝與拆除），其餘部分仍由模型計價。
 
 此對應會連同檔案自己的清單，自行載入這些欄位：每個 `state_*`、`active_*`、`won`、`round` 與清單欄位，但若 Parquet 檔案的統計顯示某欄位在整個檔案中只有一個數值，則不載入（每個已載入的欄位每列佔 4 個位元組）。

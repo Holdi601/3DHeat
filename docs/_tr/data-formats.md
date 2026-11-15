@@ -3,9 +3,9 @@ title: "Veri biçimleri başvurusu"
 nav_order: 19
 lang: "tr"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Veri biçimleri başvurusu
@@ -93,6 +93,37 @@ Sayı olmayan bir değer içeren konum, zaman ya da bakış sütunu eksik sayıl
 | Süzgeç sütunu, *kategori* | herhangi; sözlük kodlamalı | hayır | 32-bit kimlik | En fazla 4.096 değer, yoksa sütun tutulmaz. |
 
 Süzgeç sütunu olarak tutulan bir Parquet `TIMESTAMP` sütunu, epoch milisaniyelerinin bir *aralığı*dır: bir liste değil, bir kaydırıcı.
+
+## Sonuç sütunları {#outcome-columns}
+
+Kimin kazandığı, her satırda; böylece bir yer, bir rota ya da bir hamle, tarafının ardından ne sıklıkla kazandığına göre değerlendirilebilir ([Kazanma oranı](win-rate.md)). Görüntüleyici bu sütunları kendiliğinden tutar, [filtrelerde](filters.md) görüntüleyicinin dilinde ilk sırada listeler, ve [kazanma oranı haritasında](win-rate.md), [dökümde](breakdown.md) ve [hacim istatistiklerinde](volumes.md#statistics) okur. Raunt tabanlı bir oyun (CS2, Valorant, Rainbow Six Siege) ya da maç tabanlı bir oyun (War Thunder) için bir dönüştürücü dördünü de yazar:
+
+| Sütun | Tür | Anlam |
+|---|---|---|
+| `won` | 0/1 (bilinmeyen yerde boş) | satırın tarafı (takımı) **raundu** kazandı; rauntsuz bir oyunda maçı |
+| `matchWon` | 0/1 (bilinmeyen yerde boş) | satırın tarafı (takımı) **maçı** kazandı; kayıt sonu göstermiyorsa boş |
+| `round` | tam sayı, 1'den başlar | satırın ait olduğu raunt; maç tabanlı bir oyunda baştan sona 1 |
+| `roundEndReason` | metin | raundun nasıl bittiği (maç tabanlı bir oyunda maçın), aşağıdaki sözcüklerle |
+
+`won` ve `matchWon` satırın tarafına aittir: bir T oyuncusunun satırları T tarafının sonucunu, bir yapay zekâ biriminin satırları takımının sonucunu taşır; hiçbir tarafa ait olmayan satırlarda boş kalırlar. Devre arasında taraf değiştiren bir taraf kendi `matchWon` değerini korur ve her raundun `won` değerini oynadığı gibi alır. Beraberlik iki taraf için de 0'dır.
+
+Bitiş nedenleri her oyunda ortaktır, böylece tek bir filtre hepsinde çalışır (bir oyunun kendi sözcüğü mümkün olduğunda eşlenir, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Anlam | Oyunlar |
+|---|---|---|
+| `elimination` | bir tarafın tüm oyuncuları oyun dışı | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | bomba (spike, imha edenin hedefi) patladı | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | bomba (spike) imha edildi | CS2, Valorant, Rainbow Six Siege |
+| `time` | raunt saati doldu; War Thunder: iki tarafın da bileti kalmışken karara bağlandı | tümü |
+| `surrender` | bir taraf pes etti | CS2, Valorant, Rainbow Six Siege |
+| `draw` | kazanan yok | CS2 |
+| `objective` | bir hedef alındı ya da tutuldu (rehine çıkarıldı, alan güvenceye alındı) | Rainbow Six Siege |
+| `capture` | kazanan ele geçirme bölgelerini tutarken biletler tükendi | War Thunder |
+| `tickets` | öldürmeler yüzünden biletler kaybedildi | War Thunder |
+| `destruction` | son araçlar bir anda kaybedildi, yeniden doğacak kimse kalmadı | War Thunder |
+| `other` | başka her şey | |
+
+Bunları `heat3d` ipuçlarının `extra` listesinde de, diğer her sütun gibi adlandırın. `win`, `round_won`, `match_won`, `end_reason` ve `win_reason` sütun adları aynı sütunlar olarak okunur.
 
 ## `heat3d` ipuçları {#the-heat3d-hints}
 

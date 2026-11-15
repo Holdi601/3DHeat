@@ -4,9 +4,9 @@ parent: "Filtri in orodja"
 nav_order: 7
 lang: "sl"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Razčlenitev: kdo in kaj je najboljši kje
@@ -91,6 +91,6 @@ Pretvornik doda dejavnik tako, da poimenuje njegov stolpec:
 | zastavice opreme, ki so že pogoste (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed` ...) | vklopljeno, dokler ni nič |
 | `ammoType`, `shellType`, `ammoName` | zadnji izstreljeni naboj |
 
-Rezultati: stolpec `won` z 0/1 (stran vrstice je zmagala v rundi ali tekmi) in stolpec `round`. Denar: `earn_<valuta>` in `cost_<vrsta>_<valuta>`; prihodek po vrsti sam (`earn_round_cs2`, natančne nagrade za rundo iz pretvornika) nadomesti samo prihodek tega tipa v modelu stroškov (`round` zajema tudi postavitve in razminiranja), model pa še vedno oceni ostalo.
+Rezultati: stolpec `won` z 0/1 (stran vrstice je zmagala v rundi ali tekmi) in stolpec `round` - [stolpci izida](data-formats.md#outcome-columns); kjer ima datoteka `won` in `matchWon`, *Zmage %* šteje kroge. Denar: `earn_<valuta>` in `cost_<vrsta>_<valuta>`; prihodek po vrsti sam (`earn_round_cs2`, natančne nagrade za rundo iz pretvornika) nadomesti samo prihodek tega tipa v modelu stroškov (`round` zajema tudi postavitve in razminiranja), model pa še vedno oceni ostalo.
 
 Preslikava naloži te stolpce sama poleg lastnega seznama datoteke: vsak `state_*`, `active_*`, `won`, `round` in seznamski stolpec, razen tistih, ki jih statistika datoteke Parquet pokaže kot enako vrednost skozi vse (vsak naložen stolpec je 4 bajte na vrstico).

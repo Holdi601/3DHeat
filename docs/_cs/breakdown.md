@@ -4,9 +4,9 @@ parent: "Filtry a nástroje"
 nav_order: 7
 lang: "cs"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Rozpis: kdo a co si v kterém místě vede nejlépe
@@ -91,6 +91,6 @@ Převodník přidá faktor tím, že pojmenuje jeho sloupec:
 | příznaky výbavy, které jsou už běžné (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | zapnuto, dokud je nenulové |
 | `ammoType`, `shellType`, `ammoName` | náboj, který padl naposledy |
 
-Výsledky: sloupec `won` s 0/1 (strana řádku vyhrála kolo nebo zápas) a sloupec `round`. Peníze: `earn_<měna>` a `cost_<druh>_<měna>`; příjem jen podle druhu (`earn_round_cs2`, přesné odměny za kolo od převodníku) nahradí jen odhad příjmu daného druhu z modelu nákladů (`round` pokrývá i zasazení a odzbrojení) a model ocení zbytek.
+Výsledky: sloupec `won` s 0/1 (strana řádku vyhrála kolo nebo zápas) a sloupec `round` – [sloupce výsledku](data-formats.md#outcome-columns); kde má soubor `won` i `matchWon`, počítá *Výhry %* kola. Peníze: `earn_<měna>` a `cost_<druh>_<měna>`; příjem jen podle druhu (`earn_round_cs2`, přesné odměny za kolo od převodníku) nahradí jen odhad příjmu daného druhu z modelu nákladů (`round` pokrývá i zasazení a odzbrojení) a model ocení zbytek.
 
 Mapování tyto sloupce načte samo vedle seznamu sloupců souboru: každý `state_*`, `active_*`, `won`, `round` a seznamový sloupec, kromě těch, které statistiky souboru Parquet ukazují jako jednu hodnotu v celém průběhu (každý načtený sloupec stojí 4 bajty na řádek).

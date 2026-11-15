@@ -4,9 +4,9 @@ parent: "Filtrat dhe mjetet"
 nav_order: 6
 lang: "sq"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Vëllime dhe krahasimi
@@ -63,6 +63,7 @@ Filtri i GPU merr deri në 8 vëllime me 64 pika konturi gjithsej; një "!" shë
 Zona **Statistikat** ndjek filtrat, dritaren kohore dhe grupet e fshehura. *Të zgjedhurat* tregon vëllimin e zgjedhur, *Krahaso të gjitha* vendos çdo vëllim njëra pranë tjetrës. Ajo tregon:
 
 - **Rreshta brenda (të shfaqur)** dhe **Rreshta brenda (të gjitha të dhënat)**, **Lojtarë**, **Skuadra**, **Ndeshje**, **Koha brenda**, **Hyrje / dalje**, **Pika e nxehtësisë**, **Nxehtësia mesatare**, **Vëllimi / gjurma** dhe një histogram **Kur**;
+- **Shkalla e fitoreve**, ku të dhënat tregojnë kush fitoi ([kolonat e rezultatit](data-formats.md#outcome-columns)): nga raundet me një lojtar brenda, me raundin e çdo lojtari të numëruar një herë, pjesa që fitoi pala e tij - e tërhequr drejt shkallës në gjithçka që shfaqet me 4 raunde, siç bën [zbërthimi](breakdown.md) - me raundet e fituara dhe të luajtura dhe atë shkallë të përgjithshme;
 - për çdo kolonë: kategoritë me **Lift** (pjesa brenda pjesëtuar me pjesën në të gjitha të dhënat e shfaqura), dhe numrat me intervalin, medianën dhe përqindjet e 5-të deri në 95-tën.
 
 **Statistikat si CSV / JSON** i ruan. **Eksporto të dhënat brenda** shkruan rreshtat brenda si CSV ose Parquet (*Vetëm rreshtat e shfaqur* e ndezur si parazgjedhje), një vëllim ose të gjitha, me një kolonë që tregon cili vëllim e mban secilin rresht.

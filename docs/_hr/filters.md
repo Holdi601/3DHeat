@@ -4,9 +4,9 @@ parent: "Filtri i alati"
 nav_order: 1
 lang: "hr"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtri
@@ -33,6 +33,8 @@ Pri učitavanju preglednik sam izrađuje četiri stupca i navodi ih **prvo**, s 
 | **Igrač ili UI** | Igrač, UI | stupac `ai`, `is_ai`, `bot` ili `actor`; inače `is_player` / `human`; inače id računa (`user_id`, `steam_id`; prazno ili 0 je UI); za Tacview snimke, ima li objekt pilota |
 | **Klasa vozila** | 17 klasa: Lovac, Jurišni zrakoplov, Bombarder, Ostali zrakoplovi, Helikopter, Tenk, Oklopno vozilo, Protuzračna obrana, Topništvo, Kamion / auto, Brod, Podmornica, Pješaštvo, Oružje, Mamac, Građevina, Ostalo | ime vozila ili jedinice (uspoređeno s [katalogom figura](figures.md)) i stupci tipa |
 | **Klasa cilja** | iste klase | vozilo druge strane (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Odmah nakon njih dolaze [stupci ishoda](data-formats.md#outcome-columns), ako ih podaci imaju: **Ishod runde** i **Ishod meča** (*Bilo koji*, *Pobjeda*, *Poraz*) te **Kako je runda završila**, s vrijednostima na vašem jeziku. Filtrirajte po njima ili po njima podijelite toplinu kao [kartu postotka pobjeda](win-rate.md).
 
 Navode se samo vrste koje se pojavljuju. Stupci vrijednosti (`cost_*`, `earn_*`, `net_*` i *Izvor cijene*, vidi [Ponderiranje vrijednosti](value-weighting.md)) filtriraju se kao i svaki brojčani stupac: na primjer, odznačite *estimate* pod *Izvor cijene* da zadržite samo redke s cijenom.
 

@@ -4,9 +4,9 @@ parent: "필터와 도구"
 nav_order: 1
 lang: "ko"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 필터
@@ -33,6 +33,8 @@ outdated: true
 | **플레이어 또는 AI** | 플레이어, AI | `ai`, `is_ai`, `bot` 또는 `actor` 열. 없으면 `is_player` / `human`. 그것도 없으면 계정 id(`user_id`, `steam_id`, 비어 있거나 0이면 AI). Tacview 기록은 그 객체에 조종사가 있는지 봅니다. |
 | **차량 등급** | 17가지: 전투기, 공격기, 폭격기, 기타 항공기, 헬리콥터, 전차, 장갑차, 대공, 포병, 트럭 / 차, 함선, 잠수함, 보병, 무기, 기만, 구조물, 기타 | 차량 또는 유닛 이름([피규어 카탈로그](figures.md)와 대조)과 종류 열. |
 | **목표 등급** | 같은 등급 | 상대 쪽 차량(`other_vehicle`, `target_vehicle`, `victim_type` ...). |
+
+그 바로 뒤에는 데이터에 있다면 [결과 열](data-formats.md#outcome-columns)이 옵니다: **라운드 결과**와 **경기 결과**(*전체*, *승리*, *패배*), 그리고 **라운드 종료 방식**이며, 값은 여러분의 언어로 표시됩니다. 이 열로 필터하거나, 이 열로 히트를 나누어 [승률 지도](win-rate.md)로 볼 수 있습니다.
 
 실제로 나타난 종류만 나열합니다. 값 열(`cost_*`, `earn_*`, `net_*`와 *비용 출처*, [값 가중치](value-weighting.md) 참고)도 다른 숫자 열과 같게 필터링할 수 있습니다. 예를 들어 *비용 출처*에서 *추정*을 해제하면 가격이 매겨진 행만 남습니다.
 

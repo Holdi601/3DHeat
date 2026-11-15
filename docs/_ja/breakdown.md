@@ -4,9 +4,9 @@ parent: "フィルターとツール"
 nav_order: 7
 lang: "ja"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 内訳: どこで誰が何を最もうまくやったか
@@ -91,6 +91,6 @@ outdated: true
 | すでに一般的な装備のフラグ（`helmet`、`defuser`、`armor`、`scoped`、`airborne`、`duck`、`flashed` など） | ゼロ以外の間オン |
 | `ammoType`、`shellType`、`ammoName` | 最後に発射された弾 |
 
-結果: 0/1 の `won` の列（その行の側がラウンドまたは試合に勝った）と、`round` の列。お金: `earn_<currency>` と `cost_<kind>_<currency>`。種類だけの収入（`earn_round_cs2`、コンバーターの正確なラウンド報酬）は、その種類の収入についてのみコストモデルの収入を置き換えます（`round` は設置や解除も含みます）。残りはモデルが値付けします。
+結果: 0/1 の `won` の列（その行の側がラウンドまたは試合に勝った）と、`round` の列。これが[結果の列](data-formats.md#outcome-columns)です。ファイルに `won` と `matchWon` の両方がある場合、*勝率 %* はラウンドを数えます。お金: `earn_<currency>` と `cost_<kind>_<currency>`。種類だけの収入（`earn_round_cs2`、コンバーターの正確なラウンド報酬）は、その種類の収入についてのみコストモデルの収入を置き換えます（`round` は設置や解除も含みます）。残りはモデルが値付けします。
 
 マッピングは、ファイル自身のリストと並んで、これらの列を自分で読み込みます。すべての `state_*`、`active_*`、`won`、`round`、およびリストの列が対象です。ただし、Parquet ファイルの統計がすべての行で1つの値しか持たないことを示す列は除きます（読み込まれた各列は、行あたり 4 バイトです）。

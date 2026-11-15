@@ -4,9 +4,9 @@ parent: "Hitastillingar"
 nav_order: 5
 lang: "is"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Mismunur
@@ -86,6 +86,10 @@ Spjaldið vísar aðeins á [Liðalistann](teams-list.md), þar sem hver hópur 
 | **Skipta við miðpunktinn** | Setur + á [lágmark, miðju] og − á [miðju, hámark] - það sem valið dálksins gerir líka. |
 
 Gildi í báðum bilum telst +. Bilin þurfa ekki að þekja dálkinn; gildi í hvorugu eru sleppt. *Fyrstu tvær mínúturnar gegn síðustu tveimur* er bilaskipting á tímalíkum dálki.
+
+## Hlutur +: sigurhlutfallskortið {#share-of--the-win-rate-map}
+
+**Mismunur** / **Hlutur +** efst í spjaldinu velur hvað er teiknað. *Hlutur +* litar hvern stað eftir hlut +-hliðarinnar af röðunum á hvorri hlið þar, borið saman við þann hlut yfir allt sem er sýnt: heitt fyrir ofan hann, kalt fyrir neðan, ekkert þar sem hann er sá sami, og ekkert þar sem staður hefur of fáar raðir. Með unnu loturnar á + og þær töpuðu á − er þetta sigurhlutfallskort; **Sigurhlutfall í lotum** og **Sigurhlutfall í leikjum** setja það upp með einu ýti þar sem gögnin hafa [úrslitadálka](data-formats.md#outcome-columns). Sjá [Sigurhlutfall](win-rate.md).
 
 ## Litir {#colours}
 

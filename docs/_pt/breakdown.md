@@ -4,9 +4,9 @@ parent: "Filtros e ferramentas"
 nav_order: 7
 lang: "pt"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -92,6 +92,6 @@ Um conversor acrescenta um fator dando nome à sua coluna:
 | marcadores de equipamento já comuns (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | ligado enquanto for diferente de zero |
 | `ammoType`, `shellType`, `ammoName` | a munição disparada por último |
 
-Resultados: uma coluna `won` com 0/1 (o lado da linha ganhou a ronda ou a partida) e uma coluna `round`. Dinheiro: `earn_<moeda>` e `cost_<tipo>_<moeda>`; um rendimento só por tipo (`earn_round_cs2`, as recompensas exatas por ronda de um conversor) substitui apenas o rendimento do modelo de custos desse tipo (`round` também cobre plantações e desativações), e o modelo continua a calcular o resto.
+Resultados: uma coluna `won` com 0/1 (o lado da linha ganhou a ronda ou a partida) e uma coluna `round`, as [colunas de resultado](data-formats.md#outcome-columns); quando um ficheiro tem `won` e `matchWon`, *Vitórias %* conta rondas. Dinheiro: `earn_<moeda>` e `cost_<tipo>_<moeda>`; um rendimento só por tipo (`earn_round_cs2`, as recompensas exatas por ronda de um conversor) substitui apenas o rendimento do modelo de custos desse tipo (`round` também cobre plantações e desativações), e o modelo continua a calcular o resto.
 
 O mapeamento carrega estas colunas por si, ao lado da lista do próprio ficheiro: cada coluna `state_*`, `active_*`, `won`, `round` e de lista, exceto as que as estatísticas de um ficheiro Parquet mostrem com um só valor em todas as linhas (cada coluna carregada ocupa 4 bytes por linha).

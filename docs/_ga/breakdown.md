@@ -4,9 +4,9 @@ parent: "Scagairí agus uirlisí"
 nav_order: 7
 lang: "ga"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -92,6 +92,6 @@ Cuireann tiontaire fachtóir leis tríd a cholún a ainmniú:
 | bratacha trealaimh atá coitianta cheana (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | ar siúl mar a bhíonn sé neamh-nialach |
 | `ammoType`, `shellType`, `ammoName` | an babhta a lasadh go deireanach |
 
-Torthaí: colún `won` 0/1 (bhuaigh taobh na sraithe an babhta nó an cluiche) agus colún `round`. Airgead: `earn_<airgeadra>` agus `cost_<cineál>_<airgeadra>`; cuireann ioncam de réir cineáil amháin (`earn_round_cs2`, luach cruinn babhta ó thiontaire) in ionad ioncam an tsamhail costais den chineál sin amháin (clúdaíonn `round` plandálacha agus dí-phléascadh freisin), agus priseálann an tsamhail an chuid eile.
+Torthaí: colún `won` 0/1 (bhuaigh taobh na sraithe an babhta nó an cluiche) agus colún `round` - na [colúin toraidh](data-formats.md#outcome-columns); nuair atá `won` agus `matchWon` araon i gcomhad, comhaireann *Buaite %* babhtaí. Airgead: `earn_<airgeadra>` agus `cost_<cineál>_<airgeadra>`; cuireann ioncam de réir cineáil amháin (`earn_round_cs2`, luach cruinn babhta ó thiontaire) in ionad ioncam an tsamhail costais den chineál sin amháin (clúdaíonn `round` plandálacha agus dí-phléascadh freisin), agus priseálann an tsamhail an chuid eile.
 
 Luchtaíonn an mapáil na colúin seo leis féin, i dtaobh liosta chomhaid an chomhaid féin: gach colún `state_*`, `active_*`, `won`, `round` agus liosta, ach amháin iad siúd a léiríonn staitisticí comhaid Parquet nach bhfuil ach luach amháin acu ar fad (is 4 bheart gach colún luchtaithe in aghaidh sraithe).

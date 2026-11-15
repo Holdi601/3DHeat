@@ -3,9 +3,9 @@ title: "Referencia de formatos de datos"
 nav_order: 19
 lang: "es"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Referencia de formatos de datos
@@ -93,6 +93,37 @@ Una columna de posición, tiempo o mirada que contiene algo que no es un número
 | Columna de filtro, *categoría* | cualquiera; codificada por diccionario | no | id de 32 bits | Hasta 4096 valores; si no, la columna no se conserva. |
 
 Una columna `TIMESTAMP` de Parquet usada como columna de filtro es un *rango* de milisegundos desde la época: un deslizador, no una lista.
+
+## Columnas de resultado {#outcome-columns}
+
+Quién ganó, en cada fila. Así se puede juzgar un lugar, una ruta o una jugada por la frecuencia con que su lado ganó después ([Tasa de victoria](win-rate.md)). El visor conserva estas columnas por sí mismo, las muestra primero en los [filtros](filters.md), en el idioma del visor, y las lee en el [mapa de tasa de victoria](win-rate.md), el [desglose](breakdown.md) y las [estadísticas de volumen](volumes.md#statistics). Un conversor para un juego por rondas (CS2, Valorant, Rainbow Six Siege) o por partidas (War Thunder) escribe las cuatro:
+
+| Columna | Tipo | Significado |
+|---|---|---|
+| `won` | 0/1 (vacía si se desconoce) | el lado (equipo) de la fila ganó **la ronda**; en un juego sin rondas, la partida |
+| `matchWon` | 0/1 (vacía si se desconoce) | el lado (equipo) de la fila ganó **la partida**; vacía si la grabación no muestra el final |
+| `round` | número entero, desde 1 | la ronda a la que pertenece la fila; 1 en toda una partida de un juego por partidas |
+| `roundEndReason` | texto | cómo terminó la ronda (en un juego por partidas, la partida), con las palabras de abajo |
+
+`won` y `matchWon` son del lado de la fila: las filas de un jugador T llevan el resultado del lado T, las de una unidad de IA el de su equipo; las filas que no pertenecen a ningún lado las dejan vacías. Un lado que cambia en el descanso conserva su propio `matchWon` y toma el `won` de cada ronda tal como la jugó. Un empate es 0 para ambos lados.
+
+Los motivos de final, comunes a todos los juegos para que un filtro sirva para todos (la palabra propia de un juego se asigna cuando se puede, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Significado | Juegos |
+|---|---|---|
+| `elimination` | todos los jugadores de un lado fuera | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | la bomba (el spike, el objetivo del desactivador) explotó | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | la bomba (el spike) desactivada | CS2, Valorant, Rainbow Six Siege |
+| `time` | se agotó el reloj de la ronda; War Thunder: decidida con tickets restantes en ambos lados | todos |
+| `surrender` | un lado se rindió | CS2, Valorant, Rainbow Six Siege |
+| `draw` | sin ganador | CS2 |
+| `objective` | un objetivo tomado o mantenido (rehén extraído, zona asegurada) | Rainbow Six Siege |
+| `capture` | sin tickets mientras el ganador mantenía zonas de captura | War Thunder |
+| `tickets` | tickets perdidos por bajas | War Thunder |
+| `destruction` | los últimos vehículos perdidos a la vez, nadie más para reaparecer | War Thunder |
+| `other` | cualquier otra cosa | |
+
+Nómbralas también en la lista `extra` de las pistas `heat3d`, como cualquier otra columna. Los nombres de columna `win`, `round_won`, `match_won`, `end_reason` y `win_reason` se leen como las mismas columnas.
 
 ## Las pistas `heat3d` {#the-heat3d-hints}
 

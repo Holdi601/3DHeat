@@ -4,9 +4,9 @@ parent: "Varmemodi"
 nav_order: 5
 lang: "no"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Differanse
@@ -86,6 +86,10 @@ Panelet peker bare på [Lagliste](teams-list.md), der hver gruppe har en knapp *
 | **Del ved midtpunktet** | Setter + til [minimum, midten] og − til [midten, maksimum] – det som også skjer når du velger kolonnen. |
 
 En verdi i begge områdene telles som +. Områdene behøver ikke dekke kolonnen; verdier i ingen av dem utelates. *De to første minuttene mot de to siste* er en områdedeling på en tidslignende kolonne.
+
+## Andel +: seiersandelskartet {#share-of--the-win-rate-map}
+
+**Differanse** / **Andel +** øverst i panelet velger hva som tegnes. *Andel +* farger hvert sted etter +-sidens andel av radene på begge sider der, sett mot den andelen over alt som vises: varmt over den, kaldt under, ingenting der den er den samme, og ingenting der et sted har for få rader. Med de vunne rundene på + og de tapte på − er det et seiersandelskart; **Seiersandel per runde** og **Seiersandel per kamp** setter det opp med ett trykk der dataene har [resultatkolonner](data-formats.md#outcome-columns). Se [Seiersandel](win-rate.md).
 
 ## Farger {#colours}
 

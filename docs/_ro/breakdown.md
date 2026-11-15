@@ -4,9 +4,9 @@ parent: "Filtre și instrumente"
 nav_order: 7
 lang: "ro"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Defalcare: cine și ce face cel mai bine, unde
@@ -91,6 +91,6 @@ Un convertor adaugă un factor numindu-i coloana:
 | indicatoare de echipament deja comune (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | activ cât timp nu este zero |
 | `ammoType`, `shellType`, `ammoName` | runda trasă ultima oară |
 
-Rezultate: o coloană `won` cu 0/1 (partea rândului a câștigat runda sau meciul) și o coloană `round`. Bani: `earn_<monedă>` și `cost_<fel>_<monedă>`; un venit doar pe fel (`earn_round_cs2`, recompensele exacte de rundă ale unui convertor) înlocuiește doar venitul modelului de cost de acel fel (`round` acoperă și plantările și dezamorsările), iar modelul prețuiește restul.
+Rezultate: o coloană `won` cu 0/1 (partea rândului a câștigat runda sau meciul) și o coloană `round` - [coloanele de rezultat](data-formats.md#outcome-columns); unde un fișier are și `won`, și `matchWon`, *Victorii %* numără rundele. Bani: `earn_<monedă>` și `cost_<fel>_<monedă>`; un venit doar pe fel (`earn_round_cs2`, recompensele exacte de rundă ale unui convertor) înlocuiește doar venitul modelului de cost de acel fel (`round` acoperă și plantările și dezamorsările), iar modelul prețuiește restul.
 
 Maparea încarcă singură aceste coloane, alături de lista proprie a fișierului: fiecare `state_*`, `active_*`, `won`, `round` și coloană de listă, cu excepția celor pe care statisticile unui fișier Parquet le arată cu o singură valoare pe tot parcursul (fiecare coloană încărcată costă 4 octeți pe rând).

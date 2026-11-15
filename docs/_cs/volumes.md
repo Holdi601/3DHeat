@@ -4,9 +4,9 @@ parent: "Filtry a nástroje"
 nav_order: 6
 lang: "cs"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Objemy a porovnání
@@ -63,6 +63,7 @@ Filtr GPU zvládne nejvýš 8 objemů s 64 body obrysu celkem; objem nad tuto me
 Oblast **Statistiky** se řídí filtry, časovým oknem a skrytými skupinami. *Vybraný* ukazuje vybraný objem, *Porovnat vše* postaví všechny objemy vedle sebe. Ukazuje:
 
 - **Řádky uvnitř (zobrazené)** a **Řádky uvnitř (všechna data)**, **Hráči**, **Týmy**, **Zápasy**, **Čas uvnitř**, **Vstupy / výstupy**, **Špičkové teplo**, **Střední teplo**, **Objem / půdorys** a histogram **Kdy**;
+- **Podíl výher**, pokud data říkají, kdo vyhrál ([sloupce výsledku](data-formats.md#outcome-columns)): z kol s hráčem uvnitř, kde se kolo každého hráče počítá jednou, podíl, který jeho strana vyhrála – tažený o 4 kola k podílu za vše zobrazené, jako to dělá [rozpis](breakdown.md) – s vyhranými a odehranými koly a tímto celkovým podílem;
 - u každého sloupce: kategorie s **Lift** (podíl uvnitř dělený podílem ve všech zobrazených datech), a čísla s rozsahem, mediánem a 5.-95. percentilem.
 
 **Statistiky jako CSV / JSON** je uloží. **Exportovat data uvnitř** zapíše řádky uvnitř jako CSV nebo Parquet (ve výchozím nastavení *Jen zobrazené řádky* zapnuto), jeden objem nebo všechny se sloupcem, který říká, který objem drží který řádek.

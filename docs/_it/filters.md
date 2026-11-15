@@ -4,9 +4,9 @@ parent: "Filtri e strumenti"
 nav_order: 1
 lang: "it"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtri
@@ -33,6 +33,8 @@ All'apertura il visualizzatore ricava quattro colonne proprie e le elenca **per 
 | **Giocatore o IA** | Giocatore, IA | una colonna `ai`, `is_ai`, `bot` o `actor`; altrimenti `is_player` / `human`; altrimenti un id account (`user_id`, `steam_id`; vuoto o 0 è IA); per le registrazioni Tacview, se l'oggetto ha un pilota |
 | **Classe di veicolo** | 17 classi: Caccia, Aereo d'attacco, Bombardiere, Altro aereo, Elicottero, Carro armato, Veicolo corazzato, Difesa aerea, Artiglieria, Camion / auto, Nave, Sottomarino, Fanteria, Arma, Esca, Struttura, Altro | il nome del veicolo o dell'unità (confrontato con il [catalogo delle figure](figures.md)) e le colonne di tipo |
 | **Classe del bersaglio** | le stesse classi | il veicolo dell'altra parte (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Subito dopo vengono le [colonne di esito](data-formats.md#outcome-columns), dove i dati le hanno: **Esito del round** ed **Esito della partita** (*Tutti*, *Vinto*, *Perso*) e **Come è finito il round**, con i valori nella tua lingua. Filtra in base a esse, o suddividi il calore in base a esse come [mappa delle percentuali di vittoria](win-rate.md).
 
 Vengono elencati solo i tipi che compaiono. Le colonne di valore (`cost_*`, `earn_*`, `net_*` e *Fonte del costo*, vedi [Ponderazione dei valori](value-weighting.md)) si filtrano come qualsiasi colonna numerica: per esempio deseleziona *stima* sotto *Fonte del costo* per tenere solo le righe con un prezzo.
 

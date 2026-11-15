@@ -4,9 +4,9 @@ parent: "Síur og verkfæri"
 nav_order: 1
 lang: "is"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -34,6 +34,8 @@ Við hleðslu reiknar skoðarinn út fjóra eigin dálka og skráir þá **fyrst
 | **Leikmaður eða gervigreind** | Leikmaður, AI | dálk `ai`, `is_ai`, `bot` eða `actor`; annars `is_player` / `human`; annars auðkenni reiknings (`user_id`, `steam_id`; tómt eða 0 er AI); fyrir Tacview-upptökur, hvort hluturinn hefur flugmann |
 | **Flokkur farartækis** | 17 flokkar: Orrustuflugvél, Árásarflugvél, Sprengjuflugvél, Önnur loftfar, Þyrla, Skriðdreki, Brynvarið ökutæki, Loftvarnir, Stórskotalið, Vöruflutningabíll / bíll, Skip, Kafbátur, Fótgöngulið, Vopn, Tálbeita, Mannvirki, Annað | heiti farartækisins eða einingarinnar (borið saman við [fígúrusafnið](figures.md)) og gerðardálka |
 | **Flokkur skotmarks** | sömu flokkar | farartæki hinnar hliðarinnar (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Strax á eftir þeim koma [úrslitadálkarnir](data-formats.md#outcome-columns), þar sem gögnin hafa þá: **Úrslit lotu** og **Úrslit leiks** (*Hvað sem er*, *Unnið*, *Tapað*) og **Hvernig lotan endaði**, með gildin á þínu tungumáli. Síaðu eftir þeim, eða skiptu hitanum eftir þeim sem [sigurhlutfallskorti](win-rate.md).
 
 Aðeins þær tegundir sem koma fyrir eru skráðar. Gildisdálkar (`cost_*`, `earn_*`, `net_*` og *Cost source*, sjá [Gildisvigtun](value-weighting.md)) eru síanlegir eins og hver talnadálkur: til dæmis, taktu hakið af *estimate* undir *Cost source* til að halda aðeins línum með verðlagningu.
 

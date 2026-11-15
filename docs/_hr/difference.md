@@ -4,9 +4,9 @@ parent: "Načini topline"
 nav_order: 5
 lang: "hr"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Razlika
@@ -86,6 +86,10 @@ Odabir stupca stavlja njegovu prvu vrijednost na +, a drugu na −. Kad nijedna 
 | **Podijeli na sredini** | Postavlja + na [najmanju, sredina] i − na [sredina, najveća]. To radi i odabir stupca. |
 
 Vrijednost u oba raspona broji se kao +. Rasponi ne moraju pokrivati cijeli stupac. Vrijednosti koje nisu ni u jednom izostavljaju se. *Prve dvije minute protiv zadnje dvije* je podjela po rasponu na stupcu sličnom vremenu.
+
+## Udio +: karta postotka pobjeda {#share-of--the-win-rate-map}
+
+**Razlika** / **Udio +** na vrhu ploče bira što se crta. *Udio +* boji svako mjesto prema udjelu strane + među recima obiju strana na njemu, u odnosu na taj udio u svemu prikazanom: toplo iznad njega, hladno ispod, ništa gdje je isti i ništa gdje mjesto ima premalo redaka. S osvojenim rundama na + i izgubljenima na − to je karta postotka pobjeda; **Postotak pobjeda po rundi** i **Postotak pobjeda po meču** to postavljaju jednim pritiskom kad podaci imaju [stupce ishoda](data-formats.md#outcome-columns). Pogledajte [Postotak pobjeda](win-rate.md).
 
 ## Boje {#colours}
 

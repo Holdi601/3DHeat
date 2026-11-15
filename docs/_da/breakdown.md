@@ -4,9 +4,9 @@ parent: "Filtre og værktøjer"
 nav_order: 7
 lang: "da"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Opdeling: hvem og hvad klarer sig bedst hvor
@@ -91,6 +91,6 @@ En konverter tilføjer en faktor ved at navngive sin kolonne:
 | gear-flag der allerede er almindelige (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | til, mens den ikke er nul |
 | `ammoType`, `shellType`, `ammoName` | den sidst affyrede runde |
 
-Resultater: en `won`-kolonne med 0/1 (rækkens side vandt runden eller kampen) og en `round`-kolonne. Penge: `earn_<valuta>` og `cost_<art>_<valuta>`; en indtægt pr. art alene (`earn_round_cs2`, en konverters præcise rundebelønninger) erstatter kun omkostningsmodellens indtægt af den art (`round` dækker også plantninger og afmontering), og modellen prissætter resten.
+Resultater: en `won`-kolonne med 0/1 (rækkens side vandt runden eller kampen) og en `round`-kolonne - [resultatkolonnerne](data-formats.md#outcome-columns); hvor en fil har både `won` og `matchWon`, tæller *Sejr %* runder. Penge: `earn_<valuta>` og `cost_<art>_<valuta>`; en indtægt pr. art alene (`earn_round_cs2`, en konverters præcise rundebelønninger) erstatter kun omkostningsmodellens indtægt af den art (`round` dækker også plantninger og afmontering), og modellen prissætter resten.
 
 Kortlægningen indlæser disse kolonner selv, ved siden af filens egen liste: hver `state_*`, `active_*`, `won`, `round`- og listekolonne, undtagen dem en Parquet-fils statistik viser holder én værdi igennem (hver indlæst kolonne er 4 byte pr. række).

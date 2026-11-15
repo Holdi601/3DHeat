@@ -4,9 +4,9 @@ parent: "Filter und Werkzeuge"
 nav_order: 7
 lang: "de"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Aufschlüsselung: wer und was an welcher Stelle am besten ist
@@ -91,6 +91,6 @@ Ein Konverter fügt einen Faktor hinzu, indem er seine Spalte benennt:
 | Ausrüstungsmerkmale, die schon üblich sind (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | an, solange ungleich null |
 | `ammoType`, `shellType`, `ammoName` | die zuletzt abgefeuerte Munition |
 
-Ergebnisse: eine Spalte `won` mit 0/1 (die Seite der Zeile hat die Runde oder das Match gewonnen) und eine Spalte `round`. Geld: `earn_<Währung>` und `cost_<Art>_<Währung>`; ein Einkommen nur nach Art (`earn_round_cs2`, die genauen Rundenprämien eines Konverters) ersetzt nur das Einkommensmodell des Kostenmodells für diese Art (`round` umfasst auch Platzieren und Entschärfen), und das Modell bepreist den Rest weiterhin.
+Ergebnisse: eine Spalte `won` mit 0/1 (die Seite der Zeile hat die Runde oder das Match gewonnen) und eine Spalte `round` – die [Ergebnisspalten](data-formats.md#outcome-columns); wo eine Datei sowohl `won` als auch `matchWon` hat, zählt *Siegquote %* Runden. Geld: `earn_<Währung>` und `cost_<Art>_<Währung>`; ein Einkommen nur nach Art (`earn_round_cs2`, die genauen Rundenprämien eines Konverters) ersetzt nur das Einkommensmodell des Kostenmodells für diese Art (`round` umfasst auch Platzieren und Entschärfen), und das Modell bepreist den Rest weiterhin.
 
 Die Zuordnung lädt diese Spalten von selbst, neben der eigenen Liste der Datei: jede Spalte `state_*`, `active_*`, `won`, `round` und jede Listenspalte, außer denen, die die Statistik einer Parquet-Datei als einen einzigen durchgehenden Wert ausweist (jede geladene Spalte kostet 4 Byte pro Zeile).

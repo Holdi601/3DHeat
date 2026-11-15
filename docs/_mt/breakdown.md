@@ -4,9 +4,9 @@ parent: "Filtri u għodod"
 nav_order: 7
 lang: "mt"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Tqassim: min u xi jagħmel l-aħjar fejn
@@ -91,6 +91,6 @@ Konvertitur iżid fattur billi jsemmi l-kolonna tiegħu:
 | flags tat-tagħmir diġà komuni (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | mixgħula waqt li mhux zero |
 | `ammoType`, `shellType`, `ammoName` | l-munizzjon l-aħħar mitfugħ |
 
-Riżultati: kolonna `won` ta' 0/1 (in-naħa tar-ringiela rebħet ir-round jew il-partita) u kolonna `round`. Flus: `earn_<munita>` u `cost_<tip>_<munita>`; dħul għal tip waħdu (`earn_round_cs2`, premjijiet eżatti tar-round tal-konvertitur) jissostitwixxi biss id-dħul tal-mudell tal-ispiża ta' dak it-tip (`round` jkopri wkoll plants u defuses), u l-mudell jipprezza l-bqija.
+Riżultati: kolonna `won` ta' 0/1 (in-naħa tar-ringiela rebħet ir-round jew il-partita) u kolonna `round` - il-[kolonni tar-riżultat](data-formats.md#outcome-columns); fejn fajl ikollu kemm `won` kif ukoll `matchWon`, *Rebħiet %* jgħodd ir-rawnds. Flus: `earn_<munita>` u `cost_<tip>_<munita>`; dħul għal tip waħdu (`earn_round_cs2`, premjijiet eżatti tar-round tal-konvertitur) jissostitwixxi biss id-dħul tal-mudell tal-ispiża ta' dak it-tip (`round` jkopri wkoll plants u defuses), u l-mudell jipprezza l-bqija.
 
 Il-mapping jgħabbi dawn il-kolonni waħdu, flimkien mal-lista tal-fajl stess: kull `state_*`, `active_*`, `won`, `round` u kolonna ta' lista, minbarra dawk li statistika tal-fajl Parquet turi li jżommu valur wieħed matul kollox (kull kolonna mgħobbija tiswa 4 bytes għal kull ringiela).

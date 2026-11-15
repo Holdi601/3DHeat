@@ -4,9 +4,9 @@ parent: "Hëtztmodi"
 nav_order: 5
 lang: "lb"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Ënnerscheed
@@ -86,6 +86,10 @@ Wann Dir d'Kolonn wielt, kënnt hire éischte Wäert op + an hire zweeten op −
 | **An der Mëtt opdeelen** | Setzt + op [Minimum, Mëtt] an − op [Mëtt, Maximum] - dat ass och, wat d'Wiel vun der Kolonn mécht. |
 
 E Wäert an béiden Beräicher zielt als +. D'Beräicher musse d'Kolonn net ofdecken; Wäerter an keinem falen ewech. *Déi éischt zwou Minutten géint déi lescht zwou* ass eng Beräich-Opdeelung op enger zäitähnlecher Kolonn.
+
+## Undeel vu +: d'Gewannquot-Kaart {#share-of--the-win-rate-map}
+
+**Ënnerscheed** / **Undeel vu +** uewen am Panel wielt, wat gezeechent gëtt. *Undeel vu +* fierft all Plaz no dem Undeel vun der +-Säit un den Zeile vu béide Säiten do, verglach mat deem Undeel iwwer alles Gewisent: waarm driwwer, kal drënner, näischt, wou en gläich ass, an näischt, wou eng Plaz ze wéineg Zeilen huet. Mat de gewonnene Ronnen op + an de verluerenen op − ass et eng Gewannquot-Kaart; **Gewannquot pro Ronn** a **Gewannquot pro Match** stellen dat mat engem Klick an, wou d'Daten [Resultatspalten](data-formats.md#outcome-columns) hunn. Kuckt [Gewannquot](win-rate.md).
 
 ## Faarwen {#colours}
 

@@ -4,9 +4,9 @@ parent: "Modhanna teasa"
 nav_order: 5
 lang: "ga"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Difríocht
@@ -86,6 +86,10 @@ Nuair a roghnaítear an colún cuirtear a chéad luach ar + agus a dara luach ar
 | **Scoilt ag an lárphointe** | Socraíonn + go [íosmhéid, lár] agus − go [lár, uasmhéid] - is é sin freisin a dhéanann an colún a roghnú. |
 
 Má tá luach sa dá raon, is + a chomhaireofar é. Ní gá go gclúdaíonn na raonta an colún; fágtar as an toradh luachanna nach bhfuil in aon cheann. *The first two minutes against the last two* is scoilt raoin ar cholún amhail ama.
+
+## Sciar +: an léarscáil ráta buaite {#share-of--the-win-rate-map}
+
+Roghnaíonn **Difríocht** / **Sciar +** ag barr an phainéil cad a tharraingítear. Dathaíonn *Sciar +* gach áit de réir sciar an taobh + de na sraitheanna ar an dá thaobh ann, i gcoinne an sciar sin thar gach rud a thaispeántar: te os a chionn, fuar faoina bhun, gan dath nuair atá sé mar an gcéanna, agus gan dath nuair atá ró-bheagán sraitheanna ag áit. Leis na babhtaí buaite ar + agus na cinn caillte ar −, is léarscáil ráta buaite í; socraíonn **Ráta buaite in aghaidh an bhabhta** agus **Ráta buaite in aghaidh an chluiche** é sin le brú amháin nuair atá [colúin toraidh](data-formats.md#outcome-columns) sna sonraí. Féach [Ráta buaite](win-rate.md).
 
 ## Dathanna {#colours}
 

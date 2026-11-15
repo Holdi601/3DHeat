@@ -4,9 +4,9 @@ parent: "Filtrai ir įrankiai"
 nav_order: 7
 lang: "lt"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Išskaidymas: kas ir ką geriausiai daro kur
@@ -91,6 +91,6 @@ Konverteris prideda veiksnį pavadindamas jo stulpelį:
 | jau įprasti įrangos žymekliai (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | įjungti, kol nėra nulio |
 | `ammoType`, `shellType`, `ammoName` | paskutinis iššautas sviedinys |
 
-Rezultatai: stulpelis `won` su 0/1 (eilutės pusė laimėjo raundą ar rungtynes) ir stulpelis `round`. Pinigai: `earn_<valiuta>` ir `cost_<rūšis>_<valiuta>`; pajamos tik pagal rūšį (`earn_round_cs2`, konverterio tikslios raundo premijos) pakeičia tik tos rūšies pajamas kainos modelyje (`round` apima ir sprogdinimus bei išminavimus), o modelis vis dar apskaičiuoja kitas.
+Rezultatai: stulpelis `won` su 0/1 (eilutės pusė laimėjo raundą ar rungtynes) ir stulpelis `round` - [rezultato stulpeliai](data-formats.md#outcome-columns); kai faile yra ir `won`, ir `matchWon`, *Pergalės %* skaičiuoja raundus. Pinigai: `earn_<valiuta>` ir `cost_<rūšis>_<valiuta>`; pajamos tik pagal rūšį (`earn_round_cs2`, konverterio tikslios raundo premijos) pakeičia tik tos rūšies pajamas kainos modelyje (`round` apima ir sprogdinimus bei išminavimus), o modelis vis dar apskaičiuoja kitas.
 
 Susiejimas pats įkelia šiuos stulpelius šalia paties failo sąrašo: kiekvieną `state_*`, `active_*`, `won`, `round` ir sąrašo stulpelį, išskyrus tuos, kuriuos Parquet failo statistika rodo turinčius vieną reikšmę visur (kiekvienas įkeltas stulpelis kainuoja 4 baitus eilutei).

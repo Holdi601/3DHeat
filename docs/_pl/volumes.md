@@ -4,9 +4,9 @@ parent: "Filtry i narzędzia"
 nav_order: 6
 lang: "pl"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Wolumeny i porównanie
@@ -63,6 +63,7 @@ Filtr GPU przyjmuje łącznie do 8 wolumenów z 64 punktami konturu; wolumen pon
 Obszar **Statystyki** podąża za filtrami, oknem czasu i ukrytymi grupami. *Zaznaczony* pokazuje wybrany wolumen, *Porównaj wszystkie* ustawia każdy wolumen obok siebie. Pokazuje:
 
 - **Wiersze wewnątrz (pokazane)** i **Wiersze wewnątrz (wszystkie dane)**, **Gracze**, **Drużyny**, **Mecze**, **Czas wewnątrz**, **Wejścia / wyjścia**, **Szczyt ciepła**, **Średnie ciepło**, **Objętość / ślad** oraz histogram **Kiedy**;
+- **Odsetek wygranych**, gdy dane mówią, kto wygrał ([kolumny wyniku](data-formats.md#outcome-columns)): spośród rund z graczem wewnątrz, licząc rundę każdego gracza raz, udział wygranych przez jego stronę – przyciągnięty o 4 rundy do odsetka we wszystkim, co jest pokazane, tak jak robi to [zestawienie](breakdown.md) – razem z liczbą rund wygranych i rozegranych oraz tym odsetkiem ogółem;
 - dla każdej kolumny: kategorie z **Przyrost (lift)** (udział wewnątrz podzielony przez udział we wszystkich pokazanych danych), a liczby z zakresem, medianą i percentylami 5-95.
 
 **Statystyki jako CSV / JSON** je zapisują. **Eksportuj dane wewnątrz** zapisuje wiersze wewnątrz jako CSV albo Parquet (*Tylko pokazane wiersze* domyślnie włączone), jeden wolumen albo wszystkie, z kolumną mówiącą, który wolumen zawiera dany wiersz.

@@ -4,9 +4,9 @@ parent: "Modos de calor"
 nav_order: 5
 lang: "es"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Diferencia
@@ -105,6 +105,10 @@ exportaciones, dos pruebas o dos versiones.
 
 Un valor en los dos rangos cuenta como +. Los rangos no tienen que cubrir la columna; los valores en ninguno se dejan
 fuera. *Los dos primeros minutos frente a los dos últimos* es una división por rango sobre una columna parecida a un tiempo.
+
+## Proporción de +: el mapa de tasa de victoria {#share-of--the-win-rate-map}
+
+**Diferencia** / **Proporción de +** en la parte superior del panel elige lo que se dibuja. *Proporción de +* colorea cada lugar según la proporción del lado + entre las filas de ambos lados allí, frente a esa proporción sobre todo lo mostrado: cálido por encima, frío por debajo, nada donde es igual, y nada donde un lugar tiene muy pocas filas. Con las rondas ganadas en + y las perdidas en −, es un mapa de tasa de victoria. **Tasa de victoria por ronda** y **Tasa de victoria por partida** lo preparan con una sola pulsación cuando los datos tienen [columnas de resultado](data-formats.md#outcome-columns). Consulta [Tasa de victoria](win-rate.md).
 
 ## Colores {#colours}
 

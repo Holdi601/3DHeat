@@ -4,9 +4,9 @@ parent: "Filters en hulpmiddelen"
 nav_order: 1
 lang: "nl"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filters
@@ -33,6 +33,8 @@ Bij het laden berekent de viewer vier eigen kolommen en zet ze **eerst** in de l
 | **Speler of AI** | Speler, AI | een kolom `ai`, `is_ai`, `bot` of `actor`; anders `is_player` / `human`; anders een account-id (`user_id`, `steam_id`; leeg of 0 is AI); bij Tacview-opnamen of het object een piloot heeft |
 | **Voertuigklasse** | 17 klassen: Jager, Aanvalsvliegtuig, Bommenwerper, Ander vliegtuig, Helikopter, Tank, Gepantserd voertuig, Luchtverdediging, Artillerie, Vrachtwagen / auto, Schip, Onderzeeboot, Infanterie, Wapen, Lokmiddel, Constructie, Overig | de naam van het voertuig of de eenheid (vergeleken met de [figuurcatalogus](figures.md)) en typekolommen |
 | **Doelklasse** | dezelfde klassen | het voertuig van de andere partij (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Direct daarna komen de [uitslagkolommen](data-formats.md#outcome-columns), als de gegevens ze hebben: **Rondeuitslag** en **Wedstrijduitslag** (*Alle*, *Gewonnen*, *Verloren*) en **Hoe de ronde eindigde**, met de waarden in jouw taal. Filter erop, of verdeel de warmte erop als [winstpercentagekaart](win-rate.md).
 
 Alleen de soorten die voorkomen worden getoond. Waardekolommen (`cost_*`, `earn_*`, `net_*` en *Kostenbron*, zie [Waardeweging](value-weighting.md)) zijn filterbaar zoals elke getalkolom: vink bijvoorbeeld *schatting* uit onder *Kostenbron* om alleen geprijsde rijen over te houden.
 

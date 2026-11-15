@@ -4,9 +4,9 @@ parent: "フィルターとツール"
 nav_order: 1
 lang: "ja"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # フィルター
@@ -33,6 +33,8 @@ outdated: true
 | **プレイヤーか AI** | プレイヤー、AI | `ai`、`is_ai`、`bot`、`actor` という列。なければ `is_player` / `human`。なければアカウント ID（`user_id`、`steam_id`。空または 0 は AI）。Tacview の記録では、そのオブジェクトにパイロットがいるかどうか。 |
 | **車両クラス** | 17 種類：戦闘機、攻撃機、爆撃機、その他の航空機、ヘリコプター、戦車、装甲車両、防空、砲兵、トラック / 車、艦船、潜水艦、歩兵、兵装、デコイ、構造物、その他 | 車両またはユニットの名前（[フィギュアのカタログ](figures.md)と照合）と、種類の列 |
 | **目標クラス** | 車両クラスと同じ | 相手側の車両（`other_vehicle`、`target_vehicle`、`victim_type` など） |
+
+そのすぐ後には、データにあれば[結果の列](data-formats.md#outcome-columns)が続きます: **ラウンドの結果** と **試合の結果**（*すべて*、*勝ち*、*負け*）、そして **ラウンドの終わり方**。値はあなたの言語で表示されます。これでフィルターしたり、これでヒートを分割して[勝率マップ](win-rate.md)にしたりできます。
 
 実際に現れる種類だけが一覧に出ます。値の列（`cost_*`、`earn_*`、`net_*` と *コストの元*。[価値の重み付け](value-weighting.md)を参照）は、どの数値の列とも同じように絞り込めます。たとえば、*コストの元* の下で *estimate* のチェックを外すと、価格のついた行だけが残ります。
 

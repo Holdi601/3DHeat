@@ -3,9 +3,9 @@ title: "Yfirlit yfir gagnasnið"
 nav_order: 19
 lang: "is"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Yfirlit yfir gagnasnið
@@ -93,6 +93,37 @@ Staðsetningar-, tíma- eða útlitsdálkur sem geymir eitthvað annað en tölu
 | Síudálkur, *flokkur* | hvað sem er; orðabókarkóðað | nei | 32 bita auðkenni | Allt að 4.096 gildi, annars er dálkurinn ekki geymdur. |
 
 Parquet-dálkur af gerðinni `TIMESTAMP` sem er geymdur sem síudálkur er *bil* í millisekúndum frá tímabili – renna, ekki listi.
+
+## Úrslitadálkar {#outcome-columns}
+
+Hver vann, á hverri röð, svo hægt sé að meta stað, leið eða leikfléttu eftir því hve oft hlið hennar vann að lokum ([Sigurhlutfall](win-rate.md)). Skoðarinn heldur þessum dálkum sjálfur, sýnir þá fyrsta í [síunum](filters.md) á tungumáli skoðarans og les þá í [sigurhlutfallskortinu](win-rate.md), [sundurliðuninni](breakdown.md) og [tölfræði rúmmála](volumes.md#statistics). Breytir fyrir lotuleik (CS2, Valorant, Rainbow Six Siege) eða leik sem gildir í heild (War Thunder) skrifar alla fjóra:
+
+| Dálkur | Tegund | Merking |
+|---|---|---|
+| `won` | 0/1 (tómt þar sem óþekkt) | hlið raðarinnar (lið) vann **lotuna**; í leik án lota leikinn |
+| `matchWon` | 0/1 (tómt þar sem óþekkt) | hlið raðarinnar (lið) vann **leikinn**; tómt þar sem upptakan sýnir ekki endann |
+| `round` | heiltala, frá 1 | lotan sem röðin tilheyrir; 1 allan leikinn í leik án lota |
+| `roundEndReason` | texti | hvernig lotan endaði (í leik án lota leikurinn), með orðunum hér fyrir neðan |
+
+`won` og `matchWon` tilheyra hlið raðarinnar: raðir T-leikmanns bera úrslit T-hliðarinnar, raðir gervigreindareiningar úrslit liðs hennar; raðir sem tilheyra engri hlið skilja þá eftir tóma. Hlið sem skiptir í hálfleik heldur sínu eigin `matchWon` og tekur `won` hverrar lotu eins og hún spilaði hana. Jafntefli er 0 fyrir báðar hliðar.
+
+Endaástæðurnar eru sameiginlegar öllum leikjum, svo ein sía virkar á þá alla (eigið orð leiks er tengt við þær þar sem hægt er, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Merking | Leikir |
+|---|---|---|
+| `elimination` | allir leikmenn annarrar hliðar úti | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | sprengjan (spike, skotmark aftengjarans) sprakk | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | sprengjan (spike) aftengd | CS2, Valorant, Rainbow Six Siege |
+| `time` | klukka lotunnar rann út; War Thunder: ráðið með miða eftir hjá báðum hliðum | allir |
+| `surrender` | hlið gafst upp | CS2, Valorant, Rainbow Six Siege |
+| `draw` | enginn sigurvegari | CS2 |
+| `objective` | markmið tekið eða haldið (gísl fluttur út, svæði tryggt) | Rainbow Six Siege |
+| `capture` | miðarnir kláruðust á meðan sigurvegarinn hélt yfirtökusvæðum | War Thunder |
+| `tickets` | miðar tapaðir vegna fellinga | War Thunder |
+| `destruction` | síðustu farartækin töpuð í einu, enginn eftir til að birtast | War Thunder |
+| `other` | allt annað | |
+
+Nefndu þá líka í `extra`-lista `heat3d`-vísbendinganna, eins og hvern annan dálk. Dálkaheitin `win`, `round_won`, `match_won`, `end_reason` og `win_reason` eru lesin sem sömu dálkar.
 
 ## `heat3d`-vísbendingarnar {#the-heat3d-hints}
 

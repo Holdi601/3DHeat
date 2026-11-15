@@ -4,9 +4,9 @@ parent: "Filtre a nástroje"
 nav_order: 7
 lang: "sk"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Rozpis: kto a čo je najlepšie kde
@@ -91,6 +91,6 @@ Konvertor pridá faktor tak, že pomenuje jeho stĺpec:
 | príznaky výbavy, ktoré sú už bežné (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | zapnuté, kým sú nenulové |
 | `ammoType`, `shellType`, `ammoName` | naposledy vystrelené kolo |
 
-Výsledky: stĺpec `won` s hodnotami 0/1 (strana riadku vyhrala kolo alebo zápas) a stĺpec `round`. Peniaze: `earn_<mena>` a `cost_<druh>_<mena>`; príjem len podľa druhu (`earn_round_cs2`, presné odmeny za kolo z konvertora) nahradí iba model nákladov pre tento druh príjmu (`round` zahŕňa aj zasadenia a odzbrojenia) a model ocení zvyšok.
+Výsledky: stĺpec `won` s hodnotami 0/1 (strana riadku vyhrala kolo alebo zápas) a stĺpec `round` - [stĺpce výsledku](data-formats.md#outcome-columns); kde má súbor `won` aj `matchWon`, *Výhry %* počíta kolá. Peniaze: `earn_<mena>` a `cost_<druh>_<mena>`; príjem len podľa druhu (`earn_round_cs2`, presné odmeny za kolo z konvertora) nahradí iba model nákladov pre tento druh príjmu (`round` zahŕňa aj zasadenia a odzbrojenia) a model ocení zvyšok.
 
 Mapovanie načíta tieto stĺpce samo, vedľa vlastného zoznamu súboru: každý stĺpec `state_*`, `active_*`, `won`, `round` a zoznamu, okrem tých, ktoré štatistiky súboru Parquet ukazujú ako jednu hodnotu počas celého priebehu (každý načítaný stĺpec je 4 bajty na riadok).

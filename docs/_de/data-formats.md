@@ -3,9 +3,9 @@ title: "Referenz der Datenformate"
 nav_order: 19
 lang: "de"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Referenz der Datenformate
@@ -93,6 +93,37 @@ Eine Position-, Zeit- oder Blickspalte, die etwas anderes als eine Zahl enthält
 | Filterspalte, *Kategorie* | beliebig; wörterbuchkodiert | nein | 32-Bit-ID | Bis 4.096 Werte, sonst wird die Spalte nicht behalten. |
 
 Eine Parquet-Spalte vom Typ `TIMESTAMP`, die als Filterspalte behalten wird, ist ein *Bereich* aus Epochen-Millisekunden – ein Schieberegler, keine Liste.
+
+## Ergebnisspalten {#outcome-columns}
+
+Wer gewonnen hat, in jeder Zeile. So lässt sich ein Ort, ein Weg oder ein Spielzug danach beurteilen, wie oft seine Seite danach gewonnen hat ([Siegquote](win-rate.md)). Der Viewer behält diese Spalten von selbst, listet sie in den [Filtern](filters.md) zuerst, in der Sprache des Viewers, und liest sie in der [Siegquoten-Karte](win-rate.md), der [Aufschlüsselung](breakdown.md) und der [Volumen-Statistik](volumes.md#statistics). Ein Konverter für ein rundenbasiertes Spiel (CS2, Valorant, Rainbow Six Siege) oder ein matchbasiertes (War Thunder) schreibt alle vier:
+
+| Spalte | Typ | Bedeutung |
+|---|---|---|
+| `won` | 0/1 (leer, wo unbekannt) | die Seite (das Team) der Zeile hat **die Runde** gewonnen; in einem Spiel ohne Runden das Match |
+| `matchWon` | 0/1 (leer, wo unbekannt) | die Seite (das Team) der Zeile hat **das Match** gewonnen; leer, wo die Aufnahme das Ende nicht zeigt |
+| `round` | ganze Zahl, ab 1 | die Runde, zu der die Zeile gehört; in einem matchbasierten Spiel durchgehend 1 |
+| `roundEndReason` | Text | wie die Runde endete (in einem matchbasierten Spiel das Match), mit den Wörtern unten |
+
+`won` und `matchWon` gehören zur Seite der Zeile: Die Zeilen eines T-Spielers tragen das Ergebnis der T-Seite, die Zeilen einer KI-Einheit das ihres Teams; Zeilen, die zu keiner Seite gehören, lassen sie leer. Eine Seite, die zur Halbzeit wechselt, behält ihr eigenes `matchWon` und nimmt das `won` jeder Runde so, wie sie sie gespielt hat. Ein Unentschieden ist für beide Seiten 0.
+
+Die Gründe für das Ende, gemeinsam für alle Spiele, damit ein Filter für alle funktioniert (das eigene Wort eines Spiels wird zugeordnet, wo es geht, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Bedeutung | Spiele |
+|---|---|---|
+| `elimination` | jeder Spieler einer Seite ist raus | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | die Bombe (der Spike, das Ziel des Entschärfers) ist explodiert | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | die Bombe (der Spike) wurde entschärft | CS2, Valorant, Rainbow Six Siege |
+| `time` | die Rundenuhr ist abgelaufen; War Thunder: entschieden, als beide Seiten noch Tickets hatten | alle |
+| `surrender` | eine Seite hat aufgegeben | CS2, Valorant, Rainbow Six Siege |
+| `draw` | kein Sieger | CS2 |
+| `objective` | ein Ziel eingenommen oder gehalten (Geisel befreit, Bereich gesichert) | Rainbow Six Siege |
+| `capture` | Tickets ausgeblutet, während der Sieger Eroberungszonen hielt | War Thunder |
+| `tickets` | Tickets durch Abschüsse verloren | War Thunder |
+| `destruction` | die letzten Fahrzeuge auf einmal verloren, niemand mehr übrig zum Spawnen | War Thunder |
+| `other` | alles andere | |
+
+Nenne sie auch in der Liste `extra` der `heat3d`-Hinweise, wie jede andere Spalte. Die Spaltennamen `win`, `round_won`, `match_won`, `end_reason` und `win_reason` werden als dieselben Spalten gelesen.
 
 ## Die `heat3d`-Hinweise {#the-heat3d-hints}
 

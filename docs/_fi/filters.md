@@ -4,9 +4,9 @@ parent: "Suodattimet ja työkalut"
 nav_order: 1
 lang: "fi"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Suodattimet
@@ -33,6 +33,8 @@ Latauksessa katselin päättelee neljä omaa saraketta ja listaa ne **ensimmäis
 | **Pelaaja tai tekoäly** | Pelaaja, Tekoäly | sarake `ai`, `is_ai`, `bot` tai `actor`; muuten `is_player` / `human`; muuten tilitunnus (`user_id`, `steam_id`; tyhjä tai 0 on tekoäly); Tacview-tallenteille se, onko kohteella lentäjä |
 | **Ajoneuvoluokka** | 17 luokkaa: Hävittäjä, Maahyökkäyskone, Pommikone, Muu lentokone, Helikopteri, Tankki, Panssariajoneuvo, Ilmatorjunta, Tykistö, Kuorma-auto / auto, Laiva, Sukellusvene, Jalkaväki, Ase, Harhautus, Rakennelma, Muu | ajoneuvon tai yksikön nimi (verrataan [hahmoluetteloon](figures.md)) ja tyyppisarakkeet |
 | **Kohdeluokka** | samat luokat | vastapuolen ajoneuvo (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Heti niiden jälkeen tulevat [tulossarakkeet](data-formats.md#outcome-columns), jos datassa on niitä: **Erän tulos** ja **Ottelun tulos** (*Mikä tahansa*, *Voitettu*, *Hävitty*) ja **Miten erä päättyi**, sen arvot omalla kielelläsi. Suodata niiden mukaan, tai jaa lämpö niiden mukaan [voittokartaksi](win-rate.md).
 
 Vain esiintyvät tyypit luetellaan. Arvosarakkeet (`cost_*`, `earn_*`, `net_*` ja *Kustannuksen lähde*, katso [Arvopainotus](value-weighting.md)) voi suodattaa kuten mitä tahansa numerosaraketta: esimerkiksi poista *arvio* valinta kohdasta *Kustannuksen lähde*, jotta jää vain hinnoitellut rivit.
 

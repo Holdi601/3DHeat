@@ -4,9 +4,9 @@ parent: "Filtri in orodja"
 nav_order: 6
 lang: "sl"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Prostornine in primerjava
@@ -63,6 +63,7 @@ Filter GPU vzame do 8 prostornin s 64 točkami obrisa skupaj; »!« označuje pr
 Območje **Statistika** sledi filtrom, časovnemu oknu in skritim skupinam. *Izbrano* prikaže izbrano prostornino, *Primerjaj vse* postavi vsako prostornino drugo ob drugi. Prikaže:
 
 - **Vrstic znotraj (prikazanih)** in **Vrstic znotraj (vsi podatki)**, **Igralci**, **Ekipe**, **Tekme**, **Čas znotraj**, **Vstopi / izstopi**, **Vrh toplote**, **Povprečna toplota**, **Prostornina / tloris** in histogram **Kdaj**;
+- **Delež zmag**, kjer podatki povedo, kdo je zmagal ([stolpci izida](data-formats.md#outcome-columns)): od krogov z igralcem v notranjosti, krog vsakega igralca štet enkrat, delež, ki ga je njegova stran zmagala - z vleko k deležu v vsem prikazanem za 4 kroge, kot to naredi [razčlenitev](breakdown.md) - skupaj z zmaganimi in odigranimi krogi ter tem skupnim deležem;
 - za vsak stolpec: kategorije z **Lift** (delež znotraj, deljen z deležem v vseh prikazanih podatkih), in številke z razponom, mediano in 5.-95. percentilom.
 
 **Statistika kot CSV / JSON** jo shrani. **Izvozi podatke znotraj** zapiše vrstice znotraj kot CSV ali Parquet (privzeto vklopljeno *Samo prikazane vrstice*), eno prostornino ali vse, s stolpcem, ki pove, v kateri prostornini je vsaka vrstica.

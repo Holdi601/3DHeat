@@ -4,9 +4,9 @@ parent: "Filtrat dhe mjetet"
 nav_order: 1
 lang: "sq"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtrat
@@ -33,6 +33,8 @@ Gjatë ngarkimit shikuesi nxjerr katër kolona të veta dhe i liston **të parat
 | **Lojtar ose IA** | Lojtar, IA | një kolonë `ai`, `is_ai`, `bot` ose `actor`; përndryshe `is_player` / `human`; përndryshe një id llogarie (`user_id`, `steam_id`; bosh ose 0 është IA); për regjistrimet Tacview, nëse objekti ka pilot |
 | **Klasa e mjetit** | 17 klasa: Aeroplan luftarak, Avion sulmi, Bombardues, Avion tjetër, Helikopter, Tank, Mjet i blinduar, Mbrojtje ajrore, Artileri, Kamion / makinë, Anije, Nëndetëse, Këmbësori, Armë, Karficë, Strukturë, Tjetër | emri i mjetit ose njësisë (krahasuar me [katalogun e figurave](figures.md)) dhe kolonat e tipit |
 | **Klasa e objektivit** | të njëjtat klasa | mjeti i palës tjetër (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Menjëherë pas tyre vijnë [kolonat e rezultatit](data-formats.md#outcome-columns), ku të dhënat i kanë: **Rezultati i raundit** dhe **Rezultati i ndeshjes** (*Çdo*, *Fituar*, *Humbur*) dhe **Si mbaroi raundi**, me vlerat në gjuhën tuaj. Filtroni sipas tyre, ose ndajeni nxehtësinë sipas tyre si një [hartë e shkallës së fitoreve](win-rate.md).
 
 Listohen vetëm llojet që ndodhin. Kolonat e vlerave (`cost_*`, `earn_*`, `net_*` dhe *Burimi i kostos*, shih [Peshimi i vlerave](value-weighting.md)) filtrohen si çdo kolonë numerike: për shembull, hiq shenjën te *estimate* te *Burimi i kostos* për të mbajtur vetëm rreshtat me çmim.
 

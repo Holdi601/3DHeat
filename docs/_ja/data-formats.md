@@ -3,9 +3,9 @@ title: "データ形式リファレンス"
 nav_order: 19
 lang: "ja"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # データ形式リファレンス
@@ -93,6 +93,37 @@ x,y,z,t,player,team
 | フィルター列、*カテゴリー* | 任意。辞書で符号化 | いいえ | 32 ビットの ID | 最大 4,096 の値。それ以上なら列は保持されません。 |
 
 フィルター列として残された Parquet の `TIMESTAMP` 列は、エポックからのミリ秒の *範囲* になります。一覧ではなく、スライダーです。
+
+## 結果の列 {#outcome-columns}
+
+誰が勝ったかを、すべての行に持たせます。これで、場所、ルート、プレーを、その側がその後どれだけ勝ったかで判断できます（[勝率](win-rate.md)）。ビューアはこれらの列を自分で保持し、[フィルター](filters.md)の先頭にビューアの言語で並べ、[勝率マップ](win-rate.md)、[内訳](breakdown.md)、[ボリュームの統計](volumes.md#statistics)で読み取ります。ラウンド制のゲーム（CS2、Valorant、Rainbow Six Siege）や試合単位のゲーム（War Thunder）のコンバーターは、4 つすべてを書き出します:
+
+| 列 | 型 | 意味 |
+|---|---|---|
+| `won` | 0/1（不明なら空） | 行の側（チーム）が **ラウンド** に勝った。ラウンドのないゲームでは試合 |
+| `matchWon` | 0/1（不明なら空） | 行の側（チーム）が **試合** に勝った。記録に終わりが映っていなければ空 |
+| `round` | 整数、1 から | 行が属するラウンド。試合単位のゲームでは試合全体を通して 1 |
+| `roundEndReason` | テキスト | ラウンド（試合単位のゲームでは試合）がどう終わったか。下の言葉で表します |
+
+`won` と `matchWon` は、その行の側のものです。T プレイヤーの行は T 側の結果を、AI ユニットの行はそのチームの結果を持ちます。どの側にも属さない行は空のままです。ハーフタイムで入れ替わる側は自分の `matchWon` を保ち、各ラウンドの `won` はそのラウンドで戦った側のものを取ります。引き分けは両方の側で 0 です。
+
+終わり方は全ゲームで共通なので、1 つのフィルターがすべてに効きます（ゲーム独自の言葉は、できる限りこれに対応付けます。[`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)）:
+
+| `roundEndReason` | 意味 | ゲーム |
+|---|---|---|
+| `elimination` | 片方の側のプレイヤーが全員倒れた | CS2、Valorant、Rainbow Six Siege |
+| `bomb` | 爆弾（スパイク、解除装置の目標）が爆発した | CS2、Valorant、Rainbow Six Siege |
+| `defuse` | 爆弾（スパイク）が解除された | CS2、Valorant、Rainbow Six Siege |
+| `time` | ラウンドの時間が切れた。War Thunder: 両方の側にチケットが残ったまま決着 | すべて |
+| `surrender` | 片方の側が降参した | CS2、Valorant、Rainbow Six Siege |
+| `draw` | 勝者なし | CS2 |
+| `objective` | 目標を奪った、または守った（人質の救出、エリアの確保） | Rainbow Six Siege |
+| `capture` | 勝者が占領ゾーンを保持している間にチケットが尽きた | War Thunder |
+| `tickets` | 撃破によってチケットを失った | War Thunder |
+| `destruction` | 最後の車両を一度に失い、出撃できる人が残っていない | War Thunder |
+| `other` | それ以外 | |
+
+ほかの列と同じように、`heat3d` のヒントの `extra` リストにもこれらを書いてください。列名 `win`、`round_won`、`match_won`、`end_reason`、`win_reason` も、同じ列として読み込みます。
 
 ## `heat3d` のヒント {#the-heat3d-hints}
 

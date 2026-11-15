@@ -3,9 +3,9 @@ title: "Referenca e formateve të të dhënave"
 nav_order: 19
 lang: "sq"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Referenca e formateve të të dhënave
@@ -93,6 +93,37 @@ Një kolonë pozicioni, kohe ose shikimi që mban diçka tjetër nga një numër
 | Kolona filtri, *kategori* | çfarëdo; i koduar me fjalor | jo | id 32-bit | Deri 4,096 vlera, përndryshe kolona nuk mbahet. |
 
 Një kolonë Parquet `TIMESTAMP` e mbajtur si kolonë filtri është një *interval* i milisekondave epoke - një rrëshqitës, jo një listë.
+
+## Kolonat e rezultatit {#outcome-columns}
+
+Kush fitoi, në çdo rresht, që një vend, një rrugë ose një lëvizje të gjykohet nga sa shpesh pala e saj fitoi më pas ([Shkalla e fitoreve](win-rate.md)). Shikuesi i mban vetë këto kolona, i rendit të parat te [filtrat](filters.md) në gjuhën e shikuesit, dhe i lexon te [harta e shkallës së fitoreve](win-rate.md), te [zbërthimi](breakdown.md) dhe te [statistikat e vëllimeve](volumes.md#statistics). Një konvertues për një lojë me raunde (CS2, Valorant, Rainbow Six Siege) ose me ndeshje (War Thunder) i shkruan të katërta:
+
+| Kolona | Lloji | Kuptimi |
+|---|---|---|
+| `won` | 0/1 (bosh ku nuk dihet) | pala (ekipi) e rreshtit fitoi **raundin**; në një lojë pa raunde, ndeshjen |
+| `matchWon` | 0/1 (bosh ku nuk dihet) | pala (ekipi) e rreshtit fitoi **ndeshjen**; bosh ku regjistrimi nuk e tregon fundin |
+| `round` | numër i plotë, nga 1 | raundi të cilit i përket rreshti; 1 gjatë gjithë kohës në një lojë me ndeshje |
+| `roundEndReason` | tekst | si mbaroi raundi (në një lojë me ndeshje, ndeshja), me fjalët më poshtë |
+
+`won` dhe `matchWon` i përkasin palës së rreshtit: rreshtat e një lojtari T mbajnë rezultatin e palës T, rreshtat e një njësie AI atë të ekipit të saj; rreshtat që nuk i përkasin asnjë pale i lënë bosh. Një palë që ndërron në pushim mban `matchWon` e vet dhe merr `won` e çdo raundi ashtu siç e luajti. Një barazim është 0 për të dyja palët.
+
+Arsyet e mbarimit, të përbashkëta për çdo lojë që një filtër të punojë për të gjitha (fjala e vetë lojës hartëzohet ku është e mundur, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Kuptimi | Lojërat |
+|---|---|---|
+| `elimination` | të gjithë lojtarët e një pale jashtë | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | bomba (spike, objektivi i çaktivizuesit) shpërtheu | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | bomba (spike) u çaktivizua | CS2, Valorant, Rainbow Six Siege |
+| `time` | ora e raundit mbaroi; War Thunder: u vendos me bileta të mbetura te të dyja palët | të gjitha |
+| `surrender` | një palë u dorëzua | CS2, Valorant, Rainbow Six Siege |
+| `draw` | asnjë fitues | CS2 |
+| `objective` | një objektiv i marrë ose i mbajtur (peng i nxjerrë, zonë e siguruar) | Rainbow Six Siege |
+| `capture` | biletat mbaruan ndërsa fituesi mbante zonat e kapjes | War Thunder |
+| `tickets` | bileta të humbura nga asgjësimet | War Thunder |
+| `destruction` | mjetet e fundit të humbura njëherësh, askush nuk mbeti për t'u rishfaqur | War Thunder |
+| `other` | çdo gjë tjetër | |
+
+Emërtojini edhe te lista `extra` e sugjerimeve `heat3d`, si çdo kolonë tjetër. Emrat e kolonave `win`, `round_won`, `match_won`, `end_reason` dhe `win_reason` lexohen si të njëjtat kolona.
 
 ## Sugjerimet `heat3d` {#the-heat3d-hints}
 

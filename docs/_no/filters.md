@@ -4,9 +4,9 @@ parent: "Filtre og verktøy"
 nav_order: 1
 lang: "no"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtre
@@ -33,6 +33,8 @@ Ved innlasting finner visningen ut fire egne kolonner og lister dem **først**, 
 | **Spiller eller AI** | Spiller, AI | en kolonne `ai`, `is_ai`, `bot` eller `actor`; ellers `is_player` / `human`; ellers en konto-id (`user_id`, `steam_id`; tom eller 0 er AI); for Tacview-opptak, om objektet har en flyger |
 | **Kjøretøyklasse** | 17 klasser: Jager, Angrepsfly, Bombefly, Annet fly, Helikopter, Tank, Pansret kjøretøy, Luftvern, Artilleri, Lastebil / bil, Skip, Ubåt, Infanteri, Våpen, Lokkemiddel, Konstruksjon, Annet | kjøretøyets eller enhetens navn (sammenlignet med [figurkatalogen](figures.md)) og typekolonner |
 | **Målklasse** | de samme klassene | den andre partens kjøretøy (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Rett etter dem kommer [resultatkolonnene](data-formats.md#outcome-columns), der dataene har dem: **Rundens resultat** og **Kampens resultat** (*Alle*, *Vunnet*, *Tapt*) og **Hvordan runden endte**, med verdiene på ditt språk. Filtrer på dem, eller del varmen etter dem som et [seiersandelskart](win-rate.md).
 
 Bare typene som finnes listes. Verdikolonner (`cost_*`, `earn_*`, `net_*` og *Kostnadskilde*, se [Verdivekting](value-weighting.md)) kan filtreres som alle tallkolonner: for eksempel fjern avmerkingen for *estimat* under *Kostnadskilde* for å beholde bare prissatte rader.
 

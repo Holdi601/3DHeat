@@ -4,9 +4,9 @@ parent: "Värmelägen"
 nav_order: 5
 lang: "sv"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Differens
@@ -86,6 +86,10 @@ När du väljer kolumnen läggs dess första värde på + och dess andra på −
 | **Dela vid mittpunkten** | Sätter + till [minimum, mitten] och − till [mitten, maximum] – det som också händer när du väljer kolumnen. |
 
 Ett värde i båda intervallen räknas som +. Intervallen behöver inte täcka kolumnen; värden i inget av dem utelämnas. *De två första minuterna mot de två sista* är en intervalluppdelning på en tidsliknande kolumn.
+
+## Andel +: vinstandelskartan {#share-of--the-win-rate-map}
+
+**Differens** / **Andel +** överst i panelen väljer vad som ritas. *Andel +* färgar varje plats efter +-sidans andel av raderna på båda sidor där, jämfört med den andelen över allt som visas: varmt över den, kallt under, ingenting där den är densamma och ingenting där en plats har för få rader. Med de vunna ronderna på + och de förlorade på − är det en vinstandelskarta; **Vinstandel per rond** och **Vinstandel per match** ställer in det med ett tryck där datan har [resultatkolumner](data-formats.md#outcome-columns). Se [Vinstandel](win-rate.md).
 
 ## Färger {#colours}
 

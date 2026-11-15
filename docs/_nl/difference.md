@@ -4,9 +4,9 @@ parent: "Warmtemodi"
 nav_order: 5
 lang: "nl"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Verschil
@@ -86,6 +86,10 @@ Bij het kiezen van de kolom komt de eerste waarde op + en de tweede op −. Als 
 | **In het midden verdelen** | Zet + op [minimum, midden] en − op [midden, maximum] - wat het kiezen van de kolom ook doet. |
 
 Een waarde in beide bereiken telt als +. De bereiken hoeven de kolom niet te dekken; waarden in geen van beide worden weggelaten. *De eerste twee minuten tegen de laatste twee* is een bereikverdeling op een tijdachtige kolom.
+
+## Aandeel +: de winstpercentagekaart {#share-of--the-win-rate-map}
+
+**Verschil** / **Aandeel +** bovenaan het paneel kiest wat er getekend wordt. *Aandeel +* kleurt elke plek naar het aandeel van de +-kant in de rijen van beide kanten daar, vergeleken met dat aandeel over alles wat getoond wordt: warm erboven, koel eronder, niets waar het gelijk is, en niets waar een plek te weinig rijen heeft. Met de gewonnen rondes op + en de verloren rondes op − is het een winstpercentagekaart. **Winstpercentage per ronde** en **Winstpercentage per wedstrijd** stellen dat in één klik in als de gegevens [uitslagkolommen](data-formats.md#outcome-columns) hebben. Zie [Winstpercentage](win-rate.md).
 
 ## Kleuren {#colours}
 

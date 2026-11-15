@@ -4,9 +4,9 @@ parent: "Filtri e strumenti"
 nav_order: 7
 lang: "it"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Dettaglio: chi e cosa va meglio dove
@@ -91,6 +91,6 @@ Un convertitore aggiunge un fattore nominando la sua colonna:
 | flag dell'equipaggiamento già comuni (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | attivi mentre sono diversi da zero |
 | `ammoType`, `shellType`, `ammoName` | il colpo sparato per ultimo |
 
-Risultati: una colonna `won` 0/1 (il lato della riga ha vinto il round o la partita) e una colonna `round`. Denaro: `earn_<currency>` e `cost_<kind>_<currency>`; un reddito per tipo soltanto (`earn_round_cs2`, le ricompense esatte di round di un convertitore) sostituisce solo il reddito di quel tipo del modello dei costi (`round` copre anche piazzamenti e disinneschi), e il modello valuta il resto.
+Risultati: una colonna `won` 0/1 (il lato della riga ha vinto il round o la partita) e una colonna `round`, le [colonne di esito](data-formats.md#outcome-columns); dove un file ha sia `won` sia `matchWon`, *Vittorie %* conta i round. Denaro: `earn_<currency>` e `cost_<kind>_<currency>`; un reddito per tipo soltanto (`earn_round_cs2`, le ricompense esatte di round di un convertitore) sostituisce solo il reddito di quel tipo del modello dei costi (`round` copre anche piazzamenti e disinneschi), e il modello valuta il resto.
 
 La mappatura carica da sola queste colonne, accanto alla lista propria del file: ogni colonna `state_*`, `active_*`, `won`, `round` e lista, eccetto quelle che le statistiche di un file Parquet mostrano con un solo valore per tutto (ogni colonna caricata occupa 4 byte per riga).

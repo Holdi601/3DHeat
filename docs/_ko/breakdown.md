@@ -4,9 +4,9 @@ parent: "필터와 도구"
 nav_order: 7
 lang: "ko"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 상세 분석: 어디서 누가, 무엇이 가장 잘하는가
@@ -91,6 +91,6 @@ outdated: true
 | 이미 흔한 장비 플래그(`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | 0이 아닌 동안 켜짐 |
 | `ammoType`, `shellType`, `ammoName` | 마지막으로 발사한 탄 |
 
-결과: 0/1 `won` 열(행의 편이 라운드나 경기를 이겼는지)과 `round` 열. 돈: `earn_<currency>`와 `cost_<kind>_<currency>`. 종류별 수입만(`earn_round_cs2`, 변환기의 정확한 라운드 보상) 주면, 그 종류의 수입만 비용 모형의 수입을 대체합니다(`round`는 설치와 해체도 포함). 나머지는 모형이 계산합니다.
+결과: 0/1 `won` 열(행의 편이 라운드나 경기를 이겼는지)과 `round` 열 - 이것이 [결과 열](data-formats.md#outcome-columns)입니다. 파일에 `won`과 `matchWon`이 모두 있으면 *승률 %*는 라운드를 셉니다. 돈: `earn_<currency>`와 `cost_<kind>_<currency>`. 종류별 수입만(`earn_round_cs2`, 변환기의 정확한 라운드 보상) 주면, 그 종류의 수입만 비용 모형의 수입을 대체합니다(`round`는 설치와 해체도 포함). 나머지는 모형이 계산합니다.
 
 매핑은 파일 자체의 목록과 나란히, 이 열들을 스스로 불러옵니다. 모든 `state_*`, `active_*`, `won`, `round`와 목록 열입니다. 다만 Parquet 파일의 통계가 전 구간에서 값 하나만 가진다고 보여 주는 열은 제외합니다(불러온 열 하나는 행당 4바이트입니다).

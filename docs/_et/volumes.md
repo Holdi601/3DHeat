@@ -4,9 +4,9 @@ parent: "Filtrid ja tööriistad"
 nav_order: 6
 lang: "et"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Mahud ja võrdlus
@@ -63,6 +63,7 @@ GPU filter võtab kuni 8 mahtu, kokku 64 äärejoone punktiga; "!" tähistab mah
 Ala **Statistika** järgib filtreid, ajaakent ja peidetud rühmi. *Valitud* näitab valitud mahtu, *Võrdle kõiki* paneb kõik mahud kõrvuti. Ta näitab:
 
 - **Ridu sees (näidatud)** ja **Ridu sees (kõik andmed)**, **Mängijad**, **Meeskonnad**, **Mängud**, **Aeg sees**, **Sisenemised / väljumised**, **Soojuse tipp**, **Keskmine soojus**, **Maht / jalajälg** ning **Millal** histogrammi;
+- **Võitude osakaal**, kui andmed ütlevad, kes võitis ([tulemuse veerud](data-formats.md#outcome-columns)): raundidest, kus mängija oli sees, iga mängija raund loetud üks kord, osakaal, mille tema pool võitis - tõmmatuna kogu näidatu osakaalu poole 4 raundiga, nagu [jaotus](breakdown.md) teeb - koos võidetud ja mängitud raundide ning üldise osakaaluga;
 - veeru kaupa: kategooriad koos **suhtarvuga** (osakaal sees jagatud osakaaluga kõigis näidatud andmetes) ning arvud koos vahemiku, mediaani ja 5.-95. protsentiiliga.
 
 **Statistika CSV / JSON-ina** salvestab need. **Ekspordi sees olevad andmed** kirjutab sees olevad read CSV või Parquet kujul (*Ainult näidatud read* on vaikimisi sees), ühe mahu või kõik, veeruga, mis ütleb, millises mahus iga rida on.

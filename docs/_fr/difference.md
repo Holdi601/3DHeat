@@ -4,9 +4,9 @@ parent: "Modes de chaleur"
 nav_order: 5
 lang: "fr"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Différence
@@ -86,6 +86,10 @@ Choisir la colonne met sa première valeur sur + et sa deuxième sur −. Quand 
 | **Répartir au point milieu** | Met + sur [minimum, milieu] et − sur [milieu, maximum] — c'est aussi ce que fait le choix de la colonne. |
 
 Une valeur présente dans les deux plages compte comme +. Les plages n'ont pas besoin de couvrir la colonne ; les valeurs hors des deux sont laissées de côté. *Les deux premières minutes contre les deux dernières* est une répartition par plage sur une colonne de type temps.
+
+## Part du + : la carte des taux de victoire {#share-of--the-win-rate-map}
+
+**Différence** / **Part du +** en haut du panneau choisit ce qui est dessiné. *Part du +* colore chaque endroit selon la part du camp + parmi les lignes des deux camps à cet endroit, comparée à cette part sur tout ce qui est affiché : chaud au-dessus, froid en dessous, rien là où elle est égale, et rien là où un endroit a trop peu de lignes. Avec les manches gagnées sur + et les perdues sur −, c'est une carte des taux de victoire. **Taux de victoire par manche** et **Taux de victoire par match** la préparent en un clic quand les données ont des [colonnes de résultat](data-formats.md#outcome-columns). Voir [Taux de victoire](win-rate.md).
 
 ## Couleurs {#colours}
 

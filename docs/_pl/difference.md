@@ -4,9 +4,9 @@ parent: "Tryby ciepła"
 nav_order: 5
 lang: "pl"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Różnica
@@ -86,6 +86,10 @@ Wybór kolumny kładzie jej pierwszą wartość na + i drugą na −. Gdy żadna
 | **Podziel w połowie** | Ustawia + na [minimum, środek], a − na [środek, maksimum] - to samo, co robi wybór kolumny. |
 
 Wartość w obu zakresach liczy się jako +. Zakresy nie muszą pokrywać kolumny; wartości poza nimi są pomijane. *Pierwsze dwie minuty kontra ostatnie dwie* to podział zakresowy na kolumnie w rodzaju czasu.
+
+## Udział +: mapa odsetka wygranych {#share-of--the-win-rate-map}
+
+**Różnica** / **Udział +** na górze panelu wybiera, co jest rysowane. *Udział +* koloruje każde miejsce według udziału strony + wśród wierszy obu stron w tym miejscu, w porównaniu z tym udziałem we wszystkim, co jest pokazane: ciepło powyżej, zimno poniżej, nic tam, gdzie jest taki sam, i nic tam, gdzie miejsce ma za mało wierszy. Z wygranymi rundami na + i przegranymi na − to mapa odsetka wygranych. **Odsetek wygranych rund** i **Odsetek wygranych meczów** ustawiają to jednym kliknięciem, gdy dane mają [kolumny wyniku](data-formats.md#outcome-columns). Zobacz [Odsetek wygranych](win-rate.md).
 
 ## Kolory {#colours}
 

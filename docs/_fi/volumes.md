@@ -4,9 +4,9 @@ parent: "Suodattimet ja työkalut"
 nav_order: 6
 lang: "fi"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Tilavuudet ja vertailu
@@ -63,6 +63,7 @@ GPU-suodatin ottaa enintään 8 tilavuutta ja yhteensä 64 reunapistettä; "!" m
 **Tilastot**-alue seuraa suodattimia, aikaväliä ja piilotettuja ryhmiä. *Valittu* näyttää valitun tilavuuden, *Vertaa kaikkia* asettaa jokaisen tilavuuden rinnakkain. Se näyttää:
 
 - **Rivejä sisällä (näkyvät)** ja **Rivejä sisällä (kaikki data)**, **Pelaajat**, **Joukkueet**, **Ottelut**, **Aika sisällä**, **Sisään- / ulostulot**, **Huippulämpö**, **Keskilämpö**, **Tilavuus / jalanjälki** ja **Milloin** -histogrammin;
+- **Voittojen osuus**, kun data kertoo, kuka voitti ([tulossarakkeet](data-formats.md#outcome-columns)): niistä eristä, joissa pelaaja oli sisällä, kunkin pelaajan erä kerran laskettuna, se osuus, jonka hänen puolensa voitti - vedettynä kaiken näytetyn osuutta kohti 4 erällä, kuten [erittely](breakdown.md) tekee - voitettujen ja pelattujen erien sekä kokonaisosuuden kanssa;
 - kullekin sarakkeelle: luokat, joilla on **Lift** (osuus sisällä jaettuna osuudella kaikessa näytetyssä datassa), ja luvut väleineen, mediaaneineen ja 5.-95. prosenttipisteineen.
 
 **Tilastot CSV- / JSON-muodossa** tallentaa ne. **Vie sisällä oleva data** kirjoittaa sisällä olevat rivit CSV- tai Parquet-muodossa (*Vain näkyvät rivit* oletuksena päällä), yhden tilavuuden tai kaikki, sarakkeella, joka kertoo, mikä tilavuus kullakin rivillä on.

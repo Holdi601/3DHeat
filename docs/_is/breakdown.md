@@ -4,9 +4,9 @@ parent: "Síur og verkfæri"
 nav_order: 7
 lang: "is"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Sundurliðun: hver og hvað gerir best hvar
@@ -91,6 +91,6 @@ Breytir bætir við þætti með því að nefna dálkinn sinn:
 | búnaðarmerki sem eru þegar algeng (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | á meðan þau eru ekki núll |
 | `ammoType`, `shellType`, `ammoName` | umferðin sem síðast var skotin |
 
-Niðurstöður: dálkur `won` með 0/1 (hlið raðarinnar vann umferðina eða leikinn) og dálkurinn `round`. Peningar: `earn_<currency>` og `cost_<kind>_<currency>`; tekjur eftir tegund einni saman (`earn_round_cs2`, nákvæmar umferðargreiðslur breytis) koma í stað aðeins tekna kostnaðarlíkansins af þeirri tegund (`round` nær líka yfir sprengjuplöntun og afvopnun), og líkanið verðleggur afganginn.
+Niðurstöður: dálkur `won` með 0/1 (hlið raðarinnar vann umferðina eða leikinn) og dálkurinn `round` - [úrslitadálkarnir](data-formats.md#outcome-columns); þar sem skrá hefur bæði `won` og `matchWon` telur *Sigrar %* lotur. Peningar: `earn_<currency>` og `cost_<kind>_<currency>`; tekjur eftir tegund einni saman (`earn_round_cs2`, nákvæmar umferðargreiðslur breytis) koma í stað aðeins tekna kostnaðarlíkansins af þeirri tegund (`round` nær líka yfir sprengjuplöntun og afvopnun), og líkanið verðleggur afganginn.
 
 Varpið hleður þessum dálkum sjálft, við hlið eigin lista skráarinnar: sérhvern `state_*`, `active_*`, `won`, `round` og lista-dálk, nema þá sem tölfræði Parquet-skráar sýnir að hafi eitt gildi allan tímann (hver hlaðinn dálkur tekur 4 bæti á röð).

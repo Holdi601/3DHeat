@@ -4,9 +4,9 @@ parent: "Filter och verktyg"
 nav_order: 1
 lang: "sv"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filter
@@ -33,6 +33,8 @@ Vid inläsning räknar visaren ut fyra egna kolumner och listar dem **först**, 
 | **Spelare eller AI** | Spelare, AI | en kolumn `ai`, `is_ai`, `bot` eller `actor`; annars `is_player` / `human`; annars ett konto-id (`user_id`, `steam_id`; tomt eller 0 är AI); för Tacview-inspelningar, om objektet har en pilot |
 | **Fordonsklass** | 17 klasser: Jaktplan, Attackflygplan, Bombplan, Övriga flygplan, Helikopter, Stridsvagn, Pansarfordon, Luftvärn, Artilleri, Lastbil / bil, Fartyg, Ubåt, Infanteri, Vapen, Lockbete, Konstruktion, Övrigt | fordonets eller enhetens namn (jämfört mot [figurkatalogen](figures.md)) och typkolumner |
 | **Målklass** | samma klasser | motpartens fordon (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Direkt efter dem kommer [resultatkolumnerna](data-formats.md#outcome-columns), där datan har dem: **Rondresultat** och **Matchresultat** (*Alla*, *Vunnen*, *Förlorad*) och **Hur ronden slutade**, med värdena på ditt språk. Filtrera på dem, eller dela upp värmen efter dem som en [vinstandelskarta](win-rate.md).
 
 Bara de slag som förekommer listas. Värdekolumner (`cost_*`, `earn_*`, `net_*` och *Kostnadskälla*, se [Värdeviktning](value-weighting.md)) kan filtreras precis som vilken talkolumn som helst. Avmarkera till exempel *estimate* under *Kostnadskälla* för att bara behålla prissatta rader.
 

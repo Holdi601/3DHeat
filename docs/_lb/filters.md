@@ -4,9 +4,9 @@ parent: "Filteren a Werkzeich"
 nav_order: 1
 lang: "lb"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filteren
@@ -33,6 +33,8 @@ Beim Lueden erkennt den Viewer véier eege Kolonnen a lëscht se **als éischt**
 | **Spiller oder KI** | Spiller, KI | eng Kolonn `ai`, `is_ai`, `bot` oder `actor`; soss `is_player` / `human`; soss eng Kont-ID (`user_id`, `steam_id`; eidel oder 0 ass KI); bei Tacview-Opnamen, ob d'Objekt en Pilot huet |
 | **Gefierklass** | 17 Klassen: Jeeër, Attack-Fliger, Bomber, Anere Fliger, Helikopter, Panzer, Gepanzert Gefier, Loftofwier, Artillerie, Camion / Auto, Schëff, U-Boot, Infanterie, Waff, Lockvugel, Bau, Anerer | den Numm vum Gefier oder der Eenheet (verglach mat dem [Figurekatalog](figures.md)) an d'Typ-Kolonnen |
 | **Zilklass** | déiselwecht Klassen | d'Gefier vum aneren Deel (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Direkt no hinne kommen d'[Resultatspalten](data-formats.md#outcome-columns), wou d'Daten se hunn: **Resultat vun der Ronn** a **Resultat vum Match** (*All*, *Gewonnen*, *Verluer*) a **Wéi d’Ronn opgehalen huet**, mat senge Wäerter an Ärer Sprooch. Filtert op hinnen, oder deelt d'Hëtzt no hinnen op als [Gewannquot-Kaart](win-rate.md).
 
 Nëmmen d'Aarte, déi virkommen, ginn ugewisen. Wäertkolonnen (`cost_*`, `earn_*`, `net_*` an *Käschtequell*, kuckt [Wäertgewiichtung](value-weighting.md)) kënne wéi all Zuelekolonn gefiltert ginn: zum Beispill hakt *estimate* ënner *Käschtequell* of, fir nëmmen Zeilen mat engem Präis ze behalen.
 

@@ -4,9 +4,9 @@ parent: "Filteri i alati"
 nav_order: 7
 lang: "bs"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Raščlamba: ko i šta je najbolje gdje
@@ -91,6 +91,6 @@ Konverter dodaje faktor imenujući njegovu kolonu:
 | zastavice opreme koje su već uobičajene (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | uključeno dok nije nula |
 | `ammoType`, `shellType`, `ammoName` | metak posljednje ispaljen |
 
-Rezultati: kolona `won` sa 0/1 (strana reda je dobila rundu ili meč) i kolona `round`. Novac: `earn_<valuta>` i `cost_<vrsta>_<valuta>`; prihod po samoj vrsti (`earn_round_cs2`, tačne nagrade za rundu konvertera) zamjenjuje samo prihod modela troška te vrste (`round` obuhvata i postavljanje i deaktiviranje), a model i dalje cijeni ostalo.
+Rezultati: kolona `won` sa 0/1 (strana reda je dobila rundu ili meč) i kolona `round` - [kolone ishoda](data-formats.md#outcome-columns); gdje datoteka ima i `won` i `matchWon`, *Pobjede %* broji runde. Novac: `earn_<valuta>` i `cost_<vrsta>_<valuta>`; prihod po samoj vrsti (`earn_round_cs2`, tačne nagrade za rundu konvertera) zamjenjuje samo prihod modela troška te vrste (`round` obuhvata i postavljanje i deaktiviranje), a model i dalje cijeni ostalo.
 
 Mapiranje učitava ove kolone samo: svaku kolonu `state_*`, `active_*`, `won`, `round` i listu, osim onih koje statistika Parquet datoteke pokazuje da drže jednu vrijednost kroz cijeli skup (svaka učitana kolona je 4 bajta po redu).

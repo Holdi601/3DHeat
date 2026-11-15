@@ -4,9 +4,9 @@ parent: "熱度模式"
 nav_order: 5
 lang: "zh-Hant"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 差異
@@ -86,6 +86,10 @@ outdated: true
 | **在中點分割** | 將 + 設為 [最小值, 中點]，將 − 設為 [中點, 最大值]——選擇欄位時也會做同樣的設定。 |
 
 同時落在兩個範圍內的值，計為 +。範圍不必涵蓋整個欄位；兩者皆不在的值會被略去。*前兩分鐘 對 最後兩分鐘* 就是對類似時間欄位的範圍分割。
+
+## + 的佔比：勝率地圖 {#share-of--the-win-rate-map}
+
+面板頂端的 **差異** / **+ 的佔比** 選擇要畫什麼。*+ 的佔比* 依每個位置上兩方的列中 + 方所佔的比例為它著色，並與所有顯示內容上的這個比例相比：高於它為暖色，低於它為冷色，相同處不著色，列數太少的位置也不著色。把贏下的回合放在 +、輸掉的放在 −，它就是一張勝率地圖；資料有 [結果欄位](data-formats.md#outcome-columns) 時，**回合勝率** 和 **比賽勝率** 一鍵就能這樣設定。參見 [勝率](win-rate.md)。
 
 ## 顏色 {#colours}
 

@@ -4,9 +4,9 @@ parent: "Načini toplote"
 nav_order: 5
 lang: "sl"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Razlika
@@ -86,6 +86,10 @@ Ko izberete stolpec, se njegova prva vrednost postavi na + in druga na −. Kada
 | **Razdeli na sredini** | Nastavi + na [najmanjša, sredina] in − na [sredina, največja] - enako, kot se zgodi ob izbiri stolpca. |
 
 Vrednost v obeh razponih se šteje kot +. Razponi ne sejo nujno pokriti stolpca; vrednosti na nobenem so izpuščene. *Prvi dve minuti proti zadnjima dvema* je delitev po razponu na stolpcu, podobnem času.
+
+## Delež +: zemljevid deleža zmag {#share-of--the-win-rate-map}
+
+**Razlika** / **Delež +** na vrhu plošče izbere, kaj se riše. *Delež +* obarva vsako mesto po deležu strani + med vrsticami obeh strani tam, v primerjavi s tem deležem v vsem prikazanem: toplo nad njim, hladno pod njim, nič, kjer je enak, in nič, kjer ima mesto premalo vrstic. Z zmaganimi krogi na + in izgubljenimi na − je to zemljevid deleža zmag; **Delež zmag po krogih** in **Delež zmag po tekmah** to nastavita z enim pritiskom, kjer imajo podatki [stolpce izida](data-formats.md#outcome-columns). Glejte [Delež zmag](win-rate.md).
 
 ## Barve {#colours}
 

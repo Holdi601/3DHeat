@@ -3,9 +3,9 @@ title: "Referentie gegevensformaten"
 nav_order: 19
 lang: "nl"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Referentie gegevensformaten
@@ -93,6 +93,37 @@ Een positie-, tijd- of kijkkolom die iets anders dan een getal bevat, wordt gede
 | Filterkolom, *categorie* | elk; woordenboekcodering | nee | 32-bits id | Tot 4.096 waarden, anders wordt de kolom niet bewaard. |
 
 Een Parquet-`TIMESTAMP`-kolom die als filterkolom bewaard wordt, is een *bereik* van epoch-milliseconden - een schuifregelaar, geen lijst.
+
+## Uitslagkolommen {#outcome-columns}
+
+Wie won, op elke rij. Zo kun je een plek, een route of een actie beoordelen naar hoe vaak de kant ervan daarna won ([Winstpercentage](win-rate.md)). De viewer houdt deze kolommen zelf, toont ze als eerste in de [filters](filters.md), in de taal van de viewer, en leest ze in de [winstpercentagekaart](win-rate.md), de [uitsplitsing](breakdown.md) en de [volumestatistieken](volumes.md#statistics). Een converter voor een spel met rondes (CS2, Valorant, Rainbow Six Siege) of met wedstrijden (War Thunder) schrijft ze alle vier:
+
+| Kolom | Type | Betekenis |
+|---|---|---|
+| `won` | 0/1 (leeg als onbekend) | de kant (het team) van de rij won **de ronde**; in een spel zonder rondes de wedstrijd |
+| `matchWon` | 0/1 (leeg als onbekend) | de kant (het team) van de rij won **de wedstrijd**; leeg als de opname het einde niet toont |
+| `round` | geheel getal, vanaf 1 | de ronde waar de rij bij hoort; in een spel met wedstrijden overal 1 |
+| `roundEndReason` | tekst | hoe de ronde eindigde (in een spel met wedstrijden de wedstrijd), in de woorden hieronder |
+
+`won` en `matchWon` horen bij de kant van de rij: de rijen van een T-speler dragen de uitslag van de T-kant, de rijen van een AI-eenheid die van zijn team; rijen die bij geen kant horen, laten ze leeg. Een kant die bij de rust wisselt, houdt zijn eigen `matchWon` en neemt de `won` van elke ronde zoals hij die speelde. Een gelijkspel is 0 voor beide kanten.
+
+De eindredenen, gedeeld door alle spellen zodat één filter voor alle werkt (het eigen woord van een spel wordt waar mogelijk omgezet, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Betekenis | Spellen |
+|---|---|---|
+| `elimination` | elke speler van één kant uitgeschakeld | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | de bom (de spike, het doel van de ontmanteling) ging af | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | de bom (de spike) onschadelijk gemaakt | CS2, Valorant, Rainbow Six Siege |
+| `time` | de rondeklok liep af; War Thunder: beslist terwijl beide kanten nog tickets hadden | alle |
+| `surrender` | een kant gaf op | CS2, Valorant, Rainbow Six Siege |
+| `draw` | geen winnaar | CS2 |
+| `objective` | een doel ingenomen of vastgehouden (gijzelaar bevrijd, gebied beveiligd) | Rainbow Six Siege |
+| `capture` | door de tickets heen terwijl de winnaar veroveringszones vasthield | War Thunder |
+| `tickets` | tickets verloren door kills | War Thunder |
+| `destruction` | de laatste voertuigen tegelijk verloren, niemand meer over om te spawnen | War Thunder |
+| `other` | al het andere | |
+
+Noem ze ook in de lijst `extra` van de `heat3d`-aanwijzingen, net als elke andere kolom. De kolomnamen `win`, `round_won`, `match_won`, `end_reason` en `win_reason` worden als dezelfde kolommen gelezen.
 
 ## De `heat3d`-aanwijzingen {#the-heat3d-hints}
 

@@ -4,9 +4,9 @@ parent: "Filter und Werkzeuge"
 nav_order: 1
 lang: "de"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filter
@@ -33,6 +33,8 @@ Beim Laden ermittelt der Viewer vier eigene Spalten und listet sie **zuerst** au
 | **Spieler oder KI** | Spieler, KI | eine Spalte `ai`, `is_ai`, `bot` oder `actor`; sonst `is_player` / `human`; sonst eine Konto-ID (`user_id`, `steam_id`; leer oder 0 heißt KI); bei Tacview-Aufnahmen, ob das Objekt einen Piloten hat |
 | **Fahrzeugklasse** | 17 Klassen: Jäger, Erdkampfflugzeug, Bomber, Sonstiges Flugzeug, Hubschrauber, Panzer, Panzerfahrzeug, Luftverteidigung, Artillerie, Lkw / Auto, Schiff, U-Boot, Infanterie, Waffe, Köder, Bauwerk, Sonstiges | der Name des Fahrzeugs oder der Einheit (abgeglichen mit dem [Figurenkatalog](figures.md)) und Typspalten |
 | **Zielklasse** | dieselben Klassen | das Fahrzeug der Gegenseite (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Gleich danach kommen die [Ergebnisspalten](data-formats.md#outcome-columns), wo die Daten sie haben: **Rundenergebnis** und **Matchergebnis** (*Alle*, *Gewonnen*, *Verloren*) und **Wie die Runde endete**, mit Werten in deiner Sprache. Filtere nach ihnen, oder teile die Intensität nach ihnen auf, als [Siegquoten-Karte](win-rate.md).
 
 Nur Arten, die vorkommen, werden aufgelistet. Wertspalten (`cost_*`, `earn_*`, `net_*` und *Kostenquelle*, siehe [Wertgewichtung](value-weighting.md)) lassen sich wie jede Zahlenspalte filtern: Wähle zum Beispiel *Schätzung* unter *Kostenquelle* ab, um nur bepreiste Zeilen zu behalten.
 

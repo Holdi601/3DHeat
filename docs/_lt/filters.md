@@ -4,9 +4,9 @@ parent: "Filtrai ir įrankiai"
 nav_order: 1
 lang: "lt"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtrai
@@ -33,6 +33,8 @@ Pirmos eilutės yra peržiūros programos stulpeliai (žemiau). Po jų ateinanč
 | **Žaidėjas ar DI** | Žaidėjas, DI | stulpelis `ai`, `is_ai`, `bot` arba `actor`; kitaip `is_player` / `human`; kitaip paskyros ID (`user_id`, `steam_id`; tuščias arba 0 reiškia DI); Tacview įrašams – ar objektas turi pilotą |
 | **Transporto klasė** | 17 klasių: Naikintuvas, Puolamasis lėktuvas, Bombonešis, Kitas lėktuvas, Sraigtasparnis, Tankas, Šarvuotas automobilis, Oro gynyba, Artilerija, Sunkvežimis / automobilis, Laivas, Povandeninis laivas, Pėstininkai, Ginklas, Klaida, Statinys, Kita | technikos ar vieneto pavadinimas (lyginamas su [figūrų katalogu](figures.md)) ir tipo stulpeliai |
 | **Taikinio klasė** | tos pačios klasės | kitos pusės technika (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Iškart po jų eina [rezultato stulpeliai](data-formats.md#outcome-columns), jei duomenyse jie yra: **Raundo rezultatas** ir **Mačo rezultatas** (*Bet koks*, *Laimėta*, *Pralaimėta*) ir **Kaip baigėsi raundas**, jo reikšmės jūsų kalba. Filtruokite pagal juos arba skaidykite šilumą pagal juos kaip [laimėjimų žemėlapį](win-rate.md).
 
 Rodomos tik pasitaikančios rūšys. Vertės stulpeliai (`cost_*`, `earn_*`, `net_*` ir *Kainos šaltinis*, žr. [Vertės svorinimas](value-weighting.md)) filtruojami kaip bet kuris skaitinis stulpelis: pavyzdžiui, *Kainos šaltinyje* nuimkite *estimate* žymę, kad liktų tik įkainotos eilutės.
 

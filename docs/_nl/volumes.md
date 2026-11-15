@@ -4,9 +4,9 @@ parent: "Filters en hulpmiddelen"
 nav_order: 6
 lang: "nl"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Volumes en vergelijking
@@ -63,6 +63,7 @@ Het GPU-filter neemt tot 8 volumes met in totaal 64 contourpunten; een "!" marke
 Het gebied **Statistieken** volgt de filters, het tijdvenster en de verborgen groepen. *Geselecteerd* toont het geselecteerde volume, *Alles vergelijken* zet elk volume naast elkaar. Het toont:
 
 - **Rijen binnen (getoond)** en **Rijen binnen (alle gegevens)**, **Spelers**, **Teams**, **Wedstrijden**, **Tijd binnen**, **Ingangen / uitgangen**, **Piekhitte**, **Gemiddelde hitte**, **Volume / voetafdruk** en een histogram **Wanneer**;
+- **Winstpercentage**, als de gegevens zeggen wie won ([uitslagkolommen](data-formats.md#outcome-columns)): van de rondes met een speler binnen, de ronde van elke speler één keer geteld, het aandeel dat zijn kant won, met 4 rondes getrokken naar het percentage over alles wat getoond wordt, zoals de [uitsplitsing](breakdown.md) doet, met de gewonnen en gespeelde rondes en dat totale percentage;
 - per kolom: categorieën met **Lift** (aandeel binnen gedeeld door aandeel in alle getoonde data), en getallen met bereik, mediaan en de 5e-95e percentielen.
 
 **Statistieken als CSV / JSON** slaat ze op. **Gegevens binnen exporteren** schrijft de rijen binnen als CSV of Parquet (*Alleen de getoonde rijen* standaard aan), één volume of alle, met een kolom die zegt welk volume elke rij bevat.

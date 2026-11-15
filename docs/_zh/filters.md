@@ -4,9 +4,9 @@ parent: "筛选与工具"
 nav_order: 1
 lang: "zh"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 筛选
@@ -33,6 +33,8 @@ outdated: true
 | **玩家或AI** | 玩家、AI | 名为 `ai`、`is_ai`、`bot` 或 `actor` 的列；否则为 `is_player` / `human`；否则为账号 ID（`user_id`、`steam_id`；为空或 0 即 AI）；对于 Tacview 录像，则看该对象是否有飞行员 |
 | **载具类别** | 17 类：战斗机、攻击机、轰炸机、其他飞机、直升机、坦克、装甲车、防空、火炮、卡车 / 汽车、舰船、潜艇、步兵、武器、诱饵、建筑、其他 | 载具或单位名称（与[图形目录](figures.md)匹配）以及类型列 |
 | **目标类别** | 同样的类别 | 另一方的载具（`other_vehicle`、`target_vehicle`、`victim_type` ……） |
+
+紧随其后的是 [结果列](data-formats.md#outcome-columns)（如果数据中有）：**回合结果** 和 **比赛结果**（*任意*、*胜*、*负*）以及 **回合结束方式**，其值使用你的语言。可以按它们筛选，或按它们拆分热度，得到 [胜率地图](win-rate.md)。
 
 只列出实际出现的类别。数值列（`cost_*`、`earn_*`、`net_*` 以及*成本来源*，参见[数值加权](value-weighting.md)）与任何数字列一样可以筛选：例如，在*成本来源*下取消勾选*估算*，即可只保留有价格的行。
 

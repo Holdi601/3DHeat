@@ -3,9 +3,9 @@ title: "Referință pentru formatele de date"
 nav_order: 19
 lang: "ro"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Referință pentru formatele de date
@@ -93,6 +93,37 @@ O coloană de poziție, timp sau privire care conține altceva decât un număr 
 | Coloană de filtru, *categorie* | orice; codificat prin dicționar | nu | id pe 32 de biți | Până la 4 096 de valori, altfel coloana nu se păstrează. |
 
 O coloană Parquet `TIMESTAMP` păstrată ca filtru este un *interval* de milisecunde epocale - un glisor, nu o listă.
+
+## Coloanele de rezultat {#outcome-columns}
+
+Cine a câștigat, pe fiecare rând, ca un loc, un traseu sau o acțiune să poată fi judecat după cât de des partea lui a câștigat apoi ([Rata de victorie](win-rate.md)). Vizualizatorul păstrează singur aceste coloane, le arată primele în [filtre](filters.md) în limba vizualizatorului și le citește în [harta ratei de victorie](win-rate.md), în [defalcare](breakdown.md) și în [statisticile volumelor](volumes.md#statistics). Un convertor pentru un joc pe runde (CS2, Valorant, Rainbow Six Siege) sau unul pe meciuri (War Thunder) le scrie pe toate patru:
+
+| Coloană | Tip | Înțeles |
+|---|---|---|
+| `won` | 0/1 (gol unde nu se știe) | partea (echipa) rândului a câștigat **runda**; într-un joc fără runde, meciul |
+| `matchWon` | 0/1 (gol unde nu se știe) | partea (echipa) rândului a câștigat **meciul**; gol unde înregistrarea nu arată sfârșitul |
+| `round` | număr întreg, de la 1 | runda căreia îi aparține rândul; 1 pe tot parcursul într-un joc pe meciuri |
+| `roundEndReason` | text | cum s-a încheiat runda (într-un joc pe meciuri, meciul), în cuvintele de mai jos |
+
+`won` și `matchWon` sunt ale părții rândului: rândurile unui jucător T poartă rezultatul părții T, rândurile unei unități AI pe al echipei ei; rândurile care nu aparțin niciunei părți le lasă goale. O parte care schimbă la pauză își păstrează propriul `matchWon` și ia `won` al fiecărei runde așa cum a jucat-o. O remiză este 0 pentru ambele părți.
+
+Motivele de încheiere, comune tuturor jocurilor, ca un singur filtru să meargă pe toate (cuvântul propriu al unui joc este mapat unde se poate, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Înțeles | Jocuri |
+|---|---|---|
+| `elimination` | toți jucătorii unei părți scoși din joc | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | bomba (spike-ul, ținta celui care dezamorsează) a explodat | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | bomba (spike-ul) dezamorsată | CS2, Valorant, Rainbow Six Siege |
+| `time` | ceasul rundei a expirat; War Thunder: decis cu tichete rămase la ambele părți | toate |
+| `surrender` | o parte a renunțat | CS2, Valorant, Rainbow Six Siege |
+| `draw` | niciun câștigător | CS2 |
+| `objective` | un obiectiv luat sau ținut (ostatic extras, zonă securizată) | Rainbow Six Siege |
+| `capture` | rămas fără tichete cât timp câștigătorul a ținut zonele de captură | War Thunder |
+| `tickets` | tichete pierdute prin doborâri | War Thunder |
+| `destruction` | ultimele vehicule pierdute deodată, nimeni rămas care să reapară | War Thunder |
+| `other` | orice altceva | |
+
+Numiți-le și în lista `extra` a sugestiilor `heat3d`, ca pe orice altă coloană. Numele de coloane `win`, `round_won`, `match_won`, `end_reason` și `win_reason` sunt citite ca aceleași coloane.
 
 ## Sugestiile `heat3d` {#the-heat3d-hints}
 

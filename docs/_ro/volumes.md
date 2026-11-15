@@ -4,9 +4,9 @@ parent: "Filtre și instrumente"
 nav_order: 6
 lang: "ro"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Volume și comparație
@@ -63,6 +63,7 @@ Filtrul GPU ia până la 8 volume cu 64 de puncte de contur în total; un „!�
 Zona **Statistici** urmează filtrele, fereastra de timp și grupurile ascunse. *Selectat* arată volumul ales, *Compară tot* pune fiecare volum unul lângă altul. Arată:
 
 - **Rânduri în interior (afișate)** și **Rânduri în interior (toate datele)**, **Jucători**, **Echipe**, **Meciuri**, **Timp în interior**, **Intrări / ieșiri**, **Căldură maximă**, **Căldură medie**, **Volum / amprentă** și o histogramă **Când**;
+- **Rata de victorie**, acolo unde datele spun cine a câștigat ([coloanele de rezultat](data-formats.md#outcome-columns)): din rundele cu un jucător înăuntru, cu runda fiecărui jucător numărată o dată, proporția câștigată de partea lui - atrasă spre rata pe tot ce se arată cu 4 runde, cum face [defalcarea](breakdown.md) - cu rundele câștigate și jucate și acea rată totală;
 - pentru fiecare coloană: categorii cu **Lift** (ponderea din interior împărțită la ponderea din toate datele afișate) și numere cu interval, mediană și percentilele 5-95.
 
 **Statistici ca CSV / JSON** le salvează. **Exportă datele din interior** scrie rândurile din interior ca CSV sau Parquet (*Doar rândurile afișate* pornit implicit), pentru un volum sau pentru toate, cu o coloană care spune ce volum conține fiecare rând.

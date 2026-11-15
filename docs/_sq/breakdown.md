@@ -4,9 +4,9 @@ parent: "Filtrat dhe mjetet"
 nav_order: 7
 lang: "sq"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -92,6 +92,6 @@ Një konvertues shton një faktor duke emërtuar kolonën e vet:
 | flamuj pajisjesh që janë të zakonshëm (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | aktiv kur nuk është zero |
 | `ammoType`, `shellType`, `ammoName` | predha e fundit e qëlluar |
 
-Rezultatet: një kolonë `won` 0/1 (pala e rreshtit fitoi raundin ose ndeshjen) dhe një kolonë `round`. Paratë: `earn_<currency>` dhe `cost_<kind>_<currency>`; një e ardhur sipas llojit vetëm (`earn_round_cs2`, shpërblimet e sakta të raundit të një konvertuesi) zëvendëson vetëm të ardhurat e modelit të kostos për atë lloj (`round` mbulon edhe plantimet dhe çmontimet), dhe modeli çmon pjesën tjetër.
+Rezultatet: një kolonë `won` 0/1 (pala e rreshtit fitoi raundin ose ndeshjen) dhe një kolonë `round` - [kolonat e rezultatit](data-formats.md#outcome-columns); ku një skedar ka edhe `won` edhe `matchWon`, *Fitore %* numëron raundet. Paratë: `earn_<currency>` dhe `cost_<kind>_<currency>`; një e ardhur sipas llojit vetëm (`earn_round_cs2`, shpërblimet e sakta të raundit të një konvertuesi) zëvendëson vetëm të ardhurat e modelit të kostos për atë lloj (`round` mbulon edhe plantimet dhe çmontimet), dhe modeli çmon pjesën tjetër.
 
 Hartëzimi i ngarkon vetë këto kolona, pranë listës së skedarit: çdo kolonë `state_*`, `active_*`, `won`, `round` dhe listë, me përjashtim të atyre që statistikat e një skedari Parquet tregojnë se mbajnë një vlerë gjatë gjithë kohës (çdo kolonë e ngarkuar zë 4 bajt për rresht).

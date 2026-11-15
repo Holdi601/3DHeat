@@ -4,9 +4,9 @@ parent: "Moduri de căldură"
 nav_order: 5
 lang: "ro"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Diferență
@@ -86,6 +86,10 @@ Alegerea coloanei pune prima ei valoare pe + și a doua pe −. Când nicio part
 | **Împarte la mijloc** | Setează + la [minim, mijloc] și − la [mijloc, maxim] - ceea ce face și alegerea coloanei. |
 
 O valoare din ambele intervale contează ca +. Intervalele nu trebuie să acopere coloana; valorile din niciunul sunt lăsate deoparte. *Primele două minute față de ultimele două* este o împărțire pe interval a unei coloane asemănătoare timpului.
+
+## Proporția +: harta ratei de victorie {#share-of--the-win-rate-map}
+
+**Diferență** / **Proporția +** din partea de sus a panoului alege ce se desenează. *Proporția +* colorează fiecare loc după proporția părții + din rândurile ambelor părți de acolo, față de acea proporție pe tot ce se arată: cald peste ea, rece sub ea, nimic unde e la fel și nimic unde un loc are prea puține rânduri. Cu rundele câștigate pe + și cele pierdute pe − este o hartă a ratei de victorie; **Rata de victorie pe rundă** și **Rata de victorie pe meci** o configurează dintr-o apăsare, acolo unde datele au [coloane de rezultat](data-formats.md#outcome-columns). Vedeți [Rata de victorie](win-rate.md).
 
 ## Culorile {#colours}
 

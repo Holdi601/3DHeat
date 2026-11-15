@@ -4,9 +4,9 @@ parent: "Scagairí agus uirlisí"
 nav_order: 1
 lang: "ga"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Scagairí
@@ -33,6 +33,8 @@ Ag an lódáil oibríonn an t-amharcóir amach ceithre cholún de chuid féin ag
 | **Imreoir nó AI** | Imreoir, AI | colún `ai`, `is_ai`, `bot` nó `actor`; nó `is_player` / `human`; nó aitheantas cuntais (`user_id`, `steam_id`; folamh nó 0 is AI é); le haghaidh taifeadtaí Tacview, an bhfuil píolóta ag an réad |
 | **Aicme feithicle** | 17 aicme: Trodaire, Aerárthach ionsaithe, Buamadóir, Aerárthach eile, Heileacaptar, Tanc, Feithicil armúrtha, Cosaint aeir, Airtléire, Trucail / carr, Long, Fo-long, Coisí, Arm, Decoy, Struchtúr, Eile | ainm na feithicle nó an aonaid (meaitseáilte i gcoinne an [chatalóg figiúr](figures.md)) agus colúin chineáil |
 | **Aicme sprice** | na haicmí céanna | feithicil an taobh eile (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Díreach ina ndiaidh tagann na [colúin toraidh](data-formats.md#outcome-columns), nuair atá siad sna sonraí: **Toradh an bhabhta** agus **Toradh an chluiche** (*Ar bith*, *Buaite*, *Caillte*) agus **Conas a chríochnaigh an babhta**, a luachanna i do theanga. Scag orthu, nó scoilt an teas dá réir mar [léarscáil ráta buaite](win-rate.md).
 
 Ní liostaítear ach na cineálacha a tharlaíonn. Is féidir colúin luacha (`cost_*`, `earn_*`, `net_*` agus *Foinse costais*, féach [Meáchan luacha](value-weighting.md)) a scagadh cosúil le colún uimhriúil ar bith: mar shampla, bain tic de *estimate* faoi *Foinse costais* chun sraitheanna le praghas amháin a choinneáil.
 

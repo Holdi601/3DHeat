@@ -3,9 +3,9 @@ title: "Referenca formata podataka"
 nav_order: 19
 lang: "bs"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Referenca formata podataka
@@ -93,6 +93,37 @@ Kolona pozicije, vremena ili pogleda koja sadrži nešto drugo osim broja dekodi
 | Kolona filtera, *kategorija* | bilo šta; kodirano rječnikom | ne | 32-bitni id | Do 4 096 vrijednosti, inače se kolona ne čuva. |
 
 Parquet kolona `TIMESTAMP` sačuvana kao kolona filtera je *opseg* epoha u milisekundama – klizač, a ne spisak.
+
+## Kolone ishoda {#outcome-columns}
+
+Ko je pobijedio, u svakom redu, kako bi se mjesto, put ili potez mogli ocijeniti po tome koliko je često njihova strana zatim pobijedila ([Procenat pobjeda](win-rate.md)). Prikazivač ove kolone zadržava sam, navodi ih prve u [filterima](filters.md) na jeziku prikazivača i čita ih u [mapi procenta pobjeda](win-rate.md), u [raščlambi](breakdown.md) i u [statistici volumena](volumes.md#statistics). Konverter za igru s rundama (CS2, Valorant, Rainbow Six Siege) ili s mečevima (War Thunder) zapisuje sve četiri:
+
+| Kolona | Tip | Značenje |
+|---|---|---|
+| `won` | 0/1 (prazno gdje nije poznato) | strana (tim) reda je dobila **rundu**; u igri bez rundi meč |
+| `matchWon` | 0/1 (prazno gdje nije poznato) | strana (tim) reda je dobila **meč**; prazno gdje snimak ne pokazuje kraj |
+| `round` | cijeli broj, od 1 | runda kojoj red pripada; u igri s mečevima svuda 1 |
+| `roundEndReason` | tekst | kako je runda završila (u igri s mečevima meč), riječima ispod |
+
+`won` i `matchWon` pripadaju strani reda: redovi igrača T nose ishod strane T, redovi AI jedinice ishod njenog tima; redovi koji ne pripadaju nijednoj strani ostavljaju ih praznim. Strana koja na poluvremenu zamijeni stranu zadržava svoj `matchWon` i uzima `won` svake runde onako kako ju je igrala. Neriješeno je 0 za obje strane.
+
+Razlozi završetka su zajednički svim igrama, tako da jedan filter radi na svima (vlastita riječ igre se mapira gdje je moguće, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Značenje | Igre |
+|---|---|---|
+| `elimination` | ispali su svi igrači jedne strane | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | bomba (spike, cilj deaktivatora) je eksplodirala | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | bomba (spike) je deaktivirana | CS2, Valorant, Rainbow Six Siege |
+| `time` | vrijeme runde je isteklo; War Thunder: odlučeno dok su obje strane još imale bodove | sve |
+| `surrender` | strana se predala | CS2, Valorant, Rainbow Six Siege |
+| `draw` | bez pobjednika | CS2 |
+| `objective` | cilj zauzet ili zadržan (talac izveden, područje osigurano) | Rainbow Six Siege |
+| `capture` | bodovi su istekli dok je pobjednik držao zone za zauzimanje | War Thunder |
+| `tickets` | bodovi izgubljeni zbog ubistava | War Thunder |
+| `destruction` | posljednja vozila izgubljena odjednom, niko više ne može ući | War Thunder |
+| `other` | bilo šta drugo | |
+
+Navedite ih i u listi `extra` u nagovještajima `heat3d`, kao bilo koju drugu kolonu. Imena kolona `win`, `round_won`, `match_won`, `end_reason` i `win_reason` čitaju se kao iste kolone.
 
 ## Nagovještaji `heat3d` {#the-heat3d-hints}
 

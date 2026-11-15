@@ -3,9 +3,9 @@ title: "Tagairt do fhormáidí sonraí"
 nav_order: 19
 lang: "ga"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Tagairt do fhormáidí sonraí
@@ -93,6 +93,37 @@ Díchódaítear colún suímh, ama nó féachana a bhfuil rud eile ann seachas u
 | Colún scagaire, *catagóir* | ar bith; ionchódaithe le foclóir | níl | aitheantas 32-beart | Suas le 4,096 luach, nó ní coimeádtar an colún. |
 
 Is *raon* de mhilleasoin epoch é colún `TIMESTAMP` Parquet a choinnítear mar cholún scagaire - sleamhnán, ní liosta.
+
+## Colúin toraidh {#outcome-columns}
+
+Cé a bhuaigh, ar gach sraith, ionas gur féidir áit, bealach nó beart a mheas de réir cé chomh minic a bhuaigh a thaobh ina dhiaidh sin ([Ráta buaite](win-rate.md)). Coinníonn an t-amharcóir na colúin seo leis féin, liostaíonn sé ar dtús iad sna [scagairí](filters.md) i dteanga an amharcóra, agus léann sé iad sa [léarscáil ráta buaite](win-rate.md), sa [mhiondealú](breakdown.md) agus i [staitisticí na dtoirteanna](volumes.md#statistics). Scríobhann tiontaire do chluiche bunaithe ar bhabhtaí (CS2, Valorant, Rainbow Six Siege) nó do chluiche bunaithe ar chluichí (War Thunder) na ceithre cinn:
+
+| Colún | Cineál | Brí |
+|---|---|---|
+| `won` | 0/1 (folamh nuair nach eol) | bhuaigh taobh (foireann) na sraithe **an babhta**; i gcluiche gan babhtaí, an cluiche |
+| `matchWon` | 0/1 (folamh nuair nach eol) | bhuaigh taobh (foireann) na sraithe **an cluiche**; folamh nuair nach dtaispeánann an taifeadadh an deireadh |
+| `round` | slánuimhir, ó 1 | an babhta lena mbaineann an tsraith; 1 ar fud cluiche bunaithe ar chluichí |
+| `roundEndReason` | téacs | conas a chríochnaigh an babhta (i gcluiche bunaithe ar chluichí, an cluiche), sna focail thíos |
+
+Is le taobh na sraithe `won` agus `matchWon`: iompraíonn sraitheanna imreora T toradh an taobh T, sraitheanna aonaid AI toradh a fhoirne; fágann sraitheanna nach mbaineann le taobh ar bith folamh iad. Coinníonn taobh a mhalartaíonn ag leath ama a `matchWon` féin agus glacann sé `won` gach babhta mar a d'imir sé é. Is 0 don dá thaobh é comhscór.
+
+Na cúiseanna deiridh, comhroinnte ag gach cluiche ionas go n-oibríonn scagaire amháin ar gach ceann (mapáiltear focal an chluiche féin nuair is féidir, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Brí | Cluichí |
+|---|---|---|
+| `elimination` | gach imreoir de thaobh amháin amuigh | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | phléasc an buama (spike, sprioc an dí-phléascóra) | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | díchumasaíodh an buama (spike) | CS2, Valorant, Rainbow Six Siege |
+| `time` | rith clog an bhabhta amach; War Thunder: socraithe le ticéid fágtha ag an dá thaobh | gach ceann |
+| `surrender` | ghéill taobh | CS2, Valorant, Rainbow Six Siege |
+| `draw` | gan buaiteoir | CS2 |
+| `objective` | cuspóir gafa nó coinnithe (giall tugtha amach, limistéar daingnithe) | Rainbow Six Siege |
+| `capture` | ticéid ídithe fad a choinnigh an buaiteoir criosanna gabhála | War Thunder |
+| `tickets` | ticéid caillte le marúcháin | War Thunder |
+| `destruction` | na feithiclí deireanacha caillte in éineacht, gan duine ar bith fágtha le teacht isteach | War Thunder |
+| `other` | aon rud eile | |
+
+Ainmnigh iad i liosta `extra` leideanna `heat3d` freisin, mar aon cholún eile. Léitear na hainmneacha colún `win`, `round_won`, `match_won`, `end_reason` agus `win_reason` mar na colúin chéanna.
 
 ## Leideanna `heat3d` {#the-heat3d-hints}
 

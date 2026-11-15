@@ -4,9 +4,9 @@ parent: "Filtre og værktøjer"
 nav_order: 1
 lang: "da"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtre
@@ -33,6 +33,8 @@ Ved indlæsningen finder vieweren selv ud af fire kolonner og lister dem **førs
 | **Spiller eller AI** | Spiller, AI | en kolonne `ai`, `is_ai`, `bot` eller `actor`; ellers `is_player` / `human`; ellers et konto-id (`user_id`, `steam_id`; tom eller 0 er AI); for Tacview-optagelser, om objektet har en pilot |
 | **Køretøjsklasse** | 17 klasser: Jager, Angrebsfly, Bombefly, Andet fly, Helikopter, Tank, Panserkøretøj, Luftværn, Artilleri, Lastbil / bil, Skib, Ubåd, Infanteri, Våben, Lokkemiddel, Bygning, Andet | køretøjs- eller enhedsnavnet (matchet mod [figurkataloget](figures.md)) og typekolonnerne |
 | **Målklasse** | de samme klasser | den anden parts køretøj (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Lige efter dem kommer [resultatkolonnerne](data-formats.md#outcome-columns), hvor dataene har dem: **Rundens resultat** og **Kampens resultat** (*Alle*, *Vundet*, *Tabt*) og **Hvordan runden sluttede**, med værdierne på dit sprog. Filtrer på dem, eller del varmen op efter dem som et [sejrsandelskort](win-rate.md).
 
 Kun de typer, der forekommer, listes. Værdikolonner (`cost_*`, `earn_*`, `net_*` og *Omkostningskilde*, se [Værdivægtning](value-weighting.md)) kan filtreres ligesom enhver talkolonne: for eksempel fjern markeringen ved *estimeret* under *Omkostningskilde* for kun at beholde rækker med en pris.
 

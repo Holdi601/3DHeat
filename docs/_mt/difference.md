@@ -4,9 +4,9 @@ parent: "Modi tas-sħana"
 nav_order: 5
 lang: "mt"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Differenza
@@ -86,6 +86,10 @@ Meta tagħżel il-kolonna, l-ewwel valur tagħha jmur fuq + u t-tieni fuq −. M
 | **Aqsam fin-nofs** | Iqiegħed + fuq [minimu, nofs] u − fuq [nofs, massimu] - dak li jsir ukoll meta tagħżel il-kolonna. |
 
 Valur f'iż-żewġ medda jitqies bħala +. Il-medda ma jridux jkopru l-kolonna kollha; valuri f'xejn minnhom jitħallew barra. *L-ewwel żewġ minuti kontra l-aħħar żewġ minuti* hija qasma ta' medda fuq kolonna bħal ħin.
+
+## Sehem ta' +: il-mappa tar-rata ta' rebħ {#share-of--the-win-rate-map}
+
+**Differenza** / **Sehem ta’ +** fil-quċċata tal-pannell jagħżel x'jinġibed. *Sehem ta’ +* jikkulura kull post skont is-sehem tan-naħa + mir-ringieli taż-żewġ naħat hemmhekk, imqabbel ma' dak is-sehem fuq dak kollu li jidher: sħun 'il fuq minnu, kiesaħ 'l isfel, xejn fejn huwa l-istess, u xejn fejn post għandu ftit wisq ringieli. Bir-rawnds mirbuħa fuq + u dawk mitlufa fuq − hija mappa tar-rata ta' rebħ; **Rata ta’ rebħ għal kull rawnd** u **Rata ta’ rebħ għal kull partita** jissettjawha b'għafsa waħda fejn id-dejta għandha [kolonni tar-riżultat](data-formats.md#outcome-columns). Ara [Rata ta' rebħ](win-rate.md).
 
 ## Kuluri {#colours}
 

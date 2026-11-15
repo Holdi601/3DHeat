@@ -4,9 +4,9 @@ parent: "Filtry i narzędzia"
 nav_order: 7
 lang: "pl"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Zestawienie: kto i co jest najlepsze gdzie
@@ -91,6 +91,6 @@ Konwerter dodaje czynnik, nazywając jego kolumnę:
 | flagi wyposażenia, które już są w użyciu (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | włączone, gdy niezerowe |
 | `ammoType`, `shellType`, `ammoName` | ostatnio wystrzelony nabój |
 
-Wyniki: kolumna `won` 0/1 (strona wiersza wygrała rundę albo mecz) i kolumna `round`. Pieniądze: `earn_<currency>` i `cost_<kind>_<currency>`. Dochód samego rodzaju (`earn_round_cs2`, dokładne nagrody za rundę z konwertera) zastępuje tylko dochód tego rodzaju z modelu kosztów (`round` obejmuje też podkładanie i rozbrajanie), a model wycenia resztę.
+Wyniki: kolumna `won` 0/1 (strona wiersza wygrała rundę albo mecz) i kolumna `round` – [kolumny wyniku](data-formats.md#outcome-columns); gdy plik ma zarówno `won`, jak i `matchWon`, *Wygrane %* liczy rundy. Pieniądze: `earn_<currency>` i `cost_<kind>_<currency>`. Dochód samego rodzaju (`earn_round_cs2`, dokładne nagrody za rundę z konwertera) zastępuje tylko dochód tego rodzaju z modelu kosztów (`round` obejmuje też podkładanie i rozbrajanie), a model wycenia resztę.
 
 Odwzorowanie samo wczytuje te kolumny obok listy pliku: każdą `state_*`, `active_*`, `won`, `round` i kolumnę listy, z wyjątkiem tych, które statystyki pliku Parquet pokazują jako mające jedną wartość przez cały czas (każda wczytana kolumna to 4 bajty na wiersz).

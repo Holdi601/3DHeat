@@ -4,9 +4,9 @@ parent: "Szűrők és eszközök"
 nav_order: 1
 lang: "hu"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Szűrők
@@ -33,6 +33,8 @@ Betöltéskor a megjelenítő négy saját oszlopot állít elő, és ezeket **e
 | **Játékos vagy MI** | Játékos, MI | egy `ai`, `is_ai`, `bot` vagy `actor` oszlop; különben `is_player` / `human`; különben egy fiókazonosító (`user_id`, `steam_id`; üres vagy 0 jelentése MI); Tacview-felvételeknél az, hogy az objektumnak van-e pilótája |
 | **Járműosztály** | 17 osztály: Vadászgép, Támadórepülő, Bombázó, Egyéb repülő, Helikopter, Harckocsi, Páncélozott jármű, Légvédelem, Tüzérség, Teherautó / autó, Hajó, Tengeralattjáró, Gyalogság, Fegyver, Csalogató, Építmény, Egyéb | a jármű vagy egység neve (összevetve a [figurakatalógussal](figures.md)) és a típusoszlopok |
 | **Célpontosztály** | ugyanezek az osztályok | a másik fél járműve (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Rögtön utánuk jönnek az [eredményoszlopok](data-formats.md#outcome-columns), ahol az adatban megvannak: **Kör eredménye** és **Meccs eredménye** (*Bármelyik*, *Nyert*, *Vesztett*), valamint **Hogyan ért véget a kör**, az értékei az Ön nyelvén. Szűrjön rájuk, vagy ossza fel szerintük a hőt [győzelmi arány térképként](win-rate.md).
 
 Csak a ténylegesen előforduló fajták jelennek meg. Az érték-oszlopok (`cost_*`, `earn_*`, `net_*` és a *Költségforrás*, lásd [Érték-súlyozás](value-weighting.md)) bármely számoszlophoz hasonlóan szűrhetők: például a *Költségforrás* alatt vegye ki a *becslés* jelölését, hogy csak az árazott sorok maradjanak.
 

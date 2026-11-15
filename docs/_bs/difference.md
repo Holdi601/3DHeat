@@ -4,9 +4,9 @@ parent: "Načini toplote"
 nav_order: 5
 lang: "bs"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Razlika
@@ -86,6 +86,10 @@ Biranje kolone stavlja njenu prvu vrijednost na + a drugu na −. Kada nijedna s
 | **Podijeli na sredini** | Postavlja + na [najmanja, sredina] i − na [sredina, najveća] - isto što se dešava kada izaberete kolonu. |
 
 Vrijednost u oba raspona računa se kao +. Rasponi ne moraju pokrivati kolonu; vrijednosti na nijednom se izostavljaju. *Prve dvije minute naspram zadnje dvije* je podjela po rasponu na koloni nalik vremenu.
+
+## Udio +: mapa procenta pobjeda {#share-of--the-win-rate-map}
+
+**Razlika** / **Udio +** na vrhu panela bira šta se crta. *Udio +* boji svako mjesto prema udjelu strane + među redovima obje strane na njemu, u odnosu na taj udio u svemu prikazanom: toplo iznad njega, hladno ispod, ništa gdje je isti i ništa gdje mjesto ima premalo redova. S dobijenim rundama na + i izgubljenim na − to je mapa procenta pobjeda; **Procenat pobjeda po rundi** i **Procenat pobjeda po meču** to postavljaju jednim pritiskom kad podaci imaju [kolone ishoda](data-formats.md#outcome-columns). Pogledajte [Procenat pobjeda](win-rate.md).
 
 ## Boje {#colours}
 

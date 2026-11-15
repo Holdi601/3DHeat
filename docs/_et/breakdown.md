@@ -4,9 +4,9 @@ parent: "Filtrid ja tööriistad"
 nav_order: 7
 lang: "et"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Jaotus: kes ja mis toimib kus kõige paremini
@@ -91,6 +91,6 @@ Konverter lisab teguri, nimetades oma veeru:
 | juba tavalised varustuse lipud (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | sees, kui mitte-null |
 | `ammoType`, `shellType`, `ammoName` | viimati tulistatud laskemoon |
 
-Tulemused: 0/1 veerg `won` (rea pool võitis vooru või mängu) ja veerg `round`. Raha: `earn_<currency>` ja `cost_<kind>_<currency>`; ainult liigi järgi sissetulek (`earn_round_cs2`, konverteri täpsed vooruauhinnad) asendab ainult selle liigi kulumudeli sissetuleku (`round` katab ka istutused ja lahtitegemised), ja mudel hindab ülejäänu.
+Tulemused: 0/1 veerg `won` (rea pool võitis vooru või mängu) ja veerg `round` - [tulemuse veerud](data-formats.md#outcome-columns); kui failis on nii `won` kui ka `matchWon`, loeb *Võidud %* raunde. Raha: `earn_<currency>` ja `cost_<kind>_<currency>`; ainult liigi järgi sissetulek (`earn_round_cs2`, konverteri täpsed vooruauhinnad) asendab ainult selle liigi kulumudeli sissetuleku (`round` katab ka istutused ja lahtitegemised), ja mudel hindab ülejäänu.
 
 Kaardistus laadib need veerud ise, faili enda loendi kõrval: iga `state_*`, `active_*`, `won`, `round` ja loendiveeru, välja arvatud need, mida Parquet-faili statistika näitab ühe väärtusega kogu ulatuses (iga laaditud veerg on 4 baiti rea kohta).

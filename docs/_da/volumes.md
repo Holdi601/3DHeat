@@ -4,9 +4,9 @@ parent: "Filtre og værktøjer"
 nav_order: 6
 lang: "da"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Volumener og sammenligning
@@ -63,6 +63,7 @@ GPU-filteret tager op til 8 volumener med 64 konturpunkter i alt; et "!" markere
 Området **Statistik** følger filtrene, tidsvinduet og skjulte grupper. *Valgt* viser det valgte volumen, *Sammenlign alle* sætter alle volumener side om side. Det viser:
 
 - **Rækker indeni (vist)** og **Rækker indeni (alle data)**, **Spillere**, **Hold**, **Kampe**, **Tid inde**, **Ind- / udgange**, **Spidsvarme**, **Middelvarme**, **Volumen / fodaftryk** og et histogram over **Hvornår**;
+- **Sejrsandel**, hvor dataene siger, hvem der vandt ([resultatkolonner](data-formats.md#outcome-columns)): af runderne med en spiller indeni, hver spillers runde talt én gang, den andel, deres side vandt - trukket mod andelen over alt det viste med 4 runder, som [opdelingen](breakdown.md) gør - med de vundne og spillede runder og den samlede andel;
 - pr. kolonne: kategorier med **Løft** (andel inde divideret med andelen i alle viste data), og tal med interval, median og 5.-95. percentil.
 
 **Statistik som CSV / JSON** gemmer dem. **Eksportér dataene indeni** skriver rækkerne inde i volumenet som CSV eller Parquet (*Kun de viste rækker* er til som standard), ét volumen eller alle med en kolonne, der siger, hvilket volumen hver række ligger i.

@@ -4,9 +4,9 @@ parent: "Filtreler ve araçlar"
 nav_order: 6
 lang: "tr"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Hacimler ve karşılaştırma
@@ -63,6 +63,7 @@ GPU filtresi toplam 64 ana hatlı noktayla en fazla 8 hacim alır; bunun ötesin
 **İstatistikler** alanı süzgeçleri, zaman penceresini ve gizli grupları izler. *Seçili* seçilen hacmi gösterir, *Tümünü karşılaştır* her hacmi yan yana koyar. Şunları gösterir:
 
 - **İçerideki satırlar (gösterilen)** ve **İçerideki satırlar (tüm veri)**, **Oyuncular**, **Takımlar**, **Maçlar**, **İçeride geçen süre**, **Girişler / çıkışlar**, **En yüksek ısı**, **Ortalama ısı**, **Hacim / taban alanı** ve bir **Ne zaman** histogramı;
+- **Kazanma oranı**, veri kimin kazandığını söylüyorsa ([sonuç sütunları](data-formats.md#outcome-columns)): içinde bir oyuncunun olduğu rauntlardan, her oyuncunun raundu bir kez sayılarak, tarafının kazandığı pay - [döküm](breakdown.md) gibi gösterilen her şeydeki orana doğru 4 rauntla çekilmiş - kazanılan ve oynanan rauntlar ve o genel oranla birlikte;
 - sütun başına: **Lift** ile kategoriler (içerideki pay, tüm gösterilen veride paya bölünmüş) ve aralık, medyan ve 5-95. yüzdelikli sayılar.
 
 **İstatistikleri CSV / JSON olarak** bunları kaydeder. **İçerideki verileri dışa aktar** içeride olan satırları CSV ya da Parquet olarak yazar (varsayılan olarak *Yalnızca gösterilen satırlar* açık), tek bir hacim ya da hepsi, her satırın hangi hacimde olduğunu söyleyen bir sütunla.

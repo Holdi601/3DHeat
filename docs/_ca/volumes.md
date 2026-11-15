@@ -4,9 +4,9 @@ parent: "Filtres i eines"
 nav_order: 6
 lang: "ca"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Volums i comparació
@@ -63,6 +63,7 @@ El filtre de la GPU admet fins a 8 volums amb 64 punts de contorn en total; un �
 L'àrea **Estadístiques** segueix els filtres, la finestra temporal i els grups amagats. *Seleccionat* mostra el volum seleccionat, *Compara tots* posa tots els volums un al costat de l'altre. Mostra:
 
 - **Files dins (mostrades)** i **Files dins (totes les dades)**, **Jugadors**, **Equips**, **Partides**, **Temps a dins**, **Entrades / sortides**, **Calor màxima**, **Calor mitjana**, **Volum / empremta** i un histograma **Quan**;
+- **Taxa de victòria**, si les dades diuen qui va guanyar ([columnes de resultat](data-formats.md#outcome-columns)): de les rondes amb un jugador a dins, comptant la ronda de cada jugador una vegada, la part que va guanyar el seu bàndol - atreta cap a la taxa sobre tot el que es mostra amb 4 rondes, com fa el [desglossament](breakdown.md) - amb les rondes guanyades i jugades i aquesta taxa global;
 - per columna: categories amb **Ràtio (lift)** (la proporció a dins dividida per la proporció en totes les dades mostrades), i números amb interval, mediana i percentils 5 i 95.
 
 **Estadístiques com a CSV / JSON** les desa. **Exporta les dades de dins** escriu les files de dins com a CSV o Parquet (*Només les files mostrades* activat per defecte), un volum o tots, amb una columna que indica quin volum conté cada fila.

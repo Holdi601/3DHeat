@@ -3,9 +3,9 @@ title: "Referenca formata podataka"
 nav_order: 19
 lang: "hr"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Referenca formata podataka
@@ -93,6 +93,37 @@ Stupac položaja, vremena ili pogleda koji sadrži nešto drugo osim broja dekod
 | Stupac filtra, *kategorija* | bilo koji; rječnički kodiran | ne | 32-bitni id | Do 4 096 vrijednosti, inače se stupac ne čuva. |
 
 Stupac `TIMESTAMP` u Parquetu koji se koristi kao stupac filtra je *raspon* epoch milisekundi - klizač, a ne popis.
+
+## Stupci ishoda {#outcome-columns}
+
+Tko je pobijedio, u svakom retku, kako bi se mjesto, put ili potez mogli ocijeniti po tome koliko je često njihova strana zatim pobijedila ([Postotak pobjeda](win-rate.md)). Preglednik te stupce zadržava sam, navodi ih prve u [filtrima](filters.md) na jeziku preglednika i čita ih u [karti postotka pobjeda](win-rate.md), u [raščlambi](breakdown.md) i u [statistici volumena](volumes.md#statistics). Pretvarač za igru s rundama (CS2, Valorant, Rainbow Six Siege) ili s mečevima (War Thunder) zapisuje sva četiri:
+
+| Stupac | Vrsta | Značenje |
+|---|---|---|
+| `won` | 0/1 (prazno gdje nije poznato) | strana (tim) retka osvojila je **rundu**; u igri bez rundi meč |
+| `matchWon` | 0/1 (prazno gdje nije poznato) | strana (tim) retka osvojila je **meč**; prazno gdje snimka ne pokazuje kraj |
+| `round` | cijeli broj, od 1 | runda kojoj redak pripada; u igri s mečevima posvuda 1 |
+| `roundEndReason` | tekst | kako je runda završila (u igri s mečevima meč), riječima ispod |
+
+`won` i `matchWon` pripadaju strani retka: reci igrača T nose ishod strane T, reci AI jedinice ishod njezina tima; reci koji ne pripadaju nijednoj strani ostavljaju ih praznima. Strana koja na poluvremenu zamijeni stranu zadržava svoj `matchWon` i uzima `won` svake runde onako kako ju je igrala. Neriješeno je 0 za obje strane.
+
+Razlozi završetka zajednički su svim igrama, tako da jedan filtar radi na svima (vlastita riječ igre preslikava se gdje je moguće, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Značenje | Igre |
+|---|---|---|
+| `elimination` | ispali su svi igrači jedne strane | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | bomba (spike, cilj deaktivatora) je eksplodirala | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | bomba (spike) je deaktivirana | CS2, Valorant, Rainbow Six Siege |
+| `time` | vrijeme runde je isteklo; War Thunder: odlučeno dok su obje strane još imale bodove | sve |
+| `surrender` | strana se predala | CS2, Valorant, Rainbow Six Siege |
+| `draw` | bez pobjednika | CS2 |
+| `objective` | cilj zauzet ili zadržan (talac izveden, područje osigurano) | Rainbow Six Siege |
+| `capture` | bodovi su istekli dok je pobjednik držao zone za zauzimanje | War Thunder |
+| `tickets` | bodovi izgubljeni zbog ubojstava | War Thunder |
+| `destruction` | posljednja vozila izgubljena odjednom, nitko više ne može ući | War Thunder |
+| `other` | bilo što drugo | |
+
+Navedite ih i u popisu `extra` u nagovještajima `heat3d`, kao bilo koji drugi stupac. Imena stupaca `win`, `round_won`, `match_won`, `end_reason` i `win_reason` čitaju se kao isti stupci.
 
 ## Nagovještaji `heat3d` {#the-heat3d-hints}
 

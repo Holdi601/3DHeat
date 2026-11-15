@@ -4,9 +4,9 @@ parent: "Siltuma režīmi"
 nav_order: 5
 lang: "lv"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Starpība
@@ -86,6 +86,10 @@ Izvēloties kolonnu, tās pirmā vērtība tiek likta uz +, otrā — uz −. Ka
 | **Sadalīt viduspunktā** | Iestata + uz [minimums, vidus] un − uz [vidus, maksimums] — tas pats, ko dara kolonnas izvēle. |
 
 Vērtība abos diapazonos skaitās kā +. Diapazoniem nav jāpārklāj kolonna; vērtības, kas nav nevienā, tiek izlaistas. *Pirmās divas minūtes pret pēdējām divām* ir diapazona sadalījums laika tipa kolonnā.
+
+## + daļa: uzvaru karte {#share-of--the-win-rate-map}
+
+**Starpība** / **+ daļa** paneļa augšā izvēlas, kas tiek zīmēts. *+ daļa* iekrāso katru vietu pēc + puses daļas no abu pušu rindām tur, salīdzinot ar šo daļu visā parādītajā: silts virs tās, auksts zem, nekas, kur tā ir tāda pati, un nekas, kur vietā ir pārāk maz rindu. Ar uzvarētajiem raundiem uz + un zaudētajiem uz − tā ir uzvaru karte; **Uzvaru daļa raundos** un **Uzvaru daļa spēlēs** to iestata ar vienu klikšķi, ja datos ir [iznākuma kolonnas](data-formats.md#outcome-columns). Skatīt [Uzvaru daļa](win-rate.md).
 
 ## Krāsas {#colours}
 

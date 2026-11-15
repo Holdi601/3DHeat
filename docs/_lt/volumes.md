@@ -4,9 +4,9 @@ parent: "Filtrai ir įrankiai"
 nav_order: 6
 lang: "lt"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Tūriai ir palyginimas
@@ -63,6 +63,7 @@ GPU filtras paima iki 8 tūrių su 64 kontūro taškais iš viso; „!“ žymi 
 Sritis **Statistika** seka filtrus, laiko langą ir paslėptas grupes. *Pasirinktas* rodo pasirinktą tūrį, *Palyginti visus* padeda visus tūrius šalia vienas kito. Ji rodo:
 
 - **Eilutės viduje (rodomos)** ir **Eilutės viduje (visi duomenys)**, **Žaidėjai**, **Komandos**, **Rungtynės**, **Laikas viduje**, **Įėjimai / išėjimai**, **Šilumos pikas**, **Vidutinė šiluma**, **Tūris / pagrindas** ir **Kada** histogramą;
+- **Laimėjimų dalis**, kai duomenys sako, kas laimėjo ([rezultato stulpeliai](data-formats.md#outcome-columns)): iš raundų, kuriuose žaidėjas buvo viduje, kiekvieno žaidėjo raundą skaičiuojant vieną kartą, dalis, kurią laimėjo jo pusė - traukiant link viso rodomo dalies 4 raundais, kaip daro [išskaidymas](breakdown.md) - su laimėtais ir sužaistais raundais bei bendra dalimi;
 - kiekvienam stulpeliui: kategorijas su **Pakilimas** (dalis viduje, padalyta iš dalies visuose rodomuose duomenyse) ir skaičius su intervalu, mediana ir 5–95 procentiliais.
 
 **Statistika kaip CSV / JSON** ją išsaugo. **Eksportuoti duomenis viduje** įrašo vidinias eilutes kaip CSV arba Parquet (pagal numatytuosius – *Tik rodomos eilutes*), vieną tūrį arba visus, su stulpeliu, nurodančiu, kuriame tūryje yra kiekviena eilutė.

@@ -3,9 +3,9 @@ title: "Adatformátumok leírása"
 nav_order: 19
 lang: "hu"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Adatformátumok leírása
@@ -93,6 +93,37 @@ A pozícióhoz, időhöz vagy nézési irányhoz tartozó oszlop, ha nem számot
 | Szűrőoszlop, *kategória* | bármi; szótáras kódolás | nem | 32 bites azonosító | Legfeljebb 4096 érték, különben az oszlop nem marad meg. |
 
 A Parquet `TIMESTAMP` oszlop, amely szűrőoszlopként marad meg, az epoch-ezredmásodpercek *tartománya* – csúszka, nem lista.
+
+## Eredményoszlopok {#outcome-columns}
+
+Ki nyert, minden sorban, hogy egy helyet, útvonalat vagy lépést aszerint lehessen megítélni, milyen gyakran nyert utána az oldala ([Győzelmi arány](win-rate.md)). A megjelenítő magától megtartja ezeket az oszlopokat, a [szűrőkben](filters.md) elsőként sorolja fel őket a megjelenítő nyelvén, és felhasználja őket a [győzelmi arány térképén](win-rate.md), a [bontásban](breakdown.md) és a [térfogatok statisztikájában](volumes.md#statistics). Egy körökre épülő játék (CS2, Valorant, Rainbow Six Siege) vagy egy meccsekre épülő (War Thunder) konvertere mind a négyet írja:
+
+| Oszlop | Típus | Jelentés |
+|---|---|---|
+| `won` | 0/1 (üres, ha nem ismert) | a sor oldala (csapata) megnyerte **a kört**; körök nélküli játékban a meccset |
+| `matchWon` | 0/1 (üres, ha nem ismert) | a sor oldala (csapata) megnyerte **a meccset**; üres, ha a felvétel nem mutatja a végét |
+| `round` | egész szám, 1-től | a kör, amelyhez a sor tartozik; meccsekre épülő játékban végig 1 |
+| `roundEndReason` | szöveg | hogyan ért véget a kör (meccsekre épülő játékban a meccs), az alábbi szavakkal |
+
+A `won` és a `matchWon` a sor oldaláé: egy T játékos sorai a T oldal eredményét hordozzák, egy MI-egység sorai a csapatáét; a semmilyen oldalhoz nem tartozó sorokban üresek. A félidőben oldalt cserélő oldal megtartja saját `matchWon` értékét, és minden kör `won` értékét úgy veszi, ahogy azt játszotta. A döntetlen mindkét oldalnak 0.
+
+A befejezés okai minden játékban közösek, így egy szűrő mindegyiken működik (a játék saját szavát, ahol lehet, ezekre képezzük le, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Jelentés | Játékok |
+|---|---|---|
+| `elimination` | az egyik oldal minden játékosa kiesett | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | a bomba (spike, a hatástalanító célpontja) felrobbant | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | a bombát (spike-ot) hatástalanították | CS2, Valorant, Rainbow Six Siege |
+| `time` | lejárt a kör órája; War Thunder: úgy dőlt el, hogy mindkét oldalnak maradt jegye | mind |
+| `surrender` | egy oldal feladta | CS2, Valorant, Rainbow Six Siege |
+| `draw` | nincs győztes | CS2 |
+| `objective` | célpont elfoglalva vagy megtartva (túsz kimentve, terület biztosítva) | Rainbow Six Siege |
+| `capture` | elfogytak a jegyek, miközben a győztes tartotta az elfoglalási zónákat | War Thunder |
+| `tickets` | ölések miatt elvesztett jegyek | War Thunder |
+| `destruction` | az utolsó járművek egyszerre elvesztek, senki nem maradt, aki újraéledhet | War Thunder |
+| `other` | bármi más | |
+
+Nevezze meg őket a `heat3d` tippek `extra` listájában is, mint bármely más oszlopot. A `win`, `round_won`, `match_won`, `end_reason` és `win_reason` oszlopnevek ugyanezekként az oszlopokként olvasódnak.
 
 ## A `heat3d` tippek {#the-heat3d-hints}
 

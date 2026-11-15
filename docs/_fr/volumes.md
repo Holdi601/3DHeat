@@ -4,9 +4,9 @@ parent: "Filtres et outils"
 nav_order: 6
 lang: "fr"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Volumes et comparaison
@@ -63,6 +63,7 @@ Le filtre GPU prend jusqu'à 8 volumes avec 64 points de contour au total ; un �
 La zone **Statistiques** suit les filtres, la fenêtre temporelle et les groupes masqués. *Sélectionné* affiche le volume sélectionné, *Comparer tout* met chaque volume côte à côte. Elle affiche :
 
 - **Lignes dedans (affichées)** et **Lignes dedans (toutes les données)**, **Joueurs**, **Équipes**, **Matchs**, **Temps à l'intérieur**, **Entrées / sorties**, **Chaleur max**, **Chaleur moyenne**, **Volume / empreinte** et un histogramme **Quand** ;
+- **Taux de victoire**, quand les données disent qui a gagné ([colonnes de résultat](data-formats.md#outcome-columns)) : parmi les manches avec un joueur dedans, la manche de chaque joueur comptée une fois, la part que son camp a gagnée – attirée de 4 manches vers le taux sur tout ce qui est affiché, comme le fait le [détail](breakdown.md) – avec les manches gagnées et jouées et ce taux global ;
 - par colonne : les catégories avec **Lift** (part à l'intérieur divisée par la part dans toutes les données affichées), et les nombres avec l'intervalle, la médiane et les 5e-95e centiles.
 
 **Statistiques en CSV / JSON** les enregistre. **Exporter les données dedans** écrit les lignes à l'intérieur en CSV ou en Parquet (*Seulement les lignes affichées* activé par défaut), pour un volume ou pour tous, avec une colonne indiquant le volume qui contient chaque ligne.

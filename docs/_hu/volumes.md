@@ -4,9 +4,9 @@ parent: "Szűrők és eszközök"
 nav_order: 6
 lang: "hu"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Térfogatok és összehasonlítás
@@ -63,6 +63,7 @@ A GPU-szűrő legfeljebb 8 térfogatot kezel, összesen 64 körvonalponttal; a t
 A **Statisztika** terület követi a szűrőket, az időablakot és az elrejtett csoportokat. A *Kijelölt* a kijelölt térfogatot mutatja, a *Mind összehasonlítása* minden térfogatot egymás mellett. Megmutatja:
 
 - **Sorok belül (látható)** és **Sorok belül (minden adat)**, **Játékosok**, **Csapatok**, **Meccsek**, **Bent töltött idő**, **Belépések / kilépések**, **Csúcshő**, **Átlagos hő**, **Térfogat / alapterület** és egy **Mikor** hisztogramot;
+- **Győzelmi arány**, ahol az adat megmondja, ki nyert ([eredményoszlopok](data-formats.md#outcome-columns)): azokból a körökből, amelyekben játékos volt bent, minden játékos körét egyszer számolva, az oldaluk által megnyert arány - 4 körrel az összes megjelenített adat aránya felé húzva, ahogy a [bontás](breakdown.md) teszi -, a nyert és lejátszott körökkel és ezzel az összesített aránnyal;
 - oszloponként: kategóriák az **Emelés** értékkel (a bent lévő arány osztva a teljes látható adat arányával), és számok tartománnyal, mediánnal és az 5–95%-os percentilisekkel.
 
 A **Statisztika CSV / JSON formátumban** menti őket. Az **A belső adatok exportálása** a bent lévő sorokat CSV vagy Parquet formátumban írja (alapértelmezés szerint *Csak a látható sorok*), egy vagy minden térfogatra, egy oszloppal, amely megmondja, melyik térfogatban van az adott sor.

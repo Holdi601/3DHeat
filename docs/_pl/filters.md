@@ -4,9 +4,9 @@ parent: "Filtry i narzędzia"
 nav_order: 1
 lang: "pl"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtry
@@ -33,6 +33,8 @@ Przy wczytaniu przeglądarka wyznacza cztery własne kolumny i wypisuje je **jak
 | **Gracz lub SI** | Gracz, SI | kolumna `ai`, `is_ai`, `bot` albo `actor`; w przeciwnym razie `is_player` / `human`; w przeciwnym razie identyfikator konta (`user_id`, `steam_id`; pusty albo 0 to SI); dla nagrań Tacview - czy obiekt ma pilota |
 | **Klasa pojazdu** | 17 klas: Myśliwiec, Samolot szturmowy, Bombowiec, Inny samolot, Helikopter, Czołg, Pojazd opancerzony, Obrona przeciwlotnicza, Artyleria, Ciężarówka / samochód, Okręt, Okręt podwodny, Piechota, Broń, Wabik, Konstrukcja, Inne | nazwa pojazdu albo jednostki (dopasowywana do [katalogu sylwetek](figures.md)) i kolumny typu |
 | **Klasa celu** | te same klasy | pojazd drugiej strony (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Zaraz po nich są [kolumny wyniku](data-formats.md#outcome-columns), jeśli dane je mają: **Wynik rundy** i **Wynik meczu** (*Dowolny*, *Wygrana*, *Przegrana*) oraz **Jak skończyła się runda**, z wartościami w twoim języku. Filtruj według nich albo podziel według nich ciepło jako [mapę odsetka wygranych](win-rate.md).
 
 Wypisywane są tylko rodzaje, które występują. Kolumny wartości (`cost_*`, `earn_*`, `net_*` oraz *Źródło kosztu*, zob. [Ważenie wartością](value-weighting.md)) można filtrować jak każdą kolumnę liczbową: na przykład odznacz *estimate* w *Źródło kosztu*, aby zostawić tylko wiersze z ceną.
 

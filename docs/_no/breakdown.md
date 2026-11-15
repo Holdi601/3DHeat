@@ -4,9 +4,9 @@ parent: "Filtre og verktøy"
 nav_order: 7
 lang: "no"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Oppdeling: hvem og hva gjør det best hvor
@@ -91,6 +91,6 @@ En konverter legger til en faktor ved å navngi kolonnen sin:
 | utstyrsflagg som allerede er vanlige (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed` ...) | på mens den ikke er null |
 | `ammoType`, `shellType`, `ammoName` | runden sist avfyrt |
 
-Resultater: en 0/1-kolonne `won` (radens side vant runden eller kampen) og en kolonne `round`. Penger: `earn_<valuta>` og `cost_<type>_<valuta>`; en inntekt etter type alene (`earn_round_cs2`, en konverters eksakte rundebelønninger) erstatter bare kostnadsmodellens inntekt av den typen (`round` dekker også plantinger og avmontering), og modellen priser resten.
+Resultater: en 0/1-kolonne `won` (radens side vant runden eller kampen) og en kolonne `round` - [resultatkolonnene](data-formats.md#outcome-columns); der en fil har både `won` og `matchWon`, teller *Seier %* runder. Penger: `earn_<valuta>` og `cost_<type>_<valuta>`; en inntekt etter type alene (`earn_round_cs2`, en konverters eksakte rundebelønninger) erstatter bare kostnadsmodellens inntekt av den typen (`round` dekker også plantinger og avmontering), og modellen priser resten.
 
 Kartleggingen laster disse kolonnene selv, ved siden av filens egen liste: hver `state_*`-, `active_*`-, `won`-, `round`- og listekolonne, unntatt dem en Parquet-fils statistikk viser har én verdi gjennom hele (hver innlastet kolonne koster 4 byte per rad).

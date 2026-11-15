@@ -4,9 +4,9 @@ parent: "Hőmódok"
 nav_order: 5
 lang: "hu"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Különbség
@@ -86,6 +86,10 @@ Az oszlop kiválasztásakor az első értéke a +-ra, a második a −-ra kerül
 | **Felosztás a felezőpontnál** | A +-t [minimum, középső] értékre, a −-t [középső, maximum] értékre állítja – az oszlop kiválasztása is ezt teszi. |
 
 Ha egy érték mindkét tartományban benne van, +-nak számít. A tartományoknak nem kell lefedniük az oszlopot; az egyikben sem lévő értékek kimaradnak. *Az első két perc az utolsó két perccel szemben* egy időszerű oszlop tartomány szerinti felosztása.
+
+## + aránya: a győzelmi arány térképe {#share-of--the-win-rate-map}
+
+A panel tetején a **Különbség** / **+ aránya** választja ki, mi rajzolódik. A *+ aránya* minden helyet a + oldal arányával színez a két oldal ottani sorai közül, ehhez az arányhoz képest az összes megjelenített adaton: meleg felette, hideg alatta, semmi, ahol ugyanannyi, és semmi, ahol egy helyen túl kevés a sor. Ha a nyert körök a +, a vesztettek a − oldalon vannak, ez a győzelmi arány térképe; a **Nyert körök aránya** és a **Nyert meccsek aránya** egy gombnyomással beállítja ezt, ahol az adatnak vannak [eredményoszlopai](data-formats.md#outcome-columns). Lásd: [Győzelmi arány](win-rate.md).
 
 ## Színek {#colours}
 

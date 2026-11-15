@@ -4,9 +4,9 @@ parent: "Modes de calor"
 nav_order: 5
 lang: "ca"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Diferència
@@ -104,6 +104,10 @@ un valor per fitxer: així es comparen dues exportacions, dues execucions de pro
 
 Un valor a tots dos rangs compta com a +. Els rangs no han de cobrir la columna; els valors a cap dels
 dos queden fora. *Els primers dos minuts contra els darrers dos* és una divisió per rang sobre una columna semblant al temps.
+
+## Part de +: el mapa de taxa de victòria {#share-of--the-win-rate-map}
+
+**Diferència** / **Part de +** a la part de dalt del tauler tria què es dibuixa. *Part de +* acoloreix cada lloc segons la part del bàndol + de les files de tots dos bàndols d'allà, comparada amb aquesta part sobre tot el que es mostra: càlid per sobre, fred per sota, res on és igual, i res on un lloc té massa poques files. Amb les rondes guanyades a + i les perdudes a −, és un mapa de taxa de victòria; **Taxa de victòria per ronda** i **Taxa de victòria per partida** ho preparen amb un sol clic quan les dades tenen [columnes de resultat](data-formats.md#outcome-columns). Vegeu [Taxa de victòria](win-rate.md).
 
 ## Colors {#colours}
 

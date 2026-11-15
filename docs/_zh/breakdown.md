@@ -4,9 +4,9 @@ parent: "筛选与工具"
 nav_order: 7
 lang: "zh"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 
@@ -92,6 +92,6 @@ outdated: true
 | 已经常见的装备标记（`helmet`、`defuser`、`armor`、`scoped`、`airborne`、`duck`、`flashed`……） | 非零时开启 |
 | `ammoType`、`shellType`、`ammoName` | 最后一次开火所用的弹药 |
 
-结果：一个 0/1 的 `won` 列（该行所在一方赢得了回合或对局）和一个 `round` 列。金钱：`earn_<currency>` 与 `cost_<kind>_<currency>`；仅按种类给出的收入（`earn_round_cs2`，即转换器精确的回合奖励）只替换该种类的成本模型收入（`round` 还包括安放和拆除），其余部分仍由模型计价。
+结果：一个 0/1 的 `won` 列（该行所在一方赢得了回合或对局）和一个 `round` 列 - 即 [结果列](data-formats.md#outcome-columns)；文件同时有 `won` 和 `matchWon` 时，*胜率 %* 按回合计数。金钱：`earn_<currency>` 与 `cost_<kind>_<currency>`；仅按种类给出的收入（`earn_round_cs2`，即转换器精确的回合奖励）只替换该种类的成本模型收入（`round` 还包括安放和拆除），其余部分仍由模型计价。
 
 映射会自行载入这些列，并与文件自身的列表一起加载：每一个 `state_*`、`active_*`、`won`、`round` 和列表列，但 Parquet 文件的统计信息显示其全程只保持一个值的列除外（每个载入的列每行占 4 字节）。

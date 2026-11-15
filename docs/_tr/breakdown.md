@@ -4,9 +4,9 @@ parent: "Filtreler ve araçlar"
 nav_order: 7
 lang: "tr"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Döküm: kim ve nerede en iyi
@@ -91,6 +91,6 @@ Bir dönüştürücü, sütununu adlandırarak bir etken ekler:
 | zaten yaygın olan donanım bayrakları (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | sıfır olmadığı sürece açık |
 | `ammoType`, `shellType`, `ammoName` | en son ateşlenen mermi |
 
-Sonuçlar: 0/1 bir `won` sütunu (satırın tarafı turu ya da maçı kazandı) ve bir `round` sütunu. Para: `earn_<currency>` ve `cost_<kind>_<currency>`; yalnızca türüne göre bir gelir (`earn_round_cs2`, bir dönüştürücünün kesin tur ödülleri) o türdeki maliyet modelinin gelirini yerine koyar (`round` ayrıca yerleştirmeleri ve etkisiz hale getirmeleri de kapsar) ve model gerisini fiyatlandırmaya devam eder.
+Sonuçlar: 0/1 bir `won` sütunu (satırın tarafı turu ya da maçı kazandı) ve bir `round` sütunu - [sonuç sütunları](data-formats.md#outcome-columns); bir dosyada hem `won` hem `matchWon` varsa *Galibiyet %* turları sayar. Para: `earn_<currency>` ve `cost_<kind>_<currency>`; yalnızca türüne göre bir gelir (`earn_round_cs2`, bir dönüştürücünün kesin tur ödülleri) o türdeki maliyet modelinin gelirini yerine koyar (`round` ayrıca yerleştirmeleri ve etkisiz hale getirmeleri de kapsar) ve model gerisini fiyatlandırmaya devam eder.
 
 Eşleme bu sütunları kendi başına, dosyanın kendi listesinin yanında yükler: her `state_*`, `active_*`, `won`, `round` ve liste sütunu; bir Parquet dosyasının istatistiklerinin tamamında tek bir değer taşıdığını gösterenler hariç (yüklenen her sütun satır başına 4 bayt).

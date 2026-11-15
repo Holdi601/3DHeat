@@ -4,9 +4,9 @@ parent: "Фільтры і інструменты"
 nav_order: 1
 lang: "be"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Фільтры
@@ -33,6 +33,8 @@ outdated: true
 | **Гулец або ШІ** | Player, AI | слупок `ai`, `is_ai`, `bot` або `actor`; інакш `is_player` / `human`; інакш ідэнтыфікатар уліковага запісу (`user_id`, `steam_id`; пусты або 0 - гэта ШІ); для запісаў Tacview - ці ёсць у аб'екта пілот |
 | **Клас тэхнікі** | 17 класаў: Fighter, Attack aircraft, Bomber, Other aircraft, Helicopter, Танк, Браняваная машына, Air defence, Artillery, Truck / car, Ship, Submarine, Infantry, Weapon, Пастка, Structure, Other | назва тэхнікі або адзінкі (параўноўваецца з [каталогам фігур](figures.md)) і слупкі тыпу |
 | **Клас мэты** | тыя ж класы | тэхніка іншай стараны (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Адразу пасля іх ідуць [слупкі выніку](data-formats.md#outcome-columns), калі яны ёсць у даных: **Вынік раўнда** і **Вынік матча** (*Любы*, *Перамога*, *Паражэнне*) і **Як скончыўся раўнд**, са значэннямі на вашай мове. Фільтруйце па іх або падзяліце цяпло па іх як [карту долі перамог](win-rate.md).
 
 Пералічваюцца толькі віды, якія сустракаюцца. Слупкі значэнняў (`cost_*`, `earn_*`, `net_*` і *Cost source*, гл. [Узважванне значэнняў](value-weighting.md)) фільтруюцца гэтак жа, як любы лікавы слупок: напрыклад, зніміце *estimate* у *Cost source*, каб захаваць толькі радкі з цэнай.
 

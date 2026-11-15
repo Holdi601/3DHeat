@@ -4,9 +4,9 @@ parent: "Filtry a nástroje"
 nav_order: 1
 lang: "cs"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtry
@@ -33,6 +33,8 @@ Při načtení prohlížeč odvodí čtyři vlastní sloupce a uvede je **jako p
 | **Hráč nebo AI** | Hráč, AI | sloupec `ai`, `is_ai`, `bot` nebo `actor`; jinak `is_player` / `human`; jinak id účtu (`user_id`, `steam_id`; prázdné nebo 0 je AI); u záznamů Tacview, zda má objekt pilota |
 | **Třída vozidla** | 17 tříd: Stíhačka, Útočné letadlo, Bombardér, Jiné letadlo, Vrtulník, Tank, Obrněné vozidlo, Protiletadlová obrana, Dělostřelectvo, Nákladní auto / auto, Loď, Ponorka, Pěchota, Zbraň, Návnada, Stavba, Jiné | název vozidla nebo jednotky (porovnaný s [katalogem figur](figures.md)) a sloupce typu |
 | **Třída cíle** | stejné třídy | vozidlo protistrany (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Hned po nich následují [sloupce výsledku](data-formats.md#outcome-columns), pokud je data mají: **Výsledek kola** a **Výsledek zápasu** (*Libovolný*, *Vyhráno*, *Prohráno*) a **Jak kolo skončilo**, s hodnotami ve vašem jazyce. Filtrujte podle nich, nebo podle nich rozdělte teplo jako [mapu podílu výher](win-rate.md).
 
 Vypisují se jen druhy, které se vyskytují. Hodnotové sloupce (`cost_*`, `earn_*`, `net_*` a *Zdroj nákladů*, viz [Vážení hodnotou](value-weighting.md)) se filtrují jako každý číselný sloupec: například odškrtnutím *odhad* pod *Zdroj nákladů* ponecháte jen ocenění řádky.
 

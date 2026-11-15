@@ -4,9 +4,9 @@ parent: "Filtri i alati"
 nav_order: 6
 lang: "hr"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Volumeni i usporedba
@@ -63,6 +63,7 @@ GPU filtar prima do 8 volumena s ukupno 64 točke obrisa; "!" označava volumen 
 Područje **Statistika** slijedi filtre, vremenski prozor i skrivene grupe. *Odabrano* prikazuje odabrani volumen, a *Usporedi sve* stavlja svaki volumen jedan uz drugi. Prikazuje:
 
 - **Redaka unutra (prikazanih)** i **Redaka unutra (svi podaci)**, **Igrači**, **Timovi**, **Mečevi**, **Vrijeme unutra**, **Ulasci / izlasci**, **Vrh topline**, **Prosječna toplina**, **Volumen / površina** i histogram **Kada**;
+- **Postotak pobjeda**, ako podaci govore tko je pobijedio ([stupci ishoda](data-formats.md#outcome-columns)): od rundi s igračem unutra, runda svakog igrača brojena jednom, udio koji je njegova strana osvojila - privučen prema udjelu u svemu prikazanom za 4 runde, kao što to radi [raščlamba](breakdown.md) - uz osvojene i odigrane runde i taj ukupni udio;
 - po stupcu: kategorije s **Odnosom udjela** (udio unutra podijeljen s udjelom u svim prikazanim podacima), a brojevi s rasponom, medijanom i 5. do 95. percentilom.
 
 **Statistika kao CSV / JSON** sprema ih. **Izvezi podatke unutra** zapisuje redke unutra kao CSV ili Parquet (*Samo prikazani redci* uključeno prema zadanom), jedan volumen ili sve, sa stupcem koji kaže koji volumen drži koji redak.

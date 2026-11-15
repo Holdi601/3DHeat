@@ -4,9 +4,9 @@ parent: "Filtri in orodja"
 nav_order: 1
 lang: "sl"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtri
@@ -33,6 +33,8 @@ Ob nalaganju pregledovalnik sam ugotovi štiri stolpce in jih našteje **najprej
 | **Igralec ali UI** | Igralec, UI | stolpec `ai`, `is_ai`, `bot` ali `actor`; sicer `is_player` / `human`; sicer ID računa (`user_id`, `steam_id`; prazno ali 0 je UI); pri posnetkih Tacview, ali ima objekt pilota |
 | **Razred vozila** | 17 razredov: Lovec, Jurišnik, Bombnik, Drugo letalo, Helikopter, Tank, Oklepno vozilo, Protizračna obramba, Topništvo, Tovornjak / avto, Ladja, Podmornica, Pehota, Orožje, Vaba, Zgradba, Drugo | ime vozila ali enote (ujemanje s [katalogom figur](figures.md)) in stolpci tipa |
 | **Razred cilja** | isti razredi | vozilo nasprotne strani (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Takoj za njimi pridejo [stolpci izida](data-formats.md#outcome-columns), kjer jih podatki imajo: **Izid kroga** in **Izid tekme** (*Katerikoli*, *Zmaga*, *Poraz*) ter **Kako se je krog končal**, z vrednostmi v vašem jeziku. Filtrirajte po njih ali po njih razdelite toploto kot [zemljevid deleža zmag](win-rate.md).
 
 Naštete so le vrste, ki se pojavijo. Stolpci vrednosti (`cost_*`, `earn_*`, `net_*` in *Vir cene*, glejte [Utežitev vrednosti](value-weighting.md)) se filtrirajo kot vsak številski stolpec: na primer odkljukajte *ocena* pod *Vir cene*, da ohranite le ovrednotene vrstice.
 

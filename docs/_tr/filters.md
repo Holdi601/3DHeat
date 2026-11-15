@@ -4,9 +4,9 @@ parent: "Filtreler ve araçlar"
 nav_order: 1
 lang: "tr"
 source: "filters.md"
-source_hash: "e957bf788bda"
+source_hash: "231d171c03ba"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Filtreler
@@ -33,6 +33,8 @@ Yüklemede görüntüleyici kendi dört sütununu çıkarır ve bunları **ilk s
 | **Oyuncu veya YZ** | Oyuncu, YZ | `ai`, `is_ai`, `bot` ya da `actor` sütunu; yoksa `is_player` / `human`; yoksa bir hesap kimliği (`user_id`, `steam_id`; boş ya da 0 YZ'dir); Tacview kayıtları için nesnenin bir pilotu olup olmadığı |
 | **Araç sınıfı** | 17 sınıf: Avcı, Saldırı uçağı, Bombardıman uçağı, Diğer uçak, Helikopter, Tank, Zırhlı araç, Hava savunma, Topçu, Kamyon / araba, Gemi, Denizaltı, Piyade, Silah, Yem, Yapı, Diğer | araç ya da birim adı ([figür kataloğuyla](figures.md) eşleşir) ve tür sütunları |
 | **Hedef sınıfı** | aynı sınıflar | öteki tarafın aracı (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Hemen ardından, verilerde varsa [sonuç sütunları](data-formats.md#outcome-columns) gelir: **Raunt sonucu** ve **Maç sonucu** (*Herhangi*, *Kazanıldı*, *Kaybedildi*) ve değerleri sizin dilinizde olan **Raunt nasıl bitti**. Bunlara göre filtreleyin ya da ısıyı bunlara göre bir [kazanma oranı haritası](win-rate.md) olarak ayırın.
 
 Yalnızca oluşan türler listelenir. Değer sütunları (`cost_*`, `earn_*`, `net_*` ve *Maliyet kaynağı*, bkz. [Değer ağırlıklandırma](value-weighting.md)) herhangi bir sayı sütunu gibi süzülebilir: örneğin yalnızca fiyatlandırılmış satırları tutmak için *Maliyet kaynağı* altında *tahmin*i işaretten kaldırın.
 

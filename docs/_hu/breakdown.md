@@ -4,9 +4,9 @@ parent: "Szűrők és eszközök"
 nav_order: 7
 lang: "hu"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Bontás: ki és mi teljesít a legjobban hol
@@ -91,6 +91,6 @@ A konverter úgy ad hozzá tényezőt, hogy elnevezi az oszlopát:
 | már általános felszerelés-jelzők (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`…) | bekapcsolva, amíg nem nulla |
 | `ammoType`, `shellType`, `ammoName` | az utoljára leadott lövedék |
 
-Eredmények: egy 0/1 `won` oszlop (a sor oldala megnyerte a kört vagy a meccset) és egy `round` oszlop. Pénz: `earn_<currency>` és `cost_<kind>_<currency>`; a típus szerinti bevétel önmagában (`earn_round_cs2`, a konverter pontos körjutalmai) csak az adott típusú költségmodell-bevételt cseréli le (a `round` a telepítéseket és hatástalanításokat is lefedi), a modell pedig a többit továbbra is árazza.
+Eredmények: egy 0/1 `won` oszlop (a sor oldala megnyerte a kört vagy a meccset) és egy `round` oszlop - az [eredményoszlopok](data-formats.md#outcome-columns); ahol egy fájlban `won` és `matchWon` is van, a *Győzelem %* köröket számol. Pénz: `earn_<currency>` és `cost_<kind>_<currency>`; a típus szerinti bevétel önmagában (`earn_round_cs2`, a konverter pontos körjutalmai) csak az adott típusú költségmodell-bevételt cseréli le (a `round` a telepítéseket és hatástalanításokat is lefedi), a modell pedig a többit továbbra is árazza.
 
 A leképezés ezeket az oszlopokat maga tölti be, a fájl saját listája mellett: minden `state_*`, `active_*`, `won`, `round` és listaoszlopot, kivéve azokat, amelyekről egy Parquet-fájl statisztikái azt mutatják, hogy végig egy értéket tartalmaznak (minden betöltött oszlop soronként 4 bájt).

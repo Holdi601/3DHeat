@@ -4,9 +4,9 @@ parent: "Režimy tepla"
 nav_order: 5
 lang: "cs"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Rozdíl
@@ -86,6 +86,10 @@ Výběr sloupce dá jeho první hodnotu na + a druhou na −. Když žádná str
 | **Rozdělit v polovině** | Nastaví + na [minimum, střed] a − na [střed, maximum] – to dělá i výběr sloupce. |
 
 Hodnota v obou rozsazích se počítá jako +. Rozsahy nemusí pokrýt celý sloupec; hodnoty mimo oba se vynechají. *První dvě minuty proti posledním dvěma* je rozdělení podle rozsahu u sloupce podobného času.
+
+## Podíl +: mapa podílu výher {#share-of--the-win-rate-map}
+
+**Rozdíl** / **Podíl +** nahoře v panelu volí, co se kreslí. *Podíl +* obarví každé místo podle podílu strany + mezi řádky obou stran na tom místě, ve srovnání s tímto podílem za vše zobrazené: teplá nad ním, studená pod ním, nic tam, kde je stejný, a nic tam, kde má místo příliš málo řádků. S vyhranými koly na + a prohranými na − je to mapa podílu výher. **Podíl vyhraných kol** a **Podíl vyhraných zápasů** ji nastaví jedním stiskem, pokud data mají [sloupce výsledku](data-formats.md#outcome-columns). Viz [Podíl výher](win-rate.md).
 
 ## Barvy {#colours}
 

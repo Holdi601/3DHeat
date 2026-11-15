@@ -4,9 +4,9 @@ parent: "Filteren a Werkzeich"
 nav_order: 7
 lang: "lb"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Opschlësselung: wien an wat am beschte gëtt wou
@@ -91,6 +91,6 @@ E Konverter setzt en Faktor derbäi, andeems en seng Spalt benennt:
 | Ausrüstungsflaggen, déi schonn üblech sinn (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | un, solang et net null ass |
 | `ammoType`, `shellType`, `ammoName` | d'Ronn, déi als Lescht geschoss gouf |
 
-Resultater: eng 0/1-Spalt `won` (d'Säit vun der Zeil huet d'Ronn oder de Match gewonnen) an eng Spalt `round`. Suen: `earn_<Währung>` an `cost_<Aart>_<Währung>`; en Akommes nëmmen no Aart (`earn_round_cs2`, déi genau Ronnenbelounungen vun engem Konverter) ersetzt nëmmen d'Akommes vun deem Aart am Käschtemodell (`round` deckt och Plazéierungen an Entschäerfungen), an de Modell preist de Rescht.
+Resultater: eng 0/1-Spalt `won` (d'Säit vun der Zeil huet d'Ronn oder de Match gewonnen) an eng Spalt `round` - d'[Resultatspalten](data-formats.md#outcome-columns); wou e Fichier souwuel `won` wéi `matchWon` huet, zielt *Siegquote %* Ronnen. Suen: `earn_<Währung>` an `cost_<Aart>_<Währung>`; en Akommes nëmmen no Aart (`earn_round_cs2`, déi genau Ronnenbelounungen vun engem Konverter) ersetzt nëmmen d'Akommes vun deem Aart am Käschtemodell (`round` deckt och Plazéierungen an Entschäerfungen), an de Modell preist de Rescht.
 
 D'Zuuerdnung lued dës Spalten vun sech selwer, nieft der eegener Lëscht vun der Datei: all `state_*`, `active_*`, `won`, `round` an Lëscht-Spalten, ausser déi, wou d'Statistiken vun enger Parquet-Datei weisen, datt se duerch all Zeil nëmmen ee Wäert hunn (all gelueden Spalt kascht 4 Byte pro Zeil).

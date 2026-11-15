@@ -4,9 +4,9 @@ parent: "Režimy tepla"
 nav_order: 5
 lang: "sk"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Rozdiel
@@ -97,6 +97,10 @@ Výber stĺpca dá jeho prvú hodnotu na + a druhú na −. Keď žiadna strana 
 
 Hodnota v oboch rozsahoch sa počíta ako +. Rozsahy nemusia pokrývať stĺpec; hodnoty mimo oboch sa vynechajú.
 *Prvé dve minúty oproti posledným dvom* je rozdelenie podľa rozsahu nad stĺpcom podobným času.
+
+## Podiel +: mapa podielu výhier {#share-of--the-win-rate-map}
+
+**Rozdiel** / **Podiel +** v hornej časti panela vyberá, čo sa kreslí. *Podiel +* zafarbí každé miesto podľa podielu strany + na riadkoch oboch strán tam, oproti tomuto podielu vo všetkom zobrazenom: teplo nad ním, chladno pod ním, nič tam, kde je rovnaký, a nič tam, kde má miesto príliš málo riadkov. S vyhratými kolami na + a prehratými na − je to mapa podielu výhier; **Podiel vyhratých kôl** a **Podiel vyhratých zápasov** to nastavia jedným stlačením, keď dáta majú [stĺpce výsledku](data-formats.md#outcome-columns). Pozri [Podiel výhier](win-rate.md).
 
 ## Farby {#colours}
 

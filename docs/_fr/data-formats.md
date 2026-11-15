@@ -3,9 +3,9 @@ title: "Référence des formats de données"
 nav_order: 19
 lang: "fr"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Référence des formats de données
@@ -93,6 +93,37 @@ Une colonne de position, de temps ou de regard qui contient autre chose qu'un no
 | Colonne de filtre, *catégorie* | quelconque ; encodé par dictionnaire | non | identifiant 32 bits | Jusqu'à 4 096 valeurs, sinon la colonne n'est pas gardée. |
 
 Une colonne `TIMESTAMP` Parquet gardée comme colonne de filtre est une *plage* de millisecondes depuis l'époque - un curseur, pas une liste.
+
+## Colonnes de résultat {#outcome-columns}
+
+Qui a gagné, sur chaque ligne. Ainsi, un endroit, un trajet ou une action peut être jugé selon la fréquence à laquelle son camp a ensuite gagné ([Taux de victoire](win-rate.md)). La visionneuse garde ces colonnes d’elle-même, les liste en premier dans les [filtres](filters.md), dans la langue de la visionneuse, et les lit dans la [carte des taux de victoire](win-rate.md), le [détail](breakdown.md) et les [statistiques de volume](volumes.md#statistics). Un convertisseur pour un jeu par manches (CS2, Valorant, Rainbow Six Siege) ou par matchs (War Thunder) écrit les quatre :
+
+| Colonne | Type | Signification |
+|---|---|---|
+| `won` | 0/1 (vide si inconnu) | le camp (l'équipe) de la ligne a gagné **la manche** ; dans un jeu sans manches, le match |
+| `matchWon` | 0/1 (vide si inconnu) | le camp (l'équipe) de la ligne a gagné **le match** ; vide si l'enregistrement ne montre pas la fin |
+| `round` | nombre entier, à partir de 1 | la manche à laquelle appartient la ligne ; 1 partout dans un jeu par matchs |
+| `roundEndReason` | texte | comment la manche s'est terminée (dans un jeu par matchs, le match), avec les mots ci-dessous |
+
+`won` et `matchWon` appartiennent au camp de la ligne : les lignes d'un joueur T portent le résultat du camp T, celles d'une unité IA celui de son équipe ; les lignes qui n'appartiennent à aucun camp les laissent vides. Un camp qui change à la mi-temps garde son propre `matchWon` et prend le `won` de chaque manche telle qu'il l'a jouée. Une égalité vaut 0 pour les deux camps.
+
+Les raisons de fin, communes à tous les jeux pour qu'un seul filtre marche sur tous (le mot propre d'un jeu est associé quand c'est possible, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)) :
+
+| `roundEndReason` | Signification | Jeux |
+|---|---|---|
+| `elimination` | tous les joueurs d'un camp sont éliminés | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | la bombe (le spike, la cible du désamorceur) a explosé | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | la bombe (le spike) a été désamorcée | CS2, Valorant, Rainbow Six Siege |
+| `time` | le chronomètre de la manche est arrivé à zéro ; War Thunder : décidé alors que les deux camps avaient encore des tickets | tous |
+| `surrender` | un camp a abandonné | CS2, Valorant, Rainbow Six Siege |
+| `draw` | pas de vainqueur | CS2 |
+| `objective` | un objectif pris ou tenu (otage extrait, zone sécurisée) | Rainbow Six Siege |
+| `capture` | à court de tickets pendant que le vainqueur tenait des zones de capture | War Thunder |
+| `tickets` | tickets perdus à cause des éliminations | War Thunder |
+| `destruction` | les derniers véhicules perdus d'un coup, plus personne pour réapparaître | War Thunder |
+| `other` | tout le reste | |
+
+Nommez-les aussi dans la liste `extra` des indices `heat3d`, comme toute autre colonne. Les noms de colonne `win`, `round_won`, `match_won`, `end_reason` et `win_reason` sont lus comme les mêmes colonnes.
 
 ## Les indices `heat3d` {#the-heat3d-hints}
 

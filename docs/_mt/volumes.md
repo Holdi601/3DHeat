@@ -4,9 +4,9 @@ parent: "Filtri u għodod"
 nav_order: 6
 lang: "mt"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Volumi u tqabbil
@@ -63,6 +63,7 @@ Il-filtru tal-GPU jieħu sa 8 volumi b'64 punt ta' kontorn f'kollox; "!" timmark
 Iż-żona tal-**Statistika** tsegwi l-filtri, it-tieqa taż-żmien u l-gruppi moħbija. *Magħżul* juri l-volum magħżul, *Qabbel kollox* iqiegħed kull volum ġenb ġenb. Turi:
 
 - **Ringieli ġewwa (murija)** u **Ringieli ġewwa (id-data kollha)**, **Plejers**, **Timijiet**, **Logħbiet**, **Ħin ġewwa**, **Dħul / ħruġ**, **Quċċata tas-sħana**, **Sħana medja**, **Volum / marka** u istogramma **Meta**;
+- **Rata ta’ rebħ**, fejn id-dejta tgħid min rebaħ ([kolonni tar-riżultat](data-formats.md#outcome-columns)): mir-rawnds bi plejer ġewwa, bir-rawnd ta' kull plejer magħdud darba, is-sehem li rebħet in-naħa tiegħu - miġbud lejn ir-rata fuq dak kollu li jidher b'4 rawnds, kif jagħmel it-[tqassim](breakdown.md) - bir-rawnds mirbuħa u milgħuba u dik ir-rata totali;
 - għal kull kolonna: kategoriji b'**Lift** (sehem ġewwa maqsum bis-sehem fid-data kollha murija), u numri b'medda, medjan u l-5-95 percentili.
 
 **Statistika bħala CSV / JSON** jissejvjaha. **Esporta d-data ġewwa** jikteb ir-ringieli ġewwa bħala CSV jew Parquet (*Biss ir-ringieli murija* ikun imxegħel bi default), volum wieħed jew kollha b'kolonna li tgħid liema volum fih kull ringiela.

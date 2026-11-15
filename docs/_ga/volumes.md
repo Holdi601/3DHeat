@@ -4,9 +4,9 @@ parent: "Scagairí agus uirlisí"
 nav_order: 6
 lang: "ga"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Toirteanna agus comparáid
@@ -63,6 +63,7 @@ Glacann an scagaire GPU suas le 8 dtoirt le 64 pointe imlín ar fad; marcálann 
 Leanann an limistéar **Staitisticí** na scagairí, an fhuinneog ama agus na grúpaí folaithe. Taispeánann *Roghnaithe* an toirt roghnaithe, cuireann *Cuir gach ceann i gcomparáid* gach toirt taobh le taobh. Taispeánann sé:
 
 - **Sraitheanna istigh (taispeánta)** agus **Sraitheanna istigh (gach sonra)**, **Imreoirí**, **Foirne**, **Cluichí**, **Am istigh**, **Isteach / amach**, **Buaic teasa**, **Meántheas**, **Toirt / lorg coise** agus histeagram **Cathain**;
+- **Ráta buaite**, nuair a deir na sonraí cé a bhuaigh ([colúin toraidh](data-formats.md#outcome-columns)): de na babhtaí le himreoir istigh, babhta gach imreora comhairthe uair amháin, an sciar a bhuaigh a thaobh - tarraingthe i dtreo an ráta thar gach rud a thaispeántar le 4 bhabhta, mar a dhéanann an [miondealú](breakdown.md) - leis na babhtaí buaite agus imeartha agus an ráta iomlán sin;
 - do gach colún: catagóirí le **Lift** (an sciar istigh roinnte ar an sciar i ngach sonra taispeánta), agus uimhreacha le raon, meán agus 5ú-95ú ceatharthach.
 
 Sábhálann **Staitisticí mar CSV / JSON** iad. Scríobhann **Easpórtáil na sonraí istigh** na sraitheanna istigh mar CSV nó Parquet (*Na sraitheanna taispeánta amháin* ar siúl de réir réamhshocraithe), toirt amháin nó gach ceann le colún a insíonn cén toirt a bhfuil gach sraith inti.

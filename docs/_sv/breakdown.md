@@ -4,9 +4,9 @@ parent: "Filter och verktyg"
 nav_order: 7
 lang: "sv"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Uppdelning: vem och vad som presterar bäst var
@@ -91,6 +91,6 @@ En konverterare lägger till en faktor genom att namnge sin kolumn:
 | utrustningsflaggor som redan är vanliga (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | på medan det inte är noll |
 | `ammoType`, `shellType`, `ammoName` | den senast avfyrade omgången |
 
-Resultat: en kolumn `won` med 0/1 (radens sida vann ronden eller matchen) och en kolumn `round`. Pengar: `earn_<currency>` och `cost_<kind>_<currency>`. En inkomst per slag enbart (`earn_round_cs2`, konverterarens exakta belöningar per ronde) ersätter bara kostnadsmodellens inkomst av det slaget. (`round` täcker även plantor och avmonteringar). Modellen prissätter resten.
+Resultat: en kolumn `won` med 0/1 (radens sida vann ronden eller matchen) och en kolumn `round` - [resultatkolumnerna](data-formats.md#outcome-columns); där en fil har både `won` och `matchWon` räknar *Vinst %* ronder. Pengar: `earn_<currency>` och `cost_<kind>_<currency>`. En inkomst per slag enbart (`earn_round_cs2`, konverterarens exakta belöningar per ronde) ersätter bara kostnadsmodellens inkomst av det slaget. (`round` täcker även plantor och avmonteringar). Modellen prissätter resten.
 
 Mappningen läser in de här kolumnerna själv, bredvid filens egna listor: varje `state_*`-, `active_*`-, `won`-, `round`- och listkolumn, utom de som en Parquet-fils statistik visar hålla ett och samma värde hela vägen (varje inläst kolumn kostar 4 byte per rad).

@@ -3,9 +3,9 @@ title: "Opis formatów danych"
 nav_order: 19
 lang: "pl"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Opis formatów danych
@@ -93,6 +93,37 @@ Kolumna pozycji, czasu albo spojrzenia, która zawiera coś innego niż liczbę,
 | Kolumna filtra, *kategoria* | dowolny; kodowany słownikowo | nie | 32-bitowe id | Do 4096 wartości, inaczej kolumna nie jest zachowywana. |
 
 Kolumna `TIMESTAMP` w Parquet zachowana jako kolumna filtra jest *zakresem* milisekund epoki – suwakiem, a nie listą.
+
+## Kolumny wyniku {#outcome-columns}
+
+Kto wygrał, w każdym wierszu. Dzięki temu miejsce, trasę albo zagranie można ocenić po tym, jak często jego strona potem wygrywała ([Odsetek wygranych](win-rate.md)). Przeglądarka sama zachowuje te kolumny, pokazuje je jako pierwsze w [filtrach](filters.md), w języku przeglądarki, i czyta je w [mapie odsetka wygranych](win-rate.md), w [zestawieniu](breakdown.md) i w [statystykach wolumenu](volumes.md#statistics). Konwerter dla gry z rundami (CS2, Valorant, Rainbow Six Siege) albo z meczami (War Thunder) zapisuje wszystkie cztery:
+
+| Kolumna | Typ | Znaczenie |
+|---|---|---|
+| `won` | 0/1 (puste, gdy nieznane) | strona (drużyna) wiersza wygrała **rundę**; w grze bez rund – mecz |
+| `matchWon` | 0/1 (puste, gdy nieznane) | strona (drużyna) wiersza wygrała **mecz**; puste, gdy nagranie nie pokazuje końca |
+| `round` | liczba całkowita, od 1 | runda, do której należy wiersz; w grze z meczami przez cały czas 1 |
+| `roundEndReason` | tekst | jak skończyła się runda (w grze z meczami – mecz), słowami z tabeli niżej |
+
+`won` i `matchWon` należą do strony wiersza: wiersze gracza T niosą wynik strony T, wiersze jednostki SI – wynik jej drużyny; wiersze, które nie należą do żadnej strony, zostawiają je puste. Strona, która zmienia się w połowie meczu, zachowuje własne `matchWon` i bierze `won` każdej rundy tak, jak ją grała. Remis to 0 dla obu stron.
+
+Powody zakończenia, wspólne dla wszystkich gier, żeby jeden filtr działał na wszystkie (własne słowo gry jest przypisywane, gdzie się da, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Znaczenie | Gry |
+|---|---|---|
+| `elimination` | wszyscy gracze jednej strony wyeliminowani | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | bomba (spike, cel rozbrajającego) wybuchła | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | bomba (spike) rozbrojona | CS2, Valorant, Rainbow Six Siege |
+| `time` | skończył się zegar rundy; War Thunder: rozstrzygnięte, gdy obie strony miały jeszcze punkty | wszystkie |
+| `surrender` | jedna strona się poddała | CS2, Valorant, Rainbow Six Siege |
+| `draw` | brak zwycięzcy | CS2 |
+| `objective` | cel zdobyty albo utrzymany (zakładnik wyprowadzony, obszar zabezpieczony) | Rainbow Six Siege |
+| `capture` | punkty wyczerpane, gdy zwycięzca utrzymywał strefy przejęcia | War Thunder |
+| `tickets` | punkty stracone przez zabójstwa | War Thunder |
+| `destruction` | ostatnie pojazdy stracone naraz, nikt nie został do odrodzenia | War Thunder |
+| `other` | wszystko inne | |
+
+Wymień je też na liście `extra` podpowiedzi `heat3d`, jak każdą inną kolumnę. Nazwy kolumn `win`, `round_won`, `match_won`, `end_reason` i `win_reason` są czytane jako te same kolumny.
 
 ## Podpowiedzi `heat3d` {#the-heat3d-hints}
 

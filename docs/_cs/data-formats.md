@@ -3,9 +3,9 @@ title: "Přehled datových formátů"
 nav_order: 19
 lang: "cs"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Přehled datových formátů
@@ -93,6 +93,37 @@ Sloupec pozice, času nebo pohledu, který drží něco jiného než číslo, se
 | Filtrační sloupec, *kategorie* | cokoli; kódováno slovníkem | ne | 32bitové id | Až 4 096 hodnot, jinak se sloupec nezachová. |
 
 Sloupec `TIMESTAMP` z Parquetu, zachovaný jako filtrační sloupec, je *rozsah* epochálních milisekund. Je to posuvník, ne seznam.
+
+## Sloupce výsledku {#outcome-columns}
+
+Kdo vyhrál, na každém řádku. Místo, trasu nebo akci tak lze posoudit podle toho, jak často jejich strana potom vyhrála ([Podíl výher](win-rate.md)). Prohlížeč si tyto sloupce ponechá sám, uvede je ve [filtrech](filters.md) jako první, v jazyce prohlížeče, a čte je v [mapě podílu výher](win-rate.md), v [rozpisu](breakdown.md) a ve [statistikách objemu](volumes.md#statistics). Převodník pro hru na kola (CS2, Valorant, Rainbow Six Siege) nebo na zápasy (War Thunder) zapíše všechny čtyři:
+
+| Sloupec | Typ | Význam |
+|---|---|---|
+| `won` | 0/1 (prázdné, kde není známo) | strana (tým) řádku vyhrála **kolo**; ve hře bez kol zápas |
+| `matchWon` | 0/1 (prázdné, kde není známo) | strana (tým) řádku vyhrála **zápas**; prázdné, kde záznam neukazuje konec |
+| `round` | celé číslo, od 1 | kolo, ke kterému řádek patří; ve hře na zápasy po celou dobu 1 |
+| `roundEndReason` | text | jak kolo skončilo (ve hře na zápasy zápas), slovy níže |
+
+`won` a `matchWon` patří straně řádku: řádky hráče T nesou výsledek strany T, řádky jednotky AI výsledek jejího týmu; řádky, které nepatří žádné straně, je nechávají prázdné. Strana, která se v poločase vymění, si ponechá vlastní `matchWon` a bere `won` každého kola tak, jak ho hrála. Remíza je 0 pro obě strany.
+
+Důvody konce, společné pro všechny hry, aby jeden filtr fungoval na všechny (vlastní slovo hry se převede, kde to jde, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Význam | Hry |
+|---|---|---|
+| `elimination` | všichni hráči jedné strany vyřazeni | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | bomba (spike, cíl zneškodňujícího) vybuchla | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | bomba (spike) zneškodněna | CS2, Valorant, Rainbow Six Siege |
+| `time` | vypršely hodiny kola; War Thunder: rozhodnuto, když obě strany měly ještě tikety | všechny |
+| `surrender` | jedna strana se vzdala | CS2, Valorant, Rainbow Six Siege |
+| `draw` | žádný vítěz | CS2 |
+| `objective` | cíl dobytý nebo udržený (rukojmí vyvedeno, oblast zajištěna) | Rainbow Six Siege |
+| `capture` | došly tikety, zatímco vítěz držel zóny k obsazení | War Thunder |
+| `tickets` | tikety ztracené kvůli zabitím | War Thunder |
+| `destruction` | poslední vozidla ztracena najednou, nikdo nezbyl k oživení | War Thunder |
+| `other` | cokoli jiného | |
+
+Uveďte je i v seznamu `extra` nápověd `heat3d`, jako každý jiný sloupec. Názvy sloupců `win`, `round_won`, `match_won`, `end_reason` a `win_reason` se čtou jako tytéž sloupce.
 
 ## Nápovědy `heat3d` {#the-heat3d-hints}
 

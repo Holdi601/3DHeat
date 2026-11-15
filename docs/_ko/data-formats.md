@@ -3,9 +3,9 @@ title: "데이터 형식 참조"
 nav_order: 19
 lang: "ko"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 데이터 형식 참조
@@ -93,6 +93,37 @@ x,y,z,t,player,team
 | 필터 열, *분류* | 아무거나. 사전 인코딩 | 아니요 | 32비트 id | 값은 최대 4,096개이며, 넘으면 그 열을 두지 않습니다. |
 
 필터 열로 둔 Parquet `TIMESTAMP` 열은 에포크 밀리초의 *범위*입니다. 목록이 아니라 슬라이더입니다.
+
+## 결과 열 {#outcome-columns}
+
+누가 이겼는지를 모든 행에 둡니다. 그러면 장소, 경로, 플레이를 그 편이 나중에 얼마나 자주 이겼는지로 판단할 수 있습니다([승률](win-rate.md)). 뷰어는 이 열을 스스로 유지하고, [필터](filters.md)의 맨 앞에 뷰어의 언어로 나열하며, [승률 지도](win-rate.md), [상세 분석](breakdown.md), [볼륨 통계](volumes.md#statistics)에서 읽습니다. 라운드제 게임(CS2, Valorant, Rainbow Six Siege)이나 경기 단위 게임(War Thunder)의 변환기는 네 열을 모두 씁니다:
+
+| 열 | 형식 | 의미 |
+|---|---|---|
+| `won` | 0/1(모르면 비움) | 행의 편(팀)이 **라운드**를 이겼음. 라운드가 없는 게임에서는 경기 |
+| `matchWon` | 0/1(모르면 비움) | 행의 편(팀)이 **경기**를 이겼음. 기록에 끝이 나오지 않으면 비움 |
+| `round` | 정수, 1부터 | 행이 속한 라운드. 경기 단위 게임에서는 경기 내내 1 |
+| `roundEndReason` | 텍스트 | 라운드(경기 단위 게임에서는 경기)가 어떻게 끝났는지, 아래 단어로 |
+
+`won`과 `matchWon`은 그 행의 편의 것입니다. T 플레이어의 행은 T 편의 결과를, AI 유닛의 행은 그 팀의 결과를 가집니다. 어느 편에도 속하지 않는 행은 비워 둡니다. 하프타임에 편을 바꾸는 쪽은 자신의 `matchWon`을 유지하고, 각 라운드의 `won`은 그 라운드에서 뛴 편의 것을 가집니다. 무승부는 양쪽 모두 0입니다.
+
+종료 이유는 모든 게임이 함께 쓰므로 필터 하나가 모든 게임에 통합니다(게임 고유의 단어는 가능한 한 여기에 맞춥니다. [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | 의미 | 게임 |
+|---|---|---|
+| `elimination` | 한 편의 플레이어가 모두 탈락 | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | 폭탄(스파이크, 해체 장치의 목표)이 터짐 | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | 폭탄(스파이크)이 해체됨 | CS2, Valorant, Rainbow Six Siege |
+| `time` | 라운드 시간이 다 됨. War Thunder: 양쪽 모두 티켓이 남은 채로 결정됨 | 전체 |
+| `surrender` | 한 편이 항복함 | CS2, Valorant, Rainbow Six Siege |
+| `draw` | 승자 없음 | CS2 |
+| `objective` | 목표를 빼앗거나 지킴(인질 구출, 구역 확보) | Rainbow Six Siege |
+| `capture` | 승자가 점령 구역을 지키는 동안 티켓이 바닥남 | War Thunder |
+| `tickets` | 처치로 티켓을 잃음 | War Thunder |
+| `destruction` | 마지막 차량들을 한꺼번에 잃고, 다시 출격할 사람이 없음 | War Thunder |
+| `other` | 그 밖의 모든 것 | |
+
+다른 열처럼 `heat3d` 힌트의 `extra` 목록에도 적어 주세요. 열 이름 `win`, `round_won`, `match_won`, `end_reason`, `win_reason`도 같은 열로 읽습니다.
 
 ## `heat3d` 힌트 {#the-heat3d-hints}
 

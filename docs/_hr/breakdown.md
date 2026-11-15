@@ -4,9 +4,9 @@ parent: "Filtri i alati"
 nav_order: 7
 lang: "hr"
 source: "breakdown.md"
-source_hash: "9df7c09886d9"
+source_hash: "ea7831abb45a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Raščlamba: tko i što je najbolji gdje
@@ -91,6 +91,6 @@ Pretvarač dodaje faktor imenovanjem svog stupca:
 | zastavice opreme koje su već uobičajene (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | uključeno dok nije nula |
 | `ammoType`, `shellType`, `ammoName` | zadnji ispaljeni metak |
 
-Rezultati: stupac `won` s 0/1 (strana retka osvojila je rundu ili meč) i stupac `round`. Novac: `earn_<valuta>` i `cost_<vrsta>_<valuta>`; prihod samo po vrsti (`earn_round_cs2`, točne nagrade za rundu pretvarača) zamjenjuje samo model troškova za prihod te vrste (`round` obuhvaća i postavljanja i deaktivacije), a model i dalje određuje cijenu ostatka.
+Rezultati: stupac `won` s 0/1 (strana retka osvojila je rundu ili meč) i stupac `round` - [stupci ishoda](data-formats.md#outcome-columns); gdje datoteka ima i `won` i `matchWon`, *Pobjede %* broji runde. Novac: `earn_<valuta>` i `cost_<vrsta>_<valuta>`; prihod samo po vrsti (`earn_round_cs2`, točne nagrade za rundu pretvarača) zamjenjuje samo model troškova za prihod te vrste (`round` obuhvaća i postavljanja i deaktivacije), a model i dalje određuje cijenu ostatka.
 
 Preslikavanje učitava te stupce samo od sebe, uz popis iz same datoteke: svaki `state_*`, `active_*`, `won`, `round` i stupac popisa, osim onih koje statistika Parquet datoteke pokazuje da drže jednu vrijednost kroz sve (svaki učitani stupac je 4 bajta po retku).

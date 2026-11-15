@@ -4,9 +4,9 @@ parent: "Lämmön tilat"
 nav_order: 5
 lang: "fi"
 source: "difference.md"
-source_hash: "12fc27dc0616"
+source_hash: "9db62413b59c"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Erotus
@@ -86,6 +86,10 @@ Sarakkeen valinta asettaa sen ensimmäisen arvon +-puolelle ja toisen −-puolel
 | **Jaa keskikohdasta** | Asettaa + välille [pienin, keskikohta] ja − välille [keskikohta, suurin]. Tämä tapahtuu myös, kun sarake valitaan. |
 
 Arvo, joka on molemmilla väleillä, lasketaan +-puolelle. Välien ei tarvitse kattaa saraketta. Arvot, jotka eivät ole kummallakaan välillä, jätetään pois. *Kaksi ensimmäistä minuuttia vastaan kaksi viimeistä* on väliltä tehty jako aikamaisella sarakkeella.
+
+## +:n osuus: voittokartta {#share-of--the-win-rate-map}
+
+**Erotus** / **+:n osuus** paneelin yläosassa valitsee, mitä piirretään. *+:n osuus* värittää jokaisen paikan +-puolen osuudella siellä olevista kummankin puolen riveistä, verrattuna samaan osuuteen kaikesta näytetystä: lämmin sen yläpuolella, kylmä alapuolella, ei mitään, missä se on sama, eikä mitään, missä paikassa on liian vähän rivejä. Kun voitetut erät ovat +:lla ja hävityt −:lla, se on voittokartta; **Erävoittojen osuus** ja **Ottelovoittojen osuus** asettavat sen yhdellä painalluksella, kun datassa on [tulossarakkeet](data-formats.md#outcome-columns). Katso [Voittojen osuus](win-rate.md).
 
 ## Värit {#colours}
 

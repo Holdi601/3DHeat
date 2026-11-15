@@ -4,9 +4,9 @@ parent: "Filtri un rīki"
 nav_order: 6
 lang: "lv"
 source: "volumes.md"
-source_hash: "25cc132dbe25"
+source_hash: "7f97bcad27e6"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Tilpumi un salīdzināšana
@@ -63,6 +63,7 @@ GPU filtrs aptver līdz 8 tilpumiem ar 64 kontūras punktiem kopā; "!" atzīmē
 Apgabals **Statistika** seko filtriem, laika logam un paslēptajām grupām. *Atlasīts* rāda atlasīto tilpumu, *Salīdzināt visas* novieto visus tilpumus blakus. Tas rāda:
 
 - **Rindas iekšā (rādītās)** un **Rindas iekšā (visi dati)**, **Spēlētāji**, **Komandas**, **Spēles**, **Laiks iekšā**, **Ieejas / izejas**, **Siltuma maksimums**, **Vidējais siltums**, **Tilpums / pamatne** un **Kad** histogrammu;
+- **Uzvaru daļa**, ja dati saka, kurš uzvarēja ([iznākuma kolonnas](data-formats.md#outcome-columns)): no raundiem, kuros spēlētājs bija iekšā, katra spēlētāja raundu skaitot vienu reizi, daļa, kurā viņa puse uzvarēja - pievilkta visa parādītā daļai ar 4 raundiem, kā to dara [sadalījums](breakdown.md) - ar uzvarētajiem un nospēlētajiem raundiem un kopējo daļu;
 - katrai kolonnai: kategorijas ar **Pieaugums** (daļa iekšā, dalīta ar daļu visos rādītajos datos), un skaitļi ar diapazonu, mediānu un 5.-95. procentili.
 
 **Statistika kā CSV / JSON** to saglabā. **Eksportēt datus iekšā** raksta rindas iekšā kā CSV vai Parquet (*Tikai rādītās rindas* pēc noklusējuma ieslēgts), vienu tilpumu vai visus, ar kolonnu, kas norāda, kuram tilpumam pieder katra rinda.

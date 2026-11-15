@@ -3,9 +3,9 @@ title: "Referanse for dataformater"
 nav_order: 19
 lang: "no"
 source: "data-formats.md"
-source_hash: "2ffd2bfd6f0f"
+source_hash: "23c1890ce185"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Referanse for dataformater
@@ -93,6 +93,37 @@ En posisjons-, tids- eller utseendekolonne som inneholder noe annet enn et tall,
 | Filterkolonne, *kategori* | hva som helst; ordbokskodet | nei | 32-bit id | Opp til 4 096 verdier, ellers beholdes ikke kolonnen. |
 
 En Parquet-kolonne av typen `TIMESTAMP` som beholdes som filterkolonne, er et *område* av epoke-millisekunder - en skyveknapp, ikke en liste.
+
+## Resultatkolonner {#outcome-columns}
+
+Hvem som vant, på hver rad, så et sted, en rute eller et trekk kan bedømmes etter hvor ofte siden det hører til, endte med å vinne ([Seiersandel](win-rate.md)). Visningsprogrammet beholder disse kolonnene selv, viser dem først i [filtrene](filters.md) på visningsprogrammets språk og leser dem i [seiersandelskartet](win-rate.md), [oppdelingen](breakdown.md) og [volumstatistikken](volumes.md#statistics). En konverter for et rundebasert spill (CS2, Valorant, Rainbow Six Siege) eller et kampbasert (War Thunder) skriver alle fire:
+
+| Kolonne | Type | Betydning |
+|---|---|---|
+| `won` | 0/1 (tom der det er ukjent) | radens side (lag) vant **runden**; i et spill uten runder kampen |
+| `matchWon` | 0/1 (tom der det er ukjent) | radens side (lag) vant **kampen**; tom der opptaket ikke viser slutten |
+| `round` | heltall, fra 1 | runden raden hører til; 1 gjennom hele et kampbasert spill |
+| `roundEndReason` | tekst | hvordan runden endte (i et kampbasert spill kampen), med ordene nedenfor |
+
+`won` og `matchWon` hører til radens side: en T-spillers rader bærer T-sidens resultat, en AI-enhets rader lagets resultat; rader som ikke hører til noen side, lar dem stå tomme. En side som bytter ved pausen, beholder sin egen `matchWon` og tar hver rundes `won` slik den spilte den. Uavgjort er 0 for begge sider.
+
+Sluttårsakene er felles for alle spill, så ett filter virker på alle (et spills eget ord kobles der det går, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Betydning | Spill |
+|---|---|---|
+| `elimination` | alle spillerne på én side er ute | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | bomben (spike, desarmererens mål) gikk av | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | bomben (spike) ble desarmert | CS2, Valorant, Rainbow Six Siege |
+| `time` | rundens klokke gikk ut; War Thunder: avgjort med billetter igjen på begge sider | alle |
+| `surrender` | en side ga opp | CS2, Valorant, Rainbow Six Siege |
+| `draw` | ingen vinner | CS2 |
+| `objective` | et mål tatt eller holdt (gissel hentet ut, område sikret) | Rainbow Six Siege |
+| `capture` | gikk tom for billetter mens vinneren holdt erobringssoner | War Thunder |
+| `tickets` | billetter tapt til drap | War Thunder |
+| `destruction` | de siste kjøretøyene tapt på én gang, ingen igjen til å spawne | War Thunder |
+| `other` | alt annet | |
+
+Oppgi dem også i `extra`-listen i `heat3d`-hintene, som enhver annen kolonne. Kolonnenavnene `win`, `round_won`, `match_won`, `end_reason` og `win_reason` leses som de samme kolonnene.
 
 ## `heat3d`-hintene {#the-heat3d-hints}
 
