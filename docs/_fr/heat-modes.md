@@ -15,7 +15,7 @@ Chaque point ajoute une petite lueur, les lueurs s'accumulent, et l'amas est pei
 
 La barre des modes, en haut de la barre latérale de l'onglet Carte de chaleur, choisit la façon dont le [jeu de données](glossary.md) est dessiné. Les touches 1 à 4 choisissent Chaleur, Différence, Chaleur par équipe et Lignes. Les Figurines superposées n'ont pas de touche.
 
-![La barre des modes avec Chaleur, Différence, Chaleur par équipe, Figurines superposées et Lignes](../assets/img/en/heat-modes-bar.webp)
+![La barre des modes avec Chaleur, Différence, Chaleur par équipe, Figurines superposées et Lignes](../assets/img/fr/heat-modes-bar.webp)
 
 | Mode | Question à laquelle il répond |
 |---|---|
@@ -25,7 +25,7 @@ La barre des modes, en haut de la barre latérale de l'onglet Carte de chaleur, 
 | **Lignes** | Par où les gens sont-ils passés ? |
 | **Figurines superposées** | Qui était où, et quand ? |
 
-![Les mêmes données dans quatre modes : Chaleur, Différence, Chaleur par équipe et Lignes](../assets/img/en/heat-modes-grid.webp)
+![Les mêmes données dans quatre modes : Chaleur, Différence, Chaleur par équipe et Lignes](../assets/img/fr/heat-modes-grid.webp)
 
 | Mode (libellé de la barre) | Touche | Ce qu'il dessine | Nécessite |
 |---|---|---|---|
@@ -43,12 +43,12 @@ Les touches 1 à 4 sont vérifiées de la même façon par rapport aux données 
 
 | Panneau | Chaleur | Différence | Chaleur par équipe | Figurines superposées | Lignes |
 |---|---|---|---|---|---|
-| Trajets ([chaleur linéaire](line-heat.md)) | | | | | oui |
+| Parcours ([chaleur linéaire](line-heat.md)) | | | | | oui |
 | Forme de la chaleur (avec **Suivre la vue** et **Même densité à tout niveau de zoom**), Couleurs de la chaleur, Bornes en pixels des sprites, Profondeur, Élimination par distance | oui | oui | oui | | oui |
 | Direction ([chaleur directionnelle](directional-heat.md)), Valeur ([pondération des valeurs](value-weighting.md)) | oui | oui | oui | | oui |
 | Vue des équipes ([figurines superposées](box-replay.md)) | | | | oui | |
 | Répartition différentielle ([différence](difference.md)) | | oui | | | |
-| [Équipes](teams-list.md), [Entités](entities.md), [Filtres](filters.md), Arrière-plan / niveau, [Coupe](slice.md), [Mesure](measure.md), Trajectoire de caméra et rendu, Performance, Caméra et scène | oui | oui | oui | oui | oui |
+| [Équipes](teams-list.md), [Entités](entities.md), [Filtres](filters.md), Arrière-plan / niveau, [Coupe](slice.md), [Mesure](measure.md), Trajectoire de caméra et rendu, Performances, Caméra et scène | oui | oui | oui | oui | oui |
 
 ## Ce que partagent tous les modes de chaleur {#what-every-heat-mode-shares}
 

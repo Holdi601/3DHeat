@@ -28,7 +28,7 @@ Nivelul este comun tuturor celor trei file: un traseu încărcat în fila Analiz
 1. Încarcă întâi datele ([Încărcarea datelor](getting-data-in.md)), ca nivelul să fie potrivit cu ele.
 2. Deschide **Fundal / nivel** în bara laterală.
 3. Apasă **Imagine de hartă…** pentru o imagine sau **Model 3D…** pentru un nivel 3D, și alege fișierul. Pentru o înregistrare din lumea reală, folosește în schimb **Fundal din lumea reală** sau **Teatru de operații**.
-4. Așteaptă ca linia de progres să se termine. Un model mare este întâi simplificat (vezi **Ținta de simplificare** mai jos).
+4. Așteaptă ca linia de progres să se termine. Un model mare este întâi simplificat (vezi **Ținta simplificării** mai jos).
 5. Apasă **F** în vedere ca să încadrezi tot. Folosește **Opacitate** și **Luminozitate** până când căldura iese în evidență față de nivel.
 6. Apasă **Salvează în bibliotecă** dacă vei folosi nivelul din nou ([Biblioteca de niveluri](level-library.md)).
 
@@ -44,13 +44,13 @@ Nivelul este comun tuturor celor trei file: un traseu încărcat în fila Analiz
 | Parte | Detalii |
 |---|---|
 | **Imagine de hartă…**, **Model 3D…** | Încarcă unul; înlocuiește nivelul curent. |
-| **Fundal din lumea reală**, **Uită plăcile hărții** | Doar pentru un set de date cu referință geografică: construiește locul real de sub el ca nivel, sau șterge plăcile descărcate. [Fundalul lumii](world-backdrop.md) |
-| **Ținta de simplificare** | Bugetul de triunghiuri pentru următorul import de model: *Completă - fără simplificare* (implicit), *Mare - 8M*, *Medie - 3M*, *Mică - 800k*, *Siluetă - 100k*. [Niveluri 3D](model-levels.md#simplification) |
+| **Fundal din lumea reală**, **Uită dalele de hartă** | Doar pentru un set de date cu referință geografică: construiește locul real de sub el ca nivel, sau șterge plăcile descărcate. [Fundalul lumii](world-backdrop.md) |
+| **Ținta simplificării** | Bugetul de triunghiuri pentru următorul import de model: *Completă - fără simplificare* (implicit), *Mare - 8M*, *Medie - 3M*, *Mică - 800k*, *Siluetă - 100k*. [Niveluri 3D](model-levels.md#simplification) |
 | Progres și **Anulează** | Cât timp se decodează sau se importă. |
 | Notă de import | Triunghiurile înainte și după, împărțirea în sol / structuri / apă, nivelul de detaliu folosit. |
 | Nume și mărime | `lățime×înălțime px · x × z m/px` pentru o imagine, `N triunghiuri (din M)` pentru un model. |
 | **Opacitate**, **Luminozitate** | Pentru ambele tipuri. |
-| Comenzi de imagine | **Desaturează**, **Întoarce nord/sud**, **Plasare** (două ancore), **Potrivește la limitele datelor**, **Altitudine**. [Imagini de hartă](map-images.md) |
+| Comenzi de imagine | **Desaturare**, **Inversează nord/sud**, **Plasare** (două ancore), **Potrivește la limitele datelor**, **Altitudine**. [Imagini de hartă](map-images.md) |
 | Comenzi de model | Relief al solului, apă, triunghiuri ale solului, sârmă, textură, culoare capturată, structuri, clasificarea părților. [Aspectul nivelului](level-appearance.md) |
 | **Salvează în bibliotecă**, **Elimină** | [Biblioteca de niveluri](level-library.md); Elimină descarcă nivelul. |
 | **Bibliotecă** | Niveluri stocate în acest browser. [Biblioteca de niveluri](level-library.md) |

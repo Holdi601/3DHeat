@@ -30,7 +30,7 @@ Et gi ronn 2.000 benannte Gefierer, Fligeren, Schëffer, Waffen a Zaldoten, all 
 
 ## Wéi d'Figuren gemaach ginn {#how-the-figures-are-made}
 
-- **Aus publizéierte Miessunge gebaut.** Déi meescht Figuren entstinn aus dem eegene Figurebauer vum Viewer, mat ëffentlechen Zuelen: Längt, Breet, Héicht, Stroossenrieder, Tuerm an Kanoun, Flilleke an Hack. Hir Form gëtt dann mat ëffentlechen Photoen, Zeechnungen a publizéierte Miessunge fabelt. Keng Spillmodelle ginn benotzt.
+- **Aus publizéierte Miessunge gebaut.** Déi meescht Figuren entstinn aus dem eegene Figurebauer vum Viewer, mat ëffentlechen Zuelen: Längt, Breet, Héicht, Stroossenrieder, Tuerm an Kanoun, Flilleke an Hack. Hir Form gëtt dann mat ëffentlechen Photoen, Zeechnungen a publizéierte Miessunge ugepasst. Keng Spillmodelle ginn benotzt.
 - **Gratis Modeller.** E puer Figuren benotzen gratis 3D-Modeller (CC0 oder CC BY), wou se méi getreu sinn, heiansdo mat dem gebaute Rumpf kombinéiert. D'Autoren vu CC-BY-Wierker sinn op [Figurekreditter](figure-credits.md) genannt; CC0-Wierker bräuchen kee Kredit a stinn do net.
 - All Figur huet eng voll, eng grof an eng wäit ewech Versioun (Detailstufen, LOD), sou datt Dausende op eemol gezeechent kënne ginn.
 

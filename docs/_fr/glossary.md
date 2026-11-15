@@ -16,7 +16,7 @@ Brèves définitions des mots utilisés sur ce site, en langage courant. Chaque 
 
 **Ligne.** Une ligne de vos données : une chose qui s'est produite à un endroit et un moment, par exemple « le joueur 7 était ici à la seconde 12 ». La visionneuse dessine chaque ligne. [Formats de données](data-formats.md)
 
-**Colonne.** Un type de valeur dans les lignes, comme x, y, z, temps ou équipe. La visionneuse devine quelle colonne est laquelle, et vous pouvez corriger cette supposition. [Correspondance des colonnes](column-mapping.md)
+**Colonne.** Un type de valeur dans les lignes, comme x, y, z, temps ou équipe. La visionneuse devine quelle colonne est laquelle, et vous pouvez corriger cette supposition. [Mappage des colonnes](column-mapping.md)
 
 **CSV.** Un tableau en texte brut : une ligne par ligne, des valeurs séparées par des virgules. Presque tous les logiciels peuvent en écrire un. [Charger des fichiers](loading-files.md)
 
@@ -24,7 +24,7 @@ Brèves définitions des mots utilisés sur ce site, en langage courant. Chaque 
 
 **Événement.** Quelque chose qui s'est produit, comme un tir, un impact, une élimination ou un décollage. Une ligne peut être un événement, ou simplement « j'étais ici ». [Filtres](filters.md)
 
-**Personne.** Celui qui a produit les lignes : un joueur, un pilote, une voiture ou un char. Une personne est une ligne de positions dans le temps. [Sessions, personnes et groupes](sessions-persons-groups.md)
+**Personne.** Celui qui a produit les lignes : un joueur, un pilote, une voiture ou un char. Une personne est une suite de positions dans le temps. [Sessions, personnes et groupes](sessions-persons-groups.md)
 
 **Groupe (équipe).** Un ensemble de personnes affichées dans la même couleur, par exemple Blue et Red. [Sessions, personnes et groupes](sessions-persons-groups.md)
 
@@ -62,7 +62,7 @@ Brèves définitions des mots utilisés sur ce site, en langage courant. Chaque 
 
 **Corde (sommet de virage).** Le point d'un virage où la voiture est au plus près du bord intérieur. [Analyse virage par virage](race-corner-analysis.md)
 
-**Glissement.** Ce dont un pneu glisse. Un peu de glissement donne le plus d'adhérence ; trop, et la voiture dérape. [Analyse de course : la méthode](race-analytics.md)
+**Glissement.** La quantité dont un pneu glisse. Un peu de glissement donne le plus d'adhérence ; trop, et la voiture dérape. [Analyse de course : la méthode](race-analytics.md)
 
 **Enveloppe.** Ce qu'une voiture peut faire à chaque vitesse : à quel point elle peut tourner, freiner et accélérer avant de glisser. [Analyse de course : la méthode](race-analytics.md)
 

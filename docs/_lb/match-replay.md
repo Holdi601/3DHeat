@@ -58,7 +58,7 @@ Wann eng Eenheet méi kleng wier wéi **Klengste Figur um Écran**, kann se e Sy
 - **Treffermarken** sëtzen op der Uewerfläch, déi de Schoss getraff huet, an der Gréisst vun der Figur. Hir Form seet, wat geschitt ass: e Lach (duerchgaang), e hellen Spritzer (net duerchgaang), e Kratzer (ofgeprallt), e Rußstär (Sprengschoss). E faarbege Ring seet, wat et gemaach huet: Ofschoss, Modul zerstéiert, kritesch, schwéier, Schued, kee Schued, Treffer. Fiert mat der Maus iwwer eng Marke, fir den Numm vun der Ronn ze gesinn.
 - Eng zerstéiert Eenheet gëtt als **verkuelt** Wrack gezeechent vum Doud bis si erëmkënnt oder ewechgeholl gëtt; hiert Symbol ass duerchgestrach.
 - **Bränn** brennen op enger Eenheet vum Moment, wou se Feier fänkt, bis se ausgeléscht ass.
-- **Tierm** dréinen sech dohin, wou d'Daten d'Kanoun weisen (oder, ouni dat, wou de Spiller kuckt).
+- **Tuerm** dréinen sech dohin, wou d'Daten d'Kanoun weisen (oder, ouni dat, wou de Spiller kuckt).
 
 ### Waffen, Lockvugelen a Leuchtspuren {#weapons-decoys-and-tracers}
 
@@ -80,7 +80,7 @@ Klickt op eng Eenheet oder hir Beschrëftung, fir se ze **verfollegen**; d'Sekti
 
 D'Sektioun **Taktesch Usiicht** zeechent, fir kee Eenheet, déi gewielte, all, oder eng Aart (Fligeren, Buedem, Schëffer, Waffen): Geschwindegkeetsvektoren an de Wee virun sech, Nues- an Auftriebslinnen, Radarkegelen, Schlässer, Datenverbindungen, Engagementzonen a -linnen, Siichtlinnen, wou d'Spiller kucken (Siichtkegelen), d'Tuermzil an déi opgeholl Kamera.
 
-### Affichagesstil {#display-style}
+### Usiichtsstil {#display-style}
 
 `T` (oder de Schalter **Als taktesch Usiicht weisen**) wiesselt d'Optik op e Radarschierm-Stil: Glanz, Ëmrëss, Héichtelinnen, en Miessraster, Scanlinnen, Distanzringe, Héichtelatten, Panelen mat Ofschëss an Evenementer, an e **Regisseur**, deen d'Kamera selwer zu Evenementer réckelt.
 
@@ -92,7 +92,7 @@ Wann e Match mat sengen Ziler kënnt, zeechent d'Sektioun **Ziler** se um Level:
 
 ## Beschrëftungen a Statistiken {#labels-and-statistics}
 
-- **Beschrëftungen**: Reegelen pro Aart (**Gewielt**, **Fligeren**, **Buedem**, **Schëffer**, **Waffen**, **KI**): gewisen oder net, wéi Wäerter, an eng **Prioritéit** fir wien de Plaz kritt, wann d'Beschrëftunge sech iwwerlappen. **Etiketten ausenanerhalen** réckelt eng Beschrëftung neven hir Eenheet, wann se eng aner iwwerdecke géif, a léisst se weg, wou kee Plaz ass. **Etikettegréisst** ass 60 bis 250 %. **Zréck op Numm, Gefier, Héicht a Vitess** setzt d'Reegelen zréck.
+- **Beschrëftungen**: Reegelen pro Aart (**Gewielt**, **Fligeren**, **Buedem**, **Schëffer**, **Waffen**, **KI**): gewisen oder net, wéi Wäerter, an eng **Prioritéit** fir wien de Plaz kritt, wann d'Beschrëftungen sech iwwerlappen. **Etiketten ausenanerhalen** réckelt eng Beschrëftung neven hir Eenheet, wann se eng aner iwwerdecke géif, a léisst se weg, wou kee Plaz ass. **Etikettegréisst** ass 60 bis 250 %. **Zréck op Numm, Gefier, Héicht a Vitess** setzt d'Reegelen zréck.
   - Buedem-Eenheeten fänken mat Numm, Gefier a Vitess un.
   - Fligeren fänken mat Numm, Gefier, Héicht a Vitess un.
   - Schëffer fänken mat Numm, Gefier, Vitess a Kurs un.

@@ -92,7 +92,7 @@ Sekce **Soubor** obsahuje **Uložit**, **Otevřít** a **Vymazat**. **Uložit** 
 
 ## Figury {#figures}
 
-Každou figuru staví samotný prohlížeč: jednoduché tvary podle zveřejněné velikosti typu, s rysy, které ji odlišují od sousedů – kola a věž tanku, hlavně, rakety a radary protiletadlového vozidla, půdorys křídel, ocas a motory letadla, rotory a krátká křídla vrtulníku. Nic se nebere z hry. Konstrukce, kterou si hra vymyslela, se ukazuje jako obecná figura své třídy. Jak data najdou svou figuru, viz [Obrazce](figures.md#which-figure-a-unit-gets).
+Každou figuru staví samotný prohlížeč: jednoduché tvary podle zveřejněné velikosti typu, s rysy, které ji odlišují od sousedů – kola a věž tanku, hlavně, rakety a radary protiletadlového vozidla, půdorys křídel, ocas a motory letadla, rotory a krátká křídla vrtulníku. Nic se nebere z hry. Konstrukce, kterou si hra vymyslela, se ukazuje jako obecná figura své třídy. Jak data najdou svou figuru, viz [Figury](figures.md#which-figure-a-unit-gets).
 
 ## Oznámení Riotu {#riots-notice}
 

@@ -16,7 +16,7 @@ Tifsiriet qosor tal-kliem li dan is-sit juża, b'lingwa sempliċi. Kull dħul jo
 
 **Ringiela (row).** Linja waħda tad-data tiegħek: ħaġa waħda li ġrat f'post u ħin wieħed, pereżempju "il-plejer 7 kien hawn fit-tieni 12". Il-viewer jpinġi kull ringiela. [Formati tad-data](data-formats.md)
 
-**Kolonna (column).** Tip wieħed ta' valur fir-ringieli, bħal x, y, z, ħin jew tim. Il-viewer jaħsibha liema kolonna hija liema, u tista' tibdel it-tbassir. [Immappjar tal-kolonni](column-mapping.md)
+**Kolonna (column).** Tip wieħed ta' valur fir-ringieli, bħal x, y, z, ħin jew tim. Il-viewer jaħseb liema kolonna hi liema, u tista' tibdel it-tbassir. [Immappjar tal-kolonni](column-mapping.md)
 
 **CSV.** Tabella tal-kliem sempliċi: ringiela waħda f'kull linja, il-valuri separati bil-virgoli. Kważi kull programm jista' jikteb waħda. [Tagħbija tal-fajls](loading-files.md)
 
@@ -32,7 +32,7 @@ Tifsiriet qosor tal-kliem li dan is-sit juża, b'lingwa sempliċi. Kull dħul jo
 
 **Livell.** Il-mappa 3D fejn ġrat id-data: l-art, il-bini, il-ħitan. Ringieli jidhru fejn ġraw fuq il-livell. [Livelli u ġeometrija tal-isfond](levels.md)
 
-## Nara d-data {#looking-at-the-data}
+## Ħares lejn id-data {#looking-at-the-data}
 
 **Heatmap.** Ritratt fejn l-postijiet li ħafna ringieli jilmsu jiddu iktar. Postijiet kiesħa huma kwieti, postijiet sħan huma mxgħula. [Sħana](heat.md)
 
@@ -56,7 +56,7 @@ Tifsiriet qosor tal-kliem li dan is-sit juża, b'lingwa sempliċi. Kull dħul jo
 
 ## Tellieqa {#racing}
 
-**Ġiro (lap).** Vjaġġ wieħed madwar il-kors, mil-linja lura għal-linja. [Tagħbija tal-ġirjiet](race-loading-laps.md)
+**Ġiro (lap).** Vjaġġ wieħed madwar il-kors, mil-linja lura għall-linja. [Tagħbija tal-ġirjiet](race-loading-laps.md)
 
 **Ġiro ta' referenza (reference lap).** Il-ġiro li l-oħrajn kollha jitqabblu miegħu. Id-differenzi jintwerew bħala "iktar mgħaġġel" jew "iktar bil-mod" minnu. [Tagħbija tal-ġirjiet](race-loading-laps.md)
 

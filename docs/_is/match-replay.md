@@ -61,7 +61,7 @@ Fígúrur koma í stað kassa fyrir hverja einingu sem nafn hennar eða gerð er
 - **Eldar** brenna á einingu frá því hún kviknar í þar til slökkt er.
 - **Turnar** snúast þangað sem gögnin segja að byssan beinist (eða, án þess, þangað sem leikmaðurinn horfir).
 
-### Vopn, skotmörk og rekjarar {#weapons-decoys-and-tracers}
+### Vopn, tálbeitur og rekjarar {#weapons-decoys-and-tracers}
 
 Með **Vopn, skot og hittni** kveikt (hlutinn Liðssýn): flaugar, eldflaugar, sprengjur og tundurskeyti fljúga sem eigin fígúrur með reykslóð; byssukúlur og skeljar eru rekjarar; högg og sprengingar blossa upp. Rekjari teiknaður **strikaður** var reiknaður út frá höggi, því gögnin höfðu ekkert skot. Blys og flís eru teiknuð sem tálbeitur; þau eru falin úr einingalistanum nema *Tálbeitur og skeljar* sé hakað.
 

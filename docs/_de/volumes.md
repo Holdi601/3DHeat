@@ -21,7 +21,7 @@ Ein **Volumen** ist ein unsichtbarer Quader (oder Zylinder oder eine Kugel), den
  +------------+
 ```
 
-![Drei Volumen im Demo-Tal: zwei Zylinder um die Hügel, ein Quader um das Dorf](../assets/img/en/volumes.webp)
+![Drei Volumen im Demo-Tal: zwei Zylinder um die Hügel, ein Quader um das Dorf](../assets/img/de/volumes.webp)
 
 Volumen messen, was in ihnen passiert, filtern die Ansicht auf sie, exportieren ihre Zeilen und lassen sich nebeneinander vergleichen. Siehe auch das [Glossar](glossary.md) für Zeile, Person und Match.
 
@@ -76,7 +76,7 @@ Bei zwei oder mehr sichtbaren Volumen drücke **Vergleich…**.
 3. Unter **Tabelle** liest du bei jedem Wert den Unterschied zum ersten Volumen.
 4. Wechsle zu **Balken**, um die Anteile als Balken zu sehen.
 
-![Die Tabelle Volumen vergleichen: Zeilen, Zeit darin, Spieler und mehr für jedes Volumen, mit dem Unterschied zum ersten](../assets/img/en/compare.webp)
+![Die Tabelle Volumen vergleichen: Zeilen, Zeit darin, Spieler und mehr für jedes Volumen, mit dem Unterschied zum ersten](../assets/img/de/compare.webp)
 
 | Ansicht | Zeigt |
 |---|---|
@@ -86,7 +86,7 @@ Bei zwei oder mehr sichtbaren Volumen drücke **Vergleich…**.
 | **Besuche** | Box- und Violin-Diagramme, wie lange Besuche dauern (logarithmische Skala). |
 | **Fluss** | Wohin Spuren nach dem Verlassen jedes Volumens gehen: eine Übergangsmatrix oder Fluss-Bänder. |
 
-![Die Ansicht Balken: Ereignisarten pro Volumen als Anteile](../assets/img/en/compare-bars.webp)
+![Die Ansicht Balken: Ereignisarten pro Volumen als Anteile](../assets/img/de/compare-bars.webp)
 
 ## Tipps {#tips}
 

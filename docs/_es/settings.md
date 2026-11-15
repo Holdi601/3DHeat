@@ -19,11 +19,11 @@ En la parte superior de la barra lateral:
 | Control | Qué hace |
 |---|---|
 | **?** | Modo de ayuda: qué significa cada color (también `?` o `F1`) |
-| Menú **Unidades** | Métrico, Imperial, Aviación o Náutico |
+| Menú **Unidades** | Métrico, Imperial, Aeronáutico o Náutico |
 | Botón **...** junto a **Unidades** | Abre «Elige una unidad para cada magnitud»: un menú desplegable por magnitud |
 | Menú **Idioma** | El idioma del visor: [40 idiomas](languages.md), o el del navegador |
 
-![La cabecera con el menú Unidades y la ventana de unidad por magnitud abierta](../assets/img/en/settings-units.webp)
+![La cabecera con el menú Unidades y la ventana de unidad por magnitud abierta](../assets/img/es/settings-units.webp)
 
 Los números que escribas en una casilla pueden usar punto o coma (`0.35` o `0,35`). El visor acepta ambos y muestra los números como los escribe el idioma del visor.
 
@@ -31,9 +31,9 @@ Los números que escribas en una casilla pueden usar punto o coma (`0.35` o `0,3
 
 1. Elige un preajuste en el menú **Unidades**. Todas las magnitudes cambian a la vez.
 2. Para cambiar solo una magnitud, pulsa el botón **...** junto a ella y elige una unidad para esa magnitud. El menú muestra entonces un `*` tras el preajuste.
-3. Una magnitud que no has fijado sigue al preajuste. Elige «Como preajuste» para volver atrás.
+3. Una magnitud que no has fijado sigue al preajuste. Elige «Según el preajuste» para volver atrás.
 
-| Magnitud | Métrico (por defecto) | Imperial | Aviación | Náutico |
+| Magnitud | Métrico (por defecto) | Imperial | Aeronáutico | Náutico |
 |---|---|---|---|---|
 | Distancia | km | mi | NM | NM |
 | Altitud, longitud | m | ft | ft | m |
@@ -48,11 +48,11 @@ Otras unidades que puedes elegir para una magnitud: distancia km, mi, NM; veloci
 
 ## Modo de ayuda {#help-mode}
 
-![Modo de ayuda: qué significan los colores](../assets/img/en/help.webp)
+![Modo de ayuda: qué significan los colores](../assets/img/es/help.webp)
 
 Pulsa `?` o `F1`, o haz clic en el botón **?**. Muestra *Qué significan los colores*: leyendas para la vista 3D, las escalas de calor, los colores de equipo, los colores del nivel, los colores de estado de los paneles, el panel de partida y la vista de carrera. Permanece activo hasta que lo desactives. En la pestaña Partida también explica los colores del panel de partida.
 
-![Modo de ayuda en la pestaña Partida](../assets/img/en/settings-help-match.webp)
+![Modo de ayuda en la pestaña Partida](../assets/img/es/settings-help-match.webp)
 
 ## Lo que recuerda el navegador {#what-the-browser-remembers}
 

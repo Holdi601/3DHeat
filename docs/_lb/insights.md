@@ -11,7 +11,7 @@ outdated: false
 
 # Erkenntnisser
 
-**Erkenntnisser** sicht an den gelueden Daten no deem, wat erausstécht - staark Positiounen, gefäerlech Terrain, Spawn-Fallen, Engpässer, Spiller wäit iwwer hire Kollegen - a seet Iech et, dat Staarkst fir d'éischt, mat den Beweiser. Benotzt et, fir an enger Minutt ze léieren, wou e Match gewonne oder verluer gouf. Dann kann et eng Nobesprechung schreiwen, a bei engem eenzege Replay kann et als Kommentator op déi grouss Momenter sprangen.
+**Erkenntnisser** sicht an den gelueden Daten no deem, wat erausstécht - staark Positiounen, gefäerlech Terrain, Spawn-Fallen, Engpässer, Spiller wäit iwwer hire Kollegen - a seet Iech et, dat Staarkst fir d'éischt, mat den Beweiser. Benotzt et, fir an enger Minutt ze léieren, wou e Match gewonne oder verluer gouf. Dann kann et eng Zesummefaassung schreiwen, a bei engem eenzege Replay kann et als Kommentator op déi grouss Momenter sprangen.
 
 Alles gëtt am Browser gezielt. Näischt verléisst Ären Rechner, ausser Dir schalt eng extern KI an (kuckt [Extern KI](#external-ai)).
 
@@ -30,7 +30,7 @@ Zielen benotzt déi aktuell Filteren, verstoppt Gruppen an de gewielte Match iww
 
 D'Zeilen uewen an der Lëscht (zum Beispill d'Geldsummen) fasse all d'Daten zesummen, ier d'Resultater kommen.
 
-![E opgemaachtt Resultat: d'Hëtzt-Zone vun de Schëss, seng Zuelen, an eng passend Stell aus der Literatur](../assets/img/en/insights-finding.webp)
+![E opgemaacht Resultat: d'Hëtzt-Zone vun de Schëss, seng Zuelen, an eng passend Stell aus der Literatur](../assets/img/en/insights-finding.webp)
 
 ### D'Detektoren {#the-detectors}
 

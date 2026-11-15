@@ -10,7 +10,7 @@ outdated: false
 
 # Dati di esempio: prova il visualizzatore in cinque minuti
 
-![Calore di dieci partite di carri nella valle demo: cosa mostra il passo 4](../assets/img/en/heat-hero.webp)
+![Calore di dieci partite di carri nella valle demo: cosa mostra il passo 4](../assets/img/it/heat-hero.webp)
 
 Non hai ancora dati tuoi? Il repository ne crea alcuni. Tutto è inventato: una valle, un cortile e partite di tre stili di gioco fittizi, con giocatori chiamati *Blue 1* o *Red 3*. Tutte le immagini di questo sito sono state fatte con questi dati.
 
@@ -45,7 +45,7 @@ Ogni tabella indica le proprie colonne nel suo piè di pagina, quindi si carica 
 6. Apri **Rilevamenti** (nella barra laterale Mappa di calore): trova i punti dove si è sparato, colpito e distrutto molto più che altrove, intorno alle due colline.
 7. Apri la scheda **Partita**; sotto **Partite nel replay** scegli *Match 01*; premi **Riproduci** sulla linea temporale: il [replay](match-replay.md).
 
-![Un replay di Match 01 con i carri come figure](../assets/img/en/replay-overview.webp)
+![Un replay di Match 01 con i carri come figure](../assets/img/it/replay-overview.webp)
 
 Per lo sparatutto carica `demo-yard.glb` e `shooter.parquet`; per il combattimento aereo `air.parquet` (le figure si vedono meglio con **Dimensione figure** 4, un cursore nel pannello **Vista squadre** della barra laterale Mappa di calore).
 

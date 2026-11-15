@@ -15,7 +15,7 @@ Il replay è un film della partita con ogni giocatore disegnato come il mezzo ch
 
 Colpi, impatti, fuochi e relitti sono disegnati sulle unità e sugli obiettivi del livello. Telecamere, etichette e un display tattico ti aiutano a leggere lo scontro. Conosci Tacview? [Parità con Tacview](tacview-parity.md) mostra dove si trova ciascuno dei suoi strumenti.
 
-![Replay a figure della demo dei carri: carri come figure proprie, con etichette di nome, veicolo e velocità](../assets/img/en/replay-overview.webp)
+![Replay a figure della demo dei carri: carri come figure proprie, con etichette di nome, veicolo e velocità](../assets/img/it/replay-overview.webp)
 
 ## Avviare un replay {#start-a-replay}
 
@@ -30,7 +30,7 @@ Le figure sostituiscono i cubi per ogni unità il cui nome o tipo è noto (vedi 
 
 ## Figure {#figures}
 
-![Un carro che brucia nella telecamera orbitale, con il colpo che l'ha colpito](../assets/img/en/replay-tanks.webp)
+![Un carro che brucia nella telecamera orbitale, con il colpo che l'ha colpito](../assets/img/it/replay-tanks.webp)
 
 | Impostazione (sezione **Figure**) | Predefinito | Cosa fa |
 |---|---|---|
@@ -76,7 +76,7 @@ Clicca un'unità o la sua etichetta per **seguirla**; la sezione **Replay** offr
 
 ## Display tattico {#tactical-display}
 
-![La demo aerea con l'aspetto del display tattico (T): terreno a filo, pannelli di uccisioni ed eventi](../assets/img/en/replay-air-tactical.webp)
+![La demo aerea con l'aspetto del display tattico (T): terreno a filo, pannelli di uccisioni ed eventi](../assets/img/it/replay-air-tactical.webp)
 
 La sezione **Display tattico** disegna, per nessuna unità, per quelle selezionate, per tutte o per un tipo (velivoli, terra, navi, armi): vettori di velocità e il percorso davanti, linee del muso e della portanza, coni radar, aggancio, collegamenti dati, zone e linee di ingaggio, linee di vista, dove guardano i giocatori (coni di vista), la mira della torretta e la telecamera registrata.
 
@@ -84,7 +84,7 @@ La sezione **Display tattico** disegna, per nessuna unità, per quelle seleziona
 
 `T` (o l'interruttore **Mostra come display tattico**) cambia l'aspetto in uno stile da schermo radar: bagliore, contorni, curve di livello, una griglia di misura, linee di scansione, anelli di distanza, scale di altitudine, pannelli con uccisioni ed eventi, e un **Regista** che sposta la telecamera sugli eventi da solo.
 
-![Lo stesso scontro aereo nell'aspetto normale](../assets/img/en/replay-air.webp)
+![Lo stesso scontro aereo nell'aspetto normale](../assets/img/it/replay-air.webp)
 
 ## Obiettivi {#objectives}
 

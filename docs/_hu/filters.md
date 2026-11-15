@@ -19,7 +19,7 @@ A **Szűrők** elrejtik azokat a sorokat, amelyek nem érdekelnek, például egy
 2. A **Járműosztály** alatt vegye ki a *Harckocsi* jelölését. A kép azonnal változik.
 3. A visszavonáshoz nyomja meg a **Minden szűrő törlése** gombot.
 
-![A Szűrők panel: a megjelenítő saját oszlopai (Eseménytípus, Járműosztály) elöl, utána a fájl oszlopai](../assets/img/en/filters.webp)
+![A Szűrők panel: a megjelenítő saját oszlopai (Esemény típusa, Járműosztály) elöl, utána a fájl oszlopai](../assets/img/en/filters.webp)
 
 Az első sorok a megjelenítő saját oszlopai (lentebb). Az utánuk következők a fájlból származnak.
 
@@ -29,7 +29,7 @@ Betöltéskor a megjelenítő négy saját oszlopot állít elő, és ezeket **e
 
 | Oszlop | Értékek | Ebből számítva |
 |---|---|---|
-| **Eseménytípus** | 23 fajta: Pozíció, Lövés leadva, Indítás (rakéta, lövedék, bomba), Találat, Tévesztés (a fegyver nem talált közeli célpontot), Robbanás, Sérülés, Ölés, Halál, Megsemmisítve, Lezuhanás, Katapultálás / kiugrás, Megjelenés, Eltűnés, Felszállás, Leszállás, Földérintés, Megállás a talajon, Újratöltés / tankolás, Elfoglalás / cél, Csalogató, Üzenet, Egyéb | egy `event`, `events`, `event_type` vagy `event_name` nevű oszlop; az egyes játékok saját szavai (`shot`, `burst`, `fired`, `struck`, `flare`, `plant` ...) ezekre a fajtákra képződnek le. A teljes táblázat: [Eseménytípusok és -osztályok](ref-event-types.md). |
+| **Esemény típusa** | 23 fajta: Pozíció, Lövés leadva, Indítás (rakéta, lövedék, bomba), Találat, Tévesztés (a fegyver nem talált közeli célpontot), Robbanás, Sérülés, Ölés, Halál, Megsemmisítve, Lezuhanás, Katapultálás / kiugrás, Megjelenés, Eltűnés, Felszállás, Leszállás, Földérintés, Megállás a talajon, Újratöltés / tankolás, Elfoglalás / cél, Csalogató, Üzenet, Egyéb | egy `event`, `events`, `event_type` vagy `event_name` nevű oszlop; az egyes játékok saját szavai (`shot`, `burst`, `fired`, `struck`, `flare`, `plant` ...) ezekre a fajtákra képződnek le. A teljes táblázat: [Eseménytípusok és -osztályok](ref-event-types.md). |
 | **Játékos vagy MI** | Játékos, MI | egy `ai`, `is_ai`, `bot` vagy `actor` oszlop; különben `is_player` / `human`; különben egy fiókazonosító (`user_id`, `steam_id`; üres vagy 0 jelentése MI); Tacview-felvételeknél az, hogy az objektumnak van-e pilótája |
 | **Járműosztály** | 17 osztály: Vadászgép, Támadórepülő, Bombázó, Egyéb repülő, Helikopter, Harckocsi, Páncélozott jármű, Légvédelem, Tüzérség, Teherautó / autó, Hajó, Tengeralattjáró, Gyalogság, Fegyver, Csalogató, Építmény, Egyéb | a jármű vagy egység neve (összevetve a [figurakatalógussal](figures.md)) és a típusoszlopok |
 | **Célpontosztály** | ugyanezek az osztályok | a másik fél járműve (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
@@ -59,7 +59,7 @@ A csúszkák az oszlop minimumától a maximumáig, 1000 lépésben futnak; a sz
 |---|---|
 | Név, és `engedélyezett/összes` | Az oszlop, és hány értéke engedélyezett. |
 | Értéklista | Jelölőnégyzet értékenként; az üres érték *(üres)* néven látszik. |
-| **Mind** / **Egy sem** | Minden érték engedélyezése / egy sem. |
+| **Mind** / **Egyik sem** | Minden érték engedélyezése / egy sem. |
 
 Ha minden érték engedélyezett, a szűrő megszűnik.
 
@@ -76,7 +76,7 @@ Ha minden érték engedélyezett, a szűrő megszűnik.
 
 ## Fejlesztőknek {#for-developers}
 
-**Résidők.** Minden aktív szűrő a négy GPU-résálból egyet foglal el ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), soronként 4 bájtos textúrában. A résekbe a szűrők abban a sorrendben kerülnek, ahogy utoljára változtak ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), amelyet a shader és mindkét panel használ). A negyedik fölött egy hiba jelenik meg: *Csak az első 4 szűrő van alkalmazva. Törölje az egyiket – a többi figyelmen kívül marad, nem csendben kombinálódik*, a többi szűrő neve pedig *oszlop (nincs alkalmazva)* alakú. A szűrők soronként futnak a csúcsshaderben, így a küszöb változtatásához nincs újraelemzés és újrafeltöltés.
+**Rések.** Minden aktív szűrő a négy GPU-résálból egyet foglal el ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), soronként 4 bájtos textúrában. A résekbe a szűrők abban a sorrendben kerülnek, ahogy utoljára változtak ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), amelyet a shader és mindkét panel használ). A negyedik fölött egy hiba jelenik meg: *Csak az első 4 szűrő van alkalmazva. Törölje az egyiket – a többi figyelmen kívül marad, nem csendben kombinálódik*, a többi szűrő neve pedig *oszlop (nincs alkalmazva)* alakú. A szűrők soronként futnak a csúcsshaderben, így a küszöb változtatásához nincs újraelemzés és újrafeltöltés.
 
 **A panel által nem mutatott szűrők.** Az alkalmazásállapotban két további fajta létezik ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
 

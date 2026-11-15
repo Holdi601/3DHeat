@@ -49,7 +49,7 @@ Cilne salīdzina divus vai vairākus vienas trases apļus. Tā dala audeklu, kam
    Skatiet [Atkārtojums un 3D aina](race-replay-and-scene.md).
 8. Kopīgie paneļi **Līmenis** un **Kamera un aina** (trases modelis, asu apgriešana, kamera) - aprakstīti kopā ar siltumkarti un [Kamera](camera.md).
 
-**Skats** rāda trasi, nobraukto līniju, karti, automašīnas, etiķetes, kas piestiprinātas trasei, un līdz sešām automašīnu kartītēm augšā pa kreisi (skatiet [Diagrammas un HUD](race-charts-and-hud.md)). Ja apļi nav ielādēti, tas saka: "Nav ielādētu apļu - ievelciet šeit divus vai vairāk apļu failus vai ielādējiet demo apļus no sānjoslas."
+**Skats** rāda trasi, nobraukto līniju, karti, automašīnas, etiķetes, kas piestiprinātas trasei, un līdz sešām automašīnu kartītēm augšā pa kreisi (skatiet [Diagrammas un HUD](race-charts-and-hud.md)). Ja apļi nav ielādēti, tas saka: "Nav ielādētu apļu - ievelc šeit divus vai vairāk apļu failus vai ielādē demonstrācijas apļus no sānjoslas."
 
 **Josla zem skata** satur atkārtojuma transporta vadību un, ja nav paslēpts, attāluma diagrammas.
 
@@ -58,7 +58,7 @@ Cilne salīdzina divus vai vairākus vienas trases apļus. Tā dala audeklu, kam
 1. Atveriet cilni **Sacīkšu analīze** (blakus **Siltumkarte** sānjoslas augšā).
 2. Ielādējiet apļus. Nospiediet **Demo apļi**, lai redzētu, ko cilne dara ar trim izdomātiem apļiem. Saviem apļiem vispirms ierakstiet tos ([failu formāti un ierakstītāji](race-loading-laps.md#file-formats)), tad nospiediet **Ielādēt apļu failus…** vai **Mape…**, vai ievelciet failus vai mapes skatā.
 3. Ātrākais pilnais aplis kļūst par atsauci; lēnākais cits aplis tiek fokusēts. Noklikšķiniet uz jebkura apļa sarakstā, lai to fokusētu; ★ padara apli par atsauci.
-4. Izlasiet **Kur uzlaboties**. Noklikšķiniet uz atrituma: automašīnas tiek izlīdzinātas 40 m pirms tā, kamera ietver to, atkārtojums atskaņo cauri tam un atveras mērījumi.
+4. Izlasiet **Kur uzlaboties**. Noklikšķiniet uz atraduma: automašīnas tiek izlīdzinātas 40 m pirms tā, kamera ietver to, atkārtojums atskaņo cauri tam un atveras mērījumi.
 5. Uzvediet virsū diagrammām, lai pārvietotu katru automašīnu uz šo metru; Shift+klikšķis, lai tās izlīdzinātu tur.
 
 ## Taustiņi {#keyboard}
@@ -88,11 +88,11 @@ Sīkāk: [Trases statistika](race-course-statistics.md#performance-with-many-lap
 | Iestatījums | Noklusējums |
 |---|---|
 | Karte | Laika karte |
-| Nobrauktās līnijas, Automašīnas, Riepas un balstiekārta, Etiķetes, Trase no apļiem | ieslēgts |
+| Izbrauktās līnijas, Automašīnas, Riepas un piekare, Etiķetes, Trase no apļiem | ieslēgts |
 | Visas vērtības kartītēs | izslēgts |
 | Automašīnas izmērs | 1× |
 | Diagrammas | redzamas |
-| Atkārtojuma režīms | No līnijas |
+| Atkārtojuma režīms | No starta |
 | Atkārtojuma ātrums | 1× |
 | Atkārtot | ieslēgts |
 
@@ -110,7 +110,7 @@ Katru reizi, kad mainās apļu kopa, atsauce vai valoda, viss analīzes process 
 4. Līkumi tiek atrasti atsaucē un grupēti segmentos no vienas bremzēšanas zonas līdz nākamajai ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
 5. Katrai automašīnai: tās apvalks (saķere, bremzēšana, pievilkšana pēc ātruma), tās profils, tās riepu līknes ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts), [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts), [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
 6. Katram aplim un segmentam: ko tas darīja (bremzēšanas punkts, lēnākais punkts, pilna gāze, ...) un līnija, ko tas brauca ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
-7. Katram aplim: tā auto vadības notikumi, katrs salīdzināts ar apli, pret kuru tas tur tiek salīdzināts.
+7. Katram aplim: tā auto vadības notikumi, katrs salīdzināts ar to apli, ar kuru tas tur tiek salīdzināts.
 8. Katram aplim un segmentam: laika bilance pret tā salīdzināšanas apli un atradums vārdos.
 9. Laika karte un cēloņu karte katram aplim.
 

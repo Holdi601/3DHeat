@@ -34,7 +34,7 @@ Při načtení prohlížeč odvodí čtyři vlastní sloupce a uvede je **jako p
 | **Třída vozidla** | 17 tříd: Stíhačka, Útočné letadlo, Bombardér, Jiné letadlo, Vrtulník, Tank, Obrněné vozidlo, Protiletadlová obrana, Dělostřelectvo, Nákladní auto / auto, Loď, Ponorka, Pěchota, Zbraň, Návnada, Stavba, Jiné | název vozidla nebo jednotky (porovnaný s [katalogem figur](figures.md)) a sloupce typu |
 | **Třída cíle** | stejné třídy | vozidlo protistrany (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
 
-Vypisují se jen druhy, které se vyskytují. Hodnotové sloupce (`cost_*`, `earn_*`, `net_*` a *Zdroj ceny*, viz [Vážení hodnotou](value-weighting.md)) se filtrují jako každý číselný sloupec: například odškrtnutím *odhad* pod *Zdroj ceny* ponecháte jen ocenění řádky.
+Vypisují se jen druhy, které se vyskytují. Hodnotové sloupce (`cost_*`, `earn_*`, `net_*` a *Zdroj nákladů*, viz [Vážení hodnotou](value-weighting.md)) se filtrují jako každý číselný sloupec: například odškrtnutím *odhad* pod *Zdroj nákladů* ponecháte jen ocenění řádky.
 
 Seznam kategorie s více než 12 hodnotami dostane vyhledávací pole (*Hledat n hodnot*) a tlačítko **Jen tyto**, které povolí přesně hodnoty odpovídající hledání.
 
@@ -67,7 +67,7 @@ Povolení všech hodnot filtr odstraní.
 
 - **Čtyři filtry najednou.** Hlavička ukazuje `aktivní/4`. Pátý filtr se neuplatní a panel to řekne. Výběr v [Entitách](entities.md) (nebo zaměření na hráče na kartě Zápas) používá jeden ze čtyř. Filtr, který pokrývá celý sloupec, žádný nepoužije.
 - **Kategoriální sloupec má nejvýš 4 096 hodnot**; širší se při načtení neponechá.
-- **Filtry se kombinují logicky A**, a s viditelností týmů, rozdělením rozdílu, časovým oknem, vyřazením podle vzdálenosti a [řezem](slice.md).
+- **Filtry se kombinují logickou konjunkcí (AND)**, a s viditelností týmů, rozdělením rozdílu, časovým oknem, vyřazením podle vzdálenosti a [řezem](slice.md).
 - **Změna filtru restartuje akumulaci a o několik snímků později znovu změří expozici**, protože filtrování může hustotu hodně změnit ([Barva a expozice](colour-and-exposure.md#auto-exposure)).
 - **Vymazat všechny filtry** odstraní každý filtr sloupce. Viditelnost týmů a výběry hráčů nastavené jinde zůstávají.
 - Filtry sloupců mění režimy tepla. Nemění figury [přehrání figur](box-replay.md), které se řídí viditelností týmů a výběrem v Entitách. Výběr v Entitách mění obojí.
@@ -76,7 +76,7 @@ Povolení všech hodnot filtr odstraní.
 
 ## Pro vývojáře {#for-developers}
 
-**Sloty.** Každý aktivní filtr zabírá jeden ze čtyř slotů GPU ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), texturu se 4 bajty na řádek. Sloty se přidělují filtrům v pořadí, v jakém se naposledy měnily ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), sdílené shaderem i oběma panely). Nad čtyři se objeví chyba *Only the first 4 filters are applied. Clear one - the rest are being ignored, not silently combined*, a názvy dalších filtrů čtou *sloupec (not applied)*. Filtry běží na řádek ve vertex shaderu, takže změna prahu nevyžaduje nové parsování ani nové nahrání.
+**Sloty.** Každý aktivní filtr zabírá jeden ze čtyř slotů GPU ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), texturu se 4 bajty na řádek. Sloty se přidělují filtrům v pořadí, v jakém se naposledy měnily ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), sdílené shaderem i oběma panely). Nad čtyři se objeví chyba *Použije se jen první 4 filtry. Některý odstraňte – ostatní se ignorují, ne tiše kombinují*, a názvy dalších filtrů čtou *sloupec (nepoužito)*. Filtry běží na řádek ve vertex shaderu, takže změna prahu nevyžaduje nové parsování ani nové nahrání.
 
 **Filtry, které panel nezobrazuje.** V stavu aplikace existují ještě dva druhy ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
 

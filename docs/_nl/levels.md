@@ -17,7 +17,7 @@ Een niveau is de 3D-plek waar het spel zich afspeelde - een kaart, een stad, een
 - een **3D-niveau** - `.glb`, `.gltf`, `.obj`, `.stl` of `.ply` - gesplitst in grond, constructies en water en bij het importeren vereenvoudigd - zie [3D-niveaus](model-levels.md) en [Uiterlijk van niveau](level-appearance.md);
 - een **wereldachtergrond** - voor een opname die zegt waar op aarde hij is (een Tacview ACMI-bestand): het echte terrein, wegen, water, vliegvelden en gebouwen, gedownload uit open data - zie [Wereldachtergrond](world-backdrop.md).
 
-Zonder iets geladen is de scène donker met een raster en gekleurde assen (**Raster** en **Assen** in [Camera & scène](camera.md)), en het paneel zegt *Niets geladen - de scène toont een raster en assen. Voeg een kaartafbeelding of een niveaumesh toe om de warmte context te geven.*
+Zonder iets geladen is de scène donker met een raster en gekleurde assen (**Raster** en **Assen** in [Camera & scène](camera.md)), en het paneel zegt *Niets geladen - de scène toont een raster en assen. Voeg een kaartafbeelding of een niveaumesh toe om de warmte een context te geven.*
 
 Het niveau wordt door alle drie de tabbladen gedeeld: een baan die in het tabblad Race-analyse geladen is, is hetzelfde niveau dat de warmtekaart toont.
 

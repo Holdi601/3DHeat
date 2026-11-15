@@ -55,14 +55,14 @@ Keď by jednotka bola menšia než **Najmenšia figúra na obrazovke**, môže s
 
 ### Značky zásahov, trosky a požiare {#hit-marks-wrecks-and-fires}
 
-- **Značky zásahov** sú na povrchu, kam výstrel narazil, v mierke figúrky. Ich vzhľad hovorí, čo sa stalo: diera (prešlo), jasný striek (neprešlo), ryha (odrazilo sa), hviezda sadze (výbušný náboj). Farebný krúžok hovorí, čo urobil: zabíjajúci zásah, zničený modul, kritický, vážny, poškodenie, bez poškodenia, zásah. Po najazdení na značku uvidíte názov náboja.
+- **Značky zásahov** sú na povrchu, kam výstrel narazil, v mierke figúrky. Ich vzhľad hovorí, čo sa stalo: diera (prešlo), jasný striek (neprešlo), ryha (odrazilo sa), hviezdica zo sadzí (výbušný náboj). Farebný krúžok hovorí, čo urobil: zabíjajúci zásah, zničený modul, kritický, vážny, poškodenie, bez poškodenia, zásah. Po najazdení na značku uvidíte názov náboja.
 - Zničená jednotka sa kreslí **zuhoľnatená** ako vrak od svojej smrti, kým sa neobjaví znova alebo nie je odstránená; jej symbol je prečiarknutý.
 - **Požiare** horia na jednotke od okamihu, keď chytí oheň, až kým sa neuhasí.
 - **Veže** sa otáčajú tam, kam dáta hovoria, že mieri delo (alebo, bez toho, kam sa pozerá hráč).
 
 ### Zbrane, návnady a stopy {#weapons-decoys-and-tracers}
 
-Pri zapnutých **Zbrane, výstrely a zásahy** (sekcia Zobrazenie tímov) lietajú riadené strely, rakety, bomby a torpéda ako vlastné figúrky so stopou dymu; guľky a granáty sú svetelné stopy; nárazy a výbuchy blikajú. Stopa nakreslená **prerušovane** sa odvodila zo zásahu, lebo dáta nemali výstrel. Svetlice a plevy sa kreslia ako návnady; v zozname jednotiek sú skryté, pokiaľ nie je zaškrtnuté *Návnady a granáty*.
+Pri zapnutých **Zbrane, výstrely a zásahy** (sekcia Zobrazenie tímov) lietajú riadené strely, rakety, bomby a torpéda ako vlastné figúrky so stopou dymu; guľky a projektily sú svetelné stopy; nárazy a výbuchy blikajú. Stopa nakreslená **prerušovane** sa odvodila zo zásahu, lebo dáta nemali výstrel. Svetlice a plevy sa kreslia ako návnady; v zozname jednotiek sú skryté, pokiaľ nie je zaškrtnuté *Klamné ciele a strely*.
 
 ## Kamery {#cameras}
 

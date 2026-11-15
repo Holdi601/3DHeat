@@ -59,77 +59,43 @@ faqja ---(pas 4 s, pastaj çdo 6 orë)---> serveri i zhvillimit ---> git fetch
 
 ## Për zhvilluesit {#for-developers}
 
-### While it runs: the update route {#while-it-runs-the-update-route}
+### Ndërsa vepron: rruga e përditësimit {#while-it-runs-the-update-route}
 
-The dev server (Vite plugin `heat3d-self-update` in `vite.config.ts`) serves
-`/__heat3d/update`. It exists only on the dev server - not in a static build
-and not in `vite preview`.
+Serveri i zhvillimit (shtojca Vite `heat3d-self-update` në `vite.config.ts`) shërben `/__heat3d/update`. Ekziston vetëm në serverin e zhvillimit - jo në një build statik dhe jo në `vite preview`.
 
-**`GET /__heat3d/update`** answers whether the checkout is behind:
+**`GET /__heat3d/update`** përgjigjet nëse checkout-i ka mbetur pas:
 
 ```json
 { "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "the newest commit's subject" }
 ```
 
-- `checkout: false` when the folder is not a git checkout;
-- it runs `git fetch --quiet` **at most every 30 minutes** (asks in between
-  answer from what was last fetched);
-- `behind` / `ahead` from `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`,
-  `dirty` from `git status --porcelain --untracked-files=no`, `latest` the
-  subject of the upstream's newest commit;
-- with no upstream branch, `upstream: null` and `behind: 0`.
+- `checkout: false` kur dosja nuk është checkout git;
+- ekzekuton `git fetch --quiet` **të paktën çdo 30 minuta** (kërkesat ndërmjet përgjigjen nga ajo që u sollt herën e fundit);
+- `behind` / `ahead` nga `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`, `dirty` nga `git status --porcelain --untracked-files=no`, `latest` është tema e commit-it më të ri të upstream-it;
+- pa degë upstream, `upstream: null` dhe `behind: 0`.
 
-**`POST /__heat3d/update/apply`** brings the checkout up:
+**`POST /__heat3d/update/apply`** e sjell checkout-in në versionin e ri:
 
-1. Refused with `403 { ok: false, reason: "forbidden" }` unless the request has
-   the header `X-Heat3d-Update: 1` and, when it carries an `Origin`, that
-   origin's host is the request's `Host`. A cross-site form cannot send a
-   custom header without a CORS preflight, which this server never grants.
-2. Nothing to do (not a checkout, no upstream, not behind):
-   `{ ok: true, updated: false }`.
-3. Local changes: `{ ok: false, reason: "dirty" }`; local commits:
-   `{ ok: false, reason: "diverged" }`.
-4. Otherwise: notes the files that change (`git diff --name-only HEAD @{u}`),
-   `git pull --ff-only` (2 min timeout), `git submodule update --init`
-   (failure ignored), `npm install` when `package.json` or
-   `package-lock.json` changed (15 min timeout), and answers
-   `{ ok: true, updated: true, restart }` - `restart` says why the running
-   server cannot pick the update up: `"dependencies"` when they were
-   reinstalled, `"config"` when only a `vite.config` file changed, `false`
-   when nothing needs a restart.
-5. A failing git or npm command answers `{ ok: false, reason: "<the error,
-   up to 300 characters>" }`.
+1. Refuzohet me `403 { ok: false, reason: "forbidden" }` përveç nëse kërkesa ka header-in `X-Heat3d-Update: 1` dhe, kur mban një `Origin`, host-i i asaj origjine është `Host` i kërkesës. Një formular nga një site tjetër nuk mund të dërgojë një header të personalizuar pa preflight CORS, dhe ky server nuk e jep kurrë atë.
+2. Asgjë për të bërë (jo checkout, pa upstream, nuk është pas): `{ ok: true, updated: false }`.
+3. Ndryshime lokale: `{ ok: false, reason: "dirty" }`; commit lokale: `{ ok: false, reason: "diverged" }`.
+4. Përndryshe: shënon skedarët që ndryshojnë (`git diff --name-only HEAD @{u}`), `git pull --ff-only` (afat 2 minuta), `git submodule update --init` (dështimi injorohet), `npm install` kur ndryshuan `package.json` ose `package-lock.json` (afat 15 minuta), dhe përgjigjet `{ ok: true, updated: true, restart }` - `restart` thotë pse serveri që po punon nuk mund ta marrë përditësimin: `"dependencies"` kur varësitë u instaluan përsëri, `"config"` kur ndryshoi vetëm një skedar `vite.config`, `false` kur nuk duhet rinisje.
+5. Një komandë git ose npm që dështon përgjigjet `{ ok: false, reason: "<gabimi, deri në 300 karaktere>" }`.
 
-Responses are JSON with `Cache-Control: no-store`. The server listens on
-`127.0.0.1` only, so the route is not reachable from the network.
+Përgjigjet janë JSON me `Cache-Control: no-store`. Serveri dëgjon vetëm në `127.0.0.1`, kështu që rruga nuk arrihet nga rrjeti.
 
-### The notice in the page {#the-notice-in-the-page}
+### Njoftimi në faqe {#the-notice-in-the-page}
 
-`UpdateBanner`, under the name at the top of the sidebar:
+`UpdateBanner`, nën emrin në krye të shiritit anësor:
 
-- It asks the route **4 seconds** after the page loads (not in the first
-  seconds: the page has a dataset to load and a GPU to start) and again
-  **every 6 hours** while the page stays open.
-- It shows **nothing** when there is no such route (a static build), the
-  folder is not a checkout, or nothing is newer - a notice on every start is
-  one people learn to ignore.
-- Behind, with no local changes: "A newer version of 3DHeat is available (N
-  changes, the newest: <subject>)." with **Update now** and **Later**
-  (*Later* hides it until the page is reloaded).
-- Behind, with local changes: the same sentence and "This copy has local
-  changes, so it is not updated automatically; commit or stash them, then
-  run git pull." - no button.
-- **Update now** posts to `/apply` ("Updating..."). Then:
-  - "Updated. The page reloads." - and it reloads 1.5 s later (the server
-    already serves the new files);
-  - when the dependencies were reinstalled: "Updated. Its dependencies
-    changed: close the server window and run **restart.bat** to finish.";
-  - when only the server's settings changed: "Updated. Its server settings
-    changed: close the server window and run **restart.bat** to finish.";
-  - nothing to bring in after all (`updated: false` - the copy was brought up
-    meanwhile, by `start.bat` say): "Nothing to update: this copy is already
-    the newest version." - and no reload;
-  - refused: the *dirty* sentence, or "This copy has commits of its own that
-    the newest version does not; update it with git pull.", or "The update
-    did not go through: <reason>".
+- Pyet rrugën **4 sekonda** pas ngarkimit të faqes (jo në sekondat e para: faqja ka një grup të dhënash për të ngarkuar dhe një GPU për të nisur) dhe përsëri **çdo 6 orë** ndërsa faqja mbetet e hapur.
+- **Nuk shfaq asgjë** kur nuk ekziston rruga (build statik), dosja nuk është checkout, ose s'ka asgjë më të re - një njoftim në çdo nisje është diçka që njerëzit mësohen ta injorojnë.
+- Pas versionit, pa ndryshime lokale: "Ka një version më të ri të 3DHeat (N ndryshime, më i fundit: <tema>)." me **Përditëso tani** dhe **Më vonë** (*Më vonë* e fsheh deri sa të rifreskohet faqja).
+- Pas versionit, me ndryshime lokale: e njëjta fjali dhe "Kjo kopje ka ndryshime lokale, ndaj nuk përditësohet automatikisht; bëni commit ose stash, pastaj ekzekutoni git pull." - pa buton.
+- **Përditëso tani** dërgon kërkesë te `/apply` ("Po përditësohet…"). Pastaj:
+  - "U përditësua. Faqja po ringarkohet." - dhe ringarkohet 1.5 s më vonë (serveri i shërben tashmë skedarët e rinj);
+  - kur varësitë u instaluan përsëri: "U përditësua. Varësitë ndryshuan: mbyllni dritaren e serverit dhe ekzekutoni **restart.bat** për ta përfunduar.";
+  - kur ndryshuan vetëm cilësimet e serverit: "U përditësua. Cilësimet e serverit ndryshuan: mbyllni dritaren e serverit dhe ekzekutoni **restart.bat** për ta përfunduar.";
+  - në fund s'ka asgjë për të sjellë (`updated: false` - kopja u përditësua ndërkohë, p.sh. nga `start.bat`): "S'ka asgjë për të përditësuar: kjo kopje është tashmë versioni më i ri." - dhe pa rifreskim;
+  - refuzuar: fjalia për *ndryshimet lokale*, ose "Kjo kopje ka commit-e të vetat që versioni më i ri nuk i ka; përditësojeni me git pull.", ose "Përditësimi nuk u krye: <arsyeja>".
 

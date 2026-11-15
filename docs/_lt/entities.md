@@ -1,5 +1,5 @@
 ---
-title: "Subjektai"
+title: "Objektai"
 parent: "Filtrai ir įrankiai"
 nav_order: 3
 lang: "lt"

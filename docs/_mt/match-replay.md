@@ -55,7 +55,7 @@ Meta unità tkun iżgħar mill-**L-iżgħar figura fuq l-iskrin**, tista' ssir s
 
 ### Marki tal-laqtiet, wrecks u nirien {#hit-marks-wrecks-and-fires}
 
-- **Marki tal-laqtiet** jinsabu fuq il-wiċċ fejn laqat it-tir, fid-daqs tal-figura. L-aspett tagħhom juri x'ġara: toqba (għadda), splużjoni ċara (ma għaddiex), ħakk (indaqq), stilla tal-fwied (proġettil splussiv). Ċirku kulurat juri x'għamel: tir li qatel, modulu meqrud, kritiku, sever, dannu, ebda dannu, laqta. Għalli bil-mouse fuq marka biex tara l-isem tal-proġettil.
+- **Marki tal-laqtiet** jinsabu fuq il-wiċċ fejn laqat it-tir, fid-daqs tal-figura. L-aspett tagħhom juri x'ġara: toqba (għadda), splużjoni ċara (ma għaddiex), ħakk (indaqq), stilla tal-fwied (proġettil splussiv). Ċirku kulurat juri x'għamel: tir li qatel, modulu meqrud, kritiku, sever, dannu, ebda dannu, laqta. Poġġi l-mouse fuq marka biex tara l-isem tal-proġettil.
 - Unità meqruda tinżel **maħruqa** bħala wreck mill-mewt tagħha sakemm terġa' tinbeda jew titneħħa; is-simbolu tagħha jkun imħassar.
 - **Nirien** jidhru fuq unità mill-mument li tinqabad bin-nar sakemm jintfew.
 - **Torretti** jduru lejn fejn juri d-data li jimmira l-kanun (jew, mingħajr dik, fejn jħares il-plejer).
@@ -96,7 +96,7 @@ Meta partita tiġi bl-għanijiet tagħha, it-taqsima **Għanijiet** tpinġihom f
   - Unitajiet tal-art jibdew bl-isem, il-vettura u l-veloċità.
   - Inġenji tal-ajru jibdew bl-isem, il-vettura, l-għoli u l-veloċità.
   - Bastimenti jibdew bl-isem, il-vettura, il-veloċità u d-direzzjoni.
-  - Għalli bil-mouse fuq unità biex tara kull valur li għandha.
+  - Poġġi l-mouse fuq unità biex tara kull valur li għandha.
 - **Statistika**: kull tim u unità: kills, mwiet, tiri, laqtiet, proporzjon tal-laqtiet, tlugħ, nżul, ħin fl-ajru, l-ogħla veloċità, għoli u G, distanza. Esportazzjoni CSV.
 - **Grafiċi**: il-valuri ta' unità maż-żmien, żewġ unitajiet imqabbla, jew valur wieħed kontra ieħor.
 

@@ -21,7 +21,7 @@ Nahoře v postranním panelu:
 | **?** | Režim nápovědy: co znamená každá barva (také `?` nebo `F1`) |
 | Nabídka **Jednotky** | Metrické, Imperiální, Letecké nebo Námořní |
 | Tlačítko **...** vedle **Jednotky** | Otevře „Vyberte jednotku pro každou veličinu“: jednu rozbalovací nabídku pro každou veličinu |
-| Nabídka **Jazyk** | Jazyk prohlížeče: [40 jazyků](languages.md), nebo jazyk prohlížeče |
+| Nabídka **Jazyk** | Jazyk zobrazení: [40 jazyků](languages.md), nebo jazyk webového prohlížeče |
 
 ![Hlavička s nabídkou Jednotky a otevřeným oknem jednotky pro každou veličinu](../assets/img/en/settings-units.webp)
 

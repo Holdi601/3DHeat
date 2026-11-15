@@ -44,7 +44,7 @@ Alla andra värmereglage – form, mättnad, respons, minsta värme, djup, borts
 
 Från [`colors.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors.ts):
 
-- Färgerna ligger i **Oklab**-färgplanet med fast ljushet (0.7) och kroma (0.115). Därför är varje grupp lika ljus, och en röd grupp ser inte varmare ut än en blå.
+- Färgerna ligger i **Oklab**-färgplanet med fast ljushet (0,7) och kroma (0,115). Därför är varje grupp lika ljus, och en röd grupp ser inte varmare ut än en blå.
 - Med *n* grupper delas nyansringen i *n* lika delar. Grupp *i* tar **mitten** av sin del, `(i + 0.5) / n` av ett varv. Två grupper ligger så långt från varandra som antalet tillåter, och motsatser förblir motsatser oavsett antal.
 - Högst **16** olika nyanser används. Med fler grupper placeras id:n genom upprepad halvering (bitvända id:n: 0, ½, ¼, ¾, ⅛ …) så att närliggande id:n inte delar nyans. Grupper utöver 16 delar nödvändigtvis nyans.
 - En grupp vars etikett betyder ”ingen grupp” – `0`, tom, `none`, `unknown`, `null` eller `-1`, oavsett versaler – ritas i **neutral grå** i stället för att ta en bit av ringen. Bara den första sådana etiketten i grupplistan behandlas så.

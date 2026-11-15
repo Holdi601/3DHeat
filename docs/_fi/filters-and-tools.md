@@ -16,8 +16,8 @@ Nämä paneelit antavat sinun valita, *mitä* dataa katsot, ja mitata näkemäsi
 Jokainen paneeli kaventaa dataa, ja ne toimivat yhdessä: rivi piirretään vain, jos se läpäisee **kaikki** (JA).
 
 ```
-all rows -> Filters -> Teams -> Entities -> Slice -> picture
-              AND       AND       AND        AND
+kaikki rivit -> Suodattimet -> Joukkueet -> Kohteet -> Viipale -> kuva
+                     JA          JA          JA          JA
 ```
 
 Esimerkki: poista *Tank* valinta kohdasta Suodattimet, piilota Red-joukkue kohdasta Joukkueet ja valitse yksi pelaaja kohdasta Kohteet. Näet vain sen pelaajan muut liikkeet kuin tankin.

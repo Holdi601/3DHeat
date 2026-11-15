@@ -25,7 +25,7 @@ Hi ha uns 2.000 vehicles, aeronaus, vaixells, armes i soldats amb nom, tots cons
 | Terra | tancs, vehicles de combat d'infanteria, defensa antiaèria, artilleria, camions i cotxes, trens i tramvies |
 | Aire | caces, avions d'atac, bombarders, transports, helicòpters, des de biplans fins a avions de reacció moderns |
 | Mar | vaixells de guerra per classe, portaavions, submarins, barques, mercants |
-| Armes | míssils, coets, bombes, torpedes, bengales i xaff |
+| Armes | míssils, coets, bombes, torpedes, bengales i chaff |
 | Marcadors | granades de fum, de flaix i de foc, bombes col·locades, banderes, spawns, punts de ruta |
 
 ## Com es fan les figures {#how-the-figures-are-made}

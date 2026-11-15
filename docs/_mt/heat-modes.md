@@ -64,7 +64,7 @@ Kull ħaġa fil-pass 4 tiġi applikata waqt il-kompożizzjoni, għalhekk it-tras
 ## Paġni f'din it-taqsima {#pages-in-this-section}
 
 - [Sħana](heat.md) - il-modalità sempliċi tas-sħana, u l-ħarsa ġenerali tal-pannelli tagħha
-  - [Forma tal-isprite](sprite-shape.md) - raġġ, intensitajiet, tnaqqis, l-editur tal-kurva, limiti tal-pixels, l-ippattjar
+  - [Forma tal-isprite](sprite-shape.md) - raġġ, intensitajiet, tnaqqis, l-editur tal-kurva, limiti tal-pixels, l-iċċattjar
   - [Kulur u esponiment](colour-and-exposure.md) - editur tar-rampa, punt tas-saturazzjoni, espożizzjoni awtomatika, sħana minima, rispons tad-densità
   - [Fond u culling](depth-and-culling.md) - okklużjoni mill-livell, tħabbi wara t-terren, qtugħ tad-distanza
 - [Differenza](difference.md) - il-qasma tad-differenza

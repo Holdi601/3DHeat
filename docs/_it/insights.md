@@ -15,7 +15,7 @@ outdated: false
 
 Tutto viene contato nel tuo browser. Nulla lascia il tuo computer, a meno che tu non attivi un'IA esterna (vedi [IA esterna](#external-ai)).
 
-![Rilevamenti sulla demo dei carri: 14 rilevazioni, la più forte per prima](../assets/img/en/insights.webp)
+![Rilevamenti sulla demo dei carri: 14 rilevazioni, la più forte per prima](../assets/img/it/insights.webp)
 
 La sezione **Rilevamenti** si trova nella barra laterale delle schede Mappa di calore e Partita. Ha tre schede: **Rilevazioni**, **Resoconto** e **Commentatore**.
 
@@ -30,7 +30,7 @@ Il conteggio usa i filtri attuali, i gruppi nascosti e la partita scelta su tutt
 
 Le righe in cima all'elenco (per esempio i totali di denaro) riassumono l'intero dataset prima delle rilevazioni.
 
-![Una rilevazione aperta: la zona calda di colpi sparati, i suoi numeri e un passaggio corrispondente della letteratura](../assets/img/en/insights-finding.webp)
+![Una rilevazione aperta: la zona calda di colpi sparati, i suoi numeri e un passaggio corrispondente della letteratura](../assets/img/it/insights-finding.webp)
 
 ### I rilevatori {#the-detectors}
 
@@ -49,13 +49,13 @@ I rilevatori che non possono girare sui dati sono elencati in fondo con il motiv
 
 ### Come vengono ordinate le rilevazioni {#how-findings-are-ranked}
 
-Ogni luogo o gruppo viene confrontato con il resto della mappa (test binomiali esatti o test di frequenza). Il tasso di falsi positivi è tenuto al 5% (Benjamini-Hochberg). Il caso può sembrare uno schema; questo mantiene bassi i falsi allarmi: tra le rilevazioni mostrate, ci si aspetta al massimo circa una su venti dovuta al caso. Gli effetti basati su pochi eventi vengono tirati verso "nessun effetto" prima dell'ordinamento. Vengono elencate al massimo 60 rilevazioni, e ogni rilevatore ottiene qualche luogo vicino alla cima.
+Ogni luogo o gruppo viene confrontato con il resto della mappa (test binomiali esatti o test di frequenza). Il tasso di false scoperte (false discovery rate) è tenuto al 5% (Benjamini-Hochberg). Il caso può sembrare uno schema; questo mantiene bassi i falsi allarmi: tra le rilevazioni mostrate, ci si aspetta al massimo circa una su venti dovuta al caso. Gli effetti basati su pochi eventi vengono tirati verso "nessun effetto" prima dell'ordinamento. Vengono elencate al massimo 60 rilevazioni, e ogni rilevatore ottiene qualche luogo vicino alla cima.
 
 ## Resoconto {#debrief}
 
 La scheda **Resoconto** scrive le rilevazioni come un breve testo: un'introduzione, la rilevazione più chiara, una per la tattica, una per l'equilibrio, le altre raggruppate per rilevatore, e quante poggiano su prove più deboli. Ogni paragrafo ha pulsanti numerati che mostrano le sue rilevazioni. **Copia il testo** lo copia.
 
-![Il resoconto scritto dal narratore integrato](../assets/img/en/debrief.webp)
+![Il resoconto scritto dal narratore integrato](../assets/img/it/debrief.webp)
 
 Il narratore integrato funziona offline, nella tua lingua. Il selettore **Lente** qui sopra (vedi [La lente della conoscenza](knowledge.md)) decide quale letteratura citano i paragrafi.
 
@@ -78,7 +78,7 @@ Poi scrivi una domanda facoltativa e premi **Scrivi con l'IA**. Vengono inviate 
 
 Per **una partita** (sceglierne una se ne sono caricate diverse), il **Commentatore** trova i momenti che vale la pena guardare: primo sangue, multi-uccisioni, scambi, clutch, cambi di obiettivo, rimonte, giocatori in evidenza, tiri da lontano.
 
-![I momenti del commentatore per un round della demo dello sparatutto](../assets/img/en/caster.webp)
+![I momenti del commentatore per un round della demo dello sparatutto](../assets/img/it/caster.webp)
 
 - Clicca su un momento: la vista passa al replay, salta poco prima, vola lì e segue il giocatore.
 - **Riproduci i momenti** riproduce ciascuno fino alla fine e passa oltre; **Precedente** / **Successivo** scorrono tra di essi.

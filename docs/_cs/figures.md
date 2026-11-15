@@ -1,5 +1,5 @@
 ---
-title: "Obrazce"
+title: "Figury"
 nav_order: 11
 has_children: true
 lang: "cs"
@@ -9,7 +9,7 @@ translated: true
 outdated: false
 ---
 
-# Obrazce
+# Figury
 
 **Figura** je malý 3D model toho, čím jednotka skutečně je: tank, stíhačka, loď, voják. [Přehrání](match-replay.md) kreslí každou jednotku jako její figuru ve skutečné velikosti, místo prosté krychle.
 
@@ -31,7 +31,7 @@ Je jich zhruba 2 000 pojmenovaných vozidel, letadel, lodí, zbraní a vojáků,
 ## Jak se figury vyrábějí {#how-the-figures-are-made}
 
 - **Stavěné z veřejných rozměrů.** Většina figur vzniká ve stavitelí figur samotného prohlížeče z veřejných čísel: délka, šířka, výška, silniční kola, věž a hlaveň, křídla a ocas. Jejich tvar se pak ladí podle veřejných fotografií, výkresů a zveřejněných rozměrů. Nepoužívají se modely žádné hry.
-- **Volné modely.** Několik figur používá volné 3D modely (CC0 nebo CC BY), tam, kde jsou věrnější, někdy spojené s postaveným trupem. Autoři děl CC BY jsou uvedeni na [Zdrojích obrazců](figure-credits.md); díla CC0 uvádění nepotřebují a na té stránce nejsou.
+- **Volné modely.** Několik figur používá volné 3D modely (CC0 nebo CC BY), tam, kde jsou věrnější, někdy spojené s postaveným trupem. Autoři děl CC BY jsou uvedeni na [Zdrojích figur](figure-credits.md); díla CC0 uvádění nepotřebují a na té stránce nejsou.
 - Každá figura má plnou, hrubou a vzdálenou verzi (úrovně detailu, LOD), takže lze kreslit tisíce najednou.
 
 ## Kterou figuru jednotka dostane {#which-figure-a-unit-gets}

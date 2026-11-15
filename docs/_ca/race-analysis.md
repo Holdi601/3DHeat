@@ -47,7 +47,7 @@ Aquesta pàgina és el mapa de la pestanya. Cada part té la seva pròpia pàgin
 6. **Cotxes comparats** (o **El cotxe** amb un sol cotxe) - vegeu [Perfils de cotxe i comparació](race-car-profiles.md).
 7. **Vista** - quin mapa es pinta sobre el circuit i què es dibuixa.
    Vegeu [Repetició i l'escena 3D](race-replay-and-scene.md).
-8. Els panells compartits **Nivell** i **Càmera i escena** (model del recorregut, inversió d'eixos, càmera) -documentats amb el mapa de calor i a [Càmera](camera.md).
+8. Els panells compartits **Fons / nivell** i **Càmera i escena** (model del recorregut, inversió d'eixos, càmera) -documentats amb el mapa de calor i a [Càmera](camera.md).
 
 **La vista** mostra el recorregut, les línies conduïdes, el mapa, els cotxes, les etiquetes fixades al circuit, i fins a sis fitxes de cotxe a dalt a l'esquerra (vegeu [Gràfics i HUD](race-charts-and-hud.md)). Sense voltes carregades diu «No hi ha voltes carregades - Deixa anar aquí dos o més fitxers de volta, o carrega les voltes de demostració des de la barra lateral.»
 
@@ -77,7 +77,7 @@ Les tecles escrites en un camp de text o en un desplegable s'ignoren. Les tecles
 
 - Totes les voltes carregades s'analitzen i es compten; desenes triguen un o dos segons.
 - A partir de **8** voltes (`SHOW_ALL_UP_TO`), les voltes afegides només es dibuixen quan són la referència, la volta enfocada o la millor volta de la classe de la volta enfocada. *Mostra-ho tot* / *Només les que es miren* ho canvien.
-- A partir de **10** cotxes visibles (`PLAIN_PAST`), les voltes que no es miren (ni l'enfocada, ni el cotxe perseguit, ni la referència) es dibuixen amb línies aclucades a un punt cada 6 m en lloc de cada 1,5 m, i com a cotxes simples.
+- A partir de **10** cotxes visibles (`PLAIN_PAST`), les voltes que no es miren (ni l'enfocada, ni el cotxe perseguit, ni la referència) es dibuixen amb línies aclarides a un punt cada 6 m en lloc de cada 1,5 m, i com a cotxes simples.
 - Els gràfics dibuixen com a màxim **8** voltes; la HUD mostra com a màxim **6** fitxes.
 - Les estadístiques del recorregut apareixen a partir de **3** voltes.
 

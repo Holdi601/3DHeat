@@ -45,7 +45,7 @@ Wszystkie pozostałe pola ciepła - kształt, nasycenie, odpowiedź, minimalne c
 Z [`colors.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors.ts):
 
 - Kolory leżą na płaszczyźnie **Oklab** przy stałej jasności (0,7) i nasyceniu (0,115), więc każda grupa jest równie jasna i czerwona grupa nie wygląda na gorętszą od niebieskiej.
-- Przy *n* grupach koło odcieni dzieli się na *n* równych części, a grupa *i* bierze **środek** swojej części, `(i + 0,5) / n` obrotu. Każde dwie grupy są od siebie tak daleko, jak pozwala liczba, a przeciwieństwa pozostają przeciwieństwami, ilekroć by ich nie było.
+- Przy *n* grupach koło odcieni dzieli się na *n* równych części, a grupa *i* bierze **środek** swojej części, `(i + 0,5) / n` obrotu. Każde dwie grupy są od siebie tak daleko, jak pozwala liczba, a przeciwieństwa pozostają przeciwieństwami, bez względu na liczbę grup.
 - Używanych jest najwyżej **16** różnych odcieni. Przy większej liczbie grup identyfikatory są rozmieszczane przez wielokrotne połowienie (identyfikatory z odwróconymi bitami: 0, ½, ¼, ¾, ⅛, …), tak aby sąsiednie identyfikatory nie dzieliły odcienia; grupy ponad 16 muszą go dzielić.
 - Grupa, której etykieta oznacza „brak grupy” - `0`, pusta, `none`, `unknown`, `null` albo `-1`, bez względu na wielkość liter - jest rysowana w **neutralnej szarości** zamiast zajmować wycinek koła. Traktowana tak jest tylko pierwsza taka etykieta na liście grup.
 

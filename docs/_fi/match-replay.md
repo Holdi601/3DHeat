@@ -11,7 +11,7 @@ outdated: false
 
 # Ottelun toisto
 
-Toisto on elokuva ottelusta, jossa jokainen pelaaja on piirretty sellaisena, mitä hän ajoi. Sen avulla voit katsoa taistelun uudelleen, seurata yhtä yksikköä ja nähdä, kuka osui kenteen.
+Toisto on elokuva ottelusta, jossa jokainen pelaaja on piirretty sellaisena, mitä hän ajoi. Sen avulla voit katsoa taistelun uudelleen, seurata yhtä yksikköä ja nähdä, kuka osui ketä.
 
 Laukaukset, osumat, palot ja raadot piirretään kentän yksiköille ja tavoitteille. Kamerat, nimiöt ja taktinen näyttö auttavat lukemaan taistelua. Tunnetko Tacviewin? [Tacview-vastaavuus](tacview-parity.md) näyttää, missä sen jokainen työkalu on.
 

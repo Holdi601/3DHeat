@@ -21,7 +21,7 @@ Det finnes rundt 2 000 navngitte kjøretøy, fly, skip, våpen og soldater, alle
 
 | Område | Eksempler |
 |---|---|
-| Personer | soldat stående, kneband og liggende; snikskytter, panservernsoldat, sanitet, mannskap |
+| Personer | soldat stående, kneende og liggende; snikskytter, panservernsoldat, sanitet, mannskap |
 | Bakke | stridsvogner, infanterikjøretøy, luftvern, artilleri, lastebiler og biler, tog og trikker |
 | Luft | jagerfly, angrepsfly, bombefly, transportfly, helikoptre, fra dobbeldekkere til moderne jetfly |
 | Sjø | krigsskip etter klasse, hangarskip, ubåter, båter, handelsskip |

@@ -53,6 +53,6 @@ La separació per defecte és 1,4 i no 1, perquè amb 1 una barreja de cinc tons
 
 ## Com funciona {#how-it-works}
 
-La destinació de calor té quatre canals en aquest mode. Cada sprite suma la seva densitat *v* al primer canal i *v* × les coordenades Oklab *a* i *b* del grup al segon i al tercer. En el moment de compondre, la barreja del píxel és la mitjana ponderada per densitat: *a* = G / R, *b* = B / R, escalada per la separació de colors i convertida a sRGB a la lluminositat de la paleta. Dividir per la densitat acumulada fa que el to no depengui de quantes dades hi ha, i per això tots els controls de densitat continuen actuant només sobre l'opacitat.
+L'objectiu de calor té quatre canals en aquest mode. Cada sprite suma la seva densitat *v* al primer canal i *v* × les coordenades Oklab *a* i *b* del grup al segon i al tercer. En el moment de compondre, la barreja del píxel és la mitjana ponderada per densitat: *a* = G / R, *b* = B / R, escalada per la separació de colors i convertida a sRGB a la lluminositat de la paleta. Dividir per la densitat acumulada fa que el to no depengui de quantes dades hi ha, i per això tots els controls de densitat continuen actuant només sobre l'opacitat.
 
-La destinació de quatre canals costa quatre vegades la memòria de la GPU de la destinació de calor d'un sol canal a la mateixa resolució.
+L'objectiu de quatre canals costa quatre vegades la memòria de la GPU de l'objectiu de calor d'un sol canal a la mateixa resolució.

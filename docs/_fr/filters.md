@@ -11,7 +11,7 @@ outdated: false
 
 # Filtres
 
-Les **Filtres** masquent les lignes qui ne vous intéressent pas, comme une classe de véhicule ou un type d'événement, et l'image se met à jour aussitôt. Le panneau liste les colonnes conservées au chargement sous *Garder pour le filtrage* ([Correspondance des colonnes](column-mapping.md)), plus *Fichier source* lorsque plusieurs fichiers ont été chargés.
+Les **Filtres** masquent les lignes qui ne vous intéressent pas, comme une classe de véhicule ou un type d'événement, et l'image se met à jour aussitôt. Le panneau liste les colonnes conservées au chargement sous *Garder pour le filtrage* ([Mappage des colonnes](column-mapping.md)), plus *Fichier source* lorsque plusieurs fichiers ont été chargés.
 
 ## L'essayer {#try-it}
 
@@ -19,7 +19,7 @@ Les **Filtres** masquent les lignes qui ne vous intéressent pas, comme une clas
 2. Sous **Classe de véhicule**, décochez *Tank*. L'image change aussitôt.
 3. Appuyez sur **Effacer tous les filtres** pour annuler.
 
-![Le panneau Filtres : les colonnes propres à la visionneuse (Type d'événement, Classe de véhicule) d'abord, puis les colonnes de votre fichier](../assets/img/en/filters.webp)
+![Le panneau Filtres : les colonnes propres à la visionneuse (Type d'événement, Classe de véhicule) d'abord, puis les colonnes de votre fichier](../assets/img/fr/filters.webp)
 
 Les premières lignes sont les colonnes propres à la visionneuse (ci-dessous). Les lignes suivantes proviennent de votre fichier.
 
@@ -42,7 +42,7 @@ Les colonnes qui peuvent être filtrées sont déterminées au chargement, car e
 
 ## Colonnes numériques (intervalle) {#numeric-columns-range}
 
-![Un filtre d'intervalle (argent perdu) avec les deux bornes déplacées](../assets/img/en/filters-numeric.webp)
+![Un filtre d'intervalle (argent perdu) avec les deux bornes déplacées](../assets/img/fr/filters-numeric.webp)
 
 | Élément | Signification |
 |---|---|

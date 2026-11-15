@@ -15,7 +15,7 @@ Une **figurine** est un petit modèle 3D de ce qu'est réellement une unité : u
 
 Il existe environ 2 000 véhicules, avions, navires, armes et soldats nommés, tous construits par la visionneuse elle-même.
 
-![Les chars de la démo dessinés sous forme de leurs propres figurines](../assets/img/en/replay-tanks.webp)
+![Les chars de la démo dessinés sous forme de leurs propres figurines](../assets/img/fr/replay-tanks.webp)
 
 ## Ce que contient le catalogue {#what-is-in-the-catalogue}
 

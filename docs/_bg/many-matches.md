@@ -1,5 +1,5 @@
 ---
-title: "Много мачове едновременно"
+title: "Много мачове наведнъж"
 nav_order: 10
 lang: "bg"
 source: "many-matches.md"

@@ -1,6 +1,6 @@
 ---
 title: "Powtórka i scena 3D"
-parent: "Analiza wyścigu"
+parent: "Analiza wyścigowa"
 nav_order: 52
 lang: "pl"
 source: "race-replay-and-scene.md"

@@ -42,7 +42,7 @@ Mostrato in modalità Differenza, sotto i pannelli del calore.
 | Una colonna numerica | *colonna (numerica)* | Un intervallo di valori per ciascun lato |
 | Il file di origine | *File di origine - confronta due caricamenti* (quando sono stati caricati più file) | File su +, − o nessuno |
 
-Vengono offerte solo le colonne indicate con *Mantieni per il filtraggio* al momento del caricamento.
+Vengono offerte solo le colonne indicate con *Conserva per il filtraggio* al momento del caricamento.
 
 ### Confronta quote, non conteggi {#compare-shares-not-counts}
 
@@ -103,4 +103,4 @@ Ogni riga riceve un segno di +1, -1 o 0 nello shader dei vertici ([`POINT_HEAT_V
 
 Cambiare la suddivisione riavvia l'accumulo.
 
-**I gruppi nascosti restano nascosti con ogni suddivisione.** Con una suddivisione per colonna la tabella dei gruppi non porta più segni; contiene 1 per un gruppo mostrato e 0 per uno nascosto ([`frameSignTables`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts)), e le due tabelle arrivano allo shader insieme - due righe di una texture di segno su WebGL2, due metà di un unico storage buffer su WebGPU. Una riga viene disegnata solo se il suo gruppo è mostrato *e* il valore della sua colonna sta su un lato. Quindi un gruppo deselezionato nell'[Elenco delle squadre](teams-list.md), o escluso dal focus di lato della scheda Partita, non contribuisce in nessun modo la differenza venga suddivisa.
+**I gruppi nascosti restano nascosti con ogni suddivisione.** Con una suddivisione per colonna la tabella dei gruppi non porta più segni; contiene 1 per un gruppo mostrato e 0 per uno nascosto ([`frameSignTables`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts)), e le due tabelle arrivano allo shader insieme - due righe di una texture di segno su WebGL2, due metà di un unico storage buffer su WebGPU. Una riga viene disegnata solo se il suo gruppo è mostrato *e* il valore della sua colonna sta su un lato. Quindi un gruppo deselezionato nell'[Elenco delle squadre](teams-list.md), o escluso dal focus di lato della scheda Partita, non contribuisce in nessun caso, qualunque sia la suddivisione della differenza.

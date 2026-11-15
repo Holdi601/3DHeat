@@ -15,7 +15,7 @@ Jeder Punkt fügt einen kleinen Glanz hinzu, die Glanzpunkte häufen sich, und d
 
 Die Modusleiste oben in der Seitenleiste des Tabs Heatmap wählt, wie der [Datensatz](glossary.md) gezeichnet wird. Die Tasten 1-4 wählen Intensität, Differenz, Team-Intensität und Linien. Das Figuren-Overlay hat keine Taste.
 
-![Die Modusleiste mit Intensität, Differenz, Team-Intensität, Figuren-Overlay und Linien](../assets/img/en/heat-modes-bar.webp)
+![Die Modusleiste mit Intensität, Differenz, Team-Intensität, Figuren-Overlay und Linien](../assets/img/de/heat-modes-bar.webp)
 
 | Modus | Frage, die er beantwortet |
 |---|---|
@@ -25,7 +25,7 @@ Die Modusleiste oben in der Seitenleiste des Tabs Heatmap wählt, wie der [Daten
 | **Linien** | Welchen Weg sind die Leute gegangen? |
 | **Figuren-Overlay** | Wer war wo, und wann? |
 
-![Dieselben Daten in vier Modi: Intensität, Differenz, Team-Intensität und Linien](../assets/img/en/heat-modes-grid.webp)
+![Dieselben Daten in vier Modi: Intensität, Differenz, Team-Intensität und Linien](../assets/img/de/heat-modes-grid.webp)
 
 | Modus (Leistenbeschriftung) | Taste | Was er zeichnet | Braucht |
 |---|---|---|---|
@@ -55,7 +55,7 @@ Die Tasten 1-4 werden genauso gegen die Daten geprüft: Eine Taste für einen au
 Alle vier Intensitätsmodi (alles außer dem Figuren-Overlay) sind dieselbe Maschine mit verschiedenen Eingaben ([`engine.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/engine.ts)):
 
 1. **Welche Zeilen.** Das [Zeitleisten](timeline.md)-Fenster wählt einen zusammenhängenden Bereich zeitlich sortierter Zeilen; [Filter](filters.md), Gruppensichtbarkeit, die Differenz-Aufteilung, [Entfernungsbeschneidung](depth-and-culling.md#distance-culling) und der [Schnitt](slice.md) entscheiden im Vertex-Shader pro Zeile, ob und wie stark sie beiträgt.
-2. **Splatting.** Jede beitragende Zeile wird als Sprite (oder im Modus Linien als Segment) in ein Fließkomma-**Intensitätsziel** gezeichnet und addiert ihren Verlaufswert. Ist mehr Zeilen da, als ein Frame schafft, wird eine geschichtete Stichprobe gezeichnet und gewichtet, um das auszugleichen. Siehe [Abtastung und Budgets](sampling-and-budgets.md).
+2. **Splatting.** Jede beitragende Zeile wird als Sprite (oder im Modus Linien als Segment) in ein Fließkomma-**Intensitätsziel** gezeichnet und addiert ihren Verlaufswert. Sind mehr Zeilen da, als ein Frame schafft, wird eine geschichtete Stichprobe gezeichnet und gewichtet, um das auszugleichen. Siehe [Abtastung und Budgets](sampling-and-budgets.md).
 3. **Akkumulation.** Solange sich nichts ändert, werden Frames zusammengeführt, bis jede Zeile genau einmal beigetragen hat. Siehe [Akkumulation](accumulation.md).
 4. **Komposition.** Der akkumulierte Wert jedes Pixels wird durch den **Sättigungspunkt** geteilt, durch das **Dichteverhalten** geformt, um die **Mindestintensität** angehoben und im **Heatmap-Verlauf** nachgeschlagen; dessen Alpha mischt ihn über die Szene. Siehe [Farbe und Belichtung](colour-and-exposure.md).
 

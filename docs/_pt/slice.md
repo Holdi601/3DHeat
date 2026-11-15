@@ -1,5 +1,5 @@
 ---
-title: "Fatia"
+title: "Corte"
 parent: "Filtros e ferramentas"
 nav_order: 4
 lang: "pt"

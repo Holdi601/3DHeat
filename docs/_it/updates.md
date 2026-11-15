@@ -16,7 +16,7 @@ Il visualizzatore ti dice quando esiste una versione più recente, e si aggiorna
 
 1. **Nella pagina.** Quando esiste una versione più recente, compare un riquadro sotto il nome in cima alla barra laterale: "È disponibile una versione più recente di 3DHeat". Clicca **Aggiorna ora**. La pagina si ricarica da sola al termine. **Più tardi** nasconde il riquadro finché non ricarichi la pagina.
 2. **Se dice di eseguire restart.bat**, chiudi la finestra del server (la finestra nera che ha aperto `start.bat`) e fai doppio clic su `restart.bat`.
-3. **All'avvio del visualizzatore.** Anche `start.bat` controlla. Se esiste una versione più recente, chiede **Aggiornare ora? [S/N]**. Premi `S` per aggiornare. Premi `N`, oppure aspetta 60 secondi senza rispondere, per avviare la versione che hai.
+3. **All'avvio del visualizzatore.** Anche `start.bat` controlla. Se esiste una versione più recente, chiede **Update now? [Y/N]**. Premi `Y` per aggiornare. Premi `N`, oppure aspetta 60 secondi senza rispondere, per avviare la versione che hai.
 
 ![L'avviso di aggiornamento con Aggiorna ora e Più tardi](../assets/img/en/updates-notice.webp)
 
@@ -44,13 +44,13 @@ pagina ---(dopo 4 s, poi ogni 6 h)---> server di sviluppo ---> git fetch
 
 `start.bat` (fai doppio clic; la finestra è il server) fa, in ordine:
 
-1. Trova Node.js - nel `PATH`, altrimenti in `%ProgramFiles%\nodejs`, `%ProgramFiles(x86)%\nodejs` o `%LOCALAPPDATA%\Programs\nodejs` - e, se manca, propone di installarlo con `winget install -e --id OpenJS.NodeJS.LTS` (chiede S/N; dopo bisogna riaprire la finestra perché Windows legga il nuovo `PATH`).
+1. Trova Node.js - nel `PATH`, altrimenti in `%ProgramFiles%\nodejs`, `%ProgramFiles(x86)%\nodejs` o `%LOCALAPPDATA%\Programs\nodejs` - e, se manca, propone di installarlo con `winget install -e --id OpenJS.NodeJS.LTS` (chiede Y/N; dopo bisogna riaprire la finestra perché Windows legga il nuovo `PATH`).
 2. **Aggiornamenti**, quando git è installato e la cartella ha `.git`:
    - `git fetch --quiet` (senza rete o senza ramo a monte: saltato in silenzio);
    - conta `git rev-list --count HEAD..@{u}`; niente indietro: non dice nulla;
    - modifiche locali: "È disponibile una versione più recente di 3DHeat (N modifiche), ma questa copia ha modifiche locali, quindi non viene aggiornata. Salvale o mettile da parte, poi esegui git pull." - e avvia la versione che c'è;
    - commit propri (`git rev-list --count @{u}..HEAD` diverso da 0): "È disponibile una versione più recente di 3DHeat (N modifiche), ma questa copia ha commit propri che la versione più recente non ha, quindi non viene aggiornata. Aggiornala con git pull." - e avvia la versione che c'è;
-   - altrimenti "È disponibile una versione più recente di 3DHeat (N modifiche)." e la domanda **Aggiornare ora? [S/N]**. `N`, o nessuna risposta per 60 secondi, stampa "Non aggiornato; avvio della versione che hai." e avvia la versione che c'è. Con `S`: "Aggiornamento in corso...", segnala se cambiano `package.json` o `package-lock.json`, esegue `git pull --ff-only` (se anche questo fallisse - per esempio per la rete: "L'aggiornamento non è andato a buon fine; avvio della versione che hai."), poi `git submodule update --init` (gli strumenti fissati, vedi [Manutenzione della documentazione](maintaining.md#the-tools-under-exporters)), poi `npm install` quando sono cambiati i file del pacchetto ed esiste `node_modules`, e "Aggiornato."
+   - altrimenti "È disponibile una versione più recente di 3DHeat (N modifiche)." e la domanda **Update now? [Y/N]**. `N`, o nessuna risposta per 60 secondi, stampa "Non aggiornato; avvio della versione che hai." e avvia la versione che c'è. Con `Y`: "Aggiornamento in corso...", segnala se cambiano `package.json` o `package-lock.json`, esegue `git pull --ff-only` (se anche questo fallisse - per esempio per la rete: "L'aggiornamento non è andato a buon fine; avvio della versione che hai."), poi `git submodule update --init` (gli strumenti fissati, vedi [Manutenzione della documentazione](maintaining.md#the-tools-under-exporters)), poi `npm install` quando sono cambiati i file del pacchetto ed esiste `node_modules`, e "Aggiornato."
 3. Rifiuta di avviare un secondo server: quando qualcosa è già in ascolto sulla porta **5273** lo dice e rimanda a `restart.bat` / `stop.bat`.
 4. Alla prima esecuzione (nessun `node_modules`), chiede prima di scaricare le dipendenze (circa 300 MB in `node_modules\`, nulla a livello di sistema).
 5. Avvia il server di sviluppo su `127.0.0.1:5273` (`--strictPort`) e apre il browser quando è pronto.

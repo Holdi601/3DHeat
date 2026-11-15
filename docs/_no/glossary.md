@@ -76,7 +76,7 @@ Korte betydninger av ordene denne siden bruker, med vanlig språk. Hvert innlegg
 
 **GPU.** Grafikkortet eller brikken. Den tegner bildet og er langt raskere enn hovedprosessoren til å tegne millioner av klatter. [De to backendene](backends.md)
 
-**WebGPU / WebGL2.** De to måtene en nettleser lar en side bruke GPU-en på. WebGPU er nyere. Visningsprogrammet kan bruke begge og velger den beste nettleseren din har. [De to backendene](backends.md)
+**WebGPU / WebGL2.** De to måtene en nettleser lar en side bruke GPU-en på. WebGPU er nyere. Visningsprogrammet kan bruke begge og velger den beste som nettleseren din støtter. [De to backendene](backends.md)
 
 ## Counter-Strike-ord {#counter-strike-words}
 

@@ -50,7 +50,7 @@ Kjo faqe është harta e skedës. Çdo pjesë ka faqen e vet:
    Shih [Riluajtja dhe skena 3D](race-replay-and-scene.md).
 8. Panelet e përbashkëta **Niveli** dhe **Kamera & skena** (modeli i pistës, përmbysja e boshteve, kamera) - dokumentuar me Harta e nxehtësisë dhe [Kamera](camera.md).
 
-**Pamja** tregon pistën, linjat e përshkuara, hartën, makinat, etiketat e fiksuara në pistë, dhe deri në gjashtë karta makinash lart majtas (shih [Grafikët dhe HUD](race-charts-and-hud.md)). Pa xhiro të ngarkuar shkruan "Nuk ka xhiro të ngarkuar - Lësho këtu dy ose më shumë skedarë xhiresh, ose ngarko xhirot demo nga shiriti anësor."
+**Pamja** tregon pistën, linjat e përshkuara, hartën, makinat, etiketat e fiksuara në pistë, dhe deri në gjashtë karta makinash lart majtas (shih [Grafikët dhe HUD](race-charts-and-hud.md)). Pa xhiro të ngarkuar shkruan "Asnjë xhiro e ngarkuar - Lësho këtu dy ose më shumë skedarë xhiroje, ose ngarko xhirot demo nga shiriti anësor."
 
 **Shiriti nën pamje** mban transportin e riluajtjes dhe, nëse nuk është fshehur, grafikët e distancës.
 
@@ -93,7 +93,7 @@ Detajet: [Statistikat e pistës](race-course-statistics.md#performance-with-many
 | Të gjitha vlerat në kartat | jashtë |
 | Madhësia e makinës | 1× |
 | Grafikët | të shfaqur |
-| Modaliteti i riluajtjes | Nga linja |
+| Modaliteti i riluajtjes | Nga vija e nisjes |
 | Shpejtësia e riluajtjes | 1× |
 | Përsërit | po |
 

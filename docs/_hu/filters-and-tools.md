@@ -16,8 +16,8 @@ Ezekkel a panelekkel kiválaszthatja, *mely* adatot nézi, és megmérheti, amit
 Minden panel szűkíti az adatot, és együtt működnek: egy sort csak akkor rajzolunk, ha **mindet** átmegy (ÉS-kapcsolat).
 
 ```
-all rows -> Filters -> Teams -> Entities -> Slice -> picture
-              AND       AND       AND        AND
+minden sor -> Szűrők -> Csapatok -> Entitások -> Szelet -> kép
+              ÉS        ÉS        ÉS         ÉS
 ```
 
 Példa: vegye ki a *Harckocsi* jelölését a Szűrők alatt, rejtse el a Vörös csapatot a Csapatok alatt, és válasszon ki egy játékost az Entitások alatt. Csak ennek a játékosnak a nem harckocsis mozgásait látja.

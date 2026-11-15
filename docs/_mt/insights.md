@@ -49,7 +49,7 @@ Id-detectors li ma jistgħux jaħdmu fuq id-data jidhru f'isfel bir-raġuni.
 
 ### Kif jitqiegħdu s-sejbiet {#how-findings-are-ranked}
 
-Kull post jew grupp jiġi ttestjat kontra l-bqija tal-mappa (testijiet binomjali eżatti jew tar-rata). Ir-rata ta' skoperta falza tinżamm fuq 5% (Benjamini-Hochberg). Il-każwalità tista' tidher bħala mudell; dan iżomm l-allarmi foloz baxxi: fost is-sejbiet murija, madwar wieħed minn kull għoxrin huwa mistenni li tkun każwali. Effetti minn ftit avvenimenti jinġibdu lejn "l-ebda effett" qabel ma jitqiegħdu. Jintwerew l-iktar 60 sejba, u kull detector jieħu ftit postijiet fuq nett.
+Kull post jew grupp jiġi ttestjat kontra l-bqija tal-mappa (testijiet binomjali eżatti jew tar-rata). Ir-rata ta' skoperta falza (false discovery rate) tinżamm fuq 5% (Benjamini-Hochberg). Il-każwalità tista' tidher bħala mudell; dan iżomm l-allarmi foloz baxxi: fost is-sejbiet murija, madwar wieħed minn kull għoxrin huwa mistenni li tkun każwali. Effetti minn ftit avvenimenti jinġibdu lejn "l-ebda effett" qabel ma jitqiegħdu. Jintwerew l-iktar 60 sejba, u kull detector jieħu ftit postijiet fuq nett.
 
 ## Sommarju {#debrief}
 
@@ -68,9 +68,9 @@ In-narratur ta' ġewwa jaħdem offline, fil-lingwa tiegħek. Is-selector **Lenti
 | **Fornitur** | Anthropic (Claude), OpenAI (ChatGPT), OpenRouter, Ollama (lokali), LM Studio (lokali), server llama.cpp (lokali), jew kwalunkwe endpoint li jaqbel ma' OpenAI |
 | **URL bażi**, **Mudell** | Imimlija mill-fornitur; **Elenka l-mudelli** jistaqsi lis-server |
 | **Ċavetta API** | Tintbagħat biss lill-URL bażi. Qatt ma tiġi nnotata, qatt ma tinħażen f'veduti, esportazzjonijiet jew fajls `.3dheat`. Ħafna mis-servers lokali ma jeħtieġu xejn. |
-| **Ftakar iċ-ċavetta f'dan il-browser** | Mitfi b'mod awtomatiku: iċ-ċavetta titnesa meta l-paġna tingħalaq |
-| **Uża AI esterna** | Mitfi b'mod awtomatiku |
-| **Ibgħat l-ismijiet tal-plejers** | Mitfi b'mod awtomatiku: il-plejers jintbagħtu bħala P1, P2 ... |
+| **Ftakar iċ-ċavetta f'dan il-browser** | Mitfi b'mod predefinit: iċ-ċavetta titnesa meta l-paġna tingħalaq |
+| **Uża AI esterna** | Mitfi b'mod predefinit |
+| **Ibgħat l-ismijiet tal-plejers** | Mitfi b'mod predefinit: il-plejers jintbagħtu bħala P1, P2 ... |
 
 Imbagħad ikteb mistoqsija fakultattiva u agħfas **Ikteb bl-AI**. Jintbagħtu biss is-sejbiet u n-numri tagħhom - qatt ir-ringieli tad-data tiegħek. It-tweġiba tidħol bil-mod, u s-sejbiet imsemmija isiru buttuni.
 

@@ -21,7 +21,7 @@ Senza nulla caricato, la scena è scura con una griglia e assi colorati (**Grigl
 
 Il livello è condiviso da tutte e tre le schede: un percorso caricato nella scheda Analisi di gara è lo stesso livello che mostra la mappa di calore.
 
-![Il pannello Sfondo / livello con un livello caricato: pulsanti Immagine della mappa e Modello 3D, Teatro, Opacità, Luminosità, Salva nella libreria e l'elenco della Libreria](../assets/img/en/level-panel.webp)
+![Il pannello Sfondo / livello con un livello caricato: pulsanti Immagine della mappa e Modello 3D, Teatro, Opacità, Luminosità, Salva nella libreria e l'elenco della Libreria](../assets/img/it/level-panel.webp)
 
 ## Mettere un livello dietro i tuoi dati {#put-a-level-behind-your-data}
 

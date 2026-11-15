@@ -62,16 +62,16 @@ Ove postavke se čuvaju u vašem pregledniku između posjeta (ništa se nigdje n
 - postavke reprodukcije za figure, simbole, oznake, kameru i taktički prikaz;
 - brzinu reprodukcije i ogledanje;
 - oznake po snimku, zapremine po skupu podataka, slojeve ciljeva;
-- postavke vanjskog AI-ja (ključ samo ako štiklirate *Zapamti*).
+- postavke vanjskog AI-ja (ključ samo ako označite *Zapamti*).
 
 Postavke toplote, filteri i način počinju iznova pri svakom učitavanju. Potpun, generisan spisak: [Sačuvane postavke](ref-settings-storage.md).
 
-## Tipke koje prikazivač zadržava iz preglednika {#keys-the-viewer-keeps-from-the-browser}
+## Tipke koje prikazivač štiti od web-preglednika {#keys-the-viewer-keeps-from-the-browser}
 
-Sesija s velikim podacima traje da se učita, pa prikazivač sprečava da je preglednik slučajno odbaci:
+Sesija s velikim podacima dugo se učitava, pa prikazivač sprečava da je web-preglednik slučajno odbaci:
 
 - `Ctrl`/`Cmd` + slova koja bi štampala, sačuvala, otvorila, ponovo učitala, zatvorila ili otvorila nove prozore ne rade van tekstualnih polja; `F1`, `F3`, `F5`, `F6` i `F7` ne rade ništa.
 - Zatvaranje ili ponovno učitavanje kartice s učitanim podacima ili nivoom prvo pita.
-- U punom ekranu prikazivač zaključava tipke koje koristi (W, T, N, S, R, P, Q, Esc), pa ih preglednik ne preuzima.
+- U punom ekranu prikazivač zaključava tipke koje koristi (W, T, N, S, R, P, Q, Esc), pa ih web-preglednik ne preuzima.
 
 Tačan spisak: [Tipke preglednika](ref-browser-keys.md). Sve tipke prikazivača: [Referenca tastature i miša](keyboard-reference.md).

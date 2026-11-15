@@ -12,12 +12,12 @@ outdated: false
 
 # Síur og verkfæri
 
-Þessi spjöld leyfa þér að velja *hvaða* gögn þú skoðar og mæla það sem þú sérð. Notaðu þau þegar myndin er of ringuð: sýndu eitt lið, einn leikmann, einn stað, eða eina hæð í byggingu.
+Þessi spjöld leyfa þér að velja *hvaða* gögn þú skoðar og mæla það sem þú sérð. Notaðu þau þegar myndin er of yfirhlaðin: sýndu eitt lið, einn leikmann, einn stað, eða eina hæð í byggingu.
 
 Hvert spjald þrengir gögnin, og þau vinna saman: línu er aðeins teiknuð ef hún stenst **allar** (OG).
 
 ```
-all rows -> Filters -> Teams -> Entities -> Slice -> picture
+allar línur -> Síur -> Lið -> Einingar -> Sneið -> myndin
               AND       AND       AND        AND
 ```
 
@@ -32,9 +32,9 @@ Dæmi: taktu hakið af *Tank* undir Síur, feldu rauða liðið undir Lið, og v
 | [Sneið](slice.md) | Skera sneið út úr borðinu og hitanum, til að sjá inn í byggingar. | Já, og borðið | Nei |
 | [Mæling](measure.md) | Mælistika, og hitagildið undir bendlinum. | Já | Já |
 | [Rúmmál og samanburður](volumes.md) | Teikna þrívíð form og spyrja hvað gerðist inni. Getur líka síað. | Já | Já |
-| [Sundurliðun](breakdown.md) | Hvaða farartæki, leikmaður eða vopn gengur best á stað. | ekki við | ekki við |
+| [Sundurliðun](breakdown.md) | Hvaða farartæki, leikmaður eða vopn gengur best á stað. | á ekki við | á ekki við |
 
-Högggreining hefur sitt eigið svæðissíu í flipanum **Farartæki**: sjá [Greining á hittum](hit-analysis.md).
+Greining á hittum hefur sitt eigið svæðissíu í flipanum **Farartæki**: sjá [Greining á hittum](hit-analysis.md).
 
 Hugtök eins og hitakort, lína, manneskja og hópur eru útskýrð í [orðasafninu](glossary.md).
 

@@ -1,6 +1,6 @@
 ---
 title: "Zdarzenia kontroli pojazdu"
-parent: "Analiza wyścigu"
+parent: "Analiza wyścigowa"
 nav_order: 54
 lang: "pl"
 source: "race-control-events.md"

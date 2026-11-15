@@ -27,7 +27,7 @@ Bu sayfa sekmenin haritasıdır. Her bölümün kendi sayfası vardır:
 | [Araç kontrol olayları](race-control-events.md) | kilitlenmeler, tekerlek patinajı, aşırı dönüş, takla, düşük dönüş, çarpmalar, kazalar, ABS/TC, el freni, hava - her birinin nasıl algılandığı, her eşiğiyle |
 | [Viraj viraj analiz](race-corner-analysis.md) | mesafeye göre hizalama, virajlar ve bölümler, bir virajın zaman hesabı, her neden ve denendikleri sıra, çizgi biçimi ve öneri |
 | [Araç profilleri ve karşılaştırma](race-car-profiles.md) | her arabanın neler yapabildiği, turlarından ölçülerek; *Karşılaştırılan araçlar*; araba her virajda neye karar verir |
-| [Pist istatistikleri](race-course-statistics.md) | bir pistin birçok turu: virajlara ve türlere göre hatalar, hata haritası, ısı haritası dışa aktarımı, performans sınırları |
+| [Parkur istatistikleri](race-course-statistics.md) | bir pistin birçok turu: virajlara ve türlere göre hatalar, hata haritası, ısı haritası dışa aktarımı, performans sınırları |
 | [Yarış analitiği: yöntem](race-analytics.md) | kuralların arkasındaki araştırma, kaynaklarıyla |
 | [Diğer yarış oyunları](other-games.md) | görüntüleyicinin her oyunun turlarıyla ne yaptığı: bir oyunun göndermediği yerlerde kayma ve drift hesabı, aynalanmış dünyalar, ek kanallar |
 
@@ -37,8 +37,8 @@ Bu sayfa sekmenin haritasıdır. Her bölümün kendi sayfası vardır:
 
 1. **Turlar** - yükleme, listeleme, göster/gizle, referans, odak, takip.
    Bkz. [Turları yükleme](race-loading-laps.md).
-2. **Pist istatistikleri** - yalnızca üç tur yüklendiğinde görünür.
-   Bkz. [Pist istatistikleri](race-course-statistics.md).
+2. **Parkur istatistikleri** - yalnızca üç tur yüklendiğinde görünür.
+   Bkz. [Parkur istatistikleri](race-course-statistics.md).
 3. **Nerede gelişmeli** - odaklanılan turun bulguları, viraj viraj.
    Bkz. [Viraj viraj analiz](race-corner-analysis.md).
 4. **Viraj viraj** (ya da birden çok sınıf varken *Viraj viraj - sınıf X*) - her viraj için en hızlı tur ve çizgisi. İki ya da daha fazla turla gösterilir.
@@ -76,23 +76,23 @@ Bir metin alanına ya da açılır listeye yazılan tuşlar yok sayılır. Kamer
 ## Birçok tur {#many-laps}
 
 - Yüklenen tüm turlar analiz edilir ve sayılır; onlarca tur bir ya da iki saniye sürer.
-- **8** turun (`SHOW_ALL_UP_TO`) üstünde, eklenen turlar yalnızca referans, odaklanılan tur ya da odaklanılan turun sınıfının en iyi turu olduklarında çizilir. *Tümünü göster* / *Yalnızca bakılanları göster* arasında geçiş yapar.
+- **8** turun (`SHOW_ALL_UP_TO`) üstünde, eklenen turlar yalnızca referans, odaklanılan tur ya da odaklanılan turun sınıfının en iyi turu olduklarında çizilir. *Tümünü göster* / *Yalnızca incelenenler* arasında geçiş yapar.
 - **10** görünür arabanın (`PLAIN_PAST`) üstünde, bakılmayan turlar (odak, takip edilen araba ya da referans değil) 1,5 m yerine her 6 m'de bir noktaya indirgenmiş çizgilerle ve düz arabalarla çizilir.
 - Grafikler en fazla **8** tur çizer; HUD en fazla **6** kart gösterir.
-- Pist istatistikleri **3** turdan itibaren görünür.
+- Parkur istatistikleri **3** turdan itibaren görünür.
 
-Ayrıntılar: [Pist istatistikleri](race-course-statistics.md#performance-with-many-laps).
+Ayrıntılar: [Parkur istatistikleri](race-course-statistics.md#performance-with-many-laps).
 
 ## Varsayılan görünüm ayarları {#default-view-settings}
 
 | Ayar | Varsayılan |
 |---|---|
 | Harita | Zaman haritası |
-| Sürülen çizgiler, Arabalar, Lastikler ve süspansiyon, Etiketler, Turlardan pist | açık |
+| Sürülen çizgiler, Arabalar, Lastikler ve süspansiyon, Etiketler, Turlardan oluşturulan pist | açık |
 | Kartlardaki tüm değerler | kapalı |
 | Araba boyutu | 1× |
 | Grafikler | gösterilir |
-| Tekrar modu | Çizgiden |
+| Tekrar modu | Start çizgisinden |
 | Tekrar hızı | 1× |
 | Döngü | açık |
 

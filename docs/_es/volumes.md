@@ -21,7 +21,7 @@ Un **volumen** es una caja invisible (o un cilindro, o una esfera) que dibujas a
  +------------+
 ```
 
-![Tres volúmenes sobre Demo Valley: dos cilindros alrededor de las colinas, una caja alrededor del pueblo](../assets/img/en/volumes.webp)
+![Tres volúmenes sobre Demo Valley: dos cilindros alrededor de las colinas, una caja alrededor del pueblo](../assets/img/es/volumes.webp)
 
 Los volúmenes miden lo que pasa dentro, filtran la vista hasta ellos, exportan sus filas y pueden compararse uno al lado del otro. Véase también el [glosario](glossary.md) para fila, persona y partida.
 
@@ -76,7 +76,7 @@ Con dos o más volúmenes visibles, pulsa **Comparar…**.
 3. En **Tabla**, lee la diferencia de cada valor respecto al primer volumen.
 4. Cambia a **Barras** para ver las proporciones como barras.
 
-![La tabla Comparar volúmenes: filas, tiempo dentro, jugadores y más para cada volumen, con la diferencia respecto al primero](../assets/img/en/compare.webp)
+![La tabla Comparar volúmenes: filas, tiempo dentro, jugadores y más para cada volumen, con la diferencia respecto al primero](../assets/img/es/compare.webp)
 
 | Vista | Muestra |
 |---|---|
@@ -86,7 +86,7 @@ Con dos o más volúmenes visibles, pulsa **Comparar…**.
 | **Visitas** | Diagramas de caja y de violín de cuánto duran las visitas (escala logarítmica). |
 | **Flujo** | Adónde van las trayectorias al salir de cada volumen: una matriz de transiciones o cintas de flujo. |
 
-![La vista Barras: tipos de evento por volumen como proporciones](../assets/img/en/compare-bars.webp)
+![La vista Barras: tipos de evento por volumen como proporciones](../assets/img/es/compare-bars.webp)
 
 ## Consejos {#tips}
 

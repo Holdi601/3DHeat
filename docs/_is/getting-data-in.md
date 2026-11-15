@@ -38,7 +38,7 @@ Allt sem flipinn Hitakort sýnir kemur úr einu **gagnasafni**: töflu af línum
 3. **Sjálfvirk tenging.** Dálkar fá hlutverk - X, Y, Z, tími, manneskja, lota, hópur, sjónarátt - og nokkrir eru geymdir til síunar. Sérhver ágiskun er sýnd í spjaldinu **Dálkatenging** og má breyta henni. Sjá [Dálkatenging](column-mapping.md) og [Ásar, einingar og tími](axes-units-and-time.md).
 4. **Talning.** Línufjöldi hverrar skrár er lesinn (nákvæmlega úr Parquet-fótnótum, áætlaður fyrir CSV), svo spjaldið getur sagt áður en nokkuð er hlaðið hversu mikið minni hleðslan þarf og hvort það passar. Ef ekki, leggur það til að hlaða hverri *N*-tu línu. Sjá [Minni og mörk](memory-and-budgets.md).
 5. **Hlaða.** Bakgrunnsvinnsluferli þáttar aðeins úr tengdu dálkunum í hverri skrá - nokkrum skrám í einu, allt að fjárhagsáætlun [þáttunarþráða](memory-and-budgets.md#parser-threads) - og sameinar þær, í röð valsins, í eitt gagnasafn: eina sameiginlega orðabók yfir manneskjur, hópa og lotur í öllum skrám, einn sameiginlegan tímauppruna, allar línur raðaðar eftir tíma. Sjá [Lotur, persónur og hópar](sessions-persons-groups.md).
-6. **Hleðsla upp.** Aðalþráðurinn tilkynnir "Uploading N rows to the GPU" í einn ramma, og pakkar síðan línunum í minni skjákortsins innan fjárhagsáætlunar þess. Sjá [Minnisdvöl skjákorts](gpu-memory.md).
+6. **Hleðsla upp.** Aðalþráðurinn tilkynnir "Sendi N raðir á skjákortið" í einn ramma, og pakkar síðan línunum í minni skjákortsins innan fjárhagsáætlunar þess. Sjá [Minnisdvöl skjákorts](gpu-memory.md).
 7. **Fyrsta myndin.** Myndavélin rammar gögnin inn, radíus depilsins og mettun eru stillt út frá umfangi gagnanna og fjölda lína, og eftir 8 teiknaða ramma er mettunin mæld út frá myndinni sjálfri ([Litir og lýsing](colour-and-exposure.md)).
 
 ## Kröfur, athugaðar fyrir hleðslu {#requirements-checked-before-a-load}
@@ -47,7 +47,7 @@ Allt sem flipinn Hitakort sýnir kemur úr einu **gagnasafni**: töflu af línum
 |---|---|
 | **Að minnsta kosti tveir af X / Y / Z** | Hleðslan er neitað. Með nákvæmlega tveimur er þriðji ásinn 0 og gögnin teiknuð sem flatur flötur í þrívíðu senunni - sem er það sem ofanfrá-hitakort vill. |
 | Tímadálkur | Valfrjálst. Án hans er tímalínan óvirk, sýnin helst í stillingunni **Allt**, og hliðarstikan segir það. |
-| Dálkur fyrir manneskju | Valfrjálst. Þarf fyrir [fígúruyfirlögnina](box-replay.md) (fígúra fyrir hverja manneskju), [línuhita](line-heat.md) (leiðina sem hver manneskja gekk), millifærslu, slóðir og söguna **Líftími**. |
+| Dálkur fyrir manneskju | Valfrjálst. Þarf fyrir [fígúruyfirlögnina](box-replay.md) (fígúra fyrir hverja manneskju), [línuhita](line-heat.md) (leiðina sem hver manneskja gekk), brúun, slóðir og söguna **Líftími**. |
 | Dálkur fyrir hóp | Valfrjálst. Þarf fyrir [liðahita](team-heat.md) og stillingu [mismunar](difference.md) (að minnsta kosti tveir hópar). |
 
 Stilling sem hleðsluðu gögnin styðja ekki er grá í mótastikunni; ef bendillinn er yfir henni segir það af hverju.

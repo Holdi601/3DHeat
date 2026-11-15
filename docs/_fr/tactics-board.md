@@ -23,7 +23,7 @@ L'onglet **Tactique** est une planche à dessin pour un plan d'équipe : vous pl
 6. Appuyez sur **▶** (ou `K`) pour jouer le plan depuis l'étape affichée jusqu'à la fin.
 7. Nommez le plan dans **Nom du plan** et appuyez sur **Enregistrer**.
 
-![L'onglet Tactique en vue de dessus : jeu, camps et outils à gauche, trois figurines avec des flèches Déplacer, un arc de lancer de fumigène, une Zone et les étapes en bas](../assets/img/en/tactics.webp)
+![L'onglet Tactique en vue de dessus : jeu, camps et outils à gauche, trois figurines avec des flèches Déplacer, un arc de lancer de fumigène, une Zone et les étapes en bas](../assets/img/fr/tactics.webp)
 
 ## Commencer un plan {#starting-a-plan}
 
@@ -34,7 +34,7 @@ L'onglet **Tactique** est une planche à dessin pour un plan d'équipe : vous pl
 | **Carte**, **Charger les cartes Valorant** | Avec Valorant choisi : **Charger les cartes Valorant** récupère la liste des cartes sur [valorant-api.com](https://valorant-api.com) ; **Carte** place ensuite la mini-carte de la carte choisie comme niveau, cadrée depuis le dessus. L'image est récupérée au moment du choix et n'est jamais livrée avec le logiciel. L'avis de Riot est affiché tant qu'elle est à l'écran (voir plus bas). |
 | **Camp** | Le camp auquel appartient la prochaine figurine, flèche ou zone ; elle prend la couleur du camp. |
 
-Sans niveau, le tableau est le plan de sol plat. Chargez un niveau sous **Niveau** pour planifier sur une vraie carte : une carte CS2 exportée avec l'outil CS2, un niveau de la bibliothèque, ou une image de carte.
+Sans niveau, le tableau est le plan de sol plat. Chargez un niveau sous **Arrière-plan / niveau** pour planifier sur une vraie carte : une carte CS2 exportée avec l'outil CS2, un niveau de la bibliothèque, ou une image de carte.
 
 ## Outils {#tools}
 
@@ -62,7 +62,7 @@ Tout ce qui se trouve sur le tableau se déplace comme dans un éditeur 3D : fig
 | **Pivoter** | E (ou R) | Un anneau par axe tourne autour de lui. Les anneaux d'une figurine seule sont son propre lacet, tangage et roulis ; un groupe tourne autour des axes du monde, autour de son milieu. |
 | **Redimensionner** | R (ou S) | Écarte ou rapproche la sélection depuis son milieu le long d'un axe ou dans toutes les directions ; le rayon d'une zone grandit avec elle. |
 
-**Touches** bascule entre W / E / R (Unity, Unreal) et G / R / S (Blender) ; les touches ne choisissent le mode que lorsque quelque chose est sélectionné, et font voler la caméra sinon. Ainsi `R` signifie **Redimensionner** avec les touches W / E / R et **Pivoter** avec les touches G / R / S lorsque quelque chose est sélectionné, et fait tourner la prochaine figurine à poser lorsque rien ne l'est. Toutes les touches du tableau sont listées dans la [référence clavier](keyboard-reference.md#tactics-board). Maintenez **Ctrl** pendant un glissement pour accrocher un déplacement à la **Grille** (mètres) ou une rotation au **Pas d'angle**. **Aligner au sol** (activé par défaut) pose les personnes, véhicules, marqueurs, points de passage et zones déplacés sur la surface du niveau ; les avions et hélicoptères conservent leur hauteur, et un glissement le long de la flèche Y n'accroche jamais. Glisser une poignée ne déplace jamais la caméra. **Échap** annule un glissement, et chaque modification est une étape d'Annuler.
+**Clés** bascule entre W / E / R (Unity, Unreal) et G / R / S (Blender) ; les touches ne choisissent le mode que lorsque quelque chose est sélectionné, et font voler la caméra sinon. Ainsi `R` signifie **Redimensionner** avec les touches W / E / R et **Pivoter** avec les touches G / R / S lorsque quelque chose est sélectionné, et fait tourner la prochaine figurine à poser lorsque rien ne l'est. Toutes les touches du tableau sont listées dans la [référence clavier](keyboard-reference.md#tactics-board). Maintenez **Ctrl** pendant un glissement pour accrocher un déplacement à la **Grille** (mètres) ou une rotation au **Pas d'angle**. **Aligner au sol** (activé par défaut) pose les personnes, véhicules, marqueurs, points de passage et zones déplacés sur la surface du niveau ; les avions et hélicoptères conservent leur hauteur, et un glissement le long de la flèche Y n'accroche jamais. Glisser une poignée ne déplace jamais la caméra. **Échap** annule un glissement, et chaque modification est une étape d'Annuler.
 
 Les points de passage apparaissent sous forme de points sur les flèches de l'étape affichée : cliquez-en un pour le sélectionner, glissez-le pour le déplacer, Suppr pour le retirer. La section **Sélectionnées** affiche la position de la sélection en mètres, le lacet, le tangage et le roulis d'une figurine en degrés, et le rayon d'une zone, chacun modifiable en saisie directe.
 

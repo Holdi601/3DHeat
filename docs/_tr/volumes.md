@@ -29,7 +29,7 @@ Hacimler içlerinde olanı ölçer, görünümü onlara göre süzer, satırlar�
 
 1. Kenar çubuğunda **Hacimler**'i açın.
 2. Bir araç seçin ve 3B görünümde ya da 2B haritada çizin. Taban ve tavan, altındaki veriden başlar. Esc iptal eder.
-3. Seçmek için hacme tıklayın; **İstatistikler**i görünür.
+3. Seçmek için hacme tıklayın; **İstatistikler** görünür.
 
 | Araç | Nasıl çizilir |
 |---|---|
@@ -80,7 +80,7 @@ GPU filtresi toplam 64 ana hatlı noktayla en fazla 8 hacim alır; bunun ötesin
 
 | Görünüm | Gösterdiği |
 |---|---|
-| **Tablo** | Satırlar, içeride geçen süre, oyuncular, maçlar, takımlar, girişler, çıkışlar, ziyaretler, ziyaret uzunluğu, öldürmeler, ölümler, ölüm başına öldürme, dakika başına öldürme, oyuncu başına süre, değer sütunları; olaylara, araç sınıfına, oyuncuya ya da YZ'ye, takıma ve bakış yönüne göre gruplu. Her değer ilk hacimden farkını ve bir etki büyüklüğünü (önemsiz, küçük, orta, büyük) gösterir. Ilk hacme uzaklığa göre sıralamak için bir hacmin başlığına tıklayın. |
+| **Tablo** | Satırlar, içeride geçen süre, oyuncular, maçlar, takımlar, girişler, çıkışlar, ziyaretler, ziyaret uzunluğu, öldürmeler, ölümler, ölüm başına öldürme, dakika başına öldürme, oyuncu başına süre, değer sütunları; olaylara, araç sınıfına, oyuncuya ya da YZ'ye, takıma ve bakış yönüne göre gruplu. Her değer ilk hacimden farkını ve bir etki büyüklüğünü (önemsiz, küçük, orta, büyük) gösterir. İlk hacme uzaklığa göre sıralamak için bir hacmin başlığına tıklayın. |
 | **Çubuklar** | Olaya, sınıfa, aktöre, takıma ya da yöne göre sayılar ya da paylar. Görünümü ona süzmek için bir çubuğa tıklayın. |
 | **Maç boyunca** | Maçın dakikaları boyunca hacim başına bir grafik: varlık, satırlar ya da öldürmeler. Oraya atlamak için tıklayın. |
 | **Ziyaretler** | Ziyaretlerin ne kadar sürdüğünün kutu ve keman grafikleri (logaritmik ölçek). |

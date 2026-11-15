@@ -19,7 +19,7 @@ No topo da barra lateral:
 | Controlo | O que faz |
 |---|---|
 | **?** | Modo de ajuda: o que significa cada cor (também `?` ou `F1`) |
-| Menu **Unidades** | Métrico, Imperial, Aviação ou Náutico |
+| Menu **Unidades** | Métrico, Imperial, Aeronáutico ou Náutico |
 | Botão **...** ao lado de **Unidades** | Abre "Escolher uma unidade para cada grandeza": uma lista por grandeza |
 | Menu **Idioma** | O idioma do visualizador: [40 idiomas](languages.md), ou o do navegador |
 
@@ -31,9 +31,9 @@ Os números que escreve numa caixa podem usar ponto ou vírgula (`0.35` ou `0,35
 
 1. Escolha uma predefinição no menu **Unidades**. Todas as grandezas mudam em conjunto.
 2. Para mudar só uma grandeza, clique no botão **...** ao lado dela e escolha uma unidade para essa grandeza. O menu passa então a mostrar um `*` depois da predefinição.
-3. Uma grandeza que não definiu segue a predefinição. Escolha "Como predefinição" para voltar atrás.
+3. Uma grandeza que não definiu segue a predefinição. Escolha «Como na predefinição» para voltar atrás.
 
-| Grandeza | Métrico (predefinição) | Imperial | Aviação | Náutico |
+| Grandeza | Métrico (predefinição) | Imperial | Aeronáutico | Náutico |
 |---|---|---|---|---|
 | Distância | km | mi | NM | NM |
 | Altitude, comprimento | m | ft | ft | m |
@@ -50,7 +50,7 @@ Outras unidades que pode escolher para uma grandeza: distância km, mi, NM; velo
 
 ![Modo de ajuda: o que significam as cores](../assets/img/en/help.webp)
 
-Prima `?` ou `F1`, ou clique no botão **?**. Mostra *O que significam as cores*: legendas da vista 3D, das rampas de calor, das cores das equipas, das cores do nível, das cores de estado dos painéis, do painel da partida e da vista de corrida. Mantém-se até o desligar. No separador Partida explica também as cores do painel da partida.
+Prima `?` ou `F1`, ou clique no botão **?**. Mostra *O que as cores significam*: legendas da vista 3D, das rampas de calor, das cores das equipas, das cores do nível, das cores de estado dos painéis, do painel da partida e da vista de corrida. Mantém-se até o desligar. No separador Partida explica também as cores do painel da partida.
 
 ![Modo de ajuda no separador Partida](../assets/img/en/settings-help-match.webp)
 

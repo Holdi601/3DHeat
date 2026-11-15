@@ -14,7 +14,7 @@ outdated: false
 
 Jedes Match startet an seinem eigenen Anfang, und seine Einheiten bewegen sich als Figuren. Die Dateien gehen direkt in die Grafikkarte, und es wird keine vollständige Tabelle aufgebaut; so läuft es flüssig, wo ein normales Laden den Speicher ausgehen ließe.
 
-![Zehn Panzer-Matches übereinandergelegt, eine Farbe pro Match](../assets/img/en/many-matches.webp)
+![Zehn Panzer-Matches übereinandergelegt, eine Farbe pro Match](../assets/img/de/many-matches.webp)
 
 ## So benutzt du es {#how-to-use-it}
 

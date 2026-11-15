@@ -17,7 +17,7 @@ Një nivel është vendi 3D ku u zhvillua loja - një hartë, një qytet, një p
 - një **nivel 3D** - `.glb`, `.gltf`, `.obj`, `.stl` ose `.ply` - i ndarë në tokë, struktura dhe ujë, dhe i thjeshtuar gjatë importit - shih [Nivelet 3D](model-levels.md) dhe [Pamja e nivelit](level-appearance.md);
 - një **sfond botëror** - për një regjistrim që tregon ku ndodhet në tokë (një skedar Tacview ACMI), terrenin real, rrugët, ujin, aeroportet dhe ndërtesat, të shkarkuara nga të dhëna të hapura - shih [Sfondi botëror](world-backdrop.md).
 
-Kur nuk ngarkohet asgjë, skena është e errët me një rrjetë dhe boshte me ngjyra (**Rrjeta** dhe **Boshtet** te [Kamera & skena](camera.md)), dhe paneli thotë *Asgjë nuk është ngarkuar - skena shfaq një rrjetë dhe boshte. Shto një imazh harte ose një rrjetë niveli për t'i dhënë nxehtësisë kontekst.*
+Kur nuk ngarkohet asgjë, skena është e errët me një rrjetë dhe boshte me ngjyra (**Rrjeta** dhe **Boshtet** te [Kamera & skena](camera.md)), dhe paneli thotë *Asgjë e ngarkuar — skena shfaq një rrjetë dhe boshte. Shto një imazh harte ose një model 3D të nivelit për t'i dhënë kontekst nxehtësisë.*
 
 Nivelin e ndajnë të tre skedat: një pistë e ngarkuar në skedën Analiza e garës është e njëjta nivel që shfaq Harta e nxehtësisë.
 
@@ -27,7 +27,7 @@ Nivelin e ndajnë të tre skedat: një pistë e ngarkuar në skedën Analiza e g
 
 1. Ngarko fillimisht të dhënat ([Si të futni të dhënat](getting-data-in.md)), që niveli të përshtatet me to.
 2. Hap **Sfondi / niveli** në shiritin anësor.
-3. Shtyp **Imazh harte…** për një imazh ose **Model 3D…** për një nivel 3D, dhe zgjidh skedarin. Për një regjistrim të botës reale, përdor **Sfondi botëror** ose **Teatri i luftës** në vend të tyre.
+3. Shtyp **Imazh harte…** për një imazh ose **Model 3D…** për një nivel 3D, dhe zgjidh skedarin. Për një regjistrim të botës reale, përdor **Bota e vërtetë si sfond** ose **Teatri i luftës** në vend të tyre.
 4. Prit që rreshti i progresit të mbarojë. Një model i madh thjeshtohet së pari (shih **Objektivi i thjeshtimit** më poshtë).
 5. Shtyp **F** te pamja për të kornizuar gjithçka. Përdor **Opaciteti** dhe **Ndriçimi** derisa nxehtësia të dalë nga niveli.
 6. Shtyp **Ruaj në bibliotekë** nëse do ta përdorësh përsëri nivelin ([Biblioteka e niveleve](level-library.md)).
@@ -44,7 +44,7 @@ Nivelin e ndajnë të tre skedat: një pistë e ngarkuar në skedën Analiza e g
 | Pjesa | Detaje |
 |---|---|
 | **Imazh harte…**, **Model 3D…** | Ngarko një; zëvendëson nivelin aktual. |
-| **Sfondi botëror**, **Harro pllakat e hartës** | Vetëm për një grup të dhënash me referencë gjeografike: ndërton vendin real nën të si nivel, ose fshin pllakat e shkarkuara. [Sfondi botëror](world-backdrop.md) |
+| **Bota e vërtetë si sfond**, **Harro pllakat e hartës** | Vetëm për një grup të dhënash me referencë gjeografike: ndërton vendin real nën të si nivel, ose fshin pllakat e shkarkuara. [Sfondi botëror](world-backdrop.md) |
 | **Objektivi i thjeshtimit** | Buxheti i trekëndëshave për importin e radhës të modelit: *I plotë - pa thjeshtim* (parazgjedhja), *I lartë - 8M*, *Mesatar - 3M*, *I ulët - 800k*, *Silueta - 100k*. [Nivelet 3D](model-levels.md#simplification) |
 | Progresi dhe **Anulo** | Gjatë dekodimit ose importit. |
 | Shënimi i importit | Trekëndëshat para dhe pas, ndarja në tokë / struktura / ujë, niveli i detajit i përdorur. |

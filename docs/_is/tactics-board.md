@@ -71,7 +71,7 @@ Viðkomupunktar birtast sem punktar á örvum sýnda skrefsins: smelltu á einn 
 
 Leið fígúru er tímasett: hver hluti tekur lengd sína yfir borðið - sýnd á yfirborðinu á um tveggja metra fresti, svo hæð eða stigi milli tveggja punkta telst - á hraða **hams** hreyfingar hennar í þeim leik, auk allrar **bið** við viðkomupunkt. Fótgönguliðar skríða, krjúpa, ganga (hljóðlaust), hlaupa eða spretta; farartæki og bátar skríða, fara gætilega, eðlilega eða þjóta; loftför og þyrlur fljúga hægt, á siglingu, á bardagahraða eða hámarki. Hamur sem leikurinn hefur ekki (CS2 hefur engan sprett) tekur þann næsta sem hann hefur. Hvernig halli hægir á fer eftir leiknum: í CS2 og Valorant telst aðeins lárétta vegalengdin, eins og í leikjunum; hermileikir hægja á fótgönguliðum upp brekkur (göngufall Toblers) og farartækjum eftir halla.
 
-Hraðinn kemur úr töflum fyrir hvern leik með heimildum sínum (sjá [Hraði hreyfinga](tactics-speeds.md)): CS2 eftir vopninu sem er haldið, úr vopnalýsingum leiksins; Valorant eftir vopni; Battlefield, Squad, Arma og loftleikirnir eftir gerð og flokki farartækis. **Hreyfist sem** velur snið fígúru (vopn, gerð farartækis); **Eigin (m/s)** yfirskrifar hvaða hám sem er fyrir þá fígúru. Hamir heita eins og taflan sýnir þá: *Crawl*, *Crouch*, *Walk (silent)*, *Run*, *Sprint*; *Cautious*, *Normal*, *Rush*; *Slow*, *Cruise*, *Combat*, *Maximum* (þýðingarnar eru í samræmi við viðmót leiksins).
+Hraðinn kemur úr töflum fyrir hvern leik með heimildum sínum (sjá [Hraði hreyfinga](tactics-speeds.md)): CS2 eftir vopninu sem er haldið, úr vopnalýsingum leiksins; Valorant eftir vopni; Battlefield, Squad, Arma og loftleikirnir eftir gerð og flokki farartækis. **Hreyfist sem** velur snið fígúru (vopn, gerð farartækis); **Eigin (m/s)** yfirskrifar hvaða hám sem er fyrir þá fígúru. Hamir heita eins og taflan sýnir þá: *Crawl*, *Crouch*, *Walk (silent)*, *Run*, *Sprint*; *Cautious*, *Normal*, *Rush*; *Slow*, *Cruise*, *Combat*, *Maximum*.
 
 Hver viðkomupunktur sýnir tímann frá þeim síðasta og tímann frá upphafi áætlunarinnar ("+3.9 s · 0:12"). Leið valinnar fígúru sýnir alla hluta með hami, lengd og tíma, biðina og komuna. **Komur** undir **Tímataka** setur hverja fígúru með leið á eina tímalínu, fyrsta koma efst. Með **Spila í rauntíma** (sjálfgefið á) varir skref þar til hægasta leiðin kemur og hver fígúra hreyfist á sínum eigin hraða; **Sekúndur** er þá minnsta lengd skrefsins. **Borðseiningar á metra** segir hvað borðið er í: 39,37 fyrir CS2-kort (leikseiningar), 1 fyrir metra-kort.
 
@@ -81,7 +81,7 @@ Hver viðkomupunktur sýnir tímann frá þeim síðasta og tímann frá upphafi
 
 - **Fyrsta koma á kortinu** litar kortið eftir tímanum frá upphafi umferðar sem leikmaður kom fyrst á hvern stað - hnappurinn **Hraðast** sýnir þann fljótasta yfir allar umferðir, **Dæmigert (miðgildi)** miðumferðina - grænt snemma til rautt seint, fyrir aðra hliðina eða báðar. Það sýnir hvað er mögulegt og hvenær.
 - Valin leið er borin saman við það sem leikmenn náðu frá upphafi hennar (eða frá upphafi umferðarinnar) til loka hennar, hver endi er diskur af settum radíus: "Fastest observed 14.2 s, p10 15.0 s, median 18.3 s over 41 runs; your plan 15.1 s".
-- Hraðarnir sem leikmenn fóru í raun á - hlaup, ganga, krjúpa, úr göngu- og hnédálkum taflnanna - í m/s.
+- Hraðarnir sem leikmenn fóru í raun á - hlaup, ganga, krjúpa, úr göngu- og krjúpadálkum taflnanna - í m/s.
 
 ## Skref {#steps}
 
@@ -89,11 +89,11 @@ Stikan undir sýninni geymir skrefin. Áætlun byrjar með einu; **+** bætir vi
 
 ## Vistun {#saving}
 
-Hlutinn **Skrá** geymir **Vista**, **Opna** og **Hreinsa**. **Vista** skrifar áætlunina sem `<name>.h3dplan.json` (venjulegt JSON: hliðar, skref, fígúrur með stöðu í hverju skrefi, örvar, svæði, athugasemdir); **Opna** les hana aftur inn. Skrá í annarri útgáfu, eða sem er ekki áætlun, er hafnað með ástæðunni. **Hreinsa** tæmir áætlunina; Afturkalla skilar henni.
+Hlutinn **Skrá** geymir **Vista**, **Opn** og **Hreinsa**. **Vista** skrifar áætlunina sem `<name>.h3dplan.json` (venjulegt JSON: hliðar, skref, fígúrur með stöðu í hverju skrefi, örvar, svæði, athugasemdir); **Opn** les hana aftur inn. Skrá í annarri útgáfu, eða sem er ekki áætlun, er hafnað með ástæðunni. **Hreinsa** tæmir áætlunina; Afturkalla skilar henni.
 
 ## Fígúrur {#figures}
 
-Sérhver fígúra er smíðuð af skoðaranum sjálfum: einfaldar lögun í birta stærð gerðar, með einkennunum sem greina hana frá nágrönnunum - belti og turn skriðdreka, byssurnar, flaugar og ratsjár loftvarnafarartækis, vængjalögun flugvélar, hali og hreyflar, snúningsvængir þyrlu og stubbavængir. Ekkert er tekið úr leik. Hönnun sem leikur fann upp er sýnd sem almenn fígúra flokks síns. Sjá [Fígúrur](figures.md#which-figure-a-unit-gets) fyrir hvernig gögn finna fígúru sína.
+Sérhver fígúra er smíðuð af skoðaranum sjálfum: einfaldar lögun í birtri stærð gerðarinnar, með einkennunum sem greina hana frá nágrönnunum - belti og turn skriðdreka, byssurnar, flaugar og ratsjár loftvarnafarartækis, vængjalögun flugvélar, hali og hreyflar, snúningsvængir þyrlu og stubbavængir. Ekkert er tekið úr neinum leik. Hönnun sem leikur fann upp er sýnd sem almenn fígúra flokks síns. Sjá [Fígúrur](figures.md#which-figure-a-unit-gets) fyrir hvernig gögn finna fígúru sína.
 
 ## Tilkynning Riot {#riots-notice}
 

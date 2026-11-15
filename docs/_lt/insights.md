@@ -22,11 +22,11 @@ Skiltis **Įžvalgos** yra Šilumos žemėlapio ir Rungtynių skirtukų šoninė
 ## Radiniai {#findings}
 
 1. Įkelkite duomenis ir atidarykite **Įžvalgos**. Paspauskite **Rasti įžvalgų** (rodoma „Skaičiuojama… n%“, kad matytumėte eigą).
-2. Perskaitykite sąrašą. Kiekvienas radinys turi stiprumo juostą, sakinį, kokie įrodymai (*Stiprūs įrodymai*, *Geri įrodymai* arba *Kiek įrodymų*), kuris detektorius jį rado ir transporto klasę, kai tai svarbu.
+2. Perskaitykite sąrašą. Kiekvienas radinys turi stiprumo juostą, sakinį, kokie įrodymai (*Stiprūs įrodymai*, *Geri įrodymai* arba *Šiek tiek įrodymų*), kuris detektorius jį rado ir transporto klasę, kai tai svarbu.
 3. **Spustelėkite radinį**: peržiūros programa pritaiko jo filtrus, nuskrenda kamera į vietą, peršoka į laiką ir atidaro detales: efektą su 95 % intervalu, p ir q reikšmes, suskaičiuotus įrodymus bei **Tūris čia**, kuris nubrėžia [tūrį](volumes.md) aplink vietą.
 4. **Atkurti filtrus** grąžina jūsų filtrus. **Kopijuoti JSON** nukopijuoja visą ataskaitą.
 
-Skaičiavimas naudoja dabartinius filtrus, paslėptas grupes ir pasirinktas rungtynes per visą laiko intervalą. Jei vėliau pakeisite filtrus, pranešimas tai nurodys; paspauskite **Skaičiuoti iš naujo**.
+Skaičiavimas naudoja dabartinius filtrus, paslėptas grupes ir pasirinktas rungtynes per visą laiko intervalą. Jei vėliau pakeisite filtrus, pranešimas tai nurodys; paspauskite **Perskaičiuoti**.
 
 Sąrašo viršuje esančios eilutės (pavyzdžiui, pinigų sumos) apibendrina visus duomenis prieš radinius.
 
@@ -43,7 +43,7 @@ Sąrašo viršuje esančios eilutės (pavyzdžiui, pinigų sumos) apibendrina vi
 | **Klasė pagal vietą** | Transporto klasė arba žaidėjai prieš DI, daug geriau ar blogiau veikiantys srityje | nužudymų ir transporto klasės arba žaidėjo/DI stulpelio |
 | **Žaidėjai** | Žaidėjai, kurie nužudo arba žūsta daug dažniau ar rečiau nei kiti tos pačios klasės žaidėjai | asmenų ir nužudymų |
 | **Siauros vietos ir flangai** | Siauros vietos (daug daugiau perėjimų nei aplinkiniame plote) ir flangų maršrutai (retai naudojami, bet veda į nužudymus) | asmenų |
-| **Reikšmė** | *Brangi vietovė* ir *Uždirbanti vietovė* | [vertės stulpelių](value-weighting.md) |
+| **Vertė** | *Brangi vietovė* ir *Uždirbanti vietovė* | [vertės stulpelių](value-weighting.md) |
 
 Detektoriai, kurie negali veikti su duomenimis, išvardyti apačioje su priežastimi.
 

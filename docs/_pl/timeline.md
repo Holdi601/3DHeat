@@ -20,7 +20,7 @@ Pasek pod widokiem to oś czasu ([`Timeline.tsx`](https://github.com/Holdi601/3D
 
 Dwa tryby najwyższego poziomu, bo odpowiadają na różne pytania.
 
-- **Wszystko** (domyślne przy każdym wczytaniu) całkowicie ignoruje głowicę odtwarzania i pokazuje każdy wiersz, który przechodzi przez filtry. To widok „gdzie to się dzieje” i nie jest tym samym co przewinięcie do końca. Suwak jest wyłączony, a zegar pokazuje `all · <span> of data`.
+- **Wszystko** (domyślne przy każdym wczytaniu) całkowicie ignoruje głowicę odtwarzania i pokazuje każdy wiersz, który przechodzi przez filtry. To widok „gdzie to się dzieje” i nie jest tym samym co przewinięcie do końca. Suwak jest wyłączony, a zegar pokazuje `wszystko · <span> danych`.
 - **Odtwórz** puszcza dane jak przyspieszony film. Pojawiają się suwak, sterowanie i ustawienia historii.
 
 Wybór **Wszystko** zatrzymuje też odtwarzanie.

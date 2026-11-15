@@ -13,7 +13,7 @@ outdated: false
 
 Ai condus același traseu de două ori. Fila **Analiză de cursă** redă ambele curse împreună în 3D, arată unde un tur a fost mai lent și îți spune de ce. Nu ai încă ture? Apasă **Tururi demonstrative**.
 
-![Fila Analiză de cursă cu ture demonstrative: bara laterală cu Tururi și Unde să te îmbunătățești, mașinile pe traseu, graficele de sub vedere](../assets/img/en/race-analysis-overview.webp)
+![Fila Analiză de cursă cu ture demonstrative: bara laterală cu Tururi și Unde se poate câștiga timp, mașinile pe traseu, graficele de sub vedere](../assets/img/en/race-analysis-overview.webp)
 
 Fila compară două sau mai multe ture ale aceluiași traseu. Împarte pânza, camera și modelul încărcat al traseului (**Fundal / nivel**) cu harta termică; restul este propriu: propria bară laterală și propria bară de sub vedere. Cuvinte precum *tur*, *referință* și *apex* sunt în [glosar](glossary.md).
 
@@ -39,7 +39,7 @@ Această pagină este harta filei. Fiecare parte are pagina ei:
    Vezi [Încărcarea turelor](race-loading-laps.md).
 2. **Statisticile traseului** - doar de la trei ture încărcate.
    Vezi [Statisticile traseului](race-course-statistics.md).
-3. **Unde să te îmbunătățești** - constatările turului focalizat, viraj cu viraj.
+3. **Unde se poate câștiga timp** - constatările turului focalizat, viraj cu viraj.
    Vezi [Analiza curbă cu curbă](race-corner-analysis.md).
 4. **Viraj cu viraj** (sau *Viraj cu viraj – clasa X* cu mai multe clase) - cel mai rapid tur prin fiecare viraj și traiectoria lui. Apare cu două sau mai multe ture.
 5. **Controlul mașinii** - blocările, derapajele, împingerile și contactele turului focalizat.
@@ -56,9 +56,9 @@ Această pagină este harta filei. Fiecare parte are pagina ei:
 ## Start rapid {#quick-start}
 
 1. Deschide fila **Analiză de cursă** (lângă **Hartă termică** în partea de sus a barei laterale).
-2. Adu ture. Apasă **Tururi demonstrative** ca să vezi ce face fila cu trei ture inventate. Pentru turele tale, înregistrează-le întâi ([formate de fișiere și înregistratoare](race-loading-laps.md#file-formats)), apoi apasă **Încarcă fișiere cu tururi…** sau **Dosar…**, sau trage fișiere ori dosare pe vedere.
+2. Adu ture. Apasă **Tururi demonstrative** ca să vezi ce face fila cu trei ture inventate. Pentru turele tale, înregistrează-le întâi ([formate de fișiere și înregistratoare](race-loading-laps.md#file-formats)), apoi apasă **Încărcați fișiere cu tururi…** sau **Dosar…**, sau trage fișiere ori dosare pe vedere.
 3. Turul complet cel mai rapid devine referința; cel mai lent dintre celelalte ture este focalizat. Dă clic pe orice tur din listă ca să-l focalizezi; ★ face un tur referință.
-4. Citește **Unde să te îmbunătățești**. Dă clic pe o constatare: mașinile se aliniază cu 40 m înainte de ea, camera o încadrează, reluarea trece prin ea, iar măsurătorile se deschid.
+4. Citește **Unde se poate câștiga timp**. Dă clic pe o constatare: mașinile se aliniază cu 40 m înainte de ea, camera o încadrează, reluarea trece prin ea, iar măsurătorile se deschid.
 5. Treci cu cursorul peste grafice ca să muți fiecare mașină la acel metru; Shift+clic ca să le aliniezi acolo.
 
 ## Taste {#keyboard}

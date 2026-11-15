@@ -11,12 +11,12 @@ outdated: false
 
 # Filtrai
 
-**Filtrai** paslepia eilutes, kurių jums nereikia, pavyzdžiui vieną transporto klasę ar vieną įvykio rūšį, ir paveikslėlis iškart atsinaujina. Skiltyje išvardijami stulpeliai, paliekami įkeliant skiltyje *Palikti filtravimui* ([Stulpelių priskyrimas](column-mapping.md)), ir *Šaltinio failas*, kai įkelta keli failai.
+**Filtrai** paslepia eilutes, kurių jums nereikia, pavyzdžiui vieną transporto klasę ar vieną įvykio rūšį, ir paveikslėlis iškart atsinaujina. Skiltyje išvardijami stulpeliai, paliekami įkeliant skiltyje *Išsaugoti filtravimui* ([Stulpelių priskyrimas](column-mapping.md)), ir *Šaltinio failas*, kai įkelta keli failai.
 
 ## Išbandykite {#try-it}
 
 1. Įkelkite duomenų rinkinį ir šoninėje juostoje atidarykite **Filtrai**.
-2. Skiltyje **Transporto klasė** nuimkite *Tank* žymę. Paveikslėlis iškart pasikeičia.
+2. Skiltyje **Transporto klasė** nuimkite *Tankas* žymę. Paveikslėlis iškart pasikeičia.
 3. Paspauskite **Išvalyti visus filtrus**, kad grįžtumėte.
 
 ![Filtrų skydelis: pirma peržiūros programos stulpeliai (Įvykio tipas, Transporto klasė), paskui stulpeliai iš jūsų failo](../assets/img/en/filters.webp)
@@ -34,11 +34,11 @@ Pirmos eilutės yra peržiūros programos stulpeliai (žemiau). Po jų ateinanč
 | **Transporto klasė** | 17 klasių: Naikintuvas, Puolamasis lėktuvas, Bombonešis, Kitas lėktuvas, Sraigtasparnis, Tankas, Šarvuotas automobilis, Oro gynyba, Artilerija, Sunkvežimis / automobilis, Laivas, Povandeninis laivas, Pėstininkai, Ginklas, Klaida, Statinys, Kita | technikos ar vieneto pavadinimas (lyginamas su [figūrų katalogu](figures.md)) ir tipo stulpeliai |
 | **Taikinio klasė** | tos pačios klasės | kitos pusės technika (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
 
-Rodomos tik pasitaikančios rūšys. Vertės stulpeliai (`cost_*`, `earn_*`, `net_*` ir *Kainos šaltinis*, žr. [Vertės svoriavimas](value-weighting.md)) filtruojami kaip bet kuris skaitinis stulpelis: pavyzdžiui, *Kainos šaltinyje* nuimkite *estimate* žymę, kad liktų tik įkainotos eilutės.
+Rodomos tik pasitaikančios rūšys. Vertės stulpeliai (`cost_*`, `earn_*`, `net_*` ir *Kainos šaltinis*, žr. [Vertės svorinimas](value-weighting.md)) filtruojami kaip bet kuris skaitinis stulpelis: pavyzdžiui, *Kainos šaltinyje* nuimkite *estimate* žymę, kad liktų tik įkainotos eilutės.
 
 Kategorijų sąrašas su daugiau nei 12 reikšmių gauna paieškos laukelį (*Ieškoti n reikšmių*) ir mygtuką **Tik šie**, kuris leidžia tiksliai tas reikšmes, kurios atitinka.
 
-Kuriuos stulpelius galima filtruoti, nusprendžiama įkėlimo metu, nes tuomet juos reikia perskaityti. Jei neišsaugota nė vieno stulpelio, skiltis apie tai praneša ir nukreipia į *Palikti filtravimui*.
+Kuriuos stulpelius galima filtruoti, nusprendžiama įkėlimo metu, nes tuomet juos reikia perskaityti. Jei neišsaugota nė vieno stulpelio, skiltis apie tai praneša ir nukreipia į *Išsaugoti filtravimui*.
 
 ## Skaitiniai stulpeliai (intervalas) {#numeric-columns-range}
 
@@ -59,18 +59,18 @@ Slankikliai apima stulpelio mažiausią ir didžiausią reikšmes per 1 000 žin
 |---|---|
 | Pavadinimas ir `leidžiama/iš viso` | Stulpelis ir kiek jo reikšmių leidžiama. |
 | Reikšmių sąrašas | Žymės langelis kiekvienai reikšmei; tuščia reikšmė rodoma kaip *(tuščia)*. |
-| **Viskas** / **Nė vieno** | Leisti visas reikšmes / nė vienos. |
+| **Visi** / **Nė vieno** | Leisti visas reikšmes / nė vienos. |
 
 Leidus visas reikšmes, filtras pašalinamas.
 
 ## Taisyklės {#rules}
 
-- **Keturi filtrai vienu metu.** Antraštėje rodoma `aktyvūs/4`. Penktas filtras netaikomas, ir skiltis apie tai praneša. Pasirinkimas [Subjektuose](entities.md) (arba Rungtynių skirtuko žaidėjo fokusas) taip pat naudoja vieną iš keturių. Filtras, apimantis visą stulpelį, nenaudoja nė vieno.
+- **Keturi filtrai vienu metu.** Antraštėje rodoma `aktyvūs/4`. Penktas filtras netaikomas, ir skiltis apie tai praneša. Pasirinkimas [Objektuose](entities.md) (arba Rungtynių skirtuko žaidėjo fokusas) taip pat naudoja vieną iš keturių. Filtras, apimantis visą stulpelį, nenaudoja nė vieno.
 - **Kategorijų stulpelyje – daugiausia 4 096 reikšmės**; platesnis stulpelis įkėlimo metu neišsaugomas.
 - **Filtrai jungiami IR** ir su komandų matomumu, skirtumo skaidymu, laiko langu, atstumo atrinkimu bei [pjūviu](slice.md).
 - **Pakeitus filtrą, kaupimas pradedamas iš naujo ir po kelių kadrų ekspozicija išmatuojama iš naujo**, nes filtravimas gali labai pakeisti tankį ([Spalva ir ekspozicija](colour-and-exposure.md#auto-exposure)).
 - **Išvalyti visus filtrus** pašalina visus stulpelių filtrus. Komandų matomumas ir kitur nustatyti žaidėjų pasirinkimai išlieka.
-- Stulpelių filtrai keičia šilumos režimus. Jie nekeičia [figūrų pakartojimo](box-replay.md) figūrų, kurios seka komandų matomumą ir Subjektų pasirinkimą. Subjektų pasirinkimas keičia abu.
+- Stulpelių filtrai keičia šilumos režimus. Jie nekeičia [figūrų pakartojimo](box-replay.md) figūrų, kurios seka komandų matomumą ir Objektų pasirinkimą. Objektų pasirinkimas keičia abu.
 - [Linijų šilumoje](line-heat.md) filtras tikrinamas pagal eilutę, kurioje baigiasi kiekvienas segmentas.
 - Įkėlus naujus duomenis, visi filtrai išvalomi.
 
@@ -81,4 +81,4 @@ Leidus visas reikšmes, filtras pašalinamas.
 **Filtrai, kurių skydelis nerodo.** Programos būsenoje yra dar du tipai ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
 
 - **grupių** filtras, nustatomas Rungtynių skirtuko, kai jis fokusuoja vieną pusę. Jis paslepia kitas grupes visuose režimuose, įskaitant skirtumą, skaidomą pagal stulpelį.
-- **asmenų** filtras, nustatomas [Subjektų](entities.md) skydelio ir Rungtynių skirtuko, kai jis fokusuoja vieną žaidėją. Jis riboja figūrų pakartojimą ir šilumos režimus. Šilumoje tai kategorijų filtras pagal asmenų ID ir užima vieną iš keturių lizdų. Jo kaukėje telpa 65 536 ID ([`FILTER_MASK_CAPACITY`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)); asmuo už šios ribos aktyvaus filtro metu šilumoje nepiešiamas, net jei pasirinktas. Figūrų pakartojimas juos vis dar rodo.
+- **asmenų** filtras, nustatomas [Objektų](entities.md) skydelio ir Rungtynių skirtuko, kai jis fokusuoja vieną žaidėją. Jis riboja figūrų pakartojimą ir šilumos režimus. Šilumoje tai kategorijų filtras pagal asmenų ID ir užima vieną iš keturių lizdų. Jo kaukėje telpa 65 536 ID ([`FILTER_MASK_CAPACITY`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)); asmuo už šios ribos aktyvaus filtro metu šilumoje nepiešiamas, net jei pasirinktas. Figūrų pakartojimas juos vis dar rodo.

@@ -1,6 +1,6 @@
 ---
 title: "Wczytywanie okrążeń"
-parent: "Analiza wyścigu"
+parent: "Analiza wyścigowa"
 nav_order: 51
 lang: "pl"
 source: "race-loading-laps.md"

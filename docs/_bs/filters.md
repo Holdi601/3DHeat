@@ -16,7 +16,7 @@ outdated: false
 ## Isprobajte {#try-it}
 
 1. Učitajte skup podataka i otvorite **Filteri** u bočnoj traci.
-2. Pod **Klasa vozila** odštiklirajte *Tenk*. Slika se odmah mijenja.
+2. Pod **Klasa vozila** odznačite *Tenk*. Slika se odmah mijenja.
 3. Pritisnite **Očisti sve filtere** da poništite.
 
 ![Panel Filteri: prvo sopstvene kolone prikazivača (Vrsta događaja, Klasa vozila), zatim kolone iz vaše datoteke](../assets/img/en/filters.webp)
@@ -34,7 +34,7 @@ Pri učitavanju prikazivač sam izvodi četiri sopstvene kolone i navodi ih **pr
 | **Klasa vozila** | 17 klasa: Lovac, Jurišni avion, Bombarder, Ostali avioni, Helikopter, Tenk, Oklopno vozilo, Protivvazdušna odbrana, Artiljerija, Kamion / auto, Brod, Podmornica, Pješadija, Oružje, Mamac, Građevina, Ostalo | naziv vozila ili jedinice (upoređen s [katalogom figura](figures.md)) i kolone tipa |
 | **Klasa cilja** | iste klase | vozilo druge strane (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
 
-Navode se samo vrste koje se pojavljuju. Kolone vrijednosti (`cost_*`, `earn_*`, `net_*` i *Izvor troška*, vidi [Ponderisanje vrijednosti](value-weighting.md)) mogu se filtrirati kao svaka numerička kolona: na primjer, odštiklirajte *procjena* pod *Izvor troška* da zadržite samo redove s cijenom.
+Navode se samo vrste koje se pojavljuju. Kolone vrijednosti (`cost_*`, `earn_*`, `net_*` i *Izvor troška*, vidi [Ponderisanje vrijednosti](value-weighting.md)) mogu se filtrirati kao svaka numerička kolona: na primjer, odznačite *procjena* pod *Izvor troška* da zadržite samo redove s cijenom.
 
 Lista kategorija s više od 12 vrijednosti dobija polje za pretragu (*Pretraži n vrijednosti*) i dugme **Samo ovi** koje dozvoljava tačno one vrijednosti koje odgovaraju.
 
@@ -58,7 +58,7 @@ Klizači pokrivaju minimum do maksimum kolone u 1.000 koraka; polja za broj prih
 | Dio | Značenje |
 |---|---|
 | Naziv i `dozvoljeno/ukupno` | Kolona i koliko njenih vrijednosti je dozvoljeno. |
-| Spisak vrijednosti | Polje za štikliranje po vrijednosti; prazna vrijednost prikazuje se kao *(prazno)*. |
+| Spisak vrijednosti | Polje za označavanje po vrijednosti; prazna vrijednost prikazuje se kao *(prazno)*. |
 | **Sve** / **Ništa** | Dozvoli svaku vrijednost / nijednu vrijednost. |
 
 Dozvoljavanje svih vrijednosti uklanja filter.
@@ -76,9 +76,9 @@ Dozvoljavanje svih vrijednosti uklanja filter.
 
 ## Za programere {#for-developers}
 
-**Slots.** Each active filter takes one of four GPU slots ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), a texture of 4 bytes per row. Slots go to the filters in the order they were last changed ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), shared by the shader and both panels). Past four, an error says *Only the first 4 filters are applied. Clear one - the rest are being ignored, not silently combined*, and the extra filters' names read *column (not applied)*. Filters run per row in the vertex shader, so changing a threshold needs no re-parse and no re-upload.
+**Slotovi.** Svaki aktivni filter zauzima jedan od četiri GPU slota ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), teksturu od 4 bajta po redu. Slotovi idu filterima redoslijedom kojim su posljednji put mijenjani ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), dijele ih shader i oba panela). Nakon četiri pojavljuje se poruka *Primijenjena su samo prva 4 filtera. Uklonite jedan – ostali se ignorišu, a ne tiho kombinuju*, a dodatni filteri nose naziv *kolona (nije primijenjeno)*. Filteri se izvode po redu u vertex shaderu, pa promjena praga ne traži ponovno parsiranje ni ponovno slanje.
 
-**Filters the panel does not show.** Two more kinds exist in the application state ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
+**Filteri koje panel ne prikazuje.** U stanju aplikacije postoje još dvije vrste ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
 
-- a **groups** filter, set by the Match tab when it focuses one side. It hides the other groups in every mode, a [difference](difference.md) split by a column included.
-- a **persons** filter, set by the [Entities](entities.md) panel and by the Match tab when it focuses one player. It restricts the figure replay and the heat modes. In the heat it is a category filter over the person ids and takes one of the four slots. Its mask holds 65,536 ids ([`FILTER_MASK_CAPACITY`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)); a person past that is not drawn in the heat while it is active, even when selected. The figure replay still shows them.
+- filter **grupa**, koji postavlja kartica Meč kada fokusira jednu stranu. Skriva ostale grupe u svakom režimu, uključujući podjelu [razlike](difference.md) po koloni.
+- filter **osoba**, koji postavljaju panel [Entiteti](entities.md) i kartica Meč kada fokusira jednog igrača. Ograničava reprodukciju figura i režime toplote. U toploti je to filter kategorije nad id-ovima osoba i zauzima jedan od četiri slota. Maska ima 65.536 id-ova ([`FILTER_MASK_CAPACITY`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)); osoba iza te granice se dok je filter aktivan ne crta u toploti, čak ni kad je izabrana. Reprodukcija figura je i dalje prikazuje.

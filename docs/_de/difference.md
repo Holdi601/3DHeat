@@ -15,13 +15,13 @@ Rot, wo Team A mehr war, grünblau, wo Team B mehr war, nichts, wo beide gleich 
 
 **Differenz** (Taste 2) ist Intensität mit Vorzeichen. Zeilen der einen Gruppe addieren Intensität; Zeilen der anderen ziehen sie ab. Wo sich beide gleichmäßig überlagern, ist das Ergebnis null und ganz transparent; wo eine Seite überwiegt, zeigt es sich in deren Farben – standardmäßig warm (transparent → rot → gelb → weiß) für die **+**-Seite und kühl (transparent → grün → blau → lila) für die **−**-Seite.
 
-![Differenz-Intensität: rot, wo die +-Seite mehr war, grün und blau, wo die −-Seite mehr war](../assets/img/en/difference-split.webp)
+![Differenz-Intensität: rot, wo die +-Seite mehr war, grün und blau, wo die −-Seite mehr war](../assets/img/de/difference-split.webp)
 
 ## So benutzt du es {#how-to-use-it}
 
 1. Drücke `2` (oder wähle **Differenz** in der Modusleiste).
 2. Öffne **Differenz-Aufteilung** in der Seitenleiste.
-3. Wähle, **Aufteilen nach**: meist *Gruppen*.
+3. Wähle bei **Aufteilen nach** meist *Gruppen*.
 4. Lege eine Gruppe (oder einen Wert) auf **+** und eine andere auf **−**.
 5. Lies die Farben: Warm heißt die +-Seite, kühl heißt die −-Seite. Das Panel warnt, wenn eine Seite keine Zeilen hat (siehe [Meldungen, die du sehen kannst](#messages-you-may-see)).
 

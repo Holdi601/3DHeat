@@ -77,74 +77,40 @@ leht ---(4 s pärast, siis iga 6 h)---> arendusserver ---> git fetch
 
 ### Töötamise ajal: uuendamise marsruut {#while-it-runs-the-update-route}
 
-The dev server (Vite plugin `heat3d-self-update` in `vite.config.ts`) serves
-`/__heat3d/update`. It exists only on the dev server - not in a static build
-and not in `vite preview`.
+Arendusserver (Vite-plugin `heat3d-self-update` failis `vite.config.ts`) pakub marsruuti `/__heat3d/update`. See on olemas ainult arendusserveris - mitte staatilises ehituses ega `vite preview` režiimis.
 
-**`GET /__heat3d/update`** answers whether the checkout is behind:
+**`GET /__heat3d/update`** vastab, kas koopia on maha jäänud:
 
 ```json
-{ "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "the newest commit's subject" }
+{ "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "uusima commit'i pealkiri" }
 ```
 
-- `checkout: false` when the folder is not a git checkout;
-- it runs `git fetch --quiet` **at most every 30 minutes** (asks in between
-  answer from what was last fetched);
-- `behind` / `ahead` from `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`,
-  `dirty` from `git status --porcelain --untracked-files=no`, `latest` the
-  subject of the upstream's newest commit;
-- with no upstream branch, `upstream: null` and `behind: 0`.
+- `checkout: false`, kui kaust ei ole git-koopia;
+- käivitab `git fetch --quiet` **kõige rohkem kord 30 minuti jooksul** (vahepealsed päringud vastavad viimati toodud andmetele);
+- `behind` / `ahead` tulevad käskudest `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`, `dirty` käsust `git status --porcelain --untracked-files=no`, `latest` ülesvoolu uusima commit'i pealkirjast;
+- ülesvoolu harua pole, siis `upstream: null` ja `behind: 0`.
 
-**`POST /__heat3d/update/apply`** brings the checkout up:
+**`POST /__heat3d/update/apply`** toob koopia ajakohaseks:
 
-1. Refused with `403 { ok: false, reason: "forbidden" }` unless the request has
-   the header `X-Heat3d-Update: 1` and, when it carries an `Origin`, that
-   origin's host is the request's `Host`. A cross-site form cannot send a
-   custom header without a CORS preflight, which this server never grants.
-2. Nothing to do (not a checkout, no upstream, not behind):
-   `{ ok: true, updated: false }`.
-3. Local changes: `{ ok: false, reason: "dirty" }`; local commits:
-   `{ ok: false, reason: "diverged" }`.
-4. Otherwise: notes the files that change (`git diff --name-only HEAD @{u}`),
-   `git pull --ff-only` (2 min timeout), `git submodule update --init`
-   (failure ignored), `npm install` when `package.json` or
-   `package-lock.json` changed (15 min timeout), and answers
-   `{ ok: true, updated: true, restart }` - `restart` says why the running
-   server cannot pick the update up: `"dependencies"` when they were
-   reinstalled, `"config"` when only a `vite.config` file changed, `false`
-   when nothing needs a restart.
-5. A failing git or npm command answers `{ ok: false, reason: "<the error,
-   up to 300 characters>" }`.
+1. Keeldutakse vastusega `403 { ok: false, reason: "forbidden" }`, kui päringul pole päist `X-Heat3d-Update: 1` ja - kui kaasas on `Origin` - kui selle origini host ei ole päringu `Host`. Saidiülene vorm ei saa saata kohandatud päist ilma CORS-eelkontrollita, mida see server ei anna kunagi.
+2. Pole midagi teha (pole git-koopia, ülesvoolu pole, maha pole jäänud): `{ ok: true, updated: false }`.
+3. Kohalikud muudatused: `{ ok: false, reason: "dirty" }`; kohalikud commit'id: `{ ok: false, reason: "diverged" }`.
+4. Muidu: märgib muutuvad failid (`git diff --name-only HEAD @{u}`), käivitab `git pull --ff-only` (2 min ajapiirang), `git submodule update --init` (viga ignoreeritakse), `npm install`, kui `package.json` või `package-lock.json` muutusid (15 min ajapiirang), ning vastab `{ ok: true, updated: true, restart }` - `restart` ütleb, miks käimasolev server ei saa uuendust kasutusele võtta: `"dependencies"`, kui sõltuvused paigaldati uuesti, `"config"`, kui muutus ainult `vite.config` fail, `false`, kui taaskäivitust pole vaja.
+5. Ebaõnnestunud git- või npm-käsk vastab `{ ok: false, reason: "<viga, kuni 300 tähemärki>" }`.
 
-Responses are JSON with `Cache-Control: no-store`. The server listens on
-`127.0.0.1` only, so the route is not reachable from the network.
+Vastused on JSON-kujul koos päisega `Cache-Control: no-store`. Server kuulab ainult aadressi `127.0.0.1`, nii et marsruut ei ole võrgust kättesaadav.
 
 ### Teade lehel {#the-notice-in-the-page}
 
-`UpdateBanner`, under the name at the top of the sidebar:
+`UpdateBanner`, nime all külgriba ülaosas:
 
-- It asks the route **4 seconds** after the page loads (not in the first
-  seconds: the page has a dataset to load and a GPU to start) and again
-  **every 6 hours** while the page stays open.
-- It shows **nothing** when there is no such route (a static build), the
-  folder is not a checkout, or nothing is newer - a notice on every start is
-  one people learn to ignore.
-- Behind, with no local changes: "A newer version of 3DHeat is available (N
-  changes, the newest: <subject>)." with **Update now** and **Later**
-  (*Later* hides it until the page is reloaded).
-- Behind, with local changes: the same sentence and "This copy has local
-  changes, so it is not updated automatically; commit or stash them, then
-  run git pull." - no button.
-- **Update now** posts to `/apply` ("Updating..."). Then:
-  - "Updated. The page reloads." - and it reloads 1.5 s later (the server
-    already serves the new files);
-  - when the dependencies were reinstalled: "Updated. Its dependencies
-    changed: close the server window and run **restart.bat** to finish.";
-  - when only the server's settings changed: "Updated. Its server settings
-    changed: close the server window and run **restart.bat** to finish.";
-  - nothing to bring in after all (`updated: false` - the copy was brought up
-    meanwhile, by `start.bat` say): "Nothing to update: this copy is already
-    the newest version." - and no reload;
-  - refused: the *dirty* sentence, or "This copy has commits of its own that
-    the newest version does not; update it with git pull.", or "The update
-    did not go through: <reason>".
+- Ta küsib marsruudilt **4 sekundit** pärast lehe laadimist (mitte esimestel sekunditel: lehel on andmestik laadimata ja GPU käivitamata) ning uuesti **iga 6 tunni** järel, kui leht jääb lahti.
+- Ta ei näita **mitte midagi**, kui marsruuti pole (staatiline ehitis), kaust ei ole koopia või midagi pole uuem - teade igal käivitusel on selline, millele inimesed õpivad tähelepanu mitte pöörama.
+- Maas, ilma kohalike muudatusteta: "Uuem versioon 3DHeatist on saadaval (N muudatust, uusim: <pealkiri>)." ning nupud **Uuenda kohe** ja **Hiljem** (*Hiljem* peidab selle, kuni leht uuesti laetakse).
+- Maas, kohalike muudatustega: sama lause ja "Selles koopias on kohalikke muudatusi, seega seda ei uuendata automaatselt; commit'i või stash'i need, seejärel käivita git pull." - nuppu pole.
+- **Uuenda kohe** saadab päringu aadressile `/apply` ("Uuendan..."). Seejärel:
+  - "Uuendatud. Leht laaditakse uuesti." - ja leht laaditakse 1,5 s hiljem uuesti (server pakub juba uusi faile);
+  - kui sõltuvused paigaldati uuesti: "Uuendatud. Sõltuvused muutusid: sulge serveriaken ja käivita **restart.bat**, et lõpetada.";
+  - kui muutusid ainult serveri seaded: "Uuendatud. Serveri seaded muutusid: sulge serveriaken ja käivita **restart.bat**, et lõpetada.";
+  - lõpuks pole midagi tuua (`updated: false` - koopia on vahepeal juba ajakohastatud, näiteks `start.bat` poolt): "Uuendada pole midagi: see koopia on juba uusim versioon." - ja lehte ei laadita uuesti;
+  - keeldutud: kohalike muudatuste lause, või "Selles koopias on enda commit'e, mida uusim versioon ei sisalda; uuenda see käsuga git pull.", või "Uuendus ei õnnestunud: <põhjus>".

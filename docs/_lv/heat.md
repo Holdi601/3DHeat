@@ -47,7 +47,7 @@ Katra zemāk esošā vadība atbilst shader parametram, tāpēc tās maiņa neko
 | Līknes redaktors (tikai Līkne) | priekšiestatījums *Gluds* | | [Sprite forma](sprite-shape.md#the-curve-editor) |
 | **Piesātinājuma punkts** | 24; ielādējot - aptuvens novērtējums, pēc tam izmērīts | 0,1-4000, logaritmiski (10 000 000) | [Krāsa un ekspozīcija](colour-and-exposure.md#saturation-point) |
 | **Minimālais siltums** | izslēgts (0) | 0-100% | [Krāsa un ekspozīcija](colour-and-exposure.md#minimum-heat) |
-| **Blīvuma reakcija** | *Piesātinošs* | *Piesātinošs* / *Lineārs* / *Log* | [Krāsa un ekspozīcija](colour-and-exposure.md#density-response) |
+| **Reakcija uz blīvumu** | *Piesātinošs* | *Piesātinošs* / *Lineārs* / *Log* | [Krāsa un ekspozīcija](colour-and-exposure.md#density-response) |
 | **Automātiska ekspozīcija pēc lauka** | | poga | [Krāsa un ekspozīcija](colour-and-exposure.md#auto-exposure) |
 | **Sekot skatam** | ieslēgts | | Izmēra ekspozīciju no jauna katru reizi, kad kamera apstājas, tāpēc reģions, kurā ielidojat, izmanto visu krāsu skalu. Nelielas izmaiņas tiek ignorētas, un skala slīd. Atzīmi noņemiet vai velciet **Piesātinājuma punkts**, lai noslēgtu skalu un salīdzinātu vietas vienā skalā. [Krāsa un ekspozīcija](colour-and-exposure.md#follow-the-view) |
 | **Vienāds blīvums jebkurā tālummaiņā** | ieslēgts | | Krāsa nozīmē vienu un to pašu rindu skaitu uz zemes laukuma, neatkarīgi no tā, cik tuvu esat. Sprite, ko pikseļu robežas palielina (tālu) vai samazina (tuvu), saglabā siltumu, ko pievienotu tā patiesais izmērs, tāpēc attēls, kas eksponēts no tālienes, neizbalst, kad ielidojat tajā. Ja izslēgts, sprite ar robežām pievieno pilnu savu svaru savā robežotajā izmērā. [Sprite forma](sprite-shape.md#pixel-clamps) |
@@ -89,7 +89,7 @@ Taustiņi: `[` un `]` bīda tālo robežu iekšā un ārā, `\` to ieslēdz vai 
 
 ### Virziens un Vērtība {#direction-and-value}
 
-Zem sadaļas Siltuma forma ir vēl divas sadaļas. **Virziens** zīmē katru rindu kā sektoru un pievieno bultas: skatiet [Virziena siltums](directional-heat.md). **Vērtība** svērt siltumu pēc tā, cik maksāja vai ko nopelnīja katra rinda: skatiet [Vērtības svēršana](value-weighting.md).
+Zem sadaļas Siltuma forma ir vēl divas sadaļas. **Virziens** zīmē katru rindu kā sektoru un pievieno bultas: skatiet [Virziena siltums](directional-heat.md). **Vērtība** svēr siltumu pēc tā, cik maksāja vai ko nopelnīja katra rinda: skatiet [Vērtības svēršana](value-weighting.md).
 
 ## Ko saglabā {#what-is-saved}
 

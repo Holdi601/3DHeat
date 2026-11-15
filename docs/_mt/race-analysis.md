@@ -27,7 +27,7 @@ Din il-paġna hi l-mappa tat-tab. Kull parti għandha l-paġna tagħha:
 | [Avvenimenti tal-kontroll tal-karozza](race-control-events.md) | lock-ups, wheelspin, oversteer, spins, understeer, laqtiet, tfarfir, ABS/TC, handbrake, ajru - kif jinsab kull wieħed, b'kull limitu |
 | [Analiżi kantunata b'kantunata](race-corner-analysis.md) | l-allinjament skont id-distanza, kantunieri u segmenti, il-kont tal-ħin ta' kantuniera, kull kawża u l-ordni li jiġu ttestjati fiha, il-forma tal-linja u l-parir |
 | [Profili tal-karozzi u tqabbil](race-car-profiles.md) | dak li kull karozza tista' tagħmel, imkejjel mill-ġirjiet tagħha; *Il-karozzi mqabbla*; dak li tiddeċiedi l-karozza f'kull kantuniera |
-| [Statistiċi tat-traċċa](race-course-statistics.md) | ħafna ġirjiet ta' kors wieħed: żbalji għal kull kantuniera u għal kull tip, il-mappa taż-żbalji, l-esportazzjoni tas-sħana, il-limiti tal-prestazzjoni |
+| [Statistika tal-korsa](race-course-statistics.md) | ħafna ġirjiet ta' kors wieħed: żbalji għal kull kantuniera u għal kull tip, il-mappa taż-żbalji, l-esportazzjoni tas-sħana, il-limiti tal-prestazzjoni |
 | [Analitika tat-tellieqa: il-metodu](race-analytics.md) | ir-riċerka wara r-regoli, b'sorsi |
 | [Logħob ieħor tat-tellieqa](other-games.md) | x'jagħmel il-viewer bil-ġirjiet minn kull logħba: slip u drift maħduma meta logħba ma tibgħatx dawn, dinjiet imqallbin, il-kanali addizzjonali |
 
@@ -37,11 +37,11 @@ Din il-paġna hi l-mappa tat-tab. Kull parti għandha l-paġna tagħha:
 
 1. **Ġirjiet** - tella', lista, uri/aħbi, referenza, fokus, inseġwi.
    Ara [Tagħbija tal-ġirjiet](race-loading-laps.md).
-2. **Statistiċi tal-kors** - biss minn tliet ġirjiet mgħobbija 'l fuq.
-   Ara [Statistiċi tat-traċċa](race-course-statistics.md).
+2. **Statistika tal-korsa** - biss minn tliet ġirjiet mgħobbija 'l fuq.
+   Ara [Statistika tal-korsa](race-course-statistics.md).
 3. **Fejn titjieb** - is-sejbiet tal-ġiro ffokat, kantuniera b'kantuniera.
    Ara [Analiżi kantunata b'kantunata](race-corner-analysis.md).
-4. **Kantuniera b'kantuniera** (jew *Kantuniera b'kantuniera - klassi X* meta jkunu diversi klassijiet) - l-iktar ġiro mgħaġġel minn kull kantuniera u l-linja tagħha. Jintwera b'żewġ ġirjiet jew iktar.
+4. **Kurva b'kurva** (jew *Kurva b'kurva - klassi X* meta jkunu diversi klassijiet) - l-iktar ġiro mgħaġġel minn kull kantuniera u l-linja tagħha. Jintwera b'żewġ ġirjiet jew iktar.
 5. **Kontroll tal-karozza** - il-lock-ups, l-iżilqi, il-pushes u l-laqtiet tal-ġiro ffokat.
    Ara [Avvenimenti tal-kontroll tal-karozza](race-control-events.md).
 6. **Il-karozzi mqabbla** (jew **Il-karozza** b'karozza waħda) - ara [Profili tal-karozzi u tqabbil](race-car-profiles.md).
@@ -56,10 +56,10 @@ Din il-paġna hi l-mappa tat-tab. Kull parti għandha l-paġna tagħha:
 ## Bidu malajr {#quick-start}
 
 1. Iftaħ it-tab **Analiżi tat-tellieqa** (ħdejn **Heatmap** fil-quċċata tas-sidebar).
-2. Ġib il-ġirjiet. Agħfas **Dawriet demo** biex tara x'jagħmel it-tab b'tliet ġirjiet mħolqa. Għall-ġirjiet tiegħek, irrekordjahom l-ewwel ([formati tal-fajls u rekordaturi](race-loading-laps.md#file-formats)), imbagħad agħfas **Tella' fajls tal-ġiri…** jew **Folder…**, jew ħott fajls jew folders fuq il-veduta.
+2. Ġib il-ġirjiet. Agħfas **Dawriet demo** biex tara x'jagħmel it-tab b'tliet ġirjiet mħolqa. Għall-ġirjiet tiegħek, irrekordjahom l-ewwel ([formati tal-fajls u rekordaturi](race-loading-laps.md#file-formats)), imbagħad agħfas **Iftaħ fajls tad-dawriet…** jew **Folder…**, jew ħott fajls jew folders fuq il-veduta.
 3. L-iktar ġiro sħiħ u mgħaġġel isir ir-referenza; l-iktar ġiro bil-mod mill-oħrajn jiġi ffokat. Ikklikkja kull ġiro fil-lista biex tiffokah; ★ tagħmel ġiro referenza.
 4. Aqra **Fejn titjieb**. Ikklikkja sejba: il-karozzi jitqegħdu f'linja 40 m qabelha, il-kamera tiffrenaha, ir-replay jgħaddi minnha u l-kejliet jinfetħu.
-5. Oqgħod bil-mouse fuq il-grafiċi biex iġġib kull karozza f'dak il-metru; Shift+klikk biex titqegħedhom f'linja hemm.
+5. Poġġi l-mouse fuq il-grafiċi biex iġġib kull karozza f'dak il-metru; Shift+klikk biex titqegħedhom f'linja hemm.
 
 ## Ċwievet {#keyboard}
 
@@ -81,7 +81,7 @@ Iċ-ċwievet miktubin f'kaxxa tal-kitba jew f'drop-down jiġu injorati. Iċ-ċwi
 - Il-grafiċi jpingu sa **8** ġirjiet; il-HUD juri sa **6** kards.
 - L-istatistika tal-kors tidher minn **3** ġirjiet.
 
-Dettalji: [Statistiċi tat-traċċa](race-course-statistics.md#performance-with-many-laps).
+Dettalji: [Statistika tal-korsa](race-course-statistics.md#performance-with-many-laps).
 
 ## Settings tal-veduta default {#default-view-settings}
 
@@ -115,7 +115,7 @@ Kull darba li jinbidel is-sett tal-ġirjiet, ir-referenza jew il-lingwa, l-anali
 8. Għal kull ġiro u segment: il-kont tal-ħin kontra l-ġiro tat-tqabbil tiegħu u s-sejba bil-kliem.
 9. Il-mappa tal-ħin u l-mappa tal-kawża għal kull ġiro.
 
-It-testi jinħolqu fil-lingwa attwali; bidla tal-lingwa tmexxi l-analiżi mill-ġdid (u ttella' l-ismijiet tad-dawriet demo). Falliment fl-analiżi jidher taħt il-buttuni **Ġirjiet** bħala żball, u l-ġirjiet jibqgħu mgħobbija.
+It-testi jinħolqu fil-lingwa attwali; bidla tal-lingwa tmexxi l-analiżi mill-ġdid (u jbiddel l-ismijiet tad-dawriet demo). Falliment fl-analiżi jidher taħt il-buttuni **Ġirjiet** bħala żball, u l-ġirjiet jibqgħu mgħobbija.
 
 ### Fajls tas-sors {#source-files}
 

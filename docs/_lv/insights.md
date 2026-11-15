@@ -11,7 +11,7 @@ outdated: false
 
 # Atziņas
 
-**Atziņas** pārlūko ielādētos datus, meklējot to, kas izceļas - spēcīgas pozīcijas, nāvējošu zemi, dzemdēšanās slazdus, sašaurinājumus, spēlētājus, kas ievērojami pārspēj savus vienaudžus - un pastāsta jums, sākot ar spēcīgāko, ar pierādījumiem. Ar to vienā minūtē var uzzināt, kur spēle tika uzvarēta vai zaudēta. Pēc tam tas var uzrakstīt kopsavilkumu, un vienas spēles atkārtojumā tas var darboties kā komentētājs, kas pārlec uz lielajiem mirkļiem.
+**Atziņas** pārlūko ielādētos datus, meklējot to, kas izceļas - spēcīgas pozīcijas, nāvējošu zemi, spawn slazdus, sašaurinājumus, spēlētājus, kas ievērojami pārspēj savus vienaudžus - un pastāsta jums, sākot ar spēcīgāko, ar pierādījumiem. Ar to vienā minūtē var uzzināt, kur spēle tika uzvarēta vai zaudēta. Pēc tam tas var uzrakstīt kopsavilkumu, un vienas spēles atkārtojumā tas var darboties kā komentētājs, kas pārlec uz lielajiem mirkļiem.
 
 Viss tiek skaitīts jūsu pārlūkā. Nekas neatstāj jūsu datoru, ja vien neieslēdzat ārēju MI (skatiet [Ārējais MI](#external-ai)).
 

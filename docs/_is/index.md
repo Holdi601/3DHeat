@@ -12,7 +12,7 @@ outdated: false
 
 3DHeat sýnir hvar hlutir gerðust í leik - hvert leikmenn fóru, börðust og féllu - sem glóandi liti sem þú getur flogið í gegnum, eða sem litlar þrívíðar fígúrur sem endurspila leikinn.
 
-Hlaðið inn staðsetningum - CSV, Parquet, Tacview-upptökum, breyttum endurspilunum, einni skrá, möppu eða þúsundum leikja - og sjáið þær sem **hitakort sem þú getur flogið í gegnum**, sem **fígúrur sem endurspila leikinn**, sem línur eftir leiðunum sem fólk fór, eða sem einn hóp á móti öðrum. Það finnur sjálft það sem sker sig úr, og það keyrir alveg í vafranum: ekkert er sent neitt.
+Hlaðið inn staðsetningum - CSV, Parquet, Tacview-upptökum, breyttum endurspilunum, einni skrá, möppu eða þúsundum leikja - og sjáið þær sem **hitakort sem þú getur flogið í gegnum**, sem **fígúrur sem endurspila leikinn**, sem línur eftir leiðunum sem fólk fór, eða sem einn hóp á móti öðrum. Það finnur sjálft það sem sker sig úr, og það keyrir alveg í vafranum: ekkert er sent á neinn stað.
 
 ![Hiti tíu skriðdrekaleikja yfir sýnidalnum](../assets/img/en/heat-hero.webp)
 
@@ -27,7 +27,7 @@ Hlaðið inn staðsetningum - CSV, Parquet, Tacview-upptökum, breyttum endurspi
 | ![Innsýn](../assets/img/en/insights.webp) | **[Innsýn](insights.md)** - sterkar stöður, banvænt land, gildrur við upphaf, flöskuhálsar og áberandi leikmenn, fundið og raðað ásamt gögnunum; skrifuð samantekt, valfrjálst frá gervigreind að eigin vali; lýsandi fyrir einn leik; [þekkingarlinsan](knowledge.md). |
 | ![Rúmmál](../assets/img/en/compare.webp) | **[Rúmmál](volumes.md)** - teiknaðu kassa, prisma, sívalninga og kúlur, síaðu niður í þá, teldu það sem gerist inni, fluttu út og berðu staði saman hlið við hlið; [sundurliðun](breakdown.md) á því hver og hvað gengur best á stað. |
 | ![Síur](../assets/img/en/filters.webp) | **[Síur](filters.md)** - eftir atburðategund, leikmanni eða gervigreind, flokki farartækis, gildi, hvaða dálki sem er, á skjákortinu við hvaða gagnastærð sem er. |
-| ![Borð](../assets/img/en/level-panel.webp) | **[Borð](levels.md)** - kortamyndir, þrívíð borð gerð með [gagnatólunum](#related-repositories), einföldun, [bakgrunnur heimsins](world-backdrop.md) með raunverulegu landslagi fyrir flugógn. |
+| ![Borð](../assets/img/en/level-panel.webp) | **[Borð](levels.md)** - kortamyndir, þrívíð borð gerð með [gagnatólunum](#related-repositories), einföldun, [bakgrunnur heimsins](world-backdrop.md) með raunverulegu landslagi fyrir gögn úr flugi. |
 
 Einnig: flipinn [Kappakstursgreining](race-analysis.md) fyrir hringi í kappakstursleikjum, flipinn [Leikur](match-analysis.md) fyrir samantektir úr Counter-Strike 2, [Taktíkartaflan](tactics-board.md) fyrir áætlanir á borði, [greining á hittum](hit-analysis.md) eftir farartæki, [fjöldagreining](mass-analysis.md) á þúsundum leikja, [myndavélarleiðir og myndband](camera-path-and-video.md), [40 tungumál](languages.md), [mælieiningar eða breskar einingar](settings.md).
 
@@ -94,7 +94,7 @@ Skoðarinn er kyrrstæð vefsíða, en þróunarþjónninn (sjá `vite.config.ts
 
 ## Kröfur um vafra og skjákort {#browser-and-gpu-requirements}
 
-- **Vafri með WebGPU eða WebGL2.** WebGPU er prófað fyrst (Chrome og Edge hafa það); án þess er WebGL2-bakendinn notaður. WebGL2 verður að bjóða `EXT_color_buffer_float` (teikning í fleytitöflur), annars sýnir skoðarinn "Cannot initialise the renderer." Sjá [Bakendarnir tveir](backends.md). Skoðarinn er þróaður og prófaður í Chromium; aðrir vafrar eru óprófaðir.
+- **Vafri með WebGPU eða WebGL2.** WebGPU er prófað fyrst (Chrome og Edge hafa það); án þess er WebGL2-bakendinn notaður. WebGL2 verður að bjóða `EXT_color_buffer_float` (teikning í fleytitöflur), annars sýnir skoðarinn "Ekki tókst að frumstilla teiknivélina." Sjá [Bakendarnir tveir](backends.md). Skoðarinn er þróaður og prófaður í Chromium; aðrir vafrar eru óprófaðir.
 - **Vélbúnaðarhröðun kveikt.** Þegar vafrinn teiknar á örgjörvanum (SwiftShader, llvmpipe, Microsoft Basic Render Driver og svipað) sýnir rauður borði efst í hliðarstikunni að svo sé og hvernig eigi að laga það. Sjá [Greining hugbúnaðarmyndvinnslu](software-rendering.md).
 - **Stakt skjákort hjálpar, en er ekki skilyrði.** Báðir bakendarnir biðja um afkastamikla millistykkið. Það magn gagna sem hægt er að geyma á skjákortinu er fjárhagsáætlun sem þú sérð og getur breytt ([Minni og mörk](memory-and-budgets.md)).
 - **Valfrjálsir eiginleikar** nota fleiri vafraforritaskil: myndbandsbirting þarfnast WebCodecs `VideoEncoder` með VP9 eða VP8 ([Myndavélarleið og myndband](camera-path-and-video.md)); einföldun möskva á borðum þarfnast WebAssembly; að sleppa möppum á skjáinn notar File and Directory Entries API; borðasafnið notar IndexedDB; stýripinnar nota Gamepad API.

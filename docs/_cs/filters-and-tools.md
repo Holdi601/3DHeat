@@ -11,9 +11,9 @@ outdated: false
 
 # Filtry a nástroje
 
-Tyto panely vám umožní vybrat, *které* údaje se dívají a měřit to, co vidíte. Použijte je, když je obrázek příliš přeplněný: ukažte jeden tým, jednoho hráče, jedno místo nebo jedno patro budovy.
+Tyto panely vám umožní vybrat, *která* data sledujete, a změřit to, co vidíte. Použijte je, když je obrázek příliš přeplněný: ukažte jeden tým, jednoho hráče, jedno místo nebo jedno patro budovy.
 
-Každý panel data zúží a spolupracují: řádek se nakreslí, jen když projde **všemi** (A zároveň).
+Každý panel data zúží a spolupracují: řádek se nakreslí, jen když projde **všemi** (AND, tedy zároveň).
 
 ```
 všechny řádky -> Filtry -> Týmy -> Entity -> Řez -> obrázek
@@ -25,7 +25,7 @@ Příklad: odškrtněte *Tank* v Filtrech, skryjte červený tým v Týmech a vy
 | Panel | Co dělá | Režimy tepla | Překryv figur |
 |---|---|---|---|
 | [Filtry](filters.md) | Filtry rozsahu a kategorií na libovolném sloupci ponechaném při načtení. | Ano | Ne (jen filtry sloupců) |
-| [Rozdělení rozdílu](difference.md#the-difference-split-panel) | Které řádky přidávají a které odečítají, v režimu Rozdíl. | Jen Rozdíl | Ne |
+| [Rozdílové rozdělení](difference.md#the-difference-split-panel) | Které řádky přidávají a které odečítají, v režimu Rozdíl. | Jen Rozdíl | Ne |
 | [Týmy](teams-list.md) | Zobrazit nebo skrýt každý tým; dát týmy na stranu + nebo -. | Ano | Ano |
 | [Entity](entities.md) | Výběr jednotlivých hráčů. | Ano | Ano |
 | [Řez](slice.md) | Vyřízne vrstvu z levelu a tepla, abyste viděli dovnitř budov. | Ano, a level | Ne |
@@ -45,7 +45,7 @@ Postranní panel karty Teplotní mapa shora dolů:
 2. Zdroj, Mapování sloupců, Datová sada
 3. Trasy (režim Čáry)
 4. Panely tepla, nebo Týmové zobrazení
-5. Rozdělení rozdílu
+5. Rozdílové rozdělení
 6. Týmy
 7. Entity
 8. Filtry

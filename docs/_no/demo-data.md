@@ -38,7 +38,7 @@ Hver tabell navngir sine egne kolonner i bunnteksten, så den lastes inn uten no
 ## Prøv det {#try-it}
 
 1. Start visningsprogrammet (`start.bat` på Windows, eller `npm install` én gang og deretter `npm run dev` på alle systemer) og åpne `http://127.0.0.1:5273/`.
-2. **Bakgrunn / bane → 3D-modell…** og velg `demo-valley.glb`.
+2. **Bakgrunn / nivå → 3D-modell…** og velg `demo-valley.glb`.
 3. **Kilde → Filer…** og velg `tanks.parquet`.
 4. Trykk `F` for å tilpasse rammen til dataene. Du ser [varmen](heat.md) fra ti kamper.
 5. Prøv modusraden: **Differanse** (Blue mot Red), **Lagvarme**, **Linjer**.

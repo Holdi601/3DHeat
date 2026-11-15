@@ -34,7 +34,7 @@ Jekk tagħżel **Kollox** il-playback jieqaf ukoll.
 | ▶ / ❚❚ | mwaqqaf | Iħaddem jew iwaqqaf; ukoll `K`. |
 | ◀ **Ħaddem lura (J)** | | Iħaddem id-data bil-maqlub. Juri biss fil-modalità **Figuri fuq xulxin**; iċ-ċavetta `J` taħdem hemm ukoll (ara [Ċavetta](#keyboard)). |
 | ⏮ | | Lura għall-bidu tal-medda. |
-| Arloġġ | | `elapsed / total` bħala `mm:ss.s` (jew `h:mm:ss`), u, meta l-kolonna tal-ħin tkun timestamp assolut, il-ħin tal-ħajt tal-playhead bħala `HH:MM:SSZ` (UTC). |
+| Arloġġ | | `elapsed / total` bħala `mm:ss.s` (jew `h:mm:ss`), u, meta l-kolonna tal-ħin tkun timestamp assolut, il-ħin tal-ġurnata tal-playhead bħala `HH:MM:SSZ` (UTC). |
 | **Veloċità** | 1× | Sekondi tad-dataset għal kull sekonda reali. Il-menu għandu 17-il pass minn 0.01× sa 1800× (0.01, 0.02, 0.05, 0.1, 0.25, 0.5, 1, 2, 4, 8, 16, 32, 64, 128, 256, 600, 1800), u **Personalizzata…**: ikteb kwalunkwe veloċità minn 0.001× sa 3600× (pereżempju 0.3 jew 12) u agħfas Enter; Esc iżomm il-veloċità attwali. L-aħħar veloċità tinftakar għall-volta li jmiss (ara [Settings maħżuna](ref-settings-storage.md)). |
 | **Storja** | Kumulattiva | Dak li jitqies viżibbli fil-playhead: *Kumulattiva*, *Tieqa* jew *Ħajja* (aktar 'l isfel). |
 | **Medda** (Tieqa; fil-modalità Linji wkoll Ħajja) | 30 s | Tul it-tieqa li tispiċċa fil-playhead; mill-inqas 0.01 s. Fil-[Sħana tal-linji](line-heat.md#playback) hija t-tul tad-denb. |
@@ -62,7 +62,7 @@ Mill-loop tal-frame ([`engine.ts`](https://github.com/Holdi601/3DHeat/blob/main/
 - Il-playhead jitqaddem bi *ħin tal-frame × veloċità*. Il-ħin tal-frame jiġi mqabbad għal 0.1 s, sabiex it-tibdil ta' tab ma jqaffazx il-playhead.
 - Meta tagħfas Ħaddem fl-aħħar eżatt tal-medda, jibda mill-bidu, bħal media player. F'kull tagħbija l-playhead jitpoġġa fil-bidu, għalhekk l-ewwel pressjoni ta' Ħaddem tħaddem.
 - Fl-aħħar tal-medda l-playhead jirritorna għall-bidu (Ripetizzjoni fuq) jew jieqaf hemm u l-playback jintemm (Ripetizzjoni mitfija).
-- L-iskrubber jaqra l-playhead tal-magna direttament f'kull frame; l-istat tal-applikazzjoni jiġi aġġornat fuq it-tfittxija, il-bidu, it-twaqqif u l-lupep.
+- L-iskrubber jaqra l-playhead tal-magna direttament f'kull frame; l-istat tal-applikazzjoni jiġi aġġornat fuq it-tfittxija, il-bidu, it-twaqqif u ċ-ċikli.
 - Jekk tagħżel sessjoni fil-għażla tas-sessjoni, tfittex il-bidu ta' dik is-sessjoni.
 
 ## Għaliex il-playback hu lixx, u irħis {#why-playback-is-smooth-and-cheap}

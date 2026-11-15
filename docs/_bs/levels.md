@@ -17,7 +17,7 @@ Nivo je 3D mjesto na kojem se igra odvijala - mapa, grad, staza. Stavite ga iza 
 - **3D nivo** - `.glb`, `.gltf`, `.obj`, `.stl` ili `.ply` - podijeljen na tlo, strukture i vodu i pojednostavljen pri uvozu - vidi [3D nivoi](model-levels.md) i [Izgled nivoa](level-appearance.md);
 - **pozadina svijeta** - za snimak koji kaže gdje je na Zemlji (Tacview ACMI datoteka), stvarni teren, putevi, voda, aerodromi i zgrade, preuzeti iz otvorenih podataka - vidi [Pozadina svijeta](world-backdrop.md).
 
-Kada ništa nije učitano, scena je tamna s mrežom i obojenim osama (**Mreža** i **Ose** u [Kamera i scena](camera.md)), a panel kaže *Ništa nije učitano - scena prikazuje mrežu i ose. Dodajte sliku mape ili mrežu nivoa da toplota dobije kontekst.*
+Kada ništa nije učitano, scena je tamna s mrežom i obojenim osama (**Mreža** i **Ose** u [Kamera i scena](camera.md)), a panel kaže *Ništa nije učitano - scena prikazuje mrežu i ose. Dodajte sliku mape ili 3D model nivoa da toplota dobije kontekst.*
 
 Nivo dijele sve tri kartice: kurs učitan u kartici Analiza utrke je isti nivo koji prikazuje toplotna mapa.
 

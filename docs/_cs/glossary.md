@@ -50,9 +50,9 @@ Krátké významy slov, která tyto stránky používají, prostou řečí. Kaž
 
 ## Přehrání {#replay}
 
-**Figura.** Malý model tanku, letadla, auta nebo vojáka, který se pohybuje tam, kde data říkají, že byl. [Obrazce](figures.md)
+**Figura.** Malý model tanku, letadla, auta nebo vojáka, který se pohybuje tam, kde data říkají, že byl. [Figury](figures.md)
 
-**LOD (úroveň detailu).** Každá figura má podrobnou, jednodušší a velmi jednoduchou verzi. Blízké používají podrobnou, vzdálené jednoduchou, takže lze kreslit tisíce najednou. [Obrazce](figures.md)
+**LOD (úroveň detailu).** Každá figura má podrobnou, jednodušší a velmi jednoduchou verzi. Blízké používají podrobnou, vzdálené jednoduchou, takže lze kreslit tisíce najednou. [Figury](figures.md)
 
 ## Závody {#racing}
 

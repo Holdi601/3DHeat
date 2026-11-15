@@ -46,7 +46,7 @@ Objemy merajú, čo sa deje vnútri nich, filtrujú pohľad na ne, exportujú ic
 - Alt+ťahanie kopíruje, Del odstráni, Ctrl+Z / Ctrl+Y vrátia a zopakujú, Ctrl+D duplikuje. **Odstrániť všetko** zmaže každý objem.
 - Presné hodnoty: Podlaha, Strop, Otočenie / Sklon / Náklon (kvádre), Polomer (gule, valce).
 
-Každý riadok objemu má zaškrtávacie políčko zobrazenia, farbu, názov, **zahrnúť** alebo **vylúčiť**, duplikovať a odstrániť. Objemy sa ukladajú v prehliadači pre každú dátovú sadu a **Uložiť...** / **Načítať...** zapisujú a čítajú súbor `volumes.json`.
+Každý riadok objemu má zaškrtávacie políčko zobrazenia, farbu, názov, **zahrnúť** alebo **vylúčiť**, duplikovať a odstrániť. Objemy sa ukladajú v prehliadači pre každú dátovú sadu a **Uložiť…** / **Načítať…** zapisujú a čítajú súbor `volumes.json`.
 
 ## Filtrovanie pohľadu {#filter-the-view}
 
@@ -69,10 +69,10 @@ Oblasť **Štatistiky** sleduje filtre, časové okno a skryté skupiny. *Vybran
 
 ## Porovnanie objemov {#compare-volumes}
 
-Pri dvoch alebo viacerých viditeľných objemoch stlačte **Porovnanie...**.
+Pri dvoch alebo viacerých viditeľných objemoch stlačte **Porovnať…**.
 
 1. Nakreslite tri objemy, napríklad Západný kopec, Východný kopec a Dedina.
-2. Stlačte **Porovnanie...** pod Štatistikami.
+2. Stlačte **Porovnať…** pod Štatistikami.
 3. V **Tabuľka** čítajte rozdiel každej hodnoty od prvého objemu.
 4. Prepnite na **Stĺpce**, aby ste podiely videli ako stĺpce.
 

@@ -23,7 +23,7 @@ Zwee Modi op der héchster Ebene, well se verschidden Froen beäntwerten.
 - **Alles** (de Standard bei all Lueden) ignoréiert de Playhead ganz a weist all Zeil, déi d'Filteren passéiert. Dat ass d'Usiicht "wou geschitt dat", an et ass net dat selwecht wéi zum Enn réckelen. De Schieber ass ausgeschalt, an d'Auer weist `alles · <span> vun Daten`.
 - **Ofspillen** spillt d'Daten als Zäitraffer of. Schieber, Transport an d'Vergaangeheetsastellunge erscheinen.
 
-Wann Dir **Alles** wielt, hält d'Wiedergab och un.
+Wann Dir **Alles** wielt, stoppt d'Ofspillen och.
 
 ## D'Steierungen {#the-controls}
 

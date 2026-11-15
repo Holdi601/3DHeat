@@ -31,7 +31,7 @@ Katrs fails ir viena spēle (vai satur vairākas). Darbojas Parquet faili un [`.
 | **Pēc komandas** / **Pēc spēles** | Krāsot pēc puses vai krāsa katrai spēlei. |
 | **Atzīmēt, kur vienības gāja bojā** | Atzīme, kur katra vienība gāja bojā, uz 10 s, 30 s, 120 s vai visu līdz šim. |
 
-Panelis rāda, cik spēļu, vienību, rindu un pozīciju tika nolasīts, izmantoto atmiņu un ielādes laiku. *Vieta priekš* ir, cik vēl pozīciju grafikas karte varētu uzņemt. *Figūras no* ir izmērs ekrānā, zem kura vienība tiek zīmēta kā mazs šautriņš, nevis kā tās figūra.
+Panelis rāda, cik spēļu, vienību, rindu un pozīciju tika nolasīts, izmantoto atmiņu un ielādes laiku. *Vieta* ir, cik vēl pozīciju grafikas karte varētu uzņemt. *Figūras no* ir izmērs ekrānā, zem kura vienība tiek zīmēta kā mazs šautriņš, nevis kā tās figūra.
 
 Figūru izskats izmanto tās pašas vadības kā [spēles atkārtojums](match-replay.md#figures): **Figūru izmērs**, **Mazākā figūra ekrānā** un **No attāluma**.
 

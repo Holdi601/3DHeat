@@ -10,7 +10,7 @@ outdated: false
 
 # Glosārijs
 
-Īsas vārdu nozīmes šajā vietnē, vienkārā valodā. Katrs ieraksts saista ar lapu, kas to izskaidro pilnībā.
+Īsas vārdu nozīmes šajā vietnē, vienkāršā valodā. Katrs ieraksts saista ar lapu, kas to izskaidro pilnībā.
 
 ## Dati {#data}
 

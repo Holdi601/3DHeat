@@ -79,7 +79,7 @@ Taispeánann gach pointe bealaigh an am ón gceann deiridh agus an am ó thús a
 Léann **Lódáil comhaid chluiche…** táblaí meaits CS2 na léarscáile (comhaid Parquet uirlis CS2, cá mhéad is mian leat; na colúin amháin is gá, sa chúlra); cuireann **Úsáid na sonraí luchtaithe** na sonraí a lódáladh san amharcóir isteach. Ansin:
 
 - Dathaíonn **An sroicheadh is luaithe ar an léarscáil** an léarscáil de réir an ama ó thús an bhabhta a shroich imreoir an chéad uair gach spota - sroicheann an cnaipe **Is tapúla** an ceann is tapúla thar gach babhta, **Tipiciúil (airmheán)** an babhta lár - glas go luath, dearg go déanach, do thaobh amháin nó don dá cheann. Taispeánann sé cad is féidir a dhéanamh agus cathain.
-- Déantar cosán roghnaithe a chur i gcomparáid leis an méid a bhain imreoirí amach ó thús an chosáin (nó ó thús an bhabhta) go deireadh an chosáin, gach deireadh ina diosca de ghá an ga socraithe: "Is tapúla breathnaithe 14.2 s, p10 15.0 s, airmheán 18.3 s thar 41 rith; do phlean 15.1 s".
+- Déantar cosán roghnaithe a chur i gcomparáid leis an méid a bhain imreoirí amach ó thús an chosáin (nó ó thús an bhabhta) go deireadh an chosáin, gach deireadh ina dhiosca den ga socraithe: "Is tapúla breathnaithe 14.2 s, p10 15.0 s, airmheán 18.3 s thar 41 rith; do phlean 15.1 s".
 - Na luasanna a bhog imreoirí i ndáiríre - ag rith, ag siúl, ag crouchadh, ó cholúin siúil agus lúbthachta na dtáblaí - i m/s.
 
 ## Céimeanna {#steps}

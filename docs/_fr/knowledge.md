@@ -1,5 +1,5 @@
 ---
-title: "La lentille de connaissances"
+title: "Le prisme de connaissances"
 parent: "Observations"
 nav_order: 1
 lang: "fr"

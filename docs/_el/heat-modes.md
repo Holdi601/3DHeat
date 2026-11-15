@@ -48,7 +48,7 @@ outdated: false
 | Κατεύθυνση ([κατευθυντική θερμότητα](directional-heat.md)), Τιμή ([στάθμιση τιμών](value-weighting.md)) | ναι | ναι | ναι | | ναι |
 | Προβολή ομάδων ([επικάλυψη φιγούρων](box-replay.md)) | | | | ναι | |
 | Διαχωρισμός διαφοράς ([διαφορά](difference.md)) | | ναι | | | |
-| [Ομάδες](teams-list.md), [Οντότητες](entities.md), [Φίλτρα](filters.md), Background / level, [Τομή](slice.md), [Μέτρηση](measure.md), Camera path & render, Performance, Camera & scene | ναι | ναι | ναι | ναι | ναι |
+| [Ομάδες](teams-list.md), [Οντότητες](entities.md), [Φίλτρα](filters.md), Φόντο / πίστα, [Τομή](slice.md), [Μέτρηση](measure.md), Διαδρομή κάμερας & απόδοση, Επιδόσεις, Κάμερα & σκηνή | ναι | ναι | ναι | ναι | ναι |
 
 ## Τι μοιράζονται όλες οι λειτουργίες θερμότητας {#what-every-heat-mode-shares}
 

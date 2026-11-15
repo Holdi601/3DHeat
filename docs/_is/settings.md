@@ -20,8 +20,8 @@ Efst í hliðarstikunni:
 | Stjórn | Hvað hún gerir |
 |---|---|
 | **?** | Hjálparhamur: hvað hver litur þýðir (líka `?` eða `F1`) |
-| **Einingar**-valmynd | Metrakerfi, breska kerfið, flug eða sjómílur |
-| **...**-hnappur við hlið **Einingar** | Opnar "Choose a unit for each quantity": eina fellivalmynd fyrir hverja stærð |
+| **Einingar**-valmynd | Metrakerfi, Breskt kerfi, Flug eða Siglingar |
+| **...**-hnappur við hlið **Einingar** | Opnar "Veldu mælieiningu fyrir hverja stærð": eina fellivalmynd fyrir hverja stærð |
 | **Tungumál**-valmynd | Tungumál skoðarans: [40 tungumál](languages.md), eða tungumál vafrans |
 
 ![Hausinn með valmyndinni Einingar og glugganum fyrir eina einingu á hverja stærð opnum](../assets/img/en/settings-units.webp)
@@ -32,9 +32,9 @@ Tölur sem þú skrifar í reit mega nota annaðhvort punkt eða komma (`0.35` e
 
 1. Veldu forstillingu í valmyndinni **Einingar**. Allar stærðir skipta saman.
 2. Til að breyta aðeins einni stærð, smelltu á **...**-hnappinn við hliðina á henni og veldu einingu fyrir hana. Valmyndin sýnir þá `*` á eftir forstillingunni.
-3. Stærð sem þú stillir ekki fylgir forstillingunni. Veldu "As preset" til að fara til baka.
+3. Stærð sem þú stillir ekki fylgir forstillingunni. Veldu "Eftir forstillingu" til að fara til baka.
 
-| Stærð | Metrakerfi (sjálfgefið) | Breska kerfið | Flug | Sjómílur |
+| Stærð | Metrakerfi (sjálfgefið) | Breskt kerfi | Flug | Siglingar |
 |---|---|---|---|---|
 | Vegalengd | km | mi | NM | NM |
 | Hæð, lengd | m | ft | ft | m |
@@ -51,7 +51,7 @@ Aðrar einingar sem þú getur valið fyrir eina stærð: vegalengd km, mi, NM; 
 
 ![Hjálparhamur: hvað litirnir þýða](../assets/img/en/help.webp)
 
-Ýttu á `?` eða `F1`, eða smelltu á hnappinn **?**. Hann sýnir *What the colours mean*: skýringar á þrívíðu sýninni, hitaskölunum, liðslitum, litum borðsins, stöðulitum spjaldanna, leikspjaldinu og kappakstursglugganum. Hann helst á þar til þú slekkur á honum. Í flipanum Leikur útskýrir hann líka liti leikspjaldsins.
+Ýttu á `?` eða `F1`, eða smelltu á hnappinn **?**. Hann sýnir *Hvað litirnir þýða*: skýringar á þrívíðu sýninni, hitaskölunum, liðslitum, litum borðsins, stöðulitum spjaldanna, leikspjaldinu og kappakstursglugganum. Hann helst á þar til þú slekkur á honum. Í flipanum Leikur útskýrir hann líka liti leikspjaldsins.
 
 ![Hjálparhamur í flipanum Leikur](../assets/img/en/settings-help-match.webp)
 
@@ -63,7 +63,7 @@ Aðrar einingar sem þú getur valið fyrir eina stærð: vegalengd km, mi, NM; 
 - stillingar endurspilunar á fígúrum, táknum, merkingum, myndavél og taktískri skjámynd;
 - spilunarhraðann og speglun;
 - bókamerki eftir upptöku, rúmmál eftir gagnasafni, lög markmiða;
-- stillingar ytri gervigreindar (lykillinn aðeins ef þú hakar við *Remember*).
+- stillingar ytri gervigreindar (lykillinn aðeins ef þú hakar við *Muna lykilinn í þessum vafra*).
 
 Hitastillingar, síur og hamurinn byrja upp á nýtt við hverja hleðslu. Allur listinn, sjálfvirkt búinn til: [Vistaðar stillingar](ref-settings-storage.md).
 

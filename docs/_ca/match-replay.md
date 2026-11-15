@@ -62,7 +62,7 @@ Quan una unitat seria més petita que **Figura més petita a la pantalla**, pot 
 
 ### Armes, esquers i traçadors {#weapons-decoys-and-tracers}
 
-Amb **Armes, trets i impactes** activat (secció Visor d'equips): els míssils, coets, bombes i torpedes volen com a figures pròpies amb una estela de fum; les bales i les obusos són traçadors; els impactes i les explosions fan llampec. Un traçador dibuixat **en trossos** s'ha calculat a partir d'un impacte, perquè les dades no tenien el tret. Les bengales i el xaff es dibuixen com a esquers; queden amagats de la llista d'unitats tret que estigui marcat *Esquers i obusos*.
+Amb **Armes, trets i impactes** activat (secció Visor d'equips): els míssils, coets, bombes i torpedes volen com a figures pròpies amb una estela de fum; les bales i els obusos són traçadors; els impactes i les explosions fan llampec. Un traçador dibuixat **en trossos** s'ha calculat a partir d'un impacte, perquè les dades no tenien el tret. Les bengales i el chaff es dibuixen com a esquers; queden amagats de la llista d'unitats tret que estigui marcat *Esquers i obusos*.
 
 ## Càmeres {#cameras}
 

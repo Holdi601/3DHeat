@@ -88,7 +88,7 @@ Shiriti nën pamje mban hapat. Një plan fillon me një; **+** shton një, dhe �
 
 ## Ruajtja {#saving}
 
-Seksioni **Skedari** mban **Ruaj**, **Hap** dhe **Pastro**. **Ruaj** e shkruan planin si `<emri>.h3dplan.json` (JSON i thjeshtë: palët, hapat, figurat me një vend për hap, shigjetat, zonat, shënimet); **Hap** e lexon përsëri. Një skedar i një versioni tjetër, ose një që nuk është plan, refuzohet me arsyen. **Pastro** boshatis planin; Zhbëj e kthen.
+Seksioni **Skedari** mban **Ruaj**, **Hapje** dhe **Pastro**. **Ruaj** e shkruan planin si `<emri>.h3dplan.json` (JSON i thjeshtë: palët, hapat, figurat me një vend për hap, shigjetat, zonat, shënimet); **Hapje** e lexon përsëri. Një skedar i një versioni tjetër, ose një që nuk është plan, refuzohet me arsyen. **Pastro** boshatis planin; Zhbëj e kthen.
 
 ## Figurat {#figures}
 

@@ -10,7 +10,7 @@ outdated: false
 
 # Gluais
 
-Brí ghearra na bhfocal a úsáideann an suíomh seo, i mBéarla simplí. Nascann gach iontráil leis an leathanach a mhíníonn é go hiomlán.
+Brí ghearra na bhfocal a úsáideann an suíomh seo, i dteanga shimplí. Nascann gach iontráil leis an leathanach a mhíníonn é go hiomlán.
 
 ## Sonraí {#data}
 
@@ -64,7 +64,7 @@ Brí ghearra na bhfocal a úsáideann an suíomh seo, i mBéarla simplí. Nascan
 
 **Sleamhnú.** Cé chomh mór agus a shleamhnaíonn taidhe. Tugann sleamhnú beag an tarraingt is mó; ró-mhór agus sleamhnaíonn an carr. [Anailís rásaí: an modh](race-analytics.md)
 
-**Clúdach.** Cad is féidir le carr ag gach luas: cé chomh crua is féidir leis casadh, bréagadh agus luasghéarú sula sleamhnaíonn sé. [Anailís rásaí: an modh](race-analytics.md)
+**Clúdach.** Cad is féidir le carr ag gach luas: cé chomh crua is féidir leis casadh, coscadh agus luasghéarú sula sleamhnaíonn sé. [Anailís rásaí: an modh](race-analytics.md)
 
 ## Uimhreacha aerárthaigh {#aircraft-numbers}
 

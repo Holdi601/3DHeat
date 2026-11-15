@@ -10,7 +10,7 @@ outdated: false
 
 # Datos de demostración: prueba el visor en cinco minutos
 
-![Calor de diez partidas de tanques en Demo Valley: lo que muestra el paso 4](../assets/img/en/heat-hero.webp)
+![Calor de diez partidas de tanques en Demo Valley: lo que muestra el paso 4](../assets/img/es/heat-hero.webp)
 
 ¿Aún no tienes datos propios? El repositorio los genera. Todo es inventado: un valle, un patio, y partidas de tres estilos de juego ficticios con jugadores llamados *Blue 1* o *Red 3*. Todas las imágenes de este sitio se hicieron con ellos.
 
@@ -43,9 +43,9 @@ Cada tabla indica sus propias columnas en su pie, así que se carga sin ninguna 
 4. Pulsa `F` para encuadrar los datos. Verás el [calor](heat.md) de diez partidas.
 5. Prueba la barra de modos: **Diferencia** (Blue contra Red), **Calor por equipo**, **Líneas**.
 6. Abre **Hallazgos** (en la barra lateral de Mapa de calor): encuentra los lugares donde se disparó, impactó y destruyó mucho más que en otros - alrededor de las dos colinas.
-7. Abre la pestaña **Partida**; en **Partidas de la repetición** elige *Partida 01*; pulsa **Reproducir** en la línea de tiempo: la [repetición](match-replay.md).
+7. Abre la pestaña **Partida**; en **Partidas de la repetición** elige *Match 01*; pulsa **Reproducir** en la línea de tiempo: la [repetición](match-replay.md).
 
-![Una repetición de la Partida 01 con tanques como figuras](../assets/img/en/replay-overview.webp)
+![Una repetición de Match 01 con tanques como figuras](../assets/img/es/replay-overview.webp)
 
 Para el juego de disparos, carga `demo-yard.glb` y `shooter.parquet`; para el combate aéreo, `air.parquet` (las figuras se ven mejor con **Tamaño de figura** 4, un control deslizante en el panel **Visor de equipos** de la barra lateral de Mapa de calor).
 

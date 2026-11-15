@@ -1,5 +1,5 @@
 ---
-title: "Pist istatistikleri"
+title: "Parkur istatistikleri"
 parent: "Yarış analizi"
 nav_order: 57
 lang: "tr"

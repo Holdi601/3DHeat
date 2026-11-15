@@ -63,4 +63,4 @@ Panel **Datová sada** (pod **Zdrojem**) má [syntetický generátor](synthetic-
 - [Osy, jednotky a čas](axes-units-and-time.md) - svislá osa, převrácení, měřítko jednotek, časové jednotky, směr pohledu
 - [Relace, osoby a skupiny](sessions-persons-groups.md) - co každá dělá, limity, sdílené názvy, velikost entit, panel Datová sada
 - [Syntetický generátor](synthetic-generator.md)
-- [Paměť a rozpočty](memory-and-budgets.md) - model paměťové stopy, kontrola, proředění, strop řazení, rozpočty zdrojů
+- [Paměť a rozpočty](memory-and-budgets.md) - model paměťové stopy, kontrola, proředění, strop řazení, rozpočty prostředků

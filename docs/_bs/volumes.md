@@ -14,10 +14,10 @@ outdated: false
 **Zapremina** je nevidljiva kutija (ili cilindar, ili sfera) koju crtate oko nekog mjesta, da postavite pitanje: šta se ovdje dogodilo? Koristite je da brojite ubistva na mostu, da uporedite dva brda ili da prikažete samo aktivnost u jednoj oblasti.
 
 ```
- top view                 You draw a shape ->  the viewer counts
- +------------+           what is inside:
- |   ( A )    |            rows, players, kills, time ...
- |        [B] |           Compare A with B, side by side.
+ pogled odozgo            Nacrtate oblik ->  prikazivač broji
+ +------------+           šta je unutra:
+ |   ( A )    |            redovi, igrači, ubistva, vrijeme ...
+ |        [B] |           Uporedi A s B, jedno uz drugo.
  +------------+
 ```
 
@@ -65,7 +65,7 @@ Oblast **Statistika** prati filtere, vremenski prozor i sakrivene grupe. *Izabra
 - **Redova unutra (prikazanih)** i **Redova unutra (svi podaci)**, **Igrači**, **Timovi**, **Mečevi**, **Vrijeme unutra**, **Ulasci / izlasci**, **Vrh toplote**, **Prosječna toplota**, **Volumen / osnova** i histogram **Kada**;
 - po koloni: kategorije s **Liftom** (udio unutra podijeljen s udjelom u svim prikazanim podacima), a brojevi s opsegom, medijanom i 5. do 95. percentilom.
 
-**Statistika kao CSV / JSON** ih čuva. **Izvezi podatke unutra** upisuje redove unutra kao CSV ili Parquet (*Samo prikazani redovi* uključeno po defaultu), jednu zapreminu ili sve, s kolonom koja kaže kojoj zapremini pripada svaki red.
+**Statistika kao CSV / JSON** ih čuva. **Izvezi podatke unutra** upisuje redove unutra kao CSV ili Parquet (*Samo prikazani redovi* uključeno podrazumijevano), jednu zapreminu ili sve, s kolonom koja kaže kojoj zapremini pripada svaki red.
 
 ## Poredite zapremine {#compare-volumes}
 

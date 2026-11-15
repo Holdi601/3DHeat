@@ -50,7 +50,7 @@ Bir nicelik için seçebileceğiniz diğer birimler: mesafe km, mi, NM; hız km/
 
 ![Yardım modu: renklerin ne anlama geldiği](../assets/img/en/help.webp)
 
-`?` ya da `F1`'e basın ya da **?** düğmesine tıklayın. *Renkler ne anlama gelir* bölümünü gösterir: 3B görünüm için açıklamalar, ısı rampaları, takım renkleri, seviyenin renkleri, panellerin durum renkleri, maç paneli ve yarış görünümü. Kapatana kadar açık kalır. Maç sekmesinde maç panelinin renklerini de açıklar.
+`?` ya da `F1`'e basın ya da **?** düğmesine tıklayın. *Renklerin anlamı* bölümünü gösterir: 3B görünüm için açıklamalar, ısı rampaları, takım renkleri, seviyenin renkleri, panellerin durum renkleri, maç paneli ve yarış görünümü. Kapatana kadar açık kalır. Maç sekmesinde maç panelinin renklerini de açıklar.
 
 ![Maç sekmesinde yardım modu](../assets/img/en/settings-help-match.webp)
 

@@ -49,7 +49,7 @@ Táto stránka je mapou karty. Každá časť má vlastnú stránku:
    Pozri [Prehrávanie a 3D scéna](race-replay-and-scene.md).
 8. Spoločné panely **Level** a **Kamera a scéna** (model trate, obrátenie osí, kamera) - popísané pri heatmape a v [Kamere](camera.md).
 
-**Pohľad** zobrazuje trať, jazdené čiary, mapu, autá, popisky pripnuté k trati a až šesť kariet áut vľavo hore (pozri [Grafy a HUD](race-charts-and-hud.md)). Bez načítaných kôl píše „Nie sú načítané žiadne kolá - sem pustite dva alebo viac súborov kôl alebo načítajte ukážkové kolá z bočného panela.“
+**Pohľad** zobrazuje trať, jazdené čiary, mapu, autá, popisky pripnuté k trati a až šesť kariet áut vľavo hore (pozri [Grafy a HUD](race-charts-and-hud.md)). Bez načítaných kôl píše „Nie sú načítané žiadne kolá. Pustite sem dva alebo viac súborov s kolami, alebo načítajte ukážkové kolá z bočného panela.“
 
 **Lišta pod pohľadom** obsahuje prenos prehrávania a, pokiaľ nie je skrytá, grafy vzdialenosti.
 
@@ -76,7 +76,7 @@ Klávesy napísané do textového poľa alebo rozbaľovacieho zoznamu sa ignoruj
 ## Veľa kôl {#many-laps}
 
 - Všetky načítané kolá sa analyzujú a počítajú; desiatky trvajú sekundu alebo dve.
-- Nad **8** kôl (`SHOW_ALL_UP_TO`) sa pridané kolá kreslia len vtedy, ak sú referenciou, zameraným kolom alebo najlepším kolom triedy zameraného kola. Prepínajú sa *Zobraziť všetky* / *Len tie, na ktoré sa pozeráte*.
+- Nad **8** kôl (`SHOW_ALL_UP_TO`) sa pridané kolá kreslia len vtedy, ak sú referenciou, zameraným kolom alebo najlepším kolom triedy zameraného kola. Prepínajú sa *Zobraziť všetky* / *Len skúmané*.
 - Nad **10** viditeľných áut (`PLAIN_PAST`) sa kolá, na ktoré sa nepozeráte (nie zamerané, nie sledované auto ani referencia), kreslia s čiarami zredukovanými na jeden bod každých 6 m namiesto 1,5 m, a ako obyčajné autá.
 - Grafy kreslia najviac **8** kôl; HUD ukazuje najviac **6** kariet.
 - Štatistiky trate sa objavia od **3** kôl.
@@ -88,11 +88,11 @@ Podrobnosti: [Štatistiky trate](race-course-statistics.md#performance-with-many
 | Nastavenie | Predvolená hodnota |
 |---|---|
 | Mapa | Časová mapa |
-| Jazdené čiary, Autá, Pneumatiky a odpruženie, Popisky, Trať z kôl | zapnuté |
+| Odjazdené stopy, Autá, Pneumatiky a odpruženie, Popisky, Trať z kôl | zapnuté |
 | Všetky hodnoty na kartách | vypnuté |
 | Veľkosť auta | 1× |
 | Grafy | zobrazené |
-| Režim prehrávania | Od čiary |
+| Režim prehrávania | Od štartu |
 | Rýchlosť prehrávania | 1× |
 | Slučka | zapnuté |
 
@@ -100,7 +100,7 @@ Nič z toho sa neukladá; po obnovení sa začne od predvolených hodnôt. V pre
 
 ## Pre vývojárov {#for-developers}
 
-### What happens when laps are loaded {#what-happens-when-laps-are-loaded}
+### Čo sa stane pri načítaní kôl {#what-happens-when-laps-are-loaded}
 
 Pri každej zmene množiny kôl, referencie alebo jazyka sa celá analýza spustí znova (`analyse` v [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
 
@@ -116,7 +116,7 @@ Pri každej zmene množiny kôl, referencie alebo jazyka sa celá analýza spust
 
 Texty sa tvoria v aktuálnom jazyku; prepnutie jazyka spustí analýzu znova (a premenuje ukážkové kolá). Chyba analýzy sa zobrazí pod tlačidlami **Kolá** ako chyba a kolá zostanú načítané.
 
-### Source files {#source-files}
+### Zdrojové súbory {#source-files}
 
 | Súbor | Úloha |
 |---|---|

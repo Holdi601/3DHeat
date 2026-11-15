@@ -32,7 +32,7 @@ Lämpökartta-välilehden sivupalkin yläosan tilapalkki valitsee, miten [aineis
 | **Lämpö** | 1 | Lisäävä tiheys: jokainen näkyvä rivi lisää kameraan päin olevan säteittäisen hahmon. [Lämpö](heat.md) | aineiston |
 | **Erotus** | 2 | Etumerkillinen tiheys: yksi joukko lisää, toinen vähentää. [Erotus](difference.md) | kaksi puolta: vähintään kaksi ryhmää tai jako säilytetyn sarakkeen mukaan |
 | **Joukkuelämpö** | 3 | Ryhmän mukaan värjätty tiheys: sävy kullekin ryhmälle, sekoitettuna siellä, missä ryhmät menevät päällekkäin. [Joukkuelämpö](team-heat.md) | ryhmäsarakkeen |
-| **Hahmot päällekkäin** | - | Hahmo (tai laatikko) per henkilö, liikkuu aikajanalla: toisto. [Hahmot päällekkäin](box-replay.md), [Ottelun toisto](match-replay.md) | henkilösarakkeen |
+| **Hahmot päällekkäin** | - | Hahmo (tai laatikko) jokaiselle henkilölle, liikkuu aikajanalla: toisto. [Hahmot päällekkäin](box-replay.md), [Ottelun toisto](match-replay.md) | henkilösarakkeen |
 | **Viivat** | 4 | Viivalämpö: viiva jokaisesta henkilön näytteestä seuraavaan, lämpö häviää sivusuunnassa. [Viivalämpö](line-heat.md) | henkilö- ja aikasarakkeen |
 
 Tila, jota data ei tue, on harmaana, ja sen vihjeruudussa kerrotaan syy, esimerkiksi *Ei käytettävissä - Erotus-tila tarvitsee kaksi ryhmää tai säilytetyn sarakkeen jaettavaksi; tässä datassa on yksi ryhmä.* Kun uusi aineisto ei tue nykyistä tilaa, näkymä siirtyy tilaan **Lämpö**.
@@ -48,7 +48,7 @@ Näppäimet 1-4 tarkistetaan datan mukaan samalla tavalla: harmaana olevan tilan
 | Suunta ([suuntalämpö](directional-heat.md)), Arvo ([arvopainotus](value-weighting.md)) | kyllä | kyllä | kyllä | | kyllä |
 | Joukkuenäkymä ([hahmot päällekkäin](box-replay.md)) | | | | kyllä | |
 | Erotuksen jako ([erotus](difference.md)) | | kyllä | | | |
-| [Joukkueet](teams-list.md), [Kohteet](entities.md), [Suodattimet](filters.md), Tausta / kenttä, [Viipale](slice.md), [Mittaus](measure.md), Kamerapolku ja piirto, Suorituskyky, Kamera ja näkymä | kyllä | kyllä | kyllä | kyllä | kyllä |
+| [Joukkueet](teams-list.md), [Kohteet](entities.md), [Suodattimet](filters.md), Tausta / kenttä, [Viipale](slice.md), [Mittaus](measure.md), Kamerareitti ja renderöinti, Suorituskyky, Kamera ja näkymä | kyllä | kyllä | kyllä | kyllä | kyllä |
 
 ## Mitä kaikki lämmön tilat yhteisesti käyttävät {#what-every-heat-mode-shares}
 

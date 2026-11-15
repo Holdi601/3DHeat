@@ -12,7 +12,7 @@ outdated: false
 
 # Síur
 
-**Síur** fela línur sem þú hefur ekki áhuga á, eins og einn flokk farartækis eða eina tegund atburðar, og myndin uppfærist samstundis. Spjaldið telur upp dálkana sem geymdir voru við hleðslu undir *Keep for filtering* ([Dálkatenging](column-mapping.md)), auk *Source file* þegar margar skrár voru hlaðnar.
+**Síur** fela línur sem þú hefur ekki áhuga á, eins og einn flokk farartækis eða eina tegund atburðar, og myndin uppfærist samstundis. Spjaldið telur upp dálkana sem geymdir voru við hleðslu undir *Halda fyrir síun* ([Dálkatenging](column-mapping.md)), auk *Source file* þegar margar skrár voru hlaðnar.
 
 ## Prófaðu það {#try-it}
 

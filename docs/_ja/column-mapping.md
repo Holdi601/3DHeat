@@ -1,5 +1,5 @@
 ---
-title: "列の割り当て"
+title: "列マッピング"
 parent: "データの取り込み"
 nav_order: 2
 lang: "ja"

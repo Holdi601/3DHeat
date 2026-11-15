@@ -19,7 +19,7 @@ In cima alla barra laterale:
 | Controllo | Cosa fa |
 |---|---|
 | **?** | Modalità di aiuto: cosa significa ogni colore (anche `?` o `F1`) |
-| Menu **Unità** | Metrico, Imperiale, Aviazione o Nautico |
+| Menu **Unità** | Metrico, Imperiale, Aeronautico o Nautico |
 | Pulsante **...** accanto a **Unità** | Apre "Scegli un'unità per ogni grandezza": un menu a tendina per ogni grandezza |
 | Menu **Lingua** | La lingua del visualizzatore: [40 lingue](languages.md), oppure quella del browser |
 
@@ -31,9 +31,9 @@ I numeri che digiti in una casella possono usare un punto o una virgola (`0.35` 
 
 1. Scegli un preset nel menu **Unità**. Tutte le grandezze cambiano insieme.
 2. Per cambiare una sola grandezza, clicca il pulsante **...** accanto ad essa e scegli un'unità per quella grandezza. Il menu mostra allora un `*` dopo il preset.
-3. Una grandezza che non hai impostato segue il preset. Scegli "Come da preset" per tornare indietro.
+3. Una grandezza che non hai impostato segue il preset. Scegli "Come il preset" per tornare indietro.
 
-| Grandezza | Metrico (predefinito) | Imperiale | Aviazione | Nautico |
+| Grandezza | Metrico (predefinito) | Imperiale | Aeronautico | Nautico |
 |---|---|---|---|---|
 | Distanza | km | mi | NM | NM |
 | Altitudine, lunghezza | m | ft | ft | m |

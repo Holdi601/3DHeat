@@ -37,7 +37,7 @@ Fanene står øverst i sidepanelet, under navnet, enhetene og språkmenyen.
 
 | Fane | Hva den er til for |
 |---|---|
-| **Varmekart** | Enhver tabell med posisjoner: varmemodiene, figurlaget, filtre, volumer, innsikt, baner, måling og video. |
+| **Varmekart** | Enhver tabell med posisjoner: varmemodiene, figuroverlegget, filtre, volumer, innsikt, baner, måling og video. |
 | **Løpsanalyse** | To eller flere runder på samme bane: hvor tid går tapt, hvorfor, og hva du bør endre. |
 | **Kamp** | Figurreplayet av en kamp, og oppsummeringer av Counter-Strike 2-kamper. |
 | **Taktikk** | Planer på en bane: figurer, ruter, kastet utstyr, områder og notater i steg som spilles av. |
@@ -51,7 +51,7 @@ Rotmappen i repositoriet har tre batch-filer.
 
 | Fil | Hva den gjør |
 |---|---|
-| `start.bat` | Starter visningsprogrammet. Finner Node.js selv når det ikke er i `PATH` (den ser i `%ProgramFiles%\nodejs`, `%ProgramFiles(x86)%\nodejs` og `%LOCALAPPDATA%\Programs\nodejs`), og når Node.js mangler, tilbyr den å installere LTS-utgaven med `winget install -e --id OpenJS.NodeJS.LTS`. Ved første kjøring spør den før den laster ned avhengighetene (rundt 300 MB til `node_modules\` i mappen, ingenting systemomfattende). Den nekter å starte når noe allerede lytter på port 5273, og viser i stedet til `restart.bat`. Når mappen er en git-kopi uten lokale endringer og en nyere versjon finnes, spør den om å oppdatere (J/N; uten svar på 60 s beholder den denne versjonen; se [Oppdateringer](updates.md)). Deretter kjører den utviklingsserveren på `http://127.0.0.1:5273/` og åpner nettleseren. **Vinduet er serveren**: la det stå åpent, lukk det eller trykk Ctrl+C for å stoppe. |
+| `start.bat` | Starter visningsprogrammet. Finner Node.js selv når det ikke er i `PATH` (den ser i `%ProgramFiles%\nodejs`, `%ProgramFiles(x86)%\nodejs` og `%LOCALAPPDATA%\Programs\nodejs`), og når Node.js mangler, tilbyr den å installere LTS-utgaven med `winget install -e --id OpenJS.NodeJS.LTS`. Ved første kjøring spør den før den laster ned avhengighetene (rundt 300 MB til `node_modules\` i mappen, ingenting systemomfattende). Den nekter å starte når noe allerede lytter på port 5273, og viser i stedet til `restart.bat`. Når mappen er en git-kopi uten lokale endringer og en nyere versjon finnes, spør den om å oppdatere (Y/N; uten svar på 60 s beholder den denne versjonen; se [Oppdateringer](updates.md)). Deretter kjører den utviklingsserveren på `http://127.0.0.1:5273/` og åpner nettleseren. **Vinduet er serveren**: la det stå åpent, lukk det eller trykk Ctrl+C for å stoppe. |
 | `restart.bat` | Kjører `stop.bat quiet`, og deretter `start.bat`. Trengs bare etter endringer i `vite.config.ts`, når en avhengighet legges til, eller når serveren har låst seg – kildeendringer lastes inn på nytt automatisk. |
 | `stop.bat` | Stopper det som lytter på port 5273, ved prosess-id funnet med `netstat`, aldri etter bildenavn, så andre Node.js-prosesser på maskinen blir liggende. Venter rundt to sekunder på at socketen frigis. Med argumentet `quiet` pauser den ikke til slutt. |
 
@@ -107,7 +107,7 @@ Serveren bindes bare til `127.0.0.1`, så ingen av rutene kan nås fra nettverke
 
 **Analyser**: [Filtre og verktøy](filters-and-tools.md) ([filtre](filters.md), [lag](teams-list.md), [objekter](entities.md), [snitt](slice.md), [måling](measure.md), [volumer](volumes.md), [oppdeling](breakdown.md)) · [Innsikt](insights.md) ([kunnskapslinsen](knowledge.md)) · [Massanalyse](mass-analysis.md)
 
-**Replay**: [Kampreplay](match-replay.md) · [Mange kamper samtidig](many-matches.md) · [Figurer](figures.md) ([i figurlaget](figure-replay.md), [kreditering](figure-credits.md)) · [Tacview-paritet](tacview-parity.md) · [Trefferanalyse](hit-analysis.md)
+**Replay**: [Kampreplay](match-replay.md) · [Mange kamper samtidig](many-matches.md) · [Figurer](figures.md) ([i figuroverlegget](figure-replay.md), [kreditering](figure-credits.md)) · [Tacview-paritet](tacview-parity.md) · [Trefferanalyse](hit-analysis.md)
 
 **Andre faner**: [Løpsanalyse](race-analysis.md) ([metoden](race-analytics.md), [andre spill](other-games.md)) · [Kampanalyse](match-analysis.md) · [Taktikktavle](tactics-board.md) ([hastigheter](tactics-speeds.md))
 

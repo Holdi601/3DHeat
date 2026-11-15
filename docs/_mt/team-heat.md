@@ -22,7 +22,7 @@ Din mhijiex [Figuri fuq xulxin](box-replay.md): dik tpinġi figura waħda għal 
 ## Kif tuża dan {#how-to-use-it}
 
 1. Agħfas `3` (jew agħżel **Sħana tat-tim** fil-bar tal-modalitajiet).
-2. Iftaħ **Kuluri tas-sħana**. Il-kaxxi juru l-kulur ta' kull grupp; għalli bil-mouse fuq kaxxa biex tara l-isem tat-tim.
+2. Iftaħ **Kuluri tas-sħana**. Il-kaxxi juru l-kulur ta' kull grupp; poġġi l-mouse fuq kaxxa biex tara l-isem tat-tim.
 3. Jekk kollox jidher griż, għolli **Separazzjoni tal-kuluri**.
 4. Neħħi l-kaxxa ta' grupp fil-[Lista tat-timijiet](teams-list.md) biex titneħħa mill-istampa; il-kuluri l-oħra jibqgħu fejn kienu.
 
@@ -32,7 +32,7 @@ Fis-sezzjoni **Kuluri tas-sħana**:
 
 | Kontroll | Bażi | Tifsira |
 |---|---|---|
-| Kaxxi tal-kuluri | | Il-kulur ta' kull grupp, għall-ewwel 12-il grupp, imbagħad *+N iktar*. Għalli bil-mouse biex tara l-isem tal-grupp u l-kulur. |
+| Kaxxi tal-kuluri | | Il-kulur ta' kull grupp, għall-ewwel 12-il grupp, imbagħad *+N iktar*. Poġġi l-mouse biex tara l-isem tal-grupp u l-kulur. |
 | **Separazzjoni tal-kuluri** | 1.4 | Kemm titbiegħed it-taħlita mill-newtrali, 0-4. 0 jagħmel kollox griż; 1 hija l-medja vera; wara madwar 2 it-taħlitiet l-iktar ċari joħorġu mill-medda tal-wiri u jiġu mqattgħin kull kanal, u dan ibiddel it-tonalità tagħhom. |
 | **Rampa tal-opaċità (il-kulur jiġi mill-grupp)** | ir-rampa tas-sħana bażika | Hawn jintuża biss l-**alfa** tar-rampa: trasparenti fejn ma hemm xejn, opak fil-quċċata. Il-kuluri tagħha jiġu injorati. |
 

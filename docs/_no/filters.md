@@ -11,7 +11,7 @@ outdated: false
 
 # Filtre
 
-**Filtre** skjuler radene du ikke bryr deg om, for eksempel ett kjøretøyklasse eller én hendelsestype, og bildet oppdateres med én gang. Panelet lister kolonnene som beholdes ved innlasting under *Behold for filtrering* ([Kolonnetilordning](column-mapping.md)), pluss *Kildefil* når flere filer er lastet inn.
+**Filtre** skjuler radene du ikke bryr deg om, for eksempel én kjøretøyklasse eller én hendelsestype, og bildet oppdateres med én gang. Panelet lister kolonnene som beholdes ved innlasting under *Behold for filtrering* ([Kolonnetilordning](column-mapping.md)), pluss *Kildefil* når flere filer er lastet inn.
 
 ## Prøv det {#try-it}
 
@@ -76,7 +76,7 @@ Glidebryterne dekker kolonnens minste til største verdi i 1 000 steg; tallbokse
 
 ## For utviklere {#for-developers}
 
-**Plasser.** Hvert aktivt filter tar en av fire GPU-plasser ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), en tekstur på 4 byte per rad. Plassene går til filtrene i den rekkefølgen de sist ble endret ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), delt av shaderen og begge panelene). Etter fire viser en feilmelding *Bare de første 4 filtrene brukes. Fjern ett – de andre ignoreres, de slås ikke stille sammen*, og navnene på de ekstra filtrene leses *kolonne (ikke brukt)*. Filtre kjøres per rad i vertex-shaderen, så å endre en terskel krever ingen ny analyse og ingen ny opplasting.
+**Plasser.** Hvert aktivt filter tar en av fire GPU-plasser ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), en tekstur på 4 byte per rad. Plassene går til filtrene i den rekkefølgen de sist ble endret ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), delt av shaderen og begge panelene). Etter fire viser en feilmelding *Bare de første 4 filtrene brukes. Fjern ett — resten ignoreres, de kombineres ikke i det stille*, og navnene på de ekstra filtrene leses *kolonne (ikke brukt)*. Filtre kjøres per rad i vertex-shaderen, så å endre en terskel krever ingen ny analyse og ingen ny opplasting.
 
 **Filtre panelet ikke viser.** Det finnes to typer til i programtilstanden ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
 

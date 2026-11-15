@@ -1,6 +1,6 @@
 ---
 title: "Analityka wyścigów: metoda"
-parent: "Analiza wyścigu"
+parent: "Analiza wyścigowa"
 nav_order: 58
 lang: "pl"
 source: "race-analytics.md"

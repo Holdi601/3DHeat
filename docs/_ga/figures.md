@@ -11,7 +11,7 @@ outdated: false
 
 # Figiúirí
 
-Is **figiúr** samhail 3D bheag de cad is aonad i ndáiríre é: tanc, jet, long, saighdiúir. Tarraingíonn an [athsheinm](match-replay.md) gach aonad mar a fhigiúr ag an mméid fíor, in ionad bosca simplí.
+Is **figiúr** samhail 3D bheag de cad is aonad i ndáiríre é: tanc, jet, long, saighdiúir. Tarraingíonn an [athsheinm](match-replay.md) gach aonad mar a fhigiúr ag an méid fíor, in ionad bosca simplí.
 
 Tá thart ar 2,000 feithicil, aerárthach, long, arm agus saighdiúir ainmnithe ann, agus tógann an t-amharcóir féin iad go léir.
 
@@ -45,7 +45,7 @@ Breathnaíonn an t-amharcóir ar cholúin na sonraí féin:
 
 Mar sin is é an bealach is éasca na figiúirí cearta a fháil colún `vehicle` le hainmneacha fíora, nó colún `type` le clibeanna Tacview.
 
-**Taispeánann an t-aonad agam mar bhosca nó mar shaighdiúir.** Cuir colún `vehicle` leis le hainm fíor, nó colún `type` le clib Tacview. Leag an luch ar an aonad chun a fheiceáil cén t-ainm a meaitseáladh. Fágann sonraí a bhfuil colúin den sórt sin acu ach nach ndeir aon rud faoi aonad é mar bhosca; tarraingítear sonraí gan ceachtar acu mar shaighdiúirí.
+**Taispeánann an t-aonad agam mar bhosca nó mar shaighdiúir.** Cuir colún `vehicle` leis le hainm fíor, nó colún `type` le clibeanna Tacview. Leag an luch ar an aonad chun a fheiceáil cén t-ainm a meaitseáladh. Fágann sonraí a bhfuil colúin den sórt sin acu ach nach ndeir aon rud faoi aonad é mar bhosca; tarraingítear sonraí gan ceachtar acu mar shaighdiúirí.
 
 ## Socruithe {#settings}
 

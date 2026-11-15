@@ -35,7 +35,7 @@ O nível é partilhado pelos três separadores: um percurso carregado no separad
 ## O que um nível faz ao calor {#what-a-level-does-for-the-heat}
 
 - **Oculta**: os pontos de dados atrás dele ficam escurecidos por superfície, e os pontos atrás do terreno ficam escondidos ([Profundidade e culling](depth-and-culling.md)). Sem nível, não há oclusão.
-- É **cortado** pelo [Corte](slice.md) e, com *Cortar também o nível*, pelo [culling por distância](depth-and-culling.md#distance-culling), juntamente com o calor.
+- É **cortado** pelo [Corte](slice.md) e, com *Cortar também o nível*, pelo [recorte por distância](depth-and-culling.md#distance-culling), juntamente com o calor.
 - É a única coisa que a [profundidade de campo](camera.md#depth-of-field) desfoca, para além da grelha e das caixas.
 - Um nível 3D **alarga o plano distante da câmara** quando é maior que os dados: o próximo e o distante são calibrados a partir do conjunto de dados, e um mapa exportado com vários quilómetros ficaria inteiramente atrás do plano distante e deixaria a vista vazia. O plano distante passa a ser 3 × a extensão horizontal do nível quando isso é maior, o plano próximo acompanha-o (pelo menos distante / 100 000) para manter a precisão de profundidade de que depende a oclusão, e a velocidade de voo sobe para pelo menos extensão / 12. Só é alargado, nunca estreitado.
 

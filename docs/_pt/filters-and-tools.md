@@ -20,7 +20,7 @@ todas as linhas -> Filtros -> Equipas -> Entidades -> Corte -> imagem
                      E          E           E           E
 ```
 
-Exemplo: desmarque *Tank* em Filtros, oculte a equipa Red em Equipas e escolha um jogador em Entidades. Vê apenas os movimentos que não são de tanque desse jogador.
+Exemplo: desmarque *Tanque* em Filtros, oculte a equipa Red em Equipas e escolha um jogador em Entidades. Vê apenas os movimentos que não são de tanque desse jogador.
 
 | Painel | O que faz | Modos de calor | Sobreposição de figuras |
 |---|---|---|---|

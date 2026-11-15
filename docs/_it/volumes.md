@@ -21,7 +21,7 @@ vista dall'alto           disegni una forma ->  il visualizzatore conta
 +------------+
 ```
 
-![Tre volumi sulla valle demo: due cilindri intorno alle colline, una scatola intorno al villaggio](../assets/img/en/volumes.webp)
+![Tre volumi sulla valle demo: due cilindri intorno alle colline, una scatola intorno al villaggio](../assets/img/it/volumes.webp)
 
 I volumi misurano ciò che succede al loro interno, filtrano la vista su di essi, esportano le loro righe e possono essere confrontati affiancati. Vedi anche il [glossario](glossary.md) per riga, persona e partita.
 
@@ -76,7 +76,7 @@ Con due o più volumi visibili, premi **Confronta…**.
 3. In **Tabella**, leggi la differenza di ogni valore rispetto al primo volume.
 4. Passa a **Barre** per vedere le quote come barre.
 
-![La tabella Confronta volumi: righe, tempo dentro, giocatori e altro per ogni volume, con la differenza rispetto al primo](../assets/img/en/compare.webp)
+![La tabella Confronta volumi: righe, tempo dentro, giocatori e altro per ogni volume, con la differenza rispetto al primo](../assets/img/it/compare.webp)
 
 | Vista | Mostra |
 |---|---|
@@ -86,7 +86,7 @@ Con due o più volumi visibili, premi **Confronta…**.
 | **Visite** | Diagrammi a scatola e a violino della durata delle visite (scala logaritmica). |
 | **Flusso** | Dove vanno le tracce dopo aver lasciato ogni volume: una matrice delle transizioni o nastri di flusso. |
 
-![La vista Barre: tipi di evento per volume come quote](../assets/img/en/compare-bars.webp)
+![La vista Barre: tipi di evento per volume come quote](../assets/img/it/compare-bars.webp)
 
 ## Suggerimenti {#tips}
 

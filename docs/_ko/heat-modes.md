@@ -73,7 +73,3 @@ outdated: false
 - [피규어 오버레이](box-replay.md) - 리플레이 모드(파일 이름은 아직 box replay입니다)
 - [방향별 히트](directional-heat.md)
 - [값 가중치](value-weighting.md)
-
-## 저장되는 것 {#what-is-saved}
-
-위의 히트 설정은 세션 사이에 저장되지 않습니다. 페이지를 다시 불러오면 기본값으로 돌아갑니다. 브라우저에는 두 가지가 남습니다. 마지막 재생 속도(`heat3d.speed`, [타임라인](timeline.md) 참고)와 [피규어 오버레이](box-replay.md)의 멀리 있는 피규어 설정(기호 모양, 크기, 명중 표시 등)입니다. 언어, [세계 축 뒤집기](camera.md#invert-world-axis), 레이스 탭이 기억하는 차량 이름, [레벨 라이브러리](level-library.md)도 저장됩니다. 전체 목록은 [저장된 설정](ref-settings-storage.md)에 있습니다.

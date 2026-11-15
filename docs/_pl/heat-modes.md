@@ -15,7 +15,7 @@ Każda kropka dodaje odrobinę blasku, blaski się piętrzą, a stos jest malowa
 
 Pasek trybów na górze paska bocznego karty Mapa cieplna wybiera, jak rysowany jest [zbiór danych](glossary.md). Klawisze 1-4 wybierają Ciepło, Różnicę, Ciepło drużyn i Linie. Nakładka sylwetek nie ma klawisza.
 
-![Pasek trybów z Ciepło, Różnica, Ciepło drużyn, Nałożone figury i Linie](../assets/img/en/heat-modes-bar.webp)
+![Pasek trybów: Ciepło, Różnica, Ciepło drużyn, Nałożone figury i Linie](../assets/img/en/heat-modes-bar.webp)
 
 | Tryb | Pytanie, na które odpowiada |
 |---|---|
@@ -55,7 +55,7 @@ Klawisze 1-4 są sprawdzane wobec danych tak samo: klawisz trybu wyszarzonego ni
 Wszystkie cztery tryby ciepła (wszystko poza nakładką sylwetek) to ta sama maszyna z różnymi wejściami ([`engine.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/engine.ts)):
 
 1. **Które wiersze.** [Oś czasu](timeline.md) wybiera ciągły zakres wierszy posortowanych według czasu; [filtry](filters.md), widoczność grup, podział różnicy, [odrzucanie według odległości](depth-and-culling.md#distance-culling) i [przekrój](slice.md) decydują dla każdego wiersza, w shaderze wierzchołków, czy i jak mocno się liczy.
-2. **Splatting.** Każdy wiersz, który się liczy, jest rysowany jako sprite (albo w trybie Linie jako odcinek) do zmiennoprzecinkowego **celu ciepła**, dodając swoją wartość z rampy. Gdy wierszy jest więcej, niż klatka udźwignie, rysowana jest warstwowo wybrana próbka wierszy, ważona tak, by to wyrównać. Zob. [Próbkowanie i budżety](sampling-and-budgets.md).
+2. **Splatting.** Każdy wiersz, który się liczy, jest rysowany jako sprite (albo w trybie Linie jako odcinek) do zmiennoprzecinkowego **celu ciepła**, dodając swoją wartość z rampy. Gdy wierszy jest więcej, niż klatka udźwignie, rysowana jest próbka warstwowa wierszy, ważona tak, by to wyrównać. Zob. [Próbkowanie i budżety](sampling-and-budgets.md).
 3. **Akumulacja.** Dopóki nic się nie zmienia, klatki są łączone, aż każdy wiersz wniesie dokładnie jeden wkład. Zob. [Akumulacja](accumulation.md).
 4. **Kompozycja.** Zakumulowana wartość w każdym pikselu jest dzielona przez **punkt nasycenia**, kształtowana przez **odpowiedź gęstości**, podnoszona przez **minimalne ciepło** i odczytywana z **rampy kolorów**, której przezroczystość miesza ją ze sceną. Zob. [Kolor i ekspozycja](colour-and-exposure.md).
 

@@ -16,7 +16,7 @@ outdated: false
 ## Izmēģiniet {#try-it}
 
 1. Ielādējiet datu kopu un atveriet **Filtri** sānjoslā.
-2. Sadaļā **Transportlīdzekļa klase** noņemiet atzīmi *Tank*. Attēls uzreiz mainās.
+2. Sadaļā **Transportlīdzekļa klase** noņemiet atzīmi *Tanks*. Attēls uzreiz mainās.
 3. Nospiediet **Notīrīt visus filtrus**, lai atsauktu.
 
 ![Filtru panelis: skatītāja pašas kolonnas (Notikuma veids, Transportlīdzekļa klase) pirmās, tad kolonnas no jūsu faila](../assets/img/en/filters.webp)
@@ -29,9 +29,9 @@ Ielādējot skatītājs pats izveido četras kolonnas un uzskaita tās **pirmās
 
 | Kolonna | Vērtības | Izveidots no |
 |---|---|---|
-| **Notikuma veids** | 23 veidi: Pozīcija, Izšauts šāviens, Palaišana (raķete, raķete, bumba), Trāpījums, Netrāpījums (ierocis beidzās tuvu nevienam mērķim), Sprādziens, Bojājums, Nogalinājums, Nāve, Iznīcināts, Avārija, Izmešana / izlēkšana ar izpletni, Parādīšanās, Izzušana, Pacelšanās, Nolaišanās, Saskare ar zemi, Apstāšanās uz zemes, Pārbruņošana / uzpildīšana, Mērķa sasniegšana / mērķis, Ļaunā ieraksts, Ziņojums, Cits | kolonna ar nosaukumu `event`, `events`, `event_type` vai `event_name`; katras spēles pašas vārdi (`shot`, `burst`, `fired`, `struck`, `flare`, `plant` ...) tiek piesaistīti šiem veidiem. Pilna tabula: [Notikumu tipi un klases](ref-event-types.md). |
+| **Notikuma veids** | 23 veidi: Pozīcija, Izšauts šāviens, Palaišana (raķete, šāviņš, bumba), Trāpījums, Netrāpījums (ierocis beidzās tuvu nevienam mērķim), Sprādziens, Bojājums, Nogalinājums, Nāve, Iznīcināts, Avārija, Izmešana / izlēkšana ar izpletni, Parādīšanās, Izzušana, Pacelšanās, Nolaišanās, Saskare ar zemi, Apstāšanās uz zemes, Pārbruņošana / uzpildīšana, Mērķa sasniegšana / mērķis, Mānekļis, Ziņojums, Cits | kolonna ar nosaukumu `event`, `events`, `event_type` vai `event_name`; katras spēles pašas vārdi (`shot`, `burst`, `fired`, `struck`, `flare`, `plant` ...) tiek piesaistīti šiem veidiem. Pilna tabula: [Notikumu tipi un klases](ref-event-types.md). |
 | **Spēlētājs vai MI** | Spēlētājs, MI | kolonna `ai`, `is_ai`, `bot` vai `actor`; citādi `is_player` / `human`; citādi konta id (`user_id`, `steam_id`; tukšs vai 0 ir MI); Tacview ierakstiem - vai objektam ir pilots |
-| **Transportlīdzekļa klase** | 17 klases: Iznīcinātājs, Triecienlidmašīna, Bumbvedējs, Citas lidmašīnas, Helikopters, Tanks, Bruņutehnika, Pretgaisa aizsardzība, Artilērija, Kravas auto / auto, Kuģis, Zemūdene, Kājnieki, Ierocis, Ļaunā ieraksts, Būve, Cits | transportlīdzekļa vai vienības nosaukums (salīdzināts ar [figūru katalogu](figures.md)) un tipa kolonnas |
+| **Transportlīdzekļa klase** | 17 klases: Iznīcinātājs, Triecienlidmašīna, Bumbvedējs, Citas lidmašīnas, Helikopters, Tanks, Bruņutehnika, Pretgaisa aizsardzība, Artilērija, Kravas auto / auto, Kuģis, Zemūdene, Kājnieki, Ierocis, Mānekļis, Būve, Cits | transportlīdzekļa vai vienības nosaukums (salīdzināts ar [figūru katalogu](figures.md)) un tipa kolonnas |
 | **Mērķa klase** | tās pašas klases | otras puses transportlīdzeklis (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
 
 Uzskaitīti tiek tikai veidi, kas ir sastopami. Vērtību kolonnas (`cost_*`, `earn_*`, `net_*` un *Izmaksu avots*, skatiet [Vērtības svēršana](value-weighting.md)) var filtrēt kā jebkuru skaitļu kolonnu: piemēram, noņemiet atzīmi *estimate* sadaļā *Izmaksu avots*, lai paturētu tikai novērtētās rindas.
@@ -68,7 +68,7 @@ Visu vērtību atļaušana noņem filtru.
 - **Četri filtri vienlaikus.** Galvenē rādīts `aktīvie/4`. Piektais filtrs netiek piemērots, un panelis to saka. Izvēle sadaļā [Vienības](entities.md) (vai Mača cilnes spēlētāja fokuss) izmanto vienu no četriem. Filtrs, kas aptver visu kolonnu, neizmanto nevienu.
 - **Kategoriju kolonnai ir ne vairāk kā 4096 vērtības**; platāka ielādes laikā netiek saglabāta.
 - **Filtri savienojas ar UN** un ar komandu redzamību, starpības sadalījumu, laika logu, attāluma nogriešanu un [griezumu](slice.md).
-- **Filtra maiņa restartē uzkrāšanu un dažus kadrus vēlāk pārmēra ekspozīciju**, jo filtrēšana var stipri mainīt blīvumu ([Krāsa un ekspozīcija](colour-and-exposure.md#auto-exposure)).
+- **Filtra maiņa restartē uzkrāšanu un dažus kadrus vēlāk ekspozīciju izmēra no jauna**, jo filtrēšana var stipri mainīt blīvumu ([Krāsa un ekspozīcija](colour-and-exposure.md#auto-exposure)).
 - **Notīrīt visus filtrus** noņem visus kolonnu filtrus. Komandu redzamība un citur iestatītā spēlētāju izvēle paliek.
 - Kolonnu filtri maina siltuma režīmus. Tie nemaina [figūru atkārtojuma](box-replay.md) figūras, kas seko komandu redzamībai un sadaļas Vienības izvēlei. Vienības izvēle maina abus.
 - [Līniju siltumā](line-heat.md) filtrs tiek pārbaudīts pret rindu, kur katrs segments *beidzas*.

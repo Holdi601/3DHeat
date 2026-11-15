@@ -13,7 +13,7 @@ outdated: false
 
 Met deze panelen kies je *welke* data je bekijkt en meet je wat je ziet. Gebruik ze als het beeld te druk is: toon één team, één speler, één plek, of één verdieping van een gebouw.
 
-Elk paneel versmalt de data, en ze werken samen: een rij wordt alleen getekend als ze **alle** passeert (EN).
+Elk paneel versmalt de data, en ze werken samen: een rij wordt alleen getekend als ze **alle** passeert (logische EN).
 
 ```
 all rows -> Filters -> Teams -> Entities -> Slice -> picture

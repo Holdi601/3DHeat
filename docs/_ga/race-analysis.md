@@ -49,7 +49,7 @@ Is léarscáil den chluaisín é an leathanach seo. Tá leathanach dá chuid fé
    Féach [Athsheinm agus an radharc 3D](race-replay-and-scene.md).
 8. Painéil roinnte **Leibhéal** agus **Ceamara agus radharc** (múnla an chúrsa, inbhéartú aiseanna, ceamara) - doiciméadaithe leis an léarscáil teasa agus leis an [Ceamara](camera.md).
 
-**Tá an radharc** ag taispeáint an chúrsa, na línte tiománta, an léarscáil, na gluaisteáin, lipéid ceangailte leis an rian, agus suas le sé chárta gluaisteán ar bharr ar chlé (féach [Cairteacha agus an HUD](race-charts-and-hud.md)). Gan cuairteanna lódáilte deir sé "Níl cuairteanna lódáilte - Scaoil dhá chomhad cuairte nó níos mó anseo, nó lódáil na cuairteanna samplacha ón mbarra taoibh."
+**Tá an radharc** ag taispeáint an chúrsa, na línte tiománta, an léarscáil, na gluaisteáin, lipéid ceangailte leis an rian, agus suas le sé chárta gluaisteán ar bharr ar chlé (féach [Cairteacha agus an HUD](race-charts-and-hud.md)). Gan cuairteanna lódáilte deir sé "Níl aon chuaird lódáilte - Scaoil dhá chomhad cuairte nó níos mó anseo, nó lódáil na cuairteanna samplacha ón mbarra taoibh."
 
 **Tá an barra faoin radharc** ag coinneáil iompar an athsheinm agus, mura bhfolaítear é, na cairteacha fad.
 

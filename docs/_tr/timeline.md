@@ -14,7 +14,7 @@ Resmin altındaki çubuk bir video oynatıcısına benzer: verileri bir film gib
 
 ![Zaman çizelgesi çubuğu: 1 Tümü/Oynat, 2 aktarım düğmeleri, 3 saat, 4 Hız, 5 Geçmiş; Pencere ve 30 sn Aralık ile](../assets/img/en/timeline-bar.webp)
 
-Görünümün altındaki çubuk zaman çizelgesidir ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Her an hangi satırların görünür olduğuna karar verir. Bir zaman sütunu gerektirir; yoksa çubuğun tamamı devre dışı kalır, görünüm **Tümü**'nde kalır ve kenar çubuğu *Bu veride zaman sütunu yok - zaman çizelgesi devre dışı ve her veri noktası bir kerede gösteriliyor.* der.
+Görünümün altındaki çubuk zaman çizelgesidir ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Her an hangi satırların görünür olduğuna karar verir. Bir zaman sütunu gerektirir; yoksa çubuğun tamamı devre dışı kalır, görünüm **Tümü**'nde kalır ve kenar çubuğu *Bu veride zaman sütunu yok — zaman çizelgesi devre dışı ve tüm veri noktaları aynı anda gösteriliyor.* der.
 
 ## Tümü ve Oynat {#all-and-play}
 

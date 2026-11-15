@@ -11,7 +11,7 @@ outdated: false
 
 # Suodattimet
 
-**Suodattimet** piilottavat rivit, joista et välitä, kuten yhden ajoneuvoluokan tai yhden tapahtumatyypin, ja kuva päivittyy heti. Paneeli listaa sarakkeet, jotka on säilytetty latauksessa kohdassa *Säilytä suodatusta varten* ([Sarakemääritys](column-mapping.md)), sekä *Lähdetiedoston*, kun useita tiedostoja on ladattu.
+**Suodattimet** piilottavat rivit, joista et välitä, kuten yhden ajoneuvoluokan tai yhden tapahtumatyypin, ja kuva päivittyy heti. Paneeli listaa sarakkeet, jotka on säilytetty latauksessa kohdassa *Säilytä suodatusta varten* ([Sarakemääritys](column-mapping.md)), sekä *Source file* -sarakkeen, kun useita tiedostoja on ladattu.
 
 ## Kokeile {#try-it}
 

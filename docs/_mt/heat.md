@@ -13,7 +13,7 @@ outdated: false
 
 Is-sħana turi l-postijiet fejn ġraw ħafna affarijiet: aħmar fejn ġara ftit, abjad sħun ħafna fejn ġara ħafna. Twieġeb il-mistoqsija "fejn jiġri dan, u kemm".
 
-**Sħana** (ċavetta 1) hija l-modalità awtomatika. Kull ringiela viżibbli [(row)](glossary.md) tikkontribwixxi [sprite](glossary.md) tond li jħares lejn il-kamera; sprites li jaqgħu fuq xulxin jiżdiedu flimkien f'buffer ta' numri b'virgola mobbli; is-somma tiġi mqabbla permezz ta' rampa ta' kuluri - b'mod awtomatiku trasparenti → aħmar → isfar → abjad - u tinħadem fuq ix-xena.
+**Sħana** (ċavetta 1) hija l-modalità predefinita. Kull ringiela viżibbli [(row)](glossary.md) tikkontribwixxi [sprite](glossary.md) tond li jħares lejn il-kamera; sprites li jaqgħu fuq xulxin jiżdiedu flimkien f'buffer ta' numri b'virgola mobbli; is-somma tiġi mqabbla permezz ta' rampa ta' kuluri - b'mod predefinit trasparenti → aħmar → isfar → abjad - u tinħadem fuq ix-xena.
 
 ![Sħana fuq livell 3D: punti sħan ġewwa u fuq il-bini](../assets/img/en/shooter-heat.webp)
 

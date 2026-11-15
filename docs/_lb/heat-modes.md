@@ -11,7 +11,7 @@ outdated: false
 
 # Hëtztmodi
 
-All Punkt gëtt e bëssen Glanz dobäi, d'Gläicher stapelen sech, an de Stapel gëtt a Faarwe gemoolt. D'Modi si fënnef Weeër, dat ze molen, an all äntwert op eng Fro.
+All Punkt gëtt e bëssen Glanz dobäi, d'Glanzen stapelen sech, an de Stapel gëtt a Faarwe gemoolt. D'Modi si fënnef Weeër, dat ze molen, an all äntwert op eng Fro.
 
 D'Modus-Leescht ganz uewen an der Heatmap-Säitelleescht bestëmmt, wéi de [Datesaz](glossary.md) gezeechent gëtt. D'Tasten 1-4 wielen Heat, Ënnerscheed, Equipen-Heat a Linnen. Figuren-Overlay huet keng Tast.
 
@@ -59,7 +59,7 @@ All véier Heat-Modi (alles ausser dem Figuren-Overlay) sinn dee selwechte Mecha
 3. **Akkumulatioun.** Solang sech näischt ännert, ginn Biller zesummegefouert, bis all Zeil genau eemol bäidroen huet. Kuckt [Akkumulatioun](accumulation.md).
 4. **Zesummesetzung.** De Wäert pro Pixel gëtt duerch de **Sättegungspunkt** gedeelt, duerch d'**Dichtreaktioun** geformt, duerch d'**minimal Hëtzt** ugehuewen an am **Faarfverlaf** nogekuckt, dee säi Alpha iwwer d'Szen mëscht. Kuckt [Faarf a Belichtung](colour-and-exposure.md).
 
-Alles am Schrëtt 4 gëtt beim Zesummesetzen ugewannt, sou datt Verstellen vun deenen Reglere d'Akkumulatioun ni neistart; alles an de Schrëtter 1-2 schonn.
+Alles am Schrëtt 4 gëtt beim Zesummesetzen ugewannt, sou datt Verstellen vun deenen Reglere d'Akkumulatioun ni neistart; alles an de Schrëtter 1-2 deet dat.
 
 ## Säiten an dëser Sektioun {#pages-in-this-section}
 

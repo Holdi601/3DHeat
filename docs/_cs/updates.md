@@ -14,9 +14,9 @@ Prohlížeč vám řekne, když existuje novější verze, a aktualizuje se sám
 
 ## Aktualizace prohlížeče {#update-the-viewer}
 
-1. **Na stránce.** Když existuje novější verze, pod názvem nahoře v postranním panelu se objeví okno: „Je dostupná novější verze 3DHeat“. Klikněte na **Aktualizovat teď**. Stránka se po dokončení sama znovu načte. **Později** okno skryje, dokud stránku znovu nenačtete.
+1. **Na stránce.** Když existuje novější verze, pod názvem nahoře v postranním panelu se objeví okno: „Je k dispozici novější verze 3DHeat“. Klikněte na **Aktualizovat teď**. Stránka se po dokončení sama znovu načte. **Později** okno skryje, dokud stránku znovu nenačtete.
 2. **Když to říká spustit restart.bat**, zavřete okno serveru (černé okno, které otevřel `start.bat`) a dvojklikem spusťte `restart.bat`.
-3. **Při spuštění prohlížeče.** `start.bat` také kontroluje. Pokud existuje novější verze, zeptá se **Aktualizovat teď? [A/N]**. Stiskněte `A` pro aktualizaci. Stiskněte `N`, nebo počkejte 60 sekund bez odpovědi, a spustí se verze, kterou máte.
+3. **Při spuštění prohlížeče.** `start.bat` také kontroluje. Pokud existuje novější verze, zeptá se **Update now? [Y/N]**. Stiskněte `Y` pro aktualizaci. Stiskněte `N`, nebo počkejte 60 sekund bez odpovědi, a spustí se verze, kterou máte.
 
 ![Oznámení o aktualizaci s tlačítky Aktualizovat teď a Později](../assets/img/en/updates-notice.webp)
 
@@ -42,15 +42,15 @@ stránka ---(po 4 s, pak každých 6 h)---> vývojový server ---> git fetch
 
 ## Co dělá start.bat {#what-startbat-does}
 
-`start.bat` (dvojklik; okno je server) dělá postupně:
+`start.bat` (dvojklik; okno je server) dělá postupně. Zprávy v okně jsou v angličtině, tak jak je tiskne skript:
 
 1. Najde Node.js – v `PATH`, jinak v `%ProgramFiles%\nodejs`, `%ProgramFiles(x86)%\nodejs` nebo `%LOCALAPPDATA%\Programs\nodejs` – a když chybí, nabídne instalaci příkazem `winget install -e --id OpenJS.NodeJS.LTS` (zeptá se, A/N; potom je třeba okno znovu otevřít, aby Windows převzaly nový `PATH`).
 2. **Aktualizace**, když je nainstalován git a složka má `.git`:
    - `git fetch --quiet` (bez sítě nebo bez nadřazené větve: tiše přeskočeno);
    - spočítá `git rev-list --count HEAD..@{u}`; nic za: nic se neřekne;
-   - místní změny: „Je dostupná novější verze 3DHeat (N změn), ale tato kopie má místní změny, takže se neaktualizuje. Potvrďte je nebo odložte, pak spusťte git pull.“ – a spustí verzi, která tam je;
-   - vlastní commity (`git rev-list --count @{u}..HEAD` není 0): „Je dostupná novější verze 3DHeat (N změn), ale tato kopie má vlastní commity, které nejnovější verze nemá, takže se neaktualizuje. Aktualizujte ji příkazem git pull.“ – a spustí verzi, která tam je;
-   - jinak „Je dostupná novější verze 3DHeat (N změn).“ a otázka **Aktualizovat teď? [A/N]**. `N`, nebo žádná odpověď 60 sekund, vypíše „Neaktualizováno; spouští se verze, kterou máte.“ a spustí verzi, která tam je. Při `A`: „Aktualizuji...“, řekne, zda se změní `package.json` nebo `package-lock.json`, spustí `git pull --ff-only` (kdyby to stále selhalo – například sítí: „Aktualizace neproběhla; spouští se verze, kterou máte.“), pak `git submodule update --init` (připnuté nástroje, viz [Údržba dokumentace](maintaining.md#the-tools-under-exporters)), pak `npm install`, když se změnily soubory balíčku a `node_modules` existuje, a „Aktualizováno.“
+   - místní změny: „A newer version of 3DHeat is available (N changes), but this copy has local changes, so it is not updated. Commit or stash them, then run git pull.“ – a spustí verzi, která tam je;
+   - vlastní commity (`git rev-list --count @{u}..HEAD` není 0): „A newer version of 3DHeat is available (N changes), but this copy has commits of its own that the newest version does not, so it is not updated. Update it with git pull.“ – a spustí verzi, která tam je;
+   - jinak „A newer version of 3DHeat is available (N changes).“ a otázka **Update now? [Y/N]**. `N`, nebo žádná odpověď 60 sekund, vypíše „Not updated; starting the version you have.“ a spustí verzi, která tam je. Při `Y`: „Updating...“, řekne, zda se změní `package.json` nebo `package-lock.json`, spustí `git pull --ff-only` (kdyby to stále selhalo – například sítí: „The update did not go through; starting the version you have.“), pak `git submodule update --init` (připnuté nástroje, viz [Údržba dokumentace](maintaining.md#the-tools-under-exporters)), pak `npm install`, když se změnily soubory balíčku a `node_modules` existuje, a „Updated.“
 3. Odmítne spustit druhý server: když už na portu **5273** něco naslouchá, řekne to a odkáže na `restart.bat` / `stop.bat`.
 4. Při prvním spuštění (bez `node_modules`) se zeptá, než stáhne závislosti (asi 300 MB do `node_modules\`, nic v systému).
 5. Spustí vývojový server na `127.0.0.1:5273` (`--strictPort`) a až bude připraven, otevře prohlížeč.
@@ -90,11 +90,11 @@ Odpovědi jsou JSON s `Cache-Control: no-store`. Server naslouchá jen na `127.0
 
 - Trasu se zeptá **4 sekundy** po načtení stránky (ne v prvních sekundách: stránka má co načítat a GPU se spouští) a znovu **každých 6 hodin**, dokud stránka zůstává otevřená.
 - Nezobrazí **nic**, když trasa neexistuje (statický build), složka není kopie, nebo nic novějšího není – oznámení při každém spuštění se naučíte ignorovat.
-- Za, bez místních změn: „Je dostupná novější verze 3DHeat (N změn, nejnovější: <předmět>).“ s **Aktualizovat teď** a **Později** (*Později* skryje, dokud se stránka znovu nenačte).
-- Za, s místními změnami: stejná věta a „Tato kopie má místní změny, takže se neaktualizuje automaticky; potvrďte je nebo odložte, pak spusťte git pull.“ – bez tlačítka.
-- **Aktualizovat teď** odešle `/apply` („Aktualizuji...“). Pak:
-  - „Aktualizováno. Stránka se znovu načítá.“ – a znovu načte se o 1,5 s později (server už podává nové soubory);
-  - když se závislosti znovu nainstalovaly: „Aktualizováno. Jeho závislosti se změnily: zavřete okno serveru a spusťte **restart.bat**, aby se to dokončilo.“;
-  - když se změnilo jen nastavení serveru: „Aktualizováno. Nastavení serveru se změnilo: zavřete okno serveru a spusťte **restart.bat**, aby se to dokončilo.“;
-  - nakonec nic k převzetí (`updated: false` – kopii mezitím uvedl do stavu třeba `start.bat`): „Nic k aktualizaci: tato kopie je už nejnovější verze.“ – a bez znovunačtení;
-  - odmítnuto: věta o *místních změnách*, nebo „Tato kopie má vlastní commity, které nejnovější verze nemá; aktualizujte ji příkazem git pull.“, nebo „Aktualizace neproběhla: <důvod>“.
+- Pozadu, bez místních změn: „Je k dispozici novější verze 3DHeat (N změn, nejnovější: <předmět>).“ s **Aktualizovat teď** a **Později** (*Později* skryje, dokud se stránka znovu nenačte).
+- Pozadu, s místními změnami: stejná věta a „Tato kopie má místní změny, proto se neaktualizuje automaticky; udělejte commit nebo stash a pak spusťte git pull.“ – bez tlačítka.
+- **Aktualizovat teď** odešle `/apply` („Aktualizuje se…“). Pak:
+  - „Aktualizováno. Stránka se znovu načte.“ – a znovu načte se o 1,5 s později (server už podává nové soubory);
+  - když se závislosti znovu nainstalovaly: „Aktualizováno. Změnily se závislosti: zavřete okno serveru a spusťte **restart.bat**, aby se aktualizace dokončila.“;
+  - když se změnilo jen nastavení serveru: „Aktualizováno. Změnilo se nastavení serveru: zavřete okno serveru a spusťte **restart.bat**, aby se aktualizace dokončila.“;
+  - nakonec nic k převzetí (`updated: false` – kopii mezitím uvedl do stavu třeba `start.bat`): „Není co aktualizovat: tato kopie už je nejnovější verze.“ – a bez znovunačtení;
+  - odmítnuto: věta o *místních změnách*, nebo „Tato kopie má vlastní commity, které nejnovější verze nemá; aktualizujte ji pomocí git pull.“, nebo „Aktualizace se nezdařila: <důvod>“.

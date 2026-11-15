@@ -10,7 +10,7 @@ outdated: false
 
 # Données de démonstration : essayez la visionneuse en cinq minutes
 
-![Chaleur de dix matchs de chars dans la vallée de démonstration : ce que montre l'étape 4](../assets/img/en/heat-hero.webp)
+![Chaleur de dix matchs de chars dans la vallée de démonstration : ce que montre l'étape 4](../assets/img/fr/heat-hero.webp)
 
 Vous n'avez pas encore de données ? Le dépôt en fournit. Tout ce qu'il contient est inventé : une vallée, une cour, et des matchs de trois styles de jeu fictifs avec des joueurs nommés *Blue 1* ou *Red 3*. Toutes les images de ce site ont été prises avec elles.
 
@@ -45,7 +45,7 @@ Chaque table nomme ses propres colonnes dans son pied de page : elle se charge d
 6. Ouvrez **Observations** (dans la barre latérale Carte de chaleur) : il repère les endroits où bien plus de tirs, d'impacts et de destructions que partout ailleurs se sont produits, autour des deux collines.
 7. Ouvrez l'onglet **Match** ; sous **Matchs du replay**, choisissez *Match 01* ; appuyez sur **Lecture** sur la chronologie : le [replay](match-replay.md).
 
-![Un replay du Match 01 avec des chars sous forme de figurines](../assets/img/en/replay-overview.webp)
+![Un replay du Match 01 avec des chars sous forme de figurines](../assets/img/fr/replay-overview.webp)
 
 Pour le tireur, chargez `demo-yard.glb` et `shooter.parquet` ; pour le combat aérien, `air.parquet` (les figurines se voient mieux à **Taille des figurines** 4, un curseur du panneau **Vue des équipes** de la barre latérale Carte de chaleur).
 

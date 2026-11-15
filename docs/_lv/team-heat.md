@@ -46,7 +46,7 @@ No [`colors.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors.
 
 - Krāsas atrodas **Oklab** krāsu plaknē ar fiksētu spilgtumu (0,7) un hromu (0,115), tāpēc katra grupa ir vienlīdz spilgta, un sarkana grupa neizskatās karstāka par zilu.
 - Ar *n* grupām nokrāsu aplis tiek sadalīts *n* vienādās daļās, un *i*-tā grupa ņem tās daļas **centru**, `(i + 0,5) / n` apgrieziena. Jebkuras divas grupas ir tik tālu viena no otras, cik ļauj skaits, un pretēji esošās paliek pretējas neatkarīgi no skaita.
-- Lietotas ne vairāk kā **16** atšķirīgas nokrāsas. Ar vairāk grupām id tiek izvietoti ar atkārtotu dalīšanu uz pusēm (bitu apgrieztie id: 0, ½, ¼, ¾, ⅛, …), lai blakus esoši id nedalītu nokrāsu; grupas aiz 16. nepieciešami dala.
+- Lietotas ne vairāk kā **16** atšķirīgas nokrāsas. Ar vairāk grupām id tiek izvietoti ar atkārtotu dalīšanu uz pusēm (bitu apgrieztie id: 0, ½, ¼, ¾, ⅛, …), lai blakus esoši id nedalītu nokrāsu; grupas aiz 16. obligāti dalās nokrāsā.
 - Grupa, kuras nosaukums nozīmē "nav grupas" - `0`, tukšs, `none`, `unknown`, `null` vai `-1`, neatkarīgi no burtu lieluma - tiek zīmēta **neitrāli pelēka**, nevis ņem daļu no apļa. Šādi tiek apstrādāts tikai pirmais šāds nosaukums grupu sarakstā.
 
 Noklusējuma atdalīšana ir 1,4, nevis 1, jo pie 1 piecu vienmērīgi izvietotu nokrāsu sajaukums *ir* pelēks: pareizi, bet nesaskatāmi. Nedaudz virs 1 saglabā neizšķirtos godīgus, vienlaikus padarot 60/40 sadalījumu redzamu.

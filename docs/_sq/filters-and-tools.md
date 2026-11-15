@@ -52,8 +52,8 @@ Shiriti anësor i skedës Harta e nxehtësisë, nga lart poshtë:
 9. Sfondi / niveli
 10. Prerja
 11. Matja
-12. Rruga e kamerës dhe vizatimi
+12. Shtegu i kamerës & renderimi
 13. Performanca
 14. Kamera & skena
 
-Skeda Ndeshja shfaq shiritin e modeve, zgjedhësin e seancës, panelin e vet, Filtrat, Sfondin / nivelin dhe Kamerën & skenën.
+Skeda Ndeshja shfaq shiritin e modeve, zgjedhësin e seancës, panelin e vet, Filtrat, Sfondin / nivelin dhe Kamera & skena.

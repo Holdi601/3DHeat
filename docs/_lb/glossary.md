@@ -22,7 +22,7 @@ Kuerz Bedeitungen vun de Wieder, déi dës Websäit benotzt, a Klartext. All Ent
 
 **Parquet.** Eng kompakt Tabelldatei, déi séier ze liesen ass, och mat Millioune Zeilen. Dat ass dat bescht Format fir de Viewer. [Dateien lueden](loading-files.md)
 
-**Evenement.** Eppes, wat geschitt ass, wéi e Schoss, e Treffer, e Kill oder e Start. Eng Zeil kann e Evenement sinn oder just "ech war hei". [Filteren](filters.md)
+**Evenement.** Eppes, wat geschitt ass, wéi e Schoss, e Treffer, e Ofschoss oder e Start. Eng Zeil kann e Evenement sinn oder just "ech war hei". [Filteren](filters.md)
 
 **Persoun.** Deen, deen d'Zeilen gemaach huet: e Spiller, e Pilot, e Auto oder e Panzer. Eng Persoun ass eng Linn vu Positiounen duerch d'Zäit. [Sessiounen, Persounen a Gruppen](sessions-persons-groups.md)
 

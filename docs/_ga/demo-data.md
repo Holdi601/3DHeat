@@ -12,7 +12,7 @@ outdated: false
 
 ![Teas deich gcluiche tanc sa ghleann taispeána: cad a thaispeánann céim 4](../assets/img/en/heat-hero.webp)
 
-Gan sonraí de do chuid féin fós? Cruthaíonn an stóras cuid acu. Tá gach rud sa stóras seo intuaslagtha: gleann, clós, agus cluichí de thrí stíl chluiche bhréagach le himreoirí darb ainm *Blue 1* nó *Red 3*. Glacadh na pictiúir ar an suíomh seo go léir leo.
+Gan sonraí de do chuid féin fós? Cruthaíonn an stóras cuid acu. Tá gach rud sa stóras seo cumtha: gleann, clós, agus cluichí de thrí stíl chluiche bhréagach le himreoirí darb ainm *Blue 1* nó *Red 3*. Glacadh na pictiúir ar an suíomh seo go léir leo.
 
 ## Déan é {#make-it}
 

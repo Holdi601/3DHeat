@@ -1,5 +1,5 @@
 ---
-title: "Зроз"
+title: "Зрэз"
 parent: "Фільтры і інструменты"
 nav_order: 4
 lang: "be"

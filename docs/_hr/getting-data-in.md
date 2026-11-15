@@ -54,13 +54,13 @@ Način koji učitani podaci ne mogu podržati zasivljen je na traci načina; zad
 
 ## Bez vlastitih podataka {#without-your-own-data}
 
-Panel **Skup podataka** (ispod **Izvor**) ima [sintetički generator](synthetic-generator.md) koji stvara skup podataka oblika battle-royalea bilo koje veličine, koristan za isprobavanje preglednika i za testiranje što stroj može podnijeti.
+Panel **Skup podataka** (ispod **Izvor**) ima [sintetički generator](synthetic-generator.md) koji stvara skup podataka kakav imaju igre battle royale, bilo koje veličine, koristan za isprobavanje preglednika i za testiranje što stroj može podnijeti.
 
 ## Stranice u ovom odjeljku {#pages-in-this-section}
 
-- [Učitavanje datoteka](loading-files.md) - birači, mape, povuci i ispusti, spajanje više datoteka, pravilo datoteka pokreta, napredak i otkazivanje
+- [Učitavanje datoteka](loading-files.md) - birači, mape, povuci i ispusti, spajanje više datoteka, pravilo datoteka kretanja, napredak i otkazivanje
 - [Mapiranje stupaca](column-mapping.md) - svako polje panela mapiranja, kako automatsko mapiranje pogađa, `heat3d` savjeti
 - [Osi, jedinice i vrijeme](axes-units-and-time.md) - gornja os, okretanja, mjerilo jedinica, vremenske jedinice, smjer pogleda
 - [Sesije, osobe i grupe](sessions-persons-groups.md) - što svaka radi, ograničenja, zajednička imena, veličina entiteta, panel Skup podataka
 - [Sintetički generator](synthetic-generator.md)
-- [Memorija i proračuni](memory-and-budgets.md) - model otiska, provjera stanja, prorjeđivanje, granica sortiranja, proračuni resursa
+- [Memorija i proračuni](memory-and-budgets.md) - model otiska, provjera stanja, prorjeđivanje, granica sortiranja, proračun resursa

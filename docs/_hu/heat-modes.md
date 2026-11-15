@@ -57,7 +57,7 @@ Mind a négy hőmód (a figurás átfedés kivételével) ugyanaz a gépezet, el
 1. **Melyik sorok.** Az [idővonal](timeline.md) ablaka az időben rendezett sorok összefüggő tartományát választja ki; a [szűrők](filters.md), a csoportláthatóság, a különbség-felosztás, a [távolságkihagyás](depth-and-culling.md#distance-culling) és a [szelet](slice.md) soronként dönti el a csúcsshaderben, hogy hozzájárul-e, és mennyire.
 2. **Splatting.** Minden hozzájáruló sor egy sprite-ként (vagy Vonalak módban egy szakaszként) rajzolódik egy lebegőpontos **hőcélpontba**, hozzáadva a skálaértékét. Ha több sor van, mint amennyit egy képkocka elbír, a sorok rétegezett mintája rajzolódik, súlyozva a kompenzáláshoz. Lásd [Mintavétel és keretek](sampling-and-budgets.md).
 3. **Halmozás.** Amíg semmi nem változik, a képkockák addig egyesülnek, amíg minden sor pontosan egyszer nem járult hozzá. Lásd [Halmozás](accumulation.md).
-4. **Összeállítás.** Minden pixelnél a halmozott érték elosztódik a **telítési ponttal**, alakul a **sűrűségválaszon** keresztül, megemelődik a **minimális hővel**, és a **színskálán** keresve a **átlátszóság** alapján beleolvad a jelenetbe. Lásd [Szín és expozíció](colour-and-exposure.md).
+4. **Összeállítás.** Minden pixelnél a halmozott érték elosztódik a **telítési ponttal**, alakul a **sűrűségválaszon** keresztül, megemelődik a **minimális hővel**, és a **színskálán** keresve az **átlátszóság** alapján beleolvad a jelenetbe. Lásd [Szín és expozíció](colour-and-exposure.md).
 
 A 4. lépés minden eleme az összeállításkor érvényesül, így ezeknek a vezérlőknek a húzása sosem indítja újra a halmozást; az 1–2. lépésbeli dolgok viszont igen.
 

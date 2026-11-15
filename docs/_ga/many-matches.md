@@ -33,10 +33,10 @@ Is cluiche amháin é gach comhad (nó tá roinnt cluichí ann). Oibríonn comha
 
 Taispeánann an painéal cé mhéad cluiche, aonad, sraith agus suíomh a léadh, an chuimhne a úsáideadh agus am an lódála. *Seomra do* is é cé mhéad suíomh breise a d'fhéadfadh an cárta grafaice a ghlacadh fós. *Figiúirí ó* is é an méid ar an scáileán faoina dtarraingítear aonad mar dairt bheag in ionad a fhigiúir.
 
-Úsáideann dealbh na bhfigiúr na rialuithe céanna leis an [athsheinm cluiche](match-replay.md#figures): **Méid na bhfigiúirí**, **An fhíor is lú ar an scáileán** agus **Ó achar**.
+Úsáideann an forleagan figiúr na rialuithe céanna leis an [athsheinm cluiche](match-replay.md#figures): **Méid na bhfigiúirí**, **An fhíor is lú ar an scáileán** agus **Ó achar**.
 
 ## Leideanna {#tips}
 
-- Nuair nach bhfeileann rud ar bith sa chuimhne, déantar suíomhanna a chaolú (coinnítear suíomh amháin gach cúpla méadar) agus insíonn an painéal sin.
+- Nuair nach n-oireann gach rud sa chuimhne, déantar suíomhanna a chaolú (coinnítear suíomh amháin gach cúpla méadar) agus insíonn an painéal sin.
 - Oibríonn na modhanna teasa ar shonraí an fhorleagain freisin.
 - Le haghaidh staitisticí thar na mílte cluiche gan iad a tharraingt, féach [Anailís mhais](mass-analysis.md).

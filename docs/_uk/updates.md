@@ -57,78 +57,44 @@ outdated: false
 
 `restart.bat` зупиняє сервер (за портом) і знову запускає `start.bat`, тож ставить те саме питання. `stop.bat` лише зупиняє.
 
-## For developers {#for-developers}
+## Для розробників {#for-developers}
 
-### While it runs: the update route {#while-it-runs-the-update-route}
+### Поки працює: маршрут оновлення {#while-it-runs-the-update-route}
 
-The dev server (Vite plugin `heat3d-self-update` in `vite.config.ts`) serves
-`/__heat3d/update`. It exists only on the dev server - not in a static build
-and not in `vite preview`.
+Сервер розробки (плагін Vite `heat3d-self-update` у `vite.config.ts`) віддає `/__heat3d/update`. Він є лише на сервері розробки - не в статичній збірці й не у `vite preview`.
 
-**`GET /__heat3d/update`** answers whether the checkout is behind:
+**`GET /__heat3d/update`** відповідає, чи відстає копія:
 
 ```json
-{ "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "the newest commit's subject" }
+{ "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "тема найновішого коміту" }
 ```
 
-- `checkout: false` when the folder is not a git checkout;
-- it runs `git fetch --quiet` **at most every 30 minutes** (asks in between
-  answer from what was last fetched);
-- `behind` / `ahead` from `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`,
-  `dirty` from `git status --porcelain --untracked-files=no`, `latest` the
-  subject of the upstream's newest commit;
-- with no upstream branch, `upstream: null` and `behind: 0`.
+- `checkout: false`, коли тека не є копією git;
+- він запускає `git fetch --quiet` **не частіше ніж раз на 30 хвилин** (запити між цим відповідають з того, що було отримано востаннє);
+- `behind` / `ahead` беруться з `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`, `dirty` - з `git status --porcelain --untracked-files=no`, `latest` - тема найновішого коміту upstream;
+- без гілки upstream: `upstream: null` і `behind: 0`.
 
-**`POST /__heat3d/update/apply`** brings the checkout up:
+**`POST /__heat3d/update/apply`** оновлює копію:
 
-1. Refused with `403 { ok: false, reason: "forbidden" }` unless the request has
-   the header `X-Heat3d-Update: 1` and, when it carries an `Origin`, that
-   origin's host is the request's `Host`. A cross-site form cannot send a
-   custom header without a CORS preflight, which this server never grants.
-2. Nothing to do (not a checkout, no upstream, not behind):
-   `{ ok: true, updated: false }`.
-3. Local changes: `{ ok: false, reason: "dirty" }`; local commits:
-   `{ ok: false, reason: "diverged" }`.
-4. Otherwise: notes the files that change (`git diff --name-only HEAD @{u}`),
-   `git pull --ff-only` (2 min timeout), `git submodule update --init`
-   (failure ignored), `npm install` when `package.json` or
-   `package-lock.json` changed (15 min timeout), and answers
-   `{ ok: true, updated: true, restart }` - `restart` says why the running
-   server cannot pick the update up: `"dependencies"` when they were
-   reinstalled, `"config"` when only a `vite.config` file changed, `false`
-   when nothing needs a restart.
-5. A failing git or npm command answers `{ ok: false, reason: "<the error,
-   up to 300 characters>" }`.
+1. Відмова `403 { ok: false, reason: "forbidden" }`, якщо в запиті немає заголовка `X-Heat3d-Update: 1` і, коли є `Origin`, його хост не збігається з `Host` запиту. Форма з іншого сайту не може надіслати власний заголовок без попереднього CORS-запиту, якого цей сервер ніколи не дозволяє.
+2. Робити нічого (не копія, немає upstream, не відстає): `{ ok: true, updated: false }`.
+3. Локальні зміни: `{ ok: false, reason: "dirty" }`; локальні коміти: `{ ok: false, reason: "diverged" }`.
+4. Інакше: з’ясовує, які файли змінюються (`git diff --name-only HEAD @{u}`), виконує `git pull --ff-only` (тайм-аут 2 хв), `git submodule update --init` (збій ігнорується), `npm install`, якщо змінилися `package.json` або `package-lock.json` (тайм-аут 15 хв), і відповідає `{ ok: true, updated: true, restart }`. `restart` пояснює, чому запущений сервер не може підхопити оновлення: `"dependencies"`, коли залежності перевстановлено, `"config"`, коли змінився лише файл `vite.config`, `false`, коли перезапуск не потрібен.
+5. Якщо команда git або npm завершилася помилкою, відповідь `{ ok: false, reason: "<помилка, до 300 символів>" }`.
 
-Responses are JSON with `Cache-Control: no-store`. The server listens on
-`127.0.0.1` only, so the route is not reachable from the network.
+Відповіді - JSON з `Cache-Control: no-store`. Сервер слухає лише `127.0.0.1`, тож маршрут недоступний із мережі.
 
-### The notice in the page {#the-notice-in-the-page}
+### Повідомлення на сторінці {#the-notice-in-the-page}
 
-`UpdateBanner`, under the name at the top of the sidebar:
+`UpdateBanner`, під назвою вгорі бічної панелі:
 
-- It asks the route **4 seconds** after the page loads (not in the first
-  seconds: the page has a dataset to load and a GPU to start) and again
-  **every 6 hours** while the page stays open.
-- It shows **nothing** when there is no such route (a static build), the
-  folder is not a checkout, or nothing is newer - a notice on every start is
-  one people learn to ignore.
-- Behind, with no local changes: "A newer version of 3DHeat is available (N
-  changes, the newest: <subject>)." with **Update now** and **Later**
-  (*Later* hides it until the page is reloaded).
-- Behind, with local changes: the same sentence and "This copy has local
-  changes, so it is not updated automatically; commit or stash them, then
-  run git pull." - no button.
-- **Update now** posts to `/apply` ("Updating..."). Then:
-  - "Updated. The page reloads." - and it reloads 1.5 s later (the server
-    already serves the new files);
-  - when the dependencies were reinstalled: "Updated. Its dependencies
-    changed: close the server window and run **restart.bat** to finish.";
-  - when only the server's settings changed: "Updated. Its server settings
-    changed: close the server window and run **restart.bat** to finish.";
-  - nothing to bring in after all (`updated: false` - the copy was brought up
-    meanwhile, by `start.bat` say): "Nothing to update: this copy is already
-    the newest version." - and no reload;
-  - refused: the *dirty* sentence, or "This copy has commits of its own that
-    the newest version does not; update it with git pull.", or "The update
-    did not go through: <reason>".
+- Він запитує маршрут через **4 секунди** після завантаження сторінки (не в перші секунди: у сторінки є набір даних для завантаження і GPU для запуску), а потім **кожні 6 годин**, поки сторінка відкрита.
+- Він нічого не показує, коли маршруту немає (статична збірка), тека не є копією або нічого новішого немає: повідомлення при кожному запуску - це те, до чого люди швидко звикають і перестають його помічати.
+- Відстає, без локальних змін: «Доступна новіша версія 3DHeat (N змін, найновіша: <тема>).» з кнопками **Оновити зараз** і **Пізніше** (*Пізніше* ховає вікно до перезавантаження сторінки).
+- Відстає, з локальними змінами: та сама фраза і «У цій копії є локальні зміни, тож вона не оновлюється автоматично; зробіть commit або stash, потім виконайте git pull.» - без кнопки.
+- **Оновити зараз** надсилає запит на `/apply` («Оновлення…»). Далі:
+  - «Оновлено. Сторінка перезавантажується.» - і через 1,5 с сторінка перезавантажується (сервер уже віддає нові файли);
+  - якщо залежності перевстановлено: «Оновлено. Змінилися залежності: закрийте вікно сервера і запустіть **restart.bat**, щоб завершити.»;
+  - якщо змінилися лише налаштування сервера: «Оновлено. Змінилися налаштування сервера: закрийте вікно сервера і запустіть **restart.bat**, щоб завершити.»;
+  - зрештою оновлювати нічого (`updated: false`, наприклад, коли копію вже оновив `start.bat`): «Оновлювати нічого: ця копія вже найновіша.» - і без перезавантаження;
+  - відмова: фраза про локальні зміни, або «У цій копії є власні коміти, яких немає в найновішій версії; оновіть її через git pull.», або «Оновлення не відбулося: <причина>».

@@ -50,7 +50,7 @@ Significados breves de las palabras que usa este sitio, en lenguaje sencillo. Ca
 
 ## Repetición {#replay}
 
-**Figura.** Un pequeño modelo de un tanque, avión, coche o soldado que se mueve donde indican los datos que estuvo. [Figuras](figures.md)
+**Figura.** Un pequeño modelo de un tanque, avión, coche o soldado que se mueve donde dicen los datos que estuvo. [Figuras](figures.md)
 
 **LOD (nivel de detalle).** Cada figura tiene una versión detallada, otra más sencilla y otra muy simple. Las cercanas usan la detallada y las lejanas la simple, así que se pueden dibujar miles a la vez. [Figuras](figures.md)
 

@@ -61,74 +61,40 @@ outdated: false
 
 ### 실행 중: 업데이트 경로 {#while-it-runs-the-update-route}
 
-The dev server (Vite plugin `heat3d-self-update` in `vite.config.ts`) serves
-`/__heat3d/update`. It exists only on the dev server - not in a static build
-and not in `vite preview`.
+개발 서버(`vite.config.ts`의 Vite 플러그인 `heat3d-self-update`)가 `/__heat3d/update`를 제공합니다. 이 경로는 개발 서버에만 있으며, 정적 빌드나 `vite preview`에는 없습니다.
 
-**`GET /__heat3d/update`** answers whether the checkout is behind:
+**`GET /__heat3d/update`**는 체크아웃이 뒤처졌는지 답합니다:
 
 ```json
 { "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "the newest commit's subject" }
 ```
 
-- `checkout: false` when the folder is not a git checkout;
-- it runs `git fetch --quiet` **at most every 30 minutes** (asks in between
-  answer from what was last fetched);
-- `behind` / `ahead` from `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`,
-  `dirty` from `git status --porcelain --untracked-files=no`, `latest` the
-  subject of the upstream's newest commit;
-- with no upstream branch, `upstream: null` and `behind: 0`.
+- 폴더가 git 체크아웃이 아니면 `checkout: false`;
+- `git fetch --quiet`는 **최대 30분마다 한 번** 실행합니다(그 사이의 요청은 마지막으로 가져온 내용으로 답합니다);
+- `behind` / `ahead`는 `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`에서, `dirty`는 `git status --porcelain --untracked-files=no`에서, `latest`는 업스트림의 가장 최신 커밋 제목에서 가져옵니다;
+- 업스트림 브랜치가 없으면 `upstream: null`과 `behind: 0`.
 
-**`POST /__heat3d/update/apply`** brings the checkout up:
+**`POST /__heat3d/update/apply`**는 체크아웃을 최신으로 맞춥니다:
 
-1. Refused with `403 { ok: false, reason: "forbidden" }` unless the request has
-   the header `X-Heat3d-Update: 1` and, when it carries an `Origin`, that
-   origin's host is the request's `Host`. A cross-site form cannot send a
-   custom header without a CORS preflight, which this server never grants.
-2. Nothing to do (not a checkout, no upstream, not behind):
-   `{ ok: true, updated: false }`.
-3. Local changes: `{ ok: false, reason: "dirty" }`; local commits:
-   `{ ok: false, reason: "diverged" }`.
-4. Otherwise: notes the files that change (`git diff --name-only HEAD @{u}`),
-   `git pull --ff-only` (2 min timeout), `git submodule update --init`
-   (failure ignored), `npm install` when `package.json` or
-   `package-lock.json` changed (15 min timeout), and answers
-   `{ ok: true, updated: true, restart }` - `restart` says why the running
-   server cannot pick the update up: `"dependencies"` when they were
-   reinstalled, `"config"` when only a `vite.config` file changed, `false`
-   when nothing needs a restart.
-5. A failing git or npm command answers `{ ok: false, reason: "<the error,
-   up to 300 characters>" }`.
+1. 요청에 헤더 `X-Heat3d-Update: 1`이 없으면 `403 { ok: false, reason: "forbidden" }`으로 거부합니다. `Origin`이 있는 경우에는 그 origin의 호스트가 요청의 `Host`와 같아야 합니다. 사이트 간 폼은 CORS 사전 요청 없이는 사용자 지정 헤더를 보낼 수 없고, 이 서버는 그것을 허용하지 않습니다.
+2. 할 일이 없으면(체크아웃이 아님, 업스트림 없음, 뒤처지지 않음): `{ ok: true, updated: false }`.
+3. 로컬 변경이 있으면 `{ ok: false, reason: "dirty" }`; 로컬 커밋이 있으면 `{ ok: false, reason: "diverged" }`.
+4. 그 밖의 경우: 바뀌는 파일을 기록하고(`git diff --name-only HEAD @{u}`), `git pull --ff-only`(2분 제한 시간), `git submodule update --init`(실패는 무시), `package.json` 또는 `package-lock.json`이 바뀌었으면 `npm install`(15분 제한 시간)을 실행한 뒤, `{ ok: true, updated: true, restart }`로 답합니다. `restart`는 실행 중인 서버가 업데이트를 반영할 수 없는 이유를 나타냅니다. 의존성을 다시 설치했으면 `"dependencies"`, `vite.config` 파일만 바뀌었으면 `"config"`, 재시작이 필요 없으면 `false`입니다.
+5. git 또는 npm 명령이 실패하면 `{ ok: false, reason: "<오류, 최대 300자>" }`로 답합니다.
 
-Responses are JSON with `Cache-Control: no-store`. The server listens on
-`127.0.0.1` only, so the route is not reachable from the network.
+응답은 `Cache-Control: no-store`를 가진 JSON입니다. 서버는 `127.0.0.1`에서만 듣기 때문에, 이 경로는 네트워크에서 닿지 않습니다.
 
 ### 페이지의 알림 {#the-notice-in-the-page}
 
-`UpdateBanner`, under the name at the top of the sidebar:
+사이드바 맨 위의 이름 아래에 있는 `UpdateBanner`입니다:
 
-- It asks the route **4 seconds** after the page loads (not in the first
-  seconds: the page has a dataset to load and a GPU to start) and again
-  **every 6 hours** while the page stays open.
-- It shows **nothing** when there is no such route (a static build), the
-  folder is not a checkout, or nothing is newer - a notice on every start is
-  one people learn to ignore.
-- Behind, with no local changes: "A newer version of 3DHeat is available (N
-  changes, the newest: <subject>)." with **Update now** and **Later**
-  (*Later* hides it until the page is reloaded).
-- Behind, with local changes: the same sentence and "This copy has local
-  changes, so it is not updated automatically; commit or stash them, then
-  run git pull." - no button.
-- **Update now** posts to `/apply` ("Updating..."). Then:
-  - "Updated. The page reloads." - and it reloads 1.5 s later (the server
-    already serves the new files);
-  - when the dependencies were reinstalled: "Updated. Its dependencies
-    changed: close the server window and run **restart.bat** to finish.";
-  - when only the server's settings changed: "Updated. Its server settings
-    changed: close the server window and run **restart.bat** to finish.";
-  - nothing to bring in after all (`updated: false` - the copy was brought up
-    meanwhile, by `start.bat` say): "Nothing to update: this copy is already
-    the newest version." - and no reload;
-  - refused: the *dirty* sentence, or "This copy has commits of its own that
-    the newest version does not; update it with git pull.", or "The update
-    did not go through: <reason>".
+- 페이지를 불러온 뒤 **4초**에 이 경로에 묻습니다(처음 몇 초는 피합니다. 페이지가 불러올 데이터셋이 있고, 시작할 GPU가 있기 때문입니다). 페이지가 열려 있는 동안에는 **6시간마다** 다시 묻습니다.
+- 그런 경로가 없거나(정적 빌드), 폴더가 체크아웃이 아니거나, 더 새로운 것이 없으면 **아무것도 보이지 않습니다**. 시작할 때마다 알림이 뜨면 사람들이 무시하는 법을 배우기 때문입니다.
+- 뒤처졌고 로컬 변경이 없으면: "3DHeat의 새 버전이 있습니다(N개 변경, 최신: <제목>)."와 함께 **지금 업데이트**와 **나중에** 버튼을 보여 줍니다(*나중에*는 페이지를 새로 고칠 때까지 숨깁니다).
+- 뒤처졌고 로컬 변경이 있으면: 같은 문장과 "이 사본에 로컬 변경이 있어 자동으로 업데이트하지 않습니다. 커밋하거나 stash한 뒤 git pull을 실행하세요." 버튼은 없습니다.
+- **지금 업데이트**는 `/apply`로 보냅니다("업데이트 중..."). 그다음:
+  - "업데이트했습니다. 페이지를 다시 불러옵니다." - 1.5초 뒤에 새로 고칩니다(서버는 이미 새 파일을 제공하고 있습니다);
+  - 의존성을 다시 설치했으면: "업데이트했습니다. 의존성이 바뀌었으니 서버 창을 닫고 **restart.bat**을 실행해 마무리하세요.";
+  - 서버 설정만 바뀌었으면: "업데이트했습니다. 서버 설정이 바뀌었으니 서버 창을 닫고 **restart.bat**을 실행해 마무리하세요.";
+  - 결국 가져올 것이 없으면(`updated: false` - 예: 그 사이에 `start.bat`이 사본을 최신으로 만든 경우): "업데이트할 것이 없습니다. 이 사본은 이미 최신 버전입니다." - 새로 고치지 않습니다;
+  - 거부된 경우: *dirty* 문장, 또는 "이 사본에는 최신 버전에 없는 자체 커밋이 있습니다. git pull로 업데이트하세요.", 또는 "업데이트하지 못했습니다: <이유>".

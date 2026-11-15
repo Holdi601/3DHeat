@@ -87,7 +87,7 @@ Svaka kontrola u nastavku preslikava se na parametar shadera, pa njezina promjen
 
 Tipke: `[` i `]` guraju daleku granicu unutra i van, `\` je uključuje i isključuje ([Dubina i odbacivanje](depth-and-culling.md#keyboard)).
 
-### Smjer i Vrijednost {#direction-and-value}
+### Smjer i vrijednost {#direction-and-value}
 
 Još dva odjeljka nalaze se ispod Oblika topline. **Smjer** crta svaki redak kao klin i dodaje strelice: vidi [Usmjerena toplina](directional-heat.md). **Vrijednost** pondera toplinu prema onome što je svaki redak koštao ili donio: vidi [Ponderiranje vrijednosti](value-weighting.md).
 

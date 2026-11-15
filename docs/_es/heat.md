@@ -15,7 +15,7 @@ El calor pinta los lugares donde ocurrieron muchas cosas: rojo donde pasó un po
 
 **Calor** (tecla 1) es el modo por defecto. Cada [fila](glossary.md) visible aporta un [sprite](glossary.md) redondo orientado a la cámara; los sprites que se solapan se suman en un búfer de coma flotante; la suma se transforma con una escala de colores - por defecto transparente → rojo → amarillo → blanco - y se dibuja sobre la escena.
 
-![Calor en un nivel 3D: puntos calientes dentro y encima de los edificios](../assets/img/en/shooter-heat.webp)
+![Calor en un nivel 3D: puntos calientes dentro y encima de los edificios](../assets/img/es/shooter-heat.webp)
 
 La imagen muestra el calor de una ronda de disparos en un nivel con edificios: los puntos calientes están en las habitaciones y en las escaleras, no solo en el suelo.
 
@@ -26,9 +26,9 @@ La imagen muestra el calor de una ronda de disparos en un nivel con edificios: l
 3. Cambia el **Radio del sprite** hasta que los puntos vecinos se fundan en bandas: más pequeño muestra puntos sueltos, más grande muestra zonas.
 4. Abre **Colores del calor** para cambiar los colores, o **Profundidad** para que colinas y muros oculten el calor tras ellos.
 
-![Las secciones Forma del calor y Colores del calor de la barra lateral, ambas abiertas](../assets/img/en/heat-panel.webp)
+![Las secciones Forma del calor y Colores del calor de la barra lateral, ambas abiertas](../assets/img/es/heat-panel.webp)
 
-Los mismos paneles dan forma a [Diferencia](difference.md), [Calor por equipo](team-heat.md) y [Calor de línea](line-heat.md); se diferencian en lo que se suma (con signo, coloreado o a lo largo de líneas), no en cómo.
+Los mismos paneles dan forma a [Diferencia](difference.md), [Calor por equipo](team-heat.md) y [Calor de línea](line-heat.md); se diferencian en lo que suman (con signo, con color o a lo largo de líneas), no en la forma de hacerlo.
 
 ## Los paneles y sus valores por defecto {#the-panels-and-their-defaults}
 

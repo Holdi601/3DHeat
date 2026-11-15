@@ -24,7 +24,7 @@ Significats breus de les paraules que fa servir aquest lloc, en llenguatge simpl
 
 **Esdeveniment.** Alguna cosa que ha passat, com un tret, un impacte, una mort causada o un enlairament. Una fila pot ser un esdeveniment, o només «era aquí». [Filtres](filters.md)
 
-**Persona.** Qui ha fet les files: un jugador, un pilot, un cotxe o un tanc. Una persona és una línia de posicions al llarg del temps. [Sessions, persones i grups](sessions-persons-groups.md)
+**Persona.** Qui ha fet les files: un jugador, un pilot, un cotxe o un tanc. Una persona és una successió de posicions al llarg del temps. [Sessions, persones i grups](sessions-persons-groups.md)
 
 **Grup (equip).** Un conjunt de persones mostrades amb el mateix color, per exemple Blue i Red. [Sessions, persones i grups](sessions-persons-groups.md)
 

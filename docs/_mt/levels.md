@@ -21,13 +21,13 @@ Meta ma jkun imgħabba xejn, ix-xena tkun iswed b'grilja u assi kkulurati (**Gri
 
 Il-livell hu komuni għat-tliet tabs: kors imgħobbi fit-tab Analiżi tat-tellieqa huwa l-istess livell li turi l-mappa tas-sħana.
 
-![Il-pannell Sfond / livell b'livell mgħobbi: buttuni Immaġini tal-mappa u Mudell 3D, Teatru, Opaċità, Luminożità, Issejvja fil-librerija u l-lista tal-Librerija](../assets/img/en/level-panel.webp)
+![Il-pannell Sfond / livell b'livell mgħobbi: buttuni Immaġini tal-mappa u Mudell 3D, Teatru tal-operazzjonijiet, Opaċità, Luminożità, Issejvja fil-librerija u l-lista tal-Librerija](../assets/img/en/level-panel.webp)
 
 ## Poġġi livell wara d-data tiegħek {#put-a-level-behind-your-data}
 
 1. Ittella' d-data tiegħek l-ewwel ([Kif tidħol id-data](getting-data-in.md)), sabiex il-livell jitqiegħed fuqha.
 2. Iftaħ **Sfond / livell** fis-sidebar.
-3. Agħfas **Immaġini tal-mappa…** għal ritratt jew **Mudell 3D…** għal livell 3D, u agħżel il-fajl. Għal reġistrazzjoni tad-dinja reali, uża **Isfond tad-dinja** jew **Teatru** minflok.
+3. Agħfas **Immaġini tal-mappa…** għal ritratt jew **Mudell 3D…** għal livell 3D, u agħżel il-fajl. Għal reġistrazzjoni tad-dinja reali, uża **Id-dinja vera bħala sfond** jew **Teatru tal-operazzjonijiet** minflok.
 4. Stenna sakemm il-linja tal-progress tlesti. Mudell kbir jiġi mnaqqas l-ewwel (ara **Mira tas-simplifikazzjoni** hawn taħt).
 5. Agħfas **F** fil-veduta biex tiffrena kollox. Uża **Opaċità** u **Luminożità** sakemm is-sħana toħroġ 'il barra mill-livell.
 6. Agħfas **Issejvja fil-librerija** jekk se tuża l-livell aktar tard ([Librerija tal-livelli](level-library.md)).
@@ -44,7 +44,7 @@ Il-livell hu komuni għat-tliet tabs: kors imgħobbi fit-tab Analiżi tat-tellie
 | Parti | Dettalji |
 |---|---|
 | **Immaġini tal-mappa…**, **Mudell 3D…** | Tella' wieħed; jieħu post il-livell attwali. |
-| **Isfond tad-dinja**, **Insa l-madum tal-mappa** | Biss għal dataset b'referenza ġeografika: jibni l-post reali taħtha bħala livell, jew ineħħi l-madum imniżżel. [Isfond tad-dinja](world-backdrop.md) |
+| **Id-dinja vera bħala sfond**, **Insa l-madum tal-mappa** | Biss għal dataset b'referenza ġeografika: jibni l-post reali taħtha bħala livell, jew ineħħi l-madum imniżżel. [Isfond tad-dinja](world-backdrop.md) |
 | **Mira tas-simplifikazzjoni** | Il-baġit tat-trijangoli għall-importazzjoni li jmiss tal-mudell: *Sħiħ - l-ebda simplifikazzjoni* (bażi), *Għoli - 8M*, *Medju - 3M*, *Baxx - 800k*, *Silwett - 100k*. [Livelli 3D](model-levels.md#simplification) |
 | Progress u **Ikkanċella** | Waqt id-dekodifikazzjoni jew l-importazzjoni. |
 | Nota tal-importazzjoni | Trijangoli qabel u wara, il-qsim tal-art / strutturi / ilma, il-livell tad-dettall użat. |

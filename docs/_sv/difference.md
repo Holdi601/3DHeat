@@ -97,10 +97,10 @@ Använd den *linjära* täthetsresponsen när differensens storlek spelar roll. 
 
 Varje rad får ett tecken, +1, −1 eller 0, i vertex-shadern ([`POINT_HEAT_VS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/shaders.ts)). En 0 avvisar raden innan något fragment ritas.
 
-- Efter grupp kommer tecknet från en gruppabell med 4 096 poster, indexerad med radens grupp-id. Grupp-id:t ligger i den fjärde kanalen på radens positionstexel.
-- Efter kategori kommer tecknet från en andra abell med 4 096 poster, fylld per kategorivärde. Radens värde läses från kolumnens filtertextur. Ett värde bortom abellens slut avvisas på båda bakändarna.
+- Efter grupp kommer tecknet från en grupptabell med 4 096 poster, indexerad med radens grupp-id. Grupp-id:t ligger i den fjärde kanalen på radens positionstexel.
+- Efter kategori kommer tecknet från en andra tabell med 4 096 poster, fylld per kategorivärde. Radens värde läses från kolumnens filtertextur. Ett värde bortom tabellens slut avvisas på båda bakändarna.
 - Efter intervall jämförs radens värde med de två intervallen.
 
 Att ändra uppdelningen startar om ackumuleringen.
 
-**Dolda grupper förblir dolda vid varje uppdelning.** Vid en uppdelning efter en kolumn bär gruppabellen inga tecken längre. Den håller 1 för en synlig grupp och 0 för en dold ([`frameSignTables`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts)). Båda abellerna når shadern tillsammans: två rader i en teckentextur på WebGL2, två halvor av en lagringsbuffert på WebGPU. En rad ritas bara när dess grupp är synlig *och* dess kolumnvärde ligger på en sida. En grupp som avmarkerats i [Lagslistan](teams-list.md), eller som utelämnats av sidfokus i fliken Match, bidrar alltså inget oavsett hur differensen delas.
+**Dolda grupper förblir dolda vid varje uppdelning.** Vid en uppdelning efter en kolumn bär grupptabellen inga tecken längre. Den håller 1 för en synlig grupp och 0 för en dold ([`frameSignTables`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts)). Båda tabellerna når shadern tillsammans: två rader i en teckentextur på WebGL2, två halvor av en lagringsbuffert på WebGPU. En rad ritas bara när dess grupp är synlig *och* dess kolumnvärde ligger på en sida. En grupp som avmarkerats i [Lagslistan](teams-list.md), eller som utelämnats av sidfokus i fliken Match, bidrar alltså inget oavsett hur differensen delas.

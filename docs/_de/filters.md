@@ -19,7 +19,7 @@ outdated: false
 2. Wähle unter **Fahrzeugklasse** *Panzer* ab. Das Bild ändert sich sofort.
 3. Drücke **Alle Filter entfernen**, um es rückgängig zu machen.
 
-![Das Panel Filter: zuerst die eigenen Spalten des Viewers (Ereignistyp, Fahrzeugklasse), danach die Spalten aus deiner Datei](../assets/img/en/filters.webp)
+![Das Panel Filter: zuerst die eigenen Spalten des Viewers (Ereignistyp, Fahrzeugklasse), danach die Spalten aus deiner Datei](../assets/img/de/filters.webp)
 
 Die ersten Zeilen sind die eigenen Spalten des Viewers (unten). Die Zeilen danach stammen aus deiner Datei.
 
@@ -42,7 +42,7 @@ Welche Spalten gefiltert werden können, wird beim Laden entschieden, weil sie d
 
 ## Zahlenspalten (Bereich) {#numeric-columns-range}
 
-![Ein Bereichsfilter (verlorenes Geld) mit beiden Enden verschoben](../assets/img/en/filters-numeric.webp)
+![Ein Bereichsfilter (verlorenes Geld) mit beiden Enden verschoben](../assets/img/de/filters-numeric.webp)
 
 | Teil | Bedeutung |
 |---|---|

@@ -74,11 +74,11 @@ outdated: false
 - В [линейном тепле](line-heat.md) фильтр проверяется по строке, в которой *заканчивается* каждый отрезок.
 - При каждом новом наборе данных все фильтры сбрасываются.
 
-## For developers {#for-developers}
+## Для разработчиков {#for-developers}
 
-**Slots.** Each active filter takes one of four GPU slots ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), a texture of 4 bytes per row. Slots go to the filters in the order they were last changed ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), shared by the shader and both panels). Past four, an error says *Only the first 4 filters are applied. Clear one — the rest are being ignored, not silently combined*, and the extra filters' names read *column (not applied)*. Filters run per row in the vertex shader, so changing a threshold needs no re-parse and no re-upload.
+**Слоты.** Каждый активный фильтр занимает один из четырёх слотов GPU ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), текстуру по 4 байта на строку. Слоты отдаются фильтрам в порядке их последнего изменения ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), общий для шейдера и обеих панелей). Сверх четырёх выводится ошибка: *Применяются только первые 4 фильтра. Снимите один — остальные игнорируются, а не объединяются молча*, а у лишних фильтров в названии стоит *столбец (не применяется)*. Фильтры работают построчно в вершинном шейдере, поэтому смена порога не требует повторного разбора и повторной загрузки.
 
-**Filters the panel does not show.** Two more kinds exist in the application state ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
+**Фильтры, которых панель не показывает.** В состоянии приложения есть ещё два вида ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
 
-- a **groups** filter, set by the Match tab when it focuses one side. It hides the other groups in every mode, a [difference](difference.md) split by a column included.
-- a **persons** filter, set by the [Entities](entities.md) panel and by the Match tab when it focuses one player. It restricts the figure replay and the heat modes. In the heat it is a category filter over the person ids and takes one of the four slots. Its mask holds 65,536 ids ([`FILTER_MASK_CAPACITY`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)); a person past that is not drawn in the heat while it is active, even when selected. The figure replay still shows them.
+- фильтр **групп**, который задаёт вкладка Матч, когда выделяет одну сторону. Он скрывает остальные группы во всех режимах, включая [разность](difference.md), разделённую по столбцу.
+- фильтр **персон**, который задают панель [Объекты](entities.md) и вкладка Матч, когда выделяет одного игрока. Он ограничивает повтор фигур и режимы тепла. В тепле это фильтр-категория по идентификаторам персон, и он занимает один из четырёх слотов. Его маска хранит 65 536 идентификаторов ([`FILTER_MASK_CAPACITY`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)); персона сверх этого числа не рисуется в тепле, пока фильтр активен, даже если выбрана. Повтор фигур её по-прежнему показывает.

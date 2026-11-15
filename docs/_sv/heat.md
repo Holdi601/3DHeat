@@ -44,7 +44,7 @@ Varje reglage nedan motsvarar en shaderparameter, så en ändring kostar ingenti
 | **Rampform** | *Avklingning* | *Avklingning* / *Kurva* | [Spriteform](sprite-shape.md#ramp-shape-falloff-or-curve) |
 | **Avklingning** (endast Avklingning) | 1,6 | 0,1–8 (64) | [Spriteform](sprite-shape.md#falloff) |
 | **Mjuk ramp** (endast Avklingning) | på | | [Spriteform](sprite-shape.md#falloff) |
-| Kurveditorn (endast Kurva) | förinställningen *Smooth* | | [Spriteform](sprite-shape.md#the-curve-editor) |
+| Kurveditorn (endast Kurva) | förinställningen *Mjuk* | | [Spriteform](sprite-shape.md#the-curve-editor) |
 | **Mättnadspunkt** | 24; vid inläsning en uppskattning, sedan uppmätt | 0,1–4000, logaritmiskt (10 000 000) | [Färg och exponering](colour-and-exposure.md#saturation-point) |
 | **Minsta värme** | av (0) | 0–100 % | [Färg och exponering](colour-and-exposure.md#minimum-heat) |
 | **Täthetsrespons** | *Mättande* | *Mättande* / *Linjär* / *Log* | [Färg och exponering](colour-and-exposure.md#density-response) |

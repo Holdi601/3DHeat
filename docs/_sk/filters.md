@@ -29,9 +29,9 @@ Pri načítaní prehliadač zistí štyri vlastné stĺpce a vypíše ich **ako 
 
 | Stĺpec | Hodnoty | Odvodené z |
 |---|---|---|
-| **Typ udalosti** | 23 druhov: Pozícia, Výstrel, Odpálenie (raketa, raketa, bomba), Zásah, Netrafenie (zbraň skončila blízko žiadneho cieľa), Výbuch, Poškodenie, Zostrel, Smrť, Zničené, Pád, Katapultovanie / záchrana, Spawn, Zmiznutie, Vzlet, Pristátie, Kontakt so zemou, Zastavenie na zemi, Dopĺňanie zbrane / paliva, Zajatie / cieľ, Návnada, Správa, Iné | stĺpec `event`, `events`, `event_type` alebo `event_name`; slová každej hry (`shot`, `burst`, `fired`, `struck`, `flare`, `plant` ...) sa mapujú na tieto druhy. Úplná tabuľka: [Typy a triedy udalostí](ref-event-types.md). |
+| **Typ udalosti** | 23 druhov: Pozícia, Výstrel, Odpálenie (strela, raketa, bomba), Zásah, Minutie (zbraň skončila blízko žiadneho cieľa), Výbuch, Poškodenie, Zničenie cieľa, Smrť, Zničený, Havária, Katapultovanie, Objavenie, Zmiznutie, Vzlet, Pristátie, Dotyk so zemou, Zastavenie, Prezbrojenie / tankovanie, Obsadenie / cieľ, Návnada, Správa, Iné | stĺpec `event`, `events`, `event_type` alebo `event_name`; slová každej hry (`shot`, `burst`, `fired`, `struck`, `flare`, `plant` ...) sa mapujú na tieto druhy. Úplná tabuľka: [Typy a triedy udalostí](ref-event-types.md). |
 | **Hráč alebo AI** | Hráč, AI | stĺpec `ai`, `is_ai`, `bot` alebo `actor`; inak `is_player` / `human`; inak id účtu (`user_id`, `steam_id`; prázdne alebo 0 je AI); pri nahrávkach Tacview, či má objekt pilota |
-| **Trieda vozidla** | 17 tried: Stíhačka, Útočné lietadlo, Bombardér, Iné lietadlo, Vrtuľník, Tank, Obrnené vozidlo, Protivzdušná obrana, Delostrelectvo, Nákladné auto / auto, Loď, Ponorka, Pešiak, Zbraň, Návnada, Stavba, Iné | názov vozidla alebo jednotky (porovnaný s [katalógom figúrok](figures.md)) a stĺpce typu |
+| **Trieda vozidla** | 17 tried: Stíhačka, Útočné lietadlo, Bombardér, Iné lietadlo, Vrtuľník, Tank, Obrnené vozidlo, Protivzdušná obrana, Delostrelectvo, Nákladné auto / auto, Loď, Ponorka, Pechota, Zbraň, Návnada, Stavba, Iné | názov vozidla alebo jednotky (porovnaný s [katalógom figúrok](figures.md)) a stĺpce typu |
 | **Trieda cieľa** | rovnaké triedy | vozidlo druhej strany (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
 
 Vypísané sú len druhy, ktoré sa vyskytujú. Stĺpce hodnôt (`cost_*`, `earn_*`, `net_*` a *Zdroj ceny*, pozri [Váženie hodnôt](value-weighting.md)) sa dajú filtrovať ako ktorýkoľvek číselný stĺpec: napríklad odškrtnutím *odhad* pod *Zdroj ceny* ponecháte len ocenené riadky.
@@ -80,5 +80,5 @@ Povolenie každej hodnoty filter odstráni.
 
 **Filtre, ktoré panel nezobrazuje.** V stave aplikácie existujú ešte dva druhy ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
 
-- filter **skupín**, nastavený kartou Zápas, keď zameria jednu stranu. Skryje ostatné skupiny vo všetkých režimoch, aj v rozdelení rozdielu podľa stĺpca.
+- filter **skupín**, nastavený kartou Zápas, keď zameria jednu stranu. Skryje ostatné skupiny vo všetkých režimoch, aj v [rozdelení rozdielu](difference.md) podľa stĺpca.
 - filter **osôb**, nastavený panelom [Entity](entities.md) a kartou Zápas, keď zameria jedného hráča. Obmedzuje prehrávanie figúrok a režimy tepla. V teple je to kategóriový filter nad id osôb a zaberá jeden zo štyroch slotov. Jeho maska drží 65 536 id ([`FILTER_MASK_CAPACITY`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)); osoba nad tento limit sa v teple pri aktívnom filtri nekreslí, aj keď je vybraná. Prehrávanie figúrok ju stále zobrazuje.

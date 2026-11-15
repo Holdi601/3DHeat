@@ -1,6 +1,6 @@
 ---
-title: "Obrazce v překryvu obrazců"
-parent: "Obrazce"
+title: "Figury v překryvu figur"
+parent: "Figury"
 nav_order: 2
 lang: "cs"
 source: "figure-replay.md"

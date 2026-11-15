@@ -22,7 +22,7 @@ Kratki pomeni besed, ki jih uporablja ta spletna stran, v preprostem jeziku. Vsa
 
 **Parquet.** Kompaktna datoteka tabele, ki se hitro bere, tudi z milijoni vrstic. Najboljši format za pregledovalnik. [Nalaganje datotek](loading-files.md)
 
-**Dogodek.** Nekaj, kar se je zgodilo, na primer strel, zadetek, kill ali vzlet. Vrstica je lahko dogodek ali samo »bil sem tukaj«. [Filtri](filters.md)
+**Dogodek.** Nekaj, kar se je zgodilo, na primer strel, zadetek, ubitje ali vzlet. Vrstica je lahko dogodek ali samo »bil sem tukaj«. [Filtri](filters.md)
 
 **Oseba.** Tisti, ki je ustvaril vrstice: igralec, pilot, avto ali tank. Ena oseba je ena črta položajev skozi čas. [Seje, osebe in skupine](sessions-persons-groups.md)
 
@@ -46,7 +46,7 @@ Kratki pomeni besed, ki jih uporablja ta spletna stran, v preprostem jeziku. Vsa
 
 **Prostornina.** Škatla ali oblika, ki jo postavite v 3D pogled. Pregledovalnik šteje, kaj je znotraj nje, in lahko primerja prostornine med seboj. [Prostornine in primerjava](volumes.md)
 
-**Filter.** Pravilo, ki skrije vrstice, ki jih ne želite, na primer »samo killi« ali »samo ekipa Red«. [Filtri](filters.md)
+**Filter.** Pravilo, ki skrije vrstice, ki jih ne želite, na primer »samo ubitja« ali »samo ekipa Red«. [Filtri](filters.md)
 
 ## Predvajanje {#replay}
 
@@ -84,8 +84,8 @@ Kratki pomeni besed, ki jih uporablja ta spletna stran, v preprostem jeziku. Vsa
 
 **Eco, forsirani nakup, poln nakup.** Koliko denarja stran porabi za orožje na začetku runde. Eco varčuje in skoraj nič ne kupi (pod 1.500 $ na igralca v povprečju). Forsirani nakup porabi, kar ima (pod 4.000 $). Poln nakup kupi vse, kar lahko. [Analiza tekme](match-analysis.md)
 
-**Trade.** Kill, ki povrne kill: ustreljeni ste, soigralec pa ustreli vašega morilca v 5 sekundah. [Analiza tekme](match-analysis.md)
+**Izmenjava.** Ubitje, ki povrne ubitje: ustreljeni ste, soigralec pa ustreli vašega morilca v 5 sekundah. [Analiza tekme](match-analysis.md)
 
-**KAST.** Delež rund, v katerih je igralec dobil kill, asistenco, preživel ali bil trade-an. Višje število pomeni, da je igralec pomagal v več rundah. [Analiza tekme](match-analysis.md)
+**KAST.** Delež rund, v katerih je igralec dobil ubitje, asistenco, preživel ali bil maščevan. Višje število pomeni, da je igralec pomagal v več rundah. [Analiza tekme](match-analysis.md)
 
 **ADR.** Povprečna škoda na rundo: koliko zdravja je igralec vzel sovražnikom v vsaki rundi. [Analiza tekme](match-analysis.md)

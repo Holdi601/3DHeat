@@ -71,7 +71,7 @@ A szövegmezőbe vagy legördülő menübe írt billentyűket figyelmen kívül 
 ## Sok kör {#many-laps}
 
 - Minden betöltött kört elemzünk és megszámolunk; tucatnyi egy-két másodpercet vesz igénybe.
-- A **8** kör (`SHOW_ALL_UP_TO`) fölött a hozzáadott körök csak akkor rajzolódnak, ha ők a referencia, a fókuszált kör, vagy a fókuszált kör osztályának legjobb köre. A *Mind megjelenítése* / *Csak a megnézettek* kapcsol.
+- A **8** kör (`SHOW_ALL_UP_TO`) fölött a hozzáadott körök csak akkor rajzolódnak, ha ők a referencia, a fókuszált kör, vagy a fókuszált kör osztályának legjobb köre. A *Összes megjelenítése* / *Csak a megnézettek* kapcsol.
 - A **10** látható autó (`PLAIN_PAST`) fölött a nem megnézett köröket (nem a fókuszt, az üldözött autót vagy a referenciát) pontig ritkított vonalakkal rajzoljuk, 1,5 m helyett 6 méterenként, és egyszerű autókkal.
 - A diagramok legfeljebb **8** kört rajzolnak; a HUD legfeljebb **6** kártyát mutat.
 - A pályastatisztika **3** körtől jelenik meg.

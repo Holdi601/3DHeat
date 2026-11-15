@@ -47,7 +47,7 @@ Jokainen alla oleva säädin vastaa varjostinparametria, joten sen muuttaminen m
 | Käyrän muokkain (vain Käyrä) | *Pehmeä* esiasetus | | [Spriten muoto](sprite-shape.md#the-curve-editor) |
 | **Kyllästymispiste** | 24; latauksessa arvio, sitten mitataan | 0,1-4000, logaritminen (10 000 000) | [Väri ja valotus](colour-and-exposure.md#saturation-point) |
 | **Vähimmäislämpö** | pois (0) | 0-100 % | [Väri ja valotus](colour-and-exposure.md#minimum-heat) |
-| **Tiheysvaste** | *Kyllästyvä* | *Kyllästyvä* / *Lineaarinen* / *Logaritminen* | [Väri ja valotus](colour-and-exposure.md#density-response) |
+| **Tiheysvaste** | *Kyllästyvä* | *Kyllästyvä* / *Lineaarinen* / *Log* | [Väri ja valotus](colour-and-exposure.md#density-response) |
 | **Automaattinen valotus kentästä** | | painike | [Väri ja valotus](colour-and-exposure.md#auto-exposure) |
 | **Seuraa näkymää** | päällä | | Mittaa valotuksen uudelleen joka kerta, kun kamera pysähtyy, joten alue, johon lennät, käyttää koko väriliukumaa. Pienet muutokset jätetään huomiotta ja asteikko liukuu. Poista valinta tai vedä **Kyllästymispistettä** lukitaksesi asteikon ja vertaillaksesi paikkoja yhdellä asteikolla. [Väri ja valotus](colour-and-exposure.md#follow-the-view) |
 | **Sama tiheys kaikilla zoomaustasoilla** | päällä | | Väri tarkoittaa samaa rivimäärää maa-alaa kohden, olitpa kuinka lähellä tahansa. Sprite, jonka pikselirajat suurentavat (kaukana) tai pienentävät (lähellä), säilyttää lämmön, jonka sen todellinen koko lisäisi, joten kuva, joka on valotettu kaukaa, ei häivy, kun lennät sen sisään. Pois päältä rajatun spriten täysi paino lisätään sen rajatussa koossa. [Spriten muoto](sprite-shape.md#pixel-clamps) |

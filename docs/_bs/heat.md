@@ -50,7 +50,7 @@ Svaka kontrola ispod odgovara parametru shadera, pa njena promjena ne košta ni�
 | **Odziv na gustinu** | *Zasićenje* | *Zasićenje* / *Linearno* / *Log* | [Boja i ekspozicija](colour-and-exposure.md#density-response) |
 | **Automatska ekspozicija iz polja** | | dugme | [Boja i ekspozicija](colour-and-exposure.md#auto-exposure) |
 | **Prati prikaz** | uključeno | | Ponovo mjeri ekspoziciju svaki put kada kamera stane, pa područje u koje uletite koristi cijelu skalu boja. Male promjene se zanemaruju, a skala klizi. Isključite je, ili povucite **Tačku zasićenja**, da zaključate skalu i poredite mjesta na jednoj skali. [Boja i ekspozicija](colour-and-exposure.md#follow-the-view) |
-| **Ista gustina pri svakom zumiranju** | uključeno | | Boja znači isti broj redova po površini tla, koliko god da ste blizu. Sprajt koji granice pixela uvećavaju (izdaleka) ili smanjuju (izbliza) zadržava toplotu koju bi dodao njegova prava veličina, pa slika izložena izdaleka ne blijedi kada uletite u nju. Isključeno, ograničen sprajt dodaje punu težinu pri svojoj ograničenoj veličini. [Oblik sprajta](sprite-shape.md#pixel-clamps) |
+| **Ista gustina pri svakom zumiranju** | uključeno | | Boja znači isti broj redova po površini tla, koliko god da ste blizu. Sprajt koji granice piksela uvećavaju (izdaleka) ili smanjuju (izbliza) zadržava toplotu koju bi dodao njegova prava veličina, pa slika izložena izdaleka ne blijedi kada uletite u nju. Isključeno, ograničen sprajt dodaje punu težinu pri svojoj ograničenoj veličini. [Oblik sprajta](sprite-shape.md#pixel-clamps) |
 | **Spljošti na ravan tla** | isključeno | | [Oblik sprajta](sprite-shape.md#flatten-onto-ground-plane) |
 
 ### Boje toplote (zatvoren) {#heat-colours-closed}
@@ -62,7 +62,7 @@ Svaka kontrola ispod odgovara parametru shadera, pa njena promjena ne košta ni�
 | **Vrati na prozirno → crveno → žuto → bijelo** | | |
 | Skala **Negativno (timovi koji oduzimaju)** (samo Razlika) | prozirno → zeleno → plavo → ljubičasto | [Razlika](difference.md#colours) |
 
-### Granice pixela sprajta (zatvoren) {#sprite-pixel-clamps-closed}
+### Granice piksela sprajta (zatvoren) {#sprite-pixel-clamps-closed}
 
 | Kontrola | Podrazumijevano | Raspon (gornja granica prevlačenja) | Detalji |
 |---|---|---|---|
@@ -87,7 +87,7 @@ Svaka kontrola ispod odgovara parametru shadera, pa njena promjena ne košta ni�
 
 Tipke: `[` i `]` pomjeraju daleku granicu unutra i van, `\` je uključuje ili isključuje ([Dubina i culling](depth-and-culling.md#keyboard)).
 
-### Smjer i Vrijednost {#direction-and-value}
+### Smjer i vrijednost {#direction-and-value}
 
 Još dva odjeljka nalaze se ispod Oblika toplote. **Smjer** crta svaki red kao klin i dodaje strelice: vidi [Usmjerenu toplotu](directional-heat.md). **Vrijednost** ponderiše toplotu prema tome koliko je svaki red koštao ili donio: vidi [Ponderisanje vrijednosti](value-weighting.md).
 

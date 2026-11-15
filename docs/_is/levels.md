@@ -18,7 +18,7 @@ Borð er þrívíði staðurinn þar sem leikurinn fór fram - kort, bær, braut
 - **þrívítt borð** - `.glb`, `.gltf`, `.obj`, `.stl` eða `.ply` - skipt í jörð, mannvirki og vatn og einfaldað við innlestur - sjá [Þrívíð borð](model-levels.md) og [Útlit borðs](level-appearance.md);
 - **bakgrunnur heimsins** - fyrir upptöku sem segir hvar á jörðinni hún er (Tacview ACMI-skrá), raunverulegt landslag, vegi, vatn, flugvelli og byggingar, sótt úr opnum gögnum - sjá [Bakgrunnur heimsins](world-backdrop.md).
 
-Þegar ekkert er hlaðið er sviðið dökkt með hnitaneti og lituðum ásum (**Hnitanet** og **Ásar** í [Myndavél og sena](camera.md)), og spjaldið segir *Nothing loaded - the scene shows a grid and axes. Add a map image or a level mesh to give the heat context.*
+Þegar ekkert er hlaðið er sviðið dökkt með hnitaneti og lituðum ásum (**Hnitanet** og **Ásar** í [Myndavél og sena](camera.md)), og spjaldið segir *Ekkert hlaðið — senan sýnir hnitanet og ása. Bættu við kortamynd eða möskva borðs til að gefa hitanum samhengi.*
 
 Borðið er sameiginlegt fyrir alla þrjá flipana: braut sem hlaðin er í flipanum Kappakstursgreining er sama borð og hitakortið sýnir.
 
@@ -38,7 +38,7 @@ Borðið er sameiginlegt fyrir alla þrjá flipana: braut sem hlaðin er í flip
 - Það **hylur**: gagnapunktar á bak við það eru dekkaðir eftir yfirborði, og gagnapunktar á bak við landslagið eru faldir ([Dýpt og útilokun](depth-and-culling.md)). Án borðs er engin hulning.
 - Það er **skorið** af [Sneiðinni](slice.md) og, með *Skera borðið líka*, af [útilokun eftir fjarlægð](depth-and-culling.md#distance-culling), ásamt hitanum.
 - Það er eina atriðið sem [dýptarskerpa](camera.md#depth-of-field) mýkir, auk hnitanetsins og kassanna.
-- Þrívítt borð **víkkar fjarlæga plan myndavélarinnar** þegar það er stærra en gögnin: nær og fjær eru stillt út frá gagnasafninu, og útflutt kort sem er nokkra kílómetra á breidd væri annars alveg á bak við fjarlæga planið og skildi eftir tóma sýn. Fjarlæga planið verður 3 × lárétt útbreiðsla borðsins þegar það er stærra, nærplanið færist með því (að minnsta kosti fjær / 100.000) til að halda dýptarnákvæmninni sem hulningin byggir á, og flughraðinn er hækkaður í að minnsta kosti útbreiðsla / 12. Það er aðeins nokkurn tíma víkkað, aldrei þrengt.
+- Þrívítt borð **víkkar fjarlæga plan myndavélarinnar** þegar það er stærra en gögnin: nær og fjær eru stillt út frá gagnasafninu, og útflutt kort sem er nokkra kílómetra á breidd væri annars alveg á bak við fjarlæga planið og skildi eftir tóma sýn. Fjarlæga planið verður 3 × lárétt útbreiðsla borðsins þegar það er stærra, nærplanið færist með því (að minnsta kosti fjær / 100.000) til að halda dýptarnákvæmninni sem hulningin byggir á, og flughraðinn er hækkaður í að minnsta kosti útbreiðsla / 12. Það er aðeins víkkað, aldrei þrengt.
 
 ## Spjaldið, að ofan og niður {#the-panel-top-to-bottom}
 
@@ -46,10 +46,10 @@ Borðið er sameiginlegt fyrir alla þrjá flipana: braut sem hlaðin er í flip
 |---|---|
 | **Kortamynd…**, **Þrívíddarlíkan…** | Hlaðið inn einu; það kemur í stað núverandi borðs. |
 | **Raunheimur sem bakgrunnur**, **Gleyma kortareitum** | Aðeins fyrir gagnasafn með landfræðilegri tilvísun: byggir raunverulega staðinn undir því sem borð, eða eyðir sóttum kortareitum. [Bakgrunnur heimsins](world-backdrop.md) |
-| **Markmið einföldunar** | Þríhyrningafjárhagsáætlunin fyrir næsta innlestur líkans: *Full - no simplification* (sjálfgefið), *High - 8M*, *Medium - 3M*, *Low - 800k*, *Silhouette - 100k*. [Þrívíð borð](model-levels.md#simplification) |
+| **Markmið einföldunar** | Þríhyrningafjárhagsáætlunin fyrir næsta innlestur líkans: *Fullt — engin einföldun* (sjálfgefið), *Hátt — 8 millj. þríhyrninga*, *Miðlungs — 3 millj. þríhyrninga*, *Lágt — 800 þús. þríhyrninga*, *Útlína — 100 þús. þríhyrninga*. [Þrívíð borð](model-levels.md#simplification) |
 | Framvinda og **Hætta við** | Meðan afkóðað er eða líkan flutt inn. |
 | Innlestursathugasemd | Þríhyrningar fyrir og eftir, skiptingin í jörð / mannvirki / vatn, smáatriðastigið sem var notað. |
-| Heiti og stærð | `width×height px · x × z m/px` fyrir mynd, `N triangles (from M)` fyrir líkan. |
+| Heiti og stærð | `width×height px · x × z m/px` fyrir mynd, `N þríhyrningar (úr M)` fyrir líkan. |
 | **Ógegnsæi**, **Birta** | Báðar tegundir. |
 | Stýringar myndar | **Afmetta**, **Snúa norðri/suðri við**, **Staðsetning** (tvö akkeri), **Laga að mörkum gagnanna**, **Hæð**. [Kortamyndir](map-images.md) |
 | Stýringar líkans | Landhæðir, vatn, jarðþríhyrningar, vírgrind, áferð, fanguð litur, mannvirki, flokkun hluta. [Útlit borðs](level-appearance.md) |

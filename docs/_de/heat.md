@@ -15,7 +15,7 @@ Intensität malt die Stellen, an denen viel passiert ist: rot, wo es ein bissche
 
 **Intensität** (Taste 1) ist der Standardmodus. Jede sichtbare [Zeile](glossary.md) trägt einen kameragewandten runden [Sprite](glossary.md) bei; überlappende Sprites addieren sich in einem Fließkomma-Puffer; die Summe wird durch einen Farbverlauf geschickt – standardmäßig transparent → rot → gelb → weiß – und über die Szene gelegt.
 
-![Intensität auf einem 3D-Level: heiße Stellen in und auf den Gebäuden](../assets/img/en/shooter-heat.webp)
+![Intensität auf einem 3D-Level: heiße Stellen in und auf den Gebäuden](../assets/img/de/shooter-heat.webp)
 
 Das Bild zeigt die Intensität einer Shooter-Runde auf einem Level mit Gebäuden: Die heißen Stellen liegen in den Räumen und auf den Treppen, nicht nur auf dem Boden.
 
@@ -26,7 +26,7 @@ Das Bild zeigt die Intensität einer Shooter-Runde auf einem Level mit Gebäuden
 3. Ändere **Sprite-Radius**, bis benachbarte Punkte zu Bändern verschmelzen: Kleiner zeigt einzelne Flecken, größer zeigt Flächen.
 4. Öffne **Heatmap-Farben**, um die Farben zu ändern, oder **Tiefe**, damit Hügel und Wände die Intensität dahinter verbergen.
 
-![Die Abschnitte Heatmap-Form und Heatmap-Farben der Seitenleiste, beide geöffnet](../assets/img/en/heat-panel.webp)
+![Die Abschnitte Heatmap-Form und Heatmap-Farben der Seitenleiste, beide geöffnet](../assets/img/de/heat-panel.webp)
 
 Dieselben Panels formen auch [Differenz](difference.md), [Team-Intensität](team-heat.md) und [Linien-Intensität](line-heat.md); sie unterscheiden sich darin, was addiert wird (mit Vorzeichen, farbig oder entlang von Linien), nicht darin, wie es geschieht.
 

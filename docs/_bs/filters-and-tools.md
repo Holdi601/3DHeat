@@ -16,11 +16,11 @@ Ovi paneli omogućavaju da izaberete *koje* podatke gledate i da izmjerite ono �
 Svaki panel sužava podatke, a rade zajedno: red se crta samo ako prođe **sve** njih (I).
 
 ```
-all rows -> Filters -> Teams -> Entities -> Slice -> picture
-              AND       AND       AND        AND
+svi redovi -> Filteri -> Timovi -> Entiteti -> Presjek -> slika
+              I         I          I           I
 ```
 
-Primjer: odštiklirajte *Tenk* pod Filterima, sakrijte crveni tim pod Timovima i izaberite jednog igrača pod Entitetima. Vidite samo njegova kretanja koja nisu tenkom.
+Primjer: odznačite *Tenk* pod Filterima, sakrijte crveni tim pod Timovima i izaberite jednog igrača pod Entitetima. Vidite samo njegova kretanja koja nisu tenkom.
 
 | Panel | Šta radi | Načini toplote | Preklapanje figura |
 |---|---|---|---|

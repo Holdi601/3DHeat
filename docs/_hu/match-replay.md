@@ -55,7 +55,7 @@ Ha egy egység kisebb lenne a **Legkisebb figura a képernyőn** értéknél, ol
 
 ### Találatjelek, roncsok és tüzek {#hit-marks-wrecks-and-fires}
 
-- A **találatjelek** azon a felületen ülnek, amelyet a lövés elért, a figura méretarányában. Megjelenésük elárulja, mi történt: lyuk (átment), fényes szóró (nem ment át), vájat (lepattant), korom-csillag (robbanógránát). Egy színes gyűrű azt mutatja, mit tett: halálos lövés, modul megsemmisült, kritikus, súlyos, sérülés, sérülésmentes, találat. Egy jelre rámutatva megjelenik a lövedék neve.
+- A **Találatpontok** azon a felületen ülnek, amelyet a lövés elért, a figura méretarányában. Megjelenésük elárulja, mi történt: lyuk (átment), fényes szóró (nem ment át), vájat (lepattant), korom-csillag (robbanógránát). Egy színes gyűrű azt mutatja, mit tett: halálos lövés, modul megsemmisült, kritikus, súlyos, sérülés, sérülésmentes, találat. Egy jelre rámutatva megjelenik a lövedék neve.
 - Egy megsemmisített egység a haláltól kezdve, amíg újra nem születik vagy el nem távolítják, **megperzselt** roncsként rajzolódik; a jele át van húzva.
 - A **tüzek** attól a pillanattól égnek egy egységen, hogy meggyullad, amíg el nem oltják.
 - A **tornyok** oda fordulnak, ahová az adat szerint a löveg mutat (vagy adat nélkül oda, ahová a játékos néz).
@@ -66,7 +66,7 @@ A **Fegyverek, lövések és találatok** (Csapatnéző szakasz) bekapcsolva: a 
 
 ## Kamerák {#cameras}
 
-Kattintson egy egységre vagy a feliratára, hogy **kövesse**; a **Visszajátszás** szakasz kínálja a **Üldözés**, **Keringés**, **Pilótafülke** (kijelzővel, `H`), **Rögzített**, **Padlock**, **Célpont** és **Műhold** nézeteket. A `V` végigléptet közöttük, a **Kameratávolság** állítja, milyen messze. Az Esc megáll.
+Kattintson egy egységre vagy a feliratára, hogy **kövesse**; a **Visszajátszás** szakasz kínálja az **Üldözés**, **Keringés**, **Pilótafülke** (kijelzővel, `H`), **Rögzített**, **Padlock**, **Célpont** és **Műhold** nézeteket. A `V` végigléptet közöttük, a **Kameratávolság** állítja, milyen messze. Az Esc megáll.
 
 - **Két egységes nézet**: válasszon egy **Célpontot** (vagy Ctrl/Alt-kattintással egy egységet), hogy a követettől nézze; a **Csere** felcseréli őket.
 - **Mérés**: Shift-kattintással két egység között megkapja az irányt, a távolságot és a magasságkülönbséget.

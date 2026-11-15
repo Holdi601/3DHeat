@@ -32,7 +32,7 @@ Hver skrá er einn leikur (eða geymir nokkra). Parquet-skrár og [`.3dheat`](co
 | **Eftir liði** / **Eftir leik** | Litað eftir hlið, eða einn litur á hvern leik. |
 | **Merkja hvar einingar dóu** | Merki þar sem hver eining dó, í 10 s, 30 s, 120 s, eða allt hingað til. |
 
-Spjaldið sýnir hversu margir leikir, einingar, línur og staðsetningar voru lesnar, minnið sem notað var og hleðslutímann. *Rými fyrir* er hversu margar fleiri staðsetningar skjákortið gæti enn tekið. *Fígúrur frá* er stærðin á skjánum þar sem undir er einingin teiknuð sem lítil ör í stað fígúru sinnar.
+Spjaldið sýnir hversu margir leikir, einingar, línur og staðsetningar voru lesnar, minnið sem notað var og hleðslutímann. *Rými fyrir* er hversu margar fleiri staðsetningar skjákortið gæti enn tekið. *Fígúrur frá* er stærðin á skjánum, undir henni er einingin teiknuð sem lítil ör í stað fígúru sinnar.
 
 Útlit fígúranna notar sömu stýringar og [endurspilun leiks](match-replay.md#figures): **Stærð fígúra**, **Minnsta mynd á skjá** og **Í fjarlægð**.
 

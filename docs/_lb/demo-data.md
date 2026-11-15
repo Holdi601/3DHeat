@@ -51,7 +51,7 @@ Fir de Schéisser lued `demo-yard.glb` an `shooter.parquet`; fir de Loftkampf `a
 
 ## D'Screenshoten {#the-screenshots}
 
-D'Biller vun der Websäit ginn aus dëse Daten vun engem Skript gemaach, a jeder vun den Sproochen vum Viewer:
+D'Biller vun der Websäit ginn aus dësen Daten vun engem Skript gemaach, a jeder vun den Sproochen vum Viewer:
 
 ```bash
 node tools/demo-data.mjs

@@ -28,7 +28,7 @@ Jokainen tiedosto on yksi ottelu (tai sisältää useita). Parquet-tiedostot ja 
 
 | Asetus | Mitä se tekee |
 |---|---|
-| **Joukkueittain** / **Otteluittain** | Värjää puolen mukaan tai yhden värin per ottelu. |
+| **Joukkueittain** / **Otteluittain** | Värjää puolen mukaan tai oman värin kullekin ottelulle. |
 | **Merkitse, missä yksiköt kuolivat** | Merkki siihen, missä kukin yksikkö kuoli, 10 s, 30 s, 120 s tai kaikki tähän mennessä. |
 
 Paneeli näyttää, kuinka monta ottelua, yksikköä, riviä ja sijaintia luettiin, käytetyn muistin ja latausajan. *Tilaa* on, kuinka monta sijaintia näytönohjaimelle vielä mahtuisi. *Hahmot alkaen* on koko näytöllä, jonka alapuolella yksikkö piirretään pienenä nuolena eikä hahmonaan.

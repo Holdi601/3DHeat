@@ -80,7 +80,7 @@ Kratka značenja riječi koje koristi ovaj sajt, običnim jezikom. Svaka stavka 
 
 ## Riječi iz Counter-Strikea {#counter-strike-words}
 
-**Runda.** Jedna kratka borba unutar meča. Jedna strana je pobjeđuje i rezultat raste za jedan.
+**Runda.** Jedna kratka borba unutar meča. Jednu rundu dobija jedna strana, a rezultat raste za jedan.
 
 **Eco, force buy, full buy.** Koliko novca strana troši na oružje na početku runde. Eco štedi novac i kupuje gotovo ništa (ispod 1.500 $ po igraču u prosjeku). Force buy troši sve što ima (ispod 4.000 $). Full buy kupuje sve što može. [Analiza meča](match-analysis.md)
 

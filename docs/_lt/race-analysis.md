@@ -76,7 +76,7 @@ Klavišai, įvesti tekstiniame lauke ar išskleidžiamajame sąraše, ignoruojam
 ## Daug ratų {#many-laps}
 
 - Visi įkelti ratai yra analizuojami ir suskaičiuojami; dešimtys trunka sekundę ar dvi.
-- Viršijus **8** ratus (`SHOW_ALL_UP_TO`), pridėti ratai piešiami tik tada, kai jie yra etalonas, fokusuotas ratas arba geriausias fokusuoto rato klasės ratas. Jungikliai *Rodyti visus* / *Tik peržiūrėtus* perjungia.
+- Viršijus **8** ratus (`SHOW_ALL_UP_TO`), pridėti ratai piešiami tik tada, kai jie yra etalonas, fokusuotas ratas arba geriausias fokusuoto rato klasės ratas. Jungikliai *Rodyti visus* / *Tik nagrinėjami* perjungia.
 - Viršijus **10** matomų automobilių (`PLAIN_PAST`), ratai, į kuriuos nežiūrima (ne fokusas, ne persekiojamas automobilis, ne etalonas), piešiami su linijomis, retinamomis iki taško kas 6 m, o ne kas 1,5 m, ir paprastais automobiliais.
 - Grafikuose piešiama daugiausia **8** ratai; HUD rodo daugiausia **6** korteles.
 - Trasos statistika rodoma nuo **3** ratų.
@@ -88,11 +88,11 @@ Išsamiau: [Trasos statistika](race-course-statistics.md#performance-with-many-l
 | Nustatymas | Numatytoji |
 |---|---|
 | Žemėlapis | Laiko žemėlapis |
-| Nuvažiuotos linijos, Automobiliai, Padangos ir pakaba, Žymos, Trasa iš ratų | įjungta |
+| Nuvažiuotos linijos, Automobiliai, Padangos ir pakaba, Etiketės, Trasa iš ratų | įjungta |
 | Visos reikšmės kortelėse | išjungta |
 | Automobilio dydis | 1× |
 | Grafikai | rodomi |
-| Pakartojimo režimas | Nuo linijos |
+| Pakartojimo režimas | Nuo starto linijos |
 | Pakartojimo greitis | 1× |
 | Kartoti | įjungta |
 

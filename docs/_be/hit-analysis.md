@@ -1,5 +1,5 @@
 ---
-title: "Аналіз трапленняў (укладка Vehicles)"
+title: "Аналіз трапленняў (укладка Тэхніка)"
 nav_order: 12
 lang: "be"
 source: "hit-analysis.md"

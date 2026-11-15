@@ -12,7 +12,7 @@ outdated: false
 
 ![Kymmenen panssarivaunuottelun lämpö esimerkkilaaksossa: mitä vaihe 4 näyttää](../assets/img/en/heat-hero.webp)
 
-Ei omaa dataa vielä? Tietovarasto tekee sitä. Kaikki siinä on keksittyä: laakso, piha ja otteluita kolmella keksityllä pelityylillä, joiden pelaajat ovat nimeltään *Blue 1* tai *Red 3*. Kaikki tämän sivuston kuvat on otettu sillä.
+Ei omaa dataa vielä? Tietovarasto tekee sitä. Kaikki siinä on keksitty: laakso, piha ja otteluita kolmella keksityllä pelityylillä, joiden pelaajat ovat nimeltään *Blue 1* tai *Red 3*. Kaikki tämän sivuston kuvat on otettu sillä.
 
 ## Tee se {#make-it}
 

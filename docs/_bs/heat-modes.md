@@ -44,7 +44,7 @@ Tipke 1-4 provjeravaju se prema podacima na isti način: tipka za zasivljen nač
 | Panel | Toplota | Razlika | Toplota timova | Preklapanje figura | Linije |
 |---|---|---|---|---|---|
 | Rute ([toplota linija](line-heat.md)) | | | | | da |
-| Oblik toplote (s **Prati prikaz** i **Ista gustina pri svakom zumiranju**), Boje toplote, Granice pixela sprajta, Dubina, Culling po udaljenosti | da | da | da | | da |
+| Oblik toplote (s **Prati prikaz** i **Ista gustina pri svakom zumiranju**), Boje toplote, Granice piksela sprajta, Dubina, Culling po udaljenosti | da | da | da | | da |
 | Smjer ([usmjerena toplota](directional-heat.md)), Vrijednost ([ponderisanje vrijednosti](value-weighting.md)) | da | da | da | | da |
 | Prikaz tima ([preklapanje figura](box-replay.md)) | | | | da | |
 | Podjela razlike ([razlika](difference.md)) | | da | | | |
@@ -64,7 +64,7 @@ Sve u koraku 4 primjenjuje se u trenutku kompozicije, pa prevlačenje tih kontro
 ## Stranice u ovom odjeljku {#pages-in-this-section}
 
 - [Toplota](heat.md) - običan način toplote i pregled njegovih panela
-  - [Oblik sprajta](sprite-shape.md) - radijus, intenziteti, opadanje, uređivač krive, granice pixela, izravnavanje
+  - [Oblik sprajta](sprite-shape.md) - radijus, intenziteti, opadanje, uređivač krive, granice piksela, izravnavanje
   - [Boja i ekspozicija](colour-and-exposure.md) - uređivač skale, tačka zasićenja, automatska ekspozicija, minimalna toplota, odziv gustine
   - [Dubina i culling](depth-and-culling.md) - okluzija terenom nivoa, skrivanje iza terena, culling po udaljenosti
 - [Razlika](difference.md) - podjela razlike

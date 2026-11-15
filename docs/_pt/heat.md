@@ -76,7 +76,7 @@ Cada controlo abaixo corresponde a um parâmetro do shader, por isso alterá-lo 
 | **Ocultar atrás do terreno** | ligado | [Profundidade e culling](depth-and-culling.md#hide-behind-terrain) |
 | **Oculto atrás da geometria** | 0,8 (*80% mais escuro*) | [Profundidade e culling](depth-and-culling.md#hidden-behind-geometry) |
 
-### Culling por distância (fechada) {#distance-culling-closed}
+### Recorte por distância (fechada) {#distance-culling-closed}
 
 | Controlo | Predefinição | Intervalo (teto de ajuste) | Detalhes |
 |---|---|---|---|

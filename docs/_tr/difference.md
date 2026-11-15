@@ -42,7 +42,7 @@ Fark modunda, ısı panellerinin altında gösterilir.
 | Bir sayısal sütun | *sütun (sayısal)* | Her taraf için bir değer aralığı |
 | Kaynak dosya | *Kaynak dosya - iki yüklemeyi karşılaştır* (birden çok dosya yüklendiğinde) | Dosyalar +, − ya da hiçbiri |
 
-Yalnızca yükleme sırasında *Süzme için tut* altında tutulan sütunlar sunulur.
+Yalnızca yükleme sırasında *Filtreleme için tut* altında tutulan sütunlar sunulur.
 
 ### Sayıları değil, payları karşılaştır {#compare-shares-not-counts}
 
@@ -61,7 +61,7 @@ Panel, resim gerçek bir fark olmadığında uyarır:
 | *sütun* bu şekilde ayrılamaz | Seçilen sütun ayrıma uymuyor. Sütunu yeniden seçin. |
 | Ayırma sütunu, M parçadan N tanesinde GPU belleğine sığmadı | Bu satırlar çizilmiyor. Performans → Kaynak bütçeleri altında GPU bütçesini artırın ya da daha az satır yükleyin. |
 
-### Grupa göre {#by-group}
+### Gruba göre {#by-group}
 
 Panel yalnızca [Takımlar listesine](teams-list.md) işaret eder; orada her grubun bir **+** ve bir **−** düğmesi vardır. Her yüklemede grupların ilk yarısı (yukarı yuvarlanmış) +'ya, geri kalanı −'ye konur; Takımlar listesindeki **Eşit böl** aynısını bir kez daha yapar. Hiçbir tarafta olmayan ya da onay kutusuyla gizlenmiş bir grup hiçbir şeye katkıda bulunmaz.
 

@@ -15,7 +15,7 @@ Rouge là où l'équipe A était plus présente, bleu-vert là où l'équipe B l
 
 **Différence** (touche 2) est une chaleur signée. Les lignes d'une population ajoutent de la chaleur ; celles d'une autre population en retranchent. Là où les deux se recouvrent à parts égales, le résultat est nul et entièrement transparent ; là où l'une domine, il s'affiche dans les couleurs de ce camp : par défaut chaudes (transparent → rouge → jaune → blanc) pour le camp **+**, et froides (transparent → vert → bleu → violet) pour le camp **−**.
 
-![Chaleur différentielle : rouge là où le camp + était plus présent, vert et bleu là où le camp - l'était](../assets/img/en/difference-split.webp)
+![Chaleur différentielle : rouge là où le camp + était plus présent, vert et bleu là où le camp - l'était](../assets/img/fr/difference-split.webp)
 
 ## Comment l'utiliser {#how-to-use-it}
 
@@ -59,11 +59,11 @@ Le panneau avertit lorsque l'image n'est pas une vraie différence :
 | Aucune ligne de la fenêtre ne se trouve du côté **−** | Seul le camp **+** est dessiné. |
 | Aucune valeur ne se trouve sur l'un ou l'autre camp | La différence ne dessine rien. Placez au moins une valeur sur **+** ou **−**. |
 | *colonne* ne peut pas être répartie de cette façon | La colonne choisie ne convient pas à la répartition. Choisissez à nouveau la colonne. |
-| La colonne de répartition n'a pas tenu dans la mémoire GPU pour N morceaux sur M | Ces lignes ne sont pas dessinées. Augmentez le budget GPU sous Performance → Budgets de ressources, ou chargez moins de lignes. |
+| La colonne de répartition n'a pas tenu dans la mémoire GPU pour N morceaux sur M | Ces lignes ne sont pas dessinées. Augmentez le budget GPU sous Performances → Budgets de ressources, ou chargez moins de lignes. |
 
 ### Par groupe {#by-group}
 
-Le panneau renvoie simplement vers la [Liste des équipes](teams-list.md), où chaque groupe a un bouton **+** et un bouton **−**. À chaque chargement, la première moitié des groupes (arrondie au supérieur) est placée sur +, le reste sur −; **Répartir équitablement** dans la Liste des équipes fait de nouveau la même chose. Un groupe placé sur aucun camp, ou masqué avec sa case, n'apporte rien.
+Le panneau renvoie simplement vers la [Liste des équipes](teams-list.md), où chaque groupe a un bouton **+** et un bouton **−**. À chaque chargement, la première moitié des groupes (arrondie au supérieur) est placée sur +, le reste sur −. **Répartir équitablement** dans la Liste des équipes fait de nouveau la même chose. Un groupe placé sur aucun camp, ou masqué avec sa case, n'apporte rien.
 
 ### Par valeurs de catégorie {#by-category-values}
 

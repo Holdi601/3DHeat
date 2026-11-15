@@ -48,7 +48,7 @@ Klahvid 1-4 kontrollitakse andmete järgi samamoodi: hallina oleva režiimi klah
 | Suund ([suunatud soojus](directional-heat.md)), Väärtus ([väärtuskaalumine](value-weighting.md)) | jah | jah | jah | | jah |
 | Võistkonnavaatur ([kujude ülekate](box-replay.md)) | | | | jah | |
 | Erinevuse jaotus ([erinevus](difference.md)) | | jah | | | |
-| [Meeskonnad](teams-list.md), [Üksused](entities.md), [Filtrid](filters.md), Taust / tase, [Lõik](slice.md), [Mõõtmine](measure.md), Kaamerarada ja renderdus, Jõudlus, Kaamera ja stseen | jah | jah | jah | jah | jah |
+| [Võistkonnad](teams-list.md), [Üksused](entities.md), [Filtrid](filters.md), Taust / tase, [Lõik](slice.md), [Mõõtmine](measure.md), Kaamera teekond ja renderdamine, Jõudlus, Kaamera ja stseen | jah | jah | jah | jah | jah |
 
 ## Mida kõik soojusrežiimid jagavad {#what-every-heat-mode-shares}
 

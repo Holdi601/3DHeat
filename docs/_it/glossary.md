@@ -30,7 +30,7 @@ Significati brevi delle parole che usa questo sito, in linguaggio semplice. Ogni
 
 **Sessione (partita, round).** Una singola partita del gioco. Una partita o un round è una sessione. Il visualizzatore può mostrarne una sola oppure sovrapporne molte. [Sessioni, persone e gruppi](sessions-persons-groups.md)
 
-**Livello.** La mappa 3D dove sono successi i dati: terreno, edifici, muri. Le righe compaiono dove sono avvenute sul livello. [Livelli e geometria di sfondo](levels.md)
+**Livello.** La mappa 3D dove sono avvenuti i fatti dei dati: terreno, edifici, muri. Le righe compaiono dove sono avvenute sul livello. [Livelli e geometria di sfondo](levels.md)
 
 ## Guardare i dati {#looking-at-the-data}
 

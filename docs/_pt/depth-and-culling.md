@@ -1,5 +1,5 @@
 ---
-title: "Profundidade e culling"
+title: "Profundidade e recorte"
 parent: "Modos de calor"
 nav_order: 4
 lang: "pt"

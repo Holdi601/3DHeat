@@ -88,14 +88,14 @@ Ní thagann sonraí cluiche leis an rud ar bith: déantar leibhéil, léarscáil
 
 Is leathanach gréasáin statach é an amharcóir, ach cuireann an freastalaí forbartha (féach `vite.config.ts`) dhá bhealach áitiúla leis nach bhfuil ag imscaradh statach de `dist/`:
 
-- Tuairiscíonn `/__host/memory` RAM suiteáilte agus saor an ríomhaire agus, sa chás go bhfuil sé inléite, cuimhne chárta grafaice (ó `nvidia-smi`, nó ar Windows ó iontráil an adapter taispeána sa chlár). Is é seo a fhágann go n-úsáideann [buiséid chuimhne](memory-and-budgets.md) figiúirí fíora in ionad buachaillí brabhsálaí.
-- Seiceálann `/__heat3d/update` an bhfuil an seiceáil taobh thiar agus is féidir leis fast-forward a dhéanamh air ([Nuashonruithe](updates.md)).
+- Tuairiscíonn `/__host/memory` RAM suiteáilte agus saor an ríomhaire agus, sa chás go bhfuil sé inléite, cuimhne chárta grafaice (ó `nvidia-smi`, nó ar Windows ó iontráil an adapter taispeána sa chlár). Is é seo a fhágann go n-úsáideann [buiséid chuimhne](memory-and-budgets.md) figiúirí fíora in ionad tomhas teoranta an bhrabhsálaí.
+- Seiceálann `/__heat3d/update` an bhfuil an cóip taobh thiar agus is féidir leis í a chur ar aghaidh (fast-forward) ([Nuashonruithe](updates.md)).
 
 Ní ceanglaíonn an freastalaí ach le `127.0.0.1`, mar sin ní fhaightear na bealaí seo ó líonra. Oscail é mar `http://127.0.0.1:5273`: is féidir le `localhost` feiscint ar an loopback IPv6 `::1`, áit nach éisteann rud ar bith. Ní sheolann sé ceannlínte cross-origin isolation (COOP/COEP): ní úsáideann aon rud san amharcóir `SharedArrayBuffer`, agus tugann na hoibrithe a gcuid sonraí trí aistriú, ar nach gá aon rud.
 
 ## Riachtanais brabhsálaí agus GPU {#browser-and-gpu-requirements}
 
-- **Brabhsálaí le WebGPU nó WebGL2.** Triailtear WebGPU ar dtús (tá sé ag Chrome agus Edge); gan é úsáidtear an cúlstór WebGL2. Caithfidh WebGL2 `EXT_color_buffer_float` a thairiscint (rindreáil go dtí uigeachtaí snámhphointe), nó taispeánann an amharcóir "Ní féidir an rindreálaí a thosú." Féach [An dá chúltaca](backends.md). Forbraítear agus tástáiltear an amharcóir i Chromium; níl na brabhsálaithe eile fíoraithe.
+- **Brabhsálaí le WebGPU nó WebGL2.** Triailtear WebGPU ar dtús (tá sé ag Chrome agus Edge); gan é úsáidtear an cúlstór WebGL2. Caithfidh WebGL2 `EXT_color_buffer_float` a thairiscint (rindreáil go dtí uigeachtaí snámhphointe), nó taispeánann an amharcóir "Ní féidir an rindreálaí a thúsú." Féach [An dá chúltaca](backends.md). Forbraítear agus tástáiltear an amharcóir i Chromium; níl na brabhsálaithe eile fíoraithe.
 - **Luasghéarú crua ar siúl.** Nuair a dhéanann an brabhsálaí léaráidí ar an bpróiseálaí (SwiftShader, llvmpipe, an Microsoft Basic Render Driver agus cosúla) deir bratach dhearg ag barr na barra taoibh sin agus conas é a shocrú. Féach [Brath rindreála bogearraí](software-rendering.md).
 - **Cabhraíonn GPU discréideach, ach níl sé riachtanach.** Iarrann an dá chúltaca an t-oiriúnóir ardfheidhmíochta. Is buiséad é an méid sonraí is féidir a shealbhú ar an GPU is féidir leat a fheiceáil agus a athrú ([Cuimhne agus buiséid](memory-and-budgets.md)).
 - **Úsáideann gnéithe roghnacha tuilleadh APIanna brabhsálaí:** teastaíonn WebCodecs `VideoEncoder` le VP9 nó VP8 le haghaidh rindreála físeáin ([Cosán ceamara agus físeán](camera-path-and-video.md)); teastaíonn WebAssembly le haghaidh simplithe mogall leibhéal; úsáideann scaoileadh fillteán an File and Directory Entries API; úsáideann an leabharlann leibhéal IndexedDB; úsáideann pada cluiche an Gamepad API.

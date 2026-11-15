@@ -16,7 +16,7 @@ Il-viewer jgħidlek meta teżisti verżjoni iktar ġdida, u jaġġorna lilu nnif
 
 1. **Fil-paġna.** Meta teżisti verżjoni iktar ġdida, kaxxa tidher taħt l-isem fil-quċċata tas-sidebar: "Hemm verżjoni iktar ġdida ta' 3DHeat disponibbli". Ikklikkja **Aġġorna issa**. Il-paġna terġa' titlogħba waħedha meta jispiċċa. **Aktar tard** taħbi l-kaxxa sakemm terġa' ttella' l-paġna.
 2. **Jekk jgħid li għandek tmexxi restart.bat**, agħlaq it-tieqa tas-server (it-tieqa sewda li fetaħ `start.bat`) u ikklikkja darbtejn `restart.bat`.
-3. **Meta tibda l-viewer.** `start.bat` jiċċekkja wkoll. Jekk teżisti verżjoni iktar ġdida jistaqsi **Aġġorna issa? [Y/N]**. Agħfas `Y` biex taġġorna. Agħfas `N`, jew stenna 60 sekonda mingħajr tweġiba, biex tibda l-verżjoni li għandek.
+3. **Meta tibda l-viewer.** `start.bat` jiċċekkja wkoll. Jekk teżisti verżjoni iktar ġdida jistaqsi **Update now? [Y/N]**. Agħfas `Y` biex taġġorna. Agħfas `N`, jew stenna 60 sekonda mingħajr tweġiba, biex tibda l-verżjoni li għandek.
 
 ![In-notifika tal-aġġornament b'Aġġorna issa u Aktar tard](../assets/img/en/updates-notice.webp)
 
@@ -64,7 +64,7 @@ paġna ---(wara 4 s, imbagħad kull 6 sigħat)---> server tal-iżvilupp ---> git
    - jgħodd `git rev-list --count HEAD..@{u}`; xejn wara: ma jingħad xejn;
    - bidliet lokali: "Hemm verżjoni iktar ġdida ta' 3DHeat disponibbli (N bidliet), imma din il-kopja għandha bidliet lokali, għalhekk ma tiġix aġġornata. Ikkommetti jew ipoġġi fl-istash, imbagħad mexxi git pull." - u jibda l-verżjoni li hemm;
    - commits tagħha stess (`git rev-list --count @{u}..HEAD` mhux 0): "Hemm verżjoni iktar ġdida ta' 3DHeat disponibbli (N bidliet), imma din il-kopja għandha commits tagħha stess li l-verżjoni l-aktar ġdida ma għandhiex, għalhekk ma tiġix aġġornata. Aġġornaha b'git pull." - u jibda l-verżjoni li hemm;
-   - inkella "Hemm verżjoni iktar ġdida ta' 3DHeat disponibbli (N bidliet)." u l-mistoqsija **Aġġorna issa? [Y/N]**. `N`, jew l-ebda tweġiba għal 60 sekonda, jistampa "Mhux aġġornat; qed nibda l-verżjoni li għandek." u jibda l-verżjoni li hemm. Fuq `Y`: "Qed naġġorna...", jgħid jekk `package.json` jew `package-lock.json` jinbidlux,
+   - inkella "Hemm verżjoni iktar ġdida ta' 3DHeat disponibbli (N bidliet)." u l-mistoqsija **Update now? [Y/N]**. `N`, jew l-ebda tweġiba għal 60 sekonda, jistampa "Mhux aġġornat; qed nibda l-verżjoni li għandek." u jibda l-verżjoni li hemm. Fuq `Y`: "Qed naġġorna...", jgħid jekk `package.json` jew `package-lock.json` jinbidlux,
      jmexxi `git pull --ff-only` (jekk dan għadu jfalli - in-network, pereżempju:
      "L-aġġornament ma għaddiex; qed nibda l-verżjoni li għandek."), imbagħad `git submodule update --init`
      (l-għodod immarkati, ara [Iż-żamma tad-dokumentazzjoni](maintaining.md#the-tools-under-exporters)), imbagħad `npm install` meta l-fajls tal-pakkett jinbdlu u

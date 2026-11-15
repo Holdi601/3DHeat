@@ -62,7 +62,7 @@ Kui üksus oleks väiksem kui **Väikseim kujund ekraanil**, võib ta muutuda s�
 
 ### Relvad, lõksud ja jäljed {#weapons-decoys-and-tracers}
 
-Kui **Relvad, lasud ja tabamused** on sisse lülitatud (jaotis Võistkonnavaatur): raketid, rakettid, pommid ja torpeedod lendavad oma kujudena suitsujäljega; kuulid ja mürsud on jäljed; tabamused ja plahvatused välgatavad. Jälg, mis on joonistatud **katkendlikult**, arvutati tabamusest, sest andmetes polnud lasku. Valgussoojuslõksud ja tinakitid joonistatakse lõksudena; need on üksuste loendist peidetud, kui pole märgitud *Lõksud ja mürsud*.
+Kui **Relvad, lasud ja tabamused** on sisse lülitatud (jaotis Võistkonnavaatur): raketid, rakettid, pommid ja torpeedod lendavad oma kujudena suitsujäljega; kuulid ja mürsud on jäljed; tabamused ja plahvatused välgatavad. Jälg, mis on joonistatud **katkendlikult**, arvutati tabamusest, sest andmetes polnud lasku. Valgussoojuslõksud ja tinakitid joonistatakse peibutistena; need on üksuste loendist peidetud, kui pole märgitud *Peibutised ja mürsud*.
 
 ## Kaamerad {#cameras}
 

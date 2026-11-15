@@ -43,7 +43,7 @@ Tomhaiseann toirteanna cad a tharlaíonn istigh iontu, scagann siad an radharc c
 
 - Cliceáil toirt chun í a roghnú. Tarraing a corp chun í a bhogadh, a cúinní chun cruth nua a thabhairt di (Shift ar chúinne scálaíonn sé).
 - Léiríonn na láimhseálacha **buí** an t-urlár agus an síleáil, léiríonn an láimhseáil **cyan** an casadh.
-- Déanann Alt+tarraingt cóip, bainir Del, Ctrl+Z / Ctrl+Y cealaíonn agus athdhéanann, Ctrl+D dúbailtíonn. Scriosann **Bain gach ceann** gach toirt.
+- Déanann Alt+tarraingt cóip, scriosann Del, Ctrl+Z / Ctrl+Y cealaíonn agus athdhéanann, Ctrl+D dúbailtíonn. Scriosann **Bain gach ceann** gach toirt.
 - Luachanna cruinne: Urlár, Síleáil, Casadh / Fiar / Rolla (boscaí), Ga (sféir, sorcóirí).
 
 Tá cnaipe taispeána, dath, ainm, **cuir san áireamh** nó **eisigh**, dúbailt agus scriosadh ag gach sraith toirte. Sábháiltear toirteanna sa bhrabhsálaí do gach tacar sonraí, agus scríobhann agus léann **Sábháil…** / **Lódáil…** comhad `volumes.json`.

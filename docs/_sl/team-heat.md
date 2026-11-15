@@ -38,7 +38,7 @@ V razdelku **Barve toplote**:
 
 Vse druge kontrole toplote - oblika, nasičenje, odziv, najmanjša toplota, globina, izrezovanje - delujejo kot v [Toploti](heat.md).
 
-[Seznam ekip](teams-list.md) v tem načinu pokaže barvo toplote ekipe kot njen vzorec. Skrivanje skupine pusti barve vseh drugih skupin tam, kjer so bile: odtenki prihajajo iz skupnega števila skupin, ne iz tega, kar je vklopljeno, zato ostanejo slike primerljive.
+[Ekipe](teams-list.md) v tem načinu pokaže barvo toplote ekipe kot njen vzorec. Skrivanje skupine pusti barve vseh drugih skupin tam, kjer so bile: odtenki prihajajo iz skupnega števila skupin, ne iz tega, kar je vklopljeno, zato ostanejo slike primerljive.
 
 ## Paleta {#the-palette}
 

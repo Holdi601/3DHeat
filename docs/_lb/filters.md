@@ -19,7 +19,7 @@ outdated: false
 2. Ënner **Gefierklass** hakt *Tank* of. D'Bild ännert sech direkt.
 3. Drëckt **All Filtere läschen**, fir ze réckgängeg ze maachen.
 
-![Den Filteren-Panel: fir d'éischt d'Kolonnen vum Viewer selwer (Evenementtyp, Gefierklass), dann d'Kolonnen aus Ärer Datei](../assets/img/en/filters.webp)
+![De Filteren-Panel: fir d'éischt d'Kolonnen vum Viewer selwer (Evenementtyp, Gefierklass), dann d'Kolonnen aus Ärer Datei](../assets/img/en/filters.webp)
 
 Déi éischt Zeilen sinn d'Kolonnen vum Viewer selwer (hei ënnen). D'Zeilen duerno kommen aus Ärer Datei.
 

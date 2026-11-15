@@ -21,7 +21,7 @@ Na górze paska bocznego:
 | **?** | Tryb pomocy: co znaczy każdy kolor (także `?` albo `F1`) |
 | Menu **Jednostki** | Metryczne, Imperialne, Lotnicze albo Morskie |
 | Przycisk **...** obok **Jednostki** | Otwiera „Wybierz jednostkę dla każdej wielkości”: jedna lista rozwijana na wielkość |
-| Menu **Język** | Język przeglądarki: [40 języków](languages.md) albo język przeglądarki internetowej |
+| Menu **Język** | Język widoku: [40 języków](languages.md) albo języka przeglądarki |
 
 ![Nagłówek z otwartym menu Jednostki i oknem jednostki dla każdej wielkości](../assets/img/en/settings-units.webp)
 

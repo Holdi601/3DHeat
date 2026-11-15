@@ -61,74 +61,40 @@ page ---(after 4 s, then every 6 h)---> dev server ---> git fetch
 
 ### 執行期間：更新路由 {#while-it-runs-the-update-route}
 
-The dev server (Vite plugin `heat3d-self-update` in `vite.config.ts`) serves
-`/__heat3d/update`. It exists only on the dev server - not in a static build
-and not in `vite preview`.
+開發伺服器（`vite.config.ts` 中的 Vite 外掛 `heat3d-self-update`）提供 `/__heat3d/update`。它只存在於開發伺服器上，不在靜態建置中，也不在 `vite preview` 中。
 
-**`GET /__heat3d/update`** answers whether the checkout is behind:
+**`GET /__heat3d/update`** 回答簽出版本是否落後：
 
 ```json
 { "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "the newest commit's subject" }
 ```
 
-- `checkout: false` when the folder is not a git checkout;
-- it runs `git fetch --quiet` **at most every 30 minutes** (asks in between
-  answer from what was last fetched);
-- `behind` / `ahead` from `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`,
-  `dirty` from `git status --porcelain --untracked-files=no`, `latest` the
-  subject of the upstream's newest commit;
-- with no upstream branch, `upstream: null` and `behind: 0`.
+- 資料夾不是 git 簽出版本時，`checkout: false`；
+- 它**最多每 30 分鐘**執行一次 `git fetch --quiet`（期間的查詢會以上次取得的結果回答）；
+- `behind` / `ahead` 來自 `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`，`dirty` 來自 `git status --porcelain --untracked-files=no`，`latest` 為上游最新提交的主旨；
+- 沒有上游分支時，`upstream: null` 且 `behind: 0`。
 
-**`POST /__heat3d/update/apply`** brings the checkout up:
+**`POST /__heat3d/update/apply`** 會把簽出版本更新到最新：
 
-1. Refused with `403 { ok: false, reason: "forbidden" }` unless the request has
-   the header `X-Heat3d-Update: 1` and, when it carries an `Origin`, that
-   origin's host is the request's `Host`. A cross-site form cannot send a
-   custom header without a CORS preflight, which this server never grants.
-2. Nothing to do (not a checkout, no upstream, not behind):
-   `{ ok: true, updated: false }`.
-3. Local changes: `{ ok: false, reason: "dirty" }`; local commits:
-   `{ ok: false, reason: "diverged" }`.
-4. Otherwise: notes the files that change (`git diff --name-only HEAD @{u}`),
-   `git pull --ff-only` (2 min timeout), `git submodule update --init`
-   (failure ignored), `npm install` when `package.json` or
-   `package-lock.json` changed (15 min timeout), and answers
-   `{ ok: true, updated: true, restart }` - `restart` says why the running
-   server cannot pick the update up: `"dependencies"` when they were
-   reinstalled, `"config"` when only a `vite.config` file changed, `false`
-   when nothing needs a restart.
-5. A failing git or npm command answers `{ ok: false, reason: "<the error,
-   up to 300 characters>" }`.
+1. 除非請求帶有標頭 `X-Heat3d-Update: 1`，且（若帶有 `Origin`）該來源的主機與請求的 `Host` 相同，否則以 `403 { ok: false, reason: "forbidden" }` 拒絕。跨站表單若沒有 CORS 預檢，就無法送出自訂標頭，而此伺服器從不授予預檢。
+2. 沒有需要做的事（不是簽出版本、沒有上游、未落後）：`{ ok: true, updated: false }`。
+3. 有本機變更：`{ ok: false, reason: "dirty" }`；有本機提交：`{ ok: false, reason: "diverged" }`。
+4. 否則：記下會變更的檔案（`git diff --name-only HEAD @{u}`）、執行 `git pull --ff-only`（逾時 2 分鐘）、執行 `git submodule update --init`（失敗則忽略）、當 `package.json` 或 `package-lock.json` 有變更時執行 `npm install`（逾時 15 分鐘），並回答 `{ ok: true, updated: true, restart }`。`restart` 說明為何正在執行的伺服器無法套用此更新：相依套件被重新安裝時為 `"dependencies"`，只有 `vite.config` 檔案變更時為 `"config"`，無需重新啟動時為 `false`。
+5. git 或 npm 指令失敗時，回答 `{ ok: false, reason: "<the error, up to 300 characters>" }`。
 
-Responses are JSON with `Cache-Control: no-store`. The server listens on
-`127.0.0.1` only, so the route is not reachable from the network.
+回應為 JSON，並帶有 `Cache-Control: no-store`。伺服器只監聽 `127.0.0.1`，因此無法從網路存取此路由。
 
 ### 頁面中的通知 {#the-notice-in-the-page}
 
-`UpdateBanner`, under the name at the top of the sidebar:
+`UpdateBanner`，位於側邊欄頂端名稱下方：
 
-- It asks the route **4 seconds** after the page loads (not in the first
-  seconds: the page has a dataset to load and a GPU to start) and again
-  **every 6 hours** while the page stays open.
-- It shows **nothing** when there is no such route (a static build), the
-  folder is not a checkout, or nothing is newer - a notice on every start is
-  one people learn to ignore.
-- Behind, with no local changes: "A newer version of 3DHeat is available (N
-  changes, the newest: <subject>)." with **Update now** and **Later**
-  (*Later* hides it until the page is reloaded).
-- Behind, with local changes: the same sentence and "This copy has local
-  changes, so it is not updated automatically; commit or stash them, then
-  run git pull." - no button.
-- **Update now** posts to `/apply` ("Updating..."). Then:
-  - "Updated. The page reloads." - and it reloads 1.5 s later (the server
-    already serves the new files);
-  - when the dependencies were reinstalled: "Updated. Its dependencies
-    changed: close the server window and run **restart.bat** to finish.";
-  - when only the server's settings changed: "Updated. Its server settings
-    changed: close the server window and run **restart.bat** to finish.";
-  - nothing to bring in after all (`updated: false` - the copy was brought up
-    meanwhile, by `start.bat` say): "Nothing to update: this copy is already
-    the newest version." - and no reload;
-  - refused: the *dirty* sentence, or "This copy has commits of its own that
-    the newest version does not; update it with git pull.", or "The update
-    did not go through: <reason>".
+- 頁面載入後 **4 秒** 會查詢此路由（不在最初幾秒內：頁面還要載入資料集並啟動 GPU），之後只要頁面保持開啟，就會 **每 6 小時** 再查詢一次。
+- 沒有此路由（靜態建置）、資料夾不是簽出版本，或沒有更新的版本時，它**什麼都不顯示**：每次啟動都出現的通知，會讓人學會忽略。
+- 落後且沒有本機變更時：「3DHeat 有新版本可用（N 項變更，最新：<主旨>）。」並提供**立即更新**與**稍後**（*稍後*會隱藏通知，直到頁面重新載入）。
+- 落後且有本機變更時：同樣的句子，加上「此副本有本機變更，因此不會自動更新；請先 commit 或 stash 這些變更，再執行 git pull。」——沒有按鈕。
+- **立即更新**會送出請求到 `/apply`（顯示「更新中…」）。之後：
+  - 「已更新。頁面將重新載入。」——並在 1.5 秒後重新載入（伺服器已經提供新檔案）；
+  - 相依套件被重新安裝時：「已更新。相依套件已變更：請關閉伺服器視窗並執行 **restart.bat** 以完成更新。」；
+  - 只有伺服器設定變更時：「已更新。伺服器設定已變更：請關閉伺服器視窗並執行 **restart.bat** 以完成更新。」；
+  - 最後發現沒有需要套用的內容（`updated: false`，例如 `start.bat` 已在此期間更新過此副本）：「沒有需要更新的內容：此副本已是最新版本。」——並且不會重新載入；
+  - 被拒絕：顯示上述有本機變更的句子，或「此副本有最新版本沒有的自有提交；請用 git pull 更新。」，或「更新未能完成：<原因>」。

@@ -21,7 +21,7 @@ Ohne geladenes Level ist die Szene dunkel, mit einem Raster und farbigen Achsen 
 
 Das Level wird von allen drei Tabs geteilt: Eine Strecke, die im Tab Rennanalyse geladen ist, ist dasselbe Level, das die Heatmap zeigt.
 
-![Das Panel Hintergrund / Level mit geladenem Level: Schaltflächen Kartenbild und 3D-Modell, Schauplatz, Deckkraft, Helligkeit, In Bibliothek speichern und die Liste der Bibliothek](../assets/img/en/level-panel.webp)
+![Das Panel Hintergrund / Level mit geladenem Level: Schaltflächen Kartenbild und 3D-Modell, Schauplatz, Deckkraft, Helligkeit, In Bibliothek speichern und die Liste der Bibliothek](../assets/img/de/level-panel.webp)
 
 ## Ein Level hinter deine Daten legen {#put-a-level-behind-your-data}
 

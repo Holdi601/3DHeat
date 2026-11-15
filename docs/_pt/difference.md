@@ -21,7 +21,7 @@ A vermelho onde a equipa A esteve mais, azul-esverdeado onde esteve a equipa B, 
 
 1. Prima `2` (ou escolha **Diferença** na barra de modos).
 2. Abra **Divisão por diferença** na barra lateral.
-3. Escolha por que **Dividir por**: normalmente *Grupos*.
+3. Escolha o critério de **Dividir por**: normalmente *Grupos*.
 4. Coloque um grupo (ou valor) em **+** e outro em **−**.
 5. Leia as cores: quente significa o lado +, frio significa o lado −. O painel avisa se um dos lados não tem linhas (ver [Mensagens que pode ver](#messages-you-may-see)).
 
@@ -42,7 +42,7 @@ Mostrado no modo Diferença, por baixo dos painéis de calor.
 | Uma coluna numérica | *coluna (numérica)* | Um intervalo de valores para cada lado |
 | O ficheiro de origem | *Ficheiro de origem - comparar duas cargas* (quando se carregaram vários ficheiros) | Ficheiros em +, − ou em nenhum |
 
-Só são oferecidas as colunas guardadas em *Guardar para filtrar* no momento da carga.
+Só são oferecidas as colunas guardadas em *Guardar para filtragem* no momento da carga.
 
 ### Comparar proporções, não contagens {#compare-shares-not-counts}
 

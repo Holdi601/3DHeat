@@ -12,7 +12,7 @@ outdated: false
 
 La barre sous l'image fonctionne comme un lecteur vidéo : vous pouvez lire les données comme un film, les mettre en pause, faire des sauts et changer la vitesse.
 
-![La barre de chronologie : 1 Tout/Lecture, 2 boutons de transport, 3 horloge, 4 Vitesse, 5 Historique, avec Fenêtre et une Plage de 30 s](../assets/img/en/timeline-bar.webp)
+![La barre de chronologie : 1 Tout/Lecture, 2 boutons de transport, 3 horloge, 4 Vitesse, 5 Historique, avec Fenêtre et une Plage de 30 s](../assets/img/fr/timeline-bar.webp)
 
 La barre sous la vue est la chronologie ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Elle décide quelles lignes sont visibles à chaque instant. Elle exige une colonne de temps ; sans elle, toute la barre est désactivée, la vue reste en **Tout**, et la barre latérale indique *Pas de colonne de temps dans ces données - la chronologie est désactivée et chaque point de données est affiché d'un coup.*
 

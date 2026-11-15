@@ -14,10 +14,10 @@ outdated: false
 **Prostornina** je nevidna škatla (ali valj, ali krogla), ki jo narišete okoli nekega mesta, da vprašate: kaj se je tukaj zgodilo? Uporabite jo, da preštejete smrti pri mostu, primerjate dva hriba ali pokažete le dejavnost na enem območju.
 
 ```
- top view                 You draw a shape ->  the viewer counts
- +------------+           what is inside:
- |   ( A )    |            rows, players, kills, time ...
- |        [B] |           Compare A with B, side by side.
+ pogled z vrha           Narišete obliko ->  pregledovalnik prešteje
+ +------------+           kaj je znotraj:
+ |   ( A )    |            vrstice, igralci, uboji, čas ...
+ |        [B] |           Primerjajte A z B, drug ob drugem.
  +------------+
 ```
 
@@ -69,10 +69,10 @@ Območje **Statistika** sledi filtrom, časovnemu oknu in skritim skupinam. *Izb
 
 ## Primerjajte prostornine {#compare-volumes}
 
-Pri dveh ali več vidnih prostorninah pritisnite **Primerjaj...**.
+Pri dveh ali več vidnih prostorninah pritisnite **Primerjaj…**.
 
 1. Narišite tri prostornine, na primer Zahodni hrib, Vzhodni hrib in Vas.
-2. Pod Statistiko pritisnite **Primerjaj...**.
+2. Pod Statistiko pritisnite **Primerjaj…**.
 3. V **Tabeli** preberite razliko vsake vrednosti od prve prostornine.
 4. Preklopite na **Stolpce**, da vidite deleže kot stolpce.
 
@@ -80,9 +80,9 @@ Pri dveh ali več vidnih prostorninah pritisnite **Primerjaj...**.
 
 | Pogled | Prikazuje |
 |---|---|
-| **Tabela** | Vrstice, čas znotraj, igralci, tekme, ekipe, vstopi, izstopi, obiski, dolžina obiska, kills, smrti, kills na smrt, kills na minuto, čas na igralca, stolpci vrednosti; združeno po dogodkih, razredu vozila, igralcu ali UI, ekipi in smeri. Vsaka vrednost prikaže svojo razliko od prve prostornine in velikost učinka (zanemarljiv, majhen, srednji, velik). Kliknite naslov prostornine, da uredite po oddaljenosti od prve. |
+| **Tabela** | Vrstice, čas znotraj, igralci, tekme, ekipe, vstopi, izstopi, obiski, dolžina obiska, ubitja, smrti, ubitij na smrt, ubitij na minuto, čas na igralca, stolpci vrednosti; združeno po dogodkih, razredu vozila, igralcu ali UI, ekipi in smeri. Vsaka vrednost prikaže svojo razliko od prve prostornine in velikost učinka (zanemarljiv, majhen, srednji, velik). Kliknite naslov prostornine, da uredite po oddaljenosti od prve. |
 | **Stolpci** | Števila ali deleži po dogodku, razredu, akterju, ekipi ali smeri. Kliknite stolpec, da filtrirate pogled nanj. |
-| **Skozi tekmo** | En graf na prostornino skozi minute tekme: prisotnost, vrstice ali kills. Kliknite, da skočite tja. |
+| **Skozi tekmo** | En graf na prostornino skozi minute tekme: prisotnost, vrstice ali ubitja. Kliknite, da skočite tja. |
 | **Obiski** | Škatlasti in violinski diagrami, kako dolgo trajajo obiski (logaritemska lestvica). |
 | **Tok** | Kam gredo sledi, potem ko zapustijo vsako prostornino: matrika prehodov ali tokovni trakovi. |
 
@@ -91,6 +91,6 @@ Pri dveh ali več vidnih prostorninah pritisnite **Primerjaj...**.
 ## Nasveti {#tips}
 
 - Začnite pri ugotovitvi: v [Ugotovitvah](insights.md) **Prostornina tukaj** doda valj okoli mesta ugotovitve.
-- **Razčlenitev...** odpre [Razčlenitev](breakdown.md) za izbrano prostornino: kdo in kaj je najuspešnejše znotraj.
+- **Razčlenitev…** odpre [Razčlenitev](breakdown.md) za izbrano prostornino: kdo in kaj je najuspešnejše znotraj.
 - [Smerna toplota](directional-heat.md) lahko nariše smeri znotraj izbrane prostornine.
 - [Zavihek Vozila](hit-analysis.md#restrict-to-an-area) uporablja iste prostornine kot svoj filter območja.

@@ -88,14 +88,14 @@ Er komt geen spelgegeven mee: niveaus, kaarten en opnamen worden op je eigen com
 
 De viewer is een statische webpagina, maar de dev-server (zie `vite.config.ts`) voegt twee lokale routes toe die een statische publicatie van `dist/` niet heeft:
 
-- `/__host/memory` meldt het geïnstalleerde en vrije RAM van de computer en, waar het dat kan lezen, het geheugen van de videokaart (van `nvidia-smi`, of op Windows uit het registervermelding van de beeldschermadapter). Daardoor kunnen de [geheugenbudgetten](memory-and-budgets.md) echte cijfers gebruiken in plaats van de begrensde schattingen van de browser.
+- `/__host/memory` meldt het geïnstalleerde en vrije RAM van de computer en, waar het dat kan lezen, het geheugen van de videokaart (van `nvidia-smi`, of op Windows uit het register van de beeldschermadapter). Daardoor kunnen de [geheugenbudgetten](memory-and-budgets.md) echte cijfers gebruiken in plaats van de begrensde schattingen van de browser.
 - `/__heat3d/update` controleert of de checkout achterloopt en kan hem met fast-forward bijwerken ([Updates](updates.md)).
 
 De server bindt alleen aan `127.0.0.1`, dus geen van beide routes is vanuit het netwerk te bereiken. Open hem als `http://127.0.0.1:5273`: `localhost` kan naar de IPv6-loopback `::1` wijzen, waar niets luistert. Hij stuurt geen cross-origin-isolatiekoppen (COOP/COEP): niets in de viewer gebruikt `SharedArrayBuffer`, en de workers geven hun data over door overdracht, waarvoor het niet nodig is.
 
 ## Eisen aan browser en GPU {#browser-and-gpu-requirements}
 
-- **Een browser met WebGPU of WebGL2.** WebGPU wordt eerst geprobeerd (Chrome en Edge hebben het); zonder WebGPU wordt het WebGL2-backend gebruikt. WebGL2 moet `EXT_color_buffer_float` aanbieden (renderen naar float-texturen), anders toont de viewer "Cannot initialise the renderer." Zie [De twee backends](backends.md). De viewer wordt ontwikkeld en getest in Chromium; andere browsers zijn niet geverifieerd.
+- **Een browser met WebGPU of WebGL2.** WebGPU wordt eerst geprobeerd (Chrome en Edge hebben het); zonder WebGPU wordt het WebGL2-backend gebruikt. WebGL2 moet `EXT_color_buffer_float` aanbieden (renderen naar float-texturen), anders toont de viewer "Kan de renderer niet initialiseren." Zie [De twee backends](backends.md). De viewer wordt ontwikkeld en getest in Chromium; andere browsers zijn niet geverifieerd.
 - **Hardwareversnelling ingeschakeld.** Wanneer de browser op de CPU tekent (SwiftShader, llvmpipe, de Microsoft Basic Render Driver en dergelijke) staat er een rode balk bovenaan de zijbalk die dat zegt en hoe het op te lossen. Zie [Detectie van softwarerendering](software-rendering.md).
 - **Een aparte GPU helpt, maar is niet verplicht.** Beide backends vragen om de adapter met hoge prestaties. De hoeveelheid data die op de GPU past is een budget dat je kunt zien en wijzigen ([Geheugen en budgetten](memory-and-budgets.md)).
 - **Optionele functies** gebruiken nog meer browser-API's: video-rendering heeft WebCodecs `VideoEncoder` met VP9 of VP8 nodig ([Camerapad en video](camera-path-and-video.md)); het vereenvoudigen van niveau-meshes heeft WebAssembly nodig; mappen slepen gebruikt de File and Directory Entries API; de niveaubibliotheek gebruikt IndexedDB; gamepads gebruiken de Gamepad API.

@@ -20,7 +20,7 @@ Vsaka tekma se začne na svojem začetku, njene enote pa se premikajo kot figure
 
 1. V stranski vrstici Toplotni zemljevid odprite **Veliko tekem hkrati**.
 2. Pritisnite **Datoteke…** (izberite veliko datotek), **Mapa…** (mapo in njene podmape) ali **Dodaj mapo…** (dodajte k naloženemu).
-3. Pregledovalnik preklopi na prekrivanje figur in začne na začetku. Pritisnite **Predvaj**.
+3. Pregledovalnik preklopi na prekrivanje figur in začne na začetku. Pritisnite **Predvajaj**.
 
 Vsaka datoteka je ena tekma (ali jih vsebuje več). Delujejo datoteke Parquet in vsebniki [`.3dheat`](container.md). Datoteka potrebuje stolpec položaja, časa in enote; stolpci imena, tipa in strani se ohranijo. Druge datoteke in stranske datoteke pretvornikov (let, sporočila, dogodki, klepet, cilji) se preskočijo. Za navadno tabelo glejte [Uvoz podatkov](getting-data-in.md).
 

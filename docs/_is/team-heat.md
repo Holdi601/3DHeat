@@ -48,12 +48,12 @@ Allar hinar hitastýringarnar - lögun, mettun, svörun, lágmarkshiti, dýpt, �
 - Litir búa á **Oklab**-litaplaninu við fasta birtu (0,7) og litstyrk (0,115), svo sérhver hópur er jafnbjartur og rauður hópur les sig ekki heitari en blár.
 - Með *n* hópum er litahringnum skipt í *n* jafna hluta og hópur *i* tekur **miðju** hluta síns, `(i + 0,5) / n` af hring. Sérhverjir tveir hópar eru eins langt hvor frá öðrum og fjöldinn leyfir, og andstæður haldast andstæður hvað sem fjöldinn er.
 - Mest **16** ólíkir litatónar eru notaðir. Með fleiri hópum eru auðkenni sett með endurtekinni helmingun (auðkenni með snúnum bitum: 0, ½, ¼, ¾, ⅛, …) svo nágrannaauðkenni deili ekki litatóni; hópar umfram 16 deila hlutum óhjákvæmilega.
-- Hópur sem merkingin er "enginn hópur" - `0`, tómt, `none`, `unknown`, `null` eða `-1`, án tillits til stórra og smárra stafa - er teiknaður í **hlutlausu gráu** í stað þess að taka sneið af hringnum. Aðeins fyrsta slíka merkið í hóplistanum er meðhöndlað þannig.
+- Hópur sem heitið merkir "enginn hópur" - `0`, tómt, `none`, `unknown`, `null` eða `-1`, án tillits til stórra og smárra stafa - er teiknaður í **hlutlausu gráu** í stað þess að taka sneið af hringnum. Aðeins fyrsta slíka merkið í hóplistanum er meðhöndlað þannig.
 
 Sjálfgefin aðgreining er 1,4 frekar en 1 því við 1 er blanda fimm jafnt dreifðra litatóna *grá*: rétt og ólæsilegt. Örlítið yfir 1 heldur jöfnum rétt en gerir 60/40-skiptingu sýnilega.
 
 ## Hvernig þetta virkar {#how-it-works}
 
-Hitamarkið hefur fjórar rásir í þessari stillingu. Sérhver depill leggur þéttleika *v* sinn við fyrstu rásina og *v* × Oklab-hnit *a* og *b* hóps síns við aðra og þriðju rásina. Við samsetningu er blanda pixilsins þyngdaða meðaltalið eftir þéttleika: *a* = G / R, *b* = B / R, skalað með litaaðgreiningunni og breytt í sRGB við birtu pallettunnar. Með því að deila með söfnuðum þéttleika helst litatónninn óháður því hversu mikil gögnin eru, og þess vegna virkar hver þéttleikastjórn áfram aðeins á gegnsæið.
+Hitamarkið hefur fjórar rásir í þessari stillingu. Sérhver depill leggur þéttleika *v* sinn við fyrstu rásina og *v* × Oklab-hnit *a* og *b* hóps síns við aðra og þriðju rásina. Við samsetningu er blanda pixlans þyngdaða meðaltalið eftir þéttleika: *a* = G / R, *b* = B / R, skalað með litaaðgreiningunni og breytt í sRGB við birtu pallettunnar. Með því að deila með söfnuðum þéttleika helst litatónninn óháður því hversu mikil gögnin eru, og þess vegna virkar hver þéttleikastjórn áfram aðeins á gegnsæið.
 
 Fjögurra rása markið kostar fjórfalt skjákortsminni miðað við eins rása hitamarkið í sömu upplausn.

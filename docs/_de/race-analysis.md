@@ -13,7 +13,7 @@ outdated: false
 
 Du bist dieselbe Strecke zweimal gefahren. Der Tab **Rennanalyse** spielt beide Fahrten zusammen in 3D ab, zeigt, wo eine Runde langsamer war, und sagt dir, warum. Noch keine Runden? Drücke **Demo-Runden**.
 
-![Der Tab Rennanalyse mit Demo-Runden: die Seitenleiste mit Runden und Wo Zeit zu holen ist, die Autos auf der Strecke, die Diagramme unter der Ansicht](../assets/img/en/race-analysis-overview.webp)
+![Der Tab Rennanalyse mit Demo-Runden: die Seitenleiste mit Runden und Wo Zeit zu holen ist, die Autos auf der Strecke, die Diagramme unter der Ansicht](../assets/img/de/race-analysis-overview.webp)
 
 Der Tab vergleicht zwei oder mehr Runden einer Strecke. Er teilt sich Zeichenfläche, Kamera und das geladene Streckenmodell (**Hintergrund / Level**) mit der Heatmap; alles andere gehört ihm allein: seine eigene Seitenleiste und seine eigene Leiste unter der Ansicht. Begriffe wie *Runde*, *Referenz* und *Scheitelpunkt* stehen im [Glossar](glossary.md).
 
@@ -101,50 +101,35 @@ Nichts davon wird gespeichert; ein Neuladen startet mit den Voreinstellungen. Im
 
 ## Für Entwickler {#for-developers}
 
-### What happens when laps are loaded {#what-happens-when-laps-are-loaded}
+### Was passiert, wenn Runden geladen werden {#what-happens-when-laps-are-loaded}
 
-Every time the set of laps, the reference or the language changes, the whole
-analysis is redone (`analyse` in
-[`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
+Jedes Mal, wenn sich die Menge der Runden, die Referenz oder die Sprache ändert, wird die ganze Analyse neu gemacht (`analyse` in [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
 
-1. Derived channels are added to each lap where the game does not send them:
-   drift angle, wheel slip from wheel speeds, in the air, loose ground, yaw
-   rate ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
-2. The reference is chosen and every lap is projected onto its path and
-   resampled every 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
-3. Whether the game's world is mirrored is worked out from the laps
-   ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
-4. Corners are found on the reference, and grouped into segments from one
-   braking zone to the next ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
-5. Per car: its envelope (grip, braking, pull per speed), its profile, its
-   tyre curves ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts),
-   [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts),
-   [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
-6. Per lap and segment: what it did (brake point, slowest point, full
-   throttle, ...) and the line it drove ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
-7. Per lap: its car-control events, each laid against the lap it is compared
-   with there.
-8. Per lap and segment: the time account against its comparison lap and the
-   finding in words.
-9. The time map and the cause map per lap.
+1. Abgeleitete Kanäle werden jeder Runde hinzugefügt, wo das Spiel sie nicht sendet: Driftwinkel, Radschlupf aus den Raddrehzahlen, in der Luft, loser Untergrund, Gierrate ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
+2. Die Referenz wird gewählt, und jede Runde wird auf deren Weg projiziert und alle 2 m neu abgetastet ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
+3. Aus den Runden wird ermittelt, ob die Welt des Spiels gespiegelt ist ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
+4. Kurven werden auf der Referenz gefunden und zu Abschnitten gruppiert, von einer Bremszone bis zur nächsten ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
+5. Pro Auto: seine Hüllkurve (Grip, Bremsen, Zug je Geschwindigkeit), sein Profil und seine Reifenkurven ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts), [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts), [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
+6. Pro Runde und Abschnitt: was sie getan hat (Bremspunkt, langsamster Punkt, Vollgas, ...) und die Linie, die sie gefahren ist ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
+7. Pro Runde: ihre Ereignisse der Fahrzeugkontrolle, jedes dort der Runde gegenübergestellt, mit der sie verglichen wird.
+8. Pro Runde und Abschnitt: die Zeitbilanz gegen ihre Vergleichsrunde und der Befund in Worten.
+9. Die Zeitkarte und die Ursachenkarte pro Runde.
 
-The texts are produced in the current language; switching language runs the
-analysis again (and renames the demo laps). A failure in the analysis is
-shown under the **Laps** buttons as an error and the laps stay loaded.
+Die Texte entstehen in der aktuellen Sprache; ein Sprachwechsel führt die Analyse erneut aus (und benennt die Demo-Runden um). Ein Fehler in der Analyse wird unter den Schaltflächen **Runden** als Fehler angezeigt, und die Runden bleiben geladen.
 
-### Source files {#source-files}
+### Quelldateien {#source-files}
 
-| File | Role |
+| Datei | Aufgabe |
 |---|---|
-| `src/race/adapters.ts`, `ibt.ts` | reading lap files |
-| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | the lap type, naming, demo laps |
-| `src/race/derive.ts`, `handedness.ts` | derived channels, mirrored worlds |
-| `src/race/align.ts`, `segments.ts`, `line.ts` | distance axis, corners, lines |
-| `src/race/analysis.ts` | corners compared, causes, findings |
-| `src/race/envelope.ts`, `profile.ts` | what a car can do |
-| `src/race/control.ts`, `impacts.ts` | car control, hits and crashes |
-| `src/race/stats.ts` | many laps |
-| `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | replay and drawing |
-| `src/race/schema.ts`, `graphs.ts` | the channel table, the charts' rows |
-| `src/ui/race/*` | the sidebar, the charts, the HUD, the labels |
-| `src/state/raceStore.ts` | the tab's state and the replay clock |
+| `src/race/adapters.ts`, `ibt.ts` | Lesen der Rundendateien |
+| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | der Rundentyp, Benennung, Demo-Runden |
+| `src/race/derive.ts`, `handedness.ts` | abgeleitete Kanäle, gespiegelte Welten |
+| `src/race/align.ts`, `segments.ts`, `line.ts` | Distanzachse, Kurven, Linien |
+| `src/race/analysis.ts` | verglichene Kurven, Ursachen, Befunde |
+| `src/race/envelope.ts`, `profile.ts` | was ein Auto kann |
+| `src/race/control.ts`, `impacts.ts` | Fahrzeugkontrolle, Treffer und Unfälle |
+| `src/race/stats.ts` | viele Runden |
+| `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | Replay und Zeichnen |
+| `src/race/schema.ts`, `graphs.ts` | die Kanaltabelle, die Zeilen der Diagramme |
+| `src/ui/race/*` | die Seitenleiste, die Diagramme, das HUD, die Beschriftungen |
+| `src/state/raceStore.ts` | Zustand des Tabs und die Replay-Uhr |

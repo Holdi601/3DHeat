@@ -17,7 +17,7 @@ Līmenis ir 3D vieta, kur spēle notika - karte, pilsēta, trase. Novietojiet to
 - **3D līmeni** - `.glb`, `.gltf`, `.obj`, `.stl` vai `.ply` - sadalītu zemē, struktūrās un ūdenī un vienkāršotu importējot - skatiet [3D līmeņi](model-levels.md) un [Līmeņa izskats](level-appearance.md);
 - **pasaules fonu** - ierakstam, kas saka, kur uz zemes tas ir (Tacview ACMI fails), reālu reljefu, ceļus, ūdeni, lidlaukus un ēkas, lejupielādētas no atvērtiem datiem - skatiet [Pasaules fons](world-backdrop.md).
 
-Kad nekas nav ielādēts, aina ir tumša ar režģi un krāsainām asīm (**Režģis** un **Asis** sadaļā [Kamera un aina](camera.md)), un panelis saka *Nekas nav ielādēts - aina rāda režģi un asis. Pievienojiet kartes attēlu vai līmeņa tīklu, lai siltumam dotu kontekstu.*
+Kad nekas nav ielādēts, aina ir tumša ar režģi un krāsainām asīm (**Režģis** un **Asis** sadaļā [Kamera un aina](camera.md)), un panelis saka *Nekas nav ielādēts — ainā redzams režģis un asis. Pievieno kartes attēlu vai līmeņa tīklu, lai siltumam dotu kontekstu.*
 
 Līmenis ir kopīgs visām trim cilnēm: trase, kas ielādēta cilnē Sacīkšu analīze, ir tas pats līmenis, ko rāda siltumkarte.
 

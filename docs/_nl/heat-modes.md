@@ -22,7 +22,7 @@ De modusbalk bovenaan de zijbalk van het tabblad Heatmap kiest hoe de [dataset](
 | **Warmte** | Waar gebeurde het, en hoeveel? |
 | **Verschil** | Welke kant deed het vaker? |
 | **Teamwarmte** | Van wie was het? |
-| **Lijnen** | Welke kant gingen de mensen op? |
+| **Lijnen** | In welke richting gingen de mensen? |
 | **Figurenoverlay** | Wie was waar, en wanneer? |
 
 ![Dezelfde data in vier modi: Warmte, Verschil, Teamwarmte en Lijnen](../assets/img/en/heat-modes-grid.webp)
@@ -33,7 +33,7 @@ De modusbalk bovenaan de zijbalk van het tabblad Heatmap kiest hoe de [dataset](
 | **Verschil** | 2 | Gerichte dichtheid: de ene populatie telt op, een andere trekt af. [Verschil](difference.md) | twee kanten: minstens twee groepen, of een splitsing over een bewaarde kolom |
 | **Teamwarmte** | 3 | Dichtheid gekleurd per groep: een tint per groep, gemengd waar groepen overlappen. [Teamwarmte](team-heat.md) | een groepskolom |
 | **Figurenoverlay** | - | Een figuur (of doos) per persoon, bewegend langs de tijdlijn: de replay. [Figurenoverlay](box-replay.md), [Wedstrijdreplay](match-replay.md) | een kolom met personen |
-| **Lijnen** | 4 | Lijnwarmte: een lijn van elk monster van een persoon naar hun volgende, warmte die zijwaarts wegvalt. [Lijnwarmte](line-heat.md) | een kolom met personen en een tijdkolom |
+| **Lijnen** | 4 | Lijnwarmte: een lijn van elk meetpunt van een persoon naar hun volgende, warmte die zijwaarts wegvalt. [Lijnwarmte](line-heat.md) | een kolom met personen en een tijdkolom |
 
 Een modus die de data niet aankan staat grijs, en de tooltip geeft de reden, bijvoorbeeld *Niet beschikbaar - de modus Verschil heeft twee groepen of een bewaarde kolom om op te splitsen nodig; deze data heeft één groep.* Als een nieuwe dataset de huidige modus niet aankan, valt de weergave terug op **Warmte**.
 

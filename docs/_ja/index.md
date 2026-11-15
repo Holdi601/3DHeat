@@ -23,13 +23,13 @@ CSV、Parquet、Tacview の記録、変換したリプレイ、1つのファイ�
 | | |
 |---|---|
 | ![差分](../assets/img/en/heat-difference.webp) | **[ヒートモード](heat-modes.md)** - ヒート、[差分](difference.md)（一方が多かった場所は赤、もう一方が多かった場所は緑から青）、[チームヒート](team-heat.md)、[線のヒート](line-heat.md)。矢印や扇形、極座標図を使う[方向ヒート](directional-heat.md)。[価値で重み付けしたヒート](value-weighting.md)：武器、車両、燃料がどれだけの価値を持つかを反映します。 |
-| ![リプレイ](../assets/img/en/replay-tanks.webp) | **[試合のリプレイ](match-replay.md)** - 各ユニットを、それが何であるかを表す[フィギュア](figures.md)として表示します。遠くの NATO またはロシアの記号、ミサイルと曳光弾、命中マーク、残骸、火災、砲塔、目標、Tacview 風のカメラ、戦術表示。[多数の試合を同時に](many-matches.md)も表示できます。 |
+| ![リプレイ](../assets/img/en/replay-tanks.webp) | **[試合のリプレイ](match-replay.md)** - 各ユニットを、それが何であるかを表す[フィギュア](figures.md)として表示します。遠くの NATO またはロシアの記号、ミサイルと曳光弾、命中マーク、残骸、火災、砲塔、目標、Tacview 風のカメラ、戦術表示。[多数の試合を一度に](many-matches.md)も表示できます。 |
 | ![インサイト](../assets/img/en/insights.webp) | **[インサイト](insights.md)** - 有利な位置、危険な地形、スポーンの罠、チョークポイント、目立つプレイヤーを、根拠と順位付きで見つけます。書かれたまとめを、選んだ AI が作ることもできます。1試合の実況モードや、[ナレッジレンズ](knowledge.md)もあります。 |
 | ![ボリューム](../assets/img/en/compare.webp) | **[ボリューム](volumes.md)** - ボックス、角柱、円柱、球を描き、その中に絞り込み、その中で起きたことを数え、書き出し、場所を並べて比べます。その場所で誰が、何が最もよく機能しているかの[内訳](breakdown.md)も見られます。 |
 | ![フィルター](../assets/img/en/filters.webp) | **[フィルター](filters.md)** - イベントの種類、プレイヤーまたは AI、車両クラス、値、任意の列で絞り込みます。データの大きさに関係なく、グラフィックスカードで処理します。 |
 | ![レベル](../assets/img/en/level-panel.webp) | **[レベル](levels.md)** - マップ画像、[データツール](#related-repositories)で作った3Dレベル、簡略化、飛行データのための実際の地形を持つ[現実世界の背景](world-backdrop.md)。 |
 
-ほかにも、ゲームのラップを扱う[レース分析](race-analysis.md)タブ、Counter-Strike 2 の要約を扱う[試合分析](match-analysis.md)タブ、レベル上の計画を扱う[戦術ボード](tactics-board.md)、車両ごとの[被弾分析](hit-analysis.md)、何千もの試合の[大量分析](mass-analysis.md)、[カメラの経路と動画](camera-path-and-video.md)、[40 の言語](languages.md)、[メートル法またはヤード・ポンド法の単位](settings.md)があります。
+ほかにも、ゲームのラップを扱う[レース分析](race-analysis.md)タブ、Counter-Strike 2 の要約を扱う[試合分析](match-analysis.md)タブ、レベル上の計画を扱う[作戦ボード](tactics-board.md)、車両ごとの[被弾分析](hit-analysis.md)、何千もの試合の[大量分析](mass-analysis.md)、[カメラの経路と動画](camera-path-and-video.md)、[40 の言語](languages.md)、[メートル法またはヤード・ポンド法の単位](settings.md)があります。
 
 ## タブ {#the-tabs}
 
@@ -37,11 +37,11 @@ CSV、Parquet、Tacview の記録、変換したリプレイ、1つのファイ�
 
 | タブ | 用途 |
 |---|---|
-| **Heatmap** | 位置を表すあらゆる表。ヒートモード、フィギュアオーバーレイ、フィルター、ボリューム、インサイト、レベル、計測、動画。 |
-| **Race analysis** | 同じコースの2つ以上のラップ。どこで時間を失ったか、なぜか、何を変えるべきか。 |
-| **Match** | 試合のフィギュアリプレイと、Counter-Strike 2 の試合の要約。 |
-| **Tactics** | レベル上の計画。フィギュア、経路、投擲する道具、エリア、再生できる手順のメモ。 |
-| **Vehicles** | 各ユニットがどこで、誰に、何で被弾したか。 |
+| **ヒートマップ** | 位置を表すあらゆる表。ヒートモード、フィギュアオーバーレイ、フィルター、ボリューム、インサイト、レベル、計測、動画。 |
+| **レース分析** | 同じコースの2つ以上のラップ。どこで時間を失ったか、なぜか、何を変えるべきか。 |
+| **マッチ** | 試合のフィギュアリプレイと、Counter-Strike 2 の試合の要約。 |
+| **作戦** | レベル上の計画。フィギュア、経路、投擲する道具、エリア、再生できる手順のメモ。 |
+| **車両** | 各ユニットがどこで、誰に、何で被弾したか。 |
 
 ## インストールと実行 {#install-and-run}
 
@@ -94,22 +94,22 @@ npm run dev      # http://127.0.0.1:5273
 
 ## ブラウザーと GPU の要件 {#browser-and-gpu-requirements}
 
-- **WebGPU か WebGL2 のあるブラウザー。** まず WebGPU を試します（Chrome と Edge は対応しています）。WebGPU がなければ WebGL2 のバックエンドを使います。WebGL2 は `EXT_color_buffer_float`（浮動小数点テクスチャへの描画）を提供している必要があります。提供していない場合、ビューアーは「Cannot initialise the renderer.」と表示します。[2つのバックエンド](backends.md)を参照してください。ビューアーは Chromium で開発し、テストしています。他のブラウザーでは確認していません。
+- **WebGPU か WebGL2 のあるブラウザー。** まず WebGPU を試します（Chrome と Edge は対応しています）。WebGPU がなければ WebGL2 のバックエンドを使います。WebGL2 は `EXT_color_buffer_float`（浮動小数点テクスチャへの描画）を提供している必要があります。提供していない場合、ビューアーは「レンダラーを初期化できません。」と表示します。[2つのバックエンド](backends.md)を参照してください。ビューアーは Chromium で開発し、テストしています。他のブラウザーでは確認していません。
 - **ハードウェアアクセラレーションが有効であること。** ブラウザーが CPU で描画している場合（SwiftShader、llvmpipe、Microsoft Basic Render Driver など）、サイドバーの上部に赤いバナーが出て、その状況と直し方を示します。[ソフトウェアレンダリングの検出](software-rendering.md)を参照してください。
 - **個別の GPU があると助かりますが、必須ではありません。** どちらのバックエンドも高性能なアダプターを要求します。GPU に保持できるデータ量は予算として見えるもので、変更もできます（[メモリと予算](memory-and-budgets.md)）。
 - **任意の機能**は、さらなるブラウザーの API を使います。動画の描画には、VP9 または VP8 の WebCodecs `VideoEncoder` が必要です（[カメラの経路と動画](camera-path-and-video.md)）。レベルのメッシュの簡略化には WebAssembly が必要です。フォルダーのドロップには File and Directory Entries API を使います。レベルライブラリは IndexedDB を使います。ゲームパッドは Gamepad API を使います。
 
 ## ドキュメントの地図 {#documentation-map}
 
-**はじめに**: [デモデータ](demo-data.md) · [データの取り込み](getting-data-in.md)（[ファイルの読み込み](loading-files.md)、[列の割り当て](column-mapping.md)、[軸、単位、時間](axes-units-and-time.md)、[セッション、人物、グループ](sessions-persons-groups.md)、[Tacview](tacview-acmi.md)、[変換ツール](converters.md)、[.3dheat](container.md)、[メモリと予算](memory-and-budgets.md)）
+**はじめに**: [デモデータ](demo-data.md) · [データの取り込み](getting-data-in.md)（[ファイルの読み込み](loading-files.md)、[列マッピング](column-mapping.md)、[軸、単位、時間](axes-units-and-time.md)、[セッション、人物、グループ](sessions-persons-groups.md)、[Tacview](tacview-acmi.md)、[変換ツール](converters.md)、[.3dheat](container.md)、[メモリと予算](memory-and-budgets.md)）
 
 **見る**: [ヒートモード](heat-modes.md)（[ヒート](heat.md)、[スプライトの形](sprite-shape.md)、[色と露出](colour-and-exposure.md)、[深度とカリング](depth-and-culling.md)、[差分](difference.md)、[チームヒート](team-heat.md)、[線のヒート](line-heat.md)、[ボックスのリプレイ](box-replay.md)、[方向ヒート](directional-heat.md)、[価値の重み付け](value-weighting.md)） · [タイムライン](timeline.md) · [レベル](levels.md)（[マップ画像](map-images.md)、[3Dレベル](model-levels.md)、[見た目](level-appearance.md)、[ライブラリ](level-library.md)、[現実世界の背景](world-backdrop.md)、[その出典](world-backdrop-sources.md)） · [カメラ](camera.md)（[ゲームパッド](gamepad.md)、[キー](keyboard-reference.md)） · [カメラの経路と動画](camera-path-and-video.md)
 
 **分析する**: [フィルターとツール](filters-and-tools.md)（[フィルター](filters.md)、[チーム](teams-list.md)、[エンティティ](entities.md)、[スライス](slice.md)、[計測](measure.md)、[ボリューム](volumes.md)、[内訳](breakdown.md)） · [インサイト](insights.md)（[ナレッジレンズ](knowledge.md)） · [大量分析](mass-analysis.md)
 
-**リプレイ**: [試合のリプレイ](match-replay.md) · [多数の試合を同時に](many-matches.md) · [フィギュア](figures.md)（[フィギュアオーバーレイ内](figure-replay.md)、[クレジット](figure-credits.md)） · [Tacview との同等性](tacview-parity.md) · [被弾分析](hit-analysis.md)
+**リプレイ**: [試合のリプレイ](match-replay.md) · [多数の試合を一度に](many-matches.md) · [フィギュア](figures.md)（[フィギュアオーバーレイ内](figure-replay.md)、[クレジット](figure-credits.md)） · [Tacview との同等性](tacview-parity.md) · [被弾分析](hit-analysis.md)
 
-**ほかのタブ**: [レース分析](race-analysis.md)（[方法](race-analytics.md)、[他のゲーム](other-games.md)） · [試合分析](match-analysis.md) · [戦術ボード](tactics-board.md)（[速度](tactics-speeds.md)）
+**ほかのタブ**: [レース分析](race-analysis.md)（[方法](race-analytics.md)、[他のゲーム](other-games.md)） · [試合分析](match-analysis.md) · [作戦ボード](tactics-board.md)（[速度](tactics-speeds.md)）
 
 **ビューアー**: [用語集](glossary.md) · [設定、単位、キー](settings.md) · [言語](languages.md) · [更新](updates.md) · [レンダリングの内部](rendering-internals.md)（[バックエンド](backends.md)、[累積](accumulation.md)、[サンプリングと予算](sampling-and-budgets.md)、[half-float](half-float-accumulation.md)、[GPU メモリ](gpu-memory.md)、[ソフトウェアレンダリング](software-rendering.md)、[パフォーマンスと統計](performance-and-stats.md)） · [データ形式](data-formats.md) · [リファレンス](reference.md) · [ドキュメントの保守](maintaining.md)
 
@@ -148,6 +148,6 @@ npm run dev      # http://127.0.0.1:5273
 | [`src/overlay/`](https://github.com/Holdi601/3DHeat/tree/main/src/overlay) | 多数の試合のオーバーレイ |
 | [`src/figures/`](https://github.com/Holdi601/3DHeat/tree/main/src/figures) | フィギュアのカタログとその作成ツール |
 | [`src/vehicle/`](https://github.com/Holdi601/3DHeat/tree/main/src/vehicle) | 被弾分析（車両タブ） |
-| [`src/tactics/`](https://github.com/Holdi601/3DHeat/tree/main/src/tactics) | 戦術ボード |
+| [`src/tactics/`](https://github.com/Holdi601/3DHeat/tree/main/src/tactics) | 作戦ボード |
 | [`src/world/`](https://github.com/Holdi601/3DHeat/tree/main/src/world) | 現実世界の背景 |
 | [`src/units/`](https://github.com/Holdi601/3DHeat/tree/main/src/units) | 計測単位 |

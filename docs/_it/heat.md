@@ -15,7 +15,7 @@ Il calore dipinge i punti dove è successo molto: rosso dove è successo poco, b
 
 **Calore** (tasto 1) è la modalità predefinita. Ogni [riga](glossary.md) visibile contribuisce con uno [sprite](glossary.md) rotondo rivolto verso la telecamera; gli sprite sovrapposti si sommano in un buffer in virgola mobile; la somma viene mappata su una rampa di colori - per impostazione predefinita trasparente → rosso → giallo → bianco - e disegnata sopra la scena.
 
-![Calore su un livello 3D: punti caldi dentro e sopra gli edifici](../assets/img/en/shooter-heat.webp)
+![Calore su un livello 3D: punti caldi dentro e sopra gli edifici](../assets/img/it/shooter-heat.webp)
 
 L'immagine mostra il calore di un round di sparatutto su un livello con edifici: i punti caldi sono nelle stanze e sulle scale, non solo a terra.
 

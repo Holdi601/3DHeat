@@ -21,7 +21,7 @@ Sans rien de chargé, la scène est sombre avec une grille et des axes colorés 
 
 Le niveau est partagé par les trois onglets : un circuit chargé dans l'onglet Analyse de course est le même niveau que celui qu'affiche la carte de chaleur.
 
-![Le panneau Arrière-plan / niveau avec un niveau chargé : boutons Image de carte et Modèle 3D, Théâtre, Opacité, Luminosité, Enregistrer dans la bibliothèque et la liste de la Bibliothèque](../assets/img/en/level-panel.webp)
+![Le panneau Arrière-plan / niveau avec un niveau chargé : boutons Image de carte et Modèle 3D, Théâtre, Opacité, Luminosité, Enregistrer dans la bibliothèque et la liste de la Bibliothèque](../assets/img/fr/level-panel.webp)
 
 ## Placer un niveau derrière vos données {#put-a-level-behind-your-data}
 

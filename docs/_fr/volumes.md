@@ -21,7 +21,7 @@ Un **volume** est une boîte invisible (ou un cylindre, ou une sphère) que vous
  +------------+
 ```
 
-![Trois volumes sur la vallée de démonstration : deux cylindres autour des collines, une boîte autour du village](../assets/img/en/volumes.webp)
+![Trois volumes sur la vallée de démonstration : deux cylindres autour des collines, une boîte autour du village](../assets/img/fr/volumes.webp)
 
 Les volumes mesurent ce qui se passe à l'intérieur, restreignent la vue à eux, exportent leurs lignes et peuvent être comparés côte à côte. Voir aussi le [glossaire](glossary.md) pour ligne, personne et match.
 
@@ -76,7 +76,7 @@ Avec deux volumes visibles ou plus, appuyez sur **Comparer...**.
 3. Dans **Tableau**, lisez l'écart de chaque valeur par rapport au premier volume.
 4. Passez à **Barres** pour voir les parts sous forme de barres.
 
-![Le tableau Comparer les volumes : lignes, temps à l'intérieur, joueurs et plus pour chaque volume, avec l'écart par rapport au premier](../assets/img/en/compare.webp)
+![Le tableau Comparer les volumes : lignes, temps à l'intérieur, joueurs et plus pour chaque volume, avec l'écart par rapport au premier](../assets/img/fr/compare.webp)
 
 | Vue | Affiche |
 |---|---|
@@ -86,7 +86,7 @@ Avec deux volumes visibles ou plus, appuyez sur **Comparer...**.
 | **Passages** | Diagrammes en boîte et en violon de la durée des passages (échelle logarithmique). |
 | **Flux** | Là où les trajectoires vont après avoir quitté chaque volume : une matrice de transitions ou des rubans de flux. |
 
-![La vue Barres : types d'événements par volume, en parts](../assets/img/en/compare-bars.webp)
+![La vue Barres : types d'événements par volume, en parts](../assets/img/fr/compare-bars.webp)
 
 ## Astuces {#tips}
 

@@ -14,10 +14,10 @@ outdated: false
 **Wolumen** to niewidoczne pudełko (albo walec, albo kula), które rysujesz wokół miejsca, aby zapytać: co tu się działo? Użyj go, aby policzyć zabójstwa przy moście, porównać dwa wzgórza albo pokazać tylko aktywność w jednym obszarze.
 
 ```
- top view                 You draw a shape ->  the viewer counts
- +------------+           what is inside:
- |   ( A )    |            rows, players, kills, time ...
- |        [B] |           Compare A with B, side by side.
+ widok z góry             Rysujesz kształt ->  przeglądarka liczy
+ +------------+           co jest w środku:
+ |   ( A )    |            wiersze, gracze, zabójstwa, czas ...
+ |        [B] |           Porównaj A z B, obok siebie.
  +------------+
 ```
 

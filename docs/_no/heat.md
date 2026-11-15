@@ -44,10 +44,10 @@ Hver kontroll nedenfor svarer til en shader-parameter, så å endre den koster i
 | **Rampeform** | *Avtagning* | *Avtagning* / *Kurve* | [Sprite-form](sprite-shape.md#ramp-shape-falloff-or-curve) |
 | **Avtagning** (bare for Avtagning) | 1,6 | 0,1–8 (64) | [Sprite-form](sprite-shape.md#falloff) |
 | **Myk rampe** (bare for Avtagning) | på | | [Sprite-form](sprite-shape.md#falloff) |
-| Kurveredigereren (bare for Kurve) | forhåndsvalget *Glatt* | | [Sprite-form](sprite-shape.md#the-curve-editor) |
+| Kurveredigereren (bare for Kurve) | forhåndsvalget *Myk* | | [Sprite-form](sprite-shape.md#the-curve-editor) |
 | **Metningspunkt** | 24; ved innlasting et anslag, deretter målt | 0,1–4000, logaritmisk (10 000 000) | [Farge og eksponering](colour-and-exposure.md#saturation-point) |
 | **Minste varme** | av (0) | 0–100 % | [Farge og eksponering](colour-and-exposure.md#minimum-heat) |
-| **Tetthetsrespons** | *Metning* | *Metning* / *Lineær* / *Logaritmisk* | [Farge og eksponering](colour-and-exposure.md#density-response) |
+| **Tetthetsrespons** | *Mettende* | *Mettende* / *Lineær* / *Log* | [Farge og eksponering](colour-and-exposure.md#density-response) |
 | **Autoeksponer fra feltet** | | knapp | [Farge og eksponering](colour-and-exposure.md#auto-exposure) |
 | **Følg visningen** | på | | Måler eksponeringen på nytt hver gang kameraet kommer til ro, slik at et område du flyr inn i bruker hele fargeskalaen. Små endringer ignoreres, og skalaen glir jevnt. Fjern haken, eller dra **Metningspunkt**, for å låse skalaen og sammenligne steder på én skala. [Farge og eksponering](colour-and-exposure.md#follow-the-view) |
 | **Samme tetthet ved all zoom** | på | | En farge betyr samme antall rader per område på bakken, uansett hvor nær du er. En sprite som pikselgrensene forstørrer (langt unna) eller forminsker (nær) beholder varmen dens reelle størrelse ville lagt til, så et bilde eksponert langt unna ikke bleknes når du flyr inn i det. Av: en begrenset sprite legger til hele sin vekt i sin begrensede størrelse. [Sprite-form](sprite-shape.md#pixel-clamps) |
@@ -83,7 +83,7 @@ Hver kontroll nedenfor svarer til en shader-parameter, så å endre den koster i
 | **Nær** | av (0) | 0,5–5000 m, logaritmisk; nederst på sporet = av (200 000) | [Dybde og utsortering](depth-and-culling.md#distance-culling) |
 | **Fjern** | av (0) | 1–200 000 m, logaritmisk; nederst = av (10 000 000) | [Dybde og utsortering](depth-and-culling.md#distance-culling) |
 | **Skjær ved et plan** | på | | [Dybde og utsortering](depth-and-culling.md#distance-culling) |
-| **Skjær også banen** | på | | [Dybde og utsortering](depth-and-culling.md#distance-culling) |
+| **Skjær også nivået** | på | | [Dybde og utsortering](depth-and-culling.md#distance-culling) |
 
 Taster: `[` og `]` skyver den fjerne grensen inn og ut, `\` slår den av og på ([Dybde og utsortering](depth-and-culling.md#keyboard)).
 

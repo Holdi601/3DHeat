@@ -15,7 +15,7 @@ Stikan undir myndinni er eins og myndbandsspilari: þú getur spilað gögnin ei
 
 ![Tímalínustikan: 1 Allt/Spila, 2 spilunarhnappar, 3 klukka, 4 Hraði, 5 Saga, með Gluggi og Tímabil 30 s](../assets/img/en/timeline-bar.webp)
 
-Stikan undir sýninni er tímalínan ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Hún ákveður hvaða línur eru sýnilegar á hverri stundu. Hún þarfnast tímadálks; án hans er öll stikan óvirk, sýnin helst í **Allt**, og hliðarstikan segir *Enginn tímadálkur í þessum gögnum - tímalínan er óvirk og allir gagnapunktar birtast í einu.*
+Stikan undir sýninni er tímalínan ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Hún ákveður hvaða línur eru sýnilegar á hverri stundu. Hún þarfnast tímadálks; án hans er öll stikan óvirk, sýnin helst í **Allt**, og hliðarstikan segir *Enginn tímadálkur í þessum gögnum — tímalínan er óvirk og allir gagnapunktar eru sýndir í einu.*
 
 ## Allt og Spila {#all-and-play}
 
@@ -36,7 +36,7 @@ Að velja **Allt** stöðvar líka spilun.
 | ◀ **Spila afturábak (J)** | | Spilar gögnin í öfugri röð. Birtist aðeins í stillingunni **Fígúruyfirlögn**; sami takki `J` virkar þar líka (sjá [Lyklaborð](#keyboard)). |
 | ⏮ | | Aftur á upphaf bilsins. |
 | Klukka | | `liðið / samtals` sem `mm:ss.s` (eða `h:mm:ss`), og, þegar tímadálkurinn er algildur tímastimpill, tími dagsins á spilunarhausnum sem `HH:MM:SSZ` (UTC). |
-| **Hraði** | 1× | Sekúndur gagnasafnsins á hverja raunsekúndu. Valmyndin hefur 17 þrep frá 0,01× til 1800× (0,01, 0,02, 0,05, 0,1, 0,25, 0,5, 1, 2, 4, 8, 16, 32, 64, 128, 256, 600, 1800), auk **Sérsniðið…**: skrifaðu hvaða hraða sem er frá 0,001× til 3600× (til dæmis 0,3 eða 12) og ýttu á Enter; Esc heldur núverandi hraða. Síðasti hraði er munaður í næstu heimsókn (sjá [Vistaðar stillingar](ref-settings-storage.md)). |
+| **Hraði** | 1× | Sekúndur gagnasafnsins á hverja raunsekúndu. Valmyndin hefur 17 þrep frá 0,01× til 1800× (0,01, 0,02, 0,05, 0,1, 0,25, 0,5, 1, 2, 4, 8, 16, 32, 64, 128, 256, 600, 1800), auk **Sérsniðið…**: skrifaðu hvaða hraða sem er frá 0,001× til 3600× (til dæmis 0,3 eða 12) og ýttu á Enter; Esc heldur núverandi hraða. Síðasti hraði er geymdur fyrir næstu heimsókn (sjá [Vistaðar stillingar](ref-settings-storage.md)). |
 | **Saga** | Uppsafnað | Hvað telst sýnilegt á spilunarhausnum: *Uppsafnað*, *Gluggi* eða *Líftími* (hér að neðan). |
 | **Tímabil** (Gluggi; í stillingunni Línur einnig Líftími) | 30 s | Lengd gluggans sem endar á spilunarhausnum; að minnsta kosti 0,01 s. Í [Línuhita](line-heat.md#playback) er það lengd halans. |
 | **Varalíftími** (aðeins Líftími, ekki í stillingunni Línur) | 10 s | Hversu lengi gagnapunktur án næsta sýnis af sömu manneskju helst sýnilegur. |
@@ -72,9 +72,9 @@ Línur eru geymdar raðaðar eftir tíma, svo tímagluggi er tvær tvíundarleit
 
 Hvernig hitinn helst stöðugur á meðan glugginn hreyfist fer eftir sögunni ([Söfnun](accumulation.md)):
 
-- **Uppsafnað** vex aðeins, svo hver rammi bætir aðeins við þeim línum sem urðu sýnilegar frá þeim síðasta, með fullri þyngd. Flöturinn byggist upp einhliða og hlé breytir engu, því það er ekkert eftir sem kemur. (Að meta aftur í staðinn myndi láta hvern ramma lýsa upp annað handahófskennt úrtak og dofna það síðan, sem lítur út eins og bylgjur sem blossa upp og hverfa.)
+- **Uppsafnað** vex aðeins, svo hver rammi bætir aðeins við þeim línum sem urðu sýnilegar frá þeim síðasta, með fullri þyngd. Flöturinn byggist upp einátta og hlé breytir engu, því það er ekkert eftir sem kemur. (Að meta aftur í staðinn myndi láta hvern ramma lýsa upp annað handahófskennt úrtak og dofna það síðan, sem lítur út eins og bylgjur sem blossa upp og hverfa.)
 - **Gluggi** og **Líftími** breytast raunverulega í hverjum ramma og eru metin aftur, blönduð sem veldisvísismeðaltal (vog 0,34 fyrir nýja rammann), sem er óhlutdrægt í jafnvægi og miklu rólegra en að byrja upp á nýtt.
-- Í stillingunni Líftími eru frambjóðandi-línurnar þær frá *spilunarhaus - max(lengsta bil í gögnunum, Varalíftími)* upp að spilunarhausnum; skyggingin fellir síðan niður hverja línu sem líftími hennar er búinn og beitir dofnuninni.
+- Í stillingunni Líftími eru þær línur sem koma til greina frá *spilunarhaus - max(lengsta bil í gögnunum, Varalíftími)* upp að spilunarhausnum; skyggingin fellir síðan niður hverja línu sem líftími hennar er búinn og beitir dofnuninni.
 
 Að skipta á milli Allt og Spila, eða breyta sögunni, endurræsir söfnunina.
 

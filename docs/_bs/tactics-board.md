@@ -48,7 +48,7 @@ Bez nivoa tabla je ravna površ tla. Učitajte nivo pod **Nivo** da planirate na
 | **Bilješka** | Gdje ide bilješka; traži njen tekst. | Prikazuje se kao pribadača, a njen tekst iznad nje. |
 | **Briši** | Figura, strelica, područje ili bilješka. | Uklanja je od ovog koraka nadalje; na njenom prvom koraku, uklanja je potpuno. |
 
-**Poništi** i **Ponovi** (`Ctrl+Z`; `Ctrl+Y` ili `Ctrl+Shift+Z`) prolaze kroz svaku promjenu. Linija ispod plana pokazuje koliko figura, strelica i koraka ima. **Pogled odozgo** gleda pravo dolje (ortografski), **3D prikaz** vraća perspektivu, **Sličica** uklapa plan, ili nivo kada je plan prazan.
+**Poništi** i **Ponovi** (`Ctrl+Z`; `Ctrl+Y` ili `Ctrl+Shift+Z`) prolaze kroz svaku promjenu. Linija ispod plana pokazuje koliko figura, strelica i koraka ima. **Pogled odozgo** gleda pravo dolje (ortografski), **3D prikaz** vraća perspektivu, **Uokviri** uklapa plan, ili nivo kada je plan prazan.
 
 **Veličina figura** skalira svaku figuru na tabli; 1× je prava veličina, koja je izdaleka nekoliko piksela za osobu.
 
@@ -88,7 +88,7 @@ Traka ispod prikaza sadrži korake. Plan počinje s jednim; **+** dodaje jedan, 
 
 ## Čuvanje {#saving}
 
-Odjeljak **Datoteka** sadrži **Sačuvaj**, **Otv.** i **Očisti**. **Sačuvaj** piše plan kao `<naziv>.h3dplan.json` (običan JSON: strane, koraci, figure s mjestom po koraku, strelice, područja, bilješke); **Otv.** ga čita nazad. Datoteka druge verzije, ili ona koja nije plan, odbija se uz razlog. **Očisti** prazni plan; Poništi ga vraća.
+Odjeljak **Datoteka** sadrži **Sačuvaj**, **Otvori** i **Očisti**. **Sačuvaj** piše plan kao `<naziv>.h3dplan.json` (običan JSON: strane, koraci, figure s mjestom po koraku, strelice, područja, bilješke); **Otvori** ga čita nazad. Datoteka druge verzije, ili ona koja nije plan, odbija se uz razlog. **Očisti** prazni plan; Poništi ga vraća.
 
 ## Figure {#figures}
 

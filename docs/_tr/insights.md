@@ -22,7 +22,7 @@ Her şey tarayıcınızda sayılır. Harici bir yapay zekâyı açmadıkça (bkz
 ## Bulgular {#findings}
 
 1. Veri yükleyin ve **İçgörüler**'i açın. **İçgörü bul**'a basın ("Sayılıyor… %n" ilerlemeyi gösterir).
-2. Listeyi okuyun. Her bulgunun bir güç çubuğu, bir cümlesi, kanıtın ne kadar iyi olduğu (*Güçlü kanıt*, *İyi kanıt* ya da *Biraz kanıt*), onu bulan dedektör ve bunun önemli olduğu araç sınıfı vardır.
+2. Listeyi okuyun. Her bulgunun bir güç çubuğu, bir cümlesi, kanıtın ne kadar iyi olduğu (*Güçlü kanıt*, *İyi kanıt* ya da *Bir miktar kanıt*), onu bulan dedektör ve bunun önemli olduğu araç sınıfı vardır.
 3. **Bir bulguya tıklayın**: görüntüleyici süzgeçlerini uygular, kamerayı yere uçurur ve zamana atlar, ayrıntıları açar: %95 aralığıyla etki, p ve q değerleri, sayılan kanıt ve bunun etrafına bir [hacim](volumes.md) çizen **Burada hacim**.
 4. **Filtreleri geri yükle** sizin filtrelerinizi geri koyar. **JSON'u kopyala** tüm raporu kopyalar.
 
@@ -39,7 +39,7 @@ Listenin en üstündeki satırlar (örneğin para toplamları) bulgulardan önce
 | **Güç konumları** | Haritanın geri kalanına göre çok daha iyi öldürme-ölüm oranına sahip yerler ve harcanan süreye göre az kişinin öldüğü *güvenli zemin* | öldürme ve ölüm olayları |
 | **Sıcak ve soğuk bölgeler** | Bir olay türünün (atış, isabet, ele geçirme ...) orada geçirilen süreden tahmin edilenden çok daha sık ya da az sık olduğu yerler | bir olay sütunu |
 | **Açık alan ve siper** | Yakın seviye geometrisine karşı açıkta yapılan ölümler ve hızlı harekete karşı yavaş hareket | ölümler; geometri kısmı için bir 3B harita |
-| **Doğmalar** | Güçlü doğmalar, doğma tuzakları, güvenli doğmalar, ilk temasa kadar geçen süre | zaman ve kişiler |
+| **Spawn'lar** | Güçlü doğmalar, doğma tuzakları, güvenli doğmalar, ilk temasa kadar geçen süre | zaman ve kişiler |
 | **Yere göre sınıf** | Bir bölgede çok daha iyi ya da kötü sonuç veren bir araç sınıfı ya da oyuncular ile YZ'ler | öldürmeler artı bir araç sınıfı ya da oyuncu/YZ sütunu |
 | **Oyuncular** | Aynı sınıftaki diğerlerinden çok daha fazla ya da az öldüren ya da ölen oyuncular | kişiler ve öldürmeler |
 | **Dar geçitler ve kanatlar** | Dar geçitler (çevredeki zemine göre çok daha fazla geçiş) ve kanat güzergâhları (nadiren kullanılan ama öldürmelere çıkan) | kişiler |

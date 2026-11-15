@@ -88,7 +88,7 @@ De balk onder de weergave bevat de stappen. Een plan begint met één; **+** voe
 
 ## Opslaan {#saving}
 
-Het gedeelte **Bestand** bevat **Opslaan**, **Open** en **Wissen**. **Opslaan** schrijft het plan als `<naam>.h3dplan.json` (gewone JSON: kanten, stappen, figuren met een plek per stap, pijlen, gebieden, notities); **Open** leest er een terug. Een bestand van een andere versie, of een dat geen plan is, wordt geweigerd met de reden. **Wissen** leegt het plan; Ongedaan maken haalt het terug.
+Het gedeelte **Bestand** bevat **Opslaan**, **Open** en **Wissen**. **Opslaan** schrijft het plan als `<name>.h3dplan.json` (gewone JSON: kanten, stappen, figuren met een plek per stap, pijlen, gebieden, notities); **Open** leest er een terug. Een bestand van een andere versie, of een dat geen plan is, wordt geweigerd met de reden. **Wissen** leegt het plan; Ongedaan maken haalt het terug.
 
 ## Figuren {#figures}
 

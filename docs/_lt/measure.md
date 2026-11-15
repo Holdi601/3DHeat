@@ -1,5 +1,5 @@
 ---
-title: "Matas"
+title: "Matavimas"
 parent: "Filtrai ir įrankiai"
 nav_order: 5
 lang: "lt"

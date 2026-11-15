@@ -19,7 +19,7 @@ Los **Filtros** ocultan las filas que no te interesan, como una clase de vehícu
 2. En **Clase de vehículo**, desmarca *Tanque*. La imagen cambia al momento.
 3. Pulsa **Quitar todos los filtros** para deshacerlo.
 
-![El panel Filtros: primero las columnas propias del visor (Tipo de evento, Clase de vehículo), y después las columnas de tu archivo](../assets/img/en/filters.webp)
+![El panel Filtros: primero las columnas propias del visor (Tipo de evento, Clase de vehículo), y después las columnas de tu archivo](../assets/img/es/filters.webp)
 
 Las primeras filas son las columnas propias del visor (abajo). Las filas siguientes vienen de tu archivo.
 
@@ -42,7 +42,7 @@ Qué columnas se pueden filtrar se decide al cargar, porque hay que leerlas ento
 
 ## Columnas numéricas (rango) {#numeric-columns-range}
 
-![Un filtro de rango (dinero perdido) con ambos extremos arrastrados](../assets/img/en/filters-numeric.webp)
+![Un filtro de rango (dinero perdido) con ambos extremos arrastrados](../assets/img/es/filters-numeric.webp)
 
 | Parte | Significado |
 |---|---|

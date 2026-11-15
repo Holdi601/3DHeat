@@ -37,7 +37,7 @@ Prikazana v načinu Razlika, pod ploščami toplote.
 
 | Možnost | Prikazano kot | Pravilo delitve |
 |---|---|---|
-| Skupine | *Skupina (N)* (ko obstaja stolpec skupine) | Vsaka skupina na +, − ali nobeni, nastavljeno v [Seznam ekip](teams-list.md) |
+| Skupine | *Skupina (N)* (ko obstaja stolpec skupine) | Vsaka skupina na +, − ali nobeni, nastavljeno v [Ekipe](teams-list.md) |
 | Kategorijski stolpec | *stolpec (N vrednosti)* | Vrednosti na +, − ali nobeni |
 | Številski stolpec | *stolpec (številski)* | Obseg vrednosti za vsako stran |
 | Izvorna datoteka | *Izvorna datoteka - primerjaj dve nalaganji* (ko je naloženih več datotek) | Datoteke na +, − ali nobeni |
@@ -63,7 +63,7 @@ Plošča opozori, kadar slika ni prava razlika:
 
 ### Po skupini {#by-group}
 
-Plošča le kaže na [Seznam ekip](teams-list.md), kjer ima vsaka skupina gumba **+** in **−**. Ob vsakem nalaganju prva polovica skupin (zaokrožena navzgor) gre na +, ostale na −; **Razdeli enakomerno** v Seznamu ekip naredi isto še enkrat. Skupina na nobeni strani ali skrita s svojim potrditvenim poljem ne prispeva ničesar.
+Plošča le kaže na [Ekipe](teams-list.md), kjer ima vsaka skupina gumba **+** in **−**. Ob vsakem nalaganju prva polovica skupin (zaokrožena navzgor) gre na +, ostale na −; **Razdeli enakomerno** v Seznamu ekip naredi isto še enkrat. Skupina na nobeni strani ali skrita s svojim potrditvenim poljem ne prispeva ničesar.
 
 ### Po vrednostih kategorij {#by-category-values}
 

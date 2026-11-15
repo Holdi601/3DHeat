@@ -11,7 +11,7 @@ outdated: false
 
 # Filter und Werkzeuge
 
-Diese Panels lassen dich wählen, *welche* Daten du ansiehst, und messen, was du siehst. Nutze sie, wenn das Bild zu unruhig ist: einen Team, einen Spieler, einen Ort oder ein Stockwerk eines Gebäudes zeigen.
+Diese Panels lassen dich wählen, *welche* Daten du ansiehst, und messen, was du siehst. Nutze sie, wenn das Bild zu unruhig ist: ein Team, einen Spieler, einen Ort oder ein Stockwerk eines Gebäudes zeigen.
 
 Jedes Panel grenzt die Daten ein, und sie arbeiten zusammen: Eine Zeile wird nur gezeichnet, wenn sie **alle** besteht (UND).
 

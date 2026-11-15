@@ -38,7 +38,7 @@ Kun de typer, der forekommer, listes. Værdikolonner (`cost_*`, `earn_*`, `net_*
 
 En kategoriliste med mere end 12 værdier får et søgefelt (*Søg i n værdier*) og en knap **Kun disse**, der tillader præcis de værdier, der matcher.
 
-Hvilke kolonner der kan filtreres, afgøres ved indlæsningen, for de skal læses dengang. Uden nogen bevaret kolonne siger panelet det og henviser til *Behold til filtrering*.
+Hvilke kolonner der kan filtreres, afgøres ved indlæsningen, fordi de dengang skal læses. Uden nogen bevaret kolonne siger panelet det og henviser til *Behold til filtrering*.
 
 ## Talkolonner (interval) {#numeric-columns-range}
 

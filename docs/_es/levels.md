@@ -21,7 +21,7 @@ Sin nada cargado, la escena está oscura con una cuadrícula y ejes de colores (
 
 El nivel lo comparten las tres pestañas: un circuito cargado en la pestaña Análisis de carrera es el mismo nivel que muestra el mapa de calor.
 
-![El panel Fondo / nivel con un nivel cargado: botones Imagen de mapa y Modelo 3D, Teatro, Opacidad, Brillo, Guardar en la biblioteca y la lista de la Biblioteca](../assets/img/en/level-panel.webp)
+![El panel Fondo / nivel con un nivel cargado: botones Imagen de mapa y Modelo 3D, Teatro, Opacidad, Brillo, Guardar en la biblioteca y la lista de la Biblioteca](../assets/img/es/level-panel.webp)
 
 ## Poner un nivel detrás de tus datos {#put-a-level-behind-your-data}
 

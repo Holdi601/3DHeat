@@ -1,5 +1,5 @@
 ---
-title: "Analiza wyścigu"
+title: "Analiza wyścigowa"
 nav_order: 14
 has_children: true
 lang: "pl"
@@ -9,7 +9,7 @@ translated: true
 outdated: false
 ---
 
-# Analiza wyścigu
+# Analiza wyścigowa
 
 Przejechałeś tę samą trasę dwa razy. Karta **Analiza wyścigowa** odtwarza oba przejazdy razem w 3D, pokazuje, gdzie jedno okrążenie było wolniejsze, i mówi, dlaczego. Nie masz jeszcze okrążeń? Naciśnij **Okrążenia demo**.
 
@@ -49,7 +49,7 @@ Ta strona to mapa karty. Każda część ma własną stronę:
    Zob. [Powtórka i scena 3D](race-replay-and-scene.md).
 8. Wspólne panele **Poziom** i **Kamera i scena** (model trasy, odwrócenie osi, kamera) - opisane przy mapie cieplnej i w [Kamera](camera.md).
 
-**Widok** pokazuje trasę, przejechane linie, mapę, samochody, etykiety przypięte do toru oraz do sześciu kart samochodów w lewym górnym rogu (zob. [Wykresy i HUD](race-charts-and-hud.md)). Bez wczytanych okrążeń pisze: „Brak okrążeń - upuść tutaj dwa lub więcej plików okrążeń albo wczytaj okrążenia demo z paska bocznego.”
+**Widok** pokazuje trasę, przejechane linie, mapę, samochody, etykiety przypięte do toru oraz do sześciu kart samochodów w lewym górnym rogu (zob. [Wykresy i HUD](race-charts-and-hud.md)). Bez wczytanych okrążeń pisze: „Brak okrążeń - upuść tutaj dwa lub więcej plików okrążeń albo wczytaj okrążenia demonstracyjne z paska bocznego.”
 
 **Pasek pod widokiem** zawiera sterowanie powtórką i, o ile nie są ukryte, wykresy odległości.
 
@@ -92,7 +92,7 @@ Szczegóły: [Statystyki trasy](race-course-statistics.md#performance-with-many-
 | Wszystkie wartości na kartach | wyłączone |
 | Rozmiar samochodu | 1× |
 | Wykresy | pokazane |
-| Tryb powtórki | Od linii |
+| Tryb powtórki | Od linii startu |
 | Prędkość powtórki | 1× |
 | Pętla | włączona |
 

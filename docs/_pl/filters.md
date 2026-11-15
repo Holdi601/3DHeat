@@ -36,7 +36,7 @@ Przy wczytaniu przeglądarka wyznacza cztery własne kolumny i wypisuje je **jak
 
 Wypisywane są tylko rodzaje, które występują. Kolumny wartości (`cost_*`, `earn_*`, `net_*` oraz *Źródło kosztu*, zob. [Ważenie wartością](value-weighting.md)) można filtrować jak każdą kolumnę liczbową: na przykład odznacz *estimate* w *Źródło kosztu*, aby zostawić tylko wiersze z ceną.
 
-Lista kategorii z więcej niż 12 wartościami dostaje pole wyszukiwania (*Szukaj n wartości*) i przycisk **Tylko te', który pozwala dokładnie na pasujące wartości.
+Lista kategorii z więcej niż 12 wartościami dostaje pole wyszukiwania (*Szukaj n wartości*) i przycisk **Tylko te**, który pozwala dokładnie na pasujące wartości.
 
 To, które kolumny można filtrować, jest ustalane przy wczytaniu, bo wtedy trzeba je odczytać. Gdy nie ma żadnej zachowanej kolumny, panel to mówi i wskazuje *Zachowaj do filtrowania*.
 
@@ -67,7 +67,7 @@ Dozwolenie każdej wartości usuwa filtr.
 
 - **Cztery filtry naraz.** Nagłówek pokazuje `aktywne/4`. Piąty filtr nie jest stosowany, a panel to mówi. Wybór w [Obiektach](entities.md) (albo skupienie na graczu w karcie Mecz) zajmuje jeden z tych czterech. Filtr obejmujący całą kolumnę nie zajmuje żadnego.
 - **Kolumna kategorii ma najwyżej 4096 wartości**; szersza nie jest zachowywana przy wczytaniu.
-- **Filtry łączą się przez I**, a także z widocznością drużyn, podziałem różnicy, oknem czasu, odrzucaniem według odległości i [przekrojem](slice.md).
+- **Filtry łączą się przez i**, a także z widocznością drużyn, podziałem różnicy, oknem czasu, odrzucaniem według odległości i [przekrojem](slice.md).
 - **Zmiana filtra restartuje akumulację i kilka klatek później ponownie mierzy ekspozycję**, bo filtrowanie może mocno zmienić gęstość ([Kolor i ekspozycja](colour-and-exposure.md#auto-exposure)).
 - **Wyczyść wszystkie filtry** usuwa każdy filtr kolumny. Widoczność drużyn i wybory graczy ustawione gdzie indziej zostają.
 - Filtry kolumn zmieniają tryby ciepła. Nie zmieniają sylwetek [powtórki z figurami](box-replay.md), które podążają za widocznością drużyn i wyborem w Obiektach. Wybór w Obiektach zmienia oba.

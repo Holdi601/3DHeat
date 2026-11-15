@@ -1,5 +1,5 @@
 ---
-title: "Překryv obrazců"
+title: "Překryv figur"
 parent: "Režimy tepla"
 nav_order: 8
 lang: "cs"

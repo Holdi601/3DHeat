@@ -15,7 +15,7 @@ La chaleur par équipe montre où se trouvait chaque équipe, chacune dans sa pr
 
 **Chaleur par équipe** (touche 3) est le champ de densité de la [Chaleur](heat.md) avec une teinte propre à chaque [groupe](glossary.md). Là où des groupes se recouvrent, leurs teintes se mélangent ; un affrontement à égalité ressort neutre. L'opacité porte toujours la densité exactement comme dans les autres modes, si bien que l'image répond à *combien* et à *qui* à la fois. Elle exige une colonne de groupe.
 
-![Chaleur par équipe : chaque camp dans sa propre couleur ; là où ils se chevauchent, les couleurs se mélangent](../assets/img/en/heat-teams.webp)
+![Chaleur par équipe : chaque camp dans sa propre couleur ; là où ils se chevauchent, les couleurs se mélangent](../assets/img/fr/heat-teams.webp)
 
 Ce n'est pas la [superposition de figurines](box-replay.md) : celle-ci dessine une figurine par personne ; ici il s'agit d'un champ de chaleur coloré par la même colonne.
 

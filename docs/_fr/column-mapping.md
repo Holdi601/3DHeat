@@ -1,5 +1,5 @@
 ---
-title: "Correspondance des colonnes"
+title: "Mappage des colonnes"
 parent: "Importer des données"
 nav_order: 2
 lang: "fr"

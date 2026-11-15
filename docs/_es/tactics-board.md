@@ -23,7 +23,7 @@ La pestaña **Táctica** es una pizarra de dibujo para un plan de equipo: pones 
 6. Pulsa **▶** (o `K`) para reproducir el plan desde el paso mostrado hasta el final.
 7. Pon nombre al plan en **Nombre del plan** y pulsa **Guardar**.
 
-![La pestaña Táctica en vista cenital: juego, bandos y herramientas a la izquierda, tres figuras con flechas de Mover, un arco de humo lanzado, un Área y los pasos abajo](../assets/img/en/tactics.webp)
+![La pestaña Táctica en vista cenital: juego, bandos y herramientas a la izquierda, tres figuras con flechas de Mover, un arco de humo lanzado, un Área y los pasos abajo](../assets/img/es/tactics.webp)
 
 ## Empezar un plan {#starting-a-plan}
 
@@ -88,7 +88,7 @@ La barra debajo de la vista contiene los pasos. Un plan empieza con uno; **+** a
 
 ## Guardar {#saving}
 
-La sección **Archivo** contiene **Guardar**, **Open** y **Vaciar**. **Guardar** escribe el plan como `<nombre>.h3dplan.json` (JSON sencillo: bandos, pasos, figuras con un lugar por paso, flechas, áreas, notas); **Open** lo lee de nuevo. Un archivo de otra versión, o que no es un plan, se rechaza indicando el motivo. **Vaciar** deja el plan vacío; Deshacer lo devuelve.
+La sección **Archivo** contiene **Guardar**, **Abrir** y **Vaciar**. **Guardar** escribe el plan como `<nombre>.h3dplan.json` (JSON sencillo: bandos, pasos, figuras con un lugar por paso, flechas, áreas, notas); **Abrir** lo lee de nuevo. Un archivo de otra versión, o que no es un plan, se rechaza indicando el motivo. **Vaciar** deja el plan vacío; Deshacer lo devuelve.
 
 ## Figuras {#figures}
 

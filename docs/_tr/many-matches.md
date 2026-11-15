@@ -31,7 +31,7 @@ Her dosya bir maçtır (ya da birkaçını tutar). Parquet dosyaları ve [`.3dhe
 | **Takıma göre** / **Maça göre** | Tarafa göre renklendirir ya da maç başına bir renk. |
 | **Birimlerin öldüğü yerleri işaretle** | Her birimin öldüğü yerde 10 sn, 30 sn, 120 sn ya da şu ana kadar tümü için bir işaret. |
 
-Panel, kaç maç, birim, satır ve konumun okunduğunu, kullanılan belleği ve yükleme süresini gösterir. *Şuraya yer var* grafik kartının hâlâ kaç konum alabileceğidir. *Figürler şu boyuttan* ekranda bu boyutun altında bir birimin figürü yerine küçük bir ok olarak çizildiği boyuttur.
+Panel, kaç maç, birim, satır ve konumun okunduğunu, kullanılan belleği ve yükleme süresini gösterir. *Yer* grafik kartının hâlâ kaç konum alabileceğidir. *Figürler şundan itibaren* ekranda bu boyutun altında bir birimin figürü yerine küçük bir ok olarak çizildiği boyuttur.
 
 Figürlerin görünümü [maç tekrarıyla](match-replay.md#figures) aynı denetimleri kullanır: **Figür boyutu**, **Ekrandaki en küçük figür** ve **Uzaktan**.
 

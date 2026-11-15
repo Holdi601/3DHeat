@@ -52,7 +52,7 @@ Razina je zajednička svim trima karticama: staza učitana na kartici Analiza ut
 | **Neprozirnost**, **Svjetlina** | Za obje vrste. |
 | Kontrole slike | **Smanji zasićenost**, **Zamijeni sjever/jug**, **Položaj** (dva sidra), **Prilagodi granicama podataka**, **Visina**. [Slike karata](map-images.md) |
 | Kontrole modela | Reljef tla, voda, trokuti tla, žičani okvir, tekstura, uhvaćena boja, građevine, klasifikacija dijelova. [Izgled razine](level-appearance.md) |
-| **Spremi u biblioteku**, **Ukloni** | [Biblioteka razina](level-library.md); Ukloni iskrcava razinu. |
+| **Spremi u biblioteku**, **Ukloni** | [Biblioteka razina](level-library.md); Ukloni izbacuje razinu iz scene. |
 | **Biblioteka** | Razine pohranjene u ovom pregledniku. [Biblioteka razina](level-library.md) |
 
 ## Stranice u ovom odjeljku {#pages-in-this-section}
@@ -63,4 +63,4 @@ Razina je zajednička svim trima karticama: staza učitana na kartici Analiza ut
 - [Biblioteka razina](level-library.md)
 - [Pozadina svijeta](world-backdrop.md) - stvarni svijet pod snimkom, iz otvorenih podataka
 
-Kako se razine izvlače iz igara i engine-a stvar je zasebnih alata za izvoz (vidi [README](https://github.com/Holdi601/3DHeat/blob/main/README.md) repozitorija); ugovor u koji pišu sažet je u [3D razine](model-levels.md#the-exporter-contract).
+Kako se razine izvlače iz igara i njihovih motora stvar je zasebnih alata za izvoz (vidi [README](https://github.com/Holdi601/3DHeat/blob/main/README.md) repozitorija); ugovor u koji pišu sažet je u [3D razine](model-levels.md#the-exporter-contract).

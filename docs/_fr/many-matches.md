@@ -14,7 +14,7 @@ outdated: false
 
 Chaque match commence à son propre début et ses unités se déplacent sous forme de figurines. Les fichiers vont directement dans la carte graphique et aucun tableau complet n'est construit, de sorte que la lecture reste fluide là où un chargement normal manquerait de mémoire.
 
-![Dix matchs de chars superposés, une couleur par match](../assets/img/en/many-matches.webp)
+![Dix matchs de chars superposés, une couleur par match](../assets/img/fr/many-matches.webp)
 
 ## Comment l'utiliser {#how-to-use-it}
 

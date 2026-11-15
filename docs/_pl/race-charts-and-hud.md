@@ -1,6 +1,6 @@
 ---
 title: "Wykresy i HUD"
-parent: "Analiza wyścigu"
+parent: "Analiza wyścigowa"
 nav_order: 53
 lang: "pl"
 source: "race-charts-and-hud.md"

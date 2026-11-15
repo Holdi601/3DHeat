@@ -12,25 +12,25 @@ outdated: false
 
 Juosta po paveikslėliu veikia kaip vaizdo grotuvas: duomenis galite leisti kaip filmą, sustabdyti, peršokti į kitą vietą ir keisti greitį.
 
-![Laiko juosta: 1 Viskas/Groti, 2 valdymo mygtukai, 3 laikrodis, 4 Greitis, 5 Istorija, su Langu ir 30 s Intervalu](../assets/img/en/timeline-bar.webp)
+![Laiko juosta: 1 Visi/Groti, 2 valdymo mygtukai, 3 laikrodis, 4 Greitis, 5 Istorija, su Langu ir 30 s Intervalu](../assets/img/en/timeline-bar.webp)
 
-Juosta po vaizdu yra laiko juosta ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Ji nusprendžia, kurios eilutės matomos bet kuriuo metu. Jai reikia laiko stulpelio; be jo visa juosta išjungiama, vaizdas lieka režime **Viskas**, o šoninėje juostoje rodoma: *Šiuose duomenyse nėra laiko stulpelio – laiko juosta išjungta, o visi duomenų taškai rodomi iš karto.*
+Juosta po vaizdu yra laiko juosta ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Ji nusprendžia, kurios eilutės matomos bet kuriuo metu. Jai reikia laiko stulpelio; be jo visa juosta išjungiama, vaizdas lieka režime **Visi**, o šoninėje juostoje rodoma: *Šiuose duomenyse nėra laiko stulpelio — laiko juosta išjungta, visi duomenų taškai rodomi vienu metu.*
 
-## Viskas ir Groti {#all-and-play}
+## Visi ir Groti {#all-and-play}
 
 Yra du pagrindiniai režimai, nes jie atsako į skirtingus klausimus.
 
-- **Viskas** (numatytasis kiekvieno įkėlimo metu) visiškai ignoruoja atkūrimo galvutę ir rodo visas eilutes, praeinančias filtrus. Tai rodinys „kur tai vyksta“, ir jis nėra tas pats, kas patempti iki pabaigos. Slankiklis išjungtas, o laikrodis rodo `viskas · <span> duomenų`.
+- **Visi** (numatytasis kiekvieno įkėlimo metu) visiškai ignoruoja atkūrimo galvutę ir rodo visas eilutes, praeinančias filtrus. Tai rodinys „kur tai vyksta“, ir jis nėra tas pats, kas patempti iki pabaigos. Slankiklis išjungtas, o laikrodis rodo `visi · <span> duomenų`.
 - **Groti** paleidžia duomenis kaip laiko kadrą. Atsiranda slankiklis, valdymo mygtukai ir istorijos nustatymai.
 
-Pasirinkus **Viskas**, atkūrimas taip pat sustoja.
+Pasirinkus **Visi**, atkūrimas taip pat sustoja.
 
 ## Valdikliai {#the-controls}
 
 | Valdiklis | Numatytoji | Reiškia |
 |---|---|---|
 | Slankiklis | pradžia | Atkūrimo galvutė. Tempkite, kad peršoktumėte; 20 000 žingsnių per visą intervalą. |
-| **Viskas** / **Groti** | Viskas | Žr. aukščiau. |
+| **Visi** / **Groti** | Visi | Žr. aukščiau. |
 | ▶ / ❚❚ | sustabdyta | Paleisti arba sustabdyti; taip pat `K`. |
 | ◀ **Groti atgal (J)** | | Leidžia duomenis atvirkščiai. Rodoma tik režime **Figūrų sutapdinimas**; ten veikia ir klavišas `J` (žr. [Klaviatūra](#keyboard)). |
 | ⏮ | | Grįžti į intervalo pradžią. |
@@ -75,7 +75,7 @@ Kaip šiluma išlieka stabili, kai langas juda, priklauso nuo istorijos ([Kaupim
 - **Langas** ir **Gyvavimo trukmė** tikrai keičiasi kiekvieną kadrą ir yra įvertinami iš naujo, sumaišomi kaip slenkantis eksponentinis vidurkis (naujo kadro svoris 0,34); stabilioje būsenoje tai nešališka ir daug ramiau nei pradėti iš naujo.
 - Gyvavimo trukmės režime kandidatės eilutės yra tos, kurios nuo *atkūrimo galvutė − max(ilgiausias tarpas duomenyse, Atsarginė trukmė)* iki atkūrimo galvutės; šešėliuotuvas tada atmeta kiekvieną eilutę, kurios gyvavimas baigėsi, ir taiko išblėsimą.
 
-Perjungus tarp Viskas ir Groti arba pakeitus istoriją, kaupimas pradedamas iš naujo.
+Perjungus tarp Visi ir Groti arba pakeitus istoriją, kaupimas pradedamas iš naujo.
 
 ## Klaviatūra {#keyboard}
 

@@ -14,10 +14,10 @@ outdated: false
 E **Volumen** ass eng onsiichtbar Këscht (oder en Zylinder, oder eng Kugel), déi Dir ronderëm eng Plaz zitt, fir ze froen: wat ass hei dra geschitt? Benotzt en, fir Ofschëss bei enger Bréck ze zielen, fir zwee Hiwwelen ze vergläichen oder fir just d'Aktivitéit an engem Gebitt ze weisen.
 
 ```
- top view                 You draw a shape ->  the viewer counts
- +------------+           what is inside:
- |   ( A )    |            rows, players, kills, time ...
- |        [B] |           Compare A with B, side by side.
+ vu uewen                  Dir zéechent eng Form ->  de Viewer zielt
+ +------------+           wat dra ass:
+ |   ( A )    |            Zeilen, Spiller, Ofschëss, Zäit ...
+ |        [B] |           Vergläicht A mat B, niewenee.
  +------------+
 ```
 
@@ -56,7 +56,7 @@ All Volumenzeil huet e Kontrollkästchen fir d'Unzeechen, eng Faarf, en Numm, **
 | **Nëmmen dobannen** | Hëtzt, Replay an [Treffer-Analys](hit-analysis.md) zeechnen nëmmen, wat an de abezéien Volumen ass a bausserhalb vun de ausgeschlossenen. |
 | **Dobannen ausblenden** | Dat Géigendeel. |
 
-De GPU-Filter huet bis zu 8 Volumen mat insgesamt 64 Ëmrëssspunkten; e "!" markéiert en Volumen, dat driwwer ass. Statistiken an Export zielen et trotzdem.
+De GPU-Filter huet bis zu 8 Volumen mat insgesamt 64 Ëmrësspunkten; e "!" markéiert en Volumen, dat driwwer ass. Statistiken an Export zielen et trotzdem.
 
 ## Statistiken {#statistics}
 

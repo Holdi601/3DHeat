@@ -47,7 +47,7 @@ Ta stran je zemljevid zavihka. Vsak del ima svojo stran:
 6. **Primerjava avtov** (ali **Avto** pri enem avtomobilu) - glejte [Profili avtomobilov in primerjava](race-car-profiles.md).
 7. **Pogled** - katera karta je naslikana na progi in kaj je narisano.
    Glejte [Predvajanje in 3D prizor](race-replay-and-scene.md).
-8. Skupna razdelka **Raven** in **Kamera in prizor** (model proge, obrnitev osi, kamera) - dokumentirana s toplotnim zemljevidom in [Kamero](camera.md).
+8. Skupna razdelka **Ozadje / nivo** in **Kamera in prizor** (model proge, obrnitev osi, kamera) - dokumentirana s toplotnim zemljevidom in [Kamero](camera.md).
 
 **Pogled** prikazuje progo, vožene linije, karto, avtomobile, oznake, pripete na progo, in do šest kartic avtomobilov zgoraj levo (glejte [Grafi in HUD](race-charts-and-hud.md)). Brez naloženih krogov piše »Ni naloženih krogov - tu spustite dve ali več datotek krogov ali naložite demo krogi iz stranske vrstice.«
 
@@ -100,50 +100,35 @@ Nič od tega se ne shrani; ponovno nalaganje začne s privzetimi vrednostmi. V b
 
 ## Za razvijalce {#for-developers}
 
-### What happens when laps are loaded {#what-happens-when-laps-are-loaded}
+### Kaj se zgodi ob nalaganju krogov {#what-happens-when-laps-are-loaded}
 
-Every time the set of laps, the reference or the language changes, the whole
-analysis is redone (`analyse` in
-[`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
+Vsakič, ko se spremeni nabor krogov, referenca ali jezik, se celotna analiza ponovi (`analyse` v [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
 
-1. Derived channels are added to each lap where the game does not send them:
-   drift angle, wheel slip from wheel speeds, in the air, loose ground, yaw
-   rate ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
-2. The reference is chosen and every lap is projected onto its path and
-   resampled every 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
-3. Whether the game's world is mirrored is worked out from the laps
-   ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
-4. Corners are found on the reference, and grouped into segments from one
-   braking zone to the next ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
-5. Per car: its envelope (grip, braking, pull per speed), its profile, its
-   tyre curves ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts),
-   [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts),
-   [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
-6. Per lap and segment: what it did (brake point, slowest point, full
-   throttle, ...) and the line it drove ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
-7. Per lap: its car-control events, each laid against the lap it is compared
-   with there.
-8. Per lap and segment: the time account against its comparison lap and the
-   finding in words.
-9. The time map and the cause map per lap.
+1. Izpeljani kanali se dodajo vsakemu krogu tam, kjer igra teh ne pošilja: kot zdrsa, zdrs koles iz hitrosti koles, v zraku, rahlo podlago, hitrost zasuka ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
+2. Izbere se referenca in vsak krog se projicira na njeno pot ter ponovno vzorči na vsaka 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
+3. Iz krogov se izračuna, ali je svet igre zrcaljen ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
+4. Ovinki se najdejo na referenci in združijo v odseke od ene zavorne cone do naslednje ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
+5. Za vsak avto: njegova ovojnica (oprijem, zaviranje, vlečna sila glede na hitrost), njegov profil, njegove krivulje pnevmatik ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts), [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts), [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
+6. Za vsak krog in odsek: kaj je naredil (točka zaviranja, najpočasnejša točka, polni plin ...) in črta, po kateri je vozil ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
+7. Za vsak krog: njegovi dogodki vožnje avtomobila, vsak položen ob krogu, s katerim se tam primerja.
+8. Za vsak krog in odsek: časovna bilanca glede na primerjalni krog in ugotovitev z besedami.
+9. Časovni zemljevid in zemljevid vzrokov za vsak krog.
 
-The texts are produced in the current language; switching language runs the
-analysis again (and renames the demo laps). A failure in the analysis is
-shown under the **Krogi** buttons as an error and the laps stay loaded.
+Besedila nastanejo v trenutnem jeziku; zamenjava jezika ponovi analizo (in preimenuje demo kroge). Napaka pri analizi se prikaže pod gumbi **Krogi** kot napaka, krogi pa ostanejo naloženi.
 
-### Source files {#source-files}
+### Izvorne datoteke {#source-files}
 
-| File | Role |
+| Datoteka | Vloga |
 |---|---|
-| `src/race/adapters.ts`, `ibt.ts` | reading lap files |
-| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | the lap type, naming, demo laps |
-| `src/race/derive.ts`, `handedness.ts` | derived channels, mirrored worlds |
-| `src/race/align.ts`, `segments.ts`, `line.ts` | distance axis, corners, lines |
-| `src/race/analysis.ts` | corners compared, causes, findings |
-| `src/race/envelope.ts`, `profile.ts` | what a car can do |
-| `src/race/control.ts`, `impacts.ts` | car control, hits and crashes |
-| `src/race/stats.ts` | many laps |
-| `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | replay and drawing |
-| `src/race/schema.ts`, `graphs.ts` | the channel table, the charts' rows |
-| `src/ui/race/*` | the sidebar, the charts, the HUD, the labels |
-| `src/state/raceStore.ts` | the tab's state and the replay clock |
+| `src/race/adapters.ts`, `ibt.ts` | branje datotek krogov |
+| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | tip kroga, poimenovanje, demo krogi |
+| `src/race/derive.ts`, `handedness.ts` | izpeljani kanali, zrcalni svetovi |
+| `src/race/align.ts`, `segments.ts`, `line.ts` | os razdalje, ovinki, črte |
+| `src/race/analysis.ts` | primerjani ovinki, vzroki, ugotovitve |
+| `src/race/envelope.ts`, `profile.ts` | kaj avto zmore |
+| `src/race/control.ts`, `impacts.ts` | vožnja avtomobila, zadetki in trki |
+| `src/race/stats.ts` | mnogo krogov |
+| `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | predvajanje in risanje |
+| `src/race/schema.ts`, `graphs.ts` | tabela kanalov, vrstice grafov |
+| `src/ui/race/*` | stranska vrstica, grafi, HUD, oznake |
+| `src/state/raceStore.ts` | stanje zavihka in ura predvajanja |

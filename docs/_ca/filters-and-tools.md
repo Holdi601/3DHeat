@@ -43,7 +43,7 @@ La barra lateral de la pestanya Mapa de calor, de dalt a baix:
 
 1. Barra de modes i selector de sessions
 2. Origen, Assignació de columnes, Conjunt de dades
-3. Recorreguts (mode Línies)
+3. Rutes (mode Línies)
 4. Els panells de calor, o el Visor d'equips
 5. Divisió de diferència
 6. Equips
@@ -52,7 +52,7 @@ La barra lateral de la pestanya Mapa de calor, de dalt a baix:
 9. Fons / nivell
 10. Llesca
 11. Mesurar
-12. Trajectòria de càmera i render
+12. Recorregut de càmera i renderització
 13. Rendiment
 14. Càmera i escena
 

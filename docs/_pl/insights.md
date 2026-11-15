@@ -57,7 +57,7 @@ Zakładka **Podsumowanie** spisuje ustalenia jako krótki tekst: wstęp, najwyra
 
 ![Podsumowanie napisane przez wbudowanego narratora](../assets/img/en/debrief.webp)
 
-Wbudowany narrator działa offline, w Twoim języku. Wybór **Soczewka** nad nim (zob. [Soczewka wiedzy](knowledge.md)) decyduje, którą literaturę cytują akapity.
+Wbudowany narrator działa offline, w Twoim języku. Nad nim jest pole **Soczewka** (zob. [Soczewka wiedzy](knowledge.md)); decyduje ono, którą literaturę cytują akapity.
 
 ### Zewnętrzna SI {#external-ai}
 

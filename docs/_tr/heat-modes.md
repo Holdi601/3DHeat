@@ -35,7 +35,7 @@ Isı haritası sekmesinin kenar çubuğunun üstündeki mod çubuğu, [veri küm
 | **Figür bindirme** | - | Kişi başına bir figür (ya da kutu), zaman çizelgesinde hareket eder: tekrar. [Figür bindirme](box-replay.md), [Maç tekrarı](match-replay.md) | bir kişi sütunu |
 | **Çizgiler** | 4 | Çizgi ısısı: bir kişinin her örneğinden bir sonrakine bir çizgi, ısı yanlara doğru azalır. [Çizgi ısısı](line-heat.md) | bir kişi ve bir zaman sütunu |
 
-Veri kümesinin desteklemediği bir mod soluk gösterilir ve ipucu nedenini verir; örneğin *Kullanılamıyor - Fark modu bölmek için iki grup ya da tutulmuş bir sütun gerektirir; bu veride tek grup var.* Yeni bir veri kümesi geçerli modu desteklemezse, görünüm **Isı** moduna döner.
+Veri kümesinin desteklemediği bir mod soluk gösterilir ve ipucu nedenini verir; örneğin *Kullanılamıyor — Fark modu, ayırmak için iki grup ya da filtreleme için tutulan bir sütun gerektirir; bu veride bir grup var.* Yeni bir veri kümesi geçerli modu desteklemezse, görünüm **Isı** moduna döner.
 
 1-4 tuşları aynı şekilde veriye göre denetlenir: soluk gösterilen bir modun tuşu hiçbir şey yapmaz.
 
@@ -48,7 +48,7 @@ Veri kümesinin desteklemediği bir mod soluk gösterilir ve ipucu nedenini veri
 | Yön ([yönlü ısı](directional-heat.md)), Değer ([değer ağırlıklandırma](value-weighting.md)) | evet | evet | evet | | evet |
 | Takım görüntüleyici ([figür bindirme](box-replay.md)) | | | | evet | |
 | Fark bölmesi ([fark](difference.md)) | | evet | | | |
-| [Takımlar](teams-list.md), [Varlıklar](entities.md), [Filtreler](filters.md), Arka plan / bölüm, [Kesit](slice.md), [Ölçüm](measure.md), Kamera yolu ve çizim, Performans, Kamera ve sahne | evet | evet | evet | evet | evet |
+| [Takımlar](teams-list.md), [Varlıklar](entities.md), [Filtreler](filters.md), Arka plan / bölüm, [Kesit](slice.md), [Ölçüm](measure.md), Kamera yolu ve render, Performans, Kamera ve sahne | evet | evet | evet | evet | evet |
 
 ## Her ısı modunun ortak noktaları {#what-every-heat-mode-shares}
 

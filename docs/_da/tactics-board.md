@@ -80,7 +80,7 @@ Hvert waypoint viser tiden fra det forrige og tiden siden planens start ("+3,9 s
 
 - **Tidligste ankomst på kortet** farver kortet efter den tid siden rundens start, hvor en spiller først nåede hvert sted – knappen **Hurtigst** viser den hurtigste over alle runder, **Typisk (median)** den midterste runde – fra grøn tidlig til rød sen, for den ene side eller begge. Den viser, hvad der er muligt, og hvornår.
 - Den valgte rute sammenlignes med, hvad spillere opnåede fra dens start (eller fra rundens start) til dens ende, hver ende en skive med den indstillede radius: "Hurtigst observeret 14,2 s, p10 15,0 s, median 18,3 s over 41 kørsler; din plan 15,1 s".
-- De hastigheder, spillere faktisk bevægede sig med – løb, gang, krybning, fra tabellernes kolonner for gang og duk – i m/s.
+- De hastigheder, spillere faktisk bevægede sig med – løb, gang, krybning, fra tabellernes kolonner for gang og hug – i m/s.
 
 ## Trin {#steps}
 
@@ -88,7 +88,7 @@ Linjen under visningen rummer trinene. En plan starter med ét; **+** tilføjer 
 
 ## Gem {#saving}
 
-Afsnittet **Fil** rummer **Gem**, **Åbn** og **Ryd**. **Gem** skriver planen som `<navn>.h3dplan.json` (almindelig JSON: sider, trin, figurer med en plads pr. trin, pile, områder, noter); **Åbn** læser en tilbage. En fil fra en anden version, eller en der ikke er en plan, afvises med grunden. **Ryd** tømmer planen; Fortryd henter den tilbage.
+Afsnittet **Fil** rummer **Gem**, **Åbn** og **Ryd**. **Gem** skriver planen som `<name>.h3dplan.json` (almindelig JSON: sider, trin, figurer med en plads pr. trin, pile, områder, noter); **Åbn** læser en tilbage. En fil fra en anden version, eller en der ikke er en plan, afvises med grunden. **Ryd** tømmer planen; Fortryd henter den tilbage.
 
 ## Figurer {#figures}
 

@@ -24,7 +24,7 @@ Nie je to [prekrytie figúrok](box-replay.md): to kreslí jednu figúrku na osob
 1. Stlačte `3` (alebo vyberte **Teplo tímov** na lište režimov).
 2. Otvorte **Farby tepla**. Vzorky ukazujú farbu každej skupiny; po najazdení na vzorku uvidíte názov tímu.
 3. Ak je všetko sivé, zvýšte **Oddelenie farieb**.
-4. Odškrtnutím skupiny v [Zozname tímov](teams-list.md) ju z obrazu vyradíte; ostatné farby zostanú, kde boli.
+4. Odškrtnutím skupiny v paneli [Tímy](teams-list.md) ju z obrazu vyradíte; ostatné farby zostanú, kde boli.
 
 ## Ovládanie {#controls}
 
@@ -38,7 +38,7 @@ V sekcii **Farby tepla**:
 
 Všetky ostatné ovládače tepla - tvar, nasýtenie, odozva, minimálne teplo, hĺbka, orezanie - fungujú ako v [Teple](heat.md).
 
-[Zoznam tímov](teams-list.md) ukazuje v tomto režime farbu každej skupiny ako jej vzorku. Skrytie skupiny nechá farby všetkých ostatných skupín tam, kde boli: odtiene sa berú z celkového počtu skupín, nie z toho, čo je zapnuté, takže dva obrázky zostanú porovnateľné.
+Panel [Tímy](teams-list.md) ukazuje v tomto režime farbu každej skupiny ako jej vzorku. Skrytie skupiny nechá farby všetkých ostatných skupín tam, kde boli: odtiene sa berú z celkového počtu skupín, nie z toho, čo je zapnuté, takže dva obrázky zostanú porovnateľné.
 
 ## Paleta {#the-palette}
 

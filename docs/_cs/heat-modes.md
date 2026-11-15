@@ -47,7 +47,7 @@ Klávesy 1-4 se kontrolují vůči datům stejně: klávesa pro šedý režim ne
 | Tvar tepla (s **Sledovat pohled** a **Stejná hustota při každém přiblížení**), Barvy tepla, Omezení pixelů sprite, Hloubka, Vyřazení podle vzdálenosti | ano | ano | ano | | ano |
 | Směr ([směrové teplo](directional-heat.md)), Hodnota ([vážení hodnotou](value-weighting.md)) | ano | ano | ano | | ano |
 | Týmové zobrazení ([překryv figur](box-replay.md)) | | | | ano | |
-| Rozdělení rozdílu ([rozdíl](difference.md)) | | ano | | | |
+| Rozdílové rozdělení ([rozdíl](difference.md)) | | ano | | | |
 | [Týmy](teams-list.md), [Entity](entities.md), [Filtry](filters.md), Pozadí / úroveň, [Řez](slice.md), [Měření](measure.md), Trasa kamery a vykreslení, Výkon, Kamera a scéna | ano | ano | ano | ano | ano |
 
 ## Co sdílejí všechny režimy tepla {#what-every-heat-mode-shares}

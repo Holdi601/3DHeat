@@ -71,7 +71,7 @@ I tasti digitati in un campo di testo o in un menu a tendina vengono ignorati. I
 ## Molti giri {#many-laps}
 
 - Tutti i giri caricati vengono analizzati e contati; decine richiedono uno o due secondi.
-- Oltre **8** giri (`SHOW_ALL_UP_TO`), i giri aggiunti vengono disegnati solo quando sono il riferimento, il giro a fuoco o il giro migliore della classe del giro a fuoco. Gli interruttori *Mostra tutti* / *Solo quelli guardati* commutano.
+- Oltre **8** giri (`SHOW_ALL_UP_TO`), i giri aggiunti vengono disegnati solo quando sono il riferimento, il giro a fuoco o il giro migliore della classe del giro a fuoco. Gli interruttori *Mostra tutti* / *Solo quelli in esame* commutano.
 - Oltre **10** auto visibili (`PLAIN_PAST`), i giri non guardati (non il fuoco, l'auto inseguita o il riferimento) vengono disegnati con linee diradate a un punto ogni 6 m invece di 1,5 m, e con auto semplici.
 - I grafici disegnano al massimo **8** giri; l'HUD mostra al massimo **6** schede.
 - Le statistiche del percorso compaiono da **3** giri.
@@ -83,9 +83,9 @@ Dettagli: [Statistiche del percorso](race-course-statistics.md#performance-with-
 | Impostazione | Predefinito |
 |---|---|
 | Mappa | Mappa dei tempi |
-| Linee guidate, Auto, Pneumatici e sospensioni, Etichette, Tracciato dai giri | attivo |
+| Traiettorie percorse, Auto, Pneumatici e sospensioni, Etichette, Pista dai giri | attivo |
 | Tutti i valori sulle schede | disattivato |
-| Dimensione auto | 1× |
+| Dimensione delle auto | 1× |
 | Grafici | mostrati |
 | Modalità replay | Dalla linea |
 | Velocità replay | 1× |

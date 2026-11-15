@@ -72,7 +72,7 @@ Vestavěný vypravěč funguje offline, ve vašem jazyce. Výběr **Optika** nad
 | **Použít externí AI** | Ve výchozím nastavení vypnuto |
 | **Posílat jména hráčů** | Ve výchozím nastavení vypnuto: hráči se posílají jako P1, P2 ... |
 
-Pak napište volitelnou otázku a stiskněte **Napsat pomocí AI**. Posílají se jen zjištění a jejich čísla - nikdy řádky vašich dat. Odpověď se streamuje; citovaná zjištění se stanou tlačítky.
+Pak napište volitelnou otázku a stiskněte **Napsat pomocí AI**. Posílají se jen zjištění a jejich čísla - nikdy řádky vašich dat. Odpověď přichází postupně; citovaná zjištění se stanou tlačítky.
 
 ## Komentátor {#caster}
 

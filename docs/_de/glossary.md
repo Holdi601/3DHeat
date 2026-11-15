@@ -18,7 +18,7 @@ Kurze Erklärungen der Wörter, die diese Seite benutzt, in einfacher Sprache. J
 
 **Spalte.** Eine Art von Wert in den Zeilen, etwa x, y, z, Zeit oder Team. Der Viewer rät, welche Spalte was ist, und du kannst den Tipp ändern. [Spaltenzuordnung](column-mapping.md)
 
-**CSV.** Eine einfache Texttabelle: eine Zeile pro Zeile, Werte durch Kommas getrennt. Fast jedes Programm kann eine schreiben. [Dateien laden](loading-files.md)
+**CSV.** Eine einfache Texttabelle: eine Zeile pro Textzeile, Werte durch Kommas getrennt. Fast jedes Programm kann eine schreiben. [Dateien laden](loading-files.md)
 
 **Parquet.** Eine kompakte Tabellendatei, die schnell zu lesen ist, selbst bei Millionen Zeilen. Es ist das beste Format für den Viewer. [Dateien laden](loading-files.md)
 

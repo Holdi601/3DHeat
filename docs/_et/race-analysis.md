@@ -48,7 +48,7 @@ See lehekülg on vahekaardi kaart. Igal osal on oma lehekülg:
 6. **Autode võrdlus** (või **Auto**, ühe auto korral) - vt [Sõidukiprofiilid ja võrdlus](race-car-profiles.md).
 7. **Vaade** - milline kaart rajale maalitakse ja mis joonistatakse.
    Vt [Kordus ja 3D-stseen](race-replay-and-scene.md).
-8. Jagatud paneelid **Tase** ja **Kaamera ja stseen** (raja mudel, telgede pööramine, kaamera) - dokumenteeritud soojuskaardi ja [Kaamera](camera.md) juures.
+8. Jagatud paneelid **Taust / tase** ja **Kaamera ja stseen** (raja mudel, telgede pööramine, kaamera) - dokumenteeritud soojuskaardi ja [Kaamera](camera.md) juures.
 
 **Vaade** näitab rada, sõidetud jooni, kaarti, autosid, rajale kinnitatud silte ning kuni kuut autokaarti vasakul ülal (vt [Graafikud ja HUD](race-charts-and-hud.md)). Kui ringe pole laaditud, ütleb ta: "Ringe pole laaditud - lohista siia kaks või enam ringifaili või laadi külgribalt demoringid."
 

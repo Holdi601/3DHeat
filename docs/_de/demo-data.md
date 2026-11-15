@@ -10,7 +10,7 @@ outdated: false
 
 # Demodaten: den Viewer in fünf Minuten ausprobieren
 
-![Intensität von zehn Panzer-Matches im Demo-Tal: was Schritt 4 zeigt](../assets/img/en/heat-hero.webp)
+![Intensität von zehn Panzer-Matches im Demo-Tal: was Schritt 4 zeigt](../assets/img/de/heat-hero.webp)
 
 Noch keine eigenen Daten? Das Repository macht welche. Alles darin ist erfunden: ein Tal, ein Hof und Matches von drei ausgedachten Spielstilen mit Spielern wie *Blue 1* oder *Red 3*. Alle Bilder auf dieser Seite wurden damit gemacht.
 
@@ -45,7 +45,7 @@ Jede Tabelle nennt ihre Spalten in ihrer Fußzeile, daher lädt sie ohne jede Zu
 6. Öffne **Erkenntnisse** (in der Heatmap-Seitenleiste): Es findet die Stellen, an denen weit mehr geschossen, getroffen und zerstört wurde als anderswo – rund um die beiden Hügel.
 7. Öffne den Tab **Match** und wähle unter **Matches im Replay** *Match 01*. Drücke auf der Zeitleiste auf **Abspielen**: das [Replay](match-replay.md).
 
-![Ein Replay von Match 01 mit Panzern als Figuren](../assets/img/en/replay-overview.webp)
+![Ein Replay von Match 01 mit Panzern als Figuren](../assets/img/de/replay-overview.webp)
 
 Für den Shooter lade `demo-yard.glb` und `shooter.parquet`; für den Luftkampf `air.parquet` (die Figuren sind bei **Figurengröße** 4 besser zu sehen, einem Schieberegler im Bereich **Team-Ansicht** der Heatmap-Seitenleiste).
 

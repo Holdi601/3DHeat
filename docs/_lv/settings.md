@@ -19,7 +19,7 @@ Sānjoslas augšdaļā:
 | Vadība | Ko tā dara |
 |---|---|
 | **?** | Palīdzības režīms: ko nozīmē katra krāsa (arī `?` vai `F1`) |
-| Izvēlne **Vienības** | Metriskās, Angļu, Aviācijas vai Jūras |
+| Izvēlne **Vienības** | Metriskās, Imperiālās, Aviācijas vai Jūras |
 | Poga **...** blakus **Vienības** | Atver "Izvēlieties mērvienību katram lielumam": katram lielumam atsevišķa nolaižamā izvēlne |
 | Izvēlne **Valoda** | Skatītāja valoda: [40 valodas](languages.md), vai pārlūka valoda |
 
@@ -31,9 +31,9 @@ Skaitļus, ko ierakstāt lodziņā, var rakstīt ar punktu vai komatu (`0.35` va
 
 1. Izvēlieties iestatījumu izvēlnē **Vienības**. Visi lielumi mainās kopā.
 2. Lai mainītu tikai vienu lielumu, noklikšķiniet uz pogas **...** blakus tam un izvēlieties tam mērvienību. Izvēlne tad pēc iestatījuma rāda `*`.
-3. Lielums, ko neesat iestatījis, seko iestatījumam. Izvēlieties "Kā iestatīts", lai atgrieztos.
+3. Lielums, ko neesat iestatījis, seko iestatījumam. Izvēlieties "Kā komplektā", lai atgrieztos.
 
-| Lielums | Metriskā (noklusējums) | Angļu | Aviācijas | Jūras |
+| Lielums | Metriskā (noklusējums) | Imperiālā | Aviācijas | Jūras |
 |---|---|---|---|---|
 | Attālums | km | mi | NM | NM |
 | Augstums, garums | m | ft | ft | m |

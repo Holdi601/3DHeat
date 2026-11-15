@@ -45,7 +45,7 @@ Kõik, mida Soojuskaardi vahekaart näitab, tuleb ühest **andmestikust**: reate
 
 | Vajadus | Mis juhtub ilma selleta |
 |---|---|
-| **Vähemalt kaks telge X / Y / Z-st** | Laadimine keeldutakse. Kahe telje korral on kolmas telg 0 ja andmed joonistatakse 3D-stseenis lamedana tasandina, mida ülalt vaadatav kaardisoojus vajab. |
+| **Vähemalt kaks telge X / Y / Z-st** | Laadimine lükatakse tagasi. Kahe telje korral on kolmas telg 0 ja andmed joonistatakse 3D-stseenis lamedana tasandina, mida ülalt vaadatav kaardisoojus vajab. |
 | Ajaveerg | Valikuline. Ilma selleta ajajoon on keelatud, vaade jääb režiimi **Kõik**, ja külgriba ütleb seda. |
 | Isikuveerg | Valikuline. Vajalik [kujude ülekatteks](box-replay.md) (kuju iga isiku jaoks), [joonesoojuseks](line-heat.md) (iga isiku läbitud tee), interpolatsiooniks, jälgedeks ja ajaloole **Eluiga**. |
 | Rühmaveerg | Valikuline. Vajalik [võistkondade soojuseks](team-heat.md) ja [erinevuse](difference.md) režiimiks (vähemalt kaks rühma). |
@@ -63,4 +63,4 @@ Paneelil **Andmestik** (paneeli **Allikas** all) on [sünteetiline generaator](s
 - [Teljed, ühikud ja aeg](axes-units-and-time.md) - ülestelg, pööramised, ühikute mastaap, ajaühikud, vaatesuund
 - [Sessioonid, isikud ja rühmad](sessions-persons-groups.md) - mida iga üks teeb, piirangud, ühised nimed, üksuse suurus, paneel Andmestik
 - [Sünteetiline generaator](synthetic-generator.md)
-- [Mälu ja eelarved](memory-and-budgets.md) - mälumudel, mahutuskontroll, vähendamine, sorteerimise ülempiir, ressursside eelarved
+- [Mälu ja eelarved](memory-and-budgets.md) - mälumudel, mahutuskontroll, vähendamine, sorteerimise ülempiir, ressursieelarved

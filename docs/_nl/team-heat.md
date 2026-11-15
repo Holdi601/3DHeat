@@ -45,7 +45,7 @@ De [Teamlijst](teams-list.md) toont in deze modus de teamwarmtekleur van elke gr
 Uit [`colors.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors.ts):
 
 - Kleuren leven op het **Oklab**-kleurvlak bij een vaste helderheid (0,7) en chroma (0,115), zodat elke groep even helder is en een rode groep niet heter lijkt dan een blauwe.
-- Bij *n* groepen wordt de tintencirkel in *n* gelijke delen verdeeld en krijgt groep *i* het **midden** van zijn deel, `(i + 0,5) / n` van een omwenteling. Elke twee groepen liggen zo ver uit elkaar als het aantal toelaat, en tegenovergestelden blijven tegenovergesteld, wat het aantal ook is.
+- Bij *n* groepen wordt de tintencirkel in *n* gelijke delen verdeeld en krijgt groep *i* het **midden** van zijn deel, `(i + 0.5) / n` van een omwenteling. Elke twee groepen liggen zo ver uit elkaar als het aantal toelaat, en tegenovergestelden blijven tegenovergesteld, wat het aantal ook is.
 - Er worden hoogstens **16** verschillende tinten gebruikt. Bij meer groepen worden id's geplaatst door herhaald halveren (bit-omgekeerde id's: 0, ½, ¼, ¾, ⅛, …) zodat buurgroepen geen tint delen; groepen voorbij 16 delen er noodzakelijk een.
 - Een groep waarvan het label "geen groep" betekent - `0`, leeg, `none`, `unknown`, `null` of `-1`, ongeacht hoofdletters - wordt **neutraal grijs** getekend in plaats van een plak van de cirkel te nemen. Alleen het eerste zo'n label in de groepslijst wordt zo behandeld.
 

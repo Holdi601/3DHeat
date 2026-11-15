@@ -11,12 +11,12 @@ outdated: false
 
 # Filtros
 
-Os **Filtros** escondem as linhas que não lhe interessam, como uma classe de veículo ou um tipo de evento, e a imagem atualiza-se de imediato. O painel lista as colunas guardadas na carga em *Guardar para filtrar* ([Mapeamento de colunas](column-mapping.md)), mais *Ficheiro de origem* quando se carregaram vários ficheiros.
+Os **Filtros** escondem as linhas que não lhe interessam, como uma classe de veículo ou um tipo de evento, e a imagem atualiza-se de imediato. O painel lista as colunas guardadas na carga em *Guardar para filtragem* ([Mapeamento de colunas](column-mapping.md)), mais *Ficheiro de origem* quando se carregaram vários ficheiros.
 
 ## Experimentar {#try-it}
 
 1. Carregue um conjunto de dados e abra **Filtros** na barra lateral.
-2. Em **Classe de veículo**, desmarque *Tank*. A imagem muda de imediato.
+2. Em **Classe de veículo**, desmarque *Tanque*. A imagem muda de imediato.
 3. Prima **Limpar todos os filtros** para desfazer.
 
 ![O painel Filtros: primeiro as colunas do próprio visualizador (Tipo de evento, Classe de veículo), depois as colunas do seu ficheiro](../assets/img/en/filters.webp)
@@ -38,7 +38,7 @@ Só se listam os tipos que ocorrem. As colunas de valor (`cost_*`, `earn_*`, `ne
 
 Uma lista de categorias com mais de 12 valores ganha uma caixa de pesquisa (*Procurar n valores*) e um botão **Só estes** que permite exatamente os valores que correspondem.
 
-Que colunas podem ser filtradas é decidido na carga, porque têm de ser lidas nesse momento. Sem nenhuma coluna guardada, o painel diz isso e aponta para *Guardar para filtrar*.
+Que colunas podem ser filtradas é decidido na carga, porque têm de ser lidas nesse momento. Sem nenhuma coluna guardada, o painel diz isso e aponta para *Guardar para filtragem*.
 
 ## Colunas numéricas (intervalo) {#numeric-columns-range}
 
@@ -67,7 +67,7 @@ Permitir todos os valores remove o filtro.
 
 - **Quatro filtros de cada vez.** O cabeçalho mostra `ativos/4`. Um quinto filtro não é aplicado, e o painel diz isso. Uma seleção em [Entidades](entities.md) (ou o foco de jogador do separador Partida) usa um dos quatro também. Um filtro que cobre a coluna inteira não usa nenhum.
 - **Uma coluna de categorias tem no máximo 4096 valores**; uma mais larga não é guardada na carga.
-- **Os filtros combinam-se com E**, e com a visibilidade das equipas, a divisão por diferença, a janela de tempo, o culling por distância e o [corte](slice.md).
+- **Os filtros combinam-se com E**, e com a visibilidade das equipas, a divisão por diferença, a janela de tempo, o recorte por distância e o [corte](slice.md).
 - **Mudar um filtro reinicia a acumulação e volta a medir a exposição** alguns fotogramas depois, porque filtrar pode mudar muito a densidade ([Cor e exposição](colour-and-exposure.md#auto-exposure)).
 - **Limpar todos os filtros** remove todos os filtros de coluna. A visibilidade das equipas e as seleções de jogadores definidas noutro sítio mantêm-se.
 - Os filtros de coluna mudam os modos de calor. Não mudam as figuras da [repetição com figuras](box-replay.md), que seguem a visibilidade das equipas e a seleção de Entidades. A seleção de Entidades muda ambos.

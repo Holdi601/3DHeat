@@ -15,7 +15,7 @@ outdated: false
 
 Alles wird in deinem Browser gezählt. Nichts verlässt deinen Rechner, außer du schaltest eine externe KI ein (siehe [Externe KI](#external-ai)).
 
-![Erkenntnisse zur Panzer-Demo: 14 Befunde, das Stärkste zuerst](../assets/img/en/insights.webp)
+![Erkenntnisse zur Panzer-Demo: 14 Befunde, das Stärkste zuerst](../assets/img/de/insights.webp)
 
 Der Bereich **Erkenntnisse** steht in der Seitenleiste der Tabs Heatmap und Match. Er hat drei Reiter: **Befunde**, **Nachbesprechung** und **Kommentator**.
 
@@ -30,7 +30,7 @@ Gezählt wird mit den aktuellen Filtern, ausgeblendeten Gruppen und dem gewählt
 
 Die Zeilen oben in der Liste (zum Beispiel die Geldsummen) fassen die gesamten Daten zusammen, bevor die Befunde kommen.
 
-![Ein geöffneter Befund: die heiße Zone der abgegebenen Schüsse, ihre Zahlen und eine passende Stelle aus der Literatur](../assets/img/en/insights-finding.webp)
+![Ein geöffneter Befund: die heiße Zone der abgegebenen Schüsse, ihre Zahlen und eine passende Stelle aus der Literatur](../assets/img/de/insights-finding.webp)
 
 ### Die Detektoren {#the-detectors}
 
@@ -55,7 +55,7 @@ Jeder Ort und jede Gruppe wird gegen den Rest der Karte geprüft (exakte Binomia
 
 Der Reiter **Nachbesprechung** schreibt die Befunde als kurzen Text auf: einen Einstieg, den klarsten Befund, einen für Taktik, einen für Balance, die übrigen gruppiert nach Detektor, und wie viele auf schwächeren Belegen beruhen. Jeder Absatz hat nummerierte Schaltflächen, die seine Befunde zeigen. **Text kopieren** kopiert ihn.
 
-![Die Nachbesprechung, geschrieben vom eingebauten Erzähler](../assets/img/en/debrief.webp)
+![Die Nachbesprechung, geschrieben vom eingebauten Erzähler](../assets/img/de/debrief.webp)
 
 Der eingebaute Erzähler arbeitet offline, in deiner Sprache. Der Auswahlschalter **Linse** darüber (siehe [Die Wissenslinse](knowledge.md)) bestimmt, welche Literatur die Absätze zitieren.
 
@@ -76,9 +76,9 @@ Dann tippe optional eine Frage und drücke **Mit KI schreiben**. Gesendet werden
 
 ## Kommentator {#caster}
 
-Für **ein Match** (wähle eines, wenn mehrere geladen sind) findet der **Kommentator** die Momente, die sich anzusehen lohnen: erstes Blut, Mehrfachabschüsse, Vergeltungen, Schlussspurts, Wechsel bei Zielen, Comebacks, herausragende Spieler, weite Schüsse.
+Für **ein Match** (wähle eines, wenn mehrere geladen sind) findet der **Kommentator** die Momente, die sich anzusehen lohnen: erstes Blut, Mehrfachabschüsse, Vergeltungen, Clutches, Wechsel bei Zielen, Comebacks, herausragende Spieler, weite Schüsse.
 
-![Die Momente des Kommentators für eine Runde der Shooter-Demo](../assets/img/en/caster.webp)
+![Die Momente des Kommentators für eine Runde der Shooter-Demo](../assets/img/de/caster.webp)
 
 - Klicke einen Moment an: Die Ansicht wechselt ins Replay, springt kurz davor, fliegt dorthin und folgt dem Spieler.
 - **Momente abspielen** spielt jeden bis zu seinem Ende und geht weiter; **Zurück** / **Weiter** blättern durch sie.

@@ -12,16 +12,16 @@ outdated: false
 
 Vrstica pod sliko je kot videopredvajalnik: podatke lahko predvajate kot film, ustavite, skočite naokoli in spremenite hitrost.
 
-![Vrstica časovnice: 1 Vse/Predvaj, 2 gumbi za predvajanje, 3 ura, 4 Hitrost, 5 Zgodovina, z Okno in Razponom 30 s](../assets/img/en/timeline-bar.webp)
+![Vrstica časovnice: 1 Vse/Predvajaj, 2 gumbi za predvajanje, 3 ura, 4 Hitrost, 5 Zgodovina, z Okno in Razponom 30 s](../assets/img/en/timeline-bar.webp)
 
 Vrstica pod pogledom je časovnica ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Odloča, katere vrstice so kadarkoli vidne. Potrebuje stolpec s časom; brez njega je celotna vrstica onemogočena, pogled ostane v načinu **Vse**, stranska vrstica pa pove *V teh podatkih ni stolpca s časom - časovnica je onemogočena in vsaka točka je prikazana naenkrat.*
 
-## Vse in Predvaj {#all-and-play}
+## Vse in Predvajaj {#all-and-play}
 
 Dva glavna načina, ker odgovarjata na različni vprašanji.
 
 - **Vse** (privzeto ob vsakem nalaganju) popolnoma prezre glavo predvajanja in prikaže vsako vrstico, ki prestane filtre. Je pogled »kje se to dogaja«, ni isto kot pomik na konec. Drsnik je onemogočen, ura pa kaže `vse · <razpon> podatkov`.
-- **Predvaj** predvaja podatke kot hitri posnetek. Pojavijo se drsnik, kontrole predvajanja in nastavitve zgodovine.
+- **Predvajaj** predvaja podatke kot hitri posnetek. Pojavijo se drsnik, kontrole predvajanja in nastavitve zgodovine.
 
 Izbira **Vse** tudi ustavi predvajanje.
 
@@ -30,7 +30,7 @@ Izbira **Vse** tudi ustavi predvajanje.
 | Kontrola | Privzeto | Pomen |
 |---|---|---|
 | Drsnik | začetek | Glava predvajanja. Povlecite za iskanje; 20.000 korakov čez obseg. |
-| **Vse** / **Predvaj** | Vse | Glejte zgoraj. |
+| **Vse** / **Predvajaj** | Vse | Glejte zgoraj. |
 | ▶ / ❚❚ | ustavljeno | Predvajaj ali ustavi; tudi `K`. |
 | ◀ **Predvajaj nazaj (J)** | | Predvaja podatke v obratnem vrstnem redu. Prikazano le v načinu **Prekrivanje figur**; enaka tipka `J` deluje tudi tam (glejte [Tipkovnica](#keyboard)). |
 | ⏮ | | Nazaj na začetek obsega. |
@@ -47,7 +47,7 @@ Izbira **Vse** tudi ustavi predvajanje.
 
 ## Zgodovina {#history}
 
-V načinu Predvaj:
+V načinu Predvajaj:
 
 - **Kumulativno** - vse od začetka obsega do glave predvajanja. Toplota se gradi, ko se predvaja.
 - **Okno** - fiksen razpon zgodovine, ki se konča pri glavi predvajanja (*Razpon*).
@@ -75,7 +75,7 @@ Kako se toplota ohrani stabilna, medtem ko se okno premika, je odvisno od zgodov
 - **Okno** in **Življenjska doba** se res spreminjata vsak okvir in se ponovno ocenjujeta, zmešani kot eksponentno drseče povprečje (utež 0,34 za nov okvir), kar je v stabilnem stanju nepristransko in veliko mirnejše kot začeti znova.
 - V načinu Življenjska doba so kandidatne vrstice tiste od *glava predvajanja − max(najdaljša vrzel v podatkih, Nadomestna življenjska doba)* do glave predvajanja; senčilnik nato izpusti vsako vrstico, katere življenjska doba se je končala, in uporabi pojemanje.
 
-Preklop med Vse in Predvaj ali sprememba zgodovine ponovno zažene kopičenje.
+Preklop med Vse in Predvajaj ali sprememba zgodovine ponovno zažene kopičenje.
 
 ## Tipkovnica {#keyboard}
 
@@ -85,4 +85,4 @@ Preklop med Vse in Predvaj ali sprememba zgodovine ponovno zažene kopičenje.
 | `J` | Predvajaj nazaj; ponoven pritisk ustavi (samo Prekrivanje figur) |
 | `L` | Predvajaj naprej; ponoven pritisk ustavi (samo Prekrivanje figur) |
 
-`J` in `L` tudi preklopita časovnico na **Predvaj**. Tipke so ignorirane, medtem ko ima fokus besedilno polje ali meni. V zavihku Analiza dirke `K` upravlja predvajanje tega zavihka.
+`J` in `L` tudi preklopita časovnico na **Predvajaj**. Tipke so ignorirane, medtem ko ima fokus besedilno polje ali meni. V zavihku Analiza dirke `K` upravlja predvajanje tega zavihka.

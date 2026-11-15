@@ -11,7 +11,7 @@ outdated: false
 
 # Modhanna teasa
 
-Cuireann gach ponc glow beag leis, carnann na glows suas, agus péintéiltear an carnadh le dathanna. Is cúig bhealach iad na modhanna chun é a phéinteáil, agus freagraíonn gach ceann ceist amháin.
+Cuireann gach ponc lonradh beag leis, carnann na lonraí suas, agus péintéiltear an carnadh le dathanna. Is cúig bhealach iad na modhanna chun é a phéinteáil, agus freagraíonn gach ceann ceist amháin.
 
 Roghnaíonn barra na modhanna ag barr bharra taoibh chluaisín na Léarscáile teasa conas a tharraingítear an [tacar sonraí](glossary.md). Roghnaíonn eochracha 1-4 Teas, Difríocht, Teas foirne agus Línte. Níl eochair ag an Forleagan figiúirí.
 
@@ -33,9 +33,9 @@ Roghnaíonn barra na modhanna ag barr bharra taoibh chluaisín na Léarscáile t
 | **Difríocht** | 2 | Dlús comharthaithe: cuireann daonra amháin leis, baineann daonra eile. [Difríocht](difference.md) | dhá thaobh: dhá ghrúpa ar a laghad, nó scoilt thar cholún coinnithe |
 | **Teas foirne** | 3 | Dlús dathaithe de réir grúpa: dath do gach grúpa, measctha nuair a fhorlapann grúpaí. [Teas foirne](team-heat.md) | colún grúpa |
 | **Forleagan figiúirí** | - | Figiúr (nó bosca) do gach imreoir, ag bogadh feadh na hamlíne: an athsheinm. [Forleagan figiúirí](box-replay.md), [Athsheinm cluiche](match-replay.md) | colún imreora |
-| **Línte** | 4 | Teas líne: líne ó gach sampla d'imreoir go dtí an chéad cheann eile, an teas ag titim go hingearach. [Teas líne](line-heat.md) | colún imreora agus colún ama |
+| **Línte** | 4 | Teas líne: líne ó gach sampla d'imreoir go dtí an chéad cheann eile, an teas ag titim go cliathach. [Teas líne](line-heat.md) | colún imreora agus colún ama |
 
-Déantar mód nach dtacaíonn na sonraí leis a dhorchú, agus insíonn a leid cén fáth, mar shampla *Ar fáil - teastaíonn dhá ghrúpa nó colún coinnithe le scoilt uirthi ar mhód na Difríochta; níl ach grúpa amháin sna sonraí seo.* Nuair nach dtacaíonn tacar nua sonraí leis an mód reatha, titeann an radharc ar ais go **Teas**.
+Déantar mód nach dtacaíonn na sonraí leis a dhorchú, agus insíonn a leid cén fáth, mar shampla *Níl sé ar fáil — Teastaíonn dhá ghrúpa nó colún a choinnítear le haghaidh scagtha ón mód difríochta le scoilt air; níl ach grúpa amháin sna sonraí seo.* Nuair nach dtacaíonn tacar nua sonraí leis an mód reatha, titeann an radharc ar ais go **Teas**.
 
 Déantar eochracha 1-4 a sheiceáil ar an mbealach céanna i gcoinne na sonraí: ní dhéanann eochair do mhód dorchaithe rud ar bith.
 

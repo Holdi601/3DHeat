@@ -15,7 +15,7 @@ Cada punto añade un poco de brillo, los brillos se acumulan, y la acumulación 
 
 La barra de modos, en la parte superior de la barra lateral de la pestaña Mapa de calor, elige cómo se dibuja el [conjunto de datos](glossary.md). Las teclas 1-4 eligen Calor, Diferencia, Calor por equipo y Líneas. Figuras superpuestas no tiene tecla.
 
-![La barra de modos con Calor, Diferencia, Calor por equipo, Figuras superpuestas y Líneas](../assets/img/en/heat-modes-bar.webp)
+![La barra de modos con Calor, Diferencia, Calor por equipo, Figuras superpuestas y Líneas](../assets/img/es/heat-modes-bar.webp)
 
 | Modo | Pregunta que responde |
 |---|---|
@@ -25,7 +25,7 @@ La barra de modos, en la parte superior de la barra lateral de la pestaña Mapa 
 | **Líneas** | ¿Por dónde fue la gente? |
 | **Figuras superpuestas** | ¿Quién estaba dónde, y cuándo? |
 
-![Los mismos datos en cuatro modos: Calor, Diferencia, Calor por equipo y Líneas](../assets/img/en/heat-modes-grid.webp)
+![Los mismos datos en cuatro modos: Calor, Diferencia, Calor por equipo y Líneas](../assets/img/es/heat-modes-grid.webp)
 
 | Modo (etiqueta de la barra) | Tecla | Qué dibuja | Necesita |
 |---|---|---|---|

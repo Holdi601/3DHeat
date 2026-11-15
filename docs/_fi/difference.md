@@ -27,7 +27,7 @@ Punainen siellä, missä joukkue A oli enemmän, vihreä-sininen siellä, missä
 
 *Mitkä* kaksi joukkoa ovat koko kysymys, joten jako voi olla mikä tahansa säilytetty sarake, ei vain ryhmät. Rivit, jotka osuvat **kummallekaan** puolelle, **jätetään pois**, eikä niitä lasketa nollina. Tämän ansiosta jako useiden arvojen joukosta vertaa täsmälleen kahta valittua arvoa, ja se yhdistyy [suodattimiin](filters.md): suodata ensin yhteen karttaan ja jaa sitten se version mukaan.
 
-Tila tarvitsee kaksi puolta: ryhmäsarakkeen, jossa on vähintään kaksi ryhmää, tai jaon sarakkeen, joka on säilytetty suodatusta varten. Datassa, jossa on alle kaksi ryhmää, lataus aloittaa sarakejaolla: monen tiedoston latauksessa ensin sarakkeella *Lähdetiedosto*, muuten ensimmäisellä kategoriasarakkeella, jossa on kaksi arvoa, muuten ensimmäisellä numeerisella sarakkeella, jolla on väli. Näin *vertaa kahta latausta* toimii datalla ilman ryhmiä. Vain data, jossa ei ole kumpaakaan, jättää tilan pois käytöstä. Samoin käy, jos sarakejako jää ilman mitään toisella puolella.
+Tila tarvitsee kaksi puolta: ryhmäsarakkeen, jossa on vähintään kaksi ryhmää, tai jaon sarakkeen, joka on säilytetty suodatusta varten. Datassa, jossa on alle kaksi ryhmää, lataus aloittaa sarakejaolla: monen tiedoston latauksessa ensin sarakkeella *Source file*, muuten ensimmäisellä kategoriasarakkeella, jossa on kaksi arvoa, muuten ensimmäisellä numeerisella sarakkeella, jolla on väli. Näin *vertaa kahta latausta* toimii datalla ilman ryhmiä. Vain data, jossa ei ole kumpaakaan, jättää tilan pois käytöstä. Samoin käy, jos sarakejako jää ilman mitään toisella puolella.
 
 ## Erotusjaon paneeli {#the-difference-split-panel}
 
@@ -40,7 +40,7 @@ Näkyy Erotus-tilassa lämpöpaneelien alapuolella.
 | Ryhmät | *Ryhmä (N)* (kun on ryhmäsarake) | Kukin ryhmä +-, −- tai kummallekaan puolelle, asetettuna [Joukkuelistassa](teams-list.md) |
 | Kategoriasarake | *sarake (N arvoa)* | Arvot +-, −- tai kummallekaan puolelle |
 | Numeerinen sarake | *sarake (numeerinen)* | Arvoväli kummallekin puolelle |
-| Lähdetiedosto | *Lähdetiedosto - vertaa kahta latausta* (kun useita tiedostoja on ladattu) | Tiedostot +-, −- tai kummallekaan puolelle |
+| Lähdetiedosto | *Source file — vertaa kahta latausta* (kun useita tiedostoja on ladattu) | Tiedostot +-, −- tai kummallekaan puolelle |
 
 Vain sarakkeet, jotka on säilytetty kohdassa *Säilytä suodatusta varten* latauksessa, tarjotaan.
 
@@ -59,7 +59,7 @@ Paneeli varoittaa, kun kuva ei ole todellinen erotus:
 | Ikkunassa ei ole riviä **−**-puolella | Piirretään vain **+**-puoli. |
 | Kummallakaan puolella ei ole arvoa | Erotus ei piirrä mitään. Aseta vähintään yksi arvo **+**- tai **−**-puolelle. |
 | *sarake* ei voi jakautua näin | Valittu sarake ei sovi tähän jakoon. Valitse sarake uudelleen. |
-| Jakosarake ei mahtunut näytönohjaimen muistiin N / M osasta | Näitä rivejä ei piirretä. Nosta näytönohjaimen rajaa kohdasta Suorituskyky → Resurssirajat tai lataa vähemmän rivejä. |
+| Jakosarake ei mahtunut näytönohjaimen muistiin N / M osasta | Näitä rivejä ei piirretä. Nosta näytönohjaimen rajaa kohdasta Suorituskyky → Resurssibudjetit tai lataa vähemmän rivejä. |
 
 ### Ryhmittäin {#by-group}
 
@@ -74,7 +74,7 @@ Paneeli vain osoittaa [Joukkuelistaan](teams-list.md), jossa jokaisella ryhmäll
 | Arvoluettelo | Jokainen arvo **+**- ja **−**-painikkeella (napsauta aktiivista uudelleen poistaaksesi sen puolelta). Tyhjä arvo on luettelossa nimellä *(puuttuu)*. |
 | Rajamerkintä | Vain 200 ensimmäistä arvoa listataan: *Näytetään 200 ensimmäistä N arvosta. Näin leveä sarake kannattaa ensin kaventaa suodattimella, tai jakaa välin mukaan, jos sen arvot ovat järjestyksessä.* |
 
-Sarakkeen valitseminen asettaa sen ensimmäisen arvon +-puolelle ja toisen −-puolelle. Kun kummallakaan puolella ei ole arvoa, jako palautuu ryhmiin sen sijaan, että näyttäisi tyhjän kehyksen. *Lähdetiedosto* toimii samalla tavalla, yksi arvo tiedostoa kohden. Näin verrataan kahta vientiä, kahta testiajoa tai kahta versiota.
+Sarakkeen valitseminen asettaa sen ensimmäisen arvon +-puolelle ja toisen −-puolelle. Kun kummallakaan puolella ei ole arvoa, jako palautuu ryhmiin sen sijaan, että näyttäisi tyhjän kehyksen. *Source file* toimii samalla tavalla, yksi arvo tiedostoa kohden. Näin verrataan kahta vientiä, kahta testiajoa tai kahta versiota.
 
 ### Välin mukaan {#by-range}
 

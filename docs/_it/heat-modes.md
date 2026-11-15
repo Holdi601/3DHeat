@@ -15,7 +15,7 @@ Ogni punto aggiunge un piccolo bagliore, i bagliori si accumulano e il mucchio v
 
 La barra delle modalità in cima alla barra laterale della scheda Mappa di calore sceglie come viene disegnato il [dataset](glossary.md). I tasti 1-4 scelgono Calore, Differenza, Calore per squadra e Linee. Figure sovrapposte non ha un tasto.
 
-![La barra delle modalità con Calore, Differenza, Calore per squadra, Figure sovrapposte e Linee](../assets/img/en/heat-modes-bar.webp)
+![La barra delle modalità con Calore, Differenza, Calore per squadra, Figure sovrapposte e Linee](../assets/img/it/heat-modes-bar.webp)
 
 | Modalità | Domanda a cui risponde |
 |---|---|

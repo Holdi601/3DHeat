@@ -11,10 +11,10 @@ outdated: false
 
 # Volumes e comparação
 
-Um **volume** é uma caixa invisível (ou um cilindro, ou uma esfera) que desenha à volta de um sítio, para perguntar: o que aconteceu aqui dentro? Use-o para contar abates numa ponte, para comparar duas colinas, ou para mostrar só a atividade numa área.
+Um **volume** é uma caixa invisível (ou um cilindro, ou uma esfera) que se desenha à volta de um sítio, para perguntar: o que aconteceu aqui dentro? Use-o para contar abates numa ponte, para comparar duas colinas, ou para mostrar só a atividade numa área.
 
 ```
- vista de cima            Desenha uma forma ->  o visualizador conta
+ vista de cima            Desenhe uma forma ->  o visualizador conta
  +------------+           o que está dentro:
  |   ( A )    |            linhas, jogadores, abates, tempo ...
  |        [B] |           Compare A com B, lado a lado.

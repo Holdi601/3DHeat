@@ -35,7 +35,7 @@ Banen deles av alle tre fanene: en løype lastet i fanen Løpsanalyse er den sam
 ## Hva en bane gjør for varmen {#what-a-level-does-for-the-heat}
 
 - Den **skjuler**: datapunkter bak den dimmes per flate, og datapunkter bak terrenget skjules ([Dybde og utsortering](depth-and-culling.md)). Uten en bane finnes ingen skjuling.
-- Den **skjæres** av [Snitt](slice.md) og, med *Skjær også banen*, av [avstandsutsortering](depth-and-culling.md#distance-culling), sammen med varmen.
+- Den **skjæres** av [Snitt](slice.md) og, med *Skjær også nivået*, av [avstandsutsortering](depth-and-culling.md#distance-culling), sammen med varmen.
 - Den er det eneste [dybdeskarpheten](camera.md#depth-of-field) slører, i tillegg til rutenettet og boksene.
 - En 3D-bane **utvider kameraets fjerne plan** når den er større enn dataene: nær og fjern kalibreres ut fra datasettet, og et eksportert kart flere kilometer bredt ville ellers ligge helt bak det fjerne planet og etterlate et tomt bilde. Det fjerne planet blir 3 × banens horisontale utstrekning når den er større, det nære planet flyttes med det (minst fjern / 100 000) for å beholde dybdepresisjonen skjuling avhenger av, og flyfarten heves til minst utstrekning / 12. Den utvides bare, aldri snevres inn.
 

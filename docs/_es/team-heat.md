@@ -15,7 +15,7 @@ El calor por equipo muestra dónde estuvo cada equipo, cada uno en su propio col
 
 **Calor por equipo** (tecla 3) es el campo de densidad de [Calor](heat.md) con cada [grupo](glossary.md) con su propio tono. Donde los grupos se solapan, sus tonos se mezclan; un enfrentamiento parejo sale neutro. La opacidad sigue llevando la densidad exactamente igual que en los demás modos, así que la imagen responde a *cuánto* y *de quién* a la vez. Necesita una columna de grupo.
 
-![Calor por equipo: cada bando en su color; donde se solapan, los colores se mezclan](../assets/img/en/heat-teams.webp)
+![Calor por equipo: cada bando en su color; donde se solapan, los colores se mezclan](../assets/img/es/heat-teams.webp)
 
 No es la [superposición de figuras](box-replay.md): esta dibuja una figura por persona; esto es un campo de calor coloreado por la misma columna.
 

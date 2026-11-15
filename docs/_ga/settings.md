@@ -20,7 +20,7 @@ Ag barr an bharra taoibh:
 |---|---|
 | **?** | Mód cabhrach: cad a chiallaíonn gach dath (chomh maith le `?` nó `F1`) |
 | Roghchlár **Aonaid** | Méadrach, Impiriúil, Eitlíochta nó Muirí |
-| Cnaipe **...** taobh le **Aonaid** | Osclaíonn "Roghnaigh aonad do gach cainníocht": liosta anuas amháin do gach cainníocht |
+| Cnaipe **...** taobh le **Aonaid** | Osclaíonn "Roghnaigh aonad do gach méid": liosta anuas amháin do gach cainníocht |
 | Roghchlár **Teanga** | Teanga an amharcóra: [40 teanga](languages.md), nó teanga an bhrabhsálaí |
 
 ![Ceannlíne leis an roghchlár Aonaid agus an fhuinneog aonad-in-aghaidh-cainníochta oscailte](../assets/img/en/settings-units.webp)
@@ -31,7 +31,7 @@ Is féidir uimhreacha a chlóscríobhann tú i mbosca pointe nó camóg a úsái
 
 1. Roghnaigh réamhshocrú sa roghchlár **Aonaid**. Athraíonn gach cainníocht le chéile.
 2. Chun cainníocht amháin a athrú, cliceáil ar an gcnaipe **...** taobh léi agus roghnaigh aonad di. Ansin léiríonn an roghchlár `*` tar éis an réamhshocraithe.
-3. Leanann cainníocht nach ndearna tú socrú di an réamhshocrú. Roghnaigh "Mar réamhshocrú" chun filleadh air.
+3. Leanann cainníocht nach ndearna tú socrú di an réamhshocrú. Roghnaigh "De réir an réamhshocraithe" chun filleadh air.
 
 | Cainníocht | Méadrach (réamhshocrú) | Impiriúil | Eitlíochta | Muirí |
 |---|---|---|---|---|

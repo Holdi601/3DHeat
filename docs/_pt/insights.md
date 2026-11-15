@@ -11,7 +11,7 @@ outdated: false
 
 # Descobertas
 
-**Descobertas** procura nos dados carregados o que se destaca - posições fortes, terreno mortal, armadilhas de nascimento, pontos de estrangulamento, jogadores muito acima dos seus pares - e diz-lho, o mais forte primeiro, com as provas. Use-o para perceber em um minuto onde uma partida foi ganha ou perdida. Pode depois escrever um resumo, e numa única repetição pode funcionar como comentador que salta para os grandes momentos.
+**Descobertas** procura nos dados carregados o que se destaca - posições fortes, terreno mortal, armadilhas de nascimento, pontos de estrangulamento, jogadores muito acima dos seus pares - e diz-lho, o mais forte primeiro, com as provas. Use-o para perceber num minuto onde uma partida foi ganha ou perdida. Pode depois escrever um resumo, e numa única repetição pode funcionar como comentador que salta para os grandes momentos.
 
 Tudo é contado no seu navegador. Nada sai do seu computador a não ser que ligue uma IA externa (ver [IA externa](#external-ai)).
 
@@ -34,7 +34,7 @@ As linhas no topo da lista (por exemplo os totais de dinheiro) resumem o conjunt
 
 ### Os detetores {#the-detectors}
 
-| Detetor | O que encontra | Precisa nos dados de |
+| Detetor | O que encontra | Necessita nos dados |
 |---|---|---|
 | **Posições de poder** | Sítios com probabilidades de abate-morte muito melhores que o resto do mapa, e *terreno seguro* onde morrem poucos pelo tempo passado | eventos de abate e morte |
 | **Zonas quentes e frias** | Sítios onde um tipo de evento (disparos, impactos, capturas ...) acontece muito mais ou menos do que o tempo ali passado prevê | uma coluna de eventos |

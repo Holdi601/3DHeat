@@ -91,7 +91,7 @@ Vērtība abos diapazonos tiek skaitīta kā +. Diapazoniem nav jāaptver visa k
 
 Sadaļa **Siltuma krāsas** šajā režīmā rāda divus skalu redaktorus: **Pozitīvā (pieskaitošās komandas)** un **Negatīvā (atņemošās komandas)**, katram sava atiestatīšanas poga (*Atiestatīt uz caurspīdīgs → sarkans → dzeltens → balts*, *Atiestatīt uz caurspīdīgs → zaļš → zils → violets*). Kompozīcija ņem neto siltuma absolūto vērtību caur [piesātinājuma punktu un reakciju](colour-and-exposure.md) un izvēlas negatīvo skalu tur, kur neto vērtība ir zem nulles. Skatiet [Krāsa un ekspozīcija](colour-and-exposure.md#the-ramp-editor).
 
-Lietojiet *Lineāro* blīvuma reakciju, kad svarīgs ir starpības lielums: tā ir vienīgā reakcija, kur vienāda krāsa nozīmē vienādu skaitu.
+Lietojiet *Lineāro* reakciju uz blīvumu, kad svarīgs ir starpības lielums: tā ir vienīgā reakcija, kur vienāda krāsa nozīmē vienādu skaitu.
 
 ## Kā tas darbojas {#how-it-works}
 

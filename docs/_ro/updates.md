@@ -60,76 +60,42 @@ pagina ---(după 4 s, apoi la fiecare 6 h)---> serverul de dezvoltare ---> git f
 
 ## Pentru dezvoltatori {#for-developers}
 
-### Cât timp rulează: ruta de actualizare {#while-it-runs-the-update-route}
+### În timpul rulării: ruta de actualizare {#while-it-runs-the-update-route}
 
-The dev server (Vite plugin `heat3d-self-update` in `vite.config.ts`) serves
-`/__heat3d/update`. It exists only on the dev server - not in a static build
-and not in `vite preview`.
+Serverul de dezvoltare (plugin-ul Vite `heat3d-self-update` din `vite.config.ts`) servește `/__heat3d/update`. Există doar pe serverul de dezvoltare - nu într-un build static și nu în `vite preview`.
 
-**`GET /__heat3d/update`** answers whether the checkout is behind:
+**`GET /__heat3d/update`** răspunde dacă copia este în urmă:
 
 ```json
 { "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "the newest commit's subject" }
 ```
 
-- `checkout: false` when the folder is not a git checkout;
-- it runs `git fetch --quiet` **at most every 30 minutes** (asks in between
-  answer from what was last fetched);
-- `behind` / `ahead` from `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`,
-  `dirty` from `git status --porcelain --untracked-files=no`, `latest` the
-  subject of the upstream's newest commit;
-- with no upstream branch, `upstream: null` and `behind: 0`.
+- `checkout: false` când dosarul nu este o copie git;
+- rulează `git fetch --quiet` **cel mult la fiecare 30 de minute** (cererile din intervale răspund din ultimul fetch);
+- `behind` / `ahead` din `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`, `dirty` din `git status --porcelain --untracked-files=no`, `latest` subiectul celui mai nou commit din amonte;
+- fără o ramură amonte, `upstream: null` și `behind: 0`.
 
-**`POST /__heat3d/update/apply`** brings the checkout up:
+**`POST /__heat3d/update/apply`** aduce copia la zi:
 
-1. Refused with `403 { ok: false, reason: "forbidden" }` unless the request has
-   the header `X-Heat3d-Update: 1` and, when it carries an `Origin`, that
-   origin's host is the request's `Host`. A cross-site form cannot send a
-   custom header without a CORS preflight, which this server never grants.
-2. Nothing to do (not a checkout, no upstream, not behind):
-   `{ ok: true, updated: false }`.
-3. Local changes: `{ ok: false, reason: "dirty" }`; local commits:
-   `{ ok: false, reason: "diverged" }`.
-4. Otherwise: notes the files that change (`git diff --name-only HEAD @{u}`),
-   `git pull --ff-only` (2 min timeout), `git submodule update --init`
-   (failure ignored), `npm install` when `package.json` or
-   `package-lock.json` changed (15 min timeout), and answers
-   `{ ok: true, updated: true, restart }` - `restart` says why the running
-   server cannot pick the update up: `"dependencies"` when they were
-   reinstalled, `"config"` when only a `vite.config` file changed, `false`
-   when nothing needs a restart.
-5. A failing git or npm command answers `{ ok: false, reason: "<the error,
-   up to 300 characters>" }`.
+1. Refuzat cu `403 { ok: false, reason: "forbidden" }` decât dacă cererea are antetul `X-Heat3d-Update: 1` și, când poartă un `Origin`, gazda acelui origin este `Host`-ul cererii. Un formular de pe alt site nu poate trimite un antet personalizat fără o cerere preliminară CORS, pe care acest server nu o acordă niciodată.
+2. Nimic de făcut (nu este o copie git, nu există amonte, nu este în urmă): `{ ok: true, updated: false }`.
+3. Modificări locale: `{ ok: false, reason: "dirty" }`; commit-uri locale: `{ ok: false, reason: "diverged" }`.
+4. Altfel: notează fișierele care se schimbă (`git diff --name-only HEAD @{u}`), `git pull --ff-only` (timeout de 2 min), `git submodule update --init` (eșecul este ignorat), `npm install` când s-au schimbat `package.json` sau `package-lock.json` (timeout de 15 min), și răspunde `{ ok: true, updated: true, restart }` - `restart` spune de ce serverul care rulează nu poate prelua actualizarea: `"dependencies"` când dependențele au fost reinstalate, `"config"` când s-a schimbat doar un fișier `vite.config`, `false` când nu este nevoie de repornire.
+5. O comandă git sau npm care eșuează răspunde `{ ok: false, reason: "<eroarea, până la 300 de caractere>" }`.
 
-Responses are JSON with `Cache-Control: no-store`. The server listens on
-`127.0.0.1` only, so the route is not reachable from the network.
+Răspunsurile sunt JSON cu `Cache-Control: no-store`. Serverul ascultă doar pe `127.0.0.1`, deci ruta nu este accesibilă din rețea.
 
 ### Anunțul din pagină {#the-notice-in-the-page}
 
-`UpdateBanner`, under the name at the top of the sidebar:
+`UpdateBanner`, sub nume, în partea de sus a barei laterale:
 
-- It asks the route **4 seconds** after the page loads (not in the first
-  seconds: the page has a dataset to load and a GPU to start) and again
-  **every 6 hours** while the page stays open.
-- It shows **nothing** when there is no such route (a static build), the
-  folder is not a checkout, or nothing is newer - a notice on every start is
-  one people learn to ignore.
-- Behind, with no local changes: "A newer version of 3DHeat is available (N
-  changes, the newest: <subject>)." with **Update now** and **Later**
-  (*Later* hides it until the page is reloaded).
-- Behind, with local changes: the same sentence and "This copy has local
-  changes, so it is not updated automatically; commit or stash them, then
-  run git pull." - no button.
-- **Update now** posts to `/apply` ("Updating..."). Then:
-  - "Updated. The page reloads." - and it reloads 1.5 s later (the server
-    already serves the new files);
-  - when the dependencies were reinstalled: "Updated. Its dependencies
-    changed: close the server window and run **restart.bat** to finish.";
-  - when only the server's settings changed: "Updated. Its server settings
-    changed: close the server window and run **restart.bat** to finish.";
-  - nothing to bring in after all (`updated: false` - the copy was brought up
-    meanwhile, by `start.bat` say): "Nothing to update: this copy is already
-    the newest version." - and no reload;
-  - refused: the *dirty* sentence, or "This copy has commits of its own that
-    the newest version does not; update it with git pull.", or "The update
-    did not go through: <reason>".
+- Întreabă ruta la **4 secunde** după încărcarea paginii (nu în primele secunde: pagina are un set de date de încărcat și un GPU de pornit) și din nou **la fiecare 6 ore** cât timp pagina rămâne deschisă.
+- Nu arată **nimic** când ruta lipsește (un build static), dosarul nu este o copie git sau nimic nu este mai nou - un anunț la fiecare pornire este unul pe care oamenii învață să-l ignore.
+- În urmă, fără modificări locale: „Este disponibilă o versiune mai nouă a 3DHeat (N modificări, cea mai nouă: <subiect>).” cu **Actualizează acum** și **Mai târziu** (*Mai târziu* ascunde caseta până la reîncărcarea paginii).
+- În urmă, cu modificări locale: aceeași propoziție și „Această copie are modificări locale, deci nu este actualizată automat; faceți commit sau stash pentru ele, apoi rulați git pull.” - fără buton.
+- **Actualizează acum** trimite cererea către `/apply` („Se actualizează…”). Apoi:
+  - „Actualizat. Pagina se reîncarcă.” - și se reîncarcă după 1,5 s (serverul servește deja fișierele noi);
+  - când dependențele au fost reinstalate: „Actualizat. Dependențele s-au schimbat: închideți fereastra serverului și rulați **restart.bat** pentru a termina.”;
+  - când s-au schimbat doar setările serverului: „Actualizat. Setările serverului s-au schimbat: închideți fereastra serverului și rulați **restart.bat** pentru a termina.”;
+  - nimic de adus până la urmă (`updated: false` - copia a fost adusă la zi între timp, de exemplu de `start.bat`): „Nimic de actualizat: această copie este deja cea mai nouă versiune.” - și fără reîncărcare;
+  - refuzat: propoziția despre modificările locale, sau „Această copie are commit-uri proprii pe care cea mai nouă versiune nu le are; actualizați-o cu git pull.”, sau „Actualizarea nu a reușit: <motiv>”.

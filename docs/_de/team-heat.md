@@ -15,7 +15,7 @@ Team-Intensität zeigt, wo jedes Team war, jedes Team in seiner eigenen Farbe. W
 
 **Team-Intensität** (Taste 3) ist das Dichtefeld von [Intensität](heat.md), bei dem jede [Gruppe](glossary.md) einen eigenen Farbton bekommt. Wo sich Gruppen überlappen, mischen sich ihre Farbtöne; ein ausgeglichener Kampf wird neutral. Die Deckkraft trägt die Dichte weiterhin genau wie in den anderen Modi, sodass das Bild zugleich *wie viel* und *wessen* beantwortet. Sie braucht eine Gruppenspalte.
 
-![Team-Intensität: jede Seite in ihrer eigenen Farbe; wo sie sich überlappen, mischen sich die Farben](../assets/img/en/heat-teams.webp)
+![Team-Intensität: jede Seite in ihrer eigenen Farbe; wo sie sich überlappen, mischen sich die Farben](../assets/img/de/heat-teams.webp)
 
 Sie ist nicht das [Figuren-Overlay](box-replay.md): Das zeichnet eine Figur pro Person; dies ist ein Intensitätsfeld, eingefärbt nach derselben Spalte.
 

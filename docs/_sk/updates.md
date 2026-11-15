@@ -14,7 +14,7 @@ Prehliadač vám povie, keď existuje novšia verzia, a aktualizuje sa sám len 
 
 ## Aktualizácia prehliadača {#update-the-viewer}
 
-1. **Na stránke.** Keď existuje novšia verzia, pod názvom hore na bočnom paneli sa objaví box: „Je dostupná novšia verzia 3DHeat“. Kliknite na **Aktualizovať teraz**. Stránka sa po dokončení sama znova načíta. **Neskôr** skryje box, kým stránku neobnovíte.
+1. **Na stránke.** Keď existuje novšia verzia, pod názvom hore na bočnom paneli sa objaví box: „K dispozícii je novšia verzia 3DHeat“. Kliknite na **Aktualizovať teraz**. Stránka sa po dokončení sama znova načíta. **Neskôr** skryje box, kým stránku neobnovíte.
 2. **Ak hovorí, aby ste spustili restart.bat**, zatvorte okno servera (čierne okno, ktoré otvoril `start.bat`) a dvakrát kliknite na `restart.bat`.
 3. **Pri spustení prehliadača.** `start.bat` tiež kontroluje. Ak existuje novšia verzia, opýta sa **Aktualizovať teraz? [Y/N]**. Stlačte `Y` na aktualizáciu. Stlačte `N`, alebo počkajte 60 sekúnd bez odpovede, a spustí sa verzia, ktorú máte.
 
@@ -79,74 +79,40 @@ stránka ---(po 4 s, potom každých 6 h)---> vývojový server ---> git fetch
 
 ### Počas behu: trasa aktualizácie {#while-it-runs-the-update-route}
 
-The dev server (Vite plugin `heat3d-self-update` in `vite.config.ts`) serves
-`/__heat3d/update`. It exists only on the dev server - not in a static build
-and not in `vite preview`.
+Vývojový server (plugin Vite `heat3d-self-update` v `vite.config.ts`) obsluhuje `/__heat3d/update`. Existuje len na vývojovom serveri - nie v statickom builde ani vo `vite preview`.
 
-**`GET /__heat3d/update`** answers whether the checkout is behind:
+**`GET /__heat3d/update`** odpovie, či kópia zaostáva:
 
 ```json
-{ "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "the newest commit's subject" }
+{ "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "predmet najnovšieho commitu" }
 ```
 
-- `checkout: false` when the folder is not a git checkout;
-- it runs `git fetch --quiet` **at most every 30 minutes** (asks in between
-  answer from what was last fetched);
-- `behind` / `ahead` from `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`,
-  `dirty` from `git status --porcelain --untracked-files=no`, `latest` the
-  subject of the upstream's newest commit;
-- with no upstream branch, `upstream: null` and `behind: 0`.
+- `checkout: false`, keď priečinok nie je git kópia;
+- spustí `git fetch --quiet` **najviac každých 30 minút** (požiadavky medzi tým odpovedajú z naposledy stiahnutých dát);
+- `behind` / `ahead` z `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`, `dirty` z `git status --porcelain --untracked-files=no`, `latest` predmet najnovšieho commitu nadradenej vetvy;
+- bez nadradenej vetvy `upstream: null` a `behind: 0`.
 
-**`POST /__heat3d/update/apply`** brings the checkout up:
+**`POST /__heat3d/update/apply`** uvedie kópiu do poriadku:
 
-1. Refused with `403 { ok: false, reason: "forbidden" }` unless the request has
-   the header `X-Heat3d-Update: 1` and, when it carries an `Origin`, that
-   origin's host is the request's `Host`. A cross-site form cannot send a
-   custom header without a CORS preflight, which this server never grants.
-2. Nothing to do (not a checkout, no upstream, not behind):
-   `{ ok: true, updated: false }`.
-3. Local changes: `{ ok: false, reason: "dirty" }`; local commits:
-   `{ ok: false, reason: "diverged" }`.
-4. Otherwise: notes the files that change (`git diff --name-only HEAD @{u}`),
-   `git pull --ff-only` (2 min timeout), `git submodule update --init`
-   (failure ignored), `npm install` when `package.json` or
-   `package-lock.json` changed (15 min timeout), and answers
-   `{ ok: true, updated: true, restart }` - `restart` says why the running
-   server cannot pick the update up: `"dependencies"` when they were
-   reinstalled, `"config"` when only a `vite.config` file changed, `false`
-   when nothing needs a restart.
-5. A failing git or npm command answers `{ ok: false, reason: "<the error,
-   up to 300 characters>" }`.
+1. Odmietne sa so stavom `403 { ok: false, reason: "forbidden" }`, pokiaľ požiadavka nemá hlavičku `X-Heat3d-Update: 1` a ak nesie `Origin`, jeho hostiteľ sa musí rovnať `Host` požiadavky. Formulár z iného webu nemôže poslať vlastnú hlavičku bez CORS preflightu, ktorý tento server nikdy neudelí.
+2. Nie je čo robiť (nie je git kópia, nie je nadradená vetva, nezaostáva): `{ ok: true, updated: false }`.
+3. Lokálne zmeny: `{ ok: false, reason: "dirty" }`; lokálne commity: `{ ok: false, reason: "diverged" }`.
+4. Inak: zapíše, ktoré súbory sa menia (`git diff --name-only HEAD @{u}`), spustí `git pull --ff-only` (limit 2 min), `git submodule update --init` (zlyhanie sa ignoruje), `npm install`, keď sa zmenil `package.json` alebo `package-lock.json` (limit 15 min), a odpovie `{ ok: true, updated: true, restart }`. `restart` vysvetľuje, prečo bežiaci server aktualizáciu nemôže prevziať: `"dependencies"`, keď sa závislosti znova nainštalovali; `"config"`, keď sa zmenil len súbor `vite.config`; `false`, keď nič nevyžaduje reštart.
+5. Zlyhávajúci príkaz git alebo npm odpovie `{ ok: false, reason: "<chyba, najviac 300 znakov>" }`.
 
-Responses are JSON with `Cache-Control: no-store`. The server listens on
-`127.0.0.1` only, so the route is not reachable from the network.
+Odpovede sú JSON s `Cache-Control: no-store`. Server počúva iba na `127.0.0.1`, takže trasa nie je dostupná zo siete.
 
 ### Oznámenie na stránke {#the-notice-in-the-page}
 
-`UpdateBanner`, under the name at the top of the sidebar:
+`UpdateBanner`, pod názvom hore na bočnom paneli:
 
-- It asks the route **4 seconds** after the page loads (not in the first
-  seconds: the page has a dataset to load and a GPU to start) and again
-  **every 6 hours** while the page stays open.
-- It shows **nothing** when there is no such route (a static build), the
-  folder is not a checkout, or nothing is newer - a notice on every start is
-  one people learn to ignore.
-- Behind, with no local changes: "A newer version of 3DHeat is available (N
-  changes, the newest: <subject>)." with **Update now** and **Later**
-  (*Later* hides it until the page is reloaded).
-- Behind, with local changes: the same sentence and "This copy has local
-  changes, so it is not updated automatically; commit or stash them, then
-  run git pull." - no button.
-- **Update now** posts to `/apply` ("Updating..."). Then:
-  - "Updated. The page reloads." - and it reloads 1.5 s later (the server
-    already serves the new files);
-  - when the dependencies were reinstalled: "Updated. Its dependencies
-    changed: close the server window and run **restart.bat** to finish.";
-  - when only the server's settings changed: "Updated. Its server settings
-    changed: close the server window and run **restart.bat** to finish.";
-  - nothing to bring in after all (`updated: false` - the copy was brought up
-    meanwhile, by `start.bat` say): "Nothing to update: this copy is already
-    the newest version." - and no reload;
-  - refused: the *dirty* sentence, or "This copy has commits of its own that
-    the newest version does not; update it with git pull.", or "The update
-    did not go through: <reason>".
+- Pýta sa trasy **4 sekundy** po načítaní stránky (nie v prvých sekundách: stránka ešte načítava dáta a štartuje GPU) a potom znova **každých 6 hodín**, kým je stránka otvorená.
+- Nezobrazí **nič**, keď takáto trasa nie je (statický build), priečinok nie je git kópia alebo nič nie je novšie - upozornenie pri každom spustení sa ľudia naučia ignorovať.
+- Zaostáva bez lokálnych zmien: „K dispozícii je novšia verzia 3DHeat (N zmien, najnovšia: <predmet>).“ s tlačidlami **Aktualizovať teraz** a **Neskôr** (*Neskôr* skryje box, kým sa stránka znova nenačíta).
+- Zaostáva s lokálnymi zmenami: rovnaká veta a „Táto kópia má lokálne zmeny, preto sa neaktualizuje automaticky; urobte commit alebo stash a potom spustite git pull.“ - bez tlačidla.
+- **Aktualizovať teraz** pošle požiadavku na `/apply` („Aktualizuje sa…“). Potom:
+  - „Aktualizované. Stránka sa znova načíta.“ - a o 1,5 s neskôr sa znova načíta (server už podáva nové súbory);
+  - keď sa závislosti znova nainštalovali: „Aktualizované. Zmenili sa závislosti: zatvorte okno servera a spustite **restart.bat**, aby sa aktualizácia dokončila.“;
+  - keď sa zmenili len nastavenia servera: „Aktualizované. Zmenili sa nastavenia servera: zatvorte okno servera a spustite **restart.bat**, aby sa aktualizácia dokončila.“;
+  - nakoniec nie je čo prevziať (`updated: false` - kópiu medzitým uviedol do poriadku napríklad `start.bat`): „Nie je čo aktualizovať: táto kópia je už najnovšia verzia.“ - a bez obnovenia stránky;
+  - odmietnuté: veta o lokálnych zmenách, alebo „Táto kópia má vlastné commity, ktoré najnovšia verzia nemá; aktualizujte ju pomocou git pull.“, alebo „Aktualizácia sa nepodarila: <dôvod>“.

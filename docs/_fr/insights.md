@@ -15,7 +15,7 @@ Les **Observations** parcourent les données chargées à la recherche de ce qui
 
 Tout est compté dans votre navigateur. Rien ne quitte votre ordinateur, sauf si vous activez une IA externe (voir [IA externe](#external-ai)).
 
-![Observations sur la démo de chars : 14 constats, du plus fort au plus faible](../assets/img/en/insights.webp)
+![Observations sur la démo de chars : 14 constats, du plus fort au plus faible](../assets/img/fr/insights.webp)
 
 La section **Observations** se trouve dans la barre latérale des onglets Carte de chaleur et Match. Elle comporte trois onglets : **Constats**, **Bilan** et **Commentateur**.
 
@@ -30,7 +30,7 @@ Le comptage utilise les filtres en cours, les groupes masqués et le match chois
 
 Les lignes en haut de la liste (par exemple les totaux d'argent) résument l'ensemble des données avant les constats.
 
-![Un constat ouvert : la zone chaude des tirs, ses chiffres, et un passage correspondant de la littérature](../assets/img/en/insights-finding.webp)
+![Un constat ouvert : la zone chaude des tirs, ses chiffres, et un passage correspondant de la littérature](../assets/img/fr/insights-finding.webp)
 
 ### Les détecteurs {#the-detectors}
 
@@ -55,7 +55,7 @@ Chaque lieu ou groupe est testé par rapport au reste de la carte (tests binomia
 
 L'onglet **Bilan** rédige les constats sous forme de court texte : une introduction, le constat le plus net, un pour la tactique, un pour l'équilibrage, le reste regroupé par détecteur, et le nombre de constats reposant sur des preuves plus faibles. Chaque paragraphe a des boutons numérotés qui montrent ses constats. **Copier le texte** le copie.
 
-![Le bilan rédigé par le narrateur intégré](../assets/img/en/debrief.webp)
+![Le bilan rédigé par le narrateur intégré](../assets/img/fr/debrief.webp)
 
 Le narrateur intégré fonctionne hors ligne, dans votre langue. Le sélecteur **Prisme** au-dessus (voir [Le prisme de connaissances](knowledge.md)) décide des ouvrages cités par les paragraphes.
 
@@ -78,7 +78,7 @@ Saisissez ensuite une question facultative et appuyez sur **Rédiger avec l'IA**
 
 Pour **un seul match** (choisissez-en un si plusieurs sont chargés), le **Commentateur** trouve les moments qui méritent d'être regardés : premier sang, multi-éliminations, échanges, situations désespérées remportées, bascules d'objectifs, retournements, joueurs qui se démarquent, tirs à longue distance.
 
-![Les moments du commentateur pour une manche de la démo de tireur](../assets/img/en/caster.webp)
+![Les moments du commentateur pour une manche de la démo de tireur](../assets/img/fr/caster.webp)
 
 - Cliquez sur un moment : la vue passe au replay, saute juste avant, y vole et suit le joueur.
 - **Lire les moments** lit chacun jusqu'à sa fin puis passe au suivant ; **Précédent** / **Suivant** parcourent la liste.

@@ -61,74 +61,40 @@ puslapis ---(po 4 s, paskui kas 6 val.)---> kūrimo serveris ---> git fetch
 
 ### Kol veikia: atnaujinimo maršrutas {#while-it-runs-the-update-route}
 
-The dev server (Vite plugin `heat3d-self-update` in `vite.config.ts`) serves
-`/__heat3d/update`. It exists only on the dev server - not in a static build
-and not in `vite preview`.
+Kūrimo serveris (Vite įskiepis `heat3d-self-update` faile `vite.config.ts`) teikia `/__heat3d/update` kelią. Jis yra tik kūrimo serveryje – statiniame sukurime ar `vite preview` jo nėra.
 
-**`GET /__heat3d/update`** answers whether the checkout is behind:
+**`GET /__heat3d/update`** atsako, ar kopija atsilikusi:
 
 ```json
 { "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "the newest commit's subject" }
 ```
 
-- `checkout: false` when the folder is not a git checkout;
-- it runs `git fetch --quiet` **at most every 30 minutes** (asks in between
-  answer from what was last fetched);
-- `behind` / `ahead` from `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`,
-  `dirty` from `git status --porcelain --untracked-files=no`, `latest` the
-  subject of the upstream's newest commit;
-- with no upstream branch, `upstream: null` and `behind: 0`.
+- `checkout: false`, kai aplankas nėra git kopija;
+- paleidžia `git fetch --quiet` **ne dažniau kaip kas 30 minučių** (užklausos tarp tų laikų atsako pagal paskutinį atsisiuntimą);
+- `behind` / `ahead` iš `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`, `dirty` iš `git status --porcelain --untracked-files=no`, `latest` – aukštesniojo šaltinio naujausio įrašo tema;
+- kai nėra aukštesniojo šaltinio šakos, `upstream: null` ir `behind: 0`.
 
-**`POST /__heat3d/update/apply`** brings the checkout up:
+**`POST /__heat3d/update/apply`** atnaujina kopiją:
 
-1. Refused with `403 { ok: false, reason: "forbidden" }` unless the request has
-   the header `X-Heat3d-Update: 1` and, when it carries an `Origin`, that
-   origin's host is the request's `Host`. A cross-site form cannot send a
-   custom header without a CORS preflight, which this server never grants.
-2. Nothing to do (not a checkout, no upstream, not behind):
-   `{ ok: true, updated: false }`.
-3. Local changes: `{ ok: false, reason: "dirty" }`; local commits:
-   `{ ok: false, reason: "diverged" }`.
-4. Otherwise: notes the files that change (`git diff --name-only HEAD @{u}`),
-   `git pull --ff-only` (2 min timeout), `git submodule update --init`
-   (failure ignored), `npm install` when `package.json` or
-   `package-lock.json` changed (15 min timeout), and answers
-   `{ ok: true, updated: true, restart }` - `restart` says why the running
-   server cannot pick the update up: `"dependencies"` when they were
-   reinstalled, `"config"` when only a `vite.config` file changed, `false`
-   when nothing needs a restart.
-5. A failing git or npm command answers `{ ok: false, reason: "<the error,
-   up to 300 characters>" }`.
+1. Atmetama su `403 { ok: false, reason: "forbidden" }`, nebent užklausoje yra antraštė `X-Heat3d-Update: 1` ir, kai ji turi `Origin`, tos kilmės pagrindinis kompiuteris sutampa su užklausos `Host`. Tarpsvetainė forma be CORS išankstinio patikrinimo, kurio šis serveris niekada neduoda, negali siųsti tinkintos antraštės.
+2. Nėra ką daryti (ne kopija, nėra aukštesniojo šaltinio, nėra atsilikimo): `{ ok: true, updated: false }`.
+3. Vietiniai pakeitimai: `{ ok: false, reason: "dirty" }`; vietiniai įrašai: `{ ok: false, reason: "diverged" }`.
+4. Kitaip: pažymi keičiamus failus (`git diff --name-only HEAD @{u}`), vykdo `git pull --ff-only` (2 min. laiko limitas), `git submodule update --init` (klaida ignoruojama), `npm install`, kai pasikeitė `package.json` ar `package-lock.json` (15 min. laiko limitas), ir atsako `{ ok: true, updated: true, restart }`. `restart` nurodo, kodėl veikiantis serveris negali pritaikyti atnaujinimo: `"dependencies"`, kai priklausomybės buvo iš naujo įdiegtos, `"config"`, kai pasikeitė tik `vite.config` failas, `false`, kai perkrauti nereikia.
+5. Nepavykusi git ar npm komanda atsako `{ ok: false, reason: "<klaida, iki 300 simbolių>" }`.
 
-Responses are JSON with `Cache-Control: no-store`. The server listens on
-`127.0.0.1` only, so the route is not reachable from the network.
+Atsakymai yra JSON su `Cache-Control: no-store`. Serveris klauso tik `127.0.0.1`, todėl kelias nepasiekiamas iš tinklo.
 
-### The notice in the page {#the-notice-in-the-page}
+### Pranešimas puslapyje {#the-notice-in-the-page}
 
-`UpdateBanner`, under the name at the top of the sidebar:
+`UpdateBanner`, po pavadinimu šoninės juostos viršuje:
 
-- It asks the route **4 seconds** after the page loads (not in the first
-  seconds: the page has a dataset to load and a GPU to start) and again
-  **every 6 hours** while the page stays open.
-- It shows **nothing** when there is no such route (a static build), the
-  folder is not a checkout, or nothing is newer - a notice on every start is
-  one people learn to ignore.
-- Behind, with no local changes: "A newer version of 3DHeat is available (N
-  changes, the newest: <subject>)." with **Update now** and **Later**
-  (*Later* hides it until the page is reloaded).
-- Behind, with local changes: the same sentence and "This copy has local
-  changes, so it is not updated automatically; commit or stash them, then
-  run git pull." - no button.
-- **Update now** posts to `/apply` ("Updating..."). Then:
-  - "Updated. The page reloads." - and it reloads 1.5 s later (the server
-    already serves the new files);
-  - when the dependencies were reinstalled: "Updated. Its dependencies
-    changed: close the server window and run **restart.bat** to finish.";
-  - when only the server's settings changed: "Updated. Its server settings
-    changed: close the server window and run **restart.bat** to finish.";
-  - nothing to bring in after all (`updated: false` - the copy was brought up
-    meanwhile, by `start.bat` say): "Nothing to update: this copy is already
-    the newest version." - and no reload;
-  - refused: the *dirty* sentence, or "This copy has commits of its own that
-    the newest version does not; update it with git pull.", or "The update
-    did not go through: <reason>".
+- Klausia kelio **4 sekundes** po puslapio įkėlimo (ne pirmomis sekundėmis: puslapiui reikia įkelti duomenų rinkinį ir paleisti GPU) ir vėl **kas 6 valandas**, kol puslapis atviras.
+- Nieko nerodo, kai nėra tokio kelio (statinis sukurimas), aplankas nėra kopija arba nieko naujesnio nėra – pranešimas kiekvieno paleidimo metu yra tai, ką žmonės išmoksta ignoruoti.
+- Atsilikus, be vietinių pakeitimų: „Yra naujesnė 3DHeat versija (N pakeitimų, naujausias: <tema>).“ su **Atnaujinti dabar** ir **Vėliau** (*Vėliau* paslepia, kol puslapis perkraunamas).
+- Atsilikus, su vietiniais pakeitimais: ta pati frazė ir „Ši kopija turi vietinių pakeitimų, todėl neatnaujinama automatiškai; įrašykite arba paslėpkite juos, tada paleiskite git pull.“ – mygtuko nėra.
+- **Atnaujinti dabar** siunčia į `/apply` („Atnaujinama...“). Tada:
+  - „Atnaujinta. Puslapis persikrauna.“ – ir persikrauna po 1,5 s (serveris jau teikia naujus failus);
+  - kai priklausomybės buvo iš naujo įdiegtos: „Atnaujinta. Jos priklausomybės pasikeitė: uždarykite serverio langą ir baikite paleisdami **restart.bat**.“;
+  - kai pasikeitė tik serverio nustatymai: „Atnaujinta. Serverio nustatymai pasikeitė: uždarykite serverio langą ir baikite paleisdami **restart.bat**.“;
+  - galiausiai nieko nėra ką atnešti (`updated: false` – kopiją tuo metu jau atnaujino, pvz., `start.bat`): „Nėra ką atnaujinti: ši kopija jau naujausia versija.“ – ir be perkrovimo;
+  - atmesta: *vietinių pakeitimų* sakinys, arba „Ši kopija turi savo įrašų, kurių naujausia versija neturi; atnaujinkite su git pull.“, arba „Atnaujinimas nepavyko: <priežastis>“.

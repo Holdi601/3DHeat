@@ -45,11 +45,11 @@ outdated: false
 | **衰減**（僅限衰減） | 1.6 | 0.1-8（64） | [Sprite 形狀](sprite-shape.md#falloff) |
 | **平滑漸變**（僅限衰減） | 開 | | [Sprite 形狀](sprite-shape.md#falloff) |
 | 曲線編輯器（僅限曲線） | *平滑*預設 | | [Sprite 形狀](sprite-shape.md#the-curve-editor) |
-| **飽和點** | 24；載入時為估計值，之後依畫面量測 | 0.1-4000，對數刻度（10,000,000） | [色彩與曝光](colour-and-exposure.md#saturation-point) |
+| **飽和點** | 24；載入時為估計值，之後依畫面測量 | 0.1-4000，對數刻度（10,000,000） | [色彩與曝光](colour-and-exposure.md#saturation-point) |
 | **最低熱度** | 關（0） | 0-100% | [色彩與曝光](colour-and-exposure.md#minimum-heat) |
 | **密度響應** | *飽和* | *飽和* / *線性* / *對數* | [色彩與曝光](colour-and-exposure.md#density-response) |
 | **依畫面自動曝光** | | 按鈕 | [色彩與曝光](colour-and-exposure.md#auto-exposure) |
-| **跟隨視角** | 開 | | 每當攝影機停止移動時，會重新量測曝光，因此你飛入的區域會使用整個色彩漸層。小幅變化會被忽略，比例尺會平滑過渡。取消勾選，或拖動**飽和點**，即可鎖定比例尺，在同一比例尺上比較不同地點。[色彩與曝光](colour-and-exposure.md#follow-the-view) |
+| **跟隨視角** | 開 | | 每當攝影機停止移動時，會重新測量曝光，因此你飛入的區域會使用整個色彩漸層。小幅變化會被忽略，比例尺會平滑過渡。取消勾選，或拖動**飽和點**，即可鎖定比例尺，在同一比例尺上比較不同地點。[色彩與曝光](colour-and-exposure.md#follow-the-view) |
 | **任何縮放下密度一致** | 開 | | 無論你靠多近，一種顏色都代表每單位地面相同的列數。被像素限制放大（遠處）或縮小（近處）的 Sprite，會保留其真實大小應增加的熱度，因此從遠處曝光的畫面，不會因為你飛近而變淡。關閉時，被限制的 Sprite 會以其限制後的大小加上完整權重。[Sprite 形狀](sprite-shape.md#pixel-clamps) |
 | **壓平到地面** | 關 | | [Sprite 形狀](sprite-shape.md#flatten-onto-ground-plane) |
 

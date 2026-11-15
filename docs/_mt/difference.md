@@ -13,7 +13,7 @@ outdated: false
 
 Aħmar fejn it-tim A kien iktar, blu-aħdar fejn kien it-tim B, xejn fejn kienu ndaqs.
 
-**Differenza** (ċavetta 2) hija sħana b'sinjal. Ringieli ta' populazzjoni waħda jiżdiedu; ringieli ta' oħra jitnaqqsu. Fejn it-tnejn jaqgħu fuq xulxin b'mod ndaqs, ir-riżultat huwa zero u kompletament trasparenti; fejn waħda tkun domináta, turi f'kuluri dik in-naħa - b'mod awtomatiku sħan (trasparenti → aħmar → isfar → abjad) għan-naħa **+** u friski (trasparenti → aħdar → blu → vjola) għan-naħa **−**.
+**Differenza** (ċavetta 2) hija sħana b'sinjal. Ringieli ta' populazzjoni waħda jiżdiedu; ringieli ta' oħra jitnaqqsu. Fejn it-tnejn jaqgħu fuq xulxin b'mod ndaqs, ir-riżultat huwa zero u kompletament trasparenti; fejn waħda tkun dominata, turi f'kuluri dik in-naħa - b'mod predefinit sħan (trasparenti → aħmar → isfar → abjad) għan-naħa **+** u friski (trasparenti → aħdar → blu → vjola) għan-naħa **−**.
 
 ![Sħana tad-differenza: aħmar fejn in-naħa + kienet iktar, aħdar u blu fejn in-naħa - kienet iktar](../assets/img/en/difference-split.webp)
 
@@ -25,7 +25,7 @@ Aħmar fejn it-tim A kien iktar, blu-aħdar fejn kien it-tim B, xejn fejn kienu 
 4. Poġġi grupp wieħed (jew valur) fuq **+** u ieħor fuq **−**.
 5. Aqra l-kuluri: is-sħan ifisser in-naħa +, il-friski ifisser in-naħa −. Il-pannell iwissi jekk naħa waħda m'għandhiex ringieli (ara [Messaġġi li tista' tara](#messages-you-may-see)).
 
-*Liema żewġ populazzjonijiet* hija l-mistoqsija kollha, għalhekk il-qasma tista' tkun kwalunkwe kolonna miżmuma, mhux biss gruppi. Ringieli li jaqgħu **fl-ebda naħa** jitħallew barra, mhux jitqiesu bħala zero: dan hu li jagħmel qasma fuq żewġ valuri minn ħafna tqabbel eżattament dawk iż-żewġ valuri, u tgħaqqad ma' [il-filtri](filters.md) - ifilter sa mappa waħda, imbagħad aqsam dik skont il-build.
+*Liema żewġ populazzjonijiet* hija l-mistoqsija kollha, għalhekk il-qasma tista' tkun kwalunkwe kolonna miżmuma, mhux biss gruppi. Ringieli li jaqgħu **fl-ebda naħa** jitħallew barra, mhux jitqiesu bħala zero: dan hu li jagħmel qasma fuq żewġ valuri minn ħafna tqabbel eżattament dawk iż-żewġ valuri, u tgħaqqad ma' [il-filtri](filters.md) - iffiltra sa mappa waħda, imbagħad aqsam dik skont il-build.
 
 Il-modalità teħtieġ żewġ naħat: kolonna ta' grupp b'mill-inqas żewġ gruppi, jew qasma fuq kolonna miżmuma għall-filtrar. Fuq data b'anqas minn żewġ gruppi, tagħbija tibda b'qasma ta' kolonna - l-kolonna *Fajl tas-sors* ta' tagħbija b'ħafna fajls l-ewwel, altrimenti l-ewwel kolonna kategorika b'żewġ valuri, altrimenti l-ewwel kolonna numerika b'medda - sabiex *qabbel żewġ tagħbijiet* jaħdem fuq data mingħajr gruppi. Biss data mingħajr xejn minn dan tħalli l-modalità griża; hekk ukoll qasma ta' kolonna mħallija bl-ebda ħaġa fuq naħa waħda.
 
@@ -46,7 +46,7 @@ Jiġu offruti biss kolonni mħallija taħt *Żomm għall-filtrar* fil-ħin tat-t
 
 ### Qabbel proporzjonijiet, mhux għadd {#compare-shares-not-counts}
 
-**Qabbel proporzjonijiet, mhux għadd** (mitfi b'mod awtomatiku) jiżen kull naħa b'wieħed fuq l-għadd ta' ringieli tagħha, sabiex naħa b'ħames darbiet ir-ringieli ma tirbaħx bin-numri biss. Il-kulur imbagħad juri fejn kull naħa hija iktar komuni proporzjonalment mill-oħra. Uża dan meta ż-żewġ naħat ikollhom ammonti differenti ħafna ta' data, pereżempju żewġ sessjonijiet b'tul differenti.
+**Qabbel proporzjonijiet, mhux għadd** (mitfi b'mod predefinit) jiżen kull naħa b'wieħed fuq l-għadd ta' ringieli tagħha, sabiex naħa b'ħames darbiet ir-ringieli ma tirbaħx bin-numri biss. Il-kulur imbagħad juri fejn kull naħa hija iktar komuni proporzjonalment mill-oħra. Uża dan meta ż-żewġ naħat ikollhom ammonti differenti ħafna ta' data, pereżempju żewġ sessjonijiet b'tul differenti.
 
 ### Messaġġi li tista' tara {#messages-you-may-see}
 

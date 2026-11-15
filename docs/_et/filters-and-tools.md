@@ -52,7 +52,7 @@ Soojuskaardi vahekaardi külgriba ülevalt alla:
 9. Taust / tase
 10. Lõik
 11. Mõõtmine
-12. Kaamerarada ja renderdus
+12. Kaamera teekond ja renderdamine
 13. Jõudlus
 14. Kaamera ja stseen
 

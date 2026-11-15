@@ -36,10 +36,10 @@ Zgjedhja e **Të gjitha** ndalon edhe riluajtjen.
 | ⏮ | | Kthehu te fillimi i intervalit. |
 | Ora | | `e kaluar / gjithsej` si `mm:ss.s` (ose `h:mm:ss`), dhe, kur kolona e kohës është një vulë absolute, ora e saktë e kokës së luajtjes si `HH:MM:SSZ` (UTC). |
 | **Shpejtësia** | 1× | Sekonda të grupit për çdo sekondë reale. Menuja ka 17 hapa nga 0.01× deri në 1800× (0.01, 0.02, 0.05, 0.1, 0.25, 0.5, 1, 2, 4, 8, 16, 32, 64, 128, 256, 600, 1800), plus **E personalizuar…**: shkruaj çdo shpejtësi nga 0.001× deri në 3600× (për shembull 0.3 ose 12) dhe shtyp Enter; Esc e mban shpejtësinë aktuale. Shpejtësia e fundit kujtohet për vizitën e ardhshme (shih [Cilësimet e ruajtura](ref-settings-storage.md)). |
-| **Historia** | Kumulative | Çfarë numërohet si e dukshme te koka e luajtjes: *Kumulative*, *Dritare* ose *Jetëgjatësia* (më poshtë). |
-| **Hapësira** (Dritare; në modalitetin Vija edhe Jetëgjatësia) | 30 s | Gjatësia e dritares që mbaron te koka e luajtjes; të paktën 0.01 s. Te [Nxehtësia e vijave](line-heat.md#playback) është gjatësia e bishtit. |
-| **Jetë rezervë** (vetëm Jetëgjatësia, jo në modalitetin Vija) | 10 s | Sa gjatë mbetet e dukshme një pikë që s'ka mostrën e radhës të personit të vet. |
-| **Zbehje** (vetëm Jetëgjatësia, jo në modalitetin Vija) | 0.4 | Pjesa e jetës së çdo pike që kalon duke u zbehur, 0-1. |
+| **Historia** | Kumulative | Çfarë numërohet si e dukshme te koka e luajtjes: *Kumulative*, *Dritare* ose *Jetëgjatësi* (më poshtë). |
+| **Hapësira** (Dritare; në modalitetin Vija edhe Jetëgjatësi) | 30 s | Gjatësia e dritares që mbaron te koka e luajtjes; të paktën 0.01 s. Te [Nxehtësia e vijave](line-heat.md#playback) është gjatësia e bishtit. |
+| **Jetë rezervë** (vetëm Jetëgjatësi, jo në modalitetin Vija) | 10 s | Sa gjatë mbetet e dukshme një pikë që s'ka mostrën e radhës të personit të vet. |
+| **Zbehje** (vetëm Jetëgjatësi, jo në modalitetin Vija) | 0.4 | Pjesa e jetës së çdo pike që kalon duke u zbehur, 0-1. |
 | **Përsërit** | po | Në fund, fillon sërish; joaktiv ndalon në fund. |
 | Ana e djathtë | | Emri i grupit të të dhënave. |
 
@@ -51,9 +51,9 @@ Në modalitetin Luaj:
 
 - **Kumulative** - gjithçka nga fillimi i intervalit deri te koka e luajtjes. Nxehtësia grumbullohet ndërsa luhet.
 - **Dritare** - një hapësirë fikse historie që mbaron te koka e luajtjes (*Hapësira*).
-- **Jetëgjatësia** - çdo pikë jeton deri te **mostra e radhës e të njëjtit person** (në të njëjtën seancë), kështu që saktësisht një pozicion për person është aktual në çdo çast. Një pikë, personi i së cilës nuk shfaqet më - një vdekje, një shkëputje, fundi i regjistrit - nuk ka mostër të radhës, dhe jeton për *Jetë rezervë* në vend që të zhduket menjëherë ose të mbetet përgjithmonë. Pikat **zbehen** gjatë pjesës së fundit *Zbehje* të jetës së tyre në vend që të shfaqen befas: me një mostër të gjallë për person, një pikë që zhduket midis dy kornizave e bën gjithë fushën të pulsojë me shpejtësinë e mostrimit. *Zbehje* 0 e kthen prerjen e prerë.
+- **Jetëgjatësi** - çdo pikë jeton deri te **mostra e radhës e të njëjtit person** (në të njëjtën seancë), kështu që saktësisht një pozicion për person është aktual në çdo çast. Një pikë, personi i së cilës nuk shfaqet më - një vdekje, një shkëputje, fundi i regjistrit - nuk ka mostër të radhës, dhe jeton për *Jetë rezervë* në vend që të zhduket menjëherë ose të mbetet përgjithmonë. Pikat **zbehen** gjatë pjesës së fundit *Zbehje* të jetës së tyre në vend që të shfaqen befas: me një mostër të gjallë për person, një pikë që zhduket midis dy kornizave e bën gjithë fushën të pulsojë me shpejtësinë e mostrimit. *Zbehje* 0 e kthen prerjen e prerë.
 
-Jetëgjatësia kërkon një kolonë personi përveç kolonës së kohës; pa të, historia kthehet në Kumulative gjatë ngarkimit. Te [Nxehtësia e vijave](line-heat.md#playback) historia cakton sa gjatë mbetet i dukshëm bishti i një rruge; te [mbivendosja e figurave](box-replay.md) *Jetë rezervë* është sa gjatë mbahet një person që s'ka mostra të mëtejshme.
+Jetëgjatësi kërkon një kolonë personi përveç kolonës së kohës; pa të, historia kthehet në Kumulative gjatë ngarkimit. Te [Nxehtësia e vijave](line-heat.md#playback) historia cakton sa gjatë mbetet i dukshëm bishti i një rruge; te [mbivendosja e figurave](box-replay.md) *Jetë rezervë* është sa gjatë mbahet një person që s'ka mostra të mëtejshme.
 
 ## Sjellja e riluajtjes {#playback-behaviour}
 
@@ -72,8 +72,8 @@ Rreshtat ruhen të renditur sipas kohës, kështu që një dritare kohore janë 
 Si mbahet nxehtësia e qetë ndërsa dritarja lëviz varet nga historia ([Grumbullimi](accumulation.md)):
 
 - **Kumulative** vetëm rritet, kështu që çdo kornizë shton vetëm rreshtat që u bënë të dukshëm që nga e fundit, me peshë të plotë. Fusha ndërtohet monotonisht dhe pauza nuk ndryshon asgjë, sepse nuk ka më çfarë të mbërrijë. (Rivlerësimi do ta bënte çdo kornizë të ndriçonte një nëngrup tjetër të rastësishëm dhe pastaj ta zbehte, gjë që duket si shpërthime që përplasen dhe zhduken.)
-- **Dritare** dhe **Jetëgjatësia** ndryshojnë vërtet çdo kornizë dhe rivlerësohen, të përzier si mesatare e lëvizshme eksponenciale (pesha 0.34 për kornizën e re), që është e paanshme në gjendje të qëndrueshme dhe shumë më e qetë se të nisësh nga e para.
-- Në modalitetin Jetëgjatësia rreshtat kandidatë janë ata nga *koka e luajtjes - max(boshllëku më i gjatë në të dhëna, Jetë rezervë)* deri te koka e luajtjes; shader-i pastaj heq çdo rresht whose jeta e vet ka mbaruar dhe zbaton zbehjen.
+- **Dritare** dhe **Jetëgjatësi** ndryshojnë vërtet çdo kornizë dhe rivlerësohen, të përzier si mesatare e lëvizshme eksponenciale (pesha 0.34 për kornizën e re), që është e paanshme në gjendje të qëndrueshme dhe shumë më e qetë se të nisësh nga e para.
+- Në modalitetin Jetëgjatësi rreshtat kandidatë janë ata nga *koka e luajtjes - max(boshllëku më i gjatë në të dhëna, Jetë rezervë)* deri te koka e luajtjes; shader-i pastaj heq çdo rresht, jeta e të cilit ka mbaruar dhe zbaton zbehjen.
 
 Kalimi midis Të gjitha dhe Luaj, ose ndryshimi i historisë, e rinis grumbullimin.
 

@@ -45,7 +45,7 @@ Alle de andre varmestyringer – form, mætning, respons, minimumsvarme, dybde, 
 Fra [`colors.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors.ts):
 
 - Farver ligger på **Oklab**-farveplanet ved en fast lysstyrke (0,7) og kroma (0,115), så hver gruppe er lige lys, og en rød gruppe ikke virker varmere end en blå.
-- Med *n* grupper deles farvecirklen i *n* lige store dele, og gruppe *i* tager **midten** af sin del, `(i + 0,5) / n` af et omløb. To grupper er så langt fra hinanden, som antallet tillader, og modsatte forbliver modsatte, uanset antallet.
+- Med *n* grupper deles farvecirklen i *n* lige store dele, og gruppe *i* tager **midten** af sin del, `(i + 0.5) / n` af et omløb. To grupper er så langt fra hinanden, som antallet tillader, og modsatte forbliver modsatte, uanset antallet.
 - Højst **16** forskellige nuancer bruges. Med flere grupper placeres id'er ved gentagen halvering (bit-vendte id'er: 0, ½, ¼, ¾, ⅛, …), så naboid'er ikke deler en nuance; grupper ud over 16 deler nødvendigvis.
 - En gruppe, hvis navn betyder "ingen gruppe" – `0`, tom, `none`, `unknown`, `null` eller `-1`, uanset store og små bogstaver – tegnes i **neutral grå** i stedet for at tage en del af cirklen. Kun den første sådan etiket i grupperækken behandles på denne måde.
 

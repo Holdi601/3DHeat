@@ -1,5 +1,5 @@
 ---
-title: "比赛分析（CS2）"
+title: "对局分析（CS2）"
 nav_order: 13
 lang: "zh"
 source: "match-analysis.md"

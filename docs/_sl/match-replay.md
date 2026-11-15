@@ -22,11 +22,11 @@ Streli, zadetki, požari in olupki so narisani na enotah in ciljih na ravni. Kam
 1. Naložite posnetek z **Vir → Datoteke…** ali s spuščanjem na ploščo Vir (katera koli tabela s stolpcem **osebe** in stolpcem **časa**, datoteka Tacview, pretvorjen posnetek, tekma [`.3dheat`](container.md)). Glejte [Uvoz podatkov](getting-data-in.md).
 2. Odprite zavihek **Tekma** in izberite **Predvajanje figur** ali izberite **Prekrivanje figur** v vrstici načinov zavihka Toplotni zemljevid.
 3. Pod **Tekme v posnetku** izberite eno tekmo, vse hkrati ali več.
-4. Pritisnite **Predvaj** na časovnici (ali `K`). Povlecite časovnico, da skočite.
+4. Pritisnite **Predvajaj** na časovnici (ali `K`). Povlecite časovnico, da skočite.
 
 Figure nadomestijo kocke za vsako enoto, katere ime ali tip je znan (glejte [Figure](figures.md)). Podatki brez stolpca imena ali tipa so narisani kot vojaki.
 
-![Zavihek Tekma: izbirnik tekem, razdelek Figure, pogledi kamer, Predvaj in seznam dogodkov](../assets/img/en/match-replay-tab.webp)
+![Zavihek Tekma: izbirnik tekem, razdelek Figure, pogledi kamer, Predvajaj in seznam dogodkov](../assets/img/en/match-replay-tab.webp)
 
 ## Figure {#figures}
 
@@ -97,7 +97,7 @@ Ko tekma pride s svojimi cilji, razdelek **Cilji** jih nariše na ravni: cone za
   - Letala začnejo z imenom, vozilom, višino in hitrostjo.
   - Ladje začnejo z imenom, vozilom, hitrostjo in smerjo.
   - Ob postavitvi na enoto vidite vse njene vrednosti.
-- **Statistika**: po ekipi in enoti: kills, smrti, streli, zadetki, razmerje zadetkov, vzleti, pristanki, čas v zraku, največja hitrost, višina in G, razdalja. Izvoz CSV.
+- **Statistika**: po ekipi in enoti: ubitja, smrti, streli, zadetki, razmerje zadetkov, vzleti, pristanki, čas v zraku, največja hitrost, višina in G, razdalja. Izvoz CSV.
 - **Grafi**: vrednosti enote skozi čas, dve enoti primerjani ali ena vrednost proti drugi.
 
 ## Veliko tekem hkrati {#many-matches-at-once}

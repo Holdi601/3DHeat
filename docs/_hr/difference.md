@@ -27,7 +27,7 @@ Crveno tamo gdje je tim A bio više, zeleno-plavo tamo gdje je bio tim B, ništa
 
 *Koje* dvije populacije su cijelo pitanje, pa podjela može biti bilo koji zadržani stupac, ne samo grupe. Redci koji padnu na **nijednu** stranu **izostavljaju se**, ne broje se kao nula: upravo zato podjela preko dviju od mnogih vrijednosti uspoređuje točno te dvije, i slaže se s [filtrima](filters.md) - filtrirajte na jednu kartu, pa to podijelite po verziji.
 
-Način treba dvije strane: stupac grupe s najmanje dvije grupe ili podjelu po stupcu zadržanom za filtriranje. Na podacima s manje od dviju grupa učitavanje započinje podjelom po stupcu - prvo stupac *Izvorna datoteka* kod učitavanja više datoteka, inače prvi kategorijski stupac s dvije vrijednosti, inače prvi brojčani stupac s rasponom - pa *usporedba dva učitavanja* radi i na podacima bez grupa. Samo podaci bez i jednog ni drugog čine način nedostupnim; tako je i s podjelom po stupcu kojoj ostane prazna jedna strana.
+Način treba dvije strane: stupac grupe s najmanje dvije grupe ili podjelu po stupcu zadržanom za filtriranje. Na podacima s manje od dviju grupa učitavanje započinje podjelom po stupcu - prvo stupac *Izvorna datoteka* kod učitavanja više datoteka, inače prvi kategorijski stupac s dvije vrijednosti, inače prvi brojčani stupac s rasponom - pa *usporedba dva učitavanja* radi i na podacima bez grupa. Način je nedostupan samo kod podataka bez ijedne od ovih mogućnosti; nedostupan je i kad podjela po stupcu ostavi praznu jednu stranu.
 
 ## Panel Podjela razlike {#the-difference-split-panel}
 
@@ -46,7 +46,7 @@ Nude se samo stupci zadržani pod *Zadrži za filtriranje* pri učitavanju.
 
 ### Usporedi udjele, ne brojeve {#compare-shares-not-counts}
 
-**Usporedi udjele, ne brojeve** (zadano isključeno) pondera svaku stranu jednom kroz njezin vlastiti broj redaka, pa strana s pet puta više redaka ne pobjeđuje samo po brojkama. Boja tada pokazuje gdje je svaka strana proporcionalno češća od druge. Koristite to kad dvije strane imaju vrlo različite količine podataka, na primjer dvije sesije različitog trajanja.
+**Usporedi udjele, ne brojeve** (zadano isključeno) pondera svaku stranu s 1/(brojem njezinih redaka), pa strana s pet puta više redaka ne pobjeđuje samo po brojkama. Boja tada pokazuje gdje je svaka strana proporcionalno češća od druge. Koristite to kad dvije strane imaju vrlo različite količine podataka, na primjer dvije sesije različitog trajanja.
 
 ### Poruke koje možete vidjeti {#messages-you-may-see}
 
@@ -59,7 +59,7 @@ Panel upozorava kad slika nije prava razlika:
 | Nijedan redak u prozoru nije na strani **−** | Crta se samo strana **+**. |
 | Nijedna vrijednost nije ni na jednoj strani | Razlika ne crta ništa. Stavite barem jednu vrijednost na **+** ili **−**. |
 | *stupac* se ne može podijeliti na ovaj način | Odabrani stupac ne odgovara podjeli. Odaberite stupac ponovno. |
-| Stupac podjele nije stao u memoriju GPU-a za N od M dijelova | Ti redci se ne crtaju. Povećajte proračun GPU-a pod Performanse → Proračuni resursa ili učitajte manje redaka. |
+| Stupac podjele nije stao u memoriju GPU-a za N od M dijelova | Ti redci se ne crtaju. Povećajte proračun GPU-a pod Performanse → Proračun resursa ili učitajte manje redaka. |
 
 ### Po grupi {#by-group}
 
@@ -97,7 +97,7 @@ Koristite *linearni* odziv gustoće kad je važna veličina razlike: to je jedin
 
 Svaki redak dobiva predznak +1, -1 ili 0 u vertex shaderu ([`POINT_HEAT_VS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/shaders.ts)); 0 odbacuje redak prije nego se iscrta ijedan fragment.
 
-- Po grupi, predznak dolazi iz tablice grupa od 4096 unosa indeksirane id-em grupe retka (id grupe jaše u četvrtom kanalu teksela pozicije retka).
+- Po grupi, predznak dolazi iz tablice grupa od 4096 unosa indeksirane id-em grupe retka (id grupe nosi se u četvrtom kanalu teksela pozicije retka).
 - Po kategoriji, predznak dolazi iz druge tablice od 4096 unosa, popunjene po vrijednosti kategorije, a vrijednost retka čita se iz teksture filtra stupca; vrijednost iza kraja tablice se odbacuje na objema pozadinama.
 - Po rasponu, vrijednost retka uspoređuje se s dva raspona.
 

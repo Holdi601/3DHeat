@@ -11,7 +11,7 @@ outdated: false
 
 # Filtrid
 
-**Filtrid** peidavad read, mis sind ei huvita, näiteks ühe sõidukiklassi või ühe sündmuse liigi, ja pilt uueneb kohe. Paneel loetleb veerud, mis laadimisel alles hoiti jaotises *Hoia filtreerimiseks* ([Veergude seostamine](column-mapping.md)), ning lisaks *Lähtefail*, kui laeti mitu faili.
+**Filtrid** peidavad read, mis sind ei huvita, näiteks ühe sõidukiklassi või ühe sündmuse liigi, ja pilt uueneb kohe. Paneel loetleb veerud, mis laadimisel alles hoiti jaotises *Hoia filtreerimiseks* ([Veergude seostamine](column-mapping.md)), ning lisaks *Source file*, kui laeti mitu faili.
 
 ## Proovi {#try-it}
 

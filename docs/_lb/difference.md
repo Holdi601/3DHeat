@@ -15,7 +15,7 @@ Rout, wou Team A méi war, gréng-blo, wou Team B méi war, näischt, wou se gl�
 
 **Ënnerscheed** (Tast 2) ass vorzeechend Hëtzt. Zeilen vun enger Populatioun addéieren Hëtzt; Zeilen vun enger anerer zéien se of. Wou sech déi zwee gläichméisseg iwwerlappen, ass d'Resultat null a ganz transparent; wou eng Säit dominéiert, weist sech dat a senger Säitefaarf - standardméisseg waarm (transparent → rout → giel → wäiss) fir d'**+**-Säit a kal (transparent → gréng → blo → purpur) fir d'**−**-Säit.
 
-![Ënnerscheed-Hëtzt: rout, wou d'+-Säit méi war, gréng a blo, wou d'--Säit méi war](../assets/img/en/difference-split.webp)
+![Ënnerscheed-Hëtzt: rout, wou d'+-Säit méi war, gréng a blo, wou d'−-Säit méi war](../assets/img/en/difference-split.webp)
 
 ## Wéi een et benotzt {#how-to-use-it}
 
@@ -23,7 +23,7 @@ Rout, wou Team A méi war, gréng-blo, wou Team B méi war, näischt, wou se gl�
 2. Maacht **Ënnerscheedsopdeelung** an der Säitelleescht op.
 3. Wielt, **Opdeelen no**: normalerweis *Gruppen*.
 4. Setzt eng Grupp (oder e Wäert) op **+** an eng aner op **−**.
-5. Liest d'Faarwen: waarm heescht d'+-Säit, kal heescht d'−-Säit. Den Panel warnt, wann eng Säit keng Zeile huet (kuckt [Meldungen, déi s de gesäis](#messages-you-may-see)).
+5. Liest d'Faarwen: waarm heescht d'+-Säit, kal heescht d'−-Säit. De Panel warnt, wann eng Säit keng Zeile huet (kuckt [Meldungen, déi s de gesäis](#messages-you-may-see)).
 
 *Wéi* zwou Populatiounen ass déi ganz Fro, dofir kann d'Opdeelung iwwer all behalen Kolonn goen, net nëmmen iwwer Gruppen. Zeilen, déi op **keng vun deenen zwou** Säiten falen, ginn **ausgelooss**, net als null gezielt: dat mécht, datt eng Opdeelung iwwer zwee vu ville Wäerter genau déi zwee vergläicht, an et kombinéiert sech mat de [Filteren](filters.md) - filtert op eng Kaart erof, an deelt dann dat no Versioun op.
 
@@ -59,7 +59,7 @@ De Panel warnt, wann d'Bild kee richtegen Ënnerscheed ass:
 | Keng Zeil am Fënster ass op der **−**-Säit | Nëmmen d'**+**-Säit gëtt gezeechent. |
 | Kee Wäert ass op enger Säit | Den Ënnerscheed zeechent näischt. Setzt op d'mannst een Wäert op **+** oder **−**. |
 | *Kolonn* kann esou net opgedeelt ginn | D'gewielte Kolonn passt net zur Opdeelung. Wielt d'Kolonn nei. |
-| D'Opdeelungskolonn huet fir N vu M Stéck net an de GPU-Späicher gepasst | Déi Zeilen ginn net gezeechent. Hieft de GPU-Budget ënner Leeschtung → Ressourcebudgeten, oder ladd manner Zeilen. |
+| D'Opdeelungskolonn huet fir N vu M Stéck net an de GPU-Späicher gepasst | Déi Zeilen ginn net gezeechent. Hieft de GPU-Budget ënner Leeschtung → Ressourcebudgeten, oder lued manner Zeilen. |
 
 ### No Grupp {#by-group}
 
@@ -103,4 +103,4 @@ All Zeil kritt am Vertex-Shader en Vorzeechen vun +1, -1 oder 0 ([`POINT_HEAT_VS
 
 Eng Ännerung vun der Opdeelung fänkt d'Akkumulatioun nei un.
 
-**Verstoppt Gruppe bleiwen bei all Opdeelung verstoppt.** Bei enger Opdeelung iwwer eng Kolonn huet d'Gruppetabell keng Vorzeechen méi; si hält 1 fir eng gewisen Grupp a 0 fir eng verstoppt ([`frameSignTables`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts)), an béid Tabelle kommen zesummen beim Shader un - zwou Zeilen vun enger Vorzeechentextur op WebGL2, zwou Hallschten vun engem Storage-Buffer op WebGPU. Eng Zeil gëtt nëmmen gezeechent, wann hir Grupp gewise ass *an* hire Kolonnewäert op enger Säit ass. Also dréit eng Grupp, déi an der [Team-Lëscht](teams-list.md) ausgehaakt ass, oder déi duerch d'Säitefokus vum Match-Tab ausgelooss ass, näischt bäi, egal wéi d'Ënnerscheed opgedeelt ass.
+**Verstoppte Gruppen bleiwen bei all Opdeelung verstoppt.** Bei enger Opdeelung iwwer eng Kolonn huet d'Gruppetabell keng Vorzeechen méi; si hält 1 fir eng gewisen Grupp a 0 fir eng verstoppt ([`frameSignTables`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts)), an béid Tabelle kommen zesummen beim Shader un - zwou Zeilen vun enger Vorzeechentextur op WebGL2, zwou Hallschten vun engem Storage-Buffer op WebGPU. Eng Zeil gëtt nëmmen gezeechent, wann hir Grupp gewise ass *an* hire Kolonnewäert op enger Säit ass. Also dréit eng Grupp, déi an der [Team-Lëscht](teams-list.md) ausgehaakt ass, oder déi duerch d'Säitefokus vum Match-Tab ausgelooss ass, näischt bäi, egal wéi d'Ënnerscheed opgedeelt ass.

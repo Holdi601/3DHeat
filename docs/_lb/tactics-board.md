@@ -88,7 +88,7 @@ D'Leescht ënner der Usiicht hält d'Schrëtt. E Plang fänkt mat engem un; **+*
 
 ## Späicheren {#saving}
 
-D'Sektioun **Fichier** huet **Späicheren**, **Open** an **Läschen**. **Späicheren** schreift de Plang als `<name>.h3dplan.json` (einfach JSON: Säiten, Schrëtt, Figuren mat enger Plaz pro Schrëtt, Feilen, Gebidder, Notizen); **Open** liest ee zréck. Eng Datei vun enger anerer Versioun, oder déi kee Plang ass, gëtt mat dem Grond ofgelehnt. **Läschen** läscht de Plang; Réckgängeg bréngt en zréck.
+D'Sektioun **Fichier** huet **Späicheren**, **Opmaachen** an **Eidel maachen**. **Späicheren** schreift de Plang als `<name>.h3dplan.json` (einfach JSON: Säiten, Schrëtt, Figuren mat enger Plaz pro Schrëtt, Feilen, Gebidder, Notizen); **Opmaachen** liest ee zréck. Eng Datei vun enger anerer Versioun, oder déi kee Plang ass, gëtt mat dem Grond ofgelehnt. **Eidel maachen** läscht de Plang; Réckgängeg bréngt en zréck.
 
 ## Figuren {#figures}
 

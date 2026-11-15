@@ -14,7 +14,7 @@ outdated: false
 
 Ogni partita inizia dal proprio inizio e le sue unità si muovono come figure. I file vanno direttamente nella scheda grafica e non viene costruita nessuna tabella completa, quindi scorre senza intoppi dove un caricamento normale esaurirebbe la memoria.
 
-![Dieci partite di carri sovrapposte, un colore per partita](../assets/img/en/many-matches.webp)
+![Dieci partite di carri sovrapposte, un colore per partita](../assets/img/it/many-matches.webp)
 
 ## Come si usa {#how-to-use-it}
 

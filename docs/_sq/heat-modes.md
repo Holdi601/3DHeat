@@ -48,7 +48,7 @@ Tastet 1-4 kontrollohen ndaj të dhënave po në të njëjtën mënyrë: një ta
 | Drejtimi ([nxehtësi sipas drejtimit](directional-heat.md)), Vlera ([peshimi i vlerave](value-weighting.md)) | po | po | po | | po |
 | Pamja e ekipeve ([mbivendosja e figurave](box-replay.md)) | | | | po | |
 | Ndarja e diferencës ([diferenca](difference.md)) | | po | | | |
-| [Skuadrat](teams-list.md), [Entitetet](entities.md), [Filtrat](filters.md), Sfondi / niveli, [Prerja](slice.md), [Matja](measure.md), Rruga e kamerës dhe vizatimi, Performanca, Kamera & skena | po | po | po | po | po |
+| [Skuadrat](teams-list.md), [Entitetet](entities.md), [Filtrat](filters.md), Sfondi / niveli, [Prerja](slice.md), [Matja](measure.md), Shtegu i kamerës & renderimi, Performanca, Kamera & skena | po | po | po | po | po |
 
 ## Çfarë ndajnë të gjitha modalitetet e nxehtësisë {#what-every-heat-mode-shares}
 

@@ -90,11 +90,11 @@ Odpowiedzi są JSON-em z `Cache-Control: no-store`. Serwer nasłuchuje tylko na 
 
 - Pyta trasę **4 sekundy** po załadowaniu strony (nie w pierwszych sekundach: strona ma zbiór danych do wczytania i GPU do uruchomienia), a potem **co 6 godzin**, dopóki strona jest otwarta.
 - Nic nie pokazuje, gdy trasy nie ma (statyczny build), folder nie jest kopią albo nic nie jest nowsze - powiadomienie przy każdym starcie to coś, do czego ludzie przywykają i je ignorują.
-- Gdy w tyle, bez zmian lokalnych: „A newer version of 3DHeat is available (N changes, the newest: <temat>).” z przyciskami **Aktualizuj teraz** i **Później** (*Później* chowa je do przeładowania strony).
-- Gdy w tyle, ze zmianami lokalnymi: to samo zdanie i „This copy has local changes, so it is not updated automatically; commit or stash them, then run git pull.” - bez przycisku.
-- **Aktualizuj teraz** wysyła żądanie do `/apply` („Updating...”). Potem:
-  - „Updated. The page reloads.” - i przeładowuje się 1,5 s później (serwer już podaje nowe pliki);
-  - gdy zależności zostały zainstalowane ponownie: „Updated. Its dependencies changed: close the server window and run **restart.bat** to finish.”;
-  - gdy zmieniły się tylko ustawienia serwera: „Updated. Its server settings changed: close the server window and run **restart.bat** to finish.”;
-  - nic do przeniesienia po wszystkim (`updated: false` - kopię doprowadził już do porządku na przykład `start.bat`): „Nothing to update: this copy is already the newest version.” - i bez przeładowania;
-  - odrzucone: zdanie o zmianach lokalnych albo „This copy has commits of its own that the newest version does not; update it with git pull.”, albo „The update did not go through: <reason>”.
+- Gdy w tyle, bez zmian lokalnych: „Dostępna jest nowsza wersja 3DHeat (N zmian, najnowsza: <temat>).” z przyciskami **Aktualizuj teraz** i **Później** (*Później* chowa je do przeładowania strony).
+- Gdy w tyle, ze zmianami lokalnymi: to samo zdanie i „Ta kopia ma lokalne zmiany, więc nie jest aktualizowana automatycznie; zrób commit lub stash, a potem uruchom git pull.” - bez przycisku.
+- **Aktualizuj teraz** wysyła żądanie do `/apply` („Aktualizowanie…”). Potem:
+  - „Zaktualizowano. Strona zostanie przeładowana.” - i przeładowuje się 1,5 s później (serwer już podaje nowe pliki);
+  - gdy zależności zostały zainstalowane ponownie: „Zaktualizowano. Zmieniły się zależności: zamknij okno serwera i uruchom **restart.bat**, aby dokończyć.”;
+  - gdy zmieniły się tylko ustawienia serwera: „Zaktualizowano. Zmieniły się ustawienia serwera: zamknij okno serwera i uruchom **restart.bat**, aby dokończyć.”;
+  - nic do przeniesienia po wszystkim (`updated: false` - kopię doprowadził już do porządku na przykład `start.bat`): „Nie ma czego aktualizować: ta kopia to już najnowsza wersja.” - i bez przeładowania;
+  - odrzucone: zdanie o zmianach lokalnych albo „Ta kopia ma własne commity, których nie ma najnowsza wersja; zaktualizuj ją przez git pull.”, albo „Aktualizacja się nie powiodła: <reason>”.

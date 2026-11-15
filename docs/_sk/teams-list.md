@@ -1,5 +1,5 @@
 ---
-title: "Zoznam tímov"
+title: "Tímy"
 parent: "Filtre a nástroje"
 nav_order: 2
 lang: "sk"

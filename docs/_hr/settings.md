@@ -66,12 +66,12 @@ Ove postavke se čuvaju u pregledniku između posjeta (ništa se nigdje ne šalj
 
 Postavke topline, filtri i način počinju ispočetka pri svakom učitavanju. Potpuni, generirani popis: [Spremljene postavke](ref-settings-storage.md).
 
-## Tipke koje preglednik zadržava iz preglednika {#keys-the-viewer-keeps-from-the-browser}
+## Tipke koje preglednik štiti od web-preglednika {#keys-the-viewer-keeps-from-the-browser}
 
-Sesija s velikim podacima traje dugo da se učita, pa preglednik sprječava da preglednik to slučajno odbaci:
+Sesija s velikim podacima dugo se učitava, pa preglednik sprječava da je web-preglednik slučajno odbaci:
 
 - `Ctrl`/`Cmd` + slova koja bi ispisala, spremila, otvorila, ponovno učitala, zatvorila ili otvorila nove prozore ne rade izvan tekstnih polja; `F1`, `F3`, `F5`, `F6` i `F7` ne rade ništa.
 - Zatvaranje ili ponovno učitavanje kartice s učitanim podacima ili razinom prvo pita.
-- U cijelom zaslonu preglednik zaključava tipke koje koristi (W, T, N, S, R, P, Q, Esc), pa ih preglednik ne preuzima.
+- U cijelom zaslonu preglednik zaključava tipke koje koristi (W, T, N, S, R, P, Q, Esc), pa ih web-preglednik ne preuzima.
 
 Točan popis: [Tipke preglednika](ref-browser-keys.md). Sve vlastite tipke preglednika: [Referenca tipkovnice i miša](keyboard-reference.md).

@@ -15,7 +15,7 @@ Eine **Figur** ist ein kleines 3D-Modell dessen, was eine Einheit wirklich ist: 
 
 Es gibt rund 2.000 benannte Fahrzeuge, Flugzeuge, Schiffe, Waffen und Soldaten, alle vom Viewer selbst gebaut.
 
-![Panzer der Demo, als ihre eigenen Figuren gezeichnet](../assets/img/en/replay-tanks.webp)
+![Panzer der Demo, als ihre eigenen Figuren gezeichnet](../assets/img/de/replay-tanks.webp)
 
 ## Was im Katalog steht {#what-is-in-the-catalogue}
 

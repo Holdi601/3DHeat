@@ -36,7 +36,7 @@ Na secção **Cores do calor**:
 | **Separação de cor** | 1,4 | Quanto uma mistura é afastada do neutro, 0-4. 0 deixa tudo cinzento; 1 é a média verdadeira; acima de cerca de 2 as misturas mais brilhantes saem do intervalo visível e são limitadas canal a canal, o que desloca a sua tonalidade. |
 | **Rampa de opacidade (a cor vem do grupo)** | a rampa de calor predefinida | Só o **alfa** da rampa é usado aqui: transparente onde não há nada, opaco no topo. As suas cores são ignoradas. |
 
-Todos os outros controlos de calor - forma, saturação, resposta, calor mínimo, profundidade, culling - funcionam como em [Calor](heat.md).
+Todos os outros controlos de calor - forma, saturação, resposta, calor mínimo, profundidade, recorte - funcionam como em [Calor](heat.md).
 
 A [Lista de equipas](teams-list.md) mostra neste modo a cor de calor por equipa de cada grupo como a sua amostra. Ocultar um grupo deixa a cor de todos os outros onde estava: as tonalidades vêm do número total de grupos, não do que está ligado, por isso duas imagens continuam comparáveis.
 

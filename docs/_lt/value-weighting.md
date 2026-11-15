@@ -1,5 +1,5 @@
 ---
-title: "Vertės svoriavimas"
+title: "Vertės svorinimas"
 parent: "Šilumos režimai"
 nav_order: 12
 lang: "lt"

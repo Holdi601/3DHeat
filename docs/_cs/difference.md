@@ -20,7 +20,7 @@ outdated: false
 ## Jak to použít {#how-to-use-it}
 
 1. Stiskněte `2` (nebo vyberte **Rozdíl** v liště režimů).
-2. V postranním panelu otevřete **Rozdělení rozdílu**.
+2. V postranním panelu otevřete **Rozdílové rozdělení**.
 3. Vyberte, co **Rozdělit podle**: obvykle *Skupiny*.
 4. Jednu skupinu (nebo hodnotu) dejte na **+** a jinou na **−**.
 5. Čtěte barvy: teplejší znamená stranu +, chladnější stranu −. Panel varuje, když jedna strana nemá žádné řádky (viz [Zprávy, které můžete vidět](#messages-you-may-see)).
@@ -29,7 +29,7 @@ outdated: false
 
 Režim potřebuje dvě strany: sloupec skupiny s aspoň dvěma skupinami, nebo rozdělení přes sloupec ponechaný pro filtrování. U dat s méně než dvěma skupinami začne načtení rozdělením podle sloupce - nejdřív sloupec *Zdrojový soubor* u načtení z více souborů, jinak první kategoriální sloupec se dvěma hodnotami, jinak první číselný sloupec s rozpětím - takže *porovnání dvou načtení* funguje i u dat bez skupin. Režim je nedostupný jen u dat bez obojího; stejně tak u rozdělení sloupce, kde na jedné straně nic nezůstalo.
 
-## Panel Rozdělení rozdílu {#the-difference-split-panel}
+## Panel Rozdílové rozdělení {#the-difference-split-panel}
 
 Zobrazuje se v režimu Rozdíl, pod panely tepla.
 
@@ -42,7 +42,7 @@ Zobrazuje se v režimu Rozdíl, pod panely tepla.
 | Číselný sloupec | *sloupec (číselný)* | Rozsah hodnot pro každou stranu |
 | Soubor původu | *Zdrojový soubor - porovnání dvou načtení* (když bylo načteno více souborů) | Soubory na +, − nebo na žádné |
 
-Nabízejí se jen sloupce ponechané pod *Ponechat pro filtrování* při načítání.
+Nabízejí se jen sloupce ponechané pod *Zachovat pro filtrování* při načítání.
 
 ### Porovnávat podíly, ne počty {#compare-shares-not-counts}
 
@@ -59,7 +59,7 @@ Panel varuje, když obrázek není skutečný rozdíl:
 | Žádný řádek v okně není na straně **−** | Kreslí se jen strana **+**. |
 | Žádná hodnota není na žádné straně | Rozdíl nekreslí nic. Dejte aspoň jednu hodnotu na **+** nebo **−**. |
 | *sloupec nejde rozdělit tímto způsobem* | Zvolený sloupec se k rozdělení nehodí. Vyberte sloupec znovu. |
-| Sloupec rozdělení se nevešel do paměti GPU pro N z M částí | Tyto řádky se nekreslí. Zvyšte rozpočet GPU v Výkon → Rozpočty zdrojů, nebo načtěte méně řádků. |
+| Sloupec rozdělení se nevešel do paměti GPU pro N z M částí | Tyto řádky se nekreslí. Zvyšte rozpočet GPU v Výkon → Rozpočty prostředků, nebo načtěte méně řádků. |
 
 ### Podle skupiny {#by-group}
 

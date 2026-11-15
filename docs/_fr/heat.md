@@ -15,7 +15,7 @@ La chaleur colore les endroits où il s'est passé beaucoup de choses : rouge l�
 
 **Chaleur** (touche 1) est le mode par défaut. Chaque [ligne](glossary.md) visible apporte un [sprite](glossary.md) rond face à la caméra ; les sprites qui se recouvrent s'additionnent dans un tampon à virgule flottante ; la somme est reportée sur une rampe de couleurs - par défaut transparent → rouge → jaune → blanc - puis dessinée par-dessus la scène.
 
-![Chaleur sur un niveau 3D : points chauds à l'intérieur et au sommet des bâtiments](../assets/img/en/shooter-heat.webp)
+![Chaleur sur un niveau 3D : points chauds à l'intérieur et au sommet des bâtiments](../assets/img/fr/shooter-heat.webp)
 
 L'image montre la chaleur d'une manche de tireur sur un niveau avec des bâtiments : les points chauds se trouvent dans les pièces et dans les escaliers, pas seulement au sol.
 
@@ -26,7 +26,7 @@ L'image montre la chaleur d'une manche de tireur sur un niveau avec des bâtimen
 3. Modifiez **Rayon des sprites** jusqu'à ce que les points voisins se fondent en bandes : plus petit, on voit des taches isolées ; plus grand, on voit des zones.
 4. Ouvrez **Couleurs de la chaleur** pour changer les couleurs, ou **Profondeur** pour laisser les collines et les murs masquer la chaleur derrière eux.
 
-![Les sections Forme de la chaleur et Couleurs de la chaleur de la barre latérale, toutes deux ouvertes](../assets/img/en/heat-panel.webp)
+![Les sections Forme de la chaleur et Couleurs de la chaleur de la barre latérale, toutes deux ouvertes](../assets/img/fr/heat-panel.webp)
 
 Les mêmes panneaux façonnent la [Différence](difference.md), la [Chaleur par équipe](team-heat.md) et la [Chaleur linéaire](line-heat.md) ; elles diffèrent par ce qui est ajouté (signé, coloré ou le long de lignes), non par la manière.
 

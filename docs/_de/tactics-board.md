@@ -23,7 +23,7 @@ Der Tab **Taktik** ist eine Zeichentafel für einen Teamplan: Du setzt kleine Fi
 6. Drücke **▶** (oder `K`), um den Plan ab dem gezeigten Schritt bis zum Ende abzuspielen.
 7. Gib dem Plan unter **Name des Plans** einen Namen und drücke **Speichern**.
 
-![Der Tab Taktik in der Draufsicht: Spiel, Seiten und Werkzeuge links, drei Figuren mit Bewegungspfeilen, ein Wurfbogen für Rauch, eine Fläche und unten die Schritte](../assets/img/en/tactics.webp)
+![Der Tab Taktik in der Draufsicht: Spiel, Seiten und Werkzeuge links, drei Figuren mit Bewegungspfeilen, ein Wurfbogen für Rauch, eine Fläche und unten die Schritte](../assets/img/de/tactics.webp)
 
 ## Einen Plan beginnen {#starting-a-plan}
 
@@ -88,7 +88,7 @@ Die Leiste unter der Ansicht enthält die Schritte. Ein Plan beginnt mit einem; 
 
 ## Speichern {#saving}
 
-Der Abschnitt **Datei** enthält **Speichern**, **Open** und **Leeren**. **Speichern** schreibt den Plan als `<name>.h3dplan.json` (einfaches JSON: Seiten, Schritte, Figuren mit einem Ort pro Schritt, Pfeile, Flächen, Notizen); **Open** liest einen zurück. Eine Datei einer anderen Version oder eine, die kein Plan ist, wird mit dem Grund abgelehnt. **Leeren** leert den Plan; Rückgängig holt ihn zurück.
+Der Abschnitt **Datei** enthält **Speichern**, **Öffnen** und **Leeren**. **Speichern** schreibt den Plan als `<name>.h3dplan.json` (einfaches JSON: Seiten, Schritte, Figuren mit einem Ort pro Schritt, Pfeile, Flächen, Notizen); **Öffnen** liest einen zurück. Eine Datei einer anderen Version oder eine, die kein Plan ist, wird mit dem Grund abgelehnt. **Leeren** leert den Plan; Rückgängig holt ihn zurück.
 
 ## Figuren {#figures}
 

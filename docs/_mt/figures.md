@@ -45,7 +45,7 @@ Il-viewer iħares lejn il-kolonni tad-data nnifisha:
 
 Għalhekk l-aktar mod faċli biex tikseb il-figuri t-tajbin hu kolonna `vehicle` bl-ismijiet veri, jew kolonna `type` b'tags ta' Tacview.
 
-**L-unità tiegħi tidher bħala kaxxa jew suldat.** Żid kolonna `vehicle` bl-isem veru, jew kolonna `type` b'tag ta' Tacview. Għalli bil-mouse fuq l-unità biex tara liema isem ġie mqabbel. Data li għandha dawn il-kolonni imma ma tgħid xejn dwar unità tħallieha bħala kaxxa; data mingħajr xejn minnhom tinżel bħala suldati.
+**L-unità tiegħi tidher bħala kaxxa jew suldat.** Żid kolonna `vehicle` bl-isem veru, jew kolonna `type` b'tag ta' Tacview. Poġġi l-mouse fuq l-unità biex tara liema isem ġie mqabbel. Data li għandha dawn il-kolonni imma ma tgħid xejn dwar unità tħallieha bħala kaxxa; data mingħajr xejn minnhom tinżel bħala suldati.
 
 ## Settings {#settings}
 

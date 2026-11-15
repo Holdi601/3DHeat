@@ -43,12 +43,12 @@ Klávesy 1-4 sa overujú voči dátam rovnako: klávesa pre zašedený režim ni
 
 | Panel | Teplo | Rozdiel | Teplo tímov | Prekrytie figúrok | Čiary |
 |---|---|---|---|---|---|
-| Trasy ([čiarové teplo](line-heat.md)) | | | | | áno |
+| Cesty ([čiarové teplo](line-heat.md)) | | | | | áno |
 | Tvar tepla (s **Sledovať pohľad** a **Rovnaká hustota pri každom priblížení**), Farby tepla, Pixelové hranice spritu, Hĺbka, Orezanie podľa vzdialenosti | áno | áno | áno | | áno |
 | Smer ([smerové teplo](directional-heat.md)), Hodnota ([váženie hodnotou](value-weighting.md)) | áno | áno | áno | | áno |
 | Zobrazenie tímov ([prekrytie figúrok](box-replay.md)) | | | | áno | |
 | Rozdelenie rozdielu ([rozdiel](difference.md)) | | áno | | | |
-| [Zoznam tímov](teams-list.md), [Entity](entities.md), [Filtre](filters.md), Pozadie / level, [Rez](slice.md), [Meranie](measure.md), Dráha kamery a render, Výkon, Kamera a scéna | áno | áno | áno | áno | áno |
+| [Tímy](teams-list.md), [Entity](entities.md), [Filtre](filters.md), Pozadie / level, [Rez](slice.md), [Meranie](measure.md), Dráha kamery a render, Výkon, Kamera a scéna | áno | áno | áno | áno | áno |
 
 ## Čo majú spoločné všetky režimy tepla {#what-every-heat-mode-shares}
 
@@ -69,7 +69,7 @@ Všetko v kroku 4 sa uplatní pri skladaní, takže ťahanie týchto ovládačov
   - [Hĺbka a orezávanie](depth-and-culling.md) - zakrytie levelom, skrytie za terénom, orezanie podľa vzdialenosti
 - [Rozdiel](difference.md) - rozdelenie rozdielu
 - [Teplo tímov](team-heat.md)
-- [Teplo čiar](line-heat.md) - trasy
+- [Teplo čiar](line-heat.md) - cesty
 - [Prekrytie figúrok](box-replay.md) - režim prehrávania (súbor sa stále volá box replay)
 - [Smerové teplo](directional-heat.md)
 - [Váženie hodnôt](value-weighting.md)

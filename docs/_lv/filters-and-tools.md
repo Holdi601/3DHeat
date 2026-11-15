@@ -20,7 +20,7 @@ visas rindas -> Filtri -> Komandas -> Vienības -> Griezums -> attēls
                 UN        UN          UN          UN
 ```
 
-Piemērs: noņemiet atzīmi *Tank* sadaļā Filtri, paslēpiet sarkano komandu sadaļā Komandas un izvēlieties vienu spēlētāju sadaļā Vienības. Redzat tikai šī spēlētāja kustības bez tankiem.
+Piemērs: noņemiet atzīmi *Tanks* sadaļā Filtri, paslēpiet sarkano komandu sadaļā Komandas un izvēlieties vienu spēlētāju sadaļā Vienības. Redzat tikai šī spēlētāja kustības bez tankiem.
 
 | Panelis | Ko tas dara | Siltuma režīmi | Figūru pārklājums |
 |---|---|---|---|

@@ -52,7 +52,7 @@ Isı haritası sekmesinin kenar çubuğu, yukarıdan aşağıya:
 9. Arka plan / bölüm
 10. Kesit
 11. Ölçüm
-12. Kamera yolu ve çizim
+12. Kamera yolu ve render
 13. Performans
 14. Kamera ve sahne
 

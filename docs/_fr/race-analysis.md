@@ -27,7 +27,7 @@ Cette page est le plan de l'onglet. Chaque partie a sa propre page :
 | [Événements de contrôle des voitures](race-control-events.md) | blocages, patinage des roues, survirage, tête-à-queue, sous-virage, impacts, accidents, ABS/TC, frein à main, air - comment chacun est détecté, avec chaque seuil |
 | [Analyse virage par virage](race-corner-analysis.md) | alignement par distance, virages et segments, le bilan de temps d'un virage, chaque cause et l'ordre dans lequel elles sont testées, la forme de la trajectoire et le conseil |
 | [Profils de voitures et comparaison](race-car-profiles.md) | ce que chaque voiture peut faire, mesuré sur ses tours ; *Voitures comparées* ; ce que la voiture décide dans chaque virage |
-| [Statistiques du circuit](race-course-statistics.md) | de nombreux tours d'un même circuit : erreurs par virage et par type, carte des erreurs, export de la carte de chaleur, limites de performance |
+| [Statistiques du parcours](race-course-statistics.md) | de nombreux tours d'un même circuit : erreurs par virage et par type, carte des erreurs, export de la carte de chaleur, limites de performance |
 | [Analyse de course : la méthode](race-analytics.md) | la recherche derrière les règles, avec les sources |
 | [Autres jeux de course](other-games.md) | ce que fait la visionneuse avec les tours de chaque jeu : glissement et dérive calculés là où un jeu ne les envoie pas, mondes en miroir, canaux supplémentaires |
 
@@ -37,8 +37,8 @@ Cette page est le plan de l'onglet. Chaque partie a sa propre page :
 
 1. **Tours** - charger, lister, afficher/masquer, référence, mise au point, poursuite.
    Voir [Charger des tours](race-loading-laps.md).
-2. **Statistiques du circuit** - seulement à partir de trois tours chargés.
-   Voir [Statistiques du circuit](race-course-statistics.md).
+2. **Statistiques du parcours** - seulement à partir de trois tours chargés.
+   Voir [Statistiques du parcours](race-course-statistics.md).
 3. **Où progresser** - les constats du tour mis au point, virage par virage.
    Voir [Analyse virage par virage](race-corner-analysis.md).
 4. **Virage par virage** (ou *Virage par virage - classe X* avec plusieurs
@@ -50,7 +50,7 @@ Cette page est le plan de l'onglet. Chaque partie a sa propre page :
    [Profils de voitures et comparaison](race-car-profiles.md).
 7. **Vue** - quelle carte est peinte sur la piste et ce qui est dessiné.
    Voir [Rejeu et scène 3D](race-replay-and-scene.md).
-8. Les panneaux partagés **Niveau** et **Caméra et scène** (modèle du circuit,
+8. Les panneaux partagés **Arrière-plan / niveau** et **Caméra et scène** (modèle du circuit,
    inversion des axes, caméra) - documentés avec la carte de chaleur et [Caméra](camera.md).
 
 **La vue** montre le circuit, les lignes parcourues, la carte, les voitures, les
@@ -105,7 +105,7 @@ descendre, **Maj** plus rapide, **Alt** plus lent, souris pour regarder ; tout e
 - Les graphiques dessinent au plus **8** tours ; le HUD affiche au plus **6** cartes.
 - Les statistiques du circuit apparaissent à partir de **3** tours.
 
-Détails : [Statistiques du circuit](race-course-statistics.md#performance-with-many-laps).
+Détails : [Statistiques du parcours](race-course-statistics.md#performance-with-many-laps).
 
 ## Réglages d'affichage par défaut {#default-view-settings}
 
@@ -126,50 +126,50 @@ mémorisé dans le navigateur : la langue, et les noms de voitures appris à par
 
 ## Pour les développeurs {#for-developers}
 
-### What happens when laps are loaded {#what-happens-when-laps-are-loaded}
+### Ce qui se passe quand les tours sont chargés {#what-happens-when-laps-are-loaded}
 
-Every time the set of laps, the reference or the language changes, the whole
-analysis is redone (`analyse` in
-[`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
+Chaque fois que l'ensemble des tours, la référence ou la langue change, toute
+l'analyse est refaite (`analyse` dans
+[`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)) :
 
-1. Derived channels are added to each lap where the game does not send them:
-   drift angle, wheel slip from wheel speeds, in the air, loose ground, yaw
-   rate ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
-2. The reference is chosen and every lap is projected onto its path and
-   resampled every 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
-3. Whether the game's world is mirrored is worked out from the laps
+1. Des canaux dérivés sont ajoutés à chaque tour lorsque le jeu ne les envoie pas :
+   angle de dérive, glissement des roues calculé à partir de leur vitesse, en l'air,
+   sol meuble, vitesse de lacet ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
+2. La référence est choisie, et chaque tour est projeté sur son tracé puis rééchantillonné
+   tous les 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
+3. On détermine à partir des tours si le monde du jeu est en miroir
    ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
-4. Corners are found on the reference, and grouped into segments from one
-   braking zone to the next ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
-5. Per car: its envelope (grip, braking, pull per speed), its profile, its
-   tyre curves ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts),
+4. Les virages sont trouvés sur la référence, puis regroupés en segments, d'une zone de
+   freinage à la suivante ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
+5. Pour chaque voiture : son enveloppe (adhérence, freinage, reprise selon la vitesse), son
+   profil, ses courbes de pneus ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts),
    [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts),
    [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
-6. Per lap and segment: what it did (brake point, slowest point, full
-   throttle, ...) and the line it drove ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
-7. Per lap: its car-control events, each laid against the lap it is compared
-   with there.
-8. Per lap and segment: the time account against its comparison lap and the
-   finding in words.
-9. The time map and the cause map per lap.
+6. Pour chaque tour et segment : ce qu'il a fait (point de freinage, point le plus lent, pleins
+   gaz, ...) et la trajectoire suivie ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
+7. Pour chaque tour : ses événements de contrôle de la voiture, chacun posé face au tour
+   auquel il est comparé à cet endroit.
+8. Pour chaque tour et segment : le bilan de temps par rapport à son tour de comparaison, et
+   le constat en mots.
+9. La carte des temps et la carte des causes, pour chaque tour.
 
-The texts are produced in the current language; switching language runs the
-analysis again (and renames the demo laps). A failure in the analysis is
-shown under the **Laps** buttons as an error and the laps stay loaded.
+Les textes sont produits dans la langue courante ; changer de langue relance l'analyse (et
+renomme les tours de démo). Une erreur de l'analyse s'affiche sous les boutons **Tours**, et
+les tours restent chargés.
 
-### Source files {#source-files}
+### Fichiers source {#source-files}
 
-| File | Role |
+| Fichier | Rôle |
 |---|---|
-| `src/race/adapters.ts`, `ibt.ts` | reading lap files |
-| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | the lap type, naming, demo laps |
-| `src/race/derive.ts`, `handedness.ts` | derived channels, mirrored worlds |
-| `src/race/align.ts`, `segments.ts`, `line.ts` | distance axis, corners, lines |
-| `src/race/analysis.ts` | corners compared, causes, findings |
-| `src/race/envelope.ts`, `profile.ts` | what a car can do |
-| `src/race/control.ts`, `impacts.ts` | car control, hits and crashes |
-| `src/race/stats.ts` | many laps |
-| `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | replay and drawing |
-| `src/race/schema.ts`, `graphs.ts` | the channel table, the charts' rows |
-| `src/ui/race/*` | the sidebar, the charts, the HUD, the labels |
-| `src/state/raceStore.ts` | the tab's state and the replay clock |
+| `src/race/adapters.ts`, `ibt.ts` | lecture des fichiers de tour |
+| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | le type de tour, la désignation, les tours de démo |
+| `src/race/derive.ts`, `handedness.ts` | canaux dérivés, mondes en miroir |
+| `src/race/align.ts`, `segments.ts`, `line.ts` | axe des distances, virages, trajectoires |
+| `src/race/analysis.ts` | virages comparés, causes, constats |
+| `src/race/envelope.ts`, `profile.ts` | ce qu'une voiture peut faire |
+| `src/race/control.ts`, `impacts.ts` | contrôle de la voiture, impacts et accidents |
+| `src/race/stats.ts` | nombreux tours |
+| `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | rejeu et dessin |
+| `src/race/schema.ts`, `graphs.ts` | la table des canaux, les lignes des graphiques |
+| `src/ui/race/*` | la barre latérale, les graphiques, le HUD, les étiquettes |
+| `src/state/raceStore.ts` | l'état de l'onglet et l'horloge du rejeu |

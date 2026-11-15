@@ -43,7 +43,7 @@ La barre latérale de l'onglet Carte de chaleur, de haut en bas :
 
 1. Barre des modes et sélecteur de session
 2. Source, Mappage des colonnes, Jeu de données
-3. Trajets (mode Lignes)
+3. Parcours (mode Lignes)
 4. Les panneaux de chaleur, ou la Vue des équipes
 5. Répartition différentielle
 6. Équipes
@@ -53,7 +53,7 @@ La barre latérale de l'onglet Carte de chaleur, de haut en bas :
 10. Coupe
 11. Mesure
 12. Trajectoire de caméra et rendu
-13. Performance
+13. Performances
 14. Caméra et scène
 
 L'onglet Match affiche la barre des modes, le sélecteur de session, son propre panneau, Filtres, Arrière-plan / niveau et Caméra et scène.

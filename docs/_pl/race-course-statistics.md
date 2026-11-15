@@ -1,6 +1,6 @@
 ---
 title: "Statystyki trasy"
-parent: "Analiza wyścigu"
+parent: "Analiza wyścigowa"
 nav_order: 57
 lang: "pl"
 source: "race-course-statistics.md"

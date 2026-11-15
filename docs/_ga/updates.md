@@ -90,11 +90,11 @@ Is JSON iad freagraí le `Cache-Control: no-store`. Ní éisteann an freastalaí
 
 - Iarrann sé ar an mbealach **4 shoicind** tar éis an leathanach a lódáil (ní sna chéad soicindí: tá tacar sonraí le lódáil ag an leathanach agus GPU le tosú) agus arís **gach 6 uair** fad is a fhanann an leathanach ar oscailt.
 - Taispeánann sé **rud ar bith** nuair nach bhfuil an bealach ann (tógáil statach), nach seiceáil é an fillteán, nó nach bhfuil rud ar bith níos nuaí - fógra ar gach tosú is rud é a bhfoghlaimíonn daoine neamhaird a dhéanamh air.
-- Taobh thiar, gan athruithe áitiúla: "Tá leagan níos nuaí de 3DHeat ar fáil (N athrú, is nuaí: <teideal>)." le **Nuashonraigh anois** agus **Ar ball** (*Ar ball* folaíonn é go dtí go n-athlódáiltear an leathanach).
-- Taobh thiar, le hathruithe áitiúla: an abairt chéanna agus "Tá athruithe áitiúla sa chóip seo, mar sin ní nuashonraítear go huathoibríoch é; déan iad a thiomnú nó a stóráil, ansin rith git pull." - gan cnaipe.
+- Taobh thiar, gan athruithe áitiúla: "Tá leagan níos nuaí de 3DHeat ar fáil (N athrú, an ceann is nuaí: <teideal>)." le **Nuashonraigh anois** agus **Ar ball** (*Ar ball* folaíonn é go dtí go n-athlódáiltear an leathanach).
+- Taobh thiar, le hathruithe áitiúla: an abairt chéanna agus "Tá athruithe áitiúla sa chóip seo, mar sin ní nuashonraítear go huathoibríoch í; déan commit nó stash orthu, ansin rith git pull." - gan cnaipe.
 - **Nuashonraigh anois** postálann chuig `/apply` ("Updating..."). Ansin:
-  - "Updated. The page reloads." - agus athlódálann sé 1.5 s ina dhiaidh sin (tá na comhaid nua á bhfreastal cheana ag an bhfreastalaí);
-  - nuair a athshuiteáladh na spleáchais: "Updated. Its dependencies changed: close the server window and run **restart.bat** to finish.";
-  - nuair nach athraíodh ach socruithe an fhreastalaí: "Updated. Its server settings changed: close the server window and run **restart.bat** to finish.";
-  - nach bhfuil rud ar bith le tabhairt isteach tar éis an tsaoil (`updated: false` - tugadh an chóip suas cheana, ag `start.bat` mar shampla): "Nothing to update: this copy is already the newest version." - agus gan athlódáil;
-  - diúltaithe: an abairt *dirty*, nó "This copy has commits of its own that the newest version does not; update it with git pull.", nó "The update did not go through: <reason>".
+  - "Nuashonraithe. Athlódáiltear an leathanach." - agus athlódálann sé 1.5 s ina dhiaidh sin (tá na comhaid nua á bhfreastal cheana ag an bhfreastalaí);
+  - nuair a athshuiteáladh na spleáchais: "Nuashonraithe. D'athraigh a spleáchais: dún fuinneog an fhreastalaí agus rith **restart.bat** chun críochnú.";
+  - nuair nach athraíodh ach socruithe an fhreastalaí: "Nuashonraithe. D'athraigh socruithe an fhreastalaí: dún fuinneog an fhreastalaí agus rith **restart.bat** chun críochnú.";
+  - nach bhfuil rud ar bith le tabhairt isteach tar éis an tsaoil (`updated: false` - tugadh an chóip suas cheana, ag `start.bat` mar shampla): "Níl aon rud le nuashonrú: is é an leagan is nuaí an chóip seo cheana féin." - agus gan athlódáil;
+  - diúltaithe: an abairt *dirty*, nó "Tá a commits féin sa chóip seo nach bhfuil sa leagan is nuaí; nuashonraigh í le git pull.", nó "Níor éirigh leis an nuashonrú: <reason>".

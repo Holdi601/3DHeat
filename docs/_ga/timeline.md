@@ -73,7 +73,7 @@ Conas a choinnítear an teas seasmhach de réir mar a bhogann an fhuinneog ag br
 
 - **Carnach** ní fhásann sé ach riamh, mar sin cuireann gach fráma na sraitheanna a tháinig infheicthe ó shin leis, ag meáchan iomlán. Tógann an páirc monatónach agus ní athraíonn stop rud ar bith, mar níl rud ar bith fágtha le teacht. (Dá ndéanfaí athmheas ina ionad sin, dhéanfadh gach fráma fo-thacar randamach difriúil a shoilsiú agus ansin a dhí-shoilsiú, rud a léitear mar bhriseadh a bhlaiseann agus a imíonn.)
 - **Fuinneog** agus **Saolré** athraíonn siad gach fráma go fíor, agus athmheastar iad, measctha mar mheán gluaiseach easpónantúil (meáchan 0.34 ar an bhfráma nua), rud atá neamhchlaonta sa staid chobhsaí agus i bhfad níos ciúine ná tosú arís.
-- I mód Saolré is iad na sraitheanna iomaitheacha iad sin ó *ceannaire - max(an bhearna is faide sna sonraí, Saolré chúltaca)* suas go dtí an ceannaire; ansin scoireann an shader gach sraith a bhfuil a saolré féin críochnaithe aici agus cuireann sé an céimniú i bhfeidhm.
+- I mód Saolré is iad sin na sraitheanna a d'fhéadfadh a bheith infheicthe ó *ceannaire - max(an bhearna is faide sna sonraí, Saolré chúltaca)* suas go dtí an ceannaire; ansin scoireann an shader gach sraith a bhfuil a saolré féin críochnaithe aici agus cuireann sé an céimniú i bhfeidhm.
 
 Athrú idir Gach rud agus Seinn, nó athrú ar an stair, athshocraíonn an carnadh.
 

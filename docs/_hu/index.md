@@ -33,7 +33,7 @@ Emellett: a [Versenyelemzés](race-analysis.md) fül versenyjátékok köreihez,
 
 ## A fülek {#the-tabs}
 
-A fülek a oldalsáv tetején ülnek, a név, a mértékegységek és a nyelvmenü alatt.
+A fülek az oldalsáv tetején ülnek, a név, a mértékegységek és a nyelvmenü alatt.
 
 | Fül | Mire való |
 |---|---|
@@ -95,10 +95,10 @@ A kiszolgáló csak a `127.0.0.1` címen figyel, így egyik útvonal sem érhet�
 
 ## Böngésző- és GPU-követelmények {#browser-and-gpu-requirements}
 
-- **WebGPU-t vagy WebGL2-t támogató böngésző.** A WebGPU-t próbálja először (a Chrome és az Edge rendelkezik vele); enélkül a WebGL2 háttérrendszer lép működésbe. A WebGL2-nek kínálnia kell az `EXT_color_buffer_float` bővítményt (lebegőpontos textúrákba rajzoláshoz), különben a megjelenítő ezt mutatja: „Cannot initialise the renderer.” Lásd [A két háttérrendszer](backends.md). A megjelenítőt Chromiumban fejlesztik és tesztelik; más böngészők nincsenek ellenőrizve.
+- **WebGPU-t vagy WebGL2-t támogató böngésző.** A WebGPU-t próbálja először (a Chrome és az Edge rendelkezik vele); enélkül a WebGL2 háttérrendszer lép működésbe. A WebGL2-nek kínálnia kell az `EXT_color_buffer_float` bővítményt (lebegőpontos textúrákba rajzoláshoz), különben a megjelenítő ezt mutatja: „A renderelő nem inicializálható.” Lásd [A két háttérrendszer](backends.md). A megjelenítőt Chromiumban fejlesztik és tesztelik; más böngészők nincsenek ellenőrizve.
 - **Hardveres gyorsítás bekapcsolva.** Ha a böngésző a processzorral rajzol (SwiftShader, llvmpipe, a Microsoft Basic Render Driver és hasonlók), az oldalsáv tetején piros szalag jelzi ezt, és megmondja a javítást. Lásd [Szoftveres renderelés felismerése](software-rendering.md).
 - **Egy dedikált GPU segít, de nem kötelező.** Mindkét háttérrendszer a nagy teljesítményű adaptert kéri. A GPU-n tárolható adatmennyiség egy keret, amelyet lát és módosíthat ([Memória és keretek](memory-and-budgets.md)).
-- **Az opcionális funkciók további böngészőAPI-kat használnak:** a videórenderelés WebCodecs `VideoEncoder`-t igényel VP9 vagy VP8 kodekkel ([Kameraútvonal és videó](camera-path-and-video.md)); a pályák egyszerűsítéséhez WebAssembly kell; a mappák dobásához a File and Directory Entries API; a pályakönyvtár IndexedDB-t használ; a gamepadek a Gamepad API-t.
+- **Az opcionális funkciók további böngésző API-kat használnak:** a videórenderelés WebCodecs `VideoEncoder`-t igényel VP9 vagy VP8 kodekkel ([Kameraútvonal és videó](camera-path-and-video.md)); a pályák egyszerűsítéséhez WebAssembly kell; a mappák dobásához a File and Directory Entries API; a pályakönyvtár IndexedDB-t használ; a gamepadek a Gamepad API-t.
 
 ## Dokumentációs térkép {#documentation-map}
 

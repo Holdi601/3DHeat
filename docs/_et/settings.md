@@ -19,8 +19,8 @@ Külgriba ülaosas:
 | Juhtnupp | Mis see teeb |
 |---|---|
 | **?** | Abirežiim: mida iga värv tähendab (samuti `?` või `F1`) |
-| menüü **Üksused** | Meetermõõdustik, Inglise, Lennundus või Meremeeste |
-| nupp **...** nupu **Üksused** kõrval | Avab "Vali ühik igale suurusele": üks rippmenüü iga suuruse kohta |
+| menüü **Üksused** | Meetriline, Imperiaalne, Lennundus või Merendus |
+| nupp **...** nupu **Üksused** kõrval | Avab "Vali igale suurusele ühik": üks rippmenüü iga suuruse kohta |
 | menüü **Keel** | Vaaturi keel: [40 keelt](languages.md) või brauseri oma |
 
 ![Päis koos menüüga Üksused ja ühikut-suuruse kohta akna avatuna](../assets/img/en/settings-units.webp)
@@ -31,9 +31,9 @@ Kasti sisestatud numbrites võib kasutada nii punkti kui koma (`0.35` või `0,35
 
 1. Vali eelseadistus menüüst **Üksused**. Kõik suurused lülituvad koos.
 2. Ühe suuruse muutmiseks klõpsa selle kõrval olevat nuppu **...** ja vali selle suuruse ühik. Menüüs ilmub pärast eelseadistust `*`.
-3. Suurus, mida sa ei ole seadnud, järgib eelseadistust. Vali "Nagu eelseadistus", et tagasi minna.
+3. Suurus, mida sa ei ole seadnud, järgib eelseadistust. Vali "Nagu eelseades", et tagasi minna.
 
-| Suurus | Meetermõõdustik (vaikimisi) | Inglise | Lennundus | Meremeeste |
+| Suurus | Meetriline (vaikimisi) | Imperiaalne | Lennundus | Merendus |
 |---|---|---|---|---|
 | Kaugus | km | mi | NM | NM |
 | Kõrgus, pikkus | m | ft | ft | m |

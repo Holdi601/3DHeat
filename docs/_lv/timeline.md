@@ -21,7 +21,7 @@ Josla zem skata ir laika skala ([`Timeline.tsx`](https://github.com/Holdi601/3DH
 Divi augstākā līmeņa režīmi, jo tie atbild uz dažādiem jautājumiem.
 
 - **Viss** (noklusējums katrā ielādē) pilnībā ignorē atskaņošanas rādītāju un rāda katru rindu, kas iztur filtrus. Tas ir skats "kur tas notiek", un tas nav tas pats, kas pārvietoties līdz beigām. Skrubers ir atspējots, un pulkstenis rāda `viss · <span> no datiem`.
-- **Atskaņot** palaiž datus kā laika ritināju. Parādās skrubers, vadība un vēstures iestatījumi.
+- **Atskaņot** palaiž datus kā laika ritinājumu. Parādās skrubers, vadība un vēstures iestatījumi.
 
 Izvēloties **Viss**, atskaņošana tiek arī apturēta.
 
@@ -63,7 +63,7 @@ No kadru cikla ([`engine.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/r
 - Nospiežot atskaņot diapazona beigās, atskaņošana sākas no sākuma, kā to dara multivides atskaņotājs. Katrā ielādē rādītājs tiek novietots sākumā, tāpēc pirmais atskaņošanas nospiediens atskaņo.
 - Diapazona beigās rādītājs atlec atpakaļ uz sākumu (Atkārtot ieslēgts) vai apstājas tur, un atskaņošana beidzas (Atkārtot izslēgts).
 - Skrubers nolasa dzinēja atskaņošanas rādītāju tieši katrā kadrā; lietotnes stāvoklis tiek atjaunināts pārlēkšanas, sākšanas, apturēšanas un atkārtošanas brīžos.
-- Izvēloties sesiju sesiju izvēlnē, rādītājs pārlec uz šīs sesijas sākumu.
+- Izvēloties sesiju izvēlnē, rādītājs pārlec uz šīs sesijas sākumu.
 
 ## Kāpēc atskaņošana ir vienmērīga un lēta {#why-playback-is-smooth-and-cheap}
 
@@ -73,7 +73,7 @@ Kā siltums paliek stabils, kamēr logs pārvietojas, atkarīgs no vēstures ([U
 
 - **Kumulatīvi** tikai aug, tāpēc katrs kadrs pievieno tikai tās rindas, kas kļuvušas redzamas kopš iepriekšējā, pilnā svarā. Lauks veidojas monotoni, un pauzēšana neko nemaina, jo nekas vairs nenāk klāt. (Pārvērtēšana tā vietā katrā kadrā apgaismotu citu nejaušu apakškopu un tad to izgaismotu, kas izskatās kā uzliesmojumi, kas pazūd.)
 - **Logs** un **Dzīves ilgums** patiesi mainās katrā kadrā, un tie tiek pārvērtēti, sajaukti kā eksponenciāla slīdošā vidējā vērtība (svars 0,34 jaunajam kadram), kas stacionārā stāvoklī ir nenovirzīta un daudz mierīgāka nekā sākt no nulles.
-- Dzīves ilguma režīmā kandidātu rindas ir tās no *atskaņošanas rādītājs - maks(garākais starplaiks datos, Rezerves dzīves ilgums)* līdz atskaņošanas rādītājam; tad shader izmet katru rindu, kuras dzīve ir beigusies, un piemēro izgaišanu.
+- Dzīves ilguma režīmā kandidātu rindas ir tās no *atskaņošanas rādītāja - maks(garākais starplaiks datos, Rezerves dzīves ilgums)* līdz atskaņošanas rādītājam; tad shader izmet katru rindu, kuras dzīve ir beigusies, un piemēro izgaišanu.
 
 Pārslēdzoties starp Viss un Atskaņot vai mainot vēsturi, uzkrāšana tiek restartēta.
 

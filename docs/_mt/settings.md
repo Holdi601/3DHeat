@@ -31,7 +31,7 @@ In-numri li tiktibhom f'kaxxa jistgħu jużaw jew punt jew virgola (`0.35` jew `
 
 1. Agħżel preset fil-menu **Unitajiet**. Il-kwantitajiet kollha jinbdlu flimkien.
 2. Biex tbiddel kwantità waħda biss, ikklikkja l-buttuna **...** ħdejha u agħżel unità għal dik il-kwantità. Il-menu mbagħad juri `*` wara l-preset.
-3. Kwantità li ma ssettjajtx tisegwi l-preset. Agħżel "Kif il-preset" biex terġa' lura.
+3. Kwantità li ma ssettjajtx tisegwi l-preset. Agħżel "Bħas-sett" biex terġa' lura.
 
 | Kwantità | Metriku (bażi) | Imperjali | Avjazzjoni | Nawtiku |
 |---|---|---|---|---|

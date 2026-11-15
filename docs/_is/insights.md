@@ -22,7 +22,7 @@ Hlutinn **Innsýn** er í hliðarstiku flipanna Hitakort og Leikur. Hann hefur �
 
 ## Niðurstöður {#findings}
 
-1. Hladdu gögnum og opnaðu **Innsýn**. Ýttu á **Finna innsýn** (" Telja… n%" sýnir framvinduna).
+1. Hladdu gögnum og opnaðu **Innsýn**. Ýttu á **Finna innsýn** ("Tel… n%" sýnir framvinduna).
 2. Lestu listann. Hver niðurstaða hefur styrkstiku, setningu, hversu góð gögnin eru (*Sterk gögn*, *Góð gögn* eða *Nokkur gögn*), hvaða greiningartól fann hana, og flokk farartækis þar sem það skiptir máli.
 3. **Smelltu á niðurstöðu**: skoðarinn beitir síum hennar, flýgur myndavélinni að staðnum og hoppar að tímanum, og opnar upplýsingarnar: áhrifin með 95% öryggisbili, p- og q-gildin, taldu gögnin, og **Rúmmál hér**, sem teiknar [rúmmál](volumes.md) utan um staðinn.
 4. **Endurheimta síur** setur síurnar þínar aftur. **Afrita JSON** afritar alla skýrsluna.
@@ -85,7 +85,7 @@ Fyrir **einn leik** (veldu einn ef margir eru hlaðnir) finnur **Lýsandi** augn
 - **Spila augnablikin** spilar hvert þeirra til enda og heldur áfram; **Fyrra** / **Næsta** fara á milli þeirra.
 - Með ytri gervigreind kveikt skrifar **Lýsing frá gervigreind** lýsingu út frá listanum yfir augnablikin (tegundir, tímar, nöfn eða gervinöfn, lið, flokkar, fjarlægðir).
 
-Það þarfnast persóna og dráps/dauða (eða yfirtöku) atburða; `other`/`victim`-dálkur gerir gjaldkera og langskot möguleg.
+Það þarfnast persóna og dráps/dauða (eða yfirtöku) atburða; `other`/`victim`-dálkur gerir skipti og langskot möguleg.
 
 ## Þekkingarlinsan {#knowledge-lens}
 

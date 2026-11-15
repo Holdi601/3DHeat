@@ -97,7 +97,7 @@ Detailer: [Streckestatistik](race-course-statistics.md#performance-with-many-lap
 | Replay-Geschwindegkeet | 1× |
 | Endlosschleif | un |
 
-Nëmmen eng vun dësen Astellungen gëtt gespäichert: wann Dir d'Säit neu lueden, fänkt et mat den Standarde vir. Am Browser bleiwen d'Sprooch an d'Autonimm, déi aus Ronnedateien geléiert goufen (kuckt [Ronnen lueden](race-loading-laps.md#car-names)).
+Keng vun dësen Astellungen gëtt gespäichert: wann Dir d'Säit neu lueden, fänkt et mat den Standarde vir. Am Browser bleiwen d'Sprooch an d'Autonimm, déi aus Ronnedateien geléiert goufen (kuckt [Ronnen lueden](race-loading-laps.md#car-names)).
 
 ## Fir Entwéckler {#for-developers}
 
@@ -106,7 +106,7 @@ Nëmmen eng vun dësen Astellungen gëtt gespäichert: wann Dir d'Säit neu lued
 Jiddereen Mol wann d'Zuel vun de Ronnen, d'Referenz oder d'Sprooch sech ännert, gëtt déi ganz Analyse nei gemaach (`analyse` an
 [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
 
-1. Abgeleed Kanäl ginn all Ronn derbäi, wou d'Spill se net schécken: Driftwénkel, Radschlupp aus de Radgeschwindegkeeten, in der Loft, lockeren Buedem, Gierrate ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
+1. Ofgeleet Kanäl ginn all Ronn derbäi, wou d'Spill se net schécken: Driftwénkel, Radschlupp aus de Radgeschwindegkeeten, in der Loft, lockeren Buedem, Gierrate ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
 2. D'Referenz gëtt gewielt, an all Ronn gëtt op hire Wee projizéiert an all 2 m nei ofgetast ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
 3. Ob d'Welt vum Spill gespigelt ass, gëtt aus den Ronnen erausgeschafft ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
 4. Kurven ginn op der Referenz fonnt a vun enger Bremszon bis zur nächster a Segmenter gruppéiert ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
@@ -126,7 +126,7 @@ D'Texter ginn an der aktueller Sprooch gemaach; e Sprooch-Wiessel leeft d'Analys
 |---|---|
 | `src/race/adapters.ts`, `ibt.ts` | Ronnedateien liesen |
 | `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | den Ronn-Typ, d'Benennung, d'Demo-Ronnen |
-| `src/race/derive.ts`, `handedness.ts` | abgeleed Kanäl, gespigelt Welten |
+| `src/race/derive.ts`, `handedness.ts` | ofgeleet Kanäl, gespigelt Welten |
 | `src/race/align.ts`, `segments.ts`, `line.ts` | d'Distanzachs, d'Kurven, d'Linnen |
 | `src/race/analysis.ts` | d'Kurven verglach, d'Ursaachen, d'Resultater |
 | `src/race/envelope.ts`, `profile.ts` | wat e Auto kann |

@@ -16,7 +16,7 @@ Significados curtos das palavras usadas neste site, em linguagem simples. Cada e
 
 **Linha.** Uma linha dos seus dados: uma coisa que aconteceu num lugar e numa hora, por exemplo "o jogador 7 estava aqui no segundo 12". O visualizador desenha cada linha. [Formatos de dados](data-formats.md)
 
-**Coluna.** Um tipo de valor nas linhas, como x, y, z, tempo ou equipa. O visualizador adivinha qual coluna é qual, e pode mudar a adivinha. [Mapeamento de colunas](column-mapping.md)
+**Coluna.** Um tipo de valor nas linhas, como x, y, z, tempo ou equipa. O visualizador adivinha qual coluna é qual, e pode corrigir essa suposição. [Mapeamento de colunas](column-mapping.md)
 
 **CSV.** Uma tabela de texto simples: uma linha por linha, valores separados por vírgulas. Quase todos os programas a conseguem escrever. [Carregar ficheiros](loading-files.md)
 

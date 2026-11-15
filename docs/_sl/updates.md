@@ -25,11 +25,11 @@ Kopija s spremembami, ki ste jih naredili sami, se nikoli ne posodobi samodejno;
 Kako preverjanje deluje, korak za korakom:
 
 ```
-page ---(after 4 s, then every 6 h)---> dev server ---> git fetch
-   behind?  no  -> nothing is shown
-            yes -> your own changes or commits?  yes -> tell you only
-                                                 no  -> [Update now] -> git pull
-                                                        -> reload, or "run restart.bat"
+stran ---(po 4 s, nato na 6 h)---> razvojni strežnik ---> git fetch
+   zaostaja?  ne  -> nič se ne prikaže
+              da  -> lastne spremembe ali commiti?  da -> samo obvesti
+                                                   ne -> [Posodobi zdaj] -> git pull
+                                                          -> ponovno naloži ali „zaženite restart.bat“
 ```
 
 ## Varnostna pravila {#the-safety-rules}
@@ -58,78 +58,44 @@ page ---(after 4 s, then every 6 h)---> dev server ---> git fetch
 `restart.bat` ustavi strežnik (po vratih) in znova zažene `start.bat`, zato vpraša isto vprašanje. `stop.bat` samo ustavi.
 
 
-## For developers {#for-developers}
+## Za razvijalce {#for-developers}
 
-### While it runs: the update route {#while-it-runs-the-update-route}
+### Med delovanjem: pot posodobitve {#while-it-runs-the-update-route}
 
-The dev server (Vite plugin `heat3d-self-update` in `vite.config.ts`) serves
-`/__heat3d/update`. It exists only on the dev server - not in a static build
-and not in `vite preview`.
+Razvojni strežnik (vtičnik Vite `heat3d-self-update` v `vite.config.ts`) streže `/__heat3d/update`. Obstaja samo na razvojnem strežniku - ne v statičnem buildu in ne v `vite preview`.
 
-**`GET /__heat3d/update`** answers whether the checkout is behind:
+**`GET /__heat3d/update`** odgovori, ali kopija zaostaja:
 
 ```json
-{ "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "the newest commit's subject" }
+{ "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "predmet najnovejšega commita" }
 ```
 
-- `checkout: false` when the folder is not a git checkout;
-- it runs `git fetch --quiet` **at most every 30 minutes** (asks in between
-  answer from what was last fetched);
-- `behind` / `ahead` from `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`,
-  `dirty` from `git status --porcelain --untracked-files=no`, `latest` the
-  subject of the upstream's newest commit;
-- with no upstream branch, `upstream: null` and `behind: 0`.
+- `checkout: false`, kadar mapa ni git kopija;
+- zažene `git fetch --quiet` **največ vsakih 30 minut** (vmesna vprašanja odgovorijo z zadnjega pridobljenega stanja);
+- `behind` / `ahead` iz `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`, `dirty` iz `git status --porcelain --untracked-files=no`, `latest` je predmet najnovejšega commita nadrejene veje;
+- brez nadrejene veje `upstream: null` in `behind: 0`.
 
-**`POST /__heat3d/update/apply`** brings the checkout up:
+**`POST /__heat3d/update/apply`** posodobi kopijo:
 
-1. Refused with `403 { ok: false, reason: "forbidden" }` unless the request has
-   the header `X-Heat3d-Update: 1` and, when it carries an `Origin`, that
-   origin's host is the request's `Host`. A cross-site form cannot send a
-   custom header without a CORS preflight, which this server never grants.
-2. Nothing to do (not a checkout, no upstream, not behind):
-   `{ ok: true, updated: false }`.
-3. Local changes: `{ ok: false, reason: "dirty" }`; local commits:
-   `{ ok: false, reason: "diverged" }`.
-4. Otherwise: notes the files that change (`git diff --name-only HEAD @{u}`),
-   `git pull --ff-only` (2 min timeout), `git submodule update --init`
-   (failure ignored), `npm install` when `package.json` or
-   `package-lock.json` changed (15 min timeout), and answers
-   `{ ok: true, updated: true, restart }` - `restart` says why the running
-   server cannot pick the update up: `"dependencies"` when they were
-   reinstalled, `"config"` when only a `vite.config` file changed, `false`
-   when nothing needs a restart.
-5. A failing git or npm command answers `{ ok: false, reason: "<the error,
-   up to 300 characters>" }`.
+1. Zavrnjeno s `403 { ok: false, reason: "forbidden" }`, razen če zahteva nosi glavo `X-Heat3d-Update: 1` in, kadar nosi `Origin`, se gostitelj tega izvora ujema z `Host` zahteve. Obrazec z drugega spletnega mesta ne more poslati lastne glave brez predhodne zahteve CORS, ki je ta strežnik nikoli ne odobri.
+2. Ni kaj narediti (ni git kopija, ni nadrejene veje, ni zaostanka): `{ ok: true, updated: false }`.
+3. Lokalne spremembe: `{ ok: false, reason: "dirty" }`; lokalni commiti: `{ ok: false, reason: "diverged" }`.
+4. Sicer: zapiše, katere datoteke se spreminjajo (`git diff --name-only HEAD @{u}`), zažene `git pull --ff-only` (časovna omejitev 2 min), `git submodule update --init` (napaka se prezre), `npm install`, če so se spremenili `package.json` ali `package-lock.json` (časovna omejitev 15 min), in odgovori `{ ok: true, updated: true, restart }`. `restart` pove, zakaj tekoči strežnik posodobitve ne more prevzeti: `"dependencies"`, kadar so bile odvisnosti znova nameščene; `"config"`, kadar se je spremenila le datoteka `vite.config`; `false`, kadar ponovni zagon ni potreben.
+5. Neuspešen ukaz git ali npm odgovori `{ ok: false, reason: "<napaka, največ 300 znakov>" }`.
 
-Responses are JSON with `Cache-Control: no-store`. The server listens on
-`127.0.0.1` only, so the route is not reachable from the network.
+Odgovori so JSON s `Cache-Control: no-store`. Strežnik posluša samo na `127.0.0.1`, zato pot ni dosegljiva iz omrežja.
 
-### The notice in the page {#the-notice-in-the-page}
+### Obvestilo na strani {#the-notice-in-the-page}
 
-`UpdateBanner`, under the name at the top of the sidebar:
+`UpdateBanner`, pod imenom na vrhu stranske vrstice:
 
-- It asks the route **4 seconds** after the page loads (not in the first
-  seconds: the page has a dataset to load and a GPU to start) and again
-  **every 6 hours** while the page stays open.
-- It shows **nothing** when there is no such route (a static build), the
-  folder is not a checkout, or nothing is newer - a notice on every start is
-  one people learn to ignore.
-- Behind, with no local changes: "A newer version of 3DHeat is available (N
-  changes, the newest: <subject>)." with **Update now** and **Later**
-  (*Later* hides it until the page is reloaded).
-- Behind, with local changes: the same sentence and "This copy has local
-  changes, so it is not updated automatically; commit or stash them, then
-  run git pull." - no button.
-- **Update now** posts to `/apply` ("Updating..."). Then:
-  - "Updated. The page reloads." - and it reloads 1.5 s later (the server
-    already serves the new files);
-  - when the dependencies were reinstalled: "Updated. Its dependencies
-    changed: close the server window and run **restart.bat** to finish.";
-  - when only the server's settings changed: "Updated. Its server settings
-    changed: close the server window and run **restart.bat** to finish.";
-  - nothing to bring in after all (`updated: false` - the copy was brought up
-    meanwhile, by `start.bat` say): "Nothing to update: this copy is already
-    the newest version." - and no reload;
-  - refused: the *dirty* sentence, or "This copy has commits of its own that
-    the newest version does not; update it with git pull.", or "The update
-    did not go through: <reason>".
+- Pot sprašuje **4 sekunde** po nalaganju strani (ne v prvih sekundah: stran še nalaga podatke in zaganja GPE) in nato znova **vsakih 6 ur**, dokler je stran odprta.
+- Ne prikaže **ničesar**, kadar takšne poti ni (statični build), mapa ni git kopija ali nič ni novejšega - obvestilo ob vsakem zagonu bi se ljudje naučili ignorirati.
+- Zaostaja brez lokalnih sprememb: „Na voljo je novejša različica 3DHeat (N sprememb, najnovejša: <predmet>).“ z gumboma **Posodobi zdaj** in **Pozneje** (*Pozneje* skrije obvestilo, dokler stran ni znova naložena).
+- Zaostaja z lokalnimi spremembami: enak stavek in „Ta kopija ima lokalne spremembe, zato se ne posodobi samodejno; naredite commit ali stash in nato zaženite git pull.“ - brez gumba.
+- **Posodobi zdaj** pošlje zahtevo na `/apply` („Posodabljam ...“). Nato:
+  - „Posodobljeno. Stran se znova naloži.“ - in čez 1,5 s se stran znova naloži (strežnik že streže nove datoteke);
+  - ko so bile odvisnosti znova nameščene: „Posodobljeno. Odvisnosti so se spremenile: zaprite okno strežnika in zaženite **restart.bat**, da se posodobitev dokonča.“;
+  - ko so se spremenile samo nastavitve strežnika: „Posodobljeno. Nastavitve strežnika so se spremenile: zaprite okno strežnika in zaženite **restart.bat**, da se posodobitev dokonča.“;
+  - na koncu ni ničesar za prevzem (`updated: false` - kopijo je medtem uredil npr. `start.bat`): „Ni česa posodobiti: ta kopija je že najnovejša različica.“ - brez ponovnega nalaganja;
+  - zavrnjeno: stavek o lokalnih spremembah, ali „Ta kopija ima lastne commite, ki jih najnovejša različica nima; posodobite jo z git pull.“, ali „Posodobitev ni uspela: <razlog>“.

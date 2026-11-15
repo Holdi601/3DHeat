@@ -68,7 +68,7 @@ Lejimi i çdo vlere heq filtrin.
 - **Katër filtra njëherësh.** Kreu tregon `aktive/4`. Një filtër i pestë nuk zbatohet, dhe paneli e thotë këtë. Një zgjedhje te [Entitetet](entities.md) (ose fokusi i lojtarit të skedës Ndeshja) përdor edhe ajo një nga të katërtat. Një filtër që mbulon gjithë kolonën nuk përdor asnjë.
 - **Një kolonë kategorike ka më së shumti 4,096 vlera**; një më e gjerë nuk mbahet gjatë ngarkimit.
 - **Filtrat kombinohen me AND**, dhe me dukshmërinë e skuadrave, ndarjen e diferencës, dritaren kohore, heqjen sipas largësisë dhe [prerjen](slice.md).
-- **Ndryshimi i një filtri e rinis grumbullimin dhe rimat ekspozimin disa kornizа më vonë**, sepse filtrimi mund ta ndryshojë shumë dendësinë ([Ngjyra dhe ekspozimi](colour-and-exposure.md#auto-exposure)).
+- **Ndryshimi i një filtri e rinis grumbullimin dhe rimat ekspozimin disa kornizë më vonë**, sepse filtrimi mund ta ndryshojë shumë dendësinë ([Ngjyra dhe ekspozimi](colour-and-exposure.md#auto-exposure)).
 - **Pastro të gjithë filtrat** heq çdo filtër kolone. Dukshmëria e ekipeve dhe zgjedhjet e lojtarëve të bëra gjetkë ruhen.
 - Filtrat e kolonave ndryshojnë modalitetet e nxehtësisë. Nuk ndryshojnë figurat e [riluajtjes me figura](box-replay.md), që ndjekin dukshmërinë e ekipeve dhe zgjedhjen te Entitetet. Zgjedhja te Entitetet ndryshon të dyja.
 - Te [nxehtësia e vijave](line-heat.md) një filtër testohet mbi rreshtin ku mbaron çdo segment.

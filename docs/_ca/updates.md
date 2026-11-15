@@ -14,7 +14,7 @@ El visor et diu quan existeix una versió més nova, i només s'actualitza quan 
 
 ## Actualitza el visor {#update-the-viewer}
 
-1. **A la pàgina.** Quan existeix una versió més nova, apareix una caixa sota el nom a la part superior de la barra lateral: «Hi ha una versió nova de 3DHeat disponible». Fes clic a **Actualitza ara**. La pàgina es recarrega sola quan acaba. **Més tard** amaga la caixa fins que tornis a carregar la pàgina.
+1. **A la pàgina.** Quan existeix una versió més nova, apareix una caixa sota el nom a la part superior de la barra lateral: «Hi ha disponible una versió més nova de 3DHeat». Fes clic a **Actualitza ara**. La pàgina es recarrega sola quan acaba. **Més tard** amaga la caixa fins que tornis a carregar la pàgina.
 2. **Si diu que executis restart.bat**, tanca la finestra del servidor (la finestra negra que va obrir `start.bat`) i fes doble clic a `restart.bat`.
 3. **En iniciar el visor.** `start.bat` també ho comprova. Si existeix una versió més nova, pregunta **Update now? [Y/N]**. Prem `Y` per actualitzar. Prem `N`, o espera 60 segons sense respondre, per iniciar la versió que tens.
 
@@ -61,74 +61,68 @@ pàgina ---(després de 4 s, i després cada 6 h)---> servidor de desenvolupamen
 
 ### Mentre s'executa: la ruta d'actualització {#while-it-runs-the-update-route}
 
-The dev server (Vite plugin `heat3d-self-update` in `vite.config.ts`) serves
-`/__heat3d/update`. It exists only on the dev server - not in a static build
-and not in `vite preview`.
+El servidor de desenvolupament (el connector de Vite `heat3d-self-update` a `vite.config.ts`) serveix
+`/__heat3d/update`. Només existeix al servidor de desenvolupament: no en una compilació estàtica
+ni a `vite preview`.
 
-**`GET /__heat3d/update`** answers whether the checkout is behind:
+**`GET /__heat3d/update`** indica si el checkout va enrere:
 
 ```json
 { "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "the newest commit's subject" }
 ```
 
-- `checkout: false` when the folder is not a git checkout;
-- it runs `git fetch --quiet` **at most every 30 minutes** (asks in between
-  answer from what was last fetched);
-- `behind` / `ahead` from `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`,
-  `dirty` from `git status --porcelain --untracked-files=no`, `latest` the
-  subject of the upstream's newest commit;
-- with no upstream branch, `upstream: null` and `behind: 0`.
+- `checkout: false` quan la carpeta no és un checkout de git;
+- executa `git fetch --quiet` **com a molt cada 30 minuts** (les consultes intermèdies responen
+  amb la darrera recuperació);
+- `behind` / `ahead` surten de `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`, `dirty` de
+  `git status --porcelain --untracked-files=no`, i `latest` és l'assumpte de la confirmació més
+  nova de la font;
+- sense branca de font, `upstream: null` i `behind: 0`.
 
-**`POST /__heat3d/update/apply`** brings the checkout up:
+**`POST /__heat3d/update/apply`** posa el checkout al dia:
 
-1. Refused with `403 { ok: false, reason: "forbidden" }` unless the request has
-   the header `X-Heat3d-Update: 1` and, when it carries an `Origin`, that
-   origin's host is the request's `Host`. A cross-site form cannot send a
-   custom header without a CORS preflight, which this server never grants.
-2. Nothing to do (not a checkout, no upstream, not behind):
-   `{ ok: true, updated: false }`.
-3. Local changes: `{ ok: false, reason: "dirty" }`; local commits:
+1. Rebutjada amb `403 { ok: false, reason: "forbidden" }` tret que la petició porti la capçalera
+   `X-Heat3d-Update: 1` i, quan porta un `Origin`, que l'host d'aquest origen sigui el `Host` de
+   la petició. Un formulari d'un altre lloc no pot enviar una capçalera pròpia sense una
+   comprovació prèvia CORS, que aquest servidor mai no concedeix.
+2. Res a fer (no és un checkout, no hi ha font, no va enrere): `{ ok: true, updated: false }`.
+3. Canvis locals: `{ ok: false, reason: "dirty" }`; confirmacions locals:
    `{ ok: false, reason: "diverged" }`.
-4. Otherwise: notes the files that change (`git diff --name-only HEAD @{u}`),
-   `git pull --ff-only` (2 min timeout), `git submodule update --init`
-   (failure ignored), `npm install` when `package.json` or
-   `package-lock.json` changed (15 min timeout), and answers
-   `{ ok: true, updated: true, restart }` - `restart` says why the running
-   server cannot pick the update up: `"dependencies"` when they were
-   reinstalled, `"config"` when only a `vite.config` file changed, `false`
-   when nothing needs a restart.
-5. A failing git or npm command answers `{ ok: false, reason: "<the error,
-   up to 300 characters>" }`.
+4. Si no: indica quins fitxers canvien (`git diff --name-only HEAD @{u}`), executa
+   `git pull --ff-only` (límit de 2 min), `git submodule update --init` (els errors s'ignoren),
+   `npm install` quan han canviat `package.json` o `package-lock.json` (límit de 15 min), i
+   respon `{ ok: true, updated: true, restart }`. `restart` indica per què el servidor en marxa
+   no pot aplicar l'actualització: `"dependencies"` quan s'han reinstal·lat, `"config"` quan només
+   ha canviat un fitxer `vite.config`, `false` quan no cal reiniciar res.
+5. Una ordre de git o npm que falla respon `{ ok: false, reason: "<l'error, fins a 300 caràcters>" }`.
 
-Responses are JSON with `Cache-Control: no-store`. The server listens on
-`127.0.0.1` only, so the route is not reachable from the network.
+Les respostes són JSON amb `Cache-Control: no-store`. El servidor només escolta a `127.0.0.1`,
+així que la ruta no és accessible des de la xarxa.
 
-### The notice in the page {#the-notice-in-the-page}
+### L'avís a la pàgina {#the-notice-in-the-page}
 
-`UpdateBanner`, under the name at the top of the sidebar:
+`UpdateBanner`, sota el nom a la part superior de la barra lateral:
 
-- It asks the route **4 seconds** after the page loads (not in the first
-  seconds: the page has a dataset to load and a GPU to start) and again
-  **every 6 hours** while the page stays open.
-- It shows **nothing** when there is no such route (a static build), the
-  folder is not a checkout, or nothing is newer - a notice on every start is
-  one people learn to ignore.
-- Behind, with no local changes: "A newer version of 3DHeat is available (N
-  changes, the newest: <subject>)." with **Update now** and **Later**
-  (*Later* hides it until the page is reloaded).
-- Behind, with local changes: the same sentence and "This copy has local
-  changes, so it is not updated automatically; commit or stash them, then
-  run git pull." - no button.
-- **Update now** posts to `/apply` ("Updating..."). Then:
-  - "Updated. The page reloads." - and it reloads 1.5 s later (the server
-    already serves the new files);
-  - when the dependencies were reinstalled: "Updated. Its dependencies
-    changed: close the server window and run **restart.bat** to finish.";
-  - when only the server's settings changed: "Updated. Its server settings
-    changed: close the server window and run **restart.bat** to finish.";
-  - nothing to bring in after all (`updated: false` - the copy was brought up
-    meanwhile, by `start.bat` say): "Nothing to update: this copy is already
-    the newest version." - and no reload;
-  - refused: the *dirty* sentence, or "This copy has commits of its own that
-    the newest version does not; update it with git pull.", or "The update
-    did not go through: <reason>".
+- Consulta la ruta **4 segons** després que es carregui la pàgina (no en els primers segons: la
+  pàgina té un conjunt de dades a carregar i una GPU a iniciar), i de nou **cada 6 hores** mentre
+  la pàgina sigui oberta.
+- No mostra **res** quan la ruta no existeix (compilació estàtica), la carpeta no és un checkout,
+  o no hi ha res de més nou: un avís a cada inici acabaria ignorat.
+- Enrere, sense canvis locals: «Hi ha disponible una versió més nova de 3DHeat (N canvis, el més
+  recent: <assumpte>).», amb **Actualitza ara** i **Més tard** (*Més tard* amaga l'avís fins que
+  es torna a carregar la pàgina).
+- Enrere, amb canvis locals: la mateixa frase, seguida de «Aquesta còpia té canvis locals, així
+  que no s'actualitza automàticament; fes-ne un commit o un stash i després executa git pull.»
+  - sense botó.
+- **Actualitza ara** envia una petició a `/apply` («S'està actualitzant…»). Després:
+  - «Actualitzat. La pàgina es torna a carregar.» - i es torna a carregar 1,5 s més tard (el
+    servidor ja serveix els fitxers nous);
+  - quan s'han reinstal·lat les dependències: «Actualitzat. Les dependències han canviat: tanca la
+    finestra del servidor i executa **restart.bat** per acabar.»;
+  - quan només han canviat els ajustos del servidor: «Actualitzat. La configuració del servidor ha
+    canviat: tanca la finestra del servidor i executa **restart.bat** per acabar.»;
+  - si al final no hi ha res per portar (`updated: false`: la còpia ja l'ha posat al dia, per
+    exemple `start.bat`): «No hi ha res per actualitzar: aquesta còpia ja és la versió més nova.»
+    - i sense recarregar;
+  - rebutjada: la frase de canvis locals, o «Aquesta còpia té confirmacions pròpies que la versió
+    més nova no té; actualitza-la amb git pull.», o «L'actualització no s'ha pogut fer: <motiu>».

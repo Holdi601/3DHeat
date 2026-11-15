@@ -43,7 +43,7 @@ A térfogatok mérik, mi történik bennük, a nézetet rájuk szűkítik, expor
 
 - Kattintson egy térfogatra a kijelöléséhez. A testét húzva mozgatja, a sarkait húzva alakítja át (a sarkon a Shift átméretez).
 - A **sárga** fogantyúk a padlót és a mennyezetet állítják, a **ciánkék** fogantyú forgatja.
-- Az Alt+húzás másol, a Del töröl, a Ctrl+Z / Ctrl+Y visszavon és újra megcsinál, a Ctrl+D duplikál. A **Összes eltávolítása** minden térfogatot töröl.
+- Az Alt+húzás másol, a Del töröl, a Ctrl+Z / Ctrl+Y visszavon és újra megcsinál, a Ctrl+D duplikál. Az **Összes eltávolítása** minden térfogatot töröl.
 - Pontos értékek: Padló, Mennyezet, Forgatás / Dőlés / Billenés (dobozok), Sugár (gömbök, hengerek).
 
 Minden térfogatsornak van megjelenítés-jelölője, színe, neve, **belefoglal** vagy **kizár** gombja, valamint duplikáló és törlő gombja. A térfogatok adatkészletenként a böngészőben mentődnek, a **Mentés…** / **Betöltés…** pedig egy `volumes.json` fájlt ír és olvas.
@@ -52,7 +52,7 @@ Minden térfogatsornak van megjelenítés-jelölője, színe, neve, **belefoglal
 
 | Szűrő | Hatása |
 |---|---|
-| **Mind megjelenítése** (alapértelmezés) | A térfogatok csak mérnek. |
+| **Összes megjelenítése** (alapértelmezés) | A térfogatok csak mérnek. |
 | **Csak belül** | A hő, a visszajátszás és a [találatelemzés](hit-analysis.md) csak azt mutatja, ami a belefoglalt térfogatokon belül, és a kizártakon kívül van. |
 | **Belső elrejtése** | Az ellenkezője. |
 
@@ -65,7 +65,7 @@ A **Statisztika** terület követi a szűrőket, az időablakot és az elrejtett
 - **Sorok belül (látható)** és **Sorok belül (minden adat)**, **Játékosok**, **Csapatok**, **Meccsek**, **Bent töltött idő**, **Belépések / kilépések**, **Csúcshő**, **Átlagos hő**, **Térfogat / alapterület** és egy **Mikor** hisztogramot;
 - oszloponként: kategóriák a **Lift** értékkel (a bent lévő arány osztva a teljes látható adat arányával), és számok tartománnyal, mediánnal és az 5–95%-os percentilisekkel.
 
-A **Statisztika CSV / JSON formátumban** menti őket. Az **Adatok exportálása bent** a bent lévő sorokat CSV vagy Parquet formátumban írja (alapértelmezés szerint *Csak a látható sorok*), egy vagy minden térfogatra, egy oszloppal, amely megmondja, melyik térfogatban van az adott sor.
+A **Statisztika CSV / JSON formátumban** menti őket. Az **A belső adatok exportálása** a bent lévő sorokat CSV vagy Parquet formátumban írja (alapértelmezés szerint *Csak a látható sorok*), egy vagy minden térfogatra, egy oszloppal, amely megmondja, melyik térfogatban van az adott sor.
 
 ## Térfogatok összehasonlítása {#compare-volumes}
 
@@ -74,7 +74,7 @@ Két vagy több látható térfogat esetén nyomja meg az **Összehasonlítás�
 1. Rajzoljon három térfogatot, például Nyugati domb, Keleti domb és Falu.
 2. Nyomja meg az **Összehasonlítás…** gombot a Statisztika alatt.
 3. A **Táblázat** nézetben olvassa le minden érték eltérését az első térfogattól.
-4. Váltson a **Oszlopok** nézetre, hogy az arányokat oszlopokként lássa.
+4. Váltson az **Oszlopok** nézetre, hogy az arányokat oszlopokként lássa.
 
 ![Térfogat-összehasonlító táblázat: sorok, bent töltött idő, játékosok és más adatok térfogatonként, az elsőtől való eltéréssel](../assets/img/en/compare.webp)
 

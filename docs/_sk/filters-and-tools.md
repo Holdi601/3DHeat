@@ -26,7 +26,7 @@ Príklad: v Filtroch odškrtnite *Tank*, v Tímoch skryte tím Red a v Entitách
 |---|---|---|---|
 | [Filtre](filters.md) | Rozsahové a kategóriové filtre na ľubovoľnom stĺpci ponechanom pri načítaní. | Áno | Nie (len filtre stĺpcov) |
 | [Rozdelenie rozdielu](difference.md#the-difference-split-panel) | Ktoré riadky pripočítavajú a ktoré odpočítavajú, v režime Rozdiel. | Len Rozdiel | Nie |
-| [Zoznam tímov](teams-list.md) | Zobrazí alebo skryje každý tím; dá tímy na stranu + alebo -. | Áno | Áno |
+| [Tímy](teams-list.md) | Zobrazí alebo skryje každý tím; dá tímy na stranu + alebo -. | Áno | Áno |
 | [Entity](entities.md) | Výber jednotlivých hráčov. | Áno | Áno |
 | [Rez](slice.md) | Vyrežte z levelu a tepla plát, aby ste videli dnu do budov. | Áno, a level | Nie |
 | [Meranie](measure.md) | Pravítko a hodnota tepla pod kurzorom. | Áno | Áno |
@@ -43,16 +43,16 @@ Bočný panel karty Heatmapa zhora nadol:
 
 1. Lišta režimov a výber relácie
 2. Zdroj, Mapovanie stĺpcov, Dátová sada
-3. Trasy (režim Čiary)
+3. Cesty (režim Čiary)
 4. Panely tepla alebo Zobrazenie tímov
 5. Rozdelenie rozdielu
-6. Zoznam tímov
+6. Tímy
 7. Entity
 8. Filtre
 9. Pozadie / level
 10. Rez
 11. Meranie
-12. Dráha kamery a render
+12. Dráha kamery a renderovanie
 13. Výkon
 14. Kamera a scéna
 

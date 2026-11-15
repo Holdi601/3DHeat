@@ -52,7 +52,7 @@ Kiekvienos tūrio eilutės pradžioje yra rodymo žymės langelis, spalva, pavad
 
 | Filtras | Poveikis |
 |---|---|
-| **Rodyti visas** (numatytasis) | Tūriai tik matuoja. |
+| **Rodyti viską** (numatytasis) | Tūriai tik matuoja. |
 | **Tik viduje** | Šiluma, pakartojimas ir [pataikymų analizė](hit-analysis.md) piešia tik tai, kas yra įtrauktų tūrių viduje ir išskirtų tūrių išorėje. |
 | **Slėpti vidų** | Priešingai. |
 
@@ -60,9 +60,9 @@ GPU filtras paima iki 8 tūrių su 64 kontūro taškais iš viso; „!“ žymi 
 
 ## Statistika {#statistics}
 
-Sritis **Statistika** seka filtrus, laiko langą ir paslėptas grupes. *Pasirinkta* rodo pasirinktą tūrį, *Palyginti visus* padeda visus tūrius šalia vienas kito. Ji rodo:
+Sritis **Statistika** seka filtrus, laiko langą ir paslėptas grupes. *Pasirinktas* rodo pasirinktą tūrį, *Palyginti visus* padeda visus tūrius šalia vienas kito. Ji rodo:
 
-- **Eilutes viduje (rodomos)** ir **Eilutes viduje (visi duomenys)**, **Žaidėjus**, **Komandas**, **Rungtynes**, **Laiką viduje**, **Įėjimus / išėjimus**, **Šilumos piką**, **Vidutinę šilumą**, **Tūrį / pagrindą** ir **Kada** histogramą;
+- **Eilutės viduje (rodomos)** ir **Eilutės viduje (visi duomenys)**, **Žaidėjai**, **Komandos**, **Rungtynės**, **Laikas viduje**, **Įėjimai / išėjimai**, **Šilumos pikas**, **Vidutinė šiluma**, **Tūris / pagrindas** ir **Kada** histogramą;
 - kiekvienam stulpeliui: kategorijas su **Lift** (dalis viduje, padalyta iš dalies visuose rodomuose duomenyse) ir skaičius su intervalu, mediana ir 5–95 procentiliais.
 
 **Statistika kaip CSV / JSON** ją išsaugo. **Eksportuoti duomenis viduje** įrašo vidinias eilutes kaip CSV arba Parquet (pagal numatytuosius – *Tik rodomos eilutes*), vieną tūrį arba visus, su stulpeliu, nurodančiu, kuriame tūryje yra kiekviena eilutė.
@@ -80,7 +80,7 @@ Kai matomi du ar daugiau tūrių, paspauskite **Palyginti…**.
 
 | Rodinys | Rodo |
 |---|---|
-| **Lentelė** | Eilutes, laiką viduje, žaidėjus, rungtynes, komandas, įėjimus, išėjimus, apsilankymus, apsilankymo trukmę, nužudymus, mirtis, nužudymus vienai mirčiai, nužudymus per minutę, laiką vienam žaidėjui, vertės stulpelius; sugrupuota pagal įvykius, transporto klasę, žaidėją ar DI, komandą ir kryptį. Kiekviena reikšmė rodo skirtumą nuo pirmo tūrio ir efekto dydį (nereikšmingas, mažas, vidutinis, didelis). Spustelėkite tūrio antraštę, kad surikiuotumėte pagal atstumą nuo pirmojo. |
+| **Lentelė** | Eilutės, laiką viduje, žaidėjus, rungtynes, komandas, įėjimus, išėjimus, apsilankymus, apsilankymo trukmę, nužudymus, mirtis, nužudymus vienai mirčiai, nužudymus per minutę, laiką vienam žaidėjui, vertės stulpelius; sugrupuota pagal įvykius, transporto klasę, žaidėją ar DI, komandą ir kryptį. Kiekviena reikšmė rodo skirtumą nuo pirmo tūrio ir efekto dydį (nereikšmingas, mažas, vidutinis, didelis). Spustelėkite tūrio antraštę, kad surikiuotumėte pagal atstumą nuo pirmojo. |
 | **Stulpeliai** | Kiekiai arba dalys pagal įvykį, klasę, veikėją, komandą ar kryptį. Spustelėkite stulpelį, kad filtruotumėte vaizdą pagal jį. |
 | **Per rungtynes** | Viena diagrama kiekvienam tūriui per rungtynių minutes: buvimas, eilutės arba nužudymai. Spustelėkite, kad nušokdami ten. |
 | **Apsilankymai** | Dėžių ir smuikų diagramos, rodančios, kiek trunka apsilankymai (logaritminė skalė). |

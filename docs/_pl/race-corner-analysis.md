@@ -1,6 +1,6 @@
 ---
 title: "Analiza zakręt po zakręcie"
-parent: "Analiza wyścigu"
+parent: "Analiza wyścigowa"
 nav_order: 55
 lang: "pl"
 source: "race-corner-analysis.md"

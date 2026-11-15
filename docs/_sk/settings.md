@@ -20,7 +20,7 @@ Hore na bočnom paneli:
 |---|---|
 | **?** | Režim pomoci: čo znamená každá farba (aj `?` alebo `F1`) |
 | Ponuka **Jednotky** | Metrické, Imperiálne, Letecké alebo Námorné |
-| Tlačidlo **...** vedľa **Jednotky** | Otvorí „Vyberte jednotku pre každú veličinu“: jedna rozbaľovacia ponuka pre každú veličinu |
+| Tlačidlo **...** vedľa **Jednotky** | Otvorí „Zvoliť jednotku pre každú veličinu“: jedna rozbaľovacia ponuka pre každú veličinu |
 | Ponuka **Jazyk** | Jazyk prehliadača: [40 jazykov](languages.md), alebo jazyk prehliadača |
 
 ![Hlavička s ponukou Jednotky a oknom jednotky pre každú veličinu otvoreným](../assets/img/en/settings-units.webp)
@@ -31,7 +31,7 @@ Hore na bočnom paneli:
 
 1. Vyberte predvoľbu v ponuke **Jednotky**. Všetky veličiny sa prepnú spoločne.
 2. Ak chcete zmeniť len jednu veličinu, kliknite na tlačidlo **...** vedľa nej a vyberte jednotku pre ňu. Ponuka potom zobrazí `*` za predvoľbou.
-3. Veličina, ktorú ste nenastavili, sleduje predvoľbu. Vyberte „Ako predvoľba“, ak sa chcete vrátiť.
+3. Veličina, ktorú ste nenastavili, sleduje predvoľbu. Vyberte „Podľa predvoľby“, ak sa chcete vrátiť.
 
 | Veličina | Metrické (predvolené) | Imperiálne | Letecké | Námorné |
 |---|---|---|---|---|
@@ -66,7 +66,7 @@ Tieto nastavenia sa uchovávajú vo vašom prehliadači medzi návštevami (nika
 
 Nastavenia tepla, filtre a režim sa pri každom načítaní začínajú odznova. Úplný vygenerovaný zoznam: [Uložené nastavenia](ref-settings-storage.md).
 
-## Klávesy, ktoré prehliadač nechá vo viewer {#keys-the-viewer-keeps-from-the-browser}
+## Klávesy, ktoré si aplikácia ponecháva pre seba {#keys-the-viewer-keeps-from-the-browser}
 
 Relácia s veľkými dátami sa načíta dlho, takže prehliadač zabraňuje tomu, aby ju omylom zahodil:
 
@@ -74,4 +74,4 @@ Relácia s veľkými dátami sa načíta dlho, takže prehliadač zabraňuje tom
 - Zatvorenie alebo obnovenie karty s načítanými dátami alebo levelom sa najprv opýta.
 - Na celú obrazovku prehliadač uzamkne klávesy, ktoré používa (W, T, N, S, R, P, Q, Esc), aby ich prehliadač nezachytil.
 
-Presný zoznam: [Klávesy prehliadača](ref-browser-keys.md). Všetky vlastné klávesy prehliadača: [Referencia klávesnice a myši](keyboard-reference.md).
+Presný zoznam: [Klávesy prehliadača](ref-browser-keys.md). Všetky klávesy aplikácie: [Referencia klávesnice a myši](keyboard-reference.md).

@@ -1,6 +1,6 @@
 ---
 title: "移動速度"
-parent: "戦術ボード"
+parent: "作戦ボード"
 nav_order: 1
 lang: "ja"
 source: "tactics-speeds.md"

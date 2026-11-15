@@ -27,7 +27,7 @@ Punane seal, kus meeskond A oli rohkem, roheline-sinine seal, kus meeskond B oli
 
 *Millised* kaks populatsiooni on kogu küsimus, seega võib jaotus olla mis tahes alles hoitud veerg, mitte ainult rühmad. Read, mis jäävad **kummalegi** poolele, **jäetakse välja**, mitte ei loeta nulliks: see teebki jaotuse kahe väärtuse vahel täpseks, ja see kombineerub [filtritega](filters.md) - filtreeri kõigepealt üheks kaardiks, siis jaota see versiooni järgi.
 
-Režiim vajab kahte poolt: rühmaveergu vähemalt kahe rühmaga või jaotust veeru järgi, mis on alles hoitud filtreerimiseks. Andmetel, kus on alla kahe rühma, alustab laadimine veerujaotusega - kõigepealt mitme faili laadimise veerg *Lähtefail*, muidu esimene kategooriaveerg kahe väärtusega, muidu esimene arvuline veerg, millel on ulatus - nii et *võrdle kahte laadimist* töötab ka andmetel, millel rühmi pole. Ainult andmed, millel pole ei üht ega teist, jätavad režiimi kättesaamatuks; nii on ka siis, kui veerujaotuse ühel poolel ei ole midagi.
+Režiim vajab kahte poolt: rühmaveergu vähemalt kahe rühmaga või jaotust veeru järgi, mis on alles hoitud filtreerimiseks. Andmetel, kus on alla kahe rühma, alustab laadimine veerujaotusega - kõigepealt mitme faili laadimise veerg *Source file*, muidu esimene kategooriaveerg kahe väärtusega, muidu esimene arvuline veerg, millel on ulatus - nii et *võrdle kahte laadimist* töötab ka andmetel, millel rühmi pole. Ainult andmed, millel pole ei üht ega teist, jätavad režiimi kättesaamatuks; nii on ka siis, kui veerujaotuse ühel poolel ei ole midagi.
 
 ## Erinevuse jaotuse paneel {#the-difference-split-panel}
 
@@ -40,7 +40,7 @@ Näidatakse erinevuse režiimis, soojuse paneelide all.
 | Rühmad | *Rühm (N)* (kui on rühmaveerg) | Iga rühm poolel +, − või kummalgi, seadistatud [Võistkondade loendis](teams-list.md) |
 | Kategooriaveerg | *veerg (N väärtust)* | Väärtused poolel +, − või kummalgi |
 | Arvuline veerg | *veerg (arvuline)* | Väärtusevahemik kummalegi poolele |
-| Päritolufail | *Lähtefail - võrdle kahte laadimist* (kui laeti mitu faili) | Failid poolel +, − või kummalgi |
+| Päritolufail | *Source file — võrdle kahte laadimist* (kui laeti mitu faili) | Failid poolel +, − või kummalgi |
 
 Pakutakse ainult veerge, mis on laadimisel jäetud valikule *Hoia filtreerimiseks*.
 
@@ -59,7 +59,7 @@ Paneel hoiatab, kui pilt ei ole päris erinevus:
 | Aknas pole ühtegi rida poolel **−** | Joonistatakse ainult **+** pool. |
 | Kummalgi poolel pole ühtegi väärtust | Erinevus ei joonista midagi. Pane vähemalt üks väärtus poolele **+** või **−**. |
 | *veerg* ei saa nii jaotada | Valitud veerg ei sobi jaotusega. Vali veerg uuesti. |
-| Jaotusveerg ei mahtunud GPU mällu N-st M tükist | Need read ei joonistu. Tõsta GPU eelarvet jaotises Jõudlus → Ressursside eelarved või laadi vähem ridu. |
+| Jaotusveerg ei mahtunud GPU mällu N-st M tükist | Need read ei joonistu. Tõsta GPU eelarvet jaotises Jõudlus → Ressursieelarved või laadi vähem ridu. |
 
 ### Rühmade kaupa {#by-group}
 
@@ -74,7 +74,7 @@ Paneel viitab lihtsalt [Võistkondade loendile](teams-list.md), kus igal rühmal
 | Väärtuste loend | Iga väärtus nuppudega **+** ja **−** (aktiivsele vajutades uuesti eemaldad selle poolelt). Tühja väärtust nimetatakse *(puudub)*. |
 | Piirimärkus | Näidatakse ainult esimesi 200 väärtust: *Näitan esimesi 200 väärtust N-st. Nii lai veerg on parem kitsendada filtriga või jaotada vahemiku järgi, kui väärtused on järjestatud.* |
 
-Veeru valimisel pannakse selle esimene väärtus poolele + ja teine poolele −. Kui kummalgi poolel ei ole ühtegi väärtust, taandub jaotus rühmadele, selle asemel et näidata tühja kaadrit. *Lähtefail* töötab samamoodi, üks väärtus faili kohta - nii võrreldakse kahte eksporti, kahte katset või kahte versiooni.
+Veeru valimisel pannakse selle esimene väärtus poolele + ja teine poolele −. Kui kummalgi poolel ei ole ühtegi väärtust, taandub jaotus rühmadele, selle asemel et näidata tühja kaadrit. *Source file* töötab samamoodi, üks väärtus faili kohta - nii võrreldakse kahte eksporti, kahte katset või kahte versiooni.
 
 ### Vahemiku järgi {#by-range}
 

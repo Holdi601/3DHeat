@@ -81,7 +81,7 @@ No ve amb cap dada de joc: els nivells, els mapes i les gravacions es fan a la t
 | `npm run smoke` | Fa anar l'aplicació real en un Chromium sense cap, i comprova que el canvas té píxels amb color de dades; les captures van a `tools/.smoke/`. Espera que el servidor de desenvolupament estigui en marxa. |
 | `npm run smoke:f16` | La mateixa suite amb `?heat=f16`, forçant el camí d'acumulació en mitja precisió (vegeu [Acumulació en mitja precisió](half-float-accumulation.md)). |
 | `npm run bench` | Prova de rendiment de la càrrega, escriu `tools/.smoke/ingest-bench.json`. |
-| `npm run test:heavy` | Proves que necessiten fitxers de dades reals i grans; s'salten soles quan els fitxers no hi són. |
+| `npm run test:heavy` | Proves que necessiten fitxers de dades reals i grans; se salten soles quan els fitxers no hi són. |
 | `npm run inspect -- <file.parquet>` | Mostra l'esquema d'un fitxer Parquet i algunes files (`tools/inspect-parquet.mjs`). |
 
 ### Què afegeix el servidor de desenvolupament {#what-the-dev-server-adds}
@@ -126,7 +126,7 @@ El visor llegeix dades; aquestes eines les fan. Cadascuna és el seu propi repos
 | [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Demos de Counter-Strike 2 en taules de mapa de calor i resums de partides, mapes de CS2 en geometria | calor de CS2, repeticions i la pestanya Partida |
 | [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Registra la teva partida en segon pla a partir del que publiquen els jocs: telemetria, integracions d'estat de joc, registres i repeticions | les teves pròpies estadístiques sense fer res a mà |
 | [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Repeticions de War Thunder (`.wrpl`) en taules: trajectòries aèries i terrestres, trets, impactes, morts, torretes, objectius | repeticions de War Thunder, marques d'impacte i troballes |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Repeticions de World of Tanks en taules: la posició de cada vehicle, morts i morts causades | calor i repeticions de World of Tanks |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Repeticions de World of Tanks en taules: la posició de cada vehicle, morts i eliminacions | calor i repeticions de World of Tanks |
 | [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Repeticions de World of Warships en taules: la posició de cada vaixell i els enfonsaments | calor i repeticions de World of Warships |
 | [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Demos de servidors de Squad en taules: la posició, l'equip i l'esquadra de cada jugador | calor i repeticions de Squad |
 | [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Terrenys de DCS World de la teva pròpia instal·lació a nivells: terreny, carreteres, pobles, aeròdroms, camps i aigua | DCS i gravacions de Tacview sobre el seu terreny real |

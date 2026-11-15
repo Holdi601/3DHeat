@@ -60,7 +60,7 @@ Mapálann gach rialú thíos paraiméadar shader, mar sin ní chosnaíonn athrú
 | Swatches grúpa agus **Scaradh dathanna** (Teas foirne amháin) | 1.4 | [Teas foirne](team-heat.md) |
 | Eagarthóir **Grádán teasa** (*Dearfach (foirne suimitheacha)* sa Difríocht, *Grádán teimhneachta* sa Teas foirne) | trédhearcach → dearg → buí → bán | [Dath agus nochtadh](colour-and-exposure.md#the-ramp-editor) |
 | **Athshocraigh go trédhearcach → dearg → buí → bán** | | |
-| Grádán **Diúltach (foirne dealaitheacha)** (Difríocht amháin) | trédhearcach → glas → gorm → corcairdhearg | [Difríocht](difference.md#colours) |
+| Grádán **Diúltach (foirne dealaitheacha)** (Difríocht amháin) | trédhearcach → glas → gorm → corcra | [Difríocht](difference.md#colours) |
 
 ### Teorainneacha picteilíní sprid (dúnta) {#sprite-pixel-clamps-closed}
 
@@ -93,4 +93,4 @@ Tá dhá chuid eile faoi Cruth an teasa. Tarraingíonn **Treo** gach sraith mar 
 
 ## Cad a shábháiltear {#what-is-saved}
 
-Ní stóráiltear na socruithe teasa thuas idir seisiúin: má athlódálann tú an leathanach, athshocraítear na réamhshocruithe. Coinnítear dhá rud sa bhrabhsálaí: an luas athsheinm deiridh (`heat3d.speed`, féach [Amlíne](timeline.md)) agus socruithe an bhreasán i gcéin den [fhorleagan figiúr](box-replay.md) (stíl siombail, méid, marcanna buillí agus mar sin de). Mar an gcéanna, an teanga, [aiseanna domhanda inverted](camera.md#invert-world-axis), ainmneacha na ngluaisteán a chuimhnigh cluaisín rása agus an [leabharlann leibhéal](level-library.md). Tá an liosta iomlán ar [Socruithe stóráilte](ref-settings-storage.md).
+Ní stóráiltear na socruithe teasa thuas idir seisiúin: má athlódálann tú an leathanach, athshocraítear na réamhshocruithe. Coinnítear dhá rud sa bhrabhsálaí: an luas athsheinm deiridh (`heat3d.speed`, féach [Amlíne](timeline.md)) agus socruithe an bhreasán i gcéin den [fhorleagan figiúr](box-replay.md) (stíl siombail, méid, marcanna buillí agus mar sin de). Mar an gcéanna, an teanga, [aiseanna domhanda inbhéartha](camera.md#invert-world-axis), ainmneacha na ngluaisteán a chuimhnigh cluaisín rása agus an [leabharlann leibhéal](level-library.md). Tá an liosta iomlán ar [Socruithe stóráilte](ref-settings-storage.md).

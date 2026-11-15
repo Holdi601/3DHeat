@@ -28,7 +28,7 @@ Zapíše do `tools/.shots/demo/`:
 | `demo-yard.glb` | 160 m dlhý obohnaný dvor s budovami ako 3D level |
 | `tanks.parquet` | 10 zápasov tankov, 8 proti 8: pohyb, výstrely, zásahy s miestom na trupe, požiare, zostrely, trosky, namierenie veže, víťazi |
 | `tanks/match-NN.parquet` | tie isté zápasy, každý v jednom súbore, pre [veľa zápasov naraz](many-matches.md) |
-| `air.parquet` | vzdušný súboj 4 proti 4 s raketami, pascami, zostrelmi a netrafeniami |
+| `air.parquet` | vzdušný súboj 4 proti 4 s raketami, fléry, zostrelmi a netrafeniami |
 | `shooter.parquet` | 12 kôl 5 proti 5 pešo: výstrely, zostrely, položenie bomby, zarobené a minuté kredity, prilby a pomôcky |
 | `mass/` | priečinok malých zápasov `.3dheat`, pre [hromadnú analýzu](mass-analysis.md) |
 | súbor kôl pretekov | dve kolá jedného auta na zmyslenej trati, pre [Analýzu pretekov](race-analysis.md) |
@@ -40,7 +40,7 @@ Každá tabuľka má názvy svojich stĺpcov v pätičke, takže sa načíta bez
 1. Spustite prehliadač (na Windows `start.bat`, alebo na ľubovoľnom systéme raz `npm install` a potom `npm run dev`) a otvorte `http://127.0.0.1:5273/`.
 2. **Pozadie / level → 3D model…** a vyberte `demo-valley.glb`.
 3. **Zdroj → Súbory…** a vyberte `tanks.parquet`.
-4. Stlačte `F`, aby sa dáta vošli do záberu. Vidíte [teplo](heat.md) desiatich zápasov.
+4. Stlačte `F`, aby sa dáta zmestili do záberu. Vidíte [teplo](heat.md) desiatich zápasov.
 5. Vyskúšajte lištu režimov: **Rozdiel** (Blue proti Red), **Teplo tímov**, **Čiary**.
 6. Otvorte **Zistenia** (na bočnom paneli Heatmapy): nájde miesta, kde sa vystrelilo, zasiahlo a zničilo oveľa viac než inde - okolo oboch kopcov.
 7. Otvorte kartu **Zápas**; pod **Zápasy v zázname** vyberte *Match 01* a stlačte **Prehrať** na časovej osi: [prehrávanie](match-replay.md).

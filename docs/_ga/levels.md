@@ -17,7 +17,7 @@ Is é leibhéal an áit 3D inar tharla an cluiche - léarscáil, baile, rian. Cu
 - **leibhéal 3D** - `.glb`, `.gltf`, `.obj`, `.stl` nó `.ply` - roinnte ina talamh, struchtúir agus uisce agus simplithe ar iompórtáil - féach [Leibhéil 3D](model-levels.md) agus [Cuma an leibhéil](level-appearance.md);
 - **cúlra domhanda** - le haghaidh taifeadta a deir cá bhfuil sé ar an domhan (comhad Tacview ACMI), an tír-raon fíor, bóithre, uisce, aerpháirceanna agus foirgnimh, íoslódáilte ó shonraí oscailte - féach [Cúlra domhanda](world-backdrop.md).
 
-Gan aon rud lódáilte, tá an radharc dorcha le greille agus aiseanna datha (**Greille** agus **Aiseanna** sa [Ceamara agus radharc](camera.md)), agus deir an painéal *Níl aon rud lódáilte - taispeánann an radharc greille agus aiseanna. Cuir íomhá léarscáile nó mogall leibhéil leis chun comhthéacs a thabhairt don teas.*
+Gan aon rud lódáilte, tá an radharc dorcha le greille agus aiseanna datha (**Greille** agus **Aiseanna** sa [Ceamara agus radharc](camera.md)), agus deir an painéal *Níl aon rud lódáilte — taispeánann an radharc greille agus aiseanna. Cuir íomhá léarscáile nó mogalra leibhéil leis chun comhthéacs a thabhairt don teas.*
 
 Tá an leibhéal roinnte ag na trí chluaisín: is é an leibhéal céanna é a thaispeánann an teas más cúrsa é a lódáladh i gcluaisín Anailís rása.
 
@@ -45,7 +45,7 @@ Tá an leibhéal roinnte ag na trí chluaisín: is é an leibhéal céanna é a 
 |---|---|
 | **Íomhá léarscáile…**, **Samhail 3T…** | Lódáil ceann; cuireann sé an leibhéal reatha in ionad. |
 | **An fíorshaol mar chúlra**, **Déan dearmad ar thíleanna léarscáile** | Le haghaidh tacair sonraí le tagairt gheografach amháin: an áit fhíor faoi a thógáil mar leibhéal, nó na tíleanna íoslódáilte a scriosadh. [Cúlra domhanda](world-backdrop.md) |
-| **Sprioc simplithe** | An buiséad triantán don iompórtáil samhla eile: *Iomlán - gan simpliú* (réamhshocrú), *Ard - 8M*, *Meán - 3M*, *Íseal - 800k*, *Sealbhán - 100k*. [Leibhéil 3D](model-levels.md#simplification) |
+| **Sprioc simplithe** | An buiséad triantán don iompórtáil samhla eile: *Iomlán — gan simpliú* (réamhshocrú), *Ard — 8M triantán*, *Meánach — 3M triantán*, *Íseal — 800k triantán*, *Scáthchruth — 100k triantán*. [Leibhéil 3D](model-levels.md#simplification) |
 | Dul chun cinn agus **Cealaigh** | Le linn díchódála nó iompórtála. |
 | Nóta iompórtála | Triantáin roimh agus tar éis, roinnt talamh / struchtúir / uisce, an leibhéal mionsonraí a úsáideadh. |
 | Ainm agus méid | `leithead×airde px · x × z m/px` do phictiúr, `N triantán (ó M)` do shamhail. |

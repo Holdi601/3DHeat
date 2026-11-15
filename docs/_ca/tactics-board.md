@@ -34,7 +34,7 @@ La pestanya **Tàctica** és una pissarra de dibuix per a un pla d'equip: poses 
 | **Mapa**, **Carrega els mapes de Valorant** | Amb Valorant triat: **Carrega els mapes de Valorant** obté la llista de mapes de [valorant-api.com](https://valorant-api.com); **Mapa** aleshores posa el minimapa del mapa triat com a nivell, enquadrat des de dalt. La imatge es baixa quan es tria i mai no s'envia amb el visor. Es mostra l'avís de Riot mentre és a la pantalla (vegeu més avall). |
 | **Bàndol** | El bàndol al qual pertany la següent figura, fletxa o àrea; pren el color del bàndol. |
 
-Sense nivell, la pissarra és el pla del terra. Carrega un nivell sota **Nivell** per planificar sobre un mapa real: un mapa de CS2 exportat amb l'eina de CS2, un nivell de la biblioteca, o una imatge de mapa.
+Sense nivell, la pissarra és el pla del terra. Carrega un nivell sota **Fons / nivell** per planificar sobre un mapa real: un mapa de CS2 exportat amb l'eina de CS2, un nivell de la biblioteca, o una imatge de mapa.
 
 ## Eines {#tools}
 
@@ -59,10 +59,10 @@ Tot el que hi ha a la pissarra es pot moure com en un editor 3D: figures, utilit
 | Mode | Tecles | Nanses |
 |---|---|---|
 | **Mou** | W (o G) | Una fletxa per eix (X vermell, Y verd i amunt, Z blau) es mou al llarg seu; un quadrat es mou pel seu pla; el centre es mou sobre el nivell sota el punter. |
-| **Gira** | E (o R) | Un anell per eix gira al voltant seu. Els anells d'una figura sola són el seu propi guinyada, capcineig i balanceig; un grup gira al voltant dels eixos del món pel seu centre. |
-| **Escala** | R (o S) | Estén o recull la selecció des del seu centre al llarg d'un eix o per tots els costats; el radi d'una àrea creix amb ella. |
+| **Girar** | E (o R) | Un anell per eix gira al voltant seu. Els anells d'una figura sola són el seu propi guinyada, capcineig i balanceig; un grup gira al voltant dels eixos del món pel seu centre. |
+| **Escalar** | R (o S) | Estén o recull la selecció des del seu centre al llarg d'un eix o per tots els costats; el radi d'una àrea creix amb ella. |
 
-**Tecles** canvia entre W / E / R (Unity, Unreal) i G / R / S (Blender); les tecles trien el mode només quan hi ha alguna cosa seleccionada, i en cas contrari fan volar la càmera. Així, `R` vol dir **Escala** amb les tecles W / E / R i **Gira** amb les tecles G / R / S quan hi ha alguna cosa seleccionada, i gira la següent figura a col·locar quan no n'hi ha. Totes les tecles de la pissarra són a la [referència de teclat](keyboard-reference.md#tactics-board). Mantén **Ctrl** mentre arrossegues per ajustar un moviment a la **Quadrícula** (metres) o un gir al **Pas d'angle**. **Ajustar al terra** (activat per defecte) posa les persones, vehicles, marcadors, punts de ruta i àrees mogudes a la superfície del nivell; les aeronaus i els helicòpters mantenen la seva alçada, i arrossegar al llarg de la fletxa Y mai no ajusta. Arrossegar una nansa mai no mou la càmera. **Esc** cancel·la un arrossegament, i cada canvi és un pas de Desfés.
+**Claus** canvia entre W / E / R (Unity, Unreal) i G / R / S (Blender); les tecles trien el mode només quan hi ha alguna cosa seleccionada, i en cas contrari fan volar la càmera. Així, `R` vol dir **Escalar** amb les tecles W / E / R i **Girar** amb les tecles G / R / S quan hi ha alguna cosa seleccionada, i gira la següent figura a col·locar quan no n'hi ha. Totes les tecles de la pissarra són a la [referència de teclat](keyboard-reference.md#tactics-board). Mantén **Ctrl** mentre arrossegues per ajustar un moviment a la **Quadrícula** (metres) o un gir al **Pas d'angle**. **Ajustar al terra** (activat per defecte) posa les persones, vehicles, marcadors, punts de ruta i àrees mogudes a la superfície del nivell; les aeronaus i els helicòpters mantenen la seva alçada, i arrossegar al llarg de la fletxa Y mai no ajusta. Arrossegar una nansa mai no mou la càmera. **Esc** cancel·la un arrossegament, i cada canvi és un pas de Desfés.
 
 Els punts de ruta es mostren com a punts a les fletxes del pas mostrat: fes clic en un per seleccionar-lo, arrossega'l per moure'l, Delete per treure'l. La secció **Seleccionades** mostra la posició de la selecció en metres, el guinyada, el capcineig i el balanceig d'una figura en graus, i el radi d'una àrea, cadascun editable escrivint-hi.
 

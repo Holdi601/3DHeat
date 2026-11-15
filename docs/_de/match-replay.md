@@ -15,7 +15,7 @@ Das Replay ist ein Film des Matches, in dem jeder Spieler als das gezeichnet wir
 
 Schüsse, Treffer, Brände und Wracks werden auf den Einheiten und Zielen des Levels gezeichnet. Kameras, Beschriftungen und eine taktische Anzeige helfen dir, den Kampf zu lesen. Kennst du Tacview? [Tacview-Parität](tacview-parity.md) zeigt, wo jedes seiner Werkzeuge zu finden ist.
 
-![Figuren-Replay der Panzer-Demo: Panzer als ihre eigenen Figuren, mit Beschriftungen für Name, Fahrzeug und Tempo](../assets/img/en/replay-overview.webp)
+![Figuren-Replay der Panzer-Demo: Panzer als ihre eigenen Figuren, mit Beschriftungen für Name, Fahrzeug und Tempo](../assets/img/de/replay-overview.webp)
 
 ## Ein Replay starten {#start-a-replay}
 
@@ -26,11 +26,11 @@ Schüsse, Treffer, Brände und Wracks werden auf den Einheiten und Zielen des Le
 
 Figuren ersetzen Quader für jede Einheit, deren Name oder Typ bekannt ist (siehe [Figuren](figures.md)). Daten ohne Namens- oder Typspalte werden als Soldaten gezeichnet.
 
-![Der Tab Match: die Auswahl der Matches, der Abschnitt Figuren, die Kameraansichten, Abspielen und die Ereignisliste](../assets/img/en/match-replay-tab.webp)
+![Der Tab Match: die Auswahl der Matches, der Abschnitt Figuren, die Kameraansichten, Abspielen und die Ereignisliste](../assets/img/de/match-replay-tab.webp)
 
 ## Figuren {#figures}
 
-![Ein brennender Panzer in der Umlaufkamera, mit dem Treffer, der ihn getroffen hat](../assets/img/en/replay-tanks.webp)
+![Ein brennender Panzer in der Umlaufkamera, mit dem Treffer, der ihn getroffen hat](../assets/img/de/replay-tanks.webp)
 
 | Einstellung (Abschnitt **Figuren**) | Voreinstellung | Was sie tut |
 |---|---|---|
@@ -51,7 +51,7 @@ Figuren ersetzen Quader für jede Einheit, deren Name oder Typ bekannt ist (sieh
 
 Wäre eine Einheit kleiner als **Kleinste Figur am Bildschirm**, kann sie zu einem Symbol werden, das lesbar bleibt. Die Form zeigt die Art (zum Beispiel eine abgerundete Box mit einer Kettenmarke für Panzerung); die Farbe zeigt die Seite. Öffne das Menü **Symbole**, um den Stil zu ändern.
 
-![Dieselben sechs Einheiten als NATO-Symbole, russische taktische Zeichen, Symbole der Spielkarte und nur Formen](../assets/img/en/match-replay-symbols-styles.webp)
+![Dieselben sechs Einheiten als NATO-Symbole, russische taktische Zeichen, Symbole der Spielkarte und nur Formen](../assets/img/de/match-replay-symbols-styles.webp)
 
 ### Treffermarken, Wracks und Brände {#hit-marks-wrecks-and-fires}
 
@@ -76,15 +76,15 @@ Klicke eine Einheit oder ihre Beschriftung an, um ihr zu **folgen**; der Abschni
 
 ## Taktische Anzeige {#tactical-display}
 
-![Der Luftkampf-Demo im Look der taktischen Anzeige (T): Drahtgitter-Gelände, Panels für Abschüsse und Ereignisse](../assets/img/en/replay-air-tactical.webp)
+![Der Luftkampf-Demo im Look der taktischen Anzeige (T): Drahtgitter-Gelände, Panels für Abschüsse und Ereignisse](../assets/img/de/replay-air-tactical.webp)
 
-Der Abschnitt **Taktische Anzeige** zeichnet für keine Einheit, die gewählten, alle oder eine Art (Luftfahrzeuge, Boden, Schiffe, Waffen): Geschwindigkeitsvektoren und die Strecke voraus, Nase- und Auftriebslinien, Radarkegel, Zielerfassungen, Datenverbindungen, Wirkungszonen und -linien, Sichtlinien, wohin Spieler schauen (Sichtkegel), Turmausrichtung und die aufgezeichnete Kamera.
+Der Abschnitt **Taktische Anzeige** zeichnet für keine Einheit, die gewählten, alle oder eine Art (Luftfahrzeuge, Boden, Schiffe, Waffen): Geschwindigkeitsvektoren und die Strecke voraus, Nasen- und Auftriebslinien, Radarkegel, Zielerfassungen, Datenverbindungen, Wirkungszonen und -linien, Sichtlinien, wohin Spieler schauen (Sichtkegel), Turmausrichtung und die aufgezeichnete Kamera.
 
 ### Darstellungsstil {#display-style}
 
 `T` (oder der Schalter **Als taktische Anzeige darstellen**) wechselt den Look zu einem Radarbildschirm: Glühen, Umrisse, Höhenlinien, ein Messgitter, Abtastlinien, Entfernungsringe, Höhenleitern, Panels mit Abschüssen und Ereignissen und eine **Regie**, die die Kamera selbst zu Ereignissen bewegt.
 
-![Derselbe Luftkampf im normalen Look](../assets/img/en/replay-air.webp)
+![Derselbe Luftkampf im normalen Look](../assets/img/de/replay-air.webp)
 
 ## Ziele {#objectives}
 

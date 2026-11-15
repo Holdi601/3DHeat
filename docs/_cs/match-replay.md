@@ -69,7 +69,7 @@ Se zapnutým **Zbraně, výstřely a zásahy** (sekce Týmové zobrazení): rake
 Klikněte na jednotku nebo její popisek, abyste ji **sledovali**; sekce **Přehrávání** nabízí **Zezadu**, **Orbita**, **Kokpit** (s průhledným displejem, `H`), **Pevná**, **Zámek**, **Cíl** a **Satelit**. `V` je prochází, **Vzdálenost kamery** nastavuje, jak daleko. Esc zastaví.
 
 - **Pohled na dvě jednotky**: vyberte **Cíl** (nebo Ctrl/Alt-klik na jednotku), abyste ji viděli z té sledované; **Prohodit** je vymění.
-- **Měření**: Shift-klik na dvě jednotky ukáže směr, vzdálenost a výškový rozdíl mezi nimi.
+- **Míra**: Shift-klik na dvě jednotky ukáže směr, vzdálenost a výškový rozdíl mezi nimi.
 - **2D mapa** (`M`): rohový nebo celý pohled, se stopami a jmény.
 - **Záložky** (`B`): uloží okamžik a kameru; vypisují se i vlastní zabití, smrti a značky záznamu.
 - **Události**: každá událost v časovém pořadí; kliknutím tam přeskočíte. `Page Up` / `Page Down` přeskakují mezi událostmi; **Pauza při události** se zastaví u každé.

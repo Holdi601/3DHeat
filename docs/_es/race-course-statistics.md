@@ -1,5 +1,5 @@
 ---
-title: "Estadísticas del circuito"
+title: "Estadísticas del recorrido"
 parent: "Análisis de carrera"
 nav_order: 57
 lang: "es"

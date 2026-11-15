@@ -74,11 +74,11 @@ Dopuštanje svake vrijednosti uklanja filtar.
 - U [linijskoj toplini](line-heat.md) filtar se provjerava na retku u kojem svaki segment *završava*.
 - Pri svakom novom skupu podataka svi filtri se brišu.
 
-## For developers {#for-developers}
+## Za programere {#for-developers}
 
-**Slots.** Each active filter takes one of four GPU slots ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), a texture of 4 bytes per row. Slots go to the filters in the order they were last changed ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), shared by the shader and both panels). Past four, an error says *Only the first 4 filters are applied. Clear one - the rest are being ignored, not silently combined*, and the extra filters' names read *column (not applied)*. Filters run per row in the vertex shader, so changing a threshold needs no re-parse and no re-upload.
+**Utori (slots).** Svaki aktivni filtar zauzima jedan od četiri GPU utora ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), teksturu od 4 bajta po retku. Utori idu filtrima redom kojim su zadnji put mijenjani ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), dijele ga shader i oba panela). Iza četiri pojavljuje se poruka *Primijenjena su samo prva 4 filtra. Uklonite jedan – ostali se ignoriraju, a ne tiho kombiniraju*, a dodatni filtri nose naziv *stupac (nije primijenjeno)*. Filtri se izvode po retku u vertex shaderu, pa promjena praga ne traži ponovno parsiranje ni ponovno slanje.
 
-**Filters the panel does not show.** Two more kinds exist in the application state ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
+**Filtri koje panel ne prikazuje.** U stanju aplikacije postoje još dvije vrste ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
 
-- a **groups** filter, set by the Match tab when it focuses one side. It hides the other groups in every mode, a [difference](difference.md) split by a column included.
-- a **persons** filter, set by the [Entities](entities.md) panel and by the Match tab when it focuses one player. It restricts the figure replay and the heat modes. In the heat it is a category filter over the person ids and takes one of the four slots. Its mask holds 65,536 ids ([`FILTER_MASK_CAPACITY`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)); a person past that is not drawn in the heat while it is active, even when selected. The figure replay still shows them.
+- filter **grupa**, koji postavlja kartica Meč kad fokusira jednu stranu. Skriva ostale grupe u svakom načinu, uključujući podjelu [razlike](difference.md) po stupcu.
+- filter **osoba**, koji postavljaju panel [Entiteti](entities.md) i kartica Meč kad fokusira jednog igrača. Ograničava reprodukciju figura i načine topline. U toplini je to filter kategorije nad id-evima osoba i zauzima jedan od četiri utora. Maska sadrži 65.536 id-eva ([`FILTER_MASK_CAPACITY`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)); osoba iza te granice dok je filter aktivan ne crta se u toplini, čak ni kad je odabrana. Reprodukcija figura je i dalje prikazuje.

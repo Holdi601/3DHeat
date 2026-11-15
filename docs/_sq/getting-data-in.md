@@ -47,7 +47,7 @@ Gjithçka që shfaq skeda Harta e nxehtësisë vjen nga një **grup të dhënash
 |---|---|
 | **Të paktën dy nga X / Y / Z** | Ngarkimi refuzohet. Me vetëm dy, boshti i tretë është 0 dhe të dhënat vizatohen si një rrafsh i sheshtë në skenën 3D - çfarë do një hartë nxehtësie nga lart. |
 | Një kolonë kohe | Opsionale. Pa të kronologjia çaktivizohet, pamja mbetet në modalitetin **Të gjitha**, dhe shiriti anësor e thotë këtë. |
-| Një kolonë personi | Opsionale. Nevojitet për [mbivendosjen e figurave](box-replay.md) (një figurë për çdo person), [nxehtësinë e vijave](line-heat.md) (rruga që ndoqi çdo person), interpolim, gjurmë dhe historinë **Jetëgjatësia**. |
+| Një kolonë personi | Opsionale. Nevojitet për [mbivendosjen e figurave](box-replay.md) (një figurë për çdo person), [nxehtësinë e vijave](line-heat.md) (rruga që ndoqi çdo person), interpolim, gjurmë dhe historinë **Jetëgjatësi**. |
 | Një kolonë grupi | Opsionale. Nevojitet për [nxehtësinë e ekipit](team-heat.md) dhe për modalitetin [diferencë](difference.md) (të paktën dy grupe). |
 
 Një modalitet që të dhënat e ngarkuara nuk e mbajnë është i zbehur në shiritin e modeve; kur kalon mbi të, thuhet arsyeja.

@@ -13,7 +13,7 @@ outdated: false
 
 Te panele pozwalają wybrać, *które* dane oglądasz, i zmierzyć to, co widzisz. Używaj ich, gdy obraz jest zbyt zagmatwany: pokaż jedną drużynę, jednego gracza, jedno miejsce albo jedno piętro budynku.
 
-Każdy panel zawęża dane, a działają razem: wiersz jest rysowany tylko wtedy, gdy przechodzi przez **wszystkie** z nich (I).
+Każdy panel zawęża dane, a działają razem: wiersz jest rysowany tylko wtedy, gdy przechodzi przez **wszystkie** z nich (i).
 
 ```
 all rows -> Filters -> Teams -> Entities -> Slice -> picture

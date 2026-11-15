@@ -129,7 +129,7 @@ geleerd zijn (zie [Rondes laden](race-loading-laps.md#car-names)).
 
 ## Voor ontwikkelaars {#for-developers}
 
-### What happens when laps are loaded {#what-happens-when-laps-are-loaded}
+### Wat er gebeurt als rondes geladen worden {#what-happens-when-laps-are-loaded}
 
 Elke keer dat de set rondes, de referentie of de taal verandert, wordt de hele
 analyse opnieuw gedaan (`analyse` in
@@ -160,7 +160,7 @@ De teksten worden in de huidige taal gemaakt; een taalwissel draait de analyse
 opnieuw (en hernoemt de demorondes). Een fout in de analyse wordt onder de
 knoppen **Rondes** als fout getoond en de rondes blijven geladen.
 
-### Source files {#source-files}
+### Bronbestanden {#source-files}
 
 | Bestand | Rol |
 |---|---|

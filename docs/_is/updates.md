@@ -63,74 +63,40 @@ page ---(after 4 s, then every 6 h)---> dev server ---> git fetch
 
 ### Meðan hann keyrir: uppfærsluleiðin {#while-it-runs-the-update-route}
 
-The dev server (Vite plugin `heat3d-self-update` in `vite.config.ts`) serves
-`/__heat3d/update`. It exists only on the dev server - not in a static build
-and not in `vite preview`.
+Þjónninn fyrir þróun (Vite-viðbótin `heat3d-self-update` í `vite.config.ts`) þjónar `/__heat3d/update`. Hún er aðeins á þróunarþjóninum - ekki í kyrrstæðri útgáfu og ekki í `vite preview`.
 
-**`GET /__heat3d/update`** answers whether the checkout is behind:
+**`GET /__heat3d/update`** svarar hvort afritið sé á eftir:
 
 ```json
 { "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "the newest commit's subject" }
 ```
 
-- `checkout: false` when the folder is not a git checkout;
-- it runs `git fetch --quiet` **at most every 30 minutes** (asks in between
-  answer from what was last fetched);
-- `behind` / `ahead` from `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`,
-  `dirty` from `git status --porcelain --untracked-files=no`, `latest` the
-  subject of the upstream's newest commit;
-- with no upstream branch, `upstream: null` and `behind: 0`.
+- `checkout: false` þegar mappan er ekki git-afrit;
+- keyrir `git fetch --quiet` **í mesta lagi á 30 mínútna fresti** (fyrirspurnir þar á milli svara út frá því sem var sótt síðast);
+- `behind` / `ahead` úr `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`, `dirty` úr `git status --porcelain --untracked-files=no`, `latest` er efni nýjustu skuldbindingar upprunans;
+- án upprunagreinar: `upstream: null` og `behind: 0`.
 
-**`POST /__heat3d/update/apply`** brings the checkout up:
+**`POST /__heat3d/update/apply`** færir afritið upp:
 
-1. Refused with `403 { ok: false, reason: "forbidden" }` unless the request has
-   the header `X-Heat3d-Update: 1` and, when it carries an `Origin`, that
-   origin's host is the request's `Host`. A cross-site form cannot send a
-   custom header without a CORS preflight, which this server never grants.
-2. Nothing to do (not a checkout, no upstream, not behind):
-   `{ ok: true, updated: false }`.
-3. Local changes: `{ ok: false, reason: "dirty" }`; local commits:
-   `{ ok: false, reason: "diverged" }`.
-4. Otherwise: notes the files that change (`git diff --name-only HEAD @{u}`),
-   `git pull --ff-only` (2 min timeout), `git submodule update --init`
-   (failure ignored), `npm install` when `package.json` or
-   `package-lock.json` changed (15 min timeout), and answers
-   `{ ok: true, updated: true, restart }` - `restart` says why the running
-   server cannot pick the update up: `"dependencies"` when they were
-   reinstalled, `"config"` when only a `vite.config` file changed, `false`
-   when nothing needs a restart.
-5. A failing git or npm command answers `{ ok: false, reason: "<the error,
-   up to 300 characters>" }`.
+1. Hafnað með `403 { ok: false, reason: "forbidden" }` nema beiðnin beri hausinn `X-Heat3d-Update: 1` og, þegar hún ber `Origin`, sé hýsill þess uppruna sá sami og `Host` beiðninnar. Eyðublað frá annarri síðu getur ekki sent sérsniðinn haus án CORS-forkeyrslu, sem þessi þjónn veitir aldrei.
+2. Ekkert að gera (ekki afrit, engin upprunagrein, ekki á eftir): `{ ok: true, updated: false }`.
+3. Staðbundnar breytingar: `{ ok: false, reason: "dirty" }`; staðbundnar skuldbindingar: `{ ok: false, reason: "diverged" }`.
+4. Annars: skráir þær skrár sem breytast (`git diff --name-only HEAD @{u}`), keyrir `git pull --ff-only` (2 mínútna tímamörk), `git submodule update --init` (villa hunsuð), `npm install` þegar `package.json` eða `package-lock.json` breytast (15 mínútna tímamörk), og svarar `{ ok: true, updated: true, restart }` - `restart` segir hvers vegna keyrandi þjónninn getur ekki tekið uppfærsluna upp: `"dependencies"` þegar þau voru sett upp aftur, `"config"` þegar aðeins `vite.config`-skrá breyttist, `false` þegar ekkert þarf endurræsingu.
+5. Ef git- eða npm-skipun mistekst svarar það `{ ok: false, reason: "<villan, allt að 300 stafir>" }`.
 
-Responses are JSON with `Cache-Control: no-store`. The server listens on
-`127.0.0.1` only, so the route is not reachable from the network.
+Svör eru JSON með `Cache-Control: no-store`. Þjónninn hlustar aðeins á `127.0.0.1`, svo leiðin er ekki aðgengileg af netinu.
 
-### The notice in the page {#the-notice-in-the-page}
+### Tilkynningin á síðunni {#the-notice-in-the-page}
 
-`UpdateBanner`, under the name at the top of the sidebar:
+`UpdateBanner`, undir heitinu efst í hliðarstikunni:
 
-- It asks the route **4 seconds** after the page loads (not in the first
-  seconds: the page has a dataset to load and a GPU to start) and again
-  **every 6 hours** while the page stays open.
-- It shows **nothing** when there is no such route (a static build), the
-  folder is not a checkout, or nothing is newer - a notice on every start is
-  one people learn to ignore.
-- Behind, with no local changes: "A newer version of 3DHeat is available (N
-  changes, the newest: <subject>)." with **Update now** and **Later**
-  (*Later* hides it until the page is reloaded).
-- Behind, with local changes: the same sentence and "This copy has local
-  changes, so it is not updated automatically; commit or stash them, then
-  run git pull." - no button.
-- **Update now** posts to `/apply` ("Updating..."). Then:
-  - "Updated. The page reloads." - and it reloads 1.5 s later (the server
-    already serves the new files);
-  - when the dependencies were reinstalled: "Updated. Its dependencies
-    changed: close the server window and run **restart.bat** to finish.";
-  - when only the server's settings changed: "Updated. Its server settings
-    changed: close the server window and run **restart.bat** to finish.";
-  - nothing to bring in after all (`updated: false` - the copy was brought up
-    meanwhile, by `start.bat` say): "Nothing to update: this copy is already
-    the newest version." - and no reload;
-  - refused: the *dirty* sentence, or "This copy has commits of its own that
-    the newest version does not; update it with git pull.", or "The update
-    did not go through: <reason>".
+- Hann spyr leiðina **4 sekúndum** eftir að síðan hleðst (ekki fyrstu sekúndurnar: síðan hefur gagnasafn að hlaða og skjákort að ræsa) og aftur **á 6 klukkustunda fresti** meðan síðan er opin.
+- Hann sýnir **ekkert** þegar engin slík leið er til (kyrrstæð útgáfa), mappan er ekki afrit, eða ekkert er nýrra - tilkynning við hverja ræsingu er það sem fólk lærir að hunsa.
+- Á eftir, án staðbundinna breytinga: "A newer version of 3DHeat is available (N changes, the newest: <subject>)." með **Uppfæra núna** og **Síðar** (*Síðar* felur hann þar til síðan er endurhlaðin).
+- Á eftir, með staðbundnum breytingum: sama setning og "This copy has local changes, so it is not updated automatically; commit or stash them, then run git pull." - enginn hnappur.
+- **Uppfæra núna** sendir á `/apply` ("Updating..."). Þá:
+  - "Updated. The page reloads." - og síðan endurhleðst 1,5 s síðar (þjónninn þjónar þegar nýju skránum);
+  - þegar háðu forritin voru sett upp aftur: "Updated. Its dependencies changed: close the server window and run **restart.bat** to finish.";
+  - þegar aðeins stillingar þjónsins breyttust: "Updated. Its server settings changed: close the server window and run **restart.bat** to finish.";
+  - ekkert að sækja eftir allt saman (`updated: false` - afritið var uppfært í millitíðinni, til dæmis af `start.bat`): "Nothing to update: this copy is already the newest version." - og engin endurhleðsla;
+  - hafnað: *dirty*-setningin, eða "This copy has commits of its own that the newest version does not; update it with git pull.", eða "The update did not go through: <reason>".

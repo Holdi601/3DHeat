@@ -14,7 +14,7 @@ Linjen under bildet er som en videospiller: du kan spille av dataene som en film
 
 ![Tidslinjelinjen: 1 Alle/Spill av, 2 avspillingsknapper, 3 klokke, 4 Hastighet, 5 Historikk, med Vindu og et Tidsrom på 30 s](../assets/img/en/timeline-bar.webp)
 
-Linjen under visningen er tidslinjen ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Den bestemmer hvilke rader som er synlige til enhver tid. Den trenger en tidskolonne; uten en er hele linjen slått av, visningen blir værende i **Alle**, og sidepanelet sier *Ingen tidskolonne i disse dataene – tidslinjen er slått av, og hvert datapunkt vises på én gang.*
+Linjen under visningen er tidslinjen ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Den bestemmer hvilke rader som er synlige til enhver tid. Den trenger en tidskolonne; uten en er hele linjen slått av, visningen blir værende i **Alle**, og sidepanelet sier *Ingen tidskolonne i disse dataene — tidslinjen er deaktivert, og alle datapunkter vises samtidig.*
 
 ## Alle og Spill av {#all-and-play}
 

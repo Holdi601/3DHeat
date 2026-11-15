@@ -45,7 +45,7 @@ Level zdieľajú všetky tri karty: trať načítaná na karte Analýza pretekov
 |---|---|
 | **Obrázok mapy…**, **3D model…** | Načíta jeden; nahradí aktuálny level. |
 | **Skutočný svet ako pozadie**, **Zabudnúť dlaždice máp** | Len pre dátovú sadu s geografickým odkazom: postaví skutočné miesto pod ňou ako level, alebo zmaže stiahnuté dlaždice. [Pozadie sveta](world-backdrop.md) |
-| **Cieľ zjednodušenia** | Rozpočet trojuholníkov pri ďalšom importe modelu: *Plný - bez zjednodušenia* (predvolené), *Vysoký - 8M*, *Stredný - 3M*, *Nízky - 800k*, *Silueta - 100k*. [3D levely](model-levels.md#simplification) |
+| **Cieľ zjednodušenia** | Rozpočet trojuholníkov pri ďalšom importe modelu: *Plná – bez zjednodušenia* (predvolené), *Vysoká – 8 mil. trojuholníkov*, *Stredná – 3 mil. trojuholníkov*, *Nízka – 800 tis. trojuholníkov*, *Silueta – 100 tis. trojuholníkov*. [3D levely](model-levels.md#simplification) |
 | Priebeh a **Zrušiť** | Počas dekódovania alebo importu. |
 | Poznámka k importu | Trojuholníky pred a po, rozdelenie na zem / stavby / vodu, použitá úroveň detailu. |
 | Názov a veľkosť | `šírka×výška px · x × z m/px` pre obrázok, `N trojuholníkov (z M)` pre model. |

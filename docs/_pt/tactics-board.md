@@ -62,7 +62,7 @@ Tudo no quadro pode ser movido como num editor 3D: figuras, utilitários, marcad
 | **Rodar** | E (ou R) | Um anel por eixo gira em torno dele. Os anéis de uma figura isolada são a sua própria guinada, inclinação e rolamento; um grupo gira em torno dos eixos do mundo, a partir do seu centro. |
 | **Escalar** | R (ou S) | Espalha ou junta a seleção a partir do seu centro, ao longo de um eixo ou em todos os sentidos; o raio de uma área cresce com ele. |
 
-As **Teclas** alternam entre W / E / R (Unity, Unreal) e G / R / S (Blender); as teclas escolhem o modo só quando algo está selecionado, e fazem voar a câmara no resto. Assim, `R` significa **Escalar** com as teclas W / E / R e **Rodar** com as teclas G / R / S quando algo está selecionado, e roda a próxima figura a colocar quando nada está. Todas as teclas do quadro estão listadas na [referência de teclado](keyboard-reference.md#tactics-board). Mantenha **Ctrl** ao arrastar para encaixar um movimento na **Grelha** (metros) ou uma rotação no **Passo de ângulo**. **Ajustar ao chão** (ligado por omissão) põe as pessoas, veículos, marcadores, pontos de passagem e áreas movidos na superfície do nível; aeronaves e helicópteros mantêm a altura, e um arrasto ao longo da seta Y nunca encaixa. Arrastar uma pega nunca move a câmara. **Esc** cancela um arrasto, e cada alteração é um passo de Anular.
+As **Chaves** alternam entre W / E / R (Unity, Unreal) e G / R / S (Blender); as teclas escolhem o modo só quando algo está selecionado, e fazem voar a câmara no resto. Assim, `R` significa **Escalar** com as teclas W / E / R e **Rodar** com as teclas G / R / S quando algo está selecionado, e roda a próxima figura a colocar quando nada está. Todas as teclas do quadro estão listadas na [referência de teclado](keyboard-reference.md#tactics-board). Mantenha **Ctrl** ao arrastar para encaixar um movimento na **Grelha** (metros) ou uma rotação no **Passo de ângulo**. **Ajustar ao chão** (ligado por omissão) põe as pessoas, veículos, marcadores, pontos de passagem e áreas movidos na superfície do nível; aeronaves e helicópteros mantêm a altura, e um arrasto ao longo da seta Y nunca encaixa. Arrastar uma pega nunca move a câmara. **Esc** cancela um arrasto, e cada alteração é um passo de Anular.
 
 Os pontos de passagem aparecem como pontos nas setas do passo mostrado: clique num para o selecionar, arraste-o para o mover, Delete para o retirar. A secção **Selecionadas** mostra o lugar da seleção em metros, a guinada, inclinação e rolamento de uma figura em graus e o raio de uma área, cada um para escrever.
 
@@ -88,7 +88,7 @@ A barra por baixo da vista guarda os passos. Um plano começa com um; **+** acre
 
 ## Guardar {#saving}
 
-A secção **Ficheiro** tem **Guardar**, **Open** e **Limpar**. **Guardar** escreve o plano como `<nome>.h3dplan.json` (JSON simples: lados, passos, figuras com um lugar por passo, setas, áreas, notas); **Open** lê um de volta. Um ficheiro de outra versão, ou que não seja um plano, é recusado com o motivo. **Limpar** esvazia o plano; Anular devolve-o.
+A secção **Ficheiro** tem **Guardar**, **Abrir** e **Limpar**. **Guardar** escreve o plano como `<nome>.h3dplan.json` (JSON simples: lados, passos, figuras com um lugar por passo, setas, áreas, notas); **Abrir** lê um de volta. Um ficheiro de outra versão, ou que não seja um plano, é recusado com o motivo. **Limpar** esvazia o plano; Anular devolve-o.
 
 ## Figuras {#figures}
 

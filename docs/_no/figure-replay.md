@@ -1,5 +1,5 @@
 ---
-title: "Figurer i figurlaget"
+title: "Figurer i figuroverlegget"
 parent: "Figurer"
 nav_order: 2
 lang: "no"

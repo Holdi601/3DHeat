@@ -14,7 +14,7 @@ outdated: false
 
 Lade Positionen – CSV, Parquet, Tacview-Aufnahmen, konvertierte Replays, eine einzelne Datei, einen Ordner oder Tausende Matches – und sieh sie als **Heatmap, durch die du fliegen kannst**, als **Figuren, die das Match nachspielen**, als Linien entlang der Wege, die Leute genommen haben, oder als eine Gruppe gegen eine andere. Es findet selbst, was heraussticht, und läuft komplett in deinem Browser: Nichts wird irgendwohin hochgeladen.
 
-![Intensität von zehn Panzer-Matches über dem Demo-Tal](../assets/img/en/heat-hero.webp)
+![Intensität von zehn Panzer-Matches über dem Demo-Tal](../assets/img/de/heat-hero.webp)
 
 **Neu hier?** Erzeuge die [Demodaten](demo-data.md) und folge ihren sieben Schritten. Jedes Bild auf dieser Seite wurde damit gemacht.
 
@@ -22,12 +22,12 @@ Lade Positionen – CSV, Parquet, Tacview-Aufnahmen, konvertierte Replays, eine 
 
 | | |
 |---|---|
-| ![Differenz](../assets/img/en/heat-difference.webp) | **[Intensitätsmodi](heat-modes.md)** – Intensität, [Differenz](difference.md) (rot, wo eine Seite mehr hatte, grünblau, wo die andere mehr hatte), [Team-Intensität](team-heat.md), [Linien-Intensität](line-heat.md); [gerichtete Intensität](directional-heat.md) mit Keilen, Pfeilfeldern und Polardiagrammen; Intensität [nach Wert gewichtet](value-weighting.md): was Waffen, Fahrzeuge und Treibstoff kosten. |
-| ![Replay](../assets/img/en/replay-tanks.webp) | **[Match-Replay](match-replay.md)** – jede Einheit als [Figur](figures.md) von dem, was sie ist, NATO- oder russische Symbole aus der Ferne, Raketen und Leuchtspuren, Treffermarken, Wracks, Brände, Türme, Ziele und Kameras im Tacview-Stil sowie eine taktische Anzeige; [viele Matches auf einmal](many-matches.md). |
-| ![Erkenntnisse](../assets/img/en/insights.webp) | **[Erkenntnisse](insights.md)** – starke Positionen, tödlicher Boden, Spawn-Fallen, Engpässe und herausragende Spieler, gefunden und mit Belegen geordnet; eine schriftliche Nachbesprechung, optional von einer KI deiner Wahl; ein Kommentator für ein Match; die [Wissenslinse](knowledge.md). |
-| ![Volumen](../assets/img/en/compare.webp) | **[Volumen](volumes.md)** – Quader, Prismen, Zylinder und Kugeln zeichnen, nach ihnen filtern, zählen, was darin passiert, exportieren und Orte nebeneinander vergleichen; [Aufschlüsselung](breakdown.md), wer und was an einem Ort am besten abschneidet. |
-| ![Filter](../assets/img/en/filters.webp) | **[Filter](filters.md)** – nach Ereignistyp, Spieler oder KI, Fahrzeugklasse, Wert, jeder Spalte, auf der Grafikkarte bei jeder Datenmenge. |
-| ![Level](../assets/img/en/level-panel.webp) | **[Levels](levels.md)** – Kartenbilder, 3D-Levels, die mit den [Datenwerkzeugen](#related-repositories) entstehen, Vereinfachung, der [Welt-Hintergrund](world-backdrop.md) mit echtem Gelände für Flugdaten. |
+| ![Differenz](../assets/img/de/heat-difference.webp) | **[Intensitätsmodi](heat-modes.md)** – Intensität, [Differenz](difference.md) (rot, wo eine Seite mehr hatte, grünblau, wo die andere mehr hatte), [Team-Intensität](team-heat.md), [Linien-Intensität](line-heat.md); [gerichtete Intensität](directional-heat.md) mit Keilen, Pfeilfeldern und Polardiagrammen; Intensität [nach Wert gewichtet](value-weighting.md): was Waffen, Fahrzeuge und Treibstoff kosten. |
+| ![Replay](../assets/img/de/replay-tanks.webp) | **[Match-Replay](match-replay.md)** – jede Einheit als [Figur](figures.md) von dem, was sie ist, NATO- oder russische Symbole aus der Ferne, Raketen und Leuchtspuren, Treffermarken, Wracks, Brände, Türme, Ziele und Kameras im Tacview-Stil sowie eine taktische Anzeige; [viele Matches auf einmal](many-matches.md). |
+| ![Erkenntnisse](../assets/img/de/insights.webp) | **[Erkenntnisse](insights.md)** – starke Positionen, tödlicher Boden, Spawn-Fallen, Engpässe und herausragende Spieler, gefunden und mit Belegen geordnet; eine schriftliche Nachbesprechung, optional von einer KI deiner Wahl; ein Kommentator für ein Match; die [Wissenslinse](knowledge.md). |
+| ![Volumen](../assets/img/de/compare.webp) | **[Volumen](volumes.md)** – Quader, Prismen, Zylinder und Kugeln zeichnen, nach ihnen filtern, zählen, was darin passiert, exportieren und Orte nebeneinander vergleichen; [Aufschlüsselung](breakdown.md), wer und was an einem Ort am besten abschneidet. |
+| ![Filter](../assets/img/de/filters.webp) | **[Filter](filters.md)** – nach Ereignistyp, Spieler oder KI, Fahrzeugklasse, Wert, jeder Spalte, auf der Grafikkarte bei jeder Datenmenge. |
+| ![Level](../assets/img/de/level-panel.webp) | **[Levels](levels.md)** – Kartenbilder, 3D-Levels, die mit den [Datenwerkzeugen](#related-repositories) entstehen, Vereinfachung, der [Welt-Hintergrund](world-backdrop.md) mit echtem Gelände für Flugdaten. |
 
 Außerdem: der Tab [Rennanalyse](race-analysis.md) für Runden von Rennspielen, der Tab [Match](match-analysis.md) für Zusammenfassungen von Counter-Strike 2, die [Taktik-Tafel](tactics-board.md) für Pläne auf einem Level, [Trefferanalyse](hit-analysis.md) pro Fahrzeug, [Massenanalyse](mass-analysis.md) von Tausenden Matches, [Kamerapfade und Video](camera-path-and-video.md), [40 Sprachen](languages.md), [metrische oder imperiale Einheiten](settings.md).
 

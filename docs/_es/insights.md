@@ -15,7 +15,7 @@ outdated: false
 
 Todo se cuenta en tu navegador. Nada sale de tu equipo salvo que actives una IA externa (véase [IA externa](#external-ai)).
 
-![Hallazgos sobre la demo de tanques: 14 hallazgos, el más fuerte primero](../assets/img/en/insights.webp)
+![Hallazgos sobre la demo de tanques: 14 hallazgos, el más fuerte primero](../assets/img/es/insights.webp)
 
 La sección **Hallazgos** está en la barra lateral de las pestañas Mapa de calor y Partida. Tiene tres pestañas: **Hallazgos**, **Resumen** y **Comentarista**.
 
@@ -30,7 +30,7 @@ El conteo usa los filtros actuales, los grupos ocultos y la partida elegida sobr
 
 Las líneas de arriba de la lista (por ejemplo, los totales de dinero) resumen todos los datos antes de los hallazgos.
 
-![Un hallazgo abierto: la zona caliente de disparos, sus cifras y un pasaje de bibliografía que coincide](../assets/img/en/insights-finding.webp)
+![Un hallazgo abierto: la zona caliente de disparos, sus cifras y un pasaje de bibliografía que coincide](../assets/img/es/insights-finding.webp)
 
 ### Los detectores {#the-detectors}
 
@@ -55,7 +55,7 @@ Cada lugar o grupo se contrasta con el resto del mapa (pruebas binomiales exacta
 
 La pestaña **Resumen** redacta los hallazgos en un texto breve: una introducción, el hallazgo más claro, uno para la táctica, uno para el equilibrio, el resto agrupado por detector, y cuántos se apoyan en pruebas más débiles. Cada párrafo tiene botones numerados que muestran sus hallazgos. **Copiar texto** lo copia.
 
-![El resumen redactado por el narrador integrado](../assets/img/en/debrief.webp)
+![El resumen redactado por el narrador integrado](../assets/img/es/debrief.webp)
 
 El narrador integrado funciona sin conexión, en tu idioma. El selector **Lente** de encima (véase [La lente de conocimiento](knowledge.md)) decide qué bibliografía citan los párrafos.
 
@@ -76,9 +76,9 @@ Después escribe una pregunta opcional y pulsa **Escribir con IA**. Solo se env�
 
 ## Comentarista {#caster}
 
-Para **una partida** (elige una si hay varias cargadas), el **Comentarista** encuentra los momentos que merecen verse: primera sangre, multibajas, intercambios, remontadas, cambios de objetivo, remontadas de marcador, jugadores destacados, disparos largos.
+Para **una partida** (elige una si hay varias cargadas), el **Comentarista** encuentra los momentos que merecen verse: primera sangre, multibajas, intercambios, clutches, cambios de objetivo, remontadas, jugadores destacados, disparos largos.
 
-![Los momentos del comentarista para una ronda de la demo de disparos](../assets/img/en/caster.webp)
+![Los momentos del comentarista para una ronda de la demo de disparos](../assets/img/es/caster.webp)
 
 - Pulsa un momento: la vista pasa a la repetición, salta justo antes, vuela hasta allí y sigue al jugador.
 - **Reproducir los momentos** reproduce cada uno hasta su final y pasa al siguiente; **Anterior** / **Siguiente** avanzan por ellos.

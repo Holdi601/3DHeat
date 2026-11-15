@@ -12,7 +12,7 @@ outdated: false
 
 Die Leiste unter dem Bild ist wie ein Videoplayer: Du kannst die Daten wie einen Film abspielen, anhalten, springen und das Tempo ändern.
 
-![Die Zeitleiste: 1 Alle/Abspielen, 2 Bedienknöpfe, 3 Uhr, 4 Tempo, 5 Verlauf, mit Fenster und einem Zeitraum von 30 s](../assets/img/en/timeline-bar.webp)
+![Die Zeitleiste: 1 Alle/Abspielen, 2 Bedienknöpfe, 3 Uhr, 4 Tempo, 5 Verlauf, mit Fenster und einem Zeitraum von 30 s](../assets/img/de/timeline-bar.webp)
 
 Die Leiste unter der Ansicht ist die Zeitleiste ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Sie bestimmt, welche Zeilen in jedem Moment sichtbar sind. Sie braucht eine Zeitspalte; ohne sie ist die ganze Leiste deaktiviert, die Ansicht bleibt im Modus **Alle**, und die Seitenleiste sagt *Keine Zeitspalte in diesen Daten – die Zeitleiste ist deaktiviert, und jeder Datenpunkt wird sofort gezeigt.*
 
@@ -63,7 +63,7 @@ Aus der Bildschleife ([`engine.ts`](https://github.com/Holdi601/3DHeat/blob/main
 - Drückst du Abspielen ganz am Ende des Bereichs, startet es vom Anfang, wie ein Medienplayer. Bei jedem Laden wird der Abspielkopf auf den Anfang gesetzt, sodass der erste Druck auf Abspielen abspielt.
 - Am Ende des Bereichs springt der Abspielkopf zurück zum Anfang (Schleife ein) oder bleibt dort stehen, und die Wiedergabe endet (Schleife aus).
 - Der Regler liest den Abspielkopf der Engine bei jedem Frame direkt; der Anwendungszustand wird bei Sprüngen, Starts, Stopps und Schleifen aktualisiert.
-- Die Wahl einer Sitzung im Sitzungsauswahl springt zum Start dieser Sitzung.
+- Die Wahl einer Sitzung in der Sitzungsauswahl springt zum Start dieser Sitzung.
 
 ## Warum die Wiedergabe flüssig und günstig ist {#why-playback-is-smooth-and-cheap}
 

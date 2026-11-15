@@ -32,7 +32,7 @@ Há cerca de 2000 veículos, aeronaves, navios, armas e soldados com nome, todos
 
 - **Construídas a partir de dimensões publicadas.** A maioria das figuras é feita pelo construtor de figuras do próprio visualizador a partir de números públicos: comprimento, largura, altura, rodas, torre e canhão, asas e cauda. A sua forma é depois ajustada com fotografias públicas, desenhos e dimensões publicadas. Não se usa nenhum modelo de jogo.
 - **Modelos gratuitos.** Algumas figuras usam modelos 3D gratuitos (CC0 ou CC BY) quando são mais fiéis, por vezes combinados com o casco construído. Os autores de obras CC BY são creditados em [Créditos das figuras](figure-credits.md); as obras CC0 não exigem crédito e não estão listadas aí.
-- Cada figura tem uma versão completa, uma grosseira e uma distante (níveis de detalhe, LOD), para que se possam desenhar milhares de uma vez.
+- Cada figura tem uma versão completa, uma simplificada e uma distante (níveis de detalhe, LOD), para que se possam desenhar milhares de uma vez.
 
 ## Que figura recebe uma unidade {#which-figure-a-unit-gets}
 

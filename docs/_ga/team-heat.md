@@ -38,7 +38,7 @@ Sa chuid **Dathanna teasa**:
 
 Oibríonn na rialuithe teasa eile go léir - cruth, sáithiú, freagairt, teas íosta, doimhneacht, baint - mar atá sa [Teas](heat.md).
 
-Taispeánann an [Liosta foirne](teams-list.md) dath teas foirne gach grúpa mar a swatch sa mhód seo. Fágann folach grúpa dathanna gach grúpa eile san áit a raibh siad: tagann dathanna ó líon iomlán na ngrúpaí, ní ó cad atá casta air, ionas go bhfuil dhá phictiúr inchomparáide.
+Taispeánann an [Liosta foirne](teams-list.md) dath teas foirne gach grúpa mar a swatch sa mhód seo. Fágann folach grúpa dathanna gach grúpa eile san áit a raibh siad: tagann dathanna ó líon iomlán na ngrúpaí, ní ó cad atá casta air, ionas go mbeidh an dá phictiúr comparáide.
 
 ## An pailéad {#the-palette}
 

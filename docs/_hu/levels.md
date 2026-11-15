@@ -27,8 +27,8 @@ A pálya mindhárom fülön közös: a Versenyelemzés fülön betöltött pály
 
 1. Először töltse be az adatot ([Adatok betöltése](getting-data-in.md)), hogy a pálya ahhoz illeszkedjen.
 2. Nyissa meg a **Háttér / pálya** részt az oldalsávban.
-3. Nyomja meg a **Térképkép…** gombot egy képhez, vagy a **3D-modell…** gombot egy 3D-s pályához, és válassza ki a fájlt. Valódi világfelvételhez használja inkább a **Világ-háttér** vagy a **Hadszíntér** gombot.
-4. Várja meg, míg a haladássor véget ér. Egy nagy modell először egyszerűsödik (lásd lentebb a **Egyszerűsítési cél** részt).
+3. Nyomja meg a **Térképkép…** gombot egy képhez, vagy a **3D-modell…** gombot egy 3D-s pályához, és válassza ki a fájlt. Valódi világfelvételhez használja inkább a **Valós világ háttérként** vagy a **Hadszíntér** gombot.
+4. Várja meg, míg a haladássor véget ér. Egy nagy modell először egyszerűsödik (lásd lentebb az **Egyszerűsítési cél** részt).
 5. Nyomja meg az **F** gombot a nézetben, hogy mindent keretbe foglaljon. Állítsa az **Átlátszatlanságot** és a **Fényerőt**, amíg a hő ki nem emelkedik a pályából.
 6. Nyomja meg a **Mentés a könyvtárba** gombot, ha újra használni fogja a pályát ([Pályakönyvtár](level-library.md)).
 
@@ -44,7 +44,7 @@ A pálya mindhárom fülön közös: a Versenyelemzés fülön betöltött pály
 | Rész | Részletek |
 |---|---|
 | **Térképkép…**, **3D-modell…** | Egyet betölt; lecseréli az aktuális pályát. |
-| **Világ-háttér**, **Térképcsempék elfelejtése** | Csak földrajzi hivatkozású adatkészletnél: a valós helyet pályaként építi meg, vagy törli a letöltött csempéket. [Világ-háttér](world-backdrop.md) |
+| **Valós világ háttérként**, **Térképcsempék elfelejtése** | Csak földrajzi hivatkozású adatkészletnél: a valós helyet pályaként építi meg, vagy törli a letöltött csempéket. [Világ-háttér](world-backdrop.md) |
 | **Egyszerűsítési cél** | A következő modellimport háromszögkerete: *Teljes – nincs egyszerűsítés* (alapértelmezés), *Magas – 8M*, *Közepes – 3M*, *Alacsony – 800k*, *Sziluett – 100k*. [3D-s pályák](model-levels.md#simplification) |
 | Haladás és **Mégse** | Dekódolás vagy importálás közben. |
 | Importmegjegyzés | Háromszögek előtte és utána, a talaj / szerkezetek / víz bontás, a használt részletességi szint. |

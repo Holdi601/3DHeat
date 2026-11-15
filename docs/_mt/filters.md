@@ -11,7 +11,7 @@ outdated: false
 
 # Filtri
 
-**Filtri** jaħbu l-ringieli li ma tkunx tixtieq, bħal klassi waħda ta' vettura jew tip wieħed ta' avveniment, u l-istampa taġġorna minnufih. Il-pannell jelenka l-kolonni miżmuma fil-ħin tat-tagħbija taħt *Żomm għall-filtrar* ([Immappjar tal-kolonni](column-mapping.md)), flimkien mal-*Fajl tas-sors* meta tkun ħabbart diversi fajls.
+**Filtri** jaħbu l-ringieli li ma tkunx tixtieq, bħal klassi waħda ta' vettura jew tip wieħed ta' avveniment, u l-istampa taġġorna minnufih. Il-pannell jelenka l-kolonni miżmuma fil-ħin tat-tagħbija taħt *Żomm għall-filtrar* ([Immappjar tal-kolonni](column-mapping.md)), flimkien mal-*Fajl tas-sors* meta tkun tellajt diversi fajls.
 
 ## Ipprova {#try-it}
 
@@ -23,7 +23,7 @@ outdated: false
 
 L-ewwel ringieli huma l-kolonni tal-viewer stess (hawn taħt). Dawk wara jiġu mill-fajl tiegħek.
 
-## Il-kolonni liż-viewer iżid {#columns-the-viewer-adds}
+## Il-kolonni li ż-viewer iżid {#columns-the-viewer-adds}
 
 Fit-tagħbija l-viewer jaħdem erba' kolonni tiegħu stess u jelenkhom **l-ewwel**, bl-ismijiet u l-valuri fil-lingwa tiegħek, sabiex l-istess filtru jaħdem għal kull logħba u sors ta' data:
 
@@ -66,7 +66,7 @@ Meta tippermetti l-valuri kollha, il-filtru jitneħħa.
 ## Regoli {#rules}
 
 - **Erba' filtri f'daqqa.** L-intestatura turi `attiv/4`. Ħames filtru ma jiġix applikat, u l-pannell jgħid hekk. Għażla fl-[Entitajiet](entities.md) (jew il-fokus tal-plejer fit-tab Partita) tuża wieħed mill-erba' wkoll. Filtru li jkopri l-kolonna kollha ma juża xejn.
-- **Kolonna ta' kategorija għandha mill-iktar 4,096 valur**; wahda usa' ma tinżammx fil-ħin tat-tagħbija.
+- **Kolonna ta' kategorija għandha mill-iktar 4,096 valur**; waħda usa' ma tinżammx fil-ħin tat-tagħbija.
 - **Il-filtri jingħaqdu bi AND**, u mal-viżibbiltà tat-timijiet, mal-qasma tad-differenza, mat-tieqa taż-żmien, mal-qtugħ tad-distanza u mal-[qatgħa](slice.md).
 - **Tibdil f'filtru jerġa' jibda l-akkumulazzjoni u jerġa' jkejjel l-espożizzjoni ftit frames wara**, għax il-filtrar jista' jbiddel ħafna d-densità ([Kulur u esponiment](colour-and-exposure.md#auto-exposure)).
 - **Neħħi l-filtri kollha** jneħħi kull filtru ta' kolonna. Il-viżibbiltà tat-timijiet u l-għażliet tal-plejers magħmula f'postijiet oħra jinżammu.
@@ -76,7 +76,7 @@ Meta tippermetti l-valuri kollha, il-filtru jitneħħa.
 
 ## Għall-iżviluppaturi {#for-developers}
 
-**Slots.** Kull filtru attiv jieħu wieħed mill-erba' slots tal-GPU ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), texture ta' 4 bytes għal kull ringiela. Is-slots jingħataw lill-filtri skont l-ordni tal-aħħar bidla ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), maqsum bejn l-shader u ż-żewġ pannelli). Wara erbgħa, tidher żball li jgħid *Qed tiġi applikata biss l-ewwel 4 filtri. Neħħi wieħed - il-bqija qed jiġu injorati, mhux imġemmgħa bil-moħbi*, u l-ismijiet tal-filtri extra jaqraw *kolonna (mhux applikat)*. Il-filtri jaħdmu għal kull ringiela fil-vertex shader, għalhekk tibdil fil-limitu ma jeħtieġx ittra mill-ġdid tad-data u lanqas tqegħid mill-ġdid fuq il-GPU.
+**Slots.** Kull filtru attiv jieħu wieħed mill-erba' slots tal-GPU ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), texture ta' 4 bytes għal kull ringiela. Is-slots jingħataw lill-filtri skont l-ordni tal-aħħar bidla ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), maqsum bejn l-shader u ż-żewġ pannelli). Wara erbgħa, tidher żball li jgħid *Qed tiġi applikata biss l-ewwel 4 filtri. Neħħi wieħed - il-bqija qed jiġu injorati, mhux imġemmgħa bil-moħbi*, u l-ismijiet tal-filtri extra jaqraw *kolonna (mhux applikat)*. Il-filtri jaħdmu għal kull ringiela fil-vertex shader, għalhekk tibdil fil-limitu ma jeħtieġx qari mill-ġdid tad-data u lanqas tqegħid mill-ġdid fuq il-GPU.
 
 **Filtri li l-pannell ma juriex.** Hemm żewġ tipi oħra fl-istat tal-applikazzjoni ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
 

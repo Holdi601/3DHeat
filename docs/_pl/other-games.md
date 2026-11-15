@@ -1,6 +1,6 @@
 ---
 title: "Inne gry wyścigowe"
-parent: "Analiza wyścigu"
+parent: "Analiza wyścigowa"
 nav_order: 59
 lang: "pl"
 source: "other-games.md"

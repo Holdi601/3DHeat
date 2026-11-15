@@ -21,7 +21,7 @@ Vermell on l'equip A n'ha tingut més, blau-verd on n'ha tingut més l'equip B, 
 
 1. Prem `2` (o tria **Diferència** a la barra de modes).
 2. Obre **Divisió de diferència** a la barra lateral.
-3. Tria per què **Divideix per**: normalment *Grups*.
+3. Tria el criteri de **Divideix per**: normalment *Grups*.
 4. Posa un grup (o un valor) a **+** i un altre a **−**.
 5. Llegeix els colors: els càlids vol dir el bàndol +, els freds vol dir el bàndol −. El panell avisa si un bàndol no té files (vegeu [Missatges que pots veure](#messages-you-may-see)).
 
@@ -46,7 +46,7 @@ Només s'ofereixen les columnes marcades com a *Mantén per filtrar* en carregar
 
 ### Compara proporcions, no recomptes {#compare-shares-not-counts}
 
-**Compara proporcions, no recomptes** (per defecte desactivat) pondera cada bàndol per un entre el seu propi nombre de files, així que un bàndol amb cinc vegades més files no guanya només pel nombre. El color mostra aleshores on cada bàndol és proporcionalment més comú que l'altre. Fes-ho servir quan els dos bàndols tenen quantitats de dades molt diferents, per exemple dues sessions de durada diferent.
+**Compara proporcions, no recomptes** (per defecte desactivat) pondera cada bàndol per la inversa del seu propi nombre de files, així que un bàndol amb cinc vegades més files no guanya només pel nombre. El color mostra aleshores on cada bàndol és proporcionalment més comú que l'altre. Fes-ho servir quan els dos bàndols tenen quantitats de dades molt diferents, per exemple dues sessions de durada diferent.
 
 ### Missatges que pots veure {#messages-you-may-see}
 

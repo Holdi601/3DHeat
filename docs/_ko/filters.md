@@ -74,11 +74,11 @@ outdated: false
 - [선 히트](line-heat.md)에서는 각 구간이 *끝나는* 행에서 필터를 검사합니다.
 - 새 데이터셋을 불러올 때마다 모든 필터가 지워집니다.
 
-## For developers {#for-developers}
+## 개발자용 {#for-developers}
 
-**Slots.** Each active filter takes one of four GPU slots ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), a texture of 4 bytes per row. Slots go to the filters in the order they were last changed ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), shared by the shader and both panels). Past four, an error says *Only the first 4 filters are applied. Clear one - the rest are being ignored, not silently combined*, and the extra filters' names read *column (not applied)*. Filters run per row in the vertex shader, so changing a threshold needs no re-parse and no re-upload.
+**슬롯.** 활성화된 필터마다 GPU 슬롯 네 개 중 하나를 씁니다([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)). 행마다 4바이트 텍스처입니다. 슬롯은 마지막으로 바뀐 순서대로 필터에 배정됩니다([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), 셰이더와 두 패널이 함께 씁니다). 네 개를 넘으면 *처음 필터 4개만 적용됩니다. 하나를 지우세요 — 나머지는 조용히 합쳐지는 것이 아니라 무시되고 있습니다.* 라는 메시지가 나오고, 추가 필터의 이름은 *열 (적용 안 됨)*으로 나타납니다. 필터는 버텍스 셰이더에서 행마다 실행되므로, 임계값을 바꿔도 다시 파싱하거나 다시 업로드할 필요가 없습니다.
 
-**Filters the panel does not show.** Two more kinds exist in the application state ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
+**패널에 나타나지 않는 필터.** 애플리케이션 상태에는 두 종류의 필터가 더 있습니다([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
 
-- a **groups** filter, set by the Match tab when it focuses one side. It hides the other groups in every mode, a [difference](difference.md) split by a column included.
-- a **persons** filter, set by the [Entities](entities.md) panel and by the Match tab when it focuses one player. It restricts the figure replay and the heat modes. In the heat it is a category filter over the person ids and takes one of the four slots. Its mask holds 65,536 ids ([`FILTER_MASK_CAPACITY`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)); a person past that is not drawn in the heat while it is active, even when selected. The figure replay still shows them.
+- **그룹** 필터. 매치 탭이 한쪽에 초점을 맞출 때 설정됩니다. 모든 모드에서 다른 그룹을 숨기며, 열로 나눈 [차이](difference.md)도 포함합니다.
+- **사람** 필터. [개체](entities.md) 패널과, 매치 탭이 한 플레이어에 초점을 맞출 때 설정됩니다. 피규어 리플레이와 히트 모드를 제한합니다. 히트에서는 사람 id에 대한 범주 필터이며 네 슬롯 중 하나를 차지합니다. 마스크는 65,536개의 id를 담습니다([`FILTER_MASK_CAPACITY`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)). 그보다 큰 id의 사람은 필터가 활성인 동안에는 선택되어 있어도 히트에 그려지지 않습니다. 피규어 리플레이에는 여전히 나타납니다.

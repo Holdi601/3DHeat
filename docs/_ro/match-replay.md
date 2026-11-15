@@ -21,7 +21,7 @@ Trageri, lovituri, incendii și epave sunt desenate pe unități și pe obiectiv
 
 1. Încarcă o înregistrare cu **Sursă → Fișiere…** sau trăgând-o în panoul Sursă (orice tabel cu o coloană de **persoană** și una de **timp**, un fișier Tacview, o reluare convertită, un meci [`.3dheat`](container.md)). Vezi [Încărcarea datelor](getting-data-in.md).
 2. Deschide fila **Meci** și alege **Reluare cu figuri**, sau alege **Figuri suprapuse** în bara de moduri a filei Hartă termică.
-3. Sub **Meciuri în reluare** alege un meci, toate deodată, sau mai multe.
+3. Sub **Meciuri din reluare** alege un meci, toate deodată, sau mai multe.
 4. Apasă **Redare** pe cronologie (sau `K`). Trage cronologia ca să sari.
 
 Figurile înlocuiesc cutiile pentru fiecare unitate al cărei nume sau tip este cunoscut (vezi [Figuri](figures.md)). Datele fără o coloană de nume sau de tip sunt desenate ca soldați.
@@ -34,17 +34,17 @@ Figurile înlocuiesc cutiile pentru fiecare unitate al cărei nume sau tip este 
 
 | Setare (secțiunea **Figuri**) | Implicit | Ce face |
 |---|---|---|
-| **Figuri în loc de cutii** | pornit | Oprit desenează cutii simple. |
-| **Mărimea figurii** (de câte ori mărimea reală) | 1 | 1 este mărimea reală; de la 0,25 la 20 de ori (scară logaritmică). Mai mare ajută de departe. |
+| **Figuri în loc de cuburi** | pornit | Oprit desenează cutii simple. |
+| **Mărimea figurilor** (de câte ori mărimea reală) | 1 | 1 este mărimea reală; de la 0,25 la 20 de ori (scară logaritmică). Mai mare ajută de departe. |
 | **Cea mai mică figură pe ecran** | 36 px | Figurile îndepărtate cresc ca să rămână atât de mari, de la 0 la 200 px; 0 păstrează mărimea reală. |
 | **La distanță**: Figură, Săgeată, Simbol | Figură | Ce devine o unitate îndepărtată. |
-| **Simboluri** | NATO (APP-6) | NATO (APP-6), semne tactice rusești, pictograme **hartă de joc** sau **Doar forma (sigur pentru daltonism)**. |
-| **Mărimea simbolului**, **Partea mea**, **Ostil / Neutru**, **Marcaje de cap** | 28 px (12 la 64), automat, ostil, pornit | Cum arată simbolurile și care parte este prietenă. |
+| **Simboluri** | NATO (APP-6) | NATO (APP-6), semne tactice rusești, pictograme **Hartă de joc** sau **Doar forme (pentru daltoniști)**. |
+| **Mărimea simbolului**, **Partea mea**, **Ostil / Neutru**, **Liniuțe de direcție** | 28 px (12 la 64), automat, ostil, pornit | Cum arată simbolurile și care parte este prietenă. |
 | **Linii verticale** | pornit | O linie de la fiecare unitate drept în jos până la sol, ca înălțimile să se citească în 3D. |
-| **Linii și etichete pentru arme** | oprit | Linii până la sol și etichete pe rachete și bombe. |
+| **Verticale și etichete la arme** | oprit | Linii până la sol și etichete pe rachete și bombe. |
 | **Incendii pe unități** | pornit | Flăcări din momentul în care o unitate ia foc până când este stinsă. |
-| **Lovituri pe unități** | pornit | Marcaje unde au lovit gloanțele (mai jos). **Lovitură rămâne**: 1 până la 300 de secunde, sau **Toată viața**. **Marcatoare plutitoare**: marcaje desenate deasupra suprafeței. |
-| **Linii de țintire și de turelă** | oprit | Întrerupte: unde se uită jucătorul; continue: unde arată tunul. |
+| **Lovituri pe unități** | pornit | Marcaje unde au lovit gloanțele (mai jos). **Loviturile rămân**: 1 până la 300 de secunde, sau **Toată viața**. **Marcaje plutitoare**: marcaje desenate deasupra suprafeței. |
+| **Linii de privire și de turelă** | oprit | Întrerupte: unde se uită jucătorul; continue: unde arată tunul. |
 | **Clădiri** | pline | Clădiri pline sau transparente, când nivelul le desenează. |
 
 ### Simboluri la distanță {#symbols-at-a-distance}
@@ -66,13 +66,13 @@ Cu **Arme, trageri și lovituri** pornit (secțiunea Vizualizarea echipelor): ra
 
 ## Camere {#cameras}
 
-Dă clic pe o unitate sau pe eticheta ei ca s-o **urmărești**; secțiunea **Reluare** oferă **Din spate**, **Orbită**, **Cabină** (cu un afișaj tip head-up, `H`), **Fix**, **Lacăt**, **Țintă** și **Satelit**. `V` le parcurge, **Distanța camerei** stabilește cât de departe. Esc oprește.
+Dă clic pe o unitate sau pe eticheta ei ca s-o **urmărești**; secțiunea **Reluare** oferă **Din spate**, **Orbită**, **Carlingă** (cu un afișaj tip head-up, `H`), **Fixă**, **Padlock**, **Țintă** și **Satelit**. `V` le parcurge, **Distanța camerei** stabilește cât de departe. Esc oprește.
 
 - **Vedere cu două unități**: alege o **Țintă** (sau dă clic cu Ctrl/Alt pe o unitate) ca s-o privești din cea urmărită; **Schimbă** le inversează.
 - **Măsurare**: Shift-clic pe două unități pentru relevmentul, distanța și diferența de înălțime dintre ele.
 - **Hartă 2D** (`M`): vedere de colț sau completă, cu urme și nume.
 - **Semne de carte** (`B`): salvează momentul și camera; apar și eliminările, morțile și marcajele proprii ale înregistrării.
-- **Evenimente**: fiecare eveniment în ordinea timpului; un clic sare acolo. `Page Up` / `Page Down` sar între evenimente; **Oprește la eveniment** se oprește la fiecare.
+- **Evenimente**: fiecare eveniment în ordinea timpului; un clic sare acolo. `Page Up` / `Page Down` sar între evenimente; **Pauză la eveniment** oprește la fiecare.
 
 ## Afișajul tactic {#tactical-display}
 
@@ -82,7 +82,7 @@ Secțiunea **Afișaj tactic** desenează, pentru nicio unitate, pentru cele sele
 
 ### Stilul afișajului {#display-style}
 
-`T` (sau comutatorul **Arată ca afișaj tactic**) schimbă aspectul într-un stil de ecran radar: strălucire, contururi, curbe de nivel, o grilă de măsurare, linii de scanare, inele de distanță, scări de altitudine, panouri cu eliminări și evenimente și un **Regizor** care mută singur camera spre evenimente.
+`T` (sau comutatorul **Afișează ca afișaj tactic**) schimbă aspectul într-un stil de ecran radar: strălucire, contururi, curbe de nivel, o grilă de măsurare, linii de scanare, inele de distanță, scări de altitudine, panouri cu eliminări și evenimente și un **Regizor** care mută singur camera spre evenimente.
 
 ![Aceeași luptă aeriană în aspectul normal](../assets/img/en/replay-air.webp)
 
@@ -92,7 +92,7 @@ Când un meci vine cu obiectivele lui, secțiunea **Obiective** le desenează pe
 
 ## Etichete și statistici {#labels-and-statistics}
 
-- **Etichete**: reguli pe tip (**Selectată**, **Aeronave**, **Sol**, **Nave**, **Arme**, **IA**): arătate sau nu, ce valori și o **Prioritate** pentru cine primește spațiul când etichetele se suprapun. **Ține etichetele separate** mută o etichetă lângă unitatea ei când ar acoperi alta și o omite acolo unde nu este loc. **Mărimea etichetei** este între 60 și 250%. **Înapoi la nume, vehicul, altitudine și viteză** resetează regulile.
+- **Etichete**: reguli pe tip (**Selectată**, **Aeronave**, **Terestre**, **Nave**, **Arme**, **IA**): arătate sau nu, ce valori și o **Prioritate** pentru cine primește spațiul când etichetele se suprapun. **Ține etichetele separate** mută o etichetă lângă unitatea ei când ar acoperi alta și o omite acolo unde nu este loc. **Mărimea etichetelor** este între 60 și 250%. **Înapoi la nume, vehicul, altitudine și viteză** resetează regulile.
   - Unitățile terestre pornesc cu nume, vehicul și viteză.
   - Aeronavele pornesc cu nume, vehicul, altitudine și viteză.
   - Navele pornesc cu nume, vehicul, viteză și cap.

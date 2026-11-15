@@ -11,7 +11,7 @@ outdated: false
 
 # Filtri
 
-**Filtri** nascondono le righe che non ti interessano, come una classe di veicolo o un tipo di evento, e l'immagine si aggiorna subito. Il pannello elenca le colonne mantenute al caricamento sotto *Mantieni per il filtraggio* ([Mappatura delle colonne](column-mapping.md)), più *File di origine* quando sono stati caricati più file.
+**Filtri** nascondono le righe che non ti interessano, come una classe di veicolo o un tipo di evento, e l'immagine si aggiorna subito. Il pannello elenca le colonne mantenute al caricamento sotto *Conserva per il filtraggio* ([Mappatura delle colonne](column-mapping.md)), più *File di origine* quando sono stati caricati più file.
 
 ## Provalo {#try-it}
 
@@ -19,7 +19,7 @@ outdated: false
 2. Sotto **Classe di veicolo**, deseleziona *Tank*. L'immagine cambia subito.
 3. Premi **Rimuovi tutti i filtri** per annullare.
 
-![Il pannello Filtri: prima le colonne proprie del visualizzatore (Tipo di evento, Classe di veicolo), poi le colonne del tuo file](../assets/img/en/filters.webp)
+![Il pannello Filtri: prima le colonne proprie del visualizzatore (Tipo di evento, Classe di veicolo), poi le colonne del tuo file](../assets/img/it/filters.webp)
 
 Le prime righe sono le colonne proprie del visualizzatore (sotto). Le righe seguenti vengono dal tuo file.
 
@@ -38,7 +38,7 @@ Vengono elencati solo i tipi che compaiono. Le colonne di valore (`cost_*`, `ear
 
 Una lista di categorie con più di 12 valori ottiene una casella di ricerca (*Cerca n valori*) e un pulsante **Solo questi**, che consente esattamente i valori che corrispondono.
 
-Quali colonne si possono filtrare viene deciso al caricamento, perché allora devono essere lette. Senza colonne mantenute il pannello lo dice e rimanda a *Mantieni per il filtraggio*.
+Quali colonne si possono filtrare viene deciso al caricamento, perché allora devono essere lette. Senza colonne mantenute il pannello lo dice e rimanda a *Conserva per il filtraggio*.
 
 ## Colonne numeriche (intervallo) {#numeric-columns-range}
 

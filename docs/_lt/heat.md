@@ -44,7 +44,7 @@ Kiekvienas žemiau esantis valdiklis atitinka šešėliuotuvo parametrą, todėl
 | **Perėjimo forma** | *Slopimas* | *Slopimas* / *Kreivė* | [Spraito forma](sprite-shape.md#ramp-shape-falloff-or-curve) |
 | **Slopimas** (tik Slopimo režime) | 1,6 | 0,1–8 (64) | [Spraito forma](sprite-shape.md#falloff) |
 | **Glotnus perėjimas** (tik Slopimo režime) | įjungta | | [Spraito forma](sprite-shape.md#falloff) |
-| Kreivės redaktorius (tik Kreivės režime) | *Glotnus* išankstinis nustatymas | | [Spraito forma](sprite-shape.md#the-curve-editor) |
+| Kreivės redaktorius (tik Kreivės režime) | *Glotni* išankstinis nustatymas | | [Spraito forma](sprite-shape.md#the-curve-editor) |
 | **Įsotinimo taškas** | 24; įkeliant – įvertinimas, vėliau išmatuojamas | 0,1–4000, logaritminė (10 000 000) | [Spalva ir ekspozicija](colour-and-exposure.md#saturation-point) |
 | **Mažiausia šiluma** | išjungta (0) | 0–100 % | [Spalva ir ekspozicija](colour-and-exposure.md#minimum-heat) |
 | **Tankio atsakas** | *Įsotinantis* | *Įsotinantis* / *Tiesinis* / *Logaritminis* | [Spalva ir ekspozicija](colour-and-exposure.md#density-response) |
@@ -87,9 +87,9 @@ Kiekvienas žemiau esantis valdiklis atitinka šešėliuotuvo parametrą, todėl
 
 Klavišai: `[` ir `]` stumia tolimąją ribą į vidų ir į išorę, `\` ją perjungia ([Gylis ir atrinkimas](depth-and-culling.md#keyboard)).
 
-### Kryptis ir Reikšmė {#direction-and-value}
+### Kryptis ir Vertė {#direction-and-value}
 
-Dvi dar skiltys yra žemiau Šilumos formos. **Kryptis** kiekvieną eilutę piešia kaip sektorių ir prideda rodykles: žr. [Krypties šiluma](directional-heat.md). **Reikšmė** sveria šilumą pagal tai, kiek kiekviena eilutė kainavo arba uždirbo: žr. [Vertės svoriavimas](value-weighting.md).
+Dvi dar skiltys yra žemiau Šilumos formos. **Kryptis** kiekvieną eilutę piešia kaip sektorių ir prideda rodykles: žr. [Krypties šiluma](directional-heat.md). **Vertė** sveria šilumą pagal tai, kiek kiekviena eilutė kainavo arba uždirbo: žr. [Vertės svorinimas](value-weighting.md).
 
 ## Kas išsaugoma {#what-is-saved}
 

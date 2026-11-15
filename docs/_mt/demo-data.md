@@ -47,7 +47,7 @@ Kull tabella ssemmi l-kolonni tagħha fil-footer tagħha, għalhekk titħabbar m
 
 ![Replay ta' Match 01 b'tanks bħala figuri](../assets/img/en/replay-overview.webp)
 
-Għall-shooter, tella' `demo-yard.glb` u `shooter.parquet`; għall-ġlieda ta' l-ajru, `air.parquet` (il-figuri jidhru aħjar fi **Daqs tal-figuri** 4, slider fil-pannell **Viewer tat-timijiet** tas-sidebar tal-Heatmap).
+Għall-shooter, tella' `demo-yard.glb` u `shooter.parquet`; għall-ġlieda tal-ajru, `air.parquet` (il-figuri jidhru aħjar fi **Daqs tal-figuri** 4, slider fil-pannell **Viewer tat-timijiet** tas-sidebar tal-Heatmap).
 
 ## Ir-ritratti {#the-screenshots}
 

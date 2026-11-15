@@ -13,7 +13,7 @@ outdated: false
 
 Toplina timova pokazuje gdje je bio svaki tim, svaki u svojoj boji. Tamo gdje se timovi preklapaju boje se miješaju.
 
-**Toplina timova** (tipka 3) je polje gustoće iz [Topline](heat.md) s dodijeljenom vlastitom nijansom svakoj [grupi](glossary.md). Tamo gdje se grupe preklapaju, njihove nijanse se miješaju; ravnopravno natjecanje dolazi neutralno. Neprozirnost i dalje nosi gustoću točno kao u ostalim načinima, pa slika odgovara na *koliko* i *čija* u isto vrijeme. Treba stupac grupe.
+**Toplina timova** (tipka 3) je polje gustoće iz [Topline](heat.md) s dodijeljenom vlastitom nijansom svakoj [grupi](glossary.md). Tamo gdje se grupe preklapaju, njihove nijanse se miješaju; izjednačeno natjecanje daje neutralnu boju. Neprozirnost i dalje nosi gustoću točno kao u ostalim načinima, pa slika odgovara na *koliko* i *čija* u isto vrijeme. Treba stupac grupe.
 
 ![Toplina timova: svaka strana u svojoj boji; tamo gdje se preklapaju boje se miješaju](../assets/img/en/heat-teams.webp)
 
@@ -34,7 +34,7 @@ U odjeljku **Boje topline**:
 |---|---|---|
 | Uzorci | | Boja svake grupe, za prvih 12 grupa, zatim *+N još*. Zadržite pokazivač za ime grupe i boju. |
 | **Razdvajanje boja** | 1,4 | Koliko se miješana boja gura od neutralne, 0-4. 0 sve čini sivim; 1 je pravi prosjek; iznad otprilike 2 najsvjetlije mješavine izlaze iz prikazivog raspona i po kanalu se ograničavaju, što pomiče njihovu nijansu. |
-| **Skala neprozirnosti (boja dolazi od grupe)** | zadana skala topline | Ovdje se koristi samo **alfa** skale: prozirno gdje nema ničega, neprozirno na vrhu. Njezine boje se ignoriraju. |
+| **Skala neprozirnosti (boja dolazi od skupine)** | zadana skala topline | Ovdje se koristi samo **alfa** skale: prozirno gdje nema ničega, neprozirno na vrhu. Njezine boje se ignoriraju. |
 
 Sve ostale kontrole topline - oblik, zasićenje, odziv, minimalna toplina, dubina, odbacivanje - rade kao u [Toplini](heat.md).
 
@@ -45,7 +45,7 @@ Sve ostale kontrole topline - oblik, zasićenje, odziv, minimalna toplina, dubin
 Iz [`colors.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors.ts):
 
 - Boje žive na ravnini boja **Oklab** pri fiksnoj svjetlini (0,7) i kromi (0,115), pa je svaka grupa jednako svijetla i crvena grupa ne djeluje toplije od plave.
-- S *n* grupa krug nijansi dijeli se na *n* jednakih dijelova, a grupa *i* uzima **središte** svog dijela, `(i + 0,5) / n` okreta. Bilo koje dvije grupe su što su dalje moguće s obzirom na broj, a suprotnosti ostaju suprotne bez obzira na broj.
+- S *n* grupa krug nijansi dijeli se na *n* jednakih dijelova, a grupa *i* uzima **središte** svog dijela, `(i + 0,5) / n` okreta. Svake dvije grupe su što je moguće dalje jedna od druge s obzirom na njihov broj, a suprotnosti ostaju suprotne bez obzira na broj.
 - Koristi se najviše **16** različitih nijansi. S više grupa id-evi se raspoređuju ponovljenim prepolavljanjem (id-evi obrnutih bitova: 0, ½, ¼, ¾, ⅛, …) tako da susjedni id-evi ne dijele nijansu; grupe iza 16 nužno dijele.
 - Grupa čija oznaka znači „nema grupe” - `0`, prazno, `none`, `unknown`, `null` ili `-1`, bez obzira na velika i mala slova - crta se **neutralno sivo** umjesto da uzme dio kruga. Samo prva takva oznaka na popisu grupa tako se tretira.
 

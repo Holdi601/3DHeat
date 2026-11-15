@@ -31,7 +31,7 @@ Der er omkring 2.000 navngivne køretøjer, fly, skibe, våben og soldater, som 
 ## Sådan laves figurerne {#how-the-figures-are-made}
 
 - **Bygget ud fra offentliggjorte mål.** De fleste figurer laves af vieweren egen figurbygger ud fra offentlige tal: længde, bredde, højde, vejhjul, tårn og kanon, vinger og hale. Deres form tunes derefter mod offentlige fotografier, tegninger og offentliggjorte mål. Ingen spils modeller bruges.
-- **Gratis modeller.** Nogle få figurer bruger gratis 3D-modeller (CC0 eller CC BY), hvor de er mere sande, nogle gange kombineret med den byggede skrog. Ophavsmænd til CC BY-værker krediteres på [Figurkreditter](figure-credits.md); CC0-værker kræver ingen kreditering og står ikke der.
+- **Gratis modeller.** Nogle få figurer bruger gratis 3D-modeller (CC0 eller CC BY), hvor de er mere sande, nogle gange kombineret med det byggede skrog. Ophavsmænd til CC BY-værker krediteres på [Figurkreditter](figure-credits.md); CC0-værker kræver ingen kreditering og står ikke der.
 - Hver figur har en fuld, en grov og en fjern version (detaljeniveauer, LOD), så tusindvis kan tegnes på én gang.
 
 ## Hvilken figur en enhed får {#which-figure-a-unit-gets}

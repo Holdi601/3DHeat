@@ -39,12 +39,12 @@ Figurat zëvendësojnë kutitë për çdo njësi emri ose tipi i së cilës ësh
 | **Figura më e vogël në ekran** | 36 px | Figurat e largëta rriten për të mbetur kaq të mëdha, 0 deri 200 px; 0 e mban madhësinë reale. |
 | **Nga larg**: Figurë, Shigjetë, Simbol | Figurë | Çfarë bëhet një njësi e largët. |
 | **Simbolet** | NATO (APP-6) | NATO (APP-6), shenja taktike ruse, ikona **Hartë loje**, ose **Vetëm forma (për daltonikët)**. |
-| **Madhësia e simbolit**, **Pala ime**, **Armik / Neutrale**, **Vija drejtimi** | 28 px (12 deri 64), automatike, armik, po | Si duken simbolet dhe cila anë është miqësore. |
+| **Madhësia e simbolit**, **Pala ime**, **Armiqësore / Neutrale**, **Vija drejtimi** | 28 px (12 deri 64), automatike, armik, po | Si duken simbolet dhe cila anë është miqësore. |
 | **Vija vertikale** | po | Një vijë nga çdo njësi drejt e poshtë në tokë, që lartësitë të lexohen në 3D. |
 | **Vija vertikale dhe etiketa te armët** | jashtë | Vija deri në tokë dhe etiketa te raketat dhe bombat. |
 | **Zjarre në njësi** | po | Flakë nga çasti kur një njësi merr zjarr deri kur shuhet. |
 | **Goditje mbi njësitë** | po | Shenja ku goditën të shtënat (më poshtë). **Goditjet qëndrojnë**: 1 deri 300 sekonda, ose **Gjithë jeta**. **Shenja pluskuese**: shenja të vizatuara mbi sipërfaqe. |
-| **Vija të shikimit dhe të kullës** | jashtë | Me vija: ku shikon lojtari; të plota: ku drejtohet topi. |
+| **Vija të shikimit dhe të frëngjisë** | jashtë | Me vija: ku shikon lojtari; të plota: ku drejtohet topi. |
 | **Ndërtesa** | e ngurtë | Ndërtesa të ngurta ose transparente, kur niveli i vizaton. |
 
 ### Simbolet nga larg {#symbols-at-a-distance}
@@ -62,7 +62,7 @@ Kur një njësi do të ishte më e vogël se **Figura më e vogël në ekran**, 
 
 ### Armët, karficat dhe gjurmët {#weapons-decoys-and-tracers}
 
-Me **Armë, të shtëna dhe goditje** të ndezur (seksioni Pamja e ekipeve): raketat, roketat, bombat dhe siluruesit fluturojnë si figura të veta me një gjurmë tymi; plumbat dhe predhat janë gjurmë (tracerë); goditjet dhe shpërthimet ndriçojnë. Një tracer i vizatuar **me pika** u llogarit nga një goditje, sepse të dhënat nuk kishin të shtënë. Flare dhe chaff vizatohen si karfica; fshihen nga lista e njësive përveç nëse është e shënuar *Karficat dhe predhat*.
+Me **Armë, të shtëna dhe goditje** të ndezur (seksioni Pamja e ekipeve): raketat, roketat, bombat dhe siluruesit fluturojnë si figura të veta me një gjurmë tymi; plumbat dhe predhat janë gjurmë (tracerë); goditjet dhe shpërthimet ndriçojnë. Një tracer i vizatuar **me pika** u llogarit nga një goditje, sepse të dhënat nuk kishin të shtënë. Flare dhe chaff vizatohen si karfica; fshihen nga lista e njësive përveç nëse është e shënuar *Karremë dhe predha*.
 
 ## Kamerat {#cameras}
 
@@ -92,7 +92,7 @@ Kur një ndeshje vjen me objektivat e vet, seksioni **Objektivat** i vizaton në
 
 ## Etiketat dhe statistikat {#labels-and-statistics}
 
-- **Etiketat**: rregulla për llojin (**Të zgjedhurat**, **Avionë**, **Toka**, **Anije**, **Armë**, **IA**): shfaqen ose jo, cilat vlera, dhe një **Përparësia** për kë merr vend kur etiketat mbivendosen. **Mbaji etiketat larg njëra-tjetrës** e zhvendos një etiketë pranë njësisë së vet kur do të mbulonte një tjetër, dhe e heq aty ku nuk ka vend. **Madhësia e etiketave** është 60 deri 250%. **Kthehu te emri, mjeti, lartësia dhe shpejtësia** i rivendos rregullat.
+- **Etiketat**: rregulla për llojin (**Të zgjedhura**, **Avionë**, **Toka**, **Anije**, **Armë**, **IA**): shfaqen ose jo, cilat vlera, dhe një **Përparësia** për kë merr vend kur etiketat mbivendosen. **Mbaji etiketat larg njëra-tjetrës** e zhvendos një etiketë pranë njësisë së vet kur do të mbulonte një tjetër, dhe e heq aty ku nuk ka vend. **Madhësia e etiketave** është 60 deri 250%. **Kthehu te emri, mjeti, lartësia dhe shpejtësia** i rivendos rregullat.
   - Njësitë e tokës fillojnë me emrin, mjetin dhe shpejtësinë.
   - Avionët fillojnë me emrin, mjetin, lartësinë dhe shpejtësinë.
   - Anijet fillojnë me emrin, mjetin, shpejtësinë dhe drejtimin.

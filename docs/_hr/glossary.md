@@ -16,7 +16,7 @@ Kratka značenja riječi koje ova stranica koristi, običnim jezikom. Svaki unos
 
 **Redak.** Jedan red vaših podataka: jedna stvar koja se dogodila na jednom mjestu i u jednom trenutku, na primjer „igrač 7 je bio ovdje u sekundi 12”. Preglednik crta svaki redak. [Formati podataka](data-formats.md)
 
-**Stupac.** Jedna vrsta vrijednosti u recima, poput x, y, z, vremena ili tima. Preglednik pogađa koji je stupac koji, a pogađanje možete promijeniti. [Mapiranje stupaca](column-mapping.md)
+**Stupac.** Jedna vrsta vrijednosti u redcima, poput x, y, z, vremena ili tima. Preglednik pogađa koji je stupac koji, a pogađanje možete promijeniti. [Mapiranje stupaca](column-mapping.md)
 
 **CSV.** Obična tekstualna tablica: jedan redak po liniji, vrijednosti odvojene zarezima. Gotovo svaki program može ga napisati. [Učitavanje datoteka](loading-files.md)
 
@@ -80,7 +80,7 @@ Kratka značenja riječi koje ova stranica koristi, običnim jezikom. Svaki unos
 
 ## Riječi iz Counter-Strikea {#counter-strike-words}
 
-**Runda.** Jedna kratka borba unutar utakmice. Jedna strana je pobijedi, a rezultat se povećava za jedan.
+**Runda.** Jedna kratka borba unutar utakmice. Jednu rundu dobiva jedna strana, a rezultat se povećava za jedan.
 
 **Eko, prisilna kupnja, puna kupnja.** Koliko novca strana troši na oružje na početku runde. Eko štedi novac i kupuje gotovo ništa (ispod 1500 $ po igraču u prosjeku). Prisilna kupnja troši ono što ima (ispod 4000 $). Puna kupnja kupuje sve što može. [Analiza utakmice](match-analysis.md)
 

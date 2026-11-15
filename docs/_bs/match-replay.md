@@ -62,7 +62,7 @@ Kada bi jedinica bila manja od **Najmanja figura na ekranu**, može postati simb
 
 ### Oružje, mamci i tragači {#weapons-decoys-and-tracers}
 
-Uz uključeno **Oružje, hici i pogoci** (odjeljak Prikaz tima): rakete, projektili, bombe i torpeda lete kao sopstvene figure s dimnim tragom; meci i granate su tragači; udari i eksplozije bljeskaju. Tragač nacrtan **isprekidano** izveden je iz pogotka, jer podaci nisu imali hitac. Mamci i čaff crtaju se kao mamci; skriveni su sa spiska jedinica osim ako nije štiklirano *Mamci i granate*.
+Uz uključeno **Oružje, hici i pogoci** (odjeljak Prikaz tima): rakete, projektili, bombe i torpeda lete kao sopstvene figure s dimnim tragom; meci i granate su tragači; udari i eksplozije bljeskaju. Tragač nacrtan **isprekidano** izveden je iz pogotka, jer podaci nisu imali hitac. Mamci i čaff crtaju se kao mamci; skriveni su sa spiska jedinica osim ako nije označeno *Mamci i granate*.
 
 ## Kamere {#cameras}
 

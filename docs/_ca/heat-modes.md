@@ -43,12 +43,12 @@ Les tecles 1-4 es comproven amb les dades de la mateixa manera: una tecla d'un m
 
 | Panell | Calor | Diferència | Calor per equips | Figures superposades | Línies |
 |---|---|---|---|---|---|
-| Recorreguts ([calor de línia](line-heat.md)) | | | | | sí |
+| Rutes ([calor de línia](line-heat.md)) | | | | | sí |
 | Forma de la calor (amb **Segueix la vista** i **Mateixa densitat a qualsevol zoom**), Colors de la calor, Radi mínim i màxim en píxels, Profunditat, Retallada per distància | sí | sí | sí | | sí |
 | Direcció ([calor direccional](directional-heat.md)), Valor ([ponderació de valors](value-weighting.md)) | sí | sí | sí | | sí |
 | Visor d'equips ([figures superposades](box-replay.md)) | | | | sí | |
 | Divisió de diferència ([diferència](difference.md)) | | sí | | | |
-| [Equips](teams-list.md), [Entitats](entities.md), [Filtres](filters.md), Fons / nivell, [Llesca](slice.md), [Mesurar](measure.md), Trajectòria de càmera i render, Rendiment, Càmera i escena | sí | sí | sí | sí | sí |
+| [Equips](teams-list.md), [Entitats](entities.md), [Filtres](filters.md), Fons / nivell, [Llesca](slice.md), [Mesurar](measure.md), Recorregut de càmera i renderització, Rendiment, Càmera i escena | sí | sí | sí | sí | sí |
 
 ## Què comparteixen tots els modes de calor {#what-every-heat-mode-shares}
 
@@ -69,7 +69,7 @@ Tot el del pas 4 s'aplica en el moment de compondre, així que arrossegar aquest
   - [Profunditat i retallada](depth-and-culling.md) - oclusió pel nivell, amagar darrere del terreny, retallada per distància
 - [Diferència](difference.md) - la divisió de diferència
 - [Calor per equips](team-heat.md)
-- [Calor de línia](line-heat.md) - recorreguts
+- [Calor de línia](line-heat.md) - rutes
 - [Figures superposades](box-replay.md) - el mode de repetició (el fitxer encara es diu repetició de caixes)
 - [Calor direccional](directional-heat.md)
 - [Ponderació de valors](value-weighting.md)

@@ -15,7 +15,7 @@ Le replay est un film du match dans lequel chaque joueur est dessiné comme la c
 
 Les tirs, les impacts, les incendies et les épaves sont dessinés sur les unités et les objectifs du niveau. Des caméras, des étiquettes et un affichage tactique vous aident à lire le combat. Vous connaissez Tacview ? [Parité avec Tacview](tacview-parity.md) indique où se trouve chacun de ses outils.
 
-![Replay en figurines de la démo de chars : les chars sous forme de figurines propres, avec des étiquettes de nom, de véhicule et de vitesse](../assets/img/en/replay-overview.webp)
+![Replay en figurines de la démo de chars : les chars sous forme de figurines propres, avec des étiquettes de nom, de véhicule et de vitesse](../assets/img/fr/replay-overview.webp)
 
 ## Lancer un replay {#start-a-replay}
 
@@ -26,11 +26,11 @@ Les tirs, les impacts, les incendies et les épaves sont dessinés sur les unit�
 
 Les figurines remplacent les boîtes pour chaque unité dont le nom ou le type est connu (voir [Figurines](figures.md)). Les données sans colonne de nom ni de type sont dessinées en soldats.
 
-![L'onglet Match : le sélecteur de matchs, la section Figurines, les vues de caméra, Lecture et la liste des événements](../assets/img/en/match-replay-tab.webp)
+![L'onglet Match : le sélecteur de matchs, la section Figurines, les vues de caméra, Lecture et la liste des événements](../assets/img/fr/match-replay-tab.webp)
 
 ## Figurines {#figures}
 
-![Un char en feu vu par la caméra en orbite, avec le tir qui l'a touché](../assets/img/en/replay-tanks.webp)
+![Un char en feu vu par la caméra en orbite, avec le tir qui l'a touché](../assets/img/fr/replay-tanks.webp)
 
 | Réglage (section **Figurines**) | Par défaut | Ce qu'il fait |
 |---|---|---|
@@ -51,7 +51,7 @@ Les figurines remplacent les boîtes pour chaque unité dont le nom ou le type e
 
 Lorsqu'une unité serait plus petite que la **Plus petite figure à l’écran**, elle peut devenir un symbole qui reste lisible. La forme indique le type (par exemple une boîte aux coins arrondis avec une marque de chenille pour un blindé) ; la couleur indique le camp. Ouvrez le menu **Symboles** pour changer le style.
 
-![Les mêmes six unités en symboles OTAN, signes tactiques russes, icônes de carte de jeu et formes seules](../assets/img/en/match-replay-symbols-styles.webp)
+![Les mêmes six unités en symboles OTAN, signes tactiques russes, icônes de carte de jeu et formes seules](../assets/img/fr/match-replay-symbols-styles.webp)
 
 ### Marques d'impact, épaves et incendies {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Cliquez sur une unité ou son étiquette pour la **suivre** ; la section **Repla
 
 ## Affichage tactique {#tactical-display}
 
-![La démo aérienne dans l'aspect d'affichage tactique (T) : terrain en fil de fer, panneaux d'éliminations et d'événements](../assets/img/en/replay-air-tactical.webp)
+![La démo aérienne dans l'aspect d'affichage tactique (T) : terrain en fil de fer, panneaux d'éliminations et d'événements](../assets/img/fr/replay-air-tactical.webp)
 
 La section **Affichage tactique** dessine, pour aucune unité, les unités sélectionnées, toutes, ou un seul type (aéronefs, terrestres, navires, armes) : vecteurs de vitesse et trajectoire à venir, lignes de nez et de portance, cônes radar, verrouillages, liaisons de données, zones et lignes d'engagement, lignes de visée, là où les joueurs regardent (cônes de vue), visée des tourelles, et la caméra enregistrée.
 
@@ -84,7 +84,7 @@ La section **Affichage tactique** dessine, pour aucune unité, les unités séle
 
 `T` (ou la bascule **Afficher en mode tactique**) fait passer à un aspect d'écran radar : lueur, contours, courbes de niveau, grille de mesure, lignes de balayage, anneaux de portée, échelles d'altitude, panneaux d'éliminations et d'événements, et un **Réalisateur** qui déplace la caméra vers les événements de lui-même.
 
-![Le même combat aérien dans l'aspect normal](../assets/img/en/replay-air.webp)
+![Le même combat aérien dans l'aspect normal](../assets/img/fr/replay-air.webp)
 
 ## Objectifs {#objectives}
 

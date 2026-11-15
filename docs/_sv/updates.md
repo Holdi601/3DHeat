@@ -14,7 +14,7 @@ Visaren talar om när en nyare version finns, och uppdaterar sig bara när du s�
 
 ## Uppdatera visaren {#update-the-viewer}
 
-1. **I sidan.** När en nyare version finns visas en ruta under namnet överst i sidofältet: ”A newer version of 3DHeat is available”. Klicka på **Update now**. Sidan laddas om av sig själv när det är klart. **Later** döljer rutan tills du laddar om sidan.
+1. **I sidan.** När en nyare version finns visas en ruta under namnet överst i sidofältet: ”A newer version of 3DHeat is available”. Klicka på **Update now**. Sidan laddas om av sig själv när det är klart. **Senare** döljer rutan tills du laddar om sidan.
 2. **Om den säger att du ska köra restart.bat** stänger du serverfönstret (det svarta fönstret som `start.bat` öppnade) och dubbelklickar på `restart.bat`.
 3. **När du startar visaren.** `start.bat` kontrollerar också. Om en nyare version finns frågar den **Update now? [Y/N]**. Tryck `Y` för att uppdatera. Tryck `N`, eller vänta 60 sekunder utan svar, för att starta den version du har.
 
@@ -60,77 +60,42 @@ sida ---(efter 4 s, sedan var 6 h)---> utvecklingsserver ---> git fetch
 ## För utvecklare {#for-developers}
 
 
-### While it runs: the update route {#while-it-runs-the-update-route}
+### Medan den körs: uppdateringsrutten {#while-it-runs-the-update-route}
 
-The dev server (Vite plugin `heat3d-self-update` in `vite.config.ts`) serves
-`/__heat3d/update`. It exists only on the dev server - not in a static build
-and not in `vite preview`.
+Utvecklingsservern (Vite-insticksprogrammet `heat3d-self-update` i `vite.config.ts`) serverar `/__heat3d/update`. Den finns bara på utvecklingsservern, inte i en statisk build och inte i `vite preview`.
 
-**`GET /__heat3d/update`** answers whether the checkout is behind:
+**`GET /__heat3d/update`** svarar på om kopian ligger efter:
 
 ```json
 { "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "the newest commit's subject" }
 ```
 
-- `checkout: false` when the folder is not a git checkout;
-- it runs `git fetch --quiet` **at most every 30 minutes** (asks in between
-  answer from what was last fetched);
-- `behind` / `ahead` from `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`,
-  `dirty` from `git status --porcelain --untracked-files=no`, `latest` the
-  subject of the upstream's newest commit;
-- with no upstream branch, `upstream: null` and `behind: 0`.
+- `checkout: false` när mappen inte är en git-kopia;
+- den kör `git fetch --quiet` **högst var 30:e minut** (förfrågningar emellan svarar utifrån det som hämtades senast);
+- `behind` / `ahead` från `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`, `dirty` från `git status --porcelain --untracked-files=no`, `latest` är ämnesraden för uppströmsgrenens senaste incheckning;
+- utan uppströmsgren blir `upstream: null` och `behind: 0`.
 
-**`POST /__heat3d/update/apply`** brings the checkout up:
+**`POST /__heat3d/update/apply`** hämtar in uppdateringen i kopian:
 
-1. Refused with `403 { ok: false, reason: "forbidden" }` unless the request has
-   the header `X-Heat3d-Update: 1` and, when it carries an `Origin`, that
-   origin's host is the request's `Host`. A cross-site form cannot send a
-   custom header without a CORS preflight, which this server never grants.
-2. Nothing to do (not a checkout, no upstream, not behind):
-   `{ ok: true, updated: false }`.
-3. Local changes: `{ ok: false, reason: "dirty" }`; local commits:
-   `{ ok: false, reason: "diverged" }`.
-4. Otherwise: notes the files that change (`git diff --name-only HEAD @{u}`),
-   `git pull --ff-only` (2 min timeout), `git submodule update --init`
-   (failure ignored), `npm install` when `package.json` or
-   `package-lock.json` changed (15 min timeout), and answers
-   `{ ok: true, updated: true, restart }` - `restart` says why the running
-   server cannot pick the update up: `"dependencies"` when they were
-   reinstalled, `"config"` when only a `vite.config` file changed, `false`
-   when nothing needs a restart.
-5. A failing git or npm command answers `{ ok: false, reason: "<the error,
-   up to 300 characters>" }`.
+1. Nekas med `403 { ok: false, reason: "forbidden" }` om inte förfrågan bär headern `X-Heat3d-Update: 1` och, när den bär en `Origin`, att originens värd är förfrågans `Host`. Ett formulär från en annan sajt kan inte skicka en egen header utan en CORS-preflight, och den servern ger aldrig en sådan.
+2. Inget att göra (ingen git-kopia, ingen uppström, inte efter): `{ ok: true, updated: false }`.
+3. Lokala ändringar: `{ ok: false, reason: "dirty" }`; egna incheckningar: `{ ok: false, reason: "diverged" }`.
+4. Annars: noterar vilka filer som ändras (`git diff --name-only HEAD @{u}`), kör `git pull --ff-only` (tidsgräns 2 min), `git submodule update --init` (fel ignoreras), `npm install` när `package.json` eller `package-lock.json` har ändrats (tidsgräns 15 min), och svarar `{ ok: true, updated: true, restart }`. `restart` anger varför den körande servern inte kan plocka upp uppdateringen: `"dependencies"` när beroendena installerats om, `"config"` när bara en `vite.config`-fil ändrats, `false` när inget behöver startas om.
+5. Ett misslyckat git- eller npm-kommando svarar `{ ok: false, reason: "<felet, upp till 300 tecken>" }`.
 
-Responses are JSON with `Cache-Control: no-store`. The server listens on
-`127.0.0.1` only, so the route is not reachable from the network.
+Svaren är JSON med `Cache-Control: no-store`. Servern lyssnar bara på `127.0.0.1`, så rutten går inte att nå från nätverket.
 
-### The notice in the page {#the-notice-in-the-page}
+### Noticen på sidan {#the-notice-in-the-page}
 
-`UpdateBanner`, under the name at the top of the sidebar:
+`UpdateBanner`, under namnet överst i sidofältet:
 
-- It asks the route **4 seconds** after the page loads (not in the first
-  seconds: the page has a dataset to load and a GPU to start) and again
-  **every 6 hours** while the page stays open.
-- It shows **nothing** when there is no such route (a static build), the
-  folder is not a checkout, or nothing is newer - a notice on every start is
-  one people learn to ignore.
-- Behind, with no local changes: "A newer version of 3DHeat is available (N
-  changes, the newest: <subject>)." with **Update now** and **Later**
-  (*Later* hides it until the page is reloaded).
-- Behind, with local changes: the same sentence and "This copy has local
-  changes, so it is not updated automatically; commit or stash them, then
-  run git pull." - no button.
-- **Update now** posts to `/apply` ("Updating..."). Then:
-  - "Updated. The page reloads." - and it reloads 1.5 s later (the server
-    already serves the new files);
-  - when the dependencies were reinstalled: "Updated. Its dependencies
-    changed: close the server window and run **restart.bat** to finish.";
-  - when only the server's settings changed: "Updated. Its server settings
-    changed: close the server window and run **restart.bat** to finish.";
-  - nothing to bring in after all (`updated: false` - the copy was brought up
-    meanwhile, by `start.bat` say): "Nothing to update: this copy is already
-    the newest version." - and no reload;
-  - refused: the *dirty* sentence, or "This copy has commits of its own that
-    the newest version does not; update it with git pull.", or "The update
-    did not go through: <reason>".
-
+- Den frågar rutten **4 sekunder** efter att sidan laddats (inte under de första sekunderna, då sidan har en datamängd att läsa in och en GPU att starta) och igen **var sjätte timme** så länge sidan är öppen.
+- Den visar **ingenting** när det inte finns någon sådan rutt (en statisk build), mappen inte är en kopia, eller inget är nyare. En notis vid varje start är något folk lär sig att ignorera.
+- Efter, utan lokala ändringar: "A newer version of 3DHeat is available (N changes, the newest: <subject>)." med **Update now** och **Later** (*Senare* döljer den tills sidan laddas om).
+- Efter, med lokala ändringar: samma mening och "This copy has local changes, so it is not updated automatically; commit or stash them, then run git pull." Ingen knapp.
+- **Update now** skickar till `/apply` ("Updating..."). Sedan:
+  - "Updated. The page reloads." och sidan laddas om 1,5 s senare (servern serverar redan de nya filerna);
+  - när beroendena installerats om: "Updated. Its dependencies changed: close the server window and run **restart.bat** to finish.";
+  - när bara serverns inställningar ändrats: "Updated. Its server settings changed: close the server window and run **restart.bat** to finish.";
+  - inget att hämta efter allt (`updated: false`, kopian uppdaterades under tiden, till exempel av `start.bat`): "Nothing to update: this copy is already the newest version." Ingen omladdning;
+  - nekat: meningen om *dirty*, eller "This copy has commits of its own that the newest version does not; update it with git pull.", eller "The update did not go through: <reason>".

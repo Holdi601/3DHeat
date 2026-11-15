@@ -1,6 +1,6 @@
 ---
 title: "Profile pojazdów i porównanie"
-parent: "Analiza wyścigu"
+parent: "Analiza wyścigowa"
 nav_order: 56
 lang: "pl"
 source: "race-car-profiles.md"

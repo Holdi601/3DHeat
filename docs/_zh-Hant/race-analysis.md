@@ -58,7 +58,7 @@ outdated: false
 1. 開啟**賽車分析**頁籤（位於側邊欄頂端，與**熱圖**並列）。
 2. 載入單圈。按**示範圈**即可看到此頁籤如何處理三圈虛構的單圈。若要使用你自己的單圈，請先錄製（[檔案格式與錄製工具](race-loading-laps.md#file-formats)），然後按**載入單圈檔案…**或**資料夾…**，或把檔案或資料夾拖放到檢視上。
 3. 最快的完整單圈會成為參考；其他單圈中最慢的那圈會被聚焦。點擊清單中的任何單圈即可聚焦它；★ 可將某圈設為參考。
-4. 閱讀**可改進之處**。點擊某項發現：車輛會在其前 40 m 對齊，攝影機會框住它，重播會播放經過該處的過程，並開啟量測。
+4. 閱讀**可改進之處**。點擊某項發現：車輛會在其前 40 m 對齊，攝影機會框住它，重播會播放經過該處的過程，並開啟測量。
 5. 將滑鼠移到圖表上，即可讓每台車移到該公尺位置；按住 Shift 再點擊，則會在該處對齊它們。
 
 ## 按鍵 {#keyboard}
@@ -100,50 +100,35 @@ outdated: false
 
 ## 給開發者 {#for-developers}
 
-### What happens when laps are loaded {#what-happens-when-laps-are-loaded}
+### 載入單圈時會發生什麼 {#what-happens-when-laps-are-loaded}
 
-Every time the set of laps, the reference or the language changes, the whole
-analysis is redone (`analyse` in
-[`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
+每當單圈集合、參考或語言改變時，整個分析都會重新進行（[`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts) 中的 `analyse`）：
 
-1. Derived channels are added to each lap where the game does not send them:
-   drift angle, wheel slip from wheel speeds, in the air, loose ground, yaw
-   rate ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
-2. The reference is chosen and every lap is projected onto its path and
-   resampled every 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
-3. Whether the game's world is mirrored is worked out from the laps
-   ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
-4. Corners are found on the reference, and grouped into segments from one
-   braking zone to the next ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
-5. Per car: its envelope (grip, braking, pull per speed), its profile, its
-   tyre curves ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts),
-   [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts),
-   [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
-6. Per lap and segment: what it did (brake point, slowest point, full
-   throttle, ...) and the line it drove ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
-7. Per lap: its car-control events, each laid against the lap it is compared
-   with there.
-8. Per lap and segment: the time account against its comparison lap and the
-   finding in words.
-9. The time map and the cause map per lap.
+1. 在遊戲沒有送出的地方，為每一圈加入推導出的通道：漂移角、由輪速推得的車輪打滑、是否在空中、是否在鬆散地面、偏航率（[`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)）。
+2. 選定參考，並把每一圈投影到其路徑上，每 2 m 重新取樣（[`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)）。
+3. 從各圈推算遊戲世界是否鏡像（[`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)）。
+4. 在參考上找出彎道，並把它們從一個煞車區到下一個煞車區分組為路段（[`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)）。
+5. 對每輛車：其包絡（每個速度下的抓地力、煞車與牽引力）、其檔案，以及其輪胎曲線（[`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts)、[`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts)、[`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)）。
+6. 對每一圈與每個路段：它做了什麼（煞車點、最慢點、全油門等……）以及它所行駛的路線（[`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)）。
+7. 對每一圈：其車輛操控事件，各自與該圈在此處所對照的圈次並列。
+8. 對每一圈與每個路段：相對於對照圈次的時間帳，以及用文字寫成的發現。
+9. 每一圈的時間圖與原因圖。
 
-The texts are produced in the current language; switching language runs the
-analysis again (and renames the demo laps). A failure in the analysis is
-shown under the **Laps** buttons as an error and the laps stay loaded.
+文字會以目前的語言產生；切換語言會重新執行分析（並重新命名示範圈）。若分析失敗，錯誤會顯示在**單圈**按鈕下方，單圈仍保持載入。
 
-### Source files {#source-files}
+### 原始檔案 {#source-files}
 
-| File | Role |
+| 檔案 | 作用 |
 |---|---|
-| `src/race/adapters.ts`, `ibt.ts` | reading lap files |
-| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | the lap type, naming, demo laps |
-| `src/race/derive.ts`, `handedness.ts` | derived channels, mirrored worlds |
-| `src/race/align.ts`, `segments.ts`, `line.ts` | distance axis, corners, lines |
-| `src/race/analysis.ts` | corners compared, causes, findings |
-| `src/race/envelope.ts`, `profile.ts` | what a car can do |
-| `src/race/control.ts`, `impacts.ts` | car control, hits and crashes |
-| `src/race/stats.ts` | many laps |
-| `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | replay and drawing |
-| `src/race/schema.ts`, `graphs.ts` | the channel table, the charts' rows |
-| `src/ui/race/*` | the sidebar, the charts, the HUD, the labels |
-| `src/state/raceStore.ts` | the tab's state and the replay clock |
+| `src/race/adapters.ts`、`ibt.ts` | 讀取單圈檔案 |
+| `src/race/lap.ts`、`carNames.ts`、`synthetic.ts` | 單圈類型、命名、示範圈 |
+| `src/race/derive.ts`、`handedness.ts` | 推導通道、鏡像世界 |
+| `src/race/align.ts`、`segments.ts`、`line.ts` | 距離軸、彎道、線條 |
+| `src/race/analysis.ts` | 彎道比較、原因、發現 |
+| `src/race/envelope.ts`、`profile.ts` | 車輛能做什麼 |
+| `src/race/control.ts`、`impacts.ts` | 車輛操控、碰撞與撞擊 |
+| `src/race/stats.ts` | 多圈 |
+| `src/race/replay.ts`、`scene.ts`、`glyph.ts`、`geometry.ts` | 重播與繪製 |
+| `src/race/schema.ts`、`graphs.ts` | 通道表、圖表的列 |
+| `src/ui/race/*` | 側邊欄、圖表、HUD、標籤 |
+| `src/state/raceStore.ts` | 頁籤的狀態與重播時鐘 |

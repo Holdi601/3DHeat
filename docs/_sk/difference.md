@@ -37,7 +37,7 @@ Zobrazí sa v režime Rozdiel, pod panelmi tepla.
 
 | Možnosť | Zobrazené ako | Pravidlo rozdelenia |
 |---|---|---|
-| Skupiny | *Skupina (N)* (keď existuje stĺpec skupiny) | Každá skupina na +, − alebo na žiadnej, nastavené v [Zozname tímov](teams-list.md) |
+| Skupiny | *Skupina (N)* (keď existuje stĺpec skupiny) | Každá skupina na +, − alebo na žiadnej, nastavené v paneli [Tímy](teams-list.md) |
 | Kategóriový stĺpec | *stĺpec (N hodnôt)* | Hodnoty na +, − alebo na žiadnej |
 | Číselný stĺpec | *stĺpec (číselný)* | Rozsah hodnôt pre každú stranu |
 | Súbor pôvodu | *Zdrojový súbor - porovnanie dvoch načítaní* (keď bolo načítaných viac súborov) | Súbory na +, − alebo na žiadnej |
@@ -46,7 +46,7 @@ Ponúkajú sa len stĺpce ponechané pod *Ponechať na filtrovanie* pri načíta
 
 ### Porovnávať podiely, nie počty {#compare-shares-not-counts}
 
-**Porovnávať podiely, nie počty** (predvolene vypnuté) váži každú stranu jednou tretinou jej vlastného počtu riadkov, takže strana s päťkrát väčším počtom riadkov nevyhráva len číslami. Farba potom ukazuje, kde je každá strana pomerne častejšia než druhá. Použite to, keď majú strany veľmi rozdielne množstvo dát, napríklad dve relácie rozdielnej dĺžky.
+**Porovnávať podiely, nie počty** (predvolene vypnuté) váži každú stranu číslom 1 delené jej vlastným počtom riadkov, takže strana s päťkrát väčším počtom riadkov nevyhráva len číslami. Farba potom ukazuje, kde je každá strana pomerne častejšia než druhá. Použite to, keď majú strany veľmi rozdielne množstvo dát, napríklad dve relácie rozdielnej dĺžky.
 
 ### Správy, ktoré môžete vidieť {#messages-you-may-see}
 
@@ -63,7 +63,7 @@ Panel upozorní, keď obrázok nie je skutočný rozdiel:
 
 ### Podľa skupín {#by-group}
 
-Panel len ukazuje na [Zoznam tímov](teams-list.md), kde má každá skupina tlačidlá **+** a **−**. Pri každom načítaní sa prvá polovica skupín (zaokrúhlene nahor) dá na +, zvyšok na −; **Rozdeliť rovnomerne** v Zozname tímov urobí to isté znova. Skupina na žiadnej strane alebo skrytá svojím políčkom neprispieva.
+Panel len ukazuje na [Tímy](teams-list.md), kde má každá skupina tlačidlá **+** a **−**. Pri každom načítaní sa prvá polovica skupín (zaokrúhlene nahor) dá na +, zvyšok na −; **Rozdeliť rovnomerne** v paneli Tímy urobí to isté znova. Skupina na žiadnej strane alebo skrytá svojím políčkom neprispieva.
 
 ### Podľa hodnôt kategórie {#by-category-values}
 
@@ -103,4 +103,4 @@ Každý riadok dostane vo vertex shaderi znamienko +1, -1 alebo 0 ([`POINT_HEAT_
 
 Zmena rozdelenia reštartuje akumuláciu.
 
-**Skryté skupiny zostanú skryté pri každom rozdelení.** Pri rozdelení podľa stĺpca tabuľka skupín už neobsahuje znamienka; drží 1 pre zobrazenú skupinu a 0 pre skrytú ([`frameSignTables`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts)), a obe tabuľky sa dostanú do shaderu spoločne - dva riadky jednej textúry znamienok na WebGL2, dve polovice jedného storage buffera na WebGPU. Riadok sa kreslí len vtedy, keď je jeho skupina zobrazená *a* jeho hodnota stĺpca je na nejakej strane. Skupina odškrtnutá v [Zozname tímov](teams-list.md) alebo vynechaná zameraním strán na karte Zápas teda neprispieva bez ohľadu na to, ako je rozdelený rozdiel.
+**Skryté skupiny zostanú skryté pri každom rozdelení.** Pri rozdelení podľa stĺpca tabuľka skupín už neobsahuje znamienka; drží 1 pre zobrazenú skupinu a 0 pre skrytú ([`frameSignTables`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts)), a obe tabuľky sa dostanú do shaderu spoločne - dva riadky jednej textúry znamienok na WebGL2, dve polovice jedného storage buffera na WebGPU. Riadok sa kreslí len vtedy, keď je jeho skupina zobrazená *a* jeho hodnota stĺpca je na nejakej strane. Skupina odškrtnutá v paneli [Tímy](teams-list.md) alebo vynechaná zameraním strán na karte Zápas teda neprispieva bez ohľadu na to, ako je rozdelený rozdiel.

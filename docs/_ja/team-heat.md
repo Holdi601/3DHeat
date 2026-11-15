@@ -1,5 +1,5 @@
 ---
-title: "チームのヒート"
+title: "チームヒート"
 parent: "ヒートモード"
 nav_order: 6
 lang: "ja"

@@ -47,7 +47,7 @@ Iga allpool olev juhtnupp vastab varjutaja parameetrile, nii et selle muutmine e
 | Kõvera redigeerija (ainult kõveral) | eelseade *Sujuv* | | [Kujundi kuju](sprite-shape.md#the-curve-editor) |
 | **Küllastuspunkt** | 24; laadimisel hinnang, seejärel mõõdetud | 0,1-4000, logaritmiline (10 000 000) | [Värv ja säritus](colour-and-exposure.md#saturation-point) |
 | **Minimaalne soojus** | väljas (0) | 0-100% | [Värv ja säritus](colour-and-exposure.md#minimum-heat) |
-| **Tiheduse vastus** | *Küllastav* | *Küllastav* / *Lineaarne* / *Logaritmiline* | [Värv ja säritus](colour-and-exposure.md#density-response) |
+| **Tiheduse vastus** | *Küllastuv* | *Küllastuv* / *Lineaarne* / *Logaritmiline* | [Värv ja säritus](colour-and-exposure.md#density-response) |
 | **Automaatne säritus välja põhjal** | | nupp | [Värv ja säritus](colour-and-exposure.md#auto-exposure) |
 | **Järgi vaadet** | sees | | Mõõdab säritust uuesti iga kord, kui kaamera seisma jääb, nii et piirkond, kuhu lendad, kasutab kogu värviskaalat. Väikesed muutused ignoreeritakse ja skaala libiseb sujuvalt. Eemalda linnuke või lohista **Küllastuspunkti**, et skaala lukustada ja võrrelda kohti ühel skaalal. [Värv ja säritus](colour-and-exposure.md#follow-the-view) |
 | **Sama tihedus igal suumil** | sees | | Värv tähendab sama arvu ridu maa-alaühiku kohta, olenemata sellest, kui lähedal oled. Spraid, mida pikslipiirid suurendavad (kaugelt) või vähendavad (lähedalt), säilitab soojuse, mille ta oma tegelikus suuruses lisaks; nii ei tuhmu kaugelt eksponeeritud pilt, kui sinna lendad. Väljas lisab piiratud spraid oma täiskaalu piiratud suuruses. [Kujundi kuju](sprite-shape.md#pixel-clamps) |
@@ -93,4 +93,4 @@ Soojuse kuju all on veel kaks jaotist. **Suund** joonistab iga rea kiiluna ja li
 
 ## Mis salvestatakse {#what-is-saved}
 
-Ülal kirjeldatud soojusseaded ei salvestu seansside vahel: lehe laadimine taastab vaikeväärtused. Brauseris on kaks asja alles: viimane esitluskiirus (`heat3d.speed`, vaata [Ajajoon](timeline.md)) ja kujude ülekatte kaugemate kujude seaded (tähiste stiil, suurus, tabamusmärgid jne). Samuti jäävad alles keel, [pööratud maailmatelgede](camera.md#invert-world-axis) valik, võidusõidu vahekaardi meeldejäetud autonimed ja [tasemete raamatukogu](level-library.md). Täielik loend on lehel [Salvestatud seaded](ref-settings-storage.md).
+Ülal kirjeldatud soojusseaded ei salvestu seansside vahel: lehe laadimine taastab vaikeväärtused. Brauseris on kaks asja alles: viimane esitluskiirus (`heat3d.speed`, vaata [Ajajoon](timeline.md)) ja [kujude ülekatte](box-replay.md) kaugemate kujude seaded (tähiste stiil, suurus, tabamusmärgid jne). Samuti jäävad alles keel, [pööratud maailmatelgede](camera.md#invert-world-axis) valik, võidusõidu vahekaardi meeldejäetud autonimed ja [tasemete raamatukogu](level-library.md). Täielik loend on lehel [Salvestatud seaded](ref-settings-storage.md).

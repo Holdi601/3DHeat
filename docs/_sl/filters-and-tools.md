@@ -43,7 +43,7 @@ Stranska vrstica zavihka Toplotni zemljevid, od zgoraj navzdol:
 
 1. Vrstica načinov in izbirnik seje
 2. Vir, Dodelitev stolpcev, Nabor podatkov
-3. Poti (način Črte)
+3. Trase (način Črte)
 4. Plošče toplote ali Pregledovalnik ekip
 5. Delitev razlike
 6. Ekipe

@@ -1,5 +1,5 @@
 ---
-title: "Viteze de deplasare"
+title: "Viteze de mișcare"
 parent: "Tabla de tactici"
 nav_order: 1
 lang: "ro"

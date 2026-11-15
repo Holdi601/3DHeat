@@ -13,7 +13,7 @@ outdated: false
 
 Toplota timova pokazuje gdje je bio svaki tim, svaki tim u svojoj boji. Tamo gdje se timovi preklapaju, boje se miješaju.
 
-**Toplota timova** (tipka 3) je polje gustine iz [Toplote](heat.md) uz svaku [grupu](glossary.md) date sopstvene nijanse. Tamo gdje se grupe preklapaju, nijanse se miješaju; ravnopravno nadmetanje ispada neutralno. Neprozirnost i dalje nosi gustinu kao i u ostalim načinima, pa slika odgovara na *koliko* i *čija* u isto vrijeme. Potrebna je kolona grupe.
+**Toplota timova** (tipka 3) je polje gustine iz [Toplote](heat.md) uz svaku [grupu](glossary.md) date sopstvene nijanse. Tamo gdje se grupe preklapaju, nijanse se miješaju; izjednačeno nadmetanje daje neutralnu boju. Neprozirnost i dalje nosi gustinu kao i u ostalim načinima, pa slika odgovara na *koliko* i *čija* u isto vrijeme. Potrebna je kolona grupe.
 
 ![Toplota timova: svaka strana u svojoj boji; tamo gdje se preklapaju, boje se miješaju](../assets/img/en/heat-teams.webp)
 
@@ -24,7 +24,7 @@ To nije [preklapanje figura](box-replay.md): ono crta jednu figuru po osobi; ovo
 1. Pritisnite `3` (ili izaberite **Toplota timova** na traci načina).
 2. Otvorite **Boje toplote**. Uzorci pokazuju boju svake grupe; zadržite pokazivač iznad uzorka za naziv tima.
 3. Ako sve izgleda sivo, povećajte **Razdvajanje boja**.
-4. Odštiklirajte grupu u [Spisku timova](teams-list.md) da je izuzmete; boje ostalih ostaju tamo gdje su bile.
+4. Odznačite grupu u [Spisku timova](teams-list.md) da je izuzmete; boje ostalih ostaju tamo gdje su bile.
 
 ## Kontrole {#controls}
 
@@ -33,7 +33,7 @@ U odjeljku **Boje toplote**:
 | Kontrola | Podrazumijevano | Značenje |
 |---|---|---|
 | Uzorci | | Boja svake grupe, za prvih 12 grupa, zatim *+N još*. Zadržite pokazivač za naziv grupe i boju. |
-| **Razdvajanje boja** | 1,4 | Koliko je miješana boja odgurnuta od neutralne, 0-4. 0 sve čini sivim; 1 je pravi prosjek; iznad otprilike 2 najsvjetlije mješavine izlaze iz prikazivog opsega i po kanalu se stežu, što pomjera njihovu nijansu. |
+| **Razdvajanje boja** | 1,4 | Koliko je miješana boja odgurnuta od neutralne, 0-4. 0 sve čini sivim; 1 je pravi prosjek; iznad otprilike 2 najsvjetlije mješavine izlaze iz prikazivog opsega i po kanalu se ograničavaju, što pomjera njihovu nijansu. |
 | **Skala neprozirnosti (boja dolazi od grupe)** | podrazumijevana skala toplote | Ovdje se koristi samo **alfa** skale: prozirno tamo gdje nema ničega, neprozirno na vrhu. Njene boje se ignorišu. |
 
 Sve ostale kontrole toplote - oblik, zasićenje, odziv, najmanja toplota, dubina, culling - rade kao u [Toploti](heat.md).
@@ -53,6 +53,6 @@ Podrazumijevana razdvojenost je 1,4 umjesto 1, jer pri 1 mješavina pet ravnomje
 
 ## Kako radi {#how-it-works}
 
-Meta toplote u ovom načinu ima četiri kanala. Svaki sprajt dodaje svoju gustinu *v* prvom kanalu, a *v* × Oklab koordinate *a* i *b* grupe drugom i trećem. U trenutku kompozicije mješavina pixela je prosjek ponderisan gustinom: *a* = G / R, *b* = B / R, skaliran razdvojenošću boja i pretvoren u sRGB pri svjetlini palete. Dijeljenje akumuliranom gustinom čini nijansu nezavisnom od toga koliko ima podataka, i zato sve kontrole gustine i dalje djeluju samo na neprozirnost.
+Meta toplote u ovom načinu ima četiri kanala. Svaki sprajt dodaje svoju gustinu *v* prvom kanalu, a *v* × Oklab koordinate *a* i *b* grupe drugom i trećem. U trenutku kompozicije mješavina piksela je prosjek ponderisan gustinom: *a* = G / R, *b* = B / R, skaliran razdvojenošću boja i pretvoren u sRGB pri svjetlini palete. Dijeljenje akumuliranom gustinom čini nijansu nezavisnom od toga koliko ima podataka, i zato sve kontrole gustine i dalje djeluju samo na neprozirnost.
 
 Meta s četiri kanala košta četiri puta više GPU memorije od meta toplote s jednim kanalom pri istoj rezoluciji.

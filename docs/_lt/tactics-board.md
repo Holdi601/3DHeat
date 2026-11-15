@@ -17,7 +17,7 @@ Skirtukas **Taktika** yra piešimo lenta komandos planui: ant žemėlapio dedate
 
 1. Atidarykite skirtuką **Taktika**. Pasirinkite **Žaidimą** (pavyzdžiui, Counter-Strike 2) ir, jei Valorant, paspauskite **Įkelti Valorant žemėlapius** ir pasirinkite **Žemėlapį**. Arba pirma įkelkite [lygį](levels.md).
 2. Pasirinkite **Pusę** (ji nustato spalvą) ir paspauskite **Vaizdas iš viršaus**.
-3. Pasirinkite **Vieta**, pasirinkite figūrą **Figūrose** (naudokite **Ieškoti figūrų**, kad rastumėte) ir spustelėkite žemėlapį. Padėkite dvi ar tris.
+3. Pasirinkite **Padėti**, pasirinkite figūrą **Figūrose** (naudokite **Ieškoti figūrų**, kad rastumėte) ir spustelėkite žemėlapį. Padėkite dvi ar tris.
 4. Pasirinkite **Rodyklė**, spustelėkite figūrą, spustelėkite kelią, kuriuo ji turėtų eiti, ir paspauskite **Enter**, kad užbaigtumėte rodyklę.
 5. Paspauskite **+** po vaizdu, kad pridėtumėte 2 žingsnį. Kiekviena figūra prasideda ten, kur baigėsi jos rodyklė. Ten nubrėžkite daugiau rodyklių.
 6. Paspauskite **▶** (arba `K`), kad planas paleistų nuo rodomo žingsnio iki pabaigos.
@@ -41,14 +41,14 @@ Be lygio lenta yra plokščias žemės paviršius. Įkelkite lygį skiltyje **Ly
 | Įrankis | Spustelėjimas | Pastabos |
 |---|---|---|
 | **Žymėti** | Figūra, tarpinis taškas, rodyklė, sritis ar pastaba pažymi ją. | Shift+spustelėjimas prideda arba pašalina; Shift+tempimas nubrėžia dėžę, ką pridėti. Pažymėjimas gauna transformacijos įrankį (žr. žemiau); `Delete` arba `Backspace` pašalina. `M` perkelia pažymėtą figūrą į kitą spustelėjimą. |
-| **Vieta** | Padeda pasirinktą figūrą. | Figūra pasirenkama **Figūrų** paletėje (su **Ieškoti figūrų**). Jei nieko nepažymėta, `R` pasuka kitą figūrą 15° prieš padedant (`Shift+R` – kita kryptimi). |
+| **Padėti** | Padeda pasirinktą figūrą. | Figūra pasirenkama **Figūrų** paletėje (su **Ieškoti figūrų**). Jei nieko nepažymėta, `R` pasuka kitą figūrą 15° prieš padedant (`Shift+R` – kita kryptimi). |
 | **Rodyklė** | Kiekvienas spustelėjimas prideda tašką; Enter, dvigubas spustelėjimas arba dešinysis spustelėjimas ją baigia, Esc ją išmeta. | **Perkelti**, **Ataka** (platesnė galvutė) arba **Stebėjimas** (plona linija akių aukštyje). Rodyklė, pradėta ant figūros, yra tos figūros maršrutas šiame žingsnyje: atkūrus figūra juo eina, o kitas žingsnis prasideda ten, kur ji baigėsi. |
 | **Metimas** | Metėjas, tada kur nukrenta. | Brūkšninis lankas tarp jų, o pasirinkta priemonė (dūmai, blyksnis, molotovas ir kt.) atsiranda, kur nukrenta, ir lieka nuo šio žingsnio. |
 | **Sritis** | Centras, tada kraštas. | Diskas pusės spalva. |
 | **Pastaba** | Kur eina pastaba; prašo jos teksto. | Rodoma kaip smeigtukas, o jos tekstas virš jo. |
 | **Trinti** | Figūra, rodyklė, sritis ar pastaba. | Pašalina nuo šio žingsnio; pirmame žingsnyje – visiškai. |
 
-**Anuliuoti** ir **Grąžinti** (`Ctrl+Z`; `Ctrl+Y` arba `Ctrl+Shift+Z`) eina per kiekvieną pakeitimą. Linija po planu rodo, kiek figūrų, rodyklių ir žingsnių jame yra. **Vaizdas iš viršaus** žiūri tiesiai žemyn (ortografinis), **3D vaizdas** grąžina perspektyvą, **Kadras** įrėmina planą, o jei planas tuščias – lygį.
+**Anuliuoti** ir **Grąžinti** (`Ctrl+Z`; `Ctrl+Y` arba `Ctrl+Shift+Z`) eina per kiekvieną pakeitimą. Linija po planu rodo, kiek figūrų, rodyklių ir žingsnių jame yra. **Vaizdas iš viršaus** žiūri tiesiai žemyn (ortografinis), **3D vaizdas** grąžina perspektyvą, **Sutalpinti** įrėmina planą, o jei planas tuščias – lygį.
 
 **Figūrų dydis** keičia visų figūrų mastelį lentoje; 1× yra tikras dydis, kuris iš labai aukštai yra keli pikseliai žmogui.
 
@@ -70,9 +70,9 @@ Tarpiniai taškai rodomi kaip taškai rodomo žingsnio rodyklėse: spustelėkite
 
 Figūros maršrutas yra laiko atžymėtas: kiekvienas ruožas trunka savo ilgį lygyje – matuojamą paviršiuje kas porą metrų, todėl kalva ar laiptai tarp dviejų taškų skaičiuojami – tos figūros **judėjimo režimo** greičiu tame žaidime, plius bet koks **laukimas** prie tarpinio taško. Pėstininkai šliaužia, tupi, eina (tyliai), bėga arba sprintina; technika ir laivai šliaužia, važiuoja atsargiai, įprastai arba skuba; orlaiviai ir sraigtasparniai skrenda lėtai, skrydžio greičiu, kovos greičiu arba maksimaliu. Režimas, kurio žaidimas neturi (CS2 neturi sprinto), paima artimiausią turimą. Kaip įkalnė lėtina, priklauso nuo žaidimo: CS2 ir Valorant skaičiuojamas tik horizontalus atstumas, kaip žaidimuose; karinės simuliacijos pėstininkus įkalnėje lėtina (Tobler'io pėsčiojo funkcija), o techniką – pagal nuolydį.
 
-Greičiai ateina iš kiekvienam žaidimui skirtų lentelių su šaltiniais (žr. [Judėjimo greičiai](tactics-speeds.md)): CS2 – pagal laikomą ginklą, iš žaidimo ginklų apibrėžimų; Valorant – pagal ginklą; Battlefield, Squad, Arma ir oro žaidimai – pagal technikos tipą ir klasę. **Juda kaip** parenka figūros profilį (ginklą, technikos tipą); **Savas (m/s)** nepaiso jokio režimo tai figūrai. Režimai pavadinti taip, kaip rodo lenta: *Šliaužti*, *Tupėti*, *Eiti (tyliai)*, *Bėgti*, *Sprintinti*; *Atsargiai*, *Įprastai*, *Skubėti*; *Lėtai*, *Skrydžio greitis*, *Kovos greitis*, *Maksimalus*.
+Greičiai ateina iš kiekvienam žaidimui skirtų lentelių su šaltiniais (žr. [Judėjimo greičiai](tactics-speeds.md)): CS2 – pagal laikomą ginklą, iš žaidimo ginklų apibrėžimų; Valorant – pagal ginklą; Battlefield, Squad, Arma ir oro žaidimai – pagal technikos tipą ir klasę. **Juda kaip** parenka figūros profilį (ginklą, technikos tipą); **Savas (m/s)** nepaiso jokio režimo tai figūrai. Režimai pavadinti taip, kaip rodo lenta: *Šliaužti*, *Pritūpti*, *Eiti (tyliai)*, *Bėgti*, *Sprintas*; *Atsargus*, *Įprastas*, *Rush*; *Lėtas*, *Kreiserinis*, *Kova*, *Maksimalus*.
 
-Kiekvienas tarpinis taškas rodo laiką nuo paskutinio ir laiką nuo plano pradžios („+3,9 s · 0:12“). Pažymėtos figūros maršrutas išvardija kiekvieną ruožą su jo režimu, ilgiu ir laiku, laukimą ir atvykimą. **Atvykimai** skiltyje **Laikas** deda kiekvieną maršrutizuotą figūrą į vieną laiko liniją, pirmasis atvykimas viršuje. Su **Groti realiuoju laiku** (pagal numatymą įjungta) žingsnis trunka tol, kol atvyksta lėčiausias maršrutas, ir kiekviena figūra juda savo greičiu; **Sekundės** tada yra trumpiausias žingsnio ilgis. **Lygio vienetai metre** nurodo, kuo lygis yra: 39,37 CS2 žemėlapiams (žaidimo vienetai), 1 metrų žemėlapiams.
+Kiekvienas tarpinis taškas rodo laiką nuo paskutinio ir laiką nuo plano pradžios („+3,9 s · 0:12“). Pažymėtos figūros maršrutas išvardija kiekvieną ruožą su jo režimu, ilgiu ir laiku, laukimą ir atvykimą. **Atvykimai** skiltyje **Laikas** deda kiekvieną maršrutizuotą figūrą į vieną laiko liniją, pirmasis atvykimas viršuje. Su **Groti realiuoju laiku** (pagal numatymą įjungta) žingsnis trunka tol, kol atvyksta lėčiausias maršrutas, ir kiekviena figūra juda savo greičiu; **Sekundės** tada yra trumpiausias žingsnio ilgis. **Lygio vienetų metre** nurodo, kuo lygis yra: 39,37 CS2 žemėlapiams (žaidimo vienetai), 1 metrų žemėlapiams.
 
 ## Palyginkite su rungtynių duomenimis {#compare-with-match-data}
 

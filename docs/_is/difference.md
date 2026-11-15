@@ -14,7 +14,7 @@ outdated: false
 
 Rautt þar sem lið A var meira, grænblátt þar sem lið B var meira, ekkert þar sem þau voru jöfn.
 
-**Mismunur** (takki 2) er hiti með formerki. Línur úr einni þýðingu bæta við hita; línur úr annarri draga hann frá. Þar sem þær tvær skarast jafnt verður útkoman núll og alveg gegnsæ; þar sem önnur ræður ræður liturinn þeirrar hliðar - sjálfgefið hlýr (gegnsætt → rautt → gult → hvítt) fyrir **+**-hliðina og kaldur (gegnsætt → grænt → blátt → fjólublátt) fyrir **−**-hliðina.
+**Mismunur** (takki 2) er hiti með formerki. Línur úr einu þýði bæta við hita; línur úr öðru draga hann frá. Þar sem þær tvær skarast jafnt verður útkoman núll og alveg gegnsæ; þar sem önnur hliðin ræður ræður litur hennar - sjálfgefið hlýr (gegnsætt → rautt → gult → hvítt) fyrir **+**-hliðina og kaldur (gegnsætt → grænt → blátt → fjólublátt) fyrir **−**-hliðina.
 
 ![Mismunarhiti: rautt þar sem +-hliðin var meira, grænt og blátt þar sem --hliðin var meira](../assets/img/en/difference-split.webp)
 
@@ -26,9 +26,9 @@ Rautt þar sem lið A var meira, grænblátt þar sem lið B var meira, ekkert �
 4. Settu einn hóp (eða gildi) á **+** og annan á **−**.
 5. Lestu litina: hlýtt þýðir +-hliðina, kalt þýðir −-hliðina. Spjaldið varar við ef önnur hliðin hefur engar línur (sjá [Skilaboð sem þú gætir séð](#messages-you-may-see)).
 
-*Hvaða* tvær þýðingar um ræðir er öll spurningin, svo skiptingin getur verið hvaða geymdi dálkur sem er, ekki bara hópar. Línur sem falla á **hvorugt** borðið eru **sleppt**, ekki taldar sem núll: það er það sem gerir að skipting yfir tvö af mörgum gildum ber saman nákvæmlega þessi tvö, og hún vinnur með [síunum](filters.md) - síaðu niður á eitt kort, og skiptu því síðan eftir útgáfu.
+*Hvaða* tvö þýði um ræðir er öll spurningin, svo skiptingin getur verið hvaða geymdi dálkur sem er, ekki bara hópar. Línur sem lenda **hvorugu megin** eru **sleppt**, ekki taldar sem núll: það er það sem gerir að skipting yfir tvö af mörgum gildum ber saman nákvæmlega þessi tvö, og hún vinnur með [síunum](filters.md) - síaðu niður á eitt kort, og skiptu því síðan eftir útgáfu.
 
-Stillingin þarf tvær hliðar: dálk hópa með að minnsta kosti tveimur hópum, eða skiptingu yfir dálk sem geymdur er til síunar. Á gögnum með færri en tvo hópa byrjar hleðsla með dálkaskiptingu - dálkinn *Source file* í hleðslu úr mörgum skrám fyrst, annars fyrsta flokksdálkinn með tveimur gildum, annars fyrsta talnadálkinn með bili - svo *bera saman tvær hleðslur* virkar á gögnum án hópa. Aðeins gögn án hvors tveggja gera stillinguna óvirka; það gerir líka skipting dálks sem skilur eftir ekkert á annarri hliðinni.
+Stillingin þarf tvær hliðar: hópadálk með að minnsta kosti tveimur hópum, eða skiptingu yfir dálk sem geymdur er til síunar. Á gögnum með færri en tvo hópa byrjar hleðsla með dálkaskiptingu - dálkinn *Source file* í hleðslu úr mörgum skrám fyrst, annars fyrsta flokksdálkinn með tveimur gildum, annars fyrsta talnadálkinn með bili - svo *bera saman tvær hleðslur* virkar á gögnum án hópa. Aðeins gögn án hvors tveggja gera stillinguna óvirka; það gerir líka skipting dálks sem skilur eftir ekkert á annarri hliðinni.
 
 ## Spjaldið Mismunaskipting {#the-difference-split-panel}
 
@@ -43,7 +43,7 @@ Birtist í stillingunni Mismunur, undir hitaspjöldunum.
 | Talnadálkur | *dálkur (tala)* | Gildisbil fyrir hvora hlið |
 | Upprunaskráin | *Source file - compare two loads* (þegar margar skrár voru hlaðnar) | Skrár á +, − eða hvorugu |
 
-Aðeins dálkar sem geymdir voru undir *Keep for filtering* við hleðslu eru í boði.
+Aðeins dálkar sem geymdir voru undir *Halda fyrir síun* við hleðslu eru í boði.
 
 ### Bera saman hlutföll, ekki fjölda {#compare-shares-not-counts}
 
@@ -60,7 +60,7 @@ Spjaldið varar við þegar myndin er ekki raunverulegur mismunur:
 | Engin lína í glugganum er á **−**-hliðinni | Aðeins **+**-hliðin er teiknuð. |
 | Ekkert gildi er á annarri hvorri hliðinni | Mismunurinn teiknar ekkert. Settu að minnsta kosti eitt gildi á **+** eða **−**. |
 | *dálkur* er ekki hægt að skipta svona | Valinn dálkur passar ekki við skiptinguna. Veldu dálkinn aftur. |
-| Skiptidálkurinn komst ekki í skjákortsminnið fyrir N af M hlutum | Þær línur eru ekki teiknaðar. Hækkaðu fjárhagsáætlun skjákortsins undir Afköst → Auðlindamörk, eða hladdu færri línum. |
+| Skiptidálkurinn komst ekki í skjákortsminnið fyrir N af M hlutum | Þær línur eru ekki teiknaðar. Hækkaðu fjárhagsáætlun skjákortsins undir Afköst → Auðlindaheimildir, eða hladdu færri línum. |
 
 ### Eftir hópi {#by-group}
 
@@ -71,7 +71,7 @@ Spjaldið vísar bara á [Listi yfir lið](teams-list.md), þar sem hver hópur 
 | Hluti | Merking |
 |---|---|
 | `a + / b − / c ónotuð` | Hversu mörg gildi eru á hvorri hlið og á hvorugri. |
-| **Hreinsa** | Setur hvert gildi á hvorugt borðið. |
+| **Hreinsa** | Setur hvert gildi hvorugu megin. |
 | Gildalisti | Hvert gildi með **+**- og **−**-hnapp (smelltu aftur á virka hnappinn til að taka hann af þeirri hlið). Tómt gildi er skráð sem *(vantar)*. |
 | Athugasemd um hámark | Aðeins fyrstu 200 gildin eru skráð: *Sýni fyrstu 200 af N gildum. Svo breiðan dálk er betra að þrengja fyrst með síu, eða skipta eftir bili ef gildin eru raðað.* |
 

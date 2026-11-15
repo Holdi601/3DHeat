@@ -55,14 +55,14 @@ Nuair a bheadh aonad níos lú ná **An fhíor is lú ar an scáileán**, is fé
 
 ### Marcanna buillí, long briste agus tinte {#hit-marks-wrecks-and-fires}
 
-- **Tá marcanna buillí** ar an dromchla a bhuail an urchair, ag scála an fhigiúir. Insíonn a gcuma cad a tharla: poll (chuaigh tríd), spréacadh geal (níor chuaigh tríd), scríobadh (sleamhnaigh uaidh), réaltóg dhubh (fuse pléascach). Insíonn fáinne daite cad a rinne sé: urchar marfach, modúl scriosta, criticiúil, tromchúiseach, damáiste, gan damáiste, buille. Leag an luch ar mharc chun ainm an bhabhta a fheiceáil.
+- **Comharthaí buillí** ar an dromchla a bhuail an urchair, ag scála an fhigiúir. Insíonn a gcuma cad a tharla: poll (chuaigh tríd), spréacadh geal (níor chuaigh tríd), scríobadh (sleamhnaigh uaidh), réaltóg dhubh (fuse pléascach). Insíonn fáinne daite cad a rinne sé: urchar marfach, modúl scriosta, criticiúil, tromchúiseach, damáiste, gan damáiste, buille. Leag an luch ar mharc chun ainm an bhabhta a fheiceáil.
 - Tarraingítear aonad scriosta **dóite** mar long briste ón bhás go dtí go athghiniúint sé nó go mbaintear é; tá a shiombail trasnaithe.
 - **Dónn tinte** ar aonad ón nóiméad a dhóigh sé go dtí go múchtar iad.
 - **Casann túiríní** chun an áit a dhíríonn an gunna mar a deir na sonraí (nó, gan sin, an áit a bhreathnaíonn an t-imreoir).
 
 ### Airm, diúracáin agus rianta solais {#weapons-decoys-and-tracers}
 
-Le **Airm, urchair agus buillí** ar siúl (rannán na Foirne): eitlíonn diúracáin, roicéid, buamaí agus tórpedónna mar a bhfigiúirí féin le rian deataigh; is rianta solais iad piléir agus sliogáin; flashíonn tionchair agus pléascanna. Tarraingítear rian solais **ar bhealach briste** a oibríodh amach ó bhuille, toisc nach raibh urchar sna sonraí. Tarraingítear flairí agus cleabhóg mar dhiúracáin; folaítear iad ó liosta na n-aonad mura ticeáiltear *Diúracáin agus sliogáin*.
+Le **Airm, urchair agus buillí** ar siúl (rannán Amharcán foirne): eitlíonn diúracáin, roicéid, buamaí agus tórpedónna mar a bhfigiúirí féin le rian deataigh; is rianta solais iad piléir agus sliogáin; flashíonn tionchair agus pléascanna. Tarraingítear rian solais **ar bhealach briste** a oibríodh amach ó bhuille, toisc nach raibh urchar sna sonraí. Tarraingítear flairí agus cleabhóg mar dhiúracáin; folaítear iad ó liosta na n-aonad mura ticeáiltear *Diúracáin agus sliogáin*.
 
 ## Ceamaraí {#cameras}
 

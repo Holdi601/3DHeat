@@ -37,7 +37,7 @@ outdated: false
 
 | 頁籤 | 用途 |
 |---|---|
-| **熱圖** | 任何位置資料表：熱度模式、模型疊加、篩選、體積、洞察、關卡、量測與影片。 |
+| **熱圖** | 任何位置資料表：熱度模式、模型疊加、篩選、體積、洞察、關卡、測量與影片。 |
 | **賽車分析** | 同一條賽道的兩圈或更多圈：時間損失在哪裡、為什麼，以及該改什麼。 |
 | **對戰** | 比賽的模型重播，以及 Counter-Strike 2 的比賽摘要。 |
 | **戰術** | 在關卡上的規劃：模型、路線、投擲的道具、區域，以及可逐步播放的註記。 |
@@ -137,7 +137,7 @@ npm run dev      # http://127.0.0.1:5273
 | 資料夾 | 內容 |
 |---|---|
 | [`src/data/`](https://github.com/Holdi601/3DHeat/tree/main/src/data) | 檔案選取、CSV 與 Parquet 匯入、自動對應、驗證、記憶體模型、資料集建構、模型解析、分類、簡化、關卡庫 |
-| [`src/render/`](https://github.com/Holdi601/3DHeat/tree/main/src/render) | 影格迴圈（`engine.ts`）、取樣、兩種後端、攝影機、遊戲手把、量測、攝影機路徑、影片錄製 |
+| [`src/render/`](https://github.com/Holdi601/3DHeat/tree/main/src/render) | 影格迴圈（`engine.ts`）、取樣、兩種後端、攝影機、遊戲手把、測量、攝影機路徑、影片錄製 |
 | [`src/state/`](https://github.com/Holdi601/3DHeat/tree/main/src/state) | 應用程式狀態（`store.ts`）與所有預設值、領域型別（`types.ts`）、Sprite 曲線 |
 | [`src/ui/`](https://github.com/Holdi601/3DHeat/tree/main/src/ui) | 側邊欄面板、時間軸、覆蓋層 |
 | [`src/race/`](https://github.com/Holdi601/3DHeat/tree/main/src/race)、[`src/match/`](https://github.com/Holdi601/3DHeat/tree/main/src/match) | 賽車分析與對戰頁籤 |

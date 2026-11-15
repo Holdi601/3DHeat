@@ -40,7 +40,7 @@ Cada tabela indica as suas próprias colunas no rodapé, por isso carrega sem ne
 1. Inicie o visualizador (`start.bat` no Windows, ou `npm install` uma vez e depois `npm run dev` em qualquer sistema) e abra `http://127.0.0.1:5273/`.
 2. **Fundo / nível → Modelo 3D…** e escolha `demo-valley.glb`.
 3. **Origem → Ficheiros…** e escolha `tanks.parquet`.
-4. Prima `F` para enquadrar os dados. Vê o [calor](heat.md) de dez partidas.
+4. Prima `F` para enquadrar os dados. Vê-se o [calor](heat.md) de dez partidas.
 5. Experimente a barra de modos: **Diferença** (Blue contra Red), **Calor por equipa**, **Linhas**.
 6. Abra **Descobertas** (na barra lateral do Mapa de calor): encontra os lugares onde se disparou, atingiu e destruiu muito mais do que noutros sítios - à volta das duas colinas.
 7. Abra o separador **Partida**; em **Partidas na repetição** escolha *Match 01*; prima **Reproduzir** na linha temporal: a [repetição](match-replay.md).

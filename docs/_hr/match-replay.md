@@ -44,7 +44,7 @@ Figure zamjenjuju kutije za svaku jedinicu čije se ime ili tip zna (vidi [Figur
 | **Okomice i oznake na oružju** | isključeno | Linije do tla i oznake na projektilima i bombama. |
 | **Požari na jedinicama** | uključeno | Plamen od trenutka kad jedinica planu do gašenja. |
 | **Pogoci na jedinicama** | uključeno | Oznake gdje su hici pogodili (dolje). **Pogoci ostaju**: 1 do 300 sekundi, ili **Cijeli život**. **Plutajuće oznake**: oznake nacrtane iznad površine. |
-| **Linije pogleda i kupole** | isključeno | Iscrtano: gdje igrač gleda; puno: gdje je usmjeren top. |
+| **Linije pogleda i kupole** | isključeno | Isprekidano: gdje igrač gleda; puno: gdje je usmjeren top. |
 | **Zgrade** | puno | Pune ili prozirne zgrade, kad ih razina prikazuje. |
 
 ### Simboli na daljinu {#symbols-at-a-distance}

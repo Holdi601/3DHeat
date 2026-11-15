@@ -89,7 +89,7 @@ Taster: `[` og `]` skubber den fjerne grænse ind og ud, `\` skifter den til og 
 
 ### Retning og Værdi {#direction-and-value}
 
-To flere afsnit ligger under Varmeform. **Retning** tegner hver række som en kile og tilføjer pile: se [Retningsvarme](directional-heat.md). **Værdi** vægter varmen efter, hvad hver række kostede eller indbragte: se [Værdivægtning](value-weighting.md).
+To yderligere afsnit ligger under Varmeform. **Retning** tegner hver række som en kile og tilføjer pile: se [Retningsvarme](directional-heat.md). **Værdi** vægter varmen efter, hvad hver række kostede eller indbragte: se [Værdivægtning](value-weighting.md).
 
 ## Hvad der gemmes {#what-is-saved}
 

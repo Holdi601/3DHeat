@@ -34,7 +34,7 @@ Kollox li juri t-tab Heatmap ġej minn **dataset** wieħed: tabella ta' ringieli
 ## It-triq mill-fajls għall-ritratt {#the-path-from-files-to-picture}
 
 1. **Agħżel fajls** fil-pannell **Sors** - fajl wieħed, diversi, siġra ta' folders, jew billi tħotthom. Parquet, CSV, Tacview, tracks ta' GPS u iktar jiġu aċċettati; l-lista sħiħa waħda hi f'[Formati tad-data](data-formats.md#files). Ara [Tagħbija tal-fajls](loading-files.md).
-2. **Preview.** Jinfetaħ l-ewwel fajl tal-għażla: l-ismijiet tal-kolonni tiegħu, l-ewwel 50 ringiela, liema kolonni jidhru numeriċi, u (Parquet) it-tip loġiku ta' kull kolonna u l-istruzzjonijiet ta' qari tal-fajl stess, il-ħajja `heat3d` fil-footer.
+2. **Preview.** Jinfetaħ l-ewwel fajl tal-għażla: l-ismijiet tal-kolonni tiegħu, l-ewwel 50 ringiela, liema kolonni jidhru numeriċi, u (Parquet) it-tip loġiku ta' kull kolonna u l-istruzzjonijiet ta' qari tal-fajl stess, id-dħul `heat3d` fil-footer.
 3. **Immappjar awtomatiku.** Il-kolonni jiġu assenjati lil ruħhom - X, Y, Z, ħin, persuna, sessjoni, grupp, direzzjoni tal-ħares - u ftit minnhom jinżammu għall-filtrar. Kull tbassir jidher fil-pannell **Immappjar tal-kolonni** u jista' jinbidel. Ara [Immappjar tal-kolonni](column-mapping.md) u [Assi, unitajiet u ħin](axes-units-and-time.md).
 4. **Għadd.** L-għadd ta' ringieli ta' kull fajl jinqara (eżattament mill-footer ta' Parquet, stmat għal CSV), sabiex il-pannell ikun jista' jgħid qabel ma titħabbar xejn kemm memorja teħtieġ it-tagħbija u jekk tidħolx. Jekk ma tidħolx, jipproponi li titħabbar kull *N*-ija ringiela. Ara [Memorja u baġits](memory-and-budgets.md).
 5. **Tagħbija.** Worker fl-isfond jaqra biss il-kolonni immappjati ta' kull fajl - diversi fajls f'daqqa, sa baġit tal-[threads tal-parser](memory-and-budgets.md#parser-threads) - u jgħaqqadhom, fl-ordni tal-għażla, f'dataset wieħed: dizzjunarju komuni wieħed ta' persuni, gruppi u sessjonijiet fuq il-fajls kollha, bidu komuni wieħed tal-ħin, u r-ringieli kollha ordnati skont il-ħin. Ara [Sessjonijiet, persuni u gruppi](sessions-persons-groups.md).
@@ -45,7 +45,7 @@ Kollox li juri t-tab Heatmap ġej minn **dataset** wieħed: tabella ta' ringieli
 
 | Bżonn | X'jiġri mingħajru |
 |---|---|
-| **Mill-inqas tnejn minn X / Y / Z** | It-tagħbija titwaqqaf. B'tnejn biss, l-assi t-tielet hu 0 u d-data tinżel bħala pjan ċatt fix-xena 3D - dak li tixtieq mappa tas-sħana mill-fuq. |
+| **Mill-inqas tnejn minn X / Y / Z** | It-tagħbija tiġi miċħuda. B'tnejn biss, l-assi t-tielet hu 0 u d-data tinżel bħala pjan ċatt fix-xena 3D - dak li tixtieq mappa tas-sħana mill-fuq. |
 | Kolonna tal-ħin | Fakultattiva. Mingħajrha l-linja taż-żmien titfi, il-veduta tibqa' fil-modalità **Kollox**, u s-sidebar jgħid hekk. |
 | Kolonna tal-persuna | Fakultattiva. Teħtiġha l-[sovrapposizzjoni tal-figuri](box-replay.md) (figura għal kull persuna), [is-sħana tal-linji](line-heat.md) (it-triq li kull persuna mxiet), l-interpolazzjoni, id-denb u l-istorja **Ħajja**. |
 | Kolonna tal-grupp | Fakultattiva. Teħtieġha [is-sħana tat-tim](team-heat.md) u l-modalità [differenza](difference.md) (mill-inqas żewġ gruppi). |

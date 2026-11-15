@@ -47,7 +47,7 @@ Aus [`colors.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors
 - Faarwen liewen op der **Oklab**-Faarfebene mat fixer Hellegkeet (0.7) an Chroma (0.115), sou datt all Grupp gläich hell ass an eng rout Grupp net méi waarm wierkt wéi eng blo.
 - Mat *n* Gruppen gëtt de Faarfkrees a *n* gläich Deeler opgedeelt, a Grupp *i* kritt d'**Mëtt** vu sengem Deel, `(i + 0.5) / n` vun enger Ëmdréiung. All zwou Gruppe sinn sou wäit ewech, wéi d'Zuel et erlaabt, a Géigesätz bleiwen Géigesätz, egal wéi vill et sinn.
 - Héchstens **16** verschidde Faarftéin ginn benotzt. Bei méi Gruppen ginn d'IDen duerch wiederholtes Halbéieren zougewisen (bit-ëmgedréint: 0, ½, ¼, ¾, ⅛, …), sou datt Noper-IDen keng Faarf deelen; Gruppen iwwer 16 deelen sech zwangsleefeg eng.
-- Eng Grupp, deren Bezeechnung "keng Grupp" heescht - `0`, eidel, `none`, `unknown`, `null` oder `-1`, ouni Ënnerscheed vun Grouss an Klengbuschtawen - gëtt **neutralgrau** gemoolt, amplaz e Stéck vum Krees ze huelen. Nëmmen déi éischt sou Bezeechnung an der Gruppelëscht gëtt esou behandelt.
+- Eng Grupp, déi "keng Grupp" heescht - `0`, eidel, `none`, `unknown`, `null` oder `-1`, ouni Ënnerscheed vun Grouss an Klengbuschtawen - gëtt **neutralgrau** gemoolt, amplaz e Stéck vum Krees ze huelen. Nëmmen déi éischt sou Bezeechnung an der Gruppelëscht gëtt esou behandelt.
 
 D'Standard-Trennung ass 1.4 an net 1, well bei 1 eng Mëschung vu fënnef gläichméisseg verdeelte Faarftéin *grau* ass: richteg, awer net liesbar. E bëssen iwwer 1 hält Gläichstänn éierlech a mécht eng 60/40-Opdeelung siichtbar.
 

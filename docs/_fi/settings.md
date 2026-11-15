@@ -20,7 +20,7 @@ Sivupalkin yläosassa:
 |---|---|
 | **?** | Ohjetila: mitä jokainen väri tarkoittaa (myös `?` tai `F1`) |
 | **Yksiköt**-valikko | Metrinen, Brittiläinen, Ilmailu tai Merenkulku |
-| **...**-painike **Yksiköiden** vieressä | Avaa "Valitse yksikkö kullekin suureelle": yksi pudotusvalikko per suure |
+| **...**-painike **Yksiköiden** vieressä | Avaa "Valitse yksikkö jokaiselle suureelle": yksi pudotusvalikko per suure |
 | **Kieli**-valikko | Katselimen kieli: [40 kieltä](languages.md) tai selaimen kieli |
 
 ![Ylätunniste Yksiköt-valikko ja yksikkö-per-suure-ikkuna auki](../assets/img/en/settings-units.webp)

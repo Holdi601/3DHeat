@@ -13,7 +13,7 @@ outdated: false
 
 Replayet er en film av kampen der hver spiller tegnes som det de kjørte. Bruk det til å se en kamp på nytt, følge én enhet og se hvem som traff hvem.
 
-Skudd, treff, branner og vrak tegnes på enhetene og målene i banen. Kameraer, etiketter og en taktisk visning hjelper deg å lese kampen. Kjenner du Tacview? [Tacview-paritet](tacview-parity.md) viser hvor hvert av verktøyene dets står.
+Skudd, treff, branner og vrak tegnes på enhetene og målene i banen. Kameraer, etiketter og en taktisk visning hjelper deg å lese kampen. Kjenner du Tacview? [Tacview-paritet](tacview-parity.md) viser hvor hvert av verktøyene finnes.
 
 ![Figurreplay av stridsvognsdemoen: stridsvogner som egne figurer, med etiketter for navn, kjøretøy og fart](../assets/img/en/replay-overview.webp)
 
@@ -66,7 +66,7 @@ Med **Våpen, skudd og treff** på (seksjonen Lagvisning): missiler, raketter, b
 
 ## Kameraer {#cameras}
 
-Klikk på en enhet eller dens etikett for å **følge** den; seksjonen **Reprise** tilbyr **Jakt**, **Bane**, **Cockpit** (med et frontruevisningsdisplay, `H`), **Fast**, **Padlock**, **Mål** og **Satellitt**. `V` går gjennom dem, **Kameraavstand** setter hvor langt unna. Esc stopper.
+Klikk på en enhet eller dens etikett for å **følge** den; seksjonen **Reprise** tilbyr **Jakt**, **Bane**, **Cockpit** (med et head-up-display, `H`), **Fast**, **Padlock**, **Mål** og **Satellitt**. `V` går gjennom dem, **Kameraavstand** setter hvor langt unna. Esc stopper.
 
 - **Visning av to enheter**: velg et **Mål** (eller Ctrl/Alt-klikk på en enhet) for å se på den fra den du følger; **Bytt** bytter dem.
 - **Mål**: Shift-klikk på to enheter for peiling, avstand og høydeforskjell mellom dem.

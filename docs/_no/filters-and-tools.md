@@ -49,11 +49,11 @@ Sidepanelet for fanen Varmekart, fra topp til bunn:
 6. Lag
 7. Objekter
 8. Filtre
-9. Bakgrunn / bane
+9. Bakgrunn / nivå
 10. Snitt
 11. Måling
 12. Kameravei og rendering
 13. Ytelse
 14. Kamera og scene
 
-Fanen Kamp viser modusraden, økt-velgeren, sitt eget panel, Filtre, Bakgrunn / bane og Kamera og scene.
+Fanen Kamp viser modusraden, økt-velgeren, sitt eget panel, Filtre, Bakgrunn / nivå og Kamera og scene.

@@ -33,7 +33,7 @@ Fiecare fișier este un meci (sau conține mai multe). Fișierele Parquet și co
 
 Panoul arată câte meciuri, unități, rânduri și poziții au fost citite, memoria folosită și timpul de încărcare. *Loc pentru* este câte poziții în plus ar mai putea primi placa grafică. *Figuri de la* este mărimea pe ecran sub care o unitate este desenată ca o mică săgeată în loc de figura ei.
 
-Aspectul figurilor folosește aceleași comenzi ca [reluarea meciului](match-replay.md#figures): **Mărimea figurii**, **Cea mai mică figură pe ecran** și **La distanță**.
+Aspectul figurilor folosește aceleași comenzi ca [reluarea meciului](match-replay.md#figures): **Mărimea figurilor**, **Cea mai mică figură pe ecran** și **La distanță**.
 
 ## Sfaturi {#tips}
 

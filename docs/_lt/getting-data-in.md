@@ -38,7 +38,7 @@ Viskas, ką rodo Šilumos žemėlapio skirtukas, ateina iš vieno **duomenų rin
 3. **Automatinis priskyrimas.** Stulpeliai priskiriami vaidmenims – X, Y, Z, laikas, asmuo, sesija, grupė, žvilgsnio kryptis – o keletas paliekama filtravimui. Kiekvienas spėjimas rodomas skiltyje **Stulpelių priskyrimas** ir gali būti pakeistas. Žr. [Stulpelių priskyrimas](column-mapping.md) ir [Ašys, vienetai ir laikas](axes-units-and-time.md).
 4. **Skaičiavimas.** Perskaičiuojamas kiekvieno failo eilučių skaičius (tiksliai iš Parquet poraštių, įvertinamas CSV), todėl skiltis gali pasakyti, kiek atminties reikės įkėlimui ir ar ji telpa, dar prieš įkeliant ką nors. Jei netelpa, siūloma įkelti kas *N*-tą eilutę. Žr. [Atmintis ir biudžetai](memory-and-budgets.md).
 5. **Įkėlimas.** Fono darbuotojas išskaido tik priskirtus kiekvieno failo stulpelius – kelis failus vienu metu, iki [skaitytuvo gijų](memory-and-budgets.md#parser-threads) biudžeto – ir sujungia juos pagal pasirinkimo tvarką į vieną duomenų rinkinį: vieną bendrą asmenų, grupių ir sesijų žodyną visiems failams, vieną bendrą laiko pradžią ir visas eilutes, surikiuotas pagal laiką. Žr. [Sesijos, asmenys ir grupės](sessions-persons-groups.md).
-6. **Siuntimas.** Pagrindinė gija vienam kadrui praneša „Keliamos N eilučių į GPU“, tada eilutes sudeda į GPU atmintį pagal GPU biudžetą. Žr. [GPU atminties laikymas](gpu-memory.md).
+6. **Įkėlimas į GPU.** Pagrindinė gija vienam kadrui praneša „Į GPU įkeliama N eilučių“, tada eilutes sudeda į GPU atmintį pagal GPU biudžetą. Žr. [GPU atminties laikymas](gpu-memory.md).
 7. **Pirmas paveikslėlis.** Kamera įrėmina duomenis, spraito spindulys ir įsotinimas nustatomi pagal duomenų apimtį ir eilučių skaičių, o po 8 nupieštų kadrų įsotinimas išmatuojamas pagal patį paveikslėlį ([Spalva ir ekspozicija](colour-and-exposure.md)).
 
 ## Reikalavimai, tikrinami prieš įkėlimą {#requirements-checked-before-a-load}
@@ -46,7 +46,7 @@ Viskas, ką rodo Šilumos žemėlapio skirtukas, ateina iš vieno **duomenų rin
 | Reikia | Kas nutinka be jo |
 |---|---|
 | **Bent du iš X / Y / Z** | Įkėlimas atmetamas. Su tiksliai dviem trečioji ašis yra 0, o duomenys piešiami kaip plokščias paviršius 3D scenoje – tai ir reikia žemėlapio šilumai iš viršaus. |
-| Laiko stulpelis | Neprivalomas. Be jo laiko juosta išjungiama, vaizdas lieka režime **Viskas**, o šoninėje juostoje tai nurodoma. |
+| Laiko stulpelis | Neprivalomas. Be jo laiko juosta išjungiama, vaizdas lieka režime **Visi**, o šoninėje juostoje tai nurodoma. |
 | Asmens stulpelis | Neprivalomas. Reikalingas [figūrų sutapdinimui](box-replay.md) (kiekvieno asmens figūra), [linijų šilumai](line-heat.md) (kiekvieno asmens nueitas kelias), interpoliacijai, pėdsakams ir **Gyvavimo trukmė** istorijai. |
 | Grupės stulpelis | Neprivalomas. Reikalingas [komandų šilumai](team-heat.md) ir [skirtumo](difference.md) režimui (bent dvi grupės). |
 

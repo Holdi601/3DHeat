@@ -54,7 +54,7 @@ Režim koji učitani podaci ne mogu podržati zasivljen je na traci načina; zad
 
 ## Bez vlastitih podataka {#without-your-own-data}
 
-Panel **Skup podataka** (ispod **Izvor**) ima [sintetički generator](synthetic-generator.md) koji pravi skup podataka oblika battle-royalea bilo koje veličine, koristan za isprobavanje prikazivača i za testiranje šta mašina može da podnese.
+Panel **Skup podataka** (ispod **Izvor**) ima [sintetički generator](synthetic-generator.md) koji pravi skup podataka kakav imaju igre battle royale, bilo koje veličine, koristan za isprobavanje prikazivača i za testiranje šta mašina može da podnese.
 
 ## Stranice u ovom odjeljku {#pages-in-this-section}
 

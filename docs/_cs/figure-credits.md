@@ -1,6 +1,6 @@
 ---
-title: "Zdroje obrazců"
-parent: "Obrazce"
+title: "Zdroje figur"
+parent: "Figury"
 nav_order: 1
 lang: "cs"
 source: "figure-credits.md"

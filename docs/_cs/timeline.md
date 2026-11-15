@@ -34,7 +34,7 @@ Výběr **Vše** také zastaví přehrávání.
 | ▶ / ❚❚ | pozastaveno | Spustit nebo pozastavit; také `K`. |
 | ◀ **Přehrát zpět (J)** | | Pustí data pozpátku. Zobrazuje se jen v režimu **Překryv figur**; stejná klávesa `J` funguje i tam (viz [Klávesnice](#keyboard)). |
 | ⏮ | | Zpět na začátek rozsahu. |
-| Hodiny | | `uplynulo / celkem` jako `mm:ss.s` (nebo `h:mm:ss`) a, když je sloupec času absolutní časové razítko, také tečný čas hlavy přehrávání jako `HH:MM:SSZ` (UTC). |
+| Hodiny | | `uplynulo / celkem` jako `mm:ss.s` (nebo `h:mm:ss`) a, když je sloupec času absolutní časové razítko, také denní čas hlavy přehrávání jako `HH:MM:SSZ` (UTC). |
 | **Rychlost** | 1× | Sekundy datové sady za reálnou sekundu. Nabídka má 17 kroků od 0,01× do 1800× (0,01, 0,02, 0,05, 0,1, 0,25, 0,5, 1, 2, 4, 8, 16, 32, 64, 128, 256, 600, 1800), plus **Vlastní…**: napište libovolnou rychlost od 0,001× do 3600× (například 0,3 nebo 12) a stiskněte Enter; Esc ponechá aktuální rychlost. Poslední rychlost se pamatuje pro příští návštěvu (viz [Uložená nastavení](ref-settings-storage.md)). |
 | **Historie** | Kumulativně | Co se v hlavě přehrávání počítá jako viditelné: *Kumulativně*, *Okno* nebo *Životnost* (níže). |
 | **Úsek** (Okno; v režimu Čáry také Životnost) | 30 s | Délka okna končícího v hlavě přehrávání; nejméně 0,01 s. V [Čárovém teple](line-heat.md#playback) je to délka ocasu. |

@@ -43,7 +43,7 @@ Fiecare tabel își numește coloanele în subsolul său, deci se încarcă făr
 4. Apasă `F` ca să încadrezi datele. Vezi [căldura](heat.md) din zece meciuri.
 5. Încearcă bara de moduri: **Diferență** (Blue față de Red), **Căldură pe echipe**, **Linii**.
 6. Deschide **Observații** (în bara laterală Hartă termică): găsește locurile unde s-a tras, s-a lovit și s-a distrus mult mai mult decât în altă parte - în jurul celor două dealuri.
-7. Deschide fila **Meci**; sub **Meciuri în reluare** alege *Match 01*; apasă **Redare** pe cronologie: [reluarea](match-replay.md).
+7. Deschide fila **Meci**; sub **Meciuri din reluare** alege *Match 01*; apasă **Redare** pe cronologie: [reluarea](match-replay.md).
 
 ![O reluare a Match 01 cu tancuri ca figuri](../assets/img/en/replay-overview.webp)
 

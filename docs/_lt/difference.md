@@ -42,7 +42,7 @@ Rodoma Skirtumo režime, po šilumos skiltimis.
 | Skaitinis stulpelis | *stulpelis (skaitinis)* | Reikšmių intervalas kiekvienai pusei |
 | Šaltinio failas | *Failo šaltinis – palyginti du įkėlimus* (kai įkelta keli failai) | Failai į +, − arba nė vieną |
 
-Siūlomi tik stulpeliai, paliekami skiltyje *Palikti filtravimui* įkeliant.
+Siūlomi tik stulpeliai, paliekami skiltyje *Išsaugoti filtravimui* įkeliant.
 
 ### Lyginti dalis, ne kiekius {#compare-shares-not-counts}
 

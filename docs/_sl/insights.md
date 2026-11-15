@@ -40,9 +40,9 @@ Vrstice na vrhu seznama (na primer skupni zneski denarja) povzamejo celotne poda
 | **Vroča in hladna območja** | Mesta, kjer se vrsta dogodka (streli, zadetki, zajemi ...) zgodi precej pogosteje ali redkeje, kot bi napovedal čas, preživet tam | stolpec dogodkov |
 | **Odprt teren in kritje** | Smrti na odprtem proti bližnji geometriji ravni in počasi proti hitremu gibanju | smrti; 3D raven za del z geometrijo |
 | **Spawni** | Močni spawni, pasti ob pojavitvi, varni spawni, čas do prvega stika | čas in osebe |
-| **Razred po kraju** | Razred vozila ali igralci proti UI, ki v nekem območju delujejo precej bolje ali slabše | kills in stolpec razreda vozila ali igralec/UI |
-| **Igralci** | Igralci, ki ubijajo ali umirajo precej bolj ali manj kot drugi v istem razredu | osebe in kills |
-| **Ozka grla in boki** | Ozka grla (precej več prehodov kot okoliška tla) in bočne poti (redko uporabljene, a vodijo do kills) | osebe |
+| **Razred po kraju** | Razred vozila ali igralci proti UI, ki v nekem območju delujejo precej bolje ali slabše | ubitja in stolpec razreda vozila ali igralec/UI |
+| **Igralci** | Igralci, ki ubijajo ali umirajo precej bolj ali manj kot drugi v istem razredu | osebe in ubitja |
+| **Ozka grla in boki** | Ozka grla (precej več prehodov kot okoliška tla) in bočne poti (redko uporabljene, a vodijo do ubitja) | osebe |
 | **Vrednost** | *Drago ozemlje* in *Donosno ozemlje* | [stolpci vrednosti](value-weighting.md) |
 
 Zaznavniki, ki na podatkih ne morejo delovati, so na dnu seznama z razlogom.
@@ -76,7 +76,7 @@ Nato vpišite neobvezno vprašanje in pritisnite **Napiši z UI**. Pošljejo se 
 
 ## Komentator {#caster}
 
-Za **eno tekmo** (izberite eno, če je naloženih več), **Komentator** najde trenutke, vredne ogleda: prvo kri, večkratne kills, zamenjave, zadnje preživele, premike pri ciljih, preobrate, izstopajoče igralce, dolge strele.
+Za **eno tekmo** (izberite eno, če je naloženih več), **Komentator** najde trenutke, vredne ogleda: prvo kri, večkratna ubitja, zamenjave, zadnje preživele, premike pri ciljih, preobrate, izstopajoče igralce, dolge strele.
 
 ![Trenutki komentatorja za en krog demo streljanja](../assets/img/en/caster.webp)
 

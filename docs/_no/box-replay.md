@@ -1,5 +1,5 @@
 ---
-title: "Figurlag"
+title: "Figuroverlegg"
 parent: "Varmemodi"
 nav_order: 8
 lang: "no"

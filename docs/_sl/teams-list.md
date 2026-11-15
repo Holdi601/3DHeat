@@ -1,5 +1,5 @@
 ---
-title: "Seznam ekip"
+title: "Ekipe"
 parent: "Filtri in orodja"
 nav_order: 2
 lang: "sl"

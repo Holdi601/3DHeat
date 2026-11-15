@@ -31,7 +31,7 @@ Svaka datoteka je jedan meč (ili ih sadrži nekoliko). Parquet datoteke i [`.3d
 | **Po timu** / **Po meču** | Boji po strani, ili boja po meču. |
 | **Označi gdje su jedinice poginule** | Oznaka gdje je svaka jedinica poginula, 10 s, 30 s, 120 s, ili sve dosad. |
 
-Panel prikazuje koliko je mečeva, jedinica, redova i pozicija pročitano, zauzetu memoriju i vrijeme učitavanja. *Mjesta za* je koliko još pozicija grafička kartica može primiti. *Figure od* je veličina na ekranu ispod koje se jedinica crta kao mali strelac umjesto svoje figure.
+Panel prikazuje koliko je mečeva, jedinica, redova i pozicija pročitano, zauzetu memoriju i vrijeme učitavanja. *Mjesta za* je koliko još pozicija grafička kartica može primiti. *Figure od* je veličina na ekranu ispod koje se jedinica crta kao mala strelica umjesto svoje figure.
 
 Izgled figura koristi iste kontrole kao [reprodukcija meča](match-replay.md#figures): **Veličina figura**, **Najmanja figura na ekranu** i **Na daljinu**.
 

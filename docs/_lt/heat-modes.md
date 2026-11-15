@@ -45,10 +45,10 @@ Klavišai 1–4 tikrinami su duomenimis taip pat: klavišas užpilkintam režimu
 |---|---|---|---|---|---|
 | Maršrutai ([linijų šiluma](line-heat.md)) | | | | | taip |
 | Šilumos forma (su **Sekti vaizdą** ir **Vienodas tankis bet kokiu mastu**), Šilumos spalvos, Spraito pikselių ribos, Gylis, Atstumo atrinkimas | taip | taip | taip | | taip |
-| Kryptis ([krypties šiluma](directional-heat.md)), Reikšmė ([vertės svoriavimas](value-weighting.md)) | taip | taip | taip | | taip |
+| Kryptis ([krypties šiluma](directional-heat.md)), Vertė ([vertės svorinimas](value-weighting.md)) | taip | taip | taip | | taip |
 | Komandų peržiūra ([figūrų sutapdinimas](box-replay.md)) | | | | taip | |
 | Skirtumo skaidymas ([skirtumas](difference.md)) | | taip | | | |
-| [Komandos](teams-list.md), [Subjektai](entities.md), [Filtrai](filters.md), Fonas / lygis, [Pjūvis](slice.md), [Matas](measure.md), Kameros kelias ir atvaizdavimas, Našumas, Kamera ir scena | taip | taip | taip | taip | taip |
+| [Komandos](teams-list.md), [Objektai](entities.md), [Filtrai](filters.md), Fonas / lygis, [Pjūvis](slice.md), [Matavimas](measure.md), Kameros kelias ir atvaizdavimas, Našumas, Kamera ir scena | taip | taip | taip | taip | taip |
 
 ## Ką bendrai turi visi šilumos režimai {#what-every-heat-mode-shares}
 
@@ -64,7 +64,7 @@ Viskas 4 žingsnyje taikoma sudėties metu, todėl tempiant tuos valdiklius kaup
 ## Šio skyriaus puslapiai {#pages-in-this-section}
 
 - [Šiluma](heat.md) – paprastas šilumos režimas ir jo skilčių apžvalga
-  - [Spraito forma](sprite-shape.md) – spindulys, intensyvumai, slopimas, kreivės redaktorius, pikselių ribos, suplojimas
+  - [Spraito forma](sprite-shape.md) – spindulys, intensyvumai, slopimas, kreivės redaktorius, pikselių ribos, suplokštinimas
   - [Spalva ir ekspozicija](colour-and-exposure.md) – spalvų skalės redaktorius, įsotinimo taškas, automatinė ekspozicija, mažiausia šiluma, tankio atsakas
   - [Gylis ir atrinkimas](depth-and-culling.md) – slėpimas dėl lygio, slėpimas už reljefo, atstumo atrinkimas
 - [Skirtumas](difference.md) – skirtumo skaidymas
@@ -72,4 +72,4 @@ Viskas 4 žingsnyje taikoma sudėties metu, todėl tempiant tuos valdiklius kaup
 - [Linijų šiluma](line-heat.md) – maršrutai
 - [Figūrų sutapdinimas](box-replay.md) – pakartojimo režimas (failas vis dar vadinasi box replay)
 - [Krypties šiluma](directional-heat.md)
-- [Vertės svoriavimas](value-weighting.md)
+- [Vertės svorinimas](value-weighting.md)

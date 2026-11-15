@@ -18,7 +18,7 @@ Der Viewer sagt dir, wenn es eine neuere Version gibt, und aktualisiert sich nur
 2. **Wenn es heißt, restart.bat auszuführen**, schließe das Serverfenster (das schwarze Fenster, das `start.bat` geöffnet hat) und doppelklicke `restart.bat`.
 3. **Beim Starten des Viewers.** `start.bat` prüft ebenfalls. Gibt es eine neuere Version, fragt es **Jetzt aktualisieren? [J/N]**. Drücke `J`, um zu aktualisieren. Drücke `N` oder warte 60 Sekunden ohne Antwort, um die Version zu starten, die du hast.
 
-![Der Update-Hinweis mit Jetzt aktualisieren und Später](../assets/img/en/updates-notice.webp)
+![Der Update-Hinweis mit Jetzt aktualisieren und Später](../assets/img/de/updates-notice.webp)
 
 Eine Kopie mit eigenen Änderungen wird nie für dich aktualisiert; der Kasten sagt nur, dass ein Update wartet, und dass du deine Änderungen committen oder stashen und dann `git pull` ausführen sollst. Eine Kopie, die nicht mit Git installiert wurde (etwa eine Zip-Datei), zeigt nichts.
 
@@ -73,76 +73,42 @@ Seite ---(nach 4 s, dann alle 6 h)---> Entwicklungsserver ---> git fetch
 
 ## Für Entwickler {#for-developers}
 
-### While it runs: the update route {#while-it-runs-the-update-route}
+### Während er läuft: die Update-Route {#while-it-runs-the-update-route}
 
-The dev server (Vite plugin `heat3d-self-update` in `vite.config.ts`) serves
-`/__heat3d/update`. It exists only on the dev server - not in a static build
-and not in `vite preview`.
+Der Entwicklungsserver (Vite-Plugin `heat3d-self-update` in `vite.config.ts`) liefert `/__heat3d/update`. Die Route gibt es nur auf dem Entwicklungsserver – nicht in einem statischen Build und nicht in `vite preview`.
 
-**`GET /__heat3d/update`** answers whether the checkout is behind:
+**`GET /__heat3d/update`** antwortet, ob der Checkout zurückliegt:
 
 ```json
 { "checkout": true, "upstream": "origin/main", "behind": 3, "ahead": 0, "dirty": false, "latest": "the newest commit's subject" }
 ```
 
-- `checkout: false` when the folder is not a git checkout;
-- it runs `git fetch --quiet` **at most every 30 minutes** (asks in between
-  answer from what was last fetched);
-- `behind` / `ahead` from `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`,
-  `dirty` from `git status --porcelain --untracked-files=no`, `latest` the
-  subject of the upstream's newest commit;
-- with no upstream branch, `upstream: null` and `behind: 0`.
+- `checkout: false`, wenn der Ordner kein Git-Checkout ist;
+- sie führt `git fetch --quiet` **höchstens alle 30 Minuten** aus (Anfragen dazwischen antworten mit dem, was zuletzt geholt wurde);
+- `behind` / `ahead` aus `git rev-list --count HEAD..@{u}` / `@{u}..HEAD`, `dirty` aus `git status --porcelain --untracked-files=no`, `latest` der Betreff des neuesten Commits des Upstreams;
+- ohne Upstream-Branch: `upstream: null` und `behind: 0`.
 
-**`POST /__heat3d/update/apply`** brings the checkout up:
+**`POST /__heat3d/update/apply`** bringt den Checkout auf den neuesten Stand:
 
-1. Refused with `403 { ok: false, reason: "forbidden" }` unless the request has
-   the header `X-Heat3d-Update: 1` and, when it carries an `Origin`, that
-   origin's host is the request's `Host`. A cross-site form cannot send a
-   custom header without a CORS preflight, which this server never grants.
-2. Nothing to do (not a checkout, no upstream, not behind):
-   `{ ok: true, updated: false }`.
-3. Local changes: `{ ok: false, reason: "dirty" }`; local commits:
-   `{ ok: false, reason: "diverged" }`.
-4. Otherwise: notes the files that change (`git diff --name-only HEAD @{u}`),
-   `git pull --ff-only` (2 min timeout), `git submodule update --init`
-   (failure ignored), `npm install` when `package.json` or
-   `package-lock.json` changed (15 min timeout), and answers
-   `{ ok: true, updated: true, restart }` - `restart` says why the running
-   server cannot pick the update up: `"dependencies"` when they were
-   reinstalled, `"config"` when only a `vite.config` file changed, `false`
-   when nothing needs a restart.
-5. A failing git or npm command answers `{ ok: false, reason: "<the error,
-   up to 300 characters>" }`.
+1. Abgelehnt mit `403 { ok: false, reason: "forbidden" }`, außer die Anfrage hat den Header `X-Heat3d-Update: 1` und, wenn sie ein `Origin` mitschickt, stimmt dessen Host mit dem `Host` der Anfrage überein. Ein fremdes Formular kann ohne CORS-Preflight keinen eigenen Header senden, und den gewährt dieser Server nie.
+2. Nichts zu tun (kein Checkout, kein Upstream, nicht zurückliegend): `{ ok: true, updated: false }`.
+3. Lokale Änderungen: `{ ok: false, reason: "dirty" }`; eigene Commits: `{ ok: false, reason: "diverged" }`.
+4. Sonst: notiert die Dateien, die sich ändern (`git diff --name-only HEAD @{u}`), führt `git pull --ff-only` aus (Zeitlimit 2 Minuten), dann `git submodule update --init` (Fehler werden ignoriert), `npm install`, wenn sich `package.json` oder `package-lock.json` geändert haben (Zeitlimit 15 Minuten), und antwortet `{ ok: true, updated: true, restart }`. `restart` sagt, warum der laufende Server das Update nicht übernehmen kann: `"dependencies"`, wenn die Abhängigkeiten neu installiert wurden, `"config"`, wenn nur eine `vite.config`-Datei geändert wurde, `false`, wenn kein Neustart nötig ist.
+5. Ein fehlgeschlagener git- oder npm-Befehl antwortet mit `{ ok: false, reason: "<der Fehler, höchstens 300 Zeichen>" }`.
 
-Responses are JSON with `Cache-Control: no-store`. The server listens on
-`127.0.0.1` only, so the route is not reachable from the network.
+Antworten sind JSON mit `Cache-Control: no-store`. Der Server lauscht nur auf `127.0.0.1`, daher ist die Route aus dem Netzwerk nicht erreichbar.
 
-### The notice in the page {#the-notice-in-the-page}
+### Der Hinweis in der Seite {#the-notice-in-the-page}
 
-`UpdateBanner`, under the name at the top of the sidebar:
+`UpdateBanner`, unter dem Namen oben in der Seitenleiste:
 
-- It asks the route **4 seconds** after the page loads (not in the first
-  seconds: the page has a dataset to load and a GPU to start) and again
-  **every 6 hours** while the page stays open.
-- It shows **nothing** when there is no such route (a static build), the
-  folder is not a checkout, or nothing is newer - a notice on every start is
-  one people learn to ignore.
-- Behind, with no local changes: "A newer version of 3DHeat is available (N
-  changes, the newest: <subject>)." with **Update now** and **Later**
-  (*Later* hides it until the page is reloaded).
-- Behind, with local changes: the same sentence and "This copy has local
-  changes, so it is not updated automatically; commit or stash them, then
-  run git pull." - no button.
-- **Update now** posts to `/apply` ("Updating..."). Then:
-  - "Updated. The page reloads." - and it reloads 1.5 s later (the server
-    already serves the new files);
-  - when the dependencies were reinstalled: "Updated. Its dependencies
-    changed: close the server window and run **restart.bat** to finish.";
-  - when only the server's settings changed: "Updated. Its server settings
-    changed: close the server window and run **restart.bat** to finish.";
-  - nothing to bring in after all (`updated: false` - the copy was brought up
-    meanwhile, by `start.bat` say): "Nothing to update: this copy is already
-    the newest version." - and no reload;
-  - refused: the *dirty* sentence, or "This copy has commits of its own that
-    the newest version does not; update it with git pull.", or "The update
-    did not go through: <reason>".
+- Er fragt die Route **4 Sekunden** nach dem Laden der Seite (nicht in den ersten Sekunden: die Seite hat einen Datensatz zu laden und eine GPU zu starten) und danach **alle 6 Stunden**, solange die Seite offen bleibt.
+- Er zeigt **nichts**, wenn es keine solche Route gibt (ein statischer Build), der Ordner kein Checkout ist oder nichts neuer ist. Ein Hinweis bei jedem Start würde man lernen zu ignorieren.
+- Liegt die Kopie zurück, ohne lokale Änderungen: „Eine neuere Version von 3DHeat ist verfügbar (N Änderungen, die neueste: <Betreff>).“ mit **Jetzt aktualisieren** und **Später** (*Später* blendet den Hinweis aus, bis die Seite neu geladen wird).
+- Liegt die Kopie zurück, mit lokalen Änderungen: derselbe Satz und „Diese Kopie hat lokale Änderungen, daher wird sie nicht automatisch aktualisiert; committe oder stashe sie, dann führe git pull aus.“ – ohne Schaltfläche.
+- **Jetzt aktualisieren** sendet an `/apply` („Aktualisiere…“). Danach:
+  - „Aktualisiert. Die Seite wird neu geladen.“ – und sie lädt 1,5 s später neu (der Server liefert schon die neuen Dateien);
+  - wenn die Abhängigkeiten neu installiert wurden: „Aktualisiert. Die Abhängigkeiten haben sich geändert: Schließe das Serverfenster und führe **restart.bat** aus, um abzuschließen.“;
+  - wenn nur die Einstellungen des Servers geändert wurden: „Aktualisiert. Die Servereinstellungen haben sich geändert: Schließe das Serverfenster und führe **restart.bat** aus, um abzuschließen.“;
+  - wenn am Ende doch nichts zu holen ist (`updated: false`, etwa weil `start.bat` die Kopie in der Zwischenzeit aktualisiert hat): „Nichts zu aktualisieren: Diese Kopie ist schon die neueste Version.“ – und kein Neuladen;
+  - abgelehnt: der Satz zu lokalen Änderungen, oder „Diese Kopie hat eigene Commits, die die neueste Version nicht hat; aktualisiere sie mit git pull.“, oder „Das Update ist nicht durchgegangen: <Grund>“.

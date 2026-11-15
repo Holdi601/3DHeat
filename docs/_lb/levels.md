@@ -14,7 +14,7 @@ outdated: false
 E Level ass den 3D-Ort, wou de Spill stattfonnt huet - eng Kaart, eng Stad, eng Strecke. Setzt een hannert Är Daten, da gesitt Dir, *wou* d'Hëtzt ass. Den **Hannergrond / Level**-Panel (kuckt de [Glossar](glossary.md) fir "Level") gëtt Iech dräi Aarte vu Kontext:
 
 - en **Kaartebild**, mat zwee Ankerpunkten georeferenzéiert - kuckt [Kaartbiller](map-images.md);
-- en **3D-Level** - `.glb`, `.gltf`, `.obj`, `.stl` oder `.ply` - bei der Import an Buedem, Strukturen a Waasser opgedeelt an vereinfacht - kuckt [3D-Levelen](model-levels.md) a [Ausgesinn](level-appearance.md);
+- en **3D-Level** - `.glb`, `.gltf`, `.obj`, `.stl` oder `.ply` - beim Import an Buedem, Strukturen a Waasser opgedeelt an vereinfacht - kuckt [3D-Levelen](model-levels.md) a [Ausgesinn](level-appearance.md);
 - en **Welt-Hannergrond** - fir eng Opnam, déi seet, wou se op der Äerd ass (eng Tacview-ACMI-Datei), dat richtegt Terrain, Stroossen, Waasser, Fligerhaff an Gebaier, aus oppene Daten erofgeluet - kuckt [Welt-Hannergrond](world-backdrop.md).
 
 Wann näischt gelueden ass, ass d'Szen däischter mat engem Gitter a faarwege Achsen (**Gitter** an **Achsen** an [Kamera & Zeen](camera.md)), an de Panel seet *Näischt gelueden - d'Szen weist e Gitter an Achsen. Setzt en Kaartebild oder en Level-Mesh derbäi, fir d'Hëtzt Kontext ze ginn.*
@@ -34,7 +34,7 @@ De Level gëtt vun all dräi Tabs gedeelt: en Kurs, deen am Tab Course-Analys ge
 
 ## Wat e Level fir d'Hëtzt mécht {#what-a-level-does-for-the-heat}
 
-- Et **verdeckt**: Datepunkte hannert him ginn pro Flächt gedämpft, a Datepunkte hannert dem Terrain sinn verstoppt ([Déift a Ausblenden](depth-and-culling.md)). Ouni Level gëtt et keng Verdeckung.
+- Et **verdeckt**: Datepunkte hannert him ginn pro Fläch gedämpft, a Datepunkte hannert dem Terrain sinn verstoppt ([Déift a Ausblenden](depth-and-culling.md)). Ouni Level gëtt et keng Verdeckung.
 - Et gëtt vum [Schnëtt](slice.md) a, mat *De Level och schneiden*, vum [Distanzausblenden](depth-and-culling.md#distance-culling) zerschnidden, zesumme mat der Hëtzt.
 - Et ass dat eenzegt, wat d'[Tiefenschäerf](camera.md#depth-of-field) nieft dem Gitter a de Boxen verwëscht.
 - E 3D-Level **weidert d'Fernebene vun der Kamera op**, wann et méi grouss ass wéi d'Daten: Nooft an Fern ginn aus dem Datesaz kalibréiert, an eng exportéiert Kaart vu e puer Kilometer Breet léch soss ganz hannert der Fernebene an d'Usiicht bléif eidel. D'Fernebene gëtt 3 × d'horizontal Ausdehnung vum Level, wann dat méi grouss ass; d'Nooftebene geet mat (op d'mannst Fern / 100.000), fir d'Déiftepräzisioun ze halen, vun där d'Verdeckung hänkt; an d'Fluchgeschwindegkeet gëtt op d'mannst Ausdehnung / 12 eropgesat. Et gëtt nëmmen ëmmer méi wäit gemaach, ni méi enk.

@@ -11,7 +11,7 @@ outdated: false
 
 # Razlika
 
-Crveno tamo gdje je tim A bio više, zeleno-plavo tamo gdje je bio tim B, ništa tamo gdje su bili jednako.
+Crveno tamo gdje je tim A bio više, zeleno-plavo tamo gdje je bio tim B, ništa tamo gdje su bili jednaki.
 
 **Razlika** (tipka 2) je toplota s predznakom. Redovi jedne populacije dodaju toplotu; redovi druge je oduzimaju. Tamo gdje se njih dvoje ravnomjerno preklapaju rezultat je nula i potpuno proziran; tamo gdje jedna strana preovladava prikazuje se bojama te strane - podrazumijevano toplim (prozirno → crveno → žuto → bijelo) za stranu **+** i hladnim (prozirno → zeleno → plavo → ljubičasto) za stranu **−**.
 
@@ -63,7 +63,7 @@ Panel upozorava kada slika nije prava razlika:
 
 ### Po grupi {#by-group}
 
-Panel samo upućuje na [Spisak timova](teams-list.md), gdje svaka grupa ima dugme **+** i **−**. Pri svakom učitavanju prva polovina grupa (zaokružena nagore) stavlja se na +, ostale na −; **Podijeli ravnomjerno** u Spisku timova to ponovo radi. Grupa koja nije ni na jednoj strani, ili je sakrivena svojim poljem za štikliranje, ne doprinosi ništa.
+Panel samo upućuje na [Spisak timova](teams-list.md), gdje svaka grupa ima dugme **+** i **−**. Pri svakom učitavanju prva polovina grupa (zaokružena nagore) stavlja se na +, ostale na −; **Podijeli ravnomjerno** u Spisku timova to ponovo radi. Grupa koja nije ni na jednoj strani, ili je sakrivena svojim poljem za označavanje, ne doprinosi ništa.
 
 ### Po vrijednostima kategorije {#by-category-values}
 
@@ -103,4 +103,4 @@ Svaki red dobija predznak +1, -1 ili 0 u vertex shaderu ([`POINT_HEAT_VS`](https
 
 Promjena podjele ponovo pokreće akumulaciju.
 
-**Sakrivene grupe ostaju sakrivene uz svaku podjelu.** Pod podjelom po koloni tabela grupa više ne nosi predznake; drži 1 za prikazanu grupu i 0 za sakrivenu ([`frameSignTables`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts)), a obje tabele dolaze do shadera zajedno - dva reda jedne teksture predznaka na WebGL2, dvije polovine jednog storage bafera na WebGPU-u. Red se crta samo kada je njegova grupa prikazana *i* njegova vrijednost kolone je na nekoj strani. Tako grupa odštiklirana u [Spisku timova](teams-list.md), ili isključena fokusom strane s kartice Meč, ne doprinosi ništa, kako god da je razlika podijeljena.
+**Sakrivene grupe ostaju sakrivene uz svaku podjelu.** Pod podjelom po koloni tabela grupa više ne nosi predznake; drži 1 za prikazanu grupu i 0 za sakrivenu ([`frameSignTables`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts)), a obje tabele dolaze do shadera zajedno - dva reda jedne teksture predznaka na WebGL2, dvije polovine jednog storage bafera na WebGPU-u. Red se crta samo kada je njegova grupa prikazana *i* njegova vrijednost kolone je na nekoj strani. Tako grupa odznačena u [Spisku timova](teams-list.md), ili isključena fokusom strane s kartice Meč, ne doprinosi ništa, kako god da je razlika podijeljena.

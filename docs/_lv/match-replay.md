@@ -62,7 +62,7 @@ Kad vienība būtu mazāka par **Mazākā figūra ekrānā**, tā var kļūt par
 
 ### Ieroči, mērķi un trasieri {#weapons-decoys-and-tracers}
 
-Ar ieslēgtu **Ieroči, šāvieni un trāpījumi** (sadaļa Komandas skats): raķetes, rokas raķetes, bumbas un torpēdas lido kā savas figūras ar dūmu takām; lodes un čaulas ir trasieri; trāpījumi un sprādzieni uzzibsnī. Trasieris, kas zīmēts **punktēts**, tika aprēķināts no trāpījuma, jo datos nebija šāviena. Uguns ķērāji un plēves tiek zīmēti kā mērķi; tie ir paslēpti no vienību saraksta, ja vien *Mērķi un čaulas* nav atzīmēts.
+Ar ieslēgtu **Ieroči, šāvieni un trāpījumi** (sadaļa Komandas skats): raķetes, rokas raķetes, bumbas un torpēdas lido kā savas figūras ar dūmu takām; lodes un čaulas ir trasieri; trāpījumi un sprādzieni uzzibsnī. Trasieris, kas zīmēts **punktēts**, tika aprēķināts no trāpījuma, jo datos nebija šāviena. Uguns ķērāji un plēves tiek zīmēti kā mānekļi; tie ir paslēpti no vienību saraksta, ja vien *Mānekļi un šāviņi* nav atzīmēts.
 
 ## Kameras {#cameras}
 

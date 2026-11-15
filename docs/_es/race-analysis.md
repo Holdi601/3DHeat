@@ -13,7 +13,7 @@ outdated: false
 
 Recorriste el mismo circuito dos veces. La pestaña **Análisis de carrera** reproduce las dos vueltas juntas en 3D, muestra dónde una vuelta fue más lenta y te dice por qué. ¿Aún no tienes vueltas? Pulsa **Vueltas de demostración**.
 
-![La pestaña Análisis de carrera con vueltas de demostración: la barra lateral con Vueltas y Dónde mejorar, los coches en el circuito, los gráficos debajo de la vista](../assets/img/en/race-analysis-overview.webp)
+![La pestaña Análisis de carrera con vueltas de demostración: la barra lateral con Vueltas y Dónde mejorar, los coches en el circuito, los gráficos debajo de la vista](../assets/img/es/race-analysis-overview.webp)
 
 La pestaña compara dos o más vueltas de un mismo circuito. Comparte el lienzo, la cámara y el modelo del circuito cargado (**Fondo / nivel**) con el mapa de calor; todo lo demás es propio: su propia barra lateral y su propia barra debajo de la vista. Palabras como *vuelta*, *referencia* y *ápice* están en el [glosario](glossary.md).
 
@@ -27,7 +27,7 @@ Esta página es el mapa de la pestaña. Cada parte tiene su propia página:
 | [Eventos de control del coche](race-control-events.md) | bloqueos, patinaje de ruedas, sobreviraje, trompos, subviraje, impactos, choques, ABS/TC, freno de mano, aire: cómo se detecta cada uno, con cada umbral |
 | [Análisis curva a curva](race-corner-analysis.md) | alineación por distancia, curvas y tramos, la cuenta de tiempo de una curva, cada causa y el orden en que se prueban, la forma de la trazada y el consejo |
 | [Perfiles de coche y comparación](race-car-profiles.md) | lo que puede hacer cada coche, medido en sus vueltas; *Coches comparados*; lo que decide el coche en cada curva |
-| [Estadísticas del circuito](race-course-statistics.md) | muchas vueltas de un mismo circuito: errores por curva y por tipo, el mapa de errores, la exportación del mapa de calor, límites de rendimiento |
+| [Estadísticas del recorrido](race-course-statistics.md) | muchas vueltas de un mismo circuito: errores por curva y por tipo, el mapa de errores, la exportación del mapa de calor, límites de rendimiento |
 | [Análisis de carreras: el método](race-analytics.md) | la investigación detrás de las reglas, con fuentes |
 | [Otros juegos de carreras](other-games.md) | qué hace el visor con las vueltas de cada juego: deslizamiento y derrape deducidos donde un juego no los envía, mundos espejados, los canales extra |
 
@@ -37,8 +37,8 @@ Esta página es el mapa de la pestaña. Cada parte tiene su propia página:
 
 1. **Vueltas** - cargar, listar, mostrar/ocultar, referencia, enfoque, persecución.
    Véase [Cargar vueltas](race-loading-laps.md).
-2. **Estadísticas del circuito** - solo desde tres vueltas cargadas.
-   Véase [Estadísticas del circuito](race-course-statistics.md).
+2. **Estadísticas del recorrido** - solo desde tres vueltas cargadas.
+   Véase [Estadísticas del recorrido](race-course-statistics.md).
 3. **Dónde mejorar** - los hallazgos de la vuelta enfocada, curva a curva.
    Véase [Análisis curva a curva](race-corner-analysis.md).
 4. **Curva a curva** (o *Curva a curva - clase X* con varias clases) - la vuelta más rápida por cada curva y su trazada. Se muestra con dos o más vueltas.
@@ -71,7 +71,7 @@ Mientras la pestaña de carrera está abierta:
 | **Home** | volver al inicio de la repetición |
 | teclas numéricas | nada (en el mapa de calor cambian de modo) |
 
-Las teclas escritas en un campo de texto o en un desplegable se ignoran. Las teclas de cámara funcionan como en el mapa de calor (**W A S D**, **Space** arriba, **Q** abajo, **Shift** más rápido, **Alt** más lento, ratón para mirar; todo en [Cámara](camera.md)); **F** encuadra las vueltas cargadas (como hace al cargar vueltas).
+Las teclas escritas en un campo de texto o en un desplegable se ignoran. Las teclas de cámara funcionan como en el mapa de calor (**W A S D**, **Espacio** arriba, **Q** abajo, **Shift** más rápido, **Alt** más lento, ratón para mirar; todo en [Cámara](camera.md)); **F** encuadra las vueltas cargadas (como hace al cargar vueltas).
 
 ## Muchas vueltas {#many-laps}
 
@@ -79,9 +79,9 @@ Las teclas escritas en un campo de texto o en un desplegable se ignoran. Las tec
 - Más allá de **8** vueltas (`SHOW_ALL_UP_TO`), las vueltas añadidas solo se dibujan cuando son la referencia, la vuelta enfocada, o la mejor vuelta de la clase de la vuelta enfocada. *Mostrar todas* / *Solo las que se miran* alternan.
 - Más allá de **10** coches visibles (`PLAIN_PAST`), las vueltas que no se miran (ni el foco, ni el coche perseguido, ni la referencia) se dibujan con líneas adelgazadas a un punto cada 6 m en lugar de cada 1,5 m, y con coches sencillos.
 - Los gráficos dibujan como máximo **8** vueltas; el HUD muestra como máximo **6** tarjetas.
-- Las estadísticas del circuito aparecen desde **3** vueltas.
+- Las estadísticas del recorrido aparecen desde **3** vueltas.
 
-Detalles: [Estadísticas del circuito](race-course-statistics.md#performance-with-many-laps).
+Detalles: [Estadísticas del recorrido](race-course-statistics.md#performance-with-many-laps).
 
 ## Ajustes de vista por defecto {#default-view-settings}
 
@@ -100,50 +100,35 @@ Nada de esto se guarda; al recargar se empieza con los valores por defecto. Lo q
 
 ## Para desarrolladores {#for-developers}
 
-### What happens when laps are loaded {#what-happens-when-laps-are-loaded}
+### Qué ocurre al cargar vueltas {#what-happens-when-laps-are-loaded}
 
-Every time the set of laps, the reference or the language changes, the whole
-analysis is redone (`analyse` in
-[`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
+Cada vez que cambian el conjunto de vueltas, la referencia o el idioma, todo el análisis se rehace (`analyse` en [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
 
-1. Derived channels are added to each lap where the game does not send them:
-   drift angle, wheel slip from wheel speeds, in the air, loose ground, yaw
-   rate ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
-2. The reference is chosen and every lap is projected onto its path and
-   resampled every 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
-3. Whether the game's world is mirrored is worked out from the laps
-   ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
-4. Corners are found on the reference, and grouped into segments from one
-   braking zone to the next ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
-5. Per car: its envelope (grip, braking, pull per speed), its profile, its
-   tyre curves ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts),
-   [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts),
-   [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
-6. Per lap and segment: what it did (brake point, slowest point, full
-   throttle, ...) and the line it drove ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
-7. Per lap: its car-control events, each laid against the lap it is compared
-   with there.
-8. Per lap and segment: the time account against its comparison lap and the
-   finding in words.
-9. The time map and the cause map per lap.
+1. A cada vuelta se añaden canales derivados allí donde el juego no los envía: ángulo de deriva, deslizamiento de rueda a partir de la velocidad de las ruedas, en el aire, terreno suelto y velocidad de guiñada ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
+2. Se elige la referencia, y cada vuelta se proyecta sobre su trazado y se remuestrea cada 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
+3. Se deduce a partir de las vueltas si el mundo del juego está espejado ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
+4. Las curvas se encuentran en la referencia y se agrupan en tramos, desde una zona de frenada hasta la siguiente ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
+5. Por coche: su envolvente (agarre, frenada y empuje por velocidad), su perfil y sus curvas de neumáticos ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts), [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts), [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
+6. Por vuelta y tramo: lo que hizo (punto de frenada, punto más lento, acelerador a fondo, ...) y la trazada que siguió ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
+7. Por vuelta: sus eventos de control del coche, cada uno puesto frente a la vuelta con la que se compara allí.
+8. Por vuelta y tramo: la cuenta de tiempo frente a su vuelta de comparación, y el hallazgo en palabras.
+9. El mapa de tiempo y el mapa de causas de cada vuelta.
 
-The texts are produced in the current language; switching language runs the
-analysis again (and renames the demo laps). A failure in the analysis is
-shown under the **Laps** buttons as an error and the laps stay loaded.
+Los textos se producen en el idioma actual; cambiar de idioma vuelve a ejecutar el análisis (y renombra las vueltas de demostración). Un fallo del análisis se muestra debajo de los botones **Vueltas** como error, y las vueltas siguen cargadas.
 
-### Source files {#source-files}
+### Archivos de código {#source-files}
 
-| File | Role |
+| Archivo | Función |
 |---|---|
-| `src/race/adapters.ts`, `ibt.ts` | reading lap files |
-| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | the lap type, naming, demo laps |
-| `src/race/derive.ts`, `handedness.ts` | derived channels, mirrored worlds |
-| `src/race/align.ts`, `segments.ts`, `line.ts` | distance axis, corners, lines |
-| `src/race/analysis.ts` | corners compared, causes, findings |
-| `src/race/envelope.ts`, `profile.ts` | what a car can do |
-| `src/race/control.ts`, `impacts.ts` | car control, hits and crashes |
-| `src/race/stats.ts` | many laps |
-| `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | replay and drawing |
-| `src/race/schema.ts`, `graphs.ts` | the channel table, the charts' rows |
-| `src/ui/race/*` | the sidebar, the charts, the HUD, the labels |
-| `src/state/raceStore.ts` | the tab's state and the replay clock |
+| `src/race/adapters.ts`, `ibt.ts` | lectura de archivos de vuelta |
+| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | el tipo de vuelta, los nombres, las vueltas de demostración |
+| `src/race/derive.ts`, `handedness.ts` | canales derivados, mundos espejados |
+| `src/race/align.ts`, `segments.ts`, `line.ts` | eje de distancia, curvas, trazadas |
+| `src/race/analysis.ts` | curvas comparadas, causas, hallazgos |
+| `src/race/envelope.ts`, `profile.ts` | lo que puede hacer un coche |
+| `src/race/control.ts`, `impacts.ts` | control del coche, impactos y choques |
+| `src/race/stats.ts` | muchas vueltas |
+| `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | repetición y dibujo |
+| `src/race/schema.ts`, `graphs.ts` | la tabla de canales, las filas de los gráficos |
+| `src/ui/race/*` | la barra lateral, los gráficos, el HUD, las etiquetas |
+| `src/state/raceStore.ts` | el estado de la pestaña y el reloj de la repetición |

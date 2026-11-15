@@ -21,7 +21,7 @@ Modusraden øverst i sidepanelet for fanen Varmekart velger hvordan [datasettet]
 |---|---|
 | **Varme** | Hvor skjedde det, og hvor mye? |
 | **Differanse** | Hvilken side gjorde det mest? |
-| **Lagvarme** | Hvis var det? |
+| **Lagvarme** | Hvem var det? |
 | **Linjer** | Hvilken vei gikk folk? |
 | **Figuroverlegg** | Hvem var hvor, og når? |
 
@@ -48,7 +48,7 @@ Tastene 1–4 kontrolleres mot dataene på samme måte: en tast for en gråtonet
 | Retning ([retningsbasert varme](directional-heat.md)), Verdi ([verdivekting](value-weighting.md)) | ja | ja | ja | | ja |
 | Lagvisning ([figuroverlegg](box-replay.md)) | | | | ja | |
 | Delingen for differanse ([differanse](difference.md)) | | ja | | | |
-| [Lag](teams-list.md), [Objekter](entities.md), [Filtre](filters.md), Bakgrunn / bane, [Snitt](slice.md), [Måling](measure.md), Kameravei og rendering, Ytelse, Kamera og scene | ja | ja | ja | ja | ja |
+| [Lag](teams-list.md), [Objekter](entities.md), [Filtre](filters.md), Bakgrunn / nivå, [Snitt](slice.md), [Måling](measure.md), Kameravei og rendering, Ytelse, Kamera og scene | ja | ja | ja | ja | ja |
 
 ## Det alle varmemodiene har felles {#what-every-heat-mode-shares}
 

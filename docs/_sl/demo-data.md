@@ -43,7 +43,7 @@ Vsaka tabela navede svoje stolpce v nogi, zato se naloži brez kakršnekoli pres
 4. Pritisnite `F`, da uokvirite podatke. Vidite [toploto](heat.md) desetih tekem.
 5. Preizkusite vrstico načinov: **Razlika** (Blue proti Red), **Toplota ekip**, **Črte**.
 6. Odprite **Ugotovitve** (v stranski vrstici Toplotni zemljevid): najde mesta, kjer je bilo veliko več streljanja, zadetkov in uničenj kot drugje - okoli obeh hribov.
-7. Odprite zavihek **Tekma**; pod **Tekme v posnetku** izberite *Match 01*; pritisnite **Predvaj** na časovnici: [predvajanje](match-replay.md).
+7. Odprite zavihek **Tekma**; pod **Tekme v posnetku** izberite *Match 01*; pritisnite **Predvajaj** na časovnici: [predvajanje](match-replay.md).
 
 ![Predvajanje Match 01 s tenki kot figurami](../assets/img/en/replay-overview.webp)
 

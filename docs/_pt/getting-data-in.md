@@ -45,7 +45,7 @@ Tudo o que o separador Mapa de calor mostra vem de um único **conjunto de dados
 
 | Necessidade | O que acontece sem ela |
 |---|---|
-| **Pelo menos dois de X / Y / Z** | A carga é recusada. Com exatamente dois, o terceiro eixo é 0 e os dados são desenhados como um plano plano na cena 3D - que é o que quer um mapa de calor visto de cima. |
+| **Pelo menos dois de X / Y / Z** | A carga é recusada. Com exatamente dois, o terceiro eixo é 0 e os dados são desenhados como um plano na cena 3D - que é o que quer um mapa de calor visto de cima. |
 | Uma coluna de tempo | Opcional. Sem ela a linha temporal fica desativada, a vista fica no modo **Tudo** e a barra lateral diz isso. |
 | Uma coluna de pessoa | Opcional. Necessária para a [sobreposição de figuras](box-replay.md) (uma figura por pessoa), o [calor em linhas](line-heat.md) (o percurso de cada pessoa), a interpolação, os rastos e o histórico **Tempo de vida**. |
 | Uma coluna de grupo | Opcional. Necessária para o [calor por equipa](team-heat.md) e para o modo [diferença](difference.md) (pelo menos dois grupos). |

@@ -69,7 +69,7 @@ Kai vienetas būtų mažesnis už **Mažiausia figūra ekrane**, jis gali tapti 
 Spustelėkite vienetą arba jo žymę, kad jį **sektumėte**; skiltis **Pakartojimas** siūlo **Persekiojimas**, **Orbita**, **Kabina** (su projekcija prieš akis, `H`), **Fiksuota**, **Padlock**, **Taikinys** ir **Palydovas**. `V` perjungia juos, **Kameros atstumas** nustato, kiek toli. Esc sustabdo.
 
 - **Dviejų vienetų rodinys**: pasirinkite **Taikinį** (arba Ctrl / Alt spustelėkite vienetą), kad žiūrėtumėte į jį iš sekamo; **Sukeisti** juos apsikeičia.
-- **Matas**: Shift spustelėkite du vienetus, kad gautumėte kryptį, atstumą ir aukščio skirtumą tarp jų.
+- **Matavimas**: Shift spustelėkite du vienetus, kad gautumėte kryptį, atstumą ir aukščio skirtumą tarp jų.
 - **2D žemėlapis** (`M`): kampinis arba visas rodinys su pėdsakais ir pavadinimais.
 - **Žymės** (`B`): išsaugo akimirką ir kamerą; įrašo paties įrašo nužudymai, mirtys ir žymos taip pat išvardijami.
 - **Įvykiai**: kiekvienas įvykis laiko tvarka; spustelėjimas nušoka ten. `Page Up` / `Page Down` peršoka tarp įvykių; **Pauzė įvykio metu** sustoja prie kiekvieno.
@@ -90,9 +90,9 @@ Skiltis **Taktinis rodymas** piešia, be vieneto, pasirinktus, visus arba vieną
 
 Kai rungtynės turi tikslus, skiltis **Tikslai** piešia juos ant lygio: užėmimo zonas (su savininku ir užėmimo eiga), atsiradimo taškus, aerodromus, sritis ir bombardavimo taikinius, kiekvieną sluoksnį galima įjungti ar išjungti, su žymomis. Jie matomi per žemę. Įkėlus kelis žaidimo režimus, **Režimas** filtruoja rungtynes pagal režimą. Tikslai ateina iš konverterio rungtynių failo šalia įrašo arba [`.3dheat`](container.md) konteinerio viduje.
 
-## Žymos ir statistika {#labels-and-statistics}
+## Etiketės ir statistika {#labels-and-statistics}
 
-- **Žymos**: taisyklės kiekvienai rūšiai (**Pasirinkti**, **Orlaiviai**, **Antžeminiai**, **Laivai**, **Ginklai**, **DI**): rodyti ar ne, kurias reikšmes, ir **Pirmenybę**, nusprendžiančią, kas gauna vietą, kai žymos persidengia. **Laikyti etiketes atskirai** perkelia žymą šalia jos vieneto, kai ji dengtų kitą, ir ją paslepia, kai vietos nėra. **Etikečių dydis** yra nuo 60 iki 250 %. **Atgal į vardą, techniką, aukštį ir greitį** atkuria taisykles.
+- **Etiketės**: taisyklės kiekvienai rūšiai (**Pasirinkti**, **Orlaiviai**, **Antžeminiai**, **Laivai**, **Ginklai**, **DI**): rodyti ar ne, kurias reikšmes, ir **Pirmenybė**, nusprendžianti, kas gauna vietą, kai žymos persidengia. **Laikyti etiketes atskirai** perkelia žymą šalia jos vieneto, kai ji dengtų kitą, ir ją paslepia, kai vietos nėra. **Etikečių dydis** yra nuo 60 iki 250 %. **Atgal į vardą, techniką, aukštį ir greitį** atkuria taisykles.
   - Antžeminiai vienetai pradeda nuo vardo, technikos ir greičio.
   - Orlaiviai pradeda nuo vardo, technikos, aukščio ir greičio.
   - Laivai pradeda nuo vardo, technikos, greičio ir kurso.

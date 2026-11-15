@@ -61,13 +61,13 @@ Naratorul integrat funcționează offline, în limba ta. Selectorul **Lentilă**
 
 ### IA externă {#external-ai}
 
-**Setările IA** lasă un model de IA ales de tine să scrie rezumatul:
+**Setări IA** lasă un model de IA ales de tine să scrie rezumatul:
 
 | Setare | Înseamnă |
 |---|---|
 | **Furnizor** | Anthropic (Claude), OpenAI (ChatGPT), OpenRouter, Ollama (local), LM Studio (local), serverul llama.cpp (local) sau orice punct de acces compatibil cu OpenAI |
-| **Adresa de bază**, **Model** | Completate de furnizor; **Listează modelele** întreabă serverul |
-| **Cheia API** | Trimisă doar către adresa de bază. Nu se înregistrează niciodată, nu se salvează în vizualizări, exporturi sau fișiere `.3dheat`. Majoritatea serverelor locale nu au nevoie de ea. |
+| **URL de bază**, **Model** | Completate de furnizor; **Listează modelele** întreabă serverul |
+| **Cheie API** | Trimisă doar către adresa de bază. Nu se înregistrează niciodată, nu se salvează în vizualizări, exporturi sau fișiere `.3dheat`. Majoritatea serverelor locale nu au nevoie de ea. |
 | **Ține minte cheia în acest browser** | Oprit implicit: cheia este uitată când se închide pagina |
 | **Folosește o IA externă** | Oprit implicit |
 | **Trimite numele jucătorilor** | Oprit implicit: jucătorii sunt trimiși ca P1, P2 ... |
@@ -88,7 +88,7 @@ Are nevoie de persoane și de evenimente de eliminare / moarte (sau de captură)
 
 ## Lentila cunoașterii {#knowledge-lens}
 
-O observație poate fi citită printr-o **lentilă** de cunoaștere stabilită: doctrină militară, lupta aeriană și navală, operațiuni urbane, design de jocuri și esports (sau *Auto*, aleasă de unitățile din date). O observație deschisă arată apoi cea mai apropiată intrare de **doctrină și literatură** și un **paralel istoric**, cu referințe, iar **Metrici din lentilă** calculează măsuri din acea literatură pe date (potriviri Lanchester, rapoarte de schimb, rapoarte de forțe, câmpuri de tragere, teren-cheie, schimburi, inițiativă). Rezumatul și promptul pentru IA le includ. Tot ce ține de asta: [Lentila cunoașterii](knowledge.md).
+O observație poate fi citită printr-o **lentilă** de cunoaștere stabilită: doctrină militară, lupta aeriană și navală, operațiuni urbane, design de jocuri și esports (sau *Auto*, aleasă de unitățile din date). O observație deschisă arată apoi cea mai apropiată intrare de **doctrină și literatură** și un **paralel istoric**, cu referințe, iar **Măsurile lentilei** calculează măsuri din acea literatură pe date (potriviri Lanchester, rapoarte de schimb, rapoarte de forțe, câmpuri de tragere, teren-cheie, schimburi, inițiativă). Rezumatul și promptul pentru IA le includ. Tot ce ține de asta: [Lentila cunoașterii](knowledge.md).
 
 Metricile din lentilă măsoară și cum se comportă jucătorii ca mulțime și ca grup - aliniere și rătăcire, conducere pe rute, benzi și trasee, aglomerare, lideri și urmăritori, rămași în urmă, punctul de rupere sub pierderi, risc după o viață pierdută, serii, acordul la cumpărături și reacția la focul primit - fiecare față de propriul model nul: [Comportament colectiv](collective-behaviour.md).
 

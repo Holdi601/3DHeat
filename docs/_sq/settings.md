@@ -19,8 +19,8 @@ Në krye të shiritit anësor:
 | Kontrolli | Çfarë bën |
 |---|---|
 | **?** | Modaliteti i ndihmës: çfarë do të thotë çdo ngjyrë (gjithashtu `?` ose `F1`) |
-| Menuja **Njësitë** | Metrike, Imperiale, Aviacion ose Detare |
-| Butoni **...** pranë **Njësitë** | Hap "Zgjidh një njësi për çdo sasi": një listë zgjedhjeje për çdo sasi |
+| Menuja **Njësitë** | Metrik, Imperial, Aviacion ose Detar |
+| Butoni **...** pranë **Njësitë** | Hap "Zgjidh një njësi për çdo madhësi": një listë zgjedhjeje për çdo sasi |
 | Menuja **Gjuha** | Gjuha e shikuesit: [40 gjuhë](languages.md), ose ajo e shfletuesit |
 
 ![Kreu me menunë Njësitë dhe dritaren njësi-për-sasi të hapur](../assets/img/en/settings-units.webp)
@@ -31,9 +31,9 @@ Numrat që shkruan në një kuti mund të kenë pikë ose presje (`0.35` ose `0,
 
 1. Zgjidh një paracaktim në menunë **Njësitë**. Të gjitha sasitë ndërrohen bashkë.
 2. Për të ndryshuar vetëm një sasi, kliko butonin **...** pranë saj dhe zgjidh një njësi për atë sasi. Menuja shfaq atëherë një `*` pas paracaktimit.
-3. Një sasi që nuk e ke vendosur ndjek paracaktimin. Zgjidh "Sipas paracaktimit" për t'u kthyer.
+3. Një sasi që nuk e ke vendosur ndjek paracaktimin. Zgjidh "Si paracaktimi" për t'u kthyer.
 
-| Sasia | Metrike (parazgjedhja) | Imperiale | Aviacion | Detare |
+| Madhësia | Metrik (parazgjedhja) | Imperial | Aviacion | Detar |
 |---|---|---|---|---|
 | Distanca | km | mi | NM | NM |
 | Lartësia, gjatësia | m | ft | ft | m |
@@ -50,7 +50,7 @@ Njësi të tjera që mund të zgjedhësh për një sasi: distanca km, mi, NM; sh
 
 ![Modaliteti i ndihmës: çfarë do të thotë çdo ngjyrë](../assets/img/en/help.webp)
 
-Shtyp `?` ose `F1`, ose kliko butonin **?**. Ai shfaq *Çfarë do të thotë çdo ngjyrë*: legjendat për pamjen 3D, shkallët e nxehtësisë, ngjyrat e ekipeve, ngjyrat e nivelit, ngjyrat e statusit të paneleve, panelin e ndeshjes dhe pamjen e garës. Mbetet i ndezur deri sa ta fikësh. Te skeda Ndeshja shpjegon edhe ngjyrat e panelit të ndeshjes.
+Shtyp `?` ose `F1`, ose kliko butonin **?**. Ai shfaq *Çfarë nënkuptojnë ngjyrat*: legjendat për pamjen 3D, shkallët e nxehtësisë, ngjyrat e ekipeve, ngjyrat e nivelit, ngjyrat e statusit të paneleve, panelin e ndeshjes dhe pamjen e garës. Mbetet i ndezur deri sa ta fikësh. Te skeda Ndeshja shpjegon edhe ngjyrat e panelit të ndeshjes.
 
 ![Modaliteti i ndihmës te skeda Ndeshja](../assets/img/en/settings-help-match.webp)
 

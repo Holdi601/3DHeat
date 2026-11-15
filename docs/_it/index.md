@@ -10,11 +10,11 @@ outdated: false
 
 # 3DHeat
 
-3DHeat mostra dove sono successe le cose in un gioco - dove sono andati, combattuto e caduto i giocatori - come colori luminosi in cui puoi volare, oppure come piccole figure 3D che rigiocano la partita.
+3DHeat mostra dove sono successe le cose in un gioco - dove sono andati, hanno combattuto e sono caduti i giocatori - come colori luminosi in cui puoi volare, oppure come piccole figure 3D che rigiocano la partita.
 
 Carica le posizioni - CSV, Parquet, registrazioni Tacview, replay convertiti, un solo file, una cartella o migliaia di partite - e guardale come una **mappa di calore in cui puoi volare**, come **figure che rigiocano la partita**, come linee lungo i percorsi seguiti dalle persone, oppure come una popolazione contro un'altra. Trova da solo ciò che spicca, e funziona interamente nel tuo browser: non viene caricato nulla da nessuna parte.
 
-![Calore di dieci partite di carri sulla valle demo](../assets/img/en/heat-hero.webp)
+![Calore di dieci partite di carri sulla valle demo](../assets/img/it/heat-hero.webp)
 
 **Sei nuovo?** Crea i [dati di esempio](demo-data.md) e segui i suoi sette passi. Ogni immagine di questo sito è stata fatta con essi.
 
@@ -23,11 +23,11 @@ Carica le posizioni - CSV, Parquet, registrazioni Tacview, replay convertiti, un
 | | |
 |---|---|
 | ![Differenza](../assets/img/en/heat-difference.webp) | **[Modalità di calore](heat-modes.md)** - calore, [differenza](difference.md) (rosso dove un lato ne ha fatto di più, verde-blu dove ne ha fatto di più l'altro), [calore per squadra](team-heat.md), [calore lineare](line-heat.md); [calore direzionale](directional-heat.md) con cunei, campi di frecce e grafici polari; calore [pesato per valore](value-weighting.md): quanto costano armi, veicoli e carburante. |
-| ![Replay](../assets/img/en/replay-tanks.webp) | **[Replay della partita](match-replay.md)** - ogni unità come la [figura](figures.md) di ciò che è, simboli NATO o russi da lontano, missili e traccianti, segni dei colpi, relitti, fuochi, torrette, obiettivi, telecamere in stile Tacview e display tattico; [molte partite insieme](many-matches.md). |
-| ![Rilevamenti](../assets/img/en/insights.webp) | **[Rilevamenti](insights.md)** - posizioni forti, terreno mortale, trappole di spawn, strozzature e giocatori in evidenza, trovati e ordinati con le prove; un resoconto scritto, facoltativamente da un'IA a tua scelta; un commentatore per una partita; la [lente della conoscenza](knowledge.md). |
-| ![Volumi](../assets/img/en/compare.webp) | **[Volumi](volumes.md)** - disegna scatole, prismi, cilindri e sfere, filtra su di essi, conta ciò che succede dentro, esportalo e confronta i luoghi affiancati; il [dettaglio](breakdown.md) di chi e cosa rende meglio in un luogo. |
-| ![Filtri](../assets/img/en/filters.webp) | **[Filtri](filters.md)** - per tipo di evento, giocatore o IA, classe di veicolo, valore, qualsiasi colonna, nella scheda grafica a qualsiasi dimensione dei dati. |
-| ![Livello](../assets/img/en/level-panel.webp) | **[Livelli](levels.md)** - immagini di mappe, livelli 3D fatti con gli [strumenti per i dati](#related-repositories), semplificazione, lo [sfondo del mondo](world-backdrop.md) con il terreno reale per i dati di volo. |
+| ![Replay](../assets/img/it/replay-tanks.webp) | **[Replay della partita](match-replay.md)** - ogni unità come la [figura](figures.md) di ciò che è, simboli NATO o russi da lontano, missili e traccianti, segni dei colpi, relitti, fuochi, torrette, obiettivi, telecamere in stile Tacview e display tattico; [molte partite insieme](many-matches.md). |
+| ![Rilevamenti](../assets/img/it/insights.webp) | **[Rilevamenti](insights.md)** - posizioni forti, terreno mortale, trappole di spawn, strozzature e giocatori in evidenza, trovati e ordinati con le prove; un resoconto scritto, facoltativamente da un'IA a tua scelta; un commentatore per una partita; la [lente della conoscenza](knowledge.md). |
+| ![Volumi](../assets/img/it/compare.webp) | **[Volumi](volumes.md)** - disegna scatole, prismi, cilindri e sfere, filtra su di essi, conta ciò che succede dentro, esportalo e confronta i luoghi affiancati; il [dettaglio](breakdown.md) di chi e cosa rende meglio in un luogo. |
+| ![Filtri](../assets/img/it/filters.webp) | **[Filtri](filters.md)** - per tipo di evento, giocatore o IA, classe di veicolo, valore, qualsiasi colonna, nella scheda grafica a qualsiasi dimensione dei dati. |
+| ![Livello](../assets/img/it/level-panel.webp) | **[Livelli](levels.md)** - immagini di mappe, livelli 3D fatti con gli [strumenti per i dati](#related-repositories), semplificazione, lo [sfondo del mondo](world-backdrop.md) con il terreno reale per i dati di volo. |
 
 Inoltre: la scheda [Analisi di gara](race-analysis.md) per i giri dei giochi di corse, la scheda [Partita](match-analysis.md) per i riepiloghi di Counter-Strike 2, la [Lavagna tattica](tactics-board.md) per i piani su un livello, l'[analisi dei colpi](hit-analysis.md) per veicolo, l'[analisi di massa](mass-analysis.md) di migliaia di partite, [percorsi della telecamera e video](camera-path-and-video.md), [40 lingue](languages.md), [unità metriche o imperiali](settings.md).
 
@@ -51,7 +51,7 @@ La radice del repository contiene tre file batch.
 
 | File | Cosa fa |
 |---|---|
-| `start.bat` | Avvia il visualizzatore. Trova Node.js anche quando non è nel `PATH` (cerca in `%ProgramFiles%\nodejs`, `%ProgramFiles(x86)%\nodejs` e `%LOCALAPPDATA%\Programs\nodejs`), e se Node.js manca propone di installare la release LTS con `winget install -e --id OpenJS.NodeJS.LTS`. Alla prima esecuzione chiede prima di scaricare le dipendenze (circa 300 MB in `node_modules\` dentro la cartella, nulla a livello di sistema). Si rifiuta di partire quando qualcosa è già in ascolto sulla porta 5273, e rimanda a `restart.bat`. Quando la cartella è una copia git senza modifiche locali e esiste una versione più recente, chiede se aggiornare (S/N; senza risposta in 60 s mantiene questa versione; vedi [Aggiornamenti](updates.md)). Poi avvia il server di sviluppo su `http://127.0.0.1:5273/` e apre il browser. **La finestra è il server**: lasciala aperta; chiudila o premi Ctrl+C per fermarlo. |
+| `start.bat` | Avvia il visualizzatore. Trova Node.js anche quando non è nel `PATH` (cerca in `%ProgramFiles%\nodejs`, `%ProgramFiles(x86)%\nodejs` e `%LOCALAPPDATA%\Programs\nodejs`), e se Node.js manca propone di installare la release LTS con `winget install -e --id OpenJS.NodeJS.LTS`. Alla prima esecuzione chiede prima di scaricare le dipendenze (circa 300 MB in `node_modules\` dentro la cartella, nulla a livello di sistema). Si rifiuta di partire quando qualcosa è già in ascolto sulla porta 5273, e rimanda a `restart.bat`. Quando la cartella è una copia git senza modifiche locali e esiste una versione più recente, chiede se aggiornare (Y/N; senza risposta in 60 s mantiene questa versione; vedi [Aggiornamenti](updates.md)). Poi avvia il server di sviluppo su `http://127.0.0.1:5273/` e apre il browser. **La finestra è il server**: lasciala aperta; chiudila o premi Ctrl+C per fermarlo. |
 | `restart.bat` | Esegue `stop.bat quiet`, poi `start.bat`. Serve solo dopo aver cambiato `vite.config.ts`, aggiunto una dipendenza, o quando il server si è bloccato - le modifiche al codice vengono ricaricate a caldo. |
 | `stop.bat` | Ferma ciò che è in ascolto sulla porta 5273, tramite l'id del processo trovato con `netstat`, mai per nome dell'immagine, così gli altri processi Node.js della macchina restano intatti. Attende circa due secondi che il socket venga liberato. Con l'argomento `quiet` non si ferma alla fine. |
 

@@ -15,10 +15,10 @@ outdated: false
 **Rúmmál** er ósýnilegur kassi (eða sívalningur, eða kúla) sem þú teiknar utan um stað, til að spyrja: hvað gerðist hér inni? Notaðu það til að telja dráp við brú, bera saman tvær hæðir, eða sýna aðeins virknina á einu svæði.
 
 ```
- top view                 You draw a shape ->  the viewer counts
- +------------+           what is inside:
- |   ( A )    |            rows, players, kills, time ...
- |        [B] |           Compare A with B, side by side.
+ ofanfrá                  Þú teiknar form ->  sýnin telur
+ +------------+           það sem er inni:
+ |   ( A )    |            línur, leikmenn, dráp, tími ...
+ |        [B] |           Berðu A saman við B, hlið við hlið.
  +------------+
 ```
 

@@ -15,13 +15,13 @@ Rojo donde el equipo A estuvo más, azul-verde donde estuvo más el equipo B, na
 
 **Diferencia** (tecla 2) es calor con signo. Las filas de una población suman calor; las de otra lo restan. Donde los dos se solapan por igual, el resultado es cero y totalmente transparente; donde uno domina, se muestra con los colores de ese bando - por defecto cálidos (transparente → rojo → amarillo → blanco) para el lado **+** y fríos (transparente → verde → azul → morado) para el lado **−**.
 
-![Calor de diferencia: rojo donde el lado + estuvo más, verde y azul donde el lado - estuvo más](../assets/img/en/difference-split.webp)
+![Calor de diferencia: rojo donde el lado + estuvo más, verde y azul donde el lado - estuvo más](../assets/img/es/difference-split.webp)
 
 ## Cómo se usa {#how-to-use-it}
 
 1. Pulsa `2` (o elige **Diferencia** en la barra de modos).
 2. Abre **División por diferencia** en la barra lateral.
-3. Elige por qué **Dividir por**: normalmente *Grupos*.
+3. Elige el criterio de **Dividir por**: normalmente *Grupos*.
 4. Pon un grupo (o valor) en **+** y otro en **−**.
 5. Lee los colores: el cálido indica el lado +, el frío el lado −. El panel avisa si un lado no tiene filas (véase [Mensajes que puedes ver](#messages-you-may-see)).
 

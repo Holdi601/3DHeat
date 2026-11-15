@@ -35,7 +35,7 @@ Tout ce qu'affiche l'onglet Carte de chaleur provient d'un seul **jeu de donnée
 
 1. **Sélectionner les fichiers** dans le panneau **Source** - un fichier, plusieurs, une arborescence de dossiers, ou par dépôt. Parquet, CSV, Tacview, traces GPS et d'autres sont acceptés ; la liste complète se trouve dans [Formats de données](data-formats.md#files). Voir [Charger des fichiers](loading-files.md).
 2. **Aperçu.** Le premier fichier de la sélection est ouvert : ses noms de colonnes, ses 50 premières lignes, les colonnes qui semblent numériques et (Parquet) le type logique de chaque colonne ainsi que les instructions de lecture propres au fichier, l'entrée `heat3d` du pied de fichier.
-3. **Mappage automatique.** Les colonnes sont attribuées à des rôles - X, Y, Z, temps, personne, session, groupe, direction de regard - et quelques-unes sont conservées pour le filtrage. Chaque supposition est affichée dans le panneau **Mappage des colonnes** et peut être modifiée. Voir [Correspondance des colonnes](column-mapping.md) et [Axes, unités et temps](axes-units-and-time.md).
+3. **Mappage automatique.** Les colonnes sont attribuées à des rôles - X, Y, Z, temps, personne, session, groupe, direction de regard - et quelques-unes sont conservées pour le filtrage. Chaque supposition est affichée dans le panneau **Mappage des colonnes** et peut être modifiée. Voir [Mappage des colonnes](column-mapping.md) et [Axes, unités et temps](axes-units-and-time.md).
 4. **Comptage.** Le nombre de lignes de chaque fichier est lu (exactement à partir des pieds de fichiers Parquet, estimé pour le CSV), de sorte que le panneau puisse indiquer avant tout chargement la quantité de mémoire nécessaire et si elle tient. Sinon, il propose de charger une ligne sur *N*. Voir [Mémoire et budgets](memory-and-budgets.md).
 5. **Charger.** Un worker en arrière-plan analyse uniquement les colonnes mappées de chaque fichier - plusieurs fichiers à la fois, jusqu'au budget des [threads d'analyse](memory-and-budgets.md#parser-threads) - et fusionne le tout, dans l'ordre de la sélection, en un seul jeu de données : un dictionnaire commun de personnes, de groupes et de sessions pour tous les fichiers, une origine de temps commune, toutes les lignes triées par temps. Voir [Sessions, personnes et groupes](sessions-persons-groups.md).
 6. **Envoi.** Le fil principal annonce « Envoi de N lignes vers le GPU » pour une image, puis range les lignes dans la mémoire GPU dans le cadre du budget GPU. Voir [Occupation de la mémoire GPU](gpu-memory.md).
@@ -54,12 +54,12 @@ Un mode que les données chargées ne peuvent pas prendre en charge est grisé d
 
 ## Sans vos propres données {#without-your-own-data}
 
-Le panneau **Jeu de données** (sous **Source**) dispose d'un [générateur synthétique](synthetic-generator.md) qui produit un jeu de données de la forme d'un battle royale, de la taille que vous voulez : pratique pour essayer la visionneuse et pour tester ce qu'une machine peut supporter.
+Le panneau **Jeu de données** (sous **Source**) dispose d'un [générateur synthétique](synthetic-generator.md) qui produit un jeu de données de la forme d'un jeu de type battle royale, de la taille que vous voulez : pratique pour essayer la visionneuse et pour tester ce qu'une machine peut supporter.
 
 ## Pages de cette section {#pages-in-this-section}
 
 - [Charger des fichiers](loading-files.md) - sélecteurs, dossiers, glisser-déposer, fusion de plusieurs fichiers, règle des fichiers de mouvement, progression et annulation
-- [Correspondance des colonnes](column-mapping.md) - chaque champ du panneau de mappage, comment le mappage automatique devine, les indices `heat3d`
+- [Mappage des colonnes](column-mapping.md) - chaque champ du panneau de mappage, comment le mappage automatique devine, les indices `heat3d`
 - [Axes, unités et temps](axes-units-and-time.md) - axe vertical, inversions, échelle des unités, unités de temps, direction de regard
 - [Sessions, personnes et groupes](sessions-persons-groups.md) - ce que fait chacun, les limites, les noms partagés, la taille des entités, le panneau Jeu de données
 - [Générateur synthétique](synthetic-generator.md)

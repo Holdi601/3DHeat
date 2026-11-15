@@ -21,11 +21,11 @@ De små styringer øverst i sidebjælken ændrer, hvordan vieweren taler til dig
 | **?** | Hjælpetilstand: hvad hver farve betyder (også `?` eller `F1`) |
 | Menuen **Enheder** | Metrisk, Imperial, Luftfart eller Søfart |
 | Knappen **...** ved siden af **Enheder** | Åbner "Vælg en enhed for hver størrelse": én rullemenu pr. størrelse |
-| Menuen **Sprog** | Vieweren sprog: [40 sprog](languages.md), eller browserens |
+| Menuen **Sprog** | Viewerens sprog: [40 sprog](languages.md), eller browserens |
 
 ![Headeren med menuen Enheder og vinduet med en enhed pr. størrelse åbent](../assets/img/en/settings-units.webp)
 
-Tal, du skriver i en boks, må bruge enten et punktum eller et komma (`0.35` eller `0,35`). Vieweren læser begge og viser tal, som vieweren sprog skriver dem.
+Tal, du skriver i en boks, må bruge enten et punktum eller et komma (`0.35` eller `0,35`). Vieweren læser begge og viser tal, som viewerens sprog skriver dem.
 
 ## Enheder {#units}
 

@@ -12,7 +12,7 @@ outdated: false
 
 **Ħafna partiti f'daqqa** jaħdem ħafna partiti fuq xulxin, sabiex tara fejn normalment imorru l-plejers ta' kull partita. Uża dan biex tqabbel mijiet jew eluf ta' partiti f'stampa waħda.
 
-Kull partita tibda mill-bidu tagħha stess u l-unitajiet tagħha jimxu bħala figuri. Il-fajls imorru direttament fil-kard grafiku u ma jinbena l-ebda tabella sħiħa, għalhekk jaħdem bi grazzja fejn tagħbija normali tispiċċa mill-memorja.
+Kull partita tibda mill-bidu tagħha stess u l-unitajiet tagħha jimxu bħala figuri. Il-fajls imorru direttament fil-kard grafiku u ma jinbena l-ebda tabella sħiħa, għalhekk jaħdem bla intoppi fejn tagħbija normali tispiċċa mill-memorja.
 
 ![Għaxar partiti ta' tanks imqiegħda fuq xulxin, kulur wieħed għal kull partita](../assets/img/en/many-matches.webp)
 

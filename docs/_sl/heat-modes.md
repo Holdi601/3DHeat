@@ -43,7 +43,7 @@ Tipke 1-4 se preverijo enako glede na podatke: tipka za osivel način ne naredi 
 
 | Plošča | Toplota | Razlika | Toplota ekip | Prekrivanje figur | Črte |
 |---|---|---|---|---|---|
-| Poti ([črtna toplota](line-heat.md)) | | | | | da |
+| Trase ([črtna toplota](line-heat.md)) | | | | | da |
 | Oblika toplote (z **Sledi pogledu** in **Enaka gostota pri vsaki povečavi**), Barve toplote, Omejitve pikslov sprajta, Globina, Izrezovanje razdalje | da | da | da | | da |
 | Smer ([smerna toplota](directional-heat.md)), Vrednost ([utežitev vrednosti](value-weighting.md)) | da | da | da | | da |
 | Pregledovalnik ekip ([prekrivanje figur](box-replay.md)) | | | | da | |

@@ -46,7 +46,7 @@ Objemy měří, co se uvnitř nich děje, filtrují pohled na ně, exportují sv
 - Alt+tažení kopíruje, Del odstraní, Ctrl+Z / Ctrl+Y vrací zpět a znovu, Ctrl+D duplikuje. **Odebrat vše** smaže všechny objemy.
 - Přesné hodnoty: Podlaha, Strop, Otočení / Sklon / Náklon (kvádry), Poloměr (koule, válce).
 
-Každý řádek objemu má zaškrtávátko zobrazení, barvu, název, **zahrnout** nebo **vyloučit**, duplikovat a smazat. Objemy se ukládají v prohlížeči pro každou datovou sadu a **Uložit...** / **Načíst...** zapisují a čtou soubor `volumes.json`.
+Každý řádek objemu má zaškrtávátko zobrazení, barvu, název, **zahrnout** nebo **vyloučit**, duplikovat a smazat. Objemy se ukládají v prohlížeči pro každou datovou sadu a **Uložit…** / **Načíst…** zapisují a čtou soubor `volumes.json`.
 
 ## Filtrování pohledu {#filter-the-view}
 
@@ -69,10 +69,10 @@ Oblast **Statistiky** se řídí filtry, časovým oknem a skrytými skupinami. 
 
 ## Porovnání objemů {#compare-volumes}
 
-Se dvěma nebo více viditelnými objemy stiskněte **Porovnat...**.
+Se dvěma nebo více viditelnými objemy stiskněte **Porovnat…**.
 
 1. Nakreslete tři objemy, například Západní kopec, Východní kopec a Vesnice.
-2. Stiskněte **Porovnat...** pod Statistikami.
+2. Stiskněte **Porovnat…** pod Statistikami.
 3. V **Tabulka** čtěte rozdíl každé hodnoty od prvního objemu.
 4. Přepněte na **Sloupce**, abyste viděli podíly jako sloupce.
 
@@ -91,6 +91,6 @@ Se dvěma nebo více viditelnými objemy stiskněte **Porovnat...**.
 ## Tipy {#tips}
 
 - Začněte od zjištění: v [Zjištěních](insights.md) přidá **Objem zde** válec kolem místa nálezu.
-- **Rozpis...** otevře [Rozpis](breakdown.md) pro vybraný objem: kdo a co si uvnitř vede nejlépe.
+- **Rozpis…** otevře [Rozpis](breakdown.md) pro vybraný objem: kdo a co si uvnitř vede nejlépe.
 - [Směrové teplo](directional-heat.md) umí vykreslit směry uvnitř vybraného objemu.
-- [karta Vozidla](hit-analysis.md#restrict-to-an-area) používá tytéž objemy jako svůj filtr oblasti.
+- [Karta Vozidla](hit-analysis.md#restrict-to-an-area) používá tytéž objemy jako svůj filtr oblasti.

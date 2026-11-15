@@ -11,7 +11,7 @@ outdated: false
 
 # Filtreler
 
-**Filtreler** ilgilenmediğiniz satırları gizler, örneğin tek bir araç sınıfını ya da tek bir olay türünü; resim hemen güncellenir. Panel, yüklemede *Süzme için tut* altında tutulan sütunları ([Sütun eşleme](column-mapping.md)) ve birden çok dosya yüklendiğinde *Kaynak dosya*yı listeler.
+**Filtreler** ilgilenmediğiniz satırları gizler, örneğin tek bir araç sınıfını ya da tek bir olay türünü; resim hemen güncellenir. Panel, yüklemede *Filtreleme için tut* altında tutulan sütunları ([Sütun eşleme](column-mapping.md)) ve birden çok dosya yüklendiğinde *Kaynak dosya*yı listeler.
 
 ## Deneyin {#try-it}
 
@@ -38,7 +38,7 @@ Yalnızca oluşan türler listelenir. Değer sütunları (`cost_*`, `earn_*`, `n
 
 12'den fazla değeri olan bir kategori listesi bir arama kutusu (*n değeri ara*) ve yalnızca eşleşen değerlere izin veren bir **Yalnızca bunlar** düğmesi alır.
 
-Hangi sütunların süzülebileceği yükleme sırasında belirlenir, çünkü o sırada okunmaları gerekir. Hiç tutulan sütun yoksa panel bunu söyler ve *Süzme için tut*a işaret eder.
+Hangi sütunların süzülebileceği yükleme sırasında belirlenir, çünkü o sırada okunmaları gerekir. Hiç tutulan sütun yoksa panel bunu söyler ve *Filtreleme için tut*'a işaret eder.
 
 ## Sayısal sütunlar (aralık) {#numeric-columns-range}
 

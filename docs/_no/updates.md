@@ -16,7 +16,7 @@ Visningsprogrammet sier fra når en nyere versjon finnes, og oppdaterer seg selv
 
 1. **I siden.** Når en nyere versjon finnes, vises en boks under navnet øverst i sidepanelet: «En nyere versjon av 3DHeat er tilgjengelig». Klikk **Oppdater nå**. Siden laster seg selv på nytt når det er ferdig. **Senere** skjuler boksen til du laster siden på nytt.
 2. **Hvis den sier å kjøre restart.bat**, lukk servervinduet (det svarte vinduet `start.bat` åpnet), og dobbeltklikk `restart.bat`.
-3. **Når du starter visningsprogrammet.** `start.bat` sjekker også. Finnes en nyere versjon, spør den **Oppdater nå? [J/N]**. Trykk `J` for å oppdatere. Trykk `N`, eller vent 60 sekunder uten svar, for å starte versjonen du har.
+3. **Når du starter visningsprogrammet.** `start.bat` sjekker også. Finnes en nyere versjon, spør den **Oppdater nå? [Y/N]**. Trykk `Y` for å oppdatere. Trykk `N`, eller vent 60 sekunder uten svar, for å starte versjonen du har.
 
 ![Oppdateringsvarselet med Oppdater nå og Senere](../assets/img/en/updates-notice.webp)
 
@@ -44,13 +44,13 @@ side ---(etter 4 s, deretter hver 6. t)---> utviklingsserver ---> git fetch
 
 `start.bat` (dobbeltklikk den; vinduet er serveren) gjør, i rekkefølge:
 
-1. Finner Node.js – på `PATH`, ellers i `%ProgramFiles%\nodejs`, `%ProgramFiles(x86)%\nodejs` eller `%LOCALAPPDATA%\Programs\nodejs` – og tilbyr å installere den med `winget install -e --id OpenJS.NodeJS.LTS` når den mangler (spørsmål, J/N; deretter må vinduet åpnes på nytt, så Windows tar med seg den nye `PATH`).
+1. Finner Node.js – på `PATH`, ellers i `%ProgramFiles%\nodejs`, `%ProgramFiles(x86)%\nodejs` eller `%LOCALAPPDATA%\Programs\nodejs` – og tilbyr å installere den med `winget install -e --id OpenJS.NodeJS.LTS` når den mangler (spørsmål, Y/N; deretter må vinduet åpnes på nytt, så Windows tar med seg den nye `PATH`).
 2. **Oppdateringer**, når git er installert og mappen har `.git`:
    - `git fetch --quiet` (ingen nettverk eller ingen oppstrøms: hoppes over stille);
    - teller `git rev-list --count HEAD..@{u}`; ingenting bak: ingenting sies;
    - lokale endringer: «En nyere versjon av 3DHeat er tilgjengelig (N endringer), men denne kopien har lokale endringer, så den oppdateres ikke. Committ eller stash dem, og kjør deretter git pull.» – og den starter versjonen som finnes der;
    - egne commits (`git rev-list --count @{u}..HEAD` er ikke 0): «En nyere versjon av 3DHeat er tilgjengelig (N endringer), men denne kopien har egne commits som den nyeste versjonen ikke har, så den oppdateres ikke. Oppdater den med git pull.» – og den starter versjonen som finnes der;
-   - ellers «En nyere versjon av 3DHeat er tilgjengelig (N endringer).» og spørsmålet **Oppdater nå? [J/N]**. `N`, eller intet svar på 60 sekunder, skriver «Ikke oppdatert; starter versjonen du har.» og starter versjonen som finnes der. Ved `J`: «Oppdaterer...», sier om `package.json` eller `package-lock.json` endres, kjører `git pull --ff-only` (skulle det fortsatt mislykkes – nettverket, for eksempel: «Oppdateringen gikk ikke igjennom; starter versjonen du har.»), deretter `git submodule update --init` (de festede verktøyene, se [Vedlikehold av dokumentasjonen](maintaining.md#the-tools-under-exporters)), og deretter `npm install` når pakkefilene endret seg og `node_modules` finnes, og «Oppdatert.»
+   - ellers «En nyere versjon av 3DHeat er tilgjengelig (N endringer).» og spørsmålet **Oppdater nå? [Y/N]**. `N`, eller intet svar på 60 sekunder, skriver «Ikke oppdatert; starter versjonen du har.» og starter versjonen som finnes der. Ved `J`: «Oppdaterer...», sier om `package.json` eller `package-lock.json` endres, kjører `git pull --ff-only` (skulle det fortsatt mislykkes – nettverket, for eksempel: «Oppdateringen gikk ikke igjennom; starter versjonen du har.»), deretter `git submodule update --init` (de festede verktøyene, se [Vedlikehold av dokumentasjonen](maintaining.md#the-tools-under-exporters)), og deretter `npm install` når pakkefilene endret seg og `node_modules` finnes, og «Oppdatert.»
 3. Nekter å starte en andre server: når noe allerede lytter på port **5273**, sier den det og peker på `restart.bat` / `stop.bat`.
 4. Ved første kjøring (ingen `node_modules`) spør den før avhengighetene lastes ned (rundt 300 MB til `node_modules\`, ingenting systemomfattende).
 5. Starter utviklingsserveren på `127.0.0.1:5273` (`--strictPort`) og åpner nettleseren når den er klar.

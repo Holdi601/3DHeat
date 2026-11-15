@@ -24,7 +24,7 @@ Ova stranica je karta kartice. Svaki dio ima vlastitu stranicu:
 | [Učitavanje krugova](race-loading-laps.md) | svaki format datoteke, mape i staze, imena automobila, demo krugovi, popis krugova, referenca i fokus |
 | [Reprodukcija i 3D scena](race-replay-and-scene.md) | traka za upravljanje, tri načina reprodukcije, poravnavanje automobila, kamera praćenja, linije, karte, automobili, oznake, zrcaljeni svjetovi |
 | [Grafikoni i HUD](race-charts-and-hud.md) | grafikoni udaljenosti, birač grafikona, lebdenje i zumiranje, kartice automobila, tablica kanala |
-| [Događaji upravljanja automobilom](race-control-events.md) | blokade kotača, proklizavanje kotača, podupravljanje, okretanja, podupravljanje, udarci, sudari, ABS/TC, ručna kočnica, zrak - kako se svaki otkriva, sa svakim pragom |
+| [Događaji upravljanja automobilom](race-control-events.md) | blokade kotača, proklizavanje kotača, preupravljanje, okretanja, podupravljanje, udarci, sudari, ABS/TC, ručna kočnica, zrak - kako se svaki otkriva, sa svakim pragom |
 | [Analiza zavoj po zavoj](race-corner-analysis.md) | poravnanje po udaljenosti, zavoji i segmenti, obračun vremena zavoja, svaki uzrok i redoslijed u kojem se provjeravaju, oblik linije i savjet |
 | [Profili vozila i usporedba](race-car-profiles.md) | što svaki automobil može, mjereno iz njegovih krugova; *Usporedba automobila*; što automobil odlučuje u svakom zavoju |
 | [Statistika staze](race-course-statistics.md) | mnogo krugova jedne staze: greške po zavoju i po vrsti, karta grešaka, izvoz toplinske karte, granice performansi |
@@ -99,52 +99,37 @@ Pojedinosti: [Statistika staze](race-course-statistics.md#performance-with-many-
 
 Ništa od ovoga se ne sprema; ponovno učitavanje kreće od zadanih vrijednosti. Što se pamti u pregledniku: jezik i imena automobila naučena iz datoteka krugova (vidi [Učitavanje krugova](race-loading-laps.md#car-names)).
 
-## For developers {#for-developers}
+## Za programere {#for-developers}
 
-### What happens when laps are loaded {#what-happens-when-laps-are-loaded}
+### Što se događa kad se učitaju krugovi {#what-happens-when-laps-are-loaded}
 
-Every time the set of laps, the reference or the language changes, the whole
-analysis is redone (`analyse` in
-[`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
+Svaki put kad se promijeni skup krugova, referenca ili jezik, cijela analiza ponovno se izvodi (`analyse` u [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
 
-1. Derived channels are added to each lap where the game does not send them:
-   drift angle, wheel slip from wheel speeds, in the air, loose ground, yaw
-   rate ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
-2. The reference is chosen and every lap is projected onto its path and
-   resampled every 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
-3. Whether the game's world is mirrored is worked out from the laps
-   ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
-4. Corners are found on the reference, and grouped into segments from one
-   braking zone to the next ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
-5. Per car: its envelope (grip, braking, pull per speed), its profile, its
-   tyre curves ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts),
-   [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts),
-   [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
-6. Per lap and segment: what it did (brake point, slowest point, full
-   throttle, ...) and the line it drove ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
-7. Per lap: its car-control events, each laid against the lap it is compared
-   with there.
-8. Per lap and segment: the time account against its comparison lap and the
-   finding in words.
-9. The time map and the cause map per lap.
+1. Izvedeni kanali dodaju se svakom krugu tamo gdje ih igra ne šalje: kut drifta, proklizavanje kotača iz brzina kotača, u zraku, rahlo tlo, brzina zakretanja ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
+2. Bira se referenca, i svaki krug se projicira na njezinu putanju i ponovno uzorkuje svaka 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
+3. Iz krugova se računa je li svijet igre zrcaljen ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
+4. Zavoji se nalaze na referenci i grupiraju u segmente od jedne zone kočenja do sljedeće ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
+5. Po automobilu: njegova ovojnica (prianjanje, kočenje, potisak po brzini), njegov profil i krivulje njegovih guma ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts), [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts), [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
+6. Po krugu i segmentu: što je učinio (točka kočenja, najsporija točka, puni gas, ...) i linija kojom je vozio ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
+7. Po krugu: njegovi događaji upravljanja automobilom, svaki postavljen uz krug s kojim se tamo uspoređuje.
+8. Po krugu i segmentu: obračun vremena naspram kruga za usporedbu i nalaz riječima.
+9. Karta vremena i karta uzroka po krugu.
 
-The texts are produced in the current language; switching language runs the
-analysis again (and renames the demo laps). A failure in the analysis is
-shown under the **Laps** buttons as an error and the laps stay loaded.
+Tekstovi se pišu na trenutnom jeziku; promjena jezika ponovno pokreće analizu (i preimenuje demo krugove). Greška u analizi prikazuje se ispod gumba **Krugovi** kao pogreška, a krugovi ostaju učitani.
 
-### Source files {#source-files}
+### Izvorne datoteke {#source-files}
 
-| File | Role |
+| Datoteka | Uloga |
 |---|---|
-| `src/race/adapters.ts`, `ibt.ts` | reading lap files |
-| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | the lap type, naming, demo laps |
-| `src/race/derive.ts`, `handedness.ts` | derived channels, mirrored worlds |
-| `src/race/align.ts`, `segments.ts`, `line.ts` | distance axis, corners, lines |
-| `src/race/analysis.ts` | corners compared, causes, findings |
-| `src/race/envelope.ts`, `profile.ts` | what a car can do |
-| `src/race/control.ts`, `impacts.ts` | car control, hits and crashes |
-| `src/race/stats.ts` | many laps |
-| `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | replay and drawing |
-| `src/race/schema.ts`, `graphs.ts` | the channel table, the charts' rows |
-| `src/ui/race/*` | the sidebar, the charts, the HUD, the labels |
-| `src/state/raceStore.ts` | the tab's state and the replay clock |
+| `src/race/adapters.ts`, `ibt.ts` | čitanje datoteka krugova |
+| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | tip kruga, imenovanje, demo krugovi |
+| `src/race/derive.ts`, `handedness.ts` | izvedeni kanali, zrcaljeni svjetovi |
+| `src/race/align.ts`, `segments.ts`, `line.ts` | osi udaljenosti, zavoji, linije |
+| `src/race/analysis.ts` | usporedba zavoja, uzroci, nalazi |
+| `src/race/envelope.ts`, `profile.ts` | što automobil može |
+| `src/race/control.ts`, `impacts.ts` | upravljanje automobilom, udarci i sudari |
+| `src/race/stats.ts` | mnogo krugova |
+| `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | reprodukcija i crtanje |
+| `src/race/schema.ts`, `graphs.ts` | tablica kanala, retci grafikona |
+| `src/ui/race/*` | bočna traka, grafikoni, HUD, oznake |
+| `src/state/raceStore.ts` | stanje kartice i sat reprodukcije |

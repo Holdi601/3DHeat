@@ -76,7 +76,7 @@ Krátke významy slov, ktoré tento web používa, jednoduchým jazykom. Každé
 
 **GPU.** Grafická karta alebo čip. Kreslí obraz a je oveľa rýchlejšia než hlavný procesor, keď kreslí milióny škvŕn. [Dva backendy](backends.md)
 
-**WebGPU / WebGL2.** Dva spôsoby, ako prehliadač dovolí stránke použiť GPU. WebGPU je novší. Prehliadač vie použiť ktorýkoľvek a vyberie lepší, ktorý váš prehliadač má. [Dva backendy](backends.md)
+**WebGPU / WebGL2.** Dva spôsoby, ako prehliadač dovolí stránke použiť GPU. WebGPU je novší. Prehliadač vie použiť ktorýkoľvek z nich a vyberie ten lepší, ktorý váš prehliadač podporuje. [Dva backendy](backends.md)
 
 ## Slová z Counter-Strike {#counter-strike-words}
 

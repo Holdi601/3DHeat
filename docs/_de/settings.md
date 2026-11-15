@@ -23,7 +23,7 @@ Oben in der Seitenleiste:
 | Schaltfläche **...** neben **Einheiten** | Öffnet „Wähle eine Einheit für jede Größe“: ein Auswahlmenü pro Größe |
 | Menü **Sprache** | Die Sprache des Viewers: [40 Sprachen](languages.md) oder die des Browsers |
 
-![Die Kopfzeile mit dem Menü Einheiten und dem geöffneten Fenster Einheit pro Größe](../assets/img/en/settings-units.webp)
+![Die Kopfzeile mit dem Menü Einheiten und dem geöffneten Fenster Einheit pro Größe](../assets/img/de/settings-units.webp)
 
 Zahlen, die du in ein Feld tippst, dürfen einen Punkt oder ein Komma haben (`0.35` oder `0,35`). Der Viewer liest beides und zeigt Zahlen so, wie die Sprache des Viewers sie schreibt.
 
@@ -48,11 +48,11 @@ Weitere Einheiten, die du für eine Größe wählen kannst: Entfernung km, mi, N
 
 ## Hilfemodus {#help-mode}
 
-![Hilfemodus: was die Farben bedeuten](../assets/img/en/help.webp)
+![Hilfemodus: was die Farben bedeuten](../assets/img/de/help.webp)
 
 Drücke `?` oder `F1` oder klicke auf die Schaltfläche **?**. Es zeigt *Was die Farben bedeuten*: Legenden für die 3D-Ansicht, die Intensitätsverläufe, Teamfarben, die Farben des Levels, die Statusfarben der Panels, das Match-Panel und die Rennansicht. Er bleibt an, bis du ihn ausschaltest. Im Tab Match erklärt er auch die Farben des Match-Panels.
 
-![Hilfemodus im Tab Match](../assets/img/en/settings-help-match.webp)
+![Hilfemodus im Tab Match](../assets/img/de/settings-help-match.webp)
 
 ## Was der Browser sich merkt {#what-the-browser-remembers}
 
@@ -62,7 +62,7 @@ Diese Einstellungen bleiben zwischen Besuchen im Browser erhalten (nichts wird i
 - die Einstellungen des Replays für Figur, Symbol, Beschriftung, Kamera und taktische Anzeige;
 - die Wiedergabegeschwindigkeit und Spiegelung;
 - Lesezeichen pro Aufnahme, Volumen pro Datensatz, Zielebenen;
-- die Einstellungen der externen KI (der Schlüssel nur, wenn du *Merken* ankreuzt).
+- die Einstellungen der externen KI (der Schlüssel nur, wenn du *Schlüssel in diesem Browser merken* ankreuzt).
 
 Intensitätseinstellungen, Filter und der Modus starten bei jedem Laden neu. Die vollständige, generierte Liste: [Gespeicherte Einstellungen](ref-settings-storage.md).
 

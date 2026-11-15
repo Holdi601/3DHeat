@@ -23,7 +23,7 @@ En haut de la barre latérale :
 | Bouton **...** à côté de **Unités** | Ouvre « Choisir une unité pour chaque grandeur » : une liste déroulante par grandeur |
 | Menu **Langue** | La langue de la visionneuse : [40 langues](languages.md), ou celle du navigateur |
 
-![L'en-tête avec le menu Unités et la fenêtre unité par grandeur ouverte](../assets/img/en/settings-units.webp)
+![L'en-tête avec le menu Unités et la fenêtre unité par grandeur ouverte](../assets/img/fr/settings-units.webp)
 
 Les nombres que vous saisissez dans une case peuvent utiliser un point ou une virgule (`0.35` ou `0,35`). La visionneuse lit les deux et affiche les nombres comme les écrit la langue de la visionneuse.
 
@@ -48,11 +48,11 @@ Autres unités que vous pouvez choisir pour une seule grandeur : distance km, mi
 
 ## Mode aide {#help-mode}
 
-![Mode aide : ce que signifient les couleurs](../assets/img/en/help.webp)
+![Mode aide : ce que signifient les couleurs](../assets/img/fr/help.webp)
 
 Appuyez sur `?` ou `F1`, ou cliquez sur le bouton **?**. Il affiche *Ce que signifient les couleurs* : légendes de la vue 3D, des rampes de chaleur, des couleurs d'équipe, des couleurs du niveau, des couleurs d'état des panneaux, du panneau de match et de la vue de course. Il reste actif jusqu'à ce que vous le désactiviez. Dans l'onglet Match, il explique aussi les couleurs du panneau de match.
 
-![Mode aide dans l'onglet Match](../assets/img/en/settings-help-match.webp)
+![Mode aide dans l'onglet Match](../assets/img/fr/settings-help-match.webp)
 
 ## Ce que le navigateur mémorise {#what-the-browser-remembers}
 

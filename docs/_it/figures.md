@@ -15,7 +15,7 @@ Una **figura** è un piccolo modello 3D di ciò che un'unità è davvero: un car
 
 Ci sono circa 2.000 veicoli, aerei, navi, armi e soldati con nome, tutti costruiti dal visualizzatore stesso.
 
-![Carri del dataset demo disegnati con le proprie figure](../assets/img/en/replay-tanks.webp)
+![Carri del dataset demo disegnati con le proprie figure](../assets/img/it/replay-tanks.webp)
 
 ## Cosa c'è nel catalogo {#what-is-in-the-catalogue}
 

@@ -13,7 +13,7 @@ outdated: false
 
 Dearg san áit a raibh foireann A níos mó, gorm-glas san áit a raibh foireann B, aon rud san áit a raibh siad comhionann.
 
-Is teas comharthaithe é **Difríocht** (eochair 2). Cuireann sraitheanna de dhaonra amháin teas leis; baineann sraitheanna de dhaonra eile uaidh. Sa limistéar ina bhforlapann an bheirt go cothrom is nialas an toradh agus tá sé trédhearcach go hiomlán; san áit a bhfuil ceann amháin i gceannas taispeántar é i ndathanna an taobh sin - de réir réamhshocraithe te (trédhearcach → dearg → buí → bán) don taobh **+** agus fuar (trédhearcach → glas → gorm → corcairdhearg) don taobh **−**.
+Is teas comharthaithe é **Difríocht** (eochair 2). Cuireann sraitheanna de dhaonra amháin teas leis; baineann sraitheanna de dhaonra eile uaidh. Sa limistéar ina bhforlapann an bheirt go cothrom is nialas an toradh agus tá sé trédhearcach go hiomlán; san áit a bhfuil ceann amháin i gceannas taispeántar é i ndathanna an taobh sin - de réir réamhshocraithe te (trédhearcach → dearg → buí → bán) don taobh **+** agus fuar (trédhearcach → glas → gorm → corcra) don taobh **−**.
 
 ![Teas difríochta: dearg san áit a raibh an taobh + níos mó, glas agus gorm san áit a raibh an taobh - níos mó](../assets/img/en/difference-split.webp)
 
@@ -89,7 +89,7 @@ Is le + a chuntar luach atá i dhá raon. Ní gá go gclúdaíonn na raonta an c
 
 ## Dathanna {#colours}
 
-Taispeánann an chuid **Dathanna teasa** dhá eagarthóir grádáin sa mhód seo: **Dearfach (foirne suimitheacha)** agus **Diúltach (foirne dealaitheacha)**, gach ceann lena chnaipe athshocraithe féin (*Athshocraigh go trédhearcach → dearg → buí → bán*, *Athshocraigh go trédhearcach → glas → gorm → corcairdhearg*). Glacann an comhdhéanamh luach iomlán an teasa líonta trí an [pointe sáithithe agus an fhreagairt](colour-and-exposure.md), agus roghnaíonn sé an grádán diúltach san áit a bhfuil an líonta faoi nialas. Féach [Dath agus nochtadh](colour-and-exposure.md#the-ramp-editor).
+Taispeánann an chuid **Dathanna teasa** dhá eagarthóir grádáin sa mhód seo: **Dearfach (foirne suimitheacha)** agus **Diúltach (foirne dealaitheacha)**, gach ceann lena chnaipe athshocraithe féin (*Athshocraigh go trédhearcach → dearg → buí → bán*, *Athshocraigh go trédhearcach → glas → gorm → corcra*). Glacann an comhdhéanamh luach iomlán an teasa líonta trí an [pointe sáithithe agus an fhreagairt](colour-and-exposure.md), agus roghnaíonn sé an grádán diúltach san áit a bhfuil an líonta faoi nialas. Féach [Dath agus nochtadh](colour-and-exposure.md#the-ramp-editor).
 
 Bain úsáid as freagairt dhlúis *Líneach* nuair a bhíonn méid na difríochta tábhachtach: is í an t-aon fhreagairt ina gciallaíonn dath comhionann líon comhionann.
 

@@ -50,7 +50,7 @@ Flipinn ber saman tvo eða fleiri hringi á einni braut. Hann deilir striganum, 
    Sjá [Endurspilun og þrívíð sena](race-replay-and-scene.md).
 8. Sameiginlegu spjöldin **Borð** og **Myndavél og sena** (brautarlíkan, öfugsnúningur ása, myndavél) - skjalfest með hitakortinu og [Myndavél](camera.md).
 
-**Sýnin** sýnir brautina, ekin línur, kortið, bílana, merkingar festar við brautina, og allt að sex bílaspjöld efst til vinstri (sjá [Línurit og HUD](race-charts-and-hud.md)). Án hlaðinna hringja stendur "No laps loaded - Drop two or more lap files here, or load the demo laps from the sidebar."
+**Sýnin** sýnir brautina, ekin línur, kortið, bílana, merkingar festar við brautina, og allt að sex bílaspjöld efst til vinstri (sjá [Línurit og HUD](race-charts-and-hud.md)). Án hlaðinna hringja stendur "Engir hringir hlaðnir - Slepptu tveimur eða fleiri hringjaskrám hér, eða hladdu sýnishringjunum úr hliðarstikunni."
 
 **Stikan undir sýninni** geymir spilunarstýringarnar og fjarlægðarlínuritin, nema þau séu falin.
 
@@ -64,7 +64,7 @@ Flipinn ber saman tvo eða fleiri hringi á einni braut. Hann deilir striganum, 
 
 ## Lyklaborð {#keyboard}
 
-Meðan flipinn Kappakstur er opinn:
+Meðan flipinn Kappakstursgreining er opinn:
 
 | Takki | Gerir |
 |---|---|
@@ -101,50 +101,35 @@ Engin af þessum er vistuð; endurhleðsla byrjar á sjálfgildunum. Það sem e
 
 ## Fyrir forritara {#for-developers}
 
-### What happens when laps are loaded {#what-happens-when-laps-are-loaded}
+### Hvað gerist þegar hringir eru hlaðnir {#what-happens-when-laps-are-loaded}
 
-Every time the set of laps, the reference or the language changes, the whole
-analysis is redone (`analyse` in
-[`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
+Í hvert skipti sem mengi hringjanna, viðmiðunin eða tungumálið breytist er öll greiningin unnin aftur (`analyse` í [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
 
-1. Derived channels are added to each lap where the game does not send them:
-   drift angle, wheel slip from wheel speeds, in the air, loose ground, yaw
-   rate ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
-2. The reference is chosen and every lap is projected onto its path and
-   resampled every 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
-3. Whether the game's world is mirrored is worked out from the laps
-   ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
-4. Corners are found on the reference, and grouped into segments from one
-   braking zone to the next ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
-5. Per car: its envelope (grip, braking, pull per speed), its profile, its
-   tyre curves ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts),
-   [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts),
-   [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
-6. Per lap and segment: what it did (brake point, slowest point, full
-   throttle, ...) and the line it drove ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
-7. Per lap: its car-control events, each laid against the lap it is compared
-   with there.
-8. Per lap and segment: the time account against its comparison lap and the
-   finding in words.
-9. The time map and the cause map per lap.
+1. Afleiddum rásum er bætt við hvern hring þar sem leikurinn sendir þær ekki: rekhorn, hjólslip reiknað út frá hraða hjóla, í loftinu, laus jörð, snúningshraði ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
+2. Viðmiðunin er valin og hver hringur er varpaður á slóð hennar og endurúrtakaður á 2 m fresti ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
+3. Út frá hringjunum er reiknað hvort heimur leiksins er speglaður ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
+4. Beygjur eru fundnar á viðmiðuninni og flokkaðar í bil frá einu hemlunarsvæði að því næsta ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
+5. Fyrir hvern bíl: umslag hans (grip, hemlun, átak eftir hraða), snið hans og dekkjaferlar ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts), [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts), [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
+6. Fyrir hvern hring og bil: hvað hann gerði (hemlunarpunktur, hægasti punktur, full inngjöf ...) og línan sem hann ók ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
+7. Fyrir hvern hring: atburðir í stjórn bílsins, hver lagður við hringinn sem hann er borinn saman við þar.
+8. Fyrir hvern hring og bil: tímareikningurinn gagnvart samanburðarhringnum og niðurstaðan í orðum.
+9. Tímakortið og orsakakortið fyrir hvern hring.
 
-The texts are produced in the current language; switching language runs the
-analysis again (and renames the demo laps). A failure in the analysis is
-shown under the **Laps** buttons as an error and the laps stay loaded.
+Textarnir eru búnir til á núverandi tungumáli; þegar skipt er um tungumál er greiningin keyrð aftur (og sýnishringjunum fá ný heiti). Villa í greiningunni birtist sem villa undir hnöppunum **Hringir** og hringirnir haldast hlaðnir.
 
-### Source files {#source-files}
+### Skrár í frumkóðanum {#source-files}
 
-| File | Role |
+| Skrá | Hlutverk |
 |---|---|
-| `src/race/adapters.ts`, `ibt.ts` | reading lap files |
-| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | the lap type, naming, demo laps |
-| `src/race/derive.ts`, `handedness.ts` | derived channels, mirrored worlds |
-| `src/race/align.ts`, `segments.ts`, `line.ts` | distance axis, corners, lines |
-| `src/race/analysis.ts` | corners compared, causes, findings |
-| `src/race/envelope.ts`, `profile.ts` | what a car can do |
-| `src/race/control.ts`, `impacts.ts` | car control, hits and crashes |
-| `src/race/stats.ts` | many laps |
-| `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | replay and drawing |
-| `src/race/schema.ts`, `graphs.ts` | the channel table, the charts' rows |
-| `src/ui/race/*` | the sidebar, the charts, the HUD, the labels |
-| `src/state/raceStore.ts` | the tab's state and the replay clock |
+| `src/race/adapters.ts`, `ibt.ts` | lestur hringjaskráa |
+| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | gerð hrings, nafngiftir, sýnishringir |
+| `src/race/derive.ts`, `handedness.ts` | afleiddar rásir, speglaðir heimar |
+| `src/race/align.ts`, `segments.ts`, `line.ts` | vegalengdarásinn, beygjur, línur |
+| `src/race/analysis.ts` | beygjur bornar saman, orsakir, niðurstöður |
+| `src/race/envelope.ts`, `profile.ts` | hvað bíll getur |
+| `src/race/control.ts`, `impacts.ts` | stjórn á bílnum, högg og árekstrar |
+| `src/race/stats.ts` | margir hringir |
+| `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | endurspilun og teikning |
+| `src/race/schema.ts`, `graphs.ts` | rásatafla, raðir línurita |
+| `src/ui/race/*` | hliðarstikan, línuritin, HUD, merkingarnar |
+| `src/state/raceStore.ts` | ástand flipans og endurspilunarklukkan |
