@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stacks, Rotationen und Lurks",
   "lens.metric.cqbPostPlant": "Nach dem Legen und Retake",
   "lens.metric.cqbFunnel": "Todestrichter",
-  "lens.metric.cqbImpact": "Einfluss der Spieler"
+  "lens.metric.cqbImpact": "Einfluss der Spieler",
+  "lens.metric.order": "Kollektive Ausrichtung",
+  "lens.metric.herding": "Herdenverhalten bei Routen",
+  "lens.metric.lanes": "Spuren und Trampelpfade",
+  "lens.metric.crowding": "Gedränge",
+  "lens.metric.leaders": "Anführer und Folgende",
+  "lens.metric.cohesion": "Zusammenhalt und Nachzügler",
+  "lens.metric.breaking": "Bruchpunkt",
+  "lens.metric.risk": "Risiko nach Verlusten",
+  "lens.metric.streaks": "Serien (Hot Hand)",
+  "lens.metric.buy": "Kaufabstimmung",
+  "lens.metric.suppression": "Niederhalten"
 }

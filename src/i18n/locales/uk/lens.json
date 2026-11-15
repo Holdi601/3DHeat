@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Стаки, ротації та ларки",
   "lens.metric.cqbPostPlant": "Після встановлення та ретейк",
   "lens.metric.cqbFunnel": "Смертельні лійки",
-  "lens.metric.cqbImpact": "Вплив гравців"
+  "lens.metric.cqbImpact": "Вплив гравців",
+  "lens.metric.order": "Колективна узгодженість",
+  "lens.metric.herding": "Стадність у виборі маршрутів",
+  "lens.metric.lanes": "Смуги та стежки",
+  "lens.metric.crowding": "Скупченість",
+  "lens.metric.leaders": "Лідери та послідовники",
+  "lens.metric.cohesion": "Згуртованість і відсталі",
+  "lens.metric.breaking": "Точка зламу",
+  "lens.metric.risk": "Ризик після втрат",
+  "lens.metric.streaks": "Серії (гаряча рука)",
+  "lens.metric.buy": "Узгодженість закупівель",
+  "lens.metric.suppression": "Придушення вогнем"
 }

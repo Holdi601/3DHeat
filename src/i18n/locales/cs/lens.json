@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stacky, rotace a lurky",
   "lens.metric.cqbPostPlant": "Po položení a retake",
   "lens.metric.cqbFunnel": "Smrtící trychtýře",
-  "lens.metric.cqbImpact": "Vliv hráčů"
+  "lens.metric.cqbImpact": "Vliv hráčů",
+  "lens.metric.order": "Kolektivní souřadnost",
+  "lens.metric.herding": "Stádní volba tras",
+  "lens.metric.lanes": "Pruhy a stezky",
+  "lens.metric.crowding": "Tlačenice",
+  "lens.metric.leaders": "Vůdci a následovníci",
+  "lens.metric.cohesion": "Soudržnost a opozdilci",
+  "lens.metric.breaking": "Bod zlomu",
+  "lens.metric.risk": "Riziko po ztrátách",
+  "lens.metric.streaks": "Série (horká ruka)",
+  "lens.metric.buy": "Shoda nákupů",
+  "lens.metric.suppression": "Potlačení palbou"
 }

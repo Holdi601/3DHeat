@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stacks, rotacions i lurks",
   "lens.metric.cqbPostPlant": "Després de plantar i retake",
   "lens.metric.cqbFunnel": "Embuts mortals",
-  "lens.metric.cqbImpact": "Impacte dels jugadors"
+  "lens.metric.cqbImpact": "Impacte dels jugadors",
+  "lens.metric.order": "Alineació col·lectiva",
+  "lens.metric.herding": "Comportament gregari a les rutes",
+  "lens.metric.lanes": "Carrils i camins",
+  "lens.metric.crowding": "Aglomeració",
+  "lens.metric.leaders": "Líders i seguidors",
+  "lens.metric.cohesion": "Cohesió i endarrerits",
+  "lens.metric.breaking": "Punt de ruptura",
+  "lens.metric.risk": "Risc després de pèrdues",
+  "lens.metric.streaks": "Ratxes (mà calenta)",
+  "lens.metric.buy": "Acord de compra",
+  "lens.metric.suppression": "Supressió"
 }

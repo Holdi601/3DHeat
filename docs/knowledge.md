@@ -54,6 +54,8 @@ Computed in the insight worker, in the same pass over the rows as the detectors 
 
 Data with rounds adds the close-quarters and esports measures - round win probability, value of actions, opening duels, trades, peeker against holder, aim, crossfire, utility, man advantage, clutches, setups, post-plant, fatal funnels and player impact: see [Close quarters and rounds](close-quarters.md).
 
+Tracks and teams add the collective-behaviour measures of crowd science, collective motion, behavioural economics and military psychology - alignment and milling, route herding, lanes and trails, crowding, leaders and followers, stragglers, the breaking point, risk after losses, streaks, buy agreement and suppression, each against its own null model: see [Collective behaviour](collective-behaviour.md).
+
 Weapons, decoys and buildings are not counted as units. Where weapon rows name their launching unit (a `Shooter` or `Launcher` column, as Tacview-derived data has), the launch is credited to that unit, matched by its name or its object id.
 
 ## How findings meet the literature
@@ -64,9 +66,9 @@ Entries and findings meet through a **pattern taxonomy** (`src/insights/knowledg
 
 <!-- kb:begin -->
 
-The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical cases, 16 design principles, 96 studies) over 74 patterns, citing 470 references.
+The knowledge base holds 579 entries (135 concepts, 37 methods, 277 historical cases, 17 design principles, 113 studies) over 93 patterns, citing 556 references.
 
-### Patterns (74)
+### Patterns (93)
 
 | id | family | what it looks like in the data |
 |---|---|---|
@@ -144,8 +146,27 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 | `action-value` | people | Kills, trades, plants and utility differ in how much they change the chance to win. |
 | `lurk` | movement | A player alone far from the team kills (or dies) at a different rate from the pack. |
 | `rotation` | movement | How fast a side shifts players to the fight or the objective decides whether it holds or retakes. |
+| `collective-order` | people | A side's moving units head the same way far more often than their own tracks, shifted in time, would by chance. |
+| `milling` | people | A side's units circle a common centre: rotation without net travel. |
+| `herding` | people | Units leave a place the way the teammate before them did, beyond the place's own odds and beyond copying the enemy. |
+| `lane-formation` | people | Opposite flows keep to separate lanes; movement concentrates on a few trails reused match after match. |
+| `crowding` | people | Speed and flow fall as units bunch; through a choke, pushing harder moves fewer through. |
+| `leadership` | people | Some units turn first and others copy their heading a few seconds later. |
+| `cohesion` | people | Units that drift away from their group die more often than those that keep with it. |
+| `breaking-point` | people | A side that has lost a share of its strength stops closing and falls back, beyond what its distance to the enemy explains. |
+| `panic` | people | Under sudden threat units scatter, speed away or freeze, and coordination falls apart. |
+| `loss-chasing` | people | After a loss units take more (or less) risk than after a gain. |
+| `hot-hand` | people | Success follows success more often than shuffled sequences of the same player allow. |
+| `conformity` | people | Members of a side choose alike - buys, loadouts, routes - beyond their own preferences. |
+| `suppression` | people | Incoming fire changes how units move and shoot, even when it does not kill. |
+| `social-loafing` | people | Action per head falls as more teammates are present. |
+| `mixed-strategy` | people | Choices that should be unpredictable become patterned: one option wins more, or choices run in sequences. |
+| `coordination` | people | Members act in step without visible orders: synchronised movement, timing and choices. |
+| `contagion` | people | A state passes from unit to unit by contact or nearness and spreads across the map. |
+| `territoriality` | people | Units keep their distance from each other and hold to their own ground. |
+| `interaction-network` | people | Who fights, supports and follows whom forms a network with hubs, clusters and bridges. |
 
-### Concepts (104)
+### Concepts (135)
 
 | id | title | lenses | patterns | sources |
 |---|---|---|---|---|
@@ -253,8 +274,39 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 | `concept.man-advantage` | Man advantage in elimination rounds | esports, military | man-advantage, local-superiority, entry, concentration | Xenopoulos et al. 2022; Xenopoulos et al. 2020; Makarov et al. 2018 |
 | `concept.entry-duel` | Entry and the opening duel | esports, urban | entry, initiative, action-value, tempo | Xenopoulos et al. 2020; Xenopoulos et al. 2022; FM 3-06.11 2002 |
 | `concept.utility-entry` | Utility before the entry: flash and smoke | esports, urban, military | utility-support, surprise, entry, cover | FM 3-06.11 2002; ATP 3-06 2022; Xenopoulos et al. 2020 |
+| `concept.social-force-model` | Social force model of pedestrian motion | design, urban, military | crowding, lane-formation, panic, territoriality | Helbing & Molnár 1995; Helbing et al. 2005; Moussaïd et al. 2011 |
+| `concept.lane-formation` | Lane formation in counter-flow | design, urban | lane-formation, flow, avenue-of-approach | Helbing et al. 2005; Helbing & Molnár 1995; Moussaïd et al. 2011 |
+| `concept.faster-is-slower` | Faster is slower | design, urban, military | crowding, chokepoint, panic | Helbing et al. 2000; Garcimartín et al. 2014; Haghani & Sarvi 2018 |
+| `concept.fundamental-diagram` | The fundamental diagram of crowds | design, urban | crowding, flow | Seyfried et al. 2005; Fruin 1971; Haghani & Sarvi 2018 |
+| `concept.trail-formation` | Trail formation and desire lines | design, military | lane-formation, flow, avenue-of-approach, key-terrain | Helbing et al. 1997; Helbing et al. 2005 |
+| `concept.panic-myth` | Panic is rare: collective resilience | military, urban, design | panic, cohesion, mutual-support | Quarantelli 1954; Drury et al. 2009; Helbing et al. 2000 |
+| `concept.boids` | Boids: separation, alignment, cohesion | design, military | collective-order, cohesion, territoriality | Reynolds 1987; Vicsek & Zafeiris 2012 |
+| `concept.vicsek-order` | Order parameter and the onset of collective motion | design, military, air, naval | collective-order, coordination | Vicsek et al. 1995; Vicsek & Zafeiris 2012 |
+| `concept.collective-states` | Swarm, milling and polarised states | design, military, naval | milling, collective-order | Couzin et al. 2002; Tunstrøm et al. 2013 |
+| `concept.effective-leadership` | Effective leadership without signals | military, esports, design | leadership, coordination, herding | Couzin et al. 2005; Dyer et al. 2009; Krause et al. 2010 |
+| `concept.topological-interaction` | Neighbours by count, not by distance | air, military | cohesion, collective-order | Ballerini et al. 2008 |
+| `concept.swarm-intelligence` | Swarm intelligence | design, esports, military | coordination, herding, collective-order | Krause et al. 2010; Lorenz et al. 2011 |
+| `concept.information-cascade` | Herding and information cascades | esports, design, military | herding, conformity | Banerjee 1992; Bikhchandani et al. 1992; Anderson & Holt 1996 |
+| `concept.social-loafing` | Social loafing | esports, design, military | social-loafing, mutual-support | Latané et al. 1979; Karau & Williams 1993 |
+| `concept.diffusion-of-responsibility` | Diffusion of responsibility | esports, military | social-loafing, mutual-support | Darley & Latané 1968; Fischer et al. 2011 |
+| `concept.primary-group` | Primary group cohesion | military, esports | cohesion, mutual-support, breaking-point | Shils & Janowitz 1948; Siebold 2007; King 2013 |
+| `concept.breaking-point` | Breaking points and casualty thresholds | military | breaking-point, attrition, panic | Dupuy 1987; Rowland 2006; Dupuy 1990 |
+| `concept.suppression-effects` | Suppression: what fire does besides killing | military, urban | suppression, static-exposure, panic | Rowland 2006; Marshall 1947 |
+| `concept.fear-in-combat` | Fear and stress in combat decisions | military, esports | panic, suppression, loss-chasing | Stouffer & et al. 1949; Starcke & Brand 2012 |
+| `concept.choking` | Choking under pressure | esports | panic, loss-chasing, hot-hand | Baumeister 1984 |
+| `concept.prospect-theory` | Prospect theory and loss aversion | esports, design | loss-chasing | Kahneman & Tversky 1979; Tversky & Kahneman 1992 |
+| `concept.break-even` | Break-even and house-money effects | esports | loss-chasing | Thaler & Johnson 1990; Post et al. 2008 |
+| `concept.tilt` | Tilt | esports | loss-chasing, panic | Smith et al. 2009 |
+| `concept.sunk-cost` | Sunk cost | esports, military | loss-chasing, key-terrain, attrition | Arkes & Blumer 1985 |
+| `concept.hot-hand` | The hot hand and its fallacy | esports | hot-hand, skill-dispersion | Gilovich et al. 1985; Bar-Eli et al. 2006; Miller & Sanjurjo 2018 |
+| `concept.mixed-strategy` | Mixed strategies: being unpredictable | esports, design, military | mixed-strategy, balance | von Neumann & Morgenstern 1944; Walker & Wooders 2001; Wald & Wolfowitz 1940 |
+| `concept.shared-mental-models` | Shared mental models | esports, military | coordination, leadership | Mohammed et al. 2010; DeChurch & Mesmer-Magnus 2010 |
+| `concept.teamwork-components` | The components of teamwork | esports, military | coordination, leadership, mutual-support | Salas et al. 2005 |
+| `concept.virtual-worlds-labs` | Virtual worlds as laboratories of behaviour | design, esports | interaction-network, contagion, territoriality, coordination | Bainbridge 2007; Castronova 2005; Yee et al. 2007 |
+| `concept.proxemics-territory` | Personal space and territory | design, urban | territoriality, cohesion, crowding | Hall 1966; Altman 1975; Yee et al. 2007 |
+| `concept.interaction-networks` | Interaction networks: hubs and weak ties | esports, design | interaction-network, coordination | Barabási & Albert 1999; Granovetter 1973; Newman 2003 |
 
-### Methods (26)
+### Methods (37)
 
 | id | title | patterns | sources |
 |---|---|---|---|
@@ -284,8 +336,19 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 | `method.empirical-bayes` | Shrinkage: empirical Bayes | skill-dispersion, action-value, clutch | Efron & Morris 1975 |
 | `method.expected-kills` | Expected outcomes: from expected goals to expected duels | clutch, action-value, peeker-advantage, sightlines | Rathke 2017; Pollard & Reep 1997; Spearman 2018 |
 | `method.setups-rotations` | Measuring setups, rotations and lurks | rotation, lurk, interior-lines, concentration, flank | Benjamini & Hochberg 1995 |
+| `method.reflection-problem` | The reflection problem: copying or common cause | herding, conformity | Manski 1993 |
+| `method.streak-correction` | Streaks with the finite-sequence correction | hot-hand | Miller & Sanjurjo 2018; Phipson & Smyth 2010 |
+| `method.order-parameters` | Polarisation and milling order parameters | collective-order, milling | Vicsek et al. 1995; Couzin et al. 2002; Tunstrøm et al. 2013 |
+| `method.lagged-heading` | Leaders from time-lagged heading correlation | leadership, coordination | Nagy et al. 2010; Couzin et al. 2005 |
+| `method.route-cascade` | Route-cascade test of herding | herding, conformity | Bikhchandani et al. 1992; Manski 1993; Phipson & Smyth 2010 |
+| `method.lane-segregation` | Lane segregation and trail persistence | lane-formation, flow | Helbing et al. 2005; Helbing et al. 1997 |
+| `method.straggler-hazard` | Straggler hazard | cohesion, mutual-support, defeat-in-detail | Moussaïd et al. 2010; Siebold 2007 |
+| `method.breaking-curve` | Breaking curve | breaking-point, attrition | Dupuy 1987; Rowland 2006 |
+| `method.suppression-response` | Response to incoming fire | suppression | Rowland 2006 |
+| `method.risk-after-outcome` | Risk after a loss or a gain | loss-chasing | Thaler & Johnson 1990; Miller & Sanjurjo 2018 |
+| `method.buy-agreement` | Buy agreement (Fleiss' kappa) | conformity, economy, coordination | Fleiss 1971; Phipson & Smyth 2010 |
 
-### Historical cases (276)
+### Historical cases (277)
 
 | id | case | when | scale | patterns | sources |
 |---|---|---|---|---|---|
@@ -565,8 +628,9 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 | `case.openai-five-og` | OpenAI Five against OG | Apr 2019 | battle | ai-vs-player, tempo, concentration | Berner et al. 2019 |
 | `case.alphastar-2019` | AlphaStar reaches grandmaster | 2019 | campaign | ai-vs-player, skill-dispersion | Vinyals et al. 2019 |
 | `case.desert-storm-left-hook` | The left hook (Operation Desert Storm ground offensive) | 24-28 February 1991 | campaign | flank, envelopment, tempo, penetration | Scales 1993; Bourque 2002; Keaney & Cohen 1993 |
+| `case.corrupted-blood` | The Corrupted Blood incident | September 2005 | campaign | contagion, panic, herding, territoriality | Balicer 2007; Lofgren & Fefferman 2007 |
 
-### Game and level design (16)
+### Game and level design (17)
 
 | id | title | patterns | sources |
 |---|---|---|---|
@@ -586,8 +650,9 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 | `design.map-control` | Map control | key-terrain, local-superiority, flow | Xenopoulos et al. 2022; Rioult et al. 2014; Fernández & Bornn 2018 |
 | `design.heatmaps` | Heatmaps and spatial telemetry in design | flow, kill-zone, key-terrain | Drachen & Canossa 2009; Wallner & Kriglstein 2013; Hoobler et al. 2004; Kim et al. 2008; Bowman et al. 2012 |
 | `design.fun-mastery` | Mastery, learning and fun | readability, skill-dispersion | Koster 2004; Csikszentmihalyi 1990; Schell 2008 |
+| `design.buy-economy` | Round economies and buy decisions | conformity, economy, coordination, mixed-strategy | Xenopoulos et al. 2020; Fleiss 1971 |
 
-### Studies (96)
+### Studies (113)
 
 | id | title | sources |
 |---|---|---|
@@ -687,6 +752,23 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 | `study.hayakawa-2025` | Hayakawa et al.: Valorant rounds from tactical features | Hayakawa et al. 2025 |
 | `study.paskiv-2026` | Paskiv et al.: roles in professional Counter-Strike 2 | Paskiv et al. 2026 |
 | `study.ibrahim-2024` | Ibrahim et al.: training close-quarters battle | Ibrahim et al. 2024 |
+| `study.crowd-turbulence` | Crowd turbulence at the 2006 Hajj | Helbing et al. 2007; Moussaïd et al. 2011 |
+| `study.walking-groups` | Walking groups shape crowds | Moussaïd et al. 2010 |
+| `study.pigeon-hierarchy` | Hierarchical group dynamics in pigeon flocks | Nagy et al. 2010; Vicsek & Zafeiris 2012 |
+| `study.music-lab` | Social influence makes success unequal and unpredictable | Salganik et al. 2006 |
+| `study.wisdom-undermined` | Social influence undermines the wisdom of crowds | Lorenz et al. 2011 |
+| `study.drawing-power-of-crowds` | The drawing power of a crowd | Milgram et al. 1969; Gallup et al. 2012 |
+| `study.asch-conformity` | Conformity to a unanimous majority | Asch 1956; Bond & Smith 1996 |
+| `study.why-they-fight` | Why They Fight: combat motivation in Iraq | Wong et al. 2003; Shils & Janowitz 1948 |
+| `study.cohesion-performance` | Cohesion and performance: meta-analyses | Mullen & Copper 1994; Beal et al. 2003 |
+| `study.loss-averse-golfers` | Loss aversion among professional golfers | Pope & Schweitzer 2011 |
+| `study.hot-hand-baseball` | Hot hands in baseball | Green & Zwiebel 2018 |
+| `study.penalty-kicks` | Penalty kicks: professionals play minimax | Chiappori et al. 2002; Palacios-Huerta 2003; Bar-Eli et al. 2007 |
+| `study.minimax-wimbledon` | Minimax play at Wimbledon | Walker & Wooders 2001 |
+| `study.collective-intelligence` | Collective intelligence of teams | Woolley et al. 2010; Kim et al. 2017 |
+| `study.online-world-networks` | Social networks of an online world | Szell et al. 2010 |
+| `study.team-networks` | Passing networks and team performance | Duch et al. 2010; Grund 2012 |
+| `study.complex-contagion` | Behaviour spreads through clustered networks | Centola 2010 |
 
 ### Bibliography
 
@@ -694,25 +776,38 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Akaike, H. (1974). A new look at the statistical model identification. IEEE Transactions on Automatic Control 19(6): 716-723. *(checked 2026-11-15: detail)*
 - Alexander, C.; Ishikawa, S.; Silverstein, M. (1977). A Pattern Language. Oxford University Press, New York. *(checked 2026-11-15: detail)*
 - Alexander, J. H. (1993). Across the Reef: The Marine Assault of Tarawa. Marine Corps Historical Center, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Altman, I. (1975). The Environment and Social Behavior: Privacy, Personal Space, Territory, Crowding. Brooks/Cole, Monterey CA. *(checked 2026-11-15: detail)*
 - Ammianus Marcellinus (trans. Yonge, C. D.) (1862). The Roman History of Ammianus Marcellinus. Henry G. Bohn, London. *(public domain)* *(checked 2026-11-15: detail)*
+- Anderson, L. R.; Holt, C. A. (1996). Classroom games: information cascades. Journal of Economic Perspectives 10(4): 187-193. doi:10.1257/jep.10.4.187 *(checked 2026-11-15: detail)*
 - Andreas, P. (2008). Blue Helmets and Black Markets: The Business of Survival in the Siege of Sarajevo. Cornell University Press, Ithaca. *(checked 2026-11-15: detail)*
 - Anselin, L. (1995). Local Indicators of Spatial Association—LISA. Geographical Analysis 27(2): 93-115. *(checked 2026-11-15: detail)*
 - Appleman, R. E. (1961). South to the Naktong, North to the Yalu (US Army in the Korean War). Office of the Chief of Military History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Appleman, R. E. (1987). East of Chosin: Entrapment and Breakout in Korea, 1950. Texas A&M University Press, College Station. *(checked 2026-11-15: detail)*
 - Appleman, R. E.; Burns, J. M.; Gugeler, R. A.; Stevens, J. (1948). Okinawa: The Last Battle (US Army in World War II). Historical Division, Department of the Army, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Ardant du Picq, C. (trans. Greely, J. N.; Cotton, R. C.) (1921). Battle Studies: Ancient and Modern Battle. Macmillan, New York. https://www.gutenberg.org/ebooks/7294 *(public domain)* *(checked 2026-11-15: detail)*
+- Arkes, H. R.; Blumer, C. (1985). The psychology of sunk cost. Organizational Behavior and Human Decision Processes 35(1): 124-140. doi:10.1016/0749-5978(85)90049-4 *(checked 2026-11-15: detail)*
 - Armstrong, M. J. (2005). A stochastic salvo model for naval surface combat. Operations Research 53(5): 830-841. doi:10.1287/opre.1040.0195 *(checked 2026-11-15: detail)*
 - Arnold, T. D.; Fiore, N. (2019). Five operational lessons from the Battle for Mosul. Military Review (January-February 2019), Army University Press. *(public domain)* *(checked 2026-11-15: existence)*
 - Arrian (trans. Chinnock, E. J.) (1893). The Anabasis of Alexander. Hodder & Stoughton, London. https://www.gutenberg.org/ebooks/46976 *(public domain)* *(checked 2026-11-15: detail)*
+- Asch, S. E. (1956). Studies of independence and conformity: I. A minority of one against a unanimous majority. Psychological Monographs: General and Applied 70(9): 1-70. doi:10.1037/h0093718 *(checked 2026-11-15: detail)*
 - Atkinson, R. (1993). Crusade: The Untold Story of the Persian Gulf War. Houghton Mifflin, Boston. *(checked 2026-11-15: detail)*
 - Ault, F. W. (1969). Report of the Air-to-Air Missile System Capability Review (the Ault Report). Naval Air Systems Command, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Baddeley, A.; Rubak, E.; Turner, R. (2015). Spatial Point Patterns: Methodology and Applications with R. CRC Press, Boca Raton. *(checked 2026-11-15: detail)*
+- Bainbridge, W. S. (2007). The scientific research potential of virtual worlds. Science 317(5837): 472-476. doi:10.1126/science.1146930 *(checked 2026-11-15: detail)*
+- Balicer, R. D. (2007). Modeling infectious diseases dissemination through online role-playing games. Epidemiology 18(2): 260-261. doi:10.1097/01.ede.0000254692.80550.60 *(checked 2026-11-15: detail)*
 - Ballard, M. B. (2004). Vicksburg: The Campaign That Opened the Mississippi. University of North Carolina Press, Chapel Hill. *(checked 2026-11-15: detail)*
+- Ballerini, M.; Cabibbo, N.; Candelier, R.; Cavagna, A.; Cisbani, E.; Giardina, I.; Lecomte, V.; Orlandi, A.; Parisi, G.; Procaccini, A.; Viale, M.; Zdravkovic, V. (2008). Interaction ruling animal collective behavior depends on topological rather than metric distance: evidence from a field study. Proceedings of the National Academy of Sciences 105(4): 1232-1237. doi:10.1073/pnas.0711437105 *(checked 2026-11-15: detail)*
+- Banerjee, A. V. (1992). A simple model of herd behavior. Quarterly Journal of Economics 107(3): 797-817. doi:10.2307/2118364 *(checked 2026-11-15: detail)*
+- Bar-Eli, M.; Avugos, S.; Raab, M. (2006). Twenty years of "hot hand" research: review and critique. Psychology of Sport and Exercise 7(6): 525-553. doi:10.1016/j.psychsport.2006.03.001 *(checked 2026-11-15: detail)*
+- Bar-Eli, M.; Azar, O. H.; Ritov, I.; Keidar-Levin, Y.; Schein, G. (2007). Action bias among elite soccer goalkeepers: the case of penalty kicks. Journal of Economic Psychology 28(5): 606-621. doi:10.1016/j.joep.2006.12.001 *(checked 2026-11-15: detail)*
 - Bar-Siman-Tov, Y. (1980). The Israeli-Egyptian War of Attrition, 1969-1970. Columbia University Press, New York. *(checked 2026-11-15: detail)*
+- Barabási, A.-L.; Albert, R. (1999). Emergence of scaling in random networks. Science 286(5439): 509-512. doi:10.1126/science.286.5439.509 *(checked 2026-11-15: detail)*
 - Barr, N. (2004). Pendulum of War: The Three Battles of El Alamein. Jonathan Cape, London. *(checked 2026-11-15: detail)*
 - Barrow, G. W. S. (1965). Robert Bruce and the Community of the Realm of Scotland. Eyre & Spottiswoode, London. *(checked 2026-11-15: detail)*
 - Bartley, W. S. (1954). Iwo Jima: Amphibious Epic. Historical Branch, US Marine Corps, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
 - Bauckhage, C.; Kersting, K.; Sifa, R.; Thurau, C.; Drachen, A.; Canossa, A. (2012). How players lose interest in playing a game: an empirical study based on distributions of total playing times. Proc. IEEE Conference on Computational Intelligence and Games (CIG 2012): 139-146. doi:10.1109/CIG.2012.6374148 *(checked 2026-11-15: detail)*
+- Baumeister, R. F. (1984). Choking under pressure: self-consciousness and paradoxical effects of incentives on skillful performance. Journal of Personality and Social Psychology 46(3): 610-620. doi:10.1037/0022-3514.46.3.610 *(checked 2026-11-15: detail)*
+- Beal, D. J.; Cohen, R. R.; Burke, M. J.; McLendon, C. L. (2003). Cohesion and performance in groups: a meta-analytic clarification of construct relations. Journal of Applied Psychology 88(6): 989-1004. doi:10.1037/0021-9010.88.6.989 *(checked 2026-11-15: detail)*
 - Bednárek, D.; Kruliš, M.; Yaghob, J.; Zavoral, F. (2017). Player performance evaluation in team-based first-person shooter eSport. Data Management Technologies and Applications (DATA 2017), CCIS, Springer. *(checked 2026-11-15: existence)*
 - Beevor, A. (1991). Crete: The Battle and the Resistance. John Murray, London. *(checked 2026-11-15: detail)*
 - Beevor, A. (1998). Stalingrad. Viking, London. *(checked 2026-11-15: detail)*
@@ -722,6 +817,7 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Berner, C.; Brockman, G.; Chan, B.; Cheung, V.; et al. (OpenAI) (2019). Dota 2 with large scale deep reinforcement learning. arXiv:1912.06680. https://arxiv.org/abs/1912.06680 *(checked 2026-11-15: detail)*
 - Bernier, Y. W. (2001). Latency compensating methods in client/server in-game protocol design and optimization. Valve Developer Community (Valve Software). https://developer.valvesoftware.com/wiki/Latency_Compensating_Methods_in_Client/Server_In-game_Protocol_Design_and_Optimization *(checked 2026-11-15: existence)*
 - Biddle, S. (2004). Military Power: Explaining Victory and Defeat in Modern Battle. Princeton University Press, Princeton. *(checked 2026-11-15: detail)*
+- Bikhchandani, S.; Hirshleifer, D.; Welch, I. (1992). A theory of fads, fashion, custom, and cultural change as informational cascades. Journal of Political Economy 100(5): 992-1026. doi:10.1086/261849 *(checked 2026-11-15: detail)*
 - Björk, S.; Holopainen, J. (2005). Patterns in Game Design. Charles River Media, Hingham. *(checked 2026-11-15: detail)*
 - Blackett, P. M. S. (1962). Studies of War: Nuclear and Conventional. Oliver & Boyd, Edinburgh. *(checked 2026-11-15: detail)*
 - Blair, C. (1975). Silent Victory: The U.S. Submarine War Against Japan. Lippincott, Philadelphia. *(checked 2026-11-15: detail)*
@@ -729,6 +825,7 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Block, F.; Hodge, V.; Hobson, S.; Sephton, N.; Devlin, S.; Ursu, M. F.; Drachen, A.; Cowling, P. I. (2018). Narrative bytes: data-driven content production in esports. Proc. ACM International Conference on Interactive Experiences for TV and Online Video (TVX 2018): 29-41. *(checked 2026-11-15: existence)*
 - Blumenson, M. (1961). Breakout and Pursuit (US Army in World War II). Office of the Chief of Military History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Blumenson, M. (1967). Kasserine Pass. Houghton Mifflin, Boston. *(checked 2026-11-15: detail)*
+- Bond, R.; Smith, P. B. (1996). Culture and conformity: a meta-analysis of studies using Asch's (1952b, 1956) line judgment task. Psychological Bulletin 119(1): 111-137. doi:10.1037/0033-2909.119.1.111 *(checked 2026-11-15: detail)*
 - Bourque, S. A. (2002). Jayhawk! The VII Corps in the Persian Gulf War. Center of Military History, US Army, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Bowden, M. (1999). Black Hawk Down: A Story of Modern War. Atlantic Monthly Press, New York. *(checked 2026-11-15: detail)*
 - Bowman, B.; Elmqvist, N.; Jankun-Kelly, T. J. (2012). Toward visualization for games: theory, design space, and patterns. IEEE Transactions on Visualization and Computer Graphics 18(11): 1956-1968. *(checked 2026-11-15: detail)*
@@ -745,9 +842,12 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Caldwell, D.; Muller, R. (2007). The Luftwaffe over Germany: Defense of the Reich. Greenhill Books, London. *(checked 2026-11-15: detail)*
 - Campbell, N. J. M. (1986). Jutland: An Analysis of the Fighting. Conway Maritime Press, London. *(checked 2026-11-15: detail)*
 - Canossa, A.; Drachen, A.; Sørensen, J. R. M. (2011). Arrrgghh!!! - blending quantitative and qualitative methods to detect player frustration. Proc. 6th International Conference on Foundations of Digital Games (FDG 2011), ACM: 61-68. *(checked 2026-11-15: detail)*
+- Castronova, E. (2005). Synthetic Worlds: The Business and Culture of Online Games. University of Chicago Press, Chicago. *(checked 2026-11-15: detail)*
+- Centola, D. (2010). The spread of behavior in an online social network experiment. Science 329(5996): 1194-1197. doi:10.1126/science.1185231 *(checked 2026-11-15: detail)*
 - Cervone, D.; D'Amour, A.; Bornn, L.; Goldsberry, K. (2016). A multiresolution stochastic process model for predicting basketball possession outcomes. Journal of the American Statistical Association 111(514): 585-599. *(checked 2026-11-15: detail)*
 - Chandler, D. G. (1966). The Campaigns of Napoleon. Macmillan, New York. *(checked 2026-11-15: detail)*
 - Chandler, D. G. (1973). Marlborough as Military Commander. Batsford, London. *(checked 2026-11-15: detail)*
+- Chiappori, P.-A.; Levitt, S.; Groseclose, T. (2002). Testing mixed-strategy equilibria when players are heterogeneous: the case of penalty kicks in soccer. American Economic Review 92(4): 1138-1151. doi:10.1257/00028280260344678 *(checked 2026-11-15: detail)*
 - Churchill, W. S. (1899). The River War: An Historical Account of the Reconquest of the Soudan. Longmans, Green, London. https://www.gutenberg.org/ebooks/4943 *(public domain)* *(checked 2026-11-15: detail)*
 - Cilliers, J. K. (1985). Counter-Insurgency in Rhodesia. Croom Helm, London. *(checked 2026-11-15: detail)*
 - Citino, R. M. (2005). The German Way of War: From the Thirty Years' War to the Third Reich. University Press of Kansas, Lawrence. *(checked 2026-11-15: detail)*
@@ -770,6 +870,8 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Corbett, J. S. (1921). Naval Operations vol. 2 (History of the Great War). Longmans, Green, London. *(public domain)* *(checked 2026-11-15: existence)*
 - Corbett, J. S. (1923). Naval Operations vol. 3 (History of the Great War). Longmans, Green, London. *(public domain)* *(checked 2026-11-15: existence)*
 - Cordesman, A. H.; Wagner, A. R. (1990). The Lessons of Modern War, Volume II: The Iran-Iraq War. Westview Press, Boulder. *(checked 2026-11-15: existence)*
+- Couzin, I. D.; Krause, J.; Franks, N. R.; Levin, S. A. (2005). Effective leadership and decision-making in animal groups on the move. Nature 433(7025): 513-516. doi:10.1038/nature03236 *(checked 2026-11-15: detail)*
+- Couzin, I. D.; Krause, J.; James, R.; Ruxton, G. D.; Franks, N. R. (2002). Collective memory and spatial sorting in animal groups. Journal of Theoretical Biology 218(1): 1-11. doi:10.1006/jtbi.2002.3065 *(checked 2026-11-15: detail)*
 - Cox, D. R. (1972). Regression models and life-tables. Journal of the Royal Statistical Society B 34(2): 187-220. *(checked 2026-11-15: detail)*
 - Craven, W. F.; Cate, J. L. (eds.) (1949). The Army Air Forces in World War II, vol. 2: Europe: Torch to Pointblank, August 1942 to December 1943. University of Chicago Press, Chicago. *(checked 2026-11-15: existence)*
 - Craven, W. F.; Cate, J. L. (eds.) (1951). The Army Air Forces in World War II, vol. 3: Europe: Argument to V-E Day, January 1944 to May 1945. University of Chicago Press, Chicago. *(checked 2026-11-15: existence)*
@@ -777,8 +879,10 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Curry, A. (2005). Agincourt: A New History. Tempus, Stroud. *(checked 2026-11-15: detail)*
 - Cutler, T. J. (1994). The Battle of Leyte Gulf, 23-26 October 1944. HarperCollins, New York. *(checked 2026-11-15: detail)*
 - D'Este, C. (1983). Decision in Normandy. Collins, London. *(checked 2026-11-15: existence)*
+- Darley, J. M.; Latané, B. (1968). Bystander intervention in emergencies: diffusion of responsibility. Journal of Personality and Social Psychology 8(4, Pt. 1): 377-383. doi:10.1037/h0025589 *(checked 2026-11-15: detail)*
 - Davies, N. (2003). Rising '44: The Battle for Warsaw. Macmillan, London. *(checked 2026-11-15: detail)*
 - Davis, R. G. (1993). Carl A. Spaatz and the Air War in Europe. Center for Air Force History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- DeChurch, L. A.; Mesmer-Magnus, J. R. (2010). The cognitive underpinnings of effective teamwork: a meta-analysis. Journal of Applied Psychology 95(1): 32-53. doi:10.1037/a0017328 *(checked 2026-11-15: detail)*
 - Decroos, T.; Bransen, L.; Van Haaren, J.; Davis, J. (2019). Actions speak louder than goals: valuing player actions in soccer. Proc. 25th ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD 2019): 1851-1861. doi:10.1145/3292500.3330758 *(checked 2026-11-15: detail)*
 - Deitchman, S. J. (1962). A Lanchester model of guerrilla warfare. Operations Research 10(6): 818-827. doi:10.1287/opre.10.6.818 *(checked 2026-11-15: detail)*
 - Delbrück, H. (trans. Renfroe, W. J.) (1990). History of the Art of War, vol. 4: The Dawn of Modern Warfare (orig. 1920). University of Nebraska Press, Lincoln. *(checked 2026-11-15: existence)*
@@ -793,10 +897,13 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Drachen, A.; Sifa, R.; Bauckhage, C.; Thurau, C. (2012). Guns, swords and data: clustering of player behavior in computer games in the wild. Proc. IEEE Conference on Computational Intelligence and Games (CIG 2012): 163-170. *(checked 2026-11-15: detail)*
 - Drachen, A.; Yancey, M.; Maguire, J.; Chu, D.; Wang, I. Y.; Mahlmann, T.; Schubert, M.; Klabjan, D. (2014). Skill-based differences in spatio-temporal team behaviour in Defence of the Ancients 2 (DotA 2). Proc. IEEE Games Media Entertainment (GEM 2014): 1-8. doi:10.1109/GEM.2014.7048109 *(checked 2026-11-15: existence)*
 - Drea, E. J. (1981). Nomonhan: Japanese-Soviet Tactical Combat, 1939 (Leavenworth Papers 2). Combat Studies Institute, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
+- Drury, J.; Cocking, C.; Reicher, S. (2009). Everyone for themselves? A comparative study of crowd solidarity among emergency survivors. British Journal of Social Psychology 48(3): 487-506. doi:10.1348/014466608X357893 *(checked 2026-11-15: detail)*
+- Duch, J.; Waitzman, J. S.; Amaral, L. A. N. (2010). Quantifying the performance of individual players in a team activity. PLoS ONE 5(6): e10937. doi:10.1371/journal.pone.0010937 *(checked 2026-11-15: detail)*
 - Dugan, J.; Stewart, C. (1962). Ploesti: The Great Ground-Air Battle of 1 August 1943. Random House, New York. *(checked 2026-11-15: detail)*
 - Dupuy, T. N. (1979). Numbers, Predictions and War. Bobbs-Merrill, Indianapolis. *(checked 2026-11-15: detail)*
 - Dupuy, T. N. (1987). Understanding War: History and Theory of Combat. Paragon House, New York. *(checked 2026-11-15: detail)*
 - Dupuy, T. N. (1990). Attrition: Forecasting Battle Casualties and Equipment Losses in Modern War. HERO Books, Fairfax VA. *(checked 2026-11-15: detail)*
+- Dyer, J. R. G.; Johansson, A.; Helbing, D.; Couzin, I. D.; Krause, J. (2009). Leadership, consensus decision making and collective behaviour in humans. Philosophical Transactions of the Royal Society B 364(1518): 781-789. doi:10.1098/rstb.2008.0233 *(checked 2026-11-15: detail)*
 - Echevarria, A. J. (2002). Clausewitz's Center of Gravity: Changing Our Warfighting Doctrine - Again!. Strategic Studies Institute, US Army War College, Carlisle PA. *(public domain)* *(checked 2026-11-15: detail)*
 - Efron, B. (1979). Bootstrap methods: another look at the jackknife. Annals of Statistics 7(1): 1-26. *(checked 2026-11-15: detail)*
 - Efron, B.; Morris, C. (1975). Data analysis using Stein's estimator and its generalizations. Journal of the American Statistical Association 70(350): 311-319. doi:10.1080/01621459.1975.10479864 *(checked 2026-11-15: detail)*
@@ -816,7 +923,9 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Farrell, T. (2017). Unwinnable: Britain's War in Afghanistan, 2001-2014. Bodley Head, London. *(checked 2026-11-15: detail)*
 - Fernández, J.; Bornn, L. (2018). Wide open spaces: a statistical technique for measuring space creation in professional soccer. MIT Sloan Sports Analytics Conference 2018. *(checked 2026-11-15: detail)*
 - Fernández, J.; Bornn, L.; Cervone, D. (2021). A framework for the fine-grained evaluation of the instantaneous expected value of soccer possessions. Machine Learning 110(6): 1389-1427. doi:10.1007/s10994-021-05989-6 *(checked 2026-11-15: detail)*
+- Fischer, P.; Krueger, J. I.; Greitemeyer, T.; Vogrincic, C.; Kastenmüller, A.; Frey, D.; Heene, M.; Wicher, M.; Kainbacher, M. (2011). The bystander-effect: a meta-analytic review on bystander intervention in dangerous and non-dangerous emergencies. Psychological Bulletin 137(4): 517-537. doi:10.1037/a0023304 *(checked 2026-11-15: detail)*
 - Fisher, P. F. (1993). Algorithm and implementation uncertainty in viewshed analysis. International Journal of Geographical Information Systems 7(4): 331-347. *(checked 2026-11-15: detail)*
+- Fleiss, J. L. (1971). Measuring nominal scale agreement among many raters. Psychological Bulletin 76(5): 378-382. doi:10.1037/h0031619 *(checked 2026-11-15: detail)*
 - Fontenot, G.; Degen, E. J.; Tohn, D. (2004). On Point: The United States Army in Operation Iraqi Freedom. Combat Studies Institute Press, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
 - Forty, G. (2004). Villers Bocage (Battle Zone Normandy). Sutton, Stroud. *(checked 2026-11-15: detail)*
 - Fox, A. C. (2019). "Cyborgs at Little Stalingrad": A Brief History of the Battles of the Donetsk Airport, 26 May 2014 to 21 January 2015 (Land Warfare Paper). Association of the United States Army, Institute of Land Warfare, Arlington. *(checked 2026-11-15: existence)*
@@ -825,14 +934,18 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Franks, A.; Miller, A.; Bornn, L.; Goldsberry, K. (2015). Characterizing the spatial structure of defensive skill in professional basketball. Annals of Applied Statistics 9(1): 94-121. *(checked 2026-11-15: detail)*
 - Fricker, R. D. (1998). Attrition models of the Ardennes campaign. Naval Research Logistics 45(1): 1-22. https://www.rand.org/pubs/external_publications/EP19980204.html *(checked 2026-11-15: detail)*
 - Frieser, K.-H. (2005). The Blitzkrieg Legend: The 1940 Campaign in the West. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
+- Fruin, J. J. (1971). Pedestrian Planning and Design. Metropolitan Association of Urban Designers and Environmental Planners, New York. *(checked 2026-11-15: detail)*
 - Fuller, J. F. C. (1926). The Foundations of the Science of War. Hutchinson, London. *(checked 2026-11-15: detail)*
 - Fullerton, T.; Swain, C.; Hoffman, S. (2008). Game Design Workshop (2nd ed.). Morgan Kaufmann, Burlington. *(checked 2026-11-15: detail)*
 - Futrell, R. F. (1983). The United States Air Force in Korea, 1950-1953 (rev. ed.). Office of Air Force History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Gabriel, R. A. (1984). Operation Peace for Galilee: The Israeli-PLO War in Lebanon. Hill & Wang, New York. *(checked 2026-11-15: detail)*
+- Gallup, A. C.; Hale, J. J.; Sumpter, D. J. T.; Garnier, S.; Kacelnik, A.; Krebs, J. R.; Couzin, I. D. (2012). Visual attention and the acquisition of information in human crowds. Proceedings of the National Academy of Sciences 109(19): 7245-7250. doi:10.1073/pnas.1116141109 *(checked 2026-11-15: detail)*
 - Galula, D. (1964). Counterinsurgency Warfare: Theory and Practice. Praeger, New York. *(checked 2026-11-15: detail)*
 - GameSpot (2014). Counter-Strike eSports team forfeits victory after using map exploit. GameSpot. https://www.gamespot.com/articles/counter-strike-esports-team-forfeits-victory-after/1100-6423866/ *(checked 2026-11-15: detail)*
+- Garcimartín, A.; Zuriguel, I.; Pastor, J. M.; Martín-Gómez, C.; Parisi, D. R. (2014). Experimental evidence of the "faster is slower" effect. Transportation Research Procedia 2: 760-767. doi:10.1016/j.trpro.2014.09.085 *(checked 2026-11-15: detail)*
 - Gayle, G. D. (1996). Bloody Beaches: The Marines at Peleliu. Marine Corps Historical Center, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Getis, A.; Ord, J. K. (1992). The analysis of spatial association by use of distance statistics. Geographical Analysis 24(3): 189-206. *(checked 2026-11-15: detail)*
+- Gilovich, T.; Vallone, R.; Tversky, A. (1985). The hot hand in basketball: on the misperception of random sequences. Cognitive Psychology 17(3): 295-314. doi:10.1016/0010-0285(85)90010-6 *(checked 2026-11-15: detail)*
 - Gini, C. (1912). Variabilità e mutabilità. Tipografia di Paolo Cuppini, Bologna. *(public domain)* *(checked 2026-11-15: existence)*
 - Glantz, D. M. (1983). August Storm: The Soviet 1945 Strategic Offensive in Manchuria (Leavenworth Papers 7). Combat Studies Institute, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
 - Glantz, D. M. (1989). Soviet Military Deception in the Second World War. Frank Cass, London. *(checked 2026-11-15: detail)*
@@ -848,16 +961,21 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Goldsberry, K. (2012). CourtVision: new visual and spatial analytics for the NBA. MIT Sloan Sports Analytics Conference 2012. *(checked 2026-11-15: detail)*
 - Goldsworthy, A. (2001). Cannae. Cassell, London. *(checked 2026-11-15: detail)*
 - Gordon, A. (1996). The Rules of the Game: Jutland and British Naval Command. John Murray, London. *(checked 2026-11-15: detail)*
+- Granovetter, M. S. (1973). The strength of weak ties. American Journal of Sociology 78(6): 1360-1380. doi:10.1086/225469 *(checked 2026-11-15: detail)*
 - Grau, L. W. (1997). Russian-manufactured armored vehicle vulnerability in urban combat: the Chechnya experience. Red Thrust Star (January 1997), Foreign Military Studies Office, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
 - Grau, L. W. (ed.) (1996). The Bear Went Over the Mountain: Soviet Combat Tactics in Afghanistan. National Defense University Press, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Green, B.; Zwiebel, J. (2018). The hot-hand fallacy: cognitive mistakes or equilibrium adjustments? Evidence from Major League Baseball. Management Science 64(11): 5315-5348. doi:10.1287/mnsc.2017.2804 *(checked 2026-11-15: detail)*
 - Greene, J. A. (2005). The Guns of Independence: The Siege of Yorktown, 1781. Savas Beatie, New York. *(checked 2026-11-15: detail)*
 - Greene, J.; Massignani, A. (1998). The Naval War in the Mediterranean, 1940-1943. Chatham Publishing, London. *(checked 2026-11-15: detail)*
+- Grund, T. U. (2012). Network structure and team performance: the case of English Premier League soccer teams. Social Networks 34(4): 682-690. doi:10.1016/j.socnet.2012.08.004 *(checked 2026-11-15: detail)*
 - Gudmundsson, B. I. (1989). Stormtroop Tactics: Innovation in the German Army, 1914-1918. Praeger, New York. *(checked 2026-11-15: detail)*
 - Gudmundsson, J.; Horton, M. (2017). Spatio-temporal analysis of team sports. ACM Computing Surveys 50(2): article 22. https://arxiv.org/abs/1602.06994 *(checked 2026-11-15: detail)*
 - Guilmartin, J. F. (1974). Gunpowder and Galleys: Changing Technology and Mediterranean Warfare at Sea in the Sixteenth Century. Cambridge University Press, Cambridge. *(checked 2026-11-15: detail)*
 - Guo, C.; Pleiss, G.; Sun, Y.; Weinberger, K. Q. (2017). On calibration of modern neural networks. Proceedings of the 34th International Conference on Machine Learning (ICML 2017): 1321-1330. doi:10.48550/arXiv.1706.04599 *(checked 2026-11-15: detail)*
 - Güttler, C.; Johansson, T. D. (2003). Spatial principles of level-design in multi-player first-person shooters. Proc. 2nd Workshop on Network and System Support for Games (NetGames 2003), ACM: 158-170. *(checked 2026-11-15: detail)*
+- Haghani, M.; Sarvi, M. (2018). Crowd behaviour and motion: empirical methods. Transportation Research Part B: Methodological 107: 253-294. doi:10.1016/j.trb.2017.06.017 *(checked 2026-11-15: detail)*
 - Haldon, J. (2001). The Byzantine Wars. Tempus, Stroud. *(checked 2026-11-15: detail)*
+- Hall, E. T. (1966). The Hidden Dimension. Doubleday, Garden City NY. *(checked 2026-11-15: detail)*
 - Hallion, R. P. (1992). Storm over Iraq: Air Power and the Gulf War. Smithsonian Institution Press, Washington DC. *(checked 2026-11-15: detail)*
 - Hardesty, V. (1982). Red Phoenix: The Rise of Soviet Air Power, 1941-1945. Smithsonian Institution Press, Washington DC. *(checked 2026-11-15: detail)*
 - Hardesty, V.; Grinberg, I. (2012). Red Phoenix Rising: The Soviet Air Force in World War II. University Press of Kansas, Lawrence. *(checked 2026-11-15: detail)*
@@ -887,6 +1005,11 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Headquarters, US Marine Corps (1998). MCWP 3-35.3 Military Operations on Urbanized Terrain (MOUT). Department of the Navy, Washington DC (26 April 1998). https://archive.org/details/milmanual-mcwp-3-35.3-military-operations-on-urbanized-terrain-mout *(public domain)* *(checked 2026-11-15: detail)*
 - Healy, M. (1993). Qadesh 1300 BC: Clash of the Warrior Kings (Campaign 22). Osprey, London. *(checked 2026-11-15: detail)*
 - Heinl, R. D. (1968). Victory at High Tide: The Inchon-Seoul Campaign. Lippincott, Philadelphia. *(checked 2026-11-15: detail)*
+- Helbing, D.; Buzna, L.; Johansson, A.; Werner, T. (2005). Self-organized pedestrian crowd dynamics: experiments, simulations, and design solutions. Transportation Science 39(1): 1-24. doi:10.1287/trsc.1040.0108 *(checked 2026-11-15: detail)*
+- Helbing, D.; Farkas, I.; Vicsek, T. (2000). Simulating dynamical features of escape panic. Nature 407(6803): 487-490. doi:10.1038/35035023 *(checked 2026-11-15: detail)*
+- Helbing, D.; Johansson, A.; Al-Abideen, H. Z. (2007). Dynamics of crowd disasters: an empirical study. Physical Review E 75(4): 046109. doi:10.1103/PhysRevE.75.046109 *(checked 2026-11-15: detail)*
+- Helbing, D.; Keltsch, J.; Molnár, P. (1997). Modelling the evolution of human trail systems. Nature 388(6637): 47-50. doi:10.1038/40353 *(checked 2026-11-15: detail)*
+- Helbing, D.; Molnár, P. (1995). Social force model for pedestrian dynamics. Physical Review E 51(5): 4282-4286. doi:10.1103/PhysRevE.51.4282 *(checked 2026-11-15: detail)*
 - Helmbold, R. L. (1995). Rates of advance in land combat operations. Naval Research Logistics 42(4): 635-669. *(checked 2026-11-15: detail)*
 - Herbrich, R.; Minka, T.; Graepel, T. (2007). TrueSkill: a Bayesian skill rating system. Advances in Neural Information Processing Systems 19, MIT Press: 569-576. *(checked 2026-11-15: existence)*
 - Hermes, W. G. (1966). Truce Tent and Fighting Front (US Army in the Korean War). Office of the Chief of Military History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
@@ -920,7 +1043,9 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Jomini, A.-H. de (trans. Mendell, G. H.; Craighill, W. P.) (1862). The Art of War. J. B. Lippincott, Philadelphia. https://www.gutenberg.org/ebooks/13549 *(public domain)* *(checked 2026-11-15: detail)*
 - Juul, J. (2005). Half-Real: Video Games between Real Rules and Fictional Worlds. MIT Press, Cambridge MA. *(checked 2026-11-15: detail)*
 - Kahalani, A. (1984). The Heights of Courage: A Tank Leader's War on the Golan. Greenwood Press, Westport. *(checked 2026-11-15: detail)*
+- Kahneman, D.; Tversky, A. (1979). Prospect theory: an analysis of decision under risk. Econometrica 47(2): 263-291. doi:10.2307/1914185 *(checked 2026-11-15: detail)*
 - Kaplan, E. L.; Meier, P. (1958). Nonparametric estimation from incomplete observations. Journal of the American Statistical Association 53(282): 457-481. *(checked 2026-11-15: detail)*
+- Karau, S. J.; Williams, K. D. (1993). Social loafing: a meta-analytic review and theoretical integration. Journal of Personality and Social Psychology 65(4): 681-706. doi:10.1037/0022-3514.65.4.681 *(checked 2026-11-15: detail)*
 - Katona, A.; Spick, R.; Hodge, V. J.; Demediuk, S.; Block, F.; Drachen, A.; Walker, J. A. (2019). Time to die: death prediction in Dota 2 using deep learning. Proc. IEEE Conference on Games (CoG 2019): 1-8. *(checked 2026-11-15: existence)*
 - Keaney, T. A.; Cohen, E. A. (1993). Gulf War Air Power Survey: Summary Report. US Government Printing Office, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Kendall, M. G. (1938). A new measure of rank correlation. Biometrika 30(1/2): 81-93. *(checked 2026-11-15: detail)*
@@ -928,11 +1053,14 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Kennedy, L. (1974). Pursuit: The Chase and Sinking of the Bismarck. Collins, London. *(checked 2026-11-15: detail)*
 - Ketchum, R. M. (1997). Saratoga: Turning Point of America's Revolutionary War. Henry Holt, New York. *(checked 2026-11-15: detail)*
 - Kim, J. H.; Gunn, D. V.; Schuh, E.; Phillips, B. C.; Pagulayan, R. J.; Wixon, D. (2008). Tracking real-time user experience (TRUE): a comprehensive instrumentation solution for complex systems. Proc. CHI 2008, ACM: 443-452. *(checked 2026-11-15: detail)*
+- Kim, Y. J.; Engel, D.; Woolley, A. W.; Lin, J. Y. T.; McArthur, N.; Malone, T. W. (2017). What makes a strong team? Using collective intelligence to predict team performance in League of Legends. Proceedings of the 2017 ACM Conference on Computer Supported Cooperative Work and Social Computing (CSCW): 2316-2329. doi:10.1145/2998181.2998185 *(checked 2026-11-15: detail)*
+- King, A. (2013). The Combat Soldier: Infantry Tactics and Cohesion in the Twentieth and Twenty-First Centuries. Oxford University Press, Oxford. *(checked 2026-11-15: detail)*
 - Kirby, M. W. (2003). Operational Research in War and Peace: The British Experience from the 1930s to 1970. Imperial College Press, London. *(checked 2026-11-15: detail)*
 - Knight, I. (2002). Isandlwana 1879: The Great Zulu Victory. Osprey, Oxford. *(checked 2026-11-15: detail)*
 - Knox, E. G. (1964). The detection of space-time interactions. Journal of the Royal Statistical Society C 13(1): 25-30. *(checked 2026-11-15: detail)*
 - Koopman, B. O. (1946). Search and Screening (OEG Report 56). Operations Evaluation Group, Office of the Chief of Naval Operations, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Koster, R. (2004). A Theory of Fun for Game Design. Paraglyph Press, Scottsdale. *(checked 2026-11-15: detail)*
+- Krause, J.; Ruxton, G. D.; Krause, S. (2010). Swarm intelligence in animals and humans. Trends in Ecology & Evolution 25(1): 28-34. doi:10.1016/j.tree.2009.06.016 *(checked 2026-11-15: detail)*
 - Krause, M. D. (1991). The Battle of 73 Easting, 26 February 1991: A Historical Introduction to a Simulation. US Army Center of Military History / DARPA, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Kremers, R. (2009). Level Design: Concept, Theory, and Practice. A K Peters, Wellesley. *(checked 2026-11-15: detail)*
 - Krepinevich, A.; Watts, B.; Work, R. (2003). Meeting the Anti-Access and Area-Denial Challenge. Center for Strategic and Budgetary Assessments, Washington DC. *(checked 2026-11-15: existence)*
@@ -943,6 +1071,7 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Lambeth, B. S. (1984). Moscow's Lessons from the 1982 Lebanon Air War. RAND Corporation, Santa Monica. *(checked 2026-11-15: detail)*
 - Lambeth, B. S. (2001). NATO's Air War for Kosovo: A Strategic and Operational Assessment (MR-1365-AF). RAND Corporation, Santa Monica. https://www.rand.org/pubs/monograph_reports/MR1365.html *(checked 2026-11-15: detail)*
 - Lanchester, F. W. (1916). Aircraft in Warfare: The Dawn of the Fourth Arm. Constable, London. https://archive.org/details/aircraftinwarfar00lancrich *(public domain)* *(checked 2026-11-15: detail)*
+- Latané, B.; Williams, K.; Harkins, S. (1979). Many hands make light the work: the causes and consequences of social loafing. Journal of Personality and Social Psychology 37(6): 822-832. doi:10.1037/0022-3514.37.6.822 *(checked 2026-11-15: detail)*
 - Lavery, B. (1998). Nelson and the Nile: The Naval War Against Bonaparte, 1798. Chatham Publishing, London. *(checked 2026-11-15: detail)*
 - Lawrence, C. A. (2015). Kursk: The Battle of Prokhorovka. Aberdeen Books, Sheridan CO. *(checked 2026-11-15: detail)*
 - Lawrence, C. A. (2017). War by Numbers: Understanding Conventional Combat. Potomac Books, Lincoln NE. *(checked 2026-11-15: detail)*
@@ -953,6 +1082,8 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Livy (trans. Roberts, W. M.) (1905). History of Rome. J. M. Dent (Everyman's Library), London. *(public domain)* *(checked 2026-11-15: existence)*
 - Lloyd, M. (1967). Mean crowding. Journal of Animal Ecology 36(1): 1-30. *(checked 2026-11-15: detail)*
 - Lock, D.; Nettleton, D. (2014). Using random forests to estimate win probability before each play of an NFL game. Journal of Quantitative Analysis in Sports 10(2). doi:10.1515/jqas-2013-0100 *(checked 2026-11-15: detail)*
+- Lofgren, E. T.; Fefferman, N. H. (2007). The untapped potential of virtual game worlds to shed light on real world epidemics. The Lancet Infectious Diseases 7(9): 625-629. doi:10.1016/S1473-3099(07)70212-8 *(checked 2026-11-15: detail)*
+- Lorenz, J.; Rauhut, H.; Schweitzer, F.; Helbing, D. (2011). How social influence can undermine the wisdom of crowd effect. Proceedings of the National Academy of Sciences 108(22): 9020-9025. doi:10.1073/pnas.1008636108 *(checked 2026-11-15: detail)*
 - Lucas, T. W.; Dinges, J. A. (2004). The effect of battle circumstances on fitting Lanchester equations to the Battle of Kursk. Military Operations Research 9(2): 17-30. *(checked 2026-11-15: existence)*
 - Lucas, T. W.; Turkes, T. (2004). Fitting Lanchester equations to the battles of Kursk and Ardennes. Naval Research Logistics 51(1): 95-116. doi:10.1002/nav.10101 *(checked 2026-11-15: detail)*
 - Lucey, P.; Bialkowski, A.; Carr, P.; Morgan, S.; Matthews, I.; Sheikh, Y. (2013). Representing and discovering adversarial team behaviors using player roles. Proc. IEEE Conference on Computer Vision and Pattern Recognition (CVPR 2013): 2706-2713. *(checked 2026-11-15: detail)*
@@ -969,8 +1100,10 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Makarov, I.; Savostyanov, D.; Litvyakov, B.; Ignatov, D. I. (2018). Predicting winning team and probabilistic ratings in Dota 2 and Counter-Strike: Global Offensive video games. Analysis of Images, Social Networks and Texts (AIST 2017), LNCS 10716, Springer: 183-196. *(checked 2026-11-15: existence)*
 - Mangel, M.; Samaniego, F. J. (1984). Abraham Wald's work on aircraft survivability. Journal of the American Statistical Association 79(386): 259-267. *(checked 2026-11-15: detail)*
 - Mann, H. B.; Whitney, D. R. (1947). On a test of whether one of two random variables is stochastically larger than the other. Annals of Mathematical Statistics 18(1): 50-60. *(checked 2026-11-15: detail)*
+- Manski, C. F. (1993). Identification of endogenous social effects: the reflection problem. Review of Economic Studies 60(3): 531-542. doi:10.2307/2298123 *(checked 2026-11-15: detail)*
 - Manstein, E. von (1958). Lost Victories. Methuen, London. *(checked 2026-11-15: detail)*
 - Mao Tse-tung (trans. Griffith, S. B.) (1961). On Guerrilla Warfare (orig. 1937). Praeger, New York. *(checked 2026-11-15: existence)*
+- Marshall, S. L. A. (1947). Men Against Fire: The Problem of Battle Command in Future War. William Morrow, New York. *(checked 2026-11-15: detail)*
 - Marshall, S. L. A. (1956). Pork Chop Hill: The American Fighting Man in Action, Korea, Spring 1953. William Morrow, New York. *(checked 2026-11-15: detail)*
 - Martin, C.; Parker, G. (1988). The Spanish Armada. Hamish Hamilton, London. *(checked 2026-11-15: detail)*
 - Matthews, M. M. (2006). Operation AL FAJR: A Study in Army and Marine Corps Joint Operations. Combat Studies Institute Press, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
@@ -991,9 +1124,12 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Middlebrook, M. (1980). The Battle of Hamburg: Allied Bomber Forces Against a German City in 1943. Allen Lane, London. *(checked 2026-11-15: detail)*
 - Middlebrook, M. (1983). The Schweinfurt-Regensburg Mission. Allen Lane, London. *(checked 2026-11-15: detail)*
 - Middlebrook, M.; Mahoney, P. (1977). Battleship: The Loss of the Prince of Wales and the Repulse. Allen Lane, London. *(checked 2026-11-15: detail)*
+- Milgram, S.; Bickman, L.; Berkowitz, L. (1969). Note on the drawing power of crowds of different size. Journal of Personality and Social Psychology 13(2): 79-82. doi:10.1037/h0028070 *(checked 2026-11-15: detail)*
 - Miller, A.; Bornn, L.; Adams, R.; Goldsberry, K. (2014). Factorized point process intensities: a spatial analysis of professional basketball. Proc. 31st International Conference on Machine Learning (ICML 2014), PMLR 32: 235-243. *(checked 2026-11-15: detail)*
+- Miller, J. B.; Sanjurjo, A. (2018). Surprised by the hot hand fallacy? A truth in the law of small numbers. Econometrica 86(6): 2019-2047. doi:10.3982/ECTA14943 *(checked 2026-11-15: detail)*
 - Miller, J. L.; Crowcroft, J. (2009). Avatar movement in World of Warcraft battlegrounds. Proc. 8th Workshop on Network and System Support for Games (NetGames 2009), IEEE: 1-6. doi:10.1109/NETGAMES.2009.5446226 *(checked 2026-11-15: existence)*
 - Minka, T.; Cleven, R.; Zaykov, Y. (2018). TrueSkill 2: an improved Bayesian skill rating system (MSR-TR-2018-8). Microsoft Research, Redmond. *(checked 2026-11-15: existence)*
+- Mohammed, S.; Ferzandi, L.; Hamilton, K. (2010). Metaphor no more: a 15-year review of the team mental model construct. Journal of Management 36(4): 876-910. doi:10.1177/0149206309356804 *(checked 2026-11-15: detail)*
 - Montross, L.; Canzona, N. A. (1957). The Chosin Reservoir Campaign (US Marine Operations in Korea 1950-1953, Volume III). Historical Branch, US Marine Corps, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
 - Moore, H. G.; Galloway, J. L. (1992). We Were Soldiers Once... and Young. Random House, New York. *(checked 2026-11-15: detail)*
 - Moran, P. A. P. (1950). Notes on continuous stochastic phenomena. Biometrika 37(1/2): 17-23. *(checked 2026-11-15: detail)*
@@ -1006,12 +1142,17 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Morison, S. E. (1958). Leyte, June 1944-January 1945 (History of US Naval Operations in WWII, vol. 12). Little, Brown, Boston. *(checked 2026-11-15: existence)*
 - Morison, S. E. (1960). Victory in the Pacific, 1945 (History of US Naval Operations in WWII, vol. 14). Little, Brown, Boston. *(checked 2026-11-15: detail)*
 - Morse, P. M.; Kimball, G. E. (1951). Methods of Operations Research. Technology Press of MIT and John Wiley & Sons, New York, 1951. *(public domain)* *(checked 2026-11-15: detail)*
+- Moussaïd, M.; Helbing, D.; Theraulaz, G. (2011). How simple rules determine pedestrian behavior and crowd disasters. Proceedings of the National Academy of Sciences 108(17): 6884-6888. doi:10.1073/pnas.1016507108 *(checked 2026-11-15: detail)*
+- Moussaïd, M.; Perozo, N.; Garnier, S.; Helbing, D.; Theraulaz, G. (2010). The walking behaviour of pedestrian social groups and its impact on crowd dynamics. PLoS ONE 5(4): e10047. doi:10.1371/journal.pone.0010047 *(checked 2026-11-15: detail)*
 - Mueller, K. P. (ed.) (2015). Precision and Purpose: Airpower in the Libyan Civil War (RR-676-AF). RAND Corporation, Santa Monica. *(checked 2026-11-15: detail)*
+- Mullen, B.; Copper, C. (1994). The relation between group cohesiveness and performance: an integration. Psychological Bulletin 115(2): 210-227. doi:10.1037/0033-2909.115.2.210 *(checked 2026-11-15: detail)*
 - Murray, W. (1983). Strategy for Defeat: The Luftwaffe 1933-1945. Air University Press, Maxwell AFB. *(public domain)* *(checked 2026-11-15: detail)*
 - Murray, W.; Woods, K. M. (2014). The Iran-Iraq War: A Military and Strategic History. Cambridge University Press, Cambridge. *(checked 2026-11-15: detail)*
+- Nagy, M.; Ákos, Z.; Biro, D.; Vicsek, T. (2010). Hierarchical group dynamics in pigeon flocks. Nature 464(7290): 890-893. doi:10.1038/nature08891 *(checked 2026-11-15: detail)*
 - Nash, D. E. (2002). Hell's Gate: The Battle of the Cherkassy Pocket, January-February 1944. RZM Imports, Stamford, CT. *(checked 2026-11-15: detail)*
 - Naylor, S. (2005). Not a Good Day to Die: The Untold Story of Operation Anaconda. Berkley Books, New York. *(checked 2026-11-15: detail)*
 - Nelder, J. A.; Wedderburn, R. W. M. (1972). Generalized linear models. Journal of the Royal Statistical Society A 135(3): 370-384. *(checked 2026-11-15: detail)*
+- Newman, M. E. J. (2003). The structure and function of complex networks. SIAM Review 45(2): 167-256. doi:10.1137/S003614450342480 *(checked 2026-11-15: detail)*
 - Nolan, K. W. (1983). Battle for Hue: Tet, 1968. Presidio Press, Novato. *(checked 2026-11-15: detail)*
 - Nolan, K. W. (1986). Into Laos: The Story of Dewey Canyon II/Lam Son 719, Vietnam 1971. Presidio Press, Novato. *(checked 2026-11-15: detail)*
 - Nordeen, L. O. (1990). Fighters over Israel. Orion Books, New York. *(checked 2026-11-15: detail)*
@@ -1027,6 +1168,7 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Paine, S. C. M. (2003). The Sino-Japanese War of 1894-1895: Perceptions, Power, and Primacy. Cambridge University Press, Cambridge. *(checked 2026-11-15: detail)*
 - Pakdaman Naeini, M.; Cooper, G. F.; Hauskrecht, M. (2015). Obtaining well calibrated probabilities using Bayesian binning. Proceedings of the AAAI Conference on Artificial Intelligence 29(1). doi:10.1609/aaai.v29i1.9602 *(checked 2026-11-15: detail)*
 - Pakenham, T. (1979). The Boer War. Weidenfeld & Nicolson, London. *(checked 2026-11-15: detail)*
+- Palacios-Huerta, I. (2003). Professionals play minimax. Review of Economic Studies 70(2): 395-415. doi:10.1111/1467-937X.00249 *(checked 2026-11-15: detail)*
 - Pape, R. A. (1996). Bombing to Win: Air Power and Coercion in War. Cornell University Press, Ithaca. *(checked 2026-11-15: detail)*
 - Parshall, J. B.; Tully, A. P. (2005). Shattered Sword: The Untold Story of the Battle of Midway. Potomac Books, Washington DC. *(checked 2026-11-15: detail)*
 - Paskiv, V.; Zanevskyy, I.; Koman, V. (2026). Differentiating playing roles in professional Counter-Strike 2 by performance indicators: an observational study. Health, Sport, Rehabilitation. doi:10.58962/hsr.1395 *(checked 2026-11-15: detail)*
@@ -1034,6 +1176,7 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - PC Gamer (2016). The best CS:GO plays of 2016. PC Gamer. https://www.pcgamer.com/the-best-csgo-plays-of-2016 *(checked 2026-11-15: detail)*
 - Perla, P. P. (1990). The Art of Wargaming. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
 - Perla, P. P.; McGrady, E. D. (2011). Why wargaming works. Naval War College Review 64(3): 111-130. *(checked 2026-11-15: detail)*
+- Phipson, B.; Smyth, G. K. (2010). Permutation p-values should never be zero: calculating exact p-values when permutations are randomly drawn. Statistical Applications in Genetics and Molecular Biology 9(1): Article 39. doi:10.2202/1544-6115.1585 *(checked 2026-11-15: detail)*
 - Playfair, I. S. O.; Flynn, F. C.; Molony, C. J. C.; Gleave, T. P. (1960). The Mediterranean and Middle East, Volume III: British Fortunes Reach Their Lowest Ebb (History of the Second World War). HMSO, London. *(checked 2026-11-15: detail)*
 - Playfair, I. S. O.; Stitt, G. M. S.; Molony, C. J. C.; Toomer, S. E. (1954). The Mediterranean and Middle East, Volume I: The Early Successes against Italy (History of the Second World War). HMSO, London. *(checked 2026-11-15: detail)*
 - Plutarch (trans. Perrin, B.) (1916). Lives, Volume III: Pericles and Fabius Maximus, Nicias and Crassus (Loeb Classical Library). Heinemann, London; Macmillan, New York. *(public domain)* *(checked 2026-11-15: existence)*
@@ -1041,15 +1184,19 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Pollard, R.; Reep, C. (1997). Measuring the effectiveness of playing strategies at soccer. Journal of the Royal Statistical Society D 46(4): 541-550. *(checked 2026-11-15: detail)*
 - Polybius (trans. Shuckburgh, E. S.) (1889). The Histories of Polybius. Macmillan, London. *(public domain)* *(checked 2026-11-15: existence)*
 - Pope, D. (1956). The Battle of the River Plate. William Kimber, London. *(checked 2026-11-15: detail)*
+- Pope, D. G.; Schweitzer, M. E. (2011). Is Tiger Woods loss averse? Persistent bias in the face of experience, competition, and high stakes. American Economic Review 101(1): 129-157. doi:10.1257/aer.101.1.129 *(checked 2026-11-15: detail)*
+- Post, T.; van den Assem, M. J.; Baltussen, G.; Thaler, R. H. (2008). Deal or No Deal? Decision making under risk in a large-payoff game show. American Economic Review 98(1): 38-71. doi:10.1257/aer.98.1.38 *(checked 2026-11-15: detail)*
 - Prados, J.; Stubbe, R. W. (1991). Valley of Decision: The Siege of Khe Sanh. Houghton Mifflin, Boston. *(checked 2026-11-15: detail)*
 - Prange, G. W. (1981). At Dawn We Slept: The Untold Story of Pearl Harbor. McGraw-Hill, New York. *(checked 2026-11-15: detail)*
 - Prior, R.; Wilson, T. (1992). Command on the Western Front: The Military Career of Sir Henry Rawlinson, 1914-1918. Blackwell, Oxford. *(checked 2026-11-15: detail)*
 - Putney, D. T. (2004). Airpower Advantage: Planning the Gulf War Air Campaign, 1989-1991. Air Force History and Museums Program, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Quarantelli, E. L. (1954). The nature and conditions of panic. American Journal of Sociology 60(3): 267-275. doi:10.1086/221536 *(checked 2026-11-15: detail)*
 - Rabinovich, A. (1988). The Boats of Cherbourg. Seaver Books, New York. *(checked 2026-11-15: detail)*
 - Rabinovich, A. (2004). The Yom Kippur War: The Epic Encounter That Transformed the Middle East. Schocken, New York. *(checked 2026-11-15: detail)*
 - Rathke, A. (2017). An examination of expected goals and shot efficiency in soccer. Journal of Human Sport and Exercise 12(Proc2). doi:10.14198/jhse.2017.12.proc2.05 *(checked 2026-11-15: detail)*
 - Reep, C.; Benjamin, B. (1968). Skill and chance in association football. Journal of the Royal Statistical Society A 131(4): 581-585. *(checked 2026-11-15: detail)*
 - Reiter, D.; Stam, A. C. (2002). Democracies at War. Princeton University Press, Princeton. *(checked 2026-11-15: detail)*
+- Reynolds, C. W. (1987). Flocks, herds and schools: a distributed behavioral model. Proceedings of SIGGRAPH '87 (Computer Graphics 21(4)): 25-34. doi:10.1145/37401.37406 *(checked 2026-11-15: detail)*
 - Reynolds, N. E. (2005). Basrah, Baghdad, and Beyond: The U.S. Marine Corps in the Second Iraq War. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
 - Riot Games (2013). Road to Worlds: Korea regionals recap. League of Legends Nexus. https://nexus.leagueoflegends.com/en-us/2013/09/road-to-worlds-korea-regionals-recap/ *(checked 2026-11-15: detail)*
 - Rioult, F.; Métivier, J.-P.; Helleu, B.; Scelles, N.; Durand, C. (2014). Mining tracks of competitive video games. AASRI Procedia 8: 82-87. *(checked 2026-11-15: detail)*
@@ -1064,8 +1211,11 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Roskill, S. W. (1956). The War at Sea 1939-1945, vol. 2: The Period of Balance. HMSO, London. *(checked 2026-11-15: existence)*
 - Roskill, S. W. (1960). The War at Sea 1939-1945, vol. 3, part 1: The Offensive. HMSO, London. *(checked 2026-11-15: existence)*
 - Rotte, R.; Schmidt, C. M. (2003). On the production of victory: empirical determinants of battlefield success in modern war. Defence and Peace Economics 14(3): 175-192. doi:10.1080/1024269022000000868 *(checked 2026-11-15: detail)*
+- Rowland, D. (2006). The Stress of Battle: Quantifying Human Performance in Combat. The Stationery Office, London. *(checked 2026-11-15: detail)*
 - Ryan, C. (1974). A Bridge Too Far. Simon & Schuster, New York. *(checked 2026-11-15: detail)*
+- Salas, E.; Sims, D. E.; Burke, C. S. (2005). Is there a "Big Five" in teamwork?. Small Group Research 36(5): 555-599. doi:10.1177/1046496405277134 *(checked 2026-11-15: detail)*
 - Salen, K.; Zimmerman, E. (2003). Rules of Play: Game Design Fundamentals. MIT Press, Cambridge MA. *(checked 2026-11-15: detail)*
+- Salganik, M. J.; Dodds, P. S.; Watts, D. J. (2006). Experimental study of inequality and unpredictability in an artificial cultural market. Science 311(5762): 854-856. doi:10.1126/science.1121066 *(checked 2026-11-15: detail)*
 - Salmon, A. (2009). To the Last Round: The Epic British Stand on the Imjin River, Korea 1951. Aurum Press, London. *(checked 2026-11-15: detail)*
 - Scales, R. H. (1993). Certain Victory: The United States Army in the Gulf War. Office of the Chief of Staff, US Army, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Schell, J. (2008). The Art of Game Design: A Book of Lenses. Morgan Kaufmann, Burlington. *(checked 2026-11-15: detail)*
@@ -1075,31 +1225,39 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Seif El-Nasr, M.; Drachen, A.; Canossa, A. (eds.) (2013). Game Analytics: Maximizing the Value of Player Data. Springer, London. *(checked 2026-11-15: detail)*
 - Seif El-Nasr, M.; Nguyen, T.-H. D.; Canossa, A.; Drachen, A. (2021). Game Data Science. Oxford University Press, Oxford. *(checked 2026-11-15: detail)*
 - Semenov, A.; Romov, P.; Korolev, S.; Yashkov, D.; Neklyudov, K. (2017). Performance of machine learning algorithms in predicting game outcome from drafts in Dota 2. Analysis of Images, Social Networks and Texts (AIST 2016), CCIS 661, Springer: 26-37. *(checked 2026-11-15: existence)*
+- Seyfried, A.; Steffen, B.; Klingsch, W.; Boltes, M. (2005). The fundamental diagram of pedestrian movement revisited. Journal of Statistical Mechanics: Theory and Experiment 2005(10): P10002. doi:10.1088/1742-5468/2005/10/P10002 *(checked 2026-11-15: detail)*
 - Shaikh, S.; Rumbaugh, W. (2020). The Air and Missile War in Nagorno-Karabakh: Lessons for the Future of Strike and Defense. Center for Strategic and International Studies, Washington DC. *(checked 2026-11-15: existence)*
 - Shaw, R. L. (1985). Fighter Combat: Tactics and Maneuvering. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
+- Shils, E. A.; Janowitz, M. (1948). Cohesion and disintegration in the Wehrmacht in World War II. Public Opinion Quarterly 12(2): 280-315. doi:10.1086/265951 *(checked 2026-11-15: detail)*
 - Showalter, D. E. (1991). Tannenberg: Clash of Empires. Archon Books, Hamden. *(checked 2026-11-15: detail)*
 - Showalter, D. E. (1996). The Wars of Frederick the Great. Longman, London. *(checked 2026-11-15: detail)*
 - Shulimson, J.; Blasiol, L. A.; Smith, C. R.; Dawson, D. A. (1997). U.S. Marines in Vietnam: The Defining Year, 1968. History and Museums Division, US Marine Corps, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Siborne, W. (1844). History of the War in France and Belgium in 1815. T. & W. Boone, London. *(public domain)* *(checked 2026-11-15: detail)*
+- Siebold, G. L. (2007). The essence of military group cohesion. Armed Forces & Society 33(2): 286-295. doi:10.1177/0095327X06294173 *(checked 2026-11-15: detail)*
 - Sill, J. (2010). Improved NBA adjusted +/- using regularization and out-of-sample testing. MIT Sloan Sports Analytics Conference 2010. https://www.sloansportsconference.com/research-papers/improved-nba-adjusted-using-regularization-and-out-of-sample-testing *(checked 2026-11-15: existence)*
 - Silva, A. L. C.; Pappa, G. L.; Chaimowicz, L. (2018). Continuous outcome prediction of League of Legends competitive matches using recurrent neural networks. SBGames 2018, Computing Track (short paper). http://www.sbgames.org/sbgames2018/files/papers/ComputacaoShort/188226.pdf *(checked 2026-11-15: detail)*
 - Silverman, B. W. (1986). Density Estimation for Statistics and Data Analysis. Chapman & Hall, London. *(checked 2026-11-15: detail)*
 - Sirlin, D. (2006). Playing to Win: Becoming the Champion. Lulu.com. *(checked 2026-11-15: detail)*
 - Smail, R. C. (1956). Crusading Warfare, 1097-1193. Cambridge University Press, Cambridge. *(checked 2026-11-15: detail)*
+- Smith, G.; Levere, M.; Kurtzman, R. (2009). Poker player behavior after big wins and big losses. Management Science 55(9): 1547-1555. doi:10.1287/mnsc.1090.1044 *(checked 2026-11-15: detail)*
 - Smith, R. R. (1963). Triumph in the Philippines (US Army in World War II). Office of the Chief of Military History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Spearman, W. (2018). Beyond expected goals. MIT Sloan Sports Analytics Conference 2018. *(checked 2026-11-15: detail)*
 - Special Operations Review Group (Holloway, J. L., chair) (1980). Rescue Mission Report. Joint Chiefs of Staff, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Starcke, K.; Brand, M. (2012). Decision making under stress: a selective review. Neuroscience & Biobehavioral Reviews 36(4): 1228-1248. doi:10.1016/j.neubiorev.2012.02.003 *(checked 2026-11-15: detail)*
 - Stone, L. D. (1975). Theory of Optimal Search. Academic Press, New York. *(checked 2026-11-15: detail)*
 - Stone, L. D.; Keller, C. M.; Kratzke, T. M.; Strumpfer, J. P. (2014). Search for the wreckage of Air France flight AF 447. Statistical Science 29(1): 69-80. doi:10.1214/13-STS420 *(checked 2026-11-15: detail)*
+- Stouffer, S. A.; et al. (1949). The American Soldier, Volume II: Combat and Its Aftermath. Princeton University Press, Princeton. *(checked 2026-11-15: detail)*
 - Strauss, B. (2004). The Battle of Salamis. Simon & Schuster, New York. *(checked 2026-11-15: detail)*
 - Sumption, J. (1990). The Hundred Years War, Volume I: Trial by Battle. Faber & Faber, London. *(checked 2026-11-15: existence)*
 - Sun Tzu (trans. Giles, L.) (1910). The Art of War. Luzac & Co., London. https://www.gutenberg.org/ebooks/132 *(public domain)* *(checked 2026-11-15: detail)*
 - Sweetman, J. (1982). Operation Chastise: The Dams Raid, Epic or Myth. Jane's, London. *(checked 2026-11-15: detail)*
+- Szell, M.; Lambiotte, R.; Thurner, S. (2010). Multirelational organization of large-scale social networks in an online world. Proceedings of the National Academy of Sciences 107(31): 13636-13641. doi:10.1073/pnas.1004008107 *(checked 2026-11-15: detail)*
 - Tacitus (trans. Church, A. J.; Brodribb, W. J.) (1876). The Annals. Macmillan, London. *(public domain)* *(checked 2026-11-15: existence)*
 - Taki, T.; Hasegawa, J.; Fukumura, T. (1996). Development of motion analysis system for quantitative evaluation of teamwork in soccer games. Proc. IEEE International Conference on Image Processing (ICIP 1996). *(checked 2026-11-15: detail)*
 - Tapper, J. (2012). The Outpost: An Untold Story of American Valor. Little, Brown, New York. *(checked 2026-11-15: detail)*
 - Taylor, J. G. (1983). Lanchester Models of Warfare (2 vols.). Operations Research Society of America, Military Applications Section, Arlington VA. *(checked 2026-11-15: detail)*
 - Taylor, T. L. (2012). Raising the Stakes: E-Sports and the Professionalization of Computer Gaming. MIT Press, Cambridge MA. *(checked 2026-11-15: detail)*
+- Thaler, R. H.; Johnson, E. J. (1990). Gambling with the house money and trying to break even: the effects of prior outcomes on risky choice. Management Science 36(6): 643-660. doi:10.1287/mnsc.36.6.643 *(checked 2026-11-15: detail)*
 - Thompson, W. W. (2000). To Hanoi and Back: The United States Air Force and North Vietnam, 1966-1973. Air Force History and Museums Program, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
 - Till, G. (2018). Seapower: A Guide for the Twenty-First Century (4th ed.). Routledge, Abingdon. *(checked 2026-11-15: detail)*
 - Tobler, W. R. (1970). A computer movie simulating urban growth in the Detroit region. Economic Geography 46 (supplement): 234-240. *(checked 2026-11-15: detail)*
@@ -1110,8 +1268,10 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Triandafillov, V. K. (trans. Kipp, W. A.) (1994). The Nature of the Operations of Modern Armies (orig. 1929). Frank Cass, Ilford. *(checked 2026-11-15: detail)*
 - Trotter, W. R. (1991). A Frozen Hell: The Russo-Finnish Winter War of 1939-1940. Algonquin Books, Chapel Hill. *(checked 2026-11-15: detail)*
 - Tully, A. P. (2009). Battle of Surigao Strait. Indiana University Press, Bloomington. *(checked 2026-11-15: detail)*
+- Tunstrøm, K.; Katz, Y.; Ioannou, C. C.; Huepe, C.; Lutz, M. J.; Couzin, I. D. (2013). Collective states, multistability and transitional behavior in schooling fish. PLoS Computational Biology 9(2): e1002915. doi:10.1371/journal.pcbi.1002915 *(checked 2026-11-15: detail)*
 - Turnbull, S. (2003). Tannenberg 1410: Disaster for the Teutonic Knights (Campaign 122). Osprey, Oxford. *(checked 2026-11-15: detail)*
 - Turner, A.; Doxa, M.; O'Sullivan, D.; Penn, A. (2001). From isovists to visibility graphs: a methodology for the analysis of architectural space. Environment and Planning B 28(1): 103-121. *(checked 2026-11-15: detail)*
+- Tversky, A.; Kahneman, D. (1992). Advances in prospect theory: cumulative representation of uncertainty. Journal of Risk and Uncertainty 5(4): 297-323. doi:10.1007/BF00122574 *(checked 2026-11-15: detail)*
 - Upcomer (2018). CSGO 2018 retrospective: the reign of Astralis. Upcomer. https://upcomer.com/csgo-2018-retrospective-astralis/ *(checked 2026-11-15: existence)*
 - US Marine Corps (1997). MCDP 1 Warfighting. Headquarters USMC, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
 - US Navy Department (1898). Official Records of the Union and Confederate Navies in the War of the Rebellion, Series I, vol. 7. Government Printing Office, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
@@ -1120,8 +1280,13 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Vegetius (trans. Clarke, J.) (1767). De Re Militari (The Military Institutions of the Romans). W. Griffin, London. *(public domain)* *(checked 2026-11-15: existence)*
 - Vego, M. N. (2007). Joint Operational Warfare: Theory and Practice. Naval War College, Newport. *(public domain)* *(checked 2026-11-15: detail)*
 - Venkus, R. E. (1992). Raid on Qaddafi. St. Martin's Press, New York. *(checked 2026-11-15: detail)*
+- Vicsek, T.; Czirók, A.; Ben-Jacob, E.; Cohen, I.; Shochet, O. (1995). Novel type of phase transition in a system of self-driven particles. Physical Review Letters 75(6): 1226-1229. doi:10.1103/PhysRevLett.75.1226 *(checked 2026-11-15: detail)*
+- Vicsek, T.; Zafeiris, A. (2012). Collective motion. Physics Reports 517(3-4): 71-140. doi:10.1016/j.physrep.2012.03.004 *(checked 2026-11-15: detail)*
 - Vinyals, O.; Babuschkin, I.; Czarnecki, W. M.; et al. (2019). Grandmaster level in StarCraft II using multi-agent reinforcement learning. Nature 575(7782): 350-354. doi:10.1038/s41586-019-1724-z *(checked 2026-11-15: detail)*
+- von Neumann, J.; Morgenstern, O. (1944). Theory of Games and Economic Behavior. Princeton University Press, Princeton. *(checked 2026-11-15: detail)*
 - Waddington, C. H. (1973). O.R. in World War 2: Operational Research against the U-Boat. Elek Science, London. *(checked 2026-11-15: detail)*
+- Wald, A.; Wolfowitz, J. (1940). On a test whether two samples are from the same population. Annals of Mathematical Statistics 11(2): 147-162. doi:10.1214/aoms/1177731909 *(checked 2026-11-15: detail)*
+- Walker, M.; Wooders, J. (2001). Minimax play at Wimbledon. American Economic Review 91(5): 1521-1538. doi:10.1257/aer.91.5.1521 *(checked 2026-11-15: detail)*
 - Wallner, G. (ed.) (2019). Data Analytics Applications in Gaming and Entertainment. CRC Press, Boca Raton. *(checked 2026-11-15: existence)*
 - Wallner, G.; Kriglstein, S. (2013). Visualization-based analysis of gameplay data - a review of literature. Entertainment Computing 4(3): 143-155. *(checked 2026-11-15: detail)*
 - Wallner, G.; Kriglstein, S. (2014). PLATO: a visual analytics system for gameplay data. Computers & Graphics 38: 341-356. *(checked 2026-11-15: existence)*
@@ -1142,7 +1307,9 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Wilson, E. B. (1927). Probable inference, the law of succession, and statistical inference. Journal of the American Statistical Association 22(158): 209-212. *(checked 2026-11-15: detail)*
 - Wilson, H. W. (1896). Ironclads in Action: A Sketch of Naval Warfare from 1855 to 1895. Sampson Low, Marston, London. *(public domain)* *(checked 2026-11-15: detail)*
 - Wise, H. L. (2007). Inside the Danger Zone: The U.S. Military in the Persian Gulf, 1987-1988. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
+- Wong, L.; Kolditz, T. A.; Millen, R. A.; Potter, T. M. (2003). Why They Fight: Combat Motivation in the Iraq War. Strategic Studies Institute, US Army War College, Carlisle PA. https://press.armywarcollege.edu/monographs/322/ *(public domain)* *(checked 2026-11-15: detail)*
 - Woodward, S.; Robinson, P. (1992). One Hundred Days: The Memoirs of the Falklands Battle Group Commander. HarperCollins, London. *(checked 2026-11-15: detail)*
+- Woolley, A. W.; Chabris, C. F.; Pentland, A.; Hashmi, N.; Malone, T. W. (2010). Evidence for a collective intelligence factor in the performance of human groups. Science 330(6004): 686-688. doi:10.1126/science.1193147 *(checked 2026-11-15: detail)*
 - Xenophon (trans. Dakyns, H. G.) (1897). Hellenica. Macmillan, London. https://www.gutenberg.org/ebooks/1174 *(public domain)* *(checked 2026-11-15: detail)*
 - Xenopoulos, P.; Coelho, B.; Silva, C. (2021). Optimal team economic decisions in Counter-Strike. arXiv preprint 2109.12990. doi:10.48550/arXiv.2109.12990 *(checked 2026-11-15: detail)*
 - Xenopoulos, P.; Doraiswamy, H.; Silva, C. (2020). Valuing player actions in Counter-Strike: Global Offensive. Proc. IEEE International Conference on Big Data 2020: 1283-1292. https://arxiv.org/abs/2011.01324 *(checked 2026-11-15: detail)*
@@ -1153,6 +1320,7 @@ The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical c
 - Yang, P.; Harrison, B.; Roberts, D. L. (2014). Identifying patterns in combat that are predictive of success in MOBA games. Proc. 9th International Conference on Foundations of Digital Games (FDG 2014). *(checked 2026-11-15: existence)*
 - Yang, Y.; Qin, T.; Lei, Y.-H. (2017). Real-time eSports match result prediction. arXiv preprint 1701.03162. doi:10.48550/arXiv.1701.03162 *(checked 2026-11-15: detail)*
 - Yannakakis, G. N.; Togelius, J. (2018). Artificial Intelligence and Games. Springer, Cham. *(checked 2026-11-15: detail)*
+- Yee, N.; Bailenson, J. N.; Urbanek, M.; Chang, F.; Merget, D. (2007). The unbearable likeness of being digital: the persistence of nonverbal social norms in online virtual environments. CyberPsychology & Behavior 10(1): 115-121. doi:10.1089/cpb.2006.9984 *(checked 2026-11-15: detail)*
 - Zabrodskyi, M.; Watling, J.; Danylyuk, O. V.; Reynolds, N. (2022). Preliminary Lessons in Conventional Warfighting from Russia's Invasion of Ukraine: February-July 2022. Royal United Services Institute, London. *(checked 2026-11-15: detail)*
 - Zaffiri, S. (1988). Hamburger Hill: May 11-20, 1969. Presidio Press, Novato. *(checked 2026-11-15: detail)*
 - Zaloga, S. J. (1996). Bagration 1944: The Destruction of Army Group Centre (Campaign 42). Osprey, London. *(checked 2026-11-15: detail)*

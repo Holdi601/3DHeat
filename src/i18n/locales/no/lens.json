@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stacker, rotasjoner og lurks",
   "lens.metric.cqbPostPlant": "Etter planting og retake",
   "lens.metric.cqbFunnel": "Dødelige trakter",
-  "lens.metric.cqbImpact": "Spillernes innvirkning"
+  "lens.metric.cqbImpact": "Spillernes innvirkning",
+  "lens.metric.order": "Kollektiv retning",
+  "lens.metric.herding": "Flokkatferd på ruter",
+  "lens.metric.lanes": "Felt og stier",
+  "lens.metric.crowding": "Trengsel",
+  "lens.metric.leaders": "Ledere og følgere",
+  "lens.metric.cohesion": "Samhold og etternølere",
+  "lens.metric.breaking": "Bristepunkt",
+  "lens.metric.risk": "Risiko etter tap",
+  "lens.metric.streaks": "Rekker (hot hand)",
+  "lens.metric.buy": "Enighet om kjøp",
+  "lens.metric.suppression": "Nedholding"
 }

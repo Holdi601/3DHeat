@@ -13,6 +13,7 @@
  */
 
 import type { ManeuverSection } from '../insights/maneuver/summary';
+import type { BehaviourMetrics } from '../insights/behaviour/types';
 import type { CqbCounts } from '../insights/cqb/finish';
 
 /** The member's `format` and its version: a reader takes its own major, a newer one is worked out again. */
@@ -189,6 +190,11 @@ export interface MatchSummary {
    * Absent in summaries written before it; null where it could not run.
    */
   maneuvers?: ManeuverSection | null;
+  /**
+   * The behaviour analysis (`insights/behaviour`): crowd, flocking, herding, cohesion, morale, risk,
+   * streak, buy and suppression measures of this match, each with its own null model, p and q.
+   */
+  behaviour?: BehaviourMetrics | null;
   /**
    * Close-quarters counts (`insights/cqb/finish.ts` CqbCounts), additive over matches: opening
    * duels, trades, peeker against holder, crossfires, flashed entries, aim, man advantage,

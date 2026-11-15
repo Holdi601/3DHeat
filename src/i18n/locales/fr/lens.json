@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stacks, rotations et lurks",
   "lens.metric.cqbPostPlant": "Après la pose et retake",
   "lens.metric.cqbFunnel": "Entonnoirs mortels",
-  "lens.metric.cqbImpact": "Impact des joueurs"
+  "lens.metric.cqbImpact": "Impact des joueurs",
+  "lens.metric.order": "Alignement collectif",
+  "lens.metric.herding": "Grégarisme des itinéraires",
+  "lens.metric.lanes": "Voies et sentiers",
+  "lens.metric.crowding": "Encombrement",
+  "lens.metric.leaders": "Meneurs et suiveurs",
+  "lens.metric.cohesion": "Cohésion et traînards",
+  "lens.metric.breaking": "Point de rupture",
+  "lens.metric.risk": "Risque après les pertes",
+  "lens.metric.streaks": "Séries (main chaude)",
+  "lens.metric.buy": "Accord des achats",
+  "lens.metric.suppression": "Neutralisation par le feu"
 }

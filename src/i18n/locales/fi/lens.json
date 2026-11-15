@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stackit, rotaatiot ja lurkit",
   "lens.metric.cqbPostPlant": "Istutuksen jälkeen ja takaisinvaltaus",
   "lens.metric.cqbFunnel": "Kuolemansuppilot",
-  "lens.metric.cqbImpact": "Pelaajien vaikutus"
+  "lens.metric.cqbImpact": "Pelaajien vaikutus",
+  "lens.metric.order": "Kollektiivinen suuntautuminen",
+  "lens.metric.herding": "Laumakäyttäytyminen reiteillä",
+  "lens.metric.lanes": "Kaistat ja polut",
+  "lens.metric.crowding": "Ruuhka",
+  "lens.metric.leaders": "Johtajat ja seuraajat",
+  "lens.metric.cohesion": "Yhtenäisyys ja jälkeen jääneet",
+  "lens.metric.breaking": "Murtumispiste",
+  "lens.metric.risk": "Riski tappioiden jälkeen",
+  "lens.metric.streaks": "Putket (kuuma käsi)",
+  "lens.metric.buy": "Ostojen yksimielisyys",
+  "lens.metric.suppression": "Lamauttava tuli"
 }

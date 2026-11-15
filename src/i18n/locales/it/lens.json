@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stack, rotazioni e lurk",
   "lens.metric.cqbPostPlant": "Dopo il piazzamento e retake",
   "lens.metric.cqbFunnel": "Imbuti mortali",
-  "lens.metric.cqbImpact": "Impatto dei giocatori"
+  "lens.metric.cqbImpact": "Impatto dei giocatori",
+  "lens.metric.order": "Allineamento collettivo",
+  "lens.metric.herding": "Comportamento gregario nei percorsi",
+  "lens.metric.lanes": "Corsie e sentieri",
+  "lens.metric.crowding": "Affollamento",
+  "lens.metric.leaders": "Leader e seguaci",
+  "lens.metric.cohesion": "Coesione e ritardatari",
+  "lens.metric.breaking": "Punto di rottura",
+  "lens.metric.risk": "Rischio dopo le perdite",
+  "lens.metric.streaks": "Serie (mano calda)",
+  "lens.metric.buy": "Accordo sugli acquisti",
+  "lens.metric.suppression": "Soppressione"
 }

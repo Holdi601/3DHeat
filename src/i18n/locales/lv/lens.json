@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stack, rotācijas un lurk",
   "lens.metric.cqbPostPlant": "Pēc uzstādīšanas un atgūšana",
   "lens.metric.cqbFunnel": "Nāvējošās piltuves",
-  "lens.metric.cqbImpact": "Spēlētāju ietekme"
+  "lens.metric.cqbImpact": "Spēlētāju ietekme",
+  "lens.metric.order": "Kolektīvā saskaņotība",
+  "lens.metric.herding": "Ganāmpulka uzvedība maršrutos",
+  "lens.metric.lanes": "Joslas un takas",
+  "lens.metric.crowding": "Drūzmēšanās",
+  "lens.metric.leaders": "Līderi un sekotāji",
+  "lens.metric.cohesion": "Saliedētība un atpalicēji",
+  "lens.metric.breaking": "Lūzuma punkts",
+  "lens.metric.risk": "Risks pēc zaudējumiem",
+  "lens.metric.streaks": "Sērijas (karstā roka)",
+  "lens.metric.buy": "Pirkumu saskaņotība",
+  "lens.metric.suppression": "Apspiešana ar uguni"
 }

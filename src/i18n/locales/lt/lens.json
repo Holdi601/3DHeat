@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stack, rotacijos ir lurk",
   "lens.metric.cqbPostPlant": "Po padėjimo ir atkovojimas",
   "lens.metric.cqbFunnel": "Mirtini piltuvai",
-  "lens.metric.cqbImpact": "Žaidėjų poveikis"
+  "lens.metric.cqbImpact": "Žaidėjų poveikis",
+  "lens.metric.order": "Kolektyvinis išsirikiavimas",
+  "lens.metric.herding": "Bandos elgesys maršrutuose",
+  "lens.metric.lanes": "Juostos ir takai",
+  "lens.metric.crowding": "Spūstis",
+  "lens.metric.leaders": "Lyderiai ir sekėjai",
+  "lens.metric.cohesion": "Sanglauda ir atsilikėliai",
+  "lens.metric.breaking": "Lūžio taškas",
+  "lens.metric.risk": "Rizika po nuostolių",
+  "lens.metric.streaks": "Serijos (karšta ranka)",
+  "lens.metric.buy": "Pirkimų sutarimas",
+  "lens.metric.suppression": "Prislėgimas ugnimi"
 }

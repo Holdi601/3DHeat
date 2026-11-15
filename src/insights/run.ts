@@ -17,6 +17,7 @@ import { createInsightJob, gridFor, stepInsight, stepLevel, type InsightChunk, t
 import { createLensJob, safeFinishLens, stepLens, stepLensLevel, type LensOptions } from './lensMetrics';
 import type { InsightReport } from './types';
 import { cqbSync, runCqb } from './cqb/run';
+import { behaviourColumns, createBehaviourJob, finishBehaviour, stepBehaviour, type BehaviourColumns } from './behaviour/feed';
 
 const IN_FLIGHT = 3;
 /** Level floats a slice. */
@@ -43,6 +44,8 @@ interface Prep {
   info: ReportInfo;
   lens: LensOptions;
   shooterCol: Uint32Array | null;
+  /** Round and loadout columns for the behaviour analysis, where the data has them. */
+  bcols: BehaviourColumns | null;
 }
 
 function prepare(ds: Dataset, sc: CompareScope, level: Level | null): Prep {
@@ -80,6 +83,7 @@ function prepare(ds: Dataset, sc: CompareScope, level: Level | null): Prep {
     // Units in a metre, as the replay reckons it (`replayData.unitsPerMetre`): from the file's entity size.
     lens: { upm: ds.entitySize ? ds.entitySize / 0.8 : 1, events: { launch: ev('launch'), fire: ev('fire'), takeoff: ev('takeoff'), landing: ev('landing') }, shooterMap: shooter?.map },
     shooterCol: shooter?.col ?? null,
+    bcols: behaviourColumns(ds),
   };
 }
 
@@ -99,7 +103,16 @@ function chunk(p: Prep, lo: number, n: number): { chunk: InsightChunk; transfer:
     shooter = p.shooterCol.slice(lo, lo + n);
     transfer.push(shooter.buffer as ArrayBuffer);
   }
-  return { chunk: { ...c, target, shooter } as InsightChunk, transfer };
+  // Rounds and loadouts, for the behaviour analysis (`behaviour/feed.ts`).
+  const b = p.bcols;
+  const part = <T extends Float32Array | Uint8Array>(a: T | null): T | null => {
+    if (!a) return null;
+    const s = a.slice(lo, lo + n) as T;
+    transfer.push(s.buffer as ArrayBuffer);
+    return s;
+  };
+  const extra = b ? { bround: part(b.round), bequip: part(b.equip), blive: part(b.live) } : {};
+  return { chunk: { ...({ ...c, target, shooter } as InsightChunk), ...extra }, transfer };
 }
 
 /** Columns naming the unit that fired or launched a row's weapon, in order of preference. */
@@ -143,6 +156,7 @@ export function insightsSync(ds: Dataset, scope: CompareScope, level: Level | nu
   const p = prepare(ds, scope, level);
   const job = createInsightJob(p.meta, p.scope);
   const lens = createLensJob(p.meta, p.scope, p.lens);
+  const beh = createBehaviourJob(p.meta, p.scope, p.lens);
   if (p.level) {
     stepLevel(job, p.level.vertices, 6);
     stepLensLevel(lens, p.level.vertices, 6);
@@ -151,9 +165,11 @@ export function insightsSync(ds: Dataset, scope: CompareScope, level: Level | nu
     const c = chunk(p, lo, Math.min(COMPARE_CHUNK, p.cmp.hi - lo)).chunk;
     stepInsight(job, c);
     stepLens(lens, c);
+    stepBehaviour(beh, c);
   }
   const report = finishInsights(job, p.names, p.info);
   report.lens = safeFinishLens(lens, job, p.names.teams);
+  if (report.lens) report.lens.behaviour = finishBehaviour(beh);
   // Close quarters and esports measures (`cqb/`), where the data carries them.
   if (report.lens) report.lens.cqb = cqbSync(ds, scope);
   return resolve(report, ds);

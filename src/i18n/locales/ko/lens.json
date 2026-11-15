@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "스택, 로테이션, 러크",
   "lens.metric.cqbPostPlant": "설치 후와 리테이크",
   "lens.metric.cqbFunnel": "죽음의 깔때기",
-  "lens.metric.cqbImpact": "선수 영향력"
+  "lens.metric.cqbImpact": "선수 영향력",
+  "lens.metric.order": "집단 정렬",
+  "lens.metric.herding": "경로 군집 추종",
+  "lens.metric.lanes": "차선과 길",
+  "lens.metric.crowding": "혼잡",
+  "lens.metric.leaders": "리더와 추종자",
+  "lens.metric.cohesion": "응집과 낙오자",
+  "lens.metric.breaking": "붕괴점",
+  "lens.metric.risk": "손실 후 위험 감수",
+  "lens.metric.streaks": "연속 성공(핫 핸드)",
+  "lens.metric.buy": "구매 일치",
+  "lens.metric.suppression": "제압 사격"
 }

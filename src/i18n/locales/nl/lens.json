@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stacks, rotaties en lurks",
   "lens.metric.cqbPostPlant": "Na het planten en retake",
   "lens.metric.cqbFunnel": "Dodelijke trechters",
-  "lens.metric.cqbImpact": "Spelersinvloed"
+  "lens.metric.cqbImpact": "Spelersinvloed",
+  "lens.metric.order": "Collectieve uitlijning",
+  "lens.metric.herding": "Kuddegedrag op routes",
+  "lens.metric.lanes": "Rijstroken en paden",
+  "lens.metric.crowding": "Drukte",
+  "lens.metric.leaders": "Leiders en volgers",
+  "lens.metric.cohesion": "Samenhang en achterblijvers",
+  "lens.metric.breaking": "Breekpunt",
+  "lens.metric.risk": "Risico na verliezen",
+  "lens.metric.streaks": "Reeksen (hot hand)",
+  "lens.metric.buy": "Overeenstemming in aankopen",
+  "lens.metric.suppression": "Onderdrukking"
 }

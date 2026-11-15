@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stackek, rotációk és lurkok",
   "lens.metric.cqbPostPlant": "Telepítés után és visszafoglalás",
   "lens.metric.cqbFunnel": "Halálos tölcsérek",
-  "lens.metric.cqbImpact": "A játékosok hatása"
+  "lens.metric.cqbImpact": "A játékosok hatása",
+  "lens.metric.order": "Kollektív igazodás",
+  "lens.metric.herding": "Útvonal-csordaszellem",
+  "lens.metric.lanes": "Sávok és ösvények",
+  "lens.metric.crowding": "Zsúfoltság",
+  "lens.metric.leaders": "Vezetők és követők",
+  "lens.metric.cohesion": "Összetartás és lemaradók",
+  "lens.metric.breaking": "Töréspont",
+  "lens.metric.risk": "Kockázat veszteségek után",
+  "lens.metric.streaks": "Sorozatok (forró kéz)",
+  "lens.metric.buy": "Vásárlási egyetértés",
+  "lens.metric.suppression": "Lefogó tűz"
 }

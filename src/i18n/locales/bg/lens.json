@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Стекове, ротации и лъркове",
   "lens.metric.cqbPostPlant": "След поставяне и ретейк",
   "lens.metric.cqbFunnel": "Смъртоносни фунии",
-  "lens.metric.cqbImpact": "Влияние на играчите"
+  "lens.metric.cqbImpact": "Влияние на играчите",
+  "lens.metric.order": "Колективно подреждане",
+  "lens.metric.herding": "Стадно следване на маршрути",
+  "lens.metric.lanes": "Ленти и пътеки",
+  "lens.metric.crowding": "Струпване",
+  "lens.metric.leaders": "Водачи и последователи",
+  "lens.metric.cohesion": "Сплотеност и изоставащи",
+  "lens.metric.breaking": "Точка на пречупване",
+  "lens.metric.risk": "Риск след загуби",
+  "lens.metric.streaks": "Серии (гореща ръка)",
+  "lens.metric.buy": "Съгласуваност на покупките",
+  "lens.metric.suppression": "Потискане с огън"
 }

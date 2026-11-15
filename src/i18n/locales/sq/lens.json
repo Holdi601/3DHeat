@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stack, rotacione dhe lurk",
   "lens.metric.cqbPostPlant": "Pas vendosjes dhe rimarrja",
   "lens.metric.cqbFunnel": "Hinkat vdekjeprurëse",
-  "lens.metric.cqbImpact": "Ndikimi i lojtarëve"
+  "lens.metric.cqbImpact": "Ndikimi i lojtarëve",
+  "lens.metric.order": "Rreshtim kolektiv",
+  "lens.metric.herding": "Sjellje kope në rrugë",
+  "lens.metric.lanes": "Korsi dhe shtigje",
+  "lens.metric.crowding": "Grumbullim",
+  "lens.metric.leaders": "Udhëheqës dhe ndjekës",
+  "lens.metric.cohesion": "Kohezion dhe të mbetur prapa",
+  "lens.metric.breaking": "Pika e thyerjes",
+  "lens.metric.risk": "Rreziku pas humbjeve",
+  "lens.metric.streaks": "Seri (dora e nxehtë)",
+  "lens.metric.buy": "Pajtim në blerje",
+  "lens.metric.suppression": "Shtypje me zjarr"
 }

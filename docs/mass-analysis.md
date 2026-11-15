@@ -123,6 +123,10 @@ Plain JSON (`src/mass/types.ts`), about 5-30 KB deflated a match:
   hits, launches, won, vehicles; per weapon: events by kind;
 - the economy's columns (`cost_*`, `earn_*`) and their totals;
 - phases: events by kind in 20 bins of the match length and by the minute;
+- behaviour: the match's collective-behaviour measures (alignment, route
+  herding, lanes, crowding, leaders, stragglers, breaking point, risk after
+  losses, streaks, buy agreement, suppression), each with its own null model,
+  p and q - see [Collective behaviour](collective-behaviour.md);
 - the grid (below).
 
 Counted as the viewer counts: columns found as the many-match loader finds

@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Стаки, ротации и ларки",
   "lens.metric.cqbPostPlant": "После установки и ретейк",
   "lens.metric.cqbFunnel": "Смертельные воронки",
-  "lens.metric.cqbImpact": "Влияние игроков"
+  "lens.metric.cqbImpact": "Влияние игроков",
+  "lens.metric.order": "Коллективная согласованность",
+  "lens.metric.herding": "Стадность в выборе маршрутов",
+  "lens.metric.lanes": "Полосы и тропы",
+  "lens.metric.crowding": "Скученность",
+  "lens.metric.leaders": "Лидеры и ведомые",
+  "lens.metric.cohesion": "Сплочённость и отставшие",
+  "lens.metric.breaking": "Точка надлома",
+  "lens.metric.risk": "Риск после потерь",
+  "lens.metric.streaks": "Серии (горячая рука)",
+  "lens.metric.buy": "Согласованность закупок",
+  "lens.metric.suppression": "Подавление огнём"
 }

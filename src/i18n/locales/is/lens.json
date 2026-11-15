@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Hópar, tilfærslur og laumur",
   "lens.metric.cqbPostPlant": "Eftir sprengju og endurheimt",
   "lens.metric.cqbFunnel": "Dauðatrektir",
-  "lens.metric.cqbImpact": "Áhrif leikmanna"
+  "lens.metric.cqbImpact": "Áhrif leikmanna",
+  "lens.metric.order": "Sameiginleg stefna",
+  "lens.metric.herding": "Hjarðhegðun á leiðum",
+  "lens.metric.lanes": "Akreinar og stígar",
+  "lens.metric.crowding": "Þrengsli",
+  "lens.metric.leaders": "Leiðtogar og fylgjendur",
+  "lens.metric.cohesion": "Samheldni og eftirlegukindur",
+  "lens.metric.breaking": "Brotpunktur",
+  "lens.metric.risk": "Áhætta eftir töp",
+  "lens.metric.streaks": "Hrinur (heit hönd)",
+  "lens.metric.buy": "Samræmi í kaupum",
+  "lens.metric.suppression": "Bæling með skothríð"
 }

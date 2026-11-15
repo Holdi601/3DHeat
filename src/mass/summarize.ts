@@ -23,6 +23,7 @@ import { analyseMatch } from '../insights/maneuver/analyse';
 import { ManeuverCollector } from '../insights/maneuver/collect';
 import { CqbCollector } from '../insights/cqb/summary';
 import { maneuverSection } from '../insights/maneuver/summary';
+import { BehaviourTap, tapColumns, type TapColumns } from '../insights/behaviour/summaryTap';
 import type { EvKind, ManeuverMatch } from '../insights/maneuver/types';
 
 export const COMPRESSORS: Compressors = { ZSTD: (input, outputLength) => zstd(input, new Uint8Array(outputLength)) };
@@ -187,6 +188,8 @@ export interface SummaryColumns {
   mission: string | null;
   floor: string | null;
   values: { name: string; currency: string; flow: string }[];
+  /** Round, equipment and round clock, for the behaviour analysis (`insights/behaviour`). */
+  behaviour: TapColumns;
   /** The close-quarters collector's columns (`insights/cqb/summary.ts`); empty without a round column. */
   cqb: string[];
 }
@@ -219,6 +222,7 @@ export function summaryColumns(columns: string[], numeric: (c: string) => boolea
     tier: one(TIER),
     mission: one(MISSION, false),
     floor: one(FLOOR, true),
+    behaviour: tapColumns(free, numeric),
     values,
     cqb,
   };
@@ -273,6 +277,8 @@ export class SummaryBuilder {
   private readonly started = performance.now();
   /** Tracks and events for the movement analysis (`insights/maneuver`). */
   private readonly mv = new ManeuverCollector(1);
+  /** Tracks and events for the behaviour analysis (`insights/behaviour`). */
+  private readonly bh = new BehaviourTap();
   /** Duels, rounds and entries for the close-quarters counts (`insights/cqb`), where the data has rounds. */
   private readonly cqb: CqbCollector | null;
 
@@ -288,7 +294,7 @@ export class SummaryBuilder {
 
   /** Every column the builder reads. */
   static columnsOf(spec: LeanSpec, c: SummaryColumns): string[] {
-    const list = [spec.time, spec.x, spec.y, spec.z, spec.track, spec.team, spec.event, ...c.names, c.label, ...c.types, c.ai, c.flag, c.uid, c.pname, c.group, c.weapon, c.otherName, c.otherType, c.actorRef, c.won, c.tier, c.floor, ...c.values.map((v) => v.name), ...c.cqb];
+    const list = [spec.time, spec.x, spec.y, spec.z, spec.track, spec.team, spec.event, ...c.names, c.label, ...c.types, c.ai, c.flag, c.uid, c.pname, c.group, c.weapon, c.otherName, c.otherType, c.actorRef, c.won, c.tier, c.floor, ...c.values.map((v) => v.name), ...c.cqb, c.behaviour.round, c.behaviour.equip, c.behaviour.clock];
     return [...new Set(list.filter((x): x is string => !!x))];
   }
 
@@ -559,6 +565,10 @@ export class SummaryBuilder {
     const weapon = sc.weapon ? c[sc.weapon] : undefined;
     const vals = sc.values.map((v) => c[v.name]);
     const floorCol = sc.floor ? c[sc.floor] : undefined;
+    const bRound = sc.behaviour.round ? c[sc.behaviour.round] : undefined;
+    const bEquip = sc.behaviour.equip ? c[sc.behaviour.equip] : undefined;
+    const bClock = sc.behaviour.clock ? c[sc.behaviour.clock] : undefined;
+    const sideOf = (ui: number) => (this.units[ui].team < MAX_TEAMS ? this.units[ui].team : -1);
     if (!time || !xc) return;
     if (this.mission === null && sc.mission && c[sc.mission]) {
       const m = text(c[sc.mission]![0]).trim();
@@ -627,6 +637,8 @@ export class SummaryBuilder {
       if (kind === POSITION) {
         if (!u || !placed) continue;
         this.mv.sample(uIdx, -1, u.team < MAX_TEAMS ? u.team : -1, u.veh >= 0 ? this.vehCls[u.veh] : -1, t, x, Y[i], z);
+        this.bh.pos(uIdx, sideOf(uIdx), t, x, z);
+        if (bRound) this.bh.round(uIdx, sideOf(uIdx), num(bRound[i]), t, bEquip ? num(bEquip[i]) : NaN, bClock ? num(bClock[i]) : NaN);
         const dt = t - u.lastT;
         if (dt > 0 && dt <= PRESENCE_GAP) {
           u.presence += dt;
@@ -682,6 +694,7 @@ export class SummaryBuilder {
         const d = di >= 0 ? this.units[di] : null;
         this.mv.event(mk, di, -1, d && d.team < MAX_TEAMS ? d.team : -1, t, x, Y[i], z);
       }
+      this.bh.event(kName, uIdx, byI, sideOf, t);
       if (by) {
         by.ev[kind]++;
         if (kName === 'kill' && (sc.otherName || sc.otherType)) {
@@ -976,6 +989,7 @@ export class SummaryBuilder {
       classes: [...VEHICLE_CLASSES],
       grid,
       maneuvers,
+      behaviour: this.bh.finish(this.upm),
       cqb: this.cqb?.counts() ?? null,
       built: { by: this.info.by ?? 'viewer', at: new Date().toISOString(), ms: Math.round(performance.now() - this.started) },
     };

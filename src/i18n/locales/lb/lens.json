@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stacks, Rotatiounen a Lurks",
   "lens.metric.cqbPostPlant": "Nom Leeën a Retake",
   "lens.metric.cqbFunnel": "Doudlech Trichteren",
-  "lens.metric.cqbImpact": "Afloss vun de Spiller"
+  "lens.metric.cqbImpact": "Afloss vun de Spiller",
+  "lens.metric.order": "Kollektiv Ausriichtung",
+  "lens.metric.herding": "Häerdeverhalen op Strecken",
+  "lens.metric.lanes": "Spueren a Pied",
+  "lens.metric.crowding": "Gedrécks",
+  "lens.metric.leaders": "Leader an Nokommer",
+  "lens.metric.cohesion": "Zesummenhalt an Nozügler",
+  "lens.metric.breaking": "Broochpunkt",
+  "lens.metric.risk": "Risiko no Verloschter",
+  "lens.metric.streaks": "Serien (Hot Hand)",
+  "lens.metric.buy": "Akafsofstëmmung",
+  "lens.metric.suppression": "Néierhalen"
 }

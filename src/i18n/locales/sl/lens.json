@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Skupine, rotacije in lurki",
   "lens.metric.cqbPostPlant": "Po postavitvi in retake",
   "lens.metric.cqbFunnel": "Smrtni lijaki",
-  "lens.metric.cqbImpact": "Vpliv igralcev"
+  "lens.metric.cqbImpact": "Vpliv igralcev",
+  "lens.metric.order": "Kolektivna usklajenost",
+  "lens.metric.herding": "Čredno sledenje potem",
+  "lens.metric.lanes": "Pasovi in steze",
+  "lens.metric.crowding": "Gneča",
+  "lens.metric.leaders": "Vodje in sledilci",
+  "lens.metric.cohesion": "Kohezija in zaostali",
+  "lens.metric.breaking": "Točka zloma",
+  "lens.metric.risk": "Tveganje po izgubah",
+  "lens.metric.streaks": "Nizi (vroča roka)",
+  "lens.metric.buy": "Usklajenost nakupov",
+  "lens.metric.suppression": "Zatiranje z ognjem"
 }

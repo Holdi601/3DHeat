@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "堆點、回防與繞後",
   "lens.metric.cqbPostPlant": "下包後與回防",
   "lens.metric.cqbFunnel": "致命漏斗",
-  "lens.metric.cqbImpact": "選手影響力"
+  "lens.metric.cqbImpact": "選手影響力",
+  "lens.metric.order": "集體對齊",
+  "lens.metric.herding": "路線從眾",
+  "lens.metric.lanes": "車道與小徑",
+  "lens.metric.crowding": "擁擠",
+  "lens.metric.leaders": "領導者與跟隨者",
+  "lens.metric.cohesion": "凝聚與掉隊",
+  "lens.metric.breaking": "崩潰點",
+  "lens.metric.risk": "損失後的冒險",
+  "lens.metric.streaks": "連勝（熱手）",
+  "lens.metric.buy": "購買一致性",
+  "lens.metric.suppression": "火力壓制"
 }

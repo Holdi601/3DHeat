@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stack-uri, rotații și lurk-uri",
   "lens.metric.cqbPostPlant": "După plantare și retake",
   "lens.metric.cqbFunnel": "Pâlnii mortale",
-  "lens.metric.cqbImpact": "Impactul jucătorilor"
+  "lens.metric.cqbImpact": "Impactul jucătorilor",
+  "lens.metric.order": "Aliniere colectivă",
+  "lens.metric.herding": "Comportament de turmă pe rute",
+  "lens.metric.lanes": "Benzi și cărări",
+  "lens.metric.crowding": "Aglomerare",
+  "lens.metric.leaders": "Lideri și urmăritori",
+  "lens.metric.cohesion": "Coeziune și rămași în urmă",
+  "lens.metric.breaking": "Punct de rupere",
+  "lens.metric.risk": "Risc după pierderi",
+  "lens.metric.streaks": "Serii (mâna fierbinte)",
+  "lens.metric.buy": "Acord la cumpărare",
+  "lens.metric.suppression": "Suprimare prin foc"
 }

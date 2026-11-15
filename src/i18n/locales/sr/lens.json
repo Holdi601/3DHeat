@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Стекови, ротације и лурковање",
   "lens.metric.cqbPostPlant": "После постављања и ретејк",
   "lens.metric.cqbFunnel": "Смртоносни левкови",
-  "lens.metric.cqbImpact": "Утицај играча"
+  "lens.metric.cqbImpact": "Утицај играча",
+  "lens.metric.order": "Колективно усклађивање",
+  "lens.metric.herding": "Крдо на рутама",
+  "lens.metric.lanes": "Траке и стазе",
+  "lens.metric.crowding": "Гужва",
+  "lens.metric.leaders": "Вође и следбеници",
+  "lens.metric.cohesion": "Кохезија и заостали",
+  "lens.metric.breaking": "Тачка лома",
+  "lens.metric.risk": "Ризик после губитака",
+  "lens.metric.streaks": "Низови (врућа рука)",
+  "lens.metric.buy": "Усклађеност куповине",
+  "lens.metric.suppression": "Сузбијање ватром"
 }

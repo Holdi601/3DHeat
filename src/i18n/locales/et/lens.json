@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stackid, rotatsioonid ja lurkid",
   "lens.metric.cqbPostPlant": "Pärast paigaldamist ja tagasivõtmine",
   "lens.metric.cqbFunnel": "Surmalehtrid",
-  "lens.metric.cqbImpact": "Mängijate mõju"
+  "lens.metric.cqbImpact": "Mängijate mõju",
+  "lens.metric.order": "Kollektiivne joondumine",
+  "lens.metric.herding": "Karjakäitumine marsruutidel",
+  "lens.metric.lanes": "Rajad ja teerajad",
+  "lens.metric.crowding": "Tunglemine",
+  "lens.metric.leaders": "Juhid ja järgijad",
+  "lens.metric.cohesion": "Ühtekuuluvus ja mahajääjad",
+  "lens.metric.breaking": "Murdepunkt",
+  "lens.metric.risk": "Risk pärast kaotusi",
+  "lens.metric.streaks": "Seeriad (kuum käsi)",
+  "lens.metric.buy": "Ostude kooskõla",
+  "lens.metric.suppression": "Mahasurumine"
 }

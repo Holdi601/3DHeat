@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stackovi, rotacije i lurkovi",
   "lens.metric.cqbPostPlant": "Nakon postavljanja i retake",
   "lens.metric.cqbFunnel": "Smrtonosni lijevci",
-  "lens.metric.cqbImpact": "Utjecaj igrača"
+  "lens.metric.cqbImpact": "Utjecaj igrača",
+  "lens.metric.order": "Kolektivno usklađivanje",
+  "lens.metric.herding": "Krdo na rutama",
+  "lens.metric.lanes": "Trake i staze",
+  "lens.metric.crowding": "Gužva",
+  "lens.metric.leaders": "Vođe i sljedbenici",
+  "lens.metric.cohesion": "Kohezija i zaostali",
+  "lens.metric.breaking": "Točka loma",
+  "lens.metric.risk": "Rizik nakon gubitaka",
+  "lens.metric.streaks": "Nizovi (vruća ruka)",
+  "lens.metric.buy": "Usklađenost kupnje",
+  "lens.metric.suppression": "Suzbijanje vatrom"
 }

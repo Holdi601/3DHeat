@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stack, rotasyon ve lurk",
   "lens.metric.cqbPostPlant": "Kurulumdan sonra ve retake",
   "lens.metric.cqbFunnel": "Ölümcül huniler",
-  "lens.metric.cqbImpact": "Oyuncu etkisi"
+  "lens.metric.cqbImpact": "Oyuncu etkisi",
+  "lens.metric.order": "Toplu hizalanma",
+  "lens.metric.herding": "Rotalarda sürü davranışı",
+  "lens.metric.lanes": "Şeritler ve patikalar",
+  "lens.metric.crowding": "Kalabalık",
+  "lens.metric.leaders": "Liderler ve takipçiler",
+  "lens.metric.cohesion": "Uyum ve geride kalanlar",
+  "lens.metric.breaking": "Kırılma noktası",
+  "lens.metric.risk": "Kayıplardan sonra risk",
+  "lens.metric.streaks": "Seriler (sıcak el)",
+  "lens.metric.buy": "Satın alma uyumu",
+  "lens.metric.suppression": "Bastırma ateşi"
 }

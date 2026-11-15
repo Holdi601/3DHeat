@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Stacki, rotacje i lurki",
   "lens.metric.cqbPostPlant": "Po podłożeniu i retake",
   "lens.metric.cqbFunnel": "Śmiertelne lejki",
-  "lens.metric.cqbImpact": "Wpływ graczy"
+  "lens.metric.cqbImpact": "Wpływ graczy",
+  "lens.metric.order": "Zbiorowe ukierunkowanie",
+  "lens.metric.herding": "Stadne wybieranie tras",
+  "lens.metric.lanes": "Pasy i ścieżki",
+  "lens.metric.crowding": "Tłok",
+  "lens.metric.leaders": "Liderzy i naśladowcy",
+  "lens.metric.cohesion": "Spójność i maruderzy",
+  "lens.metric.breaking": "Punkt załamania",
+  "lens.metric.risk": "Ryzyko po stratach",
+  "lens.metric.streaks": "Serie (gorąca ręka)",
+  "lens.metric.buy": "Zgodność zakupów",
+  "lens.metric.suppression": "Przygważdżanie ogniem"
 }

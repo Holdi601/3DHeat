@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "スタック・ローテーション・ラーク",
   "lens.metric.cqbPostPlant": "設置後とリテイク",
   "lens.metric.cqbFunnel": "死の漏斗",
-  "lens.metric.cqbImpact": "プレイヤーの影響"
+  "lens.metric.cqbImpact": "プレイヤーの影響",
+  "lens.metric.order": "集団の整列",
+  "lens.metric.herding": "ルートの群集追従",
+  "lens.metric.lanes": "レーンと踏み跡",
+  "lens.metric.crowding": "混雑",
+  "lens.metric.leaders": "リーダーとフォロワー",
+  "lens.metric.cohesion": "結束と落伍者",
+  "lens.metric.breaking": "崩壊点",
+  "lens.metric.risk": "損失後のリスク",
+  "lens.metric.streaks": "連続成功（ホットハンド）",
+  "lens.metric.buy": "購入の一致",
+  "lens.metric.suppression": "制圧射撃"
 }

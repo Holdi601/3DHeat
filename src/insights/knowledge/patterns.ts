@@ -6,6 +6,8 @@
  * existing pattern.
  */
 
+import { BEHAVIOUR_PATTERNS } from './patterns-behaviour.ts';
+import { MANEUVER_PATTERNS } from './patterns-maneuver.ts';
 import { CQB_PATTERNS } from './patterns-cqb.ts';
 
 export type PatternFamily = 'force' | 'terrain' | 'movement' | 'time' | 'air' | 'sea' | 'urban' | 'people' | 'design';
@@ -74,8 +76,12 @@ export const PATTERNS: Pattern[] = [
   { id: 'flow', family: 'design', label: 'Level flow', sign: 'How players move through the level: loops, lanes, dead ends.' },
   { id: 'sightlines', family: 'design', label: 'Sightlines', sign: 'Long lines of sight decide where fights start and who wins them.' },
   { id: 'readability', family: 'design', label: 'Readability and fairness', sign: 'Deaths players cannot see coming: from behind, from out of sight.' },
+  // Movement analysis (`../maneuver`)
+  ...MANEUVER_PATTERNS,
   // Close quarters and round-based esports (`../cqb`)
   ...CQB_PATTERNS,
+  // Collective behaviour (`../behaviour`)
+  ...BEHAVIOUR_PATTERNS,
 ];
 
 export const PATTERN_BY_ID = new Map(PATTERNS.map((p) => [p.id, p]));

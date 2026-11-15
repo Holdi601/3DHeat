@@ -40,5 +40,16 @@
   "lens.metric.cqbSetups": "Grúpaí, rothlaithe agus snámhaithe",
   "lens.metric.cqbPostPlant": "Tar éis plandála agus athghabháil",
   "lens.metric.cqbFunnel": "Tonnadóirí marfacha",
-  "lens.metric.cqbImpact": "Tionchar na n-imreoirí"
+  "lens.metric.cqbImpact": "Tionchar na n-imreoirí",
+  "lens.metric.order": "Ailíniú comhchoiteann",
+  "lens.metric.herding": "Tréadúlacht bealaí",
+  "lens.metric.lanes": "Lánaí agus cosáin",
+  "lens.metric.crowding": "Plódú",
+  "lens.metric.leaders": "Ceannairí agus leantóirí",
+  "lens.metric.cohesion": "Comhtháthú agus fánaithe",
+  "lens.metric.breaking": "Pointe briste",
+  "lens.metric.risk": "Riosca tar éis caillteanas",
+  "lens.metric.streaks": "Sraitheanna (lámh the)",
+  "lens.metric.buy": "Comhaontú ceannaigh",
+  "lens.metric.suppression": "Cosc le tine"
 }
