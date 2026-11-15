@@ -12,6 +12,8 @@
  * the ground, power-of-two cells, so the grids of many matches add up).
  */
 
+import type { ManeuverSection } from '../insights/maneuver/summary';
+
 /** The member's `format` and its version: a reader takes its own major, a newer one is worked out again. */
 export const SUMMARY_FORMAT = '3dheat-summary';
 export const SUMMARY_VERSION = 1;
@@ -180,6 +182,12 @@ export interface MatchSummary {
   kinds: string[];
   classes: string[];
   grid: SummaryGrid | null;
+  /**
+   * The movement analysis' counts (`insights/maneuver/summary.ts`): per kind and side, the
+   * maneuvers made at medium confidence or more, how many paid off and not, kills and losses.
+   * Absent in summaries written before it; null where it could not run.
+   */
+  maneuvers?: ManeuverSection | null;
   built: { by: string; at: string; ms: number };
 }
 

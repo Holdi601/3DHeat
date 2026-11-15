@@ -19,6 +19,10 @@ import {
   BANDS, GRID_CELLS, GRID_KINDS, HEIGHT_EDGES, MAX_PLAYERS, SLICE_CELLS, MAX_TEAMS, MAX_WEAPONS, MINUTE_BINS, MINUTE_SECONDS, PHASE_BINS, PRESENCE_GAP, SUMMARY_FORMAT, SUMMARY_VERSION,
   type EventCounts, type MatchSummary, type PlayerStat, type SummaryGrid, type TeamStat, type VehicleStat,
 } from './types';
+import { analyseMatch } from '../insights/maneuver/analyse';
+import { ManeuverCollector } from '../insights/maneuver/collect';
+import { maneuverSection } from '../insights/maneuver/summary';
+import type { EvKind, ManeuverMatch } from '../insights/maneuver/types';
 
 export const COMPRESSORS: Compressors = { ZSTD: (input, outputLength) => zstd(input, new Uint8Array(outputLength)) };
 
@@ -29,7 +33,12 @@ export interface SummaryInfo {
   /** The match document (`<match>.match.json`), when there is one. */
   doc?: Record<string, unknown> | null;
   by?: string;
+  /** Handed the match's movement analysis in full (the summary keeps only its counts). */
+  onManeuvers?: (m: ManeuverMatch | null) => void;
 }
+
+/** The canonical events the movement analysis reads (`insights/maneuver`). */
+const MV_KIND: Record<string, EvKind> = { kill: 'kill', death: 'death', destroyed: 'death', crash: 'death', fire: 'fire', launch: 'launch', hit: 'hit', capture: 'capture' };
 
 const NAME_KEY = /^(vehicle|unit.?type|model|aircraft|plane|tank|ship|craft|name)$/i;
 const NAME_LABEL = /^(vehicle.?name|display.?name)$/i;
@@ -257,6 +266,8 @@ export class SummaryBuilder {
   private rows = 0;
   private mission: string | null = null;
   private readonly started = performance.now();
+  /** Tracks and events for the movement analysis (`insights/maneuver`). */
+  private readonly mv = new ManeuverCollector(1);
 
   constructor(
     readonly spec: LeanSpec,
@@ -606,6 +617,7 @@ export class SummaryBuilder {
       }
       if (kind === POSITION) {
         if (!u || !placed) continue;
+        this.mv.sample(uIdx, -1, u.team < MAX_TEAMS ? u.team : -1, u.veh >= 0 ? this.vehCls[u.veh] : -1, t, x, Y[i], z);
         const dt = t - u.lastT;
         if (dt > 0 && dt <= PRESENCE_GAP) {
           u.presence += dt;
@@ -640,16 +652,27 @@ export class SummaryBuilder {
       const kName = EVENT_KINDS[kind];
       // Whoever did it, where the row names the doer (a weapon's shooter): else the row's own unit.
       let by = u;
+      let byI = uIdx;
       if (actorRef && BY_ACTOR.has(kName)) {
         const ref = text(actorRef[i]);
         const b = ref ? this.unitOf.get(ref) : undefined;
-        if (b !== undefined) by = this.units[b];
+        if (b !== undefined) {
+          by = this.units[b];
+          byI = b;
+        }
       }
       if (DEATHS.has(kName) && u) {
         if (t - u.lastDeath < DEATH_TWICE) continue;
         u.lastDeath = t;
       }
       this.events[kind]++;
+      const mk = MV_KIND[kName];
+      if (mk && placed) {
+        // A death is the row's own unit's; the rest are the doer's.
+        const di = mk === 'death' ? uIdx : byI;
+        const d = di >= 0 ? this.units[di] : null;
+        this.mv.event(mk, di, -1, d && d.team < MAX_TEAMS ? d.team : -1, t, x, Y[i], z);
+      }
       if (by) {
         by.ev[kind]++;
         if (kName === 'kill' && (sc.otherName || sc.otherType)) {
@@ -916,6 +939,7 @@ export class SummaryBuilder {
     const unitsPlayers = this.units.filter((u) => u.actor === 1 && driven(u));
     const players = new Set(unitsPlayers.map((u) => u.player).filter(Boolean)).size;
     const v = this.cols.values;
+    const maneuvers = this.maneuvers();
     return {
       format: SUMMARY_FORMAT,
       version: SUMMARY_VERSION,
@@ -942,8 +966,22 @@ export class SummaryBuilder {
       kinds: [...GRID_KINDS],
       classes: [...VEHICLE_CLASSES],
       grid,
+      maneuvers,
       built: { by: this.info.by ?? 'viewer', at: new Date().toISOString(), ms: Math.round(performance.now() - this.started) },
     };
+  }
+
+  /** The movement analysis of the match, as counts by kind and side; null when it cannot run. */
+  private maneuvers(): MatchSummary['maneuvers'] {
+    try {
+      this.mv.upm = this.upm;
+      const [m] = this.mv.finish(this.teamNames.length);
+      const r = m ? analyseMatch(m) : null;
+      this.info.onManeuvers?.(r);
+      return maneuverSection(r);
+    } catch {
+      return null;
+    }
   }
 }
 
