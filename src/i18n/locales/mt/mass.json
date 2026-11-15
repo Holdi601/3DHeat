@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Duelli mirbuħa minn min immira aħjar",
   "mass.cqb.m.planter": "Rawnds mirbuħa min-naħa li tqiegħed",
   "mass.cqb.m.man": "Rawnds mirbuħa minn",
-  "mass.cqb.m.funnel": "Imwiet f'2,5 s mid-dħul"
+  "mass.cqb.m.funnel": "Imwiet f'2,5 s mid-dħul",
+  "mass.tab.surfaces": "Uċuħ R6",
+  "mass.surfaces.hint": "Marki fuq il-livell (toqob tal-balal u bħalhom) skont il-wiċċ fil-mapep ta' Rainbow Six Siege, minn {with} minn {matches} logħbiet. Wiċċ iżomm l-id tiegħu fil-logħbiet ta' verżjoni waħda tal-mappa. Klikk jiftaħ ringiela.",
+  "mass.surfaces.none": "L-ebda marka fuq il-livell f'dawn il-logħbiet (il-logħbiet ta' Rainbow Six Siege konvertiti b'heat3d-r6-replay 0.3.0 jew aktar ġodda għandhom).",
+  "mass.surfaces.col.surface": "Wiċċ",
+  "mass.surfaces.col.room": "Kamra",
+  "mass.surfaces.col.marks": "Marki",
+  "mass.surfaces.col.perRound": "Kull rawnd",
+  "mass.surfaces.col.shot": "Min spara magħruf",
+  "mass.surfaces.col.shotTitle": "Sehem il-marki b'min spara dedott: il-plejer iħares lejn il-marka meta dehret",
+  "mass.surfaces.kinds": "Tipi ta' marki",
+  "mass.surfaces.byOperator": "Skont l-operatur",
+  "mass.surfaces.byClass": "Skont il-klassi tal-arma",
+  "mass.surfaces.heat": "Fejn fuq il-wiċċ",
+  "mass.surfaces.load": "Tella' l-logħbiet tiegħu ({count})"
 }

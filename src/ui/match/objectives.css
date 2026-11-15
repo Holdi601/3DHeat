@@ -39,6 +39,15 @@
     conic-gradient(var(--p, transparent) calc(var(--f, 0) * 1turn), rgba(12, 14, 18, 0.85) 0);
   box-shadow: 0 0 0 1.5px rgba(12, 14, 18, 0.85);
 }
+/* A bomb site's room: its name, bold, in amber while its round is shown. */
+.objective-label.site {
+  font-weight: 700;
+  border-width: 1.5px;
+}
+.objective-label.site::before {
+  content: '\25C6';
+  margin-right: 4px;
+}
 /* What a marker is, by a sign before its words. */
 .objective-label.spawn::before,
 .objective-label.airfield::before,

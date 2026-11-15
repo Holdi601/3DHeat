@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Dueluri câștigate de cel mai bine țintit",
   "mass.cqb.m.planter": "Runde câștigate de partea care plantează",
   "mass.cqb.m.man": "Runde câștigate din starea",
-  "mass.cqb.m.funnel": "Morți în 2,5 s de la intrare"
+  "mass.cqb.m.funnel": "Morți în 2,5 s de la intrare",
+  "mass.tab.surfaces": "Suprafețe R6",
+  "mass.surfaces.hint": "Urme pe nivel (găuri de glonț și altele) pe suprafețe ale hărților Rainbow Six Siege, din {with} din {matches} meciuri. O suprafață își păstrează id-ul în meciurile unei versiuni a hărții. Un clic deschide un rând.",
+  "mass.surfaces.none": "Nicio urmă pe nivel în aceste meciuri (meciurile Rainbow Six Siege convertite cu heat3d-r6-replay 0.3.0 sau mai nou le au).",
+  "mass.surfaces.col.surface": "Suprafață",
+  "mass.surfaces.col.room": "Încăpere",
+  "mass.surfaces.col.marks": "Urme",
+  "mass.surfaces.col.perRound": "Pe rundă",
+  "mass.surfaces.col.shot": "Trăgător cunoscut",
+  "mass.surfaces.col.shotTitle": "Ponderea urmelor cu trăgător dedus: jucătorul orientat spre urmă când a apărut",
+  "mass.surfaces.kinds": "Tipuri de urme",
+  "mass.surfaces.byOperator": "După operator",
+  "mass.surfaces.byClass": "După clasa armei",
+  "mass.surfaces.heat": "Unde pe suprafață",
+  "mass.surfaces.load": "Încarcă meciurile ei ({count})"
 }

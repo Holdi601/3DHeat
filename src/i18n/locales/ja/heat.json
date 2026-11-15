@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "全体の割合への引き寄せ (行)",
   "heat.splitPanel.rateHint": "ラウンドではなく行で数えます: 立ち止まったプレイヤーはサンプルごとに 1 行増えます。ある場所で勝ったラウンド数は、内訳またはボリュームの統計で確認してください。",
   "heat.teamsList.columnSplitHint": "差分は<b>{column}</b>で分割されているため、ここのグループは描画するものを決めるだけで、どちらの側に数えるかは決めません。",
-  "heat.sourcePanel.indexing": "ユニットを索引付け中"
+  "heat.sourcePanel.indexing": "ユニットを索引付け中",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "弾痕と痕跡",
+  "heat.filterPanel.siege.marksTitle": "レベルに残った痕跡のみ（イベント impact）",
+  "heat.filterPanel.siege.marksShooter": "射手が分かる痕跡",
+  "heat.filterPanel.siege.marksShooterTitle": "射手を推定できた痕跡（痕跡が現れたときにその方向を向いていたプレイヤー）。byOperator で絞り込みまたは分割",
+  "heat.filterPanel.siege.marksWeapon": "武器分類が分かる痕跡",
+  "heat.filterPanel.siege.marksWeaponTitle": "同じ瞬間の射手のキルが武器を示す痕跡。byItemClass で絞り込みまたは分割",
+  "heat.filterPanel.siege.attempts": "設置と解除の試み",
+  "heat.filterPanel.siege.attemptsTitle": "設置または解除の開始・完了・中断のすべて",
+  "heat.filterPanel.siege.interrupted": "中断された試み",
+  "heat.filterPanel.siege.interruptedTitle": "開始したが完了しなかった設置と解除（プレイヤーがやめた地点）",
+  "heat.filterPanel.siege.reinforce": "補強",
+  "heat.filterPanel.siege.reinforceTitle": "補強された壁とハッチ（そこに立っていた防衛側の位置、推定）"
 }

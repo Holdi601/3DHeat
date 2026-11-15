@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Dragning mot totalandelen (rader)",
   "heat.splitPanel.rateHint": "Räknat i rader, inte ronder: en spelare som står still lägger till en rad per mätpunkt. För ronder vunna på en plats, använd Uppdelning eller en volyms statistik.",
   "heat.teamsList.columnSplitHint": "Differensen är uppdelad efter <b>{column}</b>, så grupperna här avgör bara vad som ritas, inte vilken sida de räknas till.",
-  "heat.sourcePanel.indexing": "Indexerar enheter"
+  "heat.sourcePanel.indexing": "Indexerar enheter",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Kulhål och märken",
+  "heat.filterPanel.siege.marksTitle": "Bara märkena på banan (händelse impact)",
+  "heat.filterPanel.siege.marksShooter": "Märken med skytt",
+  "heat.filterPanel.siege.marksShooterTitle": "Märken vars skytt har härletts (spelaren som var vänd mot märket när det uppstod); filtrera eller dela efter byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Märken med vapenklass",
+  "heat.filterPanel.siege.marksWeaponTitle": "Märken där skyttens dödande i samma ögonblick anger vapnet; filtrera eller dela efter byItemClass",
+  "heat.filterPanel.siege.attempts": "Försök att plantera och desarmera",
+  "heat.filterPanel.siege.attemptsTitle": "Varje start, slutförande och avbrott av en plantering eller desarmering",
+  "heat.filterPanel.siege.interrupted": "Avbrutna försök",
+  "heat.filterPanel.siege.interruptedTitle": "Planteringar och desarmeringar som påbörjades men inte slutfördes, där spelaren slutade",
+  "heat.filterPanel.siege.reinforce": "Förstärkningar",
+  "heat.filterPanel.siege.reinforceTitle": "Förstärkta väggar och luckor, vid försvararen som stod där (härlett)"
 }

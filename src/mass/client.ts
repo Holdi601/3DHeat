@@ -18,7 +18,7 @@ import { placeLines, usePlaceLines } from './placeLines';
 import type { MassFacets, MassLoadStats, MassRequest, MassResponse } from './massWorker';
 import type { MassDrill, MassFilter } from './store';
 
-export type MassTab = 'overview' | 'balance' | 'trends' | 'players' | 'sides' | 'maneuvers' | 'cqb' | 'map' | 'insights' | 'places' | 'niches';
+export type MassTab = 'overview' | 'balance' | 'trends' | 'players' | 'sides' | 'maneuvers' | 'cqb' | 'surfaces' | 'map' | 'insights' | 'places' | 'niches';
 
 export interface MassState {
   open: boolean;

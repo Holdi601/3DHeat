@@ -11,6 +11,7 @@ import { useEngine } from '../EngineContext';
 import { NichesTab, PlacesTab, sayMass } from './MassPlaces';
 import { MassManeuvers } from './MassManeuvers';
 import { MassCqb } from './MassCqb';
+import { MassSurfaces } from './MassSurfaces';
 import '../compare/compare.css';
 import '../breakdown/breakdown.css';
 import './mass.css';
@@ -89,7 +90,7 @@ function MassBody() {
   const setFilter = (p: Partial<typeof filter>) => st.set({ filter: { ...filter, ...p } });
   const one = (l?: string[]) => l?.[0] ?? '';
   const maps = f.maps.filter((m) => !filter.games?.length || filter.games.includes(m.game));
-  const tabs: MassTab[] = ['overview', 'balance', 'trends', 'players', 'sides', 'maneuvers', 'cqb', 'map', 'insights', 'places', 'niches'];
+  const tabs: MassTab[] = ['overview', 'balance', 'trends', 'players', 'sides', 'maneuvers', 'cqb', 'surfaces', 'map', 'insights', 'places', 'niches'];
   // The window's frame first, its date fields and tab a frame later: one frame for all of it ran long.
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -159,6 +160,7 @@ function MassBody() {
           {st.tab === 'sides' && <SidesTab />}
           {st.tab === 'maneuvers' && <MassManeuvers />}
           {st.tab === 'cqb' && <MassCqb />}
+          {st.tab === 'surfaces' && <MassSurfaces />}
           {st.tab === 'map' && <MapTab />}
           {st.tab === 'insights' && <InsightsTab />}
           {st.tab === 'places' && <PlacesTab />}

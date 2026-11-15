@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Ťah k celkovému podielu (riadky)",
   "heat.splitPanel.rateHint": "Počítané v riadkoch, nie v kolách: hráč, ktorý stojí, pridá riadok v každej vzorke. Vyhraté kolá na mieste ukáže Rozpis alebo štatistika objemu.",
   "heat.teamsList.columnSplitHint": "Rozdiel je rozdelený podľa <b>{column}</b>, takže skupiny tu určujú len to, čo sa vykreslí, nie na ktorej strane sa počítajú.",
-  "heat.sourcePanel.indexing": "Indexovanie jednotiek"
+  "heat.sourcePanel.indexing": "Indexovanie jednotiek",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Diery po guľkách a stopy",
+  "heat.filterPanel.siege.marksTitle": "Len stopy zanechané na úrovni (udalosť impact)",
+  "heat.filterPanel.siege.marksShooter": "Stopy so strelcom",
+  "heat.filterPanel.siege.marksShooterTitle": "Stopy, ktorých strelec bol odvodený (hráč otočený k stope, keď vznikla); filtrovať alebo rozdeliť podľa byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Stopy s triedou zbrane",
+  "heat.filterPanel.siege.marksWeaponTitle": "Stopy, pri ktorých zabitie strelca v tom istom okamihu uvádza zbraň; filtrovať alebo rozdeliť podľa byItemClass",
+  "heat.filterPanel.siege.attempts": "Pokusy o položenie a zneškodnenie",
+  "heat.filterPanel.siege.attemptsTitle": "Každý začiatok, dokončenie a prerušenie položenia alebo zneškodnenia",
+  "heat.filterPanel.siege.interrupted": "Prerušené pokusy",
+  "heat.filterPanel.siege.interruptedTitle": "Začaté, ale nedokončené položenia a zneškodnenia, tam kde hráč prestal",
+  "heat.filterPanel.siege.reinforce": "Zosilnenia",
+  "heat.filterPanel.siege.reinforceTitle": "Zosilnené steny a poklopy, pri obrancovi, ktorý tam stál (odvodené)"
 }

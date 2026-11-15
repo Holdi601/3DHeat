@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Atracció cap a la part global (files)",
   "heat.splitPanel.rateHint": "Comptat en files, no en rondes: un jugador quiet afegeix una fila a cada mostra. Per a les rondes guanyades en un lloc, fes servir el Desglossament o les estadístiques d'un volum.",
   "heat.teamsList.columnSplitHint": "La diferència es divideix per <b>{column}</b>, de manera que aquí els grups només decideixen què es dibuixa, no a quin costat compten.",
-  "heat.sourcePanel.indexing": "Indexant unitats"
+  "heat.sourcePanel.indexing": "Indexant unitats",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Forats de bala i marques",
+  "heat.filterPanel.siege.marksTitle": "Només les marques deixades al nivell (esdeveniment impact)",
+  "heat.filterPanel.siege.marksShooter": "Marques amb tirador",
+  "heat.filterPanel.siege.marksShooterTitle": "Marques el tirador de les quals s'ha deduït (el jugador que mirava cap a la marca quan va aparèixer); filtra o divideix per byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Marques amb classe d'arma",
+  "heat.filterPanel.siege.marksWeaponTitle": "Marques en què una baixa del tirador al mateix instant anomena l'arma; filtra o divideix per byItemClass",
+  "heat.filterPanel.siege.attempts": "Intents de col·locar i desactivar",
+  "heat.filterPanel.siege.attemptsTitle": "Cada inici, final i interrupció d'una col·locació o desactivació",
+  "heat.filterPanel.siege.interrupted": "Intents interromputs",
+  "heat.filterPanel.siege.interruptedTitle": "Col·locacions i desactivacions començades però no acabades, on el jugador es va aturar",
+  "heat.filterPanel.siege.reinforce": "Reforços",
+  "heat.filterPanel.siege.reinforceTitle": "Parets i trapes reforçades, al defensor que hi era (deduït)"
 }

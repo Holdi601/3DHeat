@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Притяжение к общей доле (строки)",
   "heat.splitPanel.rateHint": "Считается в строках, а не в раундах: стоящий игрок добавляет строку с каждым отсчётом. Выигранные раунды в месте покажет Разбивка или статистика объёма.",
   "heat.teamsList.columnSplitHint": "Разность разделена по <b>{column}</b>, поэтому группы здесь определяют только то, что рисуется, а не на какой стороне они учитываются.",
-  "heat.sourcePanel.indexing": "Индексирование единиц"
+  "heat.sourcePanel.indexing": "Индексирование единиц",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Пулевые отверстия и следы",
+  "heat.filterPanel.siege.marksTitle": "Только следы, оставленные на уровне (событие impact)",
+  "heat.filterPanel.siege.marksShooter": "Следы со стрелком",
+  "heat.filterPanel.siege.marksShooterTitle": "Следы, чей стрелок выведен (игрок, смотревший на след в момент его появления); фильтровать или делить по byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Следы с классом оружия",
+  "heat.filterPanel.siege.marksWeaponTitle": "Следы, у которых убийство стрелка в тот же момент называет оружие; фильтровать или делить по byItemClass",
+  "heat.filterPanel.siege.attempts": "Попытки установки и обезвреживания",
+  "heat.filterPanel.siege.attemptsTitle": "Каждое начало, завершение и прерывание установки или обезвреживания",
+  "heat.filterPanel.siege.interrupted": "Прерванные попытки",
+  "heat.filterPanel.siege.interruptedTitle": "Начатые, но не завершённые установки и обезвреживания, там, где игрок остановился",
+  "heat.filterPanel.siege.reinforce": "Укрепления",
+  "heat.filterPanel.siege.reinforceTitle": "Укреплённые стены и люки, у защитника, стоявшего там (выведено)"
 }

@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Genel paya çekme (satır)",
   "heat.splitPanel.rateHint": "Raunt değil satır olarak sayılır: duran bir oyuncu her örnekte bir satır ekler. Bir yerde kazanılan rauntlar için Döküm’ü veya bir hacmin istatistiklerini kullanın.",
   "heat.teamsList.columnSplitHint": "Fark <b>{column}</b> ölçütüne göre ayrılmıştır; bu yüzden buradaki gruplar yalnızca neyin çizileceğini belirler, hangi tarafta sayılacaklarını değil.",
-  "heat.sourcePanel.indexing": "Birimler dizinleniyor"
+  "heat.sourcePanel.indexing": "Birimler dizinleniyor",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Kurşun delikleri ve izler",
+  "heat.filterPanel.siege.marksTitle": "Yalnızca seviyede kalan izler (impact olayı)",
+  "heat.filterPanel.siege.marksShooter": "Atıcısı olan izler",
+  "heat.filterPanel.siege.marksShooterTitle": "Atıcısı çıkarılan izler (iz oluştuğunda ona dönük olan oyuncu); byOperator'a göre süz veya böl",
+  "heat.filterPanel.siege.marksWeapon": "Silah sınıfı olan izler",
+  "heat.filterPanel.siege.marksWeaponTitle": "Atıcının aynı andaki bir öldürmesinin silahı adlandırdığı izler; byItemClass'a göre süz veya böl",
+  "heat.filterPanel.siege.attempts": "Kurma ve etkisizleştirme girişimleri",
+  "heat.filterPanel.siege.attemptsTitle": "Her kurma veya etkisizleştirmenin başlangıcı, tamamlanması ve kesilmesi",
+  "heat.filterPanel.siege.interrupted": "Kesilen girişimler",
+  "heat.filterPanel.siege.interruptedTitle": "Başlanmış ama bitirilmemiş kurma ve etkisizleştirmeler, oyuncunun durduğu yerde",
+  "heat.filterPanel.siege.reinforce": "Güçlendirmeler",
+  "heat.filterPanel.siege.reinforceTitle": "Güçlendirilmiş duvarlar ve kapaklar, orada duran savunucuda (çıkarım)"
 }

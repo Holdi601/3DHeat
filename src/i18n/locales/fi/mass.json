@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Paremmin tähdänneen voitot",
   "mass.cqb.m.planter": "Istuttavan puolen voittamat kierrokset",
   "mass.cqb.m.man": "Kierrokset voitettu tilanteesta",
-  "mass.cqb.m.funnel": "Kuolemat 2,5 s:n sisällä sisääntulosta"
+  "mass.cqb.m.funnel": "Kuolemat 2,5 s:n sisällä sisääntulosta",
+  "mass.tab.surfaces": "R6-pinnat",
+  "mass.surfaces.hint": "Jäljet kentässä (luodinreiät ym.) pinnoittain Rainbow Six Siegen kartoilla, {with}/{matches} ottelusta. Pinta säilyttää tunnuksensa yhden karttaversion otteluissa. Napsautus avaa rivin.",
+  "mass.surfaces.none": "Näissä otteluissa ei ole jälkiä kentässä (heat3d-r6-replay 0.3.0:lla tai uudemmalla muunnetuissa Rainbow Six Siege -otteluissa niitä on).",
+  "mass.surfaces.col.surface": "Pinta",
+  "mass.surfaces.col.room": "Huone",
+  "mass.surfaces.col.marks": "Jäljet",
+  "mass.surfaces.col.perRound": "Kierrosta kohti",
+  "mass.surfaces.col.shot": "Ampuja tiedossa",
+  "mass.surfaces.col.shotTitle": "Osuus jäljistä, joiden ampuja on päätelty: pelaaja, joka katsoi jälkeä kohti sen syntyessä",
+  "mass.surfaces.kinds": "Jälkityypit",
+  "mass.surfaces.byOperator": "Operaattorin mukaan",
+  "mass.surfaces.byClass": "Aseluokan mukaan",
+  "mass.surfaces.heat": "Missä pinnalla",
+  "mass.surfaces.load": "Lataa sen ottelut ({count})"
 }

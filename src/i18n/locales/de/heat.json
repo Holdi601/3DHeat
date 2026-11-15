@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Zug zum Gesamtanteil (Zeilen)",
   "heat.splitPanel.rateHint": "In Zeilen gezählt, nicht in Runden: Wer stillsteht, fügt jede Abtastung eine Zeile hinzu. Für die an einer Stelle gewonnenen Runden nimm die Aufschlüsselung oder die Statistik eines Volumens.",
   "heat.teamsList.columnSplitHint": "Die Differenz ist nach <b>{column}</b> aufgeteilt, daher bestimmen die Gruppen hier nur, was gezeichnet wird, nicht auf welcher Seite sie zählen.",
-  "heat.sourcePanel.indexing": "Einheiten werden erfasst"
+  "heat.sourcePanel.indexing": "Einheiten werden erfasst",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Einschusslöcher und Spuren",
+  "heat.filterPanel.siege.marksTitle": "Nur die Spuren im Level (Ereignis impact)",
+  "heat.filterPanel.siege.marksShooter": "Spuren mit Schütze",
+  "heat.filterPanel.siege.marksShooterTitle": "Spuren, deren Schütze ermittelt wurde (der Spieler, der zur Spur blickte, als sie entstand); nach byOperator filtern oder aufteilen",
+  "heat.filterPanel.siege.marksWeapon": "Spuren mit Waffenklasse",
+  "heat.filterPanel.siege.marksWeaponTitle": "Spuren, bei denen ein Kill des Schützen im selben Moment die Waffe nennt; nach byItemClass filtern oder aufteilen",
+  "heat.filterPanel.siege.attempts": "Platzierungs- und Entschärfungsversuche",
+  "heat.filterPanel.siege.attemptsTitle": "Jeder Beginn, Abschluss und Abbruch einer Platzierung oder Entschärfung",
+  "heat.filterPanel.siege.interrupted": "Abgebrochene Versuche",
+  "heat.filterPanel.siege.interruptedTitle": "Begonnene, nicht beendete Platzierungen und Entschärfungen, dort wo der Spieler aufhörte",
+  "heat.filterPanel.siege.reinforce": "Verstärkungen",
+  "heat.filterPanel.siege.reinforceTitle": "Verstärkte Wände und Luken, beim Verteidiger, der dort stand (erschlossen)"
 }

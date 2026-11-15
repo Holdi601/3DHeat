@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Privlačenje ukupnom udjelu (reci)",
   "heat.splitPanel.rateHint": "Broji se u recima, ne u rundama: igrač koji stoji dodaje redak pri svakom uzorku. Za runde dobivene na mjestu upotrijebi Raščlambu ili statistiku volumena.",
   "heat.teamsList.columnSplitHint": "Razlika je podijeljena po <b>{column}</b>, pa skupine ovdje određuju samo što se crta, a ne na kojoj se strani broje.",
-  "heat.sourcePanel.indexing": "Indeksiranje jedinica"
+  "heat.sourcePanel.indexing": "Indeksiranje jedinica",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Rupe od metaka i tragovi",
+  "heat.filterPanel.siege.marksTitle": "Samo tragovi ostavljeni na razini (događaj impact)",
+  "heat.filterPanel.siege.marksShooter": "Tragovi sa strijelcem",
+  "heat.filterPanel.siege.marksShooterTitle": "Tragovi čiji je strijelac zaključen (igrač okrenut prema tragu kad je nastao); filtriraj ili podijeli po byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Tragovi s klasom oružja",
+  "heat.filterPanel.siege.marksWeaponTitle": "Tragovi kod kojih ubojstvo strijelca u istom trenutku navodi oružje; filtriraj ili podijeli po byItemClass",
+  "heat.filterPanel.siege.attempts": "Pokušaji postavljanja i deaktivacije",
+  "heat.filterPanel.siege.attemptsTitle": "Svaki početak, dovršetak i prekid postavljanja ili deaktivacije",
+  "heat.filterPanel.siege.interrupted": "Prekinuti pokušaji",
+  "heat.filterPanel.siege.interruptedTitle": "Započeta, ali nedovršena postavljanja i deaktivacije, tamo gdje je igrač stao",
+  "heat.filterPanel.siege.reinforce": "Ojačanja",
+  "heat.filterPanel.siege.reinforceTitle": "Ojačani zidovi i otvori, kod branitelja koji je tamo stajao (zaključeno)"
 }

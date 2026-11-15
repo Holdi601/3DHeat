@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Zuch zum Gesamtundeel (Reien)",
   "heat.splitPanel.rateHint": "A Reie gezielt, net a Ronnen: e Spiller, deen steet, setzt bei all Mooss eng Rei derbäi. Fir d’Ronnen, déi op enger Plaz gewonne goufen, huel d’Opschlësselung oder d’Statistik vun engem Volumen.",
   "heat.teamsList.columnSplitHint": "D’Differenz ass no <b>{column}</b> opgedeelt, dofir decidéieren d’Gruppen hei nëmmen, wat gezeechent gëtt, net op wéi enger Säit se zielen.",
-  "heat.sourcePanel.indexing": "Eenheeten ginn indexéiert"
+  "heat.sourcePanel.indexing": "Eenheeten ginn indexéiert",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Kugellächer a Spueren",
+  "heat.filterPanel.siege.marksTitle": "Nëmmen d'Spueren um Niveau (Evenement impact)",
+  "heat.filterPanel.siege.marksShooter": "Spuere mat Schütz",
+  "heat.filterPanel.siege.marksShooterTitle": "Spueren, deenen hire Schütz erschloss gouf (de Spiller, deen op d'Spuer gekuckt huet, wéi se entstanen ass); no byOperator filteren oder opdeelen",
+  "heat.filterPanel.siege.marksWeapon": "Spuere mat Waffeklass",
+  "heat.filterPanel.siege.marksWeaponTitle": "Spueren, bei deenen e Kill vum Schütz am selwechte Moment d'Waff nennt; no byItemClass filteren oder opdeelen",
+  "heat.filterPanel.siege.attempts": "Versich ze placéieren an ze entschäerfen",
+  "heat.filterPanel.siege.attemptsTitle": "All Ufank, Ofschloss an Ofbroch vun enger Placéierung oder Entschäerfung",
+  "heat.filterPanel.siege.interrupted": "Ofgebrache Versich",
+  "heat.filterPanel.siege.interruptedTitle": "Ugefaangen, net fäerdeg Placéierungen an Entschäerfungen, do wou de Spiller opgehalen huet",
+  "heat.filterPanel.siege.reinforce": "Verstäerkungen",
+  "heat.filterPanel.siege.reinforceTitle": "Verstäerkte Maueren a Lucken, beim Verteideger, deen do stoung (erschloss)"
 }

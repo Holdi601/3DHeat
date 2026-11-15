@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Labāk tēmējušā uzvarētie dueļi",
   "mass.cqb.m.planter": "Uzstādītājas puses uzvarētie raundi",
   "mass.cqb.m.man": "Raundi uzvarēti no stāvokļa",
-  "mass.cqb.m.funnel": "Nāves 2,5 s pēc ieiešanas"
+  "mass.cqb.m.funnel": "Nāves 2,5 s pēc ieiešanas",
+  "mass.tab.surfaces": "R6 virsmas",
+  "mass.surfaces.hint": "Pēdas līmenī (ložu caurumi u. c.) pa virsmām Rainbow Six Siege kartēs, no {with} no {matches} mačiem. Virsma saglabā savu id vienas kartes versijas mačos. Klikšķis atver rindu.",
+  "mass.surfaces.none": "Šajos mačos līmenī nav pēdu (Rainbow Six Siege mačiem, kas pārveidoti ar heat3d-r6-replay 0.3.0 vai jaunāku, tās ir).",
+  "mass.surfaces.col.surface": "Virsma",
+  "mass.surfaces.col.room": "Telpa",
+  "mass.surfaces.col.marks": "Pēdas",
+  "mass.surfaces.col.perRound": "Uz raundu",
+  "mass.surfaces.col.shot": "Šāvējs zināms",
+  "mass.surfaces.col.shotTitle": "Pēdu daļa ar secinātu šāvēju: spēlētājs, kas skatījās uz pēdu, kad tā radās",
+  "mass.surfaces.kinds": "Pēdu veidi",
+  "mass.surfaces.byOperator": "Pēc operatora",
+  "mass.surfaces.byClass": "Pēc ieroču klases",
+  "mass.surfaces.heat": "Kur uz virsmas",
+  "mass.surfaces.load": "Ielādēt tās mačus ({count})"
 }

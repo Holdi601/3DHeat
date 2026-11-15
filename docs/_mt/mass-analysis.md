@@ -5,7 +5,7 @@ lang: "mt"
 source: "mass-analysis.md"
 source_hash: "88fad1d761e0"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Analiżi tal-massa: eluf ta' partiti f'daqqa

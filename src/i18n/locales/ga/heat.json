@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Tarraingt i dtreo an sciar iomláin (sraitheanna)",
   "heat.splitPanel.rateHint": "Comhairtear i sraitheanna, ní i mbabhtaí: cuireann imreoir ina sheasamh sraith leis ag gach sampla. Le haghaidh babhtaí a buadh ag áit, úsáid an Miondealú nó staitisticí toirte.",
   "heat.teamsList.columnSplitHint": "Tá an difríocht scoilte de réir <b>{column}</b>, mar sin ní shocraíonn na grúpaí anseo ach cad a tharraingítear, ní cén taobh a gcomhairtear iad air.",
-  "heat.sourcePanel.indexing": "Aonaid á n-innéacsú"
+  "heat.sourcePanel.indexing": "Aonaid á n-innéacsú",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Poill piléar agus marcanna",
+  "heat.filterPanel.siege.marksTitle": "Na marcanna a fágadh ar an leibhéal amháin (teagmhas impact)",
+  "heat.filterPanel.siege.marksShooter": "Marcanna le lámhachóir",
+  "heat.filterPanel.siege.marksShooterTitle": "Marcanna ar aimsíodh a lámhachóir (an t-imreoir a bhí ag féachaint i dtreo an mhairc nuair a tháinig sé); scag nó roinn de réir byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Marcanna le haicme airm",
+  "heat.filterPanel.siege.marksWeaponTitle": "Marcanna ina n-ainmníonn marú an lámhachóra ag an nóiméad céanna an t-arm; scag nó roinn de réir byItemClass",
+  "heat.filterPanel.siege.attempts": "Iarrachtaí cur agus díghníomhachtaithe",
+  "heat.filterPanel.siege.attemptsTitle": "Gach tús, críoch agus briseadh ar chur nó ar dhíghníomhachtú",
+  "heat.filterPanel.siege.interrupted": "Iarrachtaí briste",
+  "heat.filterPanel.siege.interruptedTitle": "Cuir agus díghníomhachtuithe a tosaíodh ach nár críochnaíodh, san áit ar stop an t-imreoir",
+  "heat.filterPanel.siege.reinforce": "Treisithe",
+  "heat.filterPanel.siege.reinforceTitle": "Ballaí agus haistí treisithe, ag an gcosantóir a bhí ina sheasamh ann (aimsithe)"
 }

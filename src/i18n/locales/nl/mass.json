@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Duels gewonnen door wie beter richtte",
   "mass.cqb.m.planter": "Rondes gewonnen door de plantende kant",
   "mass.cqb.m.man": "Rondes gewonnen vanuit",
-  "mass.cqb.m.funnel": "Doden binnen 2,5 s na binnenkomst"
+  "mass.cqb.m.funnel": "Doden binnen 2,5 s na binnenkomst",
+  "mass.tab.surfaces": "R6-oppervlakken",
+  "mass.surfaces.hint": "Sporen in het level (kogelgaten e.d.) per oppervlak van de kaarten van Rainbow Six Siege, uit {with} van {matches} wedstrijden. Een oppervlak houdt zijn id in de wedstrijden van één kaartversie. Een klik opent een rij.",
+  "mass.surfaces.none": "Geen sporen in het level in deze wedstrijden (wedstrijden van Rainbow Six Siege omgezet met heat3d-r6-replay 0.3.0 of nieuwer hebben ze).",
+  "mass.surfaces.col.surface": "Oppervlak",
+  "mass.surfaces.col.room": "Ruimte",
+  "mass.surfaces.col.marks": "Sporen",
+  "mass.surfaces.col.perRound": "Per ronde",
+  "mass.surfaces.col.shot": "Schutter bekend",
+  "mass.surfaces.col.shotTitle": "Aandeel van de sporen met afgeleide schutter: de speler die naar het spoor keek toen het ontstond",
+  "mass.surfaces.kinds": "Soorten sporen",
+  "mass.surfaces.byOperator": "Per operator",
+  "mass.surfaces.byClass": "Per wapenklasse",
+  "mass.surfaces.heat": "Waar op het oppervlak",
+  "mass.surfaces.load": "Zijn wedstrijden laden ({count})"
 }

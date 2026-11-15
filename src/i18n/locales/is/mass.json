@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Einvígi unnin af þeim sem miðaði betur",
   "mass.cqb.m.planter": "Lotur unnar af liðinu sem kemur sprengju fyrir",
   "mass.cqb.m.man": "Lotur unnar úr stöðu",
-  "mass.cqb.m.funnel": "Dauðsföll innan 2,5 s frá inngöngu"
+  "mass.cqb.m.funnel": "Dauðsföll innan 2,5 s frá inngöngu",
+  "mass.tab.surfaces": "R6-fletir",
+  "mass.surfaces.hint": "Ummerki í borðinu (kúlugöt o.þ.h.) eftir fleti á kortum Rainbow Six Siege, úr {with} af {matches} leikjum. Flötur heldur auðkenni sínu í leikjum einnar kortaútgáfu. Smellur opnar línu.",
+  "mass.surfaces.none": "Engin ummerki í borðinu í þessum leikjum (Rainbow Six Siege-leikir umbreyttir með heat3d-r6-replay 0.3.0 eða nýrra hafa þau).",
+  "mass.surfaces.col.surface": "Flötur",
+  "mass.surfaces.col.room": "Herbergi",
+  "mass.surfaces.col.marks": "Ummerki",
+  "mass.surfaces.col.perRound": "Á lotu",
+  "mass.surfaces.col.shot": "Skytta þekkt",
+  "mass.surfaces.col.shotTitle": "Hlutfall ummerkja með ályktaðri skyttu: leikmaðurinn sem sneri að ummerkinu þegar það kom",
+  "mass.surfaces.kinds": "Tegundir ummerkja",
+  "mass.surfaces.byOperator": "Eftir aðgerðamanni",
+  "mass.surfaces.byClass": "Eftir vopnaflokki",
+  "mass.surfaces.heat": "Hvar á fletinum",
+  "mass.surfaces.load": "Hlaða leikjum hans ({count})"
 }

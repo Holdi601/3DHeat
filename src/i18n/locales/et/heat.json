@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Tõmme üldise osakaalu poole (read)",
   "heat.splitPanel.rateHint": "Loetud ridades, mitte raundides: paigal seisev mängija lisab rea iga mõõtmisega. Kohas võidetud raunde näitab Jaotus või mahu statistika.",
   "heat.teamsList.columnSplitHint": "Erinevus on jaotatud veeru <b>{column}</b> järgi, seega rühmad siin otsustavad ainult, mida joonistatakse, mitte seda, kummale poolele nad loetakse.",
-  "heat.sourcePanel.indexing": "Üksuste indekseerimine"
+  "heat.sourcePanel.indexing": "Üksuste indekseerimine",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Kuuliaugud ja jäljed",
+  "heat.filterPanel.siege.marksTitle": "Ainult tasemele jäänud jäljed (sündmus impact)",
+  "heat.filterPanel.siege.marksShooter": "Laskjaga jäljed",
+  "heat.filterPanel.siege.marksShooterTitle": "Jäljed, mille laskja on tuletatud (mängija, kes vaatas jälje poole, kui see tekkis); filtreeri või jaota veeru byOperator järgi",
+  "heat.filterPanel.siege.marksWeapon": "Relvaklassiga jäljed",
+  "heat.filterPanel.siege.marksWeaponTitle": "Jäljed, mille laskja samaaegne tapmine nimetab relva; filtreeri või jaota veeru byItemClass järgi",
+  "heat.filterPanel.siege.attempts": "Paigaldus- ja demineerimiskatsed",
+  "heat.filterPanel.siege.attemptsTitle": "Iga paigalduse või demineerimise algus, lõpp ja katkestus",
+  "heat.filterPanel.siege.interrupted": "Katkenud katsed",
+  "heat.filterPanel.siege.interruptedTitle": "Alustatud, kuid lõpetamata paigaldused ja demineerimised, kus mängija peatus",
+  "heat.filterPanel.siege.reinforce": "Tugevdused",
+  "heat.filterPanel.siege.reinforceTitle": "Tugevdatud seinad ja luugid, seal seisnud kaitsja juures (tuletatud)"
 }

@@ -8,7 +8,8 @@ import { create } from 'zustand';
 import { parseMatchDoc, type MatchDoc } from '../match/matchDoc';
 import { isWtMatch, parseWtMatch, type GameMatch } from '../match/wtMatch';
 import { isContainer, openContainer } from '../data/container';
-import { isObjectivesFile, loadObjectiveFiles } from './objectivesStore';
+import { isObjectivesFile, loadObjectiveFiles, useObjectivesStore } from './objectivesStore';
+import { parseObjectives } from '../match/objectives';
 import { registerLazyMatches } from './objectivesLazy';
 
 /** `ALL` as the open match: every loaded match together. */
@@ -56,6 +57,13 @@ export const useMatchStore = create<MatchState>((set, get) => ({
         } catch {
           // parseMatchDoc says what is wrong with it.
         }
+        if (isR6Match(json)) {
+          // A Rainbow Six Siege match: its bomb sites are the objectives the replay draws (no scoreboard here).
+          const j = json as Record<string, unknown>;
+          const objectives = parseObjectives(j.objectives);
+          if (objectives.length) useObjectivesStore.getState().addLite([{ match: String(j.match ?? ''), objectives }]);
+          continue;
+        }
         if (isWtMatch(json)) {
           const g = parseWtMatch(json as Record<string, unknown>);
           const at = games.findIndex((x) => x.match === g.match);
@@ -85,6 +93,11 @@ export const useMatchStore = create<MatchState>((set, get) => ({
   setNotice: (notice) => set({ notice }),
   clear: () => set({ docs: [], games: [], open: ALL, round: null, error: null, notice: null }),
 }));
+
+/** Whether parsed JSON is a Rainbow Six Siege match document (`heat3d-r6-replay`'s). */
+export function isR6Match(j: unknown): boolean {
+  return !!j && typeof j === 'object' && (j as { format?: unknown }).format === 'heat3d-r6-replay-match';
+}
 
 /**
  * The match documents and the capture zones over time that come with data

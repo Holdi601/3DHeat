@@ -5,7 +5,7 @@ lang: "zh"
 source: "mass-analysis.md"
 source_hash: "88fad1d761e0"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 大规模分析：一次分析数千场对局

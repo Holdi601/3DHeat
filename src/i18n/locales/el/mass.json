@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Μονομαχίες του καλύτερα σημαδεύοντος",
   "mass.cqb.m.planter": "Γύροι της πλευράς που τοποθετεί",
   "mass.cqb.m.man": "Γύροι που κερδήθηκαν από",
-  "mass.cqb.m.funnel": "Θάνατοι σε 2,5 s μετά την είσοδο"
+  "mass.cqb.m.funnel": "Θάνατοι σε 2,5 s μετά την είσοδο",
+  "mass.tab.surfaces": "Επιφάνειες R6",
+  "mass.surfaces.hint": "Σημάδια στο επίπεδο (τρύπες από σφαίρες κ.λπ.) ανά επιφάνεια στους χάρτες του Rainbow Six Siege, από {with} από {matches} αγώνες. Μια επιφάνεια κρατά το id της στους αγώνες μιας έκδοσης χάρτη. Ένα κλικ ανοίγει μια γραμμή.",
+  "mass.surfaces.none": "Κανένα σημάδι στο επίπεδο σε αυτούς τους αγώνες (οι αγώνες Rainbow Six Siege που μετατράπηκαν με heat3d-r6-replay 0.3.0 ή νεότερο τα έχουν).",
+  "mass.surfaces.col.surface": "Επιφάνεια",
+  "mass.surfaces.col.room": "Δωμάτιο",
+  "mass.surfaces.col.marks": "Σημάδια",
+  "mass.surfaces.col.perRound": "Ανά γύρο",
+  "mass.surfaces.col.shot": "Γνωστός σκοπευτής",
+  "mass.surfaces.col.shotTitle": "Μερίδιο των σημαδιών με συναγόμενο σκοπευτή: ο παίκτης που κοιτούσε το σημάδι όταν εμφανίστηκε",
+  "mass.surfaces.kinds": "Είδη σημαδιών",
+  "mass.surfaces.byOperator": "Ανά χειριστή",
+  "mass.surfaces.byClass": "Ανά κατηγορία όπλου",
+  "mass.surfaces.heat": "Πού στην επιφάνεια",
+  "mass.surfaces.load": "Φόρτωση των αγώνων της ({count})"
 }

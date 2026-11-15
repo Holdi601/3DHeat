@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Przyciąganie do udziału ogółem (wiersze)",
   "heat.splitPanel.rateHint": "Liczone w wierszach, nie rundach: gracz stojący w miejscu dodaje wiersz przy każdej próbce. Wygrane rundy w danym miejscu pokaże Zestawienie lub statystyki wolumenu.",
   "heat.teamsList.columnSplitHint": "Różnica jest podzielona według <b>{column}</b>, więc grupy tutaj decydują tylko o tym, co jest rysowane, a nie po której stronie się liczą.",
-  "heat.sourcePanel.indexing": "Indeksowanie jednostek"
+  "heat.sourcePanel.indexing": "Indeksowanie jednostek",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Dziury po kulach i ślady",
+  "heat.filterPanel.siege.marksTitle": "Tylko ślady pozostawione na poziomie (zdarzenie impact)",
+  "heat.filterPanel.siege.marksShooter": "Ślady ze strzelcem",
+  "heat.filterPanel.siege.marksShooterTitle": "Ślady, których strzelca ustalono (gracz zwrócony w stronę śladu, gdy powstał); filtruj lub dziel wg byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Ślady z klasą broni",
+  "heat.filterPanel.siege.marksWeaponTitle": "Ślady, przy których zabójstwo strzelca w tej samej chwili podaje broń; filtruj lub dziel wg byItemClass",
+  "heat.filterPanel.siege.attempts": "Próby podłożenia i rozbrojenia",
+  "heat.filterPanel.siege.attemptsTitle": "Każdy początek, ukończenie i przerwanie podłożenia lub rozbrojenia",
+  "heat.filterPanel.siege.interrupted": "Przerwane próby",
+  "heat.filterPanel.siege.interruptedTitle": "Rozpoczęte, lecz nieukończone podłożenia i rozbrojenia, tam gdzie gracz przerwał",
+  "heat.filterPanel.siege.reinforce": "Wzmocnienia",
+  "heat.filterPanel.siege.reinforceTitle": "Wzmocnione ściany i włazy, przy obrońcy, który tam stał (wywnioskowane)"
 }

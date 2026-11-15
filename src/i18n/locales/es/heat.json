@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Atracción hacia la proporción global (filas)",
   "heat.splitPanel.rateHint": "Contado en filas, no en rondas: un jugador quieto añade una fila en cada muestra. Para las rondas ganadas en un lugar, usa el Desglose o las estadísticas de un volumen.",
   "heat.teamsList.columnSplitHint": "La diferencia se divide por <b>{column}</b>, así que los grupos de aquí solo deciden qué se dibuja, no en qué lado cuentan.",
-  "heat.sourcePanel.indexing": "Indexando unidades"
+  "heat.sourcePanel.indexing": "Indexando unidades",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Impactos de bala y marcas",
+  "heat.filterPanel.siege.marksTitle": "Solo las marcas dejadas en el nivel (evento impact)",
+  "heat.filterPanel.siege.marksShooter": "Marcas con tirador",
+  "heat.filterPanel.siege.marksShooterTitle": "Marcas cuyo tirador se dedujo (el jugador que miraba hacia la marca al aparecer); filtrar o dividir por byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Marcas con clase de arma",
+  "heat.filterPanel.siege.marksWeaponTitle": "Marcas cuyo tirador, con una baja en el mismo instante, nombra el arma; filtrar o dividir por byItemClass",
+  "heat.filterPanel.siege.attempts": "Intentos de colocar y desactivar",
+  "heat.filterPanel.siege.attemptsTitle": "Cada inicio, final e interrupción de una colocación o desactivación",
+  "heat.filterPanel.siege.interrupted": "Intentos interrumpidos",
+  "heat.filterPanel.siege.interruptedTitle": "Colocaciones y desactivaciones iniciadas pero no terminadas, donde el jugador se detuvo",
+  "heat.filterPanel.siege.reinforce": "Refuerzos",
+  "heat.filterPanel.siege.reinforceTitle": "Paredes y trampillas reforzadas, en el defensor que estaba allí (deducido)"
 }

@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Pievilkšana kopējai daļai (rindas)",
   "heat.splitPanel.rateHint": "Skaitīts rindās, nevis raundos: stāvošs spēlētājs pievieno rindu katrā mērījumā. Vietā uzvarētos raundus rāda Sadalījums vai tilpuma statistika.",
   "heat.teamsList.columnSplitHint": "Starpība ir sadalīta pēc <b>{column}</b>, tāpēc grupas šeit nosaka tikai to, kas tiek zīmēts, nevis kurā pusē tās tiek skaitītas.",
-  "heat.sourcePanel.indexing": "Vienību indeksēšana"
+  "heat.sourcePanel.indexing": "Vienību indeksēšana",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Ložu caurumi un pēdas",
+  "heat.filterPanel.siege.marksTitle": "Tikai līmenī atstātās pēdas (notikums impact)",
+  "heat.filterPanel.siege.marksShooter": "Pēdas ar šāvēju",
+  "heat.filterPanel.siege.marksShooterTitle": "Pēdas, kuru šāvējs ir secināts (spēlētājs, kas skatījās uz pēdu, kad tā radās); filtrēt vai dalīt pēc byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Pēdas ar ieroču klasi",
+  "heat.filterPanel.siege.marksWeaponTitle": "Pēdas, kur šāvēja nogalinājums tajā pašā brīdī nosauc ieroci; filtrēt vai dalīt pēc byItemClass",
+  "heat.filterPanel.siege.attempts": "Uzstādīšanas un atmīnēšanas mēģinājumi",
+  "heat.filterPanel.siege.attemptsTitle": "Katrs uzstādīšanas vai atmīnēšanas sākums, pabeigšana un pārtraukums",
+  "heat.filterPanel.siege.interrupted": "Pārtraukti mēģinājumi",
+  "heat.filterPanel.siege.interruptedTitle": "Sāktas, bet nepabeigtas uzstādīšanas un atmīnēšanas, kur spēlētājs apstājās",
+  "heat.filterPanel.siege.reinforce": "Pastiprinājumi",
+  "heat.filterPanel.siege.reinforceTitle": "Pastiprinātas sienas un lūkas, pie aizstāvja, kas tur stāvēja (secināts)"
 }

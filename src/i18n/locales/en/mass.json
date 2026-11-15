@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Duels won by the better-aimed",
   "mass.cqb.m.planter": "Rounds won by the planting side",
   "mass.cqb.m.man": "Rounds won from",
-  "mass.cqb.m.funnel": "Deaths within 2.5 s of entering"
+  "mass.cqb.m.funnel": "Deaths within 2.5 s of entering",
+  "mass.tab.surfaces": "R6 surfaces",
+  "mass.surfaces.hint": "Marks on the level (bullet holes and the like) per surface of Rainbow Six Siege maps, from {with} of {matches} matches. A surface keeps its id across the matches of one map version. A click opens a row.",
+  "mass.surfaces.none": "No marks on the level in these matches (Rainbow Six Siege matches converted with heat3d-r6-replay 0.3.0 or later have them).",
+  "mass.surfaces.col.surface": "Surface",
+  "mass.surfaces.col.room": "Room",
+  "mass.surfaces.col.marks": "Marks",
+  "mass.surfaces.col.perRound": "Per round",
+  "mass.surfaces.col.shot": "Shooter known",
+  "mass.surfaces.col.shotTitle": "Share of the marks a shooter was worked out for: the player facing the mark as it appeared",
+  "mass.surfaces.kinds": "Mark kinds",
+  "mass.surfaces.byOperator": "By operator",
+  "mass.surfaces.byClass": "By weapon class",
+  "mass.surfaces.heat": "Where on the surface",
+  "mass.surfaces.load": "Load its matches ({count})"
 }

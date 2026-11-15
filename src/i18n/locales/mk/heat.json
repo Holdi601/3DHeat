@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Привлекување кон вкупниот удел (редови)",
   "heat.splitPanel.rateHint": "Се брои во редови, не во рунди: играч што стои додава ред при секое мерење. За добиените рунди на место користи Расчленување или статистика на волумен.",
   "heat.teamsList.columnSplitHint": "Разликата е поделена по <b>{column}</b>, па групите тука одлучуваат само што се црта, а не на која страна се бројат.",
-  "heat.sourcePanel.indexing": "Индексирање на единици"
+  "heat.sourcePanel.indexing": "Индексирање на единици",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Дупки од куршуми и траги",
+  "heat.filterPanel.siege.marksTitle": "Само трагите оставени на нивото (настан impact)",
+  "heat.filterPanel.siege.marksShooter": "Траги со стрелец",
+  "heat.filterPanel.siege.marksShooterTitle": "Траги чиј стрелец е заклучен (играчот свртен кон трагата кога настанала); филтрирај или подели по byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Траги со класа на оружје",
+  "heat.filterPanel.siege.marksWeaponTitle": "Траги каде убиството на стрелецот во истиот миг го наведува оружјето; филтрирај или подели по byItemClass",
+  "heat.filterPanel.siege.attempts": "Обиди за поставување и деактивирање",
+  "heat.filterPanel.siege.attemptsTitle": "Секој почеток, завршување и прекин на поставување или деактивирање",
+  "heat.filterPanel.siege.interrupted": "Прекинати обиди",
+  "heat.filterPanel.siege.interruptedTitle": "Започнати, но незавршени поставувања и деактивирања, таму каде што играчот застанал",
+  "heat.filterPanel.siege.reinforce": "Зајакнувања",
+  "heat.filterPanel.siege.reinforceTitle": "Зајакнати ѕидови и отвори, кај бранителот што стоел таму (заклучено)"
 }

@@ -22,6 +22,7 @@ import type { SummarizeRequest, SummarizeResponse } from './summarizeWorker';
 import { GRID_KINDS, SUMMARY_FORMAT, SUMMARY_VERSION, type MatchSummary, type SummaryGrid, type SummaryHead } from './types';
 import { maneuverRows } from './maneuvers';
 import { cqbRows } from './cqb';
+import { surfaceRows } from './marks';
 
 export type MassQuery =
   | { kind: 'overview' }
@@ -31,6 +32,7 @@ export type MassQuery =
   | { kind: 'sides' }
   | { kind: 'maneuvers' }
   | { kind: 'cqb' }
+  | { kind: 'surfaces' }
   | { kind: 'phases' };
 
 export type MassRequest =
@@ -439,6 +441,7 @@ ctx.onmessage = async (ev: MessageEvent<MassRequest>) => {
         : q.kind === 'sides' ? sides(store, mask)
         : q.kind === 'maneuvers' ? maneuverRows(store, mask)
         : q.kind === 'cqb' ? cqbRows(store, mask)
+        : q.kind === 'surfaces' ? surfaceRows(store, mask)
         : phases(store, mask);
       return post({ type: 'result', id: m.id, data, ms: performance.now() - t0 });
     }

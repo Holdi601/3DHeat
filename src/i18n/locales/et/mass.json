@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Paremini sihtinu võidetud duellid",
   "mass.cqb.m.planter": "Paigaldava poole võidetud raundid",
   "mass.cqb.m.man": "Raundid võidetud seisust",
-  "mass.cqb.m.funnel": "Surmad 2,5 s jooksul pärast sisenemist"
+  "mass.cqb.m.funnel": "Surmad 2,5 s jooksul pärast sisenemist",
+  "mass.tab.surfaces": "R6 pinnad",
+  "mass.surfaces.hint": "Jäljed tasemel (kuuliaugud jms) pinna kaupa Rainbow Six Siege'i kaartidel, {with}/{matches} matšist. Pind säilitab oma id ühe kaardiversiooni matšides. Klõps avab rea.",
+  "mass.surfaces.none": "Nendes matšides pole tasemel jälgi (heat3d-r6-replay 0.3.0 või uuemaga teisendatud Rainbow Six Siege'i matšides on).",
+  "mass.surfaces.col.surface": "Pind",
+  "mass.surfaces.col.room": "Ruum",
+  "mass.surfaces.col.marks": "Jäljed",
+  "mass.surfaces.col.perRound": "Raundi kohta",
+  "mass.surfaces.col.shot": "Laskja teada",
+  "mass.surfaces.col.shotTitle": "Jälgede osa, mille laskja on tuletatud: mängija, kes vaatas jälje poole, kui see tekkis",
+  "mass.surfaces.kinds": "Jäljeliigid",
+  "mass.surfaces.byOperator": "Operaatori järgi",
+  "mass.surfaces.byClass": "Relvaklassi järgi",
+  "mass.surfaces.heat": "Kus pinnal",
+  "mass.surfaces.load": "Laadi selle matšid ({count})"
 }

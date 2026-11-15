@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Duelle des besser Zielenden",
   "mass.cqb.m.planter": "Runden der legenden Seite",
   "mass.cqb.m.man": "Runden gewonnen aus",
-  "mass.cqb.m.funnel": "Tode binnen 2,5 s nach Betreten"
+  "mass.cqb.m.funnel": "Tode binnen 2,5 s nach Betreten",
+  "mass.tab.surfaces": "R6-Flächen",
+  "mass.surfaces.hint": "Spuren im Level (Einschusslöcher u. Ä.) je Fläche der Karten von Rainbow Six Siege, aus {with} von {matches} Matches. Eine Fläche behält ihre ID über die Matches einer Kartenversion. Ein Klick öffnet eine Zeile.",
+  "mass.surfaces.none": "Keine Spuren im Level in diesen Matches (Matches von Rainbow Six Siege, umgewandelt mit heat3d-r6-replay 0.3.0 oder neuer, haben sie).",
+  "mass.surfaces.col.surface": "Fläche",
+  "mass.surfaces.col.room": "Raum",
+  "mass.surfaces.col.marks": "Spuren",
+  "mass.surfaces.col.perRound": "Pro Runde",
+  "mass.surfaces.col.shot": "Schütze bekannt",
+  "mass.surfaces.col.shotTitle": "Anteil der Spuren mit ermitteltem Schützen: der Spieler, der zur Spur blickte, als sie entstand",
+  "mass.surfaces.kinds": "Spurarten",
+  "mass.surfaces.byOperator": "Nach Operator",
+  "mass.surfaces.byClass": "Nach Waffenklasse",
+  "mass.surfaces.heat": "Wo auf der Fläche",
+  "mass.surfaces.load": "Ihre Matches laden ({count})"
 }

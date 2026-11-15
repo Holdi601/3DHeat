@@ -5,7 +5,7 @@ lang: "ja"
 source: "mass-analysis.md"
 source_hash: "88fad1d761e0"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 大量分析：何千もの試合を一度に

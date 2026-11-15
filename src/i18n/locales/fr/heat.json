@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Attraction vers la part globale (lignes)",
   "heat.splitPanel.rateHint": "Compté en lignes, pas en manches : un joueur immobile ajoute une ligne à chaque échantillon. Pour les manches gagnées à un endroit, utilisez le Détail ou les statistiques d'un volume.",
   "heat.teamsList.columnSplitHint": "La différence est répartie selon <b>{column}</b> : les groupes ici décident seulement de ce qui est dessiné, pas du côté où ils comptent.",
-  "heat.sourcePanel.indexing": "Indexation des unités"
+  "heat.sourcePanel.indexing": "Indexation des unités",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Impacts de balles et traces",
+  "heat.filterPanel.siege.marksTitle": "Seulement les traces laissées sur le niveau (événement impact)",
+  "heat.filterPanel.siege.marksShooter": "Traces avec tireur",
+  "heat.filterPanel.siege.marksShooterTitle": "Traces dont le tireur a été déduit (le joueur tourné vers la trace quand elle est apparue) ; filtrer ou répartir par byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Traces avec classe d'arme",
+  "heat.filterPanel.siege.marksWeaponTitle": "Traces dont un kill du tireur au même instant nomme l'arme ; filtrer ou répartir par byItemClass",
+  "heat.filterPanel.siege.attempts": "Tentatives de pose et de désamorçage",
+  "heat.filterPanel.siege.attemptsTitle": "Chaque début, fin et interruption d'une pose ou d'un désamorçage",
+  "heat.filterPanel.siege.interrupted": "Tentatives interrompues",
+  "heat.filterPanel.siege.interruptedTitle": "Poses et désamorçages commencés mais non terminés, là où le joueur s'est arrêté",
+  "heat.filterPanel.siege.reinforce": "Renforcements",
+  "heat.filterPanel.siege.reinforceTitle": "Murs et trappes renforcés, à la position du défenseur qui s'y tenait (déduit)"
 }

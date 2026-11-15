@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Ġbid lejn is-sehem totali (ringieli)",
   "heat.splitPanel.rateHint": "Magħdud f’ringieli, mhux f’rawnds: plejer wieqaf iżid ringiela f’kull kampjun. Għar-rawnds mirbuħa f’post, uża t-Tqassim jew l-istatistika ta’ volum.",
   "heat.teamsList.columnSplitHint": "Id-differenza hi maqsuma skont <b>{column}</b>, għalhekk il-gruppi hawn jiddeċiedu biss x'jitpinġa, mhux fuq liema naħa jgħoddu.",
-  "heat.sourcePanel.indexing": "Qed jiġu indiċjati l-unitajiet"
+  "heat.sourcePanel.indexing": "Qed jiġu indiċjati l-unitajiet",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Toqob tal-balal u marki",
+  "heat.filterPanel.siege.marksTitle": "Il-marki li jibqgħu fuq il-livell biss (avveniment impact)",
+  "heat.filterPanel.siege.marksShooter": "Marki b'min spara",
+  "heat.filterPanel.siege.marksShooterTitle": "Marki li ġie dedott min sparahom (il-plejer iħares lejn il-marka meta dehret); iffiltra jew aqsam skont byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Marki bil-klassi tal-arma",
+  "heat.filterPanel.siege.marksWeaponTitle": "Marki fejn qtil ta' min spara fl-istess mument isemmi l-arma; iffiltra jew aqsam skont byItemClass",
+  "heat.filterPanel.siege.attempts": "Tentattivi ta' tqegħid u diżattivazzjoni",
+  "heat.filterPanel.siege.attemptsTitle": "Kull bidu, tlestija u interruzzjoni ta' tqegħid jew diżattivazzjoni",
+  "heat.filterPanel.siege.interrupted": "Tentattivi interrotti",
+  "heat.filterPanel.siege.interruptedTitle": "Tqegħid u diżattivazzjonijiet mibdija iżda mhux mitmuma, fejn il-plejer waqaf",
+  "heat.filterPanel.siege.reinforce": "Rinforzi",
+  "heat.filterPanel.siege.reinforceTitle": "Ħitan u bokkaporti rinforzati, għand id-difensur li kien hemm (dedott)"
 }

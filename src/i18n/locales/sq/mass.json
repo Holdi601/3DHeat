@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Duele të fituara nga ai që shënjestroi më mirë",
   "mass.cqb.m.planter": "Raunde të fituara nga ana që vendos",
   "mass.cqb.m.man": "Raunde të fituara nga",
-  "mass.cqb.m.funnel": "Vdekje brenda 2,5 s pas hyrjes"
+  "mass.cqb.m.funnel": "Vdekje brenda 2,5 s pas hyrjes",
+  "mass.tab.surfaces": "Sipërfaqet R6",
+  "mass.surfaces.hint": "Shenja në nivel (vrima plumbash e të ngjashme) sipas sipërfaqeve të hartave të Rainbow Six Siege, nga {with} prej {matches} ndeshjesh. Një sipërfaqe e mban id-në e saj në ndeshjet e një versioni harte. Një klikim hap një rresht.",
+  "mass.surfaces.none": "Asnjë shenjë në nivel në këto ndeshje (ndeshjet e Rainbow Six Siege të konvertuara me heat3d-r6-replay 0.3.0 ose më të ri i kanë).",
+  "mass.surfaces.col.surface": "Sipërfaqja",
+  "mass.surfaces.col.room": "Dhoma",
+  "mass.surfaces.col.marks": "Shenja",
+  "mass.surfaces.col.perRound": "Për raund",
+  "mass.surfaces.col.shot": "Qitësi i njohur",
+  "mass.surfaces.col.shotTitle": "Pjesa e shenjave me qitës të nxjerrë: lojtari i kthyer nga shenja kur u shfaq",
+  "mass.surfaces.kinds": "Llojet e shenjave",
+  "mass.surfaces.byOperator": "Sipas operatorit",
+  "mass.surfaces.byClass": "Sipas klasës së armës",
+  "mass.surfaces.heat": "Ku në sipërfaqe",
+  "mass.surfaces.load": "Ngarko ndeshjet e saj ({count})"
 }

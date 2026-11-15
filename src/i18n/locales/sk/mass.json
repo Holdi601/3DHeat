@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Súboje vyhrané lepšie mieriacim",
   "mass.cqb.m.planter": "Kolá vyhrané kladúcou stranou",
   "mass.cqb.m.man": "Kolá vyhrané zo stavu",
-  "mass.cqb.m.funnel": "Smrti do 2,5 s po vstupe"
+  "mass.cqb.m.funnel": "Smrti do 2,5 s po vstupe",
+  "mass.tab.surfaces": "Povrchy R6",
+  "mass.surfaces.hint": "Stopy na úrovni (diery po guľkách a pod.) podľa povrchov máp Rainbow Six Siege, z {with} z {matches} zápasov. Povrch si drží svoje id v zápasoch jednej verzie mapy. Kliknutie otvorí riadok.",
+  "mass.surfaces.none": "V týchto zápasoch nie sú na úrovni žiadne stopy (zápasy Rainbow Six Siege prevedené heat3d-r6-replay 0.3.0 alebo novším ich majú).",
+  "mass.surfaces.col.surface": "Povrch",
+  "mass.surfaces.col.room": "Miestnosť",
+  "mass.surfaces.col.marks": "Stopy",
+  "mass.surfaces.col.perRound": "Na kolo",
+  "mass.surfaces.col.shot": "Strelec známy",
+  "mass.surfaces.col.shotTitle": "Podiel stôp s odvodeným strelcom: hráč otočený k stope, keď vznikla",
+  "mass.surfaces.kinds": "Druhy stôp",
+  "mass.surfaces.byOperator": "Podľa operátora",
+  "mass.surfaces.byClass": "Podľa triedy zbrane",
+  "mass.surfaces.heat": "Kde na povrchu",
+  "mass.surfaces.load": "Načítať jeho zápasy ({count})"
 }

@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Atracție spre proporția totală (rânduri)",
   "heat.splitPanel.rateHint": "Numărat în rânduri, nu în runde: un jucător care stă pe loc adaugă un rând la fiecare eșantion. Pentru rundele câștigate într-un loc, folosește Defalcarea sau statisticile unui volum.",
   "heat.teamsList.columnSplitHint": "Diferența este împărțită după <b>{column}</b>, așa că grupurile de aici decid doar ce se desenează, nu în ce parte contează.",
-  "heat.sourcePanel.indexing": "Indexarea unităților"
+  "heat.sourcePanel.indexing": "Indexarea unităților",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Găuri de glonț și urme",
+  "heat.filterPanel.siege.marksTitle": "Doar urmele lăsate pe nivel (eveniment impact)",
+  "heat.filterPanel.siege.marksShooter": "Urme cu trăgător",
+  "heat.filterPanel.siege.marksShooterTitle": "Urme al căror trăgător a fost dedus (jucătorul orientat spre urmă când a apărut); filtrează sau împarte după byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Urme cu clasă de armă",
+  "heat.filterPanel.siege.marksWeaponTitle": "Urme la care o eliminare a trăgătorului în același moment numește arma; filtrează sau împarte după byItemClass",
+  "heat.filterPanel.siege.attempts": "Încercări de plantare și dezamorsare",
+  "heat.filterPanel.siege.attemptsTitle": "Fiecare început, finalizare și întrerupere a unei plantări sau dezamorsări",
+  "heat.filterPanel.siege.interrupted": "Încercări întrerupte",
+  "heat.filterPanel.siege.interruptedTitle": "Plantări și dezamorsări începute, dar neterminate, acolo unde jucătorul s-a oprit",
+  "heat.filterPanel.siege.reinforce": "Ranforsări",
+  "heat.filterPanel.siege.reinforceTitle": "Pereți și trape ranforsate, la apărătorul care stătea acolo (dedus)"
 }

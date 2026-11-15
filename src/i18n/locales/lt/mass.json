@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Geriau nusitaikiusio laimėtos dvikovos",
   "mass.cqb.m.planter": "Dedančios pusės laimėti raundai",
   "mass.cqb.m.man": "Raundai laimėti iš būsenos",
-  "mass.cqb.m.funnel": "Mirtys per 2,5 s po įėjimo"
+  "mass.cqb.m.funnel": "Mirtys per 2,5 s po įėjimo",
+  "mass.tab.surfaces": "R6 paviršiai",
+  "mass.surfaces.hint": "Žymės lygyje (kulkų skylės ir pan.) pagal Rainbow Six Siege žemėlapių paviršius, iš {with} iš {matches} rungtynių. Paviršius išlaiko savo id vienos žemėlapio versijos rungtynėse. Spustelėjus atveriama eilutė.",
+  "mass.surfaces.none": "Šiose rungtynėse lygyje žymių nėra (Rainbow Six Siege rungtynės, konvertuotos su heat3d-r6-replay 0.3.0 ar naujesne, jas turi).",
+  "mass.surfaces.col.surface": "Paviršius",
+  "mass.surfaces.col.room": "Patalpa",
+  "mass.surfaces.col.marks": "Žymės",
+  "mass.surfaces.col.perRound": "Per raundą",
+  "mass.surfaces.col.shot": "Šaulys žinomas",
+  "mass.surfaces.col.shotTitle": "Žymių dalis su nustatytu šauliu: žaidėjas, žiūrėjęs į žymę jai atsirandant",
+  "mass.surfaces.kinds": "Žymių rūšys",
+  "mass.surfaces.byOperator": "Pagal operatorių",
+  "mass.surfaces.byClass": "Pagal ginklo klasę",
+  "mass.surfaces.heat": "Kur paviršiuje",
+  "mass.surfaces.load": "Įkelti jo rungtynes ({count})"
 }

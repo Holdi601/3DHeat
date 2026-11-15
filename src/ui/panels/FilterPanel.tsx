@@ -78,6 +78,7 @@ export function FilterPanel() {
       )}
       <div className="hint">{t('heat.filterPanel.hint')}</div>
       {personSlot && <div className="hint">{t('heat.filterPanel.personSlot')}</div>}
+      <SiegePresets attrs={dataset.attrs} filters={filters} setFilters={setFilters} />
 
       {[...dataset.attrs].sort((a, b) => listOrder(a) - listOrder(b)).map((attr) => (
         <FilterRow
@@ -262,6 +263,53 @@ function FilterRow({
         {query && (
           <button onClick={() => setAllowed(new Set(categories.flatMap((l, i) => (shown(l) ? [i] : []))))}>{t('heat.filterPanel.onlyShown')}</button>
         )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Quick filters for Rainbow Six Siege matches (`heat3d-r6-replay`'s columns):
+ * the marks on the level, those a shooter or a weapon class was worked out
+ * for, the plant and defuse attempts, the interrupted ones, the
+ * reinforcements. Each sets the filters on the event column (and the column
+ * it needs filled); the other filters stay. Shown only where the data has
+ * Siege's mark columns.
+ */
+const SIEGE_PRESETS: { id: string; events: string[]; filled?: string }[] = [
+  { id: 'marks', events: ['impact'] },
+  { id: 'marksShooter', events: ['impact'], filled: 'byPlayer' },
+  { id: 'marksWeapon', events: ['impact'], filled: 'byItemClass' },
+  { id: 'attempts', events: ['plant_start', 'plant', 'plant_interrupted', 'defuse_start', 'defuse', 'defuse_interrupted'] },
+  { id: 'interrupted', events: ['plant_interrupted', 'defuse_interrupted'] },
+  { id: 'reinforce', events: ['reinforce'] },
+];
+const SIEGE_COLUMNS = ['event', ...new Set(SIEGE_PRESETS.flatMap((p) => (p.filled ? [p.filled] : [])))];
+
+function SiegePresets({ attrs, filters, setFilters }: { attrs: AttributeColumn[]; filters: FilterSpec[]; setFilters: (f: FilterSpec[]) => void }) {
+  const event = attrs.find((a) => a.name === 'event' && a.kind === 'category');
+  if (!event || !attrs.some((a) => a.name === 'markKind')) return null;
+  const labels = event.categories ?? [];
+  const shown = SIEGE_PRESETS.filter((p) => p.events.some((e) => labels.includes(e)) && (!p.filled || attrs.some((a) => a.name === p.filled)));
+  if (!shown.length) return null;
+  const apply = (p: (typeof SIEGE_PRESETS)[number]) => {
+    const rest = filters.filter((f) => !((f.kind === 'range' || f.kind === 'categories') && SIEGE_COLUMNS.includes(f.column)));
+    const next: FilterSpec[] = [{ kind: 'categories', column: 'event', allowed: labels.flatMap((l, i) => (p.events.includes(l) ? [i] : [])) }];
+    const filled = p.filled ? attrs.find((a) => a.name === p.filled) : undefined;
+    if (filled) next.push({ kind: 'categories', column: filled.name, allowed: (filled.categories ?? []).flatMap((l, i) => (l ? [i] : [])) });
+    setFilters([...rest, ...next]);
+  };
+  return (
+    <div className="field" data-testid="siege-presets">
+      <div className="label">
+        <span>{t('heat.filterPanel.siege.title')}</span>
+      </div>
+      <div className="row" style={{ flexWrap: 'wrap', gap: 4 }}>
+        {shown.map((p) => (
+          <button key={p.id} title={t(`heat.filterPanel.siege.${p.id}Title`)} onClick={() => apply(p)}>
+            {t(`heat.filterPanel.siege.${p.id}`)}
+          </button>
+        ))}
       </div>
     </div>
   );

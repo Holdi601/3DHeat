@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Duellen vum bessere Zieler gewonnen",
   "mass.cqb.m.planter": "Ronne vun der Säit gewonnen, déi leet",
   "mass.cqb.m.man": "Ronne gewonnen aus",
-  "mass.cqb.m.funnel": "Doudesfäll bannent 2,5 s nom Agrëff"
+  "mass.cqb.m.funnel": "Doudesfäll bannent 2,5 s nom Agrëff",
+  "mass.tab.surfaces": "R6-Flächen",
+  "mass.surfaces.hint": "Spueren um Niveau (Kugellächer a sou weider) pro Fläch vun de Kaarte vu Rainbow Six Siege, aus {with} vun {matches} Matcher. Eng Fläch behält hir ID an de Matcher vun enger Kaartversioun. E Klick mécht eng Zeil op.",
+  "mass.surfaces.none": "Keng Spueren um Niveau an dëse Matcher (Matcher vu Rainbow Six Siege, ëmgewandelt mat heat3d-r6-replay 0.3.0 oder méi neier, hunn se).",
+  "mass.surfaces.col.surface": "Fläch",
+  "mass.surfaces.col.room": "Raum",
+  "mass.surfaces.col.marks": "Spueren",
+  "mass.surfaces.col.perRound": "Pro Ronn",
+  "mass.surfaces.col.shot": "Schütz bekannt",
+  "mass.surfaces.col.shotTitle": "Undeel vun de Spuere mat erschlossene Schütz: de Spiller, deen op d'Spuer gekuckt huet, wéi se entstanen ass",
+  "mass.surfaces.kinds": "Spuerenaarten",
+  "mass.surfaces.byOperator": "No Operator",
+  "mass.surfaces.byClass": "No Waffeklass",
+  "mass.surfaces.heat": "Wou op der Fläch",
+  "mass.surfaces.load": "Hir Matcher lueden ({count})"
 }

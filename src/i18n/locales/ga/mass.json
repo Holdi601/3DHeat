@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Comhraic buaite ag an aimsitheoir is fearr",
   "mass.cqb.m.planter": "Babhtaí buaite ag an taobh a phlandálann",
   "mass.cqb.m.man": "Babhtaí buaite ó",
-  "mass.cqb.m.funnel": "Básanna laistigh de 2,5 s ó iontráil"
+  "mass.cqb.m.funnel": "Básanna laistigh de 2,5 s ó iontráil",
+  "mass.tab.surfaces": "Dromchlaí R6",
+  "mass.surfaces.hint": "Marcanna ar an leibhéal (poill piléar agus a leithéid) de réir dromchla ar léarscáileanna Rainbow Six Siege, ó {with} de {matches} cluiche. Coinníonn dromchla a aitheantas i gcluichí leagan amháin den léarscáil. Osclaíonn cliceáil ró.",
+  "mass.surfaces.none": "Níl aon mharcanna ar an leibhéal sna cluichí seo (tá siad i gcluichí Rainbow Six Siege a tiontaíodh le heat3d-r6-replay 0.3.0 nó níos nuaí).",
+  "mass.surfaces.col.surface": "Dromchla",
+  "mass.surfaces.col.room": "Seomra",
+  "mass.surfaces.col.marks": "Marcanna",
+  "mass.surfaces.col.perRound": "In aghaidh an bhabhta",
+  "mass.surfaces.col.shot": "Lámhachóir ar eolas",
+  "mass.surfaces.col.shotTitle": "Cion na marcanna ar aimsíodh a lámhachóir: an t-imreoir a bhí ag féachaint i dtreo an mhairc nuair a tháinig sé",
+  "mass.surfaces.kinds": "Cineálacha marcanna",
+  "mass.surfaces.byOperator": "De réir oibreora",
+  "mass.surfaces.byClass": "De réir aicme airm",
+  "mass.surfaces.heat": "Cén áit ar an dromchla",
+  "mass.surfaces.load": "Lódáil a chluichí ({count})"
 }

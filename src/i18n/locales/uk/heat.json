@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Тяжіння до загальної частки (рядки)",
   "heat.splitPanel.rateHint": "Рахується в рядках, а не в раундах: гравець, що стоїть, додає рядок з кожним відліком. Виграні раунди в місці покаже Розбивка або статистика об’єму.",
   "heat.teamsList.columnSplitHint": "Різницю поділено за <b>{column}</b>, тож групи тут визначають лише те, що малюється, а не на якому боці вони враховуються.",
-  "heat.sourcePanel.indexing": "Індексування одиниць"
+  "heat.sourcePanel.indexing": "Індексування одиниць",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Кульові отвори та сліди",
+  "heat.filterPanel.siege.marksTitle": "Лише сліди, залишені на рівні (подія impact)",
+  "heat.filterPanel.siege.marksShooter": "Сліди зі стрільцем",
+  "heat.filterPanel.siege.marksShooterTitle": "Сліди, чий стрілець виведений (гравець, що дивився на слід у мить його появи); фільтрувати або ділити за byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Сліди з класом зброї",
+  "heat.filterPanel.siege.marksWeaponTitle": "Сліди, у яких вбивство стрільця в ту саму мить називає зброю; фільтрувати або ділити за byItemClass",
+  "heat.filterPanel.siege.attempts": "Спроби встановлення та знешкодження",
+  "heat.filterPanel.siege.attemptsTitle": "Кожен початок, завершення та переривання встановлення чи знешкодження",
+  "heat.filterPanel.siege.interrupted": "Перервані спроби",
+  "heat.filterPanel.siege.interruptedTitle": "Розпочаті, але не завершені встановлення та знешкодження, там, де гравець зупинився",
+  "heat.filterPanel.siege.reinforce": "Укріплення",
+  "heat.filterPanel.siege.reinforceTitle": "Укріплені стіни та люки, біля захисника, що стояв там (виведено)"
 }

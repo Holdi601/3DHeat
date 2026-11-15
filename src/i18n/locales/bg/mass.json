@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Дуели спечелени от по-добре прицелилия се",
   "mass.cqb.m.planter": "Рундове спечелени от поставящата страна",
   "mass.cqb.m.man": "Рундове спечелени от състояние",
-  "mass.cqb.m.funnel": "Смърти до 2,5 s след влизане"
+  "mass.cqb.m.funnel": "Смърти до 2,5 s след влизане",
+  "mass.tab.surfaces": "R6 повърхности",
+  "mass.surfaces.hint": "Следи на нивото (дупки от куршуми и др.) по повърхности на картите на Rainbow Six Siege, от {with} от {matches} мача. Повърхността запазва своя id в мачовете на една версия на картата. Щракване отваря ред.",
+  "mass.surfaces.none": "Няма следи на нивото в тези мачове (мачовете на Rainbow Six Siege, преобразувани с heat3d-r6-replay 0.3.0 или по-нов, ги имат).",
+  "mass.surfaces.col.surface": "Повърхност",
+  "mass.surfaces.col.room": "Стая",
+  "mass.surfaces.col.marks": "Следи",
+  "mass.surfaces.col.perRound": "На рунд",
+  "mass.surfaces.col.shot": "Стрелецът известен",
+  "mass.surfaces.col.shotTitle": "Дял на следите с изведен стрелец: играчът, обърнат към следата, когато се е появила",
+  "mass.surfaces.kinds": "Видове следи",
+  "mass.surfaces.byOperator": "По оператор",
+  "mass.surfaces.byClass": "По клас оръжие",
+  "mass.surfaces.heat": "Къде на повърхността",
+  "mass.surfaces.load": "Зареди мачовете ѝ ({count})"
 }

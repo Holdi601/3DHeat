@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "よく狙っていた側が勝ったデュエル",
   "mass.cqb.m.planter": "設置側が勝ったラウンド",
   "mass.cqb.m.man": "この状況からのラウンド勝利",
-  "mass.cqb.m.funnel": "進入後2.5秒以内の死亡"
+  "mass.cqb.m.funnel": "進入後2.5秒以内の死亡",
+  "mass.tab.surfaces": "R6 表面",
+  "mass.surfaces.hint": "レベル上の痕跡（弾痕など）を Rainbow Six Siege のマップの表面ごとに表示（{matches} 試合中 {with} 試合）。表面の ID は同じマップバージョンの試合間で共通です。クリックで行を開きます。",
+  "mass.surfaces.none": "これらの試合にはレベル上の痕跡がありません（heat3d-r6-replay 0.3.0 以降で変換した Rainbow Six Siege の試合にあります）。",
+  "mass.surfaces.col.surface": "表面",
+  "mass.surfaces.col.room": "部屋",
+  "mass.surfaces.col.marks": "痕跡",
+  "mass.surfaces.col.perRound": "ラウンドあたり",
+  "mass.surfaces.col.shot": "射手判明",
+  "mass.surfaces.col.shotTitle": "射手を推定できた痕跡の割合：痕跡が現れたときにその方向を向いていたプレイヤー",
+  "mass.surfaces.kinds": "痕跡の種類",
+  "mass.surfaces.byOperator": "オペレーター別",
+  "mass.surfaces.byClass": "武器分類別",
+  "mass.surfaces.heat": "表面上の位置",
+  "mass.surfaces.load": "その試合を読み込む（{count}）"
 }

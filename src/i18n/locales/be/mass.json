@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Дуэлі, выйграныя лепш нацэленым",
   "mass.cqb.m.planter": "Раўнды, выйграныя бокам, што ставіць",
   "mass.cqb.m.man": "Раўнды, выйграныя са стану",
-  "mass.cqb.m.funnel": "Смерці за 2,5 с пасля ўваходу"
+  "mass.cqb.m.funnel": "Смерці за 2,5 с пасля ўваходу",
+  "mass.tab.surfaces": "Паверхні R6",
+  "mass.surfaces.hint": "Сляды на ўзроўні (кулявыя адтуліны і да т. п.) па паверхнях мап Rainbow Six Siege, з {with} з {matches} матчаў. Паверхня захоўвае свой id у матчах адной версіі мапы. Пстрычка адкрывае радок.",
+  "mass.surfaces.none": "У гэтых матчах няма слядоў на ўзроўні (яны ёсць у матчах Rainbow Six Siege, пераўтвораных heat3d-r6-replay 0.3.0 або навейшым).",
+  "mass.surfaces.col.surface": "Паверхня",
+  "mass.surfaces.col.room": "Пакой",
+  "mass.surfaces.col.marks": "Сляды",
+  "mass.surfaces.col.perRound": "За раўнд",
+  "mass.surfaces.col.shot": "Стралок вядомы",
+  "mass.surfaces.col.shotTitle": "Доля слядоў з выведзеным стралком: гулец, які глядзеў на след у момант яго з'яўлення",
+  "mass.surfaces.kinds": "Віды слядоў",
+  "mass.surfaces.byOperator": "Па аператыўніку",
+  "mass.surfaces.byClass": "Па класе зброі",
+  "mass.surfaces.heat": "Дзе на паверхні",
+  "mass.surfaces.load": "Загрузіць яе матчы ({count})"
 }

@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Цяжэнне да агульнай долі (радкі)",
   "heat.splitPanel.rateHint": "Лічыцца ў радках, а не ў раўндах: гулец, які стаіць, дадае радок з кожным адлікам. Выйграныя раўнды ў месцы пакажа Разбіўка або статыстыка аб’ёму.",
   "heat.teamsList.columnSplitHint": "Рознасць падзелена па <b>{column}</b>, таму групы тут вызначаюць толькі тое, што малюецца, а не на якім баку яны ўлічваюцца.",
-  "heat.sourcePanel.indexing": "Індэксаванне адзінак"
+  "heat.sourcePanel.indexing": "Індэксаванне адзінак",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Кулявыя адтуліны і сляды",
+  "heat.filterPanel.siege.marksTitle": "Толькі сляды, пакінутыя на ўзроўні (падзея impact)",
+  "heat.filterPanel.siege.marksShooter": "Сляды са стралком",
+  "heat.filterPanel.siege.marksShooterTitle": "Сляды, чый стралок выведзены (гулец, які глядзеў на след у момант яго з'яўлення); фільтраваць або дзяліць па byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Сляды з класам зброі",
+  "heat.filterPanel.siege.marksWeaponTitle": "Сляды, у якіх забойства стралка ў той жа момант называе зброю; фільтраваць або дзяліць па byItemClass",
+  "heat.filterPanel.siege.attempts": "Спробы ўсталявання і абясшкоджвання",
+  "heat.filterPanel.siege.attemptsTitle": "Кожны пачатак, завяршэнне і перапыненне ўсталявання або абясшкоджвання",
+  "heat.filterPanel.siege.interrupted": "Перапыненыя спробы",
+  "heat.filterPanel.siege.interruptedTitle": "Пачатыя, але не завершаныя ўсталяванні і абясшкоджванні, там, дзе гулец спыніўся",
+  "heat.filterPanel.siege.reinforce": "Умацаванні",
+  "heat.filterPanel.siege.reinforceTitle": "Умацаваныя сцены і люкі, каля абаронцы, які стаяў там (выведзена)"
 }

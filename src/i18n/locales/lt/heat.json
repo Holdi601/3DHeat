@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Traukimas link bendros dalies (eilutės)",
   "heat.splitPanel.rateHint": "Skaičiuojama eilutėmis, ne raundais: stovintis žaidėjas prideda eilutę su kiekvienu matavimu. Vietoje laimėtus raundus parodys Išskaidymas ar tūrio statistika.",
   "heat.teamsList.columnSplitHint": "Skirtumas suskaidytas pagal <b>{column}</b>, todėl grupės čia lemia tik tai, kas piešiama, o ne kurioje pusėje jos skaičiuojamos.",
-  "heat.sourcePanel.indexing": "Vienetų indeksavimas"
+  "heat.sourcePanel.indexing": "Vienetų indeksavimas",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Kulkų skylės ir žymės",
+  "heat.filterPanel.siege.marksTitle": "Tik lygyje paliktos žymės (įvykis impact)",
+  "heat.filterPanel.siege.marksShooter": "Žymės su šauliu",
+  "heat.filterPanel.siege.marksShooterTitle": "Žymės, kurių šaulys nustatytas (žaidėjas, žiūrėjęs į žymę jai atsirandant); filtruoti ar skaidyti pagal byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Žymės su ginklo klase",
+  "heat.filterPanel.siege.marksWeaponTitle": "Žymės, kurių šaulio tuo pačiu metu atliktas nužudymas nurodo ginklą; filtruoti ar skaidyti pagal byItemClass",
+  "heat.filterPanel.siege.attempts": "Padėjimo ir nukenksminimo bandymai",
+  "heat.filterPanel.siege.attemptsTitle": "Kiekviena padėjimo ar nukenksminimo pradžia, pabaiga ir nutraukimas",
+  "heat.filterPanel.siege.interrupted": "Nutraukti bandymai",
+  "heat.filterPanel.siege.interruptedTitle": "Pradėti, bet nebaigti padėjimai ir nukenksminimai, ten, kur žaidėjas sustojo",
+  "heat.filterPanel.siege.reinforce": "Sustiprinimai",
+  "heat.filterPanel.siege.reinforceTitle": "Sustiprintos sienos ir liukai, prie ten stovėjusio gynėjo (nustatyta)"
 }

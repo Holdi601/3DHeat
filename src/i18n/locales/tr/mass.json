@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Daha iyi nişan alanın kazandığı düellolar",
   "mass.cqb.m.planter": "Kuran tarafın kazandığı rauntlar",
   "mass.cqb.m.man": "Şu durumdan kazanılan rauntlar",
-  "mass.cqb.m.funnel": "Girişten sonraki 2,5 sn içinde ölümler"
+  "mass.cqb.m.funnel": "Girişten sonraki 2,5 sn içinde ölümler",
+  "mass.tab.surfaces": "R6 yüzeyleri",
+  "mass.surfaces.hint": "Seviyedeki izler (kurşun delikleri vb.) Rainbow Six Siege haritalarının yüzeylerine göre, {matches} maçın {with} tanesinden. Bir yüzey, bir harita sürümünün maçlarında kimliğini korur. Bir tıklama satırı açar.",
+  "mass.surfaces.none": "Bu maçlarda seviyede iz yok (heat3d-r6-replay 0.3.0 veya daha yenisiyle dönüştürülen Rainbow Six Siege maçlarında vardır).",
+  "mass.surfaces.col.surface": "Yüzey",
+  "mass.surfaces.col.room": "Oda",
+  "mass.surfaces.col.marks": "İzler",
+  "mass.surfaces.col.perRound": "Raunt başına",
+  "mass.surfaces.col.shot": "Atıcı biliniyor",
+  "mass.surfaces.col.shotTitle": "Atıcısı çıkarılan izlerin payı: iz oluştuğunda ona dönük olan oyuncu",
+  "mass.surfaces.kinds": "İz türleri",
+  "mass.surfaces.byOperator": "Operatöre göre",
+  "mass.surfaces.byClass": "Silah sınıfına göre",
+  "mass.surfaces.heat": "Yüzeyde nerede",
+  "mass.surfaces.load": "Maçlarını yükle ({count})"
 }

@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "向总体占比收缩（行）",
   "heat.splitPanel.rateHint": "按行计数，而非按回合：站着不动的玩家每次采样都会增加一行。要看某处赢下的回合，请用明细或体积统计。",
   "heat.teamsList.columnSplitHint": "差值按 <b>{column}</b> 拆分，因此这里的分组只决定绘制哪些内容，而不决定它们计入哪一侧。",
-  "heat.sourcePanel.indexing": "正在索引单位"
+  "heat.sourcePanel.indexing": "正在索引单位",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "弹孔与痕迹",
+  "heat.filterPanel.siege.marksTitle": "仅显示留在关卡上的痕迹（事件 impact）",
+  "heat.filterPanel.siege.marksShooter": "有射手的痕迹",
+  "heat.filterPanel.siege.marksShooterTitle": "已推断出射手的痕迹（痕迹出现时面朝它的玩家）；按 byOperator 筛选或拆分",
+  "heat.filterPanel.siege.marksWeapon": "有武器类别的痕迹",
+  "heat.filterPanel.siege.marksWeaponTitle": "射手在同一时刻的击杀给出武器的痕迹；按 byItemClass 筛选或拆分",
+  "heat.filterPanel.siege.attempts": "安放与拆除尝试",
+  "heat.filterPanel.siege.attemptsTitle": "安放或拆除的每次开始、完成与中断",
+  "heat.filterPanel.siege.interrupted": "中断的尝试",
+  "heat.filterPanel.siege.interruptedTitle": "已开始但未完成的安放与拆除，位于玩家停下的地方",
+  "heat.filterPanel.siege.reinforce": "加固",
+  "heat.filterPanel.siege.reinforceTitle": "被加固的墙和舱口，位于站在那里的防守方（推断）"
 }

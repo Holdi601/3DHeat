@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Pojedynki wygrane przez lepiej celującego",
   "mass.cqb.m.planter": "Rundy wygrane przez stronę podkładającą",
   "mass.cqb.m.man": "Rundy wygrane ze stanu",
-  "mass.cqb.m.funnel": "Śmierci do 2,5 s po wejściu"
+  "mass.cqb.m.funnel": "Śmierci do 2,5 s po wejściu",
+  "mass.tab.surfaces": "Powierzchnie R6",
+  "mass.surfaces.hint": "Ślady na poziomie (dziury po kulach itp.) według powierzchni map Rainbow Six Siege, z {with} z {matches} meczów. Powierzchnia zachowuje swój id w meczach jednej wersji mapy. Kliknięcie otwiera wiersz.",
+  "mass.surfaces.none": "Brak śladów na poziomie w tych meczach (mecze Rainbow Six Siege przekonwertowane heat3d-r6-replay 0.3.0 lub nowszym je mają).",
+  "mass.surfaces.col.surface": "Powierzchnia",
+  "mass.surfaces.col.room": "Pomieszczenie",
+  "mass.surfaces.col.marks": "Ślady",
+  "mass.surfaces.col.perRound": "Na rundę",
+  "mass.surfaces.col.shot": "Strzelec znany",
+  "mass.surfaces.col.shotTitle": "Udział śladów z ustalonym strzelcem: gracz zwrócony w stronę śladu, gdy powstał",
+  "mass.surfaces.kinds": "Rodzaje śladów",
+  "mass.surfaces.byOperator": "Wg operatora",
+  "mass.surfaces.byClass": "Wg klasy broni",
+  "mass.surfaces.heat": "Gdzie na powierzchni",
+  "mass.surfaces.load": "Wczytaj jej mecze ({count})"
 }

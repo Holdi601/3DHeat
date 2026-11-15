@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "A jobban célzó által nyert párbajok",
   "mass.cqb.m.planter": "A telepítő oldal által nyert körök",
   "mass.cqb.m.man": "Állásból nyert körök",
-  "mass.cqb.m.funnel": "Halálok 2,5 mp-en belül a belépés után"
+  "mass.cqb.m.funnel": "Halálok 2,5 mp-en belül a belépés után",
+  "mass.tab.surfaces": "R6 felületek",
+  "mass.surfaces.hint": "Nyomok a pályán (golyónyomok és hasonlók) felületenként a Rainbow Six Siege térképein, {with} / {matches} meccsből. Egy felület megtartja azonosítóját egy térképváltozat meccsein. Kattintásra megnyílik egy sor.",
+  "mass.surfaces.none": "Ezekben a meccsekben nincsenek nyomok a pályán (a heat3d-r6-replay 0.3.0 vagy újabb verzióval átalakított Rainbow Six Siege meccsekben vannak).",
+  "mass.surfaces.col.surface": "Felület",
+  "mass.surfaces.col.room": "Helyiség",
+  "mass.surfaces.col.marks": "Nyomok",
+  "mass.surfaces.col.perRound": "Körönként",
+  "mass.surfaces.col.shot": "Lövő ismert",
+  "mass.surfaces.col.shotTitle": "A kikövetkeztetett lövőjű nyomok aránya: a játékos, aki a nyom felé nézett, amikor keletkezett",
+  "mass.surfaces.kinds": "Nyomfajták",
+  "mass.surfaces.byOperator": "Operátor szerint",
+  "mass.surfaces.byClass": "Fegyverosztály szerint",
+  "mass.surfaces.heat": "Hol a felületen",
+  "mass.surfaces.load": "Meccsei betöltése ({count})"
 }

@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Attrazione verso la quota complessiva (righe)",
   "heat.splitPanel.rateHint": "Contato in righe, non in round: un giocatore fermo aggiunge una riga a ogni campione. Per i round vinti in un punto usa il Dettaglio o le statistiche di un volume.",
   "heat.teamsList.columnSplitHint": "La differenza è suddivisa per <b>{column}</b>, quindi qui i gruppi decidono solo cosa viene disegnato, non su quale lato contano.",
-  "heat.sourcePanel.indexing": "Indicizzazione delle unità"
+  "heat.sourcePanel.indexing": "Indicizzazione delle unità",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Fori di proiettile e segni",
+  "heat.filterPanel.siege.marksTitle": "Solo i segni lasciati sul livello (evento impact)",
+  "heat.filterPanel.siege.marksShooter": "Segni con tiratore",
+  "heat.filterPanel.siege.marksShooterTitle": "Segni di cui si è dedotto il tiratore (il giocatore rivolto verso il segno quando è apparso); filtra o dividi per byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Segni con classe d'arma",
+  "heat.filterPanel.siege.marksWeaponTitle": "Segni per cui un'uccisione del tiratore nello stesso istante indica l'arma; filtra o dividi per byItemClass",
+  "heat.filterPanel.siege.attempts": "Tentativi di piazzamento e disinnesco",
+  "heat.filterPanel.siege.attemptsTitle": "Ogni inizio, completamento e interruzione di un piazzamento o disinnesco",
+  "heat.filterPanel.siege.interrupted": "Tentativi interrotti",
+  "heat.filterPanel.siege.interruptedTitle": "Piazzamenti e disinneschi iniziati ma non finiti, dove il giocatore si è fermato",
+  "heat.filterPanel.siege.reinforce": "Rinforzi",
+  "heat.filterPanel.siege.reinforceTitle": "Muri e botole rinforzati, presso il difensore che era lì (dedotto)"
 }

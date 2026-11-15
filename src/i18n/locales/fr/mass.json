@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Duels gagnés par le mieux visé",
   "mass.cqb.m.planter": "Manches gagnées par le camp qui pose",
   "mass.cqb.m.man": "Manches gagnées depuis",
-  "mass.cqb.m.funnel": "Morts dans les 2,5 s après l'entrée"
+  "mass.cqb.m.funnel": "Morts dans les 2,5 s après l'entrée",
+  "mass.tab.surfaces": "Surfaces R6",
+  "mass.surfaces.hint": "Traces sur le niveau (impacts de balles, etc.) par surface des cartes de Rainbow Six Siege, sur {with} de {matches} matchs. Une surface garde son id dans les matchs d'une même version de carte. Un clic ouvre une ligne.",
+  "mass.surfaces.none": "Aucune trace sur le niveau dans ces matchs (les matchs Rainbow Six Siege convertis avec heat3d-r6-replay 0.3.0 ou plus récent en ont).",
+  "mass.surfaces.col.surface": "Surface",
+  "mass.surfaces.col.room": "Pièce",
+  "mass.surfaces.col.marks": "Traces",
+  "mass.surfaces.col.perRound": "Par manche",
+  "mass.surfaces.col.shot": "Tireur connu",
+  "mass.surfaces.col.shotTitle": "Part des traces dont le tireur a été déduit : le joueur tourné vers la trace quand elle est apparue",
+  "mass.surfaces.kinds": "Types de traces",
+  "mass.surfaces.byOperator": "Par opérateur",
+  "mass.surfaces.byClass": "Par classe d'arme",
+  "mass.surfaces.heat": "Où sur la surface",
+  "mass.surfaces.load": "Charger ses matchs ({count})"
 }

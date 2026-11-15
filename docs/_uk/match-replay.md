@@ -7,7 +7,7 @@ lang: "uk"
 source: "match-replay.md"
 source_hash: "14a8aade5ff0"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Розбір матчу

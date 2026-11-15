@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Húzás az összesített arány felé (sorok)",
   "heat.splitPanel.rateHint": "Sorokban számolva, nem körökben: egy álló játékos minden mintavételnél hozzáad egy sort. Egy helyen nyert körökhöz használd a Bontást vagy egy térfogat statisztikáját.",
   "heat.teamsList.columnSplitHint": "A különbség a(z) <b>{column}</b> szerint van felosztva, így az itteni csoportok csak azt döntik el, mi rajzolódik ki, azt nem, hogy melyik oldalon számítanak.",
-  "heat.sourcePanel.indexing": "Egységek indexelése"
+  "heat.sourcePanel.indexing": "Egységek indexelése",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Golyónyomok és nyomok",
+  "heat.filterPanel.siege.marksTitle": "Csak a pályán hagyott nyomok (impact esemény)",
+  "heat.filterPanel.siege.marksShooter": "Nyomok lövővel",
+  "heat.filterPanel.siege.marksShooterTitle": "Nyomok, amelyek lövőjét kikövetkeztettük (a játékos, aki a nyom felé nézett, amikor keletkezett); szűrés vagy bontás byOperator szerint",
+  "heat.filterPanel.siege.marksWeapon": "Nyomok fegyverosztállyal",
+  "heat.filterPanel.siege.marksWeaponTitle": "Nyomok, ahol a lövő ugyanabban a pillanatban történt ölése megnevezi a fegyvert; szűrés vagy bontás byItemClass szerint",
+  "heat.filterPanel.siege.attempts": "Telepítési és hatástalanítási kísérletek",
+  "heat.filterPanel.siege.attemptsTitle": "Minden telepítés vagy hatástalanítás kezdete, befejezése és megszakítása",
+  "heat.filterPanel.siege.interrupted": "Megszakított kísérletek",
+  "heat.filterPanel.siege.interruptedTitle": "Megkezdett, de be nem fejezett telepítések és hatástalanítások, ott, ahol a játékos abbahagyta",
+  "heat.filterPanel.siege.reinforce": "Megerősítések",
+  "heat.filterPanel.siege.reinforceTitle": "Megerősített falak és csapóajtók, az ott álló védőnél (kikövetkeztetett)"
 }

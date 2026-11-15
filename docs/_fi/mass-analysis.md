@@ -5,7 +5,7 @@ lang: "fi"
 source: "mass-analysis.md"
 source_hash: "88fad1d761e0"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Massa-analyysi: tuhansia otteluita kerralla

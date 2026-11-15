@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Vleka k skupnemu deležu (vrstice)",
   "heat.splitPanel.rateHint": "Šteto v vrsticah, ne v krogih: igralec, ki stoji, doda vrstico ob vsakem vzorcu. Za zmagane kroge na mestu uporabi Razčlenitev ali statistiko prostornine.",
   "heat.teamsList.columnSplitHint": "Razlika je razdeljena po <b>{column}</b>, zato skupine tukaj določajo le, kaj se nariše, ne pa, na kateri strani štejejo.",
-  "heat.sourcePanel.indexing": "Indeksiranje enot"
+  "heat.sourcePanel.indexing": "Indeksiranje enot",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Luknje od krogel in sledi",
+  "heat.filterPanel.siege.marksTitle": "Samo sledi, ki ostanejo na ravni (dogodek impact)",
+  "heat.filterPanel.siege.marksShooter": "Sledi s strelcem",
+  "heat.filterPanel.siege.marksShooterTitle": "Sledi, katerih strelec je izpeljan (igralec, obrnjen proti sledi, ko je nastala); filtriraj ali razdeli po byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Sledi z razredom orožja",
+  "heat.filterPanel.siege.marksWeaponTitle": "Sledi, pri katerih uboj strelca v istem trenutku navede orožje; filtriraj ali razdeli po byItemClass",
+  "heat.filterPanel.siege.attempts": "Poskusi postavitve in razorožitve",
+  "heat.filterPanel.siege.attemptsTitle": "Vsak začetek, dokončanje in prekinitev postavitve ali razorožitve",
+  "heat.filterPanel.siege.interrupted": "Prekinjeni poskusi",
+  "heat.filterPanel.siege.interruptedTitle": "Začete, a nedokončane postavitve in razorožitve, tam kjer je igralec nehal",
+  "heat.filterPanel.siege.reinforce": "Ojačitve",
+  "heat.filterPanel.siege.reinforceTitle": "Ojačane stene in lopute, pri branilcu, ki je stal tam (izpeljano)"
 }

@@ -5,7 +5,7 @@ lang: "ru"
 source: "mass-analysis.md"
 source_hash: "88fad1d761e0"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Массовый анализ: тысячи матчей сразу

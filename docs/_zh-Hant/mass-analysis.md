@@ -5,7 +5,7 @@ lang: "zh-Hant"
 source: "mass-analysis.md"
 source_hash: "88fad1d761e0"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 大規模分析：數千場對戰同時分析

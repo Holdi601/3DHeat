@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Duelli vinti da chi mirava meglio",
   "mass.cqb.m.planter": "Round vinti dal lato che pianta",
   "mass.cqb.m.man": "Round vinti da",
-  "mass.cqb.m.funnel": "Morti entro 2,5 s dall'ingresso"
+  "mass.cqb.m.funnel": "Morti entro 2,5 s dall'ingresso",
+  "mass.tab.surfaces": "Superfici R6",
+  "mass.surfaces.hint": "Segni sul livello (fori di proiettile e simili) per superficie delle mappe di Rainbow Six Siege, da {with} di {matches} partite. Una superficie mantiene il suo id nelle partite di una versione della mappa. Un clic apre una riga.",
+  "mass.surfaces.none": "Nessun segno sul livello in queste partite (le partite di Rainbow Six Siege convertite con heat3d-r6-replay 0.3.0 o successivo li hanno).",
+  "mass.surfaces.col.surface": "Superficie",
+  "mass.surfaces.col.room": "Stanza",
+  "mass.surfaces.col.marks": "Segni",
+  "mass.surfaces.col.perRound": "Per round",
+  "mass.surfaces.col.shot": "Tiratore noto",
+  "mass.surfaces.col.shotTitle": "Quota dei segni con tiratore dedotto: il giocatore rivolto verso il segno quando è apparso",
+  "mass.surfaces.kinds": "Tipi di segno",
+  "mass.surfaces.byOperator": "Per operatore",
+  "mass.surfaces.byClass": "Per classe d'arma",
+  "mass.surfaces.heat": "Dove sulla superficie",
+  "mass.surfaces.load": "Carica le sue partite ({count})"
 }

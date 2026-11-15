@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "더 잘 조준한 쪽이 이긴 듀얼",
   "mass.cqb.m.planter": "설치 진영이 이긴 라운드",
   "mass.cqb.m.man": "이 상황에서 이긴 라운드",
-  "mass.cqb.m.funnel": "진입 후 2.5초 안의 죽음"
+  "mass.cqb.m.funnel": "진입 후 2.5초 안의 죽음",
+  "mass.tab.surfaces": "R6 표면",
+  "mass.surfaces.hint": "레벨의 자국(탄흔 등)을 Rainbow Six Siege 맵의 표면별로 표시 ({matches}경기 중 {with}경기). 표면 ID는 같은 맵 버전의 경기에서 유지됩니다. 클릭하면 행이 열립니다.",
+  "mass.surfaces.none": "이 경기들에는 레벨의 자국이 없습니다 (heat3d-r6-replay 0.3.0 이상으로 변환한 Rainbow Six Siege 경기에 있습니다).",
+  "mass.surfaces.col.surface": "표면",
+  "mass.surfaces.col.room": "방",
+  "mass.surfaces.col.marks": "자국",
+  "mass.surfaces.col.perRound": "라운드당",
+  "mass.surfaces.col.shot": "사수 확인",
+  "mass.surfaces.col.shotTitle": "사수를 추정한 자국의 비율: 자국이 생길 때 그쪽을 보고 있던 플레이어",
+  "mass.surfaces.kinds": "자국 종류",
+  "mass.surfaces.byOperator": "오퍼레이터별",
+  "mass.surfaces.byClass": "무기 분류별",
+  "mass.surfaces.heat": "표면의 위치",
+  "mass.surfaces.load": "해당 경기 불러오기 ({count})"
 }

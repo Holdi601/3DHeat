@@ -41,6 +41,10 @@ export interface Objective {
   used: number | null;
   /** A capture zone's owner when the battle began. */
   ownerAtStart: number;
+  /** A bomb site's room: the site it belongs to ("B Church, B Arsenal Room"), '' for the rest. */
+  site: string;
+  /** When a bomb site is the one played (the data's seconds, from-to a round), empty when always or never said. */
+  active: [number, number][];
 }
 
 /** One zone's owner and progress over time, a step a change. */
@@ -74,6 +78,7 @@ const vec = (v: unknown): Vec3 | null =>
 export function layerOf(type: string): ObjectiveLayer {
   switch (type) {
     case 'capture_zone':
+    case 'bomb_site':
       return 'zones';
     case 'spawn':
     case 'convoy_spawn':
@@ -121,6 +126,10 @@ export function parseObjectives(list: unknown): Objective[] {
       points,
       used: typeof o.used === 'number' ? o.used : null,
       ownerAtStart: num(o.ownerAtStart),
+      site: str(o.site),
+      active: Array.isArray(o.active)
+        ? (o.active as unknown[]).flatMap((w) => (Array.isArray(w) && w.length >= 2 && typeof w[0] === 'number' && typeof w[1] === 'number' ? [[w[0], w[1]] as [number, number]] : []))
+        : [],
     });
   }
   // Zones in letter order, for the labels and the list.
@@ -178,6 +187,12 @@ export function buildTimeline(match: string, rows: ObjectiveRow[]): ObjectiveTim
   }
   events.sort((a, b) => a.time - b.time || a.zone.localeCompare(b.zone));
   return { match, zones, events };
+}
+
+/** Whether a bomb site is the one played at `t` (the data's seconds): inside one of its rounds. */
+export function siteActive(o: Pick<Objective, 'active'>, t: number): boolean {
+  for (const [a, b] of o.active) if (t >= a && t <= b) return true;
+  return false;
 }
 
 /** A zone's owner and capture progress at `t` (replay seconds); before its first row, `start`'s owner and no progress. */

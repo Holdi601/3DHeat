@@ -11,6 +11,7 @@ const GAP = 3;
 function textOf(l: ObjectiveLabel): string {
   switch (l.kind) {
     case 'zone':
+    case 'site':
       return l.text;
     case 'spawn':
       return l.text ? t('objectives.label.spawnCount', { count: Number(l.text) }) : t('objectives.label.spawn');
@@ -23,7 +24,7 @@ const css = (rgb: [number, number, number]) => `rgb(${Math.round(rgb[0] * 255)},
 
 /**
  * The objectives' words over the view: a zone's letter in its owner's colour,
- * a spawn's count, what a marker is. The more important first where two
+ * a bomb site's room by name, a spawn's count, what a marker is. The more important first where two
  * would cover each other (zones, then airfields, spawns, targets), the
  * nearer first among equals; the rest are left out until there is room.
  */

@@ -15,6 +15,7 @@
 import type { ManeuverSection } from '../insights/maneuver/summary';
 import type { BehaviourMetrics } from '../insights/behaviour/types';
 import type { CqbCounts } from '../insights/cqb/finish';
+import type { MarkCounts } from './marks';
 
 /** The member's `format` and its version: a reader takes its own major, a newer one is worked out again. */
 export const SUMMARY_FORMAT = '3dheat-summary';
@@ -201,6 +202,8 @@ export interface MatchSummary {
    * plants and the most entered places' entries and deaths. Null without a round column.
    */
   cqb?: CqbCounts | null;
+  /** Marks on the level per surface (`marks.ts`), additive over matches; null without. */
+  marks?: MarkCounts | null;
   built: { by: string; at: string; ms: number };
 }
 

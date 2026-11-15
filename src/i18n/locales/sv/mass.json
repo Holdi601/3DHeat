@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Dueller vunna av den som siktade bättre",
   "mass.cqb.m.planter": "Rundor vunna av sidan som planterar",
   "mass.cqb.m.man": "Rundor vunna från",
-  "mass.cqb.m.funnel": "Dödsfall inom 2,5 s efter inträde"
+  "mass.cqb.m.funnel": "Dödsfall inom 2,5 s efter inträde",
+  "mass.tab.surfaces": "R6-ytor",
+  "mass.surfaces.hint": "Märken på banan (kulhål o.d.) per yta på Rainbow Six Siege-kartor, från {with} av {matches} matcher. En yta behåller sitt id i matcherna på en kartversion. Ett klick öppnar en rad.",
+  "mass.surfaces.none": "Inga märken på banan i dessa matcher (Rainbow Six Siege-matcher konverterade med heat3d-r6-replay 0.3.0 eller senare har dem).",
+  "mass.surfaces.col.surface": "Yta",
+  "mass.surfaces.col.room": "Rum",
+  "mass.surfaces.col.marks": "Märken",
+  "mass.surfaces.col.perRound": "Per runda",
+  "mass.surfaces.col.shot": "Skytt känd",
+  "mass.surfaces.col.shotTitle": "Andel av märkena med härledd skytt: spelaren som var vänd mot märket när det uppstod",
+  "mass.surfaces.kinds": "Märkestyper",
+  "mass.surfaces.byOperator": "Per operatör",
+  "mass.surfaces.byClass": "Per vapenklass",
+  "mass.surfaces.heat": "Var på ytan",
+  "mass.surfaces.load": "Läs in dess matcher ({count})"
 }

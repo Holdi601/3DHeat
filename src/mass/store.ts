@@ -10,6 +10,7 @@ import { binomTwoSided, bhAdjust, wilson } from '../insights/stats';
 import { GRID_KINDS, PHASE_BINS, type SummaryHead } from './types';
 import type { ManeuverSection } from '../insights/maneuver/summary';
 import type { CqbCounts } from '../insights/cqb/finish';
+import type { MarkCounts } from './marks';
 
 /** Phases kept per match, by kind (a row of `PHASE_BINS` each). */
 export const PHASE_KINDS = ['kill', 'death', 'hit', 'launch', 'fire', 'spawn', 'capture'] as const;
@@ -119,6 +120,8 @@ export class MassStore {
   readonly maneuvers: (ManeuverSection | null)[] = [];
   /** Per match, its close-quarters counts (`insights/cqb/finish.ts`); null where its summary has none. */
   readonly cqb: (CqbCounts | null)[] = [];
+  /** Per match, its marks on the level per surface (`marks.ts`); null where its summary has none. */
+  readonly marks: (MarkCounts | null)[] = [];
 
   get matches(): number {
     return this.m.game.n;
@@ -159,6 +162,7 @@ export class MassStore {
     this.paths.push(path);
     this.maneuvers.push(h.maneuvers ?? null);
     this.cqb.push(h.cqb ?? null);
+    this.marks.push(h.marks ?? null);
     const ev = (e: Record<string, number>, ...k: string[]) => k.reduce((s, x) => s + (e[x] ?? 0), 0);
     for (const tm of h.teams) {
       const T = this.t;

@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Træk mod den samlede andel (rækker)",
   "heat.splitPanel.rateHint": "Talt i rækker, ikke runder: en spiller, der står stille, tilføjer en række pr. måling. Brug Opdeling eller en volumens statistik for runder vundet på et sted.",
   "heat.teamsList.columnSplitHint": "Forskellen er opdelt efter <b>{column}</b>, så grupperne her afgør kun, hvad der tegnes, ikke hvilken side de tæller på.",
-  "heat.sourcePanel.indexing": "Indekserer enheder"
+  "heat.sourcePanel.indexing": "Indekserer enheder",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Skudhuller og mærker",
+  "heat.filterPanel.siege.marksTitle": "Kun mærkerne på banen (hændelse impact)",
+  "heat.filterPanel.siege.marksShooter": "Mærker med skytte",
+  "heat.filterPanel.siege.marksShooterTitle": "Mærker hvor skytten er udledt (spilleren der vendte mod mærket, da det opstod); filtrér eller del efter byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Mærker med våbenklasse",
+  "heat.filterPanel.siege.marksWeaponTitle": "Mærker hvor skyttens drab i samme øjeblik nævner våbnet; filtrér eller del efter byItemClass",
+  "heat.filterPanel.siege.attempts": "Forsøg på at plante og desarmere",
+  "heat.filterPanel.siege.attemptsTitle": "Hver start, fuldførelse og afbrydelse af en plantning eller desarmering",
+  "heat.filterPanel.siege.interrupted": "Afbrudte forsøg",
+  "heat.filterPanel.siege.interruptedTitle": "Plantninger og desarmeringer der blev startet men ikke fuldført, hvor spilleren stoppede",
+  "heat.filterPanel.siege.reinforce": "Forstærkninger",
+  "heat.filterPanel.siege.reinforceTitle": "Forstærkede vægge og luger, ved forsvareren der stod der (udledt)"
 }

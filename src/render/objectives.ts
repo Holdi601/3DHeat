@@ -21,7 +21,7 @@ import type { Dataset, FilterSpec } from '../state/types';
 import type { GameMatch } from '../match/wtMatch';
 import { matchesOf, pickedMatches } from '../match/matches';
 import { SOURCE_COLUMN } from '../data/builder';
-import { OBJECTIVE_LAYERS as OBJECTIVE_LAYER_LIST, toWorld, zoneAt, type Objective, type ObjectiveLayer, type ObjectiveTimeline, type Vec3 } from '../match/objectives';
+import { OBJECTIVE_LAYERS as OBJECTIVE_LAYER_LIST, siteActive, toWorld, zoneAt, type Objective, type ObjectiveLayer, type ObjectiveTimeline, type Vec3 } from '../match/objectives';
 import { runSlice, WAIT, type SliceJob } from '../data/slices';
 import { MAX_ZONES, ZONE_PART, ZONE_STATE_FLOATS, ZONE_VERTEX_FLOATS } from './zoneShaders';
 
@@ -39,7 +39,7 @@ export interface ObjectiveLabel {
   x: number;
   y: number;
   z: number;
-  kind: 'zone' | 'spawn' | 'airfield' | 'helipad' | 'base' | 'target';
+  kind: 'zone' | 'site' | 'spawn' | 'airfield' | 'helipad' | 'base' | 'target';
   text: string;
   /** Its colour, 0..1. */
   rgb: [number, number, number];
@@ -87,6 +87,13 @@ const STEP = 20;
 const NEUTRAL: [number, number, number] = [0.86, 0.86, 0.82];
 const AREA: [number, number, number] = [0.92, 0.9, 0.62];
 const TARGET: [number, number, number] = [1, 0.58, 0.16];
+/** A bomb site while its round is shown (`siteActive`): amber, apart from both teams' colours. */
+const SITE: [number, number, number] = [1, 0.74, 0.18];
+/** The owner a bomb site has while it is the one played: drawn in `SITE`, not a team's colour. */
+const SITE_OWNER = 255;
+/** A bomb site's rooms are a few metres high: its outline and fill lie this close over the floor (data units). */
+const SITE_LIFT = 0.05;
+const SITE_TRI_LIFT = 0.08;
 
 /** The ground's height under a point; null where there is none (no level, nothing below). */
 export type GroundAt = (x: number, z: number) => number | null;
@@ -137,8 +144,11 @@ export function objectiveSources(
 export function stateKey(sources: ObjectiveSource[], t: number): string {
   if (sources.length !== 1) return '';
   const s = sources[0];
-  if (!s.timeline) return '';
-  let key = '';
+  // A bomb site lights while its round is shown.
+  let sites = '';
+  for (const o of s.objectives) if (o.active.length) sites += siteActive(o, t + s.offset) ? '1' : '0';
+  if (!s.timeline) return sites;
+  let key = sites;
   for (const [zone, tl] of s.timeline.zones) {
     const z = zoneAt(tl, t + s.offset);
     key += `${zone}${z.owner}:${z.progress};`;
@@ -304,7 +314,7 @@ function* place(sources: ObjectiveSource[], axes: Dataset['axes'] | null, ground
       const air = g0 !== null && c[1] - g0 > AIRBORNE * scale && o.layer === 'spawns';
       const gr = air ? null : ground;
       const baseY = air || g0 === null ? c[1] : g0;
-      const lift = LIFT * scale;
+      const lift = (o.type === 'bomb_site' ? SITE_LIFT : LIFT) * scale;
       const r = o.radius * scale;
       const p: Placed = {
         o,
@@ -313,7 +323,7 @@ function* place(sources: ObjectiveSource[], axes: Dataset['axes'] | null, ground
         outlines: [],
         discs: [],
       };
-      const tl = TRI_LIFT * scale;
+      const tl = (o.type === 'bomb_site' ? SITE_TRI_LIFT : TRI_LIFT) * scale;
       if (o.shape === 'points' && o.points.length) {
         const seenPt = new Set<string>();
         for (const q of o.points) {
@@ -544,7 +554,12 @@ export class ObjectiveLayerDraw {
       if (o.layer === 'zones') {
         // Its owner and the capture at the playhead: the replay's, when one battle is shown.
         const st = this.zoneState(o, f, one);
-        const rgb = st.owner ? f.teamColor(st.owner) : NEUTRAL;
+        const rgb = ownerRgb(st.owner, f);
+        if (o.type === 'bomb_site') {
+          // A site's room by its name, in amber while its round is shown.
+          labels.push({ x: p.anchor[0], y: p.anchor[1], z: p.anchor[2], kind: 'site', text: o.name, rgb, priority: st.owner ? 5 : 4 });
+          continue;
+        }
         // A capture under way: how far it has come and by whom, for the letter's ring.
         const by = st.progress > 0 ? 2 : st.progress < 0 ? 1 : 0;
         const capturing = by && (Math.abs(st.progress) < 100 || st.owner !== by);
@@ -614,6 +629,7 @@ export class ObjectiveLayerDraw {
 
   /** A zone's owner and capture at the playhead: the replay's, when one battle is shown. */
   private zoneState(o: Objective, f: ObjectiveFrame, one: ObjectiveSource | null): { owner: number; progress: number } {
+    if (o.active.length) return { owner: one && siteActive(o, f.t + one.offset) ? SITE_OWNER : 0, progress: 0 };
     return one && one.timeline ? zoneAt(one.timeline.zones.get(o.letter), f.t + one.offset, o.ownerAtStart) : { owner: one ? o.ownerAtStart : 0, progress: 0 };
   }
 
@@ -643,7 +659,7 @@ export class ObjectiveLayerDraw {
     const st = this.zones.state;
     zones.forEach((p, i) => {
       const z = this.zoneState(p.o, f, one);
-      const rgb = z.owner ? f.teamColor(z.owner) : NEUTRAL;
+      const rgb = ownerRgb(z.owner, f);
       const by = z.progress > 0 ? 2 : z.progress < 0 ? 1 : 0;
       const capturing = by && (Math.abs(z.progress) < 100 || z.owner !== by);
       const cap = by ? f.teamColor(by) : NEUTRAL;
@@ -696,6 +712,11 @@ export class ObjectiveLayerDraw {
     this.labels = labels;
     this.rev++;
   }
+}
+
+/** A zone's colour for its owner: a team's, the played bomb site's amber, or nobody's. */
+function ownerRgb(owner: number, f: ObjectiveFrame): [number, number, number] {
+  return owner === SITE_OWNER ? SITE : owner ? f.teamColor(owner) : NEUTRAL;
 }
 
 /** A capture or a zone lost, on the dataset's clock, where the zone is. */

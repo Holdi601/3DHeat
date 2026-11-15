@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Dvoboji, ki jih dobi bolje merjeni",
   "mass.cqb.m.planter": "Runde, ki jih dobi stran, ki postavi",
   "mass.cqb.m.man": "Runde dobljene iz stanja",
-  "mass.cqb.m.funnel": "Smrti v 2,5 s po vstopu"
+  "mass.cqb.m.funnel": "Smrti v 2,5 s po vstopu",
+  "mass.tab.surfaces": "Površine R6",
+  "mass.surfaces.hint": "Sledi na ravni (luknje od krogel ipd.) po površinah zemljevidov Rainbow Six Siege, iz {with} od {matches} tekem. Površina obdrži svoj id v tekmah ene različice zemljevida. Klik odpre vrstico.",
+  "mass.surfaces.none": "V teh tekmah ni sledi na ravni (tekme Rainbow Six Siege, pretvorjene s heat3d-r6-replay 0.3.0 ali novejšim, jih imajo).",
+  "mass.surfaces.col.surface": "Površina",
+  "mass.surfaces.col.room": "Prostor",
+  "mass.surfaces.col.marks": "Sledi",
+  "mass.surfaces.col.perRound": "Na rundo",
+  "mass.surfaces.col.shot": "Strelec znan",
+  "mass.surfaces.col.shotTitle": "Delež sledi z izpeljanim strelcem: igralec, obrnjen proti sledi, ko je nastala",
+  "mass.surfaces.kinds": "Vrste sledi",
+  "mass.surfaces.byOperator": "Po operaterju",
+  "mass.surfaces.byClass": "Po razredu orožja",
+  "mass.surfaces.heat": "Kje na površini",
+  "mass.surfaces.load": "Naloži njene tekme ({count})"
 }

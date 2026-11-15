@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Привличане към общия дял (редове)",
   "heat.splitPanel.rateHint": "Брои се в редове, не в рундове: играч, който стои, добавя ред при всяко отчитане. За спечелените рундове на място използвай Разбивката или статистиката на обем.",
   "heat.teamsList.columnSplitHint": "Разликата е разделена по <b>{column}</b>, затова групите тук решават само какво се рисува, а не в коя страна се броят.",
-  "heat.sourcePanel.indexing": "Индексиране на единиците"
+  "heat.sourcePanel.indexing": "Индексиране на единиците",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Дупки от куршуми и следи",
+  "heat.filterPanel.siege.marksTitle": "Само следите, оставени на нивото (събитие impact)",
+  "heat.filterPanel.siege.marksShooter": "Следи със стрелец",
+  "heat.filterPanel.siege.marksShooterTitle": "Следи, чийто стрелец е изведен (играчът, обърнат към следата, когато се е появила); филтрирай или раздели по byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Следи с клас оръжие",
+  "heat.filterPanel.siege.marksWeaponTitle": "Следи, при които убийство на стрелеца в същия миг посочва оръжието; филтрирай или раздели по byItemClass",
+  "heat.filterPanel.siege.attempts": "Опити за поставяне и обезвреждане",
+  "heat.filterPanel.siege.attemptsTitle": "Всяко начало, завършване и прекъсване на поставяне или обезвреждане",
+  "heat.filterPanel.siege.interrupted": "Прекъснати опити",
+  "heat.filterPanel.siege.interruptedTitle": "Започнати, но незавършени поставяния и обезвреждания, там където играчът е спрял",
+  "heat.filterPanel.siege.reinforce": "Подсилвания",
+  "heat.filterPanel.siege.reinforceTitle": "Подсилени стени и люкове, при защитника, стоял там (изведено)"
 }

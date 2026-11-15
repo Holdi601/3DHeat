@@ -758,5 +758,18 @@
   "heat.teamPanel.weapons": "Weapons, shots and hits",
   "heat.teamPanel.weaponsTitle": "Weapons in flight with smoke, tracers, impacts, hits and kills. Tracers inferred from a hit are dashed.",
   "heat.timeline.reverseKey": "Play backwards ({key})",
-  "heat.sourcePanel.indexing": "Indexing units"
+  "heat.sourcePanel.indexing": "Indexing units",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Bullet holes and marks",
+  "heat.filterPanel.siege.marksTitle": "Only the marks left on the level (event impact)",
+  "heat.filterPanel.siege.marksShooter": "Marks with a shooter",
+  "heat.filterPanel.siege.marksShooterTitle": "Marks a shooter was worked out for (the player facing the mark as it appeared); filter or split them by byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Marks with a weapon class",
+  "heat.filterPanel.siege.marksWeaponTitle": "Marks whose shooter's kill in the same moment names the weapon; filter or split them by byItemClass",
+  "heat.filterPanel.siege.attempts": "Plant and defuse attempts",
+  "heat.filterPanel.siege.attemptsTitle": "Every start, completion and interruption of a plant or a defuse",
+  "heat.filterPanel.siege.interrupted": "Interrupted attempts",
+  "heat.filterPanel.siege.interruptedTitle": "Plants and defuses started but not finished, where the player stopped",
+  "heat.filterPanel.siege.reinforce": "Reinforcements",
+  "heat.filterPanel.siege.reinforceTitle": "Walls and hatches reinforced, at the defender who stood there (inferred)"
 }

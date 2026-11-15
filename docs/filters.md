@@ -37,6 +37,10 @@ A category list with more than 12 values gets a search box (*Search n values*) a
 
 Which columns can be filtered is decided at load time, because they have to be read then. With no retained column the panel says so and points at *Keep for filtering*.
 
+## Rainbow Six Siege quick filters
+
+With a Rainbow Six Siege match loaded, the panel starts with buttons that set the filters in one click: **Bullet holes and marks** (the marks left on the level), **Marks with a shooter** and **Marks with a weapon class** (those a shooter, or a weapon from the shooter's kill in the same moment, was worked out for; split or filter them further by `byOperator` or `byItemClass`), **Plant and defuse attempts**, **Interrupted attempts** (started, not finished, where the player stopped) and **Reinforcements** (where a wall or hatch was reinforced, at the defender the converter infers). Each replaces the filter on the event column and keeps the rest; **Clear all filters** undoes it. The columns are described in the converter's documentation.
+
 ## Numeric columns (range)
 
 ![A range filter (money lost) with both ends dragged in](assets/img/en/filters-numeric.webp)

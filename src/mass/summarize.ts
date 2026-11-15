@@ -22,6 +22,7 @@ import {
 import { analyseMatch } from '../insights/maneuver/analyse';
 import { ManeuverCollector } from '../insights/maneuver/collect';
 import { CqbCollector } from '../insights/cqb/summary';
+import { MarkCollector } from './marks';
 import { maneuverSection } from '../insights/maneuver/summary';
 import { BehaviourTap, tapColumns, type TapColumns } from '../insights/behaviour/summaryTap';
 import type { EvKind, ManeuverMatch, MatchTracks } from '../insights/maneuver/types';
@@ -192,6 +193,8 @@ export interface SummaryColumns {
   behaviour: TapColumns;
   /** The close-quarters collector's columns (`insights/cqb/summary.ts`); empty without a round column. */
   cqb: string[];
+  /** Marks on the level per surface (`marks.ts`, Rainbow Six Siege's); empty without `surface` and `markKind`. */
+  marks: string[];
 }
 
 export function summaryColumns(columns: string[], numeric: (c: string) => boolean, spec: LeanSpec): SummaryColumns {
@@ -225,6 +228,7 @@ export function summaryColumns(columns: string[], numeric: (c: string) => boolea
     behaviour: tapColumns(free, numeric),
     values,
     cqb,
+    marks: MarkCollector.columnsOf(columns),
   };
 }
 
@@ -281,6 +285,8 @@ export class SummaryBuilder {
   private readonly bh = new BehaviourTap();
   /** Duels, rounds and entries for the close-quarters counts (`insights/cqb`), where the data has rounds. */
   private readonly cqb: CqbCollector | null;
+  /** Marks on the level per surface (`marks.ts`), where the data has them. */
+  private readonly marks: MarkCollector | null;
 
   constructor(
     readonly spec: LeanSpec,
@@ -290,11 +296,12 @@ export class SummaryBuilder {
     this.V = cols.values.length;
     this.valTotal = new Float64Array(this.V);
     this.cqb = cols.cqb.length && spec.event && spec.team ? new CqbCollector(spec, cols.cqb) : null;
+    this.marks = cols.marks?.length ? new MarkCollector(spec, cols.marks) : null;
   }
 
   /** Every column the builder reads. */
   static columnsOf(spec: LeanSpec, c: SummaryColumns): string[] {
-    const list = [spec.time, spec.x, spec.y, spec.z, spec.track, spec.team, spec.event, ...c.names, c.label, ...c.types, c.ai, c.flag, c.uid, c.pname, c.group, c.weapon, c.otherName, c.otherType, c.actorRef, c.won, c.tier, c.floor, ...c.values.map((v) => v.name), ...c.cqb, c.behaviour.round, c.behaviour.equip, c.behaviour.clock];
+    const list = [spec.time, spec.x, spec.y, spec.z, spec.track, spec.team, spec.event, ...c.names, c.label, ...c.types, c.ai, c.flag, c.uid, c.pname, c.group, c.weapon, c.otherName, c.otherType, c.actorRef, c.won, c.tier, c.floor, ...c.values.map((v) => v.name), ...c.cqb, ...(c.marks ?? []), c.behaviour.round, c.behaviour.equip, c.behaviour.clock];
     return [...new Set(list.filter((x): x is string => !!x))];
   }
 
@@ -598,6 +605,7 @@ export class SummaryBuilder {
     }
     if (this.cell === 0) this.startGrid(X, Y, Z, n);
     this.cqb?.add(c, n, X, Y, Z);
+    this.marks?.add(c, n);
     let lastLabel: unknown = undefined;
     let kind = POSITION;
     for (let i = 0; i < n; i++) {
@@ -991,6 +999,7 @@ export class SummaryBuilder {
       maneuvers,
       behaviour: this.bh.finish(this.upm),
       cqb: this.cqb?.counts() ?? null,
+      marks: this.marks?.counts() ?? null,
       built: { by: this.info.by ?? 'viewer', at: new Date().toISOString(), ms: Math.round(performance.now() - this.started) },
     };
   }

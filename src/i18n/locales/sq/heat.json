@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Tërheqje drejt pjesës së përgjithshme (rreshta)",
   "heat.splitPanel.rateHint": "Numërohet në rreshta, jo në raunde: një lojtar që qëndron në vend shton një rresht në çdo mostër. Për raundet e fituara në një vend, përdor Zbërthimin ose statistikat e një vëllimi.",
   "heat.teamsList.columnSplitHint": "Diferenca ndahet sipas <b>{column}</b>, ndaj grupet këtu vendosin vetëm çfarë vizatohet, jo në cilën anë numërohen.",
-  "heat.sourcePanel.indexing": "Po indeksohen njësitë"
+  "heat.sourcePanel.indexing": "Po indeksohen njësitë",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Vrima plumbash dhe shenja",
+  "heat.filterPanel.siege.marksTitle": "Vetëm shenjat e lëna në nivel (ngjarja impact)",
+  "heat.filterPanel.siege.marksShooter": "Shenja me qitës",
+  "heat.filterPanel.siege.marksShooterTitle": "Shenja, qitësi i të cilave është nxjerrë (lojtari i kthyer nga shenja kur u shfaq); filtro ose ndaj sipas byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Shenja me klasë arme",
+  "heat.filterPanel.siege.marksWeaponTitle": "Shenja ku një vrasje e qitësit në të njëjtin çast emërton armën; filtro ose ndaj sipas byItemClass",
+  "heat.filterPanel.siege.attempts": "Përpjekje për vendosje dhe çaktivizim",
+  "heat.filterPanel.siege.attemptsTitle": "Çdo fillim, përfundim dhe ndërprerje e një vendosjeje ose çaktivizimi",
+  "heat.filterPanel.siege.interrupted": "Përpjekje të ndërprera",
+  "heat.filterPanel.siege.interruptedTitle": "Vendosje dhe çaktivizime të nisura, por të papërfunduara, aty ku lojtari ndaloi",
+  "heat.filterPanel.siege.reinforce": "Përforcime",
+  "heat.filterPanel.siege.reinforceTitle": "Mure dhe kapakë të përforcuar, te mbrojtësi që qëndronte aty (i nxjerrë)"
 }

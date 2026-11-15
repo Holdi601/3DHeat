@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Tog að heildarhlutnum (raðir)",
   "heat.splitPanel.rateHint": "Talið í röðum, ekki lotum: leikmaður sem stendur kyrr bætir við röð í hverri mælingu. Fyrir lotur unnar á stað, notaðu Sundurliðun eða tölfræði rúmmáls.",
   "heat.teamsList.columnSplitHint": "Mismuninum er skipt eftir <b>{column}</b>, svo hóparnir hér ráða aðeins hvað er teiknað, ekki á hvorri hlið þeir teljast.",
-  "heat.sourcePanel.indexing": "Skrái einingar"
+  "heat.sourcePanel.indexing": "Skrái einingar",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Kúlugöt og ummerki",
+  "heat.filterPanel.siege.marksTitle": "Aðeins ummerkin í borðinu (atburður impact)",
+  "heat.filterPanel.siege.marksShooter": "Ummerki með skyttu",
+  "heat.filterPanel.siege.marksShooterTitle": "Ummerki þar sem skyttan er ályktuð (leikmaðurinn sem sneri að ummerkinu þegar það kom); sía eða skipta eftir byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Ummerki með vopnaflokki",
+  "heat.filterPanel.siege.marksWeaponTitle": "Ummerki þar sem fella skyttunnar á sama augnabliki nefnir vopnið; sía eða skipta eftir byItemClass",
+  "heat.filterPanel.siege.attempts": "Tilraunir til að planta og aftengja",
+  "heat.filterPanel.siege.attemptsTitle": "Hvert upphaf, lok og truflun á plöntun eða aftengingu",
+  "heat.filterPanel.siege.interrupted": "Truflaðar tilraunir",
+  "heat.filterPanel.siege.interruptedTitle": "Plantanir og aftengingar sem hófust en kláruðust ekki, þar sem leikmaðurinn hætti",
+  "heat.filterPanel.siege.reinforce": "Styrkingar",
+  "heat.filterPanel.siege.reinforceTitle": "Styrktir veggir og lúgur, hjá verjandanum sem stóð þar (ályktað)"
 }

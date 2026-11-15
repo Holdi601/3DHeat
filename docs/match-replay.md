@@ -86,6 +86,8 @@ The **Tactical display** section draws, for no unit, the selected ones, all, or 
 
 When a match comes with its objectives, the **Objectives** section draws them on the level: capture zones (with owner and capture progress), spawns, airfields, areas and bombing targets, each layer switchable, with labels. They are seen through the ground. With several game modes loaded, **Mode** filters the matches by mode. Objectives come from a converter's match file beside the recording or inside a [`.3dheat`](container.md) container.
 
+Rainbow Six Siege matches bring their bomb sites: each site's two rooms are drawn on their floor as outlines with their names, worked out from where the players stood while the game named the room; a site of the map not played in the match comes from the converter's table of sites as a circle. In the replay the site of the round at the playhead lights in amber, the others stay grey. They are part of the capture-zone layer.
+
 ## Labels and statistics
 
 - **Labels**: rules per kind (**Selected**, **Aircraft**, **Ground**, **Ships**, **Weapons**, **AI**): shown or not, which values, and a **Priority** for who gets the space when labels overlap. **Keep labels apart** moves a label beside its unit when it would cover another, and leaves it out where there is no room. **Label size** is 60 to 250 %. **Back to name, vehicle, altitude and speed** resets the rules.

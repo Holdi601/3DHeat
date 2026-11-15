@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Έλξη προς το συνολικό μερίδιο (γραμμές)",
   "heat.splitPanel.rateHint": "Μετριέται σε γραμμές, όχι σε γύρους: ένας ακίνητος παίκτης προσθέτει γραμμή σε κάθε δείγμα. Για τους γύρους που κερδήθηκαν σε ένα σημείο, χρησιμοποίησε την Ανάλυση ή τα στατιστικά ενός όγκου.",
   "heat.teamsList.columnSplitHint": "Η διαφορά διαχωρίζεται κατά <b>{column}</b>, οπότε οι ομάδες εδώ καθορίζουν μόνο τι σχεδιάζεται, όχι σε ποια πλευρά μετρούν.",
-  "heat.sourcePanel.indexing": "Ευρετηρίαση μονάδων"
+  "heat.sourcePanel.indexing": "Ευρετηρίαση μονάδων",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Τρύπες από σφαίρες και σημάδια",
+  "heat.filterPanel.siege.marksTitle": "Μόνο τα σημάδια που μένουν στο επίπεδο (συμβάν impact)",
+  "heat.filterPanel.siege.marksShooter": "Σημάδια με σκοπευτή",
+  "heat.filterPanel.siege.marksShooterTitle": "Σημάδια των οποίων ο σκοπευτής συνάγεται (ο παίκτης που κοιτούσε το σημάδι όταν εμφανίστηκε)· φίλτρο ή διαχωρισμός κατά byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Σημάδια με κατηγορία όπλου",
+  "heat.filterPanel.siege.marksWeaponTitle": "Σημάδια όπου μια εξόντωση του σκοπευτή την ίδια στιγμή κατονομάζει το όπλο· φίλτρο ή διαχωρισμός κατά byItemClass",
+  "heat.filterPanel.siege.attempts": "Απόπειρες τοποθέτησης και εξουδετέρωσης",
+  "heat.filterPanel.siege.attemptsTitle": "Κάθε έναρξη, ολοκλήρωση και διακοπή τοποθέτησης ή εξουδετέρωσης",
+  "heat.filterPanel.siege.interrupted": "Διακοπείσες απόπειρες",
+  "heat.filterPanel.siege.interruptedTitle": "Τοποθετήσεις και εξουδετερώσεις που ξεκίνησαν αλλά δεν ολοκληρώθηκαν, εκεί όπου σταμάτησε ο παίκτης",
+  "heat.filterPanel.siege.reinforce": "Ενισχύσεις",
+  "heat.filterPanel.siege.reinforceTitle": "Ενισχυμένοι τοίχοι και καταπακτές, στον αμυνόμενο που στεκόταν εκεί (συναγόμενο)"
 }

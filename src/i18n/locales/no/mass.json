@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Dueller vunnet av den som siktet best",
   "mass.cqb.m.planter": "Runder vunnet av siden som planter",
   "mass.cqb.m.man": "Runder vunnet fra",
-  "mass.cqb.m.funnel": "Dødsfall innen 2,5 s etter inngang"
+  "mass.cqb.m.funnel": "Dødsfall innen 2,5 s etter inngang",
+  "mass.tab.surfaces": "R6-flater",
+  "mass.surfaces.hint": "Merker på banen (kulehull o.l.) per flate på Rainbow Six Siege-kart, fra {with} av {matches} kamper. En flate beholder sin id i kampene på én kartversjon. Et klikk åpner en rad.",
+  "mass.surfaces.none": "Ingen merker på banen i disse kampene (Rainbow Six Siege-kamper konvertert med heat3d-r6-replay 0.3.0 eller nyere har dem).",
+  "mass.surfaces.col.surface": "Flate",
+  "mass.surfaces.col.room": "Rom",
+  "mass.surfaces.col.marks": "Merker",
+  "mass.surfaces.col.perRound": "Per runde",
+  "mass.surfaces.col.shot": "Skytter kjent",
+  "mass.surfaces.col.shotTitle": "Andel av merkene med utledet skytter: spilleren som var vendt mot merket da det oppstod",
+  "mass.surfaces.kinds": "Merketyper",
+  "mass.surfaces.byOperator": "Etter operatør",
+  "mass.surfaces.byClass": "Etter våpenklasse",
+  "mass.surfaces.heat": "Hvor på flaten",
+  "mass.surfaces.load": "Last inn kampene ({count})"
 }

@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Duelos ganados por el mejor apuntado",
   "mass.cqb.m.planter": "Rondas ganadas por el bando que planta",
   "mass.cqb.m.man": "Rondas ganadas desde",
-  "mass.cqb.m.funnel": "Muertes en 2,5 s tras entrar"
+  "mass.cqb.m.funnel": "Muertes en 2,5 s tras entrar",
+  "mass.tab.surfaces": "Superficies R6",
+  "mass.surfaces.hint": "Marcas en el nivel (impactos de bala y similares) por superficie de los mapas de Rainbow Six Siege, de {with} de {matches} partidas. Una superficie conserva su id en las partidas de una versión del mapa. Un clic abre una fila.",
+  "mass.surfaces.none": "No hay marcas en el nivel en estas partidas (las partidas de Rainbow Six Siege convertidas con heat3d-r6-replay 0.3.0 o posterior las tienen).",
+  "mass.surfaces.col.surface": "Superficie",
+  "mass.surfaces.col.room": "Sala",
+  "mass.surfaces.col.marks": "Marcas",
+  "mass.surfaces.col.perRound": "Por ronda",
+  "mass.surfaces.col.shot": "Tirador conocido",
+  "mass.surfaces.col.shotTitle": "Parte de las marcas con tirador deducido: el jugador que miraba hacia la marca al aparecer",
+  "mass.surfaces.kinds": "Tipos de marca",
+  "mass.surfaces.byOperator": "Por operador",
+  "mass.surfaces.byClass": "Por clase de arma",
+  "mass.surfaces.heat": "Dónde en la superficie",
+  "mass.surfaces.load": "Cargar sus partidas ({count})"
 }

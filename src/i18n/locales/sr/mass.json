@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Дуели које добија боље нанишањени",
   "mass.cqb.m.planter": "Рунде које добија страна која поставља",
   "mass.cqb.m.man": "Рунде добијене из стања",
-  "mass.cqb.m.funnel": "Смрти у 2,5 s од уласка"
+  "mass.cqb.m.funnel": "Смрти у 2,5 s од уласка",
+  "mass.tab.surfaces": "R6 површине",
+  "mass.surfaces.hint": "Трагови на нивоу (рупе од метака и сл.) по површинама мапа Rainbow Six Siege, из {with} од {matches} мечева. Површина задржава свој id у мечевима једне верзије мапе. Клик отвара ред.",
+  "mass.surfaces.none": "У овим мечевима нема трагова на нивоу (мечеви Rainbow Six Siege претворени са heat3d-r6-replay 0.3.0 или новијим их имају).",
+  "mass.surfaces.col.surface": "Површина",
+  "mass.surfaces.col.room": "Просторија",
+  "mass.surfaces.col.marks": "Трагови",
+  "mass.surfaces.col.perRound": "По рунди",
+  "mass.surfaces.col.shot": "Стрелац познат",
+  "mass.surfaces.col.shotTitle": "Удео трагова са закљученим стрелцем: играч окренут ка трагу кад је настао",
+  "mass.surfaces.kinds": "Врсте трагова",
+  "mass.surfaces.byOperator": "По оператеру",
+  "mass.surfaces.byClass": "По класи оружја",
+  "mass.surfaces.heat": "Где на површини",
+  "mass.surfaces.load": "Учитај њене мечеве ({count})"
 }

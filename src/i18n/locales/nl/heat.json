@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Trek naar het totale aandeel (rijen)",
   "heat.splitPanel.rateHint": "Geteld in rijen, niet in rondes: een speler die stilstaat voegt elke meting een rij toe. Voor de rondes gewonnen op een plek: gebruik Uitsplitsing of de statistiek van een volume.",
   "heat.teamsList.columnSplitHint": "Het verschil is verdeeld op <b>{column}</b>, dus de groepen hier bepalen alleen wat er wordt getekend, niet aan welke kant ze meetellen.",
-  "heat.sourcePanel.indexing": "Eenheden indexeren"
+  "heat.sourcePanel.indexing": "Eenheden indexeren",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Kogelgaten en sporen",
+  "heat.filterPanel.siege.marksTitle": "Alleen de sporen in het level (gebeurtenis impact)",
+  "heat.filterPanel.siege.marksShooter": "Sporen met schutter",
+  "heat.filterPanel.siege.marksShooterTitle": "Sporen waarvan de schutter is afgeleid (de speler die naar het spoor keek toen het ontstond); filteren of splitsen op byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Sporen met wapenklasse",
+  "heat.filterPanel.siege.marksWeaponTitle": "Sporen waarbij een kill van de schutter op hetzelfde moment het wapen noemt; filteren of splitsen op byItemClass",
+  "heat.filterPanel.siege.attempts": "Plant- en ontmantelpogingen",
+  "heat.filterPanel.siege.attemptsTitle": "Elk begin, einde en elke onderbreking van planten of ontmantelen",
+  "heat.filterPanel.siege.interrupted": "Onderbroken pogingen",
+  "heat.filterPanel.siege.interruptedTitle": "Begonnen maar niet afgemaakte plant- en ontmantelpogingen, waar de speler stopte",
+  "heat.filterPanel.siege.reinforce": "Versterkingen",
+  "heat.filterPanel.siege.reinforceTitle": "Versterkte muren en luiken, bij de verdediger die daar stond (afgeleid)"
 }

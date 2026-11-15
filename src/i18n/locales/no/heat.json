@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "Trekk mot totalandelen (rader)",
   "heat.splitPanel.rateHint": "Telt i rader, ikke runder: en spiller som står stille legger til en rad per måling. For runder vunnet på et sted, bruk Oppdeling eller statistikken til et volum.",
   "heat.teamsList.columnSplitHint": "Differansen er delt etter <b>{column}</b>, så gruppene her bestemmer bare hva som tegnes, ikke hvilken side de teller på.",
-  "heat.sourcePanel.indexing": "Indekserer enheter"
+  "heat.sourcePanel.indexing": "Indekserer enheter",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "Kulehull og merker",
+  "heat.filterPanel.siege.marksTitle": "Bare merkene på banen (hendelse impact)",
+  "heat.filterPanel.siege.marksShooter": "Merker med skytter",
+  "heat.filterPanel.siege.marksShooterTitle": "Merker der skytteren er utledet (spilleren som var vendt mot merket da det oppstod); filtrer eller del etter byOperator",
+  "heat.filterPanel.siege.marksWeapon": "Merker med våpenklasse",
+  "heat.filterPanel.siege.marksWeaponTitle": "Merker der skytterens drap i samme øyeblikk nevner våpenet; filtrer eller del etter byItemClass",
+  "heat.filterPanel.siege.attempts": "Forsøk på å plante og desarmere",
+  "heat.filterPanel.siege.attemptsTitle": "Hver start, fullføring og avbrytelse av en planting eller desarmering",
+  "heat.filterPanel.siege.interrupted": "Avbrutte forsøk",
+  "heat.filterPanel.siege.interruptedTitle": "Plantinger og desarmeringer som ble startet, men ikke fullført, der spilleren stoppet",
+  "heat.filterPanel.siege.reinforce": "Forsterkninger",
+  "heat.filterPanel.siege.reinforceTitle": "Forsterkede vegger og luker, ved forsvareren som sto der (utledet)"
 }

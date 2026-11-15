@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "瞄得更准者赢下的对决",
   "mass.cqb.m.planter": "下包方赢下的回合",
   "mass.cqb.m.man": "从此局面赢下的回合",
-  "mass.cqb.m.funnel": "进入后 2.5 秒内阵亡"
+  "mass.cqb.m.funnel": "进入后 2.5 秒内阵亡",
+  "mass.tab.surfaces": "R6 表面",
+  "mass.surfaces.hint": "按 Rainbow Six Siege 地图的表面统计关卡上的痕迹（弹孔等），来自 {matches} 场比赛中的 {with} 场。同一地图版本的比赛中表面编号不变。点击可展开一行。",
+  "mass.surfaces.none": "这些比赛中没有关卡痕迹（用 heat3d-r6-replay 0.3.0 或更新版本转换的 Rainbow Six Siege 比赛才有）。",
+  "mass.surfaces.col.surface": "表面",
+  "mass.surfaces.col.room": "房间",
+  "mass.surfaces.col.marks": "痕迹",
+  "mass.surfaces.col.perRound": "每回合",
+  "mass.surfaces.col.shot": "射手已知",
+  "mass.surfaces.col.shotTitle": "已推断出射手的痕迹占比：痕迹出现时面朝它的玩家",
+  "mass.surfaces.kinds": "痕迹种类",
+  "mass.surfaces.byOperator": "按干员",
+  "mass.surfaces.byClass": "按武器类别",
+  "mass.surfaces.heat": "在表面上的位置",
+  "mass.surfaces.load": "加载其比赛（{count}）"
 }

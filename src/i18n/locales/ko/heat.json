@@ -758,5 +758,18 @@
   "heat.splitPanel.ratePrior": "전체 비율로 끌어당김 (행)",
   "heat.splitPanel.rateHint": "라운드가 아니라 행으로 셉니다: 가만히 서 있는 플레이어는 샘플마다 한 행을 더합니다. 한 장소에서 이긴 라운드 수는 상세 분석이나 볼륨 통계를 사용하세요.",
   "heat.teamsList.columnSplitHint": "차이가 <b>{column}</b> 기준으로 분할되어 있으므로, 여기 그룹은 무엇을 그릴지만 정하고 어느 쪽에 셀지는 정하지 않습니다.",
-  "heat.sourcePanel.indexing": "유닛 색인 중"
+  "heat.sourcePanel.indexing": "유닛 색인 중",
+  "heat.filterPanel.siege.title": "Rainbow Six Siege",
+  "heat.filterPanel.siege.marks": "탄흔과 자국",
+  "heat.filterPanel.siege.marksTitle": "레벨에 남은 자국만 (이벤트 impact)",
+  "heat.filterPanel.siege.marksShooter": "사수가 있는 자국",
+  "heat.filterPanel.siege.marksShooterTitle": "사수를 추정한 자국 (자국이 생길 때 그쪽을 보고 있던 플레이어); byOperator로 필터 또는 분할",
+  "heat.filterPanel.siege.marksWeapon": "무기 분류가 있는 자국",
+  "heat.filterPanel.siege.marksWeaponTitle": "같은 순간 사수의 처치가 무기를 알려 주는 자국; byItemClass로 필터 또는 분할",
+  "heat.filterPanel.siege.attempts": "설치 및 해제 시도",
+  "heat.filterPanel.siege.attemptsTitle": "설치 또는 해제의 모든 시작, 완료, 중단",
+  "heat.filterPanel.siege.interrupted": "중단된 시도",
+  "heat.filterPanel.siege.interruptedTitle": "시작했지만 끝내지 못한 설치와 해제 (플레이어가 멈춘 곳)",
+  "heat.filterPanel.siege.reinforce": "보강",
+  "heat.filterPanel.siege.reinforceTitle": "보강된 벽과 해치 (그곳에 서 있던 수비수 위치, 추정)"
 }

@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Дуелі, виграні краще націленим",
   "mass.cqb.m.planter": "Раунди, виграні стороною, що встановлює",
   "mass.cqb.m.man": "Раунди, виграні зі стану",
-  "mass.cqb.m.funnel": "Смерті за 2,5 с після входу"
+  "mass.cqb.m.funnel": "Смерті за 2,5 с після входу",
+  "mass.tab.surfaces": "Поверхні R6",
+  "mass.surfaces.hint": "Сліди на рівні (кульові отвори тощо) за поверхнями мап Rainbow Six Siege, з {with} з {matches} матчів. Поверхня зберігає свій id у матчах однієї версії мапи. Клацання відкриває рядок.",
+  "mass.surfaces.none": "У цих матчах немає слідів на рівні (вони є в матчах Rainbow Six Siege, перетворених heat3d-r6-replay 0.3.0 або новішим).",
+  "mass.surfaces.col.surface": "Поверхня",
+  "mass.surfaces.col.room": "Кімната",
+  "mass.surfaces.col.marks": "Сліди",
+  "mass.surfaces.col.perRound": "За раунд",
+  "mass.surfaces.col.shot": "Стрілець відомий",
+  "mass.surfaces.col.shotTitle": "Частка слідів із виведеним стрільцем: гравець, що дивився на слід у мить його появи",
+  "mass.surfaces.kinds": "Види слідів",
+  "mass.surfaces.byOperator": "За оперативником",
+  "mass.surfaces.byClass": "За класом зброї",
+  "mass.surfaces.heat": "Де на поверхні",
+  "mass.surfaces.load": "Завантажити її матчі ({count})"
 }

@@ -269,5 +269,19 @@
   "mass.cqb.m.betterAim": "Dueller vundet af den bedst sigtende",
   "mass.cqb.m.planter": "Runder vundet af den plantende side",
   "mass.cqb.m.man": "Runder vundet fra",
-  "mass.cqb.m.funnel": "Dødsfald inden 2,5 s efter indgang"
+  "mass.cqb.m.funnel": "Dødsfald inden 2,5 s efter indgang",
+  "mass.tab.surfaces": "R6-flader",
+  "mass.surfaces.hint": "Mærker på banen (skudhuller o.l.) pr. flade på Rainbow Six Siege-kort, fra {with} af {matches} kampe. En flade beholder sit id i kampene på én kortversion. Et klik åbner en række.",
+  "mass.surfaces.none": "Ingen mærker på banen i disse kampe (Rainbow Six Siege-kampe konverteret med heat3d-r6-replay 0.3.0 eller nyere har dem).",
+  "mass.surfaces.col.surface": "Flade",
+  "mass.surfaces.col.room": "Rum",
+  "mass.surfaces.col.marks": "Mærker",
+  "mass.surfaces.col.perRound": "Pr. runde",
+  "mass.surfaces.col.shot": "Skytte kendt",
+  "mass.surfaces.col.shotTitle": "Andel af mærkerne med udledt skytte: spilleren der vendte mod mærket, da det opstod",
+  "mass.surfaces.kinds": "Mærketyper",
+  "mass.surfaces.byOperator": "Efter operatør",
+  "mass.surfaces.byClass": "Efter våbenklasse",
+  "mass.surfaces.heat": "Hvor på fladen",
+  "mass.surfaces.load": "Indlæs dens kampe ({count})"
 }
