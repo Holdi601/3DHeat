@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "按干员",
   "mass.surfaces.byClass": "按武器类别",
   "mass.surfaces.heat": "在表面上的位置",
-  "mass.surfaces.load": "加载其比赛（{count}）"
+  "mass.surfaces.load": "加载其比赛（{count}）",
+  "mass.say.place.winSideUp": "{map}：{team} 方在这里时赢下更多回合：{rounds} 回合中赢下 {value}，对比同场比赛中按其自身比率预期的 {base}（几率 {ratio}×；在 {held} 场比赛中据守）",
+  "mass.say.place.winSideDown": "{map}：{team} 方在这里时赢下的回合更少：{rounds} 回合中赢下 {value}，对比同场比赛中按其自身比率预期的 {base}（几率 1/{ratio}；在 {held} 场比赛中据守）",
+  "mass.niches.table.rounds": "回合",
+  "mass.niches.target.roundWin": "回合胜利",
+  "mass.niches.factor.weapon": "武器",
+  "mass.niches.factor.place": "地点",
+  "mass.niches.factor.buy": "购买",
+  "mass.niches.factor.opening": "首杀",
+  "mass.say.niche.roundWinUp": "{group}：{n} 回合中赢下 {value}，对比同场比赛中相同阵营预期的 {base}（几率 {ratio}×；{matches} 场比赛）",
+  "mass.say.niche.roundWinDown": "{group}：{n} 回合中仅赢下 {value}，对比同场比赛中相同阵营预期的 {base}（几率 1/{ratio}；{matches} 场比赛）"
 }

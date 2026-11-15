@@ -51,5 +51,6 @@
   "lens.metric.risk": "Rizika po nuostolių",
   "lens.metric.streaks": "Serijos (karšta ranka)",
   "lens.metric.buy": "Pirkimų sutarimas",
-  "lens.metric.suppression": "Prislėgimas ugnimi"
+  "lens.metric.suppression": "Prislėgimas ugnimi",
+  "lens.metric.cqbOutcome": "Kas lėmė raundus"
 }

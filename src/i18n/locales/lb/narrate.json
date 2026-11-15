@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} kämpft sech aus {deficit} Réckstand zréck a geet a Féierung.",
   "insights.cast.say.standout": "{actor} fält ënner {class} op: {kills} Kills, wou de Moyenne bei {mean} läit.",
   "insights.cast.say.struggle": "E schwéiere Match fir {actor}: {kills} Kills an {deaths} Doudesfäll, wou {class} am Moyenne {mean} Kills hunn.",
-  "insights.cast.say.longRange": "{actor} trëfft {other} aus {distance} Distanz."
+  "insights.cast.say.longRange": "{actor} trëfft {other} aus {distance} Distanz.",
+  "insights.debrief.outcome.score": "{a} huet {wa} gewonnen an {b} huet {wb} gewonnen vun {n} Ronnen mat bekannte Resultat ({a}: {pct}, 95% vun {lo} bis {hi}). {model, select, fitted {D’Siegwahrscheinlechkeeten kommen aus engem Modell, dat un dës Ronnen ugepasst gouf.} other {D’Siegwahrscheinlechkeeten kommen aus engem fixe Virab-Modell: ze wéineg Ronnen fir een unzepassen.}}",
+  "insights.debrief.outcome.factors": "Wat gewonne vu verluerene Ronnen getrennt huet{sure, select, yes {} other { (näischt dovun ass nach sécher)}}: {list}. {n} Faktoren probéiert.",
+  "insights.debrief.outcome.turns": "Wendepunkten: {list}.",
+  "insights.debrief.outcome.players": "Am meeschte Siegwahrscheinlechkeet derbäigesat: {best}. Am meeschte verluer: {worst}. No Plaz: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, wéineg Ronnen} other {}}",
+  "insights.outcome.turn": "Ronn {round} bei {at}: {kind, select, plant {e Plant} other {e Kill}} vu(n) {team}{hasPlace, select, yes { bei {place}} other {}} huet hir Chance vun {before} op {after} verréckelt{won, select, yes {, an si huet d’Ronn gewonnen} no {, awer si huet d’Ronn verluer} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} iwwer {rounds} Ronnen ({perRound} Punkten pro Ronn, 95% vun {lo} bis {hi}){small, select, yes {, wéineg Ronnen} other {}}",
+  "insights.outcome.spot": "{team} bei {place} {wpa} iwwer {n} Duellen",
+  "insights.cast.kind.turning": "Wendepunkt",
+  "insights.cast.say.turning": "{actor} schaltet {victim} aus: d’Chance vun {team}, d’Ronn ze gewannen, geet vun {fromPct} op {toPct}",
+  "insights.cast.result": "{result, select, won {- an si gewannen d’Ronn} lost {- awer si verléieren d’Ronn} other {}}"
 }

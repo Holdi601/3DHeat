@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} vinnur upp {deficit} forskot og tekur forystuna.",
   "insights.cast.say.standout": "{actor} sker sig úr meðal {class}: {kills} dráp þar sem meðaltalið er {mean}.",
   "insights.cast.say.struggle": "Erfiður leikur fyrir {actor}: {kills} dráp og {deaths} dauðsföll, þar sem {class} eru að meðaltali með {mean} dráp.",
-  "insights.cast.say.longRange": "{actor} hittir {other} úr {distance} fjarlægð."
+  "insights.cast.say.longRange": "{actor} hittir {other} úr {distance} fjarlægð.",
+  "insights.debrief.outcome.score": "{a} vann {wa} og {b} vann {wb} af {n} lotum með þekkt úrslit ({a}: {pct}, 95% frá {lo} til {hi}). {model, select, fitted {Sigurlíkurnar koma úr líkani sem er aðlagað að þessum lotum.} other {Sigurlíkurnar koma úr föstu forlíkani: of fáar lotur til að aðlaga það.}}",
+  "insights.debrief.outcome.factors": "Hvað skildi unnar lotur frá töpuðum{sure, select, yes {} other { (ekkert af því er öruggt enn)}}: {list}. {n} þættir reyndir.",
+  "insights.debrief.outcome.turns": "Vendipunktar: {list}.",
+  "insights.debrief.outcome.players": "Mestum sigurlíkum bætt við: {best}. Mest tapað: {worst}. Eftir stað: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, fáar lotur} other {}}",
+  "insights.outcome.turn": "lota {round} við {at}: {kind, select, plant {sprengjuuppsetning} other {fall}} hjá {team}{hasPlace, select, yes { á {place}} other {}} færði líkur þess úr {before} í {after}{won, select, yes {, og það vann lotuna} no {, en það tapaði lotunni} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} á {rounds} lotum ({perRound} stig á lotu, 95% frá {lo} til {hi}){small, select, yes {, fáar lotur} other {}}",
+  "insights.outcome.spot": "{team} á {place} {wpa} í {n} einvígum",
+  "insights.cast.kind.turning": "Vendipunktur",
+  "insights.cast.say.turning": "{actor} fellir {victim}: líkur {team} á að vinna lotuna fara úr {fromPct} í {toPct}",
+  "insights.cast.result": "{result, select, won {- og þeir vinna lotuna} lost {- en þeir tapa lotunni} other {}}"
 }

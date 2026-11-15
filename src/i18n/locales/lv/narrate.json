@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} atgūst {deficit} atpalicību un pārņem vadību.",
   "insights.cast.say.standout": "{actor} izceļas starp {class}: {kills} nogalināšanas, kur vidējais ir {mean}.",
   "insights.cast.say.struggle": "Smaga spēle spēlētājam {actor}: {kills} nogalināšanas un {deaths} nāves, kur {class} vidēji ir {mean} nogalināšanas.",
-  "insights.cast.say.longRange": "{actor} trāpa {other} no {distance} attāluma."
+  "insights.cast.say.longRange": "{actor} trāpa {other} no {distance} attāluma.",
+  "insights.debrief.outcome.score": "{a} uzvarēja {wa}, bet {b} uzvarēja {wb} no {n} raundiem ar zināmu rezultātu ({a}: {pct}, 95% no {lo} līdz {hi}). {model, select, fitted {Uzvaras varbūtības nāk no modeļa, kas pielāgots šiem raundiem.} other {Uzvaras varbūtības nāk no fiksēta apriorā modeļa: pārāk maz raundu, lai to pielāgotu.}}",
+  "insights.debrief.outcome.factors": "Kas šķīra uzvarētos raundus no zaudētajiem{sure, select, yes {} other { (nekas no tā vēl nav drošs)}}: {list}. Izmēģināti faktori: {n}.",
+  "insights.debrief.outcome.turns": "Pagrieziena punkti: {list}.",
+  "insights.debrief.outcome.players": "Visvairāk pievienoja uzvaras varbūtības: {best}. Visvairāk zaudēja: {worst}. Pa vietām: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, maz raundu} other {}}",
+  "insights.outcome.turn": "raunds {round} pie {at}: {team} {kind, select, plant {bumbas uzstādīšana} other {nogalinājums}}{hasPlace, select, yes { ({place})} other {}} pārvietoja tās iespēju no {before} uz {after}{won, select, yes {, un tā uzvarēja raundā} no {, bet zaudēja raundu} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} {rounds} raundos ({perRound} punkti raundā, 95% no {lo} līdz {hi}){small, select, yes {, maz raundu} other {}}",
+  "insights.outcome.spot": "{team} vietā {place} {wpa} {n} duelos",
+  "insights.cast.kind.turning": "Pagrieziena punkts",
+  "insights.cast.say.turning": "{actor} nogāž {victim}: {team} iespēja uzvarēt raundā mainās no {fromPct} uz {toPct}",
+  "insights.cast.result": "{result, select, won {- un viņi uzvar raundā} lost {- bet viņi zaudē raundu} other {}}"
 }

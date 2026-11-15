@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} stierft pro Zäit {ratio}× sou dacks wéi vergläichbar Spiller ({deaths} Doudesfäll an {timeSecs})",
   "insights.say.players.durable": "{player} stierft pro Zäit {ratio}× méi seelen wéi vergläichbar Spiller ({deaths} Doudesfäll an {timeSecs})",
   "insights.say.flow.choke": "Engpass: {crossings} Iwwerquerungen, {ratio}× d'Terrain ronderëm; {deaths} Doudesfäll hei",
-  "insights.say.flow.flank": "Flankeroute: hei ze queren féiert bannent {approachSecs} zu {ratio}× méi Kills wéi aner Weeër, awer nëmmen {sharePct} vun den Iwwerquerungen notzen se"
+  "insights.say.flow.flank": "Flankeroute: hei ze queren féiert bannent {approachSecs} zu {ratio}× méi Kills wéi aner Weeër, awer nëmmen {sharePct} vun den Iwwerquerungen notzen se",
+  "insights.det.outcome": "Wat d’Ronnen entscheed huet",
+  "insights.say.outcome.opening": "{team}: {withPct} vun {n1} Ronnen gewonnen, an deenen d’Säit dat Eröffnungsduell gewonnen huet, géint {withoutPct} vun {n2}, wann si et verluer huet ({diff} Punkten, 95% vun {lo} bis {hi})",
+  "insights.say.outcome.buy": "Mam beschte Kaf huet {team} {withPct} vun {n1} Ronnen gewonnen, géint {withoutPct} vun {n2} mam méi schlechte ({diff} Punkten, 95% vun {lo} bis {hi})",
+  "insights.say.outcome.traded": "{team}: {withPct} vun {n1} Ronnen gewonnen, an deenen hiren éischten Doud gerächt gouf, géint {withoutPct} vun {n2}, wann net ({diff} Punkten, 95% vun {lo} bis {hi})",
+  "insights.say.outcome.plant": "{team}: {withPct} vun {n1} Ronnen gewonnen, an deenen d’Säit d’Bomm geluecht huet, géint {withoutPct} vun {n2}, ouni Plant ({diff} Punkten, 95% vun {lo} bis {hi})",
+  "insights.say.outcome.utility": "{team}: {withPct} vun {n1} Ronnen gewonnen, an deenen d’Säit méi Utility agesat huet wéi normal, géint {withoutPct} vun {n2}, mat manner ({diff} Punkten, 95% vun {lo} bis {hi})",
+  "insights.say.outcome.fast": "{team}: {withPct} vun {n1} Ronnen gewonnen, mam éischte Kontakt virun {fastSecs}, géint {withoutPct} vun {n2}, mat engem spéidere ({diff} Punkten, 95% vun {lo} bis {hi})",
+  "insights.say.outcome.held": "{team}: {withPct} vun {n1} Ronnen gewonnen, an deenen d’Säit {place} gehalen huet, géint {withoutPct} vun {n2}, ouni dat ({diff} Punkten, 95% vun {lo} bis {hi})",
+  "insights.say.outcome.early": "{team}: {withPct} vun {n1} Ronnen gewonnen, an deenen d’Säit {place} an de éischte 25 s erreecht huet, géint {withoutPct} vun {n2}, soss ({diff} Punkten, 95% vun {lo} bis {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) huet {wpa} Ronnen u Siegwahrscheinlechkeet derbäigesat iwwer {rounds} Ronnen ({perRound} Punkten pro Ronn, 95% vun {lo} bis {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) huet {wpa} Ronnen u Siegwahrscheinlechkeet verluer iwwer {rounds} Ronnen ({perRound} Punkten pro Ronn, 95% vun {lo} bis {hi})"
 }

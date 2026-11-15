@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} muore {ratio}× più spesso per tempo dei giocatori comparabili ({deaths} morti in {timeSecs})",
   "insights.say.players.durable": "{player} muore {ratio}× meno spesso per tempo dei giocatori comparabili ({deaths} morti in {timeSecs})",
   "insights.say.flow.choke": "Strozzatura: {crossings} attraversamenti, {ratio}× il terreno attorno; {deaths} morti qui",
-  "insights.say.flow.flank": "Via di fianco: attraversare qui porta a {ratio}× le kill entro {approachSecs} rispetto alle altre vie, eppure solo {sharePct} degli attraversamenti la usa"
+  "insights.say.flow.flank": "Via di fianco: attraversare qui porta a {ratio}× le kill entro {approachSecs} rispetto alle altre vie, eppure solo {sharePct} degli attraversamenti la usa",
+  "insights.det.outcome": "Cosa ha deciso i round",
+  "insights.say.outcome.opening": "{team}: {withPct} di {n1} round vinti, in cui ha vinto il duello d’apertura, contro {withoutPct} di {n2}, quando l’ha perso ({diff} punti, 95% da {lo} a {hi})",
+  "insights.say.outcome.buy": "Con l’acquisto migliore {team}: {withPct} di {n1} round vinti, contro {withoutPct} di {n2} con il peggiore ({diff} punti, 95% da {lo} a {hi})",
+  "insights.say.outcome.traded": "{team}: {withPct} di {n1} round vinti, in cui la sua prima morte è stata vendicata, contro {withoutPct} di {n2}, quando no ({diff} punti, 95% da {lo} a {hi})",
+  "insights.say.outcome.plant": "{team}: {withPct} di {n1} round vinti, in cui ha piazzato la bomba, contro {withoutPct} di {n2}, senza piazzamento ({diff} punti, 95% da {lo} a {hi})",
+  "insights.say.outcome.utility": "{team}: {withPct} di {n1} round vinti, in cui ha usato più utility del solito, contro {withoutPct} di {n2}, con meno ({diff} punti, 95% da {lo} a {hi})",
+  "insights.say.outcome.fast": "{team}: {withPct} di {n1} round vinti, con il primo contatto prima di {fastSecs}, contro {withoutPct} di {n2}, con uno più tardivo ({diff} punti, 95% da {lo} a {hi})",
+  "insights.say.outcome.held": "{team}: {withPct} di {n1} round vinti, in cui ha tenuto {place}, contro {withoutPct} di {n2}, senza ({diff} punti, 95% da {lo} a {hi})",
+  "insights.say.outcome.early": "{team}: {withPct} di {n1} round vinti, in cui ha raggiunto {place} nei primi 25 s, contro {withoutPct} di {n2}, altrimenti ({diff} punti, 95% da {lo} a {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) ha aggiunto {wpa} round di probabilità di vittoria in {rounds} round ({perRound} punti a round, 95% da {lo} a {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) ha fatto perdere {wpa} round di probabilità di vittoria in {rounds} round ({perRound} punti a round, 95% da {lo} a {hi})"
 }

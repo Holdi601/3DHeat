@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} terġa' lura minn {deficit} lura u tieħu t-tmexxija.",
   "insights.cast.say.standout": "{actor} joħroġ b'mod ċar fost {class}: {kills} qtil meta l-medja hija {mean}.",
   "insights.cast.say.struggle": "Logħba diffiċli għal {actor}: {kills} qtil u {deaths} mewt, meta {class} għandhom medja ta' {mean} qtil.",
-  "insights.cast.say.longRange": "{actor} isawwat lil {other} minn {distance} 'l bogħod."
+  "insights.cast.say.longRange": "{actor} isawwat lil {other} minn {distance} 'l bogħod.",
+  "insights.debrief.outcome.score": "{a} rebaħ {wa} u {b} rebaħ {wb} minn {n} rawnds b’riżultat magħruf ({a}: {pct}, 95% minn {lo} sa {hi}). {model, select, fitted {Il-probabbiltajiet ta’ rebħa jiġu minn mudell adattat għal dawn ir-rawnds.} other {Il-probabbiltajiet ta’ rebħa jiġu minn mudell fiss a priori: wisq ftit rawnds biex wieħed jiġi adattat.}}",
+  "insights.debrief.outcome.factors": "X’separa r-rawnds rbuħa minn dawk mitlufa{sure, select, yes {} other { (xejn minnu għadu ċert)}}: {list}. {n} fatturi ppruvati.",
+  "insights.debrief.outcome.turns": "Punti ta’ bidla: {list}.",
+  "insights.debrief.outcome.players": "L-aktar probabbiltà ta’ rebħa miżjuda: {best}. L-aktar mitlufa: {worst}. Skont il-post: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, ftit rawnds} other {}}",
+  "insights.outcome.turn": "rawnd {round} f’{at}: {kind, select, plant {plant} other {qtil}} ta’ {team}{hasPlace, select, yes { f’{place}} other {}} ċaqlaq iċ-ċans tagħha minn {before} għal {after}{won, select, yes {, u rebħet ir-rawnd} no {, imma tilfet ir-rawnd} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} fuq {rounds} rawnds ({perRound} punti għal kull rawnd, 95% minn {lo} sa {hi}){small, select, yes {, ftit rawnds} other {}}",
+  "insights.outcome.spot": "{team} f’{place} {wpa} fuq {n} duels",
+  "insights.cast.kind.turning": "Punt ta’ bidla",
+  "insights.cast.say.turning": "{actor} jeqred {victim}: iċ-ċans ta’ {team} li tirbaħ ir-rawnd imur minn {fromPct} għal {toPct}",
+  "insights.cast.result": "{result, select, won {- u jirbħu r-rawnd} lost {- imma jitilfu r-rawnd} other {}}"
 }

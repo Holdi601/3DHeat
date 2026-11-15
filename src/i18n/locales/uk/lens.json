@@ -51,5 +51,6 @@
   "lens.metric.risk": "Ризик після втрат",
   "lens.metric.streaks": "Серії (гаряча рука)",
   "lens.metric.buy": "Узгодженість закупівель",
-  "lens.metric.suppression": "Придушення вогнем"
+  "lens.metric.suppression": "Придушення вогнем",
+  "lens.metric.cqbOutcome": "Що вирішило раунди"
 }

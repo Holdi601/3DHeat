@@ -125,6 +125,9 @@ export function castSource(d: Dataset, m: MatchEntry): CastSource | null {
     : sid
       ? (r: number) => sid[r]
       : () => 0;
+  // Who won each round: the `won` column's rows, by round and team.
+  const wonCol = d.attrs.find((a) => /^won$/i.test(a.name.trim()) && !a.categories);
+  const wonBy = new Map<string, [number, number]>();
   const roundOf = new Map<number, number>();
   const keyOf: number[] = [];
   const rounds: CastRound[] = [];
@@ -165,11 +168,26 @@ export function castSource(d: Dataset, m: MatchEntry): CastSource | null {
         teamIn.set(`${ri}:${u}`, team);
       }
     }
+    if (wonCol) {
+      const v = wonCol.data[r];
+      const tm = v === 0 || v === 1 ? rowTeam(r) : -1;
+      if (tm >= 0) {
+        const key = `${ri}:${tm}`;
+        const a = wonBy.get(key) ?? [0, 0];
+        a[0] += v;
+        a[1]++;
+        wonBy.set(key, a);
+      }
+    }
     const kind = kinds[evData[r]];
     if (kind === 1) kills.push(r);
     else if (kind === 2) deaths.push(r);
     else if (kind === 3) caps.push(r);
   }
+  rounds.forEach((round, ri) => {
+    const won = [...wonBy].filter(([k, [w, n]]) => k.startsWith(`${ri}:`) && w / n > 0.5).map(([k]) => Number(k.slice(k.indexOf(':') + 1)));
+    if (won.length === 1) round.winner = won[0];
+  });
   // Rounds in order: by number or session (the viewer may line their clocks up), by time after that.
   const order = rounds.map((_, i) => i).sort((a, b) => keyOf[a] - keyOf[b] || rounds[a].start - rounds[b].start);
   const remap = new Map(order.map((old, i) => [old, i]));

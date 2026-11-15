@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} kämpft sich aus {deficit} Rückstand zurück und übernimmt die Führung.",
   "insights.cast.say.standout": "{actor} sticht unter {class} heraus: {kills} Kills, wo der Schnitt bei {mean} liegt.",
   "insights.cast.say.struggle": "Ein hartes Match für {actor}: {kills} Kills und {deaths} Tode, wo {class} im Schnitt {mean} Kills haben.",
-  "insights.cast.say.longRange": "{actor} trifft {other} aus {distance} Entfernung."
+  "insights.cast.say.longRange": "{actor} trifft {other} aus {distance} Entfernung.",
+  "insights.debrief.outcome.score": "{a} gewann {wa} und {b} gewann {wb} von {n} Runden mit bekanntem Ergebnis ({a}: {pct}, 95% von {lo} bis {hi}). {model, select, fitted {Die Siegwahrscheinlichkeiten stammen aus einem an diese Runden angepassten Modell.} other {Die Siegwahrscheinlichkeiten stammen aus einem festen Vorab-Modell: zu wenige Runden, um eines anzupassen.}}",
+  "insights.debrief.outcome.factors": "Was gewonnene von verlorenen Runden trennte{sure, select, yes {} other { (noch nichts davon ist sicher)}}: {list}. {n} Faktoren geprüft.",
+  "insights.debrief.outcome.turns": "Wendepunkte: {list}.",
+  "insights.debrief.outcome.players": "Meiste Siegwahrscheinlichkeit hinzugefügt: {best}. Meiste verloren: {worst}. Nach Ort: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, wenige Runden} other {}}",
+  "insights.outcome.turn": "Runde {round} bei {at}: {kind, select, plant {ein Plant} other {ein Kill}} von {team}{hasPlace, select, yes { bei {place}} other {}} verschob ihre Chance von {before} auf {after}{won, select, yes {, und sie gewann die Runde} no {, aber sie verlor die Runde} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} über {rounds} Runden ({perRound} Punkte pro Runde, 95% von {lo} bis {hi}){small, select, yes {, wenige Runden} other {}}",
+  "insights.outcome.spot": "{team} bei {place} {wpa} über {n} Duelle",
+  "insights.cast.kind.turning": "Wendepunkt",
+  "insights.cast.say.turning": "{actor} schaltet {victim} aus: Die Chance von {team}, die Runde zu gewinnen, steigt von {fromPct} auf {toPct}",
+  "insights.cast.result": "{result, select, won {- und sie gewinnen die Runde} lost {- aber sie verlieren die Runde} other {}}"
 }

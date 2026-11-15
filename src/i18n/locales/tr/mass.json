@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Operatöre göre",
   "mass.surfaces.byClass": "Silah sınıfına göre",
   "mass.surfaces.heat": "Yüzeyde nerede",
-  "mass.surfaces.load": "Maçlarını yükle ({count})"
+  "mass.surfaces.load": "Maçlarını yükle ({count})",
+  "mass.say.place.winSideUp": "{map}: {team} tarafı burada olduğunda turlarının daha fazlasını kazanıyor: {rounds} turun {value} oranı kazanıldı, aynı maçlardaki kendi oranından beklenen {base} oranına karşı (olasılık {ratio}×; {held} maçta tutuldu)",
+  "mass.say.place.winSideDown": "{map}: {team} tarafı burada olduğunda turlarının daha azını kazanıyor: {rounds} turun {value} oranı kazanıldı, aynı maçlardaki kendi oranından beklenen {base} oranına karşı (olasılık 1/{ratio}; {held} maçta tutuldu)",
+  "mass.niches.table.rounds": "Turlar",
+  "mass.niches.target.roundWin": "Tur galibiyeti",
+  "mass.niches.factor.weapon": "Silah",
+  "mass.niches.factor.place": "Yer",
+  "mass.niches.factor.buy": "Alışveriş",
+  "mass.niches.factor.opening": "İlk öldürme",
+  "mass.say.niche.roundWinUp": "{group}: {n} turun {value} oranını kazanıyor, aynı maçlarda aynı taraflardan beklenen {base} oranına karşı (olasılık {ratio}×; {matches} maç)",
+  "mass.say.niche.roundWinDown": "{group}: {n} turun yalnızca {value} oranını kazanıyor, aynı maçlarda aynı taraflardan beklenen {base} oranına karşı (olasılık 1/{ratio}; {matches} maç)"
 }

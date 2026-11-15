@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} rimonta uno svantaggio di {deficit} e passa in testa.",
   "insights.cast.say.standout": "{actor} spicca tra {class}: {kills} uccisioni dove la media è {mean}.",
   "insights.cast.say.struggle": "Una partita dura per {actor}: {kills} uccisioni e {deaths} morti, dove {class} fanno in media {mean} uccisioni.",
-  "insights.cast.say.longRange": "{actor} colpisce {other} da {distance} di distanza."
+  "insights.cast.say.longRange": "{actor} colpisce {other} da {distance} di distanza.",
+  "insights.debrief.outcome.score": "{a} ha vinto {wa} e {b} ha vinto {wb} di {n} round con risultato noto ({a}: {pct}, 95% da {lo} a {hi}). {model, select, fitted {Le probabilità di vittoria vengono da un modello adattato a questi round.} other {Le probabilità di vittoria vengono da un modello a priori fisso: troppo pochi round per adattarne uno.}}",
+  "insights.debrief.outcome.factors": "Cosa separava i round vinti da quelli persi{sure, select, yes {} other { (niente è ancora certo)}}: {list}. Fattori provati: {n}.",
+  "insights.debrief.outcome.turns": "Punti di svolta: {list}.",
+  "insights.debrief.outcome.players": "Più probabilità di vittoria aggiunta: {best}. Più persa: {worst}. Per luogo: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, pochi round} other {}}",
+  "insights.outcome.turn": "round {round} a {at}: {kind, select, plant {un piazzamento} other {un kill}} di {team}{hasPlace, select, yes { a {place}} other {}} ha spostato la sua probabilità da {before} a {after}{won, select, yes {, e ha vinto il round} no {, ma ha perso il round} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} in {rounds} round ({perRound} punti a round, 95% da {lo} a {hi}){small, select, yes {, pochi round} other {}}",
+  "insights.outcome.spot": "{team} a {place} {wpa} in {n} duelli",
+  "insights.cast.kind.turning": "Punto di svolta",
+  "insights.cast.say.turning": "{actor} abbatte {victim}: la probabilità di {team} di vincere il round passa da {fromPct} a {toPct}",
+  "insights.cast.result": "{result, select, won {- e vincono il round} lost {- ma perdono il round} other {}}"
 }

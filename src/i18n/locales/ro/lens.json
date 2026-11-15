@@ -51,5 +51,6 @@
   "lens.metric.risk": "Risc după pierderi",
   "lens.metric.streaks": "Serii (mâna fierbinte)",
   "lens.metric.buy": "Acord la cumpărare",
-  "lens.metric.suppression": "Suprimare prin foc"
+  "lens.metric.suppression": "Suprimare prin foc",
+  "lens.metric.cqbOutcome": "Ce a decis rundele"
 }

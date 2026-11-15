@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Wg operatora",
   "mass.surfaces.byClass": "Wg klasy broni",
   "mass.surfaces.heat": "Gdzie na powierzchni",
-  "mass.surfaces.load": "Wczytaj jej mecze ({count})"
+  "mass.surfaces.load": "Wczytaj jej mecze ({count})",
+  "mass.say.place.winSideUp": "{map}: strona {team} wygrywa więcej swoich rund, gdy jest tutaj: wygrano {value} z {rounds}, wobec {base} oczekiwanych z jej własnego wskaźnika w tych samych meczach (szanse {ratio}×; utrzymane w {held} meczach)",
+  "mass.say.place.winSideDown": "{map}: strona {team} wygrywa mniej swoich rund, gdy jest tutaj: wygrano {value} z {rounds}, wobec {base} oczekiwanych z jej własnego wskaźnika w tych samych meczach (szanse 1/{ratio}; utrzymane w {held} meczach)",
+  "mass.niches.table.rounds": "Rundy",
+  "mass.niches.target.roundWin": "Wygrana runda",
+  "mass.niches.factor.weapon": "Broń",
+  "mass.niches.factor.place": "Miejsce",
+  "mass.niches.factor.buy": "Zakup",
+  "mass.niches.factor.opening": "Pierwsze zabójstwo",
+  "mass.say.niche.roundWinUp": "{group}: wygrywa {value} z {n} rund, wobec {base} oczekiwanych od tych samych stron w tych samych meczach (szanse {ratio}×; {matches} meczów)",
+  "mass.say.niche.roundWinDown": "{group}: wygrywa tylko {value} z {n} rund, wobec {base} oczekiwanych od tych samych stron w tych samych meczach (szanse 1/{ratio}; {matches} meczów)"
 }

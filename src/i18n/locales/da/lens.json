@@ -51,5 +51,6 @@
   "lens.metric.risk": "Risiko efter tab",
   "lens.metric.streaks": "Stimer (hot hand)",
   "lens.metric.buy": "Enighed om køb",
-  "lens.metric.suppression": "Nedkæmpning"
+  "lens.metric.suppression": "Nedkæmpning",
+  "lens.metric.cqbOutcome": "Hvad der afgjorde runderne"
 }

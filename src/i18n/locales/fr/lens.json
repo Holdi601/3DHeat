@@ -51,5 +51,6 @@
   "lens.metric.risk": "Risque après les pertes",
   "lens.metric.streaks": "Séries (main chaude)",
   "lens.metric.buy": "Accord des achats",
-  "lens.metric.suppression": "Neutralisation par le feu"
+  "lens.metric.suppression": "Neutralisation par le feu",
+  "lens.metric.cqbOutcome": "Ce qui a décidé les manches"
 }

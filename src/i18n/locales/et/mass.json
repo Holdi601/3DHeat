@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Operaatori järgi",
   "mass.surfaces.byClass": "Relvaklassi järgi",
   "mass.surfaces.heat": "Kus pinnal",
-  "mass.surfaces.load": "Laadi selle matšid ({count})"
+  "mass.surfaces.load": "Laadi selle matšid ({count})",
+  "mass.say.place.winSideUp": "{map}: pool {team} võidab rohkem oma voore, kui ta on siin: {value} {rounds} hulgast võidetud, võrreldes {base}ga, mida oodati tema enda määrast samades mängudes (šansid {ratio}×; hoitud {held} mängus)",
+  "mass.say.place.winSideDown": "{map}: pool {team} võidab vähem oma voore, kui ta on siin: {value} {rounds} hulgast võidetud, võrreldes {base}ga, mida oodati tema enda määrast samades mängudes (šansid 1/{ratio}; hoitud {held} mängus)",
+  "mass.niches.table.rounds": "Voorud",
+  "mass.niches.target.roundWin": "Vooruvõit",
+  "mass.niches.factor.weapon": "Relv",
+  "mass.niches.factor.place": "Koht",
+  "mass.niches.factor.buy": "Ost",
+  "mass.niches.factor.opening": "Esimene tapmine",
+  "mass.say.niche.roundWinUp": "{group}: võidab {value} {n} vooru hulgast, võrreldes {base}ga, mida oodati samadelt pooltelt samades mängudes (šansid {ratio}×; {matches} mängu)",
+  "mass.say.niche.roundWinDown": "{group}: võidab vaid {value} {n} vooru hulgast, võrreldes {base}ga, mida oodati samadelt pooltelt samades mängudes (šansid 1/{ratio}; {matches} mängu)"
 }

@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Па аператыўніку",
   "mass.surfaces.byClass": "Па класе зброі",
   "mass.surfaces.heat": "Дзе на паверхні",
-  "mass.surfaces.load": "Загрузіць яе матчы ({count})"
+  "mass.surfaces.load": "Загрузіць яе матчы ({count})",
+  "mass.say.place.winSideUp": "{map}: бок {team} выйгрывае больш сваіх раўндаў, калі знаходзіцца тут: выйграна {value} з {rounds}, супраць {base} чаканых па ўласным паказчыку ў тых жа матчах (шанцы {ratio}×; трымалі ў {held} матчах)",
+  "mass.say.place.winSideDown": "{map}: бок {team} выйгрывае менш сваіх раўндаў, калі знаходзіцца тут: выйграна {value} з {rounds}, супраць {base} чаканых па ўласным паказчыку ў тых жа матчах (шанцы 1/{ratio}; трымалі ў {held} матчах)",
+  "mass.niches.table.rounds": "Раўнды",
+  "mass.niches.target.roundWin": "Перамога ў раўндзе",
+  "mass.niches.factor.weapon": "Зброя",
+  "mass.niches.factor.place": "Месца",
+  "mass.niches.factor.buy": "Закупка",
+  "mass.niches.factor.opening": "Першае забойства",
+  "mass.say.niche.roundWinUp": "{group}: выйгрывае {value} з {n} раўндаў, супраць {base} чаканых ад тых жа бакоў у тых жа матчах (шанцы {ratio}×; матчаў: {matches})",
+  "mass.say.niche.roundWinDown": "{group}: выйгрывае толькі {value} з {n} раўндаў, супраць {base} чаканых ад тых жа бакоў у тых жа матчах (шанцы 1/{ratio}; матчаў: {matches})"
 }

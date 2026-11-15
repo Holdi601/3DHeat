@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} stiera stratu {deficit} a preberá vedenie.",
   "insights.cast.say.standout": "{actor} vyniká medzi {class}: {kills} zabití pri priemere {mean}.",
   "insights.cast.say.struggle": "Ťažký zápas pre {actor}: {kills} zabití a {deaths} smrtí, zatiaľ čo {class} majú v priemere {mean} zabití.",
-  "insights.cast.say.longRange": "{actor} zasahuje {other} z diaľky {distance}."
+  "insights.cast.say.longRange": "{actor} zasahuje {other} z diaľky {distance}.",
+  "insights.debrief.outcome.score": "{a} vyhral {wa} a {b} vyhral {wb} z {n} kôl so známym výsledkom ({a}: {pct}, 95% od {lo} do {hi}). {model, select, fitted {Pravdepodobnosti výhry pochádzajú z modelu prispôsobeného týmto kolám.} other {Pravdepodobnosti výhry pochádzajú z pevného apriórneho modelu: príliš málo kôl na jeho prispôsobenie.}}",
+  "insights.debrief.outcome.factors": "Čo odlišovalo vyhraté kolá od prehraných{sure, select, yes {} other { (zatiaľ nič nie je isté)}}: {list}. Vyskúšaných faktorov: {n}.",
+  "insights.debrief.outcome.turns": "Zlomové okamihy: {list}.",
+  "insights.debrief.outcome.players": "Najviac pridaná pravdepodobnosť výhry: {best}. Najviac stratená: {worst}. Podľa miesta: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, málo kôl} other {}}",
+  "insights.outcome.turn": "kolo {round} v {at}: {kind, select, plant {nástraha bomby} other {zabitie}} strany {team}{hasPlace, select, yes { na mieste {place}} other {}} zmenilo jej šancu z {before} na {after}{won, select, yes {, a kolo vyhrala} no {, ale kolo prehrala} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} za {rounds} kôl ({perRound} p. b. za kolo, 95% od {lo} do {hi}){small, select, yes {, málo kôl} other {}}",
+  "insights.outcome.spot": "{team} na mieste {place} {wpa} za {n} súbojov",
+  "insights.cast.kind.turning": "Zlomový okamih",
+  "insights.cast.say.turning": "{actor} zhodí {victim}: šanca strany {team} vyhrať kolo sa mení z {fromPct} na {toPct}",
+  "insights.cast.result": "{result, select, won {- a kolo vyhrajú} lost {- ale kolo prehrajú} other {}}"
 }

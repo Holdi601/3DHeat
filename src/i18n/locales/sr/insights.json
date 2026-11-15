@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} погине {ratio}× чешће по времену од упоредивих играча ({deaths} смрти у {timeSecs})",
   "insights.say.players.durable": "{player} погине {ratio}× ређе по времену од упоредивих играча ({deaths} смрти у {timeSecs})",
   "insights.say.flow.choke": "Уско грло: {crossings} прелазака, {ratio}× околни терен; {deaths} смрти овде",
-  "insights.say.flow.flank": "Обилазни пут: прелазак овде води унутар {approachSecs} до {ratio}× више килова од других путева, а користи га само {sharePct} прелазака"
+  "insights.say.flow.flank": "Обилазни пут: прелазак овде води унутар {approachSecs} до {ratio}× више килова од других путева, а користи га само {sharePct} прелазака",
+  "insights.det.outcome": "Шта је одлучило рунде",
+  "insights.say.outcome.opening": "{team}: добијено {withPct} од {n1} рунди, у којима је страна добила уводни дуел, наспрам {withoutPct} од {n2}, када га је изгубила ({diff} бодова, 95% од {lo} до {hi})",
+  "insights.say.outcome.buy": "Уз бољу куповину {team}: добијено {withPct} од {n1} рунди, наспрам {withoutPct} од {n2} уз горе ({diff} бодова, 95% од {lo} до {hi})",
+  "insights.say.outcome.traded": "{team}: добијено {withPct} од {n1} рунди, у којима је прва смрт стране освећена, наспрам {withoutPct} од {n2}, када није ({diff} бодова, 95% од {lo} до {hi})",
+  "insights.say.outcome.plant": "{team}: добијено {withPct} од {n1} рунди, у којима је страна поставила бомбу, наспрам {withoutPct} од {n2}, без постављања ({diff} бодова, 95% од {lo} до {hi})",
+  "insights.say.outcome.utility": "{team}: добијено {withPct} од {n1} рунди, у којима је страна употребила више граната него иначе, наспрам {withoutPct} од {n2}, уз мање ({diff} бодова, 95% од {lo} до {hi})",
+  "insights.say.outcome.fast": "{team}: добијено {withPct} од {n1} рунди, са првим контактом пре {fastSecs}, наспрам {withoutPct} од {n2}, са каснијим ({diff} бодова, 95% од {lo} до {hi})",
+  "insights.say.outcome.held": "{team}: добијено {withPct} од {n1} рунди, у којима је страна држала {place}, наспрам {withoutPct} од {n2}, без тога ({diff} бодова, 95% од {lo} до {hi})",
+  "insights.say.outcome.early": "{team}: добијено {withPct} од {n1} рунди, у којима је страна стигла до {place} у првих 25 s, наспрам {withoutPct} од {n2}, иначе ({diff} бодова, 95% од {lo} до {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) је додао {wpa} рунди вероватноће победе у {rounds} рунди ({perRound} бодова по рунди, 95% од {lo} до {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) је изгубио {wpa} рунди вероватноће победе у {rounds} рунди ({perRound} бодова по рунди, 95% од {lo} до {hi})"
 }

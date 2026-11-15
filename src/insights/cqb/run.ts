@@ -84,6 +84,7 @@ function chunk(p: Prep, lo: number, n: number): { chunk: CqbChunk; transfer: Arr
 
 function named(m: CqbMetrics | undefined, ds: Dataset): CqbMetrics | undefined {
   if (m?.impact) for (const v of [...m.impact.wpa, ...m.impact.rapm]) v.person = ds.personLabels[v.personIndex] ?? `#${v.personIndex}`;
+  if (m?.outcome) for (const v of [...m.outcome.best, ...m.outcome.worst]) v.person = ds.personLabels[v.personIndex] ?? `#${v.personIndex}`;
   return m;
 }
 

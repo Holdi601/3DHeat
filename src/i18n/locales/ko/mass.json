@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "오퍼레이터별",
   "mass.surfaces.byClass": "무기 분류별",
   "mass.surfaces.heat": "표면의 위치",
-  "mass.surfaces.load": "해당 경기 불러오기 ({count})"
+  "mass.surfaces.load": "해당 경기 불러오기 ({count})",
+  "mass.say.place.winSideUp": "{map}: 사이드 {team}은(는) 여기에 있을 때 라운드를 더 많이 이깁니다: {rounds}라운드 중 {value} 승리, 같은 경기에서 자체 비율로 기대한 {base} 대비 (오즈 {ratio}×; {held}경기에서 점유)",
+  "mass.say.place.winSideDown": "{map}: 사이드 {team}은(는) 여기에 있을 때 라운드를 덜 이깁니다: {rounds}라운드 중 {value} 승리, 같은 경기에서 자체 비율로 기대한 {base} 대비 (오즈 1/{ratio}; {held}경기에서 점유)",
+  "mass.niches.table.rounds": "라운드",
+  "mass.niches.target.roundWin": "라운드 승리",
+  "mass.niches.factor.weapon": "무기",
+  "mass.niches.factor.place": "장소",
+  "mass.niches.factor.buy": "구매",
+  "mass.niches.factor.opening": "첫 킬",
+  "mass.say.niche.roundWinUp": "{group}: {n}라운드 중 {value} 승리, 같은 경기의 같은 사이드에서 기대한 {base} 대비 (오즈 {ratio}×; {matches}경기)",
+  "mass.say.niche.roundWinDown": "{group}: {n}라운드 중 {value}만 승리, 같은 경기의 같은 사이드에서 기대한 {base} 대비 (오즈 1/{ratio}; {matches}경기)"
 }

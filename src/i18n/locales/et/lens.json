@@ -51,5 +51,6 @@
   "lens.metric.risk": "Risk pärast kaotusi",
   "lens.metric.streaks": "Seeriad (kuum käsi)",
   "lens.metric.buy": "Ostude kooskõla",
-  "lens.metric.suppression": "Mahasurumine"
+  "lens.metric.suppression": "Mahasurumine",
+  "lens.metric.cqbOutcome": "Mis otsustas voorud"
 }

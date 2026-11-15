@@ -51,5 +51,6 @@
   "lens.metric.risk": "Риск след загуби",
   "lens.metric.streaks": "Серии (гореща ръка)",
   "lens.metric.buy": "Съгласуваност на покупките",
-  "lens.metric.suppression": "Потискане с огън"
+  "lens.metric.suppression": "Потискане с огън",
+  "lens.metric.cqbOutcome": "Какво реши рундовете"
 }

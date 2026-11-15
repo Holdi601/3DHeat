@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} умира {ratio}× по-често на време от съпоставими играчи ({deaths} смърти за {timeSecs})",
   "insights.say.players.durable": "{player} умира {ratio}× по-рядко на време от съпоставими играчи ({deaths} смърти за {timeSecs})",
   "insights.say.flow.choke": "Тясно място: {crossings} преминавания, {ratio}× околния терен; {deaths} смърти тук",
-  "insights.say.flow.flank": "Фланг маршрут: преминаването тук води до {ratio}× повече убийства до {approachSecs}, отколкото други пътища, но го ползват само {sharePct} от преминаванията"
+  "insights.say.flow.flank": "Фланг маршрут: преминаването тук води до {ratio}× повече убийства до {approachSecs}, отколкото други пътища, но го ползват само {sharePct} от преминаванията",
+  "insights.det.outcome": "Какво реши рундовете",
+  "insights.say.outcome.opening": "{team}: спечелени {withPct} от {n1} рунда, в които отборът взе първия дуел, срещу {withoutPct} от {n2}, когато го загуби ({diff} пр.п., 95% от {lo} до {hi})",
+  "insights.say.outcome.buy": "С по-добра покупка {team}: спечелени {withPct} от {n1} рунда, срещу {withoutPct} от {n2} с по-лоша ({diff} пр.п., 95% от {lo} до {hi})",
+  "insights.say.outcome.traded": "{team}: спечелени {withPct} от {n1} рунда, в които първата смърт на отбора беше отмъстена, срещу {withoutPct} от {n2}, когато не беше ({diff} пр.п., 95% от {lo} до {hi})",
+  "insights.say.outcome.plant": "{team}: спечелени {withPct} от {n1} рунда, в които отборът постави бомбата, срещу {withoutPct} от {n2}, без поставяне ({diff} пр.п., 95% от {lo} до {hi})",
+  "insights.say.outcome.utility": "{team}: спечелени {withPct} от {n1} рунда, в които отборът използва повече гранати от обичайното, срещу {withoutPct} от {n2}, при по-малко ({diff} пр.п., 95% от {lo} до {hi})",
+  "insights.say.outcome.fast": "{team}: спечелени {withPct} от {n1} рунда, с първи контакт преди {fastSecs}, срещу {withoutPct} от {n2}, с по-късен ({diff} пр.п., 95% от {lo} до {hi})",
+  "insights.say.outcome.held": "{team}: спечелени {withPct} от {n1} рунда, в които отборът държеше {place}, срещу {withoutPct} от {n2}, без това ({diff} пр.п., 95% от {lo} до {hi})",
+  "insights.say.outcome.early": "{team}: спечелени {withPct} от {n1} рунда, в които отборът стигна до {place} през първите 25 s, срещу {withoutPct} от {n2}, иначе ({diff} пр.п., 95% от {lo} до {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) добави {wpa} рунда вероятност за победа в {rounds} рунда ({perRound} пр.п. на рунд, 95% от {lo} до {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) загуби {wpa} рунда вероятност за победа в {rounds} рунда ({perRound} пр.п. на рунд, 95% от {lo} до {hi})"
 }

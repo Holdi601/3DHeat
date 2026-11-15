@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} moare de {ratio}× mai des pe timp decât jucătorii comparabili ({deaths} morți în {timeSecs})",
   "insights.say.players.durable": "{player} moare de {ratio}× mai rar pe timp decât jucătorii comparabili ({deaths} morți în {timeSecs})",
   "insights.say.flow.choke": "Punct de strangulare: {crossings} traversări, {ratio}× terenul din jur; {deaths} morți aici",
-  "insights.say.flow.flank": "Rută de flancare: traversarea aici duce la {ratio}× kill-urile în {approachSecs} față de alte căi, dar doar {sharePct} din traversări o folosesc"
+  "insights.say.flow.flank": "Rută de flancare: traversarea aici duce la {ratio}× kill-urile în {approachSecs} față de alte căi, dar doar {sharePct} din traversări o folosesc",
+  "insights.det.outcome": "Ce a decis rundele",
+  "insights.say.outcome.opening": "{team}: câștigat {withPct} din {n1} runde, în care partea a câștigat duelul de deschidere, față de {withoutPct} din {n2}, când l-a pierdut ({diff} puncte, 95% de la {lo} la {hi})",
+  "insights.say.outcome.buy": "Cu cumpărătura mai bună {team}: câștigat {withPct} din {n1} runde, față de {withoutPct} din {n2} cu cea mai slabă ({diff} puncte, 95% de la {lo} la {hi})",
+  "insights.say.outcome.traded": "{team}: câștigat {withPct} din {n1} runde, în care prima ei moarte a fost răzbunată, față de {withoutPct} din {n2}, când nu ({diff} puncte, 95% de la {lo} la {hi})",
+  "insights.say.outcome.plant": "{team}: câștigat {withPct} din {n1} runde, în care partea a plantat bomba, față de {withoutPct} din {n2}, fără plantare ({diff} puncte, 95% de la {lo} la {hi})",
+  "insights.say.outcome.utility": "{team}: câștigat {withPct} din {n1} runde, în care partea a folosit mai multe utilități ca de obicei, față de {withoutPct} din {n2}, cu mai puține ({diff} puncte, 95% de la {lo} la {hi})",
+  "insights.say.outcome.fast": "{team}: câștigat {withPct} din {n1} runde, cu primul contact înainte de {fastSecs}, față de {withoutPct} din {n2}, cu unul mai târziu ({diff} puncte, 95% de la {lo} la {hi})",
+  "insights.say.outcome.held": "{team}: câștigat {withPct} din {n1} runde, în care partea a ținut {place}, față de {withoutPct} din {n2}, fără asta ({diff} puncte, 95% de la {lo} la {hi})",
+  "insights.say.outcome.early": "{team}: câștigat {withPct} din {n1} runde, în care partea a ajuns la {place} în primele 25 s, față de {withoutPct} din {n2}, altfel ({diff} puncte, 95% de la {lo} la {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) a adăugat {wpa} runde de probabilitate de victorie în {rounds} runde ({perRound} puncte pe rundă, 95% de la {lo} la {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) a costat {wpa} runde de probabilitate de victorie în {rounds} runde ({perRound} puncte pe rundă, 95% de la {lo} la {hi})"
 }

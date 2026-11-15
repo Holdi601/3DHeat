@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} надокнађује заостатак од {deficit} и преузима вођство.",
   "insights.cast.say.standout": "{actor} се истиче међу {class}: {kills} убистава где је просек {mean}.",
   "insights.cast.say.struggle": "Тежак меч за {actor}: {kills} убистава и {deaths} смрти, док {class} у просеку праве {mean} убистава.",
-  "insights.cast.say.longRange": "{actor} погађа {other} са удаљености {distance}."
+  "insights.cast.say.longRange": "{actor} погађа {other} са удаљености {distance}.",
+  "insights.debrief.outcome.score": "{a} је добио {wa}, а {b} {wb} од {n} рунди са познатим исходом ({a}: {pct}, 95% од {lo} до {hi}). {model, select, fitted {Вероватноће победе долазе из модела прилагођеног овим рундама.} other {Вероватноће победе долазе из фиксног априорног модела: премало рунди за прилагођавање.}}",
+  "insights.debrief.outcome.factors": "Шта је раздвајало добијене од изгубљених рунди{sure, select, yes {} other { (за сада ништа није сигурно)}}: {list}. Испробано фактора: {n}.",
+  "insights.debrief.outcome.turns": "Прекретнице: {list}.",
+  "insights.debrief.outcome.players": "Највише додате вероватноће победе: {best}. Највише изгубљене: {worst}. По местима: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, мало рунди} other {}}",
+  "insights.outcome.turn": "рунда {round} у {at}: {kind, select, plant {постављање бомбе} other {убиство}} стране {team}{hasPlace, select, yes { на месту {place}} other {}} променило је њене изгледе са {before} на {after}{won, select, yes {, и добила је рунду} no {, али је изгубила рунду} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} у {rounds} рунди ({perRound} бодова по рунди, 95% од {lo} до {hi}){small, select, yes {, мало рунди} other {}}",
+  "insights.outcome.spot": "{team} на месту {place} {wpa} у {n} дуела",
+  "insights.cast.kind.turning": "Прекретница",
+  "insights.cast.say.turning": "{actor} обара {victim}: шанса стране {team} да добије рунду мења се са {fromPct} на {toPct}",
+  "insights.cast.result": "{result, select, won {- и добијају рунду} lost {- али губе рунду} other {}}"
 }

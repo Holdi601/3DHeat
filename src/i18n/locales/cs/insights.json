@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} umírá {ratio}× častěji na čas než srovnatelní hráči ({deaths} smrtí za {timeSecs})",
   "insights.say.players.durable": "{player} umírá {ratio}× méně často na čas než srovnatelní hráči ({deaths} smrtí za {timeSecs})",
   "insights.say.flow.choke": "Úzké místo: {crossings} přechodů, {ratio}× okolní terén; {deaths} smrtí zde",
-  "insights.say.flow.flank": "Obchvatná trasa: přechod tudy vede do {approachSecs} k {ratio}× více killům než jiné cesty, přesto ji využívá jen {sharePct} přechodů"
+  "insights.say.flow.flank": "Obchvatná trasa: přechod tudy vede do {approachSecs} k {ratio}× více killům než jiné cesty, přesto ji využívá jen {sharePct} přechodů",
+  "insights.det.outcome": "Co rozhodlo kola",
+  "insights.say.outcome.opening": "{team}: vyhráno {withPct} z {n1} kol, v nichž strana vyhrála úvodní souboj, oproti {withoutPct} z {n2}, když ho prohrála ({diff} p. b., 95% od {lo} do {hi})",
+  "insights.say.outcome.buy": "S lepším nákupem {team}: vyhráno {withPct} z {n1} kol, oproti {withoutPct} z {n2} s horším ({diff} p. b., 95% od {lo} do {hi})",
+  "insights.say.outcome.traded": "{team}: vyhráno {withPct} z {n1} kol, v nichž byla první smrt strany oplacena, oproti {withoutPct} z {n2}, když ne ({diff} p. b., 95% od {lo} do {hi})",
+  "insights.say.outcome.plant": "{team}: vyhráno {withPct} z {n1} kol, v nichž strana nastražila bombu, oproti {withoutPct} z {n2}, bez nástrahy ({diff} p. b., 95% od {lo} do {hi})",
+  "insights.say.outcome.utility": "{team}: vyhráno {withPct} z {n1} kol, v nichž strana použila více granátů než obvykle, oproti {withoutPct} z {n2}, při méně ({diff} p. b., 95% od {lo} do {hi})",
+  "insights.say.outcome.fast": "{team}: vyhráno {withPct} z {n1} kol, s prvním kontaktem před {fastSecs}, oproti {withoutPct} z {n2}, s pozdějším ({diff} p. b., 95% od {lo} do {hi})",
+  "insights.say.outcome.held": "{team}: vyhráno {withPct} z {n1} kol, v nichž strana držela {place}, oproti {withoutPct} z {n2}, bez toho ({diff} p. b., 95% od {lo} do {hi})",
+  "insights.say.outcome.early": "{team}: vyhráno {withPct} z {n1} kol, v nichž strana dorazila na {place} v prvních 25 s, oproti {withoutPct} z {n2}, jinak ({diff} p. b., 95% od {lo} do {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) přidal {wpa} kol pravděpodobnosti výhry za {rounds} kol ({perRound} p. b. za kolo, 95% od {lo} do {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) ztratil {wpa} kol pravděpodobnosti výhry za {rounds} kol ({perRound} p. b. za kolo, 95% od {lo} do {hi})"
 }

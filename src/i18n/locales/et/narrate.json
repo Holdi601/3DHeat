@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} tuleb {deficit} mahajäämusest tagasi ja haarab juhtimise.",
   "insights.cast.say.standout": "{actor} paistab silma grupis {class}: {kills} tapmist, kus keskmine on {mean}.",
   "insights.cast.say.struggle": "Raske mäng mängijale {actor}: {kills} tapmist ja {deaths} surma, kus grupi {class} keskmine on {mean} tapmist.",
-  "insights.cast.say.longRange": "{actor} tabab mängijat {other} {distance} kauguselt."
+  "insights.cast.say.longRange": "{actor} tabab mängijat {other} {distance} kauguselt.",
+  "insights.debrief.outcome.score": "{a} võitis {wa} ja {b} võitis {wb} {n} tuntud tulemusega voorust ({a}: {pct}, 95% vahemikus {lo} kuni {hi}). {model, select, fitted {Võiduvõimalused tulevad nendele voorudele sobitatud mudelist.} other {Võiduvõimalused tulevad fikseeritud eelmudelist: sobitamiseks on liiga vähe voore.}}",
+  "insights.debrief.outcome.factors": "Mis lahutas võidetud voorud kaotatutest{sure, select, yes {} other { (miski pole veel kindel)}}: {list}. Proovitud tegureid: {n}.",
+  "insights.debrief.outcome.turns": "Pöördepunktid: {list}.",
+  "insights.debrief.outcome.players": "Enim lisatud võidutõenäosust: {best}. Enim kaotatud: {worst}. Kohtade kaupa: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, vähe voore} other {}}",
+  "insights.outcome.turn": "voor {round} ajal {at}: {kind, select, plant {pommi paigaldus} other {tapmine}} poole {team} poolt{hasPlace, select, yes { kohas {place}} other {}} muutis tema võimalust {before} pealt {after} peale{won, select, yes {, ja ta võitis vooru} no {, kuid kaotas vooru} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} {rounds} voorus ({perRound} punkti voorus, 95% vahemikus {lo} kuni {hi}){small, select, yes {, vähe voore} other {}}",
+  "insights.outcome.spot": "{team} kohas {place} {wpa} {n} duellis",
+  "insights.cast.kind.turning": "Pöördepunkt",
+  "insights.cast.say.turning": "{actor} lööb maha mängija {victim}: poole {team} võimalus vooru võita muutub {fromPct} pealt {toPct} peale",
+  "insights.cast.result": "{result, select, won {- ja nad võidavad vooru} lost {- aga nad kaotavad vooru} other {}}"
 }

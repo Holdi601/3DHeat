@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team}이(가) {deficit} 열세를 딛고 역전해 앞서 나갑니다.",
   "insights.cast.say.standout": "{actor}은(는) {class} 중에서 돋보입니다: 평균 {mean}킬인데 {kills}킬.",
   "insights.cast.say.struggle": "{actor}에게 힘든 경기: {kills}킬 {deaths}데스, {class}의 평균은 {mean}킬입니다.",
-  "insights.cast.say.longRange": "{actor}이(가) {distance} 거리에서 {other}을(를) 맞힙니다."
+  "insights.cast.say.longRange": "{actor}이(가) {distance} 거리에서 {other}을(를) 맞힙니다.",
+  "insights.debrief.outcome.score": "결과가 알려진 {n}라운드 중 {a}이(가) {wa}, {b}이(가) {wb}을(를) 이겼습니다 ({a}: {pct}, 95%: {lo}~{hi}). {model, select, fitted {승리 확률은 이 라운드들에 맞춘 모델에서 나왔습니다.} other {승리 확률은 고정된 사전 모델에서 나왔습니다: 모델을 맞추기에는 라운드가 너무 적습니다.}}",
+  "insights.debrief.outcome.factors": "이긴 라운드와 진 라운드를 가른 요인{sure, select, yes {} other { (아직 확실한 것은 없음)}}: {list}. 시도한 요인 {n}개.",
+  "insights.debrief.outcome.turns": "전환점: {list}.",
+  "insights.debrief.outcome.players": "승리 확률을 가장 많이 더함: {best}. 가장 많이 잃음: {worst}. 장소별: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, 라운드 적음} other {}}",
+  "insights.outcome.turn": "라운드 {round}, {at}: {team}의 {kind, select, plant {설치} other {킬}}{hasPlace, select, yes { ({place})} other {}}으로 확률이 {before}에서 {after}(으)로 움직였습니다{won, select, yes {. 이 라운드를 이겼습니다} no {. 하지만 이 라운드는 졌습니다} other {}}",
+  "insights.outcome.player": "{player}({team}) {wpa} ({rounds}라운드, 라운드당 {perRound}포인트, 95%: {lo}~{hi}){small, select, yes {, 라운드 적음} other {}}",
+  "insights.outcome.spot": "{team}, {place}: {n}번의 듀얼에서 {wpa}",
+  "insights.cast.kind.turning": "전환점",
+  "insights.cast.say.turning": "{actor}이(가) {victim}을(를) 쓰러뜨립니다: {team}의 라운드 승리 확률이 {fromPct}에서 {toPct}(으)로 바뀝니다",
+  "insights.cast.result": "{result, select, won {- 그리고 라운드를 가져갑니다} lost {- 하지만 라운드를 잃습니다} other {}}"
 }

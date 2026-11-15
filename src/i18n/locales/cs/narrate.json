@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} smazává ztrátu {deficit} a přebírá vedení.",
   "insights.cast.say.standout": "{actor} vyniká mezi {class}: {kills} zabití při průměru {mean}.",
   "insights.cast.say.struggle": "Těžký zápas pro {actor}: {kills} zabití a {deaths} smrtí, zatímco {class} mají v průměru {mean} zabití.",
-  "insights.cast.say.longRange": "{actor} zasahuje {other} z dálky {distance}."
+  "insights.cast.say.longRange": "{actor} zasahuje {other} z dálky {distance}.",
+  "insights.debrief.outcome.score": "{a} vyhrál {wa} a {b} vyhrál {wb} z {n} kol se známým výsledkem ({a}: {pct}, 95% od {lo} do {hi}). {model, select, fitted {Pravděpodobnosti výhry pocházejí z modelu přizpůsobeného těmto kolům.} other {Pravděpodobnosti výhry pocházejí z pevného apriorního modelu: příliš málo kol na jeho přizpůsobení.}}",
+  "insights.debrief.outcome.factors": "Co odlišovalo vyhraná kola od prohraných{sure, select, yes {} other { (zatím nic není jisté)}}: {list}. Vyzkoušeno faktorů: {n}.",
+  "insights.debrief.outcome.turns": "Zlomové okamžiky: {list}.",
+  "insights.debrief.outcome.players": "Nejvíce přidaná pravděpodobnost výhry: {best}. Nejvíce ztracená: {worst}. Podle místa: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, málo kol} other {}}",
+  "insights.outcome.turn": "kolo {round} v {at}: {kind, select, plant {nástraha bomby} other {zabití}} strany {team}{hasPlace, select, yes { na místě {place}} other {}} změnilo její šanci z {before} na {after}{won, select, yes {, a kolo vyhrála} no {, ale kolo prohrála} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} za {rounds} kol ({perRound} p. b. za kolo, 95% od {lo} do {hi}){small, select, yes {, málo kol} other {}}",
+  "insights.outcome.spot": "{team} na místě {place} {wpa} za {n} soubojů",
+  "insights.cast.kind.turning": "Zlomový okamžik",
+  "insights.cast.say.turning": "{actor} sundává {victim}: šance strany {team} vyhrát kolo se mění z {fromPct} na {toPct}",
+  "insights.cast.result": "{result, select, won {- a kolo vyhrají} lost {- ale kolo prohrají} other {}}"
 }

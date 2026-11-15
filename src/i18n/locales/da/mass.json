@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Efter operatør",
   "mass.surfaces.byClass": "Efter våbenklasse",
   "mass.surfaces.heat": "Hvor på fladen",
-  "mass.surfaces.load": "Indlæs dens kampe ({count})"
+  "mass.surfaces.load": "Indlæs dens kampe ({count})",
+  "mass.say.place.winSideUp": "{map}: siden {team} vinder flere af sine runder, når den er her: {value} af {rounds} vundet, mod {base} forventet ud fra dens egen rate i de samme kampe (odds {ratio}×; holdt i {held} kampe)",
+  "mass.say.place.winSideDown": "{map}: siden {team} vinder færre af sine runder, når den er her: {value} af {rounds} vundet, mod {base} forventet ud fra dens egen rate i de samme kampe (odds 1/{ratio}; holdt i {held} kampe)",
+  "mass.niches.table.rounds": "Runder",
+  "mass.niches.target.roundWin": "Rundesejr",
+  "mass.niches.factor.weapon": "Våben",
+  "mass.niches.factor.place": "Sted",
+  "mass.niches.factor.buy": "Køb",
+  "mass.niches.factor.opening": "Første drab",
+  "mass.say.niche.roundWinUp": "{group}: vinder {value} af {n} runder, mod {base} forventet fra de samme sider i de samme kampe (odds {ratio}×; {matches} kampe)",
+  "mass.say.niche.roundWinDown": "{group}: vinder kun {value} af {n} runder, mod {base} forventet fra de samme sider i de samme kampe (odds 1/{ratio}; {matches} kampe)"
 }

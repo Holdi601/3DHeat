@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} komt terug van {deficit} achter en neemt de leiding.",
   "insights.cast.say.standout": "{actor} steekt boven {class} uit: {kills} kills waar het gemiddelde {mean} is.",
   "insights.cast.say.struggle": "Een zware match voor {actor}: {kills} kills en {deaths} doden, waar {class} gemiddeld {mean} kills halen.",
-  "insights.cast.say.longRange": "{actor} raakt {other} van {distance} afstand."
+  "insights.cast.say.longRange": "{actor} raakt {other} van {distance} afstand.",
+  "insights.debrief.outcome.score": "{a} won {wa} en {b} won {wb} van {n} rondes met bekend resultaat ({a}: {pct}, 95% van {lo} tot {hi}). {model, select, fitted {De winkansen komen uit een model dat aan deze rondes is aangepast.} other {De winkansen komen uit een vast voorafgaand model: te weinig rondes om er een aan te passen.}}",
+  "insights.debrief.outcome.factors": "Wat gewonnen van verloren rondes scheidde{sure, select, yes {} other { (niets daarvan is nog zeker)}}: {list}. {n} factoren geprobeerd.",
+  "insights.debrief.outcome.turns": "Keerpunten: {list}.",
+  "insights.debrief.outcome.players": "Meeste winkans toegevoegd: {best}. Meeste verloren: {worst}. Per plek: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, weinig rondes} other {}}",
+  "insights.outcome.turn": "ronde {round} bij {at}: {kind, select, plant {een plant} other {een kill}} van {team}{hasPlace, select, yes { bij {place}} other {}} verschoof haar kans van {before} naar {after}{won, select, yes {, en ze won de ronde} no {, maar ze verloor de ronde} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} over {rounds} rondes ({perRound} punten per ronde, 95% van {lo} tot {hi}){small, select, yes {, weinig rondes} other {}}",
+  "insights.outcome.spot": "{team} bij {place} {wpa} over {n} duels",
+  "insights.cast.kind.turning": "Keerpunt",
+  "insights.cast.say.turning": "{actor} schakelt {victim} uit: de kans van {team} om de ronde te winnen gaat van {fromPct} naar {toPct}",
+  "insights.cast.result": "{result, select, won {- en ze winnen de ronde} lost {- maar ze verliezen de ronde} other {}}"
 }

@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} odrabia stratę {deficit} i obejmuje prowadzenie.",
   "insights.cast.say.standout": "{actor} wyróżnia się wśród {class}: {kills} zabójstw przy średniej {mean}.",
   "insights.cast.say.struggle": "Ciężki mecz dla {actor}: {kills} zabójstw i {deaths} śmierci, podczas gdy {class} mają średnio {mean} zabójstw.",
-  "insights.cast.say.longRange": "{actor} trafia {other} z odległości {distance}."
+  "insights.cast.say.longRange": "{actor} trafia {other} z odległości {distance}.",
+  "insights.debrief.outcome.score": "{a} wygrał {wa}, a {b} wygrał {wb} z {n} rund ze znanym wynikiem ({a}: {pct}, 95% od {lo} do {hi}). {model, select, fitted {Prawdopodobieństwa wygranej pochodzą z modelu dopasowanego do tych rund.} other {Prawdopodobieństwa wygranej pochodzą ze stałego modelu a priori: za mało rund, by go dopasować.}}",
+  "insights.debrief.outcome.factors": "Co odróżniało rundy wygrane od przegranych{sure, select, yes {} other { (nic z tego nie jest jeszcze pewne)}}: {list}. Wypróbowano czynników: {n}.",
+  "insights.debrief.outcome.turns": "Punkty zwrotne: {list}.",
+  "insights.debrief.outcome.players": "Najwięcej dodanego prawdopodobieństwa wygranej: {best}. Najwięcej utraconego: {worst}. Według miejsca: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, mało rund} other {}}",
+  "insights.outcome.turn": "runda {round} w {at}: {kind, select, plant {podłożenie bomby} other {zabójstwo}} strony {team}{hasPlace, select, yes { w miejscu {place}} other {}} zmieniło jej szansę z {before} na {after}{won, select, yes {, i wygrała rundę} no {, ale przegrała rundę} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} w {rounds} rundach ({perRound} p. proc. na rundę, 95% od {lo} do {hi}){small, select, yes {, mało rund} other {}}",
+  "insights.outcome.spot": "{team} w miejscu {place} {wpa} w {n} pojedynkach",
+  "insights.cast.kind.turning": "Punkt zwrotny",
+  "insights.cast.say.turning": "{actor} powala {victim}: szansa strony {team} na wygranie rundy zmienia się z {fromPct} na {toPct}",
+  "insights.cast.result": "{result, select, won {- i wygrywają rundę} lost {- ale przegrywają rundę} other {}}"
 }

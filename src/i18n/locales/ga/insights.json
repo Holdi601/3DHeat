@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "Faigheann {player} bás {ratio}× chomh minic in aghaidh an ama le himreoirí inchomparáide ({deaths} bás in {timeSecs})",
   "insights.say.players.durable": "Faigheann {player} bás {ratio}× níos annamh in aghaidh an ama ná imreoirí inchomparáide ({deaths} bás in {timeSecs})",
   "insights.say.flow.choke": "Cúngán: {crossings} trasnú, {ratio}× an talamh máguaird; {deaths} bás anseo",
-  "insights.say.flow.flank": "Bealach cliatháin: ag trasnú anseo faightear {ratio}× níos mó maruithe laistigh de {approachSecs} ná ar bhealaí eile, ach ní úsáideann ach {sharePct} de na trasnuithe é"
+  "insights.say.flow.flank": "Bealach cliatháin: ag trasnú anseo faightear {ratio}× níos mó maruithe laistigh de {approachSecs} ná ar bhealaí eile, ach ní úsáideann ach {sharePct} de na trasnuithe é",
+  "insights.det.outcome": "Cad a chinn na babhtaí",
+  "insights.say.outcome.opening": "{team}: bhuaigh {withPct} de {n1} babhta, inar bhuaigh an taobh an duel oscailte, i gcomparáid le {withoutPct} de {n2}, nuair a chaill sé é ({diff} pointe, 95% ó {lo} go {hi})",
+  "insights.say.outcome.buy": "Leis an ceannach is fearr {team}: bhuaigh {withPct} de {n1} babhta, i gcomparáid le {withoutPct} de {n2} leis an gceann is measa ({diff} pointe, 95% ó {lo} go {hi})",
+  "insights.say.outcome.traded": "{team}: bhuaigh {withPct} de {n1} babhta, inar glacadh díoltas ar a chéad bhás, i gcomparáid le {withoutPct} de {n2}, nuair nár glacadh ({diff} pointe, 95% ó {lo} go {hi})",
+  "insights.say.outcome.plant": "{team}: bhuaigh {withPct} de {n1} babhta, inar chuir an taobh an bhuama, i gcomparáid le {withoutPct} de {n2}, gan plant ({diff} pointe, 95% ó {lo} go {hi})",
+  "insights.say.outcome.utility": "{team}: bhuaigh {withPct} de {n1} babhta, inar úsáid an taobh níos mó utility ná mar is gnách, i gcomparáid le {withoutPct} de {n2}, le níos lú ({diff} pointe, 95% ó {lo} go {hi})",
+  "insights.say.outcome.fast": "{team}: bhuaigh {withPct} de {n1} babhta, leis an gcéad teagmháil roimh {fastSecs}, i gcomparáid le {withoutPct} de {n2}, le ceann níos déanaí ({diff} pointe, 95% ó {lo} go {hi})",
+  "insights.say.outcome.held": "{team}: bhuaigh {withPct} de {n1} babhta, inar choinnigh an taobh {place}, i gcomparáid le {withoutPct} de {n2}, gan é ({diff} pointe, 95% ó {lo} go {hi})",
+  "insights.say.outcome.early": "{team}: bhuaigh {withPct} de {n1} babhta, inar shroich an taobh {place} sna chéad 25 s, i gcomparáid le {withoutPct} de {n2}, ar shlí eile ({diff} pointe, 95% ó {lo} go {hi})",
+  "insights.say.outcome.playerUp": "Chuir {player} ({team}) {wpa} babhta de dhóchúlacht bua leis thar {rounds} babhta ({perRound} pointe sa bhabhta, 95% ó {lo} go {hi})",
+  "insights.say.outcome.playerDown": "Chaill {player} ({team}) {wpa} babhta de dhóchúlacht bua thar {rounds} babhta ({perRound} pointe sa bhabhta, 95% ó {lo} go {hi})"
 }

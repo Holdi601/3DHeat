@@ -19,7 +19,7 @@ import type { MarkCounts } from './marks';
 
 /** The member's `format` and its version: a reader takes its own major, a newer one is worked out again. */
 export const SUMMARY_FORMAT = '3dheat-summary';
-export const SUMMARY_VERSION = 1;
+export const SUMMARY_VERSION = 2;
 /** The container role and member name (`<match>.summary.json`). */
 export const SUMMARY_ROLE = 'summary';
 
@@ -64,6 +64,8 @@ export interface TeamStat {
   won: number | null;
   /** Per economy column, the sum (aligned with `economy.columns`). */
   val: number[];
+  /** Rounds won and rounds with a known result (a match-based game: 1 round); absent without a result column. */
+  rounds?: [number, number];
 }
 
 export interface VehicleStat {
@@ -87,6 +89,8 @@ export interface VehicleStat {
   /** Wins: the sum of its units' won fractions over the units with one. */
   winSum: number;
   winN: number;
+  /** Rounds won and played with a known result, a life (unit) and round each. */
+  rw?: [number, number];
   val: number[];
 }
 
@@ -102,6 +106,8 @@ export interface PlayerStat {
   hits: number;
   launches: number;
   won: number | null;
+  /** Rounds won and played with a known result. */
+  rw?: [number, number];
   /** Vehicle keys, most driven first (up to 5). */
   vehicles: string[];
 }
@@ -109,6 +115,31 @@ export interface PlayerStat {
 export interface WeaponStat {
   name: string;
   ev: EventCounts;
+  /** Rounds a side used it in (fired, hit or killed with it) and won, and those with a known result. */
+  rw?: [number, number];
+}
+
+/** Numbers a unit-round takes in `OutcomeSection.u`. */
+export const UR_STRIDE = 7;
+
+/**
+ * Who won each round, and every life's round with what it was and did
+ * (docs/mass-analysis.md, outcome): what the rounds niches (`niche.ts`) read.
+ * Absent in summaries before version 2 and without a result column.
+ */
+export interface OutcomeSection {
+  /** Names the unit-rounds point into. */
+  vehicles: string[];
+  weapons: string[];
+  places: string[];
+  /** Per round, flat `[round number, winner slot (-1 unknown), slot that made the first kill (-1 none)]`. */
+  r: number[];
+  /**
+   * Unit-rounds with a known result, flat by `UR_STRIDE`: `[round (index into r), team slot,
+   * vehicle (-1), weapon used most (-1), place held longest (-1), buy (0 eco, 1 force or pistol,
+   * 2 full; -1 unknown), won (0, 1)]`.
+   */
+  u: number[];
 }
 
 /**
@@ -143,6 +174,12 @@ export interface SummaryGrid {
   fz: number[];
   /** Events, flat tuples `[cell index, kind (GRID_KINDS), team slot, class (VEHICLE_CLASSES), band, count]`. */
   e: number[];
+  /**
+   * Rounds each side was in a cell (a second or more), by result: flat `[cell index, team slot,
+   * rounds won, rounds lost]`. Only with a result column and two rounds or more; summed over cells,
+   * a round in several counts in each (the scan measures that dispersion).
+   */
+  pw?: number[];
   /** What the bands are: heights above the match floor (world `floor`) or the data's floors. */
   bands: { by: 'height' | 'floor'; floor: number; unitsPerMetre: number };
   /**
@@ -204,6 +241,8 @@ export interface MatchSummary {
   cqb?: CqbCounts | null;
   /** Marks on the level per surface (`marks.ts`), additive over matches; null without. */
   marks?: MarkCounts | null;
+  /** Rounds and their results, unit by unit (version 2 on); null without a result column. */
+  outcome?: OutcomeSection | null;
   built: { by: string; at: string; ms: number };
 }
 

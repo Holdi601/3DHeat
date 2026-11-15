@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} отыгрывается с отставанием {deficit} и выходит вперёд.",
   "insights.cast.say.standout": "{actor} выделяется среди {class}: {kills} убийств при среднем {mean}.",
   "insights.cast.say.struggle": "Трудный матч для {actor}: {kills} убийств и {deaths} смертей, тогда как {class} в среднем делают {mean} убийств.",
-  "insights.cast.say.longRange": "{actor} попадает в {other} с расстояния {distance}."
+  "insights.cast.say.longRange": "{actor} попадает в {other} с расстояния {distance}.",
+  "insights.debrief.outcome.score": "{a} выиграл {wa}, а {b} выиграл {wb} из {n} раундов с известным результатом ({a}: {pct}, 95% от {lo} до {hi}). {model, select, fitted {Вероятности победы взяты из модели, подогнанной под эти раунды.} other {Вероятности победы взяты из фиксированной априорной модели: раундов слишком мало, чтобы подогнать модель.}}",
+  "insights.debrief.outcome.factors": "Что отличало выигранные раунды от проигранных{sure, select, yes {} other { (пока ничто не наверняка)}}: {list}. Проверено факторов: {n}.",
+  "insights.debrief.outcome.turns": "Переломные моменты: {list}.",
+  "insights.debrief.outcome.players": "Больше всего добавили вероятности победы: {best}. Больше всего потеряли: {worst}. По местам: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, мало раундов} other {}}",
+  "insights.outcome.turn": "раунд {round} на {at}: {kind, select, plant {установка бомбы} other {убийство}} от {team}{hasPlace, select, yes { на {place}} other {}} изменила её шансы с {before} до {after}{won, select, yes {, и она выиграла раунд} no {, но раунд проиграла} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} за {rounds} раундов ({perRound} п.п. за раунд, 95% от {lo} до {hi}){small, select, yes {, мало раундов} other {}}",
+  "insights.outcome.spot": "{team} на {place} {wpa} за {n} дуэлей",
+  "insights.cast.kind.turning": "Переломный момент",
+  "insights.cast.say.turning": "{actor} убивает {victim}: шанс {team} выиграть раунд меняется с {fromPct} до {toPct}",
+  "insights.cast.result": "{result, select, won {- и они выигрывают раунд} lost {- но они проигрывают раунд} other {}}"
 }

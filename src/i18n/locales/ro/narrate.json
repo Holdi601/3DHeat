@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} revine de la {deficit} diferență și preia conducerea.",
   "insights.cast.say.standout": "{actor} se remarcă printre {class}: {kills} eliminări unde media este {mean}.",
   "insights.cast.say.struggle": "Un meci greu pentru {actor}: {kills} eliminări și {deaths} morți, unde {class} au în medie {mean} eliminări.",
-  "insights.cast.say.longRange": "{actor} îl lovește pe {other} de la {distance} distanță."
+  "insights.cast.say.longRange": "{actor} îl lovește pe {other} de la {distance} distanță.",
+  "insights.debrief.outcome.score": "{a} a câștigat {wa} și {b} a câștigat {wb} din {n} runde cu rezultat cunoscut ({a}: {pct}, 95% de la {lo} la {hi}). {model, select, fitted {Probabilitățile de victorie vin dintr-un model ajustat la aceste runde.} other {Probabilitățile de victorie vin dintr-un model a priori fix: prea puține runde pentru a ajusta unul.}}",
+  "insights.debrief.outcome.factors": "Ce separa rundele câștigate de cele pierdute{sure, select, yes {} other { (nimic din asta nu e încă sigur)}}: {list}. Factori încercați: {n}.",
+  "insights.debrief.outcome.turns": "Puncte de cotitură: {list}.",
+  "insights.debrief.outcome.players": "Cea mai mare probabilitate de victorie adăugată: {best}. Cea mai mare pierdută: {worst}. După loc: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, puține runde} other {}}",
+  "insights.outcome.turn": "runda {round} la {at}: {kind, select, plant {o plantare} other {un kill}} al {team}{hasPlace, select, yes { la {place}} other {}} i-a mutat șansa de la {before} la {after}{won, select, yes {, și a câștigat runda} no {, dar a pierdut runda} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} în {rounds} runde ({perRound} puncte pe rundă, 95% de la {lo} la {hi}){small, select, yes {, puține runde} other {}}",
+  "insights.outcome.spot": "{team} la {place} {wpa} în {n} dueluri",
+  "insights.cast.kind.turning": "Punct de cotitură",
+  "insights.cast.say.turning": "{actor} îl doboară pe {victim}: șansa lui {team} de a câștiga runda trece de la {fromPct} la {toPct}",
+  "insights.cast.result": "{result, select, won {- și câștigă runda} lost {- dar pierd runda} other {}}"
 }

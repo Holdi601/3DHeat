@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} го враќа заостатокот од {deficit} и го презема водството.",
   "insights.cast.say.standout": "{actor} се истакнува меѓу {class}: {kills} убиства при просек од {mean}.",
   "insights.cast.say.struggle": "Тежок натпревар за {actor}: {kills} убиства и {deaths} смрти, додека {class} во просек имаат {mean} убиства.",
-  "insights.cast.say.longRange": "{actor} го погодува {other} од растојание {distance}."
+  "insights.cast.say.longRange": "{actor} го погодува {other} од растојание {distance}.",
+  "insights.debrief.outcome.score": "{a} доби {wa}, а {b} доби {wb} од {n} рундови со познат исход ({a}: {pct}, 95% од {lo} до {hi}). {model, select, fitted {Веројатностите за победа доаѓаат од модел прилагоден на овие рундови.} other {Веројатностите за победа доаѓаат од фиксен априорен модел: премалку рундови за да се прилагоди.}}",
+  "insights.debrief.outcome.factors": "Што ги одвојуваше добиените од изгубените рундови{sure, select, yes {} other { (ништо од тоа сè уште не е сигурно)}}: {list}. Испробани фактори: {n}.",
+  "insights.debrief.outcome.turns": "Пресвртни моменти: {list}.",
+  "insights.debrief.outcome.players": "Најмногу додадена веројатност за победа: {best}. Најмногу изгубена: {worst}. По место: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, малку рундови} other {}}",
+  "insights.outcome.turn": "рунда {round} на {at}: {kind, select, plant {поставување бомба} other {убиство}} од {team}{hasPlace, select, yes { на {place}} other {}} ја промени нејзината шанса од {before} на {after}{won, select, yes {, и таа ја доби рундата} no {, но ја изгуби рундата} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} во {rounds} рундови ({perRound} поени по рунда, 95% од {lo} до {hi}){small, select, yes {, малку рундови} other {}}",
+  "insights.outcome.spot": "{team} на {place} {wpa} во {n} дуели",
+  "insights.cast.kind.turning": "Пресвртен момент",
+  "insights.cast.say.turning": "{actor} го урива {victim}: шансата на {team} да ја добие рундата се менува од {fromPct} на {toPct}",
+  "insights.cast.result": "{result, select, won {- и ја добиваат рундата} lost {- но ја губат рундата} other {}}"
 }

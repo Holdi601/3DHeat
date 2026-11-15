@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} imut {ratio}× aktar spiss għal kull ħin minn plejers komparabbli ({deaths} mwiet f'{timeSecs})",
   "insights.say.players.durable": "{player} imut {ratio}× inqas spiss għal kull ħin minn plejers komparabbli ({deaths} mwiet f'{timeSecs})",
   "insights.say.flow.choke": "Konġestjoni: {crossings} qsim, {ratio}× l-art ta' madwarha; {deaths} mwiet hawn",
-  "insights.say.flow.flank": "Rotta tal-ġenb: li taqsam hawn iwassal għal {ratio}× aktar kills fi żmien {approachSecs} minn modi oħra, iżda biss {sharePct} tal-qsim jużawha"
+  "insights.say.flow.flank": "Rotta tal-ġenb: li taqsam hawn iwassal għal {ratio}× aktar kills fi żmien {approachSecs} minn modi oħra, iżda biss {sharePct} tal-qsim jużawha",
+  "insights.det.outcome": "X’iddeċieda r-rawnds",
+  "insights.say.outcome.opening": "{team}: rebħet {withPct} minn {n1} rawnds, li fihom in-naħa rebħet id-duel tal-ftuħ, kontra {withoutPct} minn {n2}, meta tilfitu ({diff} punti, 95% minn {lo} sa {hi})",
+  "insights.say.outcome.buy": "Bl-aħjar xiri {team}: rebħet {withPct} minn {n1} rawnds, kontra {withoutPct} minn {n2} bl-agħar ({diff} punti, 95% minn {lo} sa {hi})",
+  "insights.say.outcome.traded": "{team}: rebħet {withPct} minn {n1} rawnds, li fihom l-ewwel mewt tagħha ġiet mitluba lura, kontra {withoutPct} minn {n2}, meta le ({diff} punti, 95% minn {lo} sa {hi})",
+  "insights.say.outcome.plant": "{team}: rebħet {withPct} minn {n1} rawnds, li fihom in-naħa poġġiet il-bomba, kontra {withoutPct} minn {n2}, mingħajr plant ({diff} punti, 95% minn {lo} sa {hi})",
+  "insights.say.outcome.utility": "{team}: rebħet {withPct} minn {n1} rawnds, li fihom in-naħa użat aktar utility minn tas-soltu, kontra {withoutPct} minn {n2}, b’inqas ({diff} punti, 95% minn {lo} sa {hi})",
+  "insights.say.outcome.fast": "{team}: rebħet {withPct} minn {n1} rawnds, bl-ewwel kuntatt qabel {fastSecs}, kontra {withoutPct} minn {n2}, b’wieħed aktar tard ({diff} punti, 95% minn {lo} sa {hi})",
+  "insights.say.outcome.held": "{team}: rebħet {withPct} minn {n1} rawnds, li fihom in-naħa żammet {place}, kontra {withoutPct} minn {n2}, mingħajru ({diff} punti, 95% minn {lo} sa {hi})",
+  "insights.say.outcome.early": "{team}: rebħet {withPct} minn {n1} rawnds, li fihom in-naħa laħqet {place} fl-ewwel 25 s, kontra {withoutPct} minn {n2}, inkella ({diff} punti, 95% minn {lo} sa {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) żied {wpa} rawnds ta’ probabbiltà ta’ rebħa fuq {rounds} rawnds ({perRound} punti għal kull rawnd, 95% minn {lo} sa {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) tilef {wpa} rawnds ta’ probabbiltà ta’ rebħa fuq {rounds} rawnds ({perRound} punti għal kull rawnd, 95% minn {lo} sa {hi})"
 }

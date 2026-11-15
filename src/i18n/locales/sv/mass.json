@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Per operatör",
   "mass.surfaces.byClass": "Per vapenklass",
   "mass.surfaces.heat": "Var på ytan",
-  "mass.surfaces.load": "Läs in dess matcher ({count})"
+  "mass.surfaces.load": "Läs in dess matcher ({count})",
+  "mass.say.place.winSideUp": "{map}: sidan {team} vinner fler av sina rundor när den är här: {value} av {rounds} vunna, mot {base} förväntade utifrån dess egen andel i samma matcher (odds {ratio}×; hållen i {held} matcher)",
+  "mass.say.place.winSideDown": "{map}: sidan {team} vinner färre av sina rundor när den är här: {value} av {rounds} vunna, mot {base} förväntade utifrån dess egen andel i samma matcher (odds 1/{ratio}; hållen i {held} matcher)",
+  "mass.niches.table.rounds": "Rundor",
+  "mass.niches.target.roundWin": "Rundseger",
+  "mass.niches.factor.weapon": "Vapen",
+  "mass.niches.factor.place": "Plats",
+  "mass.niches.factor.buy": "Köp",
+  "mass.niches.factor.opening": "Första dödande",
+  "mass.say.niche.roundWinUp": "{group}: vinner {value} av {n} rundor, mot {base} förväntade från samma sidor i samma matcher (odds {ratio}×; {matches} matcher)",
+  "mass.say.niche.roundWinDown": "{group}: vinner bara {value} av {n} rundor, mot {base} förväntade från samma sidor i samma matcher (odds 1/{ratio}; {matches} matcher)"
 }

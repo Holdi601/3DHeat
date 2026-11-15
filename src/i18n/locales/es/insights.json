@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} muere {ratio}× más a menudo por tiempo que jugadores comparables ({deaths} muertes en {timeSecs})",
   "insights.say.players.durable": "{player} muere {ratio}× menos a menudo por tiempo que jugadores comparables ({deaths} muertes en {timeSecs})",
   "insights.say.flow.choke": "Cuello de botella: {crossings} cruces, {ratio}× el terreno alrededor; {deaths} muertes aquí",
-  "insights.say.flow.flank": "Ruta de flanqueo: cruzar aquí lleva a {ratio}× las bajas en {approachSecs} de otros caminos, y aun así solo {sharePct} de los cruces la usan"
+  "insights.say.flow.flank": "Ruta de flanqueo: cruzar aquí lleva a {ratio}× las bajas en {approachSecs} de otros caminos, y aun así solo {sharePct} de los cruces la usan",
+  "insights.det.outcome": "Qué decidió las rondas",
+  "insights.say.outcome.opening": "{team}: ganó {withPct} de {n1} rondas, en las que ganó el duelo de apertura, frente a {withoutPct} de {n2}, cuando lo perdió ({diff} puntos, 95% de {lo} a {hi})",
+  "insights.say.outcome.buy": "Con la mejor compra {team}: ganó {withPct} de {n1} rondas, frente a {withoutPct} de {n2} con la peor ({diff} puntos, 95% de {lo} a {hi})",
+  "insights.say.outcome.traded": "{team}: ganó {withPct} de {n1} rondas, en las que su primera muerte fue vengada, frente a {withoutPct} de {n2}, cuando no ({diff} puntos, 95% de {lo} a {hi})",
+  "insights.say.outcome.plant": "{team}: ganó {withPct} de {n1} rondas, en las que plantó la bomba, frente a {withoutPct} de {n2}, sin plantar ({diff} puntos, 95% de {lo} a {hi})",
+  "insights.say.outcome.utility": "{team}: ganó {withPct} de {n1} rondas, en las que usó más utilidad de lo habitual, frente a {withoutPct} de {n2}, con menos ({diff} puntos, 95% de {lo} a {hi})",
+  "insights.say.outcome.fast": "{team}: ganó {withPct} de {n1} rondas, con el primer contacto antes de {fastSecs}, frente a {withoutPct} de {n2}, con uno más tardío ({diff} puntos, 95% de {lo} a {hi})",
+  "insights.say.outcome.held": "{team}: ganó {withPct} de {n1} rondas, en las que mantuvo {place}, frente a {withoutPct} de {n2}, sin ello ({diff} puntos, 95% de {lo} a {hi})",
+  "insights.say.outcome.early": "{team}: ganó {withPct} de {n1} rondas, en las que llegó a {place} en los primeros 25 s, frente a {withoutPct} de {n2}, en caso contrario ({diff} puntos, 95% de {lo} a {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) sumó {wpa} rondas de probabilidad de victoria en {rounds} rondas ({perRound} puntos por ronda, 95% de {lo} a {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) restó {wpa} rondas de probabilidad de victoria en {rounds} rondas ({perRound} puntos por ronda, 95% de {lo} a {hi})"
 }

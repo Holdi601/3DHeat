@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} kæmper sig tilbage fra {deficit} under og tager føringen.",
   "insights.cast.say.standout": "{actor} skiller sig ud blandt {class}: {kills} kills hvor gennemsnittet er {mean}.",
   "insights.cast.say.struggle": "En hård kamp for {actor}: {kills} kills og {deaths} dødsfald, hvor {class} i gennemsnit tager {mean} kills.",
-  "insights.cast.say.longRange": "{actor} rammer {other} fra {distance} afstand."
+  "insights.cast.say.longRange": "{actor} rammer {other} fra {distance} afstand.",
+  "insights.debrief.outcome.score": "{a} vandt {wa} og {b} vandt {wb} af {n} runder med kendt resultat ({a}: {pct}, 95% fra {lo} til {hi}). {model, select, fitted {Sejrssandsynlighederne kommer fra en model tilpasset disse runder.} other {Sejrssandsynlighederne kommer fra en fast apriori-model: for få runder til at tilpasse en.}}",
+  "insights.debrief.outcome.factors": "Hvad der adskilte vundne fra tabte runder{sure, select, yes {} other { (intet af det er sikkert endnu)}}: {list}. {n} faktorer afprøvet.",
+  "insights.debrief.outcome.turns": "Vendepunkter: {list}.",
+  "insights.debrief.outcome.players": "Mest tilføjet sejrssandsynlighed: {best}. Mest tabt: {worst}. Efter sted: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, få runder} other {}}",
+  "insights.outcome.turn": "runde {round} ved {at}: {kind, select, plant {en plant} other {et drab}} af {team}{hasPlace, select, yes { ved {place}} other {}} flyttede dens chance fra {before} til {after}{won, select, yes {, og den tog runden} no {, men den tabte runden} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} over {rounds} runder ({perRound} point pr. runde, 95% fra {lo} til {hi}){small, select, yes {, få runder} other {}}",
+  "insights.outcome.spot": "{team} ved {place} {wpa} over {n} dueller",
+  "insights.cast.kind.turning": "Vendepunkt",
+  "insights.cast.say.turning": "{actor} fælder {victim}: {team}s chance for at vinde runden går fra {fromPct} til {toPct}",
+  "insights.cast.result": "{result, select, won {- og de tager runden} lost {- men de taber runden} other {}}"
 }

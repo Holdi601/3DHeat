@@ -51,5 +51,6 @@
   "lens.metric.risk": "Kayıplardan sonra risk",
   "lens.metric.streaks": "Seriler (sıcak el)",
   "lens.metric.buy": "Satın alma uyumu",
-  "lens.metric.suppression": "Bastırma ateşi"
+  "lens.metric.suppression": "Bastırma ateşi",
+  "lens.metric.cqbOutcome": "Turları ne belirledi"
 }

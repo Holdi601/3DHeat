@@ -51,5 +51,6 @@
   "lens.metric.risk": "Risiko no Verloschter",
   "lens.metric.streaks": "Serien (Hot Hand)",
   "lens.metric.buy": "Akafsofstëmmung",
-  "lens.metric.suppression": "Néierhalen"
+  "lens.metric.suppression": "Néierhalen",
+  "lens.metric.cqbOutcome": "Wat d’Ronnen entscheed huet"
 }

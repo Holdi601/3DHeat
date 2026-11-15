@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} は同程度のプレイヤーの時間あたり {ratio}× の頻度で死んでいます({timeSecs} で {deaths} デス)",
   "insights.say.players.durable": "{player} は同程度のプレイヤーより時間あたり {ratio}× 少ない頻度で死んでいます({timeSecs} で {deaths} デス)",
   "insights.say.flow.choke": "チョークポイント: 通過 {crossings} 回、周辺の {ratio}×、ここで {deaths} デス",
-  "insights.say.flow.flank": "側面ルート: ここを通ると {approachSecs} 以内に他のルートの {ratio}× のキルにつながるが、使うのは通過全体の {sharePct} のみ"
+  "insights.say.flow.flank": "側面ルート: ここを通ると {approachSecs} 以内に他のルートの {ratio}× のキルにつながるが、使うのは通過全体の {sharePct} のみ",
+  "insights.det.outcome": "ラウンドを決めたもの",
+  "insights.say.outcome.opening": "{team}：オープニングデュエルに勝った場合（{n1}ラウンド）の勝率は{withPct}、負けた場合（{n2}ラウンド）は{withoutPct}（{diff}ポイント、95%：{lo}～{hi}）",
+  "insights.say.outcome.buy": "購入が良かった場合、{team}は{n1}ラウンド中{withPct}で勝利、悪かった場合は{n2}ラウンド中{withoutPct}（{diff}ポイント、95%：{lo}～{hi}）",
+  "insights.say.outcome.traded": "{team}：最初のデスがトレードされた場合（{n1}ラウンド）の勝率は{withPct}、されなかった場合（{n2}ラウンド）は{withoutPct}（{diff}ポイント、95%：{lo}～{hi}）",
+  "insights.say.outcome.plant": "{team}：爆弾を設置した場合（{n1}ラウンド）の勝率は{withPct}、設置しなかった場合（{n2}ラウンド）は{withoutPct}（{diff}ポイント、95%：{lo}～{hi}）",
+  "insights.say.outcome.utility": "{team}：いつもよりユーティリティを多く使った場合（{n1}ラウンド）の勝率は{withPct}、少なかった場合（{n2}ラウンド）は{withoutPct}（{diff}ポイント、95%：{lo}～{hi}）",
+  "insights.say.outcome.fast": "{team}：最初の接触が{fastSecs}より前だった場合（{n1}ラウンド）の勝率は{withPct}、それより遅かった場合（{n2}ラウンド）は{withoutPct}（{diff}ポイント、95%：{lo}～{hi}）",
+  "insights.say.outcome.held": "{team}：{place}を押さえた場合（{n1}ラウンド）の勝率は{withPct}、押さえなかった場合（{n2}ラウンド）は{withoutPct}（{diff}ポイント、95%：{lo}～{hi}）",
+  "insights.say.outcome.early": "{team}：最初の25 s以内に{place}へ到達した場合（{n1}ラウンド）の勝率は{withPct}、そうでない場合（{n2}ラウンド）は{withoutPct}（{diff}ポイント、95%：{lo}～{hi}）",
+  "insights.say.outcome.playerUp": "{player}（{team}）は{rounds}ラウンドで{wpa}ラウンド分の勝利確率を上積み（1ラウンドあたり{perRound}ポイント、95%：{lo}～{hi}）",
+  "insights.say.outcome.playerDown": "{player}（{team}）は{rounds}ラウンドで{wpa}ラウンド分の勝利確率を失わせた（1ラウンドあたり{perRound}ポイント、95%：{lo}～{hi}）"
 }

@@ -51,5 +51,6 @@
   "lens.metric.risk": "Risiko etter tap",
   "lens.metric.streaks": "Rekker (hot hand)",
   "lens.metric.buy": "Enighet om kjøp",
-  "lens.metric.suppression": "Nedholding"
+  "lens.metric.suppression": "Nedholding",
+  "lens.metric.cqbOutcome": "Hva som avgjorde rundene"
 }

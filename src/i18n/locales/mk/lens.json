@@ -51,5 +51,6 @@
   "lens.metric.risk": "Ризик по загуби",
   "lens.metric.streaks": "Серии (жешка рака)",
   "lens.metric.buy": "Усогласеност на купувањето",
-  "lens.metric.suppression": "Потиснување со оган"
+  "lens.metric.suppression": "Потиснување со оган",
+  "lens.metric.cqbOutcome": "Што ги одлучи рундите"
 }

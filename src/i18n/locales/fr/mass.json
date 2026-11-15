@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Par opérateur",
   "mass.surfaces.byClass": "Par classe d'arme",
   "mass.surfaces.heat": "Où sur la surface",
-  "mass.surfaces.load": "Charger ses matchs ({count})"
+  "mass.surfaces.load": "Charger ses matchs ({count})",
+  "mass.say.place.winSideUp": "{map} : le camp {team} gagne plus de ses manches quand il est ici : {value} de {rounds} gagnées, contre {base} attendues d’après son propre taux dans les mêmes matchs (cotes {ratio}× ; tenu dans {held} matchs)",
+  "mass.say.place.winSideDown": "{map} : le camp {team} gagne moins de ses manches quand il est ici : {value} de {rounds} gagnées, contre {base} attendues d’après son propre taux dans les mêmes matchs (cotes 1/{ratio} ; tenu dans {held} matchs)",
+  "mass.niches.table.rounds": "Manches",
+  "mass.niches.target.roundWin": "Manche gagnée",
+  "mass.niches.factor.weapon": "Arme",
+  "mass.niches.factor.place": "Lieu",
+  "mass.niches.factor.buy": "Achat",
+  "mass.niches.factor.opening": "Premier kill",
+  "mass.say.niche.roundWinUp": "{group} : gagne {value} de {n} manches, contre {base} attendues des mêmes camps dans les mêmes matchs (cotes {ratio}× ; {matches} matchs)",
+  "mass.say.niche.roundWinDown": "{group} : ne gagne que {value} de {n} manches, contre {base} attendues des mêmes camps dans les mêmes matchs (cotes 1/{ratio} ; {matches} matchs)"
 }

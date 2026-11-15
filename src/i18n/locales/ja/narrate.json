@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team}が{deficit}のビハインドから追いつき、リードを奪います。",
   "insights.cast.say.standout": "{actor}は{class}の中で際立っています：平均{mean}キルのところ{kills}キル。",
   "insights.cast.say.struggle": "{actor}には苦しい試合：{kills}キル{deaths}デス、{class}の平均は{mean}キルです。",
-  "insights.cast.say.longRange": "{actor}が{distance}離れた{other}を撃ち抜きます。"
+  "insights.cast.say.longRange": "{actor}が{distance}離れた{other}を撃ち抜きます。",
+  "insights.debrief.outcome.score": "既知の結果がある{n}ラウンドのうち、{a}が{wa}、{b}が{wb}で勝利（{a}：{pct}、95%：{lo}～{hi}）。{model, select, fitted {勝利確率はこれらのラウンドに当てはめたモデルによるものです。} other {勝利確率は固定の事前モデルによるものです：当てはめるにはラウンドが少なすぎます。}}",
+  "insights.debrief.outcome.factors": "勝ったラウンドと負けたラウンドを分けたもの{sure, select, yes {} other {（まだ確実なものはありません）}}：{list}。試した要因：{n}件。",
+  "insights.debrief.outcome.turns": "転換点：{list}。",
+  "insights.debrief.outcome.players": "勝利確率を最も上積み：{best}。最も失わせた：{worst}。場所別：{spots}。",
+  "insights.outcome.evidence": "q {q}{small, select, yes {、ラウンド少} other {}}",
+  "insights.outcome.turn": "ラウンド{round}の{at}：{team}の{kind, select, plant {設置} other {キル}}{hasPlace, select, yes {（{place}）} other {}}で勝率が{before}から{after}に動いた{won, select, yes {。そのラウンドを取った} no {。ただしそのラウンドは落とした} other {}}",
+  "insights.outcome.player": "{player}（{team}）{wpa}（{rounds}ラウンド、1ラウンドあたり{perRound}ポイント、95%：{lo}～{hi}）{small, select, yes {、ラウンド少} other {}}",
+  "insights.outcome.spot": "{team}、{place}：{n}回のデュエルで{wpa}",
+  "insights.cast.kind.turning": "転換点",
+  "insights.cast.say.turning": "{actor}が{victim}を倒す：{team}のラウンド勝利確率が{fromPct}から{toPct}に変わる",
+  "insights.cast.result": "{result, select, won {- そしてラウンドを取る} lost {- しかしラウンドを落とす} other {}}"
 }

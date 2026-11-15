@@ -51,5 +51,6 @@
   "lens.metric.risk": "Riskju wara telf",
   "lens.metric.streaks": "Sensiela (id sħuna)",
   "lens.metric.buy": "Qbil fix-xiri",
-  "lens.metric.suppression": "Soppressjoni"
+  "lens.metric.suppression": "Soppressjoni",
+  "lens.metric.cqbOutcome": "X’iddeċieda r-rawnds"
 }

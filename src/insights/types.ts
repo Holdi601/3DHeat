@@ -12,7 +12,7 @@
 
 import type { LensMetrics } from './lensMetrics';
 
-export const DETECTORS = ['power', 'zones', 'cover', 'spawn', 'classPlace', 'players', 'flow', 'value'] as const;
+export const DETECTORS = ['power', 'zones', 'cover', 'spawn', 'classPlace', 'players', 'flow', 'value', 'outcome'] as const;
 export type DetectorId = (typeof DETECTORS)[number];
 
 /** What the effect measures. All are ratios: 1 is "like the rest of the map". */
@@ -22,7 +22,9 @@ export type EffectMeasure =
   /** Odds of a kill (of kills + deaths) here over the odds elsewhere. */
   | 'kdOddsRatio'
   /** Share of spawns or crossings against the rest. */
-  | 'shareRatio';
+  | 'shareRatio'
+  /** Odds of winning the round with a factor over the odds without it (`outcome`). */
+  | 'winOddsRatio';
 
 export interface InsightEffect {
   measure: EffectMeasure;

@@ -17,8 +17,9 @@ import { leanSpec } from '../overlay/lean/spec';
 import type { Columns, LeanSpec } from '../overlay/lean/scan';
 import {
   BANDS, GRID_CELLS, GRID_KINDS, HEIGHT_EDGES, MAX_PLAYERS, SLICE_CELLS, MAX_TEAMS, MAX_WEAPONS, MINUTE_BINS, MINUTE_SECONDS, PHASE_BINS, PRESENCE_GAP, SUMMARY_FORMAT, SUMMARY_VERSION,
-  type EventCounts, type MatchSummary, type PlayerStat, type SummaryGrid, type TeamStat, type VehicleStat,
+  UR_STRIDE, type EventCounts, type MatchSummary, type OutcomeSection, type PlayerStat, type SummaryGrid, type TeamStat, type VehicleStat,
 } from './types';
+import { buyScore } from '../insights/cqb/buy';
 import { analyseMatch } from '../insights/maneuver/analyse';
 import { ManeuverCollector } from '../insights/maneuver/collect';
 import { CqbCollector } from '../insights/cqb/summary';
@@ -59,6 +60,13 @@ const WON = /^won$/i;
 const TIER = /^(br|battle.?rating|tier|era)$/i;
 const MISSION = /^(recording|scenario)$/i;
 const FLOOR = /^(floor|storey|story|deck)$/i;
+const PLACE = /^(place|area|callout|zone|room|location|place.?name)$/i;
+const BUY = /^buy$/i;
+/** Seconds a side spends in a cell in a round for the round to count there (`SummaryGrid.pw`). */
+const ROUND_PRESENT = 1;
+/** Rounds a match keeps apart at most (the rest share the last), and unit-rounds it lists. */
+const MAX_ROUNDS = 4096;
+const MAX_UNIT_ROUNDS = 20_000;
 const TRUE = /^(1|1\.0|true|yes|y|ai|bot)$/i;
 const FALSE = /^(0|0\.0|false|no|n|player|human)$/i;
 const STATIC_TYPE = /(^|\+)(Sea|Watercraft|Static|Building|Bullseye|Navaid)(\+|$)/i;
@@ -134,6 +142,20 @@ interface Unit {
   val: Float64Array;
   wonSum: number;
   wonN: number;
+  /** The round of its last row (index into the builder's rounds), and its unit-round there. */
+  curR: number;
+  ur: UnitRound | null;
+}
+
+/** One unit in one round: its result, buy, where it stood and what it used. */
+interface UnitRound {
+  u: number;
+  round: number;
+  wonSum: number;
+  wonN: number;
+  buy: number;
+  places: Map<number, number>;
+  weapons: Map<number, number>;
 }
 
 /** Leaf column names of a Parquet file. */
@@ -188,6 +210,9 @@ export interface SummaryColumns {
   tier: string | null;
   mission: string | null;
   floor: string | null;
+  /** A named place (callout), and the round's buy, for the round outcome (`OutcomeSection`). */
+  place: string | null;
+  buy: string | null;
   values: { name: string; currency: string; flow: string }[];
   /** Round, equipment and round clock, for the behaviour analysis (`insights/behaviour`). */
   behaviour: TapColumns;
@@ -225,6 +250,8 @@ export function summaryColumns(columns: string[], numeric: (c: string) => boolea
     tier: one(TIER),
     mission: one(MISSION, false),
     floor: one(FLOOR, true),
+    place: one(PLACE, false),
+    buy: one(BUY, false),
     behaviour: tapColumns(free, numeric),
     values,
     cqb,
@@ -287,6 +314,17 @@ export class SummaryBuilder {
   private readonly cqb: CqbCollector | null;
   /** Marks on the level per surface (`marks.ts`), where the data has them. */
   private readonly marks: MarkCollector | null;
+  // The round outcome: rounds by their column's value, each side's result in each, unit-rounds,
+  // the rounds each side was in each cell (`(cell * SLOTS + slot) * MAX_ROUNDS + round` -> seconds).
+  private readonly roundOf = new Map<number, number>();
+  private readonly roundNo: number[] = [];
+  private readonly roundWon = new Map<number, [number, number]>();
+  private readonly firstKill: number[] = [];
+  private readonly unitRounds = new Map<number, UnitRound>();
+  private readonly placeDict = new Map<string, number>();
+  private readonly weaponDict = new Map<string, number>();
+  private readonly weaponUse = new Map<string, Set<number>>();
+  private rp = new Map<number, number>();
 
   constructor(
     readonly spec: LeanSpec,
@@ -301,7 +339,7 @@ export class SummaryBuilder {
 
   /** Every column the builder reads. */
   static columnsOf(spec: LeanSpec, c: SummaryColumns): string[] {
-    const list = [spec.time, spec.x, spec.y, spec.z, spec.track, spec.team, spec.event, ...c.names, c.label, ...c.types, c.ai, c.flag, c.uid, c.pname, c.group, c.weapon, c.otherName, c.otherType, c.actorRef, c.won, c.tier, c.floor, ...c.values.map((v) => v.name), ...c.cqb, ...(c.marks ?? []), c.behaviour.round, c.behaviour.equip, c.behaviour.clock];
+    const list = [spec.time, spec.x, spec.y, spec.z, spec.track, spec.team, spec.event, ...c.names, c.label, ...c.types, c.ai, c.flag, c.uid, c.pname, c.group, c.weapon, c.otherName, c.otherType, c.actorRef, c.won, c.tier, c.floor, c.place, c.buy, ...c.values.map((v) => v.name), ...c.cqb, ...(c.marks ?? []), c.behaviour.round, c.behaviour.equip, c.behaviour.clock];
     return [...new Set(list.filter((x): x is string => !!x))];
   }
 
@@ -371,7 +409,7 @@ export class SummaryBuilder {
 
   /** The grid `f` times coarser: cells summed into their parents. */
   private rebin(f: number): void {
-    const old = { ix: this.cix, iz: this.ciz, p: this.cp, pt: this.cpt, y: this.cy, y0: this.cy0, fx: this.cfx, fz: this.cfz, ev: this.cev, pc: this.cpc, ph: this.cph, ts: this.cts };
+    const old = { ix: this.cix, iz: this.ciz, p: this.cp, pt: this.cpt, y: this.cy, y0: this.cy0, fx: this.cfx, fz: this.cfz, ev: this.cev, pc: this.cpc, ph: this.cph, ts: this.cts, rp: this.rp };
     this.rebinning = true;
     this.cell *= f;
     this.cellOf = new Map();
@@ -388,6 +426,7 @@ export class SummaryBuilder {
     this.cpc = new Map();
     this.cph = new Map();
     this.cts = new Map();
+    this.rp = new Map();
     const to = new Int32Array(old.ix.length);
     for (let i = 0; i < old.ix.length; i++) {
       const j = this.cellIndex((Math.floor(old.ix[i] / f) + 0.5) * this.cell, (Math.floor(old.iz[i] / f) + 0.5) * this.cell);
@@ -408,6 +447,7 @@ export class SummaryBuilder {
     remap(old.ev, this.cev, SPAN);
     remap(old.pc, this.cpc, C);
     remap(old.ph, this.cph, B);
+    remap(old.rp, this.rp, SLOTS * MAX_ROUNDS);
     for (const [key, n] of old.ts) {
       const rest = key % (MINUTE_BINS * SK);
       const cc = Math.floor(key / (MINUTE_BINS * SK));
@@ -487,6 +527,8 @@ export class SummaryBuilder {
       val: new Float64Array(this.V),
       wonSum: 0,
       wonN: 0,
+      curR: -1,
+      ur: null,
     });
     return u;
   }
@@ -556,6 +598,39 @@ export class SummaryBuilder {
     }
   }
 
+  /** The index of a round by its column's value (NaN: the match is one round). */
+  private roundIndex(v: number): number {
+    const key = Number.isFinite(v) ? v : -1;
+    let r = this.roundOf.get(key);
+    if (r === undefined) {
+      r = Math.min(this.roundNo.length, MAX_ROUNDS - 1);
+      if (this.roundNo.length < MAX_ROUNDS) {
+        this.roundNo.push(key);
+        this.firstKill.push(-1);
+      }
+      this.roundOf.set(key, r);
+    }
+    return r;
+  }
+
+  /** The unit's round `r`, made on its first row there. */
+  private unitRound(uIdx: number, u: Unit, r: number): UnitRound {
+    if (u.curR === r && u.ur) return u.ur;
+    const key = uIdx * MAX_ROUNDS + r;
+    let ur = this.unitRounds.get(key);
+    if (!ur) this.unitRounds.set(key, (ur = { u: uIdx, round: r, wonSum: 0, wonN: 0, buy: NaN, places: new Map(), weapons: new Map() }));
+    u.curR = r;
+    u.ur = ur;
+    return ur;
+  }
+
+  private static dictId(d: Map<string, number>, v: string): number {
+    if (!v) return -1;
+    let i = d.get(v);
+    if (i === undefined) d.set(v, (i = d.size));
+    return i;
+  }
+
   /** Rows `[0, n)` of the columns. */
   add(c: Columns, n: number): void {
     const s = this.spec;
@@ -575,6 +650,10 @@ export class SummaryBuilder {
     const bRound = sc.behaviour.round ? c[sc.behaviour.round] : undefined;
     const bEquip = sc.behaviour.equip ? c[sc.behaviour.equip] : undefined;
     const bClock = sc.behaviour.clock ? c[sc.behaviour.clock] : undefined;
+    const placeCol = sc.place ? c[sc.place] : undefined;
+    const buyCol = sc.buy ? c[sc.buy] : undefined;
+    // Rounds matter only with a result to judge them by.
+    const rounds = !!won;
     const sideOf = (ui: number) => (this.units[ui].team < MAX_TEAMS ? this.units[ui].team : -1);
     if (!time || !xc) return;
     if (this.mission === null && sc.mission && c[sc.mission]) {
@@ -628,13 +707,26 @@ export class SummaryBuilder {
       const x = X[i];
       const z = Z[i];
       const placed = Number.isFinite(x) && Number.isFinite(z);
+      const ri = rounds ? this.roundIndex(bRound ? num(bRound[i]) : NaN) : 0;
+      const ur = u && rounds ? this.unitRound(uIdx, u, ri) : null;
       if (u && won) {
         const w = num(won[i]);
         if (Number.isFinite(w)) {
           u.wonSum += w > 0 ? 1 : 0;
           u.wonN++;
+          ur!.wonSum += w > 0 ? 1 : 0;
+          ur!.wonN++;
+          if (u.team < MAX_TEAMS) {
+            const k = ri * SLOTS + u.team;
+            const a = this.roundWon.get(k);
+            if (a) {
+              a[0] += w > 0 ? 1 : 0;
+              a[1]++;
+            } else this.roundWon.set(k, [w > 0 ? 1 : 0, 1]);
+          }
         }
       }
+      if (ur && buyCol && !Number.isFinite(ur.buy)) ur.buy = buyScore(text(buyCol[i]));
       for (let j = 0; j < this.V; j++) {
         const v = num(vals[j]?.[i]);
         if (Number.isFinite(v) && v !== 0) {
@@ -658,6 +750,10 @@ export class SummaryBuilder {
             if (u.lastY < this.cy0[ci]) this.cy0[ci] = u.lastY;
             const kc = ci * C + (u.veh >= 0 ? this.vehCls[u.veh] : C - 1);
             this.cpc.set(kc, (this.cpc.get(kc) ?? 0) + dt);
+            if (ur && u.team < MAX_TEAMS) {
+              const kr = (ci * SLOTS + u.team) * MAX_ROUNDS + ri;
+              this.rp.set(kr, (this.rp.get(kr) ?? 0) + dt);
+            }
             const kh = ci * B + this.band(u.lastY, floorCol ? num(floorCol[i]) : NaN);
             this.cph.set(kh, (this.cph.get(kh) ?? 0) + dt);
             this.slice(u.lastX, u.lastZ, u.lastT, K, dt);
@@ -668,6 +764,10 @@ export class SummaryBuilder {
               this.cfx[ci] += (dx / d) * dt;
               this.cfz[ci] += (dz / d) * dt;
             }
+          }
+          if (ur && placeCol) {
+            const pl = SummaryBuilder.dictId(this.placeDict, text(placeCol[i]).trim());
+            if (pl >= 0) ur.places.set(pl, (ur.places.get(pl) ?? 0) + dt);
           }
         }
         if (!(dt < 0)) {
@@ -717,8 +817,18 @@ export class SummaryBuilder {
           let a2 = this.weapons.get(w);
           if (!a2) this.weapons.set(w, (a2 = new Float64Array(EV)));
           a2[kind]++;
+          // Its round and side, for its round win counts, and the unit-round's weapons.
+          if (rounds && by && byI >= 0 && by.team < MAX_TEAMS && kName !== 'damage') {
+            let use = this.weaponUse.get(w);
+            if (!use) this.weaponUse.set(w, (use = new Set()));
+            use.add(ri * SLOTS + by.team);
+            const bur = this.unitRound(byI, by, ri);
+            const wi = SummaryBuilder.dictId(this.weaponDict, w);
+            bur.weapons.set(wi, (bur.weapons.get(wi) ?? 0) + (kName === 'kill' ? 3 : 1));
+          }
         }
       }
+      if (rounds && kName === 'kill' && by && by.team < MAX_TEAMS && this.firstKill[ri] === -1) this.firstKill[ri] = by.team;
       const g = GRID_OF[kind];
       if (g >= 0) {
         this.phK.push(g);
@@ -811,6 +921,25 @@ export class SummaryBuilder {
       const ci = keep[Math.floor(k / SPAN)];
       if (ci >= 0) grid.e.push(ci, kind, slotOut(slot), cls, band, v);
     }
+    // Rounds each side was in each cell, by the side's result in the round.
+    if (this.roundNo.length >= 2 && this.rp.size) {
+      const pw = new Map<number, [number, number]>();
+      for (const [k, secs] of this.rp) {
+        if (secs < ROUND_PRESENT) continue;
+        const ri = k % MAX_ROUNDS;
+        const cs = Math.floor(k / MAX_ROUNDS);
+        const slot = cs % SLOTS;
+        const ci = keep[Math.floor(cs / SLOTS)];
+        const res = this.roundResult(ri, slot);
+        if (ci < 0 || res < 0) continue;
+        const key = ci * SLOTS + slotOut(slot);
+        const a = pw.get(key) ?? [0, 0];
+        a[res ? 0 : 1]++;
+        pw.set(key, a);
+      }
+      grid.pw = [];
+      for (const [key, [w, l]] of [...pw].sort((a, b) => a[0] - b[0])) grid.pw.push(Math.floor(key / SLOTS), key % SLOTS, w, l);
+    }
     for (const [k, v] of sorted(this.cts)) {
       const kind = k % SK;
       const minute = Math.floor(k / SK) % MINUTE_BINS;
@@ -819,6 +948,52 @@ export class SummaryBuilder {
       grid.ts.v.push(Math.floor(cc / 2 ** 20) - SO, (cc % 2 ** 20) - SO, minute, kind, kind === K ? round1(v) : v);
     }
     return { grid, extent };
+  }
+
+  /** A side's result in a round: 1 won, 0 lost, -1 unknown (its rows say both or nothing). */
+  private roundResult(ri: number, slot: number): number {
+    const a = this.roundWon.get(ri * SLOTS + slot);
+    if (!a || !a[1]) return -1;
+    const f = a[0] / a[1];
+    return f > 0.5 ? 1 : f < 0.5 ? 0 : -1;
+  }
+
+  /** The rounds and every unit's round with its result (`OutcomeSection`); null without a result column. */
+  private outcomeSection(slotOut: (s: number) => number): OutcomeSection | null {
+    if (!this.cols.won || !this.roundNo.length) return null;
+    const r: number[] = [];
+    for (let ri = 0; ri < this.roundNo.length; ri++) {
+      let winner = -1;
+      for (let s = 0; s < MAX_TEAMS; s++) if (this.roundResult(ri, s) === 1) winner = winner === -1 ? s : -2;
+      r.push(this.roundNo[ri], winner >= 0 ? slotOut(winner) : -1, this.firstKill[ri] >= 0 ? slotOut(this.firstKill[ri]) : -1);
+    }
+    const most = (m: Map<number, number>) => {
+      let best = -1, bv = -Infinity;
+      for (const [k, v] of m) if (v > bv) [best, bv] = [k, v];
+      return best;
+    };
+    const vehicles = new Map<number, number>();
+    const u: number[] = [];
+    for (const ur of this.unitRounds.values()) {
+      if (!ur.wonN || u.length >= MAX_UNIT_ROUNDS * UR_STRIDE) continue;
+      const unit = this.units[ur.u];
+      if (unit.team >= MAX_TEAMS) continue;
+      let v = -1;
+      if (unit.veh >= 0) {
+        v = vehicles.get(unit.veh) ?? vehicles.size;
+        vehicles.set(unit.veh, v);
+      }
+      const b = ur.buy;
+      u.push(ur.round, slotOut(unit.team), v, most(ur.weapons), most(ur.places), Number.isFinite(b) ? (b < 0.25 ? 0 : b < 0.75 ? 1 : 2) : -1, ur.wonSum / ur.wonN > 0.5 ? 1 : 0);
+    }
+    if (!u.length) return null;
+    return {
+      vehicles: [...vehicles.keys()].map((k) => this.vehKey[k]),
+      weapons: [...this.weaponDict.keys()],
+      places: [...this.placeDict.keys()],
+      r,
+      u,
+    };
   }
 
   finish(): MatchSummary {
@@ -856,15 +1031,43 @@ export class SummaryBuilder {
         teamWon[s].n += u.wonN;
       }
     }
+    if (this.cols.won)
+      teams.forEach((tm, i) => {
+        let w = 0, n = 0;
+        for (let ri = 0; ri < this.roundNo.length; ri++) {
+          const res = this.roundResult(ri, i);
+          if (res < 0) continue;
+          n++;
+          w += res;
+        }
+        if (n) tm.rounds = [w, n];
+      });
     teams.forEach((tm, i) => {
       tm.players = teamPlayers[i].size;
       tm.won = teamWon[i].n ? teamWon[i].s / teamWon[i].n : null;
       tm.presence = round1(tm.presence);
     });
 
+    // Each unit's rounds: won and with a known result.
+    const unitRw = new Map<number, [number, number]>();
+    for (const ur of this.unitRounds.values()) {
+      if (!ur.wonN) continue;
+      const a = unitRw.get(ur.u) ?? [0, 0];
+      a[0] += ur.wonSum / ur.wonN > 0.5 ? 1 : 0;
+      a[1]++;
+      unitRw.set(ur.u, a);
+    }
+    const addRw = (o: { rw?: [number, number] }, ui: number) => {
+      const a = unitRw.get(ui);
+      if (!a) return;
+      o.rw ??= [0, 0];
+      o.rw[0] += a[0];
+      o.rw[1] += a[1];
+    };
+
     // Vehicles, by vehicle and team.
     const vByKey = new Map<string, VehicleStat & { _vs: Float64Array; _ev: Float64Array }>();
-    for (const u of this.units) {
+    this.units.forEach((u, ui) => {
       const team = slotOut(u.team);
       const id = `${u.veh}|${team}`;
       let v = vByKey.get(id);
@@ -900,7 +1103,8 @@ export class SummaryBuilder {
       }
       for (let j = 0; j < this.V; j++) v.val[j] += u.val[j];
       if (!v.tier && u.tier) v.tier = u.tier;
-    }
+      addRw(v, ui);
+    });
     const vehicles: VehicleStat[] = [...vByKey.values()].map(({ _vs, _ev, ...v }) => {
       v.ev = evOf(_ev);
       for (let k = 0; k < C; k++) if (_vs[k]) v.vs[VEHICLE_CLASSES[k]] = _vs[k];
@@ -911,8 +1115,8 @@ export class SummaryBuilder {
 
     // Players.
     const pBy = new Map<string, PlayerStat & { _veh: Map<string, number> }>();
-    for (const u of this.units) {
-      if (u.actor !== 1 || !u.player || !driven(u)) continue;
+    this.units.forEach((u, ui) => {
+      if (u.actor !== 1 || !u.player || !driven(u)) return;
       let p = pBy.get(u.player);
       if (!p) pBy.set(u.player, (p = { id: u.player, name: u.pname, team: slotOut(u.team), units: 0, presence: 0, kills: 0, deaths: 0, hits: 0, launches: 0, won: null, vehicles: [], _veh: new Map() }));
       p.units++;
@@ -924,7 +1128,8 @@ export class SummaryBuilder {
       const w = won(u);
       if (w !== null) p.won = p.won === null ? w : Math.max(p.won, w);
       if (u.veh >= 0) p._veh.set(this.vehKey[u.veh], (p._veh.get(this.vehKey[u.veh]) ?? 0) + u.presence + 1);
-    }
+      addRw(p, ui);
+    });
     const playerStats: PlayerStat[] = [...pBy.values()]
       .sort((a, b) => b.presence - a.presence)
       .slice(0, MAX_PLAYERS)
@@ -934,7 +1139,18 @@ export class SummaryBuilder {
       .map(([name, a]) => ({ name, ev: evOf(a), n: a.reduce((s, v) => s + v, 0) }))
       .sort((a, b) => b.n - a.n)
       .slice(0, MAX_WEAPONS)
-      .map(({ name, ev }) => ({ name, ev }));
+      .map(({ name, ev }) => {
+        const use = this.weaponUse.get(name);
+        if (!use) return { name, ev };
+        let w = 0, n = 0;
+        for (const k of use) {
+          const res = this.roundResult(Math.floor(k / SLOTS), k % SLOTS);
+          if (res < 0) continue;
+          n++;
+          w += res;
+        }
+        return n ? { name, ev, rw: [w, n] as [number, number] } : { name, ev };
+      });
 
     // Phases over the match's length, and by the minute.
     const t0 = Number.isFinite(this.tMin) ? this.tMin : 0;
@@ -1000,6 +1216,7 @@ export class SummaryBuilder {
       behaviour: this.bh.finish(this.upm),
       cqb: this.cqb?.counts() ?? null,
       marks: this.marks?.counts() ?? null,
+      outcome: this.outcomeSection(slotOut),
       built: { by: this.info.by ?? 'viewer', at: new Date().toISOString(), ms: Math.round(performance.now() - this.started) },
     };
   }

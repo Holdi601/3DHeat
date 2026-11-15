@@ -51,5 +51,6 @@
   "lens.metric.risk": "Áhætta eftir töp",
   "lens.metric.streaks": "Hrinur (heit hönd)",
   "lens.metric.buy": "Samræmi í kaupum",
-  "lens.metric.suppression": "Bæling með skothríð"
+  "lens.metric.suppression": "Bæling með skothríð",
+  "lens.metric.cqbOutcome": "Hvað réð úrslitum í lotunum"
 }

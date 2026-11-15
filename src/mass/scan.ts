@@ -31,6 +31,14 @@
  *    peak carrying the excess). Significant and not obvious is `hidden`.
  * 4. The second read (`stability`) counts the matches that saw the region and
  *    those in which it held, and the rate ratio in five folds of the matches.
+ *
+ * Win rate (`share:win:t:<side>`): where a side's summaries count the rounds
+ * it was in each cell by result (`SummaryGrid.pw`), the share of its rounds
+ * there that it won, against its own share in the match - so the map, the
+ * side and the match's own balance are the baseline, and a place stands out
+ * only where its holders win more (or less) than the same side in the same
+ * match did elsewhere. A round in several cells of a region counts in each;
+ * the dispersion measured at the region's size carries that.
  */
 
 import { VEHICLE_CLASSES } from '../data/canonical';
@@ -86,7 +94,10 @@ const CH_DB = CH_KB + BANDS;
 const CH_Y = CH_DB + BANDS;
 /** Spawns, take-offs and landings: where they gather is a base (a spawn, an airfield). */
 const CH_TL = CH_Y + 1;
-const CH = CH_TL + 1;
+/** Rounds each side was there, won and lost (`SummaryGrid.pw`). */
+const CH_WT = CH_TL + 1;
+const CH_LT = CH_WT + TT;
+const CH = CH_LT + TT;
 const TAKEOFF = gk('takeoff');
 const LANDING = gk('landing');
 const SPAWN = gk('spawn');
@@ -107,6 +118,8 @@ export interface PlacePlan {
   classes: string[];
   teams: string[];
   bands: boolean;
+  /** Whether the matches count rounds by result (`SummaryGrid.pw`): the sides' win rate is scanned. */
+  win?: boolean;
 }
 
 export interface ScanFrame {
@@ -285,6 +298,18 @@ export function measuresOf(plan: PlacePlan): PlaceMeasure[] {
         x2: -1,
       });
   }
+  if (plan.win)
+    plan.teams.slice(0, TT - 1).forEach((t, s) =>
+      out.push({
+        id: `share:win:t:${t}`,
+        type: 'share',
+        event: 'win',
+        team: t,
+        o: CH_WT + s,
+        x: CH_WT + s,
+        x2: CH_LT + s,
+      }),
+    );
   if (plan.bands && kd)
     for (let b = 0; b < BANDS; b++) {
       out.push({
@@ -750,6 +775,13 @@ export class PlaceScan {
       for (let t = 0; t < T; t++) put(i, CH_PT + slots[t], g.pt[i * (T + 1) + t] ?? 0);
     }
     for (let q = 0; q + 2 < g.pc.length; q += 3) if (g.pc[q + 1] < C) put(g.pc[q], CH_PC + g.pc[q + 1], g.pc[q + 2]);
+    if (g.pw)
+      for (let q = 0; q + 3 < g.pw.length; q += 4) {
+        const t = g.pw[q + 1];
+        if (t >= T) continue;
+        put(g.pw[q], CH_WT + slots[t], g.pw[q + 2]);
+        put(g.pw[q], CH_LT + slots[t], g.pw[q + 3]);
+      }
     for (let q = 0; q + 2 < g.ph.length; q += 3) if (g.ph[q + 1] < BANDS) put(g.ph[q], CH_PB + g.ph[q + 1], g.ph[q + 2]);
     for (let q = 0; q + 5 < g.e.length; q += 6) {
       const kind = g.e[q + 1];
@@ -1993,6 +2025,7 @@ export function planOf(
   rows: { cls: string; kills: number; deaths: number }[],
   teams: { name: string; kills: number; deaths: number }[],
   events: Record<string, number>,
+  win = false,
 ): PlacePlan {
   const ev = EVK.filter((e) => (events[e] ?? 0) + (e === 'death' ? (events.destroyed ?? 0) + (events.crash ?? 0) : 0) >= 20);
   const byCls = new Map<string, { k: number; d: number }>();
@@ -2014,7 +2047,7 @@ export function planOf(
     .sort((a, b) => b[1] - a[1])
     .slice(0, 4)
     .map(([t]) => t);
-  return { events: [...ev], classes, teams: sides, bands: true };
+  return { events: [...ev], classes, teams: sides, bands: true, win };
 }
 
 /** One map to scan: its raster, plan, and a read of its matches' grids (called twice). */

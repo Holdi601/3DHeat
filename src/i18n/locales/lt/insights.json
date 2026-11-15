@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} žūsta {ratio}× dažniau per laiką nei panašūs žaidėjai ({deaths} mirčių per {timeSecs})",
   "insights.say.players.durable": "{player} žūsta {ratio}× rečiau per laiką nei panašūs žaidėjai ({deaths} mirčių per {timeSecs})",
   "insights.say.flow.choke": "Siaura vieta: {crossings} perėjimų, {ratio}× aplinkinė vieta; {deaths} mirčių čia",
-  "insights.say.flow.flank": "Flango kelias: perėjimas čia per {approachSecs} duoda {ratio}× daugiau nužudymų nei kiti keliai, bet jį naudoja tik {sharePct} perėjimų"
+  "insights.say.flow.flank": "Flango kelias: perėjimas čia per {approachSecs} duoda {ratio}× daugiau nužudymų nei kiti keliai, bet jį naudoja tik {sharePct} perėjimų",
+  "insights.det.outcome": "Kas lėmė raundus",
+  "insights.say.outcome.opening": "{team}: laimėta {withPct} iš {n1} raundų, kuriuose pusė laimėjo atidarymo dvikovą, palyginti su {withoutPct} iš {n2}, kai ją pralaimėjo ({diff} punktų, 95% nuo {lo} iki {hi})",
+  "insights.say.outcome.buy": "Su geresniu pirkimu {team}: laimėta {withPct} iš {n1} raundų, palyginti su {withoutPct} iš {n2} su prastesniu ({diff} punktų, 95% nuo {lo} iki {hi})",
+  "insights.say.outcome.traded": "{team}: laimėta {withPct} iš {n1} raundų, kuriuose jos pirmoji mirtis buvo atkeršyta, palyginti su {withoutPct} iš {n2}, kai ne ({diff} punktų, 95% nuo {lo} iki {hi})",
+  "insights.say.outcome.plant": "{team}: laimėta {withPct} iš {n1} raundų, kuriuose pusė padėjo bombą, palyginti su {withoutPct} iš {n2}, be padėjimo ({diff} punktų, 95% nuo {lo} iki {hi})",
+  "insights.say.outcome.utility": "{team}: laimėta {withPct} iš {n1} raundų, kuriuose pusė panaudojo daugiau granatų nei įprastai, palyginti su {withoutPct} iš {n2}, su mažiau ({diff} punktų, 95% nuo {lo} iki {hi})",
+  "insights.say.outcome.fast": "{team}: laimėta {withPct} iš {n1} raundų, su pirmu kontaktu anksčiau nei {fastSecs}, palyginti su {withoutPct} iš {n2}, su vėlesniu ({diff} punktų, 95% nuo {lo} iki {hi})",
+  "insights.say.outcome.held": "{team}: laimėta {withPct} iš {n1} raundų, kuriuose pusė laikė {place}, palyginti su {withoutPct} iš {n2}, be to ({diff} punktų, 95% nuo {lo} iki {hi})",
+  "insights.say.outcome.early": "{team}: laimėta {withPct} iš {n1} raundų, kuriuose pusė pasiekė {place} per pirmąsias 25 s, palyginti su {withoutPct} iš {n2}, kitaip ({diff} punktų, 95% nuo {lo} iki {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) pridėjo {wpa} raundų pergalės tikimybės per {rounds} raundų ({perRound} punktų per raundą, 95% nuo {lo} iki {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) prarado {wpa} raundų pergalės tikimybės per {rounds} raundų ({perRound} punktų per raundą, 95% nuo {lo} iki {hi})"
 }

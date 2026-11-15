@@ -51,5 +51,6 @@
   "lens.metric.risk": "Riski tappioiden jälkeen",
   "lens.metric.streaks": "Putket (kuuma käsi)",
   "lens.metric.buy": "Ostojen yksimielisyys",
-  "lens.metric.suppression": "Lamauttava tuli"
+  "lens.metric.suppression": "Lamauttava tuli",
+  "lens.metric.cqbOutcome": "Mikä ratkaisi kierrokset"
 }

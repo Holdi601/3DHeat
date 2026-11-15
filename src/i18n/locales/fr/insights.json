@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} meurt {ratio}× plus souvent par temps que les joueurs comparables ({deaths} morts en {timeSecs})",
   "insights.say.players.durable": "{player} meurt {ratio}× moins souvent par temps que les joueurs comparables ({deaths} morts en {timeSecs})",
   "insights.say.flow.choke": "Goulet d'étranglement : {crossings} passages, {ratio}× les alentours ; {deaths} morts ici",
-  "insights.say.flow.flank": "Route de flanc : la traverser mène à {ratio}× les kills en {approachSecs} des autres chemins, pourtant seuls {sharePct} des passages l'utilisent"
+  "insights.say.flow.flank": "Route de flanc : la traverser mène à {ratio}× les kills en {approachSecs} des autres chemins, pourtant seuls {sharePct} des passages l'utilisent",
+  "insights.det.outcome": "Ce qui a décidé les manches",
+  "insights.say.outcome.opening": "{team} : {withPct} de {n1} manches gagnées, où le camp a remporté le duel d’ouverture, contre {withoutPct} de {n2}, quand il l’a perdu ({diff} points, 95% de {lo} à {hi})",
+  "insights.say.outcome.buy": "Avec le meilleur achat {team} : {withPct} de {n1} manches gagnées, contre {withoutPct} de {n2} avec le pire ({diff} points, 95% de {lo} à {hi})",
+  "insights.say.outcome.traded": "{team} : {withPct} de {n1} manches gagnées, où sa première mort a été vengée, contre {withoutPct} de {n2}, quand elle ne l’a pas été ({diff} points, 95% de {lo} à {hi})",
+  "insights.say.outcome.plant": "{team} : {withPct} de {n1} manches gagnées, où le camp a posé la bombe, contre {withoutPct} de {n2}, sans pose ({diff} points, 95% de {lo} à {hi})",
+  "insights.say.outcome.utility": "{team} : {withPct} de {n1} manches gagnées, où le camp a utilisé plus d’utilitaires que d’habitude, contre {withoutPct} de {n2}, avec moins ({diff} points, 95% de {lo} à {hi})",
+  "insights.say.outcome.fast": "{team} : {withPct} de {n1} manches gagnées, avec le premier contact avant {fastSecs}, contre {withoutPct} de {n2}, avec un plus tardif ({diff} points, 95% de {lo} à {hi})",
+  "insights.say.outcome.held": "{team} : {withPct} de {n1} manches gagnées, où le camp a tenu {place}, contre {withoutPct} de {n2}, sans cela ({diff} points, 95% de {lo} à {hi})",
+  "insights.say.outcome.early": "{team} : {withPct} de {n1} manches gagnées, où le camp a atteint {place} dans les 25 premières s, contre {withoutPct} de {n2}, sinon ({diff} points, 95% de {lo} à {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) a ajouté {wpa} manches de probabilité de victoire sur {rounds} manches ({perRound} points par manche, 95% de {lo} à {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) a coûté {wpa} manches de probabilité de victoire sur {rounds} manches ({perRound} points par manche, 95% de {lo} à {hi})"
 }

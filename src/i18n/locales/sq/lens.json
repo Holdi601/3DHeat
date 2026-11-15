@@ -51,5 +51,6 @@
   "lens.metric.risk": "Rreziku pas humbjeve",
   "lens.metric.streaks": "Seri (dora e nxehtë)",
   "lens.metric.buy": "Pajtim në blerje",
-  "lens.metric.suppression": "Shtypje me zjarr"
+  "lens.metric.suppression": "Shtypje me zjarr",
+  "lens.metric.cqbOutcome": "Çfarë vendosi raundet"
 }

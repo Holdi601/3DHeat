@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} deyr {ratio}× oftar á tíma en sambærilegir spilarar ({deaths} dauðsföll á {timeSecs})",
   "insights.say.players.durable": "{player} deyr {ratio}× sjaldnar á tíma en sambærilegir spilarar ({deaths} dauðsföll á {timeSecs})",
   "insights.say.flow.choke": "Flöskuháls: {crossings} yfirferðir, {ratio}× landið í kring; {deaths} dauðsföll hér",
-  "insights.say.flow.flank": "Hliðarleið: yfirferð hér leiðir til {ratio}× fleiri kill innan {approachSecs} en aðrar leiðir, en samt nota aðeins {sharePct} yfirferða hana"
+  "insights.say.flow.flank": "Hliðarleið: yfirferð hér leiðir til {ratio}× fleiri kill innan {approachSecs} en aðrar leiðir, en samt nota aðeins {sharePct} yfirferða hana",
+  "insights.det.outcome": "Hvað réð úrslitum í lotunum",
+  "insights.say.outcome.opening": "{team}: vann {withPct} af {n1} lotum, þar sem liðið vann upphafseinvígið, á móti {withoutPct} af {n2}, þegar það tapaði því ({diff} stig, 95% frá {lo} til {hi})",
+  "insights.say.outcome.buy": "Með betri kaupum vann {team} {withPct} af {n1} lotum, á móti {withoutPct} af {n2} með þau verri ({diff} stig, 95% frá {lo} til {hi})",
+  "insights.say.outcome.traded": "{team}: vann {withPct} af {n1} lotum, þar sem fyrsta dauða þess var hefnt, á móti {withoutPct} af {n2}, þegar því var ekki hefnt ({diff} stig, 95% frá {lo} til {hi})",
+  "insights.say.outcome.plant": "{team}: vann {withPct} af {n1} lotum, þar sem liðið kom sprengjunni fyrir, á móti {withoutPct} af {n2}, án þess ({diff} stig, 95% frá {lo} til {hi})",
+  "insights.say.outcome.utility": "{team}: vann {withPct} af {n1} lotum, þar sem liðið notaði meira af búnaði en venjulega, á móti {withoutPct} af {n2}, með minna ({diff} stig, 95% frá {lo} til {hi})",
+  "insights.say.outcome.fast": "{team}: vann {withPct} af {n1} lotum, með fyrstu snertingu fyrir {fastSecs}, á móti {withoutPct} af {n2}, með síðari ({diff} stig, 95% frá {lo} til {hi})",
+  "insights.say.outcome.held": "{team}: vann {withPct} af {n1} lotum, þar sem liðið hélt {place}, á móti {withoutPct} af {n2}, án þess ({diff} stig, 95% frá {lo} til {hi})",
+  "insights.say.outcome.early": "{team}: vann {withPct} af {n1} lotum, þar sem liðið náði {place} á fyrstu 25 s, á móti {withoutPct} af {n2}, annars ({diff} stig, 95% frá {lo} til {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) bætti við {wpa} lotum af sigurlíkum á {rounds} lotum ({perRound} stig á lotu, 95% frá {lo} til {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) tapaði {wpa} lotum af sigurlíkum á {rounds} lotum ({perRound} stig á lotu, 95% frá {lo} til {hi})"
 }

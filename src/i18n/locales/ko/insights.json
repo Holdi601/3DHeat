@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player}은(는) 비슷한 플레이어보다 시간당 {ratio}× 자주 사망 ({timeSecs} 동안 {deaths}데스)",
   "insights.say.players.durable": "{player}은(는) 비슷한 플레이어보다 시간당 {ratio}× 드물게 사망 ({timeSecs} 동안 {deaths}데스)",
   "insights.say.flow.choke": "병목: 통과 {crossings}회, 주변의 {ratio}×, 여기서 {deaths}데스",
-  "insights.say.flow.flank": "측면 경로: 여기를 지나면 {approachSecs} 안에 다른 경로의 {ratio}× 킬로 이어지지만 통과의 {sharePct}만 이용"
+  "insights.say.flow.flank": "측면 경로: 여기를 지나면 {approachSecs} 안에 다른 경로의 {ratio}× 킬로 이어지지만 통과의 {sharePct}만 이용",
+  "insights.det.outcome": "라운드를 결정한 요인",
+  "insights.say.outcome.opening": "{team}: 오프닝 듀얼에서 이긴 경우({n1}라운드) 승률 {withPct}, 진 경우({n2}라운드) {withoutPct} ({diff}포인트, 95%: {lo}~{hi})",
+  "insights.say.outcome.buy": "더 나은 구매일 때 {team}은(는) {n1}라운드 중 {withPct} 승리, 더 나쁜 구매일 때는 {n2}라운드 중 {withoutPct} ({diff}포인트, 95%: {lo}~{hi})",
+  "insights.say.outcome.traded": "{team}: 첫 사망이 트레이드된 경우({n1}라운드) 승률 {withPct}, 그렇지 않은 경우({n2}라운드) {withoutPct} ({diff}포인트, 95%: {lo}~{hi})",
+  "insights.say.outcome.plant": "{team}: 폭탄을 설치한 경우({n1}라운드) 승률 {withPct}, 설치하지 않은 경우({n2}라운드) {withoutPct} ({diff}포인트, 95%: {lo}~{hi})",
+  "insights.say.outcome.utility": "{team}: 평소보다 유틸리티를 더 쓴 경우({n1}라운드) 승률 {withPct}, 덜 쓴 경우({n2}라운드) {withoutPct} ({diff}포인트, 95%: {lo}~{hi})",
+  "insights.say.outcome.fast": "{team}: 첫 교전이 {fastSecs} 이전인 경우({n1}라운드) 승률 {withPct}, 더 늦은 경우({n2}라운드) {withoutPct} ({diff}포인트, 95%: {lo}~{hi})",
+  "insights.say.outcome.held": "{team}: {place}을(를) 지킨 경우({n1}라운드) 승률 {withPct}, 지키지 않은 경우({n2}라운드) {withoutPct} ({diff}포인트, 95%: {lo}~{hi})",
+  "insights.say.outcome.early": "{team}: 처음 25 s 안에 {place}에 도달한 경우({n1}라운드) 승률 {withPct}, 그렇지 않은 경우({n2}라운드) {withoutPct} ({diff}포인트, 95%: {lo}~{hi})",
+  "insights.say.outcome.playerUp": "{player}({team})은(는) {rounds}라운드 동안 승리 확률을 {wpa}라운드만큼 더했습니다 (라운드당 {perRound}포인트, 95%: {lo}~{hi})",
+  "insights.say.outcome.playerDown": "{player}({team})은(는) {rounds}라운드 동안 승리 확률을 {wpa}라운드만큼 잃게 했습니다 (라운드당 {perRound}포인트, 95%: {lo}~{hi})"
 }

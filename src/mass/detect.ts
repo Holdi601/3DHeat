@@ -29,7 +29,7 @@ import type { Insight, InsightPlace } from '../insights/types';
 import type { GridMerge } from './grids';
 import { balance, drillMatches, NOT_DRIVEN, phases, sides, type MassDrill, type MassFilter, type MassStore } from './store';
 import { pOfZ, type PlaceFinding, type PlaceRun, type PlaceShape } from './scan';
-import type { NicheFinding, NicheRun } from './niche';
+import { NULL_RUNS, type NicheFinding, type NicheRun } from './niche';
 import { GRID_KINDS, PHASE_BINS } from './types';
 
 export const MASS_FDR = 0.05;
@@ -490,6 +490,7 @@ const DEATH_EVENTS = ['death', 'destroyed', 'crash'];
 function placeKind(f: PlaceFinding): string {
   if (f.shape === 'time') return 'place.time';
   if (f.shape === 'band') return f.type === 'share' ? 'place.bandKd' : 'place.bandRate';
+  if (f.event === 'win') return 'place.winSide';
   if (f.type === 'share') return f.team ? 'place.kdSide' : f.band !== undefined ? 'place.kdBand' : 'place.kd';
   return f.cls ? 'place.rateClass' : f.band !== undefined ? 'place.rateBand' : 'place.rate';
 }
@@ -514,6 +515,7 @@ export function placeSentence(f: PlaceFinding): { key: string; params: Record<st
       obs: Math.round(f.observed),
       exp: f.expected >= 10 ? Math.round(f.expected) : r2(f.expected),
       held: `${f.stability.held}/${f.stability.seen}`,
+      ...(f.event === 'win' && f.exposure > 0 ? { value: pc(f.observed / f.exposure), base: pc(f.expected / f.exposure), rounds: Math.round(f.exposure) } : {}),
       ...(f.cls ? { cls: f.cls } : {}),
       ...(f.team ? { team: f.team } : {}),
       ...(f.band !== undefined ? { band: bandName(f) } : {}),
@@ -529,14 +531,14 @@ const placeDetector: MassDetector = {
   run: (ctx) => {
     const run = ctx.places!;
     const insights: MassInsight[] = run.findings.map((f) => {
-      const events = f.event === 'kd' ? ['kill', ...DEATH_EVENTS] : f.event === 'death' ? DEATH_EVENTS : [f.event];
+      const events = f.event === 'kd' ? ['kill', ...DEATH_EVENTS] : f.event === 'death' ? DEATH_EVENTS : f.event === 'win' ? ['position'] : [f.event];
       return {
         id: `mass:place:${f.id}`,
         detector: 'place',
         kind: placeKind(f),
         sentence: placeSentence(f),
         strength: f.score,
-        effect: { measure: f.type === 'share' ? 'kdOddsRatio' : 'rateRatio', value: f.shrunk, raw: fin(f.ratio), lo: fin(f.lo), hi: fin(f.hi) },
+        effect: { measure: f.event === 'win' ? 'winOddsRatio' : f.type === 'share' ? 'kdOddsRatio' : 'rateRatio', value: f.shrunk, raw: fin(f.ratio), lo: fin(f.lo), hi: fin(f.hi) },
         confidence: { p: f.p, q: f.q, level: confidenceLevel(f.q), tests: run.tests, method: `${f.shape === 'zone' ? 'zone grown on half the matches, tested on the other half' : f.shape === 'time' ? 'space-time scan against each match\'s own spread of events' : f.shape === 'band' ? 'height band against the match\'s other bands' : `${f.shape} scan`}; quasi-likelihood at the dispersion of the matches, retested cluster-robust; BH over ${run.tests} regions` },
         evidence: {
           map: f.map, observed: f.observed, expected: f.expected, exposure: f.exposure, ratioRaw: f.ratio, z: f.zScore, dispersion: f.phi,
@@ -569,7 +571,7 @@ const r2 = (v: number) => Math.round(v * 100) / 100;
 export function nicheSentence(f: NicheFinding): { key: string; params: Record<string, number | string> } {
   return {
     key: `mass.say.niche.${f.target}${f.dir > 0 ? 'Up' : 'Down'}`,
-    params: { group: nicheGroup(f), value: nicheValue(f, f.value), base: nicheValue(f, f.base), ratio: r2(f.dir > 0 ? f.shrunk : 1 / Math.max(1e-9, f.shrunk)), matches: f.matches },
+    params: { group: nicheGroup(f), value: nicheValue(f, f.value), base: nicheValue(f, f.base), ratio: r2(f.dir > 0 ? f.shrunk : 1 / Math.max(1e-9, f.shrunk)), matches: f.matches, n: Math.round(f.n) },
   };
 }
 
@@ -588,14 +590,23 @@ const nicheDetector: MassDetector = {
         kind,
         sentence: nicheSentence(f),
         strength: f.score,
-        effect: { measure: f.target === 'kd' ? 'kdOddsRatio' : f.type === 'share' ? 'shareRatio' : 'rateRatio', value: f.shrunk, raw: fin(f.ratio), lo: fin(f.lo), hi: fin(f.hi) },
-        confidence: { p: f.p, q: f.q, level: confidenceLevel(f.q), tests: run.tests, method: `beam search over ${f.table}; matches as clusters (robust variance); shrunk by a prior of 20 outcomes; 4 of 5 folds agree; BH over ${run.tests} groups` },
-        evidence: { table: f.table, k: f.k, n: f.n, value: f.value, base: f.base, wracc: f.wracc, z: f.z, rows: f.rows, matches: f.matches, folds: `${f.foldsAgree}/${f.folds}`, conditions: f.conds.map((c) => `${c.f}=${c.label || c.v}`).join('; ') },
+        effect: { measure: f.target === 'kd' ? 'kdOddsRatio' : f.target === 'roundWin' || f.target === 'win' ? 'winOddsRatio' : f.type === 'share' ? 'shareRatio' : 'rateRatio', value: f.shrunk, raw: fin(f.ratio), lo: fin(f.lo), hi: fin(f.hi) },
+        confidence: {
+          p: f.p, q: f.q, level: confidenceLevel(f.q), tests: run.tests,
+          method: f.target === 'roundWin'
+            ? `beam search over ${f.table}; each round against its side's own win rate in its match (stratified); matches as clusters (robust variance); z scaled by the empirical null of ${NULL_RUNS} searches on results shuffled within each side of each match (scale ${f.nullScale ?? 1}); 4 of 5 folds agree; BH over ${run.tests} groups; ranked by lift times support`
+            : `beam search over ${f.table}; matches as clusters (robust variance); shrunk by a prior of 20 outcomes; 4 of 5 folds agree; BH over ${run.tests} groups`,
+        },
+        evidence: {
+          table: f.table, k: f.k, n: f.n, value: f.value, base: f.base, wracc: f.wracc, z: f.z, rows: f.rows, matches: f.matches, folds: `${f.foldsAgree}/${f.folds}`, conditions: f.conds.map((c) => `${c.f}=${c.label || c.v}`).join('; '),
+          ...(f.nullScale !== undefined ? { nullScale: f.nullScale } : {}),
+          ...(f.rounds?.length ? { rounds: f.rounds.slice(0, 12).map(([m, r]) => `${m}:${r}`).join(' ') } : {}),
+        },
         place: null,
         time: null,
         filters: [],
         subject: { ...(get('class') ? { vehicleClass: get('class') } : {}), ...(get('side') ? { team: get('side') } : {}) },
-        drill: { ...(get('map') ? { map: get('map') } : {}), ...(get('mode') ? { mode: get('mode') } : {}), ...(get('vehicle') ? { vehicle: get('vehicle') } : {}), ...(get('class') ? { cls: get('class') } : {}), ...(get('side') ? { team: get('side') } : {}) },
+        drill: { ...(get('map') ? { map: get('map') } : {}), ...(get('mode') ? { mode: get('mode') } : {}), ...(get('vehicle') ? { vehicle: get('vehicle') } : {}), ...(get('class') ? { cls: get('class') } : {}), ...(get('side') ? { team: get('side') } : {}), ...(f.matchIds?.length ? { matches: f.matchIds } : {}) },
         conds: f.conds,
       };
     });

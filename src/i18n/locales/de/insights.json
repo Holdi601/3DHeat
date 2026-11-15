@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} stirbt pro Zeit {ratio}× so oft wie vergleichbare Spieler ({deaths} Tode in {timeSecs})",
   "insights.say.players.durable": "{player} stirbt pro Zeit {ratio}× seltener als vergleichbare Spieler ({deaths} Tode in {timeSecs})",
   "insights.say.flow.choke": "Engpass: {crossings} Überquerungen, {ratio}× das Umfeld; {deaths} Tode hier",
-  "insights.say.flow.flank": "Flankenroute: Wer hier quert, erzielt innerhalb von {approachSecs} {ratio}× so viele Kills wie auf anderen Wegen, doch nur {sharePct} der Überquerungen nutzen sie"
+  "insights.say.flow.flank": "Flankenroute: Wer hier quert, erzielt innerhalb von {approachSecs} {ratio}× so viele Kills wie auf anderen Wegen, doch nur {sharePct} der Überquerungen nutzen sie",
+  "insights.det.outcome": "Was die Runden entschied",
+  "insights.say.outcome.opening": "{team}: {withPct} von {n1} Runden gewonnen, in denen die Seite das Eröffnungsduell gewann, gegenüber {withoutPct} von {n2}, wenn sie es verlor ({diff} Punkte, 95% von {lo} bis {hi})",
+  "insights.say.outcome.buy": "Mit dem besseren Kauf: {team} gewann {withPct} von {n1} Runden, gegenüber {withoutPct} von {n2} mit dem schlechteren ({diff} Punkte, 95% von {lo} bis {hi})",
+  "insights.say.outcome.traded": "{team}: {withPct} von {n1} Runden gewonnen, in denen ihr erster Tod gerächt wurde, gegenüber {withoutPct} von {n2}, wenn nicht ({diff} Punkte, 95% von {lo} bis {hi})",
+  "insights.say.outcome.plant": "{team}: {withPct} von {n1} Runden gewonnen, in denen die Seite die Bombe legte, gegenüber {withoutPct} von {n2}, ohne Plant ({diff} Punkte, 95% von {lo} bis {hi})",
+  "insights.say.outcome.utility": "{team}: {withPct} von {n1} Runden gewonnen, in denen die Seite mehr Utility als üblich einsetzte, gegenüber {withoutPct} von {n2}, bei weniger ({diff} Punkte, 95% von {lo} bis {hi})",
+  "insights.say.outcome.fast": "{team}: {withPct} von {n1} Runden gewonnen, mit dem ersten Kontakt vor {fastSecs}, gegenüber {withoutPct} von {n2}, mit einem späteren ({diff} Punkte, 95% von {lo} bis {hi})",
+  "insights.say.outcome.held": "{team}: {withPct} von {n1} Runden gewonnen, in denen die Seite {place} hielt, gegenüber {withoutPct} von {n2}, ohne das ({diff} Punkte, 95% von {lo} bis {hi})",
+  "insights.say.outcome.early": "{team}: {withPct} von {n1} Runden gewonnen, in denen die Seite {place} in den ersten 25 s erreichte, gegenüber {withoutPct} von {n2}, sonst ({diff} Punkte, 95% von {lo} bis {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) brachte {wpa} Runden an Siegwahrscheinlichkeit über {rounds} Runden ({perRound} Punkte pro Runde, 95% von {lo} bis {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) kostete {wpa} Runden an Siegwahrscheinlichkeit über {rounds} Runden ({perRound} Punkte pro Runde, 95% von {lo} bis {hi})"
 }

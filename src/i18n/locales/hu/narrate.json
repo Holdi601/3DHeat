@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} ledolgozza a {deficit} hátrányt, és átveszi a vezetést.",
   "insights.cast.say.standout": "{actor} kiemelkedik a(z) {class} közül: {kills} kill, ahol az átlag {mean}.",
   "insights.cast.say.struggle": "Nehéz meccs {actor} számára: {kills} kill és {deaths} halál, míg a(z) {class} átlaga {mean} kill.",
-  "insights.cast.say.longRange": "{actor} eltalálja {other} játékost {distance} távolságból."
+  "insights.cast.say.longRange": "{actor} eltalálja {other} játékost {distance} távolságból.",
+  "insights.debrief.outcome.score": "{a} {wa} kört nyert, {b} pedig {wb} kört a(z) {n} ismert eredményű körből ({a}: {pct}, 95%: {lo} – {hi}). {model, select, fitted {A győzelmi valószínűségek az ezekhez a körökhöz illesztett modellből származnak.} other {A győzelmi valószínűségek rögzített előzetes modellből származnak: túl kevés kör az illesztéshez.}}",
+  "insights.debrief.outcome.factors": "Mi választotta el a megnyert köröket az elvesztettektől{sure, select, yes {} other { (egyik sem biztos még)}}: {list}. Kipróbált tényezők: {n}.",
+  "insights.debrief.outcome.turns": "Fordulópontok: {list}.",
+  "insights.debrief.outcome.players": "Legtöbb hozzáadott győzelmi valószínűség: {best}. Legtöbb elvesztett: {worst}. Hely szerint: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, kevés kör} other {}}",
+  "insights.outcome.turn": "{round}. kör, {at}: a(z) {team} {kind, select, plant {bomba lerakása} other {ölése}}{hasPlace, select, yes { itt: {place}} other {}} {before}-ról {after}-ra mozdította az esélyét{won, select, yes {, és megnyerte a kört} no {, de elvesztette a kört} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} {rounds} kör alatt ({perRound} pont körönként, 95%: {lo} – {hi}){small, select, yes {, kevés kör} other {}}",
+  "insights.outcome.spot": "{team} itt: {place} {wpa} {n} párbaj alatt",
+  "insights.cast.kind.turning": "Fordulópont",
+  "insights.cast.say.turning": "{actor} leteríti {victim} játékost: a(z) {team} esélye a kör megnyerésére {fromPct}-ról {toPct}-ra változik",
+  "insights.cast.result": "{result, select, won {- és megnyerik a kört} lost {- de elvesztik a kört} other {}}"
 }

@@ -51,5 +51,6 @@
   "lens.metric.risk": "Ρίσκο μετά από απώλειες",
   "lens.metric.streaks": "Σερί (ζεστό χέρι)",
   "lens.metric.buy": "Συμφωνία αγορών",
-  "lens.metric.suppression": "Καθήλωση με πυρά"
+  "lens.metric.suppression": "Καθήλωση με πυρά",
+  "lens.metric.cqbOutcome": "Τι αποφάσισε τους γύρους"
 }

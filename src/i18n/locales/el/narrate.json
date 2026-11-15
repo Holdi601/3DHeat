@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "Η {team} ανατρέπει διαφορά {deficit} και παίρνει το προβάδισμα.",
   "insights.cast.say.standout": "Ο {actor} ξεχωρίζει ανάμεσα σε {class}: {kills} σκοτωμοί όπου ο μέσος όρος είναι {mean}.",
   "insights.cast.say.struggle": "Δύσκολος αγώνας για τον {actor}: {kills} σκοτωμοί και {deaths} θάνατοι, όπου {class} έχουν μέσο όρο {mean} σκοτωμούς.",
-  "insights.cast.say.longRange": "Ο {actor} χτυπά τον {other} από απόσταση {distance}."
+  "insights.cast.say.longRange": "Ο {actor} χτυπά τον {other} από απόσταση {distance}.",
+  "insights.debrief.outcome.score": "Ο {a} κέρδισε {wa} και ο {b} κέρδισε {wb} από {n} γύρους με γνωστό αποτέλεσμα ({a}: {pct}, 95% από {lo} έως {hi}). {model, select, fitted {Οι πιθανότητες νίκης προέρχονται από μοντέλο προσαρμοσμένο σε αυτούς τους γύρους.} other {Οι πιθανότητες νίκης προέρχονται από σταθερό εκ των προτέρων μοντέλο: πολύ λίγοι γύροι για προσαρμογή.}}",
+  "insights.debrief.outcome.factors": "Τι ξεχώριζε τους κερδισμένους από τους χαμένους γύρους{sure, select, yes {} other { (τίποτα δεν είναι ακόμη βέβαιο)}}: {list}. Δοκιμάστηκαν {n} παράγοντες.",
+  "insights.debrief.outcome.turns": "Καμπή: {list}.",
+  "insights.debrief.outcome.players": "Μεγαλύτερη προστιθέμενη πιθανότητα νίκης: {best}. Μεγαλύτερη απώλεια: {worst}. Ανά σημείο: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, λίγοι γύροι} other {}}",
+  "insights.outcome.turn": "γύρος {round} στο {at}: {kind, select, plant {ένα plant} other {ένα kill}} της {team}{hasPlace, select, yes { στο {place}} other {}} μετέφερε την πιθανότητά της από {before} σε {after}{won, select, yes {, και κέρδισε τον γύρο} no {, αλλά έχασε τον γύρο} other {}}",
+  "insights.outcome.player": "Ο {player} ({team}) {wpa} σε {rounds} γύρους ({perRound} μονάδες ανά γύρο, 95% από {lo} έως {hi}){small, select, yes {, λίγοι γύροι} other {}}",
+  "insights.outcome.spot": "{team} στο {place} {wpa} σε {n} duel",
+  "insights.cast.kind.turning": "Καμπή",
+  "insights.cast.say.turning": "Ο {actor} εξουδετερώνει τον {victim}: η πιθανότητα της {team} να κερδίσει τον γύρο πηγαίνει από {fromPct} σε {toPct}",
+  "insights.cast.result": "{result, select, won {- και παίρνουν τον γύρο} lost {- αλλά χάνουν τον γύρο} other {}}"
 }

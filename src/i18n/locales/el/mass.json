@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Ανά χειριστή",
   "mass.surfaces.byClass": "Ανά κατηγορία όπλου",
   "mass.surfaces.heat": "Πού στην επιφάνεια",
-  "mass.surfaces.load": "Φόρτωση των αγώνων της ({count})"
+  "mass.surfaces.load": "Φόρτωση των αγώνων της ({count})",
+  "mass.say.place.winSideUp": "{map}: η πλευρά {team} κερδίζει περισσότερους από τους γύρους της όταν βρίσκεται εδώ: κερδήθηκαν {value} από {rounds}, έναντι {base} αναμενόμενων από τον δικό της ρυθμό στους ίδιους αγώνες (πιθανότητες {ratio}×· κρατήθηκε σε {held} αγώνες)",
+  "mass.say.place.winSideDown": "{map}: η πλευρά {team} κερδίζει λιγότερους από τους γύρους της όταν βρίσκεται εδώ: κερδήθηκαν {value} από {rounds}, έναντι {base} αναμενόμενων από τον δικό της ρυθμό στους ίδιους αγώνες (πιθανότητες 1/{ratio}· κρατήθηκε σε {held} αγώνες)",
+  "mass.niches.table.rounds": "Γύροι",
+  "mass.niches.target.roundWin": "Νίκη γύρου",
+  "mass.niches.factor.weapon": "Όπλο",
+  "mass.niches.factor.place": "Σημείο",
+  "mass.niches.factor.buy": "Αγορά",
+  "mass.niches.factor.opening": "Πρώτο kill",
+  "mass.say.niche.roundWinUp": "{group}: κερδίζει {value} από {n} γύρους, έναντι {base} αναμενόμενων από τις ίδιες πλευρές στους ίδιους αγώνες (πιθανότητες {ratio}×· {matches} αγώνες)",
+  "mass.say.niche.roundWinDown": "{group}: κερδίζει μόνο {value} από {n} γύρους, έναντι {base} αναμενόμενων από τις ίδιες πλευρές στους ίδιους αγώνες (πιθανότητες 1/{ratio}· {matches} αγώνες)"
 }

@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Per operador",
   "mass.surfaces.byClass": "Per classe d'arma",
   "mass.surfaces.heat": "On a la superfície",
-  "mass.surfaces.load": "Carrega les seves partides ({count})"
+  "mass.surfaces.load": "Carrega les seves partides ({count})",
+  "mass.say.place.winSideUp": "{map}: el bàndol {team} guanya més de les seves rondes quan és aquí: {value} de {rounds} guanyades, contra {base} esperades segons el seu propi ritme a les mateixes partides (odds {ratio}×; mantingut en {held} partides)",
+  "mass.say.place.winSideDown": "{map}: el bàndol {team} guanya menys de les seves rondes quan és aquí: {value} de {rounds} guanyades, contra {base} esperades segons el seu propi ritme a les mateixes partides (odds 1/{ratio}; mantingut en {held} partides)",
+  "mass.niches.table.rounds": "Rondes",
+  "mass.niches.target.roundWin": "Victòria de ronda",
+  "mass.niches.factor.weapon": "Arma",
+  "mass.niches.factor.place": "Lloc",
+  "mass.niches.factor.buy": "Compra",
+  "mass.niches.factor.opening": "Primera mort",
+  "mass.say.niche.roundWinUp": "{group}: guanya {value} de {n} rondes, contra {base} esperades dels mateixos bàndols a les mateixes partides (odds {ratio}×; {matches} partides)",
+  "mass.say.niche.roundWinDown": "{group}: només guanya {value} de {n} rondes, contra {base} esperades dels mateixos bàndols a les mateixes partides (odds 1/{ratio}; {matches} partides)"
 }

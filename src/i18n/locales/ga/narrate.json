@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "Tagann {team} ar ais ó {deficit} taobh thiar agus glacann an tosaíocht.",
   "insights.cast.say.standout": "Seasann {actor} amach i measc {class}: {kills} marú nuair is {mean} an meán.",
   "insights.cast.say.struggle": "Cluiche deacair do {actor}: {kills} marú agus {deaths} bás, nuair is {mean} marú meán {class}.",
-  "insights.cast.say.longRange": "Buaileann {actor} {other} ó {distance} ar shiúl."
+  "insights.cast.say.longRange": "Buaileann {actor} {other} ó {distance} ar shiúl.",
+  "insights.debrief.outcome.score": "Bhuaigh {a} {wa} agus bhuaigh {b} {wb} de {n} babhta le toradh ar eolas ({a}: {pct}, 95% ó {lo} go {hi}). {model, select, fitted {Tagann na dóchúlachtaí bua ó mhúnla atá feistithe leis na babhtaí seo.} other {Tagann na dóchúlachtaí bua ó mhúnla réamhshocraithe seasta: ró-bheagán babhtaí chun ceann a fheistiú.}}",
+  "insights.debrief.outcome.factors": "Cad a scar babhtaí buaite ó bhabhtaí caillte{sure, select, yes {} other { (níl aon cheann de cinnte go fóill)}}: {list}. {n} fachtóir triailte.",
+  "insights.debrief.outcome.turns": "Pointí casaidh: {list}.",
+  "insights.debrief.outcome.players": "An dóchúlacht bua is mó curtha leis: {best}. An ceann is mó caillte: {worst}. De réir áite: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, beagán babhtaí} other {}}",
+  "insights.outcome.turn": "babhta {round} ag {at}: {kind, select, plant {plant} other {marú}} ag {team}{hasPlace, select, yes { ag {place}} other {}} d’athraigh a seans ó {before} go {after}{won, select, yes {, agus bhuaigh sé an babhta} no {, ach chaill sé an babhta} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} thar {rounds} babhta ({perRound} pointe sa bhabhta, 95% ó {lo} go {hi}){small, select, yes {, beagán babhtaí} other {}}",
+  "insights.outcome.spot": "{team} ag {place} {wpa} thar {n} duel",
+  "insights.cast.kind.turning": "Pointe casaidh",
+  "insights.cast.say.turning": "Leagann {actor} {victim}: téann seans {team} an babhta a bhuachan ó {fromPct} go {toPct}",
+  "insights.cast.result": "{result, select, won {- agus buann siad an babhta} lost {- ach caillfidh siad an babhta} other {}}"
 }

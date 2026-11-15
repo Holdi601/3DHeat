@@ -265,8 +265,8 @@ function PlaceDetail({ f }: { f: PlaceFinding }) {
 
 // ---------------------------------------------------------------------------
 
-const TARGETS: NicheTarget[] = ['kd', 'win', 'death', 'kph', 'earn', 'deathRate'];
-const TABLES = ['lives', 'places', 'phases'] as const;
+const TARGETS: NicheTarget[] = ['roundWin', 'kd', 'win', 'death', 'kph', 'earn', 'deathRate'];
+const TABLES = ['rounds', 'lives', 'places', 'phases'] as const;
 
 /** The drill-down of a niche: its map and mode as the filter, its vehicle, class and side as the drill. */
 function nicheDrill(conds: NicheCond[]): {
@@ -399,7 +399,8 @@ export function NichesTab() {
   }, [path, filter]);
   const load = (f: NicheFinding) => {
     const { drill, extra } = nicheDrill(f.conds);
-    void drillDown(engine, { drill, extra });
+    // A rounds niche loads the matches whose rounds show it the most.
+    void drillDown(engine, { drill: f.matchIds?.length ? { matches: f.matchIds } : drill, extra });
   };
   const refine = (f: NicheFinding) => setPath({ table: f.table, target: f.target, base: f.conds });
   return (
@@ -429,8 +430,8 @@ export function NichesTab() {
         <button
           onClick={() =>
             setPath({
-              table: table === 'all' ? 'lives' : table,
-              target: target === 'all' ? 'kd' : target,
+              table: table === 'all' ? (target === 'roundWin' ? 'rounds' : 'lives') : table,
+              target: target === 'all' ? (table === 'rounds' ? 'roundWin' : 'kd') : target,
               base: [],
             })
           }

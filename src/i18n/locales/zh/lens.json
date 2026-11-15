@@ -51,5 +51,6 @@
   "lens.metric.risk": "损失后的冒险",
   "lens.metric.streaks": "连胜（热手）",
   "lens.metric.buy": "购买一致性",
-  "lens.metric.suppression": "火力压制"
+  "lens.metric.suppression": "火力压制",
+  "lens.metric.cqbOutcome": "是什么决定了回合"
 }

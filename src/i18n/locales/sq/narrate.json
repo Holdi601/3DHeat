@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} rikuperon {deficit} mbetje dhe merr epërsinë.",
   "insights.cast.say.standout": "{actor} spikat mes {class}: {kills} vrasje ku mesatarja është {mean}.",
   "insights.cast.say.struggle": "Një ndeshje e vështirë për {actor}: {kills} vrasje dhe {deaths} vdekje, ku {class} bëjnë mesatarisht {mean} vrasje.",
-  "insights.cast.say.longRange": "{actor} godet {other} nga {distance} larg."
+  "insights.cast.say.longRange": "{actor} godet {other} nga {distance} larg.",
+  "insights.debrief.outcome.score": "{a} fitoi {wa} dhe {b} fitoi {wb} nga {n} raunde me rezultat të njohur ({a}: {pct}, 95% nga {lo} në {hi}). {model, select, fitted {Probabilitetet e fitores vijnë nga një model i përshtatur me këto raunde.} other {Probabilitetet e fitores vijnë nga një model i fiksuar paraprak: shumë pak raunde për ta përshtatur.}}",
+  "insights.debrief.outcome.factors": "Çfarë ndante raundet e fituara nga ato të humbura{sure, select, yes {} other { (asgjë nga kjo nuk është ende e sigurt)}}: {list}. Faktorë të provuar: {n}.",
+  "insights.debrief.outcome.turns": "Pikat e kthesës: {list}.",
+  "insights.debrief.outcome.players": "Më shumë probabilitet fitoreje i shtuar: {best}. Më shumë i humbur: {worst}. Sipas vendit: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, pak raunde} other {}}",
+  "insights.outcome.turn": "raundi {round} te {at}: {kind, select, plant {një vendosje bombe} other {një vrasje}} nga {team}{hasPlace, select, yes { te {place}} other {}} e zhvendosi shansin e saj nga {before} në {after}{won, select, yes {, dhe ajo e fitoi raundin} no {, por ajo e humbi raundin} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} në {rounds} raunde ({perRound} pikë për raund, 95% nga {lo} në {hi}){small, select, yes {, pak raunde} other {}}",
+  "insights.outcome.spot": "{team} te {place} {wpa} në {n} dueleve",
+  "insights.cast.kind.turning": "Pika e kthesës",
+  "insights.cast.say.turning": "{actor} rrëzon {victim}: shansi i {team} për të fituar raundin shkon nga {fromPct} në {toPct}",
+  "insights.cast.result": "{result, select, won {- dhe e fitojnë raundin} lost {- por e humbin raundin} other {}}"
 }

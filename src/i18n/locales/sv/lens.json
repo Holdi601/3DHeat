@@ -51,5 +51,6 @@
   "lens.metric.risk": "Risk efter förluster",
   "lens.metric.streaks": "Sviter (het hand)",
   "lens.metric.buy": "Enighet om köp",
-  "lens.metric.suppression": "Nedhållande eld"
+  "lens.metric.suppression": "Nedhållande eld",
+  "lens.metric.cqbOutcome": "Vad som avgjorde rundorna"
 }

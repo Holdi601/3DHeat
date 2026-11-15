@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} sureb aja kohta {ratio}× sagedamini kui võrreldavad mängijad ({deaths} surma {timeSecs} jooksul)",
   "insights.say.players.durable": "{player} sureb aja kohta {ratio}× harvemini kui võrreldavad mängijad ({deaths} surma {timeSecs} jooksul)",
   "insights.say.flow.choke": "Kitsaskoht: {crossings} ületust, {ratio}× ümbritsev maa; {deaths} surma siin",
-  "insights.say.flow.flank": "Tiivatee: siit ületamine annab {approachSecs} jooksul {ratio}× rohkem tapmisi kui teised teed, ometi kasutab seda vaid {sharePct} ületustest"
+  "insights.say.flow.flank": "Tiivatee: siit ületamine annab {approachSecs} jooksul {ratio}× rohkem tapmisi kui teised teed, ometi kasutab seda vaid {sharePct} ületustest",
+  "insights.det.outcome": "Mis otsustas voorud",
+  "insights.say.outcome.opening": "{team}: võideti {withPct} {n1} vooru hulgast, kus pool võitis avaduelli, võrreldes {withoutPct}ga {n2} hulgast, kui kaotas selle ({diff} punkti, 95% vahemikus {lo} kuni {hi})",
+  "insights.say.outcome.buy": "Parema ostuga {team}: võideti {withPct} {n1} vooru hulgast, võrreldes {withoutPct}ga {n2} hulgast halvemaga ({diff} punkti, 95% vahemikus {lo} kuni {hi})",
+  "insights.say.outcome.traded": "{team}: võideti {withPct} {n1} vooru hulgast, kus tema esimene surm kätte maksti, võrreldes {withoutPct}ga {n2} hulgast, kui mitte ({diff} punkti, 95% vahemikus {lo} kuni {hi})",
+  "insights.say.outcome.plant": "{team}: võideti {withPct} {n1} vooru hulgast, kus pool paigaldas pommi, võrreldes {withoutPct}ga {n2} hulgast, ilma paigalduseta ({diff} punkti, 95% vahemikus {lo} kuni {hi})",
+  "insights.say.outcome.utility": "{team}: võideti {withPct} {n1} vooru hulgast, kus pool kasutas tavalisest rohkem granaate, võrreldes {withoutPct}ga {n2} hulgast, vähemaga ({diff} punkti, 95% vahemikus {lo} kuni {hi})",
+  "insights.say.outcome.fast": "{team}: võideti {withPct} {n1} vooru hulgast, esimese kokkupuutega enne {fastSecs}, võrreldes {withoutPct}ga {n2} hulgast, hilisemaga ({diff} punkti, 95% vahemikus {lo} kuni {hi})",
+  "insights.say.outcome.held": "{team}: võideti {withPct} {n1} vooru hulgast, kus pool hoidis kohta {place}, võrreldes {withoutPct}ga {n2} hulgast, ilma selleta ({diff} punkti, 95% vahemikus {lo} kuni {hi})",
+  "insights.say.outcome.early": "{team}: võideti {withPct} {n1} vooru hulgast, kus pool jõudis kohta {place} esimese 25 s jooksul, võrreldes {withoutPct}ga {n2} hulgast, muidu ({diff} punkti, 95% vahemikus {lo} kuni {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) lisas {wpa} vooru jagu võidutõenäosust {rounds} voorus ({perRound} punkti voorus, 95% vahemikus {lo} kuni {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) kaotas {wpa} vooru jagu võidutõenäosust {rounds} voorus ({perRound} punkti voorus, 95% vahemikus {lo} kuni {hi})"
 }

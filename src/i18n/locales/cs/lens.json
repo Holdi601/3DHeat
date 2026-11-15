@@ -51,5 +51,6 @@
   "lens.metric.risk": "Riziko po ztrátách",
   "lens.metric.streaks": "Série (horká ruka)",
   "lens.metric.buy": "Shoda nákupů",
-  "lens.metric.suppression": "Potlačení palbou"
+  "lens.metric.suppression": "Potlačení palbou",
+  "lens.metric.cqbOutcome": "Co rozhodlo kola"
 }

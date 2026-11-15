@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} mirst {ratio}× biežāk uz laiku nekā salīdzināmi spēlētāji ({deaths} nāves {timeSecs} laikā)",
   "insights.say.players.durable": "{player} mirst {ratio}× retāk uz laiku nekā salīdzināmi spēlētāji ({deaths} nāves {timeSecs} laikā)",
   "insights.say.flow.choke": "Šaurums: {crossings} šķērsojumi, {ratio}× apkārtējā zeme; {deaths} nāves šeit",
-  "insights.say.flow.flank": "Flanga maršruts: šķērsojums šeit {approachSecs} laikā dod {ratio}× vairāk nogalināšanu nekā citi ceļi, tomēr to izmanto tikai {sharePct} šķērsojumu"
+  "insights.say.flow.flank": "Flanga maršruts: šķērsojums šeit {approachSecs} laikā dod {ratio}× vairāk nogalināšanu nekā citi ceļi, tomēr to izmanto tikai {sharePct} šķērsojumu",
+  "insights.det.outcome": "Kas izšķīra raundus",
+  "insights.say.outcome.opening": "{team}: uzvarēti {withPct} no {n1} raundiem, kuros puse uzvarēja atklāšanas duelī, salīdzinājumā ar {withoutPct} no {n2}, kad to zaudēja ({diff} punkti, 95% no {lo} līdz {hi})",
+  "insights.say.outcome.buy": "Ar labāku pirkumu {team}: uzvarēti {withPct} no {n1} raundiem, salīdzinājumā ar {withoutPct} no {n2} ar sliktāku ({diff} punkti, 95% no {lo} līdz {hi})",
+  "insights.say.outcome.traded": "{team}: uzvarēti {withPct} no {n1} raundiem, kuros tās pirmā nāve tika atriebta, salīdzinājumā ar {withoutPct} no {n2}, kad nē ({diff} punkti, 95% no {lo} līdz {hi})",
+  "insights.say.outcome.plant": "{team}: uzvarēti {withPct} no {n1} raundiem, kuros puse uzstādīja bumbu, salīdzinājumā ar {withoutPct} no {n2}, bez uzstādīšanas ({diff} punkti, 95% no {lo} līdz {hi})",
+  "insights.say.outcome.utility": "{team}: uzvarēti {withPct} no {n1} raundiem, kuros puse izmantoja vairāk granātu nekā parasti, salīdzinājumā ar {withoutPct} no {n2}, ar mazāk ({diff} punkti, 95% no {lo} līdz {hi})",
+  "insights.say.outcome.fast": "{team}: uzvarēti {withPct} no {n1} raundiem, ar pirmo kontaktu pirms {fastSecs}, salīdzinājumā ar {withoutPct} no {n2}, ar vēlāku ({diff} punkti, 95% no {lo} līdz {hi})",
+  "insights.say.outcome.held": "{team}: uzvarēti {withPct} no {n1} raundiem, kuros puse noturēja {place}, salīdzinājumā ar {withoutPct} no {n2}, bez tā ({diff} punkti, 95% no {lo} līdz {hi})",
+  "insights.say.outcome.early": "{team}: uzvarēti {withPct} no {n1} raundiem, kuros puse sasniedza {place} pirmajās 25 s, salīdzinājumā ar {withoutPct} no {n2}, citādi ({diff} punkti, 95% no {lo} līdz {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) pievienoja {wpa} raundu uzvaras varbūtības {rounds} raundos ({perRound} punkti raundā, 95% no {lo} līdz {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) zaudēja {wpa} raundu uzvaras varbūtības {rounds} raundos ({perRound} punkti raundā, 95% no {lo} līdz {hi})"
 }

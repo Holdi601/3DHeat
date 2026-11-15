@@ -101,6 +101,9 @@ export function debriefPrompt(r: InsightReport, say: (key: string, params: Recor
     'You write the debrief of a gameplay analysis for players, coaches and level designers.',
     'You get the findings of a statistical engine as JSON: each with an id, a sentence, an effect (a ratio; 1 means like the rest of the map) with its 95% interval, p and q values, the counts behind it, a place in world units and filters.',
     'Write a short debrief: what stands out most, what it means for tactics, what it means for balance, and how sure each point is. Say only what the numbers support; never invent numbers, places or names. Cite each finding you use by its id in square brackets, like [power.kd:3:4].',
+    ...(top.lens?.cqb?.outcome
+      ? ['Who won is the point of the match. The "cqb.outcome" of the lens (and the findings of detector "outcome") say what decided the rounds: per side, the round win rate with and without each factor (opening duel, buy, traded first death, plant, utility, an early contact, a place held, a place reached early) with the difference, its 95% interval and q; the turning points (the kills and plants that moved the win probability most); and the players and places that added or cost the most win probability. Lead with them: what separated won from lost rounds, the turning points, who contributed most to winning and to losing. Give each with its numbers and how sure it is; a factor marked small rests on few rounds, and a "prior" model means the probabilities were not fitted to these rounds - say so.']
+      : []),
     ...(knowledge.length
       ? [
           'The report\'s "lens" holds measures of military operations analysis (a Lanchester fit of losses on strengths, local force ratios at kills, exchange ratios, viewsheds of kill places, energy states of aircraft, persistent hotspots, trade rate, first-strike advantage); its "behaviour" holds measures of collective behaviour, each with its own null model, p and q (group alignment and milling, route herding, lanes and trails, crowding, leader-follower lags, straggling, the breaking point under losses, risk after losses, streaks with the Miller-Sanjurjo correction, buy agreement, reaction to fire). You also get "knowledge": entries of a curated knowledge base - doctrine, operations research, historical battles, game and level design, analytics studies - each with its references and the findings it relates to (about).',
@@ -143,6 +146,7 @@ export function castPrompt(moments: Moment[], ctx: CastContext, opt: PromptOptio
   const system = [
     'You are an esports caster commenting on a replay. You get its key moments as JSON (time in seconds, kind, the players, numbers).',
     'For each moment write one vivid, short line (at most 25 words) a caster would say as it happens. Use only the facts given; no invented names or numbers.',
+    'A "result" says whether the side went on to win the round: say it, it is what the moment meant. A "turning" moment moved the chance of the side to win the round from fromPct to toPct (by the players left alive).',
     `Answer in ${languageName(opt.language)}, one line per moment, each starting with its id and a colon, like "m3: ...". Nothing else.`,
   ].join('\n');
   return { system, user: `Moments:\n${JSON.stringify(data)}`, maxTokens: 16000 };

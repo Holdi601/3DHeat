@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} mor {ratio}× més sovint per temps que els jugadors comparables ({deaths} morts en {timeSecs})",
   "insights.say.players.durable": "{player} mor {ratio}× menys sovint per temps que els jugadors comparables ({deaths} morts en {timeSecs})",
   "insights.say.flow.choke": "Coll d'ampolla: {crossings} creuaments, {ratio}× el terreny al voltant; {deaths} morts aquí",
-  "insights.say.flow.flank": "Ruta de flanqueig: creuar aquí porta a {ratio}× les baixes en {approachSecs} d'altres camins, però només {sharePct} dels creuaments la fan servir"
+  "insights.say.flow.flank": "Ruta de flanqueig: creuar aquí porta a {ratio}× les baixes en {approachSecs} d'altres camins, però només {sharePct} dels creuaments la fan servir",
+  "insights.det.outcome": "Què va decidir les rondes",
+  "insights.say.outcome.opening": "{team}: ha guanyat {withPct} de {n1} rondes, en què va guanyar el duel d’obertura, contra {withoutPct} de {n2}, quan el va perdre ({diff} punts, 95% de {lo} a {hi})",
+  "insights.say.outcome.buy": "Amb la millor compra {team}: ha guanyat {withPct} de {n1} rondes, contra {withoutPct} de {n2} amb la pitjor ({diff} punts, 95% de {lo} a {hi})",
+  "insights.say.outcome.traded": "{team}: ha guanyat {withPct} de {n1} rondes, en què la seva primera mort va ser venjada, contra {withoutPct} de {n2}, quan no ({diff} punts, 95% de {lo} a {hi})",
+  "insights.say.outcome.plant": "{team}: ha guanyat {withPct} de {n1} rondes, en què va plantar la bomba, contra {withoutPct} de {n2}, sense plantar ({diff} punts, 95% de {lo} a {hi})",
+  "insights.say.outcome.utility": "{team}: ha guanyat {withPct} de {n1} rondes, en què va usar més utilitat que de costum, contra {withoutPct} de {n2}, amb menys ({diff} punts, 95% de {lo} a {hi})",
+  "insights.say.outcome.fast": "{team}: ha guanyat {withPct} de {n1} rondes, amb el primer contacte abans de {fastSecs}, contra {withoutPct} de {n2}, amb un de més tardà ({diff} punts, 95% de {lo} a {hi})",
+  "insights.say.outcome.held": "{team}: ha guanyat {withPct} de {n1} rondes, en què va mantenir {place}, contra {withoutPct} de {n2}, sense això ({diff} punts, 95% de {lo} a {hi})",
+  "insights.say.outcome.early": "{team}: ha guanyat {withPct} de {n1} rondes, en què va arribar a {place} en els primers 25 s, contra {withoutPct} de {n2}, altrament ({diff} punts, 95% de {lo} a {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) ha afegit {wpa} rondes de probabilitat de victòria en {rounds} rondes ({perRound} punts per ronda, 95% de {lo} a {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) ha costat {wpa} rondes de probabilitat de victòria en {rounds} rondes ({perRound} punts per ronda, 95% de {lo} a {hi})"
 }

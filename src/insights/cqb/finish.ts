@@ -13,6 +13,7 @@
 import { bhAdjust, binomTwoSided, quantileSorted, wilson } from '../stats';
 import { calibrate, ebShrink, fisher, fitLogit, newcombe, permMeans, predict, ridgeSparse, zTwoSided, type Calibration } from './model';
 import { FLASH_SECS, LURK, MAX_TEAMS, MOVE, STILL, TRADE_SECS, type CqbWalk, type Duel, type Round } from './walk';
+import { roundOutcome, type CqbOutcome } from './outcome';
 
 /** A share with its Wilson interval. */
 export interface Share {
@@ -105,6 +106,8 @@ export interface CqbMetrics {
   postPlant?: { rounds: number; planter: Share; byNumbers: { own: number; enemy: number; won: Share }[]; holderDuels: Share };
   funnel?: { entries: number; base: number; places: { place: string; entries: number; deaths: number; rate: number; lo: number; hi: number; ratio: number; p: number; q?: number }[] };
   impact?: { wpa: PlayerValue[]; rapm: PlayerValue[]; lambda: number; players: number; places: GroupValue[]; weapons: GroupValue[] };
+  /** What decided the rounds (`outcome.ts`): factors, turning points, contributions. */
+  outcome?: CqbOutcome;
   /** Tests run; q-values are Benjamini-Hochberg over all of them. */
   tests: number;
   /** Tests with q under 0.05. */
@@ -191,6 +194,26 @@ function features(w: CqbWalk, A: number, B: number, buy: Map<number, number> | n
   X[o + 7] = tf;
   X[o + 8] = tf * lr;
   if (p > 9) X[o + 9] = buy?.get(w.snapRound[s]) ?? 0;
+}
+
+/**
+ * The prior model: coefficients of the same features (`FEATURES`) used where
+ * too few rounds fit one (a single match): men alive dominate, more so as the
+ * clock runs, the plant favours the planter, the more the longer it stands.
+ * In the range published round models give (Xenopoulos et al. 2022).
+ */
+const PRIOR_BETA = [0, 1.5, 0.2, 0.5, -0.5, 0.6, -0.6, 0, 0.5, 0.6];
+
+/** P(A wins) at every snapshot by the prior model. */
+function priorPA(w: CqbWalk, A: number, B: number): Float64Array {
+  const p = 10;
+  const one = new Float64Array(p);
+  const pA = new Float64Array(w.snapN).fill(NaN);
+  for (let s = 0; s < w.snapN; s++) {
+    features(w, A, B, null, one, 0, s, p);
+    pA[s] = predict(PRIOR_BETA, one, 0, p);
+  }
+  return pA;
 }
 
 function fold(id: number): number {
@@ -843,6 +866,14 @@ export function finishCqb(w: CqbWalk, names: CqbNames): CqbMetrics | undefined {
   } else setups(c, out);
   funnel(c, out);
   impact(c, out);
+  if (roundBased) {
+    const fitted = !!c.pA;
+    const o = roundOutcome({ w, A, B, teams: names.teams, places: names.places, winner, pA: c.pA ?? priorPA(w, A, B), model: fitted ? 'fitted' : 'prior', placeName: (pl) => placeName(c, pl) });
+    if (o) {
+      if (names.persons) for (const v of [...o.best, ...o.worst]) v.person = names.persons[v.personIndex] ?? `#${v.personIndex}`;
+      out.outcome = o;
+    }
+  }
   const q = bhAdjust(c.tests.map((x) => x.p));
   c.tests.forEach((x, i) => x.set(r3(q[i])));
   out.tests = c.tests.length;

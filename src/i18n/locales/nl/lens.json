@@ -51,5 +51,6 @@
   "lens.metric.risk": "Risico na verliezen",
   "lens.metric.streaks": "Reeksen (hot hand)",
   "lens.metric.buy": "Overeenstemming in aankopen",
-  "lens.metric.suppression": "Onderdrukking"
+  "lens.metric.suppression": "Onderdrukking",
+  "lens.metric.cqbOutcome": "Wat de rondes besliste"
 }

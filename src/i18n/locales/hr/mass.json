@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Po operateru",
   "mass.surfaces.byClass": "Po klasi oružja",
   "mass.surfaces.heat": "Gdje na površini",
-  "mass.surfaces.load": "Učitaj njezine mečeve ({count})"
+  "mass.surfaces.load": "Učitaj njezine mečeve ({count})",
+  "mass.say.place.winSideUp": "{map}: strana {team} dobiva više svojih rundi kad je ovdje: dobiveno {value} od {rounds}, naspram {base} očekivanih prema vlastitoj stopi u istim mečevima (izgledi {ratio}×; držano u {held} mečeva)",
+  "mass.say.place.winSideDown": "{map}: strana {team} dobiva manje svojih rundi kad je ovdje: dobiveno {value} od {rounds}, naspram {base} očekivanih prema vlastitoj stopi u istim mečevima (izgledi 1/{ratio}; držano u {held} mečeva)",
+  "mass.niches.table.rounds": "Runde",
+  "mass.niches.target.roundWin": "Pobjeda u rundi",
+  "mass.niches.factor.weapon": "Oružje",
+  "mass.niches.factor.place": "Mjesto",
+  "mass.niches.factor.buy": "Kupnja",
+  "mass.niches.factor.opening": "Prvo ubojstvo",
+  "mass.say.niche.roundWinUp": "{group}: dobiva {value} od {n} rundi, naspram {base} očekivanih od istih strana u istim mečevima (izgledi {ratio}×; {matches} mečeva)",
+  "mass.say.niche.roundWinDown": "{group}: dobiva samo {value} od {n} rundi, naspram {base} očekivanih od istih strana u istim mečevima (izgledi 1/{ratio}; {matches} mečeva)"
 }

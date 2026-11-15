@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Per operator",
   "mass.surfaces.byClass": "Per wapenklasse",
   "mass.surfaces.heat": "Waar op het oppervlak",
-  "mass.surfaces.load": "Zijn wedstrijden laden ({count})"
+  "mass.surfaces.load": "Zijn wedstrijden laden ({count})",
+  "mass.say.place.winSideUp": "{map}: kant {team} wint meer van haar rondes als ze hier is: {value} van {rounds} gewonnen, tegen {base} verwacht op basis van haar eigen percentage in dezelfde matches (odds {ratio}×; gehouden in {held} matches)",
+  "mass.say.place.winSideDown": "{map}: kant {team} wint minder van haar rondes als ze hier is: {value} van {rounds} gewonnen, tegen {base} verwacht op basis van haar eigen percentage in dezelfde matches (odds 1/{ratio}; gehouden in {held} matches)",
+  "mass.niches.table.rounds": "Rondes",
+  "mass.niches.target.roundWin": "Rondewinst",
+  "mass.niches.factor.weapon": "Wapen",
+  "mass.niches.factor.place": "Plek",
+  "mass.niches.factor.buy": "Aankoop",
+  "mass.niches.factor.opening": "Eerste kill",
+  "mass.say.niche.roundWinUp": "{group}: wint {value} van {n} rondes, tegen {base} verwacht van dezelfde kanten in dezelfde matches (odds {ratio}×; {matches} matches)",
+  "mass.say.niche.roundWinDown": "{group}: wint slechts {value} van {n} rondes, tegen {base} verwacht van dezelfde kanten in dezelfde matches (odds 1/{ratio}; {matches} matches)"
 }

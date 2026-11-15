@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "Ο {player} πεθαίνει {ratio}× πιο συχνά ανά χρόνο από συγκρίσιμους παίκτες ({deaths} θάνατοι σε {timeSecs})",
   "insights.say.players.durable": "Ο {player} πεθαίνει {ratio}× πιο σπάνια ανά χρόνο από συγκρίσιμους παίκτες ({deaths} θάνατοι σε {timeSecs})",
   "insights.say.flow.choke": "Σημείο συμφόρησης: {crossings} διελεύσεις, {ratio}× το γύρω έδαφος· {deaths} θάνατοι εδώ",
-  "insights.say.flow.flank": "Πλευρική διαδρομή: η διέλευση από εδώ οδηγεί σε {ratio}× περισσότερα kills μέσα σε {approachSecs} από άλλες διαδρομές, όμως μόνο {sharePct} των διελεύσεων τη χρησιμοποιούν"
+  "insights.say.flow.flank": "Πλευρική διαδρομή: η διέλευση από εδώ οδηγεί σε {ratio}× περισσότερα kills μέσα σε {approachSecs} από άλλες διαδρομές, όμως μόνο {sharePct} των διελεύσεων τη χρησιμοποιούν",
+  "insights.det.outcome": "Τι αποφάσισε τους γύρους",
+  "insights.say.outcome.opening": "{team}: κερδήθηκαν {withPct} από {n1} γύρους, στους οποίους η πλευρά κέρδισε το εναρκτήριο duel, έναντι {withoutPct} από {n2}, όταν το έχασε ({diff} μονάδες, 95% από {lo} έως {hi})",
+  "insights.say.outcome.buy": "Με την καλύτερη αγορά η {team}: κερδήθηκαν {withPct} από {n1} γύρους, έναντι {withoutPct} από {n2} με τη χειρότερη ({diff} μονάδες, 95% από {lo} έως {hi})",
+  "insights.say.outcome.traded": "{team}: κερδήθηκαν {withPct} από {n1} γύρους, στους οποίους ο πρώτος θάνατός της εκδικήθηκε, έναντι {withoutPct} από {n2}, όταν όχι ({diff} μονάδες, 95% από {lo} έως {hi})",
+  "insights.say.outcome.plant": "{team}: κερδήθηκαν {withPct} από {n1} γύρους, στους οποίους η πλευρά τοποθέτησε την bomb, έναντι {withoutPct} από {n2}, χωρίς plant ({diff} μονάδες, 95% από {lo} έως {hi})",
+  "insights.say.outcome.utility": "{team}: κερδήθηκαν {withPct} από {n1} γύρους, στους οποίους η πλευρά χρησιμοποίησε περισσότερα utility από το συνηθισμένο, έναντι {withoutPct} από {n2}, με λιγότερα ({diff} μονάδες, 95% από {lo} έως {hi})",
+  "insights.say.outcome.fast": "{team}: κερδήθηκαν {withPct} από {n1} γύρους, με πρώτη επαφή πριν από {fastSecs}, έναντι {withoutPct} από {n2}, με πιο όψιμη ({diff} μονάδες, 95% από {lo} έως {hi})",
+  "insights.say.outcome.held": "{team}: κερδήθηκαν {withPct} από {n1} γύρους, στους οποίους η πλευρά κράτησε το {place}, έναντι {withoutPct} από {n2}, χωρίς αυτό ({diff} μονάδες, 95% από {lo} έως {hi})",
+  "insights.say.outcome.early": "{team}: κερδήθηκαν {withPct} από {n1} γύρους, στους οποίους η πλευρά έφτασε στο {place} στα πρώτα 25 s, έναντι {withoutPct} από {n2}, διαφορετικά ({diff} μονάδες, 95% από {lo} έως {hi})",
+  "insights.say.outcome.playerUp": "Ο {player} ({team}) πρόσθεσε {wpa} γύρους πιθανότητας νίκης σε {rounds} γύρους ({perRound} μονάδες ανά γύρο, 95% από {lo} έως {hi})",
+  "insights.say.outcome.playerDown": "Ο {player} ({team}) έχασε {wpa} γύρους πιθανότητας νίκης σε {rounds} γύρους ({perRound} μονάδες ανά γύρο, 95% από {lo} έως {hi})"
 }

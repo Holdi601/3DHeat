@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} 依時間計的死亡頻率是同類玩家的 {ratio}×({timeSecs} 內 {deaths} 次死亡)",
   "insights.say.players.durable": "{player} 依時間計的死亡頻率比同類玩家低 {ratio}×({timeSecs} 內 {deaths} 次死亡)",
   "insights.say.flow.choke": "咽喉要道:{crossings} 次通過,為周邊地帶的 {ratio}×;此處 {deaths} 次死亡",
-  "insights.say.flow.flank": "側翼路線:從此通過,{approachSecs} 內帶來的擊殺是其他路線的 {ratio}×,但只有 {sharePct} 的通過選擇了它"
+  "insights.say.flow.flank": "側翼路線:從此通過,{approachSecs} 內帶來的擊殺是其他路線的 {ratio}×,但只有 {sharePct} 的通過選擇了它",
+  "insights.det.outcome": "是什麼決定了回合",
+  "insights.say.outcome.opening": "{team}：贏下首次對槍時（{n1} 回合）勝率為 {withPct}，輸掉時（{n2} 回合）為 {withoutPct}（{diff} 個百分點，95%：{lo} 至 {hi}）",
+  "insights.say.outcome.buy": "購買更好時，{team} 在 {n1} 回合中勝率為 {withPct}，購買更差時在 {n2} 回合中為 {withoutPct}（{diff} 個百分點，95%：{lo} 至 {hi}）",
+  "insights.say.outcome.traded": "{team}：首個陣亡被報復擊殺時（{n1} 回合）勝率為 {withPct}，沒有被報復時（{n2} 回合）為 {withoutPct}（{diff} 個百分點，95%：{lo} 至 {hi}）",
+  "insights.say.outcome.plant": "{team}：安放了炸彈時（{n1} 回合）勝率為 {withPct}，沒有安放時（{n2} 回合）為 {withoutPct}（{diff} 個百分點，95%：{lo} 至 {hi}）",
+  "insights.say.outcome.utility": "{team}：使用的道具比平時多時（{n1} 回合）勝率為 {withPct}，比平時少時（{n2} 回合）為 {withoutPct}（{diff} 個百分點，95%：{lo} 至 {hi}）",
+  "insights.say.outcome.fast": "{team}：首次接觸早於 {fastSecs} 時（{n1} 回合）勝率為 {withPct}，更晚時（{n2} 回合）為 {withoutPct}（{diff} 個百分點，95%：{lo} 至 {hi}）",
+  "insights.say.outcome.held": "{team}：守住 {place} 時（{n1} 回合）勝率為 {withPct}，沒有守住時（{n2} 回合）為 {withoutPct}（{diff} 個百分點，95%：{lo} 至 {hi}）",
+  "insights.say.outcome.early": "{team}：在前 25 s 內抵達 {place} 時（{n1} 回合）勝率為 {withPct}，否則（{n2} 回合）為 {withoutPct}（{diff} 個百分點，95%：{lo} 至 {hi}）",
+  "insights.say.outcome.playerUp": "{player}（{team}）在 {rounds} 回合中增加了相當於 {wpa} 回合的獲勝機率（每回合 {perRound} 個百分點，95%：{lo} 至 {hi}）",
+  "insights.say.outcome.playerDown": "{player}（{team}）在 {rounds} 回合中損失了相當於 {wpa} 回合的獲勝機率（每回合 {perRound} 個百分點，95%：{lo} 至 {hi}）"
 }

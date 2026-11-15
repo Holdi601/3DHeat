@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} dør {ratio}× så ofte pr. tid som sammenlignelige spillere ({deaths} dødsfald på {timeSecs})",
   "insights.say.players.durable": "{player} dør {ratio}× sjældnere pr. tid end sammenlignelige spillere ({deaths} dødsfald på {timeSecs})",
   "insights.say.flow.choke": "Flaskehals: {crossings} passager, {ratio}× terrænet omkring; {deaths} dødsfald her",
-  "insights.say.flow.flank": "Flankerute: at krydse her giver {ratio}× kills inden for {approachSecs} i forhold til andre veje, men kun {sharePct} af passagerne bruger den"
+  "insights.say.flow.flank": "Flankerute: at krydse her giver {ratio}× kills inden for {approachSecs} i forhold til andre veje, men kun {sharePct} af passagerne bruger den",
+  "insights.det.outcome": "Hvad der afgjorde runderne",
+  "insights.say.outcome.opening": "{team}: vandt {withPct} af {n1} runder, hvor siden vandt åbningsduellen, mod {withoutPct} af {n2}, når den tabte den ({diff} point, 95% fra {lo} til {hi})",
+  "insights.say.outcome.buy": "Med det bedste køb vandt {team} {withPct} af {n1} runder, mod {withoutPct} af {n2} med det dårligste ({diff} point, 95% fra {lo} til {hi})",
+  "insights.say.outcome.traded": "{team}: vandt {withPct} af {n1} runder, hvor dens første død blev hævnet, mod {withoutPct} af {n2}, når den ikke blev det ({diff} point, 95% fra {lo} til {hi})",
+  "insights.say.outcome.plant": "{team}: vandt {withPct} af {n1} runder, hvor siden plantede bomben, mod {withoutPct} af {n2}, uden plant ({diff} point, 95% fra {lo} til {hi})",
+  "insights.say.outcome.utility": "{team}: vandt {withPct} af {n1} runder, hvor siden brugte mere utility end normalt, mod {withoutPct} af {n2}, med mindre ({diff} point, 95% fra {lo} til {hi})",
+  "insights.say.outcome.fast": "{team}: vandt {withPct} af {n1} runder, med første kontakt før {fastSecs}, mod {withoutPct} af {n2}, med en senere ({diff} point, 95% fra {lo} til {hi})",
+  "insights.say.outcome.held": "{team}: vandt {withPct} af {n1} runder, hvor siden holdt {place}, mod {withoutPct} af {n2}, uden det ({diff} point, 95% fra {lo} til {hi})",
+  "insights.say.outcome.early": "{team}: vandt {withPct} af {n1} runder, hvor siden nåede {place} inden for de første 25 s, mod {withoutPct} af {n2}, ellers ({diff} point, 95% fra {lo} til {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) tilføjede {wpa} runders sejrssandsynlighed over {rounds} runder ({perRound} point pr. runde, 95% fra {lo} til {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) kostede {wpa} runders sejrssandsynlighed over {rounds} runder ({perRound} point pr. runde, 95% fra {lo} til {hi})"
 }

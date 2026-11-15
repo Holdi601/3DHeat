@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} sterft per tijd {ratio}× zo vaak als vergelijkbare spelers ({deaths} doden in {timeSecs})",
   "insights.say.players.durable": "{player} sterft per tijd {ratio}× minder vaak dan vergelijkbare spelers ({deaths} doden in {timeSecs})",
   "insights.say.flow.choke": "Knelpunt: {crossings} oversteken, {ratio}× het terrein eromheen; {deaths} doden hier",
-  "insights.say.flow.flank": "Flankroute: hier oversteken leidt binnen {approachSecs} tot {ratio}× de kills van andere wegen, toch gebruikt maar {sharePct} van de oversteken haar"
+  "insights.say.flow.flank": "Flankroute: hier oversteken leidt binnen {approachSecs} tot {ratio}× de kills van andere wegen, toch gebruikt maar {sharePct} van de oversteken haar",
+  "insights.det.outcome": "Wat de rondes besliste",
+  "insights.say.outcome.opening": "{team}: {withPct} van {n1} rondes gewonnen, waarin de kant het openingsduel won, tegen {withoutPct} van {n2}, wanneer ze het verloor ({diff} punten, 95% van {lo} tot {hi})",
+  "insights.say.outcome.buy": "Met de betere aankoop won {team} {withPct} van {n1} rondes, tegen {withoutPct} van {n2} met de slechtere ({diff} punten, 95% van {lo} tot {hi})",
+  "insights.say.outcome.traded": "{team}: {withPct} van {n1} rondes gewonnen, waarin haar eerste dood gewroken werd, tegen {withoutPct} van {n2}, wanneer niet ({diff} punten, 95% van {lo} tot {hi})",
+  "insights.say.outcome.plant": "{team}: {withPct} van {n1} rondes gewonnen, waarin de kant de bom plantte, tegen {withoutPct} van {n2}, zonder plant ({diff} punten, 95% van {lo} tot {hi})",
+  "insights.say.outcome.utility": "{team}: {withPct} van {n1} rondes gewonnen, waarin de kant meer utility gebruikte dan gebruikelijk, tegen {withoutPct} van {n2}, met minder ({diff} punten, 95% van {lo} tot {hi})",
+  "insights.say.outcome.fast": "{team}: {withPct} van {n1} rondes gewonnen, met het eerste contact vóór {fastSecs}, tegen {withoutPct} van {n2}, met een later contact ({diff} punten, 95% van {lo} tot {hi})",
+  "insights.say.outcome.held": "{team}: {withPct} van {n1} rondes gewonnen, waarin de kant {place} hield, tegen {withoutPct} van {n2}, zonder dat ({diff} punten, 95% van {lo} tot {hi})",
+  "insights.say.outcome.early": "{team}: {withPct} van {n1} rondes gewonnen, waarin de kant {place} bereikte in de eerste 25 s, tegen {withoutPct} van {n2}, anders ({diff} punten, 95% van {lo} tot {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) voegde {wpa} rondes aan winkans toe over {rounds} rondes ({perRound} punten per ronde, 95% van {lo} tot {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) kostte {wpa} rondes aan winkans over {rounds} rondes ({perRound} punten per ronde, 95% van {lo} tot {hi})"
 }

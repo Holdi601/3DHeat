@@ -51,5 +51,6 @@
   "lens.metric.risk": "Risiko nach Verlusten",
   "lens.metric.streaks": "Serien (Hot Hand)",
   "lens.metric.buy": "Kaufabstimmung",
-  "lens.metric.suppression": "Niederhalten"
+  "lens.metric.suppression": "Niederhalten",
+  "lens.metric.cqbOutcome": "Was die Runden entschied"
 }

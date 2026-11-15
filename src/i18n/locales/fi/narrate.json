@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} nousee {deficit} tappioasemasta ja ottaa johdon.",
   "insights.cast.say.standout": "{actor} erottuu ryhmässä {class}: {kills} tappoa, kun keskiarvo on {mean}.",
   "insights.cast.say.struggle": "Vaikea ottelu pelaajalle {actor}: {kills} tappoa ja {deaths} kuolemaa, kun ryhmän {class} keskiarvo on {mean} tappoa.",
-  "insights.cast.say.longRange": "{actor} osuu pelaajaan {other} {distance} päästä."
+  "insights.cast.say.longRange": "{actor} osuu pelaajaan {other} {distance} päästä.",
+  "insights.debrief.outcome.score": "{a} voitti {wa} ja {b} voitti {wb} {n} kierroksesta, joiden tulos tiedetään ({a}: {pct}, 95% väliltä {lo}–{hi}). {model, select, fitted {Voittotodennäköisyydet tulevat näihin kierroksiin sovitetusta mallista.} other {Voittotodennäköisyydet tulevat kiinteästä ennakkomallista: kierroksia on liian vähän mallin sovittamiseen.}}",
+  "insights.debrief.outcome.factors": "Mikä erotti voitetut kierrokset hävityistä{sure, select, yes {} other { (mikään ei ole vielä varmaa)}}: {list}. Kokeiltuja tekijöitä: {n}.",
+  "insights.debrief.outcome.turns": "Käännekohdat: {list}.",
+  "insights.debrief.outcome.players": "Eniten voittotodennäköisyyttä lisäsi: {best}. Eniten menetti: {worst}. Paikoittain: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, vähän kierroksia} other {}}",
+  "insights.outcome.turn": "kierros {round} kohdassa {at}: {kind, select, plant {pommin asetus} other {tappo}}, tekijä {team}{hasPlace, select, yes { paikassa {place}} other {}}, siirsi sen mahdollisuudet arvosta {before} arvoon {after}{won, select, yes {, ja se voitti kierroksen} no {, mutta se hävisi kierroksen} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} {rounds} kierroksella ({perRound} pistettä kierrosta kohti, 95% väliltä {lo}–{hi}){small, select, yes {, vähän kierroksia} other {}}",
+  "insights.outcome.spot": "{team} paikassa {place} {wpa} {n} kaksintaistelussa",
+  "insights.cast.kind.turning": "Käännekohta",
+  "insights.cast.say.turning": "{actor} kaataa pelaajan {victim}: puolen {team} mahdollisuus voittaa kierros muuttuu arvosta {fromPct} arvoon {toPct}",
+  "insights.cast.result": "{result, select, won {- ja ne voittavat kierroksen} lost {- mutta ne häviävät kierroksen} other {}}"
 }

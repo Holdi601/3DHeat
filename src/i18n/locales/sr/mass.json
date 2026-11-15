@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "По оператеру",
   "mass.surfaces.byClass": "По класи оружја",
   "mass.surfaces.heat": "Где на површини",
-  "mass.surfaces.load": "Учитај њене мечеве ({count})"
+  "mass.surfaces.load": "Учитај њене мечеве ({count})",
+  "mass.say.place.winSideUp": "{map}: страна {team} добија више својих рунди кад је овде: добијено {value} од {rounds}, наспрам {base} очекиваних према сопственој стопи у истим мечевима (изгледи {ratio}×; држано у {held} мечева)",
+  "mass.say.place.winSideDown": "{map}: страна {team} добија мање својих рунди кад је овде: добијено {value} од {rounds}, наспрам {base} очекиваних према сопственој стопи у истим мечевима (изгледи 1/{ratio}; држано у {held} мечева)",
+  "mass.niches.table.rounds": "Рунде",
+  "mass.niches.target.roundWin": "Победа у рунди",
+  "mass.niches.factor.weapon": "Оружје",
+  "mass.niches.factor.place": "Место",
+  "mass.niches.factor.buy": "Куповина",
+  "mass.niches.factor.opening": "Прво убиство",
+  "mass.say.niche.roundWinUp": "{group}: добија {value} од {n} рунди, наспрам {base} очекиваних од истих страна у истим мечевима (изгледи {ratio}×; {matches} мечева)",
+  "mass.say.niche.roundWinDown": "{group}: добија само {value} од {n} рунди, наспрам {base} очекиваних од истих страна у истим мечевима (изгледи 1/{ratio}; {matches} мечева)"
 }

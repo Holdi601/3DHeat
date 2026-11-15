@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Por operador",
   "mass.surfaces.byClass": "Por clase de arma",
   "mass.surfaces.heat": "Dónde en la superficie",
-  "mass.surfaces.load": "Cargar sus partidas ({count})"
+  "mass.surfaces.load": "Cargar sus partidas ({count})",
+  "mass.say.place.winSideUp": "{map}: el bando {team} gana más de sus rondas cuando está aquí: {value} de {rounds} ganadas, frente a {base} esperadas según su propio ritmo en las mismas partidas (odds {ratio}×; mantenido en {held} partidas)",
+  "mass.say.place.winSideDown": "{map}: el bando {team} gana menos de sus rondas cuando está aquí: {value} de {rounds} ganadas, frente a {base} esperadas según su propio ritmo en las mismas partidas (odds 1/{ratio}; mantenido en {held} partidas)",
+  "mass.niches.table.rounds": "Rondas",
+  "mass.niches.target.roundWin": "Victoria de ronda",
+  "mass.niches.factor.weapon": "Arma",
+  "mass.niches.factor.place": "Lugar",
+  "mass.niches.factor.buy": "Compra",
+  "mass.niches.factor.opening": "Primera baja",
+  "mass.say.niche.roundWinUp": "{group}: gana {value} de {n} rondas, frente a {base} esperadas de los mismos bandos en las mismas partidas (odds {ratio}×; {matches} partidas)",
+  "mass.say.niche.roundWinDown": "{group}: solo gana {value} de {n} rondas, frente a {base} esperadas de los mismos bandos en las mismas partidas (odds 1/{ratio}; {matches} partidas)"
 }

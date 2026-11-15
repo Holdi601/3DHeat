@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "По оператор",
   "mass.surfaces.byClass": "По класа на оружје",
   "mass.surfaces.heat": "Каде на површината",
-  "mass.surfaces.load": "Вчитај ги нејзините натпревари ({count})"
+  "mass.surfaces.load": "Вчитај ги нејзините натпревари ({count})",
+  "mass.say.place.winSideUp": "{map}: страната {team} добива повеќе од своите рундови кога е тука: добиени {value} од {rounds}, наспроти {base} очекувани според сопствената стапка во истите натпревари (шанси {ratio}×; држено во {held} натпревари)",
+  "mass.say.place.winSideDown": "{map}: страната {team} добива помалку од своите рундови кога е тука: добиени {value} од {rounds}, наспроти {base} очекувани според сопствената стапка во истите натпревари (шанси 1/{ratio}; држено во {held} натпревари)",
+  "mass.niches.table.rounds": "Рундови",
+  "mass.niches.target.roundWin": "Победа во рунда",
+  "mass.niches.factor.weapon": "Оружје",
+  "mass.niches.factor.place": "Место",
+  "mass.niches.factor.buy": "Набавка",
+  "mass.niches.factor.opening": "Прво убиство",
+  "mass.say.niche.roundWinUp": "{group}: добива {value} од {n} рундови, наспроти {base} очекувани од истите страни во истите натпревари (шанси {ratio}×; {matches} натпревари)",
+  "mass.say.niche.roundWinDown": "{group}: добива само {value} од {n} рундови, наспроти {base} очекувани од истите страни во истите натпревари (шанси 1/{ratio}; {matches} натпревари)"
 }

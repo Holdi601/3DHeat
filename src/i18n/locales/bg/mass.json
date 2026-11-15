@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "По оператор",
   "mass.surfaces.byClass": "По клас оръжие",
   "mass.surfaces.heat": "Къде на повърхността",
-  "mass.surfaces.load": "Зареди мачовете ѝ ({count})"
+  "mass.surfaces.load": "Зареди мачовете ѝ ({count})",
+  "mass.say.place.winSideUp": "{map}: страна {team} печели повече от рундовете си, когато е тук: спечелени {value} от {rounds}, срещу {base} очаквани според собствения ѝ дял в същите мачове (шансове {ratio}×; държано в {held} мача)",
+  "mass.say.place.winSideDown": "{map}: страна {team} печели по-малко от рундовете си, когато е тук: спечелени {value} от {rounds}, срещу {base} очаквани според собствения ѝ дял в същите мачове (шансове 1/{ratio}; държано в {held} мача)",
+  "mass.niches.table.rounds": "Рундове",
+  "mass.niches.target.roundWin": "Победа в рунда",
+  "mass.niches.factor.weapon": "Оръжие",
+  "mass.niches.factor.place": "Място",
+  "mass.niches.factor.buy": "Покупка",
+  "mass.niches.factor.opening": "Първо убийство",
+  "mass.say.niche.roundWinUp": "{group}: печели {value} от {n} рунда, срещу {base} очаквани от същите страни в същите мачове (шансове {ratio}×; {matches} мача)",
+  "mass.say.niche.roundWinDown": "{group}: печели само {value} от {n} рунда, срещу {base} очаквани от същите страни в същите мачове (шансове 1/{ratio}; {matches} мача)"
 }

@@ -51,5 +51,6 @@
   "lens.metric.risk": "손실 후 위험 감수",
   "lens.metric.streaks": "연속 성공(핫 핸드)",
   "lens.metric.buy": "구매 일치",
-  "lens.metric.suppression": "제압 사격"
+  "lens.metric.suppression": "제압 사격",
+  "lens.metric.cqbOutcome": "라운드를 결정한 요인"
 }

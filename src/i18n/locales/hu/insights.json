@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} időarányosan {ratio}×-osan gyakrabban hal meg, mint a hasonló játékosok ({deaths} halál {timeSecs} alatt)",
   "insights.say.players.durable": "{player} időarányosan {ratio}×-osan ritkábban hal meg, mint a hasonló játékosok ({deaths} halál {timeSecs} alatt)",
   "insights.say.flow.choke": "Szűk keresztmetszet: {crossings} átkelés, a környező terep {ratio}×-a; {deaths} halál itt",
-  "insights.say.flow.flank": "Szárnyútvonal: az itteni átkelés {approachSecs} alatt {ratio}×-osan több killhez vezet, mint más utak, mégis az átkelések csak {sharePct}-a használja"
+  "insights.say.flow.flank": "Szárnyútvonal: az itteni átkelés {approachSecs} alatt {ratio}×-osan több killhez vezet, mint más utak, mégis az átkelések csak {sharePct}-a használja",
+  "insights.det.outcome": "Mi döntötte el a köröket",
+  "insights.say.outcome.opening": "{team}: {n1} körből {withPct} nyert, amelyekben az oldal megnyerte a nyitó párbajt, szemben a {n2} körből {withoutPct}-kal, amikor elvesztette azt ({diff} pont, 95%: {lo} – {hi})",
+  "insights.say.outcome.buy": "A jobb vásárlással {team}: {n1} körből {withPct} nyert, szemben a {n2} körből {withoutPct}-kal a rosszabbal ({diff} pont, 95%: {lo} – {hi})",
+  "insights.say.outcome.traded": "{team}: {n1} körből {withPct} nyert, amelyekben az első halálát megtorolták, szemben a {n2} körből {withoutPct}-kal, amikor nem ({diff} pont, 95%: {lo} – {hi})",
+  "insights.say.outcome.plant": "{team}: {n1} körből {withPct} nyert, amelyekben az oldal lerakta a bombát, szemben a {n2} körből {withoutPct}-kal, lerakás nélkül ({diff} pont, 95%: {lo} – {hi})",
+  "insights.say.outcome.utility": "{team}: {n1} körből {withPct} nyert, amelyekben az oldal a szokásosnál több utilityt használt, szemben a {n2} körből {withoutPct}-kal, kevesebbel ({diff} pont, 95%: {lo} – {hi})",
+  "insights.say.outcome.fast": "{team}: {n1} körből {withPct} nyert, az első kontaktussal {fastSecs} előtt, szemben a {n2} körből {withoutPct}-kal, későbbivel ({diff} pont, 95%: {lo} – {hi})",
+  "insights.say.outcome.held": "{team}: {n1} körből {withPct} nyert, amelyekben az oldal tartotta a(z) {place} helyet, szemben a {n2} körből {withoutPct}-kal, enélkül ({diff} pont, 95%: {lo} – {hi})",
+  "insights.say.outcome.early": "{team}: {n1} körből {withPct} nyert, amelyekben az oldal az első 25 s-ban elérte a(z) {place} helyet, szemben a {n2} körből {withoutPct}-kal, egyébként ({diff} pont, 95%: {lo} – {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) {wpa} környi győzelmi esélyt adott hozzá {rounds} kör alatt ({perRound} pont körönként, 95%: {lo} – {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) {wpa} környi győzelmi esélyt vesztett {rounds} kör alatt ({perRound} pont körönként, 95%: {lo} – {hi})"
 }

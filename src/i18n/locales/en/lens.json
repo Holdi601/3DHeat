@@ -51,5 +51,6 @@
   "lens.metric.risk": "Risk after losses",
   "lens.metric.streaks": "Streaks (hot hand)",
   "lens.metric.buy": "Buy agreement",
-  "lens.metric.suppression": "Suppression"
+  "lens.metric.suppression": "Suppression",
+  "lens.metric.cqbOutcome": "What decided the rounds"
 }

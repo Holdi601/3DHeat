@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} 從落後 {deficit} 追回並取得領先。",
   "insights.cast.say.standout": "{actor} 在{class}中脫穎而出：{kills} 次擊殺，而平均為 {mean}。",
   "insights.cast.say.struggle": "{actor} 的艱難一局：{kills} 次擊殺、{deaths} 次死亡，而{class}平均 {mean} 次擊殺。",
-  "insights.cast.say.longRange": "{actor} 從 {distance} 外擊中 {other}。"
+  "insights.cast.say.longRange": "{actor} 從 {distance} 外擊中 {other}。",
+  "insights.debrief.outcome.score": "在結果已知的 {n} 回合中，{a} 贏下 {wa}，{b} 贏下 {wb}（{a}：{pct}，95%：{lo} 至 {hi}）。{model, select, fitted {獲勝機率來自擬合了這些回合的模型。} other {獲勝機率來自固定的先驗模型：回合太少，無法擬合模型。}}",
+  "insights.debrief.outcome.factors": "區分贏下與輸掉回合的因素{sure, select, yes {} other {（目前都還不確定）}}：{list}。已嘗試 {n} 個因素。",
+  "insights.debrief.outcome.turns": "轉折點：{list}。",
+  "insights.debrief.outcome.players": "增加獲勝機率最多：{best}。損失最多：{worst}。依地點：{spots}。",
+  "insights.outcome.evidence": "q {q}{small, select, yes {，回合少} other {}}",
+  "insights.outcome.turn": "第 {round} 回合 {at}：{team} 的{kind, select, plant {安放炸彈} other {擊殺}}{hasPlace, select, yes {（{place}）} other {}}使其勝算從 {before} 變為 {after}{won, select, yes {，並贏下該回合} no {，但輸掉了該回合} other {}}",
+  "insights.outcome.player": "{player}（{team}）{wpa}，共 {rounds} 回合（每回合 {perRound} 個百分點，95%：{lo} 至 {hi}）{small, select, yes {，回合少} other {}}",
+  "insights.outcome.spot": "{team} 在 {place}：{n} 次對槍中 {wpa}",
+  "insights.cast.kind.turning": "轉折點",
+  "insights.cast.say.turning": "{actor} 擊倒 {victim}：{team} 贏下該回合的機會從 {fromPct} 變為 {toPct}",
+  "insights.cast.result": "{result, select, won {- 並贏下該回合} lost {- 但輸掉該回合} other {}}"
 }

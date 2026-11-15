@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} dies {ratio}× as often per time as comparable players ({deaths} deaths in {timeSecs})",
   "insights.say.players.durable": "{player} dies {ratio}× less often per time than comparable players ({deaths} deaths in {timeSecs})",
   "insights.say.flow.choke": "Choke point: {crossings} crossings, {ratio}× the ground around it; {deaths} deaths here",
-  "insights.say.flow.flank": "Flank route: crossing here leads to {ratio}× the kills within {approachSecs} of other ways, yet only {sharePct} of crossings use it"
+  "insights.say.flow.flank": "Flank route: crossing here leads to {ratio}× the kills within {approachSecs} of other ways, yet only {sharePct} of crossings use it",
+  "insights.det.outcome": "What decided the rounds",
+  "insights.say.outcome.opening": "{team} won {withPct} of the {n1} rounds it took the opening duel, against {withoutPct} of {n2} when it lost it ({diff} points, 95% {lo} to {hi})",
+  "insights.say.outcome.buy": "With the better buy {team} won {withPct} of {n1} rounds, against {withoutPct} of {n2} with the worse ({diff} points, 95% {lo} to {hi})",
+  "insights.say.outcome.traded": "{team} won {withPct} of the {n1} rounds where its first death was traded, against {withoutPct} of {n2} where it was not ({diff} points, 95% {lo} to {hi})",
+  "insights.say.outcome.plant": "{team} won {withPct} of the {n1} rounds it planted, against {withoutPct} of {n2} without a plant ({diff} points, 95% {lo} to {hi})",
+  "insights.say.outcome.utility": "{team} won {withPct} of the {n1} rounds it used more utility than usual, against {withoutPct} of {n2} with less ({diff} points, 95% {lo} to {hi})",
+  "insights.say.outcome.fast": "{team} won {withPct} of the {n1} rounds with the first contact before {fastSecs}, against {withoutPct} of {n2} with a later one ({diff} points, 95% {lo} to {hi})",
+  "insights.say.outcome.held": "{team} won {withPct} of the {n1} rounds it held {place}, against {withoutPct} of {n2} without it ({diff} points, 95% {lo} to {hi})",
+  "insights.say.outcome.early": "{team} won {withPct} of the {n1} rounds it reached {place} in the first 25 s, against {withoutPct} of {n2} otherwise ({diff} points, 95% {lo} to {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) added {wpa} rounds' worth of win probability over {rounds} rounds ({perRound} points a round, 95% {lo} to {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) cost {wpa} rounds' worth of win probability over {rounds} rounds ({perRound} points a round, 95% {lo} to {hi})"
 }

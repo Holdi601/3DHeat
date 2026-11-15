@@ -12,7 +12,7 @@
 import { isContainer, openContainer } from '../data/container';
 import { massInsights, insightMatches, type MassInsight, type MassReport } from './detect';
 import { GridMerge, mergeCell, type Channel } from './grids';
-import { discoverNiches, livesTable, nicheChildren, PlaceTables, type NicheCond, type NicheTable, type NicheTarget } from './niche';
+import { discoverNiches, livesTable, nicheChildren, PlaceTables, roundsTable, type NicheCond, type NicheTable, type NicheTarget } from './niche';
 import { discoverPlaces, planOf, scanFrame, type PlaceJob, type PlaceMatch } from './scan';
 import {
   MassStore, balance, drillMatches, overview, phases, populations, sides, storeBytes, trends,
@@ -408,7 +408,9 @@ function planFor(list: number[]) {
   for (let r = 0; r < store.t.match.n; r++) if (want.has(store.t.match.a[r])) teams.push({ name: store.str(store.t.name.a[r]), kills: store.t.kills.a[r], deaths: store.t.deaths.a[r] });
   const GK = GRID_KINDS.length;
   for (const i of list) GRID_KINDS.forEach((k, j) => (events[k] = (events[k] ?? 0) + store.events.a[i * GK + j]));
-  return planOf(rows, teams, events);
+  // The sides' win rate where enough matches count rounds by result.
+  const win = list.filter((i) => (store.outcome[i]?.r.length ?? 0) >= 6).length >= 8;
+  return planOf(rows, teams, events, win);
 }
 
 const filterKey = (f: MassFilter) => JSON.stringify(f);
@@ -494,7 +496,7 @@ ctx.onmessage = async (ev: MessageEvent<MassRequest>) => {
       for (const [map, list] of lists) if (!jobs.some((j) => j.map === map)) await streamGrids(list, (i, g) => merges.get(map)!.add(g, teamsOf(i), extents[i], null), false);
       let niches = null;
       if (stageB) {
-        const all = [livesTable(store, mask), ...tables!.tables()];
+        const all = [livesTable(store, mask), roundsTable(store, mask), ...tables!.tables()];
         nicheTables = { key: filterKey(m.filter), tables: all };
         niches = discoverNiches(all, store.matches);
       }
@@ -503,7 +505,10 @@ ctx.onmessage = async (ev: MessageEvent<MassRequest>) => {
     }
     if (m.type === 'niche') {
       const key = filterKey(m.filter);
-      if (!nicheTables || nicheTables.key !== key) nicheTables = { key, tables: [livesTable(store, store.matchMask(m.filter))] };
+      if (!nicheTables || nicheTables.key !== key) {
+        const mask = store.matchMask(m.filter);
+        nicheTables = { key, tables: [livesTable(store, mask), roundsTable(store, mask)] };
+      }
       const t = nicheTables.tables.find((x) => x.name === m.table) ?? nicheTables.tables[0];
       return post({ type: 'result', id: m.id, data: nicheChildren(t, m.target, m.base, store.matches), ms: performance.now() - t0 });
     }

@@ -51,5 +51,6 @@
   "lens.metric.risk": "Ryzyko po stratach",
   "lens.metric.streaks": "Serie (gorąca ręka)",
   "lens.metric.buy": "Zgodność zakupów",
-  "lens.metric.suppression": "Przygważdżanie ogniem"
+  "lens.metric.suppression": "Przygważdżanie ogniem",
+  "lens.metric.cqbOutcome": "Co rozstrzygnęło rundy"
 }

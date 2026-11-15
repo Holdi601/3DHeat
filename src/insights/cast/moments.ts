@@ -53,6 +53,8 @@ export interface CastRound {
   session?: number;
   /** The filter that shows only this round (a round column's value), where the data has one. */
   filter?: FilterSpec;
+  /** The team that won the round (the data's `won` column), where it says. */
+  winner?: number;
 }
 
 export interface CastInput {
@@ -61,7 +63,7 @@ export interface CastInput {
   rounds: CastRound[];
 }
 
-export const MOMENT_KINDS = ['firstBlood', 'multiKill', 'trade', 'clutch', 'swing', 'objective', 'comeback', 'standout', 'struggle', 'longRange'] as const;
+export const MOMENT_KINDS = ['firstBlood', 'multiKill', 'trade', 'clutch', 'swing', 'objective', 'comeback', 'standout', 'struggle', 'longRange', 'turning'] as const;
 export type MomentKind = (typeof MOMENT_KINDS)[number];
 
 export interface Moment {
@@ -244,6 +246,17 @@ export function findMoments(input: CastInput, opt: MomentOptions = MOMENT_DEFAUL
     }
   }
 
+  out.push(...turningPoints(kills, input.rounds, win));
+
+  // The outcome weighs: a moment of the side that went on to win its round counts for more, and says so.
+  for (const m of out) {
+    const w = input.rounds[m.round]?.winner;
+    if (w === undefined || m.team < 0 || 'result' in m.params) continue;
+    const won = w === m.team;
+    m.params.result = won ? 'won' : 'lost';
+    if (won) m.weight = Math.min(1, m.weight + WON_BONUS);
+  }
+
   // The weightiest, no kind taking more than a third: a match of rounds has a clutch in most of them.
   const perKind = Math.max(3, Math.ceil(opt.max / 3));
   const taken = new Map<MomentKind, number>();
@@ -259,15 +272,73 @@ export function findMoments(input: CastInput, opt: MomentOptions = MOMENT_DEFAUL
     .map((m, i) => ({ ...m, id: `m${i + 1}` }));
 }
 
+/** Weight a moment gains when its side went on to win the round. */
+export const WON_BONUS = 0.15;
+/** Change of win probability a kill needs to be a turning point, and turning points kept at most. */
+const TURN_MIN = 0.2;
+const TURNS = 6;
+
+/**
+ * A side's chance to win an elimination round with `own` against `enemy`
+ * alive: a fixed model of the men alive (the prior of `cqb/finish.ts`, without
+ * the clock and the plant the caster does not read).
+ */
+export function aliveWinChance(own: number, enemy: number): number {
+  if (own <= 0) return 0;
+  if (enemy <= 0) return 1;
+  const v = 1.5 * Math.log((own + 0.5) / (enemy + 0.5)) + 0.2 * (own - enemy);
+  return 1 / (1 + Math.exp(-v));
+}
+
+/** The kills that moved a side's chance to win its round the most: in rounds without respawns, by the men left alive. */
+function turningPoints(kills: CastKill[], rounds: CastRound[], win: (t0: number, t1?: number) => { from: number; to: number }): Omit<Moment, 'id'>[] {
+  const all: Omit<Moment, 'id'>[] = [];
+  rounds.forEach((r, ri) => {
+    const rk = kills.filter((k) => k.round === ri && k.victim >= 0);
+    const deaths = new Map<number, number>();
+    for (const k of rk) deaths.set(k.victim, (deaths.get(k.victim) ?? 0) + 1);
+    if ([...deaths.values()].some((n) => n > 1)) return;
+    const teams = [...r.roster.keys()].filter((t) => t >= 0);
+    if (teams.length !== 2) return;
+    const alive = new Map(teams.map((t) => [t, r.roster.get(t)!.size] as const));
+    for (const k of rk) {
+      if (!fair(k) || !alive.has(k.killerTeam) || !alive.has(k.victimTeam)) {
+        if (alive.has(k.victimTeam)) alive.set(k.victimTeam, Math.max(0, alive.get(k.victimTeam)! - 1));
+        continue;
+      }
+      const own = alive.get(k.killerTeam)!;
+      const enemy = alive.get(k.victimTeam)!;
+      const before = aliveWinChance(own, enemy);
+      const after = aliveWinChance(own, enemy - 1);
+      alive.set(k.victimTeam, Math.max(0, enemy - 1));
+      const delta = after - before;
+      if (delta < TURN_MIN) continue;
+      const result = r.winner === undefined ? undefined : r.winner === k.killerTeam ? 'won' : 'lost';
+      all.push({
+        kind: 'turning', time: k.time, ...win(k.time), actor: k.killer, other: k.victim, team: k.killerTeam, x: k.x, y: k.y, z: k.z, round: ri,
+        // A kill that turned the round its side then won is the moment; one that did not hold, less so.
+        weight: Math.min(1, 0.3 + delta + (result === 'won' ? WON_BONUS : 0)),
+        params: { victim: k.victim, fromPct: Math.round(before * 100), toPct: Math.round(after * 100), ...(result ? { result } : {}) },
+      });
+    }
+  });
+  return all.sort((a, b) => b.weight - a.weight).slice(0, TURNS);
+}
+
 /** Kills (or rounds won by elimination) per team over time; the biggest deficit turned into a lead that held. */
 function findComeback(kills: CastKill[], rounds: CastRound[]): Omit<Moment, 'id' | 'from' | 'to'> | null {
   type Step = { time: number; team: number; k: CastKill };
   const steps: Step[] = [];
   let unit: 'kills' | 'rounds' = 'kills';
   if (rounds.length > 1) {
-    // A round's winner: the team whose opponents all went down in it.
+    // A round's winner: as the data says, else the team whose opponents all went down in it.
     rounds.forEach((r, ri) => {
       const rk = kills.filter((k) => k.round === ri && k.victim >= 0);
+      if (r.winner !== undefined && rk.length) {
+        const k = rk[rk.length - 1];
+        steps.push({ time: k.time, team: r.winner, k });
+        return;
+      }
       const left = new Map([...r.roster].filter(([t]) => t >= 0).map(([t, s]) => [t, new Set(s)] as const));
       for (const k of rk) {
         left.get(k.victimTeam)?.delete(k.victim);

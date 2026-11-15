@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} atsigriebia nuo {deficit} atsilikimo ir pereina į priekį.",
   "insights.cast.say.standout": "{actor} išsiskiria tarp {class}: {kills} nužudymai, kai vidurkis yra {mean}.",
   "insights.cast.say.struggle": "Sunkios rungtynės žaidėjui {actor}: {kills} nužudymai ir {deaths} mirtys, kai {class} vidurkis yra {mean} nužudymai.",
-  "insights.cast.say.longRange": "{actor} pataiko į {other} iš {distance} atstumo."
+  "insights.cast.say.longRange": "{actor} pataiko į {other} iš {distance} atstumo.",
+  "insights.debrief.outcome.score": "{a} laimėjo {wa}, o {b} laimėjo {wb} iš {n} raundų su žinomu rezultatu ({a}: {pct}, 95% nuo {lo} iki {hi}). {model, select, fitted {Pergalės tikimybės gautos iš šiems raundams pritaikyto modelio.} other {Pergalės tikimybės gautos iš fiksuoto apriorinio modelio: per mažai raundų jam pritaikyti.}}",
+  "insights.debrief.outcome.factors": "Kas skyrė laimėtus raundus nuo pralaimėtų{sure, select, yes {} other { (kol kas niekas nėra tikra)}}: {list}. Išbandyta veiksnių: {n}.",
+  "insights.debrief.outcome.turns": "Lūžio taškai: {list}.",
+  "insights.debrief.outcome.players": "Daugiausia pridėjo pergalės tikimybės: {best}. Daugiausia prarado: {worst}. Pagal vietą: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, mažai raundų} other {}}",
+  "insights.outcome.turn": "raundas {round} ties {at}: {team} {kind, select, plant {bombos padėjimas} other {nukovimas}}{hasPlace, select, yes { ({place})} other {}} pakeitė jos šansą iš {before} į {after}{won, select, yes {, ir ji laimėjo raundą} no {, bet pralaimėjo raundą} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} per {rounds} raundų ({perRound} punktų per raundą, 95% nuo {lo} iki {hi}){small, select, yes {, mažai raundų} other {}}",
+  "insights.outcome.spot": "{team} vietoje {place} {wpa} per {n} dvikovų",
+  "insights.cast.kind.turning": "Lūžio taškas",
+  "insights.cast.say.turning": "{actor} nukauna {victim}: {team} šansas laimėti raundą keičiasi iš {fromPct} į {toPct}",
+  "insights.cast.result": "{result, select, won {- ir jie laimi raundą} lost {- bet jie pralaimi raundą} other {}}"
 }

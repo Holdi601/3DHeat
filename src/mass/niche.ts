@@ -19,15 +19,30 @@
  * the group it refines. Benjamini-Hochberg over every group evaluated; what
  * is kept also agrees in at least four of five folds of the matches and is
  * not a refinement that only repeats its parent.
+ *
+ * The `rounds` table (`roundsTable`) has the round's result as its target:
+ * each life's round on a map (its side, the part of the match, its vehicle -
+ * an operator, an agent -, the weapon it used most, the place it held
+ * longest, the buy, whether its side made the first kill). Each row is judged
+ * against its own side's win rate in its own match (a stratified expectation,
+ * as Mantel-Haenszel), so a niche is a group that wins more (or less) than the
+ * same side did in the same matches - never the map's or the side's balance.
+ * Its z is calibrated against the search run again on the results shuffled
+ * between the rounds of each side of each match (`NULL_RUNS` times): the
+ * spread of the null's z (Efron's empirical null) scales the real ones before
+ * their p and the false discovery rate. Ranked by the lift times the support
+ * (`wracc`), held by the evidence and the folds.
  */
 
 import { NOT_DRIVEN, type MassStore } from './store';
 import { ST_BINS, type PlaceMatch, type ScanFrame } from './scan';
-import { BANDS, GRID_KINDS } from './types';
+import { BANDS, GRID_KINDS, UR_STRIDE } from './types';
 import { VEHICLE_CLASSES } from '../data/canonical';
 import { pOfZ } from './scan';
 
 export const NICHE_FDR = 0.05;
+/** Searches on shuffled results a calibrated target's null is drawn from. */
+export const NULL_RUNS = 8;
 const MIN_N = 30;
 const MIN_MATCHES = 8;
 const PRIOR = 20;
@@ -38,7 +53,7 @@ const FOLDS = 5;
 const MIN_RATIO = 1.25;
 const NICHE_MAX = 60;
 
-export type NicheTarget = 'kd' | 'win' | 'death' | 'kph' | 'earn' | 'deathRate';
+export type NicheTarget = 'kd' | 'win' | 'death' | 'kph' | 'earn' | 'deathRate' | 'roundWin';
 
 export interface NicheCond {
   f: string;
@@ -74,6 +89,11 @@ export interface NicheFinding {
   folds: number;
   foldsAgree: number;
   score: number;
+  /** A calibrated target: the empirical null's scale the z was divided by. */
+  nullScale?: number;
+  /** Matches whose rows show it the most (for the drill-down), and a few of their rounds `[match, round]`. */
+  matchIds?: number[];
+  rounds?: [number, number][];
 }
 
 /** A table of rows: factor codes, the match a row is from, and targets as (k, n) columns. */
@@ -92,6 +112,13 @@ export interface NicheTable {
     type: 'share' | 'rate';
     k: Float64Array;
     n: Float64Array;
+    /** Expected successes per row (stratified): the residual is `k - e` instead of `k - n * p0`. */
+    e?: Float64Array;
+    /** Outcome units (a side's round) and the strata they are shuffled within (a side in a match), for the null. */
+    unit?: Int32Array;
+    stratum?: Int32Array;
+    /** Per row, its round number (for the drill-down). */
+    round?: Int32Array;
   }[];
 }
 
@@ -257,6 +284,71 @@ export function livesTable(s: MassStore, mask: Uint8Array): NicheTable {
   return b.done();
 }
 
+const BUYS = ['eco', 'force', 'full'];
+
+/** The part of a match a round number falls in: rounds 1-4, 5-8, ... (the halves' first rounds in their own). */
+const roundPhase = (n: number) => (n >= 1 ? `R${Math.floor((n - 1) / 4) * 4 + 1}–${Math.floor((n - 1) / 4) * 4 + 4}` : null);
+
+/**
+ * Every life's round of every match the mask keeps that says who won (the
+ * summaries' `outcome`), as rows of the `rounds` table: the round's result,
+ * judged against the side's own win rate in the match.
+ */
+export function roundsTable(s: MassStore, mask: Uint8Array): NicheTable {
+  const b = new NicheBuilder('rounds', ['map', 'side', 'phase', 'vehicle', 'weapon', 'place', 'buy', 'opening'], [{ id: 'roundWin', type: 'share' }], { place: ['map'] });
+  const unit: number[] = [];
+  const stratum: number[] = [];
+  const round: number[] = [];
+  const unitId = new Map<number, number>();
+  const MAX_RI = 4096;
+  for (let m = 0; m < mask.length; m++) {
+    const o = mask[m] ? s.outcome[m] : null;
+    if (!o || o.r.length < 6) continue;
+    const map = s.str(s.m.map.get(m)) || null;
+    const T = s.m.teams.get(m);
+    const side = (slot: number) => (slot >= 0 && slot < T ? s.str(s.t.name.a[s.m.team0.get(m) + slot]) : null);
+    for (let q = 0; q + UR_STRIDE - 1 < o.u.length; q += UR_STRIDE) {
+      const ri = o.u[q];
+      const slot = o.u[q + 1];
+      const sd = side(slot);
+      if (!sd) continue;
+      const first = o.r[ri * 3 + 2];
+      const veh = o.u[q + 2];
+      const wp = o.u[q + 3];
+      const pl = o.u[q + 4];
+      const buy = o.u[q + 5];
+      b.push(
+        m,
+        [map, sd, roundPhase(o.r[ri * 3]), veh >= 0 ? (o.vehicles[veh] ?? null) : null, wp >= 0 ? (o.weapons[wp] ?? null) : null, pl >= 0 ? (o.places[pl] ?? null) : null, buy >= 0 ? BUYS[buy] : null, first < 0 ? null : first === slot ? 'first kill' : 'first death'],
+        [[o.u[q + 6], 1]],
+      );
+      const uk = (m * MAX_RI + ri) * 8 + Math.min(7, slot);
+      let id = unitId.get(uk);
+      if (id === undefined) unitId.set(uk, (id = unitId.size));
+      unit.push(id);
+      stratum.push(m * 8 + Math.min(7, slot));
+      round.push(o.r[ri * 3]);
+    }
+  }
+  const t = b.done();
+  // Each side's win rate in its own match, its rows' expectation.
+  const T0 = t.targets[0];
+  const e = new Float64Array(t.rows);
+  const sum = new Map<number, [number, number]>();
+  for (let r = 0; r < t.rows; r++) {
+    const a = sum.get(stratum[r]) ?? [0, 0];
+    a[0] += T0.k[r];
+    a[1] += T0.n[r];
+    sum.set(stratum[r], a);
+  }
+  for (let r = 0; r < t.rows; r++) {
+    const [k, n] = sum.get(stratum[r])!;
+    e[r] = T0.n[r] * (n > 0 ? k / n : 0);
+  }
+  t.targets[0] = { ...T0, e, unit: Int32Array.from(unit), stratum: Int32Array.from(stratum), round: Int32Array.from(round) };
+  return t;
+}
+
 const K_KILL = GRID_KINDS.indexOf('kill');
 const K_DEATHS = new Set(['death', 'destroyed', 'crash'].map((k) => GRID_KINDS.indexOf(k as (typeof GRID_KINDS)[number])));
 const SECTORS = 4;
@@ -372,6 +464,10 @@ interface Eval {
   rows: Int32Array;
   K: number;
   N: number;
+  /** Expected successes (a stratified target), else `N * p0`. */
+  E: number;
+  /** The empirical null's scale its z was divided by (1: none). */
+  scale: number;
   z: number;
   p: number;
   ratio: number;
@@ -401,11 +497,13 @@ function search(t: NicheTable, ti: number, scratch: Float64Array, counted: { tes
     }
   if (!(N > 0) || !(K > 0)) return [];
   const p0 = K / N;
+  const Ex = T.e;
+  const exp = (r: number) => (Ex ? Ex[r] : T.n[r] * p0);
   const odds = (x: number) => x / Math.max(1e-9, 1 - x);
   const touched: number[] = [];
   const fk = new Float64Array(FOLDS),
     fn = new Float64Array(FOLDS);
-  const evaluate = (conds: [number, number][], rows: Int32Array, Ks: number, Ns: number): Eval | null => {
+  const evaluate = (conds: [number, number][], rows: Int32Array, Ks: number, Ns: number, Es: number): Eval | null => {
     if (Ns < (share ? MIN_N : 0) || (!share && Ns * p0 < 15) || Ns >= N * 0.95) return null;
     // None or all of it: the data does not record the outcome for this group (deaths of a slot that never logs one), not a niche.
     if (Ks <= 0 || (share && Ks >= Ns)) return null;
@@ -418,9 +516,9 @@ function search(t: NicheTable, ti: number, scratch: Float64Array, counted: { tes
       if (T.k[r] > 0) recorded++;
       const m = t.match[r];
       if (scratch[m] === 0) touched.push(m);
-      scratch[m] += T.k[r] - T.n[r] * p0 + 1e-300;
+      scratch[m] += T.k[r] - exp(r) + 1e-300;
       fk[fold(m)] += T.k[r];
-      fn[fold(m)] += T.n[r];
+      fn[fold(m)] += Ex ? Ex[r] : T.n[r];
     }
     let v = 0;
     for (const m of touched) {
@@ -433,12 +531,22 @@ function search(t: NicheTable, ti: number, scratch: Float64Array, counted: { tes
     // Earnings most of whose lives record none: the data does not keep them for it.
     if (T.id === 'earn' && recorded < rows.length * 0.25) return null;
     v *= matches / (matches - 1);
-    const naive = share ? Ns * p0 * (1 - p0) : Ns * p0;
-    const z = ((Ks - Ns * p0) / Math.sqrt(Math.max(v, naive))) * Math.sqrt(1 - 2 / Math.max(3, matches - 1));
+    const pe = Es / Ns;
+    const naive = share ? Ns * pe * (1 - pe) : Ns * p0;
+    const z = ((Ks - Es) / Math.sqrt(Math.max(v, naive, 1e-9))) * Math.sqrt(1 - 2 / Math.max(3, matches - 1));
     const Kr = K - Ks,
       Nr = N - Ns;
     let ratio: number, shrunk: number, lo: number, hi: number;
-    if (share) {
+    if (share && Ex) {
+      // Against its own expectation: the odds of its wins over the odds its matches and sides gave it.
+      const pc = Math.min(1 - 1e-6, Math.max(1e-6, pe));
+      const ps = Math.min(1 - 0.5 / Ns, Math.max(0.5 / Ns, Ks / Ns));
+      ratio = odds(ps) / odds(pc);
+      shrunk = odds((Ks + PRIOR * pc) / (Ns + PRIOR)) / odds(pc);
+      const se = Math.sqrt(Math.max(v, naive) / Math.max(1e-9, naive)) * Math.sqrt(1 / Math.max(0.5, Ks) + 1 / Math.max(0.5, Ns - Ks));
+      lo = ratio * Math.exp(-1.96 * se);
+      hi = ratio * Math.exp(1.96 * se);
+    } else if (share) {
       const pr = Math.min(1 - 1e-6, Math.max(1e-6, Kr / Math.max(1e-9, Nr)));
       const ps = Math.min(1 - 0.5 / Ns, Math.max(0.5 / Ns, Ks / Ns));
       ratio = odds(ps) / odds(pr);
@@ -457,11 +565,11 @@ function search(t: NicheTable, ti: number, scratch: Float64Array, counted: { tes
     }
     let folds = 0,
       agree = 0;
-    const dir = Math.sign(Ks - Ns * p0);
+    const dir = Math.sign(Ks - Es);
     for (let f = 0; f < FOLDS; f++) {
       if (!(fn[f] > 0)) continue;
       folds++;
-      if (Math.sign(fk[f] - fn[f] * p0) === dir) agree++;
+      if (Math.sign(fk[f] - (Ex ? fn[f] : fn[f] * p0)) === dir) agree++;
     }
     const l = Math.min(Math.log(4), Math.abs(Math.log(Math.max(1e-9, shrunk))));
     return {
@@ -469,6 +577,8 @@ function search(t: NicheTable, ti: number, scratch: Float64Array, counted: { tes
       rows,
       K: Ks,
       N: Ns,
+      E: Es,
+      scale: 1,
       z,
       p: pOfZ(z),
       ratio,
@@ -499,13 +609,15 @@ function search(t: NicheTable, ti: number, scratch: Float64Array, counted: { tes
       const code = t.codes[f];
       const cnt = new Int32Array(L);
       const kk = new Float64Array(L),
-        nn = new Float64Array(L);
+        nn = new Float64Array(L),
+        ee = new Float64Array(L);
       for (const r of g.rows) {
         const c = code[r];
         if (c < 0) continue;
         cnt[c]++;
         kk[c] += T.k[r];
         nn[c] += T.n[r];
+        ee[c] += exp(r);
       }
       // Only levels with the support worth testing get their rows gathered.
       const want: number[] = [];
@@ -523,7 +635,7 @@ function search(t: NicheTable, ti: number, scratch: Float64Array, counted: { tes
         if (c >= 0 && ok[c]) buf[fill[c]++] = r;
       }
       for (const c of want) {
-        const e = evaluate([...g.conds, [f, c]], buf.subarray(start[c], start[c + 1]), kk[c], nn[c]);
+        const e = evaluate([...g.conds, [f, c]], buf.subarray(start[c], start[c + 1]), kk[c], nn[c], ee[c]);
         if (e) out.push(e);
       }
     }
@@ -575,6 +687,29 @@ function toFinding(t: NicheTable, ti: number, e: Eval, base: number): NicheFindi
   }));
   const value = e.N > 0 ? e.K / e.N : 0;
   const r3 = (v: number) => (Number.isFinite(v) ? Math.round(v * 1000) / 1000 : v);
+  // A stratified target's base is the group's own expectation: what its matches and sides gave it.
+  if (T.e && e.N > 0) base = e.E / e.N;
+  let matchIds: number[] | undefined;
+  let rounds: [number, number][] | undefined;
+  if (T.e && e.rows.length) {
+    // Where it showed: the matches with the largest residual its way, and their rounds that did.
+    const dir = e.K >= e.E ? 1 : -1;
+    const by = new Map<number, number>();
+    for (const r of e.rows) by.set(t.match[r], (by.get(t.match[r]) ?? 0) + dir * (T.k[r] - T.e[r]));
+    matchIds = [...by].filter((x) => x[1] > 0).sort((a, b) => b[1] - a[1]).slice(0, 60).map((x) => x[0]);
+    if (T.round) {
+      const seen = new Set<string>();
+      rounds = [];
+      for (const r of e.rows) {
+        if (rounds.length >= 60) break;
+        if ((dir > 0 ? T.k[r] : T.n[r] - T.k[r]) <= 0) continue;
+        const key = `${t.match[r]}:${T.round[r]}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        rounds.push([t.match[r], T.round[r]]);
+      }
+    }
+  }
   return {
     id: `${t.name}:${T.id}:${conds.map((c) => `${c.f}=${c.v}`).join('&')}`,
     table: t.name,
@@ -599,7 +734,79 @@ function toFinding(t: NicheTable, ti: number, e: Eval, base: number): NicheFindi
     folds: e.folds,
     foldsAgree: e.agree,
     score: 0,
+    ...(matchIds ? { matchIds } : {}),
+    ...(rounds ? { rounds } : {}),
   };
+}
+
+/** A copy of a calibrated target with its results shuffled between the units of each stratum. */
+function shuffled(t: NicheTable, ti: number, seed: number): NicheTable {
+  const T = t.targets[ti];
+  const unit = T.unit!;
+  const stratum = T.stratum!;
+  // Each unit's result (its rows share it) and the units of each stratum.
+  const res = new Map<number, number>();
+  const of = new Map<number, number[]>();
+  for (let r = 0; r < t.rows; r++) {
+    if (!(T.n[r] > 0)) continue;
+    const u = unit[r];
+    if (!res.has(u)) {
+      res.set(u, T.k[r] / T.n[r]);
+      (of.get(stratum[r]) ?? of.set(stratum[r], []).get(stratum[r])!).push(u);
+    }
+  }
+  let a = seed >>> 0;
+  const rnd = () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let x = a;
+    x = Math.imul(x ^ (x >>> 15), x | 1);
+    x ^= x + Math.imul(x ^ (x >>> 7), x | 61);
+    return ((x ^ (x >>> 14)) >>> 0) / 4294967296;
+  };
+  const to = new Map<number, number>();
+  for (const us of of.values()) {
+    const v = us.map((u) => res.get(u)!);
+    for (let i = v.length - 1; i > 0; i--) {
+      const j = Math.floor(rnd() * (i + 1));
+      [v[i], v[j]] = [v[j], v[i]];
+    }
+    us.forEach((u, i) => to.set(u, v[i]));
+  }
+  const k = new Float64Array(t.rows);
+  for (let r = 0; r < t.rows; r++) k[r] = T.n[r] > 0 ? (to.get(unit[r]) ?? 0) * T.n[r] : 0;
+  const targets = t.targets.map((x, i) => (i === ti ? { ...x, k } : x));
+  return { ...t, targets };
+}
+
+/**
+ * The empirical null of a calibrated target: the search on shuffled results, every group it
+ * tried; the scale its |z| show beyond a standard normal (1 at least), from the middle and
+ * from the tail, the larger - by the number of conditions, as a refinement of a group the beam
+ * kept for its large z inherits some of it (the deeper the group, the more selected).
+ */
+export function nullScale(t: NicheTable, ti: number, matches: number, runs = NULL_RUNS, base?: [number, number][], one = false): number[] {
+  const scratch = new Float64Array(Math.max(1, matches));
+  const byDepth: number[][] = [];
+  for (let k = 0; k < runs; k++) {
+    const counted = { tests: 0 };
+    for (const e of search(shuffled(t, ti, 1000 + k * 7919), ti, scratch, counted, base, one)) (byDepth[e.conds.length - 1] ??= []).push(Math.abs(e.z));
+  }
+  const scale = (zs: number[]) => {
+    zs.sort((a, b) => a - b);
+    const q = (f: number) => zs[Math.min(zs.length - 1, Math.floor(f * zs.length))];
+    return Math.max(1, q(0.5) / 0.6745, q(0.99) / 2.5758);
+  };
+  const all = byDepth.flat();
+  const whole = all.length >= 50 ? scale(all) : 1;
+  const out: number[] = [];
+  let last = 1;
+  for (let d = 0; d < Math.max(DEPTH + (base?.length ?? 0), byDepth.length); d++) {
+    const zs = byDepth[d] ?? [];
+    // Too few groups at a depth: the whole pool's, never below the shallower depth's.
+    last = Math.max(last, zs.length >= 50 ? scale(zs) : whole);
+    out.push(last);
+  }
+  return out;
 }
 
 export interface NicheRun {
@@ -607,6 +814,8 @@ export interface NicheRun {
   tests: number;
   tables: { name: string; rows: number }[];
   ms: number;
+  /** Calibrated targets (`table:target`) and the empirical null's largest scale of their z. */
+  nulls?: Record<string, number>;
 }
 
 /** The beam search over every table and target: Benjamini-Hochberg over all groups evaluated, the practical and stable ones kept, refinements that repeat their parent dropped. */
@@ -621,6 +830,7 @@ export function discoverNiches(tables: NicheTable[], matches: number, fdr = NICH
     base: number;
     N: number;
   }[] = [];
+  const scales = new Map<string, number>();
   for (const t of tables)
     t.targets.forEach((T, ti) => {
       let K = 0,
@@ -630,7 +840,19 @@ export function discoverNiches(tables: NicheTable[], matches: number, fdr = NICH
           K += T.k[r];
           N += T.n[r];
         }
-      for (const e of search(t, ti, scratch, counted)) if (e.p < 0.01) cands.push({ t, ti, e, base: N > 0 ? K / N : 0, N });
+      // A calibrated target: its z scaled by the empirical null of the same search on shuffled results.
+      const scaleBy = T.unit && T.stratum ? nullScale(t, ti, matches) : null;
+      if (scaleBy) scales.set(`${t.name}:${T.id}`, Math.max(...scaleBy));
+      for (const e of search(t, ti, scratch, counted)) {
+        const scale = scaleBy ? scaleBy[Math.min(scaleBy.length - 1, e.conds.length - 1)] : 1;
+        if (scale !== 1) {
+          e.scale = scale;
+          e.z /= scale;
+          e.p = pOfZ(e.z);
+          e.quality = Math.min(Math.log(4), Math.abs(Math.log(Math.max(1e-9, e.shrunk)))) * (1 - Math.exp(-Math.abs(e.z) / 3));
+        }
+        if (e.p < 0.01) cands.push({ t, ti, e, base: N > 0 ? K / N : 0, N });
+      }
     });
   // Benjamini-Hochberg: the groups not kept as candidates count as p = 1.
   const m = Math.max(counted.tests, cands.length);
@@ -673,9 +895,17 @@ export function discoverNiches(tables: NicheTable[], matches: number, fdr = NICH
     if (repeats) continue;
     keptConds.push({ key, set, dir: f.dir, shrunk: f.shrunk });
     f.q = q[i];
-    f.wracc = Math.round((e.N / N) * (f.value - base) * 1e6) / 1e6;
-    const l = Math.min(Math.log(4), Math.abs(Math.log(Math.max(1e-9, f.shrunk))));
-    f.score = Math.round((l / (l + Math.log(3))) * Math.min(1, -Math.log10(Math.max(1e-300, f.q)) / 6) * (0.5 + (0.5 * f.foldsAgree) / Math.max(1, f.folds)) * 1000) / 1000;
+    f.wracc = Math.round((e.N / N) * (f.value - f.base) * 1e6) / 1e6;
+    if (scales.has(`${t.name}:${f.target}`)) f.nullScale = Math.round(e.scale * 1000) / 1000;
+    const evidence = Math.min(1, -Math.log10(Math.max(1e-300, f.q)) / 6) * (0.5 + (0.5 * f.foldsAgree) / Math.max(1, f.folds));
+    if (t.targets[ti].e) {
+      // Lift times support: the points above (below) its expectation, by the square root of its rounds.
+      const ls = Math.abs(f.value - f.base) * Math.sqrt(e.N);
+      f.score = Math.round((ls / (ls + 1.5)) * evidence * 1000) / 1000;
+    } else {
+      const l = Math.min(Math.log(4), Math.abs(Math.log(Math.max(1e-9, f.shrunk))));
+      f.score = Math.round((l / (l + Math.log(3))) * evidence * 1000) / 1000;
+    }
     out.push(f);
     if (out.length >= NICHE_MAX) break;
   }
@@ -685,6 +915,7 @@ export function discoverNiches(tables: NicheTable[], matches: number, fdr = NICH
     tests: m,
     tables: tables.map((t) => ({ name: t.name, rows: t.rows })),
     ms: Math.round(performance.now() - t0),
+    ...(scales.size ? { nulls: Object.fromEntries(scales) } : {}),
   };
 }
 
@@ -711,6 +942,16 @@ export function nicheChildren(t: NicheTable, target: NicheTarget, base: NicheCon
   const counted = { tests: 0 };
   const scratch = new Float64Array(Math.max(1, matches));
   const evals = search(t, ti, scratch, counted, conds, true);
+  // A calibrated target: the same one-step refinement on shuffled results scales the z.
+  if (T.unit && T.stratum) {
+    const by = nullScale(t, ti, matches, NULL_RUNS, conds, true);
+    const scale = by[Math.min(by.length - 1, conds.length)];
+    for (const e of evals) {
+      e.scale = scale;
+      e.z /= scale;
+      e.p = pOfZ(e.z);
+    }
+  }
   const order = evals.map((_, i) => i).sort((a, b) => evals[a].p - evals[b].p);
   const children = evals.map((e) => toFinding(t, ti, e, p0));
   let run = 1;
@@ -730,6 +971,8 @@ export function nicheChildren(t: NicheTable, target: NicheTarget, base: NicheCon
     let k = 0,
       n = 0;
     for (let r = 0; r < t.rows; r++) if (T.n[r] > 0 && conds.every(([f, c]) => t.codes[f][r] === c)) ((k += T.k[r]), (n += T.n[r]));
+    let ex = 0;
+    if (T.e) for (let r = 0; r < t.rows; r++) if (T.n[r] > 0 && conds.every(([f, c]) => t.codes[f][r] === c)) ex += T.e[r];
     baseF = {
       ...toFinding(
         t,
@@ -739,6 +982,8 @@ export function nicheChildren(t: NicheTable, target: NicheTarget, base: NicheCon
           rows: new Int32Array(0),
           K: k,
           N: n,
+          E: T.e ? ex : n * p0,
+          scale: 1,
           z: 0,
           p: 1,
           ratio: NaN,

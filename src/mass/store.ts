@@ -7,7 +7,7 @@
  */
 
 import { binomTwoSided, bhAdjust, wilson } from '../insights/stats';
-import { GRID_KINDS, PHASE_BINS, type SummaryHead } from './types';
+import { GRID_KINDS, PHASE_BINS, type OutcomeSection, type SummaryHead } from './types';
 import type { ManeuverSection } from '../insights/maneuver/summary';
 import type { CqbCounts } from '../insights/cqb/finish';
 import type { MarkCounts } from './marks';
@@ -122,6 +122,8 @@ export class MassStore {
   readonly cqb: (CqbCounts | null)[] = [];
   /** Per match, its marks on the level per surface (`marks.ts`); null where its summary has none. */
   readonly marks: (MarkCounts | null)[] = [];
+  /** Per match, its rounds and their results unit by unit (`types.ts` OutcomeSection); null where its summary has none. */
+  readonly outcome: (OutcomeSection | null)[] = [];
 
   get matches(): number {
     return this.m.game.n;
@@ -163,6 +165,7 @@ export class MassStore {
     this.maneuvers.push(h.maneuvers ?? null);
     this.cqb.push(h.cqb ?? null);
     this.marks.push(h.marks ?? null);
+    this.outcome.push(h.outcome ?? null);
     const ev = (e: Record<string, number>, ...k: string[]) => k.reduce((s, x) => s + (e[x] ?? 0), 0);
     for (const tm of h.teams) {
       const T = this.t;

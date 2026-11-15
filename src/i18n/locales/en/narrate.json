@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} climbs back from {deficit} down and takes the lead.",
   "insights.cast.say.standout": "{actor} stands out among {class}: {kills} kills where the average is {mean}.",
   "insights.cast.say.struggle": "A hard match for {actor}: {kills} kills and {deaths} deaths, where {class} average {mean} kills.",
-  "insights.cast.say.longRange": "{actor} hits {other} from {distance} away."
+  "insights.cast.say.longRange": "{actor} hits {other} from {distance} away.",
+  "insights.debrief.outcome.score": "{a} won {wa} and {b} won {wb} of {n} rounds with a known result ({a}: {pct}, 95% {lo} to {hi}). {model, select, fitted {The win probabilities come from a model fitted to these rounds.} other {The win probabilities come from a fixed prior model: too few rounds to fit one.}}",
+  "insights.debrief.outcome.factors": "What separated won from lost rounds{sure, select, yes {} other { (none of it certain yet)}}: {list}. {n} factors tried.",
+  "insights.debrief.outcome.turns": "Turning points: {list}.",
+  "insights.debrief.outcome.players": "Most win probability added: {best}. Most lost: {worst}. By place: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, few rounds} other {}}",
+  "insights.outcome.turn": "round {round} at {at}, a {kind, select, plant {plant} other {kill}} by {team}{hasPlace, select, yes { at {place}} other {}} moved its chance from {before} to {after}{won, select, yes {, and it took the round} no {, but it lost the round} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} over {rounds} rounds ({perRound} points a round, 95% {lo} to {hi}){small, select, yes {, few rounds} other {}}",
+  "insights.outcome.spot": "{team} at {place} {wpa} over {n} duels",
+  "insights.cast.kind.turning": "Turning point",
+  "insights.cast.say.turning": "{actor} takes down {victim}: {team}'s chance to win the round goes from {fromPct} to {toPct}",
+  "insights.cast.result": "{result, select, won {- and they take the round} lost {- but they lose the round} other {}}"
 }

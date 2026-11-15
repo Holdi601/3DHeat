@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Po operaterju",
   "mass.surfaces.byClass": "Po razredu orožja",
   "mass.surfaces.heat": "Kje na površini",
-  "mass.surfaces.load": "Naloži njene tekme ({count})"
+  "mass.surfaces.load": "Naloži njene tekme ({count})",
+  "mass.say.place.winSideUp": "{map}: stran {team} dobi več svojih krogov, ko je tu: dobljenih {value} od {rounds}, v primerjavi z {base}, pričakovanimi iz njene lastne stopnje v istih tekmah (obeti {ratio}×; držano v {held} tekmah)",
+  "mass.say.place.winSideDown": "{map}: stran {team} dobi manj svojih krogov, ko je tu: dobljenih {value} od {rounds}, v primerjavi z {base}, pričakovanimi iz njene lastne stopnje v istih tekmah (obeti 1/{ratio}; držano v {held} tekmah)",
+  "mass.niches.table.rounds": "Krogi",
+  "mass.niches.target.roundWin": "Zmaga v krogu",
+  "mass.niches.factor.weapon": "Orožje",
+  "mass.niches.factor.place": "Mesto",
+  "mass.niches.factor.buy": "Nakup",
+  "mass.niches.factor.opening": "Prvi kill",
+  "mass.say.niche.roundWinUp": "{group}: dobi {value} od {n} krogov, v primerjavi z {base}, pričakovanimi od istih strani v istih tekmah (obeti {ratio}×; {matches} tekem)",
+  "mass.say.niche.roundWinDown": "{group}: dobi le {value} od {n} krogov, v primerjavi z {base}, pričakovanimi od istih strani v istih tekmah (obeti 1/{ratio}; {matches} tekem)"
 }

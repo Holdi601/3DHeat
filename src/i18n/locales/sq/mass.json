@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Sipas operatorit",
   "mass.surfaces.byClass": "Sipas klasës së armës",
   "mass.surfaces.heat": "Ku në sipërfaqe",
-  "mass.surfaces.load": "Ngarko ndeshjet e saj ({count})"
+  "mass.surfaces.load": "Ngarko ndeshjet e saj ({count})",
+  "mass.say.place.winSideUp": "{map}: ana {team} fiton më shumë nga raundet e saj kur është këtu: {value} nga {rounds} të fituara, kundrejt {base} të pritura nga shkalla e vet në të njëjtat ndeshje (gjasat {ratio}×; mbajtur në {held} ndeshje)",
+  "mass.say.place.winSideDown": "{map}: ana {team} fiton më pak nga raundet e saj kur është këtu: {value} nga {rounds} të fituara, kundrejt {base} të pritura nga shkalla e vet në të njëjtat ndeshje (gjasat 1/{ratio}; mbajtur në {held} ndeshje)",
+  "mass.niches.table.rounds": "Raunde",
+  "mass.niches.target.roundWin": "Fitorja e raundit",
+  "mass.niches.factor.weapon": "Arma",
+  "mass.niches.factor.place": "Vendi",
+  "mass.niches.factor.buy": "Blerja",
+  "mass.niches.factor.opening": "Vrasja e parë",
+  "mass.say.niche.roundWinUp": "{group}: fiton {value} nga {n} raunde, kundrejt {base} të pritura nga të njëjtat ana në të njëjtat ndeshje (gjasat {ratio}×; {matches} ndeshje)",
+  "mass.say.niche.roundWinDown": "{group}: fiton vetëm {value} nga {n} raunde, kundrejt {base} të pritura nga të njëjtat ana në të njëjtat ndeshje (gjasat 1/{ratio}; {matches} ndeshje)"
 }

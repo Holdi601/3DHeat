@@ -51,5 +51,6 @@
   "lens.metric.risk": "Riosca tar éis caillteanas",
   "lens.metric.streaks": "Sraitheanna (lámh the)",
   "lens.metric.buy": "Comhaontú ceannaigh",
-  "lens.metric.suppression": "Cosc le tine"
+  "lens.metric.suppression": "Cosc le tine",
+  "lens.metric.cqbOutcome": "Cad a chinn na babhtaí"
 }

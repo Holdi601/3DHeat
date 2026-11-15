@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Operaattorin mukaan",
   "mass.surfaces.byClass": "Aseluokan mukaan",
   "mass.surfaces.heat": "Missä pinnalla",
-  "mass.surfaces.load": "Lataa sen ottelut ({count})"
+  "mass.surfaces.load": "Lataa sen ottelut ({count})",
+  "mass.say.place.winSideUp": "{map}: puoli {team} voittaa suuremman osan kierroksistaan, kun se on täällä: {value} {rounds} kierroksesta voitettu, kun odotus oli {base} sen omasta tasosta samoissa otteluissa (kerroin {ratio}×; hallussa {held} ottelussa)",
+  "mass.say.place.winSideDown": "{map}: puoli {team} voittaa pienemmän osan kierroksistaan, kun se on täällä: {value} {rounds} kierroksesta voitettu, kun odotus oli {base} sen omasta tasosta samoissa otteluissa (kerroin 1/{ratio}; hallussa {held} ottelussa)",
+  "mass.niches.table.rounds": "Kierrokset",
+  "mass.niches.target.roundWin": "Kierroksen voitto",
+  "mass.niches.factor.weapon": "Ase",
+  "mass.niches.factor.place": "Paikka",
+  "mass.niches.factor.buy": "Osto",
+  "mass.niches.factor.opening": "Ensimmäinen tappo",
+  "mass.say.niche.roundWinUp": "{group}: voittaa {value} {n} kierroksesta, kun odotus oli {base} samoilta puolilta samoissa otteluissa (kerroin {ratio}×; {matches} ottelua)",
+  "mass.say.niche.roundWinDown": "{group}: voittaa vain {value} {n} kierroksesta, kun odotus oli {base} samoilta puolilta samoissa otteluissa (kerroin 1/{ratio}; {matches} ottelua)"
 }

@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} vdes {ratio}× më shpesh për kohë se lojtarët e krahasueshëm ({deaths} vdekje në {timeSecs})",
   "insights.say.players.durable": "{player} vdes {ratio}× më rrallë për kohë se lojtarët e krahasueshëm ({deaths} vdekje në {timeSecs})",
   "insights.say.flow.choke": "Grykë: {crossings} kalime, {ratio}× terreni përreth; {deaths} vdekje këtu",
-  "insights.say.flow.flank": "Rrugë krahu: kalimi këtu çon në {ratio}× më shumë vrasje brenda {approachSecs} se rrugët e tjera, megjithatë vetëm {sharePct} e kalimeve e përdorin"
+  "insights.say.flow.flank": "Rrugë krahu: kalimi këtu çon në {ratio}× më shumë vrasje brenda {approachSecs} se rrugët e tjera, megjithatë vetëm {sharePct} e kalimeve e përdorin",
+  "insights.det.outcome": "Çfarë vendosi raundet",
+  "insights.say.outcome.opening": "{team}: u fituan {withPct} nga {n1} raunde, në të cilat ana fitoi duelin hapës, kundrejt {withoutPct} nga {n2}, kur e humbi ({diff} pikë, 95% nga {lo} në {hi})",
+  "insights.say.outcome.buy": "Me blerjen më të mirë {team}: u fituan {withPct} nga {n1} raunde, kundrejt {withoutPct} nga {n2} me më të keqen ({diff} pikë, 95% nga {lo} në {hi})",
+  "insights.say.outcome.traded": "{team}: u fituan {withPct} nga {n1} raunde, në të cilat vdekja e saj e parë u hakmor, kundrejt {withoutPct} nga {n2}, kur jo ({diff} pikë, 95% nga {lo} në {hi})",
+  "insights.say.outcome.plant": "{team}: u fituan {withPct} nga {n1} raunde, në të cilat ana vendosi bombën, kundrejt {withoutPct} nga {n2}, pa vendosje ({diff} pikë, 95% nga {lo} në {hi})",
+  "insights.say.outcome.utility": "{team}: u fituan {withPct} nga {n1} raunde, në të cilat ana përdori më shumë granata se zakonisht, kundrejt {withoutPct} nga {n2}, me më pak ({diff} pikë, 95% nga {lo} në {hi})",
+  "insights.say.outcome.fast": "{team}: u fituan {withPct} nga {n1} raunde, me kontaktin e parë para {fastSecs}, kundrejt {withoutPct} nga {n2}, me një më të vonë ({diff} pikë, 95% nga {lo} në {hi})",
+  "insights.say.outcome.held": "{team}: u fituan {withPct} nga {n1} raunde, në të cilat ana mbajti {place}, kundrejt {withoutPct} nga {n2}, pa të ({diff} pikë, 95% nga {lo} në {hi})",
+  "insights.say.outcome.early": "{team}: u fituan {withPct} nga {n1} raunde, në të cilat ana arriti te {place} në 25 s e para, kundrejt {withoutPct} nga {n2}, përndryshe ({diff} pikë, 95% nga {lo} në {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) shtoi {wpa} raunde probabilitet fitoreje në {rounds} raunde ({perRound} pikë për raund, 95% nga {lo} në {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) humbi {wpa} raunde probabilitet fitoreje në {rounds} raunde ({perRound} pikë për raund, 95% nga {lo} në {hi})"
 }

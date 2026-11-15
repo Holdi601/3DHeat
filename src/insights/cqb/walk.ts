@@ -135,6 +135,8 @@ export const AWAY = 30;
 export const NEAR = 12;
 /** Seconds after entering a place a death counts against the entry (the fatal funnel). */
 export const FUNNEL_SECS = 2.5;
+/** Seconds from a round's start within which a place reached counts as an early position (`outcome.ts`). */
+export const EARLY_SECS = 25;
 /** Seconds between clock snapshots of a round. */
 export const CLOCK = 10;
 /** Teams a snapshot keeps alive counts for. */
@@ -245,6 +247,11 @@ export interface Round {
   stack: Int8Array | null;
   /** Clutches: team -> [person, snapshot] when the team first came down to one. */
   clutch: Map<number, [number, number]>;
+  /** Utility thrown in the round, by team (`round outcome`, `outcome.ts`). */
+  utilN: Float64Array;
+  /** Seconds each team spent at each named place, `place * MAX_TEAMS + team`; and the places it reached in the first `EARLY_SECS`. */
+  placeT: Map<number, number>;
+  placeE: Set<number>;
 }
 
 export interface Duel {
@@ -429,6 +436,9 @@ function roundOf(w: CqbWalk, s: number, t: number): Round {
       pendingKills: [],
       stack: null,
       clutch: new Map(),
+      utilN: new Float64Array(MAX_TEAMS),
+      placeT: new Map(),
+      placeE: new Set(),
     };
     w.rounds.set(s, r);
     w.order.push(r);
@@ -820,6 +830,12 @@ export function stepWalk(w: CqbWalk, rows: CqbRows): void {
           if (s.place !== -1) entryOf(w, s, pl, t);
           s.place = pl;
         }
+        // Where each side stood in the round, by named place (the outcome's positions held).
+        if (rows.place && pl >= 0 && s.team >= 0 && s.team < MAX_TEAMS) {
+          const key = pl * MAX_TEAMS + s.team;
+          if (dt > 0) r.placeT.set(key, (r.placeT.get(key) ?? 0) + dt);
+          if (t - r.start <= EARLY_SECS) r.placeE.add(key);
+        }
         // Lurking: far from every alive teammate.
         if (dt > 0 && s.team >= 0 && s.team < MAX_TEAMS) {
           const near = nearestMate(r, s, t, upm);
@@ -898,7 +914,10 @@ export function stepWalk(w: CqbWalk, rows: CqbRows): void {
         const u: Utility = { t, x: rows.x[i], z: rows.z[i], team: s.team, kind, thrower: person };
         r.util.push(u);
         if (r.util.length > 64) r.util.splice(0, r.util.length - 64);
-        if (s.team >= 0 && s.team < MAX_TEAMS) w.utilCount[(kind - K_FLASH) * MAX_TEAMS + s.team]++;
+        if (s.team >= 0 && s.team < MAX_TEAMS) {
+          w.utilCount[(kind - K_FLASH) * MAX_TEAMS + s.team]++;
+          r.utilN[s.team]++;
+        }
         if (kind === K_FLASH) w.flashes.push({ round: r.id, team: s.team, thrower: person, duels: [] });
         break;
       }

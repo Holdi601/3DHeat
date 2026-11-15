@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "No Operator",
   "mass.surfaces.byClass": "No Waffeklass",
   "mass.surfaces.heat": "Wou op der Fläch",
-  "mass.surfaces.load": "Hir Matcher lueden ({count})"
+  "mass.surfaces.load": "Hir Matcher lueden ({count})",
+  "mass.say.place.winSideUp": "{map}: d’Säit {team} gewënnt méi vu senge Ronnen, wann si hei ass: {value} vun {rounds} gewonnen, géint {base} erwaart aus hirer eegener Quote an deene selwechte Matcher (Odds {ratio}×; gehalen a {held} Matcher)",
+  "mass.say.place.winSideDown": "{map}: d’Säit {team} gewënnt manner vu senge Ronnen, wann si hei ass: {value} vun {rounds} gewonnen, géint {base} erwaart aus hirer eegener Quote an deene selwechte Matcher (Odds 1/{ratio}; gehalen a {held} Matcher)",
+  "mass.niches.table.rounds": "Ronnen",
+  "mass.niches.target.roundWin": "Ronnesiege",
+  "mass.niches.factor.weapon": "Waff",
+  "mass.niches.factor.place": "Plaz",
+  "mass.niches.factor.buy": "Kaf",
+  "mass.niches.factor.opening": "Éischte Kill",
+  "mass.say.niche.roundWinUp": "{group}: gewënnt {value} vun {n} Ronnen, géint {base} erwaart vun deene selwechte Säiten an deene selwechte Matcher (Odds {ratio}×; {matches} Matcher)",
+  "mass.say.niche.roundWinDown": "{group}: gewënnt just {value} vun {n} Ronnen, géint {base} erwaart vun deene selwechte Säiten an deene selwechte Matcher (Odds 1/{ratio}; {matches} Matcher)"
 }

@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} kuolee ajassa {ratio}× niin usein kuin vertailukelpoiset pelaajat ({deaths} kuolemaa {timeSecs} aikana)",
   "insights.say.players.durable": "{player} kuolee ajassa {ratio}× harvemmin kuin vertailukelpoiset pelaajat ({deaths} kuolemaa {timeSecs} aikana)",
   "insights.say.flow.choke": "Pullonkaula: {crossings} ylitystä, {ratio}× ympäröivään maastoon verrattuna; {deaths} kuolemaa täällä",
-  "insights.say.flow.flank": "Sivustareitti: ylitys täältä tuottaa {approachSecs} sisällä {ratio}× tappoja muihin reitteihin verrattuna, mutta vain {sharePct} ylityksistä käyttää sitä"
+  "insights.say.flow.flank": "Sivustareitti: ylitys täältä tuottaa {approachSecs} sisällä {ratio}× tappoja muihin reitteihin verrattuna, mutta vain {sharePct} ylityksistä käyttää sitä",
+  "insights.det.outcome": "Mikä ratkaisi kierrokset",
+  "insights.say.outcome.opening": "{team}: voitettiin {withPct} {n1} kierroksesta, joissa puoli voitti avauskaksintaistelun, kun taas {withoutPct} {n2} kierroksesta, kun se hävisi sen ({diff} pistettä, 95% väliltä {lo}–{hi})",
+  "insights.say.outcome.buy": "Paremmalla ostolla {team}: voitettiin {withPct} {n1} kierroksesta, kun taas {withoutPct} {n2} kierroksesta huonommalla ({diff} pistettä, 95% väliltä {lo}–{hi})",
+  "insights.say.outcome.traded": "{team}: voitettiin {withPct} {n1} kierroksesta, joissa sen ensimmäinen kuolema kostettiin, kun taas {withoutPct} {n2} kierroksesta, kun ei kostettu ({diff} pistettä, 95% väliltä {lo}–{hi})",
+  "insights.say.outcome.plant": "{team}: voitettiin {withPct} {n1} kierroksesta, joissa puoli asetti pommin, kun taas {withoutPct} {n2} kierroksesta, ilman asetusta ({diff} pistettä, 95% väliltä {lo}–{hi})",
+  "insights.say.outcome.utility": "{team}: voitettiin {withPct} {n1} kierroksesta, joissa puoli käytti tavallista enemmän utilityä, kun taas {withoutPct} {n2} kierroksesta, vähemmällä ({diff} pistettä, 95% väliltä {lo}–{hi})",
+  "insights.say.outcome.fast": "{team}: voitettiin {withPct} {n1} kierroksesta, joissa ensimmäinen kontakti tuli ennen {fastSecs}, kun taas {withoutPct} {n2} kierroksesta, myöhäisemmällä ({diff} pistettä, 95% väliltä {lo}–{hi})",
+  "insights.say.outcome.held": "{team}: voitettiin {withPct} {n1} kierroksesta, joissa puoli piti paikkaa {place}, kun taas {withoutPct} {n2} kierroksesta, ilman sitä ({diff} pistettä, 95% väliltä {lo}–{hi})",
+  "insights.say.outcome.early": "{team}: voitettiin {withPct} {n1} kierroksesta, joissa puoli pääsi paikkaan {place} ensimmäisten 25 s aikana, kun taas {withoutPct} {n2} kierroksesta, muuten ({diff} pistettä, 95% väliltä {lo}–{hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) lisäsi {wpa} kierroksen verran voittotodennäköisyyttä {rounds} kierroksella ({perRound} pistettä kierrosta kohti, 95% väliltä {lo}–{hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) menetti {wpa} kierroksen verran voittotodennäköisyyttä {rounds} kierroksella ({perRound} pistettä kierrosta kohti, 95% väliltä {lo}–{hi})"
 }

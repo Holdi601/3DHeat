@@ -51,5 +51,6 @@
   "lens.metric.risk": "Risc després de pèrdues",
   "lens.metric.streaks": "Ratxes (mà calenta)",
   "lens.metric.buy": "Acord de compra",
-  "lens.metric.suppression": "Supressió"
+  "lens.metric.suppression": "Supressió",
+  "lens.metric.cqbOutcome": "Què va decidir les rondes"
 }

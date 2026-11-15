@@ -51,5 +51,6 @@
   "lens.metric.risk": "損失後のリスク",
   "lens.metric.streaks": "連続成功（ホットハンド）",
   "lens.metric.buy": "購入の一致",
-  "lens.metric.suppression": "制圧射撃"
+  "lens.metric.suppression": "制圧射撃",
+  "lens.metric.cqbOutcome": "ラウンドを決めたもの"
 }

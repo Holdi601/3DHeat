@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} nadoknadi zaostanek {deficit} in prevzame vodstvo.",
   "insights.cast.say.standout": "{actor} izstopa med {class}: {kills} ubojev pri povprečju {mean}.",
   "insights.cast.say.struggle": "Težka tekma za {actor}: {kills} ubojev in {deaths} smrti, medtem ko {class} v povprečju dosežejo {mean} ubojev.",
-  "insights.cast.say.longRange": "{actor} zadene {other} z razdalje {distance}."
+  "insights.cast.say.longRange": "{actor} zadene {other} z razdalje {distance}.",
+  "insights.debrief.outcome.score": "{a} je dobil {wa}, {b} pa {wb} od {n} krogov z znanim izidom ({a}: {pct}, 95% od {lo} do {hi}). {model, select, fitted {Verjetnosti zmage izhajajo iz modela, prilagojenega tem krogom.} other {Verjetnosti zmage izhajajo iz fiksnega apriornega modela: premalo krogov za prilagoditev.}}",
+  "insights.debrief.outcome.factors": "Kaj je ločilo dobljene kroge od izgubljenih{sure, select, yes {} other { (nič od tega še ni gotovo)}}: {list}. Preizkušenih dejavnikov: {n}.",
+  "insights.debrief.outcome.turns": "Prelomnice: {list}.",
+  "insights.debrief.outcome.players": "Največ dodane verjetnosti zmage: {best}. Največ izgubljene: {worst}. Po mestu: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, malo krogov} other {}}",
+  "insights.outcome.turn": "krog {round} ob {at}: {kind, select, plant {postavitev bombe} other {kill}} strani {team}{hasPlace, select, yes { na mestu {place}} other {}} je premaknil njeno možnost z {before} na {after}{won, select, yes {, in krog je dobila} no {, a krog je izgubila} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} v {rounds} krogih ({perRound} točke na krog, 95% od {lo} do {hi}){small, select, yes {, malo krogov} other {}}",
+  "insights.outcome.spot": "{team} na mestu {place} {wpa} v {n} dvobojih",
+  "insights.cast.kind.turning": "Prelomnica",
+  "insights.cast.say.turning": "{actor} podre {victim}: možnost strani {team}, da dobi krog, se spremeni z {fromPct} na {toPct}",
+  "insights.cast.result": "{result, select, won {- in krog dobijo} lost {- a krog izgubijo} other {}}"
 }

@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} се връща от {deficit} изоставане и излиза напред.",
   "insights.cast.say.standout": "{actor} се откроява сред {class}: {kills} убийства при средно {mean}.",
   "insights.cast.say.struggle": "Труден мач за {actor}: {kills} убийства и {deaths} смърти, докато {class} средно правят {mean} убийства.",
-  "insights.cast.say.longRange": "{actor} улучва {other} от разстояние {distance}."
+  "insights.cast.say.longRange": "{actor} улучва {other} от разстояние {distance}.",
+  "insights.debrief.outcome.score": "{a} спечели {wa}, а {b} спечели {wb} от {n} рунда с известен резултат ({a}: {pct}, 95% от {lo} до {hi}). {model, select, fitted {Вероятностите за победа идват от модел, пригоден към тези рундове.} other {Вероятностите за победа идват от фиксиран априорен модел: твърде малко рундове, за да се пригоди такъв.}}",
+  "insights.debrief.outcome.factors": "Какво отличаваше спечелените от загубените рундове{sure, select, yes {} other { (засега нищо не е сигурно)}}: {list}. Изпробвани фактори: {n}.",
+  "insights.debrief.outcome.turns": "Повратни моменти: {list}.",
+  "insights.debrief.outcome.players": "Най-много добавена вероятност за победа: {best}. Най-много загубена: {worst}. По места: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, малко рундове} other {}}",
+  "insights.outcome.turn": "рунд {round} при {at}: {kind, select, plant {поставяне на бомба} other {убийство}} от {team}{hasPlace, select, yes { на {place}} other {}} промени шанса му от {before} на {after}{won, select, yes {, и взе рунда} no {, но загуби рунда} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} в {rounds} рунда ({perRound} пр.п. на рунд, 95% от {lo} до {hi}){small, select, yes {, малко рундове} other {}}",
+  "insights.outcome.spot": "{team} на {place} {wpa} в {n} дуела",
+  "insights.cast.kind.turning": "Повратен момент",
+  "insights.cast.say.turning": "{actor} надвива {victim}: шансът на {team} да спечели рунда се променя от {fromPct} на {toPct}",
+  "insights.cast.result": "{result, select, won {- и вземат рунда} lost {- но губят рунда} other {}}"
 }

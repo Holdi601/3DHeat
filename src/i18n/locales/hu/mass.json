@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Operátor szerint",
   "mass.surfaces.byClass": "Fegyverosztály szerint",
   "mass.surfaces.heat": "Hol a felületen",
-  "mass.surfaces.load": "Meccsei betöltése ({count})"
+  "mass.surfaces.load": "Meccsei betöltése ({count})",
+  "mass.say.place.winSideUp": "{map}: a(z) {team} oldal több körét nyeri meg, ha itt van: {rounds} körből {value} nyert, szemben a saját rátájából ugyanazokban a meccsekben várt {base}-del (esély {ratio}×; {held} meccsen tartva)",
+  "mass.say.place.winSideDown": "{map}: a(z) {team} oldal kevesebb körét nyeri meg, ha itt van: {rounds} körből {value} nyert, szemben a saját rátájából ugyanazokban a meccsekben várt {base}-del (esély 1/{ratio}; {held} meccsen tartva)",
+  "mass.niches.table.rounds": "Körök",
+  "mass.niches.target.roundWin": "Környerés",
+  "mass.niches.factor.weapon": "Fegyver",
+  "mass.niches.factor.place": "Hely",
+  "mass.niches.factor.buy": "Vásárlás",
+  "mass.niches.factor.opening": "Első ölés",
+  "mass.say.niche.roundWinUp": "{group}: {n} körből {value} nyer, szemben az ugyanazoktól az oldalaktól ugyanazokban a meccsekben várt {base}-del (esély {ratio}×; {matches} meccs)",
+  "mass.say.niche.roundWinDown": "{group}: {n} körből csak {value} nyer, szemben az ugyanazoktól az oldalaktól ugyanazokban a meccsekben várt {base}-del (esély 1/{ratio}; {matches} meccs)"
 }

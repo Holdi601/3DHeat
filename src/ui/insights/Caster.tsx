@@ -52,7 +52,11 @@ export function momentLine(m: Moment, src: CastSource, d: Dataset): string {
   let key = `insights.cast.say.${m.kind}`;
   if (m.kind === 'clutch') key = `insights.cast.say.clutch${p.outcome === 'won' ? 'Won' : p.outcome === 'lost' ? 'Lost' : 'Open'}`;
   if (m.kind === 'firstBlood' && p.round) key = 'insights.cast.say.firstBloodRound';
-  return t(key, values);
+  if (typeof p.fromPct === 'number') values.fromPct = `${p.fromPct}%`;
+  if (typeof p.toPct === 'number') values.toPct = `${p.toPct}%`;
+  const line = t(key, values);
+  // Whether the side went on to win the round.
+  return typeof p.result === 'string' && m.kind !== 'clutch' ? `${line.replace(/[.!。]\s*$/, '')} ${t('insights.cast.result', { result: p.result })}` : line;
 }
 
 /** Go to a moment: its round played, the playhead before it, the camera on it, then following its player. */

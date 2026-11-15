@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Eftir aðgerðamanni",
   "mass.surfaces.byClass": "Eftir vopnaflokki",
   "mass.surfaces.heat": "Hvar á fletinum",
-  "mass.surfaces.load": "Hlaða leikjum hans ({count})"
+  "mass.surfaces.load": "Hlaða leikjum hans ({count})",
+  "mass.say.place.winSideUp": "{map}: hliðin {team} vinnur fleiri af lotum sínum þegar hún er hér: {value} af {rounds} unnar, á móti {base} sem búist var við út frá eigin hlutfalli í sömu leikjum (líkur {ratio}×; haldið í {held} leikjum)",
+  "mass.say.place.winSideDown": "{map}: hliðin {team} vinnur færri af lotum sínum þegar hún er hér: {value} af {rounds} unnar, á móti {base} sem búist var við út frá eigin hlutfalli í sömu leikjum (líkur 1/{ratio}; haldið í {held} leikjum)",
+  "mass.niches.table.rounds": "Lotur",
+  "mass.niches.target.roundWin": "Lotusigur",
+  "mass.niches.factor.weapon": "Vopn",
+  "mass.niches.factor.place": "Staður",
+  "mass.niches.factor.buy": "Kaup",
+  "mass.niches.factor.opening": "Fyrsta fall",
+  "mass.say.niche.roundWinUp": "{group}: vinnur {value} af {n} lotum, á móti {base} sem búist var við frá sömu hliðum í sömu leikjum (líkur {ratio}×; {matches} leikir)",
+  "mass.say.niche.roundWinDown": "{group}: vinnur aðeins {value} af {n} lotum, á móti {base} sem búist var við frá sömu hliðum í sömu leikjum (líkur 1/{ratio}; {matches} leikir)"
 }

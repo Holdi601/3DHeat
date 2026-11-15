@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Podle operátora",
   "mass.surfaces.byClass": "Podle třídy zbraně",
   "mass.surfaces.heat": "Kde na povrchu",
-  "mass.surfaces.load": "Načíst jeho zápasy ({count})"
+  "mass.surfaces.load": "Načíst jeho zápasy ({count})",
+  "mass.say.place.winSideUp": "{map}: strana {team} vyhrává více svých kol, když je tady: vyhráno {value} z {rounds}, oproti {base} očekávaným podle vlastní úspěšnosti ve stejných zápasech (šance {ratio}×; drženo v {held} zápasech)",
+  "mass.say.place.winSideDown": "{map}: strana {team} vyhrává méně svých kol, když je tady: vyhráno {value} z {rounds}, oproti {base} očekávaným podle vlastní úspěšnosti ve stejných zápasech (šance 1/{ratio}; drženo v {held} zápasech)",
+  "mass.niches.table.rounds": "Kola",
+  "mass.niches.target.roundWin": "Výhra kola",
+  "mass.niches.factor.weapon": "Zbraň",
+  "mass.niches.factor.place": "Místo",
+  "mass.niches.factor.buy": "Nákup",
+  "mass.niches.factor.opening": "První zabití",
+  "mass.say.niche.roundWinUp": "{group}: vyhrává {value} z {n} kol, oproti {base} očekávaným od stejných stran ve stejných zápasech (šance {ratio}×; {matches} zápasů)",
+  "mass.say.niche.roundWinDown": "{group}: vyhrává jen {value} z {n} kol, oproti {base} očekávaným od stejných stran ve stejných zápasech (šance 1/{ratio}; {matches} zápasů)"
 }

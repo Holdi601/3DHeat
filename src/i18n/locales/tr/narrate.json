@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team}, {deficit} geriden gelip öne geçiyor.",
   "insights.cast.say.standout": "{actor}, {class} arasında öne çıkıyor: ortalama {mean} iken {kills} öldürme.",
   "insights.cast.say.struggle": "{actor} için zor bir maç: {kills} öldürme ve {deaths} ölüm; {class} ortalaması {mean} öldürme.",
-  "insights.cast.say.longRange": "{actor}, {other} oyuncusunu {distance} uzaktan vuruyor."
+  "insights.cast.say.longRange": "{actor}, {other} oyuncusunu {distance} uzaktan vuruyor.",
+  "insights.debrief.outcome.score": "Sonucu bilinen {n} turdan {a} {wa}, {b} {wb} tur kazandı ({a}: {pct}, 95%: {lo} ile {hi} arası). {model, select, fitted {Kazanma olasılıkları bu turlara uydurulmuş bir modelden geliyor.} other {Kazanma olasılıkları sabit bir ön modelden geliyor: model uydurmak için tur sayısı çok az.}}",
+  "insights.debrief.outcome.factors": "Kazanılan turları kaybedilenlerden ayıran şey{sure, select, yes {} other { (henüz hiçbiri kesin değil)}}: {list}. Denenen etken sayısı: {n}.",
+  "insights.debrief.outcome.turns": "Dönüm noktaları: {list}.",
+  "insights.debrief.outcome.players": "En çok kazanma olasılığı ekleyen: {best}. En çok kaybettiren: {worst}. Yere göre: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, az tur} other {}}",
+  "insights.outcome.turn": "tur {round}, {at}: {team} tarafının {kind, select, plant {bomba kurması} other {öldürmesi}}{hasPlace, select, yes { ({place})} other {}} şansını {before} değerinden {after} değerine taşıdı{won, select, yes {, ve turu aldı} no {, ama turu kaybetti} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa}, {rounds} turda (tur başına {perRound} puan, 95%: {lo} ile {hi} arası){small, select, yes {, az tur} other {}}",
+  "insights.outcome.spot": "{team}, {place}: {n} düelloda {wpa}",
+  "insights.cast.kind.turning": "Dönüm noktası",
+  "insights.cast.say.turning": "{actor}, {victim} oyuncusunu deviriyor: {team} tarafının turu kazanma şansı {fromPct} değerinden {toPct} değerine çıkıyor",
+  "insights.cast.result": "{result, select, won {- ve turu alıyorlar} lost {- ama turu kaybediyorlar} other {}}"
 }

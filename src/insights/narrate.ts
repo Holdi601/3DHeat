@@ -13,6 +13,7 @@
 import { int, list, num, t } from '../i18n';
 import type { LensPick } from './lens';
 import { lensParagraphs } from './lensNarrate';
+import { outcomeParagraphs } from './outcomeNarrate';
 import type { InsightNarrator, Narration, NarrationInput } from './seam';
 import type { DetectorId, Insight, InsightReport } from './types';
 
@@ -43,6 +44,7 @@ export function baseDebrief(r: InsightReport, say: (i: Insight) => string, lens:
   const ins = [...r.insights].sort((a, b) => b.strength - a.strength);
   if (!ins.length) {
     p(t('insights.debrief.nothing', { fdr: `${num(r.fdr * 100)}%` }));
+    for (const op of outcomeParagraphs(r)) p(op.text, op.cites);
     return finish(ps);
   }
   p(t('insights.debrief.lead', { n: int(ins.length), matches: int(r.dataset.matches), persons: int(r.dataset.persons), rows: int(r.dataset.shownRows) }));
@@ -58,6 +60,11 @@ export function baseDebrief(r: InsightReport, say: (i: Insight) => string, lens:
     p(t(key, { text: sentence(i) }), [i.id]);
     said.add(i.id);
     lead.push(i);
+  }
+  // What decided the rounds: the score, the factors, the turning points, who added the most.
+  for (const op of outcomeParagraphs(r)) {
+    p(op.text, op.cites);
+    for (const id of op.cites) said.add(id);
   }
   // The rest by detector, the detector with the strongest finding first.
   const groups = new Map<DetectorId, Insight[]>();

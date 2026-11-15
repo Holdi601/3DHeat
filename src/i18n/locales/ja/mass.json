@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "オペレーター別",
   "mass.surfaces.byClass": "武器分類別",
   "mass.surfaces.heat": "表面上の位置",
-  "mass.surfaces.load": "その試合を読み込む（{count}）"
+  "mass.surfaces.load": "その試合を読み込む（{count}）",
+  "mass.say.place.winSideUp": "{map}：サイド{team}はここにいるとラウンドをより多く取る：{rounds}ラウンド中{value}で勝利、同じ試合での自身の勝率から期待される{base}に対して（オッズ{ratio}×；{held}試合で保持）",
+  "mass.say.place.winSideDown": "{map}：サイド{team}はここにいるとラウンドの取得が減る：{rounds}ラウンド中{value}で勝利、同じ試合での自身の勝率から期待される{base}に対して（オッズ1/{ratio}；{held}試合で保持）",
+  "mass.niches.table.rounds": "ラウンド",
+  "mass.niches.target.roundWin": "ラウンド勝利",
+  "mass.niches.factor.weapon": "武器",
+  "mass.niches.factor.place": "場所",
+  "mass.niches.factor.buy": "購入",
+  "mass.niches.factor.opening": "ファーストキル",
+  "mass.say.niche.roundWinUp": "{group}：{n}ラウンド中{value}で勝利、同じ試合の同じサイドから期待される{base}に対して（オッズ{ratio}×；{matches}試合）",
+  "mass.say.niche.roundWinDown": "{group}：{n}ラウンド中{value}しか勝てず、同じ試合の同じサイドから期待される{base}に対して（オッズ1/{ratio}；{matches}試合）"
 }

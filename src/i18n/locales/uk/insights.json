@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} гине у {ratio}× частіше на час, ніж зіставні гравці ({deaths} смертей за {timeSecs})",
   "insights.say.players.durable": "{player} гине у {ratio}× рідше на час, ніж зіставні гравці ({deaths} смертей за {timeSecs})",
   "insights.say.flow.choke": "Вузьке місце: {crossings} проходів, {ratio}× навколишньої місцевості; {deaths} смертей тут",
-  "insights.say.flow.flank": "Фланговий маршрут: прохід тут дає за {approachSecs} у {ratio}× більше вбивств, ніж інші шляхи, але ним користується лише {sharePct} проходів"
+  "insights.say.flow.flank": "Фланговий маршрут: прохід тут дає за {approachSecs} у {ratio}× більше вбивств, ніж інші шляхи, але ним користується лише {sharePct} проходів",
+  "insights.det.outcome": "Що вирішило раунди",
+  "insights.say.outcome.opening": "{team}: виграно {withPct} із {n1} раундів, у яких сторона виграла першу дуель, проти {withoutPct} із {n2}, коли програла її ({diff} в.п., 95% від {lo} до {hi})",
+  "insights.say.outcome.buy": "З кращою закупівлею {team}: виграно {withPct} із {n1} раундів, проти {withoutPct} із {n2} з гіршою ({diff} в.п., 95% від {lo} до {hi})",
+  "insights.say.outcome.traded": "{team}: виграно {withPct} із {n1} раундів, у яких першу смерть сторони було помщено, проти {withoutPct} із {n2}, коли ні ({diff} в.п., 95% від {lo} до {hi})",
+  "insights.say.outcome.plant": "{team}: виграно {withPct} із {n1} раундів, у яких сторона встановила бомбу, проти {withoutPct} із {n2}, без встановлення ({diff} в.п., 95% від {lo} до {hi})",
+  "insights.say.outcome.utility": "{team}: виграно {withPct} із {n1} раундів, у яких сторона використала більше гранат, ніж зазвичай, проти {withoutPct} із {n2}, за меншої кількості ({diff} в.п., 95% від {lo} до {hi})",
+  "insights.say.outcome.fast": "{team}: виграно {withPct} із {n1} раундів, з першим контактом раніше за {fastSecs}, проти {withoutPct} із {n2}, з пізнішим ({diff} в.п., 95% від {lo} до {hi})",
+  "insights.say.outcome.held": "{team}: виграно {withPct} із {n1} раундів, у яких сторона утримувала {place}, проти {withoutPct} із {n2}, без цього ({diff} в.п., 95% від {lo} до {hi})",
+  "insights.say.outcome.early": "{team}: виграно {withPct} із {n1} раундів, у яких сторона дійшла до {place} за перші 25 s, проти {withoutPct} із {n2}, інакше ({diff} в.п., 95% від {lo} до {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) додав {wpa} раундів імовірності перемоги за {rounds} раундів ({perRound} в.п. за раунд, 95% від {lo} до {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) втратив {wpa} раундів імовірності перемоги за {rounds} раундів ({perRound} в.п. за раунд, 95% від {lo} до {hi})"
 }

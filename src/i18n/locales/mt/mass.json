@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Skont l-operatur",
   "mass.surfaces.byClass": "Skont il-klassi tal-arma",
   "mass.surfaces.heat": "Fejn fuq il-wiċċ",
-  "mass.surfaces.load": "Tella' l-logħbiet tiegħu ({count})"
+  "mass.surfaces.load": "Tella' l-logħbiet tiegħu ({count})",
+  "mass.say.place.winSideUp": "{map}: in-naħa {team} tirbaħ aktar mir-rawnds tagħha meta tkun hawn: {value} minn {rounds} rbuħa, kontra {base} mistennija mir-rata tagħha stess fl-istess logħbiet (probabbiltajiet {ratio}×; miżmuma f’{held} logħbiet)",
+  "mass.say.place.winSideDown": "{map}: in-naħa {team} tirbaħ inqas mir-rawnds tagħha meta tkun hawn: {value} minn {rounds} rbuħa, kontra {base} mistennija mir-rata tagħha stess fl-istess logħbiet (probabbiltajiet 1/{ratio}; miżmuma f’{held} logħbiet)",
+  "mass.niches.table.rounds": "Rawnds",
+  "mass.niches.target.roundWin": "Rebħa tar-rawnd",
+  "mass.niches.factor.weapon": "Arma",
+  "mass.niches.factor.place": "Post",
+  "mass.niches.factor.buy": "Xiri",
+  "mass.niches.factor.opening": "L-ewwel qtil",
+  "mass.say.niche.roundWinUp": "{group}: jirbaħ {value} minn {n} rawnds, kontra {base} mistennija mill-istess naħat fl-istess logħbiet (probabbiltajiet {ratio}×; {matches} logħbiet)",
+  "mass.say.niche.roundWinDown": "{group}: jirbaħ biss {value} minn {n} rawnds, kontra {base} mistennija mill-istess naħat fl-istess logħbiet (probabbiltajiet 1/{ratio}; {matches} logħbiet)"
 }

@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "De réir oibreora",
   "mass.surfaces.byClass": "De réir aicme airm",
   "mass.surfaces.heat": "Cén áit ar an dromchla",
-  "mass.surfaces.load": "Lódáil a chluichí ({count})"
+  "mass.surfaces.load": "Lódáil a chluichí ({count})",
+  "mass.say.place.winSideUp": "{map}: buaineann taobh {team} níos mó dá bhabhtaí nuair atá sé anseo: {value} de {rounds} buaite, i gcomparáid le {base} a bhíothas ag súil leo óna ráta féin sna cluichí céanna (corrlach {ratio}×; coinnithe i {held} cluiche)",
+  "mass.say.place.winSideDown": "{map}: buaineann taobh {team} níos lú dá bhabhtaí nuair atá sé anseo: {value} de {rounds} buaite, i gcomparáid le {base} a bhíothas ag súil leo óna ráta féin sna cluichí céanna (corrlach 1/{ratio}; coinnithe i {held} cluiche)",
+  "mass.niches.table.rounds": "Babhtaí",
+  "mass.niches.target.roundWin": "Bua babhta",
+  "mass.niches.factor.weapon": "Arm",
+  "mass.niches.factor.place": "Áit",
+  "mass.niches.factor.buy": "Ceannach",
+  "mass.niches.factor.opening": "An chéad mharú",
+  "mass.say.niche.roundWinUp": "{group}: buaineann {value} de {n} babhta, i gcomparáid le {base} a bhíothas ag súil leo ó na taobhanna céanna sna cluichí céanna (corrlach {ratio}×; {matches} cluiche)",
+  "mass.say.niche.roundWinDown": "{group}: ní bhuaineann ach {value} de {n} babhta, i gcomparáid le {base} a bhíothas ag súil leo ó na taobhanna céanna sna cluichí céanna (corrlach 1/{ratio}; {matches} cluiche)"
 }

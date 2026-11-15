@@ -51,5 +51,6 @@
   "lens.metric.risk": "Rizik nakon gubitaka",
   "lens.metric.streaks": "Nizovi (vruća ruka)",
   "lens.metric.buy": "Usklađenost kupovine",
-  "lens.metric.suppression": "Suzbijanje vatrom"
+  "lens.metric.suppression": "Suzbijanje vatrom",
+  "lens.metric.cqbOutcome": "Šta je odlučilo runde"
 }

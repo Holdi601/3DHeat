@@ -51,5 +51,6 @@
   "lens.metric.risk": "Tveganje po izgubah",
   "lens.metric.streaks": "Nizi (vroča roka)",
   "lens.metric.buy": "Usklajenost nakupov",
-  "lens.metric.suppression": "Zatiranje z ognjem"
+  "lens.metric.suppression": "Zatiranje z ognjem",
+  "lens.metric.cqbOutcome": "Kaj je odločilo kroge"
 }

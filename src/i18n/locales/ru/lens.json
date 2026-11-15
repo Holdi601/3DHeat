@@ -51,5 +51,6 @@
   "lens.metric.risk": "Риск после потерь",
   "lens.metric.streaks": "Серии (горячая рука)",
   "lens.metric.buy": "Согласованность закупок",
-  "lens.metric.suppression": "Подавление огнём"
+  "lens.metric.suppression": "Подавление огнём",
+  "lens.metric.cqbOutcome": "Что решило раунды"
 }

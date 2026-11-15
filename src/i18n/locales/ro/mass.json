@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "După operator",
   "mass.surfaces.byClass": "După clasa armei",
   "mass.surfaces.heat": "Unde pe suprafață",
-  "mass.surfaces.load": "Încarcă meciurile ei ({count})"
+  "mass.surfaces.load": "Încarcă meciurile ei ({count})",
+  "mass.say.place.winSideUp": "{map}: partea {team} câștigă mai multe dintre rundele ei când este aici: {value} din {rounds} câștigate, față de {base} așteptate din rata proprie în aceleași meciuri (cote {ratio}×; ținut în {held} meciuri)",
+  "mass.say.place.winSideDown": "{map}: partea {team} câștigă mai puține dintre rundele ei când este aici: {value} din {rounds} câștigate, față de {base} așteptate din rata proprie în aceleași meciuri (cote 1/{ratio}; ținut în {held} meciuri)",
+  "mass.niches.table.rounds": "Runde",
+  "mass.niches.target.roundWin": "Victorie în rundă",
+  "mass.niches.factor.weapon": "Armă",
+  "mass.niches.factor.place": "Loc",
+  "mass.niches.factor.buy": "Cumpărare",
+  "mass.niches.factor.opening": "Primul kill",
+  "mass.say.niche.roundWinUp": "{group}: câștigă {value} din {n} runde, față de {base} așteptate de la aceleași părți în aceleași meciuri (cote {ratio}×; {matches} meciuri)",
+  "mass.say.niche.roundWinDown": "{group}: câștigă doar {value} din {n} runde, față de {base} așteptate de la aceleași părți în aceleași meciuri (cote 1/{ratio}; {matches} meciuri)"
 }

@@ -51,5 +51,6 @@
   "lens.metric.risk": "Kockázat veszteségek után",
   "lens.metric.streaks": "Sorozatok (forró kéz)",
   "lens.metric.buy": "Vásárlási egyetértés",
-  "lens.metric.suppression": "Lefogó tűz"
+  "lens.metric.suppression": "Lefogó tűz",
+  "lens.metric.cqbOutcome": "Mi döntötte el a köröket"
 }

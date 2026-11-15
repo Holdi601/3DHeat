@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Pagal operatorių",
   "mass.surfaces.byClass": "Pagal ginklo klasę",
   "mass.surfaces.heat": "Kur paviršiuje",
-  "mass.surfaces.load": "Įkelti jo rungtynes ({count})"
+  "mass.surfaces.load": "Įkelti jo rungtynes ({count})",
+  "mass.say.place.winSideUp": "{map}: pusė {team} laimi daugiau savo raundų, kai yra čia: laimėta {value} iš {rounds}, palyginti su {base}, tikėtais pagal jos pačios rodiklį tose pačiose rungtynėse (šansai {ratio}×; laikyta {held} rungtynėse)",
+  "mass.say.place.winSideDown": "{map}: pusė {team} laimi mažiau savo raundų, kai yra čia: laimėta {value} iš {rounds}, palyginti su {base}, tikėtais pagal jos pačios rodiklį tose pačiose rungtynėse (šansai 1/{ratio}; laikyta {held} rungtynėse)",
+  "mass.niches.table.rounds": "Raundai",
+  "mass.niches.target.roundWin": "Raundo pergalė",
+  "mass.niches.factor.weapon": "Ginklas",
+  "mass.niches.factor.place": "Vieta",
+  "mass.niches.factor.buy": "Pirkimas",
+  "mass.niches.factor.opening": "Pirmoji žūtis",
+  "mass.say.niche.roundWinUp": "{group}: laimi {value} iš {n} raundų, palyginti su {base}, tikėtais iš tų pačių pusių tose pačiose rungtynėse (šansai {ratio}×; {matches} rungtynės)",
+  "mass.say.niche.roundWinDown": "{group}: laimi tik {value} iš {n} raundų, palyginti su {base}, tikėtais iš tų pačių pusių tose pačiose rungtynėse (šansai 1/{ratio}; {matches} rungtynės)"
 }

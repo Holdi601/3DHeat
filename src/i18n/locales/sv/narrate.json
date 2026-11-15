@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} kommer tillbaka från {deficit} under och tar ledningen.",
   "insights.cast.say.standout": "{actor} sticker ut bland {class}: {kills} kills där snittet är {mean}.",
   "insights.cast.say.struggle": "En tuff match för {actor}: {kills} kills och {deaths} dödsfall, där {class} snittar {mean} kills.",
-  "insights.cast.say.longRange": "{actor} träffar {other} från {distance} håll."
+  "insights.cast.say.longRange": "{actor} träffar {other} från {distance} håll.",
+  "insights.debrief.outcome.score": "{a} vann {wa} och {b} vann {wb} av {n} rundor med känt resultat ({a}: {pct}, 95% från {lo} till {hi}). {model, select, fitted {Vinstsannolikheterna kommer från en modell anpassad till de här rundorna.} other {Vinstsannolikheterna kommer från en fast förhandsmodell: för få rundor för att anpassa en.}}",
+  "insights.debrief.outcome.factors": "Vad som skiljde vunna från förlorade rundor{sure, select, yes {} other { (inget av det är säkert ännu)}}: {list}. {n} faktorer prövade.",
+  "insights.debrief.outcome.turns": "Vändpunkter: {list}.",
+  "insights.debrief.outcome.players": "Mest tillagd vinstsannolikhet: {best}. Mest förlorad: {worst}. Efter plats: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, få rundor} other {}}",
+  "insights.outcome.turn": "runda {round} vid {at}: {kind, select, plant {en plant} other {ett dödande}} av {team}{hasPlace, select, yes { vid {place}} other {}} flyttade dess chans från {before} till {after}{won, select, yes {, och den tog rundan} no {, men den förlorade rundan} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} över {rounds} rundor ({perRound} poäng per runda, 95% från {lo} till {hi}){small, select, yes {, få rundor} other {}}",
+  "insights.outcome.spot": "{team} vid {place} {wpa} över {n} dueller",
+  "insights.cast.kind.turning": "Vändpunkt",
+  "insights.cast.say.turning": "{actor} fäller {victim}: {team}s chans att vinna rundan går från {fromPct} till {toPct}",
+  "insights.cast.result": "{result, select, won {- och de tar rundan} lost {- men de förlorar rundan} other {}}"
 }

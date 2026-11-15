@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Nach Operator",
   "mass.surfaces.byClass": "Nach Waffenklasse",
   "mass.surfaces.heat": "Wo auf der Fläche",
-  "mass.surfaces.load": "Ihre Matches laden ({count})"
+  "mass.surfaces.load": "Ihre Matches laden ({count})",
+  "mass.say.place.winSideUp": "{map}: Seite {team} gewinnt mehr ihrer Runden, wenn sie hier ist: {value} von {rounds} gewonnen, gegenüber {base} erwartet aus ihrer eigenen Quote in denselben Matches (Odds {ratio}×; gehalten in {held} Matches)",
+  "mass.say.place.winSideDown": "{map}: Seite {team} gewinnt weniger ihrer Runden, wenn sie hier ist: {value} von {rounds} gewonnen, gegenüber {base} erwartet aus ihrer eigenen Quote in denselben Matches (Odds 1/{ratio}; gehalten in {held} Matches)",
+  "mass.niches.table.rounds": "Runden",
+  "mass.niches.target.roundWin": "Rundensieg",
+  "mass.niches.factor.weapon": "Waffe",
+  "mass.niches.factor.place": "Ort",
+  "mass.niches.factor.buy": "Kauf",
+  "mass.niches.factor.opening": "Erster Kill",
+  "mass.say.niche.roundWinUp": "{group}: gewinnt {value} von {n} Runden, gegenüber {base} erwartet von denselben Seiten in denselben Matches (Odds {ratio}×; {matches} Matches)",
+  "mass.say.niche.roundWinDown": "{group}: gewinnt nur {value} von {n} Runden, gegenüber {base} erwartet von denselben Seiten in denselben Matches (Odds 1/{ratio}; {matches} Matches)"
 }

@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} kjemper seg tilbake fra {deficit} under og tar ledelsen.",
   "insights.cast.say.standout": "{actor} skiller seg ut blant {class}: {kills} kills der snittet er {mean}.",
   "insights.cast.say.struggle": "En tøff kamp for {actor}: {kills} kills og {deaths} dødsfall, der {class} snitter {mean} kills.",
-  "insights.cast.say.longRange": "{actor} treffer {other} fra {distance} hold."
+  "insights.cast.say.longRange": "{actor} treffer {other} fra {distance} hold.",
+  "insights.debrief.outcome.score": "{a} vant {wa} og {b} vant {wb} av {n} runder med kjent resultat ({a}: {pct}, 95% fra {lo} til {hi}). {model, select, fitted {Seierssannsynlighetene kommer fra en modell tilpasset disse rundene.} other {Seierssannsynlighetene kommer fra en fast forhåndsmodell: for få runder til å tilpasse en.}}",
+  "insights.debrief.outcome.factors": "Hva som skilte vunne fra tapte runder{sure, select, yes {} other { (ingenting av det er sikkert ennå)}}: {list}. {n} faktorer prøvd.",
+  "insights.debrief.outcome.turns": "Vendepunkter: {list}.",
+  "insights.debrief.outcome.players": "Mest tillagt seierssannsynlighet: {best}. Mest tapt: {worst}. Etter sted: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, få runder} other {}}",
+  "insights.outcome.turn": "runde {round} ved {at}: {kind, select, plant {en plant} other {et drap}} av {team}{hasPlace, select, yes { ved {place}} other {}} flyttet sjansen fra {before} til {after}{won, select, yes {, og den tok runden} no {, men den tapte runden} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} over {rounds} runder ({perRound} poeng per runde, 95% fra {lo} til {hi}){small, select, yes {, få runder} other {}}",
+  "insights.outcome.spot": "{team} ved {place} {wpa} over {n} dueller",
+  "insights.cast.kind.turning": "Vendepunkt",
+  "insights.cast.say.turning": "{actor} feller {victim}: sjansen til {team} for å vinne runden går fra {fromPct} til {toPct}",
+  "insights.cast.result": "{result, select, won {- og de tar runden} lost {- men de taper runden} other {}}"
 }

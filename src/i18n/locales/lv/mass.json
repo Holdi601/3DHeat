@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "Pēc operatora",
   "mass.surfaces.byClass": "Pēc ieroču klases",
   "mass.surfaces.heat": "Kur uz virsmas",
-  "mass.surfaces.load": "Ielādēt tās mačus ({count})"
+  "mass.surfaces.load": "Ielādēt tās mačus ({count})",
+  "mass.say.place.winSideUp": "{map}: puse {team} uzvar vairāk savu raundu, kad tā ir šeit: uzvarēti {value} no {rounds}, salīdzinājumā ar {base}, ko gaidīja pēc tās pašas rādītāja tajās pašās spēlēs (izredzes {ratio}×; noturēts {held} spēlēs)",
+  "mass.say.place.winSideDown": "{map}: puse {team} uzvar mazāk savu raundu, kad tā ir šeit: uzvarēti {value} no {rounds}, salīdzinājumā ar {base}, ko gaidīja pēc tās pašas rādītāja tajās pašās spēlēs (izredzes 1/{ratio}; noturēts {held} spēlēs)",
+  "mass.niches.table.rounds": "Raundi",
+  "mass.niches.target.roundWin": "Raunda uzvara",
+  "mass.niches.factor.weapon": "Ierocis",
+  "mass.niches.factor.place": "Vieta",
+  "mass.niches.factor.buy": "Pirkums",
+  "mass.niches.factor.opening": "Pirmais nogalinājums",
+  "mass.say.niche.roundWinUp": "{group}: uzvar {value} no {n} raundiem, salīdzinājumā ar {base}, ko gaidīja no tām pašām pusēm tajās pašās spēlēs (izredzes {ratio}×; {matches} spēles)",
+  "mass.say.niche.roundWinDown": "{group}: uzvar tikai {value} no {n} raundiem, salīdzinājumā ar {base}, ko gaidīja no tām pašām pusēm tajās pašās spēlēs (izredzes 1/{ratio}; {matches} spēles)"
 }

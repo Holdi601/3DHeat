@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} адыгрываецца з адставаннем {deficit} і выходзіць наперад.",
   "insights.cast.say.standout": "{actor} вылучаецца сярод {class}: {kills} забойстваў пры сярэднім {mean}.",
   "insights.cast.say.struggle": "Цяжкі матч для {actor}: {kills} забойстваў і {deaths} смерцяў, тады як {class} у сярэднім робяць {mean} забойстваў.",
-  "insights.cast.say.longRange": "{actor} трапляе ў {other} з адлегласці {distance}."
+  "insights.cast.say.longRange": "{actor} трапляе ў {other} з адлегласці {distance}.",
+  "insights.debrief.outcome.score": "{a} выйграў {wa}, а {b} выйграў {wb} з {n} раўндаў з вядомым вынікам ({a}: {pct}, 95% ад {lo} да {hi}). {model, select, fitted {Імавернасці перамогі ўзяты з мадэлі, падагнанай пад гэтыя раўнды.} other {Імавернасці перамогі ўзяты з фіксаванай апрыёрнай мадэлі: раўндаў замала, каб падагнаць мадэль.}}",
+  "insights.debrief.outcome.factors": "Што адрознівала выйграныя раўнды ад прайграных{sure, select, yes {} other { (пакуль нішто не напэўна)}}: {list}. Праверана фактараў: {n}.",
+  "insights.debrief.outcome.turns": "Пераломныя моманты: {list}.",
+  "insights.debrief.outcome.players": "Больш за ўсё дадалі імавернасці перамогі: {best}. Больш за ўсё страцілі: {worst}. Па месцах: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, мала раўндаў} other {}}",
+  "insights.outcome.turn": "раўнд {round} на {at}: {kind, select, plant {закладка бомбы} other {забойства}} ад {team}{hasPlace, select, yes { на {place}} other {}} змяніла яе шанцы з {before} да {after}{won, select, yes {, і яна выйграла раўнд} no {, але раўнд прайграла} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} за {rounds} раўндаў ({perRound} п.п. за раўнд, 95% ад {lo} да {hi}){small, select, yes {, мала раўндаў} other {}}",
+  "insights.outcome.spot": "{team} на {place} {wpa} за {n} дуэлей",
+  "insights.cast.kind.turning": "Пераломны момант",
+  "insights.cast.say.turning": "{actor} забівае {victim}: шанец {team} выйграць раўнд змяняецца з {fromPct} да {toPct}",
+  "insights.cast.result": "{result, select, won {- і яны выйгрываюць раўнд} lost {- але яны прайграюць раўнд} other {}}"
 }

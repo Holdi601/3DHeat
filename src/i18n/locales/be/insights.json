@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} гіне ў {ratio}× часцей на час, чым параўнальныя гульцы ({deaths} смерцяў за {timeSecs})",
   "insights.say.players.durable": "{player} гіне ў {ratio}× радзей на час, чым параўнальныя гульцы ({deaths} смерцяў за {timeSecs})",
   "insights.say.flow.choke": "Вузкае месца: {crossings} праходаў, {ratio}× навакольнай мясцовасці; {deaths} смерцяў тут",
-  "insights.say.flow.flank": "Фланговы маршрут: праход тут дае за {approachSecs} у {ratio}× больш забойстваў, чым іншыя шляхі, але ім карыстаецца толькі {sharePct} праходаў"
+  "insights.say.flow.flank": "Фланговы маршрут: праход тут дае за {approachSecs} у {ratio}× больш забойстваў, чым іншыя шляхі, але ім карыстаецца толькі {sharePct} праходаў",
+  "insights.det.outcome": "Што вырашала раўнды",
+  "insights.say.outcome.opening": "{team}: выйграна {withPct} з {n1} раўндаў, у якіх каманда выйграла першую дуэль, супраць {withoutPct} з {n2}, калі прайграла яе ({diff} п.п., 95% ад {lo} да {hi})",
+  "insights.say.outcome.buy": "З лепшай закупкай {team}: выйграна {withPct} з {n1} раўндаў, супраць {withoutPct} з {n2} з горшай ({diff} п.п., 95% ад {lo} да {hi})",
+  "insights.say.outcome.traded": "{team}: выйграна {withPct} з {n1} раўндаў, у якіх першую смерць каманды адпомсцілі, супраць {withoutPct} з {n2}, калі не ({diff} п.п., 95% ад {lo} да {hi})",
+  "insights.say.outcome.plant": "{team}: выйграна {withPct} з {n1} раўндаў, у якіх каманда паставіла бомбу, супраць {withoutPct} з {n2}, без закладкі ({diff} п.п., 95% ад {lo} да {hi})",
+  "insights.say.outcome.utility": "{team}: выйграна {withPct} з {n1} раўндаў, у якіх каманда выкарыстала больш гранат, чым звычайна, супраць {withoutPct} з {n2}, пры меншай іх колькасці ({diff} п.п., 95% ад {lo} да {hi})",
+  "insights.say.outcome.fast": "{team}: выйграна {withPct} з {n1} раўндаў, з першым кантактам раней за {fastSecs}, супраць {withoutPct} з {n2}, з больш познім ({diff} п.п., 95% ад {lo} да {hi})",
+  "insights.say.outcome.held": "{team}: выйграна {withPct} з {n1} раўндаў, у якіх каманда трымала {place}, супраць {withoutPct} з {n2}, без гэтага ({diff} п.п., 95% ад {lo} да {hi})",
+  "insights.say.outcome.early": "{team}: выйграна {withPct} з {n1} раўндаў, у якіх каманда дайшла да {place} за першыя 25 s, супраць {withoutPct} з {n2}, інакш ({diff} п.п., 95% ад {lo} да {hi})",
+  "insights.say.outcome.playerUp": "{player} ({team}) дадаў {wpa} раўндаў імавернасці перамогі за {rounds} раўндаў ({perRound} п.п. за раўнд, 95% ад {lo} да {hi})",
+  "insights.say.outcome.playerDown": "{player} ({team}) страціў {wpa} раўндаў імавернасці перамогі за {rounds} раўндаў ({perRound} п.п. за раўнд, 95% ад {lo} да {hi})"
 }

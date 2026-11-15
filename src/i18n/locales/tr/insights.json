@@ -56,5 +56,16 @@
   "insights.say.players.fragile": "{player} zamana göre benzer oyunculardan {ratio}× sık ölüyor ({timeSecs} içinde {deaths} ölüm)",
   "insights.say.players.durable": "{player} zamana göre benzer oyunculardan {ratio}× seyrek ölüyor ({timeSecs} içinde {deaths} ölüm)",
   "insights.say.flow.choke": "Dar geçit: {crossings} geçiş, çevresindeki alanın {ratio}×'i; burada {deaths} ölüm",
-  "insights.say.flow.flank": "Kanat yolu: buradan geçmek, {approachSecs} içinde diğer yollardan {ratio}× fazla kill'e götürüyor, ama geçişlerin yalnızca {sharePct}'i burayı kullanıyor"
+  "insights.say.flow.flank": "Kanat yolu: buradan geçmek, {approachSecs} içinde diğer yollardan {ratio}× fazla kill'e götürüyor, ama geçişlerin yalnızca {sharePct}'i burayı kullanıyor",
+  "insights.det.outcome": "Turları ne belirledi",
+  "insights.say.outcome.opening": "{team}: açılış düellosunu kazandığında ({n1} tur) kazanma oranı {withPct}, kaybettiğinde ({n2} tur) {withoutPct} ({diff} puan, 95%: {lo} ile {hi} arası)",
+  "insights.say.outcome.buy": "Daha iyi alışverişle {team}: {n1} turun {withPct} oranı kazanıldı, daha kötüsüyle {n2} turun {withoutPct} oranı ({diff} puan, 95%: {lo} ile {hi} arası)",
+  "insights.say.outcome.traded": "{team}: ilk ölümü intikamla karşılandığında ({n1} tur) kazanma oranı {withPct}, karşılanmadığında ({n2} tur) {withoutPct} ({diff} puan, 95%: {lo} ile {hi} arası)",
+  "insights.say.outcome.plant": "{team}: bomba kurduğunda ({n1} tur) kazanma oranı {withPct}, kurmadığında ({n2} tur) {withoutPct} ({diff} puan, 95%: {lo} ile {hi} arası)",
+  "insights.say.outcome.utility": "{team}: her zamankinden fazla utility kullandığında ({n1} tur) kazanma oranı {withPct}, daha az kullandığında ({n2} tur) {withoutPct} ({diff} puan, 95%: {lo} ile {hi} arası)",
+  "insights.say.outcome.fast": "{team}: ilk temas {fastSecs} öncesindeyse ({n1} tur) kazanma oranı {withPct}, daha geçse ({n2} tur) {withoutPct} ({diff} puan, 95%: {lo} ile {hi} arası)",
+  "insights.say.outcome.held": "{team}: {place} noktasını tuttuğunda ({n1} tur) kazanma oranı {withPct}, tutmadığında ({n2} tur) {withoutPct} ({diff} puan, 95%: {lo} ile {hi} arası)",
+  "insights.say.outcome.early": "{team}: ilk 25 s içinde {place} noktasına ulaştığında ({n1} tur) kazanma oranı {withPct}, ulaşmadığında ({n2} tur) {withoutPct} ({diff} puan, 95%: {lo} ile {hi} arası)",
+  "insights.say.outcome.playerUp": "{player} ({team}) {rounds} turda {wpa} tur değerinde kazanma olasılığı ekledi (tur başına {perRound} puan, 95%: {lo} ile {hi} arası)",
+  "insights.say.outcome.playerDown": "{player} ({team}) {rounds} turda {wpa} tur değerinde kazanma olasılığı kaybettirdi (tur başına {perRound} puan, 95%: {lo} ile {hi} arası)"
 }

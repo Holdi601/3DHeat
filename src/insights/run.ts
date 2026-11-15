@@ -17,6 +17,7 @@ import { createInsightJob, gridFor, stepInsight, stepLevel, type InsightChunk, t
 import { createLensJob, safeFinishLens, stepLens, stepLensLevel, type LensOptions } from './lensMetrics';
 import type { InsightReport } from './types';
 import { cqbSync, runCqb } from './cqb/run';
+import { mergeOutcome } from './outcomeInsights';
 import { behaviourColumns, createBehaviourJob, finishBehaviour, stepBehaviour, type BehaviourColumns } from './behaviour/feed';
 
 const IN_FLIGHT = 3;
@@ -172,6 +173,7 @@ export function insightsSync(ds: Dataset, scope: CompareScope, level: Level | nu
   if (report.lens) report.lens.behaviour = finishBehaviour(beh);
   // Close quarters and esports measures (`cqb/`), where the data carries them.
   if (report.lens) report.lens.cqb = cqbSync(ds, scope);
+  mergeOutcome(report);
   return resolve(report, ds);
 }
 
@@ -234,7 +236,12 @@ export function runInsights(
         end();
         const rep = resolve(m.report, ds);
         void cqb.then((c) => {
-          if (c && rep.lens) rep.lens.cqb = c;
+          if (c && rep.lens) {
+            rep.lens.cqb = c;
+            // What decided the rounds ranks among the findings.
+            mergeOutcome(rep);
+            resolve(rep, ds);
+          }
           resolveP(rep);
         });
       }

@@ -155,11 +155,38 @@ export function cqbShows(m: CqbMetrics | undefined): Map<string, Shows> {
       weight: 0.45,
     });
   }
+  const OC = m.outcome;
+  if (OC && OC.factors.length) {
+    // What decided the rounds: the patterns of its strongest factors.
+    const KIND: Record<string, Record<string, number>> = {
+      opening: { entry: 1, initiative: 0.7 },
+      buy: { economy: 1 },
+      traded: { 'mutual-support': 1, 'defeat-in-detail': 0.5 },
+      plant: { 'key-terrain': 0.8, initiative: 0.4 },
+      utility: { 'utility-support': 1 },
+      fast: { initiative: 1, tempo: 0.5 },
+      held: { 'key-terrain': 1, 'fields-of-fire': 0.4 },
+      early: { 'key-terrain': 0.8, initiative: 0.6, 'avenue-of-approach': 0.5 },
+    };
+    const top = OC.factors.slice(0, 3);
+    const patterns: Record<string, number> = { 'action-value': 0.5 };
+    top.forEach((f, i) => {
+      for (const [k, v] of Object.entries(KIND[f.kind] ?? {})) patterns[k] = Math.max(patterns[k] ?? 0, v * (1 - 0.2 * i));
+    });
+    const say = (f: (typeof top)[number]) =>
+      `${f.team} ${f.kind}${f.place ? ` ${f.place}` : ''}: ${pct(f.with.share)} of ${f.with.n} rounds won against ${pct(f.without.share)} of ${f.without.n} (${r2(f.diff * 100)} points, ${r2(f.lo * 100)} to ${r2(f.hi * 100)}${q(f.q)}${f.small ? ', few rounds' : ''})`;
+    out.set('lens.cqbOutcome', {
+      patterns,
+      why: `What separated won from lost rounds (${OC.rounds} rounds; ${OC.teams[0]} won ${ci(OC.wins[0])}): ${top.map(say).join('; ')} ${cite('xenopoulos-2022-wp', 'benjamini-hochberg-1995')}.`,
+      weight: Math.max(0.5, sig(top[0].q)),
+    });
+  }
   return out;
 }
 
 /** The player names a CQB block carries, for the external model's pseudonyms. */
 export function cqbNames(m: CqbMetrics | undefined): string[] {
-  if (!m?.impact) return [];
-  return [...m.impact.wpa, ...m.impact.rapm].map((p) => p.person).filter((p): p is string => !!p);
+  if (!m) return [];
+  const people = [...(m.impact?.wpa ?? []), ...(m.impact?.rapm ?? []), ...(m.outcome?.best ?? []), ...(m.outcome?.worst ?? [])];
+  return people.map((p) => p.person).filter((p): p is string => !!p);
 }

@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} nadoknađuje zaostatak od {deficit} i preuzima vodstvo.",
   "insights.cast.say.standout": "{actor} ističe se među {class}: {kills} ubojstava gdje je prosjek {mean}.",
   "insights.cast.say.struggle": "Težak meč za {actor}: {kills} ubojstava i {deaths} smrti, dok {class} u prosjeku imaju {mean} ubojstava.",
-  "insights.cast.say.longRange": "{actor} pogađa {other} s udaljenosti {distance}."
+  "insights.cast.say.longRange": "{actor} pogađa {other} s udaljenosti {distance}.",
+  "insights.debrief.outcome.score": "{a} je dobio {wa}, a {b} {wb} od {n} rundi sa poznatim ishodom ({a}: {pct}, 95% od {lo} do {hi}). {model, select, fitted {Vjerojatnosti pobjede dolaze iz modela prilagođenog ovim rundama.} other {Vjerojatnosti pobjede dolaze iz fiksnog apriornog modela: premalo rundi za prilagodbu.}}",
+  "insights.debrief.outcome.factors": "Što je razdvajalo dobivene od izgubljenih rundi{sure, select, yes {} other { (za sada ništa nije sigurno)}}: {list}. Isprobano čimbenika: {n}.",
+  "insights.debrief.outcome.turns": "Prekretnice: {list}.",
+  "insights.debrief.outcome.players": "Najviše dodane vjerojatnosti pobjede: {best}. Najviše izgubljene: {worst}. Po mjestima: {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, malo rundi} other {}}",
+  "insights.outcome.turn": "runda {round} u {at}: {kind, select, plant {postavljanje bombe} other {ubojstvo}} strane {team}{hasPlace, select, yes { na mjestu {place}} other {}} promijenilo je njezine izglede s {before} na {after}{won, select, yes {, i dobila je rundu} no {, ali je izgubila rundu} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} u {rounds} rundi ({perRound} bodova po rundi, 95% od {lo} do {hi}){small, select, yes {, malo rundi} other {}}",
+  "insights.outcome.spot": "{team} na mjestu {place} {wpa} u {n} dvoboja",
+  "insights.cast.kind.turning": "Prekretnica",
+  "insights.cast.say.turning": "{actor} obara {victim}: šansa strane {team} da dobije rundu mijenja se s {fromPct} na {toPct}",
+  "insights.cast.result": "{result, select, won {- i dobivaju rundu} lost {- ali gube rundu} other {}}"
 }

@@ -51,5 +51,6 @@
   "lens.metric.risk": "Rischio dopo le perdite",
   "lens.metric.streaks": "Serie (mano calda)",
   "lens.metric.buy": "Accordo sugli acquisti",
-  "lens.metric.suppression": "Soppressione"
+  "lens.metric.suppression": "Soppressione",
+  "lens.metric.cqbOutcome": "Cosa ha deciso i round"
 }

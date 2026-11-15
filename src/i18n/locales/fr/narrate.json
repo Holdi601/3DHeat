@@ -91,5 +91,16 @@
   "insights.cast.say.comeback": "{team} revient de {deficit} de retard et prend la tête.",
   "insights.cast.say.standout": "{actor} se démarque parmi {class} : {kills} kills là où la moyenne est de {mean}.",
   "insights.cast.say.struggle": "Un match difficile pour {actor} : {kills} kills et {deaths} morts, là où {class} font {mean} kills en moyenne.",
-  "insights.cast.say.longRange": "{actor} touche {other} à {distance} de distance."
+  "insights.cast.say.longRange": "{actor} touche {other} à {distance} de distance.",
+  "insights.debrief.outcome.score": "{a} a gagné {wa} et {b} a gagné {wb} sur {n} manches au résultat connu ({a} : {pct}, 95% de {lo} à {hi}). {model, select, fitted {Les probabilités de victoire viennent d’un modèle ajusté à ces manches.} other {Les probabilités de victoire viennent d’un modèle a priori fixe : trop peu de manches pour en ajuster un.}}",
+  "insights.debrief.outcome.factors": "Ce qui séparait les manches gagnées des perdues{sure, select, yes {} other { (rien n’est encore certain)}} : {list}. {n} facteurs essayés.",
+  "insights.debrief.outcome.turns": "Moments décisifs : {list}.",
+  "insights.debrief.outcome.players": "Plus de probabilité de victoire ajoutée : {best}. Plus perdue : {worst}. Par lieu : {spots}.",
+  "insights.outcome.evidence": "q {q}{small, select, yes {, peu de manches} other {}}",
+  "insights.outcome.turn": "manche {round} à {at} : {kind, select, plant {une pose} other {un kill}} de {team}{hasPlace, select, yes { à {place}} other {}} a fait passer sa probabilité de {before} à {after}{won, select, yes {, et elle a remporté la manche} no {, mais elle a perdu la manche} other {}}",
+  "insights.outcome.player": "{player} ({team}) {wpa} sur {rounds} manches ({perRound} points par manche, 95% de {lo} à {hi}){small, select, yes {, peu de manches} other {}}",
+  "insights.outcome.spot": "{team} à {place} {wpa} sur {n} duels",
+  "insights.cast.kind.turning": "Moment décisif",
+  "insights.cast.say.turning": "{actor} abat {victim} : la probabilité de {team} de gagner la manche passe de {fromPct} à {toPct}",
+  "insights.cast.result": "{result, select, won {- et ils remportent la manche} lost {- mais ils perdent la manche} other {}}"
 }

@@ -283,5 +283,15 @@
   "mass.surfaces.byOperator": "За оперативником",
   "mass.surfaces.byClass": "За класом зброї",
   "mass.surfaces.heat": "Де на поверхні",
-  "mass.surfaces.load": "Завантажити її матчі ({count})"
+  "mass.surfaces.load": "Завантажити її матчі ({count})",
+  "mass.say.place.winSideUp": "{map}: сторона {team} виграє більше своїх раундів, коли перебуває тут: виграно {value} із {rounds}, проти {base} очікуваних за її власним показником у тих самих матчах (шанси {ratio}×; утримували в {held} матчах)",
+  "mass.say.place.winSideDown": "{map}: сторона {team} виграє менше своїх раундів, коли перебуває тут: виграно {value} із {rounds}, проти {base} очікуваних за її власним показником у тих самих матчах (шанси 1/{ratio}; утримували в {held} матчах)",
+  "mass.niches.table.rounds": "Раунди",
+  "mass.niches.target.roundWin": "Перемога в раунді",
+  "mass.niches.factor.weapon": "Зброя",
+  "mass.niches.factor.place": "Місце",
+  "mass.niches.factor.buy": "Закупівля",
+  "mass.niches.factor.opening": "Перше вбивство",
+  "mass.say.niche.roundWinUp": "{group}: виграє {value} із {n} раундів, проти {base} очікуваних від тих самих сторін у тих самих матчах (шанси {ratio}×; матчів: {matches})",
+  "mass.say.niche.roundWinDown": "{group}: виграє лише {value} із {n} раундів, проти {base} очікуваних від тих самих сторін у тих самих матчах (шанси 1/{ratio}; матчів: {matches})"
 }
