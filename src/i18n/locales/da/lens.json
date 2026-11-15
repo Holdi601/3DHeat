@@ -30,7 +30,7 @@
   "lens.metric.cqbWinProb": "Sandsynlighed for at vinde runden",
   "lens.metric.cqbActions": "Handlingers værdi",
   "lens.metric.cqbOpening": "Åbningsdueller",
-  "lens.metric.cqbTrades": "Trades og refrags",
+  "lens.metric.cqbTrades": "Trades og hævnede dødsfald",
   "lens.metric.cqbPeek": "Peeker mod holder",
   "lens.metric.cqbAim": "Sigte før duellen",
   "lens.metric.cqbCrossfire": "Krydsild",
