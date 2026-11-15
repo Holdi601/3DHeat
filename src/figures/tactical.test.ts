@@ -63,18 +63,18 @@ describe('close-quarters figures', () => {
     for (const f of Object.values(ROLE_FIGURES)) expect(CATALOG[f], f).toBeDefined();
   });
 
-  it('draws a body as the soldier with its weapon and side, a drone as the drone, and nothing for gadgets and marks', () => {
+  it('draws a body as its operator with its weapon and side, a drone as the drone, and nothing for gadgets and marks', () => {
     const c = tacticalColumns(dataset)!;
     expect(c).not.toBeNull();
-    expect(tacticalFigure(c, 0)).toBe('operator-rifle-attack');
-    expect(tacticalFigure(c, 4)).toBe('operator-smg-defense');
+    expect(tacticalFigure(c, 0)).toBe('op-ash-rifle-attack');
+    expect(tacticalFigure(c, 4)).toBe('op-mute-smg-defense');
     expect(tacticalFigure(c, 1)).toBe('throw-drone');
     expect(hiddenRow(c, 3)).toBe(true);
     expect(hiddenRow(c, 5)).toBe(true);
     for (const r of [0, 1, 4]) expect(CATALOG[tacticalFigure(c, r)!]).toBeDefined();
     const fr = new FigureReplay();
     expect(fr.knowsTypes(dataset)).toBe(true);
-    expect(fr.kindOf(dataset, 0)).toBe('operator-rifle-attack');
+    expect(fr.kindOf(dataset, 0)).toBe('op-ash-rifle-attack');
   });
 
   it('keeps a placed gadget from where it was placed until its round ends', () => {

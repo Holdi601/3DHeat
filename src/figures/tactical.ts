@@ -1,7 +1,8 @@
 /**
  * Close-quarters tactical shooters (Rainbow Six Siege's replays, and any table
- * written the same way): which figure a row is. A player's own body is the
- * close-quarters soldier holding their primary weapon's class, in the stance
+ * written the same way): which figure a row is. A player's own body is their
+ * operator's own figure (`operators.ts`; the plain close-quarters soldier for
+ * an operator it does not know) holding their primary weapon's class, in the stance
  * the data gives (standing where it says none) and with the band of the side
  * they are on; a drone is the throwable drone; a gadget or ability they placed
  * is the gadget figure its name or role calls for (`gadgets.ts`).
@@ -25,6 +26,7 @@ import type { Rgb } from '../race/geometry';
 import type { Kitbag, Stance } from './infantry';
 import type { GadgetKind } from './gadgets';
 import { personRows } from '../data/flight';
+import { operatorFigureName, operatorOf, operatorSlug } from './operators';
 
 /**
  * The band colours of the two sides, fixed, beside the team's colour: attack
@@ -318,12 +320,16 @@ export function tacticalFigure(c: TacticalColumns, row: number): string | null {
   if (pawn === 'drone') return 'throw-drone';
   const cls = textAt(c.primaryClass, row).trim().toLowerCase();
   const carry = CARRY_OF_CLASS[cls] ?? 'rifle';
-  return operatorName(carry, stanceOf(textAt(c.stance, row)), sideOf(textAt(c.side, row)));
+  const stance = stanceOf(textAt(c.stance, row));
+  // An operator the viewer knows is their own figure, holding the row's weapon class where they have one of it.
+  const op = operatorOf(textAt(c.operator, row));
+  if (op) return operatorFigureName(operatorSlug(op.name), op.carries.includes(carry) ? carry : op.carries[0], stance, op.look.side);
+  return operatorName(carry, stance, sideOf(textAt(c.side, row)));
 }
 
 /** The cache key of a row's figure: the texts `tacticalFigure` reads. */
 export function tacticalKey(c: TacticalColumns, row: number): string {
-  return `${textAt(c.pawn, row)}\u0001${textAt(c.primaryClass, row)}\u0001${textAt(c.stance, row)}\u0001${textAt(c.side, row)}`;
+  return `${textAt(c.pawn, row)}\u0001${textAt(c.primaryClass, row)}\u0001${textAt(c.stance, row)}\u0001${textAt(c.side, row)}\u0001${textAt(c.operator, row)}`;
 }
 
 /**
