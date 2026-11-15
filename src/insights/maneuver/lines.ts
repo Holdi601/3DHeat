@@ -24,6 +24,8 @@ const SIDES: [number, number, number][] = [
   [0.3, 0.9, 0.9],
 ];
 const NEUTRAL: [number, number, number] = [0.9, 0.9, 0.9];
+/** Faint maneuvers drawn besides the picked one at most. */
+const MAX_FAINT = 60;
 const FRONT: [number, number, number] = [1, 1, 1];
 
 const BLUE = /\b(blue|allies|allied|ct|nato|west|friendly|coalition)\b/i;
@@ -52,11 +54,20 @@ const ENEMY_OUTLINE: Partial<Record<ManeuverKind, number[]>> = {
 export function maneuverLines(list: Maneuver[], focus: string | null, teams: string[] = [], faint = 0.3): Lines {
   const out: number[] = [];
   const seg = (a: [number, number, number], b: [number, number, number], c: [number, number, number], alpha: number) => out.push(a[0], a[1], a[2], c[0], c[1], c[2], alpha, b[0], b[1], b[2], c[0], c[1], c[2], alpha);
-  for (const m of list) {
+  // The others, faint, at most the 60 nearest the picked one in time, each with its first four ways
+  // thinned to 12 points and no outlines: the top lines are copied to the GPU every frame, so they stay small.
+  const picked = list.find((m) => m.id === focus);
+  const rest = list
+    .filter((m) => m !== picked)
+    .sort((a, b) => (picked ? Math.abs(a.t0 - picked.t0) - Math.abs(b.t0 - picked.t0) : 0))
+    .slice(0, MAX_FAINT);
+  for (const m of picked ? [picked, ...rest] : rest) {
+    const full = m === picked;
     const alpha = focus === null || focus === m.id ? 0.95 : faint;
     const own = sideColor(m.team, teams[m.team]);
     const lift = Math.max(m.place.radius * 0.01, 0.5);
-    for (const p of m.paths) {
+    for (const p0 of full ? m.paths : m.paths.slice(0, 4)) {
+      const p = full || p0.length <= 12 ? p0 : p0.filter((_, i) => i % Math.ceil(p0.length / 12) === 0 || i === p0.length - 1);
       let len = 0;
       for (let i = 1; i < p.length; i++) {
         seg([p[i - 1][0], p[i - 1][1] + lift, p[i - 1][2]], [p[i][0], p[i][1] + lift, p[i][2]], own, alpha);
@@ -80,7 +91,7 @@ export function maneuverLines(list: Maneuver[], focus: string | null, teams: str
       }
     }
     const enemy = ENEMY_OUTLINE[m.kind] ?? [];
-    m.outlines.forEach((ring, i) => {
+    (full ? m.outlines : []).forEach((ring, i) => {
       const col = enemy.includes(i) ? sideColor(m.against, teams[m.against]) : own;
       const y = m.place.y + lift;
       for (let k = 0; k < ring.length; k++) {
