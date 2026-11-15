@@ -4,7 +4,7 @@ parent: "Warmtemodi"
 nav_order: 3
 lang: "nl"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Het juiste getal raden maakt het verschil tussen een warmtekaart en een leeg (of
 
 **Belichting automatisch uit het veld** meet het veld dat de shader echt heeft gemaakt. Het negeert lege pixels, neemt het 98e percentiel van de verlichte pixels en zet dat op 85% van de weg naar het verzadigingspunt. Zo blijft de bovenkant van de rampe over voor de echte pieken.
 
-Het paneel toont dan *gemeten X% van het beeld; 98e percentiel R ligt bij de bovenkant van de rampe*. Bij de *Verzadigende* respons komt een waarde op 85% van het verzadigingspunt uit op ongeveer 69% van de rampe in plaats van 85%.
+Het paneel toont dan *gemeten X% van het beeld; 98e percentiel R ligt bij de bovenkant van de rampe*. Bij de *Verzadigende* respons komt een waarde op 85% van het verzadigingspunt uit op ongeveer 57% van de rampe in plaats van 85%.
 
 Het draait ook **automatisch**:
 

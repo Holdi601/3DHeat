@@ -4,7 +4,7 @@ parent: "Modalità di calore"
 nav_order: 3
 lang: "it"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Sbagliarlo è la differenza tra una mappa di calore e uno schermo vuoto (o bianc
 
 **Esposizione automatica dal campo** misura il campo che lo shader ha prodotto davvero. Ignora i pixel vuoti, prende il 98° percentile di quelli illuminati e lo porta all'85% del percorso verso il punto di saturazione. Così la cima della rampa resta per i picchi reali.
 
-Il pannello poi mostra *misurato il X% del fotogramma; 98° percentile R posto vicino alla cima della rampa*. Con la risposta *Saturante*, un valore all'85% del punto di saturazione finisce a circa il 69% della rampa, non all'85%.
+Il pannello poi mostra *misurato il X% del fotogramma; 98° percentile R posto vicino alla cima della rampa*. Con la risposta *Saturante*, un valore all'85% del punto di saturazione finisce a circa il 57% della rampa, non all'85%.
 
 Viene eseguita anche **automaticamente**:
 

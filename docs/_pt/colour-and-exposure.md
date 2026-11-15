@@ -4,7 +4,7 @@ parent: "Modos de calor"
 nav_order: 3
 lang: "pt"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Acertar nisto é a diferença entre um mapa de calor e um ecrã em branco (ou br
 
 **Exposição automática a partir do campo** mede o campo que o sombreador realmente produziu. Ignora os píxeis vazios, toma o percentil 98 dos iluminados e coloca-o a 85% do caminho até ao ponto de saturação, para que o topo da rampa fique reservado para os picos reais.
 
-O painel mostra então *medido X% do fotograma; percentil 98 R colocado perto do topo da rampa*. Com a resposta *Saturante*, um valor a 85% do ponto de saturação fica a cerca de 69% da rampa e não a 85%.
+O painel mostra então *medido X% do fotograma; percentil 98 R colocado perto do topo da rampa*. Com a resposta *Saturante*, um valor a 85% do ponto de saturação fica a cerca de 57% da rampa e não a 85%.
 
 Também corre **automaticamente**:
 

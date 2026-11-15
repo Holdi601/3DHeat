@@ -4,7 +4,7 @@ parent: "Moduri de căldură"
 nav_order: 3
 lang: "ro"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ A-l greși înseamnă diferența dintre o hartă termică și un ecran gol (sau 
 
 **Expunere automată din câmp** măsoară câmpul pe cadrul pe care shader-ul l-a produs efectiv. Ignoră pixelii goi, ia percentila 98 a celor luminați și o pune la 85% din drumul până la punctul de saturație, astfel încât vârful rampei rămâne rezervat pentru vârfurile reale.
 
-Panoul afișează apoi *măsurat X% din cadru; percentila 98 R plasată aproape de vârful rampei*. Cu răspunsul *Saturant*, o valoare aflată la 85% din punctul de saturație ajunge la aproximativ 69% din rampă, nu la 85%.
+Panoul afișează apoi *măsurat X% din cadru; percentila 98 R plasată aproape de vârful rampei*. Cu răspunsul *Saturant*, o valoare aflată la 85% din punctul de saturație ajunge la aproximativ 57% din rampă, nu la 85%.
 
 Rulează și **automat**:
 

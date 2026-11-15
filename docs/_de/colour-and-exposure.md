@@ -4,7 +4,7 @@ parent: "Intensitätsmodi"
 nav_order: 3
 lang: "de"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Ein falscher Wert macht den Unterschied zwischen einer Heatmap und einem leeren 
 
 **Belichtung automatisch aus dem Feld** misst das Feld, das der Shader tatsächlich erzeugt hat. Leere Pixel werden ignoriert, der 98. Perzentilwert der beleuchteten Pixel wird genommen und auf 85 % des Weges zum Sättigungspunkt gelegt. So bleibt das obere Ende des Farbverlaufs für die echten Spitzen frei.
 
-Das Feld zeigt dann an: *gemessen X % des Bildes; 98. Perzentil R nahe dem oberen Ende des Farbverlaufs*. Bei der Antwort *Sättigend* landet ein Wert bei 85 % des Sättigungspunkts bei etwa 69 % des Farbverlaufs statt bei 85 %.
+Das Feld zeigt dann an: *gemessen X % des Bildes; 98. Perzentil R nahe dem oberen Ende des Farbverlaufs*. Bei der Antwort *Sättigend* landet ein Wert bei 85 % des Sättigungspunkts bei etwa 57 % des Farbverlaufs statt bei 85 %.
 
 Sie läuft auch **automatisch**:
 

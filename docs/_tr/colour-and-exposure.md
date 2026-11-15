@@ -4,7 +4,7 @@ parent: "Isı modları"
 nav_order: 3
 lang: "tr"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Bunu yanlış ayarlamak, ısı haritası ile boş (ya da beyaz) bir ekran arası
 
 **Alana göre otomatik pozlama**, shader'ın gerçekten ürettiği alanı ölçer. Boş pikselleri yok sayar, aydınlanmış piksellerin 98. yüzdelik dilimini alır ve bunu doygunluk noktasına giden yolun %85'ine yerleştirir. Böylece skalanın üst kısmı gerçek tepe noktalar için saklanır.
 
-Panel daha sonra *çerçevenin %X'i ölçüldü; 98. yüzdelik R, skalanın üst kısmına yakın yerleştirildi* yazısını gösterir. *Doyuran* tepki ile doygunluk noktasının %85 değeri, skalanın %85'i yerine yaklaşık %69'una denk gelir.
+Panel daha sonra *çerçevenin %X'i ölçüldü; 98. yüzdelik R, skalanın üst kısmına yakın yerleştirildi* yazısını gösterir. *Doyuran* tepki ile doygunluk noktasının %85 değeri, skalanın %85'i yerine yaklaşık %57'una denk gelir.
 
 Bu işlem **otomatik olarak** da çalışır:
 

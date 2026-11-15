@@ -4,7 +4,7 @@ parent: "Varmemodi"
 nav_order: 3
 lang: "no"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Alle kontrollene på denne siden virker når varmen blir til en farge, så når 
 
 **Autoeksponer fra feltet** måler feltet som skyggeleggingen faktisk ga. Den ser bort fra tomme piksler, tar 98. persentil av de lyste pikslene og setter den til 85 % av veien opp til metningspunktet. Slik beholdes toppen av skalaen for de virkelige toppene.
 
-Panelet viser da *målt X % av bildet; 98. persentil R plassert nær toppen av skalaen*. Med responsen *Mettende* havner en verdi på 85 % av metningspunktet på omtrent 69 % av skalaen i stedet for 85 %.
+Panelet viser da *målt X % av bildet; 98. persentil R plassert nær toppen av skalaen*. Med responsen *Mettende* havner en verdi på 85 % av metningspunktet på omtrent 57 % av skalaen i stedet for 85 %.
 
 Den kjører også **automatisk**:
 

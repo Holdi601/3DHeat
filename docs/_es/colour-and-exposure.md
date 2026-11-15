@@ -4,7 +4,7 @@ parent: "Modos de calor"
 nav_order: 3
 lang: "es"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Acertar con este valor marca la diferencia entre un mapa de calor y una pantalla
 
 **Autoexposición a partir del campo** mide el campo que el shader ha generado de verdad. Ignora los píxeles vacíos, toma el percentil 98 de los iluminados y lo coloca al 85 % del camino hacia el punto de saturación. Así la parte alta de la rampa queda reservada para los picos reales.
 
-El panel muestra entonces *medido X % del marco; percentil 98 R colocado cerca de la parte alta de la rampa*. Con la respuesta *Saturante*, un valor al 85 % del punto de saturación cae en torno al 69 % de la rampa, no al 85 %.
+El panel muestra entonces *medido X % del marco; percentil 98 R colocado cerca de la parte alta de la rampa*. Con la respuesta *Saturante*, un valor al 85 % del punto de saturación cae en torno al 57 % de la rampa, no al 85 %.
 
 También se ejecuta **automáticamente**:
 

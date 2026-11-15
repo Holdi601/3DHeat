@@ -26,7 +26,7 @@ Getting it wrong is the difference between a heatmap and a blank (or white) scre
 
 **Auto-expose from the field** meters the field the shader actually produced. It ignores empty pixels, takes the 98th percentile of the lit ones and puts it at 85% of the way to the saturation point, so the top of the ramp is kept for the real peaks.
 
-The panel then reads *metered X% of the frame; 98th percentile R placed near the top of the ramp*. With the *Saturating* response, a value at 85% of the saturation point lands at about 69% of the ramp rather than 85%.
+The panel then reads *metered X% of the frame; 98th percentile R placed near the top of the ramp*. With the *Saturating* response, a value at 85% of the saturation point lands at about 57% of the ramp rather than 85%.
 
 It also runs **automatically**:
 

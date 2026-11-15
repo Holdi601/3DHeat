@@ -4,7 +4,7 @@ parent: "Tryby ciepła"
 nav_order: 3
 lang: "pl"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Każde ustawienie na tej stronie działa wtedy, gdy ciepło zamienia się w kolo
 
 **Automatyczna ekspozycja z pola** mierzy pole, które shader faktycznie wygenerował. Ignoruje puste piksele, bierze 98. percentyl oświetlonych pikseli i ustawia go na 85% drogi do punktu nasycenia. Dzięki temu góra gradientu zostaje na prawdziwe szczyty.
 
-Panel pokazuje wtedy: *zmierzono X% kadru; 98. percentyl R ustawiony blisko góry gradientu*. Przy odpowiedzi *Nasycająca* wartość na 85% punktu nasycenia trafia na około 69% gradientu, a nie na 85%.
+Panel pokazuje wtedy: *zmierzono X% kadru; 98. percentyl R ustawiony blisko góry gradientu*. Przy odpowiedzi *Nasycająca* wartość na 85% punktu nasycenia trafia na około 57% gradientu, a nie na 85%.
 
 Działa też **automatycznie**:
 

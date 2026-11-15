@@ -4,7 +4,7 @@ parent: "Modhanna teasa"
 nav_order: 3
 lang: "ga"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -32,7 +32,7 @@ Is é an difríocht idir léarscáil teasa agus scáileán bán (nó bán-gheal)
 
 Tomhaiseann **Nochtadh uathoibríoch ón réimse** an réimse a tháirgeann an shader i ndáiríre. Déanann sé neamhaird de phicteilíní folmha, glacann sé an 98ú céatadán de na cinn soilsithe agus cuireann sé ag 85% den bhealach go dtí an pointe sáithithe é, ionas go gcoimeádtar barr an ramhair do na buaicphointí fíora.
 
-Léann an painéal *tomhaiste X% den fhráma; 98ú céatadán R curtha in aice le barr an ramhair*. Leis an fhreagairt *Sáithitheach*, tagann luach ag 85% den phointe sáithithe ar thart ar 69% den ramhar seachas 85%.
+Léann an painéal *tomhaiste X% den fhráma; 98ú céatadán R curtha in aice le barr an ramhair*. Leis an fhreagairt *Sáithitheach*, tagann luach ag 85% den phointe sáithithe ar thart ar 57% den ramhar seachas 85%.
 
 Ritheann sé **go huathoibríoch** freisin:
 

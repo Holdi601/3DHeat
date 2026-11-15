@@ -4,7 +4,7 @@ parent: "Lämmön tilat"
 nav_order: 3
 lang: "fi"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Väärä arvo erottaa lämpökartan tyhjästä (tai valkoisesta) ruudusta, eikä
 
 **Automaattinen valotus kentästä** mittaa kentän, jonka varjostin todella tuotti. Se jättää tyhjät pikselit pois, ottaa valaistujen pikselien 98. persentiilin ja sijoittaa sen 85 prosentin kohtaan matkasta kyllästymispisteeseen. Näin värikaistan yläpää jää todellisille huipuille.
 
-Paneeli näyttää tekstin *mitattiin X % kuvasta; 98. persentiili R sijoitettiin lähelle liukuvärin yläpäätä*. *Kyllästyvä*-vasteella arvo, joka on 85 % kyllästymispisteestä, osuu noin 69 %:iin värikaistasta eikä 85 %:iin.
+Paneeli näyttää tekstin *mitattiin X % kuvasta; 98. persentiili R sijoitettiin lähelle liukuvärin yläpäätä*. *Kyllästyvä*-vasteella arvo, joka on 85 % kyllästymispisteestä, osuu noin 57 %:iin värikaistasta eikä 85 %:iin.
 
 Se myös ajautuu **automaattisesti**:
 

@@ -4,7 +4,7 @@ parent: "Načini topline"
 nav_order: 3
 lang: "hr"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Pogrešna vrijednost razlikuje toplinsku kartu od praznog (ili bijelog) ekrana. 
 
 **Automatska ekspozicija iz polja** mjeri polje koje je shader stvarno proizveo. Zanemaruje prazne piksele, uzima 98. percentil osvijetljenih piksela i postavlja ga na 85% puta do točke zasićenja. Tako se vrh skale čuva za stvarne vrhove.
 
-Ploča zatim piše *izmjereno X% kadra; 98. percentil R postavljen blizu vrha skale*. Uz odziv *Zasićujući*, vrijednost na 85% točke zasićenja pada na oko 69% skale, a ne na 85%.
+Ploča zatim piše *izmjereno X% kadra; 98. percentil R postavljen blizu vrha skale*. Uz odziv *Zasićujući*, vrijednost na 85% točke zasićenja pada na oko 57% skale, a ne na 85%.
 
 Ona se također pokreće **automatski**:
 

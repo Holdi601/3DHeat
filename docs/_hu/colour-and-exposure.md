@@ -4,7 +4,7 @@ parent: "Hőmódok"
 nav_order: 3
 lang: "hu"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Ezen múlik, hogy hőtérképet vagy üres (vagy fehér) képernyőt kapunk, és
 
 Az **Automatikus expozíció a mezőből** a shader által ténylegesen előállított mezőt méri. Figyelmen kívül hagyja az üres pixeleket, a megvilágított pixelek 98. percentilisét veszi, és ezt a telítési pont 85%-ára teszi, így a színskála teteje a valódi csúcsoknak marad fenntartva.
 
-A panel ezt írja ki: *X%-nyi képkocka mérve; a 98. percentilis (R) a színskála teteje közelében*. A *Telítődő* válasznál a telítési pont 85%-os értéke a skála kb. 69%-ára esik, nem 85%-ára.
+A panel ezt írja ki: *X%-nyi képkocka mérve; a 98. percentilis (R) a színskála teteje közelében*. A *Telítődő* válasznál a telítési pont 85%-os értéke a skála kb. 57%-ára esik, nem 85%-ára.
 
 Ez **automatikusan** is lefut:
 

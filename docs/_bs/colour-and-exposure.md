@@ -4,7 +4,7 @@ parent: "Načini toplote"
 nav_order: 3
 lang: "bs"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Pogrešna vrijednost razlikuje toplinsku kartu od prazne (ili bijele) slike, a n
 
 **Automatska ekspozicija iz polja** mjeri polje koje je shader zaista proizveo. Zanemaruje prazne piksele, uzima 98. percentil osvijetljenih i stavlja ga na 85% puta do tačke zasićenja, tako da vrh rampe ostaje rezervisan za prave vrhove.
 
-Panel tada prikazuje *izmjereno X% kadra; 98. percentil R postavljen blizu vrha rampe*. Uz odziv *Zasićenje*, vrijednost na 85% tačke zasićenja pada na oko 69% rampe umjesto na 85%.
+Panel tada prikazuje *izmjereno X% kadra; 98. percentil R postavljen blizu vrha rampe*. Uz odziv *Zasićenje*, vrijednost na 85% tačke zasićenja pada na oko 57% rampe umjesto na 85%.
 
 Pokreće se i **automatski**:
 

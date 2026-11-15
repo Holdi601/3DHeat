@@ -4,7 +4,7 @@ parent: "Varmetilstande"
 nav_order: 3
 lang: "da"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ At gætte forkert er forskellen mellem et varmekort og et tomt (eller hvidt) bil
 
 **Automatisk eksponering ud fra feltet** måler på det felt, skyggeren faktisk har lavet. Den ser bort fra tomme pixels, tager den 98. percentil af de oplyste pixels og sætter den på 85 % af vejen op til mætningspunktet. Dermed er toppen af rampen reserveret til de rigtige toppe.
 
-Panelet viser derefter *målt X % af billedet; 98. percentil R placeret nær toppen af rampen*. Med responsen *Mættende* lander en værdi på 85 % af mætningspunktet på ca. 69 % af rampen i stedet for 85 %.
+Panelet viser derefter *målt X % af billedet; 98. percentil R placeret nær toppen af rampen*. Med responsen *Mættende* lander en værdi på 85 % af mætningspunktet på ca. 57 % af rampen i stedet for 85 %.
 
 Den kører også **automatisk**:
 

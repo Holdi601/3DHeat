@@ -4,7 +4,7 @@ parent: "Režimy tepla"
 nav_order: 3
 lang: "sk"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Správna hodnota rozhoduje o tom, či máte teplotnú mapu, alebo prázdnu (či 
 
 **Automatická expozícia z poľa** meria pole, ktoré shader skutočne vytvoril. Ignoruje prázdne pixely, zoberie 98. percentil osvetlených pixelov a umiestni ho na 85 % cesty k bodu nasýtenia, takže vrch farebnej škály zostáva pre skutočné špičky.
 
-Panel potom ukazuje *namerané X % rámca; 98. percentil R umiestnený blízko vrchu škály*. Pri odozve *Nasycujúca* hodnota na 85 % bodu nasýtenia pripadne asi na 69 % škály, nie na 85 %.
+Panel potom ukazuje *namerané X % rámca; 98. percentil R umiestnený blízko vrchu škály*. Pri odozve *Nasycujúca* hodnota na 85 % bodu nasýtenia pripadne asi na 57 % škály, nie na 85 %.
 
 Beží aj **automaticky**:
 

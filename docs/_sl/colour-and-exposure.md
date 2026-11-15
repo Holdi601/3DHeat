@@ -4,7 +4,7 @@ parent: "Načini toplote"
 nav_order: 3
 lang: "sl"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Napačna vrednost loči toplotno karto od prazne (ali bele) slike, in je ni mogo
 
 **Samodejna osvetlitev iz polja** izmeri polje, ki ga je senčilnik dejansko ustvaril. Prezre prazne slikovne pike, vzame 98. percentil osvetljenih pik in ga postavi na 85 % poti do točke nasičenja. Tako ostane vrh lestvice za prave vrhove.
 
-Panel nato prikaže *izmerjeno X % okvirja; 98. percentil R postavljen blizu vrha lestvice*. Pri odzivu *Nasičen* vrednost na 85 % točke nasičenja pristane pri približno 69 % lestvice, ne pri 85 %.
+Panel nato prikaže *izmerjeno X % okvirja; 98. percentil R postavljen blizu vrha lestvice*. Pri odzivu *Nasičen* vrednost na 85 % točke nasičenja pristane pri približno 57 % lestvice, ne pri 85 %.
 
 Teče tudi **samodejno**:
 

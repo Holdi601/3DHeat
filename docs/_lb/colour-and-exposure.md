@@ -4,7 +4,7 @@ parent: "Hëtztmodi"
 nav_order: 3
 lang: "lb"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Et mécht de Ënnerscheed tëscht enger Hëtztkaart an engem eidelen (oder wäis
 
 **Automatesch Beliichtung aus dem Feld** miesst d'Feld, dat de Shader wierklech gemaach huet. Et ignoréiert eidel Pixelen, hëlt de 98. Perzentil vun de beliichtenen an setzt en op 85 % vum Wee bis zum Sättegungspunkt, sou datt d'Spëtzt vum Verlaf fir déi richteg Spëtzen bleift.
 
-D'Panel weist dann *gemooss X % vum Bild; 98. Perzentil R ass no bei der Spëtzt vum Verlaf*. Mat der *Sättegender* Reaktioun kënnt en Wäert op 85 % vum Sättegungspunkt op ongeféier 69 % vum Verlaf an net 85 %.
+D'Panel weist dann *gemooss X % vum Bild; 98. Perzentil R ass no bei der Spëtzt vum Verlaf*. Mat der *Sättegender* Reaktioun kënnt en Wäert op 85 % vum Sättegungspunkt op ongeféier 57 % vum Verlaf an net 85 %.
 
 Et leeft och **vun alleng**:
 

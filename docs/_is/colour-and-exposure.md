@@ -4,7 +4,7 @@ parent: "Hitastillingar"
 nav_order: 3
 lang: "is"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Að hafa þetta rangt er munurinn á hitakorti og auðum (eða hvítum) skjá, o
 
 **Sjálfvirk lýsing út frá sviðinu** mælir sviðið sem skyggingin raunverulega skilaði. Hún hunsar tóma pixla, tekur 98. hundraðshlutamarkið af þeim lýstu og setur það í 85% leiðarinnar að mettunarpunktinum, svo að toppur skalans sé varðveittur fyrir raunverulegu hámarkin.
 
-Spjaldið sýnir þá *mælt X% af rammanum; 98. hundraðshluti R settur nálægt toppi skalans*. Með *Mettandi* svörun lendir gildi við 85% af mettunarpunktinum í um 69% af skalanum í stað 85%.
+Spjaldið sýnir þá *mælt X% af rammanum; 98. hundraðshluti R settur nálægt toppi skalans*. Með *Mettandi* svörun lendir gildi við 85% af mettunarpunktinum í um 57% af skalanum í stað 85%.
 
 Hún keyrir líka **sjálfkrafa**:
 

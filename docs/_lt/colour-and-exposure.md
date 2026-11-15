@@ -4,7 +4,7 @@ parent: "Šilumos režimai"
 nav_order: 3
 lang: "lt"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Visi šio puslapio valdikliai veikia tada, kai šiluma paverčiama spalva, todė
 
 **Automatinė ekspozicija pagal lauką** išmatuoja lauką, kurį iš tikrųjų sugeneravo šešėliuoklis. Ji ignoruoja tuščius pikselius, paima apšviestųjų pikselių 98-ąjį procentilį ir padeda jį į 85 % kelio iki įsotinimo taško, todėl viršutinė skalės dalis lieka tikrosioms smailėms.
 
-Skydelyje tada rodoma: *išmatuota X % kadro; 98-asis procentilis R padėtas arti skalės viršaus*. Su *Įsotinančia* reakcija reikšmė, esanti 85 % kelio iki įsotinimo taško, atsiduria maždaug 69 % skalės, o ne 85 %.
+Skydelyje tada rodoma: *išmatuota X % kadro; 98-asis procentilis R padėtas arti skalės viršaus*. Su *Įsotinančia* reakcija reikšmė, esanti 85 % kelio iki įsotinimo taško, atsiduria maždaug 57 % skalės, o ne 85 %.
 
 Ji taip pat veikia **automatiškai**:
 

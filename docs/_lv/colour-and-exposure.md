@@ -4,7 +4,7 @@ parent: "Siltuma režīmi"
 nav_order: 3
 lang: "lv"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Pareizs skaitlis nosaka, vai redzi siltumkarti vai tukšu (vai baltu) ekrānu. T
 
 **Automātiska ekspozīcija pēc lauka** izmēra lauku, ko šeideris patiesi izveidoja. Tā ignorē tukšos pikseļus, ņem 98. procentili no apgaismotajiem un novieto to 85% attālumā līdz piesātinājuma punktam. Tā skalas augšu saglabā īstajiem maksimumiem.
 
-Panelis tad rāda *izmērīti X % kadra; 98. procentile R novietota pie skalas augšas*. Ar *Piesātinošo* reakciju vērtība 85% no piesātinājuma punkta nokrīt ap 69% skalas, nevis 85%.
+Panelis tad rāda *izmērīti X % kadra; 98. procentile R novietota pie skalas augšas*. Ar *Piesātinošo* reakciju vērtība 85% no piesātinājuma punkta nokrīt ap 57% skalas, nevis 85%.
 
 Tas darbojas arī **automātiski**:
 

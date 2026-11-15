@@ -4,7 +4,7 @@ parent: "Värmelägen"
 nav_order: 3
 lang: "sv"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Att ha fel här är skillnaden mellan en värmekarta och en tom (eller vit) skä
 
 **Autoexponera från fältet** mäter fältet som skuggningen faktiskt gav. Den ignorerar tomma pixlar, tar den 98:e percentilen av de upplysta och placerar den på 85 % av vägen till mättnadspunkten. Då finns den översta delen av rampen kvar för de riktiga topparna.
 
-Panelen visar sedan *mätt X % av bildrutan; 98:e percentilen R placerad nära rampens topp*. Med svaret *Mättande* hamnar ett värde på 85 % av mättnadspunkten på ungefär 69 % av rampen i stället för 85 %.
+Panelen visar sedan *mätt X % av bildrutan; 98:e percentilen R placerad nära rampens topp*. Med svaret *Mättande* hamnar ett värde på 85 % av mättnadspunkten på ungefär 57 % av rampen i stället för 85 %.
 
 Den körs också **automatiskt**:
 

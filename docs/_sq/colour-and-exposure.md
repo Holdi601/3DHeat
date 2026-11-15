@@ -4,7 +4,7 @@ parent: "Mënyrat e nxehtësisë"
 nav_order: 3
 lang: "sq"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -32,7 +32,7 @@ Ta gabosh këtë është dallimi midis një harte nxehtësie dhe një ekrani bos
 
 **Ekspozim automatik nga fusha** mat fushën që shader-i prodhoi realisht. Injoron pikselët bosh, merr përqindjen e 98-të të pikselëve të ndriçuar dhe e vendos në 85% të rrugës drejt pikës së ngopjes. Kështu maja e shkallës mbahet për pikat e vërteta maksimale.
 
-Paneli lexon atëherë *matur X% të kuadrit; përqindja e 98-të R vendoset afër majës së shkallës*. Me përgjigjen *Me ngopje*, një vlerë në 85% të pikës së ngopjes arrin rreth 69% të shkallës, jo 85%.
+Paneli lexon atëherë *matur X% të kuadrit; përqindja e 98-të R vendoset afër majës së shkallës*. Me përgjigjen *Me ngopje*, një vlerë në 85% të pikës së ngopjes arrin rreth 57% të shkallës, jo 85%.
 
 Ai punon edhe **automatikisht**:
 

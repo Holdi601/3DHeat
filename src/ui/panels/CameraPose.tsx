@@ -5,7 +5,7 @@ import { directionFromYawPitch } from '../../render/pose';
 import { useInspectStore } from '../../state/inspectStore';
 import { useStore } from '../../state/store';
 import { cameraInFrame, poseToWorld } from '../inspectFormat';
-import { formatBox, parseNumber } from '../numberInput';
+import { formatBox, parseNumber, stepValue } from '../numberInput';
 
 /**
  * Numeric camera pose.
@@ -91,6 +91,14 @@ export function CameraPose() {
           if (e.key === 'Enter') {
             apply();
             (e.target as HTMLInputElement).blur();
+          } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            // A text box has no native stepping: one unit, Shift for ten, applied at once.
+            const el = e.target as HTMLInputElement;
+            const v = parseNumber(el.value);
+            if (v == null) return;
+            e.preventDefault();
+            el.value = formatBox(stepValue(v, e.key === 'ArrowUp' ? 1 : -1, 1, e.shiftKey), 2);
+            apply();
           }
         }}
       />

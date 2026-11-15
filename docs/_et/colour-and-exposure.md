@@ -4,7 +4,7 @@ parent: "Soojusrežiimid"
 nav_order: 3
 lang: "et"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Selle valesti saamine on vahe soojuskaardi ja tühja (või valge) ekraani vahel,
 
 **Automaatne säritus välja põhjal** mõõdab välja, mille varjundaja tegelikult tootis. See ignoreerib tühje pikslid, võtab valgustatud piksliste 98. protsentiili ja paigutab selle 85% kaugusele küllastuspunktini, nii et skaala tipp jääb päris tippudele.
 
-Paneel loeb siis *metered X% of the frame; 98th percentile R placed near the top of the ramp* (mõõdetud X% kaadrist; 98. protsentiil R paigutatud skaala tipu lähedale). *Küllastuva* vastuse korral läheb väärtus 85% küllastuspunktist umbes 69% kohale skaalal, mitte 85% kohale.
+Paneel loeb siis *metered X% of the frame; 98th percentile R placed near the top of the ramp* (mõõdetud X% kaadrist; 98. protsentiil R paigutatud skaala tipu lähedale). *Küllastuva* vastuse korral läheb väärtus 85% küllastuspunktist umbes 57% kohale skaalal, mitte 85% kohale.
 
 See töötab ka **automaatselt**:
 

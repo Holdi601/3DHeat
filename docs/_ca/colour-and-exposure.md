@@ -4,7 +4,7 @@ parent: "Modes de calor"
 nav_order: 3
 lang: "ca"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Encertar-lo és la diferència entre un mapa de calor i una pantalla en blanc (o
 
 **Exposició automàtica a partir del camp** mesura el camp que el shader ha produït de veritat. Ignora els píxels buits, agafa el percentil 98 dels il·luminats i el col·loca al 85% del camí cap al punt de saturació, de manera que la part alta de la rampa es reserva per als pics reals.
 
-El panell llavors mostra *mesurat X% del fotograma; percentil 98 R col·locat a prop de la part alta de la rampa*. Amb la resposta *Saturant*, un valor al 85% del punt de saturació cau a uns 69% de la rampa en lloc de 85%.
+El panell llavors mostra *mesurat X% del fotograma; percentil 98 R col·locat a prop de la part alta de la rampa*. Amb la resposta *Saturant*, un valor al 85% del punt de saturació cau a uns 57% de la rampa en lloc de 85%.
 
 També s'executa **automàticament**:
 

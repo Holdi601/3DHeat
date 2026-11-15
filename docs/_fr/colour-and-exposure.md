@@ -4,7 +4,7 @@ parent: "Modes de chaleur"
 nav_order: 3
 lang: "fr"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Bien choisir cette valeur fait la différence entre une carte de chaleur et un �
 
 **Exposition automatique d’après le champ** mesure le champ que le shader a réellement produit. Il ignore les pixels vides, prend le 98e centile des pixels éclairés et le place à 85 % du chemin vers le point de saturation. Ainsi, le haut de la rampe reste réservé aux vrais pics.
 
-Le panneau affiche alors *mesuré sur X % de l’image ; 98e centile R placé près du haut de la rampe*. Avec la réponse *Saturante*, une valeur à 85 % du point de saturation tombe à environ 69 % de la rampe au lieu de 85 %.
+Le panneau affiche alors *mesuré sur X % de l’image ; 98e centile R placé près du haut de la rampe*. Avec la réponse *Saturante*, une valeur à 85 % du point de saturation tombe à environ 57 % de la rampe au lieu de 85 %.
 
 Elle se lance aussi **automatiquement** :
 

@@ -4,7 +4,7 @@ parent: "Modi tas-sħana"
 nav_order: 3
 lang: "mt"
 source: "colour-and-exposure.md"
-source_hash: "c4d3a34a9302"
+source_hash: "efbd1901ba3f"
 translated: true
 outdated: false
 ---
@@ -31,7 +31,7 @@ Li tbiddel dan sewwa hija d-differenza bejn mappa tas-sħana u skrin vojt (jew a
 
 **Espożizzjoni awtomatika mill-kamp** tkejjel il-qasam li l-shader fil-fatt ipproduċa. Tinjora l-pixels vojta, tieħu l-98 perċentil tal-pixels imdawwlin u tqiegħdu fuq 85% tat-triq lejn il-punt tas-saturazzjoni, sabiex it-tarf tar-rampa jinżamm għall-picks reali.
 
-Il-pannell imbagħad jaqra *ikkejjel X% tal-qafas; il-98 perċentil R imqiegħed qrib it-tarf tar-rampa*. Bir-rispons *Saturanti*, valur fuq 85% tal-punt tas-saturazzjoni jaqa' madwar 69% tar-rampa minflok 85%.
+Il-pannell imbagħad jaqra *ikkejjel X% tal-qafas; il-98 perċentil R imqiegħed qrib it-tarf tar-rampa*. Bir-rispons *Saturanti*, valur fuq 85% tal-punt tas-saturazzjoni jaqa' madwar 57% tar-rampa minflok 85%.
 
 Jaħdem ukoll **awtomatikament**:
 
