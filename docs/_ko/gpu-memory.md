@@ -5,8 +5,48 @@ nav_order: 5
 lang: "ko"
 source: "gpu-memory.md"
 source_hash: "fba5dac6a137"
-translated: false
+translated: true
 outdated: false
 ---
 
-{{ site.data.i18n[page.lang].ui.untranslatedBody | default: site.data.i18n.en.ui.untranslatedBody }} [{{ site.data.i18n[page.lang].ui.english | default: "English" }}](../gpu-memory.html)
+# GPU 메모리 상주
+
+그래픽 카드의 메모리에는 한계가 있습니다. 데이터가 들어가지 않으면 뷰어는 들어가는 만큼만 보여 주고, 그렇다고 알려 줍니다. 통계 오버레이에 호박색 **Not resident** 줄이 생기고, 빠진 행의 수가 적힙니다. 빠진 것을 모르고 완전해 보이는 축소된 데이터셋은 분석 도구가 저지를 수 있는 가장 나쁜 실수이므로, 이 줄은 절대 숨기지 않습니다.
+
+![호박색 Not resident 줄이 있는 통계 오버레이](../assets/img/en/gpu-memory-not-resident.webp)
+
+더 많이 넣으려면 **Resource budgets**에서 GPU 예산을 올리고 다시 불러오세요 ([메모리와 예산](memory-and-budgets.md#raising-the-gpu-budget)). 아니면 먼저 데이터를 좁히거나, 메모리가 더 많은 카드를 쓰세요.
+
+## 개발자용 {#for-developers}
+
+### GPU에 행을 저장하는 방법 {#how-rows-are-stored-on-the-gpu}
+
+행은 데이터셋이 도착할 때 한 번 업로드되며, 8,388,608행(2²³)의 **청크** 단위입니다 ([`CHUNK_ROWS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)). 각 청크는 자체 경계 상자와 시간 범위에 맞춰 양자화됩니다.
+
+| 데이터 | 형식 | 행당 바이트 |
+|---|---|---|
+| 위치 X, Y, Z와 그룹 id | 16비트 부호 없는 정수 4개 (WebGL2에서는 RGBA16UI); X, Y, Z는 청크의 경계 상자 안 | 8 |
+| 시간과 수명 (데이터셋에 시간과 사람이 모두 있을 때) | 16비트 부호 없는 정수 2개 (RG16UI): 청크의 시간 범위 안의 시간; 수명에서 65,535는 "다음 샘플 없음" | 4 |
+
+16비트로 충분한 이유는 청크마다 경계 상자가 있기 때문입니다. 청크는 보통 지도의 일부만 덮으므로, 킬로미터 단위의 지도에서도 양자화 간격은 1cm보다 훨씬 작게 떨어지고, 실제 텔레메트리의 잡음보다 훨씬 작습니다. 네 번째 채널에 실린 그룹 id는 공짜이며, 그래서 그룹은 최대 4,096개까지만 가능합니다 ([그룹](sessions-persons-groups.md#limits)).
+
+WebGL2에서 각 청크는 폭 8,192 텍셀의 텍스처이며 텍스처 행 단위로 채워집니다. 행은 프레임마다 있는 블록 인덱스 텍스처를 거쳐 `gl_VertexID`로 접근합니다. WebGPU에서는 스토리지 버퍼입니다.
+
+사용할 때 할당되는 행별 GPU 메모리는 다음과 같습니다.
+
+- 사용 중인 각 열 [필터](filters.md): 행당 4바이트 (32비트 부동소수점 값 또는 범주 id). 필터를 처음 쓸 때 청크별로 업로드됩니다;
+- [라인 히트](line-heat.md): 행당 8바이트 (각 구간의 시작점을 데이터의 경계 상자 안에서 양자화한 값과 플래그). 라인 모드가 켜져 있는 동안.
+
+여기에 렌더 타깃이 더해집니다: 장면 색과 깊이, 히트 타깃과 그 임시 쌍둥이 ([팀 히트](team-heat.md)에서 네 채널), [가림](depth-and-culling.md)을 위한 깊이 벗기기 층. 그리고 레벨의 지오메트리.
+
+### 예산은 업로드 때 강제됩니다 {#the-budget-is-enforced-at-upload}
+
+WebGL은 서비스할 수 없는 할당을 받아들인 뒤 컨텍스트를 잃거나, 엄청난 비용으로 시스템 메모리에 의존하게 됩니다. 그래서 GPU 예산은 데이터셋을 업로드할 때 강제됩니다 ([`setDataset`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/renderer.ts)).
+
+- 청크는 순서대로(즉 시간 순으로) 들어가는 동안 업로드됩니다;
+- 들어가지 않는 첫 청크는 **부분적으로** 업로드됩니다. 남은 예산이 담을 수 있는 만큼의 텍스처 행만큼 올립니다. 청크 전체를 담을 수 없는 예산이라도 그 안에서 가능한 만큼은 보여 주기 위해서입니다. 행은 시간 순이므로, 보이는 부분은 일관된 시간 구간입니다;
+- 그 뒤의 모든 것은 **상주하지 않음**입니다.
+
+빠진 것은 숨기지 않습니다. 통계 오버레이는 0보다 클 때마다 들어가지 않은 행의 수와 함께 호박색 **Not resident** 줄을 보여 줍니다. 빠진 데이터가 완전해 보이는 것은 분석 도구가 가질 수 있는 가장 나쁜 실패입니다. 로드 전의 [적합성 검사](memory-and-budgets.md#the-fit-check)는 이 경우를 막으려고 합니다.
+
+렌더러가 쓰는 예산은 **Resource budgets**의 GPU 예산이며, 적합성 검사가 쓰는 것과 같은 값입니다. 감지된 값보다 높을 수도 있습니다. 슬라이더의 상한까지입니다 ([GPU 예산 올리기](memory-and-budgets.md#raising-the-gpu-budget) 참고). 데이터셋을 업로드할 때 적용되며, 나중에 바꾸면 다음 로드부터 적용됩니다.

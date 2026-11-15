@@ -5,8 +5,48 @@ nav_order: 5
 lang: "zh"
 source: "gpu-memory.md"
 source_hash: "fba5dac6a137"
-translated: false
+translated: true
 outdated: false
 ---
 
-{{ site.data.i18n[page.lang].ui.untranslatedBody | default: site.data.i18n.en.ui.untranslatedBody }} [{{ site.data.i18n[page.lang].ui.english | default: "English" }}](../gpu-memory.html)
+# GPU 内存驻留
+
+显卡的内存是有限的。如果你的数据放不下，查看器会显示能放下的部分，并明确说明：统计浮层会多出一行琥珀色的 **未驻留**，显示被留下的行数。一个看起来完整的被截断数据集，是分析工具可能犯的最严重错误，所以这一行永远不会被隐藏。
+
+![带有琥珀色"未驻留"行的统计浮层](../assets/img/en/gpu-memory-not-resident.webp)
+
+要放下更多数据，请在 **资源预算** 下提高 GPU 预算然后重新加载（[内存和预算](memory-and-budgets.md#raising-the-gpu-budget)），或先缩小数据范围，或使用内存更大的显卡。
+
+## 开发者须知 {#for-developers}
+
+### 行在 GPU 上如何存储 {#how-rows-are-stored-on-the-gpu}
+
+数据集到达时，行只上传一次，以 8,388,608 行（2²³）为一个**块**（[`CHUNK_ROWS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)）。每个块都针对其自身的包围盒和时间跨度进行量化：
+
+| 数据 | 格式 | 每行字节数 |
+|---|---|---|
+| 位置 X、Y、Z 和分组 id | 四个 16 位无符号整数（WebGL2 上为 RGBA16UI）；X、Y、Z 位于该块的包围盒内 | 8 |
+| 时间和生命周期（数据集同时有时间和人员时） | 两个 16 位无符号整数（RG16UI）：块的时间跨度内的时间；生命周期中 65,535 表示"没有下一个样本" | 4 |
+
+正是每个块各自的包围盒使 16 位足够：一个块通常只覆盖地图的一部分，所以在宽达数公里的地图上，量化步长远小于一厘米，远低于真实遥测数据中的噪声。第四个通道中携带的分组 id 不占额外空间——这也是为什么最多只能有 4,096 个分组（[分组](sessions-persons-groups.md#limits)）。
+
+在 WebGL2 上，每个块是一个宽 8,192 个纹素的纹理，补齐为整数个纹理行；行通过每帧的块索引纹理从 `gl_VertexID` 访问。在 WebGPU 上，它们是存储缓冲区。
+
+按需分配的其他每行 GPU 内存：
+
+- 每个启用的列[过滤器](filters.md)：每行 4 字节（32 位浮点值或类别 id），在首次使用该过滤器时按块上传；
+- [线路热度](line-heat.md)：每行 8 字节（每段的起点，在数据的包围盒内量化，以及其标志），在线路模式开启时使用。
+
+此外还有渲染目标：场景颜色和深度、热度目标及其临时副本（在[队伍热度](team-heat.md)中为四个通道）、用于[遮挡](depth-and-culling.md)的深度剥离层，以及关卡的几何体。
+
+### 预算在上传时强制执行 {#the-budget-is-enforced-at-upload}
+
+WebGL 会接受它无法满足的分配，然后要么丢失上下文，要么以极高的代价退回系统内存，所以 GPU 预算在数据集上传时强制执行（[`setDataset`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/renderer.ts)）：
+
+- 只要放得下，块就按顺序（即按时间顺序）上传；
+- 第一个放不下的块会被**部分**上传——上传剩余预算能容纳的整数个纹理行——而不是完全不上传，因此无法容纳整个块的预算仍会显示尽可能多的内容；由于行是按时间排序的，显示的部分是一段连贯的时间；
+- 之后的所有内容都是**未驻留**的。
+
+不足之处不会被隐藏：只要数量大于零，统计浮层就会以琥珀色显示 **未驻留** 一行，标明未能放下的行数。一个看起来完整的截断数据集，是分析工具可能出现的最严重故障。加载前的[容量检查](memory-and-budgets.md#the-fit-check)正是为了防止这种情况。
+
+渲染器使用的预算是 **资源预算** 中的 GPU 预算，与容量检查使用的数值相同——包括高于检测值的部分，直至滑块的上限（见[提高 GPU 预算](memory-and-budgets.md#raising-the-gpu-budget)）。它在数据集上传时应用；之后更改它要到下一次加载时才生效。

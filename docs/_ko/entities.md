@@ -5,8 +5,45 @@ nav_order: 3
 lang: "ko"
 source: "entities.md"
 source_hash: "13da19f402d8"
-translated: false
+translated: true
 outdated: false
 ---
 
-{{ site.data.i18n[page.lang].ui.untranslatedBody | default: site.data.i18n.en.ui.untranslatedBody }} [{{ site.data.i18n[page.lang].ui.english | default: "English" }}](../entities.html)
+# 개체
+
+**개체**를 쓰면 플레이어 한 명(또는 몇 명)을 골라, 그 플레이어가 간 곳만 볼 수 있습니다. 자신의 움직임이나 상대 한 명을 따라갈 때 쓰세요.
+
+패널은 데이터셋에 사람 열이 있을 때 나타납니다. 헤더에는 사람 수가 나오고, 선택이 있으면 `선택 수 / 전체 수`가 나옵니다 (*사람*은 플레이어 한 명 또는 AI 하나입니다. [용어집](glossary.md) 참고).
+
+## 플레이어 고르기 {#pick-a-player}
+
+1. 사이드바에서 **개체**를 여세요.
+2. 검색 상자에 이름의 일부를 입력하세요.
+3. 플레이어를 체크하세요. 헤더에는 예를 들어 `2 of 10`이 나오고, 나머지는 모두 사라집니다.
+4. **지우기**를 누르면 모든 사람이 다시 나옵니다.
+
+![열 명 중 두 명을 고른 개체 패널](../assets/img/en/entities-selected.webp)
+
+선택은 히트 모드(점, 라인, 차이, 팀 히트)와 [피규어 재생](box-replay.md)의 궤적, 피규어, 자취에서 선택된 사람만 보여 줍니다. 비워 두면 모두 보입니다. 모두 선택하는 것은 아무도 선택하지 않는 것과 같습니다.
+
+## 패널 {#the-panel}
+
+| 부분 | 뜻 |
+|---|---|
+| 검색 상자 | *Search N entities...* - 이름의 대소문자를 가리지 않는 부분 문자열로 목록을 거릅니다. `N matches`를 보여 주고, 200개 이상이면 `N matches, showing the first 200`이 나옵니다. 검색 결과가 없으면 *Nothing matches "..."*가 나옵니다. |
+| 목록 | 최대 200명 (일치하는 처음 200명). 각각 체크박스, 그 사람의 색 견본, 이름이 있습니다 (이름이 비어 있으면 *(unnamed)*). |
+| 진행 중 힌트 | 시간이 재생 중이면 목록에는 재생 헤드에서 *진행 중인* 사람이 들어갑니다. 검색은 모두 찾습니다. |
+| **AI (n)** | 접을 수 있는 그룹으로, 플레이어와 별도로 AI가 조종하는 유닛을 담습니다. |
+| **표시된 항목 추가** | 지금 목록에 있는 모두를 선택에 추가합니다. |
+| **표시된 항목만** | 선택을 목록에 나온 것들로 정확히 맞춥니다. |
+| **지우기** | 선택을 비웁니다. |
+
+## 한계 {#limits}
+
+히트에서 선택은 필터이며, 네 개의 [필터 슬롯](filters.md#rules) 중 하나를 씁니다. 다른 필터가 이미 네 개를 모두 쓰고 있으면, 패널에 *Not applied to the heat: all filter slots are taken. The figure replay still shows only these entities. Clear a filter under Filters to free one.*(히트에 적용되지 않음: 필터 슬롯이 모두 찼습니다. 피규어 재생은 여전히 이 개체만 보여 줍니다. 슬롯을 비우려면 필터에서 필터 하나를 지우세요.)가 나옵니다. 필터를 지우면 슬롯이 생깁니다.
+
+선택은 새 데이터셋마다 지워집니다. 매치 탭도 한 플레이어에 초점을 맞출 때 같은 선택을 설정합니다.
+
+## 개발자용 {#for-developers}
+
+선택은 *persons* 필터로 저장됩니다 ([필터](filters.md#for-developers)). 셰이더의 마스크는 65,536개의 사람 id를 담습니다. 그보다 큰 id의 사람은, 선택이 있는 동안 히트에서 그려지지 않습니다.

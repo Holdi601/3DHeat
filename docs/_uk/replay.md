@@ -1,12 +1,19 @@
 ---
-title: "Replay"
+title: "Розбір"
 nav_order: 9
 has_children: true
 lang: "uk"
 source: "replay.md"
 source_hash: "da58a6589d3b"
-translated: false
+translated: true
 outdated: false
 ---
 
-{{ site.data.i18n[page.lang].ui.untranslatedBody | default: site.data.i18n.en.ui.untranslatedBody }} [{{ site.data.i18n[page.lang].ui.english | default: "English" }}](../replay.html)
+# Розбір
+
+Розбір відтворює матч у 3D. Кожна одиниця малюється як техніка або людина, якою вона є. Використовуйте його, щоб подивитися, що сталося, порівняти багато матчів або побачити, хто в кого влучив.
+
+- [Розбір матчу](match-replay.md): відтворення одного матчу з фігурами, трасерами, влученнями та камерами в стилі Tacview.
+- [Багато матчів одразу](many-matches.md): накладіть сотні матчів один на одного.
+- [Фігури](figures.md): форми, які використовуються для одиниць, і звідки вони беруться.
+- [Аналіз влучань](hit-analysis.md): куди була влучена одна машина або один солдат і ким.

@@ -1,13 +1,33 @@
 ---
 title: "피규어 오버레이의 피규어"
 parent: "피규어"
-grand_parent: "Replay"
+grand_parent: "리플레이"
 nav_order: 2
 lang: "ko"
 source: "figure-replay.md"
 source_hash: "4b13b8ad6dff"
-translated: false
+translated: true
 outdated: false
 ---
 
-{{ site.data.i18n[page.lang].ui.untranslatedBody | default: site.data.i18n.en.ui.untranslatedBody }} [{{ site.data.i18n[page.lang].ui.english | default: "English" }}](../figure-replay.html)
+# 피규어 오버레이의 피규어
+
+이 페이지는 상자를 각 유닛이 실제로 무엇이었는지 보여 주는 작은 3D 피규어로 바꾸는 것과, 피규어가 뒤에 남기는 연기와 불에 관한 것입니다. 재생 자체의 컨트롤은 [매치 재생](match-replay.md)에 있습니다.
+
+[상자 재생](box-replay.md)과 매치 탭의 피규어 재생에서 **상자 대신 피규어**(기본으로 켜짐)는 살아 있는 각 사람을 그것이 무엇인지에 맞는 피규어로 그립니다. 걸어가는 병사, 누군가 모는 탱크, Tacview 궤적이 나타내는 항공기입니다. 피규어는 상자의 색, 위치, 방위를 가집니다. 항공기와 미사일의 경우 피치도 가지며, 데이터에 Roll 열이 있으면 기울기도 가집니다. **Figure size**는 크기를 조정합니다. 1배가 실제 크기입니다. 피규어를 클릭하면 상자를 클릭했을 때와 같이 응답합니다.
+
+## 어떤 피규어인가 {#which-figure}
+
+데이터 자체의 이름과 종류 열이 결정합니다. 열 이름을 포함한 전체 규칙은 [피규어](figures.md#which-figure-a-unit-gets)에 있습니다. 두 종류의 열이 모두 없는 데이터는 사람의 데이터이며, 모두 병사가 됩니다.
+
+일치 결과는 라벨별로 캐시되므로, 프레임 하나에는 배치 비용만 듭니다. 데이터 유닛은 데이터가 추적 대상의 크기를 알려 주지 않는 한 1미터입니다 (CS2 내보내기는 플레이어가 가로 32단위라고 알려 줍니다). 피규어는 그에 맞춰 크기가 조정됩니다.
+
+선택 사항인 자신만의 피규어 묶음은 로컬 컴퓨터에서 카탈로그 피규어를 대체할 수 있습니다. [피규어](figures.md#an-optional-local-figure-pack)를 보세요.
+
+## 효과 {#effects}
+
+일정 시간 동안 무언가를 남기는 이벤트 행은, 그것이 일어난 곳에 지속되는 동안 그려집니다. 색은 원인을 제공한 쪽의 색입니다. 연기(약 18초), 화염병이나 소이탄(7초), 섬광(약 1초)과 고폭탄 폭발(1초 미만), 기만체(15초), 설치된 폭탄(40초)입니다. 이것들은 라벨이 `smoke`, `molotov`, `incendiary`, `flash`, `he`, `decoy`, `plant`인 이벤트 열(Event, Events)에서 오며, CS2 내보내기는 폭발 시점에 이를 씁니다.
+
+## 매치 재생: Tacview의 도구 {#match-replay-tacviews-tools}
+
+카메라, 책갈피, 전술 화면, 통계, 라벨, **Drop lines**, 이벤트 목록, 차트 창은 [매치 재생](match-replay.md)에 설명되어 있습니다. [Tacview 대응](tacview-parity.md)은 모든 Tacview 기능과 현재 상태를 나열합니다.

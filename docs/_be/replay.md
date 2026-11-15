@@ -1,12 +1,19 @@
 ---
-title: "Replay"
+title: "Паўтор"
 nav_order: 9
 has_children: true
 lang: "be"
 source: "replay.md"
 source_hash: "da58a6589d3b"
-translated: false
+translated: true
 outdated: false
 ---
 
-{{ site.data.i18n[page.lang].ui.untranslatedBody | default: site.data.i18n.en.ui.untranslatedBody }} [{{ site.data.i18n[page.lang].ui.english | default: "English" }}](../replay.html)
+# Паўтор
+
+Паўтор прайгрывае матч у 3D, і кожная адзінка малюецца як тая тэхніка або тая асоба, якой яна з'яўляецца. Карыстайцеся ім, каб паглядзець, што адбылося, параўнаць многа матчаў або ўбачыць, хто ў каго трапіў.
+
+- [Паўтор матча](match-replay.md): прайграць адзін матч з фігурамі, трасіраваннем, попаданнямі і камерамі ў стылі Tacview.
+- [Многа матчаў адразу](many-matches.md): пакласці сотні матчаў адзін на адзін.
+- [Фігуры](figures.md): формы, якія выкарыстоўваюцца для адзінак, і адкуль яны бяруцца.
+- [Аналіз попаданняў](hit-analysis.md): у якое месца была паражана адна машына або адзін салдат і хто яе паразіў.

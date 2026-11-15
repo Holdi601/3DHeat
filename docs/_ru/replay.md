@@ -1,12 +1,19 @@
 ---
-title: "Replay"
+title: "Повтор"
 nav_order: 9
 has_children: true
 lang: "ru"
 source: "replay.md"
 source_hash: "da58a6589d3b"
-translated: false
+translated: true
 outdated: false
 ---
 
-{{ site.data.i18n[page.lang].ui.untranslatedBody | default: site.data.i18n.en.ui.untranslatedBody }} [{{ site.data.i18n[page.lang].ui.english | default: "English" }}](../replay.html)
+# Повтор
+
+Повтор проигрывает матч в 3D: каждый юнит показан как технику или человека, которым он является. Используйте его, чтобы смотреть, что произошло, сравнивать много матчей или видеть, кто в кого попал.
+
+- [Повтор матча](match-replay.md): проигрывание одного матча с фигурами, трассерами, попаданиями и камерами в стиле Tacview.
+- [Много матчей сразу](many-matches.md): наложение сотен матчей друг на друга.
+- [Фигуры](figures.md): формы, которые используются для юнитов, и откуда они берутся.
+- [Анализ попаданий (вкладка Техника)](hit-analysis.md): где в технику или солдата попали и кто.

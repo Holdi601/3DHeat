@@ -5,8 +5,117 @@ nav_order: 2
 lang: "zh-Hant"
 source: "column-mapping.md"
 source_hash: "8ea2f450df99"
-translated: false
+translated: true
 outdated: false
 ---
 
-{{ site.data.i18n[page.lang].ui.untranslatedBody | default: site.data.i18n.en.ui.untranslatedBody }} [{{ site.data.i18n[page.lang].ui.english | default: "English" }}](../column-mapping.html)
+# 欄位對應
+
+檔案就是一張表，而 3DHeat 必須知道哪一欄是東西向位置、哪一欄是時間、哪一欄是玩家名稱，依此類推。這個面板會顯示它猜了什麼，也是你修正錯誤猜測的地方。
+
+![載入 Parquet 檔案後的欄位對應面板：每個方框都已填好——1 X、2 Y、3 Z、4 時間、5 人物 ID、6 場次／對戰、7 隊伍／群組](../assets/img/en/column-mapping-panel.webp)
+
+*檔案本身已命名了它的欄位，因此每個方框都已填好。*
+
+例如，一個標頭為 `x,y,z,t,player,team` 的 CSV 會自動完成對應：x、y 與 z 成為位置，`t` 成為時間，`player` 成為[人物](glossary.md)，`team` 成為[群組](glossary.md)。
+
+選取檔案後，**欄位對應** 面板會在來源面板下方開啟。它會說明哪一欄扮演哪個角色。它會自動填入，且每個欄位在按下 **載入** 前都可以更改；對應是在載入時讀取的，因此之後更改就必須重新載入。
+
+## 各欄位 {#the-fields}
+
+所有欄位的選單都會列出第一個檔案的每一欄，外加 *- 無 -*。
+
+| 欄位 | 角色 | 說明 |
+|---|---|---|
+| **分隔符號** | 僅限 CSV：欄位的分隔字元。 | 選單：*逗號 ,*、*分號 ;*、*Tab*、*直線 \|*、*空格*；或在 *或輸入一個字元* 中輸入任意單一字元。會自動偵測（見下文）。變更它會重新執行自動對應，因此先前的編輯會遺失。 |
+| **X**、**Y**、**Z** | 位置。 | 至少需要兩個；未對應的第三軸為 0（資料位於一個平面上）。同一欄位對應到兩個軸是錯誤。 |
+| **來源的上方軸** | 來源中哪一軸朝上。 | *Z 朝上（大多數遊戲引擎）* 或 *Y 朝上（圖形慣例）*。參閱[座標軸、單位與時間](axes-units-and-time.md)。 |
+| **單位比例** | 乘以每一個位置。 | 按鈕 *1（m）* 與 *0.01（cm→m）*，或輸入一個數值。 |
+| **翻轉 X／翻轉 Y／翻轉 Z** | 反轉來源的一軸。 | 套用於位置與視線方向向量。 |
+| **時間** | 時間軸。 | 可選。沒有它就沒有時間軸。 |
+| **時間單位** | 如何讀取時間欄位。 | 七種單位；參閱[座標軸、單位與時間](axes-units-and-time.md#time)。對於 Parquet 的 `TIMESTAMP`／`DATE` 欄位會忽略此設定，面板會說明這一點。 |
+| **人物 ID** | 每一列屬於誰或什麼。 | 可選。使軌跡、存續時間、箱形重播與線條熱度成為可能。 |
+| **場次／對戰** | 每一列屬於哪一場比賽、團隊戰、回合、跑步或圈。 | 可選。位置永遠不會被內插、拖尾，或在場次變更時串連成一條路線。參閱[場次、人物與群組](sessions-persons-groups.md)。 |
+| **隊伍／群組** | 任何低基數的欄位。 | 可選。驅動群組顏色、隊伍熱度，以及依群組的差異分割。 |
+| **視線方向** | *無*、*偏航／俯仰欄位* 或 *方向向量欄位*。 | 使用偏航／俯仰時：**偏航**、**俯仰**與**角度單位**（*度* / *弧度*）。使用向量時：**方向 X**、**方向 Y**、**方向 Z**。用於[箱形重播](box-replay.md)的視線射線。 |
+| **保留以供篩選** | 保留在記憶體中的額外欄位。 | 每一欄一個核取方塊；對每個勾選的欄位，選擇*範圍*（數值）或*類別*。每一欄每列要花 4 位元組，並在載入時多一次解碼。只有被保留的欄位，才能[篩選](filters.md)、用於[差異分割](difference.md)，或作為[線條熱度](line-heat.md)的事件欄位。 |
+| **顯示範例資料列** | 前 12 個取樣列的表格，所有欄位。 | 用於檢查猜測。 |
+
+若勾選的篩選欄位沒有明確設定，它會被讀取為*範圍*；看起來是數值的 ID 欄位，通常以*類別*較有用。一次只能有 4 個篩選器作用中（[篩選](filters.md)）。
+
+## 自動對應如何猜測 {#how-the-auto-mapping-guesses}
+
+猜測的邏輯位於 [`src/data/automap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/automap.ts)。它會看欄位名稱、取樣列中哪些欄位是數值（超過 90% 的非空值能解析為數字）、每個欄位在樣本中取得多少個不同的值，以及 Parquet 的邏輯型別。名稱模式會依序以不分大小寫的方式嘗試，第一個與任何仍未指派欄位相符的模式獲勝。
+
+### 位置 {#position}
+
+| 軸 | 名稱模式，依序（僅限數值欄位） |
+|---|---|
+| X | `x`、`…_x` / `… x`、`pos…x`、`x…pos`、`loc…x`、`lon…`、`longitude` |
+| Y | `y`、`…_y`、`pos…y`、`y…pos`、`loc…y`、`lat…`、`latitude` |
+| Z | `z`、`…_z`、`pos…z`、`z…pos`、`loc…z`、`…alt…`、`…height…`、`…elev…` |
+
+若某個軸仍然空白，則依序以第一個閒置的數值欄位填入（忽略 `filename`、`level`、`year`、`month`、`day`、`hour`、`location`）。錯誤的猜測在畫面上一眼就能看出；空白的則會留下一個空的視埠。
+
+### 時間 {#time}
+
+- **先看 Parquet 的時間戳欄位。** 在邏輯型別為 `TIMESTAMP` 或 `DATE` 的欄位中，依分數挑選最佳者：若名稱符合時間模式則加 10,000，純 `DATE` 則扣 5,000，再加上樣本中不同值的數量。整天的日期與固定的場次開始時間幾乎只有極少的不同值，因此事件的瞬間會勝出。單位隨後設為 *Unix 時間戳（毫秒）*。
+- **否則依名稱：** `time`、`timestamp`、`ts`、`…event…time…`、`…time…stamp…`、`t`、`…date…time…`、`when`、`tick`、`…frame…`，然後是經過時間的名稱（`gdur`、`g_duration`、`…duration…`、`…elapsed…`、`…match time…`、`…round time…`、`…game time…`、`…minute from start…`、`…since start…`、`age`）。單位隨後依數值猜測：當數值看起來像 `YYYY-MM-DDT…` 或 `YYYY-MM-DD …` 時為 ISO-8601；否則依最大量級判定：超過 10^17 奈秒、超過 10^14 微秒、超過 10^11 Unix 毫秒、超過 10^8 Unix 秒、超過 10^6 毫秒，否則為秒。
+
+選擇經過時間欄位時，面板會註明每個場次隨後都會與其自身的開始時間對齊——適合疊加比賽，但無法看出它們實際的先後順序。
+
+### 場次、人物、群組 {#session-person-group}
+
+場次是在時間軸**之後**、人物與群組**之前**認定的，因為場次欄位通常是時間戳（每場比賽的每一列都帶有該場的開始瞬間）。
+
+| 角色 | 名稱模式，依序 |
+|---|---|
+| 場次 | `session` / `session_id`、`match…`、`round…`、`raid…`、`game…`、`run…`、`replay…`、`instance…`、`lap…`、`stint…`（每個皆須完全相符，可選擇加上 `_id`） |
+| 人物 | `name`、`…player…id/name…`、`…user…`、`…account…`、`persona…`、`…character…`、`victim`、`actor`、`…puuid…`、`…steam id…`、`subject…`，然後是 `driver` / `driver_id` / `driver_name`、`car` / `car_id` / `car_name`（賽車資料：會移動的是車） |
+| 群組 | `spawn_team`、`real_team`、`team` / `team_id` / `team_name`、`squad…`、`side`、`…faction…`、`clan…`、`party…`、`alliance…`、`car_class` |
+| 群組（備用） | `…victim_ai…`、`…killer_ai…`、`…is_ai/bot/npc…`、`target_type`、`survived`、`outcome`、`result` |
+
+若某個群組候選欄位在大多數取樣列中取得不同的值（超過 max(48, 取樣的 60%)），它就是 ID，而不是群組：若尚未找到人物欄位，它會成為人物欄位，且不會被用作群組。若完全找不到群組欄位，則使用不同值數量在 2 至 12 之間、且為非數值的欄位中，不同值最少的那一欄。
+
+### 視線方向 {#look-direction}
+
+名為 `yaw`、`…rot…yaw…`、`…heading…`、`azimuth…`、`…view…yaw…` 或 `rot_z` / `rotation_z` 的數值欄位，會把視線方向切換為偏航／俯仰；俯仰則以 `pitch`、`…rot…pitch…`、`…elevation…angle…`、`…view…pitch…` 尋找。若任何取樣的偏航值大小超過 7，則假設為度；否則為弧度。方向向量從不被猜測；它來自下方的提示，或來自你。
+
+### 篩選欄位 {#filter-columns}
+
+最多會自動保留 **6** 個欄位，依排名如下：
+
+1. `region`、`sessionMode`、`actor`——為了篩選而存在的欄位（分數 1200）；
+2. 在樣本中有變化的類別欄位，不同值越少者越先（1000 減去其數量）；
+3. 在樣本中為常數的欄位，但僅在載入了多個檔案時——它可能在檔案之間不同，例如地區或測試執行的 ID（600）；
+4. 數值欄位（500）。
+
+已扮演某個角色的欄位、上述雜訊名稱、單一檔案載入中為常數的欄位，以及自由文字欄位（不同值超過 max(16, 樣本的一半)）都不會被自動提供。任何欄位仍可手動勾選。
+
+### 朝上的軸 {#up-axis}
+
+當三個軸都已對應時，樣本中 Y 與 Z 之中散布較小的那一軸被視為朝上（地圖的寬度遠大於高度）；否則假設 Z 朝上。
+
+## Parquet 結尾區中的 `heat3d` 提示 {#the-heat3d-hints-in-a-parquet-footer}
+
+Parquet 檔案可以說明它應該如何被讀取。若檔案結尾區的鍵值中繼資料含有鍵名為 **`heat3d`** 的項目，其值會被解析為 JSON，並疊加在猜測之上（[`applyHints`](https://github.com/Holdi601/3DHeat/blob/main/src/data/automap.ts)）。CS2 示範轉換器會寫入這樣的項目，因此它的表格開啟時，玩家即為人物、陣營即為群組、每一回合即為一個場次，且視線方向已開啟、世界方向也正確。
+
+只會讀取選取內容中的**第一個**檔案的提示。每個項目都是可選的，而每個被提示的值仍會出現在面板中，並可更改。完整的結構描述說明、範例與寫法，參閱[資料格式參考](data-formats.md#the-heat3d-hints)。
+
+規則摘要：
+
+- 提示所指定的欄位，只有在檔案確實含有該欄位時才會套用。
+- `lookMode: "vector"` 只有在 `dirX`、`dirY` 與 `dirZ` 全部設定時才會生效；`"yawPitch"` 只有在設定了 `yaw` 時才會生效。
+- `extra` 若存在，會取代自動篩選清單（未知的名稱與已扮演角色的欄位會被捨棄）；每一項的範圍／類別型別，取決於它看起來是否為數值。若不存在，則保留自動清單，但扣除被提示指定了角色的欄位。
+- `axes.up` 必須為 `"y"` 或 `"z"`，翻轉必須為布林值，`scale` 必須為正數。
+- `entity.size` 若為正數，即為檔案單位中一個被追蹤物件的大小（[實體大小](sessions-persons-groups.md#entity-size)）；它是設定此值的唯一方式。
+
+## 已知問題：覆寫 CSV 分隔符號 {#known-issue-overriding-the-csv-separator}
+
+當你把分隔符號改為與偵測到的不同時，欄位清單與範例列不會改變（預覽仍以偵測到的分隔符號切分）。但實際載入時仍會使用你所選的分隔符號。若偵測到的分隔符號有誤：
+
+1. 以文字編輯器開啟該檔案。
+2. 將分隔符號全部替換為逗號（並將小數逗號改為小數點）。
+3. 儲存，然後重新載入該檔案。
+
+原因位於 [`previewSource`](https://github.com/Holdi601/3DHeat/blob/main/src/data/sourcePreview.ts)。

@@ -5,8 +5,48 @@ nav_order: 5
 lang: "zh-Hant"
 source: "gpu-memory.md"
 source_hash: "fba5dac6a137"
-translated: false
+translated: true
 outdated: false
 ---
 
-{{ site.data.i18n[page.lang].ui.untranslatedBody | default: site.data.i18n.en.ui.untranslatedBody }} [{{ site.data.i18n[page.lang].ui.english | default: "English" }}](../gpu-memory.html)
+# GPU 記憶體駐留
+
+顯示卡的記憶體是有限的。如果你的資料放不下，檢視器會顯示放得下的部分，並且明確說明：統計浮層會多出一行琥珀色的 **未常駐**，並顯示被略過的資料列數量。看起來完整、實際上卻被截短的資料集，會是分析工具可能犯下的最嚴重錯誤，所以這一行永遠不會被隱藏。
+
+![統計浮層，帶有琥珀色的未常駐一行](../assets/img/en/gpu-memory-not-resident.webp)
+
+若要放入更多資料，請在 **資源預算** 下提高 GPU 預算後重新載入（[記憶體與預算](memory-and-budgets.md#raising-the-gpu-budget)）、先縮小資料範圍，或使用記憶體更大的顯示卡。
+
+## 給開發者 {#for-developers}
+
+### 資料列如何儲存在 GPU 上 {#how-rows-are-stored-on-the-gpu}
+
+資料列在資料集到達時只上傳一次，以 8,388,608 列（2²³）為一個**區塊**（[`CHUNK_ROWS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)）。每個區塊都會依照它自己的包圍盒與時間跨度做量化：
+
+| 資料 | 格式 | 每列位元組數 |
+|---|---|---|
+| X、Y、Z 位置與群組 id | 四個 16 位元無號整數（WebGL2 上為 RGBA16UI）；X、Y、Z 位於區塊的包圍盒之內 | 8 |
+| 時間與生命週期（資料集同時有時間與人員時） | 兩個 16 位元無號整數（RG16UI）：區塊時間跨度內的時間；生命週期中 65,535 代表「沒有下一個樣本」 | 4 |
+
+正是每個區塊各自的包圍盒，讓 16 位元就夠用：一個區塊通常只涵蓋地圖的一部分，所以量化的步長在寬達數公里的地圖上，會遠低於一公分，遠小於真實遙測資料中的雜訊。第四個通道中附帶的群組 id 不佔額外空間——這也是為什麼最多只能有 4,096 個群組（[群組](sessions-persons-groups.md#limits)）。
+
+在 WebGL2 上，每個區塊是寬 8,192 texel 的紋理，補齊到完整的紋理列；資料列透過 `gl_VertexID` 與每個影格的區塊索引紋理來存取。在 WebGPU 上，它們是儲存緩衝區。
+
+其他每列的 GPU 記憶體會在使用時才配置：
+
+- 每個啟用的欄位[過濾器](filters.md)：每列 4 位元組（32 位元浮點值或類別 id），在第一次使用該過濾器時依區塊上傳；
+- [線條熱度](line-heat.md)：每列 8 位元組（每段的起點，在資料的包圍盒內量化，加上旗標），在開啟線條模式時使用。
+
+另外還有渲染目標：場景顏色與深度、熱度目標及其暫存副本（這個模式下為四個通道，見[隊伍熱度](team-heat.md)），以及[遮擋](depth-and-culling.md)用的深度剝離層；此外還有關卡的幾何。
+
+### 預算在上傳時強制執行 {#the-budget-is-enforced-at-upload}
+
+WebGL 會接受它無法提供服務的配置，然後不是遺失上下文，就是退回系統記憶體，代價極高，所以 GPU 預算會在資料集上傳時強制執行（[`setDataset`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/renderer.ts)）：
+
+- 區塊依序上傳（也就是依時間順序），只要放得下；
+- 第一個放不下的區塊會**部分上傳**——放得下剩餘預算的完整紋理列數量——而不是完全不上傳，所以即使預算放不下一整個區塊，仍會顯示它能放的最多內容；由於資料列是依時間排序的，顯示的部分是一段連貫的時間；
+- 之後的所有資料都是**未常駐**。
+
+缺少的部分不會被隱藏：只要數量大於零，統計浮層就會以琥珀色顯示一行 **未常駐**，並列出沒放進去的資料列數量。看起來完整的截短資料集，是分析工具可能有的最嚴重錯誤。載入前的[容量檢查](memory-and-budgets.md#the-fit-check)就是為了防止這種情況。
+
+渲染器使用的預算，是來自 **資源預算** 的 GPU 預算，與容量檢查使用的數字相同——也高於偵測到的數字，最高可到滑桿的上限（見[提高 GPU 預算](memory-and-budgets.md#raising-the-gpu-budget)）。它在資料集上傳時套用；之後再改，要到下一次載入才會生效。
