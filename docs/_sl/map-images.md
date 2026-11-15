@@ -4,7 +4,7 @@ parent: "Ravni in geometrija ozadja"
 nav_order: 1
 lang: "sl"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -50,9 +50,9 @@ Vrstica z imenom prikazuje `širina×višina px · x × z m/px`, svetovno veliko
 
 Slika je en sam teksturiran pravokotnik na višini. Pri polni neprosojnosti piše globino, zato sodeluje pri [zakrivanju](depth-and-culling.md) kot tla; pod 100 % neprosojnosti se pomeša in ne piše globine, zato ničesar ne zakrije. [Ravnilo](measure.md) meri na njeni ravnini. [Knjižnica ravni](level-library.md) shrani ravan s sliko skupaj z njenimi sidri.
 
-## Dota 2 map {#dota-2-map}
+## Zemljevid Dota 2 {#dota-2-map}
 
-Gumb **Dota 2 map** poleg **Slika zemljevida…** pridobi risbo trenutnega zemljevida Dota 2, ki jo [OpenDota](https://www.opendota.com) prikazuje na straneh svojih tekem, in jo postavi pod tabele, ki jih [Watcher](https://github.com/Holdi601/3DHeat-Watcher) zapiše iz posnetkov Dota 2 ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Slika se pridobi z opendota.com, ko pritisnete gumb, in ni del 3DHeat; risba najnovejše zaplate se vzame s seznama OpenDota, risba 7.40 pa takrat, ko seznama ni mogoče prebrati.
+Gumb **Zemljevid Dota 2** poleg **Slika zemljevida…** pridobi risbo trenutnega zemljevida Dota 2, ki jo [OpenDota](https://www.opendota.com) prikazuje na straneh svojih tekem, in jo postavi pod tabele, ki jih [Watcher](https://github.com/Holdi601/3DHeat-Watcher) zapiše iz posnetkov Dota 2 ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Slika se pridobi z opendota.com, ko pritisnete gumb, in ni del 3DHeat; risba najnovejše zaplate se vzame s seznama OpenDota, risba 7.40 pa takrat, ko seznama ni mogoče prebrati.
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ Gumb **Dota 2 map** poleg **Slika zemljevida…** pridobi risbo trenutnega zemlj
 
 Preverjeno na posnetku javne tekme zaplate 7.40: vsaka pot junaka sledi narisanim linijam, stolpi, barake in starodavni, ki jih posnetek postavi, pa padejo na narisane baze. Pogled **Zgoraj** prikaže zemljevid s severom na dnu zaslona, kot prikaže vsako tabelo z Z navzgor in obrnjenim Y.
 
-Risba je OpenDotina, zemljevid pa Valvov; Valve 3DHeat ne podpira. Za 3D zemljevid Dote je potrebna nameščena igra: glejte Watcherjeve opombe o posnetkih Dota 2.
+Risba je OpenDotina, zemljevid pa Valvov; Valve 3DHeat ne podpira.
+
+### 3D zemljevid {#the-3d-map}
+
+Z nameščeno igro Dota 2 Watcherjev ukaz [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) naredi zemljevid v 3D iz datotek same igre: tla, pečine, vodo, drevesa in stavbe, v enotah in oseh tabel iz posnetkov. Datoteko enkrat naložite z **3D-model…**: pregledovalnik jo prepozna po njenih delih (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` v `dotaMap.ts`), jo takoj shrani v [knjižnico ravni](level-library.md), kjer nadomesti starejšo, in to sporoči. Od takrat **Zemljevid Dota 2** naloži ta 3D zemljevid iz knjižnice, namesto da prenese risbo; če ga v knjižnici ni, prenese risbo in pove, kako narediti 3D zemljevid. Datoteka izvira iz vaše lastne namestitve in ostane na vašem računalniku.
 
 ## Za razvijalce {#for-developers}
 

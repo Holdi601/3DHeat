@@ -4,7 +4,7 @@ parent: "Nivells i geometria de fons"
 nav_order: 1
 lang: "ca"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -50,9 +50,9 @@ La línia del nom mostra `amplada×alçada px · x × z m/px`, la mida al món d
 
 La imatge és un sol quad amb textura a l'elevació. Amb opacitat completa escriu profunditat, de manera que participa en l'[oclusió](depth-and-culling.md) com a terra; amb una opacitat inferior al 100% es barreja i no escriu profunditat, així que no oclou res. La [regla](measure.md) mesura sobre el seu pla. La [biblioteca de nivells](level-library.md) guarda un nivell d'imatge amb les seves àncores.
 
-## Dota 2 map {#dota-2-map}
+## Mapa de Dota 2 {#dota-2-map}
 
-**Dota 2 map**, al costat de **Imatge de mapa…**, descarrega el dibuix del mapa actual de Dota 2 que [OpenDota](https://www.opendota.com) mostra a les seves pàgines de partida, i el col·loca sota les taules que el [Watcher](https://github.com/Holdi601/3DHeat-Watcher) escriu a partir de les repeticions de Dota 2 ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). La imatge es descarrega de opendota.com quan es prem el botó i no forma part de 3DHeat; el dibuix del pedaç més nou es pren de la llista pròpia d'OpenDota, i el dibuix del 7.40 quan la llista no es pot llegir.
+**Mapa de Dota 2**, al costat de **Imatge de mapa…**, descarrega el dibuix del mapa actual de Dota 2 que [OpenDota](https://www.opendota.com) mostra a les seves pàgines de partida, i el col·loca sota les taules que el [Watcher](https://github.com/Holdi601/3DHeat-Watcher) escriu a partir de les repeticions de Dota 2 ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). La imatge es descarrega de opendota.com quan es prem el botó i no forma part de 3DHeat; el dibuix del pedaç més nou es pren de la llista pròpia d'OpenDota, i el dibuix del 7.40 quan la llista no es pot llegir.
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ La imatge és un sol quad amb textura a l'elevació. Amb opacitat completa escri
 
 Comprovat amb la repetició d'una partida pública del pedaç 7.40: el rastre de cada heroi segueix els carrils dibuixats, i les torres, els quarters i els ancians que la repetició situa cauen sobre les bases dibuixades. La vista **Superior** mostra el mapa amb el nord a la part inferior de la pantalla, com fa amb qualsevol taula Z amunt amb la Y girada.
 
-El dibuix és d'OpenDota, del mapa de Valve; Valve no avala 3DHeat. Un mapa 3D de Dota necessita el joc instal·lat: mira les notes del Watcher sobre les repeticions de Dota 2.
+El dibuix és d'OpenDota, del mapa de Valve; Valve no avala 3DHeat.
+
+### El mapa 3D {#the-3d-map}
+
+Amb Dota 2 instal·lat, l'ordre [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) del Watcher (`python -m heat3d_watch dota-map -o dota.glb`) fa el mapa en 3D a partir dels fitxers del mateix joc: terreny, penya-segats, aigua, arbres i edificis, en les unitats i els eixos de les taules de les repeticions. Carrega el fitxer un cop amb **Model 3D…**: el visor el reconeix per les seves parts (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` a `dotaMap.ts`), el posa de seguida a la [biblioteca de nivells](level-library.md), substituint-ne un de més antic, i ho diu. A partir d'aleshores, **Mapa de Dota 2** carrega aquest mapa 3D de la biblioteca en lloc de baixar el dibuix; si no n'hi ha cap a la biblioteca, baixa el dibuix i explica com fer el mapa 3D. El fitxer surt de la teva pròpia instal·lació i es queda a la teva màquina.
 
 ## Per a desenvolupadors {#for-developers}
 

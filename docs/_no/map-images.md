@@ -4,7 +4,7 @@ parent: "Baner og bakgrunnsgeometri"
 nav_order: 1
 lang: "no"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -50,9 +50,9 @@ Navnelinjen viser `bredde×høyde px · x × z m/px`, verdensstørrelsen til én
 
 Bildet er ett enkelt teksturert firkantet felt på høyden. Med full opasitet skriver det dybde, så det deltar i [okklusjon](depth-and-culling.md) som bakke; under 100 % opasitet blir det blandet og skriver ingen dybde, så det okkluderer ingenting. [Linjalen](measure.md) måler på planet. [Nivåbiblioteket](level-library.md) lagrer et bildenivå med ankrene sine.
 
-## Dota 2 map {#dota-2-map}
+## Dota 2-kart {#dota-2-map}
 
-**Dota 2 map** ved siden av **Kartbilde…** henter tegningen av det gjeldende Dota 2-kartet som [OpenDota](https://www.opendota.com) viser på sine kampsider, og plasserer den under tabeller som [Watcher](https://github.com/Holdi601/3DHeat-Watcher) skriver fra Dota 2-replayer ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Bildet hentes fra opendota.com når knappen trykkes, og er ikke en del av 3DHeat; den nyeste patchens tegning tas fra OpenDotas egen liste, og 7.40-tegningen når listen ikke kan leses.
+**Dota 2-kart** ved siden av **Kartbilde…** henter tegningen av det gjeldende Dota 2-kartet som [OpenDota](https://www.opendota.com) viser på sine kampsider, og plasserer den under tabeller som [Watcher](https://github.com/Holdi601/3DHeat-Watcher) skriver fra Dota 2-replayer ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Bildet hentes fra opendota.com når knappen trykkes, og er ikke en del av 3DHeat; den nyeste patchens tegning tas fra OpenDotas egen liste, og 7.40-tegningen når listen ikke kan leses.
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ Bildet er ett enkelt teksturert firkantet felt på høyden. Med full opasitet sk
 
 Kontrollert på en offentlig kamps replay av patch 7.40: hvert helts spor følger de tegnede banene, og tårnene, kasernene og de gamle som replayet plasserer, faller på de tegnede basene. Visningen **Ovenfra** viser kartet med nord nederst på skjermen, slik den viser enhver Z-opp-tabell med Y snudd.
 
-Tegningen er OpenDotas, av Valves kart; Valve støtter ikke 3DHeat. Et 3D-kart av Dota krever at spillet er installert: se Watchers notater om Dota 2-replayer.
+Tegningen er OpenDotas, av Valves kart; Valve støtter ikke 3DHeat.
+
+### 3D-kartet {#the-3d-map}
+
+Med Dota 2 installert lager Watcher-kommandoen [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) kartet i 3D fra spillets egne filer: terreng, klipper, vann, trær og bygninger, i enhetene og aksene til replay-tabellene. Last inn filen én gang med **3D-modell…**: viseren kjenner den igjen på delene (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` i `dotaMap.ts`), legger den straks i [banebiblioteket](level-library.md), der den erstatter en eldre, og sier fra. Fra da av laster **Dota 2-kart** dette 3D-kartet fra biblioteket i stedet for å laste ned tegningen; finnes det ikke noe i biblioteket, laster den ned tegningen og forteller hvordan du lager 3D-kartet. Filen kommer fra din egen installasjon og blir på maskinen din.
 
 ## For utviklere {#for-developers}
 

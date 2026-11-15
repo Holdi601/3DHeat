@@ -4,7 +4,7 @@ parent: "Razine i geometrija pozadine"
 nav_order: 1
 lang: "hr"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -52,7 +52,7 @@ Slika je jedan teksturirani četverokut na visini. Pri punoj neprozirnosti piše
 
 ## Dota 2 karta {#dota-2-map}
 
-**Dota 2 map** uz **Slika karte…** dohvaća crtež trenutne Dota 2 karte koji [OpenDota](https://www.opendota.com) prikazuje na svojim stranicama mečeva i stavlja ga ispod tablica koje [Watcher](https://github.com/Holdi601/3DHeat-Watcher) piše iz Dota 2 snimki ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Slika se dohvaća s opendota.com kad se pritisne gumb i nije dio 3DHeata; crtež najnovije zakrpe uzima se s OpenDotina vlastitog popisa, a crtež 7.40 kad se popis ne može pročitati.
+**Karta Dote 2** uz **Slika karte…** dohvaća crtež trenutne Dota 2 karte koji [OpenDota](https://www.opendota.com) prikazuje na svojim stranicama mečeva i stavlja ga ispod tablica koje [Watcher](https://github.com/Holdi601/3DHeat-Watcher) piše iz Dota 2 snimki ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Slika se dohvaća s opendota.com kad se pritisne gumb i nije dio 3DHeata; crtež najnovije zakrpe uzima se s OpenDotina vlastitog popisa, a crtež 7.40 kad se popis ne može pročitati.
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ Slika je jedan teksturirani četverokut na visini. Pri punoj neprozirnosti piše
 
 Provjereno na javnoj snimci meča zakrpe 7.40: putanja svakog heroja prati nacrtane trake, a tornjevi, kasarne i drevnici koje snimka postavlja padaju na nacrtane baze. Pogled **Odozgo** prikazuje kartu sa sjeverom na dnu zaslona, kao što prikazuje svaku tablicu Z-gore s okrenutim Y.
 
-Crtež je OpenDotin, Valveove karte; Valve ne odobrava 3DHeat. Karta Dote u 3D zahtijeva instaliranu igru: pogledajte Watcherove bilješke o Dota 2 snimkama.
+Crtež je OpenDotin, Valveove karte; Valve ne odobrava 3DHeat.
+
+### 3D karta {#the-3d-map}
+
+Uz instaliranu Dotu 2, Watcherova naredba [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) izrađuje kartu u 3D-u iz vlastitih datoteka igre: tlo, litice, voda, drveće i zgrade, u jedinicama i osima tablica iz snimki. Učitajte datoteku jednom putem **3D model…**: preglednik je prepoznaje po dijelovima (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` u `dotaMap.ts`), odmah je sprema u [biblioteku razina](level-library.md), zamjenjujući stariju, i to javlja. Od tada **Karta Dote 2** učitava tu 3D kartu iz biblioteke umjesto da preuzima crtež; ako je u biblioteci nema, preuzima crtež i kaže kako izraditi 3D kartu. Datoteka dolazi iz vaše vlastite instalacije i ostaje na vašem računalu.
 
 ## Za razvojne programere {#for-developers}
 

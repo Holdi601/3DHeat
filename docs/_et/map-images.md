@@ -4,7 +4,7 @@ parent: "Tasemed ja taustgeomeetria"
 nav_order: 1
 lang: "et"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -63,7 +63,11 @@ Pilt on üks tekstuuriga nelinurk kõrgusel. Täieliku läbipaistmatuse korral k
 
 Kontrollitud avaliku mängu salvestisel versioonist 7.40: iga kangelase rada järgib joonistatud radu ja torned, kasarmud ning vanad, mida salvestis paigutatakse, langevad joonistatud baasidele. Vaade **Ülevalt** näitab kaarti, põhi ekraani all, nagu see näitab mis tahes Z-üles tabelit, kus Y on pööratud.
 
-Joonis on OpenDota oma, Valve'i kaardist; Valve ei toeta 3DHeatit. Dota 3D-kaart vajab mängu installitud olekut: vt Watcheri märkmeid Dota 2 salvestiste kohta.
+Joonis on OpenDota oma, Valve'i kaardist; Valve ei toeta 3DHeatit.
+
+### 3D-kaart {#the-3d-map}
+
+Kui Dota 2 on paigaldatud, teeb Watcheri käsk [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) kaardi 3D-s mängu enda failidest: pinnas, kaljud, vesi, puud ja hooned, korduste tabelite ühikutes ja telgedes. Laadi fail üks kord nupuga **3D-mudel…**: vaatur tunneb selle ära osade järgi (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` failis `dotaMap.ts`), paneb selle kohe [tasemete raamatukogusse](level-library.md), asendades vanema, ja ütleb seda. Edaspidi laadib **Dota 2 kaart** selle 3D-kaardi raamatukogust, selle asemel et joonist laadida; kui raamatukogus seda pole, laadib see joonise ja ütleb, kuidas 3D-kaarti teha. Fail tuleb sinu enda paigaldusest ja jääb sinu arvutisse.
 
 ## Arendajatele {#for-developers}
 

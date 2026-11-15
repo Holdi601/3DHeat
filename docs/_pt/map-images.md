@@ -4,7 +4,7 @@ parent: "Níveis e geometria de fundo"
 nav_order: 1
 lang: "pt"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -51,9 +51,9 @@ A linha do nome mostra `largura×altura px · x × z m/px`, o tamanho no mundo d
 
 A imagem é um único retângulo com textura à altura da elevação. Com opacidade total escreve profundidade, por isso entra na [oclusão](depth-and-culling.md) como chão; abaixo de 100% de opacidade é misturada e não escreve profundidade, por isso não oculta nada. A [régua](measure.md) mede sobre o seu plano. A [biblioteca de níveis](level-library.md) guarda um nível de imagem com as suas âncoras.
 
-## Dota 2 map {#dota-2-map}
+## Mapa de Dota 2 {#dota-2-map}
 
-O **Dota 2 map** ao lado de **Imagem de mapa…** vai buscar o desenho do mapa atual do Dota 2 que o [OpenDota](https://www.opendota.com) mostra nas suas páginas de partidas, e posiciona-o sob as tabelas que o [Watcher](https://github.com/Holdi601/3DHeat-Watcher) escreve a partir de repetições do Dota 2 ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). A imagem é transferida de opendota.com quando se carrega no botão e não faz parte do 3DHeat; o desenho do patch mais recente é tirado da lista do próprio OpenDota, e o desenho do 7.40 quando a lista não pode ser lida.
+O **Mapa de Dota 2** ao lado de **Imagem de mapa…** vai buscar o desenho do mapa atual do Dota 2 que o [OpenDota](https://www.opendota.com) mostra nas suas páginas de partidas, e posiciona-o sob as tabelas que o [Watcher](https://github.com/Holdi601/3DHeat-Watcher) escreve a partir de repetições do Dota 2 ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). A imagem é transferida de opendota.com quando se carrega no botão e não faz parte do 3DHeat; o desenho do patch mais recente é tirado da lista do próprio OpenDota, e o desenho do 7.40 quando a lista não pode ser lida.
 
 | | |
 |---|---|
@@ -64,7 +64,11 @@ O **Dota 2 map** ao lado de **Imagem de mapa…** vai buscar o desenho do mapa a
 
 Verificado numa repetição de uma partida pública do patch 7.40: a trajetória de cada herói segue as linhas desenhadas, e as torres, quartéis e antigos caem sobre as bases desenhadas. A vista **Cima** mostra o mapa com o norte na parte de baixo do ecrã, como mostra qualquer tabela com Z para cima e Y invertido.
 
-O desenho é do OpenDota, do mapa da Valve; a Valve não endossa o 3DHeat. Um mapa 3D do Dota precisa de o jogo instalado: veja as notas do Watcher sobre repetições do Dota 2.
+O desenho é do OpenDota, do mapa da Valve; a Valve não endossa o 3DHeat.
+
+### O mapa 3D {#the-3d-map}
+
+Com o Dota 2 instalado, o comando [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) do Watcher (`python -m heat3d_watch dota-map -o dota.glb`) cria o mapa em 3D a partir dos próprios ficheiros do jogo: terreno, falésias, água, árvores e edifícios, nas unidades e nos eixos das tabelas das repetições. Carregue o ficheiro uma vez com **Modelo 3D…**: o visualizador reconhece-o pelas suas partes (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` em `dotaMap.ts`), coloca-o de imediato na [biblioteca de níveis](level-library.md), substituindo um mais antigo, e indica-o. A partir daí, **Mapa de Dota 2** carrega esse mapa 3D da biblioteca em vez de transferir o desenho; se não houver nenhum na biblioteca, transfere o desenho e explica como criar o mapa 3D. O ficheiro vem da sua própria instalação e fica no seu computador.
 
 ## Para programadores {#for-developers}
 

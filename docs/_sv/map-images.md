@@ -4,7 +4,7 @@ parent: "Banor och bakgrundsgeometri"
 nav_order: 1
 lang: "sv"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -52,7 +52,7 @@ Bilden är en enda texturerad fyrhörning på höjden. Vid full opacitet skriver
 
 ## Dota 2-kartan {#dota-2-map}
 
-**Dota 2 map** bredvid **Kartbild…** hämtar ritningen av den aktuella Dota 2-kartan som [OpenDota](https://www.opendota.com) visar på sina matchsidor. Den placeras under tabeller som [Watcher](https://github.com/Holdi601/3DHeat-Watcher) skriver från Dota 2-repriser ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Bilden hämtas från opendota.com när knappen trycks in och ingår inte i 3DHeat. Den senaste patchens ritning tas från OpenDotas egen lista, och 7.40-ritningen används när listan inte kan läsas.
+**Dota 2-karta** bredvid **Kartbild…** hämtar ritningen av den aktuella Dota 2-kartan som [OpenDota](https://www.opendota.com) visar på sina matchsidor. Den placeras under tabeller som [Watcher](https://github.com/Holdi601/3DHeat-Watcher) skriver från Dota 2-repriser ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Bilden hämtas från opendota.com när knappen trycks in och ingår inte i 3DHeat. Den senaste patchens ritning tas från OpenDotas egen lista, och 7.40-ritningen används när listan inte kan läsas.
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ Bilden är en enda texturerad fyrhörning på höjden. Vid full opacitet skriver
 
 Kontrollerat på en offentlig matchrepris av patch 7.40. Varje hjältes spår följer de ritade filerna, och tornen, kasernerna och de ancient som repriset placerar hamnar på de ritade baserna. Vyn **Ovan** visar kartan med norr längst ner på skärmen. Det gör den för varje tabell med Z upp och Y vänd.
 
-Ritningen är OpenDotas, av Valves karta. Valve står inte bakom 3DHeat. En 3D-karta av Dota kräver att spelet är installerat. Se Watchers anteckningar om Dota 2-repriser.
+Ritningen är OpenDotas, av Valves karta. Valve står inte bakom 3DHeat.
+
+### 3D-kartan {#the-3d-map}
+
+Med Dota 2 installerat skapar Watchers kommando [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) kartan i 3D från spelets egna filer: mark, klippor, vatten, träd och byggnader, i repristabellernas enheter och axlar. Läs in filen en gång med **3D-modell…**: visaren känner igen den på dess delar (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` i `dotaMap.ts`), lägger den genast i [banbiblioteket](level-library.md), där den ersätter en äldre, och säger det. Därefter läser **Dota 2-karta** in den här 3D-kartan från biblioteket i stället för att hämta ritningen; finns ingen i biblioteket hämtar den ritningen och berättar hur du skapar 3D-kartan. Filen kommer från din egen installation och stannar på din dator.
 
 ## För utvecklare {#for-developers}
 

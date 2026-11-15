@@ -4,7 +4,7 @@ parent: "Niveluri și geometria fundalului"
 nav_order: 1
 lang: "ro"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -63,7 +63,11 @@ Imaginea este un singur patrulater cu textură, la altitudinea stabilită. La op
 
 Verificat pe reluarea unui meci public din patch-ul 7.40: traseul fiecărui erou urmează culoarele desenate, iar turnurile, cazărmile și anticii pe care îi plasează reluarea cad pe bazele desenate. Vederea **Sus** arată harta cu nordul în partea de jos a ecranului, cum arată orice tabel cu Z în sus și Y inversat.
 
-Desenul este al OpenDota, după harta Valve; Valve nu susține 3DHeat. O hartă 3D a Dota are nevoie de jocul instalat: vezi notele Watcher-ului despre reluările Dota 2.
+Desenul este al OpenDota, după harta Valve; Valve nu susține 3DHeat.
+
+### Harta 3D {#the-3d-map}
+
+Cu Dota 2 instalat, comanda [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) a Watcher (`python -m heat3d_watch dota-map -o dota.glb`) creează harta în 3D din fișierele jocului însuși: teren, faleze, apă, copaci și clădiri, în unitățile și pe axele tabelelor din reluări. Încărcați fișierul o dată cu **Model 3D…**: vizualizatorul îl recunoaște după părțile sale (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` în `dotaMap.ts`), îl pune imediat în [biblioteca de niveluri](level-library.md), înlocuind unul mai vechi, și o spune. De atunci, **Harta Dota 2** încarcă această hartă 3D din bibliotecă în loc să descarce desenul; dacă nu există niciuna în bibliotecă, descarcă desenul și spune cum se face harta 3D. Fișierul provine din propria instalare și rămâne pe calculatorul dumneavoastră.
 
 ## Pentru dezvoltatori {#for-developers}
 

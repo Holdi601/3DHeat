@@ -4,7 +4,7 @@ parent: "关卡与背景几何体"
 nav_order: 1
 lang: "zh"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -53,7 +53,7 @@ outdated: false
 
 ## Dota 2 地图 {#dota-2-map}
 
-**地图图像…**旁边的 **Dota 2 map** 会获取 [OpenDota](https://www.opendota.com) 在其对局页面上显示的当前 Dota 2 地图图样，并把它放在 [Watcher](https://github.com/Holdi601/3DHeat-Watcher) 从 Dota 2 回放中写出的表格之下（[`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)）。按下按钮时才会从 opendota.com 获取该图像，它不属于 3DHeat 的一部分；最新补丁的图样取自 OpenDota 自己的列表，如果无法读取该列表，则使用 7.40 版的图样。
+**地图图像…**旁边的 **Dota 2 地图** 会获取 [OpenDota](https://www.opendota.com) 在其对局页面上显示的当前 Dota 2 地图图样，并把它放在 [Watcher](https://github.com/Holdi601/3DHeat-Watcher) 从 Dota 2 回放中写出的表格之下（[`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)）。按下按钮时才会从 opendota.com 获取该图像，它不属于 3DHeat 的一部分；最新补丁的图样取自 OpenDota 自己的列表，如果无法读取该列表，则使用 7.40 版的图样。
 
 | | |
 |---|---|
@@ -64,7 +64,11 @@ outdated: false
 
 已在一场公开对局的 7.40 版回放上核对：每个英雄的轨迹都沿着所绘的车道行进，回放放置的防御塔、兵营和远古遗迹都落在所绘的基地上。**顶视**视图会以北在屏幕底部的方式显示地图，与它显示任何 Y 翻转的 Z 向上表格的方式相同。
 
-该图样是 OpenDota 为 Valve 的地图制作的；Valve 并不认可 3DHeat。Dota 的三维地图需要安装游戏：见 Watcher 关于 Dota 2 回放的说明。
+该图样是 OpenDota 为 Valve 的地图制作的；Valve 并不认可 3DHeat。
+
+### 3D 地图 {#the-3d-map}
+
+安装了 Dota 2 后，Watcher 的 [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) 命令（`python -m heat3d_watch dota-map -o dota.glb`）会从游戏自身的文件生成 3D 地图：地面、悬崖、水、树木和建筑，采用回放数据表的单位和坐标轴。用 **3D 模型…** 加载该文件一次：查看器会根据它的部件（`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`；`dotaMap.ts` 中的 `isDotaLevel`）认出它，立即放入[关卡库](level-library.md)并替换较旧的一份，同时给出提示。此后 **Dota 2 地图** 会从关卡库加载这张 3D 地图，而不是下载图样；关卡库中没有时，它会下载图样并说明如何生成 3D 地图。该文件来自你自己的安装，并留在你的电脑上。
 
 ## 开发者信息 {#for-developers}
 

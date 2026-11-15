@@ -4,7 +4,7 @@ parent: "Узроўні і фонавая геаметрыя"
 nav_order: 1
 lang: "be"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -52,7 +52,7 @@ outdated: false
 
 ## Карта Dota 2 {#dota-2-map}
 
-**Dota 2 map** побач з **Выява карты…** загружае малюнак бягучай карты Dota 2, які [OpenDota](https://www.opendota.com) паказвае на сваіх старонках матчаў, і змяшчае яго пад табліцамі, якія [Watcher](https://github.com/Holdi601/3DHeat-Watcher) піша з паўтораў Dota 2 ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Выява загружаецца з opendota.com, калі націснута кнопка, і не ўваходзіць у 3DHeat; малюнак найноўшага патча бярэцца са спісу самой OpenDota, а малюнак 7.40 - тады, калі спіс нельга прачытаць.
+**Мапа Dota 2** побач з **Выява карты…** загружае малюнак бягучай карты Dota 2, які [OpenDota](https://www.opendota.com) паказвае на сваіх старонках матчаў, і змяшчае яго пад табліцамі, якія [Watcher](https://github.com/Holdi601/3DHeat-Watcher) піша з паўтораў Dota 2 ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Выява загружаецца з opendota.com, калі націснута кнопка, і не ўваходзіць у 3DHeat; малюнак найноўшага патча бярэцца са спісу самой OpenDota, а малюнак 7.40 - тады, калі спіс нельга прачытаць.
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ outdated: false
 
 Праверана на публічным матчы паўтору патча 7.40: траекторыя кожнага героя ідзе па намаляваных лініях, а вежы, казармы і ancients, якія паўтор размяшчае, падаюць на намаляваныя базы. **Top** паказвае карту з поўначы ўнізе экрана, як паказвае любую табліцу Z уверсе з адлюстраваным Y.
 
-Малюнак - гэта OpenDota па карце Valve; Valve не падтрымлівае 3DHeat. Трохмерная карта Dota патрабуе ўсталяванай гульні: гл. заўвагі Watcher пра паўторы Dota 2.
+Малюнак - гэта OpenDota па карце Valve; Valve не падтрымлівае 3DHeat.
+
+### 3D-мапа {#the-3d-map}
+
+Калі Dota 2 усталяваная, каманда Watcher [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) робіць мапу ў 3D з уласных файлаў гульні: зямля, скалы, вада, дрэвы і будынкі, у адзінках і восях табліц паўтораў. Загрузіце файл адзін раз праз **3D-мадэль…**: праграма пазнае яго па частках (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` у `dotaMap.ts`), адразу кладзе ў [бібліятэку ўзроўняў](level-library.md), замяняючы старэйшую, і паведамляе пра гэта. Пасля гэтага **Мапа Dota 2** загружае гэтую 3D-мапу з бібліятэкі замест таго, каб спампоўваць малюнак; калі ў бібліятэцы яе няма, кнопка спампоўвае малюнак і расказвае, як зрабіць 3D-мапу. Файл паходзіць з вашай уласнай усталёўкі і застаецца на вашай машыне.
 
 ## Для распрацоўшчыкаў {#for-developers}
 

@@ -4,7 +4,7 @@ parent: "Līmeņi un fona ģeometrija"
 nav_order: 1
 lang: "lv"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -52,7 +52,7 @@ Attēls ir viens tekstūrēts četrstūris augstumā. Pilnā necaurredzamībā t
 
 ## Dota 2 karte {#dota-2-map}
 
-Poga **Dota 2 map** blakus **Kartes attēls…** ielādē pašreizējās Dota 2 kartes zīmējumu, ko [OpenDota](https://www.opendota.com) rāda savās mača lapās, un novieto to zem tabulām, ko [Watcher](https://github.com/Holdi601/3DHeat-Watcher) raksta no Dota 2 atkārtojumiem ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Attēls tiek ielādēts no opendota.com, kad nospied pogu, un nav daļa no 3DHeat. Jaunākās versijas zīmējums tiek ņemts no OpenDota pašu saraksta, bet 7.40 zīmējums — kad sarakstu nevar nolasīt.
+Poga **Dota 2 karte** blakus **Kartes attēls…** ielādē pašreizējās Dota 2 kartes zīmējumu, ko [OpenDota](https://www.opendota.com) rāda savās mača lapās, un novieto to zem tabulām, ko [Watcher](https://github.com/Holdi601/3DHeat-Watcher) raksta no Dota 2 atkārtojumiem ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Attēls tiek ielādēts no opendota.com, kad nospied pogu, un nav daļa no 3DHeat. Jaunākās versijas zīmējums tiek ņemts no OpenDota pašu saraksta, bet 7.40 zīmējums — kad sarakstu nevar nolasīt.
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ Poga **Dota 2 map** blakus **Kartes attēls…** ielādē pašreizējās Dota 2 
 
 Pārbaudīts uz publiska mača atkārtojuma 7.40 versijā: katra varoņa trajektorija seko zīmētajām joslām, un torņi, kazarmas un senie, ko atkārtojums novieto, nokrīt uz zīmētajām bāzēm. Skats **Augša** rāda karti ar ziemeļiem ekrāna apakšā, kā tas rāda jebkuru Z-augšup tabulu ar apgrieztu Y.
 
-Zīmējums ir OpenDota, Valve karte; Valve neatbalsta 3DHeat. 3D Dota karte prasa, lai spēle būtu instalēta: skat. Watcher piezīmes par Dota 2 atkārtojumiem.
+Zīmējums ir OpenDota, Valve karte; Valve neatbalsta 3DHeat.
+
+### 3D karte {#the-3d-map}
+
+Ja Dota 2 ir instalēta, Watcher komanda [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) no pašas spēles failiem izveido karti 3D: zemi, klintis, ūdeni, kokus un ēkas, atkārtojumu tabulu vienībās un asīs. Ielādē failu vienreiz ar **3D modelis…**: skatītājs to atpazīst pēc daļām (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` failā `dotaMap.ts`), uzreiz ieliek [līmeņu bibliotēkā](level-library.md), aizstājot vecāku, un par to paziņo. No tā brīža **Dota 2 karte** ielādē šo 3D karti no bibliotēkas, nevis lejupielādē zīmējumu; ja bibliotēkā tādas nav, tā lejupielādē zīmējumu un pasaka, kā izveidot 3D karti. Fails nāk no tavas pašas instalācijas un paliek tavā datorā.
 
 ## Izstrādātājiem {#for-developers}
 

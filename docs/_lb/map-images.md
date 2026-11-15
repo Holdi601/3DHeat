@@ -4,7 +4,7 @@ parent: "Levelen an Hannergrondgeometrie"
 nav_order: 1
 lang: "lb"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -52,7 +52,7 @@ D'Bild ass en eenzegt Rechteck mat Textur op der Héicht. Bei voller Deckkraaft 
 
 ## Dota 2-Kaart {#dota-2-map}
 
-**Dota 2 map** nieft **Kaartebild…** hëlt d'Zeechnung vun der aktueller Dota-2-Kaart, déi [OpenDota](https://www.opendota.com) op senge Matchsäiten weist, a stellt se ënner Tabellen, déi den [Watcher](https://github.com/Holdi601/3DHeat-Watcher) aus Dota-2-Replays schreift ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). D'Bild gëtt beim Drécken vum Knäppchen vun opendota.com geholl a gehéiert net zu 3DHeat; d'Zeechnung vum neiste Patch kënnt aus enger eegener Lëscht vun OpenDota, an d'Zeechnung vum Patch 7.40, wann d'Lëscht net gelies ka ginn.
+**Dota-2-Kaart** nieft **Kaartebild…** hëlt d'Zeechnung vun der aktueller Dota-2-Kaart, déi [OpenDota](https://www.opendota.com) op senge Matchsäiten weist, a stellt se ënner Tabellen, déi den [Watcher](https://github.com/Holdi601/3DHeat-Watcher) aus Dota-2-Replays schreift ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). D'Bild gëtt beim Drécken vum Knäppchen vun opendota.com geholl a gehéiert net zu 3DHeat; d'Zeechnung vum neiste Patch kënnt aus enger eegener Lëscht vun OpenDota, an d'Zeechnung vum Patch 7.40, wann d'Lëscht net gelies ka ginn.
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ D'Bild ass en eenzegt Rechteck mat Textur op der Héicht. Bei voller Deckkraaft 
 
 Kontrolléiert op engem ëffentlechen Match-Replay vum Patch 7.40: all Held sengem Wee follegt den gezeechnete Lanen, an d'Tierm, d'Kasärnen a d'Ancienten, déi de Replay setzt, falen op déi gezeechent Basen. D'Usiicht **Uewen** weist d'Kaart mat Norden um ënneschten Enn vum Écran, wéi se all Z-uewen-Tabell mat ëmgedréinter Y weist.
 
-D'Zeechnung ass vun OpenDota, vun der Kaart vu Valve; Valve steet net hannert 3DHeat. Eng 3D-Kaart vu Dota brauch d'installéiert Spill: kuckt d'Notizen vum Watcher zu Dota-2-Replays.
+D'Zeechnung ass vun OpenDota, vun der Kaart vu Valve; Valve steet net hannert 3DHeat.
+
+### D'3D-Kaart {#the-3d-map}
+
+Mat installéiertem Dota 2 mécht de Watcher-Befeel [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) d'Kaart an 3D aus de Spill-eegene Fichieren: Buedem, Fielsen, Waasser, Beem a Gebaier, an den Eenheeten an Axe vun de Replay-Tabellen. Luet de Fichier eemol mat **3D-Modell…**: de Viewer erkennt e vun sengen Deeler (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` an `dotaMap.ts`), leet e sofort an d'[Level-Bibliothéik](level-library.md), ersetzt eng méi al, a seet dat. Vun do un lued **Dota-2-Kaart** dës 3D-Kaart aus der Bibliothéik amplaz d'Zeechnung erofzelueden; ass keng an der Bibliothéik, lued en d'Zeechnung a seet, wéi een d'3D-Kaart mécht. De Fichier kënnt aus denger eegener Installatioun a bleift op dengem Computer.
 
 ## Fir Entwéckler {#for-developers}
 

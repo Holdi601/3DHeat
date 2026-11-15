@@ -4,7 +4,7 @@ parent: "Lygiai ir fono geometrija"
 nav_order: 1
 lang: "lt"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -50,9 +50,9 @@ Pavadinimo eilutėje rodoma `plotis×aukštis px · x × z m/px` – pasaulio dy
 
 Vaizdas yra vienas tekstūruotas keturkampis aukštyje. Esant visiškam nepermatomumui jis rašo gylį, todėl dalyvauja [užslėpime](depth-and-culling.md) kaip žemė; esant mažesniam nei 100 % nepermatomumui jis susimaišo ir gylio nerašo, todėl nieko neužslepia. [Liniuotė](measure.md) matuoja savo plokštumoje. [Lygių biblioteka](level-library.md) išsaugo vaizdo lygį su jo inkarais.
 
-## Dota 2 map {#dota-2-map}
+## Dota 2 žemėlapis {#dota-2-map}
 
-**Dota 2 map** šalia **Žemėlapio vaizdas…** parsisiunčia dabartinio Dota 2 žemėlapio brėžinį, kurį [OpenDota](https://www.opendota.com) rodo savo rungtynių puslapiuose, ir padeda jį po lentelėmis, kurias [Watcher](https://github.com/Holdi601/3DHeat-Watcher) rašo iš Dota 2 pakartojimų ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Vaizdas parsisiunčia iš opendota.com, kai paspaudžiamas mygtukas, ir nėra 3DHeat dalis; naujausio leidimo brėžinys imamas iš paties OpenDota sąrašo, o 7.40 brėžinys – kai sąrašo nepavyksta perskaityti.
+**Dota 2 žemėlapis** šalia **Žemėlapio vaizdas…** parsisiunčia dabartinio Dota 2 žemėlapio brėžinį, kurį [OpenDota](https://www.opendota.com) rodo savo rungtynių puslapiuose, ir padeda jį po lentelėmis, kurias [Watcher](https://github.com/Holdi601/3DHeat-Watcher) rašo iš Dota 2 pakartojimų ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Vaizdas parsisiunčia iš opendota.com, kai paspaudžiamas mygtukas, ir nėra 3DHeat dalis; naujausio leidimo brėžinys imamas iš paties OpenDota sąrašo, o 7.40 brėžinys – kai sąrašo nepavyksta perskaityti.
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ Vaizdas yra vienas tekstūruotas keturkampis aukštyje. Esant visiškam nepermat
 
 Patikrinta viešų rungtynių pakartojime 7.40 leidimo: kiekvienos herojaus trajektorija seka nubrėžtas linijas, o bokštai, kareivinės ir senieji, kuriuos pakartojimas talpina, nukrenta ant nubrėžtų bazių. Vaizdas **Viršus** rodo žemėlapį su šiaure ekrano apačioje, kaip ir bet kurią Z aukštyn lentelę su apverstu Y.
 
-Brėžinys yra OpenDota, Valve žemėlapio; Valve nepritaria 3DHeat. 3D Dota žemėlapiui reikia įdiegto žaidimo: žr. Watcher pastabas apie Dota 2 pakartojimus.
+Brėžinys yra OpenDota, Valve žemėlapio; Valve nepritaria 3DHeat.
+
+### 3D žemėlapis {#the-3d-map}
+
+Įdiegus Dota 2, Watcher komanda [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) iš paties žaidimo failų sukuria žemėlapį 3D: žemę, uolas, vandenį, medžius ir pastatus, pakartojimų lentelių vienetais ir ašimis. Vieną kartą įkelkite failą per **3D modelis…**: peržiūros programa atpažįsta jį pagal dalis (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` faile `dotaMap.ts`), iš karto įdeda į [lygių biblioteką](level-library.md), pakeisdama senesnį, ir tai praneša. Nuo tada **Dota 2 žemėlapis** įkelia šį 3D žemėlapį iš bibliotekos, užuot atsisiuntęs piešinį; jei bibliotekoje jo nėra, atsisiunčia piešinį ir paaiškina, kaip sukurti 3D žemėlapį. Failas gaunamas iš jūsų pačių diegimo ir lieka jūsų kompiuteryje.
 
 ## Kūrėjams {#for-developers}
 

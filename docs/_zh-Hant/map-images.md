@@ -4,7 +4,7 @@ parent: "關卡與背景幾何"
 nav_order: 1
 lang: "zh-Hant"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -52,7 +52,7 @@ outdated: false
 
 ## Dota 2 地圖 {#dota-2-map}
 
-**地圖影像…**旁的 **Dota 2 map** 會取得 [OpenDota](https://www.opendota.com) 在其對戰頁面上顯示的目前 Dota 2 地圖圖稿，並把它放在 [Watcher](https://github.com/Holdi601/3DHeat-Watcher) 從 Dota 2 重播所寫出的表格之下（[`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)）。按下按鈕時，圖片才會從 opendota.com 取得，它不屬於 3DHeat 的一部分；最新版本的圖稿取自 OpenDota 自己的清單，若無法讀取清單，則使用 7.40 的圖稿。
+**地圖影像…**旁的 **Dota 2 地圖** 會取得 [OpenDota](https://www.opendota.com) 在其對戰頁面上顯示的目前 Dota 2 地圖圖稿，並把它放在 [Watcher](https://github.com/Holdi601/3DHeat-Watcher) 從 Dota 2 重播所寫出的表格之下（[`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)）。按下按鈕時，圖片才會從 opendota.com 取得，它不屬於 3DHeat 的一部分；最新版本的圖稿取自 OpenDota 自己的清單，若無法讀取清單，則使用 7.40 的圖稿。
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ outdated: false
 
 已用 7.40 版公開對戰的重播核對：每位英雄的軌跡都沿著圖上繪製的通道行進，重播所放置的防禦塔、兵營與遠古遺跡，也都落在圖上繪製的基地上。**頂視**視角會以北方在螢幕底部的方式顯示地圖，與它顯示任何 Y 翻轉之 Z 向上表格的方式相同。
 
-圖稿屬於 OpenDota，地圖則屬於 Valve；Valve 並未為 3DHeat 背書。Dota 的 3D 地圖需要安裝遊戲：請見 Watcher 關於 Dota 2 重播的說明。
+圖稿屬於 OpenDota，地圖則屬於 Valve；Valve 並未為 3DHeat 背書。
+
+### 3D 地圖 {#the-3d-map}
+
+安裝了 Dota 2 後，Watcher 的 [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) 指令（`python -m heat3d_watch dota-map -o dota.glb`）會從遊戲本身的檔案產生 3D 地圖：地面、懸崖、水、樹木與建築，採用重播資料表的單位與座標軸。用 **3D 模型…** 載入該檔案一次：檢視器會從它的部件（`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`；`dotaMap.ts` 中的 `isDotaLevel`）認出它，立即放進[關卡庫](level-library.md)並取代較舊的一份，同時告訴你。此後 **Dota 2 地圖** 會從關卡庫載入這張 3D 地圖，而不是下載圖稿；關卡庫裡沒有時，它會下載圖稿並說明如何製作 3D 地圖。該檔案來自你自己的安裝，並留在你的電腦上。
 
 ## 給開發者 {#for-developers}
 

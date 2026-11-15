@@ -4,7 +4,7 @@ parent: "Levely a geometria pozadia"
 nav_order: 1
 lang: "sk"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -50,9 +50,9 @@ Riadok s názvom ukazuje `šírka×výška px · x × z m/px`, svetovú veľkos�
 
 Obrázok je jeden texturovaný štvorec vo výške. Pri plnej nepriehľadnosti zapisuje hĺbku, takže sa zúčastňuje [zakrývania](depth-and-culling.md) ako zem; pod 100 % nepriehľadnosťou sa mieša a hĺbku nezapisuje, takže nič nezakrýva. [Pravítko](measure.md) meria v jeho rovine. [Knižnica levelov](level-library.md) ukladá level s obrázkom spolu s jeho kotvami.
 
-## Dota 2 map {#dota-2-map}
+## Mapa Dota 2 {#dota-2-map}
 
-Tlačidlo **Dota 2 map** vedľa **Obrázok mapy…** stiahne kresbu aktuálnej mapy Dota 2, ktorú [OpenDota](https://www.opendota.com) zobrazuje na svojich stránkach zápasov, a umiestni ju pod tabuľky, ktoré [Watcher](https://github.com/Holdi601/3DHeat-Watcher) píše z replayov Dota 2 ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Obrázok sa sťahuje z opendota.com, keď sa stlačí tlačidlo, a nie je súčasťou 3DHeat; kresba najnovšieho patchu sa vezme zo zoznamu samotného OpenDota a kresba 7.40, keď sa zoznam nedá prečítať.
+Tlačidlo **Mapa Dota 2** vedľa **Obrázok mapy…** stiahne kresbu aktuálnej mapy Dota 2, ktorú [OpenDota](https://www.opendota.com) zobrazuje na svojich stránkach zápasov, a umiestni ju pod tabuľky, ktoré [Watcher](https://github.com/Holdi601/3DHeat-Watcher) píše z replayov Dota 2 ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Obrázok sa sťahuje z opendota.com, keď sa stlačí tlačidlo, a nie je súčasťou 3DHeat; kresba najnovšieho patchu sa vezme zo zoznamu samotného OpenDota a kresba 7.40, keď sa zoznam nedá prečítať.
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ Tlačidlo **Dota 2 map** vedľa **Obrázok mapy…** stiahne kresbu aktuálnej m
 
 Overené na verejnom replayi zápasu patchu 7.40: dráha každého hrdinu nasleduje nakreslené pruhy a veže, kasárne a starí sa nachádzajú tam, kde replay ich kladie, na nakreslených základniach. Pohľad **Zhora** ukazuje mapu so severom dole na obrazovke, ako ukazuje každú tabuľku Z-hore s prevráteným Y.
 
-Kresba je od OpenDota, z mapy Valve; Valve 3DHeat neschvaľuje. 3D mapa Dota potrebuje nainštalovanú hru: pozri poznámky Watchera k replayom Dota 2.
+Kresba je od OpenDota, z mapy Valve; Valve 3DHeat neschvaľuje.
+
+### 3D mapa {#the-3d-map}
+
+S nainštalovanou hrou Dota 2 vytvorí príkaz [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) z Watchera (`python -m heat3d_watch dota-map -o dota.glb`) mapu v 3D z vlastných súborov hry: terén, útesy, vodu, stromy a budovy, v jednotkách a osiach tabuliek zo záznamov. Načítajte súbor raz cez **3D model…**: prehliadač ho spozná podľa jeho častí (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` v `dotaMap.ts`), hneď ho uloží do [knižnice levelov](level-library.md), kde nahradí staršiu, a oznámi to. Odvtedy **Mapa Dota 2** načítava túto 3D mapu z knižnice namiesto sťahovania kresby; ak v knižnici žiadna nie je, stiahne kresbu a povie, ako 3D mapu vytvoriť. Súbor pochádza z vašej vlastnej inštalácie a zostáva na vašom počítači.
 
 ## Pre vývojárov {#for-developers}
 

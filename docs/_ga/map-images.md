@@ -4,7 +4,7 @@ parent: "Leibhéil agus geoiméadracht chúlra"
 nav_order: 1
 lang: "ga"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -64,7 +64,11 @@ Faigheann **Léarscáil Dota 2** in aice le **Íomhá léarscáile…** an lín�
 
 Seiceáilte ar athsheinm cluiche poiblí de phaiste 7.40: leanann rian gach laoch na lánaí tarraingthe, agus titeann na túir, na barraicí agus na Ársaí a chuireann an athsheinm ar na bunanna tarraingthe. Taispeánann an radharc **Barr** an léarscáil le tuaisceart ag bun an scáileáin, mar a thaispeánann sé aon tábla Z-suas le Y casta.
 
-Is le OpenDota an líníocht, de léarscáil Valve; ní fhaomhann Valve 3DHeat. Teastaíonn an cluiche suiteáilte ar léarscáil 3D de Dota: féach nótaí an Watcher ar athsheinmeanna Dota 2.
+Is le OpenDota an líníocht, de léarscáil Valve; ní fhaomhann Valve 3DHeat.
+
+### An léarscáil 3T {#the-3d-map}
+
+Le Dota 2 suiteáilte, déanann ordú [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) an Watcher (`python -m heat3d_watch dota-map -o dota.glb`) an léarscáil i 3T ó chomhaid an chluiche féin: talamh, aillte, uisce, crainn agus foirgnimh, in aonaid agus in aiseanna tháblaí na n-athsheinmeanna. Lódáil an comhad uair amháin le **Samhail 3T…**: aithníonn an breathnóir é ar a chodanna (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` in `dotaMap.ts`), cuireann sé sa [leabharlann leibhéal](level-library.md) láithreach é in áit cinn níos sine, agus deir sé amhlaidh. Ón uair sin, lódálann **Léarscáil Dota 2** an léarscáil 3T sin ón leabharlann in ionad an líníocht a íoslódáil; mura bhfuil ceann sa leabharlann, íoslódálann sé an líníocht agus insíonn sé conas an léarscáil 3T a dhéanamh. Is ó do shuiteáil féin a thagann an comhad agus fanann sé ar do ríomhaire.
 
 ## Do fhorbróirí {#for-developers}
 

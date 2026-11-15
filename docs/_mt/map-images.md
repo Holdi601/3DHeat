@@ -4,7 +4,7 @@ parent: "Livelli u ġeometrija tal-isfond"
 nav_order: 1
 lang: "mt"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -63,7 +63,11 @@ L-immaġni hi quad wieħed b'tekstura fl-elevazzjoni. Bl-opaċità sħiħa tikte
 
 Ikkontrollat fuq replay ta' partita pubblika tal-patch 7.40: it-traċċa ta' kull eroj issegwi t-toroq imdrawwa, u t-torrijiet, il-kwartieri u l-ancients li l-replay jqiegħed jaqgħu fuq il-bases imdrawwa. Il-veduta **Fuq** turi l-mappa bit-tramuntana f'isfel l-iskrin, kif turi kull tabella Z 'l fuq b'Y maqlub.
 
-Ir-rixma hi ta' OpenDota, ta' mappa ta' Valve; Valve ma tapprovax 3DHeat. Mappa 3D ta' Dota teħtieġ il-logħba installata: ara n-noti tal-Watcher dwar replays ta' Dota 2.
+Ir-rixma hi ta' OpenDota, ta' mappa ta' Valve; Valve ma tapprovax 3DHeat.
+
+### Il-mappa 3D {#the-3d-map}
+
+Bid-Dota 2 installat, il-kmand [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) tal-Watcher (`python -m heat3d_watch dota-map -o dota.glb`) jagħmel il-mappa fi 3D mill-fajls tal-logħba stess: art, irdumijiet, ilma, siġar u bini, fl-unitajiet u l-assi tat-tabelli tar-replays. Għabbi l-fajl darba waħda b'**Mudell 3D…**: il-viewer jagħrfu mill-partijiet tiegħu (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` f'`dotaMap.ts`), idaħħlu minnufih fil-[librerija tal-livelli](level-library.md), minflok waħda eqdem, u jgħid hekk. Minn hemm 'il quddiem **Mappa ta’ Dota 2** tgħabbi dik il-mappa 3D mil-librerija minflok tniżżel it-tpinġija; jekk ma jkunx hemm waħda fil-librerija, tniżżel it-tpinġija u tgħid kif issir il-mappa 3D. Il-fajl ġej mill-installazzjoni tiegħek stess u jibqa' fuq il-magna tiegħek.
 
 ## Għall-iżviluppaturi {#for-developers}
 

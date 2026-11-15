@@ -4,7 +4,7 @@ parent: "레벨과 배경 지오메트리"
 nav_order: 1
 lang: "ko"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -52,7 +52,7 @@ outdated: false
 
 ## Dota 2 맵 {#dota-2-map}
 
-**맵 이미지…** 옆의 **Dota 2 map**은 [OpenDota](https://www.opendota.com)이 경기 페이지에 보여 주는 현재 Dota 2 맵의 그림을 가져와서, [Watcher](https://github.com/Holdi601/3DHeat-Watcher)가 Dota 2 리플레이에서 쓴 표 아래에 놓습니다([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). 이미지는 버튼을 누를 때 opendota.com에서 가져오며, 3DHeat의 일부가 아닙니다. 가장 최근 패치의 그림은 OpenDota 자체 목록에서 고르고, 목록을 읽을 수 없으면 7.40 그림을 씁니다.
+**맵 이미지…** 옆의 **Dota 2 맵**은 [OpenDota](https://www.opendota.com)이 경기 페이지에 보여 주는 현재 Dota 2 맵의 그림을 가져와서, [Watcher](https://github.com/Holdi601/3DHeat-Watcher)가 Dota 2 리플레이에서 쓴 표 아래에 놓습니다([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). 이미지는 버튼을 누를 때 opendota.com에서 가져오며, 3DHeat의 일부가 아닙니다. 가장 최근 패치의 그림은 OpenDota 자체 목록에서 고르고, 목록을 읽을 수 없으면 7.40 그림을 씁니다.
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ outdated: false
 
 패치 7.40의 공개 경기 리플레이로 확인했습니다. 모든 영웅의 궤적이 그려진 길을 따라갔고, 리플레이가 놓은 타워, 막사, 고대 유적이 그려진 기지 위에 떨어졌습니다. **위** 보기는 지도를 북쪽이 화면 아래쪽에 오게 보여 줍니다. Y가 뒤집힌 Z가 위인 표를 어떤 것이든 보여 주는 방식과 같습니다.
 
-그림은 OpenDota의 것이며, 원작은 Valve의 지도입니다. Valve는 3DHeat를 보증하지 않습니다. Dota의 3D 지도는 게임이 설치되어 있어야 합니다. Dota 2 리플레이에 관한 Watcher의 안내를 보십시오.
+그림은 OpenDota의 것이며, 원작은 Valve의 지도입니다. Valve는 3DHeat를 보증하지 않습니다.
+
+### 3D 맵 {#the-3d-map}
+
+Dota 2가 설치되어 있으면 Watcher의 [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) 명령(`python -m heat3d_watch dota-map -o dota.glb`)이 게임 자체 파일로 맵을 3D로 만듭니다. 지면, 절벽, 물, 나무, 건물을 리플레이 테이블과 같은 단위와 축으로 만듭니다. 이 파일을 **3D 모델…**(으)로 한 번 불러오면, 뷰어는 그 파츠(`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `dotaMap.ts`의 `isDotaLevel`)로 이를 알아보고 곧바로 [레벨 라이브러리](level-library.md)에 넣으며(이전 것은 대체), 그렇다고 알려 줍니다. 그 뒤로 **Dota 2 맵** 버튼은 그림을 내려받는 대신 라이브러리에서 이 3D 맵을 불러옵니다. 라이브러리에 없으면 그림을 내려받고 3D 맵을 만드는 방법을 알려 줍니다. 이 파일은 사용자 자신의 설치에서 나오며 사용자의 컴퓨터에 남습니다.
 
 ## 개발자용 {#for-developers}
 

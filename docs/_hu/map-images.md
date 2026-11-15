@@ -4,7 +4,7 @@ parent: "Pályák és háttérgeometria"
 nav_order: 1
 lang: "hu"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -52,7 +52,7 @@ A kép egyetlen textúrázott négyszög a magasságon. Teljes átlátszatlansá
 
 ## Dota 2 térkép {#dota-2-map}
 
-A **Térképkép…** mellett lévő **Dota 2 map** lehívja azt a rajzot az aktuális Dota 2 térképről, amelyet az [OpenDota](https://www.opendota.com) a meccsoldalain mutat, és a [Watcher](https://github.com/Holdi601/3DHeat-Watcher) által Dota 2 visszajátszásokból írt táblázatok alá helyezi ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). A képet a gomb megnyomásakor tölti le az opendota.com, és nem része a 3DHeat-nek; a legújabb patch rajzát az OpenDota saját listájából vesszük, a listát nem tudva beolvasni pedig a 7.40-es rajzot.
+A **Térképkép…** mellett lévő **Dota 2-térkép** lehívja azt a rajzot az aktuális Dota 2 térképről, amelyet az [OpenDota](https://www.opendota.com) a meccsoldalain mutat, és a [Watcher](https://github.com/Holdi601/3DHeat-Watcher) által Dota 2 visszajátszásokból írt táblázatok alá helyezi ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). A képet a gomb megnyomásakor tölti le az opendota.com, és nem része a 3DHeat-nek; a legújabb patch rajzát az OpenDota saját listájából vesszük, a listát nem tudva beolvasni pedig a 7.40-es rajzot.
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ A **Térképkép…** mellett lévő **Dota 2 map** lehívja azt a rajzot az akt
 
 Egy nyilvános meccs 7.40-es patchű visszajátszásán ellenőrizve: minden hős nyomvonala a rajzolt sávokat követi, és a visszajátszás által elhelyezett tornyok, kaszárnyák és ősök a rajzolt bázisokra esnek. A **Felül** nézet a térképet mutatja, északkal a képernyő alján, ahogy minden Z-felfelé táblázatot mutat, amelynek Y-ja tükrözött.
 
-A rajz az OpenDota-é, a Valve térképéről; a Valve nem támogatja a 3DHeat-et. A Dota 3D-s térképéhez a játék telepítése kell: lásd a Watcher jegyzeteit a Dota 2 visszajátszásokról.
+A rajz az OpenDota-é, a Valve térképéről; a Valve nem támogatja a 3DHeat-et.
+
+### A 3D-s térkép {#the-3d-map}
+
+Telepített Dota 2 mellett a Watcher [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) parancsa (`python -m heat3d_watch dota-map -o dota.glb`) a játék saját fájljaiból 3D-ben elkészíti a térképet: talaj, sziklafalak, víz, fák és épületek, a visszajátszás-táblák egységeiben és tengelyeivel. Töltsd be a fájlt egyszer ezzel: **3D-modell…**. A néző a részeiről ismeri fel (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` a `dotaMap.ts` fájlban), azonnal a [pályakönyvtárba](level-library.md) teszi egy régebbi helyére, és ezt jelzi is. Onnantól a(z) **Dota 2-térkép** ezt a 3D-s térképet tölti be a könyvtárból a rajz letöltése helyett; ha nincs ilyen a könyvtárban, letölti a rajzot, és elmondja, hogyan készül a 3D-s térkép. A fájl a saját telepítésedből származik, és a gépeden marad.
 
 ## Fejlesztőknek {#for-developers}
 

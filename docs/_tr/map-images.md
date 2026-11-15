@@ -4,7 +4,7 @@ parent: "Haritalar ve arka plan geometrisi"
 nav_order: 1
 lang: "tr"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -52,7 +52,7 @@ Görüntü, yüksekliğinde tek bir dokulu dörtgendir. Tam opaklıkta derinlik 
 
 ## Dota 2 haritası {#dota-2-map}
 
-**Harita görüntüsü…**'nün yanındaki **Dota 2 map**, [OpenDota](https://www.opendota.com)'nın maç sayfalarında gösterdiği güncel Dota 2 haritasının çizimini indirir ve [Watcher'ın](https://github.com/Holdi601/3DHeat-Watcher) Dota 2 tekrarlarından yazdığı tabloların altına yerleştirir ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Görüntü, düğmeye basıldığında opendota.com'dan alınır ve 3DHeat'in bir parçası değildir; en yeni yamanın çizimi OpenDota'nın kendi listesinden alınır, liste okunamazsa 7.40 çizimi kullanılır.
+**Harita görüntüsü…**'nün yanındaki **Dota 2 haritası**, [OpenDota](https://www.opendota.com)'nın maç sayfalarında gösterdiği güncel Dota 2 haritasının çizimini indirir ve [Watcher'ın](https://github.com/Holdi601/3DHeat-Watcher) Dota 2 tekrarlarından yazdığı tabloların altına yerleştirir ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Görüntü, düğmeye basıldığında opendota.com'dan alınır ve 3DHeat'in bir parçası değildir; en yeni yamanın çizimi OpenDota'nın kendi listesinden alınır, liste okunamazsa 7.40 çizimi kullanılır.
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ Görüntü, yüksekliğinde tek bir dokulu dörtgendir. Tam opaklıkta derinlik 
 
 Yama 7.40'ın herkese açık bir maçının tekrarında kontrol edildi: her kahramanın izi çizilen şeritleri izliyor ve tekrarın yerleştirdiği kuleler, kışlalar ve ancient'lar çizilen üsslerin üzerine düşüyor. **Üst** görünüm, haritayı ekranın alt tarafında kuzey olacak şekilde gösterir; Y'si ters çevrilmiş Z-yukarı herhangi bir tabloyu gösterdiği gibi.
 
-Çizim OpenDota'nındır; harita Valve'indir; Valve, 3DHeat'i onaylamaz. Dota'nın 3B haritası oyunun kurulu olmasını gerektirir: bkz. Watcher'ın Dota 2 tekrarları notları.
+Çizim OpenDota'nındır; harita Valve'indir; Valve, 3DHeat'i onaylamaz.
+
+### 3B harita {#the-3d-map}
+
+Dota 2 kuruluysa Watcher'ın [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) komutu (`python -m heat3d_watch dota-map -o dota.glb`) haritayı oyunun kendi dosyalarından 3B olarak oluşturur: zemin, uçurumlar, su, ağaçlar ve binalar, tekrar tablolarının birimleri ve eksenleriyle. Dosyayı bir kez **3B model…** ile yükleyin: görüntüleyici onu parçalarından tanır (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `dotaMap.ts` içindeki `isDotaLevel`), hemen [harita kitaplığına](level-library.md) koyar, eskisinin yerine geçirir ve bunu söyler. O andan itibaren **Dota 2 haritası** çizimi indirmek yerine bu 3B haritayı kitaplıktan yükler; kitaplıkta yoksa çizimi indirir ve 3B haritanın nasıl yapılacağını söyler. Dosya kendi kurulumunuzdan gelir ve makinenizde kalır.
 
 ## Geliştiriciler için {#for-developers}
 

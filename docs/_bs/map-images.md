@@ -4,7 +4,7 @@ parent: "Nivoi i geometrija pozadine"
 nav_order: 1
 lang: "bs"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -63,7 +63,11 @@ Slika je jedan teksturisani četverougao na visini. Pri punoj neprozirnosti piš
 
 Provjereno na javnom replayu meča zakrpe 7.40: putanja svakog heroja prati nacrtane trake, a tornjevi, kasarne i drevni koje replay postavlja padaju na nacrtane baze. Prikaz **Odozgo** pokazuje kartu sa sjeverom na dnu ekrana, kao što prikazuje svaku tabelu s Z-gore i okrenutim Y.
 
-Crtež je OpenDotin, a mapa Valvea; Valve ne podržava 3DHeat. 3D mapa Dote zahtijeva instaliranu igru: vidi Watcherove napomene o replayima Dota 2.
+Crtež je OpenDotin, a mapa Valvea; Valve ne podržava 3DHeat.
+
+### 3D mapa {#the-3d-map}
+
+Uz instaliranu Dotu 2, Watcherova naredba [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) pravi mapu u 3D-u iz vlastitih datoteka igre: tlo, litice, voda, drveće i zgrade, u jedinicama i osama tabela iz snimaka. Učitajte datoteku jednom putem **3D model…**: preglednik je prepoznaje po dijelovima (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` u `dotaMap.ts`), odmah je stavlja u [biblioteku nivoa](level-library.md), zamjenjujući stariju, i to javlja. Od tada **Mapa Dote 2** učitava tu 3D mapu iz biblioteke umjesto da preuzima crtež; ako je u biblioteci nema, preuzima crtež i kaže kako napraviti 3D mapu. Datoteka dolazi iz vaše vlastite instalacije i ostaje na vašem računaru.
 
 ## Za programere {#for-developers}
 

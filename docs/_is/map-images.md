@@ -4,7 +4,7 @@ parent: "Borð og bakgrunnsform"
 nav_order: 1
 lang: "is"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -52,7 +52,7 @@ Myndin er einn áferðarlagður ferhyrningur í hæðinni. Við fullt ógegnsæi
 
 ## Dota 2-kortið {#dota-2-map}
 
-**Dota 2 map** við hlið **Kortamynd…** sækir teikninguna af núverandi Dota 2-korti sem [OpenDota](https://www.opendota.com) sýnir á leikjasíðum sínum, og setur hana undir töflur sem [Watcher](https://github.com/Holdi601/3DHeat-Watcher) skrifar úr Dota 2-endurspilunum ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Myndin er sótt af opendota.com þegar hnappurinn er ýttur á og er ekki hluti af 3DHeat; teikning nýjustu uppfærslunnar er tekin af lista OpenDota sjálfs, og teikning 7.40 þegar ekki er hægt að lesa listann.
+**Dota 2-kort** við hlið **Kortamynd…** sækir teikninguna af núverandi Dota 2-korti sem [OpenDota](https://www.opendota.com) sýnir á leikjasíðum sínum, og setur hana undir töflur sem [Watcher](https://github.com/Holdi601/3DHeat-Watcher) skrifar úr Dota 2-endurspilunum ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). Myndin er sótt af opendota.com þegar hnappurinn er ýttur á og er ekki hluti af 3DHeat; teikning nýjustu uppfærslunnar er tekin af lista OpenDota sjálfs, og teikning 7.40 þegar ekki er hægt að lesa listann.
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ Myndin er einn áferðarlagður ferhyrningur í hæðinni. Við fullt ógegnsæi
 
 Prófað á opinberri endurspilun leiks á uppfærslu 7.40: slóð sérhverrar hetju fylgir teiknuðum brautum, og turnarnir, herbúðirnar og fornmennirnir sem endurspilunin staðsetur lenda á teiknuðu bækistöðvunum. **Ofan**-sýnin sýnir kortið með norðri neðst á skjánum, eins og hún sýnir hvaða Z-upp töflu sem er með Y snúið við.
 
-Teikningin er frá OpenDota, af korti Valve; Valve styður ekki 3DHeat. Þrívítt kort af Dota krefst þess að leikurinn sé uppsettur: sjá athugasemdir Watchers um Dota 2-endurspilanir.
+Teikningin er frá OpenDota, af korti Valve; Valve styður ekki 3DHeat.
+
+### Þrívíða kortið {#the-3d-map}
+
+Með Dota 2 uppsett býr skipunin [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) í Watcher (`python -m heat3d_watch dota-map -o dota.glb`) til kortið í þrívídd úr skrám leiksins sjálfs: jörð, klettar, vatn, tré og byggingar, í einingum og ásum endurspilunartaflnanna. Hladdu skránni inn einu sinni með **Þrívíddarlíkan…**: skoðarinn þekkir hana á hlutum hennar (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` í `dotaMap.ts`), setur hana strax í [borðasafnið](level-library.md) í stað eldri og segir frá því. Eftir það hleður **Dota 2-kort** þessu þrívíða korti úr safninu í stað þess að sækja teikninguna; sé ekkert í safninu sækir hann teikninguna og segir hvernig þrívíða kortið er búið til. Skráin kemur úr þinni eigin uppsetningu og verður áfram á tölvunni þinni.
 
 ## Fyrir forritara {#for-developers}
 

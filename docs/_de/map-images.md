@@ -4,7 +4,7 @@ parent: "Levels und Hintergrundgeometrie"
 nav_order: 1
 lang: "de"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -63,7 +63,11 @@ Das Bild ist ein einziges texturiertes Viereck auf der Höhe. Bei voller Deckkra
 
 Geprüft an einem öffentlichen Match-Replay von Patch 7.40: Die Spur jedes Helden folgt den gezeichneten Lanes, und die Türme, Kasernen und Ancients, die das Replay platziert, fallen auf die gezeichneten Basen. Die Ansicht **Oben** zeigt die Karte mit Norden unten auf dem Bildschirm, so wie sie jede Z-oben-Tabelle mit gespiegeltem Y zeigt.
 
-Die Zeichnung gehört OpenDota, von Valves Karte; Valve unterstützt 3DHeat nicht. Eine 3D-Karte von Dota braucht das installierte Spiel: siehe die Hinweise des Watchers zu Dota-2-Replays.
+Die Zeichnung gehört OpenDota, von Valves Karte; Valve unterstützt 3DHeat nicht.
+
+### Die 3D-Karte {#the-3d-map}
+
+Bei installiertem Dota 2 erstellt der Watcher-Befehl [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) die Karte in 3D aus den eigenen Dateien des Spiels: Boden, Klippen, Wasser, Bäume und Gebäude, in den Einheiten und Achsen der Replay-Tabellen. Lade die Datei einmal mit **3D-Modell…**: Der Viewer erkennt sie an ihren Teilen (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` in `dotaMap.ts`), legt sie sofort in die [Level-Bibliothek](level-library.md), ersetzt dabei eine ältere und sagt das. Von da an lädt **Dota-2-Karte** diese 3D-Karte aus der Bibliothek, statt die Zeichnung zu laden; ist keine in der Bibliothek, lädt sie die Zeichnung und sagt, wie man die 3D-Karte erstellt. Die Datei stammt aus deiner eigenen Installation und bleibt auf deinem Rechner.
 
 ## Für Entwickler {#for-developers}
 

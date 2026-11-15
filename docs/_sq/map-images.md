@@ -4,7 +4,7 @@ parent: "Nivelet dhe gjeometria e sfondit"
 nav_order: 1
 lang: "sq"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -64,7 +64,11 @@ Imazhi është një katërkëndësh i vetëm me strukturë në lartësi. Me opac
 
 E kontrolluar në riluajtjen publike të një ndeshjeje të ndryshimit 7.40: shtegu i çdo heroi ndjek rrugët e vizatuara, dhe kullat, kazermat dhe antikët që vendos riluajtja bien mbi bazat e vizatuara. Pamja **Sipër** e tregon hartën me veriun në fund të ekranit, siç tregon çdo tabelë Z-lart me Y të kthyer.
 
-Vizatimi është i OpenDota, i hartës së Valve; Valve nuk e miraton 3DHeat. Një hartë 3D e Dota kërkon lojën të instaluar: shih shënimet e Watcher për riluajtjet e Dota 2.
+Vizatimi është i OpenDota, i hartës së Valve; Valve nuk e miraton 3DHeat.
+
+### Harta 3D {#the-3d-map}
+
+Me Dota 2 të instaluar, komanda [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) e Watcher (`python -m heat3d_watch dota-map -o dota.glb`) krijon hartën në 3D nga skedarët e vetë lojës: terren, shkëmbinj, ujë, pemë dhe ndërtesa, në njësitë dhe boshtet e tabelave të riluajtjeve. Ngarkoje skedarin një herë me **Model 3D…**: shikuesi e njeh nga pjesët e tij (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` në `dotaMap.ts`), e vendos menjëherë në [bibliotekën e niveleve](level-library.md), duke zëvendësuar një më të vjetër, dhe e thotë këtë. Që atëherë **Harta e Dota 2** e ngarkon këtë hartë 3D nga biblioteka në vend që të shkarkojë vizatimin; nëse nuk ka asnjë në bibliotekë, shkarkon vizatimin dhe tregon si bëhet harta 3D. Skedari vjen nga instalimi yt dhe mbetet në kompjuterin tënd.
 
 ## Për zhvilluesit {#for-developers}
 

@@ -4,7 +4,7 @@ parent: "Kentät ja taustageometria"
 nav_order: 1
 lang: "fi"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -63,7 +63,11 @@ Kuva on yksi tekstuuroitu neliö korkeudella. Täydellä peittävyydellä se kir
 
 Tarkistettu julkisen ottelun toistosta patchilla 7.40: jokaisen sankarin rata seuraa piirrettyjä kaistoja, ja toiston sijoittamat tornit, kasarmit ja ancientit osuvat piirrettyihin tukikohtiin. Näkymä **Ylhäältä** näyttää kartan niin, että pohjoinen on näytön alareunassa, kuten se näyttää kaikki Z ylös -taulukot, joissa Y on käännetty.
 
-Piirros on OpenDotan, Valven kartasta; Valve ei hyväksy 3DHeatia. Dotan 3D-kartta vaatii pelin asennettuna: katso Watcherin muistiinpanot Dota 2 -toistoista.
+Piirros on OpenDotan, Valven kartasta; Valve ei hyväksy 3DHeatia.
+
+### 3D-kartta {#the-3d-map}
+
+Kun Dota 2 on asennettu, Watcherin komento [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) tekee kartan 3D:nä pelin omista tiedostoista: maasto, jyrkänteet, vesi, puut ja rakennukset, toistotaulukoiden yksiköissä ja akseleilla. Lataa tiedosto kerran kohdasta **3D-malli…**: katselin tunnistaa sen osista (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` tiedostossa `dotaMap.ts`), vie sen heti [kenttäkirjastoon](level-library.md) vanhemman tilalle ja kertoo siitä. Siitä lähtien **Dota 2 -kartta** lataa tämän 3D-kartan kirjastosta piirroksen lataamisen sijaan; jos kirjastossa ei ole sitä, se lataa piirroksen ja kertoo, miten 3D-kartta tehdään. Tiedosto tulee omasta asennuksestasi ja pysyy koneellasi.
 
 ## Kehittäjille {#for-developers}
 

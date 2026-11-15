@@ -4,7 +4,7 @@ parent: "Niveaux et géométrie de fond"
 nav_order: 1
 lang: "fr"
 source: "map-images.md"
-source_hash: "d56614ef6bd1"
+source_hash: "e7a4a651d75d"
 translated: true
 outdated: false
 ---
@@ -52,7 +52,7 @@ L’image est un seul quad texturé à l’altitude choisie. À pleine opacité,
 
 ## Carte de Dota 2 {#dota-2-map}
 
-**Dota 2 map** à côté de **Image de carte…** récupère le dessin de la carte actuelle de Dota 2 que [OpenDota](https://www.opendota.com) affiche sur ses pages de match, et le place sous les tableaux que le [Watcher](https://github.com/Holdi601/3DHeat-Watcher) écrit à partir des replays de Dota 2 ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). L’image est récupérée sur opendota.com quand on appuie sur le bouton et ne fait pas partie de 3DHeat ; le dessin du dernier patch est pris dans la liste même d’OpenDota, et celui du 7.40 quand la liste ne peut pas être lue.
+**Carte de Dota 2** à côté de **Image de carte…** récupère le dessin de la carte actuelle de Dota 2 que [OpenDota](https://www.opendota.com) affiche sur ses pages de match, et le place sous les tableaux que le [Watcher](https://github.com/Holdi601/3DHeat-Watcher) écrit à partir des replays de Dota 2 ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). L’image est récupérée sur opendota.com quand on appuie sur le bouton et ne fait pas partie de 3DHeat ; le dessin du dernier patch est pris dans la liste même d’OpenDota, et celui du 7.40 quand la liste ne peut pas être lue.
 
 | | |
 |---|---|
@@ -63,7 +63,11 @@ L’image est un seul quad texturé à l’altitude choisie. À pleine opacité,
 
 Vérifié sur le replay d’un match public du patch 7.40 : la trace de chaque héros suit les voies dessinées, et les tours, casernes et ancestraux que place le replay tombent sur les bases dessinées. La vue **Dessus** montre la carte avec le nord en bas de l’écran, comme elle le fait pour tout tableau à Z vertical avec Y inversé.
 
-Le dessin est celui d’OpenDota, de la carte de Valve ; Valve n’approuve pas 3DHeat. Une carte 3D de Dota nécessite le jeu installé : voir les notes du Watcher sur les replays de Dota 2.
+Le dessin est celui d’OpenDota, de la carte de Valve ; Valve n’approuve pas 3DHeat.
+
+### La carte 3D {#the-3d-map}
+
+Avec Dota 2 installé, la commande [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) du Watcher (`python -m heat3d_watch dota-map -o dota.glb`) crée la carte en 3D à partir des fichiers du jeu lui-même : sol, falaises, eau, arbres et bâtiments, dans les unités et les axes des tables des replays. Chargez le fichier une fois avec **Modèle 3D…** : la visionneuse le reconnaît à ses parties (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree` ; `isDotaLevel` dans `dotaMap.ts`), le range aussitôt dans la [bibliothèque de niveaux](level-library.md) en remplaçant une version plus ancienne, et l'indique. Dès lors, **Carte de Dota 2** charge cette carte 3D depuis la bibliothèque au lieu de télécharger le dessin ; s'il n'y en a aucune dans la bibliothèque, il télécharge le dessin et explique comment créer la carte 3D. Le fichier vient de votre propre installation et reste sur votre machine.
 
 ## Pour les développeurs {#for-developers}
 
