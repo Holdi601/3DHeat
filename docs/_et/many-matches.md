@@ -1,43 +1,43 @@
 ---
 title: "Palju matše korraga"
-parent: "Replay"
+parent: "Kordus"
 nav_order: 2
 lang: "et"
 source: "many-matches.md"
-source_hash: "f2239cef5e91"
+source_hash: "a37a7b4cf8c2"
 translated: true
-outdated: true
+outdated: false
 ---
 
-# Palju matše korraga
+# Palju mänge korraga
 
-**Palju matše korraga** mängib paljusid matše üksteise peale, nii et näed, kuhu iga matši mängijad tavaliselt lähevad. Kasuta seda, et võrrelda sadu või tuhandeid matše ühes pildis.
+**Palju mänge korraga** mängib paljusid mänge üksteise peal, nii et näed, kuhu iga mängu mängijad tavaliselt lähevad. Kasuta seda, et võrrelda sadu või tuhandeid mänge ühel pildil.
 
-Iga matš algab oma algusest ja tema üksused liiguvad kujudena. Failid lähevad otse graafikakaardile ja ühtegi täielikku tabelit ei ehitata, seega see mängib sujuvalt seal, kus tavaline laadimine mälu otsa jookseks.
+Iga mäng algab oma algusest ja selle üksused liiguvad kujudena. Failid lähevad otse graafikakaardile ja täielikku tabelit ei ehitata, nii et see mängib sujuvalt seal, kus tavaline laadimine mälu otsa saaks.
 
-![Kümme tankimatši üksteise peale laotud, üks värv matši kohta](../assets/img/et/many-matches.webp)
+![Kümme tankimängu üksteise peale laotatud, üks värv iga mängu kohta](../assets/img/et/many-matches.webp)
 
 ## Kuidas seda kasutada {#how-to-use-it}
 
-1. Ava Soojuskaardi külgribal **Palju matše korraga**.
-2. Vajuta **Failid…** (vali palju faile), **Kaust…** (kaust ja selle alamkaustad) või **Lisa kaust…** (lisa laetule).
-3. Vaatur lülitub kujude ülekattele ja algab algusest. Vajuta **Esita**.
+1. Ava külgribal **Palju mänge korraga**.
+2. Vajuta **Failid…** (vali palju faile), **Kaust…** (kaust ja selle alamkaustad) või **Lisa kaust…** (lisa juba laaditule).
+3. Vaataja lülitub kujude ülekattele ja alustab algusest. Vajuta **Esita**.
 
-Iga fail on üks matš (või sisaldab mitut). Töötavad Parquet failid ja [`.3dheat`](container.md) konteinerid. Fail vajab asukoha-, aja- ja üksuseveergu; nime-, tüübi- ja poolveerud hoitakse alles. Teised failid ja konverterite kõrvalfailid (lend, sõnumid, sündmused, vestlus, eesmärgid) jäetakse vahele. Tavalise tabeli kohta vaata [Andmete sisselugemine](getting-data-in.md).
+Iga fail on üks mäng (või sisaldab mitut). Töötavad Parquet-failid ja [`.3dheat`](container.md) konteinerid. Fail vajab asukoha, aja ja üksuse veergu; nime, tüübi ja poole veerud jäetakse alles. Teised failid ja konverterite kõrvalfailid (lend, sõnumid, sündmused, vestlus, eesmärgid) jäetakse vahele. Tavalise tabeli kohta vt [Andmete sisselugemine](getting-data-in.md).
 
 ## Seaded {#settings}
 
-| Seade | Mida ta teeb |
+| Seade | Mida see teeb |
 |---|---|
-| **Meeskonniti** / **Mängude kaupa** | Värv poole järgi või värv matši kohta. |
+| **Meeskonniti** / **Mängude kaupa** | Värvi poole järgi või iga mängu oma värviga. |
 | **Märgi, kus üksused surid** | Märk, kus iga üksus suri, 10 s, 30 s, 120 s või kõik seni. |
 
-Paneel näitab, mitu matši, üksust, rida ja asukohta loeti, kasutatud mälu ja laadimisaega. *Ruumi* on see, kui palju rohkem asukohti graafikakaart veel võtaks. *Kujud alates* on ekraanisuurus, mille alla üksus joonistatakse väikese nooletaolise asemel oma kujuna.
+Paneel näitab, mitu mängu, üksust, rida ja asukohta loeti, kasutatud mälu ja laadimisaega. *Ruumi* on, mitu veel asukohta graafikakaart veel vastu võtta jaksab. *Kujud alates* on suurus ekraanil, millest allpool joonistatakse üksus väikese noolena, mitte oma kujuna.
 
 Kujude välimus kasutab samu juhtnuppe nagu [Matši kordus](match-replay.md#figures): **Kujude suurus**, **Väikseim kujund ekraanil** ja **Kaugelt**.
 
 ## Nipid {#tips}
 
 - Kui kõik ei mahuks mällu, hõrendatakse asukohti (alles jäetakse ainult asukoht iga mõne meetri järel) ja paneel ütleb seda.
-- Soojusrežiimid töötavad ka ülekatte andmetel.
-- Statistika kohta tuhandete matšide üle ilma neid joonistamata vaata [Massanalüüs](mass-analysis.md).
+- Soojusrežiimid töötavad ka ülekatte andmetega.
+- Statistika kohta tuhandete mängude üle ilma neid joonistamata vt [Massanalüüs](mass-analysis.md).

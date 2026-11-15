@@ -1,5 +1,7 @@
 {
  "titles": {
+  "Knowledge catalogue": "Zināšanu katalogs",
+  "Replay": "Atskaņojums",
   "Accumulation": "Uzkrāšana",
   "Axes, units and time": "Asis, mērvienības un laiks",
   "The two backends": "Abas renderēšanas metodes",

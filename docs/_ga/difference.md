@@ -4,103 +4,103 @@ parent: "Modhanna teasa"
 nav_order: 5
 lang: "ga"
 source: "difference.md"
-source_hash: "19f40abd7f5a"
+source_hash: "12fc27dc0616"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Difríocht
 
-Dearg san áit a raibh foireann A níos mó, gorm-glas san áit a raibh foireann B, aon rud san áit a raibh siad comhionann.
+Dearg nuair a bhí foireann A níos mó, glas-gorm nuair a bhí foireann B, gan dada nuair a bhí siad cothrom.
 
-Is teas comharthaithe é **Difríocht** (eochair 2). Cuireann sraitheanna de dhaonra amháin teas leis; baineann sraitheanna de dhaonra eile uaidh. Sa limistéar ina bhforlapann an bheirt go cothrom is nialas an toradh agus tá sé trédhearcach go hiomlán; san áit a bhfuil ceann amháin i gceannas taispeántar é i ndathanna an taobh sin - de réir réamhshocraithe te (trédhearcach → dearg → buí → bán) don taobh **+** agus fuar (trédhearcach → glas → gorm → corcra) don taobh **−**.
+**Difríocht** (eochair 2) is teas comhartha é. Cuireann sraitheanna de dhaonra amháin teas leis; dealaíonn sraitheanna daonra eile é. Nuair a fhorluíonn an dá cheann go cothrom bíonn an toradh nialach agus trédhearcach go hiomlán; nuair a bhíonn ceann amháin i réim taispeántar é i dathanna an taoibh sin - de réir réamhshocraithe te (trédhearcach → dearg → buí → bán) do thaobh **+**, agus fuar (trédhearcach → glas → gorm → corcra) do thaobh **−**.
 
-![Teas difríochta: dearg san áit a raibh an taobh + níos mó, glas agus gorm san áit a raibh an taobh - níos mó](../assets/img/ga/difference-split.webp)
+![Teas difríochta: dearg nuair a bhí an taobh + níos mó, glas agus gorm nuair a bhí an taobh - níos mó](../assets/img/ga/difference-split.webp)
 
 ## Conas é a úsáid {#how-to-use-it}
 
-1. Brúigh `2` (nó roghnaigh **Difríocht** sa bharra na modhanna).
-2. Oscail **Scoilt difríochta** sa bharra taoibh.
-3. Roghnaigh cad a **Scoilt de réir**: de ghnáth *Grúpaí*.
-4. Cuir grúpa amháin (nó luach) ar **+** agus grúpa eile ar **−**.
-5. Léigh na dathanna: ciallaíonn te an taobh +, ciallaíonn fuar an taobh −. Tugann an painéal rabhadh mura bhfuil sraitheanna ag taobh amháin (féach [Teachtaireachtaí a d'fhéadfá a fheiceáil](#messages-you-may-see)).
+1. Brúigh `2` (nó roghnaigh **Difríocht** sa bharra módanna).
+2. Oscail **Scoilt difríochta** sa bharra cliathánach.
+3. Roghnaigh cad atá le **Scoilt de réir**: de ghnáth *Grúpaí*.
+4. Cuir grúpa amháin (nó luach amháin) ar **+** agus grúpa eile ar **−**.
+5. Léigh na dathanna: is é te an taobh +, is é fuar an taobh −. Tugann an painéal rabhadh más rud é nach bhfuil sraitheanna ag taobh amháin (féach [Teachtaireachtaí a fheicfidh tú](#messages-you-may-see)).
 
-*Cé na dhá dhaonra* is ceist iomlán í, mar sin is féidir leis an scoilt aon cholún coinnithe a bheith, ní grúpaí amháin. Ní chuirtear sraitheanna nach dtagann ar **aon** taobh san áireamh mar nialas: is é sin a fhágann go ndéanann scoilt thar dhá luach de go leor luachanna comparáid díreach ar an dá luach sin, agus go gcomhcheanglaíonn sé leis na [scagairí](filters.md) - scag go dtí léarscáil amháin, agus roinn ansin é de réir leagan.
+*Cé dhá dhaonra* is í an cheist iomlán, mar sin is féidir leis an scoilt aon cholún coinnithe a bheith, ní grúpaí amháin. Fágtar as an toradh sraitheanna a thiteann ar **aon** taobh, ní chuntar iad mar nialach: is é sin a dhéanann go gcuireann scoilt thar dhá luach de go leor luachanna an dá luach sin i gcomparáid go beacht, agus cumhdaíonn sé leis na [scagairí](filters.md) - scag síos go léarscáil amháin, ansin scoil é de réir tógála.
 
-Teastaíonn dhá thaobh ón mhód: colún grúpa le dhá ghrúpa ar a laghad, nó scoilt thar cholún coinnithe le scagadh. Ar shonraí le níos lú ná dhá ghrúpa tosaíonn lódáil le scoilt colúin - colún **Comhad foinse** de lódáil il-chomhad ar dtús, ansin an chéad cholún catagóire le dhá luach, nó an chéad cholún uimhriúil le raon - ionas go n-oibríonn *comparáid dhá lódáil* ar shonraí gan aon ghrúpaí. Ní fhágtar an mód as fáil ach ar shonraí nach bhfuil ceachtar acu; fágtar as fáil é freisin nuair a fhágann scoilt colúin rud ar bith ar thaobh amháin.
+Teastaíonn dhá thaobh ón mód: colún grúpa le dhá ghrúpa ar a laghad, nó scoilt thar cholún coinnithe le haghaidh scagtha. Ar shonraí le níos lú ná dhá ghrúpa tosaíonn lódáil le scoilt colúin - colún *Source file* de lódáil iomadúla ar dtús, seachas sin an chéad cholún catagóire le dhá luach, seachas sin an chéad cholún uimhriúil le raon - ionas go n-oibríonn *cuir dhá lódáil i gcomparáid* ar shonraí gan aon ghrúpa. Ní fhágann ach sonraí gan ceachtar mód dodhéanta; mar an gcéanna a fhágann scoilt colúin nach bhfuil aon rud ar thaobh amháin dodhéanta.
 
-## Painéal Scoilt na Difríochta {#the-difference-split-panel}
+## Painéal na scoilte Difríochta {#the-difference-split-panel}
 
-Taispeántar é i mód na Difríochta, faoi na painéil teasa.
+Taispeántar i mód na Difríochta, faoi na panéil teasa.
 
 **Scoilt de réir** tairgeann:
 
-| Rogha | Taispeántar mar | Riail na scoilte |
+| Rogha | Taispeánta mar | Riail na scoilte |
 |---|---|---|
-| Grúpaí | *Grúpa (N)* (nuair a bhíonn colún grúpa ann) | Gach grúpa ar +, − nó ar aon cheann, socraithe sa [Liosta foirne](teams-list.md) |
+| Grúpaí | *Grúpa (N)* (nuair a bhíonn colún grúpa ann) | Gach grúpa ar +, − nó ar aon cheann, socraithe sa [liosta foirne](teams-list.md) |
 | Colún catagóire | *colún (N luach)* | Luachanna ar +, − nó ar aon cheann |
-| Colún uimhriúil | *colún (uimhriúil)* | Raon luacha do gach taobh |
-| An comhad tionscnaimh | *Comhad foinse - comparáid dhá lódáil* (nuair a lódáladh roinnt comhad) | Comhaid ar +, − nó ar aon cheann |
+| Colún uimhriúil | *colún (uimhriúil)* | Raon luachanna do gach taobh |
+| An comhad tionscnaimh | *Source file - compare two loads* (nuair a lódáladh comhaid iomadúla) | Comhaid ar +, − nó ar aon cheann |
 
-Ní thairgtear ach colúin a choinnítear faoi *Coinnigh le haghaidh scagtha* ag am an lódála.
+Ní thairgtear ach colúin a coinníodh faoi *Coinnigh le haghaidh scagtha* ag an lódáil.
 
-### Comparáid codanna, ní líonta {#compare-shares-not-counts}
+### Cuir codanna i gcomparáid, ní líonta {#compare-shares-not-counts}
 
-Meáchanaíonn **Cuir codanna i gcomparáid, ní líonta** (réamhshocraithe as) gach taobh de réir a haonaid thar líon a shraitheanna féin, ionas nach mbuann taobh a bhfuil cúig huaire níos mó sraitheanna de amháin ar líon. Ansin taispeánann an dath an áit a bhfuil gach taobh níos coitianta go comhréireach ná an taobh eile. Úsáid é nuair a bhfuil méideanna an-difriúla sonraí ag an dá thaobh, mar shampla dhá sheisiún de fhaid difriúil.
+**Cuir codanna i gcomparáid, ní líonta** (réamhshocrú as) meáchanaíonn gach taobh le haon thar a líon sraitheanna féin, ionas nach mbuann taobh a bhfuil cúig huaire níos mó sraitheanna aige ar líon amháin. Taispeánann an dath ansin cén áit a bhfuil gach taobh níos coitianta go comhréireach ná an ceann eile. Úsáid é nuair a bhíonn an-difriúil ag an dá thaobh, mar shampla dhá sheisiún de fhad difriúil.
 
-### Teachtaireachtaí a d'fhéadfá a fheiceáil {#messages-you-may-see}
+### Teachtaireachtaí a fheicfidh tú {#messages-you-may-see}
 
-Tugann an painéal rabhadh nuair nach difríocht fhíor an pictiúr:
+Tugann an painéal rabhadh nuair nach difríocht fíor an pictiúr:
 
 | Teachtaireacht | Brí |
 |---|---|
-| *N + / M −* (nó *N + / M − / K gan úsáid*) | Cé mhéad luach atá ar gach taobh (agus ar aon cheann). |
-| Níl sraith sa fhuinneog ar an taobh **+** | Ní tharraingítear ach an taobh **−**. Bog fuinneog an amlíne nó athraigh an scoilt. |
+| *N + / M −* (nó *N + / M − / K unused*) | Cé mhéad luach ar gach taobh (agus ar aon cheann). |
+| Níl sraith sa fhuinneog ar an taobh **+** | Ní tharraingítear ach an taobh **−**. Bog fuinneog na hamlíne nó athraigh an scoilt. |
 | Níl sraith sa fhuinneog ar an taobh **−** | Ní tharraingítear ach an taobh **+**. |
-| Níl luach ar aon taobh | Ní tharraingíonn an difríocht rud ar bith. Cuir luach amháin ar a laghad ar **+** nó **−**. |
-| *colún* ní féidir a scoilt sa chaoi seo | Ní oireann an colún roghnaithe don scoilt. Roghnaigh an colún arís. |
-| Níor fhóir colún na scoilte i gcuimhne an GPU do N as M de smutáin | Ní tharraingítear na sraitheanna sin. Ardaigh buiséad an GPU faoi Feidhmíocht → Buiséid acmhainní, nó lódáil níos lú sraitheanna. |
+| Níl aon luach ar aon taobh | Ní tharraingíonn an difríocht rud ar bith. Cuir luach amháin ar a laghad ar **+** nó **−**. |
+| *column* ní féidir é a scoilt sa chaoi seo | Ní oireann an colún roghnaithe don scoilt. Roghnaigh an colún arís. |
+| Níor oir colún na scoilte isteach i gcuimhne GPU do N as M píosaí | Ní tharraingítear na sraitheanna sin. Ardaigh buiséad GPU faoi Feidhmíocht → Buiséid acmhainní, nó lódáil níos lú sraitheanna. |
 
 ### De réir grúpa {#by-group}
 
-Ní dhéanann an painéal ach tagairt don [Liosta foirne](teams-list.md), áit a bhfuil cnaipe **+** agus cnaipe **−** ag gach grúpa. Ag gach lódáil cuirtear leath na ngrúpaí (suimithe suas) ar +, agus an chuid eile ar −; déanann **Roinn go cothrom** sa Liosta foirne an rud céanna arís. Ní chuireann grúpa ar aon taobh, nó a bhfuil sé folaithe lena ticbhosca, le rud ar bith.
+Ní dhéanann an painéal ach tagairt don [liosta foirne](teams-list.md), ina bhfuil cnaipe **+** agus **−** ag gach grúpa. Ar gach lódáil cuirtear leath an chéad leath de na grúpaí (suas) ar +, agus an chuid eile ar −; déanann **Roinn go cothrom** sa liosta foirne an rud céanna arís. Ní chuireann grúpa ar aon taobh, nó folaithe lena sheic-bhosca, leis ar bith.
 
 ### De réir luachanna catagóire {#by-category-values}
 
 | Cuid | Brí |
 |---|---|
-| `a + / b − / c gan úsáid` | Cé mhéad luach atá ar gach taobh agus ar aon cheann. |
+| `a + / b − / c unused` | Cé mhéad luach ar gach taobh agus ar aon cheann. |
 | **Glan** | Cuireann gach luach ar aon taobh. |
-| Liosta luachanna | Gach luach le cnaipe **+** agus cnaipe **−** (cliceáil an ceann gníomhach arís chun é a bhaint den taobh sin). Liostaítear luach folamh mar *(ar iarraidh)*. |
-| Nóta teorann | Ní liostaítear ach na chéad 200 luach: *Ag taispeáint na gcéad 200 as N luach. Is fearr colún chomh leathan seo a chúngú le scagaire ar dtús, nó a scoilt de réir raoin mura bhfuil a luachanna ordaithe.* |
+| Liosta luachanna | Gach luach le cnaipe **+** agus **−** (cliceáil an ceann gníomhach arís chun é a bhaint den taobh sin). Liostaítear luach folamh mar *(missing)*. |
+| Nóta teorann | Ní liostaítear ach an chéad 200 luach: *Showing the first 200 of N values. A column this wide is better narrowed with a filter first, or split by range if its values are ordered.* |
 
-Nuair a roghnaítear an colún cuirtear a chéad luach ar + agus a dara luach ar −. Nuair nach bhfuil luach ar aon taobh, titeann an scoilt ar ais go grúpaí in ionad fráma folamh a thaispeáint. Oibríonn *Comhad foinse* ar an mbealach céanna, luach amháin in aghaidh an chomhaid - is mar sin a chomparáidtear dhá easpórtáil, dhá rith tástála nó dhá leagan.
+Nuair a roghnaítear an colún cuirtear a chéad luach ar + agus a dara luach ar −. Nuair nach bhfuil aon luach ar an dá thaobh, titeann an scoilt ar ais go grúpaí in ionad fráma folamh a thaispeáint. Oibríonn *Source file* ar an gcaoi chéanna, luach amháin in aghaidh an chomhaid - is mar sin a chuirtear dhá onnmhairiú, dhá rith tástála nó dhá thógáil i gcomparáid.
 
 ### De réir raoin {#by-range}
 
 | Cuid | Brí |
 |---|---|
-| Leid | An t-íosmhéid agus an t-uasmhéid den cholún. |
-| **Raon dearfach (+)**, **ó** / **go** | Cuireann sraitheanna a bhfuil luach sa raon seo acu leis, ar an dá cheann. |
-| **Raon diúltach (−)**, **ó** / **go** | Baineann sraitheanna sa raon seo uaidh. |
-| **Scoilt ag an lárphointe** | Socraíonn + go [íos, lár] agus − go [lár, uas] - is é sin freisin a tharlaíonn nuair a roghnaítear an colún. |
+| Leid | Íosmhéid agus uasmhéid an cholúin. |
+| **Raon dearfach (+)**, **ó** / **go** | Cuireann sraitheanna a bhfuil luach sa raon seo acu leis, san áireamh sa dá cheann. |
+| **Raon diúltach (−)**, **ó** / **go** | Dealaíonn sraitheanna sa raon seo. |
+| **Scoilt ag an lárphointe** | Socraíonn + go [íosmhéid, lár] agus − go [lár, uasmhéid] - is é sin freisin a dhéanann an colún a roghnú. |
 
-Is le + a chuntar luach atá i dhá raon. Ní gá go gclúdaíonn na raonta an colún; fágtar luachanna nach bhfuil i gceachtar ar lár. Is scoilt raoin ar cholún ama-chosúil é *An chéad dhá nóiméad i gcoinne an dá nóiméad dheiridh*.
+Má tá luach sa dá raon, is + a chomhaireofar é. Ní gá go gclúdaíonn na raonta an colún; fágtar as an toradh luachanna nach bhfuil in aon cheann. *The first two minutes against the last two* is scoilt raoin ar cholún amhail ama.
 
 ## Dathanna {#colours}
 
-Taispeánann an chuid **Dathanna teasa** dhá eagarthóir grádáin sa mhód seo: **Dearfach (foirne suimitheacha)** agus **Diúltach (foirne dealaitheacha)**, gach ceann lena chnaipe athshocraithe féin (*Athshocraigh go trédhearcach → dearg → buí → bán*, *Athshocraigh go trédhearcach → glas → gorm → corcra*). Glacann an comhdhéanamh luach iomlán an teasa líonta trí an [pointe sáithithe agus an fhreagairt](colour-and-exposure.md), agus roghnaíonn sé an grádán diúltach san áit a bhfuil an líonta faoi nialas. Féach [Dath agus nochtadh](colour-and-exposure.md#the-ramp-editor).
+Taispeánann an chuid **Dathanna teasa** dhá eagarthóir ramp sa mhód seo: **Dearfach (foirne suimitheacha)** agus **Diúltach (foirne dealaitheacha)**, gach ceann lena chnaipe athshocraithe féin (*Reset to transparent → red → yellow → white*, *Reset to transparent → green → blue → purple*). Glacann an comhshuíomh luach absalóideach an teas glan trí [phointe sáithithe agus fhreagra](colour-and-exposure.md), agus roghnaíonn sé an ramp diúltach nuair a bhíonn an glan faoi nialas. Féach [Dath agus taispeántas](colour-and-exposure.md#the-ramp-editor).
 
-Bain úsáid as freagairt dhlúis *Líneach* nuair a bhíonn méid na difríochta tábhachtach: is í an t-aon fhreagairt ina gciallaíonn dath comhionann líon comhionann.
+Bain úsáid as an bhfreagra dlús *Líneach* nuair a bhíonn méid na difríochta tábhachtach: is é an t-aon fhreagra ina gciallaíonn dath comhionann líon comhionann.
 
-## Conas a oibríonn sé {#how-it-works}
+## Do fhorbróirí {#for-developers}
 
-Faigheann gach sraith comhartha +1, -1 nó 0 sa vertex shader ([`POINT_HEAT_VS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/shaders.ts)); diúltaíonn 0 don tsraith sula dtarraingítear aon fragment.
+Faigheann gach sraith comhartha de +1, -1 nó 0 sa veirtéacs-sceathán ([`POINT_HEAT_VS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/shaders.ts)); diúltaíonn 0 don tsraith sula dtarraingítear aon phíosa.
 
-- De réir grúpa, tagann an comhartha ó tábla grúpa de 4,096 iontráil atá innéacsaithe ag aitheantas grúpa na sraithe (rianann aitheantas an ghrúpa sa cheathrú cainéal de phictiúrelement suímh na sraithe).
-- De réir catagóire, tagann an comhartha ó dhara tábla 4,096 iontráil, líonta do gach luach catagóire, agus léitear luach na sraithe ó uigeacht scagaire an cholúin; diúltaítear do luach atá thar deireadh an tábla ar an dá chúltaca.
-- De réir raoin, déantar luach na sraithe a chur i gcomparáid leis na raonta beirt.
+- De réir grúpa, tagann an comhartha ó thábla grúpa 4,096-iontráil atá innéacsaithe ag aitheantas grúpa na sraithe (iompraíonn an t-aitheantas grúpa sa cheathrú cainéal de theacsal suíomh na sraithe).
+- De réir catagóire, tagann an comhartha ó dara tábla 4,096-iontráil, líonta de réir luachanna catagóire, agus léitear luach na sraithe ó theacsal scagaire an cholúin; diúltaítear do luach atá thar deireadh an tábla ar an dá chúltaca.
+- De réir raoin, déantar luach na sraithe a chur i gcomparáid leis an dá raon.
 
-Cuireann athrú ar an scoilt an carnadh arís ag tosú.
+Tosaíonn athrú na scoilte an carnadh arís.
 
-**Fanann grúpaí folaithe folaithe le gach scoilt.** Faoi scoilt de réir colúin ní iompraíonn an tábla grúpa comharthaí níos mó; coinníonn sé 1 do ghrúpa taispeánta agus 0 do cheann folaithe ([`frameSignTables`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts)), agus sroicheann an dá tábla an shader le chéile - dhá shraith de uigeacht comhartha amháin ar WebGL2, dhá leath de bhufair stórála amháin ar WebGPU. Tarraingítear sraith ach amháin nuair a thaispeántar a grúpa *agus* nuair a bhíonn a luach colúin ar thaobh. Mar sin, ní chuireann grúpa a bhfuil a ticbhosca bainte sa [Liosta foirne](teams-list.md), nó a fágadh ar lár le fócas taobh cluaisín Cluiche, rud ar bith leis, is cuma cén bealach a roinntear an difríocht.
+**Fanann grúpaí folaithe folaithe le gach scoilt.** Faoi scoilt de réir colúin ní iompraíonn an tábla grúpa comharthaí a thuilleadh; coinníonn sé 1 do ghrúpa a thaispeántar agus 0 do ghrúpa folaithe ([`frameSignTables`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts)), agus sroicheann an dá thábla an sceathán le chéile - dhá réimse de theacsal comhartha amháin ar WebGL2, dhá leath de bhufair stórála amháin ar WebGPU. Tarraingítear sraith amháin nuair a thaispeántar a grúpa *agus* nuair a bhíonn a luach colúin ar thaobh. Mar sin ní chuireann grúpa a bhfuil an tic bainte de sa [liosta foirne](teams-list.md), nó a fhágtar as le fócas taobh an chluaisín Cluiche, le haon rud ar bhealach ar bith a scoiltear an difríocht.

@@ -5,102 +5,102 @@ nav_order: 1
 has_children: true
 lang: "mt"
 source: "match-replay.md"
-source_hash: "9d61f24a5a04"
+source_hash: "14a8aade5ff0"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Replay tal-partita
 
-Ir-replay hu film tal-partita fejn kull plejer jinżel bħala l-ħaġa li kien isuq. Uża dan biex terġa' tara ġlieda, issegwi unità waħda u tara min laqat lil min.
+Ir-replay hu film tal-partita fejn kull plejer jinġibed bħala l-oġġett li kien isuq. Uża dan biex terġa' tara ġlieda, issegwi unità waħda u tara min laqat lil min.
 
-Tiri, laqtiet, nirien u wrecks jinżlu fuq l-unitajiet u fuq l-għanijiet fuq il-livell. Kameras, tikketti u wiri taktiku jgħinuk taqra l-ġlieda. Taf Tacview? [Ekwivalenza ma' Tacview](tacview-parity.md) turi fejn hu kull għodda tagħha.
+Tiri, laqtiet, nirien u wrakkijiet jinġibdu fuq l-unitajiet u l-għanijiet fuq il-livell. Il-kameras, it-tikketti u wiri taktiku jgħinuk taqra l-ġlieda. Taf Tacview? [Parità ma' Tacview](tacview-parity.md) juri fejn hu kull wieħed mill-għodod tiegħu.
 
-![Replay tal-figuri tad-demo tat-tanks: tanks bħala l-figuri tagħhom stess, b'tikketti ta' isem, vettura u veloċità](../assets/img/mt/replay-overview.webp)
+![Replay bil-figuri tad-demo tad-dabbabaqar: dabbabaqar bħala figuri tagħhom stess, b'tikketti tal-isem, tal-vettura u tal-veloċità](../assets/img/mt/replay-overview.webp)
 
 ## Ibda replay {#start-a-replay}
 
-1. Tella' reġistrazzjoni b'**Sors → Fajls…** jew billi tgħaddiha fuq il-pannell Sors (kwalunkwe tabella b'kolonna ta' **persuna** u **ħin**, fajl Tacview, replay konvertit, partita [`.3dheat`](container.md)). Ara [Kif tidħol id-data](getting-data-in.md).
-2. Iftaħ it-tab **Partita** u agħżel **Replay bil-figuri**, jew agħżel **Figuri fuq xulxin** fil-bar tal-modalitajiet tat-tab Heatmap.
-3. Taħt **Partiti fir-replay** agħżel partita waħda, kollha f'daqqa, jew diversi.
-4. Agħfas **Ħaddem** fuq il-linja taż-żmien (jew `K`). Iġbed il-linja taż-żmien biex timxi għal post ieħor.
+1. Tagħbi reġistrazzjoni b'**Sors → Fajls…** jew billi tgħaffagħha fuq il-pannell tas-Sors (kwalunkwe tabella b'kolonna **persuna** u kolonna **ħin**, fajl Tacview, replay kkonvertit, jew partita [`.3dheat`](container.md)). Ara [Tgħabbija tad-dejta](getting-data-in.md).
+2. Iftaħ it-tab **Partita** u agħżel **Replay bil-figuri**, jew agħżel **Figuri fuq xulxin** fil-barra tal-modi tat-tab Mappa tas-sħana.
+3. Taħt **Partiti fir-replay** agħżel partita waħda, il-partiti kollha flimkien, jew diversi.
+4. Agħfas **Ħaddem** fuq il-linja taż-żmien (jew `K`). Iġbed il-linja taż-żmien biex taqbeż.
 
-Figuri jieħdu post il-kaxxi għal kull unità li l-isem jew it-tip tagħha huwa magħruf (ara [Figuri](figures.md)). Data mingħajr kolonna ta' isem jew tip tinżel bħala suldati.
+Il-figuri jieħdu post il-kaxxi għal kull unità li l-isem jew it-tip tagħha magħruf (ara [Figuri](figures.md)). Dejta mingħajr kolonna ta' isem jew tip titpitter bħala suldati.
 
-![It-tab Partita: l-għażla tal-partiti, it-taqsima Figuri, il-veduti tal-kamera, Ħaddem u l-lista tal-avvenimenti](../assets/img/mt/match-replay-tab.webp)
+![It-tab Partita: l-għażla tal-partiti, it-taqsima Figuri, il-modi tal-kamera, Ħaddem u l-lista tal-avvenimenti](../assets/img/mt/match-replay-tab.webp)
 
 ## Figuri {#figures}
 
-![Tank jaħraq fil-kamera ta' orbita, bil-laqta li laqtu](../assets/img/mt/replay-tanks.webp)
+![Tank li qed jaħraq fil-kamera orbita, bit-tir li laqtu](../assets/img/mt/replay-tanks.webp)
 
-| Setting (taqsima **Figuri**) | Bażi | X'jagħmel |
+| Issettjar (taqsima **Figuri**) | Default | X'jagħmel |
 |---|---|---|
-| **Figuri minflok kaxxi** | fuq | Mitfi jpinġi kaxxi sempliċi. |
-| **Daqs tal-figuri** (darbiet id-daqs veru) | 1 | 1 hu d-daqs veru; 0.25 sa 20 darba (skala logaritmika). Iktar kbir jgħin minn 'l bogħod. |
-| **L-iżgħar figura fuq l-iskrin** | 36 px | Figuri 'l bogħod jikbru biex jibqgħu daqshekk twal, 0 sa 200 px; 0 iżomm id-daqs veru. |
-| **Mill-bogħod**: Figura, Vleġġa, Simbolu | Figura | X'isir unità 'l bogħod. |
-| **Simboli** | NATO (APP-6) | NATO (APP-6), sinjali tattiċi Russi, ikoni tal-**mappa tal-logħba**, jew **Forom biss (għal min ma jarax il-kuluri)**. |
-| **Daqs tas-simbolu**, **In-naħa tiegħi**, **Ostili / Newtrali**, **Marki tad-direzzjoni** | 28 px (12 sa 64), awtomatiku, ostili, fuq | Kif jidhru s-simboli u liema naħa hi ħabiba. |
-| **Linji vertikali** | fuq | Linja minn kull unità 'l isfel sal-art, sabiex l-għoljiet jinqraw fit-3D. |
+| **Figuri minflok kaxxi** | mixgħul | Mitfi juri kaxxi sempliċi. |
+| **Daqs tal-figuri** (darbiet id-daqs veru) | 1 | 1 hu d-daqs reali; 0.25 sa 20 darba (skala logaritmika). Aktar kbir jgħin minn ’l bogħod. |
+| **L-iżgħar figura fuq l-iskrin** | 36 px | Il-figuri ’l bogħod jikbru biex jibqgħu daqshekk, 0 sa 200 px; 0 iżomm id-daqs veru. |
+| **Mill-bogħod**: Figura, Vleġġa, Simbolu | Figura | X'isir unità ’l bogħod. |
+| **Simboli** | NATO (APP-6) | NATO (APP-6), sinjali taktiċi Russi, ikoni tal-**Mappa tal-logħba**, jew **Forom biss (għal min ma jarax il-kuluri)**. |
+| **Daqs tas-simbolu**, **In-naħa tiegħi**, **Ostili / Newtrali**, **Marki tad-direzzjoni** | 28 px (12 sa 64), awtomatiku, ostili, mixgħul | Kif jidhru s-simboli u liema naħa hi tal-ħbieb. |
+| **Linji vertikali** | mixgħul | Linja minn kull unità direttament ’l isfel sal-art, sabiex l-għoli jinqara f'3D. |
 | **Linji vertikali u tikketti fuq l-armi** | mitfi | Linji sal-art u tikketti fuq missili u bombi. |
-| **Nirien fuq l-unitajiet** | fuq | Fjammi mill-mument li unità tinqabad bin-nar sakemm jintfew. |
-| **Laqtiet fuq l-unitajiet** | fuq | Marki fejn ġew imlaqqta t-tiri (hawn taħt). **Il-laqtiet jibqgħu**: 1 sa 300 sekonda, jew **Il-ħajja kollha**. **Markaturi jżommu f'wiċċ l-arja**: markaturi mpinġija 'l fuq mill-wiċċ. |
-| **Linji tal-ħarsa u tat-turretta** | mitfi | Mtaqqba: fejn jħares il-plejer; sħiħa: fejn jimmira l-kanun. |
-| **Bini** | sod | Bini sod jew trasparenti, meta l-livell jipinġih. |
+| **Nirien fuq l-unitajiet** | mixgħul | Fjammi mill-mument li unità tieħu n-nar sakemm jintfew. |
+| **Laqtiet fuq l-unitajiet** | mixgħul | Marki fejn il-tiri laqat (hawn taħt). **Il-laqtiet jibqgħu**: 1 sa 300 sekonda, jew **Il-ħajja kollha**. **Markaturi jżommu f’wiċċ l-arja**: marki mingħajr ma jidħlu fl-art. |
+| **Linji tal-ħarsa u tat-turretta** | mitfi | Mitqugħ: fejn il-plejer iħares; sod: fejn il-kanun jimmira. |
+| **Bini** | sod | Bini sod jew trasparenti, meta l-livell jagħmlu. |
 
-### Simboli minn 'l bogħod {#symbols-at-a-distance}
+### Simboli ’l bogħod {#symbols-at-a-distance}
 
-Meta unità tkun iżgħar mill-**L-iżgħar figura fuq l-iskrin**, tista' ssir simbolu li jibqa' jinqara. Il-forma turi t-tip (pereżempju kaxxa b'qawsa u marka tar-roti għal armatura); il-kulur juri n-naħa. Iftaħ il-menu **Simboli** biex tbiddel l-istil.
+Meta unità tkun iżgħar minn **L-iżgħar figura fuq l-iskrin**, tista' ssir simbolu li jibqa' jinqara. Il-forma tgħid it-tip (pereżempju kaxxa mdawra b'marka ta' track għall-armatura); il-kulur jgħid in-naħa. Iftaħ il-menu **Simboli** biex tbiddel l-istil.
 
-![L-istess sitt unitajiet bħala simboli NATO, sinjali tattiċi Russi, ikoni tal-mappa tal-logħba u forom biss](../assets/img/mt/match-replay-symbols-styles.webp)
+![Sitt unitajiet l-istess bħala simboli NATO, sinjali taktiċi Russi, ikoni tal-mappa tal-logħba u forom biss](../assets/img/mt/match-replay-symbols-styles.webp)
 
-### Marki tal-laqtiet, wrecks u nirien {#hit-marks-wrecks-and-fires}
+### Marki tal-laqtiet, wrakkijiet u nirien {#hit-marks-wrecks-and-fires}
 
-- **Marki tal-laqtiet** jinsabu fuq il-wiċċ fejn laqat it-tir, fid-daqs tal-figura. L-aspett tagħhom juri x'ġara: toqba (għadda), splużjoni ċara (ma għaddiex), ħakk (indaqq), stilla tal-fwied (proġettil splussiv). Ċirku kulurat juri x'għamel: tir li qatel, modulu meqrud, kritiku, sever, dannu, ebda dannu, laqta. Poġġi l-mouse fuq marka biex tara l-isem tal-proġettil.
-- Unità meqruda tinżel **maħruqa** bħala wreck mill-mewt tagħha sakemm terġa' tinbeda jew titneħħa; is-simbolu tagħha jkun imħassar.
-- **Nirien** jidhru fuq unità mill-mument li tinqabad bin-nar sakemm jintfew.
-- **Torretti** jduru lejn fejn juri d-data li jimmira l-kanun (jew, mingħajr dik, fejn jħares il-plejer).
+- **Marki tal-laqtiet** jinsabu fuq il-wiċċ li l-tiro laqat, fuq l-iskala tal-figura. L-aspett tagħhom juri x'ġara: toqba (għadda), spray ħelwa (ma għadditx), ħaffra (niżlet bi ħlief), stilla ta' fwliegu (blast). Ċirku kulurat juri x'għamel: tir li qatel, modulu meqred, kritiku, sever, dannu, ebda dannu, laqta. Oqgħod fuq marka biex tara l-isem tal-munizzjoni.
+- Unità meqruda tinġibed **mħarqa** bħala wreck minn mewtha sa ma tirkupra jew titneħħa; is-simbolu tagħha huwa mgħoddi.
+- **In-nirien** jaħirqu fuq unità mill-mument li tieħu n-nar sakemm jintfew.
+- **Turretti** idawru lejn fejn id-dejta tgħid li l-kanun jimmira (jew, mingħajr dik, fejn il-plejer iħares).
 
-### Armi, decoys u traċċanti {#weapons-decoys-and-tracers}
+### Armi, dekojs u traċċanti {#weapons-decoys-and-tracers}
 
-Bl-**Armi, tiri u laqtiet** mixgħul (taqsima Viewer tat-timijiet): missili, rockets, bombi u torpedoes jitħaddmu bħala figuri tagħhom stess b'traċċa tad-duħħan; balal u qxur huma traċċanti; l-impatti u l-splużjonijiet jiddu. Traċċant impinġi **mtaqqab** inħadem minn laqta, għax id-data ma kellhiex it-tir. Flares u chaff jinżlu bħala decoys; huma moħbija mil-lista tal-unitajiet sakemm ma tkunx imqiegħda *Decoys u qxur*.
+Bl-**Armi, tiri u laqtiet** mixgħul (taqsima Viewer tat-timijiet): missili, rokits, bombi u torpedni jtiru bħala figuri tagħhom stess b'traċċa tad-duħħan; ir-rombli u l-blalen huma traċċanti; l-impatti u x-xoqqiet jiddi. Traċċant impittir **mitqugħ** inħadem minn laqta, għax id-dejta ma kellhiex it-tir. Flares u chaff jinġibdu bħala dekojs; ikunu moħbija mil-lista tal-unitajiet sakemm ma tkunx immarkata *Dekojs u blalen*.
 
 ## Kameras {#cameras}
 
-Ikklikkja unità jew it-tikketta tagħha biex **issegwiha**; it-taqsima **Replay** toffri **Wara**, **Orbita**, **Kokpit** (bil-wiri head-up, `H`), **Fissa**, **Padlock**, **Mira** u **Satellita**. `V` iduru bejniethom, **Distanza tal-kamera** tgħid kemm 'il bogħod. Esc jieqaf.
+Ikklikkja unità jew it-tikketta tagħha biex **tsegwiha**; it-taqsima **Replay** toffri **Wara**, **Orbita**, **Kokpit** (bil-wiri head-up, `H`), **Fissa**, **Padlock**, **Mira** u **Satellita**. `V` iduru bejniethom, **Distanza tal-kamera** tgħid kemm hi 'l bogħod. Esc jieqaf.
 
-- **Veduta ta' żewġ unitajiet**: agħżel **Mira** (jew Ctrl/Alt-ikklikkja unità) biex tarha minn dik issegwita; **Biddel** iqallibhom.
-- **Kejl**: Shift-ikklikkja żewġ unitajiet għall-azimut, il-medda u d-differenza tal-għoli bejniethom.
-- **Mappa 2D** (`M`): veduta f'kantuniera jew sħiħa, bit-traċċi u l-ismijiet.
-- **Markaturi** (`B`): jisalvaw il-mument u l-kamera; il-kills, il-mwiet u l-markaturi tar-reġistrazzjoni nnifisha jinġabru wkoll.
-- **Avvenimenti**: kull avveniment f'ordni taż-żmien; klikk imexxi hemm. `Page Up` / `Page Down` jimxu bejn l-avvenimenti; **Waqfa f'avveniment** jieqaf f'kull wieħed.
+- **Veduta ta' żewġ unitajiet**: agħżel **Mira** (jew Ctrl/Alt-klikk fuq unità) biex tarah minn dik issegwita; **Biddel** iħalli lil wieħed minnhom jiskambja.
+- **Kejl**: Shift-klikk fuq żewġ unitajiet għall-idwar, il-firxa u d-differenza fl-għoli bejniethom.
+- **Mappa 2D** (`M`): veduta fil-kantuntieri jew sħiħa, bi traċċi u ismijiet.
+- **Markaturi** (`B`): tiffranka l-mument u l-kamera; l-qtil, il-mewt u l-markaturi tar-reġistrazzjoni nfisha huma elenkati wkoll.
+- **Avvenimenti**: kull avveniment f'ordni taż-żmien; klikk imur hemm. `Page Up` / `Page Down` iqabbżu bejn l-avvenimenti; **Waqfa f'avveniment** jieqaf f'kull wieħed.
 
 ## Wiri taktiku {#tactical-display}
 
-![Il-ġlieda tal-ajru demo bil-look tal-wiri taktiku (T): art bil-wire-frame, pannelli ta' kills u avvenimenti](../assets/img/mt/replay-air-tactical.webp)
+![Id-demo tal-ajru bil-look tal-wiri taktiku (T): art wire-frame, pannelli tal-qtil u tal-avvenimenti](../assets/img/mt/replay-air-tactical.webp)
 
-It-taqsima **Wiri taktiku** tpinġi, għal ebda unità, dawk magħżula, dawk kollha, jew tip wieħed (inġenji tal-ajru, art, bastimenti, armi): vetturi tal-veloċità u t-triq 'il quddiem, linji tal-imnieħer u tal-ġarr, koni tar-radar, lock-ons, data links, żoni u linji ta' ingaġġ, linji tal-ħarsa, fejn jħarsu l-plejers (koni tal-veduta), il-ħarsa tat-turretta, u l-kamera rrekordjata.
+It-taqsima **Wiri taktiku** tiġbed, għal ebda unità, dawk magħżula, kollha, jew tip wieħed (inġenji tal-ajru, art, vapuri, armi): vetturi tal-veloċità u t-triq ’l quddiem, linji tal-muntu u tal-ġenħ, koni tar-radar, lock, rabtiet tad-dejta, żoni u linji tal-ingaġġ, linji tal-ħarsa, fejn il-plejers iħarsu (koni tal-veduta), il-mira tat-turretta, u l-kamera rreġistrata.
 
 ### Stil tal-wiri {#display-style}
 
-`T` (jew il-bidla **Uri bħala wiri taktiku**) ibiddel il-look għal stil ta' skrin tar-radar: dwal, kontorni, linji ta' kontorn, griglja tal-kejl, linji tal-iskann, ċrieki tal-medda, skali tal-għoli, pannelli bil-kills u avvenimenti, u **Direttur** li jmexxi l-kamera għall-avvenimenti minnu nnifsu.
+`T` (jew il-ħlief **Uri bħala wiri taktiku**) jbiddel il-look għal stil ta' skrin radar: glow, kontorni, linji tal-kontorn, grilja ta' kejl, linji tal-iskan, ċrieki tal-firxa, skali tal-għoli, pannelli bil-qtil u l-avvenimenti, u **Direttur** li jmexxi l-kamera għall-avvenimenti waħdu.
 
 ![L-istess ġlieda tal-ajru fil-look normali](../assets/img/mt/replay-air.webp)
 
 ## Għanijiet {#objectives}
 
-Meta partita tiġi bl-għanijiet tagħha, it-taqsima **Għanijiet** tpinġihom fuq il-livell: żoni ta' kaptura (bis-sid u l-progress tal-kaptura), spawns, ajruporti, żoni u mmirar tal-bombi, kull saff jista' jintfa', bit-tikketti. Jidhru minn taħt l-art. Meta jkunu mgħobbija diversi modalitajiet tal-logħba, **Modalità** tiffiltra l-partiti skont il-modalità. L-għanijiet ġejjin mill-fajl tal-partita tal-konvertitur ħdejn ir-reġistrazzjoni jew ġewwa kontenitur [`.3dheat`](container.md).
+Meta partita tiġi bl-għanijiet tagħha, it-taqsima **Għanijiet** tiġbedhom fuq il-livell: żoni ta' qbid (bis-sid u l-progress tal-qbid), spawns, ajruporti, żoni u miri tal-bombardament, kull saff jista' jitfa' u bit-tikketti. Jidhru minn taħt l-art. Meta jkunu mgħobbija diversi modi tal-logħba, **Modalità** tfilter il-partiti skont il-modalità. L-għanijiet ġejjin mill-fajl tal-partita ta' konvertitur ħdejn ir-reġistrazzjoni jew ġewwa kontenitur [`.3dheat`](container.md).
 
 ## Tikketti u statistika {#labels-and-statistics}
 
-- **Tikketti**: regoli għal kull tip (**Magħżula**, **Inġenji tal-ajru**, **Art**, **Vapuri**, **Armi**, **AI**): jidhru jew le, liema valuri, u **Prijorità** għal min jieħu l-post meta t-tikketti jaqgħu fuq xulxin. **Żomm it-tikketti 'l bogħod minn xulxin** iġib tikketta ħdejn l-unità tagħha meta tkun se tkopri unità oħra, u titneħħa fejn ma jkunx hemm post. **Daqs tat-tikketti** hu 60 sa 250 %. **Lura għal isem, vettura, għoli u veloċità** jirrisettja r-regoli.
-  - Unitajiet tal-art jibdew bl-isem, il-vettura u l-veloċità.
-  - Inġenji tal-ajru jibdew bl-isem, il-vettura, l-għoli u l-veloċità.
-  - Bastimenti jibdew bl-isem, il-vettura, il-veloċità u d-direzzjoni.
-  - Poġġi l-mouse fuq unità biex tara kull valur li għandha.
-- **Statistika**: kull tim u unità: kills, mwiet, tiri, laqtiet, proporzjon tal-laqtiet, tlugħ, nżul, ħin fl-ajru, l-ogħla veloċità, għoli u G, distanza. Esportazzjoni CSV.
+- **Tikketti**: regoli għal kull tip (**Magħżula**, **Inġenji tal-ajru**, **Art**, **Vapuri**, **Armi**, **AI**): jidhru jew le, liema valuri, u **Prijorità** għal min jieħu l-post meta t-tikketti jaqgħu fuq xulxin. **Żomm it-tikketti 'l bogħod minn xulxin** iqiegħed tikketta ħdejn l-unità tagħha meta tkopri unità oħra, u titneħħa fejn m'hemmx post. **Daqs tat-tikketti** hu 60 sa 250 %. **Lura għal isem, vettura, għoli u veloċità** iġib lura r-regoli.
+  - L-unitajiet tal-art jibdew b'isem, vettura u veloċità.
+  - L-inġenji tal-ajru jibdew b'isem, vettura, għoli u veloċità.
+  - Il-vapuri jibdew b'isem, vettura, veloċità u direzzjoni.
+  - Oqgħod fuq unità biex tara kull valur li għandha.
+- **Statistika**: għal kull tim u unità: qtil, mewt, tiri, laqtiet, proporzjon ta' laqtiet, tlugħ, nżul, ħin fl-ajru, l-ogħla veloċità, għoli u G, distanza. Esportazzjoni CSV.
 - **Grafiċi**: il-valuri ta' unità maż-żmien, żewġ unitajiet imqabbla, jew valur wieħed kontra ieħor.
 
 ## Ħafna partiti f'daqqa {#many-matches-at-once}
 
-Biex tqiegħed mijiet jew eluf ta' partiti fuq xulxin, ara [Ħafna partiti f'daqqa](many-matches.md). Dettalji tal-figuri (duħħan, nar, effetti oħra bil-ħin): [Effetti fuq il-figuri](figure-replay.md). Lista tal-funzjonijiet ta' Tacview: [Ekwivalenza ma' Tacview](tacview-parity.md), paġna ta' dan.
+Biex titfa' mijiet jew eluf ta' partiti fuq xulxin, ara [Ħafna partiti f'daqqa](many-matches.md). Dettalji tal-figuri (duħħan, nar, effetti oħra ma' ħin): [Figuri fil-wiri fuq xulxin](figure-replay.md). Lista tal-karatteristiċi ta' Tacview: [Parità ma' Tacview](tacview-parity.md), paġna figlia ta' din.

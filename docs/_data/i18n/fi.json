@@ -1,5 +1,7 @@
 {
  "titles": {
+  "Knowledge catalogue": "Tietokatalogi",
+  "Replay": "Toisto",
   "Accumulation": "Kertyminen",
   "Axes, units and time": "Akselit, yksiköt ja aika",
   "The two backends": "Kaksi taustaohjelmaa",

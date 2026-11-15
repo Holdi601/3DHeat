@@ -4,93 +4,93 @@ parent: "Soojusrežiimid"
 nav_order: 1
 lang: "et"
 source: "heat.md"
-source_hash: "0d84cc318ef8"
+source_hash: "b895631187ea"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Soojus
 
-Soojus värvib kohad, kus juhtus palju asju: punane, kus juhtus veidi, valgeks kuumenenud, kus juhtus väga palju. Ta vastab küsimusele "kus see juhtub ja kui palju".
+Soojus värvib kohad, kus juhtus palju asju: punane seal, kus juhtus veidi, valgelt kuum seal, kus juhtus palju. See vastab küsimusele "kus see juhtub ja kui palju".
 
-**Soojus** (klahv 1) on vaikerežiim. Iga nähtav [rida](glossary.md) lisab kaamera poole suunatud ümmarguse [spraidi](glossary.md); kattuvad spraidid liituvad ujukomapunktilises puhvris; summa vastendatakse värviskaalaga - vaikimisi läbipaistvast punaseks, kollaseks ja valgeks - ning joonistatakse stseeni peale.
+**Soojus** (klahv 1) on vaikerežiim. Iga nähtav [rida](glossary.md) annab kaamera poole pööratud ümmarguse [spraidi](glossary.md); kattuvad spraidid liituvad ujukomapuhvris; summa suunatakse värviskaala kaudu - vaikimisi läbipaistev → punane → kollane → valge - ja joonistatakse stseeni peale.
 
-![Soojus 3D-tasemel: kuumad kohad hoonete sees ja peal](../assets/img/et/shooter-heat.webp)
+![Soojus 3D-tasemel: kuumad kohad hoonete sees ja nende peal](../assets/img/et/shooter-heat.webp)
 
-Pilt näitab shooteri vooru soojust tasemel, kus on hooned: kuumad kohad on ruumides ja trepil, mitte ainult maapinnal.
+Pilt näitab laskuri vooru soojust tasemel, kus on hooned: kuumad kohad asuvad ruumides ja trepil, mitte ainult maapinnal.
 
-## Kuidas seda kasutada {#how-to-use-it}
+## Kuidas kasutada {#how-to-use-it}
 
-1. Laadi andmed ja vajuta `1` (või vali režiimiribal **Soojus**).
+1. Laadi andmed ja vajuta `1` (või vali režiimiribalt **Soojus**).
 2. Kui kõik on valge või tühi, vajuta jaotises **Soojuse kuju** nuppu **Automaatne säritus välja põhjal**.
-3. Muuda **Spraidi raadiust**, kuni läheduses olevad punktid sulavad ribadeks: väiksem näitab üksikuid laike, suurem alasid.
-4. Ava **Soojuse värvid**, et värve muuta, või **Sügavus**, et künkad ja seinad peidaksid soojuse enda taha.
+3. Muuda **Spraidi raadiust**, kuni kõrvuti olevad punktid ühinevad ribadeks: väiksem näitab üksikuid kohti, suurem näitab alasid.
+4. Ava **Soojuse värvid**, et värve muuta, või **Sügavus**, et lasta künkadel ja seintel soojus enda taha peita.
 
 ![Külgriba jaotised Soojuse kuju ja Soojuse värvid, mõlemad avatud](../assets/img/et/heat-panel.webp)
 
-Samad paneelid kujundavad ka [Erinevust](difference.md), [Võistkondade soojust](team-heat.md) ja [Joonsoojust](line-heat.md); nad erinevad selle poolest, mida lisatakse (märgiga, värvitult või mööda jooni), mitte selle poolest, kuidas.
+Samad paneelid kujundavad [Erinevust](difference.md), [Võistkondade soojust](team-heat.md) ja [Joonesoojust](line-heat.md); need erinevad selle poolest, mida lisatakse (märgiga, värviga või mööda jooni), mitte selle poolest, kuidas.
 
 ## Paneelid ja nende vaikeväärtused {#the-panels-and-their-defaults}
 
-Iga allpool olev juhtnupp vastab varjutaja parameetrile, nii et selle muutmine ei maksa midagi peale uue joonistuse. Liuguritel on kõrval kirjutatav väli ja lohistuspide (väike käepide paremal: lohista üles või alla, kaugemale on kiiremini, Shift peenhäälestuseks); kui liuguri rada lõpeb enne tegelikku piiri, võib käepide minna üle selle kuni siin antud *jog-laeni*. Väärtused märgitud *laadimisel* arvutatakse iga uue andmestiku jaoks uuesti.
+Iga juhtnupp on selgitatud oma lehel; veerg Üksikasjad viitab sellele. Liugurite kõrval on kirjutatav kast ja lohistuskäepide (väike haarang paremal: lohista üles või alla, kaugemale on kiirem, Shift peenhäälestuseks); kui liuguri rada lõpeb enne päris piiri, võib käepide minna selle üle kuni siin antud *hüppamise lakini*. Väärtused märgitud *laadimisel* arvutatakse iga uue andmekogumi jaoks uuesti.
 
 ### Soojuse kuju (avatud) {#heat-shape-open}
 
-| Juhtnupp | Vaikimisi | Vahemik (jog-lagi) | Üksikasjad |
+| Juhtnupp | Vaikimisi | Vahemik (hüppamise lagi) | Üksikasjad |
 |---|---|---|---|
-| **Spraidi raadius** | 6 m; laadimisel ulatus / 120 | 0,05-2000 m, logaritmiline (50 000) | [Kujundi kuju](sprite-shape.md#sprite-radius) |
-| **Keskme intensiivsus** | 1 | 0-10 (1000) | [Kujundi kuju](sprite-shape.md#centre-and-edge-intensity) |
-| **Serva intensiivsus** | 0 | -2-10 (1000) | [Kujundi kuju](sprite-shape.md#centre-and-edge-intensity) |
-| **Skaala kuju** | *Sumbumine* | *Sumbumine* / *Kõver* | [Kujundi kuju](sprite-shape.md#ramp-shape-falloff-or-curve) |
-| **Sumbumine** (ainult sumbumisel) | 1,6 | 0,1-8 (64) | [Kujundi kuju](sprite-shape.md#falloff) |
-| **Sujuv skaala** (ainult sumbumisel) | sees | | [Kujundi kuju](sprite-shape.md#falloff) |
-| Kõvera redigeerija (ainult kõveral) | eelseade *Sujuv* | | [Kujundi kuju](sprite-shape.md#the-curve-editor) |
+| **Spraidi raadius** | 6 m; laadimisel ulatus / 120 | 0,05-2000 m, logaritmiline (50 000) | [Spraidi kuju](sprite-shape.md#sprite-radius) |
+| **Keskme intensiivsus** | 1 | 0-10 (1000) | [Spraidi kuju](sprite-shape.md#centre-and-edge-intensity) |
+| **Serva intensiivsus** | 0 | -2-10 (1000) | [Spraidi kuju](sprite-shape.md#centre-and-edge-intensity) |
+| **Skaala kuju** | *Sumbumine* | *Sumbumine* / *Kõver* | [Spraidi kuju](sprite-shape.md#ramp-shape-falloff-or-curve) |
+| **Sumbumine** (ainult Sumbumine) | 1,6 | 0,1-8 (64) | [Spraidi kuju](sprite-shape.md#falloff) |
+| **Sujuv skaala** (ainult Sumbumine) | sees | | [Spraidi kuju](sprite-shape.md#falloff) |
+| Kõvera redaktor (ainult Kõver) | eelseadistus *Sujuv* | | [Spraidi kuju](sprite-shape.md#the-curve-editor) |
 | **Küllastuspunkt** | 24; laadimisel hinnang, seejärel mõõdetud | 0,1-4000, logaritmiline (10 000 000) | [Värv ja säritus](colour-and-exposure.md#saturation-point) |
 | **Minimaalne soojus** | väljas (0) | 0-100% | [Värv ja säritus](colour-and-exposure.md#minimum-heat) |
 | **Tiheduse vastus** | *Küllastuv* | *Küllastuv* / *Lineaarne* / *Logaritmiline* | [Värv ja säritus](colour-and-exposure.md#density-response) |
 | **Automaatne säritus välja põhjal** | | nupp | [Värv ja säritus](colour-and-exposure.md#auto-exposure) |
-| **Järgi vaadet** | sees | | Mõõdab säritust uuesti iga kord, kui kaamera seisma jääb, nii et piirkond, kuhu lendad, kasutab kogu värviskaalat. Väikesed muutused ignoreeritakse ja skaala libiseb sujuvalt. Eemalda linnuke või lohista **Küllastuspunkti**, et skaala lukustada ja võrrelda kohti ühel skaalal. [Värv ja säritus](colour-and-exposure.md#follow-the-view) |
-| **Sama tihedus igal suumil** | sees | | Värv tähendab sama arvu ridu maa-alaühiku kohta, olenemata sellest, kui lähedal oled. Spraid, mida pikslipiirid suurendavad (kaugelt) või vähendavad (lähedalt), säilitab soojuse, mille ta oma tegelikus suuruses lisaks; nii ei tuhmu kaugelt eksponeeritud pilt, kui sinna lendad. Väljas lisab piiratud spraid oma täiskaalu piiratud suuruses. [Kujundi kuju](sprite-shape.md#pixel-clamps) |
-| **Lamenda maapinna tasandile** | väljas | | [Kujundi kuju](sprite-shape.md#flatten-onto-ground-plane) |
+| **Järgi vaadet** | sees | | Mõõdab särituse uuesti iga kord, kui kaamera peatub, nii et piirkond, millesse lendad, kasutab kogu värviskaalat. Väikesed muutused ignoreeritakse ja skaala libiseb. Eemalda linnuke või lohista **Küllastuspunkti**, et skaala lukustada ja võrrelda kohti ühel skaalal. [Värv ja säritus](colour-and-exposure.md#follow-the-view) |
+| **Sama tihedus igal suumil** | sees | | Värv tähendab sama arvu ridu maa pindalaühiku kohta, olenemata sellest, kui lähedal oled. Pikslipiirangute poolt suurendatud (kaugel) või vähendatud (lähedal) spraid säilitab soojuse, mille tema tõeline suurus lisaks, nii et kaugelt särititud pilt ei hääbu, kui sisse lendad. Kui see on väljas, lisab piiratud spraid oma täiskaalu oma piiratud suuruses. [Spraidi kuju](sprite-shape.md#pixel-clamps) |
+| **Lamenda maapinna tasandile** | väljas | | [Spraidi kuju](sprite-shape.md#flatten-onto-ground-plane) |
 
 ### Soojuse värvid (suletud) {#heat-colours-closed}
 
 | Juhtnupp | Vaikimisi | Üksikasjad |
 |---|---|---|
-| Rühmade värvitükid ja **Värvide eraldus** (ainult Võistkondade soojus) | 1,4 | [Võistkondade soojus](team-heat.md) |
-| **Soojusskaala** redigeerija (*Positiivne (liitvad võistkonnad)* Erinevuses, *Läbipaistmatuse skaala* Võistkondade soojuses) | läbipaistev → punane → kollane → valge | [Värv ja säritus](colour-and-exposure.md#the-ramp-editor) |
+| Rühma värvinäidised ja **Värvide eraldus** (ainult Võistkondade soojus) | 1,4 | [Võistkondade soojus](team-heat.md) |
+| **Soojusskaala** redaktor (*Positiivne (liitvad võistkonnad)* režiimis Erinevus, *Läbipaistmatuse skaala* režiimis Võistkondade soojus) | läbipaistev → punane → kollane → valge | [Värv ja säritus](colour-and-exposure.md#the-ramp-editor) |
 | **Lähtesta: läbipaistev → punane → kollane → valge** | | |
-| **Negatiivne (lahutavad võistkonnad)** skaala (ainult Erinevuses) | läbipaistev → roheline → sinine → lilla | [Erinevus](difference.md#colours) |
+| **Negatiivne (lahutavad võistkonnad)** skaala (ainult Erinevus) | läbipaistev → roheline → sinine → lilla | [Erinevus](difference.md#colours) |
 
-### Spraidi pikslipiirid (suletud) {#sprite-pixel-clamps-closed}
+### Spraidi pikslipiirangud (suletud) {#sprite-pixel-clamps-closed}
 
-| Juhtnupp | Vaikimisi | Vahemik (jog-lagi) | Üksikasjad |
+| Juhtnupp | Vaikimisi | Vahemik (hüppamise lagi) | Üksikasjad |
 |---|---|---|---|
-| **Min raadius pikslites** | 1 px | 0-16 (512) | [Kujundi kuju](sprite-shape.md#pixel-clamps) |
-| **Max raadius pikslites** | 96 px | 2-1024, logaritmiline (8192) | [Kujundi kuju](sprite-shape.md#pixel-clamps) |
+| **Min raadius pikslites** | 1 px | 0-16 (512) | [Spraidi kuju](sprite-shape.md#pixel-clamps) |
+| **Max raadius pikslites** | 96 px | 2-1024, logaritmiline (8192) | [Spraidi kuju](sprite-shape.md#pixel-clamps) |
 
 ### Sügavus (avatud) {#depth-open}
 
 | Juhtnupp | Vaikimisi | Üksikasjad |
 |---|---|---|
-| **Peida maastiku taha** | sees | [Sügavus ja eemaldamine](depth-and-culling.md#hide-behind-terrain) |
-| **Geomeetria taha peidetud** | 0,8 (*80% tumedam*) | [Sügavus ja eemaldamine](depth-and-culling.md#hidden-behind-geometry) |
+| **Peida maastiku taha** | sees | [Sügavus ja kärpimine](depth-and-culling.md#hide-behind-terrain) |
+| **Geomeetria taha peidetud** | 0,8 (*80% tuhmim*) | [Sügavus ja kärpimine](depth-and-culling.md#hidden-behind-geometry) |
 
-### Kauguse eemaldamine (suletud) {#distance-culling-closed}
+### Kauguse järgi kärpimine (suletud) {#distance-culling-closed}
 
-| Juhtnupp | Vaikimisi | Vahemik (jog-lagi) | Üksikasjad |
+| Juhtnupp | Vaikimisi | Vahemik (hüppamise lagi) | Üksikasjad |
 |---|---|---|---|
-| **Lähedal** | väljas (0) | 0,5-5000 m, logaritmiline, raja alumine ots = väljas (200 000) | [Sügavus ja eemaldamine](depth-and-culling.md#distance-culling) |
-| **Kaugel** | väljas (0) | 1-200 000 m, logaritmiline, alumine ots = väljas (10 000 000) | [Sügavus ja eemaldamine](depth-and-culling.md#distance-culling) |
-| **Lõika tasandiga** | sees | | [Sügavus ja eemaldamine](depth-and-culling.md#distance-culling) |
-| **Lõika ka taset** | sees | | [Sügavus ja eemaldamine](depth-and-culling.md#distance-culling) |
+| **Lähedal** | väljas (0) | 0,5-5000 m, logaritmiline, raja alumine osa = väljas (200 000) | [Sügavus ja kärpimine](depth-and-culling.md#distance-culling) |
+| **Kaugel** | väljas (0) | 1-200 000 m, logaritmiline, alumine osa = väljas (10 000 000) | [Sügavus ja kärpimine](depth-and-culling.md#distance-culling) |
+| **Lõika tasandiga** | sees | | [Sügavus ja kärpimine](depth-and-culling.md#distance-culling) |
+| **Lõika ka taset** | sees | | [Sügavus ja kärpimine](depth-and-culling.md#distance-culling) |
 
-Klahvid `[` ja `]` lükkavad kaugust piiri sissepoole ja väljapoole, `\` lülitab selle sisse ja välja ([Sügavus ja eemaldamine](depth-and-culling.md#keyboard)).
+Klahvid: `[` ja `]` lükkavad kaugemat piiri sisse ja välja, `\` lülitab selle ([Sügavus ja kärpimine](depth-and-culling.md#keyboard)).
 
 ### Suund ja Väärtus {#direction-and-value}
 
-Soojuse kuju all on veel kaks jaotist. **Suund** joonistab iga rea kiiluna ja lisab nooli: vaata [Suunatud soojus](directional-heat.md). **Väärtus** kaalub soojust selle järgi, mis iga rida maksis või teenis: vaata [Väärtuskaalumine](value-weighting.md).
+Kaks rohkem jaotist on Soojuse kuju all. **Suund** joonistab iga rea kiilu ja lisab nooli: vt [Suunatud soojus](directional-heat.md). **Väärtus** kaalub soojust vastavalt sellele, mis iga rida maksis või teenis: vt [Väärtuse kaalumine](value-weighting.md).
 
 ## Mis salvestatakse {#what-is-saved}
 
-Ülal kirjeldatud soojusseaded ei salvestu seansside vahel: lehe laadimine taastab vaikeväärtused. Brauseris on kaks asja alles: viimane esitluskiirus (`heat3d.speed`, vaata [Ajajoon](timeline.md)) ja [kujude ülekatte](box-replay.md) kaugemate kujude seaded (tähiste stiil, suurus, tabamusmärgid jne). Samuti jäävad alles keel, [pööratud maailmatelgede](camera.md#invert-world-axis) valik, võidusõidu vahekaardi meeldejäetud autonimed ja [tasemete raamatukogu](level-library.md). Täielik loend on lehel [Salvestatud seaded](ref-settings-storage.md).
+Ülaltoodud soojuse seadeid ei salvestata seansside vahel: lehe uuesti laadimine taastab vaikeväärtused. Brauseris hoitakse kahte asja: viimane esituskiirus (`heat3d.speed`, vt [Ajajoon](timeline.md)) ja [kujude ülekatte](box-replay.md) kaugel olevate kujude seaded (tähiste stiil, suurus, tabamusmärgid jne). Samuti keel, [pööratud maailmatelg](camera.md#invert-world-axis), võidusõidu sakis meeldejäetud autode nimed ja [taseme raamatukogu](level-library.md). Täielik loend on lehel [Salvestatud seaded](ref-settings-storage.md).

@@ -1,43 +1,43 @@
 ---
 title: "Go leor cluichí ag an am céanna"
-parent: "Replay"
+parent: "Athsheinm"
 nav_order: 2
 lang: "ga"
 source: "many-matches.md"
-source_hash: "f2239cef5e91"
+source_hash: "a37a7b4cf8c2"
 translated: true
-outdated: true
+outdated: false
 ---
 
-# Go leor cluichí ag an am céanna
+# Go leor cluichí in éineacht
 
-Seinneann **Go leor cluichí ag an am céanna** a lán cluichí ar a chéile, ionas go bhfeiceann tú áit a dtéann imreoirí gach cluiche de ghnáth. Úsáid é chun na céadta nó na mílte cluiche a chur i gcomparáid i bpictiúr amháin.
+Seinneann **Go leor cluichí in éineacht** go leor cluichí ar bharr a chéile, ionas go bhfeiceann tú cá dtéann imreoirí gach cluiche de ghnáth. Úsáid é chun na céadanna nó na mílte cluichí a chur i gcomparáid i bpictiúr amháin.
 
-Tosaíonn gach cluiche ag a thús féin agus bogann a aonaid mar fhigiúirí. Téann na comhaid díreach isteach sa chárta grafaice agus ní thógtar tábla iomlán ar bith, ionas go seinneann sé go réidh áit a rithfeadh lódáil normálta as cuimhne.
+Tosaíonn gach cluiche ag a thús féin, agus bogann a aonaid mar fhigiúirí. Téann na comhaid díreach isteach sa chárta grafaicí agus ní thógtar tábla iomlán ar bith, ionas go seinneann sé go réidh áit a rithfeadh lódáil normálta as cuimhne.
 
-![Deich gcluiche tanc curtha ar a chéile, dath amháin in aghaidh an chluiche](../assets/img/ga/many-matches.webp)
+![Deich gcluiche tanc curtha thar a chéile, dath amháin in aghaidh an chluiche](../assets/img/ga/many-matches.webp)
 
-## Conas é a úsáid {#how-to-use-it}
+## Conas a úsáid é {#how-to-use-it}
 
-1. Oscail **Go leor cluichí ag an am céanna** sa bharra taoibh Léarscáil teasa.
-2. Brúigh **Comhaid…** (roghnaigh go leor comhad), **Fillteán…** (fillteán agus a fho-fhillteáin) nó **Cuir fillteán leis…** (cuir leis an méid atá lódáilte).
-3. Athraíonn an t-amharcóir go forleagan figiúr agus tosaíonn sé ag an tús. Brúigh **Seinn**.
+1. Oscail **Go leor cluichí in éineacht** sa bharra taobh Teasmhapa.
+2. Brúigh **Comhaid…** (roghnaigh go leor comhad), **Fillteán…** (fillteán agus a fho-fhillteáin) nó **Cuir fillteán leis…** (cuir leis an rud atá lódáilte).
+3. Athraíonn an léirsitheoir go dtí forleagan na bhfigiúr agus tosaíonn sé ag an tús. Brúigh **Seinn**.
 
-Is cluiche amháin é gach comhad (nó tá roinnt cluichí ann). Oibríonn comhaid Parquet agus coimeádáin [`.3dheat`](container.md). Teastaíonn colún suímh, am agus aonaid ó chomhad; coinnítear colúin ainm, cineál agus taobh. Déantar neamhaird ar chomhaid eile, agus ar chomhaid taobh na gcoinbhertóirí (eitilt, teachtaireachtaí, imeachtaí, comhrá, cuspóirí). Le haghaidh tábla normálta, féach [Sonraí a iontráil](getting-data-in.md).
+Is cluiche amháin gach comhad (nó tá cúpla cluiche ann). Oibríonn comhaid Parquet agus coimeádáin [`.3dheat`](container.md). Teastaíonn colún suímh, am agus aonaid ó chomhad; coinnítear colúin ainm, cineáil agus taobhe. Déantar neamhaird ar chomhaid eile, agus ar chomhaid taobh tiontairí (eitilte, teachtaireachtaí, imeachtaí, comhrá, cuspóirí). Le haghaidh tábla gnáthaigh, féach [Sonraí a fháil](getting-data-in.md).
 
 ## Socruithe {#settings}
 
 | Socrú | Cad a dhéanann sé |
 |---|---|
-| **De réir foirne** / **De réir cluiche** | Dathaigh de réir taobh, nó dath do gach cluiche. |
-| **Marcáil cá bhfuair aonaid bás** | Marc san áit ar fuair gach aonad bás, ar feadh 10 s, 30 s, 120 s, nó go léir go dtí seo. |
+| **De réir foirne** / **De réir cluiche** | Dathaigh de réir taobh, nó dath in aghaidh an chluiche. |
+| **Marcáil cá bhfuair aonaid bás** | Marc ar an áit a bhfuair gach aonad bás, ar feadh 10 s, 30 s, 120 s, nó go léir go dtí seo. |
 
-Taispeánann an painéal cé mhéad cluiche, aonad, sraith agus suíomh a léadh, an chuimhne a úsáideadh agus am an lódála. *Seomra do* is é cé mhéad suíomh breise a d'fhéadfadh an cárta grafaice a ghlacadh fós. *Figiúirí ó* is é an méid ar an scáileán faoina dtarraingítear aonad mar dairt bheag in ionad a fhigiúir.
+Taispeánann an painéal cé mhéad cluiche, aonad, sraith agus suíomh a léadh, an cuimhne a úsáideadh agus an t-am lódála. Is é *Seomra do* cé mhéad suíomh breise a d'fhéadfadh an cárta grafaicí a ghlacadh. Is é *Figiúirí ó* an méid ar an scáileán faoina dtarraingítear aonad mar shaighead bheag in ionad a fhigiúra.
 
-Úsáideann an forleagan figiúr na rialuithe céanna leis an [athsheinm cluiche](match-replay.md#figures): **Méid na bhfigiúirí**, **An fhíor is lú ar an scáileán** agus **Ó achar**.
+Úsáideann cuma na bhfigiúr na rialuithe céanna leis an [athsheinm cluiche](match-replay.md#figures): **Méid na bhfigiúirí**, **An fhíor is lú ar an scáileán** agus **Ó achar**.
 
 ## Leideanna {#tips}
 
-- Nuair nach n-oireann gach rud sa chuimhne, déantar suíomhanna a chaolú (coinnítear suíomh amháin gach cúpla méadar) agus insíonn an painéal sin.
-- Oibríonn na modhanna teasa ar shonraí an fhorleagain freisin.
-- Le haghaidh staitisticí thar na mílte cluiche gan iad a tharraingt, féach [Anailís mhais](mass-analysis.md).
+- Nuair nach bhfeadh gach rud sa chuimhne, tanaítear na suímh (ní coinnítear ach suíomh gach cúpla méadar), agus deir an painéal sin.
+- Oibríonn na módanna teasa ar shonraí an fhorleagain freisin.
+- Chun staitisticí thar na mílte cluichí a fháil gan iad a tharraingt, féach [Anailís mhais](mass-analysis.md).

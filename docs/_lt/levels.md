@@ -4,63 +4,63 @@ nav_order: 13
 has_children: true
 lang: "lt"
 source: "levels.md"
-source_hash: "74400d9e7af4"
+source_hash: "1283adc1548a"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Lygiai ir fono geometrija
 
-Lygis yra 3D vieta, kurioje vyko žaidimas – žemėlapis, miestas, trasa. Padėkite jį už savo duomenų, ir galėsite matyti, *kur* yra šiluma. Skiltis **Fonas / lygis** (žodį „lygis“ rasite [žodynėlyje](glossary.md)) suteikia tris konteksto rūšis:
+Lygis yra 3D vieta, kurioje vyko žaidimas – žemėlapis, miestas, trasa. Padėję jį už savo duomenų, galite matyti, *kur* yra šiluma. Skydelis **Fonas / lygis** (žr. [Žodynėlis](glossary.md) dėl „lygio“) suteikia tris konteksto rūšis:
 
-- **žemėlapio vaizdą**, pagal dvi inkarines vietas susietą su geografine padėtimi – žr. [Žemėlapio vaizdai](map-images.md);
-- **3D lygį** – `.glb`, `.gltf`, `.obj`, `.stl` arba `.ply` – padalytą į žemę, statinius ir vandenį bei supaprastintą importuojant – žr. [3D lygiai](model-levels.md) ir [Lygio išvaizda](level-appearance.md);
-- **pasaulio foną** – įrašui, kuris nurodo, kur Žemėje jis vyko (Tacview ACMI failui), tikrą reljefą, kelius, vandenį, aerodromus ir pastatus, parsisiųstus iš atvirų duomenų – žr. [Pasaulio fonas](world-backdrop.md).
+- **žemėlapio vaizdas**, georeferencinis pagal du inkarus – žr. [Žemėlapio vaizdai](map-images.md);
+- **3D lygis** – `.glb`, `.gltf`, `.obj`, `.stl` arba `.ply` – suskaidytas į žemę, statinius ir vandenį ir supaprastintas importuojant – žr. [3D lygiai](model-levels.md) ir [Lygio išvaizda](level-appearance.md).
+- **pasaulio fonas** – įrašui, kuris nurodo, kur žemėje jis vyko (Tacview ACMI failas), tikrasis reljefas, keliai, vanduo, aerodromai ir pastatai, atsisiųsti iš atvirų duomenų – žr. [Pasaulio fonas](world-backdrop.md).
 
-Nieko neįkėlus, scena tamsi, su tinkleliu ir spalvotomis ašimis (**Tinklelis** ir **Ašys** skiltyje [Kamera ir scena](camera.md)), o skiltis sako: *Nieko neįkelta – scenoje rodomas tinklelis ir ašys. Pridėkite žemėlapio vaizdą arba lygio tinklą, kad šiluma turėtų kontekstą.*
+Nieko neįkėlus, scena yra tamsi, su tinkleliu ir spalvotomis ašimis (**Tinklelis** ir **Ašys** skiltyje [Kamera ir scena](camera.md)), o skydelis rodo *Nieko neįkelta – scenoje matomas tinklelis ir ašys. Pridėkite žemėlapio vaizdą ar lygio tinklą, kad šiluma turėtų kontekstą.*
 
-Lygis bendras visiems trims skirtukams: trasa, įkelta Lenktynių analizės skirtuke, yra tas pats lygis, kurį rodo šilumos žemėlapis.
+Lygis bendras visiems trims skirtukams: trasa, įkelta skirtuke Lenktynių analizė, yra tas pats lygis, kurį rodo šilumos žemėlapis.
 
-![Skiltis Fonas / lygis su įkeltu lygiu: mygtukai Žemėlapio vaizdas ir 3D modelis, Karo veiksmų teatras, Nepermatomumas, Šviesumas, Įrašyti į biblioteką ir bibliotekos sąrašas](../assets/img/lt/level-panel.webp)
+![Skydelis Fonas / lygis su įkeltu lygiu: mygtukai Žemėlapio vaizdas ir 3D modelis, Teatras, Nepermatomumas, Šviesumas, Įrašyti į biblioteką ir Biblioteka sąrašas](../assets/img/lt/level-panel.webp)
 
 ## Padėkite lygį už savo duomenų {#put-a-level-behind-your-data}
 
-1. Pirmiausia įkelkite savo duomenis ([Duomenų įkėlimas](getting-data-in.md)), kad lygis būtų pritaikytas prie jų.
+1. Pirmiausia įkelkite duomenis ([Duomenų įkėlimas](getting-data-in.md)), kad lygis būtų pritaikytas prie jų.
 2. Šoninėje juostoje atidarykite **Fonas / lygis**.
-3. Paspauskite **Žemėlapio vaizdas…** paveikslėliui arba **3D modelis…** 3D lygiui ir pasirinkite failą. Realaus pasaulio įrašui naudokite **Tikrasis pasaulis kaip fonas** arba **Karo veiksmų teatras**.
-4. Palaukite, kol baigsis eigos eilutė. Didelis modelis pirma supaprastinamas (žr. žemiau **Supaprastinimo tikslas**).
-5. Paspauskite **F** vaizde, kad įrėmintumėte viską. Naudokite **Nepermatomumas** ir **Šviesumas**, kol šiluma išsiskirs nuo lygio.
+3. Paspauskite **Žemėlapio vaizdas…** paveikslėliui arba **3D modelis…** 3D lygiui ir pasirinkite failą. Realaus pasaulio įrašui naudokite **Pasaulio fonas** arba **Teatras**.
+4. Palaukite, kol baigsis progreso eilutė. Didelis modelis pirmiausia supaprastinamas (žr. žemiau **Supaprastinimo tikslas**).
+5. Paspauskite **F** vaizde, kad viską įrėmintumėte. Naudokite **Nepermatomumas** ir **Šviesumas**, kol šiluma išsiskirs iš lygio.
 6. Paspauskite **Įrašyti į biblioteką**, jei lygį naudosite dar kartą ([Lygių biblioteka](level-library.md)).
 
 ## Ką lygis daro šilumai {#what-a-level-does-for-the-heat}
 
-- Jis **uždengia**: duomenų taškai už jo nuspalvinami tamsiau pagal paviršių, o duomenų taškai už reljefo paslepiami ([Gylis ir atrinkimas](depth-and-culling.md)). Be lygio uždengimo nėra.
-- [Pjūvis](slice.md) jį **iškerpa**, o su *Pjauti ir lygį* – ir [atstumo atrinkimas](depth-and-culling.md#distance-culling) kartu su šiluma.
-- Tai vienintelis dalykas, kurį [lauko gylis](camera.md#depth-of-field) susilieja, be tinklelio ir dėžių.
-- 3D lygis **išplečia kameros tolimąją plokštumą**, kai jis didesnis už duomenis: artimoji ir tolimoji plokštumos kalibruojamos pagal duomenų rinkinį, o eksportuotas žemėlapis, kelių kilometrų pločio, kitaip būtų visiškai už tolimosios plokštumos ir palikęs tuščią vaizdą. Tolimoji plokštuma tampa 3 × lygio horizontalaus ištęsimo, kai tai didesnė, artimoji plokštuma juda kartu (bent tolima / 100 000), kad išliktų gylio tikslumas, nuo kurio priklauso uždengimas, o skraidymo greitis pakeliamas bent iki ištęsimo / 12. Ji tik plečiama, niekada nesiaurinama.
+- Jis **užstoja**: duomenų taškai už jo nuslopinami pagal paviršių, o duomenų taškai už reljefo paslepiami ([Gylis ir atrinkimas](depth-and-culling.md)). Be lygio užstojimo nėra.
+- Jį **pjauna** [Pjūvis](slice.md) ir, su *Pjauti ir lygį*, [atrinkimas pagal atstumą](depth-and-culling.md#distance-culling) kartu su šiluma.
+- Tai vienintelis dalykas, kurį [lauko gylis](camera.md#depth-of-field) sulieja, be tinklelio ir dėžučių.
+- 3D lygis **išplečia kameros tolimąją plokštumą**, kai jis didesnis nei duomenys: artima ir tolima plokštumos kalibruojamos pagal duomenų rinkinį, o eksportuotas žemėlapis, kelių kilometrų pločio, kitaip visiškai atsidurtų už tolimosios plokštumos ir paliktų tuščią vaizdą. Tolimoji plokštuma tampa 3 × lygio horizontaliu plotu, kai tai didesnė, artimoji plokštuma juda kartu su ja (bent tolima / 100 000), kad išliktų gylio tikslumas, nuo kurio priklauso užstojimas, o skrydžio greitis padidinamas bent iki plotis / 12. Ji tik plečiama, niekada nesiaurinama.
 
-## Skydelis iš viršaus žemyn {#the-panel-top-to-bottom}
+## Skydelis iš viršaus į apačią {#the-panel-top-to-bottom}
 
-| Dalis | Išsamiau |
+| Dalis | Detalės |
 |---|---|
-| **Žemėlapio vaizdas…**, **3D modelis…** | Įkelia vieną; jis pakeičia dabartinį lygį. |
-| **Tikrasis pasaulis kaip fonas**, **Pamiršti žemėlapio plyteles** | Tik duomenims su geografine nuoroda: sukuria po juo tikrą vietovę kaip lygį arba ištrina parsisiųstas plyteles. [Pasaulio fonas](world-backdrop.md) |
+| **Žemėlapio vaizdas…**, **3D modelis…** | Įkelti vieną; jis pakeičia dabartinį lygį. |
+| **Pasaulio fonas**, **Pamiršti žemėlapio plyteles** | Tik duomenų rinkiniui su geografine nuoroda: sukurti po juo tikrą vietą kaip lygį arba ištrinti atsisiųstas plyteles. [Pasaulio fonas](world-backdrop.md) |
 | **Supaprastinimo tikslas** | Trikampių biudžetas kitam modelio importui: *Pilnas – be supaprastinimo* (numatytasis), *Aukštas – 8M*, *Vidutinis – 3M*, *Žemas – 800k*, *Siluetas – 100k*. [3D lygiai](model-levels.md#simplification) |
-| Eiga ir **Atšaukti** | Kol dekoduojama arba importuojama. |
-| Importo pastaba | Trikampiai prieš ir po, žemės / statinių / vandens padalijimas, naudojamas detalumo lygis. |
+| Progresas ir **Atšaukti** | Dekoduojant ar importuojant. |
+| Importo pastaba | Trikampiai prieš ir po, žemės / statinių / vandens skaidymas, naudotas detalumo lygis. |
 | Pavadinimas ir dydis | `plotis×aukštis px · x × z m/px` paveikslėliui, `N trikampių (iš M)` modeliui. |
-| **Nepermatomumas**, **Šviesumas** | Abiejų rūšių. |
-| Paveikslėlio valdikliai | **Nubluktinti**, **Apversti šiaurę / pietus**, **Išdėstymas** (dvi inkarinės vietos), **Pritaikyti prie duomenų ribų**, **Aukštis**. [Žemėlapio vaizdai](map-images.md) |
-| Modelio valdikliai | Žemės reljefas, vanduo, žemės trikampiai, vielinis rėmas, tekstūra, užfiksuota spalva, statiniai, dalių klasifikavimas. [Lygio išvaizda](level-appearance.md) |
-| **Įrašyti į biblioteką**, **Pašalinti** | [Lygių biblioteka](level-library.md); Pašalinti iškelia lygį. |
+| **Nepermatomumas**, **Šviesumas** | Abiem rūšims. |
+| Paveikslėlio valdikliai | **Nubluktinti**, **Apversti šiaurę / pietus**, **Išdėstymas** (du inkarai), **Pritaikyti prie duomenų ribų**, **Aukštis**. [Žemėlapio vaizdai](map-images.md) |
+| Modelio valdikliai | Žemės reljefas, vanduo, žemės trikampiai, karkasas, tekstūra, užfiksuota spalva, statiniai, dalių klasifikacija. [Lygio išvaizda](level-appearance.md) |
+| **Įrašyti į biblioteką**, **Pašalinti** | [Lygių biblioteka](level-library.md); Pašalinti iškrauna lygį. |
 | **Biblioteka** | Šioje naršyklėje saugomi lygiai. [Lygių biblioteka](level-library.md) |
 
 ## Šio skyriaus puslapiai {#pages-in-this-section}
 
 - [Žemėlapio vaizdai](map-images.md)
-- [3D lygiai](model-levels.md) – formatai, dalys, klasifikavimas, supaprastinimas, tekstūros
+- [3D lygiai](model-levels.md) – formatai, dalys, klasifikacija, supaprastinimas, tekstūros
 - [Lygio išvaizda](level-appearance.md) – kiekvienas 3D lygio valdiklis
 - [Lygių biblioteka](level-library.md)
-- [Pasaulio fonas](world-backdrop.md) – tikras pasaulis po įrašu, iš atvirų duomenų
+- [Pasaulio fonas](world-backdrop.md) – tikrasis pasaulis po įrašu, iš atvirų duomenų
 
-Kaip gauti lygius iš žaidimų ir variklių, rūpinasi atskiri eksportavimo įrankiai (žr. saugyklos [README](https://github.com/Holdi601/3DHeat/blob/main/README.md)); sutartis, į kurią jie rašo, apibendrinta [3D lygiuose](model-levels.md#the-exporter-contract).
+Kaip gauti lygius iš žaidimų ir variklių, rūpinasi atskiri eksporto įrankiai (žr. saugyklos [README](https://github.com/Holdi601/3DHeat/blob/main/README.md)); sutartis, į kurią jie rašo, apibendrinta [3D lygiai](model-levels.md#the-exporter-contract) puslapyje.

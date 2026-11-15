@@ -1,13 +1,13 @@
 ---
 title: "Ottelun toisto"
-parent: "Replay"
+parent: "Toisto"
 nav_order: 1
 has_children: true
 lang: "fi"
 source: "match-replay.md"
-source_hash: "9d61f24a5a04"
+source_hash: "14a8aade5ff0"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Ottelun toisto
@@ -18,89 +18,89 @@ Laukaukset, osumat, palot ja raadot piirretään kentän yksiköille ja tavoitte
 
 ![Tankkiesimerkin hahmotoisto: panssarivaunut omina hahmoinaan, nimi-, ajoneuvo- ja nopeusnimiöt](../assets/img/fi/replay-overview.webp)
 
-## Aloita toisto {#start-a-replay}
+## Toiston aloittaminen {#start-a-replay}
 
-1. Lataa tallenne **Lähde → Tiedostot…** -valinnalla tai pudottamalla se Lähde-paneeliin (mikä tahansa taulukko, jossa on **henkilö**- ja **aika**-sarake, Tacview-tiedosto, muunnettu toisto, [`.3dheat`](container.md)-ottelu). Katso [Datan lataaminen](getting-data-in.md).
-2. Avaa **Ottelu**-välilehti ja valitse **Hahmotoisto**, tai valitse **Hahmot päällekkäin** Lämpökartta-välilehden tilapalkista.
-3. Kohdassa **Toiston ottelut** valitse yksi ottelu, kaikki kerralla tai useita.
-4. Paina aikajanalla **Toista** (tai `K`). Vedä aikajanaa hypätäksesi.
+1. Lataa tallenne valitsemalla **Source → Files…** tai pudottamalla se Source-paneeliin (mikä tahansa taulukko, jossa on **person**- ja **time**-sarake, Tacview-tiedosto, muunnettu toisto tai [`.3dheat`](container.md)-ottelu). Katso [Datan lataaminen](getting-data-in.md).
+2. Avaa **Match**-välilehti ja valitse **Figure replay**, tai valitse **Figure overlay** Heatmap-välilehden tilapalkista.
+3. Valitse kohdasta **Toiston ottelut** yksi ottelu, kaikki kerralla tai useita.
+4. Paina aikajanan **Toista**-painiketta (tai `K`). Vedä aikajanaa, jos haluat hypätä.
 
-Hahmot korvaavat laatikot jokaiselle yksikölle, jonka nimi tai tyyppi tunnetaan (katso [Hahmot](figures.md)). Data ilman nimi- tai tyyppisaraketta piirretään sotilaina.
+Hahmot korvaavat laatikot jokaiselle yksikölle, jonka nimi tai tyyppi tunnetaan (katso [Hahmot](figures.md)). Data ilman nimi- tai tyyppissaraketta piirretään sotilaina.
 
-![Ottelu-välilehti: ottelujen valitsin, Hahmot-osio, kameranäkymät, Toista ja tapahtumaluettelo](../assets/img/fi/match-replay-tab.webp)
+![Match-välilehti: ottelun valinta, Hahmot-osio, kameranäkymät, Toista-painike ja tapahtumaluettelo](../assets/img/fi/match-replay-tab.webp)
 
 ## Hahmot {#figures}
 
-![Palava panssarivaunu kiertokamerassa ja laukaus, joka sen osui](../assets/img/fi/replay-tanks.webp)
+![Palava panssarivaunu kiertokameran näkymässä ja osuma, joka sen tuhosi](../assets/img/fi/replay-tanks.webp)
 
 | Asetus (osio **Hahmot**) | Oletus | Mitä se tekee |
 |---|---|---|
 | **Hahmot laatikoiden sijaan** | päällä | Pois päältä piirtää tavalliset laatikot. |
-| **Hahmojen koko** (kertaa todellinen koko) | 1 | 1 on todellinen koko; 0,25-20 kertaa (logaritminen asteikko). Suurempi auttaa kaukaa. |
-| **Pienin hahmo näytöllä** | 36 px | Kaukana olevat hahmot kasvavat pysyäkseen tämän kokoisina, 0-200 px; 0 pitää todellisen koon. |
-| **Etäältä**: Hahmo, Nuoli, Merkki | Hahmo | Mitä kaukana oleva yksikkö muuttuu. |
+| **Hahmojen koko** (kertaa todellinen koko) | 1 | 1 on todellinen koko; 0,25–20 kertaa (logaritminen asteikko). Suurempi auttaa kaukaa. |
+| **Pienin hahmo näytöllä** | 36 px | Kaukaiset hahmot kasvavat, jotta ne pysyvät tämän kokoisina, 0–200 px; 0 pitää todellisen koon. |
+| **Etäältä**: Hahmo, Nuoli, Merkki | Hahmo | Mikä kaukainen yksikkö on. |
 | **Merkit** | NATO (APP-6) | NATO (APP-6), venäläiset taktiset merkit, **Pelikartta**-kuvakkeet tai **Vain muodot (värisokeille)**. |
-| **Merkin koko**, **Minun puoleni**, **Vihollinen / Neutraali**, **Suuntaviivat** | 28 px (12-64), automaattinen, vihollinen, päällä | Miltä merkit näyttävät ja mikä puoli on ystävällinen. |
-| **Pystyviivat** | päällä | Viiva jokaisesta yksiköstä suoraan maahan, jotta korkeudet näkyvät 3D:ssä. |
-| **Luotiviivat ja nimet aseisiin** | pois | Viivat maahan ja nimet ohjuksille ja pommeille. |
-| **Palot yksiköissä** | päällä | Liekit siitä hetkestä, kun yksikkö syttyy, kunnes palo sammutetaan. |
-| **Osumat yksiköihin** | päällä | Merkit kohdista, joihin laukaukset osuivat (alla). **Osumat näkyvät**: 1-300 sekuntia tai **Koko elinaika**. **Kelluvat merkit**: pinnan yläpuolelle piirretyt merkit. |
-| **Katse- ja tornilinjat** | pois | Katkoviiva: mihin pelaaja katsoo; yhtenäinen: mihin tykki osoittaa. |
-| **Rakennukset** | yhtenäinen | Läpinäkymättömät tai läpikuultavat rakennukset, kun kenttä ne piirtää. |
+| **Merkin koko**, **Minun puoleni**, **Vihollinen / Neutraali**, **Suuntaviivat** | 28 px (12–64), automaattinen, vihollinen, päällä | Miltä merkit näyttävät ja mikä puoli on ystävällinen. |
+| **Pystyviivat** | päällä | Viiva jokaisesta yksiköstä suoraan alas maahan, jotta korkeudet erottuvat 3D-näkymässä. |
+| **Luotiviivat ja nimet aseisiin** | pois | Viivat maahan ja nimiöt ohjuksille ja pommeille. |
+| **Palot yksiköissä** | päällä | Liekit siitä hetkestä, kun yksikkö syttyy, siihen asti kun se sammutetaan. |
+| **Osumat yksiköihin** | päällä | Merkit kohdista, joihin laukaukset osuivat (alla). **Osumat näkyvät**: 1–300 sekuntia tai **Koko elinaika**. **Kelluvat merkit**: merkit, jotka piirretään pinnan yläpuolelle. |
+| **Katse- ja tornilinjat** | pois | Katkoviiva: minne pelaaja katsoo; yhtenäinen: minne tykki osoittaa. |
+| **Rakennukset** | kiinteä | Kiinteät tai läpinäkyvät rakennukset, kun kenttä ne piirtää. |
 
 ### Merkit etäisyydellä {#symbols-at-a-distance}
 
-Kun yksikkö olisi pienempi kuin **Pienin hahmo näytöllä**, siitä voi tulla merkki, joka pysyy luettavana. Muoto kertoo lajin (esimerkiksi pyöristetty laatikko, jossa on telaraitamerkki panssarille); väri kertoo puolen. Avaa **Merkit**-valikko vaihtaaksesi tyyliä.
+Kun yksikkö olisi pienempi kuin **Pienin hahmo näytöllä**, siitä voi tulla merkki, joka pysyy luettavana. Muoto kertoo lajin (esimerkiksi pyöristetty laatikko ja telamerkki panssarille); väri kertoo puolen. Avaa **Merkit**-valikko, jos haluat vaihtaa tyyliä.
 
 ![Samat kuusi yksikköä NATO-merkkeinä, venäläisinä taktisina merkkeinä, pelikartan kuvakkeina ja pelkkinä muotoina](../assets/img/fi/match-replay-symbols-styles.webp)
 
 ### Osumamerkit, raadot ja palot {#hit-marks-wrecks-and-fires}
 
-- **Osumamerkit** istuvat pinnalla, johon laukaus osui, hahmon mittakaavassa. Niiden ulkonäkö kertoo, mitä tapahtui: reikä (meni läpi), kirkas roiske (ei mennyt läpi), vako (lipesi pinnasta), nokitähti (räjähtävä kranaatti). Värillinen rengas kertoo, mitä se teki: tappava osuma, moduuli tuhoutui, kriittinen, vakava, vaurio, ei vauriota, osuma. Vie hiiri merkin päälle nähdäksesi laukauksen nimen.
-- Tuhoutunut yksikkö piirretään **palaneena** raatona kuolemasta alkaen, kunnes se herää uudelleen tai poistetaan; sen merkki on yliviivattu.
+- **Osumamerkit** istuvat pinnalla, johon laukaus osui, hahmon mittakaavassa. Ulkonäkö kertoo, mitä tapahtui: reikä (meni läpi), kirkas roiske (ei mennyt läpi), vako (liukui ohi) tai nokitähti (räjähtävä ammus). Värillinen rengas kertoo vaikutuksen: tappava osuma, moduuli tuhoutui, kriittinen, vakava, vahinko, ei vahinkoa, osuma. Vie osoitin merkin päälle, niin näet ammuksen nimen.
+- Tuhoutunut yksikkö piirretään **palaneena** raatona siitä hetkestä kuin se kuolee, kunnes se syntyy uudelleen tai poistetaan; sen merkki on yliviivattu.
 - **Palot** palavat yksikössä siitä hetkestä, kun se syttyy, kunnes se sammutetaan.
 - **Tornit** kääntyvät sinne, minne data kertoo tykin osoittavan (tai ilman sitä sinne, minne pelaaja katsoo).
 
-### Aseet, harhautukset ja jäljittimet {#weapons-decoys-and-tracers}
+### Aseet, harhautukset ja jäljet {#weapons-decoys-and-tracers}
 
-Kun **Aseet, laukaukset ja osumat** on päällä (Joukkuenäkymä-osio): ohjukset, raketit, pommit ja torpedot lentävät omina hahmoinaan savujäljen kanssa; luodit ja kranaatit ovat jäljittimiä; iskut ja räjähdykset välähtävät. Jäljitin, joka piirretään **katkoviivana**, on laskettu osumasta, koska datassa ei ollut laukausta. Soihdut ja metalliliuskat piirretään harhautuksina; ne piilotetaan yksikköluettelosta, ellei *Harhautukset ja kuoret* ole valittuna.
+Kun **Aseet, laukaukset ja osumat** on päällä (osio Joukkueen katselija): ohjukset, raketit, pommit ja torpedot lentävät omina hahmoinaan savujäljen kanssa; luodit ja kranaatit ovat jälkiä; osumat ja räjähdykset välähtävät. Jälki, joka piirretään **katkoviivalla**, on laskettu osumasta, koska datassa ei ollut laukausta. Soihdut ja häiventeet piirretään harhautuksina; ne piilotetaan yksikköluettelosta, ellei *Harhautukset ja kranaatit* ole valittu.
 
 ## Kamerat {#cameras}
 
-Napsauta yksikköä tai sen nimiötä **seurataksesi** sitä. **Toisto**-osio tarjoaa **Takaa**, **Kierto**, **Ohjaamo** (näytön tietonäytöllä, `H`), **Kiinteä**, **Padlock**, **Kohde** ja **Satelliitti**. `V` kiertää niiden läpi, **Kameran etäisyys** asettaa etäisyyden. Esc pysäyttää.
+Napsauta yksikköä tai sen nimilappua, jos haluat **seurata** sitä. Osio **Toisto** tarjoaa **Takaa**, **Kierto**, **Ohjaamo** (näytöllä head-up-näyttö, `H`), **Kiinteä**, **Padlock**, **Kohde** ja **Satelliitti**. `V` vaihtaa niiden välillä, **Kameran etäisyys** asettaa etäisyyden. Esc pysäyttää seurannan.
 
-- **Kahden yksikön näkymä**: valitse **Kohde** (tai Ctrl/Alt-napsauta yksikköä) katsoaksesi sitä seuratusta yksiköstä; **Vaihda** vaihtaa ne keskenään.
-- **Mitta**: Shift-napsauta kahta yksikköä saadaksesi niiden välisen suunnan, etäisyyden ja korkeuseron.
-- **2D-kartta** (`M`): kulma- tai koko näkymä, jäljillä ja nimillä.
-- **Kirjanmerkit** (`B`): tallentaa hetken ja kameran; tallenteen omat tappot, kuolemat ja merkinnät luetellaan myös.
-- **Tapahtumat**: jokainen tapahtuma aikajärjestyksessä; napsautus hyppää sinne. `Page Up` / `Page Down` hyppivät tapahtumien välillä; **Tauko tapahtumassa** pysähtyy jokaiseen.
+- **Kahden yksikön näkymä**: valitse **Kohde** (tai Ctrl- tai Alt-napsauta yksikköä), jotta näet sen seurattavan yksikön näkökulmasta; **Vaihda** vaihtaa ne keskenään.
+- **Mitta**: Shift-napsauta kahta yksikköä, niin näet niiden välisen suunnan, etäisyyden ja korkeuseron.
+- **2D-kartta** (`M`): kulmanäkymä tai koko näkymä, jäljet ja nimet mukana.
+- **Kirjanmerkit** (`B`): tallentavat hetken ja kameran. Tallenteen omat tuhoamiset, kuolemat ja merkinnät näkyvät myös luettelossa.
+- **Tapahtumat**: jokainen tapahtuma aikajärjestyksessä; napsautus hyppää siihen. `Page Up` ja `Page Down` hyppivät tapahtumien välillä; **Tauko tapahtumassa** pysähtyy jokaiseen.
 
 ## Taktinen näyttö {#tactical-display}
 
-![Ilmaesimerkki taktisella ilmeellä (T): lankamalliterrain, tappo- ja tapahtumapaneelit](../assets/img/fi/replay-air-tactical.webp)
+![Ilmademo taktisen näyttötyylin kanssa (T): lankamallinen maasto, tuhoamis- ja tapahtumapaneelit](../assets/img/fi/replay-air-tactical.webp)
 
-**Taktinen näyttö** -osio piirtää joko ei yhtään yksikköä, valitut, kaikki tai yhden lajin (ilma-alukset, maa, laivat, aseet): nopeusvektorit ja edessä oleva reitti, nokka- ja nostolinjat, tutkakartiot, lukitukset, tietoliikenneyhteydet, taisteluvyöhykkeet ja -linjat, näköyhteydet, joihin pelaajat katsovat (näkökartiot), tornin suuntaus ja tallennettu kamera.
+Osio **Taktinen näyttö** piirtää ei yhdellekään yksikölle, valituille, kaikille tai yhdelle lajille (ilma-alukset, maayksiköt, laivat, aseet): nopeusvektorit ja edessä oleva reitti, nokka- ja nostolinjat, tutkakartiot, lukitukset, tietoliikenneyhteydet, taisteluvyöhykkeet ja -linjat, näköyhteydet, paikat, joihin pelaajat katsovat (näkökartiot), tornin tähtäys ja tallenteen kamera.
 
 ### Näyttötyyli {#display-style}
 
-`T` (tai **Näytä taktisena näyttönä** -kytkin) vaihtaa ilmeen tutkanäyttötyyliin: hehku, reunaviivat, korkeuskäyrät, mittaruudukko, skannausviivat, etäisyysrenkaat, korkeusportaat, paneelit tappoineen ja tapahtumineen sekä **Ohjaaja**, joka siirtää kameran tapahtumiin itsestään.
+`T` (tai **Näytä taktisena näyttönä** -kytkin) vaihtaa ulkoasun tutkanäytön tyyliin: hehku, ääriviivat, korkeuskäyrät, mittaruudukko, skannausviivat, etäisyysrenkaat, korkeusasteikot, paneelit tuhoamisilla ja tapahtumilla sekä **Ohjaaja**, joka siirtää kameran tapahtumiin itsekseen.
 
-![Sama ilmataistelu normaalilla ilmeellä](../assets/img/fi/replay-air.webp)
+![Sama ilmataistelu tavallisessa ulkoasussa](../assets/img/fi/replay-air.webp)
 
 ## Tavoitteet {#objectives}
 
-Kun ottelun mukana tulevat tavoitteet, **Tavoitteet**-osio piirtää ne kentälle: valtausalueet (omistajineen ja valtauksen edistymisineen), spawnit, lentokentät, alueet ja pommituskohteet, kukin taso kytkettävissä, nimiöineen. Ne näkyvät maan läpi. Kun useita pelitiloja on ladattu, **Tila** suodattaa ottelut pelitilan mukaan. Tavoitteet tulevat tallenteen vieressä olevasta muuntimen ottelutiedostosta tai [`.3dheat`](container.md)-säiliön sisältä.
+Kun ottelu tulee tavoitteineen, osio **Tavoitteet** piirtää ne kentälle: valtausalueet (omistajan ja valtauksen edistymisen kanssa), tukikohdat, lentokentät, alueet ja pommituskohteet. Jokainen taso voidaan kytkeä päälle tai pois, ja niissä on nimiöt. Ne näkyvät maan läpi. Kun useita pelitiloja on ladattu, **Tila** suodattaa ottelut pelitilan mukaan. Tavoitteet tulevat muuntajan ottelutiedostosta, joka on tallenteen vieressä tai [`.3dheat`](container.md)-säilön sisällä.
 
 ## Nimiöt ja tilastot {#labels-and-statistics}
 
-- **Nimiöt**: säännöt lajeittain (**Valitut**, **Ilma-alukset**, **Maa**, **Laivat**, **Aseet**, **Tekoäly**): näytetäänkö, mitkä arvot, ja **Prioriteetti**, joka päättää, kenelle tila annetaan, kun nimiöt menevät päällekkäin. **Pidä nimilaput erillään** siirtää nimiön yksikkönsä viereen, kun se peittäisi toisen, ja jättää sen pois, jos tilaa ei ole. **Nimilappujen koko** on 60-250 %. **Takaisin nimeen, ajoneuvoon, korkeuteen ja nopeuteen** palauttaa säännöt.
-  - Maayksiköissä näkyvät nimi, ajoneuvo ja nopeus.
-  - Ilma-aluksissa näkyvät nimi, ajoneuvo, korkeus ja nopeus.
-  - Laivoissa näkyvät nimi, ajoneuvo, nopeus ja suunta.
-  - Vie hiiri yksikön päälle nähdäksesi kaikki sen arvot.
-- **Tilastot**: joukkueittain ja yksiköittäin: tappot, kuolemat, laukaukset, osumat, osumasuhde, lentoonlähdöt, laskut, lentoaika, huippunopeus, korkeus ja G, matka. CSV-vienti.
-- **Kaaviot**: yksikön arvot ajan yli, kaksi yksikköä vertailtuna tai yksi arvo toista vastaan.
+- **Nimiöt**: säännöt lajeittain (**Valitut**, **Ilma-alukset**, **Maa**, **Laivat**, **Aseet**, **Tekoäly**): näytetäänkö vai ei, mitkä arvot ja **Prioriteetti** sille, kuka saa tilan, kun nimiöt menevät päällekkäin. **Pidä nimilaput erillään** siirtää nimilapun yksikkönsä viereen, kun se peittäisi toisen, ja jättää sen pois, jos tilaa ei ole. **Nimilappujen koko** on 60–250 %. **Takaisin nimeen, ajoneuvoon, korkeuteen ja nopeuteen** palauttaa säännöt.
+  - Maayksiköissä näkyvät aluksi nimi, ajoneuvo ja nopeus.
+  - Ilma-aluksissa näkyvät aluksi nimi, ajoneuvo, korkeus ja nopeus.
+  - Laivoissa näkyvät aluksi nimi, ajoneuvo, nopeus ja suunta.
+  - Vie osoitin yksikön päälle, niin näet kaikki sen arvot.
+- **Tilastot**: joukkueittain ja yksiköittäin: tuhoamiset, kuolemat, laukaukset, osumat, osumasuhde, lentoonlähdöt, laskut, ilmassa oloaika, huippunopeus, korkeus ja G, matka. Vienti CSV-muodossa.
+- **Kaaviot**: yksikön arvot ajan funktiona, kahden yksikön vertailu tai yksi arvo toisen suhteen.
 
 ## Monta ottelua kerralla {#many-matches-at-once}
 
-Satojen tai tuhansien otteluiden päällekkäin asettamiseen katso [Monta ottelua kerralla](many-matches.md). Hahmojen yksityiskohdat (savu, palo ja muut ajastetut tehosteet): [Hahmot päällekkäin -näkymän hahmot](figure-replay.md). Tacview-ominaisuuslista: [Tacview-vastaavuus](tacview-parity.md), tämän sivun alasivu.
+Kun haluat asetella satoja tai tuhansia otteluita päällekkäin, katso [Monta ottelua kerralla](many-matches.md). Hahmojen yksityiskohdat (savu, tuli ja muut ajastetut tehosteet): [Hahmot päällekkäin -näkymässä](figure-replay.md). Tacview-ominaisuuslista: [Tacview-vastaavuus](tacview-parity.md), tämän sivun alasivu.

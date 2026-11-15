@@ -3,35 +3,35 @@ title: "Configuració, unitats i tecles"
 nav_order: 16
 lang: "ca"
 source: "settings.md"
-source_hash: "bd1062895abf"
+source_hash: "f25e4cbaf3bb"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Configuració, unitats i tecles
 
-Els petits controls de dalt de la barra lateral canvien la manera com el visor es comunica amb tu: l'idioma, les unitats (metres o peus, km/h o nusos) i un mode d'ajuda que explica els colors. Les teves eleccions es recorden al navegador.
+Els petits controls a dalt de la barra lateral canvien la manera com el visor es comunica amb tu: l'idioma, les unitats (metres o peus, km/h o nusos) i un mode d'ajuda que explica els colors. Les teves eleccions es recorden al teu navegador.
 
 ## La capçalera {#the-header}
 
-A la part superior de la barra lateral:
+A dalt de la barra lateral:
 
 | Control | Què fa |
 |---|---|
-| **?** | Mode d'ajuda: què significa cada color (també `?` o `F1`) |
+| **?** | Mode d'ajuda: què vol dir cada color (també `?` o `F1`) |
 | Menú **Unitats** | Mètric, Imperial, Aviació o Nàutic |
 | Botó **...** al costat de **Unitats** | Obre «Tria una unitat per a cada magnitud»: un desplegable per magnitud |
 | Menú **Idioma** | L'idioma del visor: [40 idiomes](languages.md), o el del navegador |
 
 ![La capçalera amb el menú Unitats i la finestra d'unitat per magnitud oberta](../assets/img/ca/settings-units.webp)
 
-Els números que escrius en una caixa poden dur punt o coma (`0.35` o `0,35`). El visor els llegeix tots dos i mostra els números com els escriu l'idioma del visor.
+Els números que escrius en una casella poden usar punt o coma (`0.35` o `0,35`). El visor els llegeix tots dos i mostra els números com els escriu l'idioma del visor.
 
 ## Unitats {#units}
 
-1. Tria un preajust al menú **Unitats**. Totes les magnituds canvien juntes.
-2. Per canviar només una magnitud, fes clic al botó **...** al seu costat i tria una unitat per a aquella magnitud. El menú aleshores mostra un `*` després del preajust.
-3. Una magnitud que no has fixat segueix el preajust. Tria «Com el preajust» per tornar-hi.
+1. Tria un predefinit al menú **Unitats**. Totes les magnituds canvien alhora.
+2. Per canviar només una magnitud, fes clic al botó **...** al costat i tria una unitat per a aquesta magnitud. El menú aleshores mostra un `*` després del predefinit.
+3. Una magnitud que no has fixat segueix el predefinit. Tria «Com el predefinit» per tornar enrere.
 
 | Magnitud | Mètric (per defecte) | Imperial | Aviació | Nàutic |
 |---|---|---|---|---|
@@ -44,34 +44,34 @@ Els números que escrius en una caixa poden dur punt o coma (`0.35` o `0,35`). E
 | Massa, combustible | kg, l | lb, gal | lb, gal | t, m³ |
 | Angle | graus | graus | graus | graus |
 
-Altres unitats que pots triar per a una sola magnitud: distància km, mi, NM; velocitat km/h, m/s, kt, mph; velocitat vertical m/s, ft/min, m/min; temperatura °C, °F, K; pressió hPa, inHg, mmHg, psi; massa kg, lb, t; angle graus o mils NATO (6.400 per volta). Les unitats són les mateixes a tot el visor: etiquetes, fitxes, gràfics, estadístiques.
+Altres unitats que pots triar per a una magnitud: distància km, mi, NM; velocitat km/h, m/s, kt, mph; velocitat vertical m/s, ft/min, m/min; temperatura °C, °F, K; pressió hPa, inHg, mmHg, psi; massa kg, lb, t; angle graus o mils NATO (6400 per volta). Les unitats són les mateixes a tot el visor: etiquetes, targetes, gràfics, estadístiques.
 
 ## Mode d'ajuda {#help-mode}
 
-![Mode d'ajuda: què signifiquen els colors](../assets/img/ca/help.webp)
+![Mode d'ajuda: què vol dir cada color](../assets/img/ca/help.webp)
 
-Prem `?` o `F1`, o fes clic al botó **?**. Mostra *Què signifiquen els colors*: llegendes de la vista 3D, les rampes de calor, els colors dels equips, els colors del nivell, els colors d'estat dels panells, el panell de partida i la vista de curses. Es queda activat fins que el desactives. A la pestanya Partida també explica els colors del panell de partida.
+Prem `?` o `F1`, o fes clic al botó **?**. Mostra *Què volen dir els colors*: llegendes per a la vista 3D, les rampes de calor, els colors dels equips, els colors del nivell, els colors d'estat dels panells, el panell de la partida i la vista de la cursa. Es queda activat fins que el desactivis. A la pestanya Partida també explica els colors del panell de la partida.
 
 ![Mode d'ajuda a la pestanya Partida](../assets/img/ca/settings-help-match.webp)
 
 ## Què recorda el navegador {#what-the-browser-remembers}
 
-Aquestes configuracions es guarden al navegador entre visites (no s'envia res a cap lloc):
+Aquests ajustos es guarden al teu navegador entre visites (no s'envia res enlloc):
 
 - l'idioma, les unitats i el mode d'ajuda;
-- la configuració de figures, símbols, etiquetes, càmera i pantalla tàctica de la repetició;
+- els ajustos de la figura, el símbol, l'etiqueta, la càmera i la visualització tàctica de la repetició;
 - la velocitat de reproducció i el mirall;
 - els marcadors per gravació, els volums per conjunt de dades, les capes d'objectius;
-- la configuració de la IA externa (la clau només si marques *Recorda*).
+- els ajustos de la IA externa (la clau només si marques *Recorda*).
 
-La configuració de calor, els filtres i el mode comencen de nou a cada càrrega. La llista completa i generada: [Configuració desada](ref-settings-storage.md).
+Els ajustos de calor, els filtres i el mode comencen de nou a cada càrrega. La llista completa i generada: [Ajustos desats](ref-settings-storage.md).
 
 ## Tecles que el visor conserva del navegador {#keys-the-viewer-keeps-from-the-browser}
 
-Una sessió amb dades grans triga a carregar, així que el visor evita que el navegador la descarti per accident:
+Una sessió amb dades grans triga a carregar-se, així que el visor evita que el navegador la descarti per accident:
 
-- `Ctrl`/`Cmd` + lletres que imprimirien, desarien, obririen, recarregarien, tancarien o obririen finestres noves no fan res fora de les caixes de text; `F1`, `F3`, `F5`, `F6` i `F7` no fan res.
-- Tancar o recarregar la pestanya amb dades o un nivell carregats pregunta abans.
-- A pantalla completa el visor bloqueja les tecles que usa (W, T, N, S, R, P, Q, Esc), perquè el navegador no se les quedi.
+- `Ctrl`/`Cmd` + lletres que imprimirien, desarien, obririen, recarregarien, tancarien o obririen finestres noves no fan res fora de les caselles de text; `F1`, `F3`, `F5`, `F6` i `F7` no fan res.
+- Tancar o recarregar la pestanya amb dades o un nivell carregats pregunta primer.
+- En pantalla completa el visor bloqueja les tecles que usa (W, T, N, S, R, P, Q, Esc), perquè el navegador no se les quedi.
 
-La llista exacta: [Tecles del navegador](ref-browser-keys.md). Totes les tecles del propi visor: [Referència de teclat i ratolí](keyboard-reference.md).
+La llista exacta: [Tecles del navegador](ref-browser-keys.md). Totes les tecles pròpies del visor: [Referència de teclat i ratolí](keyboard-reference.md).

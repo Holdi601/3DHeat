@@ -4,9 +4,9 @@ nav_order: 11
 has_children: true
 lang: "fi"
 source: "race-analysis.md"
-source_hash: "63d7f4b85872"
+source_hash: "ab0531fa7bbd"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Kisa-analyysi
@@ -15,51 +15,51 @@ Ajoit saman radan kahdesti. **Kisa-analyysi**-välilehti toistaa molemmat ajot y
 
 ![Kisa-analyysi-välilehti esimerkkikierroksilla: sivupalkki Kierrokset ja Parannettavaa, autot radalla, kaaviot näkymän alla](../assets/img/fi/race-analysis-overview.webp)
 
-Välilehti vertaa kahta tai useampaa kierrosta samalta radalta. Se jakaa piirtoalueen, kameran ja ladatun radan mallin (**Tausta / kenttä**) lämpökartan kanssa; kaikki muu on omaa: oma sivupalkki ja oma palkki näkymän alla. Sanat *kierros*, *vertailu* ja *kärki* ovat [sanastossa](glossary.md).
+Välilehti vertaa kahta tai useampaa saman radan kierrosta. Se jakaa piirtoalueen, kameran ja ladatun ratamallin (**Tausta / kenttä**) lämpökartan kanssa. Kaikki muu on sen omaa: oma sivupalkki ja oma palkki näkymän alla. Sanat *kierros*, *vertailu* ja *kärki* on selitetty [sanastossa](glossary.md).
 
 Tämä sivu on välilehden kartta. Jokaisella osalla on oma sivunsa:
 
 | Sivu | Mitä se kattaa |
 |---|---|
-| [Kierrosten lataaminen](race-loading-laps.md) | jokainen tiedostomuoto, kansiot ja radat, autojen nimet, esimerkkikierrokset, kierroslista, vertailu ja painopiste |
-| [Toisto ja 3D-näkymä](race-replay-and-scene.md) | toistopalkki, kolme toistotilaa, autojen asettaminen linjaan, takaa-seurantakamera, viivat, kartat, autot, nimiöt, peilatut maailmat |
-| [Kaaviot ja HUD](race-charts-and-hud.md) | matkakaaviot, kaaviovalitsin, osoitus ja zoomaus, autokortit, kanavataulukko |
-| [Auton hallinnan tapahtumat](race-control-events.md) | lukkiutumiset, spinnaukset, ylikääntyminen, pyörimiset, alikääntyminen, osumat, törmäykset, ABS/TC, käsijarru, ilma - miten kukin tunnistetaan, jokaisen kynnysarvon kanssa |
-| [Mutka mutkalta -analyysi](race-corner-analysis.md) | kohdistus matkan mukaan, mutkat ja osuudet, mutkan aikatili, jokainen syy ja järjestys, jossa ne kokeillaan, linjan muoto ja neuvo |
+| [Kierrosten lataaminen](race-loading-laps.md) | jokainen tiedostomuoto, kansiot ja radat, autojen nimet, esimerkkikierrokset, kierroslista, vertailu ja tarkennus |
+| [Toisto ja 3D-näkymä](race-replay-and-scene.md) | toistopalkki, kolme toistotilaa, autojen kohdistaminen, takaa-ajokamera, viivat, kartat, autot, nimiöt, peilatut maailmat |
+| [Kaaviot ja HUD](race-charts-and-hud.md) | matkakaaviot, kuvaajavalitsin, osoitin ja zoomi, autokortit, kanavataulukko |
+| [Auton hallintatapahtumat](race-control-events.md) | lukkiutumiset, pyörien pyöriminen, ylistyöntö, pyörähdykset, alistyöntö, osumat, kolarit, ABS/TC, käsijarru, ilma: miten kukin tunnistetaan, jokaisen kynnysarvon kanssa |
+| [Mutka mutkalta -analyysi](race-corner-analysis.md) | kohdistus matkan mukaan, mutkat ja osuudet, mutkan ajallinen tili, jokainen syy ja järjestys, jossa ne kokeillaan, linjan muoto ja neuvo |
 | [Autoprofiilit ja vertailu](race-car-profiles.md) | mitä kukin auto pystyy tekemään, mitattuna sen kierroksista; *Autojen vertailu*; mitä auto päättää kussakin mutkassa |
-| [Ratatilastot](race-course-statistics.md) | monta kierrosta yhdeltä radalta: virheet mutkittain ja lajeittain, virhekartta, lämpökartan vienti, suorituskykyrajat |
+| [Ratatilastot](race-course-statistics.md) | monta kierrosta yhdeltä radalta: virheet mutkittain ja lajeittain, virhekartta, lämpökartan vienti, suorituskyvyn rajat |
 | [Kisa-analytiikka: menetelmä](race-analytics.md) | sääntöjen taustalla oleva tutkimus lähteineen |
-| [Muut kilpailupelit](other-games.md) | mitä katselin tekee kunkin pelin kierroksilla: luisto ja ajelehtiminen lasketaan siellä, missä peli ei niitä lähetä, peilatut maailmat, lisäkanavat |
+| [Muut kilpailupelit](other-games.md) | mitä katselin tekee kunkin pelin kierroksilla: luisto ja ajelehtiminen, jotka lasketaan, kun peli ei lähetä niitä, peilatut maailmat, lisäkanavat |
 
-## Näyttö {#the-screen}
+## Näkymä {#the-screen}
 
 **Sivupalkki**, ylhäältä alas (osioita voi taittaa):
 
-1. **Kierrokset** - lataus, luettelo, näytä/piilota, vertailu, painopiste, takaa-seuranta.
+1. **Kierrokset**: lataus, luettelo, näyttäminen ja piilottaminen, vertailu, tarkennus, takaa-ajo.
    Katso [Kierrosten lataaminen](race-loading-laps.md).
-2. **Ratatilastot** - vain kolmesta ladatusta kierroksesta alkaen.
+2. **Ratatilastot**: näkyy vasta, kun kierroksia on ladattu kolme tai enemmän.
    Katso [Ratatilastot](race-course-statistics.md).
-3. **Parannettavaa** - painopisteen kierroksen havainnot mutka mutkalta.
+3. **Parannettavaa**: tarkennetun kierroksen löydökset mutka mutkalta.
    Katso [Mutka mutkalta -analyysi](race-corner-analysis.md).
-4. **Mutka mutkalta** (tai *Mutka mutkalta - luokka X*, kun luokkia on useita) - nopein kierros jokaisen mutkan läpi ja sen linja. Näkyy kahdella tai useammalla kierroksella.
-5. **Auton hallinta** - painopisteen kierroksen lukot, liukumiset, työnnöt ja osumat.
-   Katso [Auton hallinnan tapahtumat](race-control-events.md).
-6. **Autojen vertailu** (tai **Auto**, kun yksi auto on) - katso [Autoprofiilit ja vertailu](race-car-profiles.md).
-7. **Näkymä** - mikä kartta maalataan radalle ja mitä piirretään.
+4. **Mutka mutkalta** (tai *Mutka mutkalta - luokka X*, kun luokkia on useita): nopein kierros jokaisessa mutkassa ja sen linja. Näkyy, kun kierroksia on kaksi tai enemmän.
+5. **Auton hallinta**: tarkennetun kierroksen lukot, luistot, työntöt ja osumat.
+   Katso [Auton hallintatapahtumat](race-control-events.md).
+6. **Autojen vertailu** (tai **Auto**, kun on vain yksi auto). Katso [Autoprofiilit ja vertailu](race-car-profiles.md).
+7. **Näkymä**: mikä kartta maalataan radalle ja mitä piirretään.
    Katso [Toisto ja 3D-näkymä](race-replay-and-scene.md).
-8. Yhteiset **Tausta / kenttä**- ja **Kamera ja näkymä** -paneelit (radan malli, akselin kääntö, kamera) - dokumentoitu lämpökartan yhteydessä ja [Kamerassa](camera.md).
+8. Yhteiset paneelit **Kenttä** ja **Kamera ja näkymä** (ratamalli, akselin kääntö, kamera). Ne on kuvattu lämpökartan yhteydessä ja sivulla [Kamera](camera.md).
 
-**Näkymä** näyttää radan, ajetut linjat, kartan, autot, radan kiinnittämät nimiöt ja enintään kuusi autokorttia vasemmassa yläkulmassa (katso [Kaaviot ja HUD](race-charts-and-hud.md)). Kun kierroksia ei ole ladattu, siinä lukee: "Ei kierroksia ladattuna - pudota tähän kaksi tai useampi kierrostiedosto tai lataa esimerkkikierrokset sivupalkista."
+**Näkymä** näyttää radan, ajetut linjat, kartan, autot, radan kiinnitetyt nimiöt ja enintään kuusi autokorttia vasemmassa yläkulmassa (katso [Kaaviot ja HUD](race-charts-and-hud.md)). Kun kierroksia ei ole ladattu, siinä lukee: "Ei kierroksia ladattuna. Pudota tähän kaksi tai useampia kierrostiedostoa tai lataa esimerkkikierrokset sivupalkista."
 
-**Palkki näkymän alla** sisältää toiston kuljetuspainikkeet ja, ellei piilotettu, matkakaaviot.
+**Näkymän alla oleva palkki** sisältää toiston toimintanapit ja, ellei sitä ole piilotettu, matkakaaviot.
 
 ## Pika-aloitus {#quick-start}
 
-1. Avaa **Kisa-analyysi**-välilehti (**Lämpökartta**-välilehden vieressä sivupalkin yläosassa).
-2. Hanki kierrokset. Paina **Esimerkkikierrokset** nähdäksesi, mitä välilehti tekee kolmella keksityllä kierroksella. Omia kierroksiasi varten tallenna ne ensin ([tiedostomuodot ja tallentimet](race-loading-laps.md#file-formats)), paina sitten **Lataa kierrostiedostot…** tai **Kansio…**, tai pudota tiedostot tai kansiot näkymään.
-3. Nopein täydellinen kierros tulee vertailuksi; hitain muu kierros on painopisteessä. Napsauta mitä tahansa kierrosta luettelossa asettaaksesi sen painopisteeksi; ★ tekee kierroksesta vertailun.
-4. Lue **Parannettavaa**. Napsauta havaintoa: autot asetetaan linjaan 40 m ennen sitä, kamera kehystää sen, toisto toistaa sen läpi ja mittaukset avautuvat.
-5. Vie hiiri kaavioiden päälle siirtääksesi jokaisen auton tuohon metriin; Shift+napsautus asettaa ne linjaan siinä.
+1. Avaa **Kisa-analyysi**-välilehti (**Lämpökartan** vieressä sivupalkin yläosassa).
+2. Hanki kierroksia. Paina **Esimerkkikierrokset**, niin näet, mitä välilehti tekee kolmella keksityllä kierroksella. Omia kierroksia varten tallenna ne ensin ([tiedostomuodot ja tallentimet](race-loading-laps.md#file-formats)). Paina sen jälkeen **Lataa kierrostiedostot…** tai **Kansio…**, tai pudota tiedostoja tai kansioita näkymään.
+3. Nopein täysi kierros tulee vertailukierrokseksi. Hitain muu kierros tarkennetaan. Napsauta mitä tahansa kierrosta luettelossa tarkentaaksesi sen. ★ tekee kierroksesta vertailukierroksen.
+4. Lue **Parannettavaa**. Napsauta löydöstä: autot kohdistetaan 40 m ennen sitä, kamera kehystää sen, toisto kulkee sen läpi ja mittaukset avautuvat.
+5. Vie osoitin kaavioiden päälle, niin jokainen auto siirtyy siihen metriin. Shift+napsautus kohdistaa ne siinä.
 
 ## Näppäimistö {#keyboard}
 
@@ -67,54 +67,54 @@ Kun Kisa-analyysi-välilehti on auki:
 
 | Näppäin | Tekee |
 |---|---|
-| **K** | toiston toisto / tauko |
-| **Home** | takaisin toiston alkuun |
-| numeronäppäimet | ei mitään (lämpökartassa ne vaihtavat tiloja) |
+| **K** | toisto käyntiin tai taukoon |
+| **Home** | toisto alkuun |
+| numeronäppäimet | ei mitään (lämpökartassa ne vaihtavat tilaa) |
 
-Tekstikenttään tai pudotusvalikkoon kirjoitetut näppäimet jätetään huomiotta. Kamera-näppäimet toimivat kuten lämpökartassa (**W A S D**, **Välilyönti** ylös, **Q** alas, **Shift** nopeammin, **Alt** hitaammin, hiiri katsomiseen; kaikki [Kamerassa](camera.md)); **F** kehystää ladatut kierrokset (kuten kierrosten lataus tekee).
+Tekstikentässä tai pudotusvalikossa kirjoitetut näppäimet jätetään huomiotta. Kameran näppäimet toimivat kuten lämpökartassa (**W A S D**, **Välilyönti** ylös, **Q** alas, **Shift** nopeammin, **Alt** hitaammin, hiiri katsomiseen. Kaikki on luettelossa [Kamera](camera.md)). **F** kehystää ladatut kierrokset, kuten kierrosten lataaminenkin.
 
 ## Monta kierrosta {#many-laps}
 
-- Kaikki ladatut kierrokset analysoidaan ja lasketaan; kymmenet vievät sekunnin tai kaksi.
-- Yli **8** kierroksen (`SHOW_ALL_UP_TO`) lisätyt kierrokset piirretään vain, kun ne ovat vertailu, painopiste tai painopisteen luokan paras kierros. *Näytä kaikki* / *Vain tarkasteltavat* vaihtavat.
-- Yli **10** näkyvän auton (`PLAIN_PAST`) kierrokset, joita ei katsota (ei painopiste, seurattu auto tai vertailu), piirretään linjoilla, jotka on harvennettu yhteen pisteeseen 6 metrin välein 1,5 metrin sijaan, ja tavallisina autoina.
-- Kaaviot piirtävät enintään **8** kierrosta; HUD näyttää enintään **6** korttia.
-- Ratatilastot ilmestyvät **3** kierroksesta alkaen.
+- Kaikki ladatut kierrokset analysoidaan ja lasketaan. Kymmeniin menee sekunti tai pari.
+- Yli **8** kierroksen (`SHOW_ALL_UP_TO`) lisätyt kierrokset piirretään vain, jos ne ovat vertailukierros, tarkennettu kierros tai tarkennetun kierroksen luokan paras kierros. *Näytä kaikki* ja *Vain tarkasteltavat* vaihtavat tilaa.
+- Yli **10** näkyvän auton (`PLAIN_PAST`) kierrokset, joita ei katsella (ei tarkennus, ei takaa-ajettava auto eikä vertailukierros), piirretään ohuilla viivoilla. Niissä on piste joka 6 m 1,5 m sijaan, ja autot piirretään yksinkertaisina.
+- Kaaviot piirtävät enintään **8** kierrosta. HUD näyttää enintään **6** korttia.
+- Ratatilastot näkyvät **3** kierroksesta alkaen.
 
-Yksityiskohdat: [Ratatilastot](race-course-statistics.md#performance-with-many-laps).
+Lisätiedot: [Ratatilastot](race-course-statistics.md#performance-with-many-laps).
 
-## Näkymän oletusasetukset {#default-view-settings}
+## Oletusnäkymän asetukset {#default-view-settings}
 
 | Asetus | Oletus |
 |---|---|
 | Kartta | Aikakartta |
-| Ajetut linjat, Autot, Renkaat ja jousitus, Nimiöt, Rata kierroksista | päällä |
+| Ajetut viivat, Autot, Renkaat ja jousitus, Nimiöt, Rata kierroksista | päällä |
 | Kaikki arvot korteilla | pois |
 | Auton koko | 1× |
 | Kaaviot | näkyvissä |
-| Toistotila | Lähtöviivalta |
+| Toistotila | Linjasta |
 | Toistonopeus | 1× |
 | Silmukka | päällä |
 
-Mitään näistä ei tallenneta; sivun uudelleenlataus alkaa oletuksista. Selaimessa muistetaan: kieli ja kierrostiedostoista opitut autojen nimet (katso [Kierrosten lataaminen](race-loading-laps.md#car-names)).
+Mitään näistä ei tallenneta. Sivun lataaminen uudelleen palauttaa oletukset. Selaimeen muistetaan kieli ja kierrostiedostoista opitut autojen nimet (katso [Kierrosten lataaminen](race-loading-laps.md#car-names)).
 
 ## Kehittäjille {#for-developers}
 
 ### Mitä tapahtuu, kun kierroksia ladataan {#what-happens-when-laps-are-loaded}
 
-Aina kun kierrosjoukko, vertailu tai kieli muuttuu, koko analyysi tehdään uudelleen (`analyse` tiedostossa [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
+Aina kun kierrosjoukko, vertailukierros tai kieli muuttuu, koko analyysi tehdään uudelleen (`analyse`-funktio tiedostossa [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
 
-1. Johdetut kanavat lisätään jokaiseen kierrokseen siellä, missä peli ei niitä lähetä: ajautumiskulma, renkaiden luisto pyörien nopeuksista, ilmassa, löysä maa, kääntymisnopeus ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
-2. Vertailu valitaan ja jokainen kierros projisoidaan sen reitille ja näytteistetään uudelleen 2 metrin välein ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
-3. Selvitetään kierroksista, onko pelin maailma peilattu ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
-4. Mutkat löydetään vertailusta ja ryhmitellään osuuksiksi yhdestä jarrutusalueesta seuraavaan ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
-5. Autokohtaisesti: sen verhokäyrä (pito, jarrutus, veto nopeuden mukaan), sen profiili, sen renkaiden käyrät ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts), [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts), [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
-6. Kierros- ja osuuskohtaisesti: mitä se teki (jarrupiste, hitain piste, täysi kaasu, ...) ja ajettu linja ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
-7. Kierroskohtaisesti: sen auton hallinnan tapahtumat, jokainen asetettuna vertailukierrokseen, jota siinä verrataan.
-8. Kierros- ja osuuskohtaisesti: aikatili suhteessa vertailukierrokseen ja havainto sanoin.
-9. Aikakartta ja syykartta kierroksittain.
+1. Johdetut kanavat lisätään jokaiselle kierrokselle siellä, missä peli ei niitä lähetä: ajelehtimiskulma, pyörien luisto pyörien nopeuksista, ilmassa oleminen, löysä maa ja kiertymänopeus ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
+2. Vertailukierros valitaan, ja jokainen kierros projisoidaan sen reitille ja näytteistetään uudelleen 2 m välein ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
+3. Lasketaan kierroksista, onko pelin maailma peilattu ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
+4. Mutkat löydetään vertailukierrokselta ja ryhmitellään osuuksiksi yhdestä jarrutusalueesta seuraavaan ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
+5. Kullekin autolle lasketaan sen verhokäyrä (pito, jarrutus, veto nopeuden mukaan), sen profiili ja renkaiden käyrät ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts), [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts), [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
+6. Kullekin kierrokselle ja osuudelle lasketaan, mitä se teki (jarrupiste, hitain kohta, täyskaasu ...) ja mitä linjaa se ajoi ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
+7. Kullekin kierrokselle lasketaan sen auton hallintatapahtumat. Jokainen asetetaan siihen kierrokseen, johon sitä verrataan kyseisessä kohdassa.
+8. Kullekin kierrokselle ja osuudelle lasketaan ajallinen tili suhteessa vertailukierrokseen ja löydös sanoina.
+9. Aikakartta ja syykartta lasketaan kullekin kierrokselle.
 
-Tekstit tuotetaan nykyisellä kielellä; kielen vaihto ajaa analyysin uudelleen (ja nimeää esimerkkikierrokset uudelleen). Analyysin virhe näytetään **Kierrokset**-painikkeiden alla virheenä, ja kierrokset pysyvät ladattuina.
+Tekstit tuotetaan nykyisellä kielellä. Kielen vaihtaminen ajaa analyysin uudelleen ja nimeää esimerkkikierrokset uudelleen. Analyysin virhe näkyy virheenä **Kierrokset**-painikkeiden alla, ja kierrokset pysyvät ladattuina.
 
 ### Lähdetiedostot {#source-files}
 
@@ -124,11 +124,11 @@ Tekstit tuotetaan nykyisellä kielellä; kielen vaihto ajaa analyysin uudelleen 
 | `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | kierrostyyppi, nimeäminen, esimerkkikierrokset |
 | `src/race/derive.ts`, `handedness.ts` | johdetut kanavat, peilatut maailmat |
 | `src/race/align.ts`, `segments.ts`, `line.ts` | matka-akseli, mutkat, linjat |
-| `src/race/analysis.ts` | verratut mutkat, syyt, havainnot |
+| `src/race/analysis.ts` | verratut mutkat, syyt, löydökset |
 | `src/race/envelope.ts`, `profile.ts` | mitä auto pystyy tekemään |
-| `src/race/control.ts`, `impacts.ts` | auton hallinta, osumat ja törmäykset |
+| `src/race/control.ts`, `impacts.ts` | auton hallinta, osumat ja kolarit |
 | `src/race/stats.ts` | monta kierrosta |
 | `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | toisto ja piirto |
 | `src/race/schema.ts`, `graphs.ts` | kanavataulukko, kaavioiden rivit |
 | `src/ui/race/*` | sivupalkki, kaaviot, HUD, nimiöt |
-| `src/state/raceStore.ts` | välilehden tila ja toistokello |
+| `src/state/raceStore.ts` | välilehden tila ja toiston kello |

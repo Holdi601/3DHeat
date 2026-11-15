@@ -4,55 +4,59 @@ parent: "Modi tas-sħana"
 nav_order: 6
 lang: "mt"
 source: "team-heat.md"
-source_hash: "e30b8372464b"
+source_hash: "e18e62600e3e"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Sħana tat-tim
 
-Is-sħana tat-tim turi fejn kien kull tim, kull tim b'kulur tiegħu. Fejn it-timijiet jaqgħu fuq xulxin, il-kuluri jitħalltu.
+Is-sħana tat-tim turi fejn kien kull tim, kull tim bil-kulur tiegħu. Fejn it-timijiet jaqbdu fuq xulxin il-kuluri jitħalltu.
 
-**Sħana tat-tim** (ċavetta 3) hija l-qasam tad-densità ta' [Sħana](heat.md) b'kull [grupp](glossary.md) mogħti t-tonalità tiegħu. Fejn il-gruppi jaqgħu fuq xulxin, it-tonalitajiet tagħhom jitħalltu; kompetizzjoni ndaqs toħroġ newtrali. L-opaċità għadha ġġorr id-densità eżattament bħal fil-modalitajiet l-oħra, għalhekk l-istampa twieġeb *kemm* u *ta' min* fl-istess ħin. Teħtieġ kolonna ta' grupp.
+**Sħana tat-tim** (ċavetta 3) huwa l-qasam tad-densità tal-[Sħana](heat.md) b'kull [grupp](glossary.md) mogħti t-ton tiegħu stess. Fejn il-gruppi jaqbdu fuq xulxin, it-toni tagħhom jitħalltu; logħba ugwali toħroġ newtrali. L-opaċità xorta tgħaddi d-densità daqs kif tagħmel fil-modi l-oħra, għalhekk l-istampa twieġeb *kemm* u *ta' min* fl-istess ħin. Teħtieġ kolonna tal-gruppi.
 
-![Sħana tat-tim: kull naħa b'kulur tagħha; fejn jaqgħu fuq xulxin il-kuluri jitħalltu](../assets/img/mt/heat-teams.webp)
+![Sħana tat-tim: kull naħa bil-kulur tagħha; fejn jaqbdu fuq xulxin il-kuluri jitħalltu](../assets/img/mt/heat-teams.webp)
 
-Din mhijiex [Figuri fuq xulxin](box-replay.md): dik tpinġi figura waħda għal kull persuna; din hi qasam ta' sħana mikxuf bl-istess kolonna.
+Mhix l-[overlay tal-figuri](box-replay.md): dik tpinġi figura waħda għal kull persuna; din hija qasam tas-sħana kkuluriat bl-istess kolonna.
 
-## Kif tuża dan {#how-to-use-it}
+## Kif tużah {#how-to-use-it}
 
-1. Agħfas `3` (jew agħżel **Sħana tat-tim** fil-bar tal-modalitajiet).
-2. Iftaħ **Kuluri tas-sħana**. Il-kaxxi juru l-kulur ta' kull grupp; poġġi l-mouse fuq kaxxa biex tara l-isem tat-tim.
-3. Jekk kollox jidher griż, għolli **Separazzjoni tal-kuluri**.
-4. Neħħi l-kaxxa ta' grupp fil-[Lista tat-timijiet](teams-list.md) biex titneħħa mill-istampa; il-kuluri l-oħra jibqgħu fejn kienu.
+1. Agħfas `3` (jew agħżel **Sħana tat-tim** fil-mode bar).
+2. Iftaħ **Kuluri tas-sħana**. Il-kwadratini juru l-kulur ta' kull grupp; ħalli l-mouse fuq kwadratin biex tara l-isem tat-tim.
+3. Jekk kollox jidher griż, oġħla **Separazzjoni tal-kuluri**.
+4. Neħħi l-għażla ta' grupp fil-[Lista tat-timijiet](teams-list.md) biex tħallih barra; il-kuluri l-oħra jibqgħu fejn kienu.
 
 ## Kontrolli {#controls}
 
-Fis-sezzjoni **Kuluri tas-sħana**:
+Fit-taqsima **Kuluri tas-sħana**:
 
-| Kontroll | Bażi | Tifsira |
+| Kontroll | Default | Tifsira |
 |---|---|---|
-| Kaxxi tal-kuluri | | Il-kulur ta' kull grupp, għall-ewwel 12-il grupp, imbagħad *+N iktar*. Poġġi l-mouse biex tara l-isem tal-grupp u l-kulur. |
-| **Separazzjoni tal-kuluri** | 1.4 | Kemm titbiegħed it-taħlita mill-newtrali, 0-4. 0 jagħmel kollox griż; 1 hija l-medja vera; wara madwar 2 it-taħlitiet l-iktar ċari joħorġu mill-medda tal-wiri u jiġu mqattgħin kull kanal, u dan ibiddel it-tonalità tagħhom. |
-| **Rampa tal-opaċità (il-kulur jiġi mill-grupp)** | ir-rampa tas-sħana bażika | Hawn jintuża biss l-**alfa** tar-rampa: trasparenti fejn ma hemm xejn, opak fil-quċċata. Il-kuluri tagħha jiġu injorati. |
+| Kwadratini | | Il-kulur ta' kull grupp, għall-ewwel 12-il grupp, imbagħad *+N aktar*. Ħalli l-mouse fuqhom għall-isem tal-grupp u l-kulur. |
+| **Separazzjoni tal-kuluri** | 1.4 | Kemm titbiegħed taħlita mill-newtrali, 0-4. 0 jagħmel kollox griż; 1 hija l-medja vera; wara madwar 2 it-taħlitiet l-aktar iddi'in jaqbżu l-firxa li tista' tintwera u jiġu mqaffla kanal b'kanal, u dan ibiddel it-ton tagħhom. |
+| **Rampa tal-opaċità (il-kulur jiġi mill-grupp)** | ir-rampa default tas-sħana | Minnha tintuża biss l-**alpha** tar-rampa hawn: trasparenti fejn ma hemm xejn, opaka fil-quċċata. Il-kuluri tagħha jiġu injorati. |
 
-Il-kontrolli l-oħra kollha tas-sħana - forma, saturazzjoni, rispons, sħana minima, fond, qtugħ - jaħdmu bħal f'[Sħana](heat.md).
+Grupp li t-tikketta tiegħu tfisser "l-ebda grupp" (`0`, vojt, `none`, `unknown`, `null` jew `-1`) jinpinġa griż.
 
-Il-[Lista tat-timijiet](teams-list.md) turi l-kulur tas-sħana tat-tim ta' kull grupp bħala l-kaxxa tiegħu f'din il-modalità. Meta tneħħi grupp, il-kuluri tal-gruppi l-oħra jibqgħu fejn kienu: it-tonalitajiet ġejjin mill-għadd sħiħ tal-gruppi, mhux minn dak li hu mixgħul, sabiex żewġ stampi jibqgħu jitqabblu.
+Il-kontrolli l-oħra kollha tas-sħana - forma, saturazzjoni, rispons, sħana minima, fond, culling - jaħdmu kif fi [Sħana](heat.md).
 
-## Il-paletta {#the-palette}
+Il-[Lista tat-timijiet](teams-list.md) turi l-kulur tas-sħana tat-tim ta' kull grupp bħala l-kwadratin tiegħu f'dan il-mod. Meta taħbi grupp, kull grupp ieħor jibqa' bil-kulur tiegħu fejn kien: it-toni jiġu mill-għadd sħiħ tal-gruppi, mhux minn dak li hu mixgħul, għalhekk żewġ stampi jibqgħu jitqabblu.
+
+## Għall-iżviluppaturi {#for-developers}
+
+### Il-paletta {#the-palette}
 
 Minn [`colors.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors.ts):
 
-- Il-kuluri jgħixu fuq il-pjan tal-kulur **Oklab** f'dawl fiss (0.7) u kroma fissa (0.115), sabiex kull grupp ikun daqstant ieħor ċar u grupp aħmar ma jidhirx iktar sħun minn wieħed blu.
-- B'*n* gruppi, iċ-ċirku tat-tonalitajiet jinqasam f'*n* partijiet ugwali, u grupp *i* jieħu ċ-**ċentru** tal-parti tiegħu, `(i + 0.5) / n` tal-ġir. Kull żewġ gruppi huma mbiegħda kemm jippermetti l-għadd, u l-oppost jibqa' oppost għal kwalunkwe għadd.
-- Jintużaw **16** tonalitajiet differenti biss fil-massimu. B'iktar gruppi, l-ID jitqiegħdu bl-iterazzjoni tal-qsim bi-nofs (ID bil-bit maqlub: 0, ½, ¼, ¾, ⅛, …) sabiex ID ġirien ma jaqsmux tonalità; gruppi wara s-16 bilfors jaqsmu.
-- Grupp li t-tikketta tiegħu tfisser "l-ebda grupp" - `0`, vojt, `none`, `unknown`, `null` jew `-1`, mingħajr ma t-tip tal-ittri jkun importanti - jinżel **griż newtrali** minflok ma jieħu biċċa miċ-ċirku. Biss l-ewwel tikketta bħal din fil-lista tal-gruppi tiġi ttrattata b'dan il-mod.
+- Il-kuluri jgħixu fuq il-pjan **Oklab** f'dawl fiss (0.7) u chroma fissa (0.115), għalhekk kull grupp huwa daqstant brillanti u grupp aħmar ma jidhirx sħun aktar minn wieħed blu.
+- B'*n* gruppi, iċ-ċirku tat-ton jinqasam f'*n* partijiet ugwali u l-grupp *i* jieħu ċ-**ċentru** tal-parti tiegħu, `(i + 0.5) / n` ta' dawra. Kull tnejn mill-gruppi huma imbiegħda kemm jippermetti l-għadd, u l-oppost jibqa' oppost f'kull għadd.
+- Jintużaw **16** ton differenti biss lil hinn minn hekk. Bi tnejn aktar mill-gruppi, l-ID-ijiet jitqiegħdu bi tnaqqis ripetut (ID-ijiet bit-reverse: 0, ½, ¼, ¾, ⅛, …) sabiex l-ID-ijiet ġirien ma jaqsmux ton; il-gruppi ta' wara s-16 neċessarjament jaqsmu.
+- Grupp li t-tikketta tiegħu tfisser "l-ebda grupp" - `0`, vojt, `none`, `unknown`, `null` jew `-1`, mingħajr ma tagħmel attenzjoni għall-kbar u ż-żgħar - jinpinġa **griż newtrali** minflok ma jieħu biċċa miċ-ċirku. Biss l-ewwel tikketta bħal din fil-lista tal-gruppi tittratta b'dan il-mod.
 
-Il-Separazzjoni bażika hija 1.4 u mhux 1, għax fuq 1, taħlita ta' ħames tonalitajiet mqassma b'mod ugwali *hija* griża: korretta u mhux qarrieqa. Ftit iktar minn 1 iżomm il-każijiet ta' ugwaljanza onesti filwaqt li jagħmel qsim ta' 60/40 viżibbli.
+Is-separazzjoni default hija 1.4 u mhux 1 għax, fuq 1, taħlita ta' ħames toni mqassma b'mod ugwali *hija* griża: korretta u mhux leġġibbli. Ftit aktar minn 1 iżomm il-pariġġi onesti filwaqt li tagħmel qsim ta' 60/40 viżibbli.
 
-## Kif taħdem {#how-it-works}
+### Kif taħdem {#how-it-works}
 
-Il-mira tas-sħana f'din il-modalità għandha erba' kanali. Kull sprite iżid id-densità tiegħu *v* mal-ewwel kanal u *v* × il-koordinati *a* u *b* tal-Oklab tal-grupp mat-tieni u t-tielet kanal. Waqt il-kompożizzjoni, it-taħlita tal-pixel hija l-medja mpiżża bid-densità: *a* = G / R, *b* = B / R, imkabbra bil-separazzjoni tal-kuluri u kkonvertita għal sRGB fid-dawl tal-paletta. Il-qsim bid-densità akkumulata iżomm it-tonalità indipendenti minn kemm hemm data, u dan hu l-għala kull kontroll tad-densità jibqa' jaġixxi fuq l-opaċità biss.
+Target tas-sħana għandu erba' kanali f'dan il-mod. Kull sprite iżid id-densità tiegħu *v* mal-ewwel kanal u *v* × il-koordinati Oklab *a* u *b* tal-grupp mat-tieni u t-tielet. Fil-ħin tal-composite t-taħlita tal-pixel hija l-medja mpiża bid-densità: *a* = G / R, *b* = B / R, imkabbra bis-separazzjoni tal-kuluri u mqalbla għal sRGB fid-dawl tal-paletta. Il-qsim bid-densità totali miksuba iżomm it-ton indipendenti minn kemm hemm dejta, u dan huwa l-għaliex kull kontroll tad-densità jibqa' jaħdem fuq l-opaċità biss.
 
-Il-mira b'erba' kanali tiswa erba' darbiet il-memorja tal-GPU tal-mira sħana b'kanal wieħed fl-istess riżoluzzjoni.
+Target bi erba' kanali jiswa erba' darbiet il-memorja tal-GPU tat-target tas-sħana b'kanal wieħed fl-istess riżoluzzjoni.

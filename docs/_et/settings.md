@@ -3,75 +3,75 @@ title: "Seaded, ühikud ja klahvid"
 nav_order: 16
 lang: "et"
 source: "settings.md"
-source_hash: "bd1062895abf"
+source_hash: "f25e4cbaf3bb"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Seaded, ühikud ja klahvid
 
-Külgriba ülaosas olevad väikesed juhtnupud muudavad seda, kuidas vaatur sinuga räägib: keelt, ühikuid (meetrid või jalad, km/h või sõlmed) ja abirežiimi, mis selgitab värve. Sinu valikud jäävad brauserisse meelde.
+Külgriba ülaosas olevad väikesed juhtnupud muudavad seda, kuidas vaataja sinuga räägib: keelt, ühikuid (meetrid või jalad, km/h või sõlmed) ning abirežiimi, mis selgitab värve. Sinu valikud jäetakse meelde brauserisse.
 
 ## Päis {#the-header}
 
 Külgriba ülaosas:
 
-| Juhtnupp | Mis see teeb |
+| Juhtelement | Mida see teeb |
 |---|---|
 | **?** | Abirežiim: mida iga värv tähendab (samuti `?` või `F1`) |
-| menüü **Üksused** | Meetriline, Imperiaalne, Lennundus või Merendus |
-| nupp **...** nupu **Üksused** kõrval | Avab "Vali igale suurusele ühik": üks rippmenüü iga suuruse kohta |
-| menüü **Keel** | Vaaturi keel: [40 keelt](languages.md) või brauseri oma |
+| Menüü **Ühikud** | Meetriline, Impeerium, Lennundus või Meremiil |
+| Nupp **...** nupu **Ühikud** kõrval | Avab "Vali ühik igale suurusele": üks rippmenüü iga suuruse kohta |
+| Menüü **Keel** | Vaataja keel: [40 keelt](languages.md) või brauseri oma |
 
-![Päis koos menüüga Üksused ja ühikut-suuruse kohta akna avatuna](../assets/img/et/settings-units.webp)
+![Päis, kus on avatud menüü Ühikud ja ühiku valimise aken iga suuruse kohta](../assets/img/et/settings-units.webp)
 
-Kasti sisestatud numbrites võib kasutada nii punkti kui koma (`0.35` või `0,35`). Vaatur loeb mõlemad ja näitab numbreid nii, nagu vaaturi keel neid kirjutab.
+Kasti sisestatud arvud võivad kasutada kas punkti või koma (`0.35` või `0,35`). Vaataja loeb mõlemat ja näitab arve nii, nagu vaataja keel neid kirjutab.
 
 ## Ühikud {#units}
 
-1. Vali eelseadistus menüüst **Üksused**. Kõik suurused lülituvad koos.
-2. Ühe suuruse muutmiseks klõpsa selle kõrval olevat nuppu **...** ja vali selle suuruse ühik. Menüüs ilmub pärast eelseadistust `*`.
-3. Suurus, mida sa ei ole seadnud, järgib eelseadistust. Vali "Nagu eelseades", et tagasi minna.
+1. Vali eelseadistus menüüst **Ühikud**. Kõik suurused vahetuvad koos.
+2. Ühe suuruse muutmiseks klõpsa selle kõrval olevat nuppu **...** ja vali sellele ühik. Menüü näitab siis pärast eelseadistust `*`.
+3. Suurus, mida sa ei seadnud, järgib eelseadistust. Vali "Eelseadistuse järgi", et naasta.
 
-| Suurus | Meetriline (vaikimisi) | Imperiaalne | Lennundus | Merendus |
+| Suurus | Meetriline (vaikimisi) | Impeerium | Lennundus | Meremiil |
 |---|---|---|---|---|
 | Kaugus | km | mi | NM | NM |
 | Kõrgus, pikkus | m | ft | ft | m |
 | Kiirus | km/h | mph | kt | kt |
-| Tõusu-/laskumiskiirus | m/s | ft/min | ft/min | m/s |
+| Vertikaalkiirus | m/s | ft/min | ft/min | m/s |
 | Temperatuur | °C | °F | °C | °C |
 | Rõhk | hPa | inHg | hPa | hPa |
 | Mass, kütus | kg, l | lb, gal | lb, gal | t, m³ |
 | Nurk | kraadid | kraadid | kraadid | kraadid |
 
-Muud ühikud, mida võib ühe suuruse jaoks valida: kaugus km, mi, NM; kiirus km/h, m/s, kt, mph; tõusu-/laskumiskiirus m/s, ft/min, m/min; temperatuur °C, °F, K; rõhk hPa, inHg, mmHg, psi; mass kg, lb, t; nurk kraadid või NATO mil'id (6400 ringi kohta). Ühikud on vaaturis kõikjal ühesugused: sildid, kaardid, graafikud, statistika.
+Teised ühikud, mida saab ühe suuruse jaoks valida: kaugus km, mi, NM; kiirus km/h, m/s, kt, mph; vertikaalkiirus m/s, ft/min, m/min; temperatuur °C, °F, K; rõhk hPa, inHg, mmHg, psi; mass kg, lb, t; nurk kraadid või NATO milli (6400 ringi kohta). Ühikud on vaatajas kõikjal ühesugused: sildid, kaardid, graafikud, statistika.
 
 ## Abirežiim {#help-mode}
 
 ![Abirežiim: mida värvid tähendavad](../assets/img/et/help.webp)
 
-Vajuta `?` või `F1` või klõpsa nuppu **?**. Ilmub *Mida värvid tähendavad*: legendid 3D-vaate, soojusskaalade, võistkondade värvide, taseme värvide, paneelide olekuvärvide, matši paneeli ja võidusõidu vaate jaoks. See jääb sisse, kuni sa selle välja lülitad. Matši vahekaardil selgitab see ka matši paneeli värve.
+Vajuta `?` või `F1` või klõpsa nuppu **?**. See näitab *Mida värvid tähendavad*: legendid 3D vaatele, soojuse skaalad, võistkondade värvid, taseme värvid, paneelide olekuvärvid, vahekaardi Matš paneel ja sõidu vaade. See jääb sisse, kuni lülitad selle välja. Vahekaardil Matš selgitab see ka mängupaneeli värve.
 
-![Abirežiim Matši vahekaardil](../assets/img/et/settings-help-match.webp)
+![Abirežiim vahekaardil Matš](../assets/img/et/settings-help-match.webp)
 
-## Mida brauser meelde jätab {#what-the-browser-remembers}
+## Mida brauser mäletab {#what-the-browser-remembers}
 
-Need seaded jäävad sinu brauserisse külastuste vahel (midagi ei saadeta kuhugi):
+Need seaded jäetakse sinu brauserisse külastuste vahel (midagi ei saadeta kuhugi):
 
 - keel, ühikud ja abirežiim;
-- kordusel kujude, tähiste, siltide, kaamera ja taktikalise kuva seaded;
-- esitluskiirus ja peegeldamine;
-- järjehoidjad salvestuse kohta, mahud andmestiku kohta, objektikihid;
-- välise tehisintellekti seaded (võti ainult siis, kui linnukese *Jäta meelde* märgid).
+- kordusvaate kujude, sümbolite, siltide, kaamera ja taktikalise kuvamise seaded;
+- taasesituse kiirus ja peegeldus;
+- järjehoidjad salvestise kohta, helitugevused andmestiku kohta, eesmärgikihid;
+- välise tehisintellekti seaded (võti ainult siis, kui märgid *Jäta meelde*).
 
-Soojuse seaded, filtrid ja režiim algavad iga laadimisega uuesti. Täielik, genereeritud loend: [Salvestatud seaded](ref-settings-storage.md).
+Soojuse seaded, filtrid ja režiim alustavad igal laadimisel uuesti. Täielik genereeritud loend: [Salvestatud seaded](ref-settings-storage.md).
 
-## Klahvid, mida vaatur hoiab brauserist {#keys-the-viewer-keeps-from-the-browser}
+## Klahvid, mida vaataja hoiab brauserist {#keys-the-viewer-keeps-from-the-browser}
 
-Suure andmestikuga seanss laadib aega, seega hoiab vaatur brauserit juhusliku kaotamise eest:
+Suurte andmetega seanss laaditakse aega, seega hoiab vaataja brauserit selle kogemata ära viskamast:
 
 - `Ctrl`/`Cmd` + tähed, mis trükiksid, salvestaksid, avaksid, laadiksid uuesti, sulgeksid või avaksid uusi aknaid, ei tee midagi väljaspool tekstikaste; `F1`, `F3`, `F5`, `F6` ja `F7` ei tee midagi.
-- Vahekaardi sulgemine või uuesti laadimine, kui andmed või tase on laaditud, küsib enne.
-- Täisekraanil lukustab vaatur oma kasutatavad klahvid (W, T, N, S, R, P, Q, Esc), et brauser neid ei võtaks.
+- Andmete või taseme laadimisega kaardi sulgemine või uuesti laadimine küsib kõigepealt.
+- Täisekraanil lukustab vaataja klahvid, mida ta kasutab (W, T, N, S, R, P, Q, Esc), nii et brauser neid ei võta.
 
-Täielik loend: [Brauseri klahvid](ref-browser-keys.md). Kõik vaaturi enda klahvid: [Klaviatuuri ja hiire viide](keyboard-reference.md).
+Täpne loend: [Brauseri klahvid](ref-browser-keys.md). Kõik vaataja enda klahvid: [Klaviatuuri ja hiire viide](keyboard-reference.md).

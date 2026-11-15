@@ -3,37 +3,37 @@ title: "Socruithe, aonaid agus eochracha"
 nav_order: 16
 lang: "ga"
 source: "settings.md"
-source_hash: "bd1062895abf"
+source_hash: "f25e4cbaf3bb"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Socruithe, aonaid agus eochracha
 
-Athraíonn na rialuithe beaga ag barr an bharra taoibh an bealach a labhraíonn an t-amharcóir leat: an teanga, na haonaid (méadair nó troithe, km/h nó cnota) agus mód cabhrach a mhíníonn na dathanna. Stóráiltear do roghanna i do bhrabhsálaí.
+Athraíonn na rialuithe beaga ag barr an bharra taobh conas a labhraíonn an léirsitheoir leat: an teanga, na haonaid (méadair nó troithe, km/h nó cnóid) agus mód cabhrach a mhíníonn na dathanna. Coinnítear do roghanna i do bhrabhsálaí.
 
-## Ceannlíne {#the-header}
+## An ceann {#the-header}
 
-Ag barr an bharra taoibh:
+Ag barr an bharra taobh:
 
-| Rialú | Cad a dhéanann sé |
+| Rialaithe | Cad a dhéanann sé |
 |---|---|
-| **?** | Mód cabhrach: cad a chiallaíonn gach dath (chomh maith le `?` nó `F1`) |
-| Roghchlár **Aonaid** | Méadrach, Impiriúil, Eitlíochta nó Muirí |
-| Cnaipe **...** taobh le **Aonaid** | Osclaíonn "Roghnaigh aonad do gach méid": liosta anuas amháin do gach cainníocht |
-| Roghchlár **Teanga** | Teanga an amharcóra: [40 teanga](languages.md), nó teanga an bhrabhsálaí |
+| **?** | Mód cabhrach: cad a chiallaíonn gach dath (freisin `?` nó `F1`) |
+| Roghchlár **Aonaid** | Méadrach, Impiriúil, Aviation nó Cnóid |
+| Cnaipe **...** taobh le **Aonaid** | Osclaíonn "Roghnaigh aonad do gach méid": liosta anuas amháin in aghaidh an mhéid |
+| Roghchlár **Teanga** | Teanga an léirsitheora: [40 teanga](languages.md), nó teanga an bhrabhsálaí |
 
-![Ceannlíne leis an roghchlár Aonaid agus an fhuinneog aonad-in-aghaidh-cainníochta oscailte](../assets/img/ga/settings-units.webp)
+![An ceann leis an roghchlár Aonaid agus an fhuinneog aonad in aghaidh an mhéid oscailte](../assets/img/ga/settings-units.webp)
 
-Is féidir uimhreacha a chlóscríobhann tú i mbosca pointe nó camóg a úsáid (`0.35` nó `0,35`). Léann an t-amharcóir an dá cheann agus taispeánann sé uimhreacha mar a scríobhann teanga an amharcóra iad.
+Is féidir leis na huimhreacha a chlóscríobhann tú i mbosca pointe nó camóg a úsáid (`0.35` nó `0,35`). Léann an léirsitheoir an dá cheann agus taispeánann sé uimhreacha mar a scríobhann teanga an léirsitheora iad.
 
 ## Aonaid {#units}
 
-1. Roghnaigh réamhshocrú sa roghchlár **Aonaid**. Athraíonn gach cainníocht le chéile.
-2. Chun cainníocht amháin a athrú, cliceáil ar an gcnaipe **...** taobh léi agus roghnaigh aonad di. Ansin léiríonn an roghchlár `*` tar éis an réamhshocraithe.
-3. Leanann cainníocht nach ndearna tú socrú di an réamhshocrú. Roghnaigh "De réir an réamhshocraithe" chun filleadh air.
+1. Roghnaigh réamhshocrú sa roghchlár **Aonaid**. Athraíonn gach méid le chéile.
+2. Chun méid amháin a athrú, cliceáil ar an gcnaipe **...** taobh leis agus roghnaigh aonad don mhéid sin. Taispeánann an roghchlár `*` i ndiaidh an réamhshocraithe ansin.
+3. Leanann méid nach socraíodh an réamhshocrú. Roghnaigh "Mar an réamhshocrú" chun filleadh.
 
-| Cainníocht | Méadrach (réamhshocrú) | Impiriúil | Eitlíochta | Muirí |
+| Méid | Méadrach (réamhshocrú) | Impiriúil | Aviation | Cnóid |
 |---|---|---|---|---|
 | Fad | km | mi | NM | NM |
 | Airde, fad | m | ft | ft | m |
@@ -44,13 +44,13 @@ Is féidir uimhreacha a chlóscríobhann tú i mbosca pointe nó camóg a úsái
 | Mais, breosla | kg, l | lb, gal | lb, gal | t, m³ |
 | Uillinn | céimeanna | céimeanna | céimeanna | céimeanna |
 
-Aonaid eile is féidir leat a roghnú do chainníocht amháin: fad km, mi, NM; luas km/h, m/s, kt, mph; luas ingearach m/s, ft/min, m/min; teocht °C, °F, K; brú hPa, inHg, mmHg, psi; mais kg, lb, t; uillinn céimeanna nó milleanna NATO (6400 sa chiorcal). Tá na haonaid mar an gcéanna ar fud an amharcóra: lipéid, cártaí, cairteacha, staitisticí.
+Aonaid eile is féidir leat a roghnú do mhéid amháin: fad km, mi, NM; luas km/h, m/s, kt, mph; luas ingearach m/s, ft/min, m/min; teocht °C, °F, K; brú hPa, inHg, mmHg, psi; mais kg, lb, t; uillinn céimeanna nó mils NATO (6400 sa chiorcal). Tá na haonaid mar an gcéanna i ngach áit sa léirsitheoir: lipéid, cártaí, cairteacha, staitisticí.
 
 ## Mód cabhrach {#help-mode}
 
 ![Mód cabhrach: cad a chiallaíonn na dathanna](../assets/img/ga/help.webp)
 
-Brúigh `?` nó `F1`, nó cliceáil ar an gcnaipe **?**. Taispeánann sé *Cad a chiallaíonn na dathanna*: finscéalta don radharc 3D, na grádáin theasa, dathanna foirne, dathanna an leibhéil, dathanna stádas na bpainéal, painéal an chluiche agus an radharc rása. Fanann sé ar siúl go dtí go múchann tú é. I gcluaisín Cluiche míníonn sé dathanna phainéal an chluiche freisin.
+Brúigh `?` nó `F1`, nó cliceáil ar an gcnaipe **?**. Taispeánann sé *Cad a chiallaíonn na dathanna*: míniúcháin ar an amharc 3D, na grádáin teasa, dathanna foirne, dathanna an leibhéil, dathanna stádais na bpainéal, painéal na meaitseála agus an radharc rása. Fanann sé air go dtí go múchann tú é. Sa chluaisín Cluiche míníonn sé dathanna phainéal na meaitseála freisin.
 
 ![Mód cabhrach sa chluaisín Cluiche](../assets/img/ga/settings-help-match.webp)
 
@@ -59,19 +59,19 @@ Brúigh `?` nó `F1`, nó cliceáil ar an gcnaipe **?**. Taispeánann sé *Cad a
 Coinnítear na socruithe seo i do bhrabhsálaí idir cuairteanna (ní sheoltar aon rud áit ar bith):
 
 - an teanga, na haonaid agus an mód cabhrach;
-- socruithe figiúr, siombail, lipéad, ceamara agus taispeántais taictiúla an athsheinm;
-- luas athsheinm agus scátháin;
-- leabharmharcanna in aghaidh taifeadta, toirteanna in aghaidh tacair sonraí, sraitheanna cuspóra;
-- socruithe AI seachtracha (an eochair amháin mura ticeáil tú *Cuimhnigh*).
+- socruithe taispeána an athsheinm don uimhir figiúr, siombail, lipéad, ceamara agus taispeáin tactaiciúil;
+- luas an athsheinm agus an scátháin;
+- leabharmharcanna in aghaidh an taifeadta, toisí in aghaidh an tacair sonraí, sraitheanna cuspóra;
+- socruithe AI sheachtrach (an eochair amháin mura marcálann tú *Cuimhnigh*).
 
 Tosaíonn socruithe teasa, scagairí agus an mód as an nua le gach lódáil. An liosta iomlán, ginte: [Socruithe stóráilte](ref-settings-storage.md).
 
-## Eochracha a choinníonn an t-amharcóir ón mbrabhsálaí {#keys-the-viewer-keeps-from-the-browser}
+## Eochracha a choinníonn an léirsitheoir ón mbrabhsálaí {#keys-the-viewer-keeps-from-the-browser}
 
-Tógann seisiún le sonraí móra am a lódáil, mar sin cuireann an t-amharcóir cosc ar an mbrabhsálaí é a chaitheamh amach de thimpiste:
+Tógann seisiún le sonraí móra am le lódáil, mar sin cuireann an léirsitheoir cosc ar an mbrabhsálaí é a chaitheamh amach de thimpiste:
 
-- Ní dhéanann `Ctrl`/`Cmd` + litreacha a phriontálann, a shábhálann, a osclaíonn, a athlódálann, a dhúnann nó a osclaíonn fuinneoga nua rud ar bith taobh amuigh de bhoscaí téacs; ní dhéanann `F1`, `F3`, `F5`, `F6` agus `F7` rud ar bith.
-- Fiafraíonn dúnadh nó athlódáil an chluaisín ina bhfuil sonraí nó leibhéal lódáilte ar dtús.
-- Sa lánscáileán glasálann an t-amharcóir na heochracha a úsáideann sé (W, T, N, S, R, P, Q, Esc), ionas nach nglacann an brabhsálaí iad.
+- Ní dhéanann `Ctrl`/`Cmd` + litreacha a bheadh priontáilte, sábháilte, oscailte, athlódáilte, dúnta nó oscailte nua aon rud lasmuigh de bhoscaí téacs; ní dhéanann `F1`, `F3`, `F5`, `F6` agus `F7` aon rud.
+- Nuair a dhúntar nó a athlódáiltear an cluaisín agus sonraí nó leibhéal lódáilte, iarrtar cead ar dtús.
+- Sa lánscáileán glasálann an léirsitheoir na heochracha a úsáideann sé (W, T, N, S, R, P, Q, Esc), ionas nach nglacann an brabhsálaí iad.
 
-An liosta cruinn: [Eochracha brabhsálaí](ref-browser-keys.md). Eochracha uile an amharcóra féin: [Tagairt don méarchlár agus don luch](keyboard-reference.md).
+An liosta cruinn: [Eochracha brabhsálaí](ref-browser-keys.md). Eochracha uile an léirsitheora féin: [Tagairt méarchláir agus luiche](keyboard-reference.md).

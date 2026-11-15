@@ -4,82 +4,81 @@ nav_order: 11
 has_children: true
 lang: "lb"
 source: "race-analysis.md"
-source_hash: "63d7f4b85872"
+source_hash: "ab0531fa7bbd"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Course-Analys
 
-Dir hutt déiselwecht Strecke zweemol gefuer. De Tab **Course-Analys** spillt béid Fuerten zesumme am 3D of, weist, wou eng Ronn méi lues war, a seet Iech firwat. Nach keng Ronnen? Drëckt **Demo-Ronnen**.
+Dir sidd dee selwechte Strecke zweemol gefuer. De Tab **Course-Analys** spillt béid Fahrten zesummen a 3D, weist, wou eng Ronn méi lues war, a seet Iech firwat. Nach keng Ronnen do? Dréckt **Demo-Ronnen**.
 
-![De Tab Course-Analys mat Demo-Ronnen: d'Säitelleescht mat Ronnen a Wou et ze verbesseren ass, d'Autoen op der Strecke, d'Diagrammer ënner der Usiicht](../assets/img/lb/race-analysis-overview.webp)
+![De Tab Course-Analys mat Demo-Ronnen: d'Säitelëscht mat Ronnen a Wou et ze verbesseren ass, d'Autoe op der Strecke, d'Diagrammer ënner der Usiicht](../assets/img/lb/race-analysis-overview.webp)
 
-De Tab vergläicht zwou oder méi Ronnen vun engem Kurs. Hie deelt sech mat der Heatmap d'Zeechenfläch, d'Kamera an de gelueden Streckemodell (**Hannergrond / Level**); alles anerescht ass säin eegent: seng eegen Säitelleescht an seng eegen Leescht ënner der Usiicht. Wierder wéi *Ronn*, *Referenz* an *Scheitelpunkt* stinn am [Glossar](glossary.md).
+De Tab vergläicht zwou oder méi Ronnen vun enger Strecke. Hien deelt sech de Canvas, d'Kamera an de gelueden Streckenmodell (**Hannergrond / Level**) mat dem Heatmap; alles anescht ass eegen: seng eege Säitelëscht an eng eege Leist ënner der Usiicht. Wierder wéi *Ronn*, *Referenz* an *Scheitelpunkt* stinn am [Glossar](glossary.md).
 
 Dës Säit ass d'Kaart vum Tab. All Deel huet seng eege Säit:
 
-| Säit | Wat se deckt |
+| Säit | Wat se abegräift |
 |---|---|
-| [Ronnen lueden](race-loading-laps.md) | all Dateiformat, Dossieren a Strecken, Autosnimm, Demo-Ronnen, d'Ronnelëscht, Referenz an Fokus |
-| [Replay an d'3D-Szen](race-replay-and-scene.md) | d'Transportleescht, déi dräi Replay-Modi, d'Autoen opstellen, d'Verfolgungskamera, Linnen, Kaarten, Autoen, Beschrëftungen, gespigelt Welten |
-| [Diagrammer an d'HUD](race-charts-and-hud.md) | d'Distanzdiagrammer, d'Diagrammwiel, Hoveren a Zoom, d'Autokaarten, d'Kanaltabell |
-| [Autokontroll-Evenementer](race-control-events.md) | Bremsen blockéieren, Radspin, Iwwersteierung, Dréien, Ënnersteierung, Treffer, Crashen, ABS/TC, Handbremse, Loft - wéi jeds fonnt gëtt, mat all Schwell |
-| [Kurv-fir-Kurv-Analys](race-corner-analysis.md) | Ausriichtung no Distanz, Kurven a Segmenter, d'Zäitrechnung vun enger Kurv, all Ursaach a wéi d'Reiefolleg, an där se geprüwwt ginn, d'Linnenform an de Rot |
-| [Autosprofiler an Verglach](race-car-profiles.md) | wat all Auto kann, gemoosse aus senge Ronnen; *Autoen am Verglach*; wat d'Auto an all Kurv entscheet |
-| [Streckestatistik](race-course-statistics.md) | vill Ronnen vun engem Kurs: Feeler pro Kurv an no Aart, d'Feelerkaart, den Heatmap-Export, d'Leeschtungsgrenzen |
-| [Rennanalys: d'Method](race-analytics.md) | d'Fuerschung hannert de Reegelen, mat Quellen |
-| [Aner Rennspiller](other-games.md) | wat den Viewer mat Ronnen vun all Spill mécht: Schlupp an Drift, déi erausgerechent ginn, wou e Spill se net schéckt, gespigelt Welten, d'Extra-Kanäl |
+| [Ronnen lueden](race-loading-laps.md) | all Dateiformat, Dossiere a Strecken, Autonimm, Demo-Ronnen, d'Ronnlëscht, Referenz an Fokus |
+| [Replay an d'3D-Szen](race-replay-and-scene.md) | d'Transportleist, déi dräi Replay-Modi, d'Autoen nieft eneen stellen, d'Verfolgungskamera, Linnen, Kaarten, Autoen, Beschrëftungen, gespigelt Welten |
+| [Diagrammer an d'HUD](race-charts-and-hud.md) | d'Distanzdiagrammer, d'Graphe-Auswiel, Hovern a Zoom, d'Autokaarten, d'Kanaltabell |
+| [Autokontroll-Evenementer](race-control-events.md) | Blockéiere, Radspin, Iwwersteieren, Dréiungen, Ënnersteieren, Treffer, Crashen, ABS/TC, Handbrems, Loft - wéi all erkannt gëtt, mat jiddwer Schwell |
+| [Kurv-fir-Kurv-Analys](race-corner-analysis.md) | Ausriichtung no Distanz, Kuerwen an Segmenter, d'Zäitrechnung vun enger Kurv, all Ursaach an d'Rei, an där se probéiert ginn, d'Linnenform an de Rot |
+| [Autosprofiler an Verglach](race-car-profiles.md) | wat all Auto kann, gemooss aus senge Ronnen; *Autoen am Verglach*; wat de Auto an all Kurv entscheet |
+| [Streckestatistik](race-course-statistics.md) | vill Ronnen vun enger Strecke: Feeler pro Kurv an pro Aart, d'Feelerkaart, den Heatmap-Export, d'Leeschtungsgrenzen |
+| [Rennanalys: d'Method](race-analytics.md) | d'Fuerschung hannert de Reegelen, mat de Quellen |
+| [Aner Rennspiller](other-games.md) | wat de Viewer mat Ronnen aus all Spill mécht: Rutsch a Drift, wou e Spill se net schécken, gespigelt Welten, déi zousätzlech Kanäl |
 
 ## D'Usiicht {#the-screen}
 
-**Säitelleescht**, vun uewen no ënnen (Sektiounen kënnen ageklappt ginn):
+**Säitelëscht**, vun uewen no ënnen (d'Sektiounen kënnen ageklappt ginn):
 
 1. **Ronnen** - lueden, Lëscht, weisen/verstoppen, Referenz, Fokus, Verfolgung.
    Kuckt [Ronnen lueden](race-loading-laps.md).
-2. **Streckestatistik** - nëmmen ab dräi gelueden Ronnen.
+2. **Streckestatistik** - nëmmen vun dräi gelueden Ronnen un.
    Kuckt [Streckestatistik](race-course-statistics.md).
-3. **Wou et ze verbesseren ass** - d'Resultater vun der fokusséierter Ronn, Kurv fir Kurv.
+3. **Wou et ze verbesseren ass** - d'Ergebnisser vun der fokusséierter Ronn, Kurv fir Kurv.
    Kuckt [Kurv-fir-Kurv-Analys](race-corner-analysis.md).
-4. **Kurv fir Kurv** (oder *Kurv fir Kurv - Klass X*, wann et méi Klassen sinn) - déi schnellst Ronn duerch all Kurv an hir Linn. Gewise mat zwou oder méi Ronnen.
-5. **Autokontroll** - d'Bremsblockaden, Rutschen, Drécken a Treffer vun der fokusséierter Ronn.
+4. **Kurv fir Kurv** (oder *Kurv fir Kurv - Klass X*, wann e puer Klassen do sinn) - déi schnellst Ronn duerch all Kurv an hir Linn. Gewisen ab zwou oder méi Ronnen.
+5. **Autokontroll** - d'Blockéiere, d'Rutschen, d'Iwwersteieren an d'Treffer vun der fokusséierter Ronn.
    Kuckt [Autokontroll-Evenementer](race-control-events.md).
-6. **Autoen am Verglach** (oder **Den Auto** mat engem eenzege Auto) - kuckt
-   [Autosprofiler an Verglach](race-car-profiles.md).
-7. **Usiicht** - wéi eng Kaart op d'Strecke gemoolt gëtt an wat gezeechent gëtt.
+6. **Autoen am Verglach** (oder **Den Auto**, wann nëmmen ee Auto do ass) - kuckt [Autosprofiler an Verglach](race-car-profiles.md).
+7. **Usiicht** - wéi eng Kaart op der Strecke gemoolt gëtt an wat gezeechent gëtt.
    Kuckt [Replay an d'3D-Szen](race-replay-and-scene.md).
-8. D'gedeelte Panelen **Level** an **Kamera & Zeen** (Streckemodell, Achsen-Ëmkehrung, Kamera) - mat der Heatmap a mat [Kamera](camera.md) dokumentéiert.
+8. D'gemeinsam Panelen **Level** an **Kamera & Zeen** (Streckemodell, Achsen-Ëmkéiere, Kamera) - si sinn mam Heatmap an der [Kamera](camera.md) beschriwwen.
 
-**D'Usiicht** weist d'Strecke, d'gefuerene Linnen, d'Kaart, d'Autoen, Beschrëftungen op der Strecke festgemaach, an bis zu sechs Autokaarten an der oberer lénker Eck (kuckt [Diagrammer an d'HUD](race-charts-and-hud.md)). Ouni gelueden Ronnen seet se "No laps loaded - Drop two or more lap files here, or load the demo laps from the sidebar." (Keng Ronnen gelueden - zéckt zwou oder méi Ronnedateien hei rëms, oder lued d'Demo-Ronnen aus der Säitelleescht.)
+**D'Usiicht** weist d'Strecke, d'gefuer Linnen, d'Kaart, d'Autoen, Beschrëftungen, déi un der Strecke festgemaach sinn, an bis zu sechs Autokaarten uewe lénks (kuckt [Diagrammer an d'HUD](race-charts-and-hud.md)). Ouni gelueden Ronnen steet do "Keng Ronnen gelueden - zitt zwou oder méi Ronnedateien hei eran, oder lued d'Demo-Ronnen aus der Säitelëscht."
 
-**D'Leescht ënner der Usiicht** hält d'Replay-Transport an, wann se net verstoppt ass, d'Distanzdiagrammer.
+**D'Leist ënner der Usiicht** hält d'Replay-Transportleist an, wann se net verstoppt ass, d'Distanzdiagrammer.
 
-## Schnellen Ufank {#quick-start}
+## Schnellstart {#quick-start}
 
-1. Maacht de Tab **Course-Analys** op (nieft **Heatmap** uewen an der Säitelleescht).
-2. Kritt Ronnen eran. Drëckt **Demo-Ronnen**, fir ze gesinn, wat de Tab mat dräi erfonnte Ronnen mécht. Fir Är eege Ronnen nëmmen, nëmmen se als éischt opnee ([Dateiformater a Rekorder](race-loading-laps.md#file-formats)), da drëckt **Ronnefichiere lueden…** oder **Dossier…**, oder werft Dateien oder Dossieren op d'Usiicht.
-3. D'schnellst komplett Ronn gëtt d'Referenz; d'lues-ste aner Ronn ass fokusséiert. Klickt op all Ronn an der Lëscht, fir se ze fokusséieren; ★ mécht eng Ronn zur Referenz.
-4. Liest **Wou et ze verbesseren ass**. Klickt op e Resultat: d'Autoen ginn 40 m virun et opgestallt, d'Kamera riicht et aus, de Replay spillt doduerch, an d'Miessunge gi op.
-5. Hovert iwwer d'Diagrammer, fir all Auto op deen Meter ze réckelen; Shift+Klick stellt se dort op.
+1. Maacht den Tab **Course-Analys** op (nieft **Heatmap** uewen an der Säitelëscht).
+2. Kritt Ronnen erbäi. Dréckt **Demo-Ronnen**, fir ze gesinn, wat de Tab mat dräi erfonnen Ronnen mécht. Fir Är eege Ronnen nëmmen: nëmmen se virdrun opzeechnen ([Dateiformater an Rekorder](race-loading-laps.md#file-formats)), dann dréckt **Ronnefichiere lueden…** oder **Dossier…**, oder zitt Dateien oder Dossiere op d'Usiicht.
+3. D'schnellst vollstänneg Ronn gëtt d'Referenz; d'lues Ronn vun den anere gëtt fokusséiert. Klickt op all Ronn an der Lëscht, fir se ze fokussen; ★ mécht eng Ronn zur Referenz.
+4. Liest **Wou et ze verbesseren ass**. Klickt op ee Fund: d'Autoen ginn 40 m virdrun nieft eneen gestallt, d'Kamera rahmt en, d'Replay spillt duerch en, an d'Miessunge gi op.
+5. Hovert iwwer d'Diagrammer, fir all Auto op dee Meter ze réckelen; Shift+Klick, fir se do nieft eneen ze stellen.
 
 ## Tastatur {#keyboard}
 
-Wann de Course-Analys-Tab op ass:
+Wann de Tab Course-Analys op ass:
 
 | Tast | Mécht |
 |---|---|
-| **K** | Replay ofspillen / pausen |
-| **Pos1** | Zréck op den Ufank vum Replay |
-| Zifferentasten | näischt (an der Heatmap wiesselen se d'Modi) |
+| **K** | Replay spillen / pausen |
+| **Pos1** (Home) | zréck op den Ufank vum Replay |
+| Zifferentasten | näischt (am Heatmap wiesselen se de Modus) |
 
-Tasten, déi an e Textfeld oder eng Dropdown-Lëscht getippt ginn, ginn ignoréiert. D'Kamera-Tasten funktionéiere wéi bei der Heatmap (**W A S D**, **Space** erop, **Q** erof, **Shift** méi séier, **Alt** méi lues, d'Maus fir ze kucken; all am [Kamera](camera.md)); **F** riicht d'gelueden Ronnen aus (wéi d'Lueden vun Ronnen et mécht).
+Tasten, déi an e Textfeld oder eng Auswiel geschriwwe ginn, ginn ignoréiert. D'Kamera-Tasten funktionéieren wéi am Heatmap (**W A S D**, **Espace** no uewen, **Q** no ënnen, **Shift** méi séier, **Alt** méi lues, d'Moss zum Kucken; alles an [Kamera](camera.md)); **F** rahmt d'gelueden Ronnen (wéi beim Ronnen lueden).
 
 ## Vill Ronnen {#many-laps}
 
-- All gelueden Ronnen ginn analyséiert angezielt; zwou Dotzend brauche eng Sekonn oder zwou.
-- Ab **8** Ronnen (`SHOW_ALL_UP_TO`) ginn derbäi gesat Ronnen nëmmen gezeechent, wann se d'Referenz sinn, d'fokusséiert Ronn, oder déi bescht Ronn an der Klass vun der fokusséierter Ronn. *All weisen* / *Nëmmen déi gekuckt* wiesselen.
-- Ab **10** sichtbare Autoen (`PLAIN_PAST`) ginn d'Ronnen, déi net ugekuckt ginn (net de Fokus, net de verfollegte Auto, net d'Referenz), mat Linnen gezeechent, déi all 6 m op e Punkt ausgedënnt sinn amplaz all 1,5 m, a mat eenfache Autoen.
-- D'Diagrammer zeechnen héchstens **8** Ronnen; den HUD weist héchstens **6** Kaarten.
+- All gelueden Ronnen ginn analyséiert a gezielt; Dosende brauchen eng oder zwou Sekonnen.
+- Iwwer **8** Ronnen (`SHOW_ALL_UP_TO`) ginn derbäigesate Ronnen nëmmen gemoolt, wann se d'Referenz sinn, d'fokusséiert Ronn, oder déi bescht Ronn vun der Klass vun der fokusséierter Ronn. *All weisen* / *Nëmmen déi gekuckten* schalten dat ëm.
+- Iwwer **10** sichtbar Autoen (`PLAIN_PAST`) ginn d'Ronnen, déi net ugekuckt ginn (net de Fokus, d'verfollegt Auto oder d'Referenz), mat Linnen gemoolt, déi op all 6 m ee Punkt gedënnt sinn amplaz op 1,5 m, an d'Autoen eenfach.
+- D'Diagrammer zeechnen héchstens **8** Ronnen; d'HUD weist héchstens **6** Kaarten.
 - D'Streckestatistik erschéngt ab **3** Ronnen.
 
 Detailer: [Streckestatistik](race-course-statistics.md#performance-with-many-laps).
@@ -89,50 +88,50 @@ Detailer: [Streckestatistik](race-course-statistics.md#performance-with-many-lap
 | Astellung | Standard |
 |---|---|
 | Kaart | Zäitkaart |
-| Gefuer Linnen, Autoen, Reifen a Fiederung, Beschrëftungen, Strecke aus den Ronnen | un |
-| All Wäerter op de Kaarten | aus |
+| Gefuer Linnen, Autoen, Pneien & Federung, Beschrëftungen, Strecke aus den Ronnen | un |
+| All Wäerter op den Kaarten | aus |
 | Autogréisst | 1× |
-| Diagrammer | gewise |
-| Replay-Modus | Vun der Linn aus |
+| Diagrammer | gewisen |
+| Replay-Modus | Vun der Linn |
 | Replay-Geschwindegkeet | 1× |
-| Endlosschleif | un |
+| Schleefe | un |
 
-Keng vun dësen Astellungen gëtt gespäichert: wann Dir d'Säit neu lueden, fänkt et mat den Standarde vir. Am Browser bleiwen d'Sprooch an d'Autonimm, déi aus Ronnedateien geléiert goufen (kuckt [Ronnen lueden](race-loading-laps.md#car-names)).
+Keng vun dësen Astellungen gëtt gespäichert; eng Neilueden fänkt bei de Standarden un. Am Browser bleift dat hänke: d'Sprooch, a d'Autonimm, déi aus de Ronnefichieren geléiert goufen (kuckt [Ronnen lueden](race-loading-laps.md#car-names)).
 
-## Fir Entwéckler {#for-developers}
+## Fir d'Entwéckler {#for-developers}
 
 ### Wat geschitt, wann Ronnen gelueden ginn {#what-happens-when-laps-are-loaded}
 
-Jiddereen Mol wann d'Zuel vun de Ronnen, d'Referenz oder d'Sprooch sech ännert, gëtt déi ganz Analyse nei gemaach (`analyse` an
+All Kéier wann d'Zuel vun de Ronnen, d'Referenz oder d'Sprooch sech ännert, gëtt déi ganz Analys nei gemaach (`analyse` an
 [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
 
-1. Ofgeleet Kanäl ginn all Ronn derbäi, wou d'Spill se net schécken: Driftwénkel, Radschlupp aus de Radgeschwindegkeeten, in der Loft, lockeren Buedem, Gierrate ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
+1. Ofgeleet Kanäl gi bei all Ronn derbäi, wou d'Spill se net schécken: Driftwénkel, Radspin aus de Radgeschwindegkeeten, an der Loft, lockere Buedem, Gierrate ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
 2. D'Referenz gëtt gewielt, an all Ronn gëtt op hire Wee projizéiert an all 2 m nei ofgetast ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
-3. Ob d'Welt vum Spill gespigelt ass, gëtt aus den Ronnen erausgeschafft ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
-4. Kurven ginn op der Referenz fonnt a vun enger Bremszon bis zur nächster a Segmenter gruppéiert ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
-5. Pro Auto: seng Hëllecker (Griff, Bremsen, Zuch pro Vitess), säi Profil, seng Reifekurven ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts),
+3. Ob d'Welt vum Spill gespigelt ass, gëtt aus de Ronnen erausgeschafft ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
+4. Kuerwe ginn op der Referenz fonnt an a Segmenter gruppéiert, vun enger Bremszon bis zur nächster ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
+5. Pro Auto: seng Hëllef (Grip, Brems, Zuch pro Geschwindegkeet), säi Profil, seng Reifenkurven ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts),
    [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts),
    [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
-6. Pro Ronn an Segment: wat et gemaach huet (Bremspunkt, lues-ste Punkt, voll Gas, ...) an d'Linn, déi et gefuer huet ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
-7. Pro Ronn: seng Autokontroll-Evenementer, jiddereen géint d'Ronn gestallt, mat där et do verglach gëtt.
-8. Pro Ronn an Segment: d'Zäitrechnung géint seng Vergläichsronn an de Resultat a Wieder.
-9. D'Zäitkaart an d'Ursaachekaart pro Ronn.
+6. Pro Ronn an Segment: wat se gemaach huet (Bremspunkt, lues Punkt, voll Gas, ...) an d'Linn, déi se gefuer huet ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
+7. Pro Ronn: hir Autokontroll-Evenementer, all dovun dorunner gelaagt, mat där Ronn, mat där se do verglach gëtt.
+8. Pro Ronn an Segment: d'Zäitrechnung géint hir Vergläichsronn an d'Ergebnis a Wierder.
+9. D'Zäitkaart an d'Ursaachskaart pro Ronn.
 
-D'Texter ginn an der aktueller Sprooch gemaach; e Sprooch-Wiessel leeft d'Analyse nach eng Kéier (a benennt d'Demo-Ronnen ëm). E Fehler an der Analyse gëtt ënner de **Ronnen**-Knäppchen als Feeler gewisen, an d'Ronnen bleiwen gelueden.
+D'Texter ginn an der aktueller Sprooch gemaach; e Sproochewiessel léisst d'Analys nees lafen (an hëlt d'Demo-Ronnen nei). E Feeler an der Analys gëtt ënner de Knäppercher **Ronnen** als Feeler gewisen, an d'Ronnen bleiwen gelueden.
 
 ### Quelldateien {#source-files}
 
 | Datei | Roll |
 |---|---|
-| `src/race/adapters.ts`, `ibt.ts` | Ronnedateien liesen |
+| `src/race/adapters.ts`, `ibt.ts` | Ronndateien liesen |
 | `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | den Ronn-Typ, d'Benennung, d'Demo-Ronnen |
 | `src/race/derive.ts`, `handedness.ts` | ofgeleet Kanäl, gespigelt Welten |
-| `src/race/align.ts`, `segments.ts`, `line.ts` | d'Distanzachs, d'Kurven, d'Linnen |
-| `src/race/analysis.ts` | d'Kurven verglach, d'Ursaachen, d'Resultater |
-| `src/race/envelope.ts`, `profile.ts` | wat e Auto kann |
+| `src/race/align.ts`, `segments.ts`, `line.ts` | Distanzachs, Kuerwen, Linnen |
+| `src/race/analysis.ts` | Kuerwen verglach, Ursaachen, Ergebnisser |
+| `src/race/envelope.ts`, `profile.ts` | wat een Auto kann |
 | `src/race/control.ts`, `impacts.ts` | Autokontroll, Treffer a Crashen |
 | `src/race/stats.ts` | vill Ronnen |
 | `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | Replay a Zeechnen |
-| `src/race/schema.ts`, `graphs.ts` | d'Kanaltabell, d'Zeilen vun de Diagrammer |
-| `src/ui/race/*` | d'Säitelleescht, d'Diagrammer, den HUD, d'Beschrëftungen |
-| `src/state/raceStore.ts` | den Zoustand vum Tab an d'Replay-Auer |
+| `src/race/schema.ts`, `graphs.ts` | d'Kanaltabell, d'Reien vun de Diagrammer |
+| `src/ui/race/*` | d'Säitelëscht, d'Diagrammer, d'HUD, d'Beschrëftungen |
+| `src/state/raceStore.ts` | de Stand vum Tab an d'Replay-Auer |

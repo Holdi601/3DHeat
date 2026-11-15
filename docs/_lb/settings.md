@@ -3,75 +3,76 @@ title: "Astellungen, Eenheeten a Schlësselen"
 nav_order: 16
 lang: "lb"
 source: "settings.md"
-source_hash: "bd1062895abf"
+source_hash: "f25e4cbaf3bb"
 translated: true
-outdated: true
+outdated: false
 ---
+
 
 # Astellungen, Eenheeten a Schlësselen
 
-Déi kleng Steierunge ganz uewen an der Säitelleescht änneren, wéi den Viewer mat Iech schwätzt: d'Sprooch, d'Eenheeten (Meter oder Fouss, km/h oder Knuewen) an e Hëllefmodus, dee d'Faarwe erkläert. Är Wiele ginn am Browser gemierkt.
+Déi kleng Steierungen uewen an der Säitelëscht änneren, wéi d'Visualisatioun mat Iech schwätzt: d'Sprooch, d'Eenheete (Meter oder Fouss, km/h oder Knuet) an e Hëllefmodus, deen d'Faarwe erkläert. Är Wiele ginn an Ärem Browser gespäichert.
 
-## Den Header {#the-header}
+## De Kapp {#the-header}
 
-Ganz uewen an der Säitelleescht:
+Uewen an der Säitelëscht:
 
-| Steierung | Wat et mécht |
+| Steierung | Wat se mécht |
 |---|---|
-| **?** | Hëllefmodus: wat all Faarf bedeit (och mat `?` oder `F1`) |
-| **Eenheeten**-Menü | Metresch, Imperial, Loftfaart oder Nautesch |
-| **...**-Knäppchen nieft **Eenheeten** | Mécht "Eng Eenheet fir all Gréisst wielen" op: eng Dropdown-Lëscht pro Gréisst |
-| **Sprooch**-Menü | D'Sprooch vum Viewer: [40 Sproochen](languages.md), oder déi vum Browser |
+| **?** | Hëllefmodus: wat all Faarf bedeit (och `?` oder `F1`) |
+| Menü **Eenheeten** | Metresch, Imperial, Loftfaart oder Nautesch |
+| Knäppchen **...** neewent **Eenheeten** | Mécht "Eng Eenheet fir all Gréisst wielen" op: eng Dropdown-Lëscht pro Gréisst |
+| Menü **Sprooch** | D'Sprooch vun der Visualisatioun: [40 Sproochen](languages.md), oder déi vum Browser |
 
-![De Header mam Eenheeten-Menü an dem Fënster Eenheet pro Gréisst opgemaach](../assets/img/lb/settings-units.webp)
+![De Kapp mam Eenheeten-Menü an dem Fënster Eenheet pro Gréisst opgemaach](../assets/img/lb/settings-units.webp)
 
-Zuelen, déi Dir an e Kascht tippt, dierfen en Punkt oder e Komma hunn (`0.35` oder `0,35`). Den Viewer liest béid a weist Zuelen esou, wéi d'Sprooch vum Viewer se schreift.
+Zuelen, déi Dir an eng Box tippt, kënnen e Punkt oder e Komma benotze (`0.35` oder `0,35`). D'Visualisatioun liest béides a weist d'Zuelen, wéi d'Sprooch vun der Visualisatioun se schreift.
 
 ## Eenheeten {#units}
 
-1. Wielt eng Viraschtellung am **Eenheeten**-Menü. All Gréissten wiesselen zesummen.
-2. Fir just eng Gréisst z'änneren, klickt den **...**-Knäppchen nieft där a wielt eng Eenheet fir déi Gréisst. Dann steet e `*` hannert der Viraschtellung am Menü.
+1. Wielt eng Viraschtellung am Menü **Eenheeten**. All Gréissten wiesselen zesummen.
+2. Fir nëmmen eng Gréisst ze änneren, klickt op de Knäppchen **...** neewent se a wielt eng Eenheet dofir. Dono steet e `*` nom Viraschtellung am Menü.
 3. Eng Gréisst, déi Dir net gesat hutt, follegt der Viraschtellung. Wielt "Wéi Viraschtellung", fir zréckzegoen.
 
 | Gréisst | Metresch (Standard) | Imperial | Loftfaart | Nautesch |
 |---|---|---|---|---|
 | Distanz | km | mi | NM | NM |
 | Héicht, Längt | m | ft | ft | m |
-| Vitess | km/h | mph | kt | kt |
-| Vertikal Vitess | m/s | ft/min | ft/min | m/s |
+| Geschwindegkeet | km/h | mph | kt | kt |
+| Vertikal Geschwindegkeet | m/s | ft/min | ft/min | m/s |
 | Temperatur | °C | °F | °C | °C |
 | Drock | hPa | inHg | hPa | hPa |
-| Mass, Sprit | kg, l | lb, gal | lb, gal | t, m³ |
+| Mass, Brennstoff | kg, l | lb, gal | lb, gal | t, m³ |
 | Wénkel | Grad | Grad | Grad | Grad |
 
-Aner Eenheeten, déi Dir fir eng Gréisst wielen kënnt: Distanz km, mi, NM; Vitess km/h, m/s, kt, mph; Vertikal Vitess m/s, ft/min, m/min; Temperatur °C, °F, K; Drock hPa, inHg, mmHg, psi; Mass kg, lb, t; Wénkel Grad oder NATO-Mils (6400 pro Krees). D'Eenheete sinn am ganze Viewer d'selwecht: Beschrëftungen, Kaarten, Diagrammer, Statistiken.
+Aner Eenheeten, déi Dir fir eng eenzeg Gréisst wielen kënnt: Distanz km, mi, NM; Geschwindegkeet km/h, m/s, kt, mph; vertikal Geschwindegkeet m/s, ft/min, m/min; Temperatur °C, °F, K; Drock hPa, inHg, mmHg, psi; Mass kg, lb, t; Wénkel Grad oder NATO-Mils (6400 pro Krees). D'Eenheeten sinn an der ganzer Visualisatioun d'selwecht: Beschrëftungen, Kaarten, Diagrammer, Statistik.
 
 ## Hëllefmodus {#help-mode}
 
 ![Hëllefmodus: wat d'Faarwe bedeiten](../assets/img/lb/help.webp)
 
-Drëckt `?` oder `F1`, oder klickt de **?**-Knäppchen. Et weist *Wat d'Faarwe bedeiten*: Legende fir d'3D-Usiicht, d'Hëtzt-Verlaf, d'Equipenfaarwen, d'Faarwe vum Level, d'Statusfaarwe vun de Panelen, de Match-Panel an d'Rennusiicht. Et bleift un, bis Dir en ausschalt. Am Match-Tab erkläert et och d'Faarwe vum Match-Panel.
+Dréckt `?` oder `F1`, oder klickt de Knäppchen **?**. Et weist *Wat d'Faarwe bedeiten*: Legenden fir d'3D-Ansiicht, d'Hëtzt-Verläf, d'Equipefaarwen, d'Faarwen vum Level, d'Statusfaarwe vun de Panelen, de Matchpanel an d'Rennansiicht. Et bleift un, bis Dir en ausmaacht. Am Tab Match erkläert et och d'Faarwe vum Matchpanel.
 
-![Hëllefmodus am Match-Tab](../assets/img/lb/settings-help-match.webp)
+![Hëllefmodus am Tab Match](../assets/img/lb/settings-help-match.webp)
 
-## Wat de Browser sech mierkt {#what-the-browser-remembers}
+## Wat de Browser sech merkt {#what-the-browser-remembers}
 
-Dës Astellunge bleiwe tëscht de Besuche am Browser (näischt gëtt iwwerall hin geschéckt):
+Dës Astellunge bleiwen an Ärem Browser tëscht de Besuche (näischt gëtt nirgendswou geschéckt):
 
 - d'Sprooch, d'Eenheeten an de Hëllefmodus;
-- d'Replay-Astellunge fir Figuren, Symboler, Beschrëftungen, Kamera an d'taktesch Usiicht;
-- d'Wiedergabegeschwindegkeet an d'Spiegelung;
-- Lieszeechen pro Opnam, Volumen pro Datesaz, d'Schichte vun de Ziler;
-- d'Astellunge vun der extern KI (de Schlëssel nëmmen, wann Dir *Behalen* ukräizt).
+- d'Astellungen vum Replay fir Figuren, Symboler, Beschrëftungen, Kamera an taktesch Ufzeeg;
+- d'Afspillgeschwindegkeet an d'Spiegelung;
+- d'Lieszeechen pro Opnam, d'Volumen pro Datesaz, d'Zieler-Ebenen;
+- d'extern KI-Astellungen (de Schlëssel nëmmen, wann Dir *Merken* ukreest).
 
-D'Hëtzt-Astellunge, d'Filteren an de Modus fänken mat all Lueden vun vir un. D'ganz generéiert Lëscht: [Gespäichert Astellungen](ref-settings-storage.md).
+D'Hëtzt-Astellungen, d'Filter an de Modus fänken mat all Lueden vu vir un. D'ganz generéiert Lëscht: [Gespäichert Astellungen](ref-settings-storage.md).
 
-## Tasten, déi de Viewer vum Browser behält {#keys-the-viewer-keeps-from-the-browser}
+## Schlëssel, déi d'Visualisatioun vum Browser behält {#keys-the-viewer-keeps-from-the-browser}
 
-Eng Sitzung mat grousse Daten brauch Zäit fir ze lueden, dofir hält de Viewer den Browser dovun of, se aus Versehen ewechzeheven:
+Eng Sitzung mat grousse Daten brauch Zäit fir ze lueden, dofir hält d'Visualisatioun de Browser of, se aus Versehen ewechzeginn:
 
-- `Strg`/`Cmd` + Buschtawen, déi drécken, späicheren, opmaachen, neilueden, zoumaachen oder nei Fënsteren opmaachen, maachen ausserhalb vu Textkäschte näischt; `F1`, `F3`, `F5`, `F6` a `F7` maachen näischt.
-- Zoumaachen oder Neilueden vum Tab mat Daten oder engem Level gelueden freet d'éischt.
-- Am Vollbild spären de Viewer d'Tasten, déi hien benotzt (W, T, N, S, R, P, Q, Esc), sou datt de Browser se net iwwerhëlt.
+- `Ctrl`/`Cmd` + Buschtawen, déi drécken, späicheren, opmaachen, neilueden, zoumaachen oder nei Fënstere opmaachen, maachen näischt ausser Textfelder; `F1`, `F3`, `F5`, `F6` a `F7` maachen näischt.
+- Wann Dir de Tab zoumaacht oder neilued, während Daten oder en Level gelueden sinn, frot d'Visualisatioun als Éischt.
+- Am Vollbild spaart d'Visualisatioun d'Tasten, déi se benotzt (W, T, N, S, R, P, Q, Esc), sou datt de Browser se net hëlt.
 
-Déi genau Lëscht: [Browser-Tasten](ref-browser-keys.md). All eege Tasten vum Viewer: [Referenz fir Tastatur a Maus](keyboard-reference.md).
+D'genau Lëscht: [Browser-Schlëssel](ref-browser-keys.md). All Tasten vun der Visualisatioun selwer: [Tastatur- a Mausreferenz](keyboard-reference.md).

@@ -4,132 +4,135 @@ nav_order: 11
 has_children: true
 lang: "mt"
 source: "race-analysis.md"
-source_hash: "63d7f4b85872"
+source_hash: "ab0531fa7bbd"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Analiżi tat-tellieqa
 
-Int suqt l-istess kors darbtejn. It-tab **Analiżi tat-tellieqa** iħaddem iż-żewġ sewqiet flimkien fit-3D, juri fejn ġiro wieħed kien iktar bil-mod u jgħidlek għaliex. Ma għandekx ġirjiet għadhom? Agħfas **Dawriet demo**.
+Int sewwaq l-istess traċċa darbtejn. It-tab **Analiżi tat-tellieqa** iħaddem iż-żewġ sewqiet flimkien fi 3D, juri fejn dawra waħda kienet aktar bil-mod u jgħidlek għalfejn. Ma għandekx dawriet għadu? Agħfas **Dawriet demo**.
 
-![It-tab Analiżi tat-tellieqa b'dawriet demo: is-sidebar bi Ġirjiet u Fejn titjieb, il-karozzi fuq il-kors, il-grafiċi taħt il-veduta](../assets/img/mt/race-analysis-overview.webp)
+![It-tab Analiżi tat-tellieqa b'dawriet demo: is-sidebar bid-Dawriet u Fejn titjieb, il-karozzi fuq il-korsa, il-grafiċi taħt il-view](../assets/img/mt/race-analysis-overview.webp)
 
-It-tab iqabbel żewġ ġirjiet jew iktar ta' kors wieħed. Jaqsam il-kanvas, il-kamera u l-mudell tal-kors mgħobbi (**Sfond / livell**) mas-sħana; kollox l-ieħor huwa tiegħu: is-sidebar tiegħu u l-bar tiegħu taħt il-veduta. Kliem bħal *ġiro*, *referenza* u *apex* hemm fil-[glossarju](glossary.md).
+It-tab iqabbel żewġ dawriet jew aktar ta' korsa waħda. Jaqsam il-kanvas, il-kamera u l-mudell tal-korsa mgħobbi (**Sfond / livell**) mal-heatmap; kollox l-ieħor huwa tiegħu: is-sidebar tiegħu u l-barra tiegħu taħt il-view. Kliem bħal *dawra*, *referenza* u *apex* jinsabu fil-[glossarju](glossary.md).
 
-Din il-paġna hi l-mappa tat-tab. Kull parti għandha l-paġna tagħha:
+Din il-paġna hija l-mappa tat-tab. Kull parti għandha l-paġna tagħha:
 
 | Paġna | X'tkopri |
 |---|---|
-| [Tagħbija tal-ġirjiet](race-loading-laps.md) | kull format tal-fajl, folders u korsi, ismijiet tal-karozzi, dawriet demo, il-lista tal-ġirjiet, ir-referenza u l-fokus |
-| [Replay u x-xena 3D](race-replay-and-scene.md) | il-bar tat-trasport, it-tliet modi tar-replay, it-tqegħid tal-karozzi f'linja, il-kamera tal-inseġwiment, linji, mappi, karozzi, tikketti, dinjiet imqallbin |
-| [Grafiċi u l-HUD](race-charts-and-hud.md) | il-grafiċi tal-medda, l-għażla tal-grafiku, il-ħarsa u z-zoom, il-kards tal-karozzi, it-tabella tal-kanali |
-| [Avvenimenti tal-kontroll tal-karozza](race-control-events.md) | lock-ups, wheelspin, oversteer, spins, understeer, laqtiet, tfarfir, ABS/TC, handbrake, ajru - kif jinsab kull wieħed, b'kull limitu |
-| [Analiżi kantunata b'kantunata](race-corner-analysis.md) | l-allinjament skont id-distanza, kantunieri u segmenti, il-kont tal-ħin ta' kantuniera, kull kawża u l-ordni li jiġu ttestjati fiha, il-forma tal-linja u l-parir |
-| [Profili tal-karozzi u tqabbil](race-car-profiles.md) | dak li kull karozza tista' tagħmel, imkejjel mill-ġirjiet tagħha; *Il-karozzi mqabbla*; dak li tiddeċiedi l-karozza f'kull kantuniera |
-| [Statistika tal-korsa](race-course-statistics.md) | ħafna ġirjiet ta' kors wieħed: żbalji għal kull kantuniera u għal kull tip, il-mappa taż-żbalji, l-esportazzjoni tas-sħana, il-limiti tal-prestazzjoni |
-| [Analitika tat-tellieqa: il-metodu](race-analytics.md) | ir-riċerka wara r-regoli, b'sorsi |
-| [Logħob ieħor tat-tellieqa](other-games.md) | x'jagħmel il-viewer bil-ġirjiet minn kull logħba: slip u drift maħduma meta logħba ma tibgħatx dawn, dinjiet imqallbin, il-kanali addizzjonali |
+| [Tagħbija tad-dawriet](race-loading-laps.md) | kull format ta' fajl, folders u korsi, ismijiet tal-karozzi, dawriet demo, il-lista tad-dawriet, ir-referenza u l-fokus |
+| [Replay u x-xena 3D](race-replay-and-scene.md) | il-bar tat-transport, it-tlett modi tar-replay, l-allinjament tal-karozzi, il-kamera tal-inseguiment, linji, mappi, karozzi, tikketti, dinjiet imqallba |
+| [Grafiċi u l-HUD](race-charts-and-hud.md) | il-grafiċi tad-distanza, l-għażla tal-grafiċi, hover u zoom, il-karti tal-karozzi, it-tabella tal-kanali |
+| [Avvenimenti tal-kontroll tal-karozza](race-control-events.md) | lock-ups, wheelspin, oversteer, spins, understeer, daqqiet, inkidenti, ABS/TC, handbrake, l-ajru - kif jinstab kull wieħed, b'kull limitu |
+| [Analiżi kantunata b'kantunata](race-corner-analysis.md) | l-allinjament skont id-distanza, kurvi u segmenti, il-kont tal-ħin ta' kurva, kull kawża u l-ordni li jiġu ppruvati fiha, il-forma tal-linja u l-parir |
+| [Profili tal-karozzi u tqabbil](race-car-profiles.md) | x'jista' jagħmel kull karozza, imkejla mid-dawriet tagħha; *Il-karozzi mqabbla*; x'tiddeċiedi l-karozza f'kull kurva |
+| [Statistika tal-korsa](race-course-statistics.md) | ħafna dawriet ta' korsa waħda: żbalji għal kull kurva u għal kull tip, il-mappa taż-żbalji, l-esportazzjoni għall-heatmap, limiti tal-prestazzjoni |
+| [Analitika tat-tellieqa: il-metodu](race-analytics.md) | ir-riċerka wara r-regoli, bis-sorsi |
+| [Logħob ieħor tat-tellieqa](other-games.md) | x'jagħmel il-viewer b'dawriet minn kull logħba: slip u drift maħduma fejn logħba ma tibgħathomx, dinjiet imqallba, il-kanali addizzjonali |
 
 ## L-iskrin {#the-screen}
 
-**Sidebar**, minn fuq għal isfel (it-taqsimiet jistgħu jingħalqu):
+**Sidebar**, minn fuq 'l isfel (is-taqsimiet jistgħu jingħalqu):
 
-1. **Ġirjiet** - tella', lista, uri/aħbi, referenza, fokus, inseġwi.
-   Ara [Tagħbija tal-ġirjiet](race-loading-laps.md).
-2. **Statistika tal-korsa** - biss minn tliet ġirjiet mgħobbija 'l fuq.
+1. **Dawriet** - tgħabba, tilista, turi/taħbi, referenza, fokus, inseguiment.
+   Ara [Tagħbija tad-dawriet](race-loading-laps.md).
+2. **Statistika tal-korsa** - biss minn tliet dawriet mgħobbija 'l fuq.
    Ara [Statistika tal-korsa](race-course-statistics.md).
-3. **Fejn titjieb** - is-sejbiet tal-ġiro ffokat, kantuniera b'kantuniera.
+3. **Fejn titjieb** - is-sejbiet tad-dawra fokussata, kurva b'kurva.
    Ara [Analiżi kantunata b'kantunata](race-corner-analysis.md).
-4. **Kurva b'kurva** (jew *Kurva b'kurva - klassi X* meta jkunu diversi klassijiet) - l-iktar ġiro mgħaġġel minn kull kantuniera u l-linja tagħha. Jintwera b'żewġ ġirjiet jew iktar.
-5. **Kontroll tal-karozza** - il-lock-ups, l-iżilqi, il-pushes u l-laqtiet tal-ġiro ffokat.
+4. **Kurva b'kurva** (jew *Kurva b'kurva - klassi X* meta jkunu diversi klassijiet) - l-iktar dawra mgħaġġla minn kull kurva u l-linja tagħha. Jidher b'żewġ dawriet jew aktar.
+5. **Kontroll tal-karozza** - il-locks, is-slides, il-push u l-daqqiet tad-dawra fokussata.
    Ara [Avvenimenti tal-kontroll tal-karozza](race-control-events.md).
-6. **Il-karozzi mqabbla** (jew **Il-karozza** b'karozza waħda) - ara [Profili tal-karozzi u tqabbil](race-car-profiles.md).
-7. **Veduta** - liema mappa tinpitta fuq it-triq u x'jinżel.
+6. **Il-karozzi mqabbla** (jew **Il-karozza** b'karozza waħda) - ara
+   [Profili tal-karozzi u tqabbil](race-car-profiles.md).
+7. **Veduta** - liema mappa titpinġa fuq il-korsa u x'jinġibed.
    Ara [Replay u x-xena 3D](race-replay-and-scene.md).
-8. Il-pannelli kondiviżi **Livell** u **Kamera u xena** (mudell tal-kors, inversjoni tal-assi, kamera) - iddokumentati mas-sħana u [Kamera](camera.md).
+8. Il-panels komuni **Livell** u **Kamera u xena** (mudell tal-korsa, qlib tal-assi, kamera) - iddokumentati mas-sħana u [Kamera](camera.md).
 
-**Il-veduta** turi l-kors, il-linji misjuqa, il-mappa, il-karozzi, it-tikketti mwaħħla mat-triq, u sa sitt kards tal-karozzi fuq lemin fuq nett (ara [Grafiċi u l-HUD](race-charts-and-hud.md)). Mingħajr ġirjiet mgħobbija jgħid "Ma hemm l-ebda ġiro mgħobbi - ħott hawn fajls ta' żewġ ġirjiet jew iktar, jew tella' d-dawriet demo mis-sidebar."
+**Il-view** juri l-korsa, il-linji mixjuta, il-mappa, il-karozzi, tikketti marbuta mal-korsa, u sa sitt karti tal-karozzi fin-naħa ta' fuq xellug (ara [Grafiċi u l-HUD](race-charts-and-hud.md)). Mingħajr dawriet mgħobbija jgħid "Ebda dawra mgħobbija - itfa' tnejn jew aktar fajls tad-dawra hawn, jew tella' d-dawriet demo mis-sidebar."
 
-**Il-bar taħt il-veduta** fih it-trasport tar-replay u, sakemm ma jkunx moħbi, il-grafiċi tal-medda.
+**Il-bar taħt il-view** fih it-transport tar-replay u, sakemm ma jkunx moħbi, il-grafiċi tad-distanza.
 
-## Bidu malajr {#quick-start}
+## Bidu rapid {#quick-start}
 
-1. Iftaħ it-tab **Analiżi tat-tellieqa** (ħdejn **Heatmap** fil-quċċata tas-sidebar).
-2. Ġib il-ġirjiet. Agħfas **Dawriet demo** biex tara x'jagħmel it-tab b'tliet ġirjiet mħolqa. Għall-ġirjiet tiegħek, irrekordjahom l-ewwel ([formati tal-fajls u rekordaturi](race-loading-laps.md#file-formats)), imbagħad agħfas **Iftaħ fajls tad-dawriet…** jew **Folder…**, jew ħott fajls jew folders fuq il-veduta.
-3. L-iktar ġiro sħiħ u mgħaġġel isir ir-referenza; l-iktar ġiro bil-mod mill-oħrajn jiġi ffokat. Ikklikkja kull ġiro fil-lista biex tiffokah; ★ tagħmel ġiro referenza.
-4. Aqra **Fejn titjieb**. Ikklikkja sejba: il-karozzi jitqegħdu f'linja 40 m qabelha, il-kamera tiffrenaha, ir-replay jgħaddi minnha u l-kejliet jinfetħu.
-5. Poġġi l-mouse fuq il-grafiċi biex iġġib kull karozza f'dak il-metru; Shift+klikk biex titqegħedhom f'linja hemm.
+1. Iftaħ it-tab **Analiżi tat-tellieqa** (ħdejn **Heatmap** fuq nett fis-sidebar).
+2. Ħudlu dawriet. Agħfas **Dawriet demo** biex tara x'jagħmel it-tab b'tliet dawriet magħmula. Għal dawriet tiegħek, irrekordjahom l-ewwel ([formats tal-fajls u rekordaturi](race-loading-laps.md#file-formats)), imbagħad agħfas **Iftaħ fajls tad-dawriet…** jew **Folder…**, jew itfa' fajls jew folders fuq il-view.
+3. L-iktar dawra sħiħa mgħaġġla issir ir-referenza; l-iktar dawra oħra bil-mod tiġi fokussata. Ikklikkja kwalunkwe dawra fil-lista biex tiffokussaha; ★ tagħmel dawra referenza.
+4. Aqra **Fejn titjieb**. Ikklikkja sejba: il-karozzi jiġu allinjati 40 m qabel, il-kamera tiffrejmjaha, ir-replay jgħaddi minnha u l-kejliet jinfetħu.
+5. Agħmel hover fuq il-grafiċi biex tmexxi kull karozza għal dak il-metru; Shift+klikk biex tallinjahom hemm.
 
 ## Ċwievet {#keyboard}
 
-Waqt li t-tab tat-Tellieqa miftuħ:
+Waqt li t-tab tat-Tellieqa jkun miftuħ:
 
-| Ċavetta | Tagħmel |
+| Ċavetta | Jagħmel |
 |---|---|
-| **K** | iħaddem / waqqaf ir-replay |
+| **K** | jilgħab / jieqaf ir-replay |
 | **Home** | lura għall-bidu tar-replay |
-| ċwievet tan-numri | xejn (fis-sħana jibdlu l-modalitajiet) |
+| ċwievet tan-numri | xejn (fis-sħana jibdlu l-modi) |
 
-Iċ-ċwievet miktubin f'kaxxa tal-kitba jew f'drop-down jiġu injorati. Iċ-ċwievet tal-kamera jaħdmu bħal fis-sħana (**W A S D**, **Space** 'il fuq, **Q** 'l isfel, **Shift** iktar mgħaġġel, **Alt** iktar bil-mod, il-mouse biex tħares; kollox f'[Kamera](camera.md)); **F** jiffrena l-ġirjiet imgħobbija (kif tagħmel it-tagħbija tal-ġirjiet).
+Ċwievet miktuba f'kaxxa tat-test jew f'drop-down jiġu injorati. Iċ-ċwievet tal-kamera jaħdmu kif fis-sħana (**W A S D**, **Space** 'il fuq, **Q** 'l isfel, **Shift** iktar mgħaġġel, **Alt** iktar bil-mod, il-maws biex tħares; kollox f'[Kamera](camera.md)); **F** jiffrejmja d-dawriet mgħobbija (kif jagħmel it-tagħbija tad-dawriet).
 
-## Ħafna ġirjiet {#many-laps}
+## Ħafna dawriet {#many-laps}
 
-- Il-ġirjiet kollha mgħobbija jiġu analizzati u mgħoddija; għexieren jieħdu sekonda jew tnejn.
-- Wara **8** ġirjiet (`SHOW_ALL_UP_TO`), il-ġirjiet miżjuda jitpinġew biss meta jkunu r-referenza, il-ġiro ffokat, jew l-aħjar ġiro tal-klassi tal-ġiro ffokat. Il-bidla hija *Uri kollox* / *Biss dawk li qed tħares lejhom*.
-- Wara **10** karozzi viżibbli (`PLAIN_PAST`), il-ġirjiet li mhux qed tħares lejhom (mhux il-fokus, mhux il-karozza mħaddma jew ir-referenza) jinżlu b'linji mnaqqsa għal punt kull 6 m minflok 1.5 m, u b'karozzi sempliċi.
-- Il-grafiċi jpingu sa **8** ġirjiet; il-HUD juri sa **6** kards.
-- L-istatistika tal-kors tidher minn **3** ġirjiet.
+- Id-dawriet kollha mgħobbija jiġu analizzati u mgħoddija; għexieren jieħdu sekonda jew tnejn.
+- Wara **8** dawriet (`SHOW_ALL_UP_TO`), id-dawriet miżjuda jinġibdu biss meta jkunu r-referenza, id-dawra fokussata, jew l-aħjar dawra tal-klassi tad-dawra fokussata. *Uri kollox* / *Dawk li qed tħares lejhom biss* jibdlu dan.
+- Wara **10** karozzi viżibbli (`PLAIN_PAST`), id-dawriet li mhux qed tħares lejhom (mhux il-fokus, il-karozza segwita jew ir-referenza) jinġibdu b'linji mnaqqsa għal punt kull 6 m minflok 1.5 m, u karozzi sempliċi.
+- Il-grafiċi jpinġu sa **8** dawriet; il-HUD juri sa **6** karti.
+- L-istatistika tal-korsa tidher minn **3** dawriet.
 
 Dettalji: [Statistika tal-korsa](race-course-statistics.md#performance-with-many-laps).
 
-## Settings tal-veduta default {#default-view-settings}
+## Settings default tal-view {#default-view-settings}
 
-| Setting | Bażi |
+| Setting | Default |
 |---|---|
-| Mappa | Mappa tal-ħin |
-| Linji misjuqa, Karozzi, Tajers u sospensjoni, Tikketti, Traċċa mill-ġirjiet | fuq |
-| Il-valuri kollha fuq il-kards | mitfi |
+| Mappa | Mappa taż-żmien |
+| Linji mixjuta, Karozzi, Tajers u sospensjoni, Tikketti, Traċċa mid-dawriet | mixgħul |
+| Il-valuri kollha fuq il-karti | mitfi |
 | Daqs tal-karozza | 1× |
-| Grafiċi | muri |
-| Modalità tar-replay | Mill-linja |
+| Grafiċi | murija |
+| Mod tar-replay | Mil-linja |
 | Veloċità tar-replay | 1× |
-| Ripetizzjoni | fuq |
+| Loop | mixgħul |
 
-Xejn minn dawn ma jinħażen; ttella' mill-ġdid tibda mill-bażi. Dak li jinftakar fil-browser: il-lingwa, u l-ismijiet tal-karozzi mitgħallma mill-fajls tal-ġirjiet (ara [Tagħbija tal-ġirjiet](race-loading-laps.md#car-names)).
+Ebda wieħed minn dawn ma jinħażen; reload jibda mid-default. Dak li jinftakar fil-browser: il-lingwa, u l-ismijiet tal-karozzi mitgħallma mill-fajls tad-dawriet (ara [Tagħbija tad-dawriet](race-loading-laps.md#car-names)).
 
 ## Għall-iżviluppaturi {#for-developers}
 
-### X'jiġri meta jitgħabbew il-ġirjiet {#what-happens-when-laps-are-loaded}
+### X'jiġri meta jitgħabbew dawriet {#what-happens-when-laps-are-loaded}
 
-Kull darba li jinbidel is-sett tal-ġirjiet, ir-referenza jew il-lingwa, l-analiżi kollha ssir mill-ġdid (`analyse` fi
+Kull darba li jinbidel is-sett tad-dawriet, ir-referenza jew il-lingwa, l-analiżi kollha ssir mill-ġdid (`analyse` f'
 [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
 
-1. Kanali derivati jiżdiedu għal kull ġiro fejn il-logħba ma tibgħatx dawn: angolu tad-drift, slip tar-roti mill-veloċitajiet tar-roti, fl-ajru, art mhux iebsa, rata tal-yaw ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
-2. Ir-referenza tintgħażel u kull ġiro jiġi ppruvat fuq it-triq tagħha u mdaħħal mill-ġdid kull 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
-3. Jiġi determinat jekk id-dinja tal-logħba tkunx imqallba mill-ġirjiet ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
-4. Il-kantunieri jinstabu fuq ir-referenza, u jinġabru f'segmenti minn żona ta' tifrin għal oħra li jmiss ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
-5. Għal kull karozza: l-envelope tagħha (grip, tifrin, qawwa skont il-veloċità), il-profil tagħha, il-kurvi tat-tajers tagħha ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts), [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts), [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
-6. Għal kull ġiro u segment: x'għamel (punt tat-tifrin, l-iktar punt bil-mod, throttle sħiħ, ...) u l-linja li sewqet ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
-7. Għal kull ġiro: l-avvenimenti tal-kontroll tal-karozza tagħha, kull wieħed imqabbel mal-ġiro li jitqabbel miegħu hemm.
-8. Għal kull ġiro u segment: il-kont tal-ħin kontra l-ġiro tat-tqabbil tiegħu u s-sejba bil-kliem.
-9. Il-mappa tal-ħin u l-mappa tal-kawża għal kull ġiro.
+1. Kanali derivati jiżdiedu għal kull dawra fejn il-logħba ma tibgħathomx: angolu tad-drift, slip tar-roti mill-veloċitajiet tar-roti, fl-ajru, art mhux iffissata, rata tal-yaw ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
+2. Tintgħażel ir-referenza u kull dawra titproġetta fuq it-traċċa tagħha u terġa' tiġi kampjunata kull 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
+3. Jinstab jekk id-dinja tal-logħba tkunx imqallba mid-dawriet ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
+4. Il-kurvi jinstabu fuq ir-referenza, u jingemgħu f'segmenti minn żona ta' brejk waħda sal-oħra ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
+5. Għal kull karozza: l-envelope tagħha (grip, brejk, ġbid skont il-veloċità), il-profil tagħha, il-kurvi tat-tajers tagħha ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts),
+   [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts),
+   [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
+6. Għal kull dawra u segment: x'għamlet (il-punt tal-brejk, il-punt l-aktar bil-mod, gass sħiħ, ...) u l-linja li ħadet ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
+7. Għal kull dawra: l-avvenimenti tal-kontroll tal-karozza tagħha, kull wieħed imqabbel mad-dawra li tiġi mqabbla magħha f'dak il-post.
+8. Għal kull dawra u segment: il-kont tal-ħin kontra d-dawra tat-tqabbil tagħha u s-sejba bil-kliem.
+9. Il-mappa taż-żmien u l-mappa tal-kawża għal kull dawra.
 
-It-testi jinħolqu fil-lingwa attwali; bidla tal-lingwa tmexxi l-analiżi mill-ġdid (u jbiddel l-ismijiet tad-dawriet demo). Falliment fl-analiżi jidher taħt il-buttuni **Ġirjiet** bħala żball, u l-ġirjiet jibqgħu mgħobbija.
+It-testi jiġu prodotti bil-lingwa attwali; jekk tinbidel il-lingwa l-analiżi titmexxa mill-ġdid (u d-dawriet demo jisimhom mill-ġdid). Falliment fl-analiżi jidher taħt il-buttuni **Dawriet** bħala żball u d-dawriet jibqgħu mgħobbija.
 
 ### Fajls tas-sors {#source-files}
 
 | Fajl | Rwol |
 |---|---|
-| `src/race/adapters.ts`, `ibt.ts` | il-qari tal-fajls tal-ġirjiet |
-| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | it-tip tal-ġiro, it-tismija, id-dawriet demo |
-| `src/race/derive.ts`, `handedness.ts` | kanali derivati, dinjiet imqallbin |
-| `src/race/align.ts`, `segments.ts`, `line.ts` | l-assi tad-distanza, il-kantunieri, il-linji |
-| `src/race/analysis.ts` | kantunieri imqabbla, kawżi, sejbiet |
-| `src/race/envelope.ts`, `profile.ts` | dak li karozza tista' tagħmel |
-| `src/race/control.ts`, `impacts.ts` | kontroll tal-karozza, laqtiet u tfarfir |
-| `src/race/stats.ts` | ħafna ġirjiet |
-| `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | ir-replay u t-tpinġija |
-| `src/race/schema.ts`, `graphs.ts` | it-tabella tal-kanali, ir-ringieli tal-grafiċi |
+| `src/race/adapters.ts`, `ibt.ts` | qari tal-fajls tad-dawriet |
+| `src/race/lap.ts`, `carNames.ts`, `synthetic.ts` | it-tip tad-dawra, l-ismijiet, id-dawriet demo |
+| `src/race/derive.ts`, `handedness.ts` | kanali derivati, dinjiet imqallba |
+| `src/race/align.ts`, `segments.ts`, `line.ts` | assi tad-distanza, kurvi, linji |
+| `src/race/analysis.ts` | kurvi mqabbla, kawżi, sejbiet |
+| `src/race/envelope.ts`, `profile.ts` | x'jista' jagħmel karozza |
+| `src/race/control.ts`, `impacts.ts` | kontroll tal-karozza, daqqiet u inkidenti |
+| `src/race/stats.ts` | ħafna dawriet |
+| `src/race/replay.ts`, `scene.ts`, `glyph.ts`, `geometry.ts` | replay u tpinġija |
+| `src/race/schema.ts`, `graphs.ts` | it-tabella tal-kanali, ringieli tal-grafiċi |
 | `src/ui/race/*` | is-sidebar, il-grafiċi, il-HUD, it-tikketti |
 | `src/state/raceStore.ts` | l-istat tat-tab u l-arloġġ tar-replay |

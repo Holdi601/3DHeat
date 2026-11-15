@@ -4,96 +4,96 @@ nav_order: 12
 has_children: true
 lang: "lv"
 source: "tactics-board.md"
-source_hash: "09172046f5ac"
+source_hash: "e89ef050b0f2"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Taktikas tāfele
 
-Cilne **Taktika** ir zīmēšanas tāfele komandas plānam: uz kartes novietojat mazas figūras, zīmējat bultas, kur tās dosies, un nospiežat atskaņot, lai to redzētu notiekam. Izmantojiet to, lai plānotu raundu vai uzbrukumu pirms spēles. Tā dala audeklu, kameru un [līmeni](levels.md) ar citām cilnēm un nekā citu; plāns nav dati un nezīmē siltumu.
+Cilne **Taktika** ir zīmēšanas tāfele komandas plānam: jūs novietojat mazas figūras uz kartes, zīmējat bultas, kur tās iet, un nospiežat atskaņot, lai to redzētu. Izmantojiet to, lai plānotu raundu vai uzbrukumu, pirms spēlējat. Tā dala audeklu, kameru un [līmeni](levels.md) ar pārējām cilnēm un nekā citu; plāns nav dati un nezīmē siltumu.
 
 ## Jūsu pirmais plāns {#your-first-plan}
 
 1. Atveriet cilni **Taktika**. Izvēlieties **Spēle** (piemēram, Counter-Strike 2) un Valorant gadījumā nospiediet **Ielādēt Valorant kartes** un izvēlieties **Karte**. Vai vispirms ielādējiet [līmeni](levels.md).
-2. Izvēlieties **Puse** (tā iestata krāsu) un nospiediet **Skats no augšas**.
-3. Izvēlieties **Novietot**, izvēlieties figūru sadaļā **Figūras** (izmantojiet **Meklēt figūras**, lai atrastu) un noklikšķiniet uz kartes. Novietojiet divas vai trīs.
-4. Izvēlieties **Bulta**, noklikšķiniet uz figūras, noklikšķiniet pa ceļu, pa kuru tai jāiet, un nospiediet **Enter**, lai pabeigtu bultu.
-5. Nospiediet **+** zem skata, lai pievienotu 2. soli. Katra figūra sākas tur, kur beidzās tās bulta. Zīmējiet tur vēl bultas.
+2. Izvēlieties **Puse** (tā nosaka krāsu) un nospiediet **Skats no augšas**.
+3. Izvēlieties **Vieta**, izvēlieties figūru sarakstā **Figūras** (izmantojiet **Meklēt figūras**, lai to atrastu) un noklikšķiniet uz kartes. Novietojiet divas vai trīs.
+4. Izvēlieties **Bulta**, noklikšķiniet uz figūras, noklikšķiniet gar ceļu, pa kuru tai jāiet, un nospiediet **Enter**, lai beigtu bultu.
+5. Nospiediet **+** zem skata, lai pievienotu 2. soli. Katra figūra sākas tur, kur beidzās tās bulta. Tur zīmējiet vairāk bultu.
 6. Nospiediet **▶** (vai `K`), lai atskaņotu plānu no rādītā soļa līdz beigām.
-7. Nosauciet plānu sadaļā **Plāna nosaukums** un nospiediet **Saglabāt**.
+7. Nosauciet plānu laukā **Plāna nosaukums** un nospiediet **Saglabāt**.
 
-![Taktikas cilne skatā no augšas: spēle, puses un rīki kreisajā pusē, trīs figūras ar Pārvietot bultām, dūmu Metiena loku, Zona un soļi apakšā](../assets/img/lv/tactics.webp)
+![Taktikas cilne skatā no augšas: spēle, puses un rīki pa kreisi, trīs figūras ar Pārvietot bultām, dūmu Metiena loku, Apgabals un soļi apakšā](../assets/img/lv/tactics.webp)
 
-## Plāna sākums {#starting-a-plan}
+## Plāna sākšana {#starting-a-plan}
 
 | Vadība | Ko tā dara |
 |---|---|
-| **Spēle** | Izvēlas puses un figūras, ko piedāvā palete: Counter-Strike 2 (T, CT; spēlētāji un palīgierīces), Valorant (Uzbrukums, Aizsardzība; spēlētāji un vispārīgas spējas), Battlefield, Squad, Arma (kājnieki, sauszemes transportlīdzekļi, lidmašīnas, laivas), DCS / War Thunder / IL-2 (reaktīvās lidmašīnas, propelleru lidmašīnas, helikopteri, pretgaisa aizsardzība, sauszeme, kuģi, ieroči) un Cits. Plāns, kam jau ir figūras, paturē savas puses, mainoties spēlei. |
+| **Spēle** | Izvēlas puses un figūras, ko piedāvā paleta: Counter-Strike 2 (T, CT; spēlētāji un palīglīdzekļi), Valorant (Uzbrukums, Aizsardzība; spēlētāji un vispārīgas spējas), Battlefield, Squad, Arma (kājnieki, sauszemes transportlīdzekļi, lidmašīnas, laivas), DCS / War Thunder / IL-2 (reaktīvās lidmašīnas, propelleru lidmašīnas, helikopteri, pretgaisa aizsardzība, sauszeme, kuģi, ieroči) un Cits. Plāns, kuram jau ir figūras, paturē savas puses, kad spēle mainās. |
 | **Plāna nosaukums** | Nosaukums, ar kuru plāns tiek saglabāts. |
-| **Karte**, **Ielādēt Valorant kartes** | Ja izvēlēta Valorant: **Ielādēt Valorant kartes** iegūst karšu sarakstu no [valorant-api.com](https://valorant-api.com); **Karte** tad noliek izvēlētās kartes minikarti kā līmeni, ietverta no augšas. Attēls tiek ielādēts, kad izvēlēts, un nekad nav iekļauts paketē. Riot paziņojums tiek rādīts, kamēr tas ir ekrānā (skatiet zemāk). |
-| **Puse** | Puse, kurai pieder nākamā figūra, bulta vai zona; tā iegūst puses krāsu. |
+| **Karte**, **Ielādēt Valorant kartes** | Ar izvēlētu Valorant: **Ielādēt Valorant kartes** iegūst karšu sarakstu no [valorant-api.com](https://valorant-api.com); **Karte** tad uzliek izvēlētās kartes minikarti kā līmeni, ietvertu no augšas. Attēls tiek ielādēts, kad izvēlas, un nekad netiek piegādāts kopā ar skatītāju. Riot paziņojums tiek rādīts, kamēr tas ir ekrānā (skatiet zemāk). |
+| **Puse** | Puse, kurai pieder nākamā figūra, bulta vai apgabals; tā iegūst puses krāsu. |
 
-Bez līmeņa tāfele ir plakana zemes plakne. Ielādējiet līmeni sadaļā **Līmenis**, lai plānotu uz reālas kartes: CS2 karti, ko eksportējis CS2 rīks, līmeni no bibliotēkas vai kartes attēlu.
+Bez līmeņa tāfele ir plakana zemes plakne. Ielādējiet līmeni zem **Līmenis**, lai plānotu uz īstas kartes: CS2 karti, kas eksportēta ar CS2 rīku, bibliotēkas līmeni vai kartes attēlu.
 
 ## Rīki {#tools}
 
 | Rīks | Klikšķis | Piezīmes |
 |---|---|---|
-| **Atlasīt** | Figūra, ceļa punkts, bulta, zona vai piezīme to atlasa. | Shift+klikšķis pievieno vai noņem; Shift+velkot zīmē kasti ap to, ko pievienot. Atlasītajam ir pārveidošanas gizmo (skatiet zemāk); `Delete` vai `Backspace` noņem to. `M` pārvieto atlasīto figūru uz nākamo klikšķi. |
-| **Novietot** | Noliek izvēlēto figūru. | Figūra tiek izvēlēta paletē **Figūras** (ar **Meklēt figūras**). Ja nekas nav atlasīts, `R` pagriež nākamo figūru par 15° pirms novietošanas (`Shift+R` pretējā virzienā). |
-| **Bulta** | Katrs klikšķis pievieno punktu; Enter, dubultklikšķis vai labais klikšķis to beidz, Esc to atmet. | **Pārvietot**, **Uzbrukums** (platāka galva) vai **Novērošana** (plāna līnija acu augstumā). Bulta, kas sākas uz figūras, ir šīs figūras maršruts šajā solī: atskaņojot, figūra to iet, un nākamais solis sākas tur, kur tas beidzās. |
-| **Metiens** | Metējs, tad kur tas nolaižas. | Punktēts loks no viena līdz otram, un izvēlētā palīgierīce (dūmi, zibspuldze, molotovs, ...) parādās tur, kur nolaižas, un paliek no šī soļa uz priekšu. |
-| **Zona** | Centrs, tad mala. | Disks puses krāsā. |
-| **Piezīme** | Kur piezīme iet; jautā tās tekstu. | Rāda kā smeili, un tā teksts virs tā. |
-| **Dzēst** | Figūru, bultu, zonu vai piezīmi. | Noņem to no šā soļa uz priekšu; pirmajā solī - noņem pilnīgi. |
+| **Atlasīt** | Figūra, ceļa punkts, bulta, apgabals vai piezīme to atlasa. | Shift+klikšķis pievieno vai noņem; Shift+vilkšana zīmē kastīti ap to, ko pievienot. Atlasītajai daļai ir pārveidošanas rīks (skatiet zemāk); `Delete` vai `Backspace` to noņem. `M` pārvieto atlasīto figūru uz nākamo klikšķi. |
+| **Vieta** | Novieto izvēlēto figūru. | Figūra tiek izvēlēta paletē **Figūras** (ar **Meklēt figūras**). Kad nekas nav atlasīts, `R` pagriež nākamo figūru par 15° pirms novietošanas (`Shift+R` — otrā virzienā). |
+| **Bulta** | Katrs klikšķis pievieno punktu; Enter, dubultklikšķis vai labais klikšķis to beidz, Esc to atmet. | **Pārvietot**, **Uzbrukums** (platāka galva) vai **Novērošana** (plāna līnija acu augstumā). Bulta, kas sākas uz figūras, ir šīs figūras maršruts šajā solī: atskaņojot, figūra to iet, un nākamais solis sākas, kur tas beidzās. |
+| **Metiens** | Metējs, tad vieta, kur tas nokrīt. | Punktēts loks no viena uz otru, un izvēlētais palīglīdzeklis (dūmi, zibinātājs, molotovs, ...) parādās, kur tas nokrīt, un paliek no šā soļa uz priekšu. |
+| **Apgabals** | Centrs, tad mala. | Disks puses krāsā. |
+| **Piezīme** | Kur piezīme ir; prasa tās tekstu. | Rāda kā piespraudi, un virs tās — tās teksts. |
+| **Dzēst** | Figūra, bulta, apgabals vai piezīme. | Noņem to no šā soļa uz priekšu; pirmajā solī — noņem to pilnībā. |
 
-**Atsaukt** un **Atcelt atsaukšanu** (`Ctrl+Z`; `Ctrl+Y` vai `Ctrl+Shift+Z`) soļo caur katru izmaiņu. Līnija zem plāna rāda, cik figūru, bultu un soļu tam ir. **Skats no augšas** skatās taisni uz leju (ortogrāfiski), **3D skats** atgriež perspektīvu, **Kadrs** ietver plānu, vai līmeni, ja plāns ir tukšs.
+**Atsaukt** un **Atcelt atsaukšanu** (`Ctrl+Z`; `Ctrl+Y` vai `Ctrl+Shift+Z`) soļo caur katru izmaiņu. Līnija zem plāna rāda, cik figūru, bultu un soļu tam ir. **Skats no augšas** skatās tieši uz leju (ortogrāfiski), **3D skats** atgriež perspektīvu, **Kadrs** ietver plānu kadrā vai līmeni, kad plāns ir tukšs.
 
-**Figūru izmērs** mērogo katru figūru tāfelē; 1× ir patiesais izmērs, kas no augšas ir daži pikseļi cilvēkam.
+**Figūru izmērs** mērogo katru figūru tāfelē; 1× ir patiesais izmērs, un no tālas augstuma cilvēks ir dažu pikseļu liels.
 
 ## Pārvietošana, pagriešana un mērogošana {#moving-turning-and-scaling}
 
-Visu tāfelē var pārvietot kā 3D redaktorā: figūras, palīgierīces, marķierus, atsevišķus ceļa punktus un veselas bultas, zonus un piezīmes. Atlasītajam vidū ir gizmo:
+Visu uz tāfeles var pārvietot kā 3D redaktorā: figūras, palīglīdzekļus, marķierus, atsevišķus ceļa punktus un visas bultas, apgabalus un piezīmes. Atlasītajai daļai ir rīks tās vidū:
 
 | Režīms | Taustiņi | Rokturi |
 |---|---|---|
 | **Pārvietot** | W (vai G) | Bulta katrai asij (X sarkana, Y zaļa un uz augšu, Z zila) pārvieto pa to; kvadrāts pārvieto pa savu plakni; centrs pārvieto pa līmeni zem rādītāja. |
-| **Pagriezt** | E (vai R) | Gredzens katrai asij griež ap to. Vienas figūras gredzeni griež tās virzienu, slīpumu un sānsveri; grupa griežas ap pasaules asīm ap savu centru. |
-| **Mērogot** | R (vai S) | Izstiepj vai savelk atlasīto no tā centra pa asi vai visos virzienos; zonas rādiuss aug kopā ar to. |
+| **Pagriezt** | E (vai R) | Gredzens katrai asij pagriež ap to. Vienas figūras gredzeni ir tās pašas pagrieziens, slīpums un rullis; grupa pagriežas ap pasaules asīm ap savu vidu. |
+| **Mērogot** | R (vai S) | Izplešas vai saspiež atlasīto no tās vidus pa asi vai visos virzienos; apgabala rādiuss aug kopā ar to. |
 
-**Taustiņi** pārslēdz starp W / E / R (Unity, Unreal) un G / R / S (Blender); taustiņi izvēlas režīmu tikai tad, kad kaut kas ir atlasīts, citādi lido ar kameru. Tātad `R` nozīmē **Mērogot** ar taustiņiem W / E / R un **Pagriezt** ar taustiņiem G / R / S, kad kaut kas ir atlasīts, un pagriež nākamo novietojamo figūru, kad nekas nav. Visi tāfeles taustiņi ir uzskaitīti [taustiņu uzziņā](keyboard-reference.md#tactics-board). Turiet **Ctrl** velkot, lai piesaistītu pārvietošanu pie **Režģa** (metri) vai pagriešanu pie **Leņķa soļa**. **Piesaistīt zemei** (pēc noklusējuma ieslēgts) novieto pārvietotos cilvēkus, transportlīdzekļus, marķierus, ceļa punktus un zonus uz līmeņa virsmas; lidmašīnas un helikopteri patur savu augstumu, un velkot pa Y bultu nekad nepiesaista. Velkot rokturi, kamera nekad nepārvietojas. **Esc** atceļ velkšanu, un katra izmaiņa ir viens solis Atsaukt.
+**Taustiņi** pārslēdz starp W / E / R (Unity, Unreal) un G / R / S (Blender); taustiņi izvēlas režīmu tikai tad, kad kaut kas ir atlasīts, un citādi lido ar kameru. Tātad `R` nozīmē **Mērogot** ar taustiņiem W / E / R un **Pagriezt** ar taustiņiem G / R / S, kad kaut kas ir atlasīts, un pagriež nākamo novietojamo figūru, kad nekas nav atlasīts. Visi tāfeles taustiņi ir uzskaitīti [taustiņu uzziņā](keyboard-reference.md#tactics-board). Turiet **Ctrl** velkot, lai pārvietojumu piesaistītu **Režģim** (metri) vai pagriezienu **Leņķa solim**. **Piesaistīt zemei** (pēc noklusējuma ieslēgts) novieto pārvietotos cilvēkus, transportlīdzekļus, marķierus, ceļa punktus un apgabalus uz līmeņa virsmas; lidmašīnas un helikopteri saglabā savu augstumu, un vilkšana pa Y bultu nekad nepiesaista. Rokturu velkot, kamera nekad nepārvietojas. **Esc** atceļ vilkšanu, un katra izmaiņa ir viens solis Atsaukt.
 
-Ceļa punkti tiek rādīti kā punkti uz parādītā soļa bultām: noklikšķiniet uz viena, lai to atlasītu, velciet, lai pārvietotu, Delete, lai izņemtu. Sadaļa **Izvēlētās** rāda atlasītā vietu metros, figūras virzienu, slīpumu un sānsveri grādos un zonas rādiusu, katru ierakstāmu.
+Ceļa punkti redzami kā punkti uz rādītā soļa bultām: noklikšķiniet uz viena, lai to atlasītu, velciet, lai pārvietotu, un Delete, lai to izņemtu. Sadaļa **Izvēlētās** rāda atlasītās daļas vietu metros, figūras pagriezienu, slīpumu un rulli grādos, un apgabala rādiusu, katru ar ievades lauku.
 
 ## Hronometrāža {#timing}
 
-Figūras maršruts ir laikots: katrs segments aizņem savu garumu pa līmeni - paraugots uz virsmas ik pēc pāris metriem, tāpēc kalns vai kāpnes starp diviem punktiem skaitās - ar ātrumu tās figūras kustības **režīmā** šajā spēlē, plus jebkāds **gaidīšanas** laiks ceļa punktā. Kājnieki rāpo, pietupjas, iet (klusi), skrien vai sprintē; transportlīdzekļi un laivas rāpo, brauc piesardzīgi, normāli vai steidzas; lidmašīnas un helikopteri lido lēni, kreisēšanas ātrumā, kaujas ātrumā vai maksimālajā. Režīms, kāda spēlei nav (CS2 nav sprinta), tiek aizstāts ar tuvāko, kas tai ir. Kā nogāze palēnina, atkarīgs no spēles: CS2 un Valorant skaita tikai horizontālo attālumu, kā spēlēs; mil-sim spēles palēnina kājniekus kalnup (Tobler pārgājiena funkcija) un transportlīdzekļus pēc slīpuma.
+Figūras maršruts ir laikots: katrs posms prasa tik laika, cik ir tā garums pa līmeni — paraugots virsmā ik pēc pāris metriem, tāpēc kalns vai kāpnes starp diviem punktiem tiek ieskaitītas — ar ātrumu tās figūras kustības **režīmā** šajā spēlē, plus jebkuru **gaidīšanu** pie ceļa punkta. Kājnieki ropo, tupas, iet (klusi), skrien vai sprintē; transportlīdzekļi un laivas ropo, brauc piesardzīgi, normāli vai steidzas; lidmašīnas un helikopteri lido lēni, kreiserā ātrumā, kaujas ātrumā vai maksimālajā. Režīms, kuru spēlē nav (CS2 nav sprinta), ņem tuvāko, kāds tai ir. Kā nogāze bremzē, atkarīgs no spēles: CS2 un Valorant skaitās tikai horizontālais attālums, kā spēlēs; militārajās simulācijās kājnieki kalnā palēninās (Toblera pārgājiena funkcija), transportlīdzekļi — pēc slīpuma.
 
-Ātrumi nāk no spēļu tabulām ar to avotiem (skatiet [Kustības ātrumi](tactics-speeds.md)): CS2 pēc turētā ieroča, no spēles ieroču definīcijām; Valorant pēc ieroča; Battlefield, Squad, Arma un gaisa spēles pēc transportlīdzekļa tipa un klases. **Pārvietojas kā** izvēlas figūras profilu (ieroci, transportlīdzekļa tipu); **Savs (m/s)** pārraksta jebkuru režīmu šai figūrai. Režīmi ir nosaukti tā, kā tos rāda tāfele: *Rāpot*, *Pietupties*, *Iet (klusi)*, *Skriet*, *Sprintēt*; *Piesardzīgi*, *Normāli*, *Steigties*; *Lēni*, *Kreisēšana*, *Kauja*, *Maksimāli*.
+Ātrumi nāk no spēļu tabulām ar to avotiem (skatiet [Kustības ātrumi](tactics-speeds.md)): CS2 — pēc turētā ieroča, no spēles ieroču definīcijām; Valorant — pēc ieroča; Battlefield, Squad, Arma un gaisa spēles — pēc transportlīdzekļa veida un klases. **Pārvietojas kā** izvēlas figūras profilu (ieroci, transportlīdzekļa veidu); **Savs (m/s)** pārraksta jebkuru režīmu šai figūrai. Režīmi nosaukti tā, kā tāfele tos rāda: *Ropošana*, *Tupēšanās*, *Iet (klusi)*, *Skriet*, *Sprintēt*; *Piesardzīgi*, *Normāli*, *Steidzas*; *Lēni*, *Kreiserā ātrumā*, *Kaujā*, *Maksimāli*.
 
-Katrs ceļa punkts rāda laiku kopš iepriekšējā un laiku kopš plāna sākuma ("+3,9 s · 0:12"). Atlasītās figūras maršruts uzskaita katru segmentu ar tā režīmu, garumu un laiku, gaidīšanu un ierašanos. **Ierašanās** sadaļā **Hronometrāža** novieto katru figūru ar maršrutu uz vienas laika līnijas, pirmā ierašanās augšā. Ar **Atskaņot reāllaikā** (pēc noklusējuma ieslēgts) solis ilgst, līdz ierodas lēnākais maršruts, un katra figūra kustas ar savu ātrumu; **Sekundes** tad ir soļa mazākais garums. **Līmeņa vienības uz metru** saka, kas līmenis ir: 39,37 CS2 kartēm (spēles vienības), 1 metru kartēm.
+Katrs ceļa punkts rāda laiku no pēdējā un laiku kopš plāna sākuma ("+3,9 s · 0:12"). Atlasītās figūras maršruts uzskaita katru posmu ar tā režīmu, garumu un laiku, gaidīšanu un ierašanos. **Ierašanās** zem **Hronometrāžas** novieto katru ar maršrutu figūru uz vienas laika līnijas, pirmā ierašanās augšā. Ar **Atskaņot reālajā laikā** (pēc noklusējuma ieslēgts) solis ilgst, līdz pienāk lēnākais maršruts, un katra figūra kustas ar savu ātrumu; **Sekundes** tad ir soļa mazākais garums. **Līmeņa vienības uz metru** saka, kas līmenis ir: 39,37 CS2 kartēm (spēles vienības), 1 metru kartēm.
 
 ## Salīdzināt ar mača datiem {#compare-with-match-data}
 
-**Ielādēt mača failus…** nolasa kartes CS2 mača tabulas (CS2 rīka Parquet faili, cik vajag; tikai nepieciešamās kolonnas, fonā); **Izmantot ielādētos datus** paņem skatītājā ielādētos datus. Tad:
+**Ielādēt mača failus…** nolasa kartes CS2 mača tabulas (CS2 rīka Parquet failus, cik vēlaties; tikai nepieciešamās kolonnas, fonā); **Izmantot ielādētos datus** ņem datus, kas ielādēti skatītājā. Tad:
 
-- **Agrākā ierašanās kartē** krāso karti pēc laika kopš raunda sākuma, kad spēlētājs pirmo reizi sasniedza katru vietu - poga **Ātrākais** parāda ātrāko visos raundos, **Tipisks (mediāna)** vidējo raundu - no zaļa agri līdz sarkanam vēlu, vienai pusei vai abām. Tā parāda, kas ir iespējams un kad.
-- Izvēlētais maršruts tiek salīdzināts ar to, ko spēlētāji sasniedza no tā sākuma (vai no raunda sākuma) līdz tā beigām, katrs gals ir disks ar iestatīto rādiusu: "Ātrākais novērotais 14,2 s, p10 15,0 s, mediāna 18,3 s no 41 braucieniem; jūsu plāns 15,1 s".
-- Ātrumi, ar kādiem spēlētāji patiesi kustējās - skriešana, staigāšana, pietupšanās, no tabulu ejas un pietupšanās kolonnām - m/s.
+- **Agrākā ierašanās kartē** nokrāso karti pēc laika kopš raunda sākuma, kad spēlētājs pirmo reizi sasniedza katru vietu — poga **Ātrākais** rāda ātrāko pār visiem raundiem, **Tipisks (mediāna)** — vidējo raundu — zaļš agri, sarkans vēlu, vienai pusei vai abām. Tā rāda, kas ir iespējams un kad.
+- Izvēlētais maršruts tiek salīdzināts ar to, ko spēlētāji sasniedza no tā sākuma (vai no raunda sākuma) līdz tā beigām, katrs gals kā disks ar uzstādīto rādiusu: "Ātrākais novērotais 14,2 s, p10 15,0 s, mediāna 18,3 s no 41 braucienu; jūsu plāns 15,1 s".
+- Ātrumi, ar kādiem spēlētāji patiešām kustējās — skrienot, ejot, tupoties, no tabulu ejas un tupēšanās kolonnām — m/s.
 
 ## Soļi {#steps}
 
-Josla zem skata satur soļus. Plāns sākas ar vienu; **+** pievieno vienu, un katra figūra sākas tur, kur tās maršruts pēdējā solī beidzās; **−** noņem parādīto. **Sekundes** ir, cik ilgs parādītais solis ir, atskaņojot. **▶** (K) atskaņo no parādītā soļa līdz beigām: figūras ar maršrutu iet pa to, figūras, kas nākamajā solī pārvietotas uz jaunu vietu, slīd tur, pārējās stāv. Kamēr solis ir parādīts, katras figūras vieta nākamajā solī tiek zīmēta kā bāla ēna, un pēdējā soļa bultas vāji zem šī soļa.
+Josla zem skata satur soļus. Plāns sākas ar vienu; **+** pievieno vienu, un katra figūra tajā sākas, kur tās maršruts pēdējā solī beidzās; **−** noņem rādīto. **Sekundes** ir, cik ilgi rādītais solis aizņem, atskaņojot. **▶** (K) atskaņo no rādītā soļa līdz beigām: figūras ar maršrutu iet pa to, figūras, kas nākamajā solī pārvietotas uz jaunu vietu, tur slīd, pārējās stāv. Kamēr solis ir rādīts, katras figūras vieta nākamajā solī tiek zīmēta kā bāls spoks, un pēdējā soļa bultas bāli zem šā soļa.
 
 ## Saglabāšana {#saving}
 
-Sadaļā **Fails** ir **Saglabāt**, **Pirm.** un **Notīrīt**. **Saglabāt** raksta plānu kā `<nosaukums>.h3dplan.json` (vienkāršs JSON: puses, soļi, figūras ar vietu katrā solī, bultas, zonas, piezīmes); **Pirm.** to nolasa atpakaļ. Cita versijas fails vai fails, kas nav plāns, tiek noraidīts ar iemeslu. **Notīrīt** iztukšo plānu; Atsaukt to atgriež.
+Sadaļā **Fails** ir **Saglabāt**, **Pirm.** un **Notīrīt**. **Saglabāt** raksta plānu kā `<nosaukums>.h3dplan.json` (vienkāršs JSON: puses, soļi, figūras ar vietu katrā solī, bultas, apgabali, piezīmes); **Pirm.** nolasa vienu atpakaļ. Citas versijas fails vai fails, kas nav plāns, tiek noraidīts ar iemeslu. **Notīrīt** iztukšo plānu; Atsaukt to atgriež.
 
 ## Figūras {#figures}
 
-Katru figūru veido pats skatītājs: vienkāršas formas publicētā tipa izmērā, ar iezīmēm, kas to atšķir no kaimiņiem - tanka ceļa riteņi un tornis, ieroči, raķetes un radari pretgaisa transportlīdzeklī, lidmašīnas spārna plāns, aste un dzinēji, helikoptera rotori un īsie spārni. Nekas nav ņemts no spēles. Dizains, ko izdomājusi spēle, tiek rādīts kā tā klases vispārīgā figūra. Skatiet [Figūras](figures.md#which-figure-a-unit-gets), kā dati atrod savu figūru.
+Katru figūru veido pats skatītājs: vienkāršas formas līdz veida publicētajam izmēram, ar pazīmēm, kas to atšķir no kaimiņiem — tanka ceļa riteņi un tornis, pretgaisa transportlīdzekļa ieroči, raķetes un radari, lidmašīnas spārna plāns, astes un dzinēji, helikoptera rotori un īsie spārni. Nekas nav ņemts no spēles. Dizains, ko izdomājusi spēle, tiek rādīts kā tās klases vispārīgā figūra. Skatiet [Figūras](figures.md#which-figure-a-unit-gets), lai redzētu, kā dati atrod savu figūru.
 
 ## Riot paziņojums {#riots-notice}
 
-Valorant kartes tiek rādītas saskaņā ar Riot Games politiku "Legal Jibber Jabber", kas ļauj bezmaksas kopienas projektiem tās izmantot un prasa šo paziņojumu, kur tās parādās: *3DHeat tika izveidots saskaņā ar Riot Games politiku "Legal Jibber Jabber", izmantojot Riot Games īpašumā esošus materiālus. Riot Games neatbalsta un nesponsorē šo projektu.* Tāfeles spējas ir vispārīgas formas, nevis Riot māksla.
+Valorant kartes tiek rādītas saskaņā ar Riot Games politiku "Legal Jibber Jabber", kas ļauj bezmaksas kopienas projektiem tās izmantot un prasa šo paziņojumu tur, kur tās parādās: *3DHeat was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.* Tāfeles spējas ir vispārīgas formas, nevis Riot māksla.
