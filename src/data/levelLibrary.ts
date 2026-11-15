@@ -46,7 +46,7 @@ export interface StoredLevelMeta {
    */
   stream?: { theatre: string; runways: boolean; imagery: boolean };
   bounds?: Bounds;
-  /** The game a level is known to be the map of (`dota2`: the Watcher's `dota-map`), so a button can find it again. */
+  /** The game a level is known to be the map of (`dota2`: the 3DHeat Dota tool's map), so a button can find it again. */
   game?: string;
 }
 

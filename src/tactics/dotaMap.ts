@@ -1,7 +1,8 @@
 /**
  * Dota 2's map as a level for the heatmap: OpenDota's drawing of the current
  * map (opendota.com, whose site code is MIT), fetched when asked for and never
- * shipped. With Dota 2 installed, the Watcher's `dota-map` command makes the
+ * shipped. With Dota 2 installed, the separate 3DHeat Dota tool
+ * (3DHeat-Ext-Dota, `heat3d-dota-maps`, also run by the Watcher's `dota-map`) makes the
  * map in 3D from the game's own files (terrain, water, trees, buildings, in the
  * replay tables' frame); once such a level has been loaded it is kept in the
  * level library and preferred (`isDotaLevel`). This image is for everyone else.
@@ -89,7 +90,7 @@ export async function dotaLevel(fetcher: typeof fetch = fetch): Promise<ImageLev
 }
 
 /**
- * Whether a level's parts are the Watcher's `dota-map` export: its part names
+ * Whether a level's parts are a 3DHeat Dota (`heat3d-dota-maps`) export: its part names
  * (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`,
  * ...) say so. Ancients are Dota's alone, so no other game's level matches.
  */

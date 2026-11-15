@@ -396,7 +396,7 @@ export function LevelPanel() {
 
   /**
    * The Dota 2 map under the Watcher's Dota replay tables: the 3D one made by
-   * the Watcher's `dota-map` when the library holds it (it goes there when it
+   * the 3DHeat Dota tool (`heat3d-dota-maps`) when the library holds it (it goes there when it
    * is first loaded), else OpenDota's drawing.
    */
   const loadDota = async () => {
@@ -429,7 +429,7 @@ export function LevelPanel() {
       const m = await modelLoader.load(file, LOD_TARGETS[lod], (p) => setBusy(p.label));
       const loaded = modelLevelFrom(file.name, m);
       setLevel(loaded);
-      // The Dota 2 map from the Watcher's dota-map goes to the library at once,
+      // The Dota 2 map from the 3DHeat Dota tool goes to the library at once,
       // replacing an older one, so the Dota 2 map button finds it from now on.
       let dota = isDotaLevel(m.partNames);
       if (dota) {
