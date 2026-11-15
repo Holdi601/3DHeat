@@ -1,11 +1,21 @@
 ---
 title: Camera path and video
-nav_order: 8
+nav_order: 18
 ---
 
 # Camera path and video
 
-The **Camera path & render** panel records a keyframed camera move and writes it out as a WebM video in which **every frame is fully converged** - a flythrough comes out clean, without the sampling grain a moving camera can show. The camera and the playhead move together, so the same panel makes a timelapse ([`PathPanel.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/panels/PathPanel.tsx), [`campath.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/campath.ts), [`record.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/record.ts)).
+Make a film of your data: you place the camera in a few spots and the viewer flies between them and saves a video. Every frame is very clean, with no grain. The camera and the playhead move together, so the same panel makes a timelapse ([`PathPanel.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/panels/PathPanel.tsx), [`campath.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/campath.ts), [`record.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/record.ts)).
+
+## Make a flythrough
+
+1. Fly to where the film starts and press **Add keyframe here** in **Camera path & render**.
+2. Fly to the next spot and press it again. Repeat for each stop.
+3. Tick **Preview along the path** and drag **Position along path** to check the move.
+4. Set **Duration** (how long the video is). A move that is right but too quick only needs a longer duration.
+5. Press **Render video**. Wait for the progress line; the file downloads when it finishes.
+
+![The Camera path & render panel with three keyframes, Smooth interpolation, 12 s, 30 fps and 16 Mbps](assets/img/en/camera-path-panel.webp)
 
 ## Keyframes
 
@@ -34,7 +44,15 @@ With no keyframes, a render holds the current camera still for the whole clip - 
 | Summary | | | `N frames · window: cumulative/fixed/lifetime`, and when the timeline is in All mode: *(the render switches All to Play so the playhead means something)*. |
 | **Render video** / **Cancel** | | | Starts the render; while it runs, shows `frame i / n · waited w · X MB` and how many frames were not exact. Needs a dataset. |
 
-## What a render does
+## Tips
+
+- Output size is the canvas size in device pixels (the display's pixel ratio, capped at 2). Resize the browser window to change it.
+- A cumulative history builds the heat up over the clip; a window or lifetime history shows a moving slice of time.
+- Keyframe positions are display coordinates: with an [inverted world axis](camera.md#invert-world-axis), keys made before switching it point somewhere else after.
+
+## For developers
+
+### What a render does
 
 1. Takes a test capture of the frame to learn the exact output size in device pixels.
 2. Picks a codec through WebCodecs: **VP9** (`vp09.00.10.08`), else **VP8**, at the chosen bitrate and frame rate. Without `VideoEncoder` it stops with *This browser has no VideoEncoder - WebCodecs is required to write a video*; with neither codec, *No supported video codec (tried VP9, VP8)*.
@@ -50,9 +68,3 @@ With no keyframes, a render holds the current camera still for the whole clip - 
 7. Downloads the video as `3dheat-<width>x<height>-<frames>f.webm` and reports `N frames at W×H, X MB - every frame exact`, or how many hit the wait cap.
 
 **Cancel** stops after the current frame (*Render cancelled.*) and restores the settings.
-
-## Tips
-
-- Output size is the canvas size in device pixels (the display's pixel ratio, capped at 2). Resize the browser window to change it.
-- A cumulative history builds the heat up over the clip; a window or lifetime history shows a moving slice of time.
-- Keyframe positions are display coordinates: with an [inverted world axis](camera.md#invert-world-axis), keys made before switching it point somewhere else after.

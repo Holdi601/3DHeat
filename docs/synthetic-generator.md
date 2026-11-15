@@ -6,6 +6,15 @@ nav_order: 5
 
 # Synthetic generator
 
+No data of your own? Press one button and 3DHeat invents a pretend battle for you, as small or as big as you like.
+
+1. Open the **Dataset** panel in the Heatmap sidebar (below **Source**).
+2. Scroll to **Synthetic generator**.
+3. Set **Rows (millions)**. Try 1 first: the default of 8 million is heavy for a first try.
+4. Press **Generate**.
+
+![1 million rows, 8 teams, drawn in Team heat](assets/img/en/synthetic-generator-team-heat.webp)
+
 The **Dataset** panel can generate a dataset instead of loading one. It is meant for two things: trying the viewer without data of your own, and checking whether a given number of rows, sprite radius and budget hold a usable frame rate on a machine *before* committing a large real load to it. Its movement is shaped like a battle royale match - teams start apart, then are squeezed together - because uniform noise looks fine at any budget and hides exactly the artefacts worth catching.
 
 ## Controls
@@ -16,7 +25,7 @@ The **Dataset** panel can generate a dataset instead of loading one. It is meant
 | **Teams** | 8 | Number of groups (at least 1). |
 | **Per team** | 12 | Players per group (at least 1). |
 | **Map half-extent (m)** | 4000 | Half the width of the playable area on X and Z. |
-| Estimate line | | ≈ rows × 26 bytes of RAM and rows × 8 bytes on the GPU. |
+| Estimate line | | "≈ X GB of RAM, Y GB on the GPU after quantisation." (about 26 bytes of RAM and 8 bytes on the GPU per row). |
 | **Generate** | | Generates in the ingest worker, with progress, and replaces any loaded dataset. |
 
 Generation runs in the background worker, so tens of millions of rows do not freeze the page.

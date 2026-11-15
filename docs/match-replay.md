@@ -1,22 +1,27 @@
 ---
 title: Match replay
-nav_order: 61
+nav_order: 9
+has_children: true
 ---
 
 # Match replay
 
-The replay plays a recording back with each unit drawn as **what it is**: a soldier, the tank someone drives, the aircraft, the missile in flight. Shots, hits, fires and wrecks are drawn on the units; objectives on the level; cameras, labels and a tactical display help you read the fight.
+The replay is a film of the match with every player drawn as the thing they drove. Use it to watch a fight again, follow one unit and see who hit whom.
 
-![Figure replay of the tank demo: tanks as their own figures, labels with height and speed](assets/img/en/replay-overview.webp)
+Shots, hits, fires and wrecks are drawn on the units and objectives on the level. Cameras, labels and a tactical display help you read the fight. Do you know Tacview? [Tacview parity](tacview-parity.md) shows where each of its tools is.
+
+![Figure replay of the tank demo: tanks as their own figures, with name, vehicle and speed labels](assets/img/en/replay-overview.webp)
 
 ## Start a replay
 
-1. Load a recording (any table with a **person** and a **time** column, a Tacview file, a converted replay, a [`.3dheat`](container.md) match).
+1. Load a recording with **Source → Files…** or by dropping it on the Source panel (any table with a **person** and a **time** column, a Tacview file, a converted replay, a [`.3dheat`](container.md) match). See [Getting data in](getting-data-in.md).
 2. Open the **Match** tab and pick **Figure replay**, or pick **Figure overlay** in the Heatmap tab's mode bar.
 3. Under **Matches in the replay** pick one match, all at once, or several.
 4. Press **Play** on the timeline (or `K`). Drag the timeline to jump.
 
 Figures replace boxes for every unit whose name or type is known (see [Figures](figures.md)). Data with no name or type column is drawn as soldiers.
+
+![The Match tab: the matches picker, the Figures section, the camera views, Play and the event list](assets/img/en/match-replay-tab.webp)
 
 ## Figures
 
@@ -25,22 +30,23 @@ Figures replace boxes for every unit whose name or type is known (see [Figures](
 | Setting (section **Figures**) | Default | What it does |
 |---|---|---|
 | **Figures instead of boxes** | on | Off draws plain boxes. |
-| **Figure size** (times true size) | 1 | 1 is real size; larger helps from far away. |
-| **Smallest figure on screen** | 36 px | Far-off figures grow to stay this long; 0 keeps true size. |
+| **Figure size** (times true size) | 1 | 1 is real size; 0.25 to 20 times (log scale). Larger helps from far away. |
+| **Smallest figure on screen** | 36 px | Far-off figures grow to stay this long, 0 to 200 px; 0 keeps true size. |
 | **At a distance**: Figure, Arrow, Symbol | Figure | What a far unit becomes. |
-| **Symbols** | NATO (APP-6) | NATO (APP-6), Russian tactical signs, the game's map icons, or shapes only (colour-blind safe). |
-| **Symbol size**, **My side**, **Hostile / Neutral**, **Heading ticks** | 28 px, automatic, hostile, on | How symbols look and which side is friendly. |
+| **Symbols** | NATO (APP-6) | NATO (APP-6), Russian tactical signs, **Game map** icons, or **Shape only (colour-blind safe)**. |
+| **Symbol size**, **My side**, **Hostile / Neutral**, **Heading ticks** | 28 px (12 to 64), automatic, hostile, on | How symbols look and which side is friendly. |
+| **Drop lines** | on | A line from each unit straight down to the ground, so heights read in 3D. |
 | **Drop lines and labels on weapons** | off | Lines to the ground and labels on missiles and bombs. |
 | **Fires on units** | on | Flames from the moment a unit catches fire until it is put out. |
-| **Hits on units** | on | Marks where shots struck (below). **Hits stay**: seconds, or the whole life. **Floating markers**: marks drawn above the surface. |
+| **Hits on units** | on | Marks where shots struck (below). **Hits stay**: 1 to 300 seconds, or **Whole life**. **Floating markers**: marks drawn above the surface. |
 | **Aim and turret lines** | off | Dashed: where the player looks; solid: where the gun points. |
 | **Buildings** | solid | Solid or see-through buildings, when the level paints them. |
 
 ### Symbols at a distance
 
-![The same moment from far away, units shown as NATO symbols](assets/img/en/replay-symbols.webp)
+When a unit would be smaller than **Smallest figure on screen**, it can become a symbol that stays readable. The shape tells the kind (for example a rounded box with a track mark for armour); the colour tells the side. Open the **Symbols** menu to change the style.
 
-![The same with Russian tactical signs](assets/img/en/replay-symbols-russian.webp)
+![The same six units as NATO symbols, Russian tactical signs, game map icons and shapes only](assets/img/en/match-replay-symbols-styles.webp)
 
 ### Hit marks, wrecks and fires
 
@@ -71,7 +77,7 @@ The **Tactical display** section draws, for no unit, the selected ones, all, or 
 
 ### Display style
 
-`T` (or **Show as tactical display**) switches the look to a radar-screen style: glow, outlines, contour lines, a measurement grid, scan lines, range rings, altitude ladders, panels with kills and events, and a **Director** that moves the camera to events by itself.
+`T` (or the **Show as tactical display** toggle) switches the look to a radar-screen style: glow, outlines, contour lines, a measurement grid, scan lines, range rings, altitude ladders, panels with kills and events, and a **Director** that moves the camera to events by itself.
 
 ![The same air fight in the normal look](assets/img/en/replay-air.webp)
 
@@ -81,10 +87,14 @@ When a match comes with its objectives, the **Objectives** section draws them on
 
 ## Labels and statistics
 
-- **Labels**: rules per kind (selected, aircraft, ground, ships, weapons, AI): shown or not, which values (name, vehicle, height, speed ...), and priority when labels overlap. **Declutter** and a label size.
+- **Labels**: rules per kind (**Selected**, **Aircraft**, **Ground**, **Ships**, **Weapons**, **AI**): shown or not, which values, and a **Priority** for who gets the space when labels overlap. **Keep labels apart** moves a label beside its unit when it would cover another, and leaves it out where there is no room. **Label size** is 60 to 250 %. **Back to name, vehicle, altitude and speed** resets the rules.
+  - Ground units start with name, vehicle and speed.
+  - Aircraft start with name, vehicle, altitude and speed.
+  - Ships start with name, vehicle, speed and heading.
+  - Hover a unit to see every value it has.
 - **Statistics**: per team and unit: kills, deaths, shots, hits, hit ratio, take-offs, landings, time airborne, top speed, height and G, distance. CSV export.
 - **Charts**: a unit's values over time, two units compared, or one value against another.
 
 ## Many matches at once
 
-To lay hundreds or thousands of matches over each other, see [Many matches at once](many-matches.md). For the Tacview feature list, see [Tacview parity](tacview-parity.md); for the older debrief controls, [Figure replay and debrief](figure-replay.md).
+To lay hundreds or thousands of matches over each other, see [Many matches at once](many-matches.md). Figure details (smoke, fire, other timed effects): [Figures in the figure overlay](figure-replay.md). Tacview feature list: [Tacview parity](tacview-parity.md), a child page of this one.

@@ -6,7 +6,16 @@ nav_order: 1
 
 # Gamepad and HOTAS
 
-XInput controllers work, along with anything else the browser maps to the standard gamepad layout. The Gamepad API can only be polled, so the pad is read once per frame from the render loop, and its input **adds** to the keyboard's - both can be used at once ([`gamepad.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/gamepad.ts)).
+You can fly the camera with an Xbox-style controller instead of the keyboard. Use it when you want to lean back and look around a big scene. Its input **adds** to the keyboard's, so you can use both at once.
+
+## Connect a controller
+
+1. Plug the controller in (or pair it).
+2. Click the view and press any button on the controller. Browsers only show a controller after its first input.
+3. Open **Camera & scene → Gamepad**. The device list shows it with `●`.
+4. Push the left stick to fly, the right stick to look. If the camera drifts with the sticks centred, raise **Deadzone**.
+
+Any device the browser maps to the standard gamepad layout works. A flight stick or throttle (HOTAS) is ignored by default; see below.
 
 ## Mapping
 
@@ -44,5 +53,7 @@ The stick shaping: with deflection *m* (the length of the stick vector) and dead
 The Gamepad API reports **every** HID device with axes - flight sticks, throttles, pedals, wheels - and those do not rest at centre: a twist axis or a throttle lever sits at full deflection when nobody touches it. Read as a stick, that is a permanent full-speed input no deadzone can suppress, and the camera spins on its own from the moment the page loads (and every heat mode looks broken too, because a moving camera restarts the accumulation every frame).
 
 So a device is followed only when the browser reports `mapping: "standard"`, its way of saying "an XInput-style pad with the axes where you expect them". Other devices are listed and marked ignored, and **Use device** opts into one explicitly - for flying the camera with a HOTAS, for example. Once a pad is followed the camera stays with it, so two controllers do not fight over the camera depending on enumeration order.
+
+**HOTAS:** only axes 0-3 (two sticks) and the standard buttons are read. A throttle or pedals on other axes do nothing, and a stick or throttle whose axes do not rest at centre may need a larger **Deadzone**.
 
 Browsers hide a controller until it has sent its first input, so a plugged-in pad that has not been touched does not exist yet as far as the page is concerned.

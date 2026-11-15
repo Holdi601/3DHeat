@@ -1,10 +1,19 @@
 ---
 title: Camera and controls
-nav_order: 7
+nav_order: 17
 has_children: true
 ---
 
 # Camera and controls
+
+You fly through the scene like a bird: **W A S D** to move, drag the mouse to look. Use this page to fly, to jump to a top or side view, and to read exactly where the camera is.
+
+## Fly in 4 steps
+
+1. Click once on the view so it has the keyboard.
+2. Hold **W** to fly forward, **S** back, **A** and **D** sideways, **Space** up, **Q** down.
+3. Hold the left or right mouse button and drag to look around.
+4. Press **F** to frame all the data again.
 
 The camera is a free-fly camera with a perspective and a parallel projection, preset views, a typed pose, and depth of field. Its settings are in the **Camera & scene** panel at the bottom of the sidebar (also shown in the Race analysis and Match tabs). The implementation is [`camera.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/camera.ts).
 
@@ -23,11 +32,25 @@ The camera is a free-fly camera with a perspective and a parallel projection, pr
 | Click (without dragging) | Show what is under the pointer ([Inspecting the view](#inspecting-the-view)) |
 | `C` | Copy the camera's position, yaw and pitch |
 | `G` | Go to a typed point |
-| `Esc` | Close the pick card |
+| `Esc` | Close the pick card (and stop following a unit) |
 
-Moving keys add up with a [gamepad](gamepad.md); see the [keyboard reference](keyboard-reference.md) for everything else. Keys are ignored while a text box has focus. Pitch is clamped just short of straight up and down.
+### While following a unit
+
+When the camera follows a unit in a replay ([Match replay](match-replay.md)), the flying keys do something else:
+
+| Input | Effect |
+|---|---|
+| Wheel, `W` / `S` | Closer to the unit / further away (higher / lower in the satellite view) |
+| `A` / `D`, `Q` / `E` | Orbit around the unit (chase and orbit views) |
+| Drag | Look around the unit (cockpit: look around inside) |
+| `V` / `Shift+V` | Next / previous camera view |
+| `Esc` | Stop looking at the second unit first, then stop following |
+
+Moving keys add up with a [gamepad](gamepad.md); see the [keyboard reference](keyboard-reference.md) for everything else. Keys are ignored while a text box or a drop-down has focus. Pitch is clamped just short of straight up and down.
 
 ## Camera & scene panel
+
+![The Camera & scene panel: Projection, Preset views, Field of view buttons, Fly speed and Pose](assets/img/en/camera-panel.webp)
 
 ### Projection
 
@@ -140,7 +163,7 @@ A click on the view - press and release without dragging more than 4 pixels; a d
 
 The card stays until it is closed (**×**, `Esc`), another click answers something else, or a click on empty space. A cyan cross is drawn at the point in the scene and a ring over it on screen. Its buttons: **copy** (every value, and the coordinates as `x, y, z`), **Look at**, and **Stand here** (on a data point, looking the way the row looked when it has a look direction; on a surface, 1.7 m above it).
 
-The level is indexed for picking on the first click that needs it: a grid of columns over its footprint, built a few milliseconds at a time between frames so the view never stops (about a second of work for the test level's nine million triangles), and kept until the level changes. Until then the card says *Preparing the level for picking* with a percentage, and answers the click when it is ready. A data-point search over more than four million drawn rows is spread over frames the same way.
+The level is indexed for picking on the first click that needs it: a grid of columns over its footprint, built a few milliseconds at a time between frames so the view never stops (about a second of work for a level of several million triangles), and kept until the level changes. Until then the card says *Preparing the level for picking* with a percentage, and answers the click when it is ready. A data-point search over more than four million drawn rows is spread over frames the same way.
 
 ## Depth of field
 

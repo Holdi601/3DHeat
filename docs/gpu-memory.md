@@ -6,7 +6,15 @@ nav_order: 5
 
 # GPU memory residency
 
-## How rows are stored on the GPU
+The graphics card has only so much memory. If your data does not fit, the viewer shows what fits and says so: the stats overlay gets an amber **Not resident** line with the number of rows that were left out. A shortened dataset that looked complete would be the worst mistake an analysis tool can make, so this line is never hidden.
+
+![The stats overlay with the amber Not resident line](assets/img/en/gpu-memory-not-resident.webp)
+
+To fit more, raise the GPU budget under **Resource budgets** and load again ([Memory and budgets](memory-and-budgets.md#raising-the-gpu-budget)), narrow the data first, or use a card with more memory.
+
+## For developers
+
+### How rows are stored on the GPU
 
 Rows are uploaded once, when a dataset arrives, in **chunks** of 8,388,608 rows (2²³) ([`CHUNK_ROWS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)). Each chunk is quantised against its own bounding box and time span:
 
@@ -26,7 +34,7 @@ Further per-row GPU memory, allocated on use:
 
 Plus the render targets: scene colour and depth, the heat target and its scratch twin (four channels in [Team heat](team-heat.md)), and the depth-peeling layers for [occlusion](depth-and-culling.md); and the level's geometry.
 
-## The budget is enforced at upload
+### The budget is enforced at upload
 
 WebGL accepts allocations it cannot service and then either loses the context or falls back to system memory at ruinous cost, so the GPU budget is enforced when the dataset is uploaded ([`setDataset`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/renderer.ts)):
 

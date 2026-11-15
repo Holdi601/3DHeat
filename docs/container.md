@@ -6,6 +6,16 @@ nav_order: 9
 
 # One file a match: `.3dheat`
 
+A `.3dheat` file is one whole match in one file, to copy, keep or share. To open one, just drop the file on the Source panel.
+
+```
+match.3dheat   (a ZIP file)
+  manifest      what the match is, and the list of everything inside
+  table         the positions (Parquet)
+  match.json    the match document
+  sidecars      what the converter kept whole (events, messages, ...)
+```
+
 A converted match used to be several files side by side: the table
 `<match>.parquet`, the match document `<match>.match.json` and the sidecars
 `<match>.<what>.parquet` ([Converters keep everything](converters.md)). A
@@ -131,7 +141,7 @@ file's start covers the manifest and the table's local header together.
 | `format` | always `3dheat` |
 | `format_version` | `major.minor` (below) |
 | `game`, `source`, `converter`, `match`, `map`, `mode`, `started` | what the match is and what made it; `null` where unknown |
-| `created`, `updated` | when written, when last updated |
+| `created`, `updated` | when written, when last updated (`updated` appears only after an update) |
 | `roles` | each role to its first member's name: a quick index |
 | `members` | every member except the manifest: the full list, and the one a reader trusts |
 | `matches` | optional: the matches of a container holding several (below) |

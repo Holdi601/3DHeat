@@ -6,7 +6,20 @@ nav_order: 2
 
 # 3D levels
 
-**3D model…** in the Background / level panel loads a level mesh. It is parsed, classified and simplified in a background worker ([`modelWorker.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/modelWorker.ts)) with a progress line and **Cancel**: *Reading model*, *Parsing file*, *Packing N textures*, *Classifying N parts*, *Simplifying ground (N tris)*, *Simplifying structures (N tris)*, *Building wireframe*.
+A 3D level is a model of the place - hills, streets, buildings - that your data sits inside. It lets you see which floor, hill or rooftop the heat is on. The viewer splits it into ground (solid), structures (see-through, so you can look inside) and water.
+
+## Load a 3D level
+
+1. Load your data first ([Getting data in](getting-data-in.md)). The model must use the same world space and unit as the data, Y up.
+2. In **Background / level**, choose a **Simplification target**. Leave it at *Full - no simplification* unless the model is huge.
+3. Press **3D model…** and pick a `.glb`, `.gltf`, `.obj`, `.stl` or `.ply` file.
+4. Wait for the progress line. **Cancel** stops it.
+5. Press **F** in the view. Ground is solid, structures are see-through shells, water is flat.
+6. Tune the look in [Level appearance](level-appearance.md). Press **Save to library** to keep the result ([Level library](level-library.md)).
+
+![A 3D level loaded: opaque ground with contour lines, see-through buildings, flat water](assets/img/en/model-levels-loaded.webp)
+
+**3D model…** loads the level mesh. It is parsed, classified and simplified in a background worker ([`modelWorker.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/modelWorker.ts)) with a progress line and **Cancel**: *Reading model*, *Parsing file*, *Packing N textures*, *Classifying N parts*, *Simplifying ground (N tris)*, *Simplifying structures (N tris)*, *Building wireframe*.
 
 ## Formats
 
@@ -63,11 +76,7 @@ Levels from the project's own exporters are budgeted already; the target exists 
 
 ## Textures
 
-A `.glb` whose parts carry base-colour textures is drawn in them - an extracted racing course, for example, carries one per terrain tile and one per placed model. Every texture is packed into **one atlas** in the import worker ([`atlas.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/atlas.ts)), so the level stays one draw, one sampler and one texture-coordinate attribute on both backends:
-
-- packed in shelves at each image's own size, shrunk only if the set would not fit **8192 px** either way (WebGPU's default texture size limit);
-- a **16-pixel gutter** around every image, and only the 5 mip levels that gutter protects, so a distant sign never samples its neighbour's texture;
-- **repeating textures** stay repeating. An image whose glTF sampler repeats (the glTF default) and whose texture coordinates leave 0..1 - a brick wall whose UV runs 0 to 40 along it - becomes a *tile*: its vertices keep their own coordinates and a 16-bit tile number, and the shaders wrap the coordinate into the tile's rectangle per pixel, taking the mip level from the unwrapped coordinate so the seams do not show. A tile's gutter holds its own opposite edge. An axis whose sampler clamps is clamped; an image whose coordinates stay inside 0..1 is drawn as before. A level with tiles costs 4 bytes a vertex more.
+A `.glb` whose parts carry base-colour textures is drawn in them - a racing-course export, for example, carries one per terrain tile and one per placed model.
 
 Ground texture is shown by default when present; structures that carry textures start **solid, in their own textures** (kerbs, guardrails, tyre walls and signs are the edges of a road, not buildings to look inside), with the wireframe off and flat shading off. See [Level appearance](level-appearance.md).
 
@@ -76,7 +85,17 @@ Ground texture is shown by default when present; structures that carry textures 
 - Above **300,000** structure triangles the structure edges start switched off and the face opacity at 35%: with an edge in every pixel the district reads as flat white.
 - The camera's far plane widens to fit the level ([Levels](levels.md#what-a-level-does-for-the-heat)).
 
-## The exporter contract
+## For developers
+
+### Texture atlas
+
+Every texture is packed into **one atlas** in the import worker ([`atlas.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/atlas.ts)), so the level stays one draw, one sampler and one texture-coordinate attribute on both backends:
+
+- packed in shelves at each image's own size, shrunk only if the set would not fit **8192 px** either way (WebGPU's default texture size limit);
+- a **16-pixel gutter** around every image, and only the 5 mip levels that gutter protects, so a distant sign never samples its neighbour's texture;
+- **repeating textures** stay repeating. An image whose glTF sampler repeats (the glTF default) and whose texture coordinates leave 0..1 - a brick wall whose UV runs 0 to 40 along it - becomes a *tile*: its vertices keep their own coordinates and a 16-bit tile number, and the shaders wrap the coordinate into the tile's rectangle per pixel, taking the mip level from the unwrapped coordinate so the seams do not show. A tile's gutter holds its own opposite edge. An axis whose sampler clamps is clamped; an image whose coordinates stay inside 0..1 is drawn as before. A level with tiles costs 4 bytes a vertex more.
+
+### The exporter contract
 
 What the viewer needs from a level, whatever made it:
 

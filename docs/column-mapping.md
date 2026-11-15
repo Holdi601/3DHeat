@@ -6,6 +6,14 @@ nav_order: 2
 
 # Column mapping
 
+A file is a table, and 3DHeat has to know which column holds the east-west position, which holds the time, which holds the player's name, and so on. This panel is where it says what it guessed, and where you fix a wrong guess.
+
+![The Column mapping panel after loading a Parquet file: every box already filled in](assets/img/en/column-mapping-panel.webp)
+
+*The file named its own columns, so every box is already filled.*
+
+For example, a CSV with the header `x,y,z,t,player,team` maps itself: x, y and z become the position, `t` the time, `player` the [person](glossary.md) and `team` the [group](glossary.md).
+
 After files are selected, the **Column mapping** panel opens below the Source panel. It says which column plays which role. It is filled in automatically and every field can be changed before pressing **Load**; the mapping is read at load time, so changing it afterwards means loading again.
 
 ## The fields
@@ -28,7 +36,7 @@ All column menus list every column of the first file, plus *- none -*.
 | **Keep for filtering** | Extra columns kept in memory. | A checkbox per column, and for each ticked one *range* (numeric) or *category*. Each costs 4 bytes per row and a decode pass at load. Only kept columns can be [filtered](filters.md), used for a [difference split](difference.md) or as a [line heat](line-heat.md) event column. |
 | **Show sample rows** | A table of the first 12 sampled rows, all columns. | For checking the guesses. |
 
-A ticked filter column that is not set explicitly is read as *range*; a numeric-looking id column is often more useful as *category*.
+A ticked filter column that is not set explicitly is read as *range*; a numeric-looking id column is often more useful as *category*. Only 4 filters can be active at once ([Filters](filters.md)).
 
 ## How the auto-mapping guesses
 
@@ -99,4 +107,10 @@ The rules, briefly:
 
 ## Known issue: overriding the CSV separator
 
-When the separator is changed to one different from the detected one, the preview is re-read, but in the current code ([`previewSource`](https://github.com/Holdi601/3DHeat/blob/main/src/data/sourcePreview.ts)) the re-read still splits the header and sample rows with the *detected* delimiter, so the column list and sample rows do not change. The chosen separator is stored in the mapping and used for the load itself. Until this is fixed, a file whose separator is detected wrongly is best converted to a consistent separator beforehand.
+When you change the separator to one different from the detected one, the column list and the sample rows do not change (the preview still splits with the detected separator). The chosen separator is still used for the load itself. If the detected separator is wrong:
+
+1. Open the file in a text editor.
+2. Replace the separator with a comma everywhere (and decimal commas with dots).
+3. Save, then load the file again.
+
+The cause is in [`previewSource`](https://github.com/Holdi601/3DHeat/blob/main/src/data/sourcePreview.ts).

@@ -6,16 +6,11 @@ nav_order: 56
 
 # Car profiles and comparison
 
-The analysis only tells a lap to brake harder, carry more speed or accelerate
-earlier where its car has shown it can, and it takes out of a loss what the
-cars themselves explain. So each car's limits and character are measured
-from every loaded lap of it. This page covers the envelope, the profile, the
-**Cars compared** section, and what the cars decide in each corner.
+A car can only brake, turn and accelerate so hard. The viewer measures how hard from your own laps, so it never tells you to do something your car cannot do. This also explains how much of a lost second was the car's fault and not yours.
 
-Code: [`src/race/envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts),
-[`src/race/profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts),
-`carNote` in [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts),
-`CarsSection` in [`src/ui/race/RacePanel.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/RacePanel.tsx).
+![Cars compared: two cars side by side with their grip, braking and pull](assets/img/en/race-cars-compared.webp)
+
+The analysis only tells a lap to brake harder, carry more speed or accelerate earlier where its car has shown it can, and it takes out of a loss what the cars themselves explain. So each car's limits (its *envelope*, below) and character (its *profile*) are measured from every loaded lap of it. This page covers the envelope, the profile, the **Cars compared** section, and what the cars decide in each corner.
 
 **One car** = laps with the same car number (or name, without a number) and
 the same performance index: a different tune is a different car.
@@ -188,3 +183,10 @@ one (`carNote`):
 The car's share is also taken out of the time itself - see
 [the car's share](race-corner-analysis.md#the-cars-share) - and a corner
 where the car explains 60% or more is put down to the car.
+
+## For developers
+
+Code: [`src/race/envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts),
+[`src/race/profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts),
+`carNote` in [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts),
+`CarsSection` in [`src/ui/race/RacePanel.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/RacePanel.tsx).

@@ -1,20 +1,54 @@
 ---
 title: Filters and tools
-nav_order: 5
+nav_order: 6
 has_children: true
 ---
 
 # Filters and tools
 
-The panels below the heat settings narrow down *which* rows are drawn and help read the picture.
+These panels let you pick *which* data you look at and measure what you see. Use them when the picture is too busy: show one team, one player, one place, or one floor of a building.
 
-| Panel | What it does | Applies to |
-|---|---|---|
-| [Filters](filters.md) | Live range and category filters on any column kept at load. | Heat modes (not boxes) |
-| [Difference split](difference.md#the-difference-split-panel) | Which rows add and which subtract, in Difference mode. | Difference |
-| [Teams](teams-list.md) | Show or hide each group; put groups on the + or − side. | All modes |
-| [Entities](entities.md) | Pick individual persons. | All modes (in the heat, one of the four filter slots) |
-| [Slice](slice.md) | Cut a slab out of the level and the heat, to look inside buildings. | All heat modes and the level |
-| [Measure](measure.md) | A ruler, and the heat value under the cursor. | All modes |
+Each panel narrows the data, and they work together: a row is drawn only if it passes **all** of them (AND).
 
-The sidebar order in the Heatmap tab is: mode bar and session picker, Source, Column mapping, Dataset, Routes (Lines mode), the heat panels or the Team viewer, Difference split, Teams, Entities, Filters, Background / level, Slice, Measure, Camera path & render, Performance, Camera & scene. The Match tab shows the mode bar, the session picker, its own panel, Filters, Background / level and Camera & scene.
+```
+all rows -> Filters -> Teams -> Entities -> Slice -> picture
+              AND       AND       AND        AND
+```
+
+Example: untick *Tank* under Filters, hide the Red team under Teams, and pick one player under Entities. You see only that player's non-tank movements.
+
+| Panel | What it does | Heat modes | Figure overlay |
+|---|---|---|---|
+| [Filters](filters.md) | Range and category filters on any column kept at load. | Yes | No (column filters only) |
+| [Difference split](difference.md#the-difference-split-panel) | Which rows add and which subtract, in Difference mode. | Difference only | No |
+| [Teams](teams-list.md) | Show or hide each team; put teams on the + or - side. | Yes | Yes |
+| [Entities](entities.md) | Pick individual players. | Yes | Yes |
+| [Slice](slice.md) | Cut a slab out of the level and the heat, to look inside buildings. | Yes, and the level | No |
+| [Measure](measure.md) | A ruler, and the heat value under the cursor. | Yes | Yes |
+| [Volumes and comparison](volumes.md) | Draw 3D shapes and ask what happened inside. Can also filter. | Yes | Yes |
+| [Breakdown](breakdown.md) | Which vehicle, player or weapon does best in a place. | n/a | n/a |
+
+Hit analysis has its own area filter in the **Vehicles** tab: see [Hit analysis](hit-analysis.md).
+
+Terms such as heatmap, row, person and group are explained in the [glossary](glossary.md).
+
+## Where the panels are
+
+The Heatmap tab's sidebar, from top to bottom:
+
+1. Mode bar and session picker
+2. Source, Column mapping, Dataset
+3. Routes (Lines mode)
+4. The heat panels, or the Team viewer
+5. Difference split
+6. Teams
+7. Entities
+8. Filters
+9. Background / level
+10. Slice
+11. Measure
+12. Camera path & render
+13. Performance
+14. Camera & scene
+
+The Match tab shows the mode bar, the session picker, its own panel, Filters, Background / level and Camera & scene.

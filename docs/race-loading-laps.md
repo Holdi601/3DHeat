@@ -6,33 +6,43 @@ nav_order: 51
 
 # Loading laps
 
-Everything about getting laps into the Race tab: the buttons, every file
-format and how it is read, folders that hold many courses, how cars are
-named, the demo laps, and the lap list.
+A lap file is a recording of one drive: where the car was and what the driver did, many times a second. Load two or more laps of the same course and the **Race analysis** tab can compare them.
 
-Code: [`src/ui/race/actions.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/actions.ts)
-(`loadLapFiles`), [`src/race/adapters.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/adapters.ts),
-[`src/race/ibt.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/ibt.ts),
-[`src/race/carNames.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/carNames.ts).
+![The Laps section of the Race analysis tab with three demo laps loaded: lap list, reference star, focus](assets/img/en/race-loading-laps-list.webp)
+
+## Your first laps
+
+1. Open the **Race analysis** tab.
+2. Just looking? Press **Demo laps** (see [Demo laps](#demo-laps)).
+3. Your own laps: record them in the game with a recorder (see [File formats](#file-formats)). The recorder writes one file per lap.
+4. Press **Load lap files…** and pick two or more files of the same course, or press **Folder…** and pick the folder that holds them. You can also drop files or folders on the 3D view.
+5. Click a lap in the list to see where it loses time.
+
+**Warning: laps are compared one course at a time.** Loading a lap of another named course clears the laps already loaded.
 
 ## The buttons
 
 | Control | Does |
 |---|---|
-| **Load lap files…** | a file picker for `.json`, `.csv`, `.txt`, `.ibt` and `.gz` files, several at once |
+| **Load lap files…** | a file picker for `.json`, `.csv`, `.txt`, `.ibt`, `.gz` and `.h3dcars` files, several at once (`.h3dcars` is a car file, see [Cars](race-replay-and-scene.md#the-cars)) |
 | **Folder…** | a folder picker: every lap file in the folder and below it |
 | **Demo laps** | three made-up laps of a made-up circuit (see [Demo laps](#demo-laps)) |
 | **Clear** | removes every lap (shown once laps are loaded) |
 | drop on the view | files and whole folders dropped on the 3D view are loaded the same way |
 
-Laps are **added** to those loaded - unless they are of another named
-course, in which case the loaded laps are cleared first (laps are compared
-one course at a time). Files that cannot be read are listed under the
+Laps are **added** to those loaded - **unless they are of another named
+course: then the loaded laps are cleared first** (laps are compared one
+course at a time). Files that cannot be read are listed under the
 buttons, one line each; the others still load.
 
 ## File formats
 
-The format is told from the content, not the file name.
+The format is told from the content, not the file name. In plain words:
+
+- **heat3d-lap** is the file the 3DHeat recorder writes for most games.
+- **FH Companion** is a free tool that records Forza Horizon laps. It writes a lap file and, beside it, a `.json.tele.gz` file (the same lap with every tyre's data, gzip-compressed). Pick both together.
+- **iRacing `.ibt`** is iRacing's own telemetry file; switch logging on in the car with Alt+L and load the file as it is.
+- A **lap CSV** is a plain table, one row per moment.
 
 | Format | Typical source | Read by |
 |---|---|---|
@@ -47,6 +57,151 @@ How each game is recorded and what it sends is documented by the recorders:
 and [GameCapture: the lap format](https://github.com/Holdi601/3DHeat-GameCapture/blob/main/docs/lap-format.md).
 See also [Other racing games](other-games.md).
 
+## Folders and courses
+
+**Folder…**, or a dropped folder, brings every file below it. Inside a
+folder only files ending in `.json`, `.csv`, `.txt`, `.ibt` or `.tele.gz`
+are considered, and a `.json` that is not a lap (a course's own file, its
+map) is skipped without an error.
+
+**Several courses in one pick.** FH Companion's lap library keeps each
+course in a folder named `<course name> (course_<x>_<z>_to_<x>_<z>)` (or a
+bare `course_...` for an unnamed course). When the picked files sit in more
+than one such course folder, nothing is loaded; instead the **Laps** section
+says "These are laps of N courses, and laps are compared one course at a
+time. Pick one:" and lists each course with its lap count (files ending
+`.json`, `.csv` or `.ibt`, `course.json` not counted), most laps first.
+Clicking one loads that course's files.
+
+A course is keyed by its name and its **start** point, not its end: runs
+that never finished are kept by FH Companion under the same name and start
+(in `unfinished/`) with where they stopped as the end, and they go with
+their course - marked **partial** in the list.
+
+**Several tracks among picked files.** When files picked directly (not from
+course folders) are laps of more than one named track, the same choice is
+offered per track; laps that name no track go along with whichever track is
+picked.
+
+## Car names
+
+A lap is called by its car's whole name, as the game gives it. Where the lap
+file does not name the car:
+
+1. **The folder.** FH Companion's library keeps laps in
+   `<course>/<class>/<car name> '<yy> (car<number>)/<tune>/<tag>/<lap>.json`.
+   The innermost folder matching `<name> (car<number>)` gives the name and
+   the number; one matching `car<number>` the number alone. Only folder picks
+   and dropped folders carry this path.
+2. **Another lap of the same car.** Once any lap names a car, every lap with
+   the same game and car number is called that - the laps loaded together,
+   and laps loaded later in this browser: the names are kept in
+   `localStorage` under `heat3d.carNames` (keyed `<game>:<car number>`).
+   In a private window they last as long as the laps.
+3. Otherwise "car 1234" by its number, or "car".
+
+**Labels.** In the lap list a lap shows its car name; several laps of the
+same car are numbered "Name #1", "Name #2". The analysis' sentences use the
+same labels when they are unique; otherwise the car name with the lap time,
+"Name (1:29.616)" (example times), numbered further if still not unique.
+
+**Grouping.** Laps belong to the same car (for envelopes, profiles and
+comparisons) when their car number - or name when there is no number - and
+their performance index are the same (`carKey`): the same model with a
+different tune is a different car.
+
+**Classes.** A lap's performance class is the game's (Forza D..X, iRacing's
+car class short name); the statistics order them D, C, B, A, S1, S2, R, X,
+then others alphabetically.
+
+## Demo laps
+
+**Demo laps** loads three laps of a made-up circuit (four straights and four
+right-handers), made by a simple vehicle model
+([`synthetic.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/synthetic.ts)):
+each corner's grip-limited speed, an acceleration pass forwards and a
+braking pass backwards, as a lap simulator does.
+
+| Lap | Car | Faults |
+|---|---|---|
+| clean | Grip car | none |
+| with mistakes | Grip car | brakes 35 m early into T2, gets on the throttle 30 m late out of T3, takes T4 at 0.88 of its speed, drives 1.2 m to one side |
+| other car | Power car | none; drives 1.2 m to the other side |
+
+| Car (number) | Grip | Braking | Traction | Power/mass | Drag |
+|---|---|---|---|---|---|
+| Grip car (9001) | 16 m/s² | 13 m/s² | 9 m/s² | 230 W/kg | 0.0009 /m |
+| Power car (9002) | 12 m/s² | 11 m/s² | 7 m/s² | 380 W/kg | 0.0006 /m |
+
+The lap with the mistakes is focused. The circuit is laid out the way
+Forza keeps its world (left-handed), so - exactly as with a real Forza lap -
+it comes out mirrored and the tab offers **Invert X**. All three laps carry
+per-wheel data, so every part of the tab has something to show.
+
+## The lap list
+
+Each row, left to right:
+
+| Element | Does |
+|---|---|
+| ● / ○ | shows / hides the lap (lines, car, card, charts); hidden laps are still analysed |
+| colour stroke | the lap's colour |
+| name and tags | click to **focus** the lap; hover for its source file and car (name · class PI · drivetrain) |
+| ⌖ | chase this car with the camera (click again to stop) |
+| ★ | compare everything against this lap (make it the reference); disabled on the reference |
+| × | remove the lap |
+
+**Tags:** *reference*; *best of X* (or *best of its class*) on the fastest
+lap of a class when there are several classes; *partial* on a run that did
+not reach the finish.
+
+**The second line:** the class (only with several classes), the lap time
+(`1:29.616`), the gap to the lap it is compared with (the best of its class,
+or the reference) as `+0.512` (example), and *starts late* when the lap begins more
+than 10 m after the reference's start.
+
+With more than 8 laps a line "N of M drawn" offers **Show all** (draw every
+lap: slower, and a tangle) and **Only those looked at** (the reference, the
+focused lap and the best of its class; the statistics count every lap
+either way).
+
+Under the list: the mirror hint when the laps say the drawing is mirrored
+(see [mirrored worlds](race-replay-and-scene.md#mirrored-worlds)), and with
+two or more laps the hint "Click a lap to see where it loses time …", plus,
+with several classes, that each lap is compared with the fastest of its own
+class.
+
+### Reference and focus
+
+- **Reference:** the lap every other is aligned to and, by default, compared
+  against. The fastest **complete** lap unless ★ picked another (the first
+  loaded lap when none is complete). Removing the reference lap returns to
+  the automatic choice.
+- **Focus:** the lap whose findings, car control and maps are shown. It stays
+  where the user put it; otherwise it is the **slowest** lap that is not the
+  reference ("the most to learn"). Focusing a lap also un-hides it and the
+  best lap of its class. Focusing the reference compares it with whichever
+  other lap was quickest through each corner.
+- **Classes:** with laps of several performance classes, each lap is compared
+  with the fastest complete lap of its own class (the reference, in the
+  reference's class). See [Course statistics](race-course-statistics.md).
+
+### Colours
+
+Every lap gets its own colour, by its position in the load order, so a
+lap keeps its colour when others are hidden. The hues are spaced round the
+colour wheel as the heatmap's team mode spaces groups; for each slot the
+lightness (0.52 to 0.66 in OKLCH) and chroma (0.12 to 0.18) are picked to
+stand furthest from the neighbouring slots (and the last from the first)
+under normal, protan and deutan vision, each at least 3:1 against the dark
+chart surface.
+
+## For developers
+
+Code: [`src/ui/race/actions.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/actions.ts) (`loadLapFiles`), [`src/race/adapters.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/adapters.ts), [`src/race/ibt.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/ibt.ts), [`src/race/carNames.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/carNames.ts).
+
+### How each format is read
+
 Every format ends up as one `LapTrace`: channels under canonical names
 (`time`, `distance`, `x`, `y`, `z`, `speed`, `throttle`, `slipRatio.FL` ...,
 see the [channel table](race-charts-and-hud.md#the-channel-table)), the car,
@@ -55,7 +210,7 @@ format, `time` and `distance` are shifted to start at 0, and where a source
 has no `speed` it is worked out as distance over time from the neighbouring
 samples.
 
-### heat3d-lap JSON
+#### heat3d-lap JSON
 
 A JSON object with `"format": "heat3d-lap"`. Read fields:
 
@@ -71,7 +226,7 @@ A JSON object with `"format": "heat3d-lap"`. Read fields:
 
 Without a `distance` channel, distance is summed from the 3D positions.
 
-### FH Companion lap files
+#### FH Companion lap files
 
 A JSON object with a `Lap` object holding a `samples` array (one sample about
 every 5 m). Fields mapped:
@@ -94,7 +249,7 @@ cannot be judged from them alone; pushes (from the steering against the path)
 and hits and crashes still are. Pick the `.tele.gz` beside each one too for the
 rest.
 
-### FH Companion telemetry (`.json.tele.gz`)
+#### FH Companion telemetry (`.json.tele.gz`)
 
 Gzip-compressed JSON `{ version, columns, data }`: Forza's whole Data Out for
 one lap, one row per packet, the game's own field names. Columns are looked
@@ -132,7 +287,7 @@ A `.tele.gz` alone still loads: format 2 files carry `car`
 (`ordinal`, `name`, `class`, `pi`), `track` and `lapSeconds`; without those
 the lap time is the telemetry's own duration and the car is unknown.
 
-### iRacing `.ibt`
+#### iRacing `.ibt`
 
 iRacing's telemetry file is read directly (in the browser, no conversion):
 the 112-byte header, the 32-byte disk sub-header, the variable table (144
@@ -187,7 +342,7 @@ drift angle (see [Car control events](race-control-events.md)).
 Errors: "… is too short to be an .ibt file", "… does not have an iRacing
 telemetry header", "… has no position fixes".
 
-### Lap CSV
+#### Lap CSV
 
 One row per sample; many laps in one file are told apart by a `lap` column.
 The delimiter is detected from the first five lines. An optional first line
@@ -211,7 +366,7 @@ complete. A lap's source is shown as `<file> · <lap>` when the file holds
 several. Errors: "… has no rows", "… has no x and z columns", "… has no laps
 with a time column".
 
-### Discipline and surface
+#### Discipline and surface
 
 What the analysis assumes about a lap, when the lap does not say
 (`lap.ts`):
@@ -234,142 +389,3 @@ What the analysis assumes about a lap, when the lap does not say
 - Per sample, a `loose` channel (Forza's surface rumble, Trackmania's
   materials, see [Car control events](race-control-events.md#the-ground))
   overrides the lap's surface.
-
-## Folders and courses
-
-**Folder…**, or a dropped folder, brings every file below it. Inside a
-folder only files ending in `.json`, `.csv`, `.txt`, `.ibt` or `.tele.gz`
-are considered, and a `.json` that is not a lap (a course's own file, its
-map) is skipped without an error.
-
-**Several courses in one pick.** FH Companion's lap library keeps each
-course in a folder named `<course name> (course_<x>_<z>_to_<x>_<z>)` (or a
-bare `course_...` for an unnamed course). When the picked files sit in more
-than one such course folder, nothing is loaded; instead the **Laps** section
-says "These are laps of N courses, and laps are compared one course at a
-time. Pick one:" and lists each course with its lap count (files ending
-`.json`, `.csv` or `.ibt`, `course.json` not counted), most laps first.
-Clicking one loads that course's files.
-
-A course is keyed by its name and its **start** point, not its end: runs
-that never finished are kept by FH Companion under the same name and start
-(in `unfinished/`) with where they stopped as the end, and they go with
-their course - marked **partial** in the list.
-
-**Several tracks among picked files.** When files picked directly (not from
-course folders) are laps of more than one named track, the same choice is
-offered per track; laps that name no track go along with whichever track is
-picked.
-
-## Car names
-
-A lap is called by its car's whole name, as the game gives it. Where the lap
-file does not name the car:
-
-1. **The folder.** FH Companion's library keeps laps in
-   `<course>/<class>/<car name> '<yy> (car<number>)/<tune>/<tag>/<lap>.json`.
-   The innermost folder matching `<name> (car<number>)` gives the name and
-   the number; one matching `car<number>` the number alone. Only folder picks
-   and dropped folders carry this path.
-2. **Another lap of the same car.** Once any lap names a car, every lap with
-   the same game and car number is called that - the laps loaded together,
-   and laps loaded later in this browser: the names are kept in
-   `localStorage` under `heat3d.carNames` (keyed `<game>:<car number>`).
-   In a private window they last as long as the laps.
-3. Otherwise "car 1234" by its number, or "car".
-
-**Labels.** In the lap list a lap shows its car name; several laps of the
-same car are numbered "Name #1", "Name #2". The analysis' sentences use the
-same labels when they are unique; otherwise the car name with the lap time,
-"Name (1:29.616)", numbered further if still not unique.
-
-**Grouping.** Laps belong to the same car (for envelopes, profiles and
-comparisons) when their car number - or name when there is no number - and
-their performance index are the same (`carKey`): the same model with a
-different tune is a different car.
-
-**Classes.** A lap's performance class is the game's (Forza D..X, iRacing's
-car class short name); the statistics order them D, C, B, A, S1, S2, R, X,
-then others alphabetically.
-
-## Demo laps
-
-**Demo laps** loads three laps of a made-up circuit (four straights and four
-right-handers), made by a simple vehicle model
-([`synthetic.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/synthetic.ts)):
-each corner's grip-limited speed, an acceleration pass forwards and a
-braking pass backwards, as a lap simulator does.
-
-| Lap | Car | Faults |
-|---|---|---|
-| clean | Grip car | none |
-| with mistakes | Grip car | brakes 35 m early into T2, gets on the throttle 30 m late out of T3, takes T4 at 0.88 of its speed, drives 1.2 m to one side |
-| other car | Power car | none; drives 1.2 m to the other side |
-
-| Car (number) | Grip | Braking | Traction | Power/mass | Drag |
-|---|---|---|---|---|---|
-| Grip car (9001) | 16 m/s² | 13 m/s² | 9 m/s² | 230 W/kg | 0.0009 /m |
-| Power car (9002) | 12 m/s² | 11 m/s² | 7 m/s² | 380 W/kg | 0.0006 /m |
-
-The lap with the mistakes is focused. The circuit is laid out the way
-Forza keeps its world (left-handed), so - exactly as with a real Forza lap -
-it comes out mirrored and the tab offers **Invert X**. All three laps carry
-per-wheel data, so every part of the tab has something to show.
-
-## The lap list
-
-Each row, left to right:
-
-| Element | Does |
-|---|---|
-| ● / ○ | shows / hides the lap (lines, car, card, charts); hidden laps are still analysed |
-| colour stroke | the lap's colour |
-| name and tags | click to **focus** the lap; hover for its source file and car (name · class PI · drivetrain) |
-| ⌖ | chase this car with the camera (click again to stop) |
-| ★ | compare everything against this lap (make it the reference); disabled on the reference |
-| × | remove the lap |
-
-**Tags:** *reference*; *best of X* (or *best of its class*) on the fastest
-lap of a class when there are several classes; *partial* on a run that did
-not reach the finish.
-
-**The second line:** the class (only with several classes), the lap time
-(`1:29.616`), the gap to the lap it is compared with (the best of its class,
-or the reference) as `+0.512`, and *starts late* when the lap begins more
-than 10 m after the reference's start.
-
-With more than 8 laps a line "N of M drawn" offers **Show all** (draw every
-lap: slower, and a tangle) and **Only those looked at** (the reference, the
-focused lap and the best of its class; the statistics count every lap
-either way).
-
-Under the list: the mirror hint when the laps say the drawing is mirrored
-(see [mirrored worlds](race-replay-and-scene.md#mirrored-worlds)), and with
-two or more laps the hint "Click a lap to see where it loses time …", plus,
-with several classes, that each lap is compared with the fastest of its own
-class.
-
-### Reference and focus
-
-- **Reference:** the lap every other is aligned to and, by default, compared
-  against. The fastest **complete** lap unless ★ picked another (the first
-  loaded lap when none is complete). Removing the reference lap returns to
-  the automatic choice.
-- **Focus:** the lap whose findings, car control and maps are shown. It stays
-  where the user put it; otherwise it is the **slowest** lap that is not the
-  reference ("the most to learn"). Focusing a lap also un-hides it and the
-  best lap of its class. Focusing the reference compares it with whichever
-  other lap was quickest through each corner.
-- **Classes:** with laps of several performance classes, each lap is compared
-  with the fastest complete lap of its own class (the reference, in the
-  reference's class). See [Course statistics](race-course-statistics.md).
-
-### Colours
-
-Every lap gets its own colour, by its position in the load order, so a
-lap keeps its colour when others are hidden. The hues are spaced round the
-colour wheel as the heatmap's team mode spaces groups; for each slot the
-lightness (0.52 to 0.66 in OKLCH) and chroma (0.12 to 0.18) are picked to
-stand furthest from the neighbouring slots (and the last from the first)
-under normal, protan and deutan vision, each at least 3:1 against the dark
-chart surface.

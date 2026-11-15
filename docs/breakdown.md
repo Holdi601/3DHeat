@@ -6,24 +6,29 @@ nav_order: 7
 
 # Breakdown: who and what does best where
 
-The breakdown ranks what happens in one place - a picked spot, the view, a
-volume or everything shown - by any category, and measures every state
-factor with against without.
+The **Breakdown** answers one question: in this place, which vehicle, player or weapon does best? Use it to find the tank that wins at the bridge, or to see whether wearing a helmet really helps.
+
+It ranks what happens in one place (a picked spot, the view, a volume or everything shown) by any category, and measures every state factor with against without.
 
 ![The Breakdown window ranking the vehicles by kills per death](assets/img/en/breakdown.webp)
+
+## Try it
+
+1. Load a match with kills and deaths, and open **Volumes**.
+2. Draw a volume round the place you care about and select it.
+3. Press **Breakdown...** under Statistics.
+4. Under **By**, pick *Vehicle*, and pick the measure *K/D* (kills per death).
+5. Read the list, best first. Press **Worst first** to turn it round. Click a name to filter the view to it; click again to let it go.
 
 ## Open it
 
 | From | Region it starts with |
 | --- | --- |
-| **Breakdown…** in [Volumes](volumes.md) (Statistics) | the selected volume |
+| **Breakdown...** in [Volumes](volumes.md) (Statistics) | the selected volume |
 | **Breakdown here** on the pick card, after clicking a point | a sphere round that point (**Radius**, default 3% of the data's size) |
 | the **Difference** split panel | the view |
 
-The header switches the region: **Spot**, **View** (what the camera saw at the
-last count; **Count again** after moving), **Volume** (pick one) or **All**.
-It counts in the background; the status line says how many rows are in the
-region.
+The header switches the region: **Spot**, **View** (what the camera saw at the last count; **Count again** after moving), **Volume** (pick one) or **All**. It counts in the background; the status line says how many rows are in the region.
 
 ## Ranking
 
@@ -32,32 +37,23 @@ Pick what to rank by and a measure:
 | Measure | What it is |
 | --- | --- |
 | A, B | rows on each side of the difference map, split as the heat splits them |
-| A / B, A − B, A / (A + B) | the two layers against each other |
+| A / B, A - B, A / (A + B) | the two layers against each other |
 | K/D | kills against deaths |
 | Win % | rounds (or matches) won, where the data says who won |
 | Kills / min | kills per minute present (movement samples' gaps) |
-| Earned, Lost, Net money | sums of the `earn_*` and `cost_*` columns |
+| Earned, Lost, Net money | sums of the `earn_*` and `cost_*` columns; a picker chooses the currency |
 
-Kills, deaths, presence, wins and money count every row the view shows in
-the place, on either side of the split or none. Ratios and rates are pulled
-toward the whole place's value where the counts are small,
-`(n + m·r0) / (d + m)`, and the counts are shown beside them.
+Kills, deaths, presence, wins and money count every row the view shows in the place, on either side of the split or none.
 
-You can rank by the groups, players and matches, any category column (a
-vehicle, a weapon, a side, a buy type, an agent or kit), any number column in
-ranges (armour, a loadout's value), a weapon column's **class** (rifle,
-sniper, SMG, pistol...) and how many pieces of **utility** a list column such
-as `inventory` holds. **Opponent's** ranks by the other party's value: the
-victim's weapon on a kill, the killer's on a death (needs an `other` /
-`victim` column naming them).
+Ratios and rates are pulled toward the whole place's value where the counts are small, so 2 kills in 1 life does not top the list. The counts are shown beside them.
 
-A click on a name filters the view to it; a second click lets it go.
+You can rank by the groups, players and matches, any category column (a vehicle, a weapon, a side, a buy type, an agent or kit), any number column in ranges (armour, a loadout's value), a weapon column's **class** (rifle, sniper, SMG, pistol...) and how many pieces of **utility** a list column such as `inventory` holds.
+
+**Own** ranks by the row's own value. **Opponent's** ranks by the other party's value: the victim's weapon on a kill, the killer's on a death (needs an `other` / `victim` column naming them).
 
 ## State at the time
 
-A row's value is its own unless the row logs none (an event row without
-gear) or it is a death (whose weapon column may name the killer's weapon);
-then it is what the same person last carried earlier in the match.
+A row's value is its own unless the row logs none (an event row without gear) or it is a death (whose weapon column may name the killer's weapon); then it is what the same person last carried earlier in the match.
 
 ## Factors: with against without
 
@@ -65,13 +61,17 @@ Switch from **Ranking** to **Factors**, pick **Effect on**, and read *Helps most
 
 ![Factors: having a helmet against not having one, and the utility carried, with their effect on kills per death](assets/img/en/breakdown-factors.webp)
 
-Each factor's effect on K/D, rounds won, survival (minutes per death), kills
-a minute and net money a minute, with a 95% interval: ratios as ×, rounds
-won as a difference in points. The ranking pulls each estimate toward no
-effect by its own uncertainty, so a rare factor needs a clear effect to rank
-high; the interval shown is the unpulled one.
+Each factor's effect on K/D, rounds won, survival (minutes per death), kills a minute and net money a minute, with a 95% interval: ratios as x, rounds won as a difference in points. The ranking pulls each estimate toward no effect by its own uncertainty, so a rare factor needs a clear effect to rank high; the interval shown is the unpulled one.
 
-### Naming factor columns
+At most 256 factors are measured in one pass.
+
+## For developers
+
+### Pulling small samples
+
+The ranking value is `(n + m*r0) / (d + m)`: `n` and `d` are the counts, `r0` the whole place's ratio and `m` the weight of that prior.
+
+### For converter authors: naming factor columns
 
 A converter adds a factor by naming its column:
 
@@ -84,15 +84,6 @@ A converter adds a factor by naming its column:
 | gear flags already common (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | on while non-zero |
 | `ammoType`, `shellType`, `ammoName` | the round last fired |
 
-Results: a 0/1 `won` column (the row's side won the round or match) and a
-`round` column. Money: `earn_<currency>` and `cost_<kind>_<currency>`; an
-income by kind alone (`earn_round_cs2`, a converter's exact round rewards)
-replaces only the cost model's income of that kind (`round` also covers
-plants and defuses), and the model still prices the rest.
+Results: a 0/1 `won` column (the row's side won the round or match) and a `round` column. Money: `earn_<currency>` and `cost_<kind>_<currency>`; an income by kind alone (`earn_round_cs2`, a converter's exact round rewards) replaces only the cost model's income of that kind (`round` also covers plants and defuses), and the model still prices the rest.
 
-The mapping loads these columns by itself, beside the file's own list: every
-`state_*`, `active_*`, `won`, `round` and list column, except those a Parquet
-file's statistics show hold one value throughout (each loaded column is 4
-bytes a row).
-
-At most 256 factors are measured in one pass.
+The mapping loads these columns by itself, beside the file's own list: every `state_*`, `active_*`, `won`, `round` and list column, except those a Parquet file's statistics show hold one value throughout (each loaded column is 4 bytes a row).

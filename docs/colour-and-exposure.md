@@ -6,7 +6,15 @@ nav_order: 3
 
 # Colour and exposure
 
-After the heat has been accumulated, each pixel's value is turned into a colour in one composite pass ([`COMPOSITE_FS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/shaders.ts)). Every control on this page acts there, so dragging any of them redraws immediately and **never restarts the accumulation**.
+These controls decide which amount of heat gets which colour. **Saturation point** is how much heat counts as white-hot.
+
+## Quick fixes
+
+- Everything is white: raise **Saturation point**, or press **Auto-expose from the field**.
+- Nothing is visible: lower **Saturation point**, or press **Auto-expose from the field**.
+- Only a few single dots show: turn up **Minimum heat**.
+
+After the heat has been accumulated, each pixel's value is turned into a colour in one composite pass ([`COMPOSITE_FS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/shaders.ts)). Every control on this page acts there, so dragging any of them redraws immediately and **never restarts the accumulation**. The steps are:
 
 ```
 k = |heat| / saturation point
@@ -43,6 +51,12 @@ It also runs **automatically**:
 
 When nothing is lit, the automatic run leaves the saturation alone; the button falls back to the analytic estimate and says *nothing lit to meter - used the analytic estimate*.
 
+### Follow the view
+
+**Follow the view** (Heat shape section, default on) meters again each time the camera comes to rest, so a region you fly into uses the whole colour ramp instead of the scale metered for the whole map. Small changes are ignored and the scale glides rather than jumps. It runs in the four heat modes, not in the figure overlay.
+
+Untick it to lock the scale and compare places on one scale. Dragging **Saturation point** by hand locks it too.
+
 ## Density response
 
 **Density response** - how *k* (heat / saturation) maps onto the ramp:
@@ -60,6 +74,8 @@ When nothing is lit, the automatic run leaves the saturation alone; the button f
 ## The ramp editor
 
 In the **Heat colours** section. Its label says what the ramp is for: *Heat ramp* in Heat and Lines, *Positive (additive teams)* in Difference, *Opacity ramp (colour comes from the group)* in [Team heat](team-heat.md), where only its alpha is used.
+
+![The Heat colours section with the ramp editor: preview bar, the stops, + Add stop and Reset](assets/img/en/colour-and-exposure-ramp.webp)
 
 The bar at the top previews the ramp. Below it, one row per stop:
 

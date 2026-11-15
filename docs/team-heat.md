@@ -6,9 +6,20 @@ nav_order: 6
 
 # Team heat
 
-**Team heat** (key 3) is the density field of [Heat](heat.md) with every group given its own hue. Where groups overlap, their hues mix; an even contest comes out neutral. Opacity still carries density exactly as in the other modes, so the picture answers *how much* and *whose* at once. It needs a group column.
+Team heat shows where each team was, every team in its own colour. Where teams overlap the colours mix.
 
-It is not [box replay](box-replay.md): that draws one box per person; this is a heat field coloured by the same column.
+**Team heat** (key 3) is the density field of [Heat](heat.md) with every [group](glossary.md) given its own hue. Where groups overlap, their hues mix; an even contest comes out neutral. Opacity still carries density exactly as in the other modes, so the picture answers *how much* and *whose* at once. It needs a group column.
+
+![Team heat: each side in its own colour; where they overlap the colours mix](assets/img/en/heat-teams.webp)
+
+It is not the [figure overlay](box-replay.md): that draws one figure per person; this is a heat field coloured by the same column.
+
+## How to use it
+
+1. Press `3` (or pick **Team heat** in the mode bar).
+2. Open **Heat colours**. The swatches show each group's colour; hover a swatch for the team name.
+3. If everything looks grey, raise **Colour separation**.
+4. Untick a group in the [Teams list](teams-list.md) to take it out; the other colours stay where they were.
 
 ## Controls
 

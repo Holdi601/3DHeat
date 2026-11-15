@@ -6,6 +6,16 @@ nav_order: 4
 
 # Sessions, persons and groups
 
+A **person** is one moving thing (a player, a car). A **team/group** is the side they belong to. A **session** is one match or lap. See the [glossary](glossary.md).
+
+One row of a file can name all three:
+
+| x | y | time | player | team | match |
+|---|---|---|---|---|---|
+| 10.5 | -30.2 | 12.0 | Blue 1 | Blue | Match 01 |
+
+`player` is the person, `team` is the group, `match` is the session.
+
 Three optional columns describe *who* and *where in the story* a row belongs. Each is dictionary-encoded at load: the text values become small integer ids per row plus one list of labels, shared across every file of the load.
 
 ## Person
@@ -41,6 +51,10 @@ A session column is very often a *timestamp* - the match's start instant, repeat
 
 ### The Session picker
 
+![The Session picker open on a file of ten matches: All sessions (10), Match 01, Match 02 and so on](assets/img/en/sessions-persons-groups-picker.webp)
+
+*Ten matches in one file: pick one or see them all.*
+
 Shown when the dataset has listed sessions (see the limit below).
 
 | Part | Meaning |
@@ -55,7 +69,7 @@ On load the busiest session is selected. Picking a session seeks the playhead to
 What the selection changes:
 
 - In **[box replay](box-replay.md)** it decides which session is played back: only that session's boxes and trails are drawn, and the timeline's range becomes the session's own span.
-- In the **heat modes** it does not restrict the heat, and a hint under the picker says so: *In the heat modes this only moves the playhead to the session's start; the heat still counts every session. Box replay plays the chosen session alone.* To restrict heat to one session, also keep the session column as a filter column (*Keep for filtering*) and filter on it (unverified whether a column may be both session and filter column at once; the panel allows ticking it).
+- In the **heat modes** it does not restrict the heat, and a hint under the picker says so: *In the heat modes this only moves the playhead to the session's start; the heat still counts every session. Box replay plays the chosen session alone.* To restrict heat to one session, also keep the session column as a filter column (*Keep for filtering*) and filter on it. A column may be both the session column and a filter column: the loader reads every ticked filter column on its own, whatever role it also plays.
 
 ### Too many sessions
 

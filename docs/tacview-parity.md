@@ -1,20 +1,22 @@
 ---
 title: Tacview parity
-parent: Heat modes
-nav_order: 10
+parent: Match replay
+nav_order: 1
 ---
 
 # Tacview parity
 
-Every feature of Tacview 1.9 (its manual, its user-interface string table and the ACMI 2.2 file format) and where 3DHeat's match replay stands with it. The aim: what Tacview can do for a replay and its data, 3DHeat can do too.
+Tacview is a popular program for watching flight recordings. If you know it, this page shows where each of its tools is in 3DHeat.
+
+It lists every feature of Tacview 1.9 (its manual, its user-interface string table and the ACMI 2.2 file format) and where 3DHeat's [match replay](match-replay.md) stands with it. The aim: what Tacview can do for a replay and its data, 3DHeat can do too.
 
 **Status:**
-- **done**: in 3DHeat before this checklist.
-- **new**: built with this checklist.
+- **done**: already in 3DHeat.
+- **new**: built to match a Tacview feature.
 - **not yet**: applies, not built.
 - **n/a**: does not apply here, with the reason.
 
-Where to find the features: the **Match** tab, **Figure replay** (or box replay in the Heatmap tab), in the sidebar sections **Replay**, **Units**, **Events**, **Bookmarks**, **Tactical display**, **Statistics**, **Time shift and trim**, **Map and position**, **Audio and video** and **Labels**. See [Figure replay and debrief](figure-replay.md).
+Where to find the features: the **Match** tab, **Figure replay** (or **Figure overlay** in the Heatmap tab), in the sidebar sections **Replay**, **Units**, **Events**, **Bookmarks**, **Tactical display**, **Statistics**, **Time shift and trim**, **Map and position**, **Audio and video** and **Labels**. See [Match replay](match-replay.md).
 
 ## Cameras
 
@@ -32,7 +34,7 @@ Where to find the features: the **Match** tab, **Figure replay** (or box replay 
 | Add-on Head-On camera; external camera fixed to the object | **Fixed**: a place around the unit that turns and rolls with it; drag to move it (behind, a wingtip, head-on) | new |
 | Add-on Lock Camera (freeze the position) | Stop following (Esc): the camera stays where it was | done |
 | Strategic view (zoom out to the whole Earth) | [World backdrop](world-backdrop.md) and the 2D map's whole-recording frame | done |
-| Field of view setting | Camera panel FOV | done |
+| Field of view setting | **Camera & scene** FOV | done |
 | Cycle views with keys | **V** next view, **Shift+V** back | new |
 
 ## 3D view and display options
@@ -71,7 +73,7 @@ Where to find the features: the **Match** tab, **Figure replay** (or box replay 
 | Label fields: name, call sign, pilot, speeds (TAS/CAS/IAS/Mach/GS), heights (ASL/AGL), VS, AOA, AOS, G (vertical, lateral, longitudinal), turn rate and radius, energy, fuel weight/volume/flow, heading/track, roll/pitch, heart rate | Every value of `fields.ts`: the same list, worked out where not recorded (estimates marked ~). Roll rate and SpO2 only via Raw. | done |
 | Bullseye position in labels | **Bullseye (bearing / range)** field | new |
 | ILS deviations, distance flown | Raw values; distance flown in the statistics | done (partly) |
-| Declutter unselected telemetry | **Declutter**, now ordered by each rule's priority | done / new |
+| Declutter unselected telemetry | **Keep labels apart**, ordered by each rule's priority | done / new |
 | Label all ground objects / only threats | The Ground and AI rules | new |
 | Labels scale | **Label size** (60-250 %) | new |
 | Metric / imperial units | Metric / imperial | done (two presets, not eight) |
@@ -166,7 +168,7 @@ Where to find the features: the **Match** tab, **Figure replay** (or box replay 
 | Languages | 40 languages | done |
 | Authentication of recordings | Not built | n/a |
 
-## ACMI 2.2 properties
+## For developers: ACMI 2.2 properties
 
 Read by `data/acmi.ts`; numeric properties become number columns, text ones category columns. All of them are shown under **Raw** in the unit card. These are read for a purpose:
 

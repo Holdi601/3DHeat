@@ -30,13 +30,18 @@ commercial use, and nothing imposes a copyleft obligation.
 | three | MIT | Maths and scene helpers |
 | zustand | MIT | State |
 | hyparquet | MIT | Reading Parquet telemetry |
+| hyparquet-writer | MIT | Writing Parquet (volume export, tools) |
+| fzstd | MIT | Reading Zstandard-compressed data |
 | meshoptimizer | MIT | Level decimation |
 | vite | MIT | Build and dev server |
+| @vitejs/plugin-react | MIT | Build (React for Vite) |
 | vitest | MIT | Tests |
 | typescript | Apache-2.0 | Build |
 | playwright | Apache-2.0 | Smoke tests (development only) |
 | @webgpu/types | BSD-3-Clause | Type definitions |
 | @types/\* | MIT | Type definitions |
+
+Data and model credits that come with the viewer are listed on their own pages: [figure credits](docs/figure-credits.md) (drawings and free models under CC BY) and [world backdrop sources](docs/world-backdrop-sources.md) (map data and imagery providers and their terms).
 
 ---
 

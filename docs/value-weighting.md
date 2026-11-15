@@ -8,7 +8,7 @@ nav_order: 12
 
 Every shot, munition, lost vehicle and litre of fuel has a price. The viewer works out what each row cost or earned and can weigh the heat by it, so the map shows **where the money went** instead of where the rows are.
 
-![Heat weighed by the value lost: the hot spots are where the most expensive vehicles were destroyed](assets/img/en/value.webp)
+![Heat weighed by the value lost: each dot is a destroyed vehicle, and brighter means more expensive](assets/img/en/value.webp)
 
 ## How to use it
 
@@ -18,7 +18,7 @@ Every shot, munition, lost vehicle and litre of fuel has a price. The viewer wor
 4. Read **Totals**: the sum of every value column for what is shown (filters and time window apply).
 5. Where the prices are real-world money, a **USD / EUR** switch appears.
 
-Pick the empty entry to count rows again.
+Pick the blank first entry of the menu to count rows again.
 
 ## What can be weighed
 
@@ -42,7 +42,7 @@ The column names are `cost_<kind>_<currency>`, `earn_<currency>` and `net_<curre
 
 | Table | Currency |
 |---|---|
-| Real-world military: missiles, bombs, rounds, countermeasures, aircraft, helicopters, ground vehicles, ships, fuel | USD (EUR = USD × 0.92) |
+| Real-world military: missiles, bombs, rounds, countermeasures, aircraft, helicopters, ground vehicles, ships, fuel | USD (EUR = USD × 0.92, the fixed `EUR_PER_USD` in [`cost.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/cost.ts); it is not a live rate) |
 | Shooter buy menus and kill rewards | the game's credits |
 | Tank and ship games | the game's credits |
 | Strategy games (several resources) | one column per resource plus a combined one |

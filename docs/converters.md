@@ -6,6 +6,8 @@ nav_order: 8
 
 # Converters keep everything
 
+You do not need this page to open a replay. It is for people who write tools that turn game files into 3DHeat tables, and for anyone who wants to know why those tables hold so much.
+
 Every tool that turns a game's replay, demo, log or live telemetry into
 something the viewer opens follows one rule:
 
@@ -24,7 +26,7 @@ This page is the convention all converters share: the War Thunder, World of
 Tanks, World of Warships and Squad replay converters, the CS2 demo converter,
 the background watcher (its Dota replay decoder and every live adapter), the
 game capture tool's telemetry readers, and the viewer's own imports (Tacview
-ACMI, OCAP, GPX/KML/IGC/FIT/NMEA). Each tool's README has a **Completeness**
+ACMI, OCAP, GPX/KML/IGC/FIT/NMEA). The viewer's own readers are described in [Tacview recordings](tacview-acmi.md) and [Loading files](loading-files.md); the one-file form is [One file a match](container.md). One match becomes a table, a `match.json` and sidecars, optionally packed into one `.3dheat` file. Each tool's README has a **Completeness**
 section that lists, for that source, what is read, what is kept raw and what
 is not available, and why.
 
@@ -137,7 +139,7 @@ Every converter writes, into its match document (or the session's
 "selfCheck": {
   "completeness": {
     "rule": "https://github.com/Holdi601/3DHeat/blob/main/docs/converters.md",
-    "sidecars": ["de_mirage_2026-11-07.events.parquet"],
+    "sidecars": ["match-0001.events.parquet"],
     "types": {
       "player_death": {"seen": 182, "decoded": 182, "partial": 0, "raw": 0, "lost": 0},
       "bullet_damage": {"seen": 2410, "decoded": 0, "partial": 0, "raw": 2410, "lost": 0}

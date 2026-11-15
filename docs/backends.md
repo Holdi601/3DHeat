@@ -6,9 +6,15 @@ nav_order: 1
 
 # The two backends
 
+A browser can let a page use the graphics card in two ways, WebGPU (newer) and WebGL2. The viewer can use both and picks the best one itself, so you normally do nothing. See which one you are on: **Backend** in the stats overlay (top right of the view).
+
+![The stats overlay: Backend, FPS, Frame, Rows in window, Sprites / frame, Budget, Heat res, Coverage](assets/img/en/performance-stats-overlay.webp)
+
 The viewer has two complete renderers behind one interface ([`types.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)): **WebGPU** ([`webgpu/`](https://github.com/Holdi601/3DHeat/tree/main/src/render/webgpu)) and **WebGL2** ([`webgl2/`](https://github.com/Holdi601/3DHeat/tree/main/src/render/webgl2)). Both draw the same picture with the same algorithms; the shaders exist in WGSL and GLSL ES 3.00 side by side. The stats overlay's first line, **Backend**, says which one is running; hovering it shows why WebGPU was not used, when it was not.
 
-## How one is chosen
+## For developers
+
+### How one is chosen
 
 A canvas can hold only one kind of context, so the choice is made once, before any drawing ([`createRenderer.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/createRenderer.ts)):
 
@@ -18,7 +24,7 @@ A canvas can hold only one kind of context, so the choice is made once, before a
 
 `powerPreference: 'high-performance'` is what stops a laptop with switchable graphics handing the page its integrated GPU. Beyond that the page has no say: hardware acceleration is a browser setting.
 
-## URL switches
+### URL switches
 
 Append to the page address, for example `http://127.0.0.1:5273/?backend=webgl2`.
 
@@ -30,7 +36,7 @@ Append to the page address, for example `http://127.0.0.1:5273/?backend=webgl2`.
 | `?glcheck` | WebGL2: read GL errors during the frame and expose them on `renderer.heatDebug`. Off by default because `getError` is a pipeline sync point. |
 | `?occdebug=<n>` | WebGL2 developer aid: replaces the heat with occlusion debug values. Not for normal use. |
 
-## Differences that matter
+### Differences that matter
 
 | | WebGPU | WebGL2 |
 |---|---|---|
@@ -45,10 +51,10 @@ Append to the page address, for example `http://127.0.0.1:5273/?backend=webgl2`.
 
 Both backends upload the sprite curve table as half floats; WebGPU's `queue.writeTexture` copies raw bytes, so the data is encoded to binary16 first ([`half.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/half.ts)).
 
-### Texture limits
+#### Texture limits
 
 `texStorage2D` past `MAX_TEXTURE_SIZE` does not throw: the allocation is dropped, later uploads fail and sampling returns zero. The WebGL2 helper [`createTexture`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/glutil.ts) checks both dimensions against the limit and throws with the size, the block-index texture is two-dimensional (4,096 wide) so it cannot outgrow a limit, and `src/render/limits.test.ts` pins every texture dimension against the limits worth supporting. The WebGL2 renderer also refuses a device whose maximum texture size is below the row texture's 8,192 width.
 
-## Testing both
+### Testing both
 
-`npm run smoke` drives the real app in headless Chromium on WebGL2 (by default `http://127.0.0.1:5273/`); pass `"http://127.0.0.1:5273/?backend=webgpu"` to `node tools/smoke.mjs` for WebGPU, and `npm run smoke:f16` for the half-float path. `tools/probe-webgpu.mjs` and `tools/probe-present.mjs` diagnose adapter and presentation availability in headless browsers.
+`npm run smoke` drives the real app in headless Chromium on WebGL2 (by default `http://127.0.0.1:5273/`); pass `"http://127.0.0.1:5273/?backend=webgpu"` to `node tools/smoke.mjs` for WebGPU, and `npm run smoke:f16` for the half-float path. `tools/probe-webgpu.mjs` and `tools/probe-present.mjs` (listed under developer tools in [Command-line tools](ref-tools.md)) diagnose adapter and presentation availability in headless browsers.

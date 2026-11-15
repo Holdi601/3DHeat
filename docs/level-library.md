@@ -6,7 +6,16 @@ nav_order: 4
 
 # Level library
 
+The library keeps your levels in this browser so you do not have to load and simplify them again. **Clearing the site's data in the browser deletes the library, and there is no export.** Keep your original files.
+
 Processing a level - parse, classify, weld, decimate, pack textures - is slow, and the result is the same every time. The **Library** at the bottom of the Background / level panel keeps processed levels in this browser, so a decimated mesh is never rebuilt twice ([`levelLibrary.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/levelLibrary.ts)).
+
+## Save and reload a level
+
+1. Load a map image or a 3D model and check it looks right.
+2. Press **Save to library**. The panel says *Saved. It will load instantly next time.*
+3. Next time, open the **Library** list and press ▸ on the level.
+4. Press ✕ to delete an entry you no longer need.
 
 ## Using it
 
@@ -31,4 +40,4 @@ A model loaded from the library has no part list, and its bounds and ground heig
 
 ## Where it lives
 
-In the browser's IndexedDB, database `3dheat`, object store `levels`, for the page's origin (`http://127.0.0.1:5273` with `start.bat`). It is local to that browser profile: another browser, another profile or another origin (for example `localhost` instead of `127.0.0.1`) sees a different, empty library. Clearing the site's data in the browser deletes it. Entries saved by older versions without structures, colours or water still load.
+In the browser's IndexedDB, database `3dheat`, object store `levels`, for the page's origin (the address in the browser's address bar). It is local to that browser profile: another browser, another profile or another address (for example `localhost` instead of `127.0.0.1`) sees a different, empty library. Clearing the site's data in the browser deletes it. Entries saved by older versions without structures, colours or water still load.

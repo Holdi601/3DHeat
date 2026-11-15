@@ -6,14 +6,9 @@ nav_order: 53
 
 # Charts and the HUD
 
-The distance charts under the view, the graph picker, and the car cards in
-the top left of the view - and the one table, `CHANNELS`, that decides how
-every channel is labelled, graphed and drawn.
+Charts line your laps up metre by metre, so you can see where one driver braked later or lifted earlier. The cards in the top left of the view show what each car and driver is doing right now.
 
-Code: [`src/ui/race/RaceBar.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/RaceBar.tsx),
-[`src/race/graphs.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/graphs.ts),
-[`src/ui/race/RaceHud.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/RaceHud.tsx),
-[`src/race/schema.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/schema.ts).
+![Charts under the view: gap, speed, throttle, brake and steering rows for two laps, the time and cause strips on top, and the cursor with the cards](assets/img/en/race-charts-rows.webp)
 
 ## The charts
 
@@ -109,6 +104,8 @@ offered under *other*, named from their own id ("brakeLinePress" →
 
 The charts redraw in the current language when it changes.
 
+The hint line in the legend says the same in short: "Hover: every car there · wheel: step along the lap · Ctrl+wheel: zoom · click: jump · Shift+click: line up".
+
 ## The car cards (HUD)
 
 Top left of the view, a card per visible lap - at most **6**, the first six
@@ -151,7 +148,14 @@ carries at this moment, then every per-wheel channel as four values (FL FR
 RL RR), named from the channel table or from the channel's own name, ordered
 by group.
 
-## The channel table
+## For developers
+
+Code: [`src/ui/race/RaceBar.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/RaceBar.tsx),
+[`src/race/graphs.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/graphs.ts),
+[`src/ui/race/RaceHud.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/RaceHud.tsx),
+[`src/race/schema.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/schema.ts).
+
+### The channel table
 
 `CHANNELS` in [`src/race/schema.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/schema.ts)
 is the one place a channel is described: its unit, whether it is one value

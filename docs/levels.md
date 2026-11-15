@@ -1,12 +1,12 @@
 ---
 title: Levels and background geometry
-nav_order: 6
+nav_order: 16
 has_children: true
 ---
 
 # Levels and background geometry
 
-Heat means little without the place it happened in. The **Background / level** panel puts one of two kinds of context behind the data:
+A level is the 3D place where the game happened - a map, a town, a track. Put one behind your data and you can see *where* the heat is. The **Background / level** panel (see [Glossary](glossary.md) for "level") gives you three kinds of context:
 
 - a **map image**, georeferenced by two anchors - see [Map images](map-images.md);
 - a **3D level** - `.glb`, `.gltf`, `.obj`, `.stl` or `.ply` - split into ground, structures and water and simplified on import - see [3D levels](model-levels.md) and [Level appearance](level-appearance.md).
@@ -15,6 +15,17 @@ Heat means little without the place it happened in. The **Background / level** p
 With nothing loaded, the scene is dark with a grid and coloured axes (**Grid** and **Axes** in [Camera & scene](camera.md)), and the panel says *Nothing loaded - the scene shows a grid and axes. Add a map image or a level mesh to give the heat context.*
 
 The level is shared by all three tabs: a course loaded in the Race analysis tab is the same level the heatmap shows.
+
+![The Background / level panel with a level loaded: Map image and 3D model buttons, Theatre, Opacity, Brightness, Save to library and the Library list](assets/img/en/level-panel.webp)
+
+## Put a level behind your data
+
+1. Load your data first ([Getting data in](getting-data-in.md)), so the level is fitted to it.
+2. Open **Background / level** in the sidebar.
+3. Press **Map image…** for a picture or **3D model…** for a 3D level, and pick the file. For a real-world recording, use **World backdrop** or **Theatre** instead.
+4. Wait for the progress line to finish. A big model is simplified first (see **Simplification target** below).
+5. Press **F** in the view to frame everything. Use **Opacity** and **Brightness** until the heat stands out from the level.
+6. Press **Save to library** if you will use the level again ([Level library](level-library.md)).
 
 ## What a level does for the heat
 

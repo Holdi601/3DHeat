@@ -6,7 +6,13 @@ nav_order: 4
 
 # Depth and culling
 
-Without depth, a heatmap over a 3D level is a flat overlay: everything the dataset contains glows through every wall at full strength, the depth cues the level provides are cancelled out, and a hotspot inside a building looks the same as one on its roof. The **Depth** section makes the level hide what is behind it; **Distance culling** restricts the heat to a shell or slab around the camera; the [Slice](slice.md) cuts a slab out of the world. All three apply to the heat modes and change which rows contribute, so changing them restarts the accumulation.
+Depth makes hills and walls hide the heat behind them, like a real wall hides a person. Distance culling keeps only the heat between a near and a far distance from the camera.
+
+![A low camera behind a hill, with Hide behind terrain off (left) and on (right)](assets/img/en/depth-and-culling-terrain.webp)
+
+![Distance culling with Far at 400 m and Cut the level too on: a slice of the map around the camera](assets/img/en/depth-and-culling-far.webp)
+
+Without depth, a heatmap over a 3D [level](levels.md) is a flat overlay: everything the dataset contains glows through every wall at full strength, the depth cues the level provides are cancelled out, and a hotspot inside a building looks the same as one on its roof. The **Depth** section makes the level hide what is behind it; **Distance culling** restricts the heat to a shell or slab around the camera; the [Slice](slice.md) cuts a slab out of the world. All three apply to the heat modes and change which rows contribute, so changing them restarts the accumulation.
 
 ## Depth
 

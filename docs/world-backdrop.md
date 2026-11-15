@@ -2,37 +2,35 @@
 title: World backdrop
 parent: Levels and background geometry
 nav_order: 5
+has_children: true
 ---
 
 # World backdrop
 
-A recording made in the real world - a Tacview ACMI file from DCS, IL-2, MSFS or anything else Tacview records - says where on the earth it is. For such a dataset the **Background / level** panel offers **World backdrop**: it downloads open map data for the area under the data and builds it into a level, in the same metres as the data. Terrain, roads, railways, water, runways and buildings, simplified, and nothing else.
+A world backdrop puts the real ground under a flight recording: hills, roads, rivers, airfields and buildings, downloaded from free open map data. Use it when a Tacview recording would otherwise float over an empty grid. It is a [level](glossary.md), so the heat and the figures sit on it.
 
-The button is shown only when the loaded dataset carries a geographic reference (below). Below it, a **Theatre** picker builds a whole real-world game map - a DCS terrain or an IL-2 map - with or without data loaded ([Theatres](#theatres)). Everything is built in a background worker ([`src/world`](https://github.com/Holdi601/3DHeat/tree/main/src/world)) with a progress line and **Cancel**: *Elevation tiles: N of M*, *Map tiles: N of M*, *Building the backdrop*. The result replaces the current level and behaves as any [3D level](model-levels.md): it occludes the heat, is cut by the slice, has the [appearance controls](level-appearance.md), and can be saved to the [library](level-library.md).
+## Build one
+
+1. Load a flight recording that says where on the earth it is (a Tacview `.acmi` file), or load nothing and pick a theatre in step 3. See [Getting data in](getting-data-in.md).
+2. Open **Background / level** in the sidebar.
+3. Press **World backdrop** to build the ground under your data. Or pick a game map in **Theatre** and press **Build theatre backdrop** (or **Stream theatre**).
+4. Wait. The panel shows the progress (*Elevation tiles*, *Map tiles*, *Building the backdrop*); **Cancel** stops it.
+5. Fly around. The credit line for the map data is written at the bottom right of the view.
+
+The first build downloads some tens of megabytes. The browser keeps them, so a second build of the same area downloads nothing. **Forget map tiles** deletes them. The button **World backdrop** is shown only when the loaded data carries a geographic reference (below).
+
+Everything is built in a background worker ([`src/world`](https://github.com/Holdi601/3DHeat/tree/main/src/world)). The result replaces the current level and behaves as any [3D level](model-levels.md): it hides the heat behind it, is cut by the slice, has the [appearance controls](level-appearance.md), and can be saved to the [library](level-library.md).
 
 ## Where the data is: the geographic reference
 
 A dataset gets a geographic reference only from a source that states one:
 
 - **An ACMI recording**: its header's `ReferenceLatitude` and `ReferenceLongitude`, and positions that the reader projects onto the plane touching the WGS84 ellipsoid there (X east, Y north, metres; heights are the recording's altitude above sea level). The reference is kept when the mapping takes **X** and **Y** as the ground axes - the recording's own hints do - and dropped when the ground comes from any other column, such as a game's own flat-world **U** and **V**.
-- **A Parquet table whose `heat3d` hints carry a `geo` entry** - the [Watcher](https://github.com/Holdi601/3DHeat-Watcher)'s DCS, MSFS, X-Plane and IL-2 (Tacview) tables:
-
-  ```json
-  "geo": {"lat0": 42.0, "lon0": 42.0, "projection": "tangent-plane", "east": "x", "north": "z", "up": "y",
-          "dcs": {"theatre": "Caucasus", "x": "dcs_x", "y": "dcs_y", "z": "dcs_z"}}
-  ```
-
-  `east`, `north` and `up` name the columns holding east and north metres on the same tangent plane at (`lat0`, `lon0`) and the altitude. The load carries the reference when its mapping takes exactly those columns (east as X, north and height as Y and Z either way round). The optional `dcs` entry names a DCS table's own metres (x north, y up, z east) and its theatre: a load that maps those columns is placed through the theatre's transverse Mercator projection instead ([DCS coordinates](#dcs-coordinates)). A table without `geo` reads as before.
+- **A Parquet table whose `heat3d` hints carry a `geo` entry** - the [Watcher](https://github.com/Holdi601/3DHeat-Watcher)'s DCS, MSFS, X-Plane and IL-2 (Tacview) tables. The entry is described under [For developers](#for-developers).
 
 A load of several files keeps the reference only when all share the same one. Every other loader is unaffected and carries none.
 
 The backdrop is projected the same way and then put through the load's axis mapping, so it lands under the data whatever flips or scale the mapping applies.
-
-### DCS coordinates
-
-Each DCS theatre is a Transverse Mercator projection (WGS84, scale 0.9996) with its own central meridian and false origin, DCS x being the northing and z the easting. The constants are the ones the pydcs project publishes; the maths is Krüger's series to sixth order (Karney 2011), ported from the DCS terrain converter's own `projection.py` to [`src/world/dcsProjection.ts`](https://github.com/Holdi601/3DHeat/tree/main/src/world/dcsProjection.ts). A backdrop for DCS metres is built straight in them, so a Watcher DCS table mapped by `dcs_x`/`dcs_y`/`dcs_z`, a level the DCS terrain converter wrote and the backdrop all share one frame. Iraq's constants are not published; they are fitted to the 43 beacons the theatre's own `beacons.lua` gives both ways (4 cm root mean square; the same fit gives Caucasus, Syria and Sinai back to the millimetre).
-
-The Watcher's DCS tables are on a tangent plane at the theatre's fixed reference point (the same point the theatre picker uses, below), so several missions on one theatre merge with their reference intact and line up with a theatre backdrop without moving it.
 
 ## Theatres
 
@@ -81,12 +79,6 @@ With data loaded the theatre is built on the data's plane, so it lands under it 
 
 Vector tiles are read at zoom 14 (the only zoom with buildings) when the box needs at most 300 of them, else at the deepest zoom that does, down to 8. A larger area gets terrain only.
 
-### Simplification and budget
-
-- Buildings under 20 m² are dropped; 60 m² when the box is more than 30 km across, 150 m² beyond 80 km. The rest are added largest first until the buildings reach 1.5M triangles.
-- Minor roads, service roads and tracks are dropped beyond 60 km across; beyond 150 km only motorways, trunk, primary and secondary roads remain.
-- The whole backdrop stays under about 3M triangles. The import note says how many buildings were left out.
-
 ### Look
 
 A backdrop starts with **Show captured colour** on - colour is what tells a light road from the grey ground it lies on, a dark runway from its apron - with the ground's triangle edges off, since a regular grid says nothing, faint contours, an opaque sea (a floor under it would fight the surface for depth far off), and buildings light grey and nearly solid, as a map draws them. The open sea gets no ground triangles at all. Everything else is a model level's default look.
@@ -98,29 +90,9 @@ While a backdrop is the level, its sources' credit is written bottom right of th
 > OpenFreeMap © OpenMapTiles · Data © OpenStreetMap contributors · Elevation: Terrain Tiles – SRTM, GMTED2010, 3DEP courtesy of the U.S. Geological Survey; ETOPO1: NOAA; and others
 
 Each part links to its source's attribution page (openstreetmap.org/copyright and the Terrain Tiles [attribution list](https://github.com/tilezen/joerd/blob/master/docs/attribution.md)). A backdrop saved to the library keeps its credits and shows them again when loaded. The text is translated with the viewer; the names are not.
-
 ## Sources and their terms
 
-| Source | Terms (as read on 7 November 2026) |
-|---|---|
-| [OpenFreeMap](https://openfreemap.org) - OpenMapTiles-schema vector tiles from OpenStreetMap, current build named by `https://tiles.openfreemap.org/planet` | Free, no key, commercial use allowed. The [terms](https://openfreemap.org/tos/) forbid collecting data "in automated ways, except for offline downloads": an app may let users download an area for offline use if each download is at most 3,000 tiles or 50 MB, made with at most 4 parallel requests, with a User-Agent identifying the app. Attribution is required: "OpenFreeMap © OpenMapTiles Data from OpenStreetMap" (the OpenFreeMap part optional). The service may end without notice. |
-| [OpenStreetMap](https://www.openstreetmap.org/copyright) data | ODbL 1.0. Fetching it at run time and drawing it locally is private use; the drawn view is a Produced Work that needs a visible credit, and so are screenshots and videos made from it. |
-| [OpenMapTiles](https://openmaptiles.org) schema | CC BY 4.0 for the schema; credit "© OpenMapTiles". |
-| [OurAirports](https://ourairports.com/data/) `runways.csv` | Released into the public domain; no key. The credit "Runways: OurAirports (public domain)" is shown as a courtesy. |
-| [EOX Sentinel-2 cloudless](https://cloudless.eox.at) 2016, `tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg` | The 2016 layer is CC BY 4.0 (later years are CC BY-NC-SA, not used). EOX's service page invites use of the endpoints in applications, as a demo service without guarantee and with rate limiting; it says nothing about caching, which CC BY allows. Credit, shown on the canvas: "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017)", linked. CORS: the request's origin is echoed. |
-| [Mapterhorn](https://mapterhorn.com), `tiles.mapterhorn.com/{z}/{x}/{y}.webp` | Terrarium-encoded 512 px lossless WebP, no key, open CORS. Sources under CC BY, public domain and similar open licences (none non-commercial or share-alike); credit "© Mapterhorn" and, for the global layer, "produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA". No published usage policy for the public endpoint. |
-| [USGS The National Map](https://www.usgs.gov/programs/national-geospatial-program/national-map) orthoimagery, `basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}` | USGS: "Most U.S. Geological Survey (USGS) information resides in the Public Domain and may be used without restriction"; it asks for credit, e.g. "(Product or data name) courtesy of the U.S. Geological Survey". The service names its source "USDA, USGS The National Map: Orthoimagery" (USDA NAIP, also a federal public-domain work); that is the credit shown. No key, open CORS. |
-| [IGN Géoplateforme](https://cartes.gouv.fr/cgu) BD ORTHO, `data.geopf.fr/wmts?…LAYER=ORTHOIMAGERY.ORTHOPHOTOS…TILEMATRIXSET=PM…` | The Géoplateforme terms list the WMTS as "Non soumis à limite d'usage" (no usage limit; WMS is limited to 40-50 requests a second); data are "soumises à la licence choisie et renseignée par le Fournisseur de données", by default the Etalab Licence Ouverte, under which BD ORTHO has been open since 2021; users must "ne pas nuire, entraver ou fausser le bon fonctionnement des API". Caching is not addressed; the Licence Ouverte allows reuse with the source credited: "Orthophotos: © IGN – BD ORTHO, Licence Ouverte 2.0". No key, open CORS. |
-| [AWS Terrain Tiles](https://registry.opendata.aws/terrain-tiles/) (Mapzen / Tilezen), `s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png` | Open data from many sources, each with its own credit ([list](https://github.com/tilezen/joerd/blob/master/docs/attribution.md)); no key, no service guarantee, served with open CORS. Heights decode as `R × 256 + G + B / 256 − 32768` metres. |
-
-How the backdrop stays inside those terms:
-
-- A backdrop under a recording downloads at most 36 elevation tiles and 300 vector tiles; a theatre built once at most 64 + 100 elevation tiles and 64 + 1,500 vector tiles; a streamed theatre one tile of each source at a time per map tile, as the camera goes. Four requests at a time per source.
-- **A theatre built once is one download**, and downloads at most 1,000 vector tiles or 40 MB (OpenFreeMap's terms allow 3,000 tiles or 50 MB). Tiles are asked for centre first; past the allowance the build takes only tiles already in the cache and says how many are still to come. Building again fetches the next chunk, and so on: a large area arrives in pieces, each one cached.
-- Built again, or followed back over, nothing is downloaded.
-- Tiles are downloaded only when **World backdrop** is pressed, never in the background.
-- A browser does not let a page set its own User-Agent; the requests carry the browser's, and the page's origin as `Origin`/`Referer`. A desktop build of the viewer should send its own.
-- **Nothing derived from OpenStreetMap is ever shipped** with the viewer or committed to its repository: ODbL's share-alike applies to a distributed derived database. Backdrops are built on the user's machine and kept only in that browser (the tile cache and, if saved, the level library).
+Every source, its licence and how the backdrop stays inside the terms: [World backdrop: sources and terms](world-backdrop-sources.md).
 
 ## The tile cache
 
@@ -173,3 +145,28 @@ Period maps could texture the historical theatres later. The US Army Map Service
 | IL-2 Arras (Flying Circus) | British WWI trench maps (not AMS) | McMaster University; National Library of Scotland (non-commercial terms) |
 
 AMS sheets carry latitude and longitude ticks at their corners, so each would be placed by a four-corner fit and draped on the terrain as a texture, built and kept locally like the tiles.
+
+
+## For developers
+
+### The `geo` entry in a Parquet table
+
+```json
+"geo": {"lat0": 42.0, "lon0": 42.0, "projection": "tangent-plane", "east": "x", "north": "z", "up": "y",
+        "dcs": {"theatre": "Caucasus", "x": "dcs_x", "y": "dcs_y", "z": "dcs_z"}}
+```
+
+`east`, `north` and `up` name the columns holding east and north metres on the same tangent plane at (`lat0`, `lon0`) and the altitude. The load carries the reference when its mapping takes exactly those columns (east as X, north and height as Y and Z either way round). The optional `dcs` entry names a DCS table's own metres (x north, y up, z east) and its theatre: a load that maps those columns is placed through the theatre's transverse Mercator projection instead ([DCS coordinates](#dcs-coordinates)). A table without `geo` reads as before.
+
+### DCS coordinates
+
+Each DCS theatre is a Transverse Mercator projection (WGS84, scale 0.9996) with its own central meridian and false origin, DCS x being the northing and z the easting. The constants are the ones the pydcs project publishes; the maths is Krüger's series to sixth order (Karney 2011), ported to [`src/world/dcsProjection.ts`](https://github.com/Holdi601/3DHeat/tree/main/src/world/dcsProjection.ts). A backdrop for DCS metres is built straight in them, so a Watcher DCS table mapped by `dcs_x`/`dcs_y`/`dcs_z`, a level the DCS terrain converter wrote and the backdrop all share one frame. Iraq's constants are not published; they are fitted to published reference points (4 cm root mean square).
+
+The Watcher's DCS tables are on a tangent plane at the theatre's fixed reference point (the same point the theatre picker uses, below), so several missions on one theatre merge with their reference intact and line up with a theatre backdrop without moving it.
+
+### Simplification and budget
+
+- Buildings under 20 m² are dropped; 60 m² when the box is more than 30 km across, 150 m² beyond 80 km. The rest are added largest first until the buildings reach 1.5M triangles.
+- Minor roads, service roads and tracks are dropped beyond 60 km across; beyond 150 km only motorways, trunk, primary and secondary roads remain.
+- The whole backdrop stays under about 3M triangles. The import note says how many buildings were left out.
+

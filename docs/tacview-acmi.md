@@ -6,11 +6,13 @@ nav_order: 7
 
 # Tacview recordings (ACMI)
 
-Tacview's flight recordings load like any table: pick or drop a `.acmi` (text, `.txt.acmi`, or zipped, `.zip.acmi`) and press **Load**. ACMI is Tacview's public file format ([documentation](https://www.tacview.net/documentation/acmi/)); DCS (through Tacview's exporter), IL-2 Great Battles, Falcon BMS, X-Plane, MSFS and others write it, so this reads any of them.
+Tacview is a program that records flights in flight simulators; its files end in `.acmi`. 3DHeat opens them so you can see where every aircraft flew.
+
+Tacview's flight recordings load like any table: pick or drop a `.acmi` (text, `.txt.acmi`, or zipped, `.zip.acmi`) and press **Load**. You then get the heat of all flights, and in the **Match** tab a replay with figures, tracks and an event list ([Match replay](match-replay.md)). ACMI is Tacview's public file format ([documentation](https://www.tacview.net/documentation/acmi/)); DCS (through Tacview's exporter), IL-2 Great Battles, Falcon BMS, X-Plane, MSFS and others write it, so this reads any of them.
 
 ## What a recording becomes
 
-One row each time an object's position is written, one row per event at the object's place, and one row when an object leaves (`Removed`, where it was last). An event about no object seen yet - a bookmark, a message to all - is a row of the object `(recording)` at the reference point. The recording carries its own reading instructions, so the mapping step fills itself in:
+One row each time an object's position is written, one row per event at the object's place, and one row when an object leaves (`Removed`, where it was last). An event about no object seen yet - a bookmark, a message to all - is a row of the object `(recording)` at the reference point. The recording carries its own reading instructions, so the mapping step fills itself in. The reader writes these columns: `Time`, `X`, `Y`, `Altitude`, `Object`, `Coalition`, `Heading`, `Pitch`, `Roll`, `Type`, `Name`, `Pilot`, `Group`, `Country`, `Color`, `Event`, `Latitude`, `Longitude`, `Recording`, `EventObjects`, `RecordingInfo`, then any further properties the recording has. Their roles:
 
 | Column | Role | Meaning |
 |---|---|---|
@@ -21,7 +23,7 @@ One row each time an object's position is written, one row per event at the obje
 | Coalition | team | The side (or the colour, when there is no coalition). |
 | Heading, Pitch | look | Degrees; heading 0 is north. |
 | Recording | session | The recording's Title, or the file name: several recordings load side by side without their tracks joining. |
-| Type, Name, Pilot, Group, Country, Color, Event, Roll, Latitude, Longitude | filters | Kept for filtering; Type and Name pick each object's [figure](figure-replay.md), Event feeds the debrief's event list, Roll banks the aircraft. |
+| Type, Name, Pilot, Group, Country, Color, Event, Roll, Latitude, Longitude | filters | Kept for filtering; Type and Name pick each object's [figure](figures.md), Event feeds the debrief's event list, Roll banks the aircraft. |
 | U, V | | The game's own flat-world metres, when every sample has them (DCS writes them). |
 | EventObjects | filters | Every object an event names (`Message|a01|b02|...`), by id. |
 | RecordingInfo | | The recording's own properties as they stood at that moment - DataSource, DataRecorder, Author, Category, Briefing, Comments, ... - as JSON. |

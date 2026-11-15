@@ -10,3 +10,5 @@ aux_links:
 exclude:
   - wiki
   - "*.py"
+mermaid:
+  version: "10.9.1"

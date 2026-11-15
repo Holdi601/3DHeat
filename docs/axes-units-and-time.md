@@ -6,9 +6,15 @@ nav_order: 3
 
 # Axes, units and time
 
+Games and maps do not agree on which way is up, how long a unit is, or how time is written. This page shows the three settings that make your data stand, scale and play the right way.
+
+If your map stands like a wall instead of lying like a floor, switch **Up axis in source**.
+
+![The same data drawn with Up axis in source set wrongly (standing like a wall) and rightly (lying like a floor)](assets/img/en/axes-units-and-time-up-axis.webp)
+
 ## The world the viewer draws in
 
-The viewer's world is **Y-up and right-handed** (the three.js convention): X and Z are the ground plane, Y is height. Game engines disagree - most are Z-up, some are left-handed - so the mapping says how to turn the file's axes into the viewer's.
+The viewer's world is **Y-up**: X and Z are the ground plane, Y is height. Most game engines are **Z-up**: for them X and Y are the ground and Z is height. Some engines are also mirrored (left-handed). The mapping says how to turn the file's axes into the viewer's. (Technically the viewer is right-handed, the three.js convention.)
 
 ### Up axis
 
@@ -29,13 +35,15 @@ To draw a mirrored world the right way round **without** changing the data, use 
 
 ### Unit scale
 
-**Unit scale** multiplies every position. *1 (m)* sets 1, *0.01 (cm→m)* sets 0.01 (Unreal Engine and Source-engine units are centimetres or inches, not metres), and the box accepts any value. A typed 0 or a value that is not a number is replaced by 1.
+**Unit scale** multiplies every position. *1 (m)* sets 1, *0.01 (cm→m)* sets 0.01 (Unreal Engine units are centimetres, so use 0.01; Source-engine units are inches, so use 0.0254; neither is metres), and the box accepts any value. A typed 0 or a value that is not a number is replaced by 1.
 
 The viewer labels distances in metres (sprite radius, cull distances, the ruler, fly speed), which is only true when the scaled world unit is a metre. Nothing breaks when it is not; the labels just read "m" for whatever the unit is.
 
 ## Time
 
 ### Time units
+
+Rule of thumb: values like 17000000000 (ten or more digits) are a Unix timestamp; values like 0, 0.25, 0.5 are seconds from the start.
 
 | Time unit (menu label) | Read as | Wall clock shown |
 |---|---|---|

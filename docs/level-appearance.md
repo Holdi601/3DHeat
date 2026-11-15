@@ -6,6 +6,18 @@ nav_order: 3
 
 # Level appearance
 
+These controls change how a 3D level looks, so the heat stands out from it and you can still read the place. Nothing here changes the data.
+
+## Quick start
+
+1. Load a 3D level ([3D levels](model-levels.md)).
+2. In **Background / level**, lower **Brightness** until the heat is the brightest thing on screen.
+3. Open **Ground relief** and raise **Slope shading** or **Contour strength** until you can tell a hill from a plain.
+4. Open **Structures**. Lower **Face opacity** to see inside buildings, or switch **Structure texture** on to see them solid.
+5. If the ground has a picture painted on it, try **Ground texture** off and on.
+
+![Ground relief and Structures sections open, with the level shown with relief cues](assets/img/en/level-appearance-sections.webp)
+
 With a [3D level](model-levels.md) loaded, the Background / level panel shows these controls. Defaults are those a freshly imported level gets ([`modelLevelFrom`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/panels/LevelPanel.tsx), [`level.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/level.ts)). Changing them only redraws the scene; the heat accumulation is kept.
 
 ## The whole level
@@ -19,7 +31,7 @@ The level is drawn desaturated - grey ground, a tinted shell - so the heat is th
 
 ## Ground relief
 
-Terrain normals nearly all point up, so a light alone gives a whole landscape one flat grey and a valley reads like a plateau. Three cues, each answering a different failure:
+From far away a hill and a plain look the same grey, so the viewer adds three hints. Each answers a different failure:
 
 | Control | Default | Meaning |
 |---|---|---|

@@ -1,24 +1,56 @@
 ---
 title: Data formats reference
-nav_order: 10
+nav_order: 22
 ---
 
 # Data formats reference
+
+This page lists every kind of file 3DHeat can open, and what a table inside it must look like. A table is rows and columns, like a spreadsheet: every row says where something was and, if you have it, when and who.
 
 What the Heatmap tab reads, column by column, and the hints a Parquet file can carry. (The Race analysis tab reads lap files, and the Match tab match summaries; see [Race analysis](race-analysis.md) and [Match analysis](match-analysis.md).)
 
 ## Files
 
-| Extension | Read as |
-|---|---|
-| `.parquet`, `.pq` | Parquet |
-| `.csv`, `.tsv`, `.txt` | Delimited text |
+This is the one complete list of loadable files. The **Source** panel (**Files…**, **Folder…**, or drag and drop) accepts exactly these:
+
+| Extension | What it is | Read by |
+|---|---|---|
+| `.parquet`, `.pq` | Parquet table | the Parquet reader (below) |
+| `.csv`, `.tsv`, `.txt` | Delimited text | the text reader (below) |
+| `.3dheat` | One match in one file (a ZIP holding the table and its extras) | loads as the table it holds - [One file a match](container.md) |
+| `.acmi` (also `.txt.acmi`, `.zip.acmi`) | Tacview flight recording | its own reader - [Tacview recordings](tacview-acmi.md) |
+| `.json`, `.json.gz` | OCAP recording (Arma-style) | its own reader |
+| `.gpx`, `.kml`, `.kmz`, `.nmea`, `.nma`, `.igc`, `.fit` | GPS tracks: GPX, KML/KMZ, NMEA logs, IGC gliding logs, FIT sports files | its own reader; positions come from latitude and longitude |
+
+Not loaded as positions: the small JSON files that sit beside a table to describe it (names ending in `.match.json`, `.course.json`, `.level.json`, `.meta.json`, `.summary.json`, `.session.json`, `.hints.json`), and a converter's extra tables (`<match>.events.parquet` and the like, see [Converters](converters.md)) unless you pick them on their own. Anything else is skipped with a reason. How a selection is filtered is explained in [Loading files](loading-files.md#which-files-are-kept).
 
 Empty files are skipped. In a selection that contains `movement*.<ext>` files, only those are loaded ([Loading files](loading-files.md#which-files-are-kept)).
 
 The data is **one row per sample**: a position at a moment, optionally with who, which group, which session, where they were looking, and any further columns. Event rows (a kill, a plant, a shot) can sit in the same table as position rows, told apart by an event column.
 
 ## Delimited text (CSV, TSV, TXT)
+
+A smallest useful file, three rows:
+
+```
+x,y,z,t,player,team
+10.5,2.0,-30.2,0.00,Blue 1,Blue
+11.0,2.0,-29.8,0.25,Blue 1,Blue
+-4.2,1.5,18.9,0.00,Red 3,Red
+```
+
+The columns map themselves ([Column mapping](column-mapping.md)).
+
+A smallest useful file, three rows:
+
+```
+x,y,z,t,player,team
+10.5,2.0,-30.2,0.00,Blue 1,Blue
+11.0,2.0,-29.8,0.25,Blue 1,Blue
+-4.2,1.5,18.9,0.00,Red 3,Red
+```
+
+The columns map themselves ([Column mapping](column-mapping.md)).
 
 Parsed by a byte-level scanner that decodes only the mapped columns ([`csv.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/csv.ts)).
 
@@ -29,7 +61,7 @@ Parsed by a byte-level scanner that decodes only the mapped columns ([`csv.ts`](
 | Quoting | RFC 4180: fields may be wrapped in double quotes, `""` inside quotes is a literal quote. |
 | Whitespace | Leading and trailing spaces, tabs and quotes are trimmed from each field. |
 | Fields per row | At most 4,096; more is an error (*is the delimiter right?*). |
-| Numbers | Optional sign, digits, optional `.` and decimals, optional exponent (`1.5e-3`). A decimal comma, thousands separators or trailing units (`12 m`) do not parse and count as missing. |
+| Numbers | Optional sign, digits, optional `.` and decimals, optional exponent (`1.5e-3`). A decimal comma (`1,5`), thousands separators or trailing units (`12 m`) do not parse and count as missing. If your file uses decimal commas, replace them with dots before loading (find and replace in a text editor works). |
 | Numeric column | A column is offered as numeric when more than 90% of the non-empty values in the first 50 rows parse as numbers. |
 | Row count | Estimated before loading from the average line length of the first 1 MiB. |
 | Text encoding | UTF-8. |
@@ -57,7 +89,7 @@ A position, time or look column that holds something other than a number decodes
 | Role | Type in the file | Required | Stored as | Limits |
 |---|---|---|---|---|
 | X, Y, Z | number | two of three | 32-bit float, after the [axis mapping](axes-units-and-time.md) | A row without a usable position is dropped. |
-| Time | number in one of the [time units](axes-units-and-time.md#time-units), Parquet timestamp, or ISO-8601 text | no | 32-bit float seconds from the earliest row | Sorting is refused above 80M rows. |
+| Time | number in one of the [time units](axes-units-and-time.md#time-units), Parquet timestamp, or ISO-8601 text | no | 32-bit float seconds from the earliest row | Sorting is refused above 400,000,000 rows ([why](memory-and-budgets.md#the-sort-ceiling)). |
 | Person | any; dictionary-encoded | no | 32-bit id | |
 | Session | any; dictionary-encoded | no | 32-bit id | Labels listed up to 100,000 sessions. |
 | Group | any; dictionary-encoded | no | 16-bit id | Up to 4,096 groups, else the grouping is dropped. |

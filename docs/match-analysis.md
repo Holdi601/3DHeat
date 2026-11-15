@@ -1,20 +1,25 @@
 ---
 title: Match analysis (CS2)
-nav_order: 60
+nav_order: 13
 ---
 
 # Match analysis (Counter-Strike 2)
 
-The **Match** tab is the scoreboard and round-by-round view of CS2 matches,
-over the heatmap of the same matches: score, halves and overtime, every
-round's result and economy, the kill feed, the scoreboard, statistics across
-every loaded match - and every part of it one click from the heatmap, through
-the heatmap's own filters.
+The **Match** tab plays a recording back as figures, and for a Counter-Strike 2 match it also shows the scoreboard: who won each round, how, and who got the kills. Use it to review a match round by round, then jump to the same moment in the heatmap.
 
-Code: [`src/ui/match/MatchPanel.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/match/MatchPanel.tsx),
-[`src/match/matchDoc.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/match/matchDoc.ts),
-[`src/match/focus.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/match/focus.ts),
-[`src/state/matchStore.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/state/matchStore.ts).
+The Match tab plays any recording as figures: a War Thunder or Tacview recording, or a CS2 demo, listed under **Matches in the replay** ([Match replay](match-replay.md)). A CS2 `.match.json` file adds the scoreboard described on this page.
+
+## Review a CS2 match
+
+1. Convert the demo ([below](#where-the-data-comes-from)) to a `.parquet` and a `.match.json` file.
+2. In the **Heatmap** tab, load the `.parquet` file under **Source**.
+3. Open the **Match** tab and click **Load match files…**, or drop the `.match.json` file on the view.
+4. Click a match in **Match summaries**, then a cell of the round strip to open that round.
+5. Click **Show round** to see that round in the heatmap, or **Replay round** to watch it as figures.
+
+![The Match tab: round strip with a round open, kill feed and Scoreboard](assets/img/en/match-analysis-round.webp)
+
+Words like KAST, ADR, eco, force buy and trade are in the [glossary](glossary.md#counter-strike-words).
 
 ## Where the data comes from
 
@@ -50,24 +55,6 @@ of freeze time - the first round of each regulation half a pistol round
 (none in overtime), then under $1,500 an eco, under $4,000 a force buy,
 anything more a full buy.
 
-### Summary versions
-
-The tab reads summaries of version 1 and version 2 (`"version"` in the
-file) side by side, and treats them alike:
-
-| | Version 2 | Version 1 |
-|---|---|---|
-| plant time | seconds into the round, as the kills | match seconds; the tab subtracts the round's start |
-| plant site | `A` or `B`; empty when the demo does not say | `A`, `B`, or an entity number - read as an unknown site |
-| half length | `halfLength`, from where the sides first swap; 12 when it is null | 12 (MR12) |
-| pistol rounds | `pistolRounds` (round 1 and the first round after the half) | the rounds whose buy is `pistol` |
-| drawn round | `winner` and `winnerTeam` empty | - |
-| suicide | `suicide` on the kill, never a teamkill | told by attacker and victim being the same player |
-
-A kill's `noscope` and `attackerBlind` (version 2) are not shown in the
-Match tab, which also shows no place from the heatmap table, so a grenade
-row's empty `place` there changes nothing here.
-
 ## The tab
 
 The sidebar of the Match tab holds the heatmap's mode switch and session
@@ -75,7 +62,7 @@ picker at the top, then the match sections below, then the heatmap's
 **Filters**, **Level** and **Camera** panels - the view is the heatmap of
 whatever Parquet is loaded in the Heatmap tab.
 
-### Matches
+### Match summaries
 
 | Control | Does |
 |---|---|
@@ -219,16 +206,6 @@ never loads it itself.
 Scoped by where the buttons are: all loaded matches, this match, or this
 round ("Show in the heatmap - round 7").
 
-How a focus becomes filters (`focusFilters`):
-
-- **match** → a category filter on the `match` column;
-- **round** → a range filter `round` = N on a numeric `round` column (a
-  category filter on a categorical one), and the round's session
-  (`<match> #NN`) is selected in the session picker;
-- **events** → a category filter on the `event` column;
-- **player** → a person filter on that player;
-- **side** → a group filter.
-
 What cannot be applied is said under the buttons, not silently filtered to
 nothing: "no match column retained - match not applied", "match: X not in
 the loaded data", the same for round and events, "player X not in the loaded
@@ -242,3 +219,38 @@ timeline to *play* mode with its window set to *lifetime*, seeks to the
 start of the round's session and plays. When the round is not a session of
 the loaded data: "this round is not a session of the loaded data: nothing to
 replay".
+
+## For developers
+
+Code: [`src/ui/match/MatchPanel.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/match/MatchPanel.tsx),
+[`src/match/matchDoc.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/match/matchDoc.ts),
+[`src/match/focus.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/match/focus.ts),
+[`src/state/matchStore.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/state/matchStore.ts).
+
+### Summary versions
+
+The tab reads summaries of version 1 and version 2 (`"version"` in the
+file) side by side, and treats them alike:
+
+| | Version 2 | Version 1 |
+|---|---|---|
+| plant time | seconds into the round, as the kills | match seconds; the tab subtracts the round's start |
+| plant site | `A` or `B`; empty when the demo does not say | `A`, `B`, or an entity number - read as an unknown site |
+| half length | `halfLength`, from where the sides first swap; 12 when it is null | 12 (MR12) |
+| pistol rounds | `pistolRounds` (round 1 and the first round after the half) | the rounds whose buy is `pistol` |
+| drawn round | `winner` and `winnerTeam` empty | - |
+| suicide | `suicide` on the kill, never a teamkill | told by attacker and victim being the same player |
+
+A kill's `noscope` and `attackerBlind` (version 2) are not shown in the
+Match tab, which also shows no place from the heatmap table, so a grenade
+row's empty `place` there changes nothing here.
+
+How a focus becomes filters (`focusFilters`):
+
+- **match** → a category filter on the `match` column;
+- **round** → a range filter `round` = N on a numeric `round` column (a
+  category filter on a categorical one), and the round's session
+  (`<match> #NN`) is selected in the session picker;
+- **events** → a category filter on the `event` column;
+- **player** → a person filter on that player;
+- **side** → a group filter.

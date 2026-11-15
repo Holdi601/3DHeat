@@ -62,14 +62,23 @@ const pages = {};
     ['X', 'X_NAMES'], ['Y', 'Y_NAMES'], ['Z', 'Z_NAMES'], ['Time', 'TIME_NAMES'], ['Person', 'PERSON_NAMES'],
     ['Session (match, round)', 'SESSION_NAMES'], ['Group (team)', 'TEAM_NAMES'], ['Yaw', 'YAW_NAMES'], ['Pitch', 'PITCH_NAMES'],
   ];
-  let body = 'When a file is loaded, each role is given to the first column whose name matches one of these patterns (regular expressions, tried in order; `i` = any case). Every guess can be changed in [Column mapping](column-mapping.md), and a Parquet file can name its columns itself ([the `heat3d` hints](data-formats.md#the-heat3d-hints)).\n\n| Role | Name patterns |\n|---|---|\n';
+  let body = 'When a file is loaded, each role is given to the first column whose name matches one of these patterns (regular expressions, tried in order; `i` = any case). Every guess can be changed in [Column mapping](column-mapping.md), and a Parquet file can name its columns itself ([the `heat3d` hints](data-formats.md#the-heat3d-hints)).\n\n| Role | Name patterns | Examples that match |\n|---|---|---|\n';
+  const SAMPLES = ['x', 'y', 'z', 'pos_x', 'PosX', 'position_x', 'X_world', 'lat', 'lon', 'alt', 'altitude', 'height', 'time', 't', 'timestamp', 'tick', 'seconds', 'elapsed', 'match_time', 'player', 'player_id', 'steamid', 'name', 'user', 'unit', 'pilot', 'person', 'match', 'session', 'round', 'roundId', 'game_id', 'team', 'side', 'faction', 'coalition', 'group', 'yaw', 'heading', 'azimuth', 'view_yaw', 'pitch', 'elevation', 'view_pitch'];
+  const examples = (pats) => {
+    const hit = (p, n) => {
+      const m = p.match(/^\/(.*)\/([a-z]*)$/);
+      try { return new RegExp(m[1], m[2]).test(n); } catch { return false; }
+    };
+    return SAMPLES.filter((n) => pats.some((p) => hit(p, n))).slice(0, 6).map((n) => `\`${n}\``).join(', ');
+  };
   for (const [role, name] of roles) {
     const start = am.indexOf(`const ${name} = [`);
     if (start < 0) continue;
     const text = am.slice(start, am.indexOf('];', start));
-    const pats = [...text.matchAll(/(\/(?:\\\/|[^/\n])+\/[a-z]*)/g)].map((m) => `\`${cell(m[1])}\``);
+    const raw = [...text.matchAll(/(\/(?:\\\/|[^/\n])+\/[a-z]*)/g)].map((m) => m[1]);
+    const pats = raw.map((r) => `\`${cell(r)}\``);
     if (/\.\.\.ELAPSED_NAMES/.test(text)) pats.push('and elapsed-time names (`elapsed`, `match_time` ...)');
-    body += `| ${role} | ${pats.join(' ')} |\n`;
+    body += `| ${role} | ${pats.join(' ')} | ${examples(raw)} |\n`;
   }
   pages['ref-columns.md'] = page('Column names', 2, body);
 }
@@ -78,9 +87,9 @@ const pages = {};
 {
   const lang = src('src/i18n/languages.ts');
   const list = [...lang.slice(lang.indexOf('export const LANGUAGES')).matchAll(/\{ code: '([\w-]+)', name: '([^']+)'/g)];
-  let body = `The viewer speaks ${list.length} languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. More in [Languages](languages.md).\n\n| Code | Language |\n|---|---|\n`;
+  let body = `The viewer speaks ${list.length} languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).\n\n| Code | Language |\n|---|---|\n`;
   for (const [, code, name] of list) body += `| \`${code}\` | ${name} |\n`;
-  pages['ref-languages.md'] = page('Languages', 3, body);
+  pages['ref-languages.md'] = page('Language list', 3, body);
 }
 
 // ------------------------------------------------------------ browser keys
@@ -155,10 +164,11 @@ All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md)
 
 // ------------------------------------------------------------ command-line tools
 {
-  const TOOLS = ['3dheat-pack.mjs', '3dheat-summarize.mjs', 'acmi-to-parquet.mjs', 'container.mjs', 'demo-data.mjs', 'docs-shots.mjs', 'docs-refs.mjs', 'smoke.mjs', 'check-visual.mjs', 'convert-media.mjs'];
-  let body = 'The command-line tools in the viewer\'s `tools/` folder (Node.js, run from the repository root). The first paragraph of each tool\'s own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.\n';
-  for (const t of TOOLS) {
-    if (!existsSync(join(REPO, 'tools', t))) continue;
+  const USER_TOOLS = ['3dheat-pack.mjs', '3dheat-summarize.mjs', 'acmi-to-parquet.mjs'];
+  const DEV_TOOLS = ['demo-data.mjs', 'docs-shots.mjs', 'docs-refs.mjs', 'smoke.mjs', 'check-visual.mjs', 'convert-media.mjs', 'probe-webgpu.mjs', 'probe-present.mjs'];
+  const LIBRARIES = ['container.mjs'];
+  const section = (t, heading) => {
+    if (!existsSync(join(REPO, 'tools', t))) return '';
     const text = src(`tools/${t}`);
     const block = text.match(/\/\*\*([\s\S]*?)\*\//)?.[1] ?? '';
     const lines = block.split('\n').map((l) => l.replace(/^\s*\* ?/, ''));
@@ -168,9 +178,16 @@ All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md)
       first.push(l.trim());
     }
     const usage = lines.filter((l) => /^\s*(node tools\/|npm run )/.test(l)).map((l) => l.trim());
-    body += `\n## \`${t}\`\n\n${first.join(' ')}\n`;
-    if (usage.length) body += `\n\`\`\`\n${usage.join('\n')}\n\`\`\`\n`;
-  }
+    let out = `\n${heading} \`${t}\`\n\n${first.join(' ')}\n`;
+    if (usage.length) out += `\n\`\`\`\n${usage.join('\n')}\n\`\`\`\n`;
+    return out;
+  };
+  let body = 'The command-line tools in the viewer\'s `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool\'s own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.\n\n## For your data\n';
+  for (const t of USER_TOOLS) body += section(t, '###');
+  body += '\n## For developers and the docs\n\nThese check the viewer, make the demo data and the screenshots, and write the reference pages.\n';
+  for (const t of DEV_TOOLS) body += section(t, '###');
+  body += '\n## Libraries\n\n';
+  body += LIBRARIES.filter((t) => existsSync(join(REPO, 'tools', t))).map((t) => `\`${t}\` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).`).join('\n') + '\n';
   pages['ref-tools.md'] = page('Command-line tools', 7, body);
 }
 

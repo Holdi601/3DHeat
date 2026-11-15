@@ -6,7 +6,20 @@ nav_order: 1
 
 # Map images
 
-**Map image…** in the Background / level panel puts a picture - a minimap, a satellite image, a floor plan - flat under the data, placed by two anchors.
+A map image is a flat picture - a minimap, a satellite photo, a floor plan - laid under your data so you can see where the heat sits. You tell the viewer where the picture belongs by pinning two points on it to two places in the world (the "anchors").
+
+## Load and place a map image
+
+1. Load your data first ([Getting data in](getting-data-in.md)).
+2. In **Background / level**, press **Map image…** and pick the picture. It is stretched over the data's area.
+3. Press **Fit to data bounds** if the picture was moved. Anchor 1 goes to the picture's top-left corner, anchor 2 to its bottom-right corner, at the data's edges.
+4. If the heat does not line up with the picture, pick two landmarks that are far apart (for example two opposite corners of a building or two crossroads). Read each one's pixel on the picture and its world position (hover with the [ruler](measure.md) to read **X** and **Z**).
+5. Type them into **Placement**: for **Anchor 1** the landmark's **px**, **py**, **world X**, **world Z**; the same for **Anchor 2**.
+6. Check: a track or hotspot that you know sits on a road should now sit on that road. Adjust the numbers until it does.
+
+![The Placement section with two anchors and heat drawn on a map picture](assets/img/en/map-images-placement.webp)
+
+The two landmarks must differ in both pixel columns and pixel rows, or the panel says *The two anchors share a pixel row or column*.
 
 ## Loading
 
@@ -28,20 +41,6 @@ On load the image is stretched over the dataset's X-Z bounds (or ±1000 units wi
 
 The name line shows `width×height px · x × z m/px`, the world size of one pixel along each axis.
 
-## How the anchors place the image
-
-From [`mapQuadFromAnchors`](https://github.com/Holdi601/3DHeat/blob/main/src/render/level.ts), with anchors *a* and *b*:
-
-```
-scaleX = (b.worldX - a.worldX) / (b.px - a.px)
-scaleZ = (b.worldZ - a.worldZ) / (b.py - a.py)
-pixel (0, 0) sits at  (a.worldX - a.px × scaleX,  a.worldZ - a.py × scaleZ)
-```
-
-Two anchors fix both scale and offset on each axis independently, so a map can be stretched differently on X and Z but not rotated. The anchors must differ in **both** pixel coordinates; when they share a row or a column no scale can be derived, the map is not drawn, and the panel says *The two anchors share a pixel row or column*.
-
-To georeference precisely: pick two well-separated landmarks visible on the image whose world coordinates you know (from the data, or by hovering with the [ruler](measure.md)), and type their pixel and world coordinates.
-
 ## In the scene
 
 The image is a single textured quad at the elevation. At full opacity it writes depth, so it takes part in [occlusion](depth-and-culling.md) as ground; below 100% opacity it is blended and writes no depth, so it occludes nothing. The [ruler](measure.md) measures on its plane. The [level library](level-library.md) stores an image level with its anchors.
@@ -60,3 +59,17 @@ The image is a single textured quad at the elevation. At full opacity it writes 
 Checked on a public match's replay of patch 7.40: every hero's track follows the drawn lanes, and the towers, barracks and ancients the replay places fall on the drawn bases. The **Top** view shows the map with north at the bottom of the screen, as it shows any Z-up table with Y flipped.
 
 The drawing is OpenDota's, of Valve's map; Valve does not endorse 3DHeat. A 3D map of Dota needs the game installed: see the Watcher's notes on Dota 2 replays.
+
+## For developers
+
+### How the anchors place the image
+
+From [`mapQuadFromAnchors`](https://github.com/Holdi601/3DHeat/blob/main/src/render/level.ts), with anchors *a* and *b*:
+
+```
+scaleX = (b.worldX - a.worldX) / (b.px - a.px)
+scaleZ = (b.worldZ - a.worldZ) / (b.py - a.py)
+pixel (0, 0) sits at  (a.worldX - a.px × scaleX,  a.worldZ - a.py × scaleZ)
+```
+
+Two anchors fix both scale and offset on each axis independently, so a map can be stretched differently on X and Z but not rotated. The anchors must differ in **both** pixel coordinates; when they share a row or a column no scale can be derived, the map is not drawn, and the panel says *The two anchors share a pixel row or column*.

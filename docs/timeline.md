@@ -1,9 +1,13 @@
 ---
 title: Timeline and playback
-nav_order: 4
+nav_order: 5
 ---
 
 # Timeline and playback
+
+The bar under the picture is like a video player: you can play the data as a movie, pause it, jump around and change the speed.
+
+![The timeline bar: 1 All/Play, 2 transport buttons, 3 clock, 4 Speed, 5 History, with Window and a Span of 30 s](assets/img/en/timeline-bar.webp)
 
 The bar under the view is the timeline ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). It decides which rows are visible at any moment. It needs a time column; without one the whole bar is disabled, the view stays in **All**, and the sidebar says *No time column in this data - the timeline is disabled and every datapoint is shown at once.*
 
@@ -23,9 +27,10 @@ Choosing **All** also stops playback.
 | Scrubber | the start | The playhead. Drag to seek; 20,000 steps across the range. |
 | **All** / **Play** | All | See above. |
 | ▶ / ❚❚ | paused | Play or pause; also `K`. |
+| ◀ **Play backwards (J)** | | Plays the data in reverse. Shown in the **Figure overlay** mode only; the same key `J` works there too (see [Keyboard](#keyboard)). |
 | ⏮ | | Back to the start of the range. |
 | Clock | | `elapsed / total` as `mm:ss.s` (or `h:mm:ss`), and, when the time column is an absolute timestamp, the wall-clock time of day of the playhead as `HH:MM:SSZ` (UTC). |
-| **Speed** | 1× | Dataset seconds per real second: 0.25, 0.5, 1, 2, 4, 8, 16, 60, 300 or 1800×. |
+| **Speed** | 1× | Dataset seconds per real second. The menu has 17 steps from 0.01× to 1800× (0.01, 0.02, 0.05, 0.1, 0.25, 0.5, 1, 2, 4, 8, 16, 32, 64, 128, 256, 600, 1800), plus **Custom…**: type any speed from 0.001× to 3600× (for example 0.3 or 12) and press Enter; Esc keeps the current speed. The last speed is remembered for the next visit (see [Stored settings](ref-settings-storage.md)). |
 | **History** | Cumulative | What counts as visible at the playhead: *Cumulative*, *Window* or *Lifetime* (below). |
 | **Span** (Window; in Lines mode also Lifetime) | 30 s | Length of the window ending at the playhead; at least 0.01 s. In [Line heat](line-heat.md#playback) it is the tail length. |
 | **Fallback life** (Lifetime only, not in Lines mode) | 10 s | How long a datapoint with no next sample of its person stays visible. |
@@ -33,7 +38,7 @@ Choosing **All** also stops playback.
 | **Loop** | on | At the end, start again; off stops at the end. |
 | Right side | | The dataset's name. |
 
-The **range** is the dataset's time span - or, in [box replay](box-replay.md) with a session selected, that session's span.
+The **range** is the dataset's time span - or, in the [figure overlay](box-replay.md) with a session selected, that session's span.
 
 ## History
 
@@ -43,7 +48,7 @@ In Play mode:
 - **Window** - a fixed span of history ending at the playhead (*Span*).
 - **Lifetime** - each datapoint lives until the **same person's next sample** (in the same session), so exactly one position per person is current at any instant. A datapoint whose person never appears again - a death, a disconnect, the end of the log - has no next sample, and lives for the *Fallback life* instead of vanishing at once or persisting forever. Datapoints **fade out** over the last *Fade* fraction of their life rather than popping off: with one sample live per person, a datapoint disappearing between one frame and the next makes the whole field flicker at the sample rate. *Fade* 0 restores the hard cut.
 
-Lifetime needs a person column as well as a time column; without one the history falls back to Cumulative on load. In [Line heat](line-heat.md#playback) the history sets how long a route's tail stays visible; in [Box replay](box-replay.md) the *Fallback life* is how long a person with no further samples is held.
+Lifetime needs a person column as well as a time column; without one the history falls back to Cumulative on load. In [Line heat](line-heat.md#playback) the history sets how long a route's tail stays visible; in the [figure overlay](box-replay.md) the *Fallback life* is how long a person with no further samples is held.
 
 ## Playback behaviour
 
@@ -72,5 +77,7 @@ Switching between All and Play, or changing the history, restarts the accumulati
 | Key | Effect |
 |---|---|
 | `K` | Play / pause |
+| `J` | Play backwards; pressing it again pauses (Figure overlay only) |
+| `L` | Play forwards; pressing it again pauses (Figure overlay only) |
 
-The key is ignored while a text box or menu has focus. In the Race analysis tab `K` drives that tab's own replay instead.
+`J` and `L` also switch the timeline to **Play**. The keys are ignored while a text box or menu has focus. In the Race analysis tab `K` drives that tab's own replay instead.

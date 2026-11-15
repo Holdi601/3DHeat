@@ -6,11 +6,28 @@ nav_order: 3
 
 # Sampling and budgets
 
-## Candidate rows
+When there are too many dots to draw in one frame, the viewer draws an even sample and makes each dot count for more, so the picture stays right. A controller adjusts how many it draws so the viewer keeps its frame rate.
+
+## Performance panel controls
+
+| Control | Default | Range (jog) |
+|---|---|---|
+| **Draw every row each frame** | on | |
+| **Adaptive budget** | on | |
+| **Target FPS** | 60 | 20-240 (1000) |
+| **Starting sprites / frame** (adaptive) or **Sprites / frame** | 4.00M | 65,536-268,435,456, logarithmic (268,435,456) |
+| **Heat resolution** | 100% | 25-100%, multiplied by the adaptive stage-two scale |
+| **Progressive refinement** | on | Off: every frame is a fresh single-frame estimate (useful to see the raw sample). |
+
+See also [Performance panel and stats overlay](performance-and-stats.md).
+
+## For developers
+
+### Candidate rows
 
 Rows are stored in ascending time. The timeline window [*lo*, *hi*] becomes a row range with two binary searches over the time column ([`candidateRange`](https://github.com/Holdi601/3DHeat/blob/main/src/render/sampling.ts)); without a time column every row is a candidate. These are the **Rows in window** of the stats overlay. Per-row tests - filters, groups, split, culling, slice, lifetime - happen later, in the shader; a row that fails costs one vertex invocation and no fragments.
 
-## The sampling plan
+### The sampling plan
 
 [`planFrame`](https://github.com/Holdi601/3DHeat/blob/main/src/render/sampling.ts) divides the candidate range into **blocks of 4,096 consecutive rows** and picks how many to draw from the frame's sprite budget:
 
@@ -21,7 +38,7 @@ Each drawn row's heat is multiplied by **candidates / submitted**, so the expect
 
 One plan can carry at most 65,536 blocks - 268,435,456 sprites - because both backends hold a fixed 65,536-slot block-start buffer. A request for more is capped there, and the shortfall shows up honestly as more frames to converge.
 
-## Draw every row each frame
+### Draw every row each frame
 
 **Performance → Draw every row each frame** (default **on**): the budget becomes a floor rather than a ceiling, and a frame that starts a fresh estimate draws every row it is responsible for (up to the 268M cap).
 
@@ -29,9 +46,9 @@ The reason: a camera move discards the accumulation, so a moving frame is a sing
 
 Turn it off on hardware that cannot afford the whole field at once: *Sprites / frame* is then a real limit, and the view converges over a few still frames instead.
 
-What a full plan costs, measured on an RTX 5080 at a 4K canvas with a 14M triangle level, sprites of 1 m radius (a pixel or two): 100M sprites a frame at 30 fps, 134M at 20 fps, 200M at 15 fps, all 264.6M of the largest load at 12 fps. With sprites that small the vertex stage is the whole cost, and heat resolution changes nothing; with large sprites the fill is: 8M sprites of 100 m radius took 2.5 s a frame at full heat resolution and 170 ms at 25%. **Draw every row each frame** therefore starts at 67M and climbs by a quarter a frame while frames take under 150 ms, and halves while they take over 400 ms, so that a heavy view cannot run a frame past what the GPU's watchdog allows.
+What a full plan costs, measured on a high-end desktop GPU at a 4K canvas with a large level, sprites of 1 m radius (a pixel or two): roughly 100M sprites a frame at 30 fps, 200M at 15 fps, and the 268M maximum at about 12 fps. With sprites that small the vertex stage is the whole cost, and heat resolution changes nothing; with large sprites the fill is: 8M sprites of 100 m radius took 2.5 s a frame at full heat resolution and 170 ms at 25%. **Draw every row each frame** therefore starts at 67M and climbs by a quarter a frame while frames take under 150 ms, and halves while they take over 400 ms, so that a heavy view cannot run a frame past what the GPU's watchdog allows.
 
-## The adaptive budget
+### The adaptive budget
 
 **Performance → Adaptive budget** (default on) tunes the sprite budget to hold **Target FPS** ([`BudgetController`](https://github.com/Holdi601/3DHeat/blob/main/src/render/sampling.ts)). It is idle in box replay and during video renders.
 
@@ -46,16 +63,3 @@ The input is the frame time, smoothed (90% previous + 10% new, with single frame
 With the adaptive budget off, the budget is simply **Sprites / frame**.
 
 With *Draw every row each frame* on, the adaptive budget still runs, but the exact rule raises the budget to cover all candidate rows, so in practice it controls only the resolution stage and frames that do not start a fresh estimate.
-
-## Performance panel controls
-
-| Control | Default | Range (jog) |
-|---|---|---|
-| **Draw every row each frame** | on | |
-| **Adaptive budget** | on | |
-| **Target FPS** | 60 | 20-240 (1000) |
-| **Starting sprites / frame** (adaptive) or **Sprites / frame** | 4.00M | 65,536-268,435,456, logarithmic (268,435,456) |
-| **Heat resolution** | 100% | 25-100%, multiplied by the adaptive stage-two scale |
-| **Progressive refinement** | on | Off: every frame is a fresh single-frame estimate (useful to see the raw sample). |
-
-See also [Performance panel and stats overlay](performance-and-stats.md).

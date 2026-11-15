@@ -6,16 +6,9 @@ nav_order: 52
 
 # Replay and the 3D scene
 
-How the laps are played back together, and everything drawn in the 3D view
-of the Race tab: driven lines, the three maps painted on the track, the
-cars, bursts where a lap hit something, labels, and the drawing of mirrored
-worlds.
+Play your laps back together, like a race, and watch where one car pulls ahead. Everything you see in the 3D view of the **Race analysis** tab is described here: the driven lines, the colours painted on the track, the cars and the labels.
 
-Code: [`src/race/replay.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/replay.ts),
-[`src/race/scene.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/scene.ts),
-[`src/race/glyph.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/glyph.ts),
-[`src/ui/race/RaceBar.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/RaceBar.tsx) (`Transport`),
-[`src/ui/race/RaceLabels.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/RaceLabels.tsx).
+![Cause map with the cars lined up 40 m before a corner: coloured track, two cars and the flag post](assets/img/en/race-replay-lined-up.webp)
 
 ## The replay clock
 
@@ -59,6 +52,12 @@ How each lap's own time follows from the clock:
 | **Lined up** (`anchor`) | the clock plus the lap's offset | every car on the same spot at the same moment, then let go - what happens from that point on, not from the start of the lap |
 | **Side by side** (`locked`) | the time at which the lap reached the reference's current distance | every car held at the reference's distance all lap: speeds and inputs compared metre by metre |
 
+Use it when:
+
+- **From the line**: you want to see who is ahead and how the gap grows.
+- **Lined up**: you want to know what happens in one corner or on one straight, with everyone starting level there.
+- **Side by side**: you want to compare what the drivers do with pedals and wheel at the same place on the course.
+
 **Offsets in *Lined up*:** for an anchor at `s` metres along the reference,
 each lap's offset is its own time at `s` minus the reference's time at `s`,
 both read from the aligned laps (see
@@ -90,27 +89,6 @@ of travel, pitched down to the car, eased (20% of the way each frame) so it
 does not shake with every wobble. ⌖ again releases it. The chased car is
 drawn a little lighter, with a white ring on the ground, and its card is
 highlighted.
-
-### What a car is at a moment
-
-`stateAt` interpolates each channel between the two samples around the
-lap's time. Channels that step (gear, flags) take the nearest sample.
-A lap that has finished parks on the line.
-
-**Heading.** The direction of travel comes from positions a few metres
-apart (at least 2 m either side, so a wobble does not turn the car). The
-body's heading comes from the game's yaw only once it is fitted to the
-direction of travel - sign and offset, by circular mean over samples faster
-than 10 m/s (at least 20) - and only if it then agrees with it (circular
-variance under 0.05, about 18° of scatter); otherwise the body points along
-the direction of travel. That keeps a slide visible (body and travel apart)
-without trusting a game's angle convention.
-
-**Steering and sides.** Which way a positive steer turns the car, and on
-which side the game's right-hand wheels belong, are measured from the lap:
-the steering against the turning of the path, and which side's suspension
-compresses on the outside of turns (without suspension data, Forza games are
-taken as mirrored).
 
 ## The View section
 
@@ -197,8 +175,8 @@ passes the moment of a hit, a shock ring spreads from it for 0.8 s.
 ## Help mode
 
 **?** beside the language picker, or the **?** or **F1** key, turns on a key to
-every colour on screen, on all three tabs ([`HelpPanel.tsx`](../src/ui/help/HelpPanel.tsx),
-[`RaceHelp.tsx`](../src/ui/race/RaceHelp.tsx)). The choice stays in this browser.
+every colour on screen, on all three tabs ([`HelpPanel.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/help/HelpPanel.tsx),
+[`RaceHelp.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/RaceHelp.tsx)). The choice stays in this browser.
 
 - **The key** in the corner of the view lists the colours for the tab and mode in
   use. Each ramp comes from where the view gets it, so a heat ramp you edited shows
@@ -220,16 +198,16 @@ python -m heat3d_gamefiles cars -o forza.h3dcars
 Without one, each car is drawn as **the viewer's own car** of its kind and era:
 saloon, coupé, hatchback, estate, sports car, supercar, muscle car, off-roader,
 pickup, van or microcar, each as a classic (before 1980), of the 80s and 90s, or
-modern ([`carBodies.ts`](../src/race/carBodies.ts)). Those are built here from
+modern ([`carBodies.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/carBodies.ts)). Those are built here from
 general proportions: no logos, no model names and nothing from any game's files,
 so they ship with the viewer. The kind comes from the car's name, the era from
 the year in it; a car with neither is taken from its class. About a hundred
 real generations are known by their published length, width, height and
-wheelbase ([`carSpecs.ts`](../src/race/carSpecs.ts); a line each, rounded), so a
+wheelbase ([`carSpecs.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/carSpecs.ts); a line each, rounded), so a
 1990s 3 series gets that car's size and stance, still as a plain shape with no
 badge or grille.
 
-The car file holds the game's own low-detail model of each car, about 900 triangles, with
+The car file is made on your own machine from your own copy of the game. It holds a low-detail model of each car, about 900 triangles, with
 its wheel positions (see [the extractor's `cars`
 command](https://github.com/Holdi601/3DHeat-GameFiles/blob/main/docs/commands.md#cars)).
 **Load car file...** in the view settings, or dropping the file on the race
@@ -238,7 +216,7 @@ not something to pass on, and the viewer ships none.
 
 Which car stands in for a lap's is worked out from what is loaded each time and
 never stored, so a car with no counterpart today gets its own as soon as a newer
-file has it ([`carMatch.ts`](../src/race/carMatch.ts)):
+file has it ([`carMatch.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/carMatch.ts)):
 
 | Lap's car | Drawn as |
 |---|---|
@@ -334,3 +312,32 @@ Only the drawing changes - a reflection folded into the view matrix; the data,
 the analysis and every coordinate the tools show stay the game's own. The
 inversion is kept in the browser. The analysis names bends left or right by
 the same measurement (an unknown world is taken as mirrored, as Forza's is).
+
+## For developers
+
+Code: [`src/race/replay.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/replay.ts),
+[`src/race/scene.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/scene.ts),
+[`src/race/glyph.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/glyph.ts),
+[`src/ui/race/RaceBar.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/RaceBar.tsx) (`Transport`),
+[`src/ui/race/RaceLabels.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/RaceLabels.tsx).
+
+### What a car is at a moment
+
+`stateAt` interpolates each channel between the two samples around the
+lap's time. Channels that step (gear, flags) take the nearest sample.
+A lap that has finished parks on the line.
+
+**Heading.** The direction of travel comes from positions a few metres
+apart (at least 2 m either side, so a wobble does not turn the car). The
+body's heading comes from the game's yaw only once it is fitted to the
+direction of travel - sign and offset, by circular mean over samples faster
+than 10 m/s (at least 20) - and only if it then agrees with it (circular
+variance under 0.05, about 18° of scatter); otherwise the body points along
+the direction of travel. That keeps a slide visible (body and travel apart)
+without trusting a game's angle convention.
+
+**Steering and sides.** Which way a positive steer turns the car, and on
+which side the game's right-hand wheels belong, are measured from the lap:
+the steering against the turning of the path, and which side's suspension
+compresses on the outside of turns (without suspension data, Forza games are
+taken as mirrored).

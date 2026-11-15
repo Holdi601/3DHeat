@@ -5,7 +5,9 @@ nav_order: 1
 
 # 3DHeat
 
-3DHeat is a realtime 3D viewer for where things happened in games and simulations. Load positions - CSV, Parquet, Tacview recordings, converted replays, a single file, a folder or thousands of matches - and see them as a **heatmap you can fly through**, as **figures replaying the match**, as lines along the routes people took, or as one population against another. It finds what stands out by itself, and it runs entirely in your browser: nothing is uploaded anywhere.
+3DHeat shows where things happened in a game - where players went, fought and fell - as glowing colours you can fly through, or as little 3D figures that replay the match.
+
+Load positions - CSV, Parquet, Tacview recordings, converted replays, a single file, a folder or thousands of matches - and see them as a **heatmap you can fly through**, as **figures replaying the match**, as lines along the routes people took, or as one population against another. It finds what stands out by itself, and it runs entirely in your browser: nothing is uploaded anywhere.
 
 ![Heat of ten tank matches over the demo valley](assets/img/en/heat-hero.webp)
 
@@ -15,7 +17,7 @@ nav_order: 1
 
 | | |
 |---|---|
-| ![Difference](assets/img/en/heat-difference.webp) | **[Heat modes](heat-modes.md)** - heat, [difference](difference.md) (Blue against Red), [team heat](team-heat.md), [line heat](line-heat.md); [directional heat](directional-heat.md) with wedges, arrow fields and polar charts; heat [weighed by value](value-weighting.md): what weapons, vehicles and fuel cost. |
+| ![Difference](assets/img/en/heat-difference.webp) | **[Heat modes](heat-modes.md)** - heat, [difference](difference.md) (red where one side was more, green-blue where the other was), [team heat](team-heat.md), [line heat](line-heat.md); [directional heat](directional-heat.md) with wedges, arrow fields and polar charts; heat [weighed by value](value-weighting.md): what weapons, vehicles and fuel cost. |
 | ![Replay](assets/img/en/replay-tanks.webp) | **[Match replay](match-replay.md)** - every unit as the [figure](figures.md) of what it is, NATO or Russian symbols far off, missiles and tracers, hit marks, wrecks, fires, turrets, objectives, Tacview-style cameras and tactical display; [many matches at once](many-matches.md). |
 | ![Insights](assets/img/en/insights.webp) | **[Insights](insights.md)** - strong positions, deadly ground, spawn traps, chokes and standout players, found and ranked with the evidence; a written debrief, optionally by an AI of your choice; a caster for one match; the [knowledge lens](knowledge.md). |
 | ![Volumes](assets/img/en/compare.webp) | **[Volumes](volumes.md)** - draw boxes, prisms, cylinders and spheres, filter to them, count what happens inside, export it, and compare places side by side; [breakdown](breakdown.md) of who and what does best in a place. |
@@ -44,7 +46,7 @@ The repository root holds three batch files.
 
 | File | What it does |
 |---|---|
-| `start.bat` | Starts the viewer. Finds Node.js even when it is not on `PATH` (it looks in `%ProgramFiles%\nodejs`, `%ProgramFiles(x86)%\nodejs` and `%LOCALAPPDATA%\Programs\nodejs`), and when Node.js is missing it offers to install the LTS release with `winget install -e --id OpenJS.NodeJS.LTS`. On first run it asks before downloading the dependencies (about 300 MB into `node_modules\` inside the folder, nothing system-wide). It refuses to start when something already listens on port 5273, and points at `restart.bat` instead. When the folder is a git checkout with no local changes it updates itself first (see [Updates](updates.md)). Then it runs the dev server on `http://127.0.0.1:5273/` and opens the browser. **The window is the server**: leave it open, close it or press Ctrl+C to stop. |
+| `start.bat` | Starts the viewer. Finds Node.js even when it is not on `PATH` (it looks in `%ProgramFiles%\nodejs`, `%ProgramFiles(x86)%\nodejs` and `%LOCALAPPDATA%\Programs\nodejs`), and when Node.js is missing it offers to install the LTS release with `winget install -e --id OpenJS.NodeJS.LTS`. On first run it asks before downloading the dependencies (about 300 MB into `node_modules\` inside the folder, nothing system-wide). It refuses to start when something already listens on port 5273, and points at `restart.bat` instead. When the folder is a git checkout with no local changes and a newer version exists, it asks whether to update (Y/N; with no answer in 60 s it keeps this version; see [Updates](updates.md)). Then it runs the dev server on `http://127.0.0.1:5273/` and opens the browser. **The window is the server**: leave it open, close it or press Ctrl+C to stop. |
 | `restart.bat` | Runs `stop.bat quiet`, then `start.bat`. Only needed after changing `vite.config.ts`, adding a dependency, or when the server has wedged - source edits are hot-reloaded. |
 | `stop.bat` | Stops whatever listens on port 5273, by process id found through `netstat`, never by image name, so other Node.js processes on the machine are left alone. Waits about two seconds for the socket to be released. With the argument `quiet` it does not pause at the end. |
 
@@ -97,15 +99,15 @@ The server binds to `127.0.0.1` only, so neither route is reachable from the net
 
 **Start**: [Demo data](demo-data.md) · [Getting data in](getting-data-in.md) ([loading files](loading-files.md), [column mapping](column-mapping.md), [axes, units and time](axes-units-and-time.md), [sessions, persons and groups](sessions-persons-groups.md), [Tacview](tacview-acmi.md), [converters](converters.md), [.3dheat](container.md), [memory and budgets](memory-and-budgets.md))
 
-**See**: [Heat modes](heat-modes.md) ([heat](heat.md), [sprite shape](sprite-shape.md), [colour and exposure](colour-and-exposure.md), [depth and culling](depth-and-culling.md), [difference](difference.md), [team heat](team-heat.md), [line heat](line-heat.md), [box replay](box-replay.md), [directional heat](directional-heat.md), [value weighting](value-weighting.md)) · [Timeline](timeline.md) · [Levels](levels.md) ([map images](map-images.md), [3D levels](model-levels.md), [appearance](level-appearance.md), [library](level-library.md), [world backdrop](world-backdrop.md)) · [Camera](camera.md) ([gamepad](gamepad.md), [keys](keyboard-reference.md)) · [Camera path and video](camera-path-and-video.md)
+**See**: [Heat modes](heat-modes.md) ([heat](heat.md), [sprite shape](sprite-shape.md), [colour and exposure](colour-and-exposure.md), [depth and culling](depth-and-culling.md), [difference](difference.md), [team heat](team-heat.md), [line heat](line-heat.md), [box replay](box-replay.md), [directional heat](directional-heat.md), [value weighting](value-weighting.md)) · [Timeline](timeline.md) · [Levels](levels.md) ([map images](map-images.md), [3D levels](model-levels.md), [appearance](level-appearance.md), [library](level-library.md), [world backdrop](world-backdrop.md), [its sources](world-backdrop-sources.md)) · [Camera](camera.md) ([gamepad](gamepad.md), [keys](keyboard-reference.md)) · [Camera path and video](camera-path-and-video.md)
 
 **Analyse**: [Filters and tools](filters-and-tools.md) ([filters](filters.md), [teams](teams-list.md), [entities](entities.md), [slice](slice.md), [measure](measure.md), [volumes](volumes.md), [breakdown](breakdown.md)) · [Insights](insights.md) ([knowledge lens](knowledge.md)) · [Mass analysis](mass-analysis.md)
 
-**Replay**: [Match replay](match-replay.md) · [Many matches at once](many-matches.md) · [Figures](figures.md) · [Figure replay and debrief](figure-replay.md) · [Tacview parity](tacview-parity.md) · [Hit analysis](hit-analysis.md)
+**Replay**: [Match replay](match-replay.md) · [Many matches at once](many-matches.md) · [Figures](figures.md) ([in the figure overlay](figure-replay.md), [credits](figure-credits.md)) · [Tacview parity](tacview-parity.md) · [Hit analysis](hit-analysis.md)
 
 **Other tabs**: [Race analysis](race-analysis.md) ([the method](race-analytics.md), [other games](other-games.md)) · [Match analysis](match-analysis.md) · [Tactics board](tactics-board.md) ([speeds](tactics-speeds.md))
 
-**The viewer**: [Settings, units and keys](settings.md) · [Languages](languages.md) · [Updates](updates.md) · [Rendering internals](rendering-internals.md) ([backends](backends.md), [accumulation](accumulation.md), [sampling and budgets](sampling-and-budgets.md), [half-float](half-float-accumulation.md), [GPU memory](gpu-memory.md), [software rendering](software-rendering.md), [performance and stats](performance-and-stats.md)) · [Data formats](data-formats.md) · [Reference](reference.md) · [Maintaining the docs](maintaining.md)
+**The viewer**: [Glossary](glossary.md) · [Settings, units and keys](settings.md) · [Languages](languages.md) · [Updates](updates.md) · [Rendering internals](rendering-internals.md) ([backends](backends.md), [accumulation](accumulation.md), [sampling and budgets](sampling-and-budgets.md), [half-float](half-float-accumulation.md), [GPU memory](gpu-memory.md), [software rendering](software-rendering.md), [performance and stats](performance-and-stats.md)) · [Data formats](data-formats.md) · [Reference](reference.md) · [Maintaining the docs](maintaining.md)
 
 ## Related repositories
 
@@ -135,3 +137,13 @@ The viewer reads data; these tools make it. Each is its own public repository (M
 | [`src/ui/`](https://github.com/Holdi601/3DHeat/tree/main/src/ui) | The sidebar panels, timeline, overlays |
 | [`src/race/`](https://github.com/Holdi601/3DHeat/tree/main/src/race), [`src/match/`](https://github.com/Holdi601/3DHeat/tree/main/src/match) | The Race analysis and Match tabs |
 | [`src/i18n/`](https://github.com/Holdi601/3DHeat/tree/main/src/i18n) | Translations |
+| [`src/insights/`](https://github.com/Holdi601/3DHeat/tree/main/src/insights) | Insights: detectors, debrief, caster, AI providers, the knowledge lens |
+| [`src/mass/`](https://github.com/Holdi601/3DHeat/tree/main/src/mass) | Mass analysis over many matches |
+| [`src/volumes/`](https://github.com/Holdi601/3DHeat/tree/main/src/volumes) | Volumes, their statistics, export and comparison |
+| [`src/breakdown/`](https://github.com/Holdi601/3DHeat/tree/main/src/breakdown) | Breakdown and factors |
+| [`src/overlay/`](https://github.com/Holdi601/3DHeat/tree/main/src/overlay) | The many-match overlay |
+| [`src/figures/`](https://github.com/Holdi601/3DHeat/tree/main/src/figures) | The figure catalogue and its builder |
+| [`src/vehicle/`](https://github.com/Holdi601/3DHeat/tree/main/src/vehicle) | Hit analysis (Vehicles tab) |
+| [`src/tactics/`](https://github.com/Holdi601/3DHeat/tree/main/src/tactics) | The tactics board |
+| [`src/world/`](https://github.com/Holdi601/3DHeat/tree/main/src/world) | The world backdrop |
+| [`src/units/`](https://github.com/Holdi601/3DHeat/tree/main/src/units) | Units of measure |

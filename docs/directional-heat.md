@@ -10,6 +10,8 @@ Plain heat says **where** things happen. Directional heat also says **which way*
 
 ![Heat drawn as wedges that point the way each row faced, with a field of arrows over it](assets/img/en/direction.webp)
 
+A normal sprite is a full disc (360 degrees). With a **Wedge opening** of 70 degrees the same sprite becomes a narrow wedge that points the way the row faced, and adds the same total heat.
+
 ## How to use it
 
 1. Load data with a direction in it (see [What gives a row a direction](#what-gives-a-row-a-direction)).

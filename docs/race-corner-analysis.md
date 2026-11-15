@@ -6,18 +6,80 @@ nav_order: 55
 
 # Corner-by-corner analysis
 
-How two laps are compared: one distance axis, corners and their segments,
-what each lap did in each corner, the time account of a corner, how the
-verdict and its cause are chosen, the shape of the line and the advice - and
-the **Where to improve** and **Corner by corner** sections that show it.
-Every threshold here is the code's.
+Two laps of the same course are compared corner by corner. For each corner the viewer says who was quicker, how much time it was worth, and why - braked too early, got on the power late, took a wider line - so you know what to practise first.
 
-Code: [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts),
-[`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts),
-[`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts),
-[`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts),
-[`src/ui/race/RacePanel.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/RacePanel.tsx).
-The reasoning and its sources: [the method](race-analytics.md).
+![A finding opened in Where to improve, next to the Corner by corner table](assets/img/en/race-corner-finding.webp)
+
+A worked example: in corner 3, Driver A brakes 20 m earlier than Driver B and loses 0.15 s getting there, but is on the throttle sooner and gains 0.15 s on the way out. Net 0.00 s: the corner is level, and nobody is told to brake later.
+
+## What you see
+
+### Where to improve
+
+The sidebar section for the focused lap ("Load at least two laps of one
+course." until then).
+
+**The head:** "<lap> <time> against <reference> <time>" and the lap-time gap -
+or, for the reference, "against the quickest other lap through each corner
+(…)" and the total it lost. Beside it, the loss split into *driving* and
+*car / context*.
+
+**The breakdown bar:** the time lost by cause group (braking, entry, exit,
+straight, car, context), in the cause colours, with a legend.
+
+**The findings**, three lists:
+
+1. Driver losses, costliest first, at most **12** - or "Nowhere that driving
+   differently would win time stands out."
+2. **Show what the car or situation cost (X s)** - car and context losses, at
+   most 8 (on by default).
+3. **Where <lap> is quicker, or level another way (N)** - gains and level
+   corners, at most 10 (on by default).
+
+Each finding shows its rank, title (the corner and what happened, with the
+cost for a loss), the verdict line, the cost (gains with a minus) with a
+bar, and a chip: *braking*, *entry*, *exit*, *straight* (driver losses, with
+"· car X" when the car explains 0.02 s or more), *car*, *context*,
+*quicker*, *level*. **Click one** to line the cars up 40 m before it, frame it
+and replay it, and open its measurements:
+
+- **Braking:** where each braked (or lifted) and from what speed, and how
+  many metres earlier or later (from 5 m);
+- **Slowest:** each lap's minimum speed and where;
+- **Full throttle:** where each was flat, and how much sooner or later;
+- **Line:** turn-in difference, tightest radii, how far inside or outside,
+  and each lap's line shape and apex;
+- **Straight to the next corner:** its length, both speeds where both were
+  flat, what it lost or gained and of what - the starting speed, the other's
+  stronger pull, a lift, speed scrubbed, how it was driven (parts from
+  0.02 s);
+- **The car:** how much of the loss is the car, and of what (pull, grip,
+  brakes; when 0.02 s or more);
+
+then the tip, **The cars:** (in different cars, see
+[Car profiles](race-car-profiles.md#what-the-cars-decide-in-a-corner)), and
+the line advice.
+
+### Corner by corner
+
+A table (with two or more laps), one row per segment, of the focused lap's
+class when there are several classes:
+
+| Column | Shows |
+|---|---|
+| Corner | `T3`, `T11-T12` |
+| Quickest | the lap quickest through it (its own time from segment start to end) |
+| by | its margin over the second quickest, s |
+| line | the quickest lap's shape and apex ("V · late", "U/V · middle"); hover for its tightest, entry and exit radii; "both ways" for a mixed complex |
+| (the focused lap) | how far behind the quickest it was, or ✓ when it was the quickest |
+
+Clicking a row opens the focused lap's finding there (or lines the cars up
+40 m before the segment). Under the table, when every corner has a time:
+"The quickest through every corner, put together: <time> (± on the
+reference / on the best of class X)" - the best segments plus the quickest
+run to the first corner when that is its own stretch.
+
+## How it is worked out
 
 The governing rule: **a corner is judged whole**, from the braking zone for
 it to the braking zone for the next one. A lap that brakes earlier to get the
@@ -410,67 +472,11 @@ was wanted and the lap neither apexed late nor was slowest early; *rounder
 than this car wants* where a V was wanted; *squarer than this car wants*
 where a U was wanted; otherwise *that fits*.
 
-## Where to improve
+## For developers
 
-The sidebar section for the focused lap ("Load at least two laps of one
-course." until then).
-
-**The head:** "<lap> <time> against <reference> <time>" and the lap-time gap -
-or, for the reference, "against the quickest other lap through each corner
-(…)" and the total it lost. Beside it, the loss split into *driving* and
-*car / context*.
-
-**The breakdown bar:** the time lost by cause group (braking, entry, exit,
-straight, car, context), in the cause colours, with a legend.
-
-**The findings**, three lists:
-
-1. Driver losses, costliest first, at most **12** - or "Nowhere that driving
-   differently would win time stands out."
-2. **Show what the car or situation cost (X s)** - car and context losses, at
-   most 8 (on by default).
-3. **Where <lap> is quicker, or level another way (N)** - gains and level
-   corners, at most 10 (on by default).
-
-Each finding shows its rank, title (the corner and what happened, with the
-cost for a loss), the verdict line, the cost (gains with a minus) with a
-bar, and a chip: *braking*, *entry*, *exit*, *straight* (driver losses, with
-"· car X" when the car explains 0.02 s or more), *car*, *context*,
-*quicker*, *level*. **Click one** to line the cars up 40 m before it, frame it
-and replay it, and open its measurements:
-
-- **Braking:** where each braked (or lifted) and from what speed, and how
-  many metres earlier or later (from 5 m);
-- **Slowest:** each lap's minimum speed and where;
-- **Full throttle:** where each was flat, and how much sooner or later;
-- **Line:** turn-in difference, tightest radii, how far inside or outside,
-  and each lap's line shape and apex;
-- **Straight to the next corner:** its length, both speeds where both were
-  flat, what it lost or gained and of what - the starting speed, the other's
-  stronger pull, a lift, speed scrubbed, how it was driven (parts from
-  0.02 s);
-- **The car:** how much of the loss is the car, and of what (pull, grip,
-  brakes; when 0.02 s or more);
-
-then the tip, **The cars:** (in different cars, see
-[Car profiles](race-car-profiles.md#what-the-cars-decide-in-a-corner)), and
-the line advice.
-
-## Corner by corner
-
-A table (with two or more laps), one row per segment, of the focused lap's
-class when there are several classes:
-
-| Column | Shows |
-|---|---|
-| Corner | `T3`, `T11-T12` |
-| Quickest | the lap quickest through it (its own time from segment start to end) |
-| by | its margin over the second quickest, s |
-| line | the quickest lap's shape and apex ("V · late", "U/V · middle"); hover for its tightest, entry and exit radii; "both ways" for a mixed complex |
-| (the focused lap) | how far behind the quickest it was, or ✓ when it was the quickest |
-
-Clicking a row opens the focused lap's finding there (or lines the cars up
-40 m before the segment). Under the table, when every corner has a time:
-"The quickest through every corner, put together: <time> (± on the
-reference / on the best of class X)" - the best segments plus the quickest
-run to the first corner when that is its own stretch.
+Code: [`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts),
+[`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts),
+[`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts),
+[`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts),
+[`src/ui/race/RacePanel.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/RacePanel.tsx).
+The reasoning and its sources: [the method](race-analytics.md).

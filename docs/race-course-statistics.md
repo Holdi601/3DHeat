@@ -6,23 +6,20 @@ nav_order: 57
 
 # Course statistics
 
-Load a course's whole folder - dozens of laps, several cars, several
-performance classes - and every lap is judged, then counted: which mistakes
-are made where, by how many of the laps, and what they cost. This page
-covers the comparison by class, what counts as a mistake, the **Course
-statistics** section, the mistake map, the heatmap export, courses from
-several tracks, and the performance limits with many laps.
+Load many laps of one course and the viewer counts the mistakes: which corner costs the most time, how many of the laps went wrong there, and why. Use it to find the corner that is worth practising.
 
-Code: [`src/race/stats.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/stats.ts),
-[`src/ui/race/StatsSection.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/StatsSection.tsx),
-`openMistakesInHeatmap` in [`src/ui/race/actions.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/actions.ts).
+Try it: **Demo laps** gives three laps, enough for this section to appear.
+
+![Course statistics with the mistake map: the track painted by how many laps lost time in each corner, and the list of corners](assets/img/en/race-course-mistake-map.webp)
+
+Load a course's whole folder - dozens of laps, several cars, several performance classes - and every lap is judged, then counted. This page covers the comparison by class, what counts as a mistake, the **Course statistics** section, the mistake map, the heatmap export, courses from several tracks, and the performance limits with many laps.
 
 ## Against the best of its own class
 
 A lap is compared corner by corner with the **fastest complete lap of its
 own performance class** (the reference, in the reference's class); that lap
 itself with whoever of its class was quickest through each corner, or of
-every lap when it is alone in its class. A C-class car's braking point
+every lap when it is alone in its class. Cars are grouped by the game's performance class (in Forza, D up to X; C and S2 are two of them). A C-class car's braking point
 against an S2 car's says nothing about the driving. The time map, the gaps
 in the lap list and the *Corner by corner* table follow the same comparison
 (see [who each lap is compared with](race-corner-analysis.md#who-each-lap-is-compared-with)).
@@ -196,3 +193,9 @@ is drawn is limited so the view stays at frame rate:
 
 Mistake occurrences are worked out once per analysis and cached; the
 mistake map's density is cached per class selection and mistake.
+
+## For developers
+
+Code: [`src/race/stats.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/stats.ts),
+[`src/ui/race/StatsSection.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/StatsSection.tsx),
+`openMistakesInHeatmap` in [`src/ui/race/actions.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/actions.ts).

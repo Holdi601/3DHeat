@@ -4,9 +4,17 @@ parent: Race analysis
 nav_order: 58
 ---
 
-# Race analytics: how two laps are compared, and why
+# Race analytics: the method
 
-This is the method behind the viewer's **Race** tab: what it measures, how it
+In short:
+
+- Laps are compared **by distance**, not by time, so the same place on the course lines up.
+- Each corner is judged **whole**, from one braking zone to the next.
+- The time lost is **split** into where it was lost (braking, entry, exit, straight) and how much of it the car explains.
+- The cause is **explained in words**, with advice.
+- To use it, not to read how it works: see [Race analysis](race-analysis.md).
+
+This is the method behind the **Race analysis** tab: what it measures, how it
 decides where time went, and how it turns that into advice. It is the
 specification the analysis code (`src/race/`) follows, so every rule here has a
 counterpart there and a test that pins it.
@@ -49,8 +57,8 @@ The first version charged every *phase* separately and only ever looked at
 losses. A lap that braked earlier lost time in the braking phase, and was told
 to brake later - even when that earlier braking got the car turned sooner, on
 the power sooner and out of the corner faster, and won it all back down the
-straight. On a pair of recorded laps it told the lap that did that to "brake
-66 m later", when the other lap - which did brake later - had missed the apex, run
+straight. In one test it told the lap that did that to "brake
+much later", when the other lap - which did brake later - had missed the apex, run
 wide and lost exactly what it had gained. The time data said the two ways
 through were level; the advice said the opposite.
 
@@ -198,6 +206,8 @@ minimum speed - and calls it "point and shoot" at 0.45 and above, "momentum" at
 at 55-110 km/h has downforce working.
 
 ## The method
+
+The numbers below are the reasoning. The thresholds the code uses are kept on one page each, and those pages are the reference when a number here differs: [Corner-by-corner analysis](race-corner-analysis.md), [Car control events](race-control-events.md), [Car profiles and comparison](race-car-profiles.md) and [Course statistics](race-course-statistics.md).
 
 ### 1. One distance axis
 
@@ -403,9 +413,9 @@ MoTeC channels in OptimumG's braking series use -0.07 for one car), not at a
 book value, and the book values disagree anyway: the force peaks at 5-20% slip
 on tarmac depending on tyre and model, at 6% or at 20-60% on snow depending on
 the source, and no source gives one for gravel. Games scale slip differently
-again: Forza's is "normalised" so that past 1 grip is lost - yet recorded laps
-show a car's brakes giving their best anywhere from 0.7 to 1.6 of it, and
-ordinary braking zones running past 1. So for each car, over every loaded lap of it, the force it
+again: Forza's is "normalised" so that past 1 grip is lost - yet a car's brakes can
+give their best well below or well above 1 of it, and
+ordinary braking zones can run past 1. So for each car, over every loaded lap of it, the force it
 made is binned against the slip it ran - deceleration against the wheels' slip
 ratio under straight-line braking, acceleration (as a share of what the car
 makes at that speed) against the driven wheels' slip, cornering grip (as a share
@@ -416,9 +426,8 @@ slip alone flags nothing there. With too little data, the limit is one and a
 half times the nominal peak.
 
 **The ground is known per sample**, where the game says: Forza rumbles the
-tyres on gravel, dirt and grass (on recorded laps a few percent of the samples
-on a tarmac circuit, a quarter to three quarters on dirt and cross-country
-courses), Trackmania names the
+tyres on gravel, dirt and grass (few samples on a tarmac circuit, many
+on dirt and cross-country courses), Trackmania names the
 material under each wheel, and a rally stage's ground is found as section 11
 says. Curves, drift habits and thresholds are kept apart for tarmac and
 loose ground.
@@ -476,7 +485,7 @@ along a wall - head-on, from behind or along a side by the direction of the
 force. Its cost runs until the car has its speed back: the metres to regain it
 at the car's own pull, 40 to 400. A hit or a crash that explains much of a
 corner's loss is that corner's story, before the cars and before anything else
-the time did. Checked against recorded laps: strikes on walls are found - an
+the time did. Checked on test laps: strikes on walls are found - an
 acceleration far past any tyre's, most of the speed gone within a couple of
 samples - and a rally stage's jumps and landings are not taken for hits.
 

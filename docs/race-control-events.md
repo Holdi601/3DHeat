@@ -6,11 +6,62 @@ nav_order: 54
 
 # Car control events
 
-Every lap is read for how the car was handled - where a wheel locked, where
-the driven wheels spun, where the rear stepped out or the car spun, where
-the front washed wide, where it hit something - and each event is laid
-against the lap it is compared with over the same metres. This page gives
-every rule and threshold, and the **Car control** section that shows them.
+The viewer watches how each lap was driven and marks where the driver made the car slide, spin, hit something or waste grip. This is useful because a mistake that cost time is the quickest thing to fix.
+
+![A corner finding opened in Where to improve, with the Car control table below it](assets/img/en/race-control-table.webp)
+
+## In plain words
+
+- **Lock**: you brake so hard that a wheel stops turning and slides. The car stops worse and cannot steer.
+- **Wheelspin**: you press the throttle so hard that the driven wheels spin faster than the car moves. You lose pull.
+- **Oversteer**: the back of the car slides wide. If it goes all the way round, that is a **spin**.
+- **Understeer**: the front of the car slides wide ("pushing"); turning the wheel more does not help.
+- **Hit** and **crash**: the car touched something (a hit is a knock or scrape, a crash is a hard one).
+- **ABS**, **TC**: the car's own helpers acting against lock and wheelspin. They are not mistakes.
+
+## The Car control section (what you see)
+
+For the focused lap, whatever the laps carry - with no tyre slip and no
+drift angle it shows what is still found rather than nothing (below).
+
+**The table**: one row per kind that either lap shows - Locked wheels,
+Wheelspin, Rear stepping out (oversteer and spins), Pushing wide, Crashes,
+Hits, ABS acting, Traction control acting, Handbrake, In the air - each cell
+"count · seconds", for the focused lap and the lap it is compared with; and
+*Most drift angle* when there is a drift angle (the largest on the ground).
+
+**The list**: its unshared faults that cost at least 0.02 s, costliest first,
+at most 12, each with its title and cost (and the chip of its kind). Click
+one to read its tip, line the cars up 40 m before it and replay it. **Also
+what both laps did there** adds every fault, shared ones included (chip
+"both did it", cost "—" under 0.01 s). With none: "Nothing X did with the
+tyres cost it time that Y did not do too."
+
+**The hint under it** says what the detection could see with - "From each
+wheel's slip and slip angle, and the car's drift angle." (or slip and slip
+angle, slip and drift angle, slip only, or "From the car's drift angle only -
+these laps carry no tyre slip.") - the ground the limits were measured for
+(tarmac, loose, mixed: over 80% loose samples is loose, under 20% tarmac),
+which lap the events were laid against, and how the cost is counted.
+
+With **no tyre slip and no drift angle** (an FH Companion lap file without its
+telemetry) the table and list are shown all the same, and the hint says what
+was still found from what the laps carry: "These laps carry no tyre slip and no
+drift angle, so locks and wheelspin cannot be told. Still found: pushes, from
+the steering against the path; hits and crashes, from the speed and
+acceleration." - slides from the yaw rate are named too where the laps have
+one, pushes only where they have steering. The sentence on the slip and drift
+limits is left out, and a second hint says: "For Forza Horizon, pick the
+`.tele.gz` file beside each FH Companion lap too: it is the full telemetry,
+every wheel's slip 64 times a second."
+
+The lap's **total** control cost (used in summaries) counts overlapping
+faults - a lock and the slide it starts, within 40 m - once, at the
+costliest of the cluster.
+
+## How it is detected
+
+The rest of this page is the rule book: every kind, every threshold.
 
 Code: [`src/race/control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts),
 [`src/race/impacts.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/impacts.ts),
@@ -47,10 +98,10 @@ canonical names (a game's own value always wins):
 
 | Channel | From |
 |---|---|
-| `bodySlip` (drift angle) | the car-frame velocity, `atan2(latVel, |longVel|)`, where the game sends it (0 below 3 m/s); otherwise the heading (the game's yaw, fitted to the direction of travel by sign and offset over samples faster than 10 m/s, trusted only with a circular variance under 0.05) against the direction of travel (positions at least 2 m apart), at speeds above 3 m/s |
+| `bodySlip` (drift angle) | the car-frame velocity, `atan2(latVel, abs(longVel))`, where the game sends it (0 below 3 m/s); otherwise the heading (the game's yaw, fitted to the direction of travel by sign and offset over samples faster than 10 m/s, trusted only with a circular variance under 0.05) against the direction of travel (positions at least 2 m apart), at speeds above 3 m/s |
 | `yawRate` | the change of `yaw` over time, where there is a heading but no rate |
 | `airborne` | every wheel's ground contact off (≤ 0.5); else every wheel's load under 5% of its median; else every suspension travel at or under 0.02 (fully extended). A single stray sample is not a flight |
-| `slipRatio.<W>` | `(wheel surface speed - car speed) / car speed` above 3 m/s, where the game sends wheel surface speeds; or from wheel rotation × a rolling radius measured on the lap - the median of `speed / rotation` while coasting straight (speed > 10 m/s, throttle < 0.3, brake < 0.05, |longitudinal acceleration| < 3 m/s², not in the air; every sample above 10 m/s when fewer than 20), accepted between 0.1 and 1 m. Marked `physical` |
+| `slipRatio.<W>` | `(wheel surface speed - car speed) / car speed` above 3 m/s, where the game sends wheel surface speeds; or from wheel rotation × a rolling radius measured on the lap - the median of `speed / rotation` while coasting straight (speed > 10 m/s, throttle < 0.3, brake < 0.05, abs(longitudinal acceleration) < 3 m/s², not in the air; every sample above 10 m/s when fewer than 20), accepted between 0.1 and 1 m. Marked `physical` |
 | `loose` | Forza's surface rumble on at least 2 wheels (> 0.001) for at least 0.33 s (a kerb is shorter), gaps under 1 s bridged |
 
 ### On the ground and settled
@@ -96,12 +147,12 @@ of it (`measureTyres`), separately for tarmac and loose ground:
 
 | Curve | Samples (speed > 10 m/s, settled, accelerations under 45 m/s²) | Slip (x) | Force (y) |
 |---|---|---|---|
-| braking | brake > 0.3, handbrake ≤ 0.2, driving straight (lateral under 30% of the hardest) | |mean slip ratio of the four wheels| | deceleration |
+| braking | brake > 0.3, handbrake ≤ 0.2, driving straight (lateral under 30% of the hardest) | abs(mean slip ratio of the four wheels) | deceleration |
 | traction | throttle > 0.8, brake ≤ 0.05, straight, the car's full-throttle pull at that speed > 0.5 m/s² | the largest driven wheel's slip ratio | acceleration as a share of that pull |
 | front | lateral over 30% of the hardest, the car's grip at that speed > 1 m/s² | the larger front slip angle | lateral acceleration as a share of that grip |
 | rear | the same | the larger rear slip angle | the same |
 
-"The hardest" is the 99th percentile of the lap's |lateral acceleration| on
+"The hardest" is the 99th percentile of the lap's abs(lateral acceleration) on
 that ground (all ground when it has fewer than 50 samples). The drivetrain
 decides the driven wheels (FWD fronts, RWD rears, AWD all; unknown: all).
 
@@ -120,7 +171,7 @@ Each car also gets:
 - its **drift habit**: the upper quartile of its drift angle wherever it
   corners at 60% of its hardest or more (needs 100 samples);
 - its **steering per curvature** (`steerGain`), per 5 m/s speed band: the
-  median of |steer| / path curvature while cornering firmly but well inside
+  median of abs(steer) / path curvature while cornering firmly but well inside
   its grip (30-60% of its hardest, curvature tighter than 400 m radius,
   steer above 0.02; 25 samples a band). The path's curvature is the yaw rate
   over speed where the game sends a yaw rate, else from the positions ±5 m.
@@ -133,7 +184,7 @@ Each car also gets:
 | **wheelspin** | throttle > 0.2 (or no throttle channel), and a driven wheel's slip ratio above the traction limit | the largest driven slip; the limit |
 | **oversteer** (drift angle) | the drift angle above the larger of the surface's floor and 1.5 × the car's drift habit there | the largest drift angle, radians |
 | **oversteer** (slip angles, no drift angle) | the larger rear slip angle above the rear limit and more than 0.25 above the larger front one | the rear slip angle (multiples of peak) |
-| **oversteer** (no drift angle, but yaw rate and lateral acceleration) | the "attitude velocity" - |yaw rate| minus |lateral acceleration| / speed, above 8 m/s - over 0.2 rad/s, with the steering against the turn | rad/s; limit 0.2 |
+| **oversteer** (no drift angle, but yaw rate and lateral acceleration) | the "attitude velocity" - abs(yaw rate) minus abs(lateral acceleration) / speed, above 8 m/s - over 0.2 rad/s, with the steering against the turn | rad/s; limit 0.2 |
 | **spin** | an oversteer run whose drift angle peaked past **60°** | as oversteer |
 | **understeer** (slip angles) | not sliding, the larger front slip angle above the front limit and more than 0.3 above the rear | the front slip angle; the limit |
 | **understeer** (no slip angles) | faster than 12 m/s, not sliding, not countersteering, lateral acceleration above half the lap's hardest (99th percentile), path tighter than 300 m radius, and steering more than **1.6 times** what the car's own steering-per-curvature says the path needed | times the needed steering; limit 1.6 |
@@ -150,7 +201,7 @@ laps (1.5 × its habit).
 **Which way the car turns** (for "against the turn"): the heading change of
 the lap's own path over ±6 m (at least 2 grid points); tighter than 600 m
 radius counts as turning; right or left by whether the world is mirrored.
-The steering is **against** the turn when |steer| > 0.05 and its sign is
+The steering is **against** the turn when abs(steer) > 0.05 and its sign is
 opposite to the turn - a slide being **caught** with opposite lock.
 
 **The pedals as it began** (`pedal`): *braking* when the brake is above 0.1;
@@ -179,7 +230,7 @@ class was quickest through the segment):
    event; for wheelspin, its full-throttle pull minus what it did; for an
    impact, the speed it took. Said when over 0.5 m/s (1.8 km/h).
 
-A fault that is not shared and cost at least **0.02 s** is listed, and can
+A fault that is not shared and cost at least **0.02 s** is listed (the [course statistics](race-course-statistics.md) count only faults of **0.03 s** or more, so that a mistake counted across many laps is a clear one), and can
 become the cause of a corner's loss (see
 [Corner-by-corner analysis](race-corner-analysis.md#car-control-faults-and-impacts)).
 
@@ -213,46 +264,6 @@ forces of a hit, so a hit is measured against the lap's own car:
 What a car can do is measured with every impact left out, from 0.1 s before
 it to 1 s after it (`struckMask`).
 
-## The Car control section
-
-For the focused lap, whatever the laps carry - with no tyre slip and no
-drift angle it shows what is still found rather than nothing (below).
-
-**The table**: one row per kind that either lap shows - Locked wheels,
-Wheelspin, Rear stepping out (oversteer and spins), Pushing wide, Crashes,
-Hits, ABS acting, Traction control acting, Handbrake, In the air - each cell
-"count · seconds", for the focused lap and the lap it is compared with; and
-*Most drift angle* when there is a drift angle (the largest on the ground).
-
-**The list**: its unshared faults that cost at least 0.02 s, costliest first,
-at most 12, each with its title and cost (and the chip of its kind). Click
-one to read its tip, line the cars up 40 m before it and replay it. **Also
-what both laps did there** adds every fault, shared ones included (chip
-"both did it", cost "—" under 0.01 s). With none: "Nothing X did with the
-tyres cost it time that Y did not do too."
-
-**The hint under it** says what the detection could see with - "From each
-wheel's slip and slip angle, and the car's drift angle." (or slip and slip
-angle, slip and drift angle, slip only, or "From the car's drift angle only -
-these laps carry no tyre slip.") - the ground the limits were measured for
-(tarmac, loose, mixed: over 80% loose samples is loose, under 20% tarmac),
-which lap the events were laid against, and how the cost is counted.
-
-With **no tyre slip and no drift angle** (an FH Companion lap file without its
-telemetry) the table and list are shown all the same, and the hint says what
-was still found from what the laps carry: "These laps carry no tyre slip and no
-drift angle, so locks and wheelspin cannot be told. Still found: pushes, from
-the steering against the path; hits and crashes, from the speed and
-acceleration." - slides from the yaw rate are named too where the laps have
-one, pushes only where they have steering. The sentence on the slip and drift
-limits is left out, and a second hint says: "For Forza Horizon, pick the
-`.tele.gz` file beside each FH Companion lap too: it is the full telemetry,
-every wheel's slip 64 times a second."
-
-The lap's **total** control cost (used in summaries) counts overlapping
-faults - a lock and the slide it starts, within 40 m - once, at the
-costliest of the cluster.
-
 ## The texts
 
 Each event is said naming both laps, with where (metres along the
@@ -270,7 +281,7 @@ lap, and a tip. The tip follows from the kind and what was measured:
 | understeer | more lock does nothing once the front has gone: arrive slower, trail a little brake to load the front, unwind; on loose ground, turn the car with a lift or a left-foot dab |
 | hit / crash | along the side: a metre of margin costs less than the scrape; from behind: another car or sliding backwards; a crash head-on: brake earlier; a knock at the front: clipped something. "X hit there too." when shared |
 
-In Trackmania (game name), a slide also says: below about **400 km/h**
+In Trackmania, a slide also says: below about **400 km/h**
 (**300** on loose ground: dirt, grass, plastic) a slide gives less drive than
 gripping; above, a speedslide at the right angle gains, and this one cost
 time so its angle was off.

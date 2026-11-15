@@ -1,9 +1,12 @@
 ---
 title: Movement speeds
-nav_order: 10
+parent: Tactics board
+nav_order: 1
 ---
 
 # Movement speeds
+
+How long does it take a soldier, a tank or a jet to get from A to B? This page says how fast each figure moves on the [tactics board](tactics-board.md), and where those numbers come from, so you can trust the times on your plan or change them.
 
 The [tactics board](tactics-board.md) times a plan from how fast each figure moves. The speeds come from one file per game in `src/tactics/speeds/`: a speed for each movement mode of each class (infantry, ground vehicles, boats, aircraft, helicopters), plus named profiles such as one per CS2 weapon or one per aircraft type. Every file lists its sources, and every value says whether it is **official** (the game's own data, or the published figures of a real aircraft) or **approximate** (community-measured or a typical value).
 
@@ -15,7 +18,7 @@ These are starting points. **Every figure can override its speeds on the board**
 |---|---|
 | Infantry | crawl (prone), crouch, walk (the slow, quiet walk), run (default movement), sprint |
 | Ground vehicles, boats | crawl, cautious, normal (cross-country), rush (road top speed) |
-| Aircraft, helicopters | slow (approach, loiter, hover-taxi), cruise, combat (corner speed or attack run), max |
+| Aircraft, helicopters | slow (approach, loiter, hover-taxi), cruise, combat (corner speed or attack run), maximum |
 
 A mode the game does not have is left empty: CS2 and Valorant have no sprint and no prone.
 
@@ -35,7 +38,7 @@ Each file also says how the game treats slopes. CS2, Valorant and Squad cap hori
 
 **Arma** (km/h). **Approximate.** Infantry paces are community timings: about 5 km/h walking, 9 km/h crouched tactical pace, 15 km/h jogging and about 21 km/h sprinting. Vehicle top speeds are the configured maximums of the vanilla Arma 3 vehicles in each class, from a third-party listing. The slower vehicle modes are estimates.
 
-**DCS / War Thunder / IL-2** (km/h). Every aircraft and helicopter in the palette has its own profile. Cruise and max speeds are the **published figures** of the real aircraft, which the sims model closely. Max is at sea level for jets and at the rated altitude for propeller aircraft, and each profile's note says which. Slow and combat speeds are typical values. Ground vehicles use the published road speeds of the real vehicles, rounded (**approximate**). Ships use the published top speeds of their class.
+**DCS / War Thunder / IL-2** (km/h). Every aircraft and helicopter in the palette has its own profile. Cruise and max speeds are the **published figures** of the real aircraft, which the sims model closely. Maximum is at sea level for jets and at the rated altitude for propeller aircraft, and each profile's note says which. Slow and combat speeds are typical values. Ground vehicles use the published road speeds of the real vehicles, rounded (**approximate**). Ships use the published top speeds of their class.
 
 **Other** (m/s). **Approximate** real-world defaults: crawl 0.5, crouch 1.5, walk 1.4, run 3.5, sprint 6.
 
@@ -54,10 +57,10 @@ Valorant
 Battlefield
 - [EA forums: Battlefield 6 movement speed](https://forums.ea.com/discussions/battlefield-6-beta-feedback-en/movement-speed/12440378)
 - [Battlefield 6 movement guide](https://deltiasgaming.com/?p=309455)
-- [Pre-release report of a 6.4 m/s sprint](https://redlib.cypherpunktools.com/r/Battlefield/comments/1jci338/for_reference/mi9ahrb/?context=3)
+- [Pre-release report of a 6.4 m/s sprint](https://www.reddit.com/r/Battlefield/comments/1jci338/for_reference/mi9ahrb/)
 
 Squad
-- [r/joinsquad: Squad game mechanics post (2018)](https://reddit.rtrace.io/r/joinsquad/comments/7xeh9g/squad_game_mechanics_post)
+- [r/joinsquad: Squad game mechanics post (2018)](https://www.reddit.com/r/joinsquad/comments/7xeh9g/squad_game_mechanics_post/)
 - [Squad](https://joinsquad.com/) (publishes no speeds)
 
 Arma

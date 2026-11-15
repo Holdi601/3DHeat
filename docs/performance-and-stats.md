@@ -6,9 +6,13 @@ nav_order: 7
 
 # Performance panel and stats overlay
 
+The box in the top right of the view shows how hard the viewer is working: how many frames a second, how many dots it draws, and whether it is still refining the picture. The **Performance** panel lets you trade picture quality for speed.
+
 ## The stats overlay
 
 The box at the top right of the view in the Heatmap and Match tabs ([`StatsOverlay.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/StatsOverlay.tsx)). It reads the engine's live readout every animation frame.
+
+![The stats overlay on the many-matches scene, with numbered callouts: 1 Backend, 2 FPS, 3 Frame, 4 Rows in window, 5 Sprites / frame, 6 Budget, 7 Heat res, 8 Coverage](assets/img/en/performance-stats-overlay.webp)
 
 | Line | Meaning |
 |---|---|
@@ -27,6 +31,15 @@ The box at the top right of the view in the Heatmap and Match tabs ([`StatsOverl
 
 At the bottom right of the view, in perspective only: the fly speed and the time to cross the data at that speed. Drag it to change the speed. See [Camera](camera.md#fly-speed).
 
+## If the viewer is slow
+
+Look at the stats overlay, then:
+
+1. **Rows in window much larger than Sprites / frame, Coverage below 100%** - the frame cannot draw everything; it converges over several frames when still. Narrow the window, filter, or cull to reduce the candidates; or accept the sampling.
+2. **Sprites / frame equal to Rows in window, frame still slow** - the cost is per sprite on screen: lower the *Max pixel radius* ([Sprite shape](sprite-shape.md#pixel-clamps)) or the *Heat resolution*.
+3. **Slow with few rows** - likely the level: large structure counts with edges on, ground triangles, depth of field. See [Level appearance](level-appearance.md).
+4. **Everything slow, and a red banner** - software rendering ([Software rendering detection](software-rendering.md)).
+
 ## The Performance panel
 
 | Control | Default | Effect |
@@ -41,10 +54,3 @@ At the bottom right of the view, in perspective only: the fly speed and the time
 | **Resource budgets** | detected | RAM, GPU and parser-thread budgets. [Memory and budgets](memory-and-budgets.md#resource-budgets) |
 
 None of these are saved; a reload restores the defaults.
-
-## Reading slow frames
-
-- **Rows in window much larger than Sprites / frame, Coverage below 100%** - the frame cannot draw everything; it converges over several frames when still. Narrow the window, filter, or cull to reduce the candidates; or accept the sampling.
-- **Sprites / frame equal to Rows in window, frame still slow** - the cost is per sprite on screen: lower the *Max pixel radius* ([Sprite shape](sprite-shape.md#pixel-clamps)) or the *Heat resolution*.
-- **Slow with few rows** - likely the level: large structure counts with edges on, ground triangles, depth of field. See [Level appearance](level-appearance.md).
-- **Everything slow, and a red banner** - software rendering ([Software rendering detection](software-rendering.md)).

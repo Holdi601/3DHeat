@@ -6,6 +6,17 @@ nav_order: 1
 
 # Loading files
 
+This page shows how to give 3DHeat your files and what it does with them. Drop a folder, and it picks the files that hold positions and merges them into one picture.
+
+1. Open **Source** at the top of the Heatmap sidebar.
+2. Drop files or a folder on the drop zone, or press **Files…** or **Folder…**.
+3. Read the selection line and the **Memory estimate** (see the picture below).
+4. Press **Load**.
+
+![The Source panel after dropping a folder of ten matches: the selection line, the Memory estimate at fits, and Load 10 files](assets/img/en/loading-files-source.webp)
+
+*After you drop a folder, 3DHeat tells you what it found and whether it fits.*
+
 Files are loaded in the **Source** panel at the top of the Heatmap tab's sidebar. Everything selected at once becomes **one** dataset.
 
 ## Choosing files
@@ -17,7 +28,7 @@ Files are loaded in the **Source** panel at the top of the Heatmap tab's sidebar
 | **Files…** | A file picker that accepts several files. |
 | **Folder…** | A folder picker (the browser's `webkitdirectory` picker); every file in the folder tree is offered. |
 
-The pickers accept `.parquet`, `.pq`, `.csv`, `.tsv` and `.txt`, and `.3dheat` match containers, which load as the tables they hold ([One file a match](container.md)); a container that cannot be read is skipped as *not a csv/parquet file*. A file whose name ends in `.parquet` or `.pq` is read as Parquet; everything else is read as delimited text (see [Data formats reference](data-formats.md)).
+The pickers accept the file types in the [list of loadable files](data-formats.md#files). In short: `.parquet`/`.pq` are read as Parquet, `.csv`/`.tsv`/`.txt` as delimited text, `.acmi` (Tacview), OCAP `.json`/`.json.gz` and the GPS formats (GPX, KML, KMZ, NMEA, IGC, FIT) go through their own readers, and `.3dheat` match containers load as the tables they hold ([One file a match](container.md)). A container that cannot be read is skipped as *not a csv/parquet file*.
 
 Dropped folders are walked to a depth of 12 levels and at most 20,000 files, as a guard against symlink loops and runaway trees.
 
@@ -27,8 +38,8 @@ Before anything is read, the selection is filtered ([`filterDataFiles`](https://
 
 - A file with another extension is skipped: *not a csv/parquet file*.
 - A file of 0 bytes is skipped: *empty (0 bytes)*.
-- **Converter sidecars** - the raw data a converter keeps beside a match's table, `<match>.messages.parquet`, `.events.parquet`, `.raw.parquet` and the others listed in [Converters keep everything](converters.md) - are skipped: *a converter's sidecar*. To open one, pick or drop it on its own (or only sidecars): a selection of nothing but sidecars loads them like any table. The JSON beside a table (`.match.json`, `.meta.json`, `.summary.json` and the like) is never offered as positions.
-- **The movement-file rule.** If any file in the selection is named `movement*.parquet`, `movement*.csv` (and the other extensions) - `movement.parquet`, `movement_1.parquet` and so on - then every other data file is skipped: *not a movement file, and this folder has movement files*. Telemetry exports often hold one table of positions beside dozens of tables without positions, and only the former can be drawn. A folder without any movement file loads all its data files.
+- **Converter sidecars** - the raw data a converter keeps beside a match's table, `<match>.messages.parquet`, `.events.parquet`, `.raw.parquet` and the others listed in [Converters keep everything](converters.md) - are skipped: *a converter's sidecar*. To open one, pick or drop it on its own (or only sidecars): a selection of nothing but sidecars loads them like any table. The JSON beside a table (`.match.json`, `.course.json`, `.level.json`, `.meta.json`, `.summary.json`, `.session.json` and `.hints.json`) is never offered as positions.
+- **The movement-file rule.** If any file in the selection is named `movement*.parquet`, `movement*.csv` (and the other extensions) - `movement.parquet`, `movement_1.parquet` and so on - then every other data file is skipped: *not a movement file, and this folder has movement files*. Telemetry exports often hold one table of positions beside dozens of tables without positions, and only the former can be drawn. A folder without any movement file loads all its data files. Example: a folder with `movement_1.parquet`, `kills.parquet` and `shop.parquet` loads `movement_1.parquet`; the other two are listed as skipped. Example: a folder with `movement_1.parquet`, `kills.parquet` and `shop.parquet` loads `movement_1.parquet`; the other two are listed as skipped.
 - The kept files are sorted by their path inside the selection, so the same folder always produces the same dataset and the same colours.
 
 The panel then shows the selection (a single file's name, or `folder (N files)` using the longest common folder), the number of files, their total size and the total row count - exact when every file is Parquet, marked `≈` when any is CSV. Skipped files are listed with their reason, the first four by name.
@@ -53,7 +64,11 @@ The **Load** button reads *Load file*, *Load N files*, or *Load N files (1 in K)
 
 While loading, the panel shows the current step (with `[file/files]` in front when there are several files), the rows read so far, a progress bar, and **Cancel**. Cancel terminates the ingest worker, and with it any parser workers it started.
 
-The load runs in a Web Worker ([`ingestWorker.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/ingestWorker.ts)), so the page keeps drawing. With several files and more than one [parser thread](memory-and-budgets.md#parser-threads), up to that many files are parsed **at once**, each in a parser worker of its own ([`parseWorker.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/parseWorker.ts)), as far as the RAM budget leaves room; they are still merged one at a time in the order of the selection, so the dataset is the same as a one-at-a-time load. While several are in flight, the progress line names the file that last reported, and the bar and row count add up every file in flight. With one thread, or a single file, files are parsed one after another in the ingest worker itself. Only the columns the mapping names are read: an unmapped column of a Parquet file costs nothing; a CSV is scanned byte by byte but only mapped fields are decoded. After the last file, the merge runs through named phases - *Putting rows in time order*, *Reordering columns (n of m)*, *Measuring extent*, *Building the roster*, *Summarising sessions*, *Computing lifetimes* - and then the main thread shows *Uploading N rows to the GPU* for one frame before doing it, so a long upload is never mistaken for a freeze.
+The page keeps drawing while it loads, because the work happens in the background. You see the current step, the rows read, a progress bar and **Cancel**. After the last file the panel shows the steps *Putting rows in time order*, *Reordering columns (n of m)*, *Measuring extent*, *Building the roster*, *Summarising sessions* and *Computing lifetimes*, then *Uploading N rows to the GPU* for one frame, so a long upload is never mistaken for a freeze.
+
+### How it works
+
+The load runs in a Web Worker ([`ingestWorker.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/ingestWorker.ts)). With several files and more than one [parser thread](memory-and-budgets.md#parser-threads), up to that many files are parsed **at once**, each in a parser worker of its own ([`parseWorker.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/parseWorker.ts)), as far as the RAM budget leaves room; they are still merged one at a time in the order of the selection, so the dataset is the same as a one-at-a-time load. While several are in flight, the progress line names the file that last reported, and the bar and row count add up every file in flight. With one thread, or a single file, files are parsed one after another in the ingest worker itself. Only the columns the mapping names are read: an unmapped column of a Parquet file costs nothing; a CSV is scanned byte by byte but only mapped fields are decoded.
 
 ## Several files become one dataset
 

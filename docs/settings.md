@@ -1,9 +1,11 @@
 ---
 title: Settings, units and keys
-nav_order: 71
+nav_order: 19
 ---
 
 # Settings, units and keys
+
+The small controls at the top of the sidebar change how the viewer talks to you: the language, the units (metres or feet, km/h or knots) and a help mode that explains the colours. Your choices are remembered in your browser.
 
 ## The header
 
@@ -12,27 +14,40 @@ At the top of the sidebar:
 | Control | What it does |
 |---|---|
 | **?** | Help mode: what every colour means (also `?` or `F1`) |
-| **Units** menu | Metric, Imperial, Aviation or Nautical, and each quantity on its own |
+| **Units** menu | Metric, Imperial, Aviation or Nautical |
+| **...** button beside **Units** | Opens "Choose a unit for each quantity": one drop-down per quantity |
 | **Language** menu | The viewer's language: [40 languages](languages.md), or the browser's |
+
+![The header with the Units menu and the unit-per-quantity window open](assets/img/en/settings-units.webp)
+
+Numbers you type into a box may use either a point or a comma (`0.35` or `0,35`). The viewer reads both and shows numbers the way the viewer's language writes them.
 
 ## Units
 
-Pick a preset, then change any single quantity:
+1. Pick a preset in the **Units** menu. All quantities switch together.
+2. To change one quantity only, click the **...** button beside it and pick a unit for that quantity. The menu then shows a `*` after the preset.
+3. A quantity you did not set follows the preset. Choose "As preset" to go back.
 
-| Preset | Distance | Height | Speed |
-|---|---|---|---|
-| **Metric** (default) | km | m | km/h |
-| **Imperial** | mi | ft | mph |
-| **Aviation** | NM | ft | kt |
-| **Nautical** | NM | m | kt |
+| Quantity | Metric (default) | Imperial | Aviation | Nautical |
+|---|---|---|---|---|
+| Distance | km | mi | NM | NM |
+| Altitude, length | m | ft | ft | m |
+| Speed | km/h | mph | kt | kt |
+| Vertical speed | m/s | ft/min | ft/min | m/s |
+| Temperature | °C | °F | °C | °C |
+| Pressure | hPa | inHg | hPa | hPa |
+| Mass, fuel | kg, l | lb, gal | lb, gal | t, m³ |
+| Angle | degrees | degrees | degrees | degrees |
 
-Quantities you can set on their own: distance (km, mi, NM), altitude and length (m, ft), speed (km/h, m/s, kt, mph), vertical speed (m/s, ft/min, m/min), temperature (°C, °F, K), pressure (hPa, inHg, mmHg, psi), mass and fuel (kg, lb, t), angle (degrees, NATO mil). A quantity not set follows the preset. The units are the same everywhere in the viewer: labels, cards, charts, statistics.
+Other units you can pick for one quantity: distance km, mi, NM; speed km/h, m/s, kt, mph; vertical speed m/s, ft/min, m/min; temperature °C, °F, K; pressure hPa, inHg, mmHg, psi; mass kg, lb, t; angle degrees or NATO mils (6400 to the circle). The units are the same everywhere in the viewer: labels, cards, charts, statistics.
 
 ## Help mode
 
 ![Help mode: what the colours mean](assets/img/en/help.webp)
 
-`?`, `F1` or the **?** button shows *What the colours mean*: legends for the 3D view, the heat ramps, team colours, the level's colours, the panels' status colours, the match panel and the race view. It stays on until you switch it off.
+Press `?` or `F1`, or click the **?** button. It shows *What the colours mean*: legends for the 3D view, the heat ramps, team colours, the level's colours, the panels' status colours, the match panel and the race view. It stays on until you switch it off. In the Match tab it explains the match panel's colours too.
+
+![Help mode in the Match tab](assets/img/en/settings-help-match.webp)
 
 ## What the browser remembers
 

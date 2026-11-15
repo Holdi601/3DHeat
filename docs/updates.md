@@ -1,19 +1,31 @@
 ---
 title: Updates
-nav_order: 80
+nav_order: 21
 ---
 
 # Updates
 
-The viewer runs from a git checkout, so "the newest version" is whatever the
-branch it follows has upstream. It keeps itself current in two places: when
-it starts (`start.bat`), and while it runs (a route on the dev server and a
-notice in the page). Both follow the same safety rules. The tools under
-`exporters/` are pinned git submodules that move with it.
+The viewer tells you when a newer version exists, and updates itself only when you say yes. Nothing is changed on your computer without your answer.
 
-Code: [`start.bat`](https://github.com/Holdi601/3DHeat/blob/main/start.bat),
-`selfUpdate` in [`vite.config.ts`](https://github.com/Holdi601/3DHeat/blob/main/vite.config.ts),
-[`src/ui/UpdateBanner.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/UpdateBanner.tsx).
+## Update the viewer
+
+1. **In the page.** When a newer version exists, a box appears under the name at the top of the sidebar: "A newer version of 3DHeat is available". Click **Update now**. The page reloads by itself when it is done. **Later** hides the box until you reload the page.
+2. **If it says to run restart.bat**, close the server window (the black window that `start.bat` opened) and double-click `restart.bat`.
+3. **When you start the viewer.** `start.bat` checks too. If a newer version exists it asks **Update now? [Y/N]**. Press `Y` to update. Press `N`, or wait 60 seconds without answering, to start the version you have.
+
+![The update notice with Update now and Later](assets/img/en/updates-notice.webp)
+
+A copy with changes of your own is never updated for you; the box only tells you an update is waiting, and says to commit or stash your changes and run `git pull`. A copy that was not installed with git (a zip file, say) shows nothing.
+
+How the check works, step by step:
+
+```
+page ---(after 4 s, then every 6 h)---> dev server ---> git fetch
+   behind?  no  -> nothing is shown
+            yes -> your own changes or commits?  yes -> tell you only
+                                                 no  -> [Update now] -> git pull
+                                                        -> reload, or "run restart.bat"
+```
 
 ## The safety rules
 
@@ -35,7 +47,7 @@ Code: [`start.bat`](https://github.com/Holdi601/3DHeat/blob/main/start.bat),
   (a copy without `.git`, no git installed, a static build) is left alone
   and says nothing.
 
-## When it starts: start.bat
+## What start.bat does
 
 `start.bat` (double-click it; the window is the server) does, in order:
 
@@ -54,11 +66,10 @@ Code: [`start.bat`](https://github.com/Holdi601/3DHeat/blob/main/start.bat),
      version of 3DHeat is available (N changes), but this copy has commits of
      its own that the newest version does not, so it is not updated. Update it
      with git pull." - and it starts the version there is;
-   - otherwise "A newer version of 3DHeat is available (N changes).
-     Updating...", notes whether `package.json` or `package-lock.json` change,
+   - otherwise "A newer version of 3DHeat is available (N changes)." and the question **Update now? [Y/N]**. `N`, or no answer for 60 seconds, prints "Not updated; starting the version you have." and starts the version there is. On `Y`: "Updating...", notes whether `package.json` or `package-lock.json` change,
      runs `git pull --ff-only` (should that still fail - the network, say:
      "The update did not go through; starting the version you have."), then `git submodule update --init`
-     (the pinned tools), then `npm install` when the package files changed and
+     (the pinned tools, see [Maintaining the docs](maintaining.md#the-tools-under-exporters)), then `npm install` when the package files changed and
      `node_modules` exists, and "Updated."
 3. Refuses to start a second server: when something already listens on port
    **5273** it says so and points at `restart.bat` / `stop.bat`.
@@ -67,10 +78,12 @@ Code: [`start.bat`](https://github.com/Holdi601/3DHeat/blob/main/start.bat),
 5. Starts the dev server on `127.0.0.1:5273` (`--strictPort`) and opens the
    browser when it is ready.
 
-`restart.bat` stops the server (by port) and runs `start.bat` again, so a
-restart also updates. `stop.bat` only stops it.
+`restart.bat` stops the server (by port) and runs `start.bat` again, so it asks the same question. `stop.bat` only stops it.
 
-## While it runs: the update route
+
+## For developers
+
+### While it runs: the update route
 
 The dev server (Vite plugin `heat3d-self-update` in `vite.config.ts`) serves
 `/__heat3d/update`. It exists only on the dev server - not in a static build
@@ -114,7 +127,7 @@ and not in `vite preview`.
 Responses are JSON with `Cache-Control: no-store`. The server listens on
 `127.0.0.1` only, so the route is not reachable from the network.
 
-## The notice in the page
+### The notice in the page
 
 `UpdateBanner`, under the name at the top of the sidebar:
 
@@ -144,33 +157,3 @@ Responses are JSON with `Cache-Control: no-store`. The server listens on
     the newest version does not; update it with git pull.", or "The update
     did not go through: <reason>".
 
-## The tools under exporters/
-
-The tools around the viewer are separate public projects, each with its own
-MIT licence, releases, wiki and update check, pinned in this repository as
-git submodules:
-
-| Folder | Repository |
-|---|---|
-| `exporters/gamefiles/` | [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) - courses and levels out of games' own archives |
-| `exporters/gamecapture/` | [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) - lap telemetry recorders; levels from gameplay video |
-| `exporters/unreal/` | [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) - Unreal Editor plugin |
-| `exporters/cs2/` | [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) - CS2 demos and maps |
-| `exporters/watcher/` | [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) - records play in the background |
-
-**Pinned** means this repository records one exact commit of each tool. A
-checkout of the viewer gets those commits:
-
-```bash
-git clone --recursive https://github.com/Holdi601/3DHeat
-# or, after a plain clone:
-git submodule update --init
-```
-
-Both update paths above run `git submodule update --init` after pulling, so
-the tools follow the viewer to the commits its newest version pins - not
-the tools' own newest commits. A tool's newer release reaches the viewer
-when the pin here is moved: changes to a tool are committed and pushed in
-its own folder (its own repository) first, then the new pin is committed
-here. Each tool also checks for its own newer releases; that is documented
-in its own repository.

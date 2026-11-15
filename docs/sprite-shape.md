@@ -10,11 +10,17 @@ Each row is drawn as a round sprite that always faces the camera. Its size and t
 
 Changing any of them restarts the accumulation (the field has to be redrawn with the new shape).
 
+Think of each dot as a soft blob of light. A small blob shows single spots; a big blob merges neighbours into a cloud. The shape decides how soft the edge is.
+
+![The same dots drawn with the Linear, Smooth, Tight, Plateau, Ring and Shelf shapes, each with its cross-section plot](assets/img/en/sprite-shape-presets.webp)
+
 ## Sprite radius
 
 The sprite's radius in **world units** (labelled metres). Default 6, and on every load the horizontal extent of the data / 120 - large enough that neighbouring samples along a path merge into a band rather than reading as a hairline. Logarithmic slider 0.05-2000, drag handle up to 50,000.
 
-Under a perspective projection the radius on screen shrinks with distance: in pixels it is `radius × P[1][1] / w × viewport height / 2`, where `w` is the point's view depth. Under the parallel projection it is the same everywhere, which is part of why the parallel view is the right one for comparing hotspots ([Camera](camera.md#projection)).
+![The same hot spot with a sprite radius of 2 m, 6 m and 20 m](assets/img/en/sprite-shape-radius.webp)
+
+Things far away look smaller, so a sprite shrinks on screen with distance. (The formula: in pixels it is `radius × P[1][1] / w × viewport height / 2`, where `w` is the point's view depth.) Under the parallel projection it is the same everywhere, which is part of why the parallel view is the right one for comparing hotspots ([Camera](camera.md#projection)).
 
 ## Pixel clamps
 
@@ -24,6 +30,8 @@ Under a perspective projection the radius on screen shrinks with distance: in pi
 |---|---|---|---|
 | **Min pixel radius** | 1 px | 0-16 (512) | Keeps distant data from vanishing below one pixel. |
 | **Max pixel radius** | 96 px | 2-1024, logarithmic (8192) | The overdraw guard. A sprite covering N pixels costs N blend operations, so an unclamped radius close to the camera is what turns a fast frame into a slow one. Past the viewport height it stops clamping anything. |
+
+**Same density at any zoom** (in the Heat shape section, default on) works with the clamps. A sprite that a clamp makes bigger (far away) or smaller (close up) keeps the heat its true size would add, so a colour means the same number of rows per area of ground at any zoom. With it off, a clamped sprite adds its full weight at its clamped size, and the picture changes as you fly in.
 
 ## Centre and edge intensity
 
@@ -71,7 +79,7 @@ The endpoints are fixed at the centre and the rim; their height is still yours. 
 | **Ring** | 0.15 at the centre, 1 at 62% of the radius, 0 at the rim | A hollow sprite: shows where paths pass rather than where they stop. |
 | **Shelf** | Two-stage falloff, 0.45 at 35% | Separates a dense core from its surroundings. |
 
-**How it is drawn.** The curve is baked into a 256-entry table whenever it changes, uploaded as a 16-bit float texture, and sampled per fragment with linear filtering and a half-texel inset so both ends stay exact. Solving a Bézier for x needs iteration, which has no place in the program's hottest shader, and a table fetch is also cheaper than the `pow()` the falloff uses. 16-bit rather than 8-bit because 8 bits shows as banding once thousands of sprites have summed; 16-bit half float is filterable in core WebGL2 where 32-bit needs an extension.
+**How it is drawn** (you can skip this). The curve is baked into a 256-entry table whenever it changes, uploaded as a 16-bit float texture, and sampled per fragment with linear filtering and a half-texel inset so both ends stay exact. Solving a Bézier for x needs iteration, which has no place in the program's hottest shader, and a table fetch is also cheaper than the `pow()` the falloff uses. 16-bit rather than 8-bit because 8 bits shows as banding once thousands of sprites have summed; 16-bit half float is filterable in core WebGL2 where 32-bit needs an extension.
 
 ## Flatten onto ground plane
 

@@ -8,9 +8,11 @@ nav_order: 7
 
 # Command-line tools
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). The first paragraph of each tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
 
-## `3dheat-pack.mjs`
+## For your data
+
+### `3dheat-pack.mjs`
 
 Packs converted matches into `.3dheat` containers, one file a match (docs/container.md), and back.
 
@@ -22,7 +24,7 @@ node tools/3dheat-pack.mjs update <file.3dheat> [--add <role>[:<member name>]=<f
 node tools/3dheat-pack.mjs repack <folder|file.3dheat>...
 ```
 
-## `3dheat-summarize.mjs`
+### `3dheat-summarize.mjs`
 
 The mass index (docs/mass-analysis.md): every `.3dheat` match under the folders gets its summary (`src/mass/summarize.ts`) - the match, its vehicles, teams, players and weapons, its phases, its grid - written into the container as the `summary` member, once; a match summarised already (by this version) is only read. Then one index per folder:
 
@@ -30,7 +32,7 @@ The mass index (docs/mass-analysis.md): every `.3dheat` match under the folders 
 node tools/3dheat-summarize.mjs <folder>... [--jobs N] [--force] [--no-write] [--no-index] [--limit N] [--settle MIN]
 ```
 
-## `acmi-to-parquet.mjs`
+### `acmi-to-parquet.mjs`
 
 Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder at a time, for the many-match overlay: one Parquet file per recording, the folder tree kept, so a map or a scenario loads as one folder.
 
@@ -38,11 +40,11 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## `container.mjs`
+## For developers and the docs
 
-`.3dheat` containers in Node (docs/container.md): writing one from a match's loose files, reading and verifying one, adding or replacing members in place (`updateContainer`), compacting (`repackContainer`), and finding a match's loose files in a folder. Used by tools/3dheat-pack.mjs and tools/acmi-to-parquet.mjs.
+These check the viewer, make the demo data and the screenshots, and write the reference pages.
 
-## `demo-data.mjs`
+### `demo-data.mjs`
 
 Synthetic demo data for the documentation screenshots.
 
@@ -50,7 +52,7 @@ Synthetic demo data for the documentation screenshots.
 node tools/demo-data.mjs [out dir]        (default tools/.shots/demo)
 ```
 
-## `docs-shots.mjs`
+### `docs-shots.mjs`
 
 Screenshots for the documentation site, from the synthetic demo data only.
 
@@ -59,7 +61,7 @@ node tools/demo-data.mjs                       (once: makes tools/.shots/demo)
 node tools/docs-shots.mjs [--lang en] [--only name,name] [--url http://127.0.0.1:5321/]
 ```
 
-## `docs-refs.mjs`
+### `docs-refs.mjs`
 
 Writes the documentation's reference pages from the code, so they cannot drift from it: event types and classes, the column names the loader recognises, the languages, the browser keys the viewer keeps, the settings kept in the browser, the value tables and the command-line tools.
 
@@ -67,7 +69,7 @@ Writes the documentation's reference pages from the code, so they cannot drift f
 node tools/docs-refs.mjs [--lang en] [--check]
 ```
 
-## `smoke.mjs`
+### `smoke.mjs`
 
 Headless smoke test.
 
@@ -75,7 +77,7 @@ Headless smoke test.
 node tools/smoke.mjs [url]
 ```
 
-## `check-visual.mjs`
+### `check-visual.mjs`
 
 Visual checks on rendered frames: the bugs a user would otherwise find by looking.
 
@@ -87,7 +89,7 @@ npm run check:visual -- --only=frametime --webgpu --gpu   frame times on this ma
 npm run check:visual -- --url=http://127.0.0.1:5285/   against a server already running
 ```
 
-## `convert-media.mjs`
+### `convert-media.mjs`
 
 Convert reference media into PNGs that can be read directly.
 
@@ -95,3 +97,19 @@ Convert reference media into PNGs that can be read directly.
 node tools/convert-media.mjs image <in.avif> <out.png>
 node tools/convert-media.mjs video <in.mp4> <outDir> [count]
 ```
+
+### `probe-webgpu.mjs`
+
+Find a headless Chromium configuration that exposes a WebGPU adapter.
+
+### `probe-present.mjs`
+
+Find a headless configuration whose WebGPU canvas is actually composited.
+
+```
+node tools/probe-present.mjs [url]
+```
+
+## Libraries
+
+`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).

@@ -6,52 +6,70 @@ nav_order: 6
 
 # Volumes and comparison
 
-A **volume** is a shape you draw in the 3D view: a box, a prism, a cylinder or a sphere. Volumes measure what happens inside them, filter the view to them, export their rows, and can be compared side by side.
+A **volume** is an invisible box (or cylinder, or sphere) that you draw around a place, to ask: what happened in here? Use it to count kills at a bridge, to compare two hills, or to show only the activity in one area.
+
+```
+ top view                 You draw a shape ->  the viewer counts
+ +------------+           what is inside:
+ |   ( A )    |            rows, players, kills, time ...
+ |        [B] |           Compare A with B, side by side.
+ +------------+
+```
 
 ![Three volumes on the demo valley: two cylinders round the hills, a box round the village](assets/img/en/volumes.webp)
 
+Volumes measure what happens inside them, filter the view to them, export their rows, and can be compared side by side. See also the [glossary](glossary.md) for row, person and match.
+
 ## Draw a volume
 
-Open **Volumes** in the sidebar and pick a tool:
+1. Open **Volumes** in the sidebar.
+2. Pick a tool and draw in the 3D view or on the 2D map. Floor and ceiling start from the data underneath. Esc cancels.
+3. Click the volume to select it; its **Statistics** appear.
 
 | Tool | How to draw |
 |---|---|
 | **Box** | Drag a rectangle (Shift: a square). A click places a default box. |
-| **n-gon** | Drag from the centre (Shift keeps it regular). *Corners* sets n (default 8). |
+| **n-gon** | Drag from the centre (Shift keeps it regular). *Corners* sets n, from 3 to 64 (default 8, so the button reads **8-gon**). |
 | **Polygon** | Click the corners; close with a double-click, Enter or a click on the first corner. Backspace removes the last corner. |
 | **Cylinder** | Drag the radius. |
 | **Sphere** | Drag the radius; it rests on the ground. |
-
-You can draw in the 3D view or on the 2D map. Floor and ceiling start from the data underneath. Esc cancels.
 
 ## Edit
 
 - Click a volume to select it. Drag its body to move it, corners to reshape it (Shift on a corner scales).
 - The **yellow** handles set floor and ceiling, the **cyan** handle turns it.
-- Alt+drag copies, Del removes, Ctrl+Z / Ctrl+Y undo and redo, Ctrl+D duplicates.
+- Alt+drag copies, Del removes, Ctrl+Z / Ctrl+Y undo and redo, Ctrl+D duplicates. **Remove all** deletes every volume.
 - Exact values: Floor, Ceiling, Turn / Pitch / Roll (boxes), Radius (spheres, cylinders).
 
-Each volume row has a show checkbox, a colour, a name, **include** or **exclude**, duplicate and delete. Volumes are saved in the browser for each dataset, and **Save…** / **Load…** write and read a `volumes.json` file.
+Each volume row has a show checkbox, a colour, a name, **include** or **exclude**, duplicate and delete. Volumes are saved in the browser for each dataset, and **Save...** / **Load...** write and read a `volumes.json` file.
 
 ## Filter the view
 
 | Filter | Effect |
 |---|---|
 | **Show all** (default) | Volumes only measure. |
-| **Only inside** | Heat, replay and hit analysis draw only what is inside the included volumes and outside the excluded ones. |
+| **Only inside** | Heat, replay and [hit analysis](hit-analysis.md) draw only what is inside the included volumes and outside the excluded ones. |
 | **Hide inside** | The opposite. |
 
 The GPU filter takes up to 8 volumes with 64 outline points in all; a "!" marks a volume past that. Statistics and export still count it.
 
 ## Statistics
 
-The **Statistics** area follows the filters, the time window and hidden groups. *Selected* shows the selected volume, *Compare all* puts every volume side by side. It counts rows inside, players, teams, matches, time inside, entries and exits, peak and mean heat, the volume's size, a "When" histogram, and per column: categories with **Lift** (share inside ÷ share in all shown data) and numbers with range, median and 5th–95th percentiles.
+The **Statistics** area follows the filters, the time window and hidden groups. *Selected* shows the selected volume, *Compare all* puts every volume side by side. It shows:
+
+- **Rows inside (shown)** and **Rows inside (all data)**, **Players**, **Teams**, **Matches**, **Time inside**, **Entries / exits**, **Peak heat**, **Mean heat**, **Volume / footprint** and a **When** histogram;
+- per column: categories with **Lift** (share inside divided by share in all shown data), and numbers with range, median and 5th-95th percentiles.
 
 **Statistics as CSV / JSON** save them. **Export the data inside** writes the rows inside as CSV or Parquet (*Only the rows shown* on by default), one volume or all with a column saying which volume holds each row.
 
 ## Compare volumes
 
-With two or more visible volumes, **Compare…** opens a window:
+With two or more visible volumes, press **Compare...**.
+
+1. Draw three volumes, for example West hill, East hill and Village.
+2. Press **Compare...** under Statistics.
+3. In **Table**, read each value's difference from the first volume.
+4. Switch to **Bars** to see the shares as bars.
 
 ![The Compare volumes table: rows, time inside, players and more for each volume, with the difference from the first](assets/img/en/compare.webp)
 
@@ -68,5 +86,6 @@ With two or more visible volumes, **Compare…** opens a window:
 ## Tips
 
 - Start from a finding: in [Insights](insights.md), **Volume here** adds a cylinder round the finding's place.
-- **Breakdown…** opens the [Breakdown](breakdown.md) for the selected volume: who and what does best inside it.
+- **Breakdown...** opens the [Breakdown](breakdown.md) for the selected volume: who and what does best inside it.
 - [Directional heat](directional-heat.md) can chart the directions inside the selected volume.
+- The [Vehicles tab](hit-analysis.md#restrict-to-an-area) uses the same volumes as its area filter.

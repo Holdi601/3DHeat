@@ -6,7 +6,19 @@ nav_order: 5
 
 # Difference
 
+Red where team A was more, green-blue where team B was, nothing where they were equal.
+
 **Difference** (key 2) is signed heat. Rows of one population add heat; rows of another subtract it. Where the two overlap evenly the result is zero and fully transparent; where one dominates it shows in that side's colours - by default warm (transparent → red → yellow → white) for the **+** side and cool (transparent → green → blue → purple) for the **−** side.
+
+![Difference heat: red where the + side was more, green and blue where the - side was more](assets/img/en/difference-split.webp)
+
+## How to use it
+
+1. Press `2` (or pick **Difference** in the mode bar).
+2. Open **Difference split** in the sidebar.
+3. Choose what to **Split by**: usually *Groups*.
+4. Put one group (or value) on **+** and another on **−**.
+5. Read the colours: warm means the + side, cool means the − side. The panel warns if one side has no rows (see [Messages you may see](#messages-you-may-see)).
 
 *Which* two populations is the whole question, so the split can be any retained column, not only groups. Rows that fall on **neither** side are **left out**, not counted as zero: that is what makes a split over two of many values compare exactly those two, and it composes with the [filters](filters.md) - filter down to one map, then split that by build.
 
@@ -26,6 +38,23 @@ Shown in Difference mode, below the heat panels.
 | The file of origin | *Source file - compare two loads* (when several files were loaded) | Files on +, − or neither |
 
 Only columns kept under *Keep for filtering* at load time are offered.
+
+### Compare shares, not counts
+
+**Compare shares, not counts** (default off) weights each side by one over its own row count, so a side with five times the rows does not win by numbers alone. The colour then shows where each side is proportionally more common than the other. Use it when the two sides have very different amounts of data, for example two sessions of different length.
+
+### Messages you may see
+
+The panel warns when the picture is not a real difference:
+
+| Message | Meaning |
+|---|---|
+| *N + / M −* (or *N + / M − / K unused*) | How many values are on each side (and on neither). |
+| No row in the window is on the **+** side | Only the **−** side is drawn. Move the timeline window or change the split. |
+| No row in the window is on the **−** side | Only the **+** side is drawn. |
+| No value is on either side | The difference draws nothing. Put at least one value on **+** or **−**. |
+| *column* cannot be split this way | The chosen column does not fit the split. Choose the column again. |
+| The split column did not fit in GPU memory for N of M chunks | Those rows are not drawn. Raise the GPU budget under Performance → Resource budgets, or load fewer rows. |
 
 ### By group
 

@@ -1,6 +1,6 @@
 # 3DHeat
 
-A realtime 3D viewer for where things happened in games and simulations: **heatmaps you can fly through, figure replays of matches, and analysis that finds what stands out** - for millions of rows and thousands of matches, in the browser, on the graphics card (WebGPU, or WebGL2).
+3DHeat shows where things happened in a game - where players went, fought and fell - as **glowing colours you can fly through**, or as **little 3D figures that replay the match**, and it finds what stands out by itself. It handles millions of rows and thousands of matches, in the browser, on the graphics card (WebGPU, or WebGL2).
 
 ![Heat of ten tank matches over a demo valley](docs/assets/img/en/heat-hero.webp)
 
@@ -10,15 +10,19 @@ No game data comes with it. Levels, maps and recordings are made on your own mac
 
 ## Quick start
 
-```bash
-git clone --recursive https://github.com/Holdi601/3DHeat.git
-cd 3DHeat
-npm install
-npm run dev                  # http://127.0.0.1:5273
-node tools/demo-data.mjs     # made-up demo matches and levels in tools/.shots/demo
-```
+1. Install [Node.js](https://nodejs.org/) (LTS) and use a Chromium browser (Chrome or Edge) with hardware acceleration on; see [browser and GPU requirements](https://holdi601.github.io/3DHeat/#browser-and-gpu-requirements).
+2. Get the viewer and start it - the server keeps running in its window:
+   ```bash
+   git clone --recursive https://github.com/Holdi601/3DHeat.git
+   cd 3DHeat
+   npm install
+   npm run dev                  # open http://127.0.0.1:5273
+   ```
+   On Windows, `start.bat` does this: it finds or installs Node.js, installs the dependencies, offers updates when there are any, and opens the browser.
+3. Make some made-up demo data: `node tools/demo-data.mjs` (in a second window). It lands in `tools/.shots/demo/`.
+4. In the viewer: **Background / level → 3D model…** and pick `demo-valley.glb`, then **Source → Files…** and pick `tanks.parquet` from the same folder (or drop it on the Source panel).
 
-On Windows, `start.bat` does all of it: it finds or installs Node.js, installs the dependencies, keeps itself updated and opens the browser. Then follow the [demo data](https://holdi601.github.io/3DHeat/demo-data.html) page's seven steps.
+The [demo data](https://holdi601.github.io/3DHeat/demo-data.html) page takes it from there.
 
 ## Features
 
@@ -31,6 +35,10 @@ On Windows, `start.bat` does all of it: it finds or installs Node.js, installs t
 | [Insights](https://holdi601.github.io/3DHeat/insights.html) | detectors for strong positions, deadly ground, spawn traps, chokes and standout players, with the evidence; a debrief (built-in or by an AI you choose); a caster; the [knowledge lens](https://holdi601.github.io/3DHeat/knowledge.html); [mass analysis](https://holdi601.github.io/3DHeat/mass-analysis.html) |
 | [Match replay](https://holdi601.github.io/3DHeat/match-replay.html) | each unit as the [figure](https://holdi601.github.io/3DHeat/figures.html) of what it is; NATO and Russian symbols; missiles, tracers, decoys; hit marks, wrecks, fires, turrets; objectives; Tacview-style cameras and tactical display |
 | [Levels](https://holdi601.github.io/3DHeat/levels.html) | map images, 3D levels with simplification, a world backdrop with real terrain |
+| [Timeline](https://holdi601.github.io/3DHeat/timeline.html) | play, pause, rewind and speed; a time window over the data |
+| [Hit analysis](https://holdi601.github.io/3DHeat/hit-analysis.html) | the Vehicles tab: where each unit was hit, by whom and with what |
+| [Match analysis](https://holdi601.github.io/3DHeat/match-analysis.html) | Counter-Strike 2 scoreboards, rounds and economy |
+| [Camera path and video](https://holdi601.github.io/3DHeat/camera-path-and-video.html) | fly a recorded path and render it to a video |
 | [Race analysis](https://holdi601.github.io/3DHeat/race-analysis.html) | laps of racing games compared corner by corner |
 | [Tactics board](https://holdi601.github.io/3DHeat/tactics-board.html) | plans on a level in steps that play |
 | [Settings](https://holdi601.github.io/3DHeat/settings.html) | 40 languages, metric / imperial / aviation / nautical units, help mode, keys that keep a session safe |
@@ -61,17 +69,7 @@ Optional converters, under `exporters/ext/`, kept apart so a problem with one af
 
 ## Developing
 
-| Command | What it runs |
-|---|---|
-| `npm run dev` | the dev server on `127.0.0.1:5273` |
-| `npm run build` | type check and production bundle |
-| `npm test` | unit and integration tests (vitest) |
-| `npm run smoke` | the real app in headless Chromium against a running dev server |
-| `npm run check:visual` | visual checks: zoom invariance, flicker, jitter, frame time |
-| `node tools/docs-refs.mjs` | regenerate the documentation's reference pages from the code |
-| `node tools/docs-shots.mjs` | regenerate the documentation's screenshots from the demo data |
-
-The source layout and every script are described on the [documentation's home page](https://holdi601.github.io/3DHeat/#install-and-run). Keeping the docs current: [Maintaining the docs](https://holdi601.github.io/3DHeat/maintaining.html); changes: [CHANGELOG.md](CHANGELOG.md).
+`npm run dev`, `npm run build`, `npm test`, `npm run smoke` and `npm run check:visual`; every script and the source layout are on the [documentation's home page](https://holdi601.github.io/3DHeat/#install-and-run). The docs' reference pages and pictures are regenerated with `node tools/docs-refs.mjs` and `node tools/docs-shots.mjs`; see [Maintaining the docs](https://holdi601.github.io/3DHeat/maintaining.html). Changes: [CHANGELOG.md](CHANGELOG.md).
 
 ## Licence
 

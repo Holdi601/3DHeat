@@ -1,12 +1,12 @@
 ---
 title: Insights
-nav_order: 11
+nav_order: 7
 has_children: true
 ---
 
 # Insights
 
-**Insights** looks through the loaded data for what stands out - strong positions, deadly ground, spawn traps, choke points, players far above their peers - and tells you, strongest first, with the evidence. It can then write a debrief, and in a single replay it can act as a caster that jumps to the big moments.
+**Insights** looks through the loaded data for what stands out - strong positions, deadly ground, spawn traps, choke points, players far above their peers - and tells you, strongest first, with the evidence. Use it to learn in a minute where a match was won or lost. It can then write a debrief, and in a single replay it can act as a caster that jumps to the big moments.
 
 Everything is counted in your browser. Nothing leaves your computer unless you switch on an external AI (see [External AI](#external-ai)).
 
@@ -16,12 +16,14 @@ The **Insights** section is in the sidebar of the Heatmap and Match tabs. It has
 
 ## Findings
 
-1. Load data and open **Insights**. Counting starts by itself ("Counting… n%").
-2. Read the list. Each finding has a strength bar, a sentence, how good the evidence is (*Strong*, *Good* or *Some evidence*), which detector found it, and the vehicle class where that matters.
+1. Load data and open **Insights**. Press **Find insights** ("Counting… n%" shows the progress).
+2. Read the list. Each finding has a strength bar, a sentence, how good the evidence is (*Strong evidence*, *Good evidence* or *Some evidence*), which detector found it, and the vehicle class where that matters.
 3. **Click a finding**: the viewer applies its filters, flies the camera to the place and jumps to the time, and opens the details: the effect with its 95% interval, the p and q values, the counted evidence, and **Volume here**, which draws a [volume](volumes.md) round the place.
 4. **Restore filters** puts your filters back. **Copy JSON** copies the whole report.
 
 Counting uses the current filters, hidden groups and picked match over the whole time range. When you change the filters afterwards, a note says so; press **Count again**.
+
+The lines at the top of the list (for example the money totals) summarise the whole data before the findings.
 
 ![A finding opened: the shots-fired hot zone, its numbers, and a matching passage from the literature](assets/img/en/insights-finding.webp)
 
@@ -42,7 +44,7 @@ Detectors that cannot run on the data are listed at the bottom with the reason.
 
 ### How findings are ranked
 
-Every place or group is tested against the rest of the map (exact binomial or rate tests). The false discovery rate is held at 5% (Benjamini-Hochberg), so among the findings shown, at most about one in twenty is expected to be chance. Effects from few events are pulled toward "no effect" before ranking. At most 60 findings are listed, and every detector gets a few places near the top.
+Every place or group is tested against the rest of the map (exact binomial or rate tests). The false discovery rate is held at 5% (Benjamini-Hochberg). Chance can look like a pattern; this keeps false alarms low: among the findings shown, at most about one in twenty is expected to be chance. Effects from few events are pulled toward "no effect" before ranking. At most 60 findings are listed, and every detector gets a few places near the top.
 
 ## Debrief
 
@@ -50,7 +52,7 @@ The **Debrief** tab writes the findings up as a short text: a lead, the clearest
 
 ![The debrief written by the built-in narrator](assets/img/en/debrief.webp)
 
-The built-in narrator works offline, in your language.
+The built-in narrator works offline, in your language. The **Lens** selector above it (see [The knowledge lens](knowledge.md)) decides which literature the paragraphs cite.
 
 ### External AI
 

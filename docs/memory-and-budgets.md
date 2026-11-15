@@ -6,6 +6,12 @@ nav_order: 6
 
 # Memory, budgets and the fit check
 
+Your computer has limited memory. 3DHeat adds up what your files need and tells you before **Load** whether they fit.
+
+![The Memory estimate at won't fit, with Load every [N] row pre-filled and the Load button reading Too large - reduce or decimate](assets/img/en/memory-and-budgets-wont-fit.webp)
+
+*Too big for this computer? 3DHeat suggests loading every Nth row instead.*
+
 A browser tab that runs out of memory partway through a load crashes and loses minutes of work, and a GPU asked for more than it has either loses its context or slows to a crawl. So before a load starts the Source panel says how much memory it needs, compares that with budgets detected for this machine, and refuses - with a way out - when it will not fit. The model is in [`src/data/memory.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/memory.ts).
 
 ## The memory estimate
@@ -71,10 +77,27 @@ The renderer needs rows in ascending time order, so a mapped time column means s
 |---|---|---|
 | **RAM for row data** | 256 MiB to the RAM ceiling, logarithmic | The RAM budget for the fit check. Marked *(above detected)* past the detected default, *(max)* at the ceiling. |
 | **GPU for row data** | 128 MiB to the GPU ceiling, logarithmic | The GPU budget for the fit check and for uploading rows. Marked *(above detected)* past the detected default, *(max)* at the ceiling. |
-| **Parser threads** | 1 to the logical core count | How many files a load parses at once, each in a worker of its own. Default cores - 2 (cores - 1 on four cores or fewer). See [Parser threads](#parser-threads). |
+| **Parser threads** | 1 to the logical core count | How many files a load parses at once, each in a worker of its own. Default cores - 2 (cores - 1 on four cores or fewer). See [Parser threads](#parser-threads) (under For developers). |
 | Sources line | | Where each figure came from (`RAM: …. GPU: …. CPU: ….`). |
 | **Re-detect** | | Asks the dev server for a fresh memory reading and recomputes every budget. |
 | GPU name | | The adapter's short name; the full renderer string is the tooltip. |
+
+### Raising the GPU budget
+
+A GPU budget above the detected figure applies as set: the fit check and the upload take the same figure from one function ([`effectiveGpuBudget`](https://github.com/Holdi601/3DHeat/blob/main/src/render/budget.ts)), which caps it only at the GPU ceiling the slider stops at. So a load the check passes is uploaded in full. Past the detected figure the slider reads *(above detected)*: the number is then your judgement of the card, not a measurement, and setting it higher than the card has risks a lost context or a crawl.
+
+## Huge datasets: the levers
+
+From cheapest to most drastic:
+
+1. **Fewer filter columns.** Each is 4 bytes a row and a decode pass.
+2. **A stride.** Every *N*th row.
+3. **No time column.** No sort, no sort ceiling, no 4-8 bytes a row of time and lifetime - and no timeline.
+4. **Raise the budgets**, when you know the memory is there.
+
+At render time, large datasets are handled by sampling and progressive accumulation rather than by reducing the data; see [Sampling and budgets](sampling-and-budgets.md).
+
+## For developers
 
 ### Parser threads
 
@@ -108,18 +131,3 @@ The merge order is the order of the selection, whatever order the files finish i
 - Never below 128 MiB.
 
 **CPU.** `navigator.hardwareConcurrency` (4 when not reported).
-
-### Raising the GPU budget
-
-A GPU budget above the detected figure applies as set: the fit check and the upload take the same figure from one function ([`effectiveGpuBudget`](https://github.com/Holdi601/3DHeat/blob/main/src/render/budget.ts)), which caps it only at the GPU ceiling the slider stops at. So a load the check passes is uploaded in full. Past the detected figure the slider reads *(above detected)*: the number is then your judgement of the card, not a measurement, and setting it higher than the card has risks a lost context or a crawl.
-
-## Huge datasets: the levers
-
-From cheapest to most drastic:
-
-1. **Fewer filter columns.** Each is 4 bytes a row and a decode pass.
-2. **A stride.** Every *N*th row.
-3. **No time column.** No sort, no sort ceiling, no 4-8 bytes a row of time and lifetime - and no timeline.
-4. **Raise the budgets**, when you know the memory is there.
-
-At render time, large datasets are handled by sampling and progressive accumulation rather than by reducing the data; see [Sampling and budgets](sampling-and-budgets.md).

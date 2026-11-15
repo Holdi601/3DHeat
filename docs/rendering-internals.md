@@ -1,12 +1,18 @@
 ---
 title: Rendering internals
-nav_order: 9
+nav_order: 25
 has_children: true
 ---
 
 # Rendering internals
 
-How the viewer draws tens of millions of rows at interactive frame rates, and how it makes sure the picture it shows is the right one. This section is for anyone who wants to understand a number in the stats overlay, tune the Performance panel, or work on the renderer.
+The viewer draws millions of dots as glowing blobs and adds them up. This section explains the tricks that keep that fast, and what the numbers in the stats overlay mean. Read it if the viewer feels slow, or if you want to work on the renderer.
+
+```
+data -> time window -> GPU filters -> sampling plan -> splat -> accumulate -> colour -> screen
+```
+
+To see how your own computer is doing, look at the stats box in the top right of the view: [Performance panel and stats overlay](performance-and-stats.md). New words (GPU, row, sprite, heatmap) are in the [glossary](glossary.md).
 
 ## The core problem
 

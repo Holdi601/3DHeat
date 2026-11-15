@@ -1,21 +1,39 @@
 ---
 title: Mass analysis
-nav_order: 62
+nav_order: 8
 ---
 
 # Mass analysis: thousands of matches at once
 
-**Heatmap → Mass analysis** analyses a folder of matches - a thousand, ten
-thousand - without reading a row of their tables. Each match has a compact
-summary, written once; the panel works from those, and loads the rows of
-exactly the matches you click into the 3D view.
+**Mass analysis** shows you what a whole folder of matches adds up to: which vehicle wins most, which side is favoured, where the action is. Use it when you have far more matches than you could watch.
+
+It works from a small summary of each match, so a thousand or ten thousand matches open fast. It loads the full rows only for the matches you click.
+
+## Try it
+
+1. Open **Mass analysis** in the Heatmap sidebar.
+2. Press **Folder...** (or **Files...**) and pick your `.3dheat` matches.
+3. Wait while the panel reads the summaries ("Summaries... n of N").
+4. Press **Open analysis**. A window opens with tabs.
+5. Set the filters (Game, Map, Mode, From, To), then read a tab, for example Balance.
+6. Click a row, a cell or an insight: its matches load into the 3D view, with the camera on the place.
+
+![The Balance tab: win rate and kills per death by vehicle](assets/img/en/mass-balance.webp)
+
+```
+folder of .3dheat -> summaries -> window (tabs) -> click a row -> matches open in 3D
+```
+
+A `.3dheat` file is one match ([One file a match](container.md)). A *heatmap* and a *row* are explained in the [glossary](glossary.md).
 
 ## Getting the summaries
+
+Nothing to do for most people: the panel works out missing summaries itself. To prepare a big folder once, use the offline tool below.
 
 Every `.3dheat` match gets a summary (`src/mass/summarize.ts`), kept in the
 container as the member `<match>.summary.json` (role `summary`, see
 [One file a match](container.md)). The offline tool writes them, and an
-index per folder:
+index per folder. It is a developer tool; run it on a big folder to save the panel the work:
 
 ```
 node tools/3dheat-summarize.mjs <folder>... [--jobs N] [--force] [--no-write] [--no-index] [--limit N] [--settle MIN]
@@ -28,8 +46,7 @@ node tools/3dheat-summarize.mjs <folder>... [--jobs N] [--force] [--no-write] [-
 - `<folder>/3dheat-index.jsonl.gz`: a line a match - its path, size, time
   and summary without the grid. `<folder>/3dheat-index.grids.jsonl.gz`: a
   line a match with its grid.
-- Run it where the files are, at low priority (`nice -n 19 ionice -c3`),
-  for example on a NAS with the viewer's `src` and `tools` folders.
+- Run it on the machine that holds the files, at low priority (for example `nice -n 19 ionice -c3` on Linux).
 
 The panel takes, for each match, the first of: the folder's index line (same
 path and size), the browser's cache (IndexedDB, by name, size and time), the
@@ -39,23 +56,34 @@ speed of reading the tables, after that from the cache.
 
 ## The panel
 
-Pick a folder (or files; **Add folder** joins another). The window has a
-filter (game, map, mode, dates) and these tabs; every number comes from the
-summaries, and a click on a row, a cell or an insight loads its matches into
-the view as the many-match overlay with the filters that show it (vehicle,
-class, weapon, team, player) and the camera on the place:
+Pick a folder (or files; **Add folder...** joins another). The window has the filters **Game**, **Map**, **Mode**, **From** and **To**, a **Split by** choice, **Fewest lives** and **Players only**, and these tabs. Every number comes from the summaries, and a click on a row, a cell or an insight loads its matches into the view as the many-match overlay with the filters that show it (vehicle, class, weapon, team, player) and the camera on the place:
 
 | Tab | What |
 |---|---|
 | Overview | matches, hours, players, lives, rows, dates; matches a day; by game, map, mode; event totals; economy by currency; when in the match things happen |
-| Balance | by vehicle, class, weapon or team, split by map, mode, tier or game: K/D with its ~95% interval, win rate (Wilson), survival, kills and hits a minute, earnings a minute, and q - the Benjamini-Hochberg false discovery rate of K/D and win against the rest of the split. **Players only** leaves out what the mission's AI drove |
+| Balance | by vehicle, class, weapon or team, split by map, mode, tier or game: K/D with its ~95% interval, win rate (Wilson), survival, kills and hits a minute, earnings a minute, and q - the Benjamini-Hochberg false discovery rate of K/D and win against the rest of the split. **Fewest lives** hides rows with too few lives to trust; **Players only** leaves out what the mission's AI drove |
 | Trends | use (share of presence), K/D or win rate of the top vehicles or classes a day, week or month |
 | Players | distinct players, matches a player, players a match, the most frequent players |
 | Sides | each side of each map: matches won against an even split |
 | Map | a map's summed grid: presence, kills, deaths, K/D, any event, flow, and **hot in how many matches** (stability); by team, at 1, 2, 4 or 8 times the cell |
-| Insights | the mass detectors and the map detectors (below); **Copy report** gives the JSON a language model reads |
+| Places | places that stand out in the numbers but not in the heat (a large area busy as a whole, corridors, height bands); **Find places** |
+| Niches | groups doing markedly better or worse than the rest (a vehicle on one map, a sector at one height); **Find niches** |
+| Insights | the mass detectors and the map detectors (below); **Copy report (JSON)** gives the JSON a language model reads |
 
 ## Insights over many matches
+
+The **Insights** tab finds, over all matches, vehicles that trade or win better or worse than the rest, places hot in a steady share of matches, sides that win more than an even split, vehicles whose use moves over the dates, and parts of the match that hold more kills than an even spread. Each finding carries its counts, effect, interval and a false discovery rate (held to 5%), and a click loads its matches. Details: [For developers](#for-developers).
+
+## Scale
+
+SCALE_PLACEHOLDER
+
+The store keeps about 15 KB a match, so 10,000 matches take ~150 MB in the
+worker; grids are never held for more than the map asked for.
+
+## For developers
+
+### Insights over many matches
 
 `src/mass/detect.ts` - every finding with its counts, effect and interval,
 p and q (Benjamini-Hochberg over everything the detector tried, held to 5%),
@@ -72,7 +100,7 @@ in the same shape as the single-match report (`insights/seam.ts`).
 | `phase` | a part of the match length holding more kills, hits, launches... than an even spread |
 | `grid.*` | the single-dataset detectors (power positions, hot and quiet zones, class places) on each map's summed grids: `GridMerge.toInsightJob` fills the insight pass's grids from the summaries; the detectors that need tracks skip |
 
-## The summary
+### The summary
 
 Plain JSON (`src/mass/types.ts`), about 5-30 KB deflated a match:
 
@@ -91,7 +119,7 @@ them (`leanSpec`), events by `data/canonical.ts`; a kill a Tacview weapon
 scores counts for its shooter; a death said twice at once (`dead`, `death`)
 counts once.
 
-### The grid: what Stage B builds on
+#### The grid: what Stage B builds on
 
 The spatial part is made for scan statistics over regions of any size and
 shape, not only for heat pictures:
@@ -135,10 +163,4 @@ plugs in without changing the rest:
 3. A new sentence is a `mass.say.<kind>Up` / `Down` message in
    `locales/*/mass.json`.
 
-## Scale
 
-The summaries, the panel's tabs, the insights and the drill-down all run in
-workers, so the view keeps its frame rate while they work.
-
-The store keeps about 15 KB a match, so 10,000 matches take ~150 MB in the
-worker; grids are never held for more than the map asked for.

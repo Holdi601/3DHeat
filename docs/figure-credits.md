@@ -6,7 +6,7 @@ nav_order: 1
 
 # Figure credits
 
-Some figure outlines were measured on drawings published under CC BY; their authors are credited here. Every source used is listed in src/figures/specs/sources.md.
+Outlines, proportions and some models are measured on or derived from works under these licences. Their authors are credited here. Works under CC0 need no credit and are not listed. Every source used is listed in [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
 
 - Figure outlines derived from: "Typenblatt-TS Boot 206" by Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Figure proportions checked on: "T-72B3 mod. 2011 in Mulino" by the Ministry of Defence of the Russian Federation (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

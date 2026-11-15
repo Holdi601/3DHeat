@@ -1,16 +1,27 @@
 ---
-title: Box replay
+title: Figure overlay
 parent: Heat modes
 nav_order: 8
 ---
 
-# Box replay
+# Figure overlay (box replay)
 
-**Box replay** (key 4) draws one box per person, moving along the [timeline](timeline.md), with optional look rays and trails. It is playback rather than density: *who was where, when*. It needs a person column; without a time column every sample is drawn at once.
+A little movie: one figure for each person, moving as time runs, with a trail behind it.
+
+The mode is called **Figure overlay** in the mode bar. This page used to be called "box replay", because before figures existed each person was a box; "figure replay" and "box replay" mean the same thing. **Figure overlay** has no number key: pick it in the mode bar. It draws one figure (or box) per [person](glossary.md), moving along the [timeline](timeline.md), with optional look rays and trails. It is playback rather than density: *who was where, when*. It needs a person column; without a time column every sample is drawn at once.
+
+![The figure overlay on demo tanks, paused at about 30 s, with 30 s trails and the Team viewer panel open](assets/img/en/box-replay-overlay.webp)
+
+## How to use it
+
+1. Load data with a person column and a time column.
+2. Pick **Figure overlay** in the mode bar.
+3. Switch the timeline to **Play** and press play (`K`).
+4. Open **Team viewer** to change **Trail length**, the figure size or the look rays.
 
 No heat is drawn in this mode, and the adaptive sprite budget is idle.
 
-By default each person is drawn as the figure of what they are rather than a box - see [Figure replay and debrief](figure-replay.md), which also covers names over the tracks, the follow camera, measuring between two tracks and the event list.
+By default each person is drawn as the figure of what they are rather than a box - see [Figures](figures.md) for which figure a unit gets, and [Match replay](match-replay.md) for labels, the follow camera, measuring between two units and the event list.
 
 ## The Team viewer panel
 
@@ -18,6 +29,10 @@ Shown instead of the heat panels in this mode.
 
 | Control | Default | Range (jog) | Meaning |
 |---|---|---|---|
+| **Figures instead of boxes** | on | | Each person as the figure of what they are: a soldier on foot, the tank or aircraft the data names. What the data says nothing about stays a box. |
+| **Figure size** | 1× | | 1× is true size. |
+| **Smallest figure on screen** | 36 px | 0 = always true size | True size up close; further away figures grow to stay this many pixels long. |
+| **Weapons, shots and hits** | on | | Weapons in flight with smoke, tracers, impacts, hits and kills. Tracers inferred from a hit are dashed. |
 | **Cube size** | entity size, or extent / 500, on load | 0.05-200 m, logarithmic (5000) | Edge length of each box. See [entity size](sessions-persons-groups.md#entity-size). |
 | **Interpolate between samples** | on | | Between two samples of the same person in the same session, place the box proportionally between them. Never across a session boundary. |
 | **Show look direction** | on | | A ray from each box along the person's look direction (needs [look columns](axes-units-and-time.md#look-direction)). |
@@ -54,6 +69,6 @@ One hue family per group and one shade per member, so a glance tells you which s
 
 ## Notes
 
-- The box replay rebuilds its boxes only when something changes; an idle frame redraws the last ones.
+- The figure overlay rebuilds its figures only when something changes; an idle frame redraws the last ones.
 - The *Cubes* line of the [stats overlay](performance-and-stats.md) counts the boxes on screen.
-- Box replay draws in the same scene as the level, so [depth of field](camera.md#depth-of-field) blurs the boxes but never the heat.
+- The figure overlay draws in the same scene as the level, so [depth of field](camera.md#depth-of-field) blurs the boxes but never the heat.

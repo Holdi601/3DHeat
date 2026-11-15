@@ -6,9 +6,21 @@ nav_order: 7
 
 # Line heat
 
-**Lines** (key 5) is line heat: a line from each of a person's samples to their next, splatted with the same falloff a sprite has - across the line instead of round a point. It shows where people *went* rather than where they stood: a corridor run through once is as visible as a room camped in, and a fast player's sparse samples join into a continuous route instead of a dotted trail. It needs a person column and a time column.
+Heat shows where people stood. Lines shows the paths they walked.
 
-A line only makes sense between a beginning and an end, so the **Routes** panel says what bounds a route.
+**Lines** (key 4) is line heat: a line from each of a [person's](glossary.md) samples to their next, splatted with the same falloff a [sprite](glossary.md) has - across the line instead of round a point. It shows where people *went* rather than where they stood: a corridor run through once is as visible as a room camped in, and a fast player's sparse samples join into a continuous route instead of a dotted trail. It needs a person column and a time column.
+
+![Line heat: each person's route as a line, hot where routes overlap](assets/img/en/heat-lines.webp)
+
+## How to use it
+
+1. Press `4` (or pick **Lines** in the mode bar).
+2. Open **Routes** and check the green checklist: time axis and person id must be present.
+3. Press **Suggest from the event names** to fill in where routes start and end.
+4. Read the stats line: "N routes, M of them reaching an end".
+5. If lines jump across the map, adjust **Longest step** (see [The jump limit](#the-jump-limit)).
+
+A line only makes sense between a beginning and an end, so the **Routes** panel says what bounds a route. Everything from [The rules of a route](#the-rules-of-a-route) on is detail you can skip.
 
 ## The Routes panel
 

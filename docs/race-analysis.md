@@ -1,17 +1,16 @@
 ---
 title: Race analysis
-nav_order: 50
+nav_order: 14
 has_children: true
 ---
 
 # Race analysis
 
-The **Race analysis** tab compares two or more laps of one course: where one
-lap loses time to another, why, and what to do about it. It shares the
-canvas, the camera and the loaded course model (**Background / level**) with
-the heatmap, and nothing else - it has its own state
-([`src/state/raceStore.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/state/raceStore.ts)),
-its own sidebar and its own bar under the view.
+You drove the same track twice. The **Race analysis** tab plays both drives together in 3D, shows where one lap was slower and tells you why. No laps yet? Press **Demo laps**.
+
+![The Race analysis tab with demo laps: the sidebar with Laps and Where to improve, the cars on the course, the charts under the view](assets/img/en/race-analysis-overview.webp)
+
+The tab compares two or more laps of one course. It shares the canvas, the camera and the loaded course model (**Background / level**) with the heatmap; everything else is its own: its own sidebar and its own bar under the view. Words like *lap*, *reference* and *apex* are in the [glossary](glossary.md).
 
 This page is the map of the tab. Each part has its own page:
 
@@ -46,8 +45,8 @@ This page is the map of the tab. Each part has its own page:
    [Car profiles and comparison](race-car-profiles.md).
 7. **View** - which map is painted on the track and what is drawn.
    See [Replay and the 3D scene](race-replay-and-scene.md).
-8. The shared **Level** and **Camera** panels (course model, axis inversion,
-   camera) - documented with the heatmap.
+8. The shared **Level** and **Camera & scene** panels (course model, axis
+   inversion, camera) - documented with the heatmap and [Camera](camera.md).
 
 **The view** shows the course, the driven lines, the map, the cars, labels
 pinned to the track, and up to six car cards top left (see
@@ -62,8 +61,10 @@ the distance charts.
 
 1. Open the **Race analysis** tab (beside **Heatmap** at the top of the
    sidebar).
-2. Press **Demo laps** to see what the tab does with three made-up laps, or
-   **Load lap files…** / **Folder…**, or drop files or folders on the view.
+2. Get laps in. Press **Demo laps** to see what the tab does with three
+   made-up laps. For your own laps, record them first
+   ([file formats and recorders](race-loading-laps.md#file-formats)), then press
+   **Load lap files…** or **Folder…**, or drop files or folders on the view.
 3. The fastest complete lap becomes the reference; the slowest other lap is
    focused. Click any lap in the list to focus it; ★ makes a lap the
    reference.
@@ -84,39 +85,9 @@ While the Race tab is open:
 | digit keys | nothing (in the heatmap they switch modes) |
 
 Keys typed into a text field or a drop-down are ignored. The camera keys
-(WASD, Space/Q, Shift, Alt, mouse) work as in the heatmap; **F** frames the
+work as in the heatmap (**W A S D**, **Space** up, **Q** down, **Shift** faster,
+**Alt** slower, mouse to look; all in [Camera](camera.md)); **F** frames the
 loaded laps (as loading laps does).
-
-## What happens when laps are loaded
-
-Every time the set of laps, the reference or the language changes, the whole
-analysis is redone (`analyse` in
-[`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
-
-1. Derived channels are added to each lap where the game does not send them:
-   drift angle, wheel slip from wheel speeds, in the air, loose ground, yaw
-   rate ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
-2. The reference is chosen and every lap is projected onto its path and
-   resampled every 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
-3. Whether the game's world is mirrored is worked out from the laps
-   ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
-4. Corners are found on the reference, and grouped into segments from one
-   braking zone to the next ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
-5. Per car: its envelope (grip, braking, pull per speed), its profile, its
-   tyre curves ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts),
-   [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts),
-   [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
-6. Per lap and segment: what it did (brake point, slowest point, full
-   throttle, ...) and the line it drove ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
-7. Per lap: its car-control events, each laid against the lap it is compared
-   with there.
-8. Per lap and segment: the time account against its comparison lap and the
-   finding in words.
-9. The time map and the cause map per lap.
-
-The texts are produced in the current language; switching language runs the
-analysis again (and renames the demo laps). A failure in the analysis is
-shown under the **Laps** buttons as an error and the laps stay loaded.
 
 ## Many laps
 
@@ -149,7 +120,40 @@ None of these are saved; a reload starts from the defaults. What is
 remembered in the browser: the language, and the car names learned from lap
 files (see [Loading laps](race-loading-laps.md#car-names)).
 
-## Source files
+## For developers
+
+### What happens when laps are loaded
+
+Every time the set of laps, the reference or the language changes, the whole
+analysis is redone (`analyse` in
+[`src/race/analysis.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/analysis.ts)):
+
+1. Derived channels are added to each lap where the game does not send them:
+   drift angle, wheel slip from wheel speeds, in the air, loose ground, yaw
+   rate ([`derive.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/derive.ts)).
+2. The reference is chosen and every lap is projected onto its path and
+   resampled every 2 m ([`align.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/align.ts)).
+3. Whether the game's world is mirrored is worked out from the laps
+   ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)).
+4. Corners are found on the reference, and grouped into segments from one
+   braking zone to the next ([`segments.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/segments.ts)).
+5. Per car: its envelope (grip, braking, pull per speed), its profile, its
+   tyre curves ([`envelope.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/envelope.ts),
+   [`profile.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/profile.ts),
+   [`control.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/control.ts)).
+6. Per lap and segment: what it did (brake point, slowest point, full
+   throttle, ...) and the line it drove ([`line.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/line.ts)).
+7. Per lap: its car-control events, each laid against the lap it is compared
+   with there.
+8. Per lap and segment: the time account against its comparison lap and the
+   finding in words.
+9. The time map and the cause map per lap.
+
+The texts are produced in the current language; switching language runs the
+analysis again (and renames the demo laps). A failure in the analysis is
+shown under the **Laps** buttons as an error and the laps stay loaded.
+
+### Source files
 
 | File | Role |
 |---|---|
