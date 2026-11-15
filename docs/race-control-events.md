@@ -194,7 +194,10 @@ Each car also gets:
 | **hit**, **crash** | see [Hits and crashes](#hits-and-crashes) | speed the impact took |
 
 Drift-angle floors by surface: tarmac **7°**, mixed **10°**, loose and snow
-**15°**, ice **10°**. A car that runs more as a matter of course - an arcade
+**15°**, ice **10°**. They follow the literature: a tyre's slip angle peaks at
+3-10° on tarmac and a road car's body-slip stability limit is about 12° on dry
+asphalt, while rally and drift driving run 30-50° ([Race analytics,
+sources](race-analytics.md#sources)). A car that runs more as a matter of course - an arcade
 tyre model, a gravel specialist - has its own, higher threshold from its own
 laps (1.5 × its habit).
 
