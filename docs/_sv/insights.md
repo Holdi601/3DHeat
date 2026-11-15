@@ -1,0 +1,103 @@
+---
+title: "Insikter"
+nav_order: 7
+has_children: true
+lang: "sv"
+source: "insights.md"
+source_hash: "8232fe145807"
+translated: true
+outdated: false
+---
+
+# Insikter
+
+**Insikter** letar igenom den inlästa datan efter det som sticker ut: starka positioner, dödlig mark, spawn-fällor, flaskhalsar och spelare långt över sina jämlikar. Den berättar det, starkast först, med underlaget. Med den kan du på en minut lära dig var en match vanns eller förlorades. Den kan sedan skriva en genomgång, och i en enda repris kan den fungera som kommentator som hoppar till de stora ögonblicken.
+
+Allt räknas i din webbläsare. Ingenting lämnar datorn om du inte slår på en extern AI (se [Extern AI](#external-ai)).
+
+![Insikter på stridsvagnsdemon: 14 fynd, starkast först](../assets/img/en/insights.webp)
+
+Avsnittet **Insikter** finns i sidofältet i flikarna Värmekarta och Match. Det har tre flikar: **Fynd**, **Genomgång** och **Kommentator**.
+
+## Fynd {#findings}
+
+1. Läs in data och öppna **Insikter**. Tryck **Hitta insikter** (”Räknar… n %” visar förloppet).
+2. Läs listan. Varje fynd har en styrkestapel, en mening, hur gott underlaget är (*Starkt underlag*, *Bra underlag* eller *Visst underlag*), vilken detektor som hittade det och fordonsklassen där det spelar roll.
+3. **Klicka på ett fynd**: visaren tillämpar dess filter, flyger kameran till platsen och hoppar till tiden, och öppnar detaljerna. Där visas effekten med dess 95 %-intervall, p- och q-värdena, det räknade underlaget och **Volym här**, som ritar en [volym](volumes.md) runt platsen.
+4. **Återställ filter** lägger tillbaka dina filter. **Kopiera JSON** kopierar hela rapporten.
+
+Räkningen använder de aktuella filtren, dolda grupper och vald match över hela tidsintervallet. Ändrar du filtren efteråt visas en notis om det; tryck **Räkna om**.
+
+Raderna överst i listan (till exempel summorna för pengar) sammanfattar hela datan före fynden.
+
+![Ett öppnat fynd: den heta zonen för avfyrade skott, dess siffror och ett passande stycke ur litteraturen](../assets/img/en/insights-finding.webp)
+
+### Detektorerna {#the-detectors}
+
+| Detektor | Vad den hittar | Behöver i datan |
+|---|---|---|
+| **Maktpositioner** | Platser med mycket bättre förhållande mellan dödningar och dödsfall än resten av kartan, och *säker mark* där få dör för tiden som spenderas | dödnings- och dödshändelser |
+| **Heta och kalla zoner** | Platser där en händelsetyp (skott, träffar, erövringar ...) sker långt oftare eller sällnare än tiden där förutsäger | en händelsekolumn |
+| **Öppen mark och skydd** | Dödsfall i det öppna mot närliggande nivågeometri, och långsamt mot snabb rörelse | dödsfall; en 3D-bana för geometridelen |
+| **Spawns** | Starka spawns, spawn-fällor, säkra spawns, tid till första kontakt | tid och personer |
+| **Klass per plats** | En fordonsklass, eller spelare mot AI, som gör det mycket bättre eller sämre i ett område | dödningar plus en fordonsklass eller en **ai**-kolumn |
+| **Spelare** | Spelare som dödar eller dör långt oftare eller sällnare än andra i samma klass | **person** och dödningar |
+| **Flaskhalsar och flanker** | Flaskhalsar (långt fler passager än marken runt) och flankrutter (sällan använda, men leder till dödningar) | **person** |
+| **Värde** | *Dyr mark* och *Inbringande mark* | [värdekolumner](value-weighting.md) |
+
+Detektorer som inte kan köras på datan listas längst ned, med skälet.
+
+### Så rangordnas fynden {#how-findings-are-ranked}
+
+Varje plats eller grupp testas mot resten av kartan (exakta binomial- eller frekvenstest). Andelen falska upptäckter hålls på 5 % (Benjamini-Hochberg). Slump kan se ut som ett mönster. Det här håller falsklarmen nere: bland de visade fynden väntas högst ungefär ett av tjugo bero på slump. Effekter från få händelser dras mot ”ingen effekt” före rangordningen. Högst 60 fynd listas, och varje detektor får några platser högst upp.
+
+## Genomgång {#debrief}
+
+Fliken **Genomgång** skriver ner fynden som en kort text: en inledning, det tydligaste fyndet, ett för taktik, ett för balansering, resten grupperade efter detektor och hur många som bygger på svagare underlag. Varje stycke har numrerade knappar som visar dess fynd. **Kopiera text** kopierar den.
+
+![Genomgången skriven av den inbyggda berättaren](../assets/img/en/debrief.webp)
+
+Den inbyggda berättaren fungerar offline, på ditt språk. Väljaren **Lins** ovanför den (se [Kunskapslinsen](knowledge.md)) avgör vilken litteratur styckena hänvisar till.
+
+### Extern AI {#external-ai}
+
+**AI-inställningar** låter en AI-modell du väljer skriva genomgången i stället:
+
+| Inställning | Betydelse |
+|---|---|
+| **Leverantör** | Anthropic (Claude), OpenAI (ChatGPT), OpenRouter, Ollama (lokal), LM Studio (lokal), llama.cpp-server (lokal) eller valfri OpenAI-kompatibel slutpunkt |
+| **Bas-URL**, **Modell** | Ifylls av leverantören. **Lista modeller** frågar servern |
+| **API-nyckel** | Skickas bara till bas-URL:en. Loggas aldrig och sparas aldrig i vyer, exporter eller `.3dheat`-filer. De flesta lokala servrar behöver ingen. |
+| **Kom ihåg nyckeln i den här webbläsaren** | Av som standard: nyckeln glöms när sidan stängs |
+| **Använd en extern AI** | Av som standard |
+| **Skicka spelarnamn** | Av som standard: spelare skickas som P1, P2 ... |
+
+Skriv sedan en valfri fråga och tryck **Skriv med AI**. Bara fynden och deras siffror skickas, aldrig raderna i din data. Svaret strömmar in, och citerade fynd blir knappar.
+
+## Kommentator {#caster}
+
+För **en match** (välj en om flera är inlästa) hittar **Kommentatorn** de ögonblick som är värda att titta på: första blodet, multidödningar, byten, vändningar i slutspel, skiften i mål, comebacks, framträdande spelare och långskott.
+
+![Kommentatorns ögonblick för en runda i skyttespelsdemon](../assets/img/en/caster.webp)
+
+- Klicka på ett ögonblick: vyn byter till repriset, hoppar till strax före det, flyger dit och följer spelaren.
+- **Spela ögonblicken** spelar upp varje till slutet och går vidare. **Föregående** / **Nästa** bläddrar bland dem.
+- Med en extern AI på skriver **Kommentarer av AI** en kommentar utifrån ögonblickslistan (slag, tider, namn eller pseudonymer, lag, klasser, avstånd).
+
+Den behöver **person** och dödnings- eller dödshändelser (eller erövringar). En kolumn `other`/`victim` gör byten och långskott möjliga.
+
+## Kunskapslinsen {#knowledge-lens}
+
+Ett fynd kan läsas genom en **lins** av etablerad kunskap: militär doktrin, luft- och sjöstrid, stadsoperationer, spelkonstruktion och e-sport (eller *Auto*, vald av enheterna i datan). Ett öppnat fynd visar då den närmaste **doktrin- och litteraturposten** och en **historisk parallell**, med referenser. **Linsmått** beräknar mått ur litteraturen på datan: Lanchester-anpassningar, utbytesförhållanden, styrkeförhållanden, eldfält, nyckelterräng, byten och initiativ. Genomgången och AI-prompten tar med dem. Allt om det: [Kunskapslinsen](knowledge.md).
+
+Linsmåtten mäter också hur spelarna beter sig som en folkmassa och som en grupp: linjering och virvlande, ruttstyrning, körfält och spår, trängsel, ledare och följare, eftersläntrare, brytpunkten vid förluster, risken efter ett förlorat liv, serier, köpöverenskommelse och reaktionen på inkommande eld. Var och en jämförs mot sin egen nollmodell: [Gruppbeteende](collective-behaviour.md).
+
+## Data som gör insikterna möjliga {#data-that-makes-insights-work}
+
+- positioner med **time**, en **person** och en **team**-kolumn;
+- en **event**-kolumn med dödningar och dödsfall (`kill`, `death`), och andra (`hit`, `fire`, `capture` ...);
+- en kolumn för motparten (`other`, `victim`) för byten och riktningar;
+- en **vehicle**- eller **type**-kolumn för klasser; en `ai`-kolumn för spelare mot AI;
+- en **session**- / **match**- / **round**-kolumn när det finns flera matcher.
+
+[Demodata](demo-data.md) har alla dessa.
