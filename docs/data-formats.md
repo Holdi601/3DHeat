@@ -89,6 +89,37 @@ A position, time or look column that holds something other than a number decodes
 
 A Parquet `TIMESTAMP` column kept as a filter column is a *range* of epoch milliseconds - a slider, not a list.
 
+## Outcome columns
+
+Who won, on every row, so a place, a route or a play can be judged by how often its side went on to win ([Win rate](win-rate.md)). The viewer keeps these columns by itself, lists them first in the [filters](filters.md) in the viewer's language, and reads them in the [win-rate map](win-rate.md), the [breakdown](breakdown.md) and the [volume statistics](volumes.md#statistics). A converter for a round-based game (CS2, Valorant, Rainbow Six Siege) or a match-based one (War Thunder) writes all four:
+
+| Column | Type | Meaning |
+|---|---|---|
+| `won` | 0/1 (empty where unknown) | the row's side (team) won **the round**; in a game without rounds, the match |
+| `matchWon` | 0/1 (empty where unknown) | the row's side (team) won **the match**; empty where the recording does not show the end |
+| `round` | whole number, from 1 | the round the row belongs to; 1 throughout a match-based game |
+| `roundEndReason` | text | how the round ended (in a match-based game, the match), in the words below |
+
+`won` and `matchWon` are the side's of the row: a T player's rows carry the T side's result, an AI unit's rows its team's; rows that belong to no side leave them empty. A side that swaps at half time keeps its own `matchWon` and takes each round's `won` as it played it. A draw is 0 for both sides.
+
+The end reasons, shared by every game so one filter works on all (a game's own word is mapped where it can be, [`data/outcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/outcome.ts)):
+
+| `roundEndReason` | Meaning | Games |
+|---|---|---|
+| `elimination` | every player of one side out | CS2, Valorant, Rainbow Six Siege |
+| `bomb` | the bomb (spike, defuser's target) went off | CS2, Valorant, Rainbow Six Siege |
+| `defuse` | the bomb (spike) defused | CS2, Valorant, Rainbow Six Siege |
+| `time` | the round clock ran out; War Thunder: decided with both sides' tickets left | all |
+| `surrender` | a side gave up | CS2, Valorant, Rainbow Six Siege |
+| `draw` | no winner | CS2 |
+| `objective` | an objective taken or held (hostage extracted, area secured) | Rainbow Six Siege |
+| `capture` | bled out of tickets while the winner held capture zones | War Thunder |
+| `tickets` | tickets lost to kills | War Thunder |
+| `destruction` | the last vehicles lost at once, no one left to spawn | War Thunder |
+| `other` | anything else | |
+
+Name them in the `heat3d` hints' `extra` list too, as any other column. The column names `win`, `round_won`, `match_won`, `end_reason` and `win_reason` are read as the same columns.
+
 ## The `heat3d` hints
 
 A Parquet file can carry its own reading instructions in its footer's key/value metadata, under the key **`heat3d`**, as a JSON object ([`MappingHints`](https://github.com/Holdi601/3DHeat/blob/main/src/data/automap.ts)). The viewer applies them over its own guesses when the file is the first of a selection; every entry is optional and every result is still shown and editable in the [Column mapping](column-mapping.md#the-heat3d-hints-in-a-parquet-footer) panel. Anything that does not parse as a JSON object is ignored.

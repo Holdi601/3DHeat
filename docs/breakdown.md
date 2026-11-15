@@ -86,6 +86,6 @@ A converter adds a factor by naming its column:
 | gear flags already common (`helmet`, `defuser`, `armor`, `scoped`, `airborne`, `duck`, `flashed`...) | on while non-zero |
 | `ammoType`, `shellType`, `ammoName` | the round last fired |
 
-Results: a 0/1 `won` column (the row's side won the round or match) and a `round` column. Money: `earn_<currency>` and `cost_<kind>_<currency>`; an income by kind alone (`earn_round_cs2`, a converter's exact round rewards) replaces only the cost model's income of that kind (`round` also covers plants and defuses), and the model still prices the rest.
+Results: a 0/1 `won` column (the row's side won the round or match) and a `round` column - the [outcome columns](data-formats.md#outcome-columns); where a file has both `won` and `matchWon`, *Win %* counts rounds. Money: `earn_<currency>` and `cost_<kind>_<currency>`; an income by kind alone (`earn_round_cs2`, a converter's exact round rewards) replaces only the cost model's income of that kind (`round` also covers plants and defuses), and the model still prices the rest.
 
 The mapping loads these columns by itself, beside the file's own list: every `state_*`, `active_*`, `won`, `round` and list column, except those a Parquet file's statistics show hold one value throughout (each loaded column is 4 bytes a row).

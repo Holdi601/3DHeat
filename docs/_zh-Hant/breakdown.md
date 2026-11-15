@@ -6,7 +6,7 @@ lang: "zh-Hant"
 source: "breakdown.md"
 source_hash: "9df7c09886d9"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 明細：誰與什麼在何處表現最好

@@ -6,7 +6,7 @@ lang: "be"
 source: "volumes.md"
 source_hash: "25cc132dbe25"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Аб'ёмы і параўнанне

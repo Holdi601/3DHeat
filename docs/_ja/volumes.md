@@ -6,7 +6,7 @@ lang: "ja"
 source: "volumes.md"
 source_hash: "25cc132dbe25"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # ボリュームと比較

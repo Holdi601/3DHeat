@@ -6,7 +6,7 @@ lang: "sl"
 source: "filters.md"
 source_hash: "e957bf788bda"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Filtri

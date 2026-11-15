@@ -58,6 +58,7 @@ The GPU filter takes up to 8 volumes with 64 outline points in all; a "!" marks 
 The **Statistics** area follows the filters, the time window and hidden groups. *Selected* shows the selected volume, *Compare all* puts every volume side by side. It shows:
 
 - **Rows inside (shown)** and **Rows inside (all data)**, **Players**, **Teams**, **Matches**, **Time inside**, **Entries / exits**, **Peak heat**, **Mean heat**, **Volume / footprint** and a **When** histogram;
+- **Win rate**, where the data says who won ([outcome columns](data-formats.md#outcome-columns)): of the rounds with a player inside, each player's round counted once, the share their side won - pulled toward the rate over everything shown by 4 rounds, as the [breakdown](breakdown.md) does - with the rounds won and played and that overall rate;
 - per column: categories with **Lift** (share inside divided by share in all shown data), and numbers with range, median and 5th-95th percentiles.
 
 **Statistics as CSV / JSON** save them. **Export the data inside** writes the rows inside as CSV or Parquet (*Only the rows shown* on by default), one volume or all with a column saying which volume holds each row.

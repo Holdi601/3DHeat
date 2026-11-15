@@ -82,6 +82,10 @@ Choosing the column puts its first value on + and its second on −. When neithe
 
 A value in both ranges counts as +. The ranges do not have to cover the column; values in neither are left out. *The first two minutes against the last two* is a range split on a time-like column.
 
+## Share of +: the win-rate map
+
+**Difference** / **Share of +** at the top of the panel chooses what is drawn. *Share of +* colours each place by the + side's share of the rows on either side there, against that share over everything shown: warm above it, cool below, nothing where it is the same, and nothing where a place has too few rows. With the won rounds on + and the lost on − it is a win-rate map; **Round win rate** and **Match win rate** set that up in one press where the data has [outcome columns](data-formats.md#outcome-columns). See [Win rate](win-rate.md).
+
 ## Colours
 
 The **Heat colours** section shows two ramp editors in this mode: **Positive (additive teams)** and **Negative (subtractive teams)**, each with its own reset button (*Reset to transparent → red → yellow → white*, *Reset to transparent → green → blue → purple*). The composite takes the absolute value of the net heat through the [saturation point and response](colour-and-exposure.md), and picks the negative ramp where the net is below zero. See [Colour and exposure](colour-and-exposure.md#the-ramp-editor).

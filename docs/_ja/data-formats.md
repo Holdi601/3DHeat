@@ -5,7 +5,7 @@ lang: "ja"
 source: "data-formats.md"
 source_hash: "2ffd2bfd6f0f"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # データ形式リファレンス

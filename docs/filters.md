@@ -29,6 +29,8 @@ On load the viewer works out four columns of its own and lists them **first**, w
 | **Vehicle class** | 17 classes: Fighter, Attack aircraft, Bomber, Other aircraft, Helicopter, Tank, Armoured vehicle, Air defence, Artillery, Truck / car, Ship, Submarine, Infantry, Weapon, Decoy, Structure, Other | the vehicle or unit name (matched against the [figure catalogue](figures.md)) and type columns |
 | **Target class** | the same classes | the other party's vehicle (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
 
+Right after them come the [outcome columns](data-formats.md#outcome-columns), where the data has them: **Round result** and **Match result** (*Any*, *Won*, *Lost*) and **How the round ended**, its values in your language. Filter on them, or split the heat by them as a [win-rate map](win-rate.md).
+
 Only the kinds that occur are listed. Value columns (`cost_*`, `earn_*`, `net_*` and *Cost source*, see [Value weighting](value-weighting.md)) are filterable like any number column: for example untick *estimate* under *Cost source* to keep only priced rows.
 
 A category list with more than 12 values gets a search box (*Search n values*) and an **Only these** button that allows exactly the values that match.

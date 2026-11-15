@@ -6,7 +6,7 @@ lang: "es"
 source: "breakdown.md"
 source_hash: "9df7c09886d9"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Desglose: quién y qué funciona mejor en cada sitio

@@ -6,7 +6,7 @@ lang: "uk"
 source: "volumes.md"
 source_hash: "25cc132dbe25"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Об’єми і порівняння

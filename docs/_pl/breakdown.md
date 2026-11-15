@@ -6,7 +6,7 @@ lang: "pl"
 source: "breakdown.md"
 source_hash: "9df7c09886d9"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Zestawienie: kto i co jest najlepsze gdzie

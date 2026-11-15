@@ -6,7 +6,7 @@ lang: "sv"
 source: "breakdown.md"
 source_hash: "9df7c09886d9"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Uppdelning: vem och vad som presterar bäst var
