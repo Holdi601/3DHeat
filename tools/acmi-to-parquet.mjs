@@ -69,10 +69,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { Worker, isMainThread, parentPort, workerData } from 'node:worker_threads';
 import { describe, verifyContainer, writeContainer } from './container.mjs';
+import { readText } from './acmi-read.mjs';
 
 const SELF = fileURLToPath(import.meta.url);
 const ROOT = path.resolve(path.dirname(SELF), '..');
@@ -192,59 +192,6 @@ class Launchers {
 }
 
 // ---------------------------------------------------------------------------
-// Reading a recording as text, a piece at a time.
-
-/** Where the first member of a zip lies: its method and the byte range of its data. */
-function zipMember(file) {
-  const fd = fs.openSync(file, 'r');
-  try {
-    const size = fs.fstatSync(fd).size;
-    const tail = Math.min(size, 65557);
-    const buf = Buffer.alloc(tail);
-    fs.readSync(fd, buf, 0, tail, size - tail);
-    let eocd = -1;
-    for (let i = tail - 22; i >= 0; i--)
-      if (buf.readUInt32LE(i) === 0x06054b50) {
-        eocd = i;
-        break;
-      }
-    if (eocd < 0) throw new Error('not a zip: no end of central directory');
-    const cdAt = buf.readUInt32LE(eocd + 16);
-    const cd = Buffer.alloc(46);
-    fs.readSync(fd, cd, 0, 46, cdAt);
-    if (cd.readUInt32LE(0) !== 0x02014b50) throw new Error('zip central directory not found');
-    const method = cd.readUInt16LE(10);
-    const csize = cd.readUInt32LE(20);
-    const local = cd.readUInt32LE(42);
-    const lh = Buffer.alloc(30);
-    fs.readSync(fd, lh, 0, 30, local);
-    const start = local + 30 + lh.readUInt16LE(26) + lh.readUInt16LE(28);
-    return { method, start, end: start + csize };
-  } finally {
-    fs.closeSync(fd);
-  }
-}
-
-/** Feeds the recording's text to `push`, piece by piece. */
-async function readText(file, push) {
-  const head = Buffer.alloc(4);
-  const fd = fs.openSync(file, 'r');
-  fs.readSync(fd, head, 0, 4, 0);
-  fs.closeSync(fd);
-  let stream;
-  if (head.readUInt32LE(0) === 0x04034b50) {
-    const m = zipMember(file);
-    if (m.method !== 0 && m.method !== 8) throw new Error(`zip method ${m.method} is not supported`);
-    const raw = fs.createReadStream(file, { start: m.start, end: Math.max(m.start, m.end - 1), highWaterMark: 1 << 20 });
-    stream = m.method === 8 ? raw.pipe(zlib.createInflateRaw({ chunkSize: 1 << 20 })) : raw;
-  } else stream = fs.createReadStream(file, { highWaterMark: 1 << 20 });
-  const dec = new TextDecoder('utf-8');
-  for await (const chunk of stream) push(dec.decode(chunk, { stream: true }));
-  const rest = dec.decode();
-  if (rest) push(rest);
-}
-
-// ---------------------------------------------------------------------------
 // One recording, in a worker.
 
 async function convert(job, theatres) {
@@ -296,9 +243,10 @@ async function convert(job, theatres) {
   // The columns: the viewer's ACMI table, then every property.
   const EVENT_TEXT = ['Shooter', 'Target', 'Weapon', 'OtherVehicle', 'OtherType', 'Airfield', 'Detail', 'Inferred'];
   // Who won (docs/data-formats.md#outcome-columns) and each aircraft's sortie.
-  const OUTCOME_NUM = ['round', 'won', 'matchWon', 'sortie', 'sortieKills'];
-  const OUTCOME_TEXT = ['server', 'mission', 'roundEndReason', 'sortieResult'];
-  const OUTCOME = ['server', 'mission', 'round', 'won', 'matchWon', 'roundEndReason', 'sortie', 'sortieResult', 'sortieKills'];
+  // A campaign round spans many sessions (recordings): `campaign` names it, `session` is this one's place in it.
+  const OUTCOME_NUM = ['round', 'session', 'sessionStart', 'won', 'matchWon', 'sortie', 'sortieKills'];
+  const OUTCOME_TEXT = ['server', 'mission', 'campaign', 'roundEndReason', 'sortieResult'];
+  const OUTCOME = ['server', 'mission', 'campaign', 'round', 'session', 'sessionStart', 'won', 'matchWon', 'roundEndReason', 'sortie', 'sortieResult', 'sortieKills'];
   const FIXED_NUM = ['Time', 'X', 'Y', 'Altitude', 'Heading', 'Pitch', 'Roll', 'Latitude', 'Longitude', 'Rounds', ...OUTCOME_NUM];
   const FIXED_TEXT = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT, ...OUTCOME_TEXT];
   const OWN_TEXT = new Set(['Type', 'Name', 'Pilot', 'Group', 'Country', 'Coalition', 'Color']);
@@ -458,7 +406,7 @@ async function convert(job, theatres) {
   const [jT, jX, jY, jA, jH, jP, jR, jLat, jLon, jU, jV] = ['Time', 'X', 'Y', 'Altitude', 'Heading', 'Pitch', 'Roll', 'Latitude', 'Longitude', 'U', 'V'].map(J);
   const [jObj, jCo, jTy, jNa, jPi, jGr, jCn, jCl, jEv, jRec, jEvo, jInfo, jAct, jLau] = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher'].map(J);
   const [jSh, jTg, jWp, jOv, jOt, jAf, jDt, jInf, jRnd] = [...EVENT_TEXT, 'Rounds'].map(J);
-  const [jSrv, jMis, jRound, jWon, jMWon, jWhy, jSor, jSorR, jSorK] = OUTCOME.map(J);
+  const [jSrv, jMis, jCamp, jRound, jSess, jSessT, jWon, jMWon, jWhy, jSor, jSorR, jSorK] = OUTCOME.map(J);
   /** A row's server, round and outcome by its side and the real time of its mission time `t`; no sortie yet. */
   let lastRound = null;
   const stamp = (b, i, t, color) => {
@@ -467,7 +415,10 @@ async function convert(job, theatres) {
     const wall = recUnix + t;
     if (!lastRound || !(wall >= lastRound.t0 && wall < lastRound.t1)) lastRound = roundAt(rounds, wall);
     const r = lastRound;
+    b[jCamp][i] = r ? r.campaign : '';
     b[jRound][i] = r ? r.id : NaN;
+    b[jSess][i] = r ? r.session : NaN;
+    b[jSessT][i] = recUnix;
     // A campaign is the round and the match at once: who took it.
     b[jWon][i] = b[jMWon][i] = wonIn(r, color);
     b[jWhy][i] = r && r.winner ? (r.endReason ?? '') : '';
@@ -480,6 +431,8 @@ async function convert(job, theatres) {
   const liveAir = new Map();
   let capture = null;
   let captures = 0;
+  /** A colour's coalition as this recording names them (DCS: Red is Allies, Blue Enemies). */
+  const coalitionOf = new Map();
   const pads = new PadOwners((c) => {
     capture = c;
   });
@@ -603,6 +556,7 @@ async function convert(job, theatres) {
     b[jSh][i] = b[jTg][i] = b[jWp][i] = b[jOv][i] = b[jOt][i] = b[jAf][i] = b[jDt][i] = b[jInf][i] = '';
     b[jRnd][i] = NaN;
     stamp(b, i, row.t, p.get('Color') ?? '');
+    if (p.has('Color') && p.has('Coalition') && !coalitionOf.has(p.get('Color'))) coalitionOf.set(p.get('Color'), p.get('Coalition'));
     // What the recording leaves unsaid, from how things move, appear and end.
     if (row.placed && row.id) {
       const type = p.get('Type') ?? '';
@@ -679,6 +633,35 @@ async function convert(job, theatres) {
   reader.end();
   finder.finish();
   info(reader.lastTime);
+  // The places taken between the session before and this one (a chained rounds file lists them): a capture row
+  // each at the place, at the recording's start, marked as between missions.
+  const startRound = Number.isFinite(recUnix) ? roundAt(rounds, recUnix) : null;
+  const between = startRound && Number.isFinite(startRound.session) ? startRound.captures : [];
+  for (const c of between) {
+    const k = main.next();
+    const cb = main.bufs;
+    for (let j = 0; j < columns.length; j++) cb[j][k] = columns[j].num ? NaN : '';
+    const [x, y] = project(c.lat, c.lon);
+    cb[jT][k] = reader.refTime ?? 0;
+    cb[jX][k] = x;
+    cb[jY][k] = y;
+    cb[jA][k] = 0;
+    cb[jLat][k] = c.lat;
+    cb[jLon][k] = c.lon;
+    cb[jObj][k] = '(campaign)';
+    cb[jCo][k] = coalitionOf.get(c.to) ?? c.to;
+    cb[jCl][k] = c.to;
+    cb[jEv][k] = 'capture';
+    cb[jRec][k] = recording;
+    cb[jDt][k] = `${c.from} to ${c.to}, between missions`;
+    cb[jInf][k] = 'between missions';
+    cb[jAct][k] = '';
+    cb[jLau][k] = '';
+    stamp(cb, k, 0, c.to);
+    captures++;
+    eventRows++;
+    mainRows++;
+  }
   // The aircraft still in the recording: flying or down at its end.
   sorties.finish((reader.refTime ?? 0) + reader.lastTime, (label) => (liveAir.has(label) ? finder.airborne(liveAir.get(label)) : null));
   const sortieCount = {};
@@ -709,8 +692,10 @@ async function convert(job, theatres) {
     server: srv.server || null,
     mission: srv.mission || null,
     kind: srv.kind,
-    result: { winner: last?.winner ?? null, round: last?.id ?? null, endReason: last?.winner ? (last.endReason ?? null) : null, source: last ? roundsSource : null },
-    rounds: rounds.map((r) => ({ id: r.id, start: iso(r.t0), end: iso(r.t1), winner: r.winner, endReason: r.endReason, state: r.state })),
+    result: { winner: last?.winner ?? null, round: last?.id ?? null, campaign: last?.campaign ?? null, endReason: last?.winner ? (last.endReason ?? null) : null, confidence: last?.winner ? (last.confidence ?? null) : null, source: last ? roundsSource : null },
+    rounds: rounds.map((r) => ({ id: r.id, campaign: r.campaign, start: iso(r.t0), end: iso(r.t1), winner: r.winner, endReason: r.endReason, state: r.state, confidence: r.confidence })),
+    // The campaign round this recording (session) began in: its place in it, and who held what at its start.
+    session: startRound ? { campaign: startRound.campaign, round: startRound.id, session: Number.isFinite(startRound.session) ? startRound.session : null, start: iso(recUnix), held: Number.isFinite(startRound.red) ? { Red: startRound.red, Blue: startRound.blue } : null, takenBefore: between.length } : null,
     captures,
     sorties: sortieCount,
   };

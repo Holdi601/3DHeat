@@ -42,18 +42,25 @@ A DCS multiplayer server records its missions with Tacview around the clock, and
 |---|---|
 | `server` | the server or campaign, from the recording's header (its Title, Author and Comments name the known public servers - Blue Flag, SPS Contention, Growling Sidewinder; otherwise an Author that names someone); `--server Name` names it for a whole folder. A recording whose header names no server - an Author such as `Admin`, a Title and Comments no known server writes - stays unattributed: `server` empty, even when it was downloaded from a server's recording page, since the page may hold other communities' missions too |
 | `mission` | the recording's Title without its version or campaign month: `Operation_Example_V7.7.99` becomes `Operation Example` |
-| `round` | the server's own number of the campaign the moment belongs to, from a rounds file (below); empty without one |
+| `campaign` | the campaign round the recording belongs to, by server, map and number: `Example Server North 3`. One recording is one session (restart to restart); a round runs over many sessions, days or weeks |
+| `round` | that round's number: the server's own where it publishes one, else the n-th round seen of that server and map; from a rounds file (below), empty without one |
+| `session` | the recording's place among the round's sessions, 1, 2, ...; `sessionStart` its real start (Unix seconds) |
 | `won`, `matchWon` | 1 when the row's side (its Color, Red or Blue) won that campaign, 0 when it lost; empty where no rounds file names a winner, and on neutral rows. A campaign is the round and the match at once, so both hold the same |
 | `roundEndReason` | `capture` for a campaign won by taking everything |
+| `won`, `matchWon` on every session of a round | the round's result, written on every recording of it once its end is known |
 | `sortie` | on an aircraft's rows: its flight, 1, 2, ... from take-off to take-off; the ground time before the first take-off and after a landing counts to the flight it belongs to |
 | `sortieResult` | how that flight ended: `landed`, `landed damaged` (after a hit in the air), `ejected`, `shot down`, `destroyed` (on the ground), `crashed`, `despawned` (gone in the air with no cause seen - a player leaving), `airborne at end`, `no takeoff` |
 | `sortieKills` | the kills credited to the aircraft in that flight |
 
 In a persistent server the sortie is the unit that means something: filter on `sortieResult` = `shot down` to see where flights were lost, or break the heat down by `sortieResult` or `server` in the [breakdown](breakdown.md). The take-offs, landings, ejections, kills and crashes it is made of are the events the converter works out from how the aircraft move (above).
 
+Places taken between two sessions of a round - known from the rounds file, below - are `capture` events at the start of the later recording: `Object` `(campaign)`, at the place, `Detail` `Red to Blue, between missions`, `Inferred` `between missions`.
+
 An airfield or FARP that changes sides where the recording shows it - written again in the other colour, or removed and written again at its place in the other within five minutes - becomes a `capture` event at the pad: `Event` = `capture`, `Airfield` its name, `Detail` `Red to Blue`, `Coalition` its new side. A pad first written in a colour is no capture. The servers looked at so far write their pads once, so their recordings hold no captures.
 
 ### Rounds files
+
+A rounds file says, per server, its campaign rounds, who won them and each one's sessions. It comes from what the server publishes, or from the recordings themselves (below).
 
 Who won a campaign is what the server publishes - a campaign log on its web page - not something in the recording. A rounds file carries it, and the converter reads it with `--rounds file.json` (more than one may be given):
 
@@ -86,12 +93,35 @@ The match document's counterpart, the `acmi` footer, says where the result came 
 
 A row of a pilot `Viper 1 (F-16C_50) #a01` on the Blue side in that campaign then reads `server` Example Server, `round` 41, `won` 1, `roundEndReason` capture, `sortie` 2, `sortieResult` landed, `sortieKills` 1.
 
+### Rounds from the recordings themselves
+
+A persistent server keeps its campaign across restarts, and each recording begins with the ground units and statics of both sides where the campaign left them. `node tools/dcs-campaign-rounds.mjs <out-folder> <folder>...` reads the first minutes of every recording ([`data/dcsCampaign.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/dcsCampaign.ts)), puts each server's recordings of one map in time order and chains them:
+
+- **Places**: the ground in cells of about 2 km; a cell is a side's where three quarters of the units there at a session's start are its. *Contested* places are those seen held by both sides.
+- **Captures**: a place held by the other side at the next session's start - taken between the missions, or during the earlier one.
+- **A new round**: a session whose places differ from the last one's in more than 60% of them - the starting layout of a new round, not a step of the old one. A round also ends when the server moves to another map (its sessions begin after the last and go on).
+- **Who won**: of a round that ended, the side holding every place at its last session's start (`capture`, confidence high), else the side holding more of the contested places (medium at twice the other's, else low; low when it ended with a map change). An open round has no winner, but every session says how many places each side held at its start, so who was ahead shows.
+- A server whose sessions all begin alike keeps no state between them: it is not chained.
+
+The last session's start can be hours before the round's end, so the confidence matters. Checked against a server that publishes its winners: the chain found every new round at the session the published round began, and the side ahead at the last start was the published winner in each of the 9 rounds it could check. `--official file.json` keeps such a server's published rounds and adds the chain's sessions to them; the file's `validation` says how far the chain agreed. In a made-up campaign:
+
+```json
+{ "id": 2, "campaign": "Example Server North 2", "title": "^(?:Example_North_V1\.0)$",
+  "start": "2026-11-02T06:00:00.000Z", "end": "2026-11-06T12:00:00.000Z", "winner": "Red", "endReason": null,
+  "state": "won (reset)", "confidence": "medium", "ahead": "Red",
+  "sessions": [
+    { "start": "2026-11-02T06:00:00.000Z", "red": 12, "blue": 11, "redAll": 30, "blueAll": 28, "captures": [] },
+    { "start": "2026-11-02T12:00:00.000Z", "red": 14, "blue": 9, "redAll": 32, "blueAll": 26,
+      "captures": [{ "lat": 42.36, "lon": 42.02, "from": "Blue", "to": "Red" }, { "lat": 42.4, "lon": 41.98, "from": "Blue", "to": "Red" }] }
+  ] }
+```
+
 What the known servers publish:
 
 | Server | A round | How a side wins | Where the winner can be read |
 |---|---|---|---|
 | SPS Contention | a campaign on one map and era (days), over many restarts | every airfield, FARP and stronghold taken; a campaign ended without a winner was rotated | the server's public campaign log (winner, start, end per campaign) |
-| Blue Flag | a campaign round over many 5-hour missions; the Title's `_YYYY_MM` advances one month a restart | every enemy position taken; older rounds named the side holding more after a fixed time | not published in a form found so far: empty |
-| Growling Sidewinder | a mission run (6 hours) of an open-conflict mission | zones and airfields taken | its statistics page shows pilots, not results: empty |
+| Blue Flag | a campaign round over many 5-hour missions; the Title's `_YYYY_MM` advances one month a restart | every enemy position taken; older rounds named the side holding more after a fixed time | not published in a form found so far; the chain of the recordings follows each round and who holds how much at every start |
+| Growling Sidewinder | a mission run (6 hours) of an open-conflict mission | zones and airfields taken | its statistics page shows pilots, not results; every session begins alike, so no round spans sessions: empty |
 | Missions against the AI (capture-the-zones missions) | a mission run | the players' side against the mission's AI: no PvP outcome | empty |
 | Unattributed (header names no server) | - | - | empty, `server` empty too |

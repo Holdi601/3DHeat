@@ -95,6 +95,25 @@ export interface DcsRound {
   endReason?: string | null;
   /** The source's own word for how it stands: won, rotated, in progress. */
   state?: string;
+  /** The round's name across servers: server, map and number (`Blue Flag Syria 1`). */
+  campaign?: string;
+  /** How sure the winner is, where it was worked out rather than published (`dcsCampaign.ts`). */
+  confidence?: 'high' | 'medium' | 'low' | null;
+  /** Who was ahead at the last session's start (an open round's too). */
+  ahead?: DcsSide | null;
+  /** The round's sessions (recordings) in order, with the contested places each side held at its start and what changed side before it. */
+  sessions?: DcsRoundSession[];
+}
+
+/** One session (recording) of a round. */
+export interface DcsRoundSession {
+  /** Its RecordingTime. */
+  start: string | null;
+  file?: string;
+  red?: number;
+  blue?: number;
+  /** Places taken since the session before: their centre and the sides. */
+  captures?: { lat: number; lon: number; from: DcsSide; to: DcsSide }[];
 }
 
 /** A rounds file: `{ format: 'heat3d-dcs-rounds', version: 1, server, source, rounds: [...] }`. */
@@ -123,7 +142,18 @@ export interface RoundSpan {
   winner: DcsSide | null;
   endReason: string | null;
   state: string | null;
+  campaign: string;
+  confidence: string | null;
+  /** The recording's own session in this round, from 1; NaN where the round lists none at its start. */
+  session: number;
+  /** The contested places each side held at the recording's start, and those taken since the session before. */
+  red: number;
+  blue: number;
+  captures: { lat: number; lon: number; from: DcsSide; to: DcsSide }[];
 }
+
+/** How near (s) a session's listed start must be to the recording's RecordingTime. */
+const SESSION_MATCH_S = 120;
 
 /** The rounds of the servers a converter was given, looked up per recording and per row. */
 export class DcsRounds {
@@ -159,7 +189,15 @@ export class DcsRounds {
       if (!Number.isFinite(a) || Number.isNaN(b)) continue;
       if (b <= t0 || a > t1) continue;
       const w = r.winner === 'Red' || r.winner === 'Blue' ? r.winner : null;
-      rounds.push({ id: r.id, t0: a, t1: b, winner: w, endReason: w ? (r.endReason ?? null) : null, state: r.state ?? null });
+      // This recording among the round's sessions: by its start.
+      const list = r.sessions ?? [];
+      const at = list.findIndex((x) => Math.abs(isoSeconds(x.start) - t0) <= SESSION_MATCH_S);
+      const me = at >= 0 ? list[at] : null;
+      rounds.push({
+        id: r.id, t0: a, t1: b, winner: w, endReason: w ? (r.endReason ?? null) : null, state: r.state ?? null,
+        campaign: r.campaign ?? `${server} ${r.id}`, confidence: r.confidence ?? null,
+        session: at >= 0 ? at + 1 : NaN, red: me?.red ?? NaN, blue: me?.blue ?? NaN, captures: me?.captures ?? [],
+      });
     }
     rounds.sort((p, q) => p.t0 - q.t0);
     return { rounds, source: rounds.length ? f.source : null };
