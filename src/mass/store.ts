@@ -91,6 +91,8 @@ export interface MassFilter {
 /** What a drill-down asks for, besides the filter. */
 export interface MassDrill {
   match?: number;
+  /** These matches (a place's: where it held), within the filter. */
+  matches?: number[];
   vehicle?: string;
   cls?: string;
   team?: string;
@@ -779,6 +781,7 @@ export function phases(s: MassStore, mask: Uint8Array): Record<string, number[]>
 /** The matches a drill-down asks for (filter, then the rows that name the vehicle, class, team, player or weapon). */
 export function drillMatches(s: MassStore, mask: Uint8Array, d: MassDrill): number[] {
   if (d.match !== undefined) return mask[d.match] ? [d.match] : [];
+  if (d.matches) return d.matches.filter((m) => mask[m]);
   const keep = new Uint8Array(mask.length);
   let any = false;
   const id = (x?: string) => (x === undefined ? -2 : s.dict.id(x));

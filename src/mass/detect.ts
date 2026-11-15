@@ -27,7 +27,9 @@ import type { InsightNames } from '../insights/detectors';
 import { bhAdjust, confidenceLevel, shareTest, strengthOf, type ShareTest } from '../insights/stats';
 import type { Insight, InsightPlace } from '../insights/types';
 import type { GridMerge } from './grids';
-import { balance, drillMatches, phases, sides, type MassDrill, type MassFilter, type MassStore } from './store';
+import { balance, drillMatches, NOT_DRIVEN, phases, sides, type MassDrill, type MassFilter, type MassStore } from './store';
+import { pOfZ, type PlaceFinding, type PlaceRun, type PlaceShape } from './scan';
+import type { NicheFinding, NicheRun } from './niche';
 import { GRID_KINDS, PHASE_BINS } from './types';
 
 export const MASS_FDR = 0.05;
@@ -36,13 +38,25 @@ export const MASS_MAX = 80;
 const MIN_UNITS = 20;
 const MIN_SEEN = 8;
 
-export type MassDetectorId = 'balance' | 'hotspot' | 'side' | 'meta' | 'phase' | `grid.${string}`;
+export type MassDetectorId = 'balance' | 'hotspot' | 'side' | 'meta' | 'phase' | 'place' | 'niche' | `grid.${string}`;
 
 /** An insight of the mass report: the single-dataset shape, with what loads its evidence. */
 export interface MassInsight extends Omit<Insight, 'detector'> {
   detector: MassDetectorId;
   /** The matches it rests on, as a drill-down within the report's filter (and map). */
   drill: MassDrill & { map?: string; mode?: string };
+  /** A place's outline, height band or part of the match, and how plain it already is in the heat (`place`). */
+  region?: {
+    shape: PlaceShape;
+    segs: number[];
+    path?: [number, number][];
+    bandY?: [number, number];
+    phase?: [number, number];
+    obviousness: number;
+    hidden: boolean;
+  };
+  /** A niche's conditions (`niche`). */
+  conds?: { f: string; v: string; label?: string }[];
 }
 
 export interface MassDetectorRun {
@@ -56,6 +70,9 @@ export interface MassDetectorRun {
 
 export interface MassReport {
   schema: 'heat3d.mass/1';
+  /** Stage B in full: every place and niche kept (the insights carry the best of them). */
+  places?: PlaceRun | null;
+  niches?: NicheRun | null;
   dataset: { matches: number; games: string[]; maps: number; hours: number; players: number; from: string | null; to: string | null };
   filter: MassFilter;
   detectors: MassDetectorRun[];
@@ -70,6 +87,9 @@ export interface MassContext {
   mask: Uint8Array;
   filter: MassFilter;
   grids: Map<string, GridMerge>;
+  /** Stage B, worked out before (the place scan reads the grids twice, the niches need its tables). */
+  places?: PlaceRun | null;
+  niches?: NicheRun | null;
 }
 
 export interface MassDetector {
@@ -249,6 +269,22 @@ const sideDetector: MassDetector = {
   },
 };
 
+/** A use shift worth telling: this many share points at least, and a quarter more or less. */
+const META_MIN_POINTS = 0.02;
+const META_MIN_USE = 1.25;
+/** A K/D shift: odds this much better or worse. */
+const META_MIN_KD = 1.3;
+
+/**
+ * Meta shifts with practical significance: on mixed dates, servers and
+ * missions a binomial on lives calls nearly every change significant (lives
+ * of one match move together). So the test is cluster-robust (each match's
+ * lives a cluster, its residual against the half's share), the shift must be
+ * large enough to matter (`META_MIN_*`), the dates' quarters must move the
+ * same way (Kendall's tau of the quarters' shares with time, at least 0.5 in
+ * the shift's direction: a trend, not one odd stretch), and a vehicle seen
+ * on several maps must shift the same way on most of them.
+ */
 const metaDetector: MassDetector = {
   id: 'meta',
   skip: (ctx) => {
@@ -258,58 +294,162 @@ const metaDetector: MassDetector = {
   },
   run: (ctx) => {
     const s = ctx.store;
+    const n = ctx.mask.length;
     const dates: number[] = [];
-    for (let i = 0; i < ctx.mask.length; i++) if (ctx.mask[i] && Number.isFinite(s.m.started.get(i))) dates.push(s.m.started.get(i));
+    for (let i = 0; i < n; i++) if (ctx.mask[i] && Number.isFinite(s.m.started.get(i))) dates.push(s.m.started.get(i));
     dates.sort((a, b) => a - b);
-    const mid = dates[Math.floor(dates.length / 2)];
-    const early = new Uint8Array(ctx.mask.length);
-    const late = new Uint8Array(ctx.mask.length);
-    for (let i = 0; i < ctx.mask.length; i++) {
+    const cut = [0.25, 0.5, 0.75].map((f) => dates[Math.floor(dates.length * f)]);
+    const mid = cut[1];
+    /** Quarter of the dates (0..3), -1 undated or filtered out. */
+    const quarter = new Int8Array(n).fill(-1);
+    for (let i = 0; i < n; i++) {
       const st = s.m.started.get(i);
-      if (!ctx.mask[i] || !Number.isFinite(st)) continue;
-      (st < mid ? early : late)[i] = 1;
+      if (ctx.mask[i] && Number.isFinite(st)) quarter[i] = st < cut[0] ? 0 : st < cut[1] ? 1 : st < cut[2] ? 2 : 3;
     }
-    // Per map, so a change in which maps were played is no change in the meta; usage counts the lives players chose.
-    const a = balance(s, early, 'vehicle', 'map');
-    const b = balance(s, late, 'vehicle', 'map');
-    const sum = (rows: typeof a) => {
-      const m = new Map<string, number>();
-      for (const r of rows) m.set(r.split, (m.get(r.split) ?? 0) + r.players);
-      return m;
+    // Player lives a match (the vehicles anyone chose).
+    const tot = new Float64Array(n);
+    const V = s.v;
+    for (let r = 0; r < V.match.n; r++) {
+      const m = V.match.a[r];
+      if (quarter[m] < 0 || NOT_DRIVEN.has(s.str(V.cls.a[r]))) continue;
+      tot[m] += V.players.a[r];
+    }
+    // Per map and quarter: lives, and lives squared (for the robust variance).
+    const mapQ = new Map<number, { t: Float64Array; t2: Float64Array }>();
+    for (let i = 0; i < n; i++) {
+      if (quarter[i] < 0) continue;
+      const mp = s.m.map.get(i);
+      let a = mapQ.get(mp);
+      if (!a) mapQ.set(mp, (a = { t: new Float64Array(4), t2: new Float64Array(4) }));
+      a.t[quarter[i]] += tot[i];
+      a.t2[quarter[i]] += tot[i] * tot[i];
+    }
+    interface Acc { key: number; label: number; cls: number; map: number; l: Float64Array; ll: Float64Array; lt: Float64Array; k: Float64Array; d: Float64Array; kk: Float64Array; kn: Float64Array; nn: Float64Array }
+    const accs = new Map<string, Acc>();
+    for (let r = 0; r < V.match.n; r++) {
+      const m = V.match.a[r];
+      const qt = quarter[m];
+      if (qt < 0 || NOT_DRIVEN.has(s.str(V.cls.a[r]))) continue;
+      const mp = s.m.map.get(m);
+      const id = `${mp}|${V.key.a[r]}`;
+      let a = accs.get(id);
+      if (!a) {
+        const z = () => new Float64Array(4);
+        accs.set(id, (a = { key: V.key.a[r], label: V.label.a[r], cls: V.cls.a[r], map: mp, l: z(), ll: z(), lt: z(), k: z(), d: z(), kk: z(), kn: z(), nn: z() }));
+      }
+      const l = V.players.a[r], k = V.kills.a[r], d = V.deaths.a[r];
+      a.l[qt] += l;
+      a.ll[qt] += l * l;
+      a.lt[qt] += l * tot[m];
+      a.k[qt] += k;
+      a.d[qt] += d;
+      a.kk[qt] += k * k;
+      a.kn[qt] += k * (k + d);
+      a.nn[qt] += (k + d) * (k + d);
+    }
+    const sum = (x: Float64Array, q: number[]) => q.reduce((v, i) => v + x[i], 0);
+    const E = [0, 1], L = [2, 3];
+    /** Kendall's tau of the quarters' values (those with enough) against time. */
+    const tau = (v: number[], ok: boolean[]) => {
+      const pts = v.map((x, i) => [i, x] as const).filter((_, i) => ok[i]);
+      let c = 0, all = 0;
+      for (let i = 0; i < pts.length; i++)
+        for (let j = i + 1; j < pts.length; j++) {
+          all++;
+          c += Math.sign(pts[j][1] - pts[i][1]);
+        }
+      return pts.length >= 3 && all ? c / all : 0;
     };
-    const ta = sum(a), tb = sum(b);
-    const byKey = new Map(a.map((r) => [`${r.key}${r.split}`, r]));
-    const drafts: Draft[] = [];
+    type Shift = { a: Acc; kind: 'usage' | 'kd'; dir: number; draft: Draft };
+    const shifts: Shift[] = [];
     let tests = 0;
     const day = (sec: number) => new Date(sec * 1000).toISOString().slice(0, 10);
-    for (const r of b) {
-      const e = byKey.get(`${r.key}${r.split}`);
-      const pe = e?.players ?? 0;
-      const na = ta.get(r.split) ?? 0;
-      const nb = tb.get(r.split) ?? 0;
-      if (!r.split || r.players + pe < MIN_UNITS || na < MIN_UNITS || nb < MIN_UNITS) continue;
-      const params = { vehicle: r.label || r.key, map: r.split, since: day(mid) };
-      tests++;
-      drafts.push({
-        detector: 'meta', kind: 'meta.usage', key: `${r.split}:${r.key}`,
-        test: shareTest(r.players, nb, pe, na),
-        params: { ...params, before: pc(pe / na), after: pc(r.players / nb) },
-        evidence: { livesLate: r.players, livesEarly: pe, totalLate: nb, totalEarly: na, split: day(mid), map: r.split },
-        drill: { vehicle: r.key, map: r.split }, subject: { vehicleClass: r.cls },
-        method: 'exact binomial on its share of player lives on the map, later half of the dates against the earlier; BH',
-      });
-      if (e && r.players >= MIN_UNITS && e.players >= MIN_UNITS && r.kills + r.deaths >= 10 && e.kills + e.deaths >= 10) {
+    for (const a of accs.values()) {
+      const mq = mapQ.get(a.map)!;
+      const mapName = s.str(a.map);
+      if (!mapName) continue;
+      const vehicle = s.str(a.label) || s.str(a.key);
+      const params = { vehicle, map: mapName, since: day(mid) };
+      const drill = { vehicle: s.str(a.key), map: mapName };
+      // Use: share of the map's player lives, early half against late.
+      const lE = sum(a.l, E), lL = sum(a.l, L), tE = sum(mq.t, E), tL = sum(mq.t, L);
+      if (lE + lL >= MIN_UNITS && tE >= MIN_UNITS && tL >= MIN_UNITS) {
         tests++;
-        drafts.push({
-          detector: 'meta', kind: 'meta.kd', key: `${r.split}:${r.key}`,
-          test: shareTest(r.kills, r.kills + r.deaths, e.kills, e.kills + e.deaths),
-          params: { ...params, before: r3(e.kd), after: r3(r.kd) },
-          evidence: { killsLate: r.kills, deathsLate: r.deaths, killsEarly: e.kills, deathsEarly: e.deaths, split: day(mid), map: r.split },
-          drill: { vehicle: r.key, map: r.split }, subject: { vehicleClass: r.cls },
-          method: 'exact binomial on kills of kills + deaths on the map, later half against the earlier; BH',
-        });
+        const pE = lE / tE, pL = lL / tL;
+        // Over the half's matches, (lives - p * total)^2 - the matches without the vehicle included.
+        const rv = (q: number[], p: number, T: number) => (sum(a.ll, q) - 2 * p * sum(a.lt, q) + p * p * sum(mq.t2, q)) / (T * T);
+        const se = Math.sqrt(Math.max(1e-12, rv(E, pE, tE) + rv(L, pL, tL), (pE * (1 - pE)) / tE + (pL * (1 - pL)) / tL));
+        const z = (pL - pE) / se;
+        const rel = Math.max(pL, 1e-9) / Math.max(pE, 1e-9);
+        const big = Math.abs(pL - pE) >= META_MIN_POINTS && (rel >= META_MIN_USE || 1 / rel >= META_MIN_USE);
+        const qs = [0, 1, 2, 3].map((q) => (mq.t[q] > 0 ? a.l[q] / mq.t[q] : 0));
+        const trend = tau(qs, [0, 1, 2, 3].map((q) => mq.t[q] >= MIN_SEEN)) * Math.sign(pL - pE);
+        if (big && trend >= 0.5) {
+          const test = shareTest(lL, tL, lE, tE);
+          test.p = pOfZ(z);
+          shifts.push({
+            a, kind: 'usage', dir: Math.sign(pL - pE),
+            draft: {
+              detector: 'meta', kind: 'meta.usage', key: `${mapName}:${s.str(a.key)}`, test,
+              params: { ...params, before: pc(pE), after: pc(pL) },
+              evidence: { livesLate: lL, livesEarly: lE, totalLate: tL, totalEarly: tE, quarters: qs.map((x) => pc(x)).join(' '), trend: r3(trend), z: r3(z), split: day(mid), map: mapName },
+              drill, subject: { vehicleClass: s.str(a.cls) },
+              method: "share of the map's player lives, later half of the dates against the earlier; matches as clusters (robust variance); a shift of 2 points and 25% at least, the quarters trending the same way (Kendall tau >= 0.5); BH",
+            },
+          });
+        }
+      }
+      // K/D: kills of kills + deaths, early half against late.
+      const kE = sum(a.k, E), kL = sum(a.k, L), nE = kE + sum(a.d, E), nL = kL + sum(a.d, L);
+      if (sum(a.l, E) >= MIN_UNITS && sum(a.l, L) >= MIN_UNITS && nE >= 10 && nL >= 10) {
+        tests++;
+        const pE = kE / nE, pL = kL / nL;
+        const rv = (q: number[], p: number, N: number) => (sum(a.kk, q) - 2 * p * sum(a.kn, q) + p * p * sum(a.nn, q)) / (N * N);
+        const se = Math.sqrt(Math.max(1e-12, rv(E, pE, nE) + rv(L, pL, nL), (pE * (1 - pE)) / nE + (pL * (1 - pL)) / nL));
+        const z = (pL - pE) / se;
+        const test = shareTest(kL, nL, kE, nE);
+        const ratio = test.shrunk >= 1 ? test.shrunk : 1 / test.shrunk;
+        const qs = [0, 1, 2, 3].map((q) => (a.k[q] + a.d[q] > 0 ? a.k[q] / (a.k[q] + a.d[q]) : 0));
+        const trend = tau(qs, [0, 1, 2, 3].map((q) => a.k[q] + a.d[q] >= 5)) * Math.sign(pL - pE);
+        if (ratio >= META_MIN_KD && trend >= 0.5) {
+          test.p = pOfZ(z);
+          const kd = (k: number, nn: number) => r3(k / Math.max(1, nn - k));
+          shifts.push({
+            a, kind: 'kd', dir: Math.sign(pL - pE),
+            draft: {
+              detector: 'meta', kind: 'meta.kd', key: `${mapName}:${s.str(a.key)}`, test,
+              params: { ...params, before: kd(kE, nE), after: kd(kL, nL) },
+              evidence: { killsLate: kL, deathsLate: nL - kL, killsEarly: kE, deathsEarly: nE - kE, trend: r3(trend), z: r3(z), split: day(mid), map: mapName },
+              drill, subject: { vehicleClass: s.str(a.cls) },
+              method: 'kills of kills + deaths on the map, later half against the earlier; matches as clusters (robust variance); odds 1.3 times at least, the quarters trending the same way; BH',
+            },
+          });
+        }
       }
     }
+    // Across maps: a vehicle shifting one way here and the other way elsewhere is noise, not a meta.
+    const byVehicle = new Map<string, number[]>();
+    for (const a of accs.values()) {
+      const mq = mapQ.get(a.map)!;
+      const lE = sum(a.l, E), lL = sum(a.l, L);
+      if (lE >= 10 && lL >= 10) {
+        const v = byVehicle.get(`${a.key}|usage`) ?? [];
+        v.push(Math.sign(lL / Math.max(1e-9, sum(mq.t, L)) - lE / Math.max(1e-9, sum(mq.t, E))));
+        byVehicle.set(`${a.key}|usage`, v);
+      }
+      const nE = sum(a.k, E) + sum(a.d, E), nL = sum(a.k, L) + sum(a.d, L);
+      if (nE >= 10 && nL >= 10) {
+        const w = byVehicle.get(`${a.key}|kd`) ?? [];
+        w.push(Math.sign(sum(a.k, L) / nL - sum(a.k, E) / nE));
+        byVehicle.set(`${a.key}|kd`, w);
+      }
+    }
+    const drafts = shifts
+      .filter((x) => {
+        const dirs = byVehicle.get(`${x.a.key}|${x.kind}`) ?? [];
+        return dirs.length < 2 || dirs.filter((d) => d === x.dir).length / dirs.length > 0.5;
+      })
+      .map((x) => x.draft);
     return { insights: finish(drafts, tests), tests };
   },
 };
@@ -344,7 +484,126 @@ const phaseDetector: MassDetector = {
   },
 };
 
-export const MASS_DETECTORS: MassDetector[] = [balanceDetector, hotspotDetector, sideDetector, metaDetector, phaseDetector];
+const DEATH_EVENTS = ['death', 'destroyed', 'crash'];
+
+/** A place's sentence: by what it measures (all units, a class, a side, a band) and its shape. */
+function placeKind(f: PlaceFinding): string {
+  if (f.shape === 'time') return 'place.time';
+  if (f.shape === 'band') return f.type === 'share' ? 'place.bandKd' : 'place.bandRate';
+  if (f.type === 'share') return f.team ? 'place.kdSide' : f.band !== undefined ? 'place.kdBand' : 'place.kd';
+  return f.cls ? 'place.rateClass' : f.band !== undefined ? 'place.rateBand' : 'place.rate';
+}
+
+/** A band as words: metres above the ground, or the data's floor. */
+export function bandName(f: { band?: number; bandBy?: 'height' | 'floor' }): string {
+  if (f.band === undefined) return '';
+  if (f.bandBy === 'floor') return `#${f.band}`;
+  const e = [0, 3, 10, 30, 100, 300, 1000, 3000];
+  return f.band >= e.length - 1 ? `> ${e[e.length - 1]} m` : `${e[f.band]}–${e[f.band + 1]} m`;
+}
+
+/** A place's sentence: its message key and values. */
+export function placeSentence(f: PlaceFinding): { key: string; params: Record<string, number | string> } {
+  const kind = placeKind(f);
+  return {
+    key: `mass.say.${kind}${f.dir > 0 ? 'Up' : 'Down'}`,
+    params: {
+      map: f.map,
+      event: f.event,
+      ratio: r2(f.dir > 0 ? f.shrunk : 1 / Math.max(1e-9, f.shrunk)),
+      obs: Math.round(f.observed),
+      exp: f.expected >= 10 ? Math.round(f.expected) : r2(f.expected),
+      held: `${f.stability.held}/${f.stability.seen}`,
+      ...(f.cls ? { cls: f.cls } : {}),
+      ...(f.team ? { team: f.team } : {}),
+      ...(f.band !== undefined ? { band: bandName(f) } : {}),
+      ...(f.phase ? { from: Math.round(f.phase[0] * 100), to: Math.round(f.phase[1] * 100) } : {}),
+    },
+  };
+}
+
+/** Places found by the scan (`scan.ts`), as insights: already tested, held to the rate and ranked there. */
+const placeDetector: MassDetector = {
+  id: 'place',
+  skip: (ctx) => (!ctx.places ? 'mass.skip.noGrids' : null),
+  run: (ctx) => {
+    const run = ctx.places!;
+    const insights: MassInsight[] = run.findings.map((f) => {
+      const events = f.event === 'kd' ? ['kill', ...DEATH_EVENTS] : f.event === 'death' ? DEATH_EVENTS : [f.event];
+      return {
+        id: `mass:place:${f.id}`,
+        detector: 'place',
+        kind: placeKind(f),
+        sentence: placeSentence(f),
+        strength: f.score,
+        effect: { measure: f.type === 'share' ? 'kdOddsRatio' : 'rateRatio', value: f.shrunk, raw: fin(f.ratio), lo: fin(f.lo), hi: fin(f.hi) },
+        confidence: { p: f.p, q: f.q, level: confidenceLevel(f.q), tests: run.tests, method: `${f.shape === 'zone' ? 'zone grown on half the matches, tested on the other half' : f.shape === 'time' ? 'space-time scan against each match\'s own spread of events' : f.shape === 'band' ? 'height band against the match\'s other bands' : `${f.shape} scan`}; quasi-likelihood at the dispersion of the matches, retested cluster-robust; BH over ${run.tests} regions` },
+        evidence: {
+          map: f.map, observed: f.observed, expected: f.expected, exposure: f.exposure, ratioRaw: f.ratio, z: f.zScore, dispersion: f.phi,
+          giStar1: f.gi[0], giStar2: f.gi[1], giStar4: f.gi[2], localMoran: f.moran,
+          obviousness: f.obviousness, hidden: f.hidden ? 1 : 0, peakShare: f.peakShare,
+          matchesSeen: f.stability.seen, matchesHeld: f.stability.held, folds: `${f.stability.foldsAgree}/${f.stability.folds}`,
+          shape: f.shape, cells: f.cells, cell: f.cell, measure: f.measure, ...(f.heldOut ? { heldOut: 1 } : {}),
+        },
+        place: { x: f.x, y: f.y, z: f.z, radius: f.radius, grid: 'coarse', cell: f.cell, ...(f.path ? { path: f.path.map(([x, z]) => [x, f.y, z] as [number, number, number]) } : {}) },
+        time: null,
+        filters: [{ by: 'category', column: 'Event type', values: events }, ...(f.team ? [{ by: 'team' as const, values: [f.team] }] : [])],
+        subject: { ...(f.cls ? { vehicleClass: f.cls } : {}), ...(f.team ? { team: f.team } : {}), eventKind: f.event === 'kd' ? 'kill' : f.event },
+        drill: { map: f.map, ...(f.matches.length ? { matches: f.matches } : {}), ...(f.cls ? { cls: f.cls } : {}) },
+        region: { shape: f.shape, segs: f.segs, ...(f.path ? { path: f.path } : {}), ...(f.bandY ? { bandY: f.bandY } : {}), ...(f.phase ? { phase: f.phase } : {}), obviousness: f.obviousness, hidden: f.hidden },
+      };
+    });
+    return { insights, tests: run.tests };
+  },
+};
+
+/** A niche's conditions as words: its values, `·` between. */
+export function nicheGroup(f: Pick<NicheFinding, 'conds'>): string {
+  return f.conds.map((c) => c.label || c.v).join(' · ');
+}
+
+const nicheValue = (f: NicheFinding, v: number) => (f.type === 'share' ? pc(v) : r2(v));
+const r2 = (v: number) => Math.round(v * 100) / 100;
+
+/** A niche's sentence: its message key and values. */
+export function nicheSentence(f: NicheFinding): { key: string; params: Record<string, number | string> } {
+  return {
+    key: `mass.say.niche.${f.target}${f.dir > 0 ? 'Up' : 'Down'}`,
+    params: { group: nicheGroup(f), value: nicheValue(f, f.value), base: nicheValue(f, f.base), ratio: r2(f.dir > 0 ? f.shrunk : 1 / Math.max(1e-9, f.shrunk)), matches: f.matches },
+  };
+}
+
+/** Niches found by the beam search (`niche.ts`), as insights. */
+const nicheDetector: MassDetector = {
+  id: 'niche',
+  skip: (ctx) => (!ctx.niches ? 'mass.skip.other' : null),
+  run: (ctx) => {
+    const run = ctx.niches!;
+    const insights: MassInsight[] = run.findings.map((f) => {
+      const get = (k: string) => f.conds.find((c) => c.f === k)?.v;
+      const kind = `niche.${f.target}`;
+      return {
+        id: `mass:niche:${f.id}`,
+        detector: 'niche',
+        kind,
+        sentence: nicheSentence(f),
+        strength: f.score,
+        effect: { measure: f.target === 'kd' ? 'kdOddsRatio' : f.type === 'share' ? 'shareRatio' : 'rateRatio', value: f.shrunk, raw: fin(f.ratio), lo: fin(f.lo), hi: fin(f.hi) },
+        confidence: { p: f.p, q: f.q, level: confidenceLevel(f.q), tests: run.tests, method: `beam search over ${f.table}; matches as clusters (robust variance); shrunk by a prior of 20 outcomes; 4 of 5 folds agree; BH over ${run.tests} groups` },
+        evidence: { table: f.table, k: f.k, n: f.n, value: f.value, base: f.base, wracc: f.wracc, z: f.z, rows: f.rows, matches: f.matches, folds: `${f.foldsAgree}/${f.folds}`, conditions: f.conds.map((c) => `${c.f}=${c.label || c.v}`).join('; ') },
+        place: null,
+        time: null,
+        filters: [],
+        subject: { ...(get('class') ? { vehicleClass: get('class') } : {}), ...(get('side') ? { team: get('side') } : {}) },
+        drill: { ...(get('map') ? { map: get('map') } : {}), ...(get('mode') ? { mode: get('mode') } : {}), ...(get('vehicle') ? { vehicle: get('vehicle') } : {}), ...(get('class') ? { cls: get('class') } : {}), ...(get('side') ? { team: get('side') } : {}) },
+        conds: f.conds,
+      };
+    });
+    return { insights, tests: run.tests };
+  },
+};
+
+export const MASS_DETECTORS: MassDetector[] = [balanceDetector, hotspotDetector, sideDetector, metaDetector, phaseDetector, placeDetector, nicheDetector];
 
 const NAMES: InsightNames = { events: EVENT_KINDS, classes: VEHICLE_CLASSES, actors: ACTORS, teams: [], eventColumn: 'Event type', classColumn: 'Vehicle class', actorColumn: 'Player or AI' };
 
@@ -420,6 +679,8 @@ export function massInsights(ctx: MassContext, extra: MassDetector[] = []): Mass
     filter: ctx.filter,
     detectors: runs,
     insights: [...first, ...rest].slice(0, MASS_MAX),
+    places: ctx.places ?? null,
+    niches: ctx.niches ?? null,
     fdr: MASS_FDR,
     elapsedMs: Math.round(performance.now() - t0),
   };
@@ -445,8 +706,13 @@ export function massReportForModel(r: MassReport, say: (key: string, params: Rec
       time: i.time,
       filters: i.filters,
       subject: i.subject,
-      drill: i.drill,
+      drill: { ...i.drill, ...(i.drill.matches ? { matches: i.drill.matches.length } : {}) },
+      ...(i.region ? { region: { shape: i.region.shape, hidden: i.region.hidden, obviousness: i.region.obviousness, ...(i.region.bandY ? { heights: i.region.bandY } : {}), ...(i.region.phase ? { phase: i.region.phase } : {}) } } : {}),
+      ...(i.conds ? { conditions: i.conds } : {}),
     })),
+    // Stage B beyond the insights: how much was tried, and every hidden place (no outlines: numbers a model reads).
+    ...(r.places ? { places: { tests: r.places.tests, found: r.places.findings.length, hidden: r.places.findings.filter((f) => f.hidden).length, maps: r.places.maps.map(({ map, matches, kept }) => ({ map, matches, kept })) } } : {}),
+    ...(r.niches ? { niches: { tests: r.niches.tests, found: r.niches.findings.length } } : {}),
   };
 }
 

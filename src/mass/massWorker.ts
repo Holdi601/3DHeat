@@ -12,12 +12,14 @@
 import { isContainer, openContainer } from '../data/container';
 import { massInsights, insightMatches, type MassInsight, type MassReport } from './detect';
 import { GridMerge, mergeCell, type Channel } from './grids';
+import { discoverNiches, livesTable, nicheChildren, PlaceTables, type NicheCond, type NicheTable, type NicheTarget } from './niche';
+import { discoverPlaces, planOf, scanFrame, type PlaceJob, type PlaceMatch } from './scan';
 import {
   MassStore, balance, drillMatches, overview, phases, populations, sides, storeBytes, trends,
   type BalanceBy, type BalanceSplit, type Bucket, type MassDrill, type MassFilter,
 } from './store';
 import type { SummarizeRequest, SummarizeResponse } from './summarizeWorker';
-import { SUMMARY_FORMAT, SUMMARY_VERSION, type MatchSummary, type SummaryGrid, type SummaryHead } from './types';
+import { GRID_KINDS, SUMMARY_FORMAT, SUMMARY_VERSION, type MatchSummary, type SummaryGrid, type SummaryHead } from './types';
 
 export type MassQuery =
   | { kind: 'overview' }
@@ -28,10 +30,12 @@ export type MassQuery =
   | { kind: 'phases' };
 
 export type MassRequest =
+  | { type: 'files'; files: { file: File; path: string }[] }
   | { type: 'open'; files: { file: File; path: string }[]; add: boolean }
   | { type: 'query'; id: number; filter: MassFilter; q: MassQuery }
   | { type: 'grid'; id: number; filter: MassFilter; map: string; channel: Channel; level: number; team: string | null }
-  | { type: 'insights'; id: number; filter: MassFilter; maps: number }
+  | { type: 'insights'; id: number; filter: MassFilter; maps: number; stageB?: boolean }
+  | { type: 'niche'; id: number; filter: MassFilter; table: string; target: NicheTarget; base: NicheCond[] }
   | { type: 'drill'; id: number; filter: MassFilter; drill?: MassDrill; insight?: MassInsight };
 
 export interface MassFacets {
@@ -331,6 +335,12 @@ function teamsOf(i: number): string[] {
 /** The matches' grids summed (indexes streamed once each, the rest read one by one). */
 async function mergeOf(list: number[], team: string | null, progress: boolean): Promise<GridMerge> {
   const merge = new GridMerge(mergeCell(list.map((i) => extents[i])));
+  await streamGrids(list, (i, g) => merge.add(g, teamsOf(i), extents[i], team), progress);
+  return merge;
+}
+
+/** Each match's grid handed to `visit`, a match at a time: indexes streamed once each, the rest read one by one. */
+async function streamGrids(list: number[], visit: (i: number, g: SummaryGrid) => void, progress: boolean): Promise<void> {
   const byGz = new Map<File, Map<string, number>>();
   const other: number[] = [];
   for (const i of list) {
@@ -353,7 +363,7 @@ async function mergeOf(list: number[], team: string | null, progress: boolean): 
       const i = path === null ? undefined : want.get(path);
       if (i === undefined) continue;
       const e = JSON.parse(line) as { grid: SummaryGrid };
-      merge.add(e.grid, teamsOf(i), extents[i], team);
+      if (e.grid) visit(i, e.grid);
       want.delete(path);
       tick();
       if (!want.size) break;
@@ -369,7 +379,7 @@ async function mergeOf(list: number[], team: string | null, progress: boolean): 
       const i = other[k];
       try {
         const g = await gridOf(i);
-        if (g) merge.add(g, teamsOf(i), extents[i], team);
+        if (g) visit(i, g);
       } catch {
         // a file gone or unreadable: its grid is left out
       }
@@ -377,10 +387,27 @@ async function mergeOf(list: number[], team: string | null, progress: boolean): 
     }
   };
   await Promise.all(Array.from({ length: Math.min(8, other.length) }, work));
-  return merge;
+}
+
+/** The niche explorer's tables: the lives of the filter, and the places of the last insights run on it. */
+let nicheTables: { key: string; tables: NicheTable[] } | null = null;
+
+/** What the place scan looks for on a map: from the heads of its matches. */
+function planFor(list: number[]) {
+  const rows: { cls: string; kills: number; deaths: number }[] = [];
+  const teams: { name: string; kills: number; deaths: number }[] = [];
+  const events: Record<string, number> = {};
+  const want = new Set(list);
+  for (let r = 0; r < store.v.match.n; r++) if (want.has(store.v.match.a[r])) rows.push({ cls: store.str(store.v.cls.a[r]), kills: store.v.kills.a[r], deaths: store.v.deaths.a[r] });
+  for (let r = 0; r < store.t.match.n; r++) if (want.has(store.t.match.a[r])) teams.push({ name: store.str(store.t.name.a[r]), kills: store.t.kills.a[r], deaths: store.t.deaths.a[r] });
+  const GK = GRID_KINDS.length;
+  for (const i of list) GRID_KINDS.forEach((k, j) => (events[k] = (events[k] ?? 0) + store.events.a[i * GK + j]));
+  return planOf(rows, teams, events);
 }
 
 const filterKey = (f: MassFilter) => JSON.stringify(f);
+/** Files handed over before an `open`, a slice a message. */
+let incoming: { file: File; path: string }[] = [];
 
 // ---------------------------------------------------------------------------
 
@@ -388,7 +415,15 @@ ctx.onmessage = async (ev: MessageEvent<MassRequest>) => {
   const m = ev.data;
   const t0 = performance.now();
   try {
-    if (m.type === 'open') return await open(m.files, m.add);
+    if (m.type === 'files') {
+      incoming.push(...m.files);
+      return;
+    }
+    if (m.type === 'open') {
+      const list = [...incoming, ...m.files];
+      incoming = [];
+      return await open(list, m.add);
+    }
     if (m.type === 'query') {
       const mask = store.matchMask(m.filter);
       const q = m.q;
@@ -418,14 +453,50 @@ ctx.onmessage = async (ev: MessageEvent<MassRequest>) => {
       const mask = store.matchMask(m.filter);
       const o = overview(store, mask);
       const merges = new Map<string, GridMerge>();
+      const stageB = m.stageB !== false;
+      const tables = stageB ? new PlaceTables(store, mask) : null;
+      const jobs: PlaceJob[] = [];
+      const lists = new Map<string, number[]>();
       for (const mp of o.byMap.filter((x) => x.key).slice(0, m.maps)) {
         const mm = store.matchMask({ ...m.filter, maps: [mp.key] });
         const list: number[] = [];
         for (let i = 0; i < mm.length; i++) if (mm[i]) list.push(i);
-        merges.set(mp.key, await mergeOf(list, null, false));
+        lists.set(mp.key, list);
+        merges.set(mp.key, new GridMerge(mergeCell(list.map((i) => extents[i]))));
+        const frame = stageB ? scanFrame(list.map((i) => extents[i])) : null;
+        if (frame)
+          jobs.push({
+            map: mp.key,
+            frame,
+            plan: planFor(list),
+            read: (visit) => streamGrids(list, (i, grid) => visit({ i, grid, teams: teamsOf(i), duration: store.m.duration.get(i) } satisfies PlaceMatch), false),
+          });
       }
-      const report: MassReport = massInsights({ store, mask, filter: m.filter, grids: merges });
+      let places = null;
+      if (stageB) {
+        // One read feeds the summed grids, the place scan and the niche tables; the scan reads its maps again for stability.
+        const frames = new Map(jobs.map((j) => [j.map, j.frame]));
+        places = await discoverPlaces(jobs, (map, pm) => {
+          merges.get(map)!.add(pm.grid, pm.teams, extents[pm.i], null);
+          tables!.add(map, frames.get(map)!, pm);
+        });
+      }
+      // Maps without a raster (no extents) still get their summed grids.
+      for (const [map, list] of lists) if (!jobs.some((j) => j.map === map)) await streamGrids(list, (i, g) => merges.get(map)!.add(g, teamsOf(i), extents[i], null), false);
+      let niches = null;
+      if (stageB) {
+        const all = [livesTable(store, mask), ...tables!.tables()];
+        nicheTables = { key: filterKey(m.filter), tables: all };
+        niches = discoverNiches(all, store.matches);
+      }
+      const report: MassReport = massInsights({ store, mask, filter: m.filter, grids: merges, places, niches });
       return post({ type: 'result', id: m.id, data: report, ms: performance.now() - t0 });
+    }
+    if (m.type === 'niche') {
+      const key = filterKey(m.filter);
+      if (!nicheTables || nicheTables.key !== key) nicheTables = { key, tables: [livesTable(store, store.matchMask(m.filter))] };
+      const t = nicheTables.tables.find((x) => x.name === m.table) ?? nicheTables.tables[0];
+      return post({ type: 'result', id: m.id, data: nicheChildren(t, m.target, m.base, store.matches), ms: performance.now() - t0 });
     }
     if (m.type === 'drill') {
       const list = m.insight ? insightMatches(store, m.filter, m.insight) : drillMatches(store, store.matchMask(m.filter), m.drill ?? {});

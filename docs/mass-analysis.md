@@ -72,11 +72,14 @@ Pick a folder (or files; **Add folder...** joins another). The window has the fi
 
 ## Insights over many matches
 
+The **Places** tab finds places that stand out in the numbers but not in the heat - a large area busy as a whole, a corridor, a height band, a place busy only in one part of the match - marks the ones the plain heat does not show as **hidden**, and outlines them in the 3D view; **Load** flies there with the matches it held in. The **Niches** tab finds groups (a vehicle on one map and side, a sector at one height) doing markedly better or worse than the rest; click one to see its refinements.
+
 The **Insights** tab finds, over all matches, vehicles that trade or win better or worse than the rest, places hot in a steady share of matches, sides that win more than an even split, vehicles whose use moves over the dates, and parts of the match that hold more kills than an even spread. Each finding carries its counts, effect, interval and a false discovery rate (held to 5%), and a click loads its matches. Details: [For developers](#for-developers).
 
 ## Scale
 
-SCALE_PLACEHOLDER
+The summaries, the panel's tabs, the insights and the drill-down all run in
+workers, so the view keeps its frame rate while they work.
 
 The store keeps about 15 KB a match, so 10,000 matches take ~150 MB in the
 worker; grids are never held for more than the map asked for.
@@ -96,8 +99,10 @@ in the same shape as the single-match report (`insights/seam.ts`).
 | `balance` | a player vehicle trading or winning better or worse than the rest on a map or in a mode |
 | `hotspot` | places hot in a steady share of the matches that came by (matches hot / matches seen, against the map's other cells) - not just hot in sum |
 | `side` | a side of a map winning more than an even split |
-| `meta` | a vehicle's share of player lives or its K/D moving between the earlier and the later half of the dates, per map |
+| `meta` | a vehicle's share of player lives or its K/D moving between the earlier and the later half of the dates, per map - large enough to matter, trending over the quarters, the same way on most maps (below) |
 | `phase` | a part of the match length holding more kills, hits, launches... than an even spread |
+| `place` | places that stand out over many matches (Stage B, below): a region's rate or kill share against each match's own, circles, corridors, grown zones, height bands, phases; hidden when the plain heat does not show them |
+| `niche` | groups doing markedly better or worse (Stage B, below) |
 | `grid.*` | the single-dataset detectors (power positions, hot and quiet zones, class places) on each map's summed grids: `GridMerge.toInsightJob` fills the insight pass's grids from the summaries; the detectors that need tracks skip |
 
 ### The summary
@@ -143,24 +148,109 @@ shape, not only for heat pictures:
   `GRID_KINDS.length`; match phases are minutes over the length.
 - Sparse, counts integers, seconds to a tenth: bounded by what happened.
 
-### Stage B: niche and subgroup discovery
+### Stage B: places and niches
 
-Stage B adds detectors that look for places and groups that stand out
-without catching the eye: a large area busy as a whole with no hot cell,
-an unusual ratio on few counts, corridors and lines, height layers. It
-plugs in without changing the rest:
+Stage B looks for what stands out in the numbers without catching the eye:
+a large area busy as a whole with no hot cell in it, an odd kill-death
+ratio on few events, a corridor, a height band, a cluster that is there only
+in one part of the match - and groups (a vehicle on one map on one side, a
+sector at one height) doing markedly better or worse than the rest. One
+**Find places** / **Find niches** / **Find insights** runs all detectors;
+the three tabs share the report.
 
-1. A detector is a `MassDetector` (`detect.ts`): `skip(ctx)` and
-   `run(ctx) -> { insights, tests }`; pass it in `massInsights(ctx, extra)`.
-   Its findings are `MassInsight`s (same JSON, same q control, a `drill`
-   that loads their matches, a `place` with `path` for a corridor).
-2. `ctx` holds the `MassStore` (every match's head as columns), the
-   filter's mask and a `GridMerge` per map. For region scans, read the
-   summaries' grids directly - stream them with `mergeOf` in
-   `massWorker.ts`, or keep per-match cells: the pyramid, exposures, bands
-   and slices above are what a Kulldorff-style scan (or a corridor or
-   band scan) needs, with Monte Carlo or BH over the regions tried.
-3. A new sentence is a `mass.say.<kind>Up` / `Down` message in
-   `locales/*/mass.json`.
+#### Places (`src/mass/scan.ts`)
 
+Each map's matches are read twice, a match at a time; memory holds sums on a
+raster of at most 64 cells a side (16 for the space-time scan), never the
+matches.
 
+- **Measures.** An event's rate per second of presence - kills, deaths,
+  hits, launches, captures, for all units, per class (the 4 with most
+  events), per height band - and the share of kills in kills and deaths
+  (all, per side, per band). Which classes and sides come from the heads
+  (`planOf`).
+- **Expectation by match.** Each match's own rate spread over its own
+  presence in a cell is the cell's expectation (a covariate-adjusted
+  Kulldorff scan stratified by match): a few bloody matches or one busy
+  server make no place.
+- **Dispersion.** Matches disagree far beyond Poisson. Each match's
+  residuals are summed in blocks of 1, 2, 4, 8, 16 cells; the dispersion of
+  each block size (squared residuals over the null variance, pooled, the
+  worst 5% of blocks left out) scales every test of a region that size: a
+  quasi-likelihood ratio, Poisson for rates, binomial for shares.
+- **Regions.** Circles of 0.75 to 18 cells; ellipses at six angles, 3 and 6
+  times as long as wide, 3 to 18 cells (corridors; the axis is the
+  insight's `place.path`); zones grown cell by cell from the strongest local
+  Getis-Ord Gi* cells while the region's z grows (irregular shapes) - grown
+  on one half of the matches and tested on the other, so the growing's
+  freedom costs no false places; each height band against the match's other
+  bands over the whole map (cluster-robust); space-time cylinders: a circle
+  in one or two fifths of the match length, against the match's own spread
+  of its events over place and time (the space-time permutation scan).
+- **Testing.** p from the quasi-likelihood; Benjamini-Hochberg over every
+  region tried on every map (700,000 on three maps is usual) at 5%. What
+  passes is pruned (a region mostly inside a stronger one of its measure says
+  the same), read again for its **stability** - matches that saw it, matches
+  it held in, its direction in five folds of the matches - and tested once
+  more at the variance the matches themselves show (cluster-robust, matches
+  as clusters, never under Poisson), BH again. Quiet places on a base (2% or
+  more of the map's spawns, take-offs and landings) are left out.
+- **Effect.** The rate (or odds) ratio, shrunk by empirical Bayes (a gamma
+  prior fitted to the map's 2x2 blocks), with a ~95% interval at the
+  dispersion; Gi* at 1, 2 and 4 cells and local Moran at the centre.
+- **Visual obviousness.** How much the region already shows in the plain
+  heat of its event (log scale to the brightest cell, as the views draw it):
+  its contrast with a ring around it (a tenth of the palette is hard to see,
+  two fifths plain) and a bright peak carrying the excess; a ratio is never
+  drawn by the heat, so a share counts half. Under 35% is **hidden**. The
+  rank: strength (effect saturating at 4 times, quiet places at 0.7) times
+  `1 - 0.7 x obviousness` times the folds' agreement.
+
+The **Places** tab lists them (hidden only by default; by map, shape,
+direction), a click outlines the map's places in the 3D view (`placeLines.ts`:
+the engine's top lines, built once - magenta hidden, amber plain, cyan quiet,
+the picked one full; a band as a box from its floor to its ceiling) and on
+the Map tab's canvas; **Load** flies there and loads the 60 matches it held
+in most, filtered to its event (and class).
+
+#### Niches (`src/mass/niche.ts`)
+
+Beam search (width 24, depth 3) over three tables: **lives** (players' lives:
+game, map, mode, class, vehicle, side, tier, quarter of the dates, third of
+the match lengths; K/D, win, death a life, kills an hour, earnings a
+minute), **places** (kills and deaths by map, mode, dates, sector of the map
+4 x 4, class, side, band) and **phases** (sector and fifth of the match:
+K/D, deaths an hour of presence). A group is tested against the whole with
+matches as clusters (the sandwich variance of its residuals by match), its
+effect an odds or rate ratio shrunk by a prior of 20 outcomes; it needs 30
+outcomes in 8 matches, a refinement must be 10% stronger than its parent,
+groups where the outcome is none or all (not recorded for them) are left
+out. Kept: BH under 5% over every group evaluated, a shrunk ratio of 1.25
+(or 1/1.25) at least, four of five folds agreeing, not a refinement that
+only repeats its parent. The **Niches** tab lists them; a click shows every
+one-condition refinement of the group (the explorer), **Load** loads its
+matches. Loadouts are not in the summaries yet.
+
+#### Meta shifts with practical significance
+
+On mixed dates the binomial on lives called nearly every change significant. `meta` now tests cluster-robust (each match's
+lives a cluster), keeps a use shift only of 2 points and 25% at least, a
+K/D shift of 1.3 times, the dates' quarters trending the same way (Kendall's
+tau at least 0.5) and, for a vehicle on several maps, the same direction on
+most of them. That leaves only a few shifts on a test set where the plain test flagged nearly all.
+
+#### For a model
+
+`massReportForModel` gives each place its `region` (shape, hidden,
+obviousness, heights, phase) and each niche its `conditions`, plus how many
+regions and groups were tried. The knowledge lens can read places as kill
+zones and avenues of approach: their kinds are `place.*` and `niche.*`.
+
+#### Checks
+
+`scan.test.ts` plants a diffuse area (1.6 times the death rate over a circle
+of 22 cells, faint in every cell), a corridor, a height band and a
+phase-only cluster in 240 synthetic overdispersed matches - all found, the
+diffuse one hidden - and runs eight null sets of 60 matches: no place.
+`niche.test.ts` finds a planted vehicle x map x side group and nothing in
+five null tables.

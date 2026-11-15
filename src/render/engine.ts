@@ -32,6 +32,7 @@ import { useObjectivesStore } from '../state/objectivesStore';
 import { wantObjectives, wantTimeline } from '../state/objectivesLazy';
 import type { Objective } from '../match/objectives';
 import { ObjectiveLayerDraw, objectiveSources, stateKey, type ObjectiveSource } from './objectives';
+import { withPlaceLines } from '../mass/placeLines';
 import { DirectionController } from './directionController';
 import { dropLinesOn, unitsPerMetre } from '../ui/replay/replayData';
 import { FollowRig, type RigMode } from './followRig';
@@ -3792,8 +3793,8 @@ export class Engine {
       symbols: !raceBuilt && s.mode === 'team' && s.team.figures ? this.symbolParams(s) : null,
       overlayVerts,
       overlayVertCount,
-      topVerts: this.directions.top(this.objectiveTop)?.data ?? null,
-      topVertCount: this.directions.top(this.objectiveTop)?.count ?? 0,
+      topVerts: withPlaceLines(this.directions.top(this.objectiveTop))?.data ?? null,
+      topVertCount: withPlaceLines(this.directions.top(this.objectiveTop))?.count ?? 0,
       topTris: this.objectiveTopTris?.data ?? null,
       groundTris: objGround?.data ?? null,
       objectiveZones:

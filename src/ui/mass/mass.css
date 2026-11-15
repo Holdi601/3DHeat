@@ -110,3 +110,47 @@
 .mass-took {
   margin-top: 6px;
 }
+
+/* Stage B: places and niches. */
+.mass-badge {
+  font-size: 11px;
+  padding: 0 5px;
+  margin-right: 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.mass-badge-hidden {
+  background: rgba(255, 90, 220, 0.3);
+}
+
+.mass-badge-plain {
+  background: rgba(255, 180, 60, 0.25);
+}
+
+.mass-badge-quiet {
+  background: rgba(90, 215, 255, 0.25);
+}
+
+.brk-table tr.mass-picked td {
+  background: rgba(255, 90, 220, 0.14);
+}
+
+.mass-chip {
+  display: inline-block;
+  margin: 1px 4px 1px 0;
+  padding: 0 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.07);
+  white-space: nowrap;
+}
+
+.mass-detail {
+  margin-top: 6px;
+}
+
+.brk-table.mass-places td:nth-child(2) {
+  text-align: left;
+  white-space: normal;
+  min-width: 340px;
+}

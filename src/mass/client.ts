@@ -13,11 +13,12 @@ import type { Engine } from '../render/engine';
 import { useStore } from '../state/store';
 import type { FilterSpec } from '../state/types';
 import { startLeanLoad } from '../ui/overlay/LeanOverlayPanel';
-import type { MassInsight } from './detect';
+import type { MassInsight, MassReport } from './detect';
+import { placeLines, usePlaceLines } from './placeLines';
 import type { MassFacets, MassLoadStats, MassRequest, MassResponse } from './massWorker';
 import type { MassDrill, MassFilter } from './store';
 
-export type MassTab = 'overview' | 'balance' | 'trends' | 'players' | 'sides' | 'map' | 'insights';
+export type MassTab = 'overview' | 'balance' | 'trends' | 'players' | 'sides' | 'map' | 'insights' | 'places' | 'niches';
 
 export interface MassState {
   open: boolean;
@@ -30,6 +31,11 @@ export interface MassState {
   /** Last round trips, ms, by what was asked (for the panel and the probes). */
   timings: Record<string, number>;
   drilling: boolean;
+  /** The last insights run (Insights, Places and Niches tabs share it), its filter's key, and whether one is running. */
+  report: MassReport | null;
+  reportKey: string | null;
+  reporting: boolean;
+  reportError: string | null;
   set: (p: Partial<MassState>) => void;
 }
 
@@ -43,8 +49,59 @@ export const useMass = create<MassState>((set) => ({
   error: null,
   timings: {},
   drilling: false,
+  report: null,
+  reportKey: null,
+  reporting: false,
+  reportError: null,
   set: (p) => set(p),
 }));
+
+/** Runs the insights (Stage A and B) on the filter, for every tab that shows them. */
+export async function findInsights(maps: number): Promise<void> {
+  const st = useMass.getState();
+  if (st.reporting) return;
+  st.set({ reporting: true, reportError: null });
+  try {
+    const filter = st.filter;
+    const report = await askMass<MassReport>({ type: 'insights', filter, maps }, 'insights');
+    useMass.getState().set({ report, reportKey: JSON.stringify(filter) });
+  } catch (e) {
+    useMass.getState().set({ reportError: (e as Error).message });
+  } finally {
+    useMass.getState().set({ reporting: false });
+  }
+}
+
+/** The places of a map drawn in the view, one picked; none when `map` is null. */
+export function showPlaces(engine: Engine | null, map: string | null, focus: string | null = null): void {
+  const r = useMass.getState().report;
+  const list = map && r ? r.insights.filter((i) => i.region && i.drill.map === map) : [];
+  // Every place of the map the report kept, not only those among the insights.
+  const extra = map && r?.places ? r.places.findings.filter((f) => f.map === map && !list.some((i) => i.id === `mass:place:${f.id}`)) : [];
+  const all = [...list, ...extra.map(placeInsight)];
+  usePlaceLines.getState().set({ lines: all.length ? placeLines(all, focus) : null, focus });
+  engine?.invalidate(2);
+}
+
+/** A place as the insight the report would have made of it (for the lines and the drill-down). */
+export function placeInsight(f: NonNullable<MassReport['places']>['findings'][number]): MassInsight {
+  return {
+    id: `mass:place:${f.id}`,
+    detector: 'place',
+    kind: 'place',
+    sentence: { key: f.dir > 0 ? 'Up' : 'Down', params: {} },
+    strength: f.score,
+    effect: { measure: 'rateRatio', value: f.shrunk, raw: f.ratio, lo: f.lo, hi: f.hi },
+    confidence: { p: f.p, q: f.q, level: 'low', tests: 0, method: '' },
+    evidence: {},
+    place: { x: f.x, y: f.y, z: f.z, radius: f.radius, grid: 'coarse', cell: f.cell },
+    time: null,
+    filters: [],
+    subject: {},
+    drill: { map: f.map, ...(f.matches.length ? { matches: f.matches } : {}) },
+    region: { shape: f.shape, segs: f.segs, ...(f.path ? { path: f.path } : {}), ...(f.bandY ? { bandY: f.bandY } : {}), obviousness: f.obviousness, hidden: f.hidden },
+  };
+}
 
 // The probes read the timings (tools, dev builds only).
 if (import.meta.env.DEV) (globalThis as { __mass?: typeof useMass }).__mass = useMass;
@@ -87,12 +144,17 @@ function ensure(): Worker {
 }
 
 /** Hands the picked files (containers, tables, the folders' index files) to the worker. */
-export function openMass(list: { file: File; path: string }[], add = false): Promise<boolean> {
+export async function openMass(list: { file: File; path: string }[], add = false): Promise<boolean> {
   const w = ensure();
   useMass.getState().set({ error: null, progress: { done: 0, total: list.length, phase: 'index' }, ...(add ? {} : { facets: null, stats: null }) });
+  // The handles go over in slices, a task each: cloning hundreds of them in one message held the page for a frame or more.
+  for (let i = 0; i < list.length; i += 16) {
+    w.postMessage({ type: 'files', files: list.slice(i, i + 16) } satisfies MassRequest);
+    await new Promise((r) => setTimeout(r, 0));
+  }
   return new Promise((resolve) => {
     opened = resolve;
-    w.postMessage({ type: 'open', files: list, add } satisfies MassRequest);
+    w.postMessage({ type: 'open', files: [], add } satisfies MassRequest);
   });
 }
 

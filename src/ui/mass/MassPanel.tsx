@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { num, t, useLang } from '../../i18n';
-import { askMass, drillDown, openMass, useMass, type MassTab } from '../../mass/client';
+import { askMass, drillDown, findInsights, openMass, useMass, type MassTab } from '../../mass/client';
 import { massReportForModel, type MassInsight, type MassReport } from '../../mass/detect';
 import type { Channel } from '../../mass/grids';
 import { MATCH_HIST, type BalanceBy, type BalanceRow, type BalanceSplit, type Bucket, type Overview, type Populations, type SideRow, type Trends } from '../../mass/store';
 import { GRID_KINDS } from '../../mass/types';
 import { Check, Section, Segmented } from '../controls';
 import { useEngine } from '../EngineContext';
+import { NichesTab, PlacesTab, sayMass } from './MassPlaces';
 import '../compare/compare.css';
 import '../breakdown/breakdown.css';
 import './mass.css';
@@ -86,7 +87,13 @@ function MassBody() {
   const setFilter = (p: Partial<typeof filter>) => st.set({ filter: { ...filter, ...p } });
   const one = (l?: string[]) => l?.[0] ?? '';
   const maps = f.maps.filter((m) => !filter.games?.length || filter.games.includes(m.game));
-  const tabs: MassTab[] = ['overview', 'balance', 'trends', 'players', 'sides', 'map', 'insights'];
+  const tabs: MassTab[] = ['overview', 'balance', 'trends', 'players', 'sides', 'map', 'insights', 'places', 'niches'];
+  // The window's frame first, its date fields and tab a frame later: one frame for all of it ran long.
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setReady(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
   const dateValue = (sec: number | null | undefined) => (sec ? new Date(sec).toISOString().slice(0, 10) : '');
   return (
     <div className="cmp-window brk-window mass-window" role="dialog" aria-label={t('mass.title')}>
@@ -121,14 +128,18 @@ function MassBody() {
             </select>
           </label>
         )}
-        <label className="brk-field">
-          {t('mass.from')}
-          <input type="date" value={dateValue(filter.from)} onChange={(e) => setFilter({ from: e.target.value ? Date.parse(e.target.value) : null })} />
-        </label>
-        <label className="brk-field">
-          {t('mass.to')}
-          <input type="date" value={dateValue(filter.to)} onChange={(e) => setFilter({ to: e.target.value ? Date.parse(e.target.value) + 86_399_999 : null })} />
-        </label>
+        {ready && (
+          <>
+            <label className="brk-field">
+              {t('mass.from')}
+              <input type="date" value={dateValue(filter.from)} onChange={(e) => setFilter({ from: e.target.value ? Date.parse(e.target.value) : null })} />
+            </label>
+            <label className="brk-field">
+              {t('mass.to')}
+              <input type="date" value={dateValue(filter.to)} onChange={(e) => setFilter({ to: e.target.value ? Date.parse(e.target.value) + 86_399_999 : null })} />
+            </label>
+          </>
+        )}
         <Segmented<MassTab> value={st.tab} options={tabs.map((v) => ({ value: v, label: t(`mass.tab.${v}`) }))} onChange={(tab) => st.set({ tab })} />
         <span className="cmp-status">
           {st.drilling ? t('mass.drilling') : st.progress ? t(`mass.phase.${st.progress.phase}`, { done: st.progress.done, total: st.progress.total }) : ''}
@@ -139,13 +150,15 @@ function MassBody() {
       </div>
       <div className="cmp-body">
         <div className="cmp-scroll">
-          {st.tab === 'overview' && <OverviewTab />}
+          {ready && st.tab === 'overview' && <OverviewTab />}
           {st.tab === 'balance' && <BalanceTab />}
           {st.tab === 'trends' && <TrendsTab />}
           {st.tab === 'players' && <PlayersTab />}
           {st.tab === 'sides' && <SidesTab />}
           {st.tab === 'map' && <MapTab />}
           {st.tab === 'insights' && <InsightsTab />}
+          {st.tab === 'places' && <PlacesTab />}
+          {st.tab === 'niches' && <NichesTab />}
         </div>
       </div>
     </div>
@@ -582,6 +595,7 @@ function MapTab() {
   }, [filter.maps]);
   const q = useQuery<RasterData>(() => ({ type: 'grid', filter, map, channel, level, team }), 'grid', [map, channel, level, team]);
   const r = q.data;
+  const places = useMass((s) => s.report?.places?.findings);
   useEffect(() => {
     const c = canvas.current;
     if (!c || !r || !r.nx) return;
@@ -623,7 +637,21 @@ function MapTab() {
           g.stroke();
         }
     }
-  }, [r, channel]);
+    // The places found on this map, outlined: magenta hidden, amber plain, cyan quiet.
+    const mine = (places ?? []).filter((f) => f.map === map && f.shape !== 'band');
+    if (mine.length) {
+      g.lineWidth = Math.max(0.6, r.nx / 300);
+      for (const f of mine) {
+        g.strokeStyle = f.dir < 0 ? 'rgba(90,215,255,0.9)' : f.hidden ? 'rgba(255,90,220,0.95)' : 'rgba(255,180,60,0.9)';
+        g.beginPath();
+        for (let k = 0; k + 3 < f.segs.length; k += 4) {
+          g.moveTo((f.segs[k] - r.x0) / r.cell, r.nz - (f.segs[k + 1] - r.z0) / r.cell);
+          g.lineTo((f.segs[k + 2] - r.x0) / r.cell, r.nz - (f.segs[k + 3] - r.z0) / r.cell);
+        }
+        g.stroke();
+      }
+    }
+  }, [r, channel, places, map]);
   const click = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!r || !r.nx) return;
     const b = e.currentTarget.getBoundingClientRect();
@@ -678,31 +706,19 @@ function MapTab() {
 }
 
 function InsightsTab() {
-  const filter = useMass((s) => s.filter);
   const engine = useEngine();
-  const [maps, setMaps] = useState(4);
-  const [report, setReport] = useState<MassReport | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [ms, setMs] = useState<number | null>(null);
-  const [err, setErr] = useState<string | null>(null);
-  const run = async () => {
-    setBusy(true);
-    setErr(null);
-    const t0 = performance.now();
-    try {
-      setReport(await askMass<MassReport>({ type: 'insights', filter, maps }, 'insights'));
-      setMs(Math.round(performance.now() - t0));
-    } catch (e) {
-      setErr((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  };
-  const say = (key: string, params: Record<string, number | string>) => t(key, params);
+  const [maps, setMaps] = useState(8);
+  // The report is shared with the Places and Niches tabs (one run of every detector).
+  const report = useMass((s) => s.report);
+  const busy = useMass((s) => s.reporting);
+  const err = useMass((s) => s.reportError);
+  const ms = useMass((s) => (s.report ? s.timings.insights ?? null : null));
+  const run = () => findInsights(maps);
+  const say = sayMass;
   const copy = () => {
     if (report) void navigator.clipboard?.writeText(JSON.stringify(massReportForModel(report, say), null, 1));
   };
-  const text = (i: MassInsight) => (i.sentence.key.startsWith('mass.') ? t(i.sentence.key, i.sentence.params) : `${i.evidence.map ?? ''}: ${t(i.sentence.key, i.sentence.params)}`);
+  const text = (i: MassInsight) => (i.sentence.key.startsWith('mass.') ? sayMass(i.sentence.key, i.sentence.params) : `${i.evidence.map ?? ''}: ${t(i.sentence.key, i.sentence.params)}`);
   return (
     <div>
       <div className="row brk-controls" style={{ flexWrap: 'wrap', marginBottom: 6 }}>
@@ -711,7 +727,7 @@ function InsightsTab() {
         </button>
         <label className="brk-field">
           {t('mass.insightMaps')}
-          <input type="number" min={0} max={20} value={maps} onChange={(e) => setMaps(Math.max(0, Math.min(20, Number(e.target.value) || 0)))} />
+          <input type="number" min={0} max={40} value={maps} onChange={(e) => setMaps(Math.max(0, Math.min(40, Number(e.target.value) || 0)))} />
         </label>
         {report && <button onClick={copy}>{t('mass.copyReport')}</button>}
         <span className="hint">{t('mass.insightsHint')}</span>
@@ -725,7 +741,8 @@ function InsightsTab() {
           <ol className="mass-insights">
             {report.insights.map((i) => (
               <li key={i.id}>
-                <span className={`mass-conf mass-conf-${i.confidence.level}`}>{t(`mass.conf.${i.confidence.level}`)}</span> {text(i)}
+                <span className={`mass-conf mass-conf-${i.confidence.level}`}>{t(`mass.conf.${i.confidence.level}`)}</span>
+                {i.region?.hidden && <span className="mass-badge mass-badge-hidden">{t('mass.places.badge.hidden')}</span>} {text(i)}
                 <span className="mass-dim"> q={i.confidence.q < 0.001 ? '<0.001' : fmt(i.confidence.q, 3)}</span>
                 <button className="small" onClick={() => void drillDown(engine, { insight: i })}>
                   {t('mass.load')}
