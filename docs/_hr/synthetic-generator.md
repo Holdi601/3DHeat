@@ -11,12 +11,12 @@ outdated: false
 
 # Sintetički generator
 
-Nemaš vlastite podatke? Pritisni jedan gumb i 3DHeat ti izmisli lažnu bitku, koliko god mala ili velika želiš.
+Nemate vlastite podatke? Pritisnite jedan gumb i 3DHeat će vam izmisliti lažnu bitku, koliko god mala ili velika želite.
 
 1. Otvori ploču **Skup podataka** u bočnoj traci Toplinske karte (ispod **Izvor**).
 2. Pomakni se do **Sintetički generator**.
 3. Postavi **Retci (milijuni)**. Probaj prvo 1: zadanih 8 milijuna je teško za prvi pokušaj.
-4. Pritisni **Generiraj**.
+4. Pritisnite **Generiraj**.
 
 ![1 milijun redaka, 8 timova, nacrtano u načinu Toplina timova](../assets/img/en/synthetic-generator-team-heat.webp)
 

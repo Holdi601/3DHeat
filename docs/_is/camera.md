@@ -99,7 +99,7 @@ Sama gildi er sýnt neðst til hægri á sýninni (aðeins í fjarvídd): hraði
 | **Leikjafjarstýring** | virkt | Sjá [Leikjafjarstýring og HOTAS](gamepad.md). |
 | **Staða** | | Sjá hér að neðan. |
 | **Skoða** | | Lestur myndavélar, smellival, stefnuhornsvenjan og *Fara á punkt*; sjá [Skoða sýnina](#inspecting-the-view). |
-| **Ramma inn gagnasafnið (F)** | | Fellir gögnin (í flipanum Kappakstursgreining: hringina) að sýninni og heldur núverandi stefnu. Myndavélin er sett í r / tan(fov / 2) frá miðjunni, þar sem r er helmingur hornalínu marka gagnanna. |
+| **Ramma inn gagnasafn (F)** | | Fellir gögnin (í flipanum Kappakstursgreining: hringina) að sýninni og heldur núverandi stefnu. Myndavélin er sett í r / tan(fov / 2) frá miðjunni, þar sem r er helmingur hornalínu marka gagnanna. |
 | **Hnitanet**, **Ásar** | kveikt, kveikt | Jarðarnet með bili 1/2/5 × 10ⁿ, um 1/40 af útbreiðslu gagnanna (nær út í 1,5 × gögnin, á milli 8 og 120 netreita), og litaðir ásar. |
 | **Snúa heimsás við** X, Y, Z | slökkt | Sjá hér að neðan. |
 

@@ -11,9 +11,9 @@ translated: true
 
 # Liosta teangacha
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+Labhraíonn an radharc 40 teanga. Tosaíonn sé i dteanga an bhrabhsálaí nuair a bhíonn sí ar fáil, agus athraíonn roghchlár na dteangacha ag barr an tsleasa é. Conas é a athrú, agus conas na haistriúcháin a dhéantar: [Teangacha](languages.md).
 
-| Code | Language |
+| Cód | Teanga |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

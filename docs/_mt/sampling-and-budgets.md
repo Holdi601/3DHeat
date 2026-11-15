@@ -55,7 +55,7 @@ Dak li tiswa pjan sħiħ, imkejjel fuq GPU ta' desktop tal-ogħla klassi f'canva
 
 ### Il-baġit adattiv {#the-adaptive-budget}
 
-**Prestazzjoni → Baġit adattiv** (default mixgħul) jaġġusta l-baġit tal-sprites biex iżomm **FPS immirati** ([`BudgetController`](https://github.com/Holdi601/3DHeat/blob/main/src/render/sampling.ts)). Hu bla attività fir-[replay tal-kaxxi](box-replay.md) u waqt rendering tal-vidjo.
+**Prestazzjoni → Baġit adattiv** (default mixgħul) jaġġusta l-baġit tal-sprites biex iżomm **FPS immirati** ([`BudgetController`](https://github.com/Holdi601/3DHeat/blob/main/src/render/sampling.ts)). Hu bla attività fir-replay tal-kaxxi u waqt rendering tal-vidjo.
 
 L-input hu l-ħin tal-frame, immellet (90% tal-preċedenti + 10% il-ġdid, b'frames individwali mqabbdin għal 2 s), kontra mira ta' 1000 / max(15, FPS immirati) ms.
 

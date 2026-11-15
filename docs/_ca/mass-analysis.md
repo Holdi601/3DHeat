@@ -135,7 +135,7 @@ La part espacial està feta per a estadístiques d'exploració sobre regions de 
 
 ### Fase B: llocs i nínxols {#stage-b-places-and-niches}
 
-La Fase B busca el que destaca en els números sense cridar l'atenció: una àrea gran plena en conjunt sense cap cel·la calenta, una proporció estranya de morts entre mort i baixa en pocs esdeveniments, un corredor, una franja d'altura, un grup que només hi és en una part de la partida - i grups (un vehicle en un mapa en un bàndol, un sector a una altura) que van clarament millor o pitjor que la resta. Un sol **Troba llocs** / **Troba nínxols** / **Troba troballes** executa tots els detectors; les tres pestanyes comparteixen l'informe.
+La Fase B busca el que destaca en els números sense cridar l'atenció: una àrea gran plena en conjunt sense cap cel·la calenta, una proporció estranya de morts entre mort i baixa en pocs esdeveniments, un corredor, una franja d'altura, un grup que només hi és en una part de la partida - i grups (un vehicle en un mapa en un bàndol, un sector a una altura) que van clarament millor o pitjor que la resta. Un sol **Troba llocs** / **Troba nínxols** / **Cerca conclusions** executa tots els detectors; les tres pestanyes comparteixen l'informe.
 
 #### Llocs (`src/mass/scan.ts`) {#places-srcmassscants}
 

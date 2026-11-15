@@ -11,9 +11,9 @@ translated: true
 
 # Kieliluettelo
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+Katsoja puhuu 40 kielellä. Se aloittaa selaimen kielellä, jos sellainen on tuettu, ja sivupalkin yläreunan kielivalikko vaihtaa kieltä. Kielen vaihto ja käännösten tekeminen: [Kielet](languages.md).
 
-| Code | Language |
+| Koodi | Kieli |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

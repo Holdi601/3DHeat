@@ -11,11 +11,11 @@ outdated: false
 
 # Boravak u memoriji GPU-a
 
-Grafička kartica ima samo određenu količinu memorije. Ako tvoji podaci ne stanu, preglednik prikazuje što stane i kaže to: prikaz statistike dobija jantarni redak **Nije u memoriji** s brojem redaka koji su izostavljeni. Skraćeni skup podataka koji izgleda cjelovit bila bi najgora greška koju alat za analizu može napraviti, pa se ovaj redak nikad ne skriva.
+Grafička kartica ima samo određenu količinu memorije. Ako vaši podaci ne stanu, preglednik prikazuje što stane i kaže to: prikaz statistike dobija jantarni redak **Nije u memoriji** s brojem redaka koji su izostavljeni. Skraćeni skup podataka koji izgleda cjelovit bila bi najgora greška koju alat za analizu može napraviti, pa se ovaj redak nikad ne skriva.
 
 ![Prikaz statistike s jantarnim retkom Nije u memoriji](../assets/img/en/gpu-memory-not-resident.webp)
 
-Da stane više, povisi GPU proračun pod **Proračun resursa** i ponovno učitaj ([Memorija i proračuni](memory-and-budgets.md#raising-the-gpu-budget)), prvo suzi podatke ili koristi karticu s više memorije.
+Da stane više, povisite GPU proračun pod **Proračun resursa** i ponovno učitajte ([Memorija i proračuni](memory-and-budgets.md#raising-the-gpu-budget)), prvo suzite podatke ili koristi karticu s više memorije.
 
 ## Za razvojne programere {#for-developers}
 

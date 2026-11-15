@@ -75,7 +75,7 @@ Wo du die Funktionen findest: im Tab **Match**, bei **Figuren-Replay** (oder **F
 
 | Tacview | 3DHeat | Status |
 |---|---|---|
-| Beschriftungen ein/aus, getrennt für gewählte und nicht gewählte Objekte | **Beschriftungen** mit Regeln für **Gewählt**, **Luftfahrzeuge**, **Boden**, **Schiffe**, **Waffen** und **KI**: an oder aus, eigene Werte, Priorität | neu |
+| Beschriftungen ein/aus, getrennt für gewählte und nicht gewählte Objekte | **Beschriftungen** mit Regeln für **Gewählte**, **Luftfahrzeuge**, **Boden**, **Schiffe**, **Waffen** und **KI**: an oder aus, eigene Werte, Priorität | neu |
 | Beschriftungsfelder: Name, Rufzeichen, Pilot, Geschwindigkeiten (TAS/CAS/IAS/Mach/GS), Höhen (ASL/AGL), VS, AOA, AOS, G (vertikal, seitlich, längs), Drehrate und Radius, Energie, Treibstoff Gewicht/Volumen/Fluss, Kurs/Spur, Roll/Nick, Herzfrequenz | Jeder Wert aus `fields.ts`: dieselbe Liste, dort berechnet, wo nichts aufgezeichnet ist (Schätzungen mit ~ markiert). Rollrate und SpO2 nur über Roh. | vorhanden |
 | Position des Bullseye in den Beschriftungen | Feld **Bullseye (Peilung / Entfernung)** | neu |
 | ILS-Abweichungen, zurückgelegte Strecke | Rohwerte; zurückgelegte Strecke in der Statistik | vorhanden (teilweise) |
@@ -140,7 +140,7 @@ Wo du die Funktionen findest: im Tab **Match**, bei **Figuren-Replay** (oder **F
 | Bild für Bild | **,** und **.** eine Sekunde zurück und vor (Umschalt: zehn) | neu |
 | Rückwärts abspielen | **◀** auf der Zeitleiste, **J** (**L** vorwärts; dieselbe Taste erneut hält an): spielt vom Ende zum Anfang mit der gewählten Geschwindigkeit, wiederholt oder hält am Anfang an | neu |
 | Dialog „Zu Zeit springen“ | Die Zeitleiste und die Ereignisliste | vorhanden |
-| Zeitverschiebung eines Objekts (Geist) | **Zeitverschiebung und Zuschnitt**: den Flug einer Einheit oder eine ganze Aufnahme um so viele Sekunden verschieben; **Aufnahmen ausrichten** bringt mehrere Aufnahmen zum gemeinsamen Start und spielt sie gleichzeitig ab (zwei Einsätze an verschiedenen Tagen nebeneinander). Die Aufnahme wird neu aufgebaut, daher folgen Spuren, Ereignisse, Diagramme und Statistik | neu |
+| Zeitverschiebung eines Objekts (Geist) | **Zeitverschiebung und Zuschnitt**: den Flug einer Einheit oder eine ganze Aufnahme um so viele Sekunden verschieben; **Aufzeichnungen ausrichten** bringt mehrere Aufnahmen zum gemeinsamen Start und spielt sie gleichzeitig ab (zwei Einsätze an verschiedenen Tagen nebeneinander). Die Aufnahme wird neu aufgebaut, daher folgen Spuren, Ereignisse, Diagramme und Statistik | neu |
 | Zuschnitt vor/nach | **Ab jetzt / Bis jetzt / Auf diesen Abschnitt zuschneiden** (Rückgängig behält die Verschiebungen), dann **CSV exportieren** (lädt zurück in 3DHeat) oder **ACMI exportieren** (Tacview-2.2-Text, für eine auf der Erde platzierte Aufnahme) | neu |
 
 ## Gelände und Karte {#terrain-and-map}
@@ -160,7 +160,7 @@ Wo du die Funktionen findest: im Tab **Match**, bei **Figuren-Replay** (oder **F
 | GPX, KML, CSV, NMEA, IGC, FIT, DIS ... | **GPX** (Tracks, Routen, Wegpunkte; Herzfrequenz, Trittfrequenz, Leistung, Temperatur von Garmin), **KML/KMZ** (gx:Track, LineString, Point), **NMEA 0183** (RMC und GGA jedes Senders, Prüfsummen geprüft, über Mitternacht), **IGC** (B-Sätze, Datum, Pilot und Segelflugzeug), **FIT** (Record-Nachrichten, komprimierte Zeitstempel) – jede nach Breite und Länge auf der Ebene in der Mitte der Tracks platziert, damit der Welt-Hintergrund passt; Kurs, Neigung und Geschwindigkeit aus der Datei oder von Fix zu Fix. CSV und Parquet wie bisher | neu (DIS entfällt: ein Live-Netzwerkprotokoll) |
 | Eigene Aufnahmegeräte (DCS, BMS, IL-2, MSFS ...) | Eigene Konverter von 3DHeat (War Thunder, CS2, Squad, Arma und andere) | vorhanden (eigene) |
 | Echtzeit-Telemetrie über TCP, ADS-B | Nicht gebaut | entfällt (Wiedergabe nach dem Match) |
-| Synchronisiertes Audio/Video | **Audio und Video**: eine lokale Datei spielt, pausiert, springt und ändert das Tempo mit der Zeitleiste ab einem festen Start (**Starts jetzt**, ±0,1 s); ein Video in einem veränderbaren Feld über der Ansicht oder als Bild-in-Bild. Die Datei bleibt im Browser | neu |
+| Synchronisiertes Audio/Video | **Audio und Video**: eine lokale Datei spielt, pausiert, springt und ändert das Tempo mit der Zeitleiste ab einem festen Start (**Beginnt jetzt**, ±0,1 s); ein Video in einem veränderbaren Feld über der Ansicht oder als Bild-in-Bild. Die Datei bleibt im Browser | neu |
 | Videoexport | [Kamerapfad und Video](camera-path-and-video.md) | vorhanden |
 
 ## Anderes {#other}

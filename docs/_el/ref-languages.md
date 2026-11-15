@@ -11,9 +11,9 @@ translated: true
 
 # Λίστα γλωσσών
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+Η προβολή μιλά 40 γλώσσες. Ξεκινά με τη γλώσσα του προγράμματος περιήγησης, αν τη διαθέτει, και το μενού γλωσσών στο πάνω μέρος της πλαϊνής στήλης την αλλάζει. Πώς γίνεται η αλλαγή και πώς φτιάχνονται οι μεταφράσεις: [Γλώσσες](languages.md).
 
-| Code | Language |
+| Κωδικός | Γλώσσα |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

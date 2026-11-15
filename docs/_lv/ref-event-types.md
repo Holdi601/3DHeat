@@ -11,11 +11,11 @@ translated: true
 
 # Notikumu tipi un klases
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Skatītājs pievieno kolonnu **Notikuma veids** katrai datu kopai, kurai ir notikumu kolonna (`event`, `events`, `event_type` vai `event_name`). Katras spēles pašas vārdi tiek saistīti ar vienu no šiem veidiem (lielie un mazie burti vienādi); vārds, kas nav uzskaitīts, tiek skaitīts kā *Cits*.
 
-| Kind | Shown as | Words in the data |
+| Veids | Rādīts kā | Vārdi datos |
 |---|---|---|
-| `position` | Pozīcija | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Pozīcija | `(tukšs)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Šāviens | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Palaišana (raķete, šāviņš, bumba) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Trāpījums | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Ziņa | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Cits | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Transportlīdzekļu klases {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Kolonnas **Transportlīdzekļa klase** un **Mērķa klase** izmanto šīs klases, kas noteiktas pēc transportlīdzekļu nosaukumiem (caur [figūru katalogu](figures.md)) un tipa kolonnām.
 
-| Class | Shown as |
+| Klase | Rādīts kā |
 |---|---|
 | `fighter` | Iznīcinātājs |
 | `attack` | Triecienlidmašīna |

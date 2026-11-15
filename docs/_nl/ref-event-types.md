@@ -11,11 +11,11 @@ translated: true
 
 # Gebeurtenistypen en -klassen
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+De viewer voegt aan elke dataset met een gebeurteniskolom (`event`, `events`, `event_type` of `event_name`) een kolom **Soort gebeurtenis** toe. De eigen woorden van elk spel worden aan een van deze soorten gekoppeld (hoofdletters en kleine letters maken niet uit); een woord dat niet in de lijst staat, telt als *Overig*.
 
-| Kind | Shown as | Words in the data |
+| Soort | Getoond als | Woorden in de data |
 |---|---|---|
-| `position` | Positie | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Positie | `(leeg)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Schot gelost | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Lancering (raket, projectiel, bom) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Treffer | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Bericht | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Overig | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Voertuigklassen {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+De kolommen **Voertuigklasse** en **Doelklasse** gebruiken deze klassen, bepaald uit de namen van voertuigen (via de [figurencatalogus](figures.md)) en de typekolommen.
 
-| Class | Shown as |
+| Klasse | Getoond als |
 |---|---|
 | `fighter` | Jager |
 | `attack` | Aanvalsvliegtuig |

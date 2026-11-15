@@ -16,7 +16,7 @@ La scheda **Tattica** è una lavagna da disegno per un piano di squadra: metti p
 ## Il tuo primo piano {#your-first-plan}
 
 1. Apri la scheda **Tattica**. Scegli il **Gioco** (per esempio Counter-Strike 2) e, per Valorant, premi **Carica le mappe di Valorant** e scegli una **Mappa**. Oppure carica prima un [livello](levels.md).
-2. Scegli uno **Schieramento** (imposta il colore) e premi **Vista dall'alto**.
+2. Scegli uno **Schieramento** (imposta il colore) e premi **Vista dall’alto**.
 3. Scegli **Luogo**, scegli una figura in **Figure** (usa **Cerca figure** per trovarne una) e clicca sulla mappa. Mettine due o tre.
 4. Scegli **Freccia**, clicca su una figura, clicca lungo il percorso che dovrebbe seguire, e premi **Invio** per finire la freccia.
 5. Premi **+** sotto la vista per aggiungere il passo 2. Ogni figura inizia dove è finita la sua freccia. Disegna altre frecce lì.

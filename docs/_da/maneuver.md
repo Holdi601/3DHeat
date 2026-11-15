@@ -15,7 +15,7 @@ outdated: false
 og giver navn til de manøvrer, de laver: et flankeangreb, en tang, et gennembrud, et
 baghold, et tilbagetog, et missilforsvar, at krydse T'et. Hver manøvre får også en
 angivelse af, hvor sikker den er, tallene bag den, om den betalte sig, og om den
-har paralleller i doktrin og historie. **Massanalyse → Manøvrer** tæller dem over
+har paralleller i doktrin og historie. **Masseanalyse → Manøvrer** tæller dem over
 tusindvis af kampe: hvor ofte hver enkelt laves pr. kort, spiltilstand og side, og
 hvor ofte den betaler sig.
 
@@ -108,9 +108,9 @@ omringning betaler sig, når lommen mister halvdelen.
 
 ## Over mange kampe {#over-many-matches}
 
-Hver kamps resumé (`src/mass/summarize.ts`, se [Massanalyse](mass-analysis.md))
+Hver kamps resumé (`src/mass/summarize.ts`, se [Masseanalyse](mass-analysis.md))
 indeholder et lille afsnit `maneuvers`: pr. type og side, lavet (ved Sandsynlig eller
-højere), betalt sig, ikke betalt, drab og tab. **Massanalyse → Manøvrer** lægger dem
+højere), betalt sig, ikke betalt, drab og tab. **Masseanalyse → Manøvrer** lægger dem
 sammen over de kampe, filteret beholder - pr. kort og spiltilstand, eller samlet - med
 Wilson-intervallet for andelen, der betalte sig. En række indlæser de kampe, den blev
 lavet i. Resuméer skrevet før afsnittet fandtes har ingen: kør

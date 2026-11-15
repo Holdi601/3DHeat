@@ -1,5 +1,5 @@
 ---
-title: "Massanalyse"
+title: "Masseanalyse"
 nav_order: 8
 lang: "da"
 source: "mass-analysis.md"
@@ -8,15 +8,15 @@ translated: true
 outdated: false
 ---
 
-# Massanalyse: tusindvis af kampe på én gang
+# Masseanalyse: tusindvis af kampe på én gang
 
-**Massanalyse** viser dig, hvad en hel mappe med kampe giver i sum: hvilket køretøj der vinder mest, hvilken side der er favoriseret, hvor handlingen er. Brug den, når du har langt flere kampe, end du kan se.
+**Masseanalyse** viser dig, hvad en hel mappe med kampe giver i sum: hvilket køretøj der vinder mest, hvilken side der er favoriseret, hvor handlingen er. Brug den, når du har langt flere kampe, end du kan se.
 
 Den arbejder ud fra et lille resumé af hver kamp, så tusind eller ti tusind kampe åbner hurtigt. Den indlæser de fulde rækker kun for de kampe, du klikker på.
 
 ## Prøv det {#try-it}
 
-1. Åbn **Massanalyse** i varmekortets sidepanel.
+1. Åbn **Masseanalyse** i varmekortets sidepanel.
 2. Tryk **Mappe …** (eller **Filer …**) og vælg dine `.3dheat`-kampe.
 3. Vent, mens panelet læser resuméerne ("Resuméer … n af N").
 4. Tryk **Åbn analyse**. Et vindue åbnes med faner.

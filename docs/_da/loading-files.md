@@ -95,7 +95,7 @@ Det nye datasæt erstatter et eventuelt tidligere. Ved hver indlæsning ([`setDa
 - sættes sprite-radius til den vandrette udstrækning / 120 og mætningen til et analytisk overslag; kubestørrelse, kig-strålens længde, flyvehastighed og nær/fjern-planerne sættes ud fra udstrækningen (se [Sessioner, personer og grupper](sessions-persons-groups.md#entity-size));
 - sættes kampreplay-sessionen til den session med flest rækker;
 - gættes linje-varme-ruterne på ny ([Linje-varme](line-heat.md));
-- falder visningstilstanden tilbage til **Varme**, hvis den nuværende tilstand ikke understøttes af de nye data; tidslinjen falder tilbage til **Alle** uden en tidskolonne, og historikken til **Kumulativ** uden levetider;
+- falder visningstilstanden tilbage til **Varme**, hvis den nuværende tilstand ikke understøttes af de nye data; tidslinjen falder tilbage til **Alle** uden en tidskolonne, og historikken til **Kumulativt** uden levetider;
 - parkeres afspilningshovedet ved starten, og afspilningen stopper;
 - indrammer kameraet hele datasættet fra standardretningen (kigger langs -Z, hældet ned ca. 36°).
 

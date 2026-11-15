@@ -3,16 +3,16 @@ title: "Domov"
 nav_order: 1
 lang: "sk"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat ukazuje, kde sa v hre niečo stalo - kam hráči chodili, kde bojovali a kde padli - ako žiariace farby, v ktorých môžete letieť, alebo ako malé 3D figúrky, ktoré zápas znovu prehrávajú.
 
-Načítajte pozície - CSV, Parquet, nahrávky Tacview, prekonvertované záznamy, jeden súbor, priečinok alebo tisíce zápasov - a pozerajte ich ako **heatmapu, v ktorej môžete letieť**, ako **figúrky, ktoré prehrávajú zápas**, ako čiary pozdĺž trás, ktorými ľudia išli, alebo ako jednu populáciu proti druhej. Sama nájde, čo vyniká, a beží úplne vo vašom prehliadači: nikam sa nič neposiela.
+Načítajte pozície - CSV, Parquet, nahrávky Tacview, prekonvertované záznamy, jeden súbor, priečinok alebo tisíce zápasov - a pozerajte ich ako **heatmapu, v ktorej môžete letieť**, ako **figúrky, ktoré prehrávajú zápas**, ako čiary pozdĺž trás, ktorými ľudia išli, alebo ako jednu populáciu proti druhej. Sama nájde, čo vyniká, a beží úplne vo vašom prehliadači: nikam sa nič neposiela. 3DHeat a všetky jeho nástroje sú zadarmo a s otvoreným zdrojovým kódom pod [licenciou MIT](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Teplo z desiatich zápasov tankov nad ukážkovou dolinou](../assets/img/sk/heat-hero.webp)
 

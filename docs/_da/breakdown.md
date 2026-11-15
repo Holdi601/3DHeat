@@ -31,7 +31,7 @@ Den rangerer, hvad der sker ét sted (et valgt sted, visningen, et volumen eller
 | --- | --- |
 | **Opdeling...** i [Volumener](volumes.md) (Statistik) | det valgte volumen |
 | **Opdeling her** på valgkortet, efter at du har klikket på et punkt | en kugle omkring punktet (**Radius**, standard 3 % af datasættets størrelse) |
-| det delte forskelspanel | visningen |
+| det delte panel **Forskel** | visningen |
 
 Overskriften skifter området: **Sted**, **Visning** (det kameraet så ved den sidste optælling; **Tæl igen** efter at have flyttet), **Volumen** (vælg et) eller **Alle**. Den tæller i baggrunden; statuslinjen siger, hvor mange rækker der er i området.
 

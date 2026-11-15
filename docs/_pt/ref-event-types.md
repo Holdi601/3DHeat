@@ -11,11 +11,11 @@ translated: true
 
 # Tipos e classes de evento
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+O visualizador acrescenta uma coluna **Tipo de evento** a cada conjunto de dados que tenha uma coluna de evento (`event`, `events`, `event_type` ou `event_name`). As palavras de cada jogo são associadas a um destes tipos (maiúsculas e minúsculas tanto faz); uma palavra não listada conta como *Outro*.
 
-| Kind | Shown as | Words in the data |
+| Tipo | Mostrado como | Palavras nos dados |
 |---|---|---|
-| `position` | Posição | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Posição | `(vazio)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Disparo | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Lançamento (míssil, foguete, bomba) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Acerto | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Mensagem | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Outro | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Classes de veículo {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+As colunas **Classe de veículo** e **Classe do alvo** usam estas classes, calculadas a partir dos nomes dos veículos (através do [catálogo de figuras](figures.md)) e das colunas de tipo.
 
-| Class | Shown as |
+| Classe | Mostrado como |
 |---|---|
 | `fighter` | Caça |
 | `attack` | Avião de ataque |

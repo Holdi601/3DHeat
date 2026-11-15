@@ -10,13 +10,13 @@ outdated: false
 
 # Oppdateringer
 
-Seeren sier fra når en nyere versjon finnes, og oppdaterer seg selv bare når du sier ja. Ingenting endres på datamaskinen din uten ditt svar.
+Visningsprogrammet sier fra når en nyere versjon finnes, og oppdaterer seg selv bare når du sier ja. Ingenting endres på datamaskinen din uten ditt svar.
 
-## Oppdatere seeren {#update-the-viewer}
+## Oppdatere visningsprogrammet {#update-the-viewer}
 
 1. **I siden.** Når en nyere versjon finnes, vises en boks under navnet øverst i sidestolpen: «En nyere versjon av 3DHeat er tilgjengelig». Klikk på **Oppdater nå**. Siden laster seg selv inn på nytt når det er ferdig. **Senere** skjuler boksen til du laster inn siden på nytt.
-2. **Hvis den sier å kjøre restart.bat**, lukk serevinduet (det svarte vinduet `start.bat` åpnet), og dobbeltklikk på `restart.bat`.
-3. **Når du starter seeren.** `start.bat` sjekker også. Finnes en nyere versjon, spør den **Update now? [Y/N]**. Trykk `Y` for å oppdatere. Trykk `N`, eller vent 60 sekunder uten å svare, for å starte versjonen du har.
+2. **Hvis den sier å kjøre restart.bat**, lukk servervinduet (det svarte vinduet `start.bat` åpnet), og dobbeltklikk på `restart.bat`.
+3. **Når du starter visningsprogrammet.** `start.bat` sjekker også. Finnes en nyere versjon, spør den **Update now? [Y/N]**. Trykk `Y` for å oppdatere. Trykk `N`, eller vent 60 sekunder uten å svare, for å starte versjonen du har.
 
 ![Oppdateringsmerknaden med Oppdater nå og Senere](../assets/img/no/updates-notice.webp)
 
@@ -142,7 +142,7 @@ Svar er JSON med `Cache-Control: no-store`. Serveren lytter bare på
 - **Oppdater nå** sender til `/apply` («Oppdaterer…»). Deretter:
   - «Oppdatert. Siden laster inn på nytt.» – og den laster inn på nytt 1,5 s senere
     (serveren betjener allerede de nye filene);
-  - når avhengighetene ble installert på nytt: «Oppdatert. Avhengighetene endret seg: lukk serevinduet og kjør **restart.bat** for å fullføre.»;
-  - når bare serverens innstillinger endret seg: «Oppdatert. Serverinnstillingene endret seg: lukk serevinduet og kjør **restart.bat** for å fullføre.»;
+  - når avhengighetene ble installert på nytt: «Oppdatert. Avhengighetene endret seg: lukk servervinduet og kjør **restart.bat** for å fullføre.»;
+  - når bare serverens innstillinger endret seg: «Oppdatert. Serverinnstillingene endret seg: lukk servervinduet og kjør **restart.bat** for å fullføre.»;
   - ingenting å hente likevel (`updated: false` – kopien ble brakt opp i mellomtiden, for eksempel av `start.bat`): «Ingen oppdatering: denne kopien er allerede den nyeste versjonen.» – og ingen innlasting på nytt;
   - avvist: setningen om *dirty*, eller «Denne kopien har egne commits som den nyeste versjonen ikke har; oppdater den med git pull.», eller «Oppdateringen gikk ikke igjennom: <årsak>».

@@ -12,7 +12,7 @@ outdated: false
 
 # Nahrávky Tacview (ACMI)
 
-Tacview je program, ktorý zaznamenáva lety v leteckých simulátoroch; jeho súbory končia na `.acmi`. 3DHeat ich otvára, aby ste videli, kam lietal každý lietadlo.
+Tacview je program, ktorý zaznamenáva lety v leteckých simulátoroch; jeho súbory končia na `.acmi`. 3DHeat ich otvára, aby ste videli, kam lietalo každé lietadlo.
 
 Nahrávky letov z Tacview sa načítajú ako každá tabuľka: vyberte alebo pretiahnite `.acmi` (text, `.txt.acmi`, alebo zabalený, `.zip.acmi`) a stlačte **Načítať**. Potom dostanete teplo všetkých letov a na karte **Zápas** prehrávanie s figúrkami, stopami a zoznamom udalostí ([Prehrávanie zápasu](match-replay.md)). ACMI je verejný formát súborov Tacview ([dokumentácia](https://www.tacview.net/documentation/acmi/)); DCS (cez exportér Tacview), IL-2 Great Battles, Falcon BMS, X-Plane, MSFS a ďalšie ho zapisujú, takže to číta ktorýkoľvek z nich.
 

@@ -11,9 +11,9 @@ translated: true
 
 # Таблиці значень
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+Цінові таблиці з [Зважування за вартістю](value-weighting.md). Гру розпізнають за назвами в даних; власні колонки вартості конвертера у валюті гри важливіші за ці таблиці.
 
-| Table | Currency | Defined in |
+| Таблиця | Валюта | Визначено в |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

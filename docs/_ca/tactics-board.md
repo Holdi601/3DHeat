@@ -58,9 +58,9 @@ Tot el que hi ha a la pissarra es pot moure com en un editor 3D: figures, utilit
 
 | Mode | Tecles | Anses |
 |---|---|---|
-| **Mou** | W (o G) | Una fletxa per eix (X vermell, Y verd i amunt, Z blau) es mou al llarg seu; un quadrat es mou en el seu pla; el centre es mou sobre el nivell sota el punter. |
-| **Gira** | E (o R) | Un anell per eix gira al seu voltant. Els anells d'una figura sola són el seu propi guinyament, capcineig i balanceig; un grup gira al voltant dels eixos del món pel seu centre. |
-| **Escala** | R (o S) | Estén o recull la selecció des del seu centre en un eix o en totes les direccions; el radi d'una àrea creix amb ella. |
+| **Moure** | W (o G) | Una fletxa per eix (X vermell, Y verd i amunt, Z blau) es mou al llarg seu; un quadrat es mou en el seu pla; el centre es mou sobre el nivell sota el punter. |
+| **Girar** | E (o R) | Un anell per eix gira al seu voltant. Els anells d'una figura sola són el seu propi guinyament, capcineig i balanceig; un grup gira al voltant dels eixos del món pel seu centre. |
+| **Escalar** | R (o S) | Estén o recull la selecció des del seu centre en un eix o en totes les direccions; el radi d'una àrea creix amb ella. |
 
 **Tecles** canvia entre W / E / R (Unity, Unreal) i G / R / S (Blender); les tecles trien el mode només quan hi ha alguna cosa seleccionada, i en cas contrari fan volar la càmera. Així, `R` vol dir **Escala** amb les tecles W / E / R i **Gira** amb les tecles G / R / S quan hi ha alguna cosa seleccionada, i gira la següent figura a posar quan no n'hi ha cap. Totes les tecles de la pissarra són a la [referència de teclat](keyboard-reference.md#tactics-board). Mantingueu **Ctrl** mentre arrossegueu per ajustar un moviment a la **Quadrícula** (metres) o un gir al **Pas d'angle**. **Ajustar al terra** (activat per defecte) posa les persones, vehicles, marcadors, punts de pas i àrees mogudes sobre la superfície del nivell; els avions i helicòpters mantenen l'altura, i un arrossegament al llarg de la fletxa Y mai no s'ajusta. Arrossegar un ansa mai no mou la càmera. **Esc** cancel·la un arrossegament, i cada canvi és un pas de Desfés.
 

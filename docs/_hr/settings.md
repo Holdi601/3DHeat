@@ -10,7 +10,7 @@ outdated: false
 
 # Postavke, jedinice i tipke
 
-Mali upravljači na vrhu bočne trake mijenjaju način na koji ti preglednik govori: jezik, jedinice (metri ili stope, km/h ili čvorovi) i način pomoći koji objašnjava boje. Tvoj izbor se pamti u pregledniku.
+Mali izbornici na vrhu bočne trake mijenjaju jezik, jedinice (metri ili stope, km/h ili čvorovi) i način pomoći koji objašnjava boje. Vaš izbor se pamti u pregledniku.
 
 ## Zaglavlje {#the-header}
 

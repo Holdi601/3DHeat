@@ -11,23 +11,23 @@ translated: true
 
 # Išsaugoti nustatymai
 
-What the viewer keeps in your browser (`localStorage`) between visits. Nothing of it is sent anywhere. Clearing the site data in the browser removes it all.
+Ką peržiūros programa laiko jūsų naršyklėje (`localStorage`) tarp apsilankymų. Niekas iš to niekur nesiunčiama. Svetainės duomenų išvalymas naršyklėje pašalina viską.
 
-| Key | Holds | Code |
+| Raktas | Saugo | Kodas |
 |---|---|---|
-| `3dheat.objectives` | objectives shown, layers, labels | `src/state/objectivesStore.ts` |
-| `3dheat.volumes.…` | volumes, per dataset | `src/volumes/store.ts` |
-| `heat3d.ai` | external AI: provider, address, model, options (not the key) | `src/insights/ai/settings.ts` |
-| `heat3d.ai.key` | the external AI key, only when *Remember the key* is ticked | `src/insights/ai/settings.ts` |
-| `heat3d.bookmarks.…` | bookmarks, per recording | `src/ui/replay/bookmarks.ts` |
-| `heat3d.carNames` | car names in the race tab | `src/race/carNames.ts` |
-| `heat3d.far` | figures at a distance, symbols, hit marks, aim lines | `src/state/store.ts` |
-| `heat3d.help` | help mode on or off | `src/state/helpStore.ts` |
-| `heat3d.inspect` | the pick card and camera readout | `src/state/inspectStore.ts` |
-| `heat3d.language` | the language picked | `src/i18n/index.ts` |
-| `heat3d.mirror` | the axis mirroring | `src/state/store.ts` |
-| `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
-| `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
-| `heat3d.units` | the units preset and single units | `src/state/unitsStore.ts` |
+| `3dheat.objectives` | rodomus tikslus, sluoksnius, etiketes | `src/state/objectivesStore.ts` |
+| `3dheat.volumes.…` | tūrius, kiekvienam duomenų rinkiniui | `src/volumes/store.ts` |
+| `heat3d.ai` | išorinį DI: teikėją, adresą, modelį, parinktis (ne raktą) | `src/insights/ai/settings.ts` |
+| `heat3d.ai.key` | išorinio DI raktą, tik kai pažymėta *Prisiminti raktą* | `src/insights/ai/settings.ts` |
+| `heat3d.bookmarks.…` | žymes, kiekvienam įrašui | `src/ui/replay/bookmarks.ts` |
+| `heat3d.carNames` | automobilių pavadinimus lenktynių skirtuke | `src/race/carNames.ts` |
+| `heat3d.far` | tolimas figūras, ženklus, pataikymų žymas, taikymo linijas | `src/state/store.ts` |
+| `heat3d.help` | pagalbos režimą įjungtą ar išjungtą | `src/state/helpStore.ts` |
+| `heat3d.inspect` | apžiūros kortelę ir kameros rodmenis | `src/state/inspectStore.ts` |
+| `heat3d.language` | pasirinktą kalbą | `src/i18n/index.ts` |
+| `heat3d.mirror` | ašių atspindėjimą | `src/state/store.ts` |
+| `heat3d.replay` | pakartojimo etiketes, taktinį rodinį, 2D žemėlapį, diagramas, galvos aukščio ekraną, žvilgsnį, pastatus, sekimo kamerą | `src/state/replayStore.ts` |
+| `heat3d.speed` | atkūrimo greitį | `src/state/playbackSpeed.ts` |
+| `heat3d.units` | vienetų rinkinį ir atskirus vienetus | `src/state/unitsStore.ts` |
 
-Heat settings, filters and the view mode are not kept: they start fresh with each load.
+Šilumos nustatymai, filtrai ir rodinio režimas neišsaugomi: su kiekvienu įkėlimu jie prasideda iš naujo.

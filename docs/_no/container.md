@@ -163,7 +163,7 @@ Hvert medlem:
 | `bytes` | størrelsen, ukomprimert |
 | `sha256` | av bytene, ukomprimert |
 | `rows` | en tabells antall rader |
-| `schema` | konvensjonen den følger, `{ "id", "version" }`: et dokuments egne `format` og `version` (`heat3d-wt-replay-match` 2), `heat3d-table` for en tabell seeren leser etter sin `heat3d`-fotnote, `heat3d-acmi-table` for Tacview-verktøyets |
+| `schema` | konvensjonen den følger, `{ "id", "version" }`: et dokuments egne `format` og `version` (`heat3d-wt-replay-match` 2), `heat3d-table` for en tabell visningsprogrammet leser etter sin `heat3d`-fotnote, `heat3d-acmi-table` for Tacview-verktøyets |
 | `match` | i en beholder med flere kamper, `matches[].id` den hører til |
 
 ### Laget for å vokse {#made-to-grow}
@@ -188,7 +188,7 @@ leser den nå:
   Arrow, PNG- eller JPEG-miniatyrbilder, glTF-modeller, lyd, rene blobber.
 - **Flere kamper.** En økt eller en turnering kan gå i én beholder: `matches` lister
   dem (`{ "id", "map", "mode", "started", ... }`), og hvert medlem nevner sin
-  `match`. Seeren laster hvert medlem med rollen `table`.
+  `match`. Visningsprogrammet laster hvert medlem med rollen `table`.
 - **Referanser.** Filer en beholder trenger, men ikke holder, for eksempel en bane,
   listes i `references` med navn og sha256
   (`{ "kind": "level", "name": "...", "sha256": "..." }`), så riktig fil finnes og
@@ -203,7 +203,7 @@ leser den nå:
   kjent eller ukjent, beholdes. En oppdatering som mislykkes, kuttes tilbake til
   beholderen slik den var.
 
-Seerens tester holder den til dette: en beholder i format 1.7 med en ukjent rolle,
+Visningsprogrammets tester holder den til dette: en beholder i format 1.7 med en ukjent rolle,
 et medlemsfelt, en utvidelse og et lydmedlem i en mappe lastes, og overlever en
 oppdatering og en repack med alt intakt; en beholder med hovedversjon 2 avvises.
 
@@ -214,5 +214,5 @@ oppdatering og en repack med alt intakt; en beholder med hovedversjon 2 avvises.
 - Python: `container.py`, rundt 140 linjer på standard `zipfile`, den samme filen i hver
   konverter (`heat3d_ext_warthunder/container.py`, `heat3d_cs2/container.py`), så ingen
   konverter avhenger av en annen. En ny konverter kopierer den.
-- Seeren leser med
+- Visningsprogrammet leser med
   [`src/data/container.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/container.ts).

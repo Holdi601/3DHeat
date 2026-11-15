@@ -26,7 +26,7 @@ Yra apie 2 000 pavadintų transporto priemonių, orlaivių, laivų, ginklų ir k
 | Sausuma | tankai, pėstininkų kovos mašinos, oro gynyba, artilerija, sunkvežimiai ir automobiliai, traukiniai ir tramvajai |
 | Oras | naikintuvai, puolimo lėktuvai, bombonešiai, transportiniai lėktuvai, sraigtasparniai – nuo dvisparnių iki šiuolaikinių reaktyvinių |
 | Jūra | karo laivai pagal klasę, lėktuvnešiai, povandeniniai laivai, valtys, prekybiniai laivai |
-| Ginklai | raketos, rakečių paleidimo įrenginiai, bombos, torpedos, signalinės raketos ir dirbtiniÅ³ debesÅ³ sviediniai |
+| Ginklai | raketos, rakečių paleidimo įrenginiai, bombos, torpedos, signalinės raketos ir dirbtinių debesų sviediniai |
 | Žymekliai | dūmų, blyksnio ir gaisro granatos, pasodinti bombos, vėliavos, atsiradimo vietos, maršruto taškai |
 
 ## Kaip sukuriamos figūros {#how-the-figures-are-made}

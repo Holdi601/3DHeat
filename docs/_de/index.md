@@ -3,16 +3,16 @@ title: "Startseite"
 nav_order: 1
 lang: "de"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat zeigt, wo in einem Spiel etwas passiert ist – wohin Spieler gelaufen sind, wo sie gekämpft haben und wo sie gefallen sind. Als leuchtende Farben, durch die du fliegen kannst, oder als kleine 3D-Figuren, die das Match nachspielen.
 
-Lade Positionen – CSV, Parquet, Tacview-Aufnahmen, konvertierte Replays, eine einzelne Datei, einen Ordner oder Tausende Matches – und sieh sie als **Heatmap, durch die du fliegen kannst**, als **Figuren, die das Match nachspielen**, als Linien entlang der Wege, die Leute genommen haben, oder als eine Gruppe gegen eine andere. Es findet selbst, was heraussticht, und läuft komplett in deinem Browser: Nichts wird irgendwohin hochgeladen.
+Lade Positionen – CSV, Parquet, Tacview-Aufnahmen, konvertierte Replays, eine einzelne Datei, einen Ordner oder Tausende Matches – und sieh sie als **Heatmap, durch die du fliegen kannst**, als **Figuren, die das Match nachspielen**, als Linien entlang der Wege, die Leute genommen haben, oder als eine Gruppe gegen eine andere. Es findet selbst, was heraussticht, und läuft komplett in deinem Browser: Nichts wird irgendwohin hochgeladen. 3DHeat und alle seine Werkzeuge sind kostenlos und Open Source unter der [MIT-Lizenz](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Intensität von zehn Panzer-Matches über dem Demo-Tal](../assets/img/de/heat-hero.webp)
 

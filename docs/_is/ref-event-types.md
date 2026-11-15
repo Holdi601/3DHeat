@@ -11,11 +11,11 @@ translated: true
 
 # Atburðategundir og flokkar
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Skoðarinn bætir dálkinum **Tegund atburðar** við hvert gagnasafn sem hefur atburðadálk (`event`, `events`, `event_type` eða `event_name`). Orð hvers leiks um sig er tengt einni af þessum gerðum (stórir og litlir stafir jafngildir); orð sem er ekki á listanum telst *Annað*.
 
-| Kind | Shown as | Words in the data |
+| Gerð | Birtist sem | Orð í gögnunum |
 |---|---|---|
-| `position` | Staðsetning | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Staðsetning | `(tómt)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Skot | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Skot á loft (flugskeyti, eldflaug, sprengja) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Högg | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Skilaboð | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Annað | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Flokkar farartækja {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Dálkarnir **Flokkur farartækis** og **Flokkur skotmarks** nota þessa flokka, reiknaða út frá heitum farartækja (í gegnum [fígúrusafnið](figures.md)) og tegundadálkum.
 
-| Class | Shown as |
+| Flokkur | Birtist sem |
 |---|---|
 | `fighter` | Orrustuflugvél |
 | `attack` | Árásarflugvél |

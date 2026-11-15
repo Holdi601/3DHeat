@@ -56,8 +56,8 @@ Myndin sýnir höggin þar sem gögnin gefa punkt eða líkamshluta. Sundurliðu
 
 Hlutinn **Svæði** takmarkar greininguna við högg sem áttu sér stað á ákveðnum stað á kortinu.
 
-1. Ýttu á **Teikna kassa** eða **Teikna marghyrning**, og teiknaðu á þrívíða jörðinni eða taktíska kortinu.
-2. Veldu **Fórnarlamb inni** (teldu högg þegar einingin sem var hitt var á svæðinu) eða **Skotmaður inni** (þegar sá sem skaut var þar).
+1. Ýttu á **Teikna ferhyrning** eða **Teikna marghyrning**, og teiknaðu á þrívíða jörðinni eða taktíska kortinu.
+2. Veldu **Fórnarlamb inni** (teldu högg þegar einingin sem var hitt var á svæðinu) eða **Skytta inni** (þegar sá sem skaut var þar).
 3. Ýttu á **Nota sem síu**. Flísarnar sýna „{n} af {total} höggum á svæðinu“.
 4. **Endurstilla svæði** fjarlægir öll svæði.
 

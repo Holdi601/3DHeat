@@ -20,7 +20,7 @@ Hver kamp starter ved sin egen begyndelse, og dens enheder bevæger sig som figu
 ## Sådan bruges den {#how-to-use-it}
 
 1. Åbn **Mange kampe på én gang** i varmesidebaren.
-2. Tryk på **Filer …** (vælg mange filer), **Mappe …** (en mappe og dens undermapper) eller **Tilføj mappe …** (føj til det, der er indlæst).
+2. Tryk på **Filer …** (vælg mange filer), **Mappe …** (en mappe og dens undermapper) eller **Tilføj mappe…** (føj til det, der er indlæst).
 3. Fremviseren skifter til figuroverlejringen og starter fra begyndelsen. Tryk på **Afspil**.
 
 Hver fil er én kamp (eller rummer flere). Parquet-filer og [`.3dheat`](container.md)-containere virker. En fil skal have en positions-, en tids- og en enhedskolonne. Navne-, type- og sidekolonner beholdes. Andre filer og sidefilerne fra konvertere (flyvning, beskeder, hændelser, chat, mål) springes over. For en almindelig tabel, se [Indlæs data](getting-data-in.md).
@@ -40,4 +40,4 @@ Figurernes udseende bruger de samme styringer som [kamp-replayet](match-replay.m
 
 - Når alt ikke ville passe i hukommelsen, tyndes positionerne ud (kun en position hver få meter beholdes), og panelet siger det.
 - Varmetilstandene virker også på overlejringens data.
-- Til statistik over tusindvis af kampe uden at tegne dem, se [Massanalyse](mass-analysis.md).
+- Til statistik over tusindvis af kampe uden at tegne dem, se [Masseanalyse](mass-analysis.md).

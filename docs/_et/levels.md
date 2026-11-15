@@ -11,7 +11,7 @@ outdated: false
 
 # Tasemed ja taustageomeetria
 
-Tase on 3D-koht, kus mäng toimus - kaart, linn, rada. Pane see oma andmete taha ja näed, *kus* soojus asub. Jaotis **Taust / tase** (vt sõnastikust "tase") annab kolme liiki konteksti:
+Tase on 3D-koht, kus mäng toimus - kaart, linn, rada. Pane see oma andmete taha ja näed, *kus* soojus asub. Jaotis **Taust / tase** (vt [sõnastikust](glossary.md) "tase") annab kolme liiki konteksti:
 
 - **kaardipilt**, mis on geograafiliselt paigutatud kahe ankruga - vt [Kaardipildid](map-images.md);
 - **3D-tase** - `.glb`, `.gltf`, `.obj`, `.stl` või `.ply` - jagatud maapinnaks, ehitisteks ja veeks ning lihtsustatud importimisel - vt [3D-tasemed](model-levels.md) ja [Taseme välimus](level-appearance.md);

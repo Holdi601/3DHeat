@@ -11,9 +11,9 @@ translated: true
 
 # Taules de valors
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+Les taules de preus de [Ponderació de valors](value-weighting.md). El joc es reconeix pels noms de les dades; les pròpies columnes de valor d'un convertidor, en la moneda del joc, tenen prioritat sobre aquestes.
 
-| Table | Currency | Defined in |
+| Taula | Moneda | Definida a |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

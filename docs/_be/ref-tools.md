@@ -11,9 +11,9 @@ translated: true
 
 # Інструменты каманднага радка
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Інструменты каманднага радка з папкі `tools/` праглядальніка (Node.js, запускаюцца з кораня рэпазіторыя). Карыстацца праглядальнікам яны не патрэбныя: яны ўпакоўваюць, зводзяць і канвертуюць вашы дадзеныя і дапамагаюць тым, хто падтрымлівае праглядальнік. У кожнага запісу ёсць першы абзац апісання інструмента і радкі выкарыстання; інструмент без аргументаў пакажа поўную даведку, дзе яна ёсць. Інструменты дадзеных [звязаных рэпазіторыяў](index.md#related-repositories) апісваюць свае каманды самі.
 
-## For your data
+## Для вашых дадзеных {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Для распрацоўшчыкаў і дакументацыі {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Яны правяраюць праглядальнік, ствараюць дэма-дадзеныя і здымкі экрана і пішуць даведачныя старонкі.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Бібліятэкі {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` — бібліятэка без каманднага радка: інструменты вышэй імпартуюць яе, каб чытаць і запісваць [файл .3dheat](container.md).

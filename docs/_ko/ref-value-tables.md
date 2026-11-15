@@ -11,9 +11,9 @@ translated: true
 
 # 값 표
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+[값 가중치](value-weighting.md)의 가격표입니다. 게임은 데이터의 이름으로 인식합니다. 변환기가 게임 통화로 가진 고유 값 열이 있으면 이 표보다 우선합니다.
 
-| Table | Currency | Defined in |
+| 표 | 통화 | 정의 위치 |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

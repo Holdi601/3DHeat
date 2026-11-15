@@ -1,5 +1,5 @@
 ---
-title: "Vienības"
+title: "Objekti"
 parent: "Filtri un rīki"
 nav_order: 3
 lang: "lv"
@@ -9,15 +9,15 @@ translated: true
 outdated: false
 ---
 
-# Vienības
+# Objekti
 
-**Vienības** ļauj izvēlēties vienu spēlētāju (vai dažus), lai redzētu tikai, kur šis spēlētājs ir bijis. Izmantojiet to, lai sekotu savai kustībai vai vienam pretiniekam.
+**Objekti** ļauj izvēlēties vienu spēlētāju (vai dažus), lai redzētu tikai, kur šis spēlētājs ir bijis. Izmantojiet to, lai sekotu savai kustībai vai vienam pretiniekam.
 
 Panelis tiek rādīts, kad datu kopai ir personu kolonna. Tā galvene rāda personu skaitu vai `selected of total`, kamēr ir aktīva atlase (*persona* ir viens spēlētājs vai MI, skatiet [glosāriju](glossary.md)).
 
 ## Izvēlieties spēlētāju {#pick-a-player}
 
-1. Atveriet **Vienības** sānjoslā.
+1. Atveriet **Objekti** sānjoslā.
 2. Meklēšanas lodziņā ierakstiet daļu no vārda.
 3. Atzīmējiet spēlētāju. Galvenē rakstīts, piemēram, `2 of 10`, un viss pārējais pazūd.
 4. **Notīrīt** parāda visus atkal.

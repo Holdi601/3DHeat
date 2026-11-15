@@ -3,16 +3,16 @@ title: "Domov"
 nav_order: 1
 lang: "sl"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat pokaže, kje so se stvari dogajale v igri - kam so šli igralci, kje so se borili in kje so padli - kot svetleče barve, skozi katere lahko letite, ali kot majhne 3D figure, ki ponovijo tekmo.
 
-Naložite pozicije - CSV, Parquet, posnetke Tacview, pretvorjene posnetke, eno datoteko, mapo ali na tisoče tekem - in jih vidite kot **toplotni zemljevid, skozi katerega lahko letite**, kot **figure, ki ponovijo tekmo**, kot črte vzdolž poti, po katerih so hodili ljudje, ali kot eno populacijo proti drugi. Sama poišče, kaj izstopa, in deluje povsem v vašem brskalniku: nič se ne naloži nikamor.
+Naložite pozicije - CSV, Parquet, posnetke Tacview, pretvorjene posnetke, eno datoteko, mapo ali na tisoče tekem - in jih vidite kot **toplotni zemljevid, skozi katerega lahko letite**, kot **figure, ki ponovijo tekmo**, kot črte vzdolž poti, po katerih so hodili ljudje, ali kot eno populacijo proti drugi. Sama poišče, kaj izstopa, in deluje povsem v vašem brskalniku: nič se ne naloži nikamor. 3DHeat in vsa njegova orodja so brezplačna in odprtokodna pod [licenco MIT](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Toplota desetih tekem s tenki nad demo dolino](../assets/img/sl/heat-hero.webp)
 
@@ -24,7 +24,7 @@ Naložite pozicije - CSV, Parquet, posnetke Tacview, pretvorjene posnetke, eno d
 |---|---|
 | ![Razlika](../assets/img/sl/heat-difference.webp) | **[Načini toplote](heat-modes.md)** - toplota, [razlika](difference.md) (rdeča tam, kjer je bila ena stran bolj prisotna, zeleno-modra tam, kjer druga), [toplota ekip](team-heat.md), [črtna toplota](line-heat.md); [smerna toplota](directional-heat.md) z kloni, polji puščic in polarnimi grafi; toplota [utežena z vrednostjo](value-weighting.md): kaj stanejo orožje, vozila in gorivo. |
 | ![Predvajanje](../assets/img/sl/replay-tanks.webp) | **[Predvajanje tekme](match-replay.md)** - vsaka enota kot [figura](figures.md) tega, kar je, simboli NATO ali ruski simboli na daljavo, rakete in sledilni streli, oznake zadetkov, olupki, požari, kupole, cilji ter kamere v slogu Tacview in taktični prikaz; [veliko tekem hkrati](many-matches.md). |
-| ![Ugotovitve](../assets/img/sl/insights.webp) | **[Ugotovitve](insights.md)** - močne pozicije, smrtonosna tla, pasti ob pojavitvi, ozka grla in izstopajoči igralci, najdeni in razvrščeni z dokazi; pisni povzetek, po izbiri z UI po vaši izbiri; komentator za eno tekmo; [leča znanja](knowledge.md). |
+| ![Ugotovitve](../assets/img/sl/insights.webp) | **[Ugotovitve](insights.md)** - močne pozicije, smrtonosna tla, pasti ob pojavitvi, ozka grla in izstopajoči igralci, najdeni in razvrščeni z dokazi; pisni povzetek, po želji z AI, ki ga izberete; komentator za eno tekmo; [leča znanja](knowledge.md). |
 | ![Prostornine](../assets/img/sl/compare.webp) | **[Prostornine](volumes.md)** - rišite kvadre, prizme, valje in krogle, filtrirajte po njih, štejte, kaj se dogaja znotraj, izvozite in primerjajte kraje drug ob drugem; [razčlenitev](breakdown.md), kdo in kaj je najbolj uspešno na nekem mestu. |
 | ![Filtri](../assets/img/sl/filters.webp) | **[Filtri](filters.md)** - po vrsti dogodka, igralcu ali UI, razredu vozila, vrednosti, poljubnem stolpcu, na grafični kartici pri vsaki velikosti podatkov. |
 | ![Raven](../assets/img/sl/level-panel.webp) | **[Ravni](levels.md)** - slike zemljevidov, 3D ravni, narejene z [orodji za podatke](#related-repositories), poenostavitev, [ozadje sveta](world-backdrop.md) z resničnim terenom za podatke o letenju. |
@@ -44,6 +44,8 @@ Zavihki so na vrhu stranske vrstice, pod imenom, enotami in menijem za jezik.
 | **Vozila** | Kje je bila vsaka enota zadeta, kdo je zadel in s čim. |
 
 ## Namestitev in zagon {#install-and-run}
+
+3DHeat je brezplačen za uporabo, spreminjanje in deljenje (licenca MIT), prav tako vsako orodje, navedeno pod [Sorodni repozitoriji](#related-repositories).
 
 ### Windows, na enostaven način {#windows-the-easy-way}
 

@@ -21,14 +21,14 @@ Visningen viser, hvordan hver runde blev kørt. Den markerer de steder, hvor fø
 - **Hjulspin**: du trykker speederen så hårdt i bund, at de drevne hjul snurrer hurtigere, end bilen kører. Du mister træk.
 - **Overstyring**: bagenden af bilen glider ud til siden. Hvis den drejer hele vejen rundt, er det et **spin**.
 - **Understyring**: forenden af bilen glider ud til siden ("skubber"). Det hjælper ikke at dreje rattet mere.
-- **Træf** og **styrt**: bilen rørte ved noget. Et træf er et stød eller en ridse, og et styrt er et hårdt stød.
+- **Berøring** og **styrt**: bilen rørte ved noget. Et træf er et stød eller en ridse, og et styrt er et hårdt stød.
 - **ABS** og **TC**: bilens egne hjælpere, som virker mod blokering og hjulspin. De er ikke fejl.
 
 ## Afsnittet Bilkontrol (det du ser) {#the-car-control-section-what-you-see}
 
 For den valgte runde viser den, hvad runderne har, også uden hjulglidning og uden driftvinkel. Den viser stadig det, der kan findes, i stedet for ingenting (se nedenfor).
 
-**Tabellen**: én række for hver slags, som mindst én af de to runder viser. Det er Låste hjul, Hjulspin, Bagende glider ud (overstyring og spin), Skubber ud, Styrt, Træf, ABS i brug, Sporkontrol i brug, Håndbremse og I luften. Hver celle viser "antal · sekunder" for den valgte runde og for den runde, den sammenlignes med. Og *Størst driftvinkel*, når der er en driftvinkel (den største på jorden).
+**Tabellen**: én række for hver slags, som mindst én af de to runder viser. Det er Låste hjul, Hjulspin, Bagende glider ud (overstyring og spin), Skubber ud, Styrt, Berøring, ABS i brug, Sporkontrol i brug, Håndbremse og I luften. Hver celle viser "antal · sekunder" for den valgte runde og for den runde, den sammenlignes med. Og *Størst driftvinkel*, når der er en driftvinkel (den største på jorden).
 
 **Listen**: dens ikke-delte fejl, der koster mindst 0,02 s, de dyreste først, højst 12. Hver med sin titel og pris (og mærket for sin slags). Klik på en for at læse dens tip, stil bilerne op 40 m før den og afspil den. **Også hvad begge runder gjorde der** tilføjer alle fejl, også de delte (mærket "begge gjorde det", pris "—" under 0,01 s). Hvis der ingen er: "Det X gjorde med dækkene, kostede ikke tid, men det Y ikke gjorde, kostede tid."
 
@@ -57,7 +57,7 @@ Begrundelsen og litteraturen står i [metoden](race-analytics.md).
 | `spin` | (talt med Bagende glider ud) | ja | 0,1 s |
 | `understeer` | Skubber ud | ja | 0,25 s |
 | `crash` | Styrt | ja | - |
-| `hit` | Træf | ja | - |
+| `hit` | Berøringer | ja | - |
 | `abs` | ABS i brug | nej | 0,2 s |
 | `tc` | Sporkontrol i brug | nej | 0,2 s |
 | `handbrake` | Håndbremse | nej | 0,1 s |

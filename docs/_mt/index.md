@@ -3,16 +3,16 @@ title: "Id-dar"
 nav_order: 1
 lang: "mt"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat juri fejn ġraw affarijiet f'logħba - fejn mexxew il-plejers, fejn ġġieldu u fejn waqgħu - bħala kuluri li tista' ttir fihom, jew bħala figuri 3D żgħar li jerġgħu jilagħbu l-partita.
 
-Tagħbi pożizzjonijiet - CSV, Parquet, reġistrazzjonijiet Tacview, replays konvertiti, fajl wieħed, folder jew eluf ta' partiti - u araw bħala **sħana li tista' ttir fiha**, bħala **figuri li jerġgħu jilagħbu l-partita**, bħala linji tul it-toroq li ħadu n-nies, jew bħala popolazzjoni waħda kontra oħra. Jsib waħdu dak li jinqala' 'l barra, u jaħdem kollu fil-browser tiegħek: xejn ma jitgħabba x'imkien ieħor.
+Tagħbi pożizzjonijiet - CSV, Parquet, reġistrazzjonijiet Tacview, replays konvertiti, fajl wieħed, folder jew eluf ta' partiti - u araw bħala **sħana li tista' ttir fiha**, bħala **figuri li jerġgħu jilagħbu l-partita**, bħala linji tul it-toroq li ħadu n-nies, jew bħala popolazzjoni waħda kontra oħra. Jsib waħdu dak li jinqala' 'l barra, u jaħdem kollu fil-browser tiegħek: xejn ma jitgħabba x'imkien ieħor. 3DHeat u l-għodod kollha tiegħu huma b'xejn u open source taħt il-[liċenzja MIT](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Sħana ta' għaxar partiti ta' tanks fuq il-wied demo](../assets/img/mt/heat-hero.webp)
 
@@ -44,6 +44,8 @@ It-tabs jinsabu fil-quċċata tas-sidebar, taħt l-isem, l-unitajiet u l-menu ta
 | **Vetturi** | Fejn ġiet imlaqqta kull unità, minn min u b'xiex. |
 
 ## Installazzjoni u tmexxija {#install-and-run}
+
+3DHeat hu b'xejn biex tuża, tbiddel u taqsam (liċenzja MIT), u hekk ukoll kull għodda elenkata taħt [Repożitorji relatati](#related-repositories).
 
 ### Windows, il-mod sempliċi {#windows-the-easy-way}
 

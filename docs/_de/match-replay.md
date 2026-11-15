@@ -54,9 +54,9 @@ Ist eine Einheit kleiner als **Kleinste Figur am Bildschirm**, kann sie zu einem
 
 ![Dieselben sechs Einheiten als NATO-Symbole, russische taktische Zeichen, Symbole der Spielkarte und nur Formen](../assets/img/de/match-replay-symbols-styles.webp)
 
-### Trefferzeichen, Wracks und Brände {#hit-marks-wrecks-and-fires}
+### Treffermarken, Wracks und Brände {#hit-marks-wrecks-and-fires}
 
-- **Trefferzeichen** sitzen auf der Oberfläche, auf die der Schuss traf, im Maßstab der Figur. Ihr Aussehen zeigt, was geschah: ein Loch (durchgeschlagen), ein heller Spritzer (nicht durchgeschlagen), eine Furche (abgeprallt), ein Rußstern (Sprengladung). Ein farbiger Ring sagt, was er bewirkt hat: tödlicher Treffer, Modul zerstört, kritisch, schwer, Schaden, kein Schaden, Treffer. Fahre über ein Zeichen, um den Namen der Munition zu sehen.
+- **Treffermarken** sitzen auf der Oberfläche, auf die der Schuss traf, im Maßstab der Figur. Ihr Aussehen zeigt, was geschah: ein Loch (durchgeschlagen), ein heller Spritzer (nicht durchgeschlagen), eine Furche (abgeprallt), ein Rußstern (Sprengladung). Ein farbiger Ring sagt, was er bewirkt hat: tödlicher Treffer, Modul zerstört, kritisch, schwer, Schaden, kein Schaden, Treffer. Fahre über ein Zeichen, um den Namen der Munition zu sehen.
 - Eine zerstörte Einheit wird vom Tod an als **verkohltes** Wrack gezeichnet, bis sie wieder erscheint oder entfernt wird; ihr Symbol ist durchgestrichen.
 - **Brände** brennen an einer Einheit vom Moment an, in dem sie Feuer fängt, bis es gelöscht ist.
 - **Türme** drehen sich dorthin, wohin die Daten das Geschütz zeigen (oder, ohne diese, wohin der Spieler schaut).

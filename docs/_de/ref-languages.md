@@ -11,9 +11,9 @@ translated: true
 
 # Sprachliste
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+Der Viewer spricht 40 Sprachen. Er startet in der Sprache des Browsers, wenn sie dabei ist, und das Sprachmenü oben in der Seitenleiste ändert sie. Wie man sie ändert und wie Übersetzungen entstehen: [Sprachen](languages.md).
 
-| Code | Language |
+| Code | Sprache |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

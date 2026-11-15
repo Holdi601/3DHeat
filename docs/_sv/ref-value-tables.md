@@ -11,9 +11,9 @@ translated: true
 
 # Värdetabeller
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+Prislistorna i [Värdeviktning](value-weighting.md). Spelet känns igen från namn i datan; en konverterares egna värdekolumner i spelets valuta väger tyngre än dessa.
 
-| Table | Currency | Defined in |
+| Tabell | Valuta | Definierad i |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

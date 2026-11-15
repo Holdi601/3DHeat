@@ -3,16 +3,16 @@ title: "Etusivu"
 nav_order: 1
 lang: "fi"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat näyttää, missä asiat tapahtuivat pelissä: missä pelaajat liikkuivat, taistelivat ja kaatuivat. Se näyttää ne hehkuvina väreinä, joiden läpi voit lentää, tai pieninä 3D-hahmoina, jotka toistavat ottelun.
 
-Lataa sijainnit: CSV, Parquet, Tacview-tallenteet, muunnetut toistot, yksi tiedosto, kansio tai tuhansia otteluita. Näet ne **lämpökarttana, jonka läpi voit lentää**, **hahmoina, jotka toistavat ottelun**, viivoina pitkin reittejä, joita ihmiset kulkivat, tai yhtenä joukkona toista vastaan. Se löytää itse, mikä erottuu. Se toimii kokonaan selaimessasi. Mitään ei lähetetä mihinkään.
+Lataa sijainnit: CSV, Parquet, Tacview-tallenteet, muunnetut toistot, yksi tiedosto, kansio tai tuhansia otteluita. Näet ne **lämpökarttana, jonka läpi voit lentää**, **hahmoina, jotka toistavat ottelun**, viivoina pitkin reittejä, joita ihmiset kulkivat, tai yhtenä joukkona toista vastaan. Se löytää itse, mikä erottuu. Se toimii kokonaan selaimessasi. Mitään ei lähetetä mihinkään. 3DHeat ja kaikki sen työkalut ovat ilmaisia ja avoimen lähdekoodin [MIT-lisenssillä](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Kymmenen panssarivaunuottelun lämpö esimerkkilaaksossa](../assets/img/fi/heat-hero.webp)
 
@@ -44,6 +44,8 @@ Välilehdet ovat sivupalkin yläosassa, nimen, yksiköiden ja kielivalikon alapu
 | **Ajoneuvot** | Missä kukin yksikkö osui, kuka osui ja millä. |
 
 ## Asennus ja käynnistys {#install-and-run}
+
+3DHeat on ilmainen käyttää, muuttaa ja jakaa (MIT-lisenssi), ja samoin on jokainen [Liittyvät tietovarastot](#related-repositories) -osiossa lueteltu työkalu.
 
 ### Windows, helpolla tavalla {#windows-the-easy-way}
 

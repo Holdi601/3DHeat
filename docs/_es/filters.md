@@ -80,5 +80,5 @@ Permitir todos los valores quita el filtro.
 
 **Filtros que el panel no muestra.** Existen dos tipos más en el estado de la aplicación ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
 
-- un filtro de **grupos**, fijado por la pestaña Partida cuando enfoca un bando. Oculta los demás grupos en todos los modos, incluida una división por diferencia por columna.
+- un filtro de **grupos**, fijado por la pestaña Partida cuando enfoca un bando. Oculta los demás grupos en todos los modos, incluida una [división por diferencia](difference.md) por columna.
 - un filtro de **personas**, fijado por el panel [Entidades](entities.md) y por la pestaña Partida cuando enfoca a un jugador. Restringe la repetición por figuras y los modos de calor. En el calor es un filtro de categoría sobre los ids de persona y ocupa una de las cuatro ranuras. Su máscara guarda 65.536 ids ([`FILTER_MASK_CAPACITY`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)); una persona más allá de eso no se dibuja en el calor mientras el filtro esté activo, aunque esté seleccionada. La repetición por figuras sigue mostrándolas.

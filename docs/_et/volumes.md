@@ -37,7 +37,7 @@ Mahud mõõdavad, mis nende sees juhtub, filtreerivad vaate nende järgi, ekspor
 | **n-nurk** | Lohista keskpunktist (Shift hoiab korrapärasena). *Nurgad* määrab n-i, 3 kuni 64 (vaikimisi 8, nii et nupp näitab **8-nurk**). |
 | **Hulknurk** | Klõpsa nurgad; sulge topeltklõpsuga, Enteriga või klõpsuga esimesel nurgal. Backspace eemaldab viimase nurga. |
 | **Silinder** | Lohista raadiust. |
-| **Sfäär** | Lohista raadiust; ta toetub maapinnale. |
+| **Kera** | Lohista raadiust; ta toetub maapinnale. |
 
 ## Redigeeri {#edit}
 
@@ -63,7 +63,7 @@ GPU filter võtab kuni 8 mahtu, kokku 64 äärejoone punktiga; "!" tähistab mah
 Ala **Statistika** järgib filtreid, ajaakent ja peidetud rühmi. *Valitud* näitab valitud mahtu, *Võrdle kõiki* paneb kõik mahud kõrvuti. Ta näitab:
 
 - **Ridu sees (näidatud)** ja **Ridu sees (kõik andmed)**, **Mängijad**, **Meeskonnad**, **Mängud**, **Aeg sees**, **Sisenemised / väljumised**, **Soojuse tipp**, **Keskmine soojus**, **Maht / jalajälg** ning **Millal** histogrammi;
-- veeru kaupa: kategooriad koos **Lift**iga (osakaal sees jagatud osakaaluga kõigis näidatud andmetes) ning arvud koos vahemiku, mediaani ja 5.-95. protsentiiliga.
+- veeru kaupa: kategooriad koos **suhtarvuga** (osakaal sees jagatud osakaaluga kõigis näidatud andmetes) ning arvud koos vahemiku, mediaani ja 5.-95. protsentiiliga.
 
 **Statistika CSV / JSON-ina** salvestab need. **Ekspordi sees olevad andmed** kirjutab sees olevad read CSV või Parquet kujul (*Ainult näidatud read* on vaikimisi sees), ühe mahu või kõik, veeruga, mis ütleb, millises mahus iga rida on.
 

@@ -3,16 +3,16 @@ title: "Ana sayfa"
 nav_order: 1
 lang: "tr"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat, bir oyunda olayların nerede yaşandığını gösterir - oyuncuların nereye gittiğini, nerede savaştığını ve nerede düştüğünü - içinde uçabileceğiniz parlak renkler olarak ya da maçı yeniden oynatan küçük 3B figürler olarak.
 
-Konum verilerini yükleyin - CSV, Parquet, Tacview kayıtları, dönüştürülmüş tekrarlar, tek bir dosya, bir klasör ya da binlerce maç - ve bunları **içinde uçabileceğiniz bir ısı haritası** olarak, **maçı yeniden oynatan figürler** olarak, insanların izlediği rotalar boyunca çizgiler olarak ya da bir nüfusu ötekiyle karşılaştırarak görün. Öne çıkanı kendi başına bulur ve her şey tarayıcınızda çalışır: hiçbir şey bir yere yüklenmez.
+Konum verilerini yükleyin - CSV, Parquet, Tacview kayıtları, dönüştürülmüş tekrarlar, tek bir dosya, bir klasör ya da binlerce maç - ve bunları **içinde uçabileceğiniz bir ısı haritası** olarak, **maçı yeniden oynatan figürler** olarak, insanların izlediği rotalar boyunca çizgiler olarak ya da bir nüfusu ötekiyle karşılaştırarak görün. Öne çıkanı kendi başına bulur ve her şey tarayıcınızda çalışır: hiçbir şey bir yere yüklenmez. 3DHeat ve tüm araçları [MIT lisansı](https://github.com/Holdi601/3DHeat/blob/main/LICENSE) altında ücretsiz ve açık kaynaklıdır.
 
 ![Demo Valley üzerindeki on tank maçının ısısı](../assets/img/tr/heat-hero.webp)
 
@@ -44,6 +44,8 @@ Sekmeler kenar çubuğunun üstünde, adın, birimlerin ve dil menüsünün alt�
 | **Araçlar** | Her birimin nerede vurulduğu, kim tarafından ve neyle. |
 
 ## Kurulum ve çalıştırma {#install-and-run}
+
+3DHeat'i kullanmak, değiştirmek ve paylaşmak ücretsizdir (MIT lisansı); [İlgili depolar](#related-repositories) altında listelenen her araç da öyledir.
 
 ### Windows, kolay yol {#windows-the-easy-way}
 

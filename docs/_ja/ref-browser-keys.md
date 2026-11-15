@@ -11,13 +11,13 @@ translated: true
 
 # ブラウザのキー
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+読み込んだセッションが誤ったショートカットで失われないよう、ビューアーは次のキーをブラウザーから取り上げます。
 
-| Keys | When | Effect |
+| キー | 条件 | 効果 |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` （`Cmd` でも同じ） | テキストボックスの外 | ブラウザーの動作（印刷、保存、開く、再読み込み、新しいウィンドウ、閉じる など）は行われません |
+| `F1` `F3` `F5` `F6` `F7` | 常時 | ブラウザーの動作（ヘルプ、検索、再読み込み、アドレスバー、キャレットブラウズ）は行われません |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | 全画面表示中 | ビューアーが占有し（Keyboard Lock API）、ブラウザーは動作しません |
+| タブを閉じる、または再読み込みする | データまたはレベルを読み込んでいるとき | ブラウザーが先に確認します |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+ビューアー独自のキーはすべて: [キーボードとマウスのリファレンス](keyboard-reference.md)。

@@ -11,13 +11,13 @@ translated: true
 
 # Tastet e shfletuesit
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Që një seancë e ngarkuar të mos humbasë nga një shkurtore e rastësishme, shfaqja i mban këta tastet larg shfletuesit.
 
-| Keys | When | Effect |
+| Tastet | Kur | Efekti |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (edhe me `Cmd`) | jashtë kutive të tekstit | veprimi i shfletuesit (printim, ruajtje, hapje, rifreskim, dritare e re, mbyllje ...) nuk ndodh |
+| `F1` `F3` `F5` `F6` `F7` | gjithmonë | veprimi i shfletuesit (ndihma, kërkimi, rifreskimi, shiriti i adresës, lëvizja me kursorin) nuk ndodh |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | në ekran të plotë | të kyçura për shfaqjen (Keyboard Lock API), kështu shfletuesi nuk reagon ndaj tyre |
+| mbyllja ose rifreskimi i skedës | me të dhëna ose nivel të ngarkuar | shfletuesi pyet së pari |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Të gjithë tastet e vetë shfaqjes: [Referenca e tastierës dhe miut](keyboard-reference.md).

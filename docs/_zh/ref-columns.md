@@ -11,16 +11,16 @@ translated: true
 
 # 列名
 
-When a file is loaded, each role is given to the first column whose name matches one of these patterns (regular expressions, tried in order; `i` = any case). Every guess can be changed in [Column mapping](column-mapping.md), and a Parquet file can name its columns itself ([the `heat3d` hints](data-formats.md#the-heat3d-hints)).
+加载文件时，每个角色会分配给第一个名称匹配下列模式之一的列（正则表达式，按顺序尝试；`i` = 不区分大小写）。每项推测都可以在[列映射](column-mapping.md)中更改；Parquet 文件可以自行指定列名（[`heat3d` 提示](data-formats.md#the-heat3d-hints)）。
 
-| Role | Name patterns | Examples that match |
+| 角色 | 名称模式 | 匹配的示例 |
 |---|---|---|
 | X | `/^x$/i` `/(^\|[_\s])x$/i` `/pos.*x/i` `/x.*pos/i` `/loc.*x/i` `/^lon/i` `/longitude/i` | `x`, `pos_x`, `PosX`, `position_x`, `lon` |
 | Y | `/^y$/i` `/(^\|[_\s])y$/i` `/pos.*y/i` `/y.*pos/i` `/loc.*y/i` `/^lat/i` `/latitude/i` | `y`, `lat` |
 | Z | `/^z$/i` `/(^\|[_\s])z$/i` `/pos.*z/i` `/z.*pos/i` `/loc.*z/i` `/alt/i` `/height/i` `/elev/i` | `z`, `alt`, `altitude`, `height`, `elevation` |
-| Time | `/^time$/i` `/^timestamp$/i` `/^ts$/i` `/event.*time/i` `/time.*stamp/i` `/^t$/i` `/date.*time/i` `/^when$/i` `/^tick$/i` `/frame/i` and elapsed-time names (`elapsed`, `match_time` ...) | `time`, `t`, `timestamp`, `tick` |
-| Person | `/^name$/i` `/player.*(id\|name)/i` `/(^\|_)user(_\|$\|id\|name)/i` `/account/i` `/^persona/i` `/character/i` `/^victim$/i` `/^actor$/i` `/puuid/i` `/steam.?id/i` `/^subject/i` `/^driver(_?id\|_?name)?$/i` `/^car(_?id\|_?name)?$/i` | `player_id`, `steamid`, `name`, `user` |
-| Session (match, round) | `/^session(_?id)?$/i` `/^match(_?id)?$/i` `/^round(_?id)?$/i` `/^raid(_?id)?$/i` `/^game(_?id)?$/i` `/^run(_?id)?$/i` `/^replay(_?id)?$/i` `/^instance(_?id)?$/i` `/^lap(_?id)?$/i` `/^stint(_?id)?$/i` | `match`, `session`, `round`, `roundId`, `game_id` |
-| Group (team) | `/^spawn_?team$/i` `/^real_?team$/i` `/^team(_?id\|_?name)?$/i` `/^squad/i` `/^side$/i` `/faction/i` `/^clan/i` `/^party/i` `/^alliance/i` `/^car_?class$/i` | `team`, `side`, `faction` |
-| Yaw | `/^yaw$/i` `/rot.*yaw/i` `/heading/i` `/^azimuth/i` `/view.*yaw/i` `/^rot(ation)?_?z$/i` | `yaw`, `heading`, `azimuth`, `view_yaw` |
-| Pitch | `/^pitch$/i` `/rot.*pitch/i` `/elevation.*angle/i` `/view.*pitch/i` | `pitch`, `view_pitch` |
+| 时间 | `/^time$/i` `/^timestamp$/i` `/^ts$/i` `/event.*time/i` `/time.*stamp/i` `/^t$/i` `/date.*time/i` `/^when$/i` `/^tick$/i` `/frame/i` 以及经过时间的名称（`elapsed`、`match_time` ...） | `time`, `t`, `timestamp`, `tick` |
+| 人员 | `/^name$/i` `/player.*(id\|name)/i` `/(^\|_)user(_\|$\|id\|name)/i` `/account/i` `/^persona/i` `/character/i` `/^victim$/i` `/^actor$/i` `/puuid/i` `/steam.?id/i` `/^subject/i` `/^driver(_?id\|_?name)?$/i` `/^car(_?id\|_?name)?$/i` | `player_id`, `steamid`, `name`, `user` |
+| 会话（比赛、回合） | `/^session(_?id)?$/i` `/^match(_?id)?$/i` `/^round(_?id)?$/i` `/^raid(_?id)?$/i` `/^game(_?id)?$/i` `/^run(_?id)?$/i` `/^replay(_?id)?$/i` `/^instance(_?id)?$/i` `/^lap(_?id)?$/i` `/^stint(_?id)?$/i` | `match`, `session`, `round`, `roundId`, `game_id` |
+| 分组（队伍） | `/^spawn_?team$/i` `/^real_?team$/i` `/^team(_?id\|_?name)?$/i` `/^squad/i` `/^side$/i` `/faction/i` `/^clan/i` `/^party/i` `/^alliance/i` `/^car_?class$/i` | `team`, `side`, `faction` |
+| 偏航 | `/^yaw$/i` `/rot.*yaw/i` `/heading/i` `/^azimuth/i` `/view.*yaw/i` `/^rot(ation)?_?z$/i` | `yaw`, `heading`, `azimuth`, `view_yaw` |
+| 俯仰 | `/^pitch$/i` `/rot.*pitch/i` `/elevation.*angle/i` `/view.*pitch/i` | `pitch`, `view_pitch` |

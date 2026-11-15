@@ -63,7 +63,7 @@ GPU filtar prima do 8 volumena s ukupno 64 točke obrisa; "!" označava volumen 
 Područje **Statistika** slijedi filtre, vremenski prozor i skrivene grupe. *Odabrano* prikazuje odabrani volumen, a *Usporedi sve* stavlja svaki volumen jedan uz drugi. Prikazuje:
 
 - **Redaka unutra (prikazanih)** i **Redaka unutra (svi podaci)**, **Igrači**, **Timovi**, **Mečevi**, **Vrijeme unutra**, **Ulasci / izlasci**, **Vrh topline**, **Prosječna toplina**, **Volumen / površina** i histogram **Kada**;
-- po stupcu: kategorije s **Lift** (udio unutra podijeljen s udjelom u svim prikazanim podacima), a brojevi s rasponom, medijanom i 5. do 95. percentilom.
+- po stupcu: kategorije s **Odnosom udjela** (udio unutra podijeljen s udjelom u svim prikazanim podacima), a brojevi s rasponom, medijanom i 5. do 95. percentilom.
 
 **Statistika kao CSV / JSON** sprema ih. **Izvezi podatke unutra** zapisuje redke unutra kao CSV ili Parquet (*Samo prikazani redci* uključeno prema zadanom), jedan volumen ili sve, sa stupcem koji kaže koji volumen drži koji redak.
 

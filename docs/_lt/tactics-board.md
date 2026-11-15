@@ -138,10 +138,10 @@ naują vietą kitame žingsnyje, nuslysta ten, likusios stovi. Kol rodomas žing
 
 ## Įrašymas {#saving}
 
-Skiltyje **Failas** yra **Įrašyti**, **Atidaryti** ir **Trinti**. **Įrašyti** išsaugo planą kaip `<pavadinimas>.h3dplan.json`
-(paprastas JSON: pusės, žingsniai, figūros su vieta kiekviename žingsnyje, rodyklės, sritys, pastabos); **Atidaryti**
-nuskaito vieną atgal. Kito versijos failas arba failas, kuris nėra planas, atmetamas nurodant priežastį. **Trinti**
-išvalo planą; Anuliuoti jį grąžina.
+Skiltyje **Failas** yra **Įrašyti**, **Atverti** ir **Išvalyti**. **Įrašyti** išsaugo planą kaip `<pavadinimas>.h3dplan.json`
+(paprastas JSON: pusės, žingsniai, figūros su vieta kiekviename žingsnyje, rodyklės, sritys, pastabos); **Atverti**
+nuskaito vieną atgal. Kito versijos failas arba failas, kuris nėra planas, atmetamas nurodant priežastį. **Išvalyti**
+nuvalo planą; **Anuliuoti** jį grąžina.
 
 ## Figūros {#figures}
 

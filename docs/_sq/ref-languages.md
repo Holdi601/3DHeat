@@ -11,9 +11,9 @@ translated: true
 
 # Lista e gjuhëve
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+Shfaqja flet 40 gjuhë. Nis me gjuhën e shfletuesit, kur e ka, dhe menuja e gjuhës në krye të shiritit anësor e ndryshon. Si ndryshohet dhe si bëhen përkthimet: [Gjuhët](languages.md).
 
-| Code | Language |
+| Kodi | Gjuha |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

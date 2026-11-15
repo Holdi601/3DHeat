@@ -11,11 +11,11 @@ translated: true
 
 # Types et classes d'événements
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Le visualiseur ajoute une colonne **Type d'événement** à chaque jeu de données ayant une colonne d'événement (`event`, `events`, `event_type` ou `event_name`). Les mots propres à chaque jeu sont rattachés à l'un de ces genres (majuscules et minuscules indifféremment) ; un mot absent de la liste compte comme *Autre*.
 
-| Kind | Shown as | Words in the data |
+| Genre | Affiché comme | Mots dans les données |
 |---|---|---|
-| `position` | Position | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Position | `(vide)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Tir | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Lancement (missile, roquette, bombe) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Impact | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Message | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Autre | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Classes de véhicules {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Les colonnes **Classe de véhicule** et **Classe de cible** utilisent ces classes, déduites des noms de véhicules (via le [catalogue des figures](figures.md)) et des colonnes de type.
 
-| Class | Shown as |
+| Classe | Affiché comme |
 |---|---|
 | `fighter` | Chasseur |
 | `attack` | Avion d'attaque |

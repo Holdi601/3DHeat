@@ -134,7 +134,7 @@ Vanlig JSON (`src/mass/types.ts`), omtrent 5–30 KB komprimert per kamp:
   hver med sin egen nullmodell, p og q – se [Kollektiv atferd](collective-behaviour.md);
 - rutenettet (under).
 
-Telt slik seeren teller: kolonner funnet slik massespilleren finner dem
+Telt slik visningsprogrammet teller: kolonner funnet slik massespilleren finner dem
 (`leanSpec`), hendelser etter `data/canonical.ts`; et drap et Tacview-våpen
 scorer, teller for skytteren; en død som er sagt to ganger samtidig (`dead`, `death`)
 teller én gang.
@@ -144,7 +144,7 @@ teller én gang.
 Den romlige delen er laget for skanningsstatistikk over regioner av enhver størrelse
 og form, ikke bare for varmebilder:
 
-- **En pyramide.** Cellene er justerte potenser av to i verdenshenhold (x, z slik seeren plasserer dem). Nivå `k` er cellene summert etter `ix >> k, iz >> k` –
+- **En pyramide.** Cellene er justerte potenser av to i verdenshenhold (x, z slik visningsprogrammet plasserer dem). Nivå `k` er cellene summert etter `ix >> k, iz >> k` –
   eksakt, innen en kamp og over kamper med andre cellestørrelser – og et hvilket
   som helst område (en boks, en korridor langs en linje, en ring) er en sum av celler. Det finste
   nivået passer kampens robuste utstrekning (cellene som har 99 % av tilstedeværelsen) i

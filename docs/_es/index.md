@@ -3,16 +3,16 @@ title: "Inicio"
 nav_order: 1
 lang: "es"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat muestra dónde ocurrieron las cosas en un juego - por dónde fueron los jugadores, dónde lucharon y dónde cayeron - como colores brillantes por los que puedes volar, o como pequeñas figuras 3D que repiten la partida.
 
-Carga posiciones - CSV, Parquet, grabaciones de Tacview, repeticiones convertidas, un solo archivo, una carpeta o miles de partidas - y verlas como un **mapa de calor por el que puedes volar**, como **figuras que repiten la partida**, como líneas a lo largo de las rutas que siguió la gente, o como una población frente a otra. Encuentra por sí solo lo que destaca, y funciona por completo en tu navegador: no se sube nada a ningún sitio.
+Carga posiciones - CSV, Parquet, grabaciones de Tacview, repeticiones convertidas, un solo archivo, una carpeta o miles de partidas - y verlas como un **mapa de calor por el que puedes volar**, como **figuras que repiten la partida**, como líneas a lo largo de las rutas que siguió la gente, o como una población frente a otra. Encuentra por sí solo lo que destaca, y funciona por completo en tu navegador: no se sube nada a ningún sitio. 3DHeat y todas sus herramientas son gratuitas y de código abierto bajo la [licencia MIT](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Calor de diez partidas de tanques sobre Demo Valley](../assets/img/es/heat-hero.webp)
 

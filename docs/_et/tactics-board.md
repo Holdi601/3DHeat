@@ -43,7 +43,7 @@ päris kaardil: CS2 tööriistaga eksporditud CS2 kaart, raamatukogu tase või k
 |---|---|---|
 | **Vali** | Kuju, teepunkt, nool, ala või märkus valib selle. | Shift+klõps lisab või eemaldab; Shift+lohistus joonistab kasti selle ümber, mida lisada. Valikul on teisendus-gizmo (vt allpool); `Delete` või `Backspace` eemaldab selle. `M` viib valitud kuju järgmise klõpsuni. |
 | **Koht** | Paneb valitud kuju maha. | Kuju valitakse jaotise **Kujud** paletist (koos **Otsi kujusid**). Kui ei ole midagi valitud, pöörab `R` järgmist kuju 15° enne paigutamist (`Shift+R` vastupidi). |
-| **Nool** | Iga klõps lisab punkti; Enter, topeltklõps või parempoolne klõps lõpetab, Esc loobub. | **Liigu**, **Rünnak** (laiem ots) või **Jälgi** (õhuke joon silmade kõrgusel). Kujult alustatud nool on selle kuju marsruut sel sammul: esitamisel kuju käib seda mööda ja järgmine samm algab sealt, kus see lõppes. |
+| **Nool** | Iga klõps lisab punkti; Enter, topeltklõps või parempoolne klõps lõpetab, Esc loobub. | **Liikumine**, **Rünnak** (laiem ots) või **Jälgimine** (õhuke joon silmade kõrgusel). Kujult alustatud nool on selle kuju marsruut sel sammul: esitamisel kuju käib seda mööda ja järgmine samm algab sealt, kus see lõppes. |
 | **Visata** | Viskaja, siis koht, kuhu see maandub. | Katkendlik kaar ühest teise ja valitud abivahend (suits, välk, molotov, ...) ilmub sinna, kuhu see maandub, ja jääb sellest sammust alates. |
 | **Ala** | Keskpunkt, siis serv. | Ketas poole värvis. |
 | **Märkus** | Koht, kuhu märkus läheb; küsib selle teksti. | Näidatakse nõelana, ja selle tekst on selle kohal. |

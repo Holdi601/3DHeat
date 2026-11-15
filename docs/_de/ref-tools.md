@@ -11,9 +11,9 @@ translated: true
 
 # Kommandozeilen-Werkzeuge
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Die Kommandozeilen-Werkzeuge im Ordner `tools/` des Viewers (Node.js, aus dem Repository-Stammverzeichnis ausgeführt). Für die Nutzung des Viewers brauchst du sie nie: Sie packen, fassen zusammen und konvertieren deine Daten und helfen beim Pflegen des Viewers. Jeder Eintrag enthält den ersten Absatz der Beschreibung des Werkzeugs und seine Aufrufzeilen; ohne Argumente gestartet zeigt ein Werkzeug, wo vorhanden, seine vollständige Hilfe. Die Datenwerkzeuge der [verwandten Repositories](index.md#related-repositories) dokumentieren ihre eigenen Befehle.
 
-## For your data
+## Für deine Daten {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Für Entwickler und die Dokumentation {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Diese prüfen den Viewer, erstellen die Demodaten und Screenshots und schreiben die Referenzseiten.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Bibliotheken {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` ist eine Bibliothek ohne Kommandozeile: Die oben genannten Werkzeuge importieren sie, um die [.3dheat-Datei](container.md) zu lesen und zu schreiben.

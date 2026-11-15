@@ -11,11 +11,11 @@ translated: true
 
 # Cineálacha agus aicmí imeachtaí
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Cuireann an lamhleabhar colún **Cineál imeachta** le gach tacar sonraí a bhfuil colún imeachta aige (`event`, `events`, `event_type` nó `event_name`). Déantar focail gach cluiche a mhapáil ar cheann de na cineálacha seo (litreacha móra agus beaga araon); meastar focal nach bhfuil ar an liosta mar *Eile*.
 
-| Kind | Shown as | Words in the data |
+| Cineál | Taispeánta mar | Focail sna sonraí |
 |---|---|---|
-| `position` | Suíomh | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Suíomh | `(folamh)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Urchar | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Seoladh (diúracán, roicéad, buama) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Buille | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Teachtaireacht | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Eile | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Aicmí feithiclí {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Úsáideann na colúin **Aicme feithicle** agus **Aicme sprice** na haicmí seo, arna ngníomhú ó ainmneacha feithiclí (trí [an catalóg figiúr](figures.md)) agus colúin chineáil.
 
-| Class | Shown as |
+| Aicme | Taispeánta mar |
 |---|---|
 | `fighter` | Trodaire |
 | `attack` | Aerárthach ionsaithe |

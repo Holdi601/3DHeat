@@ -11,9 +11,9 @@ translated: true
 
 # Uirlisí líne ordaithe
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Na huirlisí líne ordaithe i bhfillteán `tools/` an radhairc (Node.js, rite ó fhréamh an stórais). Ní theastaíonn siad uait riamh chun an radharc a úsáid: pacálann, achoimríonn agus tiontaíonn siad do shonraí, agus cuidíonn siad leis an duine a choinníonn an radharc. Tugann gach iontráil céad alt cur síos na huirlise féin agus na línte úsáide; rith uirlis gan argóintí chun cabhair iomlán a fháil, nuair a bhíonn sí ann. Déanann uirlisí sonraí na [stór gaolmhar](index.md#related-repositories) a n-orduithe féin a dhoiciméadú.
 
-## For your data
+## Do do chuid sonraí {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Do fhorbróirí agus don doiciméadú {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Seiceálann siad seo an radharc, cruthaíonn siad sonraí demo agus scáileáin, agus scríobhann siad na leathanaigh thagartha.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Leabharlanna {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+Is leabharlann gan líne ordaithe é `container.mjs`: iompórtálann na huirlisí thuas é chun an [comhad .3dheat](container.md) a léamh agus a scríobh.

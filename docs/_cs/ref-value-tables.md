@@ -11,9 +11,9 @@ translated: true
 
 # Tabulky hodnot
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+Cenové tabulky z [Vážení hodnot](value-weighting.md). Hra se rozpoznává podle názvů v datech; vlastní sloupce hodnot převodníku v měně hry mají přednost před těmito tabulkami.
 
-| Table | Currency | Defined in |
+| Tabulka | Měna | Definováno v |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

@@ -132,20 +132,20 @@ Disse tre huskes i nettleseren (`localStorage`-nøkkel `heat3d.inspect`).
 
 ### Koordinater: dataenes egen ramme {#coordinates-the-datas-own-frame}
 
-Hver koordinat inspeksjonsverktøyene viser eller tar imot, er i **de innlastede dataenes egen ramme**: [aksekartleggingen](axes-units-and-time.md) ved innlasting (opp-akse, speilvendinger, skala) er reversert. En posisjon lest av visningen er tallet tabellen med kildedataene holder, og et tall fra tabellen skrevet i hoppfeltet lander på det stedet. Når kartleggingen ikke endrer noe (en Y-opp, uskalert innlasting – det opptaksverktøyene og nivåeksporterne skriver) er det rett og slett verden; ellers viser avlesningen en **dataramme**-merkelapp. Uten et datasett er koordinatene verdenskoordinater. Yaw og pitch gjelder alltid seerens verden, med Y opp.
+Hver koordinat inspeksjonsverktøyene viser eller tar imot, er i **de innlastede dataenes egen ramme**: [aksekartleggingen](axes-units-and-time.md) ved innlasting (opp-akse, speilvendinger, skala) er reversert. En posisjon lest av visningen er tallet tabellen med kildedataene holder, og et tall fra tabellen skrevet i hoppfeltet lander på det stedet. Når kartleggingen ikke endrer noe (en Y-opp, uskalert innlasting – det opptaksverktøyene og nivåeksporterne skriver) er det rett og slett verden; ellers viser avlesningen en **dataramme**-merkelapp. Uten et datasett er koordinatene verdenskoordinater. Yaw og pitch gjelder alltid visningsprogrammets verden, med Y opp.
 
 ### Yaw-konvensjoner {#yaw-conventions}
 
 | Konvensjon | Yaw 0° ser langs | Vokser mot | Brukes av |
 |---|---|---|---|
 | **Viseren** | -Z | -X | flykameraet, [ferdige visninger](#preset-views) |
-| **Spill / opptaksverktøy** | +X | -Z | opptaksverktøyenes `yaw`-kolonner og positurer; i et nivå eksportert i seerens ramme, spillets egen yaw |
+| **Spill / opptaksverktøy** | +X | -Z | opptaksverktøyenes `yaw`-kolonner og positurer; i et nivå eksportert i visningsprogrammets ramme, spillets egen yaw |
 
 Pitch er den samme i begge: opp fra horisontalen. De to skiller seg med en kvart omdreining og ikke noe annet:
 
 > viewer yaw = spill-yaw - 90°
 
-En retning `d` er `(cos p · cos y, sin p, -cos p · sin y)` i spillkonvensjonen og `(-sin y · cos p, sin p, -cos y · cos p)` i seerens. Velg **Spill / opptaksverktøy** for å skrive inn en yaw rett fra en opptakstabell, eller for å sammenligne avlesningen med en.
+En retning `d` er `(cos p · cos y, sin p, -cos p · sin y)` i spillkonvensjonen og `(-sin y · cos p, sin p, -cos y · cos p)` i visningsprogrammets. Velg **Spill / opptaksverktøy** for å skrive inn en yaw rett fra en opptakstabell, eller for å sammenligne avlesningen med en.
 
 ### Gå til et punkt {#going-to-a-point}
 

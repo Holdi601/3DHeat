@@ -106,7 +106,7 @@ De medlemmer, konverterne skriver i dag, i denne rækkefølge:
 | `table` | `<match>.parquet` | ja |
 | `match` | `<match>.match.json` | nej (deflate) |
 | `messages`, `flight`, `events`, `effects`, `objectives`, `packets`, `props`, `strings`, ... | `<match>.<rolle>.parquet` | ja |
-| `summary` | `<match>.summary.json`, massens indeks' resumé ([Massanalyse](mass-analysis.md)), tilføjet af `tools/3dheat-summarize.mjs` | nej (deflate) |
+| `summary` | `<match>.summary.json`, massens indeks' resumé ([Masseanalyse](mass-analysis.md)), tilføjet af `tools/3dheat-summarize.mjs` | nej (deflate) |
 
 Tabellen kommer lige efter manifestet, så læserens første læsning af filens
 start dækker både manifestet og tabellens lokale header.
@@ -191,7 +191,7 @@ der læser det nu:
 - **Flere kampe.** En session eller et turnering kan gå i én container:
   `matches` lister dem (`{ "id", "map", "mode", "started", ... }`), og hvert
   medlem navngiver sin `match`. Vieweren indlæser hvert medlem med rollen `table`.
-- **Referencer.** Filer, en container har brug for, men ikke holder, f.eks. en
+- **Kilder.** Filer, en container har brug for, men ikke holder, f.eks. en
   bane, listes i `references` med navn og sha256
   (`{ "kind": "level", "name": "...", "sha256": "..." }`), så den rigtige fil
   findes og kontrolleres uden at blive kopieret ind i hver kamp.

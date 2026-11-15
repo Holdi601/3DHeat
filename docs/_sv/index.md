@@ -3,16 +3,16 @@ title: "Start"
 nav_order: 1
 lang: "sv"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat visar var saker hände i ett spel – var spelare rörde sig, stred och föll – som glödande färger du kan flyga igenom, eller som små 3D-figurer som spelar upp matchen igen.
 
-Läs in positioner – CSV, Parquet, Tacview-inspelningar, konverterade repriser, en enda fil, en mapp eller tusentals matcher – och se dem som en **värmekarta du kan flyga igenom**, som **figurer som spelar upp matchen**, som linjer längs rutterna folk tog, eller som en population mot en annan. Den hittar själv vad som sticker ut, och den körs helt i webbläsaren: ingenting laddas upp någonstans.
+Läs in positioner – CSV, Parquet, Tacview-inspelningar, konverterade repriser, en enda fil, en mapp eller tusentals matcher – och se dem som en **värmekarta du kan flyga igenom**, som **figurer som spelar upp matchen**, som linjer längs rutterna folk tog, eller som en population mot en annan. Den hittar själv vad som sticker ut, och den körs helt i webbläsaren: ingenting laddas upp någonstans. 3DHeat och alla dess verktyg är gratis och öppen källkod under [MIT-licensen](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Värme från tio stridsvagnsmatcher över demo valley](../assets/img/sv/heat-hero.webp)
 
@@ -44,6 +44,8 @@ Flikarna sitter överst i sidofältet, under namnet, enheterna och språkmenyn.
 | **Fordon** | Var varje enhet träffades, av vem och med vad. |
 
 ## Installera och köra {#install-and-run}
+
+3DHeat är gratis att använda, ändra och dela (MIT-licens), och detsamma gäller varje verktyg som listas under [Relaterade förråd](#related-repositories).
 
 ### Windows, det enkla sättet {#windows-the-easy-way}
 

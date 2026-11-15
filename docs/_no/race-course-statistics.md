@@ -11,7 +11,7 @@ outdated: false
 
 # Banestatistikk
 
-Last inn mange runder på én bane, så teller seeren feilene: hvilket sving som koster mest tid, hvor mange av rundene som gikk galt der, og hvorfor. Bruk den til å finne svingen som er verdt å øve på.
+Last inn mange runder på én bane, så teller visningsprogrammet feilene: hvilket sving som koster mest tid, hvor mange av rundene som gikk galt der, og hvorfor. Bruk den til å finne svingen som er verdt å øve på.
 
 Prøv den: **Demorunder** gir tre runder, nok til at denne delen vises.
 

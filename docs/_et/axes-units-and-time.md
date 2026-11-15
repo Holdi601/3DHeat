@@ -95,7 +95,7 @@ Aja veerg nagu `match_time` või `round_time` loeb iga mängu enda algusest. Sel
 
 Vaatesuunda kasutab ainult [kasti taasesitus](box-replay.md) (kiired igast kastist). See salvestatakse kahe nurgana, yaw ja pitch, radiaanides.
 
-- **Yaw / pitch veerud** loetakse nii, nagu need on, teisendatult kraadidest, kui *Kraadid* on valitud. Neid ei kohandata ülestelje ega pööramiste järgi.
+- **Pöörde- ja kaldenurga veerud** loetakse nii, nagu need on, teisendatult kraadidest, kui *Kraadid* on valitud. Neid ei kohandata ülestelje ega pööramiste järgi.
 - **Suunavektori veerud** lähevad läbi samasuguse ümbermärgistamise ja pööramise nagu positsioonid ja muutuvad seejärel maailmatelgedel yaw = atan2(x, -z) ja pitch = atan2(y, √(x² + z²)) väärtusteks, nii et kiir osutab kohta, kuhu kast on suunatud ka peegelpildis allikamaailmas.
 
 Kui yaw/pitch veerud osutavad pärast pööramist, suunavektorit või kohandatud nurki valesti, on parandus see.

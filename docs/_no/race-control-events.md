@@ -143,7 +143,7 @@ Hver bil får også:
 | **abs**, **tc** | `absActive` / `tcActive` over 0,5 | - |
 | **handbrake** | `handbrake` over 0,2 | - |
 | **airborne** | `airborne` over 0,5 | - |
-| **hit**, **crash** | se [Treff og krasj](#hits-and-crashes) | farten støtet tok |
+| **treff**, **krasj** | se [Treff og krasj](#hits-and-crashes) | farten støtet tok |
 
 Driftvinkelgulvene per underlag: asfalt **7°**, blandet **10°**, løst og snø **15°**, is **10°**. En bil som kjører mer som en selvfølge – en arkademodell for dekk, en grusspesialist – får en egen, høyere terskel fra sine egne runder (1,5 × driftvanen).
 

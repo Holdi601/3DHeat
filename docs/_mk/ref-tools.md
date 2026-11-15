@@ -11,9 +11,9 @@ translated: true
 
 # Алатки за командна линија
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Алатките од командна линија во папката `tools/` на прелистувачот (Node.js, се пуштаат од коренот на репозиториумот). Никогаш не ви се потребни за користење на прелистувачот: ги пакуваат, сумираат и конвертираат вашите податоци и му помагаат на оној што го одржува прелистувачот. Секоја ставка ја има првата алинеја од описот на алатката и редовите за употреба; пуштете ја алатката без аргументи за целата помош таму каде што има. Алатките за податоци од [поврзаните репозиториуми](index.md#related-repositories) сами ги документираат своите наредби.
 
-## For your data
+## За вашите податоци {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## За програмерите и документацијата {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Овие ги проверуваат прелистувачот, ги прават демо податоците и снимките од екранот и ги пишуваат страниците со референци.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Библиотеки {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` е библиотека без командна линија: горните алатки ја увезуваат за да ја читаат и пишуваат [датотеката .3dheat](container.md).

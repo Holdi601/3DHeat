@@ -11,9 +11,9 @@ translated: true
 
 # Gildatöflur
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+Verðtöflurnar í [Gildisvigtun](value-weighting.md). Leikurinn er þekktur af heitum í gögnunum; gildisdálkar breytandans sjálfs í gjaldmiðli leiksins ganga framar þessum.
 
-| Table | Currency | Defined in |
+| Tafla | Gjaldmiðill | Skilgreint í |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

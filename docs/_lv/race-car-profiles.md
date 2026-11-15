@@ -15,7 +15,7 @@ Auto var bremzēt, pagriezties un paātrināties tikai tik stipri. Skatītājs m
 
 ![Salīdzinātas automašīnas: divas automašīnas līdzās ar to sakeri, bremzēšanu un vilci](../assets/img/en/race-cars-compared.webp)
 
-Analīze liek aplim bremzēt stiprāk, nest vairāk ātruma vai paātrināties agrāk tikai tur, kur automašīna to ir parādījusi, un no zaudējuma izņem to, ko pašas automašīnas izskaidro. Tāpēc katras automašīnas robežas (tās *aploksne*, zemāk) un raksturs (tās *profils*) tiek izmērīti no katra tās ielādētā apļa. Šī lapa aptver aploksni, profilu, sadaļu **Salīdzinātās automašīnas** un to, ko automašīnas nosaka katrā stūrī.
+Analīze liek aplim bremzēt stiprāk, nest vairāk ātruma vai paātrināties agrāk tikai tur, kur automašīna to ir parādījusi, un no zaudējuma izņem to, ko pašas automašīnas izskaidro. Tāpēc katras automašīnas robežas (tās *aploksne*, zemāk) un raksturs (tās *profils*) tiek izmērīti no katra tās ielādētā apļa. Šī lapa aptver aploksni, profilu, sadaļu **Auto salīdzinājums** un to, ko automašīnas nosaka katrā stūrī.
 
 **Viena automašīna** = apļi ar to pašu automašīnas numuru (vai nosaukumu, bez numura) un to pašu veiktspējas indeksu: cita regulēšana ir cita automašīna.
 
@@ -61,9 +61,9 @@ Aploksnes lasīšana noteiktā ātrumā interpolē starp joslu centriem un, ja j
 
 **Aizmugures zaudēšana.** Skaita tur, kur vadītājam bija jānoķer: stūrējot ar 60% vai vairāk no sakeres, slīdot (drifts pāri 10° uz asfalta, 20° uz irdenas zemes), ar stūri (virs 0,06) pagriezti **pret** līkumu. Tas, kura stūres zīme sakrīt ar kura sānu spēka zīmi, tiek mērīts katrā aplī (paraugi, kas pagriežas bez slīdes). Slīde tiek skaitīta vienreiz, kamēr auto pārstāj slīdēt. Auto, ko kādu brīdi tīši vada sānis, nekā nezaudē; tas, kam vajag pretēju stūri, zaudē. Skaitīts vienādi katrai automašīnai, tātad divas automašīnas var salīdzināt. Vajag stūri un drifta leņķi.
 
-## Salīdzinātās automašīnas {#cars-compared}
+## Auto salīdzinājums {#cars-compared}
 
-Sānjoslas sadaļa ir **Automašīna** ar vienu automašīnu, **Salīdzinātās automašīnas** ar vairākām.
+Sānjoslas sadaļa ir **Automašīna** ar vienu automašīnu, **Auto salīdzinājums** ar vairākām.
 
 **Tabula**: kolonna katrai automašīnai, rinda katram mēram, kuram kādai automašīnai ir vērtība: Turēta sakere; Vilce līdz 50 km/h, 50-120, 120-200, virs 200; Bremzēšana; Ātrākais; Sasniedz maksimumu pie ("joprojām velk", ja nekad nav sasniedzis); Joprojām velk savā ātrākajā; Aizmugure noķerta, uz apli; Virs 10° drifta, stipras stūrēšanas laikā. Kur automašīnas atšķiras vairāk nekā par 3%, labākā vērtība ir atzīmēta (augstāka sakerei, vilcei, bremzēšanai, ātrumiem; zemāka aizmugures slīdēm).
 

@@ -3,16 +3,16 @@ title: "Forsíða"
 nav_order: 1
 lang: "is"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat sýnir hvar hlutir gerðust í leik - hvert leikmenn fóru, börðust og féllu - sem glóandi liti sem þú getur flogið í gegnum, eða sem litlar þrívíðar fígúrur sem endurspila leikinn.
 
-Hlaðið inn staðsetningum - CSV, Parquet, Tacview-upptökum, breyttum endurspilunum, einni skrá, möppu eða þúsundum leikja - og sjáið þær sem **hitakort sem þú getur flogið í gegnum**, sem **fígúrur sem endurspila leikinn**, sem línur eftir leiðunum sem fólk fór, eða sem einn hóp á móti öðrum. Það finnur sjálft það sem sker sig úr, og það keyrir alveg í vafranum: ekkert er sent á neinn stað.
+Hlaðið inn staðsetningum - CSV, Parquet, Tacview-upptökum, breyttum endurspilunum, einni skrá, möppu eða þúsundum leikja - og sjáið þær sem **hitakort sem þú getur flogið í gegnum**, sem **fígúrur sem endurspila leikinn**, sem línur eftir leiðunum sem fólk fór, eða sem einn hóp á móti öðrum. Það finnur sjálft það sem sker sig úr, og það keyrir alveg í vafranum: ekkert er sent á neinn stað. 3DHeat og öll verkfæri þess eru ókeypis og opinn hugbúnaður undir [MIT-leyfinu](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Hiti tíu skriðdrekaleikja yfir sýnidalnum](../assets/img/is/heat-hero.webp)
 

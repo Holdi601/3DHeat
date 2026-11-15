@@ -11,13 +11,13 @@ translated: true
 
 # Naršyklės klavišai
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Kad įkelta sesija nepradingtų dėl atsitiktinai paspausto klavišo, peržiūros programa neleidžia naršyklei naudoti šių klavišų.
 
-| Keys | When | Effect |
+| Klavišai | Kada | Poveikis |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (taip pat su `Cmd`) | ne teksto laukuose | naršyklės veiksmas (spausdinimas, išsaugojimas, atidarymas, perkrovimas, naujas langas, uždarymas ...) neįvyksta |
+| `F1` `F3` `F5` `F6` `F7` | visada | naršyklės veiksmas (žinynas, paieška, perkrovimas, adresų juosta, žymeklio naršymas) neįvyksta |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | viso ekrano režimu | užrakinti peržiūros programai (Keyboard Lock API), todėl naršyklė į juos nereaguoja |
+| skirtuko uždarymas ar perkrovimas | įkėlus duomenis ar lygį | naršyklė klausia prieš tai |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Visi paties peržiūros programos klavišai: [Klaviatūros ir pelės nuoroda](keyboard-reference.md).

@@ -11,9 +11,9 @@ translated: true
 
 # Ferramentas de linha de comandos
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+As ferramentas de linha de comandos da pasta `tools/` do visualizador (Node.js, executadas a partir da raiz do repositório). Nunca precisa delas para usar o visualizador: servem para empacotar, resumir e converter os seus dados, e ajudam quem mantém o visualizador. Cada entrada tem o primeiro parágrafo da descrição da própria ferramenta e as suas linhas de utilização; execute uma ferramenta sem argumentos para a ajuda completa, quando existe. As ferramentas de dados dos [repositórios relacionados](index.md#related-repositories) documentam os seus próprios comandos.
 
-## For your data
+## Para os seus dados {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Para programadores e para a documentação {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Estas verificam o visualizador, criam os dados de demonstração e as capturas de ecrã, e escrevem as páginas de referência.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Bibliotecas {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` é uma biblioteca sem linha de comandos: as ferramentas acima importam-na para ler e escrever o [ficheiro .3dheat](container.md).

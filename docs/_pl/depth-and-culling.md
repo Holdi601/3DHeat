@@ -29,9 +29,9 @@ Oba ustawienia wymagają [poziomu](levels.md): obrazu mapy albo modelu 3D. Bez w
 
 Teren i ściany są nieprzezroczyste na różne sposoby. Patrzysz *przez* ścianę celowo, by zobaczyć, na którym piętrze był ruch. Nigdy nie chcesz patrzeć przez wzgórze, bo za nim jest odległa strona mapy. Na mapie o szerokości kilometrów to większość danych, a ich suma na horyzoncie tworzy pas jaśniejszy niż cokolwiek na pierwszym planie. Jeden przyciemniacz nie może obsłużyć obu przypadków, więc teren dostaje próg odcięcia, a ściany zostają przy przyciemnianiu poniżej.
 
-### Zasłonięte przez geometrię {#hidden-behind-geometry}
+### Ukryte za geometrią {#hidden-behind-geometry}
 
-**Zasłonięte przez geometrię** (domyślnie 0,8): jak mocno tłumiony jest punkt danych za geometrią poziomu. Wartość 0 oznacza *widać przez*, wartości pośrednie to *N% ciemniej* (pozycja suwaka, a nie zmierzone przyciemnienie), a 1 oznacza *całkowicie ukryte*.
+**Ukryte za geometrią** (domyślnie 0,8): jak mocno tłumiony jest punkt danych za geometrią poziomu. Wartość 0 oznacza *widać przez*, wartości pośrednie to *N% ciemniej* (pozycja suwaka, a nie zmierzone przyciemnienie), a 1 oznacza *całkowicie ukryte*.
 
 Każda ściana albo podłoga między punktem a kamerą przyciemnia go jeszcze bardziej. Przy domyślnym ustawieniu jedna ściana zostawia kilka procent, a każda kolejna powierzchnia dzieli to, co zostało, na pół, do czterech powierzchni. Przy 1 nic za geometrią nie jest rysowane i to najtańsze ustawienie.
 
@@ -66,7 +66,7 @@ Kroki są geometryczne, bo użyteczny zakres obejmuje cztery rzędy wielkości, 
 
 Budowle są rysowane do własnej tekstury głębi. Fragment, który jest za głębią sceny, ale *nie* za głębią budowli, jest za ziemią i zostaje odrzucony. Kosztuje to jeden przebieg głębi po budowlach, pomijany, gdy przełącznik jest wyłączony.
 
-### Zasłonięte przez geometrię {#hidden-behind-geometry}
+### Ukryte za geometrią {#hidden-behind-geometry}
 
 Liczy się **dla każdej powierzchni**. Pojedyncze porównanie głębi mówi tylko „coś jest z przodu”, więc punkt za jedną ścianą i punkt cztery pokoje w głąb budynku przyciemniłyby się tak samo, a wnętrze wyglądałoby jak jedna blada plama. Zamiast tego geometria budowli jest **zdejmowana warstwami głębi** do maksymalnie 3 dodatkowych warstw ([`HEAT_DEPTH_LAYERS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)). Każdy fragment liczy, ile powierzchni jest przed nim (własna głębia sceny plus zdjęte warstwy: do czterech), a przyciemnienia się składają:
 

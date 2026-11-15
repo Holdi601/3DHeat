@@ -11,9 +11,9 @@ translated: true
 
 # Mjetet e linjës së komandës
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Mjetet e linjës së komandës në dosjen `tools/` të shfaqjes (Node.js, ekzekutohen nga rrënja e depos). Nuk të duhen kurrë për të përdorur shfaqjen: paketojnë, përmbledhin dhe konvertojnë të dhënat e tua, dhe ndihmojnë atë që e mirëmban shfaqjen. Çdo hyrje ka paragrafin e parë të përshkrimit të vet dhe rreshtat e përdorimit; aty ku ka, ekzekuto një mjet pa argumente për ndihmën e plotë. Mjetet e të dhënave të [depove të lidhura](index.md#related-repositories) dokumentojnë komandat e veta.
 
-## For your data
+## Për të dhënat e tua {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Për zhvilluesit dhe dokumentimin {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Këto kontrollojnë shfaqjen, bëjnë të dhënat demo dhe pamjet e ekranit, dhe shkruajnë faqet e referencës.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Bibliotekat {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` është bibliotekë pa linjë komandash: mjetet më sipër e importojnë për të lexuar dhe shkruar [skedarin .3dheat](container.md).

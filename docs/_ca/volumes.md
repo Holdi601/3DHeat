@@ -63,7 +63,7 @@ El filtre de la GPU admet fins a 8 volums amb 64 punts de contorn en total; un �
 L'àrea **Estadístiques** segueix els filtres, la finestra temporal i els grups amagats. *Seleccionat* mostra el volum seleccionat, *Compara tots* posa tots els volums un al costat de l'altre. Mostra:
 
 - **Files dins (mostrades)** i **Files dins (totes les dades)**, **Jugadors**, **Equips**, **Partides**, **Temps a dins**, **Entrades / sortides**, **Calor màxima**, **Calor mitjana**, **Volum / empremta** i un histograma **Quan**;
-- per columna: categories amb **Lift** (la proporció a dins dividida per la proporció en totes les dades mostrades), i números amb interval, mediana i percentils 5 i 95.
+- per columna: categories amb **Ràtio (lift)** (la proporció a dins dividida per la proporció en totes les dades mostrades), i números amb interval, mediana i percentils 5 i 95.
 
 **Estadístiques com a CSV / JSON** les desa. **Exporta les dades de dins** escriu les files de dins com a CSV o Parquet (*Només les files mostrades* activat per defecte), un volum o tots, amb una columna que indica quin volum conté cada fila.
 

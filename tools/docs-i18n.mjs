@@ -148,7 +148,7 @@ function writeEnglishStrings(pages) {
     ...(old.ui ?? {}),
   };
   mkdirSync(join(DOCS, '_data', 'i18n'), { recursive: true });
-  writeFileSync(p, `${JSON.stringify({ titles, ui }, null, 1)}\n`);
+  writeFileSync(p, `${JSON.stringify({ ...old, titles, ui }, null, 1)}\n`);
 }
 
 // ------------------------------------------------------------ sync
@@ -258,7 +258,8 @@ else if (cmd === 'sync') {
 } else if (cmd === 'status') status();
 else if (cmd === 'todo') for (const f of status(false)[0]?.todo ?? []) console.log(f);
 else if (cmd === 'source') process.stdout.write(englishForTranslation(rest[0]));
+else if (cmd === 'hash') console.log(hash(readFileSync(join(DOCS, rest[0]), 'utf8')));
 else {
-  console.error('usage: node tools/docs-i18n.mjs sync|status|todo <code>|source <page.md>');
+  console.error('usage: node tools/docs-i18n.mjs sync|status|todo <code>|source <page.md>|hash <page.md>|terms <code> <page.md>...');
   process.exit(2);
 }

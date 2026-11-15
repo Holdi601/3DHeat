@@ -70,7 +70,7 @@ La capçalera **Estructures** mostra el nombre de triangles de les estructures; 
 | **Cares de la closca** | activat | Una superfície tènue amb una vora de Fresnel brillant, perquè un edifici es llegeixi com un volum i no com una gàbia o un banc de boira. |
 | **Opacitat de les cares** | 25% (35% per sobre de 300.000 triangles d'estructura, 100% amb textura) | De 0 a 60% a la pista, fins al 100% amb la nansa. Mantén-la baixa: les estructures sòlides amaguen les dades que hi ha dins. |
 | **Arestes vives** | activat (desactivat amb textura) | Ombreja cada triangle segons la seva pròpia normal, calculada al shader de fragments a partir de les derivades de l'espai de pantalla. Els nivells exportats estan soldats i porten normals promitjades, cosa que arrodoneix cada cantonada de caixa fins a "paper d'alumini fos"; separar cada vèrtex per arreglar-ho multiplicaria el buffer de vèrtexs. Desactiva-la per a un nivell en què les superfícies corbes importen més que les seves cantonades. |
-| **To de les estructures** | Cian | Un selector de color i els preajustos **Cian**, **Ambre**, **Violeta**, **Blanc**. |
+| **Tint de les estructures** | Cian | Un selector de color i els preajustos **Cian**, **Ambre**, **Violeta**, **Blanc**. |
 | **Mostra la classificació de les parts (N)** | | Cada part, la seva classe i el motiu; mira [Nivells 3D](model-levels.md#ground-structures-and-water). |
 
 ## Tallar el nivell {#cutting-the-level}

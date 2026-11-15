@@ -1,5 +1,5 @@
 ---
-title: "Griezums"
+title: "Šķēle"
 parent: "Filtri un rīki"
 nav_order: 4
 lang: "lv"
@@ -9,13 +9,13 @@ translated: true
 outdated: false
 ---
 
-# Griezums
+# Šķēle
 
-**Griezums** sagriež pasauli kā kūkas šķēli, lai varētu paskatīties ēku iekšienē. Izmantojiet to, kad sienas paslēpj interesantu siltumu, piemēram, lai redzētu vienu ēkas stāvu.
+**Šķēle** sagriež pasauli kā kūkas šķēli, lai varētu paskatīties ēku iekšienē. Izmantojiet to, kad sienas paslēpj interesantu siltumu, piemēram, lai redzētu vienu ēkas stāvu.
 
 ## Izmēģiniet {#try-it}
 
-1. Ielādējiet līmeni un datus un atveriet **Griezums**.
+1. Ielādējiet līmeni un datus un atveriet **Šķēle**.
 2. Atzīmējiet **Sagriezt pasauli**. Ass ir **Augstums**.
 3. Velciet **Pozīcija** augšup un lejup: slānis kustas cauri līmenim.
 4. Padariet **Biezumu** plānu plāna stāvam vai platu "viss zem šīs vietas".

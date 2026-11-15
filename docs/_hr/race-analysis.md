@@ -66,7 +66,7 @@ Dok je kartica Utrka otvorena:
 | **Home** | na početak reprodukcije |
 | tipke s brojevima | ništa (na toplinskoj karti mijenjaju načine) |
 
-Tipke upisane u polje za tekst ili padajući izbornik se zanemaruju. Tipke kamere rade kao na toplinskoj karti (**W A S D**, **Space** gore, **Q** dolje, **Shift** brže, **Alt** sporije, miš za gledanje; sve u [Kameri](camera.md)). **F** uokviruje učitane krugove (kao što to radi učitavanje krugova).
+Tipke upisane u polje za tekst ili padajući izbornik se zanemaruju. Tipke kamere rade kao na toplinskoj karti (**W A S D**, **Razmak** gore, **Q** dolje, **Shift** brže, **Alt** sporije, miš za gledanje; sve u [Kameri](camera.md)). **F** uokviruje učitane krugove (kao što to radi učitavanje krugova).
 
 ## Mnogo krugova {#many-laps}
 

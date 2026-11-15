@@ -11,7 +11,7 @@ outdated: false
 
 # Course-Analys
 
-Dir sidd dee selwechte Strecke zweemol gefuer. De Tab **Course-Analys** spillt béid Fahrten zesummen a 3D, weist, wou eng Ronn méi lues war, a seet Iech firwat. Nach keng Ronnen do? Dréckt **Demo-Ronnen**.
+Dir sidd déi selwecht Strecke zweemol gefuer. De Tab **Course-Analys** spillt béid Fahrten zesummen a 3D, weist, wou eng Ronn méi lues war, a seet Iech firwat. Nach keng Ronnen do? Dréckt **Demo-Ronnen**.
 
 ![De Tab Course-Analys mat Demo-Ronnen: d'Säitelëscht mat Ronnen a Wou et ze verbesseren ass, d'Autoe op der Strecke, d'Diagrammer ënner der Usiicht](../assets/img/lb/race-analysis-overview.webp)
 

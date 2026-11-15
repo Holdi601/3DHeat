@@ -11,9 +11,9 @@ translated: true
 
 # Değer tabloları
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+[Değer ağırlıklandırma](value-weighting.md) fiyat tabloları. Oyun, verideki adlardan tanınır; bir dönüştürücünün oyunun para biriminde kendi değer sütunları bunların yerini alır.
 
-| Table | Currency | Defined in |
+| Tablo | Para birimi | Tanımlandığı yer |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

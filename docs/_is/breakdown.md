@@ -54,7 +54,7 @@ Hlutföll og hraðar eru dregnir að gildi alls staðarins þar sem talningarnar
 
 Þú getur raðað eftir hópum, leikmönnum og leikjum, hvaða flokksdálki sem er (farartæki, vopni, hlið, kaupgerð, umboðsmanni eða búnaðarpakka), hvaða talnadálki sem er í bilum (brynju, gildi búnaðar), **flokki** vopnadálks (riffill, leyniskytta, SMG, skammbyssa...) og hversu mörg stykki af **búnaði** lista-dálkur eins og `inventory` geymir.
 
-**Eigið** raðar eftir eigin gildi raðarinnar. **Andstæðings** raðar eftir gildi hins aðilans: vopni fórnarlambsins í drápi, vopni banamannsins í dauðsfalli (þarfnast dálks `other` / `victim` sem nefnir þá).
+**Eigið** raðar eftir eigin gildi raðarinnar. **Andstæðingsins** raðar eftir gildi hins aðilans: vopni fórnarlambsins í drápi, vopni banamannsins í dauðsfalli (þarfnast dálks `other` / `victim` sem nefnir þá).
 
 ## Ástandið á þeim tíma {#state-at-the-time}
 

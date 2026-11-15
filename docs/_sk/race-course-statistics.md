@@ -113,7 +113,7 @@ Zobrazí sa od **3** kôl, medzi **Kolá** a **Kde sa zlepšiť**.
   príliš skoro. V 9 rôznych autách - asi 0,21 s každé." a kolá, ktoré ju urobili, **najhoršie
   prvé**, každé s cenou - najviac 8, "+N ďalších" pre zvyšok. **Kliknutie na kolo** ho zvýrazní
   a prehrá tú chybu (zarovnanú 40 m pred ňou).
-- **Ukázať v heatmape**: pozri nižšie. "Vytváram heatmapu…", kým beží; vypnuté, keď nie sú žiadne chyby.
+- **Zobraziť v heatmape**: pozri nižšie. "Vytváram heatmapu…", kým beží; vypnuté, keď nie sú žiadne chyby.
 
 ## Mapa chýb {#the-mistake-map}
 
@@ -129,9 +129,9 @@ Keď sú **Popisy** zapnuté, vrchol každej zákruty nesie jej najčastejšiu c
 "T3 · 12/40" pri jednom vybranom druhu, "T3 · čisté" pri žiadnom. Nad popisom sa po prejdení myšou
 zobrazia straty zákruty a jej päť najčastejších chýb; kliknutím sa zákruta v štatistike otvorí alebo zatvorí.
 
-## Ukázať v heatmape {#show-in-the-heatmap}
+## Zobraziť v heatmape {#show-in-the-heatmap}
 
-**Ukázať v heatmape** odovzdá to isté karte heatmapy ako dataset s názvom
+**Zobraziť v heatmape** odovzdá to isté karte heatmapy ako dataset s názvom
 "Chyby na <trať>" (alebo "Chyby na trati"), takže celá sada nástrojov heatmapy - režimy,
 filtre, časová os, rezy - funguje na tom, kde kolá chybujú.
 

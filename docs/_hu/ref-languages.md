@@ -11,9 +11,9 @@ translated: true
 
 # Nyelvlista
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+A megjelenítő 40 nyelven beszél. A böngésző nyelvével indul, ha van ilyen, az oldalsáv tetején lévő nyelvmenü pedig megváltoztatja. A nyelv módosításának és a fordítások készítésének módja: [Nyelvek](languages.md).
 
-| Code | Language |
+| Kód | Nyelv |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

@@ -1,5 +1,5 @@
 ---
-title: "Automašīnas vadības notikumi"
+title: "Auto vadības notikumi"
 parent: "Sacīkšu analīze"
 nav_order: 54
 lang: "lv"
@@ -9,7 +9,7 @@ translated: true
 outdated: false
 ---
 
-# Automašīnas vadības notikumi
+# Auto vadības notikumi
 
 Skatītājs redz, kā katrs aplis ir braukts, un atzīmē vietas, kur vadītājs lika automašīnai slīdēt, apgriezties, trāpīt pret kaut ko vai zaudēt satvērumu. Tas ir noderīgi, jo kļūda, kas maksāja laiku, ir visātrāk labojama.
 
@@ -253,6 +253,7 @@ Katrs notikums tiek aprakstīts, nosaucot abus aplus, ar vietu (metros pa atsauc
 | bloķēšana, tikai priekšējie | bloķēts priekšējais nevar stūrēt: mazāk spiediena zonas augšā, atlaidiet to līkumā |
 | bloķēšana, tikai aizmugurējie | bloķēta aizmugure ļauj automašīnai griezties: bremzējiet vairāk taisnā līnijā, atlaidiet, pagriežot; pārvietojiet sadalījumu uz priekšu, ja tas atkārtojas |
 | bloķēšana, irdena zeme | bloķēts ritenis arē zemi: spiediet līdz tieši pirms bloķēšanās |
+| bloķēšana, citādi | pedālis pārāk stiprs saķerei: spiediet pakāpeniskāk |
 | riteņu buksēšana | ievadiet gāzi, kad stūre atgriežas, īsi pārslēdziet, kur vilce ir ierobežota (irdenā zemē: augstāka pārnesums mīkstina griezes momentu) |
 | apgriešanās / pārstūre | pēc pedāļa: zem bremzēšanas (pārāk stipra bremzēšana līkumā, pārāk agra pārslēgšana uz zemāku pārnesumu), atlaists (pārstūre pēc atlaišanas: turiet vienmērīgu gāzi), uz gāzes (pārāk daudz, kamēr vēl pagriezts), nekas (ieņemts pārāk ātri); "noķerta ar pretēju stūri", kad stūrēts pretēji; irdenā zemē vai rallijā "kāds leņķis ir ātrākais veids, kā apgriezties - otra brauciena pietika"|
 | nedostūre | stūres ripas griešana neko nedara, kad priekšdaļa jau ir aizgājusi: ieejiet lēnāk, nedaudz turiet bremzi, lai noslogotu priekšdaļu, atvelciet; irdenā zemē pagrieziet auto ar atlaišanu vai kreisās kājas pieskārienu |

@@ -20,7 +20,7 @@ Hiti sýnir hvar fólk stóð. Línur sýna leiðirnar sem það gekk.
 ## Hvernig á að nota hana {#how-to-use-it}
 
 1. Ýttu á `4` (eða veldu **Línur** í hamastikunni).
-2. Opnaðu **Leiðir** og athugaðu græna gátlistann: tímaás og auðkenni persónu verða að vera til staðar.
+2. Opnaðu **Leiðir** og athugaðu græna gátlistann: tímaás og persónuauðkenni verða að vera til staðar.
 3. Ýttu á **Stinga upp á út frá heitum atburðanna** til að fylla inn hvar leiðir byrja og enda.
 4. Lestu tölfræðilínuna: "N leiðir, M þeirra ná enda".
 5. Ef línur stökkva yfir kortið, stilltu **Lengsta skref** (sjá [Stökkmörkin](#the-jump-limit)).
@@ -38,8 +38,8 @@ Gátlisti, grænn þegar atriðið er til staðar, gulur þegar ekki:
 | Lína | Staða |
 |---|---|
 | **Tímaás** | *til staðar* / *vantar - þarf* |
-| **Auðkenni persónu** | *til staðar* / *vantar - þarf* |
-| **Auðkenni lotu** | *til staðar* / *engin - allar raðir eru ein lota* |
+| **Persónuauðkenni** | *til staðar* / *vantar - þarf* |
+| **Auðkenni setu** | *til staðar* / *engin - allar raðir eru ein lota* |
 | **Upphafs- og lokaatburðir** | *N upphöf, M lok* / *enginn valinn - heil spor* (grænt aðeins með atburðadálki og að minnsta kosti einu upphafi og einu lokum) |
 
 ### Stýringar {#controls}
@@ -47,8 +47,8 @@ Gátlisti, grænn þegar atriðið er til staðar, gulur þegar ekki:
 | Stýring | Merking |
 |---|---|
 | **Atburðadálkur** | Flokksdálkur þar sem gildin eru atburðir (spawn, death, position, ...). *Enginn - heil spor*: spor hverrar persónu í hverri lotu er ein leið, brotin þar sem sporið hefur bil. Aðeins dálkar sem geymdir eru til síunar við hleðslu eru boðnir. |
-| **Leið byrjar við** | Atburðagildi sem hefja leið (spawn, respawn, deploy). Enginn valinn: leið byrjar við fyrsta sýni persónunnar, og aftur eftir hvern endi. |
-| **Leið endar við** | Atburðagildi sem enda leið (death, extraction, teleport). Línan nær upp að endaröðinni sjálfri. Enginn valinn: leið endar þar sem spor persónunnar endar. |
+| **Leið hefst við** | Atburðagildi sem hefja leið (spawn, respawn, deploy). Enginn valinn: leið byrjar við fyrsta sýni persónunnar, og aftur eftir hvern endi. |
+| **Leið lýkur við** | Atburðagildi sem enda leið (death, extraction, teleport). Línan nær upp að endaröðinni sjálfri. Enginn valinn: leið endar þar sem spor persónunnar endar. |
 | **Punktar á leið** | Atburðagildi sem raðirnar liggja eftir leiðinni. Enginn valinn: sérhver röð persónunnar. Þrengdu það þegar dálkurinn geymir líka raðir sem eru annars staðar, eins og þar sem sprengja lenti. |
 | **Stinga upp á út frá heitum atburðanna** | Fyllir listana þrjá út frá heitum gildanna (hér fyrir neðan). |
 | **Litur** | *Hiti*, *Liðahiti* eða *Mismunur*. Sömu leiðir í litavali þess hams: hver hópur í sínum lit, eða önnur hlið gegn hinni, með hópalistanum, skiptingunni og skölunum sem virka eins og í þeim hömum. Sjálfgefið *Hiti*. Liðahiti og mismunur þurfa hópdálk. |

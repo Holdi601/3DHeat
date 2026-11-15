@@ -58,7 +58,7 @@ No [`TrackCursor`](https://github.com/Holdi601/3DHeat/blob/main/src/data/tracks.
 **Dzīvās kastes** (režīms Atskaņot, neapstrādāti paraugi izslēgti). Katrai redzamai personai — viņas pēdējais paraugs pie atskaņošanas galviņas vai pirms tās:
 
 - Ja personai ir nākamais paraugs, tas ir tajā pašā sesijā un vārds nav kopīgs, kaste tiek novietota starp abiem paraugiem proporcionāli laikam. Pagrieziens (yaw) tiek interpolēts īsāko ceļu, slīpums (pitch) lineāri (kad *Interpolēt* ir ieslēgts).
-- Citādi kaste paliek pie pēdējā parauga visu laiku **rezerves dzīvei** (noklusējums 10 s) un tad tiek nomesta, lai izslēgtie spēlētāji neuzkavētos.
+- Citādi kaste paliek pie pēdējā parauga visu laiku **rezerves dzīves ilgums** (noklusējums 10 s) un tad tiek nomesta, lai izslēgtie spēlētāji neuzkavētos.
 
 **Visu režīms** ignorē atskaņošanas galviņu un zīmē katru paraugu diapazonā kā kasti.
 

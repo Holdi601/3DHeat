@@ -11,13 +11,13 @@ translated: true
 
 # 브라우저 키
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+불러온 세션이 실수로 누른 단축키 때문에 사라지지 않도록, 뷰어는 다음 키를 브라우저에서 가져옵니다.
 
-| Keys | When | Effect |
+| 키 | 조건 | 효과 |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (`Cmd`로도 가능) | 텍스트 상자 밖 | 브라우저의 동작(인쇄, 저장, 열기, 새로고침, 새 창, 닫기 등)이 일어나지 않습니다 |
+| `F1` `F3` `F5` `F6` `F7` | 항상 | 브라우저의 동작(도움말, 찾기, 새로고침, 주소 표시줄, 캐럿 탐색)이 일어나지 않습니다 |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | 전체 화면에서 | 뷰어가 잠그므로(Keyboard Lock API) 브라우저가 이 키에 반응하지 않습니다 |
+| 탭을 닫거나 새로고침하기 | 데이터나 레벨을 불러온 상태에서 | 브라우저가 먼저 묻습니다 |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+뷰어 고유의 모든 키: [키보드 및 마우스 참조](keyboard-reference.md).

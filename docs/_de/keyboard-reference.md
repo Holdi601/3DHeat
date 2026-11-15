@@ -131,7 +131,7 @@ Mit eingeschaltetem **Klick zeigt, was dort ist** und ausgeschaltetem Lineal ([K
 
 ## Messen {#measure}
 
-Mit aktivem **Lineal** ([Messen](measure.md)):
+Mit **Lineal aktiv** ([Messen](measure.md)):
 
 | Eingabe | Wirkung |
 |---|---|

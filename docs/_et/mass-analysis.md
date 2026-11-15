@@ -16,7 +16,7 @@ See töötab iga matši väikese kokkuvõtte põhjal, nii et tuhat või kümme t
 
 ## Proovi {#try-it}
 
-1. Ava **Massanalüüs** Heatmap'i külgribal.
+1. Ava **Massanalüüs** Soojuskaardi külgribal.
 2. Vajuta **Kaust...** (või **Failid...**) ja vali oma `.3dheat` matšid.
 3. Oota, kuni paneel loeb kokkuvõtted („Kokkuvõtted... n / N“).
 4. Vajuta **Ava analüüs**. Avaneb aken vahekaartidega.

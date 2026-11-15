@@ -11,9 +11,9 @@ translated: true
 
 # Nástroje příkazové řádky
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Nástroje příkazového řádku ve složce `tools/` prohlížeče (Node.js, spouštěné z kořene repozitáře). Pro použití prohlížeče je nikdy nepotřebujete: balí, shrnují a převádějí vaše data a pomáhají tomu, kdo prohlížeč udržuje. Každá položka obsahuje první odstavec popisu nástroje a jeho řádky použití; spuštěním nástroje bez argumentů získáte úplnou nápovědu, pokud ji má. Datové nástroje [příbuzných repozitářů](index.md#related-repositories) dokumentují své vlastní příkazy.
 
-## For your data
+## Pro vaše data {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Pro vývojáře a dokumentaci {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Tyto kontrolují prohlížeč, vytvářejí ukázková data a snímky obrazovky a zapisují referenční stránky.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Knihovny {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` je knihovna bez příkazového řádku: výše uvedené nástroje ji importují, aby četly a zapisovaly [soubor .3dheat](container.md).

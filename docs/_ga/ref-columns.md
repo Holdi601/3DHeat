@@ -11,16 +11,16 @@ translated: true
 
 # Ainmneacha colún
 
-When a file is loaded, each role is given to the first column whose name matches one of these patterns (regular expressions, tried in order; `i` = any case). Every guess can be changed in [Column mapping](column-mapping.md), and a Parquet file can name its columns itself ([the `heat3d` hints](data-formats.md#the-heat3d-hints)).
+Nuair a lódáiltear comhad, tugtar gach ról don chéad cholún a mheaitseálann le ceann de na patrúin seo (abairtí rialta, triaileadh in ord; `i` = aon chás). Is féidir gach tuairim a athrú in [Mapáil colún](column-mapping.md), agus is féidir le comhad Parquet a cholúin féin a ainmniú ([leideanna `heat3d`](data-formats.md#the-heat3d-hints)).
 
-| Role | Name patterns | Examples that match |
+| Ról | Patrúin ainm | Samplaí a mheaitseálann |
 |---|---|---|
 | X | `/^x$/i` `/(^\|[_\s])x$/i` `/pos.*x/i` `/x.*pos/i` `/loc.*x/i` `/^lon/i` `/longitude/i` | `x`, `pos_x`, `PosX`, `position_x`, `lon` |
 | Y | `/^y$/i` `/(^\|[_\s])y$/i` `/pos.*y/i` `/y.*pos/i` `/loc.*y/i` `/^lat/i` `/latitude/i` | `y`, `lat` |
 | Z | `/^z$/i` `/(^\|[_\s])z$/i` `/pos.*z/i` `/z.*pos/i` `/loc.*z/i` `/alt/i` `/height/i` `/elev/i` | `z`, `alt`, `altitude`, `height`, `elevation` |
-| Time | `/^time$/i` `/^timestamp$/i` `/^ts$/i` `/event.*time/i` `/time.*stamp/i` `/^t$/i` `/date.*time/i` `/^when$/i` `/^tick$/i` `/frame/i` and elapsed-time names (`elapsed`, `match_time` ...) | `time`, `t`, `timestamp`, `tick` |
-| Person | `/^name$/i` `/player.*(id\|name)/i` `/(^\|_)user(_\|$\|id\|name)/i` `/account/i` `/^persona/i` `/character/i` `/^victim$/i` `/^actor$/i` `/puuid/i` `/steam.?id/i` `/^subject/i` `/^driver(_?id\|_?name)?$/i` `/^car(_?id\|_?name)?$/i` | `player_id`, `steamid`, `name`, `user` |
-| Session (match, round) | `/^session(_?id)?$/i` `/^match(_?id)?$/i` `/^round(_?id)?$/i` `/^raid(_?id)?$/i` `/^game(_?id)?$/i` `/^run(_?id)?$/i` `/^replay(_?id)?$/i` `/^instance(_?id)?$/i` `/^lap(_?id)?$/i` `/^stint(_?id)?$/i` | `match`, `session`, `round`, `roundId`, `game_id` |
-| Group (team) | `/^spawn_?team$/i` `/^real_?team$/i` `/^team(_?id\|_?name)?$/i` `/^squad/i` `/^side$/i` `/faction/i` `/^clan/i` `/^party/i` `/^alliance/i` `/^car_?class$/i` | `team`, `side`, `faction` |
+| Am | `/^time$/i` `/^timestamp$/i` `/^ts$/i` `/event.*time/i` `/time.*stamp/i` `/^t$/i` `/date.*time/i` `/^when$/i` `/^tick$/i` `/frame/i` agus ainmneacha ama imithe (`elapsed`, `match_time` ...) | `time`, `t`, `timestamp`, `tick` |
+| Duine | `/^name$/i` `/player.*(id\|name)/i` `/(^\|_)user(_\|$\|id\|name)/i` `/account/i` `/^persona/i` `/character/i` `/^victim$/i` `/^actor$/i` `/puuid/i` `/steam.?id/i` `/^subject/i` `/^driver(_?id\|_?name)?$/i` `/^car(_?id\|_?name)?$/i` | `player_id`, `steamid`, `name`, `user` |
+| Seisiún (cluiche, babhta) | `/^session(_?id)?$/i` `/^match(_?id)?$/i` `/^round(_?id)?$/i` `/^raid(_?id)?$/i` `/^game(_?id)?$/i` `/^run(_?id)?$/i` `/^replay(_?id)?$/i` `/^instance(_?id)?$/i` `/^lap(_?id)?$/i` `/^stint(_?id)?$/i` | `match`, `session`, `round`, `roundId`, `game_id` |
+| Grúpa (foireann) | `/^spawn_?team$/i` `/^real_?team$/i` `/^team(_?id\|_?name)?$/i` `/^squad/i` `/^side$/i` `/faction/i` `/^clan/i` `/^party/i` `/^alliance/i` `/^car_?class$/i` | `team`, `side`, `faction` |
 | Yaw | `/^yaw$/i` `/rot.*yaw/i` `/heading/i` `/^azimuth/i` `/view.*yaw/i` `/^rot(ation)?_?z$/i` | `yaw`, `heading`, `azimuth`, `view_yaw` |
 | Pitch | `/^pitch$/i` `/rot.*pitch/i` `/elevation.*angle/i` `/view.*pitch/i` | `pitch`, `view_pitch` |

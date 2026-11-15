@@ -11,11 +11,11 @@ translated: true
 
 # Sündmuste tüübid ja klassid
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Vaataja lisab igale andmestikule, millel on sündmuste veerg (`event`, `events`, `event_type` või `event_name`), veeru **Sündmuse tüüp**. Iga mängu omad sõnad seotakse ühe nendest liikidest (suur- ja väiketähed samaks); loetlemata sõna loetakse kui *Muu*.
 
-| Kind | Shown as | Words in the data |
+| Liik | Kuvatakse kui | Sõnad andmetes |
 |---|---|---|
-| `position` | Asukoht | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Asukoht | `(tühi)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Lask | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Välja laskmine (rakett, mürsk, pomm) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Tabamus | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Sõnum | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Muu | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Sõidukiklassid {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Veerud **Sõidukiklass** ja **Sihtmärgi klass** kasutavad neid klasse, mis on tuletatud sõidukite nimedest (läbi [kujude katalooga](figures.md)) ja tüübiveergudest.
 
-| Class | Shown as |
+| Klass | Kuvatakse kui |
 |---|---|
 | `fighter` | Hävitaja |
 | `attack` | Ründelennuk |

@@ -63,7 +63,7 @@ Filtr GPU przyjmuje łącznie do 8 wolumenów z 64 punktami konturu; wolumen pon
 Obszar **Statystyki** podąża za filtrami, oknem czasu i ukrytymi grupami. *Zaznaczony* pokazuje wybrany wolumen, *Porównaj wszystkie* ustawia każdy wolumen obok siebie. Pokazuje:
 
 - **Wiersze wewnątrz (pokazane)** i **Wiersze wewnątrz (wszystkie dane)**, **Gracze**, **Drużyny**, **Mecze**, **Czas wewnątrz**, **Wejścia / wyjścia**, **Szczyt ciepła**, **Średnie ciepło**, **Objętość / ślad** oraz histogram **Kiedy**;
-- dla każdej kolumny: kategorie z **Lift** (udział wewnątrz podzielony przez udział we wszystkich pokazanych danych), a liczby z zakresem, medianą i percentylami 5-95.
+- dla każdej kolumny: kategorie z **Przyrost (lift)** (udział wewnątrz podzielony przez udział we wszystkich pokazanych danych), a liczby z zakresem, medianą i percentylami 5-95.
 
 **Statystyki jako CSV / JSON** je zapisują. **Eksportuj dane wewnątrz** zapisuje wiersze wewnątrz jako CSV albo Parquet (*Tylko pokazane wiersze* domyślnie włączone), jeden wolumen albo wszystkie, z kolumną mówiącą, który wolumen zawiera dany wiersz.
 

@@ -13,7 +13,7 @@ outdated: false
 
 Līmenis ir 3D vieta, kur notika spēle — karte, pilsēta, trase. Ja to novieto aiz taviem datiem, vari redzēt, *kur* ir siltums. Panelis **Fons / līmenis** (skat. [Glosāriju](glossary.md) vārdam "līmenis") dod trīs veidu kontekstu:
 
-- **kartes attēlu**, kas ģeoreferencēts ar diviem enkuriem — skat. [Karšu attēli](map-images.md);
+- **kartes attēls**, kas ģeoreferencēts ar diviem enkuriem — skat. [Karšu attēli](map-images.md);
 - **3D līmeni** — `.glb`, `.gltf`, `.obj`, `.stl` vai `.ply` — sadalītu zemē, būvēs un ūdenī un vienkāršotu importējot — skat. [3D līmeņi](model-levels.md) un [Līmeņa izskats](level-appearance.md);
 - **reālās pasaules fonu** — ierakstam, kas norāda, kur uz zemes tas ir (Tacview ACMI fails): reālu reljefu, ceļus, ūdeni, aerodromus un ēkas, lejupielādētas no atvērtiem datiem — skat. [Pasaules fons](world-backdrop.md).
 

@@ -11,11 +11,11 @@ translated: true
 
 # Evenementtypen a -klassen
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+De Viewer setzt eng Kolonn **Evenementtyp** bei all Datesaz mat enger Evenementkolonn (`event`, `events`, `event_type` oder `event_name`). All Spill hir eege Wierder ginn engem vun dësen Typen zougeuerdnet (grouss a kleng Buschtawen ginn d'selwecht); e Wuert, dat net gelëscht ass, zielt als *Soss*.
 
-| Kind | Shown as | Words in the data |
+| Typ | Gewisen als | Wierder an den Donnéeën |
 |---|---|---|
-| `position` | Positioun | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Positioun | `(eidel)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Schoss | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Start (Rakéit, Bomm) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Treffer | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Message | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Soss | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Gefierklassen {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+D'Kolonnen **Gefierklass** an **Zilklass** benotzen dës Klassen, ausgerechent aus de Gefierennimm (iwwer de [Figurekatalog](figures.md)) an den Typkolonnen.
 
-| Class | Shown as |
+| Klass | Gewisen als |
 |---|---|
 | `fighter` | Jeeër |
 | `attack` | Attackfliger |

@@ -11,13 +11,13 @@ translated: true
 
 # Lyklar í vafra
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Svo að hlaðin lota glatist ekki vegna óvart flýtilykils, heldur skoðarinn þessum tökkum frá vafranum.
 
-| Keys | When | Effect |
+| Takkar | Hvenær | Áhrif |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (einnig með `Cmd`) | utan textareita | aðgerð vafrans (prenta, vista, opna, endurhlaða, nýr gluggi, loka ...) á sér ekki stað |
+| `F1` `F3` `F5` `F6` `F7` | alltaf | aðgerð vafrans (hjálp, leit, endurhlaða, veffangastika, bendilsflakk) á sér ekki stað |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | á öllum skjánum | læst fyrir skoðarann (Keyboard Lock API), svo vafrinn bregst ekki við þeim |
+| lokun eða endurhleðsla flipans | með gögn eða borð hlaðið | vafrinn spyr fyrst |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Allir eigin takkar skoðarans: [Yfirlit yfir lyklaborð og mús](keyboard-reference.md).

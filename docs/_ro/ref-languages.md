@@ -11,9 +11,9 @@ translated: true
 
 # Lista limbilor
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+Vizualizatorul vorbește 40 limbi. Pornește în limba browserului, dacă o are, iar meniul de limbi de sus din bara laterală o schimbă. Cum se schimbă și cum se fac traducerile: [Limbi](languages.md).
 
-| Code | Language |
+| Cod | Limbă |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

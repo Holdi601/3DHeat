@@ -3,16 +3,16 @@ title: "Home"
 nav_order: 1
 lang: "it"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat mostra dove sono successe le cose in un gioco - dove sono andati, hanno combattuto e sono caduti i giocatori - come colori luminosi in cui puoi volare, oppure come piccole figure 3D che rigiocano la partita.
 
-Carica le posizioni - CSV, Parquet, registrazioni Tacview, replay convertiti, un solo file, una cartella o migliaia di partite - e guardale come una **mappa di calore in cui puoi volare**, come **figure che rigiocano la partita**, come linee lungo i percorsi seguiti dalle persone, oppure come una popolazione contro un'altra. Trova da solo ciò che spicca, e funziona interamente nel tuo browser: non viene caricato nulla da nessuna parte.
+Carica le posizioni - CSV, Parquet, registrazioni Tacview, replay convertiti, un solo file, una cartella o migliaia di partite - e guardale come una **mappa di calore in cui puoi volare**, come **figure che rigiocano la partita**, come linee lungo i percorsi seguiti dalle persone, oppure come una popolazione contro un'altra. Trova da solo ciò che spicca, e funziona interamente nel tuo browser: non viene caricato nulla da nessuna parte. 3DHeat e tutti i suoi strumenti sono gratuiti e open source, con licenza [MIT](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Calore di dieci partite di carri sulla valle demo](../assets/img/it/heat-hero.webp)
 
@@ -44,6 +44,8 @@ Le schede stanno in cima alla barra laterale, sotto il nome, il menu delle unit�
 | **Veicoli** | Dove è stata colpita ogni unità, da chi e con cosa. |
 
 ## Installare ed eseguire {#install-and-run}
+
+3DHeat è gratuito da usare, modificare e condividere (licenza MIT), e lo sono anche tutti gli strumenti elencati in [Repository collegati](#related-repositories).
 
 ### Windows, il modo facile {#windows-the-easy-way}
 

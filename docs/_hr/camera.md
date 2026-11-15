@@ -16,7 +16,7 @@ Letite kroz scenu kao ptica: **W A S D** za kretanje, povucite mišem za gledanj
 ## Let u 4 koraka {#fly-in-4-steps}
 
 1. Kliknite jednom na prikaz da bi imao tipkovnicu.
-2. Držite **W** za let naprijed, **S** natrag, **A** i **D** u stranu, **Space** gore, **Q** dolje.
+2. Držite **W** za let naprijed, **S** natrag, **A** i **D** u stranu, **Razmak** gore, **Q** dolje.
 3. Držite lijevu ili desnu tipku miša i povucite za gledanje oko sebe.
 4. Pritisnite **F** za ponovno uokvirivanje svih podataka.
 

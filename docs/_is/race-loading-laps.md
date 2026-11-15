@@ -113,7 +113,7 @@ Hver röð, frá vinstri til hægri:
 | ★ | beru allt saman við þennan hring (gerðu hann að viðmiði); óvirkt á viðmiðinu |
 | × | fjarlægir hringinn |
 
-**Merki:** *viðmið*; *best af X* (eða *best í sínum flokki*) á fljótasta hring flokks þegar flokkar eru nokkrir; *ófullgerður* á keyrslu sem náði ekki í mark.
+**Merkingar:** *viðmið*; *best af X* (eða *best í sínum flokki*) á fljótasta hring flokks þegar flokkar eru nokkrir; *ófullgerður* á keyrslu sem náði ekki í mark.
 
 **Önnur línan:** flokkurinn (aðeins þegar flokkar eru nokkrir), hringtíminn (`1:29.616`), bilið að hringnum sem hann er borinn saman við (sá besti í flokknum, eða viðmiðið) sem `+0.512` (dæmi), og *byrjar seint* þegar hringurinn byrjar meira en 10 m eftir ræsingu viðmiðsins.
 

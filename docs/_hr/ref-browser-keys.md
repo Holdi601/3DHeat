@@ -11,13 +11,13 @@ translated: true
 
 # Tipke preglednika
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Kako učitana sesija ne bi bila izgubljena zbog slučajne prečice, preglednik zadržava ove tipke za sebe.
 
-| Keys | When | Effect |
+| Tipke | Kada | Učinak |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (također s `Cmd`) | izvan tekstnih polja | radnja preglednika (ispis, spremanje, otvaranje, ponovno učitavanje, novi prozor, zatvaranje ...) se ne izvrši |
+| `F1` `F3` `F5` `F6` `F7` | uvijek | radnja preglednika (pomoć, traženje, ponovno učitavanje, adresna traka, pregledavanje tipkama) se ne izvrši |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | na cijelom zaslonu | zaključano za preglednik (Keyboard Lock API), pa preglednik na njih ne reagira |
+| zatvaranje ili ponovno učitavanje kartice | s učitanim podacima ili razinom | preglednik prvo pita |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Sve vlastite tipke preglednika: [Referenca tipkovnice i miša](keyboard-reference.md).

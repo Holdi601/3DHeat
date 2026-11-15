@@ -584,6 +584,7 @@ Il-bażi tal-għarfien fiha 579 dħul (135 kunċett, 37 metodu, 277 każ storiku
 ### Disinn tal-logħba u tal-livell (17) {#game-and-level-design-17}
 
 | id | titolu | mudelli | sorsi |
+|---|---|---|---|
 | `design.chokepoint` | Ħalq dojoq fid-disinn tal-livell | chokepoint, flow, kill-zone, balance | Totten 2019; Hullett & Whitehead 2010; Güttler & Johansson 2003 |
 | `design.flank-routes` | Rotot ta' ġenb u rotot alternattivi | flank, flow, avenue-of-approach | Hullett & Whitehead 2010; Totten 2019; Björk & Holopainen 2005 |
 | `design.sightlines` | Linji tal-vista u d-distanza tal-ingaġġ | sightlines, fields-of-fire, class-counter, readability | Totten 2019; Güttler & Johansson 2003; Kremers 2009 |

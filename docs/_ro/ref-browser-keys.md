@@ -11,13 +11,13 @@ translated: true
 
 # Tastele browserului
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Ca o sesiune încărcată să nu fie pierdută dintr-o scurtătură greșită, vizualizatorul păstrează aceste taste din browser.
 
-| Keys | When | Effect |
+| Taste | Când | Efect |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (și cu `Cmd`) | în afara câmpurilor de text | acțiunea browserului (imprimare, salvare, deschidere, reîncărcare, fereastră nouă, închidere ...) nu are loc |
+| `F1` `F3` `F5` `F6` `F7` | mereu | acțiunea browserului (ajutor, căutare, reîncărcare, bara de adrese, navigarea cu cursorul) nu are loc |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | pe ecran complet | blocate pentru vizualizator (Keyboard Lock API), astfel că browserul nu reacționează la ele |
+| închiderea sau reîncărcarea filei | cu date sau un nivel încărcat | browserul întreabă mai întâi |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Toate tastele proprii ale vizualizatorului: [Referință pentru tastatură și mouse](keyboard-reference.md).

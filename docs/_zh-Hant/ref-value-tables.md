@@ -11,9 +11,9 @@ translated: true
 
 # 數值表
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+[數值加權](value-weighting.md)的價格表。遊戲依資料中的名稱辨識；轉換器自帶、以該遊戲貨幣計的數值欄位優先於這些表。
 
-| Table | Currency | Defined in |
+| 表格 | 貨幣 | 定義於 |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

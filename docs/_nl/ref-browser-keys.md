@@ -11,13 +11,13 @@ translated: true
 
 # Toetsen in de browser
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Zodat een geladen sessie niet verloren gaat door een per ongeluk ingedrukte sneltoets, houdt de viewer deze toetsen uit de browser.
 
-| Keys | When | Effect |
+| Toetsen | Wanneer | Effect |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (ook met `Cmd`) | buiten tekstvakken | de actie van de browser (afdrukken, opslaan, openen, opnieuw laden, nieuw venster, sluiten ...) gebeurt niet |
+| `F1` `F3` `F5` `F6` `F7` | altijd | de actie van de browser (help, zoeken, opnieuw laden, adresbalk, bladeren met cursor) gebeurt niet |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | op volledig scherm | voor de viewer vergrendeld (Keyboard Lock API), zodat de browser er niets mee doet |
+| het tabblad sluiten of opnieuw laden | met data of een geladen level | de browser vraagt eerst |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Alle eigen toetsen van de viewer: [Referentie toetsenbord en muis](keyboard-reference.md).

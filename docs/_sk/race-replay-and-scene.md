@@ -224,6 +224,6 @@ Kód: [`src/race/replay.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/ra
 
 `stateAt` interpoluje každý kanál medzi dvoma vzorkami okolo času kola. Kanály, ktoré skáču (rýchlostný stupeň, vlajky), zoberú najbližšiu vzorku. Kolo, ktoré skončilo, zaparkuje na čiare.
 
-**Smer.** Smer jazdy vyplýva z pozícií vzdialených niekoľko metrov (aspoň 2 m na každú stranu, aby kolísanie neotočilo auto). Smer karosérie vyplýva z uhla zatáčania hry len vtedy, keď je prispôsobený smeru jazdy - znamienko a odsadenie, kruhovým priemerom cez vzorky rýchlejšie než 10 m/s (aspoň 20) - a len keď sa s ním potom zhoduje (kruhový rozptyl pod 0,05, asi 18° rozptylu); inak karoséria smeruje pozdĺž smeru jazdy. To udrží šmyk viditeľný (karoséria a jazda od seba), bez dôvery v uhlovú konvenciu hry.
+**Kurz.** Smer jazdy vyplýva z pozícií vzdialených niekoľko metrov (aspoň 2 m na každú stranu, aby kolísanie neotočilo auto). Smer karosérie vyplýva z uhla zatáčania hry len vtedy, keď je prispôsobený smeru jazdy - znamienko a odsadenie, kruhovým priemerom cez vzorky rýchlejšie než 10 m/s (aspoň 20) - a len keď sa s ním potom zhoduje (kruhový rozptyl pod 0,05, asi 18° rozptylu); inak karoséria smeruje pozdĺž smeru jazdy. To udrží šmyk viditeľný (karoséria a jazda od seba), bez dôvery v uhlovú konvenciu hry.
 
 **Riadenie a strany.** Akým smerom kladné riadenie otáča auto a ktorej strane patria pravé kolesá hry, sa meria z kola: riadenie oproti zatáčaniu dráhy a ktoré odpruženie sa stláča na vonkajšej strane zákrut (bez údajov o odpružení sa hry Forza berú ako zrkadlené).

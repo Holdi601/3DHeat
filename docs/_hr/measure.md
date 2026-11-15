@@ -11,14 +11,14 @@ outdated: false
 
 # Mjera
 
-**Mjera** pretvara miš u ravnalo i kaže koliko je zauzeto mjesto pod pokazivačem. Upotrijebi je da saznaš koliko su dva mjesta udaljena ili koliko prometa ima jedno mjesto.
+**Mjera** pretvara miš u ravnalo i kaže koliko je zauzeto mjesto pod pokazivačem. Upotrijebite je da saznate koliko su dva mjesta udaljena ili koliko prometa ima jedno mjesto.
 
 ## Isprobaj {#try-it}
 
 1. Otvori **Mjera** u bočnoj traci i označi **Ravnalo aktivno**.
 2. Lijevim klikom klikni tri mjesta na karti. Svaki klik ostavlja točku.
 3. Pročitaj **Ukupnu duljinu** (duljina cijele putanje) i **Zadnji odsječak** (zadnju dionicu).
-4. Desnim klikom ukloni zadnju točku, ili pritisni **Očisti (3)** da ukloniš sve.
+4. Desnim klikom uklonite zadnju točku, ili pritisnite **Očisti (3)** da uklonite sve.
 
 ![Ravnalo s tri točke na selu i njegova očitanja](../assets/img/hr/measure-ruler.webp)
 

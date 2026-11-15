@@ -11,9 +11,9 @@ translated: true
 
 # Lista tal-lingwi
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+Il-viewer jitkellem 40 lingwi. Jibda bil-lingwa tal-brawżer meta jkollu waħda, u l-menu tal-lingwa fil-quċċata tal-ġenb jibdilha. Kif tinbidel, u kif isiru t-traduzzjonijiet: [Lingwi](languages.md).
 
-| Code | Language |
+| Kodiċi | Lingwa |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

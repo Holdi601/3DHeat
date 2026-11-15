@@ -11,11 +11,11 @@ translated: true
 
 # Eseménytípusok és -osztályok
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+A megjelenítő minden olyan adathalmazhoz hozzáad egy **Esemény típusa** oszlopot, amelynek van eseményoszlopa (`event`, `events`, `event_type` vagy `event_name`). Minden játék saját szavait a fajták egyikéhez rendeli (kis- és nagybetűre egyaránt); a fel nem sorolt szó *Egyéb*-nek számít.
 
-| Kind | Shown as | Words in the data |
+| Fajta | Megjelenítve mint | Szavak az adatokban |
 |---|---|---|
-| `position` | Pozíció | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Pozíció | `(üres)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Lövés | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Kilövés (rakéta, lövedék, bomba) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Találat | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Üzenet | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Egyéb | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Járműosztályok {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+A **Járműosztály** és a **Célpontosztály** oszlopok ezeket az osztályokat használják; ezeket a járműnevekből (a [figurakatalóguson](figures.md) át) és a típusoszlopokból állapítják meg.
 
-| Class | Shown as |
+| Osztály | Megjelenítve mint |
 |---|---|
 | `fighter` | Vadászgép |
 | `attack` | Csapásmérő repülő |

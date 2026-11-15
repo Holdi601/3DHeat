@@ -22,7 +22,7 @@ Quan un fotograma no pot dibuixar totes les files, en dibuixa una mostra i la po
 | Mode | Quan | Què passa amb l'acumulador |
 |---|---|---|
 | **reinicia** | la càmera s'ha mogut, ha canviat alguna cosa que altera el camp, la refinació progressiva està desactivada, comença una finestra creixent (primer fotograma de la reproducció, després d'un salt), o la calor en línies reproduïda s'ha mogut | Es substitueix per l'estimació d'aquest fotograma. |
-| **estén** | una finestra **Acumulada** que només ha crescut des de l'últim fotograma | Aquest fotograma només dibuixa les files que acaben de ser visibles, amb pes complet, i les suma. Res no es desintegra. |
+| **estén** | una finestra **Acumulat** que només ha crescut des de l'últim fotograma | Aquest fotograma només dibuixa les files que acaben de ser visibles, amb pes complet, i les suma. Res no es desintegra. |
 | **ema** | una finestra lliscant (**Finestra**, **Temps de vida**) s'ha mogut | `acc = acc × (1 - 0,34) + fotograma × 0,34` - una mitjana mòbil exponencial d'uns tres fotogrames. |
 | **mitjana** | no ha canviat res i l'estimació no és completa | `acc = acc × (1 - 1/n) + fotograma × 1/n` al *n*è fotograma: una mitjana corrent. |
 | **omet** (inactiu) | convergit i no ha canviat res | No es dibuixa res; el fotograma només es torna a compondre. |

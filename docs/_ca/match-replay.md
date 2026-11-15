@@ -22,7 +22,7 @@ Els trets, els impactes, els disparos i les destruccions es dibuixen sobre les u
 ## Iniciar una repetició {#start-a-replay}
 
 1. Carrega una gravació amb **Font → Fitxers…** o deixant-la caure sobre el panell Font (qualsevol taula amb una columna de **persona** i una de **temps**, un fitxer de Tacview, una repetició convertida, una partida [`.3dheat`](container.md)). Mira [Com entren les dades](getting-data-in.md).
-2. Obre la pestanya **Partida** i tria **Repetició amb figures**, o tria **Superposició de figures** a la barra de modes de la pestanya Mapa de calor.
+2. Obre la pestanya **Partida** i tria **Repetició amb figures**, o tria **Figures superposades** a la barra de modes de la pestanya Mapa de calor.
 3. A **Partides de la repetició** tria una partida, totes alhora, o diverses.
 4. Prem **Reprodueix** a la línia de temps (o `K`). Arrossega la línia de temps per saltar.
 
@@ -40,7 +40,7 @@ Les figures substitueixen les caixes per a cada unitat el nom o el tipus de la q
 | **Mida de les figures** (vegades la mida real) | 1 | 1 és la mida real; de 0,25 a 20 vegades (escala logarítmica). Més gran ajuda des de lluny. |
 | **Figura més petita a la pantalla** | 36 px | Les figures llunyanes creixen per mantenir-se aquesta llargada, de 0 a 200 px; 0 manté la mida real. |
 | **A distància**: Figura, Fletxa, Símbol | Figura | En què es converteix una unitat llunyana. |
-| **Símbols** | NATO (APP-6) | NATO (APP-6), senyals tàctiques russes, icones de **Mapa del joc**, o **Només formes (apte per a daltònics)**. |
+| **Símbols** | NATO (APP-6) | NATO (APP-6), senyals tàctiques russes, icones de **Mapa de joc**, o **Només formes (apte per a daltònics)**. |
 | **Mida del símbol**, **El meu bàndol**, **Hostil / Neutral**, **Marques de rumb** | 28 px (12 a 64), automàtic, hostil, activat | Com es veuen els símbols i quin bàndol és amic. |
 | **Línies verticals** | activat | Una línia de cada unitat cap avall fins a terra, perquè les alçades es llegeixin en 3D. |
 | **Línies a terra i etiquetes a les armes** | apagat | Línies fins a terra i etiquetes en míssils i bombes. |

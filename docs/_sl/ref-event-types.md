@@ -11,11 +11,11 @@ translated: true
 
 # Vrste in razredi dogodkov
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Prikazovalnik doda stolpec **Vrsta dogodka** vsakemu podatkovnemu nizu, ki ima stolpec dogodkov (`event`, `events`, `event_type` ali `event_name`). Besede posamezne igre se preslikajo v eno od teh vrst (velike in male črke enako); beseda, ki ni navedena, šteje kot *Drugo*.
 
-| Kind | Shown as | Words in the data |
+| Vrsta | Prikazano kot | Besede v podatkih |
 |---|---|---|
-| `position` | Položaj | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Položaj | `(prazno)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Strel | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Izstrelitev (raketa, izstrelek, bomba) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Zadetek | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Sporočilo | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Drugo | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Razredi vozil {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Stolpca **Razred vozila** in **Razred cilja** uporabljata te razrede, določene iz imen vozil (prek [kataloga figur](figures.md)) in stolpcev tipa.
 
-| Class | Shown as |
+| Razred | Prikazano kot |
 |---|---|
 | `fighter` | Lovec |
 | `attack` | Jurišnik |

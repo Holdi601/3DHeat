@@ -11,9 +11,9 @@ translated: true
 
 # Komandinės eilutės įrankiai
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Komandinės eilutės įrankiai iš peržiūros programos `tools/` aplanko (Node.js, paleidžiami iš saugyklos šakninio aplanko). Naudojantis peržiūros programa jų niekada nereikia: jie supakuoja, apibendrina ir konvertuoja jūsų duomenis bei padeda tam, kas prižiūri peržiūros programą. Kiekvienas įrašas turi pirmąją įrankio aprašymo pastraipą ir naudojimo eilutes; kur yra, įrankis be argumentų parodys visą žinyną. [Susijusių saugyklų](index.md#related-repositories) duomenų įrankiai aprašo savo komandas patys.
 
-## For your data
+## Jūsų duomenims {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Kūrėjams ir dokumentacijai {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Jie tikrina peržiūros programą, kuria demonstracinius duomenis ir ekrano nuotraukas bei rašo nuorodų puslapius.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Bibliotekos {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` — biblioteka be komandinės eilutės: aukščiau nurodyti įrankiai ją importuoja, kad skaitytų ir rašytų [.3dheat failą](container.md).

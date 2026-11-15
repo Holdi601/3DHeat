@@ -3,16 +3,16 @@ title: "Početna"
 nav_order: 1
 lang: "hr"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat pokazuje gdje su se stvari dogodile u igri - kamo su igrači išli, gdje su se borili i gdje su pali - kao svjetleće boje kroz koje možete letjeti ili kao male 3D figure koje ponovno prikazuju utakmicu.
 
-Učitajte pozicije - CSV, Parquet, Tacview snimke, pretvorene reprodukcije, jednu datoteku, mapu ili tisuće utakmica - i vidite ih kao **toplinsku kartu kroz koju možete letjeti**, kao **figure koje ponovno prikazuju utakmicu**, kao crte duž putanja kojima su ljudi išli ili kao jednu populaciju naspram druge. Sam pronalazi ono što se ističe, i radi potpuno u vašem pregledniku: ništa se nigdje ne šalje.
+Učitajte pozicije - CSV, Parquet, Tacview snimke, pretvorene reprodukcije, jednu datoteku, mapu ili tisuće utakmica - i vidite ih kao **toplinsku kartu kroz koju možete letjeti**, kao **figure koje ponovno prikazuju utakmicu**, kao crte duž putanja kojima su ljudi išli ili kao jednu populaciju naspram druge. Sam pronalazi ono što se ističe, i radi potpuno u vašem pregledniku: ništa se nigdje ne šalje. 3DHeat i svi njegovi alati besplatni su i otvorenog koda pod [MIT licencom](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Toplina deset utakmica tenkova nad demo dolinom](../assets/img/hr/heat-hero.webp)
 
@@ -44,6 +44,8 @@ Kartice su na vrhu bočne trake, ispod naziva, jedinica i izbornika jezika.
 | **Vozila** | Gdje je svaka jedinica pogođena, od koga i čime. |
 
 ## Instalacija i pokretanje {#install-and-run}
+
+3DHeat je besplatan za korištenje, mijenjanje i dijeljenje (MIT licenca), i tako je sa svakim alatom navedenim pod [Srodni repozitoriji](#related-repositories).
 
 ### Windows, jednostavan način {#windows-the-easy-way}
 

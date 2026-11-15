@@ -3,16 +3,16 @@ title: "Inici"
 nav_order: 1
 lang: "ca"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat mostra on han passat les coses en un joc -on han anat, on han lluitat i on han caigut els jugadors- com a colors lluminosos pels quals pots volar, o com a petites figures 3D que repeteixen la partida.
 
-Carrega posicions -CSV, Parquet, gravacions de Tacview, repeticions convertides, un sol fitxer, una carpeta o milers de partides- i mira-les com a **mapa de calor pel qual pots volar**, com a **figures que repeteixen la partida**, com a línies al llarg dels recorreguts que va fer la gent, o com una població contra una altra. Troba sol el que destaca, i funciona del tot al navegador: no es puja res a cap lloc.
+Carrega posicions -CSV, Parquet, gravacions de Tacview, repeticions convertides, un sol fitxer, una carpeta o milers de partides- i mira-les com a **mapa de calor pel qual pots volar**, com a **figures que repeteixen la partida**, com a línies al llarg dels recorreguts que va fer la gent, o com una població contra una altra. Troba sol el que destaca, i funciona del tot al navegador: no es puja res a cap lloc. 3DHeat i totes les seves eines són gratuïtes i de codi obert sota la [llicència MIT](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Calor de deu partides de tancs sobre la vall de demostració](../assets/img/ca/heat-hero.webp)
 
@@ -44,6 +44,8 @@ Les pestanyes són a la part superior de la barra lateral, sota el nom, les unit
 | **Vehicles** | On ha estat tocada cada unitat, per qui i amb què. |
 
 ## Instal·lació i execució {#install-and-run}
+
+3DHeat es pot usar, canviar i compartir de franc (llicència MIT), i ho és cada eina de la llista de [Repositoris relacionats](#related-repositories).
 
 ### Windows, la manera fàcil {#windows-the-easy-way}
 

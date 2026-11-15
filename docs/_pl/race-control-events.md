@@ -18,7 +18,7 @@ Widz ogląda, jak prowadzono każde okrążenie, i zaznacza miejsca, w których 
 ## Prostymi słowami {#in-plain-words}
 
 - **Blokada**: hamujesz tak mocno, że koło przestaje się obracać i ślizga. Samochód hamuje wtedy gorzej i nie da się nim skręcać.
-- **Buksowanie**: dociskasz gaz tak mocno, że napędzane koła kręcą się szybciej, niż jedzie samochód. Tracisz siłę napędu.
+- **Buksowanie kół**: dociskasz gaz tak mocno, że napędzane koła kręcą się szybciej, niż jedzie samochód. Tracisz siłę napędu.
 - **Nadsterowność**: tył samochodu ucieka na bok. Jeśli obróci się całkiem dookoła, to jest **obrót**.
 - **Podsterowność**: przód samochodu ucieka na bok („pcha”); kręcenie kierownicą mocniej nie pomaga.
 - **Uderzenie** i **rozbicie**: samochód dotknął czegoś (uderzenie to stuknięcie albo otarcie, rozbicie to mocny cios).
@@ -28,7 +28,7 @@ Widz ogląda, jak prowadzono każde okrążenie, i zaznacza miejsca, w których 
 
 Dla wybranego okrążenia pokazuje to, co dają okrążenia. Bez poślizgu opon i bez kąta dryfu pokazuje to, co nadal da się znaleźć, zamiast nic (poniżej).
 
-**Tabela**: jeden wiersz na każdy rodzaj, który pokazuje choć jedno z dwóch okrążeń: Zablokowane koła, Buksowanie, Tył ucieka (nadsterowność i obroty), Pchanie na zewnątrz, Rozbicia, Uderzenia, Działanie ABS, Działanie kontroli trakcji, Hamulec ręczny, W powietrzu. Każda komórka to „liczba · sekundy” dla wybranego okrążenia i dla okrążenia, z którym jest porównywane. Jest też *Największy kąt dryfu*, gdy jest kąt dryfu (największy na ziemi).
+**Tabela**: jeden wiersz na każdy rodzaj, który pokazuje choć jedno z dwóch okrążeń: Zablokowane koła, Buksowanie kół, Tył ucieka (nadsterowność i obroty), Pchanie na zewnątrz, Rozbicia, Uderzenia, Działanie ABS, Działanie kontroli trakcji, Hamulec ręczny, W powietrzu. Każda komórka to „liczba · sekundy” dla wybranego okrążenia i dla okrążenia, z którym jest porównywane. Jest też *Największy kąt dryfu*, gdy jest kąt dryfu (największy na ziemi).
 
 **Lista**: jej niewspólne usterki, które kosztowały co najmniej 0,02 s, od najdroższej, najwyżej 12, każda z tytułem i kosztem (oraz znacznikiem swojego rodzaju). Kliknij jedną, żeby przeczytać jej podpowiedź, ustawić oba samochody 40 m przed nią i odtworzyć ją. **Także to, co zrobiły oba okrążenia tam** dodaje każdą usterkę, także wspólne (znacznik „obaj tak zrobili”, koszt „—” poniżej 0,01 s). Gdy nie ma żadnych: „Nic, co X zrobił oponami, nie kosztowało go czasu, czego Y też nie zrobił.”
 
@@ -52,7 +52,7 @@ Uzasadnienie i literatura są w [metodzie](race-analytics.md).
 | Rodzaj | Wiersz w tabeli | Usterka? | Najkrótsze, które się liczy |
 |---|---|---|---|
 | `lock` | Zablokowane koła | tak | 0,1 s |
-| `wheelspin` | Buksowanie | tak | 0,15 s |
+| `wheelspin` | Buksowanie kół | tak | 0,15 s |
 | `oversteer` | Tył ucieka | tak | 0,2 s |
 | `spin` | (liczone z Tył ucieka) | tak | 0,1 s |
 | `understeer` | Pchanie na zewnątrz | tak | 0,25 s |

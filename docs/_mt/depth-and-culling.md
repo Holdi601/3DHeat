@@ -39,7 +39,7 @@ Ara wkoll [Id-dehra tal-livell](level-appearance.md).
 
 ## Qtugħ skont id-distanza {#distance-culling}
 
-**Qtugħ skont id-distanza** (magħluq b'default) jillimita s-sħana għal ringieli bejn limitu viċin u limitu 'l bogħod mill-kamera. Ħallί limitu 'l bogħod biex taqra d-densità ġewwa bini mingħajr in-naħa l-bogħod tal-mappa tgħaqqad fuqu; ħalli limitu viċin biex tgħaddi *minn* punt sħun minflok ma tidħol fih.
+**Qtugħ skont id-distanza** (magħluq b'default) jillimita s-sħana għal ringieli bejn limitu viċin u limitu 'l bogħod mill-kamera. Ħalli limitu 'l bogħod biex taqra d-densità ġewwa bini mingħajr in-naħa l-bogħod tal-mappa tgħaqqad fuqu; ħalli limitu viċin biex tgħaddi *minn* punt sħun minflok ma tidħol fih.
 
 | Kontroll | Default | Firxa (jog) | Tifsira |
 |---|---|---|---|

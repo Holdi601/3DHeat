@@ -132,20 +132,20 @@ Oben links in der Ansicht: die **x**-, **y**-, **z**-, **Gierwinkel**- und **Nic
 
 ### Koordinaten: das eigene Bezugssystem der Daten {#coordinates-the-datas-own-frame}
 
-Jede Koordinate, die die Untersuchungswerkzeuge zeigen oder annehmen, liegt im **eigenen Bezugssystem der geladenen Daten**: Die [Achsenzuordnung](axes-units-and-time.md) des Ladens (Hochachse, Spiegelungen, Maßstab) wird rückgängig gemacht. Eine Position, die man von der Ansicht abliest, ist die Zahl, die die Quelltabelle enthält, und eine Zahl aus der Tabelle, die man ins Sprungfeld tippt, landet genau an dieser Stelle. Wenn die Zuordnung nichts ändert (ein Laden mit Y oben und ohne Maßstab – so schreiben es die Aufnahmewerkzeuge und die Level-Exporter), ist das einfach die Welt; sonst trägt die Anzeige eine Marke **Datenbezugssystem**. Ohne Datensatz sind die Koordinaten Weltkoordinaten. Gierwinkel und Nickwinkel beziehen sich immer auf die Welt des Viewers, Y oben.
+Jede Koordinate, die die Untersuchungswerkzeuge zeigen oder annehmen, liegt im **eigenen Bezugssystem der geladenen Daten**: Die [Achsenzuordnung](axes-units-and-time.md) des Ladens (Hochachse, Spiegelungen, Maßstab) wird rückgängig gemacht. Eine Position, die man von der Ansicht abliest, ist die Zahl, die die Quelltabelle enthält, und eine Zahl aus der Tabelle, die man ins Sprungfeld tippt, landet genau an dieser Stelle. Wenn die Zuordnung nichts ändert (ein Laden mit Y oben und ohne Maßstab – so schreiben es die Aufnahmewerkzeuge und die Level-Exporter), ist das einfach die Welt; sonst trägt die Anzeige eine Marke **Datenkoordinaten**. Ohne Datensatz sind die Koordinaten Weltkoordinaten. Gierwinkel und Nickwinkel beziehen sich immer auf die Welt des Viewers, Y oben.
 
 ### Gierwinkel-Konventionen {#yaw-conventions}
 
 | Konvention | Gierwinkel 0° schaut entlang | Wächst hin zu | Verwendet von |
 |---|---|---|---|
 | **Viewer** | -Z | -X | die freie Flugkamera, [voreingestellte Ansichten](#preset-views) |
-| **Spiel / Aufnahmewerkzeuge** | +X | -Z | die Spalten `yaw` und die Posen der Aufnahmewerkzeuge; in einem Level, das im Bezugssystem des Viewers exportiert wurde, der eigene Gierwinkel des Spiels |
+| **Spiel / Aufnahmetools** | +X | -Z | die Spalten `yaw` und die Posen der Aufnahmewerkzeuge; in einem Level, das im Bezugssystem des Viewers exportiert wurde, der eigene Gierwinkel des Spiels |
 
 Die Neigung ist in beiden gleich: nach oben von der Waagerechten. Die beiden unterscheiden sich um eine Vierteldrehung und sonst nichts:
 
 > Viewer-Gierwinkel = Spiel-Gierwinkel - 90°
 
-Eine Richtung `d` ist `(cos p · cos y, sin p, -cos p · sin y)` in der Spielkonvention und `(-sin y · cos p, sin p, -cos y · cos p)` in der des Viewers. Wähle **Spiel / Aufnahmewerkzeuge**, um einen Gierwinkel direkt aus einer Aufnahmetabelle einzutippen oder die Anzeige mit einer solchen zu vergleichen.
+Eine Richtung `d` ist `(cos p · cos y, sin p, -cos p · sin y)` in der Spielkonvention und `(-sin y · cos p, sin p, -cos y · cos p)` in der des Viewers. Wähle **Spiel / Aufnahmetools**, um einen Gierwinkel direkt aus einer Aufnahmetabelle einzutippen oder die Anzeige mit einer solchen zu vergleichen.
 
 ### Zu einem Punkt springen {#going-to-a-point}
 

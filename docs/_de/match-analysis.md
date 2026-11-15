@@ -133,10 +133,10 @@ Jeder Link setzt die eigenen **Filter** der Heatmap, daher bleibt sichtbar und �
 | **Positionen** | `position` – wo die Spieler waren, achtmal pro Sekunde |
 | **Abschüsse** | `kill` – wo der Täter stand |
 | **Tode** | `death` – wo das Opfer fiel |
-| **Openings** | `kill` und `death` mit `opening` = 1 – der erste Abschuss jeder Runde, wo beide standen (nur angeboten, wenn die Tabelle eine Spalte `opening` hat) |
-| **Rauch** | `smoke` – wo Rauch landete |
-| **Blendungen** | `flash` – wo Blendgranaten zündeten |
-| **Molotows** | `molotov` – wo Molotows und Brandbomben brannten |
+| **Opening Kills** | `kill` und `death` mit `opening` = 1 – der erste Abschuss jeder Runde, wo beide standen (nur angeboten, wenn die Tabelle eine Spalte `opening` hat) |
+| **Smokes** | `smoke` – wo Rauch landete |
+| **Flashes** | `flash` – wo Blendgranaten zündeten |
+| **Molotovs** | `molotov` – wo Molotows und Brandbomben brannten |
 | **HE** | `he` – wo HE-Granaten detonierten |
 | **Plants** | `plant` – wo die Bombe gelegt wurde |
 | **Schüsse** | `shot` – wo Schüsse abgegeben wurden |

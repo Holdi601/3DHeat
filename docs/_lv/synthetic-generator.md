@@ -1,5 +1,5 @@
 ---
-title: "Sintētiskais ģenerators"
+title: "Sintētisko datu ģenerators"
 parent: "Datu ievade"
 nav_order: 5
 lang: "lv"
@@ -9,12 +9,12 @@ translated: true
 outdated: false
 ---
 
-# Sintētiskais ģenerators
+# Sintētisko datu ģenerators
 
 Nav savu datu? Nospiediet vienu pogu, un 3DHeat izdomā jums izdomātu kauju, cik mazu vai lielu vien vēlaties.
 
 1. Atveriet **Datu kopa** paneli siltumkartes sānjoslā (zem **Avots**).
-2. Ritiniet līdz **Sintētiskais ģenerators**.
+2. Ritiniet līdz **Sintētisko datu ģenerators**.
 3. Iestatiet **Rindas (miljonos)**. Pirmo reizi izmēģiniet 1: noklusējums 8 miljoni ir par smagu pirmajam mēģinājumam.
 4. Nospiediet **Ģenerēt**.
 

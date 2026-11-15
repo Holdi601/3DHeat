@@ -11,13 +11,13 @@ translated: true
 
 # Клавиши в браузъра
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+За да не се загуби заредена сесия заради случайна клавишна комбинация, визуализаторът задържа тези клавиши от браузъра.
 
-| Keys | When | Effect |
+| Клавиши | Кога | Действие |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (също с `Cmd`) | извън текстови полета | действието на браузъра (печат, запазване, отваряне, презареждане, нов прозорец, затваряне ...) не се извършва |
+| `F1` `F3` `F5` `F6` `F7` | винаги | действието на браузъра (помощ, търсене, презареждане, адресен ред, навигация с каре) не се извършва |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | на цял екран | заключени за визуализатора (Keyboard Lock API), така че браузърът не реагира на тях |
+| затваряне или презареждане на раздела | със заредени данни или ниво | браузърът пита първо |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Всички клавиши на визуализатора: [Справка за клавиатурата и мишката](keyboard-reference.md).

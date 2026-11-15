@@ -19,7 +19,7 @@ Katrai šāvienai, munīcijai, zaudētai mašīnai un litram degvielas ir cena. 
 
 1. Ielādējiet datus ar notikumiem (šāvieni, nogalinājumi, nāves) un transportlīdzekļu vai ieroču nosaukumiem.
 2. Atveriet **Vērtība** siltuma sānjoslā.
-3. Izvēlieties **Svērt siltumu pēc**, piemēram, *Zaudēts (USD)*. Siltums tagad pieskaita katras rindas cenu, nevis 1.
+3. Izvēlieties **Karstuma svēršana pēc**, piemēram, *Zaudēts (USD)*. Siltums tagad pieskaita katras rindas cenu, nevis 1.
 4. Skatiet **Kopsummas**: katras vērtību kolonnas summu tam, kas tiek rādīts (piemēro filtri un laika logs).
 5. Ja cenas ir reālā naudā, parādās pārslēgs **USD / EUR**.
 

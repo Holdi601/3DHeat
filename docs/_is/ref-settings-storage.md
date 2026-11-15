@@ -11,23 +11,23 @@ translated: true
 
 # Vistaðar stillingar
 
-What the viewer keeps in your browser (`localStorage`) between visits. Nothing of it is sent anywhere. Clearing the site data in the browser removes it all.
+Það sem skoðarinn geymir í vafranum þínum (`localStorage`) milli heimsókna. Ekkert af því er sent neitt. Ef gögn vefsvæðisins eru hreinsuð í vafranum er allt fjarlægt.
 
-| Key | Holds | Code |
+| Lykill | Geymir | Kóði |
 |---|---|---|
-| `3dheat.objectives` | objectives shown, layers, labels | `src/state/objectivesStore.ts` |
-| `3dheat.volumes.…` | volumes, per dataset | `src/volumes/store.ts` |
-| `heat3d.ai` | external AI: provider, address, model, options (not the key) | `src/insights/ai/settings.ts` |
-| `heat3d.ai.key` | the external AI key, only when *Remember the key* is ticked | `src/insights/ai/settings.ts` |
-| `heat3d.bookmarks.…` | bookmarks, per recording | `src/ui/replay/bookmarks.ts` |
-| `heat3d.carNames` | car names in the race tab | `src/race/carNames.ts` |
-| `heat3d.far` | figures at a distance, symbols, hit marks, aim lines | `src/state/store.ts` |
-| `heat3d.help` | help mode on or off | `src/state/helpStore.ts` |
-| `heat3d.inspect` | the pick card and camera readout | `src/state/inspectStore.ts` |
-| `heat3d.language` | the language picked | `src/i18n/index.ts` |
-| `heat3d.mirror` | the axis mirroring | `src/state/store.ts` |
-| `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
-| `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
-| `heat3d.units` | the units preset and single units | `src/state/unitsStore.ts` |
+| `3dheat.objectives` | sýnd markmið, lög, merkingar | `src/state/objectivesStore.ts` |
+| `3dheat.volumes.…` | rúmmál, fyrir hvert gagnasafn | `src/volumes/store.ts` |
+| `heat3d.ai` | ytri gervigreind: þjónustuaðili, vistfang, líkan, valkostir (ekki lykillinn) | `src/insights/ai/settings.ts` |
+| `heat3d.ai.key` | lykill ytri gervigreindar, aðeins þegar *Muna lykilinn í þessum vafra* er hakað við | `src/insights/ai/settings.ts` |
+| `heat3d.bookmarks.…` | bókamerki, fyrir hverja upptöku | `src/ui/replay/bookmarks.ts` |
+| `heat3d.carNames` | heiti bíla í kappakstursflipanum | `src/race/carNames.ts` |
+| `heat3d.far` | fígúrur í fjarlægð, tákn, höggmerki, miðlínur | `src/state/store.ts` |
+| `heat3d.help` | hjálparhamur á eða af | `src/state/helpStore.ts` |
+| `heat3d.inspect` | skoðunarspjaldið og mælingu myndavélar | `src/state/inspectStore.ts` |
+| `heat3d.language` | valið tungumál | `src/i18n/index.ts` |
+| `heat3d.mirror` | speglun ásanna | `src/state/store.ts` |
+| `heat3d.replay` | merkingar endurspilunar, taktísk skjámynd, 2D kort, línurit, sjónskjár (HUD), útlit, byggingar, eftirfylgnimyndavél | `src/state/replayStore.ts` |
+| `heat3d.speed` | hraði spilunar | `src/state/playbackSpeed.ts` |
+| `heat3d.units` | einingaforstillingin og stakar einingar | `src/state/unitsStore.ts` |
 
-Heat settings, filters and the view mode are not kept: they start fresh with each load.
+Hitastillingar, síur og skoðunarhamur eru ekki geymd: þau byrja upp á nýtt við hverja hleðslu.

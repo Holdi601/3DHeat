@@ -11,11 +11,11 @@ translated: true
 
 # Tipuri și clase de evenimente
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Vizualizatorul adaugă o coloană **Tip de eveniment** la fiecare set de date care are o coloană de evenimente (`event`, `events`, `event_type` sau `event_name`). Cuvintele fiecărui joc sunt asociate cu unul dintre aceste tipuri (majuscule și minuscule la fel); un cuvânt care nu este listat se consideră *Altele*.
 
-| Kind | Shown as | Words in the data |
+| Tip | Afișat ca | Cuvinte în date |
 |---|---|---|
-| `position` | Poziție | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Poziție | `(gol)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Foc tras | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Lansare (rachetă, proiectil, bombă) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Lovitură | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Mesaj | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Altele | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Clasele vehiculelor {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Coloanele **Clasa vehiculului** și **Clasa țintei** folosesc aceste clase, stabilite din numele vehiculelor (prin [catalogul de figuri](figures.md)) și din coloanele de tip.
 
-| Class | Shown as |
+| Clasa | Afișat ca |
 |---|---|
 | `fighter` | Vânător |
 | `attack` | Avion de atac |

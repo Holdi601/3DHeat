@@ -17,7 +17,7 @@ Vahekaart Matš esitab iga salvestise kujudena: War Thunderi või Tacview salves
 ## Vaata CS2 matš üle {#review-a-cs2-match}
 
 1. Konverteeri demo ([allpool](#where-the-data-comes-from)) `.parquet` ja `.match.json` failiks.
-2. Vahekaardil **Heatmap** laadi `.parquet` fail jaotise **Allikas** all.
+2. Vahekaardil **Soojuskaart** laadi `.parquet` fail jaotise **Allikas** all.
 3. Ava vahekaart **Matš** ja klõpsa **Laadi matšifailid…** või lohista `.match.json` fail vaatele.
 4. Klõpsa matšil jaotises **Matšide kokkuvõtted**, seejärel raundi ribal lahtril, et see raund avada.
 5. Klõpsa **Näita raundi**, et näha seda raundi soojuskaardil, või **Raundi kordus**, et vaadata seda kujudena.
@@ -37,7 +37,7 @@ python -m heat3d_cs2 demos <demo files or folders> -o out
 
 | Fail | Laaditakse | Sisaldab |
 |---|---|---|
-| `<match>.parquet` | vahekaart **Heatmap** (paneel Allikas, nagu iga Parquet – üks fail, mitu või terve kaust) | iga mängija asukoht kaheksa korda sekundis ja iga sündmus, kus see toimus: tapmine, surm, haavamine, laskmine, viskamine, suits, pimestusgranaat, HE, molotov, decoy, pimestamine, pommi panek, pommi desarmeerimine, plahvatus; koos `match`, `round`, `roundId`, `event`, `player`, `side`, `team`, vaatesuunaga, `weapon`, `place`, `opening`, `traded` … |
+| `<match>.parquet` | vahekaart **Soojuskaart** (paneel Allikas, nagu iga Parquet – üks fail, mitu või terve kaust) | iga mängija asukoht kaheksa korda sekundis ja iga sündmus, kus see toimus: tapmine, surm, haavamine, laskmine, viskamine, suits, pimestusgranaat, HE, molotov, decoy, pimestamine, pommi panek, pommi desarmeerimine, plahvatus; koos `match`, `round`, `roundId`, `event`, `player`, `side`, `team`, vaatesuunaga, `weapon`, `place`, `opening`, `traded` … |
 | `<match>.match.json` | vahekaart **Matš** | meeskonnad, skoor, iga raund (võitja, kuidas, majandus, pommi panek, iga tapmine järjekorras, clutchid, ellujäänud), iga mängija tulemustabeli rida |
 
 Parquet-faili jaluses on lugemisjuhised (võti `heat3d`), nii et see avaneb ilma
@@ -59,7 +59,7 @@ on keskmine varustuse väärtus vaba aja lõpus – iga regulatsioonipoolaja esi
 
 Vahekaardi Matš külgribal on ülal soojuskaardi režiimi lüliti ja seansi valija, seejärel all
 matši jaotised, ning soojuskaardi paneelid **Filtrid**, **Tase** ja **Kaamera** – vaade on
-soojuskaart mis tahes Parquet-ist, mis on laaditud vahekaardil Heatmap.
+soojuskaart mis tahes Parquet-ist, mis on laaditud vahekaardil Soojuskaart.
 
 ### Matšide kokkuvõtted {#match-summaries}
 
@@ -79,7 +79,7 @@ uuesti (sama `match` nimi), asendab varasema. Matšid on sorteeritud kaardi, see
 Kui laaditud on täpselt üks matš, avatakse see; muidu valik jääb (vaikimisi kõik matšid).
 
 Kui midagi pole laaditud, selgitab jaotis: konverteeri käsuga `python -m heat3d_cs2
-demos`, laadi siia `.match.json` failid ja vahekaardil Heatmap `.parquet` failid.
+demos`, laadi siia `.match.json` failid ja vahekaardil Soojuskaart `.parquet` failid.
 
 ### Matš (üks matš avatud) {#match-one-match-open}
 
@@ -158,7 +158,7 @@ Nuppude Näita soojuskaardil kõigi laaditud matšide jaoks on selle all.
 ## Näita soojuskaardil {#show-in-the-heatmap}
 
 Iga link seab soojuskaardi enda **filtrid**, nii et see, mida näidatakse, jääb nähtavaks ja muudetavaks paneelis Filtrid, ja **Näita kõiki** tühjendab need.
-Need töötavad vahekaardil Heatmap laaditud soojuskaardi tabelil; vahekaart Matš ei laadi seda kunagi ise.
+Need töötavad vahekaardil Soojuskaart laaditud soojuskaardi tabelil; vahekaart Matš ei laadi seda kunagi ise.
 
 | Nupp | Näidatavad sündmused |
 |---|---|
@@ -177,8 +177,8 @@ Ulatus sõltub nuppude asukohast: kõik laaditud matšid, see matš või see rau
 
 Seda, mida ei saa rakendada, öeldakse nuppude all, mitte ei filtrita vaikselt tühjaks: "no match column retained - match not applied",
 "match: X not in the loaded data", sama raundi ja sündmuste kohta, "player X not in the loaded data", "side X not in the loaded data",
-"no heatmap data loaded: load the matches' .parquet files in the Heatmap tab". Kui andmeid pole laaditud, ütlevad lingid
-ka "Load the matches' .parquet files in the Heatmap tab to see them on the map."
+"soojuskaardi andmeid pole laaditud: laadi matšide failid .parquet vahekaardil Soojuskaart". Kui andmeid pole laaditud, ütlevad lingid
+ka "Load the matches' .parquet files in the Soojuskaart tab to see them on the map."
 
 **Raundi kordus** lisaks lülitab soojuskaardi **Kastikordusele**, ajajoone režiimi *esita* koos aknaga *eluiga*,
 kerib raundi seansi algusesse ja esitab. Kui raund ei ole laaditud andmete seanss: "this round is not a session of the loaded data: nothing to replay".

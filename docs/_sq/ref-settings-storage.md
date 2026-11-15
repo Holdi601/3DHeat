@@ -11,23 +11,23 @@ translated: true
 
 # Cilësimet e ruajtura
 
-What the viewer keeps in your browser (`localStorage`) between visits. Nothing of it is sent anywhere. Clearing the site data in the browser removes it all.
+Ç'mban shfaqja në shfletuesin tuaj (`localStorage`) midis vizitave. Asgjë nga ajo nuk dërgohet askund. Fshirja e të dhënave të faqes në shfletues i heq të gjitha.
 
-| Key | Holds | Code |
+| Çelësi | Mban | Kodi |
 |---|---|---|
-| `3dheat.objectives` | objectives shown, layers, labels | `src/state/objectivesStore.ts` |
-| `3dheat.volumes.…` | volumes, per dataset | `src/volumes/store.ts` |
-| `heat3d.ai` | external AI: provider, address, model, options (not the key) | `src/insights/ai/settings.ts` |
-| `heat3d.ai.key` | the external AI key, only when *Remember the key* is ticked | `src/insights/ai/settings.ts` |
-| `heat3d.bookmarks.…` | bookmarks, per recording | `src/ui/replay/bookmarks.ts` |
-| `heat3d.carNames` | car names in the race tab | `src/race/carNames.ts` |
-| `heat3d.far` | figures at a distance, symbols, hit marks, aim lines | `src/state/store.ts` |
-| `heat3d.help` | help mode on or off | `src/state/helpStore.ts` |
-| `heat3d.inspect` | the pick card and camera readout | `src/state/inspectStore.ts` |
-| `heat3d.language` | the language picked | `src/i18n/index.ts` |
-| `heat3d.mirror` | the axis mirroring | `src/state/store.ts` |
-| `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
-| `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
-| `heat3d.units` | the units preset and single units | `src/state/unitsStore.ts` |
+| `3dheat.objectives` | objektivat e shfaqura, shtresat, etiketat | `src/state/objectivesStore.ts` |
+| `3dheat.volumes.…` | vëllimet, për çdo grup të dhënash | `src/volumes/store.ts` |
+| `heat3d.ai` | IA e jashtme: ofruesi, adresa, modeli, opsionet (jo çelësi) | `src/insights/ai/settings.ts` |
+| `heat3d.ai.key` | çelësi i IA-së së jashtme, vetëm kur është shënuar *Mbaje mend çelësin në këtë shfletues* | `src/insights/ai/settings.ts` |
+| `heat3d.bookmarks.…` | shënuesit, për çdo regjistrim | `src/ui/replay/bookmarks.ts` |
+| `heat3d.carNames` | emrat e mjeteve te skeda e garës | `src/race/carNames.ts` |
+| `heat3d.far` | figurat nga larg, simbolet, shenjat e goditjeve, vijat e synimit | `src/state/store.ts` |
+| `heat3d.help` | mënyra e ndihmës e ndezur ose e fikur | `src/state/helpStore.ts` |
+| `heat3d.inspect` | kartela e zgjedhjes dhe leximi i kamerës | `src/state/inspectStore.ts` |
+| `heat3d.language` | gjuha e zgjedhur | `src/i18n/index.ts` |
+| `heat3d.mirror` | pasqyrimi i boshteve | `src/state/store.ts` |
+| `heat3d.replay` | etiketat e riluajtjes, pamja taktike, harta 2D, grafikët, ekrani head-up, pamja, ndërtesat, kamera e ndjekjes | `src/state/replayStore.ts` |
+| `heat3d.speed` | shpejtësia e riluajtjes | `src/state/playbackSpeed.ts` |
+| `heat3d.units` | parazgjedhja e njësive dhe njësitë e veçanta | `src/state/unitsStore.ts` |
 
-Heat settings, filters and the view mode are not kept: they start fresh with each load.
+Cilësimet e nxehtësisë, filtrat dhe mënyra e pamjes nuk ruhen: nisin nga e para me çdo ngarkim.

@@ -11,9 +11,9 @@ translated: true
 
 # Valodu saraksts
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+Skatītājs runā 40 valodās. Tas sākas ar pārlūka valodu, ja tā ir pieejama, un valodas izvēlne sānjoslas augšdaļā to maina. Kā to mainīt un kā tiek veikti tulkojumi: [Valodas](languages.md).
 
-| Code | Language |
+| Kods | Valoda |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

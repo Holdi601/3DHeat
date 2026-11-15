@@ -20,7 +20,7 @@ Målingerne kommer fra doktrin for rydning af rum og bykamp (den dødelige tragt
 1. Indlæs en eller flere kampe med runder (en CS2-konvertering har alt, den behøver).
 2. Åbn **Indsigter** og tryk på **Find indsigter**.
 3. Under **Linsemål** læser du linjerne fra *Sandsynlighed for rundesejr* til *Spillerens påvirkning*; hver har sine tal, sit 95 %-interval, sin q-værdi og de kilder, den følger.
-4. Vælg linsen **E-sport** eller **By** for at læse dem gennem den litteratur; **Skriv med AI** sender dem med rapporten.
+4. Vælg linsen **E-sport** eller **Bykamp** for at læse dem gennem den litteratur; **Skriv med AI** sender dem med rapporten.
 
 ## Hvad den måler {#what-it-measures}
 

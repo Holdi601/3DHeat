@@ -41,21 +41,21 @@ Tas darbojas arī **automātiski**:
 
 Ja nekas nav apgaismots, automātiskā darbība piesātinājumu nemaina. Poga atgriežas pie analītiskās aplēses un parāda *nav apgaismots, ko mērīt — izmantota analītiska aplēse*.
 
-### Seko skatam {#follow-the-view}
+### Sekot skatam {#follow-the-view}
 
-**Seko skatam** (sadaļa Siltuma forma, noklusējums ieslēgts) mēra no jauna katru reizi, kad kamera apstājas. Tāpēc reģions, kurā ielido, izmanto visu krāsu skalu, nevis skalu, kas izmērīta visai kartei. Nelielas izmaiņas tiek ignorētas, un skala slīd, nevis lec. Tas darbojas četros siltuma režīmos, bet ne figūru pārklājumā.
+**Sekot skatam** (sadaļa Siltuma forma, noklusējums ieslēgts) mēra no jauna katru reizi, kad kamera apstājas. Tāpēc reģions, kurā ielido, izmanto visu krāsu skalu, nevis skalu, kas izmērīta visai kartei. Nelielas izmaiņas tiek ignorētas, un skala slīd, nevis lec. Tas darbojas četros siltuma režīmos, bet ne figūru pārklājumā.
 
 Izslēdz, lai bloķētu skalu un salīdzinātu vietas vienā skalā. Ja **Piesātinājuma punktu** velc ar roku, tas arī bloķējas.
 
-## Blīvuma reakcija {#density-response}
+## Reakcija uz blīvumu {#density-response}
 
-**Blīvuma reakcija** — kā *k* (siltums / piesātinājuma punkts) tiek sasaistīts ar skalu:
+**Reakcija uz blīvumu** — kā *k* (siltums / piesātinājuma punkts) tiek sasaistīts ar skalu:
 
 | Reakcija | Formula | Izmantošana |
 |---|---|---|
-| **Piesātinošā** (noklusējums) | t = 1 - e^(-k) | Asimptotiski tuvojas skalas augšai, tāpat kā sakrauti caurspīdīgi spraiti. Nekas nekad nepāriet plakanā baltā, tāpēc tā ir drošā noklusējuma izvēle nepazīstamiem datiem. |
-| **Lineārā** | t = k | Vienīgā kartēšana, kur vienāda krāsa nozīmē vienādu skaitu. Lieto, lai salīdzinātu divas datu kopas vai divus laika logus. |
-| **Logaritmiskā** | t = log₂(1 + 7k) / 3 | Saspiež garu asti, tāpēc viens ekstrēms karsts punkts vairs nenospiež visu pārējo līdz skalas apakšai. Paceļ retas vietas. |
+| **Piesātinoša** (noklusējums) | t = 1 - e^(-k) | Asimptotiski tuvojas skalas augšai, tāpat kā sakrauti caurspīdīgi spraiti. Nekas nekad nepāriet plakanā baltā, tāpēc tā ir drošā noklusējuma izvēle nepazīstamiem datiem. |
+| **Lineāra** | t = k | Vienīgā kartēšana, kur vienāda krāsa nozīmē vienādu skaitu. Lieto, lai salīdzinātu divas datu kopas vai divus laika logus. |
+| **Logaritmiska** | t = log₂(1 + 7k) / 3 | Saspiež garu asti, tāpēc viens ekstrēms karsts punkts vairs nenospiež visu pārējo līdz skalas apakšai. Paceļ retas vietas. |
 
 ## Minimālais siltums {#minimum-heat}
 

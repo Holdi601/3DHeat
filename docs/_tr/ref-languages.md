@@ -11,9 +11,9 @@ translated: true
 
 # Dil listesi
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+Görüntüleyici 40 dil konuşur. Tarayıcının dili varsa onunla başlar; kenar çubuğunun üstündeki dil menüsü dili değiştirir. Nasıl değiştirileceği ve çevirilerin nasıl yapıldığı: [Diller](languages.md).
 
-| Code | Language |
+| Kod | Dil |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

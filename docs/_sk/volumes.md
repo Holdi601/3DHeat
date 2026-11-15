@@ -63,7 +63,7 @@ GPU filter berie najviac 8 objemov so 64 bodmi obrysu spolu; objem nad tento lim
 Oblasť **Štatistiky** sleduje filtre, časové okno a skryté skupiny. *Vybraný* ukazuje vybraný objem, *Porovnať všetky* dá každý objem vedľa seba. Zobrazuje:
 
 - **Riadky vnútri (zobrazené)** a **Riadky vnútri (všetky dáta)**, **Hráči**, **Tímy**, **Zápasy**, **Čas vnútri**, **Vstupy / výstupy**, **Špičkové teplo**, **Stredné teplo**, **Objem / pôdorys** a histogram **Kedy**;
-- pre každý stĺpec: kategórie s **Lift** (podiel vnútri delený podielom vo všetkých zobrazených dátach) a čísla s rozsahom, mediánom a 5.-95. percentilom.
+- pre každý stĺpec: kategórie s **Pomer podielov** (podiel vnútri delený podielom vo všetkých zobrazených dátach) a čísla s rozsahom, mediánom a 5.-95. percentilom.
 
 **Štatistiky ako CSV / JSON** ich uložia. **Exportovať dáta vnútri** zapíše riadky vnútri ako CSV alebo Parquet (predvolene zapnuté *Iba zobrazené riadky*), jeden objem alebo všetky, so stĺpcom, ktorý hovorí, v ktorom objeme je každý riadok.
 

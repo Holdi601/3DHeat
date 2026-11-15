@@ -11,9 +11,9 @@ translated: true
 
 # Kommandoradsverktyg
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Kommandoradsverktygen i visarens mapp `tools/` (Node.js, körs från repots rotmapp). Du behöver aldrig dem för att använda visaren: de packar, sammanfattar och konverterar dina data och hjälper den som underhåller visaren. Varje post har första stycket ur verktygets egen beskrivning och dess användningsrader; kör ett verktyg utan argument för fullständig hjälp där sådan finns. Dataverktygen i [relaterade repositorier](index.md#related-repositories) dokumenterar sina egna kommandon.
 
-## For your data
+## För dina data {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## För utvecklare och dokumentationen {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Dessa kontrollerar visaren, skapar demodata och skärmbilder och skriver referenssidorna.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Bibliotek {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` är ett bibliotek utan kommandorad: verktygen ovan importerar det för att läsa och skriva [.3dheat-filen](container.md).

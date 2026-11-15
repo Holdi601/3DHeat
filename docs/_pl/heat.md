@@ -74,7 +74,7 @@ Każde ustawienie ma własną stronę, a kolumna Szczegóły prowadzi do niej. S
 | Ustawienie | Domyślnie | Szczegóły |
 |---|---|---|
 | **Ukryj za terenem** | włączone | [Głębia i odrzucanie](depth-and-culling.md#hide-behind-terrain) |
-| **Zasłonięte przez geometrię** | 0,8 (*80% ciemniej*) | [Głębia i odrzucanie](depth-and-culling.md#hidden-behind-geometry) |
+| **Ukryte za geometrią** | 0,8 (*80% ciemniej*) | [Głębia i odrzucanie](depth-and-culling.md#hidden-behind-geometry) |
 
 ### Odcinanie według odległości (zamknięte) {#distance-culling-closed}
 

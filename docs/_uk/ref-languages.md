@@ -11,9 +11,9 @@ translated: true
 
 # Список мов
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+Переглядач розмовляє 40 мовами. Він стартує з мови браузера, якщо вона є, а меню мови вгорі бічної панелі її змінює. Як змінити мову і як робляться переклади: [Мови](languages.md).
 
-| Code | Language |
+| Код | Мова |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

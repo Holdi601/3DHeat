@@ -11,9 +11,9 @@ translated: true
 
 # Käsurea tööriistad
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Käsurea tööriistad vaataja kaustas `tools/` (Node.js, käivitatakse repo juurkaustast). Vaataja kasutamiseks neid pole vaja: need pakivad, võtavad kokku ja teisendavad sinu andmeid ning aitavad vaatajat hooldavat inimest. Igal kirjel on tööriista enda kirjelduse esimene lõik ja selle kasutusread; käivita tööriist ilma argumentideta, et näha täielikku abi, kui see on olemas. [Seotud repode](index.md#related-repositories) andmetööriistad dokumenteerivad oma käsud ise.
 
-## For your data
+## Sinu andmetele {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Arendajatele ja dokumentatsioonile {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Need kontrollivad vaatajat, teevad demoandmed ja ekraanipildid ning kirjutavad viitelehed.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Teegid {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` on teek ilma käsureata: ülalnimetatud tööriistad impordivad seda, et lugeda ja kirjutada [.3dheat-faili](container.md).

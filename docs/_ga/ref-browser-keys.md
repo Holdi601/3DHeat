@@ -11,13 +11,13 @@ translated: true
 
 # Eochracha brabhsálaí
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Ionas nach gcaillfear seisiún lódáilte de bharr aicearra gan choinne, coinníonn an radharc na heochracha seo ón mbrabhsálaí.
 
-| Keys | When | Effect |
+| Eochracha | Nuair | Éifeacht |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (le `Cmd` freisin) | lasmuigh de bhoscaí téacs | ní tharlaíonn gníomh an bhrabhsálaí (priontáil, sábháil, oscailt, athlódáil, fuinneog nua, dún ...) |
+| `F1` `F3` `F5` `F6` `F7` | i gcónaí | ní tharlaíonn gníomh an bhrabhsálaí (cabhair, cuardach, athlódáil, barra seoltaí, brabhsáil chúrsóra) |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | i lánscáileán | faoi ghlas don radharc (Keyboard Lock API), mar sin ní fhreagraíonn an brabhsálaí dóibh |
+| an cluaisín a dhúnadh nó a athlódáil | le sonraí nó leibhéal lódáilte | fiafraíonn an brabhsálaí ar dtús |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Eochracha féin an radhairc go léir: [Tagairt don méarchlár agus don luch](keyboard-reference.md).

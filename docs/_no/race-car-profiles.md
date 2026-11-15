@@ -11,7 +11,7 @@ outdated: false
 
 # Bilprofiler og sammenligning
 
-En bil kan bare bremse, svinge og akselerere så hardt. Seeren måler hvor hardt fra dine egne runder, så den aldri ber deg gjøre noe bilen din ikke kan. Dette forklarer også hvor mye av et tapt sekund som var bilens feil og ikke din.
+En bil kan bare bremse, svinge og akselerere så hardt. Visningsprogrammet måler hvor hardt fra dine egne runder, så den aldri ber deg gjøre noe bilen din ikke kan. Dette forklarer også hvor mye av et tapt sekund som var bilens feil og ikke din.
 
 ![Cars compared: two cars side by side with their grip, braking and pull](../assets/img/en/race-cars-compared.webp)
 

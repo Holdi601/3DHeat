@@ -3,16 +3,16 @@ title: "Hjem"
 nav_order: 1
 lang: "no"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat viser hvor ting skjedde i et spill – hvor spillerne beveget seg, kjempet og falt – som glødende farger du kan fly gjennom, eller som små 3D-figurer som spiller kampen av igjen.
 
-Last inn posisjoner – CSV, Parquet, Tacview-opptak, konverterte replayer, én fil, en mappe eller tusenvis av kamper – og se dem som et **varmekart du kan fly gjennom**, som **figurer som spiller kampen av igjen**, som linjer langs rutene folk tok, eller som én populasjon mot en annen. Den finner selv det som skiller seg ut, og den kjører helt i nettleseren din: ingenting sendes til noen server.
+Last inn posisjoner – CSV, Parquet, Tacview-opptak, konverterte replayer, én fil, en mappe eller tusenvis av kamper – og se dem som et **varmekart du kan fly gjennom**, som **figurer som spiller kampen av igjen**, som linjer langs rutene folk tok, eller som én populasjon mot en annen. Den finner selv det som skiller seg ut, og den kjører helt i nettleseren din: ingenting sendes til noen server. 3DHeat og alle verktøyene er gratis og åpen kildekode under [MIT-lisensen](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Varme fra ti stridsvognkamper over Demo Valley](../assets/img/no/heat-hero.webp)
 
@@ -44,6 +44,8 @@ Fanene står øverst i sidepanelet, under navnet, enhetene og språkmenyen.
 | **Kjøretøy** | Hvor hver enhet ble truffet, av hvem og med hva. |
 
 ## Installere og kjøre {#install-and-run}
+
+3DHeat er gratis å bruke, endre og dele (MIT-lisensen), og det samme gjelder hvert verktøy som står under [Relaterte repositorier](#related-repositories).
 
 ### Windows, den enkle måten {#windows-the-easy-way}
 

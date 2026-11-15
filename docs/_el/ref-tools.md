@@ -11,9 +11,9 @@ translated: true
 
 # Εργαλεία γραμμής εντολών
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Τα εργαλεία γραμμής εντολών στον φάκελο `tools/` της προβολής (Node.js, εκτελούνται από τη ρίζα του αποθετηρίου). Δεν χρειάζονται ποτέ για να χρησιμοποιήσετε την προβολή: συσκευάζουν, συνοψίζουν και μετατρέπουν τα δεδομένα σας, και βοηθούν όποιον συντηρεί την προβολή. Κάθε καταχώριση έχει την πρώτη παράγραφο της δικής της περιγραφής και τις γραμμές χρήσης της· όπου υπάρχει, εκτελέστε ένα εργαλείο χωρίς ορίσματα για την πλήρη βοήθειά του. Τα εργαλεία δεδομένων των [σχετικών αποθετηρίων](index.md#related-repositories) τεκμηριώνουν τις δικές τους εντολές.
 
-## For your data
+## Για τα δεδομένα σας {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Για προγραμματιστές και την τεκμηρίωση {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Αυτά ελέγχουν την προβολή, φτιάχνουν τα δεδομένα επίδειξης και τα στιγμιότυπα οθόνης, και γράφουν τις σελίδες αναφοράς.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Βιβλιοθήκες {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+Το `container.mjs` είναι βιβλιοθήκη χωρίς γραμμή εντολών: τα παραπάνω εργαλεία την εισάγουν για να διαβάζουν και να γράφουν το [αρχείο .3dheat](container.md).

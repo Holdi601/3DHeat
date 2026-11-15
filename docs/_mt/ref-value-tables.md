@@ -11,9 +11,9 @@ translated: true
 
 # Tabelli tal-valuri
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+It-tabelli tal-prezzijiet ta' [Piż tal-valur](value-weighting.md). Il-logħba tiġi rikonoxxuta mill-ismijiet fid-dejta; il-kolonni tal-valur tal-konvertitur stess, fil-munita tal-logħba, jieħdu preċedenza fuq dawn.
 
-| Table | Currency | Defined in |
+| Tabella | Munita | Definita f' |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

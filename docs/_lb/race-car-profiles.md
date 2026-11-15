@@ -11,11 +11,11 @@ outdated: false
 
 # Autosprofiler an Verglach
 
-En Auto kann nëmmen esou hart bremsen, drécken an beschleunegen. De Viewer miesst wéi hart aus denge eegene Ronnen, dofir seet en dir ni, eppes ze maachen, wat däi Auto net kann. Dat erkläert och, wéi vill vun enger verluerener Sekonn um Auto louch an net bei dir.
+En Auto kann nëmmen esou hart bremsen, drécken an beschleunegen. De Viewer miesst wéi hart aus Ären eegene Ronnen, dofir seet en Iech ni, eppes ze maachen, wat Äre Auto net kann. Dat erkläert och, wéi vill vun enger verluerener Sekonn um Auto louch an net bei Iech.
 
 ![Autoen am Verglach: zwee Autoen niewenaneen mat hirem Gripp, Bremsen an Drock](../assets/img/en/race-cars-compared.webp)
 
-D'Analyse seet enger Ronn nëmmen, si soll méi hart bremsen, méi Geschwindegkeet droen oder méi fréi beschleunegen, wou däi Auto dat gewisen huet, an si zitt aus engem Verloscht ewech, wat d'Autoen selwer erklären. Dofir gi d'Grenzen vun all Auto (hir *Hëllef*, hei drënner) an hire Charakter (hiert *Profil*) aus all geluedene Ronn vun him gemooss. Dës Säit behandelt d'Hëllef, d'Profil, den Ofschnëtt **Autoen am Verglach**, an wat d'Autoen an all Kurv entscheeden.
+D'Analyse seet enger Ronn nëmmen, si soll méi hart bremsen, méi Geschwindegkeet droen oder méi fréi beschleunegen, wou Äre Auto dat gewisen huet, an si zitt aus engem Verloscht ewech, wat d'Autoen selwer erklären. Dofir gi d'Grenzen vun all Auto (hir *Hëllef*, hei drënner) an hire Charakter (hiert *Profil*) aus all geluedene Ronn vun him gemooss. Dës Säit behandelt d'Hëllef, d'Profil, den Ofschnëtt **Autoen am Verglach**, an wat d'Autoen an all Kurv entscheeden.
 
 **En Auto** = Ronnen mat der selwechter Autosnummer (oder dem Numm, ouni Nummer) an dem selwechte Leeschtungsindex: eng aner Tuning ass en anere Auto.
 

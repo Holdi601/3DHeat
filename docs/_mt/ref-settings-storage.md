@@ -11,23 +11,23 @@ translated: true
 
 # Settings maħżuna
 
-What the viewer keeps in your browser (`localStorage`) between visits. Nothing of it is sent anywhere. Clearing the site data in the browser removes it all.
+Dak li l-viewer iżomm fil-brawżer tiegħek (`localStorage`) bejn iż-żjarat. Xejn minn dan ma jintbagħat x'imkien. It-tneħħija tad-dejta tas-sit fil-brawżer titnaqqas kollha.
 
-| Key | Holds | Code |
+| Ċavetta | Iżomm | Kodiċi |
 |---|---|---|
-| `3dheat.objectives` | objectives shown, layers, labels | `src/state/objectivesStore.ts` |
-| `3dheat.volumes.…` | volumes, per dataset | `src/volumes/store.ts` |
-| `heat3d.ai` | external AI: provider, address, model, options (not the key) | `src/insights/ai/settings.ts` |
-| `heat3d.ai.key` | the external AI key, only when *Remember the key* is ticked | `src/insights/ai/settings.ts` |
-| `heat3d.bookmarks.…` | bookmarks, per recording | `src/ui/replay/bookmarks.ts` |
-| `heat3d.carNames` | car names in the race tab | `src/race/carNames.ts` |
-| `heat3d.far` | figures at a distance, symbols, hit marks, aim lines | `src/state/store.ts` |
-| `heat3d.help` | help mode on or off | `src/state/helpStore.ts` |
-| `heat3d.inspect` | the pick card and camera readout | `src/state/inspectStore.ts` |
-| `heat3d.language` | the language picked | `src/i18n/index.ts` |
-| `heat3d.mirror` | the axis mirroring | `src/state/store.ts` |
-| `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
-| `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
-| `heat3d.units` | the units preset and single units | `src/state/unitsStore.ts` |
+| `3dheat.objectives` | objettivi murija, saffi, tikketti | `src/state/objectivesStore.ts` |
+| `3dheat.volumes.…` | volumi, għal kull sett ta' dejta | `src/volumes/store.ts` |
+| `heat3d.ai` | AI esterna: fornitur, indirizz, mudell, għażliet (mhux iċ-ċavetta) | `src/insights/ai/settings.ts` |
+| `heat3d.ai.key` | iċ-ċavetta tal-AI esterna, biss meta *Ftakar iċ-ċavetta* tkun immarkata | `src/insights/ai/settings.ts` |
+| `heat3d.bookmarks.…` | bookmarks, għal kull reġistrazzjoni | `src/ui/replay/bookmarks.ts` |
+| `heat3d.carNames` | ismijiet tal-karozzi fit-tab tat-tellieqa | `src/race/carNames.ts` |
+| `heat3d.far` | figuri għal distanza, simboli, sinjali ta' kolp, linji ta' mira | `src/state/store.ts` |
+| `heat3d.help` | il-mod tal-għajnuna mixgħul jew mitfi | `src/state/helpStore.ts` |
+| `heat3d.inspect` | il-karta tal-għażla u l-qari tal-kamera | `src/state/inspectStore.ts` |
+| `heat3d.language` | il-lingwa magħżula | `src/i18n/index.ts` |
+| `heat3d.mirror` | l-immirrar tal-assi | `src/state/store.ts` |
+| `heat3d.replay` | tikketti tar-replay, werrej tattiku, mappa 2D, grafiċi, display head-up, dehra, bini, kamera li ssegwi | `src/state/replayStore.ts` |
+| `heat3d.speed` | il-veloċità tar-replay | `src/state/playbackSpeed.ts` |
+| `heat3d.units` | il-preset tal-unitajiet u l-unitajiet individwali | `src/state/unitsStore.ts` |
 
-Heat settings, filters and the view mode are not kept: they start fresh with each load.
+Is-settings tas-sħana, il-filtri u l-mod tal-veduta ma jinżammux: jibdew mill-ġdid f'kull tagħbija.

@@ -11,13 +11,13 @@ translated: true
 
 # Browser-Tasten
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Damit eine geladene Session nicht durch einen versehentlichen Tastendruck verloren geht, hält der Viewer diese Tasten vom Browser fern.
 
-| Keys | When | Effect |
+| Tasten | Wann | Wirkung |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (auch mit `Cmd`) | außerhalb von Textfeldern | die Aktion des Browsers (Drucken, Speichern, Öffnen, Neu laden, neues Fenster, Schließen ...) findet nicht statt |
+| `F1` `F3` `F5` `F6` `F7` | immer | die Aktion des Browsers (Hilfe, Suchen, Neu laden, Adressleiste, Caret-Browsing) findet nicht statt |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | im Vollbild | für den Viewer gesperrt (Keyboard Lock API), damit der Browser nicht auf sie reagiert |
+| Schließen oder Neu laden des Tabs | mit geladenen Daten oder einem Level | der Browser fragt vorher nach |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Alle eigenen Tasten des Viewers: [Tastatur- und Maus-Referenz](keyboard-reference.md).

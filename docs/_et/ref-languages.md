@@ -11,9 +11,9 @@ translated: true
 
 # Keelte loend
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+Vaataja räägib 40 keeles. See alustab brauseri keelega, kui seda toetatakse, ja külgriba ülaosas olev keelemenüü muudab keelt. Kuidas keelt muuta ja kuidas tõlkeid tehakse: [Keeled](languages.md).
 
-| Code | Language |
+| Kood | Keel |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

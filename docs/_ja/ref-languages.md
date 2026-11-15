@@ -11,9 +11,9 @@ translated: true
 
 # 言語一覧
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+ビューアーは 40 言語に対応しています。ブラウザーの言語に対応していればその言語で起動し、サイドバー上部の言語メニューで変更できます。変更方法と翻訳の作り方: [言語](languages.md)。
 
-| Code | Language |
+| コード | 言語 |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

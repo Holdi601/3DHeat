@@ -3,16 +3,16 @@ title: "首页"
 nav_order: 1
 lang: "zh"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat 显示游戏中事情发生在哪里：玩家去了哪里、在哪里交战、在哪里倒下。结果是一些发光的颜色，你可以在其中飞行穿梭；也可以是一个个小小的 3D 图形，重现整场比赛。
 
-加载位置数据，包括 CSV、Parquet、Tacview 录像、转换后的回放、单个文件、一个文件夹或成千上万场比赛，然后把它们看成**可以飞行穿梭的热力图**、**重现比赛的图形**、沿玩家路线绘制的线条，或者两组人群之间的对比。它会自己找出突出的地方，完全在你的浏览器中运行：没有任何内容会上传到别处。
+加载位置数据，包括 CSV、Parquet、Tacview 录像、转换后的回放、单个文件、一个文件夹或成千上万场比赛，然后把它们看成**可以飞行穿梭的热力图**、**重现比赛的图形**、沿玩家路线绘制的线条，或者两组人群之间的对比。它会自己找出突出的地方，完全在你的浏览器中运行：没有任何内容会上传到别处。3DHeat 及其所有工具都是免费的开源软件，采用 [MIT 许可证](https://github.com/Holdi601/3DHeat/blob/main/LICENSE)发布。
 
 ![Heat of ten tank matches over the demo valley](../assets/img/zh/heat-hero.webp)
 
@@ -44,6 +44,8 @@ outdated: true
 | **载具** | 每个单位在哪里被命中、被谁命中、用什么命中。 |
 
 ## 安装与运行 {#install-and-run}
+
+3DHeat 可以免费使用、修改和分享（MIT 许可证），[相关仓库](#related-repositories)中列出的每个工具同样如此。
 
 ### Windows，简便方式 {#windows-the-easy-way}
 

@@ -75,11 +75,11 @@ Smelltu á einingu eða merki hennar til að **fylgja** henni; hlutinn **Endursp
 - **Bókamerki** (`B`): vistaðu augnablikið og myndavélina; dráp, dauðsföll og merki upptökunnar sjálfrar eru líka á listanum.
 - **Atburðir**: hver atburður í tímaröð; smellur stekkur þangað. `Page Up` / `Page Down` stökkva milli atburða; **Gera hlé á atburði** stöðvar við hvern þeirra.
 
-## Taktísk skjámynd {#tactical-display}
+## Hernaðarsýn {#tactical-display}
 
 ![Loftdæmið með taktísku skjámyndinni (T): landslag í vírramma, dráps- og atburðaspjöld](../assets/img/is/replay-air-tactical.webp)
 
-Hlutinn **Taktísk skjámynd** teiknar, fyrir enga einingu, þær sem eru valdar, allar, eða eina tegund (loftför, á landi, skip, vopn): hraðavigra og leiðina framundan, nef- og lyftulínur, ratsjárkeilur, læsingar, gagnatengingar, bardagasvæði og -línur, sjónlínur, hvert leikmenn horfa (sjónkeilur), miðun turna og myndavélina eins og hún var tekin upp.
+Hlutinn **Hernaðarsýn** teiknar, fyrir enga einingu, þær sem eru valdar, allar, eða eina tegund (loftför, á landi, skip, vopn): hraðavigra og leiðina framundan, nef- og lyftulínur, ratsjárkeilur, læsingar, gagnatengingar, bardagasvæði og -línur, sjónlínur, hvert leikmenn horfa (sjónkeilur), miðun turna og myndavélina eins og hún var tekin upp.
 
 ### Útlit skjámyndar {#display-style}
 

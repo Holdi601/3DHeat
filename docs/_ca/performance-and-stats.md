@@ -23,14 +23,14 @@ El fotograma a dalt a la dreta de la vista a les pestanyes Mapa de calor i Parti
 |---|---|
 | **Backend** | *WebGPU* o *WebGL2*. Passa el ratolí per veure el motiu pel qual no s'ha usat WebGPU, quan no s'ha usat. Vegeu [Els dos backends](backends.md). |
 | **FPS** | Fotogrames per segon, mitjana de com a mínim 0,4 s. |
-| **Frame** | Temps de fotograma en ms, suavitzat (90 % l'anterior, 10 % el nou). És el temps entre fotogrames, no temps de GPU: no es mesura cap temporització de GPU per pas. |
-| **Rows in window** | Files candidates: les files de la finestra de temps actual, abans del filtratge per fila al shader. |
-| **Sprites / frame** | Sprites que va enviar el pla de l'últim fotograma (es manté al valor planificat en els fotogrames inactius, que no dibuixen res). |
+| **Fotograma** | Temps de fotograma en ms, suavitzat (90 % l'anterior, 10 % el nou). És el temps entre fotogrames, no temps de GPU: no es mesura cap temporització de GPU per pas. |
+| **Files a la finestra** | Files candidates: les files de la finestra de temps actual, abans del filtratge per fila al shader. |
+| **Sprites / fotograma** | Sprites que va enviar el pla de l'últim fotograma (es manté al valor planificat en els fotogrames inactius, que no dibuixen res). |
 | **Budget** | El pressupost de sprites amb què es va planificar aquest fotograma: el valor del controlador adaptatiu, pujat a tots els candidats quan es dibuixa cada fila. |
-| **Heat res** | La resolució del buffer de calor com a part del canvas: el ajust *Resolució de la calor* multiplicat per l'escala adaptativa de la segona etapa. |
-| **Coverage** | Fins on ha arribat l'acumulació progressiva a usar totes les files: un percentatge mentre convergeix (ambre), *exact* quan ha acabat. Un fotograma sorollós mai no es confon amb la imatge acabada. |
-| **Cubes** | Caixes dibuixades a la [repetició de caixes](box-replay.md). |
-| **Not resident** | Es mostra només quan les files no hi cabien al pressupost de la GPU: quantes. Vegeu [Permanència de memòria de la GPU](gpu-memory.md). |
+| **Res. de calor** | La resolució del buffer de calor com a part del canvas: el ajust *Resolució de la calor* multiplicat per l'escala adaptativa de la segona etapa. |
+| **Cobertura** | Fins on ha arribat l'acumulació progressiva a usar totes les files: un percentatge mentre convergeix (ambre), *exact* quan ha acabat. Un fotograma sorollós mai no es confon amb la imatge acabada. |
+| **Cubs** | Caixes dibuixades a la [repetició de caixes](box-replay.md). |
+| **No resident** | Es mostra només quan les files no hi cabien al pressupost de la GPU: quantes. Vegeu [Permanència de memòria de la GPU](gpu-memory.md). |
 
 ## La visualització de velocitat {#the-speed-display}
 
@@ -40,8 +40,8 @@ A baix a la dreta de la vista, només en perspectiva: la velocitat de vol i el t
 
 Mira la capa d'estadístiques i després:
 
-1. **Rows in window molt més gran que Sprites / frame, Coverage per sota del 100 %**: el fotograma no pot dibuixar-ho tot; convergeix en diversos fotogrames quan està quiet. Estreny la finestra, filtra o retalla per reduir els candidats; o accepta el mostreig.
-2. **Sprites / frame igual a Rows in window, el fotograma encara lent**: el cost és per sprite a la pantalla: baixa el *Radi màxim de píxels* ([Forma del sprite](sprite-shape.md#pixel-clamps)) o la *Resolució de la calor*.
+1. **Files a la finestra molt més gran que Sprites / fotograma, Cobertura per sota del 100 %**: el fotograma no pot dibuixar-ho tot; convergeix en diversos fotogrames quan està quiet. Estreny la finestra, filtra o retalla per reduir els candidats; o accepta el mostreig.
+2. **Sprites / fotograma igual a Files a la finestra, el fotograma encara lent**: el cost és per sprite a la pantalla: baixa el *Radi màxim de píxels* ([Forma del sprite](sprite-shape.md#pixel-clamps)) o la *Resolució de la calor*.
 3. **Lent amb poques files**: probablement el nivell: molts comptes d'estructures amb vores activades, triangles de terreny, profunditat de camp. Vegeu [Aspecte del nivell](level-appearance.md).
 4. **Tot lent, i un bàner vermell**: renderitzat per programari ([Detecció de renderitzat per programari](software-rendering.md)).
 

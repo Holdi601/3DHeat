@@ -11,23 +11,23 @@ translated: true
 
 # 儲存的設定
 
-What the viewer keeps in your browser (`localStorage`) between visits. Nothing of it is sent anywhere. Clearing the site data in the browser removes it all.
+檢視器在兩次造訪之間保存在你瀏覽器中（`localStorage`）的內容。這些內容不會傳送到任何地方。在瀏覽器中清除網站資料即可全部刪除。
 
-| Key | Holds | Code |
+| 鍵 | 保存內容 | 代碼 |
 |---|---|---|
-| `3dheat.objectives` | objectives shown, layers, labels | `src/state/objectivesStore.ts` |
-| `3dheat.volumes.…` | volumes, per dataset | `src/volumes/store.ts` |
-| `heat3d.ai` | external AI: provider, address, model, options (not the key) | `src/insights/ai/settings.ts` |
-| `heat3d.ai.key` | the external AI key, only when *Remember the key* is ticked | `src/insights/ai/settings.ts` |
-| `heat3d.bookmarks.…` | bookmarks, per recording | `src/ui/replay/bookmarks.ts` |
-| `heat3d.carNames` | car names in the race tab | `src/race/carNames.ts` |
-| `heat3d.far` | figures at a distance, symbols, hit marks, aim lines | `src/state/store.ts` |
-| `heat3d.help` | help mode on or off | `src/state/helpStore.ts` |
-| `heat3d.inspect` | the pick card and camera readout | `src/state/inspectStore.ts` |
-| `heat3d.language` | the language picked | `src/i18n/index.ts` |
-| `heat3d.mirror` | the axis mirroring | `src/state/store.ts` |
-| `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
-| `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
-| `heat3d.units` | the units preset and single units | `src/state/unitsStore.ts` |
+| `3dheat.objectives` | 顯示的目標、圖層、標籤 | `src/state/objectivesStore.ts` |
+| `3dheat.volumes.…` | 體積（每個資料集分別保存） | `src/volumes/store.ts` |
+| `heat3d.ai` | 外部 AI：提供者、位址、模型、選項（不含金鑰） | `src/insights/ai/settings.ts` |
+| `heat3d.ai.key` | 外部 AI 金鑰（僅在勾選*在此瀏覽器中記住金鑰*時保存） | `src/insights/ai/settings.ts` |
+| `heat3d.bookmarks.…` | 書籤（每個錄影分別保存） | `src/ui/replay/bookmarks.ts` |
+| `heat3d.carNames` | 賽車分頁中的車輛名稱 | `src/race/carNames.ts` |
+| `heat3d.far` | 遠處的圖示、符號、命中標記、瞄準線 | `src/state/store.ts` |
+| `heat3d.help` | 說明模式開或關 | `src/state/helpStore.ts` |
+| `heat3d.inspect` | 拾取卡片與攝影機讀數 | `src/state/inspectStore.ts` |
+| `heat3d.language` | 所選語言 | `src/i18n/index.ts` |
+| `heat3d.mirror` | 座標軸鏡像 | `src/state/store.ts` |
+| `heat3d.replay` | 回放標籤、戰術顯示、2D 地圖、圖表、抬頭顯示器、外觀、建築、跟隨攝影機 | `src/state/replayStore.ts` |
+| `heat3d.speed` | 回放速度 | `src/state/playbackSpeed.ts` |
+| `heat3d.units` | 單位預設與個別單位 | `src/state/unitsStore.ts` |
 
-Heat settings, filters and the view mode are not kept: they start fresh with each load.
+熱度設定、篩選器與檢視模式不會保存：每次載入都從頭開始。

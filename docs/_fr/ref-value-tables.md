@@ -11,9 +11,9 @@ translated: true
 
 # Tables de valeurs
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+Les tableaux de prix de [Pondération des valeurs](value-weighting.md). Le jeu est reconnu à partir des noms dans les données ; les colonnes de valeur propres à un convertisseur, dans la monnaie du jeu, priment sur ces tableaux.
 
-| Table | Currency | Defined in |
+| Tableau | Monnaie | Défini dans |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

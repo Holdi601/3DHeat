@@ -11,9 +11,9 @@ translated: true
 
 # Инструменты командной строки
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Инструменты командной строки из папки `tools/` просмотрщика (Node.js, запускаются из корня репозитория). Для работы с просмотрщиком они не нужны: они упаковывают, сводят и конвертируют ваши данные и помогают тем, кто поддерживает просмотрщик. У каждой записи есть первый абзац описания инструмента и строки использования; если инструмент запустить без аргументов, он покажет полную справку, где она есть. Инструменты данных [связанных репозиториев](index.md#related-repositories) описывают свои команды сами.
 
-## For your data
+## Для ваших данных {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Для разработчиков и документации {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Они проверяют просмотрщик, создают демо-данные и снимки экрана и пишут справочные страницы.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Библиотеки {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` — библиотека без командной строки: инструменты выше импортируют её, чтобы читать и записывать [файл .3dheat](container.md).

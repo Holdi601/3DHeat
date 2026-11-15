@@ -3,16 +3,16 @@ title: "Heem"
 nav_order: 1
 lang: "lb"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat weist, wou Saache lass waren - wou Spiller gaang sinn, gekämpft hunn an gefall sinn - als glëtzeg Faarwen, duerch déi s de fléien kanns, oder als kleng 3D-Figuren, déi de Match nach eng Kéier ofspillen.
 
-Luet Positiounen - CSV, Parquet, Tacview-Opnamen, konvertéiert Replayen, eng eenzeg Datei, en Dossier oder Dausende Matcher - a kuckt se als **Hëtztkaart, duerch déi s de fléien kanns**, als **Figuren, déi de Match ofspillen**, als Linnen laanschs d'Weeër, déi d'Leit geholl hunn, oder als eng Populatioun géint eng aner. Et fënnt selwer, wat sech ofhieft, a rangéiert et mat den Beweiser, a alles leeft komplett an Ärem Browser: näischt gëtt iergendwou higelueden.
+Luet Positiounen - CSV, Parquet, Tacview-Opnamen, konvertéiert Replayen, eng eenzeg Datei, en Dossier oder Dausende Matcher - a kuckt se als **Hëtztkaart, duerch déi s de fléien kanns**, als **Figuren, déi de Match ofspillen**, als Linnen laanschs d'Weeër, déi d'Leit geholl hunn, oder als eng Populatioun géint eng aner. Et fënnt selwer, wat sech ofhieft, a rangéiert et mat den Beweiser, a alles leeft komplett an Ärem Browser: näischt gëtt iergendwou higelueden. 3DHeat a all seng Werkzeich si gratis a Open Source ënner der [MIT-Lizenz](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Hëtzt vun zéng Panzermatcher iwwer dem Demo-Tal](../assets/img/lb/heat-hero.webp)
 

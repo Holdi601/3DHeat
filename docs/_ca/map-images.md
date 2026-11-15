@@ -50,9 +50,9 @@ La línia del nom mostra `amplada×alçada px · x × z m/px`, la mida al món d
 
 La imatge és un sol quad amb textura a l'elevació. Amb opacitat completa escriu profunditat, de manera que participa en l'[oclusió](depth-and-culling.md) com a terra; amb una opacitat inferior al 100% es barreja i no escriu profunditat, així que no oclou res. La [regla](measure.md) mesura sobre el seu pla. La [biblioteca de nivells](level-library.md) guarda un nivell d'imatge amb les seves àncores.
 
-## Mapa de Dota 2 {#dota-2-map}
+## Dota 2 map {#dota-2-map}
 
-**Mapa de Dota 2**, al costat de **Imatge de mapa…**, descarrega el dibuix del mapa actual de Dota 2 que [OpenDota](https://www.opendota.com) mostra a les seves pàgines de partida, i el col·loca sota les taules que el [Watcher](https://github.com/Holdi601/3DHeat-Watcher) escriu a partir de les repeticions de Dota 2 ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). La imatge es descarrega de opendota.com quan es prem el botó i no forma part de 3DHeat; el dibuix del pedaç més nou es pren de la llista pròpia d'OpenDota, i el dibuix del 7.40 quan la llista no es pot llegir.
+**Dota 2 map**, al costat de **Imatge de mapa…**, descarrega el dibuix del mapa actual de Dota 2 que [OpenDota](https://www.opendota.com) mostra a les seves pàgines de partida, i el col·loca sota les taules que el [Watcher](https://github.com/Holdi601/3DHeat-Watcher) escriu a partir de les repeticions de Dota 2 ([`dotaMap.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/tactics/dotaMap.ts)). La imatge es descarrega de opendota.com quan es prem el botó i no forma part de 3DHeat; el dibuix del pedaç més nou es pren de la llista pròpia d'OpenDota, i el dibuix del 7.40 quan la llista no es pot llegir.
 
 | | |
 |---|---|

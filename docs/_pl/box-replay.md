@@ -13,14 +13,14 @@ outdated: false
 
 Mały film: jedna figura dla każdej osoby, poruszająca się, gdy czas płynie, z smugą za sobą.
 
-Tryb nazywa się **Nakładka sylwetek** na pasku trybów. Ta strona dawniej nazywała się „powtórka w sześcianach”, bo zanim pojawiły się figury, każda osoba była sześcianem. „Powtórka figur” i „powtórka w sześcianach” znaczą to samo. **Nakładka sylwetek** nie ma klawisza z cyfrą: wybierz ją na pasku trybów. Rysuje jedną figurę (albo sześcian) na [osobę](glossary.md), poruszającą się po [osi czasu](timeline.md). Opcjonalnie pokazuje promienie kierunku patrzenia i smugi. To odtwarzanie, a nie gęstość: *kto był gdzie, kiedy*. Potrzebuje kolumny osoby; bez kolumny czasu każda próbka jest rysowana od razu.
+Tryb nazywa się **Nałożone figury** na pasku trybów. Ta strona dawniej nazywała się „powtórka w sześcianach”, bo zanim pojawiły się figury, każda osoba była sześcianem. „Powtórka figur” i „powtórka w sześcianach” znaczą to samo. **Nałożone figury** nie ma klawisza z cyfrą: wybierz ją na pasku trybów. Rysuje jedną figurę (albo sześcian) na [osobę](glossary.md), poruszającą się po [osi czasu](timeline.md). Opcjonalnie pokazuje promienie kierunku patrzenia i smugi. To odtwarzanie, a nie gęstość: *kto był gdzie, kiedy*. Potrzebuje kolumny osoby; bez kolumny czasu każda próbka jest rysowana od razu.
 
 ![Nakładka sylwetek na czołgach demo, wstrzymana w okolicy 30 s, ze smugami 30 s i otwartym panelem Widok drużyn](../assets/img/pl/box-replay-overlay.webp)
 
 ## Jak tego używać {#how-to-use-it}
 
 1. Wczytaj dane z kolumną osoby i kolumną czasu.
-2. Wybierz **Nakładka sylwetek** na pasku trybów.
+2. Wybierz **Nałożone figury** na pasku trybów.
 3. Przełącz oś czasu na **Odtwórz** i naciśnij odtwarzanie (`K`).
 4. Otwórz **Widok drużyn**, by zmienić **Długość smugi**, rozmiar figur albo promienie kierunku patrzenia.
 

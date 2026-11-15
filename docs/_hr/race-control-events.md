@@ -85,7 +85,7 @@ Ništa se ne procjenjuje u zraku ili **0,3 s nakon slijetanja**. Ovjes se tada s
 
 ### Podloga {#the-ground}
 
-Podloga svakog uzorka je **rahla** tamo gdje kanal `loose` kruga to kaže (Forzino podrhtavanje površine, materijali kotača u Trackmaniji). Inače je to površina kruga (vidi [disciplinu i površinu](race-loading-laps.md#discipline-and-surface)): asfalt, ili rahla za sve ostalo. Krivulje, navike driftanja i pragovi čuvaju se odvojeno za asfalt i rahlu podlogu.
+Podloga svakog uzorka je **rastresita** tamo gdje kanal `loose` kruga to kaže (Forzino podrhtavanje površine, materijali kotača u Trackmaniji). Inače je to površina kruga (vidi [disciplinu i površinu](race-loading-laps.md#discipline-and-surface)): asfalt, ili rahla za sve ostalo. Krivulje, navike driftanja i pragovi čuvaju se odvojeno za asfalt i rahlu podlogu.
 
 ### Klizanje, kao višekratnik nazivnog vrha gume {#slip-as-a-multiple-of-the-tyres-nominal-peak}
 

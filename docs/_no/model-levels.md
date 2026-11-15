@@ -11,9 +11,9 @@ outdated: false
 
 # 3D-baner
 
-Et 3D-bane er en modell av stedet – åser, gater, bygninger – som dataene dine ligger inne i. Det lar deg se hvilken etasje, bakke eller tak varmen er på. Visningsprogrammet deler det i bakke (massiv), strukturer (gjennomsiktige, så du kan se inn i dem) og vann.
+En 3D-bane er en modell av stedet – åser, gater, bygninger – som dataene dine ligger inne i. Det lar deg se hvilken etasje, bakke eller tak varmen er på. Visningsprogrammet deler det i bakke (massiv), strukturer (gjennomsiktige, så du kan se inn i dem) og vann.
 
-## Last inn et 3D-bane {#load-a-3d-level}
+## Last inn en 3D-bane {#load-a-3d-level}
 
 1. Last inn dataene dine først ([Få inn data](getting-data-in.md)). Modellen må bruke samme verdensrom og enhet som dataene, med Y opp.
 2. Under **Bakgrunn / nivå** velger du et **Forenklingsmål**. La det stå på *Full – ingen forenkling* med mindre modellen er enorm.

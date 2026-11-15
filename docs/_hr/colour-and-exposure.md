@@ -23,7 +23,7 @@ Svaka kontrola na ovoj stranici djeluje kad se toplina pretvara u boju. Zato se 
 
 ## Točka zasićenja {#saturation-point}
 
-**Točka zasićenja** (odjeljak Oblik topline): akumulirana toplina koja odgovara vrhu skale boja (uz odziv *Linearni*; za ostale pogledajte niže). Logaritamski klizač od 0,1 do 4000, a ručica se može povući do 10.000.000, jer akumulirana toplina raste s brojem redaka. Zadano je 24. Pri svakom učitavanju prvo se uzima **analitička procjena**, a zatim se **mjeri** iz slike.
+**Točka zasićenja** (odjeljak Oblik topline): akumulirana toplina koja odgovara vrhu skale boja (uz odziv *Linearno*; za ostale pogledajte niže). Logaritamski klizač od 0,1 do 4000, a ručica se može povući do 10.000.000, jer akumulirana toplina raste s brojem redaka. Zadano je 24. Pri svakom učitavanju prvo se uzima **analitička procjena**, a zatim se **mjeri** iz slike.
 
 Pogrešna vrijednost razlikuje toplinsku kartu od praznog (ili bijelog) ekrana. Ne može se pouzdano izvesti, jer se telemetrija toliko grupira (pokretanje, vrata, usko grlo) da se omjer vršne i prosječne gustoće između skupova podataka i između kutova kamere razlikuje za red veličine.
 
@@ -54,7 +54,7 @@ Isključite ga da zaključate mjerilo i usporedite mjesta na jednoj skali. Ručn
 | Odziv | Formula | Upotreba |
 |---|---|---|
 | **Zasićujući** (zadano) | t = 1 - e^(-k) | Asimptotski se približava vrhu skale, kao što to rade naslagani prozirni spriteovi. Ništa nikad ne prelazi u ravnu bijelu, pa je to siguran zadani izbor za nepoznate podatke. |
-| **Linearni** | t = k | Jedino preslikavanje u kojem jednaka boja znači jednak broj. Koristite ga za usporedbu dvaju skupova podataka ili dvaju vremenskih razdoblja. |
+| **Linearno** | t = k | Jedino preslikavanje u kojem jednaka boja znači jednak broj. Koristite ga za usporedbu dvaju skupova podataka ili dvaju vremenskih razdoblja. |
 | **Logaritamski** | t = log₂(1 + 7k) / 3 | Sažima dugi rep, pa jedna ekstremna vruća točka više ne spljoštava sve ostalo na dno skale. Podiže rijetka područja. |
 
 ## Minimalna toplina {#minimum-heat}

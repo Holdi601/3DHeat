@@ -22,7 +22,7 @@ Kad jedan kadar ne može nacrtati svaki redak, nacrta uzorak i ponderira ga; sli
 | Način | Kad | Što se događa s akumulatorom |
 |---|---|---|
 | **reset** | kamera se pomaknula, nešto što mijenja polje se promijenilo, progresivno pročišćavanje je isključeno, počinje rastući prozor (prvi kadar reprodukcije, nakon skoka), ili se linijska toplina reproducirane putanje pomaknula | Zamijenjen procjenom ovog kadra. |
-| **extend** | **Kumulativni** prozor koji je samo narastao od zadnjeg kadra | Ovaj kadar crta samo retke koji su upravo postali vidljivi, punom težinom, i dodaje ih. Ništa ne slabi. |
+| **extend** | prozor s načinom **Kumulativno** koji je samo narastao od zadnjeg kadra | Ovaj kadar crta samo retke koji su upravo postali vidljivi, punom težinom, i dodaje ih. Ništa ne slabi. |
 | **ema** | klizni prozor (**Prozor**, **Životni vijek**) se pomaknuo | `acc = acc × (1 - 0,34) + frame × 0,34` - eksponencijalni pomični prosjek od oko tri kadra. |
 | **mean** | ništa se nije promijenilo, a procjena nije potpuna | `acc = acc × (1 - 1/n) + frame × 1/n` na *n*-tom kadru: tekući prosjek. |
 | **skip** (miruje) | konvergirano i ništa se nije promijenilo | Ništa se ne crta; kadar se samo ponovno slaže. |

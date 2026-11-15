@@ -11,13 +11,13 @@ translated: true
 
 # Taster i browseren
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+For at en indlæst session ikke skal gå tabt ved en utilsigtet genvej, beholder viseren disse taster fra browseren.
 
-| Keys | When | Effect |
+| Taster | Hvornår | Virkning |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (også med `Cmd`) | uden for tekstfelter | browserens handling (udskriv, gem, åbn, genindlæs, nyt vindue, luk ...) sker ikke |
+| `F1` `F3` `F5` `F6` `F7` | altid | browserens handling (hjælp, søg, genindlæs, adresselinje, markørnavigation) sker ikke |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | i fuld skærm | låst for viseren (Keyboard Lock API), så browseren ikke reagerer på dem |
+| lukning eller genindlæsning af fanen | med data eller et niveau indlæst | browseren spørger først |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Alle viserens egne taster: [Reference for tastatur og mus](keyboard-reference.md).

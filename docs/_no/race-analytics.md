@@ -125,7 +125,7 @@ Drivlinjen endrer hvordan linjen kjøres mer enn selve linjen: en forhjulsdrevet
 [RWD vs FWD](https://yousuckatracing.wordpress.com/2021/11/08/rwd-vs-fwd-part-1/),
 [AWD vs RWD cornering](https://www.e46fanatics.com/threads/awd-vs-rwd-cornering.493666/))
 
-Seeren måler bilens forhold mellom kraft og grep i hvert sving ut fra den egne kjøringen: akselerasjon med full gass ved utgangsfart delt på sidegrepet ved minimumsfart. Den kaller det "point and shoot" ved 0,45 og over, "momentum" ved 0,25 og under. En bil der grepet ved 150-250 km/t er mer enn 15 % over grepet ved 55-110 km/t, har downforce i virksomhet.
+Visningsprogrammet måler bilens forhold mellom kraft og grep i hvert sving ut fra den egne kjøringen: akselerasjon med full gass ved utgangsfart delt på sidegrepet ved minimumsfart. Den kaller det "point and shoot" ved 0,45 og over, "momentum" ved 0,25 og under. En bil der grepet ved 150-250 km/t er mer enn 15 % over grepet ved 55-110 km/t, har downforce i virksomhet.
 
 ## Metoden {#the-method}
 
@@ -214,7 +214,7 @@ Mot den andre runden: hvor mye innenfor eller utenfor den kjørte ved innsving, 
 
 ### 10. Hvilken vei verden er {#which-way-round-the-world-is}
 
-Seerens verden er høyrehåndet med Y opp. Et spill med en venstrehåndet verden (Forza blant dem) kommer speilvendt ut i den: hver høyresving tegnet som et venstresving, både bane og runder. Rundene sier det selv: positivt rattutslag er til høyre i hver adapter, og den ytre hjulopphengingen i en sving trykkes sammen. Løpsfanen tilbyr derfor å rette det, og **Kamera og scene → Inverter verdensaksen** gjør det: X, Y eller Z tegnes snudd. Bare tegningen endres, en speiling lagt inn i visningsmatrisen. Kameraet flyr i den tegnede verdenen, mens dataene, analysen og alle koordinater verktøyene viser, forblir spillets egne. Analysen navngir svinger venstre eller høyre med samme måling.
+Visningsprogrammets verden er høyrehåndet med Y opp. Et spill med en venstrehåndet verden (Forza blant dem) kommer speilvendt ut i den: hver høyresving tegnet som et venstresving, både bane og runder. Rundene sier det selv: positivt rattutslag er til høyre i hver adapter, og den ytre hjulopphengingen i en sving trykkes sammen. Løpsfanen tilbyr derfor å rette det, og **Kamera og scene → Inverter verdensaksen** gjør det: X, Y eller Z tegnes snudd. Bare tegningen endres, en speiling lagt inn i visningsmatrisen. Kameraet flyr i den tegnede verdenen, mens dataene, analysen og alle koordinater verktøyene viser, forblir spillets egne. Analysen navngir svinger venstre eller høyre med samme måling.
 
 ### 11. Rally: slidet, venstrefoten, luften {#rally-the-slide-the-left-foot-the-air}
 

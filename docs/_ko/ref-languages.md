@@ -11,9 +11,9 @@ translated: true
 
 # 언어 목록
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+뷰어는 40개 언어를 지원합니다. 브라우저 언어가 있으면 그 언어로 시작하며, 사이드바 상단의 언어 메뉴로 바꿀 수 있습니다. 변경 방법과 번역 방식: [언어](languages.md).
 
-| Code | Language |
+| 코드 | 언어 |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

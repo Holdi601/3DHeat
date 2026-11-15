@@ -11,9 +11,9 @@ translated: true
 
 # Vērtību tabulas
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+Cenu tabulas no [Vērtības svēršanas](value-weighting.md). Spēle tiek atpazīta pēc nosaukumiem datos; pārveidotāja pašas vērtību kolonnas spēles valūtā ir svarīgākas par šīm.
 
-| Table | Currency | Defined in |
+| Tabula | Valūta | Definēta |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

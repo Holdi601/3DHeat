@@ -11,11 +11,11 @@ translated: true
 
 # Typy a triedy udalostí
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Prehliadač pridáva stĺpec **Typ udalosti** ku každému datasetu, ktorý má stĺpec udalostí (`event`, `events`, `event_type` alebo `event_name`). Slovné výrazy každej hry sa zaraďujú do jedného z týchto druhov (veľké a malé písmená sa rozlišujú rovnako); výraz, ktorý nie je uvedený, sa počíta ako *Iné*.
 
-| Kind | Shown as | Words in the data |
+| Druh | Zobrazí sa ako | Výrazy v údajoch |
 |---|---|---|
-| `position` | Pozícia | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Pozícia | `(prázdne)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Výstrel | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Odpálenie (raketa, strela, bomba) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Zásah | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Správa | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Iné | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Triedy vozidiel {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Stĺpce **Trieda vozidla** a **Trieda cieľa** používajú tieto triedy, určené z názvov vozidiel (cez [katalóg figúrok](figures.md)) a zo stĺpcov typu.
 
-| Class | Shown as |
+| Trieda | Zobrazí sa ako |
 |---|---|
 | `fighter` | Stíhačka |
 | `attack` | Útočné lietadlo |

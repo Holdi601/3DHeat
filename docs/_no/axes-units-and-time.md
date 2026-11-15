@@ -38,7 +38,7 @@ Visningens verden er **Y-opp**: X og Z er bakkeplanet, Y er høyden. De fleste s
 
 ### Opp-akse {#up-axis}
 
-**Opp-akse i kilden** i [Kolonnekartleggingen](column-mapping.md):
+**Opp-akse i kilden** i [Kolonnetilordningen](column-mapping.md):
 
 | Innstilling | Fil (x, y, z) blir verden (X, Y, Z) |
 |---|---|

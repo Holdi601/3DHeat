@@ -29,7 +29,7 @@ Denne siden er kartet over fanen. Hver del har sin egen side:
 | [Bilprofiler og sammenligning](race-car-profiles.md) | hva hver bil kan, målt fra rundene; *Biler sammenlignet*; hva bilen avgjør i hvert sving |
 | [Banestatistikk](race-course-statistics.md) | mange runder på én bane: feil per sving og per type, feilkartet, eksporten til varmekartet, ytelsesgrenser |
 | [Løpsanalyse: metoden](race-analytics.md) | forskningen bak reglene, med kilder |
-| [Andre racingspill](other-games.md) | hva seeren gjør med runder fra hvert spill: slip og drift regnet ut der et spill ikke sender dem, speilvendte verdener, de ekstra kanalene |
+| [Andre racingspill](other-games.md) | hva visningsprogrammet gjør med runder fra hvert spill: slip og drift regnet ut der et spill ikke sender dem, speilvendte verdener, de ekstra kanalene |
 
 ## Skjermbildet {#the-screen}
 

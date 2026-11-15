@@ -63,7 +63,7 @@ GPU filtras paima iki 8 tūrių su 64 kontūro taškais iš viso; „!“ žymi 
 Sritis **Statistika** seka filtrus, laiko langą ir paslėptas grupes. *Pasirinktas* rodo pasirinktą tūrį, *Palyginti visus* padeda visus tūrius šalia vienas kito. Ji rodo:
 
 - **Eilutės viduje (rodomos)** ir **Eilutės viduje (visi duomenys)**, **Žaidėjai**, **Komandos**, **Rungtynės**, **Laikas viduje**, **Įėjimai / išėjimai**, **Šilumos pikas**, **Vidutinė šiluma**, **Tūris / pagrindas** ir **Kada** histogramą;
-- kiekvienam stulpeliui: kategorijas su **Lift** (dalis viduje, padalyta iš dalies visuose rodomuose duomenyse) ir skaičius su intervalu, mediana ir 5–95 procentiliais.
+- kiekvienam stulpeliui: kategorijas su **Pakilimas** (dalis viduje, padalyta iš dalies visuose rodomuose duomenyse) ir skaičius su intervalu, mediana ir 5–95 procentiliais.
 
 **Statistika kaip CSV / JSON** ją išsaugo. **Eksportuoti duomenis viduje** įrašo vidinias eilutes kaip CSV arba Parquet (pagal numatytuosius – *Tik rodomos eilutes*), vieną tūrį arba visus, su stulpeliu, nurodančiu, kuriame tūryje yra kiekviena eilutė.
 

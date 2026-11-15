@@ -11,11 +11,11 @@ translated: true
 
 # Hendelsestyper og klasser
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Viseren legger til en kolonne **Hendelsestype** i hvert datasett som har en hendelseskolonne (`event`, `events`, `event_type` eller `event_name`). Hvert spills egne ord knyttes til en av disse typene (store og små bokstaver likestilt); et ord som ikke står i listen regnes som *Annet*.
 
-| Kind | Shown as | Words in the data |
+| Type | Vises som | Ord i dataene |
 |---|---|---|
-| `position` | Posisjon | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Posisjon | `(tom)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Skudd avfyrt | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Utskyting (missil, rakett, bombe) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Treff | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Melding | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Annet | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Kjøretøyklasser {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Kolonnene **Kjøretøyklasse** og **Målklasse** bruker disse klassene, utledet fra kjøretøynavn (gjennom [figurkatalogen](figures.md)) og typekolonner.
 
-| Class | Shown as |
+| Klasse | Vises som |
 |---|---|
 | `fighter` | Jagerfly |
 | `attack` | Angrepsfly |

@@ -51,7 +51,7 @@ Paskatieties uz statistikas pārklājumu un tad:
 |---|---|---|
 | Padoms | | Katrs kadrs izzīmē stratificētu nejaušu redzamo rindu apakškopu ar svaru, kas mērogots kompensēšanai, tāpēc paredzamais siltums ir precīzs jebkurā budžetā. Turot skatu nekustīgu, kadri turpina sapludināšanu, līdz katra rinda ir ieguldījusi. |
 | **Zīmēt katru rindu katrā kadrā** | ieslēgts | Katrs kadrs, kas sāk jaunu aplēsi, zīmē katru kandidātu rindu (līdz aptuveni 268M). Zemāk esošais budžets kļūst par minimumu. [Paraugu ņemšana un budžeti](sampling-and-budgets.md#draw-every-row-each-frame) |
-| **Adaptīvais budžets** | ieslēgts | Pielāgo spraitus kadrā, tad siltuma izšķirtspēju, lai saglabātu mērķa kadru ātrumu, un apstājas, kad samazināšana nepalīdz. [Paraugu ņemšana un budžeti](sampling-and-budgets.md#the-adaptive-budget) |
+| **Adaptīvs budžets** | ieslēgts | Pielāgo spraitus kadrā, tad siltuma izšķirtspēju, lai saglabātu mērķa kadru ātrumu, un apstājas, kad samazināšana nepalīdz. [Paraugu ņemšana un budžeti](sampling-and-budgets.md#the-adaptive-budget) |
 | **Mērķa FPS** | 60 | 20–240 (1000 ar rokturi). Vērtības zem 15 tiek uzskatītas par 15. |
 | **Sākotnējie spraiti / kadrs** / **Spraiti / kadrs** | 4.00M | 65 536–268 435 456, logaritmiski. Nosaukts par *Sākotnējie*, kamēr adaptīvais ir ieslēgts, jo kontrolieris to pārvieto. |
 | **Siltuma izšķirtspēja** | 100% | 25–100%. Fragmentu izmaksas mērogojas ar kvadrātu: 50% sadala sajaukšanas darbu uz ceturtdaļu, un siltuma lauks ir pietiekami gluds, lai to gandrīz nemanītu. |

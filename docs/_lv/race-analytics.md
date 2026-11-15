@@ -125,7 +125,7 @@ Ko automašīna var, nāk no katra ielādētā tās apļa: sānu saķere, bremz�
 - **aizmugures zaudēšana**: cik reižu apli tā slīdēja pāri 10° dreifam (20° irdenā segumā) ar stūri pret līkumu — noķerta ar pretējo stūri — un cik no tām sākās ar gāzi, un kāda daļa no tās saķeres tās sākās. Automašīna, ko tīšāk brauc nedaudz sānis, neko nezaudē; tā, kuru jānoķer, zaudē. Skaitīts vienādi katrai automašīnai, tāpēc divas automašīnas var salīdzināt;
 - **līdzsvars**, kur apļi nes slīdes leņķus: priekšējais pret aizmuguri robežā.
 
-**Salīdzinātās automašīnas** novieto automašīnas blakus — tabulu, teikumu katrai par to, kas automašīna ir pret otru ("X paātrinās labāk, bet nevar tā pagriezties, vajag ilgāku bremzēšanas ceļu un vieglāk zaudē aizmuguri"), katru skaidru atšķirību (4% saķeres, 5% vilkmes vai bremzēšanas, 4 km/h maksimālā ātruma, aizmugure, kas noķerta vismaz vienu reizi vairāk un pusotru reizi biežāk nekā apli), un to, kā katru vadīt. Ar vienu automašīnu tas saka, kāda šī automašīna ir.
+**Auto salīdzinājums** novieto automašīnas blakus — tabulu, teikumu katrai par to, kas automašīna ir pret otru ("X paātrinās labāk, bet nevar tā pagriezties, vajag ilgāku bremzēšanas ceļu un vieglāk zaudē aizmuguri"), katru skaidru atšķirību (4% saķeres, 5% vilkmes vai bremzēšanas, 4 km/h maksimālā ātruma, aizmugure, kas noķerta vismaz vienu reizi vairāk un pusotru reizi biežāk nekā apli), un to, kā katru vadīt. Ar vienu automašīnu tas saka, kāda šī automašīna ir.
 
 **Katrā līkumā**, kad apļi ir dažādās automašīnās, atradums saka, kuru daļu no tā nosaka automašīnas, un kā no šīs automašīnas izspiest maksimumu:
 

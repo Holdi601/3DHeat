@@ -3,16 +3,16 @@ title: "Acasă"
 nav_order: 1
 lang: "ro"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat arată unde s-au întâmplat lucrurile într-un joc - unde au mers jucătorii, unde s-au luptat și unde au căzut - ca culori strălucitoare prin care poți zbura sau ca mici figuri 3D care refac meciul.
 
-Încarcă poziții - CSV, Parquet, înregistrări Tacview, reluări convertite, un singur fișier, un dosar sau mii de meciuri - și vezi-le ca o **hartă termică prin care poți zbura**, ca **figuri care refac meciul**, ca linii de-a lungul traseelor pe care le-au urmat oamenii sau ca o populație pusă lângă alta. Singur găsește ce iese în evidență și rulează complet în browserul tău: nimic nu este trimis nicăieri.
+Încarcă poziții - CSV, Parquet, înregistrări Tacview, reluări convertite, un singur fișier, un dosar sau mii de meciuri - și vezi-le ca o **hartă termică prin care poți zbura**, ca **figuri care refac meciul**, ca linii de-a lungul traseelor pe care le-au urmat oamenii sau ca o populație pusă lângă alta. El singur găsește ce iese în evidență și rulează complet în browserul tău: nimic nu este trimis nicăieri. 3DHeat și toate instrumentele lui sunt gratuite și cu cod deschis sub [licența MIT](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Căldura a zece meciuri cu tancuri peste valea demonstrativă](../assets/img/ro/heat-hero.webp)
 
@@ -44,6 +44,8 @@ Filele se află în partea de sus a barei laterale, sub nume, unități și meni
 | **Vehicule** | Unde a fost lovită fiecare unitate, de către cine și cu ce. |
 
 ## Instalare și rulare {#install-and-run}
+
+3DHeat poate fi folosit, modificat și distribuit gratuit (licența MIT), la fel ca fiecare instrument din [Depozite înrudite](#related-repositories).
 
 ### Windows, varianta simplă {#windows-the-easy-way}
 

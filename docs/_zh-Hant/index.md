@@ -3,16 +3,16 @@ title: "首頁"
 nav_order: 1
 lang: "zh-Hant"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat 會顯示遊戲中事情發生的位置，包括玩家去過哪裡、在哪裡交戰、又在哪裡倒下。它可以呈現為你能飛行穿越的發光熱度色彩，也可以呈現為重播比賽過程的小型 3D 模型。
 
-載入位置資料（CSV、Parquet、Tacview 錄影、轉換後的重播、單一檔案、資料夾，或數千場比賽），然後把它們看成 **可以飛行穿越的熱圖**、**重播比賽的模型**、沿著玩家路線的線條，或是兩群人的對照。它會自己找出特別突出的地方，而且完全在你的瀏覽器中執行：不會上傳到任何地方。
+載入位置資料（CSV、Parquet、Tacview 錄影、轉換後的重播、單一檔案、資料夾，或數千場比賽），然後把它們看成 **可以飛行穿越的熱圖**、**重播比賽的模型**、沿著玩家路線的線條，或是兩群人的對照。它會自己找出特別突出的地方，而且完全在你的瀏覽器中執行：不會上傳到任何地方。3DHeat 與它的所有工具都是免費且開放原始碼的，採用 [MIT 授權](https://github.com/Holdi601/3DHeat/blob/main/LICENSE)。
 
 ![示範山谷上十場戰車比賽的熱度](../assets/img/zh-Hant/heat-hero.webp)
 
@@ -44,6 +44,8 @@ outdated: true
 | **載具** | 每個單位在哪裡被擊中、被誰擊中、以什麼擊中。 |
 
 ## 安裝與執行 {#install-and-run}
+
+3DHeat 可以自由使用、修改與分享（MIT 授權），[相關儲存庫](#related-repositories)中列出的每個工具也一樣。
 
 ### Windows，簡易方式 {#windows-the-easy-way}
 

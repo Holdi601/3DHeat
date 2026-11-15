@@ -11,13 +11,13 @@ translated: true
 
 # 浏览器按键
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+为避免已加载的会话因误按快捷键而丢失，查看器会从浏览器中接管以下按键。
 
-| Keys | When | Effect |
+| 按键 | 何时 | 效果 |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` （也适用于 `Cmd`） | 文本框之外 | 浏览器的操作（打印、保存、打开、重新加载、新窗口、关闭等）不会发生 |
+| `F1` `F3` `F5` `F6` `F7` | 始终 | 浏览器的操作（帮助、查找、重新加载、地址栏、光标浏览）不会发生 |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | 全屏时 | 由查看器锁定（Keyboard Lock API），浏览器不会响应这些按键 |
+| 关闭或重新加载标签页 | 已加载数据或关卡时 | 浏览器会先询问 |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+查看器自身的所有按键：[键盘与鼠标参考](keyboard-reference.md)。

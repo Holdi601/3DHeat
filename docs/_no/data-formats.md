@@ -96,7 +96,7 @@ En Parquet-kolonne av typen `TIMESTAMP` som beholdes som filterkolonne, er et *o
 
 ## `heat3d`-hintene {#the-heat3d-hints}
 
-En Parquet-fil kan bære sine egne leseinstruksjoner i footerens nøkkel/verdi-metadata, under nøkkelen **`heat3d`**, som et JSON-objekt ([`MappingHints`](https://github.com/Holdi601/3DHeat/blob/main/src/data/automap.ts)). Seeren bruker dem over sine egne gjetninger når filen er den første i et valg; hver oppføring er valgfri, og hvert resultat vises fortsatt og kan redigeres i panelet [Kolonnekobling](column-mapping.md#the-heat3d-hints-in-a-parquet-footer). Alt som ikke leses som et JSON-objekt, ignoreres.
+En Parquet-fil kan bære sine egne leseinstruksjoner i footerens nøkkel/verdi-metadata, under nøkkelen **`heat3d`**, som et JSON-objekt ([`MappingHints`](https://github.com/Holdi601/3DHeat/blob/main/src/data/automap.ts)). Visningsprogrammet bruker dem over sine egne gjetninger når filen er den første i et valg; hver oppføring er valgfri, og hvert resultat vises fortsatt og kan redigeres i panelet [Kolonnekobling](column-mapping.md#the-heat3d-hints-in-a-parquet-footer). Alt som ikke leses som et JSON-objekt, ignoreres.
 
 ### Skjema {#schema}
 

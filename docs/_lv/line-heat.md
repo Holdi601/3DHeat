@@ -64,7 +64,7 @@ Izvēloties citu notikumu kolonnu, ieteikums tiek piemērots, ja ieteikums izvē
 Katrā ielādē un pēc **Ieteikt pēc notikumu nosaukumiem** ([`suggestLineSettings`](https://github.com/Holdi601/3DHeat/blob/main/src/data/lines.ts)):
 
 - **Notikumu kolonna:** pirmā paturētā kategoriju kolonna ar nosaukumu `event`, `eventname` vai `eventtype`; citādi `kind`, `type` vai `action`; citādi jebkura, kas satur *event*, *kind*, *action* vai *type*.
-- **Sākumi:** vērtības, kas satur *spawn, deploy, join, enter, start, begin, respawn, revive, land/landed/landing, drop* — ja vien tās neatbilst arī beigu vārdam.
+- **Sākums:** vērtības, kas satur *spawn, deploy, join, enter, start, begin, respawn, revive, land/landed/landing, drop* — ja vien tās neatbilst arī beigu vārdam.
 - **Beigas:** vērtības, kas satur *death, died, dead, kill/killed, eliminat…, extract, evac, teleport, leave, left, disconnect, quit, exit, end, finish, downed* — izņemot vērtības `kill` un `kills` (nogalinājums ir tas, ko dara nogalinātājs, nevis viņa maršruta beigas).
 - **Punkti:** vērtības, kas ir tieši *position, location, player location, move, movement, tick, sample* vai *pos*; ja kāda atrasta, sākumi un beigas tiek pievienoti arī punktiem. Ja nav atrasta neviena, punkti paliek tukši (katra rinda).
 

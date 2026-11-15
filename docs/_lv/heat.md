@@ -47,9 +47,9 @@ Katra vadība ir izskaidrota savā lapā; kolonna Detaļas ved uz to. Slīdņiem
 | Līkņu redaktors (tikai Līkne) | priekšiestatījums *Gluda* | | [Sprite forma](sprite-shape.md#the-curve-editor) |
 | **Piesātinājuma punkts** | 24; ielādē aplēse, pēc tam izmērīts | 0,1–4000, logaritmiski (10 000 000) | [Krāsa un ekspozīcija](colour-and-exposure.md#saturation-point) |
 | **Minimālais siltums** | izslēgts (0) | 0–100% | [Krāsa un ekspozīcija](colour-and-exposure.md#minimum-heat) |
-| **Blīvuma reakcija** | *Piesātinošā* | *Piesātinošā* / *Lineārā* / *Logaritmiskā* | [Krāsa un ekspozīcija](colour-and-exposure.md#density-response) |
+| **Reakcija uz blīvumu** | *Piesātinoša* | *Piesātinoša* / *Lineāra* / *Logaritmiska* | [Krāsa un ekspozīcija](colour-and-exposure.md#density-response) |
 | **Automātiska ekspozīcija pēc lauka** | | poga | [Krāsa un ekspozīcija](colour-and-exposure.md#auto-exposure) |
-| **Seko skatam** | ieslēgts | | Katru reizi, kad kamera apstājas, ekspozīciju mēra no jauna, tāpēc reģions, kurā ielido, izmanto visu krāsu skalu. Nelielas izmaiņas tiek ignorētas, un skala slīd. Noņem atzīmi vai velc **Piesātinājuma punktu**, lai bloķētu skalu un salīdzinātu vietas vienā skalā. [Krāsa un ekspozīcija](colour-and-exposure.md#follow-the-view) |
+| **Sekot skatam** | ieslēgts | | Katru reizi, kad kamera apstājas, ekspozīciju mēra no jauna, tāpēc reģions, kurā ielido, izmanto visu krāsu skalu. Nelielas izmaiņas tiek ignorētas, un skala slīd. Noņem atzīmi vai velc **Piesātinājuma punktu**, lai bloķētu skalu un salīdzinātu vietas vienā skalā. [Krāsa un ekspozīcija](colour-and-exposure.md#follow-the-view) |
 | **Vienāds blīvums jebkurā tālummaiņā** | ieslēgts | | Krāsa nozīmē vienādu rindu skaitu uz zemes laukuma vienību neatkarīgi no tā, cik tuvu esi. Spraits, ko pikseļu ierobežojumi palielina (tālu) vai samazina (tuvu), saglabā siltumu, ko pievienotu tā patiesais izmērs, tāpēc attēls, ekspozēts no tāluma, neizbalē, kad tajā ielido. Izslēgts: ierobežots spraits pievieno visu savu svaru ierobežotajā izmērā. [Sprite forma](sprite-shape.md#pixel-clamps) |
 | **Saplacināt uz zemes plaknes** | izslēgts | | [Sprite forma](sprite-shape.md#flatten-onto-ground-plane) |
 

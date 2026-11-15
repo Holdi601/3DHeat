@@ -44,7 +44,7 @@ Parquet-filens fotnote har leseinstruksjoner (nøkkel `heat3d`), så den åpnes 
 stille noe: spilleren som personen, siden som gruppen, hver runde (`roundId`,
 "<match> #NN") som en økt, siktretningen på, og verden den riktige veien
 (CS2s verden er høyrehåndet med Z opp; leses med standard Z-opp-kartlegging
-ville den bli speilvendt). Se [Kolonnekartlegging](column-mapping.md) og
+ville den bli speilvendt). Se [Kolonnetilordning](column-mapping.md) og
 [Laste inn filer](loading-files.md).
 `python -m heat3d_cs2 map <kart>` eksporterer kartgeometrien i samme ramme,
 lastet inn i **Nivå**.
@@ -128,7 +128,7 @@ En tabell per lag, en rad per spiller:
 | Open | åpningsdueller vunnet-tapt |
 | Cl | clutcher vunnet/spilt |
 
-Hold musen over en spiller: tradede drap, ganger tradet, blendingsassister, fiender blendet, nytteskade, og runder med flerdrap ("2×3k"). **Klikk på en spiller** for deres drap og dødsfall i varmekartet (denne kampen).
+Hold musen over en spiller: trade-drap, ganger tradet, blendingsassister, fiender blendet, nytteskade, og runder med flerdrap ("2×3k"). **Klikk på en spiller** for deres drap og dødsfall i varmekartet (denne kampen).
 
 ### På tvers av kamper (Alle kamper) {#across-matches-all-matches}
 

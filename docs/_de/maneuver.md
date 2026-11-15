@@ -62,7 +62,7 @@ Alles wird am Maßstab des Matches selbst gemessen: die **Gefechtsreichweite** `
 
 Jedes Manöver nennt, welche **Muster** der Wissensbasis es zeigt (`patterns-maneuver.ts`: Formation, Frontalangriff, doppelte Umfassung, Einkesselung, Durchbruch, Feuer und Bewegung, Finte, Rückzug, Verfolgung, Verteidigung in der Tiefe, Sicherung, Auflockerung, Raketenabwehr, Winkelkampf, Luftraumüberwachung, Strike-Paket, Kiellinie, Überqueren des T) und die Einträge, die man zuerst lesen sollte. Ältere Einträge tragen die neuen Muster über `knowledge/maneuver-tags.ts` weiter. Siehe [Die Wissenslinse](knowledge.md).
 
-**Es hat sich gelohnt** vergleicht den Austausch der Einheiten, während das Manöver lief (und eine Minute danach), mit dem ihrer Seite über das Match. Ein Rückzug lohnt sich, wenn nach dem Wenden weniger Einheiten verloren gehen als vorher; eine Raketenabwehr, wenn das Flugzeug eine Minute überlebt; eine Einkesselung, wenn die Tasche die Hälfte verliert.
+**Hat sich gelohnt** vergleicht den Austausch der Einheiten, während das Manöver lief (und eine Minute danach), mit dem ihrer Seite über das Match. Ein Rückzug lohnt sich, wenn nach dem Wenden weniger Einheiten verloren gehen als vorher; eine Raketenabwehr, wenn das Flugzeug eine Minute überlebt; eine Einkesselung, wenn die Tasche die Hälfte verliert.
 
 ## Über viele Matches {#over-many-matches}
 

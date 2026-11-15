@@ -3,16 +3,16 @@ title: "Sākums"
 nav_order: 1
 lang: "lv"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat parāda, kur kas notika spēlē - kur spēlētāji devās, cīnījās un krita - kā spožas krāsas, pa kurām var "lidot", vai kā mazas 3D figūriņas, kas atkārto spēli. 
 
-Ielādējiet pozīcijas - CSV, Parquet, Tacview ierakstus, konvertētus atkārtojumus, vienu failu, mapi vai tūkstošiem spēļu - un skatiet tās kā **siltumkarti, pa kuru var lidot**, kā **figūras, kas atkārto spēli**, kā līnijas pa maršrutiem, pa kuriem gāja cilvēki, vai kā vienu populāciju pret otru. Tā pati atrod, kas izceļas, un darbojas pilnībā jūsu pārlūkprogrammā: nekas nekur netiek augšupielādēts.
+Ielādējiet pozīcijas - CSV, Parquet, Tacview ierakstus, konvertētus atkārtojumus, vienu failu, mapi vai tūkstošiem spēļu - un skatiet tās kā **siltumkarti, pa kuru var lidot**, kā **figūras, kas atkārto spēli**, kā līnijas pa maršrutiem, pa kuriem gāja cilvēki, vai kā vienu populāciju pret otru. Pati atrod, kas izceļas, un darbojas pilnībā jūsu pārlūkprogrammā: nekas nekur netiek augšupielādēts. 3DHeat un visi tā rīki ir bez maksas un atvērtā koda ar [MIT licenci](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Dažu tanku spēļu siltums demonstrācijas ielejā](../assets/img/lv/heat-hero.webp)
 
@@ -44,6 +44,8 @@ Cilnes atrodas sānjoslas augšdaļā, zem nosaukuma, mērvienībām un valodas 
 | **Tehnika** | Kur katrs transportlīdzeklis tika trāpīts, kurš un ar ko. |
 
 ## Instalēšana un palaišana {#install-and-run}
+
+3DHeat ir bez maksas lietojams, maināms un koplietojams (MIT licence), tāpat kā katrs rīks, kas uzskaitīts sadaļā [Saistītās repozitorijas](#related-repositories).
 
 ### Windows, vienkāršais veids {#windows-the-easy-way}
 
@@ -108,7 +110,7 @@ Serveris piesaistās tikai pie `127.0.0.1`, tāpēc neviens no maršrutiem nav s
 
 **Analizēt**: [Filtri un rīki](filters-and-tools.md) ([filtri](filters.md), [komandas](teams-list.md), [vienības](entities.md), [griezums](slice.md), [mērīšana](measure.md), [tilpumi](volumes.md), [sadalījums](breakdown.md)) · [Atziņas](insights.md) ([zināšanu lēca](knowledge.md)) · [Masveida analīze](mass-analysis.md)
 
-**Atkārtojums**: [Spēles atkārtojums](match-replay.md) · [Daudzas spēles vienlaikus](many-matches.md) · [Figūras](figures.md) ([figūru pārklājumā](figure-replay.md), [autori](figure-credits.md)) · [Tacview paritāte](tacview-parity.md) · [Trāpījumu analīze](hit-analysis.md)
+**Atskaņojums**: [Spēles atkārtojums](match-replay.md) · [Daudzas spēles vienlaikus](many-matches.md) · [Figūras](figures.md) ([figūru pārklājumā](figure-replay.md), [autori](figure-credits.md)) · [Tacview paritāte](tacview-parity.md) · [Trāpījumu analīze](hit-analysis.md)
 
 **Citas cilnes**: [Sacīkšu analīze](race-analysis.md) ([metode](race-analytics.md), [citas spēles](other-games.md)) · [Spēles analīze](match-analysis.md) · [Taktikas tāfele](tactics-board.md) ([ātrumi](tactics-speeds.md))
 

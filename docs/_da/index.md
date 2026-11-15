@@ -3,16 +3,16 @@ title: "Start"
 nav_order: 1
 lang: "da"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat viser, hvor ting skete i et spil – hvor spillerne bevægede sig, kæmpede og faldt – som lysende farver, du kan flyve igennem, eller som små 3D-figurer, der genafspiller kampen.
 
-Indlæs positioner – CSV, Parquet, Tacview-optagelser, konverterede replays, en enkelt fil, en mappe eller tusindvis af kampe – og se dem som et **heatmap, du kan flyve igennem**, som **figurer, der genafspiller kampen**, som linjer langs de ruter, folk tog, eller som én population mod en anden. Det finder selv det, der skiller sig ud, og det kører helt i din browser: intet uploades nogen steder.
+Indlæs positioner – CSV, Parquet, Tacview-optagelser, konverterede replays, en enkelt fil, en mappe eller tusindvis af kampe – og se dem som et **heatmap, du kan flyve igennem**, som **figurer, der genafspiller kampen**, som linjer langs de ruter, folk tog, eller som én population mod en anden. Det finder selv det, der skiller sig ud, og det kører helt i din browser: intet uploades nogen steder. 3DHeat og alle dets værktøjer er gratis og open source under [MIT-licensen](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Varme fra ti tankkampe over Demo Valley](../assets/img/da/heat-hero.webp)
 
@@ -105,7 +105,7 @@ Serveren binder kun til `127.0.0.1`, så ingen af ruterne kan nås fra netværke
 
 **Se**: [Varmetilstande](heat-modes.md) ([varme](heat.md), [spriteform](sprite-shape.md), [farve og eksponering](colour-and-exposure.md), [dybde og culling](depth-and-culling.md), [forskel](difference.md), [holdvarme](team-heat.md), [linjevarme](line-heat.md), [boksreplay](box-replay.md), [retningsvarme](directional-heat.md), [værdivægtning](value-weighting.md)) · [Tidslinje](timeline.md) · [Baner](levels.md) ([kortbilleder](map-images.md), [3D-baner](model-levels.md), [udseende](level-appearance.md), [bibliotek](level-library.md), [verdensbaggrund](world-backdrop.md), [dens kilder](world-backdrop-sources.md)) · [Kamera](camera.md) ([gamepad](gamepad.md), [taster](keyboard-reference.md)) · [Kamerabane og video](camera-path-and-video.md)
 
-**Analysér**: [Filtre og værktøjer](filters-and-tools.md) ([filtre](filters.md), [hold](teams-list.md), [enheder](entities.md), [snit](slice.md), [måling](measure.md), [volumener](volumes.md), [opdeling](breakdown.md)) · [Indsigter](insights.md) ([vidensobjektivet](knowledge.md)) · [Massanalyse](mass-analysis.md)
+**Analysér**: [Filtre og værktøjer](filters-and-tools.md) ([filtre](filters.md), [hold](teams-list.md), [enheder](entities.md), [snit](slice.md), [måling](measure.md), [volumener](volumes.md), [opdeling](breakdown.md)) · [Indsigter](insights.md) ([vidensobjektivet](knowledge.md)) · [Masseanalyse](mass-analysis.md)
 
 **Replay**: [Kamp-replay](match-replay.md) · [Mange kampe på én gang](many-matches.md) · [Figurer](figures.md) ([i figuroverlejringen](figure-replay.md), [kreditering](figure-credits.md)) · [Tacview-paritet](tacview-parity.md) · [Træfanalyse](hit-analysis.md)
 
@@ -142,7 +142,7 @@ Vieweren læser data; disse værktøjer laver dem. Hvert er sit eget offentlige 
 | [`src/race/`](https://github.com/Holdi601/3DHeat/tree/main/src/race), [`src/match/`](https://github.com/Holdi601/3DHeat/tree/main/src/match) | Fanerne Løbsanalyse og Kamp |
 | [`src/i18n/`](https://github.com/Holdi601/3DHeat/tree/main/src/i18n) | Oversættelser |
 | [`src/insights/`](https://github.com/Holdi601/3DHeat/tree/main/src/insights) | Indsigter: detektorer, gennemgang, kommentator, AI-udbydere, vidensobjektivet |
-| [`src/mass/`](https://github.com/Holdi601/3DHeat/tree/main/src/mass) | Massanalyse over mange kampe |
+| [`src/mass/`](https://github.com/Holdi601/3DHeat/tree/main/src/mass) | Masseanalyse over mange kampe |
 | [`src/volumes/`](https://github.com/Holdi601/3DHeat/tree/main/src/volumes) | Volumener, deres statistik, eksport og sammenligning |
 | [`src/breakdown/`](https://github.com/Holdi601/3DHeat/tree/main/src/breakdown) | Opdeling og faktorer |
 | [`src/overlay/`](https://github.com/Holdi601/3DHeat/tree/main/src/overlay) | Overlejringen for mange kampe |

@@ -91,9 +91,9 @@ Sekcia **Taktické zobrazenie** kreslí, pre žiadnu jednotku, vybrané, všetky
 
 Keď zápas prichádza s cieľmi, sekcia **Ciele** ich kreslí na mape: zóny dobytia (s vlastníkom a priebehom dobývania), miesta odrodenia, letiská, oblasti a ciele bombardovania, každú vrstvu možno zapnúť alebo vypnúť, s popiskami. Sú vidno cez zem. Pri načítaných viacerých herných režimoch **Režim** filtruje zápasy podľa režimu. Ciele pochádzajú zo zápasového súboru prekonvertéra vedľa záznamu alebo vo vnútri kontajnera [`.3dheat`](container.md).
 
-## Popisky a štatistiky {#labels-and-statistics}
+## Popisy a štatistiky {#labels-and-statistics}
 
-- **Popisky**: pravidlá pre každý druh (**Vybrané**, **Lietadlá**, **Zem**, **Lode**, **Zbrane**, **AI**): zobraziť alebo nie, ktoré hodnoty, a **Priorita** určuje, kto dostane miesto, keď sa popisky prekrývajú. **Neprekrývať popisy** presunie popisok vedľa jednotky, keď by zakryl inú, a tam, kde nie je miesto, ho vynechá. **Veľkosť popisov** je 60 až 250 %. **Späť na meno, stroj, výšku a rýchlosť** pravidlá obnoví.
+- **Popisy**: pravidlá pre každý druh (**Vybrané**, **Lietadlá**, **Zem**, **Lode**, **Zbrane**, **AI**): zobraziť alebo nie, ktoré hodnoty, a **Priorita** určuje, kto dostane miesto, keď sa popisky prekrývajú. **Neprekrývať popisy** presunie popisok vedľa jednotky, keď by zakryl inú, a tam, kde nie je miesto, ho vynechá. **Veľkosť popisov** je 60 až 250 %. **Späť na meno, stroj, výšku a rýchlosť** pravidlá obnoví.
   - Pozemné jednotky začínajú menom, strojom a rýchlosťou.
   - Lietadlá začínajú menom, strojom, výškou a rýchlosťou.
   - Lode začínajú menom, strojom, rýchlosťou a kurzom.

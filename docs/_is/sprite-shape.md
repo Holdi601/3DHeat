@@ -73,16 +73,16 @@ Endapunktarnir eru fastir í miðju og á jaðri; hæð þeirra er samt þín.
 
 | Forstilling | Lögun | Notkun |
 |---|---|---|
-| **Línuleg** | Bein lína frá 1 niður í 0 | Eins og *Dvínun* 1 með *Mjúkum skala* slökktum. |
-| **Mjúk** | S-ferill | Sjálfgefni ferillinn; það sem *Mjúkur skali* gefur við dvínun 1. |
+| **Línulegt** | Bein lína frá 1 niður í 0 | Eins og *Dvínun* 1 með *Mjúkum skala* slökktum. |
+| **Mjúkt** | S-ferill | Sjálfgefni ferillinn; það sem *Mjúkur skali* gefur við dvínun 1. |
 | **Þétt** | Brött kjarni, langur daufur faldur | Strjál gögn. |
 | **Slétta** | Flöt, síðan hröð niðurfelling | Lesst sem diskur frekar en klessa. |
 | **Hringur** | 0,15 í miðju, 1 við 62% radíussins, 0 á jaðri | Holur sprite: sýnir hvar leiðir fara um frekar en hvar þær stoppa. |
 | **Stallur** | Tveggja þrepa dvínun, 0,45 við 35% | Aðskilur þéttan kjarna frá umhverfi sínu. |
 
-## Fletja út á jarðarflöt {#flatten-onto-ground-plane}
+## Fletja á jarðflöt {#flatten-onto-ground-plane}
 
-**Fletja út á jarðarflöt** (sjálfgefið slökkt) hunsar hæð hverrar raðar og teiknar allan hita í einni hæð - lægsta Y gagnasafnsins - klassíska 2D-kortahitakortið. Með því á er dýptarhulun og *Fela á bak við landslag* slökkt (hver punktur myndi þá sitja nákvæmlega á því yfirborði sem hann er prófaður gegn), og Dýptarhlutinn segir það.
+**Fletja á jarðflöt** (sjálfgefið slökkt) hunsar hæð hverrar raðar og teiknar allan hita í einni hæð - lægsta Y gagnasafnsins - klassíska 2D-kortahitakortið. Með því á er dýptarhulun og *Fela á bak við landslag* slökkt (hver punktur myndi þá sitja nákvæmlega á því yfirborði sem hann er prófaður gegn), og Dýptarhlutinn segir það.
 
 ## Fyrir forritara {#for-developers}
 

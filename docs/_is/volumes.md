@@ -61,10 +61,10 @@ Skjásían tekur allt að 8 rúmmál með 64 útlínupunktum samtals; "!" merkir
 
 ## Tölfræði {#statistics}
 
-Svæðið **Tölfræði** fylgir síunum, tímaglugganum og földum hópum. *Valið* sýnir valda rúmmálið, *Bera saman alla* setur hvert rúmmál hlið við hlið. Það sýnir:
+Svæðið **Tölfræði** fylgir síunum, tímaglugganum og földum hópum. *Valið* sýnir valda rúmmálið, *Bera saman öll* setur hvert rúmmál hlið við hlið. Það sýnir:
 
 - **Raðir inni (sýndar)** og **Raðir inni (öll gögn)**, **Leikmenn**, **Lið**, **Leikir**, **Tími inni**, **Inngöngur / útgöngur**, **Hámarkshiti**, **Meðalhiti**, **Rúmmál / grunnflötur** og **Hvenær**-súlurit;
-- fyrir hvern dálk: flokka með **Lift** (hlutdeild inni deilt með hlutdeild í öllum sýndum gögnum), og tölur með bili, miðgildi og 5.-95. hundraðshlutamörkum.
+- fyrir hvern dálk: flokka með **Lyfting** (hlutdeild inni deilt með hlutdeild í öllum sýndum gögnum), og tölur með bili, miðgildi og 5.-95. hundraðshlutamörkum.
 
 **Tölfræði sem CSV / JSON** vistar þær. **Flytja út gögnin inni** skrifar línurnar inni sem CSV eða Parquet (*Aðeins sýndu raðirnar* er kveikt sjálfgefið), eitt rúmmál eða öll með dálki sem segir hvaða rúmmál heldur hverri línu.
 

@@ -11,11 +11,11 @@ outdated: false
 
 # Analyse sving for sving
 
-To runder på samme bane sammenlignes sving for sving. For hvert sving sier seeren hvem som var raskest, hvor mye tid det var verdt, og hvorfor: bremset for tidlig, kom på gass for sent, tok en bredere linje. Da vet du hva du skal øve på først.
+To runder på samme bane sammenlignes sving for sving. For hvert sving sier visningsprogrammet hvem som var raskest, hvor mye tid det var verdt, og hvorfor: bremset for tidlig, kom på gass for sent, tok en bredere linje. Da vet du hva du skal øve på først.
 
 ![A finding opened in Where to improve, next to the Corner by corner table](../assets/img/en/race-corner-finding.webp)
 
-Et eksempel: i sving 3 bremser Driver A 20 m tidligere enn Driver B og taper 0,15 s på vei dit, men er på gass tidligere og vinner 0,15 s på vei ut. Netto 0,00 s: svingen er likt, og ingen får beskjed om å bremse senere.
+Et eksempel: i sving 3 bremser Fører A 20 m tidligere enn Fører B og taper 0,15 s på vei dit, men er på gass tidligere og vinner 0,15 s på vei ut. Netto 0,00 s: svingen er likt, og ingen får beskjed om å bremse senere.
 
 ## Hva du ser {#what-you-see}
 

@@ -11,23 +11,23 @@ translated: true
 
 # Mentett beállítások
 
-What the viewer keeps in your browser (`localStorage`) between visits. Nothing of it is sent anywhere. Clearing the site data in the browser removes it all.
+Amit a megjelenítő a böngészőjében (`localStorage`) tart meg a látogatások között. Ebből semmi nem kerül máshova. A böngészőben a webhely adatainak törlésével ez mind eltávolítható.
 
-| Key | Holds | Code |
+| Kulcs | Tartalma | Kód |
 |---|---|---|
-| `3dheat.objectives` | objectives shown, layers, labels | `src/state/objectivesStore.ts` |
-| `3dheat.volumes.…` | volumes, per dataset | `src/volumes/store.ts` |
-| `heat3d.ai` | external AI: provider, address, model, options (not the key) | `src/insights/ai/settings.ts` |
-| `heat3d.ai.key` | the external AI key, only when *Remember the key* is ticked | `src/insights/ai/settings.ts` |
-| `heat3d.bookmarks.…` | bookmarks, per recording | `src/ui/replay/bookmarks.ts` |
-| `heat3d.carNames` | car names in the race tab | `src/race/carNames.ts` |
-| `heat3d.far` | figures at a distance, symbols, hit marks, aim lines | `src/state/store.ts` |
-| `heat3d.help` | help mode on or off | `src/state/helpStore.ts` |
-| `heat3d.inspect` | the pick card and camera readout | `src/state/inspectStore.ts` |
-| `heat3d.language` | the language picked | `src/i18n/index.ts` |
-| `heat3d.mirror` | the axis mirroring | `src/state/store.ts` |
-| `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
-| `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
-| `heat3d.units` | the units preset and single units | `src/state/unitsStore.ts` |
+| `3dheat.objectives` | látható célok, rétegek, feliratok | `src/state/objectivesStore.ts` |
+| `3dheat.volumes.…` | térfogatok, adathalmazonként | `src/volumes/store.ts` |
+| `heat3d.ai` | külső MI: szolgáltató, cím, modell, beállítások (a kulcs nem) | `src/insights/ai/settings.ts` |
+| `heat3d.ai.key` | a külső MI kulcsa, csak ha a *Kulcs megjegyzése ebben a böngészőben* be van jelölve | `src/insights/ai/settings.ts` |
+| `heat3d.bookmarks.…` | könyvjelzők, felvételenként | `src/ui/replay/bookmarks.ts` |
+| `heat3d.carNames` | autónevek a versenyfülön | `src/race/carNames.ts` |
+| `heat3d.far` | távolsági figurák, jelek, találatpontok, célvonalak | `src/state/store.ts` |
+| `heat3d.help` | a súgó mód be- vagy kikapcsolt állapota | `src/state/helpStore.ts` |
+| `heat3d.inspect` | a kiválasztókártya és a kamera-kijelzés | `src/state/inspectStore.ts` |
+| `heat3d.language` | a kiválasztott nyelv | `src/i18n/index.ts` |
+| `heat3d.mirror` | a tengelytükrözés | `src/state/store.ts` |
+| `heat3d.replay` | visszajátszási feliratok, taktikai megjelenítés, 2D térkép, diagramok, head-up kijelző, nézet, épületek, követőkamera | `src/state/replayStore.ts` |
+| `heat3d.speed` | a lejátszás sebessége | `src/state/playbackSpeed.ts` |
+| `heat3d.units` | a mértékegység-előbeállítás és az egyedi mértékegységek | `src/state/unitsStore.ts` |
 
-Heat settings, filters and the view mode are not kept: they start fresh with each load.
+A hőtérkép-beállítások, a szűrők és a nézetmód nincsenek megtartva: minden betöltésnél újonnan indulnak.

@@ -8,6 +8,8 @@ translated: true
 outdated: false
 ---
 
+# Demonstraciniai duomenys: išbandykite peržiūros programą per penkias minutes
+
 ![Dešimties tankų rungtynių šiluma demonstraciniame Demo Valley lygyje: ką rodo 4 žingsnis](../assets/img/lt/heat-hero.webp)
 
 Dar neturite savo duomenų? Saugykla juos sukuria. Viskas juose išgalvota: slėnis, kiemas ir trijų išgalvotų žaidimų stilių rungtynės, kuriose žaidėjai vadinasi *Blue 1* arba *Red 3*. Visi šios svetainės paveikslėliai padaryti su jais.

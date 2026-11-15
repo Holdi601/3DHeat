@@ -13,7 +13,7 @@ outdated: false
 
 **Raščlamba** odgovara na jedno pitanje: na ovom mjestu, koje vozilo, igrač ili oružje je najbolje? Koristite je da nađete tenk koji pobjeđuje na mostu ili da vidite pomaže li zaista nositi kacigu.
 
-Ona rangira što se događa na jednom mjestu (odabrana točka, prikaz, volumen ili sve prikazano) po bilo kojoj kategoriji i mjeri svaki faktor stanja s naspram bez.
+Ona rangira što se događa na jednom mjestu (odabrana točka, prikaz, volumen ili sve prikazano) po bilo kojoj kategoriji i mjeri učinak svakog čimbenika stanja: s njim naspram bez njega.
 
 ![Prozor Raščlambe koji rangira vozila po ubojstvima po smrti](../assets/img/hr/breakdown.webp)
 
@@ -62,7 +62,7 @@ Vrijednost retka je njegova vlastita, osim ako redak ne bilježi nijednu (redak 
 
 ## Faktori: s naspram bez {#factors-with-against-without}
 
-Prebacite s **Rangiranja** na **Faktore**, odaberite **Učinak na** i pročitajte *Najviše pomaže* i *Najviše šteti*:
+Prebacite s **Poredak** na **Čimbenici**, odaberite **Učinak na** i pročitajte *Najviše pomaže* i *Najviše šteti*:
 
 ![Faktori: kaciga naspram bez kacige i nošena pomagala, s njihovim učinkom na ubojstva po smrti](../assets/img/hr/breakdown-factors.webp)
 

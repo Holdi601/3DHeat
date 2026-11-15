@@ -11,11 +11,11 @@ translated: true
 
 # Tapahtumatyypit ja luokat
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Katsoja lisää jokaiseen aineistoon, jossa on tapahtumasarake (`event`, `events`, `event_type` tai `event_name`), sarakkeen **Tapahtumatyyppi**. Kunkin pelin omat sanat liitetään johonkin näistä lajeista (isot ja pienet kirjaimet samoin); luettelematon sana lasketaan lajiin *Muu*.
 
-| Kind | Shown as | Words in the data |
+| Laji | Näkyy nimellä | Sanat aineistossa |
 |---|---|---|
-| `position` | Sijainti | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Sijainti | `(tyhjä)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Laukaus | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Laukaisu (ohjus, raketti, pommi) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Osuma | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Viesti | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Muu | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Ajoneuvoluokat {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Sarakkeet **Ajoneuvoluokka** ja **Kohteen luokka** käyttävät näitä luokkia, jotka on päätelty ajoneuvojen nimistä (ks. [hahmoluettelo](figures.md)) ja tyyppisarakkeista.
 
-| Class | Shown as |
+| Luokka | Näkyy nimellä |
 |---|---|
 | `fighter` | Hävittäjä |
 | `attack` | Hyökkäyskone |

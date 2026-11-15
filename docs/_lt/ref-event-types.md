@@ -11,11 +11,11 @@ translated: true
 
 # Įvykių tipai ir klasės
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Peržiūros programa prideda stulpelį **Įvykio tipas** prie kiekvieno duomenų rinkinio, kuriame yra įvykio stulpelis (`event`, `events`, `event_type` arba `event_name`). Kiekvieno žaidimo žodžiai priskiriami vienam iš šių tipų (didžiosios ir mažosios raidės nesiskiria); žodis, kurio sąraše nėra, laikomas *Kita*.
 
-| Kind | Shown as | Words in the data |
+| Rūšis | Rodoma kaip | Žodžiai duomenyse |
 |---|---|---|
-| `position` | Padėtis | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Padėtis | `(tuščia)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Šūvis | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Paleidimas (raketa, sviedinys, bomba) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Pataikymas | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Žinutė | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Kita | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Transporto klasės {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Stulpeliai **Transporto klasė** ir **Taikinio klasė** naudoja šias klases, nustatytas pagal transporto pavadinimus (per [figūrų katalogą](figures.md)) ir tipo stulpelius.
 
-| Class | Shown as |
+| Klasė | Rodoma kaip |
 |---|---|
 | `fighter` | Naikintuvas |
 | `attack` | Šturmo lėktuvas |

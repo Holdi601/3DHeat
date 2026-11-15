@@ -11,23 +11,23 @@ translated: true
 
 # Gespäichert Astellungen
 
-What the viewer keeps in your browser (`localStorage`) between visits. Nothing of it is sent anywhere. Clearing the site data in the browser removes it all.
+Wat de Viewer tëscht de Besuche am Browser (`localStorage`) hält. Näischt dovun gëtt iergendwohin geschéckt. Wann een d'Site-Donnéeën am Browser läscht, geet et alles fort.
 
-| Key | Holds | Code |
+| Schlëssel | Hält | Code |
 |---|---|---|
-| `3dheat.objectives` | objectives shown, layers, labels | `src/state/objectivesStore.ts` |
-| `3dheat.volumes.…` | volumes, per dataset | `src/volumes/store.ts` |
-| `heat3d.ai` | external AI: provider, address, model, options (not the key) | `src/insights/ai/settings.ts` |
-| `heat3d.ai.key` | the external AI key, only when *Remember the key* is ticked | `src/insights/ai/settings.ts` |
-| `heat3d.bookmarks.…` | bookmarks, per recording | `src/ui/replay/bookmarks.ts` |
-| `heat3d.carNames` | car names in the race tab | `src/race/carNames.ts` |
-| `heat3d.far` | figures at a distance, symbols, hit marks, aim lines | `src/state/store.ts` |
-| `heat3d.help` | help mode on or off | `src/state/helpStore.ts` |
-| `heat3d.inspect` | the pick card and camera readout | `src/state/inspectStore.ts` |
-| `heat3d.language` | the language picked | `src/i18n/index.ts` |
-| `heat3d.mirror` | the axis mirroring | `src/state/store.ts` |
-| `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
-| `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
-| `heat3d.units` | the units preset and single units | `src/state/unitsStore.ts` |
+| `3dheat.objectives` | gewisen Zieler, Ebenen, Beschrëftungen | `src/state/objectivesStore.ts` |
+| `3dheat.volumes.…` | Volumen, pro Datesaz | `src/volumes/store.ts` |
+| `heat3d.ai` | extern KI: Ubidder, Adress, Modell, Optiounen (net de Schlëssel) | `src/insights/ai/settings.ts` |
+| `heat3d.ai.key` | de Schlëssel fir déi extern KI, nëmmen wann *De Schlëssel späicheren* ugekräizt ass | `src/insights/ai/settings.ts` |
+| `heat3d.bookmarks.…` | Lieszeechen, pro Opnam | `src/ui/replay/bookmarks.ts` |
+| `heat3d.carNames` | Autosnimm am Renntab | `src/race/carNames.ts` |
+| `heat3d.far` | Figuren op Distanz, Symboler, Trefferzeechen, Zilleinnen | `src/state/store.ts` |
+| `heat3d.help` | Hëllefsmodus un oder aus | `src/state/helpStore.ts` |
+| `heat3d.inspect` | d'Pick-Kaart an d'Kamera-Anzeig | `src/state/inspectStore.ts` |
+| `heat3d.language` | déi gewielte Sprooch | `src/i18n/index.ts` |
+| `heat3d.mirror` | d'Spiegelung vun den Achsen | `src/state/store.ts` |
+| `heat3d.replay` | Replay-Beschrëftungen, taktesch Unzeig, 2D-Kaart, Diagrammer, Head-up-Unzeig, Ausgesinn, Gebaier, Follow-Kamera | `src/state/replayStore.ts` |
+| `heat3d.speed` | d'Wiedergabegeschwindegkeet | `src/state/playbackSpeed.ts` |
+| `heat3d.units` | d'Eenheetevoureneestellung an d'eenzel Eenheeten | `src/state/unitsStore.ts` |
 
-Heat settings, filters and the view mode are not kept: they start fresh with each load.
+D'Hëtztastellungen, d'Filteren an de Vuesmodus ginn net gehalen: si fänken mat all Lueden vu Wénkel un.

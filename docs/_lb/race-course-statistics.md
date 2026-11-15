@@ -13,7 +13,7 @@ outdated: false
 
 Ladet vill Ronnen vun enger Strecke, an de Viewer zielt d'Feeler: Kuerf, déi am meeschte Zäit kaschten, wéi vill Ronnen do schif gaange sinn, an firwat. Benotzt et, fir d'Kurv ze fannen, déi et wäert ass ze üben.
 
-Probéiert et: **Demo-Ronnen** gëtt dräi Ronnen, duer dass dësen Abschnitt erschéngt.
+Probéiert et: **Demo-Ronnen** gëtt dräi Ronnen, sou datt dëse Ofschnëtt erschéngt.
 
 ![Streckestatistik mat der Feelerkaart: d'Strecke, gefierft no wéivill Ronnen an all Kurv Zäit verluer hunn, an d'Lëscht vun de Kuerwen](../assets/img/en/race-course-mistake-map.webp)
 

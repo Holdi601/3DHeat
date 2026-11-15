@@ -11,13 +11,13 @@ translated: true
 
 # Ċwievet tal-browser
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Biex sessjoni mgħobbija ma titlifx minn buttuna mitfugħa b'mod żbaljat, il-viewer iżomm dawn il-buttuni mill-brawżer.
 
-| Keys | When | Effect |
+| Buttuni | Meta | Effett |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (ukoll b'`Cmd`) | barra' mill-kaxxi tat-test | l-azzjoni tal-brawżer (stampa, salvataġġ, iftaħ, erġa' tgħabbi, tieqa ġdida, agħlaq ...) ma sseħħx |
+| `F1` `F3` `F5` `F6` `F7` | dejjem | l-azzjoni tal-brawżer (għajnuna, fittex, erġa' tgħabbi, barra l-indirizz, navigazzjoni bil-kursur) ma sseħħx |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | fuq l-iskrin sħiħ | imsakkra għall-viewer (API tal-Keyboard Lock), sabiex il-brawżer ma jaġixxix fuqhom |
+| tagħlaq jew terġa' tgħabbi t-tab | b'dejta jew livell mgħobbi | il-brawżer jistaqsi l-ewwel |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Il-buttuni kollha tal-viewer innifsu: [Referenza tat-tastiera u tal-mouse](keyboard-reference.md).

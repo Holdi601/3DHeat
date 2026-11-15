@@ -27,7 +27,7 @@ Tri neobavezna stupca opisuju *tko* i *gdje u priči* redak pripada. Svaki se pr
 
 Stupac **ID osobe** imenuje pokretnu stvar kojoj redak pripada: igrača, bota, automobil. Pohranjuje se kao 32-bitni id po retku.
 
-S osobom i stupcem vremena, učitavanje računa **trajanje** svakog retka: vrijeme do sljedećeg uzorka iste osobe *u istoj sesiji*, ili "nijedno" (oznaka, -1) kad sljedećeg uzorka nema: osoba je umrla, otišla ili je zapis završio. Trajanja pokreću povijest **Trajanje** na [vremenskoj osi](timeline.md), interpolaciju i zastarjelost u [box reprodukciji](box-replay.md) te prekide rute u [linijskoj toplini](line-heat.md). Što se radi s retkom bez sljedbenika, postavka je prikaza (*Rezervni vijek*), a ne ugrađeno u podatke.
+S osobom i stupcem vremena, učitavanje računa **životni vijek** svakog retka: vrijeme do sljedećeg uzorka iste osobe *u istoj sesiji*, ili "nijedno" (oznaka, -1) kad sljedećeg uzorka nema: osoba je umrla, otišla ili je zapis završio. Trajanja pokreću povijest **Trajanje** na [vremenskoj osi](timeline.md), interpolaciju i zastarjelost u [box reprodukciji](box-replay.md) te prekide rute u [linijskoj toplini](line-heat.md). Što se radi s retkom bez sljedbenika, postavka je prikaza (*Rezervni vijek*), a ne ugrađeno u podatke.
 
 Svaka osoba dobiva grupu svojeg **prvog** retka po vremenu. Ta dodjela boji njezin okvir u box reprodukciji i određuje kojoj grupi pripada prekidač vidljivosti koji ju tamo skriva. Načini topline koriste umjesto toga grupu svakog retka.
 

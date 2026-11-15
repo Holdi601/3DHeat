@@ -22,8 +22,8 @@ Kad viens kadrs nevar uzzīmēt katru rindu, tas uzzīmē paraugu un to pasvaru;
 | Režīms | Kad | Kas notiek ar uzkrājēju |
 |---|---|---|
 | **reset** | kamera pakustējās, kaut kas, kas maina lauku, mainījās, progresīvā precizēšana ir izslēgta, aug logs sākas (pirmais atskaņošanas kadrs, pēc meklēšanas), vai atskaņotās līnijas siltums pakustējās | Aizstāts ar šī kadra aplēsi. |
-| **extend** | **Kumulatīvs** logs, kas kopš pēdējā kadra tikai pieaudzis | Šis kadrs zīmē tikai rindas, kas tikko kļuva redzamas, pilnā svarā, un tās pieskaita. Nekas nesadalās. |
-| **ema** | slīdošs logs (**Logs**, **Dzīvildze**) pakustējies | `acc = acc × (1 - 0.34) + frame × 0.34` — eksponenciāli slīdoša vidējā vērtība ap trim kadriem. |
+| **extend** | logs **Kumulatīvi**, kas kopš pēdējā kadra tikai pieaudzis | Šis kadrs zīmē tikai rindas, kas tikko kļuva redzamas, pilnā svarā, un tās pieskaita. Nekas nesadalās. |
+| **ema** | slīdošs logs (**Logs**, **Dzīves ilgums**) pakustējies | `acc = acc × (1 - 0.34) + frame × 0.34` — eksponenciāli slīdoša vidējā vērtība ap trim kadriem. |
 | **mean** | nekas nav mainījies un aplēse nav pilnīga | `acc = acc × (1 - 1/n) + frame × 1/n` n-tajā kadrā: tekošais vidējais. |
 | **skip** (dīkstāve) | konverģējis un nekas nav mainījies | Nekas netiek zīmēts; kadrs tikai pārsalikt. |
 
@@ -46,7 +46,7 @@ Iestatījumi iekrīt trīs grupās atkarībā no tā, ko uzkrātais bufers vēl 
 | Grupa | Maina | Efekts |
 |---|---|---|
 | **Ģeometrija** — kuras rindas dod ieguldījumu un cik daudz | skata režīms; līniju maršruti; spraita rādiuss, centra un malas intensitāte, kritums, gluds gradients, līkne, pikseļu ierobežojumi, saplacināšana; atmešana pēc attāluma tuvā, tālā un plakanā veidā; aizsegšana un paslēpšana aiz reljefa; griezums; audekla izmērs; siltuma izšķirtspēja; grupu redzamība un zīmes; starpības sadalīšana; Viss / Atskaņot; vēsture; kolonnu filtri un vienību atlase; pusprecizitātes pastiprinājums | Atiestatīt. |
-| **Logs** — laika diapazons | atskaņošanas galviņas kustība; dzīvildzes rezerve un izbalēšana | Paplašināt (kumulatīvs) vai slīdošais vidējais (slīdošs). |
+| **Logs** — laika diapazons | atskaņošanas galviņas kustība; rezerves dzīves ilgums un izbalēšana | Paplašināt (kumulatīvs) vai slīdošais vidējais (slīdošs). |
 | **Salikums** — tikai krāsošana | piesātinājums, blīvuma reakcija, minimālais siltums, krāsu skalas; līmeņa griešana; režģis un asis; kastes atkārtojuma iestatījumi un sesija; lauka dziļums | Pārzīmēt, neaizskarot siltumu. |
 
 Kameras kustība vienmēr atiestata. Tāpēc piesātinājuma vai skalas vilkšana ir bez maksas; sprite rādiusa vilkšana pārstartē konverģenci katrā solī.

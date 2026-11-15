@@ -3,16 +3,16 @@ title: "홈"
 nav_order: 1
 lang: "ko"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat은 게임 안에서 무슨 일이 어디서 일어났는지를 보여 줍니다. 플레이어가 어디로 가고, 어디서 싸우고, 어디서 쓰러졌는지를, 날아다닐 수 있는 빛나는 색의 히트로 보거나, 경기를 다시 재생하는 작은 3D 피규어로 볼 수 있습니다.
 
-위치 데이터를 불러오세요. CSV, Parquet, Tacview 기록, 변환한 리플레이, 파일 하나, 폴더, 또는 수천 경기도 됩니다. 그리고 이를 **날아다닐 수 있는 히트맵**으로, **경기를 재생하는 피규어**로, 사람들이 지나간 경로를 따라 그은 선으로, 또는 한 집단과 다른 집단의 비교로 볼 수 있습니다. 스스로 눈에 띄는 것을 찾아 근거와 함께 순위를 매기며, 모든 것이 여러분의 브라우저 안에서 실행됩니다. 어디에도 업로드되지 않습니다.
+위치 데이터를 불러오세요. CSV, Parquet, Tacview 기록, 변환한 리플레이, 파일 하나, 폴더, 또는 수천 경기도 됩니다. 그리고 이를 **날아다닐 수 있는 히트맵**으로, **경기를 재생하는 피규어**로, 사람들이 지나간 경로를 따라 그은 선으로, 또는 한 집단과 다른 집단의 비교로 볼 수 있습니다. 스스로 눈에 띄는 것을 찾아 근거와 함께 순위를 매기며, 모든 것이 여러분의 브라우저 안에서 실행됩니다. 어디에도 업로드되지 않습니다. 3DHeat과 모든 도구는 [MIT 라이선스](https://github.com/Holdi601/3DHeat/blob/main/LICENSE)에 따라 무료이며 오픈 소스입니다.
 
 ![demo valley 위의 전차 10경기 히트](../assets/img/ko/heat-hero.webp)
 
@@ -22,12 +22,12 @@ outdated: true
 
 | | |
 |---|---|
-| ![차이](../assets/img/ko/heat-difference.webp) | **[히트 모드](heat-modes.md)** - 히트, [차이](difference.md)(한쪽이 더 많았던 곳은 빨강, 다른 쪽이 더 많았던 곳은 초록-파랑), [팀 히트](team-heat.md), [선 히트](line-heat.md). 화살표 필드와 극좌표 차트를 쓰는 [방향별 히트](directional-heat.md). [가치로 가중한 히트](value-weighting.md): 무기, 차량, 연료가 얼마의 값인지 반영합니다. |
+| ![차이](../assets/img/ko/heat-difference.webp) | **[히트 모드](heat-modes.md)** - 히트, [차이](difference.md)(한쪽이 더 많았던 곳은 빨강, 다른 쪽이 더 많았던 곳은 초록-파랑), [팀 히트](team-heat.md), [라인](line-heat.md). 화살표 필드와 극좌표 차트를 쓰는 [방향별 히트](directional-heat.md). [가치로 가중한 히트](value-weighting.md): 무기, 차량, 연료가 얼마의 값인지 반영합니다. |
 | ![리플레이](../assets/img/ko/replay-tanks.webp) | **[경기 리플레이](match-replay.md)** - 각 유닛을 그것이 무엇인지 보여 주는 [피규어](figures.md)로 표시합니다. 멀리 있는 NATO 또는 러시아 기호, 미사일과 예광탄, 명중 표시, 잔해, 화재, 포탑, 목표, Tacview 풍의 카메라, 전술 표시. [여러 경기를 한꺼번에](many-matches.md) 볼 수도 있습니다. |
 | ![인사이트](../assets/img/ko/insights.webp) | **[인사이트](insights.md)** - 강한 위치, 위험한 지형, 리스폰 함정, 병목, 두드러진 플레이어를 근거와 순위와 함께 찾습니다. 글로 된 총평을 원하는 AI가 쓸 수도 있습니다. 한 경기용 캐스터, 그리고 [지식 렌즈](knowledge.md)도 있습니다. |
-| ![볼륨](../assets/img/ko/compare.webp) | **[볼륨](volumes.md)** - 상자, 프리즘, 원기둥, 구를 그리고, 그 안으로 필터를 걸어 그 안에서 일어난 일을 세고, 내보내고, 장소들을 나란히 비교합니다. 어떤 장소에서 누가, 무엇이 가장 잘 되는지 보는 [세부 분석](breakdown.md)도 있습니다. |
+| ![볼륨](../assets/img/ko/compare.webp) | **[볼륨](volumes.md)** - 상자, 프리즘, 원기둥, 구를 그리고, 그 안으로 필터를 걸어 그 안에서 일어난 일을 세고, 내보내고, 장소들을 나란히 비교합니다. 어떤 장소에서 누가, 무엇이 가장 잘 되는지 보는 [상세 분석](breakdown.md)도 있습니다. |
 | ![필터](../assets/img/ko/filters.webp) | **[필터](filters.md)** - 이벤트 종류, 플레이어 또는 AI, 차량 클래스, 값, 임의의 열로 거릅니다. 데이터 크기와 관계없이 그래픽 카드에서 처리합니다. |
-| ![레벨](../assets/img/ko/level-panel.webp) | **[레벨](levels.md)** - 맵 이미지, [데이터 도구](#related-repositories)로 만든 3D 레벨, 단순화, 비행 데이터를 위한 실제 지형이 있는 [세계 배경](world-backdrop.md). |
+| ![레벨](../assets/img/ko/level-panel.webp) | **[레벨](levels.md)** - 맵 이미지, [데이터 도구](#related-repositories)로 만든 3D 레벨, 단순화, 비행 데이터를 위한 [실제 세계 배경](world-backdrop.md), 비행 데이터를 위한 실제 지형. |
 
 이 밖에도 있습니다. 게임 레이스의 랩을 위한 [레이스 분석](race-analysis.md) 탭, 카운터 스트라이크 2 요약을 위한 [매치](match-analysis.md) 탭, 레벨 위의 계획을 위한 [전술 보드](tactics-board.md), 차량별 [피격 분석](hit-analysis.md), 수천 경기를 위한 [대량 분석](mass-analysis.md), [카메라 경로와 영상](camera-path-and-video.md), [40개 언어](languages.md), [미터법 또는 야드파운드법 단위](settings.md).
 
@@ -103,9 +103,9 @@ npm run dev      # http://127.0.0.1:5273
 
 **시작**: [데모 데이터](demo-data.md) · [데이터 가져오기](getting-data-in.md)([파일 불러오기](loading-files.md), [열 매핑](column-mapping.md), [축, 단위, 시간](axes-units-and-time.md), [세션, 사람, 그룹](sessions-persons-groups.md), [Tacview](tacview-acmi.md), [변환기](converters.md), [.3dheat](container.md), [메모리와 예산](memory-and-budgets.md))
 
-**보기**: [히트 모드](heat-modes.md)([히트](heat.md), [스프라이트 모양](sprite-shape.md), [색과 노출](colour-and-exposure.md), [깊이와 컬링](depth-and-culling.md), [차이](difference.md), [팀 히트](team-heat.md), [선 히트](line-heat.md), [박스 리플레이](box-replay.md), [방향별 히트](directional-heat.md), [값 가중치](value-weighting.md)) · [타임라인](timeline.md) · [레벨](levels.md)([맵 이미지](map-images.md), [3D 레벨](model-levels.md), [외관](level-appearance.md), [라이브러리](level-library.md), [세계 배경](world-backdrop.md), [그 출처](world-backdrop-sources.md)) · [카메라](camera.md)([게임패드](gamepad.md), [키](keyboard-reference.md)) · [카메라 경로와 영상](camera-path-and-video.md)
+**보기**: [히트 모드](heat-modes.md)([히트](heat.md), [스프라이트 모양](sprite-shape.md), [색과 노출](colour-and-exposure.md), [깊이와 컬링](depth-and-culling.md), [차이](difference.md), [팀 히트](team-heat.md), [라인](line-heat.md), [박스 리플레이](box-replay.md), [방향별 히트](directional-heat.md), [값 가중치](value-weighting.md)) · [타임라인](timeline.md) · [레벨](levels.md)([맵 이미지](map-images.md), [3D 레벨](model-levels.md), [외관](level-appearance.md), [라이브러리](level-library.md), [세계 배경](world-backdrop.md), [그 출처](world-backdrop-sources.md)) · [카메라](camera.md)([게임패드](gamepad.md), [키](keyboard-reference.md)) · [카메라 경로와 영상](camera-path-and-video.md)
 
-**분석**: [필터와 도구](filters-and-tools.md)([필터](filters.md), [팀](teams-list.md), [개체](entities.md), [단면](slice.md), [측정](measure.md), [볼륨](volumes.md), [세부 분석](breakdown.md)) · [인사이트](insights.md)([지식 렌즈](knowledge.md)) · [대량 분석](mass-analysis.md)
+**분석**: [필터와 도구](filters-and-tools.md)([필터](filters.md), [팀](teams-list.md), [개체](entities.md), [단면](slice.md), [측정](measure.md), [볼륨](volumes.md), [상세 분석](breakdown.md)) · [인사이트](insights.md)([지식 렌즈](knowledge.md)) · [대량 분석](mass-analysis.md)
 
 **리플레이**: [경기 리플레이](match-replay.md) · [여러 경기를 한꺼번에](many-matches.md) · [피규어](figures.md)([피규어 오버레이에서](figure-replay.md), [출처](figure-credits.md)) · [Tacview 동등성](tacview-parity.md) · [피격 분석](hit-analysis.md)
 
@@ -144,7 +144,7 @@ npm run dev      # http://127.0.0.1:5273
 | [`src/insights/`](https://github.com/Holdi601/3DHeat/tree/main/src/insights) | 인사이트: 탐지기, 총평, 캐스터, AI 제공자, 지식 렌즈 |
 | [`src/mass/`](https://github.com/Holdi601/3DHeat/tree/main/src/mass) | 여러 경기에 걸친 대량 분석 |
 | [`src/volumes/`](https://github.com/Holdi601/3DHeat/tree/main/src/volumes) | 볼륨, 그 통계, 내보내기, 비교 |
-| [`src/breakdown/`](https://github.com/Holdi601/3DHeat/tree/main/src/breakdown) | 세부 분석과 요인 |
+| [`src/breakdown/`](https://github.com/Holdi601/3DHeat/tree/main/src/breakdown) | 상세 분석과 요인 |
 | [`src/overlay/`](https://github.com/Holdi601/3DHeat/tree/main/src/overlay) | 여러 경기 오버레이 |
 | [`src/figures/`](https://github.com/Holdi601/3DHeat/tree/main/src/figures) | 피규어 카탈로그와 그 빌더 |
 | [`src/vehicle/`](https://github.com/Holdi601/3DHeat/tree/main/src/vehicle) | 피격 분석(차량 탭) |

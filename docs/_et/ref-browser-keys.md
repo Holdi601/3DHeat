@@ -11,13 +11,13 @@ translated: true
 
 # Brauseri klahvid
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Et laaditud seanss ei kaoks juhusliku otseteel, hoiab vaataja need klahvid brauserist eemal.
 
-| Keys | When | Effect |
+| Klahvid | Millal | Toime |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (ka koos `Cmd`-ga) | tekstikastidest väljaspool | brauseri toiming (printimine, salvestamine, avamine, uuesti laadimine, uus aken, sulgemine ...) ei toimu |
+| `F1` `F3` `F5` `F6` `F7` | alati | brauseri toiming (abi, otsing, uuesti laadimine, aadressirida, kursori liigutamine) ei toimu |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | täisekraanil | vaatajale lukus (Keyboard Lock API), nii et brauser neile ei reageeri |
+| vahekaardi sulgemine või uuesti laadimine | andmete või taseme laadimisel | brauser küsib enne |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Kõik vaataja enda klahvid: [Klaviatuuri ja hiire juhend](keyboard-reference.md).

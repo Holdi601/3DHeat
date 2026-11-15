@@ -11,9 +11,9 @@ translated: true
 
 # Инструменти за командния ред
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Инструментите от командния ред в папката `tools/` на визуализатора (Node.js, стартират се от корена на хранилището). Никога не са ви нужни, за да ползвате визуализатора: те пакетират, обобщават и конвертират данните ви и помагат на поддържащия визуализатора. Всеки запис има първия параграф от описанието на инструмента и редовете за употреба; стартирайте инструмент без аргументи за пълната помощ, където има такава. Инструментите за данни от [свързаните хранилища](index.md#related-repositories) документират командите си сами.
 
-## For your data
+## За вашите данни {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## За разработчици и документацията {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Тези проверяват визуализатора, правят демо данните и снимките на екрана и пишат справочните страници.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Библиотеки {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` е библиотека без команден ред: горните инструменти я импортират, за да четат и пишат [файла .3dheat](container.md).

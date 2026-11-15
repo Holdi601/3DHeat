@@ -93,9 +93,9 @@ Stupac vremena poput `match_time` ili `round_time` broji od početka svakog meč
 
 ## Smjer pogleda {#look-direction}
 
-Smjer pogleda koristi samo [reprodukcija kutije](box-replay.md) (zrake iz svake kutije). Sprema se kao dva kuta, skretanje i nagib, u radijanima.
+Smjer pogleda koristi samo [reprodukcija kutije](box-replay.md) (zrake iz svake kutije). Sprema se kao dva kuta, zakret i nagib, u radijanima.
 
-- **Stupci skretanja / nagiba** čitaju se kakvi jesu, pretvaraju se iz stupnjeva kad je odabrano *Stupnjevi*. Ne prilagođavaju se za os prema gore ili okrete.
-- **Stupci vektora smjera** prolaze kroz isto preimenovanje i okrete kao pozicije, a zatim postaju skretanje = atan2(x, -z) i nagib = atan2(y, √(x² + z²)) u osima svijeta, pa zraka pokazuje kamo kutija gleda i u svijetu zrcaljenog izvora.
+- **Stupci zakreta / nagiba** čitaju se kakvi jesu, pretvaraju se iz stupnjeva kad je odabrano *Stupnjevi*. Ne prilagođavaju se za os prema gore ili okrete.
+- **Stupci vektora smjera** prolaze kroz isto preimenovanje i okrete kao pozicije, a zatim postaju zakret = atan2(x, -z) i nagib = atan2(y, √(x² + z²)) u osima svijeta, pa zraka pokazuje kamo kutija gleda i u svijetu zrcaljenog izvora.
 
-Ako stupci skretanja/nagiba nakon okreta, vektora smjera ili prilagođenih kuteva pokazuju u krivom smjeru, rješenje je to što treba popraviti.
+Ako stupci zakreta/nagiba nakon okreta, vektora smjera ili prilagođenih kuteva pokazuju u krivom smjeru, rješenje je to što treba popraviti.

@@ -11,9 +11,9 @@ translated: true
 
 # Sprooch-Lëscht
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+De Viewer schwätzt 40 Sprooche. Hie fänkt mat der Sprooch vum Browser un, wann hien se huet, an d'Sprooch-Menü uewen an der Säitelleescht ännert se. Wéi ee se ännert, an wéi d'Iwwersetzunge gemaach ginn: [Sprooche](languages.md).
 
-| Code | Language |
+| Code | Sprooch |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

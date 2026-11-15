@@ -11,23 +11,23 @@ translated: true
 
 # Salvestatud seaded
 
-What the viewer keeps in your browser (`localStorage`) between visits. Nothing of it is sent anywhere. Clearing the site data in the browser removes it all.
+Mida vaataja hoiab sinu brauseris (`localStorage`) külastuste vahel. Sellest ei saadeta midagi kuhugi. Saidi andmete kustutamine brauseris eemaldab kõik.
 
-| Key | Holds | Code |
+| Võti | Hoiab | Kood |
 |---|---|---|
-| `3dheat.objectives` | objectives shown, layers, labels | `src/state/objectivesStore.ts` |
-| `3dheat.volumes.…` | volumes, per dataset | `src/volumes/store.ts` |
-| `heat3d.ai` | external AI: provider, address, model, options (not the key) | `src/insights/ai/settings.ts` |
-| `heat3d.ai.key` | the external AI key, only when *Remember the key* is ticked | `src/insights/ai/settings.ts` |
-| `heat3d.bookmarks.…` | bookmarks, per recording | `src/ui/replay/bookmarks.ts` |
-| `heat3d.carNames` | car names in the race tab | `src/race/carNames.ts` |
-| `heat3d.far` | figures at a distance, symbols, hit marks, aim lines | `src/state/store.ts` |
-| `heat3d.help` | help mode on or off | `src/state/helpStore.ts` |
-| `heat3d.inspect` | the pick card and camera readout | `src/state/inspectStore.ts` |
-| `heat3d.language` | the language picked | `src/i18n/index.ts` |
-| `heat3d.mirror` | the axis mirroring | `src/state/store.ts` |
-| `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
-| `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
-| `heat3d.units` | the units preset and single units | `src/state/unitsStore.ts` |
+| `3dheat.objectives` | kuvatavad eesmärgid, kihid, sildid | `src/state/objectivesStore.ts` |
+| `3dheat.volumes.…` | ruumalad, andmestiku kaupa | `src/volumes/store.ts` |
+| `heat3d.ai` | väline tehisintellekt: teenusepakkuja, aadress, mudel, valikud (mitte võti) | `src/insights/ai/settings.ts` |
+| `heat3d.ai.key` | välise tehisintellekti võti, ainult kui *Jäta võti meelde* on märgitud | `src/insights/ai/settings.ts` |
+| `heat3d.bookmarks.…` | järjehoidjad, salvestuse kaupa | `src/ui/replay/bookmarks.ts` |
+| `heat3d.carNames` | sõidukite nimed sõidutabis | `src/race/carNames.ts` |
+| `heat3d.far` | kaugel olevad kujud, tähised, tabamusmärgid, sihtjooned | `src/state/store.ts` |
+| `heat3d.help` | abirežiim sees või väljas | `src/state/helpStore.ts` |
+| `heat3d.inspect` | valikukaart ja kaamera näit | `src/state/inspectStore.ts` |
+| `heat3d.language` | valitud keel | `src/i18n/index.ts` |
+| `heat3d.mirror` | telgede peegeldamine | `src/state/store.ts` |
+| `heat3d.replay` | kordusesildid, taktikaline kuva, 2D-kaart, diagrammid, pealaekuvar, välimus, hooned, järgiv kaamera | `src/state/replayStore.ts` |
+| `heat3d.speed` | esitamise kiirus | `src/state/playbackSpeed.ts` |
+| `heat3d.units` | ühikute eelseade ja üksikud ühikud | `src/state/unitsStore.ts` |
 
-Heat settings, filters and the view mode are not kept: they start fresh with each load.
+Soojuse seaded, filtrid ja vaaterežiim ei ole salvestatud: need algavad iga laadimisega puhtalt.

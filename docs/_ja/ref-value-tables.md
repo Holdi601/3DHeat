@@ -11,9 +11,9 @@ translated: true
 
 # 値の表
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+[値の重み付け](value-weighting.md)の価格表です。ゲームはデータ内の名前から認識します。変換ツールが持つ、そのゲームの通貨による独自の値の列は、これらより優先されます。
 
-| Table | Currency | Defined in |
+| 表 | 通貨 | 定義場所 |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

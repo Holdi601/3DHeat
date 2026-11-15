@@ -177,7 +177,7 @@ Et sammenklappeligt afsnit i Kamera og scene, med titlen *Dybdeskarphed - til*, 
 | Indstilling | Standard | Interval (skyder) | Betydning |
 |---|---|---|---|
 | **Aktiveret** | fra | | |
-| **Fokus på det indrammede** | til | | Fokus i den afstand, den sidste tilpasning brugte (*Fokuseret på N m.*). |
+| **Fokusér på det indrammede** | til | | Fokus i den afstand, den sidste tilpasning brugte (*Fokuseret på N m.*). |
 | **Fokusafstand** | 1000 | 1-200.000, logaritmisk (10.000.000) | Vises, når fokus er manuelt. |
 | **Blænde** | ±35 % | ±2 % til ±200 %, logaritmisk (±3200 %) | Dybden, der holdes skarp, som en brøkdel af fokusafstanden - relativ i stedet for et f-tal, fordi scener spænder fra et rum til et otte-kilometers kort. |
 | **Maksimal sløring** | 12 px | 1-48 (256) | Den største sløringsradius; omkostningen skalerer med den. |

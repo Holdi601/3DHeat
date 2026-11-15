@@ -76,7 +76,7 @@ Hvert veipunkt viser tiden fra det forrige og tiden siden planens start («+3,9 
 
 ## Sammenlign med kampdata {#compare-with-match-data}
 
-**Last inn kampfiler…** leser kamptabeller for CS2 for kartet (CS2-verktøyets Parquet-filer, så mange som ønskelig; bare kolonnene som trengs, i bakgrunnen); **Bruk innlastede data** tar dataene som er lastet i seeren. Deretter:
+**Last inn kampfiler…** leser kamptabeller for CS2 for kartet (CS2-verktøyets Parquet-filer, så mange som ønskelig; bare kolonnene som trengs, i bakgrunnen); **Bruk innlastede data** tar dataene som er lastet i visningsprogrammet. Deretter:
 
 - **Tidligste ankomst på kartet** farger kartet etter tiden siden rundens start da en spiller først nådde hvert sted – knappen **Raskest** viser den raskeste over alle runder, **Typisk (median)** den midterste runden – fra grønt tidlig til rødt sent, for én side eller begge. Den viser hva som er mulig, og når.
 - Den valgte ruten sammenlignes med det spillere oppnådde fra dens start (eller rundens start) til dens slutt, hver ende en skive med den valgte radiusen: «Raskest observert 14,2 s, p10 15,0 s, median 18,3 s over 41 kjøringer; planen din 15,1 s».
@@ -92,7 +92,7 @@ Delen **Fil** har **Lagre**, **Åpning** og **Tøm**. **Lagre** skriver planen s
 
 ## Figurer {#figures}
 
-Hver figur bygges av seeren selv: enkle former i en type publisert størrelse, med de trekkene som skiller den fra naboene – et stridsvognsspor med bakhjul og tårn, våpnene, missilene og radarene til et luftvernkjøretøy, en luftfarkosts vingeplan, hale og motorer, et helikopters rotorer og stumpvinger. Ingenting er hentet fra et spill. En design et spill har funnet på, vises som den generiske figuren for sin klasse. Se [Figurer](figures.md#which-figure-a-unit-gets) for hvordan data finner sin figur.
+Hver figur bygges av visningsprogrammet selv: enkle former i en type publisert størrelse, med de trekkene som skiller den fra naboene – et stridsvognsspor med bakhjul og tårn, våpnene, missilene og radarene til et luftvernkjøretøy, en luftfarkosts vingeplan, hale og motorer, et helikopters rotorer og stumpvinger. Ingenting er hentet fra et spill. En design et spill har funnet på, vises som den generiske figuren for sin klasse. Se [Figurer](figures.md#which-figure-a-unit-gets) for hvordan data finner sin figur.
 
 ## Riots merknad {#riots-notice}
 

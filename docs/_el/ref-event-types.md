@@ -11,11 +11,11 @@ translated: true
 
 # Τύποι και κλάσεις γεγονότων
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Η προβολή προσθέτει μια στήλη **Τύπος συμβάντος** σε κάθε σύνολο δεδομένων που έχει στήλη συμβάντων (`event`, `events`, `event_type` ή `event_name`). Οι λέξεις κάθε παιχνιδιού αντιστοιχίζονται σε ένα από αυτά τα είδη (χωρίς διαφορά πεζών και κεφαλαίων)· μια λέξη που δεν είναι στη λίστα μετράει ως *Άλλο*.
 
-| Kind | Shown as | Words in the data |
+| Είδος | Εμφανίζεται ως | Λέξεις στα δεδομένα |
 |---|---|---|
-| `position` | Θέση | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Θέση | `(κενό)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Βολή | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Εκτόξευση (πύραυλος, ρουκέτα, βόμβα) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Βολή που βρήκε στόχο | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Μήνυμα | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Άλλο | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Κλάσεις οχημάτων {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Οι στήλες **Κλάση οχήματος** και **Κλάση στόχου** χρησιμοποιούν αυτές τις κλάσεις, που προκύπτουν από τα ονόματα των οχημάτων (μέσω του [καταλόγου φιγούρων](figures.md)) και από τις στήλες τύπου.
 
-| Class | Shown as |
+| Κλάση | Εμφανίζεται ως |
 |---|---|
 | `fighter` | Μαχητικό |
 | `attack` | Αεροσκάφος κρούσης |

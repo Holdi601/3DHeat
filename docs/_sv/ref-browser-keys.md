@@ -11,13 +11,13 @@ translated: true
 
 # Tangenter i webbläsaren
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+För att en inläst session inte ska gå förlorad på grund av en råkad genväg håller visaren dessa tangenter borta från webbläsaren.
 
-| Keys | When | Effect |
+| Tangenter | När | Effekt |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (även med `Cmd`) | utanför textrutor | webbläsarens åtgärd (skriv ut, spara, öppna, ladda om, nytt fönster, stäng ...) sker inte |
+| `F1` `F3` `F5` `F6` `F7` | alltid | webbläsarens åtgärd (hjälp, sök, ladda om, adressfält, bläddring med textmarkör) sker inte |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | i helskärm | låsta för visaren (Keyboard Lock API), så webbläsaren agerar inte på dem |
+| stänga eller ladda om fliken | med data eller nivå inläst | webbläsaren frågar först |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Alla visarens egna tangenter: [Tangent- och musreferens](keyboard-reference.md).

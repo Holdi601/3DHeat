@@ -16,7 +16,7 @@ Kuerz Bedeitungen vun de Wierder, déi dës Säit benotzt, a klore Sprooch. All 
 
 **Zeil.** Eng Linn vun Ären Daten: eng Saach, déi op enger Plaz an enger Zäit geschitt ass, zum Beispill "Spiller 7 war hei an der 12. Sekonn". De Viewer zeechent all Zeil. [Datenformater](data-formats.md)
 
-**Kolonn.** Eng Aart vu Wäert an den Zeilen, wéi x, y, z, Zäit oder Equipe. De Viewer erkennt, welch Kolonn wat ass, an Dir kënnt dat änneren. [Kolonnenzuuerdnung](column-mapping.md)
+**Kolonn.** Eng Aart vu Wäert an den Zeilen, wéi x, y, z, Zäit oder Equipe. De Viewer erkennt, welch Kolonn wat ass, an Dir kënnt dat änneren. [Kolonnenzouweisung](column-mapping.md)
 
 **CSV.** Eng eefach Textdabell: eng Zeil pro Linn, d'Wäerter mat Komma getrennt. Bal all Programm kann eng schreiwen. [Dateie lueden](loading-files.md)
 

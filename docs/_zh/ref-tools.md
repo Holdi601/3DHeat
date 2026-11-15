@@ -11,9 +11,9 @@ translated: true
 
 # 命令行工具
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+查看器 `tools/` 文件夹中的命令行工具（Node.js，从仓库根目录运行）。使用查看器完全不需要它们：它们负责打包、汇总和转换你的数据，也方便维护查看器的人。每个条目包含工具自身描述的第一段和用法说明；若工具有帮助，不带参数运行即可看到完整帮助。[相关仓库](index.md#related-repositories)中的数据工具会自行记录其命令。
 
-## For your data
+## 用于你的数据 {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## 面向开发者和文档 {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+这些工具用于检查查看器、制作演示数据和截图，并生成参考页面。
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## 库 {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` 是没有命令行的库，上面的工具会引入它以读写 [.3dheat 文件](container.md)。

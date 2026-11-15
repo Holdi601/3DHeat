@@ -11,9 +11,9 @@ translated: true
 
 # Llista d'idiomes
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+El visualitzador parla 40 idiomes. S'inicia amb l'idioma del navegador quan el té, i el menú d'idioma de la part superior de la barra lateral el canvia. Com canviar-lo, i com es fan les traduccions: [Idiomes](languages.md).
 
-| Code | Language |
+| Codi | Idioma |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

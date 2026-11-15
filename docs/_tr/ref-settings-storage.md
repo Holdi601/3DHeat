@@ -11,23 +11,23 @@ translated: true
 
 # Kayıtlı ayarlar
 
-What the viewer keeps in your browser (`localStorage`) between visits. Nothing of it is sent anywhere. Clearing the site data in the browser removes it all.
+Görüntüleyicinin ziyaretler arasında tarayıcınızda (`localStorage`) tuttukları. Bunların hiçbiri bir yere gönderilmez. Tarayıcıdaki site verilerini silmek hepsini kaldırır.
 
-| Key | Holds | Code |
+| Anahtar | Tuttuğu | Kod |
 |---|---|---|
-| `3dheat.objectives` | objectives shown, layers, labels | `src/state/objectivesStore.ts` |
-| `3dheat.volumes.…` | volumes, per dataset | `src/volumes/store.ts` |
-| `heat3d.ai` | external AI: provider, address, model, options (not the key) | `src/insights/ai/settings.ts` |
-| `heat3d.ai.key` | the external AI key, only when *Remember the key* is ticked | `src/insights/ai/settings.ts` |
-| `heat3d.bookmarks.…` | bookmarks, per recording | `src/ui/replay/bookmarks.ts` |
-| `heat3d.carNames` | car names in the race tab | `src/race/carNames.ts` |
-| `heat3d.far` | figures at a distance, symbols, hit marks, aim lines | `src/state/store.ts` |
-| `heat3d.help` | help mode on or off | `src/state/helpStore.ts` |
-| `heat3d.inspect` | the pick card and camera readout | `src/state/inspectStore.ts` |
-| `heat3d.language` | the language picked | `src/i18n/index.ts` |
-| `heat3d.mirror` | the axis mirroring | `src/state/store.ts` |
-| `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
-| `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
-| `heat3d.units` | the units preset and single units | `src/state/unitsStore.ts` |
+| `3dheat.objectives` | gösterilen hedefler, katmanlar, etiketler | `src/state/objectivesStore.ts` |
+| `3dheat.volumes.…` | hacimler, veri kümesi başına | `src/volumes/store.ts` |
+| `heat3d.ai` | harici yapay zekâ: sağlayıcı, adres, model, seçenekler (anahtar hariç) | `src/insights/ai/settings.ts` |
+| `heat3d.ai.key` | harici yapay zekâ anahtarı, yalnızca *Anahtarı bu tarayıcıda hatırla* işaretliyse | `src/insights/ai/settings.ts` |
+| `heat3d.bookmarks.…` | yer imleri, kayıt başına | `src/ui/replay/bookmarks.ts` |
+| `heat3d.carNames` | yarış sekmesindeki araç adları | `src/race/carNames.ts` |
+| `heat3d.far` | uzaktaki figürler, semboller, isabet işaretleri, nişan çizgileri | `src/state/store.ts` |
+| `heat3d.help` | yardım modu açık ya da kapalı | `src/state/helpStore.ts` |
+| `heat3d.inspect` | seçim kartı ve kamera okuması | `src/state/inspectStore.ts` |
+| `heat3d.language` | seçilen dil | `src/i18n/index.ts` |
+| `heat3d.mirror` | eksen aynalaması | `src/state/store.ts` |
+| `heat3d.replay` | tekrar etiketleri, taktik ekran, 2B harita, grafikler, başüstü gösterge, görünüm, binalar, takip kamerası | `src/state/replayStore.ts` |
+| `heat3d.speed` | oynatma hızı | `src/state/playbackSpeed.ts` |
+| `heat3d.units` | birim ön ayarı ve tek birimler | `src/state/unitsStore.ts` |
 
-Heat settings, filters and the view mode are not kept: they start fresh with each load.
+Isı ayarları, filtreler ve görünüm modu tutulmaz: her yüklemede sıfırdan başlarlar.

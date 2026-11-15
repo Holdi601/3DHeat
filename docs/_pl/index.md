@@ -3,16 +3,16 @@ title: "Strona główna"
 nav_order: 1
 lang: "pl"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat pokazuje, gdzie w grze coś się działo: dokąd szli gracze, gdzie walczyli i gdzie ginęli. Pokazuje to jako świecące kolory, po których możesz latać, albo jako małe figury 3D, które odtwarzają mecz.
 
-Wczytaj pozycje - CSV, Parquet, nagrania Tacview, przekonwertowane powtórki, jeden plik, folder albo tysiące meczów - i zobacz je jako **mapę cieplną, po której możesz latać**, jako **figury odtwarzające mecz**, jako linie wzdłuż tras, którymi szli ludzie, albo jako jedną grupę obok drugiej. Program sam znajduje to, co się wyróżnia, i działa w całości w przeglądarce: nic nigdzie nie jest wysyłane.
+Wczytaj pozycje - CSV, Parquet, nagrania Tacview, przekonwertowane powtórki, jeden plik, folder albo tysiące meczów - i zobacz je jako **mapę cieplną, po której możesz latać**, jako **figury odtwarzające mecz**, jako linie wzdłuż tras, którymi szli ludzie, albo jako jedną grupę obok drugiej. Program sam znajduje to, co się wyróżnia, i działa w całości w przeglądarce: nic nigdzie nie jest wysyłane. 3DHeat i wszystkie jego narzędzia są darmowe i open source na [licencji MIT](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Ciepło dziesięciu meczów czołgów nad Demo Valley](../assets/img/pl/heat-hero.webp)
 
@@ -44,6 +44,8 @@ Karty znajdują się na górze paska bocznego, pod nazwą, jednostkami i menu j�
 | **Pojazdy** | Gdzie każda jednostka została trafiona, przez kogo i czym. |
 
 ## Instalacja i uruchomienie {#install-and-run}
+
+3DHeat jest darmowy w użyciu, zmianie i udostępnianiu (licencja MIT), tak samo jak każde narzędzie wymienione w [Powiązane repozytoria](#related-repositories).
 
 ### Windows, łatwą drogą {#windows-the-easy-way}
 

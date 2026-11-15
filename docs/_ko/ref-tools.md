@@ -11,9 +11,9 @@ translated: true
 
 # 명령줄 도구
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+뷰어의 `tools/` 폴더에 있는 명령줄 도구입니다(Node.js, 저장소 루트에서 실행). 뷰어를 사용하는 데는 필요 없습니다. 데이터를 묶고, 요약하고, 변환하며, 뷰어를 관리하는 사람을 돕습니다. 각 항목에는 도구 자체 설명의 첫 단락과 사용법 줄이 있습니다. 도움말이 있는 도구는 인수 없이 실행하면 전체 도움말이 나옵니다. [관련 저장소](index.md#related-repositories)의 데이터 도구는 자체 명령을 문서화합니다.
 
-## For your data
+## 내 데이터용 {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## 개발자와 문서용 {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+뷰어를 점검하고, 데모 데이터와 스크린샷을 만들고, 참조 페이지를 작성합니다.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## 라이브러리 {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs`은 명령줄이 없는 라이브러리입니다. 위의 도구들이 이를 가져와 [.3dheat 파일](container.md)을 읽고 씁니다.

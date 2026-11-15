@@ -118,7 +118,7 @@ Yfir alla leiki sem eru hlaðnir:
 - **Sprengja**: sett eftir stað, og hve oft T-liðið vann þær lotur á eftir („12 settar á A (T vann 67%)“), sett þar sem samantektin þekkir ekki staðinn sjálfstætt („2 settar á óþekktum stað (T vann 50%)“), eða „aldrei sett“; hvernig lotur enduðu, algengast fyrst;
 - „Liðið sem tók upphafsfellinguna vann N% þessara lota.“ (sjálfsvíg er ekki upphafsfelling; jafntefli í lotu breytir engri opnun);
 - **Upphafseinvígi, hvar**: tíu staðirnir með flestar upphafsfellingar (eftir því hvar fórnarlambið var; staðaheiti leiksins gerð læsileg, „TopofMid“ → „Top of Mid“), einvígin og hlutdeildin sem T-liðið vann;
-- **Spilarar**: fimmtán bestu eftir fellingum mínus dauðsföllum, samanlagt yfir alla leiki þeirra (paraðir eftir Steam-auðkenni): leikir, K-D, ADR og KAST vegið eftir leiknum lotum, HS% vegið eftir fellingum, upphafseinvígi. **Smelltu á spilara** til að sjá fellingar hans og dauðsföll yfir alla leiki í hitakortinu.
+- **Leikmenn**: fimmtán bestu eftir fellingum mínus dauðsföllum, samanlagt yfir alla leiki þeirra (paraðir eftir Steam-auðkenni): leikir, K-D, ADR og KAST vegið eftir leiknum lotum, HS% vegið eftir fellingum, upphafseinvígi. **Smelltu á spilara** til að sjá fellingar hans og dauðsföll yfir alla leiki í hitakortinu.
 
 Hnapparnir Sýna-á-hitakortinu fyrir alla hlaðna leiki eru undir þessu.
 

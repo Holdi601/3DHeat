@@ -22,7 +22,7 @@ Leht loetleb iga Tacview 1.9 funktsiooni (selle käsiraamat, kasutajaliidese tek
 - **pole veel**: kehtib, aga pole ehitatud.
 - **ei kehti**: ei kehti siin, põhjusega.
 
-Funktsioonide leidmine: vahekaart **Matš**, **Kujukordus** (või **Kujude ülekate** vahekaardil Heatmap) ja külgriba jaotised **Kordus**, **Üksused**, **Sündmused**, **Järjehoidjad**, **Taktikaline kuva**, **Statistika**, **Ajanihe ja kärpimine**, **Kaart ja asukoht**, **Heli ja video** ning **Sildid**. Vt [matši kordus](match-replay.md).
+Funktsioonide leidmine: vahekaart **Matš**, **Kujukordus** (või **Kujude ülekate** vahekaardil Soojuskaart) ja külgriba jaotised **Kordus**, **Üksused**, **Sündmused**, **Järjehoidjad**, **Taktikaline kuva**, **Statistika**, **Ajanihe ja kärpimine**, **Kaart ja asukoht**, **Heli ja video** ning **Sildid**. Vt [matši kordus](match-replay.md).
 
 ## Kaamerad {#cameras}
 

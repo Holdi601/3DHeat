@@ -11,13 +11,13 @@ translated: true
 
 # Böngészőbillentyűk
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Hogy a betöltött munkamenet ne vesszen el egy véletlen billentyűlenyomás miatt, a megjelenítő megtartja ezeket a billentyűket a böngészőtől.
 
-| Keys | When | Effect |
+| Billentyűk | Mikor | Hatás |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (`Cmd`-vel is) | szövegmezőn kívül | a böngésző művelete (nyomtatás, mentés, megnyitás, újratöltés, új ablak, bezárás ...) nem történik meg |
+| `F1` `F3` `F5` `F6` `F7` | mindig | a böngésző művelete (súgó, keresés, újratöltés, címsor, kurzoros böngészés) nem történik meg |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | teljes képernyőn | a megjelenítő zárolja őket (Keyboard Lock API), így a böngésző nem reagál rájuk |
+| a lap bezárása vagy újratöltése | adat vagy pálya betöltve | a böngésző előbb rákérdez |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+A megjelenítő összes saját billentyűje: [Billentyűzet és egér](keyboard-reference.md).

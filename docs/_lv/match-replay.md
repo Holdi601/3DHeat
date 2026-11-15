@@ -21,8 +21,8 @@ Atkārtojums ir mača filma, kurā katrs spēlētājs ir zīmēts kā tas, ko vi
 ## Sāc atkārtojumu {#start-a-replay}
 
 1. Ielādē ierakstu ar **Avots → Faili…** vai nometot to avota panelī (jebkura tabula ar **personas** un **laika** kolonnu, Tacview fails, konvertēts atkārtojums, [`.3dheat`](container.md) mačs). Skat. [Datu ievade](getting-data-in.md).
-2. Atver cilni **Mačs** un izvēlies **Figūru atkārtojums**, vai izvēlies **Figūru pārklājums** siltumkartes cilnes režīmu joslā.
-3. Sadaļā **Mači atkārtojumā** izvēlies vienu maču, visus uzreiz vai vairākus.
+2. Atver cilni **Mačs** un izvēlies **Figūru atskaņojums**, vai izvēlies **Figūru pārklājums** siltumkartes cilnes režīmu joslā.
+3. Sadaļā **Mači atskaņojumā** izvēlies vienu maču, visus uzreiz vai vairākus.
 4. Nospied **Atskaņot** laika skalā (vai `K`). Velc laika skalu, lai pārlēktu.
 
 Figūras aizstāj kastes katrai vienībai, kuras vārds vai tips ir zināms (skat. [Figūras](figures.md)). Dati bez vārda vai tipa kolonnas tiek zīmēti kā karavīri.
@@ -36,16 +36,16 @@ Figūras aizstāj kastes katrai vienībai, kuras vārds vai tips ir zināms (ska
 | Iestatījums (sadaļa **Figūras**) | Noklusējums | Ko tas dara |
 |---|---|---|
 | **Figūras kastīšu vietā** | ieslēgts | Izslēgts zīmē vienkāršas kastes. |
-| **Figūras izmērs** (reizes patiesais izmērs) | 1 | 1 ir patiesais izmērs; 0,25 līdz 20 reizes (logaritmiska skala). Lielāks palīdz no tāluma. |
+| **Figūru izmērs** (reizes patiesais izmērs) | 1 | 1 ir patiesais izmērs; 0,25 līdz 20 reizes (logaritmiska skala). Lielāks palīdz no tāluma. |
 | **Mazākā figūra ekrānā** | 36 px | Tālās figūras aug, lai paliktu tik garas, 0–200 px; 0 saglabā patieso izmēru. |
-| **Attālumā**: Figūra, Bulta, Simbols | Figūra | Ko kļūst vienība, kas ir tāla. |
-| **Simboli** | NATO (APP-6) | NATO (APP-6), Krievijas taktiskās zīmes, **Spēles kartes** ikonas vai **Tikai forma (krāsu aklajiem drošs)**. |
-| **Simbola izmērs**, **Mana puse**, **Pretinieks / Neitrāls**, **Virziena atzīmes** | 28 px (12 līdz 64), automātiski, pretinieks, ieslēgts | Kā simboli izskatās un kura puse ir draudzīga. |
-| **Nolaižamās līnijas** | ieslēgts | Līnija no katras vienības taisni lejup līdz zemei, lai augstumi lasās 3D. |
-| **Nolaižamās līnijas un etiķetes uz ieročiem** | izslēgts | Līnijas līdz zemei un etiķetes uz raķetēm un bumbām. |
-| **Uguns uz vienībām** | ieslēgts | Liesmas no brīža, kad vienība aizdegas, līdz tā tiek nodzēsta. |
-| **Trāpījumi uz vienībām** | ieslēgts | Atzīmes, kur trāpīja šāvieni (zemāk). **Trāpījumi paliek**: 1 līdz 300 sekundes vai **Visa dzīve**. **Peldošās atzīmes**: atzīmes, kas zīmētas virs virsmas. |
-| **Mērķēšanas un torņu līnijas** | izslēgts | Punktētas: kur spēlētājs skatās; cietas: kur vērsts ierocis. |
+| **No attāluma**: Figūra, Bulta, Simbols | Figūra | Ko kļūst vienība, kas ir tāla. |
+| **Simboli** | NATO (APP-6) | NATO (APP-6), Krievijas taktiskās zīmes, **Spēles karte** ikonas vai **Tikai formas (krāsu akliem)**. |
+| **Simbola izmērs**, **Mana puse**, **Pretinieks / Neitrāls**, **Kursa svītras** | 28 px (12 līdz 64), automātiski, pretinieks, ieslēgts | Kā simboli izskatās un kura puse ir draudzīga. |
+| **Vertikālās līnijas** | ieslēgts | Līnija no katras vienības taisni lejup līdz zemei, lai augstumi lasās 3D. |
+| **Vertikāles un nosaukumi ieročiem** | izslēgts | Līnijas līdz zemei un etiķetes uz raķetēm un bumbām. |
+| **Ugunsgrēki vienībās** | ieslēgts | Liesmas no brīža, kad vienība aizdegas, līdz tā tiek nodzēsta. |
+| **Trāpījumi vienībām** | ieslēgts | Atzīmes, kur trāpīja šāvieni (zemāk). **Trāpījumi paliek**: 1 līdz 300 sekundes vai **Visa dzīve**. **Peldošas atzīmes**: atzīmes, kas zīmētas virs virsmas. |
+| **Skata un torņa līnijas** | izslēgts | Punktētas: kur spēlētājs skatās; cietas: kur vērsts ierocis. |
 | **Ēkas** | cietas | Cietas vai caurspīdīgas ēkas, kad līmenis tās krāso. |
 
 ### Simboli attālumā {#symbols-at-a-distance}
@@ -67,13 +67,13 @@ Ar ieslēgtu **Ieroči, šāvieni un trāpījumi** (sadaļa Komandu skats): raķ
 
 ## Kameras {#cameras}
 
-Noklikšķini uz vienības vai tās etiķetes, lai to **sekotu**. Sadaļā **Atkārtojums** piedāvā **Dzīšana**, **Orbīta**, **Kabīne** (ar galvas displeju, `H`), **Fiksēta**, **Padlock**, **Mērķis** un **Satelīts**. `V` pārslēdz tos, **Kameras attālums** nosaka, cik tālu. Esc aptur.
+Noklikšķini uz vienības vai tās etiķetes, lai to **sekotu**. Sadaļā **Atskaņojums** piedāvā **Vajāšana**, **Orbīta**, **Kabīne** (ar galvas displeju, `H`), **Fiksēta**, **Padlock**, **Mērķis** un **Pavadonis**. `V` pārslēdz tos, **Kameras attālums** nosaka, cik tālu. Esc aptur.
 
-- **Divu vienību skats**: izvēlies **Mērķi** (vai Ctrl/Alt-klikšķis uz vienības), lai to skatītu no sekotās; **Apmainīt** tās savstarpēji apmaina.
+- **Divu vienību skats**: izvēlies **Mērķi** (vai Ctrl/Alt-klikšķis uz vienības), lai to skatītu no sekotās; **Mainīt vietām** tās savstarpēji apmaina.
 - **Mērīšana**: Shift-klikšķis uz divām vienībām, lai redzētu virzienu, attālumu un augstuma starpību starp tām.
 - **2D karte** (`M`): stūris vai pilns skats, ar astēm un nosaukumiem.
 - **Grāmatzīmes** (`B`): saglabā brīdi un kameru; ieraksta paša nogalinājumi, nāves un atzīmes arī ir uzskaitītas.
-- **Notikumi**: katrs notikums laika secībā; klikšķis aizlec tur. `Page Up` / `Page Down` lec starp notikumiem; **Pauzēt pie notikuma** aptur pie katra.
+- **Notikumi**: katrs notikums laika secībā; klikšķis aizlec tur. `Page Up` / `Page Down` lec starp notikumiem; **Pauze notikumā** aptur pie katra.
 
 ## Taktiskais attēlojums {#tactical-display}
 
@@ -83,7 +83,7 @@ Sadaļa **Taktiskais attēlojums** zīmē, nevienai vienībai, izvēlētās, vis
 
 ### Attēlojuma stils {#display-style}
 
-`T` (vai slēdzis **Rādīt kā taktisko attēlojumu**) pārslēdz izskatu uz radara ekrāna stilu: spīdums, kontūras, horizontāļu līnijas, mērījumu režģis, skenēšanas līnijas, diapazona gredzeni, augstuma kāpnes, paneļi ar nogalinājumiem un notikumiem un **Režisors**, kas kameru pats pārvieto uz notikumiem.
+`T` (vai slēdzis **Rādīt kā taktisko displeju**) pārslēdz izskatu uz radara ekrāna stilu: spīdums, kontūras, horizontāļu līnijas, mērījumu režģis, skenēšanas līnijas, diapazona gredzeni, augstuma kāpnes, paneļi ar nogalinājumiem un notikumiem un **Režisors**, kas kameru pats pārvieto uz notikumiem.
 
 ![Tā pati gaisa cīņa parastajā izskatā](../assets/img/lv/replay-air.webp)
 
@@ -93,7 +93,7 @@ Kad mačs nāk ar saviem mērķiem, sadaļa **Mērķi** tos zīmē uz līmeņa: 
 
 ## Etiķetes un statistika {#labels-and-statistics}
 
-- **Etiķetes**: noteikumi katram veidam (**Izvēlētās**, **Lidaparāti**, **Sauszemes**, **Kuģi**, **Ieroči**, **AI**): rādīt vai nē, kuras vērtības un **Prioritāte**, kurš dabū vietu, kad etiķetes pārklājas. **Turēt etiķetes atsevišķi** pārvieto etiķeti blakus tās vienībai, kad tā aizsegtu citu, un to izlaiž, kad vietas nav. **Etiķetes izmērs** ir 60 līdz 250 %. **Atgriezties pie nosaukuma, transportlīdzekļa, augstuma un ātruma** atiestata noteikumus.
+- **Etiķetes**: noteikumi katram veidam (**Izvēlētās**, **Gaisa kuģi**, **Zeme**, **Kuģi**, **Ieroči**, **MI**): rādīt vai nē, kuras vērtības un **Prioritāte**, kurš dabū vietu, kad etiķetes pārklājas. **Turēt etiķetes atsevišķi** pārvieto etiķeti blakus tās vienībai, kad tā aizsegtu citu, un to izlaiž, kad vietas nav. **Etiķešu izmērs** ir 60 līdz 250 %. **Atpakaļ uz vārdu, transportlīdzekli, augstumu un ātrumu** atiestata noteikumus.
   - Sauszemes vienības sākas ar nosaukumu, transportlīdzekli un ātrumu.
   - Lidaparāti sākas ar nosaukumu, transportlīdzekli, augstumu un ātrumu.
   - Kuģi sākas ar nosaukumu, transportlīdzekli, ātrumu un virzienu.

@@ -63,7 +63,7 @@ GPU-filteret tar opptil 8 volumer med 64 konturpunkter til sammen; et «!» mark
 Området **Statistikk** følger filtrene, tidsvinduet og skjulte grupper. *Valgt* viser det valgte volumet, *Sammenlign alle* setter alle volumer side om side. Det viser:
 
 - **Rader inni (vist)** og **Rader inni (alle data)**, **Spillere**, **Lag**, **Kamper**, **Tid inne**, **Innganger / utganger**, **Toppvarme**, **Middelvarme**, **Volum / fotavtrykk** og et **Når**-histogram;
-- per kolonne: kategorier med **Lift** (andel inni delt på andel i alle viste data), og tall med område, median og 5.–95. persentil.
+- per kolonne: kategorier med **Løft** (andel inni delt på andel i alle viste data), og tall med område, median og 5.–95. persentil.
 
 **Statistikk som CSV / JSON** lagrer dem. **Eksporter dataene inni** skriver radene inni som CSV eller Parquet (*Bare radene som vises* er på som standard), ett volum eller alle, med en kolonne som sier hvilket volum som holder hver rad.
 

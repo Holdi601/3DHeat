@@ -17,7 +17,7 @@ Działa na podstawie małego podsumowania każdego meczu, więc tysiąc albo dzi
 ## Wypróbuj {#try-it}
 
 1. Otwórz **Analiza masowa** na pasku bocznym Heatmap.
-2. Naciśnij **Folder...** (albo **Pliki...**) i wybierz swoje mecze `.3dheat`.
+2. Naciśnij **Folder…** (albo **Pliki…**) i wybierz swoje mecze `.3dheat`.
 3. Poczekaj, aż panel odczyta podsumowania („Podsumowania... n z N”).
 4. Naciśnij **Otwórz analizę**. Otworzy się okno z zakładkami.
 5. Ustaw filtry (Gra, Mapa, Tryb, Z, Do), a potem przeczytaj zakładkę, na przykład Bilans.
@@ -50,7 +50,7 @@ Panel bierze dla każdego meczu pierwsze z dostępnych: linię indeksu folderu (
 
 ## Panel {#the-panel}
 
-Wybierz folder (albo pliki; **Dodaj folder...** dołącza kolejny). Okno ma filtry **Gra**, **Mapa**, **Tryb**, **Z** i **Do**, wybór **Podziel według**, **Najmniej żyć** i **Tylko gracze** oraz te zakładki. Każda liczba pochodzi z podsumowań. Kliknięcie wiersza, komórki albo wniosku wczytuje jego mecze do widoku jako nakładkę wielu meczów, z filtrami, które je pokazują (pojazd, klasa, broń, drużyna, gracz), i z kamerą na tym miejscu:
+Wybierz folder (albo pliki; **Dodaj folder…** dołącza kolejny). Okno ma filtry **Gra**, **Mapa**, **Tryb**, **Z** i **Do**, wybór **Podziel według**, **Najmniej żyć** i **Tylko gracze** oraz te zakładki. Każda liczba pochodzi z podsumowań. Kliknięcie wiersza, komórki albo wniosku wczytuje jego mecze do widoku jako nakładkę wielu meczów, z filtrami, które je pokazują (pojazd, klasa, broń, drużyna, gracz), i z kamerą na tym miejscu:
 
 | Zakładka | Co pokazuje |
 |---|---|

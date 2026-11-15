@@ -11,13 +11,13 @@ translated: true
 
 # Touches du navigateur
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Pour qu'une session chargée ne soit pas perdue à cause d'un raccourci malencontreux, le visualiseur garde ces touches pour lui au lieu de les laisser au navigateur.
 
-| Keys | When | Effect |
+| Touches | Quand | Effet |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (aussi avec `Cmd`) | hors des zones de texte | l'action du navigateur (imprimer, enregistrer, ouvrir, recharger, nouvelle fenêtre, fermer ...) ne se produit pas |
+| `F1` `F3` `F5` `F6` `F7` | toujours | l'action du navigateur (aide, rechercher, recharger, barre d'adresse, navigation au curseur) ne se produit pas |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | en plein écran | verrouillées pour le visualiseur (API Keyboard Lock), donc le navigateur n'y réagit pas |
+| fermer ou recharger l'onglet | avec des données ou un niveau chargé | le navigateur demande d'abord confirmation |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Toutes les touches propres au visualiseur : [Référence clavier et souris](keyboard-reference.md).

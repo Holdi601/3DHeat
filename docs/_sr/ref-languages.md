@@ -11,9 +11,9 @@ translated: true
 
 # Списак језика
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+Прегледач говори 40 језика. Почиње на језику прегледача ако га има, а језички мени на врху бочне траке га мења. Како се мења и како се праве преводи: [Језици](languages.md).
 
-| Code | Language |
+| Шифра | Језик |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

@@ -11,9 +11,9 @@ translated: true
 
 # Komut satırı araçları
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Görüntüleyicinin `tools/` klasöründeki komut satırı araçları (Node.js, depo kökünden çalıştırılır). Görüntüleyiciyi kullanmak için bunlara hiçbir zaman ihtiyaç yoktur: verilerinizi paketler, özetler ve dönüştürürler; görüntüleyiciyi sürdürenlere de yardımcı olurlar. Her girdide aracın kendi açıklamasının ilk paragrafı ve kullanım satırları vardır; varsa, tam yardım için bir aracı argümansız çalıştırın. [İlgili depoların](index.md#related-repositories) veri araçları kendi komutlarını belgeler.
 
-## For your data
+## Verileriniz için {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Geliştiriciler ve belgeler için {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Bunlar görüntüleyiciyi denetler, demo verileri ve ekran görüntülerini üretir ve başvuru sayfalarını yazar.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Kitaplıklar {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` komut satırı olmayan bir kitaplıktır: yukarıdaki araçlar, [.3dheat dosyasını](container.md) okumak ve yazmak için onu içe aktarır.

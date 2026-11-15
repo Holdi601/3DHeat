@@ -11,13 +11,13 @@ translated: true
 
 # Πλήκτρα περιηγητή
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Για να μη χαθεί μια φορτωμένη συνεδρία από μια τυχαία συντόμευση, η προβολή κρατά αυτά τα πλήκτρα μακριά από το πρόγραμμα περιήγησης.
 
-| Keys | When | Effect |
+| Πλήκτρα | Πότε | Αποτέλεσμα |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (και με `Cmd`) | εκτός πεδίων κειμένου | η ενέργεια του προγράμματος περιήγησης (εκτύπωση, αποθήκευση, άνοιγμα, ανανέωση, νέο παράθυρο, κλείσιμο ...) δεν εκτελείται |
+| `F1` `F3` `F5` `F6` `F7` | πάντα | η ενέργεια του προγράμματος περιήγησης (βοήθεια, εύρεση, ανανέωση, γραμμή διεύθυνσης, πλοήγηση με δρομέα) δεν εκτελείται |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | σε πλήρη οθόνη | κλειδώνονται για την προβολή (Keyboard Lock API), ώστε το πρόγραμμα περιήγησης να μην τα εκτελεί |
+| κλείσιμο ή ανανέωση της καρτέλας | με φορτωμένα δεδομένα ή επίπεδο | το πρόγραμμα περιήγησης ρωτά πρώτα |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Όλα τα πλήκτρα της ίδιας της προβολής: [Αναφορά πληκτρολογίου και ποντικιού](keyboard-reference.md).

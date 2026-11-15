@@ -15,7 +15,7 @@ outdated: false
 
 1. Atveriet **Avots** augšā, Siltumkartes sānjoslā.
 2. Ievelciet failus vai mapi ievilkšanas laukā vai nospiediet **Faili…** vai **Mape…**.
-3. Izlasiet izvēles rindu un **Atmiņas novērtējumu** (skatiet attēlu zemāk).
+3. Izlasiet izvēles rindu un **Atmiņas novērtējums** (skatiet attēlu zemāk).
 4. Nospiediet **Ielādēt**.
 
 ![Avota panelis pēc desmit mačus saturošas mapes ievilkšanas: 1 — izvēles rinda, 2 — atmiņas novērtējums "der", 3 — poga "Ielādēt 10 failus"](../assets/img/en/loading-files-source.webp)
@@ -28,7 +28,7 @@ Failus ielādē panelī **Avots** Siltumkartes cilnes sānjoslas augšdaļā. Vi
 
 | Vadība | Ko tā dara |
 |---|---|
-| **Ievelciet šeit failus vai mapi** (ievilkšanas lauks) | Ievelciet jebkuru failu un mapju kombināciju. Mapes tiek pārlūkotas rekursīvi. Noklikšķinot uz ievilkšanas lauka, atveras tāds pats izvēlnis kā **Faili…**. |
+| **Ievelc šeit failus vai mapi** (ievilkšanas lauks) | Ievelciet jebkuru failu un mapju kombināciju. Mapes tiek pārlūkotas rekursīvi. Noklikšķinot uz ievilkšanas lauka, atveras tāds pats izvēlnis kā **Faili…**. |
 | **Viens fails…** | Failu izvēlnis vienam failam. |
 | **Faili…** | Failu izvēlnis, kas pieņem vairākus failus. |
 | **Mape…** | Mapes izvēlnis (pārlūkprogrammas `webkitdirectory` izvēlnis); tiek piedāvāts katrs fails mapes kokā. |

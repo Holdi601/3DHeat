@@ -45,7 +45,7 @@ Katrs fails saka arī, kā spēle apstrādā nogāzes. CS2, Valorant un Squad ie
 
 **DCS / War Thunder / IL-2** (km/h). Katram lidaparātam un helikopteram palitrā ir savs profils. Kreiserēšanas un maksimālie ātrumi ir reālo lidaparātu **publicētie dati**, ko simulatori modelē tuvu. Maksimums ir jūras līmenī reaktīviem un nominālā augstumā propelleru lidaparātiem, un katra profila piezīme saka, kura. Lēnie un kaujas ātrumi ir tipiskas vērtības. Sauszemes transportlīdzekļi izmanto reālo transportlīdzekļu publicētos ceļa ātrumus, noapaļotus (**aptuveni**). Kuģi izmanto savas klases publicētos maksimālos ātrumus.
 
-**Citi** (m/s). **Aptuveni** reālās pasaules noklusējumi: ložņāšana 0,5, pietupšanās 1,5, iešana 1,4, skrējiens 3,5, sprints 6.
+**Cits** (m/s). **Aptuveni** reālās pasaules noklusējumi: ložņāšana 0,5, pietupšanās 1,5, iešana 1,4, skrējiens 3,5, sprints 6.
 
 ## Avoti {#sources}
 

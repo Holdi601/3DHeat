@@ -11,9 +11,9 @@ translated: true
 
 # Πίνακες τιμών
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+Οι πίνακες τιμών της [Στάθμισης τιμών](value-weighting.md). Το παιχνίδι αναγνωρίζεται από τα ονόματα στα δεδομένα· οι δικές τις στήλες τιμών ενός μετατροπέα, στο νόμισμα του παιχνιδιού, υπερισχύουν αυτών.
 
-| Table | Currency | Defined in |
+| Πίνακας | Νόμισμα | Ορίζεται στο |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

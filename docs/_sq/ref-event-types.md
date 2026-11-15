@@ -11,11 +11,11 @@ translated: true
 
 # Llojet dhe klasat e ngjarjeve
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Shfaqja shton një kolonë **Lloji i ngjarjes** te çdo grup të dhënash që ka kolonë ngjarjesh (`event`, `events`, `event_type` ose `event_name`). Fjalët e secilës lojë përshkruhen në një nga këto lloje (pa dallim shkronjash të mëdha e të vogla); një fjalë që nuk është në listë llogaritet si *Tjetër*.
 
-| Kind | Shown as | Words in the data |
+| Lloji | Shfaqet si | Fjalët në të dhënat |
 |---|---|---|
-| `position` | Pozicioni | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Pozicioni | `(bosh)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Të shtënë | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Lëshim (raketë, predhë, bombë) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Goditje | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Mesazh | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Tjetër | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Klasat e mjeteve {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Kolonat **Klasa e mjetit** dhe **Klasa e objektivit** i përdorin këto klasa, të llogaritura nga emrat e mjeteve (përmes [katalogut të figurave](figures.md)) dhe nga kolonat e tipit.
 
-| Class | Shown as |
+| Klasa | Shfaqet si |
 |---|---|
 | `fighter` | Luftarak |
 | `attack` | Avion sulmues |

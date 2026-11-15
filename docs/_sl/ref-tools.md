@@ -11,9 +11,9 @@ translated: true
 
 # Orodja ukazne vrstice
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Orodja ukazne vrstice v mapi `tools/` prikazovalnika (Node.js, zagnana iz korena repozitorija). Prikazovalnika zanje nikoli ne potrebujete: pakirajo, povzemajo in pretvarjajo vaše podatke ter pomagajo tistemu, ki prikazovalnik vzdržuje. Vsak vnos vsebuje prvi odstavek opisa orodja in njegove vrstice za uporabo; orodje brez argumentov pokaže celotno pomoč, kjer jo ima. Podatkovna orodja [sorodnih repozitorijev](index.md#related-repositories) dokumentirajo svoje ukaze sama.
 
-## For your data
+## Za vaše podatke {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Za razvijalce in dokumentacijo {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Ta orodja preverjajo prikazovalnik, izdelujejo demo podatke in posnetke zaslona ter pišejo referenčne strani.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Knjižnice {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` je knjižnica brez ukazne vrstice; zgornja orodja jo uvažajo, da berejo in pišejo [datoteko .3dheat](container.md).

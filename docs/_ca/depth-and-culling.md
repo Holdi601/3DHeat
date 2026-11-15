@@ -11,13 +11,13 @@ outdated: false
 
 # Profunditat i retall
 
-La profunditat fa que els turons i els murs amaguin la calor que hi ha darrere, com un mur de veritat amaga una persona. El retall per distància només deixa la calor entre una distància propera i una de llunyana de la càmera.
+La profunditat fa que els turons i els murs amaguin la calor que hi ha darrere, com un mur de veritat amaga una persona. El descart per distància només deixa la calor entre una distància propera i una de llunyana de la càmera.
 
 ![Una càmera baixa darrere d'un turó, amb Amaga darrere del terreny desactivat (esquerra) i activat (dreta)](../assets/img/en/depth-and-culling-terrain.webp)
 
-![Retall per distància amb Llunyà a 400 m i Talla també el nivell activat: una franja del mapa al voltant de la càmera](../assets/img/en/depth-and-culling-far.webp)
+![Descart per distància amb Llunyà a 400 m i Talla també el nivell activat: una franja del mapa al voltant de la càmera](../assets/img/en/depth-and-culling-far.webp)
 
-Sense profunditat, un mapa de calor sobre un [nivell](levels.md) en 3D és una superposició plana: tot el que contenen les dades brilla a través de cada mur amb força total, les pistes de profunditat que dona el nivell es cancel·len, i un punt calent dins d'un edifici es veu igual que un de sobre la seva teulada. La secció **Profunditat** fa que el nivell amagui el que hi ha darrere; el **Retall per distància** restringeix la calor a una capa o una llosa al voltant de la càmera; el [Tall](slice.md) talla una llosa del món. Els tres s'apliquen als modes de calor i canvien quines files hi contribueixen, de manera que canviar-los reinicia l'acumulació.
+Sense profunditat, un mapa de calor sobre un [nivell](levels.md) en 3D és una superposició plana: tot el que contenen les dades brilla a través de cada mur amb força total, les pistes de profunditat que dona el nivell es cancel·len, i un punt calent dins d'un edifici es veu igual que un de sobre la seva teulada. La secció **Profunditat** fa que el nivell amagui el que hi ha darrere; el **Descart per distància** restringeix la calor a una capa o una llosa al voltant de la càmera; el [Tall](slice.md) talla una llosa del món. Els tres s'apliquen als modes de calor i canvien quines files hi contribueixen, de manera que canviar-los reinicia l'acumulació.
 
 ## Profunditat {#depth}
 
@@ -37,9 +37,9 @@ Cada mur o terra entre un punt i la càmera l'enfosqueix més: un mur deixa uns 
 
 Mira també [Aspecte del nivell](level-appearance.md).
 
-## Retall per distància {#distance-culling}
+## Descart per distància {#distance-culling}
 
-El **Retall per distància** (tancat per defecte) restringeix la calor a les files entre un límit proper i un de llunyà des de la càmera. Posa un límit llunyà per llegir la densitat dins d'un edifici sense que la part llunyana del mapa se sumi a sobre; posa un límit proper per volar *a través* d'un punt calent en lloc de cap a dins.
+El **Descart per distància** (tancat per defecte) restringeix la calor a les files entre un límit proper i un de llunyà des de la càmera. Posa un límit llunyà per llegir la densitat dins d'un edifici sense que la part llunyana del mapa se sumi a sobre; posa un límit proper per volar *a través* d'un punt calent en lloc de cap a dins.
 
 | Control | Per defecte | Rang (roda) | Significat |
 |---|---|---|---|
@@ -88,6 +88,6 @@ Com ([`engine.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/engin
 
 Les estructures es dibuixen translúcides, però es dibuixen dins la profunditat que llegeix l'oclusió; un nivell les estructures del qual no arribessin a la textura de profunditat només s'ocluiria contra el terreny.
 
-### Retall per distància {#distance-culling}
+### Descart per distància {#distance-culling}
 
 Els dos límits s'avaluen al shader de vèrtexs, de manera que una fila retallada costa un vèrtex i cap fragment.

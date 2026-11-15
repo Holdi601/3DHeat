@@ -11,13 +11,13 @@ translated: true
 
 # Pārlūka taustiņi
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Lai ielādēta sesija netiktu zaudēta nejaušā īsceļa dēļ, skatītājs šos taustiņus notur pārlūkam nepieejamus.
 
-| Keys | When | Effect |
+| Taustiņi | Kad | Efekts |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (arī ar `Cmd`) | ārpus teksta lodziņiem | pārlūka darbība (drukāt, saglabāt, atvērt, pārlādēt, jauns logs, aizvērt ...) nenotiek |
+| `F1` `F3` `F5` `F6` `F7` | vienmēr | pārlūka darbība (palīdzība, meklēt, pārlādēt, adreses josla, kursora pārvietošana ar bultiņām) nenotiek |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | pilnekrāna režīmā | skatītājam bloķēti (Keyboard Lock API), tāpēc pārlūks uz tiem nereaģē |
+| cilnes aizvēršana vai pārlādēšana | ar ielādētiem datiem vai līmeni | pārlūks vispirms jautā |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Visi paša skatītāja taustiņi: [Tastatūras un peles uzziņa](keyboard-reference.md).

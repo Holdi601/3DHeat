@@ -11,9 +11,9 @@ translated: true
 
 # Tablaí luacha
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+Na tablaí praghsanna in [Meáchan luacha](value-weighting.md). Aithnítear an cluiche ó ainmneacha sna sonraí; tosaíonn colúin luacha tiontaire féin in airgeadra an chluiche os cionn na dtablaí seo.
 
-| Table | Currency | Defined in |
+| Tábla | Airgeadra | Sainmhínithe i |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

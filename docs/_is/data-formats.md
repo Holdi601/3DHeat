@@ -88,6 +88,7 @@ Staðsetningar-, tíma- eða útlitsdálkur sem geymir eitthvað annað en tölu
 | Lota | hvað sem er; orðabókarkóðað | nei | 32 bita auðkenni | Merki skráð fyrir allt að 100.000 lotur. |
 | Hópur | hvað sem er; orðabókarkóðað | nei | 16 bita auðkenni | Allt að 4.096 hópar, annars er hópaskiptingin felld niður. |
 | Snúningur, halli | tala, gráður eða radíanar | nei | 32 bita brotatala í radíönum | |
+| Stefna X, Y, Z | tala | nei (allar þrjár saman) | breytt í snúning og halla | |
 | Síudálkur, *bil* | tala | nei | 32 bita brotatala | Allt að 4 síur virkar í einu. |
 | Síudálkur, *flokkur* | hvað sem er; orðabókarkóðað | nei | 32 bita auðkenni | Allt að 4.096 gildi, annars er dálkurinn ekki geymdur. |
 

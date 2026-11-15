@@ -63,7 +63,7 @@ GPU filtrs aptver līdz 8 tilpumiem ar 64 kontūras punktiem kopā; "!" atzīmē
 Apgabals **Statistika** seko filtriem, laika logam un paslēptajām grupām. *Atlasīts* rāda atlasīto tilpumu, *Salīdzināt visas* novieto visus tilpumus blakus. Tas rāda:
 
 - **Rindas iekšā (rādītās)** un **Rindas iekšā (visi dati)**, **Spēlētāji**, **Komandas**, **Spēles**, **Laiks iekšā**, **Ieejas / izejas**, **Siltuma maksimums**, **Vidējais siltums**, **Tilpums / pamatne** un **Kad** histogrammu;
-- katrai kolonnai: kategorijas ar **Lift** (daļa iekšā, dalīta ar daļu visos rādītajos datos), un skaitļi ar diapazonu, mediānu un 5.-95. procentili.
+- katrai kolonnai: kategorijas ar **Pieaugums** (daļa iekšā, dalīta ar daļu visos rādītajos datos), un skaitļi ar diapazonu, mediānu un 5.-95. procentili.
 
 **Statistika kā CSV / JSON** to saglabā. **Eksportēt datus iekšā** raksta rindas iekšā kā CSV vai Parquet (*Tikai rādītās rindas* pēc noklusējuma ieslēgts), vienu tilpumu vai visus, ar kolonnu, kas norāda, kuram tilpumam pieder katra rinda.
 

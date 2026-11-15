@@ -11,9 +11,9 @@ translated: true
 
 # Lijst met talen
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+De viewer spreekt 40 talen. Hij start in de taal van de browser als die beschikbaar is, en het taalmenu bovenaan de zijbalk wijzigt die. Hoe je dat verandert en hoe vertalingen worden gemaakt: [Talen](languages.md).
 
-| Code | Language |
+| Code | Taal |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |

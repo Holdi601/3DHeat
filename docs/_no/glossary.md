@@ -16,7 +16,7 @@ Korte betydninger av ordene dette nettstedet bruker, med enkle ord. Hvert punkt 
 
 **Rad.** Én linje i dataene dine: én ting som skjedde på ett sted og tidspunkt, for eksempel «spiller 7 var her ved sekund 12». Visningen tegner hver rad. [Dataformater](data-formats.md)
 
-**Kolonne.** Én type verdi i radene, som x, y, z, tid eller lag. Visningen gjetter hvilken kolonne som er hvilken, og du kan endre gjetningen. [Kolonnekartlegging](column-mapping.md)
+**Kolonne.** Én type verdi i radene, som x, y, z, tid eller lag. Visningen gjetter hvilken kolonne som er hvilken, og du kan endre gjetningen. [Kolonnetilordning](column-mapping.md)
 
 **CSV.** En enkel teksttabell: én rad per linje, verdiene skilt med komma. Nesten alle programmer kan skrive en. [Laste inn filer](loading-files.md)
 
@@ -86,6 +86,6 @@ Korte betydninger av ordene dette nettstedet bruker, med enkle ord. Hvert punkt 
 
 **Trade.** Et drap som betaler tilbake et drap: du blir skutt, og en lagkamerat skyter drapsmannen din innen 5 sekunder. [Kampanalyse](match-analysis.md)
 
-**KAST.** Andelen runder der en spiller fikk et drap, en assist, overlevde eller ble traded. Et høyere tall betyr at spilleren hjalp til i flere runder. [Kampanalyse](match-analysis.md)
+**KAST.** Andelen runder der en spiller fikk et drap, en assist, overlevde eller ble tradet. Et høyere tall betyr at spilleren hjalp til i flere runder. [Kampanalyse](match-analysis.md)
 
 **ADR.** Gjennomsnittlig skade per runde: hvor mye helse en spiller tok fra fiender hver runde. [Kampanalyse](match-analysis.md)

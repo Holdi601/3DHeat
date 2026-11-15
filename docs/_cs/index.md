@@ -3,9 +3,9 @@ title: "Domů"
 nav_order: 1
 lang: "cs"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -44,6 +44,8 @@ Karty jsou nahoře v postranním panelu, pod názvem, jednotkami a nabídkou jaz
 | **Vozidla** | Kde byla každá jednotka zasažena, kým a čím. |
 
 ## Instalace a spuštění {#install-and-run}
+
+3DHeat můžete volně používat, upravovat a sdílet (licence MIT), stejně jako každý nástroj uvedený v [Související repozitáře](#related-repositories).
 
 ### Windows, snadno {#windows-the-easy-way}
 

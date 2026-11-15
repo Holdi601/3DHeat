@@ -24,7 +24,7 @@ Pozadie sveta položí skutočný terén pod záznam letu: kopce, cesty, rieky, 
 
 Prvé zostavenie stiahne niekoľko desiatok megabajtov. Prehliadač ich ponechá, takže druhé zostavenie tej istej oblasti nič nesťahuje. **Zabudnúť dlaždice máp** ich zmaže. Tlačidlo **Skutočný svet ako pozadie** sa zobrazí len vtedy, keď načítané dáta nesú geografický odkaz (nižšie).
 
-Všetko sa zostavuje na pozadí v pracovnom vlákne ([`src/world`](https://github.com/Holdi601/3DHeat/tree/main/src/world)). Výsledok nahradí aktuálny level a správa sa ako ktorýkoľvek [3D level](model-levels.md): skrýva teplo za sebou, dá sa rozrezať [rezom](slice.md), má [ovládanie vzhľadu](level-appearance.md) a dá sa uložiť do [knižnice](level-library.md).
+Všetko sa zostavuje na pozadí v pracovnom vlákne ([`src/world`](https://github.com/Holdi601/3DHeat/tree/main/src/world)). Výsledok nahradí aktuálny level a správa sa ako ktorýkoľvek [3D level](model-levels.md): skrýva teplo za sebou, dá sa rozrezať rezom, má [ovládanie vzhľadu](level-appearance.md) a dá sa uložiť do [knižnice](level-library.md).
 
 ## Kde sú dáta: zemepisný odkaz {#where-the-data-is-the-geographic-reference}
 

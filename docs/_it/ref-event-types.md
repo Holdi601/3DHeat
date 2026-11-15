@@ -11,11 +11,11 @@ translated: true
 
 # Tipi e classi di evento
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Il visualizzatore aggiunge una colonna **Tipo di evento** a ogni insieme di dati che ha una colonna di evento (`event`, `events`, `event_type` o `event_name`). Le parole proprie di ogni gioco sono associate a uno di questi tipi (maiuscole e minuscole indifferenti); una parola non elencata conta come *Altro*.
 
-| Kind | Shown as | Words in the data |
+| Tipo | Mostrato come | Parole nei dati |
 |---|---|---|
-| `position` | Posizione | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Posizione | `(vuoto)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Colpo sparato | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Lancio (missile, razzo, bomba) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Colpo a segno | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Messaggio | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Altro | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Classi di veicolo {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Le colonne **Classe di veicolo** e **Classe del bersaglio** usano queste classi, ricavate dai nomi dei veicoli (tramite il [catalogo delle figure](figures.md)) e dalle colonne di tipo.
 
-| Class | Shown as |
+| Classe | Mostrato come |
 |---|---|
 | `fighter` | Caccia |
 | `attack` | Aereo d'attacco |

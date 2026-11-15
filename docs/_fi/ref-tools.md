@@ -11,9 +11,9 @@ translated: true
 
 # Komentorivityökalut
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Katsojan kansiossa `tools/` olevat komentorivityökalut (Node.js, ajetaan repositorion juuresta). Katsojan käyttöön niitä ei tarvita: ne pakkaavat, tiivistävät ja muuntavat aineistojasi ja auttavat katsojan ylläpitäjää. Jokaisessa kohdassa on työkalun oman kuvauksen ensimmäinen kappale ja sen käyttörivit; aja työkalu ilman argumentteja nähdäksesi täydellisen ohjeen, jos sellainen on. [Liittyvien repositorioiden](index.md#related-repositories) aineistotyökalut dokumentoivat omat komentonsa.
 
-## For your data
+## Aineistoillesi {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Kehittäjille ja dokumentaatiolle {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Nämä tarkistavat katsojan, luovat demoaineiston ja kuvakaappaukset sekä kirjoittavat viitesivut.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Kirjastot {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` on kirjasto ilman komentoriviä: yllä olevat työkalut tuovat sen lukemaan ja kirjoittamaan [.3dheat-tiedoston](container.md).

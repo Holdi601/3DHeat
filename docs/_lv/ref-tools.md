@@ -11,9 +11,9 @@ translated: true
 
 # Komandrindas rīki
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Komandrindas rīki skatītāja mapē `tools/` (Node.js, palaiž no repozitorija saknes). Skatītāja lietošanai tie nav vajadzīgi: tie sapako, apkopo un pārveido jūsu datus un palīdz tam, kas uztur skatītāju. Katram ierakstam ir rīka paša apraksta pirmā rindkopa un tā lietošanas rindas; palaidiet rīku bez argumentiem, lai redzētu pilnu palīdzību, kur tāda ir. Datu rīki [saistītajos repozitorijos](index.md#related-repositories) dokumentē savas komandas.
 
-## For your data
+## Jūsu datiem {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Izstrādātājiem un dokumentācijai {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Šie pārbauda skatītāju, veido demonstrācijas datus un ekrānuzņēmumus un raksta uzziņas lapas.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Bibliotēkas {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` ir bibliotēka bez komandrindas: iepriekš minētie rīki to importē, lai lasītu un rakstītu [.3dheat failu](container.md).

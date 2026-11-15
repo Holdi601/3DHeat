@@ -3,16 +3,16 @@ title: "Főoldal"
 nav_order: 1
 lang: "hu"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 A 3DHeat megmutatja, hol történt valami egy játékban: hol mozogtak a játékosok, hol harcoltak és hol estek el. Ezt izzó színekként mutatja, amelyek között el lehet repülni, vagy apró 3D-s figuraként, amelyek visszajátsszák a meccset.
 
-Töltsön be pozíciókat – CSV, Parquet, Tacview-felvételek, átalakított visszajátszások, egyetlen fájl, mappa vagy több ezer meccs –, és nézze meg őket **hőtérképként, amelyben el lehet repülni**, **figurákként, amelyek visszajátsszák a meccset**, vonalakként a játékosok útvonalai mentén, vagy egy populáció egy másikkal szembeni összevetéseként. Magától megtalálja, ami kiemelkedik, és teljes egészében a böngészőjében fut: semmit nem tölt fel sehová.
+Töltsön be pozíciókat – CSV, Parquet, Tacview-felvételek, átalakított visszajátszások, egyetlen fájl, mappa vagy több ezer meccs –, és nézze meg őket **hőtérképként, amelyben el lehet repülni**, **figurákként, amelyek visszajátsszák a meccset**, vonalakként a játékosok útvonalai mentén, vagy egy populáció egy másikkal szembeni összevetéseként. Magától megtalálja, ami kiemelkedik, és teljes egészében a böngészőjében fut: semmit nem tölt fel sehová. A 3DHeat és minden eszköze ingyenes és nyílt forráskódú, az [MIT-licenc](https://github.com/Holdi601/3DHeat/blob/main/LICENSE) alatt.
 
 ![Tíz harckocsimeccs hője a Demo Valley fölött](../assets/img/hu/heat-hero.webp)
 
@@ -45,13 +45,15 @@ A fülek az oldalsáv tetején ülnek, a név, a mértékegységek és a nyelvme
 
 ## Telepítés és futtatás {#install-and-run}
 
+A 3DHeat ingyenesen használható, módosítható és megosztható (MIT-licenc), és ugyanígy a [Kapcsolódó tárolók](#related-repositories) alatt felsorolt minden eszköz is.
+
 ### Windows, a könnyű módon {#windows-the-easy-way}
 
-A tárológyökér három kötegelt fájlt tartalmaz.
+A tároló gyökérmappája három kötegelt fájlt tartalmaz.
 
 | Fájl | Mit csinál |
 |---|---|
-| `start.bat` | Elindítja a megjelenítőt. Akkor is megtalálja a Node.js-t, ha nincs a `PATH`-ban (ezeket a helyeket nézi: `%ProgramFiles%\nodejs`, `%ProgramFiles(x86)%\nodejs` és `%LOCALAPPDATA%\Programs\nodejs`), és ha a Node.js hiányzik, felajánlja az LTS-kiadás telepítését a `winget install -e --id OpenJS.NodeJS.LTS` paranccsal. Az első futtatáskor megkérdezi, mielőtt letöltené a függőségeket (nagyjából 300 MB a mappán belüli `node_modules\` mappába, rendszerszintű változtatás nélkül). Nem indul el, ha már valami figyel a 5273-as porton, és helyette a `restart.bat` használatát javasolja. Ha a mappa git-tár tiszta helyi változtatások nélkül, és van újabb verzió, megkérdezi, frissítsen-e (I/N; ha 60 másodpercig nincs válasz, megtartja ezt a verziót; lásd [Frissítések](updates.md)). Ezután elindítja a fejlesztői kiszolgálót a `http://127.0.0.1:5273/` címen, és megnyitja a böngészőt. **Az ablak maga a kiszolgáló**: hagyja nyitva; a bezárás vagy a Ctrl+C leállítja. |
+| `start.bat` | Elindítja a megjelenítőt. Akkor is megtalálja a Node.js-t, ha nincs a `PATH`-ban (ezeket a helyeket nézi: `%ProgramFiles%\nodejs`, `%ProgramFiles(x86)%\nodejs` és `%LOCALAPPDATA%\Programs\nodejs`), és ha a Node.js hiányzik, felajánlja az LTS-kiadás telepítését a `winget install -e --id OpenJS.NodeJS.LTS` paranccsal. Az első futtatáskor megkérdezi, mielőtt letöltené a függőségeket (nagyjából 300 MB a mappán belüli `node_modules\` mappába, rendszerszintű változtatás nélkül). Nem indul el, ha már valami figyel az 5273-as porton, és helyette a `restart.bat` használatát javasolja. Ha a mappa git-tár tiszta helyi változtatások nélkül, és van újabb verzió, megkérdezi, frissítsen-e (I/N; ha 60 másodpercig nincs válasz, megtartja ezt a verziót; lásd [Frissítések](updates.md)). Ezután elindítja a fejlesztői kiszolgálót a `http://127.0.0.1:5273/` címen, és megnyitja a böngészőt. **Az ablak maga a kiszolgáló**: hagyja nyitva; a bezárás vagy a Ctrl+C leállítja. |
 | `restart.bat` | Lefuttatja a `stop.bat quiet` parancsot, majd a `start.bat`-ot. Csak a `vite.config.ts` módosítása, új függőség hozzáadása után vagy akkor kell, ha a kiszolgáló elakadt – a forrásfájl-változtatások élőben betöltődnek. |
 | `stop.bat` | Leállítja azt, ami az 5273-as porton figyel, a folyamatazonosítót a `netstat` segítségével keresve, sosem a képfájl neve alapján, így a gépen futó többi Node.js-folyamat érintetlen marad. Nagyjából két másodpercet vár, hogy a socket felszabaduljon. A `quiet` argumentummal nem áll meg a végén. |
 
@@ -91,7 +93,7 @@ A megjelenítő statikus weboldal, de a fejlesztői kiszolgáló (lásd `vite.co
 - A `/__host/memory` jelenti a gép telepített és szabad RAM-ját, és ha olvasható, a videokártya memóriáját is (az `nvidia-smi`-ből, Windowson pedig a kijelzőadapter registry-bejegyzéséből). Ez teszi lehetővé, hogy a [memóriakeretek](memory-and-budgets.md) valós értékeket használjanak a böngésző korlátozott becslései helyett.
 - A `/__heat3d/update` ellenőrzi, hogy a másolat le van-e maradva, és tud rá gyors előrelépést végezni ([Frissítések](updates.md)).
 
-A kiszolgáló csak a `127.0.0.1` címen figyel, így egyik útvonal sem érhető el hálózatról. A `http://127.0.0.1:5273` címen nyissa meg: a `localhost` feloldódhat az IPv6 loopback-címre (`::1`), ahol nincs figyelő. Nem küld származáson átívelő izolációs fejléceket (COOP/COEP): a megjelenítő semmi nem használ `SharedArrayBuffer`-t, a munkafolyamatok pedig átadással adják át az adatot, ami ehhez nem kell.
+A kiszolgáló csak a `127.0.0.1` címen figyel, így egyik útvonal sem érhető el hálózatról. A `http://127.0.0.1:5273` címen nyissa meg: a `localhost` feloldódhat az IPv6 loopback-címre (`::1`), ahol nincs figyelő. Nem küld származáson átívelő izolációs fejléceket (COOP/COEP): a megjelenítőben semmi sem használ `SharedArrayBuffer`-t, a munkafolyamatok pedig átadással adják át az adatot, ami ehhez nem kell.
 
 ## Böngésző- és GPU-követelmények {#browser-and-gpu-requirements}
 

@@ -32,7 +32,7 @@ Valitud ringi puhul näitab jaotis seda, mida ringid parasjagu sisaldavad. Kui r
 
 **Loend**: valitud ringi vead, mida teine ring ei jaga ja mis maksavad vähemalt 0,02 s, kallimad ees, kõige rohkem 12. Igaühel on pealkiri, hind ja oma liigi silt. Klõpsa ühel, et lugeda selle vihjet, joonda autod 40 m enne seda ja vaata uuesti. **Ka see, mida mõlemad ringid seal tegid** lisab iga vea, ka ühiste (silt „mõlemad tegid seda“, hind „—“ alla 0,01 s). Kui vigu pole: „Rehvidega ei teinud {name} midagi, mis oleks maksnud aega ja mida {other} poleks samuti teinud.“
 
-**Vihje selle all** ütleb, millega tuvastamine nägi: „Iga ratta libisemise ja libisemisnurga ning auto triivinurga põhjal.“ (või „Iga ratta libisemise ja libisemisnurga põhjal.“, „Iga ratta libisemise ja auto triivinurga põhjal.“, „Iga ratta libisemise põhjal.“ või „Ainult auto triivinurga põhjal – neis ringides pole rehvide libisemist.“). Samuti ütleb see, mille jaoks piirid mõõdeti (asfalt, lahtine, segane: üle 80% lahtisi proove on lahtine, alla 20% asfalt), millise ringiga sündmused paigutati ja kuidas kulu arvestatakse.
+**Vihje selle all** ütleb, millega tuvastamine nägi: „Iga ratta libisemise ja libisemisnurga ning auto triivinurga põhjal.“ (või „Iga ratta libisemise ja libisemisnurga põhjal.“, „Iga ratta libisemise ja auto triivinurga põhjal.“, „Iga ratta libisemise põhjal.“ või „Ainult auto triivinurga põhjal – neis ringides pole rehvide libisemist.“). Samuti ütleb see, mille jaoks piirid mõõdeti (asfalt, lahtine pinnas, segapinnas: üle 80% lahtisi proove on lahtine pinnas, alla 20% asfalt), millise ringiga sündmused paigutati ja kuidas kulu arvestatakse.
 
 Kui **rehvide libisemist ega triivinurka pole** (FH Companion ring ilma oma telemeetriata), näidatakse tabelit ja loendit ikkagi. Vihje ütleb: „Neis ringides pole rehvide libisemist ega triivinurka, seega ei saa blokeerumisi ega buksimist eristada. Endiselt leitakse: alajuhitavus, rooli ja raja võrdlusest; löögid ja allakukkumised, kiiruse ja kiirenduse põhjal.“ Libisemised pöörlemiskiirusest nimetatakse samuti, kui ringidel see on. Alajuhitavust nimetatakse ainult siis, kui on roolisisend. Lause libisemise ja triivinurga piiride kohta jäetakse ära. Teine vihje ütleb: „Forza Horizoni puhul vali iga FH Companion ringi kõrvale ka `.tele.gz` fail: see on täielik telemeetria, iga ratta libisemine 64 korda sekundis.“
 
@@ -85,7 +85,7 @@ Midagi ei hinnata õhus ega **0,3 s** jooksul pärast maandumist. Vedrustus jõu
 
 ### Maapind {#the-ground}
 
-Iga proovi maapind on **lahtine**, kui ringi `loose` kanal nii ütleb (Forza pinna rumble, Trackmania rataste materjalid). Muidu on see ringi pind (vt [distsipliin ja pind](race-loading-laps.md#discipline-and-surface)): asfalt või muu lahtine. Kõverad, triivi harjumused ja piirid on asfaltil ja lahtisel pinnal eraldi.
+Iga proovi maapind on **lahtine pinnas**, kui ringi `loose` kanal nii ütleb (Forza pinna rumble, Trackmania rataste materjalid). Muidu on see ringi pind (vt [distsipliin ja pind](race-loading-laps.md#discipline-and-surface)): asfalt või muu lahtine pinnas. Kõverad, triivi harjumused ja piirid on asfaltil ja lahtisel pinnal eraldi.
 
 ### Libisemine kui mitu rehvi nimipiirist {#slip-as-a-multiple-of-the-tyres-nominal-peak}
 
@@ -145,7 +145,7 @@ Igal autol on ka:
 | **airborne** | `airborne` üle 0,5 | - |
 | **hit**, **crash** | vt [Löögid ja allakukkumised](#hits-and-crashes) | löögi võetud kiirus |
 
-Triivinurga põhjad pinna järgi: asfalt **7°**, segane **10°**, lahtine ja lumi **15°**, jää **10°**. Auto, mis libiseb rohkem iseenesestmõistetavalt (arkaadne rehvimudel, kruusaspetsialist), saab oma kõrgema läve oma ringidelt (1,5 × tema harjumus).
+Triivinurga põhjad pinna järgi: asfalt **7°**, segapinnas **10°**, lahtine pinnas ja lumi **15°**, jää **10°**. Auto, mis libiseb rohkem iseenesestmõistetavalt (arkaadne rehvimudel, kruusaspetsialist), saab oma kõrgema läve oma ringidelt (1,5 × tema harjumus).
 
 **Mis suunas auto pöörab** (pööre "vastu"): raja enda peasuuna muutus ±6 m jooksul (vähemalt 2 ruudustiku punkti). Kitsam kui 600 m raadius loeb pööramiseks. Parem või vasak sõltub sellest, kas maailm on peegeldatud. Roolimine on **vastu** pööret, kui abs(roolimine) on üle 0,05 ja märk on pöördega vastupidine. See on libisemine, mida **püütakse kinni** vastupidise rooliga.
 

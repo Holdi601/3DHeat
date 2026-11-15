@@ -11,9 +11,9 @@ translated: true
 
 # Tablice vrijednosti
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+Cjenici iz [Ponderiranje vrijednosti](value-weighting.md). Igra se prepoznaje po nazivima u podacima; vlastiti stupci vrijednosti pretvarača u valuti igre imaju prednost nad ovima.
 
-| Table | Currency | Defined in |
+| Tablica | Valuta | Definirano u |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

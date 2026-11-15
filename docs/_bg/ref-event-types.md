@@ -11,11 +11,11 @@ translated: true
 
 # Видове и класове събития
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Визуализаторът добавя колона **Тип събитие** към всеки набор данни, който има колона за събития (`event`, `events`, `event_type` или `event_name`). Думите на всяка игра се съпоставят с един от тези видове (главни и малки букви са еднакви); дума, която не е в списъка, се смята за *Други*.
 
-| Kind | Shown as | Words in the data |
+| Вид | Показва се като | Думи в данните |
 |---|---|---|
-| `position` | Позиция | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Позиция | `(празно)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Изстрел | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Изстрелване (ракета, снаряд, бомба) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Попадение | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Съобщение | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Друго | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Класове превозни средства {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Колоните **Клас превозно средство** и **Клас цел** използват тези класове, определени от имената на машините (чрез [каталога на фигурите](figures.md)) и колоните с тип.
 
-| Class | Shown as |
+| Клас | Показва се като |
 |---|---|
 | `fighter` | Изтребител |
 | `attack` | Щурмовак |

@@ -3,16 +3,16 @@ title: "Início"
 nav_order: 1
 lang: "pt"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
-O 3DHeat mostra onde as coisas aconteceram num jogo: por onde andaram os jogadores, onde lutaram e onde caíram. Mostra isto como cores brilhantes por onde pode voar, ou como pequenas figuras 3D que repetem a partida.
+O 3DHeat mostra onde as coisas aconteceram num jogo: por onde andaram os jogadores, onde lutaram e onde caíram. Mostra isto como cores brilhantes através das quais pode voar, ou como pequenas figuras 3D que repetem a partida.
 
-Carregue posições (CSV, Parquet, gravações Tacview, repetições convertidas, um único ficheiro, uma pasta ou milhares de partidas) e veja-as como um **mapa de calor por onde pode voar**, como **figuras que repetem a partida**, como linhas ao longo dos percursos que as pessoas seguiram, ou como uma população contra outra. Encontra sozinho o que se destaca, e funciona inteiramente no seu navegador: não se envia nada para lado nenhum.
+Carregue posições (CSV, Parquet, gravações Tacview, repetições convertidas, um único ficheiro, uma pasta ou milhares de partidas) e veja-as como um **mapa de calor por onde pode voar**, como **figuras que repetem a partida**, como linhas ao longo dos percursos que as pessoas seguiram, ou como uma população contra outra. Encontra sozinho o que se destaca, e funciona inteiramente no seu navegador: não se envia nada para lado nenhum. O 3DHeat e todas as suas ferramentas são gratuitos e de código aberto sob a [licença MIT](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Calor de dez partidas de tanques sobre o vale de demonstração](../assets/img/pt/heat-hero.webp)
 
@@ -44,6 +44,8 @@ Os separadores ficam no topo da barra lateral, por baixo do nome, das unidades e
 | **Veículos** | Onde foi atingida cada unidade, por quem e com quê. |
 
 ## Instalar e executar {#install-and-run}
+
+O 3DHeat é gratuito para usar, alterar e partilhar (licença MIT), e o mesmo se aplica a todas as ferramentas listadas em [Repositórios relacionados](#related-repositories).
 
 ### Windows, o modo fácil {#windows-the-easy-way}
 

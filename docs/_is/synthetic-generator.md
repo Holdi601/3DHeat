@@ -42,7 +42,7 @@ Gerð fer fram í bakgrunnsverkanum, svo tugir milljóna lína frysta ekki síð
 - **Dálkar:** staða, tími, persóna (`P000`, `P001`, ...), hópur (`Team 1`, `Team 2`, ...), snúningur og halli, og líftímar. Enginn setudálkur og engir síudálkar.
 - **Tími:** eitt sýni á hvern leikmann á 0,25 s fresti, byrjar á 0 (afstæður tími, engin veggklukka).
 - **Hreyfing:** hvert lið byrjar í sínum geira á hring við 55-95% af hálfri breidd. Öruggur hringur með miðju nærri miðjunni (færður af handahófi um allt að fjórðung af hálfri breidd) minnkar í 8% af hálfri breidd í sex áföngum með hléum; hver leikmaður stýrir að reikandi punkti innan hans, með dempun og hávaða. Hæðin sveiflast á milli 0 og 220 m.
-- **Sjónstefna:** snúningur eftir stefnu ferðarinnar, halli út frá lóðréttum hraða.
+- **Horfstefna:** snúningur eftir stefnu ferðarinnar, halli út frá lóðréttum hraða.
 - **Endurtakanlegt:** slembifræið er fast (1337), svo sömu stillingar gefa alltaf sömu gögn.
 
 Sérhver hitahamur, box replay og línuhiti (heilar slóðir, því enginn atburðadálkur er til staðar) virka á því. Saga líftímanna virkar líka.

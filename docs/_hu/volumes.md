@@ -63,7 +63,7 @@ A GPU-szűrő legfeljebb 8 térfogatot kezel, összesen 64 körvonalponttal; a t
 A **Statisztika** terület követi a szűrőket, az időablakot és az elrejtett csoportokat. A *Kijelölt* a kijelölt térfogatot mutatja, a *Mind összehasonlítása* minden térfogatot egymás mellett. Megmutatja:
 
 - **Sorok belül (látható)** és **Sorok belül (minden adat)**, **Játékosok**, **Csapatok**, **Meccsek**, **Bent töltött idő**, **Belépések / kilépések**, **Csúcshő**, **Átlagos hő**, **Térfogat / alapterület** és egy **Mikor** hisztogramot;
-- oszloponként: kategóriák a **Lift** értékkel (a bent lévő arány osztva a teljes látható adat arányával), és számok tartománnyal, mediánnal és az 5–95%-os percentilisekkel.
+- oszloponként: kategóriák az **Emelés** értékkel (a bent lévő arány osztva a teljes látható adat arányával), és számok tartománnyal, mediánnal és az 5–95%-os percentilisekkel.
 
 A **Statisztika CSV / JSON formátumban** menti őket. Az **A belső adatok exportálása** a bent lévő sorokat CSV vagy Parquet formátumban írja (alapértelmezés szerint *Csak a látható sorok*), egy vagy minden térfogatra, egy oszloppal, amely megmondja, melyik térfogatban van az adott sor.
 

@@ -3,16 +3,16 @@ title: "Accueil"
 nav_order: 1
 lang: "fr"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat montre où les choses se sont passées dans un jeu : où les joueurs sont allés, où ils se sont battus et où ils sont tombés. Il les affiche sous forme de couleurs lumineuses dans lesquelles vous pouvez voler, ou sous forme de petites figurines 3D qui rejouent le match.
 
-Chargez des positions (CSV, Parquet, enregistrements Tacview, replays convertis, un fichier seul, un dossier ou des milliers de matchs) et voyez-les sous forme de **carte de chaleur dans laquelle vous pouvez voler**, de **figurines qui rejouent le match**, de lignes le long des trajets suivis, ou comme une population face à une autre. Il repère seul ce qui ressort, et il fonctionne entièrement dans votre navigateur : rien n'est envoyé nulle part.
+Chargez des positions (CSV, Parquet, enregistrements Tacview, replays convertis, un fichier seul, un dossier ou des milliers de matchs) et voyez-les sous forme de **carte de chaleur dans laquelle vous pouvez voler**, de **figurines qui rejouent le match**, de lignes le long des trajets suivis, ou comme une population face à une autre. Il repère seul ce qui ressort, et il fonctionne entièrement dans votre navigateur : rien n'est envoyé nulle part. 3DHeat et tous ses outils sont gratuits et open source, sous [licence MIT](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Chaleur de dix matchs de chars au-dessus de la vallée de démonstration](../assets/img/fr/heat-hero.webp)
 
@@ -44,6 +44,8 @@ Les onglets se trouvent en haut de la barre latérale, sous le nom, les unités 
 | **Véhicules** | Où chaque unité a été touchée, par qui et avec quoi. |
 
 ## Installer et lancer {#install-and-run}
+
+3DHeat est gratuit à utiliser, modifier et partager (licence MIT), et il en va de même pour chaque outil listé dans [Dépôts associés](#related-repositories).
 
 ### Windows, la méthode facile {#windows-the-easy-way}
 

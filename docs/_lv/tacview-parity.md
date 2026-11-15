@@ -30,7 +30,7 @@ Kur atrast funkcijas: cilne **Mačs**, **Figūru atskaņojums** (vai **Figūru p
 |---|---|---|
 | Kabīnes skats (F5), horizonts griežas kopā ar lidmašīnu | **Kabīne**: no vienības ārpus tās, pēc tās stāvokļa, kā to paredz kustības modelis. Vienības pašas figūra tiek nogriezta. Velciet, lai skatītos apkārt; **Atkal skatīties uz priekšu** atiestata. | new |
 | HUD kabīnes skatā (IAS/CAS/TAS izvēle) | **Displejs acu līmenī** (H): horizonts un tangāžas skala faktiskajā skatā, lidojuma trajektorijas marķieris, kursa lenta, IAS, augstums, TAS, Mahs, G, uzbrukuma leņķis, vertikālais ātrums, AGL | new |
-| 3D kabīnes instrumenti, pilota galvas izsekošana (PilotHead*), TrackIR | Nav kabīnes modeļu; galvas leņķi tiek rādīti vienības kartītes **Raw** skatā | n/a (nav kabīnes modeļu; galvas izsekošanas aparatūra ir domāta tiešraidei) |
+| 3D kabīnes instrumenti, pilota galvas izsekošana (PilotHead*), TrackIR | Nav kabīnes modeļu; galvas leņķi tiek rādīti vienības kartītes **Neapstrādāts** skatā | n/a (nav kabīnes modeļu; galvas izsekošanas aparatūra ir domāta tiešraidei) |
 | Ārējais skats (F6): riņķot ap primāro objektu | **Vajāšana** (griežas kopā ar vienību) un **Orbīta** (saglabā savu virzienu) | done |
 | Cīņas kamera, "Skatīties uz mērķi" (padlock) | **Padlock**: no kabīnes, turēts uz mērķa | new |
 | Cīņas kamera, "Centrēts" / "Skatīties uz priekšu" | **Mērķis**: aiz vienības uz līnijas no mērķa, skatoties garām tam uz mērķi. **Fiksēta** azimutā 0 skatās uz priekšu no priekšpuses. | new |
@@ -62,8 +62,8 @@ Kur atrast funkcijas: cilne **Mačs**, **Figūru atskaņojums** (vai **Figūru p
 | Glisādes pārklājums | **Glisādes**: 3° trajektorijas ar ±0,7° pilnas skalas malām abos katras skrejceļa galos ierakstam tuvumā, no OurAirports izmērītajiem slieksniem un augstumiem (lejupielādēti vienreiz, glabāti bezsaistē), atzīme katrā jūras jūdzē, nosaukta pēc lidostas un skrejceļa | new |
 | Augstuma ierobežojumi (griestu/grīdas signāls) | **Augstuma ierobežojums**: grīda un griesti; to ārpus esošo vienību etiķetes kļūst sarkanas, un katra šķērsošana (zem grīdas, virs griestiem, atpakaļ iekšā) tiek uzskaitīta - klikšķis aizved uz turieni un seko vienībai | new |
 | Iznīcinātie objekti pelēki, pēc 15 min noņemti | Dzīvības beidzas kopā ar savu trasi; mirusī vienība vienību sarakstā tiek nopelēkota | done |
-| Redzams / Atspējots īpašības | Rādītas **Raw**; ar tām nekas netiek paslēpts | not yet |
-| Stick/throttle/pedāļu pozīciju attēlošana | Gāzes un motora vērtības laukos; vadības ievades **Raw** | done (kā vērtības) |
+| Redzams / Atspējots īpašības | Rādītas **Neapstrādāts**; ar tām nekas netiek paslēpts | not yet |
+| Stick/throttle/pedāļu pozīciju attēlošana | Gāzes un motora vērtības laukos; vadības ievades **Neapstrādāts** | done (kā vērtības) |
 | Komentāri kā subtitri | **Ziņojumi kā subtitri** (Etiķetes): ACMI Message un Comment notikumi, un tērzēšana no jebkuras spēles (Chat, Say vai Radio notikumi, vai tērzēšanas kolonna), skatījuma apakšā ar to, kurš teica, sešas sekundes | new |
 | Datuma un UTC laika attēlošana | Laika skalas pulkstenis ar UTC, kur ierakstam ir atsauces laiks | done |
 | Peles pozīcija platums/garums, MGRS, bullseye | Izvēles kartīte (noklikšķiniet uz punkta) dod platumu/garumu grādos, minūtēs un sekundēs un MGRS blakus pasaules metriem; bullseye katrai vienībai (lauks) | new |
@@ -78,7 +78,7 @@ Kur atrast funkcijas: cilne **Mačs**, **Figūru atskaņojums** (vai **Figūru p
 | Etiķetes ieslēgtas/izslēgtas, atsevišķi izvēlētajiem un neizvēlētajiem objektiem | **Etiķetes** ar noteikumiem **Izvēlētās**, **Gaisa kuģi**, **Zeme**, **Kuģi**, **Ieroči** un **MI**: rādītas vai nē, savas vērtības, prioritāte | new |
 | Etiķešu lauki: nosaukums, izsaukuma zīme, pilots, ātrumi (TAS/CAS/IAS/Mahs/GS), augstumi (ASL/AGL), VS, AOA, AOS, G (vertikālais, sānu, garenvirziena), pagrieziena ātrums un rādiuss, enerģija, degvielas svars/tilpums/plūsma, virziens/trase, ripa/tangāža, sirdsdarbība | Katra `fields.ts` vērtība: tas pats saraksts, aprēķināts, kur nav ierakstīts (aptuvenās vērtības atzīmētas ar ~). Ripas ātrums un SpO2 tikai caur Raw. | done |
 | Bullseye pozīcija etiķetēs | Lauks **Bullseye (azimuts / attālums)** | new |
-| ILS novirzes, nolidotais attālums | Raw vērtības; nolidotais attālums statistikā | done (daļēji) |
+| ILS novirzes, nolidotais attālums | Neapstrādātās vērtības; nolidotais attālums statistikā | done (daļēji) |
 | Nerādīt nevajadzīgu telemetriju neizvēlētajiem objektiem | **Turēt etiķetes atsevišķi**, sakārtotas pēc katra noteikuma prioritātes | done / new |
 | Etiķēt visus zemes objektus / tikai draudus | Noteikumi Zeme un MI | new |
 | Etiķešu mērogs | **Etiķešu izmērs** (60-250 %) | new |
@@ -92,9 +92,9 @@ Kur atrast funkcijas: cilne **Mačs**, **Figūru atskaņojums** (vai **Figūru p
 | Diapazons / pelengs / aspekts / tuvošanās starp diviem objektiem | BRAA līnija izmērītajam pārim; lauki Range, Bearing, Aspect un Closure no sekotās vienības | done |
 | Relatīvais pelengs, LOS ātrums | Lauki **Relatīvais pelengs** (no sekotās vienības deguna, L/R) un **Redzes līnijas leņķiskais ātrums** (°/s) | new |
 | Telemetrijas logi | Vienības kartīte un uzmešanas kartīte | done |
-| Neapstrādāta telemetrija (katra ierakstītā īpašība, arī nezināmās) | **Raw** vienības kartītē: katra kolonna vienības rindā, kā ierakstīta | new |
+| Neapstrādāta telemetrija (katra ierakstītā īpašība, arī nezināmās) | **Neapstrādāts** vienības kartītē: katra kolonna vienības rindā, kā ierakstīta | new |
 | Aktīvo objektu saraksts | **Vienības**: spēlētāji, MI, lidojumā esošie ieroči; dzīvie spilgti | done |
-| Ieraksta īpašību logs (nosaukums, autors, brīfings...) | Glabāts kā RecordingInfo kolonna; rādīts Raw | done (nav loga) |
+| Ieraksta īpašību logs (nosaukums, autors, brīfings...) | Glabāts kā RecordingInfo kolonna; rādīts Neapstrādāts | done (nav loga) |
 | Pozīciju formāti DMS/MGRS, magnētiskais ziemeļi | **Pozīcija (platums / garums)** DMS un **MGRS** laukos; lauks **Magnētiskais kurss**; **Magnētiskie kursi** raksta kursu, virzienu un pelengu magnētiskajos (°M) un rāda kompasu ar abiem ziemeļiem un variāciju - Pasaules magnētiskais modelis 2025 (publiskā domēna koeficienti), aprēķināts šeit pēc vienības vietas un datuma | new |
 
 ## Diagrammas {#charts}
@@ -176,7 +176,7 @@ Kur atrast funkcijas: cilne **Mačs**, **Figūru atskaņojums** (vai **Figūru p
 
 ## Izstrādātājiem: ACMI 2.2 īpašības {#for-developers-acmi-22-properties}
 
-Lasa `data/acmi.ts`; skaitliskās īpašības kļūst par skaitļu kolonnām, teksta - par kategoriju kolonnām. Visas tās tiek rādītas zem **Raw** vienības kartītē. Tās tiek lasītas nolūkā:
+Lasa `data/acmi.ts`; skaitliskās īpašības kļūst par skaitļu kolonnām, teksta - par kategoriju kolonnām. Visas tās tiek rādītas zem **Neapstrādāts** vienības kartītē. Tās tiek lasītas nolūkā:
 
 | Īpašības | Lietojums |
 |---|---|
@@ -193,6 +193,6 @@ Lasa `data/acmi.ts`; skaitliskās īpašības kļūst par skaitļu kolonnām, te
 | Notikumi: Destroyed, TakenOff, Landed, Bookmark, Message, Comment, LeftArea, Timeout | Notikumu saraksts, statistika (nāves, pacelšanās, nolaišanās), grāmatzīmes; Message un Comment kā subtitri |
 | PilotHeadYaw, PilotHeadPitch | Pilota skata līnija |
 | Tipa tags Bullseye (Navaid+Static+Bullseye) | Bullseye lauks un kartes gredzeni |
-| Viss pārējais (PilotHeadRoll, vadība, virsmas, ILS novirzes, SpO2, ENL, Label, Debug, Importance, Slot, Visible, Disabled, Radius, izmēri...) | Rādīts kā ierakstīts zem **Raw** |
+| Viss pārējais (PilotHeadRoll, vadība, virsmas, ILS novirzes, SpO2, ENL, Label, Debug, Importance, Slot, Visible, Disabled, Radius, izmēri...) | Rādīts kā ierakstīts zem **Neapstrādāts** |
 
 Radara un notveršanas leņķi tiek ņemti pret vienības pašas asīm: azimuts pa labi, elevācija uz augšu, ripa - labais spārns uz leju. ACMI specifikācija saka, ka tie ir attiecībā pret lidmašīnu, bet nesaka, kurā virzienā ir pozitīvi; šī lasīšana seko tās transformācijai (yaw pulksteņa rādītāja virzienā, pitch uz augšu, roll labais spārns uz leju).

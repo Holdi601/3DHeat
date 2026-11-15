@@ -11,11 +11,11 @@ translated: true
 
 # 이벤트 종류와 분류
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+뷰어는 이벤트 열(`event`, `events`, `event_type`, `event_name`)이 있는 모든 데이터셋에 **이벤트 유형** 열을 추가합니다. 각 게임의 고유 단어는 이 종류 중 하나에 대응되며(대소문자 구분 없음), 목록에 없는 단어는 *기타*로 셉니다.
 
-| Kind | Shown as | Words in the data |
+| 종류 | 표시 이름 | 데이터의 단어 |
 |---|---|---|
-| `position` | 위치 | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | 위치 | `(비어 있음)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | 발사 사격 | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | 발사(미사일, 로켓, 폭탄) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | 명중 | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | 메시지 | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | 기타 | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## 차량 등급 {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+**차량 등급** 열과 **목표 등급** 열은 이 등급을 사용합니다. 등급은 차량 이름([피규어 카탈로그](figures.md)를 통해)과 유형 열에서 산출됩니다.
 
-| Class | Shown as |
+| 등급 | 표시 이름 |
 |---|---|
 | `fighter` | 전투기 |
 | `attack` | 공격기 |

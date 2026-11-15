@@ -24,7 +24,7 @@ Der Bereich **Erkenntnisse** steht in der Seitenleiste der Tabs Heatmap und Matc
 1. Lade Daten und öffne **Erkenntnisse**. Drücke **Erkenntnisse finden** („Zähle… n %“ zeigt den Fortschritt).
 2. Lies die Liste. Jeder Befund hat einen Stärkebalken, einen Satz, wie gut die Belege sind (*Starke Belege*, *Gute Belege* oder *Einige Belege*), welcher Detektor ihn gefunden hat und, wo es wichtig ist, die Fahrzeugklasse.
 3. **Klicke einen Befund an**: Der Viewer wendet seine Filter an, fliegt die Kamera zum Ort und springt zur Zeit, und öffnet die Details: die Wirkung mit ihrem 95-%-Intervall, die p- und q-Werte, die gezählten Belege und **Volumen hier**, das ein [Volumen](volumes.md) um den Ort zieht.
-4. **Filter wiederherstellen** setzt deine Filter zurück. **JSON kopieren** kopiert den ganzen Bericht.
+4. **Filter zurücksetzen** setzt deine Filter zurück. **JSON kopieren** kopiert den ganzen Bericht.
 
 Gezählt wird mit den aktuellen Filtern, ausgeblendeten Gruppen und dem gewählten Match über den gesamten Zeitraum. Änderst du danach die Filter, weist ein Hinweis darauf hin; drücke **Neu zählen**.
 

@@ -84,7 +84,7 @@ Korte betydninger af de ord, denne side bruger, i almindeligt sprog. Hver post l
 
 **Eco, force buy, full buy.** Hvor mange penge en side bruger på våben i starten af en runde. En eco sparer penge og køber næsten intet (under $1.500 pr. spiller i gennemsnit). Et force buy bruger det, den har (under $4.000). Et full buy køber alt, det kan. [Kampanalyse](match-analysis.md)
 
-**Trade.** Et drab, der betaler et drab tilbage: du bliver skudt, og en holdkammerat skyder din dræber inden for 5 sekunder. [Kampanalyse](match-analysis.md)
+**Bytte.** Et drab, der betaler et drab tilbage: du bliver skudt, og en holdkammerat skyder din dræber inden for 5 sekunder. [Kampanalyse](match-analysis.md)
 
 **KAST.** Andelen af runder, hvor en spiller fik et drab, en assist, overlevede eller blev trade'et. Et højere tal betyder, at spilleren hjalp i flere runder. [Kampanalyse](match-analysis.md)
 

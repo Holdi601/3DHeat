@@ -11,9 +11,9 @@ translated: true
 
 # Arvotaulukot
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+[Arvopainotuksen](value-weighting.md) hintataulukot. Peli tunnistetaan aineiston nimistä; muuntajan omat arvosarakkeet pelin valuutassa ohittavat nämä.
 
-| Table | Currency | Defined in |
+| Taulukko | Valuutta | Määritelty |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

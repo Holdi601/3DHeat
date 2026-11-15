@@ -11,9 +11,9 @@ translated: true
 
 # Opdrachtregelprogramma's
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+De opdrachtregelprogramma's in de map `tools/` van de viewer (Node.js, uitgevoerd vanuit de hoofdmap van de repository). Je hebt ze nooit nodig om de viewer te gebruiken: ze verpakken, samenvatten en converteren je data, en helpen wie de viewer onderhoudt. Elk item heeft de eerste alinea van de eigen beschrijving van het programma en de gebruiksregels; start een programma zonder argumenten voor de volledige help waar die bestaat. De data-programma's van de [verwante repositories](index.md#related-repositories) documenteren hun eigen opdrachten.
 
-## For your data
+## Voor je data {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Voor ontwikkelaars en de documentatie {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Deze controleren de viewer, maken de demodata en de schermafbeeldingen, en schrijven de referentiepagina's.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Bibliotheken {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` is een bibliotheek zonder opdrachtregel: de programma's hierboven importeren hem om het [.3dheat-bestand](container.md) te lezen en te schrijven.

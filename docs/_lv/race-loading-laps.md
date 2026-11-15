@@ -90,6 +90,11 @@ Apli sauc pēc automašīnas pilnā nosaukuma, kā to dod spēle. Kur apļa fail
 | ar kļūdām | Saķeres auto | bremzē 35 m agrāk uz T2, uzliek gāzi 30 m vēlāk ārā no T3, brauc T4 ar 0,88 no sava ātruma, novirzās 1,2 m uz vienu pusi |
 | cits auto | Jaudas auto | nav; novirzās 1,2 m uz otru pusi |
 
+| Automašīna (numurs) | Saķere | Bremzēšana | Trakcija | Jauda/masa | Pretestība |
+|---|---|---|---|---|---|
+| Saķeres auto (9001) | 16 m/s² | 13 m/s² | 9 m/s² | 230 W/kg | 0,0009 /m |
+| Jaudas auto (9002) | 12 m/s² | 11 m/s² | 7 m/s² | 380 W/kg | 0,0006 /m |
+
 Apli ar kļūdām fokusē. Trase ir izkārtota tā, kā Forza glabā savu pasauli (kreisroku), tāpēc — tieši kā ar īstu Forza apli — tas nāk spoguļots, un cilne piedāvā **Apgriezt X**. Visiem trim apļiem ir riteņu dati, tāpēc katrai cilnes daļai ir ko rādīt.
 
 

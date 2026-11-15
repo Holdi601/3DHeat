@@ -11,9 +11,9 @@ translated: true
 
 # Parancssori eszközök
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+A megjelenítő `tools/` mappájában lévő parancssori eszközök (Node.js, a tároló gyökeréből futtatva). A megjelenítő használatához soha nincs szükség rájuk: becsomagolják, összefoglalják és konvertálják az adataidat, és segítenek a megjelenítőt karbantartóknak. Minden bejegyzés tartalmazza az eszköz saját leírásának első bekezdését és a használati sorait; ahol van, argumentumok nélküli futtatással kapod meg a teljes súgót. A [kapcsolódó tárolók](index.md#related-repositories) adateszközei saját parancsaikat dokumentálják.
 
-## For your data
+## Az adataidhoz {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Fejlesztőknek és a dokumentációnak {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Ezek a megjelenítőt ellenőrzik, elkészítik a demóadatokat és a képernyőképeket, és megírják a referenciaoldalakat.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Könyvtárak {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+A `container.mjs` parancssori felület nélküli könyvtár: a fenti eszközök importálják, hogy olvassák és írják a [.3dheat fájlt](container.md).

@@ -11,9 +11,9 @@ translated: true
 
 # Eines de línia d'ordres
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Les eines de línia d'ordres de la carpeta `tools/` del visualitzador (Node.js, executades des de l'arrel del repositori). No les necessiteu mai per fer servir el visualitzador: empaqueten, resumeixen i converteixen les vostres dades, i ajuden qui manté el visualitzador. Cada entrada té el primer paràgraf de la descripció pròpia de l'eina i les seves línies d'ús; executeu una eina sense arguments per veure l'ajuda completa quan en té. Les eines de dades dels [repositoris relacionats](index.md#related-repositories) documenten les seves pròpies ordres.
 
-## For your data
+## Per a les vostres dades {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Per a desenvolupadors i la documentació {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Aquestes comproven el visualitzador, fan les dades de demostració i les captures de pantalla, i escriuen les pàgines de referència.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Biblioteques {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` és una biblioteca sense línia d'ordres: les eines de dalt la importen per llegir i escriure el [fitxer .3dheat](container.md).

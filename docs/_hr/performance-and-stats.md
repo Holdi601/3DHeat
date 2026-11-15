@@ -56,6 +56,6 @@ Pogledaj prikaz statistike, pa:
 | **Početni spriteovi / kadar** / **Spriteovi / kadar** | 4,00M | 65.536-268.435.456, logaritamski. Zove se *Početni* dok je prilagodljivi proračun uključen, jer ga upravljač pomiče. |
 | **Rezolucija topline** | 100% | 25-100%. Trošak fragmenata raste s kvadratom: 50% je četvrtina posla miješanja, a toplinsko polje je dovoljno glatko da se to jedva vidi. |
 | **Progresivno pročišćavanje** | uključeno | Akumulira kroz kadrove dok pogled miruje. Isključeno prikazuje procjenu jednog kadra svaki kadar. [Akumulacija](accumulation.md) |
-| **Proračuni resursa** | otkriveno | Proračuni RAM-a, GPU-a i niti parsera. [Memorija i proračuni](memory-and-budgets.md#resource-budgets) |
+| **Proračun resursa** | otkriveno | Proračuni RAM-a, GPU-a i niti parsera. [Memorija i proračuni](memory-and-budgets.md#resource-budgets) |
 
 Ništa od ovoga se ne sprema; ponovno učitavanje vraća zadane vrijednosti.

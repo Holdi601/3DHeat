@@ -17,14 +17,14 @@ Vaate paremas ülanurgas olev kast näitab, kui palju vaatajal tööd on: mitu k
 
 Kast vaate paremas ülanurgas vahekaartidel Soojus ja Matš ([`StatsOverlay.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/StatsOverlay.tsx)). See loeb mootori elavat näitu iga animatsioonikaadri ajal.
 
-![Statistikakate stseenil many-matches, nummerdatud selgitustega: 1 Taustsüsteem, 2 FPS, 3 Kaader, 4 Read aknas, 5 Spraite / kaader, 6 Eelarve, 7 Soojuse lahutus, 8 Katvus](../assets/img/en/performance-stats-overlay.webp)
+![Statistikakate stseenil many-matches, nummerdatud selgitustega: 1 Taustsüsteem, 2 FPS, 3 Kaader, 4 Ridu aknas, 5 Spraite / kaader, 6 Eelarve, 7 Soojuse lahutus, 8 Katvus](../assets/img/en/performance-stats-overlay.webp)
 
 | Rida | Tähendus |
 |---|---|
 | **Taustsüsteem** | *WebGPU* või *WebGL2*. Hiirega üle viies näed, miks WebGPU-d ei kasutatud, kui ei kasutatud. Vt [Kaks renderdajat](backends.md). |
 | **FPS** | Kaadrit sekundis, keskmistatud vähemalt 0,4 s peale. |
 | **Kaader** | Kaadri aeg millisekundites, silutud (90% eelmine, 10% uus). See on aeg kaadrite vahel, mitte GPU aeg: GPU aega passide kaupa ei mõõdeta. |
-| **Read aknas** | Kandidaatread: praeguse ajaakna read enne rea-kaupa filtreerimist shaderis. |
+| **Ridu aknas** | Kandidaatread: praeguse ajaakna read enne rea-kaupa filtreerimist shaderis. |
 | **Spraite / kaader** | Spraidid, mille viimase kaadri plaan esitas (seisval kaadril, mis ei joonista midagi, jäävad need planeeritud arvuks). |
 | **Eelarve** | Spraitide eelarve, millega see kaader planeeriti: kohanduva kontrolleri väärtus, tõstetud kõigile kandidaatidele, kui joonistatakse iga rida. |
 | **Soojuse lahutus** | Soojuspuhvri lahutus osana canvasest: seade *Soojuse lahutusvõime* korrutatud kohandava teise astme skaalaga. |
@@ -40,8 +40,8 @@ Vaate paremas alanurgas, ainult perspektiivis: lennukiirus ja aeg andmete läbim
 
 Vaata statistikakatet ja siis:
 
-1. **Read aknas on palju suurem kui Spraite / kaader ja Katvus alla 100%**: kaader ei saa kõike joonistada; kui pilt on paigal, koondub see mitme kaadriga. Kitsenda akent, filtreeri või lõika, et vähendada kandidaate; või lepi valimiga.
-2. **Spraite / kaader on võrdne Read aknas-ga ja kaader ikka aeglane**: kulu tekib spraidi kohta ekraanil: langeta *Maksimaalne pikslite raadius* ([Kujundi kuju](sprite-shape.md#pixel-clamps)) või *Soojuse lahutus*.
+1. **Ridu aknas on palju suurem kui Spraite / kaader ja Katvus alla 100%**: kaader ei saa kõike joonistada; kui pilt on paigal, koondub see mitme kaadriga. Kitsenda akent, filtreeri või lõika, et vähendada kandidaate; või lepi valimiga.
+2. **Spraite / kaader on võrdne Ridu aknas-ga ja kaader ikka aeglane**: kulu tekib spraidi kohta ekraanil: langeta *Maksimaalne pikslite raadius* ([Kujundi kuju](sprite-shape.md#pixel-clamps)) või *Soojuse lahutus*.
 3. **Aeglane vähese arvu ridade korral**: tõenäoliselt tase: suur struktuuride arv servadega, maapinna kolmnurgad, sügavusteravus. Vt [Taseme välimus](level-appearance.md).
 4. **Kõik on aeglane ja punane bänner**: tarkvaraline renderdus ([Tarkvaralise renderduse tuvastamine](software-rendering.md)).
 

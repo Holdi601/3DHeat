@@ -1,5 +1,5 @@
 ---
-title: "Superposició de figures"
+title: "Figures superposades"
 parent: "Modes de calor"
 nav_order: 8
 lang: "ca"
@@ -10,18 +10,18 @@ outdated: false
 ---
 
 
-# Superposició de figures (repetició de caixes)
+# Figures superposades (repetició de caixes)
 
 Una petita pel·lícula: una figura per a cada persona, que es mou a mesura que passa el temps, amb un rastre darrere. 
 
-El mode es diu **Superposició de figures** a la barra de modes. Aquesta pàgina s'anomenava abans "repetició de caixes", perquè abans que existissin les figures cada persona era una caixa; "repetició amb figures" i "repetició de caixes" volen dir el mateix. **Superposició de figures** no té tecla numèrica: tria'l a la barra de modes. Dibuixa una figura (o caixa) per cada [persona](glossary.md), que es mou al llarg de la [línia de temps](timeline.md), amb raigs de mirada i rastres opcionals. És reproducció i no densitat: *qui era on, i quan*. Necessita una columna de persona; sense columna de temps, cada mostra es dibuixa de cop.
+El mode es diu **Figures superposades** a la barra de modes. Aquesta pàgina s'anomenava abans "repetició de caixes", perquè abans que existissin les figures cada persona era una caixa; "repetició amb figures" i "repetició de caixes" volen dir el mateix. **Figures superposades** no té tecla numèrica: tria'l a la barra de modes. Dibuixa una figura (o caixa) per cada [persona](glossary.md), que es mou al llarg de la [línia de temps](timeline.md), amb raigs de mirada i rastres opcionals. És reproducció i no densitat: *qui era on, i quan*. Necessita una columna de persona; sense columna de temps, cada mostra es dibuixa de cop.
 
 ![La superposició de figures sobre tancs de demostració, aturada cap als 30 s, amb rastres de 30 s i el panell Visor d'equips obert](../assets/img/ca/box-replay-overlay.webp)
 
 ## Com s'usa {#how-to-use-it}
 
 1. Carrega dades amb una columna de persona i una columna de temps.
-2. Tria **Superposició de figures** a la barra de modes.
+2. Tria **Figures superposades** a la barra de modes.
 3. Posa la línia de temps en **Reprodueix** i prem reproduir (`K`).
 4. Obre **Visor d'equips** per canviar la **Longitud del rastre**, la mida de les figures o els raigs de mirada.
 

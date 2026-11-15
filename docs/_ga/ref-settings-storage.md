@@ -11,23 +11,23 @@ translated: true
 
 # Socruithe stóráilte
 
-What the viewer keeps in your browser (`localStorage`) between visits. Nothing of it is sent anywhere. Clearing the site data in the browser removes it all.
+Cad a choinníonn an radharc i do bhrabhsálaí (`localStorage`) idir cuairteanna. Ní sheoltar aon rud de chuig áit ar bith. Glanann folamh sonraí an tsuímh sa bhrabhsálaí é go léir.
 
-| Key | Holds | Code |
+| Eochair | Coinníonn | Cód |
 |---|---|---|
-| `3dheat.objectives` | objectives shown, layers, labels | `src/state/objectivesStore.ts` |
-| `3dheat.volumes.…` | volumes, per dataset | `src/volumes/store.ts` |
-| `heat3d.ai` | external AI: provider, address, model, options (not the key) | `src/insights/ai/settings.ts` |
-| `heat3d.ai.key` | the external AI key, only when *Remember the key* is ticked | `src/insights/ai/settings.ts` |
-| `heat3d.bookmarks.…` | bookmarks, per recording | `src/ui/replay/bookmarks.ts` |
-| `heat3d.carNames` | car names in the race tab | `src/race/carNames.ts` |
-| `heat3d.far` | figures at a distance, symbols, hit marks, aim lines | `src/state/store.ts` |
-| `heat3d.help` | help mode on or off | `src/state/helpStore.ts` |
-| `heat3d.inspect` | the pick card and camera readout | `src/state/inspectStore.ts` |
-| `heat3d.language` | the language picked | `src/i18n/index.ts` |
-| `heat3d.mirror` | the axis mirroring | `src/state/store.ts` |
-| `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
-| `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
-| `heat3d.units` | the units preset and single units | `src/state/unitsStore.ts` |
+| `3dheat.objectives` | cuspóirí a taispeántar, sraitheanna, lipéid | `src/state/objectivesStore.ts` |
+| `3dheat.volumes.…` | toirteanna, in aghaidh an tacair sonraí | `src/volumes/store.ts` |
+| `heat3d.ai` | AI sheachtrach: soláthraí, seoladh, samhail, roghanna (ní an eochair) | `src/insights/ai/settings.ts` |
+| `heat3d.ai.key` | eochair AI sheachtrach, ach amháin nuair a bhíonn *Cuimhnigh ar an eochair sa bhrabhsálaí seo* ticeáilte | `src/insights/ai/settings.ts` |
+| `heat3d.bookmarks.…` | leabharmharcanna, in aghaidh an taifeadta | `src/ui/replay/bookmarks.ts` |
+| `heat3d.carNames` | ainmneacha gluaisteán sa chluaisín rásaíochta | `src/race/carNames.ts` |
+| `heat3d.far` | figiúirí i gcéin, siombailí, marcanna buailte, línte aimsithe | `src/state/store.ts` |
+| `heat3d.help` | modh cabhrach ar nó as | `src/state/helpStore.ts` |
+| `heat3d.inspect` | cárta scrúdaithe agus léamh an cheamara | `src/state/inspectStore.ts` |
+| `heat3d.language` | an teanga roghnaithe | `src/i18n/index.ts` |
+| `heat3d.mirror` | scátháil na n-ais | `src/state/store.ts` |
+| `heat3d.replay` | lipéid athsheinm, taispeáint thaicticiúil, mapa 2D, cairteacha, taispeáint aníos, cuma, foirgnimh, ceamara leanúnach | `src/state/replayStore.ts` |
+| `heat3d.speed` | luas an athsheinm | `src/state/playbackSpeed.ts` |
+| `heat3d.units` | an réamhshocrú aonad agus na haonaid aonair | `src/state/unitsStore.ts` |
 
-Heat settings, filters and the view mode are not kept: they start fresh with each load.
+Ní choinnítear socruithe teasa, scagairí agus modh an amhairc: tosaíonn siad as an nua le gach lódáil.

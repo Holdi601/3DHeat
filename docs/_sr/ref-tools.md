@@ -11,9 +11,9 @@ translated: true
 
 # Алати командне линије
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Алатке за командну линију из фасцикле `tools/` прегледача (Node.js, покрећу се из корена репозиторијума). Никада нису потребне за коришћење прегледача: спакују, сажимају и конвертују ваше податке и помажу ономе ко одржава прегледач. Свака ставка има први пасус описа алатке и редове за употребу; покрените алатку без аргумената за пуну помоћ тамо где постоји. Алатке за податке [сродних репозиторијума](index.md#related-repositories) документују своје наредбе сами.
 
-## For your data
+## За ваше податке {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## За програмере и документацију {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Ове алатке проверавају прегледач, праве демо податке и снимке екрана и пишу странице с референцама.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Библиотеке {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` је библиотека без командне линије: горње алатке је увозе да читају и пишу [датотеку .3dheat](container.md).

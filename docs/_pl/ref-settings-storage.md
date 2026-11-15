@@ -11,23 +11,23 @@ translated: true
 
 # Zapisane ustawienia
 
-What the viewer keeps in your browser (`localStorage`) between visits. Nothing of it is sent anywhere. Clearing the site data in the browser removes it all.
+To, co przeglądarka zapisuje w Twojej przeglądarce (`localStorage`) między wizytami. Nic z tego nigdzie nie jest wysyłane. Wyczyszczenie danych witryny w przeglądarce usuwa wszystko.
 
-| Key | Holds | Code |
+| Klucz | Przechowuje | Kod |
 |---|---|---|
-| `3dheat.objectives` | objectives shown, layers, labels | `src/state/objectivesStore.ts` |
-| `3dheat.volumes.…` | volumes, per dataset | `src/volumes/store.ts` |
-| `heat3d.ai` | external AI: provider, address, model, options (not the key) | `src/insights/ai/settings.ts` |
-| `heat3d.ai.key` | the external AI key, only when *Remember the key* is ticked | `src/insights/ai/settings.ts` |
-| `heat3d.bookmarks.…` | bookmarks, per recording | `src/ui/replay/bookmarks.ts` |
-| `heat3d.carNames` | car names in the race tab | `src/race/carNames.ts` |
-| `heat3d.far` | figures at a distance, symbols, hit marks, aim lines | `src/state/store.ts` |
-| `heat3d.help` | help mode on or off | `src/state/helpStore.ts` |
-| `heat3d.inspect` | the pick card and camera readout | `src/state/inspectStore.ts` |
-| `heat3d.language` | the language picked | `src/i18n/index.ts` |
-| `heat3d.mirror` | the axis mirroring | `src/state/store.ts` |
-| `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
-| `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
-| `heat3d.units` | the units preset and single units | `src/state/unitsStore.ts` |
+| `3dheat.objectives` | wyświetlane cele, warstwy, etykiety | `src/state/objectivesStore.ts` |
+| `3dheat.volumes.…` | wolumeny, osobno dla każdego zbioru danych | `src/volumes/store.ts` |
+| `heat3d.ai` | zewnętrzna AI: dostawca, adres, model, opcje (nie klucz) | `src/insights/ai/settings.ts` |
+| `heat3d.ai.key` | klucz zewnętrznej AI, tylko gdy zaznaczono *Zapamiętaj klucz* | `src/insights/ai/settings.ts` |
+| `heat3d.bookmarks.…` | zakładki, osobno dla każdego nagrania | `src/ui/replay/bookmarks.ts` |
+| `heat3d.carNames` | nazwy pojazdów w zakładce wyścigu | `src/race/carNames.ts` |
+| `heat3d.far` | sylwetki z daleka, symbole, znaczniki trafień, linie celowania | `src/state/store.ts` |
+| `heat3d.help` | tryb pomocy włączony lub wyłączony | `src/state/helpStore.ts` |
+| `heat3d.inspect` | karta wyboru i odczyt kamery | `src/state/inspectStore.ts` |
+| `heat3d.language` | wybrany język | `src/i18n/index.ts` |
+| `heat3d.mirror` | odbicie osi | `src/state/store.ts` |
+| `heat3d.replay` | etykiety powtórki, wyświetlanie taktyczne, mapa 2D, wykresy, wyświetlacz head-up, wygląd, budynki, kamera śledząca | `src/state/replayStore.ts` |
+| `heat3d.speed` | prędkość odtwarzania | `src/state/playbackSpeed.ts` |
+| `heat3d.units` | zestaw jednostek i pojedyncze jednostki | `src/state/unitsStore.ts` |
 
-Heat settings, filters and the view mode are not kept: they start fresh with each load.
+Ustawienia ciepła, filtry i tryb widoku nie są zapisywane: przy każdym wczytaniu zaczynają od zera.

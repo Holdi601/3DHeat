@@ -11,13 +11,13 @@ translated: true
 
 # Klávesy prehliadača
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Aby sa načítaná relácia nestratila kvôli náhodnej skratke, prehliadač si tieto klávesy ponecháva pre seba.
 
-| Keys | When | Effect |
+| Klávesy | Kedy | Účinok |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (aj s `Cmd`) | mimo textových polí | akcia prehliadača (tlač, uloženie, otvorenie, obnovenie, nové okno, zatvorenie ...) sa nevykoná |
+| `F1` `F3` `F5` `F6` `F7` | vždy | akcia prehliadača (pomoc, hľadanie, obnovenie, adresný riadok, prehliadanie kurzorom) sa nevykoná |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | na celú obrazovku | uzamknuté pre prehliadač (Keyboard Lock API), takže prehliadač na ne nereaguje |
+| zatvorenie alebo obnovenie karty | keď je načítaný súbor alebo úroveň | prehliadač sa najprv opýta |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Všetky vlastné klávesy prehliadača: [Referencia klávesnice a myši](keyboard-reference.md).

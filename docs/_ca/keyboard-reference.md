@@ -64,11 +64,11 @@ De [`App.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/App.tsx).
 | `[` | Estreny el límit de tall llunyà ÷1,12 (`Shift`: ÷1,35) |
 | `\` | Desactiva el límit de tall llunyà / torna a activar-lo on era ([Profunditat i retall](depth-and-culling.md#keyboard)) |
 
-El mode **Superposició de figures** no té tecla numèrica; tria'l a la barra de modes o obre la pestanya Partida. Les tecles numèriques passen per la mateixa comprovació que la barra de modes: una tecla per a un mode que la barra mostra com a no disponible per a les dades carregades no fa res.
+El mode **Figures superposades** no té tecla numèrica; tria'l a la barra de modes o obre la pestanya Partida. Les tecles numèriques passen per la mateixa comprovació que la barra de modes: una tecla per a un mode que la barra mostra com a no disponible per a les dades carregades no fa res.
 
 ## Repetició de partida {#match-replay}
 
-En el mode Superposició de figures, que fa servir la pestanya Partida ([Repetició de partida](match-replay.md)). Funcionen tant si una unitat està seguida com si no, excepte on s'indica:
+En el mode Figures superposades, que fa servir la pestanya Partida ([Repetició de partida](match-replay.md)). Funcionen tant si una unitat està seguida com si no, excepte on s'indica:
 
 | Tecla | Efecte |
 |---|---|

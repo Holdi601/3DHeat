@@ -11,9 +11,9 @@ translated: true
 
 # Értéktáblák
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+Az [Érték-súlyozás](value-weighting.md) ártáblái. A játékot a nevekből ismeri fel az adatokban; egy konvertáló saját, a játék pénznemében megadott értékoszlopai felülírják ezeket.
 
-| Table | Currency | Defined in |
+| Tábla | Pénznem | Meghatározva itt |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

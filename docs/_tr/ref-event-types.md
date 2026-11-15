@@ -11,11 +11,11 @@ translated: true
 
 # Olay türleri ve sınıfları
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Görüntüleyici, olay sütunu olan her veri kümesine bir **Olay türü** sütunu ekler (`event`, `events`, `event_type` veya `event_name`). Her oyunun kendi sözcükleri bu türlerden birine eşlenir (büyük ve küçük harf fark etmez); listede olmayan bir sözcük *Diğer* sayılır.
 
-| Kind | Shown as | Words in the data |
+| Tür | Görünen ad | Verideki sözcükler |
 |---|---|---|
-| `position` | Konum | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Konum | `(boş)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Atış | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Fırlatma (füze, roket, bomba) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | İsabet | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Mesaj | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Diğer | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Araç sınıfları {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+**Araç sınıfı** ve **Hedef sınıfı** sütunları bu sınıfları kullanır; sınıflar araç adlarından ([figür kataloğu](figures.md) üzerinden) ve tür sütunlarından çıkarılır.
 
-| Class | Shown as |
+| Sınıf | Görünen ad |
 |---|---|
 | `fighter` | Av uçağı |
 | `attack` | Taarruz uçağı |

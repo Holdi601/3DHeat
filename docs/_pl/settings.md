@@ -20,7 +20,7 @@ U góry paska bocznego:
 |---|---|
 | **?** | Tryb pomocy: co znaczy każdy kolor (także `?` albo `F1`) |
 | Menu **Jednostki** | Metryczne, Imperialne, Lotnicze albo Morskie |
-| Przycisk **...** obok **Jednostki** | Otwiera „Wybierz jednostkę dla każdej wielkości”: jedna lista rozwijana dla każdej wielkości |
+| Przycisk **…** obok **Jednostki** | Otwiera „Wybierz jednostkę dla każdej wielkości”: jedna lista rozwijana dla każdej wielkości |
 | Menu **Język** | Język przeglądarki: [40 języków](languages.md) albo język przeglądarki |
 
 ![Nagłówek z menu Jednostki i otwartym oknem jednostek dla każdej wielkości](../assets/img/pl/settings-units.webp)
@@ -30,7 +30,7 @@ Liczby, które wpisujesz w polu, mogą mieć kropkę albo przecinek (`0.35` albo
 ## Jednostki {#units}
 
 1. Wybierz zestaw w menu **Jednostki**. Wszystkie wielkości przełączają się razem.
-2. Aby zmienić tylko jedną wielkość, kliknij przycisk **...** obok niej i wybierz dla niej jednostkę. Menu pokaże wtedy `*` za zestawem.
+2. Aby zmienić tylko jedną wielkość, kliknij przycisk **…** obok niej i wybierz dla niej jednostkę. Menu pokaże wtedy `*` za zestawem.
 3. Wielkość, której nie ustawiłeś, podąża za zestawem. Wybierz „Jak w zestawie”, aby wrócić.
 
 | Wielkość | Metryczne (domyślne) | Imperialne | Lotnicze | Morskie |

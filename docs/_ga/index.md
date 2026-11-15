@@ -3,16 +3,16 @@ title: "Baile"
 nav_order: 1
 lang: "ga"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 Taispeánann 3DHeat cá ndeachaigh rudaí i gcluiche - cá ndeachaigh imreoirí, cá ndearna siad troid agus cá dtit siad - mar dhathanna lonracha ar féidir leat eitilt tríothu, nó mar fhigiúirí beaga 3D a athsheinm an cluiche.
 
-Lódáil suímh - CSV, Parquet, taifeadtaí Tacview, athsheinmeanna coinbhertaithe, comhad amháin, fillteán nó na mílte cluiche - agus féach orthu mar **léarscáil theasa ar féidir leat eitilt tríthi**, mar **fhigiúirí a athsheinmeann an cluiche**, mar línte feadh na n-bealaí a thóg daoine, nó mar dhaonra amháin i gcoinne daonra eile. Aimsíonn sé cad a sheasann amach leis féin, agus ritheann sé go hiomlán i do bhrabhsálaí: ní uaslódáiltear aon rud in áit ar bith.
+Lódáil suímh - CSV, Parquet, taifeadtaí Tacview, athsheinmeanna coinbhertaithe, comhad amháin, fillteán nó na mílte cluiche - agus féach orthu mar **léarscáil theasa ar féidir leat eitilt tríthi**, mar **fhigiúirí a athsheinmeann an cluiche**, mar línte feadh na n-bealaí a thóg daoine, nó mar dhaonra amháin i gcoinne daonra eile. Aimsíonn sé cad a sheasann amach leis féin, agus ritheann sé go hiomlán i do bhrabhsálaí: ní uaslódáiltear aon rud in áit ar bith. Tá 3DHeat agus a uirlisí go léir saor in aisce agus foinse oscailte faoi [cheadúnas MIT](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Teas deich gcluiche tanc thar ghleann an taispeána](../assets/img/ga/heat-hero.webp)
 
@@ -44,6 +44,8 @@ Tá na cluaisíní ag barr na barra taoibh, faoin ainm, na haonaid agus roghchl�
 | **Feithiclí** | Cá raibh gach aonad buailte, ag cé agus le cad. |
 
 ## Suiteáil agus rith {#install-and-run}
+
+Tá 3DHeat saor in aisce le húsáid, le hathrú agus le roinnt (ceadúnas MIT), agus mar sin tá gach uirlis atá liostaithe faoi [Stórais ghaolmhara](#related-repositories) saor freisin.
 
 ### Windows, an bealach éasca {#windows-the-easy-way}
 

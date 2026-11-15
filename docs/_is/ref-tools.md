@@ -11,9 +11,9 @@ translated: true
 
 # Skipanalínuverkfæri
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+Skipanalínuverkfærin í `tools/`-möppu skoðarans (Node.js, keyrð úr rótarmöppu geymslunnar). Þú þarft þau aldrei til að nota skoðarann: þau pakka, draga saman og umbreyta gögnunum þínum og hjálpa þeim sem viðheldur skoðaranum. Hver færsla hefur fyrstu málsgrein lýsingar verkfærisins og notkunarlínurnar; keyrðu verkfæri án skipana til að fá alla hjálp þar sem hún er til. Gagnaverkfæri [tengdra geymslna](index.md#related-repositories) skjalfesta sínar eigin skipanir.
 
-## For your data
+## Fyrir gögnin þín {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## Fyrir forritara og skjölin {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+Þessi athuga skoðarann, búa til demógögn og skjámyndir og skrifa viðmiðunarsíðurnar.
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## Söfn {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` er safn án skipanalínu: verkfærin hér fyrir ofan flytja það inn til að lesa og skrifa [.3dheat-skrána](container.md).

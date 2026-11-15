@@ -88,7 +88,7 @@ Skata augšējā kreisajā stūrī — kartīte katram redzamajam aplim, ne vair
 
 **Rādījumi:** ātrums km/h, paša apļa laiks, tā attālums pa atsauci.
 
-**Ievades:**
+**Vadība:**
 
 - stūre, ko pagriež stūres ievade (pilns pagrieziens attēlots kā 180°), ar procentiem zem tās;
 - josla katram pedālim, no kreisās uz labo kā pedāļu blokā — sajūgs, bremze, gāze — katra ar procentiem un īso nosaukumu savā krāsā (tikai tie pedāļi, ko aplis satur);
@@ -96,7 +96,7 @@ Skata augšējā kreisajā stūrī — kartīte katram redzamajam aplim, ne vair
 - neliela lampiņa katram ieslēgtā/izslēgtā kanālam, ko aplis satur — rokas bremze, ABS, TC, DRS, boksa ierobežotājs, gaisā — iedegas savā krāsā, kamēr ir ieslēgta (virs puse no diapazona);
 - rādījums katram līmeņa kanālam: bremžu sadalījums, ABS un TC iestatījumi, pūtējs, degviela.
 
-**Ievades līnija:** pēdējās **6 sekundes** no katra pedāļa (viena josla, katrs savā krāsā) un stūres (sava josla, centrēta), beidzoties šajā brīdī — ko vadītājs darīja, ieejot tajā. Līdz 160 punktiem.
+**Vadības līnija:** pēdējās **6 sekundes** no katra pedāļa (viena josla, katrs savā krāsā) un stūres (sava josla, centrēta), beidzoties šajā brīdī — ko vadītājs darīja, ieejot tajā. Līdz 160 punktiem.
 
 **Visas vērtības** (⋯ vai *Visas vērtības kartītēs*): katrs cits skalārs lielums, ko aplis satur šajā brīdī, tad katrs riteņa kanāls kā četras vērtības (FL FR RL RR), nosaukti pēc kanālu tabulas vai paša kanāla nosaukuma, sakārtoti pēc grupas.
 

@@ -11,13 +11,13 @@ translated: true
 
 # Tastatursnarveier i nettleseren
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+For at en lastet økt ikke skal gå tapt på grunn av en utilsiktet snarvei, beholder viseren disse tastene fra nettleseren.
 
-| Keys | When | Effect |
+| Taster | Når | Virkning |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (også med `Cmd`) | utenfor tekstfelt | nettleserens handling (skriv ut, lagre, åpne, last inn på nytt, nytt vindu, lukk ...) skjer ikke |
+| `F1` `F3` `F5` `F6` `F7` | alltid | nettleserens handling (hjelp, søk, last inn på nytt, adressefelt, bla med markør) skjer ikke |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | i fullskjerm | låst for viseren (Keyboard Lock API), så nettleseren ikke reagerer på dem |
+| lukke eller laste inn fanen på nytt | med data eller et nivå lastet | nettleseren spør først |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Alle viserens egne taster: [Referanse for tastatur og mus](keyboard-reference.md).

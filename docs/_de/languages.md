@@ -10,7 +10,7 @@ outdated: false
 
 # Sprachen
 
-Der Viewer kann deine Sprache: jeder Knopf, jeder Hinweis und jede Meldung sowie jeder Satz der Rennanalyse und der Match-Analyse wird in der Sprache angezeigt, die du wählst. Er kennt 40 Sprachen und startet in der Sprache deines Browsers, wenn er sie hat.
+Der Viewer spricht deine Sprache: jeder Knopf, jeder Hinweis und jede Meldung sowie jeder Satz der Rennanalyse und der Match-Analyse wird in der Sprache angezeigt, die du wählst. Er kennt 40 Sprachen und startet in der Sprache deines Browsers, wenn er sie hat.
 
 Alle Amtssprachen Europas sind dabei (die 24 der EU sowie Norwegisch, Isländisch, Ukrainisch, Russisch, Belarussisch, Serbisch, Bosnisch, Mazedonisch, Albanisch, Türkisch, Luxemburgisch und Katalanisch), dazu Japanisch, Koreanisch sowie Chinesisch vereinfacht und traditionell. Die ganze Liste: [Sprachliste](ref-languages.md).
 

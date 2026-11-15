@@ -11,11 +11,11 @@ translated: true
 
 # 事件類型與類別
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+檢視器會為每個含有事件欄位（`event`、`events`、`event_type` 或 `event_name`）的資料集加入一個 **事件類型** 欄位。每個遊戲自己的詞語會對應到其中一種類型（不分大小寫）；未列出的詞語計為 *其他*。
 
-| Kind | Shown as | Words in the data |
+| 類型 | 顯示為 | 資料中的詞語 |
 |---|---|---|
-| `position` | 位置 | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | 位置 | `（空）`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | 開火 | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | 發射(飛彈、火箭、炸彈) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | 命中 | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | 訊息 | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | 其他 | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## 載具類別 {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+**載具類別** 欄位與 **目標類別** 欄位使用這些類別，它們依載具名稱（透過[圖示目錄](figures.md)）與類型欄位推算。
 
-| Class | Shown as |
+| 類別 | 顯示為 |
 |---|---|
 | `fighter` | 戰鬥機 |
 | `attack` | 攻擊機 |

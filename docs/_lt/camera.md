@@ -69,7 +69,7 @@ Judėjimo klavišai sumuojami su [žaidimų pultu](gamepad.md); visa kita - [kla
 
 | Grupė | Mygtukai | Orientacija |
 |---|---|---|
-| **Izometrinis** | **NE**, **NW**, **SE**, **SW** | Lygiagretus, polinkis -35,264° (= atan(1/√2), kampas, kuriuo visos trys ašys projektuojamos į tokį patį ilgį), posūkis -45°, 45°, -135°, 135°. Keturi kampai, nes vienas visada slepia pusę žemėlapio už arčiau esančio. |
+| **Izometrinis** | **ŠR**, **ŠV**, **PR**, **PV** | Lygiagretus, polinkis -35,264° (= atan(1/√2), kampas, kuriuo visos trys ašys projektuojamos į tokį patį ilgį), posūkis -45°, 45°, -135°, 135°. Keturi kampai, nes vienas visada slepia pusę žemėlapio už arčiau esančio. |
 | **Šoniniai vaizdai** | **Viršus**, **Apačia**, **Priekis**, **Galas**, **Kairė**, **Dešinė** | Lygiagretus. Viršus žiūri tiesiai žemyn (polinkis -89,9°), Apačia - tiesiai aukštyn, Priekis - išilgai -Z (posūkis 0°), Galas - išilgai +Z (180°), Kairė - išilgai -X (-90°), Dešinė - išilgai +X (90°). |
 | | **Atgal į perspektyvą** | Grįžti į perspektyvos pozą, kurią palikote. Perspektyvoje išjungta. |
 | | **Trijų ketvirčių vaizdas** | Perspektyvinis, posūkis -35°, polinkis -28°. |

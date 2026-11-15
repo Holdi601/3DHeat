@@ -11,23 +11,23 @@ translated: true
 
 # 저장된 설정
 
-What the viewer keeps in your browser (`localStorage`) between visits. Nothing of it is sent anywhere. Clearing the site data in the browser removes it all.
+뷰어가 방문 사이에 브라우저(`localStorage`)에 보관하는 내용입니다. 이 중 어떤 것도 외부로 전송되지 않습니다. 브라우저에서 사이트 데이터를 지우면 모두 제거됩니다.
 
-| Key | Holds | Code |
+| 키 | 보관 내용 | 코드 |
 |---|---|---|
-| `3dheat.objectives` | objectives shown, layers, labels | `src/state/objectivesStore.ts` |
-| `3dheat.volumes.…` | volumes, per dataset | `src/volumes/store.ts` |
-| `heat3d.ai` | external AI: provider, address, model, options (not the key) | `src/insights/ai/settings.ts` |
-| `heat3d.ai.key` | the external AI key, only when *Remember the key* is ticked | `src/insights/ai/settings.ts` |
-| `heat3d.bookmarks.…` | bookmarks, per recording | `src/ui/replay/bookmarks.ts` |
-| `heat3d.carNames` | car names in the race tab | `src/race/carNames.ts` |
-| `heat3d.far` | figures at a distance, symbols, hit marks, aim lines | `src/state/store.ts` |
-| `heat3d.help` | help mode on or off | `src/state/helpStore.ts` |
-| `heat3d.inspect` | the pick card and camera readout | `src/state/inspectStore.ts` |
-| `heat3d.language` | the language picked | `src/i18n/index.ts` |
-| `heat3d.mirror` | the axis mirroring | `src/state/store.ts` |
-| `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
-| `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
-| `heat3d.units` | the units preset and single units | `src/state/unitsStore.ts` |
+| `3dheat.objectives` | 표시되는 목표, 레이어, 라벨 | `src/state/objectivesStore.ts` |
+| `3dheat.volumes.…` | 볼륨(데이터셋별) | `src/volumes/store.ts` |
+| `heat3d.ai` | 외부 AI: 제공자, 주소, 모델, 옵션(키 제외) | `src/insights/ai/settings.ts` |
+| `heat3d.ai.key` | 외부 AI 키(*이 브라우저에 키 기억*을 선택한 경우에만) | `src/insights/ai/settings.ts` |
+| `heat3d.bookmarks.…` | 북마크(녹화별) | `src/ui/replay/bookmarks.ts` |
+| `heat3d.carNames` | 레이스 탭의 차량 이름 | `src/race/carNames.ts` |
+| `heat3d.far` | 먼 거리의 피규어, 기호, 명중 표시, 조준선 | `src/state/store.ts` |
+| `heat3d.help` | 도움말 모드 켜기/끄기 | `src/state/helpStore.ts` |
+| `heat3d.inspect` | 선택 카드와 카메라 판독값 | `src/state/inspectStore.ts` |
+| `heat3d.language` | 선택한 언어 | `src/i18n/index.ts` |
+| `heat3d.mirror` | 축 대칭 | `src/state/store.ts` |
+| `heat3d.replay` | 리플레이 라벨, 전술 표시, 2D 지도, 차트, 헤드업 디스플레이, 외관, 건물, 추적 카메라 | `src/state/replayStore.ts` |
+| `heat3d.speed` | 재생 속도 | `src/state/playbackSpeed.ts` |
+| `heat3d.units` | 단위 프리셋과 개별 단위 | `src/state/unitsStore.ts` |
 
-Heat settings, filters and the view mode are not kept: they start fresh with each load.
+히트 설정, 필터, 보기 모드는 보관되지 않습니다. 불러올 때마다 새로 시작합니다.

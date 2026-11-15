@@ -36,7 +36,7 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Message | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Other | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Vehicle classes {#vehicle-classes}
 
 The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
 

@@ -22,7 +22,7 @@ totes les files -> Filtres -> Equips -> Entitats -> Llesca -> imatge
 
 Exemple: desmarca *Tank* a Filtres, amaga l'equip Red a Equips, i tria un jugador a Entitats. Només veus els moviments no de tanc d'aquell jugador.
 
-| Panell | Què fa | Modes de calor | Superposició de figures |
+| Panell | Què fa | Modes de calor | Figures superposades |
 |---|---|---|---|
 | [Filtres](filters.md) | Filtres d'interval i de categoria sobre qualsevol columna retinguda en carregar. | Sí | No (només filtres de columna) |
 | [Divisió de diferència](difference.md#the-difference-split-panel) | Quines files sumen i quines resten, en mode Diferència. | Només Diferència | No |

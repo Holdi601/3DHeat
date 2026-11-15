@@ -3,16 +3,16 @@ title: "Pagrindinis"
 nav_order: 1
 lang: "lt"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat parodo, kur žaidime kas vyko – kur judėjo žaidėjai, kur kovojo ir kur žuvo – kaip spindinčias spalvas, per kurias galima skristi, arba kaip mažas 3D figūras, kurios pakartoja rungtynes.
 
-Įkelkite pozicijas – CSV, Parquet, Tacview įrašus, konvertuotus pakartojimus, vieną failą, aplanką ar tūkstančius rungtynių – ir pamatykite jas kaip **šilumos žemėlapį, per kurį galima skristi**, kaip **figūras, kurios pakartoja rungtynes**, kaip linijas išilgai maršrutų, kuriais ėjo žmonės, arba kaip vienos populiacijos palyginimą su kita. Programa pati suranda, kas išsiskiria, ir veikia visiškai jūsų naršyklėje: niekas niekur neįkeliamas.
+Įkelkite pozicijas – CSV, Parquet, Tacview įrašus, konvertuotus pakartojimus, vieną failą, aplanką ar tūkstančius rungtynių – ir pamatykite jas kaip **šilumos žemėlapį, per kurį galima skristi**, kaip **figūras, kurios pakartoja rungtynes**, kaip linijas išilgai maršrutų, kuriais ėjo žmonės, arba kaip vienos populiacijos palyginimą su kita. Programa pati suranda, kas išsiskiria, ir veikia visiškai jūsų naršyklėje: niekas niekur neįkeliamas. 3DHeat ir visi jo įrankiai yra nemokami ir atviro kodo pagal [MIT licenciją](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Dešimties tankų rungtynių šiluma Demo Valley lygyje](../assets/img/lt/heat-hero.webp)
 
@@ -44,6 +44,8 @@ Skirtukai yra viršuje šoninės juostos, po pavadinimu, vienetais ir kalbos men
 | **Technika** | Kur kiekvienas vienetas buvo pataikytas, kas pataikė ir kuo. |
 
 ## Įdiegimas ir paleidimas {#install-and-run}
+
+3DHeat galima laisvai naudoti, keisti ir dalytis (MIT licencija), taip pat kiekvienu įrankiu, išvardytu [Susijusios saugyklos](#related-repositories) skyriuje.
 
 ### Windows, paprastas būdas {#windows-the-easy-way}
 

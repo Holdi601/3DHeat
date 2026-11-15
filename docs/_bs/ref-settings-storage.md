@@ -11,23 +11,23 @@ translated: true
 
 # Sačuvane postavke
 
-What the viewer keeps in your browser (`localStorage`) between visits. Nothing of it is sent anywhere. Clearing the site data in the browser removes it all.
+Šta preglednik pohranjuje u vašem pregledniku (`localStorage`) između posjeta. Ništa od toga se nigdje ne šalje. Brisanje podataka mjesta u pregledniku uklanja sve.
 
-| Key | Holds | Code |
+| Ključ | Sprema | Kod |
 |---|---|---|
-| `3dheat.objectives` | objectives shown, layers, labels | `src/state/objectivesStore.ts` |
-| `3dheat.volumes.…` | volumes, per dataset | `src/volumes/store.ts` |
-| `heat3d.ai` | external AI: provider, address, model, options (not the key) | `src/insights/ai/settings.ts` |
-| `heat3d.ai.key` | the external AI key, only when *Remember the key* is ticked | `src/insights/ai/settings.ts` |
-| `heat3d.bookmarks.…` | bookmarks, per recording | `src/ui/replay/bookmarks.ts` |
-| `heat3d.carNames` | car names in the race tab | `src/race/carNames.ts` |
-| `heat3d.far` | figures at a distance, symbols, hit marks, aim lines | `src/state/store.ts` |
-| `heat3d.help` | help mode on or off | `src/state/helpStore.ts` |
-| `heat3d.inspect` | the pick card and camera readout | `src/state/inspectStore.ts` |
-| `heat3d.language` | the language picked | `src/i18n/index.ts` |
-| `heat3d.mirror` | the axis mirroring | `src/state/store.ts` |
-| `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
-| `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
-| `heat3d.units` | the units preset and single units | `src/state/unitsStore.ts` |
+| `3dheat.objectives` | prikazani ciljevi, slojevi, oznake | `src/state/objectivesStore.ts` |
+| `3dheat.volumes.…` | volumeni, po skupu podataka | `src/volumes/store.ts` |
+| `heat3d.ai` | vanjska UI: pružatelj, adresa, model, opcije (ne ključ) | `src/insights/ai/settings.ts` |
+| `heat3d.ai.key` | ključ vanjske UI, samo kad je označeno *Zapamti ključ* | `src/insights/ai/settings.ts` |
+| `heat3d.bookmarks.…` | zabilješke, po snimku | `src/ui/replay/bookmarks.ts` |
+| `heat3d.carNames` | nazivi vozila na kartici utrke | `src/race/carNames.ts` |
+| `heat3d.far` | figure na udaljenosti, simboli, oznake pogodaka, linije nišanjenja | `src/state/store.ts` |
+| `heat3d.help` | način pomoći uključen ili isključen | `src/state/helpStore.ts` |
+| `heat3d.inspect` | kartica odabira i očitavanje kamere | `src/state/inspectStore.ts` |
+| `heat3d.language` | odabrani jezik | `src/i18n/index.ts` |
+| `heat3d.mirror` | zrcaljenje osa | `src/state/store.ts` |
+| `heat3d.replay` | oznake reprodukcije, taktički prikaz, 2D karta, grafikoni, head-up prikaz, izgled, zgrade, kamera koja prati | `src/state/replayStore.ts` |
+| `heat3d.speed` | brzina reprodukcije | `src/state/playbackSpeed.ts` |
+| `heat3d.units` | predložak jedinica i pojedinačne jedinice | `src/state/unitsStore.ts` |
 
-Heat settings, filters and the view mode are not kept: they start fresh with each load.
+Postavke topline, filteri i način prikaza se ne pamte: svako učitavanje kreće ispočetka.

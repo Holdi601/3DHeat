@@ -11,12 +11,12 @@ outdated: false
 
 # Gamepad i HOTAS
 
-Kameru možeš letjeti kontrolerom u stilu Xboxa umjesto tipkovnicom. Koristi ga kad želiš se naslonuti i gledati oko velike scene. Njegov ulaz **dodaje se** ulazu s tipkovnice, pa možeš koristiti oboje istovremeno.
+Kameru možete letjeti kontrolerom u stilu Xboxa umjesto tipkovnicom. Koristite ga kad želite sjediti opušteno i gledati oko velike scene. Njegov ulaz **dodaje se** ulazu s tipkovnice, pa možete koristiti oboje istovremeno.
 
 ## Spoji kontroler {#connect-a-controller}
 
-1. Priključi kontroler (ili ga upari).
-2. Klikni na pogled i pritisni bilo koji gumb na kontroleru. Preglednici prikazuju kontroler tek nakon njegova prvog unosa.
+1. Priključite kontroler (ili ga uparite).
+2. Kliknite na pogled i pritisnite bilo koji gumb na kontroleru. Preglednici prikazuju kontroler tek nakon njegova prvog unosa.
 3. Otvori **Kamera i scena → Gamepad**. Popis uređaja prikazuje ga s `●`.
 4. Pomakni lijevu palicu za letenje, desnu za gledanje. Ako se kamera pomiče dok su palice u sredini, povećaj **Mrtvu zonu**.
 

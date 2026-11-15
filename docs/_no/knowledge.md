@@ -25,7 +25,7 @@ Når [Innsikt](insights.md) finner noe, forklarer denne delen det med ideer fra 
 
 ## Slik virker det {#how-it-works}
 
-Innsikt-panelet vurderer funnene sine slik en profesjonell analytiker ville gjort: gjennom militær doktrine og operasjonsanalyse, historiske kamper, og litteraturen om spilldesign, banedesign og analyse. Det gjør det frakoblet, fra en utvalgt kunnskapsbase i seeren, og gir det samme materialet til en ekstern modell når en skriver gjennomgangen.
+Innsikt-panelet vurderer funnene sine slik en profesjonell analytiker ville gjort: gjennom militær doktrine og operasjonsanalyse, historiske kamper, og litteraturen om spilldesign, banedesign og analyse. Det gjør det frakoblet, fra en utvalgt kunnskapsbase i visningsprogrammet, og gir det samme materialet til en ekstern modell når en skriver gjennomgangen.
 
 ## Hva panelet viser {#what-the-panel-shows}
 

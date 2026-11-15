@@ -11,13 +11,13 @@ translated: true
 
 # Klawisze przeglądarki
 
-So that a loaded session is not lost to a stray shortcut, the viewer keeps these keys from the browser.
+Żeby wczytana sesja nie przepadła przez przypadkowy skrót, przeglądarka zatrzymuje te klawisze, zanim dotrą do przeglądarki.
 
-| Keys | When | Effect |
+| Klawisze | Kiedy | Efekt |
 |---|---|---|
-| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (also with `Cmd`) | outside text boxes | the browser's action (print, save, open, reload, new window, close ...) does not happen |
-| `F1` `F3` `F5` `F6` `F7` | always | the browser's action (help, find, reload, address bar, caret browsing) does not happen |
-| `W` `T` `N` `S` `R` `P` `Q` `Escape` | in full screen | locked for the viewer (Keyboard Lock API), so the browser does not act on them |
-| closing or reloading the tab | with data or a level loaded | the browser asks first |
+| `Ctrl+S` `Ctrl+P` `Ctrl+O` `Ctrl+U` `Ctrl+J` `Ctrl+H` `Ctrl+D` `Ctrl+R` `Ctrl+E` `Ctrl+K` `Ctrl+L` `Ctrl+G` `Ctrl+B` `Ctrl+Q` `Ctrl+W` `Ctrl+N` `Ctrl+T` (także z `Cmd`) | poza polami tekstowymi | akcja przeglądarki (drukowanie, zapis, otwieranie, przeładowanie, nowe okno, zamknięcie ...) nie następuje |
+| `F1` `F3` `F5` `F6` `F7` | zawsze | akcja przeglądarki (pomoc, wyszukiwanie, przeładowanie, pasek adresu, przeglądanie kursorem) nie następuje |
+| `W` `T` `N` `S` `R` `P` `Q` `Escape` | na pełnym ekranie | zablokowane dla przeglądarki (Keyboard Lock API), więc przeglądarka na nie nie reaguje |
+| zamknięcie lub przeładowanie karty | z wczytanymi danymi lub poziomem | przeglądarka najpierw pyta |
 
-All the viewer's own keys: [Keyboard and mouse reference](keyboard-reference.md).
+Wszystkie klawisze przeglądarki: [Skróty klawiaturowe i mysz](keyboard-reference.md).

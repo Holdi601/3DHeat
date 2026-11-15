@@ -73,7 +73,7 @@ Clicca su un'unità o sulla sua etichetta per **seguirla**; la sezione **Replay*
 - **Misura**: Maiusc-clic su due unità per il rilevamento, la distanza e la differenza di altezza tra di esse.
 - **Mappa 2D** (`M`): angolo o vista intera, con scie e nomi.
 - **Segnalibri** (`B`): salva il momento e la telecamera; vengono elencate anche le uccisioni, le morti e i segni propri della registrazione.
-- **Eventi**: ogni evento in ordine di tempo; un clic ci porta lì. `Pag su` / `Pag giù` saltano tra gli eventi; **Pausa sull'evento** si ferma su ciascuno.
+- **Eventi**: ogni evento in ordine di tempo; un clic ci porta lì. `Pag su` / `Pag giù` saltano tra gli eventi; **Pausa sull’evento** si ferma su ciascuno.
 
 ## Display tattico {#tactical-display}
 

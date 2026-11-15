@@ -23,14 +23,14 @@ Pole w prawym górnym rogu widoku, w kartach Mapa cieplna i Mecz ([`StatsOverlay
 |---|---|
 | **Backend** | *WebGPU* albo *WebGL2*. Po najechaniu widać, dlaczego nie użyto WebGPU, jeśli nie zostało użyte. Zobacz [Dwa silniki](backends.md). |
 | **FPS** | Klatki na sekundę, uśrednione z co najmniej 0,4 s. |
-| **Frame** | Czas klatki w ms, wygładzony (90% poprzedniej wartości, 10% nowej). To czas między klatkami, a nie czas GPU - czas poszczególnych przebiegów GPU nie jest mierzony. |
-| **Rows in window** | Kandydujące wiersze: wiersze w bieżącym oknie czasowym, przed filtrowaniem poszczególnych wierszy w shaderze. |
-| **Sprites / frame** | Sprite'y, które zgłosił plan ostatniej klatki (na klatkach bezczynnych, które niczego nie rysują, zostaje zaplanowana wartość). |
+| **Klatka** | Czas klatki w ms, wygładzony (90% poprzedniej wartości, 10% nowej). To czas między klatkami, a nie czas GPU - czas poszczególnych przebiegów GPU nie jest mierzony. |
+| **Wiersze w oknie** | Kandydujące wiersze: wiersze w bieżącym oknie czasowym, przed filtrowaniem poszczególnych wierszy w shaderze. |
+| **Sprite'y / klatka** | Sprite'y, które zgłosił plan ostatniej klatki (na klatkach bezczynnych, które niczego nie rysują, zostaje zaplanowana wartość). |
 | **Budget** | Budżet sprite'ów, z którym zaplanowano tę klatkę - wartość kontrolera adaptacyjnego, podniesiona do wszystkich kandydatów, gdy rysowany jest każdy wiersz. |
-| **Heat res** | Rozdzielczość bufora ciepła jako udział płótna: ustawienie *Rozdzielczość ciepła* razy skala adaptacyjnego drugiego stopnia. |
-| **Coverage** | Jak daleko akumulacja progresywna doszła do użycia każdego wiersza: procent podczas zbiegania (bursztynowy), *dokładnie*, gdy skończone. Zaszumiona klatka nigdy nie zostanie pomylona z gotowym obrazem. |
-| **Cubes** | Pudełka narysowane w [powtórce pudełek](box-replay.md). |
-| **Not resident** | Pokazywane tylko wtedy, gdy wiersze nie zmieściły się w budżecie GPU: ile ich jest. Zobacz [Pamięć GPU](gpu-memory.md). |
+| **Rozdz. ciepła** | Rozdzielczość bufora ciepła jako udział płótna: ustawienie *Rozdzielczość ciepła* razy skala adaptacyjnego drugiego stopnia. |
+| **Pokrycie** | Jak daleko akumulacja progresywna doszła do użycia każdego wiersza: procent podczas zbiegania (bursztynowy), *dokładnie*, gdy skończone. Zaszumiona klatka nigdy nie zostanie pomylona z gotowym obrazem. |
+| **Sześciany** | Pudełka narysowane w [powtórce pudełek](box-replay.md). |
+| **Nie w pamięci** | Pokazywane tylko wtedy, gdy wiersze nie zmieściły się w budżecie GPU: ile ich jest. Zobacz [Pamięć GPU](gpu-memory.md). |
 
 ## Wyświetlacz prędkości {#the-speed-display}
 
@@ -40,8 +40,8 @@ W prawym dolnym rogu widoku, tylko w perspektywie: prędkość lotu i czas przel
 
 Spójrz na nakładkę statystyk, a potem:
 
-1. **Rows in window znacznie większe niż Sprites / frame, Coverage poniżej 100%** - klatka nie może narysować wszystkiego; przy bezruchu zbiega w kilku klatkach. Zawęź okno, filtruj albo odrzucaj, aby zmniejszyć liczbę kandydatów; albo zaakceptuj próbkowanie.
-2. **Sprites / frame równe Rows in window, klatka wciąż wolna** - koszt zależy od liczby sprite'ów na ekranie: obniż *Maks. promień w pikselach* ([Kształt sprite'a](sprite-shape.md#pixel-clamps)) albo *Rozdzielczość ciepła*.
+1. **Wiersze w oknie znacznie większe niż Sprite'y / klatka, Pokrycie poniżej 100%** - klatka nie może narysować wszystkiego; przy bezruchu zbiega w kilku klatkach. Zawęź okno, filtruj albo odrzucaj, aby zmniejszyć liczbę kandydatów; albo zaakceptuj próbkowanie.
+2. **Sprite'y / klatka równe Wiersze w oknie, klatka wciąż wolna** - koszt zależy od liczby sprite'ów na ekranie: obniż *Maks. promień w pikselach* ([Kształt sprite'a](sprite-shape.md#pixel-clamps)) albo *Rozdzielczość ciepła*.
 3. **Wolno przy małej liczbie wierszy** - prawdopodobnie poziom: duża liczba konstrukcji z włączonymi krawędziami, trójkąty podłoża, głębia ostrości. Zobacz [Wygląd poziomu](level-appearance.md).
 4. **Wszystko wolne i czerwony baner** - renderowanie programowe ([Wykrywanie renderowania programowego](software-rendering.md)).
 

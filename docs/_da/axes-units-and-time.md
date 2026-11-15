@@ -95,7 +95,7 @@ En tidskolonne som `match_time` eller `round_time` tæller fra hver kamps egen s
 
 Kigretning bruges kun af [boksreplay](box-replay.md) (strålerne fra hver boks). Den gemmes som to vinkler, gir og hældning, i radianer.
 
-- **Gir- / hældningskolonner** læses, som de er, omregnet fra grader, når *Grader* er valgt. De justeres ikke for opad-aksen eller vendingerne.
+- **Yaw-/pitch-kolonner** læses, som de er, omregnet fra grader, når *Grader* er valgt. De justeres ikke for opad-aksen eller vendingerne.
 - **Kolonner med retningsvektor** går gennem samme omdøbning og vendinger som positionerne og bliver derefter gir = atan2(x, -z) og hældning = atan2(y, √(x² + z²)) i verdensakser, så strålen også peger dér, boksen vender, i en spejlvendt kildeverden.
 
-Hvis gir-/hældningskolonner peger den forkerte vej efter en vending, en retningsvektor eller justerede vinkler, er det løsningen.
+Hvis yaw-/pitch-kolonner peger den forkerte vej efter en vending, en retningsvektor eller justerede vinkler, er det løsningen.

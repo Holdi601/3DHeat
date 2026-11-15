@@ -9,13 +9,13 @@ translated: true
 outdated: false
 ---
 
-# Messwert
+# Messen
 
-**Messwert** macht die Maus zu einem Lineal und sagt dir, wie stark der Punkt unter dem Cursor belegt ist. Nutze ihn, um herauszufinden, wie weit zwei Orte auseinander liegen, oder wie viel Verkehr ein Ort hat.
+**Messen** macht die Maus zu einem Lineal und sagt dir, wie stark der Punkt unter dem Cursor belegt ist. Nutze ihn, um herauszufinden, wie weit zwei Orte auseinander liegen, oder wie viel Verkehr ein Ort hat.
 
 ## Ausprobieren {#try-it}
 
-1. Öffne **Messwert** in der Seitenleiste und setze den Haken bei **Lineal aktiv**.
+1. Öffne **Messen** in der Seitenleiste und setze den Haken bei **Lineal aktiv**.
 2. Klicke dreimal mit der linken Taste auf die Karte. Jeder Klick setzt einen Punkt.
 3. Lies **Pfad gesamt** (die Länge des ganzen Pfads) und **Letztes Segment** (der letzte Abschnitt).
 4. Mit der rechten Taste entfernst du den letzten Punkt. Mit **Leeren (3)** entfernst du alle.

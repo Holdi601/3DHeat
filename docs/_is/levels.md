@@ -27,7 +27,7 @@ Borðið er sameiginlegt fyrir alla þrjá flipana: braut sem hlaðin er í flip
 
 1. Hladdu gögnunum fyrst ([Hvernig gögn eru sett inn](getting-data-in.md)), svo borðið sé lagað að þeim.
 2. Opnaðu **Bakgrunnur / borð** á hliðarstikunni.
-3. Ýttu á **Kortamynd…** fyrir mynd eða **Þrívíddarlíkan…** fyrir þrívítt borð, og veldu skrána. Fyrir upptöku úr raunheimi notaðu **Bakgrunnur heimsins** eða **Vígvöllur** í staðinn.
+3. Ýttu á **Kortamynd…** fyrir mynd eða **Þrívíddarlíkan…** fyrir þrívítt borð, og veldu skrána. Fyrir upptöku úr raunheimi notaðu **Raunheimur sem bakgrunnur** eða **Vígvöllur** í staðinn.
 4. Bíddu eftir að framvindulínan klárist. Stórt líkan er fyrst einfaldað (sjá **Markmið einföldunar** hér að neðan).
 5. Ýttu á **F** í sýninni til að ramma allt inn. Notaðu **Ógegnsæi** og **Birtu** þar til hitinn sker sig úr borðinu.
 6. Ýttu á **Vista í safn** ef þú ætlar að nota borðið aftur ([Borðasafn](level-library.md)).
@@ -44,7 +44,7 @@ Borðið er sameiginlegt fyrir alla þrjá flipana: braut sem hlaðin er í flip
 | Hluti | Nánar |
 |---|---|
 | **Kortamynd…**, **Þrívíddarlíkan…** | Hladdu einu; það kemur í stað núverandi borðs. |
-| **Bakgrunnur heimsins**, **Gleyma kortareitum** | Aðeins fyrir gagnasafn með landfræðilegri tilvísun: byggir raunverulega staðinn undir því sem borð, eða eyðir sóttu reitunum. [Bakgrunnur heimsins](world-backdrop.md) |
+| **Raunheimur sem bakgrunnur**, **Gleyma kortareitum** | Aðeins fyrir gagnasafn með landfræðilegri tilvísun: byggir raunverulega staðinn undir því sem borð, eða eyðir sóttu reitunum. [Bakgrunnur heimsins](world-backdrop.md) |
 | **Markmið einföldunar** | Þríhyrningafjárhagsáætlunin fyrir næsta innflutning líkans: *Full - engin einföldun* (sjálfgefið), *Há - 8M*, *Miðlungs - 3M*, *Lág - 800k*, *Útlína - 100k*. [Þrívíð borð](model-levels.md#simplification) |
 | Framvinda og **Hætta við** | Meðan afkóðun eða innflutningur stendur yfir. |
 | Innflutningsathugasemd | Þríhyrningar fyrir og eftir, skiptingin í jörð / mannvirki / vatn, smáatriðastigið sem var notað. |

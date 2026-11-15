@@ -13,7 +13,7 @@ outdated: false
 
 Skoðarinn horfir á hvernig hver hringur var ekinn og merkir staðina þar sem ökumaðurinn lét bílinn renna, snúast, lenda í einhverju eða sóa gripi. Þetta er gagnlegt, því mistök sem kostuðu tíma er fljótlegast að laga.
 
-![Hlutinn Stýring bílsins: hversu oft hver hringur læsti hjóli, snérist eða ýtti út á við, og listinn yfir villurnar með einni opinni](../assets/img/en/race-control-table.webp)
+![Hlutinn Stjórn á bílnum: hversu oft hver hringur læsti hjóli, snérist eða ýtti út á við, og listinn yfir villurnar með einni opinni](../assets/img/en/race-control-table.webp)
 
 ## Í einföldu máli {#in-plain-words}
 
@@ -24,7 +24,7 @@ Skoðarinn horfir á hvernig hver hringur var ekinn og merkir staðina þar sem 
 - **Högg** og **brotlending**: bíllinn snerti eitthvað (högg er hnjask eða rispa, brotlending er harður árekstur).
 - **ABS**, **TC**: hjálparkerfi bílsins sem vinna gegn læsingu og spóli. Þau eru ekki mistök.
 
-## Hlutinn Stýring bílsins (það sem þú sérð) {#the-car-control-section-what-you-see}
+## Hlutinn Stjórn á bílnum (það sem þú sérð) {#the-car-control-section-what-you-see}
 
 Fyrir valda hringinn, með það sem hringirnir bera, sýnir hann það sem finnst samt, án skriðs dekkja og án rekhorns, í stað þess að sýna ekkert (hér að neðan).
 
@@ -204,4 +204,4 @@ Hver atburður er lýstur með nafni beggja hringjanna, hvar (metrar eftir viðm
 | aðeins stefna | - | út frá stefnu miðað við akstur | út frá stýringu á hverja beygju |
 | FH Companion hringjaskrá ein (ekkert yaw, ekkert skrið) | - | - | út frá stýringu á hverja beygju (hún hefur stýri og hröðun) |
 
-Högg og brotlendingar þurfa aðeins hraða (betra með hröðun), svo hver heimild hefur þau. **Hlutinn Stýring bílsins** sýnir hvað hver heimild leyfir: með FH Companion hringjaskrá einni saman, ýtingar hennar út frá stýrinu og höggin hennar, og ábendinguna um að hlaða `.tele.gz` fyrir afganginn.
+Högg og brotlendingar þurfa aðeins hraða (betra með hröðun), svo hver heimild hefur þau. **Hlutinn Stjórn á bílnum** sýnir hvað hver heimild leyfir: með FH Companion hringjaskrá einni saman, ýtingar hennar út frá stýrinu og höggin hennar, og ábendinguna um að hlaða `.tele.gz` fyrir afganginn.

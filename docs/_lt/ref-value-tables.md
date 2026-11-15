@@ -11,9 +11,9 @@ translated: true
 
 # Reikšmių lentelės
 
-The price tables of [Value weighting](value-weighting.md). The game is recognised from names in the data; a converter's own value columns in the game's currency win over these.
+Kainų lentelės iš [Vertės svorinimo](value-weighting.md). Žaidimas atpažįstamas pagal duomenų pavadinimus; konverterio paties vertės stulpeliai žaidimo valiuta pranoksta šias lenteles.
 
-| Table | Currency | Defined in |
+| Lentelė | Valiuta | Apibrėžta |
 |---|---|---|
 | Real-world (USD) | `usd` | `src/data/costs/military.ts` |
 | StarCraft II | `res` | `src/data/costs/rts.ts` |

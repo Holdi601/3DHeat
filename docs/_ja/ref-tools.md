@@ -11,9 +11,9 @@ translated: true
 
 # コマンドラインツール
 
-The command-line tools in the viewer's `tools/` folder (Node.js, run from the repository root). You never need them to use the viewer: they pack, summarise and convert your data, and help whoever maintains the viewer. Each entry has the first paragraph of the tool's own description and its usage lines; run a tool without arguments for its full help where it has one. The data tools of the [related repositories](index.md#related-repositories) document their own commands.
+ビューアーの `tools/` フォルダーにあるコマンドラインツールです（Node.js、リポジトリのルートから実行）。ビューアーを使うのに必要はありません。データのパッケージ化、要約、変換を行い、ビューアーの保守者を助けます。各項目には、ツール自身の説明の最初の段落と使い方の行を載せています。ヘルプのあるツールは、引数なしで実行すると完全なヘルプが表示されます。[関連リポジトリ](index.md#related-repositories)のデータツールは、独自のコマンドを文書化しています。
 
-## For your data
+## お使いのデータ向け {#for-your-data}
 
 ### `3dheat-pack.mjs`
 
@@ -43,9 +43,9 @@ Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder
 node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
 ```
 
-## For developers and the docs
+## 開発者とドキュメント向け {#for-developers-and-the-docs}
 
-These check the viewer, make the demo data and the screenshots, and write the reference pages.
+ビューアーの検査、デモデータとスクリーンショットの作成、リファレンスページの書き出しを行います。
 
 ### `demo-data.mjs`
 
@@ -113,6 +113,6 @@ Find a headless configuration whose WebGPU canvas is actually composited.
 node tools/probe-present.mjs [url]
 ```
 
-## Libraries
+## ライブラリ {#libraries}
 
-`container.mjs` is a library with no command line: the tools above import it to read and write the [.3dheat file](container.md).
+`container.mjs` はコマンドラインを持たないライブラリです。上のツールはこれを読み込み、[.3dheat ファイル](container.md)を読み書きします。

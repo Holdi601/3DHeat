@@ -3,16 +3,16 @@ title: "Avaleht"
 nav_order: 1
 lang: "et"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat näitab, kus asjad mängus juhtusid - kuhu mängijad läksid, kus nad võitlesid ja kukkusid - hõõguvate värvidena, millest saab lennata läbi, või väikeste 3D-kujudena, mis kordavad matši.
 
-Laadi asukohad - CSV, Parquet, Tacview salvestised, konverteeritud kordused, üks fail, kaust või tuhanded matšid - ja vaata neid **soojuskaardina, millest saab lennata läbi**, **kujudena, mis kordavad matši**, joontena mööda marsruute, mida inimesed käisid, või ühe populatsioonina teise vastu. See leiab ise, mis silma paistab, ja töötab täielikult sinu brauseris: midagi ei laadita kuhugi üles.
+Laadi asukohad - CSV, Parquet, Tacview salvestised, konverteeritud kordused, üks fail, kaust või tuhanded matšid - ja vaata neid **soojuskaardina, millest saab lennata läbi**, **kujudena, mis kordavad matši**, joontena mööda marsruute, mida inimesed käisid, või ühe populatsioonina teise vastu. See leiab ise, mis silma paistab, ja töötab täielikult sinu brauseris: midagi ei laadita kuhugi üles. 3DHeat ja kõik selle tööriistad on tasuta ja avatud lähtekoodiga [MIT litsentsi](https://github.com/Holdi601/3DHeat/blob/main/LICENSE) all.
 
 ![Kümne tankimatši soojus demo-orus](../assets/img/et/heat-hero.webp)
 
@@ -44,6 +44,8 @@ Vahekaardid asuvad külgriba ülaosas nime, ühikute ja keelemenüü all.
 | **Sõidukid** | Kus iga üksus tabati, kes ja millega. |
 
 ## Paigaldus ja käivitamine {#install-and-run}
+
+3DHeat on vabalt kasutatav, muudetav ja jagatav (MIT litsents), samuti iga tööriist, mis on loetletud jaotises [Seotud hoidlad](#related-repositories).
 
 ### Windows, lihtne viis {#windows-the-easy-way}
 

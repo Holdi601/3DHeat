@@ -124,7 +124,7 @@ Målt på referencen: meter med fuld gas efter svinget (fra dens fuld gas til st
 | **langsomste punkt**, **mindstefart** | som ovenfor |
 | **gas på** | efter slip (eller det langsomste punkt), den første gas > 0,15 uden bremse |
 | **fuld gas** | det første punkt efter det, der holdt på ≥ 0,95 i 10 m |
-| **rulning** | meter fra slip til gas på, med bremse og gas begge under 0,05 |
+| **friløb** | meter fra slip til gas på, med bremse og gas begge under 0,05 |
 | **gasdyk** | antal gange gassen faldt mere end 0,25 under sin løbende top, mellem gas på og fuld gas |
 | **sideværts top** | den største sideværts acceleration fra 20 m før slip til det senere af fuld gas og 20 m efter det langsomste punkt |
 | **gear ved apex** | ved det langsomste punkt |

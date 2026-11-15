@@ -11,11 +11,11 @@ translated: true
 
 # Tipi u klassijiet ta' avvenimenti
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+Il-viewer iżid kolonna **Tip ta' avveniment** f'kull sett ta' dejta li għandu kolonna ta' avvenimenti (`event`, `events`, `event_type` jew `event_name`). Il-kliem ta' kull logħba jitqabbel ma' wieħed minn dawn it-tipi (l-ittri kbar u ż-żgħar huma l-istess); kelma li mhix elenkata titqies bħala *Oħra*.
 
-| Kind | Shown as | Words in the data |
+| Tip | Murija bħala | Kliem fid-dejta |
 |---|---|---|
-| `position` | Pożizzjoni | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Pożizzjoni | `(vojt)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Sparatura | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Tluq (missila, rokit, bomba) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Daqqa | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Messaġġ | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Oħra | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Klassijiet tal-vetturi {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Il-kolonni **Klassi tal-vettura** u **Klassi tal-mira** jużaw dawn il-klassijiet, miksuba mill-ismijiet tal-vetturi (permezz tal-[katalgu tal-figuri](figures.md)) u mill-kolonni tat-tip.
 
-| Class | Shown as |
+| Klassi | Murija bħala |
 |---|---|
 | `fighter` | Ġellied |
 | `attack` | Ajruplan ta' attakk |

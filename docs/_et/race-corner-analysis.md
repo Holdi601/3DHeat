@@ -150,7 +150,7 @@ Ajakaart, vahed ringide nimekirjas, auto juhtimise sündmused ja kurvitabel jär
 - **Netos** = `rel(lõpp) - rel(algus)` (ringrajal pluss joont ületav jooks lendaval ringil): otsus. Lähemal kui **0,03 s** on **sama**.
 - **Jaotus**: kus kurvi sees esimene ring pöördus. Lõigul, mis algab kummagi ringi esimesest pidurdamispunktist või aeglaseimast punktist ja lõpeb hilisema neist, täisgaasi või aeglaseima punkti kohal, on suurim kõikumine, mille ring siis kas andis tagasi või võitis tagasi, kui see kõikumine on üle **0,04 s**. Muidu on see hilisem kahest aeglaseimast punktist.
 - **Tipuni** = `rel(jaotus) - rel(algus)`; **pärast seda** = netos miinus see.
-  Kui mõlemad on vähemalt 0,04 s ja vastupidise märgiga, siis ring **trade'is** ühte teise vastu.
+  Kui mõlemad on vähemalt 0,04 s ja vastupidise märgiga, siis ring **vahetas** ühte teise vastu.
 - **Pärast seda** jaguneb uuesti kohas, kus mõlemad ringid on täisgaasil: **väljasõit** (jaotus kuni hilisema täisgaasi punktini) ja **sirge** (sealt lõpuni).
 - **Sirge** jaguneb kolmeks:
   - *väljasõidu kiirus* (`byExit`): mõõdetud, mitte modelleeritud. Aeglasem auto läbib kiirema auto alguskiiruse veidi sirge peal, ja sealt on tema enda jälg see, mis ta oleks teinud sellelt kiiruselt, oma käigukasti, takistuse ja kaldega. Nihutatuna tagasi sellesse punkti (ja sõidetuna edasi lõppkiirusel meetrite jooksul, mida ta võidab) on see tema aeg kiiremast algusest; vahe on väljasõidu kiiruse hind. Kui aeglasem auto ei jõua seda kiirust (või ainult viimastel 2 proovil), pannakse tema enda kiirendus sirgel tagasi võimsusena (`a·v` hoitud), mitte kunagi rohkem, kui tema ümbrik näitab sellel kiirusel (ilma ümbrikuta kaks korda mõõdetud kiirendus).
@@ -177,18 +177,18 @@ Auto kulu on summa, kuni kaona ulatuseni.
 
 | Juhtum | Leid | Tulemus |
 |---|---|---|
-| netos ±0,03 s piires, trade, väiksem pool vähemalt **0,1 s** | **sama, kaks teed läbi** – kes oli aeglane sisse ja kiire välja, kes vastupidi; kui sirge tuleb järele (sirgele või kahe vahele), on aeglane sisse ja kiire välja see tee, millele ehitada: hoia selle varajane gaas, võida sisenemine tagasi pidurdades kõvemini, mitte hiljem | sama |
+| netos ±0,03 s piires, vahetus, väiksem pool vähemalt **0,1 s** | **sama, kaks teed läbi** – kes oli aeglane sisse ja kiire välja, kes vastupidi; kui sirge tuleb järele (sirgele või kahe vahele), on aeglane sisse ja kiire välja see tee, millele ehitada: hoia selle varajane gaas, võida sisenemine tagasi pidurdades kõvemini, mitte hiljem | sama |
 | netos ±0,03 s piires muidu | ei öelda midagi | - |
-| võidetud, trade, kaotatud tipuni | **aeglane sisse, kiire välja tasus end ära**: hoia see, siin on väljasõit rohkem väärt | võit |
-| võidetud, trade, võidetud tipuni | **sisenemisel kiirem**: sisenemine on õige, varasem täisgaas hoiaks rohkem | võit |
+| võidetud, vahetus, kaotatud tipuni | **aeglane sisse, kiire välja tasus end ära**: hoia see, siin on väljasõit rohkem väärt | võit |
+| võidetud, vahetus, võidetud tipuni | **sisenemisel kiirem**: sisenemine on õige, varasem täisgaas hoiaks rohkem | võit |
 | võidetud ja teisel ringil on siin kadu | **kiirem – teise tegemise tõttu**, tema põhjus ja vihje ütlesid "Teisele ringile: …" | võit |
 | võidetud muidu | **kiirem sisenemisel / väljumisel**, sõltuvalt sellest, kumb pool võitis rohkem (hiljem pidurdades, rohkem kiirust keskel; või varem sirgeks, tugevam tõmme) | võit |
 | kaotatud, ja **kokkupõrke või õnnetuse** kulu vähemalt `max(0,05 s; 40% kaost)` | löök on kurvi lugu, enne autosid | kadu |
 | kaotatud ja **auto osa** on 60% või rohkem | **auto**: tema tõmme sirgel, haarduvus keskel või pidurid, suurim osa; juhi osa (≥ 0,03 s) öeldakse kui "Muu X s: …" | kadu |
 | kaotatud ja üks jagamata **auto juhtimise viga** maksis vähemalt `max(0,05 s; 40%)` | see viga (vt allpool), kus aeg selle ümber liikus | kadu |
 | kaotatud ja **pikem lend** maksis vähemalt `max(0,05 s; 40%)` | lend | kadu |
-| kaotatud, trade, tipuni võidetud | **liiga kiire sisse, aeglane välja**: väljasõidu põhjus; loobu mõnest sisenemisest, et saada varem pöörata ja täisgaasile, teise ringi pidurdus- ja täisgaasipunktidega. Selle juur (`cause`, mida [statistika](race-course-statistics.md) loeb): hilisem pidurdamine, kui ta pidurdas mitu meetrit hiljem kui teine; muidu väljasõidu põhjus | kadu |
-| kaotatud, trade, tipuni kaotatud | **andis sisenemisel rohkem ära, kui väljasõit tagasi võitis**: sisenemise põhjus, mis on ühtlasi tema juur (`cause`); hoia väljasõit, kaota vähem sisenemisel | kadu |
+| kaotatud, vahetus, tipuni võidetud | **liiga kiire sisse, aeglane välja**: väljasõidu põhjus; loobu mõnest sisenemisest, et saada varem pöörata ja täisgaasile, teise ringi pidurdus- ja täisgaasipunktidega. Selle juur (`cause`, mida [statistika](race-course-statistics.md) loeb): hilisem pidurdamine, kui ta pidurdas mitu meetrit hiljem kui teine; muidu väljasõidu põhjus | kadu |
+| kaotatud, vahetus, tipuni kaotatud | **andis sisenemisel rohkem ära, kui väljasõit tagasi võitis**: sisenemise põhjus, mis on ühtlasi tema juur (`cause`); hoia väljasõit, kaota vähem sisenemisel | kadu |
 | kaotatud, sirgel gaasi võetud ja sõidetud osa on üle poole kaost | **sirgel ei sõidetud täisgaasil**: osa täisgaasil võrreldes teisega, kus ja kui kaua gaasi võeti | kadu |
 | kaotatud, autode tõmme üle 60% kaost ja sirge üle poole | **auto tõmme sirgel** (mõlema auto tõmme 160 km/h juures) | kadu |
 | kaotatud muidu | põhjus poolest, mis kaotas rohkem (tipuni ≥ pärast seda: sisenemise oma; muidu väljasõidu oma). Aeglasem välja ainult seetõttu, et keskel aeglasem (rohkem kui 1 m/s): selle asemel keskosa põhjus | kadu |

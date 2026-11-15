@@ -11,11 +11,11 @@ translated: true
 
 # Tipus i classes d'esdeveniments
 
-The viewer adds an **Event type** column to every dataset that has an event column (`event`, `events`, `event_type` or `event_name`). Each game's own words are mapped to one of these kinds (upper and lower case alike); a word not listed counts as *Other*.
+El visualitzador afegeix una columna **Tipus d'esdeveniment** a cada conjunt de dades que té una columna d'esdeveniments (`event`, `events`, `event_type` o `event_name`). Les paraules pròpies de cada joc s'assignen a un d'aquests tipus (sense distingir majúscules de minúscules); una paraula que no hi és figura com a *Altre*.
 
-| Kind | Shown as | Words in the data |
+| Tipus | Es mostra com | Paraules a les dades |
 |---|---|---|
-| `position` | Posició | `(empty)`, `position`, `pos`, `sample`, `move`, `vehicle` |
+| `position` | Posició | `(buit)`, `position`, `pos`, `sample`, `move`, `vehicle` |
 | `fire` | Tret | `burst`, `shot`, `gun_shot`, `fire`, `fire_start`, `fire_stop`, `weapon_fire`, `slash`, `hasfired`, `shoot`, `fired`, `tracer` |
 | `launch` | Llançament (míssil, coet, bomba) | `launch`, `launched`, `torpedo`, `throw`, `release` |
 | `hit` | Impacte | `hit`, `hit_critical`, `hit_severe`, `struck`, `impact`, `hasbeenhitby` |
@@ -39,11 +39,11 @@ The viewer adds an **Event type** column to every dataset that has an event colu
 | `message` | Missatge | `chat`, `message`, `command`, `bookmark`, `debug`, `comment` |
 | `other` | Altre | `grenade`, `projectile`, `nade`, `thrown`, `flight` |
 
-## Vehicle classes
+## Classes de vehicle {#vehicle-classes}
 
-The **Vehicle class** and **Target class** columns use these classes, worked out from vehicle names (through the [figure catalogue](figures.md)) and type columns.
+Les columnes **Classe de vehicle** i **Classe de l'objectiu** fan servir aquestes classes, calculades a partir dels noms dels vehicles (a través del [catàleg de figures](figures.md)) i de les columnes de tipus.
 
-| Class | Shown as |
+| Classe | Es mostra com |
 |---|---|
 | `fighter` | Caça |
 | `attack` | Avió d'atac |

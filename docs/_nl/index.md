@@ -3,16 +3,16 @@ title: "Startpagina"
 nav_order: 1
 lang: "nl"
 source: "index.md"
-source_hash: "b93bb646bdad"
+source_hash: "25c1fded750f"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
 
 3DHeat laat zien waar dingen in een spel gebeurden - waar spelers heen gingen, vochten en vielen - als gloeiende kleuren waar je doorheen kunt vliegen, of als kleine 3D-figuurtjes die de wedstrijd opnieuw afspelen.
 
-Laad posities in - CSV, Parquet, Tacview-opnamen, omgezette replays, een enkel bestand, een map of duizenden wedstrijden - en bekijk ze als een **heatmap waar je doorheen kunt vliegen**, als **figuren die de wedstrijd opnieuw afspelen**, als lijnen langs de routes die mensen namen, of als de ene groep tegenover de andere. Het vindt zelf wat opvalt, en het draait volledig in je browser: er wordt niets ergens naartoe geüpload.
+Laad posities in - CSV, Parquet, Tacview-opnamen, omgezette replays, een enkel bestand, een map of duizenden wedstrijden - en bekijk ze als een **heatmap waar je doorheen kunt vliegen**, als **figuren die de wedstrijd opnieuw afspelen**, als lijnen langs de routes die mensen namen, of als de ene groep tegenover de andere. Het vindt zelf wat opvalt, en het draait volledig in je browser: er wordt niets ergens naartoe geüpload. 3DHeat en al zijn tools zijn gratis en open source onder de [MIT-licentie](https://github.com/Holdi601/3DHeat/blob/main/LICENSE).
 
 ![Warmte van tien tankwedstrijden over het demodal](../assets/img/nl/heat-hero.webp)
 
@@ -44,6 +44,8 @@ De tabbladen staan bovenaan de zijbalk, onder de naam, de eenheden en het taalme
 | **Voertuigen** | Waar elke eenheid is geraakt, door wie en met wat. |
 
 ## Installeren en starten {#install-and-run}
+
+3DHeat is gratis te gebruiken, te wijzigen en te delen (MIT-licentie), en dat geldt ook voor elke tool uit [Gerelateerde repositories](#related-repositories).
 
 ### Windows, de makkelijke manier {#windows-the-easy-way}
 

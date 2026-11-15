@@ -198,7 +198,7 @@ Festet til banen og plassert hvert bilde fra kameraets projeksjon (utenfor skjer
 
 ## Speilvendte verdener {#mirrored-worlds}
 
-Seerens verden er høyrehåndet med Y opp: sett ovenfra svinger en bil til venstre når retningen `atan2(dx, dz)` vokser. Et spill med en venstrehåndet verden - Forza blant dem - kommer speilvendt ut: hver høyresving tegnet som et venstresving, både bane og runder.
+Visningsprogrammets verden er høyrehåndet med Y opp: sett ovenfra svinger en bil til venstre når retningen `atan2(dx, dz)` vokser. Et spill med en venstrehåndet verden - Forza blant dem - kommer speilvendt ut: hver høyresving tegnet som et venstresving, både bane og runder.
 
 Rundene sier det selv ([`handedness.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/race/handedness.ts)): hver runde gås gjennom noen meter (3 m) om gangen, og svingingen av stien sammenlignes med kompresjonen i den ytre fjæringen (`suspension.FR` minus `suspension.FL`) og, uten fjæring, med styringen (positiv til høyre i hver adapter). En runde som svinger mindre enn π totalt, sier ingenting; bevis teller når det overstiger 2 % av svingingen. Rundene stemmer; et uavgjort er "kan ikke si".
 

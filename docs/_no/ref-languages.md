@@ -11,9 +11,9 @@ translated: true
 
 # Språkliste
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+Viseren snakker 40 språk. Den starter med nettleserens språk når den har det, og språkmenyen øverst i sidefeltet endrer det. Hvordan du endrer det, og hvordan oversettelsene lages: [Språk](languages.md).
 
-| Code | Language |
+| Kode | Språk |
 |---|---|
 | `en` | English |
 | `de` | Deutsch |
