@@ -8,6 +8,8 @@
  */
 
 import { LANGUAGES } from '../../i18n/languages';
+import { fullCite } from '../knowledge';
+import { topEntries, type LensPick } from '../lens';
 import { reportForModel } from '../seam';
 import type { InsightReport } from '../types';
 import type { Moment } from '../cast/moments';
@@ -58,6 +60,31 @@ export interface PromptOptions {
   language: string;
   names: boolean;
   question?: string;
+  /** The knowledge lens to ground the debrief in; false sends no knowledge. */
+  lens?: LensPick | false;
+}
+
+/** Knowledge entries sent with a debrief at most. */
+const MAX_KNOWLEDGE = 14;
+
+/** The knowledge base entries most relevant to the report, as a model reads them (`lens.ts`). */
+export function knowledgeForModel(r: InsightReport, lens: LensPick = 'auto') {
+  const top = topEntries(r, lens, MAX_KNOWLEDGE * 2);
+  // Concepts and literature first, but always a few historical parallels.
+  const cases = top.filter((x) => x.entry.type === 'case').slice(0, 5);
+  const rest = top.filter((x) => x.entry.type !== 'case').slice(0, MAX_KNOWLEDGE - cases.length);
+  return [...rest, ...cases].map(({ entry: e, score, about }) => ({
+    id: e.id,
+    type: e.type,
+    title: e.title,
+    relevance: Math.round(score * 100) / 100,
+    about,
+    summary: e.summary,
+    lesson: e.lesson,
+    ...(e.measure ? { measure: e.measure } : {}),
+    ...(e.when ? { when: e.when, where: e.where, outcome: e.outcome } : {}),
+    references: e.refs.map(fullCite),
+  }));
 }
 
 export function debriefPrompt(r: InsightReport, say: (key: string, params: Record<string, number | string>) => string, opt: PromptOptions): ChatPrompt {
@@ -67,13 +94,20 @@ export function debriefPrompt(r: InsightReport, say: (key: string, params: Recor
   if (!opt.names) {
     report = pseudonymize({ ...report, dataset: { ...report.dataset, name: '' } }, aliases(reportNames(top)));
   }
+  const knowledge = opt.lens === false ? [] : knowledgeForModel(top, opt.lens ?? 'auto');
   const system = [
     'You write the debrief of a gameplay analysis for players, coaches and level designers.',
     'You get the findings of a statistical engine as JSON: each with an id, a sentence, an effect (a ratio; 1 means like the rest of the map) with its 95% interval, p and q values, the counts behind it, a place in world units and filters.',
     'Write a short debrief: what stands out most, what it means for tactics, what it means for balance, and how sure each point is. Say only what the numbers support; never invent numbers, places or names. Cite each finding you use by its id in square brackets, like [power.kd:3:4].',
-    `Write in ${languageName(opt.language)}. Plain text, short paragraphs, no headings or tables; at most about 250 words.`,
+    ...(knowledge.length
+      ? [
+          'The report\'s "lens" holds measures of military operations analysis (a Lanchester fit of losses on strengths, local force ratios at kills, exchange ratios, viewsheds of kill places, energy states of aircraft, persistent hotspots, trade rate, first-strike advantage). You also get "knowledge": entries of a curated knowledge base - doctrine, operations research, historical battles, game and level design, analytics studies - each with its references and the findings it relates to (about).',
+          'Judge the findings through that literature like a professional analyst: name the concept that explains a finding, and where a historical case genuinely shares its pattern, give it as a parallel with its date and outcome. Cite entries by id in curly braces, like {concept.lanchester-square}, and name their sources as author and year. Use only the entries and references given; never invent sources, quotes or historical facts. Say where a parallel stops holding.',
+        ]
+      : []),
+    `Write in ${languageName(opt.language)}. Plain text, short paragraphs, no headings or tables; at most about ${knowledge.length ? 350 : 250} words.`,
   ].join('\n');
-  const user = `${opt.question?.trim() ? `Question: ${opt.question.trim()}\n\n` : ''}Report:\n${JSON.stringify(report)}`;
+  const user = `${opt.question?.trim() ? `Question: ${opt.question.trim()}\n\n` : ''}Report:\n${JSON.stringify(report)}${knowledge.length ? `\n\nKnowledge:\n${JSON.stringify(knowledge)}` : ''}`;
   return { system, user, maxTokens: 16000 };
 }
 

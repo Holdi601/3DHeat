@@ -23,6 +23,7 @@ import { Caster } from './Caster';
 import { parseValueColumn } from '../../data/costs/columns';
 import { valueColumnLabel } from '../panels/ValueSection';
 import { Debrief } from './Debrief';
+import { InsightLens, LensMetricsView, LensPicker } from './LensView';
 import { useEngine } from '../EngineContext';
 import './insights.css';
 
@@ -168,6 +169,8 @@ function InsightsBody() {
             ))}
           </ol>
           <Skipped />
+          <LensPicker />
+          <LensMetricsView report={r} />
         </>
       )}
     </div>
@@ -199,6 +202,7 @@ const fmtRatio = (v: number | null) => (v !== null && Number.isFinite(v) ? `${nu
 const fmtP = (p: number) => (p <= 0 ? '< 1e-300' : p < 1e-4 ? p.toExponential(1) : num(p, p < 0.01 ? 4 : 3));
 
 function Details({ ins }: { ins: Insight }) {
+  const report = useInsights((s) => s.report);
   const e = ins.effect;
   const c = ins.confidence;
   return (
@@ -218,6 +222,7 @@ function Details({ ins }: { ins: Insight }) {
           {t('insights.volume')}
         </button>
       )}
+      {report && <InsightLens ins={ins} report={report} />}
     </div>
   );
 }

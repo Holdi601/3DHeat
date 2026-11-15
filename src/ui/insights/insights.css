@@ -197,3 +197,62 @@
   font-variant-numeric: tabular-nums;
   opacity: 0.7;
 }
+
+/* The knowledge lens: literature, parallels, references and lens metrics. */
+
+.ins-debrief .ins-p {
+  margin: 6px 0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.ins-debrief .ins-lens-literature,
+.ins-debrief .ins-lens-parallel,
+.ins-debrief .ins-lens-metrics {
+  padding-left: 8px;
+  border-left: 2px solid var(--accent-dim);
+}
+
+.ins-debrief .ins-lens-parallel {
+  border-left-color: var(--warm);
+}
+
+.ins-lens,
+.ins-lens-metrics {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.ins-lens-metrics > summary,
+.ins-refs > summary {
+  cursor: pointer;
+  color: var(--text-dim, var(--text));
+}
+
+.ins-lens-hit {
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+
+.ins-lens-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
+.ins-refs {
+  margin-top: 2px;
+  font-size: 11px;
+}
+
+.ins-refs ol {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+
+.ins-refs li {
+  margin: 2px 0;
+  overflow-wrap: anywhere;
+}

@@ -10,6 +10,8 @@
  * viewer says it in the viewer's language, a narrator can say it in its own.
  */
 
+import type { LensMetrics } from './lensMetrics';
+
 export const DETECTORS = ['power', 'zones', 'cover', 'spawn', 'classPlace', 'players', 'flow', 'value'] as const;
 export type DetectorId = (typeof DETECTORS)[number];
 
@@ -139,6 +141,8 @@ export interface InsightReport {
   values?: InsightValue[];
   detectors: DetectorRun[];
   insights: Insight[];
+  /** Measures of operations analysis over the same rows (`lensMetrics.ts`), for the knowledge lens. */
+  lens?: LensMetrics;
   /** Was the false discovery rate controlled at. */
   fdr: number;
   elapsedMs: number;

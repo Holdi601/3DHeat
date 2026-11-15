@@ -11,12 +11,18 @@
  */
 
 import { int, list, num, t } from '../i18n';
+import type { LensPick } from './lens';
+import { lensParagraphs } from './lensNarrate';
 import type { InsightNarrator, Narration, NarrationInput } from './seam';
 import type { DetectorId, Insight, InsightReport } from './types';
 
 export interface DebriefParagraph {
   text: string;
   cites: string[];
+  /** Lens lines (`lensNarrate.ts`): the knowledge entries said, and what about. */
+  refs?: string[];
+  role?: 'literature' | 'parallel' | 'metrics';
+  about?: string;
 }
 
 export interface Debrief extends Narration {
@@ -30,7 +36,7 @@ const BALANCE = /^(spawn\.(trap|strong)|classPlace\.)/;
 const PER_GROUP = 2;
 
 /** `say` turns an insight into its sentence in the viewer's language (the panel's `insightText`). */
-export function baseDebrief(r: InsightReport, say: (i: Insight) => string): Debrief {
+export function baseDebrief(r: InsightReport, say: (i: Insight) => string, lens: LensPick | false = 'auto'): Debrief {
   const ps: DebriefParagraph[] = [];
   const p = (text: string, cites: string[] = []) => ps.push({ text, cites });
   const sentence = (i: Insight) => say(i).replace(/[.!。]\s*$/, '');
@@ -41,7 +47,9 @@ export function baseDebrief(r: InsightReport, say: (i: Insight) => string): Debr
   }
   p(t('insights.debrief.lead', { n: int(ins.length), matches: int(r.dataset.matches), persons: int(r.dataset.persons), rows: int(r.dataset.shownRows) }));
   const said = new Set<string>();
+  const lead: Insight[] = [];
   const top = ins[0];
+  lead.push(top);
   p(t('insights.debrief.headline', { conf: t(`insights.conf.${top.confidence.level}`), text: sentence(top) }), [top.id]);
   said.add(top.id);
   for (const [re, key] of [[TACTICS, 'insights.debrief.tactics'], [BALANCE, 'insights.debrief.balance']] as const) {
@@ -49,6 +57,7 @@ export function baseDebrief(r: InsightReport, say: (i: Insight) => string): Debr
     if (!i) continue;
     p(t(key, { text: sentence(i) }), [i.id]);
     said.add(i.id);
+    lead.push(i);
   }
   // The rest by detector, the detector with the strongest finding first.
   const groups = new Map<DetectorId, Insight[]>();
@@ -62,6 +71,8 @@ export function baseDebrief(r: InsightReport, say: (i: Insight) => string): Debr
       shown.map((i) => i.id),
     );
   }
+  // Through the lens: the literature and the historical parallels of the lead findings and the lens metrics.
+  if (lens !== false) ps.push(...lensParagraphs(r, lead, lens));
   const weak = ins.filter((i) => i.confidence.level === 'low').length;
   if (weak > 0) p(t('insights.debrief.weak', { n: int(weak) }));
   return finish(ps);

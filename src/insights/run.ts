@@ -14,6 +14,7 @@ import { chunkAt, COMPARE_CHUNK, prepareCompare } from '../volumes/compareRun';
 import type { InsightNames } from './detectors';
 import { finishInsights, type ReportInfo } from './engine';
 import { createInsightJob, gridFor, stepInsight, stepLevel, type InsightChunk, type InsightMeta } from './pass';
+import { createLensJob, safeFinishLens, stepLens, stepLensLevel, type LensOptions } from './lensMetrics';
 import type { InsightReport } from './types';
 
 const IN_FLIGHT = 3;
@@ -39,6 +40,7 @@ interface Prep {
   level: ModelLevel | null;
   names: InsightNames;
   info: ReportInfo;
+  lens: LensOptions;
 }
 
 function prepare(ds: Dataset, sc: CompareScope, level: Level | null): Prep {
@@ -72,6 +74,8 @@ function prepare(ds: Dataset, sc: CompareScope, level: Level | null): Prep {
       actorColumn: CANON.actor,
     },
     info: { name: ds.name, rows: ds.count, hasLevel: !!model },
+    // Units in a metre, as the replay reckons it (`replayData.unitsPerMetre`): from the file's entity size.
+    lens: { upm: ds.entitySize ? ds.entitySize / 0.8 : 1 },
   };
 }
 
@@ -106,9 +110,19 @@ function resolve(r: InsightReport, ds: Dataset): InsightReport {
 export function insightsSync(ds: Dataset, scope: CompareScope, level: Level | null = null): InsightReport {
   const p = prepare(ds, scope, level);
   const job = createInsightJob(p.meta, p.scope);
-  if (p.level) stepLevel(job, p.level.vertices, 6);
-  for (let lo = p.cmp.lo; lo < p.cmp.hi; lo += COMPARE_CHUNK) stepInsight(job, chunk(p, lo, Math.min(COMPARE_CHUNK, p.cmp.hi - lo)).chunk);
-  return resolve(finishInsights(job, p.names, p.info), ds);
+  const lens = createLensJob(p.meta, p.scope, p.lens);
+  if (p.level) {
+    stepLevel(job, p.level.vertices, 6);
+    stepLensLevel(lens, p.level.vertices, 6);
+  }
+  for (let lo = p.cmp.lo; lo < p.cmp.hi; lo += COMPARE_CHUNK) {
+    const c = chunk(p, lo, Math.min(COMPARE_CHUNK, p.cmp.hi - lo)).chunk;
+    stepInsight(job, c);
+    stepLens(lens, c);
+  }
+  const report = finishInsights(job, p.names, p.info);
+  report.lens = safeFinishLens(lens, job, p.names.teams);
+  return resolve(report, ds);
 }
 
 /** The insights in a worker; rejects with an AbortError when `signal` is aborted. */
@@ -171,7 +185,7 @@ export function runInsights(
     };
     worker.onerror = (e) => fail(new Error(e.message || 'insight worker failed'));
     if (opts.signal?.aborted) return fail(new DOMException('aborted', 'AbortError'));
-    worker.postMessage({ type: 'start', meta: p.meta, scope: p.scope });
+    worker.postMessage({ type: 'start', meta: p.meta, scope: p.scope, lens: p.lens });
     pump();
   });
 }

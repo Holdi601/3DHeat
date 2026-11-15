@@ -14,11 +14,13 @@ import type { Insight, InsightReport } from '../../insights/types';
 import { AiSettingsButton } from './AiSettings';
 import { insightText } from './say';
 import { useAiStream } from './useAiStream';
+import { LensPicker, References, useLens } from './LensView';
 
 export function Debrief({ report, onPick }: { report: InsightReport; onPick: (ins: Insight) => void }) {
   const samples = report.dataset.exposure === 'samples';
   const say = (i: Insight) => insightText(i, samples);
-  const d = useMemo(() => baseDebrief(report, say), [report, lang()]); // eslint-disable-line react-hooks/exhaustive-deps
+  const lens = useLens((s) => s.lens);
+  const d = useMemo(() => baseDebrief(report, say, lens), [report, lang(), lens]); // eslint-disable-line react-hooks/exhaustive-deps
   const byId = useMemo(() => new Map(report.insights.map((i) => [i.id, i])), [report]);
   const rank = useMemo(() => new Map([...report.insights].sort((a, b) => b.strength - a.strength).map((i, n) => [i.id, n + 1])), [report]);
   const ai = useAi();
@@ -42,17 +44,19 @@ export function Debrief({ report, onPick }: { report: InsightReport; onPick: (in
       const ins = report.insights.find((i) => i.sentence.key === key && i.sentence.params === params);
       return ins ? say(ins) : t(key, params);
     };
-    stream.start(debriefPrompt(report, sayKey, { language: lang(), names: ai.names, question }), about);
+    stream.start(debriefPrompt(report, sayKey, { language: lang(), names: ai.names, question, lens }), about);
   };
 
   const copy = () => navigator.clipboard?.writeText((answer && stream.text) || d.text).catch(() => undefined);
 
   return (
     <div className="ins-debrief">
+      <LensPicker />
       {d.paragraphs.map((p, i) => (
-        <p key={i}>
+        <div key={i} className={p.role ? `ins-p ins-lens-${p.role}` : 'ins-p'}>
           {p.text} {p.cites.map(cite)}
-        </p>
+          {p.refs && <References ids={p.refs} />}
+        </div>
       ))}
       <div className="ins-ai">
         <div className="row wrap" style={{ gap: 6, alignItems: 'center' }}>

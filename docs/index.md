@@ -97,6 +97,7 @@ The server binds to `127.0.0.1` only, so neither route is reachable from the net
 
 - [Race analysis](race-analysis.md) and its method, [Race analytics](race-analytics.md); [Other racing games](other-games.md)
 - [Match analysis](match-analysis.md)
+- [The knowledge lens](knowledge.md) - the Insights findings judged through doctrine, operations research, historical battles and game design literature
 - [Languages](languages.md)
 - [Updates](updates.md)
 

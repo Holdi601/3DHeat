@@ -42,6 +42,8 @@ export function reportForModel(r: InsightReport, say: (key: string, params: Reco
     grid: r.grid,
     baseline: r.baseline,
     fdr: r.fdr,
+    /** Measures of operations analysis (Lanchester fit, force ratios, viewsheds...), where the data carries them. */
+    lens: r.lens,
     detectors: r.detectors.map(({ id, ran, skipped, tests, found }) => ({ id, ran, skipped, tests, found })),
     insights: r.insights.map((i: Insight) => ({
       id: i.id,
