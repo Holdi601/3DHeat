@@ -391,12 +391,13 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
   var glyphA = look.y;
   var dart = look.z > 0.5;
   if (look.x > 0.0) {
-    // Full when big at true size, coarse from a third of that, far below.
-    var mesh = meshes & 0xffffu;
-    if (trueLen < u.lod.z) { mesh = meshes >> 16u; }
-    if (trueLen < u.lod.z / 3.0) { mesh = tracks[b + 6u] & 0xffffu; }
+    // Full when big as drawn (after the smallest-figure growth), coarse from a third of that, far below.
     var scale = u.lod.y;
     if (look.w < 0.5) { scale = max(u.lod.y, u.px.z * pxSize / longest); }
+    let drawnLen = longest * scale / pxSize;
+    var mesh = meshes & 0xffffu;
+    if (drawnLen < u.lod.z) { mesh = meshes >> 16u; }
+    if (drawnLen < u.lod.z / 3.0) { mesh = tracks[b + 6u] & 0xffffu; }
     let slot = atomicAdd(&counts[mesh], 1u);
     if (slot < runs[mesh].y) {
       let o = (runs[mesh].x + slot) * 4u;

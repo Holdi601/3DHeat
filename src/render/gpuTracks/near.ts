@@ -158,10 +158,12 @@ export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): Figu
     const ny = (m[1] * pose.x + m[5] * pose.y + m[9] * pose.z + m[13]) / w;
     if (Math.abs(nx) > 1.3 || Math.abs(ny) > 1.3) continue;
     const meshes = s.trackData[i * TRACK_U32 + 3];
-    let mesh = meshes & 0xffff;
-    if (trueLen < f.fullPx) mesh = meshes >>> 16;
-    if (trueLen < f.fullPx / 3) mesh = s.trackData[i * TRACK_U32 + 6] & 0xffff;
+    // The model by its size as drawn, after the smallest-figure growth (as the place shader has it).
     const scale = look.trueSize ? f.scale : Math.max(f.scale, (f.minPixels * pxSize) / f32[i * TRACK_U32 + 4]);
+    const drawnLen = (L * scale) / pxSize;
+    let mesh = meshes & 0xffff;
+    if (drawnLen < f.fullPx) mesh = meshes >>> 16;
+    if (drawnLen < f.fullPx / 3) mesh = s.trackData[i * TRACK_U32 + 6] & 0xffff;
     const c = s.trackData[i * TRACK_U32 + 2];
     const out = runs.add(mesh);
     out[0] = pose.x - ox;
