@@ -36,7 +36,8 @@ export const END_REASON = /^(round.?end.?reason|end.?reason|match.?end.?reason|r
  *   surrender    a side gave up
  *   draw         no winner
  *   objective    an objective taken or held (Rainbow Six's hostage, secure area)
- *   capture      War Thunder: bled out of tickets while the winner held zones
+ *   capture      War Thunder: bled out of tickets while the winner held zones;
+ *                DCS: a persistent campaign won by taking every airfield and zone
  *   tickets      War Thunder: tickets lost to kills
  *   destruction  War Thunder: the last vehicles lost at once, no one left to spawn
  *   other

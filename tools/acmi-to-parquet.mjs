@@ -4,7 +4,7 @@
  * folder at a time, for the many-match overlay: one Parquet file per
  * recording, the folder tree kept, so a map or a scenario loads as one folder.
  *
- *   node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
+ *   node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--server Name] [--rounds file.json ...] [--force] [--loose]
  *
  * Each recording is read twice as a stream (`src/data/acmiStream.ts`, the
  * same reading as the viewer's own ACMI loader): first for its properties
@@ -28,10 +28,26 @@
  *                          row of its own at its object (`Inferred`), with
  *                          Shooter, Target, Weapon, OtherVehicle, OtherType,
  *                          Airfield, Detail and Rounds
+ *                          An airfield or FARP that changes sides where the
+ *                          recording shows it is a `capture` row at the pad
+ *                          (Detail "Red to Blue", Airfield its name)
  *   <name>.events.parquet  the rows at no place: comments, events about no
  *                          object seen, objects that never got a position, and
  *                          a row each time the recording's own properties
  *                          change (RecordingInfo, as JSON)
+ *
+ * Every row says where the recording comes from and who won
+ * (`src/data/dcsOutcome.ts`, docs/data-formats.md#outcome-columns): `server`
+ * (by the header's Title, Author and Comments, or --server) and `mission`;
+ * `round`, `won`, `matchWon` and `roundEndReason` from a rounds file
+ * (--rounds, format heat3d-dcs-rounds: a server's campaigns, who won each,
+ * and where that was read), empty where none says - a server's recording
+ * shows no winner; and on an aircraft's rows its `sortie` (1, 2, ... from
+ * take-off to take-off), how it ended (`sortieResult`: landed, landed
+ * damaged, ejected, shot down, destroyed, crashed, despawned, airborne at
+ * end, no takeoff) and its kills (`sortieKills`). The `acmi` footer's
+ * `outcome` holds the server, its rounds, the result with its source, the
+ * captures and the sorties by how they ended.
  *
  * Positions are east and north metres (X, Y) on the plane touching the earth
  * at the origin of the theatre the recording is in (`src/world/theatres.ts`,
@@ -234,6 +250,7 @@ async function readText(file, push) {
 async function convert(job, theatres) {
   const { AcmiStreamReader, acmiObjectLabel, tangentPlane } = await import(new URL('../src/data/acmiStream.ts', import.meta.url).href);
   const { AcmiEventFinder } = await import(new URL('../src/data/acmiEvents.ts', import.meta.url).href);
+  const { AcmiSorties, DcsRounds, PadOwners, dcsServer, roundAt, wonIn } = await import(new URL('../src/data/dcsOutcome.ts', import.meta.url).href);
   const t0 = performance.now();
   const name = stemOf(path.basename(job.input));
 
@@ -268,10 +285,22 @@ async function convert(job, theatres) {
   const origin = theatre ? theatre.origin : { lat: r1.refLat, lon: r1.refLon };
   const project = tangentPlane(origin.lat, origin.lon);
 
+  // The server and its rounds (`src/data/dcsOutcome.ts`): the header names the server, a rounds file who won.
+  // A row's time is the mission's clock (ReferenceTime + t); the rounds are the real one, from RecordingTime.
+  const srv = dcsServer(r1.globals, job.server ?? '');
+  const recUnix = r1.globals.RecordingTime ? Date.parse(r1.globals.RecordingTime) / 1000 : NaN;
+  const { rounds, source: roundsSource } = Number.isFinite(recUnix)
+    ? new DcsRounds(job.rounds ?? []).forRecording(srv.server, r1.globals.Title ?? '', recUnix, recUnix + Math.max(0, r1.lastTime ?? 0))
+    : { rounds: [], source: null };
+
   // The columns: the viewer's ACMI table, then every property.
   const EVENT_TEXT = ['Shooter', 'Target', 'Weapon', 'OtherVehicle', 'OtherType', 'Airfield', 'Detail', 'Inferred'];
-  const FIXED_NUM = ['Time', 'X', 'Y', 'Altitude', 'Heading', 'Pitch', 'Roll', 'Latitude', 'Longitude', 'Rounds'];
-  const FIXED_TEXT = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT];
+  // Who won (docs/data-formats.md#outcome-columns) and each aircraft's sortie.
+  const OUTCOME_NUM = ['round', 'won', 'matchWon', 'sortie', 'sortieKills'];
+  const OUTCOME_TEXT = ['server', 'mission', 'roundEndReason', 'sortieResult'];
+  const OUTCOME = ['server', 'mission', 'round', 'won', 'matchWon', 'roundEndReason', 'sortie', 'sortieResult', 'sortieKills'];
+  const FIXED_NUM = ['Time', 'X', 'Y', 'Altitude', 'Heading', 'Pitch', 'Roll', 'Latitude', 'Longitude', 'Rounds', ...OUTCOME_NUM];
+  const FIXED_TEXT = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT, ...OUTCOME_TEXT];
   const OWN_TEXT = new Set(['Type', 'Name', 'Pilot', 'Group', 'Country', 'Coalition', 'Color']);
   const hasUV = r1.rowsWithUV > 0;
   const taken = new Set([...FIXED_NUM, ...FIXED_TEXT, ...(hasUV ? ['U', 'V'] : [])]);
@@ -279,7 +308,7 @@ async function convert(job, theatres) {
   const colName = (k) => (taken.has(k) ? `${k} (property)` : k);
   const numKeys = [...r1.numericKeys].filter((k) => !r1.textKeys.has(k)).sort();
   const textKeys = [...r1.textKeys].filter((k) => !OWN_TEXT.has(k)).sort();
-  const order = ['Time', 'X', 'Y', 'Altitude', 'Object', 'Coalition', 'Heading', 'Pitch', 'Roll', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Latitude', 'Longitude', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT, 'Rounds', ...(hasUV ? ['U', 'V'] : [])];
+  const order = ['Time', 'X', 'Y', 'Altitude', 'Object', 'Coalition', 'Heading', 'Pitch', 'Roll', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Latitude', 'Longitude', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT, 'Rounds', ...OUTCOME, ...(hasUV ? ['U', 'V'] : [])];
   const numeric = new Set([...FIXED_NUM, 'U', 'V']);
   const columns = [...order.map((c) => ({ name: c, num: numeric.has(c) })), ...numKeys.map((k) => ({ name: colName(k), num: true, prop: k })), ...textKeys.map((k) => ({ name: colName(k), num: false, prop: k }))];
 
@@ -301,7 +330,7 @@ async function convert(job, theatres) {
       pitch: 'Pitch',
       angleUnit: 'degrees',
       // As the viewer's own reading (`acmiHints`): RecordingInfo for the Match tab's title, briefing and comments.
-      extra: ['Type', 'Name', 'Pilot', 'Group', 'Country', 'Event', 'Altitude', 'Roll', 'Latitude', 'Longitude', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT, 'Rounds', ...columns.slice(order.length).map((c) => c.name)],
+      extra: ['Type', 'Name', 'Pilot', 'Group', 'Country', 'Event', 'Altitude', 'Roll', 'Latitude', 'Longitude', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT, 'Rounds', ...OUTCOME, ...columns.slice(order.length).map((c) => c.name)],
     },
     geo: { lat0: origin.lat, lon0: origin.lon, projection: 'tangent-plane', east: 'X', north: 'Y', up: 'Altitude' },
   };
@@ -380,7 +409,9 @@ async function convert(job, theatres) {
         }
         return n++;
       },
-      finish(kv) {
+      finish(kv, prepare) {
+        // What is known only at the end (each aircraft's sortie) is filled in first.
+        if (prepare) prepare(bufs, n);
         // A stable counting sort by object, objects in the order first seen.
         const keys = bufs[keyCol];
         const index = new Map();
@@ -427,6 +458,31 @@ async function convert(job, theatres) {
   const [jT, jX, jY, jA, jH, jP, jR, jLat, jLon, jU, jV] = ['Time', 'X', 'Y', 'Altitude', 'Heading', 'Pitch', 'Roll', 'Latitude', 'Longitude', 'U', 'V'].map(J);
   const [jObj, jCo, jTy, jNa, jPi, jGr, jCn, jCl, jEv, jRec, jEvo, jInfo, jAct, jLau] = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher'].map(J);
   const [jSh, jTg, jWp, jOv, jOt, jAf, jDt, jInf, jRnd] = [...EVENT_TEXT, 'Rounds'].map(J);
+  const [jSrv, jMis, jRound, jWon, jMWon, jWhy, jSor, jSorR, jSorK] = OUTCOME.map(J);
+  /** A row's server, round and outcome by its side and the real time of its mission time `t`; no sortie yet. */
+  let lastRound = null;
+  const stamp = (b, i, t, color) => {
+    b[jSrv][i] = srv.server;
+    b[jMis][i] = srv.mission;
+    const wall = recUnix + t;
+    if (!lastRound || !(wall >= lastRound.t0 && wall < lastRound.t1)) lastRound = roundAt(rounds, wall);
+    const r = lastRound;
+    b[jRound][i] = r ? r.id : NaN;
+    // A campaign is the round and the match at once: who took it.
+    b[jWon][i] = b[jMWon][i] = wonIn(r, color);
+    b[jWhy][i] = r && r.winner ? (r.endReason ?? '') : '';
+    b[jSor][i] = NaN;
+    b[jSorR][i] = '';
+    b[jSorK][i] = NaN;
+  };
+  /** Each aircraft's sorties (by its rows' Object label), and the airfields and FARPs that change sides. */
+  const sorties = new AcmiSorties();
+  const liveAir = new Map();
+  let capture = null;
+  let captures = 0;
+  const pads = new PadOwners((c) => {
+    capture = c;
+  });
   const launchers = new Launchers();
   /** Per object now in the recording, what an event row of its says of it (`AcmiEventFinder` keeps it past its end). */
   const snaps = new Map();
@@ -436,6 +492,8 @@ async function convert(job, theatres) {
   const typeOf = (info) => (info ? (info.p.get('Type') ?? '') : '');
   const finder = new AcmiEventFinder((e) => {
     const s = e.subjectInfo;
+    // The sortie hears every event of an aircraft's, a kill credited after its shooter left too.
+    if (AcmiSorties.isAircraft(typeOf(s))) sorties.event(s.label, e.kind, (reader.refTime ?? 0) + e.t, e.detail);
     // An object's row after its end would bring it back: the event stays on the other side's row.
     if (e.subjectGone) {
       eventsLost++;
@@ -486,6 +544,7 @@ async function convert(job, theatres) {
     b[jDt][i] = e.detail;
     b[jInf][i] = 'inferred';
     b[jRnd][i] = e.rounds || NaN;
+    stamp(b, i, e.t, p.get('Color') ?? '');
     eventRows++;
     if (o === main) mainRows++;
     else effectRows++;
@@ -543,12 +602,23 @@ async function convert(job, theatres) {
     }
     b[jSh][i] = b[jTg][i] = b[jWp][i] = b[jOv][i] = b[jOt][i] = b[jAf][i] = b[jDt][i] = b[jInf][i] = '';
     b[jRnd][i] = NaN;
+    stamp(b, i, row.t, p.get('Color') ?? '');
     // What the recording leaves unsaid, from how things move, appear and end.
     if (row.placed && row.id) {
+      const type = p.get('Type') ?? '';
+      const air = AcmiSorties.isAircraft(type);
       if (row.event === 'Removed') {
+        // Flying when it went (asked before the finder forgets it): a sortie's end the removal's judgement may name.
+        if (air) {
+          sorties.removed(label, (reader.refTime ?? 0) + row.t, finder.airborne(row.id));
+          liveAir.delete(label);
+        }
+        if (PadOwners.isPad(type)) pads.removed(label, row.t);
         finder.removed(row.id, null, row.t);
         snaps.delete(row.id);
       } else if (!row.event) {
+        if (air) liveAir.set(label, row.id);
+        if (PadOwners.isPad(type)) pads.sample(label, row.t, x, y, row.alt, p.get('Color') ?? '', p.get('Name') ?? '');
         let s = snaps.get(row.id);
         if (!s) snaps.set(row.id, (s = { p, label, effect: o === effects, actor: '', launcher: '', lat: 0, lon: 0, x: 0, y: 0, head: NaN, pitch: NaN, roll: NaN }));
         s.p = p;
@@ -566,6 +636,23 @@ async function convert(job, theatres) {
     }
     if (o === main) mainRows++;
     else if (o === effects) effectRows++;
+    // An airfield or FARP that changed sides: a row of its own at the pad, as the events worked out are.
+    if (capture) {
+      const c = capture;
+      capture = null;
+      const k = o.next();
+      const cb = o.bufs;
+      for (let j = 0; j < columns.length; j++) cb[j][k] = cb[j][i];
+      cb[jEv][k] = 'capture';
+      cb[jEvo][k] = '';
+      cb[jAf][k] = c.name;
+      cb[jDt][k] = `${c.from} to ${c.to}`;
+      cb[jInf][k] = 'inferred';
+      captures++;
+      eventRows++;
+      if (o === main) mainRows++;
+      else if (o === effects) effectRows++;
+    }
     info(row.t);
   }, name);
   // The recording's own properties, whenever they changed: a row of the side file.
@@ -582,6 +669,7 @@ async function convert(job, theatres) {
     sb[jInfo][k] = JSON.stringify(reader.globals);
     sb[jAct][k] = '';
     sb[jLau][k] = '';
+    stamp(sb, k, t, '');
     sb[jLat][k] = reader.refLat;
     sb[jLon][k] = reader.refLon;
     [sb[jX][k], sb[jY][k]] = project(reader.refLat, reader.refLon);
@@ -591,6 +679,41 @@ async function convert(job, theatres) {
   reader.end();
   finder.finish();
   info(reader.lastTime);
+  // The aircraft still in the recording: flying or down at its end.
+  sorties.finish((reader.refTime ?? 0) + reader.lastTime, (label) => (liveAir.has(label) ? finder.airborne(liveAir.get(label)) : null));
+  const sortieCount = {};
+  for (const [, tr] of sorties.entries()) for (const so of tr.list) sortieCount[so.result] = (sortieCount[so.result] ?? 0) + 1;
+  /** Each aircraft row's sortie, its end and its kills, now that every sortie has ended. */
+  const fillSorties = (bufs, n) => {
+    const obj = bufs[jObj];
+    const time = bufs[jT];
+    let key = null;
+    let list = null;
+    for (let i = 0; i < n; i++) {
+      if (obj[i] !== key) {
+        key = obj[i];
+        list = sorties.of(key);
+      }
+      if (!list.length) continue;
+      const so = sorties.at(key, time[i]);
+      if (!so) continue;
+      bufs[jSor][i] = so.n;
+      bufs[jSorR][i] = so.result ?? '';
+      bufs[jSorK][i] = so.kills;
+    }
+  };
+  // Who won, and where that is from (as a War Thunder match's `result.source`): a rounds file, or nothing.
+  const iso = (u) => (Number.isFinite(u) ? new Date(u * 1000).toISOString() : null);
+  const last = rounds.length ? roundAt(rounds, recUnix + reader.lastTime) ?? rounds[rounds.length - 1] : null;
+  const outcome = {
+    server: srv.server || null,
+    mission: srv.mission || null,
+    kind: srv.kind,
+    result: { winner: last?.winner ?? null, round: last?.id ?? null, endReason: last?.winner ? (last.endReason ?? null) : null, source: last ? roundsSource : null },
+    rounds: rounds.map((r) => ({ id: r.id, start: iso(r.t0), end: iso(r.t1), winner: r.winner, endReason: r.endReason, state: r.state })),
+    captures,
+    sorties: sortieCount,
+  };
   const meta = {
     title: reader.title,
     recording,
@@ -601,13 +724,14 @@ async function convert(job, theatres) {
     completeness: reader.completeness(),
     rows: { placed: mainRows, effects: effectRows, other: reader.rows + eventRows - mainRows - effectRows },
     // The events worked out (`Inferred`), by kind, and those left out (their object already gone).
-    inferred: { ...finder.counts, lost: eventsLost },
+    inferred: { ...finder.counts, capture: captures, lost: eventsLost },
+    outcome,
   };
   const kv = [
     { key: 'heat3d', value: JSON.stringify(hints) },
     { key: 'acmi', value: JSON.stringify(meta) },
   ];
-  const wrote = main.finish(kv);
+  const wrote = main.finish(kv, fillSorties);
   const effectsWrote = effects.finish(kv);
   const sideRows = side.finish(kv);
   if (!sideRows) fs.rmSync(`${sideFile}.part`, { force: true });
@@ -675,9 +799,13 @@ async function cli() {
   const version = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')).version ?? null;
   const jobsArg = flag('--jobs');
   const theatre = flag('--theatre') ?? null;
+  const server = flag('--server') ?? '';
+  // Rounds files (format heat3d-dcs-rounds, `src/data/dcsOutcome.ts`): who won a server's rounds, from what it publishes.
+  const rounds = [];
+  for (let f = flag('--rounds'); f !== undefined; f = flag('--rounds')) rounds.push(JSON.parse(fs.readFileSync(f, 'utf8')));
   const [inDir, outDir] = args;
   if (!inDir || !outDir) {
-    console.error('usage: node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]');
+    console.error('usage: node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--server Name] [--rounds file.json ...] [--force] [--loose]');
     process.exit(2);
   }
   const theatres = await theatreList();
@@ -697,7 +825,7 @@ async function cli() {
       skipped++;
       continue;
     }
-    jobs.push({ input, output, container, version, theatre, bytes: fs.statSync(input).size });
+    jobs.push({ input, output, container, version, theatre, server, rounds, bytes: fs.statSync(input).size });
   }
   // The biggest first, so the last to finish is a small one.
   jobs.sort((a, b) => b.bytes - a.bytes);

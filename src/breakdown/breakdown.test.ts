@@ -88,6 +88,17 @@ describe('breakdown', () => {
     expect(Array.from(team.result.groups!.won)).toEqual([1, 1]);
   });
 
+  it('breaks a category a converter writes on every row (a DCS `server`) down with its rounds won', () => {
+    const ds = duel();
+    // Round one on one server, round two on another, as two recordings of two servers load side by side.
+    const round = ds.attrs.find((a) => a.name === 'round')!.data;
+    ds.attrs.push({ name: 'server', kind: 'category', data: Uint32Array.from(round, (r) => r), min: 0, max: 1, categories: ['Server A', 'Server B'] });
+    expect(dimensionsOf(ds).map((d) => d.id)).toContain('cat:server');
+    const { prep, result } = breakdownSync(ds, req(ds, { dim: dimOf(ds, 'cat:server') }));
+    expect(byLabel(prep.dim!.labels, result.groups!.played)).toEqual({ 'Server A': 2, 'Server B': 2 });
+    expect(byLabel(prep.dim!.labels, result.groups!.won)).toEqual({ 'Server A': 1, 'Server B': 1 });
+  });
+
   it('measures each state factor with against without, carried onto event rows', () => {
     const ds = duel();
     const f = buildFactors(ds);

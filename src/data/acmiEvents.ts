@@ -263,6 +263,12 @@ export class AcmiEventFinder<K, R, I> {
     } else this.cells.get(o.cell)?.delete(o);
   }
 
+  /** Whether an aircraft still in the recording was flying at its last sample (null: no such aircraft). */
+  airborne(key: K): boolean | null {
+    const o = this.objs.get(key);
+    return o && (o.kind === 'air' || o.kind === 'heli') ? o.state === 2 : null;
+  }
+
   /** The time is now `t`: the removals of earlier frames are judged, bursts over are told. */
   advance(t: number): void {
     if (this.pending.length && this.pending[0].gone < t) {
