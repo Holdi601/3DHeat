@@ -19,6 +19,7 @@ import { geoFrame } from '../../world/geoFrame';
 import { formatLatLon, toMgrs } from '../../world/mgrs';
 import { relativeValue, velocityOf } from './relative';
 import { declination } from '../../world/wmm';
+import { operatorLabel } from '../../figures/tactical';
 
 /** Fields that are not flight parameters. */
 export const INFO_FIELDS = ['name', 'vehicle', 'team', 'kind', 'range', 'bearing', 'relBearing', 'aspect', 'closure', 'losRate', 'altDiff', 'bullseye', 'position', 'mgrs', 'magHeading'] as const;
@@ -195,6 +196,9 @@ export function fieldText(c: FieldContext, id: string, teamLabel: (team: number)
     case 'name':
       return c.unit.name;
     case 'vehicle': {
+      // A close-quarters soldier: the operator played then and their role's symbol (a new pick each round).
+      const op = operatorLabel(c.d, c.person, c.time);
+      if (op) return op;
       // The vehicle of the life on show: a player who switched from a tank to an SPAA is named by the SPAA.
       const v = vehicleOf(c.unit, c.person);
       return v && v !== c.unit.name && !c.unit.name.startsWith(v) ? v : '';

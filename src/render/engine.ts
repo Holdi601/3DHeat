@@ -3507,6 +3507,7 @@ export class Engine {
           // origin: see FrameParams.viewProjRel.
           exact: motion ? this.motion.exact : undefined,
           origin: this.originArr,
+          session: s.team.session,
         });
         // What the events leave behind for a while, in the thrower's colour.
         const d = this.dataset;

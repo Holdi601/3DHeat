@@ -13,6 +13,7 @@ import {
 } from './ingest';
 import { msg, MsgError } from './msg';
 import { geoOfHints, parseHints } from './automap';
+import { splitObjectTracks } from './objectTracks';
 import { asyncBufferFromFile, readParquetColumns, type ColumnRequest } from './parquet';
 import type { ColumnMapping, TimeUnit } from '../state/types';
 
@@ -120,6 +121,11 @@ export async function ingestParquet(
   const person = dict(mapping.personId, 'person');
   const team = dict(mapping.teamId, 'team');
   const session = dict(mapping.sessionId, 'session');
+  // A person's drones and gadgets logged under their name (`objectTracks.ts`): the object's id read exactly, a float would merge neighbours.
+  const objects =
+    person && available.has('pawn') && available.has('entity') && mapping.personId !== 'entity'
+      ? { pawn: dict('pawn', 'filter')!, entity: numeric64('entity', 'filter')! }
+      : null;
 
   const extras: Array<{ name: string; numbers?: Float32Array; d?: Dictionary; ids?: Uint32Array }> =
     [];
@@ -140,6 +146,8 @@ export async function ingestParquet(
   await readParquetColumns(buf, metadata, requests, n, (f) =>
     onProgress(progress(reading, f, Math.round(f * n))),
   );
+
+  if (objects && person) splitObjectTracks(person.ids, person.dict, objects.pawn.ids, objects.pawn.dict.labels, objects.entity);
 
   const { px, py, pz } = remapAxesInPlace({ x: rawX, y: rawY, z: rawZ }, mapping, n);
   const time = timeText

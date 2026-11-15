@@ -33,6 +33,8 @@ import { deadAt, deathsOf } from '../data/deaths';
 import { wreckColour } from './wreck';
 import { chaffMetres, decoyAlpha, farLook, glyphPx } from '../render/symbols/lod';
 import { dartMesh } from '../render/symbols/darts';
+import { hiddenRow, tacticalColumns, tacticalFigure, tacticalKey, type TacticalColumns } from './tactical';
+import { drawPlacedGadgets } from './gadgetLayer';
 
 const NAME_COLUMN = /^(name|vehicle|vehicle.?name|unit|unit.?type|model|aircraft|plane|tank|ship|craft|loadout|kit|figure)$/i;
 const TYPE_COLUMN = /^(type|class|kind|category|icon|role|domain|vehicle.?type|vehicle.?class)$/i;
@@ -106,6 +108,8 @@ export interface FigureReplayOptions {
    * Glyphs, darts' hit boxes and picking stay absolute.
    */
   origin?: ArrayLike<number>;
+  /** The session on show (-1 for all): a tactical table's placed gadgets are drawn for it (`gadgetLayer.ts`). */
+  session?: number;
 }
 
 /** `fr` moved by minus `o`, for the instance buffers. */
@@ -130,6 +134,8 @@ export class FigureReplay {
   private names: AttributeColumn[] = [];
   private types: AttributeColumn[] = [];
   private roll: AttributeColumn | null = null;
+  /** A close-quarters table's columns (`tactical.ts`): its rows are soldiers, drones and placed gadgets. */
+  private tactical: TacticalColumns | null = null;
   /** The data's speed: a Mach, or metres a second (`airspeed` true, `indicated` to be corrected for height). */
   private mach: AttributeColumn | null = null;
   private airspeed: { col: AttributeColumn; unit: number; indicated: boolean } | null = null;
@@ -214,6 +220,7 @@ export class FigureReplay {
     this.lastSeen.clear();
     this.sweeps.clear();
     const cats = d.attrs.filter((a) => a.kind === 'category' && a.categories);
+    this.tactical = tacticalColumns(d);
     this.names = cats.filter((a) => NAME_COLUMN.test(a.name.trim()));
     this.types = cats.filter((a) => TYPE_COLUMN.test(a.name.trim()));
     this.roll = d.attrs.find((a) => a.kind !== 'category' && /^roll$/i.test(a.name.trim())) ?? null;
@@ -269,12 +276,23 @@ export class FigureReplay {
   /** Whether the data has columns that say what things are; without them everything is a person. */
   knowsTypes(d: Dataset): boolean {
     if (d !== this.dataset) this.attach(d);
-    return this.names.length > 0 || this.types.length > 0;
+    return this.names.length > 0 || this.types.length > 0 || !!this.tactical;
   }
 
   /** The figure for a row, by its name and type labels; null for none. */
   kindOf(d: Dataset, row: number): string | null {
     if (d !== this.dataset) this.attach(d);
+    const tac = this.tactical;
+    if (tac) {
+      // A close-quarters table: the soldier with their weapon class, stance and side, or a drone.
+      const key = tacticalKey(tac, row);
+      let k = this.kinds.get(key);
+      if (k === undefined) {
+        k = tacticalFigure(tac, row);
+        this.kinds.set(key, k);
+      }
+      return k;
+    }
     if (!this.names.length && !this.types.length) return null;
     const names = this.names.map((a) => a.categories![(a.data as Uint32Array)[row]] ?? '');
     const types = this.types.map((a) => a.categories![(a.data as Uint32Array)[row]] ?? '');
@@ -342,6 +360,12 @@ export class FigureReplay {
       const c = i * CUBE_STRIDE;
       const row = rows[i];
       if (cams.any && row >= 0 && d.personId && cams.persons[d.personId[row]]) {
+        this.kindsDrawn[i] = '';
+        continue;
+      }
+      // A placed gadget is drawn from its own rows below, a mark on the level by the marks: neither is a figure here.
+      // A row at the very origin is one written before its thing was anywhere (a player before spawning).
+      if (this.tactical && row >= 0 && (hiddenRow(this.tactical, row) || (Math.abs(d.px[row]) < 0.01 && Math.abs(d.pz[row]) < 0.01))) {
         this.kindsDrawn[i] = '';
         continue;
       }
@@ -463,6 +487,18 @@ export class FigureReplay {
         this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha, Number.isFinite(aimNow.yaw) ? aimNow.yaw : 0, Number.isFinite(aimNow.pitch) ? aimNow.pitch : NO_PITCH);
       } else this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha);
       this.placed.push({ box: i, row, kind: kind!, fr, scale, min: t.min, max: t.max });
+    }
+    // A close-quarters table's placed gadgets, each from its own rows until its round ends.
+    if (this.tactical && o.time !== undefined && !this.cpuPlace) {
+      drawPlacedGadgets(d, this.batches, {
+        time: o.time,
+        session: o.session ?? -1,
+        scale: o.scale,
+        minPixels: o.minPixels,
+        pixelSize: o.pixelSize,
+        origin: o.origin,
+        template: (k) => this.template(k),
+      });
     }
   }
 

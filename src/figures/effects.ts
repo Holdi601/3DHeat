@@ -14,6 +14,7 @@ import { VertexBuffer } from '../race/geometry';
 import type { Dataset } from '../state/types';
 import { CATALOG } from './catalog';
 import { place, TemplateCache, type Template } from './kit';
+import { tacticalColumns } from './tactical';
 
 export const EFFECTS: Record<string, { figure: string; seconds: number }> = {
   smoke: { figure: 'cs2-smoke', seconds: 18 },
@@ -25,7 +26,12 @@ export const EFFECTS: Record<string, { figure: string; seconds: number }> = {
   plant: { figure: 'cs2-bomb', seconds: 40 },
 };
 
-const LONGEST = Math.max(...Object.values(EFFECTS).map((e) => e.seconds));
+/** A close-quarters table's own (`tactical.ts`): its plant is the defuser, on a 45 s timer. */
+const TACTICAL_EFFECTS: Record<string, { figure: string; seconds: number }> = {
+  plant: { figure: 'defuser', seconds: 45 },
+};
+
+const LONGEST = Math.max(...Object.values(EFFECTS).map((e) => e.seconds), ...Object.values(TACTICAL_EFFECTS).map((e) => e.seconds));
 
 interface EffectRows {
   rows: Uint32Array;
@@ -44,7 +50,8 @@ function effectRows(d: Dataset): EffectRows | null {
     return null;
   }
   // Which category ids are effects.
-  const kinds = col.categories.map((c) => EFFECTS[c.trim().toLowerCase()] ?? null);
+  const own = tacticalColumns(d) ? TACTICAL_EFFECTS : null;
+  const kinds = col.categories.map((c) => own?.[c.trim().toLowerCase()] ?? EFFECTS[c.trim().toLowerCase()] ?? null);
   if (!kinds.some(Boolean)) {
     cache.set(d, null);
     return null;

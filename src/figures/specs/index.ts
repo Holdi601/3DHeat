@@ -35,6 +35,7 @@ import { ARMOUR_MODERN } from './armour-modern';
 import { ARMOUR_WW2 } from './armour-ww2';
 import { PROP_VARIANTS } from './prop-variants';
 import { SHIP_CLASSES } from './ship-classes';
+import { TACTICAL } from './tactical';
 import { swingStates } from './swing';
 import { groundReach } from './ground-reach';
 
@@ -53,7 +54,7 @@ export interface SpecSet {
 }
 
 /** Every spec set, in order; a later set's entry replaces an earlier one of the same name. */
-export const SPEC_SETS: SpecSet[] = [GENERIC, AIR_DEFENCE, GROUND_MODERN, GROUND_WW2, TANKS, PROPS, HELIS, AIRCRAFT, SHIPS, JET_VARIANTS, JET_VARIANTS_WORLD, JET_ATTACK, HELI_VARIANTS, ARMOUR_MODERN, ARMOUR_WW2, PROP_VARIANTS, AIR_EXTRA, SHIP_CLASSES, MUNITIONS, DCS_ALIASES, BF_ALIASES, WT_ALIASES, IL2_ALIASES, WOWS_ALIASES];
+export const SPEC_SETS: SpecSet[] = [GENERIC, AIR_DEFENCE, GROUND_MODERN, GROUND_WW2, TANKS, PROPS, HELIS, AIRCRAFT, SHIPS, JET_VARIANTS, JET_VARIANTS_WORLD, JET_ATTACK, HELI_VARIANTS, ARMOUR_MODERN, ARMOUR_WW2, PROP_VARIANTS, AIR_EXTRA, SHIP_CLASSES, MUNITIONS, DCS_ALIASES, BF_ALIASES, WT_ALIASES, IL2_ALIASES, WOWS_ALIASES, TACTICAL];
 // Swing wings at their sweeps, from the figures as the sets above leave them.
 SPEC_SETS.push(swingStates(SPEC_SETS));
 // Gun armed ground figures ended at their published length with the gun forward.

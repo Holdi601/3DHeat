@@ -16,6 +16,7 @@
  */
 
 import { classOfType, isEffectDomain } from '../../figures/symbolClass';
+import { OBJECT_PAWN } from '../../figures/tactical';
 import { CANON } from '../../data/canonical';
 import type { AttributeColumn, Dataset } from '../../state/types';
 import { personRows, personRowsSteps } from '../../data/flight';
@@ -198,6 +199,8 @@ function* unitsSteps(d: Dataset): Generator<void, UnitIndex, void> {
   const vehicleRaw = attr(d, ['Vehicle', 'vehicle', 'Name', 'unitType']);
   const typeCol = attr(d, ['type', 'Type']);
   const kindCol = attr(d, ['kind']);
+  // A drone or a gadget a player sent out (`figures/tactical.ts`) is a unit of its own, as a weapon's flight is.
+  const pawnCol = attr(d, ['pawn']);
   const life = attr(d, ['life']);
   const aiCol = attr(d, ['ai', 'isAI', 'is_ai', 'bot', 'isBot', 'is_bot']);
   const playerFlag = attr(d, ['isPlayer', 'is_player', 'human']);
@@ -232,7 +235,7 @@ function* unitsSteps(d: Dataset): Generator<void, UnitIndex, void> {
     const tk = `${type}+${kind}`;
     let effect = effects.get(tk);
     if (effect === undefined) effects.set(tk, (effect = isEffectDomain(classOfType(tk)?.domain ?? -1)));
-    const weapon = effect || /^w[0-9a-f]/i.test(lifeText) || (acmi && WEAPON_TYPE.test(type)) || (!!kindCol && /^(weapon|projectile|missile|rocket|bomb|shell|torpedo)$/i.test(kind));
+    const weapon = effect || (!!pawnCol && OBJECT_PAWN.test(text(pawnCol, first))) || /^w[0-9a-f]/i.test(lifeText) || (acmi && WEAPON_TYPE.test(type)) || (!!kindCol && /^(weapon|projectile|missile|rocket|bomb|shell|torpedo)$/i.test(kind));
     const who = text(player, first).trim();
     const vehicleId = text(vehicleRaw, first);
     const vehicle = text(display, first) || prettyVehicle(vehicleId);

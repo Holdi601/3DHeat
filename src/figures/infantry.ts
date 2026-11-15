@@ -3,6 +3,15 @@
  * to stand 1.8 m tall; the uniform takes the team's colour, the helmet a
  * darker shade of it, so a crowd reads by team at a glance and the head shows
  * which way someone faces.
+ *
+ * Close-quarters soldiers (`vest`) wear a plate carrier and hold their weapon
+ * by class: an assault rifle, a short SMG with its magazine, a shotgun with
+ * its pump, a long DMR with its scope, an LMG with its box, a handgun held out
+ * in both hands, or a ballistic shield with a view port and a handgun beside
+ * it. Weapon lengths are the classes' usual ones (an SMG about 0.6 m, a rifle
+ * 0.8-0.9 m, a shotgun or DMR about 1 m, a shield about 0.6 m by 1 m). `band`
+ * puts a fixed colour on the plate carrier, both upper arms and round the
+ * helmet: the side someone is on (attack, defence), beside the team's colour.
  */
 
 import { finish, newKit, PAINT, type Template } from './kit';
@@ -10,16 +19,23 @@ import { blob, block, tube } from './parts';
 import type { Rgb } from '../race/geometry';
 
 export type Stance = 'stand' | 'crouch' | 'prone';
-export type Kitbag = 'rifle' | 'sniper' | 'launcher' | 'crew' | 'medic' | 'none';
+export type Kitbag = 'rifle' | 'sniper' | 'launcher' | 'crew' | 'medic' | 'none' | 'smg' | 'shotgun' | 'dmr' | 'lmg' | 'pistol' | 'shield';
 
 export interface PersonSpec {
   stance?: Stance;
   carry?: Kitbag;
   /** Standing height, metres. */
   height?: number;
+  /** A plate carrier over the chest (close-quarters soldiers). */
+  vest?: boolean;
+  /** A fixed colour on the upper arms and round the helmet (the side someone is on). */
+  band?: Rgb;
 }
 
 const grey = (k: number): Rgb => [k, k, k];
+
+/** A shield's face: a dark grey that reads against any team colour. */
+const SHIELD: Rgb = [0.24, 0.25, 0.27];
 
 export function buildPerson(spec: PersonSpec = {}): Template {
   const k = newKit();
@@ -39,6 +55,18 @@ export function buildPerson(spec: PersonSpec = {}): Template {
     blob(F, fr, v(0.68, 0, 0.24), v(0.12, 0.1, 0.11), PAINT.skin);
     blob(T, fr, v(0.69, 0, 0.3), v(0.14, 0.13, 0.08), grey(0.55));
     if (carry === 'rifle' || carry === 'sniper') tube(F, fr, v(0.45, 0.12, 0.2), v(carry === 'sniper' ? 1.65 : 1.35, 0.12, 0.2), 0.03 * s, 0.025 * s, PAINT.dark, 6);
+    if (spec.vest) block(spec.band ? F : T, fr, v(0.25, 0, 0.3), 0.5 * s, 0.44 * s, 0.06 * s, spec.band ?? grey(0.45));
+    const reach: Partial<Record<Kitbag, number>> = { smg: 1.1, shotgun: 1.45, dmr: 1.5, lmg: 1.45, pistol: 0.95 };
+    const end = reach[carry];
+    if (end !== undefined) {
+      const thick = carry === 'shotgun' ? 0.035 : 0.03;
+      tube(F, fr, v(0.45, 0.12, 0.2), v(end, 0.12, 0.2), thick * s, thick * 0.8 * s, PAINT.dark, 6);
+      if (carry === 'lmg') block(F, fr, v(0.7, 0.12, 0.12), 0.12 * s, 0.1 * s, 0.1 * s, PAINT.dark);
+      if (carry === 'dmr') tube(F, fr, v(0.62, 0.12, 0.26), v(0.85, 0.12, 0.26), 0.03 * s, 0.03 * s, PAINT.metal, 6);
+    }
+    // A shield lies ahead of the head, standing on its edge.
+    if (carry === 'shield') block(T, fr, v(0.98, 0.04, 0.28), 0.05 * s, 0.6 * s, 0.56 * s, SHIELD);
+    if (spec.band) blob(F, fr, v(0.69, 0, 0.27), v(0.15, 0.14, 0.03), spec.band);
     return finish(k, 'ground');
   }
 
@@ -58,15 +86,28 @@ export function buildPerson(spec: PersonSpec = {}): Template {
   const chest = hip + 0.58;
   block(T, fr, v(0, 0, (hip + chest) / 2), 0.26 * s, 0.44 * s, (chest - hip) * s, WHITE_SHADE);
   block(T, fr, v(-0.2, 0, hip + 0.32), 0.16 * s, 0.34 * s, 0.4 * s, grey(0.62));
+  // A plate carrier: front and back plates over the chest, a shade darker.
+  // With a band, the carrier's front plate is in the band's colour: the side shows from far off.
+  if (spec.vest) {
+    block(spec.band ? F : T, fr, v(0.09, 0, hip + 0.36), 0.1 * s, 0.4 * s, 0.36 * s, spec.band ?? grey(0.45));
+    block(T, fr, v(0.15, 0, hip + 0.2), 0.06 * s, 0.36 * s, 0.1 * s, grey(0.4));
+  }
   // Head, helmet a shade darker so the face shows the way they look.
   blob(F, fr, v(0.02, 0, chest + 0.14), v(0.11, 0.1, 0.12), PAINT.skin);
   if (carry === 'crew') blob(T, fr, v(0, 0, chest + 0.2), v(0.13, 0.12, 0.08), grey(0.5));
   else if (carry === 'sniper') blob(T, fr, v(-0.01, 0, chest + 0.21), v(0.13, 0.12, 0.07), grey(0.42));
   else blob(T, fr, v(-0.01, 0, chest + 0.2), v(0.15, 0.14, 0.09), grey(0.5));
-  // Arms and what the hands hold.
+  // Arms and what the hands hold: a handgun is held out at arm's length, a shield's handgun beside it.
   const shoulder = chest - 0.06;
-  const hands: [number, number, number] = v(0.42, 0.04, shoulder - 0.2);
-  for (const side of [-0.25, 0.25]) tube(T, fr, v(0, side, shoulder), hands, 0.05 * s, 0.045 * s, grey(0.78), 5);
+  const out = carry === 'pistol';
+  const hands: [number, number, number] = out ? v(0.55, 0, shoulder - 0.08) : v(0.42, 0.04, shoulder - 0.2);
+  if (carry === 'shield') {
+    // The left arm holds the shield's grip, the right a handgun past its edge.
+    tube(T, fr, v(0, -0.25, shoulder), v(0.36, -0.1, shoulder - 0.2), 0.05 * s, 0.045 * s, grey(0.78), 5);
+    tube(T, fr, v(0, 0.25, shoulder), v(0.45, 0.36, shoulder - 0.1), 0.05 * s, 0.045 * s, grey(0.78), 5);
+  } else {
+    for (const side of [-0.25, 0.25]) tube(T, fr, v(0, side, shoulder), hands, 0.05 * s, 0.045 * s, grey(0.78), 5);
+  }
   if (carry === 'rifle') tube(F, fr, v(0.12, 0.08, shoulder - 0.12), v(0.92, 0.04, shoulder - 0.2), 0.035 * s, 0.025 * s, PAINT.dark, 6);
   if (carry === 'sniper') {
     tube(F, fr, v(0.1, 0.08, shoulder - 0.12), v(1.25, 0.04, shoulder - 0.2), 0.035 * s, 0.022 * s, PAINT.dark, 6);
@@ -77,6 +118,34 @@ export function buildPerson(spec: PersonSpec = {}): Template {
     block(F, fr, v(-0.29, 0, hip + 0.34), 0.02 * s, 0.22 * s, 0.07 * s, PAINT.light);
     block(F, fr, v(-0.29, 0, hip + 0.34), 0.02 * s, 0.07 * s, 0.22 * s, PAINT.light);
     tube(F, fr, v(0.12, 0.08, shoulder - 0.12), v(0.75, 0.04, shoulder - 0.2), 0.03 * s, 0.022 * s, PAINT.dark, 6);
+  }
+  if (carry === 'smg') {
+    // About 0.6 m, its magazine straight down in front of the trigger.
+    tube(F, fr, v(0.14, 0.08, shoulder - 0.13), v(0.74, 0.04, shoulder - 0.2), 0.04 * s, 0.03 * s, PAINT.dark, 6);
+    block(F, fr, v(0.46, 0.05, shoulder - 0.3), 0.05 * s, 0.03 * s, 0.16 * s, PAINT.dark);
+  }
+  if (carry === 'shotgun') {
+    // About a metre, a thick barrel and the pump under it.
+    tube(F, fr, v(0.08, 0.08, shoulder - 0.12), v(1.02, 0.04, shoulder - 0.19), 0.042 * s, 0.03 * s, PAINT.dark, 6);
+    tube(F, fr, v(0.55, 0.04, shoulder - 0.25), v(0.82, 0.04, shoulder - 0.25), 0.035 * s, 0.035 * s, PAINT.metal, 6);
+  }
+  if (carry === 'dmr' || carry === 'lmg') {
+    // About a metre; a DMR's scope on top, an LMG's box under it.
+    tube(F, fr, v(0.1, 0.08, shoulder - 0.12), v(1.08, 0.04, shoulder - 0.2), 0.04 * s, 0.026 * s, PAINT.dark, 6);
+    if (carry === 'dmr') tube(F, fr, v(0.32, 0.07, shoulder - 0.05), v(0.58, 0.07, shoulder - 0.06), 0.032 * s, 0.032 * s, PAINT.metal, 6);
+    else block(F, fr, v(0.36, 0.08, shoulder - 0.3), 0.14 * s, 0.11 * s, 0.14 * s, PAINT.dark);
+  }
+  if (carry === 'pistol') block(F, fr, v(0.62, 0, shoulder - 0.04), 0.18 * s, 0.035 * s, 0.13 * s, PAINT.dark);
+  if (carry === 'shield') {
+    // A ballistic shield about 0.6 m by 1 m in front, its view port at eye height; the handgun at its right edge.
+    const mid = crouch ? 0.55 : 0.98;
+    block(T, fr, v(0.42, -0.04, mid), 0.05 * s, 0.6 * s, 1.0 * s, SHIELD);
+    block(F, fr, v(0.45, -0.04, chest + 0.1), 0.02 * s, 0.26 * s, 0.08 * s, PAINT.glass);
+    block(F, fr, v(0.52, 0.38, shoulder - 0.08), 0.18 * s, 0.035 * s, 0.13 * s, PAINT.dark);
+  }
+  if (spec.band) {
+    for (const side of [-0.25, 0.25]) block(F, fr, v(0.03, side * 1.02, shoulder - 0.08), 0.12 * s, 0.11 * s, 0.07 * s, spec.band);
+    block(F, fr, v(-0.01, 0, chest + 0.16), 0.31 * s, 0.29 * s, 0.035 * s, spec.band);
   }
   return finish(k, 'ground');
 }
