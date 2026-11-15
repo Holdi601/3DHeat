@@ -14,7 +14,7 @@ outdated: false
 
 Katra spēle sākas savā sākumā, un tās vienības kustas kā figūras. Faili tiek ielādēti tieši grafikas kartē, un nekāda pilna tabula netiek veidota, tāpēc tas darbojas vienmērīgi tur, kur parasta ielāde beigtos atmiņu.
 
-![Desmit tanku spēles, uzliktas viena uz otras, pa vienai krāsai katrai spēlei](../assets/img/en/many-matches.webp)
+![Desmit tanku spēles, uzliktas viena uz otras, pa vienai krāsai katrai spēlei](../assets/img/lv/many-matches.webp)
 
 ## Kā to lietot {#how-to-use-it}
 

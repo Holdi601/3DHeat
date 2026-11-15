@@ -21,7 +21,7 @@ Et **volum** er en usynlig boks (eller sylinder, eller kule) du tegner rundt et 
  +------------+
 ```
 
-![Tre volumer på demo-dalen: to sylindre rundt åsene, en boks rundt landsbyen](../assets/img/en/volumes.webp)
+![Tre volumer på demo-dalen: to sylindre rundt åsene, en boks rundt landsbyen](../assets/img/no/volumes.webp)
 
 Volumer måler hva som skjer inni dem, filtrerer visningen til dem, eksporterer radene deres, og kan sammenlignes side om side. Se også [ordlisten](glossary.md) for rad, person og kamp.
 
@@ -76,7 +76,7 @@ Med to eller flere synlige volumer, trykk **Sammenlign…**.
 3. I **Tabell** leser du hver verdis forskjell fra det første volumet.
 4. Bytt til **Søyler** for å se andelene som søyler.
 
-![Tabellen for Sammenlign volumer: rader, tid inne, spillere og mer for hvert volum, med forskjellen fra det første](../assets/img/en/compare.webp)
+![Tabellen for Sammenlign volumer: rader, tid inne, spillere og mer for hvert volum, med forskjellen fra det første](../assets/img/no/compare.webp)
 
 | Visning | Viser |
 |---|---|
@@ -86,7 +86,7 @@ Med to eller flere synlige volumer, trykk **Sammenlign…**.
 | **Besøk** | Boks- og fiolindiagrammer over hvor lenge besøkene varer (logaritmisk skala). |
 | **Flyt** | Hvor sporene går etter å ha forlatt hvert volum: en overgangsmatrise eller flytbånd. |
 
-![Søylevisningen: hendelsestyper per volum som andeler](../assets/img/en/compare-bars.webp)
+![Søylevisningen: hendelsestyper per volum som andeler](../assets/img/no/compare-bars.webp)
 
 ## Tips {#tips}
 

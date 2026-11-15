@@ -23,7 +23,7 @@ Karta **Taktika** je kreslicí tabule pro plán týmu: na mapu položíte malé 
 6. Stiskněte **▶** (nebo `K`), aby se plán přehrál od ukázaného kroku až do konce.
 7. Pojmenujte plán v **Název plánu** a stiskněte **Uložit**.
 
-![Karta Taktika v pohledu shora: hra, strany a nástroje vlevo, tři figury s šipkami Posunout, oblouk hodu kouřové granáty, Oblast a kroky podél spodku](../assets/img/en/tactics.webp)
+![Karta Taktika v pohledu shora: hra, strany a nástroje vlevo, tři figury s šipkami Posunout, oblouk hodu kouřové granáty, Oblast a kroky podél spodku](../assets/img/cs/tactics.webp)
 
 ## Začátek plánu {#starting-a-plan}
 

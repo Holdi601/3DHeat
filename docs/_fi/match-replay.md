@@ -15,7 +15,7 @@ Toisto on elokuva ottelusta, jossa jokainen pelaaja on piirretty sellaisena, mit
 
 Laukaukset, osumat, palot ja raadot piirretään kentän yksiköille ja tavoitteille. Kamerat, nimiöt ja taktinen näyttö auttavat lukemaan taistelua. Tunnetko Tacviewin? [Tacview-vastaavuus](tacview-parity.md) näyttää, missä sen jokainen työkalu on.
 
-![Tankkiesimerkin hahmotoisto: panssarivaunut omina hahmoinaan, nimi-, ajoneuvo- ja nopeusnimiöt](../assets/img/en/replay-overview.webp)
+![Tankkiesimerkin hahmotoisto: panssarivaunut omina hahmoinaan, nimi-, ajoneuvo- ja nopeusnimiöt](../assets/img/fi/replay-overview.webp)
 
 ## Aloita toisto {#start-a-replay}
 
@@ -26,11 +26,11 @@ Laukaukset, osumat, palot ja raadot piirretään kentän yksiköille ja tavoitte
 
 Hahmot korvaavat laatikot jokaiselle yksikölle, jonka nimi tai tyyppi tunnetaan (katso [Hahmot](figures.md)). Data ilman nimi- tai tyyppisaraketta piirretään sotilaina.
 
-![Ottelu-välilehti: ottelujen valitsin, Hahmot-osio, kameranäkymät, Toista ja tapahtumaluettelo](../assets/img/en/match-replay-tab.webp)
+![Ottelu-välilehti: ottelujen valitsin, Hahmot-osio, kameranäkymät, Toista ja tapahtumaluettelo](../assets/img/fi/match-replay-tab.webp)
 
 ## Hahmot {#figures}
 
-![Palava panssarivaunu kiertokamerassa ja laukaus, joka sen osui](../assets/img/en/replay-tanks.webp)
+![Palava panssarivaunu kiertokamerassa ja laukaus, joka sen osui](../assets/img/fi/replay-tanks.webp)
 
 | Asetus (osio **Hahmot**) | Oletus | Mitä se tekee |
 |---|---|---|
@@ -51,7 +51,7 @@ Hahmot korvaavat laatikot jokaiselle yksikölle, jonka nimi tai tyyppi tunnetaan
 
 Kun yksikkö olisi pienempi kuin **Pienin hahmo näytöllä**, siitä voi tulla merkki, joka pysyy luettavana. Muoto kertoo lajin (esimerkiksi pyöristetty laatikko, jossa on telaraitamerkki panssarille); väri kertoo puolen. Avaa **Merkit**-valikko vaihtaaksesi tyyliä.
 
-![Samat kuusi yksikköä NATO-merkkeinä, venäläisinä taktisina merkkeinä, pelikartan kuvakkeina ja pelkkinä muotoina](../assets/img/en/match-replay-symbols-styles.webp)
+![Samat kuusi yksikköä NATO-merkkeinä, venäläisinä taktisina merkkeinä, pelikartan kuvakkeina ja pelkkinä muotoina](../assets/img/fi/match-replay-symbols-styles.webp)
 
 ### Osumamerkit, raadot ja palot {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Napsauta yksikköä tai sen nimiötä **seurataksesi** sitä. **Toisto**-osio ta
 
 ## Taktinen näyttö {#tactical-display}
 
-![Ilmaesimerkki taktisella ilmeellä (T): lankamalliterrain, tappo- ja tapahtumapaneelit](../assets/img/en/replay-air-tactical.webp)
+![Ilmaesimerkki taktisella ilmeellä (T): lankamalliterrain, tappo- ja tapahtumapaneelit](../assets/img/fi/replay-air-tactical.webp)
 
 **Taktinen näyttö** -osio piirtää joko ei yhtään yksikköä, valitut, kaikki tai yhden lajin (ilma-alukset, maa, laivat, aseet): nopeusvektorit ja edessä oleva reitti, nokka- ja nostolinjat, tutkakartiot, lukitukset, tietoliikenneyhteydet, taisteluvyöhykkeet ja -linjat, näköyhteydet, joihin pelaajat katsovat (näkökartiot), tornin suuntaus ja tallennettu kamera.
 
@@ -84,7 +84,7 @@ Napsauta yksikköä tai sen nimiötä **seurataksesi** sitä. **Toisto**-osio ta
 
 `T` (tai **Näytä taktisena näyttönä** -kytkin) vaihtaa ilmeen tutkanäyttötyyliin: hehku, reunaviivat, korkeuskäyrät, mittaruudukko, skannausviivat, etäisyysrenkaat, korkeusportaat, paneelit tappoineen ja tapahtumineen sekä **Ohjaaja**, joka siirtää kameran tapahtumiin itsestään.
 
-![Sama ilmataistelu normaalilla ilmeellä](../assets/img/en/replay-air.webp)
+![Sama ilmataistelu normaalilla ilmeellä](../assets/img/fi/replay-air.webp)
 
 ## Tavoitteet {#objectives}
 

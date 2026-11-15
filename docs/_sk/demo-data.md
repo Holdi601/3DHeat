@@ -10,7 +10,7 @@ outdated: false
 
 # Ukážkové dáta: vyskúšajte prehliadač za päť minút
 
-![Teplo z desiatich zápasov tankov v ukážkovej doline: čo ukazuje krok 4](../assets/img/en/heat-hero.webp)
+![Teplo z desiatich zápasov tankov v ukážkovej doline: čo ukazuje krok 4](../assets/img/sk/heat-hero.webp)
 
 Zatiaľ nemáte vlastné dáta? Repozitár nejaké vytvorí. Všetko v ňom je vymyslené: dolina, dvor a zápasy troch zmyslených herných štýlov s hráčmi, ktorí sa volajú *Blue 1* alebo *Red 3*. Všetky obrázky na tejto stránke boli urobené s nimi.
 
@@ -45,7 +45,7 @@ Každá tabuľka má názvy svojich stĺpcov v pätičke, takže sa načíta bez
 6. Otvorte **Zistenia** (na bočnom paneli Heatmapy): nájde miesta, kde sa vystrelilo, zasiahlo a zničilo oveľa viac než inde - okolo oboch kopcov.
 7. Otvorte kartu **Zápas**; pod **Zápasy v zázname** vyberte *Match 01* a stlačte **Prehrať** na časovej osi: [prehrávanie](match-replay.md).
 
-![Prehrávanie zápasu Match 01 s tankami ako figúrkami](../assets/img/en/replay-overview.webp)
+![Prehrávanie zápasu Match 01 s tankami ako figúrkami](../assets/img/sk/replay-overview.webp)
 
 Pre streľbu načítajte `demo-yard.glb` a `shooter.parquet`; pre vzdušný súboj `air.parquet` (figúrky sa lepšie vidia pri **Veľkosti figúrok** 4, posuvník v paneli **Zobrazenie tímov** na bočnom paneli Heatmapy).
 

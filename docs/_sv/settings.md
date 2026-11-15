@@ -23,7 +23,7 @@ De små reglagen överst i sidofältet styr hur visaren kommunicerar med dig: sp
 | Knappen **...** bredvid **Enheter** | Öppnar ”Välj en enhet för varje storhet”: en rullgardinsmeny per storhet |
 | Menyn **Språk** | Visarens språk: [40 språk](languages.md), eller webbläsarens |
 
-![Sidhuvudet med menyn Enheter och fönstret för en enhet per storhet öppet](../assets/img/en/settings-units.webp)
+![Sidhuvudet med menyn Enheter och fönstret för en enhet per storhet öppet](../assets/img/sv/settings-units.webp)
 
 Siffror du skriver i en ruta kan använda antingen punkt eller komma (`0.35` eller `0,35`). Visaren läser båda och visar siffror så som visarens språk skriver dem.
 
@@ -48,11 +48,11 @@ Andra enheter du kan välja för en enskild storhet: distans km, mi, NM; fart km
 
 ## Hjälpläge {#help-mode}
 
-![Hjälpläge: vad färgerna betyder](../assets/img/en/help.webp)
+![Hjälpläge: vad färgerna betyder](../assets/img/sv/help.webp)
 
 Tryck `?` eller `F1`, eller klicka på knappen **?**. Då visas *Vad färgerna betyder*: förklaringar för 3D-vyn, värmerampen, lagfärgerna, banans färger, panelernas statusfärger, matchpanelen och racingvyn. Det är på tills du stänger av det. I fliken Match förklarar det även matchpanelens färger.
 
-![Hjälpläget i fliken Match](../assets/img/en/settings-help-match.webp)
+![Hjälpläget i fliken Match](../assets/img/sv/settings-help-match.webp)
 
 ## Vad webbläsaren minns {#what-the-browser-remembers}
 

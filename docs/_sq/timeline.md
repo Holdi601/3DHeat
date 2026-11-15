@@ -12,7 +12,7 @@ outdated: false
 
 Shiriti nën figurë është si një lojtar videoje: mund ta luash grupin e të dhënave si film, ta ndalosh, të kërcesh nëpër të dhe të ndryshosh shpejtësinë.
 
-![Shiriti i kronologjisë: 1 Të gjitha/Luaj, 2 butonat e lëvizjes, 3 ora, 4 Shpejtësia, 5 Historia, me Dritare dhe një Hapësirë 30 s](../assets/img/en/timeline-bar.webp)
+![Shiriti i kronologjisë: 1 Të gjitha/Luaj, 2 butonat e lëvizjes, 3 ora, 4 Shpejtësia, 5 Historia, me Dritare dhe një Hapësirë 30 s](../assets/img/sq/timeline-bar.webp)
 
 Shiriti nën pamje është kronologjia ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Ai vendos cilët rreshta janë të dukshëm në çdo çast. Nevojitet një kolonë kohe; pa të e gjithë shiriti çaktivizohet, pamja mbetet në **Të gjitha**, dhe shiriti anësor thotë *Nuk ka kolonë kohe në këto të dhëna - kronologjia është çaktivizuar dhe çdo pikë shfaqet menjëherë.*
 

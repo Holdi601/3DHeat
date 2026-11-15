@@ -18,7 +18,7 @@ Przeglądarka mówi, kiedy istnieje nowsza wersja, i aktualizuje się sama tylko
 2. **Jeśli każe uruchomić restart.bat**, zamknij okno serwera (czarne okno, które otworzył `start.bat`) i dwukrotnie kliknij `restart.bat`.
 3. **Przy uruchamianiu przeglądarki.** `start.bat` też sprawdza. Gdy istnieje nowsza wersja, pyta **Update now? [Y/N]** (komunikaty konsoli są po angielsku, tak jak je drukuje skrypt). Naciśnij `Y`, aby zaktualizować. Naciśnij `N` albo poczekaj 60 sekund bez odpowiedzi, aby uruchomić wersję, którą masz.
 
-![Komunikat o aktualizacji z przyciskami Aktualizuj teraz i Później](../assets/img/en/updates-notice.webp)
+![Komunikat o aktualizacji z przyciskami Aktualizuj teraz i Później](../assets/img/pl/updates-notice.webp)
 
 Kopia ze zmianami własnymi nigdy nie jest aktualizowana za Ciebie; okienko tylko mówi, że czeka aktualizacja, i każe zatwierdzić albo odłożyć zmiany (commit lub stash) i uruchomić `git pull`. Kopia niezainstalowana przez git (na przykład plik zip) nic nie pokazuje.
 

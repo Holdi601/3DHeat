@@ -14,7 +14,7 @@ outdated: false
 
 Luet Positiounen - CSV, Parquet, Tacview-Opnamen, konvertéiert Replayen, eng eenzeg Datei, en Dossier oder Dausende Matcher - a kuckt se als **Hëtztkaart, duerch déi s de fléien kanns**, als **Figuren, déi de Match ofspillen**, als Linnen laanschs d'Weeër, déi d'Leit geholl hunn, oder als eng Populatioun géint eng aner. Et fënnt selwer, wat sech ofhieft, a rangéiert et mat den Beweiser, a alles leeft komplett an Ärem Browser: näischt gëtt iergendwou higelueden.
 
-![Hëtzt vun zéng Panzermatcher iwwer dem Demo-Tal](../assets/img/en/heat-hero.webp)
+![Hëtzt vun zéng Panzermatcher iwwer dem Demo-Tal](../assets/img/lb/heat-hero.webp)
 
 **Nei hei?** Maacht d'[Demo-Daten](demo-data.md) a follegt hiren siwe Schrëtt. All Bild op dëser Säit ass mat hinnen gemaach.
 
@@ -22,12 +22,12 @@ Luet Positiounen - CSV, Parquet, Tacview-Opnamen, konvertéiert Replayen, eng ee
 
 | | |
 |---|---|
-| ![Ënnerscheed](../assets/img/en/heat-difference.webp) | **[Hëtztmodi](heat-modes.md)** - Hëtzt, [Ënnerscheed](difference.md) (rout, wou eng Säit méi war, grénzbloen, wou déi aner war), [Equipen-Heat](team-heat.md), [Linn-Hëtzt](line-heat.md); [Richtungs-Hëtzt](directional-heat.md) mat Kielen, Pfeilfelder a Polardiagrammer; Hëtzt [no Wäert gewiicht](value-weighting.md): wat Waffen, Gefierer an Sprit kosten. |
-| ![Replay](../assets/img/en/replay-tanks.webp) | **[Match-Replay](match-replay.md)** - all Eenheet als [Figur](figures.md) vun deem, wat se ass, NATO- oder russesch Symboler op wäit Distanz, Raketen a Leuchtspuren, Treffermarken, Wracken, Bränn, Tuerm, Ziler a taktesch Usiicht; [vill Matcher op eemol](many-matches.md). |
-| ![Erkenntnisser](../assets/img/en/insights.webp) | **[Erkenntnisser](insights.md)** - staark Positiounen, gefäerlech Terrain, Spawn-Fallen, Engpässer a staark Spiller, fonnt a gerangéiert mat den Beweiser; eng geschriwwen Nobesprechung, optional vun enger KI vun Ärer Wiel; en Caster fir ee Match; d'[Wëssenslens](knowledge.md). |
-| ![Volumen](../assets/img/en/compare.webp) | **[Volumen](volumes.md)** - Këschten, Prismen, Zylinder a Kugele zéchnen, drop filteren, zielen, wat dra geschitt, exportéieren, a Plazen niewenenee vergläichen; [Opschlësselung](breakdown.md) vu wiem a wat an enger Plaz am beschte ass. |
-| ![Filteren](../assets/img/en/filters.webp) | **[Filteren](filters.md)** - no Evenementtyp, Spiller oder KI, Gefierklass, Wäert, all Kolonn, op der Grafikkaart bei all Datemgréisst. |
-| ![Level](../assets/img/en/level-panel.webp) | **[Levelen](levels.md)** - Kaartbiller, 3D-Levelen, mat den [Datenwerkzeich](#related-repositories) gemaach, Vereinfachung, de [Welt-Hannergrond](world-backdrop.md) mat richtegem Terrain fir Fluchdaten. |
+| ![Ënnerscheed](../assets/img/lb/heat-difference.webp) | **[Hëtztmodi](heat-modes.md)** - Hëtzt, [Ënnerscheed](difference.md) (rout, wou eng Säit méi war, grénzbloen, wou déi aner war), [Equipen-Heat](team-heat.md), [Linn-Hëtzt](line-heat.md); [Richtungs-Hëtzt](directional-heat.md) mat Kielen, Pfeilfelder a Polardiagrammer; Hëtzt [no Wäert gewiicht](value-weighting.md): wat Waffen, Gefierer an Sprit kosten. |
+| ![Replay](../assets/img/lb/replay-tanks.webp) | **[Match-Replay](match-replay.md)** - all Eenheet als [Figur](figures.md) vun deem, wat se ass, NATO- oder russesch Symboler op wäit Distanz, Raketen a Leuchtspuren, Treffermarken, Wracken, Bränn, Tuerm, Ziler a taktesch Usiicht; [vill Matcher op eemol](many-matches.md). |
+| ![Erkenntnisser](../assets/img/lb/insights.webp) | **[Erkenntnisser](insights.md)** - staark Positiounen, gefäerlech Terrain, Spawn-Fallen, Engpässer a staark Spiller, fonnt a gerangéiert mat den Beweiser; eng geschriwwen Nobesprechung, optional vun enger KI vun Ärer Wiel; en Caster fir ee Match; d'[Wëssenslens](knowledge.md). |
+| ![Volumen](../assets/img/lb/compare.webp) | **[Volumen](volumes.md)** - Këschten, Prismen, Zylinder a Kugele zéchnen, drop filteren, zielen, wat dra geschitt, exportéieren, a Plazen niewenenee vergläichen; [Opschlësselung](breakdown.md) vu wiem a wat an enger Plaz am beschte ass. |
+| ![Filteren](../assets/img/lb/filters.webp) | **[Filteren](filters.md)** - no Evenementtyp, Spiller oder KI, Gefierklass, Wäert, all Kolonn, op der Grafikkaart bei all Datemgréisst. |
+| ![Level](../assets/img/lb/level-panel.webp) | **[Levelen](levels.md)** - Kaartbiller, 3D-Levelen, mat den [Datenwerkzeich](#related-repositories) gemaach, Vereinfachung, de [Welt-Hannergrond](world-backdrop.md) mat richtegem Terrain fir Fluchdaten. |
 
 Dobäi: den [Course-Analys](race-analysis.md)-Tab fir Ronnen vu Rennspiller, den [Match](match-analysis.md)-Tab fir Zesummenfassungen vu Counter-Strike 2, den [Taktik-Board](tactics-board.md) fir Pläng op engem Level, [Treffer-Analys](hit-analysis.md) pro Gefier, [Massenanalys](mass-analysis.md) vu Dausende Matcher, [Kamerapfad a Video](camera-path-and-video.md), [40 Sproochen](languages.md), [metresch oder imperial Eenheeten](settings.md).
 

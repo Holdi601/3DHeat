@@ -15,7 +15,7 @@ A vermelho onde a equipa A esteve mais, azul-esverdeado onde esteve a equipa B, 
 
 **Diferença** (tecla 2) é calor com sinal. As linhas de uma população somam calor; as de outra subtraem-no. Onde as duas se sobrepõem por igual o resultado é zero e totalmente transparente; onde uma domina, mostra-se nas cores desse lado - por omissão quentes (transparente → vermelho → amarelo → branco) para o lado **+** e frias (transparente → verde → azul → roxo) para o lado **−**.
 
-![Calor de diferença: vermelho onde o lado + esteve mais, verde e azul onde o lado - esteve mais](../assets/img/en/difference-split.webp)
+![Calor de diferença: vermelho onde o lado + esteve mais, verde e azul onde o lado - esteve mais](../assets/img/pt/difference-split.webp)
 
 ## Como usar {#how-to-use-it}
 

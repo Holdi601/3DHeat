@@ -10,7 +10,7 @@ outdated: false
 
 # Demodata: probeer de viewer in vijf minuten
 
-![Warmte van tien tankwedstrijden in het demodal: wat stap 4 laat zien](../assets/img/en/heat-hero.webp)
+![Warmte van tien tankwedstrijden in het demodal: wat stap 4 laat zien](../assets/img/nl/heat-hero.webp)
 
 Nog geen eigen data? De repository maakt wat. Alles erin is verzonnen: een dal, een werf, en wedstrijden van drie verzonnen spelstijlen met spelers die *Blue 1* of *Red 3* heten. De afbeeldingen op deze site zijn er allemaal mee gemaakt.
 
@@ -45,7 +45,7 @@ Elke tabel noemt zijn eigen kolommen in de voettekst, dus hij laadt zonder enige
 6. Open **Inzichten** (in de zijbalk van Heatmap): het vindt de plekken waar veel meer geschoten, geraakt en vernietigd werd dan elders - rond de twee heuvels.
 7. Open het tabblad **Match**; kies onder **Matches in de replay** *Match 01*; druk op **Afspelen** op de tijdlijn: de [replay](match-replay.md).
 
-![Een replay van Match 01 met tanks als figuren](../assets/img/en/replay-overview.webp)
+![Een replay van Match 01 met tanks als figuren](../assets/img/nl/replay-overview.webp)
 
 Voor het schietspel laad je `demo-yard.glb` en `shooter.parquet`; voor het luchtgevecht `air.parquet` (de figuren zijn makkelijker te zien bij **Figuurgrootte** 4, een schuifregelaar in het paneel **Teamweergave** van de zijbalk van Heatmap).
 

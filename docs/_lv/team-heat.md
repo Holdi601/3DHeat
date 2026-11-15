@@ -15,7 +15,7 @@ Komandu siltums parāda, kur atradās katra komanda, katra savā krāsā. Kur ko
 
 **Komandu siltums** (taustiņš 3) ir [Siltuma](heat.md) blīvuma lauks, kur katrai [grupai](glossary.md) ir sava nokrāsa. Kur grupas pārklājas, to nokrāsas sajaucas; vienlīdzīga cīņa iznāk neitrāla. Necaurredzamība joprojām nes blīvumu tieši tāpat kā citos režīmos, tāpēc attēls vienlaikus atbild uz *cik daudz* un *kura*. Tam vajag grupu kolonnu.
 
-![Komandu siltums: katra puse savā krāsā; kur tās pārklājas, krāsas sajaucas](../assets/img/en/heat-teams.webp)
+![Komandu siltums: katra puse savā krāsā; kur tās pārklājas, krāsas sajaucas](../assets/img/lv/heat-teams.webp)
 
 Tas nav [figūru pārklājums](box-replay.md): tas zīmē vienu figūru katrai personai; šis ir siltuma lauks, krāsots pēc tās pašas kolonnas.
 

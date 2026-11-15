@@ -15,7 +15,7 @@ Hver prik tilføjer en lille glød, glødene hobes op, og bunken males i farver.
 
 Tilstandslinjen øverst i Heatmap-fanens sidebjælke vælger, hvordan [datasættet](glossary.md) tegnes. Tasterne 1-4 vælger Varme, Forskel, Holdvarme og Linjer. Figuroverlejring har ingen tast.
 
-![Tilstandslinjen med Varme, Forskel, Holdvarme, Figuroverlejring og Linjer](../assets/img/en/heat-modes-bar.webp)
+![Tilstandslinjen med Varme, Forskel, Holdvarme, Figuroverlejring og Linjer](../assets/img/da/heat-modes-bar.webp)
 
 | Tilstand | Spørgsmål den besvarer |
 |---|---|
@@ -25,7 +25,7 @@ Tilstandslinjen øverst i Heatmap-fanens sidebjælke vælger, hvordan [datasætt
 | **Linjer** | Hvilken vej gik folk? |
 | **Figuroverlejring** | Hvem var hvor, og hvornår? |
 
-![De samme data i fire tilstande: Varme, Forskel, Holdvarme og Linjer](../assets/img/en/heat-modes-grid.webp)
+![De samme data i fire tilstande: Varme, Forskel, Holdvarme og Linjer](../assets/img/da/heat-modes-grid.webp)
 
 | Tilstand (navn i tilstandslinjen) | Tast | Hvad den tegner | Kræver |
 |---|---|---|---|

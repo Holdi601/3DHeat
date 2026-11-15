@@ -15,7 +15,7 @@ outdated: false
 
 Všechno se počítá ve vašem prohlížeči. Nic neopustí váš počítač, pokud nezapnete externí AI (viz [Externí AI](#external-ai)).
 
-![Zjištění na ukázce tanků: 14 nálezů, nejsilnější první](../assets/img/en/insights.webp)
+![Zjištění na ukázce tanků: 14 nálezů, nejsilnější první](../assets/img/cs/insights.webp)
 
 Sekce **Zjištění** je v postranním panelu karet Teplotní mapa a Zápas. Má tři záložky: **Zjištění**, **Shrnutí** a **Komentátor**.
 
@@ -30,7 +30,7 @@ Počítání používá aktuální filtry, skryté skupiny a vybraný zápas př
 
 Řádky nahoře v seznamu (například součty peněz) shrnují celá data před zjištěními.
 
-![Otevřené zjištění: horká zóna výstřelů, její čísla a odpovídající pasáž z literatury](../assets/img/en/insights-finding.webp)
+![Otevřené zjištění: horká zóna výstřelů, její čísla a odpovídající pasáž z literatury](../assets/img/cs/insights-finding.webp)
 
 ### Detektory {#the-detectors}
 
@@ -55,7 +55,7 @@ Každé místo nebo skupina se testuje proti zbytku mapy (přesné binomické ne
 
 Záložka **Shrnutí** sepíše zjištění do krátkého textu: úvod, nejjasnější zjištění, jedno pro taktiku, jedno pro vyvážení, zbytek seskupený podle detektoru a kolik jich stojí na slabších důkazech. Každý odstavec má očíslovaná tlačítka, která ukážou jeho zjištění. **Kopírovat text** ho zkopíruje.
 
-![Shrnutí napsané vestavěným vypravěčem](../assets/img/en/debrief.webp)
+![Shrnutí napsané vestavěným vypravěčem](../assets/img/cs/debrief.webp)
 
 Vestavěný vypravěč funguje offline, ve vašem jazyce. Výběr **Optika** nad ním (viz [Čočka znalostí](knowledge.md)) určuje, kterou literaturu odstavce citují.
 
@@ -78,7 +78,7 @@ Pak napište volitelnou otázku a stiskněte **Napsat pomocí AI**. Posílají s
 
 Pro **jeden zápas** (vyberte jeden, pokud je načtených více) **Komentátor** najde okamžiky stojící za sledování: první krev, násobná zabití, výměny, clutche, změny cílů, návraty, vynikající hráče, dlouhé výstřely.
 
-![Okamžiky komentátora pro jedno kolo ukázky střelce](../assets/img/en/caster.webp)
+![Okamžiky komentátora pro jedno kolo ukázky střelce](../assets/img/cs/caster.webp)
 
 - Klikněte na okamžik: pohled přepne na přehrání, přeskočí těsně před něj, doletí tam a sleduje hráče.
 - **Přehrát momenty** přehraje každý až do konce a jde dál; **Předchozí** / **Další** procházejí jimi.

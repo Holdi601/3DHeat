@@ -23,7 +23,7 @@ Në krye të shiritit anësor:
 | Butoni **...** pranë **Njësitë** | Hap "Zgjidh një njësi për çdo madhësi": një listë zgjedhjeje për çdo sasi |
 | Menuja **Gjuha** | Gjuha e shikuesit: [40 gjuhë](languages.md), ose ajo e shfletuesit |
 
-![Kreu me menunë Njësitë dhe dritaren njësi-për-sasi të hapur](../assets/img/en/settings-units.webp)
+![Kreu me menunë Njësitë dhe dritaren njësi-për-sasi të hapur](../assets/img/sq/settings-units.webp)
 
 Numrat që shkruan në një kuti mund të kenë pikë ose presje (`0.35` ose `0,35`). Shikuesi i lexon të dyja dhe i shfaq numrat ashtu si i shkruan gjuha e shikuesit.
 
@@ -48,11 +48,11 @@ Njësi të tjera që mund të zgjedhësh për një sasi: distanca km, mi, NM; sh
 
 ## Modaliteti i ndihmës {#help-mode}
 
-![Modaliteti i ndihmës: çfarë do të thotë çdo ngjyrë](../assets/img/en/help.webp)
+![Modaliteti i ndihmës: çfarë do të thotë çdo ngjyrë](../assets/img/sq/help.webp)
 
 Shtyp `?` ose `F1`, ose kliko butonin **?**. Ai shfaq *Çfarë nënkuptojnë ngjyrat*: legjendat për pamjen 3D, shkallët e nxehtësisë, ngjyrat e ekipeve, ngjyrat e nivelit, ngjyrat e statusit të paneleve, panelin e ndeshjes dhe pamjen e garës. Mbetet i ndezur deri sa ta fikësh. Te skeda Ndeshja shpjegon edhe ngjyrat e panelit të ndeshjes.
 
-![Modaliteti i ndihmës te skeda Ndeshja](../assets/img/en/settings-help-match.webp)
+![Modaliteti i ndihmës te skeda Ndeshja](../assets/img/sq/settings-help-match.webp)
 
 ## Çfarë kujton shfletuesi {#what-the-browser-remembers}
 

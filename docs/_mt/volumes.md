@@ -21,7 +21,7 @@ outdated: false
  +------------+
 ```
 
-![Tliet volumi fuq il-wied demo: żewġ ċilindri madwar l-għoljiet, kaxxa madwar ir-raħal](../assets/img/en/volumes.webp)
+![Tliet volumi fuq il-wied demo: żewġ ċilindri madwar l-għoljiet, kaxxa madwar ir-raħal](../assets/img/mt/volumes.webp)
 
 Il-volumi jkejlu dak li jiġri ġewwa fihom, jiffiltraw il-veduta għalihom, jesportaw ir-ringieli tagħhom, u jistgħu jitqabblu ġenb ġenb. Ara wkoll il-[glossarju](glossary.md) għal ringiela, persuna u partita.
 
@@ -76,7 +76,7 @@ Bi tnejn jew iktar volumi murija, agħfas **Qabbel...**.
 3. Fi **Tabella**, aqra d-differenza ta' kull valur mill-ewwel volum.
 4. Aqleb għal **Vireg** biex tara s-sehmijiet bħala vireg.
 
-![It-tabella Qabbel volumi: ringieli, ħin ġewwa, plejers u iktar għal kull volum, bid-differenza mill-ewwel](../assets/img/en/compare.webp)
+![It-tabella Qabbel volumi: ringieli, ħin ġewwa, plejers u iktar għal kull volum, bid-differenza mill-ewwel](../assets/img/mt/compare.webp)
 
 | Veduta | Turi |
 |---|---|
@@ -86,7 +86,7 @@ Bi tnejn jew iktar volumi murija, agħfas **Qabbel...**.
 | **Żjarat** | Plots tal-kaxxa u tal-violin tad-dewmien taż-żjarat (skala logaritmika). |
 | **Fluss** | Fejn jiġu t-traċċi wara li jitilqu minn kull volum: matriċi ta' tranżizzjonijiet jew xridiet ta' fluss. |
 
-![Il-veduta Vireg: tipi ta' avvenimenti għal kull volum bħala sehem](../assets/img/en/compare-bars.webp)
+![Il-veduta Vireg: tipi ta' avvenimenti għal kull volum bħala sehem](../assets/img/mt/compare-bars.webp)
 
 ## Tips {#tips}
 

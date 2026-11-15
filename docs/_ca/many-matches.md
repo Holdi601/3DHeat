@@ -14,7 +14,7 @@ outdated: false
 
 Cada partida comença al seu propi inici i les seves unitats es mouen com a figures. Els fitxers van directament a la targeta gràfica i no es construeix cap taula completa, així que funciona fluïdament allà on una càrrega normal es quedaria sense memòria.
 
-![Deu partides de tancs superposades, un color per partida](../assets/img/en/many-matches.webp)
+![Deu partides de tancs superposades, un color per partida](../assets/img/ca/many-matches.webp)
 
 ## Com s'usa {#how-to-use-it}
 

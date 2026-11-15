@@ -21,7 +21,7 @@ Keď nie je nič načítané, scéna je tmavá s mriežkou a farebnými osami (*
 
 Level zdieľajú všetky tri karty: trať načítaná na karte Analýza pretekov je ten istý level, aký zobrazuje heatmapa.
 
-![Panel Pozadie / level s načítaným levelom: tlačidlá Obrázok mapy a 3D model, Bojisko, Nepriehľadnosť, Jas, Uložiť do knižnice a zoznam Knižnica](../assets/img/en/level-panel.webp)
+![Panel Pozadie / level s načítaným levelom: tlačidlá Obrázok mapy a 3D model, Bojisko, Nepriehľadnosť, Jas, Uložiť do knižnice a zoznam Knižnica](../assets/img/sk/level-panel.webp)
 
 ## Položte level za svoje dáta {#put-a-level-behind-your-data}
 

@@ -12,7 +12,7 @@ outdated: false
 
 Josla zem attēla darbojas kā video atskaņotājs: datus var atskaņot kā filmu, apturēt, pārlēkt uz citu vietu un mainīt ātrumu.
 
-![Laika joslas: 1 Viss/Atskaņot, 2 vadības pogas, 3 pulkstenis, 4 Ātrums, 5 Vēsture, ar Logs un Posms 30 s](../assets/img/en/timeline-bar.webp)
+![Laika joslas: 1 Viss/Atskaņot, 2 vadības pogas, 3 pulkstenis, 4 Ātrums, 5 Vēsture, ar Logs un Posms 30 s](../assets/img/lv/timeline-bar.webp)
 
 Josla zem skata ir laika skala ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Tā nosaka, kuras rindas ir redzamas katrā brīdī. Tai vajag laika kolonnu; bez tās visa josla ir atspējota, skats paliek režīmā **Viss**, un sānjosla saka *Šajos datos nav laika kolonnas - laika skala ir atspējota, un visi datu punkti tiek rādīti uzreiz.*
 

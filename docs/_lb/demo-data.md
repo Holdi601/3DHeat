@@ -10,7 +10,7 @@ outdated: false
 
 # Demo-Daten: probéiert den Viewer a fënnef Minutten
 
-![Hëtzt vun zéng Panzermatcher am Demo-Tal: wat Schrëtt 4 weist](../assets/img/en/heat-hero.webp)
+![Hëtzt vun zéng Panzermatcher am Demo-Tal: wat Schrëtt 4 weist](../assets/img/lb/heat-hero.webp)
 
 Nach keng eege Daten? Dat Repository mécht der. Alles dodriwwer ass erfonnt: en Tal, en Hof, an Matcher vun dräi erfonnte Spillstiler mat Spiller, déi *Blue 1* oder *Red 3* heeschen. D'Biller op dëser Säit goufen alleguer domat gemaach.
 
@@ -45,7 +45,7 @@ All Tabell nennt hir eegen Kolonnen an hirer Fousszeil, sou datt se ouni Zouweis
 6. Maacht **Erkenntnisser** op (an der Heatmap-Säitelleescht): et fënnt d'Plazen, wou vill méi geschoss, getraff a zerstéiert gouf wéi anzwousch - ronderëm déi zwee Hiwwelen.
 7. Maacht den **Match**-Tab op; ënner **Matcher am Replay** wielt *Match 01*; drëckt **Ofspillen** op der Zäitlinn: de [Replay](match-replay.md).
 
-![E Replay vu Match 01 mat Panzer als Figuren](../assets/img/en/replay-overview.webp)
+![E Replay vu Match 01 mat Panzer als Figuren](../assets/img/lb/replay-overview.webp)
 
 Fir de Schéisser lued `demo-yard.glb` an `shooter.parquet`; fir de Loftkampf `air.parquet` (d'Figuren sinn bei **Figurengréisst** 4 méi liicht ze gesinn, en Schieber am Panel **Equipenusiicht** an der Heatmap-Säitelleescht).
 

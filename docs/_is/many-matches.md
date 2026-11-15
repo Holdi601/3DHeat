@@ -15,7 +15,7 @@ outdated: false
 
 Hver leikur byrjar á sínu eigin upphafi og einingar hans hreyfast sem fígúrur. Skrárnar fara beint inn á skjákortið og engin heil tafla er búin til, svo það spilast mjúklega þar sem venjuleg hleðsla myndi klárast af minni.
 
-![Tíu skriðdrekaleikir lagðir hverjir yfir aðra, einn litur á leik](../assets/img/en/many-matches.webp)
+![Tíu skriðdrekaleikir lagðir hverjir yfir aðra, einn litur á leik](../assets/img/is/many-matches.webp)
 
 ## Hvernig á að nota það {#how-to-use-it}
 

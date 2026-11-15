@@ -23,7 +23,7 @@ outdated: false
 6. Paina **▶** (tai `K`) toistaaksesi suunnitelman näytetystä vaiheesta loppuun.
 7. Nimeä suunnitelma kohdassa **Suunnitelman nimi** ja paina **Tallenna**.
 
-![Taktiikka-välilehti ylhäältä: peli, puolet ja työkalut vasemmalla, kolme hahmoa liikenuolilla, savun heittokaari, alue ja vaiheet alareunassa](../assets/img/en/tactics.webp)
+![Taktiikka-välilehti ylhäältä: peli, puolet ja työkalut vasemmalla, kolme hahmoa liikenuolilla, savun heittokaari, alue ja vaiheet alareunassa](../assets/img/fi/tactics.webp)
 
 ## Suunnitelman aloittaminen {#starting-a-plan}
 

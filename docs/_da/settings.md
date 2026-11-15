@@ -23,7 +23,7 @@ De små styringer øverst i sidebjælken ændrer, hvordan vieweren taler til dig
 | Knappen **...** ved siden af **Enheder** | Åbner "Vælg en enhed for hver størrelse": én rullemenu pr. størrelse |
 | Menuen **Sprog** | Viewerens sprog: [40 sprog](languages.md), eller browserens |
 
-![Headeren med menuen Enheder og vinduet med en enhed pr. størrelse åbent](../assets/img/en/settings-units.webp)
+![Headeren med menuen Enheder og vinduet med en enhed pr. størrelse åbent](../assets/img/da/settings-units.webp)
 
 Tal, du skriver i en boks, må bruge enten et punktum eller et komma (`0.35` eller `0,35`). Vieweren læser begge og viser tal, som viewerens sprog skriver dem.
 
@@ -48,11 +48,11 @@ Andre enheder, du kan vælge for én størrelse: afstand km, mi, NM; fart km/t, 
 
 ## Hjælpetilstand {#help-mode}
 
-![Hjælpetilstand: hvad farverne betyder](../assets/img/en/help.webp)
+![Hjælpetilstand: hvad farverne betyder](../assets/img/da/help.webp)
 
 Tryk på `?` eller `F1`, eller klik på knappen **?**. Den viser *Hvad farverne betyder*: forklaringer til 3D-visningen, varmerampene, holdfarverne, banens farver, panelernes statusfarver, kamppanelet og løbsvisningen. Den bliver, til du slår den fra. På fanen Kamp forklarer den også kamppanelets farver.
 
-![Hjælpetilstand på fanen Kamp](../assets/img/en/settings-help-match.webp)
+![Hjælpetilstand på fanen Kamp](../assets/img/da/settings-help-match.webp)
 
 ## Hvad browseren husker {#what-the-browser-remembers}
 

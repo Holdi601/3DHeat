@@ -21,7 +21,7 @@ Kur nuk ngarkohet asgjë, skena është e errët me një rrjetë dhe boshte me n
 
 Nivelin e ndajnë të tre skedat: një pistë e ngarkuar në skedën Analiza e garës është e njëjta nivel që shfaq Harta e nxehtësisë.
 
-![Paneli Sfondi / niveli me një nivel të ngarkuar: butonat Imazh harte dhe Model 3D, Teatri i luftës, Opaciteti, Ndriçimi, Ruaj në bibliotekë dhe lista e Bibliotekës](../assets/img/en/level-panel.webp)
+![Paneli Sfondi / niveli me një nivel të ngarkuar: butonat Imazh harte dhe Model 3D, Teatri i luftës, Opaciteti, Ndriçimi, Ruaj në bibliotekë dhe lista e Bibliotekës](../assets/img/sq/level-panel.webp)
 
 ## Vëre një nivel pas të dhënave {#put-a-level-behind-your-data}
 

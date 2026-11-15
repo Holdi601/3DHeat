@@ -15,7 +15,7 @@ Toplota boji mjesta gdje se desilo mnogo stvari: crveno tamo gdje se desilo malo
 
 **Toplota** (tipka 1) je podrazumijevani način. Svaki vidljivi [red](glossary.md) doprinosi okruglim [sprajtom](glossary.md) okrenutim ka kameri; preklapajući sprajtovi se zbrajaju u bafer s pokretnim zarezom; zbir se preslikava kroz skalu boja - podrazumijevano prozirno → crveno → žuto → bijelo - i crta preko scene.
 
-![Toplota na 3D nivou: vruće tačke unutar i na vrhu zgrada](../assets/img/en/shooter-heat.webp)
+![Toplota na 3D nivou: vruće tačke unutar i na vrhu zgrada](../assets/img/bs/shooter-heat.webp)
 
 Slika prikazuje toplotu jednog kruga shootera na nivou sa zgradama: vruće tačke su u prostorijama i na stepenicama, ne samo na tlu.
 
@@ -26,7 +26,7 @@ Slika prikazuje toplotu jednog kruga shootera na nivou sa zgradama: vruće tačk
 3. Promijenite **Radijus sprajta** dok se susjedne tačke ne spoje u pojaseve: manji prikazuje pojedinačne tačke, veći prikazuje oblasti.
 4. Otvorite **Boje toplote** da promijenite boje, ili **Dubinu** da brda i zidovi sakriju toplotu iza sebe.
 
-![Odjeljci Oblik toplote i Boje toplote na bočnoj traci, oba otvorena](../assets/img/en/heat-panel.webp)
+![Odjeljci Oblik toplote i Boje toplote na bočnoj traci, oba otvorena](../assets/img/bs/heat-panel.webp)
 
 Isti paneli oblikuju [Razliku](difference.md), [Toplotu timova](team-heat.md) i [Toplotu linija](line-heat.md); razlikuju se po tome šta se dodaje (sa predznakom, obojeno ili duž linija), a ne po načinu na koji se to radi.
 

@@ -14,7 +14,7 @@ outdated: false
 
 Konum verilerini yükleyin - CSV, Parquet, Tacview kayıtları, dönüştürülmüş tekrarlar, tek bir dosya, bir klasör ya da binlerce maç - ve bunları **içinde uçabileceğiniz bir ısı haritası** olarak, **maçı yeniden oynatan figürler** olarak, insanların izlediği rotalar boyunca çizgiler olarak ya da bir nüfusu ötekiyle karşılaştırarak görün. Öne çıkanı kendi başına bulur ve her şey tarayıcınızda çalışır: hiçbir şey bir yere yüklenmez.
 
-![Demo Valley üzerindeki on tank maçının ısısı](../assets/img/en/heat-hero.webp)
+![Demo Valley üzerindeki on tank maçının ısısı](../assets/img/tr/heat-hero.webp)
 
 **Burada yeniyseniz:** [demo verilerini](demo-data.md) oluşturun ve yedi adımını izleyin. Bu sitedeki her resim onunla çekildi.
 
@@ -22,12 +22,12 @@ Konum verilerini yükleyin - CSV, Parquet, Tacview kayıtları, dönüştürülm
 
 | | |
 |---|---|
-| ![Fark](../assets/img/en/heat-difference.webp) | **[Isı modları](heat-modes.md)** - ısı, [fark](difference.md) (bir tarafın daha çok olduğu yerler kırmızı, diğer tarafın olduğu yerler yeşil-mavi), [takım ısısı](team-heat.md), [çizgi ısısı](line-heat.md); kama, ok alanları ve kutupsal grafiklerle [yönlü ısı](directional-heat.md); [değere göre ağırlıklandırılmış](value-weighting.md) ısı: silahların, araçların ve yakıtın maliyeti. |
-| ![Tekrar](../assets/img/en/replay-tanks.webp) | **[Maç tekrarı](match-replay.md)** - her birim, ne olduğunun [figürü](figures.md) olarak; uzakta NATO ya da Rus sembolleri, füzeler ve izler, isabet işaretleri, enkazlar, yangınlar, taretler, hedefler, Tacview tarzı kameralar ve taktik ekran; [birçok maç birden](many-matches.md). |
-| ![İçgörüler](../assets/img/en/insights.webp) | **[İçgörüler](insights.md)** - güçlü konumlar, ölümcül zemin, doğma tuzakları, boğazlar ve öne çıkan oyuncular; kanıtlarıyla bulunup sıralanır; yazılı bir değerlendirme, isterseniz seçtiğiniz bir yapay zekâ tarafından; tek bir maç için bir yayıncı modu; [bilgi merceği](knowledge.md). |
-| ![Hacimler](../assets/img/en/compare.webp) | **[Hacimler](volumes.md)** - kutular, prizmalar, silindirler ve küreler çizin, onlara göre süzün, içinde olanları sayın, dışa aktarın ve yerleri yan yana karşılaştırın; bir yerde kimin ve neyin en iyi olduğunun [dökümü](breakdown.md). |
-| ![Filtreler](../assets/img/en/filters.webp) | **[Filtreler](filters.md)** - olay türüne, oyuncuya ya da yapay zekâya, araç sınıfına, değere, herhangi bir sütuna göre; veri boyutu ne olursa olsun grafik kartında. |
-| ![Harita](../assets/img/en/level-panel.webp) | **[Haritalar](levels.md)** - harita görselleri, [veri araçlarıyla](#related-repositories) yapılan 3B haritalar, sadeleştirme, uçuş verileri için gerçek arazili [dünya arka planı](world-backdrop.md). |
+| ![Fark](../assets/img/tr/heat-difference.webp) | **[Isı modları](heat-modes.md)** - ısı, [fark](difference.md) (bir tarafın daha çok olduğu yerler kırmızı, diğer tarafın olduğu yerler yeşil-mavi), [takım ısısı](team-heat.md), [çizgi ısısı](line-heat.md); kama, ok alanları ve kutupsal grafiklerle [yönlü ısı](directional-heat.md); [değere göre ağırlıklandırılmış](value-weighting.md) ısı: silahların, araçların ve yakıtın maliyeti. |
+| ![Tekrar](../assets/img/tr/replay-tanks.webp) | **[Maç tekrarı](match-replay.md)** - her birim, ne olduğunun [figürü](figures.md) olarak; uzakta NATO ya da Rus sembolleri, füzeler ve izler, isabet işaretleri, enkazlar, yangınlar, taretler, hedefler, Tacview tarzı kameralar ve taktik ekran; [birçok maç birden](many-matches.md). |
+| ![İçgörüler](../assets/img/tr/insights.webp) | **[İçgörüler](insights.md)** - güçlü konumlar, ölümcül zemin, doğma tuzakları, boğazlar ve öne çıkan oyuncular; kanıtlarıyla bulunup sıralanır; yazılı bir değerlendirme, isterseniz seçtiğiniz bir yapay zekâ tarafından; tek bir maç için bir yayıncı modu; [bilgi merceği](knowledge.md). |
+| ![Hacimler](../assets/img/tr/compare.webp) | **[Hacimler](volumes.md)** - kutular, prizmalar, silindirler ve küreler çizin, onlara göre süzün, içinde olanları sayın, dışa aktarın ve yerleri yan yana karşılaştırın; bir yerde kimin ve neyin en iyi olduğunun [dökümü](breakdown.md). |
+| ![Filtreler](../assets/img/tr/filters.webp) | **[Filtreler](filters.md)** - olay türüne, oyuncuya ya da yapay zekâya, araç sınıfına, değere, herhangi bir sütuna göre; veri boyutu ne olursa olsun grafik kartında. |
+| ![Harita](../assets/img/tr/level-panel.webp) | **[Haritalar](levels.md)** - harita görselleri, [veri araçlarıyla](#related-repositories) yapılan 3B haritalar, sadeleştirme, uçuş verileri için gerçek arazili [dünya arka planı](world-backdrop.md). |
 
 Ayrıca: yarış oyunlarının turları için [Yarış analizi](race-analysis.md) sekmesi, Counter-Strike 2 özetleri için [Maç](match-analysis.md) sekmesi, bir haritadaki planlar için [Taktik tahtası](tactics-board.md), araç başına [isabet analizi](hit-analysis.md), binlerce maçın [toplu analizi](mass-analysis.md), [kamera yolları ve video](camera-path-and-video.md), [40 dil](languages.md), [metrik ya da imparatorluk birimleri](settings.md).
 

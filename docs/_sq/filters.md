@@ -19,7 +19,7 @@ outdated: false
 2. Te **Klasa e mjetit**, hiq shenjën e *Tank*. Figura ndryshon menjëherë.
 3. Shtyp **Pastro të gjithë filtrat** për ta zhbërë.
 
-![Paneli i Filtrave: kolonat e vetë shikuesit (Lloji i ngjarjes, Klasa e mjetit) së pari, pastaj kolonat nga skedari yt](../assets/img/en/filters.webp)
+![Paneli i Filtrave: kolonat e vetë shikuesit (Lloji i ngjarjes, Klasa e mjetit) së pari, pastaj kolonat nga skedari yt](../assets/img/sq/filters.webp)
 
 Rreshtat e parë janë kolonat e vetë shikuesit (më poshtë). Rreshtat pas tyre vijnë nga skedari yt.
 
@@ -42,7 +42,7 @@ Cilat kolona mund të filtrohen vendoset gjatë ngarkimit, sepse duhet të lexoh
 
 ## Kolonat numerike (interval) {#numeric-columns-range}
 
-![Një filtër intervali (paratë e humbura) me të dy skajet e tërhequr](../assets/img/en/filters-numeric.webp)
+![Një filtër intervali (paratë e humbura) me të dy skajet e tërhequr](../assets/img/sq/filters-numeric.webp)
 
 | Pjesa | Kuptimi |
 |---|---|

@@ -18,7 +18,7 @@ Pregledovalnik vam pove, kdaj obstaja novejša različica, in se posodobi samo, 
 2. **Če piše, naj zaženete restart.bat**, zaprite okno strežnika (črno okno, ki ga je odprl `start.bat`) in dvakrat kliknite `restart.bat`.
 3. **Ob zagonu pregledovalnika.** `start.bat` prav tako preveri. Če obstaja novejša različica, vpraša **Posodobi zdaj? [Y/N]**. Pritisnite `Y`, da posodobite. Pritisnite `N` ali počakajte 60 sekund brez odgovora, da zaženete različico, ki jo imate.
 
-![Obvestilo o posodobitvi z Posodobi zdaj in Pozneje](../assets/img/en/updates-notice.webp)
+![Obvestilo o posodobitvi z Posodobi zdaj in Pozneje](../assets/img/sl/updates-notice.webp)
 
 Kopija s spremembami, ki ste jih naredili sami, se nikoli ne posodobi samodejno; okence vam samo pove, da čaka posodobitev, in naroči, naj shranite ali skrijete spremembe ter zaženete `git pull`. Kopija, ki ni bila nameščena z gitom (na primer datoteka zip), ne prikaže ničesar.
 

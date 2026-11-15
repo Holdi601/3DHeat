@@ -13,7 +13,7 @@ outdated: false
 
 Ajoit saman radan kahdesti. **Kisa-analyysi**-välilehti toistaa molemmat ajot yhdessä 3D:nä, näyttää, missä yksi kierros oli hitaampi, ja kertoo miksi. Ei vielä kierroksia? Paina **Esimerkkikierrokset**.
 
-![Kisa-analyysi-välilehti esimerkkikierroksilla: sivupalkki Kierrokset ja Parannettavaa, autot radalla, kaaviot näkymän alla](../assets/img/en/race-analysis-overview.webp)
+![Kisa-analyysi-välilehti esimerkkikierroksilla: sivupalkki Kierrokset ja Parannettavaa, autot radalla, kaaviot näkymän alla](../assets/img/fi/race-analysis-overview.webp)
 
 Välilehti vertaa kahta tai useampaa kierrosta samalta radalta. Se jakaa piirtoalueen, kameran ja ladatun radan mallin (**Tausta / kenttä**) lämpökartan kanssa; kaikki muu on omaa: oma sivupalkki ja oma palkki näkymän alla. Sanat *kierros*, *vertailu* ja *kärki* ovat [sanastossa](glossary.md).
 

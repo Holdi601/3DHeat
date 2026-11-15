@@ -15,7 +15,7 @@ outdated: false
 
 Peržiūros programos pačios sukurtas katalogas turi apie 2 000 pavadintų automobilių, orlaivių, laivų, ginklų ir kareivių.
 
-![Demonstracijos tankai, nupiešti kaip savos figūros](../assets/img/en/replay-tanks.webp)
+![Demonstracijos tankai, nupiešti kaip savos figūros](../assets/img/lt/replay-tanks.webp)
 
 ## Kas yra kataloge {#what-is-in-the-catalogue}
 

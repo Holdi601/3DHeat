@@ -15,7 +15,7 @@ Cada punt afegeix una mica de brillantor, les brillantors s'acumulen, i l'acumul
 
 La barra de modes, a la part superior de la barra lateral de la pestanya Mapa de calor, tria com es dibuixa el [conjunt de dades](glossary.md). Les tecles 1-4 trien Calor, Diferència, Calor per equips i Línies. Figures superposades no té tecla.
 
-![La barra de modes amb Calor, Diferència, Calor per equips, Figures superposades i Línies](../assets/img/en/heat-modes-bar.webp)
+![La barra de modes amb Calor, Diferència, Calor per equips, Figures superposades i Línies](../assets/img/ca/heat-modes-bar.webp)
 
 | Mode | Pregunta a la qual respon |
 |---|---|
@@ -25,7 +25,7 @@ La barra de modes, a la part superior de la barra lateral de la pestanya Mapa de
 | **Línies** | Per on anava la gent? |
 | **Figures superposades** | Qui era on, i quan? |
 
-![Les mateixes dades en quatre modes: Calor, Diferència, Calor per equips i Línies](../assets/img/en/heat-modes-grid.webp)
+![Les mateixes dades en quatre modes: Calor, Diferència, Calor per equips i Línies](../assets/img/ca/heat-modes-grid.webp)
 
 | Mode (etiqueta de la barra) | Tecla | Què dibuixa | Necessita |
 |---|---|---|---|

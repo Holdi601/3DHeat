@@ -13,7 +13,7 @@ outdated: false
 
 Przejechałeś tę samą trasę dwa razy. Karta **Analiza wyścigowa** odtwarza oba przejazdy razem w 3D, pokazuje, gdzie jedno okrążenie było wolniejsze, i mówi, dlaczego. Nie masz jeszcze okrążeń? Naciśnij **Okrążenia demo**.
 
-![Karta Analiza wyścigowa z okrążeniami demo: pasek boczny z Okrążeniami i Gdzie się poprawić, samochody na trasie, wykresy pod widokiem](../assets/img/en/race-analysis-overview.webp)
+![Karta Analiza wyścigowa z okrążeniami demo: pasek boczny z Okrążeniami i Gdzie się poprawić, samochody na trasie, wykresy pod widokiem](../assets/img/pl/race-analysis-overview.webp)
 
 Karta porównuje dwa lub więcej okrążeń jednej trasy. Dzieli z mapą cieplną płótno, kamerę i wczytany model trasy (**Tło / poziom**); reszta jest jej własna: własny pasek boczny i własny pasek pod widokiem. Słowa takie jak *okrążenie*, *odniesienie* i *punkt wierzchołkowy* są w [słowniku pojęć](glossary.md).
 

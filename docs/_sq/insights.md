@@ -15,7 +15,7 @@ outdated: false
 
 Gjithçka numërohet në shfletuesin tënd. Asgjë nuk del nga kompjuteri yt, përveç nëse ndez një IA të jashtme (shih [IA e jashtme](#external-ai)).
 
-![Vëzhgimet mbi demo-n e tankeve: 14 gjetje, më e fortja e para](../assets/img/en/insights.webp)
+![Vëzhgimet mbi demo-n e tankeve: 14 gjetje, më e fortja e para](../assets/img/sq/insights.webp)
 
 Seksioni **Vëzhgime** ndodhet në shiritin anësor të skedave Harta e nxehtësisë dhe Ndeshja. Ka tre skeda: **Gjetjet**, **Përmbledhja** dhe **Komentuesi**.
 
@@ -30,7 +30,7 @@ Numërimi përdor filtrat aktualë, grupet e fshehura dhe ndeshjen e zgjedhur p�
 
 Rreshtat në krye të listës (për shembull totalet e parasë) përmbledhin gjithë të dhënat përpara gjetjeve.
 
-![Një gjetje e hapur: zona e nxehtë e të shtënave, numrat e saj, dhe një pasazh përkatës nga literatura](../assets/img/en/insights-finding.webp)
+![Një gjetje e hapur: zona e nxehtë e të shtënave, numrat e saj, dhe një pasazh përkatës nga literatura](../assets/img/sq/insights-finding.webp)
 
 ### Detektorët {#the-detectors}
 
@@ -55,7 +55,7 @@ Detektorët që nuk mund të punojnë mbi të dhënat listohen në fund, me arsy
 
 Skeda **Përmbledhja** i shkruan gjetjet në një tekst të shkurtër: një hyrje, gjetja më e qartë, një për taktikat, një për balancimin, pjesa tjetër e grupuar sipas detektorit, dhe sa prej tyre mbështeten në prova më të dobëta. Çdo paragraf ka butona të numëruar që shfaqin gjetjet e tij. **Kopjo tekstin** e kopjon.
 
-![Përmbledhja e shkruar nga narratori i integruar](../assets/img/en/debrief.webp)
+![Përmbledhja e shkruar nga narratori i integruar](../assets/img/sq/debrief.webp)
 
 Narratori i integruar punon pa internet, në gjuhën tënde. Përzgjedhësi **Lente** mbi të (shih [Lente e njohurive](knowledge.md)) përcakton cilën literaturë citojnë paragrafët.
 
@@ -78,7 +78,7 @@ Pastaj shkruaj një pyetje opsionale dhe shtyp **Shkruaj me IA**. Dërgohen vet�
 
 Për **një ndeshje** (zgjidh një nëse janë ngarkuar disa), **Komentuesi** gjen momentet që vlen të shihen: gjakun e parë, shumëvrasjet, shkëmbimet, kthimet në fund, luhatjet e objektivave, rikthimet, lojtarët që dallohen, të shtënat nga larg.
 
-![Momentet e komentuesit për një raund të demos shooter](../assets/img/en/caster.webp)
+![Momentet e komentuesit për një raund të demos shooter](../assets/img/sq/caster.webp)
 
 - Kliko një moment: pamja kalon te riluajtja, kërcen pak përpara tij, fluturon atje dhe ndjek lojtarin.
 - **Luaj çastet** e luan çdo moment deri në fund dhe kalon më tej; **Para** / **Pas** lëviz mes tyre.

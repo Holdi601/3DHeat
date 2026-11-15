@@ -14,7 +14,7 @@ outdated: false
 
 Iga matš algab oma algusest ja tema üksused liiguvad kujudena. Failid lähevad otse graafikakaardile ja ühtegi täielikku tabelit ei ehitata, seega see mängib sujuvalt seal, kus tavaline laadimine mälu otsa jookseks.
 
-![Kümme tankimatši üksteise peale laotud, üks värv matši kohta](../assets/img/en/many-matches.webp)
+![Kümme tankimatši üksteise peale laotud, üks värv matši kohta](../assets/img/et/many-matches.webp)
 
 ## Kuidas seda kasutada {#how-to-use-it}
 

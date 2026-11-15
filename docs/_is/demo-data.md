@@ -10,7 +10,7 @@ outdated: false
 
 # Sýnigögn: prófaðu skoðarann á fimm mínútum
 
-![Hiti tíu skriðdrekaleikja í sýnidalnum: það sem skref 4 sýnir](../assets/img/en/heat-hero.webp)
+![Hiti tíu skriðdrekaleikja í sýnidalnum: það sem skref 4 sýnir](../assets/img/is/heat-hero.webp)
 
 Engin eigin gögn enn? Geymslan býr þau til. Allt í henni er uppspunnið: dalur, garður og leikir af þremur tilbúnum leikjastílum með leikmönnum sem heita *Blue 1* eða *Red 3*. Myndirnar á þessari síðu voru allar teknar með þeim.
 
@@ -45,7 +45,7 @@ Hver tafla nefnir dálka sína í fótnótunni sinni, svo hún hleðst án nokku
 6. Opnaðu **Innsýn** (í hliðarstiku Hitakorts): þar finnur hún staðina þar sem miklu meira var skotið, hitt og eyðilagt en annars staðar - um hæðirnar tvær.
 7. Opnaðu flipann **Leikur**; undir **Leikir í endurspiluninni** veldu *Match 01*; ýttu á **Spila** á tímalínunni: [endurspilunin](match-replay.md).
 
-![Endurspilun Match 01 með skriðdrekum sem fígúrum](../assets/img/en/replay-overview.webp)
+![Endurspilun Match 01 með skriðdrekum sem fígúrum](../assets/img/is/replay-overview.webp)
 
 Fyrir skotleikinn hleður þú `demo-yard.glb` og `shooter.parquet`; fyrir loftorrustuna `air.parquet` (fígúrurnar sjást betur við **Stærð fígúra** 4, sleði í spjaldinu **Liðssýn** í hliðarstiku Hitakorts).
 

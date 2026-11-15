@@ -15,7 +15,7 @@ outdated: false
 
 Ir apmēram 2000 nosaukto transportlīdzekļu, lidmašīnu, kuģu, ieroču un karavīru, visi veidoti pašā skatītājā.
 
-![Demonstrācijas tanki, zīmēti kā savas figūras](../assets/img/en/replay-tanks.webp)
+![Demonstrācijas tanki, zīmēti kā savas figūras](../assets/img/lv/replay-tanks.webp)
 
 ## Kas ir katalogā {#what-is-in-the-catalogue}
 

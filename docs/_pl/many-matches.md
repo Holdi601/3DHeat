@@ -14,7 +14,7 @@ outdated: false
 
 Każdy mecz zaczyna od swojego własnego początku, a jego jednostki poruszają się jako figury. Pliki trafiają wprost do karty graficznej i nie buduje się żadnej pełnej tabeli, więc odtwarzanie jest płynne tam, gdzie zwykłe wczytanie skończyłoby pamięć.
 
-![Dziesięć meczów czołgów nałożonych na siebie, jeden kolor na mecz](../assets/img/en/many-matches.webp)
+![Dziesięć meczów czołgów nałożonych na siebie, jeden kolor na mecz](../assets/img/pl/many-matches.webp)
 
 ## Jak tego używać {#how-to-use-it}
 

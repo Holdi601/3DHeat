@@ -18,7 +18,7 @@ Shikuesi të tregon kur ekziston një version më i ri, dhe përditësohet vetë
 2. **Nëse thotë të ekzekutosh restart.bat**, mbyll dritaren e serverit (dritarja e zezë që hapi `start.bat`) dhe kliko dy herë `restart.bat`.
 3. **Kur nis shikuesin.** `start.bat` kontrollon gjithashtu. Nëse ekziston një version më i ri, pyet **Update now? [Y/N]**. Shtyp `Y` për të përditësuar. Shtyp `N`, ose prit 60 sekonda pa u përgjigjur, për të nisur versionin që ke.
 
-![Njoftimi i përditësimit me Përditëso tani dhe Më vonë](../assets/img/en/updates-notice.webp)
+![Njoftimi i përditësimit me Përditëso tani dhe Më vonë](../assets/img/sq/updates-notice.webp)
 
 Një kopje me ndryshime të tua nuk përditësohet kurrë për ty; kutia vetëm të tregon se po pret një përditësim, dhe thotë të bësh commit ose stash të ndryshimeve dhe të ekzekutosh `git pull`. Një kopje që nuk u instalua me git (për shembull një skedar zip) nuk shfaq asgjë.
 

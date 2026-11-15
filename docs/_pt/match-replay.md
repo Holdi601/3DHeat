@@ -15,7 +15,7 @@ A repetição é um filme da partida com cada jogador desenhado como aquilo que 
 
 Disparos, impactos, incêndios e destroços são desenhados nas unidades e nos objetivos do nível. Câmaras, etiquetas e uma visualização tática ajudam a ler o combate. Conhece o Tacview? [Paridade com o Tacview](tacview-parity.md) mostra onde está cada uma das suas ferramentas.
 
-![Repetição com figuras da demo de tanques: tanques como figuras próprias, com etiquetas de nome, veículo e velocidade](../assets/img/en/replay-overview.webp)
+![Repetição com figuras da demo de tanques: tanques como figuras próprias, com etiquetas de nome, veículo e velocidade](../assets/img/pt/replay-overview.webp)
 
 ## Iniciar uma repetição {#start-a-replay}
 
@@ -26,11 +26,11 @@ Disparos, impactos, incêndios e destroços são desenhados nas unidades e nos o
 
 As figuras substituem as caixas para cada unidade cujo nome ou tipo é conhecido (ver [Figuras](figures.md)). Os dados sem coluna de nome ou tipo são desenhados como soldados.
 
-![O separador Partida: o seletor de partidas, a secção Figuras, as vistas da câmara, Reproduzir e a lista de eventos](../assets/img/en/match-replay-tab.webp)
+![O separador Partida: o seletor de partidas, a secção Figuras, as vistas da câmara, Reproduzir e a lista de eventos](../assets/img/pt/match-replay-tab.webp)
 
 ## Figuras {#figures}
 
-![Um tanque em chamas na câmara de órbita, com o disparo que o atingiu](../assets/img/en/replay-tanks.webp)
+![Um tanque em chamas na câmara de órbita, com o disparo que o atingiu](../assets/img/pt/replay-tanks.webp)
 
 | Definição (secção **Figuras**) | Predefinição | O que faz |
 |---|---|---|
@@ -51,7 +51,7 @@ As figuras substituem as caixas para cada unidade cujo nome ou tipo é conhecido
 
 Quando uma unidade ficaria menor que a **Menor figura no ecrã**, pode tornar-se num símbolo que continua legível. A forma indica o tipo (por exemplo uma caixa arredondada com uma marca de lagarta para um blindado); a cor indica o lado. Abra o menu **Símbolos** para mudar o estilo.
 
-![As mesmas seis unidades como símbolos NATO, sinais táticos russos, ícones de mapa de jogo e apenas formas](../assets/img/en/match-replay-symbols-styles.webp)
+![As mesmas seis unidades como símbolos NATO, sinais táticos russos, ícones de mapa de jogo e apenas formas](../assets/img/pt/match-replay-symbols-styles.webp)
 
 ### Marcas de impacto, destroços e incêndios {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Clique numa unidade ou na sua etiqueta para a **seguir**; a secção **Repetiç�
 
 ## Visualização tática {#tactical-display}
 
-![A demo aérea com o aspeto de visualização tática (T): terreno em arame, painéis de abates e eventos](../assets/img/en/replay-air-tactical.webp)
+![A demo aérea com o aspeto de visualização tática (T): terreno em arame, painéis de abates e eventos](../assets/img/pt/replay-air-tactical.webp)
 
 A secção **Visualização tática** desenha, para nenhuma unidade, as selecionadas, todas, ou um tipo (aeronaves, terrestres, navios, armas): vetores de velocidade e o caminho à frente, linhas de nariz e de sustentação, cones de radar, bloqueios, ligações de dados, zonas e linhas de combate, linhas de visão, para onde olham os jogadores (cones de visão), a pontaria das torres e a câmara gravada.
 
@@ -84,7 +84,7 @@ A secção **Visualização tática** desenha, para nenhuma unidade, as selecion
 
 `T` (ou o botão **Mostrar como ecrã tático**) muda o aspeto para um estilo de ecrã de radar: brilho, contornos, curvas de nível, uma grelha de medição, linhas de varrimento, anéis de alcance, escalas de altitude, painéis com abates e eventos, e um **Realizador** que move a câmara para os eventos por si próprio.
 
-![O mesmo combate aéreo no aspeto normal](../assets/img/en/replay-air.webp)
+![O mesmo combate aéreo no aspeto normal](../assets/img/pt/replay-air.webp)
 
 ## Objetivos {#objectives}
 

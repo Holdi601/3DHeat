@@ -13,7 +13,7 @@ outdated: false
 
 Dir hutt déiselwecht Strecke zweemol gefuer. De Tab **Course-Analys** spillt béid Fuerten zesumme am 3D of, weist, wou eng Ronn méi lues war, a seet Iech firwat. Nach keng Ronnen? Drëckt **Demo-Ronnen**.
 
-![De Tab Course-Analys mat Demo-Ronnen: d'Säitelleescht mat Ronnen a Wou et ze verbesseren ass, d'Autoen op der Strecke, d'Diagrammer ënner der Usiicht](../assets/img/en/race-analysis-overview.webp)
+![De Tab Course-Analys mat Demo-Ronnen: d'Säitelleescht mat Ronnen a Wou et ze verbesseren ass, d'Autoen op der Strecke, d'Diagrammer ënner der Usiicht](../assets/img/lb/race-analysis-overview.webp)
 
 De Tab vergläicht zwou oder méi Ronnen vun engem Kurs. Hie deelt sech mat der Heatmap d'Zeechenfläch, d'Kamera an de gelueden Streckemodell (**Hannergrond / Level**); alles anerescht ass säin eegent: seng eegen Säitelleescht an seng eegen Leescht ënner der Usiicht. Wierder wéi *Ronn*, *Referenz* an *Scheitelpunkt* stinn am [Glossar](glossary.md).
 

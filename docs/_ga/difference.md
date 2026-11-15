@@ -15,7 +15,7 @@ Dearg san áit a raibh foireann A níos mó, gorm-glas san áit a raibh foireann
 
 Is teas comharthaithe é **Difríocht** (eochair 2). Cuireann sraitheanna de dhaonra amháin teas leis; baineann sraitheanna de dhaonra eile uaidh. Sa limistéar ina bhforlapann an bheirt go cothrom is nialas an toradh agus tá sé trédhearcach go hiomlán; san áit a bhfuil ceann amháin i gceannas taispeántar é i ndathanna an taobh sin - de réir réamhshocraithe te (trédhearcach → dearg → buí → bán) don taobh **+** agus fuar (trédhearcach → glas → gorm → corcra) don taobh **−**.
 
-![Teas difríochta: dearg san áit a raibh an taobh + níos mó, glas agus gorm san áit a raibh an taobh - níos mó](../assets/img/en/difference-split.webp)
+![Teas difríochta: dearg san áit a raibh an taobh + níos mó, glas agus gorm san áit a raibh an taobh - níos mó](../assets/img/ga/difference-split.webp)
 
 ## Conas é a úsáid {#how-to-use-it}
 

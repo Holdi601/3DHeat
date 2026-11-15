@@ -23,7 +23,7 @@ A **Taktika** fül egy rajztábla csapattervekhez: kis figurákat helyez el a t�
 6. Nyomja meg a **▶** gombot (vagy a `K`-t), hogy a tervet a mutatott lépéstől a végéig lejátssza.
 7. Nevezze el a tervet a **Terv neve** mezőben, és nyomja meg a **Mentés** gombot.
 
-![A Taktika fül felülnézetben: játék, oldalak és eszközök balra, három figura Eltolás nyilakkal, egy füst Dobás ív, egy Terület, és a lépések alul](../assets/img/en/tactics.webp)
+![A Taktika fül felülnézetben: játék, oldalak és eszközök balra, három figura Eltolás nyilakkal, egy füst Dobás ív, egy Terület, és a lépések alul](../assets/img/hu/tactics.webp)
 
 ## Terv indítása {#starting-a-plan}
 

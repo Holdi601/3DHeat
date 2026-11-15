@@ -13,7 +13,7 @@ outdated: false
 
 你驾驶同一条赛道两次。**赛车分析**标签页会在 3D 中同时播放两次行驶，显示一圈在哪里更慢，并告诉你原因。还没有圈次？按**演示圈**。
 
-![The Race analysis tab with demo laps: the sidebar with Laps and Where to improve, the cars on the course, the charts under the view](../assets/img/en/race-analysis-overview.webp)
+![The Race analysis tab with demo laps: the sidebar with Laps and Where to improve, the cars on the course, the charts under the view](../assets/img/zh/race-analysis-overview.webp)
 
 该标签页比较同一赛道上的两圈或更多圈。它与热力图共享画布、摄像机和已加载的赛道模型（**背景/关卡**）；其余部分都是它自己的：自己的侧边栏和视图下方自己的工具条。*圈*、*参考*和*弯心*等词语在[术语表](glossary.md)中。
 

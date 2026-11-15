@@ -16,7 +16,7 @@ outdated: false
 
 Það eru um 2.000 nefnd farartæki, loftför, skip, vopn og hermenn, öll smíðuð af skoðaranum sjálfum.
 
-![Skriðdrekar sýnidæmisins teiknaðir sem eigin fígúrur](../assets/img/en/replay-tanks.webp)
+![Skriðdrekar sýnidæmisins teiknaðir sem eigin fígúrur](../assets/img/is/replay-tanks.webp)
 
 ## Hvað er í safninu {#what-is-in-the-catalogue}
 

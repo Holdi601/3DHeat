@@ -14,7 +14,7 @@ outdated: false
 
 Vsaka tekma se začne na svojem začetku, njene enote pa se premikajo kot figure. Datoteke gredo naravnost v grafično kartico in ne zgradi se nobena polna tabela, zato teče gladko tam, kjer bi običajno nalaganje zmanjkalo pomnilnika.
 
-![Deset tekem s tenki, položenih čez drugo, ena barva na tekmo](../assets/img/en/many-matches.webp)
+![Deset tekem s tenki, položenih čez drugo, ena barva na tekmo](../assets/img/sl/many-matches.webp)
 
 ## Kako uporabljati {#how-to-use-it}
 

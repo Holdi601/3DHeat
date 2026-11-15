@@ -15,7 +15,7 @@ Takım A'nın daha çok olduğu yerler kırmızı, takım B'nin daha çok olduğ
 
 **Fark** (tuş 2) işaretli bir ısıdır. Bir nüfusun satırları ısı ekler; bir diğerinin satırları onu çıkarır. İki taraf eşit olarak üst üste geldiğinde sonuç sıfırdır ve tamamen saydamdır; biri baskın olduğunda kendi tarafının renklerinde görünür - varsayılan olarak **+** tarafı için sıcak renkler (saydam → kırmızı → sarı → beyaz) ve **−** tarafı için soğuk renkler (saydam → yeşil → mavi → mor).
 
-![Fark ısısı: + tarafı daha çok olan yerler kırmızı, - tarafı daha çok olan yerler yeşil ve mavi](../assets/img/en/difference-split.webp)
+![Fark ısısı: + tarafı daha çok olan yerler kırmızı, - tarafı daha çok olan yerler yeşil ve mavi](../assets/img/tr/difference-split.webp)
 
 ## Nasıl kullanılır {#how-to-use-it}
 

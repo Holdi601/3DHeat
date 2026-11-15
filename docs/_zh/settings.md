@@ -23,7 +23,7 @@ outdated: false
 | **单位**旁边的 **...** 按钮 | 打开“为每个量选择单位”：每个量一个下拉菜单 |
 | **语言**菜单 | 查看器的语言：[40 种语言](languages.md)，或浏览器的语言 |
 
-![The header with the Units menu and the unit-per-quantity window open](../assets/img/en/settings-units.webp)
+![The header with the Units menu and the unit-per-quantity window open](../assets/img/zh/settings-units.webp)
 
 你在输入框中键入的数字可以使用小数点或逗号（`0.35` 或 `0,35`）。查看器两者都能读取，并按查看器语言的书写习惯显示数字。
 
@@ -48,11 +48,11 @@ outdated: false
 
 ## 帮助模式 {#help-mode}
 
-![Help mode: what the colours mean](../assets/img/en/help.webp)
+![Help mode: what the colours mean](../assets/img/zh/help.webp)
 
 按 `?` 或 `F1`，或点击 **?** 按钮。它会显示*颜色的含义*：三维视图、热度色带、队伍颜色、关卡颜色、面板状态颜色、对局面板和赛车视图的图例。在关闭之前它会一直保持开启。在对局标签页中，它也会解释对局面板的颜色。
 
-![Help mode in the Match tab](../assets/img/en/settings-help-match.webp)
+![Help mode in the Match tab](../assets/img/zh/settings-help-match.webp)
 
 ## 浏览器记住的内容 {#what-the-browser-remembers}
 

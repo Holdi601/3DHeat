@@ -15,7 +15,7 @@ Varme maler stedene der mye skjedde: rødt der det skjedde litt, hvitglødende d
 
 **Varme** (tast 1) er standardmodusen. Hver synlige [rad](glossary.md) bidrar med en rund [sprite](glossary.md) som vender mot kameraet; overlappende sprite-er legges sammen i en buffer med flyttall; summen slås opp i en fargeskala – som standard gjennomsiktig → rød → gul → hvit – og tegnes over scenen.
 
-![Varme på en 3D-bane: varmepunkter inne i og på toppen av bygningene](../assets/img/en/shooter-heat.webp)
+![Varme på en 3D-bane: varmepunkter inne i og på toppen av bygningene](../assets/img/no/shooter-heat.webp)
 
 Bildet viser varmen fra en runde skytespill på en bane med bygninger: varmepunktene ligger i rommene og på trappene, ikke bare på bakken.
 
@@ -26,7 +26,7 @@ Bildet viser varmen fra en runde skytespill på en bane med bygninger: varmepunk
 3. Endre **Sprite-radius** til nabopunktene smelter sammen til bånd: mindre viser enkeltflekker, større viser områder.
 4. Åpne **Varmefarger** for å endre fargene, eller **Dybde** for at høyder og vegger skal skjule varmen bak seg.
 
-![Seksjonene Varmeform og Varmefarger i sidepanelet, begge åpne](../assets/img/en/heat-panel.webp)
+![Seksjonene Varmeform og Varmefarger i sidepanelet, begge åpne](../assets/img/no/heat-panel.webp)
 
 De samme panelene former [Differanse](difference.md), [Lagvarme](team-heat.md) og [Linjevarme](line-heat.md); de skiller seg i hva som legges til (fortegnet, fargelagt, eller langs linjer), ikke i hvordan.
 

@@ -15,7 +15,7 @@ Lämpö maalaa paikat, joissa tapahtui paljon: punainen siellä, missä tapahtui
 
 **Lämpö** (näppäin 1) on oletustila. Jokainen näkyvä [rivi](glossary.md) lisää kameraan päin olevan pyöreän [hahmon](glossary.md). Päällekkäiset hahmot kasautuvat liukulukupuskuriin. Summa muunnetaan väriliukuman läpi (oletuksena läpinäkyvä → punainen → keltainen → valkoinen) ja piirretään kohtauksen päälle.
 
-![Lämpö 3D-kentällä: kuumia kohtia rakennusten sisällä ja päällä](../assets/img/en/shooter-heat.webp)
+![Lämpö 3D-kentällä: kuumia kohtia rakennusten sisällä ja päällä](../assets/img/fi/shooter-heat.webp)
 
 Kuvassa on ampujakierroksen lämpö kentällä, jolla on rakennuksia: kuumia kohtia on huoneissa ja portaissa, ei vain maassa.
 
@@ -26,7 +26,7 @@ Kuvassa on ampujakierroksen lämpö kentällä, jolla on rakennuksia: kuumia koh
 3. Muuta **Spriten säde** -arvoa, kunnes vierekkäiset pisteet sulautuvat nauhoiksi: pienempi näyttää yksittäisiä pisteitä, suurempi alueita.
 4. Avaa **Lämmön värit** vaihtaaksesi värejä, tai **Syvyys** antaaksesi kukkuloiden ja seinien piilottaa lämmön takanaan.
 
-![Sivupalkin osiot Lämmön muoto ja Lämmön värit, molemmat auki](../assets/img/en/heat-panel.webp)
+![Sivupalkin osiot Lämmön muoto ja Lämmön värit, molemmat auki](../assets/img/fi/heat-panel.webp)
 
 Samat paneelit muokkaavat myös [Erotusta](difference.md), [Joukkuelämpöä](team-heat.md) ja [Viivalämpöä](line-heat.md). Ne eroavat siinä, mitä lisätään (etumerkillinen, värjätty tai viivoja pitkin), eivät siinä, miten.
 

@@ -15,7 +15,7 @@ Breathnaíonn **Léargais** tríd na sonraí lódáilte le haghaidh rud a sheasa
 
 Déantar gach rud a chomhaireamh i do bhrabhsálaí. Ní fhágann rud ar bith do ríomhaire mura lasann tú AI seachtrach (féach [AI sheachtrach](#external-ai)).
 
-![Léargais ar shampla na dtancanna: 14 torthaí, an ceann is láidre ar dtús](../assets/img/en/insights.webp)
+![Léargais ar shampla na dtancanna: 14 torthaí, an ceann is láidre ar dtús](../assets/img/ga/insights.webp)
 
 Tá an chuid **Léargais** sa bharra taoibh de chluaisíní na Léarscáile teasa agus Cluiche. Tá trí chluaisín inti: **Torthaí**, **Achoimre** agus **Tráchtaire**.
 
@@ -30,7 +30,7 @@ Tá an chuid **Léargais** sa bharra taoibh de chluaisíní na Léarscáile teas
 
 Tugann na línte ag barr an liosta (mar shampla na suimeanna airgid) achoimre ar na sonraí go léir roimh na torthaí.
 
-![Torthaí oscailte: an crios te de na hurchair lámhachta, a uimhreacha, agus sliocht comhoiriúnach ón litríocht](../assets/img/en/insights-finding.webp)
+![Torthaí oscailte: an crios te de na hurchair lámhachta, a uimhreacha, agus sliocht comhoiriúnach ón litríocht](../assets/img/ga/insights-finding.webp)
 
 ### Na braiteoirí {#the-detectors}
 
@@ -55,7 +55,7 @@ Déantar gach áit nó grúpa a thástáil i gcoinne na coda eile den léarscái
 
 Scríobhann an cluaisín **Achoimre** na torthaí mar théacs gearr: ceannlíne, an torthaí is soiléire, ceann do thaictic, ceann do chothromaíocht, na cinn eile grúpáilte de réir braiteora, agus cé mhéad atá ag brath ar fhianaise níos laige. Tá cnaipí uimhrithe ag gach mír a thaispeánann a torthaí. **Cóipeáil téacs** cóipeálann é.
 
-![An achoimre a scríobh an t-insealbhaitheoir ionsuite](../assets/img/en/debrief.webp)
+![An achoimre a scríobh an t-insealbhaitheoir ionsuite](../assets/img/ga/debrief.webp)
 
 Oibríonn an t-insealbhaitheoir ionsuite as líne, i do theanga. Socraíonn an roghnóir **Lionsa** os a chionn (féach [An lionsa eolais](knowledge.md)) cén litríocht a luann na míreanna.
 
@@ -78,7 +78,7 @@ Ansin clóscríobh ceist roghnach agus brúigh **Scríobh le AI**. Seoltar na to
 
 Le haghaidh **cluiche amháin** (roghnaigh ceann amháin má tá go leor lódáilte), aimsíonn an **Tráchtaire** na nóiméid is fiú féachaint orthu: an chéad fhuil, ilmharuithe, trádálacha, clutches, luaineachtaí cuspóra, aisghabhálacha, imreoirí a sheasann amach, urchair fhada.
 
-![Nóiméid an tráchtaire do bhabhta amháin de shampla an lámhachóra](../assets/img/en/caster.webp)
+![Nóiméid an tráchtaire do bhabhta amháin de shampla an lámhachóra](../assets/img/ga/caster.webp)
 
 - Cliceáil ar nóiméad: athraíonn an radharc go dtí an athsheinm, léimeann sé go díreach roimh é, eitlíonn sé ann agus leanann sé an t-imreoir.
 - **Seinn na nóiméid** seinneann gach ceann go dtí a dheireadh agus bogann ar aghaidh; **Roimhe seo** / **Ar aghaidh** céimníonn tríothu.

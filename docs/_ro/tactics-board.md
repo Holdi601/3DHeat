@@ -23,7 +23,7 @@ Fila **Tactică** este o tablă de desen pentru un plan de echipă: pui figurine
 6. Apasă **▶** (sau `K`) ca să redai planul de la pasul arătat până la capăt.
 7. Dă un nume planului în **Numele planului** și apasă **Salvează**.
 
-![Fila Tactică în vedere de sus: jocul, părțile și instrumentele în stânga, trei figurine cu săgeți de Deplasare, un arc de aruncare de fum, o Zonă și pașii de-a lungul de jos](../assets/img/en/tactics.webp)
+![Fila Tactică în vedere de sus: jocul, părțile și instrumentele în stânga, trei figurine cu săgeți de Deplasare, un arc de aruncare de fum, o Zonă și pașii de-a lungul de jos](../assets/img/ro/tactics.webp)
 
 ## Începerea unui plan {#starting-a-plan}
 

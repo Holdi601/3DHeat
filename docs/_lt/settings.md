@@ -23,7 +23,7 @@ Maži valdikliai viršuje šoninės juostos keičia tai, kaip peržiūros progra
 | Mygtukas **...** šalia **Vienetų** | Atidaro „Pasirinkite vienetą kiekvienam dydžiui“: po vieną išskleidžiamąjį sąrašą kiekvienam dydžiui |
 | **Kalba** meniu | Peržiūros programos kalba: [40 kalbų](languages.md) arba naršyklės kalba |
 
-![Antraštė su atidarytu Vienetų meniu ir vienetų kiekvienam dydžiui langu](../assets/img/en/settings-units.webp)
+![Antraštė su atidarytu Vienetų meniu ir vienetų kiekvienam dydžiui langu](../assets/img/lt/settings-units.webp)
 
 Skaičiai, kuriuos įvedate į langelį, gali turėti tašką arba kablelį (`0.35` arba `0,35`). Peržiūros programa skaito abu ir rodo skaičius taip, kaip rašo jos kalba.
 
@@ -48,11 +48,11 @@ Kiti vienetai, kuriuos galite pasirinkti vienam dydžiui: atstumas km, mi, NM; g
 
 ## Pagalbos režimas {#help-mode}
 
-![Pagalbos režimas: ką reiškia spalvos](../assets/img/en/help.webp)
+![Pagalbos režimas: ką reiškia spalvos](../assets/img/lt/help.webp)
 
 Paspauskite `?` arba `F1` arba spustelėkite mygtuką **?**. Jis rodo *Ką reiškia spalvos*: 3D vaizdo legendas, šilumos skales, komandų spalvas, lygio spalvas, skydelių būsenos spalvas, rungtynių skydelį ir lenktynių vaizdą. Jis lieka įjungtas, kol jį išjungiate. Rungtynių skirtuke jis paaiškina ir rungtynių skydelio spalvas.
 
-![Pagalbos režimas Rungtynių skirtuke](../assets/img/en/settings-help-match.webp)
+![Pagalbos režimas Rungtynių skirtuke](../assets/img/lt/settings-help-match.webp)
 
 ## Ką naršyklė prisimena {#what-the-browser-remembers}
 

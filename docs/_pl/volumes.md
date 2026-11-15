@@ -21,7 +21,7 @@ outdated: false
  +------------+
 ```
 
-![Trzy wolumeny w Demo Valley: dwa walce wokół wzgórz, pudełko wokół wioski](../assets/img/en/volumes.webp)
+![Trzy wolumeny w Demo Valley: dwa walce wokół wzgórz, pudełko wokół wioski](../assets/img/pl/volumes.webp)
 
 Wolumeny mierzą, co się w nich dzieje, zawężają widok do nich, eksportują ich wiersze i można je porównywać obok siebie. Zob. też [słownik pojęć](glossary.md) dla wiersza, osoby i meczu.
 
@@ -76,7 +76,7 @@ Przy dwóch lub więcej widocznych wolumenach naciśnij **Porównaj…**.
 3. W **Tabela** czytaj różnicę każdej wartości względem pierwszego wolumenu.
 4. Przełącz na **Słupki**, aby zobaczyć udziały jako słupki.
 
-![Tabela porównania wolumenów: wiersze, czas wewnątrz, gracze i więcej dla każdego wolumenu, z różnicą względem pierwszego](../assets/img/en/compare.webp)
+![Tabela porównania wolumenów: wiersze, czas wewnątrz, gracze i więcej dla każdego wolumenu, z różnicą względem pierwszego](../assets/img/pl/compare.webp)
 
 | Widok | Pokazuje |
 |---|---|
@@ -86,7 +86,7 @@ Przy dwóch lub więcej widocznych wolumenach naciśnij **Porównaj…**.
 | **Wizyty** | Wykresy pudełkowe i skrzypcowe pokazujące, jak długo trwają wizyty (skala logarytmiczna). |
 | **Przepływ** | Dokąd idą ślady po wyjściu z każdego wolumenu: macierz przejść albo wstęgi przepływu. |
 
-![Widok Słupki: rodzaje zdarzeń na wolumen jako udziały](../assets/img/en/compare-bars.webp)
+![Widok Słupki: rodzaje zdarzeń na wolumen jako udziały](../assets/img/pl/compare-bars.webp)
 
 ## Wskazówki {#tips}
 

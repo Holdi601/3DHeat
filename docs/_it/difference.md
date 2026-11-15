@@ -15,7 +15,7 @@ Rosso dove la squadra A ne ha fatto di più, verde-blu dove ne ha fatto di più 
 
 **Differenza** (tasto 2) è calore con segno. Le righe di una popolazione aggiungono calore; quelle di un'altra lo sottraggono. Dove le due si bilanciano il risultato è zero e completamente trasparente; dove una prevale, si mostra con i colori di quel lato - di base caldi (trasparente → rosso → giallo → bianco) per il lato **+** e freddi (trasparente → verde → blu → viola) per il lato **−**.
 
-![Calore di differenza: rosso dove il lato + ne ha fatto di più, verde e blu dove ne ha fatto di più il lato -](../assets/img/en/difference-split.webp)
+![Calore di differenza: rosso dove il lato + ne ha fatto di più, verde e blu dove ne ha fatto di più il lato -](../assets/img/it/difference-split.webp)
 
 ## Come si usa {#how-to-use-it}
 

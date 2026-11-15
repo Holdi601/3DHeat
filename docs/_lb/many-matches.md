@@ -14,7 +14,7 @@ outdated: false
 
 All Match fänkt op sengem eegene Ufank un, an seng Eenheete beweegen sech als Figuren. D'Dateie goen direkt an d'Grafikkaart, an et gëtt keng ganz Tabell gebaut, sou datt et glätt leeft, wou e normalt Lueden op wéineg Späicher stéisst.
 
-![Zéng Panzermatcher iwwereneen geluecht, eng Faarf pro Match](../assets/img/en/many-matches.webp)
+![Zéng Panzermatcher iwwereneen geluecht, eng Faarf pro Match](../assets/img/lb/many-matches.webp)
 
 ## Wéi een et benotzt {#how-to-use-it}
 

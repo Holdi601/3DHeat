@@ -23,7 +23,7 @@ outdated: false
 6. 按 **▶**（或 `K`）从所示步骤播放计划直到结束。
 7. 在**计划名称**中为计划命名，然后按**保存**。
 
-![The Tactics tab in top view: game, sides and tools on the left, three figures with Move arrows, a smoke Throw arc, an Area and the steps along the bottom](../assets/img/en/tactics.webp)
+![The Tactics tab in top view: game, sides and tools on the left, three figures with Move arrows, a smoke Throw arc, an Area and the steps along the bottom](../assets/img/zh/tactics.webp)
 
 ## 开始一个计划 {#starting-a-plan}
 

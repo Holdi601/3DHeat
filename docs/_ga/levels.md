@@ -21,7 +21,7 @@ Gan aon rud lódáilte, tá an radharc dorcha le greille agus aiseanna datha (**
 
 Tá an leibhéal roinnte ag na trí chluaisín: is é an leibhéal céanna é a thaispeánann an teas más cúrsa é a lódáladh i gcluaisín Anailís rása.
 
-![Painéal an Chúlra / leibhéil le leibhéal lódáilte: cnaipí Íomhá léarscáile agus Samhail 3T, Láthair chatha, Teimhneacht, Gile, Sábháil sa leabharlann agus liosta na Leabharlainne](../assets/img/en/level-panel.webp)
+![Painéal an Chúlra / leibhéil le leibhéal lódáilte: cnaipí Íomhá léarscáile agus Samhail 3T, Láthair chatha, Teimhneacht, Gile, Sábháil sa leabharlann agus liosta na Leabharlainne](../assets/img/ga/level-panel.webp)
 
 ## Cuir leibhéal taobh thiar de do shonraí {#put-a-level-behind-your-data}
 

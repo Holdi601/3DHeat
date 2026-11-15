@@ -10,7 +10,7 @@ outdated: false
 
 # Demodata: prova visaren på fem minuter
 
-![Värme från tio stridsvagnsmatcher i demo valley: vad steg 4 visar](../assets/img/en/heat-hero.webp)
+![Värme från tio stridsvagnsmatcher i demo valley: vad steg 4 visar](../assets/img/sv/heat-hero.webp)
 
 Inga egna data än? Förrådet skapar några. Allt i det är påhittat: en dal, en gård och matcher i tre påhittade spelstilar, med spelare som heter *Blue 1* eller *Red 3*. Bilderna på den här webbplatsen togs alla med dem.
 
@@ -45,7 +45,7 @@ Varje tabell anger sina egna kolumner i sin fot, så den läses in utan någon m
 6. Öppna **Insikter** (i sidofältet för Värmekarta): den hittar platserna där långt fler skott avlossades, träffar gjordes och förstörelser skedde än på andra ställen – runt de två kullarna.
 7. Öppna fliken **Match**; under **Matcher i reprisen** välj *Match 01*; tryck **Spela** på tidslinjen: [repriserna](match-replay.md).
 
-![En repris av Match 01 med stridsvagnar som figurer](../assets/img/en/replay-overview.webp)
+![En repris av Match 01 med stridsvagnar som figurer](../assets/img/sv/replay-overview.webp)
 
 För skyttespelet läser du in `demo-yard.glb` och `shooter.parquet`; för luftstriden `air.parquet` (figurerna syns bättre vid **Figurstorlek** 4, ett reglage i panelen **Lagvisare** i sidofältet för Värmekarta).
 

@@ -15,7 +15,7 @@ outdated: false
 
 所有计数都在你的浏览器中完成。除非你开启外部 AI（参见[外部 AI](#external-ai)），否则没有任何内容会离开你的电脑。
 
-![Insights on the tank demo: 14 findings, strongest first](../assets/img/en/insights.webp)
+![Insights on the tank demo: 14 findings, strongest first](../assets/img/zh/insights.webp)
 
 **洞察**部分位于热力图和对局标签页的侧边栏中。它有三个标签页：**发现**、**总结**和**解说**。
 
@@ -30,7 +30,7 @@ outdated: false
 
 列表顶部的各行（例如金钱总额）会在发现之前概括整个数据。
 
-![A finding opened: the shots-fired hot zone, its numbers, and a matching passage from the literature](../assets/img/en/insights-finding.webp)
+![A finding opened: the shots-fired hot zone, its numbers, and a matching passage from the literature](../assets/img/zh/insights-finding.webp)
 
 ### 检测器 {#the-detectors}
 
@@ -55,7 +55,7 @@ outdated: false
 
 **总结**标签页会将发现写成一段简短的文字：开篇、最清晰的一个发现、一条战术建议、一条平衡性建议、其余按检测器分组的发现，以及有多少发现依据较弱的证据。每个段落都有编号按钮，用于显示其对应的发现。**复制文本**会复制它。
 
-![The debrief written by the built-in narrator](../assets/img/en/debrief.webp)
+![The debrief written by the built-in narrator](../assets/img/zh/debrief.webp)
 
 内置叙述者可离线工作，使用你的语言。其上方的**视角**选择器（参见[知识视角](knowledge.md)）决定段落引用哪些文献。
 
@@ -78,7 +78,7 @@ outdated: false
 
 对于**一场比赛**（如果加载了多场，请选择一场），**解说**会找出值得观看的时刻：第一滴血、多杀、换杀、残局、目标易手、逆转、突出的玩家、远距离击杀。
 
-![The caster's moments for one round of the shooter demo](../assets/img/en/caster.webp)
+![The caster's moments for one round of the shooter demo](../assets/img/zh/caster.webp)
 
 - 点击某个时刻：视图切换到回放，跳到其之前不久的位置，飞到那里并跟随该玩家。
 - **播放时刻**会将每个时刻播放到结束然后前进；**上一个** / **下一个**逐个切换。

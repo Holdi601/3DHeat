@@ -21,7 +21,7 @@ Een **volume** is een onzichtbare doos (of cilinder, of bol) die je rond een ple
  +------------+
 ```
 
-![Drie volumes in het demodal: twee cilinders rond de heuvels, een doos rond het dorp](../assets/img/en/volumes.webp)
+![Drie volumes in het demodal: twee cilinders rond de heuvels, een doos rond het dorp](../assets/img/nl/volumes.webp)
 
 Volumes meten wat erin gebeurt, filteren de weergave tot hen, exporteren hun rijen, en kunnen naast elkaar vergeleken worden. Zie ook de [woordenlijst](glossary.md) voor rij, persoon en wedstrijd.
 
@@ -76,7 +76,7 @@ Met twee of meer zichtbare volumes drukt je op **Vergelijken...**.
 3. Lees in **Tabel** het verschil van elke waarde met het eerste volume.
 4. Schakel naar **Balken** om de aandelen als balken te zien.
 
-![De tabel Volumes vergelijken: rijen, tijd binnen, spelers en meer voor elk volume, met het verschil met het eerste](../assets/img/en/compare.webp)
+![De tabel Volumes vergelijken: rijen, tijd binnen, spelers en meer voor elk volume, met het verschil met het eerste](../assets/img/nl/compare.webp)
 
 | Weergave | Toont |
 |---|---|
@@ -86,7 +86,7 @@ Met twee of meer zichtbare volumes drukt je op **Vergelijken...**.
 | **Bezoeken** | Doos- en vioolplots van hoe lang bezoeken duren (logschaal). |
 | **Stroom** | Waar sporen heen gaan nadat ze elk volume verlaten: een overgangsmatrix of stroomlinten. |
 
-![De weergave Balken: soorten gebeurtenissen per volume als aandelen](../assets/img/en/compare-bars.webp)
+![De weergave Balken: soorten gebeurtenissen per volume als aandelen](../assets/img/nl/compare-bars.webp)
 
 ## Tips {#tips}
 

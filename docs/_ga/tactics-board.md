@@ -23,7 +23,7 @@ Is clár tarraingthe do phlean foirne é cluaisín **Beartaíocht**: cuireann t�
 6. Brúigh **▶** (nó `K`) chun an plean a sheinm ón gcéim a thaispeántar go deireadh.
 7. Ainmnigh an plean in **Ainm an phlean** agus brúigh **Sábháil**.
 
-![Cluaisín na Beartaíochta in amharc ón mbarr: cluiche, taobhanna agus uirlisí ar thaobh na láimhe clé, trí fhigiúr le saigheada Bog, cuar caitheamh deataigh, Limistéar agus na céimeanna feadh an bhoinn](../assets/img/en/tactics.webp)
+![Cluaisín na Beartaíochta in amharc ón mbarr: cluiche, taobhanna agus uirlisí ar thaobh na láimhe clé, trí fhigiúr le saigheada Bog, cuar caitheamh deataigh, Limistéar agus na céimeanna feadh an bhoinn](../assets/img/ga/tactics.webp)
 
 ## Plean a thosú {#starting-a-plan}
 

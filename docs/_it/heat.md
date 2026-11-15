@@ -26,7 +26,7 @@ L'immagine mostra il calore di un round di sparatutto su un livello con edifici:
 3. Cambia **Raggio degli sprite** finché i punti vicini si fondono in fasce: più piccolo mostra punti singoli, più grande mostra aree.
 4. Apri **Colori del calore** per cambiare i colori, oppure **Profondità** per far nascondere il calore dietro colline e muri.
 
-![Le sezioni Forma del calore e Colori del calore della barra laterale, entrambe aperte](../assets/img/en/heat-panel.webp)
+![Le sezioni Forma del calore e Colori del calore della barra laterale, entrambe aperte](../assets/img/it/heat-panel.webp)
 
 Gli stessi pannelli modellano [Differenza](difference.md), [Calore per squadra](team-heat.md) e [Calore lineare](line-heat.md); differiscono in ciò che viene sommato (con segno, colorato o lungo linee), non nel modo.
 

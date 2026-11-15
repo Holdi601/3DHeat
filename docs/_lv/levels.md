@@ -21,7 +21,7 @@ Kad nekas nav ielādēts, aina ir tumša ar režģi un krāsainām asīm (**Rež
 
 Līmenis ir kopīgs visām trim cilnēm: trase, kas ielādēta cilnē Sacīkšu analīze, ir tas pats līmenis, ko rāda siltumkarte.
 
-![Panelis Fons / līmenis ar ielādētu līmeni: pogas Kartes attēls un 3D modelis, Teātris, Necaurredzamība, Spilgtums, Saglabāt bibliotēkā un Bibliotēkas saraksts](../assets/img/en/level-panel.webp)
+![Panelis Fons / līmenis ar ielādētu līmeni: pogas Kartes attēls un 3D modelis, Teātris, Necaurredzamība, Spilgtums, Saglabāt bibliotēkā un Bibliotēkas saraksts](../assets/img/lv/level-panel.webp)
 
 ## Novietojiet līmeni aiz saviem datiem {#put-a-level-behind-your-data}
 

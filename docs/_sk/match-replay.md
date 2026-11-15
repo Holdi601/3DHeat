@@ -15,7 +15,7 @@ Prehrávanie je film zápasu, v ktorom je každý hráč nakreslený ako to, č�
 
 Výstrely, zásahy, požiare a trosky sa kreslia na jednotkách a cieľoch na leveli. Kamery, popisky a taktický displej vám pomáhajú čítať boj. Poznáte Tacview? [Parita s Tacview](tacview-parity.md) ukazuje, kde je každý z jeho nástrojov.
 
-![Prehrávanie figúrok ukážky tankov: tanky ako vlastné figúrky s popiskami mena, vozidla a rýchlosti](../assets/img/en/replay-overview.webp)
+![Prehrávanie figúrok ukážky tankov: tanky ako vlastné figúrky s popiskami mena, vozidla a rýchlosti](../assets/img/sk/replay-overview.webp)
 
 ## Spustenie prehrávania {#start-a-replay}
 
@@ -26,11 +26,11 @@ Výstrely, zásahy, požiare a trosky sa kreslia na jednotkách a cieľoch na le
 
 Figúrky nahradia kocky pre každú jednotku, ktorej názov alebo typ je známy (pozri [Figúrky](figures.md)). Dáta bez stĺpca názvu alebo typu sa kreslia ako vojaci.
 
-![Karta Zápas: výber zápasov, sekcia Figúrky, pohľady kamery, Prehrať a zoznam udalostí](../assets/img/en/match-replay-tab.webp)
+![Karta Zápas: výber zápasov, sekcia Figúrky, pohľady kamery, Prehrať a zoznam udalostí](../assets/img/sk/match-replay-tab.webp)
 
 ## Figúrky {#figures}
 
-![Horiaci tank v orbitálnej kamere so zásahom, ktorý ho zasiahol](../assets/img/en/replay-tanks.webp)
+![Horiaci tank v orbitálnej kamere so zásahom, ktorý ho zasiahol](../assets/img/sk/replay-tanks.webp)
 
 | Nastavenie (sekcia **Figúrky**) | Predvolená hodnota | Čo robí |
 |---|---|---|
@@ -51,7 +51,7 @@ Figúrky nahradia kocky pre každú jednotku, ktorej názov alebo typ je známy 
 
 Keď by jednotka bola menšia než **Najmenšia figúra na obrazovke**, môže sa z nej stať symbol, ktorý zostane čitateľný. Tvar prezrádza druh (napríklad zaoblená kocka s pásovou stopou pre obrnené vozidlo); farba prezrádza stranu. Otvorte ponuku **Symboly** a zmeňte štýl.
 
-![Tých istých šesť jednotiek ako symboly NATO, ruské taktické značky, ikony herných máp a len tvary](../assets/img/en/match-replay-symbols-styles.webp)
+![Tých istých šesť jednotiek ako symboly NATO, ruské taktické značky, ikony herných máp a len tvary](../assets/img/sk/match-replay-symbols-styles.webp)
 
 ### Značky zásahov, trosky a požiare {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Kliknutím na jednotku alebo jej popisok ju **nasledujete**; sekcia **Prehrávan
 
 ## Taktické zobrazenie {#tactical-display}
 
-![Vzdušná ukážka s pohľadom taktického displeja (T): drôtový terén, panely zabití a udalostí](../assets/img/en/replay-air-tactical.webp)
+![Vzdušná ukážka s pohľadom taktického displeja (T): drôtový terén, panely zabití a udalostí](../assets/img/sk/replay-air-tactical.webp)
 
 Sekcia **Taktické zobrazenie** kreslí pre žiadnu jednotku, vybrané, všetky alebo jeden druh (lietadlá, zem, lode, zbrane): vektory rýchlosti a dráhu dopredu, čiary nosa a vztlaku, kužele radarov, zámky, dátové spojenia, zóny a čiary zapojenia, čiary videnia, kam hráči pozerajú (kužele pohľadu), namierenie veže a zaznamenanú kameru.
 
@@ -84,7 +84,7 @@ Sekcia **Taktické zobrazenie** kreslí pre žiadnu jednotku, vybrané, všetky 
 
 `T` (alebo prepínač **Zobraziť ako taktický displej**) prepne vzhľad na štýl radarovej obrazovky: žiara, obrysy, vrstevnice, mriežka merania, skenovacie čiary, krúžky dosahu, rebríky výšok, panely so zabitiami a udalosťami a **Režisér**, ktorý kameru sám presúva k udalostiam.
 
-![Ten istý vzdušný boj v bežnom vzhľade](../assets/img/en/replay-air.webp)
+![Ten istý vzdušný boj v bežnom vzhľade](../assets/img/sk/replay-air.webp)
 
 ## Ciele {#objectives}
 

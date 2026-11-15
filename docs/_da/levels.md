@@ -21,7 +21,7 @@ Uden noget indlæst er scenen mørk med et gitter og farvede akser (**Gitter** o
 
 Banen deles af alle tre faner: en bane, der er indlæst i fanen Løbsanalyse, er den samme bane, som heatmappet viser.
 
-![Panelet Baggrund / bane med en bane indlæst: knapperne Kortbillede og 3D-model, Krigsskueplads, Opacitet, Lysstyrke, Gem i biblioteket og listen Bibliotek](../assets/img/en/level-panel.webp)
+![Panelet Baggrund / bane med en bane indlæst: knapperne Kortbillede og 3D-model, Krigsskueplads, Opacitet, Lysstyrke, Gem i biblioteket og listen Bibliotek](../assets/img/da/level-panel.webp)
 
 ## Læg en bane bag dine data {#put-a-level-behind-your-data}
 

@@ -21,7 +21,7 @@ outdated: false
  +------------+
 ```
 
-![Tri volumena na demo dolini: dva valjka oko brda, kutija oko sela](../assets/img/en/volumes.webp)
+![Tri volumena na demo dolini: dva valjka oko brda, kutija oko sela](../assets/img/hr/volumes.webp)
 
 Volumeni mjere što se događa unutar njih, filtriraju prikaz na njih, izvoze njihove redke i mogu se uspoređivati jedan uz drugi. Vidi i [pojmovnik](glossary.md) za redak, osobu i utakmicu.
 
@@ -76,7 +76,7 @@ Uz dva ili više vidljivih volumena pritisnite **Usporedi…**.
 3. U **Tablici** pročitajte razliku svake vrijednosti od prvog volumena.
 4. Prebacite na **Stupce** da vidite udjele kao stupce.
 
-![Tablica Usporedba volumena: redci, vrijeme unutra, igrači i više za svaki volumen, s razlikom od prvog](../assets/img/en/compare.webp)
+![Tablica Usporedba volumena: redci, vrijeme unutra, igrači i više za svaki volumen, s razlikom od prvog](../assets/img/hr/compare.webp)
 
 | Prikaz | Prikazuje |
 |---|---|
@@ -86,7 +86,7 @@ Uz dva ili više vidljivih volumena pritisnite **Usporedi…**.
 | **Posjeti** | Kutijasti i violin grafikoni koliko dugo traju posjeti (logaritamska skala). |
 | **Tok** | Kamo putanje idu nakon izlaska iz svakog volumena: matrica prijelaza ili vrpce toka. |
 
-![Prikaz Stupci: vrste događaja po volumenu kao udjeli](../assets/img/en/compare-bars.webp)
+![Prikaz Stupci: vrste događaja po volumenu kao udjeli](../assets/img/hr/compare-bars.webp)
 
 ## Savjeti {#tips}
 

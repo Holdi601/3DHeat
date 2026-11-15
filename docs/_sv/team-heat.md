@@ -15,7 +15,7 @@ Lagvärme visar var varje lag var, varje lag i sin egen färg. Där lagen överl
 
 **Lagvärme** (tangent 3) är täthetsfältet från [Värme](heat.md) med varje [grupp](glossary.md) given en egen nyans. Där grupper överlappar blandas deras nyanser. En jämn kamp blir neutral. Opaciteten bär fortfarande täthet precis som i de andra lägena, så bilden svarar på *hur mycket* och *vems* samtidigt. Den behöver en gruppkolumn.
 
-![Lagvärme: varje sida i sin egen färg; där de överlappar blandas färgerna](../assets/img/en/heat-teams.webp)
+![Lagvärme: varje sida i sin egen färg; där de överlappar blandas färgerna](../assets/img/sv/heat-teams.webp)
 
 Det här är inte [figuröverlägget](box-replay.md). Det ritar en figur per person; det här är ett värmefält färgat efter samma kolumn.
 

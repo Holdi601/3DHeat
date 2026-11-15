@@ -12,7 +12,7 @@ outdated: false
 
 Панэль пад малюнкам падобная да відэапляэра: даныя можна прайграць як фільм, паставіць на паўзу, перайсці да любога моманту і змяніць хуткасць.
 
-![Панэль стужкі часу: 1 All/Play, 2 кнопкі кіравання, 3 гадзіннік, 4 Speed, 5 History, з Window і Span 30 s](../assets/img/en/timeline-bar.webp)
+![Панэль стужкі часу: 1 All/Play, 2 кнопкі кіравання, 3 гадзіннік, 4 Speed, 5 History, з Window і Span 30 s](../assets/img/be/timeline-bar.webp)
 
 Панэль пад выглядам - гэта стужка часу ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Яна вырашае, якія радкі бачныя ў любы момант. Патрэбны слупок часу; без яго ўся панэль адключана, від застаецца ў **Усе**, а бакавая панэль кажа *No time column in this data - the timeline is disabled and every datapoint is shown at once.*
 

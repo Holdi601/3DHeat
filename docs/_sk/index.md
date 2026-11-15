@@ -14,7 +14,7 @@ outdated: false
 
 Načítajte pozície - CSV, Parquet, nahrávky Tacview, prekonvertované záznamy, jeden súbor, priečinok alebo tisíce zápasov - a pozerajte ich ako **heatmapu, v ktorej môžete letieť**, ako **figúrky, ktoré prehrávajú zápas**, ako čiary pozdĺž trás, ktorými ľudia išli, alebo ako jednu populáciu proti druhej. Sama nájde, čo vyniká, a beží úplne vo vašom prehliadači: nikam sa nič neposiela.
 
-![Teplo z desiatich zápasov tankov nad ukážkovou dolinou](../assets/img/en/heat-hero.webp)
+![Teplo z desiatich zápasov tankov nad ukážkovou dolinou](../assets/img/sk/heat-hero.webp)
 
 **Ste tu noví?** Vytvorte [ukážkové dáta](demo-data.md) a prejdite ich siedmimi krokmi. Každý obrázok na tejto stránke bol urobený s nimi.
 
@@ -22,12 +22,12 @@ Načítajte pozície - CSV, Parquet, nahrávky Tacview, prekonvertované záznam
 
 | | |
 |---|---|
-| ![Rozdiel](../assets/img/en/heat-difference.webp) | **[Režimy tepla](heat-modes.md)** - teplo, [rozdiel](difference.md) (červená tam, kde bola jedna strana viac, zelenomodrá tam, kde druhá), [teplo tímov](team-heat.md), [teplo čiar](line-heat.md); [smerové teplo](directional-heat.md) s klinmi, poliami šípok a polárnymi grafmi; teplo [vážené hodnotou](value-weighting.md): čo stoja zbrane, vozidlá a palivo. |
-| ![Prehrávanie](../assets/img/en/replay-tanks.webp) | **[Prehrávanie zápasu](match-replay.md)** - každá jednotka ako [figúra](figures.md) toho, čím je, symboly NATO alebo ruské z diaľky, rakety a stopy výstrelov, značky zásahov, trosky, požiare, veže, ciele, kamery v štýle Tacview a taktický displej; [veľa zápasov naraz](many-matches.md). |
-| ![Zistenia](../assets/img/en/insights.webp) | **[Zistenia](insights.md)** - silné pozície, smrtiace terény, pasce na spawnoch, úzke miesta a vynikajúci hráči, nájdené a zoradené s dôkazmi; písomné zhrnutie, voliteľne od AI podľa vašej voľby; komentátor pre jeden zápas; [šošovka znalostí](knowledge.md). |
-| ![Objemy](../assets/img/en/compare.webp) | **[Objemy](volumes.md)** - kreslite kvádre, hranoly, valce a gule, filtrujte podľa nich, počítajte, čo sa v nich deje, exportujte to a porovnávajte miesta vedľa seba; [rozpis](breakdown.md), kto a čo si v mieste vedie najlepšie. |
-| ![Filtre](../assets/img/en/filters.webp) | **[Filtre](filters.md)** - podľa typu udalosti, hráča alebo AI, triedy vozidla, hodnoty, ľubovoľného stĺpca, na grafickej karte pri akejkoľvek veľkosti dát. |
-| ![Level](../assets/img/en/level-panel.webp) | **[Levely](levels.md)** - obrázky máp, 3D levely vytvorené [nástrojmi na dáta](#related-repositories), zjednodušenie, [pozadie sveta](world-backdrop.md) so skutočným terénom pre letové dáta. |
+| ![Rozdiel](../assets/img/sk/heat-difference.webp) | **[Režimy tepla](heat-modes.md)** - teplo, [rozdiel](difference.md) (červená tam, kde bola jedna strana viac, zelenomodrá tam, kde druhá), [teplo tímov](team-heat.md), [teplo čiar](line-heat.md); [smerové teplo](directional-heat.md) s klinmi, poliami šípok a polárnymi grafmi; teplo [vážené hodnotou](value-weighting.md): čo stoja zbrane, vozidlá a palivo. |
+| ![Prehrávanie](../assets/img/sk/replay-tanks.webp) | **[Prehrávanie zápasu](match-replay.md)** - každá jednotka ako [figúra](figures.md) toho, čím je, symboly NATO alebo ruské z diaľky, rakety a stopy výstrelov, značky zásahov, trosky, požiare, veže, ciele, kamery v štýle Tacview a taktický displej; [veľa zápasov naraz](many-matches.md). |
+| ![Zistenia](../assets/img/sk/insights.webp) | **[Zistenia](insights.md)** - silné pozície, smrtiace terény, pasce na spawnoch, úzke miesta a vynikajúci hráči, nájdené a zoradené s dôkazmi; písomné zhrnutie, voliteľne od AI podľa vašej voľby; komentátor pre jeden zápas; [šošovka znalostí](knowledge.md). |
+| ![Objemy](../assets/img/sk/compare.webp) | **[Objemy](volumes.md)** - kreslite kvádre, hranoly, valce a gule, filtrujte podľa nich, počítajte, čo sa v nich deje, exportujte to a porovnávajte miesta vedľa seba; [rozpis](breakdown.md), kto a čo si v mieste vedie najlepšie. |
+| ![Filtre](../assets/img/sk/filters.webp) | **[Filtre](filters.md)** - podľa typu udalosti, hráča alebo AI, triedy vozidla, hodnoty, ľubovoľného stĺpca, na grafickej karte pri akejkoľvek veľkosti dát. |
+| ![Level](../assets/img/sk/level-panel.webp) | **[Levely](levels.md)** - obrázky máp, 3D levely vytvorené [nástrojmi na dáta](#related-repositories), zjednodušenie, [pozadie sveta](world-backdrop.md) so skutočným terénom pre letové dáta. |
 
 Ďalej: karta [Analýza pretekov](race-analysis.md) pre kolá závodných hier, karta [Zápas](match-analysis.md) so súhrnmi Counter-Strike 2, [Taktická tabuľa](tactics-board.md) s plánmi na leveli, [analýza zásahov](hit-analysis.md) podľa vozidla, [hromadná analýza](mass-analysis.md) tisícov zápasov, [dráhy kamery a video](camera-path-and-video.md), [40 jazykov](languages.md), [metrické alebo imperiálne jednotky](settings.md).
 

@@ -13,7 +13,7 @@ outdated: false
 
 E ke drejtuar të njëjtën pistë dy herë. Skeda **Analiza e garës** i luan të dy drejtimet bashkë në 3D, tregon ku u humb koha në një xhiro më të ngadaltë dhe të thotë pse. Nuk ka ende xhiro? Shtyp **Xhiro demo**.
 
-![Skeda Analiza e garës me xhiro demo: shiriti anësor me Xhirot dhe Ku të përmirësohesh, makinat në pistë, grafikët nën pamje](../assets/img/en/race-analysis-overview.webp)
+![Skeda Analiza e garës me xhiro demo: shiriti anësor me Xhirot dhe Ku të përmirësohesh, makinat në pistë, grafikët nën pamje](../assets/img/sq/race-analysis-overview.webp)
 
 Skeda krahason dy ose më shumë xhiro të një pisteje. Ajo ndan me Harta e nxehtësisë vizën, kamerën dhe modelin e ngarkuar të pistës (**Sfondi / niveli**); gjithçka tjetër është e vetja: shiriti i vet anësor dhe shiriti i vet nën pamje. Fjalët si *xhiro*, *referencë* dhe *kulmi i kthesës* janë në [fjalor](glossary.md).
 

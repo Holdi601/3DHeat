@@ -15,7 +15,7 @@ Sarkans, kur komanda A bija vairāk, zilganzaļš, kur bija vairāk komandai B, 
 
 **Starpība** (taustiņš 2) ir parakstīts siltums. Vienas populācijas rindas pieskaita siltumu; citas populācijas rindas to atņem. Kur abas pārklājas vienmērīgi, rezultāts ir nulle un pilnīgi caurspīdīgs; kur viena dominē, tas parādās tās puses krāsās - pēc noklusējuma silti (caurspīdīgs → sarkans → dzeltens → balts) **+** pusei un vēsi (caurspīdīgs → zaļš → zils → violets) **−** pusei.
 
-![Starpības siltums: sarkans, kur + puse bija vairāk, zaļš un zils, kur - puse bija vairāk](../assets/img/en/difference-split.webp)
+![Starpības siltums: sarkans, kur + puse bija vairāk, zaļš un zils, kur - puse bija vairāk](../assets/img/lv/difference-split.webp)
 
 ## Kā to lietot {#how-to-use-it}
 

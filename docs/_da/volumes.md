@@ -21,7 +21,7 @@ set ovenfra              Du tegner en form ->  viewer tæller
 +------------+
 ```
 
-![Tre volumener over Demo Valley: to cylindre rundt om bakkerne, en boks rundt om landsbyen](../assets/img/en/volumes.webp)
+![Tre volumener over Demo Valley: to cylindre rundt om bakkerne, en boks rundt om landsbyen](../assets/img/da/volumes.webp)
 
 Volumener måler, hvad der sker indeni dem, filtrerer visningen til dem, eksporterer deres rækker og kan sammenlignes side om side. Se også [ordlisten](glossary.md) for række, person og kamp.
 
@@ -76,7 +76,7 @@ Med to eller flere synlige volumener trykker du på **Sammenlign...**.
 3. I **Tabel** læser du hver værdis forskel fra det første volumen.
 4. Skift til **Søjler** for at se andelene som søjler.
 
-![Tabellen Sammenlign volumener: rækker, tid inde, spillere og mere for hvert volumen, med forskellen fra det første](../assets/img/en/compare.webp)
+![Tabellen Sammenlign volumener: rækker, tid inde, spillere og mere for hvert volumen, med forskellen fra det første](../assets/img/da/compare.webp)
 
 | Visning | Viser |
 |---|---|
@@ -86,7 +86,7 @@ Med to eller flere synlige volumener trykker du på **Sammenlign...**.
 | **Besøg** | Boks- og violindiagrammer over, hvor længe besøgene varer (logaritmisk skala). |
 | **Flow** | Hvor sporene går, efter de forlader hvert volumen: en overgangsmatrix eller flow-bånd. |
 
-![Søjlevisningen: hændelsestyper pr. volumen som andele](../assets/img/en/compare-bars.webp)
+![Søjlevisningen: hændelsestyper pr. volumen som andele](../assets/img/da/compare-bars.webp)
 
 ## Tips {#tips}
 

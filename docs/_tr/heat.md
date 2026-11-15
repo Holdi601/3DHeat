@@ -15,7 +15,7 @@ Isı, çok şeyin olduğu yerleri boyar: bir miktar olduğu yerde kırmızı, ç
 
 **Isı** (tuş 1) varsayılan moddur. Görünen her [satır](glossary.md) kameraya dönük yuvarlak bir [sprite](glossary.md) katkıda bulunur; üst üste binen sprite'lar kayan noktalı bir tamponda toplanır; toplam bir renk rampasından geçirilir - varsayılan olarak saydam → kırmızı → sarı → beyaz - ve sahnenin üstüne çizilir.
 
-![Bir 3B haritada ısı: binaların içinde ve üstünde sıcak noktalar](../assets/img/en/shooter-heat.webp)
+![Bir 3B haritada ısı: binaların içinde ve üstünde sıcak noktalar](../assets/img/tr/shooter-heat.webp)
 
 Resim, binaları olan bir haritada bir shooter turunun ısısını gösterir: sıcak noktalar yalnızca zeminde değil, odalarda ve merdivenlerde de bulunur.
 
@@ -26,7 +26,7 @@ Resim, binaları olan bir haritada bir shooter turunun ısısını gösterir: s�
 3. Komşu noktalar bantlar halinde birleşene kadar **Sprite yarıçapı**'nı değiştirin: küçük olan tek tek noktaları, büyük olan alanları gösterir.
 4. Renkleri değiştirmek için **Isı renkleri**'ni, tepelerin ve duvarların ısıyı arkalarında gizlemesi için **Derinlik**'i açın.
 
-![Kenar çubuğunun iki bölümü, Isı şekli ve Isı renkleri, ikisi de açık](../assets/img/en/heat-panel.webp)
+![Kenar çubuğunun iki bölümü, Isı şekli ve Isı renkleri, ikisi de açık](../assets/img/tr/heat-panel.webp)
 
 Aynı paneller [Fark](difference.md), [Takım ısısı](team-heat.md) ve [Çizgi ısısı](line-heat.md) modlarını da şekillendirir; farkları eklenen şeyde (işaretli, renkli ya da çizgiler boyunca), şekillendirme biçiminde değil.
 

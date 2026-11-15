@@ -15,7 +15,7 @@ Värme målar platserna där mycket har hänt: rött där det hänt lite, vitgl�
 
 **Värme** (tangent 1) är standardläget. Varje synlig [rad](glossary.md) bidrar med en kameravänd rund [sprite](glossary.md); överlappande sprites adderas i en flyttalsbuffert; summan avbildas genom en färgramp – som standard genomskinlig → röd → gul → vit – och ritas över scenen.
 
-![Värme på en 3D-bana: heta punkter inne i och ovanpå byggnaderna](../assets/img/en/shooter-heat.webp)
+![Värme på en 3D-bana: heta punkter inne i och ovanpå byggnaderna](../assets/img/sv/shooter-heat.webp)
 
 Bilden visar värmen från en skyttespelsrunda på en bana med byggnader: heta punkter sitter i rummen och på trapporna, inte bara på marken.
 
@@ -26,7 +26,7 @@ Bilden visar värmen från en skyttespelsrunda på en bana med byggnader: heta p
 3. Ändra **Spriteradie** tills närliggande prickar går ihop till band: mindre ger enskilda fläckar, större ger områden.
 4. Öppna **Värmefärger** för att ändra färgerna, eller **Djup** för att låta kullar och väggar dölja värmen bakom sig.
 
-![Avsnitten Värmeform och Värmefärger i sidofältet, båda öppna](../assets/img/en/heat-panel.webp)
+![Avsnitten Värmeform och Värmefärger i sidofältet, båda öppna](../assets/img/sv/heat-panel.webp)
 
 Samma paneler formar [Differens](difference.md), [Lagvärme](team-heat.md) och [Linjevärme](line-heat.md). De skiljer sig i vad som adderas (signerat, färgat eller längs linjer), inte i hur det görs.
 

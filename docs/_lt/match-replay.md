@@ -15,7 +15,7 @@ Pakartojimas yra rungtynių filmas, kuriame kiekvienas žaidėjas nupieštas kai
 
 Šūviai, pataikymai, gaisrai ir griuvėsiai piešiami ant vienetų ir tikslų lygyje. Kameros, žymos ir taktinis rodinys padeda skaityti kovą. Ar žinote Tacview? [Tacview paritetas](tacview-parity.md) rodo, kur yra kiekvienas jo įrankis.
 
-![Tankų demonstracijos figūrų pakartojimas: tankai kaip savos figūros su pavadinimo, technikos ir greičio žymomis](../assets/img/en/replay-overview.webp)
+![Tankų demonstracijos figūrų pakartojimas: tankai kaip savos figūros su pavadinimo, technikos ir greičio žymomis](../assets/img/lt/replay-overview.webp)
 
 ## Pradėkite pakartojimą {#start-a-replay}
 
@@ -26,11 +26,11 @@ Pakartojimas yra rungtynių filmas, kuriame kiekvienas žaidėjas nupieštas kai
 
 Figūros pakeičia dėžutes kiekvienam vienetui, kurio pavadinimas arba tipas žinomas (žr. [Figūros](figures.md)). Duomenys be pavadinimo ar tipo stulpelio piešiami kaip kareiviai.
 
-![Rungtynių skirtukas: rungtynių parinkiklis, Figūros skiltis, kameros rodiniai, Groti ir įvykių sąrašas](../assets/img/en/match-replay-tab.webp)
+![Rungtynių skirtukas: rungtynių parinkiklis, Figūros skiltis, kameros rodiniai, Groti ir įvykių sąrašas](../assets/img/lt/match-replay-tab.webp)
 
 ## Figūros {#figures}
 
-![Degantis tankas orbitos kameroje su šūviu, kuris jį pataikė](../assets/img/en/replay-tanks.webp)
+![Degantis tankas orbitos kameroje su šūviu, kuris jį pataikė](../assets/img/lt/replay-tanks.webp)
 
 | Nustatymas (skiltis **Figūros**) | Numatytoji | Ką daro |
 |---|---|---|
@@ -51,7 +51,7 @@ Figūros pakeičia dėžutes kiekvienam vienetui, kurio pavadinimas arba tipas �
 
 Kai vienetas būtų mažesnis už **Mažiausia figūra ekrane**, jis gali tapti ženklu, kuris lieka įskaitomas. Forma parodo rūšį (pavyzdžiui, suapvalinta dėžė su vikšro žyme šarvuotai technikai); spalva parodo pusę. Atidarykite meniu **Ženklai**, kad pakeistumėte stilių.
 
-![Tie patys šeši vienetai kaip NATO ženklai, Rusijos taktiniai ženklai, žaidimo žemėlapio piktogramos ir tik formos](../assets/img/en/match-replay-symbols-styles.webp)
+![Tie patys šeši vienetai kaip NATO ženklai, Rusijos taktiniai ženklai, žaidimo žemėlapio piktogramos ir tik formos](../assets/img/lt/match-replay-symbols-styles.webp)
 
 ### Pataikymų žymės, griuvėsiai ir gaisrai {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Spustelėkite vienetą arba jo žymę, kad jį **sektumėte**; skiltis **Pakarto
 
 ## Taktinis rodymas {#tactical-display}
 
-![Oro demonstracija su taktinio rodymo vaizdu (T): vielinio rėmo reljefas, nužudymų ir įvykių skydeliai](../assets/img/en/replay-air-tactical.webp)
+![Oro demonstracija su taktinio rodymo vaizdu (T): vielinio rėmo reljefas, nužudymų ir įvykių skydeliai](../assets/img/lt/replay-air-tactical.webp)
 
 Skiltis **Taktinis rodymas** piešia, be vieneto, pasirinktus, visus arba vieną rūšį (orlaiviai, antžeminiai, laivai, ginklai): greičio vektorius ir priekyje esantį kelią, nosies ir kėlimo linijas, radarų kūgius, užraktus, duomenų ryšius, įsitraukimo zonas ir linijas, matymo linijas, kur žiūri žaidėjai (žvilgsnio kūgiai), bokštų nukreipimą ir įrašytą kamerą.
 
@@ -84,7 +84,7 @@ Skiltis **Taktinis rodymas** piešia, be vieneto, pasirinktus, visus arba vieną
 
 `T` (arba jungiklis **Rodyti kaip taktinį vaizdą**) perjungia išvaizdą į radaro ekrano stilių: švytėjimas, kontūrai, kontūrų linijos, matavimo tinklelis, skenavimo linijos, nuotolio žiedai, aukščio skalės, skydeliai su nužudymais ir įvykiais bei **Režisierius**, kuris pats perkelia kamerą prie įvykių.
 
-![Ta pati oro kova įprastu vaizdu](../assets/img/en/replay-air.webp)
+![Ta pati oro kova įprastu vaizdu](../assets/img/lt/replay-air.webp)
 
 ## Tikslai {#objectives}
 

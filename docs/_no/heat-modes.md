@@ -15,7 +15,7 @@ Hver prikk legger til en liten glød, gløden hopes opp, og haugen males med far
 
 Modusraden øverst i sidepanelet for fanen Varmekart velger hvordan [datasettet](glossary.md) tegnes. Tastene 1–4 velger Varme, Differanse, Lagvarme og Linjer. Figuroverlegg har ingen tast.
 
-![Modusraden med Varme, Differanse, Lagvarme, Figuroverlegg og Linjer](../assets/img/en/heat-modes-bar.webp)
+![Modusraden med Varme, Differanse, Lagvarme, Figuroverlegg og Linjer](../assets/img/no/heat-modes-bar.webp)
 
 | Modus | Spørsmålet den svarer på |
 |---|---|
@@ -25,7 +25,7 @@ Modusraden øverst i sidepanelet for fanen Varmekart velger hvordan [datasettet]
 | **Linjer** | Hvilken vei gikk folk? |
 | **Figuroverlegg** | Hvem var hvor, og når? |
 
-![De samme dataene i fire modi: Varme, Differanse, Lagvarme og Linjer](../assets/img/en/heat-modes-grid.webp)
+![De samme dataene i fire modi: Varme, Differanse, Lagvarme og Linjer](../assets/img/no/heat-modes-grid.webp)
 
 | Modus (navn i modusraden) | Tast | Hva den tegner | Trenger |
 |---|---|---|---|

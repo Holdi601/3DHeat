@@ -23,7 +23,7 @@ O separador **Tática** é uma prancheta para um plano de equipa: colocam-se fig
 6. Prima **▶** (ou `K`) para reproduzir o plano desde o passo mostrado até ao fim.
 7. Dê um nome ao plano em **Nome do plano** e prima **Guardar**.
 
-![O separador Tática em vista de cima: jogo, lados e ferramentas à esquerda, três figuras com setas de Deslocar, um arco de fumo de Lançar, uma Área e os passos ao longo do fundo](../assets/img/en/tactics.webp)
+![O separador Tática em vista de cima: jogo, lados e ferramentas à esquerda, três figuras com setas de Deslocar, um arco de fumo de Lançar, uma Área e os passos ao longo do fundo](../assets/img/pt/tactics.webp)
 
 ## Começar um plano {#starting-a-plan}
 

@@ -18,7 +18,7 @@ Katselin kertoo, kun uudempi versio on olemassa, ja päivittää itsensä vain, 
 2. **Jos se pyytää ajamaan restart.bat-tiedoston**, sulje palvelinikkuna (musta ikkuna, jonka `start.bat` avasi) ja kaksoisnapsauta `restart.bat`-tiedostoa.
 3. **Kun käynnistät katselimen.** `start.bat` tarkistaa myös. Jos uudempi versio on olemassa, se kysyy **Päivitetäänkö? [Y/N]**. Paina `Y` päivittääksesi. Paina `N` tai odota 60 sekuntia ilman vastausta käynnistääksesi versiosi.
 
-![Päivitysilmoitus: Päivitä nyt ja Myöhemmin](../assets/img/en/updates-notice.webp)
+![Päivitysilmoitus: Päivitä nyt ja Myöhemmin](../assets/img/fi/updates-notice.webp)
 
 Kopiota, jossa on omia muutoksia, ei koskaan päivitetä puolestasi. Laatikko vain kertoo, että päivitys odottaa, ja neuvoo tekemään muutoksista commitin tai stashin ja ajamaan `git pull`-komennon. Kopio, jota ei ole asennettu gitillä (esimerkiksi zip-tiedosto), ei näytä mitään.
 

@@ -15,7 +15,7 @@ Ciepło drużyn pokazuje, gdzie była każda drużyna, każda we własnym kolorz
 
 **Ciepło drużyn** (klawisz 3) to pole gęstości z [Ciepła](heat.md), w którym każda [grupa](glossary.md) dostaje własny odcień. Tam, gdzie grupy się nakładają, ich odcienie się mieszają; wyrównana walka wychodzi neutralna. Krycie nadal niesie gęstość dokładnie jak w pozostałych trybach, więc obraz odpowiada jednocześnie na pytania *ile* i *czyje*. Potrzebna jest kolumna grupy.
 
-![Ciepło drużyn: każda strona w swoim kolorze; tam, gdzie się nakładają, kolory się mieszają](../assets/img/en/heat-teams.webp)
+![Ciepło drużyn: każda strona w swoim kolorze; tam, gdzie się nakładają, kolory się mieszają](../assets/img/pl/heat-teams.webp)
 
 To nie jest [nakładka sylwetek](box-replay.md): ta rysuje jedną figurę na osobę; to jest pole ciepła pokolorowane tą samą kolumną.
 

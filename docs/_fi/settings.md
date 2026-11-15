@@ -23,7 +23,7 @@ Sivupalkin yläosassa:
 | **...**-painike **Yksiköiden** vieressä | Avaa "Valitse yksikkö jokaiselle suureelle": yksi pudotusvalikko per suure |
 | **Kieli**-valikko | Katselimen kieli: [40 kieltä](languages.md) tai selaimen kieli |
 
-![Ylätunniste Yksiköt-valikko ja yksikkö-per-suure-ikkuna auki](../assets/img/en/settings-units.webp)
+![Ylätunniste Yksiköt-valikko ja yksikkö-per-suure-ikkuna auki](../assets/img/fi/settings-units.webp)
 
 Luvut, jotka kirjoitat kenttään, voivat käyttää joko pistettä tai pilkkua (`0.35` tai `0,35`). Katselin lukee molemmat ja näyttää luvut sillä tavalla, kuin katselimen kieli ne kirjoittaa.
 
@@ -48,11 +48,11 @@ Muut yksiköt, joita voit valita yhdelle suureelle: matka km, mi, NM; nopeus km/
 
 ## Ohjetila {#help-mode}
 
-![Ohjetila: mitä värit tarkoittavat](../assets/img/en/help.webp)
+![Ohjetila: mitä värit tarkoittavat](../assets/img/fi/help.webp)
 
 Paina `?` tai `F1` tai napsauta **?**-painiketta. Se näyttää *Mitä värit tarkoittavat*: selitteet 3D-näkymälle, lämpöliukumille, joukkueiden väreille, kentän väreille, paneelien tilavärit, ottelupaneelin ja kilpailunäkymän. Se pysyy päällä, kunnes kytket sen pois. Ottelu-välilehdessä se selittää myös ottelupaneelin värit.
 
-![Ohjetila Ottelu-välilehdessä](../assets/img/en/settings-help-match.webp)
+![Ohjetila Ottelu-välilehdessä](../assets/img/fi/settings-help-match.webp)
 
 ## Mitä selain muistaa {#what-the-browser-remembers}
 

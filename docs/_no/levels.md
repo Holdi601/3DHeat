@@ -21,7 +21,7 @@ Uten noe lastet er scenen mørk med et rutenett og fargede akser (**Rutenett** o
 
 Banen deles av alle tre fanene: en løype lastet i fanen Løpsanalyse er den samme banen varmekartet viser.
 
-![Panelet Bakgrunn / nivå med en bane lastet: knappene Kartbilde og 3D-modell, Krigsskueplass, Opasitet, Lysstyrke, Lagre i biblioteket og listen Bibliotek](../assets/img/en/level-panel.webp)
+![Panelet Bakgrunn / nivå med en bane lastet: knappene Kartbilde og 3D-modell, Krigsskueplass, Opasitet, Lysstyrke, Lagre i biblioteket og listen Bibliotek](../assets/img/no/level-panel.webp)
 
 ## Legg en bane bak dataene dine {#put-a-level-behind-your-data}
 

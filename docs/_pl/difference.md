@@ -15,7 +15,7 @@ Na czerwono tam, gdzie drużyna A była częściej, na zielononiebiesko tam, gdz
 
 **Różnica** (klawisz 2) to ciepło ze znakiem. Wiersze jednej populacji dodają ciepło; wiersze innej je odejmują. Tam, gdzie oba zbiory nakładają się równo, wynik to zero i pełna przezroczystość; tam, gdzie jeden dominuje, widać go w kolorach tej strony - domyślnie ciepłych (przezroczysty → czerwony → żółty → biały) dla strony **+** i chłodnych (przezroczysty → zielony → niebieski → fioletowy) dla strony **−**.
 
-![Ciepło różnicy: na czerwono tam, gdzie strona + była częściej, na zielono i niebiesko tam, gdzie częściej była strona -](../assets/img/en/difference-split.webp)
+![Ciepło różnicy: na czerwono tam, gdzie strona + była częściej, na zielono i niebiesko tam, gdzie częściej była strona -](../assets/img/pl/difference-split.webp)
 
 ## Jak tego używać {#how-to-use-it}
 

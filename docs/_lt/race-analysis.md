@@ -13,7 +13,7 @@ outdated: false
 
 Tą pačią trasą nuvažiavote du kartus. Skirtukas **Lenktynių analizė** rodo abu važiavimus kartu 3D, parodo, kur vienas ratas buvo lėtesnis, ir pasako kodėl. Ratų dar nėra? Paspauskite **Demonstraciniai ratai**.
 
-![Lenktynių analizės skirtukas su demonstraciniais ratais: šoninė juosta su Ratai ir Kur tobulėti, automobiliai trasoje, grafikai po vaizdu](../assets/img/en/race-analysis-overview.webp)
+![Lenktynių analizės skirtukas su demonstraciniais ratais: šoninė juosta su Ratai ir Kur tobulėti, automobiliai trasoje, grafikai po vaizdu](../assets/img/lt/race-analysis-overview.webp)
 
 Skirtukas palygina du ar daugiau ratų vienoje trasoje. Su Šilumos žemėlapiu jis dalijasi drobę, kamerą ir įkeltą trasos modelį (**Fonas / lygis**); viskas kita – jo paties: savo šoninė juosta ir savo juosta po vaizdu. Tokie žodžiai kaip *ratas*, *etalonas* ir *viršūnė* paaiškinti [žodynėlyje](glossary.md).
 

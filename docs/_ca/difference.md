@@ -15,7 +15,7 @@ Vermell on l'equip A n'ha tingut més, blau-verd on n'ha tingut més l'equip B, 
 
 **Diferència** (tecla 2) és calor amb signe. Les files d'una població sumen calor; les d'una altra població la resten. On els dos s'equilibren, el resultat és zero i totalment transparent; on en domina un, es veu amb els colors d'aquest bàndol -per defecte càlids (transparent → vermell → groc → blanc) per al bàndol **+** i freds (transparent → verd → blau → lila) per al bàndol **−**.
 
-![Calor de diferència: vermell on el bàndol + n'ha tingut més, verd i blau on n'ha tingut més el bàndol -](../assets/img/en/difference-split.webp)
+![Calor de diferència: vermell on el bàndol + n'ha tingut més, verd i blau on n'ha tingut més el bàndol -](../assets/img/ca/difference-split.webp)
 
 ## Com s'usa {#how-to-use-it}
 

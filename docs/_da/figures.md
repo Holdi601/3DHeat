@@ -15,7 +15,7 @@ En **figur** er en lille 3D-model af det, en enhed rigtigt er: en stridsvogn, et
 
 Der er omkring 2.000 navngivne køretøjer, fly, skibe, våben og soldater, som alle er bygget af vieweren selv.
 
-![Stridsvogne fra demoen tegnet som deres egne figurer](../assets/img/en/replay-tanks.webp)
+![Stridsvogne fra demoen tegnet som deres egne figurer](../assets/img/da/replay-tanks.webp)
 
 ## Hvad der er i kataloget {#what-is-in-the-catalogue}
 

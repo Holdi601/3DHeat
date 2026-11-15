@@ -21,7 +21,7 @@ outdated: false
 
 Узровень агульны для ўсіх трох укладак: трасса, загружаная ва ўкладцы Аналіз заездаў, - гэта той жа ўзровень, які паказвае цеплавая карта.
 
-![Панэль Фон / узровень з загружаным узроўнем: кнопкі Map image і 3D model, Theatre, Opacity, Brightness, Save to library і спіс Library](../assets/img/en/level-panel.webp)
+![Панэль Фон / узровень з загружаным узроўнем: кнопкі Map image і 3D model, Theatre, Opacity, Brightness, Save to library і спіс Library](../assets/img/be/level-panel.webp)
 
 ## Пастаўце ўзровень за вашымі данымі {#put-a-level-behind-your-data}
 

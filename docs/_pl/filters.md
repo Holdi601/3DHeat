@@ -19,7 +19,7 @@ outdated: false
 2. W **Klasa pojazdu** odznacz *Tank*. Obraz zmienia się od razu.
 3. Naciśnij **Wyczyść wszystkie filtry**, aby cofnąć.
 
-![Panel Filtry: najpierw kolumny samej przeglądarki (Typ zdarzenia, Klasa pojazdu), a potem kolumny z Twojego pliku](../assets/img/en/filters.webp)
+![Panel Filtry: najpierw kolumny samej przeglądarki (Typ zdarzenia, Klasa pojazdu), a potem kolumny z Twojego pliku](../assets/img/pl/filters.webp)
 
 Pierwsze wiersze to kolumny samej przeglądarki (poniżej). Wiersze po nich pochodzą z Twojego pliku.
 
@@ -42,7 +42,7 @@ To, które kolumny można filtrować, jest ustalane przy wczytaniu, bo wtedy trz
 
 ## Kolumny liczbowe (zakres) {#numeric-columns-range}
 
-![Filtr zakresu (utracone pieniądze) z obiema końcówkami przeciągniętymi do środka](../assets/img/en/filters-numeric.webp)
+![Filtr zakresu (utracone pieniądze) z obiema końcówkami przeciągniętymi do środka](../assets/img/pl/filters-numeric.webp)
 
 | Część | Znaczenie |
 |---|---|

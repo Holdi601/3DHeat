@@ -16,7 +16,7 @@ Hiti málar staðina þar sem margt gerðist: rautt þar sem það gerðist lít
 
 **Hiti** (takki 1) er sjálfgefin stilling. Sérhver sýnileg [lína](glossary.md) leggur til kringlóttan [depil](glossary.md) sem snýr að myndavélinni; skarandi deplar leggjast saman í fleytibuffer; summan er færð í gegnum litaskala - sjálfgefið gegnsætt → rautt → gult → hvítt - og teiknuð yfir senuna.
 
-![Hiti á þrívíðu borði: heitir blettir inni í byggingunum og ofan á þeim](../assets/img/en/shooter-heat.webp)
+![Hiti á þrívíðu borði: heitir blettir inni í byggingunum og ofan á þeim](../assets/img/is/shooter-heat.webp)
 
 Myndin sýnir hita úr skotleikjalotu á borði með byggingum: heitir blettir eru í herbergjunum og á stigunum, ekki bara á jörðinni.
 
@@ -27,7 +27,7 @@ Myndin sýnir hita úr skotleikjalotu á borði með byggingum: heitir blettir e
 3. Breyttu **Radíus depils** þar til nálægir punktar renna saman í bönd: minna sýnir stakka bletti, stærra sýnir svæði.
 4. Opnaðu **Hitalitir** til að breyta litunum, eða **Dýpt** til að láta hæðir og veggi fela hitann á bak við sig.
 
-![Hlutarnir Lögun hitans og Hitalitir í hliðarstikunni, báðir opnir](../assets/img/en/heat-panel.webp)
+![Hlutarnir Lögun hitans og Hitalitir í hliðarstikunni, báðir opnir](../assets/img/is/heat-panel.webp)
 
 Sömu spjöldin móta [Mismun](difference.md), [Liðahita](team-heat.md) og [Línuhita](line-heat.md); þau eru ólík í því sem bætt er við (með formerki, litað eða eftir línum), ekki í því hvernig það er gert.
 

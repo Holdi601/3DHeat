@@ -15,7 +15,7 @@ Replayet er en film af kampen, hvor hver spiller tegnes som det, vedkommende kø
 
 Skud, træffere, brande og vrag tegnes på enhederne og målene på banen. Kameraer, etiketter og en taktisk visning hjælper dig med at læse slaget. Kender du Tacview? [Tacview-paritet](tacview-parity.md) viser, hvor hvert af dets værktøjer findes.
 
-![Figur-replay af stridsvogns-demoen: stridsvogne som deres egne figurer, med navn-, køretøj- og hastighedsetiketter](../assets/img/en/replay-overview.webp)
+![Figur-replay af stridsvogns-demoen: stridsvogne som deres egne figurer, med navn-, køretøj- og hastighedsetiketter](../assets/img/da/replay-overview.webp)
 
 ## Start et replay {#start-a-replay}
 
@@ -26,11 +26,11 @@ Skud, træffere, brande og vrag tegnes på enhederne og målene på banen. Kamer
 
 Figurer erstatter bokse for hver enhed, hvis navn eller type er kendt (se [Figurer](figures.md)). Data uden navne- eller typekolonne tegnes som soldater.
 
-![Fanen Kamp: kampvælgeren, afsnittet Figurer, kameravisningerne, Afspil og hændelseslisten](../assets/img/en/match-replay-tab.webp)
+![Fanen Kamp: kampvælgeren, afsnittet Figurer, kameravisningerne, Afspil og hændelseslisten](../assets/img/da/match-replay-tab.webp)
 
 ## Figurer {#figures}
 
-![En brændende stridsvogn i kredsløbskameraet, med skuddet der ramte den](../assets/img/en/replay-tanks.webp)
+![En brændende stridsvogn i kredsløbskameraet, med skuddet der ramte den](../assets/img/da/replay-tanks.webp)
 
 | Indstilling (afsnittet **Figurer**) | Standard | Hvad den gør |
 |---|---|---|
@@ -51,7 +51,7 @@ Figurer erstatter bokse for hver enhed, hvis navn eller type er kendt (se [Figur
 
 Når en enhed ville være mindre end **Mindste figur på skærmen**, kan den blive til et symbol, der forbliver læseligt. Formen fortæller typen (for eksempel en afrundet boks med et beltemærke for panser); farven fortæller siden. Åbn menuen **Symboler** for at ændre stilen.
 
-![De samme seks enheder som NATO-symboler, russiske taktiske tegn, ikoner i spilkort-stil og kun former](../assets/img/en/match-replay-symbols-styles.webp)
+![De samme seks enheder som NATO-symboler, russiske taktiske tegn, ikoner i spilkort-stil og kun former](../assets/img/da/match-replay-symbols-styles.webp)
 
 ### Træfmærker, vrag og brande {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Klik på en enhed eller dens etiket for at **følge** den; afsnittet **Replay** 
 
 ## Taktisk visning {#tactical-display}
 
-![Luftdemoen med den taktiske visningsstil (T): trådramme-terræn, paneler med drab og hændelser](../assets/img/en/replay-air-tactical.webp)
+![Luftdemoen med den taktiske visningsstil (T): trådramme-terræn, paneler med drab og hændelser](../assets/img/da/replay-air-tactical.webp)
 
 Afsnittet **Taktisk visning** tegner, for ingen enhed, de valgte, alle eller én type (fly, land, skibe, våben): hastighedsvektorer og banen forude, næse- og løftelinjer, radarkegler, låsninger, datalinks, engagementszoner og -linjer, sigtelinjer, hvor spillerne kigger (synskegler), tårnsigte og det optagne kamera.
 
@@ -84,7 +84,7 @@ Afsnittet **Taktisk visning** tegner, for ingen enhed, de valgte, alle eller én
 
 `T` (eller kontakten **Vis som taktisk visning**) skifter udseendet til en radarskærmsstil: glød, konturer, højdekurver, et målegitter, scanlinjer, afstandsringe, højdestiger, paneler med drab og hændelser og en **Instruktør**, der selv flytter kameraet til hændelser.
 
-![Den samme luftkamp i det normale udseende](../assets/img/en/replay-air.webp)
+![Den samme luftkamp i det normale udseende](../assets/img/da/replay-air.webp)
 
 ## Mål {#objectives}
 

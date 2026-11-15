@@ -19,7 +19,7 @@ outdated: false
 2. 在**载具类别**下，取消勾选*坦克*。画面会立即改变。
 3. 按**清除所有筛选**即可撤销。
 
-![The Filters panel: the viewer's own columns (Event type, Vehicle class) first, then the columns from your file](../assets/img/en/filters.webp)
+![The Filters panel: the viewer's own columns (Event type, Vehicle class) first, then the columns from your file](../assets/img/zh/filters.webp)
 
 最前面的行是查看器自己的列（见下文）。之后的行来自你的文件。
 
@@ -42,7 +42,7 @@ outdated: false
 
 ## 数值列（范围）{#numeric-columns-range}
 
-![A range filter (money lost) with both ends dragged in](../assets/img/en/filters-numeric.webp)
+![A range filter (money lost) with both ends dragged in](../assets/img/zh/filters-numeric.webp)
 
 | 部分 | 含义 |
 |---|---|

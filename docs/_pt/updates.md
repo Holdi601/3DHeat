@@ -18,7 +18,7 @@ O visualizador diz-lhe quando existe uma versão mais nova, e só se atualiza qu
 2. **Se disser para executar restart.bat**, feche a janela do servidor (a janela preta que o `start.bat` abriu) e faça duplo clique em `restart.bat`.
 3. **Ao iniciar o visualizador.** O `start.bat` também verifica. Se existir uma versão mais nova, pergunta **Update now? [Y/N]** (o script está em inglês). Prima `Y` para atualizar. Prima `N`, ou espere 60 segundos sem responder, para iniciar a versão que tem.
 
-![O aviso de atualização com Atualizar agora e Mais tarde](../assets/img/en/updates-notice.webp)
+![O aviso de atualização com Atualizar agora e Mais tarde](../assets/img/pt/updates-notice.webp)
 
 Uma cópia com alterações suas nunca é atualizada por si; a caixa só diz que há uma atualização à espera, e pede para fazer commit ou stash das suas alterações e executar `git pull`. Uma cópia que não foi instalada com o git (um ficheiro zip, por exemplo) não mostra nada.
 

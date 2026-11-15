@@ -15,7 +15,7 @@ Aħmar fejn it-tim A kien iktar, blu-aħdar fejn kien it-tim B, xejn fejn kienu 
 
 **Differenza** (ċavetta 2) hija sħana b'sinjal. Ringieli ta' populazzjoni waħda jiżdiedu; ringieli ta' oħra jitnaqqsu. Fejn it-tnejn jaqgħu fuq xulxin b'mod ndaqs, ir-riżultat huwa zero u kompletament trasparenti; fejn waħda tkun dominata, turi f'kuluri dik in-naħa - b'mod predefinit sħan (trasparenti → aħmar → isfar → abjad) għan-naħa **+** u friski (trasparenti → aħdar → blu → vjola) għan-naħa **−**.
 
-![Sħana tad-differenza: aħmar fejn in-naħa + kienet iktar, aħdar u blu fejn in-naħa - kienet iktar](../assets/img/en/difference-split.webp)
+![Sħana tad-differenza: aħmar fejn in-naħa + kienet iktar, aħdar u blu fejn in-naħa - kienet iktar](../assets/img/mt/difference-split.webp)
 
 ## Kif tuża dan {#how-to-use-it}
 

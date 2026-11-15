@@ -15,7 +15,7 @@ Tekrar, maçın her oyuncunun kullandığı şey olarak çizildiği bir filmdir.
 
 Atışlar, isabetler, ateşler ve enkazlar seviyedeki birimlerin ve hedeflerin üzerine çizilir. Kameralar, etiketler ve bir taktik ekran çatışmayı okumanıza yardım eder. Tacview'u biliyor musunuz? [Tacview eşdeğerliği](tacview-parity.md) araçlarının her birinin nerede olduğunu gösterir.
 
-![Tank demosunun figür tekrarı: tanklar kendi figürleriyle, ad, araç ve hız etiketleriyle](../assets/img/en/replay-overview.webp)
+![Tank demosunun figür tekrarı: tanklar kendi figürleriyle, ad, araç ve hız etiketleriyle](../assets/img/tr/replay-overview.webp)
 
 ## Bir tekrar başlatın {#start-a-replay}
 
@@ -26,11 +26,11 @@ Atışlar, isabetler, ateşler ve enkazlar seviyedeki birimlerin ve hedeflerin �
 
 Adı ya da türü bilinen her birim için figürler kutuların yerini alır (bkz. [Figürler](figures.md)). Ad ya da tür sütunu olmayan veri asker olarak çizilir.
 
-![Maç sekmesi: maç seçici, Figürler bölümü, kamera görünümleri, Oynat ve olay listesi](../assets/img/en/match-replay-tab.webp)
+![Maç sekmesi: maç seçici, Figürler bölümü, kamera görünümleri, Oynat ve olay listesi](../assets/img/tr/match-replay-tab.webp)
 
 ## Figürler {#figures}
 
-![Yörünge kamerasında yanan bir tank ve onu vuran atış](../assets/img/en/replay-tanks.webp)
+![Yörünge kamerasında yanan bir tank ve onu vuran atış](../assets/img/tr/replay-tanks.webp)
 
 | Ayar (**Figürler** bölümü) | Varsayılan | Ne yapar |
 |---|---|---|
@@ -51,7 +51,7 @@ Adı ya da türü bilinen her birim için figürler kutuların yerini alır (bkz
 
 Bir birim **Ekrandaki en küçük figür**den daha küçük olacaksa, okunabilir kalan bir sembole dönüşebilir. Şekil türünü söyler (örneğin zırhlı için paletli işaretli yuvarlak bir kutu); renk tarafı söyler. Stili değiştirmek için **Semboller** menüsünü açın.
 
-![Aynı altı birim: NATO sembolleri, Rus taktik işaretleri, oyun haritası simgeleri ve yalnızca şekiller olarak](../assets/img/en/match-replay-symbols-styles.webp)
+![Aynı altı birim: NATO sembolleri, Rus taktik işaretleri, oyun haritası simgeleri ve yalnızca şekiller olarak](../assets/img/tr/match-replay-symbols-styles.webp)
 
 ### İsabet işaretleri, enkazlar ve ateşler {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Bir birime ya da etiketine tıklayarak onu **takip** edin; **Tekrar** bölümü 
 
 ## Taktik ekran {#tactical-display}
 
-![Taktik ekran görünümüyle (T) hava demosu: tel kafes arazi, öldürme ve olay panelleri](../assets/img/en/replay-air-tactical.webp)
+![Taktik ekran görünümüyle (T) hava demosu: tel kafes arazi, öldürme ve olay panelleri](../assets/img/tr/replay-air-tactical.webp)
 
 **Taktik ekran** bölümü, hiçbir birim için değil, seçilmiş olanlar, hepsi ya da bir tür (uçak, kara, gemiler, silahlar) için şunları çizer: hız vektörleri ve önündeki yol, burun ve kaldırma çizgileri, radar konileri, kilitler, veri bağlantıları, angajman bölgeleri ve çizgileri, görüş hatları, oyuncuların baktığı yerler (görüş konileri), taret nişanı ve kaydedilen kamera.
 
@@ -84,7 +84,7 @@ Bir birime ya da etiketine tıklayarak onu **takip** edin; **Tekrar** bölümü 
 
 `T` (ya da **Taktik ekran olarak göster** düğmesi) görünümü bir radar ekranı stiline çevirir: parıltı, ana hatlar, kontur çizgileri, bir ölçüm ızgarası, tarama çizgileri, menzil halkaları, irtifa merdivenleri, öldürme ve olaylı paneller ve olaylara kendi kendine kamerayı taşıyan bir **Yönetmen**.
 
-![Aynı hava muharebesi normal görünümde](../assets/img/en/replay-air.webp)
+![Aynı hava muharebesi normal görünümde](../assets/img/tr/replay-air.webp)
 
 ## Hedefler {#objectives}
 

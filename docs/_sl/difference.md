@@ -15,7 +15,7 @@ Rdeče tam, kjer je bila ekipa A bolj prisotna, zeleno-modro tam, kjer je bila e
 
 **Razlika** (tipka 2) je predznačena toplota. Vrstice ene populacije dodajajo toploto, vrstice druge jo odštevajo. Kjer se obe enakomerno prekrivata, je rezultat nič in popolnoma prosojen; kjer prevladuje ena, se pokaže v barvah te strani - privzeto toplih (prosojno → rdeče → rumeno → belo) za stran **+** in hladnih (prosojno → zeleno → modro → vijolično) za stran **−**.
 
-![Toplota razlike: rdeče tam, kjer je bila stran + bolj prisotna, zeleno in modro tam, kjer je bila stran − bolj prisotna](../assets/img/en/difference-split.webp)
+![Toplota razlike: rdeče tam, kjer je bila stran + bolj prisotna, zeleno in modro tam, kjer je bila stran − bolj prisotna](../assets/img/sl/difference-split.webp)
 
 ## Kako uporabljati {#how-to-use-it}
 

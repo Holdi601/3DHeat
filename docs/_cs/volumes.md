@@ -21,7 +21,7 @@ outdated: false
  +------------+
 ```
 
-![Tři objemy v ukázkovém údolí: dva válce kolem kopců, kvádr kolem vesnice](../assets/img/en/volumes.webp)
+![Tři objemy v ukázkovém údolí: dva válce kolem kopců, kvádr kolem vesnice](../assets/img/cs/volumes.webp)
 
 Objemy měří, co se uvnitř nich děje, filtrují pohled na ně, exportují své řádky a dají se porovnat vedle sebe. Pojmy řádek, osoba a zápas jsou ve [slovníčku](glossary.md).
 
@@ -76,7 +76,7 @@ Se dvěma nebo více viditelnými objemy stiskněte **Porovnat…**.
 3. V **Tabulka** čtěte rozdíl každé hodnoty od prvního objemu.
 4. Přepněte na **Sloupce**, abyste viděli podíly jako sloupce.
 
-![Tabulka Porovnání objemů: řádky, čas uvnitř, hráči a další pro každý objem, s rozdílem od prvního](../assets/img/en/compare.webp)
+![Tabulka Porovnání objemů: řádky, čas uvnitř, hráči a další pro každý objem, s rozdílem od prvního](../assets/img/cs/compare.webp)
 
 | Pohled | Ukazuje |
 |---|---|
@@ -86,7 +86,7 @@ Se dvěma nebo více viditelnými objemy stiskněte **Porovnat…**.
 | **Návštěvy** | Krabicové a houslové grafy, jak dlouho návštěvy trvají (logaritmická stupnice). |
 | **Tok** | Kam tratě směřují po opuštění každého objemu: matice přechodů nebo toky. |
 
-![Pohled Sloupce: druhy událostí na objem jako podíly](../assets/img/en/compare-bars.webp)
+![Pohled Sloupce: druhy událostí na objem jako podíly](../assets/img/cs/compare-bars.webp)
 
 ## Tipy {#tips}
 

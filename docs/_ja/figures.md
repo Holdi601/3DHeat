@@ -15,7 +15,7 @@ outdated: false
 
 名前付きの車両、航空機、艦船、兵器、兵士が約 2,000 種類あり、すべてビューア自身が作っています。
 
-![デモの戦車を、それぞれのフィギュアとして描いたもの](../assets/img/en/replay-tanks.webp)
+![デモの戦車を、それぞれのフィギュアとして描いたもの](../assets/img/ja/replay-tanks.webp)
 
 ## カタログに何があるか {#what-is-in-the-catalogue}
 

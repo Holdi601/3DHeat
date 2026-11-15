@@ -15,7 +15,7 @@ Ciepło maluje miejsca, w których działo się dużo: na czerwono tam, gdzie dz
 
 **Ciepło** (klawisz 1) to domyślny tryb. Każdy widoczny [wiersz](glossary.md) dokłada okrągły [sprite](glossary.md) zwrócony do kamery; nakładające się sprite'y sumują się w buforze zmiennoprzecinkowym; suma jest przepuszczana przez gradient kolorów - domyślnie przezroczysty → czerwony → żółty → biały - i rysowana na scenie.
 
-![Ciepło na poziomie 3D: gorące punkty w środku budynków i na ich dachach](../assets/img/en/shooter-heat.webp)
+![Ciepło na poziomie 3D: gorące punkty w środku budynków i na ich dachach](../assets/img/pl/shooter-heat.webp)
 
 Obrazek pokazuje ciepło z rundy strzelanki na poziomie z budynkami: gorące punkty leżą w pokojach i na schodach, a nie tylko na ziemi.
 
@@ -26,7 +26,7 @@ Obrazek pokazuje ciepło z rundy strzelanki na poziomie z budynkami: gorące pun
 3. Zmieniaj **Promień sprite'a**, aż sąsiednie kropki połączą się w pasma: mniejszy promień pokazuje pojedyncze punkty, większy - obszary.
 4. Otwórz **Kolory ciepła**, aby zmienić kolory, albo **Głębia**, aby wzgórza i ściany zasłaniały ciepło za sobą.
 
-![Sekcje Kształt ciepła i Kolory ciepła na pasku bocznym, obie otwarte](../assets/img/en/heat-panel.webp)
+![Sekcje Kształt ciepła i Kolory ciepła na pasku bocznym, obie otwarte](../assets/img/pl/heat-panel.webp)
 
 Te same panele kształtują [Różnicę](difference.md), [Ciepło drużyn](team-heat.md) i [Ciepło liniowe](line-heat.md); różnią się tym, co się dodaje (ze znakiem, pokolorowane albo wzdłuż linii), a nie sposobem.
 

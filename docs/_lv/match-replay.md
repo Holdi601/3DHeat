@@ -15,7 +15,7 @@ Atkārtojums ir spēles filma, kurā katrs spēlētājs ir attēlots kā tas, ko
 
 Šāvieni, trāpījumi, ugunsgrēki un sagrautas vienības tiek zīmēti uz vienībām un mērķiem līmenī. Kameras, etiķetes un taktiskais attēlojums palīdz lasīt cīņu. Vai jūs pazīstat Tacview? [Tacview paritāte](tacview-parity.md) parāda, kur atrodas katrs tā rīks.
 
-![Figūru atkārtojums tanku demonstrācijā: tanki kā savas figūras, ar vārda, transportlīdzekļa un ātruma etiķetēm](../assets/img/en/replay-overview.webp)
+![Figūru atkārtojums tanku demonstrācijā: tanki kā savas figūras, ar vārda, transportlīdzekļa un ātruma etiķetēm](../assets/img/lv/replay-overview.webp)
 
 ## Sāciet atkārtojumu {#start-a-replay}
 
@@ -26,11 +26,11 @@ Atkārtojums ir spēles filma, kurā katrs spēlētājs ir attēlots kā tas, ko
 
 Figūras aizstāj kastes katrai vienībai, kuras nosaukums vai tips ir zināms (skatiet [Figūras](figures.md)). Dati bez nosaukuma vai tipa kolonnas tiek zīmēti kā karavīri.
 
-![Cilne Mačs: spēļu izvēle, sadaļa Figūras, kameru skati, Atskaņot un notikumu saraksts](../assets/img/en/match-replay-tab.webp)
+![Cilne Mačs: spēļu izvēle, sadaļa Figūras, kameru skati, Atskaņot un notikumu saraksts](../assets/img/lv/match-replay-tab.webp)
 
 ## Figūras {#figures}
 
-![Degošs tanks orbītas kamerā, ar šāvienu, kas to trāpīja](../assets/img/en/replay-tanks.webp)
+![Degošs tanks orbītas kamerā, ar šāvienu, kas to trāpīja](../assets/img/lv/replay-tanks.webp)
 
 | Iestatījums (sadaļa **Figūras**) | Noklusējums | Ko tas dara |
 |---|---|---|
@@ -51,7 +51,7 @@ Figūras aizstāj kastes katrai vienībai, kuras nosaukums vai tips ir zināms (
 
 Kad vienība būtu mazāka par **Mazākā figūra ekrānā**, tā var kļūt par simbolu, kas paliek salasāms. Forma norāda veidu (piemēram, noapaļota kaste ar sliežu zīmi bruņutehnikai); krāsa norāda pusi. Atveriet izvēlni **Simboli**, lai mainītu stilu.
 
-![Tās pašas sešas vienības kā NATO simboli, Krievijas taktiskās zīmes, spēles kartes ikonas un tikai formas](../assets/img/en/match-replay-symbols-styles.webp)
+![Tās pašas sešas vienības kā NATO simboli, Krievijas taktiskās zīmes, spēles kartes ikonas un tikai formas](../assets/img/lv/match-replay-symbols-styles.webp)
 
 ### Trāpījumu atzīmes, sagrautās vienības un ugunsgrēki {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Noklikšķiniet uz vienības vai tās etiķetes, lai **sekotu** tai; sadaļa **A
 
 ## Taktiskais attēlojums {#tactical-display}
 
-![Gaisa demonstrācija ar taktiskā attēlojuma izskatu (T): stieples formas reljefs, nogalinājumu un notikumu paneļi](../assets/img/en/replay-air-tactical.webp)
+![Gaisa demonstrācija ar taktiskā attēlojuma izskatu (T): stieples formas reljefs, nogalinājumu un notikumu paneļi](../assets/img/lv/replay-air-tactical.webp)
 
 Sadaļa **Taktiskais attēlojums** nevienai vienībai nezīmē neko, izvēlētajām, visām vai vienam veidam (gaisa kuģi, zeme, kuģi, ieroči): ātruma vektorus un ceļu uz priekšu, deguna un pacelšanas līnijas, radaru konusus, bloķējumus, datu saites, iesaistīšanās zonas un līnijas, redzamības līnijas, kur spēlētāji skatās (skata konusi), torņa mērķi un ierakstīto kameru.
 
@@ -84,7 +84,7 @@ Sadaļa **Taktiskais attēlojums** nevienai vienībai nezīmē neko, izvēlētaj
 
 `T` (vai slēdzis **Rādīt kā taktisko displeju**) pārslēdz izskatu uz radara ekrāna stilu: spīdums, kontūras, horizontāles, mērījumu režģis, skenēšanas līnijas, diapazona gredzeni, augstuma kāpnes, paneļi ar nogalinājumiem un notikumiem, un **Režisors**, kas pats pārvieto kameru uz notikumiem.
 
-![Tā pati gaisa cīņa normālā izskatā](../assets/img/en/replay-air.webp)
+![Tā pati gaisa cīņa normālā izskatā](../assets/img/lv/replay-air.webp)
 
 ## Mērķi {#objectives}
 

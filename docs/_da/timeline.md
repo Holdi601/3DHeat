@@ -12,7 +12,7 @@ outdated: false
 
 Linjen under billedet fungerer som en videoafspiller: du kan afspille dataene som en film, sætte på pause, springe rundt og ændre hastigheden.
 
-![Tidslinjen: 1 Alle/Afspil, 2 transportknapper, 3 ur, 4 Hastighed, 5 Historik, med Vindue og et Tidsrum på 30 s](../assets/img/en/timeline-bar.webp)
+![Tidslinjen: 1 Alle/Afspil, 2 transportknapper, 3 ur, 4 Hastighed, 5 Historik, med Vindue og et Tidsrum på 30 s](../assets/img/da/timeline-bar.webp)
 
 Linjen under visningen er tidslinjen ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Den bestemmer, hvilke rækker der er synlige på ethvert tidspunkt. Den kræver en tidskolonne; uden en er hele linjen slået fra, visningen bliver i **Alle**, og sidebjælken siger *Ingen tidskolonne i disse data - tidslinjen er slået fra, og alle datapunkter vises på én gang.*
 

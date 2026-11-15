@@ -15,7 +15,7 @@ Predvajanje je film tekme, v katerem je vsak igralec narisan kot tisto, kar je v
 
 Streli, zadetki, požari in olupki so narisani na enotah in ciljih na ravni. Kamere, oznake in taktični prikaz vam pomagajo brati boj. Poznate Tacview? [Enakovrednost s Tacview](tacview-parity.md) pokaže, kje je vsako njegovo orodje.
 
-![Predvajanje figur demo tenkov: tenki kot lastne figure z oznakami imena, vozila in hitrosti](../assets/img/en/replay-overview.webp)
+![Predvajanje figur demo tenkov: tenki kot lastne figure z oznakami imena, vozila in hitrosti](../assets/img/sl/replay-overview.webp)
 
 ## Zaženite predvajanje {#start-a-replay}
 
@@ -26,11 +26,11 @@ Streli, zadetki, požari in olupki so narisani na enotah in ciljih na ravni. Kam
 
 Figure nadomestijo kocke za vsako enoto, katere ime ali tip je znan (glejte [Figure](figures.md)). Podatki brez stolpca imena ali tipa so narisani kot vojaki.
 
-![Zavihek Tekma: izbirnik tekem, razdelek Figure, pogledi kamer, Predvajaj in seznam dogodkov](../assets/img/en/match-replay-tab.webp)
+![Zavihek Tekma: izbirnik tekem, razdelek Figure, pogledi kamer, Predvajaj in seznam dogodkov](../assets/img/sl/match-replay-tab.webp)
 
 ## Figure {#figures}
 
-![Gorječi tenk v kameri orbite s strelom, ki ga je zadel](../assets/img/en/replay-tanks.webp)
+![Gorječi tenk v kameri orbite s strelom, ki ga je zadel](../assets/img/sl/replay-tanks.webp)
 
 | Nastavitev (razdelek **Figure**) | Privzeto | Kaj naredi |
 |---|---|---|
@@ -51,7 +51,7 @@ Figure nadomestijo kocke za vsako enoto, katere ime ali tip je znan (glejte [Fig
 
 Kadar bi bila enota manjša od **Najmanjša figura na zaslonu**, lahko postane simbol, ki ostane berljiv. Oblika pove vrsto (na primer zaobljena škatla z oznako gosenice za oklepna vozila); barva pove stran. Odprite meni **Simboli**, da spremenite slog.
 
-![Enakih šest enot kot simboli NATO, ruski taktični znaki, ikone zemljevida igre in samo oblike](../assets/img/en/match-replay-symbols-styles.webp)
+![Enakih šest enot kot simboli NATO, ruski taktični znaki, ikone zemljevida igre in samo oblike](../assets/img/sl/match-replay-symbols-styles.webp)
 
 ### Oznake zadetkov, olupki in požari {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Kliknite enoto ali njeno oznako, da ji **sledite**; razdelek **Predvajanje** pon
 
 ## Taktični prikaz {#tactical-display}
 
-![Zračni demo z videzom taktičnega prikaza (T): teren v žičnem okvirju, paneli kills in dogodkov](../assets/img/en/replay-air-tactical.webp)
+![Zračni demo z videzom taktičnega prikaza (T): teren v žičnem okvirju, paneli kills in dogodkov](../assets/img/sl/replay-air-tactical.webp)
 
 Razdelek **Taktični prikaz** nariše za nobeno enoto, izbrane, vse ali eno vrsto (letala, kopno, ladje, orožje): vektorje hitrosti in pot naprej, črte nosa in dviga, stožce radarja, zaklepanja, podatkovne povezave, območja in črte angažiranja, črte vidnosti, kam igralci gledajo (stožci pogleda), nastavitev kupole in zabeleženo kamero.
 
@@ -84,7 +84,7 @@ Razdelek **Taktični prikaz** nariše za nobeno enoto, izbrane, vse ali eno vrst
 
 `T` (ali stikalo **Prikaži kot taktični zaslon**) preklopi videz v slog radarskega zaslona: sijaj, obrisi, višinske črte, mrežo za merjenje, skenirne črte, obroče dosega, lestvice višin, plošče s kills in dogodki ter **Režiserja**, ki kamero sam premakne k dogodkom.
 
-![Isti zračni boj v običajnem videzu](../assets/img/en/replay-air.webp)
+![Isti zračni boj v običajnem videzu](../assets/img/sl/replay-air.webp)
 
 ## Cilji {#objectives}
 

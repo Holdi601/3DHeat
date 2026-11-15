@@ -14,7 +14,7 @@ outdated: false
 
 Učitajte pozicije - CSV, Parquet, Tacview snimke, pretvorene reprodukcije, jednu datoteku, mapu ili tisuće utakmica - i vidite ih kao **toplinsku kartu kroz koju možete letjeti**, kao **figure koje ponovno prikazuju utakmicu**, kao crte duž putanja kojima su ljudi išli ili kao jednu populaciju naspram druge. Sam pronalazi ono što se ističe, i radi potpuno u vašem pregledniku: ništa se nigdje ne šalje.
 
-![Toplina deset utakmica tenkova nad demo dolinom](../assets/img/en/heat-hero.webp)
+![Toplina deset utakmica tenkova nad demo dolinom](../assets/img/hr/heat-hero.webp)
 
 **Prvi put ovdje?** Napravite [demo podatke](demo-data.md) i slijedite njihovih sedam koraka. Svaka slika na ovoj stranici snimljena je s njima.
 
@@ -22,12 +22,12 @@ Učitajte pozicije - CSV, Parquet, Tacview snimke, pretvorene reprodukcije, jedn
 
 | | |
 |---|---|
-| ![Razlika](../assets/img/en/heat-difference.webp) | **[Načini topline](heat-modes.md)** - toplina, [razlika](difference.md) (crveno tamo gdje je jedna strana bila više, zeleno-plavo tamo gdje je bila druga), [toplina timova](team-heat.md), [linijska toplina](line-heat.md); [usmjerena toplina](directional-heat.md) s klinovima, poljima strelica i polarnim grafikonima; toplina [ponderirana vrijednošću](value-weighting.md): što oružje, vozila i gorivo koštaju. |
-| ![Reprodukcija](../assets/img/en/replay-tanks.webp) | **[Reprodukcija utakmice](match-replay.md)** - svaka jedinica kao [figura](figures.md) onoga što jest, NATO ili ruski simboli na daljinu, projektili i tragovi, oznake pogodaka, olupine, požari, kupole, ciljevi, kamere u stilu Tacviewa i taktički prikaz; [mnogo utakmica odjednom](many-matches.md). |
-| ![Uvidi](../assets/img/en/insights.webp) | **[Uvidi](insights.md)** - jake pozicije, smrtonosno tlo, zamke za spawnanje, uska grla i istaknuti igrači, pronađeni i rangirani s dokazima; pisani sažetak, po želji pomoću UI-ja po vašem izboru; komentator za jednu utakmicu; [leća znanja](knowledge.md). |
-| ![Volumeni](../assets/img/en/compare.webp) | **[Volumeni](volumes.md)** - crtajte kutije, prizme, valjke i kugle, filtrirajte na njih, brojite što se događa unutra, izvezite to i usporedite mjesta jedno uz drugo; [raščlamba](breakdown.md) tko i što najbolje radi na nekom mjestu. |
-| ![Filtri](../assets/img/en/filters.webp) | **[Filtri](filters.md)** - po vrsti događaja, igraču ili UI-ju, klasi vozila, vrijednosti, bilo kojem stupcu, na grafičkoj kartici pri bilo kojoj veličini podataka. |
-| ![Razina](../assets/img/en/level-panel.webp) | **[Razine](levels.md)** - slike karata, 3D razine napravljene [alatima za podatke](#related-repositories), pojednostavljenje, [pozadina svijeta](world-backdrop.md) sa stvarnim terenom za podatke o letu. |
+| ![Razlika](../assets/img/hr/heat-difference.webp) | **[Načini topline](heat-modes.md)** - toplina, [razlika](difference.md) (crveno tamo gdje je jedna strana bila više, zeleno-plavo tamo gdje je bila druga), [toplina timova](team-heat.md), [linijska toplina](line-heat.md); [usmjerena toplina](directional-heat.md) s klinovima, poljima strelica i polarnim grafikonima; toplina [ponderirana vrijednošću](value-weighting.md): što oružje, vozila i gorivo koštaju. |
+| ![Reprodukcija](../assets/img/hr/replay-tanks.webp) | **[Reprodukcija utakmice](match-replay.md)** - svaka jedinica kao [figura](figures.md) onoga što jest, NATO ili ruski simboli na daljinu, projektili i tragovi, oznake pogodaka, olupine, požari, kupole, ciljevi, kamere u stilu Tacviewa i taktički prikaz; [mnogo utakmica odjednom](many-matches.md). |
+| ![Uvidi](../assets/img/hr/insights.webp) | **[Uvidi](insights.md)** - jake pozicije, smrtonosno tlo, zamke za spawnanje, uska grla i istaknuti igrači, pronađeni i rangirani s dokazima; pisani sažetak, po želji pomoću UI-ja po vašem izboru; komentator za jednu utakmicu; [leća znanja](knowledge.md). |
+| ![Volumeni](../assets/img/hr/compare.webp) | **[Volumeni](volumes.md)** - crtajte kutije, prizme, valjke i kugle, filtrirajte na njih, brojite što se događa unutra, izvezite to i usporedite mjesta jedno uz drugo; [raščlamba](breakdown.md) tko i što najbolje radi na nekom mjestu. |
+| ![Filtri](../assets/img/hr/filters.webp) | **[Filtri](filters.md)** - po vrsti događaja, igraču ili UI-ju, klasi vozila, vrijednosti, bilo kojem stupcu, na grafičkoj kartici pri bilo kojoj veličini podataka. |
+| ![Razina](../assets/img/hr/level-panel.webp) | **[Razine](levels.md)** - slike karata, 3D razine napravljene [alatima za podatke](#related-repositories), pojednostavljenje, [pozadina svijeta](world-backdrop.md) sa stvarnim terenom za podatke o letu. |
 
 Također: kartica [Analiza utrke](race-analysis.md) za krugove utrkaških igara, kartica [Meč](match-analysis.md) za sažetke Counter-Strike 2 utakmica, [Ploča taktika](tactics-board.md) za planove na razini, [analiza pogodaka](hit-analysis.md) po vozilu, [masovna analiza](mass-analysis.md) tisuća utakmica, [putanje kamere i video](camera-path-and-video.md), [40 jezika](languages.md), [metričke ili imperijalne jedinice](settings.md).
 

@@ -15,7 +15,7 @@ Každá bodka pridá malú žiaru, žiary sa hromadia a hromada sa maľuje farba
 
 Lišta režimov hore na bočnom paneli karty Heatmapa určuje, ako sa [dátová sada](glossary.md) kreslí. Klávesy 1-4 vyberajú Teplo, Rozdiel, Teplo tímov a Čiary. Prekrytie figúrok nemá klávesu.
 
-![Lišta režimov s Teplo, Rozdiel, Teplo tímov, Prekrytie figúrok a Čiary](../assets/img/en/heat-modes-bar.webp)
+![Lišta režimov s Teplo, Rozdiel, Teplo tímov, Prekrytie figúrok a Čiary](../assets/img/sk/heat-modes-bar.webp)
 
 | Režim | Otázka, na ktorú odpovedá |
 |---|---|
@@ -25,7 +25,7 @@ Lišta režimov hore na bočnom paneli karty Heatmapa určuje, ako sa [dátová 
 | **Čiary** | Ktorým smerom ľudia išli? |
 | **Prekrytie figúrok** | Kto bol kde a kedy? |
 
-![Tie isté dáta v štyroch režimoch: Teplo, Rozdiel, Teplo tímov a Čiary](../assets/img/en/heat-modes-grid.webp)
+![Tie isté dáta v štyroch režimoch: Teplo, Rozdiel, Teplo tímov a Čiary](../assets/img/sk/heat-modes-grid.webp)
 
 | Režim (označenie na lište) | Klávesa | Čo kreslí | Potrebuje |
 |---|---|---|---|

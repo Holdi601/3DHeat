@@ -15,7 +15,7 @@ Svaka tačka dodaje malo sjaja, sjaji se gomilaju, a gomila se boji bojama. Nač
 
 Traka načina na vrhu bočne trake kartice Toplotna mapa bira kako se [skup podataka](glossary.md) crta. Tipke 1-4 biraju Toplota, Razlika, Toplota timova i Linije. Preklapanje figura nema tipku.
 
-![Traka načina s Toplota, Razlika, Toplota timova, Preklapanje figura i Linije](../assets/img/en/heat-modes-bar.webp)
+![Traka načina s Toplota, Razlika, Toplota timova, Preklapanje figura i Linije](../assets/img/bs/heat-modes-bar.webp)
 
 | Način | Pitanje na koje odgovara |
 |---|---|
@@ -25,7 +25,7 @@ Traka načina na vrhu bočne trake kartice Toplotna mapa bira kako se [skup poda
 | **Linije** | Kojim putem su ljudi išli? |
 | **Preklapanje figura** | Ko je bio gdje, i kada? |
 
-![Isti podaci u četiri načina: Toplota, Razlika, Toplota timova i Linije](../assets/img/en/heat-modes-grid.webp)
+![Isti podaci u četiri načina: Toplota, Razlika, Toplota timova i Linije](../assets/img/bs/heat-modes-grid.webp)
 
 | Način (oznaka na traci) | Tipka | Šta crta | Treba |
 |---|---|---|---|

@@ -19,7 +19,7 @@ Cuireann **Scagairí** na sraitheanna nach bhfuil spéis agat iontu i bhfolach, 
 2. Faoi **Aicme feithicle**, bain tic de *Tanc*. Athraíonn an pictiúr láithreach.
 3. Brúigh **Glan na scagairí go léir** chun an gníomh a chealú.
 
-![Painéal na Scagairí: colúin an amharcóra féin (Cineál imeachta, Aicme feithicle) ar dtús, ansin na colúin ó do chomhad](../assets/img/en/filters.webp)
+![Painéal na Scagairí: colúin an amharcóra féin (Cineál imeachta, Aicme feithicle) ar dtús, ansin na colúin ó do chomhad](../assets/img/ga/filters.webp)
 
 Is iad na chéad sraitheanna colúin an amharcóra féin (thíos). Tagann na sraitheanna ina ndiaidh ó do chomhad.
 
@@ -42,7 +42,7 @@ Cinntear cé na colúin is féidir a scagadh ag am an lódála, toisc go gcaithf
 
 ## Colúin uimhriúla (raon) {#numeric-columns-range}
 
-![Scagaire raoin (airgead caillte) le an dá cheann tarraingthe](../assets/img/en/filters-numeric.webp)
+![Scagaire raoin (airgead caillte) le an dá cheann tarraingthe](../assets/img/ga/filters-numeric.webp)
 
 | Cuid | Brí |
 |---|---|

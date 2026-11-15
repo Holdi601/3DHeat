@@ -23,7 +23,7 @@ Na vrhu bočne trake:
 | Dugme **...** pored **Jedinica** | Otvara „Izaberite jedinicu za svaku veličinu”: jedan padajući meni po veličini |
 | Meni **Jezik** | Jezik prikazivača: [40 jezika](languages.md), ili jezik preglednika |
 
-![Zaglavlje s otvorenim menijem Jedinice i prozorom jedinice po veličini](../assets/img/en/settings-units.webp)
+![Zaglavlje s otvorenim menijem Jedinice i prozorom jedinice po veličini](../assets/img/bs/settings-units.webp)
 
 Brojevi koje upisujete u polje mogu koristiti tačku ili zarez (`0.35` ili `0,35`). Prikazivač prihvata oba i prikazuje brojeve onako kako ih piše jezik prikazivača.
 
@@ -48,11 +48,11 @@ Druge jedinice koje možete izabrati za jednu veličinu: udaljenost km, mi, NM; 
 
 ## Režim pomoći {#help-mode}
 
-![Režim pomoći: šta znače boje](../assets/img/en/help.webp)
+![Režim pomoći: šta znače boje](../assets/img/bs/help.webp)
 
 Pritisnite `?` ili `F1`, ili kliknite dugme **?**. Prikazuje *Šta znače boje*: legende za 3D prikaz, skale toplote, boje timova, boje nivoa, statusne boje panela, panel meča i prikaz trke. Ostaje uključen dok ga ne isključite. Na kartici Meč objašnjava i boje panela meča.
 
-![Režim pomoći na kartici Meč](../assets/img/en/settings-help-match.webp)
+![Režim pomoći na kartici Meč](../assets/img/bs/settings-help-match.webp)
 
 ## Šta pregledač pamti {#what-the-browser-remembers}
 

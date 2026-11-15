@@ -14,7 +14,7 @@ outdated: false
 
 加载位置数据，包括 CSV、Parquet、Tacview 录像、转换后的回放、单个文件、一个文件夹或成千上万场比赛，然后把它们看成**可以飞行穿梭的热力图**、**重现比赛的图形**、沿玩家路线绘制的线条，或者两组人群之间的对比。它会自己找出突出的地方，完全在你的浏览器中运行：没有任何内容会上传到别处。
 
-![Heat of ten tank matches over the demo valley](../assets/img/en/heat-hero.webp)
+![Heat of ten tank matches over the demo valley](../assets/img/zh/heat-hero.webp)
 
 **第一次使用？** 先生成[演示数据](demo-data.md)，然后按它的七个步骤操作。本站的每一张图都是用它拍的。
 
@@ -22,12 +22,12 @@ outdated: false
 
 | | |
 |---|---|
-| ![Difference](../assets/img/en/heat-difference.webp) | **[热度模式](heat-modes.md)**：热度、[差值](difference.md)（一方更多的地方为红色，另一方更多的地方为绿蓝色）、[队伍热度](team-heat.md)、[线条热度](line-heat.md)；[方向热度](directional-heat.md)，包括扇形、箭头场和极坐标图；按[数值加权](value-weighting.md)的热度：武器、载具和燃料各自的代价。 |
-| ![Replay](../assets/img/en/replay-tanks.webp) | **[比赛回放](match-replay.md)**：每个单位都以它所属类型的[图形](figures.md)呈现，远距离时显示北约或俄式符号，还有导弹和曳光弹、命中标记、残骸、火焰、炮塔、目标，以及 Tacview 风格的摄像机和战术显示；[同时查看多场比赛](many-matches.md)。 |
-| ![Insights](../assets/img/en/insights.webp) | **[洞察](insights.md)**：强势位置、致命地形、出生点陷阱、瓶颈和突出的玩家，附带证据并排序；书面复盘，可选由你选择的 AI 生成；单场比赛的解说模式；[知识视角](knowledge.md)。 |
-| ![Volumes](../assets/img/en/compare.webp) | **[体积](volumes.md)**：绘制方块、棱柱、圆柱和球体，按它们筛选，统计其中发生的事情，导出，并把多个地点并排比较；[细分](breakdown.md)显示某个地点中谁、什么表现最好。 |
-| ![Filters](../assets/img/en/filters.webp) | **[筛选](filters.md)**：按事件类型、玩家或 AI、载具类别、数值、任意列筛选，在任何数据规模下都由显卡完成。 |
-| ![Level](../assets/img/en/level-panel.webp) | **[关卡](levels.md)**：地图图像、用[数据工具](#related-repositories)制作的 3D 关卡、简化处理、用于飞行数据的真实地形[世界背景](world-backdrop.md)。 |
+| ![Difference](../assets/img/zh/heat-difference.webp) | **[热度模式](heat-modes.md)**：热度、[差值](difference.md)（一方更多的地方为红色，另一方更多的地方为绿蓝色）、[队伍热度](team-heat.md)、[线条热度](line-heat.md)；[方向热度](directional-heat.md)，包括扇形、箭头场和极坐标图；按[数值加权](value-weighting.md)的热度：武器、载具和燃料各自的代价。 |
+| ![Replay](../assets/img/zh/replay-tanks.webp) | **[比赛回放](match-replay.md)**：每个单位都以它所属类型的[图形](figures.md)呈现，远距离时显示北约或俄式符号，还有导弹和曳光弹、命中标记、残骸、火焰、炮塔、目标，以及 Tacview 风格的摄像机和战术显示；[同时查看多场比赛](many-matches.md)。 |
+| ![Insights](../assets/img/zh/insights.webp) | **[洞察](insights.md)**：强势位置、致命地形、出生点陷阱、瓶颈和突出的玩家，附带证据并排序；书面复盘，可选由你选择的 AI 生成；单场比赛的解说模式；[知识视角](knowledge.md)。 |
+| ![Volumes](../assets/img/zh/compare.webp) | **[体积](volumes.md)**：绘制方块、棱柱、圆柱和球体，按它们筛选，统计其中发生的事情，导出，并把多个地点并排比较；[细分](breakdown.md)显示某个地点中谁、什么表现最好。 |
+| ![Filters](../assets/img/zh/filters.webp) | **[筛选](filters.md)**：按事件类型、玩家或 AI、载具类别、数值、任意列筛选，在任何数据规模下都由显卡完成。 |
+| ![Level](../assets/img/zh/level-panel.webp) | **[关卡](levels.md)**：地图图像、用[数据工具](#related-repositories)制作的 3D 关卡、简化处理、用于飞行数据的真实地形[世界背景](world-backdrop.md)。 |
 
 此外还有：用于赛车游戏多圈数据的[赛车分析](race-analysis.md)标签页；用于 Counter-Strike 2 摘要的[对局](match-analysis.md)标签页；用于关卡上计划的[战术面板](tactics-board.md)；按载具统计的[命中分析](hit-analysis.md)；数千场比赛的[批量分析](mass-analysis.md)；[摄像机路径与视频](camera-path-and-video.md)；[40 种语言](languages.md)；[公制或英制单位](settings.md)。
 

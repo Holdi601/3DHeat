@@ -15,7 +15,7 @@ Të kuqe aty ku ekipi A ishte më shumë, blu-jeshile aty ku ishte ekipi B, asgj
 
 **Diferencë** (tasti 2) është nxehtësi me shenjë. Rreshtat e një popullate shtojnë nxehtësi; ata të një popullate tjetër e zbresin. Aty ku të dyja mbivendosen njësoj, rezultati është zero dhe plotësisht transparent; aty ku njëra mbizotëron, shfaqet me ngjyrat e asaj ane - si parazgjedhje të ngrohta (transparent → e kuqe → e verdhë → e bardhë) për anën **+** dhe të ftohta (transparent → jeshile → blu → vjollcë) për anën **−**.
 
-![Nxehtësi diference: e kuqe aty ku ana + ishte më shumë, jeshile dhe blu aty ku ana − ishte më shumë](../assets/img/en/difference-split.webp)
+![Nxehtësi diference: e kuqe aty ku ana + ishte më shumë, jeshile dhe blu aty ku ana − ishte më shumë](../assets/img/sq/difference-split.webp)
 
 ## Si ta përdorësh {#how-to-use-it}
 

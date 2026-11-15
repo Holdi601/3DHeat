@@ -13,7 +13,7 @@ outdated: false
 
 Sõitsid sama raja kaks korda. Vahekaart **Sõiduanalüüs** mängib mõlemad sõidud koos 3D-s, näitab, kus üks ring oli aeglasem, ja ütleb, miks. Pole veel ringe? Vajuta **Demoringid**.
 
-![Sõiduanalüüsi vahekaart demoringidega: külgriba koos Ringide ja Kus parandada, rajal autod, graafikud vaate all](../assets/img/en/race-analysis-overview.webp)
+![Sõiduanalüüsi vahekaart demoringidega: külgriba koos Ringide ja Kus parandada, rajal autod, graafikud vaate all](../assets/img/et/race-analysis-overview.webp)
 
 Vahekaart võrdleb kahte või enamat ringi ühel rajal. Ta jagab lõuendit, kaamerat ja laetud raja mudelit (**Taust / tase**) soojuskaardiga; kõik muu on tema oma: oma külgriba ja oma riba vaate all. Sõnad nagu *ring*, *võrdlusring* ja *tipp* on [sõnastikus](glossary.md).
 

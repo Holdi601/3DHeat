@@ -15,7 +15,7 @@ outdated: false
 
 Všetko sa počíta vo vašom prehliadači. Nič neodchádza z vášho počítača, pokiaľ nezapnete externú AI (pozri [Externú AI](#external-ai)).
 
-![Zistenia na ukážke tankov: 14 zistení, najsilnejšie prvé](../assets/img/en/insights.webp)
+![Zistenia na ukážke tankov: 14 zistení, najsilnejšie prvé](../assets/img/sk/insights.webp)
 
 Sekcia **Zistenia** je na bočnom paneli kariet Heatmapa a Zápas. Má tri záložky: **Zistenia**, **Zhrnutie** a **Komentátor**.
 
@@ -30,7 +30,7 @@ Počítanie používa aktuálne filtre, skryté skupiny a vybraný zápas v celo
 
 Riadky na vrchu zoznamu (napríklad súčty peňazí) zhrnú celé dáta pred zisteniami.
 
-![Otvorené zistenie: horúca zóna výstrelov, jej čísla a zodpovedajúci úryvok z literatúry](../assets/img/en/insights-finding.webp)
+![Otvorené zistenie: horúca zóna výstrelov, jej čísla a zodpovedajúci úryvok z literatúry](../assets/img/sk/insights-finding.webp)
 
 ### Detektory {#the-detectors}
 
@@ -55,7 +55,7 @@ Každé miesto alebo skupina sa testuje voči zvyšku mapy (presné binomické a
 
 Záložka **Zhrnutie** zapíše zistenia do krátkeho textu: úvod, najjasnejšie zistenie, jedno o taktike, jedno o vyvažovaní, zvyšok zoskupený podľa detektora a koľko stojí na slabších dôkazoch. Každý odsek má očíslované tlačidlá, ktoré ukazujú jeho zistenia. **Kopírovať text** ho skopíruje.
 
-![Zhrnutie napísané vstavaným rozprávačom](../assets/img/en/debrief.webp)
+![Zhrnutie napísané vstavaným rozprávačom](../assets/img/sk/debrief.webp)
 
 Vstavaný rozprávač funguje offline, vo vašom jazyku. Výber **Optika** nad ním (pozri [Šošovku znalostí](knowledge.md)) určuje, akú literatúru odseky citujú.
 
@@ -78,7 +78,7 @@ Potom napíšte voliteľnú otázku a stlačte **Napísať pomocou AI**. Posiela
 
 Pre **jeden zápas** (ak je načítaných viac, vyberte jeden) **Komentátor** nájde momenty hodné pozornosti: prvú krv, viacnásobné zabitia, výmeny, záchrany v koncovke, zmeny pri cieľoch, návraty, vynikajúcich hráčov, dlhé výstrely.
 
-![Momenty komentátora pre jedno kolo ukážky streľby](../assets/img/en/caster.webp)
+![Momenty komentátora pre jedno kolo ukážky streľby](../assets/img/sk/caster.webp)
 
 - Kliknite na moment: pohľad prejde na prehrávanie, skočí tesne pred neho, prelietne tam a sleduje hráča.
 - **Prehrať momenty** prehrá každý až do konca a ide ďalej; **Predchádzajúci** / **Ďalší** sa pohybujú medzi nimi.

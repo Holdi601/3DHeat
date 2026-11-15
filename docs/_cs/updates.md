@@ -18,7 +18,7 @@ Prohlížeč vám řekne, když existuje novější verze, a aktualizuje se sám
 2. **Když to říká spustit restart.bat**, zavřete okno serveru (černé okno, které otevřel `start.bat`) a dvojklikem spusťte `restart.bat`.
 3. **Při spuštění prohlížeče.** `start.bat` také kontroluje. Pokud existuje novější verze, zeptá se **Update now? [Y/N]**. Stiskněte `Y` pro aktualizaci. Stiskněte `N`, nebo počkejte 60 sekund bez odpovědi, a spustí se verze, kterou máte.
 
-![Oznámení o aktualizaci s tlačítky Aktualizovat teď a Později](../assets/img/en/updates-notice.webp)
+![Oznámení o aktualizaci s tlačítky Aktualizovat teď a Později](../assets/img/cs/updates-notice.webp)
 
 Kopie s vašimi vlastními změnami se nikdy neaktualizuje za vás; okno jen říká, že čeká aktualizace, a vyzve k potvrzení nebo odložení změn a spuštění `git pull`. Kopie nainstalovaná bez gitu (například soubor zip) nezobrazí nic.
 

@@ -22,7 +22,7 @@ Borð er þrívíði staðurinn þar sem leikurinn fór fram - kort, bær, braut
 
 Borðið er sameiginlegt fyrir alla þrjá flipana: braut sem hlaðin er í flipanum Kappakstursgreining er sama borð og hitakortið sýnir.
 
-![Spjaldið Bakgrunnur / borð með borði hlöðnu: hnappar fyrir Kortamynd og Þrívíddarlíkan, Vígvöllur, Ógegnsæi, Birta, Vista í safn og listinn Safn](../assets/img/en/level-panel.webp)
+![Spjaldið Bakgrunnur / borð með borði hlöðnu: hnappar fyrir Kortamynd og Þrívíddarlíkan, Vígvöllur, Ógegnsæi, Birta, Vista í safn og listinn Safn](../assets/img/is/level-panel.webp)
 
 ## Settu borð á bak við gögnin þín {#put-a-level-behind-your-data}
 

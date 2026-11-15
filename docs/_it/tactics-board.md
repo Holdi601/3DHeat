@@ -23,7 +23,7 @@ La scheda **Tattica** è una lavagna da disegno per un piano di squadra: metti p
 6. Premi **▶** (o `K`) per riprodurre il piano dal passo mostrato fino alla fine.
 7. Dai un nome al piano in **Nome del piano** e premi **Salva**.
 
-![La scheda Tattica in vista dall'alto: gioco, schieramenti e strumenti a sinistra, tre figure con frecce di movimento, un arco di lancio di fumogeno, un'Area e i passi lungo il fondo](../assets/img/en/tactics.webp)
+![La scheda Tattica in vista dall'alto: gioco, schieramenti e strumenti a sinistra, tre figure con frecce di movimento, un arco di lancio di fumogeno, un'Area e i passi lungo il fondo](../assets/img/it/tactics.webp)
 
 ## Avviare un piano {#starting-a-plan}
 

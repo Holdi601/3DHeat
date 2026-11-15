@@ -21,7 +21,7 @@ Një **vëllim** është një kuti e padukshme (ose cilindër, ose sferë) që v
  +------------+
 ```
 
-![Tre vëllime mbi demo valley: dy cilindra rreth kodrave, një kuti rreth fshatit](../assets/img/en/volumes.webp)
+![Tre vëllime mbi demo valley: dy cilindra rreth kodrave, një kuti rreth fshatit](../assets/img/sq/volumes.webp)
 
 Vëllimet matin çfarë ndodh brenda tyre, filtrojnë pamjen sipas tyre, eksportojnë rreshtat e tyre, dhe mund të krahasohen njëra pranë tjetrës. Shih edhe [fjalorin](glossary.md) për rresht, person dhe ndeshje.
 
@@ -76,7 +76,7 @@ Me dy ose më shumë vëllime të dukshme, shtyp **Krahaso...**.
 3. Te **Tabelë**, lexo ndryshimin e çdo vlere nga vëllimi i parë.
 4. Kalo te **Shirita** për të parë pjesët si shirita.
 
-![Tabela e krahasimit të vëllimeve: rreshta, koha brenda, lojtarë dhe më shumë për çdo vëllim, me ndryshimin nga i pari](../assets/img/en/compare.webp)
+![Tabela e krahasimit të vëllimeve: rreshta, koha brenda, lojtarë dhe më shumë për çdo vëllim, me ndryshimin nga i pari](../assets/img/sq/compare.webp)
 
 | Pamja | Shfaq |
 |---|---|
@@ -86,7 +86,7 @@ Me dy ose më shumë vëllime të dukshme, shtyp **Krahaso...**.
 | **Vizita** | Grafikë kutie dhe violinë për sa zgjasin vizitat (shkallë logaritmike). |
 | **Rrjedha** | Ku shkojnë gjurmët pasi largohen nga çdo vëllim: një matricë kalimesh ose shirita rrjedhe. |
 
-![Pamja e Shirave: llojet e ngjarjeve për çdo vëllim si pjesë](../assets/img/en/compare-bars.webp)
+![Pamja e Shirave: llojet e ngjarjeve për çdo vëllim si pjesë](../assets/img/sq/compare-bars.webp)
 
 ## Këshilla {#tips}
 

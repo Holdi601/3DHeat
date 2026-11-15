@@ -12,7 +12,7 @@ outdated: false
 
 Bara de sub imagine este ca un player video: poți reda datele ca pe un film, le poți pune pe pauză, sări prin ele și schimba viteza.
 
-![Bara cronologiei: 1 Toate/Redare, 2 butoanele de transport, 3 ceasul, 4 Viteză, 5 Istoric, cu Fereastră și un Interval de 30 s](../assets/img/en/timeline-bar.webp)
+![Bara cronologiei: 1 Toate/Redare, 2 butoanele de transport, 3 ceasul, 4 Viteză, 5 Istoric, cu Fereastră și un Interval de 30 s](../assets/img/ro/timeline-bar.webp)
 
 Bara de sub vizualizare este cronologia ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Ea decide ce rânduri sunt vizibile în orice moment. Are nevoie de o coloană de timp; fără ea, toată bara este dezactivată, vizualizarea rămâne în modul **Toate**, iar bara laterală spune *Nu există coloană de timp în aceste date - cronologia este dezactivată și fiecare punct de date se arată deodată.*
 

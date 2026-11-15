@@ -15,7 +15,7 @@ outdated: false
 
 射擊、命中、火焰與殘骸會畫在關卡上的單位與目標上。攝影機、標籤與戰術顯示可以幫助你讀懂戰鬥。你熟悉 Tacview 嗎？[Tacview 對等功能](tacview-parity.md)說明了它的每項工具在這裡的對應位置。
 
-![示範戰車的模型重播：戰車以各自的模型呈現，並附有名稱、載具與速度標籤](../assets/img/en/replay-overview.webp)
+![示範戰車的模型重播：戰車以各自的模型呈現，並附有名稱、載具與速度標籤](../assets/img/zh-Hant/replay-overview.webp)
 
 ## 開始重播 {#start-a-replay}
 
@@ -26,11 +26,11 @@ outdated: false
 
 對於名稱或類型為已知的每個單位，模型會取代方塊（請參閱[模型](figures.md)）。沒有名稱或類型欄位的資料，會以士兵繪製。
 
-![對戰頁籤：比賽選擇器、圖示區段、攝影機視角、播放與事件清單](../assets/img/en/match-replay-tab.webp)
+![對戰頁籤：比賽選擇器、圖示區段、攝影機視角、播放與事件清單](../assets/img/zh-Hant/match-replay-tab.webp)
 
 ## 模型 {#figures}
 
-![環繞攝影機中燃燒的戰車，以及擊中它的那一發](../assets/img/en/replay-tanks.webp)
+![環繞攝影機中燃燒的戰車，以及擊中它的那一發](../assets/img/zh-Hant/replay-tanks.webp)
 
 | 設定（**圖示**區段） | 預設值 | 功能 |
 |---|---|---|
@@ -51,7 +51,7 @@ outdated: false
 
 當某個單位會比**螢幕上最小的模型**還小時，它可以變成一個保持清晰可讀的符號。形狀代表種類（例如裝甲車為帶有履帶標記的圓角方塊）；顏色代表陣營。開啟**符號體系**選單即可變更樣式。
 
-![同樣六個單位以 NATO 符號、俄式戰術標誌、遊戲地圖圖示與僅形狀呈現](../assets/img/en/match-replay-symbols-styles.webp)
+![同樣六個單位以 NATO 符號、俄式戰術標誌、遊戲地圖圖示與僅形狀呈現](../assets/img/zh-Hant/match-replay-symbols-styles.webp)
 
 ### 命中標記、殘骸與火焰 {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ outdated: false
 
 ## 戰術顯示 {#tactical-display}
 
-![空戰示範的戰術顯示外觀（T）：線框地形、擊殺與事件面板](../assets/img/en/replay-air-tactical.webp)
+![空戰示範的戰術顯示外觀（T）：線框地形、擊殺與事件面板](../assets/img/zh-Hant/replay-air-tactical.webp)
 
 **戰術顯示**區段會為單位繪製：不選單位、選取的單位、全部，或某一種類（飛機、地面、艦船、武器）：速度向量與前方路徑、機頭與升力線、雷達錐、鎖定、資料鏈、交戰區與交戰線、視線、玩家看的方向（視野錐）、砲塔瞄準，以及錄影中的攝影機。
 
@@ -84,7 +84,7 @@ outdated: false
 
 `T`（或**以戰術顯示檢視**開關）會把外觀切換為雷達螢幕風格：發光、輪廓、等高線、測量格線、掃描線、距離環、高度階梯、顯示擊殺與事件的面板，以及會自行把攝影機移到事件處的**導演**。
 
-![同一場空戰的一般外觀](../assets/img/en/replay-air.webp)
+![同一場空戰的一般外觀](../assets/img/zh-Hant/replay-air.webp)
 
 ## 目標 {#objectives}
 

@@ -14,7 +14,7 @@ outdated: false
 
 Kull partita tibda mill-bidu tagħha stess u l-unitajiet tagħha jimxu bħala figuri. Il-fajls imorru direttament fil-kard grafiku u ma jinbena l-ebda tabella sħiħa, għalhekk jaħdem bla intoppi fejn tagħbija normali tispiċċa mill-memorja.
 
-![Għaxar partiti ta' tanks imqiegħda fuq xulxin, kulur wieħed għal kull partita](../assets/img/en/many-matches.webp)
+![Għaxar partiti ta' tanks imqiegħda fuq xulxin, kulur wieħed għal kull partita](../assets/img/mt/many-matches.webp)
 
 ## Kif tuża dan {#how-to-use-it}
 

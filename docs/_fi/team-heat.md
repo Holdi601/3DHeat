@@ -15,7 +15,7 @@ Joukkuelämpö näyttää, missä kukin joukkue oli, jokainen omalla värillää
 
 **Joukkuelämpö** (näppäin 3) on [Lämmön](heat.md) tiheyskenttä, jossa jokaisella [ryhmällä](glossary.md) on oma sävynsä. Siellä, missä ryhmät menevät päällekkäin, niiden sävyt sekoittuvat. Tasainen kamppailu näkyy neutraalina. Peittävyys kantaa tiheyttä edelleen samoin kuin muissa tiloissa, joten kuva vastaa samalla kysymyksiin *kuinka paljon* ja *kenen*. Tila tarvitsee ryhmäsarakkeen.
 
-![Joukkuelämpö: jokainen puoli omalla värillään; siellä, missä ne menevät päällekkäin, värit sekoittuvat](../assets/img/en/heat-teams.webp)
+![Joukkuelämpö: jokainen puoli omalla värillään; siellä, missä ne menevät päällekkäin, värit sekoittuvat](../assets/img/fi/heat-teams.webp)
 
 Se ei ole [hahmo päällekkäin -näkymä](box-replay.md): se piirtää yhden hahmon henkilöä kohden. Tämä on tiheyskenttä, joka on värjätty saman sarakkeen mukaan.
 

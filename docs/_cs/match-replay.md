@@ -15,7 +15,7 @@ Přehrání je film zápasu, v němž je každý hráč nakreslen jako to, čím
 
 Výstřely, zásahy, požáry a vraky se kreslí na jednotkách a cílech na levelu. Kamery, popisky a taktický displej vám pomohou souboj číst. Znáte Tacview? [Parita s Tacview](tacview-parity.md) ukazuje, kde je každý jeho nástroj.
 
-![Přehrání figur ukázky tanků: tanky jako vlastní figury, s popisky jména, vozidla a rychlosti](../assets/img/en/replay-overview.webp)
+![Přehrání figur ukázky tanků: tanky jako vlastní figury, s popisky jména, vozidla a rychlosti](../assets/img/cs/replay-overview.webp)
 
 ## Spuštění přehrání {#start-a-replay}
 
@@ -26,11 +26,11 @@ Výstřely, zásahy, požáry a vraky se kreslí na jednotkách a cílech na lev
 
 Figury nahrazují krychle u každé jednotky, jejíž jméno nebo typ je znám (viz [Figury](figures.md)). Data bez sloupce jména nebo typu se kreslí jako vojáci.
 
-![Karta Zápas: výběr zápasů, sekce Figury, pohledy kamer, Přehrát a seznam událostí](../assets/img/en/match-replay-tab.webp)
+![Karta Zápas: výběr zápasů, sekce Figury, pohledy kamer, Přehrát a seznam událostí](../assets/img/cs/match-replay-tab.webp)
 
 ## Figury {#figures}
 
-![Hořící tank v orbitální kameře se zásahem, který ho zasáhl](../assets/img/en/replay-tanks.webp)
+![Hořící tank v orbitální kameře se zásahem, který ho zasáhl](../assets/img/cs/replay-tanks.webp)
 
 | Nastavení (sekce **Figury**) | Výchozí | Co dělá |
 |---|---|---|
@@ -51,7 +51,7 @@ Figury nahrazují krychle u každé jednotky, jejíž jméno nebo typ je znám (
 
 Když by jednotka byla menší než **Nejmenší figura na obrazovce**, může se stát symbolem, který zůstane čitelný. Tvar říká druh (například zaoblený kvádr s pásovou značkou pro obrněné vozidlo); barva říká stranu. Otevřete nabídku **Symboly**, abyste změnili styl.
 
-![Týchž šest jednotek jako symboly NATO, ruské taktické značky, ikony herní mapy a jen tvary](../assets/img/en/match-replay-symbols-styles.webp)
+![Týchž šest jednotek jako symboly NATO, ruské taktické značky, ikony herní mapy a jen tvary](../assets/img/cs/match-replay-symbols-styles.webp)
 
 ### Značky zásahů, vraky a požáry {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Klikněte na jednotku nebo její popisek, abyste ji **sledovali**; sekce **Přeh
 
 ## Taktický displej {#tactical-display}
 
-![Ukázka letectva s taktickým vzhledem (T): drátěný terén, panely zabití a událostí](../assets/img/en/replay-air-tactical.webp)
+![Ukázka letectva s taktickým vzhledem (T): drátěný terén, panely zabití a událostí](../assets/img/cs/replay-air-tactical.webp)
 
 Sekce **Taktický displej** kreslí pro žádnou jednotku, pro vybrané, pro všechny, nebo pro jeden druh (letadla, pozemní, lodě, zbraně): vektory rychlosti a dráhu před sebou, čáry nosu a vztlaku, radarové kužely, zámky, datová spojení, zóny a čáry zapojení, zorné čáry, kam hráči hledí (kužely pohledu), míření věží a zaznamenanou kameru.
 
@@ -84,7 +84,7 @@ Sekce **Taktický displej** kreslí pro žádnou jednotku, pro vybrané, pro vš
 
 `T` (nebo přepínač **Zobrazit jako taktický displej**) přepne vzhled na styl radarové obrazovky: záře, obrysy, vrstevnice, měřicí mřížka, skenovací čáry, kroužky dosahu, výškové žebříky, panely se zabitími a událostmi a **Režisér**, který kameru přesouvá k událostem sám.
 
-![Stejný letecký souboj v běžném vzhledu](../assets/img/en/replay-air.webp)
+![Stejný letecký souboj v běžném vzhledu](../assets/img/cs/replay-air.webp)
 
 ## Cíle {#objectives}
 

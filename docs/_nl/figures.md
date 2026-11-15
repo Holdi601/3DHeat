@@ -15,7 +15,7 @@ Een **figuur** is een klein 3D-model van wat een eenheid echt is: een tank, een 
 
 Er zijn ongeveer 2.000 benoemde voertuigen, vliegtuigen, schepen, wapens en soldaten, allemaal door de viewer zelf gebouwd.
 
-![Tanks van de demo, getekend als hun eigen figuren](../assets/img/en/replay-tanks.webp)
+![Tanks van de demo, getekend als hun eigen figuren](../assets/img/nl/replay-tanks.webp)
 
 ## Wat er in de catalogus zit {#what-is-in-the-catalogue}
 

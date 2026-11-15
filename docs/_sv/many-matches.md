@@ -14,7 +14,7 @@ outdated: false
 
 Varje match startar vid sin egen början, och dess enheter rör sig som figurer. Filerna går direkt in i grafikkortet, och ingen fullständig tabell byggs. Då spelas det jämnt där en vanlig inläsning skulle ta slut på minne.
 
-![Tio stridsvagnsmatcher lagda över varandra, en färg per match](../assets/img/en/many-matches.webp)
+![Tio stridsvagnsmatcher lagda över varandra, en färg per match](../assets/img/sv/many-matches.webp)
 
 ## Så använder du det {#how-to-use-it}
 

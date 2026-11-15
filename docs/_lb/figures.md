@@ -15,7 +15,7 @@ Eng **Figur** ass e klenge 3D-Modell vun deem, wat eng Eenheet wierklech ass: e 
 
 Et gi ronn 2.000 benannte Gefierer, Fligeren, Schëffer, Waffen a Zaldoten, all vum Viewer selwer gebaut.
 
-![D'Panzer vum Demo als hir eegen Figuren gezeechent](../assets/img/en/replay-tanks.webp)
+![D'Panzer vum Demo als hir eegen Figuren gezeechent](../assets/img/lb/replay-tanks.webp)
 
 ## Wat am Katalog ass {#what-is-in-the-catalogue}
 

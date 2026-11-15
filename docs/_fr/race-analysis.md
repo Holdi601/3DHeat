@@ -13,7 +13,7 @@ outdated: false
 
 Vous avez roulé deux fois le même circuit. L'onglet **Analyse de course** joue les deux trajets ensemble en 3D, montre où un tour était plus lent et vous dit pourquoi. Pas encore de tours ? Appuyez sur **Tours de démo**.
 
-![L'onglet Analyse de course avec les tours de démo : la barre latérale avec Tours et Où progresser, les voitures sur le circuit, les graphiques sous la vue](../assets/img/en/race-analysis-overview.webp)
+![L'onglet Analyse de course avec les tours de démo : la barre latérale avec Tours et Où progresser, les voitures sur le circuit, les graphiques sous la vue](../assets/img/fr/race-analysis-overview.webp)
 
 L'onglet compare deux tours ou plus d'un même parcours. Il partage le canevas, la caméra et le modèle de circuit chargé (**Arrière-plan / niveau**) avec la carte de chaleur ; tout le reste lui est propre : sa propre barre latérale et sa propre barre sous la vue. Des mots comme *tour*, *référence* et *corde* sont dans le [glossaire](glossary.md).
 

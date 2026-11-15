@@ -21,7 +21,7 @@ Sense res carregat, l'escena és fosca amb una quadrícula i eixos de colors (**
 
 El nivell és compartit per les tres pestanyes: un circuit carregat a la pestanya Anàlisi de curses és el mateix nivell que mostra el mapa de calor.
 
-![El panell Fons / nivell amb un nivell carregat: els botons Imatge de mapa i Model 3D, Teatre, Opacitat, Brillantor, Desa a la biblioteca i la llista de la Biblioteca](../assets/img/en/level-panel.webp)
+![El panell Fons / nivell amb un nivell carregat: els botons Imatge de mapa i Model 3D, Teatre, Opacitat, Brillantor, Desa a la biblioteca i la llista de la Biblioteca](../assets/img/ca/level-panel.webp)
 
 ## Posa un nivell darrere de les teves dades {#put-a-level-behind-your-data}
 

@@ -15,7 +15,7 @@ outdated: false
 
 Jest około 2000 nazwanych pojazdów, samolotów, okrętów, broni i żołnierzy, wszystkie zbudowane przez samą przeglądarkę.
 
-![Czołgi z demo narysowane jako własne figury](../assets/img/en/replay-tanks.webp)
+![Czołgi z demo narysowane jako własne figury](../assets/img/pl/replay-tanks.webp)
 
 ## Co jest w katalogu {#what-is-in-the-catalogue}
 

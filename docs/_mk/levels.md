@@ -21,7 +21,7 @@ outdated: false
 
 Нивото го делат сите три картички: тркачка патека вчитана во картичката Анализа на трки е истото ниво што го прикажува топлинската мапа.
 
-![Панелот Позадина / ниво со вчитано ниво: копчиња Map image и 3D model, Theatre, Opacity, Brightness, Save to library и листата Library](../assets/img/en/level-panel.webp)
+![Панелот Позадина / ниво со вчитано ниво: копчиња Map image и 3D model, Theatre, Opacity, Brightness, Save to library и листата Library](../assets/img/mk/level-panel.webp)
 
 ## Ставете ниво зад вашите податоци {#put-a-level-behind-your-data}
 

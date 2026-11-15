@@ -15,7 +15,7 @@ Taispeánann teas foirne áit a raibh gach foireann, gach foireann ina dath féi
 
 Is é **Teas foirne** (eochair 3) páirc an dlúis de [Teas](heat.md) le dath aonair ar gach [grúpa](glossary.md). San áit a bhforlapann grúpaí measctar a ndathanna; tagann comhrac comhionann amach neodrach. Iompraíonn teimhneacht an dlús go díreach mar a dhéanann sna modhanna eile, ionas go bhfreagraíonn an pictiúr *cé mhéad* agus *cé leis* ag an am céanna. Teastaíonn colún grúpa uaidh.
 
-![Teas foirne: gach taobh ina dhath féin; san áit a bhforlapann siad measctar na dathanna](../assets/img/en/heat-teams.webp)
+![Teas foirne: gach taobh ina dhath féin; san áit a bhforlapann siad measctar na dathanna](../assets/img/ga/heat-teams.webp)
 
 Ní hé an [forleagan figiúr](box-replay.md) é: tarraingíonn sin figiúr amháin do gach imreoir; is páirc teasa é seo dathaithe ag an gcolún céanna.
 

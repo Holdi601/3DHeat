@@ -14,7 +14,7 @@ outdated: false
 
 Hlaðið inn staðsetningum - CSV, Parquet, Tacview-upptökum, breyttum endurspilunum, einni skrá, möppu eða þúsundum leikja - og sjáið þær sem **hitakort sem þú getur flogið í gegnum**, sem **fígúrur sem endurspila leikinn**, sem línur eftir leiðunum sem fólk fór, eða sem einn hóp á móti öðrum. Það finnur sjálft það sem sker sig úr, og það keyrir alveg í vafranum: ekkert er sent á neinn stað.
 
-![Hiti tíu skriðdrekaleikja yfir sýnidalnum](../assets/img/en/heat-hero.webp)
+![Hiti tíu skriðdrekaleikja yfir sýnidalnum](../assets/img/is/heat-hero.webp)
 
 **Ert þú nýr hér?** Búðu til [sýnigögnin](demo-data.md) og fylgdu sjö skrefunum þeirra. Hver mynd á þessari síðu var tekin með þeim.
 
@@ -22,12 +22,12 @@ Hlaðið inn staðsetningum - CSV, Parquet, Tacview-upptökum, breyttum endurspi
 
 | | |
 |---|---|
-| ![Mismunur](../assets/img/en/heat-difference.webp) | **[Hitastillingar](heat-modes.md)** - hiti, [mismunur](difference.md) (rautt þar sem önnur hliðin var meira, grænblátt þar sem hin var meira), [liðahiti](team-heat.md), [línuhiti](line-heat.md); [stefnuhiti](directional-heat.md) með geirum, örvasviðum og skautsrit; hiti [vigtaður eftir gildi](value-weighting.md): hvað vopn, farartæki og eldsneyti kosta. |
-| ![Endurspilun](../assets/img/en/replay-tanks.webp) | **[Endurspilun leiks](match-replay.md)** - sérhver eining sem [fígúra](figures.md) af því sem hún er, NATO- eða rússnesk tákn þegar hún er langt í burtu, flaugar og skotrákir, höggmerki, flök, eldar, turnar, markmið, myndavélar í anda Tacview og taktísk skjámynd; [margir leikir í einu](many-matches.md). |
-| ![Innsýn](../assets/img/en/insights.webp) | **[Innsýn](insights.md)** - sterkar stöður, banvænt land, gildrur við upphaf, flöskuhálsar og áberandi leikmenn, fundið og raðað ásamt gögnunum; skrifuð samantekt, valfrjálst frá gervigreind að eigin vali; lýsandi fyrir einn leik; [þekkingarlinsan](knowledge.md). |
-| ![Rúmmál](../assets/img/en/compare.webp) | **[Rúmmál](volumes.md)** - teiknaðu kassa, prisma, sívalninga og kúlur, síaðu niður í þá, teldu það sem gerist inni, fluttu út og berðu staði saman hlið við hlið; [sundurliðun](breakdown.md) á því hver og hvað gengur best á stað. |
-| ![Síur](../assets/img/en/filters.webp) | **[Síur](filters.md)** - eftir atburðategund, leikmanni eða gervigreind, flokki farartækis, gildi, hvaða dálki sem er, á skjákortinu við hvaða gagnastærð sem er. |
-| ![Borð](../assets/img/en/level-panel.webp) | **[Borð](levels.md)** - kortamyndir, þrívíð borð gerð með [gagnatólunum](#related-repositories), einföldun, [bakgrunnur heimsins](world-backdrop.md) með raunverulegu landslagi fyrir gögn úr flugi. |
+| ![Mismunur](../assets/img/is/heat-difference.webp) | **[Hitastillingar](heat-modes.md)** - hiti, [mismunur](difference.md) (rautt þar sem önnur hliðin var meira, grænblátt þar sem hin var meira), [liðahiti](team-heat.md), [línuhiti](line-heat.md); [stefnuhiti](directional-heat.md) með geirum, örvasviðum og skautsrit; hiti [vigtaður eftir gildi](value-weighting.md): hvað vopn, farartæki og eldsneyti kosta. |
+| ![Endurspilun](../assets/img/is/replay-tanks.webp) | **[Endurspilun leiks](match-replay.md)** - sérhver eining sem [fígúra](figures.md) af því sem hún er, NATO- eða rússnesk tákn þegar hún er langt í burtu, flaugar og skotrákir, höggmerki, flök, eldar, turnar, markmið, myndavélar í anda Tacview og taktísk skjámynd; [margir leikir í einu](many-matches.md). |
+| ![Innsýn](../assets/img/is/insights.webp) | **[Innsýn](insights.md)** - sterkar stöður, banvænt land, gildrur við upphaf, flöskuhálsar og áberandi leikmenn, fundið og raðað ásamt gögnunum; skrifuð samantekt, valfrjálst frá gervigreind að eigin vali; lýsandi fyrir einn leik; [þekkingarlinsan](knowledge.md). |
+| ![Rúmmál](../assets/img/is/compare.webp) | **[Rúmmál](volumes.md)** - teiknaðu kassa, prisma, sívalninga og kúlur, síaðu niður í þá, teldu það sem gerist inni, fluttu út og berðu staði saman hlið við hlið; [sundurliðun](breakdown.md) á því hver og hvað gengur best á stað. |
+| ![Síur](../assets/img/is/filters.webp) | **[Síur](filters.md)** - eftir atburðategund, leikmanni eða gervigreind, flokki farartækis, gildi, hvaða dálki sem er, á skjákortinu við hvaða gagnastærð sem er. |
+| ![Borð](../assets/img/is/level-panel.webp) | **[Borð](levels.md)** - kortamyndir, þrívíð borð gerð með [gagnatólunum](#related-repositories), einföldun, [bakgrunnur heimsins](world-backdrop.md) með raunverulegu landslagi fyrir gögn úr flugi. |
 
 Einnig: flipinn [Kappakstursgreining](race-analysis.md) fyrir hringi í kappakstursleikjum, flipinn [Leikur](match-analysis.md) fyrir samantektir úr Counter-Strike 2, [Taktíkartaflan](tactics-board.md) fyrir áætlanir á borði, [greining á hittum](hit-analysis.md) eftir farartæki, [fjöldagreining](mass-analysis.md) á þúsundum leikja, [myndavélarleiðir og myndband](camera-path-and-video.md), [40 tungumál](languages.md), [mælieiningar eða breskar einingar](settings.md).
 

@@ -23,7 +23,7 @@ No topo da barra lateral:
 | Botão **...** ao lado de **Unidades** | Abre "Escolher uma unidade para cada grandeza": uma lista por grandeza |
 | Menu **Idioma** | O idioma do visualizador: [40 idiomas](languages.md), ou o do navegador |
 
-![O cabeçalho com o menu Unidades e a janela de unidade por grandeza aberta](../assets/img/en/settings-units.webp)
+![O cabeçalho com o menu Unidades e a janela de unidade por grandeza aberta](../assets/img/pt/settings-units.webp)
 
 Os números que escreve numa caixa podem usar ponto ou vírgula (`0.35` ou `0,35`). O visualizador lê os dois e mostra os números como o idioma do visualizador os escreve.
 
@@ -48,11 +48,11 @@ Outras unidades que pode escolher para uma grandeza: distância km, mi, NM; velo
 
 ## Modo de ajuda {#help-mode}
 
-![Modo de ajuda: o que significam as cores](../assets/img/en/help.webp)
+![Modo de ajuda: o que significam as cores](../assets/img/pt/help.webp)
 
 Prima `?` ou `F1`, ou clique no botão **?**. Mostra *O que as cores significam*: legendas da vista 3D, das rampas de calor, das cores das equipas, das cores do nível, das cores de estado dos painéis, do painel da partida e da vista de corrida. Mantém-se até o desligar. No separador Partida explica também as cores do painel da partida.
 
-![Modo de ajuda no separador Partida](../assets/img/en/settings-help-match.webp)
+![Modo de ajuda no separador Partida](../assets/img/pt/settings-help-match.webp)
 
 ## O que o navegador memoriza {#what-the-browser-remembers}
 

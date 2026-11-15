@@ -15,7 +15,7 @@ O calor pinta os sítios onde aconteceram muitas coisas: vermelho onde aconteceu
 
 **Calor** (tecla 1) é o modo por omissão. Cada [linha](glossary.md) visível contribui com um [sprite](glossary.md) redondo virado para a câmara; os sprites que se sobrepõem somam-se num buffer de vírgula flutuante; a soma passa por uma rampa de cores - por omissão transparente → vermelho → amarelo → branco - e é desenhada sobre a cena.
 
-![Calor num nível 3D: pontos quentes dentro e em cima dos edifícios](../assets/img/en/shooter-heat.webp)
+![Calor num nível 3D: pontos quentes dentro e em cima dos edifícios](../assets/img/pt/shooter-heat.webp)
 
 A imagem mostra o calor de uma ronda de atirador num nível com edifícios: os pontos quentes estão nas salas e nas escadas, não só no chão.
 
@@ -26,7 +26,7 @@ A imagem mostra o calor de uma ronda de atirador num nível com edifícios: os p
 3. Altere o **Raio do sprite** até os pontos vizinhos se fundirem em faixas: mais pequeno mostra manchas isoladas, mais grande mostra áreas.
 4. Abra **Cores do calor** para mudar as cores, ou **Profundidade** para deixar que colinas e paredes escondam o calor atrás delas.
 
-![As secções Forma do calor e Cores do calor da barra lateral, ambas abertas](../assets/img/en/heat-panel.webp)
+![As secções Forma do calor e Cores do calor da barra lateral, ambas abertas](../assets/img/pt/heat-panel.webp)
 
 Os mesmos painéis dão forma à [Diferença](difference.md), ao [Calor por equipa](team-heat.md) e ao [Calor em linhas](line-heat.md); diferem no que se soma (com sinal, colorido, ou ao longo de linhas), não na forma como o fazem.
 

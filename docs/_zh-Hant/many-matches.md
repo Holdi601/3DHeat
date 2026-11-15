@@ -14,7 +14,7 @@ outdated: false
 
 每場比賽都從自己的開頭開始，其單位以模型的形式移動。檔案會直接送進顯示卡，不會建立完整的表格，因此即使一般載入會耗盡記憶體，它仍能流暢播放。
 
-![十場戰車比賽重疊，每場比賽一種顏色](../assets/img/en/many-matches.webp)
+![十場戰車比賽重疊，每場比賽一種顏色](../assets/img/zh-Hant/many-matches.webp)
 
 ## 使用方法 {#how-to-use-it}
 

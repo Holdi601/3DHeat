@@ -15,7 +15,7 @@ Komandų šiluma rodo, kur buvo kiekviena komanda, kiekviena – savo spalva. Te
 
 **Komandų šiluma** (klavišas 3) yra [Šilumos](heat.md) tankio laukas, kuriame kiekvienai [grupei](glossary.md) suteiktas savas atspalvis. Ten, kur grupės persidengia, jų atspalviai maišosi; lygi kova išeina neutrali. Nepermatomumas ir toliau nešą tankį taip, kaip ir kituose režimuose, todėl paveikslėlis iš karto atsako ir į *kiek*, ir į *kieno*. Jam reikia grupių stulpelio.
 
-![Komandų šiluma: kiekviena pusė savo spalva; ten, kur jos persidengia, spalvos maišosi](../assets/img/en/heat-teams.webp)
+![Komandų šiluma: kiekviena pusė savo spalva; ten, kur jos persidengia, spalvos maišosi](../assets/img/lt/heat-teams.webp)
 
 Tai nėra [figūrų sutapdinimas](box-replay.md): jis piešia po vieną figūrą kiekvienam asmeniui, o čia – šilumos lauką, nudažytą pagal tą patį stulpelį.
 

@@ -15,7 +15,7 @@ Is-sħana turi l-postijiet fejn ġraw ħafna affarijiet: aħmar fejn ġara ftit,
 
 **Sħana** (ċavetta 1) hija l-modalità predefinita. Kull ringiela viżibbli [(row)](glossary.md) tikkontribwixxi [sprite](glossary.md) tond li jħares lejn il-kamera; sprites li jaqgħu fuq xulxin jiżdiedu flimkien f'buffer ta' numri b'virgola mobbli; is-somma tiġi mqabbla permezz ta' rampa ta' kuluri - b'mod predefinit trasparenti → aħmar → isfar → abjad - u tinħadem fuq ix-xena.
 
-![Sħana fuq livell 3D: punti sħan ġewwa u fuq il-bini](../assets/img/en/shooter-heat.webp)
+![Sħana fuq livell 3D: punti sħan ġewwa u fuq il-bini](../assets/img/mt/shooter-heat.webp)
 
 Ir-ritratt juri s-sħana ta' rawnd ta' shooter fuq livell bil-bini: il-punti sħan jinsabu fl-kmamar u fuq it-taraġ, mhux biss fuq l-art.
 
@@ -26,7 +26,7 @@ Ir-ritratt juri s-sħana ta' rawnd ta' shooter fuq livell bil-bini: il-punti sħ
 3. Ibdel **Raġġ tas-sprite** sakemm il-punti ta' ħdejn xulxin jingħaqdu f'fasċi: iż-żgħir juri punti waħedhom, il-kbir juri żoni.
 4. Iftaħ **Kuluri tas-sħana** biex tibdel il-kuluri, jew **Fond** biex l-għoljiet u l-ħitan jaħbu s-sħana warajhom.
 
-![Is-sezzjonijiet Forma tas-sħana u Kuluri tas-sħana tal-ġenb, it-tnejn miftuħa](../assets/img/en/heat-panel.webp)
+![Is-sezzjonijiet Forma tas-sħana u Kuluri tas-sħana tal-ġenb, it-tnejn miftuħa](../assets/img/mt/heat-panel.webp)
 
 L-istess pannelli jifformaw [Differenza](difference.md), [Sħana tat-tim](team-heat.md) u [Sħana tal-linji](line-heat.md); jiddifferenzjaw f'dak li jiġi miżjud (b'sinjal, b'kuluri, jew tul linji), mhux f'kif isir.
 

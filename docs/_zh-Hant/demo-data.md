@@ -10,7 +10,7 @@ outdated: false
 
 # 示範資料：五分鐘內試用檢視器
 
-![示範山谷中十場戰車比賽的熱度：第 4 步顯示的內容](../assets/img/en/heat-hero.webp)
+![示範山谷中十場戰車比賽的熱度：第 4 步顯示的內容](../assets/img/zh-Hant/heat-hero.webp)
 
 還沒有你自己的資料？儲存庫可以產生一些。其中的所有內容都是虛構的：一座山谷、一個院子，以及三種虛構遊戲風格的比賽，玩家名稱是 *Blue 1* 或 *Red 3*。本網站的所有圖片都是用它拍攝的。
 
@@ -45,7 +45,7 @@ node tools/demo-data.mjs
 6. 開啟**洞察**（在熱圖側邊欄中）：它會找出射擊、命中與摧毀次數遠多於其他地方的位置，例如兩座山丘周圍。
 7. 開啟**對戰**頁籤；在**重播中的對戰**下選擇 *Match 01*；在時間軸上按**播放**：即是[重播](match-replay.md)。
 
-![以模型呈現戰車的 Match 01 重播](../assets/img/en/replay-overview.webp)
+![以模型呈現戰車的 Match 01 重播](../assets/img/zh-Hant/replay-overview.webp)
 
 對於射擊遊戲，請載入 `demo-yard.glb` 與 `shooter.parquet`；對於空戰，請載入 `air.parquet`（在**圖示大小** 4 時，模型較容易看清楚；此滑桿位於熱圖側邊欄的**隊伍檢視器**面板中）。
 

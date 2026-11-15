@@ -18,7 +18,7 @@ El visor et diu quan existeix una versió més nova, i només s'actualitza quan 
 2. **Si diu que executis restart.bat**, tanca la finestra del servidor (la finestra negra que va obrir `start.bat`) i fes doble clic a `restart.bat`.
 3. **En iniciar el visor.** `start.bat` també ho comprova. Si existeix una versió més nova, pregunta **Update now? [Y/N]**. Prem `Y` per actualitzar. Prem `N`, o espera 60 segons sense respondre, per iniciar la versió que tens.
 
-![L'avís d'actualització amb Actualitza ara i Més tard](../assets/img/en/updates-notice.webp)
+![L'avís d'actualització amb Actualitza ara i Més tard](../assets/img/ca/updates-notice.webp)
 
 Una còpia amb canvis propis mai no s'actualitza per tu; la caixa només diu que hi ha una actualització esperant, i indica que has de confirmar o guardar els teus canvis i executar `git pull`. Una còpia que no s'ha instal·lat amb git (un fitxer zip, per exemple) no mostra res.
 

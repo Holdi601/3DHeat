@@ -15,7 +15,7 @@ outdated: false
 
 Alt tælles i din browser. Intet forlader din computer, medmindre du slår en ekstern AI til (se [Ekstern AI](#external-ai)).
 
-![Indsigter på tank-demoen: 14 fund, stærkeste først](../assets/img/en/insights.webp)
+![Indsigter på tank-demoen: 14 fund, stærkeste først](../assets/img/da/insights.webp)
 
 Afsnittet **Indsigter** findes i sidebjælken på fanerne Heatmap og Kamp. Det har tre faner: **Fund**, **Gennemgang** og **Kommentator**.
 
@@ -30,7 +30,7 @@ Optællingen bruger de aktuelle filtre, skjulte grupper og den valgte kamp over 
 
 Linjerne øverst på listen (for eksempel pengetotalerne) opsummerer hele datasættet før fundene.
 
-![Et fund åbnet: varmezonen for affyrede skud, dets tal og et passende afsnit fra litteraturen](../assets/img/en/insights-finding.webp)
+![Et fund åbnet: varmezonen for affyrede skud, dets tal og et passende afsnit fra litteraturen](../assets/img/da/insights-finding.webp)
 
 ### Detektorerne {#the-detectors}
 
@@ -55,7 +55,7 @@ Hvert sted eller hver gruppe testes mod resten af kortet (eksakte binomial- elle
 
 Fanen **Gennemgang** skriver fundene op som en kort tekst: en indledning, det tydeligste fund, ét om taktik, ét om balance, resten grupperet efter detektor, og hvor mange der hviler på svagere evidens. Hvert afsnit har nummererede knapper, der viser dets fund. **Kopiér tekst** kopierer den.
 
-![Gennemgangen skrevet af den indbyggede fortæller](../assets/img/en/debrief.webp)
+![Gennemgangen skrevet af den indbyggede fortæller](../assets/img/da/debrief.webp)
 
 Den indbyggede fortæller virker offline, på dit sprog. Vælgeren **Linse** over den (se [Vidensobjektivet](knowledge.md)) bestemmer, hvilken litteratur afsnittene citerer.
 
@@ -78,7 +78,7 @@ Skriv derefter et valgfrit spørgsmål, og tryk på **Skriv med AI**. Kun funden
 
 For **én kamp** (vælg en, hvis flere er indlæst) finder **Kommentatoren** de øjeblikke, der er værd at se: første blod, multidrab, byttehandler, clutches, skift i mål, comebacks, markante spillere, lange skud.
 
-![Kommentatorens øjeblikke for én runde af skyde-demoen](../assets/img/en/caster.webp)
+![Kommentatorens øjeblikke for én runde af skyde-demoen](../assets/img/da/caster.webp)
 
 - Klik på et øjeblik: visningen skifter til replayet, springer til lige før det, flyver derhen og følger spilleren.
 - **Afspil øjeblikkene** afspiller hvert til enden og går videre; **Forrige** / **Næste** går igennem dem.

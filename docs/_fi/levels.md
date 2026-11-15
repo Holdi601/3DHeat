@@ -21,7 +21,7 @@ Kun mitään ei ole ladattu, kohtaus on tumma, ja siinä on ruudukko ja värilli
 
 Kenttä on yhteinen kaikille kolmelle välilehdelle: Kisa-analyysissä ladattu rata on sama kenttä, jonka lämpökartta näyttää.
 
-![Tausta / kenttä -paneeli, jossa kenttä on ladattu: painikkeet Karttakuva ja 3D-malli, Sotanäyttämö, Peittävyys, Kirkkaus, Tallenna kirjastoon ja Kirjasto-luettelo](../assets/img/en/level-panel.webp)
+![Tausta / kenttä -paneeli, jossa kenttä on ladattu: painikkeet Karttakuva ja 3D-malli, Sotanäyttämö, Peittävyys, Kirkkaus, Tallenna kirjastoon ja Kirjasto-luettelo](../assets/img/fi/level-panel.webp)
 
 ## Aseta kenttä datasi taakse {#put-a-level-behind-your-data}
 

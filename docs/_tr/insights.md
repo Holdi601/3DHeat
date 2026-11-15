@@ -15,7 +15,7 @@ outdated: false
 
 Her şey tarayıcınızda sayılır. Harici bir yapay zekâyı açmadıkça (bkz. [Harici yapay zekâ](#external-ai)) hiçbir şey bilgisayarınızdan çıkmaz.
 
-![Tank demosunda içgörüler: 14 bulgu, en güçlüsü önce](../assets/img/en/insights.webp)
+![Tank demosunda içgörüler: 14 bulgu, en güçlüsü önce](../assets/img/tr/insights.webp)
 
 **İçgörüler** bölümü Isı haritası ve Maç sekmelerinin kenar çubuğundadır. Üç sekmesi vardır: **Bulgular**, **Özet** ve **Anlatıcı**.
 
@@ -30,7 +30,7 @@ Sayma, tüm zaman aralığında geçerli filtreleri, gizli grupları ve seçilen
 
 Listenin en üstündeki satırlar (örneğin para toplamları) bulgulardan önce tüm veriyi özetler.
 
-![Açılmış bir bulgu: ateş edilen atışların sıcak bölgesi, sayıları ve literatürden eşleşen bir pasaj](../assets/img/en/insights-finding.webp)
+![Açılmış bir bulgu: ateş edilen atışların sıcak bölgesi, sayıları ve literatürden eşleşen bir pasaj](../assets/img/tr/insights-finding.webp)
 
 ### Dedektörler {#the-detectors}
 
@@ -55,7 +55,7 @@ Her yer ya da grup haritanın geri kalanına karşı sınanır (kesin ikili ya d
 
 **Özet** sekmesi bulguları kısa bir metne yazar: bir giriş, en net bulgu, taktik için bir tane, dengeleme için bir tane, geri kalanı dedektöre göre gruplanmış ve kaçının daha zayıf kanıta dayandığı. Her paragrafta, bulgularını gösteren numaralı düğmeler vardır. **Metni kopyala** onu kopyalar.
 
-![Yerleşik anlatıcının yazdığı özet](../assets/img/en/debrief.webp)
+![Yerleşik anlatıcının yazdığı özet](../assets/img/tr/debrief.webp)
 
 Yerleşik anlatıcı çevrimdışı çalışır, sizin dilinizde. Üstündeki **Mercek** seçici (bkz. [Bilgi merceği](knowledge.md)) paragrafların hangi literatüre atıf yaptığını belirler.
 
@@ -78,7 +78,7 @@ Sonra isteğe bağlı bir soru yazın ve **Yapay zekâ ile yaz**'a basın. Yaln�
 
 **Tek bir maç** için (birkaç tane yüklüyse birini seçin), **Anlatıcı** izlemeye değer anları bulur: ilk kan, çoklu öldürmeler, takaslar, son adam savaşları, hedef değişimleri, geri dönüşler, öne çıkan oyuncular, uzun atışlar.
 
-![Shooter demosunun bir turu için anlatıcının anları](../assets/img/en/caster.webp)
+![Shooter demosunun bir turu için anlatıcının anları](../assets/img/tr/caster.webp)
 
 - Bir ana tıklayın: görünüm tekrara geçer, hemen öncesine atlar, oraya uçar ve oyuncuyu izler.
 - **Anları oynat** her birini sonuna kadar oynatır ve ilerler; **Önceki** / **Sonraki** onların arasında adım atar.

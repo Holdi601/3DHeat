@@ -23,7 +23,7 @@ Ag barr an bharra taoibh:
 | Cnaipe **...** taobh le **Aonaid** | Osclaíonn "Roghnaigh aonad do gach méid": liosta anuas amháin do gach cainníocht |
 | Roghchlár **Teanga** | Teanga an amharcóra: [40 teanga](languages.md), nó teanga an bhrabhsálaí |
 
-![Ceannlíne leis an roghchlár Aonaid agus an fhuinneog aonad-in-aghaidh-cainníochta oscailte](../assets/img/en/settings-units.webp)
+![Ceannlíne leis an roghchlár Aonaid agus an fhuinneog aonad-in-aghaidh-cainníochta oscailte](../assets/img/ga/settings-units.webp)
 
 Is féidir uimhreacha a chlóscríobhann tú i mbosca pointe nó camóg a úsáid (`0.35` nó `0,35`). Léann an t-amharcóir an dá cheann agus taispeánann sé uimhreacha mar a scríobhann teanga an amharcóra iad.
 
@@ -48,11 +48,11 @@ Aonaid eile is féidir leat a roghnú do chainníocht amháin: fad km, mi, NM; l
 
 ## Mód cabhrach {#help-mode}
 
-![Mód cabhrach: cad a chiallaíonn na dathanna](../assets/img/en/help.webp)
+![Mód cabhrach: cad a chiallaíonn na dathanna](../assets/img/ga/help.webp)
 
 Brúigh `?` nó `F1`, nó cliceáil ar an gcnaipe **?**. Taispeánann sé *Cad a chiallaíonn na dathanna*: finscéalta don radharc 3D, na grádáin theasa, dathanna foirne, dathanna an leibhéil, dathanna stádas na bpainéal, painéal an chluiche agus an radharc rása. Fanann sé ar siúl go dtí go múchann tú é. I gcluaisín Cluiche míníonn sé dathanna phainéal an chluiche freisin.
 
-![Mód cabhrach sa chluaisín Cluiche](../assets/img/en/settings-help-match.webp)
+![Mód cabhrach sa chluaisín Cluiche](../assets/img/ga/settings-help-match.webp)
 
 ## Cad a chuimhníonn an brabhsálaí {#what-the-browser-remembers}
 

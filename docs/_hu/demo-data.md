@@ -10,7 +10,7 @@ outdated: false
 
 # Demóadatok: próbálja ki a megjelenítőt öt perc alatt
 
-![Tíz harckocsimeccs hője a Demo Valley-ben: amit a 4. lépés mutat](../assets/img/en/heat-hero.webp)
+![Tíz harckocsimeccs hője a Demo Valley-ben: amit a 4. lépés mutat](../assets/img/hu/heat-hero.webp)
 
 Még nincsenek saját adatai? A tároló készít néhányat. Minden benne kitalált: egy völgy, egy udvar, és három kitalált játékstílus meccsei, *Blue 1* vagy *Red 3* nevű játékosokkal. Az oldal összes képe ezzel készült.
 
@@ -45,7 +45,7 @@ Minden táblázat a láblécében nevezi meg a saját oszlopait, így hozzárend
 6. Nyissa meg a **Felismerések** panelt (a Hőtérkép oldalsávjában): megtalálja azokat a helyeket, ahol sokkal többet lőttek, találtak el és semmisítettek meg, mint máshol – a két domb körül.
 7. Nyissa meg a **Meccs** fület; a **Meccsek a visszajátszásban** alatt válassza a *Match 01*-et; nyomja meg a **Lejátszás** gombot az idővonalon: ez a [visszajátszás](match-replay.md).
 
-![A Match 01 visszajátszása figurákként megjelenő harckocsikkal](../assets/img/en/replay-overview.webp)
+![A Match 01 visszajátszása figurákként megjelenő harckocsikkal](../assets/img/hu/replay-overview.webp)
 
 A lövöldözős játékhoz töltse be a `demo-yard.glb` és a `shooter.parquet` fájlt; a légi harchoz az `air.parquet` fájlt (a figurák a **Figuraméret** 4-es értékén jobban látszanak, ez egy csúszka a Hőtérkép oldalsávjának **Csapatnéző** panelén).
 

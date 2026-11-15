@@ -14,7 +14,7 @@ outdated: false
 
 Last inn posisjoner – CSV, Parquet, Tacview-opptak, konverterte replayer, én fil, en mappe eller tusenvis av kamper – og se dem som et **varmekart du kan fly gjennom**, som **figurer som spiller kampen av igjen**, som linjer langs rutene folk tok, eller som én populasjon mot en annen. Den finner selv det som skiller seg ut, og den kjører helt i nettleseren din: ingenting sendes til noen server.
 
-![Varme fra ti stridsvognkamper over Demo Valley](../assets/img/en/heat-hero.webp)
+![Varme fra ti stridsvognkamper over Demo Valley](../assets/img/no/heat-hero.webp)
 
 **Ny her?** Lag [demodataene](demo-data.md) og følg de sju stegene. Alle bildene på denne siden er tatt med dem.
 
@@ -22,12 +22,12 @@ Last inn posisjoner – CSV, Parquet, Tacview-opptak, konverterte replayer, én 
 
 | | |
 |---|---|
-| ![Forskjell](../assets/img/en/heat-difference.webp) | **[Varmemodi](heat-modes.md)** – varme, [forskjell](difference.md) (rødt der den ene siden var mer, grønt-blått der den andre var det), [lagvarme](team-heat.md), [linjevarme](line-heat.md); [retningsbasert varme](directional-heat.md) med kiler, pilfelt og polardiagrammer; varme [vektet etter verdi](value-weighting.md): hva våpen, kjøretøy og drivstoff koster. |
-| ![Reprise](../assets/img/en/replay-tanks.webp) | **[Kampreplay](match-replay.md)** – hver enhet som [figuren](figures.md) for det den er, NATO- eller russiske symboler på avstand, missiler og sporstoffer, treffmerker, vrak, branner, tårn, mål, Tacview-liknende kameraer og taktisk visning; [mange kamper samtidig](many-matches.md). |
-| ![Innsikt](../assets/img/en/insights.webp) | **[Innsikt](insights.md)** – sterke posisjoner, dødelig terreng, spawn-feller, flaskehalser og spillere som skiller seg ut, funnet og rangert med beviset; en skriftlig oppsummering, eventuelt laget av en KI du velger; en kommentator for én kamp; [kunnskapslinsen](knowledge.md). |
-| ![Volumer](../assets/img/en/compare.webp) | **[Volumer](volumes.md)** – tegn bokser, prismer, sylindre og kuler, filtrer til dem, tell det som skjer inni, eksporter det, og sammenlign steder side om side; [oppdeling](breakdown.md) av hvem og hva som gjør det best på et sted. |
-| ![Filtre](../assets/img/en/filters.webp) | **[Filtre](filters.md)** – etter hendelsestype, spiller eller KI, kjøretøyklasse, verdi, hvilken som helst kolonne, i grafikkortet uansett datastørrelse. |
-| ![Bane](../assets/img/en/level-panel.webp) | **[Baner](levels.md)** – kartbilder, 3D-baner laget med [dataverktøyene](#related-repositories), forenkling, [verdensbakgrunnen](world-backdrop.md) med ekte terreng for flydata. |
+| ![Forskjell](../assets/img/no/heat-difference.webp) | **[Varmemodi](heat-modes.md)** – varme, [forskjell](difference.md) (rødt der den ene siden var mer, grønt-blått der den andre var det), [lagvarme](team-heat.md), [linjevarme](line-heat.md); [retningsbasert varme](directional-heat.md) med kiler, pilfelt og polardiagrammer; varme [vektet etter verdi](value-weighting.md): hva våpen, kjøretøy og drivstoff koster. |
+| ![Reprise](../assets/img/no/replay-tanks.webp) | **[Kampreplay](match-replay.md)** – hver enhet som [figuren](figures.md) for det den er, NATO- eller russiske symboler på avstand, missiler og sporstoffer, treffmerker, vrak, branner, tårn, mål, Tacview-liknende kameraer og taktisk visning; [mange kamper samtidig](many-matches.md). |
+| ![Innsikt](../assets/img/no/insights.webp) | **[Innsikt](insights.md)** – sterke posisjoner, dødelig terreng, spawn-feller, flaskehalser og spillere som skiller seg ut, funnet og rangert med beviset; en skriftlig oppsummering, eventuelt laget av en KI du velger; en kommentator for én kamp; [kunnskapslinsen](knowledge.md). |
+| ![Volumer](../assets/img/no/compare.webp) | **[Volumer](volumes.md)** – tegn bokser, prismer, sylindre og kuler, filtrer til dem, tell det som skjer inni, eksporter det, og sammenlign steder side om side; [oppdeling](breakdown.md) av hvem og hva som gjør det best på et sted. |
+| ![Filtre](../assets/img/no/filters.webp) | **[Filtre](filters.md)** – etter hendelsestype, spiller eller KI, kjøretøyklasse, verdi, hvilken som helst kolonne, i grafikkortet uansett datastørrelse. |
+| ![Bane](../assets/img/no/level-panel.webp) | **[Baner](levels.md)** – kartbilder, 3D-baner laget med [dataverktøyene](#related-repositories), forenkling, [verdensbakgrunnen](world-backdrop.md) med ekte terreng for flydata. |
 
 Også: fanen [Løpsanalyse](race-analysis.md) for runder i racingspill, fanen [Kamp](match-analysis.md) for oppsummeringer av Counter-Strike 2, [taktikktavlen](tactics-board.md) for planer på en bane, [trefferanalyse](hit-analysis.md) per kjøretøy, [massanalyse](mass-analysis.md) av tusenvis av kamper, [kameraveier og video](camera-path-and-video.md), [40 språk](languages.md), [metriske eller imperiske enheter](settings.md).
 

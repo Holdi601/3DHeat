@@ -14,7 +14,7 @@ outdated: false
 
 Kiekvienos rungtynės prasideda nuo savo pradžios, o jų vienetai juda kaip figūros. Failai eina tiesiai į vaizdo plokštę ir pilnos lentelės nekuriama, todėl veikia sklandžiai ten, kur įprastas įkėlimas baigtų atmintį.
 
-![Dešimt tankų rungtynių viena ant kitos, po vieną spalvą kiekvienoms rungtynėms](../assets/img/en/many-matches.webp)
+![Dešimt tankų rungtynių viena ant kitos, po vieną spalvą kiekvienoms rungtynėms](../assets/img/lt/many-matches.webp)
 
 ## Kaip naudoti {#how-to-use-it}
 

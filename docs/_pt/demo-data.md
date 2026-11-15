@@ -10,7 +10,7 @@ outdated: false
 
 # Dados de demonstração: experimente o visualizador em cinco minutos
 
-![Calor de dez partidas de tanques no vale de demonstração: o que mostra o passo 4](../assets/img/en/heat-hero.webp)
+![Calor de dez partidas de tanques no vale de demonstração: o que mostra o passo 4](../assets/img/pt/heat-hero.webp)
 
 Ainda não tem dados seus? O repositório cria alguns. Tudo o que lá está é inventado: um vale, um pátio e partidas de três estilos de jogo fictícios, com jogadores chamados *Blue 1* ou *Red 3*. As imagens deste site foram todas tiradas com eles.
 
@@ -45,7 +45,7 @@ Cada tabela indica as suas próprias colunas no rodapé, por isso carrega sem ne
 6. Abra **Descobertas** (na barra lateral do Mapa de calor): encontra os lugares onde se disparou, atingiu e destruiu muito mais do que noutros sítios - à volta das duas colinas.
 7. Abra o separador **Partida**; em **Partidas na repetição** escolha *Match 01*; prima **Reproduzir** na linha temporal: a [repetição](match-replay.md).
 
-![Uma repetição da Match 01 com tanques como figuras](../assets/img/en/replay-overview.webp)
+![Uma repetição da Match 01 com tanques como figuras](../assets/img/pt/replay-overview.webp)
 
 Para o jogo de atirador, carregue `demo-yard.glb` e `shooter.parquet`; para o combate aéreo, `air.parquet` (as figuras veem-se melhor com **Tamanho das figuras** 4, um controlo deslizante no painel **Visualizador de equipas** da barra lateral do Mapa de calor).
 

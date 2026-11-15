@@ -15,7 +15,7 @@ Kiekvienas taškas prideda šiek tiek švytėjimo, švytėjimai susikaupia, o su
 
 Režimų juosta viršuje Šilumos žemėlapio skirtuko šoninėje juostoje parenka, kaip piešiamas [duomenų rinkinys](glossary.md). Klavišai 1–4 parenka Šilumą, Skirtumą, Komandų šilumą ir Linijas. Figūrų sutapdinimas klavišo neturi.
 
-![Režimų juosta su Šiluma, Skirtumu, Komandų šiluma, Figūrų sutapdinimu ir Linijomis](../assets/img/en/heat-modes-bar.webp)
+![Režimų juosta su Šiluma, Skirtumu, Komandų šiluma, Figūrų sutapdinimu ir Linijomis](../assets/img/lt/heat-modes-bar.webp)
 
 | Režimas | Klausimas, į kurį atsako |
 |---|---|
@@ -25,7 +25,7 @@ Režimų juosta viršuje Šilumos žemėlapio skirtuko šoninėje juostoje paren
 | **Linijos** | Kuria kryptimi žmonės ėjo? |
 | **Figūrų sutapdinimas** | Kas kur buvo ir kada? |
 
-![Tie patys duomenys keturiais režimais: Šiluma, Skirtumas, Komandų šiluma ir Linijos](../assets/img/en/heat-modes-grid.webp)
+![Tie patys duomenys keturiais režimais: Šiluma, Skirtumas, Komandų šiluma ir Linijos](../assets/img/lt/heat-modes-grid.webp)
 
 | Režimas (juostos žymė) | Klavišas | Ką piešia | Reikia |
 |---|---|---|---|

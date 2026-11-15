@@ -21,7 +21,7 @@ Hiçbir şey yüklü değilken sahne ızgara ve renkli eksenlerle karanlıktır 
 
 Harita üç sekmenin hepsi tarafından paylaşılır: Yarış analizi sekmesinde yüklenen bir pist, ısı haritasının gösterdiği haritanın aynısıdır.
 
-![Harita yüklüyken Arka plan / bölüm paneli: Harita görüntüsü ve 3B model düğmeleri, Harekât alanı, Opaklık, Parlaklık, Kitaplığa kaydet ve Kitaplık listesi](../assets/img/en/level-panel.webp)
+![Harita yüklüyken Arka plan / bölüm paneli: Harita görüntüsü ve 3B model düğmeleri, Harekât alanı, Opaklık, Parlaklık, Kitaplığa kaydet ve Kitaplık listesi](../assets/img/tr/level-panel.webp)
 
 ## Verinizin arkasına bir harita koyun {#put-a-level-behind-your-data}
 

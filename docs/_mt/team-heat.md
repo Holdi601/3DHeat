@@ -15,7 +15,7 @@ Is-sħana tat-tim turi fejn kien kull tim, kull tim b'kulur tiegħu. Fejn it-tim
 
 **Sħana tat-tim** (ċavetta 3) hija l-qasam tad-densità ta' [Sħana](heat.md) b'kull [grupp](glossary.md) mogħti t-tonalità tiegħu. Fejn il-gruppi jaqgħu fuq xulxin, it-tonalitajiet tagħhom jitħalltu; kompetizzjoni ndaqs toħroġ newtrali. L-opaċità għadha ġġorr id-densità eżattament bħal fil-modalitajiet l-oħra, għalhekk l-istampa twieġeb *kemm* u *ta' min* fl-istess ħin. Teħtieġ kolonna ta' grupp.
 
-![Sħana tat-tim: kull naħa b'kulur tagħha; fejn jaqgħu fuq xulxin il-kuluri jitħalltu](../assets/img/en/heat-teams.webp)
+![Sħana tat-tim: kull naħa b'kulur tagħha; fejn jaqgħu fuq xulxin il-kuluri jitħalltu](../assets/img/mt/heat-teams.webp)
 
 Din mhijiex [Figuri fuq xulxin](box-replay.md): dik tpinġi figura waħda għal kull persuna; din hi qasam ta' sħana mikxuf bl-istess kolonna.
 

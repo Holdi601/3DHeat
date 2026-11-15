@@ -15,7 +15,7 @@ Toplina timova pokazuje gdje je bio svaki tim, svaki u svojoj boji. Tamo gdje se
 
 **Toplina timova** (tipka 3) je polje gustoće iz [Topline](heat.md) s dodijeljenom vlastitom nijansom svakoj [grupi](glossary.md). Tamo gdje se grupe preklapaju, njihove nijanse se miješaju; izjednačeno natjecanje daje neutralnu boju. Neprozirnost i dalje nosi gustoću točno kao u ostalim načinima, pa slika odgovara na *koliko* i *čija* u isto vrijeme. Treba stupac grupe.
 
-![Toplina timova: svaka strana u svojoj boji; tamo gdje se preklapaju boje se miješaju](../assets/img/en/heat-teams.webp)
+![Toplina timova: svaka strana u svojoj boji; tamo gdje se preklapaju boje se miješaju](../assets/img/hr/heat-teams.webp)
 
 To nije [prekrivanje figura](box-replay.md): ono crta jednu figuru po osobi; ovo je polje topline obojeno istim stupcem.
 

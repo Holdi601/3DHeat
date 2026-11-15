@@ -10,7 +10,7 @@ outdated: false
 
 # Dades de demostració: prova el visor en cinc minuts
 
-![Calor de deu partides de tancs a la vall de demostració: el que mostra el pas 4](../assets/img/en/heat-hero.webp)
+![Calor de deu partides de tancs a la vall de demostració: el que mostra el pas 4](../assets/img/ca/heat-hero.webp)
 
 Encara no tens dades pròpies? El repositori en fa. Tot és inventat: una vall, un pati, i partides de tres estils de joc també inventats, amb jugadors que es diuen *Blue 1* o *Red 3*. Les imatges d'aquest lloc s'han fet totes amb aquestes dades.
 
@@ -45,7 +45,7 @@ Cada taula indica les seves pròpies columnes al peu, així que es carrega sense
 6. Obre **Troballes** (a la barra lateral del Mapa de calor): troba els llocs on es va disparar, tocar i destruir molt més que a la resta -al voltant dels dos turons.
 7. Obre la pestanya **Partida**; a **Partides de la repetició** tria *Match 01*, i prem **Reprodueix** a la línia de temps: la [repetició](match-replay.md).
 
-![Una repetició de Match 01 amb tancs com a figures](../assets/img/en/replay-overview.webp)
+![Una repetició de Match 01 amb tancs com a figures](../assets/img/ca/replay-overview.webp)
 
 Per al tiroteig, carrega `demo-yard.glb` i `shooter.parquet`; per a la batalla aèria, `air.parquet` (les figures es veuen millor amb **Mida de les figures** 4, un lliscador al panell **Visor d'equips** de la barra lateral del Mapa de calor).
 

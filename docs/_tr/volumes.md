@@ -21,7 +21,7 @@ outdated: false
  +------------+
 ```
 
-![Demo Valley üzerinde üç hacim: tepelerin etrafında iki silindir, köyün etrafında bir kutu](../assets/img/en/volumes.webp)
+![Demo Valley üzerinde üç hacim: tepelerin etrafında iki silindir, köyün etrafında bir kutu](../assets/img/tr/volumes.webp)
 
 Hacimler içlerinde olanı ölçer, görünümü onlara göre süzer, satırlarını dışa aktarır ve yan yana karşılaştırılabilir. Satır, kişi ve maç için [terimler sözlüğüne](glossary.md) de bakın.
 
@@ -76,7 +76,7 @@ GPU filtresi toplam 64 ana hatlı noktayla en fazla 8 hacim alır; bunun ötesin
 3. **Tablo** içinde her değerin ilk hacimden farkını okuyun.
 4. Payları çubuk olarak görmek için **Çubuklar**'a geçin.
 
-![Hacimleri karşılaştır tablosu: her hacim için satırlar, içeride geçen süre, oyuncular ve daha fazlası, ilkinden farkıyla](../assets/img/en/compare.webp)
+![Hacimleri karşılaştır tablosu: her hacim için satırlar, içeride geçen süre, oyuncular ve daha fazlası, ilkinden farkıyla](../assets/img/tr/compare.webp)
 
 | Görünüm | Gösterdiği |
 |---|---|
@@ -86,7 +86,7 @@ GPU filtresi toplam 64 ana hatlı noktayla en fazla 8 hacim alır; bunun ötesin
 | **Ziyaretler** | Ziyaretlerin ne kadar sürdüğünün kutu ve keman grafikleri (logaritmik ölçek). |
 | **Akış** | Her hacimden çıktıktan sonra izlerin nereye gittiği: bir geçişler matrisi ya da akış şeritleri. |
 
-![Çubuklar görünümü: hacim başına olay türleri, paylar olarak](../assets/img/en/compare-bars.webp)
+![Çubuklar görünümü: hacim başına olay türleri, paylar olarak](../assets/img/tr/compare-bars.webp)
 
 ## İpuçları {#tips}
 

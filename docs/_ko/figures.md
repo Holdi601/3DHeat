@@ -15,7 +15,7 @@ outdated: false
 
 이름이 붙은 차량, 항공기, 함선, 무장, 병사가 약 2,000개 있으며, 모두 뷰어가 직접 만듭니다.
 
-![데모의 전차를 각자의 피규어로 그린 모습](../assets/img/en/replay-tanks.webp)
+![데모의 전차를 각자의 피규어로 그린 모습](../assets/img/ko/replay-tanks.webp)
 
 ## 카탈로그에 있는 것 {#what-is-in-the-catalogue}
 

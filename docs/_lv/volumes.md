@@ -21,7 +21,7 @@ outdated: false
  +------------+
 ```
 
-![Trīs tilpumi demonstrācijas ielejā: divi cilindri ap kalniem, kaste ap ciematu](../assets/img/en/volumes.webp)
+![Trīs tilpumi demonstrācijas ielejā: divi cilindri ap kalniem, kaste ap ciematu](../assets/img/lv/volumes.webp)
 
 Tilpumi mēra, kas notiek iekšpusē, filtrē skatu tikai uz tiem, eksportē to rindas un var tikt salīdzināti blakus. Skatiet arī [glosāriju](glossary.md) par rindu, personu un spēli.
 
@@ -76,7 +76,7 @@ Ar diviem vai vairāk redzamiem tilpumiem nospiediet **Salīdzināt...**.
 3. Sadaļā **Tabula** lasiet katras vērtības starpību no pirmā tilpuma.
 4. Pārslēdzieties uz **Joslas**, lai redzētu daļas kā joslas.
 
-![Salīdzinājuma tilpumu tabula: rindas, laiks iekšā, spēlētāji un vairāk katram tilpumam, ar starpību no pirmā](../assets/img/en/compare.webp)
+![Salīdzinājuma tilpumu tabula: rindas, laiks iekšā, spēlētāji un vairāk katram tilpumam, ar starpību no pirmā](../assets/img/lv/compare.webp)
 
 | Skats | Rāda |
 |---|---|
@@ -86,7 +86,7 @@ Ar diviem vai vairāk redzamiem tilpumiem nospiediet **Salīdzināt...**.
 | **Apmeklējumi** | Kastu un vijoļu diagrammas par to, cik ilgi ilgst apmeklējumi (logaritmiska skala). |
 | **Plūsma** | Kur trases ved pēc atstāšanas katru tilpumu: pāreju matrica vai plūsmas lentes. |
 
-![Joslu skats: notikumu veidi katrā tilpumā kā daļas](../assets/img/en/compare-bars.webp)
+![Joslu skats: notikumu veidi katrā tilpumā kā daļas](../assets/img/lv/compare-bars.webp)
 
 ## Padomi {#tips}
 

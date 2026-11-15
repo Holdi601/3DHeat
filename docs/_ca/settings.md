@@ -23,7 +23,7 @@ A la part superior de la barra lateral:
 | Botó **...** al costat de **Unitats** | Obre «Tria una unitat per a cada magnitud»: un desplegable per magnitud |
 | Menú **Idioma** | L'idioma del visor: [40 idiomes](languages.md), o el del navegador |
 
-![La capçalera amb el menú Unitats i la finestra d'unitat per magnitud oberta](../assets/img/en/settings-units.webp)
+![La capçalera amb el menú Unitats i la finestra d'unitat per magnitud oberta](../assets/img/ca/settings-units.webp)
 
 Els números que escrius en una caixa poden dur punt o coma (`0.35` o `0,35`). El visor els llegeix tots dos i mostra els números com els escriu l'idioma del visor.
 
@@ -48,11 +48,11 @@ Altres unitats que pots triar per a una sola magnitud: distància km, mi, NM; ve
 
 ## Mode d'ajuda {#help-mode}
 
-![Mode d'ajuda: què signifiquen els colors](../assets/img/en/help.webp)
+![Mode d'ajuda: què signifiquen els colors](../assets/img/ca/help.webp)
 
 Prem `?` o `F1`, o fes clic al botó **?**. Mostra *Què signifiquen els colors*: llegendes de la vista 3D, les rampes de calor, els colors dels equips, els colors del nivell, els colors d'estat dels panells, el panell de partida i la vista de curses. Es queda activat fins que el desactives. A la pestanya Partida també explica els colors del panell de partida.
 
-![Mode d'ajuda a la pestanya Partida](../assets/img/en/settings-help-match.webp)
+![Mode d'ajuda a la pestanya Partida](../assets/img/ca/settings-help-match.webp)
 
 ## Què recorda el navegador {#what-the-browser-remembers}
 

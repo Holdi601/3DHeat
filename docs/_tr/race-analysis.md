@@ -13,7 +13,7 @@ outdated: false
 
 Aynı pisti iki kez sürdünüz. **Yarış analizi** sekmesi iki sürüşü birlikte 3B'de oynatır, bir turun nerede yavaş olduğunu gösterir ve nedenini söyler. Henüz turunuz yok mu? **Demo turlar**'a basın.
 
-![Demo turlarıyla Yarış analizi sekmesi: Turlar ve Nerede gelişmeli bölümleri olan kenar çubuğu, parkurdaki arabalar, görünümün altındaki grafikler](../assets/img/en/race-analysis-overview.webp)
+![Demo turlarıyla Yarış analizi sekmesi: Turlar ve Nerede gelişmeli bölümleri olan kenar çubuğu, parkurdaki arabalar, görünümün altındaki grafikler](../assets/img/tr/race-analysis-overview.webp)
 
 Sekme bir pistin iki ya da daha fazla turunu karşılaştırır. Tuvali, kamerayı ve yüklenen pist modelini (**Arka plan / bölüm**) ısı haritasıyla paylaşır; geri kalan her şey kendisine aittir: kendi kenar çubuğu ve görünümün altındaki kendi çubuğu. *Tur*, *referans* ve *apeks* gibi sözcükler [terimler sözlüğündedir](glossary.md).
 

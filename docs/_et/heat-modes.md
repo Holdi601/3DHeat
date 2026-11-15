@@ -15,7 +15,7 @@ Iga punkt lisab väikese hõõguva ala, hõõgud kuhjuvad ja kuhjumist värvitak
 
 Soojuskaardi vahekaardi külgriba ülaosas olev režiimiriba valib, kuidas [andmestikku](glossary.md) joonistatakse. Klahvid 1-4 valivad Soojuse, Erinevuse, Võistkondade soojuse ja Joonte. Kujude ülekattel klahvi ei ole.
 
-![Režiimiriba: Soojus, Erinevus, Võistkondade soojus, Kujude ülekate ja Jooned](../assets/img/en/heat-modes-bar.webp)
+![Režiimiriba: Soojus, Erinevus, Võistkondade soojus, Kujude ülekate ja Jooned](../assets/img/et/heat-modes-bar.webp)
 
 | Režiim | Küsimus, millele ta vastab |
 |---|---|
@@ -25,7 +25,7 @@ Soojuskaardi vahekaardi külgriba ülaosas olev režiimiriba valib, kuidas [andm
 | **Jooned** | Mis suunas inimesed liikusid? |
 | **Kujude ülekate** | Kes oli kus ja millal? |
 
-![Sama andmestik nelja režiimiga: Soojus, Erinevus, Võistkondade soojus ja Jooned](../assets/img/en/heat-modes-grid.webp)
+![Sama andmestik nelja režiimiga: Soojus, Erinevus, Võistkondade soojus ja Jooned](../assets/img/et/heat-modes-grid.webp)
 
 | Režiim (riba silt) | Klahv | Mida ta joonistab | Vajab |
 |---|---|---|---|

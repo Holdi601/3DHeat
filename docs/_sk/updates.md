@@ -18,7 +18,7 @@ Prehliadač vám povie, keď existuje novšia verzia, a aktualizuje sa sám len 
 2. **Ak hovorí, aby ste spustili restart.bat**, zatvorte okno servera (čierne okno, ktoré otvoril `start.bat`) a dvakrát kliknite na `restart.bat`.
 3. **Pri spustení prehliadača.** `start.bat` tiež kontroluje. Ak existuje novšia verzia, opýta sa **Aktualizovať teraz? [Y/N]**. Stlačte `Y` na aktualizáciu. Stlačte `N`, alebo počkajte 60 sekúnd bez odpovede, a spustí sa verzia, ktorú máte.
 
-![Upozornenie na aktualizáciu s Aktualizovať teraz a Neskôr](../assets/img/en/updates-notice.webp)
+![Upozornenie na aktualizáciu s Aktualizovať teraz a Neskôr](../assets/img/sk/updates-notice.webp)
 
 Kópia s vašimi vlastnými zmenami sa nikdy nezaktualizuje za vás; box len hovorí, že čaká aktualizácia, a povie, aby ste zmeny potvrdili alebo odložili (commit alebo stash) a spustili `git pull`. Kópia, ktorá nebola nainštalovaná cez git (napríklad zip súbor), nezobrazí nič.
 

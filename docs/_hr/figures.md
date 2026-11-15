@@ -15,7 +15,7 @@ outdated: false
 
 Ima oko 2000 imenovanih vozila, zrakoplova, brodova, oružja i vojnika, a sve ih je izradio sam preglednik.
 
-![Tenkovi iz demo podataka nacrtani kao vlastite figure](../assets/img/en/replay-tanks.webp)
+![Tenkovi iz demo podataka nacrtani kao vlastite figure](../assets/img/hr/replay-tanks.webp)
 
 ## Što je u katalogu {#what-is-in-the-catalogue}
 

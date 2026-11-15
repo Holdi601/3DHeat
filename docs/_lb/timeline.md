@@ -12,7 +12,7 @@ outdated: false
 
 D'Leescht ënner dem Bild ass wéi e Videospiller: Dir kënnt d'Daten wéi e Film ofspillen, pausen, sprangen a d'Geschwindegkeet änneren.
 
-![D'Zäitlinn: 1 Alles/Ofspillen, 2 Transportknäppchen, 3 Auer, 4 Geschwindegkeet, 5 Vergaangenheet, mat Fënster an engem Zäitraum vun 30 s](../assets/img/en/timeline-bar.webp)
+![D'Zäitlinn: 1 Alles/Ofspillen, 2 Transportknäppchen, 3 Auer, 4 Geschwindegkeet, 5 Vergaangenheet, mat Fënster an engem Zäitraum vun 30 s](../assets/img/lb/timeline-bar.webp)
 
 D'Leescht ënner der Usiicht ass d'Zäitlinn ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Si entscheet, wéi Zeilen zu all Moment sichtbar sinn. Si brauch eng Zäitkolonn; ouni déi ass déi ganz Leescht ausgegraut, d'Usiicht bleift op **Alles**, an d'Säitelleescht seet *Keng Zäitkolonn an dëse Daten - d'Zäitlinn ass ausgeschalt, an all Datepunkt gëtt op eemol gewisen.*
 

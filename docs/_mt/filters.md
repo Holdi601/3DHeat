@@ -19,7 +19,7 @@ outdated: false
 2. Taħt **Klassi tal-vettura**, neħħi l-kaxxa ta' *Tank*. L-istampa tinbidel minnufih.
 3. Agħfas **Neħħi l-filtri kollha** biex tirtira.
 
-![Il-pannell tal-Filtri: l-ewwel il-kolonni tal-viewer stess (Tip ta' avveniment, Klassi tal-vettura), imbagħad il-kolonni mill-fajl tiegħek](../assets/img/en/filters.webp)
+![Il-pannell tal-Filtri: l-ewwel il-kolonni tal-viewer stess (Tip ta' avveniment, Klassi tal-vettura), imbagħad il-kolonni mill-fajl tiegħek](../assets/img/mt/filters.webp)
 
 L-ewwel ringieli huma l-kolonni tal-viewer stess (hawn taħt). Dawk wara jiġu mill-fajl tiegħek.
 
@@ -42,7 +42,7 @@ Liema kolonni jistgħu jiġu ffiltrati jiġi deċiż fil-ħin tat-tagħbija, għ
 
 ## Kolonni numeriċi (medda) {#numeric-columns-range}
 
-![Filtru ta' medda (flus mitlufa) biż-żewġ truf imġebdin](../assets/img/en/filters-numeric.webp)
+![Filtru ta' medda (flus mitlufa) biż-żewġ truf imġebdin](../assets/img/mt/filters-numeric.webp)
 
 | Parti | Tifsira |
 |---|---|

@@ -15,7 +15,7 @@ Raudona, kur A komanda buvo daugiau, žalsvai mėlyna, kur daugiau buvo B komand
 
 **Skirtumas** (klavišas 2) yra ženklą turinti šiluma. Vienos populiacijos eilutės prideda šilumą, kitos populiacijos eilutės ją atima. Ten, kur abi pusės persidengia lygiai, rezultatas lygus nuliui ir visiškai permatomas; ten, kur viena pusė vyrauja, ji rodoma tos pusės spalvomis – pagal numatymą šiltomis (skaidri → raudona → geltona → balta) **+** pusei ir vėsiomis (skaidri → žalia → mėlyna → violetinė) **−** pusei.
 
-![Skirtumo šiluma: raudona, kur + pusė buvo daugiau, žalia ir mėlyna, kur - pusė buvo daugiau](../assets/img/en/difference-split.webp)
+![Skirtumo šiluma: raudona, kur + pusė buvo daugiau, žalia ir mėlyna, kur - pusė buvo daugiau](../assets/img/lt/difference-split.webp)
 
 ## Kaip naudoti {#how-to-use-it}
 

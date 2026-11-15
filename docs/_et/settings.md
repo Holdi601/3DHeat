@@ -23,7 +23,7 @@ Külgriba ülaosas:
 | nupp **...** nupu **Üksused** kõrval | Avab "Vali igale suurusele ühik": üks rippmenüü iga suuruse kohta |
 | menüü **Keel** | Vaaturi keel: [40 keelt](languages.md) või brauseri oma |
 
-![Päis koos menüüga Üksused ja ühikut-suuruse kohta akna avatuna](../assets/img/en/settings-units.webp)
+![Päis koos menüüga Üksused ja ühikut-suuruse kohta akna avatuna](../assets/img/et/settings-units.webp)
 
 Kasti sisestatud numbrites võib kasutada nii punkti kui koma (`0.35` või `0,35`). Vaatur loeb mõlemad ja näitab numbreid nii, nagu vaaturi keel neid kirjutab.
 
@@ -48,11 +48,11 @@ Muud ühikud, mida võib ühe suuruse jaoks valida: kaugus km, mi, NM; kiirus km
 
 ## Abirežiim {#help-mode}
 
-![Abirežiim: mida värvid tähendavad](../assets/img/en/help.webp)
+![Abirežiim: mida värvid tähendavad](../assets/img/et/help.webp)
 
 Vajuta `?` või `F1` või klõpsa nuppu **?**. Ilmub *Mida värvid tähendavad*: legendid 3D-vaate, soojusskaalade, võistkondade värvide, taseme värvide, paneelide olekuvärvide, matši paneeli ja võidusõidu vaate jaoks. See jääb sisse, kuni sa selle välja lülitad. Matši vahekaardil selgitab see ka matši paneeli värve.
 
-![Abirežiim Matši vahekaardil](../assets/img/en/settings-help-match.webp)
+![Abirežiim Matši vahekaardil](../assets/img/et/settings-help-match.webp)
 
 ## Mida brauser meelde jätab {#what-the-browser-remembers}
 

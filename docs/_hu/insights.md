@@ -15,7 +15,7 @@ A **Felismerések** átnézi a betöltött adatot, és megkeresi, ami kiemelkedi
 
 Minden a böngészőjében számolódik. Semmi nem hagyja el a gépét, hacsak nem kapcsol be külső MI-t (lásd [Külső MI](#external-ai)).
 
-![Felismerések a tank-demón: 14 megállapítás, erősség szerint rendezve](../assets/img/en/insights.webp)
+![Felismerések a tank-demón: 14 megállapítás, erősség szerint rendezve](../assets/img/hu/insights.webp)
 
 A **Felismerések** szakasz a Hőtérkép és a Meccs fül oldalsávjában van. Három füle van: **Megállapítások**, **Összegzés** és **Kommentátor**.
 
@@ -30,7 +30,7 @@ A számlálás a jelenlegi szűrőket, az elrejtett csoportokat és a kiválaszt
 
 A lista tetején lévő sorok (például a pénzösszegek) a megállapítások előtt foglalják össze az egész adatot.
 
-![Egy megnyitott megállapítás: a lövések forró zónája, a számai és egy megfelelő részlet a szakirodalomból](../assets/img/en/insights-finding.webp)
+![Egy megnyitott megállapítás: a lövések forró zónája, a számai és egy megfelelő részlet a szakirodalomból](../assets/img/hu/insights-finding.webp)
 
 ### A detektorok {#the-detectors}
 
@@ -55,7 +55,7 @@ Minden helyet vagy csoportot összevetünk a térkép többi részével (pontos 
 
 Az **Összegzés** fül a megállapításokat rövid szöveggé írja: egy bevezetőt, a legtisztább megállapítást, egyet a taktikáról, egyet az egyensúlyról, a többit detektor szerint csoportosítva, és azt, hány gyengébb bizonyítékon nyugszik. Minden bekezdés számozott gombokat tartalmaz, amelyek a megállapításait mutatják. A **Szöveg másolása** lemásolja.
 
-![A beépített narrátor által írt összegzés](../assets/img/en/debrief.webp)
+![A beépített narrátor által írt összegzés](../assets/img/hu/debrief.webp)
 
 A beépített narrátor offline fut, az Ön nyelvén. A fölötte lévő **Lencse** választó (lásd [A tudás-lencse](knowledge.md)) dönti el, melyik szakirodalomra hivatkoznak a bekezdések.
 
@@ -78,7 +78,7 @@ Ezután írjon egy opcionális kérdést, és nyomja meg az **Írás MI-vel** go
 
 **Egy meccsre** (ha több van betöltve, válasszon egyet) a **Kommentátor** megtalálja a megnézésre érdemes pillanatokat: első vér, többszörös gyilkosságok, cserék, befejezések, cél-fordulatok, visszatérések, kiemelkedő játékosok, hosszú lövések.
 
-![A kommentátor pillanatai a lövöldözős demo egy körére](../assets/img/en/caster.webp)
+![A kommentátor pillanatai a lövöldözős demo egy körére](../assets/img/hu/caster.webp)
 
 - Kattintson egy pillanatra: a nézet átvált a visszajátszásra, közvetlenül elé ugrik, odarepül és követi a játékost.
 - A **Pillanatok lejátszása** mindegyiket a végéig játssza, és továbblép; az **Előző** / **Következő** végigléptet közöttük.

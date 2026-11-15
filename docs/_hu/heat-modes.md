@@ -15,7 +15,7 @@ Minden pont ad egy kis izzást, az izzások halmozódnak, és a halmot színekke
 
 A Hőtérkép fül oldalsávjának tetején lévő módválasztó sáv határozza meg, hogyan rajzolódik ki az [adatkészlet](glossary.md). A 1–4 billentyűk a Hő, Különbség, Csapathő és Vonalak módokat választják. A Figurás átfedésnek nincs billentyűje.
 
-![A módválasztó sáv: Hő, Különbség, Csapathő, Figurás átfedés és Vonalak](../assets/img/en/heat-modes-bar.webp)
+![A módválasztó sáv: Hő, Különbség, Csapathő, Figurás átfedés és Vonalak](../assets/img/hu/heat-modes-bar.webp)
 
 | Mód | Kérdés, amire válaszol |
 |---|---|
@@ -25,7 +25,7 @@ A Hőtérkép fül oldalsávjának tetején lévő módválasztó sáv határozz
 | **Vonalak** | Merre mentek az emberek? |
 | **Figurás átfedés** | Ki hol volt, és mikor? |
 
-![Ugyanaz az adat négy módban: Hő, Különbség, Csapathő és Vonalak](../assets/img/en/heat-modes-grid.webp)
+![Ugyanaz az adat négy módban: Hő, Különbség, Csapathő és Vonalak](../assets/img/hu/heat-modes-grid.webp)
 
 | Mód (sáv felirata) | Billentyű | Mit rajzol | Szükséges hozzá |
 |---|---|---|---|

@@ -23,7 +23,7 @@ Fanen **Taktik** er en tegnetavle til en holdplan: du sætter små figurer på e
 6. Tryk på **▶** (eller `K`) for at afspille planen fra det viste trin til enden.
 7. Navngiv planen i **Planens navn**, og tryk på **Gem**.
 
-![Taktik-fanen set ovenfra: spil, sider og værktøjer til venstre, tre figurer med Bevæg-pile, en røg-kastebue, et Område og trinene langs bunden](../assets/img/en/tactics.webp)
+![Taktik-fanen set ovenfra: spil, sider og værktøjer til venstre, tre figurer med Bevæg-pile, en røg-kastebue, et Område og trinene langs bunden](../assets/img/da/tactics.webp)
 
 ## Start en plan {#starting-a-plan}
 

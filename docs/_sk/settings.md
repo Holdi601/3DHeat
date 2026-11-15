@@ -23,7 +23,7 @@ Hore na bočnom paneli:
 | Tlačidlo **...** vedľa **Jednotky** | Otvorí „Zvoliť jednotku pre každú veličinu“: jedna rozbaľovacia ponuka pre každú veličinu |
 | Ponuka **Jazyk** | Jazyk prehliadača: [40 jazykov](languages.md), alebo jazyk prehliadača |
 
-![Hlavička s ponukou Jednotky a oknom jednotky pre každú veličinu otvoreným](../assets/img/en/settings-units.webp)
+![Hlavička s ponukou Jednotky a oknom jednotky pre každú veličinu otvoreným](../assets/img/sk/settings-units.webp)
 
 Čísla, ktoré napíšete do políčka, môžu mať bodku alebo čiarku (`0.35` alebo `0,35`). Prehliadač prijme obe a zobrazí čísla tak, ako ich píše jazyk prehliadača.
 
@@ -48,11 +48,11 @@ Hore na bočnom paneli:
 
 ## Režim pomoci {#help-mode}
 
-![Režim pomoci: čo znamenajú farby](../assets/img/en/help.webp)
+![Režim pomoci: čo znamenajú farby](../assets/img/sk/help.webp)
 
 Stlačte `?` alebo `F1`, alebo kliknite na tlačidlo **?**. Zobrazí *Čo znamenajú farby*: legendy pre 3D pohľad, škály tepla, farby tímov, farby levelu, farby stavových indikátorov panelov, panel zápasu a pohľad pretekov. Zostáva zapnutý, kým ho nevypnete. Na karte Zápas vysvetľuje aj farby panela zápasu.
 
-![Režim pomoci na karte Zápas](../assets/img/en/settings-help-match.webp)
+![Režim pomoci na karte Zápas](../assets/img/sk/settings-help-match.webp)
 
 ## Čo si prehliadač pamätá {#what-the-browser-remembers}
 

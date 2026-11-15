@@ -15,7 +15,7 @@ A visszajátszás a meccs filmje, amelyben minden játékos az általa vezetett 
 
 A lövéseket, találatokat, tüzeket és roncsokat az egységekre és a pálya célpontjaira rajzoljuk. Kamerák, feliratok és taktikai kijelző segítenek a harc olvasásában. Ismeri a Tacview-t? A [Tacview-egyenértékűség](tacview-parity.md) mutatja, hol található minden funkciója.
 
-![A tank-demo figurás visszajátszása: a harckocsik saját figuráikként, név-, jármű- és sebességfeliratokkal](../assets/img/en/replay-overview.webp)
+![A tank-demo figurás visszajátszása: a harckocsik saját figuráikként, név-, jármű- és sebességfeliratokkal](../assets/img/hu/replay-overview.webp)
 
 ## Visszajátszás indítása {#start-a-replay}
 
@@ -26,11 +26,11 @@ A lövéseket, találatokat, tüzeket és roncsokat az egységekre és a pálya 
 
 A figurák minden olyan egység helyébe lépnek, amelynek a neve vagy típusa ismert (lásd [Figurák](figures.md)). Név- vagy típusoszlop nélküli adatot katonaként rajzolunk.
 
-![A Meccs fül: a meccsválasztó, a Figurák szakasz, a kameranézetek, a Lejátszás és az eseménylista](../assets/img/en/match-replay-tab.webp)
+![A Meccs fül: a meccsválasztó, a Figurák szakasz, a kameranézetek, a Lejátszás és az eseménylista](../assets/img/hu/match-replay-tab.webp)
 
 ## Figurák {#figures}
 
-![Égő harckocsi a keringő kamerában, a találattal, amely eltalálta](../assets/img/en/replay-tanks.webp)
+![Égő harckocsi a keringő kamerában, a találattal, amely eltalálta](../assets/img/hu/replay-tanks.webp)
 
 | Beállítás (**Figurák** szakasz) | Alapérték | Mit csinál |
 |---|---|---|
@@ -51,7 +51,7 @@ A figurák minden olyan egység helyébe lépnek, amelynek a neve vagy típusa i
 
 Ha egy egység kisebb lenne a **Legkisebb figura a képernyőn** értéknél, olvasható jellé válhat. Az alakja mondja meg a fajtáját (például egy lekerekített doboz lánctalp-jelöléssel a páncélosoknál); a színe az oldalt. A **Jelek** menü nyitásával változtathatja a stílust.
 
-![Ugyanaz a hat egység NATO-jelként, orosz taktikai jelként, játéktérképi ikonként és csak alakként](../assets/img/en/match-replay-symbols-styles.webp)
+![Ugyanaz a hat egység NATO-jelként, orosz taktikai jelként, játéktérképi ikonként és csak alakként](../assets/img/hu/match-replay-symbols-styles.webp)
 
 ### Találatjelek, roncsok és tüzek {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Kattintson egy egységre vagy a feliratára, hogy **kövesse**; a **Visszajátsz
 
 ## Taktikai megjelenítés {#tactical-display}
 
-![A légi demo taktikai megjelenítéses nézete (T): drótvázas terep, gyilkosság- és eseménypanelek](../assets/img/en/replay-air-tactical.webp)
+![A légi demo taktikai megjelenítéses nézete (T): drótvázas terep, gyilkosság- és eseménypanelek](../assets/img/hu/replay-air-tactical.webp)
 
 A **Taktikai megjelenítés** szakasz – egyik egységnek sem, a kijelölteknek, mindnek vagy egy fajtának (repülőgép, földi, hajók, fegyverek) – rajzolja: sebességvektorokat és az előttük lévő útvonalat, orr- és emelővonalakat, radarkúpokat, zárolásokat, adatkapcsolatokat, bevetési zónákat és -vonalakat, láthatósági vonalakat, azt, hová néznek a játékosok (nézőkúpok), a torony irányzását és a rögzített kamerát.
 
@@ -84,7 +84,7 @@ A **Taktikai megjelenítés** szakasz – egyik egységnek sem, a kijelölteknek
 
 A `T` (vagy a **Megjelenítés taktikai kijelzőként** kapcsoló) radarképernyő-stílusra vált: fény, körvonalak, szintvonalak, mérőrács, pásztázóvonalak, távolsággyűrűk, magasságlétrák, gyilkosságokat és eseményeket mutató panelek, és egy **Rendező**, amely önállóan mozgatja a kamerát az események felé.
 
-![Ugyanaz a légi harc a normál nézetben](../assets/img/en/replay-air.webp)
+![Ugyanaz a légi harc a normál nézetben](../assets/img/hu/replay-air.webp)
 
 ## Célok {#objectives}
 

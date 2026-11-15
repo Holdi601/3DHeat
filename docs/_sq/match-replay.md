@@ -15,7 +15,7 @@ Riluajtja është një film i ndeshjes me çdo lojtar të vizatuar si ajo që dr
 
 Të shtënat, goditjet, zjarret dhe mbetjet vizatohen mbi njësitë dhe objektivat në nivel. Kamerat, etiketat dhe një ekran taktik të ndihmojnë të lexosh luftimin. E njeh Tacview? [Barazia me Tacview](tacview-parity.md) tregon ku ndodh çdo mjet i tij.
 
-![Riluajtja me figura e demos me tanke: tanket si figurat e veta, me etiketa emri, mjeti dhe shpejtësie](../assets/img/en/replay-overview.webp)
+![Riluajtja me figura e demos me tanke: tanket si figurat e veta, me etiketa emri, mjeti dhe shpejtësie](../assets/img/sq/replay-overview.webp)
 
 ## Nis një riluajtje {#start-a-replay}
 
@@ -26,11 +26,11 @@ Të shtënat, goditjet, zjarret dhe mbetjet vizatohen mbi njësitë dhe objektiv
 
 Figurat zëvendësojnë kutitë për çdo njësi emri ose tipi i së cilës është i njohur (shih [Figurat](figures.md)). Të dhënat pa kolonë emri ose tipi vizatohen si ushtarë.
 
-![Skeda Ndeshja: përzgjedhësi i ndeshjeve, seksioni Figurat, pamjet e kamerës, Luaj dhe lista e ngjarjeve](../assets/img/en/match-replay-tab.webp)
+![Skeda Ndeshja: përzgjedhësi i ndeshjeve, seksioni Figurat, pamjet e kamerës, Luaj dhe lista e ngjarjeve](../assets/img/sq/match-replay-tab.webp)
 
 ## Figurat {#figures}
 
-![Një tank që digjet në kamerën orbitale, me të shtënën që e goditi](../assets/img/en/replay-tanks.webp)
+![Një tank që digjet në kamerën orbitale, me të shtënën që e goditi](../assets/img/sq/replay-tanks.webp)
 
 | Cilësimi (seksioni **Figurat**) | Parazgjedhja | Çfarë bën |
 |---|---|---|
@@ -51,7 +51,7 @@ Figurat zëvendësojnë kutitë për çdo njësi emri ose tipi i së cilës ësh
 
 Kur një njësi do të ishte më e vogël se **Figura më e vogël në ekran**, mund të bëhet një simbol që mbetet i lexueshëm. Forma tregon llojin (për shembull një kuti e rrumbullakosur me shenjë shinash për blindat); ngjyra tregon anën. Hap menunë **Simbolet** për të ndryshuar stilin.
 
-![Të njëjtat gjashtë njësi si simbole NATO, shenja taktike ruse, ikona hartë loje dhe vetëm forma](../assets/img/en/match-replay-symbols-styles.webp)
+![Të njëjtat gjashtë njësi si simbole NATO, shenja taktike ruse, ikona hartë loje dhe vetëm forma](../assets/img/sq/match-replay-symbols-styles.webp)
 
 ### Shenjat e goditjeve, mbetjet dhe zjarret {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Kliko një njësi ose etiketën e saj për ta **ndjekur**; seksioni **Riluajtja*
 
 ## Pamja taktike {#tactical-display}
 
-![Demo ajrore me pamjen taktike (T): terren me tela, panele vrasjesh dhe ngjarjesh](../assets/img/en/replay-air-tactical.webp)
+![Demo ajrore me pamjen taktike (T): terren me tela, panele vrasjesh dhe ngjarjesh](../assets/img/sq/replay-air-tactical.webp)
 
 Seksioni **Pamja taktike** vizaton, për asnjë njësi, për të zgjedhurat, për të gjitha, ose për një lloj (avionë, tokë, anije, armë): vektorët e shpejtësisë dhe shtegun e përpara, vijat e hundës dhe të ngritjes, konet e radarit, kyçjet, lidhjet e të dhënave, zonat dhe vijat e angazhimit, vijat e shikimit, ku shikojnë lojtarët (konet e shikimit), drejtimi i kullës, dhe kamera e regjistruar.
 
@@ -84,7 +84,7 @@ Seksioni **Pamja taktike** vizaton, për asnjë njësi, për të zgjedhurat, pë
 
 `T` (ose çelësi **Shfaq si ekran taktik**) e ndryshon pamjen në një stil ekrani radari: shkëlqim, kontura, vija nivelimi, rrjetë matjeje, vija skanimi, unaza distancash, shkallë lartësie, panele me vrasje dhe ngjarje, dhe një **Regjisor** që e lëviz kamerën te ngjarjet vetë.
 
-![E njëjta luftë ajrore në pamjen e zakonshme](../assets/img/en/replay-air.webp)
+![E njëjta luftë ajrore në pamjen e zakonshme](../assets/img/sq/replay-air.webp)
 
 ## Objektivat {#objectives}
 

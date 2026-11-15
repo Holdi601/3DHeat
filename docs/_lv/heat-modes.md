@@ -15,7 +15,7 @@ Katrs punkts pievieno nedaudz spīduma, spīdumi sakrājas, un krāvums tiek nok
 
 Režīmu josla Siltumkartes cilnes sānjoslas augšdaļā izvēlas, kā [datu kopa](glossary.md) tiek zīmēta. Taustiņi 1-4 izvēlas Siltums, Starpība, Komandu siltums un Līnijas. Figūru pārklājumam taustiņa nav.
 
-![Režīmu josla ar Siltums, Starpība, Komandu siltums, Figūru pārklājums un Līnijas](../assets/img/en/heat-modes-bar.webp)
+![Režīmu josla ar Siltums, Starpība, Komandu siltums, Figūru pārklājums un Līnijas](../assets/img/lv/heat-modes-bar.webp)
 
 | Režīms | Jautājums, uz kuru tas atbild |
 |---|---|
@@ -25,7 +25,7 @@ Režīmu josla Siltumkartes cilnes sānjoslas augšdaļā izvēlas, kā [datu ko
 | **Līnijas** | Kurā virzienā cilvēki devās? |
 | **Figūru pārklājums** | Kas bija kur un kad? |
 
-![Tie paši dati četros režīmos: Siltums, Starpība, Komandu siltums un Līnijas](../assets/img/en/heat-modes-grid.webp)
+![Tie paši dati četros režīmos: Siltums, Starpība, Komandu siltums un Līnijas](../assets/img/lv/heat-modes-grid.webp)
 
 | Režīms (joslas nosaukums) | Taustiņš | Ko tas zīmē | Nepieciešams |
 |---|---|---|---|

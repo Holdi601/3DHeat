@@ -15,7 +15,7 @@ Heat molt d'Plaze, wou ganz vill geschitt ass: rout, wou et e bëssen geschitt a
 
 **Heat** (Tast 1) ass de Standardmodus. All sichtbar [Zeil](glossary.md) setzt e kameragerichtete ronne [Sprite](glossary.md) derbäi; sech iwwerlappend Sprite addéieren sech an engem Float-Puffer; d'Summ gëtt duerch en Faarfverlaf geschéckt - standardméisseg transparent → rout → giel → wäiss - a iwwer d'Szen gezeechent.
 
-![Hëtzt op engem 3D-Level: waarm Plaze bannen a uewen op den Gebaier](../assets/img/en/shooter-heat.webp)
+![Hëtzt op engem 3D-Level: waarm Plaze bannen a uewen op den Gebaier](../assets/img/lb/shooter-heat.webp)
 
 D'Bild weist d'Hëtzt vun enger Schéisser-Ronn op engem Level mat Gebaier: waarm Plaze sinn an de Raim an op de Trappen, net nëmmen um Buedem.
 
@@ -26,7 +26,7 @@ D'Bild weist d'Hëtzt vun enger Schéisser-Ronn op engem Level mat Gebaier: waar
 3. Ännert **Sprite-Radius**, bis d'Noper-Punkte an Bänner zesummewuessen: méi kleng weist eenzel Flecken, méi grouss weist Gebidder.
 4. Maacht **Heat-Faarwen** op, fir d'Faarwen z'änneren, oder **Déift**, fir datt Hiwwele a Mauere d'Hëtzt hannendru verstoppen.
 
-![D'Sektiounen Heat-Form an Heat-Faarwen vun der Säitelleescht, beid op](../assets/img/en/heat-panel.webp)
+![D'Sektiounen Heat-Form an Heat-Faarwen vun der Säitelleescht, beid op](../assets/img/lb/heat-panel.webp)
 
 D'selwecht Panelen formen och [Ënnerscheed](difference.md), [Equipen-Heat](team-heat.md) an [Linn-Hëtzt](line-heat.md); si ënnerscheede sech a deem, wat derbäigesat gëtt (mat Vorzeechen, gefierft oder laanschs Linnen), net a Wéi.
 

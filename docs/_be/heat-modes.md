@@ -15,7 +15,7 @@ outdated: false
 
 Панэль рэжымаў уверсе бакавой панэлі ўкладкі Цеплавая карта выбірае, як малюецца [набор даных](glossary.md). Клавішы 1-4 выбіраюць Цеплыня, Розніца, Каманды і Лініі. Накладанне фігур клавішы не мае.
 
-![Панэль рэжымаў: Heat, Difference, Team heat, Figure overlay і Lines](../assets/img/en/heat-modes-bar.webp)
+![Панэль рэжымаў: Heat, Difference, Team heat, Figure overlay і Lines](../assets/img/be/heat-modes-bar.webp)
 
 | Рэжым | На якое пытанне адказвае |
 |---|---|
@@ -25,7 +25,7 @@ outdated: false
 | **Лініі** | Якім шляхам ішлі людзі? |
 | **Накладанне фігур** | Хто дзе быў і калі? |
 
-![Тыя ж даныя ў чатырох рэжымах: Heat, Difference, Team heat і Lines](../assets/img/en/heat-modes-grid.webp)
+![Тыя ж даныя ў чатырох рэжымах: Heat, Difference, Team heat і Lines](../assets/img/be/heat-modes-grid.webp)
 
 | Рэжым (надпіс на панэлі) | Клавіша | Што малюе | Патрабуе |
 |---|---|---|---|

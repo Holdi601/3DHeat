@@ -18,7 +18,7 @@ Vieweren fortæller dig, når en nyere version findes, og opdaterer sig selv fø
 2. **Hvis der står, at du skal køre restart.bat**, lukker du serverens vindue (det sorte vindue, `start.bat` åbnede) og dobbeltklikker på `restart.bat`.
 3. **Når du starter vieweren.** `start.bat` tjekker også. Findes en nyere version, spørger den **Update now? [Y/N]** (den engelske prompt, som vises i vinduet). Tryk `Y` for at opdatere. Tryk `N`, eller vent 60 sekunder uden at svare, for at starte den version, du har.
 
-![Opdateringsmeddelelsen med Opdatér nu og Senere](../assets/img/en/updates-notice.webp)
+![Opdateringsmeddelelsen med Opdatér nu og Senere](../assets/img/da/updates-notice.webp)
 
 En kopi med dine egne ændringer opdateres aldrig for dig; boksen fortæller kun, at en opdatering venter, og siger, at du skal committe eller stashe dine ændringer og køre `git pull`. En kopi, der ikke er installeret med git (for eksempel en zip-fil), viser ingenting.
 

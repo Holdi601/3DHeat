@@ -15,7 +15,7 @@ Teamwarmte toont waar elk team was, elk team in zijn eigen kleur. Waar teams ove
 
 **Teamwarmte** (toets 3) is het dichtheidsveld van [Warmte](heat.md) met aan elke [groep](glossary.md) een eigen tint. Waar groepen overlappen mengen hun tinten; een gelijke strijd komt neutraal uit. De dekking draagt de dichtheid nog precies zoals in de andere modi, dus het beeld antwoordt tegelijk op *hoeveel* en *van wie*. Het heeft een groepskolom nodig.
 
-![Teamwarmte: elke kant in zijn eigen kleur; waar ze overlappen mengen de kleuren](../assets/img/en/heat-teams.webp)
+![Teamwarmte: elke kant in zijn eigen kleur; waar ze overlappen mengen de kleuren](../assets/img/nl/heat-teams.webp)
 
 Het is niet de [figurenoverlay](box-replay.md): die tekent één figuur per persoon; dit is een warmteveld dat met dezelfde kolom gekleurd is.
 

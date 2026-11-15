@@ -19,7 +19,7 @@ outdated: false
 2. Under **Kjøretøyklasse**, fjern avmerkingen for *Tank*. Bildet endres med én gang.
 3. Trykk **Fjern alle filtre** for å angre.
 
-![Filterpanelet: visningens egne kolonner (Hendelsestype, Kjøretøyklasse) først, deretter kolonnene fra filen din](../assets/img/en/filters.webp)
+![Filterpanelet: visningens egne kolonner (Hendelsestype, Kjøretøyklasse) først, deretter kolonnene fra filen din](../assets/img/no/filters.webp)
 
 De første radene er visningens egne kolonner (under). Radene etter dem kommer fra filen din.
 
@@ -42,7 +42,7 @@ Hvilke kolonner som kan filtreres, avgjøres ved innlasting, fordi de må leses 
 
 ## Tallkolonner (område) {#numeric-columns-range}
 
-![Et områdefilter (tapte penger) med begge ender dratt inn](../assets/img/en/filters-numeric.webp)
+![Et områdefilter (tapte penger) med begge ender dratt inn](../assets/img/no/filters-numeric.webp)
 
 | Del | Betydning |
 |---|---|

@@ -15,7 +15,7 @@ A **figura** egy kis 3D-s modell arról, hogy mi valójában az egység: egy har
 
 Mintegy 2000 nevesített jármű, repülőgép, hajó, fegyver és katona van, amelyeket maga a megjelenítő épít.
 
-![A demo harckocsijai a saját figuráikként](../assets/img/en/replay-tanks.webp)
+![A demo harckocsijai a saját figuráikként](../assets/img/hu/replay-tanks.webp)
 
 ## Mi van a katalógusban {#what-is-in-the-catalogue}
 

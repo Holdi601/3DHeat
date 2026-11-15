@@ -18,7 +18,7 @@ Görüntüleyici daha yeni bir sürüm olduğunda size söyler ve yalnızca siz 
 2. **restart.bat çalıştırmanızı söylerse**, sunucu penceresini (`start.bat`'ın açtığı siyah pencere) kapatın ve `restart.bat` dosyasına çift tıklayın.
 3. **Görüntüleyiciyi başlattığınızda.** `start.bat` de denetler. Daha yeni bir sürüm varsa **Şimdi güncellensin mi? [Y/N]** diye sorar. Güncellemek için `Y`'ye basın. `N`'ye basın ya da 60 saniye yanıtsız bekleyin; sahip olduğunuz sürümü başlatır.
 
-![Şimdi güncelle ve Daha sonra düğmeleriyle güncelleme bildirimi](../assets/img/en/updates-notice.webp)
+![Şimdi güncelle ve Daha sonra düğmeleriyle güncelleme bildirimi](../assets/img/tr/updates-notice.webp)
 
 Kendi değişikliklerinizi içeren bir kopya asla sizin yerinize güncellenmez; kutu yalnızca bir güncellemenin beklediğini söyler ve değişikliklerinizi kaydetmenizi ya da saklamanızı ve `git pull` çalıştırmanızı önerir. Git ile kurulmamış bir kopya (örneğin bir zip dosyası) hiçbir şey göstermez.
 

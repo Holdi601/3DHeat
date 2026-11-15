@@ -15,7 +15,7 @@ Reluarea este un film al meciului în care fiecare jucător este desenat ca lucr
 
 Trageri, lovituri, incendii și epave sunt desenate pe unități și pe obiectivele din nivel. Camerele, etichetele și un afișaj tactic te ajută să citești lupta. Cunoști Tacview? [Paritatea cu Tacview](tacview-parity.md) arată unde se află fiecare dintre instrumentele lui.
 
-![Reluare cu figuri a demonstrației cu tancuri: tancurile ca figuri proprii, cu etichete de nume, vehicul și viteză](../assets/img/en/replay-overview.webp)
+![Reluare cu figuri a demonstrației cu tancuri: tancurile ca figuri proprii, cu etichete de nume, vehicul și viteză](../assets/img/ro/replay-overview.webp)
 
 ## Pornește o reluare {#start-a-replay}
 
@@ -26,11 +26,11 @@ Trageri, lovituri, incendii și epave sunt desenate pe unități și pe obiectiv
 
 Figurile înlocuiesc cutiile pentru fiecare unitate al cărei nume sau tip este cunoscut (vezi [Figuri](figures.md)). Datele fără o coloană de nume sau de tip sunt desenate ca soldați.
 
-![Fila Meci: selectorul de meciuri, secțiunea Figuri, vederile camerei, Redare și lista de evenimente](../assets/img/en/match-replay-tab.webp)
+![Fila Meci: selectorul de meciuri, secțiunea Figuri, vederile camerei, Redare și lista de evenimente](../assets/img/ro/match-replay-tab.webp)
 
 ## Figuri {#figures}
 
-![Un tanc în flăcări în camera de orbită, cu lovitura care l-a atins](../assets/img/en/replay-tanks.webp)
+![Un tanc în flăcări în camera de orbită, cu lovitura care l-a atins](../assets/img/ro/replay-tanks.webp)
 
 | Setare (secțiunea **Figuri**) | Implicit | Ce face |
 |---|---|---|
@@ -51,7 +51,7 @@ Figurile înlocuiesc cutiile pentru fiecare unitate al cărei nume sau tip este 
 
 Când o unitate ar fi mai mică decât **Cea mai mică figură pe ecran**, poate deveni un simbol care rămâne lizibil. Forma spune tipul (de exemplu o cutie rotunjită cu o urmă de șenile pentru blindate); culoarea spune partea. Deschide meniul **Simboluri** ca să schimbi stilul.
 
-![Aceleași șase unități ca simboluri NATO, semne tactice rusești, pictograme de hartă de joc și doar forme](../assets/img/en/match-replay-symbols-styles.webp)
+![Aceleași șase unități ca simboluri NATO, semne tactice rusești, pictograme de hartă de joc și doar forme](../assets/img/ro/match-replay-symbols-styles.webp)
 
 ### Marcaje de lovituri, epave și incendii {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Dă clic pe o unitate sau pe eticheta ei ca s-o **urmărești**; secțiunea **Re
 
 ## Afișajul tactic {#tactical-display}
 
-![Demonstrația aeriană cu aspectul afișajului tactic (T): teren în sârmă, panouri cu eliminări și evenimente](../assets/img/en/replay-air-tactical.webp)
+![Demonstrația aeriană cu aspectul afișajului tactic (T): teren în sârmă, panouri cu eliminări și evenimente](../assets/img/ro/replay-air-tactical.webp)
 
 Secțiunea **Afișaj tactic** desenează, pentru nicio unitate, pentru cele selectate, pentru toate sau pentru un tip (aeronave, sol, nave, arme): vectori de viteză și traseul înainte, linii de nas și de portanță, conuri radar, blocaje, legături de date, zone și linii de angajare, linii de vedere, unde se uită jucătorii (conuri de vedere), țintirea turelei și camera înregistrată.
 
@@ -84,7 +84,7 @@ Secțiunea **Afișaj tactic** desenează, pentru nicio unitate, pentru cele sele
 
 `T` (sau comutatorul **Afișează ca afișaj tactic**) schimbă aspectul într-un stil de ecran radar: strălucire, contururi, curbe de nivel, o grilă de măsurare, linii de scanare, inele de distanță, scări de altitudine, panouri cu eliminări și evenimente și un **Regizor** care mută singur camera spre evenimente.
 
-![Aceeași luptă aeriană în aspectul normal](../assets/img/en/replay-air.webp)
+![Aceeași luptă aeriană în aspectul normal](../assets/img/ro/replay-air.webp)
 
 ## Obiective {#objectives}
 

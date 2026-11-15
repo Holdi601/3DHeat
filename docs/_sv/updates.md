@@ -18,7 +18,7 @@ Visaren talar om när en nyare version finns, och uppdaterar sig bara när du s�
 2. **Om den säger att du ska köra restart.bat** stänger du serverfönstret (det svarta fönstret som `start.bat` öppnade) och dubbelklickar på `restart.bat`.
 3. **När du startar visaren.** `start.bat` kontrollerar också. Om en nyare version finns frågar den **Update now? [Y/N]**. Tryck `Y` för att uppdatera. Tryck `N`, eller vänta 60 sekunder utan svar, för att starta den version du har.
 
-![Uppdateringsnotisen med Update now och Later](../assets/img/en/updates-notice.webp)
+![Uppdateringsnotisen med Update now och Later](../assets/img/sv/updates-notice.webp)
 
 En kopia med egna ändringar uppdateras aldrig åt dig. Rutan talar bara om att en uppdatering väntar, och säger att du ska checka in eller stasha dina ändringar och köra `git pull`. En kopia som inte installerats med git (en zipfil till exempel) visar ingenting.
 

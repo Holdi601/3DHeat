@@ -15,7 +15,7 @@ Vsaka pika doda malo sijaja, sijaji se nalagajo drug na drugega, kupček pa se p
 
 Vrstica načinov na vrhu stranske vrstice zavihka Toplotni zemljevid izbere, kako se [nabor podatkov](glossary.md) riše. Tipke 1-4 izberejo Toplota, Razlika, Toplota ekip in Črte. Prekrivanje figur nima tipke.
 
-![Vrstica načinov s Toplota, Razlika, Toplota ekip, Prekrivanje figur in Črte](../assets/img/en/heat-modes-bar.webp)
+![Vrstica načinov s Toplota, Razlika, Toplota ekip, Prekrivanje figur in Črte](../assets/img/sl/heat-modes-bar.webp)
 
 | Način | Vprašanje, na katero odgovori |
 |---|---|
@@ -25,7 +25,7 @@ Vrstica načinov na vrhu stranske vrstice zavihka Toplotni zemljevid izbere, kak
 | **Črte** | Po katerih poteh so šli ljudje? |
 | **Prekrivanje figur** | Kdo je bil kje in kdaj? |
 
-![Isti podatki v štirih načinih: Toplota, Razlika, Toplota ekip in Črte](../assets/img/en/heat-modes-grid.webp)
+![Isti podatki v štirih načinih: Toplota, Razlika, Toplota ekip in Črte](../assets/img/sl/heat-modes-grid.webp)
 
 | Način (oznaka v vrstici) | Tipka | Kaj riše | Potrebuje |
 |---|---|---|---|

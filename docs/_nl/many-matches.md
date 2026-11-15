@@ -14,7 +14,7 @@ outdated: false
 
 Elke wedstrijd begint bij zijn eigen begin en zijn eenheden bewegen als figuren. De bestanden gaan rechtstreeks de videokaart in en er wordt geen volledige tabel opgebouwd, dus het speelt soepel waar een gewone lading geheugen tekort zou komen.
 
-![Tien tankwedstrijden over elkaar gelegd, één kleur per wedstrijd](../assets/img/en/many-matches.webp)
+![Tien tankwedstrijden over elkaar gelegd, één kleur per wedstrijd](../assets/img/nl/many-matches.webp)
 
 ## Zo gebruik je het {#how-to-use-it}
 

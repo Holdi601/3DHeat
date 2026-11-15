@@ -15,7 +15,7 @@ outdated: false
 
 Alles wordt in je browser geteld. Niets verlaat je computer tenzij je een externe AI aanzet (zie [Externe AI](#external-ai)).
 
-![Inzichten op de tankdemo: 14 bevindingen, het sterkste eerst](../assets/img/en/insights.webp)
+![Inzichten op de tankdemo: 14 bevindingen, het sterkste eerst](../assets/img/nl/insights.webp)
 
 Het gedeelte **Inzichten** staat in de zijbalk van de tabbladen Heatmap en Match. Het heeft drie tabbladen: **Bevindingen**, **Nabespreking** en **Commentator**.
 
@@ -30,7 +30,7 @@ Het tellen gebruikt de huidige filters, verborgen groepen en gekozen wedstrijd o
 
 De regels bovenaan de lijst (bijvoorbeeld de geldtotalen) vatten de volledige data samen voor de bevindingen.
 
-![Een bevinding geopend: de hete zone van geschoten schoten, de cijfers, en een passage uit de literatuur die erbij past](../assets/img/en/insights-finding.webp)
+![Een bevinding geopend: de hete zone van geschoten schoten, de cijfers, en een passage uit de literatuur die erbij past](../assets/img/nl/insights-finding.webp)
 
 ### De detectors {#the-detectors}
 
@@ -55,7 +55,7 @@ Elke plek of groep wordt getoetst tegen de rest van de kaart (exacte binomiale o
 
 Het tabblad **Nabespreking** schrijft de bevindingen uit als korte tekst: een inleiding, de duidelijkste bevinding, één voor tactiek, één voor balans, de rest gegroepeerd per detector, en hoeveel er op zwakker bewijs rusten. Elke alinea heeft genummerde knoppen die de bevindingen tonen. **Tekst kopiëren** kopieert hem.
 
-![De nabespreking geschreven door de ingebouwde verteller](../assets/img/en/debrief.webp)
+![De nabespreking geschreven door de ingebouwde verteller](../assets/img/nl/debrief.webp)
 
 De ingebouwde verteller werkt offline, in jouw taal. De keuzelijst **Lens** erboven (zie [De kennislens](knowledge.md)) bepaalt welke literatuur de alinea's citeren.
 
@@ -78,7 +78,7 @@ Typ daarna eventueel een vraag en druk op **Schrijven met AI**. Alleen de bevind
 
 Voor **één wedstrijd** (kies er één als er meerdere geladen zijn) zoekt de **Commentator** de momenten die het waard zijn om te bekijken: eerste bloed, multi-kills, ruilen, clutches, wendingen bij doelen, comebacks, opvallende spelers, lange schoten.
 
-![De momenten van de commentator voor één ronde van de schietdemo](../assets/img/en/caster.webp)
+![De momenten van de commentator voor één ronde van de schietdemo](../assets/img/nl/caster.webp)
 
 - Klik op een moment: de weergave schakelt naar de replay, springt naar even vóór het moment, vliegt erheen en volgt de speler.
 - **Momenten afspelen** speelt elk moment tot het eind en gaat door; **Vorige** / **Volgende** lopen erdoorheen.

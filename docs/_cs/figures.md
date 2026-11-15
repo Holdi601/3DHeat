@@ -15,7 +15,7 @@ outdated: false
 
 Je jich zhruba 2 000 pojmenovaných vozidel, letadel, lodí, zbraní a vojáků, všechny vytvořené samotným prohlížečem.
 
-![Tanky z ukázky, nakreslené jako vlastní figury](../assets/img/en/replay-tanks.webp)
+![Tanky z ukázky, nakreslené jako vlastní figury](../assets/img/cs/replay-tanks.webp)
 
 ## Co je v katalogu {#what-is-in-the-catalogue}
 

@@ -15,7 +15,7 @@ Crveno tamo gdje je tim A bio više, zeleno-plavo tamo gdje je bio tim B, ništa
 
 **Razlika** (tipka 2) je toplina s predznakom. Redci jedne populacije zbrajaju toplinu; redci druge je oduzimaju. Tamo gdje se dvije populacije ravnomjerno preklapaju rezultat je nula i potpuno prozirno; tamo gdje jedna prevladava, prikazuje se u bojama te strane - zadano toplo (prozirno → crveno → žuto → bijelo) za stranu **+** i hladno (prozirno → zeleno → plavo → ljubičasto) za stranu **−**.
 
-![Razlika topline: crveno tamo gdje je strana + bila više, zeleno i plavo tamo gdje je strana - bila više](../assets/img/en/difference-split.webp)
+![Razlika topline: crveno tamo gdje je strana + bila više, zeleno i plavo tamo gdje je strana - bila više](../assets/img/hr/difference-split.webp)
 
 ## Kako se koristi {#how-to-use-it}
 

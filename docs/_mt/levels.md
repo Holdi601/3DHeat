@@ -21,7 +21,7 @@ Meta ma jkun imgħabba xejn, ix-xena tkun iswed b'grilja u assi kkulurati (**Gri
 
 Il-livell hu komuni għat-tliet tabs: kors imgħobbi fit-tab Analiżi tat-tellieqa huwa l-istess livell li turi l-mappa tas-sħana.
 
-![Il-pannell Sfond / livell b'livell mgħobbi: buttuni Immaġini tal-mappa u Mudell 3D, Teatru tal-operazzjonijiet, Opaċità, Luminożità, Issejvja fil-librerija u l-lista tal-Librerija](../assets/img/en/level-panel.webp)
+![Il-pannell Sfond / livell b'livell mgħobbi: buttuni Immaġini tal-mappa u Mudell 3D, Teatru tal-operazzjonijiet, Opaċità, Luminożità, Issejvja fil-librerija u l-lista tal-Librerija](../assets/img/mt/level-panel.webp)
 
 ## Poġġi livell wara d-data tiegħek {#put-a-level-behind-your-data}
 

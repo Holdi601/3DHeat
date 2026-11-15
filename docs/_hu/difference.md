@@ -15,7 +15,7 @@ Pirossal, ahol az A csapat volt többet jelen, zöldeskékkel, ahol a B, és sem
 
 A **Különbség** (2-es billentyű) előjeles hő. Az egyik népesség sorai hozzáadnak hőt, egy másik népesség sorai elvesznek belőle. Ahol a kettő egyenletesen átfedi egymást, az eredmény nulla és teljesen átlátszó; ahol az egyik dominál, annak az oldalnak a színeiben jelenik meg – alapértelmezés szerint melegen (átlátszó → piros → sárga → fehér) a **+** oldalnak, hűvösen (átlátszó → zöld → kék → lila) a **−** oldalnak.
 
-![Különbség-hő: piros, ahol a + oldal volt többet, zöld és kék, ahol a − oldal](../assets/img/en/difference-split.webp)
+![Különbség-hő: piros, ahol a + oldal volt többet, zöld és kék, ahol a − oldal](../assets/img/hu/difference-split.webp)
 
 ## Használat {#how-to-use-it}
 

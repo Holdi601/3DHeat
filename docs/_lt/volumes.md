@@ -21,7 +21,7 @@ outdated: false
  +------------+
 ```
 
-![Trys tūriai Demo Valley lygyje: du cilindrai aplink kalvas, dėžė aplink kaimą](../assets/img/en/volumes.webp)
+![Trys tūriai Demo Valley lygyje: du cilindrai aplink kalvas, dėžė aplink kaimą](../assets/img/lt/volumes.webp)
 
 Tūriai matuoja, kas vyksta jų viduje, filtruoja vaizdą pagal juos, eksportuoja jų eilutes ir gali būti lyginami šalia vienas kito. Eilutės, asmens ir rungtynių sąvokos paaiškintos [žodynėlyje](glossary.md).
 
@@ -76,7 +76,7 @@ Kai matomi du ar daugiau tūrių, paspauskite **Palyginti…**.
 3. Skiltyje **Lentelė** skaitykite kiekvienos reikšmės skirtumą nuo pirmo tūrio.
 4. Perjunkite į **Stulpeliai**, kad matytumėte dalis kaip stulpelius.
 
-![Tūrių palyginimo lentelė: kiekvieno tūrio eilutės, laikas viduje, žaidėjai ir kita, su skirtumu nuo pirmojo](../assets/img/en/compare.webp)
+![Tūrių palyginimo lentelė: kiekvieno tūrio eilutės, laikas viduje, žaidėjai ir kita, su skirtumu nuo pirmojo](../assets/img/lt/compare.webp)
 
 | Rodinys | Rodo |
 |---|---|
@@ -86,7 +86,7 @@ Kai matomi du ar daugiau tūrių, paspauskite **Palyginti…**.
 | **Apsilankymai** | Dėžių ir smuikų diagramos, rodančios, kiek trunka apsilankymai (logaritminė skalė). |
 | **Srautas** | Kur keliai veda išėjus iš kiekvieno tūrio: perėjimų matrica arba srauto juostos. |
 
-![Stulpelių rodinys: įvykių rūšys kiekviename tūryje kaip dalys](../assets/img/en/compare-bars.webp)
+![Stulpelių rodinys: įvykių rūšys kiekviename tūryje kaip dalys](../assets/img/lt/compare-bars.webp)
 
 ## Patarimai {#tips}
 

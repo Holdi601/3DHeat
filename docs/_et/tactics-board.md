@@ -23,7 +23,7 @@ Vahekaart **Taktika** on joonistuslaud meeskonnaplaani jaoks: paned kaardile vä
 6. Vajuta **▶** (või `K`), et esitada plaan näidatud sammust lõpuni.
 7. Nimeta plaan jaotises **Plaani nimi** ja vajuta **Salvesta**.
 
-![Taktikavahekaart pealtvaates: mäng, pooled ja tööriistad vasakul, kolm kuju Nihuta-nooltega, suitsu Vise-kaar, Ala ja sammud allservas](../assets/img/en/tactics.webp)
+![Taktikavahekaart pealtvaates: mäng, pooled ja tööriistad vasakul, kolm kuju Nihuta-nooltega, suitsu Vise-kaar, Ala ja sammud allservas](../assets/img/et/tactics.webp)
 
 ## Plaani alustamine {#starting-a-plan}
 

@@ -13,7 +13,7 @@ outdated: false
 
 Du körde samma bana två gånger. Fliken **Racinganalys** spelar upp båda körningarna tillsammans i 3D, visar var ett varv var långsammare och berättar varför. Inga varv än? Tryck **Demovarv**.
 
-![Fliken Racinganalys med demovarv: sidofältet med Varv och Var det finns tid att hämta, bilarna på banan och graferna under vyn](../assets/img/en/race-analysis-overview.webp)
+![Fliken Racinganalys med demovarv: sidofältet med Varv och Var det finns tid att hämta, bilarna på banan och graferna under vyn](../assets/img/sv/race-analysis-overview.webp)
 
 Fliken jämför två eller fler varv på en och samma bana. Den delar duken, kameran och banmodellen (**Bakgrund / nivå**) med värmekartan. Allt annat är eget: egen sidopanel och eget fält under vyn. Ord som *lap*, *reference* och *apex* förklaras i [ordlistan](glossary.md).
 

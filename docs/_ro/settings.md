@@ -23,7 +23,7 @@ Comenzile mici din partea de sus a barei laterale schimbă felul în care vorbe�
 | Butonul **...** de lângă **Unități** | Deschide „Alege o unitate pentru fiecare mărime”: o listă derulantă pentru fiecare mărime |
 | Meniul **Limbă** | Limba vizualizatorului: [40 de limbi](languages.md), sau cea a browserului |
 
-![Antetul cu meniul Unități și fereastra unitate-cu-mărime deschise](../assets/img/en/settings-units.webp)
+![Antetul cu meniul Unități și fereastra unitate-cu-mărime deschise](../assets/img/ro/settings-units.webp)
 
 Numerele pe care le scrii într-o casetă pot folosi punct sau virgulă (`0.35` sau `0,35`). Vizualizatorul citește amândouă și arată numerele cum le scrie limba vizualizatorului.
 
@@ -48,11 +48,11 @@ Alte unități pe care le poți alege pentru o singură mărime: distanță km, 
 
 ## Modul de ajutor {#help-mode}
 
-![Modul de ajutor: ce înseamnă culorile](../assets/img/en/help.webp)
+![Modul de ajutor: ce înseamnă culorile](../assets/img/ro/help.webp)
 
 Apasă `?` sau `F1`, sau dă clic pe butonul **?**. Arată *Ce înseamnă culorile*: legende pentru vederea 3D, rampele de căldură, culorile echipelor, culorile nivelului, culorile de stare ale panourilor, panoul meciului și vederea de cursă. Rămâne pornit până îl oprești. În fila Meci explică și culorile panoului meciului.
 
-![Modul de ajutor în fila Meci](../assets/img/en/settings-help-match.webp)
+![Modul de ajutor în fila Meci](../assets/img/ro/settings-help-match.webp)
 
 ## Ce ține minte browserul {#what-the-browser-remembers}
 

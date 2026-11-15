@@ -15,7 +15,7 @@ Her nokta biraz parıltı ekler, parıltılar üst üste biner ve yığın renkl
 
 Isı haritası sekmesinin kenar çubuğunun üstündeki mod çubuğu, [veri kümesinin](glossary.md) nasıl çizileceğini seçer. 1-4 tuşları Isı, Fark, Takım ısısı ve Çizgiler'i seçer. Figür bindirmenin bir tuşu yoktur.
 
-![Isı, Fark, Takım ısısı, Figür bindirme ve Çizgiler ile mod çubuğu](../assets/img/en/heat-modes-bar.webp)
+![Isı, Fark, Takım ısısı, Figür bindirme ve Çizgiler ile mod çubuğu](../assets/img/tr/heat-modes-bar.webp)
 
 | Mod | Yanıtladığı soru |
 |---|---|
@@ -25,7 +25,7 @@ Isı haritası sekmesinin kenar çubuğunun üstündeki mod çubuğu, [veri küm
 | **Çizgiler** | İnsanlar hangi yönde gitti? |
 | **Figür bindirme** | Kim nerede ve ne zaman oldu? |
 
-![Aynı veri dört modda: Isı, Fark, Takım ısısı ve Çizgiler](../assets/img/en/heat-modes-grid.webp)
+![Aynı veri dört modda: Isı, Fark, Takım ısısı ve Çizgiler](../assets/img/tr/heat-modes-grid.webp)
 
 | Mod (mod çubuğu etiketi) | Tuş | Ne çizer | Gerektirir |
 |---|---|---|---|

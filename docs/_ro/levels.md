@@ -21,7 +21,7 @@ Fără nimic încărcat, scena este întunecată, cu o grilă și axe colorate (
 
 Nivelul este comun tuturor celor trei file: un traseu încărcat în fila Analiză de cursă este același nivel pe care îl arată harta termică.
 
-![Panoul Fundal / nivel cu un nivel încărcat: butoanele Imagine de hartă și Model 3D, Teatru, Opacitate, Luminozitate, Salvează în bibliotecă și lista Bibliotecii](../assets/img/en/level-panel.webp)
+![Panoul Fundal / nivel cu un nivel încărcat: butoanele Imagine de hartă și Model 3D, Teatru, Opacitate, Luminozitate, Salvează în bibliotecă și lista Bibliotecii](../assets/img/ro/level-panel.webp)
 
 ## Pune un nivel în spatele datelor {#put-a-level-behind-your-data}
 

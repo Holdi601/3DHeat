@@ -14,7 +14,7 @@ outdated: false
 
 Lataa sijainnit: CSV, Parquet, Tacview-tallenteet, muunnetut toistot, yksi tiedosto, kansio tai tuhansia otteluita. Näet ne **lämpökarttana, jonka läpi voit lentää**, **hahmoina, jotka toistavat ottelun**, viivoina pitkin reittejä, joita ihmiset kulkivat, tai yhtenä joukkona toista vastaan. Se löytää itse, mikä erottuu. Se toimii kokonaan selaimessasi. Mitään ei lähetetä mihinkään.
 
-![Kymmenen panssarivaunuottelun lämpö esimerkkilaaksossa](../assets/img/en/heat-hero.webp)
+![Kymmenen panssarivaunuottelun lämpö esimerkkilaaksossa](../assets/img/fi/heat-hero.webp)
 
 **Uusi täällä?** Tee [esimerkkidata](demo-data.md) ja seuraa sen seitsemää vaihetta. Jokainen tämän sivuston kuva on otettu sillä.
 
@@ -22,12 +22,12 @@ Lataa sijainnit: CSV, Parquet, Tacview-tallenteet, muunnetut toistot, yksi tiedo
 
 | | |
 |---|---|
-| ![Erotus](../assets/img/en/heat-difference.webp) | **[Lämmön tilat](heat-modes.md)** - lämpö, [erotus](difference.md) (punainen siellä, missä toinen puoli oli enemmän, vihreä-sininen siellä, missä toinen puoli oli), [joukkuelämpö](team-heat.md), [viivalämpö](line-heat.md); [suuntalämpö](directional-heat.md) kiiloilla, nuolikentillä ja napakaavioilla; lämpö [painotettuna arvolla](value-weighting.md): mitä aseet, ajoneuvot ja polttoaine maksavat. |
-| ![Toisto](../assets/img/en/replay-tanks.webp) | **[Ottelun toisto](match-replay.md)** - jokainen yksikkö [hahmona](figures.md) siitä, mitä se on, NATO- tai venäläiset merkit kaukana, ohjuksia ja jäljitteitä, osumamerkit, raadot, palot, tornit, tavoitteet, Tacview-tyyliset kamerat ja taktinen näyttö; [monta ottelua kerralla](many-matches.md). |
-| ![Havainnot](../assets/img/en/insights.webp) | **[Havainnot](insights.md)** - vahvat asemat, vaaralliset maastot, synnytysloukut, pullonkaulat ja silmään pistävät pelaajat, löydettynä ja järjestettynä todisteineen; kirjallinen katsaus, halutessasi valitsemasi tekoälyn kirjoittama; selostaja yhdelle ottelulle; [tietolinssi](knowledge.md). |
-| ![Tilavuudet](../assets/img/en/compare.webp) | **[Tilavuudet](volumes.md)** - piirrä laatikoita, prismoja, sylintereitä ja palloja, suodata niiden mukaan, laske niiden sisällä tapahtuva, vie data ja vertaile paikkoja rinnakkain; [erittely](breakdown.md) siitä, kuka ja mikä menestyy paikassa parhaiten. |
-| ![Suodattimet](../assets/img/en/filters.webp) | **[Suodattimet](filters.md)** - tapahtumatyypin, pelaajan tai tekoälyn, ajoneuvoluokan, arvon tai minkä tahansa sarakkeen mukaan näytönohjaimessa, minkä kokoisella datalla tahansa. |
-| ![Kenttä](../assets/img/en/level-panel.webp) | **[Kentät](levels.md)** - karttakuvat, 3D-kentät, jotka on tehty [datatyökaluilla](#related-repositories), yksinkertaistus ja [maailmatausta](world-backdrop.md) todellisella maastolla lentodatalle. |
+| ![Erotus](../assets/img/fi/heat-difference.webp) | **[Lämmön tilat](heat-modes.md)** - lämpö, [erotus](difference.md) (punainen siellä, missä toinen puoli oli enemmän, vihreä-sininen siellä, missä toinen puoli oli), [joukkuelämpö](team-heat.md), [viivalämpö](line-heat.md); [suuntalämpö](directional-heat.md) kiiloilla, nuolikentillä ja napakaavioilla; lämpö [painotettuna arvolla](value-weighting.md): mitä aseet, ajoneuvot ja polttoaine maksavat. |
+| ![Toisto](../assets/img/fi/replay-tanks.webp) | **[Ottelun toisto](match-replay.md)** - jokainen yksikkö [hahmona](figures.md) siitä, mitä se on, NATO- tai venäläiset merkit kaukana, ohjuksia ja jäljitteitä, osumamerkit, raadot, palot, tornit, tavoitteet, Tacview-tyyliset kamerat ja taktinen näyttö; [monta ottelua kerralla](many-matches.md). |
+| ![Havainnot](../assets/img/fi/insights.webp) | **[Havainnot](insights.md)** - vahvat asemat, vaaralliset maastot, synnytysloukut, pullonkaulat ja silmään pistävät pelaajat, löydettynä ja järjestettynä todisteineen; kirjallinen katsaus, halutessasi valitsemasi tekoälyn kirjoittama; selostaja yhdelle ottelulle; [tietolinssi](knowledge.md). |
+| ![Tilavuudet](../assets/img/fi/compare.webp) | **[Tilavuudet](volumes.md)** - piirrä laatikoita, prismoja, sylintereitä ja palloja, suodata niiden mukaan, laske niiden sisällä tapahtuva, vie data ja vertaile paikkoja rinnakkain; [erittely](breakdown.md) siitä, kuka ja mikä menestyy paikassa parhaiten. |
+| ![Suodattimet](../assets/img/fi/filters.webp) | **[Suodattimet](filters.md)** - tapahtumatyypin, pelaajan tai tekoälyn, ajoneuvoluokan, arvon tai minkä tahansa sarakkeen mukaan näytönohjaimessa, minkä kokoisella datalla tahansa. |
+| ![Kenttä](../assets/img/fi/level-panel.webp) | **[Kentät](levels.md)** - karttakuvat, 3D-kentät, jotka on tehty [datatyökaluilla](#related-repositories), yksinkertaistus ja [maailmatausta](world-backdrop.md) todellisella maastolla lentodatalle. |
 
 Lisäksi: [Kisa-analyysi](race-analysis.md) -välilehti kilpailupelien kierroksille, [Ottelu](match-analysis.md) -välilehti Counter-Strike 2:n ottelukoosteille, [Taktiikkataulu](tactics-board.md) suunnitelmille kentällä, [osumaanalyysi](hit-analysis.md) ajoneuvoittain, [massa-analyysi](mass-analysis.md) tuhansista otteluista, [kameraradat ja video](camera-path-and-video.md), [40 kieltä](languages.md) ja [metriset tai imperiaaliset yksiköt](settings.md).
 

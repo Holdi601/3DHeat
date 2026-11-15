@@ -21,7 +21,7 @@ outdated: false
 
 三個頁籤共用同一個關卡：在賽車分析頁籤中載入的賽道，就是熱圖所顯示的同一個關卡。
 
-![已載入關卡時的背景／關卡面板：地圖影像與 3D 模型按鈕、戰區、不透明度、亮度、儲存至關卡庫與關卡庫清單](../assets/img/en/level-panel.webp)
+![已載入關卡時的背景／關卡面板：地圖影像與 3D 模型按鈕、戰區、不透明度、亮度、儲存至關卡庫與關卡庫清單](../assets/img/zh-Hant/level-panel.webp)
 
 ## 把關卡放在你的資料後面 {#put-a-level-behind-your-data}
 

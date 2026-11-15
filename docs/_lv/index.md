@@ -14,7 +14,7 @@ outdated: false
 
 Ielādējiet pozīcijas - CSV, Parquet, Tacview ierakstus, konvertētus atkārtojumus, vienu failu, mapi vai tūkstošiem spēļu - un skatiet tās kā **siltumkarti, pa kuru var lidot**, kā **figūras, kas atkārto spēli**, kā līnijas pa maršrutiem, pa kuriem gāja cilvēki, vai kā vienu populāciju pret otru. Tā pati atrod, kas izceļas, un darbojas pilnībā jūsu pārlūkprogrammā: nekas nekur netiek augšupielādēts.
 
-![Dažu tanku spēļu siltums demonstrācijas ielejā](../assets/img/en/heat-hero.webp)
+![Dažu tanku spēļu siltums demonstrācijas ielejā](../assets/img/lv/heat-hero.webp)
 
 **Jauns šeit?** Izveidojiet [demonstrācijas datus](demo-data.md) un izpildiet tās septiņus soļus. Katrs attēls šajā vietnē ir uzņemts ar tiem.
 
@@ -22,12 +22,12 @@ Ielādējiet pozīcijas - CSV, Parquet, Tacview ierakstus, konvertētus atkārto
 
 | | |
 |---|---|
-| ![Starpība](../assets/img/en/heat-difference.webp) | **[Siltuma režīmi](heat-modes.md)** - siltums, [starpība](difference.md) (sarkana, kur vienā pusē bija vairāk, zilganzaļa, kur otrā), [komandu siltums](team-heat.md), [līniju siltums](line-heat.md); [virziena siltums](directional-heat.md) ar sektoriem, bultu laukiem un polārajām diagrammām; siltums [svērts pēc vērtības](value-weighting.md): ko maksā ieroči, transportlīdzekļi un degviela. |
-| ![Atkārtojums](../assets/img/en/replay-tanks.webp) | **[Spēles atkārtojums](match-replay.md)** - katra vienība kā [figūra](figures.md) ar to, kas tā ir, NATO vai krievu simboli tālākiem objektiem, raķetes un trasieri, trāpījumu zīmes, sagrautās vienības, ugunsgrēki, torņi, mērķi, Tacview stila kameras un taktiskais attēlojums; [daudzas spēles vienlaikus](many-matches.md). |
-| ![Atziņas](../assets/img/en/insights.webp) | **[Atziņas](insights.md)** - spēcīgas pozīcijas, nāvējoša zeme, spawn slazdi, sašaurinājumi un izcili spēlētāji, atrasti un sarindoti ar pierādījumiem; rakstisks secinājumu kopsavilkums, pēc izvēles ar jūsu izvēlētu MI; komentētāja režīms vienai spēlei; [zināšanu lēca](knowledge.md). |
-| ![Tilpumi](../assets/img/en/compare.webp) | **[Tilpumi](volumes.md)** - zīmējiet kastes, prizmas, cilindrus un sfēras, filtrējiet pēc tiem, saskaitiet, kas tajos notiek, eksportējiet un salīdziniet vietas blakus; [sadalījums](breakdown.md) - kas un kas labi darbojas vietā. |
-| ![Filtri](../assets/img/en/filters.webp) | **[Filtri](filters.md)** - pēc notikuma tipa, spēlētāja vai MI, transportlīdzekļa klases, vērtības, jebkuras kolonnas, grafikas kartē jebkurā datu apjomā. |
-| ![Līmenis](../assets/img/en/level-panel.webp) | **[Līmeņi](levels.md)** - karšu attēli, 3D līmeņi, kas veidoti ar [datu rīkiem](#related-repositories), vienkāršošana, [pasaules fons](world-backdrop.md) ar reālu reljefu lidojuma datiem. |
+| ![Starpība](../assets/img/lv/heat-difference.webp) | **[Siltuma režīmi](heat-modes.md)** - siltums, [starpība](difference.md) (sarkana, kur vienā pusē bija vairāk, zilganzaļa, kur otrā), [komandu siltums](team-heat.md), [līniju siltums](line-heat.md); [virziena siltums](directional-heat.md) ar sektoriem, bultu laukiem un polārajām diagrammām; siltums [svērts pēc vērtības](value-weighting.md): ko maksā ieroči, transportlīdzekļi un degviela. |
+| ![Atkārtojums](../assets/img/lv/replay-tanks.webp) | **[Spēles atkārtojums](match-replay.md)** - katra vienība kā [figūra](figures.md) ar to, kas tā ir, NATO vai krievu simboli tālākiem objektiem, raķetes un trasieri, trāpījumu zīmes, sagrautās vienības, ugunsgrēki, torņi, mērķi, Tacview stila kameras un taktiskais attēlojums; [daudzas spēles vienlaikus](many-matches.md). |
+| ![Atziņas](../assets/img/lv/insights.webp) | **[Atziņas](insights.md)** - spēcīgas pozīcijas, nāvējoša zeme, spawn slazdi, sašaurinājumi un izcili spēlētāji, atrasti un sarindoti ar pierādījumiem; rakstisks secinājumu kopsavilkums, pēc izvēles ar jūsu izvēlētu MI; komentētāja režīms vienai spēlei; [zināšanu lēca](knowledge.md). |
+| ![Tilpumi](../assets/img/lv/compare.webp) | **[Tilpumi](volumes.md)** - zīmējiet kastes, prizmas, cilindrus un sfēras, filtrējiet pēc tiem, saskaitiet, kas tajos notiek, eksportējiet un salīdziniet vietas blakus; [sadalījums](breakdown.md) - kas un kas labi darbojas vietā. |
+| ![Filtri](../assets/img/lv/filters.webp) | **[Filtri](filters.md)** - pēc notikuma tipa, spēlētāja vai MI, transportlīdzekļa klases, vērtības, jebkuras kolonnas, grafikas kartē jebkurā datu apjomā. |
+| ![Līmenis](../assets/img/lv/level-panel.webp) | **[Līmeņi](levels.md)** - karšu attēli, 3D līmeņi, kas veidoti ar [datu rīkiem](#related-repositories), vienkāršošana, [pasaules fons](world-backdrop.md) ar reālu reljefu lidojuma datiem. |
 
 Vēl: cilne [Sacīkšu analīze](race-analysis.md) sacīkšu spēļu apļiem, cilne [Mačs](match-analysis.md) Counter-Strike 2 kopsavilkumiem, [taktikas tāfele](tactics-board.md) plāniem uz līmeņa, [trāpījumu analīze](hit-analysis.md) pa transportlīdzekļiem, [masveida analīze](mass-analysis.md) tūkstošiem spēļu, [kameras ceļi un video](camera-path-and-video.md), [40 valodas](languages.md), [metriskās vai angļu mērvienības](settings.md).
 

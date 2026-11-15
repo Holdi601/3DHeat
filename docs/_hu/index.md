@@ -14,7 +14,7 @@ A 3DHeat megmutatja, hol történt valami egy játékban: hol mozogtak a játék
 
 Töltsön be pozíciókat – CSV, Parquet, Tacview-felvételek, átalakított visszajátszások, egyetlen fájl, mappa vagy több ezer meccs –, és nézze meg őket **hőtérképként, amelyben el lehet repülni**, **figurákként, amelyek visszajátsszák a meccset**, vonalakként a játékosok útvonalai mentén, vagy egy populáció egy másikkal szembeni összevetéseként. Magától megtalálja, ami kiemelkedik, és teljes egészében a böngészőjében fut: semmit nem tölt fel sehová.
 
-![Tíz harckocsimeccs hője a Demo Valley fölött](../assets/img/en/heat-hero.webp)
+![Tíz harckocsimeccs hője a Demo Valley fölött](../assets/img/hu/heat-hero.webp)
 
 **Új vagy itt?** Készítse el a [demóadatokat](demo-data.md), és kövesse a hét lépését. Ezen az oldalon minden képet ezzel készítettünk.
 
@@ -22,12 +22,12 @@ Töltsön be pozíciókat – CSV, Parquet, Tacview-felvételek, átalakított v
 
 | | |
 |---|---|
-| ![Különbség](../assets/img/en/heat-difference.webp) | **[Hőmódok](heat-modes.md)** – hő, [különbség](difference.md) (piros, ahol az egyik oldal többet volt jelen, zöldeskék, ahol a másik), [csapathő](team-heat.md), [vonal-hő](line-heat.md); [irányított hő](directional-heat.md) ékekkel, nyílmezőkkel és poláris diagramokkal; hő [érték szerint súlyozva](value-weighting.md): mibe kerül a fegyver, a jármű és az üzemanyag. |
-| ![Visszajátszás](../assets/img/en/replay-tanks.webp) | **[Meccs-visszajátszás](match-replay.md)** – minden egység a saját [figurájával](figures.md), a távolabbiak NATO- vagy orosz jelekkel, rakéták és nyomjelzők, találatjelek, roncsok, tüzek, toronyok, célok, Tacview-szerű kamerák és taktikai megjelenítés; [sok meccs egyszerre](many-matches.md). |
-| ![Felismerések](../assets/img/en/insights.webp) | **[Felismerések](insights.md)** – erős pozíciók, halálos terep, spawn-csapdák, szűk keresztmetszetek és kiemelkedő játékosok, bizonyítékkal együtt megtalálva és rangsorolva; írott összegzés, opcionálisan a választott MI-vel; kommentátor egy meccshez; a [tudás-lencse](knowledge.md). |
-| ![Térfogatok](../assets/img/en/compare.webp) | **[Térfogatok](volumes.md)** – dobozok, hasábok, hengerek és gömbök rajzolása, szűrés rájuk, a bennük történtek számlálása, exportálás, és helyek összehasonlítása egymás mellett; [bontás](breakdown.md) arról, hogy ki és mi teljesít a legjobban egy helyen. |
-| ![Szűrők](../assets/img/en/filters.webp) | **[Szűrők](filters.md)** – esemény típusa, játékos vagy MI, járműosztály, érték, bármely oszlop szerint, bármekkora adatmennyiségnél a videokártyán. |
-| ![Pálya](../assets/img/en/level-panel.webp) | **[Pályák](levels.md)** – térképképek, 3D-s pályák az [adateszközökkel](#related-repositories), egyszerűsítés, a [világ-háttér](world-backdrop.md) valódi terepeivel repülési adatokhoz. |
+| ![Különbség](../assets/img/hu/heat-difference.webp) | **[Hőmódok](heat-modes.md)** – hő, [különbség](difference.md) (piros, ahol az egyik oldal többet volt jelen, zöldeskék, ahol a másik), [csapathő](team-heat.md), [vonal-hő](line-heat.md); [irányított hő](directional-heat.md) ékekkel, nyílmezőkkel és poláris diagramokkal; hő [érték szerint súlyozva](value-weighting.md): mibe kerül a fegyver, a jármű és az üzemanyag. |
+| ![Visszajátszás](../assets/img/hu/replay-tanks.webp) | **[Meccs-visszajátszás](match-replay.md)** – minden egység a saját [figurájával](figures.md), a távolabbiak NATO- vagy orosz jelekkel, rakéták és nyomjelzők, találatjelek, roncsok, tüzek, toronyok, célok, Tacview-szerű kamerák és taktikai megjelenítés; [sok meccs egyszerre](many-matches.md). |
+| ![Felismerések](../assets/img/hu/insights.webp) | **[Felismerések](insights.md)** – erős pozíciók, halálos terep, spawn-csapdák, szűk keresztmetszetek és kiemelkedő játékosok, bizonyítékkal együtt megtalálva és rangsorolva; írott összegzés, opcionálisan a választott MI-vel; kommentátor egy meccshez; a [tudás-lencse](knowledge.md). |
+| ![Térfogatok](../assets/img/hu/compare.webp) | **[Térfogatok](volumes.md)** – dobozok, hasábok, hengerek és gömbök rajzolása, szűrés rájuk, a bennük történtek számlálása, exportálás, és helyek összehasonlítása egymás mellett; [bontás](breakdown.md) arról, hogy ki és mi teljesít a legjobban egy helyen. |
+| ![Szűrők](../assets/img/hu/filters.webp) | **[Szűrők](filters.md)** – esemény típusa, játékos vagy MI, járműosztály, érték, bármely oszlop szerint, bármekkora adatmennyiségnél a videokártyán. |
+| ![Pálya](../assets/img/hu/level-panel.webp) | **[Pályák](levels.md)** – térképképek, 3D-s pályák az [adateszközökkel](#related-repositories), egyszerűsítés, a [világ-háttér](world-backdrop.md) valódi terepeivel repülési adatokhoz. |
 
 Emellett: a [Versenyelemzés](race-analysis.md) fül versenyjátékok köreihez, a [Meccs](match-analysis.md) fül a Counter-Strike 2 összegzéseihez, a [Taktikatábla](tactics-board.md) pályán készült tervekhez, a [találatelemzés](hit-analysis.md) járművenként, a [tömegelemzés](mass-analysis.md) több ezer meccshez, a [kameraútvonalak és videó](camera-path-and-video.md), [40 nyelv](languages.md), [metrikus vagy angolszász mértékegységek](settings.md).
 

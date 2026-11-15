@@ -13,7 +13,7 @@ outdated: false
 
 Jūs braucāt pa to pašu trasi divreiz. Cilne **Sacīkšu analīze** atskaņo abus braucienus kopā 3D, parāda, kur viens aplis bija lēnāks, un pastāsta, kāpēc. Vēl nav apļu? Nospiediet **Demo apļi**.
 
-![Cilne Sacīkšu analīze ar demo apļiem: sānjosla ar Apļi un Kur uzlaboties, automašīnas trasē, diagrammas zem skata](../assets/img/en/race-analysis-overview.webp)
+![Cilne Sacīkšu analīze ar demo apļiem: sānjosla ar Apļi un Kur uzlaboties, automašīnas trasē, diagrammas zem skata](../assets/img/lv/race-analysis-overview.webp)
 
 Cilne salīdzina divus vai vairākus vienas trases apļus. Tā dala audeklu, kameru un ielādēto trases modeli (**Fons / līmenis**) ar siltumkarti; viss pārējais ir savs: sava sānjosla un sava josla zem skata. Tādi vārdi kā *aplis*, *atsauce* un *apex* ir [glosārijā](glossary.md).
 

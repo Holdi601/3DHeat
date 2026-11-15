@@ -26,7 +26,7 @@ Colpi, impatti, fuochi e relitti sono disegnati sulle unità e sugli obiettivi d
 
 Le figure sostituiscono i cubi per ogni unità il cui nome o tipo è noto (vedi [Figure](figures.md)). I dati senza una colonna di nome o di tipo vengono disegnati come soldati.
 
-![La scheda Partita: il selettore delle partite, la sezione Figure, le viste della telecamera, Riproduci e l'elenco degli eventi](../assets/img/en/match-replay-tab.webp)
+![La scheda Partita: il selettore delle partite, la sezione Figure, le viste della telecamera, Riproduci e l'elenco degli eventi](../assets/img/it/match-replay-tab.webp)
 
 ## Figure {#figures}
 
@@ -51,7 +51,7 @@ Le figure sostituiscono i cubi per ogni unità il cui nome o tipo è noto (vedi 
 
 Quando un'unità sarebbe più piccola di **Figura più piccola sullo schermo**, può diventare un simbolo che resta leggibile. La forma indica il tipo (per esempio una scatola arrotondata con un segno di cingolo per le corazzate); il colore indica il lato. Apri il menu **Simboli** per cambiare lo stile.
 
-![Le stesse sei unità come simboli NATO, segnali tattici russi, icone della mappa di gioco e sole forme](../assets/img/en/match-replay-symbols-styles.webp)
+![Le stesse sei unità come simboli NATO, segnali tattici russi, icone della mappa di gioco e sole forme](../assets/img/it/match-replay-symbols-styles.webp)
 
 ### Segni dei colpi, relitti e fuochi {#hit-marks-wrecks-and-fires}
 

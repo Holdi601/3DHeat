@@ -18,7 +18,7 @@ Il-viewer jgħidlek meta teżisti verżjoni iktar ġdida, u jaġġorna lilu nnif
 2. **Jekk jgħid li għandek tmexxi restart.bat**, agħlaq it-tieqa tas-server (it-tieqa sewda li fetaħ `start.bat`) u ikklikkja darbtejn `restart.bat`.
 3. **Meta tibda l-viewer.** `start.bat` jiċċekkja wkoll. Jekk teżisti verżjoni iktar ġdida jistaqsi **Update now? [Y/N]**. Agħfas `Y` biex taġġorna. Agħfas `N`, jew stenna 60 sekonda mingħajr tweġiba, biex tibda l-verżjoni li għandek.
 
-![In-notifika tal-aġġornament b'Aġġorna issa u Aktar tard](../assets/img/en/updates-notice.webp)
+![In-notifika tal-aġġornament b'Aġġorna issa u Aktar tard](../assets/img/mt/updates-notice.webp)
 
 Kopja b'bidliet tiegħek innifsek qatt ma tiġi aġġornata għalik; il-kaxxa tgħidlek biss li hemm aġġornament jistenna, u tgħid biex tagħmel commit jew stash tal-bidliet tiegħek u tmexxi `git pull`. Kopja li ma ġietx installata b'git (fajl zip, pereżempju) ma turi xejn.
 

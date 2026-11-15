@@ -18,7 +18,7 @@ Vaatur teatab sulle, kui on olemas uuem versioon, ja uuendab end ainult siis, ku
 2. **Kui seal öeldakse, et käivita restart.bat**, sulge serveriaken (must aken, mille `start.bat` avas) ja topeldi `restart.bat`.
 3. **Vaaturi käivitamisel.** `start.bat` kontrollib ka. Kui on uuem versioon, küsib ta **Uuenda kohe? [Y/N]**. Vajuta `Y`, et uuendada. Vajuta `N` või oota 60 sekundit ilma vastamata, et käivitada versioon, mis sul on.
 
-![Uuenduse teade nupuga Uuenda kohe ja Hiljem](../assets/img/en/updates-notice.webp)
+![Uuenduse teade nupuga Uuenda kohe ja Hiljem](../assets/img/et/updates-notice.webp)
 
 Koopiat, millel on sinu enda muudatused, ei uuendata sinu eest kunagi; kast ütleb ainult, et uuendus ootab, ja palub muudatused commit'ida või stash'ida ning käivitada `git pull`. Koopia, mis ei ole installitud gitiga (näiteks zip-fail), ei näita midagi.
 

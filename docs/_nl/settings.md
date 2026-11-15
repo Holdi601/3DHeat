@@ -23,7 +23,7 @@ Bovenaan de zijbalk:
 | Knop **...** naast **Eenheden** | Opent "Kies een eenheid per grootheid": één keuzelijst per grootheid |
 | Menu **Taal** | De taal van de viewer: [40 talen](languages.md), of die van de browser |
 
-![De kop met het menu Eenheden en het venster eenheid-per-grootheid open](../assets/img/en/settings-units.webp)
+![De kop met het menu Eenheden en het venster eenheid-per-grootheid open](../assets/img/nl/settings-units.webp)
 
 Getallen die je in een vak typt mogen een punt of een komma gebruiken (`0.35` of `0,35`). De viewer leest beide en toont getallen zoals de taal van de viewer ze schrijft.
 
@@ -48,11 +48,11 @@ Andere eenheden die je voor één grootheid kunt kiezen: afstand km, mi, NM; sne
 
 ## Hulpmodus {#help-mode}
 
-![Hulpmodus: wat de kleuren betekenen](../assets/img/en/help.webp)
+![Hulpmodus: wat de kleuren betekenen](../assets/img/nl/help.webp)
 
 Druk op `?` of `F1`, of klik op de knop **?**. Die toont *Wat de kleuren betekenen*: legenda's voor de 3D-weergave, de warmteramp, teamkleuren, de kleuren van het niveau, de statuskleuren van de panelen, het paneel van het tabblad Match en de racweergave. Hij blijft aan tot je hem uitzet. In het tabblad Match legt hij ook de kleuren van het wedstrijdpaneel uit.
 
-![Hulpmodus in het tabblad Match](../assets/img/en/settings-help-match.webp)
+![Hulpmodus in het tabblad Match](../assets/img/nl/settings-help-match.webp)
 
 ## Wat de browser onthoudt {#what-the-browser-remembers}
 

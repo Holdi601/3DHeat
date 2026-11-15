@@ -13,7 +13,7 @@ outdated: false
 
 Thiomáin an rian céanna faoi dhó. Seinneann cluaisín **Anailís rása** an dá thiomáint le chéile sa 3D, taispeánann sé cá raibh cuairt amháin níos moille agus insíonn sé duit cén fáth. Gan cuairteanna fós? Brúigh **Cuairteanna samplacha**.
 
-![Cluaisín Anailís rása le cuairteanna samplacha: an barra taoibh le Cuairteanna agus Cá háit le feabhsú, na gluaisteáin ar an gcúrsa, na cairteacha faoin radharc](../assets/img/en/race-analysis-overview.webp)
+![Cluaisín Anailís rása le cuairteanna samplacha: an barra taoibh le Cuairteanna agus Cá háit le feabhsú, na gluaisteáin ar an gcúrsa, na cairteacha faoin radharc](../assets/img/ga/race-analysis-overview.webp)
 
 Déanann an cluaisín cuairteanna dhá cheann nó níos mó de chúrsa amháin a chur i gcomparáid. Roinneann sé an canbhás, an ceamara agus múnla an chúrsa lódáilte (**Cúlra / leibhéal**) leis an léarscáil teasa; is leis féin gach rud eile: a bharra taoibh féin agus a bharra féin faoin radharc. Tá téarmaí mar *cuairt*, *tagartha* agus *barr an chúinne* sa [ghluais](glossary.md).
 

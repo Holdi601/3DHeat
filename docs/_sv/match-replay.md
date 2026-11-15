@@ -15,7 +15,7 @@ Repriset är en film av matchen där varje spelare ritas som det hen körde. Anv
 
 Skott, träffar, bränder och vrak ritas på enheterna och målen på banan. Kameror, etiketter och en taktisk vy hjälper dig att läsa striden. Känner du till Tacview? [Tacview-paritet](tacview-parity.md) visar var vart och ett av dess verktyg finns.
 
-![Figurrepris av stridsvagnsdemon: stridsvagnar som egna figurer, med etiketter för namn, fordon och hastighet](../assets/img/en/replay-overview.webp)
+![Figurrepris av stridsvagnsdemon: stridsvagnar som egna figurer, med etiketter för namn, fordon och hastighet](../assets/img/sv/replay-overview.webp)
 
 ## Starta en repris {#start-a-replay}
 
@@ -26,11 +26,11 @@ Skott, träffar, bränder och vrak ritas på enheterna och målen på banan. Kam
 
 Figurer ersätter lådor för varje enhet vars namn eller typ är känt (se [Figurer](figures.md)). Data utan namn- eller typkolumn ritas som soldater.
 
-![Fliken Match: väljaren för matcher, avsnittet Figurer, kamervyerna, Spela och händelselistan](../assets/img/en/match-replay-tab.webp)
+![Fliken Match: väljaren för matcher, avsnittet Figurer, kamervyerna, Spela och händelselistan](../assets/img/sv/match-replay-tab.webp)
 
 ## Figurer {#figures}
 
-![En brinnande stridsvagn i kretsningskameran, med skottet som träffade den](../assets/img/en/replay-tanks.webp)
+![En brinnande stridsvagn i kretsningskameran, med skottet som träffade den](../assets/img/sv/replay-tanks.webp)
 
 | Inställning (avsnittet **Figurer**) | Standard | Vad den gör |
 |---|---|---|
@@ -51,7 +51,7 @@ Figurer ersätter lådor för varje enhet vars namn eller typ är känt (se [Fig
 
 När en enhet skulle bli mindre än **Minsta figur på skärmen** kan den bli en symbol som förblir läsbar. Formen visar slaget (till exempel en avrundad låda med ett bandmärke för pansar). Färgen visar sidan. Öppna menyn **Symboler** för att ändra stilen.
 
-![Samma sex enheter som NATO-symboler, ryska taktiska tecken, ikoner för spelkartan och bara former](../assets/img/en/match-replay-symbols-styles.webp)
+![Samma sex enheter som NATO-symboler, ryska taktiska tecken, ikoner för spelkartan och bara former](../assets/img/sv/match-replay-symbols-styles.webp)
 
 ### Träffmärken, vrak och bränder {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Klicka på en enhet eller dess etikett för att **följa** den. Avsnittet **Repr
 
 ## Taktisk visning {#tactical-display}
 
-![Luftdemon i den taktiska visningens utseende (T): trådmodell av terrängen, paneler för dödningar och händelser](../assets/img/en/replay-air-tactical.webp)
+![Luftdemon i den taktiska visningens utseende (T): trådmodell av terrängen, paneler för dödningar och händelser](../assets/img/sv/replay-air-tactical.webp)
 
 Avsnittet **Taktisk visning** ritar, för ingen enhet, de valda, alla, eller en typ (flygplan, mark, fartyg, vapen): hastighetsvektorer och banan framåt, nos- och lyftlinjer, radarkoner, låsningar, datalänkar, engagemangszoner och -linjer, siktlinjer, vart spelare tittar (sikteskoner), tornsikte och den inspelade kameran.
 
@@ -84,7 +84,7 @@ Avsnittet **Taktisk visning** ritar, för ingen enhet, de valda, alla, eller en 
 
 `T` (eller reglaget **Visa som taktisk vy**) byter utseendet till en radarskärmsstil: glöd, konturer, höjdkurvor, ett mätnät, skannerlinjer, avståndsringar, höjdstegar, paneler med dödningar och händelser, och en **Regissör** som flyttar kameran till händelser av egen kraft.
 
-![Samma luftstrid i det vanliga utseendet](../assets/img/en/replay-air.webp)
+![Samma luftstrid i det vanliga utseendet](../assets/img/sv/replay-air.webp)
 
 ## Mål {#objectives}
 

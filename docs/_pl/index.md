@@ -14,7 +14,7 @@ outdated: false
 
 Wczytaj pozycje - CSV, Parquet, nagrania Tacview, przekonwertowane powtórki, jeden plik, folder albo tysiące meczów - i zobacz je jako **mapę cieplną, po której możesz latać**, jako **figury odtwarzające mecz**, jako linie wzdłuż tras, którymi szli ludzie, albo jako jedną grupę obok drugiej. Program sam znajduje to, co się wyróżnia, i działa w całości w przeglądarce: nic nigdzie nie jest wysyłane.
 
-![Ciepło dziesięciu meczów czołgów nad Demo Valley](../assets/img/en/heat-hero.webp)
+![Ciepło dziesięciu meczów czołgów nad Demo Valley](../assets/img/pl/heat-hero.webp)
 
 **Nowy tutaj?** Wygeneruj [dane demonstracyjne](demo-data.md) i przejdź przez ich siedem kroków. Każdy obrazek na tej stronie został zrobiony właśnie z nich.
 
@@ -22,12 +22,12 @@ Wczytaj pozycje - CSV, Parquet, nagrania Tacview, przekonwertowane powtórki, je
 
 | | |
 |---|---|
-| ![Różnica](../assets/img/en/heat-difference.webp) | **[Tryby ciepła](heat-modes.md)** - ciepło, [różnica](difference.md) (na czerwono tam, gdzie jedna strona miała więcej, na zielononiebiesko tam, gdzie druga), [ciepło drużyn](team-heat.md), [ciepło liniowe](line-heat.md); [ciepło kierunkowe](directional-heat.md) z klinami, polami strzałek i wykresami biegunowymi; ciepło [ważone wartością](value-weighting.md): ile kosztują broń, pojazdy i paliwo. |
-| ![Powtórka](../assets/img/en/replay-tanks.webp) | **[Powtórka meczu](match-replay.md)** - każda jednostka jako [figura](figures.md) tego, czym jest, symbole NATO lub rosyjskie z daleka, pociski i smugi, znaczniki trafień, wraki, pożary, wieże, cele, kamery w stylu Tacview i wyświetlacz taktyczny; [wiele meczów naraz](many-matches.md). |
-| ![Wnioski](../assets/img/en/insights.webp) | **[Wnioski](insights.md)** - mocne pozycje, śmiercionośny teren, pułapki na odrodzeniu, wąskie gardła i wyróżniający się gracze, znalezieni i uszeregowani wraz z dowodami; pisemne podsumowanie, opcjonalnie przygotowane przez AI wybraną przez Ciebie; komentator jednego meczu; [soczewka wiedzy](knowledge.md). |
-| ![Wolumeny](../assets/img/en/compare.webp) | **[Wolumeny](volumes.md)** - rysuj pudełka, graniastosłupy, walce i sfery, filtruj do nich, licz, co się w nich dzieje, eksportuj i porównuj miejsca obok siebie; [podział](breakdown.md) tego, kto i co najlepiej radzi sobie w danym miejscu. |
-| ![Filtry](../assets/img/en/filters.webp) | **[Filtry](filters.md)** - według typu zdarzenia, gracza lub AI, klasy pojazdu, wartości i dowolnej kolumny, na karcie graficznej przy każdym rozmiarze danych. |
-| ![Poziom](../assets/img/en/level-panel.webp) | **[Poziomy](levels.md)** - obrazy map, poziomy 3D zrobione [narzędziami do danych](#related-repositories), uproszczenie, [tło świata](world-backdrop.md) z prawdziwym terenem dla danych lotu. |
+| ![Różnica](../assets/img/pl/heat-difference.webp) | **[Tryby ciepła](heat-modes.md)** - ciepło, [różnica](difference.md) (na czerwono tam, gdzie jedna strona miała więcej, na zielononiebiesko tam, gdzie druga), [ciepło drużyn](team-heat.md), [ciepło liniowe](line-heat.md); [ciepło kierunkowe](directional-heat.md) z klinami, polami strzałek i wykresami biegunowymi; ciepło [ważone wartością](value-weighting.md): ile kosztują broń, pojazdy i paliwo. |
+| ![Powtórka](../assets/img/pl/replay-tanks.webp) | **[Powtórka meczu](match-replay.md)** - każda jednostka jako [figura](figures.md) tego, czym jest, symbole NATO lub rosyjskie z daleka, pociski i smugi, znaczniki trafień, wraki, pożary, wieże, cele, kamery w stylu Tacview i wyświetlacz taktyczny; [wiele meczów naraz](many-matches.md). |
+| ![Wnioski](../assets/img/pl/insights.webp) | **[Wnioski](insights.md)** - mocne pozycje, śmiercionośny teren, pułapki na odrodzeniu, wąskie gardła i wyróżniający się gracze, znalezieni i uszeregowani wraz z dowodami; pisemne podsumowanie, opcjonalnie przygotowane przez AI wybraną przez Ciebie; komentator jednego meczu; [soczewka wiedzy](knowledge.md). |
+| ![Wolumeny](../assets/img/pl/compare.webp) | **[Wolumeny](volumes.md)** - rysuj pudełka, graniastosłupy, walce i sfery, filtruj do nich, licz, co się w nich dzieje, eksportuj i porównuj miejsca obok siebie; [podział](breakdown.md) tego, kto i co najlepiej radzi sobie w danym miejscu. |
+| ![Filtry](../assets/img/pl/filters.webp) | **[Filtry](filters.md)** - według typu zdarzenia, gracza lub AI, klasy pojazdu, wartości i dowolnej kolumny, na karcie graficznej przy każdym rozmiarze danych. |
+| ![Poziom](../assets/img/pl/level-panel.webp) | **[Poziomy](levels.md)** - obrazy map, poziomy 3D zrobione [narzędziami do danych](#related-repositories), uproszczenie, [tło świata](world-backdrop.md) z prawdziwym terenem dla danych lotu. |
 
 Ponadto: karta [Analiza wyścigu](race-analysis.md) dla okrążeń gier wyścigowych, karta [Mecz](match-analysis.md) z podsumowaniami Counter-Strike 2, [Tablica taktyczna](tactics-board.md) z planami na poziomie, [analiza trafień](hit-analysis.md) dla każdego pojazdu, [analiza zbiorcza](mass-analysis.md) tysięcy meczów, [ścieżki kamery i wideo](camera-path-and-video.md), [40 języków](languages.md), [jednostki metryczne lub imperialne](settings.md).
 

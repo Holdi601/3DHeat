@@ -15,7 +15,7 @@ outdated: false
 
 Kollox jiġi għodd fil-browser tiegħek. Xejn ma joħroġ mill-kompjuter tiegħek sakemm ma tixgħel AI esterna (ara [AI esterna](#external-ai)).
 
-![Għarfien fuq id-demo tat-tanks: 14-il sejba, l-iktar qawwi l-ewwel](../assets/img/en/insights.webp)
+![Għarfien fuq id-demo tat-tanks: 14-il sejba, l-iktar qawwi l-ewwel](../assets/img/mt/insights.webp)
 
 It-taqsima **Għarfien** tinsab fis-sidebar tat-tabs Heatmap u Partita. Għandha tlett tabs: **Sejbiet**, **Sommarju** u **Kummentatur**.
 
@@ -30,7 +30,7 @@ Il-għadd juża l-filtri attwali, il-gruppi moħbija u l-partita magħżula fuq 
 
 Il-linji fil-quċċata tal-lista (pereżempju t-totali tal-flus) jiġbru d-data kollha qabel is-sejbiet.
 
-![Sejba miftuħa: iż-żona sħuna tal-tir, in-numri tagħha, u silta xierqa mil-letteratura](../assets/img/en/insights-finding.webp)
+![Sejba miftuħa: iż-żona sħuna tal-tir, in-numri tagħha, u silta xierqa mil-letteratura](../assets/img/mt/insights-finding.webp)
 
 ### Id-detectors {#the-detectors}
 
@@ -55,7 +55,7 @@ Kull post jew grupp jiġi ttestjat kontra l-bqija tal-mappa (testijiet binomjali
 
 It-tab **Sommarju** jikteb is-sejbiet f'test qasir: introduzzjoni, l-iktar sejba ċara, waħda għat-tattika, waħda għall-bilanċ, il-bqija mqassma skont id-detector, u kemm minnhom jistrieħu fuq evidenza iktar dgħajfa. Kull paragrafu għandu buttuni nnumerati li juru s-sejbiet tiegħu. **Ikkopja t-test** jikkopjah.
 
-![Is-sommarju miktub mill-narratur ta' ġewwa](../assets/img/en/debrief.webp)
+![Is-sommarju miktub mill-narratur ta' ġewwa](../assets/img/mt/debrief.webp)
 
 In-narratur ta' ġewwa jaħdem offline, fil-lingwa tiegħek. Is-selector **Lenti** ta' fuqu (ara [Il-lenti tal-għarfien](knowledge.md)) jiddeċiedi liema letteratura tiċċita l-paragrafi.
 
@@ -78,7 +78,7 @@ Imbagħad ikteb mistoqsija fakultattiva u agħfas **Ikteb bl-AI**. Jintbagħtu b
 
 Għal **partita waħda** (agħżel waħda jekk hemm diversi mgħobbijin), il-**Kummentatur** isib il-mumenti li jistħoqqilhom jiġu osservati: l-ewwel demm, multi-kills, trades, clutches, bidliet fl-għanijiet, rimonta, plejers li joqogħdu 'l fuq, tiri twil.
 
-![Il-mumenti tal-kummentatur għal rawnd wieħed tad-demo tal-shooter](../assets/img/en/caster.webp)
+![Il-mumenti tal-kummentatur għal rawnd wieħed tad-demo tal-shooter](../assets/img/mt/caster.webp)
 
 - Ikklikkja mument: il-veduta tinbidel għall-replay, timxi għal ftit qabel, tittrasporta lilha u ssegwi l-plejer.
 - **Ħaddem il-mumenti** iħaddem kull wieħed sal-aħħar tiegħu u jmur għall-oħra; **Preċedenti** / **Li jmiss** jimxu bejniethom.

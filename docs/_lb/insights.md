@@ -15,7 +15,7 @@ outdated: false
 
 Alles gëtt am Browser gezielt. Näischt verléisst Ären Rechner, ausser Dir schalt eng extern KI an (kuckt [Extern KI](#external-ai)).
 
-![Erkenntnisser op der Panzer-Demo: 14 Resultater, dat Staarkst fir d'éischt](../assets/img/en/insights.webp)
+![Erkenntnisser op der Panzer-Demo: 14 Resultater, dat Staarkst fir d'éischt](../assets/img/lb/insights.webp)
 
 D'Sektioun **Erkenntnisser** ass an der Säitelleescht vum Heatmap- an Match-Tab. Si huet dräi Tabs: **Resultater**, **Zesummefaassung** an **Kommentator**.
 
@@ -30,7 +30,7 @@ Zielen benotzt déi aktuell Filteren, verstoppt Gruppen an de gewielte Match iww
 
 D'Zeilen uewen an der Lëscht (zum Beispill d'Geldsummen) fasse all d'Daten zesummen, ier d'Resultater kommen.
 
-![E opgemaacht Resultat: d'Hëtzt-Zone vun de Schëss, seng Zuelen, an eng passend Stell aus der Literatur](../assets/img/en/insights-finding.webp)
+![E opgemaacht Resultat: d'Hëtzt-Zone vun de Schëss, seng Zuelen, an eng passend Stell aus der Literatur](../assets/img/lb/insights-finding.webp)
 
 ### D'Detektoren {#the-detectors}
 
@@ -55,7 +55,7 @@ All Plaz oder Grupp gëtt géint de Rescht vun der Kaart getest (exakt Binomial-
 
 De Tab **Zesummefaassung** schreift d'Resultater als kuerze Text: en Opstart, dat kloerste Resultat, ee fir d'Taktik, ee fir d'Gläichgewiicht, de Rescht no Detektor gruppéiert, a wéivill op méi schwaache Beweiser beruhen. All Absatz huet nummeréiert Knäppchen, déi seng Resultater weisen. **Text kopéieren** kopéiert en.
 
-![D'Zesummefaassung, vum agebaute Erzieler geschriwwen](../assets/img/en/debrief.webp)
+![D'Zesummefaassung, vum agebaute Erzieler geschriwwen](../assets/img/lb/debrief.webp)
 
 De agebaute Erzieler funktionéiert offline, an Ärer Sprooch. De **Lëns**-Wieler driwwer (kuckt [Dat Wëssenslens](knowledge.md)) bestëmmt, aus wéi enger Literatur d'Absätz zitéieren.
 
@@ -78,7 +78,7 @@ Duerno tippt Dir eng optional Fro an drëckt **Mat KI schreiwen**. Nëmmen d'Res
 
 Fir **ee Match** (wielt een, wann méi gelueden sinn) fënnt den **Kommentator** d'Momenter, déi et wäert sinn ze kucken: éischte Bluttrëpfe, Mehrfach-Ofschëss, Trades, Clutches, Ännerunge bei Ziler, Comebacks, staark Spiller, laang Schëss.
 
-![D'Momenter vum Kommentator fir eng Ronn vun der Schéisser-Demo](../assets/img/en/caster.webp)
+![D'Momenter vum Kommentator fir eng Ronn vun der Schéisser-Demo](../assets/img/lb/caster.webp)
 
 - Klickt op e Moment: d'Usiicht wiesselt op de Replay, sprengt just virdrun, fléit dohin a follegt de Spiller.
 - **Momenter ofspillen** spillt all ee bis zum Enn a geet weider; **Virdrun** / **Weider** blät duerch se.

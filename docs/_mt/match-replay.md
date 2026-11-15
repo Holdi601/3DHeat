@@ -15,7 +15,7 @@ Ir-replay hu film tal-partita fejn kull plejer jinżel bħala l-ħaġa li kien i
 
 Tiri, laqtiet, nirien u wrecks jinżlu fuq l-unitajiet u fuq l-għanijiet fuq il-livell. Kameras, tikketti u wiri taktiku jgħinuk taqra l-ġlieda. Taf Tacview? [Ekwivalenza ma' Tacview](tacview-parity.md) turi fejn hu kull għodda tagħha.
 
-![Replay tal-figuri tad-demo tat-tanks: tanks bħala l-figuri tagħhom stess, b'tikketti ta' isem, vettura u veloċità](../assets/img/en/replay-overview.webp)
+![Replay tal-figuri tad-demo tat-tanks: tanks bħala l-figuri tagħhom stess, b'tikketti ta' isem, vettura u veloċità](../assets/img/mt/replay-overview.webp)
 
 ## Ibda replay {#start-a-replay}
 
@@ -26,11 +26,11 @@ Tiri, laqtiet, nirien u wrecks jinżlu fuq l-unitajiet u fuq l-għanijiet fuq il
 
 Figuri jieħdu post il-kaxxi għal kull unità li l-isem jew it-tip tagħha huwa magħruf (ara [Figuri](figures.md)). Data mingħajr kolonna ta' isem jew tip tinżel bħala suldati.
 
-![It-tab Partita: l-għażla tal-partiti, it-taqsima Figuri, il-veduti tal-kamera, Ħaddem u l-lista tal-avvenimenti](../assets/img/en/match-replay-tab.webp)
+![It-tab Partita: l-għażla tal-partiti, it-taqsima Figuri, il-veduti tal-kamera, Ħaddem u l-lista tal-avvenimenti](../assets/img/mt/match-replay-tab.webp)
 
 ## Figuri {#figures}
 
-![Tank jaħraq fil-kamera ta' orbita, bil-laqta li laqtu](../assets/img/en/replay-tanks.webp)
+![Tank jaħraq fil-kamera ta' orbita, bil-laqta li laqtu](../assets/img/mt/replay-tanks.webp)
 
 | Setting (taqsima **Figuri**) | Bażi | X'jagħmel |
 |---|---|---|
@@ -51,7 +51,7 @@ Figuri jieħdu post il-kaxxi għal kull unità li l-isem jew it-tip tagħha huwa
 
 Meta unità tkun iżgħar mill-**L-iżgħar figura fuq l-iskrin**, tista' ssir simbolu li jibqa' jinqara. Il-forma turi t-tip (pereżempju kaxxa b'qawsa u marka tar-roti għal armatura); il-kulur juri n-naħa. Iftaħ il-menu **Simboli** biex tbiddel l-istil.
 
-![L-istess sitt unitajiet bħala simboli NATO, sinjali tattiċi Russi, ikoni tal-mappa tal-logħba u forom biss](../assets/img/en/match-replay-symbols-styles.webp)
+![L-istess sitt unitajiet bħala simboli NATO, sinjali tattiċi Russi, ikoni tal-mappa tal-logħba u forom biss](../assets/img/mt/match-replay-symbols-styles.webp)
 
 ### Marki tal-laqtiet, wrecks u nirien {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Ikklikkja unità jew it-tikketta tagħha biex **issegwiha**; it-taqsima **Replay
 
 ## Wiri taktiku {#tactical-display}
 
-![Il-ġlieda tal-ajru demo bil-look tal-wiri taktiku (T): art bil-wire-frame, pannelli ta' kills u avvenimenti](../assets/img/en/replay-air-tactical.webp)
+![Il-ġlieda tal-ajru demo bil-look tal-wiri taktiku (T): art bil-wire-frame, pannelli ta' kills u avvenimenti](../assets/img/mt/replay-air-tactical.webp)
 
 It-taqsima **Wiri taktiku** tpinġi, għal ebda unità, dawk magħżula, dawk kollha, jew tip wieħed (inġenji tal-ajru, art, bastimenti, armi): vetturi tal-veloċità u t-triq 'il quddiem, linji tal-imnieħer u tal-ġarr, koni tar-radar, lock-ons, data links, żoni u linji ta' ingaġġ, linji tal-ħarsa, fejn jħarsu l-plejers (koni tal-veduta), il-ħarsa tat-turretta, u l-kamera rrekordjata.
 
@@ -84,7 +84,7 @@ It-taqsima **Wiri taktiku** tpinġi, għal ebda unità, dawk magħżula, dawk ko
 
 `T` (jew il-bidla **Uri bħala wiri taktiku**) ibiddel il-look għal stil ta' skrin tar-radar: dwal, kontorni, linji ta' kontorn, griglja tal-kejl, linji tal-iskann, ċrieki tal-medda, skali tal-għoli, pannelli bil-kills u avvenimenti, u **Direttur** li jmexxi l-kamera għall-avvenimenti minnu nnifsu.
 
-![L-istess ġlieda tal-ajru fil-look normali](../assets/img/en/replay-air.webp)
+![L-istess ġlieda tal-ajru fil-look normali](../assets/img/mt/replay-air.webp)
 
 ## Għanijiet {#objectives}
 

@@ -10,7 +10,7 @@ outdated: false
 
 # Data demo: ipprova l-viewer f'ħames minuti
 
-![Sħana ta' għaxar partiti ta' tanks fil-Demo Valley: dak li juri l-pass 4](../assets/img/en/heat-hero.webp)
+![Sħana ta' għaxar partiti ta' tanks fil-Demo Valley: dak li juri l-pass 4](../assets/img/mt/heat-hero.webp)
 
 Għadek ma għandekx data tiegħek? Ir-repożitorju jagħmel xi waħda. Kollox fih hu mħoloq: wied, bitħa, u partiti ta' tliet stili ta' logħba mħolqa b'plejers imsejħa *Blue 1* jew *Red 3*. Ir-ritratti kollha fuq dan is-sit ittieħdu bih.
 
@@ -45,7 +45,7 @@ Kull tabella ssemmi l-kolonni tagħha fil-footer tagħha, għalhekk titħabbar m
 6. Iftaħ **Għarfien** (fis-sidebar tal-Heatmap): isib l-postijiet fejn ġie sparat, laqat u meqrud ħafna iktar minn postijiet oħra - madwar iż-żewġ għoljiet.
 7. Iftaħ it-tab **Partita**; taħt **Partiti fir-replay** agħżel *Match 01*; agħfas **Ħaddem** fuq il-linja taż-żmien: il-[replay](match-replay.md).
 
-![Replay ta' Match 01 b'tanks bħala figuri](../assets/img/en/replay-overview.webp)
+![Replay ta' Match 01 b'tanks bħala figuri](../assets/img/mt/replay-overview.webp)
 
 Għall-shooter, tella' `demo-yard.glb` u `shooter.parquet`; għall-ġlieda tal-ajru, `air.parquet` (il-figuri jidhru aħjar fi **Daqs tal-figuri** 4, slider fil-pannell **Viewer tat-timijiet** tas-sidebar tal-Heatmap).
 

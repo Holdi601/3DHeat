@@ -10,7 +10,7 @@ outdated: false
 
 # Sonraí taispeána: triail a bhaint as an amharcóir i gcúig nóiméad
 
-![Teas deich gcluiche tanc sa ghleann taispeána: cad a thaispeánann céim 4](../assets/img/en/heat-hero.webp)
+![Teas deich gcluiche tanc sa ghleann taispeána: cad a thaispeánann céim 4](../assets/img/ga/heat-hero.webp)
 
 Gan sonraí de do chuid féin fós? Cruthaíonn an stóras cuid acu. Tá gach rud sa stóras seo cumtha: gleann, clós, agus cluichí de thrí stíl chluiche bhréagach le himreoirí darb ainm *Blue 1* nó *Red 3*. Glacadh na pictiúir ar an suíomh seo go léir leo.
 
@@ -45,7 +45,7 @@ Ainmníonn gach tábla a cuid colún féin ina fhoot, ionas go lódálann sé ga
 6. Oscail **Léargais** (sa bharra taoibh Léarscáil teasa): aimsíonn sé na háiteanna inar lámhachadh, buaileadh agus scriosadh i bhfad níos mó ná in áiteanna eile - timpeall an dá chnoc.
 7. Oscail an cluaisín **Cluiche**; faoi **Cluichí san athsheinm** roghnaigh *Match 01*; brúigh **Seinn** ar an amlíne: an [athsheinm](match-replay.md).
 
-![Athsheinm de Match 01 le tancanna mar fhigiúirí](../assets/img/en/replay-overview.webp)
+![Athsheinm de Match 01 le tancanna mar fhigiúirí](../assets/img/ga/replay-overview.webp)
 
 Don lámhachóir, lódáil `demo-yard.glb` agus `shooter.parquet`; don troid aeir, `air.parquet` (is éasca na figiúirí a fheiceáil ag **Méid na bhfigiúirí** 4, sleamhnán sa phainéal **Amharcán foirne** de bharra taoibh na Léarscáile teasa).
 

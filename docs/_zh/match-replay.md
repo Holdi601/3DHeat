@@ -15,7 +15,7 @@ outdated: false
 
 射击、命中、起火和残骸会绘制在关卡的单位和目标上。摄像机、标签和战术显示帮助你读懂交战。你了解 Tacview 吗？[Tacview 对齐](tacview-parity.md)说明了它的每项工具在这里对应什么。
 
-![Figure replay of the tank demo: tanks as their own figures, with name, vehicle and speed labels](../assets/img/en/replay-overview.webp)
+![Figure replay of the tank demo: tanks as their own figures, with name, vehicle and speed labels](../assets/img/zh/replay-overview.webp)
 
 ## 开始回放 {#start-a-replay}
 
@@ -26,11 +26,11 @@ outdated: false
 
 对于名称或类型已知的每个单位，图形会取代方框（参见[图形](figures.md)）。没有名称或类型列的数据会被绘制为士兵。
 
-![The Match tab: the matches picker, the Figures section, the camera views, Play and the event list](../assets/img/en/match-replay-tab.webp)
+![The Match tab: the matches picker, the Figures section, the camera views, Play and the event list](../assets/img/zh/match-replay-tab.webp)
 
 ## 图标 {#figures}
 
-![A burning tank in the orbit camera, with the shot that hit it](../assets/img/en/replay-tanks.webp)
+![A burning tank in the orbit camera, with the shot that hit it](../assets/img/zh/replay-tanks.webp)
 
 | 设置（**图标**部分） | 默认值 | 作用 |
 |---|---|---|
@@ -51,7 +51,7 @@ outdated: false
 
 当一个单位会小于**屏幕上最小的模型**时，它可以变成一个保持可读的符号。形状表示类别（例如，装甲车用带履带标记的圆角方框）；颜色表示阵营。打开**符号体系**菜单可更改样式。
 
-![The same six units as NATO symbols, Russian tactical signs, game map icons and shapes only](../assets/img/en/match-replay-symbols-styles.webp)
+![The same six units as NATO symbols, Russian tactical signs, game map icons and shapes only](../assets/img/zh/match-replay-symbols-styles.webp)
 
 ### 命中标记、残骸和火焰 {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ outdated: false
 
 ## 战术显示 {#tactical-display}
 
-![The air demo with the tactical display look (T): wire-frame terrain, kill and event panels](../assets/img/en/replay-air-tactical.webp)
+![The air demo with the tactical display look (T): wire-frame terrain, kill and event panels](../assets/img/zh/replay-air-tactical.webp)
 
 **战术显示**部分可以为所有单位、所选单位、全部单位，或某一类（飞机、地面、舰船、武器）绘制：速度矢量和前方路径、机头和升力线、雷达锥、锁定、数据链、交战区域和线条、视线、玩家看向的方向（视锥）、炮塔瞄准，以及录制的摄像机。
 
@@ -84,7 +84,7 @@ outdated: false
 
 `T`（或**以战术显示查看**开关）会将外观切换为雷达屏幕风格：辉光、轮廓、等高线、测量网格、扫描线、距离环、高度阶梯、显示击杀和事件的面板，以及一个会自行将摄像机移动到事件处的**导演**。
 
-![The same air fight in the normal look](../assets/img/en/replay-air.webp)
+![The same air fight in the normal look](../assets/img/zh/replay-air.webp)
 
 ## 目标 {#objectives}
 

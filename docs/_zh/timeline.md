@@ -12,7 +12,7 @@ outdated: false
 
 画面下方的条就像视频播放器：你可以把数据当作影片来播放、暂停、跳转，并更改速度。
 
-![The timeline bar: 1 All/Play, 2 transport buttons, 3 clock, 4 Speed, 5 History, with Window and a Span of 30 s](../assets/img/en/timeline-bar.webp)
+![The timeline bar: 1 All/Play, 2 transport buttons, 3 clock, 4 Speed, 5 History, with Window and a Span of 30 s](../assets/img/zh/timeline-bar.webp)
 
 视图下方的条就是时间线（[`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)）。它决定任何时刻哪些行可见。它需要一个时间列；没有时间列时，整个条会被禁用，视图保持在**全部**，侧边栏会显示：*此数据没有时间列 - 时间线已禁用，所有数据点同时显示。*
 

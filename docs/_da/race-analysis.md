@@ -13,7 +13,7 @@ outdated: false
 
 Du kørte den samme bane to gange. Fanen **Løbsanalyse** afspiller begge kørsler sammen i 3D, viser, hvor den ene omgang var langsommere, og fortæller dig hvorfor. Ingen omgange endnu? Tryk på **Demo-omgange**.
 
-![Fanen Løbsanalyse med demo-omgange: sidebjælken med Omgange og Hvor du kan forbedre dig, bilerne på banen, diagrammerne under visningen](../assets/img/en/race-analysis-overview.webp)
+![Fanen Løbsanalyse med demo-omgange: sidebjælken med Omgange og Hvor du kan forbedre dig, bilerne på banen, diagrammerne under visningen](../assets/img/da/race-analysis-overview.webp)
 
 Fanen sammenligner to eller flere omgange på samme bane. Den deler lærredet, kameraet og den indlæste banemodel (**Baggrund / bane**) med heatmappet; alt andet er sit eget: sin egen sidebjælke og sin egen linje under visningen. Ord som *omgang*, *reference* og *apex* forklares i [ordlisten](glossary.md).
 

@@ -21,7 +21,7 @@ Sem nada carregado, a cena fica escura com uma grelha e eixos coloridos (**Grelh
 
 O nível é partilhado pelos três separadores: um percurso carregado no separador Análise de corrida é o mesmo nível que o mapa de calor mostra.
 
-![O painel Fundo / nível com um nível carregado: botões Imagem de mapa e Modelo 3D, Teatro, Opacidade, Brilho, Guardar na biblioteca e a lista da Biblioteca](../assets/img/en/level-panel.webp)
+![O painel Fundo / nível com um nível carregado: botões Imagem de mapa e Modelo 3D, Teatro, Opacidade, Brilho, Guardar na biblioteca e a lista da Biblioteca](../assets/img/pt/level-panel.webp)
 
 ## Pôr um nível por trás dos seus dados {#put-a-level-behind-your-data}
 

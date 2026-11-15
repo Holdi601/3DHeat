@@ -21,7 +21,7 @@ outdated: false
  +------------+
 ```
 
-![Kolme tilavuutta esimerkkilaaksossa: kaksi sylinteriä mäkien ympärillä, laatikko kylän ympärillä](../assets/img/en/volumes.webp)
+![Kolme tilavuutta esimerkkilaaksossa: kaksi sylinteriä mäkien ympärillä, laatikko kylän ympärillä](../assets/img/fi/volumes.webp)
 
 Tilavuudet mittaavat, mitä niiden sisällä tapahtuu, rajaavat näkymän niihin, vievät niiden rivit ja voivat vertailla niitä rinnakkain. Katso myös [sanasto](glossary.md) termeille rivi, henkilö ja ottelu.
 
@@ -76,7 +76,7 @@ Kun kaksi tai useampi tilavuus on näkyvissä, paina **Vertaile...**.
 3. Lue **Taulukko**-näkymässä kunkin arvon ero ensimmäiseen tilavuuteen.
 4. Vaihda **Palkit**-näkymään nähdäksesi osuudet palkkeina.
 
-![Vertailu-taulukko: rivit, aika sisällä, pelaajat ja muuta kullekin tilavuudelle, sekä ero ensimmäiseen](../assets/img/en/compare.webp)
+![Vertailu-taulukko: rivit, aika sisällä, pelaajat ja muuta kullekin tilavuudelle, sekä ero ensimmäiseen](../assets/img/fi/compare.webp)
 
 | Näkymä | Näyttää |
 |---|---|
@@ -86,7 +86,7 @@ Kun kaksi tai useampi tilavuus on näkyvissä, paina **Vertaile...**.
 | **Käynnit** | Laatikko- ja viulukaaviot siitä, kuinka kauan käynnit kestivät (logaritminen asteikko). |
 | **Virta** | Minne liikkeet menevät poistuttuaan kustakin tilavuudesta: siirtymämatriisi tai virtanauhat. |
 
-![Palkit-näkymä: tapahtumatyypit tilavuuksittain osuuksina](../assets/img/en/compare-bars.webp)
+![Palkit-näkymä: tapahtumatyypit tilavuuksittain osuuksina](../assets/img/fi/compare-bars.webp)
 
 ## Vinkit {#tips}
 

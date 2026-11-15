@@ -15,7 +15,7 @@ Jokainen piste lisää pienen hehkun, hehkut kasautuvat, ja kasa maalataan väre
 
 Lämpökartta-välilehden sivupalkin yläosan tilapalkki valitsee, miten [aineisto](glossary.md) piirretään. Näppäimet 1-4 valitsevat Lämpö, Erotus, Joukkuelämpö ja Viivat. Hahmot päällekkäin -tilalla ei ole näppäintä.
 
-![Tilapalkki: Lämpö, Erotus, Joukkuelämpö, Hahmot päällekkäin ja Viivat](../assets/img/en/heat-modes-bar.webp)
+![Tilapalkki: Lämpö, Erotus, Joukkuelämpö, Hahmot päällekkäin ja Viivat](../assets/img/fi/heat-modes-bar.webp)
 
 | Tila | Kysymys, johon se vastaa |
 |---|---|
@@ -25,7 +25,7 @@ Lämpökartta-välilehden sivupalkin yläosan tilapalkki valitsee, miten [aineis
 | **Viivat** | Mihin suuntaan ihmiset menivät? |
 | **Hahmot päällekkäin** | Kuka oli missäkin ja milloin? |
 
-![Sama data neljässä tilassa: Lämpö, Erotus, Joukkuelämpö ja Viivat](../assets/img/en/heat-modes-grid.webp)
+![Sama data neljässä tilassa: Lämpö, Erotus, Joukkuelämpö ja Viivat](../assets/img/fi/heat-modes-grid.webp)
 
 | Tila (tilapalkin nimi) | Näppäin | Mitä se piirtää | Tarvitsee |
 |---|---|---|---|

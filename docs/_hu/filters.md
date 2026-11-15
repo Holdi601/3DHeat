@@ -19,7 +19,7 @@ A **Szűrők** elrejtik azokat a sorokat, amelyek nem érdekelnek, például egy
 2. A **Járműosztály** alatt vegye ki a *Harckocsi* jelölését. A kép azonnal változik.
 3. A visszavonáshoz nyomja meg a **Minden szűrő törlése** gombot.
 
-![A Szűrők panel: a megjelenítő saját oszlopai (Esemény típusa, Járműosztály) elöl, utána a fájl oszlopai](../assets/img/en/filters.webp)
+![A Szűrők panel: a megjelenítő saját oszlopai (Esemény típusa, Járműosztály) elöl, utána a fájl oszlopai](../assets/img/hu/filters.webp)
 
 Az első sorok a megjelenítő saját oszlopai (lentebb). Az utánuk következők a fájlból származnak.
 
@@ -42,7 +42,7 @@ Hogy mely oszlopok szűrhetők, azt a betöltés döntötte el, mert akkor kell 
 
 ## Számoszlopok (tartomány) {#numeric-columns-range}
 
-![Tartományszűrő (elveszített pénz) mindkét végével áthúzva](../assets/img/en/filters-numeric.webp)
+![Tartományszűrő (elveszített pénz) mindkét végével áthúzva](../assets/img/hu/filters-numeric.webp)
 
 | Rész | Jelentése |
 |---|---|

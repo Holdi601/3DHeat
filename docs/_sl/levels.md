@@ -21,7 +21,7 @@ Brez naložene ničesar je prizor temen z mrežo in barvnimi osmi (**Mreža** in
 
 Raven je deljena med vsemi tremi zavihki: proga, naložena v zavihku Analiza dirke, je ista raven, ki jo kaže toplotni zemljevid.
 
-![Plošča Ozadje / nivo z naloženo ravnjo: gumbi Slika zemljevida in 3D-model, Resnični svet kot ozadje, Neprosojnost, Svetlost, Shrani v knjižnico in seznam Knjižnica](../assets/img/en/level-panel.webp)
+![Plošča Ozadje / nivo z naloženo ravnjo: gumbi Slika zemljevida in 3D-model, Resnični svet kot ozadje, Neprosojnost, Svetlost, Shrani v knjižnico in seznam Knjižnica](../assets/img/sl/level-panel.webp)
 
 ## Postavite raven za svoje podatke {#put-a-level-behind-your-data}
 

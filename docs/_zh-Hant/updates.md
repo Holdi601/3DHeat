@@ -18,7 +18,7 @@ outdated: false
 2. **若它要求你執行 restart.bat**，請關閉伺服器視窗（由 `start.bat` 開啟的黑色視窗），然後連按兩下 `restart.bat`。
 3. **啟動檢視器時。** `start.bat` 也會檢查。若有較新版本，它會詢問 **Update now? [Y/N]**（立即更新？[Y/N]）。按 `Y` 即可更新。按 `N`，或等待 60 秒不作回答，則會啟動你目前擁有的版本。
 
-![更新通知，含立即更新與稍後按鈕](../assets/img/en/updates-notice.webp)
+![更新通知，含立即更新與稍後按鈕](../assets/img/zh-Hant/updates-notice.webp)
 
 有你自己修改內容的副本絕不會替你自動更新；方塊只會告訴你有更新在等待，並說明要提交或暫存你的變更，然後執行 `git pull`。不是透過 git 安裝的副本（例如 zip 檔案）則不會顯示任何內容。
 

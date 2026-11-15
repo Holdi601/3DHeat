@@ -15,7 +15,7 @@ outdated: false
 
 Kõik loetakse sinu brauseris. Midagi ei lahku sinu arvutist, kui sa ei lülita sisse välist tehisintellekti (vt [Väline tehisintellekt](#external-ai)).
 
-![Tähelepanekud tankide demol: 14 leidu, tugevaimad esimesena](../assets/img/en/insights.webp)
+![Tähelepanekud tankide demol: 14 leidu, tugevaimad esimesena](../assets/img/et/insights.webp)
 
 Jaotis **Tähelepanekud** asub Soojuskaardi ja Matši vahekaartide külgribal. Sellel on kolm vahekaarti: **Leiud**, **Kokkuvõte** ja **Kommentaator**.
 
@@ -30,7 +30,7 @@ Loendamine kasutab praegusi filtreid, peidetud rühmi ja valitud matši kogu aja
 
 Loetelu ülaosa read (näiteks rahasummad) kokkuvõtavad kogu andmeid enne leide.
 
-![Avatud leid: tulistamise kuum tsoon, selle arvud ja sobiv lõik kirjandusest](../assets/img/en/insights-finding.webp)
+![Avatud leid: tulistamise kuum tsoon, selle arvud ja sobiv lõik kirjandusest](../assets/img/et/insights-finding.webp)
 
 ### Detektorid {#the-detectors}
 
@@ -55,7 +55,7 @@ Iga koht või rühm testitakse võrreldes kogu ülejäänud kaardiga (täpsed bi
 
 Vahekaart **Kokkuvõte** kirjutab leiud kokku lühikeseks tekstiks: juhtlause, selgeim leid, üks taktika kohta, üks tasakaalustamise kohta, ülejäänud detektorite kaupa rühmitatuna ning mitu neist põhineb nõrgematel tõenditel. Igal lõigul on nummerdatud nupud, mis näitavad selle leide. **Kopeeri tekst** kopeerib selle.
 
-![Sisseehitatud jutustaja kirjutatud kokkuvõte](../assets/img/en/debrief.webp)
+![Sisseehitatud jutustaja kirjutatud kokkuvõte](../assets/img/et/debrief.webp)
 
 Sisseehitatud jutustaja töötab võrguühenduseta, sinu keeles. Selle kohal olev valija **Lääts** (vt [Teadmiste lääts](knowledge.md)) otsustab, millist kirjandust lõigud tsiteerivad.
 
@@ -78,7 +78,7 @@ Seejärel kirjuta soovi korral küsimus ja vajuta **Kirjuta TI-ga**. Saadetakse 
 
 **Ühe matši** jaoks (vali üks, kui on laetud mitu) leiab **Kommentaator** hetked, mis on jälgimist väärt: esimene veri, mitmiktapmised, vahetused, kriitilised lahingud, eesmärgi muutused, tagasitulekud, silmapaistvad mängijad, pikad lasud.
 
-![Kommentaatori hetked ühe vooru jaoks shooteri demol](../assets/img/en/caster.webp)
+![Kommentaatori hetked ühe vooru jaoks shooteri demol](../assets/img/et/caster.webp)
 
 - Klõpsa hetkel: vaade lülitub kordusele, hüppab just enne seda, lendab sinna ja jälgib mängijat.
 - **Esita hetked** mängib iga hetke lõpuni ja liigub edasi; **Eelmine** / **Järgmine** liiguvad hetkede vahel.

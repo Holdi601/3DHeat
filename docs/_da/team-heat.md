@@ -15,7 +15,7 @@ Holdvarme viser, hvor hvert hold var, med hvert hold i sin egen farve. Hvor hold
 
 **Holdvarme** (tast 3) er tæthedsfeltet fra [Varme](heat.md), med hver [gruppe](glossary.md) givet sin egen nuance. Hvor grupper overlapper, blandes deres nuancer; en jævn kamp bliver neutral. Opacitet bærer stadig tætheden præcis som i de andre tilstande, så billedet svarer på *hvor meget* og *hvis* på samme tid. Den kræver en gruppekolonne.
 
-![Holdvarme: hver side i sin egen farve; hvor de overlapper, blandes farverne](../assets/img/en/heat-teams.webp)
+![Holdvarme: hver side i sin egen farve; hvor de overlapper, blandes farverne](../assets/img/da/heat-teams.webp)
 
 Det er ikke [figuroverlejringen](box-replay.md): den tegner én figur pr. person; dette er et tæthedsfelt farvet efter den samme kolonne.
 

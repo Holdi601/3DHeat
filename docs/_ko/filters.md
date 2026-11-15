@@ -19,7 +19,7 @@ outdated: false
 2. **차량 등급** 아래에서 *전차*를 해제합니다. 그림이 즉시 바뀝니다.
 3. **모든 필터 지우기**를 눌러 되돌립니다.
 
-![필터 패널: 뷰어 자체의 열(이벤트 유형, 차량 등급)이 먼저, 그다음 파일의 열들](../assets/img/en/filters.webp)
+![필터 패널: 뷰어 자체의 열(이벤트 유형, 차량 등급)이 먼저, 그다음 파일의 열들](../assets/img/ko/filters.webp)
 
 처음 나오는 행들은 뷰어 자체의 열입니다(아래 참고). 그 뒤의 행들은 파일에서 왔습니다.
 
@@ -42,7 +42,7 @@ outdated: false
 
 ## 숫자 열(범위) {#numeric-columns-range}
 
-![양쪽 끝을 끌어 놓은 범위 필터(잃은 돈)](../assets/img/en/filters-numeric.webp)
+![양쪽 끝을 끌어 놓은 범위 필터(잃은 돈)](../assets/img/ko/filters-numeric.webp)
 
 | 부분 | 뜻 |
 |---|---|

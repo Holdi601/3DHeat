@@ -23,7 +23,7 @@ Fanen **Taktikk** er en tegnetavle for en lagplan: du legger små figurer på et
 6. Trykk **▶** (eller `K`) for å spille planen fra vist steg til slutten.
 7. Gi planen et navn i **Navn på planen** og trykk **Lagre**.
 
-![Taktikkfanen i ovenfra-visning: spill, sider og verktøy til venstre, tre figurer med Flytt-piler, en røykbue for Kast, et Område og stegene langs bunnen](../assets/img/en/tactics.webp)
+![Taktikkfanen i ovenfra-visning: spill, sider og verktøy til venstre, tre figurer med Flytt-piler, en røykbue for Kast, et Område og stegene langs bunnen](../assets/img/no/tactics.webp)
 
 ## Starte en plan {#starting-a-plan}
 

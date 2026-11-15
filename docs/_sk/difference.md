@@ -15,7 +15,7 @@ outdated: false
 
 **Rozdiel** (klávesa 2) je teplo so znamienkom. Riadky jednej populácie pridávajú teplo; riadky inej ho odpočítavajú. Tam, kde sa obe prekrývajú rovnomerne, je výsledok nula a úplne priehľadný; tam, kde jedna prevláda, sa ukáže v jej farbách - predvolene teplých (priehľadná → červená → žltá → biela) pre stranu **+** a chladných (priehľadná → zelená → modrá → fialová) pre stranu **−**.
 
-![Teplo rozdielu: červená tam, kde bola viac strana +, zelená a modrá tam, kde bola viac strana -](../assets/img/en/difference-split.webp)
+![Teplo rozdielu: červená tam, kde bola viac strana +, zelená a modrá tam, kde bola viac strana -](../assets/img/sk/difference-split.webp)
 
 ## Ako to použiť {#how-to-use-it}
 

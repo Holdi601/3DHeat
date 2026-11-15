@@ -12,7 +12,7 @@ outdated: false
 
 Tá an barra faoin bpictiúr cosúil le seinnteoir físe: is féidir na sonraí a sheinm mar scannán, iad a stopadh, léim tríothu agus an luas a athrú.
 
-![Barra na hamlíne: 1 Gach rud/Seinn, 2 cnaipí iompair, 3 clog, 4 Luas, 5 Stair, agus Fuinneog agus Réise de 30 s](../assets/img/en/timeline-bar.webp)
+![Barra na hamlíne: 1 Gach rud/Seinn, 2 cnaipí iompair, 3 clog, 4 Luas, 5 Stair, agus Fuinneog agus Réise de 30 s](../assets/img/ga/timeline-bar.webp)
 
 Is é an barra faoin radharc an amlíne ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Cinneann sé cé na sraitheanna infheicthe ag am ar bith. Teastaíonn colún ama uaidh; gan é díchumasaítear an barra ar fad, fanann an radharc sa mhód **Gach rud**, agus deir an bharra taoibh *Níl colún ama sna sonraí seo - tá an amlíne díchumasaithe agus taispeántar gach pointe sonraí ag an am céanna.*
 

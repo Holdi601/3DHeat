@@ -21,7 +21,7 @@ outdated: false
  +------------+
 ```
 
-![Tri zapremine na demo dolini: dva cilindra oko brda, kutija oko sela](../assets/img/en/volumes.webp)
+![Tri zapremine na demo dolini: dva cilindra oko brda, kutija oko sela](../assets/img/bs/volumes.webp)
 
 Zapremine mjere šta se dešava unutar njih, filtriraju prikaz na njih, izvoze svoje redove i mogu se porediti jedna uz drugu. Vidi i [rječnik pojmova](glossary.md) za red, osobu i meč.
 
@@ -76,7 +76,7 @@ Kada ima dvije ili više vidljivih zapremina, pritisnite **Uporedi...**.
 3. U **Tabeli** pročitajte razliku svake vrijednosti od prve zapremine.
 4. Prebacite na **Stubce** da vidite udjele kao stubce.
 
-![Tabela Poređenje zapremina: redovi, vrijeme unutra, igrači i više za svaku zapreminu, s razlikom od prve](../assets/img/en/compare.webp)
+![Tabela Poređenje zapremina: redovi, vrijeme unutra, igrači i više za svaku zapreminu, s razlikom od prve](../assets/img/bs/compare.webp)
 
 | Prikaz | Prikazuje |
 |---|---|
@@ -86,7 +86,7 @@ Kada ima dvije ili više vidljivih zapremina, pritisnite **Uporedi...**.
 | **Posjete** | Box i violin dijagrami koliko dugo traju posjete (logaritamska skala). |
 | **Tok** | Gdje tragovi idu nakon što napuste svaku zapreminu: matrica prelaza ili trake toka. |
 
-![Prikaz Stubci: vrste događaja po zapremini kao udjeli](../assets/img/en/compare-bars.webp)
+![Prikaz Stubci: vrste događaja po zapremini kao udjeli](../assets/img/bs/compare-bars.webp)
 
 ## Savjeti {#tips}
 

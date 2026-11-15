@@ -19,7 +19,7 @@ Os **Filtros** escondem as linhas que não lhe interessam, como uma classe de ve
 2. Em **Classe de veículo**, desmarque *Tanque*. A imagem muda de imediato.
 3. Prima **Limpar todos os filtros** para desfazer.
 
-![O painel Filtros: primeiro as colunas do próprio visualizador (Tipo de evento, Classe de veículo), depois as colunas do seu ficheiro](../assets/img/en/filters.webp)
+![O painel Filtros: primeiro as colunas do próprio visualizador (Tipo de evento, Classe de veículo), depois as colunas do seu ficheiro](../assets/img/pt/filters.webp)
 
 As primeiras linhas são as colunas do próprio visualizador (abaixo). As linhas seguintes vêm do seu ficheiro.
 
@@ -42,7 +42,7 @@ Que colunas podem ser filtradas é decidido na carga, porque têm de ser lidas n
 
 ## Colunas numéricas (intervalo) {#numeric-columns-range}
 
-![Um filtro de intervalo (dinheiro perdido) com as duas pontas arrastadas](../assets/img/en/filters-numeric.webp)
+![Um filtro de intervalo (dinheiro perdido) com as duas pontas arrastadas](../assets/img/pt/filters-numeric.webp)
 
 | Parte | Significado |
 |---|---|

@@ -15,7 +15,7 @@ Týmové teplo ukazuje, kde byl každý tým, každý tým svou barvou. Tam, kde
 
 **Týmové teplo** (klávesa 3) je hustotní pole [Tepla](heat.md), kde každá [skupina](glossary.md) dostane vlastní odstín. Kde se skupiny překrývají, jejich odstíny se mísí; vyrovnaný souboj vyjde neutrálně. Průhlednost stále nese hustotu přesně jako v ostatních režimech, takže obrázek odpovídá zároveň na *kolik* a *čí*. Potřebuje sloupec skupiny.
 
-![Týmové teplo: každá strana svou barvou; tam, kde se překrývají, se barvy mísí](../assets/img/en/heat-teams.webp)
+![Týmové teplo: každá strana svou barvou; tam, kde se překrývají, se barvy mísí](../assets/img/cs/heat-teams.webp)
 
 Není to [překryv figur](box-replay.md): ten kreslí jednu figuru na osobu; tohle je pole tepla obarvené stejným sloupcem.
 

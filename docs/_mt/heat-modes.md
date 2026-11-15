@@ -15,7 +15,7 @@ Kull punt iżid ftit dwal, id-dwal jitħaxxnu flimkien, u l-massa tinpitta bil-k
 
 Il-bar tal-modalitajiet fil-quċċata tal-sidebar tat-tab Heatmap jagħżel kif jinħadem [is-dataset](glossary.md). Iċ-ċwievet 1-4 jagħżlu Sħana, Differenza, Sħana tat-tim u Linji. Figuri fuq xulxin m'għandux ċavetta.
 
-![Il-bar tal-modalitajiet b'Sħana, Differenza, Sħana tat-tim, Figuri fuq xulxin u Linji](../assets/img/en/heat-modes-bar.webp)
+![Il-bar tal-modalitajiet b'Sħana, Differenza, Sħana tat-tim, Figuri fuq xulxin u Linji](../assets/img/mt/heat-modes-bar.webp)
 
 | Modalità | Mistoqsija li twieġeb |
 |---|---|
@@ -25,7 +25,7 @@ Il-bar tal-modalitajiet fil-quċċata tal-sidebar tat-tab Heatmap jagħżel kif 
 | **Linji** | Liema triq ħadu n-nies? |
 | **Figuri fuq xulxin** | Min kien fejn, u meta? |
 
-![L-istess data f'erba' modalitajiet: Sħana, Differenza, Sħana tat-tim u Linji](../assets/img/en/heat-modes-grid.webp)
+![L-istess data f'erba' modalitajiet: Sħana, Differenza, Sħana tat-tim u Linji](../assets/img/mt/heat-modes-grid.webp)
 
 | Modalità (tikketta fil-bar) | Ċavetta | Dak li jpinġi | Jeħtieġ |
 |---|---|---|---|

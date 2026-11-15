@@ -23,7 +23,7 @@ outdated: false
 | **유닛** 옆의 **...** 버튼 | "양마다 단위 고르기"를 엽니다. 양마다 드롭다운 하나씩 있습니다 |
 | **언어** 메뉴 | 뷰어의 언어. [40개 언어](languages.md) 또는 브라우저의 언어 |
 
-![유닛 메뉴와 양마다 단위를 고르는 창이 열린 머리글](../assets/img/en/settings-units.webp)
+![유닛 메뉴와 양마다 단위를 고르는 창이 열린 머리글](../assets/img/ko/settings-units.webp)
 
 상자에 입력하는 숫자는 점(`0.35`)이나 쉼표(`0,35`) 어느 쪽이든 쓸 수 있습니다. 뷰어는 둘 다 읽고, 숫자를 뷰어 언어의 표기법으로 보여 줍니다.
 
@@ -48,11 +48,11 @@ outdated: false
 
 ## 도움말 모드 {#help-mode}
 
-![도움말 모드: 색이 무엇을 뜻하는지](../assets/img/en/help.webp)
+![도움말 모드: 색이 무엇을 뜻하는지](../assets/img/ko/help.webp)
 
 `?` 또는 `F1`을 누르거나 **?** 버튼을 클릭하세요. *색의 뜻*을 보여 줍니다. 3D 보기의 범례, 히트 램프, 팀 색, 레벨의 색, 패널의 상태 색, 매치 패널과 레이스 보기의 범례입니다. 끌 때까지 켜져 있습니다. 매치 탭에서는 매치 패널의 색도 설명합니다.
 
-![매치 탭의 도움말 모드](../assets/img/en/settings-help-match.webp)
+![매치 탭의 도움말 모드](../assets/img/ko/settings-help-match.webp)
 
 ## 브라우저가 기억하는 것 {#what-the-browser-remembers}
 

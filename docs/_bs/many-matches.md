@@ -14,7 +14,7 @@ outdated: false
 
 Svaki meč počinje od svog početka, a jedinice se kreću kao figure. Datoteke idu direktno u grafičku karticu i ne pravi se puna tabela, pa se pušta glatko tamo gdje bi običan unos ostao bez memorije.
 
-![Deset mečeva tenkova položeno jedno preko drugog, jedna boja po meču](../assets/img/en/many-matches.webp)
+![Deset mečeva tenkova položeno jedno preko drugog, jedna boja po meču](../assets/img/bs/many-matches.webp)
 
 ## Kako se koristi {#how-to-use-it}
 

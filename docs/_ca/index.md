@@ -14,7 +14,7 @@ outdated: false
 
 Carrega posicions -CSV, Parquet, gravacions de Tacview, repeticions convertides, un sol fitxer, una carpeta o milers de partides- i mira-les com a **mapa de calor pel qual pots volar**, com a **figures que repeteixen la partida**, com a línies al llarg dels recorreguts que va fer la gent, o com una població contra una altra. Troba sol el que destaca, i funciona del tot al navegador: no es puja res a cap lloc.
 
-![Calor de deu partides de tancs sobre la vall de demostració](../assets/img/en/heat-hero.webp)
+![Calor de deu partides de tancs sobre la vall de demostració](../assets/img/ca/heat-hero.webp)
 
 **Ets nou aquí?** Crea les [dades de demostració](demo-data.md) i segueix els seus set passos. Totes les imatges d'aquest lloc s'han fet amb elles.
 
@@ -22,12 +22,12 @@ Carrega posicions -CSV, Parquet, gravacions de Tacview, repeticions convertides,
 
 | | |
 |---|---|
-| ![Diferència](../assets/img/en/heat-difference.webp) | **[Modes de calor](heat-modes.md)** - calor, [diferència](difference.md) (vermell on un bàndol n'ha tingut més, blau-verd on n'ha tingut més l'altre), [calor per equips](team-heat.md), [calor de línia](line-heat.md); [calor direccional](directional-heat.md) amb sectors, camps de fletxes i gràfics polars; calor [ponderada pel valor](value-weighting.md): què costen les armes, els vehicles i el combustible. |
-| ![Repetició](../assets/img/en/replay-tanks.webp) | **[Repetició de partida](match-replay.md)** - cada unitat com la [figura](figures.md) del que és, símbols NATO o russos a distància, míssils i traçadors, marques d'impacte, restes, incendis, torretes, objectius, càmeres a l'estil de Tacview i pantalla tàctica; [moltes partides alhora](many-matches.md). |
-| ![Troballes](../assets/img/en/insights.webp) | **[Troballes](insights.md)** - posicions fortes, terreny mortal, trampes d'aparició, colls d'ampolla i jugadors destacats, trobats i ordenats amb les proves; un resum escrit, opcionalment fet per una IA que tries; un comentarista per a una partida; la [lent del coneixement](knowledge.md). |
-| ![Volums](../assets/img/en/compare.webp) | **[Volums](volumes.md)** - dibuixa caixes, prismes, cilindres i esferes, filtra fins a ells, compta el que passa a dins, exporta-ho i compara llocs un al costat de l'altre; [desglossament](breakdown.md) de qui i què funciona millor en un lloc. |
-| ![Filtres](../assets/img/en/filters.webp) | **[Filtres](filters.md)** - per tipus d'esdeveniment, jugador o IA, classe de vehicle, valor, qualsevol columna, a la targeta gràfica amb qualsevol mida de dades. |
-| ![Nivell](../assets/img/en/level-panel.webp) | **[Nivells](levels.md)** - imatges de mapa, nivells 3D fets amb les [eines de dades](#related-repositories), simplificació, el [fons del món](world-backdrop.md) amb terreny real per a dades de vol. |
+| ![Diferència](../assets/img/ca/heat-difference.webp) | **[Modes de calor](heat-modes.md)** - calor, [diferència](difference.md) (vermell on un bàndol n'ha tingut més, blau-verd on n'ha tingut més l'altre), [calor per equips](team-heat.md), [calor de línia](line-heat.md); [calor direccional](directional-heat.md) amb sectors, camps de fletxes i gràfics polars; calor [ponderada pel valor](value-weighting.md): què costen les armes, els vehicles i el combustible. |
+| ![Repetició](../assets/img/ca/replay-tanks.webp) | **[Repetició de partida](match-replay.md)** - cada unitat com la [figura](figures.md) del que és, símbols NATO o russos a distància, míssils i traçadors, marques d'impacte, restes, incendis, torretes, objectius, càmeres a l'estil de Tacview i pantalla tàctica; [moltes partides alhora](many-matches.md). |
+| ![Troballes](../assets/img/ca/insights.webp) | **[Troballes](insights.md)** - posicions fortes, terreny mortal, trampes d'aparició, colls d'ampolla i jugadors destacats, trobats i ordenats amb les proves; un resum escrit, opcionalment fet per una IA que tries; un comentarista per a una partida; la [lent del coneixement](knowledge.md). |
+| ![Volums](../assets/img/ca/compare.webp) | **[Volums](volumes.md)** - dibuixa caixes, prismes, cilindres i esferes, filtra fins a ells, compta el que passa a dins, exporta-ho i compara llocs un al costat de l'altre; [desglossament](breakdown.md) de qui i què funciona millor en un lloc. |
+| ![Filtres](../assets/img/ca/filters.webp) | **[Filtres](filters.md)** - per tipus d'esdeveniment, jugador o IA, classe de vehicle, valor, qualsevol columna, a la targeta gràfica amb qualsevol mida de dades. |
+| ![Nivell](../assets/img/ca/level-panel.webp) | **[Nivells](levels.md)** - imatges de mapa, nivells 3D fets amb les [eines de dades](#related-repositories), simplificació, el [fons del món](world-backdrop.md) amb terreny real per a dades de vol. |
 
 També: la pestanya [Anàlisi de curses](race-analysis.md) per a voltes de jocs de curses, la pestanya [Partida](match-analysis.md) per als resums de Counter-Strike 2, la [Pissarra tàctica](tactics-board.md) per a plans sobre un nivell, la [anàlisi d'impactes](hit-analysis.md) per vehicle, l'[anàlisi massiva](mass-analysis.md) de milers de partides, les [trajectòries de càmera i el vídeo](camera-path-and-video.md), [40 idiomes](languages.md) i [unitats mètriques o imperials](settings.md).
 

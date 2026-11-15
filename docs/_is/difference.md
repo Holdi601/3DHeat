@@ -16,7 +16,7 @@ Rautt þar sem lið A var meira, grænblátt þar sem lið B var meira, ekkert �
 
 **Mismunur** (takki 2) er hiti með formerki. Línur úr einu þýði bæta við hita; línur úr öðru draga hann frá. Þar sem þær tvær skarast jafnt verður útkoman núll og alveg gegnsæ; þar sem önnur hliðin ræður ræður litur hennar - sjálfgefið hlýr (gegnsætt → rautt → gult → hvítt) fyrir **+**-hliðina og kaldur (gegnsætt → grænt → blátt → fjólublátt) fyrir **−**-hliðina.
 
-![Mismunarhiti: rautt þar sem +-hliðin var meira, grænt og blátt þar sem --hliðin var meira](../assets/img/en/difference-split.webp)
+![Mismunarhiti: rautt þar sem +-hliðin var meira, grænt og blátt þar sem --hliðin var meira](../assets/img/is/difference-split.webp)
 
 ## Hvernig á að nota hann {#how-to-use-it}
 

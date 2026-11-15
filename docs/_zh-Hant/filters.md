@@ -19,7 +19,7 @@ outdated: false
 2. 在**載具類別**下，取消勾選*Tank*。畫面會立即改變。
 3. 按**清除所有篩選**即可復原。
 
-![篩選面板：先顯示檢視器自己的欄位（事件類型、載具類別），然後才是你檔案中的欄位](../assets/img/en/filters.webp)
+![篩選面板：先顯示檢視器自己的欄位（事件類型、載具類別），然後才是你檔案中的欄位](../assets/img/zh-Hant/filters.webp)
 
 前幾列是檢視器自己的欄位（見下文）。之後的列則來自你的檔案。
 
@@ -42,7 +42,7 @@ outdated: false
 
 ## 數值欄位（範圍） {#numeric-columns-range}
 
-![範圍篩選（損失的金錢），兩端都已拖動](../assets/img/en/filters-numeric.webp)
+![範圍篩選（損失的金錢），兩端都已拖動](../assets/img/zh-Hant/filters-numeric.webp)
 
 | 部分 | 意義 |
 |---|---|

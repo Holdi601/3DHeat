@@ -15,7 +15,7 @@ outdated: false
 
 目录中大约有 2,000 个具名的载具、飞机、舰船、武器和士兵，全部由查看器自己构建。
 
-![Tanks of the demo drawn as their own figures](../assets/img/en/replay-tanks.webp)
+![Tanks of the demo drawn as their own figures](../assets/img/zh/replay-tanks.webp)
 
 ## 目录中有什么 {#what-is-in-the-catalogue}
 

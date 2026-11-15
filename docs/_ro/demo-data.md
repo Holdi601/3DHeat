@@ -10,7 +10,7 @@ outdated: false
 
 # Date demonstrative: încearcă vizualizatorul în cinci minute
 
-![Căldura a zece meciuri cu tancuri în valea demonstrativă: ce arată pasul 4](../assets/img/en/heat-hero.webp)
+![Căldura a zece meciuri cu tancuri în valea demonstrativă: ce arată pasul 4](../assets/img/ro/heat-hero.webp)
 
 Nu ai încă date proprii? Depozitul le generează. Totul în el este inventat: o vale, o curte și meciuri din trei stiluri de joc inventate, cu jucători numiți *Blue 1* sau *Red 3*. Imaginile de pe acest site au fost toate făcute cu ele.
 
@@ -45,7 +45,7 @@ Fiecare tabel își numește coloanele în subsolul său, deci se încarcă făr
 6. Deschide **Observații** (în bara laterală Hartă termică): găsește locurile unde s-a tras, s-a lovit și s-a distrus mult mai mult decât în altă parte - în jurul celor două dealuri.
 7. Deschide fila **Meci**; sub **Meciuri din reluare** alege *Match 01*; apasă **Redare** pe cronologie: [reluarea](match-replay.md).
 
-![O reluare a Match 01 cu tancuri ca figuri](../assets/img/en/replay-overview.webp)
+![O reluare a Match 01 cu tancuri ca figuri](../assets/img/ro/replay-overview.webp)
 
 Pentru tragător, încarcă `demo-yard.glb` și `shooter.parquet`; pentru lupta aeriană, `air.parquet` (figurile se văd mai bine la **Mărimea figurilor** 4, un glisor din panoul **Vizualizare pe echipe** din bara laterală Hartă termică).
 

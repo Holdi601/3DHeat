@@ -21,7 +21,7 @@ E **Volumen** ass eng onsiichtbar Këscht (oder en Zylinder, oder eng Kugel), d�
  +------------+
 ```
 
-![Dräi Volumen am Demo-Tal: zwee Zylinder ronderëm d'Hiwwelen, eng Këscht ronderëm d'Duerf](../assets/img/en/volumes.webp)
+![Dräi Volumen am Demo-Tal: zwee Zylinder ronderëm d'Hiwwelen, eng Këscht ronderëm d'Duerf](../assets/img/lb/volumes.webp)
 
 Volumen miessen, wat dran geschitt, filteren d'Usiicht op si, exportéieren hir Zeilen, a si kënnen niewenee verglach ginn. Kuckt och de [Glossar](glossary.md) fir Zeil, Persoun a Match.
 
@@ -76,7 +76,7 @@ Mat zwee oder méi siichtbare Volumen drécken Dir **Vergläichen…**.
 3. An **Tabell** liest Dir d'Differenz vun all Wäert zum éischte Volumen.
 4. Wiesselt op **Baalken**, fir d'Undeeler als Baalken ze gesinn.
 
-![D'Tabell Volumen vergläichen: Zeilen, Zäit dobannen, Spiller a méi fir all Volumen, mat der Differenz zum éischte](../assets/img/en/compare.webp)
+![D'Tabell Volumen vergläichen: Zeilen, Zäit dobannen, Spiller a méi fir all Volumen, mat der Differenz zum éischte](../assets/img/lb/compare.webp)
 
 | Usiicht | Weist |
 |---|---|
@@ -86,7 +86,7 @@ Mat zwee oder méi siichtbare Volumen drécken Dir **Vergläichen…**.
 | **Besich** | Box- an Violinplots, wéi laang Besicher daueren (logarithmesch Skala). |
 | **Fluss** | Wou d'Spuren nom Verloosse vu jidderem Volumen hi goen: eng Iwwergangsmatrix oder Flussbänner. |
 
-![D'Baalkenusiicht: Evenementaarte pro Volumen als Undeeler](../assets/img/en/compare-bars.webp)
+![D'Baalkenusiicht: Evenementaarte pro Volumen als Undeeler](../assets/img/lb/compare-bars.webp)
 
 ## Tipps {#tips}
 

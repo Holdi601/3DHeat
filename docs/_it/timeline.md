@@ -12,7 +12,7 @@ outdated: false
 
 La barra sotto l'immagine è come un lettore video: puoi riprodurre i dati come un film, metterli in pausa, saltare avanti e indietro e cambiarne la velocità.
 
-![La barra della linea temporale: 1 Tutto/Riproduci, 2 pulsanti di trasporto, 3 orologio, 4 Velocità, 5 Cronologia, con Finestra e un Intervallo di 30 s](../assets/img/en/timeline-bar.webp)
+![La barra della linea temporale: 1 Tutto/Riproduci, 2 pulsanti di trasporto, 3 orologio, 4 Velocità, 5 Cronologia, con Finestra e un Intervallo di 30 s](../assets/img/it/timeline-bar.webp)
 
 La barra sotto la vista è la linea temporale ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Decide quali righe sono visibili in ogni momento. Richiede una colonna di tempo: senza di essa l'intera barra è disattivata, la vista resta in **Tutto** e la barra laterale dice *Nessuna colonna di tempo in questi dati - la linea temporale è disattivata e ogni punto dato viene mostrato subito.*
 

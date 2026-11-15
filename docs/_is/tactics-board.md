@@ -24,7 +24,7 @@ Flipinn **Leikfræði** er teikniborð fyrir liðsáætlun: þú setur litlar f�
 6. Ýttu á **▶** (eða `K`) til að spila áætlunina frá sýnda skrefinu til loka.
 7. Gefðu áætluninni heiti í **Heiti áætlunar** og ýttu á **Vista**.
 
-![Flipinn Leikfræði í sýn ofan frá: leikur, hliðar og verkfæri vinstra megin, þrjár fígúrur með Færa-örvum, reykkast-bogi, svæði og skrefin neðst](../assets/img/en/tactics.webp)
+![Flipinn Leikfræði í sýn ofan frá: leikur, hliðar og verkfæri vinstra megin, þrjár fígúrur með Færa-örvum, reykkast-bogi, svæði og skrefin neðst](../assets/img/is/tactics.webp)
 
 ## Að byrja áætlun {#starting-a-plan}
 

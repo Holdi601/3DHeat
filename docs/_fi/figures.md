@@ -15,7 +15,7 @@ outdated: false
 
 Nimettyjä ajoneuvoja, lentokoneita, laivoja, aseita ja sotilaita on noin 2 000. Katselin rakentaa ne itse.
 
-![Esimerkkidatan panssarivaunut omina hahmoinaan](../assets/img/en/replay-tanks.webp)
+![Esimerkkidatan panssarivaunut omina hahmoinaan](../assets/img/fi/replay-tanks.webp)
 
 ## Mitä luettelossa on {#what-is-in-the-catalogue}
 

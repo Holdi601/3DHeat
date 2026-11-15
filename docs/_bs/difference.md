@@ -15,7 +15,7 @@ Crveno tamo gdje je tim A bio više, zeleno-plavo tamo gdje je bio tim B, ništa
 
 **Razlika** (tipka 2) je toplota s predznakom. Redovi jedne populacije dodaju toplotu; redovi druge je oduzimaju. Tamo gdje se njih dvoje ravnomjerno preklapaju rezultat je nula i potpuno proziran; tamo gdje jedna strana preovladava prikazuje se bojama te strane - podrazumijevano toplim (prozirno → crveno → žuto → bijelo) za stranu **+** i hladnim (prozirno → zeleno → plavo → ljubičasto) za stranu **−**.
 
-![Toplota razlike: crveno tamo gdje je strana + bila više, zeleno i plavo tamo gdje je strana - bila više](../assets/img/en/difference-split.webp)
+![Toplota razlike: crveno tamo gdje je strana + bila više, zeleno i plavo tamo gdje je strana - bila više](../assets/img/bs/difference-split.webp)
 
 ## Kako se koristi {#how-to-use-it}
 

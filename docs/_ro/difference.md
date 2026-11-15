@@ -15,7 +15,7 @@ Roșu acolo unde echipa A a fost mai mult, verde-albastru acolo unde a fost echi
 
 **Diferență** (tasta 2) este căldură cu semn. Rândurile unei populații adaugă căldură; ale alteia o scad. Acolo unde cele două se suprapun uniform, rezultatul este zero și complet transparent; acolo unde una domină, se arată în culorile acelei părți - implicit calde (transparent → roșu → galben → alb) pentru partea **+** și reci (transparent → verde → albastru → violet) pentru partea **−**.
 
-![Căldură diferență: roșu acolo unde partea + a fost mai mult, verde și albastru acolo unde partea − a fost mai mult](../assets/img/en/difference-split.webp)
+![Căldură diferență: roșu acolo unde partea + a fost mai mult, verde și albastru acolo unde partea − a fost mai mult](../assets/img/ro/difference-split.webp)
 
 ## Cum se folosește {#how-to-use-it}
 

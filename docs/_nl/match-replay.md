@@ -15,7 +15,7 @@ De replay is een film van de wedstrijd waarin elke speler wordt getekend als het
 
 Schoten, treffers, branden en wrakken worden getekend op de eenheden en doelen op het niveau. Camera's, labels en een tactische weergave helpen je het gevecht te lezen. Ken je Tacview? [Tacview-gelijkwaardigheid](tacview-parity.md) laat zien waar elk van zijn hulpmiddelen zit.
 
-![Figurenreplay van de tankdemo: tanks als hun eigen figuren, met labels voor naam, voertuig en snelheid](../assets/img/en/replay-overview.webp)
+![Figurenreplay van de tankdemo: tanks als hun eigen figuren, met labels voor naam, voertuig en snelheid](../assets/img/nl/replay-overview.webp)
 
 ## Een replay starten {#start-a-replay}
 
@@ -26,11 +26,11 @@ Schoten, treffers, branden en wrakken worden getekend op de eenheden en doelen o
 
 Figuren vervangen blokken voor elke eenheid waarvan de naam of het type bekend is (zie [Figuren](figures.md)). Data zonder naam- of typekolom wordt als soldaten getekend.
 
-![Het tabblad Match: de wedstrijdkiezer, het gedeelte Figuren, de cameraweergaven, Afspelen en de gebeurtenislijst](../assets/img/en/match-replay-tab.webp)
+![Het tabblad Match: de wedstrijdkiezer, het gedeelte Figuren, de cameraweergaven, Afspelen en de gebeurtenislijst](../assets/img/nl/match-replay-tab.webp)
 
 ## Figuren {#figures}
 
-![Een brandende tank in de omcirkelingscamera, met het schot dat hem raakte](../assets/img/en/replay-tanks.webp)
+![Een brandende tank in de omcirkelingscamera, met het schot dat hem raakte](../assets/img/nl/replay-tanks.webp)
 
 | Instelling (gedeelte **Figuren**) | Standaard | Wat het doet |
 |---|---|---|
@@ -51,7 +51,7 @@ Figuren vervangen blokken voor elke eenheid waarvan de naam of het type bekend i
 
 Wanneer een eenheid kleiner zou zijn dan **Kleinste figuur op het scherm**, kan ze een symbool worden dat leesbaar blijft. De vorm vertelt de soort (bijvoorbeeld een afgeronde doos met een rupsmerk voor pantservoertuigen); de kleur vertelt de kant. Open het menu **Symbolen** om de stijl te wijzigen.
 
-![Dezelfde zes eenheden als NAVO-symbolen, Russische tactische tekens, pictogrammen van de spelkaart en alleen vormen](../assets/img/en/match-replay-symbols-styles.webp)
+![Dezelfde zes eenheden als NAVO-symbolen, Russische tactische tekens, pictogrammen van de spelkaart en alleen vormen](../assets/img/nl/match-replay-symbols-styles.webp)
 
 ### Treffermarkeringen, wrakken en branden {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Klik op een eenheid of haar label om die te **volgen**; het gedeelte **Replay** 
 
 ## Tactische weergave {#tactical-display}
 
-![De luchtdemo met de tactische weergave (T): draadmodel-terrein, kill- en gebeurtenispanelen](../assets/img/en/replay-air-tactical.webp)
+![De luchtdemo met de tactische weergave (T): draadmodel-terrein, kill- en gebeurtenispanelen](../assets/img/nl/replay-air-tactical.webp)
 
 Het gedeelte **Tactische weergave** tekent, voor geen enkele eenheid, de geselecteerde, alle, of één soort (vliegtuigen, grond, schepen, wapens): snelheidsvectoren en het pad vooruit, neus- en liftlijnen, radarkegels, vergrendelingen, datalinks, betrokkenheidszones en -lijnen, zichtlijnen, waar spelers kijken (kijkkegels), kanonrichting en de opgenomen camera.
 
@@ -84,7 +84,7 @@ Het gedeelte **Tactische weergave** tekent, voor geen enkele eenheid, de geselec
 
 `T` (of de schakelaar **Tonen als tactisch scherm**) zet de weergave om naar een radarscherm-stijl: gloed, contouren, hoogtelijnen, een meetraster, scanlijnen, afstandsringen, hoogteladders, panelen met kills en gebeurtenissen, en een **Regisseur** die de camera zelf naar gebeurtenissen verplaatst.
 
-![Hetzelfde luchtgevecht in de gewone weergave](../assets/img/en/replay-air.webp)
+![Hetzelfde luchtgevecht in de gewone weergave](../assets/img/nl/replay-air.webp)
 
 ## Doelen {#objectives}
 

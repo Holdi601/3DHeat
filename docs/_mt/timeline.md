@@ -12,7 +12,7 @@ outdated: false
 
 Il-bar taħt ir-ritratt hu bħal player tal-vidjo: tista' tħaddem id-data bħala film, twaqqafha, timxi minn post għall-ieħor u tbiddel il-veloċità.
 
-![Il-bar tal-linja taż-żmien: 1 Kollox/Ħaddem, 2 buttuni tal-kontroll, 3 arloġġ, 4 Veloċità, 5 Storja, b'Tieqa u Medda ta' 30 s](../assets/img/en/timeline-bar.webp)
+![Il-bar tal-linja taż-żmien: 1 Kollox/Ħaddem, 2 buttuni tal-kontroll, 3 arloġġ, 4 Veloċità, 5 Storja, b'Tieqa u Medda ta' 30 s](../assets/img/mt/timeline-bar.webp)
 
 Il-bar taħt il-veduta hu l-linja taż-żmien ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Hu jiddeċiedi liema ringieli huma viżibbli f'kull mument. Teħtieġ kolonna ta' ħin; mingħajrha l-bar kollu jitfi, il-veduta tibqa' fuq **Kollox**, u s-sidebar jgħid *Ma hemm l-ebda kolonna ta' ħin f'din id-data - il-linja taż-żmien hija mitfija u kull punt tad-data jintwera f'daqqa.*
 

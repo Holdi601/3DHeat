@@ -16,7 +16,7 @@ Liðahiti sýnir hvar hvert lið var, hvert lið í sínum eigin lit. Þar sem l
 
 **Liðahiti** (takki 3) er þéttleikasviðið úr [Hita](heat.md) með sérhverjum [hópi](glossary.md) gefnum sinn eigin litatón. Þar sem hópar skarast blandast litatónar þeirra; jöfn keppni verður hlutlaus. Gegnsæi ber samt þéttleikann nákvæmlega eins og í hinum stillingunum, svo myndin svarar bæði *hversu mikið* og *hvers* í einu. Hann þarfnast hópdálks.
 
-![Liðahiti: hvor hlið í sínum lit; þar sem þær skarast blandast litirnir](../assets/img/en/heat-teams.webp)
+![Liðahiti: hvor hlið í sínum lit; þar sem þær skarast blandast litirnir](../assets/img/is/heat-teams.webp)
 
 Þetta er ekki [fígúruyfirlögnin](box-replay.md): hún teiknar eina fígúru á hverja manneskju; þetta er hitasvið litað eftir sama dálki.
 

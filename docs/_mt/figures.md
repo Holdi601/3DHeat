@@ -15,7 +15,7 @@ outdated: false
 
 Hemm madwar 2,000 vettura, inġenju, vapur, arma u suldat b'isem, kollha mibnija mill-viewer innifsu.
 
-![Tanks tad-demo mpinġija bħala l-figuri tagħhom stess](../assets/img/en/replay-tanks.webp)
+![Tanks tad-demo mpinġija bħala l-figuri tagħhom stess](../assets/img/mt/replay-tanks.webp)
 
 ## X'hemm fil-katalgu {#what-is-in-the-catalogue}
 

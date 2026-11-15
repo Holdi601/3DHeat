@@ -19,7 +19,7 @@ outdated: false
 2. Under **Fordonsklass**, avmarkera *Stridsvagn*. Bilden ändras på en gång.
 3. Tryck **Rensa alla filter** för att ångra.
 
-![Filterpanelen: visarens egna kolumner (Händelsetyp, Fordonsklass) först, sedan kolumnerna från din fil](../assets/img/en/filters.webp)
+![Filterpanelen: visarens egna kolumner (Händelsetyp, Fordonsklass) först, sedan kolumnerna från din fil](../assets/img/sv/filters.webp)
 
 De första raderna är visarens egna kolumner (nedan). Raderna efter dem kommer från din fil.
 
@@ -42,7 +42,7 @@ Vilka kolumner som kan filtreras avgörs vid inläsningen, eftersom de måste l�
 
 ## Talkolumner (intervall) {#numeric-columns-range}
 
-![Ett intervallfilter (förlorade pengar) med båda ändarna dragna](../assets/img/en/filters-numeric.webp)
+![Ett intervallfilter (förlorade pengar) med båda ändarna dragna](../assets/img/sv/filters-numeric.webp)
 
 | Del | Betydelse |
 |---|---|

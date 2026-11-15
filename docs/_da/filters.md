@@ -19,7 +19,7 @@ outdated: false
 2. Under **Køretøjsklasse** fjerner du markeringen ved *Tank*. Billedet ændrer sig med det samme.
 3. Tryk på **Ryd alle filtre** for at fortryde.
 
-![Filterpanelet: vieweren egne kolonner (Hændelsestype, Køretøjsklasse) først, derefter kolonnerne fra din fil](../assets/img/en/filters.webp)
+![Filterpanelet: vieweren egne kolonner (Hændelsestype, Køretøjsklasse) først, derefter kolonnerne fra din fil](../assets/img/da/filters.webp)
 
 De første rækker er vieweren egne kolonner (nedenfor). Rækkerne efter dem kommer fra din fil.
 
@@ -42,7 +42,7 @@ Hvilke kolonner der kan filtreres, afgøres ved indlæsningen, fordi de dengang 
 
 ## Talkolonner (interval) {#numeric-columns-range}
 
-![Et intervalfilter (tabt penge) med begge ender trukket ind](../assets/img/en/filters-numeric.webp)
+![Et intervalfilter (tabt penge) med begge ender trukket ind](../assets/img/da/filters-numeric.webp)
 
 | Del | Betydning |
 |---|---|

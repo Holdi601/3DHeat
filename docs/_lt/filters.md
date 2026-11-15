@@ -19,7 +19,7 @@ outdated: false
 2. Skiltyje **Transporto klasė** nuimkite *Tankas* žymę. Paveikslėlis iškart pasikeičia.
 3. Paspauskite **Išvalyti visus filtrus**, kad grįžtumėte.
 
-![Filtrų skydelis: pirma peržiūros programos stulpeliai (Įvykio tipas, Transporto klasė), paskui stulpeliai iš jūsų failo](../assets/img/en/filters.webp)
+![Filtrų skydelis: pirma peržiūros programos stulpeliai (Įvykio tipas, Transporto klasė), paskui stulpeliai iš jūsų failo](../assets/img/lt/filters.webp)
 
 Pirmos eilutės yra peržiūros programos stulpeliai (žemiau). Po jų ateinančios eilutės yra iš jūsų failo.
 
@@ -42,7 +42,7 @@ Kuriuos stulpelius galima filtruoti, nusprendžiama įkėlimo metu, nes tuomet j
 
 ## Skaitiniai stulpeliai (intervalas) {#numeric-columns-range}
 
-![Intervalo filtras (prarasti pinigai) su abiem galais, patempta](../assets/img/en/filters-numeric.webp)
+![Intervalo filtras (prarasti pinigai) su abiem galais, patempta](../assets/img/lt/filters-numeric.webp)
 
 | Dalis | Reiškia |
 |---|---|

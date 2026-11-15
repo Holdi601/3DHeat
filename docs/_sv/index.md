@@ -14,7 +14,7 @@ outdated: false
 
 Läs in positioner – CSV, Parquet, Tacview-inspelningar, konverterade repriser, en enda fil, en mapp eller tusentals matcher – och se dem som en **värmekarta du kan flyga igenom**, som **figurer som spelar upp matchen**, som linjer längs rutterna folk tog, eller som en population mot en annan. Den hittar själv vad som sticker ut, och den körs helt i webbläsaren: ingenting laddas upp någonstans.
 
-![Värme från tio stridsvagnsmatcher över demo valley](../assets/img/en/heat-hero.webp)
+![Värme från tio stridsvagnsmatcher över demo valley](../assets/img/sv/heat-hero.webp)
 
 **Ny här?** Gör [demodata](demo-data.md) och följ dess sju steg. Varje bild på den här webbplatsen togs med den.
 
@@ -22,12 +22,12 @@ Läs in positioner – CSV, Parquet, Tacview-inspelningar, konverterade repriser
 
 | | |
 |---|---|
-| ![Differens](../assets/img/en/heat-difference.webp) | **[Värmelägen](heat-modes.md)** - värme, [differens](difference.md) (rött där ena sidan var mer, grönblått där den andra var), [lagvärme](team-heat.md), [linjevärme](line-heat.md); [riktningsvärme](directional-heat.md) med kilar, pilfält och polardiagram; värme [viktad efter värde](value-weighting.md): vad vapen, fordon och bränsle kostar. |
-| ![Repris](../assets/img/en/replay-tanks.webp) | **[Matchrepris](match-replay.md)** - varje enhet som [figuren](figures.md) av vad den är, NATO- eller ryska symboler på långt avstånd, robotar och spårljus, träffmärken, vrak, bränder, torn, mål, Tacview-liknande kameror och taktisk vy; [många matcher samtidigt](many-matches.md). |
-| ![Insikter](../assets/img/en/insights.webp) | **[Insikter](insights.md)** - starka positioner, dödlig mark, spawn-fällor, flaskhalsar och framträdande spelare, hittade och rangordnade med underlaget; en skriftlig genomgång, valfritt av en AI du väljer; en kommentator för en match; [kunskapslinsen](knowledge.md). |
-| ![Volymer](../assets/img/en/compare.webp) | **[Volymer](volumes.md)** - rita lådor, prismor, cylindrar och sfärer, filtrera till dem, räkna vad som händer inuti, exportera det och jämför platser sida vid sida; [uppdelning](breakdown.md) av vem och vad som gör det bäst på en plats. |
-| ![Filter](../assets/img/en/filters.webp) | **[Filter](filters.md)** - efter händelsetyp, spelare eller AI, fordonsklass, värde, valfri kolumn, i grafikkortet oavsett datastorlek. |
-| ![Bana](../assets/img/en/level-panel.webp) | **[Banor](levels.md)** - kartbilder, 3D-banor gjorda med [datverktygen](#related-repositories), förenkling, [världsbakgrunden](world-backdrop.md) med riktig terräng för flygdata. |
+| ![Differens](../assets/img/sv/heat-difference.webp) | **[Värmelägen](heat-modes.md)** - värme, [differens](difference.md) (rött där ena sidan var mer, grönblått där den andra var), [lagvärme](team-heat.md), [linjevärme](line-heat.md); [riktningsvärme](directional-heat.md) med kilar, pilfält och polardiagram; värme [viktad efter värde](value-weighting.md): vad vapen, fordon och bränsle kostar. |
+| ![Repris](../assets/img/sv/replay-tanks.webp) | **[Matchrepris](match-replay.md)** - varje enhet som [figuren](figures.md) av vad den är, NATO- eller ryska symboler på långt avstånd, robotar och spårljus, träffmärken, vrak, bränder, torn, mål, Tacview-liknande kameror och taktisk vy; [många matcher samtidigt](many-matches.md). |
+| ![Insikter](../assets/img/sv/insights.webp) | **[Insikter](insights.md)** - starka positioner, dödlig mark, spawn-fällor, flaskhalsar och framträdande spelare, hittade och rangordnade med underlaget; en skriftlig genomgång, valfritt av en AI du väljer; en kommentator för en match; [kunskapslinsen](knowledge.md). |
+| ![Volymer](../assets/img/sv/compare.webp) | **[Volymer](volumes.md)** - rita lådor, prismor, cylindrar och sfärer, filtrera till dem, räkna vad som händer inuti, exportera det och jämför platser sida vid sida; [uppdelning](breakdown.md) av vem och vad som gör det bäst på en plats. |
+| ![Filter](../assets/img/sv/filters.webp) | **[Filter](filters.md)** - efter händelsetyp, spelare eller AI, fordonsklass, värde, valfri kolumn, i grafikkortet oavsett datastorlek. |
+| ![Bana](../assets/img/sv/level-panel.webp) | **[Banor](levels.md)** - kartbilder, 3D-banor gjorda med [datverktygen](#related-repositories), förenkling, [världsbakgrunden](world-backdrop.md) med riktig terräng för flygdata. |
 
 Dessutom: [Racinganalys](race-analysis.md)-fliken för varv från racingspel, [Match](match-analysis.md)-fliken för sammanfattningar av Counter-Strike 2, [Taktiktavlan](tactics-board.md) för planer på en bana, [träffanalys](hit-analysis.md) per fordon, [massanalys](mass-analysis.md) av tusentals matcher, [kameravägar och video](camera-path-and-video.md), [40 språk](languages.md), [metriska eller engelska enheter](settings.md).
 

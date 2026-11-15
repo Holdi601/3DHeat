@@ -15,7 +15,7 @@ outdated: false
 
 Sve se broji u vašem pregledniku. Ništa ne napušta vaše računalo osim ako ne uključite vanjski UI (vidi [Vanjski UI](#external-ai)).
 
-![Uvidi na demo tenkova: 14 nalaza, od najjačeg prema najslabijem](../assets/img/en/insights.webp)
+![Uvidi na demo tenkova: 14 nalaza, od najjačeg prema najslabijem](../assets/img/hr/insights.webp)
 
 Odjeljak **Uvidi** nalazi se u bočnoj traci kartica Toplinska karta i Meč. Ima tri kartice: **Nalazi**, **Sažetak** i **Komentator**.
 
@@ -30,7 +30,7 @@ Brojanje koristi trenutne filtre, skrivene grupe i odabranu utakmicu kroz cijeli
 
 Retci na vrhu popisa (na primjer ukupni iznosi novca) sažimaju cijele podatke prije nalaza.
 
-![Otvoren nalaz: vruća zona ispaljenih hitaca, njezini brojevi i odgovarajući odlomak iz literature](../assets/img/en/insights-finding.webp)
+![Otvoren nalaz: vruća zona ispaljenih hitaca, njezini brojevi i odgovarajući odlomak iz literature](../assets/img/hr/insights-finding.webp)
 
 ### Detektori {#the-detectors}
 
@@ -55,7 +55,7 @@ Svako mjesto ili grupa testira se naspram ostatka karte (točni binomni testovi 
 
 Kartica **Sažetak** piše nalaze kao kratak tekst: uvod, najjasniji nalaz, jedan za taktiku, jedan za balansiranje, ostali grupirani po detektoru i koliko ih se oslanja na slabije dokaze. Svaki odlomak ima numerirane gumbe koji prikazuju njegove nalaze. **Kopiraj tekst** ga kopira.
 
-![Sažetak koji je napisao ugrađeni pripovjedač](../assets/img/en/debrief.webp)
+![Sažetak koji je napisao ugrađeni pripovjedač](../assets/img/hr/debrief.webp)
 
 Ugrađeni pripovjedač radi izvan mreže, na vašem jeziku. Birač **Leća** iznad njega (vidi [Leća znanja](knowledge.md)) određuje koju literaturu odlomci citiraju.
 
@@ -78,7 +78,7 @@ Zatim upišite neobavezno pitanje i pritisnite **Napiši uz UI**. Šalju se samo
 
 Za **jednu utakmicu** (odaberite jednu ako je učitano više), **Komentator** pronalazi trenutke vrijedne gledanja: prvu krv, višestruka ubojstva, razmjene, završnice, promjene ciljeva, preokrete, istaknute igrače, dalekometne pucnjeve.
 
-![Trenutci komentatora za jednu rundu demo strijelca](../assets/img/en/caster.webp)
+![Trenutci komentatora za jednu rundu demo strijelca](../assets/img/hr/caster.webp)
 
 - Kliknite trenutak: prikaz prelazi na reprodukciju, skače na malo prije njega, leti do tamo i prati igrača.
 - **Reproduciraj trenutke** pušta svaki do kraja i prelazi dalje; **Prethodno** / **Sljedeće** se kreću kroz njih.

@@ -15,7 +15,7 @@ outdated: false
 
 **差值**（按键 2）是带符号的热度。一组人口的行会增加热度；另一组人口的行则减少热度。两者均匀重叠的地方结果为零，完全透明；一方占优的地方则以该方的颜色显示——默认情况下，**+** 方为暖色（透明 → 红 → 黄 → 白），**−** 方为冷色（透明 → 绿 → 蓝 → 紫）。
 
-![Difference heat: red where the + side was more, green and blue where the - side was more](../assets/img/en/difference-split.webp)
+![Difference heat: red where the + side was more, green and blue where the - side was more](../assets/img/zh/difference-split.webp)
 
 ## 使用方法 {#how-to-use-it}
 

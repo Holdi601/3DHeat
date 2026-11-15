@@ -15,7 +15,7 @@ outdated: false
 
 Vse se šteje v vašem brskalniku. Nič ne zapusti računalnika, dokler ne vklopite zunanjega UI (glejte [Zunanji UI](#external-ai)).
 
-![Ugotovitve na demo tenkih: 14 ugotovitev, najmočnejše najprej](../assets/img/en/insights.webp)
+![Ugotovitve na demo tenkih: 14 ugotovitev, najmočnejše najprej](../assets/img/sl/insights.webp)
 
 Razdelek **Ugotovitve** je v stranski vrstici zavihkov Toplotni zemljevid in Tekma. Ima tri zavihke: **Ugotovitve**, **Povzetek** in **Komentator**.
 
@@ -30,7 +30,7 @@ Razdelek **Ugotovitve** je v stranski vrstici zavihkov Toplotni zemljevid in Tek
 
 Vrstice na vrhu seznama (na primer skupni zneski denarja) povzamejo celotne podatke pred ugotovitvami.
 
-![Odprta ugotovitev: vroče območje streljanja, njene številke in ustrezen odlomek iz literature](../assets/img/en/insights-finding.webp)
+![Odprta ugotovitev: vroče območje streljanja, njene številke in ustrezen odlomek iz literature](../assets/img/sl/insights-finding.webp)
 
 ### Zaznavniki {#the-detectors}
 
@@ -55,7 +55,7 @@ Vsako mesto ali skupina se preizkusi proti preostalemu zemljevidu (natančni bin
 
 Zavihek **Povzetek** ugotovitve zapiše v kratko besedilo: uvod, najjasnejšo ugotovitev, eno za taktiko, eno za uravnoteženje, ostale razvrščene po zaznavniku in koliko jih temelji na šibkejših dokazih. Vsak odstavek ima oštevilčene gumbe, ki prikažejo njegove ugotovitve. **Kopiraj besedilo** ga kopira.
 
-![Povzetek, ki ga napiše vgrajeni pripovedovalec](../assets/img/en/debrief.webp)
+![Povzetek, ki ga napiše vgrajeni pripovedovalec](../assets/img/sl/debrief.webp)
 
 Vgrajeni pripovedovalec deluje brez povezave, v vašem jeziku. Izbirnik **Leča** nad njim (glejte [Leča znanja](knowledge.md)) določi, katero literaturo odstavki navedejo.
 
@@ -78,7 +78,7 @@ Nato vpišite neobvezno vprašanje in pritisnite **Napiši z UI**. Pošljejo se 
 
 Za **eno tekmo** (izberite eno, če je naloženih več), **Komentator** najde trenutke, vredne ogleda: prvo kri, večkratna ubitja, zamenjave, zadnje preživele, premike pri ciljih, preobrate, izstopajoče igralce, dolge strele.
 
-![Trenutki komentatorja za en krog demo streljanja](../assets/img/en/caster.webp)
+![Trenutki komentatorja za en krog demo streljanja](../assets/img/sl/caster.webp)
 
 - Kliknite trenutek: pogled preklopi na predvajanje, skoči tik pred njega, poleti tja in sledi igralcu.
 - **Predvajaj trenutke** predvaja vsakega do konca in gre naprej; **Prejšnji** / **Naslednji** se premikata med njimi.

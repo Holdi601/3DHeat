@@ -21,7 +21,7 @@ En **volym** är en osynlig låda (eller cylinder, eller sfär) som du ritar run
  +------------+
 ```
 
-![Tre volymer på demo valley: två cylindrar runt kullarna, en låda runt byn](../assets/img/en/volumes.webp)
+![Tre volymer på demo valley: två cylindrar runt kullarna, en låda runt byn](../assets/img/sv/volumes.webp)
 
 Volymer mäter vad som händer inuti dem, filtrerar vyn till dem, exporterar deras rader och kan jämföras sida vid sida. Se även [ordlistan](glossary.md) för rad, person och match.
 
@@ -76,7 +76,7 @@ Med två eller fler synliga volymer, tryck **Jämför…**.
 3. I **Tabell** läser du varje värdes skillnad från den första volymen.
 4. Byt till **Staplar** för att se andelarna som staplar.
 
-![Jämförelsetabellen för volymer: rader, tid inuti, spelare med mera för varje volym, med skillnaden från den första](../assets/img/en/compare.webp)
+![Jämförelsetabellen för volymer: rader, tid inuti, spelare med mera för varje volym, med skillnaden från den första](../assets/img/sv/compare.webp)
 
 | Vy | Visar |
 |---|---|
@@ -86,7 +86,7 @@ Med två eller fler synliga volymer, tryck **Jämför…**.
 | **Besök** | Låd- och violindiagram över hur länge besöken varar (logaritmisk skala). |
 | **Flöde** | Vart spåren tar vägen efter att ha lämnat varje volym: en övergångsmatris eller flödesband. |
 
-![Vyn Staplar: händelsetyper per volym som andelar](../assets/img/en/compare-bars.webp)
+![Vyn Staplar: händelsetyper per volym som andelar](../assets/img/sv/compare-bars.webp)
 
 ## Tips {#tips}
 

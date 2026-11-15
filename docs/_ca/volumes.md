@@ -21,7 +21,7 @@ Un **volum** és una caixa invisible (o un cilindre, o una esfera) que dibuixes 
  +------------+
 ```
 
-![Tres volums sobre la vall de demostració: dos cilindres al voltant dels turons, una caixa al voltant del poble](../assets/img/en/volumes.webp)
+![Tres volums sobre la vall de demostració: dos cilindres al voltant dels turons, una caixa al voltant del poble](../assets/img/ca/volumes.webp)
 
 Els volums mesuren el que passa dins, filtren la vista fins a ells, exporten les seves files, i es poden comparar un al costat de l'altre. Vegeu també el [glossari](glossary.md) per a fila, persona i partida.
 
@@ -76,7 +76,7 @@ Amb dos o més volums visibles, prem **Compara...**.
 3. A **Taula**, llegeix la diferència de cada valor respecte del primer volum.
 4. Canvia a **Barres** per veure les proporcions com a barres.
 
-![La taula Compara volums: files, temps a dins, jugadors i més per a cada volum, amb la diferència respecte del primer](../assets/img/en/compare.webp)
+![La taula Compara volums: files, temps a dins, jugadors i més per a cada volum, amb la diferència respecte del primer](../assets/img/ca/compare.webp)
 
 | Vista | Mostra |
 |---|---|
@@ -86,7 +86,7 @@ Amb dos o més volums visibles, prem **Compara...**.
 | **Visites** | Gràfics de caixa i de violí de quant duren les visites (escala logarítmica). |
 | **Flux** | On van els recorreguts en sortir de cada volum: una matriu de transicions o cintes de flux. |
 
-![La vista Barres: tipus d'esdeveniment per volum com a proporcions](../assets/img/en/compare-bars.webp)
+![La vista Barres: tipus d'esdeveniment per volum com a proporcions](../assets/img/ca/compare-bars.webp)
 
 ## Consells {#tips}
 

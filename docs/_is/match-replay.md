@@ -16,7 +16,7 @@ Endurspilunin er kvikmynd af leiknum þar sem hver leikmaður er teiknaður sem 
 
 Skot, högg, eldar og flök eru teiknuð á einingarnar og markmiðin á borðinu. Myndavélar, merkingar og taktísk skjámynd hjálpa þér að lesa bardagann. Þekkir þú Tacview? [Samræmi við Tacview](tacview-parity.md) sýnir hvar hvert þeirra tóla er.
 
-![Fígúruendurspilun tankasýnidæmisins: skriðdrekar sem eigin fígúrur, með merkingum fyrir heiti, farartæki og hraða](../assets/img/en/replay-overview.webp)
+![Fígúruendurspilun tankasýnidæmisins: skriðdrekar sem eigin fígúrur, með merkingum fyrir heiti, farartæki og hraða](../assets/img/is/replay-overview.webp)
 
 ## Byrjaðu endurspilun {#start-a-replay}
 
@@ -27,11 +27,11 @@ Skot, högg, eldar og flök eru teiknuð á einingarnar og markmiðin á borðin
 
 Fígúrur koma í stað kassa fyrir hverja einingu sem nafn hennar eða gerð er þekkt (sjá [Fígúrur](figures.md)). Gögn án dálks fyrir nafn eða gerð eru teiknuð sem hermenn.
 
-![Flipinn Leikur: val leikja, hlutinn Fígúrur, myndavélarsýnirnar, Spila og atburðalistinn](../assets/img/en/match-replay-tab.webp)
+![Flipinn Leikur: val leikja, hlutinn Fígúrur, myndavélarsýnirnar, Spila og atburðalistinn](../assets/img/is/match-replay-tab.webp)
 
 ## Fígúrur {#figures}
 
-![Brennandi skriðdreki í brautarmyndavélinni, með skotinu sem hitti hann](../assets/img/en/replay-tanks.webp)
+![Brennandi skriðdreki í brautarmyndavélinni, með skotinu sem hitti hann](../assets/img/is/replay-tanks.webp)
 
 | Stilling (hlutinn **Fígúrur**) | Sjálfgildi | Hvað hún gerir |
 |---|---|---|
@@ -52,7 +52,7 @@ Fígúrur koma í stað kassa fyrir hverja einingu sem nafn hennar eða gerð er
 
 Þegar eining væri minni en **Minnsta mynd á skjá** getur hún orðið tákn sem helst læsilegt. Lögunin segir hvers konar hún er (til dæmis ávöl kassi með beltismerki fyrir brynvarið); liturinn segir hvaða hlið. Opnaðu valmyndina **Tákn** til að breyta stílnum.
 
-![Sömu sex einingarnar sem NATO-tákn, rússnesk taktísk tákn, tákn leikjakorts og aðeins lögun](../assets/img/en/match-replay-symbols-styles.webp)
+![Sömu sex einingarnar sem NATO-tákn, rússnesk taktísk tákn, tákn leikjakorts og aðeins lögun](../assets/img/is/match-replay-symbols-styles.webp)
 
 ### Höggmerki, flök og eldar {#hit-marks-wrecks-and-fires}
 
@@ -77,7 +77,7 @@ Smelltu á einingu eða merki hennar til að **fylgja** henni; hlutinn **Endursp
 
 ## Taktísk skjámynd {#tactical-display}
 
-![Loftsýnidæmið með taktísku skjámyndinni (T): vírgrindarlandslag, dráps- og atburðaspjöld](../assets/img/en/replay-air-tactical.webp)
+![Loftsýnidæmið með taktísku skjámyndinni (T): vírgrindarlandslag, dráps- og atburðaspjöld](../assets/img/is/replay-air-tactical.webp)
 
 Hlutinn **Hernaðarsýn** teiknar, fyrir enga einingu, þær sem valdar eru, allar, eða eina tegund (loftför, land, skip, vopn): hraðavigra og leiðina framundan, nef- og lyftulínur, ratsjárkeilur, læsingar, gagnatengingar, þátttökusvæði og línur, sjónlínur, hvert leikmenn horfa (sjónkeilur), miðun turna, og skráða myndavélina.
 
@@ -85,7 +85,7 @@ Hlutinn **Hernaðarsýn** teiknar, fyrir enga einingu, þær sem valdar eru, all
 
 `T` (eða rofinn **Sýna sem taktíska skjámynd**) skiptir útlitinu yfir í ratsjárskjástíl: glóð, útlínur, hæðarlínur, mælinet, skanna-línur, drægnihringi, hæðarstiga, spjöld með dráp og atburðum, og **Leikstjóra** sem færir myndavélina að atburðum sjálfur.
 
-![Sama loftorrustan í venjulegu útliti](../assets/img/en/replay-air.webp)
+![Sama loftorrustan í venjulegu útliti](../assets/img/is/replay-air.webp)
 
 ## Markmið {#objectives}
 

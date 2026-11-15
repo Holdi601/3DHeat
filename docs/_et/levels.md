@@ -21,7 +21,7 @@ Kui midagi pole laaditud, on stseen tume ruudustiku ja värviliste telgedega (**
 
 Tase on jagatud kõigi kolme vahekaardi vahel: Sõiduanalüüsi vahekaardil laetud rada on sama tase, mida soojuskaart näitab.
 
-![Paneel Taust / tase koos laetud tasemega: nupud Kaardipilt ja 3D-mudel, Sõjatander, Läbipaistmatus, Heledus, Salvesta teeki ja Teek](../assets/img/en/level-panel.webp)
+![Paneel Taust / tase koos laetud tasemega: nupud Kaardipilt ja 3D-mudel, Sõjatander, Läbipaistmatus, Heledus, Salvesta teeki ja Teek](../assets/img/et/level-panel.webp)
 
 ## Aseta tase oma andmete taha {#put-a-level-behind-your-data}
 

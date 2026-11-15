@@ -15,7 +15,7 @@ Fiecare punct adaugă o mică strălucire, strălucirile se adună, iar grămada
 
 Bara de moduri din partea de sus a barei laterale a filei Hartă termică alege cum se desenează [setul de date](glossary.md). Tastele 1-4 aleg Căldură, Diferență, Căldură pe echipe și Linii. Suprapunerea figurilor nu are tastă.
 
-![Bara de moduri cu Căldură, Diferență, Căldură pe echipe, Figuri suprapuse și Linii](../assets/img/en/heat-modes-bar.webp)
+![Bara de moduri cu Căldură, Diferență, Căldură pe echipe, Figuri suprapuse și Linii](../assets/img/ro/heat-modes-bar.webp)
 
 | Mod | Întrebarea la care răspunde |
 |---|---|
@@ -25,7 +25,7 @@ Bara de moduri din partea de sus a barei laterale a filei Hartă termică alege 
 | **Linii** | Pe unde au mers oamenii? |
 | **Figuri suprapuse** | Cine a fost unde și când? |
 
-![Aceleași date în patru moduri: Căldură, Diferență, Căldură pe echipe și Linii](../assets/img/en/heat-modes-grid.webp)
+![Aceleași date în patru moduri: Căldură, Diferență, Căldură pe echipe și Linii](../assets/img/ro/heat-modes-grid.webp)
 
 | Mod (eticheta din bară) | Tastă | Ce desenează | Are nevoie de |
 |---|---|---|---|

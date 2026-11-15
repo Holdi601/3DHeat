@@ -14,7 +14,7 @@ outdated: false
 
 Fiecare meci începe de la propriul început, iar unitățile lui se mișcă ca figuri. Fișierele merg direct în placa grafică și nu se construiește niciun tabel complet, deci rulează fluid acolo unde o încărcare obișnuită ar rămâne fără memorie.
 
-![Zece meciuri cu tancuri suprapuse, o culoare pentru fiecare meci](../assets/img/en/many-matches.webp)
+![Zece meciuri cu tancuri suprapuse, o culoare pentru fiecare meci](../assets/img/ro/many-matches.webp)
 
 ## Cum se folosește {#how-to-use-it}
 

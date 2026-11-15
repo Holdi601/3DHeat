@@ -15,7 +15,7 @@ Rødt, hvor hold A var flest, grøn-blåt, hvor hold B var flest, og intet, hvor
 
 **Forskel** (tast 2) er fortegnet varme. Rækker fra den ene population lægger varme til; rækker fra en anden trækker den fra. Hvor de to overlapper jævnt, bliver resultatet nul og helt gennemsigtigt; hvor den ene dominerer, vises det i den sides farver – som standard varme (gennemsigtig → rød → gul → hvid) for **+**-siden og kølig (gennemsigtig → grøn → blå → lilla) for **−**-siden.
 
-![Forskelsvarme: rødt, hvor +-siden var flest, grønt og blåt, hvor -siden var flest](../assets/img/en/difference-split.webp)
+![Forskelsvarme: rødt, hvor +-siden var flest, grønt og blåt, hvor -siden var flest](../assets/img/da/difference-split.webp)
 
 ## Sådan bruger du den {#how-to-use-it}
 

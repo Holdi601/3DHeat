@@ -15,7 +15,7 @@ outdated: false
 
 Wszystko jest liczone w przeglądarce. Nic nie opuszcza komputera, chyba że włączysz zewnętrzną SI (zob. [Zewnętrzna SI](#external-ai)).
 
-![Wnioski na demo czołgów: 14 ustaleń, od najmocniejszego](../assets/img/en/insights.webp)
+![Wnioski na demo czołgów: 14 ustaleń, od najmocniejszego](../assets/img/pl/insights.webp)
 
 Sekcja **Wnioski** znajduje się w pasku bocznym kart Mapa cieplna i Mecz. Ma trzy zakładki: **Ustalenia**, **Podsumowanie** i **Komentator**.
 
@@ -30,7 +30,7 @@ Liczenie używa bieżących filtrów, ukrytych grup i wybranego meczu w całym z
 
 Linie na górze listy (na przykład sumy pieniędzy) streszczają cały zbiór danych przed ustaleniami.
 
-![Otwarte ustalenie: strefa gęstych strzałów, jej liczby i pasujący fragment z literatury](../assets/img/en/insights-finding.webp)
+![Otwarte ustalenie: strefa gęstych strzałów, jej liczby i pasujący fragment z literatury](../assets/img/pl/insights-finding.webp)
 
 ### Detektory {#the-detectors}
 
@@ -55,7 +55,7 @@ Każde miejsce albo grupa jest testowane względem reszty mapy (dokładne testy 
 
 Zakładka **Podsumowanie** spisuje ustalenia jako krótki tekst: wstęp, najwyraźniejsze ustalenie, jedno o taktyce, jedno o równowadze, reszta pogrupowana według detektora oraz to, ile opiera się na słabszych dowodach. Każdy akapit ma ponumerowane przyciski pokazujące jego ustalenia. **Kopiuj tekst** kopiuje go.
 
-![Podsumowanie napisane przez wbudowanego narratora](../assets/img/en/debrief.webp)
+![Podsumowanie napisane przez wbudowanego narratora](../assets/img/pl/debrief.webp)
 
 Wbudowany narrator działa offline, w Twoim języku. Nad nim jest pole **Soczewka** (zob. [Soczewka wiedzy](knowledge.md)); decyduje ono, którą literaturę cytują akapity.
 
@@ -78,7 +78,7 @@ Potem wpisz opcjonalne pytanie i naciśnij **Napisz z pomocą SI**. Wysyłane s�
 
 Dla **jednego meczu** (wybierz go, jeśli wczytano kilka) **Komentator** znajduje momenty warte obejrzenia: pierwszą krew, wielokrotne zabójstwa, wymiany, clutche, zwroty przy celach, powroty, wyróżniających się graczy, długie strzały.
 
-![Momenty komentatora z jednej rundy demo strzelanki](../assets/img/en/caster.webp)
+![Momenty komentatora z jednej rundy demo strzelanki](../assets/img/pl/caster.webp)
 
 - Kliknij moment: widok przechodzi na powtórkę, przeskakuje tuż przed nim, przelatuje tam i podąża za graczem.
 - **Odtwórz momenty** odtwarza każdy do końca i idzie dalej; **Poprzedni** / **Następny** przechodzą krok po kroku.

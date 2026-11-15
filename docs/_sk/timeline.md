@@ -12,7 +12,7 @@ outdated: false
 
 Lišta pod obrázkom je ako videoprehrávač: dáta môžete prehrať ako film, pozastaviť, preskakovať a meniť rýchlosť.
 
-![Lišta časovej osi: 1 Všetko/Prehrať, 2 tlačidlá prehrávania, 3 hodiny, 4 Rýchlosť, 5 História, s Okno a Rozsahom 30 s](../assets/img/en/timeline-bar.webp)
+![Lišta časovej osi: 1 Všetko/Prehrať, 2 tlačidlá prehrávania, 3 hodiny, 4 Rýchlosť, 5 História, s Okno a Rozsahom 30 s](../assets/img/sk/timeline-bar.webp)
 
 Lišta pod pohľadom je časová os ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Rozhoduje, ktoré riadky sú v danom okamihu viditeľné. Potrebuje stĺpec času; bez neho je celá lišta vypnutá, pohľad zostane v režime **Všetko** a bočný panel hovorí: *V týchto dátach nie je stĺpec času - časová os je vypnutá a každý dátový bod sa zobrazuje naraz.*
 

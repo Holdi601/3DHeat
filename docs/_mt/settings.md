@@ -23,7 +23,7 @@ Fil-quċċata tas-sidebar:
 | Buttuna **...** ħdejn **Unitajiet** | Tiftaħ "Agħżel unità għal kull kwantità": drop-down wieħed għal kull kwantità |
 | Menu **Lingwa** | Il-lingwa tal-viewer: [40 lingwa](languages.md), jew dik tal-browser |
 
-![Il-header bil-menu Unitajiet u t-tieqa unità-għal-kull-kwantità miftuħa](../assets/img/en/settings-units.webp)
+![Il-header bil-menu Unitajiet u t-tieqa unità-għal-kull-kwantità miftuħa](../assets/img/mt/settings-units.webp)
 
 In-numri li tiktibhom f'kaxxa jistgħu jużaw jew punt jew virgola (`0.35` jew `0,35`). Il-viewer jaqra t-tnejn u juri n-numri kif tikteb il-lingwa tal-viewer.
 
@@ -48,11 +48,11 @@ Unitajiet oħra li tista' tagħżel għal kwantità waħda: distanza km, mi, NM;
 
 ## Modalità tal-għajnuna {#help-mode}
 
-![Modalità tal-għajnuna: x'tfisser il-kuluri](../assets/img/en/help.webp)
+![Modalità tal-għajnuna: x'tfisser il-kuluri](../assets/img/mt/help.webp)
 
 Agħfas `?` jew `F1`, jew ikklikkja l-buttuna **?**. Turi *X'tfisser il-kuluri*: legends għall-veduta 3D, ir-rampi tas-sħana, il-kuluri tat-timijiet, il-kuluri tal-livell, il-kuluri tal-istatus tal-pannelli, il-pannell tal-partita u l-veduta tat-tellieqa. Tibqa' attiva sakemm titfiha. Fit-tab Partita tispjega wkoll il-kuluri tal-pannell tal-partita.
 
-![Modalità tal-għajnuna fit-tab Partita](../assets/img/en/settings-help-match.webp)
+![Modalità tal-għajnuna fit-tab Partita](../assets/img/mt/settings-help-match.webp)
 
 ## Dak li l-browser jiftakar {#what-the-browser-remembers}
 

@@ -12,7 +12,7 @@ outdated: false
 
 Pasek pod obrazem działa jak odtwarzacz wideo: możesz odtworzyć dane jak film, zatrzymać je, przeskoczyć w inne miejsce i zmienić prędkość.
 
-![Pasek osi czasu: 1 Wszystko/Odtwórz, 2 przyciski sterowania, 3 zegar, 4 Prędkość, 5 Historia, z Oknem i Odcinkiem 30 s](../assets/img/en/timeline-bar.webp)
+![Pasek osi czasu: 1 Wszystko/Odtwórz, 2 przyciski sterowania, 3 zegar, 4 Prędkość, 5 Historia, z Oknem i Odcinkiem 30 s](../assets/img/pl/timeline-bar.webp)
 
 Pasek pod widokiem to oś czasu ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Decyduje, które wiersze są widoczne w danej chwili. Potrzebuje kolumny czasu; bez niej cały pasek jest wyłączony, widok zostaje w trybie **Wszystko**, a pasek boczny mówi: *Brak kolumny czasu w tych danych - oś czasu jest wyłączona i każdy punkt danych jest pokazany od razu.*
 

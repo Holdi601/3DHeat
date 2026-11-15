@@ -23,7 +23,7 @@ Na górze paska bocznego:
 | Przycisk **...** obok **Jednostki** | Otwiera „Wybierz jednostkę dla każdej wielkości”: jedna lista rozwijana na wielkość |
 | Menu **Język** | Język widoku: [40 języków](languages.md) albo języka przeglądarki |
 
-![Nagłówek z otwartym menu Jednostki i oknem jednostki dla każdej wielkości](../assets/img/en/settings-units.webp)
+![Nagłówek z otwartym menu Jednostki i oknem jednostki dla każdej wielkości](../assets/img/pl/settings-units.webp)
 
 Liczby wpisywane w polu mogą mieć kropkę albo przecinek (`0.35` albo `0,35`). Przeglądarka czyta obie i pokazuje liczby tak, jak pisze się je w jej języku.
 
@@ -48,11 +48,11 @@ Inne jednostki, które można wybrać dla jednej wielkości: odległość km, mi
 
 ## Tryb pomocy {#help-mode}
 
-![Tryb pomocy: co znaczą kolory](../assets/img/en/help.webp)
+![Tryb pomocy: co znaczą kolory](../assets/img/pl/help.webp)
 
 Naciśnij `?` albo `F1` albo kliknij przycisk **?**. Pokazuje się *Co znaczą kolory*: legendy widoku 3D, gradienty ciepła, kolory drużyn, kolory poziomu, kolory stanów paneli, panel meczu i widok wyścigu. Zostaje włączony, dopóki go nie wyłączysz. Na karcie Mecz wyjaśnia także kolory panelu meczu.
 
-![Tryb pomocy na karcie Mecz](../assets/img/en/settings-help-match.webp)
+![Tryb pomocy na karcie Mecz](../assets/img/pl/settings-help-match.webp)
 
 ## Co pamięta przeglądarka {#what-the-browser-remembers}
 

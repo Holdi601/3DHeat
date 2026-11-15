@@ -15,7 +15,7 @@ La calor per equips mostra on era cada equip, cadascun amb el seu color. On els 
 
 **Calor per equips** (tecla 3) és el camp de densitat de [Calor](heat.md) amb cada [grup](glossary.md) amb el seu propi to. On els grups es solapen, els seus tons es barregen; una disputa igualada surt neutra. L'opacitat encara porta la densitat exactament com en els altres modes, així que la imatge respon *quant* i *de qui* alhora. Necessita una columna de grup.
 
-![Calor per equips: cada bàndol amb el seu color; on es solapen, els colors es barregen](../assets/img/en/heat-teams.webp)
+![Calor per equips: cada bàndol amb el seu color; on es solapen, els colors es barregen](../assets/img/ca/heat-teams.webp)
 
 No és la [superposició de figures](box-replay.md): aquella dibuixa una figura per persona; això és un camp de calor acolorit per la mateixa columna.
 

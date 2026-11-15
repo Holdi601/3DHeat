@@ -10,7 +10,7 @@ outdated: false
 
 # Dane demonstracyjne: wypróbuj przeglądarkę w pięć minut
 
-![Ciepło dziesięciu meczów czołgów w Demo Valley: co pokazuje krok 4](../assets/img/en/heat-hero.webp)
+![Ciepło dziesięciu meczów czołgów w Demo Valley: co pokazuje krok 4](../assets/img/pl/heat-hero.webp)
 
 Nie masz jeszcze własnych danych? Repozytorium je tworzy. Wszystko w nim jest zmyślone: dolina, podwórko i mecze trzech zmyślonych stylów gry, z graczami o nazwach *Blue 1* albo *Red 3*. Wszystkie obrazki na tej stronie zostały zrobione właśnie z nich.
 
@@ -45,7 +45,7 @@ Każda tabela podaje swoje kolumny w stopce, więc wczytuje się bez żadnego ma
 6. Otwórz **Wnioski** (w pasku bocznym Mapy cieplnej): znajdzie miejsca, gdzie znacznie więcej strzelano, trafiano i niszczono niż gdzie indziej - wokół dwóch wzgórz.
 7. Otwórz kartę **Mecz**; w **Mecze w powtórce** wybierz *Match 01* i naciśnij **Odtwórz** na osi czasu: [powtórka](match-replay.md).
 
-![Powtórka Match 01 z czołgami jako figurami](../assets/img/en/replay-overview.webp)
+![Powtórka Match 01 z czołgami jako figurami](../assets/img/pl/replay-overview.webp)
 
 W przypadku strzelanki wczytaj `demo-yard.glb` i `shooter.parquet`; do walki powietrznej - `air.parquet` (figury są łatwiej widoczne przy **Rozmiar figur** 4, suwaku w panelu **Widok drużyn** w pasku bocznym Mapy cieplnej).
 

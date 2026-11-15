@@ -25,7 +25,7 @@ La barra delle modalità in cima alla barra laterale della scheda Mappa di calor
 | **Linee** | Da che parte sono andate le persone? |
 | **Figure sovrapposte** | Chi era dove, e quando? |
 
-![Gli stessi dati in quattro modalità: Calore, Differenza, Calore per squadra e Linee](../assets/img/en/heat-modes-grid.webp)
+![Gli stessi dati in quattro modalità: Calore, Differenza, Calore per squadra e Linee](../assets/img/it/heat-modes-grid.webp)
 
 | Modalità (etichetta nella barra) | Tasto | Cosa disegna | Richiede |
 |---|---|---|---|

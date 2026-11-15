@@ -15,7 +15,7 @@ outdated: false
 
 Alt telles i nettleseren din. Ingenting forlater datamaskinen din med mindre du slår på en ekstern KI (se [Ekstern KI](#external-ai)).
 
-![Innsikter på stridsvognsdemoen: 14 funn, sterkest først](../assets/img/en/insights.webp)
+![Innsikter på stridsvognsdemoen: 14 funn, sterkest først](../assets/img/no/insights.webp)
 
 Delen **Innsikter** står i sidepanelet for fanene Varmekart og Kamp. Den har tre faner: **Funn**, **Gjennomgang** og **Kommentator**.
 
@@ -30,7 +30,7 @@ Tellingen bruker de gjeldende filtrene, skjulte grupper og den valgte kampen ove
 
 Linjene øverst i listen (for eksempel pengesummene) oppsummerer hele dataene før funnene.
 
-![Et åpnet funn: varmesonen for avfyrte skudd, tallene, og et passende avsnitt fra litteraturen](../assets/img/en/insights-finding.webp)
+![Et åpnet funn: varmesonen for avfyrte skudd, tallene, og et passende avsnitt fra litteraturen](../assets/img/no/insights-finding.webp)
 
 ### Detektorene {#the-detectors}
 
@@ -55,7 +55,7 @@ Hvert sted eller hver gruppe testes mot resten av kartet (eksakte binomial- elle
 
 Fanen **Gjennomgang** skriver funnene opp som en kort tekst: en innledning, det tydeligste funnet, ett om taktikk, ett om balanse, resten gruppert etter detektor, og hvor mange som hviler på svakere bevis. Hvert avsnitt har nummererte knapper som viser funnene sine. **Kopier tekst** kopierer den.
 
-![Gjennomgangen skrevet av den innebygde fortelleren](../assets/img/en/debrief.webp)
+![Gjennomgangen skrevet av den innebygde fortelleren](../assets/img/no/debrief.webp)
 
 Den innebygde fortelleren virker frakoblet, på ditt språk. Velgeren **Linse** over den (se [Kunnskapslinsen](knowledge.md)) avgjør hvilken litteratur avsnittene siterer.
 
@@ -78,7 +78,7 @@ Skriv deretter et valgfritt spørsmål og trykk **Skriv med AI**. Bare funnene o
 
 For **én kamp** (velg én hvis flere er lastet inn) finner **Kommentatoren** øyeblikkene verdt å se på: første blod, flerdrap, byttehandler, siste mann-situasjoner, endringer i mål, comebacks, spillere som skiller seg ut, langskudd.
 
-![Kommentatorens øyeblikk for én runde i skytespill-demoen](../assets/img/en/caster.webp)
+![Kommentatorens øyeblikk for én runde i skytespill-demoen](../assets/img/no/caster.webp)
 
 - Klikk på et øyeblikk: visningen bytter til replayet, hopper til like før det, flyr dit og følger spilleren.
 - **Spill av øyeblikkene** spiller hvert til slutten og går videre; **Forrige** / **Neste** blar gjennom dem.

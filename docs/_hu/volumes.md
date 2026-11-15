@@ -21,7 +21,7 @@ felülnézet               Ön rajzol egy alakzatot ->  a megjelenítő
 +------------+
 ```
 
-![Három térfogat a Demo Valley-n: két henger a dombok körül, egy doboz a falu körül](../assets/img/en/volumes.webp)
+![Három térfogat a Demo Valley-n: két henger a dombok körül, egy doboz a falu körül](../assets/img/hu/volumes.webp)
 
 A térfogatok mérik, mi történik bennük, a nézetet rájuk szűkítik, exportálják a soraikat, és egymás mellett összehasonlíthatók. Lásd még a [szójegyzéket](glossary.md) a sor, személy és meccs fogalmakhoz.
 
@@ -76,7 +76,7 @@ Két vagy több látható térfogat esetén nyomja meg az **Összehasonlítás�
 3. A **Táblázat** nézetben olvassa le minden érték eltérését az első térfogattól.
 4. Váltson az **Oszlopok** nézetre, hogy az arányokat oszlopokként lássa.
 
-![Térfogat-összehasonlító táblázat: sorok, bent töltött idő, játékosok és más adatok térfogatonként, az elsőtől való eltéréssel](../assets/img/en/compare.webp)
+![Térfogat-összehasonlító táblázat: sorok, bent töltött idő, játékosok és más adatok térfogatonként, az elsőtől való eltéréssel](../assets/img/hu/compare.webp)
 
 | Nézet | Mit mutat |
 |---|---|
@@ -86,7 +86,7 @@ Két vagy több látható térfogat esetén nyomja meg az **Összehasonlítás�
 | **Látogatások** | Doboz- és hegedűdiagramok arról, meddig tartanak a látogatások (logaritmikus skála). |
 | **Áramlás** | Hová mennek a pályák egy-egy térfogat elhagyása után: átmenetmátrix vagy áramlási szalagok. |
 
-![Az Oszlopok nézet: eseménytípusok térfogatonként arányokként](../assets/img/en/compare-bars.webp)
+![Az Oszlopok nézet: eseménytípusok térfogatonként arányokként](../assets/img/hu/compare-bars.webp)
 
 ## Tippek {#tips}
 

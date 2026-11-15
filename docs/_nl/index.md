@@ -14,7 +14,7 @@ outdated: false
 
 Laad posities in - CSV, Parquet, Tacview-opnamen, omgezette replays, een enkel bestand, een map of duizenden wedstrijden - en bekijk ze als een **heatmap waar je doorheen kunt vliegen**, als **figuren die de wedstrijd opnieuw afspelen**, als lijnen langs de routes die mensen namen, of als de ene groep tegenover de andere. Het vindt zelf wat opvalt, en het draait volledig in je browser: er wordt niets ergens naartoe geüpload.
 
-![Warmte van tien tankwedstrijden over het demodal](../assets/img/en/heat-hero.webp)
+![Warmte van tien tankwedstrijden over het demodal](../assets/img/nl/heat-hero.webp)
 
 **Nieuw hier?** Maak de [demodata](demo-data.md) en volg de zeven stappen. Elke afbeelding op deze site is ermee gemaakt.
 
@@ -22,12 +22,12 @@ Laad posities in - CSV, Parquet, Tacview-opnamen, omgezette replays, een enkel b
 
 | | |
 |---|---|
-| ![Verschil](../assets/img/en/heat-difference.webp) | **[Warmtemodi](heat-modes.md)** - warmte, [verschil](difference.md) (rood waar de ene kant vaker was, groenblauw waar de andere kant vaker was), [teamwarmte](team-heat.md), [lijnwarmte](line-heat.md); [richtingswarmte](directional-heat.md) met wiggen, pijlvelden en poolgrafieken; warmte [gewogen naar waarde](value-weighting.md): wat wapens, voertuigen en brandstof kosten. |
-| ![Replay](../assets/img/en/replay-tanks.webp) | **[Wedstrijdreplay](match-replay.md)** - elke eenheid als de [figuur](figures.md) van wat het is, NAVO- of Russische symbolen op afstand, raketten en tracers, treffermarkeringen, wrakken, branden, torentjes, doelen en camera's in Tacview-stijl en een tactische weergave; [veel wedstrijden tegelijk](many-matches.md). |
-| ![Inzichten](../assets/img/en/insights.webp) | **[Inzichten](insights.md)** - sterke posities, dodelijke grond, spawnvallen, knelpunten en opvallende spelers, gevonden en gerangschikt met het bewijs; een geschreven nabespreking, optioneel door een AI naar keuze; een caster voor één wedstrijd; de [kennislens](knowledge.md). |
-| ![Volumes](../assets/img/en/compare.webp) | **[Volumes](volumes.md)** - teken dozen, prisma's, cilinders en bollen, filter erop, tel wat erin gebeurt, exporteer het en vergelijk plaatsen naast elkaar; een [uitsplitsing](breakdown.md) van wie en wat het best doet op een plek. |
-| ![Filters](../assets/img/en/filters.webp) | **[Filters](filters.md)** - op gebeurtenistype, speler of AI, voertuigklasse, waarde, elke kolom, in de videokaart bij elke datagrootte. |
-| ![Niveau](../assets/img/en/level-panel.webp) | **[Niveaus](levels.md)** - kaartafbeeldingen, 3D-niveaus gemaakt met de [datatools](#related-repositories), vereenvoudiging, de [wereldachtergrond](world-backdrop.md) met echt terrein voor vluchtdata. |
+| ![Verschil](../assets/img/nl/heat-difference.webp) | **[Warmtemodi](heat-modes.md)** - warmte, [verschil](difference.md) (rood waar de ene kant vaker was, groenblauw waar de andere kant vaker was), [teamwarmte](team-heat.md), [lijnwarmte](line-heat.md); [richtingswarmte](directional-heat.md) met wiggen, pijlvelden en poolgrafieken; warmte [gewogen naar waarde](value-weighting.md): wat wapens, voertuigen en brandstof kosten. |
+| ![Replay](../assets/img/nl/replay-tanks.webp) | **[Wedstrijdreplay](match-replay.md)** - elke eenheid als de [figuur](figures.md) van wat het is, NAVO- of Russische symbolen op afstand, raketten en tracers, treffermarkeringen, wrakken, branden, torentjes, doelen en camera's in Tacview-stijl en een tactische weergave; [veel wedstrijden tegelijk](many-matches.md). |
+| ![Inzichten](../assets/img/nl/insights.webp) | **[Inzichten](insights.md)** - sterke posities, dodelijke grond, spawnvallen, knelpunten en opvallende spelers, gevonden en gerangschikt met het bewijs; een geschreven nabespreking, optioneel door een AI naar keuze; een caster voor één wedstrijd; de [kennislens](knowledge.md). |
+| ![Volumes](../assets/img/nl/compare.webp) | **[Volumes](volumes.md)** - teken dozen, prisma's, cilinders en bollen, filter erop, tel wat erin gebeurt, exporteer het en vergelijk plaatsen naast elkaar; een [uitsplitsing](breakdown.md) van wie en wat het best doet op een plek. |
+| ![Filters](../assets/img/nl/filters.webp) | **[Filters](filters.md)** - op gebeurtenistype, speler of AI, voertuigklasse, waarde, elke kolom, in de videokaart bij elke datagrootte. |
+| ![Niveau](../assets/img/nl/level-panel.webp) | **[Niveaus](levels.md)** - kaartafbeeldingen, 3D-niveaus gemaakt met de [datatools](#related-repositories), vereenvoudiging, de [wereldachtergrond](world-backdrop.md) met echt terrein voor vluchtdata. |
 
 Verder: het tabblad [Race-analyse](race-analysis.md) voor rondes van racespellen, het tabblad [Match](match-analysis.md) voor samenvattingen van Counter-Strike 2, het [Tactiekbord](tactics-board.md) voor plannen op een niveau, [trefferanalyse](hit-analysis.md) per voertuig, [massa-analyse](mass-analysis.md) van duizenden wedstrijden, [camerapaden en video](camera-path-and-video.md), [40 talen](languages.md), [metrische of imperiale eenheden](settings.md).
 

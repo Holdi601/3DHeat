@@ -8,7 +8,7 @@ translated: true
 outdated: false
 ---
 
-![Dešimties tankų rungtynių šiluma demonstraciniame Demo Valley lygyje: ką rodo 4 žingsnis](../assets/img/en/heat-hero.webp)
+![Dešimties tankų rungtynių šiluma demonstraciniame Demo Valley lygyje: ką rodo 4 žingsnis](../assets/img/lt/heat-hero.webp)
 
 Dar neturite savo duomenų? Saugykla juos sukuria. Viskas juose išgalvota: slėnis, kiemas ir trijų išgalvotų žaidimų stilių rungtynės, kuriose žaidėjai vadinasi *Blue 1* arba *Red 3*. Visi šios svetainės paveikslėliai padaryti su jais.
 
@@ -43,7 +43,7 @@ Kiekviena lentelė savo stulpelius nurodo apatinėje dalyje, todėl ji įkeliama
 6. Atidarykite **Įžvalgos** (Šilumos žemėlapio šoninėje juostoje): jos ras vietas, kur buvo šaudoma, pataikoma ir naikinama daug daugiau nei kitur – aplink dvi kalvas.
 7. Atidarykite skirtuką **Rungtynės**; skiltyje **Rungtynės pakartojime** pasirinkite *Match 01* ir laiko juostoje paspauskite **Groti**: [pakartojimas](match-replay.md).
 
-![Match 01 pakartojimas, kuriame tankai rodomi kaip figūros](../assets/img/en/replay-overview.webp)
+![Match 01 pakartojimas, kuriame tankai rodomi kaip figūros](../assets/img/lt/replay-overview.webp)
 
 Šaulio duomenims įkelkite `demo-yard.glb` ir `shooter.parquet`; oro mūšiui – `air.parquet` (figūras lengviau matyti, kai **Figūrų dydis** yra 4; tai slankiklis **Komandų peržiūra** skydelyje Šilumos žemėlapio šoninėje juostoje).
 

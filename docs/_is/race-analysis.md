@@ -14,7 +14,7 @@ outdated: false
 
 Þú ókst sömu braut tvisvar. Flipinn **Kappakstursgreining** spilar báða aksturana saman í 3D, sýnir hvar einn hringur var hægari og segir þér af hverju. Engir hringir enn? Ýttu á **Sýnishringir**.
 
-![Flipinn Kappakstursgreining með sýnishringjum: hliðarstikan með Hringir og Hvar má bæta sig, bílarnir á brautinni, línuritin undir sýninni](../assets/img/en/race-analysis-overview.webp)
+![Flipinn Kappakstursgreining með sýnishringjum: hliðarstikan með Hringir og Hvar má bæta sig, bílarnir á brautinni, línuritin undir sýninni](../assets/img/is/race-analysis-overview.webp)
 
 Flipinn ber saman tvo eða fleiri hringi á einni braut. Hann deilir striganum, myndavélinni og brautarlíkaninu (**Bakgrunnur / borð**) með hitakortinu; allt annað er hans eigið: eigin hliðarstika og eigin stika undir sýninni. Orð eins og *hringur*, *viðmiðun* og *toppur beygju* eru í [orðasafninu](glossary.md).
 

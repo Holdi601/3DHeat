@@ -18,7 +18,7 @@ A megjelenítő szól, ha létezik újabb verzió, és csak akkor frissíti mag�
 2. **Ha a restart.bat futtatását kéri**, zárja be a kiszolgáló ablakát (a fekete ablakot, amelyet a `start.bat` nyitott meg), és kattintson duplán a `restart.bat` fájlra.
 3. **A megjelenítő indításakor.** A `start.bat` is ellenőriz. Ha létezik újabb verzió, megkérdezi: **Frissítés most? [Y/N]**. Nyomja meg a `Y`-t a frissítéshez. Nyomja meg az `N`-t, vagy várjon 60 másodpercet válasz nélkül, és a meglévő verzió indul.
 
-![A frissítési értesítés a Frissítés most és a Később gombokkal](../assets/img/en/updates-notice.webp)
+![A frissítési értesítés a Frissítés most és a Később gombokkal](../assets/img/hu/updates-notice.webp)
 
 Az Ön saját változtatásokat tartalmazó példányát soha nem frissítjük Ön helyett; a doboz csak azt jelzi, hogy frissítés vár, és azt, hogy a változtatásokat commitolja vagy tegye félre, majd futtassa a `git pull` parancsot. A git nélkül telepített példány (például egy zip-fájl) semmit nem mutat.
 

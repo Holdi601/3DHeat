@@ -10,7 +10,7 @@ outdated: false
 
 # Esimerkkidata: kokeile katselinta viidessä minuutissa
 
-![Kymmenen panssarivaunuottelun lämpö esimerkkilaaksossa: mitä vaihe 4 näyttää](../assets/img/en/heat-hero.webp)
+![Kymmenen panssarivaunuottelun lämpö esimerkkilaaksossa: mitä vaihe 4 näyttää](../assets/img/fi/heat-hero.webp)
 
 Ei omaa dataa vielä? Tietovarasto tekee sitä. Kaikki siinä on keksitty: laakso, piha ja otteluita kolmella keksityllä pelityylillä, joiden pelaajat ovat nimeltään *Blue 1* tai *Red 3*. Kaikki tämän sivuston kuvat on otettu sillä.
 
@@ -45,7 +45,7 @@ Jokainen taulukko nimeää sarakkeensa omassa alatunnisteessaan, joten se lataut
 6. Avaa **Havainnot** (Lämpökartta-sivupalkissa): se löytää paikat, joissa ammuttiin, osuttiin ja tuhottiin paljon enemmän kuin muualla, kahden mäen ympärillä.
 7. Avaa **Ottelu**-välilehti. Valitse kohdassa **Toiston ottelut** *Match 01*, ja paina aikajanalla **Toista**: [toisto](match-replay.md).
 
-![Toisto ottelusta Match 01, jossa panssarivaunut ovat hahmoina](../assets/img/en/replay-overview.webp)
+![Toisto ottelusta Match 01, jossa panssarivaunut ovat hahmoina](../assets/img/fi/replay-overview.webp)
 
 Ampujapeliä varten lataa `demo-yard.glb` ja `shooter.parquet`. Ilmataistelua varten lataa `air.parquet`. Hahmot näkyvät helpommin, kun **Hahmojen koko** on 4. Se on liukusäädin Lämpökartta-sivupalkin **Joukkuenäkymä**-paneelissa.
 

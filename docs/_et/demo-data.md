@@ -10,7 +10,7 @@ outdated: false
 
 # Demoandmed: proovi vaatajat viie minutiga
 
-![Kümne tankimatši soojus demo-orus: mida samm 4 näitab](../assets/img/en/heat-hero.webp)
+![Kümne tankimatši soojus demo-orus: mida samm 4 näitab](../assets/img/et/heat-hero.webp)
 
 Sul pole veel omi andmeid? Hoidla teeb need ise. Kõik selles on väljamõeldud: org, hoov ning kolme väljamõeldud mängustiili matšid, kus mängijate nimed on *Blue 1* või *Red 3*. Selle saidi pildid on kõik tehtud nende andmetega.
 
@@ -45,7 +45,7 @@ Iga tabel nimetab oma veerud oma jaluses, nii et ta laaditakse ilma seostamiseta
 6. Ava **Tähelepanekud** (Soojuskaardi külgribal): see leiab kohad, kus tulistati, tabati ja hävitati palju rohkem kui mujal, kahe künka ümber.
 7. Ava **Matš** vahekaart; jaotises **Korduse matšid** vali *Match 01*; vajuta ajajoonel **Esita**: [kordus](match-replay.md).
 
-![Match 01 kordus, tankid kujudena](../assets/img/en/replay-overview.webp)
+![Match 01 kordus, tankid kujudena](../assets/img/et/replay-overview.webp)
 
 Shooteri jaoks laadi `demo-yard.glb` ja `shooter.parquet`; õhulahingu jaoks `air.parquet`. Kujud on selle juures paremini näha, kui **Kujude suurus** on 4 (liugur paneelil **Võistkonnavaatur** Soojuskaardi külgribal).
 

@@ -23,7 +23,7 @@ outdated: false
 | **單位**旁的 **...** 按鈕 | 開啟「為每個數量選擇單位」：每個數量各有一個下拉式選單 |
 | **語言**選單 | 檢視器的語言：[40 種語言](languages.md)，或瀏覽器的語言 |
 
-![標題列，顯示單位選單與每個數量的單位視窗](../assets/img/en/settings-units.webp)
+![標題列，顯示單位選單與每個數量的單位視窗](../assets/img/zh-Hant/settings-units.webp)
 
 你在方框中輸入的數字可以使用小數點或逗號（`0.35` 或 `0,35`）。檢視器兩種都能讀取，並會依檢視器語言的寫法顯示數字。
 
@@ -48,11 +48,11 @@ outdated: false
 
 ## 說明模式 {#help-mode}
 
-![說明模式：顏色的意義](../assets/img/en/help.webp)
+![說明模式：顏色的意義](../assets/img/zh-Hant/help.webp)
 
 按 `?` 或 `F1`，或點擊 **?** 按鈕。它會顯示*顏色的意義*：3D 檢視、熱度漸層、隊伍顏色、關卡顏色、面板狀態顏色、對戰面板與賽車檢視的圖例。直到你關閉為止都會保持開啟。在對戰頁籤中，它也會說明對戰面板的顏色。
 
-![對戰頁籤中的說明模式](../assets/img/en/settings-help-match.webp)
+![對戰頁籤中的說明模式](../assets/img/zh-Hant/settings-help-match.webp)
 
 ## 瀏覽器會記住的內容 {#what-the-browser-remembers}
 

@@ -15,7 +15,7 @@ Toplota timova pokazuje gdje je bio svaki tim, svaki tim u svojoj boji. Tamo gdj
 
 **Toplota timova** (tipka 3) je polje gustine iz [Toplote](heat.md) uz svaku [grupu](glossary.md) date sopstvene nijanse. Tamo gdje se grupe preklapaju, nijanse se miješaju; izjednačeno nadmetanje daje neutralnu boju. Neprozirnost i dalje nosi gustinu kao i u ostalim načinima, pa slika odgovara na *koliko* i *čija* u isto vrijeme. Potrebna je kolona grupe.
 
-![Toplota timova: svaka strana u svojoj boji; tamo gdje se preklapaju, boje se miješaju](../assets/img/en/heat-teams.webp)
+![Toplota timova: svaka strana u svojoj boji; tamo gdje se preklapaju, boje se miješaju](../assets/img/bs/heat-teams.webp)
 
 To nije [preklapanje figura](box-replay.md): ono crta jednu figuru po osobi; ovo je polje toplote obojeno istom kolonom.
 

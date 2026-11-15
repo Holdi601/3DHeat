@@ -15,7 +15,7 @@ outdated: false
 
 Sve se računa u vašem pregledniku. Ništa ne napušta vaš računar, osim ako ne uključite vanjski AI (vidi [Vanjski AI](#external-ai)).
 
-![Uvidi na demo tenkovima: 14 nalaza, najjači prvi](../assets/img/en/insights.webp)
+![Uvidi na demo tenkovima: 14 nalaza, najjači prvi](../assets/img/bs/insights.webp)
 
 Odjeljak **Uvidi** nalazi se u bočnoj traci kartica Toplotna mapa i Meč. Ima tri kartice: **Nalazi**, **Sažetak** i **Komentator**.
 
@@ -30,7 +30,7 @@ Brojanje koristi trenutne filtere, sakrivene grupe i izabrani meč kroz cijeli v
 
 Redovi na vrhu spiska (na primjer ukupni iznosi novca) sažimaju cijele podatke prije nalaza.
 
-![Otvoren nalaz: vruća zona ispaljenih hitaca, njeni brojevi i odgovarajući odlomak iz literature](../assets/img/en/insights-finding.webp)
+![Otvoren nalaz: vruća zona ispaljenih hitaca, njeni brojevi i odgovarajući odlomak iz literature](../assets/img/bs/insights-finding.webp)
 
 ### Detektori {#the-detectors}
 
@@ -55,7 +55,7 @@ Svako mjesto ili grupa poredi se s ostatkom mape (tačni binomni testovi ili tes
 
 Kartica **Sažetak** piše nalaze kao kratak tekst: uvod, najjasniji nalaz, jedan za taktiku, jedan za balansiranje, ostali grupisani po detektoru, i koliko ih se oslanja na slabije dokaze. Svaki pasus ima numerisana dugmad koja pokazuju njegove nalaze. **Kopiraj tekst** ga kopira.
 
-![Sažetak koji je napisao ugrađeni pripovjedač](../assets/img/en/debrief.webp)
+![Sažetak koji je napisao ugrađeni pripovjedač](../assets/img/bs/debrief.webp)
 
 Ugrađeni pripovjedač radi offline, na vašem jeziku. Birač **Leća** iznad njega (vidi [Sočivo znanja](knowledge.md)) odlučuje koju literaturu pasusi citiraju.
 
@@ -78,7 +78,7 @@ Zatim unesite opcionalno pitanje i pritisnite **Napiši uz AI**. Šalju se samo 
 
 Za **jedan meč** (izaberite jedan ako ih je učitano više), **Komentator** pronalazi trenutke vrijedne gledanja: prvu krv, višestruka ubistva, razmjene, zaokrete, promjene ciljeva, povratke, istaknute igrače, dugačke hitce.
 
-![Trenuci komentatora za jedan krug demo shootera](../assets/img/en/caster.webp)
+![Trenuci komentatora za jedan krug demo shootera](../assets/img/bs/caster.webp)
 
 - Kliknite trenutak: prikaz prelazi na reprodukciju, skače na trenutak prije njega, leti tamo i prati igrača.
 - **Reproduciraj trenutke** pušta svaki do kraja i prelazi dalje; **Prethodno** / **Sljedeće** se kreću kroz njih.

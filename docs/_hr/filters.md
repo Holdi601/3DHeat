@@ -19,7 +19,7 @@ outdated: false
 2. Pod **Klasa vozila** odznačite *Tank*. Slika se odmah mijenja.
 3. Pritisnite **Očisti sve filtre** za poništavanje.
 
-![Panel Filtri: prvo vlastiti stupci preglednika (Vrsta događaja, Klasa vozila), zatim stupci iz vaše datoteke](../assets/img/en/filters.webp)
+![Panel Filtri: prvo vlastiti stupci preglednika (Vrsta događaja, Klasa vozila), zatim stupci iz vaše datoteke](../assets/img/hr/filters.webp)
 
 Prvi redci su vlastiti stupci preglednika (u nastavku). Redci nakon njih dolaze iz vaše datoteke.
 
@@ -42,7 +42,7 @@ Koji se stupci mogu filtrirati odlučuje se pri učitavanju, jer se tada moraju 
 
 ## Brojčani stupci (raspon) {#numeric-columns-range}
 
-![Filtar raspona (izgubljeni novac) s oba kraja povučena](../assets/img/en/filters-numeric.webp)
+![Filtar raspona (izgubljeni novac) s oba kraja povučena](../assets/img/hr/filters-numeric.webp)
 
 | Dio | Značenje |
 |---|---|

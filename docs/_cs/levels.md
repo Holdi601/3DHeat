@@ -21,7 +21,7 @@ Když není nic načteno, scéna je tmavá s mřížkou a barevnými osami (**M�
 
 Level sdílejí všechny tři karty: trať načtená na kartě Analýza závodu je tentýž level, který ukazuje teplotní mapa.
 
-![Panel Pozadí / úroveň s načteným levelem: tlačítka Obrázek mapy a 3D model, Bojiště, Krytí, Jas, Uložit do knihovny a seznam Knihovna](../assets/img/en/level-panel.webp)
+![Panel Pozadí / úroveň s načteným levelem: tlačítka Obrázek mapy a 3D model, Bojiště, Krytí, Jas, Uložit do knihovny a seznam Knihovna](../assets/img/cs/level-panel.webp)
 
 ## Položte level za svá data {#put-a-level-behind-your-data}
 

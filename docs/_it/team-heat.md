@@ -15,7 +15,7 @@ Il calore per squadra mostra dove si trovava ciascuna squadra, ognuna nel propri
 
 **Calore per squadra** (tasto 3) è il campo di densità di [Calore](heat.md) con ogni [gruppo](glossary.md) dotato di una propria tinta. Dove i gruppi si sovrappongono, le loro tinte si mescolano; una sfida equilibrata risulta neutra. L'opacità continua a rappresentare la densità come nelle altre modalità, quindi l'immagine risponde insieme a *quanto* e *di chi*. Richiede una colonna di gruppo.
 
-![Calore per squadra: ogni lato nel proprio colore; dove si sovrappongono, i colori si mescolano](../assets/img/en/heat-teams.webp)
+![Calore per squadra: ogni lato nel proprio colore; dove si sovrappongono, i colori si mescolano](../assets/img/it/heat-teams.webp)
 
 Non è la [sovrapposizione delle figure](box-replay.md): quella disegna una figura per persona; questo è un campo di calore colorato dalla stessa colonna.
 

@@ -15,7 +15,7 @@ outdated: false
 
 **熱度**（按鍵 1）是預設模式。每個可見的[列](glossary.md)都會加入一個面向攝影機的圓形[Sprite](glossary.md)；重疊的 Sprite 會在浮點緩衝區中相加；總和再經由色彩漸層映射（預設為透明 → 紅 → 黃 → 白），並疊加在場景上。
 
-![3D 關卡上的熱度：熱點位於建築物內部與頂部](../assets/img/en/shooter-heat.webp)
+![3D 關卡上的熱度：熱點位於建築物內部與頂部](../assets/img/zh-Hant/shooter-heat.webp)
 
 此圖顯示的是某一回合射擊遊戲在有建築物的關卡上的熱度：熱點位於房間內與樓梯上，而不只是在地面上。
 
@@ -26,7 +26,7 @@ outdated: false
 3. 調整 **Sprite 半徑**，直到相鄰的點合併成帶狀：較小時顯示單一的點，較大時顯示區域。
 4. 開啟**熱度顏色**來變更顏色，或開啟**深度**，讓山丘與牆壁把背後的熱度遮住。
 
-![側邊欄中展開的熱度形狀與熱度顏色區段](../assets/img/en/heat-panel.webp)
+![側邊欄中展開的熱度形狀與熱度顏色區段](../assets/img/zh-Hant/heat-panel.webp)
 
 同樣的面板也會塑造[差異](difference.md)、[隊伍熱度](team-heat.md)與[線條熱度](line-heat.md)；它們的差別在於新增的內容（帶正負號、有顏色，或沿著線條），而不在於運作方式。
 

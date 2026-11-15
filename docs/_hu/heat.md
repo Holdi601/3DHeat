@@ -15,7 +15,7 @@ A hő azokat a helyeket festi be, ahol sok minden történt: pirossal, ahol kics
 
 A **Hő** (1-es billentyű) az alapértelmezett mód. Minden látható [sor](glossary.md) egy kamerafelé forduló kerek [sprite](glossary.md)-ot ad hozzá; az átfedő sprite-ok lebegőpontos pufferben összeadódnak; az összeget színskálán vezetjük át – alapértelmezés szerint átlátszó → piros → sárga → fehér –, és a jelenet fölé rajzoljuk.
 
-![Hő egy 3D-s pályán: forró pontok az épületek belsejében és tetején](../assets/img/en/shooter-heat.webp)
+![Hő egy 3D-s pályán: forró pontok az épületek belsejében és tetején](../assets/img/hu/shooter-heat.webp)
 
 A kép egy lövöldözős kör hőjét mutatja épületekkel teli pályán: a forró pontok a szobákban és a lépcsőkön ülnek, nem csak a talajon.
 
@@ -26,7 +26,7 @@ A kép egy lövöldözős kör hőjét mutatja épületekkel teli pályán: a fo
 3. Állítsa a **Sprite sugara** értékét, amíg a szomszédos pontok sávokká nem olvadnak: kisebb értéknél egyedi foltok látszanak, nagyobbnál területek.
 4. Nyissa meg a **Hőszínek** részt a színek megváltoztatásához, vagy a **Mélység** részt, hogy a dombok és a falak elrejtsék mögöttük a hőt.
 
-![Az oldalsáv Hőalak és Hőszínek szakasza, mindkettő nyitva](../assets/img/en/heat-panel.webp)
+![Az oldalsáv Hőalak és Hőszínek szakasza, mindkettő nyitva](../assets/img/hu/heat-panel.webp)
 
 Ugyanezek a panelek formálják a [Különbség](difference.md), a [Csapathő](team-heat.md) és a [Vonal-hő](line-heat.md) módot is; azok abban különböznek, mit adnak hozzá (előjelesen, színezve vagy vonalak mentén), nem abban, hogyan.
 

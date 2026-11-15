@@ -15,7 +15,7 @@ Căldura pe echipe arată unde a fost fiecare echipă, fiecare echipă în culoa
 
 **Căldură pe echipe** (tasta 3) este câmpul de densitate din [Căldură](heat.md) cu fiecare [grup](glossary.md) primind propria nuanță. Acolo unde grupurile se suprapun, nuanțele lor se amestecă; o luptă echilibrată iese neutră. Opacitatea poartă în continuare densitatea exact ca în celelalte moduri, astfel că imaginea răspunde în același timp la *cât* și la *a cui*. Are nevoie de o coloană de grup.
 
-![Căldură pe echipe: fiecare parte în culoarea ei; acolo unde se suprapun, culorile se amestecă](../assets/img/en/heat-teams.webp)
+![Căldură pe echipe: fiecare parte în culoarea ei; acolo unde se suprapun, culorile se amestecă](../assets/img/ro/heat-teams.webp)
 
 Nu este [suprapunerea figurilor](box-replay.md): aceasta desenează o figură pentru fiecare persoană; aceasta este un câmp de căldură colorat după aceeași coloană.
 

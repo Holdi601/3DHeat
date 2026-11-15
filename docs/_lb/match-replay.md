@@ -15,7 +15,7 @@ De Replay ass en Film vum Match, wou all Spiller als dat gezeechent gëtt, wat s
 
 Schéiss, Treffer, Bränn a Wracken ginn op den Eenheete an de Ziler um Level gezeechent. Kameraen, Beschrëftungen a eng taktesch Usiicht hëllefen, de Kampf ze liesen. Kennt Dir Tacview? [Tacview-Parittéit](tacview-parity.md) weist, wou all Werkzeug vun deem steet.
 
-![Figuren-Replay vum Panzer-Demo: Panzer als eege Figuren, mat Numm-, Gefier- a Vitessbeschrëftungen](../assets/img/en/replay-overview.webp)
+![Figuren-Replay vum Panzer-Demo: Panzer als eege Figuren, mat Numm-, Gefier- a Vitessbeschrëftungen](../assets/img/lb/replay-overview.webp)
 
 ## E Replay starten {#start-a-replay}
 
@@ -26,11 +26,11 @@ Schéiss, Treffer, Bränn a Wracken ginn op den Eenheete an de Ziler um Level ge
 
 Figuren ersetzen d'Boxen fir all Eenheet, vun där de Numm oder den Typ bekannt ass (kuckt [Figuren](figures.md)). Daten ouni Numm- oder Typkolonn ginn als Zaldote gezeechent.
 
-![Den Match-Tab: d'Matcher-Auswiel, d'Sektioun Figuren, d'Kameraansiichten, Ofspillen an d'Evenementlëscht](../assets/img/en/match-replay-tab.webp)
+![Den Match-Tab: d'Matcher-Auswiel, d'Sektioun Figuren, d'Kameraansiichten, Ofspillen an d'Evenementlëscht](../assets/img/lb/match-replay-tab.webp)
 
 ## Figuren {#figures}
 
-![En brennende Panzer an der Orbit-Kamera, mat dem Schoss, dee en getraff huet](../assets/img/en/replay-tanks.webp)
+![En brennende Panzer an der Orbit-Kamera, mat dem Schoss, dee en getraff huet](../assets/img/lb/replay-tanks.webp)
 
 | Astellung (Sektioun **Figuren**) | Standard | Wat et mécht |
 |---|---|---|
@@ -51,7 +51,7 @@ Figuren ersetzen d'Boxen fir all Eenheet, vun där de Numm oder den Typ bekannt 
 
 Wann eng Eenheet méi kleng wier wéi **Klengste Figur um Écran**, kann se e Symbol ginn, dat liesbar bleift. D'Form seet d'Aart (zum Beispill e ofgerënnte Kascht mat enger Kettemark fir Panzerung); d'Faarf seet d'Säit. Maacht d'**Symboler**-Menü op, fir de Stil z'änneren.
 
-![Déiselwecht sechs Eenheete als NATO-Symboler, russesch taktesch Zeechen, Spillkaart-Symboler an nëmme Formen](../assets/img/en/match-replay-symbols-styles.webp)
+![Déiselwecht sechs Eenheete als NATO-Symboler, russesch taktesch Zeechen, Spillkaart-Symboler an nëmme Formen](../assets/img/lb/match-replay-symbols-styles.webp)
 
 ### Treffermarken, Wracken a Bränn {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Klickt op eng Eenheet oder hir Beschrëftung, fir se ze **verfollegen**; d'Sekti
 
 ## Taktesch Usiicht {#tactical-display}
 
-![D'Loftdemo mat der taktescher Usiicht-Optik (T): Drahtmodell-Terrain, Ofschoss- an Evenementpanelen](../assets/img/en/replay-air-tactical.webp)
+![D'Loftdemo mat der taktescher Usiicht-Optik (T): Drahtmodell-Terrain, Ofschoss- an Evenementpanelen](../assets/img/lb/replay-air-tactical.webp)
 
 D'Sektioun **Taktesch Usiicht** zeechent, fir kee Eenheet, déi gewielte, all, oder eng Aart (Fligeren, Buedem, Schëffer, Waffen): Geschwindegkeetsvektoren an de Wee virun sech, Nues- an Auftriebslinnen, Radarkegelen, Schlässer, Datenverbindungen, Engagementzonen a -linnen, Siichtlinnen, wou d'Spiller kucken (Siichtkegelen), d'Tuermzil an déi opgeholl Kamera.
 
@@ -84,7 +84,7 @@ D'Sektioun **Taktesch Usiicht** zeechent, fir kee Eenheet, déi gewielte, all, o
 
 `T` (oder de Schalter **Als taktesch Usiicht weisen**) wiesselt d'Optik op e Radarschierm-Stil: Glanz, Ëmrëss, Héichtelinnen, en Miessraster, Scanlinnen, Distanzringe, Héichtelatten, Panelen mat Ofschëss an Evenementer, an e **Regisseur**, deen d'Kamera selwer zu Evenementer réckelt.
 
-![Dee selwechte Loftkampf an der normaler Optik](../assets/img/en/replay-air.webp)
+![Dee selwechte Loftkampf an der normaler Optik](../assets/img/lb/replay-air.webp)
 
 ## Ziler {#objectives}
 

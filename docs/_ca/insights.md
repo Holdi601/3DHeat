@@ -15,7 +15,7 @@ outdated: false
 
 Tot es compta al navegador. Res surt del teu ordinador tret que activis una IA externa (vegeu [IA externa](#external-ai)).
 
-![Troballes sobre la demostració de tancs: 14 troballes, la més forta primer](../assets/img/en/insights.webp)
+![Troballes sobre la demostració de tancs: 14 troballes, la més forta primer](../assets/img/ca/insights.webp)
 
 La secció **Troballes** és a la barra lateral de les pestanyes Mapa de calor i Partida. Té tres pestanyes: **Troballes**, **Resum** i **Comentarista**.
 
@@ -30,7 +30,7 @@ El recompte usa els filtres actuals, els grups amagats i la partida triada en to
 
 Les línies de dalt de la llista (per exemple els totals de diners) resumeixen el conjunt de dades abans de les troballes.
 
-![Una troballa oberta: la zona calenta de trets disparats, els seus números, i un fragment de la bibliografia que hi concorda](../assets/img/en/insights-finding.webp)
+![Una troballa oberta: la zona calenta de trets disparats, els seus números, i un fragment de la bibliografia que hi concorda](../assets/img/ca/insights-finding.webp)
 
 ### Els detectors {#the-detectors}
 
@@ -55,7 +55,7 @@ Cada lloc o grup es prova contra la resta del mapa (proves binomials exactes o d
 
 La pestanya **Resum** escriu les troballes en un text curt: una entrada, la troballa més clara, una per a tàctica, una per a equilibri, la resta agrupada per detector, i quantes es basen en proves més febles. Cada paràgraf té botons numerats que mostren les seves troballes. **Copia el text** el copia.
 
-![El resum escrit pel narrador integrat](../assets/img/en/debrief.webp)
+![El resum escrit pel narrador integrat](../assets/img/ca/debrief.webp)
 
 El narrador integrat funciona sense connexió, en el teu idioma. El selector **Lent** de sobre (vegeu [La lent del coneixement](knowledge.md)) decideix quina bibliografia citen els paràgrafs.
 
@@ -78,7 +78,7 @@ Després escriu una pregunta opcional i prem **Escriu amb IA**. Només s'envien 
 
 Per a **una partida** (tria'n una si n'hi ha diverses carregades), el **Comentarista** troba els moments que val la pena mirar: primera sang, multimorts, represàlies, moments decisius, canvis d'objectiu, remuntades, jugadors destacats, tirs llargs.
 
-![Els moments del comentarista per a una ronda de la demostració de tiroteig](../assets/img/en/caster.webp)
+![Els moments del comentarista per a una ronda de la demostració de tiroteig](../assets/img/ca/caster.webp)
 
 - Fes clic a un moment: la vista passa a la repetició, salta just abans, hi vola i segueix el jugador.
 - **Reprodueix els moments** reprodueix cadascun fins al final i passa al següent; **Anterior** / **Següent** avancen pels moments.

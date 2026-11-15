@@ -10,7 +10,7 @@ outdated: false
 
 # Demo podaci: isprobajte preglednik za pet minuta
 
-![Toplina deset utakmica tenkova u demo dolini: ono što prikazuje korak 4](../assets/img/en/heat-hero.webp)
+![Toplina deset utakmica tenkova u demo dolini: ono što prikazuje korak 4](../assets/img/hr/heat-hero.webp)
 
 Još nemate vlastite podatke? Repozitorij ih napravi. Sve u njemu je izmišljeno: dolina, dvorište i utakmice triju izmišljenih stilova igre s igračima koji se zovu *Blue 1* ili *Red 3*. Sve slike na ovoj stranici snimljene su s njima.
 
@@ -45,7 +45,7 @@ Svaka tablica navodi svoje stupce u podnožju, pa se učitava bez ikakvog mapira
 6. Otvorite **Uvide** (u bočnoj traci Toplinske karte): pronalazi mjesta gdje je znatno više pucano, pogođeno i uništeno nego drugdje - oko dva brda.
 7. Otvorite karticu **Meč**; pod **Mečevi u snimci** odaberite *Match 01*; pritisnite **Reprodukcija** na vremenskoj traci: [reprodukcija](match-replay.md).
 
-![Reprodukcija Match 01 s tenkovima kao figurama](../assets/img/en/replay-overview.webp)
+![Reprodukcija Match 01 s tenkovima kao figurama](../assets/img/hr/replay-overview.webp)
 
 Za strelca učitajte `demo-yard.glb` i `shooter.parquet`; za zračnu borbu `air.parquet` (figure se lakše vide pri **Veličina figura** 4, klizaču u panelu **Prikaz timova** u bočnoj traci Toplinske karte).
 

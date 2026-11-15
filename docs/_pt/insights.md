@@ -15,7 +15,7 @@ outdated: false
 
 Tudo é contado no seu navegador. Nada sai do seu computador a não ser que ligue uma IA externa (ver [IA externa](#external-ai)).
 
-![Descobertas no demo de tanques: 14 achados, o mais forte primeiro](../assets/img/en/insights.webp)
+![Descobertas no demo de tanques: 14 achados, o mais forte primeiro](../assets/img/pt/insights.webp)
 
 A secção **Descobertas** está na barra lateral dos separadores Mapa de calor e Partida. Tem três separadores: **Descobertas**, **Resumo** e **Comentarista**.
 
@@ -30,7 +30,7 @@ A contagem usa os filtros atuais, os grupos ocultos e a partida escolhida em tod
 
 As linhas no topo da lista (por exemplo os totais de dinheiro) resumem o conjunto de dados inteiro antes das descobertas.
 
-![Uma descoberta aberta: a zona quente de disparos, os seus números e uma passagem correspondente da literatura](../assets/img/en/insights-finding.webp)
+![Uma descoberta aberta: a zona quente de disparos, os seus números e uma passagem correspondente da literatura](../assets/img/pt/insights-finding.webp)
 
 ### Os detetores {#the-detectors}
 
@@ -55,7 +55,7 @@ Cada sítio ou grupo é testado contra o resto do mapa (testes binomiais exatos 
 
 O separador **Resumo** escreve as descobertas num texto curto: uma abertura, a descoberta mais clara, uma para táticas, uma para equilíbrio, as restantes agrupadas por detetor, e quantas assentam em provas mais fracas. Cada parágrafo tem botões numerados que mostram as suas descobertas. **Copiar texto** copia-o.
 
-![O resumo escrito pelo narrador incorporado](../assets/img/en/debrief.webp)
+![O resumo escrito pelo narrador incorporado](../assets/img/pt/debrief.webp)
 
 O narrador incorporado funciona offline, no seu idioma. O seletor **Lente** acima dele (ver [A lente de conhecimento](knowledge.md)) decide que literatura os parágrafos citam.
 
@@ -78,7 +78,7 @@ Depois escreva uma pergunta opcional e prima **Escrever com IA**. Só as descobe
 
 Para **uma partida** (escolha uma se houver várias carregadas), o **Comentarista** encontra os momentos que valem a pena ver: primeiro sangue, multi-abates, trocas, clutches, viragens de objetivos, reviravoltas, jogadores em destaque, tiros longos.
 
-![Os momentos do comentarista para uma ronda do demo de atirador](../assets/img/en/caster.webp)
+![Os momentos do comentarista para uma ronda do demo de atirador](../assets/img/pt/caster.webp)
 
 - Clique num momento: a vista passa para a repetição, salta para pouco antes, voa até lá e segue o jogador.
 - **Reproduzir os momentos** reproduz cada um até ao fim e avança; **Anterior** / **Próximo** percorrem-nos.

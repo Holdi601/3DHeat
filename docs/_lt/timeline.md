@@ -12,7 +12,7 @@ outdated: false
 
 Juosta po paveikslėliu veikia kaip vaizdo grotuvas: duomenis galite leisti kaip filmą, sustabdyti, peršokti į kitą vietą ir keisti greitį.
 
-![Laiko juosta: 1 Visi/Groti, 2 valdymo mygtukai, 3 laikrodis, 4 Greitis, 5 Istorija, su Langu ir 30 s Intervalu](../assets/img/en/timeline-bar.webp)
+![Laiko juosta: 1 Visi/Groti, 2 valdymo mygtukai, 3 laikrodis, 4 Greitis, 5 Istorija, su Langu ir 30 s Intervalu](../assets/img/lt/timeline-bar.webp)
 
 Juosta po vaizdu yra laiko juosta ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Ji nusprendžia, kurios eilutės matomos bet kuriuo metu. Jai reikia laiko stulpelio; be jo visa juosta išjungiama, vaizdas lieka režime **Visi**, o šoninėje juostoje rodoma: *Šiuose duomenyse nėra laiko stulpelio — laiko juosta išjungta, visi duomenų taškai rodomi vienu metu.*
 

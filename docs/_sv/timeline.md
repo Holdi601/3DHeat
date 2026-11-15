@@ -12,7 +12,7 @@ outdated: false
 
 Fältet under bilden fungerar som en videospelare: du kan spela upp datan som en film, pausa den, hoppa runt och ändra hastigheten.
 
-![Tidslinjefältet: 1 Alla/Spela, 2 transportknappar, 3 klocka, 4 Hastighet, 5 Historik, med Fönster och ett Intervall på 30 s](../assets/img/en/timeline-bar.webp)
+![Tidslinjefältet: 1 Alla/Spela, 2 transportknappar, 3 klocka, 4 Hastighet, 5 Historik, med Fönster och ett Intervall på 30 s](../assets/img/sv/timeline-bar.webp)
 
 Fältet under vyn är tidslinjen ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Den avgör vilka rader som är synliga just nu. Den behöver en tidskolumn. Utan en är hela fältet avstängt, vyn stannar i **Alla** och sidofältet säger ”Ingen tidskolumn i dessa data — tidslinjen är avstängd och alla datapunkter visas på en gång.”
 

@@ -23,7 +23,7 @@ In cima alla barra laterale:
 | Pulsante **...** accanto a **Unità** | Apre "Scegli un'unità per ogni grandezza": un menu a tendina per ogni grandezza |
 | Menu **Lingua** | La lingua del visualizzatore: [40 lingue](languages.md), oppure quella del browser |
 
-![L'intestazione con il menu Unità e la finestra unità per grandezza aperta](../assets/img/en/settings-units.webp)
+![L'intestazione con il menu Unità e la finestra unità per grandezza aperta](../assets/img/it/settings-units.webp)
 
 I numeri che digiti in una casella possono usare un punto o una virgola (`0.35` oppure `0,35`). Il visualizzatore legge entrambi e mostra i numeri nel modo in cui li scrive la lingua del visualizzatore.
 
@@ -48,11 +48,11 @@ Altre unità che puoi scegliere per una grandezza: distanza km, mi, NM; velocit�
 
 ## Modalità di aiuto {#help-mode}
 
-![Modalità di aiuto: cosa significano i colori](../assets/img/en/help.webp)
+![Modalità di aiuto: cosa significano i colori](../assets/img/it/help.webp)
 
 Premi `?` o `F1`, oppure clicca il pulsante **?**. Mostra *Cosa significano i colori*: le legende della vista 3D, le rampe del calore, i colori delle squadre, i colori del livello, i colori di stato dei pannelli, il pannello della partita e la vista di gara. Resta attiva finché non la spegni. Nella scheda Partita spiega anche i colori del pannello della partita.
 
-![Modalità di aiuto nella scheda Partita](../assets/img/en/settings-help-match.webp)
+![Modalità di aiuto nella scheda Partita](../assets/img/it/settings-help-match.webp)
 
 ## Cosa ricorda il browser {#what-the-browser-remembers}
 

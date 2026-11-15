@@ -13,7 +13,7 @@ outdated: false
 
 Has conduït el mateix circuit dues vegades. La pestanya **Anàlisi de curses** reprodueix les dues conduccions juntes en 3D, mostra on una volta anava més lenta i t'explica per què. Encara no tens voltes? Prem **Voltes de demostració**.
 
-![La pestanya Anàlisi de curses amb voltes de demostració: la barra lateral amb Voltes i On millorar, els cotxes sobre el circuit, els gràfics sota la vista](../assets/img/en/race-analysis-overview.webp)
+![La pestanya Anàlisi de curses amb voltes de demostració: la barra lateral amb Voltes i On millorar, els cotxes sobre el circuit, els gràfics sota la vista](../assets/img/ca/race-analysis-overview.webp)
 
 La pestanya compara dues o més voltes d'un mateix recorregut. Comparteix el llenç, la càmera i el model del recorregut carregat (**Fons / nivell**) amb el mapa de calor; tota la resta és seu: la seva pròpia barra lateral i la seva pròpia barra sota la vista. Paraules com *volta*, *referència* i *vèrtex* són al [glossari](glossary.md).
 

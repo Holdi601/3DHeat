@@ -15,7 +15,7 @@ Nxehtësia lyen vendet ku ndodhën shumë gjëra: të kuqe aty ku ndodhi pak, e 
 
 **Nxehtësi** (tasti 1) është modaliteti parazgjedhur. Çdo [rresht](glossary.md) i dukshëm shton një [sprite](glossary.md) të rrumbullt që i shikon kamerës; sprite-et që mbivendosen mblidhen në një buffer me pikë lundruese; shuma kalon nëpër një shkallë ngjyrash - si parazgjedhje transparent → e kuqe → e verdhë → e bardhë - dhe vizatohet mbi skenë.
 
-![Nxehtësi në një nivel 3D: pika të nxehta brenda dhe mbi ndërtesat](../assets/img/en/shooter-heat.webp)
+![Nxehtësi në një nivel 3D: pika të nxehta brenda dhe mbi ndërtesat](../assets/img/sq/shooter-heat.webp)
 
 Figura tregon nxehtësinë e një raundi shooter në një nivel me ndërtesa: pikat e nxehta ndodhen në dhoma dhe në shkallë, jo vetëm në tokë.
 
@@ -26,7 +26,7 @@ Figura tregon nxehtësinë e një raundi shooter në një nivel me ndërtesa: pi
 3. Ndrysho **Rrezja e sprite-it** derisa pikat fqinje të bashkohen në brez: më e vogël shfaq pika të vetme, më e madhe shfaq zona.
 4. Hap **Ngjyrat e nxehtësisë** për të ndryshuar ngjyrat, ose **Thellësia** për ta lënë kodrat dhe muret të fshehin nxehtësinë pas tyre.
 
-![Seksionet Forma e nxehtësisë dhe Ngjyrat e nxehtësisë të shiritit anësor, të dyja të hapura](../assets/img/en/heat-panel.webp)
+![Seksionet Forma e nxehtësisë dhe Ngjyrat e nxehtësisë të shiritit anësor, të dyja të hapura](../assets/img/sq/heat-panel.webp)
 
 Të njëjtat panele formojnë [Diferencën](difference.md), [Nxehtësinë e ekipit](team-heat.md) dhe [Nxehtësinë e vijave](line-heat.md); ndryshojnë në atë që shtohet (me shenjë, me ngjyra, ose përgjatë vijave), jo në mënyrën si.
 

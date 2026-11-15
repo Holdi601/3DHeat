@@ -14,7 +14,7 @@ outdated: false
 
 Cada partida começa no seu próprio início e as suas unidades movem-se como figuras. Os ficheiros vão diretamente para a placa gráfica e não se constrói nenhuma tabela completa, por isso reproduz-se com fluidez onde uma carga normal ficaria sem memória.
 
-![Dez partidas de tanques sobrepostas, uma cor por partida](../assets/img/en/many-matches.webp)
+![Dez partidas de tanques sobrepostas, uma cor por partida](../assets/img/pt/many-matches.webp)
 
 ## Como usar {#how-to-use-it}
 

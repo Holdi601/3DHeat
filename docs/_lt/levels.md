@@ -21,7 +21,7 @@ Nieko neįkėlus, scena tamsi, su tinkleliu ir spalvotomis ašimis (**Tinklelis*
 
 Lygis bendras visiems trims skirtukams: trasa, įkelta Lenktynių analizės skirtuke, yra tas pats lygis, kurį rodo šilumos žemėlapis.
 
-![Skiltis Fonas / lygis su įkeltu lygiu: mygtukai Žemėlapio vaizdas ir 3D modelis, Karo veiksmų teatras, Nepermatomumas, Šviesumas, Įrašyti į biblioteką ir bibliotekos sąrašas](../assets/img/en/level-panel.webp)
+![Skiltis Fonas / lygis su įkeltu lygiu: mygtukai Žemėlapio vaizdas ir 3D modelis, Karo veiksmų teatras, Nepermatomumas, Šviesumas, Įrašyti į biblioteką ir bibliotekos sąrašas](../assets/img/lt/level-panel.webp)
 
 ## Padėkite lygį už savo duomenų {#put-a-level-behind-your-data}
 

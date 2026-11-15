@@ -13,7 +13,7 @@ outdated: false
 
 Percorreu o mesmo percurso duas vezes. O separador **Análise de corrida** reproduz as duas corridas juntas em 3D, mostra onde uma volta foi mais lenta e diz-lhe porquê. Ainda não tem voltas? Prima **Voltas de demonstração**.
 
-![O separador Análise de corrida com voltas de demonstração: a barra lateral com Voltas e Onde melhorar, os carros no percurso, os gráficos por baixo da vista](../assets/img/en/race-analysis-overview.webp)
+![O separador Análise de corrida com voltas de demonstração: a barra lateral com Voltas e Onde melhorar, os carros no percurso, os gráficos por baixo da vista](../assets/img/pt/race-analysis-overview.webp)
 
 O separador compara duas ou mais voltas de um mesmo percurso. Partilha a tela, a câmara e o modelo do percurso carregado (**Fundo / nível**) com o mapa de calor; tudo o resto é próprio: a sua barra lateral e a sua barra por baixo da vista. Palavras como *volta*, *referência* e *vértice* estão no [glossário](glossary.md).
 

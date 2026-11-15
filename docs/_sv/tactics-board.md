@@ -23,7 +23,7 @@ Fliken **Taktik** är en ritbräda för en lagplan. Du lägger ut små figurer p
 6. Tryck **▶** (eller `K`) för att spela planen från det visade steget till slutet.
 7. Ge planen ett namn under **Planens namn** och tryck **Spara**.
 
-![Fliken Taktik i vy ovanifrån: spel, sidor och verktyg till vänster, tre figurer med Flytta-pilar, en rökbåge för kastad rök, ett område och stegen längs nedre kanten](../assets/img/en/tactics.webp)
+![Fliken Taktik i vy ovanifrån: spel, sidor och verktyg till vänster, tre figurer med Flytta-pilar, en rökbåge för kastad rök, ett område och stegen längs nedre kanten](../assets/img/sv/tactics.webp)
 
 ## Att starta en plan {#starting-a-plan}
 

@@ -21,7 +21,7 @@ Un **volum** este o cutie invizibilă (sau un cilindru, sau o sferă) pe care o 
  +------------+
 ```
 
-![Trei volume pe valea demonstrativă: două cilindri în jurul dealurilor, o cutie în jurul satului](../assets/img/en/volumes.webp)
+![Trei volume pe valea demonstrativă: două cilindri în jurul dealurilor, o cutie în jurul satului](../assets/img/ro/volumes.webp)
 
 Volumele măsoară ce se întâmplă în interiorul lor, filtrează vizualizarea după ele, își exportă rândurile și pot fi comparate unul lângă altul. Vezi și [glosarul](glossary.md) pentru rând, persoană și meci.
 
@@ -76,7 +76,7 @@ Cu două sau mai multe volume vizibile, apasă **Compară...**.
 3. La **Tabel**, citește diferența fiecărei valori față de primul volum.
 4. Trece la **Bare** ca să vezi ponderile ca bare.
 
-![Tabelul Compară volumele: rânduri, timp în interior, jucători și altele pentru fiecare volum, cu diferența față de primul](../assets/img/en/compare.webp)
+![Tabelul Compară volumele: rânduri, timp în interior, jucători și altele pentru fiecare volum, cu diferența față de primul](../assets/img/ro/compare.webp)
 
 | Vedere | Arată |
 |---|---|
@@ -86,7 +86,7 @@ Cu două sau mai multe volume vizibile, apasă **Compară...**.
 | **Vizite** | Grafice tip cutie și violon cu cât durează vizitele (scară logaritmică). |
 | **Flux** | Unde merg traseele după ce ies din fiecare volum: o matrice de tranziții sau panglici de flux. |
 
-![Vederea Bare: tipurile de evenimente pe volum, ca ponderi](../assets/img/en/compare-bars.webp)
+![Vederea Bare: tipurile de evenimente pe volum, ca ponderi](../assets/img/ro/compare-bars.webp)
 
 ## Sfaturi {#tips}
 

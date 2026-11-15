@@ -14,7 +14,7 @@ outdated: false
 
 Çdo ndeshje fillon nga fillimi i vet dhe njësitë e saj lëvizin si figura. Skedarët shkojnë drejt e në kartën grafike dhe nuk ndërtohet asnjë tabelë e plotë, kështu që luhet rrjedhshëm aty ku një ngarkim normal do të mbaronte memorien.
 
-![Dhjetë ndeshje me tanke të vendosura njëra mbi tjetrën, një ngjyrë për ndeshje](../assets/img/en/many-matches.webp)
+![Dhjetë ndeshje me tanke të vendosura njëra mbi tjetrën, një ngjyrë për ndeshje](../assets/img/sq/many-matches.webp)
 
 ## Si ta përdorësh {#how-to-use-it}
 

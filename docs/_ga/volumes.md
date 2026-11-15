@@ -21,7 +21,7 @@ Is **toirt** bosca dofheicthe (nó sorcóir, nó sféar) a tharraingíonn tú ti
  +------------+
 ```
 
-![Trí thoirt ar ghleann an taispeána: dhá shorcóir timpeall na gcnoc, bosca timpeall an tsráidbhaile](../assets/img/en/volumes.webp)
+![Trí thoirt ar ghleann an taispeána: dhá shorcóir timpeall na gcnoc, bosca timpeall an tsráidbhaile](../assets/img/ga/volumes.webp)
 
 Tomhaiseann toirteanna cad a tharlaíonn istigh iontu, scagann siad an radharc chucu, easpórtálann siad a sraitheanna, agus is féidir iad a chur i gcomparáid taobh le taobh. Féach freisin an [gluais](glossary.md) le haghaidh sraith, imreora agus cluiche.
 
@@ -76,7 +76,7 @@ Le dhá thoirt infheicthe nó níos mó, brúigh **Cuir i gcomparáid…**.
 3. I **Tábla**, léigh difríocht gach luacha ón gcéad toirt.
 4. Athraigh go **Barraí** chun na sciareanna mar bharraí a fheiceáil.
 
-![Tábla na Comparáide toirteanna: sraitheanna, am istigh, imreoirí agus níos mó do gach toirt, leis an difríocht ón gcéad cheann](../assets/img/en/compare.webp)
+![Tábla na Comparáide toirteanna: sraitheanna, am istigh, imreoirí agus níos mó do gach toirt, leis an difríocht ón gcéad cheann](../assets/img/ga/compare.webp)
 
 | Radharc | Taispeánann sé |
 |---|---|
@@ -86,7 +86,7 @@ Le dhá thoirt infheicthe nó níos mó, brúigh **Cuir i gcomparáid…**.
 | **Cuairteanna** | Plótaí bosca agus fidil de cé chomh fada is a mhaireann cuairteanna (scála logartamach). |
 | **Sreabhadh** | Cá dtéann rianta tar éis fágáil gach toirt: maitrís trasdula nó ribíní sreafa. |
 
-![Radharc na mbarraí: cineálacha imeachta in aghaidh gach toirt mar sciareanna](../assets/img/en/compare-bars.webp)
+![Radharc na mbarraí: cineálacha imeachta in aghaidh gach toirt mar sciareanna](../assets/img/ga/compare-bars.webp)
 
 ## Leideanna {#tips}
 

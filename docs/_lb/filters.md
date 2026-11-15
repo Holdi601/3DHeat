@@ -19,7 +19,7 @@ outdated: false
 2. Ënner **Gefierklass** hakt *Tank* of. D'Bild ännert sech direkt.
 3. Drëckt **All Filtere läschen**, fir ze réckgängeg ze maachen.
 
-![De Filteren-Panel: fir d'éischt d'Kolonnen vum Viewer selwer (Evenementtyp, Gefierklass), dann d'Kolonnen aus Ärer Datei](../assets/img/en/filters.webp)
+![De Filteren-Panel: fir d'éischt d'Kolonnen vum Viewer selwer (Evenementtyp, Gefierklass), dann d'Kolonnen aus Ärer Datei](../assets/img/lb/filters.webp)
 
 Déi éischt Zeilen sinn d'Kolonnen vum Viewer selwer (hei ënnen). D'Zeilen duerno kommen aus Ärer Datei.
 
@@ -42,7 +42,7 @@ Welch Kolonnen gefiltert kënne ginn, gëtt beim Lueden festgeluecht, well se da
 
 ## Numeresch Kolonnen (Beräich) {#numeric-columns-range}
 
-![E Beräichsfilter (verluer Geld) mat beiden Enden verschuewen](../assets/img/en/filters-numeric.webp)
+![E Beräichsfilter (verluer Geld) mat beiden Enden verschuewen](../assets/img/lb/filters-numeric.webp)
 
 | Deel | Bedeutung |
 |---|---|

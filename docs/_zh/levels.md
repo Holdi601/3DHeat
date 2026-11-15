@@ -21,7 +21,7 @@ outdated: false
 
 三个标签页共享同一个关卡：在赛车分析标签页中加载的赛道，就是热力图所显示的同一个关卡。
 
-![The Background / level panel with a level loaded: Map image and 3D model buttons, Theatre, Opacity, Brightness, Save to library and the Library list](../assets/img/en/level-panel.webp)
+![The Background / level panel with a level loaded: Map image and 3D model buttons, Theatre, Opacity, Brightness, Save to library and the Library list](../assets/img/zh/level-panel.webp)
 
 ## 把关卡放在数据后面 {#put-a-level-behind-your-data}
 

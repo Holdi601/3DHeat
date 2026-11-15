@@ -15,7 +15,7 @@ Soojus värvib kohad, kus juhtus palju asju: punane, kus juhtus veidi, valgeks k
 
 **Soojus** (klahv 1) on vaikerežiim. Iga nähtav [rida](glossary.md) lisab kaamera poole suunatud ümmarguse [spraidi](glossary.md); kattuvad spraidid liituvad ujukomapunktilises puhvris; summa vastendatakse värviskaalaga - vaikimisi läbipaistvast punaseks, kollaseks ja valgeks - ning joonistatakse stseeni peale.
 
-![Soojus 3D-tasemel: kuumad kohad hoonete sees ja peal](../assets/img/en/shooter-heat.webp)
+![Soojus 3D-tasemel: kuumad kohad hoonete sees ja peal](../assets/img/et/shooter-heat.webp)
 
 Pilt näitab shooteri vooru soojust tasemel, kus on hooned: kuumad kohad on ruumides ja trepil, mitte ainult maapinnal.
 
@@ -26,7 +26,7 @@ Pilt näitab shooteri vooru soojust tasemel, kus on hooned: kuumad kohad on ruum
 3. Muuda **Spraidi raadiust**, kuni läheduses olevad punktid sulavad ribadeks: väiksem näitab üksikuid laike, suurem alasid.
 4. Ava **Soojuse värvid**, et värve muuta, või **Sügavus**, et künkad ja seinad peidaksid soojuse enda taha.
 
-![Külgriba jaotised Soojuse kuju ja Soojuse värvid, mõlemad avatud](../assets/img/en/heat-panel.webp)
+![Külgriba jaotised Soojuse kuju ja Soojuse värvid, mõlemad avatud](../assets/img/et/heat-panel.webp)
 
 Samad paneelid kujundavad ka [Erinevust](difference.md), [Võistkondade soojust](team-heat.md) ja [Joonsoojust](line-heat.md); nad erinevad selle poolest, mida lisatakse (märgiga, värvitult või mööda jooni), mitte selle poolest, kuidas.
 

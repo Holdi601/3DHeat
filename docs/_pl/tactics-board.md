@@ -23,7 +23,7 @@ Karta **Taktyka** to tablica do rysowania planów drużyny: kładziesz małe fig
 6. Naciśnij **▶** (albo `K`), aby odtworzyć plan od pokazywanego kroku do końca.
 7. Nazwij plan w **Nazwa planu** i naciśnij **Zapisz**.
 
-![Karta Taktyka w widoku z góry: gra, strony i narzędzia po lewej, trzy figury z strzałkami Przesuń, łuk rzutu dymnego, Obszar i kroki wzdłuż dołu](../assets/img/en/tactics.webp)
+![Karta Taktyka w widoku z góry: gra, strony i narzędzia po lewej, trzy figury z strzałkami Przesuń, łuk rzutu dymnego, Obszar i kroki wzdłuż dołu](../assets/img/pl/tactics.webp)
 
 ## Zaczynanie planu {#starting-a-plan}
 

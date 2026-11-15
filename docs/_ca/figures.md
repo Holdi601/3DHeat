@@ -15,7 +15,7 @@ Una **figura** és un petit model 3D del que és realment una unitat: un tanc, u
 
 Hi ha uns 2.000 vehicles, aeronaus, vaixells, armes i soldats amb nom, tots construïts pel mateix visor.
 
-![Tancs de la demostració dibuixats com a figures pròpies](../assets/img/en/replay-tanks.webp)
+![Tancs de la demostració dibuixats com a figures pròpies](../assets/img/ca/replay-tanks.webp)
 
 ## Què hi ha al catàleg {#what-is-in-the-catalogue}
 

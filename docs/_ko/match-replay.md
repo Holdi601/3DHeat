@@ -15,7 +15,7 @@ outdated: false
 
 사격, 명중, 화재, 잔해는 레벨 위의 유닛과 목표 위에 그려집니다. 카메라, 라벨, 전술 표시는 전투를 읽는 데 도움을 줍니다. Tacview를 아시나요? [Tacview 동등성](tacview-parity.md)에서 Tacview의 각 도구가 어디에 있는지 볼 수 있습니다.
 
-![전차 데모의 피규어 리플레이: 전차가 각자의 피규어로, 이름, 차량, 속도 라벨과 함께](../assets/img/en/replay-overview.webp)
+![전차 데모의 피규어 리플레이: 전차가 각자의 피규어로, 이름, 차량, 속도 라벨과 함께](../assets/img/ko/replay-overview.webp)
 
 ## 리플레이 시작하기 {#start-a-replay}
 
@@ -26,11 +26,11 @@ outdated: false
 
 이름이나 종류를 아는 모든 유닛은 상자 대신 피규어로 바뀝니다([피규어](figures.md) 참고). 이름이나 종류 열이 없는 데이터는 병사로 그려집니다.
 
-![매치 탭: 경기 선택기, 피규어 섹션, 카메라 보기, 재생과 이벤트 목록](../assets/img/en/match-replay-tab.webp)
+![매치 탭: 경기 선택기, 피규어 섹션, 카메라 보기, 재생과 이벤트 목록](../assets/img/ko/match-replay-tab.webp)
 
 ## 피규어 {#figures}
 
-![궤도 카메라에서 불타는 전차와 그것을 맞힌 사격](../assets/img/en/replay-tanks.webp)
+![궤도 카메라에서 불타는 전차와 그것을 맞힌 사격](../assets/img/ko/replay-tanks.webp)
 
 | 설정(**피규어** 섹션) | 기본값 | 하는 일 |
 |---|---|---|
@@ -51,7 +51,7 @@ outdated: false
 
 유닛이 **화면의 최소 피규어 크기**보다 작아지면, 계속 읽을 수 있는 기호로 바뀔 수 있습니다. 모양은 종류를 알려 줍니다(예: 장갑차는 궤도 표시가 있는 둥근 상자). 색은 편을 알려 줍니다. **기호 체계** 메뉴를 열면 기호 양식을 바꿀 수 있습니다.
 
-![같은 여섯 유닛을 NATO 기호, 러시아 전술 기호, 게임 지도 아이콘, 모양만으로 나타낸 모습](../assets/img/en/match-replay-symbols-styles.webp)
+![같은 여섯 유닛을 NATO 기호, 러시아 전술 기호, 게임 지도 아이콘, 모양만으로 나타낸 모습](../assets/img/ko/match-replay-symbols-styles.webp)
 
 ### 명중 표시, 잔해, 화재 {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ outdated: false
 
 ## 전술 표시 {#tactical-display}
 
-![전술 표시 모습(T)을 한 공중전: 선으로 된 지형, 격추와 이벤트 패널](../assets/img/en/replay-air-tactical.webp)
+![전술 표시 모습(T)을 한 공중전: 선으로 된 지형, 격추와 이벤트 패널](../assets/img/ko/replay-air-tactical.webp)
 
 **전술 표시** 섹션은 유닛을 고르지 않으면 모두, 고른 것만, 또는 한 종류(항공기, 지상, 함선, 무장)를 그립니다. 속도 벡터와 앞으로 갈 경로, 기수와 양력 선, 레이더 원뿔, 록, 데이터 링크, 교전 구역과 선, 시선, 플레이어가 보는 곳(시야 원뿔), 포탑 조준, 기록된 카메라를 보여 줍니다.
 
@@ -84,7 +84,7 @@ outdated: false
 
 `T`(또는 **전술 디스플레이로 보기** 토글)를 누르면 레이더 화면 양식으로 바뀝니다. 빛 번짐, 윤곽선, 등고선, 측정 격자, 주사선, 거리 고리, 고도 사다리, 격추와 이벤트 패널이 나오고, **디렉터**가 카메라를 이벤트로 알아서 옮깁니다.
 
-![같은 공중전을 일반 양식으로 본 모습](../assets/img/en/replay-air.webp)
+![같은 공중전을 일반 양식으로 본 모습](../assets/img/ko/replay-air.webp)
 
 ## 목표 {#objectives}
 

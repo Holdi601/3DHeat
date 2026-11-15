@@ -18,7 +18,7 @@ De Viewer seet Iech Bescheed, wann et eng méi nei Versioun gëtt, an aktualisé
 2. **Wann et seet, restart.bat ze lafen**, maacht d'Serverfënster zou (dat schwaarzt Fënster, dat `start.bat` opgemaach huet) a duebelklickt `restart.bat`.
 3. **Wann Dir den Viewer startet.** `start.bat` kuckt och. Wann et eng méi nei Versioun gëtt, freet et **Elo aktualiséieren? [J/N]**. Drëckt `J`, fir ze aktualiséieren. Drëckt `N`, oder waart 60 Sekonnen ouni Äntwert, fir d'Versioun ze starten, déi Dir hutt.
 
-![D'Aktualiséierungsnotiz mat Elo aktualiséieren an Méi spéit](../assets/img/en/updates-notice.webp)
+![D'Aktualiséierungsnotiz mat Elo aktualiséieren an Méi spéit](../assets/img/lb/updates-notice.webp)
 
 Eng Kopie mat eegene Ännerungen gëtt ni fir Iech aktualiséiert; de Kaschte seet nëmmen, datt en Update waart, a seet, Dir sollt Är Ännerungen comitten oder stashen an `git pull` ausféieren. Eng Kopie, déi net mat git installéiert gouf (zum Beispill als Zip-Datei), weist guer näischt.
 

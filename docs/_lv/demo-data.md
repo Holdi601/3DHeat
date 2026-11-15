@@ -10,7 +10,7 @@ outdated: false
 
 # Demonstrācijas dati: izmēģiniet skatītāju piecās minūtēs
 
-![Desmit tanku spēļu siltums demonstrācijas ielejā: ko parāda 4. solis](../assets/img/en/heat-hero.webp)
+![Desmit tanku spēļu siltums demonstrācijas ielejā: ko parāda 4. solis](../assets/img/lv/heat-hero.webp)
 
 Vai jums vēl nav savu datu? Repozitorijs tos izveido. Viss tajā ir izdomāts: ieleja, pagalms un spēles trijos izdomātos spēles stilos, ar spēlētājiem *Blue 1* vai *Red 3*. Visi šīs vietnes attēli uzņemti ar tiem.
 
@@ -45,7 +45,7 @@ Katra tabula savas kolonnas nosauc savā kājenē, tāpēc tā ielādējas bez j
 6. Atveriet **Atziņas** (Siltumkarte sānjoslā): tās atrod vietas, kur tika šauts, trāpīts un iznīcināts daudz vairāk nekā citur - ap abiem kalniem.
 7. Atveriet cilni **Mačs**; zem **Mači atskaņojumā** izvēlieties *Match 01*; laika skalā nospiediet **Atskaņot**: [atkārtojums](match-replay.md).
 
-![Match 01 atkārtojums ar tankiem kā figūrām](../assets/img/en/replay-overview.webp)
+![Match 01 atkārtojums ar tankiem kā figūrām](../assets/img/lv/replay-overview.webp)
 
 Šāvējam ielādējiet `demo-yard.glb` un `shooter.parquet`; gaisa kaujai - `air.parquet` (figūras ir vieglāk saskatāmas, ja **Figūru izmērs** ir 4, slīdnis panelī **Komandu skats** Siltumkartes sānjoslā).
 

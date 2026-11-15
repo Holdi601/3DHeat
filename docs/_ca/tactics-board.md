@@ -23,7 +23,7 @@ La pestanya **Tàctica** és una pissarra de dibuix per a un pla d'equip: poses 
 6. Prem **▶** (o `K`) per reproduir el pla des del pas mostrat fins al final.
 7. Posa nom al pla a **Nom del pla** i prem **Desa**.
 
-![La pestanya Tàctica en vista zenital: joc, bàndols i eines a l'esquerra, tres figures amb fletxes de Mou, un arc de fum de Llançament, una Àrea i els passos a la part inferior](../assets/img/en/tactics.webp)
+![La pestanya Tàctica en vista zenital: joc, bàndols i eines a l'esquerra, tres figures amb fletxes de Mou, un arc de fum de Llançament, una Àrea i els passos a la part inferior](../assets/img/ca/tactics.webp)
 
 ## Començar un pla {#starting-a-plan}
 

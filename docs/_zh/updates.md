@@ -18,7 +18,7 @@ outdated: false
 2. **如果它提示运行 restart.bat**，请关闭服务器窗口（`start.bat` 打开的黑色窗口），然后双击 `restart.bat`。
 3. **启动查看器时。** `start.bat` 也会检查。如果存在更新的版本，它会询问**立即更新？[Y/N]**。按 `Y` 即可更新。按 `N`，或在 60 秒内不作回答，则会启动你当前拥有的版本。
 
-![The update notice with Update now and Later](../assets/img/en/updates-notice.webp)
+![The update notice with Update now and Later](../assets/img/zh/updates-notice.webp)
 
 你自己做过修改的副本永远不会被自动更新；该方框只会告诉你有更新在等待，并提示你提交或暂存（stash）你的更改，然后运行 `git pull`。未通过 git 安装的副本（例如 zip 文件）不会显示任何内容。
 

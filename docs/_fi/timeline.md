@@ -12,7 +12,7 @@ outdated: false
 
 Kuvan alla oleva palkki on kuin videosoitin: voit toistaa datan elokuvana, pysäyttää sen, hypätä kohdasta toiseen ja muuttaa nopeutta.
 
-![Aikajanapalkki: 1 Kaikki/Toista, 2 toistopainikkeet, 3 kello, 4 Nopeus, 5 Historia, sekä Ikkuna ja 30 s jakso](../assets/img/en/timeline-bar.webp)
+![Aikajanapalkki: 1 Kaikki/Toista, 2 toistopainikkeet, 3 kello, 4 Nopeus, 5 Historia, sekä Ikkuna ja 30 s jakso](../assets/img/fi/timeline-bar.webp)
 
 Näkymän alla oleva palkki on aikajana ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Se päättää, mitkä rivit ovat näkyvissä milloinkin. Se tarvitsee aikasarakkeen. Ilman sitä koko palkki poistetaan käytöstä, näkymä pysyy tilassa **Kaikki** ja sivupalkki kertoo: *Tässä datassa ei ole aikasaraketta - aikajana on pois käytöstä ja jokainen datapiste näytetään kerralla.*
 

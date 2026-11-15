@@ -12,7 +12,7 @@ outdated: false
 
 Riba pildi all on nagu videomängija: andmeid saab esitada filmina, peatada, kerida ja muuta kiirust.
 
-![Ajajoone riba: 1 Kõik/Esita, 2 juhtnupud, 3 kell, 4 Kiirus, 5 Ajalugu, aken ja 30 s vahemik](../assets/img/en/timeline-bar.webp)
+![Ajajoone riba: 1 Kõik/Esita, 2 juhtnupud, 3 kell, 4 Kiirus, 5 Ajalugu, aken ja 30 s vahemik](../assets/img/et/timeline-bar.webp)
 
 Riba vaate all on ajajoon ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Ta otsustab, millised read on igal hetkel nähtavad. Ta vajab ajaveergu; ilma selleta on kogu riba keelatud, vaade jääb režiimi **Kõik** ja külgriba ütleb: *Neis andmetes pole ajaveergu - ajajoon on välja lülitatud ja kõik andmepunktid kuvatakse korraga.*
 

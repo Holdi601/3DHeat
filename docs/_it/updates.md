@@ -18,7 +18,7 @@ Il visualizzatore ti dice quando esiste una versione più recente, e si aggiorna
 2. **Se dice di eseguire restart.bat**, chiudi la finestra del server (la finestra nera che ha aperto `start.bat`) e fai doppio clic su `restart.bat`.
 3. **All'avvio del visualizzatore.** Anche `start.bat` controlla. Se esiste una versione più recente, chiede **Update now? [Y/N]**. Premi `Y` per aggiornare. Premi `N`, oppure aspetta 60 secondi senza rispondere, per avviare la versione che hai.
 
-![L'avviso di aggiornamento con Aggiorna ora e Più tardi](../assets/img/en/updates-notice.webp)
+![L'avviso di aggiornamento con Aggiorna ora e Più tardi](../assets/img/it/updates-notice.webp)
 
 Una copia con modifiche proprie non viene mai aggiornata al posto tuo: il riquadro ti dice soltanto che un aggiornamento è in attesa, e dice di salvare (commit) o mettere da parte (stash) le modifiche ed eseguire `git pull`. Una copia non installata con git (per esempio un file zip) non mostra nulla.
 

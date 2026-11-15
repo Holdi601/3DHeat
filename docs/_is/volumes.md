@@ -22,7 +22,7 @@ outdated: false
  +------------+
 ```
 
-![Þrjú rúmmál á sýnidalnum: tveir sívalningar um hæðirnar, kassi um þorpið](../assets/img/en/volumes.webp)
+![Þrjú rúmmál á sýnidalnum: tveir sívalningar um hæðirnar, kassi um þorpið](../assets/img/is/volumes.webp)
 
 Rúmmál mæla það sem gerist inni í þeim, sía sýnina niður á þau, flytja út línur þeirra, og má bera saman hlið við hlið. Sjá líka [orðasafnið](glossary.md) fyrir línu, manneskju og leik.
 
@@ -77,7 +77,7 @@ Með tvö eða fleiri sýnileg rúmmál, ýttu á **Bera saman…**.
 3. Í **Tafla** les þú mismun hvers gildis frá fyrsta rúmmálinu.
 4. Skiptu yfir í **Súlur** til að sjá hlutdeildirnar sem súlur.
 
-![Samanburðartaflan fyrir rúmmál: raðir, tími inni, leikmenn og fleira fyrir hvert rúmmál, með mismuninum frá fyrsta](../assets/img/en/compare.webp)
+![Samanburðartaflan fyrir rúmmál: raðir, tími inni, leikmenn og fleira fyrir hvert rúmmál, með mismuninum frá fyrsta](../assets/img/is/compare.webp)
 
 | Sýn | Sýnir |
 |---|---|
@@ -87,7 +87,7 @@ Með tvö eða fleiri sýnileg rúmmál, ýttu á **Bera saman…**.
 | **Heimsóknir** | Kassa- og fiðluritum af því hversu lengi heimsóknir standa (lógaritmískur kvarði). |
 | **Flæði** | Hvert ferlar fara eftir að hafa yfirgefið hvert rúmmál: umbreytingafylki eða flæðisbönd. |
 
-![Súlusýnin: tegundir atburða á hvert rúmmál sem hlutdeildir](../assets/img/en/compare-bars.webp)
+![Súlusýnin: tegundir atburða á hvert rúmmál sem hlutdeildir](../assets/img/is/compare-bars.webp)
 
 ## Ábendingar {#tips}
 

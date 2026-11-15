@@ -15,7 +15,7 @@ Nxehtësia e ekipit tregon ku ishte çdo ekip, çdo ekip me ngjyrën e vet. Aty 
 
 **Nxehtësi ekipi** (tasti 3) është fusha e dendësisë së [Nxehtësisë](heat.md) me çdo [grup](glossary.md) të dhënë një nuancë të vetën. Aty ku grupet mbivendosen, nuancat përzihen; një garë e barabartë del neutrale. Opaciteti ende mbart dendësinë saktësisht si në modalitetet e tjera, kështu që figura përgjigjet *sa* dhe *kujt* njëherësh. Kërkon një kolonë grupi.
 
-![Nxehtësi ekipi: secila anë me ngjyrën e vet; aty ku mbivendosen, ngjyrat përzihen](../assets/img/en/heat-teams.webp)
+![Nxehtësi ekipi: secila anë me ngjyrën e vet; aty ku mbivendosen, ngjyrat përzihen](../assets/img/sq/heat-teams.webp)
 
 Nuk është [mbivendosja e figurave](box-replay.md): ajo vizaton një figurë për person; kjo është një fushë nxehtësie e ngjyrosur sipas së njëjtës kolonë.
 

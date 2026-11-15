@@ -100,7 +100,7 @@ export default (ctx) => {
     async raceOverview() {
       await start('main');
       await fold('race.ui.stats.title');
-      await pickFinding(/T1: /);
+      await pickFinding(/T1\s*[:：]/);
       await levelAtFlag();
       await click('race.ui.view.maps.time', {}, { wait: 600 });
       await race((m) => m.useRaceStore.getState().patchView({ carScale: 6 }));
@@ -118,7 +118,7 @@ export default (ctx) => {
     async raceReplay() {
       await start('main');
       await fold('race.ui.stats.title');
-      await pickFinding(/T2-T3: /);
+      await pickFinding(/T2-T3\s*[:：]/);
       await click('race.ui.view.maps.cause', {}, { wait: 600 });
       const s = await levelAtFlag();
       // Camera about 80 m above the stretch from the flag to the end of the corner.
@@ -140,7 +140,7 @@ export default (ctx) => {
     async raceCharts() {
       await start('main');
       await fold('race.ui.stats.title');
-      await pickFinding(/T1: /);
+      await pickFinding(/T1\s*[:：]/);
       await levelAtFlag();
       await above();
       const plot = page.locator('.race-charts svg.plot').first();
@@ -167,7 +167,7 @@ export default (ctx) => {
       await focusLap('(B) #1');
       await fold('race.ui.stats.title');
       await fold('race.ui.laps.title');
-      await pickFinding(/T1: /);
+      await pickFinding(/T1\s*[:：]/);
       await open('race.ui.insights.title');
       await tall(1800, async () => {
         await open('race.ui.insights.title');

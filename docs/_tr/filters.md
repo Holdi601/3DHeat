@@ -19,7 +19,7 @@ outdated: false
 2. **Araç sınıfı** altında *Tank*'ı işaretten kaldırın. Resim hemen değişir.
 3. Geri almak için **Tüm filtreleri temizle**'ye basın.
 
-![Filtreler paneli: önce görüntüleyicinin kendi sütunları (Olay türü, Araç sınıfı), sonra dosyanızdaki sütunlar](../assets/img/en/filters.webp)
+![Filtreler paneli: önce görüntüleyicinin kendi sütunları (Olay türü, Araç sınıfı), sonra dosyanızdaki sütunlar](../assets/img/tr/filters.webp)
 
 İlk satırlar görüntüleyicinin kendi sütunlarıdır (aşağıda). Onlardan sonraki satırlar dosyanızdan gelir.
 
@@ -42,7 +42,7 @@ Hangi sütunların süzülebileceği yükleme sırasında belirlenir, çünkü o
 
 ## Sayısal sütunlar (aralık) {#numeric-columns-range}
 
-![Her iki ucu sürüklenmiş bir aralık filtresi (kaybedilen para)](../assets/img/en/filters-numeric.webp)
+![Her iki ucu sürüklenmiş bir aralık filtresi (kaybedilen para)](../assets/img/tr/filters-numeric.webp)
 
 | Bölüm | Anlamı |
 |---|---|

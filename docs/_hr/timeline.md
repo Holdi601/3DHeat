@@ -12,7 +12,7 @@ outdated: false
 
 Traka ispod slike je kao video player: podatke možete pustiti kao film, pauzirati, skakati po njima i mijenjati brzinu.
 
-![Vremenska traka: 1 Sve/Reprodukcija, 2 gumbi za upravljanje, 3 sat, 4 Brzina, 5 Povijest, s Prozorom i Rasponom od 30 s](../assets/img/en/timeline-bar.webp)
+![Vremenska traka: 1 Sve/Reprodukcija, 2 gumbi za upravljanje, 3 sat, 4 Brzina, 5 Povijest, s Prozorom i Rasponom od 30 s](../assets/img/hr/timeline-bar.webp)
 
 Traka ispod prikaza je vremenska traka ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Ona odlučuje koji su redci vidljivi u svakom trenutku. Treba stupac vremena; bez njega je cijela traka onemogućena, prikaz ostaje u **Sve**, a bočna traka kaže *Nema stupca vremena u ovim podacima - vremenska traka je onemogućena i svaka točka podataka prikazuje se odjednom.*
 

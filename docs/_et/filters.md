@@ -19,7 +19,7 @@ outdated: false
 2. Jaotises **Sõidukiklass** eemalda linnuke *Tank*. Pilt muutub kohe.
 3. Tagasivõtmiseks vajuta **Tühjenda kõik filtrid**.
 
-![Filtrite paneel: vaituri enda veerud (Sündmuse tüüp, Sõidukiklass) esimesena, siis veerud sinu failist](../assets/img/en/filters.webp)
+![Filtrite paneel: vaituri enda veerud (Sündmuse tüüp, Sõidukiklass) esimesena, siis veerud sinu failist](../assets/img/et/filters.webp)
 
 Esimesed read on vaaturi enda veerud (allpool). Neile järgnevad read tulevad sinu failist.
 
@@ -42,7 +42,7 @@ Millised veerud on filtreeritavad, otsustatakse laadimisel, sest need tuleb siis
 
 ## Arvveerud (vahemik) {#numeric-columns-range}
 
-![Vahemikufilter (kaotatud raha), mõlemad otsad lohistatud sisse](../assets/img/en/filters-numeric.webp)
+![Vahemikufilter (kaotatud raha), mõlemad otsad lohistatud sisse](../assets/img/et/filters-numeric.webp)
 
 | Osa | Tähendus |
 |---|---|

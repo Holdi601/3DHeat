@@ -12,7 +12,7 @@ outdated: false
 
 De balk onder het beeld werkt als een videospeler: je kunt de data als film afspelen, pauzeren, springen en de snelheid wijzigen.
 
-![De tijdlijnbalk: 1 Alles/Afspelen, 2 bedieningsknoppen, 3 klok, 4 Snelheid, 5 Geschiedenis, met Venster en een Periode van 30 s](../assets/img/en/timeline-bar.webp)
+![De tijdlijnbalk: 1 Alles/Afspelen, 2 bedieningsknoppen, 3 klok, 4 Snelheid, 5 Geschiedenis, met Venster en een Periode van 30 s](../assets/img/nl/timeline-bar.webp)
 
 De balk onder de weergave is de tijdlijn ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Die bepaalt welke rijen op elk moment zichtbaar zijn. Er is een tijdkolom nodig; zonder die is de hele balk uitgeschakeld, blijft de weergave in **Alles**, en de zijbalk zegt *Geen tijdkolom in deze data - de tijdlijn is uitgeschakeld en elk datapunt wordt tegelijk getoond.*
 

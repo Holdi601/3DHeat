@@ -15,7 +15,7 @@ outdated: false
 
 Allt räknas i din webbläsare. Ingenting lämnar datorn om du inte slår på en extern AI (se [Extern AI](#external-ai)).
 
-![Insikter på stridsvagnsdemon: 14 fynd, starkast först](../assets/img/en/insights.webp)
+![Insikter på stridsvagnsdemon: 14 fynd, starkast först](../assets/img/sv/insights.webp)
 
 Avsnittet **Insikter** finns i sidofältet i flikarna Värmekarta och Match. Det har tre flikar: **Fynd**, **Genomgång** och **Kommentator**.
 
@@ -30,7 +30,7 @@ Räkningen använder de aktuella filtren, dolda grupper och vald match över hel
 
 Raderna överst i listan (till exempel summorna för pengar) sammanfattar hela datan före fynden.
 
-![Ett öppnat fynd: den heta zonen för avfyrade skott, dess siffror och ett passande stycke ur litteraturen](../assets/img/en/insights-finding.webp)
+![Ett öppnat fynd: den heta zonen för avfyrade skott, dess siffror och ett passande stycke ur litteraturen](../assets/img/sv/insights-finding.webp)
 
 ### Detektorerna {#the-detectors}
 
@@ -55,7 +55,7 @@ Varje plats eller grupp testas mot resten av kartan (exakta binomial- eller frek
 
 Fliken **Genomgång** skriver ner fynden som en kort text: en inledning, det tydligaste fyndet, ett för taktik, ett för balansering, resten grupperade efter detektor och hur många som bygger på svagare underlag. Varje stycke har numrerade knappar som visar dess fynd. **Kopiera text** kopierar den.
 
-![Genomgången skriven av den inbyggda berättaren](../assets/img/en/debrief.webp)
+![Genomgången skriven av den inbyggda berättaren](../assets/img/sv/debrief.webp)
 
 Den inbyggda berättaren fungerar offline, på ditt språk. Väljaren **Lins** ovanför den (se [Kunskapslinsen](knowledge.md)) avgör vilken litteratur styckena hänvisar till.
 
@@ -78,7 +78,7 @@ Skriv sedan en valfri fråga och tryck **Skriv med AI**. Bara fynden och deras s
 
 För **en match** (välj en om flera är inlästa) hittar **Kommentatorn** de ögonblick som är värda att titta på: första blodet, multidödningar, byten, vändningar i slutspel, skiften i mål, comebacks, framträdande spelare och långskott.
 
-![Kommentatorns ögonblick för en runda i skyttespelsdemon](../assets/img/en/caster.webp)
+![Kommentatorns ögonblick för en runda i skyttespelsdemon](../assets/img/sv/caster.webp)
 
 - Klicka på ett ögonblick: vyn byter till repriset, hoppar till strax före det, flyger dit och följer spelaren.
 - **Spela ögonblicken** spelar upp varje till slutet och går vidare. **Föregående** / **Nästa** bläddrar bland dem.

@@ -13,7 +13,7 @@ outdated: false
 
 Stikan undir myndinni er eins og myndbandsspilari: þú getur spilað gögnin eins og kvikmynd, gert hlé, hoppað til og breytt hraðanum.
 
-![Tímalínustikan: 1 Allt/Spila, 2 spilunarhnappar, 3 klukka, 4 Hraði, 5 Saga, með Gluggi og Tímabil 30 s](../assets/img/en/timeline-bar.webp)
+![Tímalínustikan: 1 Allt/Spila, 2 spilunarhnappar, 3 klukka, 4 Hraði, 5 Saga, með Gluggi og Tímabil 30 s](../assets/img/is/timeline-bar.webp)
 
 Stikan undir sýninni er tímalínan ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Hún ákveður hvaða línur eru sýnilegar á hverri stundu. Hún þarfnast tímadálks; án hans er öll stikan óvirk, sýnin helst í **Allt**, og hliðarstikan segir *Enginn tímadálkur í þessum gögnum — tímalínan er óvirk og allir gagnapunktar eru sýndir í einu.*
 

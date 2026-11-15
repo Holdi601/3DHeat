@@ -15,7 +15,7 @@ Każda kropka dodaje odrobinę blasku, blaski się piętrzą, a stos jest malowa
 
 Pasek trybów na górze paska bocznego karty Mapa cieplna wybiera, jak rysowany jest [zbiór danych](glossary.md). Klawisze 1-4 wybierają Ciepło, Różnicę, Ciepło drużyn i Linie. Nakładka sylwetek nie ma klawisza.
 
-![Pasek trybów: Ciepło, Różnica, Ciepło drużyn, Nałożone figury i Linie](../assets/img/en/heat-modes-bar.webp)
+![Pasek trybów: Ciepło, Różnica, Ciepło drużyn, Nałożone figury i Linie](../assets/img/pl/heat-modes-bar.webp)
 
 | Tryb | Pytanie, na które odpowiada |
 |---|---|
@@ -25,7 +25,7 @@ Pasek trybów na górze paska bocznego karty Mapa cieplna wybiera, jak rysowany 
 | **Linie** | Którędy szli ludzie? |
 | **Nałożone figury** | Kto był gdzie i kiedy? |
 
-![Te same dane w czterech trybach: Ciepło, Różnica, Ciepło drużyn i Linie](../assets/img/en/heat-modes-grid.webp)
+![Te same dane w czterech trybach: Ciepło, Różnica, Ciepło drużyn i Linie](../assets/img/pl/heat-modes-grid.webp)
 
 | Tryb (etykieta na pasku) | Klawisz | Co rysuje | Potrzebuje |
 |---|---|---|---|

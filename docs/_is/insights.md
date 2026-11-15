@@ -16,7 +16,7 @@ outdated: false
 
 Allt er talið í vafranum þínum. Ekkert fer af tölvunni þinni nema þú kveikir á ytri gervigreind (sjá [Ytri gervigreind](#external-ai)).
 
-![Innsýn á tankasýnidæminu: 14 niðurstöður, það sterkasta fyrst](../assets/img/en/insights.webp)
+![Innsýn á tankasýnidæminu: 14 niðurstöður, það sterkasta fyrst](../assets/img/is/insights.webp)
 
 Hlutinn **Innsýn** er í hliðarstiku flipanna Hitakort og Leikur. Hann hefur þrjá flipa: **Niðurstöður**, **Samantekt** og **Lýsandi**.
 
@@ -31,7 +31,7 @@ Talningin notar núverandi síur, földu hópana og valinn leik yfir allt tímab
 
 Línurnar efst á listanum (til dæmis heildarfjárhæðirnar) draga saman öll gögnin á undan niðurstöðunum.
 
-![Opnuð niðurstaða: heitt svæði skota, tölurnar og samsvarandi kafli úr heimildum](../assets/img/en/insights-finding.webp)
+![Opnuð niðurstaða: heitt svæði skota, tölurnar og samsvarandi kafli úr heimildum](../assets/img/is/insights-finding.webp)
 
 ### Greiningartólin {#the-detectors}
 
@@ -56,7 +56,7 @@ Sérhver staður eða hópur er prófaður gegn restinni af kortinu (nákvæm tv
 
 Flipinn **Samantekt** skrifar niðurstöðurnar upp sem stuttan texta: upphaf, skýrasta niðurstaðan, ein fyrir taktík, ein fyrir jafnvægi, hinar flokkaðar eftir greiningartóli, og hversu margar byggja á veikari gögnum. Hver málsgrein hefur tölusetta hnappa sem sýna niðurstöðurnar hennar. **Afrita texta** afritar hann.
 
-![Samantektin sem innbyggði sögumaðurinn skrifaði](../assets/img/en/debrief.webp)
+![Samantektin sem innbyggði sögumaðurinn skrifaði](../assets/img/is/debrief.webp)
 
 Innbyggði sögumaðurinn virkar án nettengingar, á þínu tungumáli. Valið **Linsa** fyrir ofan hann (sjá [Þekkingarlinsan](knowledge.md)) ræður hvaða heimildir málsgreinarnar vísa í.
 
@@ -79,7 +79,7 @@ Skrifaðu síðan valfrjálsa spurningu og ýttu á **Skrifa með gervigreind**.
 
 Fyrir **einn leik** (veldu einn ef margir eru hlaðnir) finnur **Lýsandi** augnablikin sem vert er að horfa á: fyrsta blóð, margföld dráp, skipti, lokasóknir, sveiflur í markmiðum, endurkomur, áberandi leikmenn, langskot.
 
-![Augnablik lýsandans fyrir eina lotu í skotleikjasýnidæminu](../assets/img/en/caster.webp)
+![Augnablik lýsandans fyrir eina lotu í skotleikjasýnidæminu](../assets/img/is/caster.webp)
 
 - Smelltu á augnablik: sýnin skiptir yfir í endurspilunina, hoppar rétt fyrir það, flýgur þangað og fylgir leikmanninum.
 - **Spila augnablikin** spilar hvert þeirra til enda og heldur áfram; **Fyrra** / **Næsta** fara á milli þeirra.

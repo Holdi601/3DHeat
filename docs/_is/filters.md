@@ -20,7 +20,7 @@ outdated: false
 2. Undir **Flokkur farartækis**, taktu hakið af *Tank*. Myndin breytist samstundis.
 3. Ýttu á **Hreinsa allar síur** til að afturkalla.
 
-![Spjaldið Síur: dálkar sýnilegs forrits (Tegund atburðar, Flokkur farartækis) fyrst, síðan dálkarnir úr skránni þinni](../assets/img/en/filters.webp)
+![Spjaldið Síur: dálkar sýnilegs forrits (Tegund atburðar, Flokkur farartækis) fyrst, síðan dálkarnir úr skránni þinni](../assets/img/is/filters.webp)
 
 Fyrstu línurnar eru dálkar forritsins (hér að neðan). Línurnar þar á eftir koma úr skránni þinni.
 
@@ -43,7 +43,7 @@ Hvaða dálka má sía er ákveðið við hleðslu, því þá þarf að lesa þ
 
 ## Talnadálkar (bil) {#numeric-columns-range}
 
-![Bilsía (tapað fé) með báða enda dregna til](../assets/img/en/filters-numeric.webp)
+![Bilsía (tapað fé) með báða enda dregna til](../assets/img/is/filters-numeric.webp)
 
 | Hluti | Merking |
 |---|---|

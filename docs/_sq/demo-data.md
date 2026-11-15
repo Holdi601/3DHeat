@@ -10,7 +10,7 @@ outdated: false
 
 # Të dhënat demo: provo shikuesin për pesë minuta
 
-![Nxehtësia e dhjetë ndeshjeve me tanke në demo valley: çfarë tregon hapi 4](../assets/img/en/heat-hero.webp)
+![Nxehtësia e dhjetë ndeshjeve me tanke në demo valley: çfarë tregon hapi 4](../assets/img/sq/heat-hero.webp)
 
 Ende nuk ke të dhëna të tuat? Depoja krijon disa. Gjithçka në to është e shpikur: një luginë, një oborr, dhe ndeshje me tre stile lojërash të shpikura, me lojtarë të quajtur *Blue 1* ose *Red 3*. Fotot në këtë faqe u bënë të gjitha me to.
 
@@ -45,7 +45,7 @@ Kjo shkruan në `tools/.shots/demo/`:
 6. Hap **Vëzhgime** (në shiritin anësor të Harta e nxehtësisë): gjen vendet ku u shtuan shumë më tepër, u goditën dhe u shkatërruan sesa gjetkë - rreth dy kodrave.
 7. Hap skedën **Ndeshja**; nën **Ndeshjet në riluajtje** zgjidh *Match 01*; shtyp **Luaj** në kronologji: [riluajtja](match-replay.md).
 
-![Riluajtja e Match 01 me tanke si figura](../assets/img/en/replay-overview.webp)
+![Riluajtja e Match 01 me tanke si figura](../assets/img/sq/replay-overview.webp)
 
 Për lojën shooter, ngarko `demo-yard.glb` dhe `shooter.parquet`; për luftën ajrore, `air.parquet` (figurat shihen më lehtë me **Madhësia e figurës** 4, një rrëshqitës në panelin **Pamja e ekipeve** të shiritit anësor të Harta e nxehtësisë).
 

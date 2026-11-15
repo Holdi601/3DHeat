@@ -15,7 +15,7 @@ Reprodukcija je film utakmice u kojem je svaki igrač nacrtan kao ono čime je u
 
 Hici, pogoci, požari i olupine crtaju se na jedinicama i ciljevima na razini. Kamere, oznake i taktički prikaz pomažu vam čitati borbu. Poznajete Tacview? [Paritet s Tacviewom](tacview-parity.md) pokazuje gdje je svaki njegov alat.
 
-![Reprodukcija figura demo tenkova: tenkovi kao vlastite figure, s oznakama imena, vozila i brzine](../assets/img/en/replay-overview.webp)
+![Reprodukcija figura demo tenkova: tenkovi kao vlastite figure, s oznakama imena, vozila i brzine](../assets/img/hr/replay-overview.webp)
 
 ## Pokrenite reprodukciju {#start-a-replay}
 
@@ -26,11 +26,11 @@ Hici, pogoci, požari i olupine crtaju se na jedinicama i ciljevima na razini. K
 
 Figure zamjenjuju kutije za svaku jedinicu čije se ime ili tip zna (vidi [Figure](figures.md)). Podaci bez stupca imena ili tipa crtaju se kao vojnici.
 
-![Kartica Meč: izbornik utakmica, odjeljak Figure, prikazi kamere, Reprodukcija i popis događaja](../assets/img/en/match-replay-tab.webp)
+![Kartica Meč: izbornik utakmica, odjeljak Figure, prikazi kamere, Reprodukcija i popis događaja](../assets/img/hr/match-replay-tab.webp)
 
 ## Figure {#figures}
 
-![Zapaljen tenk u kameri orbite, s hicem koji ga je pogodio](../assets/img/en/replay-tanks.webp)
+![Zapaljen tenk u kameri orbite, s hicem koji ga je pogodio](../assets/img/hr/replay-tanks.webp)
 
 | Postavka (odjeljak **Figure**) | Zadano | Što radi |
 |---|---|---|
@@ -51,7 +51,7 @@ Figure zamjenjuju kutije za svaku jedinicu čije se ime ili tip zna (vidi [Figur
 
 Kad bi jedinica bila manja od **Najmanja figura na zaslonu**, može postati simbol koji ostaje čitljiv. Oblik kaže vrstu (na primjer zaobljena kutija s oznakom gusjenica za oklopna vozila); boja kaže stranu. Otvorite izbornik **Simboli** da promijenite stil.
 
-![Isto šest jedinica kao NATO simboli, ruski taktički znakovi, ikone karte igre i samo oblici](../assets/img/en/match-replay-symbols-styles.webp)
+![Isto šest jedinica kao NATO simboli, ruski taktički znakovi, ikone karte igre i samo oblici](../assets/img/hr/match-replay-symbols-styles.webp)
 
 ### Oznake pogodaka, olupine i požari {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Kliknite jedinicu ili njezinu oznaku da je **pratite**; odjeljak **Reprodukcija*
 
 ## Taktički prikaz {#tactical-display}
 
-![Zračna demo s izgledom taktičkog prikaza (T): teren u žičanom okviru, paneli ubojstava i događaja](../assets/img/en/replay-air-tactical.webp)
+![Zračna demo s izgledom taktičkog prikaza (T): teren u žičanom okviru, paneli ubojstava i događaja](../assets/img/hr/replay-air-tactical.webp)
 
 Odjeljak **Taktički prikaz** crta, za nijednu jedinicu, odabrane, sve ili jednu vrstu (zrakoplove, kopno, brodove, oružje): vektore brzine i put ispred, linije nosa i uzgona, stošce radara, zaključavanja, podatkovne veze, zone i linije angažmana, linije vida, gdje igrači gledaju (stošci pogleda), usmjerenje kupole i snimljenu kameru.
 
@@ -84,7 +84,7 @@ Odjeljak **Taktički prikaz** crta, za nijednu jedinicu, odabrane, sve ili jednu
 
 `T` (ili preklopnik **Prikaži kao taktički prikaz**) prebacuje izgled na stil radarskog zaslona: sjaj, obrisi, konturne linije, mreža za mjerenje, linije skeniranja, prstenovi dometa, ljestve visine, paneli s ubojstvima i događajima, i **Redatelj** koji sam pomiče kameru na događaje.
 
-![Ista zračna borba u običnom izgledu](../assets/img/en/replay-air.webp)
+![Ista zračna borba u običnom izgledu](../assets/img/hr/replay-air.webp)
 
 ## Ciljevi {#objectives}
 

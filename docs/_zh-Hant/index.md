@@ -14,7 +14,7 @@ outdated: false
 
 載入位置資料（CSV、Parquet、Tacview 錄影、轉換後的重播、單一檔案、資料夾，或數千場比賽），然後把它們看成 **可以飛行穿越的熱圖**、**重播比賽的模型**、沿著玩家路線的線條，或是兩群人的對照。它會自己找出特別突出的地方，而且完全在你的瀏覽器中執行：不會上傳到任何地方。
 
-![示範山谷上十場戰車比賽的熱度](../assets/img/en/heat-hero.webp)
+![示範山谷上十場戰車比賽的熱度](../assets/img/zh-Hant/heat-hero.webp)
 
 **第一次來？** 先產生 [示範資料](demo-data.md)，並依照它的七個步驟操作。本網站的每張圖片都是用它拍攝的。
 
@@ -22,12 +22,12 @@ outdated: false
 
 | | |
 |---|---|
-| ![差異](../assets/img/en/heat-difference.webp) | **[熱度模式](heat-modes.md)** - 熱度、[差異](difference.md)（某一方較多的地方為紅色，另一方較多的地方為綠藍色）、[隊伍熱度](team-heat.md)、[線條熱度](line-heat.md)；[方向熱度](directional-heat.md)，包含扇形、箭頭場與極座標圖；依[數值加權](value-weighting.md)的熱度：武器、載具與燃料各自的成本。 |
-| ![重播](../assets/img/en/replay-tanks.webp) | **[對戰重播](match-replay.md)** - 每個單位都以它本身的[模型](figures.md)呈現，遠距離時使用 NATO 或俄式符號，另有飛彈與曳光彈、命中標記、殘骸、火焰、砲塔、目標、類似 Tacview 的攝影機，以及戰術顯示；[一次疊加多場比賽](many-matches.md)。 |
-| ![洞察](../assets/img/en/insights.webp) | **[洞察](insights.md)** - 強勢位置、致命地形、出生點陷阱、咽喉點與特別突出的玩家，都附上證據並加以排序；可撰寫文字總結，也可選用你指定的 AI 來產生；單場比賽的解說模式；以及[知識視角](knowledge.md)。 |
-| ![體積](../assets/img/en/compare.webp) | **[體積](volumes.md)** - 繪製方塊、角柱、圓柱與球體，依它們篩選、統計其中發生的事件、匯出，並將各地點並排比較；[明細](breakdown.md)可看出在某個地點誰、以及什麼表現最好。 |
-| ![篩選](../assets/img/en/filters.webp) | **[篩選](filters.md)** - 依事件類型、玩家或 AI、載具類別、數值、任何欄位篩選，無論資料多大，都在顯示卡中完成。 |
-| ![關卡](../assets/img/en/level-panel.webp) | **[關卡](levels.md)** - 地圖影像、使用[資料工具](#related-repositories)製作的 3D 關卡、簡化、[世界背景](world-backdrop.md)（飛行資料使用真實地形）。 |
+| ![差異](../assets/img/zh-Hant/heat-difference.webp) | **[熱度模式](heat-modes.md)** - 熱度、[差異](difference.md)（某一方較多的地方為紅色，另一方較多的地方為綠藍色）、[隊伍熱度](team-heat.md)、[線條熱度](line-heat.md)；[方向熱度](directional-heat.md)，包含扇形、箭頭場與極座標圖；依[數值加權](value-weighting.md)的熱度：武器、載具與燃料各自的成本。 |
+| ![重播](../assets/img/zh-Hant/replay-tanks.webp) | **[對戰重播](match-replay.md)** - 每個單位都以它本身的[模型](figures.md)呈現，遠距離時使用 NATO 或俄式符號，另有飛彈與曳光彈、命中標記、殘骸、火焰、砲塔、目標、類似 Tacview 的攝影機，以及戰術顯示；[一次疊加多場比賽](many-matches.md)。 |
+| ![洞察](../assets/img/zh-Hant/insights.webp) | **[洞察](insights.md)** - 強勢位置、致命地形、出生點陷阱、咽喉點與特別突出的玩家，都附上證據並加以排序；可撰寫文字總結，也可選用你指定的 AI 來產生；單場比賽的解說模式；以及[知識視角](knowledge.md)。 |
+| ![體積](../assets/img/zh-Hant/compare.webp) | **[體積](volumes.md)** - 繪製方塊、角柱、圓柱與球體，依它們篩選、統計其中發生的事件、匯出，並將各地點並排比較；[明細](breakdown.md)可看出在某個地點誰、以及什麼表現最好。 |
+| ![篩選](../assets/img/zh-Hant/filters.webp) | **[篩選](filters.md)** - 依事件類型、玩家或 AI、載具類別、數值、任何欄位篩選，無論資料多大，都在顯示卡中完成。 |
+| ![關卡](../assets/img/zh-Hant/level-panel.webp) | **[關卡](levels.md)** - 地圖影像、使用[資料工具](#related-repositories)製作的 3D 關卡、簡化、[世界背景](world-backdrop.md)（飛行資料使用真實地形）。 |
 
 另外還有：賽車遊戲單圈分析用的[賽車分析](race-analysis.md)頁籤、Counter-Strike 2 比賽摘要用的[對戰](match-analysis.md)頁籤、在關卡上規劃用的[戰術板](tactics-board.md)、依載具呈現的[命中分析](hit-analysis.md)、數千場比賽的[大量分析](mass-analysis.md)、[攝影機路徑與影片](camera-path-and-video.md)、[40 種語言](languages.md)，以及[公制或英制單位](settings.md)。
 

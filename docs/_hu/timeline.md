@@ -12,7 +12,7 @@ outdated: false
 
 A kép alatti sáv olyan, mint egy videólejátszó: az adatot filmként lejátszhatja, szüneteltetheti, ugrálhat benne és változtathatja a sebességet.
 
-![Az idővonal sáv: 1 Összes/Lejátszás, 2 vezérlőgombok, 3 óra, 4 Sebesség, 5 Előzmény, a Span 30 s-os Ablakkal](../assets/img/en/timeline-bar.webp)
+![Az idővonal sáv: 1 Összes/Lejátszás, 2 vezérlőgombok, 3 óra, 4 Sebesség, 5 Előzmény, a Span 30 s-os Ablakkal](../assets/img/hu/timeline-bar.webp)
 
 A nézet alatti sáv az idővonal ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Eldönti, mely sorok látszanak bármely pillanatban. Időoszlop kell hozzá; ennek hiányában az egész sáv letiltva, a nézet az **Összes** módban marad, és az oldalsáv azt írja: *Nincs időoszlop ebben az adatban – az idővonal letiltva, és minden adatpont egyszerre látszik.*
 

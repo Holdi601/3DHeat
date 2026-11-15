@@ -13,7 +13,7 @@ outdated: false
 
 Ai condus același traseu de două ori. Fila **Analiză de cursă** redă ambele curse împreună în 3D, arată unde un tur a fost mai lent și îți spune de ce. Nu ai încă ture? Apasă **Tururi demonstrative**.
 
-![Fila Analiză de cursă cu ture demonstrative: bara laterală cu Tururi și Unde se poate câștiga timp, mașinile pe traseu, graficele de sub vedere](../assets/img/en/race-analysis-overview.webp)
+![Fila Analiză de cursă cu ture demonstrative: bara laterală cu Tururi și Unde se poate câștiga timp, mașinile pe traseu, graficele de sub vedere](../assets/img/ro/race-analysis-overview.webp)
 
 Fila compară două sau mai multe ture ale aceluiași traseu. Împarte pânza, camera și modelul încărcat al traseului (**Fundal / nivel**) cu harta termică; restul este propriu: propria bară laterală și propria bară de sub vedere. Cuvinte precum *tur*, *referință* și *apex* sunt în [glosar](glossary.md).
 

@@ -10,7 +10,7 @@ outdated: false
 
 # Demo verileri: görüntüleyiciyi beş dakikada deneyin
 
-![Demo Valley'de on tank maçının ısısı: adım 4'ün gösterdiği](../assets/img/en/heat-hero.webp)
+![Demo Valley'de on tank maçının ısısı: adım 4'ün gösterdiği](../assets/img/tr/heat-hero.webp)
 
 Henüz kendi verileriniz yok mu? Depo bazılarını üretir. İçindeki her şey uydurmadır: bir vadi, bir avlu ve üç uydurma oyun tarzında maçlar; oyuncuların adı *Blue 1* ya da *Red 3*. Bu sitedeki resimlerin tümü bununla çekildi.
 
@@ -45,7 +45,7 @@ Her tablo sütunlarını kendi altbilgisinde adlandırır; bu yüzden hiçbir e�
 6. **İçgörüler**'i açın (Isı haritası kenar çubuğunda): diğer yerlerden çok daha fazla ateş edilen, isabet alan ve yok edilen yerleri bulur - iki tepenin çevresinde.
 7. **Maç** sekmesini açın; **Tekrardaki maçlar** altında *Match 01* seçin; zaman çizelgesinde **Oynat**'a basın: [tekrar](match-replay.md).
 
-![Tankların figür olarak göründüğü Match 01 tekrarı](../assets/img/en/replay-overview.webp)
+![Tankların figür olarak göründüğü Match 01 tekrarı](../assets/img/tr/replay-overview.webp)
 
 Shooter için `demo-yard.glb` ve `shooter.parquet` dosyalarını yükleyin; hava muharebesi için `air.parquet` dosyasını (figürler **Figür boyutu** 4'te daha kolay görülür; bu, Isı haritası kenar çubuğunun **Takım görüntüleyici** panelindeki bir kaydırıcıdır).
 

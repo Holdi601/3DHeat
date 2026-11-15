@@ -15,7 +15,7 @@ Lagvarme viser hvor hvert lag var, hvert lag i sin egen farge. Der lagene overla
 
 **Lagvarme** (tast 3) er tetthetsfeltet til [Varme](heat.md) med hver [gruppe](glossary.md) gitt sin egen fargetone. Der gruppene overlapper, blandes fargetonene; en jevn kamp blir nøytral. Opasitet bærer fortsatt tetthet akkurat som i de andre modiene, så bildet svarer på *hvor mye* og *hvem* samtidig. Den trenger en gruppekolonne.
 
-![Lagvarme: hver side i sin egen farge; der de overlapper, blandes fargene](../assets/img/en/heat-teams.webp)
+![Lagvarme: hver side i sin egen farge; der de overlapper, blandes fargene](../assets/img/no/heat-teams.webp)
 
 Det er ikke [figuroverlegget](box-replay.md): det tegner én figur per person; dette er et varmefelt farget etter samme kolonne.
 

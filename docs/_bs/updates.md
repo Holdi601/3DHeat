@@ -18,7 +18,7 @@ Prikazivač vam kaže kada postoji novija verzija, i ažurira se sam samo ako ka
 2. **Ako kaže da pokrenete restart.bat**, zatvorite prozor servera (crni prozor koji je otvorio `start.bat`) i dvaput kliknite `restart.bat`.
 3. **Kada pokrenete prikazivač.** I `start.bat` provjerava. Ako postoji novija verzija, pita **Ažurirati sada? [Y/N]**. Pritisnite `Y` za ažuriranje. Pritisnite `N`, ili sačekajte 60 sekundi bez odgovora, da pokrenete verziju koju imate.
 
-![Obavijest o ažuriranju s dugmadima Ažuriraj sada i Kasnije](../assets/img/en/updates-notice.webp)
+![Obavijest o ažuriranju s dugmadima Ažuriraj sada i Kasnije](../assets/img/bs/updates-notice.webp)
 
 Kopija s vašim sopstvenim izmjenama nikada se ne ažurira za vas; okvir samo kaže da čeka ažuriranje i traži da sačuvate ili odložite svoje izmjene i pokrenete `git pull`. Kopija koja nije instalirana preko gita (recimo zip datoteka) ne prikazuje ništa.
 

@@ -21,7 +21,7 @@ Kada ništa nije učitano, scena je tamna s mrežom i obojenim osama (**Mreža**
 
 Nivo dijele sve tri kartice: kurs učitan u kartici Analiza utrke je isti nivo koji prikazuje toplotna mapa.
 
-![Panel Pozadina / nivo s učitanim nivoom: dugmad Slika mape i 3D model, Ratište, Neprozirnost, Svjetlina, Spremi u biblioteku i spisak Biblioteke](../assets/img/en/level-panel.webp)
+![Panel Pozadina / nivo s učitanim nivoom: dugmad Slika mape i 3D model, Ratište, Neprozirnost, Svjetlina, Spremi u biblioteku i spisak Biblioteke](../assets/img/bs/level-panel.webp)
 
 ## Stavite nivo iza svojih podataka {#put-a-level-behind-your-data}
 

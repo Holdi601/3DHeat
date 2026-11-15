@@ -15,7 +15,7 @@ Toplota barva mesta, kjer se je zgodilo veliko stvari: rdeče, kjer se je zgodil
 
 **Toplota** (tipka 1) je privzeti način. Vsaka vidna [vrstica](glossary.md) prispeva okrogel [sprajt](glossary.md), obrnjen proti kameri; prekrivajoči se sprajti se seštejejo v medpomnilniku s plavajočo vejico; vsota se preslika skozi barvno lestvico - privzeto prosojno → rdeče → rumeno → belo - in nariše čez prizor.
 
-![Toplota na 3D ravni: vroče točke v stavbah in na njihovih vrhovih](../assets/img/en/shooter-heat.webp)
+![Toplota na 3D ravni: vroče točke v stavbah in na njihovih vrhovih](../assets/img/sl/shooter-heat.webp)
 
 Slika prikazuje toploto kroga streljanja na ravni s stavbami: vroče točke so v sobah in na stopnicah, ne le na tleh.
 
@@ -26,7 +26,7 @@ Slika prikazuje toploto kroga streljanja na ravni s stavbami: vroče točke so v
 3. Spreminjajte **Polmer sprajta**, dokler se sosednje pike ne združijo v pasove: manjši prikaže posamezne točke, večji območja.
 4. Odprite **Barve toplote**, če želite spremeniti barve, ali **Globina**, da hribi in zidovi skrijejo toploto za seboj.
 
-![Razdelka Oblika toplote in Barve toplote v stranski vrstici, oba odprta](../assets/img/en/heat-panel.webp)
+![Razdelka Oblika toplote in Barve toplote v stranski vrstici, oba odprta](../assets/img/sl/heat-panel.webp)
 
 Iste plošče oblikujejo [Razliko](difference.md), [Toploto ekip](team-heat.md) in [Črtno toploto](line-heat.md); razlikujejo se v tem, kaj se prišteva (predznačeno, obarvano ali vzdolž črt), ne v tem, kako.
 

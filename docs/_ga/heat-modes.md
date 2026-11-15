@@ -15,7 +15,7 @@ Cuireann gach ponc lonradh beag leis, carnann na lonraí suas, agus péintéilte
 
 Roghnaíonn barra na modhanna ag barr bharra taoibh chluaisín na Léarscáile teasa conas a tharraingítear an [tacar sonraí](glossary.md). Roghnaíonn eochracha 1-4 Teas, Difríocht, Teas foirne agus Línte. Níl eochair ag an Forleagan figiúirí.
 
-![Barra na modhanna le Teas, Difríocht, Teas foirne, Forleagan figiúirí agus Línte](../assets/img/en/heat-modes-bar.webp)
+![Barra na modhanna le Teas, Difríocht, Teas foirne, Forleagan figiúirí agus Línte](../assets/img/ga/heat-modes-bar.webp)
 
 | Mód | An cheist a fhreagraíonn sé |
 |---|---|
@@ -25,7 +25,7 @@ Roghnaíonn barra na modhanna ag barr bharra taoibh chluaisín na Léarscáile t
 | **Línte** | Cén treo ar chuaigh daoine? |
 | **Forleagan figiúirí** | Cé a bhí cá háit, agus nuair? |
 
-![Na sonraí céanna i gceithre mhód: Teas, Difríocht, Teas foirne agus Línte](../assets/img/en/heat-modes-grid.webp)
+![Na sonraí céanna i gceithre mhód: Teas, Difríocht, Teas foirne agus Línte](../assets/img/ga/heat-modes-grid.webp)
 
 | Modh (lipéad an bharra) | Eochair | Cad a tharraingíonn sé | Riachtanas |
 |---|---|---|---|

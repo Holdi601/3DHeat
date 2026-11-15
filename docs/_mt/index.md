@@ -14,7 +14,7 @@ outdated: false
 
 Tagħbi pożizzjonijiet - CSV, Parquet, reġistrazzjonijiet Tacview, replays konvertiti, fajl wieħed, folder jew eluf ta' partiti - u araw bħala **sħana li tista' ttir fiha**, bħala **figuri li jerġgħu jilagħbu l-partita**, bħala linji tul it-toroq li ħadu n-nies, jew bħala popolazzjoni waħda kontra oħra. Jsib waħdu dak li jinqala' 'l barra, u jaħdem kollu fil-browser tiegħek: xejn ma jitgħabba x'imkien ieħor.
 
-![Sħana ta' għaxar partiti ta' tanks fuq il-wied demo](../assets/img/en/heat-hero.webp)
+![Sħana ta' għaxar partiti ta' tanks fuq il-wied demo](../assets/img/mt/heat-hero.webp)
 
 **Ġdid hawn?** Agħmel [id-data demo](demo-data.md) u segwi l-seba' passi tagħha. Kull ritratt fuq dan is-sit ittieħed b'hekk.
 
@@ -22,12 +22,12 @@ Tagħbi pożizzjonijiet - CSV, Parquet, reġistrazzjonijiet Tacview, replays kon
 
 | | |
 |---|---|
-| ![Differenza](../assets/img/en/heat-difference.webp) | **[Modi tas-sħana](heat-modes.md)** - sħana, [differenza](difference.md) (aħmar fejn naħa waħda kienet iktar, blu-aħdar fejn l-oħra kienet), [sħana tat-tim](team-heat.md), [sħana tal-linji](line-heat.md); [sħana direzzjonali](directional-heat.md) b'kunjals, qasam ta' vleġġi u grafiċi polari; sħana [mkejla bil-valur](value-weighting.md): kemm jiswew l-armi, il-vetturi u l-fjuwil. |
-| ![Replay](../assets/img/en/replay-tanks.webp) | **[Replay tal-partita](match-replay.md)** - kull unità bħala l-[figura](figures.md) ta' dak li hi, simboli NATO jew Russi 'l bogħod, missili u traċċanti, marki tal-laqtiet, wrecks, nirien, turretti, għanijiet, kameras bi stil Tacview u wiri taktiku; [ħafna partiti f'daqqa](many-matches.md). |
-| ![Għarfien](../assets/img/en/insights.webp) | **[Għarfien](insights.md)** - pożizzjonijiet b'saħħa, art mortali, trappoli tal-bidu, konġestjonijiet u plejers li joqogħdu 'l fuq, misjuba u mqassma bl-evidenza; sommarju bil-miktub, jew bl-AI li tagħżel; kummentatur għal partita waħda; il-[lenti tal-għarfien](knowledge.md). |
-| ![Volumi](../assets/img/en/compare.webp) | **[Volumi](volumes.md)** - ipitti kaxxi, prizmi, ċilindri u sfieri, iffiltra għalihom, għodd x'jiġri ġewwa, esportah, u qabbel postijiet ġenb ġenb; [qsim fid-dettall](breakdown.md) ta' min u x'jagħmel l-aħjar f'post. |
-| ![Filtri](../assets/img/en/filters.webp) | **[Filtri](filters.md)** - bit-tip tal-avveniment, plejer jew AI, klassi tal-vettura, valur, kwalunkwe kolonna, fil-kard grafiku f'kull daqs ta' data. |
-| ![Livell](../assets/img/en/level-panel.webp) | **[Livelli](levels.md)** - immaġini tal-mappa, livelli 3D magħmula bl-[għodod tad-data](#related-repositories), tnaqqis, l-[isfond tad-dinja](world-backdrop.md) b'art reali għal data ta' titjir. |
+| ![Differenza](../assets/img/mt/heat-difference.webp) | **[Modi tas-sħana](heat-modes.md)** - sħana, [differenza](difference.md) (aħmar fejn naħa waħda kienet iktar, blu-aħdar fejn l-oħra kienet), [sħana tat-tim](team-heat.md), [sħana tal-linji](line-heat.md); [sħana direzzjonali](directional-heat.md) b'kunjals, qasam ta' vleġġi u grafiċi polari; sħana [mkejla bil-valur](value-weighting.md): kemm jiswew l-armi, il-vetturi u l-fjuwil. |
+| ![Replay](../assets/img/mt/replay-tanks.webp) | **[Replay tal-partita](match-replay.md)** - kull unità bħala l-[figura](figures.md) ta' dak li hi, simboli NATO jew Russi 'l bogħod, missili u traċċanti, marki tal-laqtiet, wrecks, nirien, turretti, għanijiet, kameras bi stil Tacview u wiri taktiku; [ħafna partiti f'daqqa](many-matches.md). |
+| ![Għarfien](../assets/img/mt/insights.webp) | **[Għarfien](insights.md)** - pożizzjonijiet b'saħħa, art mortali, trappoli tal-bidu, konġestjonijiet u plejers li joqogħdu 'l fuq, misjuba u mqassma bl-evidenza; sommarju bil-miktub, jew bl-AI li tagħżel; kummentatur għal partita waħda; il-[lenti tal-għarfien](knowledge.md). |
+| ![Volumi](../assets/img/mt/compare.webp) | **[Volumi](volumes.md)** - ipitti kaxxi, prizmi, ċilindri u sfieri, iffiltra għalihom, għodd x'jiġri ġewwa, esportah, u qabbel postijiet ġenb ġenb; [qsim fid-dettall](breakdown.md) ta' min u x'jagħmel l-aħjar f'post. |
+| ![Filtri](../assets/img/mt/filters.webp) | **[Filtri](filters.md)** - bit-tip tal-avveniment, plejer jew AI, klassi tal-vettura, valur, kwalunkwe kolonna, fil-kard grafiku f'kull daqs ta' data. |
+| ![Livell](../assets/img/mt/level-panel.webp) | **[Livelli](levels.md)** - immaġini tal-mappa, livelli 3D magħmula bl-[għodod tad-data](#related-repositories), tnaqqis, l-[isfond tad-dinja](world-backdrop.md) b'art reali għal data ta' titjir. |
 
 Barra minn hekk: it-tab [Analiżi tat-tellieqa](race-analysis.md) għal ġirjiet ta' logħob tat-tellieqa, it-tab [Partita](match-analysis.md) għal sommarji ta' Counter-Strike 2, il-[Bord tat-tattika](tactics-board.md) għal pjanijiet fuq livell, [analiżi tal-kolpijiet](hit-analysis.md) għal kull vettura, [analiżi tal-massa](mass-analysis.md) ta' eluf ta' partiti, [mogħdijiet tal-kamera u vidjo](camera-path-and-video.md), [40 lingwa](languages.md), [unitajiet metriċi jew imperjali](settings.md).
 

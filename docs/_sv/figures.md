@@ -15,7 +15,7 @@ En **figur** är en liten 3D-modell av vad en enhet verkligen är: en stridsvagn
 
 Det finns cirka 2 000 namngivna fordon, flygplan, fartyg, vapen och soldater, alla byggda av visaren själv.
 
-![Stridsvagnarna i demon ritade som sina egna figurer](../assets/img/en/replay-tanks.webp)
+![Stridsvagnarna i demon ritade som sina egna figurer](../assets/img/sv/replay-tanks.webp)
 
 ## Vad som finns i katalogen {#what-is-in-the-catalogue}
 

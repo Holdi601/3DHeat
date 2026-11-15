@@ -18,7 +18,7 @@ Vizualizatorul îți spune când există o versiune mai nouă și se actualizeaz
 2. **Dacă spune să rulezi restart.bat**, închide fereastra serverului (fereastra neagră pe care a deschis-o `start.bat`) și fă dublu clic pe `restart.bat`.
 3. **Când pornești vizualizatorul.** `start.bat` verifică și el. Dacă există o versiune mai nouă, întreabă **Actualizez acum? [Y/N]**. Apasă `Y` ca să actualizezi. Apasă `N`, sau așteaptă 60 de secunde fără răspuns, ca să pornească versiunea pe care o ai.
 
-![Anunțul de actualizare cu Actualizează acum și Mai târziu](../assets/img/en/updates-notice.webp)
+![Anunțul de actualizare cu Actualizează acum și Mai târziu](../assets/img/ro/updates-notice.webp)
 
 O copie cu modificări proprii nu este niciodată actualizată pentru tine; caseta doar spune că o actualizare așteaptă și cere să salvezi sau să pui deoparte modificările și să rulezi `git pull`. O copie care nu a fost instalată cu git (un fișier zip, de exemplu) nu arată nimic.
 

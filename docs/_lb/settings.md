@@ -23,7 +23,7 @@ Ganz uewen an der Säitelleescht:
 | **...**-Knäppchen nieft **Eenheeten** | Mécht "Eng Eenheet fir all Gréisst wielen" op: eng Dropdown-Lëscht pro Gréisst |
 | **Sprooch**-Menü | D'Sprooch vum Viewer: [40 Sproochen](languages.md), oder déi vum Browser |
 
-![De Header mam Eenheeten-Menü an dem Fënster Eenheet pro Gréisst opgemaach](../assets/img/en/settings-units.webp)
+![De Header mam Eenheeten-Menü an dem Fënster Eenheet pro Gréisst opgemaach](../assets/img/lb/settings-units.webp)
 
 Zuelen, déi Dir an e Kascht tippt, dierfen en Punkt oder e Komma hunn (`0.35` oder `0,35`). Den Viewer liest béid a weist Zuelen esou, wéi d'Sprooch vum Viewer se schreift.
 
@@ -48,11 +48,11 @@ Aner Eenheeten, déi Dir fir eng Gréisst wielen kënnt: Distanz km, mi, NM; Vit
 
 ## Hëllefmodus {#help-mode}
 
-![Hëllefmodus: wat d'Faarwe bedeiten](../assets/img/en/help.webp)
+![Hëllefmodus: wat d'Faarwe bedeiten](../assets/img/lb/help.webp)
 
 Drëckt `?` oder `F1`, oder klickt de **?**-Knäppchen. Et weist *Wat d'Faarwe bedeiten*: Legende fir d'3D-Usiicht, d'Hëtzt-Verlaf, d'Equipenfaarwen, d'Faarwe vum Level, d'Statusfaarwe vun de Panelen, de Match-Panel an d'Rennusiicht. Et bleift un, bis Dir en ausschalt. Am Match-Tab erkläert et och d'Faarwe vum Match-Panel.
 
-![Hëllefmodus am Match-Tab](../assets/img/en/settings-help-match.webp)
+![Hëllefmodus am Match-Tab](../assets/img/lb/settings-help-match.webp)
 
 ## Wat de Browser sech mierkt {#what-the-browser-remembers}
 

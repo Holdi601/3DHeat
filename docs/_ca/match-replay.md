@@ -15,7 +15,7 @@ La repetició és una pel·lícula de la partida amb cada jugador dibuixat com l
 
 Els trets, els impactes, els incendis i les restes es dibuixen sobre les unitats i els objectius del nivell. Les càmeres, les etiquetes i una pantalla tàctica t'ajuden a llegir el combat. Coneixes Tacview? [Paritat amb Tacview](tacview-parity.md) mostra on és cadascuna de les seves eines.
 
-![Repetició amb figures de la demostració de tancs: els tancs com a figures pròpies, amb etiquetes de nom, vehicle i velocitat](../assets/img/en/replay-overview.webp)
+![Repetició amb figures de la demostració de tancs: els tancs com a figures pròpies, amb etiquetes de nom, vehicle i velocitat](../assets/img/ca/replay-overview.webp)
 
 ## Inicia una repetició {#start-a-replay}
 
@@ -26,11 +26,11 @@ Els trets, els impactes, els incendis i les restes es dibuixen sobre les unitats
 
 Les figures substitueixen les caixes per a cada unitat el nom o el tipus de la qual es coneix (vegeu [Figures](figures.md)). Les dades sense columna de nom o de tipus es dibuixen com a soldats.
 
-![La pestanya Partida: el selector de partides, la secció Figures, les vistes de càmera, Reprodueix i la llista d'esdeveniments](../assets/img/en/match-replay-tab.webp)
+![La pestanya Partida: el selector de partides, la secció Figures, les vistes de càmera, Reprodueix i la llista d'esdeveniments](../assets/img/ca/match-replay-tab.webp)
 
 ## Figures {#figures}
 
-![Un tanc en flames a la càmera d'òrbita, amb el tir que l'ha tocat](../assets/img/en/replay-tanks.webp)
+![Un tanc en flames a la càmera d'òrbita, amb el tir que l'ha tocat](../assets/img/ca/replay-tanks.webp)
 
 | Configuració (secció **Figures**) | Per defecte | Què fa |
 |---|---|---|
@@ -51,7 +51,7 @@ Les figures substitueixen les caixes per a cada unitat el nom o el tipus de la q
 
 Quan una unitat seria més petita que **Figura més petita a la pantalla**, pot convertir-se en un símbol que es llegeix bé. La forma indica el tipus (per exemple una caixa arrodonida amb una marca d'oruga per a blindats); el color indica el bàndol. Obre el menú **Símbols** per canviar l'estil.
 
-![Les mateixes sis unitats com a símbols NATO, signes tàctics russos, icones de mapa de joc i només formes](../assets/img/en/match-replay-symbols-styles.webp)
+![Les mateixes sis unitats com a símbols NATO, signes tàctics russos, icones de mapa de joc i només formes](../assets/img/ca/match-replay-symbols-styles.webp)
 
 ### Marques d'impacte, restes i incendis {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Fes clic a una unitat o a la seva etiqueta per **seguir-la**; la secció **Repet
 
 ## Pantalla tàctica {#tactical-display}
 
-![La demostració aèria amb l'aspecte de pantalla tàctica (T): terreny en filferro, panells de morts i esdeveniments](../assets/img/en/replay-air-tactical.webp)
+![La demostració aèria amb l'aspecte de pantalla tàctica (T): terreny en filferro, panells de morts i esdeveniments](../assets/img/ca/replay-air-tactical.webp)
 
 La secció **Pantalla tàctica** dibuixa, per a cap unitat, les seleccionades, totes, o un tipus (aeronaus, terra, vaixells, armes): vectors de velocitat i la trajectòria endavant, línies de morro i de sustentació, cons de radar, bloquejos, enllaços de dades, zones i línies d'enfrontament, línies de visió, on miren els jugadors (cons de visió), la punteria de la torreta, i la càmera enregistrada.
 
@@ -84,7 +84,7 @@ La secció **Pantalla tàctica** dibuixa, per a cap unitat, les seleccionades, t
 
 `T` (o l'interruptor **Mostra com a pantalla tàctica**) canvia l'aspecte a un estil de pantalla de radar: brillantor, contorns, línies de nivell, una quadrícula de mesura, línies d'exploració, anells de distància, escales d'altitud, panells amb morts i esdeveniments, i un **Director** que mou la càmera als esdeveniments per si sol.
 
-![El mateix combat aeri amb l'aspecte normal](../assets/img/en/replay-air.webp)
+![El mateix combat aeri amb l'aspecte normal](../assets/img/ca/replay-air.webp)
 
 ## Objectius {#objectives}
 

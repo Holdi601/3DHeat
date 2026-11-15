@@ -14,7 +14,7 @@ outdated: false
 
 Her maç kendi başlangıcından başlar ve birimleri figür olarak hareket eder. Dosyalar doğrudan grafik kartına gider ve tam bir tablo oluşturulmaz; bu yüzden normal bir yüklemenin belleğinin tükeneceği yerde de akıcı çalışır.
 
-![Her maç için bir renkle, üst üste konmuş on tank maçı](../assets/img/en/many-matches.webp)
+![Her maç için bir renkle, üst üste konmuş on tank maçı](../assets/img/tr/many-matches.webp)
 
 ## Nasıl kullanılır {#how-to-use-it}
 

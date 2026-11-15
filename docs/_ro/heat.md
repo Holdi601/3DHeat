@@ -15,7 +15,7 @@ Căldura colorează locurile unde s-au petrecut multe lucruri: roșu acolo unde 
 
 **Căldură** (tasta 1) este modul implicit. Fiecare [rând](glossary.md) vizibil adaugă un [sprite](glossary.md) rotund orientat spre cameră; sprite-urile care se suprapun se adună într-un buffer cu virgulă mobilă; suma trece printr-o rampă de culori - implicit transparent → roșu → galben → alb - și se desenează peste scenă.
 
-![Căldură pe un nivel 3D: zone fierbinți în interiorul și deasupra clădirilor](../assets/img/en/shooter-heat.webp)
+![Căldură pe un nivel 3D: zone fierbinți în interiorul și deasupra clădirilor](../assets/img/ro/shooter-heat.webp)
 
 Imaginea arată căldura unei runde de tragător pe un nivel cu clădiri: zonele fierbinți stau în încăperi și pe scări, nu doar pe sol.
 
@@ -26,7 +26,7 @@ Imaginea arată căldura unei runde de tragător pe un nivel cu clădiri: zonele
 3. Schimbă **Raza sprite-ului** până când punctele vecine se unesc în benzi: mai mic arată pete singulare, mai mare arată zone.
 4. Deschide **Culorile căldurii** ca să schimbi culorile, sau **Adâncime** ca să lași dealurile și zidurile să ascundă căldura din spatele lor.
 
-![Secțiunile Forma căldurii și Culorile căldurii din bara laterală, ambele deschise](../assets/img/en/heat-panel.webp)
+![Secțiunile Forma căldurii și Culorile căldurii din bara laterală, ambele deschise](../assets/img/ro/heat-panel.webp)
 
 Aceleași panouri modelează [Diferența](difference.md), [Căldura pe echipe](team-heat.md) și [Căldura pe linii](line-heat.md); diferă ce se adaugă (cu semn, colorat sau de-a lungul liniilor), nu cum.
 

@@ -14,7 +14,7 @@ outdated: false
 
 每场比赛都从各自的开始处出发，其单位以图形的形式移动。文件直接进入显卡，不会构建完整的表格，因此即使在普通加载会耗尽内存的情况下，它也能流畅播放。
 
-![Ten tank matches laid over each other, one colour per match](../assets/img/en/many-matches.webp)
+![Ten tank matches laid over each other, one colour per match](../assets/img/zh/many-matches.webp)
 
 ## 使用方法 {#how-to-use-it}
 

@@ -15,7 +15,7 @@ Powtórka to film z meczu, w którym każdy gracz jest narysowany jako to, czym 
 
 Strzały, trafienia, pożary i wraki są rysowane na jednostkach i celach na poziomie. Kamery, etykiety i wyświetlacz taktyczny pomagają czytać walkę. Znasz Tacview? [Zgodność z Tacview](tacview-parity.md) pokazuje, gdzie jest każde z jego narzędzi.
 
-![Powtórka z figurami dla demo czołgów: czołgi jako własne figury, z etykietami nazwy, pojazdu i prędkości](../assets/img/en/replay-overview.webp)
+![Powtórka z figurami dla demo czołgów: czołgi jako własne figury, z etykietami nazwy, pojazdu i prędkości](../assets/img/pl/replay-overview.webp)
 
 ## Rozpocznij powtórkę {#start-a-replay}
 
@@ -26,11 +26,11 @@ Strzały, trafienia, pożary i wraki są rysowane na jednostkach i celach na poz
 
 Figury zastępują sześciany dla każdej jednostki, której nazwa albo typ jest znany (zob. [Sylwetki](figures.md)). Dane bez kolumny nazwy ani typu są rysowane jako żołnierze.
 
-![Karta Mecz: wybór meczów, sekcja Figury, widoki kamer, Odtwórz i lista zdarzeń](../assets/img/en/match-replay-tab.webp)
+![Karta Mecz: wybór meczów, sekcja Figury, widoki kamer, Odtwórz i lista zdarzeń](../assets/img/pl/match-replay-tab.webp)
 
 ## Figury {#figures}
 
-![Płonący czołg w kamerze orbity, z pociskiem, który go trafił](../assets/img/en/replay-tanks.webp)
+![Płonący czołg w kamerze orbity, z pociskiem, który go trafił](../assets/img/pl/replay-tanks.webp)
 
 | Ustawienie (sekcja **Figury**) | Domyślnie | Co robi |
 |---|---|---|
@@ -51,7 +51,7 @@ Figury zastępują sześciany dla każdej jednostki, której nazwa albo typ jest
 
 Gdy jednostka byłaby mniejsza niż **Najmniejsza figura na ekranie**, może stać się symbolem, który pozostaje czytelny. Kształt mówi, jakiego jest rodzaju (na przykład zaokrąglony prostokąt ze znakiem gąsienicy dla pancerza); kolor mówi, po czyjej jest stronie. Otwórz menu **Symbole**, aby zmienić styl.
 
-![Te same sześć jednostek jako symbole NATO, rosyjskie znaki taktyczne, ikony mapy gry i same kształty](../assets/img/en/match-replay-symbols-styles.webp)
+![Te same sześć jednostek jako symbole NATO, rosyjskie znaki taktyczne, ikony mapy gry i same kształty](../assets/img/pl/match-replay-symbols-styles.webp)
 
 ### Znaczniki trafień, wraki i pożary {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Kliknij jednostkę albo jej etykietę, by **podążać** za nią; sekcja **Powt�
 
 ## Wyświetlanie taktyczne {#tactical-display}
 
-![Demo powietrzne w wyglądzie wyświetlacza taktycznego (T): siatka terenu, panele zabójstw i zdarzeń](../assets/img/en/replay-air-tactical.webp)
+![Demo powietrzne w wyglądzie wyświetlacza taktycznego (T): siatka terenu, panele zabójstw i zdarzeń](../assets/img/pl/replay-air-tactical.webp)
 
 Sekcja **Wyświetlanie taktyczne** rysuje dla żadnej jednostki, dla wybranych, dla wszystkich albo dla jednego rodzaju (samoloty, naziemne, okręty, uzbrojenie): wektory prędkości i ścieżkę przed jednostką, linie dziobu i nośności, stożki radarów, namierzenia, łącza danych, strefy i linie zaangażowania, linie widzenia, miejsca, w które patrzą gracze (stożki widzenia), celowanie wieży i zarejestrowaną kamerę.
 
@@ -84,7 +84,7 @@ Sekcja **Wyświetlanie taktyczne** rysuje dla żadnej jednostki, dla wybranych, 
 
 `T` (albo przełącznik **Pokaż jako wyświetlacz taktyczny**) przełącza wygląd na styl ekranu radarowego: poświata, kontury, linie poziomicy, siatka pomiarowa, linie skanowania, pierścienie zasięgu, drabiny wysokości, panele z zabójstwami i zdarzeniami oraz **Reżyser**, który sam przesuwa kamerę do zdarzeń.
 
-![Ta sama walka powietrzna w zwykłym wyglądzie](../assets/img/en/replay-air.webp)
+![Ta sama walka powietrzna w zwykłym wyglądzie](../assets/img/pl/replay-air.webp)
 
 ## Cele {#objectives}
 

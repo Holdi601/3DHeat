@@ -15,7 +15,7 @@ Rout, wou Team A méi war, gréng-blo, wou Team B méi war, näischt, wou se gl�
 
 **Ënnerscheed** (Tast 2) ass vorzeechend Hëtzt. Zeilen vun enger Populatioun addéieren Hëtzt; Zeilen vun enger anerer zéien se of. Wou sech déi zwee gläichméisseg iwwerlappen, ass d'Resultat null a ganz transparent; wou eng Säit dominéiert, weist sech dat a senger Säitefaarf - standardméisseg waarm (transparent → rout → giel → wäiss) fir d'**+**-Säit a kal (transparent → gréng → blo → purpur) fir d'**−**-Säit.
 
-![Ënnerscheed-Hëtzt: rout, wou d'+-Säit méi war, gréng a blo, wou d'−-Säit méi war](../assets/img/en/difference-split.webp)
+![Ënnerscheed-Hëtzt: rout, wou d'+-Säit méi war, gréng a blo, wou d'−-Säit méi war](../assets/img/lb/difference-split.webp)
 
 ## Wéi een et benotzt {#how-to-use-it}
 

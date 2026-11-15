@@ -15,7 +15,7 @@ Toplota ekip pokaže, kje je bila vsaka ekipa, vsaka ekipa v svoji barvi. Kjer s
 
 **Toplota ekip** (tipka 3) je polje gostote iz [Toplote](heat.md), pri čemer ima vsaka [skupina](glossary.md) svoj odtenek. Kjer se skupine prekrivajo, se njihovi odtenki mešajo; enakovreden spopad je nevtralen. Prosojnost še vedno nosi gostoto natanko kot v drugih načinih, zato slika hkrati odgovarja na *koliko* in *čigava*. Potrebuje stolpec skupine.
 
-![Toplota ekip: vsaka stran v svoji barvi; kjer se prekrivata, se barve mešajo](../assets/img/en/heat-teams.webp)
+![Toplota ekip: vsaka stran v svoji barvi; kjer se prekrivata, se barve mešajo](../assets/img/sl/heat-teams.webp)
 
 Ni [prekrivanje figur](box-replay.md): to nariše eno figuro na osebo; to je polje toplote, obarvano s istim stolpcem.
 

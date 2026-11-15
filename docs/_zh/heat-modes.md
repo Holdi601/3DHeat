@@ -15,7 +15,7 @@ outdated: false
 
 热力图标签页侧边栏顶部的模式栏决定如何绘制[数据集](glossary.md)。按键 1-4 分别选择热度、差值、队伍热度和线条。模型叠加没有快捷键。
 
-![The mode bar with Heat, Difference, Team heat, Figure overlay and Lines](../assets/img/en/heat-modes-bar.webp)
+![The mode bar with Heat, Difference, Team heat, Figure overlay and Lines](../assets/img/zh/heat-modes-bar.webp)
 
 | 模式 | 它回答的问题 |
 |---|---|
@@ -25,7 +25,7 @@ outdated: false
 | **线条** | 人们走了哪条路？ |
 | **模型叠加** | 谁在哪里，在什么时候？ |
 
-![The same data in four modes: Heat, Difference, Team heat and Lines](../assets/img/en/heat-modes-grid.webp)
+![The same data in four modes: Heat, Difference, Team heat and Lines](../assets/img/zh/heat-modes-grid.webp)
 
 | 模式（模式栏标签） | 按键 | 绘制内容 | 需要 |
 |---|---|---|---|

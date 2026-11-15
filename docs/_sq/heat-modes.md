@@ -15,7 +15,7 @@ outdated: false
 
 Shiriti i modeve në krye të shiritit anësor të skedës Harta e nxehtësisë zgjedh si vizatohet [grupi i të dhënave](glossary.md). Tastet 1-4 zgjedhin Nxehtësi, Diferencë, Nxehtësi ekipi dhe Vija. Mbivendosje figurash nuk ka tast.
 
-![Shiriti i modeve me Nxehtësi, Diferencë, Nxehtësi ekipi, Mbivendosje figurash dhe Vija](../assets/img/en/heat-modes-bar.webp)
+![Shiriti i modeve me Nxehtësi, Diferencë, Nxehtësi ekipi, Mbivendosje figurash dhe Vija](../assets/img/sq/heat-modes-bar.webp)
 
 | Modaliteti | Pyetja që i përgjigjet |
 |---|---|
@@ -25,7 +25,7 @@ Shiriti i modeve në krye të shiritit anësor të skedës Harta e nxehtësisë 
 | **Vija** | Nga cila anë shkuan njerëzit? |
 | **Mbivendosje figurash** | Kush ishte ku, dhe kur? |
 
-![Të njëjtat të dhëna në katër modalitete: Nxehtësi, Diferencë, Nxehtësi ekipi dhe Vija](../assets/img/en/heat-modes-grid.webp)
+![Të njëjtat të dhëna në katër modalitete: Nxehtësi, Diferencë, Nxehtësi ekipi dhe Vija](../assets/img/sq/heat-modes-grid.webp)
 
 | Modaliteti (etiketa në shirit) | Tasti | Çfarë vizaton | Kërkon |
 |---|---|---|---|

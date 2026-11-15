@@ -24,7 +24,7 @@ Efst í hliðarstikunni:
 | **...**-hnappur við hlið **Einingar** | Opnar "Veldu mælieiningu fyrir hverja stærð": eina fellivalmynd fyrir hverja stærð |
 | **Tungumál**-valmynd | Tungumál skoðarans: [40 tungumál](languages.md), eða tungumál vafrans |
 
-![Hausinn með valmyndinni Einingar og glugganum fyrir eina einingu á hverja stærð opnum](../assets/img/en/settings-units.webp)
+![Hausinn með valmyndinni Einingar og glugganum fyrir eina einingu á hverja stærð opnum](../assets/img/is/settings-units.webp)
 
 Tölur sem þú skrifar í reit mega nota annaðhvort punkt eða komma (`0.35` eða `0,35`). Skoðarinn les hvort tveggja og sýnir tölur eins og tungumál skoðarans skrifar þær.
 
@@ -49,11 +49,11 @@ Aðrar einingar sem þú getur valið fyrir eina stærð: vegalengd km, mi, NM; 
 
 ## Hjálparhamur {#help-mode}
 
-![Hjálparhamur: hvað litirnir þýða](../assets/img/en/help.webp)
+![Hjálparhamur: hvað litirnir þýða](../assets/img/is/help.webp)
 
 Ýttu á `?` eða `F1`, eða smelltu á hnappinn **?**. Hann sýnir *Hvað litirnir þýða*: skýringar á þrívíðu sýninni, hitaskölunum, liðslitum, litum borðsins, stöðulitum spjaldanna, leikspjaldinu og kappakstursglugganum. Hann helst á þar til þú slekkur á honum. Í flipanum Leikur útskýrir hann líka liti leikspjaldsins.
 
-![Hjálparhamur í flipanum Leikur](../assets/img/en/settings-help-match.webp)
+![Hjálparhamur í flipanum Leikur](../assets/img/is/settings-help-match.webp)
 
 ## Það sem vafrinn man {#what-the-browser-remembers}
 

@@ -12,7 +12,7 @@ outdated: false
 
 圖像下方的列就像影片播放器：你可以把資料當成影片播放、暫停、跳到任意位置，並變更速度。
 
-![時間軸列：1 全部／播放、2 傳輸按鈕、3 時鐘、4 速度、5 歷史，並顯示時間窗與 30 秒區間](../assets/img/en/timeline-bar.webp)
+![時間軸列：1 全部／播放、2 傳輸按鈕、3 時鐘、4 速度、5 歷史，並顯示時間窗與 30 秒區間](../assets/img/zh-Hant/timeline-bar.webp)
 
 檢視下方的列就是時間軸（[`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)）。它決定任何時刻哪些列是可見的。它需要時間欄位；沒有時間欄位時，整個列會停用，檢視保持在**全部**，側邊欄會顯示*此資料沒有時間欄位 - 時間軸已停用，所有資料點會一次顯示。*
 

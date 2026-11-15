@@ -15,7 +15,7 @@ En **figur** er en liten 3D-modell av det en enhet egentlig er: en stridsvogn, e
 
 Det finnes rundt 2 000 navngitte kjøretøy, fly, skip, våpen og soldater, alle bygget av visningsprogrammet selv.
 
-![Stridsvognene i demoen tegnet som egne figurer](../assets/img/en/replay-tanks.webp)
+![Stridsvognene i demoen tegnet som egne figurer](../assets/img/no/replay-tanks.webp)
 
 ## Hva som finnes i katalogen {#what-is-in-the-catalogue}
 

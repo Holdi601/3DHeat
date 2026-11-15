@@ -23,7 +23,7 @@ A sáv tetején:
 | **...** gomb az **Egységek** mellett | Megnyitja a „Válasszon mértékegységet minden mennyiséghez” ablakot: egy legördülő mező mennyiségenként |
 | **Nyelv** menü | A megjelenítő nyelve: [40 nyelv](languages.md), vagy a böngészőé |
 
-![A fejléc a Mértékegységek menüvel és a mennyiségenkénti mértékegység-ablakkal](../assets/img/en/settings-units.webp)
+![A fejléc a Mértékegységek menüvel és a mennyiségenkénti mértékegység-ablakkal](../assets/img/hu/settings-units.webp)
 
 A dobozba beírt számokban lehet pont vagy vessző is (`0.35` vagy `0,35`). A megjelenítő mindkettőt olvassa, és a számokat az Ön nyelvének szokása szerint mutatja.
 
@@ -48,11 +48,11 @@ Egy mennyiséghez további választható mértékegységek: távolság km, mi, N
 
 ## Súgómód {#help-mode}
 
-![Súgómód: mit jelentenek a színek](../assets/img/en/help.webp)
+![Súgómód: mit jelentenek a színek](../assets/img/hu/help.webp)
 
 Nyomja meg a `?` vagy `F1` gombot, vagy kattintson a **?** gombra. Megjelenik a *Mit jelentenek a színek* panel: jelmagyarázatok a 3D-s nézethez, a hőskálákhoz, a csapatszínekhez, a pálya színeihez, a panelek állapotszíneihez, a meccspanelhez és a versenynézethez. Addig marad, amíg ki nem kapcsolja. A Meccs fülön a meccspanel színeit is elmagyarázza.
 
-![Súgómód a Meccs fülön](../assets/img/en/settings-help-match.webp)
+![Súgómód a Meccs fülön](../assets/img/hu/settings-help-match.webp)
 
 ## Amit a böngésző megjegyez {#what-the-browser-remembers}
 

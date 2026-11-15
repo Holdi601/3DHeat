@@ -15,7 +15,7 @@ outdated: false
 
 Viss tiek skaitīts jūsu pārlūkā. Nekas neatstāj jūsu datoru, ja vien neieslēdzat ārēju MI (skatiet [Ārējais MI](#external-ai)).
 
-![Atziņas uz tanku demonstrācijas: 14 atradumi, spēcīgākais pirmais](../assets/img/en/insights.webp)
+![Atziņas uz tanku demonstrācijas: 14 atradumi, spēcīgākais pirmais](../assets/img/lv/insights.webp)
 
 Sadaļa **Atziņas** atrodas Siltumkartes un Mača cilņu sānjoslā. Tai ir trīs cilnes: **Atradumi**, **Kopsavilkums** un **Komentētājs**.
 
@@ -30,7 +30,7 @@ Skaitīšanā tiek izmantoti pašreizējie filtri, paslēptās grupas un izvēl�
 
 Saraksta augšā esošās rindas (piemēram, naudas kopsummas) apkopo visus datus pirms atradumiem.
 
-![Atrasts atradums atvērts: nopietnas uguns karstā zona, tās skaitļi un atbilstošs fragments no literatūras](../assets/img/en/insights-finding.webp)
+![Atrasts atradums atvērts: nopietnas uguns karstā zona, tās skaitļi un atbilstošs fragments no literatūras](../assets/img/lv/insights-finding.webp)
 
 ### Detektori {#the-detectors}
 
@@ -55,7 +55,7 @@ Katra vieta vai grupa tiek pārbaudīta pret pārējo karti (precīzi binomiāli
 
 Cilnē **Kopsavilkums** atradumi tiek uzrakstīti kā īss teksts: ievads, skaidrākais atradums, viens par taktiku, viens par balansēšanu, pārējie grupēti pēc detektora, un cik no tiem balstās uz vājākiem pierādījumiem. Katram rindkopas punktam ir numurētas pogas, kas parāda tās atradumus. **Kopēt tekstu** to kopē.
 
-![Kopsavilkums, ko uzrakstījis iebūvētais stāstītājs](../assets/img/en/debrief.webp)
+![Kopsavilkums, ko uzrakstījis iebūvētais stāstītājs](../assets/img/lv/debrief.webp)
 
 Iebūvētais stāstītājs darbojas bezsaistē, jūsu valodā. Virs tā esošais **Lēcas** atlasītājs (skatiet [Zināšanu lēca](knowledge.md)) izlemj, kādu literatūru rindkopas citē.
 
@@ -78,7 +78,7 @@ Pēc tam ierakstiet neobligātu jautājumu un nospiediet **Rakstīt ar MI**. Tie
 
 Vienai **spēlei** (izvēlieties vienu, ja ielādētas vairākas) **Komentētājs** atrod mirkļus, kas vērti skatīšanās: pirmo asiņu, vairāku nogalinājumu, apmaiņas, izdzīvošanas, mērķa svārstības, atgriešanās, izcilus spēlētājus, tālus šāvienus.
 
-![Komentētāja mirkļi vienam raundam šāvēja demonstrācijā](../assets/img/en/caster.webp)
+![Komentētāja mirkļi vienam raundam šāvēja demonstrācijā](../assets/img/lv/caster.webp)
 
 - Noklikšķiniet uz mirkļa: skats pārslēdzas uz atkārtojumu, pārlec tieši pirms tā, lido tur un seko spēlētājam.
 - **Atskaņot mirkļus** atskaņo katru līdz beigām un pāriet tālāk; **Iepriekšējais** / **Nākamais** pārvietojas starp tiem.

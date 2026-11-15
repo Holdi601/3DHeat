@@ -23,7 +23,7 @@ outdated: false
 6. Gösterilen adımdan sona kadar planı oynatmak için **▶**'ye (ya da `K`) basın.
 7. **Plan adı**'nda planı adlandırın ve **Kaydet**'e basın.
 
-![Üstten görünümde Taktik sekmesi: solda oyun, taraflar ve araçlar; Taşı okları olan üç figür, bir duman Atış yayı, bir Alan ve altta adımlar](../assets/img/en/tactics.webp)
+![Üstten görünümde Taktik sekmesi: solda oyun, taraflar ve araçlar; Taşı okları olan üç figür, bir duman Atış yayı, bir Alan ve altta adımlar](../assets/img/tr/tactics.webp)
 
 ## Plana başlamak {#starting-a-plan}
 

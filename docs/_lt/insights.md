@@ -15,7 +15,7 @@ outdated: false
 
 Viskas skaičiuojama jūsų naršyklėje. Niekas nepalieka jūsų kompiuterio, nebent įjungsite išorinį DI (žr. [Išorinis DI](#external-ai)).
 
-![Įžvalgos tankų demonstracijoje: 14 radinių, stipriausi pirmi](../assets/img/en/insights.webp)
+![Įžvalgos tankų demonstracijoje: 14 radinių, stipriausi pirmi](../assets/img/lt/insights.webp)
 
 Skiltis **Įžvalgos** yra Šilumos žemėlapio ir Rungtynių skirtukų šoninėje juostoje. Ji turi tris skirtukus: **Radiniai**, **Santrauka** ir **Komentatorius**.
 
@@ -30,7 +30,7 @@ Skaičiavimas naudoja dabartinius filtrus, paslėptas grupes ir pasirinktas rung
 
 Sąrašo viršuje esančios eilutės (pavyzdžiui, pinigų sumos) apibendrina visus duomenis prieš radinius.
 
-![Atidarytas radinys: šūvių karštoji zona, jos skaičiai ir atitinkama literatūros ištrauka](../assets/img/en/insights-finding.webp)
+![Atidarytas radinys: šūvių karštoji zona, jos skaičiai ir atitinkama literatūros ištrauka](../assets/img/lt/insights-finding.webp)
 
 ### Detektoriai {#the-detectors}
 
@@ -55,7 +55,7 @@ Kiekviena vieta arba grupė tikrinama palyginus su likusiu žemėlapiu (tiksli b
 
 Skirtuke **Santrauka** radiniai surašomi į trumpą tekstą: įvadas, aiškiausias radinys, vienas taktikai, vienas balansavimui, likusieji sugrupuoti pagal detektorių ir kiek jų remiasi silpnesniais įrodymais. Kiekviena pastraipa turi numeruotus mygtukus, rodančius jos radinius. **Kopijuoti tekstą** jį nukopijuoja.
 
-![Santrauka, parašyta įmontuoto pasakotojo](../assets/img/en/debrief.webp)
+![Santrauka, parašyta įmontuoto pasakotojo](../assets/img/lt/debrief.webp)
 
 Įmontuotas pasakotojas veikia neprisijungęs, jūsų kalba. Virš jo esantis **Lęšis** parinkiklis (žr. [Žinių lęšis](knowledge.md)) nusprendžia, kokią literatūrą pastraipos cituoja.
 
@@ -78,7 +78,7 @@ Tada įveskite neprivalomą klausimą ir paspauskite **Rašyti su DI**. Siunčia
 
 **Vienoms rungtynėms** (jei įkelta keletas, pasirinkite vieną) **Komentatorius** randa akimirkas, vertas stebėti: pirmąjį kraujo praliejimą, kelis nužudymus vienu metu, keitimus, paskutinius kovotojus, tikslų pasikeitimus, sugrįžimus, išsiskiriančius žaidėjus, tolimus šūvius.
 
-![Komentatoriaus akimirkos vienam raundui iš šaulio demonstracijos](../assets/img/en/caster.webp)
+![Komentatoriaus akimirkos vienam raundui iš šaulio demonstracijos](../assets/img/lt/caster.webp)
 
 - Spustelėkite akimirką: rodinys persijungia į pakartojimą, peršoka prieš ją, nuskrenda į vietą ir seka žaidėją.
 - **Paleisti akimirkas** paleidžia kiekvieną iki pabaigos ir eina toliau; **Ankstesnė** / **Kita** persijungia tarp jų.

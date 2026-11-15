@@ -19,7 +19,7 @@ Skoðarinn segir þér þegar nýrri útgáfa er til, og uppfærir sjálfan sig 
 2. **Ef hann segir að keyra restart.bat**, lokaðu þjónsglugganum (svarta glugganum sem `start.bat` opnaði) og tvísmelltu á `restart.bat`.
 3. **Þegar þú ræsir skoðarann.** `start.bat` athugar líka. Ef nýrri útgáfa er til spyr hann **Update now? [Y/N]**. Ýttu á `Y` til að uppfæra. Ýttu á `N`, eða bíddu í 60 sekúndur án svars, til að ræsa útgáfuna sem þú hefur.
 
-![Uppfærslutilkynningin með Uppfæra núna og Síðar](../assets/img/en/updates-notice.webp)
+![Uppfærslutilkynningin með Uppfæra núna og Síðar](../assets/img/is/updates-notice.webp)
 
 Afrit með þínum eigin breytingum er aldrei uppfært fyrir þig; kassinn segir aðeins að uppfærsla bíði, og segir að þú eigir að vista eða geyma breytingar þínar og keyra `git pull`. Afrit sem var ekki sett upp með git (til dæmis zip-skrá) sýnir ekkert.
 

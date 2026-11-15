@@ -19,7 +19,7 @@ outdated: false
 2. La **Clasa vehiculului**, debifează *Tank*. Imaginea se schimbă imediat.
 3. Apasă **Șterge toate filtrele** ca să anulezi.
 
-![Panoul Filtre: mai întâi coloanele proprii ale vizualizatorului (Tip de eveniment, Clasa vehiculului), apoi coloanele din fișierul tău](../assets/img/en/filters.webp)
+![Panoul Filtre: mai întâi coloanele proprii ale vizualizatorului (Tip de eveniment, Clasa vehiculului), apoi coloanele din fișierul tău](../assets/img/ro/filters.webp)
 
 Primele rânduri sunt coloanele proprii ale vizualizatorului (mai jos). Rândurile de după ele vin din fișierul tău.
 
@@ -42,7 +42,7 @@ Ce coloane pot fi filtrate se decide la încărcare, pentru că trebuie citite a
 
 ## Coloane numerice (interval) {#numeric-columns-range}
 
-![Un filtru de interval (bani pierduți) cu ambele capete trase](../assets/img/en/filters-numeric.webp)
+![Un filtru de interval (bani pierduți) cu ambele capete trase](../assets/img/ro/filters-numeric.webp)
 
 | Parte | Înseamnă |
 |---|---|

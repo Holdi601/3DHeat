@@ -13,7 +13,7 @@ outdated: false
 
 Isto progo ste vozili dvakrat. Zavihek **Analiza dirke** predvaja obe vožnji skupaj v 3D, pokaže, kje je bil en krog počasnejši, in vam pove zakaj. Še nimate krogov? Pritisnite **Demo krogi**.
 
-![Zavihek Analiza dirke z demo krogi: stranska vrstica z Krogi in Kje se izboljšati, avtomobili na progi, grafi pod pogledom](../assets/img/en/race-analysis-overview.webp)
+![Zavihek Analiza dirke z demo krogi: stranska vrstica z Krogi in Kje se izboljšati, avtomobili na progi, grafi pod pogledom](../assets/img/sl/race-analysis-overview.webp)
 
 Zavihek primerja dva ali več krogov ene proge. Deli platno, kamero in naloženi model proge (**Ozadje / nivo**) s toplotnim zemljevidom; vse drugo je njegovo: lastna stranska vrstica in lastna vrstica pod pogledom. Izrazi, kot so *krog*, *referenca* in *apeks*, so v [slovarju pojmov](glossary.md).
 

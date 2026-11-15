@@ -15,7 +15,7 @@ Equipen-Heat weist, wou all Equipe war, all Equipe a senger eegener Faarf. Wou E
 
 **Equipen-Heat** (Tast 3) ass d'Dichtefeld vun [Heat](heat.md), wou all [Grupp](glossary.md) eng eege Faarfton kritt. Wou Gruppe sech iwwerlappen, mëschen sech hir Faarwen; e gläichen Duell kënnt neutral eraus. Déckkraaft drägt d'Dicht nach ëmmer exakt wéi an den anere Modi, sou datt d'Bild zur selwechter Zäit *wéi vill* an *wiem* beäntwert. Et brauch eng Gruppekolonn.
 
-![Equipen-Heat: all Säit a senger eegener Faarf; wou se sech iwwerlappen, mëschen sech d'Faarwen](../assets/img/en/heat-teams.webp)
+![Equipen-Heat: all Säit a senger eegener Faarf; wou se sech iwwerlappen, mëschen sech d'Faarwen](../assets/img/lb/heat-teams.webp)
 
 Et ass **net** de [Figuren-Overlay](box-replay.md): deen zeechent eng Figur pro Persoun; dat hei ass en Hëtztfeld, dat mat déiselwechter Kolonn gefierft ass.
 

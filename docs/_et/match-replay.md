@@ -15,7 +15,7 @@ Kordus on matši film, kus iga mängija on joonistatud selle asjana, mida ta juh
 
 Lasud, tabamused, tulekahjud ja vraki märgitakse tasemel olevatele üksustele ja eesmärkidele. Kaamerad, sildid ja taktikaline kuva aitavad lahingut lugeda. Kas tunned Tacview't? [Tacview tasemel](tacview-parity.md) näitab, kus on kõik selle tööriistad.
 
-![Tankide demo kujukordus: tankid oma kujudena, nime-, sõiduki- ja kiirusesiltidega](../assets/img/en/replay-overview.webp)
+![Tankide demo kujukordus: tankid oma kujudena, nime-, sõiduki- ja kiirusesiltidega](../assets/img/et/replay-overview.webp)
 
 ## Alusta kordust {#start-a-replay}
 
@@ -26,11 +26,11 @@ Lasud, tabamused, tulekahjud ja vraki märgitakse tasemel olevatele üksustele j
 
 Kujud asendavad kastid igal üksusel, mille nimi või tüüp on teada (vt [Kujud](figures.md)). Andmed, millel pole nime- ega tüübiveergu, joonistatakse sõduritena.
 
-![Vahekaart Matš: matšide valija, jaotis Kujud, kaamera vaated, Esita ja sündmuste loend](../assets/img/en/match-replay-tab.webp)
+![Vahekaart Matš: matšide valija, jaotis Kujud, kaamera vaated, Esita ja sündmuste loend](../assets/img/et/match-replay-tab.webp)
 
 ## Kujud {#figures}
 
-![Põlev tank orbitaalkaamera vaates, koos tabamusega, mis selle tabas](../assets/img/en/replay-tanks.webp)
+![Põlev tank orbitaalkaamera vaates, koos tabamusega, mis selle tabas](../assets/img/et/replay-tanks.webp)
 
 | Seade (jaotis **Kujud**) | Vaikimisi | Mida ta teeb |
 |---|---|---|
@@ -51,7 +51,7 @@ Kujud asendavad kastid igal üksusel, mille nimi või tüüp on teada (vt [Kujud
 
 Kui üksus oleks väiksem kui **Väikseim kujund ekraanil**, võib ta muutuda sümboliks, mis jääb loetavaks. Kuju ütleb liigi (näiteks soomuki puhul ümarnurkne kast jälje märgiga); värv ütleb poole. Menüüs **Tähised** saab stiili muuta.
 
-![Samad kuus üksust NATO sümbolitena, vene taktikaliste märkidena, mängukaardi ikoonidena ja ainult kujudena](../assets/img/en/match-replay-symbols-styles.webp)
+![Samad kuus üksust NATO sümbolitena, vene taktikaliste märkidena, mängukaardi ikoonidena ja ainult kujudena](../assets/img/et/match-replay-symbols-styles.webp)
 
 ### Tabamusmärgid, vrakid ja tulekahjud {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Klõpsa üksusel või selle sildil, et seda **jälgida**; jaotis **Kordus** paku
 
 ## Taktikaline kuva {#tactical-display}
 
-![Õhudemo taktikalises ilmes (T): traatraam maastik, tapmiste ja sündmuste paneelid](../assets/img/en/replay-air-tactical.webp)
+![Õhudemo taktikalises ilmes (T): traatraam maastik, tapmiste ja sündmuste paneelid](../assets/img/et/replay-air-tactical.webp)
 
 Jaotis **Taktikaline kuva** joonistab ühegi üksuse jaoks, valitud üksuste, kõigi või ühe liigi (õhusõidukid, maismaa, laevad, relvad) jaoks: kiirusvektorid ja ees olev tee, nina- ja tõstejooned, radarikoonused, lukustused, andmesidelingid, kaasamisalad ja -jooned, nägemisjooned, kus mängijad vaatavad (vaatekoonused), tornide sihtimine ja salvestatud kaamera.
 
@@ -84,7 +84,7 @@ Jaotis **Taktikaline kuva** joonistab ühegi üksuse jaoks, valitud üksuste, k�
 
 `T` (või lüliti **Näita taktikalise kuvana**) lülitab ilme radarikuva stiilile: hõõgumine, kontuurid, kõrgusjooned, mõõtmisvõrk, skaneerimisjooned, ulatusrõngad, kõrguse redelid, paneelid tapmiste ja sündmustega ning **Režissöör**, mis liigutab kaamerat sündmuste juurde ise.
 
-![Sama õhulahing tavalises ilmes](../assets/img/en/replay-air.webp)
+![Sama õhulahing tavalises ilmes](../assets/img/et/replay-air.webp)
 
 ## Eesmärgid {#objectives}
 

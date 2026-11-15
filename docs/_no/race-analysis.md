@@ -13,7 +13,7 @@ outdated: false
 
 Du kjørte samme bane to ganger. Fanen **Løpsanalyse** spiller begge kjøringene sammen i 3D, viser hvor den ene runden var tregere, og forteller deg hvorfor. Ingen runder ennå? Trykk **Demorunder**.
 
-![Fanen Løpsanalyse med demorunder: sidepanelet med Runder og Hvor du kan forbedre deg, bilene på banen, diagrammene under visningen](../assets/img/en/race-analysis-overview.webp)
+![Fanen Løpsanalyse med demorunder: sidepanelet med Runder og Hvor du kan forbedre deg, bilene på banen, diagrammene under visningen](../assets/img/no/race-analysis-overview.webp)
 
 Fanen sammenligner to eller flere runder på samme bane. Den deler lerretet, kameraet og banemodellen (**Bakgrunn / nivå**) med varmekartet; alt annet er sitt eget: sitt eget sidepanel og sin egen linje under visningen. Ord som *runde*, *referanse* og *apex* forklares i [ordlisten](glossary.md).
 

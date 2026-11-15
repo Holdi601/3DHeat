@@ -14,7 +14,7 @@ A **Sok meccs egyszerre** sok meccset játszik egymás tetején, így látja, ho
 
 Minden meccs a saját kezdetén indul, az egységei pedig figuraként mozognak. A fájlok közvetlenül a videokártyába kerülnek, és nincs teljes táblázat, így simán fut ott, ahol a normál betöltés kifogyna a memóriából.
 
-![Tíz harckocsimeccs egymásra rakva, meccsenként egy szín](../assets/img/en/many-matches.webp)
+![Tíz harckocsimeccs egymásra rakva, meccsenként egy szín](../assets/img/hu/many-matches.webp)
 
 ## Használat {#how-to-use-it}
 

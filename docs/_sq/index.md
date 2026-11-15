@@ -14,7 +14,7 @@ outdated: false
 
 Ngarko pozicionet - CSV, Parquet, regjistrime Tacview, riluajtje të konvertuara, një skedar i vetëm, një dosje ose mijëra ndeshje - dhe shiko them si **hartë nxehtësie nëpër të cilën mund të fluturosh**, si **figura që riluajnë ndeshjen**, si vija përgjatë rrugëve që ndoqën njerëzit, ose si një popullatë kundër një tjetre. Ajo gjen vetë ato që dallojnë, dhe punon tërësisht në shfletuesin tënd: asgjë nuk ngarkohet askund.
 
-![Nxehtësia e dhjetë ndeshjeve me tanke mbi demo valley](../assets/img/en/heat-hero.webp)
+![Nxehtësia e dhjetë ndeshjeve me tanke mbi demo valley](../assets/img/sq/heat-hero.webp)
 
 **Je i ri këtu?** Krijo [të dhënat demo](demo-data.md) dhe ndiq shtatë hapat e tyre. Çdo foto në këtë faqe u bë me to.
 
@@ -22,12 +22,12 @@ Ngarko pozicionet - CSV, Parquet, regjistrime Tacview, riluajtje të konvertuara
 
 | | |
 |---|---|
-| ![Diferenca](../assets/img/en/heat-difference.webp) | **[Mënyrat e nxehtësisë](heat-modes.md)** - nxehtësi, [diferencë](difference.md) (e kuqe aty ku njëra palë ishte më shumë, e gjelbër-blu aty ku ishte tjetra), [nxehtësi ekipi](team-heat.md), [nxehtësi vijash](line-heat.md); [nxehtësi sipas drejtimit](directional-heat.md) me sektorë, fusha shigjetash dhe grafikë polarë; nxehtësi [e peshuar sipas vlerës](value-weighting.md): sa kushtojnë armët, mjetet dhe karburanti. |
-| ![Riluajtja](../assets/img/en/replay-tanks.webp) | **[Riluajtja e ndeshjes](match-replay.md)** - çdo njësi si [figura](figures.md) e asaj që është, simbole NATO ose ruse kur është larg, raketa dhe tracerë, shenja goditjesh, mbetje, zjarre, kulla, objektiva, kamera në stilin e Tacview dhe ekran taktik; [shumë ndeshje njëherësh](many-matches.md). |
-| ![Vëzhgime](../assets/img/en/insights.webp) | **[Vëzhgime](insights.md)** - pozicione të forta, tokë vdekjeprurëse, kurthe lindjeje, grykë dhe lojtarë që dallohen, të gjetura dhe të renditura me provat; një përmbledhje me shkrim, opsionalisht nga një IA sipas zgjedhjes sate; një komentues për një ndeshje; [lente e njohurive](knowledge.md). |
-| ![Vëllime](../assets/img/en/compare.webp) | **[Vëllime](volumes.md)** - vizato kuti, prizma, cilindra dhe sfera, filtro sipas tyre, numëro çfarë ndodh brenda, eksporto dhe krahaso vende një pranë tjetrit; [zbërthimi](breakdown.md) i asaj që del më mirë, kush dhe çfarë, në një vend. |
-| ![Filtrat](../assets/img/en/filters.webp) | **[Filtrat](filters.md)** - sipas llojit të ngjarjes, lojtarit ose IA-së, klasës së mjetit, vlerës, çdo kolone, në kartën grafike me çfarëdo madhësie të dhënash. |
-| ![Niveli](../assets/img/en/level-panel.webp) | **[Nivelet](levels.md)** - imazhe hartash, nivele 3D të bëra me [veglat e të dhënave](#related-repositories), thjeshtim, [sfondi botëror](world-backdrop.md) me terren real për të dhënat e fluturimit. |
+| ![Diferenca](../assets/img/sq/heat-difference.webp) | **[Mënyrat e nxehtësisë](heat-modes.md)** - nxehtësi, [diferencë](difference.md) (e kuqe aty ku njëra palë ishte më shumë, e gjelbër-blu aty ku ishte tjetra), [nxehtësi ekipi](team-heat.md), [nxehtësi vijash](line-heat.md); [nxehtësi sipas drejtimit](directional-heat.md) me sektorë, fusha shigjetash dhe grafikë polarë; nxehtësi [e peshuar sipas vlerës](value-weighting.md): sa kushtojnë armët, mjetet dhe karburanti. |
+| ![Riluajtja](../assets/img/sq/replay-tanks.webp) | **[Riluajtja e ndeshjes](match-replay.md)** - çdo njësi si [figura](figures.md) e asaj që është, simbole NATO ose ruse kur është larg, raketa dhe tracerë, shenja goditjesh, mbetje, zjarre, kulla, objektiva, kamera në stilin e Tacview dhe ekran taktik; [shumë ndeshje njëherësh](many-matches.md). |
+| ![Vëzhgime](../assets/img/sq/insights.webp) | **[Vëzhgime](insights.md)** - pozicione të forta, tokë vdekjeprurëse, kurthe lindjeje, grykë dhe lojtarë që dallohen, të gjetura dhe të renditura me provat; një përmbledhje me shkrim, opsionalisht nga një IA sipas zgjedhjes sate; një komentues për një ndeshje; [lente e njohurive](knowledge.md). |
+| ![Vëllime](../assets/img/sq/compare.webp) | **[Vëllime](volumes.md)** - vizato kuti, prizma, cilindra dhe sfera, filtro sipas tyre, numëro çfarë ndodh brenda, eksporto dhe krahaso vende një pranë tjetrit; [zbërthimi](breakdown.md) i asaj që del më mirë, kush dhe çfarë, në një vend. |
+| ![Filtrat](../assets/img/sq/filters.webp) | **[Filtrat](filters.md)** - sipas llojit të ngjarjes, lojtarit ose IA-së, klasës së mjetit, vlerës, çdo kolone, në kartën grafike me çfarëdo madhësie të dhënash. |
+| ![Niveli](../assets/img/sq/level-panel.webp) | **[Nivelet](levels.md)** - imazhe hartash, nivele 3D të bëra me [veglat e të dhënave](#related-repositories), thjeshtim, [sfondi botëror](world-backdrop.md) me terren real për të dhënat e fluturimit. |
 
 Gjithashtu: skeda [Analiza e garës](race-analysis.md) për xhiro të lojërave me makina, skeda [Ndeshja](match-analysis.md) për përmbledhjet e Counter-Strike 2, [Tabela e taktikave](tactics-board.md) për plane mbi një nivel, [analiza e goditjeve](hit-analysis.md) për çdo mjet, [analiza masive](mass-analysis.md) e mijëra ndeshjeve, [rrugët e kamerës dhe videoja](camera-path-and-video.md), [40 gjuhë](languages.md), [njësi metrike ose imperiale](settings.md).
 

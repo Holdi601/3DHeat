@@ -15,7 +15,7 @@ Toplina boji mjesta gdje se događalo mnogo stvari: crveno tamo gdje se događal
 
 **Toplina** (tipka 1) je zadani način. Svaki vidljivi [redak](glossary.md) doprinosi okruglim [spriteom](glossary.md) okrenutim prema kameri; preklapajući spriteovi zbrajaju se u međuspremnik s pomičnom točkom; zbroj se preslikava kroz skalu boja - zadano prozirno → crveno → žuto → bijelo - i crta preko scene.
 
-![Toplina na 3D razini: vruće točke unutar i na vrhu zgrada](../assets/img/en/shooter-heat.webp)
+![Toplina na 3D razini: vruće točke unutar i na vrhu zgrada](../assets/img/hr/shooter-heat.webp)
 
 Slika prikazuje toplinu runde strijelca na razini sa zgradama: vruće točke su u sobama i na stubištima, ne samo na tlu.
 
@@ -26,7 +26,7 @@ Slika prikazuje toplinu runde strijelca na razini sa zgradama: vruće točke su 
 3. Mijenjajte **Radijus spritea** dok se susjedne točke ne spoje u pojaseve: manji prikazuje pojedinačne mrlje, veći prikazuje područja.
 4. Otvorite **Boje topline** da promijenite boje, ili **Dubinu** da brda i zidovi sakriju toplinu iza sebe.
 
-![Odjeljci Oblik topline i Boje topline na bočnoj traci, oba otvorena](../assets/img/en/heat-panel.webp)
+![Odjeljci Oblik topline i Boje topline na bočnoj traci, oba otvorena](../assets/img/hr/heat-panel.webp)
 
 Isti paneli oblikuju [Razliku](difference.md), [Toplinu timova](team-heat.md) i [Linijsku toplinu](line-heat.md); razlikuju se po onome što se dodaje (s predznakom, obojeno ili duž linija), a ne po načinu.
 

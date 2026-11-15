@@ -19,7 +19,7 @@ outdated: false
 2. Pod **Třída vozidla** odškrtněte *Tank*. Obrázek se hned změní.
 3. Stiskněte **Vymazat všechny filtry**, abyste to vrátili.
 
-![Panel Filtry: nejdřív vlastní sloupce prohlížeče (Typ události, Třída vozidla), pak sloupce z vašeho souboru](../assets/img/en/filters.webp)
+![Panel Filtry: nejdřív vlastní sloupce prohlížeče (Typ události, Třída vozidla), pak sloupce z vašeho souboru](../assets/img/cs/filters.webp)
 
 První řádky jsou vlastní sloupce prohlížeče (níže). Řádky za nimi pocházejí z vašeho souboru.
 
@@ -42,7 +42,7 @@ To, které sloupce lze filtrovat, se rozhoduje při načítání, protože se mu
 
 ## Číselné sloupce (rozsah) {#numeric-columns-range}
 
-![Filtr rozsahu (ztracené peníze) s oběma konci posunutými](../assets/img/en/filters-numeric.webp)
+![Filtr rozsahu (ztracené peníze) s oběma konci posunutými](../assets/img/cs/filters-numeric.webp)
 
 | Část | Význam |
 |---|---|

@@ -21,7 +21,7 @@ Ha semmi nincs betöltve, a jelenet sötét, rácsot és színes tengelyeket mut
 
 A pálya mindhárom fülön közös: a Versenyelemzés fülön betöltött pálya ugyanaz, amelyet a hőtérkép mutat.
 
-![A Háttér / pálya panel betöltött pályával: Térképkép és 3D-modell gombok, Hadszíntér, Átlátszatlanság, Fényerő, Mentés a könyvtárba és a Könyvtár lista](../assets/img/en/level-panel.webp)
+![A Háttér / pálya panel betöltött pályával: Térképkép és 3D-modell gombok, Hadszíntér, Átlátszatlanság, Fényerő, Mentés a könyvtárba és a Könyvtár lista](../assets/img/hu/level-panel.webp)
 
 ## Pálya az adat mögé {#put-a-level-behind-your-data}
 

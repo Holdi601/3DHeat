@@ -21,7 +21,7 @@ Wann näischt gelueden ass, ass d'Szen däischter mat engem Gitter a faarwege Ac
 
 De Level gëtt vun all dräi Tabs gedeelt: en Kurs, deen am Tab Course-Analys gelueden ass, ass dee selwechte Level wéi d'Heatmap weist.
 
-![De Panel Hannergrond / Level mat engem gelueden Level: d'Knäppchen Kaartebild an 3D-Modell, Theater, Deckkraaft, Hellegkeet, An der Bibliothéik späicheren an d'Bibliothéik-Lëscht](../assets/img/en/level-panel.webp)
+![De Panel Hannergrond / Level mat engem gelueden Level: d'Knäppchen Kaartebild an 3D-Modell, Theater, Deckkraaft, Hellegkeet, An der Bibliothéik späicheren an d'Bibliothéik-Lëscht](../assets/img/lb/level-panel.webp)
 
 ## E Level hannert Är Daten leeën {#put-a-level-behind-your-data}
 

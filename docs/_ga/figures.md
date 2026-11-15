@@ -15,7 +15,7 @@ Is **figiúr** samhail 3D bheag de cad is aonad i ndáiríre é: tanc, jet, long
 
 Tá thart ar 2,000 feithicil, aerárthach, long, arm agus saighdiúir ainmnithe ann, agus tógann an t-amharcóir féin iad go léir.
 
-![Tancanna an taispeána tarraingthe mar a bhfigiúirí féin](../assets/img/en/replay-tanks.webp)
+![Tancanna an taispeána tarraingthe mar a bhfigiúirí féin](../assets/img/ga/replay-tanks.webp)
 
 ## Cad atá sa chatalóg {#what-is-in-the-catalogue}
 

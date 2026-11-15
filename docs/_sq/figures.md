@@ -15,7 +15,7 @@ Një **figurë** është një model i vogël 3D i asaj që është në të vërt
 
 Ka rreth 2,000 mjete, avionë, anije, armë dhe ushtarë të emërtuar, të gjitha të ndërtuara nga vetë shikuesi.
 
-![Tanket e demos të vizatuara si figurat e tyre](../assets/img/en/replay-tanks.webp)
+![Tanket e demos të vizatuara si figurat e tyre](../assets/img/sq/replay-tanks.webp)
 
 ## Çfarë ka në katalog {#what-is-in-the-catalogue}
 

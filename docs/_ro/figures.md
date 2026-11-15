@@ -15,7 +15,7 @@ O **figură** este un mic model 3D a ceea ce este de fapt o unitate: un tanc, un
 
 Există circa 2.000 de vehicule, aeronave, nave, arme și soldați cu nume, toate construite chiar de vizualizator.
 
-![Tancurile din demonstrație desenate ca figuri proprii](../assets/img/en/replay-tanks.webp)
+![Tancurile din demonstrație desenate ca figuri proprii](../assets/img/ro/replay-tanks.webp)
 
 ## Ce conține catalogul {#what-is-in-the-catalogue}
 

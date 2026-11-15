@@ -15,7 +15,7 @@ Rood waar team A vaker was, groenblauw waar team B vaker was, niets waar ze even
 
 **Verschil** (toets 2) is warmte met een teken. Rijen van de ene populatie tellen warmte op; rijen van een andere trekken die af. Waar de twee gelijkmatig overlappen is het resultaat nul en volledig transparant; waar één overheerst toont het zich in de kleuren van die kant - standaard warm (transparant → rood → geel → wit) voor de kant **+** en koel (transparant → groen → blauw → paars) voor de kant **−**.
 
-![Verschilwarmte: rood waar de + kant vaker was, groen en blauw waar de - kant vaker was](../assets/img/en/difference-split.webp)
+![Verschilwarmte: rood waar de + kant vaker was, groen en blauw waar de - kant vaker was](../assets/img/nl/difference-split.webp)
 
 ## Zo gebruik je het {#how-to-use-it}
 

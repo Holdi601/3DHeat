@@ -21,7 +21,7 @@ Utan något inläst är scenen mörk med ett rutnät och färgade axlar (**Rutn�
 
 Banan delas av alla tre flikarna: en bana som lästs in i fliken Racinganalys är samma bana som värmekartan visar.
 
-![Panelen Bakgrund / nivå med en bana inläst: knapparna Kartbild och 3D-modell, Teater, Opacitet, Ljusstyrka, Spara i biblioteket och listan Bibliotek](../assets/img/en/level-panel.webp)
+![Panelen Bakgrund / nivå med en bana inläst: knapparna Kartbild och 3D-modell, Teater, Opacitet, Ljusstyrka, Spara i biblioteket och listan Bibliotek](../assets/img/sv/level-panel.webp)
 
 ## Lägg en bana bakom din data {#put-a-level-behind-your-data}
 

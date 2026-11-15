@@ -23,7 +23,7 @@ Het tabblad **Tactiek** is een tekenbord voor een teamplan: je zet kleine figuur
 6. Druk op **▶** (of `K`) om het plan vanaf de getoonde stap tot het einde af te spelen.
 7. Geef het plan een naam in **Naam van het plan** en druk op **Opslaan**.
 
-![Het tabblad Tactiek in bovenaanzicht: spel, kanten en gereedschappen links, drie figuren met bewegingspijlen, een rookboog voor een worp, een gebied en de stappen onderaan](../assets/img/en/tactics.webp)
+![Het tabblad Tactiek in bovenaanzicht: spel, kanten en gereedschappen links, drie figuren met bewegingspijlen, een rookboog voor een worp, een gebied en de stappen onderaan](../assets/img/nl/tactics.webp)
 
 ## Een plan beginnen {#starting-a-plan}
 

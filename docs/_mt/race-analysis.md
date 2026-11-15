@@ -13,7 +13,7 @@ outdated: false
 
 Int suqt l-istess kors darbtejn. It-tab **Analiżi tat-tellieqa** iħaddem iż-żewġ sewqiet flimkien fit-3D, juri fejn ġiro wieħed kien iktar bil-mod u jgħidlek għaliex. Ma għandekx ġirjiet għadhom? Agħfas **Dawriet demo**.
 
-![It-tab Analiżi tat-tellieqa b'dawriet demo: is-sidebar bi Ġirjiet u Fejn titjieb, il-karozzi fuq il-kors, il-grafiċi taħt il-veduta](../assets/img/en/race-analysis-overview.webp)
+![It-tab Analiżi tat-tellieqa b'dawriet demo: is-sidebar bi Ġirjiet u Fejn titjieb, il-karozzi fuq il-kors, il-grafiċi taħt il-veduta](../assets/img/mt/race-analysis-overview.webp)
 
 It-tab iqabbel żewġ ġirjiet jew iktar ta' kors wieħed. Jaqsam il-kanvas, il-kamera u l-mudell tal-kors mgħobbi (**Sfond / livell**) mas-sħana; kollox l-ieħor huwa tiegħu: is-sidebar tiegħu u l-bar tiegħu taħt il-veduta. Kliem bħal *ġiro*, *referenza* u *apex* hemm fil-[glossarju](glossary.md).
 

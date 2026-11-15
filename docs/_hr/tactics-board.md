@@ -23,7 +23,7 @@ Kartica **Taktika** je ploča za crtanje timskog plana: na kartu stavljate male 
 6. Pritisnite **▶** (ili `K`) da pustite plan od prikazanog koraka do kraja.
 7. Imenujte plan u **Naziv plana** i pritisnite **Spremi**.
 
-![Kartica Taktika u pogledu odozgo: igra, strane i alati lijevo, tri figure sa strelicama Pomakni, luk bacanja dima, Područje i koraci duž dna](../assets/img/en/tactics.webp)
+![Kartica Taktika u pogledu odozgo: igra, strane i alati lijevo, tri figure sa strelicama Pomakni, luk bacanja dima, Područje i koraci duž dna](../assets/img/hr/tactics.webp)
 
 ## Početak plana {#starting-a-plan}
 

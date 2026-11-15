@@ -14,7 +14,7 @@ outdated: false
 
 CSV、Parquet、Tacview の記録、変換したリプレイ、1つのファイル、フォルダー、何千もの試合のいずれでも位置データを読み込めます。そして、それを**飛び回れるヒートマップ**、**試合を再現するフィギュア**、プレイヤーが通った経路に沿った線、または1つの集団と別の集団の比較として見ることができます。自動で目立つ点を見つけ、根拠と一緒に順位をつけます。すべてあなたのブラウザーの中で動きます。どこにもアップロードされません。
 
-![demo valley の上の、10 戦車マッチのヒート](../assets/img/en/heat-hero.webp)
+![demo valley の上の、10 戦車マッチのヒート](../assets/img/ja/heat-hero.webp)
 
 **初めての方へ**: [デモデータ](demo-data.md)を作って、その7つの手順に従ってください。このサイトのすべての画像は、このデータを使って撮影されています。
 
@@ -22,12 +22,12 @@ CSV、Parquet、Tacview の記録、変換したリプレイ、1つのファイ�
 
 | | |
 |---|---|
-| ![差分](../assets/img/en/heat-difference.webp) | **[ヒートモード](heat-modes.md)** - ヒート、[差分](difference.md)（一方が多かった場所は赤、もう一方が多かった場所は緑から青）、[チームヒート](team-heat.md)、[線のヒート](line-heat.md)。矢印や扇形、極座標図を使う[方向ヒート](directional-heat.md)。[価値で重み付けしたヒート](value-weighting.md)：武器、車両、燃料がどれだけの価値を持つかを反映します。 |
-| ![リプレイ](../assets/img/en/replay-tanks.webp) | **[試合のリプレイ](match-replay.md)** - 各ユニットを、それが何であるかを表す[フィギュア](figures.md)として表示します。遠くの NATO またはロシアの記号、ミサイルと曳光弾、命中マーク、残骸、火災、砲塔、目標、Tacview 風のカメラ、戦術表示。[多数の試合を一度に](many-matches.md)も表示できます。 |
-| ![インサイト](../assets/img/en/insights.webp) | **[インサイト](insights.md)** - 有利な位置、危険な地形、スポーンの罠、チョークポイント、目立つプレイヤーを、根拠と順位付きで見つけます。書かれたまとめを、選んだ AI が作ることもできます。1試合の実況モードや、[ナレッジレンズ](knowledge.md)もあります。 |
-| ![ボリューム](../assets/img/en/compare.webp) | **[ボリューム](volumes.md)** - ボックス、角柱、円柱、球を描き、その中に絞り込み、その中で起きたことを数え、書き出し、場所を並べて比べます。その場所で誰が、何が最もよく機能しているかの[内訳](breakdown.md)も見られます。 |
-| ![フィルター](../assets/img/en/filters.webp) | **[フィルター](filters.md)** - イベントの種類、プレイヤーまたは AI、車両クラス、値、任意の列で絞り込みます。データの大きさに関係なく、グラフィックスカードで処理します。 |
-| ![レベル](../assets/img/en/level-panel.webp) | **[レベル](levels.md)** - マップ画像、[データツール](#related-repositories)で作った3Dレベル、簡略化、飛行データのための実際の地形を持つ[現実世界の背景](world-backdrop.md)。 |
+| ![差分](../assets/img/ja/heat-difference.webp) | **[ヒートモード](heat-modes.md)** - ヒート、[差分](difference.md)（一方が多かった場所は赤、もう一方が多かった場所は緑から青）、[チームヒート](team-heat.md)、[線のヒート](line-heat.md)。矢印や扇形、極座標図を使う[方向ヒート](directional-heat.md)。[価値で重み付けしたヒート](value-weighting.md)：武器、車両、燃料がどれだけの価値を持つかを反映します。 |
+| ![リプレイ](../assets/img/ja/replay-tanks.webp) | **[試合のリプレイ](match-replay.md)** - 各ユニットを、それが何であるかを表す[フィギュア](figures.md)として表示します。遠くの NATO またはロシアの記号、ミサイルと曳光弾、命中マーク、残骸、火災、砲塔、目標、Tacview 風のカメラ、戦術表示。[多数の試合を一度に](many-matches.md)も表示できます。 |
+| ![インサイト](../assets/img/ja/insights.webp) | **[インサイト](insights.md)** - 有利な位置、危険な地形、スポーンの罠、チョークポイント、目立つプレイヤーを、根拠と順位付きで見つけます。書かれたまとめを、選んだ AI が作ることもできます。1試合の実況モードや、[ナレッジレンズ](knowledge.md)もあります。 |
+| ![ボリューム](../assets/img/ja/compare.webp) | **[ボリューム](volumes.md)** - ボックス、角柱、円柱、球を描き、その中に絞り込み、その中で起きたことを数え、書き出し、場所を並べて比べます。その場所で誰が、何が最もよく機能しているかの[内訳](breakdown.md)も見られます。 |
+| ![フィルター](../assets/img/ja/filters.webp) | **[フィルター](filters.md)** - イベントの種類、プレイヤーまたは AI、車両クラス、値、任意の列で絞り込みます。データの大きさに関係なく、グラフィックスカードで処理します。 |
+| ![レベル](../assets/img/ja/level-panel.webp) | **[レベル](levels.md)** - マップ画像、[データツール](#related-repositories)で作った3Dレベル、簡略化、飛行データのための実際の地形を持つ[現実世界の背景](world-backdrop.md)。 |
 
 ほかにも、ゲームのラップを扱う[レース分析](race-analysis.md)タブ、Counter-Strike 2 の要約を扱う[試合分析](match-analysis.md)タブ、レベル上の計画を扱う[作戦ボード](tactics-board.md)、車両ごとの[被弾分析](hit-analysis.md)、何千もの試合の[大量分析](mass-analysis.md)、[カメラの経路と動画](camera-path-and-video.md)、[40 の言語](languages.md)、[メートル法またはヤード・ポンド法の単位](settings.md)があります。
 

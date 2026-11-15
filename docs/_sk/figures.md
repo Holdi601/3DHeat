@@ -15,7 +15,7 @@ outdated: false
 
 Je tu približne 2 000 pomenovaných vozidiel, lietadiel, lodí, zbraní a vojakov, všetko ich vytvára samotný prehliadač.
 
-![Tanky z ukážky nakreslené ako vlastné figúrky](../assets/img/en/replay-tanks.webp)
+![Tanky z ukážky nakreslené ako vlastné figúrky](../assets/img/sk/replay-tanks.webp)
 
 ## Čo je v katalógu {#what-is-in-the-catalogue}
 

@@ -15,7 +15,7 @@ Siltums nokrāso vietas, kur notika daudz kas: sarkans, kur notika mazliet, balt
 
 **Siltums** (taustiņš 1) ir noklusējuma režīms. Katra redzamā [rinda](glossary.md) pievieno apaļu, pret kameru vērstu [sprite](glossary.md); pārklājošies sprite saskaitās peldošo punktu bufferī; summa tiek pārveidota caur krāsu skalu - pēc noklusējuma caurspīdīgs → sarkans → dzeltens → balts - un uzzīmēta pāri ainai.
 
-![Siltums 3D līmenī: karstās vietas ēku iekšpusē un virsū](../assets/img/en/shooter-heat.webp)
+![Siltums 3D līmenī: karstās vietas ēku iekšpusē un virsū](../assets/img/lv/shooter-heat.webp)
 
 Attēlā redzams šāvēja raunda siltums līmenī ar ēkām: karstās vietas atrodas istabās un uz kāpnēm, ne tikai uz zemes.
 
@@ -26,7 +26,7 @@ Attēlā redzams šāvēja raunda siltums līmenī ar ēkām: karstās vietas at
 3. Mainiet **Spraita rādiuss**, līdz blakus esošie punkti saplūst joslās: mazāks rāda atsevišķus punktus, lielāks - laukumus.
 4. Atveriet **Siltuma krāsas**, lai mainītu krāsas, vai **Dziļums**, lai kalni un sienas paslēptu siltumu aiz sevis.
 
-![Sānjoslas sadaļas Siltuma forma un Siltuma krāsas, abas atvērtas](../assets/img/en/heat-panel.webp)
+![Sānjoslas sadaļas Siltuma forma un Siltuma krāsas, abas atvērtas](../assets/img/lv/heat-panel.webp)
 
 Tie paši paneļi veido [Starpību](difference.md), [Komandu siltumu](team-heat.md) un [Līniju siltumu](line-heat.md); tie atšķiras pēc tā, ko pievieno (ar zīmi, krāsoti vai pa līnijām), nevis pēc veida.
 

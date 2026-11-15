@@ -15,7 +15,7 @@ Võistkondade soojus näitab, kus iga võistkond oli, igal võistkonnal oma vär
 
 **Võistkondade soojus** (klahv 3) on [Soojuse](heat.md) tihedusväli, kus igale [rühmale](glossary.md) on antud oma toon. Kus rühmad kattuvad, segunevad nende toonid; võrdne võistlus tuleb neutraalne. Läbipaistmatus kannab tihedust endiselt täpselt nagu teistes režiimides, nii et pilt vastab korraga küsimustele *kui palju* ja *kelle oma*. See vajab rühmaveergu.
 
-![Võistkondade soojus: iga pool oma värvis; kus nad kattuvad, segunevad värvid](../assets/img/en/heat-teams.webp)
+![Võistkondade soojus: iga pool oma värvis; kus nad kattuvad, segunevad värvid](../assets/img/et/heat-teams.webp)
 
 See ei ole [kujude ülekate](box-replay.md): too joonistab ühe kuju isiku kohta; see on soojusväli, mida värvib sama veerg.
 

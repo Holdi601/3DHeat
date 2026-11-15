@@ -10,7 +10,7 @@ outdated: false
 
 # Demodata: prøv vieweren på fem minutter
 
-![Varme fra ti stridsvognskampe i Demo Valley: det trin 4 viser](../assets/img/en/heat-hero.webp)
+![Varme fra ti stridsvognskampe i Demo Valley: det trin 4 viser](../assets/img/da/heat-hero.webp)
 
 Har du ingen data af egen hånd endnu? Repositoriet laver nogle. Alt i det er opdigtet: en dal (Demo Valley), en gård (Demo Yard) og kampe i tre opdigtede spilstile med spillere, der hedder *Blue 1* eller *Red 3*. Billederne på dette websted er alle taget med dem.
 
@@ -45,7 +45,7 @@ Hver tabel angiver sine egne kolonner i sin fod, så den indlæses uden nogen ti
 6. Åbn **Indsigter** (i Heatmap-sidebjælken): den finder de steder, hvor langt mere blev skudt, ramt og ødelagt end andre steder – omkring de to bakker.
 7. Åbn fanen **Kamp**; under **Kampe i replayet** vælg *Match 01*, og tryk på **Afspil** på tidslinjen: [replayet](match-replay.md).
 
-![Et replay af Match 01 med stridsvogne som figurer](../assets/img/en/replay-overview.webp)
+![Et replay af Match 01 med stridsvogne som figurer](../assets/img/da/replay-overview.webp)
 
 Til skytten indlæser du `demo-yard.glb` og `shooter.parquet`; til luftkampen `air.parquet` (figurerne er lettere at se ved **Figurstørrelse** 4, en skyder i panelet **Holdvisning** i Heatmap-sidebjælken).
 

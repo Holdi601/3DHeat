@@ -19,7 +19,7 @@ Els **Filtres** amaguen les files que no t'interessen, com una classe de vehicle
 2. A **Classe de vehicle**, desmarca *Tank*. La imatge canvia de seguida.
 3. Prem **Esborra tots els filtres** per desfer-ho.
 
-![El panell Filtres: primer les columnes pròpies del visor (Tipus d'esdeveniment, Classe de vehicle), i després les columnes del teu fitxer](../assets/img/en/filters.webp)
+![El panell Filtres: primer les columnes pròpies del visor (Tipus d'esdeveniment, Classe de vehicle), i després les columnes del teu fitxer](../assets/img/ca/filters.webp)
 
 Les primeres files són les columnes pròpies del visor (més avall). Les files següents vénen del teu fitxer.
 
@@ -42,7 +42,7 @@ Quines columnes es poden filtrar es decideix en carregar, perquè cal llegir-les
 
 ## Columnes numèriques (interval) {#numeric-columns-range}
 
-![Un filtre d'interval (diners perduts) amb els dos extrems arrossegats](../assets/img/en/filters-numeric.webp)
+![Un filtre d'interval (diners perduts) amb els dos extrems arrossegats](../assets/img/ca/filters-numeric.webp)
 
 | Part | Significat |
 |---|---|

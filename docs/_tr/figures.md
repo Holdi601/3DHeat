@@ -15,7 +15,7 @@ Bir **figür**, bir birimin gerçekte ne olduğunun küçük bir 3B modelidir: b
 
 Görüntüleyicinin kendisi tarafından yapılmış, adlandırılmış yaklaşık 2.000 araç, uçak, gemi, silah ve asker vardır.
 
-![Demonun tankları kendi figürleriyle çizilmiş](../assets/img/en/replay-tanks.webp)
+![Demonun tankları kendi figürleriyle çizilmiş](../assets/img/tr/replay-tanks.webp)
 
 ## Katalogda neler var {#what-is-in-the-catalogue}
 

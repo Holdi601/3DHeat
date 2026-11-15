@@ -15,7 +15,7 @@ outdated: false
 
 熱圖頁籤側邊欄頂部的模式列決定[資料集](glossary.md)如何繪製。按鍵 1-4 分別選取熱度、差異、隊伍熱度與線條。模型疊加沒有快捷鍵。
 
-![模式列：熱度、差異、隊伍熱度、模型疊加與線條](../assets/img/en/heat-modes-bar.webp)
+![模式列：熱度、差異、隊伍熱度、模型疊加與線條](../assets/img/zh-Hant/heat-modes-bar.webp)
 
 | 模式 | 它回答的問題 |
 |---|---|
@@ -25,7 +25,7 @@ outdated: false
 | **線條** | 人們走了哪些方向？ |
 | **模型疊加** | 誰在哪裡，又是什麼時候？ |
 
-![同一份資料的四種模式：熱度、差異、隊伍熱度與線條](../assets/img/en/heat-modes-grid.webp)
+![同一份資料的四種模式：熱度、差異、隊伍熱度與線條](../assets/img/zh-Hant/heat-modes-grid.webp)
 
 | 模式（模式列標籤） | 按鍵 | 繪製內容 | 需要 |
 |---|---|---|---|

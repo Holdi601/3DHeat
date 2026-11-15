@@ -15,7 +15,7 @@ All Punkt gëtt e bëssen Glanz dobäi, d'Glanzen stapelen sech, an de Stapel g�
 
 D'Modus-Leescht ganz uewen an der Heatmap-Säitelleescht bestëmmt, wéi de [Datesaz](glossary.md) gezeechent gëtt. D'Tasten 1-4 wielen Heat, Ënnerscheed, Equipen-Heat a Linnen. Figuren-Overlay huet keng Tast.
 
-![D'Modus-Leescht mat Heat, Ënnerscheed, Equipen-Heat, Figuren-Overlay a Linnen](../assets/img/en/heat-modes-bar.webp)
+![D'Modus-Leescht mat Heat, Ënnerscheed, Equipen-Heat, Figuren-Overlay a Linnen](../assets/img/lb/heat-modes-bar.webp)
 
 | Modus | Fro, déi en beäntwert |
 |---|---|
@@ -25,7 +25,7 @@ D'Modus-Leescht ganz uewen an der Heatmap-Säitelleescht bestëmmt, wéi de [Dat
 | **Linnen** | An wéi enger Richtung si Leit gaangen? |
 | **Figuren-Overlay** | Wou war wien, a wann? |
 
-![Déiselwecht Daten a véier Modi: Heat, Ënnerscheed, Equipen-Heat a Linnen](../assets/img/en/heat-modes-grid.webp)
+![Déiselwecht Daten a véier Modi: Heat, Ënnerscheed, Equipen-Heat a Linnen](../assets/img/lb/heat-modes-grid.webp)
 
 | Modus (Bezeechnung an der Leescht) | Tast | Wat en zeechent | Brauch |
 |---|---|---|---|

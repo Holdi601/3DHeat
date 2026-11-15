@@ -15,7 +15,7 @@ outdated: false
 
 Kaikki lasketaan selaimessasi. Mikään ei poistu koneeltasi, ellet kytke päälle ulkoista tekoälyä (katso [Ulkoinen tekoäly](#external-ai)).
 
-![Havainnot tankkiesimerkissä: 14 löydöstä, vahvimmat ensin](../assets/img/en/insights.webp)
+![Havainnot tankkiesimerkissä: 14 löydöstä, vahvimmat ensin](../assets/img/fi/insights.webp)
 
 **Havainnot**-osio on Lämpökartta- ja Ottelu-välilehtien sivupalkissa. Siinä on kolme välilehteä: **Löydökset**, **Katsaus** ja **Selostaja**.
 
@@ -30,7 +30,7 @@ Laskenta käyttää nykyisiä suodattimia, piilotettuja ryhmiä ja valittua otte
 
 Luettelon yläosan rivit (esimerkiksi rahasummat) tiivistävät koko datan ennen löydöksiä.
 
-![Avattu löydös: ammuttujen laukausten kuuma alue, sen luvut ja vastaava kohta kirjallisuudesta](../assets/img/en/insights-finding.webp)
+![Avattu löydös: ammuttujen laukausten kuuma alue, sen luvut ja vastaava kohta kirjallisuudesta](../assets/img/fi/insights-finding.webp)
 
 ### Tunnistimet {#the-detectors}
 
@@ -55,7 +55,7 @@ Jokaista paikkaa tai ryhmää verrataan muuhun karttaan (tarkat binomi- tai nope
 
 **Katsaus**-välilehti kirjoittaa löydökset lyhyeksi tekstiksi: johdanto, selkein löydös, yksi taktiikasta, yksi tasapainotuksesta, loput tunnistimittain ryhmiteltyinä ja kuinka moni nojaa heikompaan näyttöön. Jokaisessa kappaleessa on numeroidut painikkeet, jotka näyttävät sen löydökset. **Kopioi teksti** kopioi sen.
 
-![Sisäänrakennetun kertojan kirjoittama katsaus](../assets/img/en/debrief.webp)
+![Sisäänrakennetun kertojan kirjoittama katsaus](../assets/img/fi/debrief.webp)
 
 Sisäänrakennettu kertoja toimii offline-tilassa, kielelläsi. Sen yläpuolella oleva **Linssi**-valitsin (katso [Tietolinssi](knowledge.md)) päättää, mihin kirjallisuuteen kappaleet viittaavat.
 
@@ -78,7 +78,7 @@ Kirjoita sitten halutessasi kysymys ja paina **Kirjoita tekoälyllä**. Lähetet
 
 Yhdelle **ottelulle** (valitse yksi, jos useita on ladattu) **Selostaja** löytää hetket, jotka kannattaa katsoa: ensimmäinen tappo, monitappot, vaihtokaupat, ratkaisevat tilanteet, tavoitteiden käännökset, paluut, silmään pistävät pelaajat, pitkät laukaukset.
 
-![Selostajan hetket yhdelle kierrokselle ampujaesimerkissä](../assets/img/en/caster.webp)
+![Selostajan hetket yhdelle kierrokselle ampujaesimerkissä](../assets/img/fi/caster.webp)
 
 - Napsauta hetkeä: näkymä vaihtuu toistoon, hyppää juuri sitä edeltävään kohtaan, lentää sinne ja seuraa pelaajaa.
 - **Toista hetket** toistaa jokaisen loppuun asti ja siirtyy eteenpäin; **Edellinen** / **Seuraava** siirtyvät hetkien välillä.

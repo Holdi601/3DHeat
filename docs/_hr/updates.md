@@ -18,7 +18,7 @@ Preglednik vam javlja kad postoji novija verzija, a ažurira se sam tek kad to p
 2. **Ako piše da pokrenete restart.bat**, zatvorite prozor poslužitelja (crni prozor koji je otvorio `start.bat`) i dvaput kliknite `restart.bat`.
 3. **Pri pokretanju preglednika.** `start.bat` također provjerava. Ako postoji novija verzija, pita **Ažurirati sada? [Y/N]**. Pritisnite `Y` za ažuriranje. Pritisnite `N`, ili pričekajte 60 sekundi bez odgovora, da pokrenete verziju koju imate.
 
-![Obavijest o ažuriranju s gumbima Ažuriraj sada i Kasnije](../assets/img/en/updates-notice.webp)
+![Obavijest o ažuriranju s gumbima Ažuriraj sada i Kasnije](../assets/img/hr/updates-notice.webp)
 
 Primjerak s vašim vlastitim promjenama nikad se ne ažurira umjesto vas; okvir samo kaže da čeka ažuriranje i traži da spremite ili odložite svoje promjene te pokrenete `git pull`. Primjerak koji nije instaliran gitom (na primjer zip datoteka) ne prikazuje ništa.
 

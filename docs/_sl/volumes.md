@@ -21,7 +21,7 @@ outdated: false
  +------------+
 ```
 
-![Tri prostornine v demo dolini: dva valja okoli hribov, kvader okoli vasi](../assets/img/en/volumes.webp)
+![Tri prostornine v demo dolini: dva valja okoli hribov, kvader okoli vasi](../assets/img/sl/volumes.webp)
 
 Prostornine merijo, kaj se dogaja znotraj njih, filtrirajo pogled nanje, izvozijo svoje vrstice in se lahko primerjajo drug ob drugem. Glejte tudi [slovar pojmov](glossary.md) za vrstico, osebo in tekmo.
 
@@ -76,7 +76,7 @@ Pri dveh ali več vidnih prostorninah pritisnite **Primerjaj…**.
 3. V **Tabeli** preberite razliko vsake vrednosti od prve prostornine.
 4. Preklopite na **Stolpce**, da vidite deleže kot stolpce.
 
-![Tabela Primerjaj prostornine: vrstice, čas znotraj, igralci in več za vsako prostornino, z razliko od prve](../assets/img/en/compare.webp)
+![Tabela Primerjaj prostornine: vrstice, čas znotraj, igralci in več za vsako prostornino, z razliko od prve](../assets/img/sl/compare.webp)
 
 | Pogled | Prikazuje |
 |---|---|
@@ -86,7 +86,7 @@ Pri dveh ali več vidnih prostorninah pritisnite **Primerjaj…**.
 | **Obiski** | Škatlasti in violinski diagrami, kako dolgo trajajo obiski (logaritemska lestvica). |
 | **Tok** | Kam gredo sledi, potem ko zapustijo vsako prostornino: matrika prehodov ali tokovni trakovi. |
 
-![Pogled Stolpci: vrste dogodkov po prostorninah kot deleži](../assets/img/en/compare-bars.webp)
+![Pogled Stolpci: vrste dogodkov po prostorninah kot deleži](../assets/img/sl/compare-bars.webp)
 
 ## Nasveti {#tips}
 

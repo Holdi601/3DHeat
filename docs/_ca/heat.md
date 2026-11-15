@@ -15,7 +15,7 @@ La calor pinta els llocs on han passat moltes coses: vermell on ha passat una mi
 
 **Calor** (tecla 1) és el mode per defecte. Cada [fila](glossary.md) visible aporta un [sprite](glossary.md) rodó orientat cap a la càmera; els sprites que se solapen se sumen en un buffer de coma flotant; la suma es transforma amb una rampa de colors -per defecte transparent → vermell → groc → blanc- i es dibuixa sobre l'escena.
 
-![Calor en un nivell 3D: punts calents dins i a sobre dels edificis](../assets/img/en/shooter-heat.webp)
+![Calor en un nivell 3D: punts calents dins i a sobre dels edificis](../assets/img/ca/shooter-heat.webp)
 
 La imatge mostra la calor d'una ronda de tiroteig en un nivell amb edificis: els punts calents són a les sales i a les escales, no només a terra.
 
@@ -26,7 +26,7 @@ La imatge mostra la calor d'una ronda de tiroteig en un nivell amb edificis: els
 3. Canvia **Radi dels sprites** fins que els punts veïns es fonguin en bandes: més petit mostra punts individuals, més gran mostra àrees.
 4. Obre **Colors de la calor** per canviar els colors, o **Profunditat** perquè els turons i les parets amaguin la calor que hi ha darrere.
 
-![Les seccions Forma de la calor i Colors de la calor de la barra lateral, totes dues obertes](../assets/img/en/heat-panel.webp)
+![Les seccions Forma de la calor i Colors de la calor de la barra lateral, totes dues obertes](../assets/img/ca/heat-panel.webp)
 
 Els mateixos panells donen forma a [Diferència](difference.md), [Calor per equips](team-heat.md) i [Calor de línia](line-heat.md); es diferencien en el que s'afegeix (amb signe, acolorit, o al llarg de línies), no en com.
 

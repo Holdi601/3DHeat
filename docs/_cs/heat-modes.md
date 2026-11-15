@@ -15,7 +15,7 @@ Každá tečka přidá trochu záře, záře se sčítají a hromada se obarví 
 
 Lišta režimů nahoře v postranním panelu karty Teplotní mapa určuje, jak se [datová sada](glossary.md) kreslí. Klávesy 1-4 vybírají Teplo, Rozdíl, Týmové teplo a Čáry. Překryv figur nemá klávesu.
 
-![Lišta režimů s Teplo, Rozdíl, Týmové teplo, Překryv figur a Čáry](../assets/img/en/heat-modes-bar.webp)
+![Lišta režimů s Teplo, Rozdíl, Týmové teplo, Překryv figur a Čáry](../assets/img/cs/heat-modes-bar.webp)
 
 | Režim | Na jakou otázku odpovídá |
 |---|---|
@@ -25,7 +25,7 @@ Lišta režimů nahoře v postranním panelu karty Teplotní mapa určuje, jak s
 | **Čáry** | Kterými směry lidé šli? |
 | **Překryv figur** | Kdo byl kde a kdy? |
 
-![Tatáž data ve čtyřech režimech: Teplo, Rozdíl, Týmové teplo a Čáry](../assets/img/en/heat-modes-grid.webp)
+![Tatáž data ve čtyřech režimech: Teplo, Rozdíl, Týmové teplo a Čáry](../assets/img/cs/heat-modes-grid.webp)
 
 | Režim (popisek na liště) | Klávesa | Co kreslí | Potřebuje |
 |---|---|---|---|

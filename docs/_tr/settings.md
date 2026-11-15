@@ -23,7 +23,7 @@ Kenar çubuğunun en üstünde:
 | **Birimler**in yanındaki **...** düğmesi | "Her nicelik için bir birim seçin" penceresini açar: nicelik başına bir açılır liste |
 | **Dil** menüsü | Görüntüleyicinin dili: [40 dil](languages.md) ya da tarayıcınınki |
 
-![Birimler menüsü ve nicelik başına birim penceresi açık üst bilgi](../assets/img/en/settings-units.webp)
+![Birimler menüsü ve nicelik başına birim penceresi açık üst bilgi](../assets/img/tr/settings-units.webp)
 
 Bir kutuya yazdığınız sayılar nokta ya da virgül kullanabilir (`0.35` ya da `0,35`). Görüntüleyici ikisini de okur ve sayıları görüntüleyicinin dilinin yazdığı biçimde gösterir.
 
@@ -48,11 +48,11 @@ Bir nicelik için seçebileceğiniz diğer birimler: mesafe km, mi, NM; hız km/
 
 ## Yardım modu {#help-mode}
 
-![Yardım modu: renklerin ne anlama geldiği](../assets/img/en/help.webp)
+![Yardım modu: renklerin ne anlama geldiği](../assets/img/tr/help.webp)
 
 `?` ya da `F1`'e basın ya da **?** düğmesine tıklayın. *Renklerin anlamı* bölümünü gösterir: 3B görünüm için açıklamalar, ısı rampaları, takım renkleri, seviyenin renkleri, panellerin durum renkleri, maç paneli ve yarış görünümü. Kapatana kadar açık kalır. Maç sekmesinde maç panelinin renklerini de açıklar.
 
-![Maç sekmesinde yardım modu](../assets/img/en/settings-help-match.webp)
+![Maç sekmesinde yardım modu](../assets/img/tr/settings-help-match.webp)
 
 ## Tarayıcının hatırladıkları {#what-the-browser-remembers}
 

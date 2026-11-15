@@ -14,7 +14,7 @@ Taispeánann 3DHeat cá ndeachaigh rudaí i gcluiche - cá ndeachaigh imreoirí,
 
 Lódáil suímh - CSV, Parquet, taifeadtaí Tacview, athsheinmeanna coinbhertaithe, comhad amháin, fillteán nó na mílte cluiche - agus féach orthu mar **léarscáil theasa ar féidir leat eitilt tríthi**, mar **fhigiúirí a athsheinmeann an cluiche**, mar línte feadh na n-bealaí a thóg daoine, nó mar dhaonra amháin i gcoinne daonra eile. Aimsíonn sé cad a sheasann amach leis féin, agus ritheann sé go hiomlán i do bhrabhsálaí: ní uaslódáiltear aon rud in áit ar bith.
 
-![Teas deich gcluiche tanc thar ghleann an taispeána](../assets/img/en/heat-hero.webp)
+![Teas deich gcluiche tanc thar ghleann an taispeána](../assets/img/ga/heat-hero.webp)
 
 **Nua anseo?** Déan na [sonraí taispeána](demo-data.md) agus lean a seacht gcéim. Tógadh gach pictiúr ar an suíomh seo leo.
 
@@ -22,12 +22,12 @@ Lódáil suímh - CSV, Parquet, taifeadtaí Tacview, athsheinmeanna coinbhertait
 
 | | |
 |---|---|
-| ![Difríocht](../assets/img/en/heat-difference.webp) | **[Modhanna teasa](heat-modes.md)** - teas, [difríocht](difference.md) (dearg far a raibh an taobh amháin níos mó, gorm-glas far a raibh an taobh eile), [teas foirne](team-heat.md), [teas líne](line-heat.md); [teas treoch](directional-heat.md) le lúibíní, réimsí saighead agus cairteacha polair; teas [meáite de réir luacha](value-weighting.md): cad a chosnaíonn airm, feithiclí agus breosla. |
-| ![Athsheinm](../assets/img/en/replay-tanks.webp) | **[Athsheinm cluiche](match-replay.md)** - gach aonad mar an [figiúr](figures.md) de cad é, samhlacha NATO nó Rúsach i bhfad i gcéin, diúracáin agus rianta solais, marcanna buillí, long briste, tinte, túiríní, cuspóirí, ceamaraí de stíl Tacview agus taispeántas taictiúil; [go leor cluichí ag an am céanna](many-matches.md). |
-| ![Léargais](../assets/img/en/insights.webp) | **[Léargais](insights.md)** - suímh láidre, talamh marfach, gaistí spawn, cúngáin agus imreoirí a sheasann amach, aimsithe agus rangaithe leis an fhianaise; achoimre scríofa, roghnach le AI de do rogha; tráchtaire le haghaidh cluiche amháin; an [lionsa eolais](knowledge.md). |
-| ![Toirteanna](../assets/img/en/compare.webp) | **[Toirteanna](volumes.md)** - boscaí, prismeanna, sorcóirí agus sféir a tharraingt, scagadh chucu, comhairle a dhéanamh ar an méid a tharlaíonn istigh, é a easpórtáil, agus áiteanna a chur i gcomparáid taobh le taobh; [miondealú](breakdown.md) ar cé agus cad a dhéanann go maith in áit. |
-| ![Scagairí](../assets/img/en/filters.webp) | **[Scagairí](filters.md)** - de réir cineál imeachta, imreoir nó AI, aicme feithicle, luach, aon cholún, sa chárta grafaice ag aon mhéid sonraí. |
-| ![Leibhéal](../assets/img/en/level-panel.webp) | **[Leibhéil](levels.md)** - íomhánna léarscáile, leibhéil 3D a rinneadh leis na [uirlisí sonraí](#related-repositories), simplithe, an [cúlra domhanda](world-backdrop.md) le tír-raon fíor le haghaidh sonraí eitilte. |
+| ![Difríocht](../assets/img/ga/heat-difference.webp) | **[Modhanna teasa](heat-modes.md)** - teas, [difríocht](difference.md) (dearg far a raibh an taobh amháin níos mó, gorm-glas far a raibh an taobh eile), [teas foirne](team-heat.md), [teas líne](line-heat.md); [teas treoch](directional-heat.md) le lúibíní, réimsí saighead agus cairteacha polair; teas [meáite de réir luacha](value-weighting.md): cad a chosnaíonn airm, feithiclí agus breosla. |
+| ![Athsheinm](../assets/img/ga/replay-tanks.webp) | **[Athsheinm cluiche](match-replay.md)** - gach aonad mar an [figiúr](figures.md) de cad é, samhlacha NATO nó Rúsach i bhfad i gcéin, diúracáin agus rianta solais, marcanna buillí, long briste, tinte, túiríní, cuspóirí, ceamaraí de stíl Tacview agus taispeántas taictiúil; [go leor cluichí ag an am céanna](many-matches.md). |
+| ![Léargais](../assets/img/ga/insights.webp) | **[Léargais](insights.md)** - suímh láidre, talamh marfach, gaistí spawn, cúngáin agus imreoirí a sheasann amach, aimsithe agus rangaithe leis an fhianaise; achoimre scríofa, roghnach le AI de do rogha; tráchtaire le haghaidh cluiche amháin; an [lionsa eolais](knowledge.md). |
+| ![Toirteanna](../assets/img/ga/compare.webp) | **[Toirteanna](volumes.md)** - boscaí, prismeanna, sorcóirí agus sféir a tharraingt, scagadh chucu, comhairle a dhéanamh ar an méid a tharlaíonn istigh, é a easpórtáil, agus áiteanna a chur i gcomparáid taobh le taobh; [miondealú](breakdown.md) ar cé agus cad a dhéanann go maith in áit. |
+| ![Scagairí](../assets/img/ga/filters.webp) | **[Scagairí](filters.md)** - de réir cineál imeachta, imreoir nó AI, aicme feithicle, luach, aon cholún, sa chárta grafaice ag aon mhéid sonraí. |
+| ![Leibhéal](../assets/img/ga/level-panel.webp) | **[Leibhéil](levels.md)** - íomhánna léarscáile, leibhéil 3D a rinneadh leis na [uirlisí sonraí](#related-repositories), simplithe, an [cúlra domhanda](world-backdrop.md) le tír-raon fíor le haghaidh sonraí eitilte. |
 
 Chomh maith leis sin: cluaisín [Anailís rása](race-analysis.md) le haghaidh cuairteanna ar chluichí rásaíochta, cluaisín [Cluiche](match-analysis.md) le haghaidh achoimrí Counter-Strike 2, an [Clár na dtaictic](tactics-board.md) le haghaidh pleananna ar leibhéal, [anailís buailte](hit-analysis.md) de réir feithicle, [anailís mhais](mass-analysis.md) de na mílte cluiche, [cosáin ceamara agus físeán](camera-path-and-video.md), [40 teanga](languages.md), [aonaid mheiticiúla nó impiriúla](settings.md).
 

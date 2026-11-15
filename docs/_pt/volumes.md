@@ -21,7 +21,7 @@ Um **volume** é uma caixa invisível (ou um cilindro, ou uma esfera) que se des
  +------------+
 ```
 
-![Três volumes no vale de demonstração: dois cilindros à volta das colinas, uma caixa à volta da aldeia](../assets/img/en/volumes.webp)
+![Três volumes no vale de demonstração: dois cilindros à volta das colinas, uma caixa à volta da aldeia](../assets/img/pt/volumes.webp)
 
 Os volumes medem o que acontece dentro deles, filtram a vista para eles, exportam as suas linhas e podem ser comparados lado a lado. Veja também o [glossário](glossary.md) para linha, pessoa e partida.
 
@@ -76,7 +76,7 @@ Com dois ou mais volumes visíveis, prima **Comparar...**.
 3. Em **Tabela**, leia a diferença de cada valor em relação ao primeiro volume.
 4. Mude para **Barras** para ver as proporções em barras.
 
-![A tabela Comparar volumes: linhas, tempo dentro, jogadores e mais para cada volume, com a diferença face ao primeiro](../assets/img/en/compare.webp)
+![A tabela Comparar volumes: linhas, tempo dentro, jogadores e mais para cada volume, com a diferença face ao primeiro](../assets/img/pt/compare.webp)
 
 | Vista | Mostra |
 |---|---|
@@ -86,7 +86,7 @@ Com dois ou mais volumes visíveis, prima **Comparar...**.
 | **Visitas** | Gráficos de caixa e de violino da duração das visitas (escala logarítmica). |
 | **Fluxo** | Para onde vão os trajetos depois de sair de cada volume: uma matriz de transições ou fitas de fluxo. |
 
-![A vista Barras: tipos de evento por volume como proporções](../assets/img/en/compare-bars.webp)
+![A vista Barras: tipos de evento por volume como proporções](../assets/img/pt/compare-bars.webp)
 
 ## Sugestões {#tips}
 

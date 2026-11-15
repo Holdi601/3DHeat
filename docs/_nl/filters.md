@@ -19,7 +19,7 @@ outdated: false
 2. Vink onder **Voertuigklasse** *Tank* uit. Het beeld verandert meteen.
 3. Druk op **Alle filters wissen** om het ongedaan te maken.
 
-![Het paneel Filters: eerst de eigen kolommen van de viewer (Soort gebeurtenis, Voertuigklasse), daarna de kolommen uit je bestand](../assets/img/en/filters.webp)
+![Het paneel Filters: eerst de eigen kolommen van de viewer (Soort gebeurtenis, Voertuigklasse), daarna de kolommen uit je bestand](../assets/img/nl/filters.webp)
 
 De eerste rijen zijn de eigen kolommen van de viewer (hieronder). De rijen daarna komen uit je bestand.
 
@@ -42,7 +42,7 @@ Welke kolommen filterbaar zijn wordt bij het laden bepaald, omdat ze dan gelezen
 
 ## Getalkolommen (bereik) {#numeric-columns-range}
 
-![Een bereikfilter (verloren geld) met beide uiteinden versleept](../assets/img/en/filters-numeric.webp)
+![Een bereikfilter (verloren geld) met beide uiteinden versleept](../assets/img/nl/filters-numeric.webp)
 
 | Onderdeel | Betekenis |
 |---|---|

@@ -14,7 +14,7 @@ outdated: false
 
 Jokainen ottelu alkaa omasta alustaan, ja sen yksiköt liikkuvat hahmoina. Tiedostot menevät suoraan näytönohjaimelle, eikä koko taulukkoa rakenneta, joten toisto on sujuva siellä, missä tavallinen lataus loppuisi muistista.
 
-![Kymmenen panssarivaunuottelua päällekkäin, yksi väri ottelua kohden](../assets/img/en/many-matches.webp)
+![Kymmenen panssarivaunuottelua päällekkäin, yksi väri ottelua kohden](../assets/img/fi/many-matches.webp)
 
 ## Käyttötapa {#how-to-use-it}
 

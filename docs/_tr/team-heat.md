@@ -15,7 +15,7 @@ Takım ısısı her takımın nerede olduğunu gösterir, her takım kendi rengi
 
 **Takım ısısı** (tuş 3), her [grubun](glossary.md) kendi tonu verilmiş [Isı'nın](heat.md) yoğunluk alanıdır. Gruplar üst üste geldiğinde tonları karışır; eşit bir mücadele nötr çıkar. Opaklık diğer modlardaki gibi yoğunluğu aynen taşır, böylece resim *ne kadar* ve *kimin* sorularını aynı anda yanıtlar. Bir grup sütunu gerektirir.
 
-![Takım ısısı: her taraf kendi renginde; üst üste geldiklerinde renkler karışır](../assets/img/en/heat-teams.webp)
+![Takım ısısı: her taraf kendi renginde; üst üste geldiklerinde renkler karışır](../assets/img/tr/heat-teams.webp)
 
 [Figür bindirme](box-replay.md) değildir: o kişi başına bir figür çizer; bu ise aynı sütunla renklendirilmiş bir ısı alanıdır.
 

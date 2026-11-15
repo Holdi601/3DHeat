@@ -10,7 +10,7 @@ outdated: false
 
 # Ukázková data: vyzkoušejte prohlížeč za pět minut
 
-![Teplo deseti zápasů s tanky v ukázkovém údolí: co ukazuje krok 4](../assets/img/en/heat-hero.webp)
+![Teplo deseti zápasů s tanky v ukázkovém údolí: co ukazuje krok 4](../assets/img/cs/heat-hero.webp)
 
 Zatím nemáte vlastní data? Repozitář si je vyrobí. Všechno v něm je vymyšlené: údolí, dvůr a zápasy tří smyšlených herních stylů s hráči jménem *Blue 1* nebo *Red 3*. Obrázky na těchto stránkách byly všechny pořízeny s nimi.
 
@@ -45,7 +45,7 @@ Každá tabulka pojmenovává své sloupce v zápatí, takže se načte bez jak�
 6. Otevřete **Zjištění** (v postranním panelu Teplotní mapy): najde místa, kde se vystřelilo, zasáhlo a zničilo mnohem víc než jinde - kolem obou kopců.
 7. Otevřete kartu **Zápas**; pod **Zápasy v záznamu** vyberte *Match 01* a stiskněte **Přehrát** na časové ose: [přehrání](match-replay.md).
 
-![Přehrání Match 01 s tanky jako figurami](../assets/img/en/replay-overview.webp)
+![Přehrání Match 01 s tanky jako figurami](../assets/img/cs/replay-overview.webp)
 
 Pro střelce načtěte `demo-yard.glb` a `shooter.parquet`; pro letecký souboj `air.parquet` (figury jsou lépe vidět při **Velikosti figur** 4, což je posuvník v panelu **Týmové zobrazení** v postranním panelu Teplotní mapy).
 

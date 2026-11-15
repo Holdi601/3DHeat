@@ -15,7 +15,7 @@ Is scannán den chluiche an athsheinm, agus gach imreoir tarraingthe mar an rud 
 
 Tarraingítear urchair, buillí, tinte agus long briste ar na haonaid agus ar na cuspóirí ar an leibhéal. Cuidíonn ceamaraí, lipéid agus taispeántas taictiúil leat an troid a léamh. An eol duit Tacview? Taispeánann [Comhionannas Tacview](tacview-parity.md) cá bhfuil gach ceann dá uirlisí.
 
-![Athsheinm figiúr de shampla na dtancanna: tancanna mar a bhfigiúirí féin, le lipéid ainm, feithicle agus luais](../assets/img/en/replay-overview.webp)
+![Athsheinm figiúr de shampla na dtancanna: tancanna mar a bhfigiúirí féin, le lipéid ainm, feithicle agus luais](../assets/img/ga/replay-overview.webp)
 
 ## Tosaigh athsheinm {#start-a-replay}
 
@@ -26,11 +26,11 @@ Tarraingítear urchair, buillí, tinte agus long briste ar na haonaid agus ar na
 
 Tagann figiúirí in ionad boscaí do gach aonad a bhfuil a ainm nó a chineál ar eolas (féach [Figiúirí](figures.md)). Tarraingítear sonraí gan colún ainm nó cineál mar shaighdiúirí.
 
-![Cluaisín Cluiche: an roghnóir cluichí, an chuid Figiúirí, na radharcanna ceamara, Seinn agus liosta na n-imeachtaí](../assets/img/en/match-replay-tab.webp)
+![Cluaisín Cluiche: an roghnóir cluichí, an chuid Figiúirí, na radharcanna ceamara, Seinn agus liosta na n-imeachtaí](../assets/img/ga/match-replay-tab.webp)
 
 ## Figiúirí {#figures}
 
-![Tanc ag dó sa cheamara fithise, leis an urchair a bhuail é](../assets/img/en/replay-tanks.webp)
+![Tanc ag dó sa cheamara fithise, leis an urchair a bhuail é](../assets/img/ga/replay-tanks.webp)
 
 | Socrú (cuid **Figiúirí**) | Réamhshocrú | Cad a dhéanann sé |
 |---|---|---|
@@ -51,7 +51,7 @@ Tagann figiúirí in ionad boscaí do gach aonad a bhfuil a ainm nó a chineál 
 
 Nuair a bheadh aonad níos lú ná **An fhíor is lú ar an scáileán**, is féidir leis dul i gcruth siombail a fhanann inléite. Insíonn an cruth an cineál (mar shampla bosca cruinn le marc rian d'arm); insíonn an dath an taobh. Oscail roghchlár **Siombailí** chun an stíl a athrú.
 
-![An sé aonad chéanna mar shiombailí NATO, comharthaí taictiúla Rúsacha, deilbhíní léarscáile chluiche agus cruthanna amháin](../assets/img/en/match-replay-symbols-styles.webp)
+![An sé aonad chéanna mar shiombailí NATO, comharthaí taictiúla Rúsacha, deilbhíní léarscáile chluiche agus cruthanna amháin](../assets/img/ga/match-replay-symbols-styles.webp)
 
 ### Marcanna buillí, long briste agus tinte {#hit-marks-wrecks-and-fires}
 
@@ -76,7 +76,7 @@ Cliceáil ar aonad nó ar a lipéad chun é a **leanúint**; cuireann an chuid *
 
 ## Taispeántas taictiúil {#tactical-display}
 
-![Sampla an aeir leis an taispeáint taictiúil (T): tír-raon sreangchreatach, painéil marú agus imeachtaí](../assets/img/en/replay-air-tactical.webp)
+![Sampla an aeir leis an taispeáint taictiúil (T): tír-raon sreangchreatach, painéil marú agus imeachtaí](../assets/img/ga/replay-air-tactical.webp)
 
 Tarraingíonn an chuid **Taispeáint thaicticiúil**, gan aonad ar bith, na roghnaithe, gach ceann, nó cineál amháin (aerárthaí, talamh, longa, airm): veicteoirí luais agus an cosán chun tosaigh, línte srónach agus ardaithe, cón radair, glasanna, naisc sonraí, limistéir agus línte comhraic, línte radhairc, cá bhfuil na himreoirí ag féachaint (cón amhairc), aim túirín, agus ceamara an taifeadta.
 
@@ -84,7 +84,7 @@ Tarraingíonn an chuid **Taispeáint thaicticiúil**, gan aonad ar bith, na rogh
 
 Athraíonn `T` (nó an scoránán **Taispeáin mar thaispeáint thaictiúil**) an cuma go stíl scáileáin radair: glow, imlínte, líne chonúir, greille tomhais, línte scanta, fáinní raoin, dréimirí airde, painéil le marúanna agus imeachtaí, agus **Stiúrthóir** a bhogann an ceamara chuig imeachtaí leis féin.
 
-![An comhrac aeir céanna sa chuma normálta](../assets/img/en/replay-air.webp)
+![An comhrac aeir céanna sa chuma normálta](../assets/img/ga/replay-air.webp)
 
 ## Cuspóirí {#objectives}
 

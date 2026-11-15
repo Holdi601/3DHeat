@@ -15,7 +15,7 @@ Teplo maluje místa, kde se stalo hodně věcí: červeně tam, kde se stalo tro
 
 **Teplo** (klávesa 1) je výchozí režim. Každý viditelný [řádek](glossary.md) přispívá kulatým [spritem](glossary.md) natočeným ke kameře; překrývající se sprite se sčítají v bufferu v plovoucí desetinné čárce; součet se převede přes škálu barev - ve výchozím nastavení průhledná → červená → žlutá → bílá - a nakreslí se přes scénu.
 
-![Teplo na 3D levelu: horká místa uvnitř budov i na jejich střechách](../assets/img/en/shooter-heat.webp)
+![Teplo na 3D levelu: horká místa uvnitř budov i na jejich střechách](../assets/img/cs/shooter-heat.webp)
 
 Obrázek ukazuje teplo jednoho kola střelce na levelu s budovami: horká místa leží v místnostech a na schodech, ne jen na zemi.
 
@@ -26,7 +26,7 @@ Obrázek ukazuje teplo jednoho kola střelce na levelu s budovami: horká místa
 3. Měňte **Poloměr spritu**, dokud se sousední tečky nesloučí do pásů: menší ukáže jednotlivé body, větší ukáže plochy.
 4. Otevřete **Barvy tepla**, chcete-li změnit barvy, nebo **Hloubku**, aby kopce a zdi skryly teplo za sebou.
 
-![Sekce Tvar tepla a Barvy tepla v postranním panelu, obě otevřené](../assets/img/en/heat-panel.webp)
+![Sekce Tvar tepla a Barvy tepla v postranním panelu, obě otevřené](../assets/img/cs/heat-panel.webp)
 
 Stejné panely tvarují [Rozdíl](difference.md), [Týmové teplo](team-heat.md) a [Čárové teplo](line-heat.md); liší se tím, co se přidává (se znaménkem, obarvené nebo podél čar), ne tím, jak.
 

@@ -19,7 +19,7 @@ outdated: false
 2. Kohdassa **Ajoneuvoluokka** poista *Tank* valinta. Kuva muuttuu heti.
 3. Paina **Tyhjennä kaikki suodattimet** kumotaksesi.
 
-![Suodattimet-paneeli: ensin katselimen omat sarakkeet (Tapahtumatyyppi, Ajoneuvoluokka), sitten tiedostosi sarakkeet](../assets/img/en/filters.webp)
+![Suodattimet-paneeli: ensin katselimen omat sarakkeet (Tapahtumatyyppi, Ajoneuvoluokka), sitten tiedostosi sarakkeet](../assets/img/fi/filters.webp)
 
 Ensimmäiset rivit ovat katselimen omia sarakkeita (alla). Niiden jälkeiset rivit tulevat tiedostostasi.
 
@@ -42,7 +42,7 @@ Se, mitkä sarakkeet voi suodattaa, päätetään latauksessa, koska ne täytyy 
 
 ## Numeerisat sarakkeet (väli) {#numeric-columns-range}
 
-![Väli-suodatin (menetetty raha), molemmat päät vedettyinä](../assets/img/en/filters-numeric.webp)
+![Väli-suodatin (menetetty raha), molemmat päät vedettyinä](../assets/img/fi/filters-numeric.webp)
 
 | Osa | Merkitys |
 |---|---|

@@ -21,7 +21,7 @@ Gdy nic nie jest wczytane, scena jest ciemna, z siatką i kolorowymi osiami (**S
 
 Poziom jest wspólny dla wszystkich trzech kart: trasa wczytana w karcie Analiza wyścigowa to ten sam poziom, który pokazuje mapa cieplna.
 
-![Panel Tło / poziom z wczytanym poziomem: przyciski Obraz mapy i Model 3D, Teatr działań, Krycie, Jasność, Zapisz w bibliotece i lista Biblioteka](../assets/img/en/level-panel.webp)
+![Panel Tło / poziom z wczytanym poziomem: przyciski Obraz mapy i Model 3D, Teatr działań, Krycie, Jasność, Zapisz w bibliotece i lista Biblioteka](../assets/img/pl/level-panel.webp)
 
 ## Połóż poziom za swoimi danymi {#put-a-level-behind-your-data}
 

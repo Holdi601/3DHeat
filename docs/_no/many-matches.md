@@ -14,7 +14,7 @@ outdated: false
 
 Hver kamp starter ved sin egen begynnelse, og enhetene beveger seg som figurer. Filene går rett inn i grafikkortet, og ingen full tabell bygges, så det spilles jevnt der en vanlig innlasting ville gå tom for minne.
 
-![Ti stridsvognkamper lagt oppå hverandre, én farge per kamp](../assets/img/en/many-matches.webp)
+![Ti stridsvognkamper lagt oppå hverandre, én farge per kamp](../assets/img/no/many-matches.webp)
 
 ## Slik bruker du den {#how-to-use-it}
 

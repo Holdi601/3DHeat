@@ -16,7 +16,7 @@ Sérhver punktur bætir við smá glóandi ljósi, ljósin hlaðast upp, og hrú
 
 Mótastikan efst í hliðarstiku flipans Hitakort ræður því hvernig [gagnasafnið](glossary.md) er teiknað. Takkarnir 1-4 velja Hiti, Mismunur, Liðahiti og Línur. Fígúruyfirlögn hefur engan takka.
 
-![Mótastikan með Hiti, Mismunur, Liðahiti, Fígúruyfirlögn og Línur](../assets/img/en/heat-modes-bar.webp)
+![Mótastikan með Hiti, Mismunur, Liðahiti, Fígúruyfirlögn og Línur](../assets/img/is/heat-modes-bar.webp)
 
 | Stilling | Spurningin sem hún svarar |
 |---|---|
@@ -26,7 +26,7 @@ Mótastikan efst í hliðarstiku flipans Hitakort ræður því hvernig [gagnasa
 | **Línur** | Hvaða leið fór fólk? |
 | **Fígúruyfirlögn** | Hver var hvar, og hvenær? |
 
-![Sömu gögnin í fjórum stillingum: Hiti, Mismunur, Liðahiti og Línur](../assets/img/en/heat-modes-grid.webp)
+![Sömu gögnin í fjórum stillingum: Hiti, Mismunur, Liðahiti og Línur](../assets/img/is/heat-modes-grid.webp)
 
 | Stilling (heiti á stiku) | Takki | Hvað hún teiknar | Þarfnast |
 |---|---|---|---|

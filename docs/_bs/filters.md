@@ -19,7 +19,7 @@ outdated: false
 2. Pod **Klasa vozila** odznačite *Tenk*. Slika se odmah mijenja.
 3. Pritisnite **Očisti sve filtere** da poništite.
 
-![Panel Filteri: prvo sopstvene kolone prikazivača (Vrsta događaja, Klasa vozila), zatim kolone iz vaše datoteke](../assets/img/en/filters.webp)
+![Panel Filteri: prvo sopstvene kolone prikazivača (Vrsta događaja, Klasa vozila), zatim kolone iz vaše datoteke](../assets/img/bs/filters.webp)
 
 Prvi redovi su sopstvene kolone prikazivača (ispod). Redovi nakon njih dolaze iz vaše datoteke.
 
@@ -42,7 +42,7 @@ Koje kolone se mogu filtrirati odlučuje se pri učitavanju, jer se tada moraju 
 
 ## Numeričke kolone (opseg) {#numeric-columns-range}
 
-![Filter opsega (izgubljeni novac) s oba kraja povučena](../assets/img/en/filters-numeric.webp)
+![Filter opsega (izgubljeni novac) s oba kraja povučena](../assets/img/bs/filters-numeric.webp)
 
 | Dio | Značenje |
 |---|---|

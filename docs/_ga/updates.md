@@ -18,7 +18,7 @@ Insíonn an t-amharcóir duit nuair a bhíonn leagan níos nuaí ann, agus nuash
 2. **Má deir sé restart.bat a rith**, dún fuinneog an fhreastalaí (an fhuinneog dhubh a d'oscail `start.bat`) agus déan dúbailtcliceáil ar `restart.bat`.
 3. **Nuair a thosaíonn tú an t-amharcóir.** Seiceálann `start.bat` freisin. Má tá leagan níos nuaí ann fiafraíonn sé **Update now? [Y/N]**. Brúigh `Y` chun nuashonrú. Brúigh `N`, nó fan 60 soicind gan freagra, chun an leagan atá agat a thosú.
 
-![Fógra na nuashonraithe le Nuashonraigh anois agus Ar ball](../assets/img/en/updates-notice.webp)
+![Fógra na nuashonraithe le Nuashonraigh anois agus Ar ball](../assets/img/ga/updates-notice.webp)
 
 Ní nuashonraítear cóip le hathruithe de do chuid féin duit riamh; insíonn an bosca go bhfuil nuashonrú ag fanacht, agus deir sé do chuid athruithe a dhéanamh nó a stóráil, agus `git pull` a rith. Ní thaispeánann cóip nár suiteáladh le git (comhad zip, mar shampla) rud ar bith.
 

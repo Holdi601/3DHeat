@@ -13,7 +13,7 @@ outdated: false
 
 Vozili ste istu stazu dvaput. Kartica **Analiza utrke** pušta obje vožnje zajedno u 3D, pokazuje gdje je jedan krug bio sporiji i kaže vam zašto. Još nemate krugove? Pritisnite **Demo krugovi**.
 
-![Kartica Analiza utrke s demo krugovima: bočna traka s Krugovima i Gdje napredovati, automobili na stazi, grafikoni ispod prikaza](../assets/img/en/race-analysis-overview.webp)
+![Kartica Analiza utrke s demo krugovima: bočna traka s Krugovima i Gdje napredovati, automobili na stazi, grafikoni ispod prikaza](../assets/img/hr/race-analysis-overview.webp)
 
 Kartica uspoređuje dva ili više krugova jedne staze. Dijeli platno, kameru i učitani model staze (**Pozadina / razina**) s toplinskom kartom; sve ostalo je vlastito: vlastita bočna traka i vlastita traka ispod prikaza. Riječi poput *krug*, *referenca* i *vrh zavoja* nalaze se u [pojmovniku](glossary.md).
 

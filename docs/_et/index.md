@@ -14,7 +14,7 @@ outdated: false
 
 Laadi asukohad - CSV, Parquet, Tacview salvestised, konverteeritud kordused, üks fail, kaust või tuhanded matšid - ja vaata neid **soojuskaardina, millest saab lennata läbi**, **kujudena, mis kordavad matši**, joontena mööda marsruute, mida inimesed käisid, või ühe populatsioonina teise vastu. See leiab ise, mis silma paistab, ja töötab täielikult sinu brauseris: midagi ei laadita kuhugi üles.
 
-![Kümne tankimatši soojus demo-orus](../assets/img/en/heat-hero.webp)
+![Kümne tankimatši soojus demo-orus](../assets/img/et/heat-hero.webp)
 
 **Oled siin uus?** Tee [demoandmed](demo-data.md) ja järgi selle seitset sammu. Kõik sellel saidil olevad pildid on tehtud nende abil.
 
@@ -22,12 +22,12 @@ Laadi asukohad - CSV, Parquet, Tacview salvestised, konverteeritud kordused, ük
 
 | | |
 |---|---|
-| ![Erinevus](../assets/img/en/heat-difference.webp) | **[Soojusrežiimid](heat-modes.md)** - soojus, [erinevus](difference.md) (punane seal, kus üks pool oli rohkem, roheline-sinine seal, kus teine), [võistkondade soojus](team-heat.md), [joonesoojus](line-heat.md); [suunatud soojus](directional-heat.md) kiilude, noolevälja ja polaardiagrammidega; soojus [väärtuse järgi kaalutud](value-weighting.md): mis maksavad relvad, sõidukid ja kütus. |
-| ![Kordus](../assets/img/en/replay-tanks.webp) | **[Matši kordus](match-replay.md)** - iga üksus [kujuna](figures.md) sellest, mis ta on, NATO- või vene sümbolid kaugel, raketid ja jäljed, tabamusmärgid, vrakid, tulekahjud, torned, eesmärgid, Tacview-laadsed kaamerad ja taktikaline kuva; [palju matše korraga](many-matches.md). |
-| ![Tähelepanekud](../assets/img/en/insights.webp) | **[Tähelepanekud](insights.md)** - tugevad positsioonid, surmav maa, spawni lõksud, kitsaskohad ja silmapaistvad mängijad, leitud ja järjestatud koos tõenditega; kirjalik kokkuvõte, soovi korral mõne sinu valitud tehisintellekti poolt; kommentaator ühe matši jaoks; [teadmiste lääts](knowledge.md). |
-| ![Mahud](../assets/img/en/compare.webp) | **[Mahud](volumes.md)** - joonista kaste, prisme, silindreid ja sfääre, filtreeri nende järgi, loenda, mis seal juhtub, ekspordi see ja võrdle kohti kõrvuti; [jaotus](breakdown.md), kes ja mis kohas kõige paremini toimib. |
-| ![Filtrid](../assets/img/en/filters.webp) | **[Filtrid](filters.md)** - sündmuse liigi, mängija või TI, sõidukiklassi, väärtuse, mis tahes veeru järgi, graafikakaardil mis tahes andmesuurusel. |
-| ![Tase](../assets/img/en/level-panel.webp) | **[Tasemed](levels.md)** - kaardipildid, 3D-tasemed, mis on tehtud [andmetööriistadega](#related-repositories), lihtsustamine, [maailmataust](world-backdrop.md) päris maastikuga lennuandmete jaoks. |
+| ![Erinevus](../assets/img/et/heat-difference.webp) | **[Soojusrežiimid](heat-modes.md)** - soojus, [erinevus](difference.md) (punane seal, kus üks pool oli rohkem, roheline-sinine seal, kus teine), [võistkondade soojus](team-heat.md), [joonesoojus](line-heat.md); [suunatud soojus](directional-heat.md) kiilude, noolevälja ja polaardiagrammidega; soojus [väärtuse järgi kaalutud](value-weighting.md): mis maksavad relvad, sõidukid ja kütus. |
+| ![Kordus](../assets/img/et/replay-tanks.webp) | **[Matši kordus](match-replay.md)** - iga üksus [kujuna](figures.md) sellest, mis ta on, NATO- või vene sümbolid kaugel, raketid ja jäljed, tabamusmärgid, vrakid, tulekahjud, torned, eesmärgid, Tacview-laadsed kaamerad ja taktikaline kuva; [palju matše korraga](many-matches.md). |
+| ![Tähelepanekud](../assets/img/et/insights.webp) | **[Tähelepanekud](insights.md)** - tugevad positsioonid, surmav maa, spawni lõksud, kitsaskohad ja silmapaistvad mängijad, leitud ja järjestatud koos tõenditega; kirjalik kokkuvõte, soovi korral mõne sinu valitud tehisintellekti poolt; kommentaator ühe matši jaoks; [teadmiste lääts](knowledge.md). |
+| ![Mahud](../assets/img/et/compare.webp) | **[Mahud](volumes.md)** - joonista kaste, prisme, silindreid ja sfääre, filtreeri nende järgi, loenda, mis seal juhtub, ekspordi see ja võrdle kohti kõrvuti; [jaotus](breakdown.md), kes ja mis kohas kõige paremini toimib. |
+| ![Filtrid](../assets/img/et/filters.webp) | **[Filtrid](filters.md)** - sündmuse liigi, mängija või TI, sõidukiklassi, väärtuse, mis tahes veeru järgi, graafikakaardil mis tahes andmesuurusel. |
+| ![Tase](../assets/img/et/level-panel.webp) | **[Tasemed](levels.md)** - kaardipildid, 3D-tasemed, mis on tehtud [andmetööriistadega](#related-repositories), lihtsustamine, [maailmataust](world-backdrop.md) päris maastikuga lennuandmete jaoks. |
 
 Lisaks: vahekaart [Sõiduanalüüs](race-analysis.md) võidusõidumängude ringide jaoks, vahekaart [Matš](match-analysis.md) Counter-Strike 2 kokkuvõteteks, [taktikatahvel](tactics-board.md) tasemel plaanide jaoks, [tabamuste analüüs](hit-analysis.md) sõiduki kaupa, [massanalüüs](mass-analysis.md) tuhandete matšide jaoks, [kaamerarajad ja video](camera-path-and-video.md), [40 keelt](languages.md), [meetermõõdustik või inglise ühikud](settings.md).
 

@@ -21,7 +21,7 @@ outdated: false
  +------------+
 ```
 
-![Three volumes on the demo valley: two cylinders round the hills, a box round the village](../assets/img/en/volumes.webp)
+![Three volumes on the demo valley: two cylinders round the hills, a box round the village](../assets/img/zh/volumes.webp)
 
 体积用于测量其内部发生的事情，将视图筛选为仅其内部，导出其中的行，并可以并排比较。关于行、人员和对局，另见[术语表](glossary.md)。
 
@@ -76,7 +76,7 @@ GPU 筛选最多支持 8 个体积，总共 64 个轮廓点；超出的体积会
 3. 在**表格**中，查看每个数值与第一个体积的差值。
 4. 切换到**条形**，以条形图查看占比。
 
-![The Compare volumes table: rows, time inside, players and more for each volume, with the difference from the first](../assets/img/en/compare.webp)
+![The Compare volumes table: rows, time inside, players and more for each volume, with the difference from the first](../assets/img/zh/compare.webp)
 
 | 视图 | 显示内容 |
 |---|---|
@@ -86,7 +86,7 @@ GPU 筛选最多支持 8 个体积，总共 64 个轮廓点；超出的体积会
 | **访问** | 访问持续时长的箱线图和小提琴图（对数刻度）。 |
 | **流向** | 轨迹离开每个体积后去往何处：转移矩阵或流向带。 |
 
-![The Bars view: event kinds per volume as shares](../assets/img/en/compare-bars.webp)
+![The Bars view: event kinds per volume as shares](../assets/img/zh/compare-bars.webp)
 
 ## 提示 {#tips}
 

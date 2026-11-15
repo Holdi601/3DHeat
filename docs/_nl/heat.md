@@ -15,7 +15,7 @@ Warmte kleurt de plekken waar veel gebeurde: rood waar het een beetje gebeurde, 
 
 **Warmte** (toets 1) is de standaardmodus. Elke zichtbare [rij](glossary.md) draagt een camera-gericht rond [sprite](glossary.md) bij; overlappende sprites tellen op in een buffer met drijvende komma; de som wordt via een kleurenrampe omgezet - standaard transparant → rood → geel → wit - en over de scène getekend.
 
-![Warmte op een 3D-niveau: hete plekken binnen en bovenop de gebouwen](../assets/img/en/shooter-heat.webp)
+![Warmte op een 3D-niveau: hete plekken binnen en bovenop de gebouwen](../assets/img/nl/shooter-heat.webp)
 
 De afbeelding toont de warmte van een schietronde op een niveau met gebouwen: hete plekken zitten in de kamers en op de trappen, niet alleen op de grond.
 
@@ -26,7 +26,7 @@ De afbeelding toont de warmte van een schietronde op een niveau met gebouwen: he
 3. Verander **Spritestraal** tot naburige stippen tot banden samensmelten: kleiner toont losse plekken, groter toont gebieden.
 4. Open **Heatmapkleuren** om de kleuren te wijzigen, of **Diepte** zodat heuvels en muren de warmte erachter verbergen.
 
-![De gedeelten Heatmapvorm en Heatmapkleuren van de zijbalk, beide open](../assets/img/en/heat-panel.webp)
+![De gedeelten Heatmapvorm en Heatmapkleuren van de zijbalk, beide open](../assets/img/nl/heat-panel.webp)
 
 Dezelfde panelen vormen [Verschil](difference.md), [Teamwarmte](team-heat.md) en [Lijnwarmte](line-heat.md); ze verschillen in wat wordt opgeteld (met teken, gekleurd, of langs lijnen), niet in hoe.
 

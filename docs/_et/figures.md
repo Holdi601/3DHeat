@@ -15,7 +15,7 @@ outdated: false
 
 Kataloogis on umbes 2000 nimega sõidukit, lennukit, laeva, relva ja sõdurit, kõik vaaturi enda ehitatud.
 
-![Demo tankid, joonistatud nende omade kujudena](../assets/img/en/replay-tanks.webp)
+![Demo tankid, joonistatud nende omade kujudena](../assets/img/et/replay-tanks.webp)
 
 ## Mis on kataloogis {#what-is-in-the-catalogue}
 

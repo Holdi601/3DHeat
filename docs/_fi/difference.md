@@ -15,7 +15,7 @@ Punainen siellä, missä joukkue A oli enemmän, vihreä-sininen siellä, missä
 
 **Erotus** (näppäin 2) on etumerkillinen lämpö. Yhden joukon rivit lisäävät lämpöä, toisen joukon rivit vähentävät sitä. Siellä, missä kaksi joukkoa ovat tasan, tulos on nolla ja täysin läpinäkyvä. Siellä, missä toinen hallitsee, se näkyy sen puolen väreissä: oletuksena lämpimillä (läpinäkyvä → punainen → keltainen → valkoinen) **+**-puolelle ja viileillä (läpinäkyvä → vihreä → sininen → violetti) **−**-puolelle.
 
-![Erotuslämpö: punainen siellä, missä +-puoli oli enemmän, vihreä ja sininen siellä, missä -puoli oli enemmän](../assets/img/en/difference-split.webp)
+![Erotuslämpö: punainen siellä, missä +-puoli oli enemmän, vihreä ja sininen siellä, missä -puoli oli enemmän](../assets/img/fi/difference-split.webp)
 
 ## Käyttötapa {#how-to-use-it}
 

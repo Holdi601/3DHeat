@@ -42,7 +42,7 @@ Quali colonne si possono filtrare viene deciso al caricamento, perché allora de
 
 ## Colonne numeriche (intervallo) {#numeric-columns-range}
 
-![Un filtro di intervallo (denaro perso) con entrambe le estremità trascinate](../assets/img/en/filters-numeric.webp)
+![Un filtro di intervallo (denaro perso) con entrambe le estremità trascinate](../assets/img/it/filters-numeric.webp)
 
 | Parte | Significato |
 |---|---|

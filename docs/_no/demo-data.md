@@ -10,7 +10,7 @@ outdated: false
 
 # Demodata: prøv visningsprogrammet på fem minutter
 
-![Varme fra ti stridsvognkamper i demo-dalen: det steg 4 viser](../assets/img/en/heat-hero.webp)
+![Varme fra ti stridsvognkamper i demo-dalen: det steg 4 viser](../assets/img/no/heat-hero.webp)
 
 Har du ingen egne data ennå? Repositoriet lager noen. Alt i det er oppdiktet: en dal, en gård, og kamper av tre oppdiktede spillstiler med spillere som heter *Blue 1* eller *Red 3*. Bildene på denne siden er alle tatt med dem.
 
@@ -45,7 +45,7 @@ Hver tabell navngir sine egne kolonner i bunnteksten, så den lastes inn uten no
 6. Åpne **Innsikter** (i sidepanelet for Varmekart): den finner stedene der langt mer ble skutt, truffet og ødelagt enn ellers – rundt de to åsene.
 7. Åpne fanen **Kamp**; under **Kamper i reprisen** velger du *Match 01*; trykk **Spill av** på tidslinjen: [replayet](match-replay.md).
 
-![Et replay av Match 01 med stridsvogner som figurer](../assets/img/en/replay-overview.webp)
+![Et replay av Match 01 med stridsvogner som figurer](../assets/img/no/replay-overview.webp)
 
 For skytespillet laster du `demo-yard.glb` og `shooter.parquet`; for luftkampen `air.parquet` (figurene er lettere å se ved **Figurstørrelse** 4, en glidebryter i panelet **Lagvisning** i sidepanelet for Varmekart).
 

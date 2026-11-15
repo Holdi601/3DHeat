@@ -21,7 +21,7 @@ Bez ičega učitanog scena je tamna s mrežom i obojenim osima (**Mreža** i **O
 
 Razina je zajednička svim trima karticama: staza učitana na kartici Analiza utrke je ista razina koju prikazuje toplinska karta.
 
-![Panel Pozadina / razina s učitanom razinom: gumbi Slika karte i 3D model, Ratište, Neprozirnost, Svjetlina, Spremi u biblioteku i popis Biblioteke](../assets/img/en/level-panel.webp)
+![Panel Pozadina / razina s učitanom razinom: gumbi Slika karte i 3D model, Ratište, Neprozirnost, Svjetlina, Spremi u biblioteku i popis Biblioteke](../assets/img/hr/level-panel.webp)
 
 ## Stavite razinu iza svojih podataka {#put-a-level-behind-your-data}
 

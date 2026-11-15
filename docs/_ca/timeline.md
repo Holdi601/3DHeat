@@ -12,7 +12,7 @@ outdated: false
 
 La barra sota la imatge és com un reproductor de vídeo: pots reproduir les dades com una pel·lícula, aturar-les, saltar per elles i canviar la velocitat.
 
-![La barra de la línia de temps: 1 Tot/Reprodueix, 2 botons de reproducció, 3 rellotge, 4 Velocitat, 5 Historial, amb Finestra i un Interval de 30 s](../assets/img/en/timeline-bar.webp)
+![La barra de la línia de temps: 1 Tot/Reprodueix, 2 botons de reproducció, 3 rellotge, 4 Velocitat, 5 Historial, amb Finestra i un Interval de 30 s](../assets/img/ca/timeline-bar.webp)
 
 La barra sota la vista és la línia de temps ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Decideix quines files són visibles en cada moment. Necessita una columna de temps; sense ella tota la barra queda desactivada, la vista es queda en **Tot**, i la barra lateral ho diu: *No hi ha cap columna de temps en aquestes dades: la línia de temps està desactivada i tots els punts de dades es mostren de cop.*
 

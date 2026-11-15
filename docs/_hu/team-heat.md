@@ -15,7 +15,7 @@ A csapathő megmutatja, hol volt minden csapat, mindegyiket a saját színében.
 
 A **Csapathő** (3-as billentyű) a [Hő](heat.md) sűrűségi mezője, minden [csoport](glossary.md) saját árnyalatot kap. Ahol a csoportok átfednek, az árnyalatok keverednek; az egyenlő küzdelem semleges színt ad. Az átlátszóság továbbra is ugyanúgy hordozza a sűrűséget, mint a többi módban, így a kép egyszerre válaszol arra, *mennyi* és *kié*. Csoportoszlop kell hozzá.
 
-![Csapathő: mindkét oldal a saját színében; ahol átfednek, a színek keverednek](../assets/img/en/heat-teams.webp)
+![Csapathő: mindkét oldal a saját színében; ahol átfednek, a színek keverednek](../assets/img/hu/heat-teams.webp)
 
 Ez nem a [figurás átfedés](box-replay.md): az személyenként egy figurát rajzol; ez egy hőmező, amelyet ugyanaz az oszlop színez.
 

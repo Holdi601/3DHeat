@@ -15,7 +15,7 @@ Uma **figura** é um pequeno modelo 3D daquilo que uma unidade realmente é: um 
 
 Há cerca de 2000 veículos, aeronaves, navios, armas e soldados com nome, todos construídos pelo próprio visualizador.
 
-![Tanques da demo desenhados como figuras próprias](../assets/img/en/replay-tanks.webp)
+![Tanques da demo desenhados como figuras próprias](../assets/img/pt/replay-tanks.webp)
 
 ## O que está no catálogo {#what-is-in-the-catalogue}
 

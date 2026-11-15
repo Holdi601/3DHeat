@@ -23,7 +23,7 @@ Cilne **Taktika** ir zīmēšanas tāfele komandas plānam: uz kartes novietojat
 6. Nospiediet **▶** (vai `K`), lai atskaņotu plānu no rādītā soļa līdz beigām.
 7. Nosauciet plānu sadaļā **Plāna nosaukums** un nospiediet **Saglabāt**.
 
-![Taktikas cilne skatā no augšas: spēle, puses un rīki kreisajā pusē, trīs figūras ar Pārvietot bultām, dūmu Metiena loku, Zona un soļi apakšā](../assets/img/en/tactics.webp)
+![Taktikas cilne skatā no augšas: spēle, puses un rīki kreisajā pusē, trīs figūras ar Pārvietot bultām, dūmu Metiena loku, Zona un soļi apakšā](../assets/img/lv/tactics.webp)
 
 ## Plāna sākums {#starting-a-plan}
 

@@ -23,7 +23,7 @@ Skeda **Taktika** është një tabelë vizatimi për një plan ekipi: vendos fig
 6. Shtyp **▶** (ose `K`) për të luajtur planin nga hapi i shfaqur deri në fund.
 7. Emërto planin te **Emri i planit** dhe shtyp **Ruaj**.
 
-![Skeda Taktika në pamje nga lart: lojë, pala dhe mjetet majtas, tre figura me shigjeta Zhvendos, një hark hedhjeje tymi, një Zonë dhe hapat poshtë](../assets/img/en/tactics.webp)
+![Skeda Taktika në pamje nga lart: lojë, pala dhe mjetet majtas, tre figura me shigjeta Zhvendos, një hark hedhjeje tymi, një Zonë dhe hapat poshtë](../assets/img/sq/tactics.webp)
 
 ## Fillimi i një plani {#starting-a-plan}
 

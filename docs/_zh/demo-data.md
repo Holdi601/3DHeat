@@ -10,7 +10,7 @@ outdated: false
 
 # 演示数据：五分钟试用查看器
 
-![Heat of ten tank matches in the demo valley: what step 4 shows](../assets/img/en/heat-hero.webp)
+![Heat of ten tank matches in the demo valley: what step 4 shows](../assets/img/zh/heat-hero.webp)
 
 还没有你自己的数据？仓库会生成一些。其中的一切都是虚构的：一个山谷、一个院子，以及三种虚构游戏风格的对局，玩家名叫 *Blue 1* 或 *Red 3*。本站的所有图片都是用它拍摄的。
 
@@ -45,7 +45,7 @@ node tools/demo-data.mjs
 6. 打开**洞察**（位于热力图侧边栏中）：它会找出被射击、命中和摧毁次数远多于其他地方的位置——即两座山丘周围。
 7. 打开**对局**标签页；在**回放中的对局**下选择 *Match 01*，然后在时间线上按**播放**：即[回放](match-replay.md)。
 
-![A replay of Match 01 with tanks as figures](../assets/img/en/replay-overview.webp)
+![A replay of Match 01 with tanks as figures](../assets/img/zh/replay-overview.webp)
 
 对于步战数据，加载 `demo-yard.glb` 和 `shooter.parquet`；对于空战，加载 `air.parquet`（在热力图侧边栏的**队伍查看器**面板中，将**图标大小**设为 4 时，图形更容易看清，这是一个滑块）。
 

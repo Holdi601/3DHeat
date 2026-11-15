@@ -14,7 +14,7 @@ outdated: false
 
 Įkelkite pozicijas – CSV, Parquet, Tacview įrašus, konvertuotus pakartojimus, vieną failą, aplanką ar tūkstančius rungtynių – ir pamatykite jas kaip **šilumos žemėlapį, per kurį galima skristi**, kaip **figūras, kurios pakartoja rungtynes**, kaip linijas išilgai maršrutų, kuriais ėjo žmonės, arba kaip vienos populiacijos palyginimą su kita. Programa pati suranda, kas išsiskiria, ir veikia visiškai jūsų naršyklėje: niekas niekur neįkeliamas.
 
-![Dešimties tankų rungtynių šiluma Demo Valley lygyje](../assets/img/en/heat-hero.webp)
+![Dešimties tankų rungtynių šiluma Demo Valley lygyje](../assets/img/lt/heat-hero.webp)
 
 **Esate čia pirmas kartas?** Sukurkite [demonstracinius duomenis](demo-data.md) ir sekite jų septynis žingsnius. Visi šios svetainės paveikslėliai padaryti su jais.
 
@@ -22,12 +22,12 @@ outdated: false
 
 | | |
 |---|---|
-| ![Skirtumas](../assets/img/en/heat-difference.webp) | **[Šilumos režimai](heat-modes.md)** – šiluma, [skirtumas](difference.md) (raudona, kur viena pusė buvo daugiau, žalsvai mėlyna, kur buvo daugiau kita), [komandų šiluma](team-heat.md), [linijų šiluma](line-heat.md); [krypties šiluma](directional-heat.md) su sektoriais, krypčių laukais ir poliarinėmis diagramomis; šiluma, [sverta pagal vertę](value-weighting.md): kiek kainuoja ginklai, technika ir kuras. |
-| ![Pakartojimas](../assets/img/en/replay-tanks.webp) | **[Rungtynių pakartojimas](match-replay.md)** – kiekvienas vienetas kaip [figūra](figures.md) to, kuo jis yra, NATO ar rusiški ženklai toli, raketos ir trasuojantys šūviai, pataikymų žymės, griuvėsiai, gaisrai, bokštai, tikslai, Tacview stiliaus kameros ir taktinis vaizdas; [daug rungtynių vienu metu](many-matches.md). |
-| ![Įžvalgos](../assets/img/en/insights.webp) | **[Įžvalgos](insights.md)** – stiprios pozicijos, pavojinga vietovė, atsiradimo spąstai, siauros vietos ir išsiskiriantys žaidėjai, surasti ir surikiuoti su įrodymais; rašytinė santrauka, pasirinktinai su jūsų pasirinktu DI; komentatorius vienoms rungtynėms; [žinių lęšis](knowledge.md). |
-| ![Tūriai](../assets/img/en/compare.webp) | **[Tūriai](volumes.md)** – braižykite dėžes, prizmes, cilindrus ir sferas, filtruokite pagal juos, skaičiuokite, kas vyksta viduje, eksportuokite ir lyginkite vietas šalia viena kitos; [išskaidymas](breakdown.md), kas ir ką geriausiai daro vietoje. |
-| ![Filtrai](../assets/img/en/filters.webp) | **[Filtrai](filters.md)** – pagal įvykio tipą, žaidėją ar DI, transporto klasę, vertę, bet kurį stulpelį – vaizdo plokštėje, prie bet kokio duomenų dydžio. |
-| ![Lygis](../assets/img/en/level-panel.webp) | **[Lygiai](levels.md)** – žemėlapio vaizdai, 3D lygiai, padaryti su [duomenų įrankiais](#related-repositories), supaprastinimas, [pasaulio fonas](world-backdrop.md) su tikru reljefu skrydžio duomenims. |
+| ![Skirtumas](../assets/img/lt/heat-difference.webp) | **[Šilumos režimai](heat-modes.md)** – šiluma, [skirtumas](difference.md) (raudona, kur viena pusė buvo daugiau, žalsvai mėlyna, kur buvo daugiau kita), [komandų šiluma](team-heat.md), [linijų šiluma](line-heat.md); [krypties šiluma](directional-heat.md) su sektoriais, krypčių laukais ir poliarinėmis diagramomis; šiluma, [sverta pagal vertę](value-weighting.md): kiek kainuoja ginklai, technika ir kuras. |
+| ![Pakartojimas](../assets/img/lt/replay-tanks.webp) | **[Rungtynių pakartojimas](match-replay.md)** – kiekvienas vienetas kaip [figūra](figures.md) to, kuo jis yra, NATO ar rusiški ženklai toli, raketos ir trasuojantys šūviai, pataikymų žymės, griuvėsiai, gaisrai, bokštai, tikslai, Tacview stiliaus kameros ir taktinis vaizdas; [daug rungtynių vienu metu](many-matches.md). |
+| ![Įžvalgos](../assets/img/lt/insights.webp) | **[Įžvalgos](insights.md)** – stiprios pozicijos, pavojinga vietovė, atsiradimo spąstai, siauros vietos ir išsiskiriantys žaidėjai, surasti ir surikiuoti su įrodymais; rašytinė santrauka, pasirinktinai su jūsų pasirinktu DI; komentatorius vienoms rungtynėms; [žinių lęšis](knowledge.md). |
+| ![Tūriai](../assets/img/lt/compare.webp) | **[Tūriai](volumes.md)** – braižykite dėžes, prizmes, cilindrus ir sferas, filtruokite pagal juos, skaičiuokite, kas vyksta viduje, eksportuokite ir lyginkite vietas šalia viena kitos; [išskaidymas](breakdown.md), kas ir ką geriausiai daro vietoje. |
+| ![Filtrai](../assets/img/lt/filters.webp) | **[Filtrai](filters.md)** – pagal įvykio tipą, žaidėją ar DI, transporto klasę, vertę, bet kurį stulpelį – vaizdo plokštėje, prie bet kokio duomenų dydžio. |
+| ![Lygis](../assets/img/lt/level-panel.webp) | **[Lygiai](levels.md)** – žemėlapio vaizdai, 3D lygiai, padaryti su [duomenų įrankiais](#related-repositories), supaprastinimas, [pasaulio fonas](world-backdrop.md) su tikru reljefu skrydžio duomenims. |
 
 Be to: [Lenktynių analizės](race-analysis.md) skirtukas lenktynių žaidimų ratams, [Rungtynių](match-analysis.md) skirtukas Counter-Strike 2 santraukoms, [Taktikos lenta](tactics-board.md) planams ant lygio, [pataikymų analizė](hit-analysis.md) pagal techniką, [masinė analizė](mass-analysis.md) tūkstančiams rungtynių, [kameros keliai ir vaizdo įrašai](camera-path-and-video.md), [40 kalbų](languages.md), [metriniai arba imperiniai vienetai](settings.md).
 

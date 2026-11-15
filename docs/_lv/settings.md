@@ -23,7 +23,7 @@ Sānjoslas augšdaļā:
 | Poga **...** blakus **Vienības** | Atver "Izvēlieties mērvienību katram lielumam": katram lielumam atsevišķa nolaižamā izvēlne |
 | Izvēlne **Valoda** | Skatītāja valoda: [40 valodas](languages.md), vai pārlūka valoda |
 
-![Galvene ar atvērtu izvēlni Vienības un logu mērvienība katram lielumam](../assets/img/en/settings-units.webp)
+![Galvene ar atvērtu izvēlni Vienības un logu mērvienība katram lielumam](../assets/img/lv/settings-units.webp)
 
 Skaitļus, ko ierakstāt lodziņā, var rakstīt ar punktu vai komatu (`0.35` vai `0,35`). Skatītājs saprot abus un rāda skaitļus tā, kā raksta skatītāja valoda.
 
@@ -48,11 +48,11 @@ Citas mērvienības, ko varat izvēlēties vienam lielumam: attālums km, mi, NM
 
 ## Palīdzības režīms {#help-mode}
 
-![Palīdzības režīms: ko nozīmē krāsas](../assets/img/en/help.webp)
+![Palīdzības režīms: ko nozīmē krāsas](../assets/img/lv/help.webp)
 
 Nospiediet `?` vai `F1`, vai noklikšķiniet uz pogas **?**. Tas rāda *Ko nozīmē krāsas*: leģendas 3D skatam, siltuma skalām, komandu krāsām, līmeņa krāsām, paneļu statusa krāsām, mača paneli un sacīkšu skatu. Tas paliek ieslēgts, līdz to izslēdzat. Cilnē Mačs tas skaidro arī mača paneļa krāsas.
 
-![Palīdzības režīms cilnē Mačs](../assets/img/en/settings-help-match.webp)
+![Palīdzības režīms cilnē Mačs](../assets/img/lv/settings-help-match.webp)
 
 ## Ko pārlūks atceras {#what-the-browser-remembers}
 

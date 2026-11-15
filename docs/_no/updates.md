@@ -18,7 +18,7 @@ Visningsprogrammet sier fra når en nyere versjon finnes, og oppdaterer seg selv
 2. **Hvis den sier å kjøre restart.bat**, lukk servervinduet (det svarte vinduet `start.bat` åpnet), og dobbeltklikk `restart.bat`.
 3. **Når du starter visningsprogrammet.** `start.bat` sjekker også. Finnes en nyere versjon, spør den **Oppdater nå? [Y/N]**. Trykk `Y` for å oppdatere. Trykk `N`, eller vent 60 sekunder uten svar, for å starte versjonen du har.
 
-![Oppdateringsvarselet med Oppdater nå og Senere](../assets/img/en/updates-notice.webp)
+![Oppdateringsvarselet med Oppdater nå og Senere](../assets/img/no/updates-notice.webp)
 
 En kopi med egne endringer oppdateres aldri for deg; boksen forteller bare at en oppdatering venter, og sier at du skal committe eller stashe endringene og kjøre `git pull`. En kopi som ikke er installert med git (for eksempel en zip-fil) viser ingenting.
 

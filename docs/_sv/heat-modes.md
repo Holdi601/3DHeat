@@ -15,7 +15,7 @@ Varje prick lägger till en liten glöd, glöden staplas på varandra, och stape
 
 Lägesfältet överst i sidofältet för fliken Värmekarta väljer hur [datamängden](glossary.md) ritas. Tangenterna 1–4 väljer Värme, Differens, Lagvärme och Linjer. Figuröverlägg har ingen tangent.
 
-![Lägesfältet med Värme, Differens, Lagvärme, Figuröverlägg och Linjer](../assets/img/en/heat-modes-bar.webp)
+![Lägesfältet med Värme, Differens, Lagvärme, Figuröverlägg och Linjer](../assets/img/sv/heat-modes-bar.webp)
 
 | Läge | Fråga det svarar på |
 |---|---|
@@ -25,7 +25,7 @@ Lägesfältet överst i sidofältet för fliken Värmekarta väljer hur [datamä
 | **Linjer** | Vilken väg tog folk? |
 | **Figuröverlägg** | Vem var var, och när? |
 
-![Samma data i fyra lägen: Värme, Differens, Lagvärme och Linjer](../assets/img/en/heat-modes-grid.webp)
+![Samma data i fyra lägen: Värme, Differens, Lagvärme och Linjer](../assets/img/sv/heat-modes-grid.webp)
 
 | Läge (etikett i fältet) | Tangent | Vad det ritar | Behöver |
 |---|---|---|---|

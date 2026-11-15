@@ -15,7 +15,7 @@ Rött där lag A var mer, grönblått där lag B var mer, ingenting där de var 
 
 **Differens** (tangent 2) är signerad värme. Rader ur en population adderar värme; rader ur en annan subtraherar den. Där de två överlappar jämnt blir resultatet noll och helt genomskinligt. Där den ena dominerar syns den i den sidans färger – som standard varma (genomskinlig → röd → gul → vit) för **+**-sidan och kalla (genomskinlig → grön → blå → lila) för **−**-sidan.
 
-![Differensvärme: rött där +-sidan var mer, grönt och blått där −-sidan var mer](../assets/img/en/difference-split.webp)
+![Differensvärme: rött där +-sidan var mer, grönt och blått där −-sidan var mer](../assets/img/sv/difference-split.webp)
 
 ## Så använder du det {#how-to-use-it}
 

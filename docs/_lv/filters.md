@@ -19,7 +19,7 @@ outdated: false
 2. Sadaļā **Transportlīdzekļa klase** noņemiet atzīmi *Tanks*. Attēls uzreiz mainās.
 3. Nospiediet **Notīrīt visus filtrus**, lai atsauktu.
 
-![Filtru panelis: skatītāja pašas kolonnas (Notikuma veids, Transportlīdzekļa klase) pirmās, tad kolonnas no jūsu faila](../assets/img/en/filters.webp)
+![Filtru panelis: skatītāja pašas kolonnas (Notikuma veids, Transportlīdzekļa klase) pirmās, tad kolonnas no jūsu faila](../assets/img/lv/filters.webp)
 
 Pirmās rindas ir skatītāja pašas kolonnas (zemāk). Pēc tām nāk kolonnas no jūsu faila.
 
@@ -42,7 +42,7 @@ Kuras kolonnas var filtrēt, tiek izlemts ielādes laikā, jo tās tad ir jānol
 
 ## Skaitliskās kolonnas (diapazons) {#numeric-columns-range}
 
-![Diapazona filtrs (zaudētā nauda) ar abiem galiem, kas pārvilkti](../assets/img/en/filters-numeric.webp)
+![Diapazona filtrs (zaudētā nauda) ar abiem galiem, kas pārvilkti](../assets/img/lv/filters-numeric.webp)
 
 | Daļa | Nozīme |
 |---|---|

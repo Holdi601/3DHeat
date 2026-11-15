@@ -19,7 +19,7 @@ outdated: false
 2. Pod **Razred vozila** odkljukajte *Tank*. Slika se takoj spremeni.
 3. Pritisnite **Počisti vse filtre**, da razveljavite.
 
-![Plošča Filtri: najprej lastni stolpci pregledovalnika (Vrsta dogodka, Razred vozila), nato stolpci iz vaše datoteke](../assets/img/en/filters.webp)
+![Plošča Filtri: najprej lastni stolpci pregledovalnika (Vrsta dogodka, Razred vozila), nato stolpci iz vaše datoteke](../assets/img/sl/filters.webp)
 
 Prve vrstice so lastni stolpci pregledovalnika (spodaj). Vrstice za njimi prihajajo iz vaše datoteke.
 
@@ -42,7 +42,7 @@ Kateri stolpci se lahko filtrirajo, se odloči ob nalaganju, ker jih je treba ta
 
 ## Številski stolpci (razpon) {#numeric-columns-range}
 
-![Filter razpona (izgubljen denar) z obema krajema povlečenima](../assets/img/en/filters-numeric.webp)
+![Filter razpona (izgubljen denar) z obema krajema povlečenima](../assets/img/sl/filters-numeric.webp)
 
 | Del | Pomen |
 |---|---|

@@ -23,7 +23,7 @@ Na vrhu stranske vrstice:
 | Gumb **...** ob **Enote** | Odpre »Izberite enoto za vsako veličino«: en spustni meni za vsako veličino |
 | Meni **Jezik** | Jezik pregledovalnika: [40 jezikov](languages.md) ali jezik brskalnika |
 
-![Glava z menijem Enote in odprtim oknom enote za vsako veličino](../assets/img/en/settings-units.webp)
+![Glava z menijem Enote in odprtim oknom enote za vsako veličino](../assets/img/sl/settings-units.webp)
 
 Številke, ki jih vtipkate v polje, lahko uporabljajo piko ali vejico (`0.35` ali `0,35`). Pregledovalnik bere obe in prikaže številke tako, kot jih piše jezik pregledovalnika.
 
@@ -48,11 +48,11 @@ Druge enote, ki jih lahko izberete za eno veličino: razdalja km, mi, NM; hitros
 
 ## Način pomoči {#help-mode}
 
-![Način pomoči: kaj pomenijo barve](../assets/img/en/help.webp)
+![Način pomoči: kaj pomenijo barve](../assets/img/sl/help.webp)
 
 Pritisnite `?` ali `F1` ali kliknite gumb **?**. Prikaže *Kaj pomenijo barve*: legende za 3D pogled, lestvice toplote, barve ekip, barve ravni, barve stanja plošč, ploščo tekme in pogled dirke. Ostane, dokler ga ne izklopite. V zavihku Tekma razlaga tudi barve plošče tekme.
 
-![Način pomoči v zavihku Tekma](../assets/img/en/settings-help-match.webp)
+![Način pomoči v zavihku Tekma](../assets/img/sl/settings-help-match.webp)
 
 ## Kaj brskalnik shrani {#what-the-browser-remembers}
 

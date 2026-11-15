@@ -19,7 +19,7 @@ outdated: false
 2. Pod **Trieda vozidla** odškrtnite *Tank*. Obrázok sa hneď zmení.
 3. Stlačením **Zrušiť všetky filtre** to vrátite.
 
-![Panel Filtre: najprv stĺpce, ktoré pridáva prehliadač (Typ udalosti, Trieda vozidla), potom stĺpce z vášho súboru](../assets/img/en/filters.webp)
+![Panel Filtre: najprv stĺpce, ktoré pridáva prehliadač (Typ udalosti, Trieda vozidla), potom stĺpce z vášho súboru](../assets/img/sk/filters.webp)
 
 Prvé riadky sú vlastné stĺpce prehliadača (pozri nižšie). Riadky za nimi pochádzajú z vášho súboru.
 
@@ -42,7 +42,7 @@ Ktoré stĺpce sa dajú filtrovať, sa rozhoduje pri načítaní, pretože sa mu
 
 ## Číselné stĺpce (rozsah) {#numeric-columns-range}
 
-![Rozsahový filter (stratené peniaze) s oboma koncami posunutými](../assets/img/en/filters-numeric.webp)
+![Rozsahový filter (stratené peniaze) s oboma koncami posunutými](../assets/img/sk/filters-numeric.webp)
 
 | Časť | Význam |
 |---|---|

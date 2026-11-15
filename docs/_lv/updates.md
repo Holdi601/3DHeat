@@ -18,7 +18,7 @@ Skatītājs jums paziņo, kad ir jaunāka versija, un atjaunina sevi tikai tad, 
 2. **Ja tiek teikts palaist restart.bat**, aizveriet servera logu (melno logu, ko atvēra `start.bat`) un divreiz noklikšķiniet uz `restart.bat`.
 3. **Kad palaižat skatītāju.** `start.bat` arī pārbauda. Ja ir jaunāka versija, tas jautā **Atjaunināt tagad? [Y/N]**. Nospiediet `Y`, lai atjauninātu. Nospiediet `N` vai pagaidiet 60 sekundes bez atbildes, lai palaistu versiju, kas jums ir.
 
-![Atjauninājuma paziņojums ar Atjaunināt tagad un Vēlāk](../assets/img/en/updates-notice.webp)
+![Atjauninājuma paziņojums ar Atjaunināt tagad un Vēlāk](../assets/img/lv/updates-notice.webp)
 
 Kopija ar jūsu pašu izmaiņām nekad netiek atjaunināta automātiski; lodziņš tikai saka, ka atjauninājums gaida, un liek saglabāt vai paslēpt izmaiņas un palaist `git pull`. Kopija, kas nav instalēta ar git (piemēram, zip fails), nerāda neko.
 

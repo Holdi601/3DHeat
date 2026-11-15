@@ -18,7 +18,7 @@ Peržiūros programa praneša, kai yra naujesnė versija, ir atsinaujina pati ti
 2. **Jei sakoma paleisti restart.bat**, uždarykite serverio langą (juodą langą, kurį atidarė `start.bat`) ir dukart spustelėkite `restart.bat`.
 3. **Paleisdami peržiūros programą.** `start.bat` taip pat tikrina. Jei yra naujesnė versija, klausia **Atnaujinti dabar? [Y/N]**. Paspauskite `Y`, kad atnaujintumėte. Paspauskite `N` arba palaukite 60 sekundžių be atsakymo, kad paleistumėte turimą versiją.
 
-![Atnaujinimo pranešimas su Atnaujinti dabar ir Vėliau](../assets/img/en/updates-notice.webp)
+![Atnaujinimo pranešimas su Atnaujinti dabar ir Vėliau](../assets/img/lt/updates-notice.webp)
 
 Kopijos su jūsų pačių pakeitimais niekada neatnaujinamos automatiškai; langelis tik praneša, kad laukia atnaujinimas, ir sako įrašyti arba paslėpti pakeitimus ir paleisti `git pull`. Kopija, neįdiegta su git (pavyzdžiui, zip failas), nieko nerodo.
 

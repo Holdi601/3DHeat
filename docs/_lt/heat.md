@@ -15,7 +15,7 @@ outdated: false
 
 **Šiluma** (klavišas 1) yra numatytasis režimas. Kiekviena matoma [eilutė](glossary.md) prideda į kamerą nukreiptą apvalų [spraitą](glossary.md); persidengiantys spraitai susideda į slankiojo kablelio buferį; suma perleidžiama per spalvų skalę – pagal numatymą skaidri → raudona → geltona → balta – ir nupiešiama virš scenos.
 
-![Šiluma 3D lygyje: karštos vietos pastatų viduje ir ant jų](../assets/img/en/shooter-heat.webp)
+![Šiluma 3D lygyje: karštos vietos pastatų viduje ir ant jų](../assets/img/lt/shooter-heat.webp)
 
 Paveikslėlyje – šaulio raundo šiluma lygyje su pastatais: karštos vietos yra kambariuose ir laiptuose, o ne tik ant žemės.
 
@@ -26,7 +26,7 @@ Paveikslėlyje – šaulio raundo šiluma lygyje su pastatais: karštos vietos y
 3. Keiskite **Spraito spindulys**, kol gretimi taškai susilies į juostas: mažesnis rodo atskiras dėmes, didesnis – plotus.
 4. Atidarykite **Šilumos spalvos**, kad pakeistumėte spalvas, arba **Gylis**, kad kalvos ir sienos slėptų šilumą už savęs.
 
-![Šoninės juostos skiltys Šilumos forma ir Šilumos spalvos, abi atidarytos](../assets/img/en/heat-panel.webp)
+![Šoninės juostos skiltys Šilumos forma ir Šilumos spalvos, abi atidarytos](../assets/img/lt/heat-panel.webp)
 
 Tos pačios skiltys formuoja [Skirtumą](difference.md), [Komandų šilumą](team-heat.md) ir [Linijų šilumą](line-heat.md); jos skiriasi tuo, kas pridedama (su ženklu, nudažyta arba išilgai linijų), o ne kaip tai daroma.
 

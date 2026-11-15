@@ -13,7 +13,7 @@ outdated: false
 
 Je reed twee keer dezelfde baan. Het tabblad **Race-analyse** speelt beide ritten samen af in 3D, toont waar één ronde langzamer was en vertelt je waarom. Nog geen rondes? Druk op **Demorondes**.
 
-![Het tabblad Race-analyse met demorondes: de zijbalk met Rondes en Waar tijd te winnen is, de wagens op de baan, de grafieken onder de weergave](../assets/img/en/race-analysis-overview.webp)
+![Het tabblad Race-analyse met demorondes: de zijbalk met Rondes en Waar tijd te winnen is, de wagens op de baan, de grafieken onder de weergave](../assets/img/nl/race-analysis-overview.webp)
 
 Het tabblad vergelijkt twee of meer rondes van één baan. Het deelt het canvas, de camera en het geladen baanmodel (**Achtergrond / level**) met de warmtekaart; al het andere is eigen: de eigen zijbalk en de eigen balk onder de weergave. Woorden als *ronde*, *referentie* en *apex* staan in de [woordenlijst](glossary.md).
 

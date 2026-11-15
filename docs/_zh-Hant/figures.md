@@ -15,7 +15,7 @@ outdated: false
 
 目錄中約有 2,000 種具名的載具、飛機、艦艇、武器與士兵，全部由檢視器自己建構。
 
-![示範中的戰車以各自的模型繪製](../assets/img/en/replay-tanks.webp)
+![示範中的戰車以各自的模型繪製](../assets/img/zh-Hant/replay-tanks.webp)
 
 ## 目錄內容 {#what-is-in-the-catalogue}
 

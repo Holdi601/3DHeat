@@ -23,7 +23,7 @@ Skirtukas **Taktika** yra piešimo lenta komandos planui: ant žemėlapio dedate
 6. Paspauskite **▶** (arba `K`), kad planas paleistų nuo rodomo žingsnio iki pabaigos.
 7. Pavadinkite planą lauke **Plano pavadinimas** ir paspauskite **Įrašyti**.
 
-![Taktikos skirtukas vaizde iš viršaus: žaidimas, pusės ir įrankiai kairėje, trys figūros su Judėjimo rodyklėmis, dūmų Metimo lanko, Sritis ir žingsniai apačioje](../assets/img/en/tactics.webp)
+![Taktikos skirtukas vaizde iš viršaus: žaidimas, pusės ir įrankiai kairėje, trys figūros su Judėjimo rodyklėmis, dūmų Metimo lanko, Sritis ir žingsniai apačioje](../assets/img/lt/tactics.webp)
 
 ## Plano pradžia {#starting-a-plan}
 

@@ -13,7 +13,7 @@ outdated: false
 
 Jazdili ste dvakrát po tej istej trati. Karta **Analýza pretekov** prehrá obe jazdy spolu v 3D, ukáže, kde bolo jedno kolo pomalšie, a povie vám prečo. Ešte nemáte kolá? Stlačte **Ukážkové kolá**.
 
-![Karta Analýza pretekov s ukážkovými kolami: bočný panel s Kolami a Kde sa zlepšiť, autá na trati, grafy pod pohľadom](../assets/img/en/race-analysis-overview.webp)
+![Karta Analýza pretekov s ukážkovými kolami: bočný panel s Kolami a Kde sa zlepšiť, autá na trati, grafy pod pohľadom](../assets/img/sk/race-analysis-overview.webp)
 
 Karta porovnáva dve alebo viac kôl jednej trate. Plátno, kameru a načítaný model trate (**Pozadie / level**) zdieľa s heatmapou; všetko ostatné má vlastné: vlastný bočný panel a vlastnú lištu pod pohľadom. Slová ako *kolo*, *referencia* a *apex* sú v [slovníku](glossary.md).
 

@@ -13,7 +13,7 @@ outdated: false
 
 Kétszer ugyanazt a pályát hajtotta. A **Versenyelemzés** fül mindkét futást együtt játssza le 3D-ben, megmutatja, hol volt lassabb egy kör, és megmondja, miért. Még nincsenek körei? Nyomja meg a **Demókörök** gombot.
 
-![A Versenyelemzés fül a demókörökkel: az oldalsáv a Körök és a Hol lehet javítani részekkel, az autók a pályán, a diagramok a nézet alatt](../assets/img/en/race-analysis-overview.webp)
+![A Versenyelemzés fül a demókörökkel: az oldalsáv a Körök és a Hol lehet javítani részekkel, az autók a pályán, a diagramok a nézet alatt](../assets/img/hu/race-analysis-overview.webp)
 
 A fül egy pálya két vagy több körét hasonlítja össze. A vászon, a kamera és a betöltött pályamodell (**Háttér / pálya**) a hőtérképpel közös; minden más saját: saját oldalsávja és saját sávja a nézet alatt. Az olyan szavak, mint a *kör*, a *referencia* és a *csúcspont*, a [szójegyzékben](glossary.md) vannak.
 

@@ -15,7 +15,7 @@ Elke stip voegt een klein gloed toe, de gloeden stapelen zich op, en de stapel w
 
 De modusbalk bovenaan de zijbalk van het tabblad Heatmap kiest hoe de [dataset](glossary.md) wordt getekend. Toetsen 1-4 kiezen Warmte, Verschil, Teamwarmte en Lijnen. Figurenoverlay heeft geen toets.
 
-![De modusbalk met Warmte, Verschil, Teamwarmte, Figurenoverlay en Lijnen](../assets/img/en/heat-modes-bar.webp)
+![De modusbalk met Warmte, Verschil, Teamwarmte, Figurenoverlay en Lijnen](../assets/img/nl/heat-modes-bar.webp)
 
 | Modus | Vraag die het beantwoordt |
 |---|---|
@@ -25,7 +25,7 @@ De modusbalk bovenaan de zijbalk van het tabblad Heatmap kiest hoe de [dataset](
 | **Lijnen** | In welke richting gingen de mensen? |
 | **Figurenoverlay** | Wie was waar, en wanneer? |
 
-![Dezelfde data in vier modi: Warmte, Verschil, Teamwarmte en Lijnen](../assets/img/en/heat-modes-grid.webp)
+![Dezelfde data in vier modi: Warmte, Verschil, Teamwarmte en Lijnen](../assets/img/nl/heat-modes-grid.webp)
 
 | Modus (label in de balk) | Toets | Wat het tekent | Nodig |
 |---|---|---|---|

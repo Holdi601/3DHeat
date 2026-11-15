@@ -23,7 +23,7 @@ Nahoře v postranním panelu:
 | Tlačítko **...** vedle **Jednotky** | Otevře „Vyberte jednotku pro každou veličinu“: jednu rozbalovací nabídku pro každou veličinu |
 | Nabídka **Jazyk** | Jazyk zobrazení: [40 jazyků](languages.md), nebo jazyk webového prohlížeče |
 
-![Hlavička s nabídkou Jednotky a otevřeným oknem jednotky pro každou veličinu](../assets/img/en/settings-units.webp)
+![Hlavička s nabídkou Jednotky a otevřeným oknem jednotky pro každou veličinu](../assets/img/cs/settings-units.webp)
 
 Čísla, která napíšete do pole, mohou mít tečku nebo čárku (`0.35` nebo `0,35`). Prohlížeč čte obojí a čísla zobrazuje tak, jak je píše jazyk prohlížeče.
 
@@ -48,11 +48,11 @@ Další jednotky, které lze vybrat pro jednu veličinu: vzdálenost km, mi, NM;
 
 ## Režim nápovědy {#help-mode}
 
-![Režim nápovědy: co znamenají barvy](../assets/img/en/help.webp)
+![Režim nápovědy: co znamenají barvy](../assets/img/cs/help.webp)
 
 Stiskněte `?` nebo `F1`, nebo klikněte na tlačítko **?**. Zobrazí se *Co znamenají barvy*: legendy pro 3D pohled, škály tepla, barvy týmů, barvy levelu, stavové barvy panelů, panel zápasu a pohled závodu. Zůstane zapnutý, dokud ho nevypnete. Na kartě Zápas vysvětluje i barvy panelu zápasu.
 
-![Režim nápovědy na kartě Zápas](../assets/img/en/settings-help-match.webp)
+![Režim nápovědy na kartě Zápas](../assets/img/cs/settings-help-match.webp)
 
 ## Co si prohlížeč pamatuje {#what-the-browser-remembers}
 

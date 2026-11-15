@@ -15,7 +15,7 @@ outdated: false
 
 **热度**（按键 1）是默认模式。每个可见的[行](glossary.md)都会贡献一个面向摄像机的圆形[精灵](glossary.md)；重叠的精灵在浮点缓冲区中相加；总和通过颜色渐变映射——默认是透明 → 红 → 黄 → 白——然后绘制在场景之上。
 
-![Heat on a 3D level: hot spots inside and on top of the buildings](../assets/img/en/shooter-heat.webp)
+![Heat on a 3D level: hot spots inside and on top of the buildings](../assets/img/zh/shooter-heat.webp)
 
 图片显示的是一个带建筑物的关卡中步战回合的热度：热点位于房间内和楼梯上，而不只是地面上。
 
@@ -26,7 +26,7 @@ outdated: false
 3. 调整**精灵半径**，直到相邻的点合并成带状：较小的显示单个光点，较大的显示区域。
 4. 打开**热度颜色**来更改颜色，或打开**深度**，让山丘和墙壁遮住其后的热度。
 
-![The Heat shape and Heat colours sections of the sidebar, both open](../assets/img/en/heat-panel.webp)
+![The Heat shape and Heat colours sections of the sidebar, both open](../assets/img/zh/heat-panel.webp)
 
 同样的面板也塑造[差值](difference.md)、[队伍热度](team-heat.md)和[线条热度](line-heat.md)；它们的区别在于相加的内容（带符号、有颜色，或沿线条），而不在于处理方式。
 

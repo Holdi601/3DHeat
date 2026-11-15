@@ -15,7 +15,7 @@ outdated: false
 
 **队伍热度**（按键 3）是[热度](heat.md)的密度场，每个[分组](glossary.md)都被赋予自己的色相。分组重叠时，它们的色相会混合；势均力敌的对抗会呈现中性色。不透明度仍像其他模式一样承载密度，因此画面同时回答*多少*和*是谁的*。它需要一个分组列。
 
-![Team heat: each side in its own colour; where they overlap the colours mix](../assets/img/en/heat-teams.webp)
+![Team heat: each side in its own colour; where they overlap the colours mix](../assets/img/zh/heat-teams.webp)
 
 它不是[模型叠加](box-replay.md)：后者为每个人绘制一个图形；这里则是由同一列着色的热度场。
 

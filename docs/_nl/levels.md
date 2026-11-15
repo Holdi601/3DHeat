@@ -21,7 +21,7 @@ Zonder iets geladen is de scène donker met een raster en gekleurde assen (**Ras
 
 Het niveau wordt door alle drie de tabbladen gedeeld: een baan die in het tabblad Race-analyse geladen is, is hetzelfde niveau dat de warmtekaart toont.
 
-![Het paneel Achtergrond / level met een niveau geladen: knoppen Kaartafbeelding en 3D-model, Strijdtoneel, Dekking, Helderheid, Opslaan in bibliotheek en de lijst Bibliotheek](../assets/img/en/level-panel.webp)
+![Het paneel Achtergrond / level met een niveau geladen: knoppen Kaartafbeelding en 3D-model, Strijdtoneel, Dekking, Helderheid, Opslaan in bibliotheek en de lijst Bibliotheek](../assets/img/nl/level-panel.webp)
 
 ## Zet een niveau achter je data {#put-a-level-behind-your-data}
 

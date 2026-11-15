@@ -23,7 +23,7 @@ Zavihek **Taktika** je risalna tabla za načrt ekipe: na zemljevid postavite maj
 6. Pritisnite **▶** (ali `K`), da predvajate načrt od prikazanega koraka do konca.
 7. Imenujte načrt v **Ime načrta** in pritisnite **Shrani**.
 
-![Zavihek Taktika v pogledu od zgoraj: igra, strani in orodja levo, tri figure s puščicami Premik, lok metanja dima, območje in koraki ob dnu](../assets/img/en/tactics.webp)
+![Zavihek Taktika v pogledu od zgoraj: igra, strani in orodja levo, tri figure s puščicami Premik, lok metanja dima, območje in koraki ob dnu](../assets/img/sl/tactics.webp)
 
 ## Začetek načrta {#starting-a-plan}
 

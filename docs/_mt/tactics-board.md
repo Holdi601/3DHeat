@@ -23,7 +23,7 @@ It-tab **Tattika** hu bord tat-tpinġija għal pjan ta' tim: titqiegħed figuri 
 6. Agħfas **▶** (jew `K`) biex tħaddem il-pjan mill-pass murija sal-aħħar.
 7. Semmi l-pjan f'**Isem il-pjan** u agħfas **Issejvja**.
 
-![It-tab Tattika f'veduta minn fuq: logħba, naħat u għodod fuq ix-xellug, tliet figuri b'vleġġi tal-Moviment, arc tat-tefgħa tad-duħħan, Erja u l-passi tul l-isfel](../assets/img/en/tactics.webp)
+![It-tab Tattika f'veduta minn fuq: logħba, naħat u għodod fuq ix-xellug, tliet figuri b'vleġġi tal-Moviment, arc tat-tefgħa tad-duħħan, Erja u l-passi tul l-isfel](../assets/img/mt/tactics.webp)
 
 ## Tibda pjan {#starting-a-plan}
 

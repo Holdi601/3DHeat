@@ -13,7 +13,7 @@ outdated: false
 
 Hai guidato due volte lo stesso tracciato. La scheda **Analisi di gara** riproduce insieme entrambe le guide in 3D, mostra dove un giro è stato più lento e ti dice perché. Nessun giro ancora? Premi **Giri demo**.
 
-![La scheda Analisi di gara con giri demo: la barra laterale con Giri e Dove migliorare, le auto sul percorso, i grafici sotto la vista](../assets/img/en/race-analysis-overview.webp)
+![La scheda Analisi di gara con giri demo: la barra laterale con Giri e Dove migliorare, le auto sul percorso, i grafici sotto la vista](../assets/img/it/race-analysis-overview.webp)
 
 La scheda confronta due o più giri dello stesso percorso. Condivide con la mappa di calore il canvas, la telecamera e il modello del percorso caricato (**Sfondo / livello**); tutto il resto è suo: una propria barra laterale e una propria barra sotto la vista. Termini come *giro*, *riferimento* e *apice* sono nel [glossario](glossary.md).
 

@@ -14,7 +14,7 @@ Seinneann **Go leor cluichí ag an am céanna** a lán cluichí ar a chéile, io
 
 Tosaíonn gach cluiche ag a thús féin agus bogann a aonaid mar fhigiúirí. Téann na comhaid díreach isteach sa chárta grafaice agus ní thógtar tábla iomlán ar bith, ionas go seinneann sé go réidh áit a rithfeadh lódáil normálta as cuimhne.
 
-![Deich gcluiche tanc curtha ar a chéile, dath amháin in aghaidh an chluiche](../assets/img/en/many-matches.webp)
+![Deich gcluiche tanc curtha ar a chéile, dath amháin in aghaidh an chluiche](../assets/img/ga/many-matches.webp)
 
 ## Conas é a úsáid {#how-to-use-it}
 

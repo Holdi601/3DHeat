@@ -14,7 +14,7 @@ outdated: false
 
 Încarcă poziții - CSV, Parquet, înregistrări Tacview, reluări convertite, un singur fișier, un dosar sau mii de meciuri - și vezi-le ca o **hartă termică prin care poți zbura**, ca **figuri care refac meciul**, ca linii de-a lungul traseelor pe care le-au urmat oamenii sau ca o populație pusă lângă alta. Singur găsește ce iese în evidență și rulează complet în browserul tău: nimic nu este trimis nicăieri.
 
-![Căldura a zece meciuri cu tancuri peste valea demonstrativă](../assets/img/en/heat-hero.webp)
+![Căldura a zece meciuri cu tancuri peste valea demonstrativă](../assets/img/ro/heat-hero.webp)
 
 **Ești nou aici?** Generează [datele demonstrative](demo-data.md) și urmează cei șapte pași. Fiecare imagine de pe acest site a fost făcută cu ele.
 
@@ -22,12 +22,12 @@ outdated: false
 
 | | |
 |---|---|
-| ![Diferență](../assets/img/en/heat-difference.webp) | **[Moduri de căldură](heat-modes.md)** - căldură, [diferență](difference.md) (roșu acolo unde o parte a fost mai mult, verde-albastru acolo unde a fost cealaltă), [căldură pe echipe](team-heat.md), [căldură pe linii](line-heat.md); [căldură direcțională](directional-heat.md) cu sectoare, câmpuri de săgeți și grafice polare; căldură [ponderată după valoare](value-weighting.md): cât costă armele, vehiculele și combustibilul. |
-| ![Reluare](../assets/img/en/replay-tanks.webp) | **[Reluarea meciului](match-replay.md)** - fiecare unitate ca [figura](figures.md) a ceea ce este, simboluri NATO sau rusești de la distanță, rachete și trasoare, marcaje de lovituri, epave, incendii, turele, obiective, camere în stil Tacview și afișaj tactic; [multe meciuri deodată](many-matches.md). |
-| ![Observații](../assets/img/en/insights.webp) | **[Observații](insights.md)** - poziții puternice, zone mortale, capcane de apariție, strangulări și jucători care ies în evidență, găsite și ordonate împreună cu dovezile; un rezumat scris, opțional de o IA aleasă de tine; un comentator pentru un meci; [lentila cunoașterii](knowledge.md). |
-| ![Volume](../assets/img/en/compare.webp) | **[Volume](volumes.md)** - desenează cutii, prisme, cilindri și sfere, filtrează după ele, numără ce se întâmplă înăuntru, exportă și compară locurile una lângă alta; [defalcare](breakdown.md) a cine și ce se descurcă cel mai bine într-un loc. |
-| ![Filtre](../assets/img/en/filters.webp) | **[Filtre](filters.md)** - după tipul evenimentului, jucător sau IA, clasa vehiculului, valoare, orice coloană, pe placa grafică, la orice mărime a datelor. |
-| ![Nivel](../assets/img/en/level-panel.webp) | **[Niveluri](levels.md)** - imagini de hartă, niveluri 3D făcute cu [instrumentele de date](#related-repositories), simplificare, [fundalul lumii](world-backdrop.md) cu teren real pentru datele de zbor. |
+| ![Diferență](../assets/img/ro/heat-difference.webp) | **[Moduri de căldură](heat-modes.md)** - căldură, [diferență](difference.md) (roșu acolo unde o parte a fost mai mult, verde-albastru acolo unde a fost cealaltă), [căldură pe echipe](team-heat.md), [căldură pe linii](line-heat.md); [căldură direcțională](directional-heat.md) cu sectoare, câmpuri de săgeți și grafice polare; căldură [ponderată după valoare](value-weighting.md): cât costă armele, vehiculele și combustibilul. |
+| ![Reluare](../assets/img/ro/replay-tanks.webp) | **[Reluarea meciului](match-replay.md)** - fiecare unitate ca [figura](figures.md) a ceea ce este, simboluri NATO sau rusești de la distanță, rachete și trasoare, marcaje de lovituri, epave, incendii, turele, obiective, camere în stil Tacview și afișaj tactic; [multe meciuri deodată](many-matches.md). |
+| ![Observații](../assets/img/ro/insights.webp) | **[Observații](insights.md)** - poziții puternice, zone mortale, capcane de apariție, strangulări și jucători care ies în evidență, găsite și ordonate împreună cu dovezile; un rezumat scris, opțional de o IA aleasă de tine; un comentator pentru un meci; [lentila cunoașterii](knowledge.md). |
+| ![Volume](../assets/img/ro/compare.webp) | **[Volume](volumes.md)** - desenează cutii, prisme, cilindri și sfere, filtrează după ele, numără ce se întâmplă înăuntru, exportă și compară locurile una lângă alta; [defalcare](breakdown.md) a cine și ce se descurcă cel mai bine într-un loc. |
+| ![Filtre](../assets/img/ro/filters.webp) | **[Filtre](filters.md)** - după tipul evenimentului, jucător sau IA, clasa vehiculului, valoare, orice coloană, pe placa grafică, la orice mărime a datelor. |
+| ![Nivel](../assets/img/ro/level-panel.webp) | **[Niveluri](levels.md)** - imagini de hartă, niveluri 3D făcute cu [instrumentele de date](#related-repositories), simplificare, [fundalul lumii](world-backdrop.md) cu teren real pentru datele de zbor. |
 
 Mai sunt: fila [Analiză de cursă](race-analysis.md) pentru turele jocurilor de curse, fila [Meci](match-analysis.md) pentru rezumatele Counter-Strike 2, [tabla de tactici](tactics-board.md) pentru planuri pe un nivel, [analiza lovirilor](hit-analysis.md) pe vehicul, [analiza de masă](mass-analysis.md) a mii de meciuri, [traseele camerei și videoclipurile](camera-path-and-video.md), [40 de limbi](languages.md), [unități metrice sau imperiale](settings.md).
 

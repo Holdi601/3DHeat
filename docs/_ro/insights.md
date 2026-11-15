@@ -15,7 +15,7 @@ outdated: false
 
 Totul se numără în browserul tău. Nimic nu părăsește calculatorul, decât dacă pornești o IA externă (vezi [IA externă](#external-ai)).
 
-![Observații pe demonstrația cu tancuri: 14 constatări, cele mai puternice primele](../assets/img/en/insights.webp)
+![Observații pe demonstrația cu tancuri: 14 constatări, cele mai puternice primele](../assets/img/ro/insights.webp)
 
 Secțiunea **Observații** se află în bara laterală a filelor Hartă termică și Meci. Are trei file: **Constatări**, **Rezumat** și **Comentator**.
 
@@ -30,7 +30,7 @@ Numărarea folosește filtrele curente, grupurile ascunse și meciul ales pe toa
 
 Rândurile de deasupra listei (de exemplu totalurile de bani) rezumă toate datele înainte de observații.
 
-![O observație deschisă: zona fierbinte a focurilor trase, cifrele ei și un pasaj corespunzător din literatură](../assets/img/en/insights-finding.webp)
+![O observație deschisă: zona fierbinte a focurilor trase, cifrele ei și un pasaj corespunzător din literatură](../assets/img/ro/insights-finding.webp)
 
 ### Detectorii {#the-detectors}
 
@@ -55,7 +55,7 @@ Fiecare loc sau grup este testat față de restul hărții (teste binomiale exac
 
 Fila **Rezumat** scrie observațiile ca un text scurt: o introducere, cea mai clară observație, una pentru tactică, una pentru echilibrare, restul grupate pe detector și câte se sprijină pe dovezi mai slabe. Fiecare paragraf are butoane numerotate care arată observațiile lui. **Copiază textul** îl copiază.
 
-![Rezumatul scris de naratorul integrat](../assets/img/en/debrief.webp)
+![Rezumatul scris de naratorul integrat](../assets/img/ro/debrief.webp)
 
 Naratorul integrat funcționează offline, în limba ta. Selectorul **Lentilă** de deasupra lui (vezi [Lentila cunoașterii](knowledge.md)) decide din ce literatură citează paragrafele.
 
@@ -78,7 +78,7 @@ Apoi scrie o întrebare opțională și apasă **Scrie cu IA**. Se trimit doar o
 
 Pentru **un singur meci** (alege unul dacă sunt mai multe încărcate), **Comentatorul** găsește momentele care merită urmărite: primul sânge, multi-eliminările, schimburile, clutch-urile, schimbările de obiectiv, revenirile, jucătorii care ies în evidență, loviturile de la distanță.
 
-![Momentele comentatorului pentru o rundă din demonstrația de tragător](../assets/img/en/caster.webp)
+![Momentele comentatorului pentru o rundă din demonstrația de tragător](../assets/img/ro/caster.webp)
 
 - Dă clic pe un moment: vizualizarea trece la reluare, sare chiar înainte de el, zboară acolo și urmărește jucătorul.
 - **Redă momentele** redă fiecare până la capăt și trece mai departe; **Anterior** / **Următor** parcurg lista.

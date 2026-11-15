@@ -15,7 +15,7 @@ Rødt der lag A var mest, grønn-blått der lag B var det, ingenting der de var 
 
 **Differanse** (tast 2) er varme med fortegn. Rader fra én populasjon legger til varme; rader fra en annen trekker den fra. Der de to overlapper jevnt, blir resultatet null og helt gjennomsiktig; der den ene dominerer, vises den i den sidens farger – som standard varme (gjennomsiktig → rød → gul → hvit) for **+**-siden og kjølige (gjennomsiktig → grønn → blå → lilla) for **−**-siden.
 
-![Differansevarme: rødt der +-siden var mest, grønt og blått der −-siden var mest](../assets/img/en/difference-split.webp)
+![Differansevarme: rødt der +-siden var mest, grønt og blått der −-siden var mest](../assets/img/no/difference-split.webp)
 
 ## Slik bruker du den {#how-to-use-it}
 

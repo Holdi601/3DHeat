@@ -18,7 +18,7 @@ De viewer laat je weten wanneer er een nieuwere versie bestaat, en werkt zichzel
 2. **Als er staat dat je restart.bat moet draaien**, sluit je het servervenster (het zwarte venster dat `start.bat` opende) en dubbelklik je op `restart.bat`.
 3. **Bij het starten van de viewer.** `start.bat` controleert ook. Als er een nieuwere versie bestaat, vraagt het **Update now? [Y/N]**. Druk op `Y` om bij te werken. Druk op `N`, of wacht 60 seconden zonder antwoord, om de versie die je hebt te starten.
 
-![De melding van een update met Nu bijwerken en Later](../assets/img/en/updates-notice.webp)
+![De melding van een update met Nu bijwerken en Later](../assets/img/nl/updates-notice.webp)
 
 Een kopie met eigen wijzigingen wordt nooit voor je bijgewerkt; het vak vertelt alleen dat er een update klaarstaat, en zegt dat je je wijzigingen moet committen of stashen en `git pull` moet draaien. Een kopie die niet met git is geïnstalleerd (bijvoorbeeld een zipbestand) toont niets.
 

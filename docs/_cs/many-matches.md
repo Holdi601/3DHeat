@@ -14,7 +14,7 @@ outdated: false
 
 Každý zápas začíná na svém vlastním začátku a jeho jednotky se pohybují jako figury. Soubory jdou přímo do grafické karty a nevytváří se žádná úplná tabulka, takže to běží plynule tam, kde by běžné načtení došlo paměť.
 
-![Deset zápasů tanků přes sebe, jedna barva na zápas](../assets/img/en/many-matches.webp)
+![Deset zápasů tanků přes sebe, jedna barva na zápas](../assets/img/cs/many-matches.webp)
 
 ## Jak to použít {#how-to-use-it}
 

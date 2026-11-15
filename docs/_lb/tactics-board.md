@@ -23,7 +23,7 @@ De Tab **Taktik** ass e Zeechebriet fir en Equipeplang: Dir setzt kleng Figuren 
 6. Drëckt **▶** (oder `K`), fir de Plang vum gewisenen Schrëtt bis zum Enn ofzespillen.
 7. Gitt de Plang bei **Numm vum Plang** a drëckt **Späicheren**.
 
-![Den Taktik-Tab an der Vun-uewen-Usiicht: Spiel, Säite an Werkzeich lénks, dräi Figuren mat Verréckelen-Feile, en Rauchworf-Bogen, e Gebitt an d'Schrëtt ënnen laanscht](../assets/img/en/tactics.webp)
+![Den Taktik-Tab an der Vun-uewen-Usiicht: Spiel, Säite an Werkzeich lénks, dräi Figuren mat Verréckelen-Feile, en Rauchworf-Bogen, e Gebitt an d'Schrëtt ënnen laanscht](../assets/img/lb/tactics.webp)
 
 ## E Plang ufänken {#starting-a-plan}
 

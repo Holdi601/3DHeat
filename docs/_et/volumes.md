@@ -21,7 +21,7 @@ outdated: false
  +------------+
 ```
 
-![Kolm mahtu demo-orus: kaks silindrit künkade ümber, kast küla ümber](../assets/img/en/volumes.webp)
+![Kolm mahtu demo-orus: kaks silindrit künkade ümber, kast küla ümber](../assets/img/et/volumes.webp)
 
 Mahud mõõdavad, mis nende sees juhtub, filtreerivad vaate nende järgi, ekspordivad oma read ja neid saab võrrelda kõrvuti. Vaata ka [sõnastikku](glossary.md) mõistete rida, isik ja matš kohta.
 
@@ -76,7 +76,7 @@ Kahe või enama nähtava mahu korral vajuta **Võrdle...**.
 3. Vaates **Tabel** loe iga väärtuse erinevust esimesest mahust.
 4. Lülitu **Tulpadele**, et näha osakaale tulpadena.
 
-![Mahtude võrdluse tabel: read, aeg sees, mängijad jne iga mahu kohta koos erinevusega esimesest](../assets/img/en/compare.webp)
+![Mahtude võrdluse tabel: read, aeg sees, mängijad jne iga mahu kohta koos erinevusega esimesest](../assets/img/et/compare.webp)
 
 | Vaade | Näitab |
 |---|---|
@@ -86,7 +86,7 @@ Kahe või enama nähtava mahu korral vajuta **Võrdle...**.
 | **Külastused** | Kasti- ja viiulidiagrammid selle kohta, kui kaua külastused kestavad (logaritmiline skaala). |
 | **Voog** | Kuhu jäljed pärast iga mahu jätmist lähevad: siirdemaatriks või voovöödid. |
 
-![Tulpade vaade: sündmuste liigid mahu kohta osakaaludena](../assets/img/en/compare-bars.webp)
+![Tulpade vaade: sündmuste liigid mahu kohta osakaaludena](../assets/img/et/compare-bars.webp)
 
 ## Nipid {#tips}
 

@@ -15,7 +15,7 @@ outdated: false
 
 Obstaja okoli 2.000 imenovanih vozil, letal, ladij, orožij in vojakov, vse zgradi sam pregledovalnik.
 
-![Tenki iz demo podatkov, narisani kot lastne figure](../assets/img/en/replay-tanks.webp)
+![Tenki iz demo podatkov, narisani kot lastne figure](../assets/img/sl/replay-tanks.webp)
 
 ## Kaj je v katalogu {#what-is-in-the-catalogue}
 

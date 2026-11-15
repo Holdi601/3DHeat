@@ -12,7 +12,7 @@ outdated: false
 
 Vrstica pod sliko je kot videopredvajalnik: podatke lahko predvajate kot film, ustavite, skočite naokoli in spremenite hitrost.
 
-![Vrstica časovnice: 1 Vse/Predvajaj, 2 gumbi za predvajanje, 3 ura, 4 Hitrost, 5 Zgodovina, z Okno in Razponom 30 s](../assets/img/en/timeline-bar.webp)
+![Vrstica časovnice: 1 Vse/Predvajaj, 2 gumbi za predvajanje, 3 ura, 4 Hitrost, 5 Zgodovina, z Okno in Razponom 30 s](../assets/img/sl/timeline-bar.webp)
 
 Vrstica pod pogledom je časovnica ([`Timeline.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/Timeline.tsx)). Odloča, katere vrstice so kadarkoli vidne. Potrebuje stolpec s časom; brez njega je celotna vrstica onemogočena, pogled ostane v načinu **Vse**, stranska vrstica pa pove *V teh podatkih ni stolpca s časom - časovnica je onemogočena in vsaka točka je prikazana naenkrat.*
 

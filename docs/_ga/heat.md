@@ -15,7 +15,7 @@ Péinteálann teas na háiteanna ar tharla go leor rudaí iontu: dearg san áit 
 
 Is é **Teas** (eochair 1) an mód réamhshocraithe. Cuireann gach [sraith](glossary.md) infheicthe sprid radiach cruinn atá ag féachaint ar an gceamara leis; cuireann spridí forleathana suas i maolán snámhphointe; cuirtear an suim trí ghrádán dathanna - de réir réamhshocraithe trédhearcach → dearg → buí → bán - agus tarraingítear thar an radharc é.
 
-![Teas ar leibhéal 3D: spotaí te istigh agus ar bharr na bhfoirgneamh](../assets/img/en/shooter-heat.webp)
+![Teas ar leibhéal 3D: spotaí te istigh agus ar bharr na bhfoirgneamh](../assets/img/ga/shooter-heat.webp)
 
 Taispeánann an pictiúr teas babhta lámhachóra ar leibhéal le foirgnimh: suíonn spotaí te sna seomraí agus ar na staighrí, ní ar an talamh amháin.
 
@@ -26,7 +26,7 @@ Taispeánann an pictiúr teas babhta lámhachóra ar leibhéal le foirgnimh: su�
 3. Athraigh **Ga na sprideanna** go dtí go dtéann pointí comharsanacha isteach i gcriosanna: is lú a thaispeánann spotaí aonair, is mó a thaispeánann limistéir.
 4. Oscail **Dathanna teasa** chun na dathanna a athrú, nó **Doimhneacht** chun ligean do chnoic agus ballaí an teas a fholú taobh thiar díobh.
 
-![Cuid Chruth an teasa agus Dathanna teasa den bharra taoibh, an dá cheann oscailte](../assets/img/en/heat-panel.webp)
+![Cuid Chruth an teasa agus Dathanna teasa den bharra taoibh, an dá cheann oscailte](../assets/img/ga/heat-panel.webp)
 
 Cruthaíonn na painéil chéanna [Difríocht](difference.md), [Teas foirne](team-heat.md) agus [Teas líne](line-heat.md); difríonn siad i rud a chuirtear leis (comhartha, dathaithe, nó feadh línte), ní i conas.
 

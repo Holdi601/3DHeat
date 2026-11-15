@@ -15,7 +15,7 @@ Punane seal, kus meeskond A oli rohkem, roheline-sinine seal, kus meeskond B oli
 
 **Erinevus** (klahv 2) on märgiga soojus. Ühe populatsiooni read lisavad soojust; teise populatsiooni read lahutavad seda. Kus kaks poolt on ühtlaselt kattuvad, on tulemus null ja täiesti läbipaistev; kus üks domineerib, näidatakse seda selle poole värvides - vaikimisi soojad (läbipaistev → punane → kollane → valge) **+** poolele ja jahedad (läbipaistev → roheline → sinine → lilla) **−** poolele.
 
-![Erinevuse soojus: punane seal, kus + pool oli rohkem, roheline ja sinine seal, kus - pool oli rohkem](../assets/img/en/difference-split.webp)
+![Erinevuse soojus: punane seal, kus + pool oli rohkem, roheline ja sinine seal, kus - pool oli rohkem](../assets/img/et/difference-split.webp)
 
 ## Kuidas seda kasutada {#how-to-use-it}
 
