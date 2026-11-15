@@ -267,7 +267,8 @@ export function risk(w: World, lives: Life[], r: Rng): RiskMetric | undefined {
     afterWin: round(o.win),
     lo: round(boots[Math.floor(boots.length * 0.025)] ?? NaN),
     hi: round(boots[Math.floor(boots.length * 0.975)] ?? NaN),
-    tilt: o.nt >= 30 && o.ne >= 5 && td === td ? { after: round(o.tiltAfter), otherwise: round(o.tiltOther), p: round(permTwoSided(td, nt), 5), pairs: o.nt } : null,
+    // Not on round data yet: on CS2 tables it gives an implausible 0.5% against 13% that still needs explaining.
+    tilt: !w.rounds.length && o.nt >= 30 && o.ne >= 5 && td === td ? { after: round(o.tiltAfter), otherwise: round(o.tiltOther), p: round(permTwoSided(td, nt), 5), pairs: o.nt } : null,
   };
 }
 
