@@ -637,8 +637,8 @@ export class SummaryBuilder {
       if (kind === POSITION) {
         if (!u || !placed) continue;
         this.mv.sample(uIdx, -1, u.team < MAX_TEAMS ? u.team : -1, u.veh >= 0 ? this.vehCls[u.veh] : -1, t, x, Y[i], z);
-        this.bh.pos(uIdx, sideOf(uIdx), t, x, z);
         if (bRound) this.bh.round(uIdx, sideOf(uIdx), num(bRound[i]), t, bEquip ? num(bEquip[i]) : NaN, bClock ? num(bClock[i]) : NaN);
+        this.bh.pos(uIdx, sideOf(uIdx), t, x, z);
         const dt = t - u.lastT;
         if (dt > 0 && dt <= PRESENCE_GAP) {
           u.presence += dt;

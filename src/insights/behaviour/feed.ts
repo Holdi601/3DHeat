@@ -106,11 +106,12 @@ export function stepBehaviour(job: BehaviourJob, ch: LensChunk & BehaviourChunk)
     if (p < 0 || (meta.personShared && meta.personShared[p] === 1)) continue;
     const k = unitOf(job, p, s, team ? team[j] : -1);
     if (POS < 0 || kind === POS) {
-      acc.pos(k, t, x, z);
+      // The round first: a new one brings a dead unit back before its sample is taken.
       if (ch.bround) {
         const rd = ch.bround[j];
         if (rd === rd) acc.loadout(k, rd, t, ch.bequip ? ch.bequip[j] : NaN, ch.blive ? ch.blive[j] === 1 : true);
       }
+      acc.pos(k, t, x, z);
       continue;
     }
     if (kind === meta.kill) acc.event(KILL, k, t);

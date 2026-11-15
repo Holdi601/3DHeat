@@ -245,7 +245,8 @@ export class BehaviourAcc {
     // A dead unit's samples (a body or a camera left at the spot) are not a unit moving.
     const d = this.dead.a[k];
     if (d === d) {
-      if (t >= d && Math.hypot(x - this.dx.a[k], z - this.dz.a[k]) < 2 * this.upm) return;
+      // With rounds, only the next round (or a spawn) brings a unit back: a dead player's camera moves too.
+      if (t >= d && (this.round.a[k] >= 0 || Math.hypot(x - this.dx.a[k], z - this.dz.a[k]) < 2 * this.upm)) return;
       this.dead.a[k] = NaN;
     }
     const b = Math.floor(t / BIN);
