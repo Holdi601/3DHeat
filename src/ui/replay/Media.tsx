@@ -6,6 +6,7 @@ import { useAnimationFrame, useEngine } from '../EngineContext';
 import { clock, usePlayhead } from './hooks';
 import { num, t } from '../../i18n';
 import './replay.css';
+import { NumberBox } from '../NumberBox';
 
 /**
  * An audio or video file played with the replay (Tacview's synchronised
@@ -90,15 +91,12 @@ export function MediaPanel() {
           <div className="row">
             <span>{t('replay.media.startsAt')}</span>
             <span className="mono">{clock(m.offset - start)}</span>
-            <input
+            <NumberBox
               className="narrow"
-              type="number"
               step={0.1}
-              value={Number((m.offset - start).toFixed(2))}
-              onChange={(e) => {
-                const v = Number(e.target.value);
-                if (Number.isFinite(v)) m.patch({ offset: start + v });
-              }}
+              digits={2}
+              value={m.offset - start}
+              onChange={(v) => m.patch({ offset: start + v })}
               title={t('replay.media.offsetTitle')}
             />
           </div>

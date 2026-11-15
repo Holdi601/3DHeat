@@ -6,6 +6,7 @@ import { useAnimationFrame, useEngine } from './EngineContext';
 import { num, t } from '../i18n';
 import { ReplayMarks } from './replay/ReplayMarks';
 import { MAX_SPEED, MIN_SPEED, parseSpeed, saveSpeed, speedDigits, speedOptions } from '../state/playbackSpeed';
+import { NumberBox } from './NumberBox';
 
 const windowModes = (): Array<{ value: WindowMode; label: string; title: string }> => [
   {
@@ -262,15 +263,13 @@ export function Timeline() {
             {(timeline.window === 'fixed' || (lines && timeline.window === 'lifetime')) && (
               <label title={t('heat.timeline.spanTitle')}>
                 {t('heat.timeline.span')}
-                <input
+                <NumberBox
                   className="narrow"
-                  type="number"
                   min={0.01}
                   step={1}
+                  digits={3}
                   value={timeline.windowSeconds}
-                  onChange={(e) =>
-                    patchTimeline({ windowSeconds: Math.max(0.01, Number(e.target.value) || 1) })
-                  }
+                  onChange={(v) => patchTimeline({ windowSeconds: v })}
                 />
                 {t('heat.timeline.seconds')}
               </label>
@@ -294,18 +293,14 @@ export function Timeline() {
                 </label>
                 <label title={t('heat.timeline.fadeTitle')}>
                   {t('heat.timeline.fade')}
-                  <input
+                  <NumberBox
                     className="narrow"
-                    type="number"
                     min={0}
                     max={1}
                     step={0.05}
+                    digits={2}
                     value={timeline.fadeOut}
-                    onChange={(e) =>
-                      patchTimeline({
-                        fadeOut: Math.max(0, Math.min(1, Number(e.target.value) || 0)),
-                      })
-                    }
+                    onChange={(v) => patchTimeline({ fadeOut: v })}
                   />
                 </label>
               </>

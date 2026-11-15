@@ -370,6 +370,18 @@ svg.curve {
   color: var(--warm);
 }
 
+.value-total {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  line-height: 1.6;
+}
+
+.value-total > span:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 .line-chips button.chip-toggle {
   white-space: normal;
   overflow-wrap: anywhere;

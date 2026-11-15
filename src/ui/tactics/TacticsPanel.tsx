@@ -10,6 +10,7 @@ import { useEngine } from '../EngineContext';
 import { fetchValorantMaps, RIOT_NOTICE, valorantLevel, type ValorantMap } from '../../tactics/valorantMaps';
 import { GizmoControls, SelectionInspector, TelemetryPanel, TimingSettings } from './TacticsInspector';
 import './tactics.css';
+import { NumberBox } from '../NumberBox';
 
 /**
  * The tactics board's sidebar: which game, which side, the tool in hand, the
@@ -271,13 +272,13 @@ export function BoardBar() {
       </span>
       <label className="board-seconds">
         {t('tactics.seconds')}
-        <input
-          type="number"
+        <NumberBox
           min={0.5}
           max={120}
           step={0.5}
+          digits={2}
           value={plan.steps[step]?.seconds ?? 4}
-          onChange={(e) => store().setStepSeconds(step, Number(e.target.value))}
+          onChange={(v) => store().setStepSeconds(step, v)}
         />
       </label>
     </div>

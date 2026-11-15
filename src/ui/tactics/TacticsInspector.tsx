@@ -11,6 +11,7 @@ import type { Region, TravelStats } from '../../tactics/telemetry';
 import { figureLabel } from '../../tactics/names';
 import { num, t } from '../../i18n';
 import { expandContainerFiles } from '../../data/container';
+import { NumberBox } from '../NumberBox';
 
 const DEG = 180 / Math.PI;
 
@@ -304,7 +305,7 @@ function TelemetryCompare({ plan, arrow, total }: { plan: Plan; arrow: PlanArrow
         </select>
         <label className="board-seconds">
           {t('tactics.tele.radius')}
-          <input type="number" min={0.5} step={0.5} value={radius} onChange={(e) => setRadius(Math.max(0.5, Number(e.target.value) || REGION_M))} />
+          <NumberBox min={0.5} step={0.5} digits={2} value={radius} onChange={setRadius} />
         </label>
       </div>
       {err && <div className="hint">{err}</div>}
@@ -437,7 +438,7 @@ export function TelemetryPanel() {
             </select>
             <label className="board-seconds">
               {t('tactics.tele.cell')}
-              <input type="number" min={0.25} step={0.25} value={cellM} onChange={(e) => setCellM(Math.max(0.25, Number(e.target.value) || 1.6))} onBlur={() => tele.heatOn && tele.setHeat(true, undefined, cellM * upm)} />
+              <NumberBox min={0.25} step={0.25} digits={3} value={cellM} onChange={setCellM} onBlur={() => tele.heatOn && tele.setHeat(true, undefined, cellM * upm)} />
             </label>
           </div>
           {tele.heat && (

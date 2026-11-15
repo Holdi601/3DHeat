@@ -1,6 +1,7 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { Jog } from './Jog';
 import { num, t } from '../i18n';
+import { NumberBox } from './NumberBox';
 
 export function Section({
   title,
@@ -115,17 +116,14 @@ export function Slider({
           value={Math.min(logarithmic ? 1 : max, Math.max(logarithmic ? 0 : min, toSlider(value)))}
           onChange={(e) => onChange(fromSlider(Number(e.target.value)))}
         />
-        <input
+        <NumberBox
           className="narrow"
-          type="number"
           // Shown to the digits that fit: 57.8998 in a box five characters wide
           // shows "57.89" and hides the rest. The value itself is not rounded.
-          value={Number(value.toFixed(Math.abs(value) >= 100 ? 0 : Math.abs(value) >= 10 ? 1 : Math.abs(value) >= 1 ? 2 : 3))}
+          value={value}
+          digits={(v) => (Math.abs(v) >= 100 ? 0 : Math.abs(v) >= 10 ? 1 : Math.abs(v) >= 1 ? 2 : 3)}
           step={step}
-          onChange={(e) => {
-            const v = Number(e.target.value);
-            if (Number.isFinite(v)) onChange(v);
-          }}
+          onChange={onChange}
         />
         <Jog
           value={value}
@@ -161,15 +159,7 @@ export function NumberField({
       <div className="label">
         <span>{label}</span>
       </div>
-      <input
-        type="number"
-        value={Number(value.toFixed(4))}
-        step={step}
-        onChange={(e) => {
-          const v = Number(e.target.value);
-          if (Number.isFinite(v)) onChange(v);
-        }}
-      />
+      <NumberBox value={value} digits={4} step={step} onChange={onChange} />
       {hint && <div className="hint">{hint}</div>}
     </div>
   );

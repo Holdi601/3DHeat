@@ -28,6 +28,7 @@ import { TIME_UNIT_LABELS, type ColumnMapping, type TimeUnit } from '../../state
 import { Check, Rich, Section, Select } from '../controls';
 import { list, num, t } from '../../i18n';
 import { prepareUnits } from '../replay/units';
+import { NumberBox } from '../NumberBox';
 
 const delimiterOptions = (): Array<{ value: string; label: string }> => [
   { value: ',', label: t('heat.sourcePanel.delimiter.comma') },
@@ -492,14 +493,12 @@ export function SourcePanel() {
               <button onClick={() => patch({ axes: { ...mapping.axes, scale: 0.01 } })}>
                 {t('heat.sourcePanel.scaleCentimetres', { value: num(0.01, 2) })}
               </button>
-              <input
+              <NumberBox
                 className="narrow"
-                type="number"
                 step={0.01}
+                digits={6}
                 value={mapping.axes.scale}
-                onChange={(e) =>
-                  patch({ axes: { ...mapping.axes, scale: Number(e.target.value) || 1 } })
-                }
+                onChange={(v) => patch({ axes: { ...mapping.axes, scale: v || 1 } })}
               />
             </div>
           </div>

@@ -52,6 +52,7 @@ import { useEngine } from '../EngineContext';
 import { columnLabel, valueLabel } from '../panels/FilterPanel';
 import '../compare/compare.css';
 import './breakdown.css';
+import { NumberBox } from '../NumberBox';
 
 type RegionKind = 'pick' | 'view' | 'volume' | 'all';
 type View = 'rank' | 'factors';
@@ -344,7 +345,7 @@ function BreakdownBody() {
         {ui.region === 'pick' && (
           <label className="brk-field">
             {t('breakdown.radius')}
-            <input type="number" min={0.1} step="any" value={radius} onChange={(e) => ui.set({ radius: Math.max(0.1, Number(e.target.value) || radius) })} />
+            <NumberBox min={0.1} step={0.1} digits={3} value={radius} onChange={(v) => ui.set({ radius: v })} />
           </label>
         )}
         {ui.region === 'volume' && volumes.length > 0 && (

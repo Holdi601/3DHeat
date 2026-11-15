@@ -1,6 +1,7 @@
 import { stopToCss } from '../render/colors';
 import type { ColorStop } from '../state/types';
 import { int, t } from '../i18n';
+import { NumberBox } from './NumberBox';
 
 /**
  * Editor for one heat ramp.
@@ -39,14 +40,14 @@ export function RampEditor({
               value={rgbToHex(s.rgb)}
               onChange={(e) => update(i, { rgb: hexToRgb(e.target.value) })}
             />
-            <input
-              type="number"
+            <NumberBox
               min={0}
               max={1}
               step={0.01}
-              value={Number(s.pos.toFixed(3))}
+              digits={3}
+              value={s.pos}
               title={t('heat.rampEditor.position')}
-              onChange={(e) => update(i, { pos: clamp01(Number(e.target.value)) })}
+              onChange={(v) => update(i, { pos: clamp01(v) })}
             />
             <input
               type="range"

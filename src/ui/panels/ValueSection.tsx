@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { COST_SOURCE, currencyUnit, isMoney, shownValue, valueColumnsOf, type ValueColumn } from '../../data/cost';
-import { num, t } from '../../i18n';
+import { int, num, t } from '../../i18n';
 import { useStore } from '../../state/store';
 import type { Dataset } from '../../state/types';
 import { Section, Segmented, Select } from '../controls';
@@ -64,9 +64,9 @@ export function ValueSection() {
           )}
           <div className="label">{t('value.totals')}</div>
           {totals.map((x) => (
-            <div className="line" key={x.col.name}>
+            <div className="value-total" key={x.col.name}>
               <span>{valueColumnLabel(x.col, money)}</span>
-              <span>{num(Math.round(shownValue(x.total, x.col.currency, money)))}</span>
+              <span>{int(shownValue(x.total, x.col.currency, money))}</span>
             </div>
           ))}
           {estimated !== null && estimated > 0 && <div className="hint">{t('value.estimated', { pct: num(estimated * 100) })}</div>}

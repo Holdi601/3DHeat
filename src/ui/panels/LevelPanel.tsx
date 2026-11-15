@@ -45,6 +45,7 @@ import { lengthText, useUnits } from '../../state/unitsStore';
 import { useRaceStore } from '../../state/raceStore';
 import { useReplayStore } from '../../state/replayStore';
 import { buildingsLook } from '../replay/buildings';
+import { NumberBox } from '../NumberBox';
 
 /** Longest edge we upload; larger maps are downscaled to fit the GPU. */
 const MAX_MAP_EDGE = 8192;
@@ -1138,12 +1139,7 @@ function AnchorEditor({
   const field = (key: keyof MapAnchor, label: string, step: number, title?: string) => (
     <label style={{ fontSize: 10, color: 'var(--text-faint)', flex: 1 }} title={title}>
       {label}
-      <input
-        type="number"
-        step={step}
-        value={Number(anchor[key].toFixed(3))}
-        onChange={(e) => onChange({ ...anchor, [key]: Number(e.target.value) || 0 })}
-      />
+      <NumberBox step={step} digits={3} value={anchor[key]} onChange={(v) => onChange({ ...anchor, [key]: v })} />
     </label>
   );
 

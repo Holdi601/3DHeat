@@ -6,6 +6,7 @@ import { MAX_FILTER_SLOTS } from '../../render/types';
 import type { AttributeColumn, FilterSpec } from '../../state/types';
 import { Section } from '../controls';
 import { num, t } from '../../i18n';
+import { NumberBox } from '../NumberBox';
 
 /**
  * Live filters over the retained columns.
@@ -127,14 +128,12 @@ function FilterRow({
           </span>
         </div>
         <div className="row">
-          <input
-            type="number"
+          <NumberBox
             className="narrow"
-            value={Number(min.toFixed(4))}
+            value={min}
+            digits={4}
             step={span / 100}
-            onChange={(e) =>
-              onChange({ kind: 'range', column: attr.name, min: Number(e.target.value), max })
-            }
+            onChange={(v) => onChange({ kind: 'range', column: attr.name, min: v, max })}
           />
           <input
             type="range"
@@ -153,14 +152,12 @@ function FilterRow({
           />
         </div>
         <div className="row">
-          <input
-            type="number"
+          <NumberBox
             className="narrow"
-            value={Number(max.toFixed(4))}
+            value={max}
+            digits={4}
             step={span / 100}
-            onChange={(e) =>
-              onChange({ kind: 'range', column: attr.name, min, max: Number(e.target.value) })
-            }
+            onChange={(v) => onChange({ kind: 'range', column: attr.name, min, max: v })}
           />
           <input
             type="range"
