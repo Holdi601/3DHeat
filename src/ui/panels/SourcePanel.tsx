@@ -10,6 +10,7 @@ import {
 } from '../../data/filePick';
 import { expandContainers } from '../../data/container';
 import { loadMatchesBeside } from '../../state/matchStore';
+import { noteR6Maps } from '../../data/r6Level';
 import { loader, type LoaderProgress } from '../../data/loader';
 import type { SelectionSize, SourcePreview } from '../../data/sourcePreview';
 import { DELIMITERS } from '../../data/csv';
@@ -94,6 +95,8 @@ export function SourcePanel() {
       const { files: raw, failed } = await expandContainers(chosen);
       // The battles' match documents and objectives with them, for the match tab and the level.
       void loadMatchesBeside(chosen.map((f) => f.file));
+      // The Siege maps they are on, for the level panel to offer the R6 tool's levels.
+      void noteR6Maps(chosen.map((f) => f.file));
       const { accepted, skipped: bad } = filterDataFiles(raw);
       for (const name of failed) bad.push({ name, reason: t('data.filePick.notData') });
       setSkipped(bad);

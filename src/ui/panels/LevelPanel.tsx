@@ -34,6 +34,7 @@ import {
 import { useStore } from '../../state/store';
 import { canResimplify, cancelResimplify, resimplifyLevel } from '../../render/levelSimplify';
 import { DOTA_GAME, dotaLevel, isDotaLevel } from '../../tactics/dotaMap';
+import { bestR6Level, parseR6GameKey, r6GameKey, r6LevelOf, useR6Maps } from '../../data/r6Level';
 import { Check, Section, Slider } from '../controls';
 import { int, num, t } from '../../i18n';
 import type { BackdropResult } from '../../world/backdrop';
@@ -122,6 +123,8 @@ function modelPayload(level: ModelLevel) {
     // A streamed theatre is kept as what it streams, not as tiles.
     ...(level.stream ? { stream: level.stream, bounds: level.bounds } : {}),
     ...(isDotaLevel(level.partNames) ? { game: DOTA_GAME } : {}),
+    // A Siege map from the R6 tool: kept under its map and version, so R6 replays find it (r6Level.ts).
+    ...(r6LevelOf(level.partNames) ? { game: r6GameKey(r6LevelOf(level.partNames)!) } : {}),
   };
 }
 
@@ -269,6 +272,9 @@ function worldLook(level: ModelLevel, credits: ModelLevel['credits']): ModelLeve
  * simplification pass, which is why processed levels are cached in the library
  * rather than re-decimated every session.
  */
+/** The last R6 level picked by itself for a set of matches, so it is not picked again after the user changes it. */
+let lastR6Auto = '';
+
 export function LevelPanel() {
   useUnits();
   const level = useStore((s) => s.level);
@@ -443,6 +449,21 @@ export function LevelPanel() {
           dota = false;
         }
       }
+      // A Siege map from the R6 tool goes to the library too, replacing an older
+      // copy of the same map and version, so R6 replays on it are offered it.
+      const r6 = r6LevelOf(m.partNames);
+      let r6Kept = false;
+      if (r6) {
+        try {
+          const older = (await listLevels()).filter((e) => e.game === r6GameKey(r6));
+          await saveModelLevel(loaded.name, modelPayload(loaded));
+          for (const e of older) await deleteLevel(e.id);
+          refreshLibrary();
+          r6Kept = true;
+        } catch {
+          // No room in the library: the level is loaded all the same, only not kept.
+        }
+      }
       const totalSource = m.sourceTriangles + m.sourceStructureTriangles;
       const totalNow = m.triangles + m.structureTriangles + m.waterTriangles;
       const structures = m.partClasses.filter((c) => c === 'structure').length;
@@ -470,6 +491,7 @@ export function LevelPanel() {
               })
             : t('heat.levelPanel.importedAt', { lod: lodLabel(lod) }),
           ...(dota ? [t('heat.levelPanel.dota3dNotice')] : []),
+          ...(r6Kept && r6 ? [t('heat.levelPanel.r6Kept', { map: r6.map })] : []),
         ].join(' '),
       );
     } catch (err) {
@@ -627,6 +649,26 @@ export function LevelPanel() {
   };
 
   const img = level?.kind === 'image' ? level : null;
+  // Siege levels for the R6 matches just picked: the same map version first, else the same map.
+  const r6Wanted = useR6Maps((st) => st.wanted);
+  const r6Offers = r6Wanted
+    .map((want) => ({ want, meta: bestR6Level(library, want) }))
+    .filter((o): o is { want: typeof o.want; meta: StoredLevelMeta } => !!o.meta);
+  const loadR6 = async (o: (typeof r6Offers)[number]) => {
+    await loadFromLibrary(o.meta);
+    const have = parseR6GameKey(o.meta.game);
+    const other = !!o.want.world && !!have?.world && have.world !== o.want.world;
+    setNote(t(other ? 'heat.levelPanel.r6OtherVersion' : 'heat.levelPanel.r6Loaded', { map: o.want.map }));
+  };
+  const r6Auto = r6Offers[0] ? `${r6Offers[0].meta.id}|${r6Wanted.map((w) => `${w.map}@${w.world}`).join(',')}` : '';
+  useEffect(() => {
+    // Picked once per set of matches, and only when no level is loaded: a level the user chose stays.
+    if (!r6Auto || r6Auto === lastR6Auto || useStore.getState().level) return;
+    lastR6Auto = r6Auto;
+    void loadR6(r6Offers[0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [r6Auto]);
+
   const mdl = level?.kind === 'model' ? level : null;
   // Every structure field is optional on the level, so resolve the defaults once
   // rather than sprinkling fallbacks through the JSX.
@@ -652,6 +694,16 @@ export function LevelPanel() {
         <button disabled={!!busy} onClick={() => void loadDota()} title={t('heat.levelPanel.dotaTitle')}>
           {t('heat.levelPanel.dota')}
         </button>
+        {r6Offers.map((o) => (
+          <button
+            key={o.meta.id}
+            disabled={!!busy}
+            onClick={() => void loadR6(o)}
+            title={t('heat.levelPanel.r6Title', { map: o.want.map })}
+          >
+            {t('heat.levelPanel.r6', { map: o.want.map })}
+          </button>
+        ))}
       </div>
 
       <WorldBackdrop busy={!!busy} toLevel={worldLevelFrom} fromModel={worldModelFrom} setError={setError} setNote={setNote} />
