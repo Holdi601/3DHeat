@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Distanțe de angajare",
   "lens.metric.killChain": "Lanț de lovire",
   "lens.metric.dispersion": "Concentrare sau dispersare",
-  "lens.metric.sorties": "Misiuni de zbor"
+  "lens.metric.sorties": "Misiuni de zbor",
+  "lens.metric.cqbWinProb": "Probabilitatea de a câștiga runda",
+  "lens.metric.cqbActions": "Valoarea acțiunilor",
+  "lens.metric.cqbOpening": "Dueluri de deschidere",
+  "lens.metric.cqbTrades": "Schimburi și refraguri",
+  "lens.metric.cqbPeek": "Peeker contra celui care ține",
+  "lens.metric.cqbAim": "Țintirea înainte de duel",
+  "lens.metric.cqbCrossfire": "Foc încrucișat",
+  "lens.metric.cqbUtility": "Grenade înainte de intrare",
+  "lens.metric.cqbManAdvantage": "Superioritate numerică",
+  "lens.metric.cqbClutch": "Clutch-uri",
+  "lens.metric.cqbSetups": "Stack-uri, rotații și lurk-uri",
+  "lens.metric.cqbPostPlant": "După plantare și retake",
+  "lens.metric.cqbFunnel": "Pâlnii mortale",
+  "lens.metric.cqbImpact": "Impactul jucătorilor"
 }

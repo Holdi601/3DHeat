@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Raonta teagmhála",
   "lens.metric.killChain": "Slabhra marfach",
   "lens.metric.dispersion": "Comhchruinniú nó scaipeadh",
-  "lens.metric.sorties": "Turais aeir"
+  "lens.metric.sorties": "Turais aeir",
+  "lens.metric.cqbWinProb": "Dóchúlacht an babhta a bhuachan",
+  "lens.metric.cqbActions": "Luach na ngníomhartha",
+  "lens.metric.cqbOpening": "Comhraic tosaigh",
+  "lens.metric.cqbTrades": "Malartuithe agus frithmharuithe",
+  "lens.metric.cqbPeek": "Gliúcálaí in aghaidh coimeádaí",
+  "lens.metric.cqbAim": "Aimsiú roimh an gcomhrac",
+  "lens.metric.cqbCrossfire": "Crosstine",
+  "lens.metric.cqbUtility": "Gránáidí roimh an iontráil",
+  "lens.metric.cqbManAdvantage": "Barr líon daoine",
+  "lens.metric.cqbClutch": "Babhtaí cinniúnacha",
+  "lens.metric.cqbSetups": "Grúpaí, rothlaithe agus snámhaithe",
+  "lens.metric.cqbPostPlant": "Tar éis plandála agus athghabháil",
+  "lens.metric.cqbFunnel": "Tonnadóirí marfacha",
+  "lens.metric.cqbImpact": "Tionchar na n-imreoirí"
 }

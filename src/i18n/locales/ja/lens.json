@@ -26,5 +26,19 @@
   "lens.metric.ranges": "交戦距離",
   "lens.metric.killChain": "キルチェーン",
   "lens.metric.dispersion": "集中か分散か",
-  "lens.metric.sorties": "出撃"
+  "lens.metric.sorties": "出撃",
+  "lens.metric.cqbWinProb": "ラウンド勝率",
+  "lens.metric.cqbActions": "アクションの価値",
+  "lens.metric.cqbOpening": "オープニングデュエル",
+  "lens.metric.cqbTrades": "トレードとリフラグ",
+  "lens.metric.cqbPeek": "ピーク側対ホールド側",
+  "lens.metric.cqbAim": "デュエル前のエイム",
+  "lens.metric.cqbCrossfire": "十字砲火",
+  "lens.metric.cqbUtility": "エントリー前のユーティリティ",
+  "lens.metric.cqbManAdvantage": "人数有利",
+  "lens.metric.cqbClutch": "クラッチ",
+  "lens.metric.cqbSetups": "スタック・ローテーション・ラーク",
+  "lens.metric.cqbPostPlant": "設置後とリテイク",
+  "lens.metric.cqbFunnel": "死の漏斗",
+  "lens.metric.cqbImpact": "プレイヤーの影響"
 }

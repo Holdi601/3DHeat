@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Kampfdistanzen",
   "lens.metric.killChain": "Wierkungskette",
   "lens.metric.dispersion": "Konzentratioun oder Streeung",
-  "lens.metric.sorties": "Asätz"
+  "lens.metric.sorties": "Asätz",
+  "lens.metric.cqbWinProb": "Wahrscheinlechkeet d'Ronn ze gewannen",
+  "lens.metric.cqbActions": "Wäert vun den Aktiounen",
+  "lens.metric.cqbOpening": "Ouvertureduellen",
+  "lens.metric.cqbTrades": "Trades a Refrags",
+  "lens.metric.cqbPeek": "Peeker géint Halter",
+  "lens.metric.cqbAim": "Zilen virum Duell",
+  "lens.metric.cqbCrossfire": "Kräizfeier",
+  "lens.metric.cqbUtility": "Granaten virum Agrëff",
+  "lens.metric.cqbManAdvantage": "Iwwerzuel",
+  "lens.metric.cqbClutch": "Clutches",
+  "lens.metric.cqbSetups": "Stacks, Rotatiounen a Lurks",
+  "lens.metric.cqbPostPlant": "Nom Leeën a Retake",
+  "lens.metric.cqbFunnel": "Doudlech Trichteren",
+  "lens.metric.cqbImpact": "Afloss vun de Spiller"
 }

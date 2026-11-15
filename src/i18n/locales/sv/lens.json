@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Stridsavstånd",
   "lens.metric.killChain": "Bekämpningskedja",
   "lens.metric.dispersion": "Koncentration eller spridning",
-  "lens.metric.sorties": "Uppdrag"
+  "lens.metric.sorties": "Uppdrag",
+  "lens.metric.cqbWinProb": "Sannolikhet att vinna rundan",
+  "lens.metric.cqbActions": "Handlingarnas värde",
+  "lens.metric.cqbOpening": "Öppningsdueller",
+  "lens.metric.cqbTrades": "Trades och refrags",
+  "lens.metric.cqbPeek": "Peeker mot hållare",
+  "lens.metric.cqbAim": "Sikte före duellen",
+  "lens.metric.cqbCrossfire": "Korseld",
+  "lens.metric.cqbUtility": "Granater före inträngning",
+  "lens.metric.cqbManAdvantage": "Numerärt överläge",
+  "lens.metric.cqbClutch": "Clutchar",
+  "lens.metric.cqbSetups": "Stackar, rotationer och lurks",
+  "lens.metric.cqbPostPlant": "Efter plantering och retake",
+  "lens.metric.cqbFunnel": "Dödliga trattar",
+  "lens.metric.cqbImpact": "Spelarnas inverkan"
 }

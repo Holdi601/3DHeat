@@ -52,6 +52,8 @@ Computed in the insight worker, in the same pass over the rows as the detectors 
 | Concentration or dispersion | In each 20 s period, the spread of the two largest sides and the share of kills taken by the tighter one | time, teams |
 | Sorties | Per side: sorties (takeoffs, or aircraft spawns), landings, aircraft lost and kills by aircraft; loss rate and kills per sortie | aircraft classes; takeoffs or spawns |
 
+Data with rounds adds the close-quarters and esports measures - round win probability, value of actions, opening duels, trades, peeker against holder, aim, crossfire, utility, man advantage, clutches, setups, post-plant, fatal funnels and player impact: see [Close quarters and rounds](close-quarters.md).
+
 Weapons, decoys and buildings are not counted as units. Where weapon rows name their launching unit (a `Shooter` or `Launcher` column, as Tacview-derived data has), the launch is credited to that unit, matched by its name or its object id.
 
 ## How findings meet the literature
@@ -62,9 +64,9 @@ Entries and findings meet through a **pattern taxonomy** (`src/insights/knowledg
 
 <!-- kb:begin -->
 
-The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical cases, 16 design principles, 86 studies) over 64 patterns, citing 441 references.
+The knowledge base holds 518 entries (104 concepts, 26 methods, 276 historical cases, 16 design principles, 96 studies) over 74 patterns, citing 470 references.
 
-### Patterns (64)
+### Patterns (74)
 
 | id | family | what it looks like in the data |
 |---|---|---|
@@ -132,8 +134,18 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `strike-package` | air | Aircraft of different roles fly together to a target; some attack the ground, others cover them. |
 | `line-of-battle` | sea | Ships steam in column one behind another so that all broadsides bear. |
 | `crossing-the-t` | sea | A column passes across the head of the enemy's column: all of its guns bear, few of the enemy's. |
+| `fatal-funnel` | urban | Players entering one doorway, room or choke die there within moments far more often than entering elsewhere. |
+| `crossfire` | force | Holders whose lines of fire converge from different angles win more duels than a single holder. |
+| `peeker-advantage` | time | The player who moves into view wins duels against the one holding the angle more (or less) often than half. |
+| `entry` | time | The first kill of a round decides much of the round; entries win or lose by place and support. |
+| `utility-support` | force | A flash or smoke just before a duel changes who wins it. |
+| `man-advantage` | force | Rounds are won by the side with more players alive, and some sides convert or throw an advantage. |
+| `clutch` | people | Last players alive win more (or less) often than the state of the round predicts. |
+| `action-value` | people | Kills, trades, plants and utility differ in how much they change the chance to win. |
+| `lurk` | movement | A player alone far from the team kills (or dies) at a different rate from the pack. |
+| `rotation` | movement | How fast a side shifts players to the fight or the objective decides whether it holds or retakes. |
 
-### Concepts (81)
+### Concepts (104)
 
 | id | title | lenses | patterns | sources |
 |---|---|---|---|---|
@@ -145,8 +157,8 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `concept.combat-power` | Combat power and its multipliers | military | local-superiority, combined-arms, fields-of-fire, cover | Dupuy 1979; Dupuy 1987; FM 3-0 2022; Biddle 2004 |
 | `concept.modern-system` | The modern system of force employment | military | cover, open-ground, combined-arms, static-exposure | Biddle 2004 |
 | `concept.ooda` | The OODA loop (observe-orient-decide-act) | military, air, esports | tempo, initiative, surprise | Boyd 1986; Osinga 2007; MCDP 1 1997 |
-| `concept.energy-maneuverability` | Energy-maneuverability theory | air | energy-advantage, high-ground, mobility | Boyd et al. 1966; Shaw 1985; Osinga 2007 |
-| `concept.bfm-acm` | Basic fighter maneuvers and air combat maneuvering | air | energy-advantage, initiative, surprise | Shaw 1985; Weapons Systems Evaluation Group 1967 |
+| `concept.energy-maneuverability` | Energy-maneuverability theory | air | energy-advantage, angles-fight, high-ground, mobility | Boyd et al. 1966; Shaw 1985; Osinga 2007 |
+| `concept.bfm-acm` | Basic fighter maneuvers and air combat maneuvering | air | angles-fight, energy-advantage, initiative, surprise | Shaw 1985; Weapons Systems Evaluation Group 1967 |
 | `concept.terrain-ocoka` | Terrain analysis: OAKOC / KOCOA | military, design, urban | key-terrain, fields-of-fire, avenue-of-approach, cover, obstacle | FM 3-90 2023; ATP 2-01.3 2019; FM 34-130 1994; FM 5-33 1990 |
 | `concept.mett-tc` | METT-TC: mission variables | military | balance, key-terrain | FM 3-90 2023; FM 3-0 2022 |
 | `concept.key-terrain` | Key and decisive terrain | military, design, esports | key-terrain, high-ground, fields-of-fire | FM 3-90 2023; ATP 2-01.3 2019; FM 34-130 1994 |
@@ -163,12 +175,12 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `concept.combined-arms` | Combined arms | military, design | combined-arms, class-counter | FM 3-0 2022; Biddle 2004; Doubler 1994 |
 | `concept.suppression` | Suppression | military, urban | combined-arms, mutual-support, cover | FM 3-90 2023; Biddle 2004 |
 | `concept.sead` | Suppression and destruction of enemy air defences (SEAD/DEAD) | air, military | sead, air-superiority, combined-arms | JP 3-01 2017; Department of the Air Force 2002; Lambeth 1984; Keaney & Cohen 1993 |
-| `concept.cap` | Combat air patrol and air superiority | air | air-superiority, exchange-ratio, key-terrain | Department of the Air Force 2002; JP 3-01 2017; Douhet 1942 |
-| `concept.bvr` | Beyond-visual-range engagement | air | bvr, initiative, fields-of-fire | Michel 1997; Keaney & Cohen 1993; Shaw 1985 |
+| `concept.cap` | Combat air patrol and air superiority | air | cap, air-superiority, exchange-ratio, key-terrain | Department of the Air Force 2002; JP 3-01 2017; Douhet 1942 |
+| `concept.bvr` | Beyond-visual-range engagement | air | bvr, initiative, missile-defence, fields-of-fire | Michel 1997; Keaney & Cohen 1993; Shaw 1985 |
 | `concept.indirect-approach` | The indirect approach | military, esports, design | flank, surprise, avenue-of-approach | Liddell Hart 1954; Sun Tzu 1910 |
-| `concept.envelopment` | Envelopment and encirclement | military | envelopment, flank, concentration | FM 3-90 2023; Polybius 1889; Goldsworthy 2001 |
+| `concept.envelopment` | Envelopment and encirclement | military | envelopment, double-envelopment, encirclement, flank, concentration | FM 3-90 2023; Polybius 1889; Goldsworthy 2001 |
 | `concept.ambush` | Ambush | military, esports, design | ambush, surprise, kill-zone, avenue-of-approach | FM 3-21.8 2007; FM 3-90 2023; Tacitus 1876 |
-| `concept.defence-in-depth` | Defence in depth | military | attrition, kill-zone, key-terrain | FM 3-90-1 2013; Glantz & House 1999 |
+| `concept.defence-in-depth` | Defence in depth | military | defence-in-depth, attrition, kill-zone, key-terrain | FM 3-90-1 2013; Glantz & House 1999 |
 | `concept.friction` | Friction and the fog of war | military, esports | readability, surprise, tempo | Clausewitz 1873; Benjamini & Hochberg 1995 |
 | `concept.culminating-point` | Culminating point of the attack | military | attrition, tempo, interior-lines | Clausewitz 1873; FM 3-0 2022 |
 | `concept.surprise` | Surprise | military, air, naval, esports | surprise, initiative, ambush | Sun Tzu 1910; Dupuy 1987; MCDP 1 1997 |
@@ -188,25 +200,25 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `concept.deep-battle` | Deep battle and deep operations | military | tempo, flank, concentration, interior-lines | Triandafillov 1994; Isserson 2013; Glantz 1991 |
 | `concept.airland-battle` | AirLand Battle | military, air | combined-arms, tempo, initiative | FM 100-5 1982; Romjue 1984 |
 | `concept.mission-command` | Mission command (Auftragstaktik) | military, esports | tempo, initiative, mutual-support | Citino 2005; van Creveld 1982; MCDP 1 1997 |
-| `concept.exploitation` | Breakthrough and exploitation | military | tempo, flank, defeat-in-detail | Triandafillov 1994; Blumenson 1961; FM 3-90 2023 |
-| `concept.fire-and-movement` | Fire and movement | military, esports | mutual-support, cover, combined-arms | ATP 3-21.8 2016; FM 3-21.8 2007; House 1984 |
-| `concept.bounding-overwatch` | Bounding overwatch | military, esports | mutual-support, fields-of-fire, mobility | FM 3-20.15 2007; ATP 3-21.8 2016 |
-| `concept.reconnaissance-pull` | Reconnaissance pull and infiltration | military, esports | flank, scouting, tempo | Gudmundsson 1989; Lupfer 1981; FM 3-90-2 2013 |
+| `concept.exploitation` | Breakthrough and exploitation | military | tempo, pursuit, penetration, flank, defeat-in-detail | Triandafillov 1994; Blumenson 1961; FM 3-90 2023 |
+| `concept.fire-and-movement` | Fire and movement | military, esports | fire-and-maneuver, mutual-support, cover, combined-arms | ATP 3-21.8 2016; FM 3-21.8 2007; House 1984 |
+| `concept.bounding-overwatch` | Bounding overwatch | military, esports | fire-and-maneuver, mutual-support, fields-of-fire, mobility | FM 3-20.15 2007; ATP 3-21.8 2016 |
+| `concept.reconnaissance-pull` | Reconnaissance pull and infiltration | military, esports | flank, screening, scouting, tempo | Gudmundsson 1989; Lupfer 1981; FM 3-90-2 2013 |
 | `concept.reserve` | The reserve | military, esports | tempo, concentration, interior-lines | Clausewitz 1873; FM 3-90 2023 |
-| `concept.elastic-defence` | Elastic defence and counterattack | military | kill-zone, reverse-slope, tempo | Lupfer 1981; FM 3-90-1 2013 |
+| `concept.elastic-defence` | Elastic defence and counterattack | military | defence-in-depth, kill-zone, withdrawal, reverse-slope, tempo | Lupfer 1981; FM 3-90-1 2013 |
 | `concept.kill-chain` | The kill chain (find, fix, track, target, engage, assess) | military, air, naval | tempo, scouting, initiative | JP 3-60 2018; Boyd 1986 |
 | `concept.detection-engagement` | Detection range versus engagement range | air, naval, military | scouting, bvr, fields-of-fire, initiative | Koopman 1946; Washburn 2002; Hughes & Girrier 2018 |
 | `concept.cev` | Combat effectiveness value | military, esports | exchange-ratio, local-superiority, skill-dispersion | Dupuy 1987; Dupuy 1979; Lawrence 2017; van Creveld 1982 |
-| `concept.dispersion` | Dispersion on the battlefield | military, esports | area-fire, mutual-support, concentration | Dupuy 1987; Biddle 2004; Clark & Evans 1954 |
+| `concept.dispersion` | Dispersion on the battlefield | military, esports | dispersion, area-fire, mutual-support, concentration | Dupuy 1987; Biddle 2004; Clark & Evans 1954 |
 | `concept.cas` | Close air support | air, military | combined-arms, class-counter, sead | JP 3-09.3 2019 |
 | `concept.interdiction` | Air interdiction | air, military | avenue-of-approach, interior-lines, tempo | Warden 1988; Pape 1996; JP 3-60 2018 |
 | `concept.escort-sweep` | Escort versus fighter sweep | air | air-superiority, initiative, mutual-support | Davis 1993; McFarland & Newton 1991 |
 | `concept.boom-zoom` | Energy fight versus turning fight | air | energy-advantage, initiative | Shaw 1985; Boyd et al. 1966 |
 | `concept.pursuit-geometry` | Lead, pure and lag pursuit | air | energy-advantage, initiative | Shaw 1985 |
-| `concept.thach-weave` | The Thach weave | air | mutual-support, local-superiority | Lundstrom 1984; Shaw 1985 |
-| `concept.finger-four` | The finger-four and the fighting pair | air | mutual-support, scouting | Shaw 1985 |
+| `concept.thach-weave` | The Thach weave | air | mutual-support, formation, local-superiority | Lundstrom 1984; Shaw 1985 |
+| `concept.finger-four` | The finger-four and the fighting pair | air | mutual-support, formation, scouting | Shaw 1985 |
 | `concept.fleet-in-being` | Fleet in being | naval | safe-ground, interior-lines, balance | Corbett 1911; Till 2018 |
-| `concept.crossing-the-t` | Crossing the T | naval, military | local-superiority, fields-of-fire, concentration | Hughes & Girrier 2018; Evans & Peattie 1997 |
+| `concept.crossing-the-t` | Crossing the T | naval, military | crossing-the-t, local-superiority, fields-of-fire, concentration, line-of-battle | Hughes & Girrier 2018; Evans & Peattie 1997 |
 | `concept.convoy` | Convoy | naval | mutual-support, scouting, concentration | Waddington 1973; Blackett 1962; Corbett 1911 |
 | `concept.a2ad` | Anti-access and area denial | naval, air, military | fields-of-fire, sead, avenue-of-approach | Krepinevich et al. 2003; Till 2018 |
 | `concept.strongpoint` | Strongpoint defence in built-up areas | urban, military | urban-close, kill-zone, mutual-support, vertical | FM 3-06 2006; FM 90-10 1979 |
@@ -215,11 +227,34 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `concept.guerrilla` | Guerrilla warfare | military, urban | ambush, mobility, surprise, safe-ground | Lawrence 1920; Mao Tse-tung 1961; Deitchman 1962 |
 | `concept.counterinsurgency` | Counterinsurgency | military, urban | scouting, key-terrain, safe-ground | Galula 1964; FM 3-24 2006 |
 | `concept.sanctuary` | Sanctuary | military, design | safe-ground, balance | Galula 1964; Mao Tse-tung 1961 |
-| `concept.deception` | Deception (maskirovka) | military, esports | surprise, flank, scouting | Glantz 1989; Sun Tzu 1910 |
+| `concept.deception` | Deception (maskirovka) | military, esports | feint, surprise, flank, scouting | Glantz 1989; Sun Tzu 1910 |
 | `concept.information-advantage` | Information advantage | military, esports | scouting, initiative, tempo | FM 3-0 2022; Boyd 1986 |
 | `concept.economy-rounds` | Economy rounds and resource tempo | esports, design | economy, balance, tempo | Xenopoulos et al. 2020; Adams & Dormans 2012 |
+| `concept.tactical-formations` | Movement formations: line, column, wedge, echelon | military, esports | formation, mutual-support | FM 3-21.8 2007; FM 3-20.15 2007; FM 3-90 2023 |
+| `concept.frontal-attack` | Frontal attack | military | frontal-assault, attrition, concentration | FM 3-90 2023; FM 3-90-1 2013; Liddell Hart 1954 |
+| `concept.double-envelopment` | Double envelopment (the pincer) | military | double-envelopment, envelopment, encirclement, flank | FM 3-90 2023; Goldsworthy 2001; Polybius 1889 |
+| `concept.encirclement-pocket` | Encirclement and the pocket | military | encirclement, envelopment, defeat-in-detail | FM 3-90 2023; Glantz & House 1995; Goldsworthy 2001 |
+| `concept.penetration` | Penetration and breakthrough | military | penetration, concentration, local-superiority | FM 3-90 2023; Frieser 2005; Gudmundsson 1989 |
+| `concept.pursuit` | Pursuit | military | pursuit, tempo, withdrawal | FM 3-90-1 2013; FM 3-90 2023; Clausewitz 1873 |
+| `concept.retrograde` | Retrograde: withdrawal, delay and retreat | military | withdrawal, defence-in-depth, mobility | FM 3-90-1 2013; FM 3-90 2023 |
+| `concept.feint-demonstration` | Feint and demonstration | military, esports | feint, surprise, concentration | FM 3-90 2023; Glantz 1989; Liddell Hart 1954 |
+| `concept.security-operations` | Screen, guard and cover: security ahead of the main body | military | screening, scouting, surprise | FM 3-90-2 2013; FM 3-90 2023 |
+| `concept.bvr-defensive` | Defending against a missile: crank, notch, drag and pump | air | missile-defence, bvr, energy-advantage | Shaw 1985; Michel 1997; Boyd et al. 1966 |
+| `concept.bvr-formations` | Beyond-visual-range formations: wall, lead-trail, grinder, pincer | air | bvr, formation, double-envelopment, cap | Shaw 1985; Michel 1997 |
+| `concept.angles-energy-fight` | The angles fight and the energy fight | air | angles-fight, energy-advantage | Shaw 1985; Boyd et al. 1966 |
+| `concept.strike-package` | Strike package and the sequencing of suppression | air | strike-package, sead, combined-arms | Keaney & Cohen 1993; Werrell 2005; Nordeen 1990 |
+| `concept.line-of-battle` | The line of battle | naval | line-of-battle, formation, crossing-the-t | Mahan 1890; Hughes & Girrier 2018; Corbett 1910 |
+| `concept.fatal-funnel` | The fatal funnel | urban, military, esports, design | fatal-funnel, chokepoint, kill-zone, urban-close, entry | FM 3-06.11 2002; ATP 3-21.8 2016; Department of the Army 2011 |
+| `concept.room-clearing` | Room clearing: surprise, speed, controlled violence | urban, military, esports | entry, surprise, tempo, initiative, urban-close, utility-support | FM 3-06.11 2002; Department of the Army 2011; MCWP 3-35.3 1998 |
+| `concept.points-of-domination` | Points of domination | urban, military, esports | crossfire, mutual-support, fields-of-fire, entry | FM 3-06.11 2002; Department of the Army 2011 |
+| `concept.slicing-the-pie` | Clearing corners: slicing the pie | urban, military, esports | peeker-advantage, sightlines, cover, readability | FM 3-06.11 2002 |
+| `concept.crossfire` | Crossfire and interlocking fields of fire | military, urban, esports, design | crossfire, fields-of-fire, kill-zone, mutual-support | FM 3-21.8 2007; ATP 3-06 2022; FM 3-06.11 2002 |
+| `concept.peekers-advantage` | The peeker's advantage | esports, design | peeker-advantage, initiative, surprise, readability | Bernier 2001; Tokey et al. 2024; Lee & Chang 2017; Liu et al. 2022 |
+| `concept.man-advantage` | Man advantage in elimination rounds | esports, military | man-advantage, local-superiority, entry, concentration | Xenopoulos et al. 2022; Xenopoulos et al. 2020; Makarov et al. 2018 |
+| `concept.entry-duel` | Entry and the opening duel | esports, urban | entry, initiative, action-value, tempo | Xenopoulos et al. 2020; Xenopoulos et al. 2022; FM 3-06.11 2002 |
+| `concept.utility-entry` | Utility before the entry: flash and smoke | esports, urban, military | utility-support, surprise, entry, cover | FM 3-06.11 2002; ATP 3-06 2022; Xenopoulos et al. 2020 |
 
-### Methods (20)
+### Methods (26)
 
 | id | title | patterns | sources |
 |---|---|---|---|
@@ -243,8 +278,14 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `method.kill-chain` | Kill-chain timing | tempo, initiative, surprise | Boyd 1986; Osinga 2007; Weapons Systems Evaluation Group 1967 |
 | `method.dispersion` | Dispersion against kill share (concentration of force in time) | concentration, area-fire, local-superiority, mutual-support | Lanchester 1916; Biddle 2004; Clausewitz 1873; Jomini 1862 |
 | `method.sortie-attrition` | Loss rate and kills per sortie | air-superiority, exchange-ratio, attrition | Keaney & Cohen 1993; Morse & Kimball 1951; Overy 2000; Weapons Systems Evaluation Group 1967 |
+| `method.round-win-probability` | Round win-probability model | action-value, man-advantage, entry, clutch | Xenopoulos et al. 2022; Lock & Nettleton 2014; Robberechts et al. 2021; Brier 1950; Guo et al. 2017; Pakdaman Naeini et al. 2015 |
+| `method.win-probability-added` | Action value: win probability added | action-value, entry, utility-support, mutual-support | Xenopoulos et al. 2020; Maymin 2021; Fernández et al. 2021; Pollard & Reep 1997; Decroos et al. 2019 |
+| `method.adjusted-plus-minus` | Adjusted plus-minus by ridge regression (RAPM) | skill-dispersion, action-value, mutual-support | Sill 2010; Macdonald 2012; Hoerl & Kennard 1970 |
+| `method.empirical-bayes` | Shrinkage: empirical Bayes | skill-dispersion, action-value, clutch | Efron & Morris 1975 |
+| `method.expected-kills` | Expected outcomes: from expected goals to expected duels | clutch, action-value, peeker-advantage, sightlines | Rathke 2017; Pollard & Reep 1997; Spearman 2018 |
+| `method.setups-rotations` | Measuring setups, rotations and lurks | rotation, lurk, interior-lines, concentration, flank | Benjamini & Hochberg 1995 |
 
-### Historical cases (275)
+### Historical cases (276)
 
 | id | case | when | scale | patterns | sources |
 |---|---|---|---|---|---|
@@ -254,49 +295,49 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `case.leuctra` | Leuctra | 371 BC | battle | concentration, local-superiority | Xenophon 1897 |
 | `case.gaugamela` | Gaugamela | 331 BC | battle | concentration, tempo, flank | Arrian 1893 |
 | `case.trasimene` | Lake Trasimene | 217 BC | battle | ambush, surprise, kill-zone, chokepoint | Polybius 1889 |
-| `case.cannae` | Cannae | 216 BC | battle | envelopment, local-superiority, concentration, attrition | Polybius 1889; Goldsworthy 2001 |
+| `case.cannae` | Cannae | 216 BC | battle | double-envelopment, envelopment, encirclement, local-superiority, concentration, attrition | Polybius 1889; Goldsworthy 2001 |
 | `case.teutoburg` | Teutoburg Forest | AD 9 | battle | ambush, surprise, chokepoint, obstacle | Tacitus 1876 |
 | `case.hastings` | Hastings | 1066 | battle | high-ground, key-terrain, surprise | Morillo 1996 |
 | `case.stirling-bridge` | Stirling Bridge | 1297 | battle | defeat-in-detail, chokepoint, local-superiority | Barrow 1965 |
 | `case.agincourt` | Agincourt | 1415 | battle | chokepoint, kill-zone, fields-of-fire, open-ground | Curry 2005 |
-| `case.leuthen` | Leuthen | 1757 | battle | concentration, flank, surprise, interior-lines | Showalter 1996 |
+| `case.leuthen` | Leuthen | 1757 | battle | concentration, feint, flank, surprise, interior-lines | Showalter 1996 |
 | `case.austerlitz` | Austerlitz | 1805 | battle | key-terrain, high-ground, concentration, surprise | Chandler 1966 |
-| `case.trafalgar` | Trafalgar | 1805 | battle | concentration, local-superiority, initiative | Corbett 1910; Mahan 1890 |
+| `case.trafalgar` | Trafalgar | 1805 | battle | concentration, line-of-battle, local-superiority, penetration, initiative | Corbett 1910; Mahan 1890 |
 | `case.waterloo` | Waterloo | 1815 | battle | reverse-slope, key-terrain, safe-ground, attrition | Siborne 1844 |
 | `case.fredericksburg` | Fredericksburg: Marye's Heights | 1862 | engagement | kill-zone, open-ground, cover, fields-of-fire | US War Department 1888 |
 | `case.little-round-top` | Gettysburg: Little Round Top | 1863 | engagement | key-terrain, high-ground, fields-of-fire | Coddington 1968 |
-| `case.picketts-charge` | Gettysburg: Pickett's Charge | 1863 | engagement | open-ground, kill-zone, fields-of-fire, envelopment | Coddington 1968 |
+| `case.picketts-charge` | Gettysburg: Pickett's Charge | 1863 | engagement | frontal-assault, open-ground, kill-zone, fields-of-fire, envelopment | Coddington 1968 |
 | `case.isandlwana` | Isandlwana | 1879 | battle | envelopment, defeat-in-detail, surprise | Knight 2002 |
 | `case.rorkes-drift` | Rorke's Drift | 1879 | engagement | cover, kill-zone, mutual-support, local-superiority | Knight 2002 |
-| `case.tannenberg` | Tannenberg | 1914 | campaign | interior-lines, defeat-in-detail, concentration, envelopment | Showalter 1991 |
-| `case.somme-1916` | The Somme, first day | 1 July 1916 | battle | open-ground, kill-zone, attrition, static-exposure | Middlebrook 1971; Biddle 2004 |
+| `case.tannenberg` | Tannenberg | 1914 | campaign | interior-lines, defeat-in-detail, double-envelopment, encirclement, concentration, envelopment | Showalter 1991 |
+| `case.somme-1916` | The Somme, first day | 1 July 1916 | battle | open-ground, frontal-assault, kill-zone, attrition, static-exposure | Middlebrook 1971; Biddle 2004 |
 | `case.verdun` | Verdun | 1916 | campaign | attrition, key-terrain, kill-zone | Horne 1962 |
-| `case.jutland` | Jutland | 1916 | battle | scouting, exchange-ratio, fleet-salvo | Gordon 1996; Campbell 1986; Corbett 1923 |
+| `case.jutland` | Jutland | 1916 | battle | crossing-the-t, line-of-battle, scouting, exchange-ratio, fleet-salvo | Gordon 1996; Campbell 1986; Corbett 1923 |
 | `case.suomussalmi` | Suomussalmi | 1939-40 | battle | defeat-in-detail, ambush, mobility, envelopment | Trotter 1991 |
-| `case.ardennes-1940` | Sedan and the Ardennes | May 1940 | campaign | flank, surprise, tempo, avenue-of-approach | Frieser 2005 |
+| `case.ardennes-1940` | Sedan and the Ardennes | May 1940 | campaign | penetration, flank, surprise, tempo, avenue-of-approach | Frieser 2005 |
 | `case.arras-1940` | Arras counterattack | 21 May 1940 | engagement | combined-arms, class-counter, surprise | Frieser 2005 |
 | `case.battle-of-britain` | Battle of Britain | Jul-Oct 1940 | campaign | air-superiority, interior-lines, scouting, concentration | Overy 2000; Bungay 2000 |
 | `case.battle-of-atlantic` | Battle of the Atlantic: convoy operational research | 1939-45 | campaign | scouting, concentration, mutual-support | Blackett 1962; Morse & Kimball 1951 |
 | `case.midway` | Midway | June 1942 | battle | fleet-salvo, scouting, initiative, surprise | Parshall & Tully 2005 |
 | `case.el-alamein` | Second El Alamein | Oct-Nov 1942 | battle | attrition, obstacle, kill-zone, combined-arms | Barr 2004 |
 | `case.kasserine` | Kasserine Pass | Feb 1943 | battle | mutual-support, defeat-in-detail, key-terrain | Blumenson 1967 |
-| `case.stalingrad` | Stalingrad | Aug 1942-Feb 1943 | campaign | urban-close, attrition, vertical, envelopment | Beevor 1998; Glantz & House 1995 |
-| `case.kursk` | Kursk | July 1943 | campaign | attrition, obstacle, fields-of-fire, kill-zone | Glantz & House 1999; Zetterling & Frankson 2000; Lucas & Turkes 2004 |
+| `case.stalingrad` | Stalingrad | Aug 1942-Feb 1943 | campaign | encirclement, urban-close, attrition, double-envelopment, vertical, envelopment | Beevor 1998; Glantz & House 1995 |
+| `case.kursk` | Kursk | July 1943 | campaign | defence-in-depth, attrition, obstacle, fields-of-fire, kill-zone | Glantz & House 1999; Zetterling & Frankson 2000; Lucas & Turkes 2004 |
 | `case.prokhorovka` | Prokhorovka | 12 July 1943 | engagement | exchange-ratio, fields-of-fire, open-ground, local-superiority | Zetterling & Frankson 2000; Glantz & House 1999 |
 | `case.villers-bocage` | Villers-Bocage | 13 June 1944 | engagement | ambush, kill-zone, chokepoint, class-counter | Forty 2004 |
 | `case.normandy-bocage` | Normandy hedgerows | June-July 1944 | campaign | cover, combined-arms, fields-of-fire, urban-close | Doubler 1994; Blumenson 1961 |
 | `case.cobra` | Operation Cobra | July 1944 | campaign | concentration, tempo, local-superiority | Blumenson 1961 |
 | `case.leyte-gulf` | Leyte Gulf | Oct 1944 | battle | scouting, concentration, chokepoint, surprise | Morison 1958; Cutler 1994 |
 | `case.bastogne` | Bastogne | Dec 1944 | battle | key-terrain, interior-lines, mutual-support | Cole 1965 |
-| `case.tsushima` | Tsushima | May 1905 | battle | concentration, local-superiority, fields-of-fire | Evans & Peattie 1997 |
+| `case.tsushima` | Tsushima | May 1905 | battle | crossing-the-t, concentration, line-of-battle, local-superiority, fields-of-fire | Evans & Peattie 1997 |
 | `case.inchon` | Inchon | Sept 1950 | campaign | flank, surprise, interior-lines | Heinl 1968 |
 | `case.mig-alley` | MiG Alley | 1950-53 | campaign | air-superiority, exchange-ratio, skill-dispersion, energy-advantage | Werrell 2005 |
 | `case.dien-bien-phu` | Dien Bien Phu | 1954 | battle | high-ground, fields-of-fire, key-terrain, attrition | Fall 1966 |
 | `case.ia-drang` | Ia Drang: LZ X-Ray | Nov 1965 | engagement | mutual-support, combined-arms, mobility | Moore & Galloway 1992 |
-| `case.operation-bolo` | Operation Bolo | 2 Jan 1967 | engagement | surprise, ambush, initiative, energy-advantage | Michel 1997 |
+| `case.operation-bolo` | Operation Bolo | 2 Jan 1967 | engagement | feint, surprise, ambush, initiative, energy-advantage | Michel 1997 |
 | `case.valley-of-tears` | Golan: the Valley of Tears | Oct 1973 | battle | fields-of-fire, exchange-ratio, high-ground, kill-zone, obstacle | Herzog 1975; Rabinovich 2004; Kahalani 1984 |
 | `case.chinese-farm` | Sinai: the Chinese Farm | Oct 1973 | battle | combined-arms, class-counter, kill-zone | Herzog 1975; Rabinovich 2004 |
-| `case.bekaa-1982` | Bekaa Valley (Operation Mole Cricket 19) | June 1982 | battle | sead, air-superiority, scouting, exchange-ratio | Lambeth 1984 |
+| `case.bekaa-1982` | Bekaa Valley (Operation Mole Cricket 19) | June 1982 | battle | sead, air-superiority, strike-package, scouting, exchange-ratio | Lambeth 1984 |
 | `case.falklands` | Falklands air war | May-June 1982 | campaign | air-superiority, kill-zone, exchange-ratio, chokepoint | Ethell & Price 1983; Woodward & Robinson 1992 |
 | `case.desert-storm-air` | Desert Storm air campaign | Jan-Feb 1991 | campaign | air-superiority, sead, bvr, tempo | Keaney & Cohen 1993; Hallion 1992 |
 | `case.73-easting` | 73 Easting | 26 Feb 1991 | engagement | exchange-ratio, initiative, fields-of-fire, surprise | Krause 1991; Bourque 2002; Biddle 2004 |
@@ -337,33 +378,33 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `case.omdurman` | Omdurman | 1898 | battle | fields-of-fire, open-ground, exchange-ratio, class-counter | Churchill 1899 |
 | `case.spion-kop` | Spion Kop | 1900 | engagement | high-ground, fields-of-fire, static-exposure, key-terrain | Pakenham 1979 |
 | `case.gallipoli` | Gallipoli | 1915 | campaign | high-ground, attrition, kill-zone, key-terrain | Travers 2001 |
-| `case.cambrai-1917` | Cambrai | Nov 1917 | battle | surprise, combined-arms, class-counter, tempo | Cooper 1967 |
+| `case.cambrai-1917` | Cambrai | Nov 1917 | battle | surprise, combined-arms, penetration, class-counter, tempo | Cooper 1967 |
 | `case.caporetto` | Caporetto | Oct-Nov 1917 | campaign | tempo, flank, avenue-of-approach, surprise | Gudmundsson 1989; Rommel 1937 |
-| `case.kaiserschlacht` | The German spring offensive (Operation Michael) | Mar-Apr 1918 | campaign | tempo, surprise, attrition, mobility | Gudmundsson 1989 |
+| `case.kaiserschlacht` | The German spring offensive (Operation Michael) | Mar-Apr 1918 | campaign | penetration, tempo, surprise, attrition, mobility | Gudmundsson 1989 |
 | `case.amiens-1918` | Amiens | Aug 1918 | battle | combined-arms, surprise, concentration | Prior & Wilson 1992 |
 | `case.khalkhin-gol` | Khalkhin Gol (Nomonhan) | Aug 1939 | battle | envelopment, combined-arms, concentration, surprise | Drea 1981; Coox 1985 |
 | `case.poland-1939` | The Polish campaign | Sept 1939 | campaign | envelopment, tempo, mobility, air-superiority | Zaloga & Madej 1985 |
 | `case.hannut-gembloux` | Hannut and Gembloux | May 1940 | battle | concentration, class-counter, combined-arms | Frieser 2005 |
 | `case.stonne` | Stonne | May 1940 | engagement | key-terrain, attrition, high-ground | Frieser 2005; Doughty 1990 |
-| `case.dunkirk` | The Dunkirk perimeter | May-June 1940 | campaign | obstacle, safe-ground, mutual-support | Frieser 2005; May 2000 |
+| `case.dunkirk` | The Dunkirk perimeter | May-June 1940 | campaign | withdrawal, obstacle, safe-ground, mutual-support | Frieser 2005; May 2000 |
 | `case.beda-fomm` | Operation Compass and Beda Fomm | Dec 1940-Feb 1941 | campaign | mobility, flank, tempo, exchange-ratio | Playfair et al. 1954 |
 | `case.crusader` | Operation Crusader and Sidi Rezegh | Nov-Dec 1941 | campaign | defeat-in-detail, combined-arms, attrition, concentration | Playfair et al. 1960 |
 | `case.gazala` | Gazala | May-June 1942 | battle | flank, defeat-in-detail, mutual-support, obstacle | Playfair et al. 1960 |
 | `case.alam-halfa` | Alam Halfa | Aug-Sept 1942 | battle | fields-of-fire, key-terrain, obstacle, air-superiority | Barr 2004 |
 | `case.dubno-brody` | Dubno-Brody | June 1941 | battle | defeat-in-detail, combined-arms, air-superiority | Glantz 2001; Glantz & House 1995 |
-| `case.kiev-1941` | Kiev encirclement | Sept 1941 | campaign | envelopment, static-exposure, tempo | Glantz & House 1995; Erickson 1975 |
+| `case.kiev-1941` | Kiev encirclement | Sept 1941 | campaign | encirclement, envelopment, double-envelopment, static-exposure, tempo | Glantz & House 1995; Erickson 1975 |
 | `case.moscow-1941` | Moscow | Oct 1941-Jan 1942 | campaign | attrition, tempo, interior-lines, surprise | Glantz & House 1995; Erickson 1975 |
 | `case.rzhev-mars` | Rzhev and Operation Mars | 1942 | campaign | attrition, kill-zone, defeat-in-detail | Glantz 1999 |
 | `case.second-kharkov` | Second Kharkov | May 1942 | battle | envelopment, flank, tempo | Glantz 1998 |
 | `case.third-kharkov` | Third Kharkov (Manstein's backhand blow) | Feb-Mar 1943 | campaign | tempo, flank, interior-lines, local-superiority | Glantz 1991; Manstein 1958 |
 | `case.bagration` | Operation Bagration | June-Aug 1944 | campaign | concentration, envelopment, surprise, tempo | Zaloga 1996; Glantz & House 1995 |
-| `case.korsun` | Korsun-Cherkassy pocket | Jan-Feb 1944 | battle | envelopment, attrition, open-ground | Nash 2002; Glantz & House 1995 |
+| `case.korsun` | Korsun-Cherkassy pocket | Jan-Feb 1944 | battle | encirclement, envelopment, attrition, open-ground | Nash 2002; Glantz & House 1995 |
 | `case.kamenets-podolsky` | Kamenets-Podolsky pocket | Mar-Apr 1944 | campaign | mobility, envelopment, interior-lines | Glantz & House 1995 |
 | `case.epsom` | Operation Epsom | June 1944 | battle | attrition, key-terrain, cover | D'Este 1983; Hastings 1984 |
 | `case.goodwood` | Operation Goodwood | July 1944 | battle | open-ground, fields-of-fire, combined-arms, exchange-ratio | D'Este 1983; Hastings 1984 |
 | `case.totalize` | Operation Totalize | Aug 1944 | battle | surprise, combined-arms, tempo | Copp 2003 |
 | `case.mortain` | Mortain | Aug 1944 | battle | key-terrain, high-ground, fields-of-fire, air-superiority | Blumenson 1961 |
-| `case.falaise` | Falaise pocket | Aug 1944 | campaign | envelopment, kill-zone, chokepoint | Blumenson 1961; Hastings 1984 |
+| `case.falaise` | Falaise pocket | Aug 1944 | campaign | encirclement, envelopment, double-envelopment, kill-zone, chokepoint | Blumenson 1961; Hastings 1984 |
 | `case.market-garden` | Market Garden and Arnhem | Sept 1944 | campaign | chokepoint, avenue-of-approach, tempo, key-terrain | MacDonald 1963; Ryan 1974 |
 | `case.aachen` | Aachen | Oct 1944 | battle | urban-close, combined-arms, envelopment | MacDonald 1963 |
 | `case.hurtgen` | Hürtgen Forest | Sept 1944-Feb 1945 | campaign | attrition, cover, class-counter, ambush | MacDonald 1963 |
@@ -463,7 +504,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `case.instant-thunder` | Instant Thunder: planning the Gulf air campaign | Aug 1990-Jan 1991 | campaign | tempo, concentration, sead, key-terrain | Putney 2004; Keaney & Cohen 1993 |
 | `case.task-force-normandy-1991` | Task Force Normandy: the opening Apache strike | 17 Jan 1991 | engagement | sead, surprise, initiative, combined-arms | Keaney & Cohen 1993; Atkinson 1993 |
 | `case.scud-hunt-1991` | The Great Scud Hunt | Jan-Feb 1991 | campaign | scouting, mobility, static-exposure | Keaney & Cohen 1993; Rosenau 2001 |
-| `case.highway-of-death-1991` | Mutla Ridge ("Highway of Death") | 26-27 Feb 1991 | engagement | chokepoint, kill-zone, open-ground, air-superiority | Atkinson 1993; Keaney & Cohen 1993 |
+| `case.highway-of-death-1991` | Mutla Ridge ("Highway of Death") | 26-27 Feb 1991 | engagement | chokepoint, kill-zone, pursuit, withdrawal, open-ground, air-superiority | Atkinson 1993; Keaney & Cohen 1993 |
 | `case.anaconda-2002` | Operation Anaconda: Apaches in the Shahi-Kot | Mar 2002 | battle | high-ground, kill-zone, scouting, readability | Naylor 2005 |
 | `case.karbala-apache-2003` | The Karbala Apache attack | 24 Mar 2003 | engagement | ambush, kill-zone, urban-close, readability | Fontenot et al. 2004 |
 | `case.libya-2011` | The Libyan air campaign | Mar-Oct 2011 | campaign | air-superiority, sead, scouting | Mueller 2015 |
@@ -506,7 +547,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `case.north-cape-1943` | North Cape | Dec 1943 | battle | scouting, envelopment, concentration | Roskill 1960 |
 | `case.pacific-submarines` | The US submarine campaign against Japan | 1941-1945 | campaign | economy, attrition, class-counter | Blair 1975 |
 | `case.samar-1944` | Off Samar | 25 Oct 1944 | battle | mutual-support, surprise, readability, local-superiority | Hornfischer 2004; Cutler 1994 |
-| `case.surigao-1944` | Surigao Strait | 25 Oct 1944 | battle | chokepoint, kill-zone, concentration, fields-of-fire | Tully 2009; Morison 1958 |
+| `case.surigao-1944` | Surigao Strait | 25 Oct 1944 | battle | crossing-the-t, chokepoint, kill-zone, concentration, line-of-battle, fields-of-fire | Tully 2009; Morison 1958 |
 | `case.okinawa-kamikaze-1945` | Okinawa: the kamikaze campaign | Apr-June 1945 | campaign | attrition, static-exposure, scouting, kill-zone | Morison 1960 |
 | `case.eilat-1967` | The sinking of the Eilat | Oct 1967 | engagement | fleet-salvo, class-counter, safe-ground | Hughes 2000; Rabinovich 1988 |
 | `case.latakia-1973` | Latakia | Oct 1973 | battle | fleet-salvo, class-counter, initiative | Rabinovich 1988; Hughes 2000 |
@@ -523,6 +564,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `case.astralis-2018` | Astralis and the utility era | 2018 | campaign | combined-arms, mutual-support, kill-zone | Upcomer 2018 |
 | `case.openai-five-og` | OpenAI Five against OG | Apr 2019 | battle | ai-vs-player, tempo, concentration | Berner et al. 2019 |
 | `case.alphastar-2019` | AlphaStar reaches grandmaster | 2019 | campaign | ai-vs-player, skill-dispersion | Vinyals et al. 2019 |
+| `case.desert-storm-left-hook` | The left hook (Operation Desert Storm ground offensive) | 24-28 February 1991 | campaign | flank, envelopment, tempo, penetration | Scales 1993; Bourque 2002; Keaney & Cohen 1993 |
 
 ### Game and level design (16)
 
@@ -545,7 +587,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `design.heatmaps` | Heatmaps and spatial telemetry in design | flow, kill-zone, key-terrain | Drachen & Canossa 2009; Wallner & Kriglstein 2013; Hoobler et al. 2004; Kim et al. 2008; Bowman et al. 2012 |
 | `design.fun-mastery` | Mastery, learning and fun | readability, skill-dispersion | Koster 2004; Csikszentmihalyi 1990; Schell 2008 |
 
-### Studies (86)
+### Studies (96)
 
 | id | title | sources |
 |---|---|---|
@@ -635,6 +677,16 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `study.survival-analysis` | Survival analysis for time to death | Kaplan & Meier 1958; Cox 1972 |
 | `study.glm` | Generalised linear models for counts | Nelder & Wedderburn 1972; McCullagh & Nelder 1989; Akaike 1974 |
 | `study.bootstrap` | Bootstrap and interval estimates | Efron 1979; Wilson 1927 |
+| `study.tokey-2024` | Tokey et al.: latency and the peeker's advantage | Tokey et al. 2024 |
+| `study.lee-chang-2017` | Lee and Chang: shot around a corner | Lee & Chang 2017; Bernier 2001 |
+| `study.claypool-latency` | Claypool: latency and player actions | Claypool & Claypool 2006; Liu et al. 2022 |
+| `study.xenopoulos-2022-wp` | Xenopoulos et al.: professionals and amateurs through win probability | Xenopoulos et al. 2022; Xenopoulos & Silva 2022 |
+| `study.xenopoulos-2021-econ` | Xenopoulos et al.: economic decisions in Counter-Strike | Xenopoulos et al. 2021 |
+| `study.maymin-2021` | Maymin: smart kills and worthless deaths | Maymin 2021 |
+| `study.moba-live-prediction` | Live outcome prediction in MOBAs | Yang et al. 2017; Silva et al. 2018 |
+| `study.hayakawa-2025` | Hayakawa et al.: Valorant rounds from tactical features | Hayakawa et al. 2025 |
+| `study.paskiv-2026` | Paskiv et al.: roles in professional Counter-Strike 2 | Paskiv et al. 2026 |
+| `study.ibrahim-2024` | Ibrahim et al.: training close-quarters battle | Ibrahim et al. 2024 |
 
 ### Bibliography
 
@@ -668,6 +720,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Benedikt, M. L. (1979). To take hold of space: isovists and isovist fields. Environment and Planning B 6(1): 47-65. *(checked 2026-11-15: detail)*
 - Benjamini, Y.; Hochberg, Y. (1995). Controlling the false discovery rate: a practical and powerful approach to multiple testing. Journal of the Royal Statistical Society B 57(1): 289-300. *(checked 2026-11-15: detail)*
 - Berner, C.; Brockman, G.; Chan, B.; Cheung, V.; et al. (OpenAI) (2019). Dota 2 with large scale deep reinforcement learning. arXiv:1912.06680. https://arxiv.org/abs/1912.06680 *(checked 2026-11-15: detail)*
+- Bernier, Y. W. (2001). Latency compensating methods in client/server in-game protocol design and optimization. Valve Developer Community (Valve Software). https://developer.valvesoftware.com/wiki/Latency_Compensating_Methods_in_Client/Server_In-game_Protocol_Design_and_Optimization *(checked 2026-11-15: existence)*
 - Biddle, S. (2004). Military Power: Explaining Victory and Defeat in Modern Battle. Princeton University Press, Princeton. *(checked 2026-11-15: detail)*
 - Björk, S.; Holopainen, J. (2005). Patterns in Game Design. Charles River Media, Hingham. *(checked 2026-11-15: detail)*
 - Blackett, P. M. S. (1962). Studies of War: Nuclear and Conventional. Oliver & Boyd, Edinburgh. *(checked 2026-11-15: detail)*
@@ -683,6 +736,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Boyd, J. R.; Christie, T. P.; Gibson, J. E. (1966). Energy-Maneuverability (APGC-TR-66-4). Air Proving Ground Center, Eglin AFB. *(checked 2026-11-15: detail)*
 - Bracken, J. (1995). Lanchester models of the Ardennes campaign. Naval Research Logistics 42(4): 559-577. *(checked 2026-11-15: detail)*
 - Bradley, R. A.; Terry, M. E. (1952). Rank analysis of incomplete block designs: I. The method of paired comparisons. Biometrika 39(3/4): 324-345. *(checked 2026-11-15: detail)*
+- Brier, G. W. (1950). Verification of forecasts expressed in terms of probability. Monthly Weather Review 78(1): 1-3. doi:10.1175/1520-0493(1950)078<0001:VOFEIT>2.0.CO;2 *(checked 2026-11-15: detail)*
 - Bronk, J.; Reynolds, N.; Watling, J. (2022). The Russian Air War and Ukrainian Requirements for Air Defence. Royal United Services Institute, London (Special Resources, November 2022). *(checked 2026-11-15: existence)*
 - Budiansky, S. (2013). Blackett's War: The Men Who Defeated the Nazi U-Boats and Brought Science to the Art of Warfare. Alfred A. Knopf, New York. *(checked 2026-11-15: detail)*
 - Bungay, S. (2000). The Most Dangerous Enemy: A History of the Battle of Britain. Aurum Press, London. *(checked 2026-11-15: detail)*
@@ -699,6 +753,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Citino, R. M. (2005). The German Way of War: From the Thirty Years' War to the Third Reich. University Press of Kansas, Lawrence. *(checked 2026-11-15: detail)*
 - Clark, P. J.; Evans, F. C. (1954). Distance to nearest neighbor as a measure of spatial relationships in populations. Ecology 35(4): 445-453. *(checked 2026-11-15: detail)*
 - Clausewitz, C. von (trans. Graham, J. J.) (1873). On War. N. Trübner, London. https://www.gutenberg.org/ebooks/1946 *(public domain)* *(checked 2026-11-15: existence)*
+- Claypool, M.; Claypool, K. (2006). Latency and player actions in online games. Communications of the ACM 49(11): 40-45. doi:10.1145/1167838.1167860 *(checked 2026-11-15: detail)*
 - Clodfelter, M. (1989). The Limits of Air Power: The American Bombing of North Vietnam. Free Press, New York. *(checked 2026-11-15: detail)*
 - Coddington, E. B. (1968). The Gettysburg Campaign: A Study in Command. Scribner, New York. *(checked 2026-11-15: detail)*
 - Cohen, A.; Hamilton, R. E. (2011). The Russian Military and the Georgia War: Lessons and Implications. Strategic Studies Institute, US Army War College, Carlisle. *(public domain)* *(checked 2026-11-15: detail)*
@@ -744,6 +799,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Dupuy, T. N. (1990). Attrition: Forecasting Battle Casualties and Equipment Losses in Modern War. HERO Books, Fairfax VA. *(checked 2026-11-15: detail)*
 - Echevarria, A. J. (2002). Clausewitz's Center of Gravity: Changing Our Warfighting Doctrine - Again!. Strategic Studies Institute, US Army War College, Carlisle PA. *(public domain)* *(checked 2026-11-15: detail)*
 - Efron, B. (1979). Bootstrap methods: another look at the jackknife. Annals of Statistics 7(1): 1-26. *(checked 2026-11-15: detail)*
+- Efron, B.; Morris, C. (1975). Data analysis using Stein's estimator and its generalizations. Journal of the American Statistical Association 70(350): 311-319. doi:10.1080/01621459.1975.10479864 *(checked 2026-11-15: detail)*
 - Eggert, C.; Herrlich, M.; Smeddinck, J.; Malaka, R. (2015). Classification of player roles in the team-based multi-player game Dota 2. Entertainment Computing - ICEC 2015, LNCS 9353, Springer: 112-125. *(checked 2026-11-15: existence)*
 - Elias, G. S.; Garfield, R.; Gutschera, K. R. (2012). Characteristics of Games. MIT Press, Cambridge MA. *(checked 2026-11-15: detail)*
 - Elo, A. E. (1978). The Rating of Chessplayers, Past and Present. Arco, New York. *(checked 2026-11-15: detail)*
@@ -759,6 +815,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Fall, B. B. (1966). Hell in a Very Small Place: The Siege of Dien Bien Phu. Lippincott, Philadelphia. *(checked 2026-11-15: detail)*
 - Farrell, T. (2017). Unwinnable: Britain's War in Afghanistan, 2001-2014. Bodley Head, London. *(checked 2026-11-15: detail)*
 - Fernández, J.; Bornn, L. (2018). Wide open spaces: a statistical technique for measuring space creation in professional soccer. MIT Sloan Sports Analytics Conference 2018. *(checked 2026-11-15: detail)*
+- Fernández, J.; Bornn, L.; Cervone, D. (2021). A framework for the fine-grained evaluation of the instantaneous expected value of soccer possessions. Machine Learning 110(6): 1389-1427. doi:10.1007/s10994-021-05989-6 *(checked 2026-11-15: detail)*
 - Fisher, P. F. (1993). Algorithm and implementation uncertainty in viewshed analysis. International Journal of Geographical Information Systems 7(4): 331-347. *(checked 2026-11-15: detail)*
 - Fontenot, G.; Degen, E. J.; Tohn, D. (2004). On Point: The United States Army in Operation Iraqi Freedom. Combat Studies Institute Press, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
 - Forty, G. (2004). Villers Bocage (Battle Zone Normandy). Sutton, Stroud. *(checked 2026-11-15: detail)*
@@ -798,6 +855,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Gudmundsson, B. I. (1989). Stormtroop Tactics: Innovation in the German Army, 1914-1918. Praeger, New York. *(checked 2026-11-15: detail)*
 - Gudmundsson, J.; Horton, M. (2017). Spatio-temporal analysis of team sports. ACM Computing Surveys 50(2): article 22. https://arxiv.org/abs/1602.06994 *(checked 2026-11-15: detail)*
 - Guilmartin, J. F. (1974). Gunpowder and Galleys: Changing Technology and Mediterranean Warfare at Sea in the Sixteenth Century. Cambridge University Press, Cambridge. *(checked 2026-11-15: detail)*
+- Guo, C.; Pleiss, G.; Sun, Y.; Weinberger, K. Q. (2017). On calibration of modern neural networks. Proceedings of the 34th International Conference on Machine Learning (ICML 2017): 1321-1330. doi:10.48550/arXiv.1706.04599 *(checked 2026-11-15: detail)*
 - Güttler, C.; Johansson, T. D. (2003). Spatial principles of level-design in multi-player first-person shooters. Proc. 2nd Workshop on Network and System Support for Games (NetGames 2003), ACM: 158-170. *(checked 2026-11-15: detail)*
 - Haldon, J. (2001). The Byzantine Wars. Tempus, Stroud. *(checked 2026-11-15: detail)*
 - Hallion, R. P. (1992). Storm over Iraq: Air Power and the Gulf War. Smithsonian Institution Press, Washington DC. *(checked 2026-11-15: detail)*
@@ -807,21 +865,26 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Hartley, D. S.; Helmbold, R. L. (1995). Validating Lanchester's square law and other attrition models. Naval Research Logistics 42(4): 609-633. *(checked 2026-11-15: detail)*
 - Hastings, M. (1984). Overlord: D-Day and the Battle for Normandy. Michael Joseph, London. *(checked 2026-11-15: detail)*
 - Hastings, M.; Jenkins, S. (1983). The Battle for the Falklands. Michael Joseph, London. *(checked 2026-11-15: detail)*
+- Hayakawa, N.; Shimari, K.; Yamasaki, K.; Hoshikawa, H.; Tsuchida, R.; Matsumoto, K. (2025). Round outcome prediction in VALORANT using tactical features from video analysis. IEEE Conference on Games (CoG) 2025: 1-4. doi:10.1109/CoG64752.2025.11114177 *(checked 2026-11-15: detail)*
 - Hayward, J. S. A. (1998). Stopped at Stalingrad: The Luftwaffe and Hitler's Defeat in the East, 1942-1943. University Press of Kansas, Lawrence. *(checked 2026-11-15: detail)*
 - Headquarters, Department of the Army (1979). FM 90-10 Military Operations on Urbanized Terrain (MOUT). US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
 - Headquarters, Department of the Army (1982). FM 100-5 Operations. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
 - Headquarters, Department of the Army (1990). FM 5-33 Terrain Analysis. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
 - Headquarters, Department of the Army (1994). FM 34-130 Intelligence Preparation of the Battlefield. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Headquarters, Department of the Army (2002). FM 3-06.11 Combined Arms Operations in Urban Terrain. Department of the Army, Washington DC (28 February 2002). https://www.globalsecurity.org/military/library/policy/army/fm/3-06-11/index.html *(public domain)* *(checked 2026-11-15: detail)*
 - Headquarters, Department of the Army (2006). FM 3-06 Urban Operations. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
 - Headquarters, Department of the Army (2006). FM 3-24 Counterinsurgency. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
 - Headquarters, Department of the Army (2007). FM 3-21.8 The Infantry Rifle Platoon and Squad. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
 - Headquarters, Department of the Army (2007). FM 3-20.15 Tank Platoon. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Headquarters, Department of the Army (2011). ATTP 3-06.11 Combined Arms Operations in Urban Terrain. Department of the Army, Washington DC (10 June 2011). https://archive.org/details/attp-3-06.11-combined-arms-operations-in-urban-terrain-2011 *(public domain)* *(checked 2026-11-15: detail)*
 - Headquarters, Department of the Army (2013). FM 3-90-1 Offense and Defense, Volume 1. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
 - Headquarters, Department of the Army (2013). FM 3-90-2 Reconnaissance, Security, and Tactical Enabling Tasks, Volume 2. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Headquarters, Department of the Army (2016). ATP 3-21.8 Infantry Platoon and Squad. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
 - Headquarters, Department of the Army (2019). ATP 2-01.3 Intelligence Preparation of the Battlefield. US Army, Washington DC. https://armypubs.army.mil *(public domain)* *(checked 2026-11-15: existence)*
 - Headquarters, Department of the Army (2022). FM 3-0 Operations. US Army, Washington DC. https://armypubs.army.mil *(public domain)* *(checked 2026-11-15: existence)*
 - Headquarters, Department of the Army (2023). FM 3-90 Tactics. US Army, Washington DC. https://armypubs.army.mil *(public domain)* *(checked 2026-11-15: existence)*
+- Headquarters, Department of the Army; Marine Corps Tactics and Operations Group (2022). ATP 3-06 / MCTP 12-10B Urban Operations. Department of the Army, Washington DC (21 July 2022). https://archive.org/details/arn-35826-atp-3-06-000-web-1 *(public domain)* *(checked 2026-11-15: detail)*
+- Headquarters, US Marine Corps (1998). MCWP 3-35.3 Military Operations on Urbanized Terrain (MOUT). Department of the Navy, Washington DC (26 April 1998). https://archive.org/details/milmanual-mcwp-3-35.3-military-operations-on-urbanized-terrain-mout *(public domain)* *(checked 2026-11-15: detail)*
 - Healy, M. (1993). Qadesh 1300 BC: Clash of the Warrior Kings (Campaign 22). Osprey, London. *(checked 2026-11-15: detail)*
 - Heinl, R. D. (1968). Victory at High Tide: The Inchon-Seoul Campaign. Lippincott, Philadelphia. *(checked 2026-11-15: detail)*
 - Helmbold, R. L. (1995). Rates of advance in land combat operations. Naval Research Logistics 42(4): 635-669. *(checked 2026-11-15: detail)*
@@ -833,6 +896,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Hillier, B.; Hanson, J. (1984). The Social Logic of Space. Cambridge University Press, Cambridge. *(checked 2026-11-15: detail)*
 - Hinh, N. D. (1979). Lam Son 719 (Indochina Monographs). US Army Center of Military History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Hodge, V. J.; Devlin, S.; Sephton, N.; Block, F.; Cowling, P. I.; Drachen, A. (2021). Win prediction in multiplayer esports: live professional match prediction. IEEE Transactions on Games 13(4): 368-379. *(checked 2026-11-15: detail)*
+- Hoerl, A. E.; Kennard, R. W. (1970). Ridge regression: biased estimation for nonorthogonal problems. Technometrics 12(1): 55-67. doi:10.1080/00401706.1970.10488634 *(checked 2026-11-15: detail)*
 - Holland, J. (2003). Fortress Malta: An Island Under Siege, 1940-1943. Orion, London. *(checked 2026-11-15: detail)*
 - Hoobler, N.; Humphreys, G.; Agrawala, M. (2004). Visualizing competitive behaviors in multi-user virtual environments. Proc. IEEE Visualization 2004: 163-170. *(checked 2026-11-15: detail)*
 - Horne, A. (1962). The Price of Glory: Verdun 1916. Macmillan, London. *(checked 2026-11-15: detail)*
@@ -845,6 +909,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Hughes, W. P. (2000). Fleet Tactics and Coastal Combat (2nd ed.). Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
 - Hughes, W. P.; Girrier, R. P. (2018). Fleet Tactics and Naval Operations (3rd ed.). Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
 - Hullett, K.; Whitehead, J. (2010). Design patterns in FPS levels. Proc. Foundations of Digital Games (FDG 2010), ACM: 78-85. *(checked 2026-11-15: detail)*
+- Ibrahim, F.; Feildboy, E.; Huber, Y.; Nagy, D.; Hennig, J.; Herzberg, P. Y. (2024). Enhancing close quarters battle performance: the effect of a compact training on the tactical performance and stress response of non-specialized and special forces. Journal of Police and Criminal Psychology. doi:10.1007/s11896-024-09699-2 *(checked 2026-11-15: detail)*
 - Isserson, G. S. (trans. Menning, B. W.) (2013). The Evolution of Operational Art (orig. 1936-37). Combat Studies Institute Press, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
 - Johnson, D. E.; Markel, M. W.; Shannon, B. (2013). The 2008 Battle of Sadr City: Reimagining Urban Combat (RR-160-A). RAND Corporation, Santa Monica. *(checked 2026-11-15: detail)*
 - Johnson, I. R.; MacKay, N. J. (2011). Lanchester models and the Battle of Britain. Naval Research Logistics 58(3): 210-222. doi:10.1002/nav.20328 *(checked 2026-11-15: detail)*
@@ -882,9 +947,12 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Lawrence, C. A. (2015). Kursk: The Battle of Prokhorovka. Aberdeen Books, Sheridan CO. *(checked 2026-11-15: detail)*
 - Lawrence, C. A. (2017). War by Numbers: Understanding Conventional Combat. Potomac Books, Lincoln NE. *(checked 2026-11-15: detail)*
 - Lawrence, T. E. (1920). The evolution of a revolt. Army Quarterly 1(1): 55-69. *(public domain)* *(checked 2026-11-15: existence)*
+- Lee, S. W. K.; Chang, R. K. C. (2017). On "shot around a corner" in first-person shooter games. 15th Annual Workshop on Network and Systems Support for Games (NetGames 2017): 1-6. doi:10.1109/NetGames.2017.7991545 *(checked 2026-11-15: detail)*
 - Liddell Hart, B. H. (1954). Strategy: The Indirect Approach. Faber & Faber, London. *(checked 2026-11-15: existence)*
+- Liu, S.; Xu, X.; Claypool, M. (2022). A survey and taxonomy of latency compensation techniques for network computer games. ACM Computing Surveys 54(11s): 1-34. doi:10.1145/3519023 *(checked 2026-11-15: detail)*
 - Livy (trans. Roberts, W. M.) (1905). History of Rome. J. M. Dent (Everyman's Library), London. *(public domain)* *(checked 2026-11-15: existence)*
 - Lloyd, M. (1967). Mean crowding. Journal of Animal Ecology 36(1): 1-30. *(checked 2026-11-15: detail)*
+- Lock, D.; Nettleton, D. (2014). Using random forests to estimate win probability before each play of an NFL game. Journal of Quantitative Analysis in Sports 10(2). doi:10.1515/jqas-2013-0100 *(checked 2026-11-15: detail)*
 - Lucas, T. W.; Dinges, J. A. (2004). The effect of battle circumstances on fitting Lanchester equations to the Battle of Kursk. Military Operations Research 9(2): 17-30. *(checked 2026-11-15: existence)*
 - Lucas, T. W.; Turkes, T. (2004). Fitting Lanchester equations to the battles of Kursk and Ardennes. Naval Research Logistics 51(1): 95-116. doi:10.1002/nav.10101 *(checked 2026-11-15: detail)*
 - Lucey, P.; Bialkowski, A.; Carr, P.; Morgan, S.; Matthews, I.; Sheikh, Y. (2013). Representing and discovering adversarial team behaviors using player roles. Proc. IEEE Conference on Computer Vision and Pattern Recognition (CVPR 2013): 2706-2713. *(checked 2026-11-15: detail)*
@@ -892,6 +960,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Lundstrom, J. B. (1994). The First Team and the Guadalcanal Campaign: Naval Fighter Combat from August to November 1942. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
 - Lupfer, T. T. (1981). The Dynamics of Doctrine: The Changes in German Tactical Doctrine During the First World War (Leavenworth Papers 4). Combat Studies Institute, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
 - Lynch, K. (1960). The Image of the City. MIT Press, Cambridge MA. *(checked 2026-11-15: detail)*
+- Macdonald, B. (2012). Adjusted plus-minus for NHL players using ridge regression with goals, shots, Fenwick, and Corsi. Journal of Quantitative Analysis in Sports 8(3). doi:10.1515/1559-0410.1447 *(checked 2026-11-15: detail)*
 - MacDonald, C. B. (1963). The Siegfried Line Campaign (US Army in World War II). Office of the Chief of Military History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - MacDonald, C. B. (1985). A Time for Trumpets: The Untold Story of the Battle of the Bulge. William Morrow, New York. *(checked 2026-11-15: detail)*
 - MacGarrigle, G. L. (1998). Taking the Offensive: October 1966 to October 1967 (US Army in Vietnam). Center of Military History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
@@ -908,6 +977,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Matthews, M. M. (2008). We Were Caught Unprepared: The 2006 Hezbollah-Israeli War (Long War Series Occasional Paper 26). Combat Studies Institute Press, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
 - Mattingly, G. (1959). The Armada. Houghton Mifflin, Boston. *(checked 2026-11-15: detail)*
 - May, E. R. (2000). Strange Victory: Hitler's Conquest of France. Hill & Wang, New York. *(checked 2026-11-15: detail)*
+- Maymin, P. Z. (2021). Smart kills and worthless deaths: eSports analytics for League of Legends. Journal of Quantitative Analysis in Sports 17(1): 11-27. doi:10.1515/jqas-2019-0096 *(checked 2026-11-15: detail)*
 - McCloskey, J. F. (1987). The beginnings of operations research: 1934-1941. Operations Research 35(1): 143-152. *(checked 2026-11-15: detail)*
 - McCullagh, P.; Nelder, J. A. (1989). Generalized Linear Models (2nd ed.). Chapman & Hall, London. *(checked 2026-11-15: detail)*
 - McFarland, S. L.; Newton, W. P. (1991). To Command the Sky: The Battle for Air Superiority over Germany, 1942-1944. Smithsonian Institution Press, Washington DC. *(checked 2026-11-15: detail)*
@@ -955,9 +1025,11 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Overy, R. (2000). The Battle. Penguin, London, 2000. US edition: W. W. Norton, New York, 2001, as 'The Battle of Britain: The Myth and the Reality'. *(checked 2026-11-15: detail)*
 - Overy, R. (2013). The Bombing War: Europe 1939-1945. Allen Lane, London. *(checked 2026-11-15: detail)*
 - Paine, S. C. M. (2003). The Sino-Japanese War of 1894-1895: Perceptions, Power, and Primacy. Cambridge University Press, Cambridge. *(checked 2026-11-15: detail)*
+- Pakdaman Naeini, M.; Cooper, G. F.; Hauskrecht, M. (2015). Obtaining well calibrated probabilities using Bayesian binning. Proceedings of the AAAI Conference on Artificial Intelligence 29(1). doi:10.1609/aaai.v29i1.9602 *(checked 2026-11-15: detail)*
 - Pakenham, T. (1979). The Boer War. Weidenfeld & Nicolson, London. *(checked 2026-11-15: detail)*
 - Pape, R. A. (1996). Bombing to Win: Air Power and Coercion in War. Cornell University Press, Ithaca. *(checked 2026-11-15: detail)*
 - Parshall, J. B.; Tully, A. P. (2005). Shattered Sword: The Untold Story of the Battle of Midway. Potomac Books, Washington DC. *(checked 2026-11-15: detail)*
+- Paskiv, V.; Zanevskyy, I.; Koman, V. (2026). Differentiating playing roles in professional Counter-Strike 2 by performance indicators: an observational study. Health, Sport, Rehabilitation. doi:10.58962/hsr.1395 *(checked 2026-11-15: detail)*
 - PC Gamer (2013). The International 2013: Grand Finals in review. PC Gamer. https://www.pcgamer.com/the-international-2013-grand-finals-in-review *(checked 2026-11-15: detail)*
 - PC Gamer (2016). The best CS:GO plays of 2016. PC Gamer. https://www.pcgamer.com/the-best-csgo-plays-of-2016 *(checked 2026-11-15: detail)*
 - Perla, P. P. (1990). The Art of Wargaming. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
@@ -975,12 +1047,14 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Putney, D. T. (2004). Airpower Advantage: Planning the Gulf War Air Campaign, 1989-1991. Air Force History and Museums Program, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Rabinovich, A. (1988). The Boats of Cherbourg. Seaver Books, New York. *(checked 2026-11-15: detail)*
 - Rabinovich, A. (2004). The Yom Kippur War: The Epic Encounter That Transformed the Middle East. Schocken, New York. *(checked 2026-11-15: detail)*
+- Rathke, A. (2017). An examination of expected goals and shot efficiency in soccer. Journal of Human Sport and Exercise 12(Proc2). doi:10.14198/jhse.2017.12.proc2.05 *(checked 2026-11-15: detail)*
 - Reep, C.; Benjamin, B. (1968). Skill and chance in association football. Journal of the Royal Statistical Society A 131(4): 581-585. *(checked 2026-11-15: detail)*
 - Reiter, D.; Stam, A. C. (2002). Democracies at War. Princeton University Press, Princeton. *(checked 2026-11-15: detail)*
 - Reynolds, N. E. (2005). Basrah, Baghdad, and Beyond: The U.S. Marine Corps in the Second Iraq War. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
 - Riot Games (2013). Road to Worlds: Korea regionals recap. League of Legends Nexus. https://nexus.leagueoflegends.com/en-us/2013/09/road-to-worlds-korea-regionals-recap/ *(checked 2026-11-15: detail)*
 - Rioult, F.; Métivier, J.-P.; Helleu, B.; Scelles, N.; Durand, C. (2014). Mining tracks of competitive video games. AASRI Procedia 8: 82-87. *(checked 2026-11-15: detail)*
 - Ripley, B. D. (1977). Modelling spatial patterns. Journal of the Royal Statistical Society B 39(2): 172-212. *(checked 2026-11-15: detail)*
+- Robberechts, P.; Van Haaren, J.; Davis, J. (2021). A Bayesian approach to in-game win probability in soccer. Proceedings of the 27th ACM SIGKDD Conference on Knowledge Discovery & Data Mining: 3512-3521. doi:10.1145/3447548.3467194 *(checked 2026-11-15: detail)*
 - Roberts, M. (1958). Gustavus Adolphus: A History of Sweden, 1611-1632, Volume II. Longmans, Green, London. *(checked 2026-11-15: detail)*
 - Robinson, L. (2004). Masters of Chaos: The Secret History of the Special Forces. PublicAffairs, New York. *(checked 2026-11-15: detail)*
 - Romjue, J. L. (1984). From Active Defense to AirLand Battle: The Development of Army Doctrine 1973-1982. US Army Training and Doctrine Command Historical Office, Fort Monroe. *(public domain)* *(checked 2026-11-15: detail)*
@@ -1007,6 +1081,8 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Showalter, D. E. (1996). The Wars of Frederick the Great. Longman, London. *(checked 2026-11-15: detail)*
 - Shulimson, J.; Blasiol, L. A.; Smith, C. R.; Dawson, D. A. (1997). U.S. Marines in Vietnam: The Defining Year, 1968. History and Museums Division, US Marine Corps, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
 - Siborne, W. (1844). History of the War in France and Belgium in 1815. T. & W. Boone, London. *(public domain)* *(checked 2026-11-15: detail)*
+- Sill, J. (2010). Improved NBA adjusted +/- using regularization and out-of-sample testing. MIT Sloan Sports Analytics Conference 2010. https://www.sloansportsconference.com/research-papers/improved-nba-adjusted-using-regularization-and-out-of-sample-testing *(checked 2026-11-15: existence)*
+- Silva, A. L. C.; Pappa, G. L.; Chaimowicz, L. (2018). Continuous outcome prediction of League of Legends competitive matches using recurrent neural networks. SBGames 2018, Computing Track (short paper). http://www.sbgames.org/sbgames2018/files/papers/ComputacaoShort/188226.pdf *(checked 2026-11-15: detail)*
 - Silverman, B. W. (1986). Density Estimation for Statistics and Data Analysis. Chapman & Hall, London. *(checked 2026-11-15: detail)*
 - Sirlin, D. (2006). Playing to Win: Becoming the Champion. Lulu.com. *(checked 2026-11-15: detail)*
 - Smail, R. C. (1956). Crusading Warfare, 1097-1193. Cambridge University Press, Cambridge. *(checked 2026-11-15: detail)*
@@ -1027,6 +1103,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Thompson, W. W. (2000). To Hanoi and Back: The United States Air Force and North Vietnam, 1966-1973. Air Force History and Museums Program, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
 - Till, G. (2018). Seapower: A Guide for the Twenty-First Century (4th ed.). Routledge, Abingdon. *(checked 2026-11-15: detail)*
 - Tobler, W. R. (1970). A computer movie simulating urban growth in the Detroit region. Economic Geography 46 (supplement): 234-240. *(checked 2026-11-15: detail)*
+- Tokey, S. S.; Chen, Z.-S.; Mettler, C.; Tang, D.-X.; Boudaoud, B.; Kim, J.; Spjut, J.; Claypool, M. (2024). The effects of network latency on the peeker's advantage in first-person shooter games. Proceedings of the 19th International Conference on the Foundations of Digital Games (FDG 2024). doi:10.1145/3649921.3650002 *(checked 2026-11-15: detail)*
 - Totten, C. W. (2019). An Architectural Approach to Level Design (2nd ed.). CRC Press, Boca Raton. *(checked 2026-11-15: detail)*
 - Trask, D. F. (1981). The War with Spain in 1898. Macmillan, New York. *(checked 2026-11-15: detail)*
 - Travers, T. (2001). Gallipoli 1915. Tempus, Stroud. *(checked 2026-11-15: detail)*
@@ -1067,10 +1144,14 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Wise, H. L. (2007). Inside the Danger Zone: The U.S. Military in the Persian Gulf, 1987-1988. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
 - Woodward, S.; Robinson, P. (1992). One Hundred Days: The Memoirs of the Falklands Battle Group Commander. HarperCollins, London. *(checked 2026-11-15: detail)*
 - Xenophon (trans. Dakyns, H. G.) (1897). Hellenica. Macmillan, London. https://www.gutenberg.org/ebooks/1174 *(public domain)* *(checked 2026-11-15: detail)*
+- Xenopoulos, P.; Coelho, B.; Silva, C. (2021). Optimal team economic decisions in Counter-Strike. arXiv preprint 2109.12990. doi:10.48550/arXiv.2109.12990 *(checked 2026-11-15: detail)*
 - Xenopoulos, P.; Doraiswamy, H.; Silva, C. (2020). Valuing player actions in Counter-Strike: Global Offensive. Proc. IEEE International Conference on Big Data 2020: 1283-1292. https://arxiv.org/abs/2011.01324 *(checked 2026-11-15: detail)*
+- Xenopoulos, P.; Freeman, W. R.; Silva, C. (2022). Analyzing the differences between professional and amateur esports through win probability. Proceedings of the ACM Web Conference 2022 (WWW '22): 3418-3427. doi:10.1145/3485447.3512277 *(checked 2026-11-15: detail)*
 - Xenopoulos, P.; Rulff, J.; Nonato, L. G.; Barr, B.; Silva, C. (2022). ggViz: accelerating large-scale esports game analysis. Proc. ACM on Human-Computer Interaction 6 (CHI PLAY): 238. *(checked 2026-11-15: existence)*
+- Xenopoulos, P.; Silva, C. (2022). ESTA: an esports trajectory and action dataset. arXiv preprint 2209.09861. doi:10.48550/arXiv.2209.09861 *(checked 2026-11-15: detail)*
 - Y'Blood, W. T. (1981). Red Sun Setting: The Battle of the Philippine Sea. Naval Institute Press, Annapolis. *(checked 2026-11-15: existence)*
 - Yang, P.; Harrison, B.; Roberts, D. L. (2014). Identifying patterns in combat that are predictive of success in MOBA games. Proc. 9th International Conference on Foundations of Digital Games (FDG 2014). *(checked 2026-11-15: existence)*
+- Yang, Y.; Qin, T.; Lei, Y.-H. (2017). Real-time eSports match result prediction. arXiv preprint 1701.03162. doi:10.48550/arXiv.1701.03162 *(checked 2026-11-15: detail)*
 - Yannakakis, G. N.; Togelius, J. (2018). Artificial Intelligence and Games. Springer, Cham. *(checked 2026-11-15: detail)*
 - Zabrodskyi, M.; Watling, J.; Danylyuk, O. V.; Reynolds, N. (2022). Preliminary Lessons in Conventional Warfighting from Russia's Invasion of Ukraine: February-July 2022. Royal United Services Institute, London. *(checked 2026-11-15: detail)*
 - Zaffiri, S. (1988). Hamburger Hill: May 11-20, 1969. Presidio Press, Novato. *(checked 2026-11-15: detail)*

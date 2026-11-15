@@ -10,6 +10,7 @@ import { CASES_AIR_SEA } from './cases-air-sea.ts';
 import { CASES_ESPORTS } from './cases-esports.ts';
 import { CASES_LAND } from './cases-land.ts';
 import { CONCEPTS_MORE } from './concepts-more.ts';
+import { CQB_KB } from './cqb.ts';
 import { STUDIES } from './studies.ts';
 import { CONCEPTS } from './concepts.ts';
 import { DESIGN } from './design.ts';
@@ -18,7 +19,7 @@ import { PATTERNS } from './patterns.ts';
 import { REFERENCES, REF_BY_ID, fullCite, shortCite } from './refs.ts';
 import type { KbEntry } from './types.ts';
 
-export const KB: KbEntry[] = [...CONCEPTS, ...CONCEPTS_MORE, ...METHODS, ...CASES, ...CASES_LAND, ...CASES_AIR_SEA, ...CASES_ESPORTS, ...DESIGN, ...STUDIES];
+export const KB: KbEntry[] = [...CONCEPTS, ...CONCEPTS_MORE, ...METHODS, ...CASES, ...CASES_LAND, ...CASES_AIR_SEA, ...CASES_ESPORTS, ...DESIGN, ...STUDIES, ...CQB_KB];
 export const KB_BY_ID = new Map(KB.map((e) => [e.id, e]));
 
 export { PATTERNS, REFERENCES, REF_BY_ID, fullCite, shortCite };

@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Distanzi tal-ingaġġ",
   "lens.metric.killChain": "Katina tal-qtil",
   "lens.metric.dispersion": "Konċentrazzjoni jew tixrid",
-  "lens.metric.sorties": "Titjiriet"
+  "lens.metric.sorties": "Titjiriet",
+  "lens.metric.cqbWinProb": "Probabbiltà li tirbaħ ir-rawnd",
+  "lens.metric.cqbActions": "Valur tal-azzjonijiet",
+  "lens.metric.cqbOpening": "Duelli tal-ftuħ",
+  "lens.metric.cqbTrades": "Skambji u refrags",
+  "lens.metric.cqbPeek": "Peeker kontra min iżomm",
+  "lens.metric.cqbAim": "Immirar qabel id-duell",
+  "lens.metric.cqbCrossfire": "Nar inkroċjat",
+  "lens.metric.cqbUtility": "Granati qabel id-dħul",
+  "lens.metric.cqbManAdvantage": "Superjorità numerika",
+  "lens.metric.cqbClutch": "Clutches",
+  "lens.metric.cqbSetups": "Stacks, rotazzjonijiet u lurks",
+  "lens.metric.cqbPostPlant": "Wara t-tqegħid u retake",
+  "lens.metric.cqbFunnel": "Lembubi fatali",
+  "lens.metric.cqbImpact": "Impatt tal-plejers"
 }

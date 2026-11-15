@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Distàncies d'enfrontament",
   "lens.metric.killChain": "Cadena d'atac",
   "lens.metric.dispersion": "Concentració o dispersió",
-  "lens.metric.sorties": "Sortides"
+  "lens.metric.sorties": "Sortides",
+  "lens.metric.cqbWinProb": "Probabilitat de guanyar la ronda",
+  "lens.metric.cqbActions": "Valor de les accions",
+  "lens.metric.cqbOpening": "Duels d'obertura",
+  "lens.metric.cqbTrades": "Trades i refrags",
+  "lens.metric.cqbPeek": "Peeker contra defensor",
+  "lens.metric.cqbAim": "Punteria abans del duel",
+  "lens.metric.cqbCrossfire": "Foc creuat",
+  "lens.metric.cqbUtility": "Utilitats abans de l'entrada",
+  "lens.metric.cqbManAdvantage": "Superioritat numèrica",
+  "lens.metric.cqbClutch": "Clutches",
+  "lens.metric.cqbSetups": "Stacks, rotacions i lurks",
+  "lens.metric.cqbPostPlant": "Després de plantar i retake",
+  "lens.metric.cqbFunnel": "Embuts mortals",
+  "lens.metric.cqbImpact": "Impacte dels jugadors"
 }

@@ -26,5 +26,19 @@
   "lens.metric.ranges": "교전 거리",
   "lens.metric.killChain": "킬 체인",
   "lens.metric.dispersion": "집중인가 분산인가",
-  "lens.metric.sorties": "출격"
+  "lens.metric.sorties": "출격",
+  "lens.metric.cqbWinProb": "라운드 승리 확률",
+  "lens.metric.cqbActions": "행동의 가치",
+  "lens.metric.cqbOpening": "오프닝 듀얼",
+  "lens.metric.cqbTrades": "트레이드와 리프래그",
+  "lens.metric.cqbPeek": "피커 대 홀더",
+  "lens.metric.cqbAim": "듀얼 전 조준",
+  "lens.metric.cqbCrossfire": "교차 사격",
+  "lens.metric.cqbUtility": "진입 전 유틸리티",
+  "lens.metric.cqbManAdvantage": "수적 우위",
+  "lens.metric.cqbClutch": "클러치",
+  "lens.metric.cqbSetups": "스택, 로테이션, 러크",
+  "lens.metric.cqbPostPlant": "설치 후와 리테이크",
+  "lens.metric.cqbFunnel": "죽음의 깔때기",
+  "lens.metric.cqbImpact": "선수 영향력"
 }

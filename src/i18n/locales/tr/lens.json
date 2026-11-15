@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Angajman mesafeleri",
   "lens.metric.killChain": "Vuruş zinciri",
   "lens.metric.dispersion": "Yoğunlaşma mı dağılma mı",
-  "lens.metric.sorties": "Sortiler"
+  "lens.metric.sorties": "Sortiler",
+  "lens.metric.cqbWinProb": "Raunt kazanma olasılığı",
+  "lens.metric.cqbActions": "Eylemlerin değeri",
+  "lens.metric.cqbOpening": "Açılış düelloları",
+  "lens.metric.cqbTrades": "Takaslar ve refragler",
+  "lens.metric.cqbPeek": "Peeker ile tutan",
+  "lens.metric.cqbAim": "Düello öncesi nişan",
+  "lens.metric.cqbCrossfire": "Çapraz ateş",
+  "lens.metric.cqbUtility": "Girişten önce bombalar",
+  "lens.metric.cqbManAdvantage": "Sayısal üstünlük",
+  "lens.metric.cqbClutch": "Clutch'lar",
+  "lens.metric.cqbSetups": "Stack, rotasyon ve lurk",
+  "lens.metric.cqbPostPlant": "Kurulumdan sonra ve retake",
+  "lens.metric.cqbFunnel": "Ölümcül huniler",
+  "lens.metric.cqbImpact": "Oyuncu etkisi"
 }

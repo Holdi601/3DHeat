@@ -6,6 +6,7 @@
  */
 
 import { REFS_AIR_SEA } from './refs-air-sea.ts';
+import { REFS_CQB } from './cqb.ts';
 import { REFS_LAND } from './refs-land.ts';
 import { REFS_SCIENCE } from './refs-science.ts';
 import type { Reference } from './types';
@@ -192,7 +193,7 @@ const BASE: Reference[] = [
 ];
 
 /** Every reference: the base list and those of the larger entry files; the same work cited from two files is listed once. */
-export const REFERENCES: Reference[] = [...new Map([...BASE, ...REFS_AIR_SEA, ...REFS_LAND, ...REFS_SCIENCE].map((x) => [x.id, x])).values()];
+export const REFERENCES: Reference[] = [...new Map([...BASE, ...REFS_AIR_SEA, ...REFS_LAND, ...REFS_SCIENCE, ...REFS_CQB].map((x) => [x.id, x])).values()];
 
 export const REF_BY_ID = new Map(REFERENCES.map((x) => [x.id, x]));
 

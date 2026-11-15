@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Lahingukaugused",
   "lens.metric.killChain": "Hävitusahel",
   "lens.metric.dispersion": "Koondamine või hajutamine",
-  "lens.metric.sorties": "Lennud"
+  "lens.metric.sorties": "Lennud",
+  "lens.metric.cqbWinProb": "Raundi võidu tõenäosus",
+  "lens.metric.cqbActions": "Tegevuste väärtus",
+  "lens.metric.cqbOpening": "Avaduellid",
+  "lens.metric.cqbTrades": "Vahetused ja refragid",
+  "lens.metric.cqbPeek": "Piiluja hoidja vastu",
+  "lens.metric.cqbAim": "Sihtimine enne duelli",
+  "lens.metric.cqbCrossfire": "Ristituli",
+  "lens.metric.cqbUtility": "Granaadid enne sisenemist",
+  "lens.metric.cqbManAdvantage": "Arvuline ülekaal",
+  "lens.metric.cqbClutch": "Clutchid",
+  "lens.metric.cqbSetups": "Stackid, rotatsioonid ja lurkid",
+  "lens.metric.cqbPostPlant": "Pärast paigaldamist ja tagasivõtmine",
+  "lens.metric.cqbFunnel": "Surmalehtrid",
+  "lens.metric.cqbImpact": "Mängijate mõju"
 }

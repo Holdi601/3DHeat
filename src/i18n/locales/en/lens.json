@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Engagement ranges",
   "lens.metric.killChain": "Kill chain",
   "lens.metric.dispersion": "Concentration or dispersion",
-  "lens.metric.sorties": "Sorties"
+  "lens.metric.sorties": "Sorties",
+  "lens.metric.cqbWinProb": "Round win probability",
+  "lens.metric.cqbActions": "Value of actions",
+  "lens.metric.cqbOpening": "Opening duels",
+  "lens.metric.cqbTrades": "Trades and refrags",
+  "lens.metric.cqbPeek": "Peeker against holder",
+  "lens.metric.cqbAim": "Aim before the duel",
+  "lens.metric.cqbCrossfire": "Crossfire",
+  "lens.metric.cqbUtility": "Utility into entries",
+  "lens.metric.cqbManAdvantage": "Man advantage",
+  "lens.metric.cqbClutch": "Clutches",
+  "lens.metric.cqbSetups": "Stacks, rotations and lurks",
+  "lens.metric.cqbPostPlant": "Post-plant and retake",
+  "lens.metric.cqbFunnel": "Fatal funnels",
+  "lens.metric.cqbImpact": "Player impact"
 }

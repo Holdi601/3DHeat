@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Taisteluetäisyydet",
   "lens.metric.killChain": "Tuhoamisketju",
   "lens.metric.dispersion": "Keskitys vai hajautus",
-  "lens.metric.sorties": "Lentotehtävät"
+  "lens.metric.sorties": "Lentotehtävät",
+  "lens.metric.cqbWinProb": "Kierroksen voittotodennäköisyys",
+  "lens.metric.cqbActions": "Toimintojen arvo",
+  "lens.metric.cqbOpening": "Avauskaksintaistelut",
+  "lens.metric.cqbTrades": "Vaihdot ja refragit",
+  "lens.metric.cqbPeek": "Peekkaaja vastaan pitäjä",
+  "lens.metric.cqbAim": "Tähtäys ennen kaksintaistelua",
+  "lens.metric.cqbCrossfire": "Ristituli",
+  "lens.metric.cqbUtility": "Kranaatit ennen sisääntuloa",
+  "lens.metric.cqbManAdvantage": "Ylivoima",
+  "lens.metric.cqbClutch": "Clutchit",
+  "lens.metric.cqbSetups": "Stackit, rotaatiot ja lurkit",
+  "lens.metric.cqbPostPlant": "Istutuksen jälkeen ja takaisinvaltaus",
+  "lens.metric.cqbFunnel": "Kuolemansuppilot",
+  "lens.metric.cqbImpact": "Pelaajien vaikutus"
 }

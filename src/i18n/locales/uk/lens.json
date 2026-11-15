@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Дальності бою",
   "lens.metric.killChain": "Ланцюг ураження",
   "lens.metric.dispersion": "Зосередження чи розосередження",
-  "lens.metric.sorties": "Бойові вильоти"
+  "lens.metric.sorties": "Бойові вильоти",
+  "lens.metric.cqbWinProb": "Імовірність перемоги в раунді",
+  "lens.metric.cqbActions": "Цінність дій",
+  "lens.metric.cqbOpening": "Стартові дуелі",
+  "lens.metric.cqbTrades": "Розміни та рефраги",
+  "lens.metric.cqbPeek": "Пікер проти тримача",
+  "lens.metric.cqbAim": "Приціл перед дуеллю",
+  "lens.metric.cqbCrossfire": "Перехресний вогонь",
+  "lens.metric.cqbUtility": "Гранати перед заходом",
+  "lens.metric.cqbManAdvantage": "Чисельна перевага",
+  "lens.metric.cqbClutch": "Клатчі",
+  "lens.metric.cqbSetups": "Стаки, ротації та ларки",
+  "lens.metric.cqbPostPlant": "Після встановлення та ретейк",
+  "lens.metric.cqbFunnel": "Смертельні лійки",
+  "lens.metric.cqbImpact": "Вплив гравців"
 }

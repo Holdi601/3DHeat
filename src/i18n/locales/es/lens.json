@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Distancias de enfrentamiento",
   "lens.metric.killChain": "Cadena de ataque",
   "lens.metric.dispersion": "Concentración o dispersión",
-  "lens.metric.sorties": "Salidas"
+  "lens.metric.sorties": "Salidas",
+  "lens.metric.cqbWinProb": "Probabilidad de ganar la ronda",
+  "lens.metric.cqbActions": "Valor de las acciones",
+  "lens.metric.cqbOpening": "Duelos de apertura",
+  "lens.metric.cqbTrades": "Trades y refrags",
+  "lens.metric.cqbPeek": "Peeker contra defensor",
+  "lens.metric.cqbAim": "Puntería antes del duelo",
+  "lens.metric.cqbCrossfire": "Fuego cruzado",
+  "lens.metric.cqbUtility": "Utilidad antes de la entrada",
+  "lens.metric.cqbManAdvantage": "Superioridad numérica",
+  "lens.metric.cqbClutch": "Clutches",
+  "lens.metric.cqbSetups": "Stacks, rotaciones y lurks",
+  "lens.metric.cqbPostPlant": "Tras la plantación y retake",
+  "lens.metric.cqbFunnel": "Embudos mortales",
+  "lens.metric.cqbImpact": "Impacto de los jugadores"
 }

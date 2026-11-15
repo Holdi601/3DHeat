@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Bojne razdalje",
   "lens.metric.killChain": "Uničevalna veriga",
   "lens.metric.dispersion": "Zgostitev ali razpršitev",
-  "lens.metric.sorties": "Poleti"
+  "lens.metric.sorties": "Poleti",
+  "lens.metric.cqbWinProb": "Verjetnost zmage v rundi",
+  "lens.metric.cqbActions": "Vrednost dejanj",
+  "lens.metric.cqbOpening": "Uvodni dvoboji",
+  "lens.metric.cqbTrades": "Menjave in refragi",
+  "lens.metric.cqbPeek": "Kukajoči proti držečemu",
+  "lens.metric.cqbAim": "Merjenje pred dvobojem",
+  "lens.metric.cqbCrossfire": "Navzkrižni ogenj",
+  "lens.metric.cqbUtility": "Granate pred vstopom",
+  "lens.metric.cqbManAdvantage": "Številčna premoč",
+  "lens.metric.cqbClutch": "Clutchi",
+  "lens.metric.cqbSetups": "Skupine, rotacije in lurki",
+  "lens.metric.cqbPostPlant": "Po postavitvi in retake",
+  "lens.metric.cqbFunnel": "Smrtni lijaki",
+  "lens.metric.cqbImpact": "Vpliv igralcev"
 }

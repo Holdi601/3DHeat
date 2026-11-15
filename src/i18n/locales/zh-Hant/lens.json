@@ -26,5 +26,19 @@
   "lens.metric.ranges": "交戰距離",
   "lens.metric.killChain": "殺傷鏈",
   "lens.metric.dispersion": "集中還是分散",
-  "lens.metric.sorties": "出動架次"
+  "lens.metric.sorties": "出動架次",
+  "lens.metric.cqbWinProb": "回合勝率",
+  "lens.metric.cqbActions": "行動價值",
+  "lens.metric.cqbOpening": "首殺對決",
+  "lens.metric.cqbTrades": "補槍與反殺",
+  "lens.metric.cqbPeek": "拉槍者對架槍者",
+  "lens.metric.cqbAim": "對決前的瞄準",
+  "lens.metric.cqbCrossfire": "交叉火力",
+  "lens.metric.cqbUtility": "進攻前的道具",
+  "lens.metric.cqbManAdvantage": "人數優勢",
+  "lens.metric.cqbClutch": "殘局",
+  "lens.metric.cqbSetups": "堆點、回防與繞後",
+  "lens.metric.cqbPostPlant": "下包後與回防",
+  "lens.metric.cqbFunnel": "致命漏斗",
+  "lens.metric.cqbImpact": "選手影響力"
 }

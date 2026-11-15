@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Gevechtsafstanden",
   "lens.metric.killChain": "Kill chain",
   "lens.metric.dispersion": "Concentratie of spreiding",
-  "lens.metric.sorties": "Vluchten"
+  "lens.metric.sorties": "Vluchten",
+  "lens.metric.cqbWinProb": "Kans om de ronde te winnen",
+  "lens.metric.cqbActions": "Waarde van acties",
+  "lens.metric.cqbOpening": "Openingsduels",
+  "lens.metric.cqbTrades": "Trades en refrags",
+  "lens.metric.cqbPeek": "Peeker tegen houder",
+  "lens.metric.cqbAim": "Richten voor het duel",
+  "lens.metric.cqbCrossfire": "Kruisvuur",
+  "lens.metric.cqbUtility": "Utility voor de entry",
+  "lens.metric.cqbManAdvantage": "Overtal",
+  "lens.metric.cqbClutch": "Clutches",
+  "lens.metric.cqbSetups": "Stacks, rotaties en lurks",
+  "lens.metric.cqbPostPlant": "Na het planten en retake",
+  "lens.metric.cqbFunnel": "Dodelijke trechters",
+  "lens.metric.cqbImpact": "Spelersinvloed"
 }

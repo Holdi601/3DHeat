@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Kampfentfernungen",
   "lens.metric.killChain": "Wirkungskette",
   "lens.metric.dispersion": "Konzentration oder Streuung",
-  "lens.metric.sorties": "Einsätze"
+  "lens.metric.sorties": "Einsätze",
+  "lens.metric.cqbWinProb": "Rundensieg-Wahrscheinlichkeit",
+  "lens.metric.cqbActions": "Wert der Aktionen",
+  "lens.metric.cqbOpening": "Eröffnungsduelle",
+  "lens.metric.cqbTrades": "Trades und Refrags",
+  "lens.metric.cqbPeek": "Peeker gegen Halter",
+  "lens.metric.cqbAim": "Zielen vor dem Duell",
+  "lens.metric.cqbCrossfire": "Kreuzfeuer",
+  "lens.metric.cqbUtility": "Granaten vor dem Eindringen",
+  "lens.metric.cqbManAdvantage": "Überzahl",
+  "lens.metric.cqbClutch": "Clutches",
+  "lens.metric.cqbSetups": "Stacks, Rotationen und Lurks",
+  "lens.metric.cqbPostPlant": "Nach dem Legen und Retake",
+  "lens.metric.cqbFunnel": "Todestrichter",
+  "lens.metric.cqbImpact": "Einfluss der Spieler"
 }

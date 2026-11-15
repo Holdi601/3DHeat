@@ -15,6 +15,7 @@ import { citeList, KB, KB_BY_ID, type KbEntry, type LensId } from './knowledge';
 import type { Domain } from './knowledge/types';
 import type { LensMetrics } from './lensMetrics';
 import type { Insight, InsightReport } from './types';
+import { cqbShows } from './cqb/shows';
 
 export type LensPick = LensId | 'auto';
 
@@ -250,6 +251,7 @@ export function ofMetrics(m: LensMetrics | undefined): Map<string, Shows> {
       weight: 0.55,
     });
   }
+  for (const [id, s] of cqbShows(m.cqb)) out.set(id, s);
   return out;
 }
 

@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Далёкасці бою",
   "lens.metric.killChain": "Ланцуг паражэння",
   "lens.metric.dispersion": "Засяроджванне ці рассяроджванне",
-  "lens.metric.sorties": "Баявыя вылеты"
+  "lens.metric.sorties": "Баявыя вылеты",
+  "lens.metric.cqbWinProb": "Імавернасць перамогі ў раўндзе",
+  "lens.metric.cqbActions": "Каштоўнасць дзеянняў",
+  "lens.metric.cqbOpening": "Пачатковыя дуэлі",
+  "lens.metric.cqbTrades": "Размены і рэфрагі",
+  "lens.metric.cqbPeek": "Пікер супраць трымальніка",
+  "lens.metric.cqbAim": "Прыцэл перад дуэллю",
+  "lens.metric.cqbCrossfire": "Перакрыжаваны агонь",
+  "lens.metric.cqbUtility": "Гранаты перад уваходам",
+  "lens.metric.cqbManAdvantage": "Колькасная перавага",
+  "lens.metric.cqbClutch": "Клатчы",
+  "lens.metric.cqbSetups": "Стакі, ратацыі і ларкі",
+  "lens.metric.cqbPostPlant": "Пасля ўстаноўкі і рэтэйк",
+  "lens.metric.cqbFunnel": "Смяротныя лейкі",
+  "lens.metric.cqbImpact": "Уплыў гульцоў"
 }

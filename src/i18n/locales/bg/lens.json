@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Бойни разстояния",
   "lens.metric.killChain": "Верига на поразяване",
   "lens.metric.dispersion": "Съсредоточаване или разпръскване",
-  "lens.metric.sorties": "Бойни полети"
+  "lens.metric.sorties": "Бойни полети",
+  "lens.metric.cqbWinProb": "Вероятност за победа в рунда",
+  "lens.metric.cqbActions": "Стойност на действията",
+  "lens.metric.cqbOpening": "Начални дуели",
+  "lens.metric.cqbTrades": "Размени и рефрагове",
+  "lens.metric.cqbPeek": "Пийкър срещу държащ",
+  "lens.metric.cqbAim": "Прицел преди дуела",
+  "lens.metric.cqbCrossfire": "Кръстосан огън",
+  "lens.metric.cqbUtility": "Гранати преди влизане",
+  "lens.metric.cqbManAdvantage": "Числено превъзходство",
+  "lens.metric.cqbClutch": "Клъчове",
+  "lens.metric.cqbSetups": "Стекове, ротации и лъркове",
+  "lens.metric.cqbPostPlant": "След поставяне и ретейк",
+  "lens.metric.cqbFunnel": "Смъртоносни фунии",
+  "lens.metric.cqbImpact": "Влияние на играчите"
 }

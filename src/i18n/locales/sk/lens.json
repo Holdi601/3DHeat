@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Bojové vzdialenosti",
   "lens.metric.killChain": "Ničivý reťazec",
   "lens.metric.dispersion": "Sústredenie alebo rozptýlenie",
-  "lens.metric.sorties": "Bojové lety"
+  "lens.metric.sorties": "Bojové lety",
+  "lens.metric.cqbWinProb": "Pravdepodobnosť výhry kola",
+  "lens.metric.cqbActions": "Hodnota akcií",
+  "lens.metric.cqbOpening": "Úvodné súboje",
+  "lens.metric.cqbTrades": "Trady a refragy",
+  "lens.metric.cqbPeek": "Peekujúci proti držiacemu",
+  "lens.metric.cqbAim": "Mierenie pred súbojom",
+  "lens.metric.cqbCrossfire": "Krížová paľba",
+  "lens.metric.cqbUtility": "Granáty pred vstupom",
+  "lens.metric.cqbManAdvantage": "Početná prevaha",
+  "lens.metric.cqbClutch": "Clutche",
+  "lens.metric.cqbSetups": "Stacky, rotácie a lurky",
+  "lens.metric.cqbPostPlant": "Po položení a retake",
+  "lens.metric.cqbFunnel": "Smrtiace lieviky",
+  "lens.metric.cqbImpact": "Vplyv hráčov"
 }

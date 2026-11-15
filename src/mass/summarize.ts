@@ -21,6 +21,7 @@ import {
 } from './types';
 import { analyseMatch } from '../insights/maneuver/analyse';
 import { ManeuverCollector } from '../insights/maneuver/collect';
+import { CqbCollector } from '../insights/cqb/summary';
 import { maneuverSection } from '../insights/maneuver/summary';
 import type { EvKind, ManeuverMatch } from '../insights/maneuver/types';
 
@@ -186,6 +187,8 @@ export interface SummaryColumns {
   mission: string | null;
   floor: string | null;
   values: { name: string; currency: string; flow: string }[];
+  /** The close-quarters collector's columns (`insights/cqb/summary.ts`); empty without a round column. */
+  cqb: string[];
 }
 
 export function summaryColumns(columns: string[], numeric: (c: string) => boolean, spec: LeanSpec): SummaryColumns {
@@ -198,6 +201,7 @@ export function summaryColumns(columns: string[], numeric: (c: string) => boolea
     const v = numeric(c) ? parseValueColumn(c) : null;
     return v ? [{ name: c, currency: v.currency, flow: v.flow }] : [];
   });
+  const cqb = CqbCollector.columnsOf(spec, columns);
   return {
     names: names.slice(0, 2),
     label: one(NAME_LABEL, false),
@@ -216,6 +220,7 @@ export function summaryColumns(columns: string[], numeric: (c: string) => boolea
     mission: one(MISSION, false),
     floor: one(FLOOR, true),
     values,
+    cqb,
   };
 }
 
@@ -268,6 +273,8 @@ export class SummaryBuilder {
   private readonly started = performance.now();
   /** Tracks and events for the movement analysis (`insights/maneuver`). */
   private readonly mv = new ManeuverCollector(1);
+  /** Duels, rounds and entries for the close-quarters counts (`insights/cqb`), where the data has rounds. */
+  private readonly cqb: CqbCollector | null;
 
   constructor(
     readonly spec: LeanSpec,
@@ -276,11 +283,12 @@ export class SummaryBuilder {
   ) {
     this.V = cols.values.length;
     this.valTotal = new Float64Array(this.V);
+    this.cqb = cols.cqb.length && spec.event && spec.team ? new CqbCollector(spec, cols.cqb) : null;
   }
 
   /** Every column the builder reads. */
   static columnsOf(spec: LeanSpec, c: SummaryColumns): string[] {
-    const list = [spec.time, spec.x, spec.y, spec.z, spec.track, spec.team, spec.event, ...c.names, c.label, ...c.types, c.ai, c.flag, c.uid, c.pname, c.group, c.weapon, c.otherName, c.otherType, c.actorRef, c.won, c.tier, c.floor, ...c.values.map((v) => v.name)];
+    const list = [spec.time, spec.x, spec.y, spec.z, spec.track, spec.team, spec.event, ...c.names, c.label, ...c.types, c.ai, c.flag, c.uid, c.pname, c.group, c.weapon, c.otherName, c.otherType, c.actorRef, c.won, c.tier, c.floor, ...c.values.map((v) => v.name), ...c.cqb];
     return [...new Set(list.filter((x): x is string => !!x))];
   }
 
@@ -579,6 +587,7 @@ export class SummaryBuilder {
       }
     }
     if (this.cell === 0) this.startGrid(X, Y, Z, n);
+    this.cqb?.add(c, n, X, Y, Z);
     let lastLabel: unknown = undefined;
     let kind = POSITION;
     for (let i = 0; i < n; i++) {
@@ -967,6 +976,7 @@ export class SummaryBuilder {
       classes: [...VEHICLE_CLASSES],
       grid,
       maneuvers,
+      cqb: this.cqb?.counts() ?? null,
       built: { by: this.info.by ?? 'viewer', at: new Date().toISOString(), ms: Math.round(performance.now() - this.started) },
     };
   }

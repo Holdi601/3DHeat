@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Bardagafjarlægðir",
   "lens.metric.killChain": "Árásarkeðja",
   "lens.metric.dispersion": "Samþjöppun eða dreifing",
-  "lens.metric.sorties": "Flugferðir"
+  "lens.metric.sorties": "Flugferðir",
+  "lens.metric.cqbWinProb": "Líkur á sigri í lotu",
+  "lens.metric.cqbActions": "Gildi aðgerða",
+  "lens.metric.cqbOpening": "Opnunareinvígi",
+  "lens.metric.cqbTrades": "Skipti og hefndardráp",
+  "lens.metric.cqbPeek": "Kíkjandi gegn haldara",
+  "lens.metric.cqbAim": "Mið fyrir einvígið",
+  "lens.metric.cqbCrossfire": "Krossskothríð",
+  "lens.metric.cqbUtility": "Handsprengjur fyrir inngöngu",
+  "lens.metric.cqbManAdvantage": "Liðsmunur",
+  "lens.metric.cqbClutch": "Úrslitastöður",
+  "lens.metric.cqbSetups": "Hópar, tilfærslur og laumur",
+  "lens.metric.cqbPostPlant": "Eftir sprengju og endurheimt",
+  "lens.metric.cqbFunnel": "Dauðatrektir",
+  "lens.metric.cqbImpact": "Áhrif leikmanna"
 }

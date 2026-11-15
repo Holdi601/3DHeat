@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Kampavstander",
   "lens.metric.killChain": "Drapskjede",
   "lens.metric.dispersion": "Konsentrasjon eller spredning",
-  "lens.metric.sorties": "Tokt"
+  "lens.metric.sorties": "Tokt",
+  "lens.metric.cqbWinProb": "Sannsynlighet for å vinne runden",
+  "lens.metric.cqbActions": "Handlingenes verdi",
+  "lens.metric.cqbOpening": "Åpningsdueller",
+  "lens.metric.cqbTrades": "Trades og refrags",
+  "lens.metric.cqbPeek": "Peeker mot holder",
+  "lens.metric.cqbAim": "Sikte før duellen",
+  "lens.metric.cqbCrossfire": "Kryssild",
+  "lens.metric.cqbUtility": "Granater før inntrengning",
+  "lens.metric.cqbManAdvantage": "Overtall",
+  "lens.metric.cqbClutch": "Clutcher",
+  "lens.metric.cqbSetups": "Stacker, rotasjoner og lurks",
+  "lens.metric.cqbPostPlant": "Etter planting og retake",
+  "lens.metric.cqbFunnel": "Dødelige trakter",
+  "lens.metric.cqbImpact": "Spillernes innvirkning"
 }

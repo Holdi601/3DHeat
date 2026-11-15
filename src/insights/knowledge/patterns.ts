@@ -6,6 +6,8 @@
  * existing pattern.
  */
 
+import { CQB_PATTERNS } from './patterns-cqb.ts';
+
 export type PatternFamily = 'force' | 'terrain' | 'movement' | 'time' | 'air' | 'sea' | 'urban' | 'people' | 'design';
 
 export interface Pattern {
@@ -72,6 +74,8 @@ export const PATTERNS: Pattern[] = [
   { id: 'flow', family: 'design', label: 'Level flow', sign: 'How players move through the level: loops, lanes, dead ends.' },
   { id: 'sightlines', family: 'design', label: 'Sightlines', sign: 'Long lines of sight decide where fights start and who wins them.' },
   { id: 'readability', family: 'design', label: 'Readability and fairness', sign: 'Deaths players cannot see coming: from behind, from out of sight.' },
+  // Close quarters and round-based esports (`../cqb`)
+  ...CQB_PATTERNS,
 ];
 
 export const PATTERN_BY_ID = new Map(PATTERNS.map((p) => [p.id, p]));

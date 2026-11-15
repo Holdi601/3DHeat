@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Kaujas attālumi",
   "lens.metric.killChain": "Iznīcināšanas ķēde",
   "lens.metric.dispersion": "Koncentrācija vai izkliede",
-  "lens.metric.sorties": "Lidojumi"
+  "lens.metric.sorties": "Lidojumi",
+  "lens.metric.cqbWinProb": "Raunda uzvaras varbūtība",
+  "lens.metric.cqbActions": "Darbību vērtība",
+  "lens.metric.cqbOpening": "Sākuma dueļi",
+  "lens.metric.cqbTrades": "Apmaiņas un refragi",
+  "lens.metric.cqbPeek": "Lūkotājs pret turētāju",
+  "lens.metric.cqbAim": "Tēmēšana pirms dueļa",
+  "lens.metric.cqbCrossfire": "Krustuguns",
+  "lens.metric.cqbUtility": "Granātas pirms ieiešanas",
+  "lens.metric.cqbManAdvantage": "Skaitliskais pārsvars",
+  "lens.metric.cqbClutch": "Clutch situācijas",
+  "lens.metric.cqbSetups": "Stack, rotācijas un lurk",
+  "lens.metric.cqbPostPlant": "Pēc uzstādīšanas un atgūšana",
+  "lens.metric.cqbFunnel": "Nāvējošās piltuves",
+  "lens.metric.cqbImpact": "Spēlētāju ietekme"
 }

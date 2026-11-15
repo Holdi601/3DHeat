@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Дальности боя",
   "lens.metric.killChain": "Цепочка поражения",
   "lens.metric.dispersion": "Сосредоточение или рассредоточение",
-  "lens.metric.sorties": "Боевые вылеты"
+  "lens.metric.sorties": "Боевые вылеты",
+  "lens.metric.cqbWinProb": "Вероятность победы в раунде",
+  "lens.metric.cqbActions": "Ценность действий",
+  "lens.metric.cqbOpening": "Стартовые дуэли",
+  "lens.metric.cqbTrades": "Размены и рефраги",
+  "lens.metric.cqbPeek": "Пикающий против держащего",
+  "lens.metric.cqbAim": "Прицел перед дуэлью",
+  "lens.metric.cqbCrossfire": "Перекрёстный огонь",
+  "lens.metric.cqbUtility": "Гранаты перед заходом",
+  "lens.metric.cqbManAdvantage": "Численное превосходство",
+  "lens.metric.cqbClutch": "Клатчи",
+  "lens.metric.cqbSetups": "Стаки, ротации и ларки",
+  "lens.metric.cqbPostPlant": "После установки и ретейк",
+  "lens.metric.cqbFunnel": "Смертельные воронки",
+  "lens.metric.cqbImpact": "Влияние игроков"
 }

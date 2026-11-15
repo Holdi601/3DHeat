@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Distances d'engagement",
   "lens.metric.killChain": "Chaîne de destruction",
   "lens.metric.dispersion": "Concentration ou dispersion",
-  "lens.metric.sorties": "Sorties"
+  "lens.metric.sorties": "Sorties",
+  "lens.metric.cqbWinProb": "Probabilité de gagner la manche",
+  "lens.metric.cqbActions": "Valeur des actions",
+  "lens.metric.cqbOpening": "Duels d'ouverture",
+  "lens.metric.cqbTrades": "Échanges et refrags",
+  "lens.metric.cqbPeek": "Peeker contre tenant",
+  "lens.metric.cqbAim": "Visée avant le duel",
+  "lens.metric.cqbCrossfire": "Tirs croisés",
+  "lens.metric.cqbUtility": "Utilitaires avant l'entrée",
+  "lens.metric.cqbManAdvantage": "Supériorité numérique",
+  "lens.metric.cqbClutch": "Clutchs",
+  "lens.metric.cqbSetups": "Stacks, rotations et lurks",
+  "lens.metric.cqbPostPlant": "Après la pose et retake",
+  "lens.metric.cqbFunnel": "Entonnoirs mortels",
+  "lens.metric.cqbImpact": "Impact des joueurs"
 }

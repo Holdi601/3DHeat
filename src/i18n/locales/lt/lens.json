@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Kovos atstumai",
   "lens.metric.killChain": "Naikinimo grandinė",
   "lens.metric.dispersion": "Koncentracija ar išsklaidymas",
-  "lens.metric.sorties": "Skrydžiai"
+  "lens.metric.sorties": "Skrydžiai",
+  "lens.metric.cqbWinProb": "Raundo pergalės tikimybė",
+  "lens.metric.cqbActions": "Veiksmų vertė",
+  "lens.metric.cqbOpening": "Pradinės dvikovos",
+  "lens.metric.cqbTrades": "Mainai ir refragai",
+  "lens.metric.cqbPeek": "Žvilgčiojantis prieš laikantį",
+  "lens.metric.cqbAim": "Taikymas prieš dvikovą",
+  "lens.metric.cqbCrossfire": "Kryžminė ugnis",
+  "lens.metric.cqbUtility": "Granatos prieš įėjimą",
+  "lens.metric.cqbManAdvantage": "Skaitinis pranašumas",
+  "lens.metric.cqbClutch": "Clutch situacijos",
+  "lens.metric.cqbSetups": "Stack, rotacijos ir lurk",
+  "lens.metric.cqbPostPlant": "Po padėjimo ir atkovojimas",
+  "lens.metric.cqbFunnel": "Mirtini piltuvai",
+  "lens.metric.cqbImpact": "Žaidėjų poveikis"
 }

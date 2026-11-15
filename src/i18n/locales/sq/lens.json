@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Distancat e angazhimit",
   "lens.metric.killChain": "Zinxhiri i goditjes",
   "lens.metric.dispersion": "Përqendrim apo shpërndarje",
-  "lens.metric.sorties": "Fluturime luftarake"
+  "lens.metric.sorties": "Fluturime luftarake",
+  "lens.metric.cqbWinProb": "Probabiliteti për të fituar raundin",
+  "lens.metric.cqbActions": "Vlera e veprimeve",
+  "lens.metric.cqbOpening": "Duelet hapëse",
+  "lens.metric.cqbTrades": "Shkëmbime dhe refrag",
+  "lens.metric.cqbPeek": "Peeker kundër mbajtësit",
+  "lens.metric.cqbAim": "Shënjestrimi para duelit",
+  "lens.metric.cqbCrossfire": "Zjarr i kryqëzuar",
+  "lens.metric.cqbUtility": "Granata para hyrjes",
+  "lens.metric.cqbManAdvantage": "Epërsi numerike",
+  "lens.metric.cqbClutch": "Clutch",
+  "lens.metric.cqbSetups": "Stack, rotacione dhe lurk",
+  "lens.metric.cqbPostPlant": "Pas vendosjes dhe rimarrja",
+  "lens.metric.cqbFunnel": "Hinkat vdekjeprurëse",
+  "lens.metric.cqbImpact": "Ndikimi i lojtarëve"
 }

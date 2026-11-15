@@ -16,6 +16,7 @@ import { finishInsights, type ReportInfo } from './engine';
 import { createInsightJob, gridFor, stepInsight, stepLevel, type InsightChunk, type InsightMeta } from './pass';
 import { createLensJob, safeFinishLens, stepLens, stepLensLevel, type LensOptions } from './lensMetrics';
 import type { InsightReport } from './types';
+import { cqbSync, runCqb } from './cqb/run';
 
 const IN_FLIGHT = 3;
 /** Level floats a slice. */
@@ -153,6 +154,8 @@ export function insightsSync(ds: Dataset, scope: CompareScope, level: Level | nu
   }
   const report = finishInsights(job, p.names, p.info);
   report.lens = safeFinishLens(lens, job, p.names.teams);
+  // Close quarters and esports measures (`cqb/`), where the data carries them.
+  if (report.lens) report.lens.cqb = cqbSync(ds, scope);
   return resolve(report, ds);
 }
 
@@ -164,6 +167,8 @@ export function runInsights(
   opts: { signal?: AbortSignal; onProgress?: (fraction: number) => void } = {},
 ): Promise<InsightReport> {
   const p = prepare(ds, scope, level);
+  // Close quarters and esports measures in their own worker, alongside (`cqb/run.ts`).
+  const cqb = runCqb(ds, scope, opts.signal).catch(() => undefined);
   const lv = p.level?.vertices ?? null;
   return new Promise((resolveP, reject) => {
     const worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
@@ -211,7 +216,11 @@ export function runInsights(
         pump();
       } else {
         end();
-        resolveP(resolve(m.report, ds));
+        const rep = resolve(m.report, ds);
+        void cqb.then((c) => {
+          if (c && rep.lens) rep.lens.cqb = c;
+          resolveP(rep);
+        });
       }
     };
     worker.onerror = (e) => fail(new Error(e.message || 'insight worker failed'));

@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Odległości walki",
   "lens.metric.killChain": "Łańcuch rażenia",
   "lens.metric.dispersion": "Koncentracja czy rozproszenie",
-  "lens.metric.sorties": "Loty bojowe"
+  "lens.metric.sorties": "Loty bojowe",
+  "lens.metric.cqbWinProb": "Prawdopodobieństwo wygrania rundy",
+  "lens.metric.cqbActions": "Wartość akcji",
+  "lens.metric.cqbOpening": "Pojedynki otwierające",
+  "lens.metric.cqbTrades": "Trade'y i refragi",
+  "lens.metric.cqbPeek": "Peekujący przeciw trzymającemu",
+  "lens.metric.cqbAim": "Celowanie przed pojedynkiem",
+  "lens.metric.cqbCrossfire": "Ogień krzyżowy",
+  "lens.metric.cqbUtility": "Granaty przed wejściem",
+  "lens.metric.cqbManAdvantage": "Przewaga liczebna",
+  "lens.metric.cqbClutch": "Clutche",
+  "lens.metric.cqbSetups": "Stacki, rotacje i lurki",
+  "lens.metric.cqbPostPlant": "Po podłożeniu i retake",
+  "lens.metric.cqbFunnel": "Śmiertelne lejki",
+  "lens.metric.cqbImpact": "Wpływ graczy"
 }

@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Борбене удаљености",
   "lens.metric.killChain": "Ланац уништења",
   "lens.metric.dispersion": "Концентрација или распршеност",
-  "lens.metric.sorties": "Летачке мисије"
+  "lens.metric.sorties": "Летачке мисије",
+  "lens.metric.cqbWinProb": "Вероватноћа победе у рунди",
+  "lens.metric.cqbActions": "Вредност акција",
+  "lens.metric.cqbOpening": "Уводни дуели",
+  "lens.metric.cqbTrades": "Размене и рефрагови",
+  "lens.metric.cqbPeek": "Пикер против држаоца",
+  "lens.metric.cqbAim": "Нишањење пре дуела",
+  "lens.metric.cqbCrossfire": "Унакрсна ватра",
+  "lens.metric.cqbUtility": "Гранате пре уласка",
+  "lens.metric.cqbManAdvantage": "Бројчана надмоћ",
+  "lens.metric.cqbClutch": "Клачеви",
+  "lens.metric.cqbSetups": "Стекови, ротације и лурковање",
+  "lens.metric.cqbPostPlant": "После постављања и ретејк",
+  "lens.metric.cqbFunnel": "Смртоносни левкови",
+  "lens.metric.cqbImpact": "Утицај играча"
 }

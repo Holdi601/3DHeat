@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Harci távolságok",
   "lens.metric.killChain": "Csapási lánc",
   "lens.metric.dispersion": "Összpontosítás vagy szétszórás",
-  "lens.metric.sorties": "Bevetések"
+  "lens.metric.sorties": "Bevetések",
+  "lens.metric.cqbWinProb": "Körgyőzelem valószínűsége",
+  "lens.metric.cqbActions": "Az akciók értéke",
+  "lens.metric.cqbOpening": "Nyitó párbajok",
+  "lens.metric.cqbTrades": "Trade-ek és refragek",
+  "lens.metric.cqbPeek": "Peekelő a tartó ellen",
+  "lens.metric.cqbAim": "Célzás a párbaj előtt",
+  "lens.metric.cqbCrossfire": "Kereszttűz",
+  "lens.metric.cqbUtility": "Gránátok a behatolás előtt",
+  "lens.metric.cqbManAdvantage": "Létszámfölény",
+  "lens.metric.cqbClutch": "Clutch-ok",
+  "lens.metric.cqbSetups": "Stackek, rotációk és lurkok",
+  "lens.metric.cqbPostPlant": "Telepítés után és visszafoglalás",
+  "lens.metric.cqbFunnel": "Halálos tölcsérek",
+  "lens.metric.cqbImpact": "A játékosok hatása"
 }

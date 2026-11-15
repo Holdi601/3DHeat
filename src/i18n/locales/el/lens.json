@@ -26,5 +26,19 @@
   "lens.metric.ranges": "Αποστάσεις εμπλοκής",
   "lens.metric.killChain": "Αλυσίδα προσβολής",
   "lens.metric.dispersion": "Συγκέντρωση ή διασπορά",
-  "lens.metric.sorties": "Έξοδοι"
+  "lens.metric.sorties": "Έξοδοι",
+  "lens.metric.cqbWinProb": "Πιθανότητα νίκης γύρου",
+  "lens.metric.cqbActions": "Αξία ενεργειών",
+  "lens.metric.cqbOpening": "Εναρκτήριες μονομαχίες",
+  "lens.metric.cqbTrades": "Ανταλλαγές και refrag",
+  "lens.metric.cqbPeek": "Peeker απέναντι σε κάτοχο",
+  "lens.metric.cqbAim": "Σημάδι πριν τη μονομαχία",
+  "lens.metric.cqbCrossfire": "Διασταυρούμενα πυρά",
+  "lens.metric.cqbUtility": "Χειροβομβίδες πριν την είσοδο",
+  "lens.metric.cqbManAdvantage": "Αριθμητική υπεροχή",
+  "lens.metric.cqbClutch": "Clutch",
+  "lens.metric.cqbSetups": "Stack, περιστροφές και lurk",
+  "lens.metric.cqbPostPlant": "Μετά την τοποθέτηση και ανακατάληψη",
+  "lens.metric.cqbFunnel": "Θανατηφόρα χωνιά",
+  "lens.metric.cqbImpact": "Επίδραση παικτών"
 }

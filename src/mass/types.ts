@@ -13,6 +13,7 @@
  */
 
 import type { ManeuverSection } from '../insights/maneuver/summary';
+import type { CqbCounts } from '../insights/cqb/finish';
 
 /** The member's `format` and its version: a reader takes its own major, a newer one is worked out again. */
 export const SUMMARY_FORMAT = '3dheat-summary';
@@ -188,6 +189,12 @@ export interface MatchSummary {
    * Absent in summaries written before it; null where it could not run.
    */
   maneuvers?: ManeuverSection | null;
+  /**
+   * Close-quarters counts (`insights/cqb/finish.ts` CqbCounts), additive over matches: opening
+   * duels, trades, peeker against holder, crossfires, flashed entries, aim, man advantage,
+   * plants and the most entered places' entries and deaths. Null without a round column.
+   */
+  cqb?: CqbCounts | null;
   built: { by: string; at: string; ms: number };
 }
 

@@ -10,6 +10,7 @@
 import { LANGUAGES } from '../../i18n/languages';
 import { fullCite } from '../knowledge';
 import { topEntries, type LensPick } from '../lens';
+import { cqbNames } from '../cqb/shows';
 import { reportForModel } from '../seam';
 import type { InsightReport } from '../types';
 import type { Moment } from '../cast/moments';
@@ -51,6 +52,7 @@ function reportNames(r: InsightReport): string[] {
     const p = i.sentence.params.player;
     if (typeof p === 'string') out.push(p);
   }
+  out.push(...cqbNames(r.lens?.cqb));
   return out;
 }
 
@@ -102,6 +104,9 @@ export function debriefPrompt(r: InsightReport, say: (key: string, params: Recor
     ...(knowledge.length
       ? [
           'The report\'s "lens" holds measures of military operations analysis (a Lanchester fit of losses on strengths, local force ratios at kills, exchange ratios, viewsheds of kill places, energy states of aircraft, persistent hotspots, trade rate, first-strike advantage). You also get "knowledge": entries of a curated knowledge base - doctrine, operations research, historical battles, game and level design, analytics studies - each with its references and the findings it relates to (about).',
+          ...(top.lens?.cqb
+            ? ['The lens\'s "cqb" holds close-quarters and esports measures: a round win-probability model fitted to these rounds with its out-of-fold calibration, the win probability each kind of action added, opening duels, trades, peeker against holder, aim before the duel, crossfires, utility before entries, man advantage, clutches against the model, stacks, rotations, lurks, post-plant and retake, fatal funnels by place and player impact (shrunk win probability added, ridge plus-minus); every share has a 95% interval and every test a q over all of them.']
+            : []),
           'Judge the findings through that literature like a professional analyst: name the concept that explains a finding, and where a historical case genuinely shares its pattern, give it as a parallel with its date and outcome. Cite entries by id in curly braces, like {concept.lanchester-square}, and name their sources as author and year. Use only the entries and references given; never invent sources, quotes or historical facts. Say where a parallel stops holding.',
         ]
       : []),
