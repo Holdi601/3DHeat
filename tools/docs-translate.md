@@ -1,40 +1,54 @@
 # Translating the documentation site
 
-The site in `docs/` is written in English and translated into every language the viewer has (`src/i18n/locales/<lang>`). This file is the workflow, so that a later change re-translates only what changed.
+The site in `docs/` is written in English and published in every language the viewer has (`src/i18n/locales/<code>`). This file is the workflow, so that a later change re-translates only what changed.
 
 ## Layout
 
 | What | Where |
 |---|---|
 | English pages (the source) | `docs/<page>.md` |
-| A translation | `docs/<lang>/<page>.md`, the same file name and page tree |
-| Screenshots | `docs/assets/img/<lang>/<name>.webp`, taken with the viewer's UI in that language (`node tools/docs-shots.mjs --lang <lang>`) |
-| Generated reference pages | `node tools/docs-refs.mjs --lang <lang>` writes `docs/<lang>/ref-*.md` with the language's UI labels |
-| Diagrams | text in the page (Mermaid, or SVG whose labels come from a per-language string table), never English text baked into an image |
+| A language's pages | the Jekyll collection `docs/_<code>/<page>.md`, served at `/<code>/<page>.html`; every English page has one, a short stub pointing to English until it is translated |
+| Titles and site strings | `docs/_data/i18n/<code>.json` (`titles`: English title → title in the language, unique within the language; `ui`: the picker's and the notices' words) |
+| Language list | `docs/_data/languages.json`, written from `src/i18n/languages.ts` |
+| Navigation per language | `docs/_includes/components/{sidebar,site_nav,breadcrumbs,children_nav}.html`: the theme's files (just-the-docs v0.10.0) with the navigation limited to the page's language; `header_custom.html` holds the language picker and the "not translated" / "out of date" notice, `head_custom.html` the redirect of the English home page to the browser's language |
+| Screenshots | `docs/assets/img/<code>/<name>.webp`, taken with the viewer's UI in that language: `node tools/docs-shots.mjs --lang <code> --only <groups>`; a page uses its language's picture where one exists and the English one otherwise |
+| Reference pages | `node tools/docs-refs.mjs --lang <code>` writes `docs/_<code>/ref-*.md` with the language's UI labels |
+| Diagrams | Mermaid in the page text, so their labels are translated with the page |
 
 ## Source hashes
 
-Every translated page carries in its front matter the hash of the English text it was made from:
+Each translated page's front matter says what it was made from:
 
 ```yaml
-lang: de
-source: insights.md
-source_hash: 3f9a0c1b2d4e   # first 12 hex digits of sha256 of the English file
+lang: "de"
+source: "insights.md"
+source_hash: "3f9a0c1b2d4e"   # sha256 of the English file, 12 hex digits
+translated: true
+outdated: false
 ```
 
-A page whose English source has a different hash now is **outdated**: the site marks it and links the English page. A page with no translation falls back to the English one. Screenshots are tracked the same way: a language's picture is outdated when the English picture of the same name is newer (re-run `docs-shots.mjs` for that language).
+`node tools/docs-i18n.mjs sync` keeps the front matter in step with the English page and sets `outdated: true` when the English file no longer has that hash; the page then shows "may be out of date". `node tools/docs-i18n.mjs status` counts translated, outdated and untranslated pages per language; `todo <code>` lists the pages of a language that need work.
+
+## Translating a page
+
+1. `node tools/docs-i18n.mjs source <page>.md` prints the English text with every heading carrying its English anchor (`{#anchor}`), so links into the page keep working in every language.
+2. `node tools/docs-i18n.mjs terms <code> <page>.md` prints the UI's own words in the language for every bold label of the page: the docs must say what the screen says. A short label can belong to several places of the UI; check the context in `src/i18n/locales/<code>/*.json`.
+3. Write the translation below the existing front matter of `docs/_<code>/<page>.md` and change `translated: false` to `translated: true`. Keep Markdown, anchors, links, image paths, code, file and column names, keys and the demo names; translate alt texts and Mermaid labels.
+4. `node tools/docs-i18n.mjs sync --lang <code>`, then `node tools/docs-refs.mjs --lang <code>`.
 
 ## Workflow for a change
 
-1. Change the English pages (and re-run `docs-refs.mjs` and `docs-shots.mjs --lang en` when the UI changed).
-2. Have the English pages reviewed by someone who did not write them (beginner, child, expert readers) and fix what the review found; see [docs/maintaining.md](../docs/maintaining.md).
-3. List the pages whose `source_hash` no longer matches their English source, per language.
-4. Translate only those, a few languages at a time, by a translator (a person or an AI model). Each translator gets: the English page, the old translation if any, and the language's locale files (`src/i18n/locales/<lang>/*.json`), and uses the UI's own words for every button, panel and setting the page names (the docs must say what the screen says). Keep Markdown, links, code, file names and column names unchanged; translate image alt text.
-5. Set the new `source_hash` in each translated page.
-6. Take the screenshots in each changed language, cropped to what the page shows; WebP, compressed.
-7. Run a review per language: clear for beginner, child and expert readers, labels of diagrams right, words match the localised UI. Fix the findings.
-8. Run the confidential-terms scan over the changed files, then commit. Publish when the release is approved.
+1. Change the English pages; regenerate `docs-refs.mjs` and the English screenshots when the UI changed.
+2. Review the English pages (beginner, child and expert readers) and fix the findings; see [docs/maintaining.md](../docs/maintaining.md).
+3. `node tools/docs-i18n.mjs status`: translate the outdated and new pages per language (one language per translator, with the steps above).
+4. Review each language: meaning, plain wording, the UI's words, structure. Fix the findings.
+5. Retake the language's screenshots: `node tools/docs-shots.mjs --lang <code> --only <groups>`, then `sync` points the pages at them.
+6. Scan the changed files for confidential terms, then commit. Publish only after the owner agrees.
 
-## Size budget
+## What is translated today
 
-About 300 MB of pictures for the whole site. If all languages' pictures would pass that, keep localised pictures for each feature's key screenshot and let the others fall back to English; say so in the report.
+The 21 pages a new user needs first (home, demo data, getting data in, heat modes, heat, difference, team heat, timeline, filters and tools, filters, volumes, insights, match replay, figures, many matches, race analysis, tactics board, levels, settings, glossary, updates) in all 39 languages besides English, and every page's title. The other pages show their title in the language and point to the English text. Screenshots: the pictures of those pages in every language.
+
+## Size
+
+About 300 MB of pictures for the whole site at most. All languages' pictures of the translated pages take about 3.6 MB a language.
