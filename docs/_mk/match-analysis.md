@@ -5,7 +5,7 @@ lang: "mk"
 source: "match-analysis.md"
 source_hash: "270f28c0f42b"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Анализа на натпревар (Counter-Strike 2)

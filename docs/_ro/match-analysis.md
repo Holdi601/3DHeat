@@ -5,7 +5,7 @@ lang: "ro"
 source: "match-analysis.md"
 source_hash: "270f28c0f42b"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Analiza meciului (Counter-Strike 2)

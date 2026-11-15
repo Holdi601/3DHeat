@@ -6,7 +6,7 @@ lang: "da"
 source: "insights.md"
 source_hash: "8232fe145807"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Indsigter

@@ -5,7 +5,7 @@ lang: "sr"
 source: "match-analysis.md"
 source_hash: "270f28c0f42b"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Анализа меча (Counter-Strike 2)

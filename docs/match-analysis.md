@@ -183,6 +183,16 @@ Over every loaded match:
 
 The Show-in-the-heatmap buttons for all loaded matches sit under it.
 
+## What decided the rounds
+
+The tab counts; [Insights](insights.md#who-won-what-decided-the-rounds) explains. With a match's heatmap table loaded (it carries the `won` column), **Insights** splits each side's rounds by what happened in them - the opening duel, the buy, a traded first death, the plant, utility, an early first contact, each place held and each place reached in the first 25 s - and says which made the difference, with the difference of the win rates, its 95% interval and q, and *few rounds* where an arm has fewer than eight. It names the turning points (the kills and plants that moved the win probability most) and the players and places that added or cost the most, and the **Debrief** and the **Caster** lead with them. A made-up example:
+
+> T won 79% of the 19 rounds it held Mid, against 24% of 21 without it (55 points, 95% 26 to 74) - q 0.004.
+>
+> Turning points: round 17 at 48 s, a kill by CT at B site moved its chance from 31% to 58%, and it took the round.
+
+One match has fewer than 30 rounds, so its win probabilities come from a fixed prior model of the men alive, the plant and the clock; the text says so. Over many matches the same questions are asked by the [mass analysis](mass-analysis.md#who-won).
+
 ## Show in the heatmap
 
 Every link sets the heatmap's own **filters**, so what is shown stays

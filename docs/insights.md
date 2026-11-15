@@ -39,6 +39,7 @@ The lines at the top of the list (for example the money totals) summarise the wh
 | **Players** | Players killing or dying far more or less than others in the same class | persons and kills |
 | **Chokes and flanks** | Choke points (far more crossings than the ground around) and flank routes (rarely used, but lead to kills) | persons |
 | **Value** | *Costly ground* and *Earning ground* | [value columns](value-weighting.md) |
+| **What decided the rounds** | What separated won from lost rounds, and the players who added or cost the most win probability (see [Who won](#who-won-what-decided-the-rounds)) | rounds, kills and deaths, and the [outcome columns](data-formats.md#outcome-columns) (`won`) |
 
 Detectors that cannot run on the data are listed at the bottom with the reason.
 
@@ -46,9 +47,42 @@ Detectors that cannot run on the data are listed at the bottom with the reason.
 
 Every place or group is tested against the rest of the map (exact binomial or rate tests). The false discovery rate is held at 5% (Benjamini-Hochberg). Chance can look like a pattern; this keeps false alarms low: among the findings shown, at most about one in twenty is expected to be chance. Effects from few events are pulled toward "no effect" before ranking. At most 60 findings are listed, and every detector gets a few places near the top.
 
+### Who won: what decided the rounds
+
+Where the data says who won each round (the `won` [outcome column](data-formats.md#outcome-columns): CS2, Rainbow Six Siege, War Thunder ...), the result is what Insights is about. For each side it splits the rounds by what happened in them and compares the win rates:
+
+| Factor | The side's rounds with it | ... and without it |
+|---|---|---|
+| Opening duel | it made the first kill | it died first |
+| Buy | its buy was better than the other side's | worse |
+| Traded first death | its first death was traded within 5 s | not traded |
+| Plant | it planted | no plant |
+| Utility | more grenades than its usual round | fewer |
+| Early contact | the first duel came before the match's median time | later |
+| A place held | a player stood at the place 5 s or more | nobody did |
+| A place reached early | a player got there in the first 25 s (the route) | nobody did |
+
+Each comparison is a difference of two win rates with its 95% interval (Newcombe), Fisher's exact p, and a q over every factor tried (Benjamini-Hochberg). An arm with fewer than 8 rounds is marked *few rounds*. Those under the 5% false discovery rate become findings; the strongest rank above the other detectors' (an outcome finding weighs 1.35 times one of the same effect and evidence).
+
+A made-up example over 40 rounds:
+
+> **T** won 79% of the 19 rounds it held **Mid**, against 24% of 21 without it (55 points, 95% 26 to 74) - q 0.004.
+
+It also follows the round's **win probability** - the chance each side had at every moment, from the men alive, the plant and the clock: fitted to the rounds when there are 30 or more, else a fixed prior model (and the text says which). From it come the **turning points** (the kills and plants that moved the chance most) and each player's **win probability added**: the kills and plants they made count for them, their deaths against, in rounds' worth over the match, a round on average with its interval, tested against zero. The places get the same balance: which side gained the most in the duels fought there.
+
+The data needs rounds, kills and deaths with both sides, and the `won` column; named places (`place`) for places held, a `buy` column for the buy.
+
 ## Debrief
 
-The **Debrief** tab writes the findings up as a short text: a lead, the clearest finding, one for tactics, one for balancing, the rest grouped by detector, and how many rest on weaker evidence. Each paragraph has numbered buttons that show its findings. **Copy text** copies it.
+The **Debrief** tab writes the findings up as a short text: a lead, the clearest finding, one for tactics, one for balancing, then - where the data says who won - what decided the rounds, the rest grouped by detector, and how many rest on weaker evidence.
+
+What decided the rounds comes in four paragraphs: the score and where the win probabilities come from; the strongest factors with their numbers, interval and q (when none passes the false discovery rate the text says *none of it certain yet*, and still names the strongest); the three biggest turning points; and the players who added and cost the most win probability, with the places that gained the most. A made-up example:
+
+> T won 23 and CT won 17 of 40 rounds with a known result (T: 58%, 95% 42% to 72%). The win probabilities come from a model fitted to these rounds.
+>
+> What separated won from lost rounds: T won 79% of the 19 rounds it held Mid, against 24% of 21 without it (55 points, 95% 26 to 74) (q 0.004), ...
+>
+> Turning points: round 17 at 48 s, a kill by CT at B site moved its chance from 31% to 58%, and it took the round, ... Each paragraph has numbered buttons that show its findings. **Copy text** copies it.
 
 ![The debrief written by the built-in narrator](assets/img/en/debrief.webp)
 
@@ -67,11 +101,13 @@ The built-in narrator works offline, in your language. The **Lens** selector abo
 | **Use an external AI** | Off by default |
 | **Send player names** | Off by default: players are sent as P1, P2 ... |
 
-Then type an optional question and press **Write with AI**. Only the findings and their numbers are sent - never the rows of your data. The answer streams in; cited findings become buttons.
+Then type an optional question and press **Write with AI**. Only the findings and their numbers are sent - never the rows of your data. The answer streams in; cited findings become buttons. Where the data says who won, the model is told to lead with what decided the rounds, with each number's interval and q, and to say when a factor rests on few rounds or the win probabilities come from the prior model.
 
 ## Caster
 
-For **one match** (pick one if several are loaded), the **Caster** finds the moments worth watching: first blood, multi-kills, trades, clutches, objective swings, comebacks, standout players, long shots.
+For **one match** (pick one if several are loaded), the **Caster** finds the moments worth watching: first blood, multi-kills, trades, clutches, objective swings, comebacks, standout players, long shots, and **turning points** - the kills that moved a side's chance to win the round the most (by the players left alive on each side, in rounds without respawns).
+
+Where the data says who won each round, every moment says it: *"Anna takes down Ben: T's chance to win the round goes from 38% to 62% - and they take the round."* A moment of the side that went on to win counts for more when the caster picks which to keep, and a comeback is counted in rounds won.
 
 ![The caster's moments for one round of the shooter demo](assets/img/en/caster.webp)
 

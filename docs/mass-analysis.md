@@ -68,13 +68,22 @@ Pick a folder (or files; **Add folder...** joins another). The window has the fi
 | Close quarters | round data: opening duels by side and their conversion, trades, peeker against holder, crossfires, flashed entries, aim, plants, man advantage and, **By map**, the places that kill the players entering them - each a share with its Wilson interval, from the summaries' `cqb` counts ([Close quarters and rounds](close-quarters.md)) |
 | R6 surfaces | Rainbow Six Siege's marks on the level (bullet holes and the like) per level surface: marks, per round of the map, the room, the share whose shooter was worked out; a click opens the mark kinds, the shooters' operators and weapon classes, and where on the surface the marks are (a small heat of quarter-metre cells); a surface keeps its id across the matches of one map version. From the summaries' `marks` counts |
 | Map | a map's summed grid: presence, kills, deaths, K/D, any event, flow, and **hot in how many matches** (stability); by team, at 1, 2, 4 or 8 times the cell |
-| Places | places that stand out in the numbers but not in the heat (a large area busy as a whole, corridors, height bands); **Find places** |
-| Niches | groups doing markedly better or worse than the rest (a vehicle on one map, a sector at one height); **Find niches** |
+| Places | places that stand out in the numbers but not in the heat (a large area busy as a whole, corridors, height bands), and places whose holders win more or fewer of their rounds; **Find places** |
+| Niches | groups doing markedly better or worse than the rest (a vehicle on one map, a sector at one height), and groups of rounds won beyond what their side won in the same matches; **Find niches** |
 | Insights | the mass detectors and the map detectors (below); **Copy report (JSON)** gives the JSON a language model reads |
 
 ## Insights over many matches
 
 The **Places** tab finds places that stand out in the numbers but not in the heat - a large area busy as a whole, a corridor, a height band, a place busy only in one part of the match - marks the ones the plain heat does not show as **hidden**, and outlines them in the 3D view; **Load** flies there with the matches it held in. The **Niches** tab finds groups (a vehicle on one map and side, a sector at one height) doing markedly better or worse than the rest; click one to see its refinements.
+
+### Who won
+
+Where the matches say who won each round (the `won` [outcome column](data-formats.md#outcome-columns)), the result is a target of its own:
+
+- **Places: win rate.** For each side, the share of its rounds in a place that it won, against the share it won in the same match anywhere - so the map's balance, the side's and the match's own are the baseline, and only places whose holders win more (or fewer) of their rounds stand out. A made-up example: *"Dust: side T wins more of its rounds when it is here: 61% of 412 won, against 49% expected from its own rate in the same matches (odds 1.6x; held in 31/48 matches)."* The same false discovery rate and stability checks as every place; **Load** loads the matches it held in, showing that side's positions.
+- **Niches: round win.** The **Rounds** table holds every life's round: the map, the side, the part of the match (rounds 1-4, 5-8, ...), the vehicle (an operator, an agent), the weapon it used most, the place it held longest, the buy (eco, force, full) and whether its side made the first kill. A group is judged against what its side won in the same matches, so *T on Dust with an AWP* is a niche only when those rounds were won more often than T's other rounds in those matches. A made-up example: *"m1 · T · AWP: wins 80% of 320 rounds, against 62% expected from the same sides in the same matches (odds 2.3x; 40 matches)."* Ranked by the lift times the support; **Load** loads the matches whose rounds show it most.
+
+Both need summaries of version 2 (see [Getting the summaries](#getting-the-summaries)): older ones are worked out again.
 
 The **Insights** tab finds, over all matches, vehicles that trade or win better or worse than the rest, places hot in a steady share of matches, sides that win more than an even split, vehicles whose use moves over the dates, and parts of the match that hold more kills than an even spread. Each finding carries its counts, effect, interval and a false discovery rate (held to 5%), and a click loads its matches. Details: [For developers](#for-developers).
 
@@ -123,6 +132,11 @@ Plain JSON (`src/mass/types.ts`), about 5-30 KB deflated a match:
   by canonical kind, kills by the target's class, wins, money;
 - per player (by user id, else name): team, lives, presence, kills, deaths,
   hits, launches, won, vehicles; per weapon: events by kind;
+- with a result column (version 2): rounds won and played per team, vehicle
+  (`rw`, a life and round each), player and weapon (the rounds a side used it
+  in); every life's round (`outcome.u`: round, side, vehicle, the weapon it
+  used most, the place it held longest, the buy, won) and every round's
+  number, winner and the side of its first kill (`outcome.r`);
 - the economy's columns (`cost_*`, `earn_*`) and their totals;
 - phases: events by kind in 20 bins of the match length and by the minute;
 - behaviour: the match's collective-behaviour measures (alignment, route
@@ -155,6 +169,9 @@ shape, not only for heat pictures:
   with a `floor`/`storey`/`deck` column bands by its floors instead. `y` is
   each cell's mean height, `y0` its lowest (its floor, for height above it).
 - **Events** as tuples `[cell, kind, team, class, band, count]`.
+- **Rounds by result** (version 2, with a result column and two rounds or
+  more): `pw` as `[cell, team, rounds won, rounds lost]` - the rounds each side
+  spent a second or more in the cell, by its result in the round.
 - **Time slices** at a coarse level (8 cells a side), by the minute from
   the match start: `[cx, cz, minute, kind, value]`, presence seconds as kind
   `GRID_KINDS.length`; match phases are minutes over the length.
@@ -179,12 +196,16 @@ matches.
 - **Measures.** An event's rate per second of presence - kills, deaths,
   hits, launches, captures, for all units, per class (the 4 with most
   events), per height band - and the share of kills in kills and deaths
-  (all, per side, per band). Which classes and sides come from the heads
-  (`planOf`).
+  (all, per side, per band), and each side's **win rate**: its rounds in
+  the cell won against lost (`pw`), where 8 matches of the map or more count
+  rounds by result. Which classes and sides come from the heads (`planOf`).
 - **Expectation by match.** Each match's own rate spread over its own
   presence in a cell is the cell's expectation (a covariate-adjusted
   Kulldorff scan stratified by match): a few bloody matches or one busy
-  server make no place.
+  server make no place. For the win rate the expectation is the side's own
+  share of rounds won in that match, so the map's and the side's balance are
+  never a place. A round in several cells of a region counts in each; the
+  dispersion measured at the region's size carries that.
 - **Dispersion.** Matches disagree far beyond Poisson. Each match's
   residuals are summed in blocks of 1, 2, 4, 8, 16 cells; the dispersion of
   each block size (squared residuals over the null variance, pooled, the
@@ -243,6 +264,26 @@ only repeats its parent. The **Niches** tab lists them; a click shows every
 one-condition refinement of the group (the explorer), **Load** loads its
 matches. Loadouts are not in the summaries yet.
 
+The fourth table, **rounds** (`roundsTable`), has the round's result as its
+target: one row a life's round - map, side, part of the match (rounds 1-4,
+5-8, ...), vehicle, the weapon used most, the place held longest, buy, first
+kill or first death - judged against its own side's win rate in its own
+match (the stratified expectation of Mantel-Haenszel: the residual is
+`won - e`, `e` the side's share in the match), so a niche is never the map's
+or the side's balance. Matches stay the clusters. Its z is calibrated: the
+same beam search runs eight times on the results shuffled between the
+rounds of each side of each match (the side's rate in each match kept), and
+the spread of those null z beyond a standard normal - per number of
+conditions, from the middle (median / 0.674) and the tail (99th percentile /
+2.576), the larger, never under 1 - divides the real ones before their p and
+the false discovery rate (an empirical null, Efron 2004). Deeper groups get
+the larger scale: the beam keeps refinements of groups chosen for their
+large z. A niche's base is its own expectation, its lift the points above
+it, and it ranks by the lift times the square root of its rounds, held by
+the evidence and the folds (`wracc` is the support times the lift). It
+carries the matches where it showed most (`matchIds`) and a few of their
+rounds (`rounds`, `[match, round]`) for the drill-down.
+
 #### Meta shifts with practical significance
 
 On mixed dates the binomial on lives called nearly every change significant. `meta` now tests cluster-robust (each match's
@@ -265,4 +306,10 @@ of 22 cells, faint in every cell), a corridor, a height band and a
 phase-only cluster in 240 synthetic overdispersed matches - all found, the
 diffuse one hidden - and runs eight null sets of 60 matches: no place.
 `niche.test.ts` finds a planted vehicle x map x side group and nothing in
-five null tables.
+five null tables. `outcome.test.ts` checks the version 2 summary (rounds won
+by side, unit, player and weapon, `pw`, the unit-rounds); plants a lane whose
+side wins 70% of its rounds against 35% (each match its own balance) - found -
+and runs 20 null sets of 50 matches where the lanes say nothing: no win-rate
+place; plants an AWP on one map that wins its side's rounds 30 points more -
+found, with its matches and rounds - and runs 30 null sets of 80 matches with
+each match its own balance and one side stronger on one map: no niche.

@@ -5,7 +5,7 @@ lang: "ja"
 source: "match-analysis.md"
 source_hash: "270f28c0f42b"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 試合分析 (CS2)
