@@ -18,7 +18,7 @@
  * A file changed in the last `--settle` minutes (10 by default) is left out:
  * a converter may still be writing it.
  * --no-write leaves the containers as they are (the index only). Meant to run
- * where the files are (e.g. a home server next to the NAS), at low priority:
+ * on the machine that holds the files, at low priority:
  * `nice -n 19 ionice -c3 node tools/3dheat-summarize.mjs ...`.
  */
 
