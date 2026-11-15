@@ -5,22 +5,36 @@ nav_order: 1
 
 # 3DHeat
 
-3DHeat is a realtime 3D telemetry viewer that runs in the browser. It loads positional data - CSV, Parquet and Tacview ACMI recordings, a single file, several files or a whole folder tree, tens of millions of rows - and shows it as a heatmap you can fly through, as moving boxes on a timeline, as lines along the routes people took, or as a comparison of two populations. Beside the heatmap it has a race analysis tab that compares laps of a racing game, and a match tab for Counter-Strike 2 match summaries.
+3DHeat is a realtime 3D viewer for where things happened in games and simulations. Load positions - CSV, Parquet, Tacview recordings, converted replays, a single file, a folder or thousands of matches - and see them as a **heatmap you can fly through**, as **figures replaying the match**, as lines along the routes people took, or as one population against another. It finds what stands out by itself, and it runs entirely in your browser: nothing is uploaded anywhere.
 
-It draws on the graphics card through **WebGPU** where the browser offers it and falls back to **WebGL2** otherwise. Nothing is uploaded anywhere: files are read by the browser from your disk, and the only server involved is the small local development server that `start.bat` runs.
+![Heat of ten tank matches over the demo valley](assets/img/en/heat-hero.webp)
+
+**New here?** Make the [demo data](demo-data.md) and follow its seven steps. Every picture on this site was taken with it.
+
+## What it does
+
+| | |
+|---|---|
+| ![Difference](assets/img/en/heat-difference.webp) | **[Heat modes](heat-modes.md)** - heat, [difference](difference.md) (Blue against Red), [team heat](team-heat.md), [line heat](line-heat.md); [directional heat](directional-heat.md) with wedges, arrow fields and polar charts; heat [weighed by value](value-weighting.md): what weapons, vehicles and fuel cost. |
+| ![Replay](assets/img/en/replay-tanks.webp) | **[Match replay](match-replay.md)** - every unit as the [figure](figures.md) of what it is, NATO or Russian symbols far off, missiles and tracers, hit marks, wrecks, fires, turrets, objectives, Tacview-style cameras and tactical display; [many matches at once](many-matches.md). |
+| ![Insights](assets/img/en/insights.webp) | **[Insights](insights.md)** - strong positions, deadly ground, spawn traps, chokes and standout players, found and ranked with the evidence; a written debrief, optionally by an AI of your choice; a caster for one match; the [knowledge lens](knowledge.md). |
+| ![Volumes](assets/img/en/compare.webp) | **[Volumes](volumes.md)** - draw boxes, prisms, cylinders and spheres, filter to them, count what happens inside, export it, and compare places side by side; [breakdown](breakdown.md) of who and what does best in a place. |
+| ![Filters](assets/img/en/filters.webp) | **[Filters](filters.md)** - by event type, player or AI, vehicle class, value, any column, in the graphics card at any data size. |
+| ![Level](assets/img/en/level-panel.webp) | **[Levels](levels.md)** - map images, 3D levels made with the [data tools](#related-repositories), simplification, the [world backdrop](world-backdrop.md) with real terrain for flight data. |
+
+Also: the [Race analysis](race-analysis.md) tab for laps of racing games, the [Match](match-analysis.md) tab for Counter-Strike 2 summaries, the [Tactics board](tactics-board.md) for plans on a level, [hit analysis](hit-analysis.md) per vehicle, [mass analysis](mass-analysis.md) of thousands of matches, [camera paths and video](camera-path-and-video.md), [40 languages](languages.md), [metric or imperial units](settings.md).
 
 ## The tabs
 
-The tabs sit at the top of the sidebar, under the name and the language menu.
+The tabs sit at the top of the sidebar, under the name, the units and the language menu.
 
-| Tab | What it is for | Documentation |
-|---|---|---|
-| **Heatmap** | Any positional table: heat, difference, team heat, line heat and box replay over a timeline, with filters, levels, slicing, measuring and video rendering. | Most of this site, starting at [Getting data in](getting-data-in.md) |
-| **Race analysis** | Two or more laps of one course: where time is lost, why, and what to change; replay of the cars. Shares the canvas, camera and level with the heatmap and nothing else. | [Race analysis](race-analysis.md), the method in [Race analytics](race-analytics.md), other games in [Other racing games](other-games.md) |
-| **Match** | Counter-Strike 2 match summaries: scoreboards, rounds, economy; each linked to the heatmap through its filters. | [Match analysis](match-analysis.md) |
-| **Tactics** | Plans on a level: figures, routes, thrown utility, areas and notes in steps that play; for CS2, Valorant, Battlefield, Squad, Arma and the flight and vehicle games. | [Tactics board](tactics-board.md) |
-
-The three tabs share one canvas and one camera. The Heatmap and Match tabs also share the dataset, the view mode, the [filters](filters.md) and the [level](levels.md).
+| Tab | What it is for |
+|---|---|
+| **Heatmap** | Any positional table: the heat modes, the figure overlay, filters, volumes, insights, levels, measuring and video. |
+| **Race analysis** | Two or more laps of one course: where time is lost, why, and what to change. |
+| **Match** | The figure replay of a match, and Counter-Strike 2 match summaries. |
+| **Tactics** | Plans on a level: figures, routes, thrown utility, areas and notes in steps that play. |
+| **Vehicles** | Where each unit was hit, by whom and with what. |
 
 ## Install and run
 
@@ -44,7 +58,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-The `exporters/` folder holds the separate data tools as git submodules, each its own repository; after a plain clone run `git submodule update --init`. The viewer itself does not need them to run. `exporters/ext/` holds the optional replay converters (War Thunder, World of Tanks, World of Warships, Squad), kept apart so that a problem with one of them affects nothing else.
+The `exporters/` folder holds the separate data tools as git submodules, each its own repository; after a plain clone run `git submodule update --init`. The viewer itself does not need them to run. `exporters/ext/` holds the optional converters (War Thunder, World of Tanks, World of Warships, Squad replays; DCS and IL-2 maps), kept apart so that a problem with one of them affects nothing else.
 
 No game data comes with any of it: levels, maps and recordings are made on your own machine with the tools, from games you own.
 
@@ -81,27 +95,35 @@ The server binds to `127.0.0.1` only, so neither route is reachable from the net
 
 ## Documentation map
 
-**Heatmap tab**
+**Start**: [Demo data](demo-data.md) · [Getting data in](getting-data-in.md) ([loading files](loading-files.md), [column mapping](column-mapping.md), [axes, units and time](axes-units-and-time.md), [sessions, persons and groups](sessions-persons-groups.md), [Tacview](tacview-acmi.md), [converters](converters.md), [.3dheat](container.md), [memory and budgets](memory-and-budgets.md))
 
-- [Getting data in](getting-data-in.md) - [loading files](loading-files.md), [converters keep everything](converters.md), [column mapping](column-mapping.md), [axes, units and time](axes-units-and-time.md), [sessions, persons and groups](sessions-persons-groups.md), [the synthetic generator](synthetic-generator.md), [memory and budgets](memory-and-budgets.md)
-- [Heat modes](heat-modes.md) - [heat](heat.md) with [sprite shape](sprite-shape.md), [colour and exposure](colour-and-exposure.md) and [depth and culling](depth-and-culling.md); [difference](difference.md) and its [breakdown](breakdown.md), [team heat](team-heat.md), [line heat](line-heat.md), [box replay](box-replay.md)
-- [Timeline and playback](timeline.md)
-- [Filters and tools](filters-and-tools.md) - [filters](filters.md), [teams list](teams-list.md), [entities](entities.md), [slice](slice.md), [measure](measure.md)
-- [Levels and background geometry](levels.md) - [map images](map-images.md), [3D levels](model-levels.md), [level appearance](level-appearance.md), [level library](level-library.md)
-- [Camera and controls](camera.md) - [gamepad and HOTAS](gamepad.md), [keyboard and mouse reference](keyboard-reference.md)
-- [Camera path and video](camera-path-and-video.md)
-- [Rendering internals](rendering-internals.md) - [backends](backends.md), [accumulation](accumulation.md), [sampling and budgets](sampling-and-budgets.md), [half-float accumulation](half-float-accumulation.md), [GPU memory residency](gpu-memory.md), [software rendering](software-rendering.md), [performance panel and stats](performance-and-stats.md)
-- [Data formats reference](data-formats.md)
+**See**: [Heat modes](heat-modes.md) ([heat](heat.md), [sprite shape](sprite-shape.md), [colour and exposure](colour-and-exposure.md), [depth and culling](depth-and-culling.md), [difference](difference.md), [team heat](team-heat.md), [line heat](line-heat.md), [box replay](box-replay.md), [directional heat](directional-heat.md), [value weighting](value-weighting.md)) · [Timeline](timeline.md) · [Levels](levels.md) ([map images](map-images.md), [3D levels](model-levels.md), [appearance](level-appearance.md), [library](level-library.md), [world backdrop](world-backdrop.md)) · [Camera](camera.md) ([gamepad](gamepad.md), [keys](keyboard-reference.md)) · [Camera path and video](camera-path-and-video.md)
 
-**The other tabs and the viewer as a whole**
+**Analyse**: [Filters and tools](filters-and-tools.md) ([filters](filters.md), [teams](teams-list.md), [entities](entities.md), [slice](slice.md), [measure](measure.md), [volumes](volumes.md), [breakdown](breakdown.md)) · [Insights](insights.md) ([knowledge lens](knowledge.md)) · [Mass analysis](mass-analysis.md)
 
-- [Race analysis](race-analysis.md) and its method, [Race analytics](race-analytics.md); [Other racing games](other-games.md)
-- [Match analysis](match-analysis.md)
-- [The knowledge lens](knowledge.md) - the Insights findings judged through doctrine, operations research, historical battles and game design literature
-- [Languages](languages.md)
-- [Updates](updates.md)
+**Replay**: [Match replay](match-replay.md) · [Many matches at once](many-matches.md) · [Figures](figures.md) · [Figure replay and debrief](figure-replay.md) · [Tacview parity](tacview-parity.md) · [Hit analysis](hit-analysis.md)
 
-The tools that produce data for the viewer - lap recorders, level extractors, the CS2 demo converter, the background watcher - are separate public projects with their own documentation, listed in the repository's [README](https://github.com/Holdi601/3DHeat/blob/main/README.md).
+**Other tabs**: [Race analysis](race-analysis.md) ([the method](race-analytics.md), [other games](other-games.md)) · [Match analysis](match-analysis.md) · [Tactics board](tactics-board.md) ([speeds](tactics-speeds.md))
+
+**The viewer**: [Settings, units and keys](settings.md) · [Languages](languages.md) · [Updates](updates.md) · [Rendering internals](rendering-internals.md) ([backends](backends.md), [accumulation](accumulation.md), [sampling and budgets](sampling-and-budgets.md), [half-float](half-float-accumulation.md), [GPU memory](gpu-memory.md), [software rendering](software-rendering.md), [performance and stats](performance-and-stats.md)) · [Data formats](data-formats.md) · [Reference](reference.md) · [Maintaining the docs](maintaining.md)
+
+## Related repositories
+
+The viewer reads data; these tools make it. Each is its own public repository (MIT) with its own documentation. None of them ships game data: levels, maps and recordings are made on your own machine, from games you own.
+
+| Repository | What it does | Useful for |
+|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Reads courses and levels out of the archives games ship (Forza Horizon, BeamNG, Assetto Corsa Rally; Unreal, Unity, Frostbite and Source 2 readers) as glTF | a 3D level under your heat or replay |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Records lap telemetry from the interfaces racing games publish, and rebuilds levels from gameplay video | laps for Race analysis; a level where no files can be read |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editor plugin that exports a level as one glTF file | levels of your own Unreal projects |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 demos into heatmap tables and match summaries, CS2 maps into geometry | CS2 heat, replays and the Match tab |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Records your play in the background from what games publish: telemetry, game-state integrations, logs, replays | your own statistics without doing anything by hand |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder replays (`.wrpl`) to tables: air and ground tracks, shots, hits, kills, turrets, objectives | War Thunder replays, hit marks and insights |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks replays to tables: every vehicle's position, deaths and kills | World of Tanks heat and replays |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships replays to tables: every ship's position and sinkings | World of Warships heat and replays |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad server demos to tables: every player's position, team and squad | Squad heat and replays |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World terrains from your own install to levels: ground, roads, towns, airfields, fields, water | DCS and Tacview recordings on their real terrain |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles maps into levels | IL-2 recordings on their map |
 
 ## Source layout, briefly
 

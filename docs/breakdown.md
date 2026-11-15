@@ -1,9 +1,29 @@
+---
+title: Breakdown
+parent: Filters and tools
+nav_order: 7
+---
+
 # Breakdown: who and what does best where
 
 The breakdown ranks what happens in one place - a picked spot, the view, a
 volume or everything shown - by any category, and measures every state
-factor with against without. Open it from **Difference** (the Split panel),
-from a picked point (**Breakdown here**) or from the Volumes panel.
+factor with against without.
+
+![The Breakdown window ranking the vehicles by kills per death](assets/img/en/breakdown.webp)
+
+## Open it
+
+| From | Region it starts with |
+| --- | --- |
+| **Breakdown…** in [Volumes](volumes.md) (Statistics) | the selected volume |
+| **Breakdown here** on the pick card, after clicking a point | a sphere round that point (**Radius**, default 3% of the data's size) |
+| the **Difference** split panel | the view |
+
+The header switches the region: **Spot**, **View** (what the camera saw at the
+last count; **Count again** after moving), **Volume** (pick one) or **All**.
+It counts in the background; the status line says how many rows are in the
+region.
 
 ## Ranking
 
@@ -40,6 +60,10 @@ gear) or it is a death (whose weapon column may name the killer's weapon);
 then it is what the same person last carried earlier in the match.
 
 ## Factors: with against without
+
+Switch from **Ranking** to **Factors**, pick **Effect on**, and read *Helps most* and *Hurts most*:
+
+![Factors: having a helmet against not having one, and the utility carried, with their effect on kills per death](assets/img/en/breakdown-factors.webp)
 
 Each factor's effect on K/D, rounds won, survival (minutes per death), kills
 a minute and net money a minute, with a 95% interval: ratios as ×, rounds

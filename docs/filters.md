@@ -8,6 +8,23 @@ nav_order: 1
 
 The **Filters** panel lists every column that was kept under *Keep for filtering* at load ([Column mapping](column-mapping.md)), plus *Source file* when several files were loaded. Each one can restrict the render live. Filters are evaluated per row **in the vertex shader**, so changing a threshold re-filters the whole dataset on the next frame - no re-parse, no re-upload, no rebuilt buffer - at any dataset size.
 
+![The Filters panel with the columns the viewer adds: Event type and Vehicle class first](assets/img/en/filters.webp)
+
+## Columns the viewer adds
+
+On load the viewer works out four columns of its own and lists them **first**, with names and values in your language, so the same filter works for every game and data source:
+
+| Column | Values | Worked out from |
+|---|---|---|
+| **Event type** | 23 kinds: Position, Shot fired, Launch, Hit, Miss, Explosion, Damage, Kill, Death, Destroyed, Crash, Ejection, Spawn, Despawn, Take-off, Landing, Ground contact, Stop on the ground, Rearm / refuel, Capture / objective, Decoy, Message, Other | a column called `event`, `events`, `event_type` or `event_name`; each game's own words (`shot`, `burst`, `fired`, `struck`, `flare`, `plant` ...) are mapped to these kinds. The full table: [Event types and classes](ref-event-types.md). |
+| **Player or AI** | Player, AI | a column `ai`, `is_ai`, `bot` or `actor`; else `is_player` / `human`; else an account id (`user_id`, `steam_id`; empty or 0 is AI); for Tacview recordings, whether the object has a pilot |
+| **Vehicle class** | 17 classes: Fighter, Attack aircraft, Bomber, Other aircraft, Helicopter, Tank, Armoured vehicle, Air defence, Artillery, Truck / car, Ship, Submarine, Infantry, Weapon, Decoy, Structure, Other | the vehicle or unit name (matched against the [figure catalogue](figures.md)) and type columns |
+| **Target class** | the same classes | the other party's vehicle (`other_vehicle`, `target_vehicle`, `victim_type` ...) |
+
+Only the kinds that occur are listed. Value columns (`cost_*`, `earn_*`, `net_*` and *Cost source*, see [Value weighting](value-weighting.md)) are filterable like any number column: for example untick *estimate* under *Cost source* to keep only priced rows.
+
+A category list with more than 12 values gets a search box (*Search n values*) and an **Only these** button that allows exactly the values that match.
+
 Which columns can be filtered is decided at load time, because they have to be read then. With no retained column the panel says so and points at *Keep for filtering*.
 
 ## Numeric columns (range)
@@ -17,7 +34,7 @@ Which columns can be filtered is decided at load time, because they have to be r
 | Name, and `min … max` | The column, and the current range (the column's full range while no filter is set). |
 | First row: number box and slider | The lower bound. Dragging the slider above the upper bound pushes the upper bound with it. |
 | Second row: number box and slider | The upper bound. Dragging below the lower bound pushes it too. |
-| **Reset column** | Removes this filter. |
+| **Reset *column*** | Removes this filter. |
 
 The sliders cover the column's minimum to maximum in 1,000 steps; the number boxes accept any value. A row passes when its value lies within the range, both ends included. Large values are shown in exponent form (`1.23e6`).
 

@@ -1,5 +1,6 @@
 ---
-title: Hit analysis
+title: Hit analysis (Vehicles tab)
+nav_order: 64
 ---
 
 # Hit analysis

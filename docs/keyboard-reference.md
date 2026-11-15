@@ -38,16 +38,17 @@ From [`App.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/App.tsx).
 | `C` | Copy the camera's position, yaw and pitch ([camera readout](camera.md#camera-readout)) |
 | `G` | Go to a typed point: opens the box under the camera readout |
 | `Esc` | Close the pick card |
+| `T` | Tactical display look on or off ([Match replay](match-replay.md#display-style)) |
+| `?` / `F1` | Help mode: what the colours mean ([Settings, units and keys](settings.md#help-mode)) |
 | `1` | [Heat](heat.md) |
 | `2` | [Difference](difference.md) |
 | `3` | [Team heat](team-heat.md) |
-| `4` | [Box replay](box-replay.md) |
-| `5` | [Lines](line-heat.md) |
+| `4` | [Lines](line-heat.md) |
 | `]` | Far cull bound out ×1.12 (`Shift`: ×1.35) |
 | `[` | Far cull bound in ÷1.12 (`Shift`: ÷1.35) |
 | `\` | Far cull bound off / back on where it was ([Depth and culling](depth-and-culling.md#keyboard)) |
 
-The number keys go through the same check as the mode bar: a key for a mode the bar shows as unavailable for the loaded data does nothing.
+The **Figure overlay** mode has no number key; pick it in the mode bar or open the Match tab. The number keys go through the same check as the mode bar: a key for a mode the bar shows as unavailable for the loaded data does nothing.
 
 ## Match replay
 
@@ -61,7 +62,9 @@ In box replay and the Match tab's figure replay ([Figure replay](figure-replay.m
 | `H` | Head-up display in the cockpit and padlock views |
 | `Page Down` / `Page Up` | Next / previous event of the kinds the event list shows |
 | `.` / `,` | A second on / back, paused (`Shift`: ten seconds) |
-| `Esc` | Stop following |
+| `Esc` | Stop looking at the target first, then stop following |
+| `Ctrl`/`Alt`+click a unit | Look at it from the followed unit (the two-unit view) |
+| Shift+click two units | Measure between them: bearing, range, height difference |
 
 ## Click-to-pick
 
@@ -92,6 +95,10 @@ With **Ruler active** ([Measure](measure.md)):
 ## Race analysis tab
 
 In the Race analysis tab `K` plays and pauses the race replay, `Home` rewinds it, and the number keys do nothing. See [Race analysis](race-analysis.md).
+
+## Keys the viewer keeps from the browser
+
+Some browser shortcuts would close or reload the page and lose a loaded session; the viewer keeps them for itself. The list is generated from the code: [Browser keys](ref-browser-keys.md).
 
 ## Gamepad
 

@@ -1,5 +1,7 @@
 ---
 title: The knowledge lens
+parent: Insights
+nav_order: 1
 ---
 
 # The knowledge lens

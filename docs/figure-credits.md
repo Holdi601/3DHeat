@@ -1,3 +1,9 @@
+---
+title: Figure credits
+parent: Figures
+nav_order: 1
+---
+
 # Figure credits
 
 Some figure outlines were measured on drawings published under CC BY; their authors are credited here. Every source used is listed in src/figures/specs/sources.md.

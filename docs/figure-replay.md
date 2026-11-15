@@ -18,16 +18,9 @@ What a person is comes from the data's own columns:
 
 The match is cached per label, so a frame costs only the placing. A data unit is a metre unless the data says how big one tracked thing is (the CS2 export says a player is 32 units across); figures are scaled to match.
 
-### A local figure pack
+### An optional local figure pack
 
-Figures that may not be published (for example ones prepared on your own machine from material you may use but not share) can live in a local figure pack: one JSON file, `{ "version": 1, "figures": { "<figure name>": <mesh figure>, ... } }`, in the format of the mesh figures in `src/figures/meshes` (each with its hull, a turret that turns about its ring and a gun that raises about its trunnion, and its own coarse and far builds). While the viewer finds a pack, its figures replace the catalogue's of the same names; without one, nothing changes. Where one catalogue figure stands for game units of different shapes, the pack can carry a figure per unit: a `"units": { "<unit id>": "<figure>@<variant>" }` map draws those units as the variant figures `<figure>@<variant>` of the pack, which join the catalogue as kin of `<figure>` (same domain and class) while the pack is installed.
-
-The dev server (`npm run dev`) and the preview server (`npm run preview`) hand the pack to the page. Tell them where it is in either of two ways:
-
-- the environment variable `HEAT3D_FIGURE_PACK` set to the file's full path before starting the server, or
-- a `"figurePack": "<full path>"` entry in `tools/local-data.json` (git-ignored).
-
-The page never downloads the whole file. The server hands it a small index (each figure's name and a tag of its content, and the units), and the figures themselves one at a time, only those of the vehicles a loaded recording shows, each when it is first built: binary and compressed (about a fiftieth of the pack file for a recording's few dozen vehicles), at an address that changes with the figure, so the browser keeps each one and asks again only after it changed. The server reads the file again when it changes, so a changed pack shows after a reload. A build served any other way has no pack. Keep the pack outside the repository: `local-pack/`, `figure-pack*.json` and `*.figpack.json` are git-ignored, and a test fails if a pack or a figure from one is ever tracked.
+The catalogue's figures can be replaced on your own machine by an optional local figure pack: a file kept outside the repository that the dev and preview servers hand to the page, whose figures take the place of catalogue figures of the same names while it is present. Without one, nothing changes; a published build never has one. See [Figures](figures.md#an-optional-local-figure-pack).
 
 ## Effects
 

@@ -5,13 +5,13 @@ This repository holds two projects under two licences, kept apart on purpose:
 | Part | Licence | Where |
 |---|---|---|
 | **The viewer** (`src/`, `tools/`, `datasources/`, everything not under `exporters/`) | **Proprietary, all rights reserved.** No licence is granted. | this repository |
-| **The extractors** (`exporters/`: game files, game capture and the telemetry recorders, the Unreal exporter) | **MIT** — free and open source | their own public repository, [3DHeat-Extractors](https://github.com/Holdi601/3DHeat-Extractors), pinned here as a git submodule |
+| **The tools** (`exporters/`: game files, game capture, the Unreal exporter, the CS2 converter, the watcher, and the optional converters under `exporters/ext/`) | **MIT** — free and open source | each in its own public repository (3DHeat-GameFiles, -GameCapture, -UnrealExporter, -CS2, -Watcher, -Ext-*), pinned here as git submodules; see the [README](README.md#related-repositories) |
 
 The extractors are free so that anyone can get their courses, levels and laps
 out of a game whether or not they use the viewer; the viewer is what is sold.
-The extractors' own third-party components, model licences and the obligations
-of reading game files are recorded in [`exporters/LICENSES.md`](exporters/LICENSES.md), which
-travels with them.
+Each tool's own third-party components, model licences and the obligations
+of reading game files are recorded in the `LICENSES.md` of its repository, which
+travels with it.
 
 Every licence below was read off the package metadata in September 2026, not
 recalled. Where a component's terms changed after that, the source is what
