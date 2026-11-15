@@ -6,6 +6,19 @@ nav_order: 1
 
 # The knowledge lens
 
+When [Insights](insights.md) finds something, this part explains it with ideas from military history, game design and sport analysis, and names the book or paper it comes from. Use it to learn *why* a pattern matters, not only that it exists.
+
+## Try it
+
+1. Load data and open **Insights**, then press **Find insights**.
+2. Click a finding to open it.
+3. Read **Doctrine and literature** and **Historical parallel**; the full references are folded underneath.
+4. Change **Lens** (for example to *Military doctrine*) to read the same finding through another body of literature.
+
+![An opened finding with its matching passage from the literature](assets/img/en/insights-finding.webp)
+
+## How it works
+
 The Insights panel judges its findings the way a professional analyst would: through military doctrine and operations research, historical engagements, and the game design, level design and analytics literature. It does this offline, from a curated knowledge base in the viewer, and hands the same material to an external model when one writes the debrief.
 
 ## What the panel shows
@@ -30,7 +43,7 @@ Computed in the insight worker, in the same pass over the rows as the detectors 
 | Fields of fire | Viewsheds of the busiest kill places on a 2.5D obstruction surface (level geometry up to wall height, or the ground walked) against the average place, and the rank correlation of view and kill share | positions; a loaded level makes it sharper; not for air |
 | Energy state | Specific energy (height plus the height speed could buy) of air killers and air victims, compared by the Mann-Whitney statistic | aircraft classes, time, altitude |
 | Key terrain | How often each place is among a match's three busiest kill places | several matches |
-| Trades | Deaths answered by a teammate's kill within the engagement range and 5 s | time, teams |
+| Mutual support (trades) | Deaths answered by a teammate's kill within the engagement range and 5 s | time, teams |
 | First strike | Engagements - kills grouped by match, by 20 s of quiet and by three engagement ranges of distance - won by the side that scored first | time, teams |
 | Salvo model | Hughes' salvo equation fitted to 20 s periods of ships in contact: ships put out of action per attacking ship, and saved per defending ship; a Lanchester fit on ships alone | ship classes, time, teams |
 | Combat effectiveness | Kills per unit-hour in action of each side and the ratio of the two largest (a combat effectiveness value in Dupuy's sense) with its 95% interval, and each side's share of kills at even local numbers | time, teams |
@@ -45,21 +58,13 @@ Weapons, decoys and buildings are not counted as units. Where weapon rows name t
 
 Entries and findings meet through a **pattern taxonomy** (`src/insights/knowledge/patterns.ts`): concentration, local superiority, aimed and area fire, chokepoints, kill zones, fields of fire, reverse slope, flanking, mutual support, energy advantage, spawn pressure, balance and so on. Each detector kind and each lens metric says which patterns its numbers show (`src/insights/lens.ts`); each knowledge entry says which patterns it speaks to, with a weight. The relevance of an entry to a finding is the weighted overlap, scaled by how well the entry's domain (land, air, sea, urban) fits the data and by the finding's own strength. The rationale shown is the finding's numbers in a sentence followed by the entry's lesson.
 
-## Adding entries
-
-1. Pick the file by type: `concepts.ts`, `methods.ts`, `cases.ts`, `design.ts` (design principles and studies) in `src/insights/knowledge/`.
-2. Give it a new id `<type>.<slug>` (never reuse one), its lenses, domains, and the patterns it speaks to with weights 0..1. Add a pattern to `patterns.ts` only when a finding can show it, and map it from a finding or metric in `lens.ts`.
-3. Write the summary and the lesson **in your own words**. Quotes only from public-domain works (`pd: true` in the reference), and short.
-4. Cite: add any new work to `refs.ts` with authors, year, title and publisher (journal with volume and pages); a URL or DOI where there is a public record.
-5. Run `npx vitest run src/insights/lens.test.ts` (unique ids, known patterns, resolving references, public-domain quotes, cases with date and outcome) and `node tools/knowledge-doc.mjs` to refresh the catalogue below.
-
 ## Catalogue
 
 <!-- kb:begin -->
 
-The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical cases, 16 design principles, 86 studies) over 46 patterns, citing 444 references.
+The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical cases, 16 design principles, 86 studies) over 64 patterns, citing 443 references.
 
-### Patterns (46)
+### Patterns (64)
 
 | id | family | what it looks like in the data |
 |---|---|---|
@@ -109,6 +114,24 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `flow` | design | How players move through the level: loops, lanes, dead ends. |
 | `sightlines` | design | Long lines of sight decide where fights start and who wins them. |
 | `readability` | design | Deaths players cannot see coming: from behind, from out of sight. |
+| `formation` | movement | Units of a side move together in a recognisable shape: line, column, wedge, echelon, box. |
+| `frontal-assault` | movement | A group closes on the enemy straight into the face of its front. |
+| `double-envelopment` | movement | Two groups strike both flanks of one enemy body at about the same time. |
+| `encirclement` | movement | An enemy group ends up with the other side all round it and few ways out. |
+| `penetration` | movement | A group passes through the enemy line where enemies stand on both sides of it. |
+| `fire-and-maneuver` | movement | Part of a group moves while the rest stands and covers it, and the roles alternate. |
+| `feint` | movement | A small group draws the enemy to one place; the main effort strikes elsewhere soon after. |
+| `withdrawal` | movement | A group in contact turns away and opens the distance to the enemy. |
+| `pursuit` | movement | A group follows an enemy that is moving away, keeping or closing the distance. |
+| `defence-in-depth` | terrain | Defenders stand in several belts one behind the other along the enemy's axis of advance. |
+| `screening` | movement | A small element moves well ahead of its main body and meets the enemy first. |
+| `dispersion` | force | A side spreads out over time; fewer of its units share one place. |
+| `missile-defence` | air | Aircraft under missile threat turn the threat to the side or the tail: crank, notch, drag, pump. |
+| `angles-fight` | air | Close-range dogfight at low speed and high turn rate, fought for nose position rather than energy. |
+| `cap` | air | Aircraft orbit a fixed station for minutes, waiting for the enemy to come. |
+| `strike-package` | air | Aircraft of different roles fly together to a target; some attack the ground, others cover them. |
+| `line-of-battle` | sea | Ships steam in column one behind another so that all broadsides bear. |
+| `crossing-the-t` | sea | A column passes across the head of the enemy's column: all of its guns bear, few of the enemy's. |
 
 ### Concepts (81)
 
@@ -494,7 +517,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `case.evo-moment-37` | Evo Moment 37 | Aug 2004 | engagement | tempo, initiative, readability | ESPN 2016 |
 | `case.bisu-revolution` | The Bisu revolution | Mar 2007 | battle | balance, class-counter, mobility | Team Liquid (Hot_Bid) 2007; Taylor 2012 |
 | `case.dream-coil-ti3` | The Dream Coil at The International 2013 | Aug 2013 | engagement | interior-lines, defeat-in-detail, tempo, initiative | PC Gamer 2013 |
-| `case.faker-zed-2013` | Faker's Zed against Ryu | Aug 2013 | engagement | skill-dispersion, initiative, readability | Riot Games 2013 |
+| `case.faker-zed-2013` | Faker's Zed against Ryu | Sep 2013 | engagement | skill-dispersion, initiative, readability | Riot Games 2013 |
 | `case.olofboost` | The Overpass boost | Nov 2014 | engagement | sightlines, readability, balance, fields-of-fire | GameSpot 2014 |
 | `case.coldzera-jump` | The jumping AWP on Mirage | Apr 2016 | engagement | surprise, skill-dispersion, chokepoint, local-superiority | PC Gamer 2016 |
 | `case.astralis-2018` | Astralis and the utility era | 2018 | campaign | combined-arms, mutual-support, kill-zone | Upcomer 2018 |
@@ -542,7 +565,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `study.willard-1962` | Willard: Lanchester against three centuries of land battles | Willard 1962; Fain 1977 |
 | `study.fain-1977` | Fain: sixty Second World War engagements | Fain 1977; Willard 1962 |
 | `study.weiss-1966` | Weiss: combat models and the US Civil War | Weiss 1966 |
-| `study.hartley-1995-attrition` | Hartley: a statistical model of attrition data | Hartley 1995; Hartley 2001 |
+| `study.hartley-1995-attrition` | Hartley: a statistical model of attrition data | Hartley 1995 |
 | `study.helmbold-1995` | Helmbold: rates of advance in land combat | Helmbold 1995 |
 | `study.lucas-dinges-2004` | Lucas and Dinges: circumstances matter more than the law | Lucas & Dinges 2004; Lucas & Turkes 2004 |
 | `study.kursk-data-base` | The Kursk Data Base | Lawrence 2015; Lucas & Dinges 2004; Lucas & Turkes 2004 |
@@ -738,7 +761,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Fisher, P. F. (1993). Algorithm and implementation uncertainty in viewshed analysis. International Journal of Geographical Information Systems 7(4): 331-347.
 - Fontenot, G.; Degen, E. J.; Tohn, D. (2004). On Point: The United States Army in Operation Iraqi Freedom. Combat Studies Institute Press, Fort Leavenworth. *(public domain)*
 - Forty, G. (2004). Villers Bocage (Battle Zone Normandy). Sutton, Stroud.
-- Fox, A. C. (2019). "Cyborgs at Little Stalingrad": A Brief History of the Battles of the Donetsk Airport (Land Warfare Paper 125). Association of the United States Army, Institute of Land Warfare, Arlington.
+- Fox, A. C. (2019). "Cyborgs at Little Stalingrad": A Brief History of the Battles of the Donetsk Airport, 26 May 2014 to 21 January 2015 (Land Warfare Paper). Association of the United States Army, Institute of Land Warfare, Arlington.
 - Fox, A. C.; Rossow, A. J. (2017). Making Sense of Russian Hybrid Warfare: A Brief Assessment of the Russo-Ukrainian War (Land Warfare Paper 112). Association of the United States Army, Institute of Land Warfare, Arlington.
 - Frank, R. B. (1990). Guadalcanal: The Definitive Account of the Landmark Battle. Random House, New York.
 - Franks, A.; Miller, A.; Bornn, L.; Goldsberry, K. (2015). Characterizing the spatial structure of defensive skill in professional basketball. Annals of Applied Statistics 9(1): 94-121.
@@ -780,7 +803,6 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Hardesty, V. (1982). Red Phoenix: The Rise of Soviet Air Power, 1941-1945. Smithsonian Institution Press, Washington DC.
 - Hardesty, V.; Grinberg, I. (2012). Red Phoenix Rising: The Soviet Air Force in World War II. University Press of Kansas, Lawrence.
 - Hartley, D. S. (1995). A mathematical model of attrition data. Naval Research Logistics 42(4): 585-607.
-- Hartley, D. S. (2001). Predicting Combat Effects. INFORMS / Military Applications Society, Linthicum MD.
 - Hartley, D. S.; Helmbold, R. L. (1995). Validating Lanchester's square law and other attrition models. Naval Research Logistics 42(4): 609-633.
 - Hastings, M. (1984). Overlord: D-Day and the Battle for Normandy. Michael Joseph, London.
 - Hastings, M.; Jenkins, S. (1983). The Battle for the Falklands. Michael Joseph, London.
@@ -1061,3 +1083,13 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Zuehlke, M. (1999). Ortona: Canada's Epic World War II Battle. Stoddart, Toronto.
 
 <!-- kb:end -->
+
+## For developers
+
+### Adding entries
+
+1. Pick the file by type: `concepts.ts` and `concepts-more.ts`, `methods.ts`, `cases.ts`, `cases-land.ts`, `cases-air-sea.ts`, `cases-esports.ts`, `design.ts` (design principles) or `studies.ts` in `src/insights/knowledge/`.
+2. Give it a new id `<type>.<slug>` (never reuse one), its lenses, domains, and the patterns it speaks to with weights 0..1. Add a pattern to `patterns.ts` only when a finding can show it, and map it from a finding or metric in `lens.ts`.
+3. Write the summary and the lesson **in your own words**. Quotes only from public-domain works (`pd: true` in the reference), and short.
+4. Cite: add any new work to `refs.ts` with authors, year, title and publisher (journal with volume and pages); a URL or DOI where there is a public record.
+5. Run `npx vitest run src/insights/lens.test.ts` (unique ids, known patterns, resolving references, public-domain quotes, cases with date and outcome) and `node tools/knowledge-doc.mjs` to refresh the catalogue above.

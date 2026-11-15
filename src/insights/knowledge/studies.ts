@@ -50,9 +50,9 @@ export const STUDIES: KbEntry[] = [
     lenses: ['military'],
     domains: ['land'],
     patterns: { attrition: 1, 'exchange-ratio': 0.4 },
-    summary: 'Hartley fitted an empirical model to a large collection of historical engagements as an alternative to assuming any single Lanchester law, and later developed it into a broader account of predicting combat effects.',
+    summary: 'Hartley fitted an empirical model to a large collection of historical engagements as an alternative to assuming any single Lanchester law, and compared it with the classic laws.',
     lesson: 'An empirical attrition relation fitted to many fights is more trustworthy than a textbook law applied to one.',
-    refs: ['hartley-1995', 'hartley-2001'],
+    refs: ['hartley-1995'],
     see: ['study.hartley-helmbold-1995'],
   }),
   s({

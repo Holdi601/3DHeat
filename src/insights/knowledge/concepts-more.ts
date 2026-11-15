@@ -97,7 +97,7 @@ export const CONCEPTS_MORE: KbEntry[] = [
     lenses: ['military', 'esports'],
     domains: ['any'],
     patterns: { tempo: 0.8, initiative: 0.7, 'mutual-support': 0.4 },
-    summary: 'Commanders state intent and leave subordinates free to choose how, so that the force can act on opportunities faster than orders could travel. Historians link the German tradition of it to high fighting power per soldier.',
+    summary: 'Commanders state intent and leave subordinates free to choose how, so that the force can act on opportunities faster than orders could travel. Historians tie it to the reputation of the German army for high fighting power per soldier, though some (Citino) stress that subordinate independence worked alongside, not instead of, firm operational direction.',
     predicts: 'Faster local reactions: fights started and finished on initiative, without waiting for the whole team.',
     measure: 'Lens metrics killChain (time from first contact to kill) and trades (how fast a loss is answered).',
     lesson: 'Short reaction times across the team are decentralised initiative at work.',

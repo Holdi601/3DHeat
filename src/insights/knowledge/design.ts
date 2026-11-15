@@ -223,7 +223,7 @@ export const DESIGN: KbEntry[] = [
     lenses: ['military'],
     domains: ['land'],
     patterns: { attrition: 1, 'aimed-fire': 0.5, 'area-fire': 0.5 },
-    summary: 'Re-fitting the Ardennes data by regression and adding air sorties, Fricker found that neither the linear nor the square law fitted, and proposed a form in which losses depend on own and enemy strength with exponents between the classic laws.',
+    summary: 'Re-fitting the Ardennes data by regression and adding air sorties, Fricker found that neither the linear nor the square law fitted, and proposed an alternative functional form fitted to the data in place of either classic law.',
     lesson: 'Free exponents usually fit better than either pure law: report them rather than forcing a label.',
     refs: ['fricker-1998'],
   }),
