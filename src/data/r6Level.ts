@@ -8,9 +8,10 @@ import type { StoredLevelMeta } from './levelLibrary';
  *
  * The viewer only reads the tool's output: a .glb whose parts are named
  * `ground:r6 <Map> @<world id>` and `structure:r6 <Map> @<world id>` (breakable
- * objects add ` breakable <entity>`). The world id is the replays' `worldid`,
- * which changes when a map is reworked, so a level is offered first for
- * replays of the same version of the map and otherwise for the same map name.
+ * objects add ` breakable <entity>`, the ground plates ` plate`). The world id
+ * is the replays' `worldid`, which changes when a map is reworked, so a level
+ * is offered first for replays of the same version of the map and otherwise
+ * for the same map name.
  */
 
 export interface R6LevelId {
@@ -19,7 +20,7 @@ export interface R6LevelId {
   world: string | null;
 }
 
-const PART = /^(?:ground|structure)\s*:\s*r6 (.+?)(?: @(\d+))?(?: breakable [0-9a-f]+)?$/i;
+const PART = /^(?:ground|structure)\s*:\s*r6 (.+?)(?: @(\d+))?(?: breakable [0-9a-f]+| plate)?$/i;
 const KEY = 'r6siege:';
 
 /** The R6 map a loaded model is, from its part names; null for any other model. */
