@@ -1,14 +1,14 @@
 # Licences and third-party components
 
-This repository holds two projects under two licences, kept apart on purpose:
+The viewer and its tools are all free and open source under the MIT licence:
 
 | Part | Licence | Where |
 |---|---|---|
-| **The viewer** (`src/`, `tools/`, `datasources/`, everything not under `exporters/`) | **Proprietary, all rights reserved.** No licence is granted. | this repository |
+| **The viewer** (`src/`, `tools/`, `datasources/`, everything not under `exporters/`) | **MIT** — free and open source, see [LICENSE](LICENSE) | this repository |
 | **The tools** (`exporters/`: game files, game capture, the Unreal exporter, the CS2 converter, the watcher, and the optional converters under `exporters/ext/`) | **MIT** — free and open source | each in its own public repository (3DHeat-GameFiles, -GameCapture, -UnrealExporter, -CS2, -Watcher, -Ext-*), pinned here as git submodules; see the [README](README.md#related-repositories) |
 
-The extractors are free so that anyone can get their courses, levels and laps
-out of a game whether or not they use the viewer; the viewer is what is sold.
+The tools are separate repositories so that anyone can get their courses,
+levels and laps out of a game whether or not they use the viewer.
 Each tool's own third-party components, model licences and the obligations
 of reading game files are recorded in the `LICENSES.md` of its repository, which
 travels with it.

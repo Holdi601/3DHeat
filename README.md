@@ -73,4 +73,4 @@ Optional converters, under `exporters/ext/`, kept apart so a problem with one af
 
 ## Licence
 
-The viewer (everything outside `exporters/`) is proprietary, all rights reserved; its source is public to read. The tools are MIT. Details and every third-party component: [LICENSES.md](LICENSES.md).
+3DHeat and all its tools are MIT licensed ([LICENSE](LICENSE)). Every third-party component and its licence: [LICENSES.md](LICENSES.md).
