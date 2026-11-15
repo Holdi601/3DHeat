@@ -37,7 +37,7 @@ node tools/3dheat-summarize.mjs <folder>... [--jobs N] [--force] [--no-write] [-
 Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder at a time, for the many-match overlay: one Parquet file per recording, the folder tree kept, so a map or a scenario loads as one folder.
 
 ```
-node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
+node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--server Name] [--rounds file.json ...] [--force] [--loose]
 ```
 
 ## For developers and the docs {#for-developers-and-the-docs}

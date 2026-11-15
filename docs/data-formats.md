@@ -91,7 +91,7 @@ A Parquet `TIMESTAMP` column kept as a filter column is a *range* of epoch milli
 
 ## Outcome columns
 
-Who won, on every row, so a place, a route or a play can be judged by how often its side went on to win ([Win rate](win-rate.md)). The viewer keeps these columns by itself, lists them first in the [filters](filters.md) in the viewer's language, and reads them in the [win-rate map](win-rate.md), the [breakdown](breakdown.md) and the [volume statistics](volumes.md#statistics). A converter for a round-based game (CS2, Valorant, Rainbow Six Siege) or a match-based one (War Thunder) writes all four:
+Who won, on every row, so a place, a route or a play can be judged by how often its side went on to win ([Win rate](win-rate.md)). The viewer keeps these columns by itself, lists them first in the [filters](filters.md) in the viewer's language, and reads them in the [win-rate map](win-rate.md), the [breakdown](breakdown.md) and the [volume statistics](volumes.md#statistics). A converter for a round-based game (CS2, Valorant, Rainbow Six Siege) or a match-based one (War Thunder) writes all four; the Tacview converter writes them for a DCS server's campaigns where a rounds file says who won ([DCS servers](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Column | Type | Meaning |
 |---|---|---|
@@ -113,7 +113,7 @@ The end reasons, shared by every game so one filter works on all (a game's own w
 | `surrender` | a side gave up | CS2, Valorant, Rainbow Six Siege |
 | `draw` | no winner | CS2 |
 | `objective` | an objective taken or held (hostage extracted, area secured) | Rainbow Six Siege |
-| `capture` | bled out of tickets while the winner held capture zones | War Thunder |
+| `capture` | bled out of tickets while the winner held capture zones; DCS: a persistent campaign won by taking every airfield and zone | War Thunder, DCS |
 | `tickets` | tickets lost to kills | War Thunder |
 | `destruction` | the last vehicles lost at once, no one left to spawn | War Thunder |
 | `other` | anything else | |

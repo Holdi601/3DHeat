@@ -12,7 +12,7 @@ Where a player stands, which way they go, where they throw their utility - and h
 
 *The picture is made-up data: three routes on an empty level, 68%, 50% and 33% of their rows in won rounds.*
 
-It needs data that says who won: the [outcome columns](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). The CS2 and War Thunder converters write them; any file can.
+It needs data that says who won: the [outcome columns](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). The CS2 and War Thunder converters write them, the Tacview converter for a DCS server's campaigns ([DCS servers](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); any file can.
 
 ## Try it
 
