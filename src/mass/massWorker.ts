@@ -20,6 +20,7 @@ import {
 } from './store';
 import type { SummarizeRequest, SummarizeResponse } from './summarizeWorker';
 import { GRID_KINDS, SUMMARY_FORMAT, SUMMARY_VERSION, type MatchSummary, type SummaryGrid, type SummaryHead } from './types';
+import { maneuverRows } from './maneuvers';
 
 export type MassQuery =
   | { kind: 'overview' }
@@ -27,6 +28,7 @@ export type MassQuery =
   | { kind: 'trends'; by: 'vehicle' | 'class'; bucket: Bucket }
   | { kind: 'populations' }
   | { kind: 'sides' }
+  | { kind: 'maneuvers' }
   | { kind: 'phases' };
 
 export type MassRequest =
@@ -433,6 +435,7 @@ ctx.onmessage = async (ev: MessageEvent<MassRequest>) => {
         : q.kind === 'trends' ? trends(store, mask, q.by, q.bucket)
         : q.kind === 'populations' ? populations(store, mask)
         : q.kind === 'sides' ? sides(store, mask)
+        : q.kind === 'maneuvers' ? maneuverRows(store, mask)
         : phases(store, mask);
       return post({ type: 'result', id: m.id, data, ms: performance.now() - t0 });
     }

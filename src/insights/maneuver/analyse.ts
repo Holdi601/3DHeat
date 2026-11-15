@@ -87,7 +87,7 @@ export function analyseMatch(m: MatchTracks, now: () => number = () => performan
     .slice(0, 60);
   const range: ManeuverMatch['range'] = {};
   for (let d = 0; d < DOMAINS.length; d++) if (Array.from(f.dom).some((x) => x === d)) range[DOMAINS[d]] = Math.round(ctx.R[d]);
-  return { session: m.session, duration: Math.round(f.duration), range, step: f.step, groups, maneuvers: kept, ms: Math.round(now() - t0), timings };
+  return { session: m.session, start: m.t0, duration: Math.round(f.duration), range, step: f.step, groups, maneuvers: kept, ms: Math.round(now() - t0), timings };
 }
 
 /** Finds of one kind by one side that overlap in time and place: the most confident stands for them. */

@@ -9,6 +9,7 @@ import { GRID_KINDS } from '../../mass/types';
 import { Check, Section, Segmented } from '../controls';
 import { useEngine } from '../EngineContext';
 import { NichesTab, PlacesTab, sayMass } from './MassPlaces';
+import { MassManeuvers } from './MassManeuvers';
 import '../compare/compare.css';
 import '../breakdown/breakdown.css';
 import './mass.css';
@@ -87,7 +88,7 @@ function MassBody() {
   const setFilter = (p: Partial<typeof filter>) => st.set({ filter: { ...filter, ...p } });
   const one = (l?: string[]) => l?.[0] ?? '';
   const maps = f.maps.filter((m) => !filter.games?.length || filter.games.includes(m.game));
-  const tabs: MassTab[] = ['overview', 'balance', 'trends', 'players', 'sides', 'map', 'insights', 'places', 'niches'];
+  const tabs: MassTab[] = ['overview', 'balance', 'trends', 'players', 'sides', 'maneuvers', 'map', 'insights', 'places', 'niches'];
   // The window's frame first, its date fields and tab a frame later: one frame for all of it ran long.
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -140,7 +141,7 @@ function MassBody() {
             </label>
           </>
         )}
-        <Segmented<MassTab> value={st.tab} options={tabs.map((v) => ({ value: v, label: t(`mass.tab.${v}`) }))} onChange={(tab) => st.set({ tab })} />
+        <Segmented<MassTab> value={st.tab} options={tabs.map((v) => ({ value: v, label: v === 'maneuvers' ? t('maneuver.tab') : t(`mass.tab.${v}`) }))} onChange={(tab) => st.set({ tab })} />
         <span className="cmp-status">
           {st.drilling ? t('mass.drilling') : st.progress ? t(`mass.phase.${st.progress.phase}`, { done: st.progress.done, total: st.progress.total }) : ''}
         </span>
@@ -155,6 +156,7 @@ function MassBody() {
           {st.tab === 'trends' && <TrendsTab />}
           {st.tab === 'players' && <PlayersTab />}
           {st.tab === 'sides' && <SidesTab />}
+          {st.tab === 'maneuvers' && <MassManeuvers />}
           {st.tab === 'map' && <MapTab />}
           {st.tab === 'insights' && <InsightsTab />}
           {st.tab === 'places' && <PlacesTab />}

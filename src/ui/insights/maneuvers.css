@@ -1,0 +1,82 @@
+/* Maneuvers tab (Maneuvers.tsx): the timeline, the list's markers and the paid-off table. */
+
+.mv-timeline {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 40px;
+  margin: 6px 0;
+  background: var(--panel-2, rgba(127, 127, 127, 0.08));
+  border-radius: 4px;
+}
+
+.mv-tick {
+  stroke: currentColor;
+  stroke-opacity: 0.18;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.mv-tick-label {
+  fill: currentColor;
+  fill-opacity: 0.6;
+  font-size: 10px;
+}
+
+.mv-dot {
+  display: inline-block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+}
+
+.mv-dim {
+  opacity: 0.7;
+}
+
+.mv-paid {
+  padding: 0 4px;
+  border-radius: 3px;
+}
+
+.mv-paid.yes {
+  background: rgba(80, 200, 120, 0.25);
+}
+
+.mv-paid.no {
+  background: rgba(230, 90, 80, 0.25);
+}
+
+.mv-kb ul {
+  margin: 4px 0 0;
+  padding-left: 16px;
+}
+
+.mv-kb li {
+  margin-bottom: 4px;
+}
+
+.mv-table {
+  margin-top: 8px;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  table-layout: fixed;
+}
+
+.mv-table th,
+.mv-table td {
+  padding: 2px 4px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mv-table th:nth-child(n + 3),
+.mv-table td:nth-child(n + 3) {
+  width: 52px;
+  text-align: right;
+}

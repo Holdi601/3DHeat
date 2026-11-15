@@ -8,6 +8,7 @@
 
 import { binomTwoSided, bhAdjust, wilson } from '../insights/stats';
 import { GRID_KINDS, PHASE_BINS, type SummaryHead } from './types';
+import type { ManeuverSection } from '../insights/maneuver/summary';
 
 /** Phases kept per match, by kind (a row of `PHASE_BINS` each). */
 export const PHASE_KINDS = ['kill', 'death', 'hit', 'launch', 'fire', 'spawn', 'capture'] as const;
@@ -113,6 +114,8 @@ export class MassStore {
   events = new Col32(4096);
   /** The matches' file references (paths or ids the worker resolves). */
   readonly paths: string[] = [];
+  /** Per match, its movement analysis' counts (`insights/maneuver/summary.ts`); null where its summary has none. */
+  readonly maneuvers: (ManeuverSection | null)[] = [];
 
   get matches(): number {
     return this.m.game.n;
@@ -151,6 +154,7 @@ export class MassStore {
     M.cur.push(d.id(cur ?? ''));
     M.source.push(this.paths.length);
     this.paths.push(path);
+    this.maneuvers.push(h.maneuvers ?? null);
     const ev = (e: Record<string, number>, ...k: string[]) => k.reduce((s, x) => s + (e[x] ?? 0), 0);
     for (const tm of h.teams) {
       const T = this.t;

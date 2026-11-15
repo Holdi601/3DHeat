@@ -47,6 +47,8 @@ export interface ManeuverRow {
   hi: number | null;
   kills: number;
   losses: number;
+  /** Indices (into the list given) of the matches it was made in. */
+  ids: number[];
 }
 
 export function wilson(k: number, n: number): [number, number] | null {
@@ -76,7 +78,7 @@ export function maneuverTable(list: { map: string | null; mode: string | null; t
       ]) {
         const key = `${kind}\u0001${mp}\u0001${md}\u0001${side}`;
         let r = rows.get(key);
-        if (!r) rows.set(key, (r = { kind, map: mp, mode: md, side, n: 0, matches: 0, of: 0, paid: 0, judged: 0, rate: null, lo: null, hi: null, kills: 0, losses: 0, seen: new Set() }));
+        if (!r) rows.set(key, (r = { kind, map: mp, mode: md, side, n: 0, matches: 0, of: 0, paid: 0, judged: 0, rate: null, lo: null, hi: null, kills: 0, losses: 0, ids: [], seen: new Set() }));
         r.n += n;
         r.paid += paid;
         r.judged += paid + not;
@@ -85,6 +87,7 @@ export function maneuverTable(list: { map: string | null; mode: string | null; t
         if (!r.seen.has(i)) {
           r.seen.add(i);
           r.matches++;
+          r.ids.push(i);
         }
       }
     }

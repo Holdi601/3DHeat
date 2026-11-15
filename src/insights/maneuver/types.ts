@@ -172,6 +172,8 @@ export interface GroupInfo {
 
 export interface ManeuverMatch {
   session: number;
+  /** Data seconds the match's times count from. */
+  start: number;
   duration: number;
   /** Engagement range by domain as measured (world units), the scale everything is judged at. */
   range: Partial<Record<DomainId, number>>;

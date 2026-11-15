@@ -164,7 +164,8 @@ export function scenarios(): Scenario[] {
     const fix = line(0, TANK, -650, [-150, 0, 150]);
     const w = group(0, TANK, way([[0, -3200, -1600], [150, -3200, 0], [330, -500, 0], [600, -500, 0]]), [[0, 0], [-50, 0], [-100, 0]]);
     const e = group(0, TANK, way([[0, 3200, -1600], [150, 3200, 0], [330, 500, 0], [600, 500, 0]]), [[0, 0], [50, 0], [100, 0]]);
-    out.push({ name: 'pincer', tracks: build([...b, ...fix, ...w, ...e], [], 600), planted: ['pincer'], allowed: ['flank', 'formation', 'encirclement', 'concentration'] });
+    const evs = [kill(335, w[0]), kill(338, e[0]), kill(352, w[1])];
+    out.push({ name: 'pincer', tracks: withDeaths(build([...b, ...fix, ...w, ...e], evs, 600), [b[0], b[4], b[1]], [335, 338, 352]), planted: ['pincer'], allowed: ['flank', 'formation', 'encirclement', 'concentration'] });
   }
   // Encirclement: six close in from all round on a group of three and hold the ring.
   {

@@ -20,6 +20,7 @@ import { useStore } from '../../state/store';
 import { currentScope, scopeKey } from '../../volumes/scope';
 import { Section, Segmented } from '../controls';
 import { Caster } from './Caster';
+import { Maneuvers } from './Maneuvers';
 import { parseValueColumn } from '../../data/costs/columns';
 import { valueColumnLabel } from '../panels/ValueSection';
 import { Debrief } from './Debrief';
@@ -27,7 +28,7 @@ import { InsightLens, LensMetricsView, LensPicker } from './LensView';
 import { useEngine } from '../EngineContext';
 import './insights.css';
 
-type Tab = 'findings' | 'debrief' | 'caster';
+type Tab = 'findings' | 'debrief' | 'caster' | 'maneuvers';
 /** Outside the panel: the sidebar is rebuilt when the replay opens, and the tab stays. */
 const useTab = create<{ tab: Tab }>(() => ({ tab: 'findings' }));
 
@@ -46,6 +47,7 @@ export function InsightsPanel() {
           { value: 'findings', label: t('insights.tab.findings') },
           { value: 'debrief', label: t('insights.tab.debrief') },
           { value: 'caster', label: t('insights.tab.caster') },
+          { value: 'maneuvers', label: t('maneuver.tab') },
         ]}
       />
       {/* Kept mounted: opening the panel counts, whichever tab is shown. */}
@@ -54,6 +56,7 @@ export function InsightsPanel() {
       </div>
       {tab === 'debrief' && <DebriefTab />}
       {tab === 'caster' && <Caster />}
+      {tab === 'maneuvers' && <Maneuvers />}
     </Section>
   );
 }
