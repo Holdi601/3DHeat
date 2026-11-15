@@ -627,7 +627,10 @@ export function herdingAndLanes(w: World, r: Rng): { herding?: HerdingMetric; la
       // Null: each run's direction flipped at random, the same in every place it crossed (lateral position
       // independent of direction, with the dependence between neighbouring places kept).
       const flip = new Map<number, number>();
-      for (let k = 0; k < 500; k++) {
+      // As many draws as a budget of point visits allows (thousands of places in a long campaign), 100 to 500.
+      const pts = cells.reduce((x, c) => x + c.s.length, 0);
+      const draws = Math.max(100, Math.min(500, Math.floor(5e7 / Math.max(1, pts))));
+      for (let k = 0; k < draws; k++) {
         flip.clear();
         for (const c of cells) {
           for (let i = 0; i < c.s.length; i++) {
@@ -806,7 +809,7 @@ export function crowding(w: World, r: Rng, busy: Set<number> | null): CrowdingMe
       else if (d <= 1) sparseX += BIN;
       const s = Math.hypot(t.vx[o], t.vz[o]);
       if (!(s >= w.vmin) || !(t.pace > 0)) continue;
-      const rel = s / t.pace;
+      const rel = Math.min(5, s / t.pace);
       const k = Math.min(5, d);
       sp[k] += rel;
       spN[k]++;
@@ -1137,7 +1140,7 @@ export function breaking(w: World, r: Rng): BreakingMetric | undefined {
           n++;
         }
         if (n < 2) continue;
-        const a = s / n / (W * BIN) / pace;
+        const a = Math.max(-5, Math.min(5, s / n / (W * BIN) / Math.max(pace, w.upm)));
         const tEnd = (M.B0 + (wi + 1) * W) * BIN;
         let lost = 0;
         for (const td of deaths) if (td > tEnd - 60 && td <= tEnd) lost++;

@@ -431,7 +431,7 @@ function countIn(a: number[], lo: number, hi: number): number {
 
 function relSpeed(t: Track, o: number): number {
   if (o < 0 || o >= t.n || !(t.pace > 0)) return NaN;
-  return Math.hypot(t.vx[o], t.vz[o]) / t.pace;
+  return Math.min(5, Math.hypot(t.vx[o], t.vz[o]) / t.pace);
 }
 
 /** Speed change around bin `o`: the two bins after against the two before. */

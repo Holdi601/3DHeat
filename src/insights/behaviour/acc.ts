@@ -167,6 +167,11 @@ export class BehaviourAcc {
   private lz = new F32();
   private px = new F32();
   private pz = new F32();
+  // Death: when and where, until the unit lives again (a spawn, a new round, or moving off the spot).
+  private dead = new F64();
+  private dx = new F32();
+  private dz = new F32();
+  private round = new I32();
   // Resampled points.
   private eK = new I32(4096);
   private eB = new I32(4096);
@@ -200,6 +205,10 @@ export class BehaviourAcc {
     this.lz.push(NaN);
     this.px.push(NaN);
     this.pz.push(NaN);
+    this.dead.push(NaN);
+    this.dx.push(NaN);
+    this.dz.push(NaN);
+    this.round.push(-1);
     return k;
   }
 
@@ -233,6 +242,12 @@ export class BehaviourAcc {
   /** A movement sample of unit `k` at `t` seconds. */
   pos(k: number, t: number, x: number, z: number): void {
     if (!(t === t && x === x && z === z) || !this.open(k)) return;
+    // A dead unit's samples (a body or a camera left at the spot) are not a unit moving.
+    const d = this.dead.a[k];
+    if (d === d) {
+      if (t >= d && Math.hypot(x - this.dx.a[k], z - this.dz.a[k]) < 2 * this.upm) return;
+      this.dead.a[k] = NaN;
+    }
     const b = Math.floor(t / BIN);
     const c = this.cb.a[k];
     if (c === NO) this.cb.a[k] = b;
@@ -247,6 +262,11 @@ export class BehaviourAcc {
   /** An event (`KILL` by `k`, `DEATH` of `k`, `FIRE` by `k`, `HURT` taken by `k`, `SPAWN` of `k`). */
   event(kind: number, k: number, t: number): void {
     if (k < 0 || !(t === t) || !this.admitted.has(this.tM.a[k])) return;
+    if (kind === DEATH) {
+      this.dead.a[k] = t;
+      this.dx.a[k] = this.lx.a[k];
+      this.dz.a[k] = this.lz.a[k];
+    } else if (kind === SPAWN) this.dead.a[k] = NaN;
     this.vKind.push(kind);
     this.vK.push(k);
     this.vT.push(t);
@@ -258,6 +278,11 @@ export class BehaviourAcc {
    */
   loadout(k: number, round: number, t: number, equip: number, live: boolean): void {
     if (k < 0 || !(round === round) || !(t === t)) return;
+    // A new round brings the dead back.
+    if (this.round.a[k] !== round) {
+      this.round.a[k] = round;
+      this.dead.a[k] = NaN;
+    }
     const key = k * 4096 + (round & 4095);
     const r = this.rounds.get(key);
     if (!r) this.rounds.set(key, { k, ti: -1, round, equip, live: live && equip === equip, t0: t, t1: t });
@@ -340,8 +365,9 @@ export class BehaviourAcc {
         if (s === s) speeds.push(s);
       }
       speeds.sort((p, q) => p - q);
-      // The pace of moving: the median of the faster half (a unit that mostly waits still has a walking pace).
-      t.pace = speeds.length ? speeds[Math.floor(speeds.length * 0.75)] : NaN;
+      // The pace of moving: the median of the faster half (a unit that mostly waits still has a walking pace),
+      // at least a metre a second, so that a unit that hardly moved does not turn every step into a sprint.
+      t.pace = speeds.length ? Math.max(this.upm, speeds[Math.floor(speeds.length * 0.75)]) : NaN;
     }
     // Matches.
     const byM = new Map<number, number[]>();

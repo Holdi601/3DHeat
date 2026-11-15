@@ -85,6 +85,8 @@ It needs persons and kill/death (or capture) events; an `other`/`victim` column 
 
 A finding can be read through a **lens** of established knowledge: military doctrine, air and naval combat, urban operations, game design and esports (or *Auto*, chosen by the units in the data). An opened finding then shows the closest **doctrine and literature** entry and a **historical parallel**, with references, and **Lens metrics** computes measures from that literature on the data (Lanchester fits, exchange ratios, force ratios, fields of fire, key terrain, trades, initiative). The debrief and the AI prompt include them. Everything about it: [The knowledge lens](knowledge.md).
 
+The lens metrics also measure how the players behave as a crowd and as a group - alignment and milling, route herding, lanes and trails, crowding, leaders and followers, stragglers, the breaking point under losses, risk after a lost life, streaks, buy agreement and the response to incoming fire - each against its own null model: [Collective behaviour](collective-behaviour.md).
+
 ## Data that makes insights work
 
 - positions with **time**, a **person** and a **team** column;
