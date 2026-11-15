@@ -70,7 +70,7 @@
   "volumes.stats.value": "Waarde",
   "volumes.stats.count": "Rijen",
   "volumes.stats.share": "Aandeel",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Lift (verhouding)",
   "volumes.stats.liftTitle": "Aandeel binnen gedeeld door het aandeel in alle getoonde gegevens: boven 1 betekent oververtegenwoordigd binnen",
   "volumes.stats.more": "{count, plural, one {# waarde meer} other {# waarden meer}}",
   "volumes.stats.range": "Bereik",

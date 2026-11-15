@@ -70,7 +70,7 @@
   "volumes.stats.value": "Вредност",
   "volumes.stats.count": "Редови",
   "volumes.stats.share": "Удел",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Лифт",
   "volumes.stats.liftTitle": "Уделот внатре поделен со уделот во сите прикажани податоци: над 1 значи прекумерна застапеност внатре",
   "volumes.stats.more": "{count, plural, one {Уште # вредност} other {Уште # вредности}}",
   "volumes.stats.range": "Опсег",

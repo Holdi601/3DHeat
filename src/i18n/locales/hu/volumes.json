@@ -70,7 +70,7 @@
   "volumes.stats.value": "Érték",
   "volumes.stats.count": "Sorok",
   "volumes.stats.share": "Arány",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Emelés",
   "volumes.stats.liftTitle": "A belső arány osztva az összes látható adat arányával: 1 felett belül felülreprezentált",
   "volumes.stats.more": "{count, plural, one {# további érték} other {# további érték}}",
   "volumes.stats.range": "Tartomány",

@@ -70,7 +70,7 @@
   "volumes.stats.value": "Vrednost",
   "volumes.stats.count": "Vrstice",
   "volumes.stats.share": "Delež",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Dvig",
   "volumes.stats.liftTitle": "Delež znotraj, deljen z deležem v vseh prikazanih podatkih: nad 1 pomeni preveč zastopano znotraj",
   "volumes.stats.more": "{count, plural, one {Še # vrednost} two {Še # vrednosti} few {Še # vrednosti} other {Še # vrednosti}}",
   "volumes.stats.range": "Razpon",

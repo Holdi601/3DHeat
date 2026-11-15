@@ -70,7 +70,7 @@
   "volumes.stats.value": "數值",
   "volumes.stats.count": "列數",
   "volumes.stats.share": "占比",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "提升度",
   "volumes.stats.liftTitle": "內部占比除以全部已顯示資料中的占比：大於 1 表示內部占比偏高",
   "volumes.stats.more": "{count, plural, other {另有 # 個值}}",
   "volumes.stats.range": "範圍",

@@ -70,7 +70,7 @@
   "volumes.stats.value": "Стойност",
   "volumes.stats.count": "Редове",
   "volumes.stats.share": "Дял",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Лифт",
   "volumes.stats.liftTitle": "Дялът вътре, разделен на дела във всички показани данни: над 1 означава свръхпредставеност вътре",
   "volumes.stats.more": "{count, plural, one {Още # стойност} other {Още # стойности}}",
   "volumes.stats.range": "Диапазон",

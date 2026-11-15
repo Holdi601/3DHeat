@@ -70,7 +70,7 @@
   "volumes.stats.value": "Valor",
   "volumes.stats.count": "Filas",
   "volumes.stats.share": "Proporción",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Razón (lift)",
   "volumes.stats.liftTitle": "Proporción dentro dividida por la proporción en todos los datos mostrados: por encima de 1 significa sobrerrepresentado dentro",
   "volumes.stats.more": "{count, plural, one {# valor más} many {# valores más} other {# valores más}}",
   "volumes.stats.range": "Rango",

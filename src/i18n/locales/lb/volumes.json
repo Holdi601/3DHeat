@@ -70,7 +70,7 @@
   "volumes.stats.value": "Wäert",
   "volumes.stats.count": "Zeilen",
   "volumes.stats.share": "Undeel",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Lift (Verhältnis)",
   "volumes.stats.liftTitle": "Undeel dobannen gedeelt duerch den Undeel an alle gewisenen Daten: iwwer 1 heescht dobannen iwwerrepresentéiert",
   "volumes.stats.more": "{count, plural, one {# weidere Wäert} other {# weider Wäerter}}",
   "volumes.stats.range": "Beräich",

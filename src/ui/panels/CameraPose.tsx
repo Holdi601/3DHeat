@@ -5,6 +5,7 @@ import { directionFromYawPitch } from '../../render/pose';
 import { useInspectStore } from '../../state/inspectStore';
 import { useStore } from '../../state/store';
 import { cameraInFrame, poseToWorld } from '../inspectFormat';
+import { formatBox, parseNumber } from '../numberInput';
 
 /**
  * Numeric camera pose.
@@ -38,7 +39,7 @@ export function CameraPose() {
     if (!engine || editing) return;
     const set = (el: HTMLInputElement | null, v: number) => {
       if (!el) return;
-      const s = v.toFixed(2);
+      const s = formatBox(v, 2);
       if (el.value !== s) el.value = s;
     };
     const c = cameraInFrame(engine, axes, convention);
@@ -49,19 +50,21 @@ export function CameraPose() {
     set(refs.pitch.current, c.pitch);
   }, !!engine);
 
+  const read = (el: HTMLInputElement | null) => parseNumber(el?.value ?? '') ?? NaN;
+
   const applyPosition = () => {
     if (!engine) return;
-    const x = Number(refs.x.current?.value);
-    const y = Number(refs.y.current?.value);
-    const z = Number(refs.z.current?.value);
+    const x = read(refs.x.current);
+    const y = read(refs.y.current);
+    const z = read(refs.z.current);
     if ([x, y, z].every(Number.isFinite)) {
       engine.setCameraPose(poseToWorld(engine, { x, y, z }, axes, convention).position, null);
     }
   };
   const applyRotation = () => {
     if (!engine) return;
-    const yaw = Number(refs.yaw.current?.value);
-    const pitch = Number(refs.pitch.current?.value);
+    const yaw = read(refs.yaw.current);
+    const pitch = read(refs.pitch.current);
     if (Number.isFinite(yaw) && Number.isFinite(pitch)) {
       engine.setCameraPose(null, directionFromYawPitch(convention, yaw, pitch));
     }
@@ -71,14 +74,13 @@ export function CameraPose() {
     key: keyof typeof refs,
     label: string,
     apply: () => void,
-    step: number,
   ) => (
     <label style={{ fontSize: 10, color: 'var(--text-faint)', flex: 1 }}>
       {label}
       <input
         ref={refs[key]}
-        type="number"
-        step={step}
+        type="text"
+        inputMode="decimal"
         defaultValue="0"
         onFocus={() => setEditing(true)}
         onBlur={() => {
@@ -119,13 +121,13 @@ export function CameraPose() {
         </button>
       </div>
       <div className="row">
-        {field('x', 'X', applyPosition, 1)}
-        {field('y', 'Y', applyPosition, 1)}
-        {field('z', 'Z', applyPosition, 1)}
+        {field('x', 'X', applyPosition)}
+        {field('y', 'Y', applyPosition)}
+        {field('z', 'Z', applyPosition)}
       </div>
       <div className="row">
-        {field('yaw', t('heat.cameraPose.yaw'), applyRotation, 1)}
-        {field('pitch', t('heat.cameraPose.pitch'), applyRotation, 1)}
+        {field('yaw', t('heat.cameraPose.yaw'), applyRotation)}
+        {field('pitch', t('heat.cameraPose.pitch'), applyRotation)}
       </div>
       <div className="hint">{t('heat.cameraPose.hint', { key: 'Enter' })}</div>
     </div>

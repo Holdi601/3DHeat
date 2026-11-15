@@ -70,7 +70,7 @@
   "volumes.stats.value": "Değer",
   "volumes.stats.count": "Satırlar",
   "volumes.stats.share": "Pay",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Yükselme",
   "volumes.stats.liftTitle": "İçerideki payın gösterilen tüm verideki paya bölümü: 1'in üstü içeride fazla temsil edildiği anlamına gelir",
   "volumes.stats.more": "{count, plural, one {# değer daha} other {# değer daha}}",
   "volumes.stats.range": "Aralık",

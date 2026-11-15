@@ -70,7 +70,7 @@
   "volumes.stats.value": "Luach",
   "volumes.stats.count": "Sraitheanna",
   "volumes.stats.share": "Sciar",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Ardú",
   "volumes.stats.liftTitle": "An sciar istigh roinnte ar an sciar i ngach sonra taispeánta: ciallaíonn os cionn 1 róiléiriú istigh",
   "volumes.stats.more": "{count, plural, one {# luach eile} two {# luach eile} few {# luach eile} many {# luach eile} other {# luach eile}}",
   "volumes.stats.range": "Raon",

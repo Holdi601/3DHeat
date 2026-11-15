@@ -70,7 +70,7 @@
   "volumes.stats.value": "Väärtus",
   "volumes.stats.count": "Read",
   "volumes.stats.share": "Osakaal",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Suhtarv",
   "volumes.stats.liftTitle": "Osakaal sees jagatud osakaaluga kõigis näidatud andmetes: üle 1 tähendab, et seal on üle esindatud",
   "volumes.stats.more": "{count, plural, one {Veel # väärtus} other {Veel # väärtust}}",
   "volumes.stats.range": "Vahemik",

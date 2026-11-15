@@ -70,7 +70,7 @@
   "volumes.stats.value": "Значение",
   "volumes.stats.count": "Строки",
   "volumes.stats.share": "Доля",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Лифт",
   "volumes.stats.liftTitle": "Доля внутри, делённая на долю во всех показанных данных: больше 1 значит, что внутри представлено избыточно",
   "volumes.stats.more": "{count, plural, one {Ещё # значение} few {Ещё # значения} many {Ещё # значений} other {Ещё # значения}}",
   "volumes.stats.range": "Диапазон",

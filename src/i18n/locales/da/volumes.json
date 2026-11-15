@@ -70,7 +70,7 @@
   "volumes.stats.value": "Værdi",
   "volumes.stats.count": "Rækker",
   "volumes.stats.share": "Andel",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Løft",
   "volumes.stats.liftTitle": "Andelen indeni divideret med andelen i alle viste data: over 1 betyder overrepræsenteret indeni",
   "volumes.stats.more": "{count, plural, one {# værdi mere} other {# værdier mere}}",
   "volumes.stats.range": "Interval",

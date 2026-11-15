@@ -70,7 +70,7 @@
   "volumes.stats.value": "Gildi",
   "volumes.stats.count": "Raðir",
   "volumes.stats.share": "Hlutfall",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Lyfting",
   "volumes.stats.liftTitle": "Hlutfall inni deilt með hlutfalli í öllum sýndum gögnum: yfir 1 þýðir ofurfulltrúa inni",
   "volumes.stats.more": "{count, plural, one {# gildi í viðbót} other {# gildi í viðbót}}",
   "volumes.stats.range": "Bil",

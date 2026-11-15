@@ -70,7 +70,7 @@
   "volumes.stats.value": "Wartość",
   "volumes.stats.count": "Wiersze",
   "volumes.stats.share": "Udział",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Przyrost (lift)",
   "volumes.stats.liftTitle": "Udział wewnątrz podzielony przez udział we wszystkich pokazanych danych: powyżej 1 oznacza nadreprezentację wewnątrz",
   "volumes.stats.more": "{count, plural, one {# wartość więcej} few {# wartości więcej} many {# wartości więcej} other {# wartości więcej}}",
   "volumes.stats.range": "Zakres",

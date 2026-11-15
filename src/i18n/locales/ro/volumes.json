@@ -70,7 +70,7 @@
   "volumes.stats.value": "Valoare",
   "volumes.stats.count": "Rânduri",
   "volumes.stats.share": "Pondere",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Raport (lift)",
   "volumes.stats.liftTitle": "Ponderea în interior împărțită la ponderea în toate datele afișate: peste 1 înseamnă suprareprezentat în interior",
   "volumes.stats.more": "{count, plural, one {# valoare în plus} few {# valori în plus} other {# de valori în plus}}",
   "volumes.stats.range": "Interval",

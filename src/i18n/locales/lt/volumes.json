@@ -70,7 +70,7 @@
   "volumes.stats.value": "Reikšmė",
   "volumes.stats.count": "Eilutės",
   "volumes.stats.share": "Dalis",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Pakilimas",
   "volumes.stats.liftTitle": "Dalis viduje, padalyta iš dalies visuose rodomuose duomenyse: virš 1 reiškia, kad viduje atstovaujama per daug",
   "volumes.stats.more": "{count, plural, one {Dar # reikšmė} few {Dar # reikšmės} many {Dar # reikšmės} other {Dar # reikšmių}}",
   "volumes.stats.range": "Diapazonas",

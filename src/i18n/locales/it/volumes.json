@@ -70,7 +70,7 @@
   "volumes.stats.value": "Valore",
   "volumes.stats.count": "Righe",
   "volumes.stats.share": "Quota",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Rapporto (lift)",
   "volumes.stats.liftTitle": "Quota dentro divisa per la quota in tutti i dati mostrati: sopra 1 significa sovrarappresentato dentro",
   "volumes.stats.more": "{count, plural, one {# valore in più} many {# valori in più} other {# valori in più}}",
   "volumes.stats.range": "Intervallo",

@@ -70,7 +70,7 @@
   "volumes.stats.value": "Τιμή",
   "volumes.stats.count": "Γραμμές",
   "volumes.stats.share": "Μερίδιο",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Λόγος μεριδίου",
   "volumes.stats.liftTitle": "Το μερίδιο μέσα διαιρεμένο με το μερίδιο σε όλα τα εμφανιζόμενα δεδομένα: πάνω από 1 σημαίνει υπερεκπροσώπηση μέσα",
   "volumes.stats.more": "{count, plural, one {# ακόμη τιμή} other {# ακόμη τιμές}}",
   "volumes.stats.range": "Εύρος",

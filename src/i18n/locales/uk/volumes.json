@@ -70,7 +70,7 @@
   "volumes.stats.value": "Значення",
   "volumes.stats.count": "Рядки",
   "volumes.stats.share": "Частка",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Ліфт",
   "volumes.stats.liftTitle": "Частка всередині, поділена на частку в усіх показаних даних: понад 1 означає надмірне представлення всередині",
   "volumes.stats.more": "{count, plural, one {Ще # значення} few {Ще # значення} many {Ще # значень} other {Ще # значення}}",
   "volumes.stats.range": "Діапазон",

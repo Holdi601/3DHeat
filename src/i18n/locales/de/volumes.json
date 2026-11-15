@@ -70,7 +70,7 @@
   "volumes.stats.value": "Wert",
   "volumes.stats.count": "Zeilen",
   "volumes.stats.share": "Anteil",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Lift (Verhältnis)",
   "volumes.stats.liftTitle": "Anteil innen geteilt durch den Anteil in allen angezeigten Daten: über 1 heißt innen überrepräsentiert",
   "volumes.stats.more": "{count, plural, one {# weiterer Wert} other {# weitere Werte}}",
   "volumes.stats.range": "Spanne",

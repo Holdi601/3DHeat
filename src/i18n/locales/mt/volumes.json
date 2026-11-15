@@ -70,7 +70,7 @@
   "volumes.stats.value": "Valur",
   "volumes.stats.count": "Ringieli",
   "volumes.stats.share": "Sehem",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Lift (proporzjon)",
   "volumes.stats.liftTitle": "Is-sehem ġewwa maqsum bis-sehem fid-data murija kollha: aktar minn 1 ifisser rappreżentat żejjed ġewwa",
   "volumes.stats.more": "{count, plural, one {# valur ieħor} two {# valuri oħra} few {# valuri oħra} many {# valuri oħra} other {# valuri oħra}}",
   "volumes.stats.range": "Firxa",

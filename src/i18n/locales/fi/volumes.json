@@ -70,7 +70,7 @@
   "volumes.stats.value": "Arvo",
   "volumes.stats.count": "Rivit",
   "volumes.stats.share": "Osuus",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Nosto",
   "volumes.stats.liftTitle": "Osuus sisällä jaettuna osuudella kaikessa näytetyssä datassa: yli 1 tarkoittaa yliedustettua sisällä",
   "volumes.stats.more": "{count, plural, one {# arvo lisää} other {# arvoa lisää}}",
   "volumes.stats.range": "Vaihteluväli",

@@ -70,7 +70,7 @@
   "volumes.stats.value": "Hodnota",
   "volumes.stats.count": "Riadky",
   "volumes.stats.share": "Podiel",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Pomer podielov",
   "volumes.stats.liftTitle": "Podiel vnútri delený podielom vo všetkých zobrazených dátach: nad 1 znamená nadreprezentované vnútri",
   "volumes.stats.more": "{count, plural, one {# hodnota navyše} few {# hodnoty navyše} many {# hodnoty navyše} other {# hodnôt navyše}}",
   "volumes.stats.range": "Rozsah",

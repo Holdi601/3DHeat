@@ -70,7 +70,7 @@
   "volumes.stats.value": "Valeur",
   "volumes.stats.count": "Lignes",
   "volumes.stats.share": "Part",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Rapport (lift)",
   "volumes.stats.liftTitle": "Part dedans divisée par la part dans toutes les données affichées : au-dessus de 1 = surreprésenté dedans",
   "volumes.stats.more": "{count, plural, one {# valeur de plus} many {# valeurs de plus} other {# valeurs de plus}}",
   "volumes.stats.range": "Plage",

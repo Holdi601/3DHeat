@@ -70,7 +70,7 @@
   "volumes.stats.value": "Valor",
   "volumes.stats.count": "Linhas",
   "volumes.stats.share": "Parte",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Razão (lift)",
   "volumes.stats.liftTitle": "Parte dentro dividida pela parte em todos os dados mostrados: acima de 1 significa sobrerrepresentado dentro",
   "volumes.stats.more": "{count, plural, one {# valor a mais} many {# valores a mais} other {# valores a mais}}",
   "volumes.stats.range": "Intervalo",

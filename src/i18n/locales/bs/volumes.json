@@ -70,7 +70,7 @@
   "volumes.stats.value": "Vrijednost",
   "volumes.stats.count": "Redovi",
   "volumes.stats.share": "Udio",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Odnos udjela",
   "volumes.stats.liftTitle": "Udio unutra podijeljen udjelom u svim prikazanim podacima: iznad 1 znači prekomjernu zastupljenost unutra",
   "volumes.stats.more": "{count, plural, one {Još # vrijednost} few {Još # vrijednosti} other {Još # vrijednosti}}",
   "volumes.stats.range": "Raspon",

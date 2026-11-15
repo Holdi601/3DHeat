@@ -70,7 +70,7 @@
   "volumes.stats.value": "値",
   "volumes.stats.count": "行数",
   "volumes.stats.share": "割合",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "リフト",
   "volumes.stats.liftTitle": "内側の割合を、表示中の全データでの割合で割った値：1を超えると内側に偏っています",
   "volumes.stats.more": "{count, plural, other {ほか#件の値}}",
   "volumes.stats.range": "範囲",

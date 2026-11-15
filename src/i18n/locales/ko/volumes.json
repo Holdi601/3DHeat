@@ -70,7 +70,7 @@
   "volumes.stats.value": "값",
   "volumes.stats.count": "행",
   "volumes.stats.share": "비율",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "리프트",
   "volumes.stats.liftTitle": "안쪽 비율을 표시된 전체 데이터의 비율로 나눈 값: 1보다 크면 안쪽에 많이 몰려 있다는 뜻입니다",
   "volumes.stats.more": "{count, plural, other {값 #개 더}}",
   "volumes.stats.range": "범위",

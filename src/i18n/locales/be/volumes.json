@@ -70,7 +70,7 @@
   "volumes.stats.value": "Значэнне",
   "volumes.stats.count": "Радкі",
   "volumes.stats.share": "Доля",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Ліфт",
   "volumes.stats.liftTitle": "Доля ўнутры, падзеленая на долю ва ўсіх паказаных даных: больш за 1 значыць, што ўнутры прадстаўлена празмерна",
   "volumes.stats.more": "{count, plural, one {Яшчэ # значэнне} few {Яшчэ # значэнні} many {Яшчэ # значэнняў} other {Яшчэ # значэння}}",
   "volumes.stats.range": "Дыяпазон",

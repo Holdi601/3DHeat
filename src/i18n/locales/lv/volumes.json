@@ -70,7 +70,7 @@
   "volumes.stats.value": "Vērtība",
   "volumes.stats.count": "Rindas",
   "volumes.stats.share": "Daļa",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Pieaugums",
   "volumes.stats.liftTitle": "Daļa iekšā, dalīta ar daļu visos rādītajos datos: virs 1 nozīmē pārmērīgu pārstāvību iekšā",
   "volumes.stats.more": "{count, plural, zero {Vēl # vērtību} one {Vēl # vērtība} other {Vēl # vērtības}}",
   "volumes.stats.range": "Diapazons",

@@ -70,7 +70,7 @@
   "volumes.stats.value": "Vlera",
   "volumes.stats.count": "Rreshta",
   "volumes.stats.share": "Pjesa",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Ngritja",
   "volumes.stats.liftTitle": "Pjesa brenda e pjesëtuar me pjesën në të gjitha të dhënat e shfaqura: mbi 1 do të thotë i mbipërfaqësuar brenda",
   "volumes.stats.more": "{count, plural, one {Edhe # vlerë} other {Edhe # vlera}}",
   "volumes.stats.range": "Diapazoni",

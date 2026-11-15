@@ -4,7 +4,7 @@
   "lean.pickFiles": "Датотеки…",
   "lean.pickFolder": "Папка…",
   "lean.addFolder": "Додај папка…",
-  "lean.addFolderTitle": "Ги додава мечевите од папка на вчитаните: мапа чии снимки се во неколку папки се вчитува цела.",
+  "lean.addFolderTitle": "Ги додава натпреварите од папка на вчитаните: мапа чии снимки се во неколку папки се вчитува цела.",
   "lean.name": "{count, plural, one {# датотека на натпревар} other {# датотеки на натпревари}}",
   "lean.cancel": "Откажи",
   "lean.progress": "{done} од {total} делови · {rows} редови · {seconds} s",

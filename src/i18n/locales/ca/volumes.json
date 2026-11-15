@@ -70,7 +70,7 @@
   "volumes.stats.value": "Valor",
   "volumes.stats.count": "Files",
   "volumes.stats.share": "Proporció",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Ràtio (lift)",
   "volumes.stats.liftTitle": "Proporció dins dividida per la proporció a totes les dades mostrades: per sobre d'1 vol dir sobrerepresentat dins",
   "volumes.stats.more": "{count, plural, one {# valor més} many {# valors més} other {# valors més}}",
   "volumes.stats.range": "Rang",

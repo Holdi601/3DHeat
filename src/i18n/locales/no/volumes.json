@@ -70,7 +70,7 @@
   "volumes.stats.value": "Verdi",
   "volumes.stats.count": "Rader",
   "volumes.stats.share": "Andel",
-  "volumes.stats.lift": "Lift",
+  "volumes.stats.lift": "Løft",
   "volumes.stats.liftTitle": "Andelen inni delt på andelen i alle viste data: over 1 betyr overrepresentert inni",
   "volumes.stats.more": "{count, plural, one {# verdi til} other {# verdier til}}",
   "volumes.stats.range": "Område",

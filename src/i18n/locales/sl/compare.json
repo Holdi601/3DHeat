@@ -24,7 +24,7 @@
   "compare.group.overview": "Pregled",
   "compare.group.events": "Dogodki",
   "compare.group.class": "Razred vozila, delež časa znotraj",
-  "compare.group.actor": "Igralec ali UI, delež časa znotraj",
+  "compare.group.actor": "Igralec ali AI, delež časa znotraj",
   "compare.group.team": "Ekipa, delež časa znotraj",
   "compare.group.dir": "Smer, delež vrstic s smerjo",
   "compare.m.rows": "Vrstice",
