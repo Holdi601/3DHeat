@@ -167,5 +167,9 @@
   "match.series.held": "Sporné miesta držané na začiatku každej relácie (červení, modrí)",
   "match.series.go": "Prejsť na začiatok relácie {n}",
   "match.series.row": "{n}. {date} · Červení {red} / Modrí {blue} · dobyté predtým: {taken}",
-  "match.series.offer": "Tento záznam je relácia {n} kola kampane {campaign}. Načítajte s ním ostatné záznamy kola a sledujte kolo ako jednu sériu."
+  "match.series.offer": "Tento záznam je relácia {n} kola kampane {campaign}. Načítajte s ním ostatné záznamy kola a sledujte kolo ako jednu sériu.",
+  "match.series.loadRound": "Načítať celé kolo: relácie {count}, {size}",
+  "match.series.loading": "Sťahuje sa relácia {n} z {of}…",
+  "match.series.missing": "Relácie, ktoré na tomto počítači nie sú: {count}",
+  "match.series.loadFailed": "Kolo sa nepodarilo načítať: {error}"
 }

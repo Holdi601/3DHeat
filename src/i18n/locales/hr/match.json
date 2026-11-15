@@ -167,5 +167,9 @@
   "match.series.held": "Sporna mjesta držana na početku svake sesije (crveni, plavi)",
   "match.series.go": "Idi na početak sesije {n}",
   "match.series.row": "{n}. {date} · Crveni {red} / Plavi {blue} · zauzeto prije: {taken}",
-  "match.series.offer": "Ova snimka je sesija {n} kruga kampanje {campaign}. Učitajte s njom ostale snimke kruga da biste gledali krug kao jednu seriju."
+  "match.series.offer": "Ova snimka je sesija {n} kruga kampanje {campaign}. Učitajte s njom ostale snimke kruga da biste gledali krug kao jednu seriju.",
+  "match.series.loadRound": "Učitaj cijeli krug: sesije {count}, {size}",
+  "match.series.loading": "Dohvaća se sesija {n} od {of}…",
+  "match.series.missing": "Sesije koje nisu na ovom računalu: {count}",
+  "match.series.loadFailed": "Krug se nije mogao učitati: {error}"
 }

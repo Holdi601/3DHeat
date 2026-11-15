@@ -167,5 +167,9 @@
   "match.series.held": "Áiteanna faoi chonspóid i seilbh ag tús gach seisiúin (dearg, gorm)",
   "match.series.go": "Téigh go tús sheisiún {n}",
   "match.series.row": "{n}. {date} · Dearg {red} / Gorm {blue} · gafa roimhe: {taken}",
-  "match.series.offer": "Is é an taifeadadh seo seisiún {n} den bhabhta feachtais {campaign}. Lódáil taifeadtaí eile an bhabhta in éineacht leis chun féachaint ar an mbabhta mar shraith amháin."
+  "match.series.offer": "Is é an taifeadadh seo seisiún {n} den bhabhta feachtais {campaign}. Lódáil taifeadtaí eile an bhabhta in éineacht leis chun féachaint ar an mbabhta mar shraith amháin.",
+  "match.series.loadRound": "Lódáil an babhta ar fad: seisiúin {count}, {size}",
+  "match.series.loading": "Seisiún {n} de {of} á fháil…",
+  "match.series.missing": "Seisiúin nach bhfuil ar an meaisín seo: {count}",
+  "match.series.loadFailed": "Níorbh fhéidir an babhta a lódáil: {error}"
 }

@@ -18,7 +18,7 @@
  * Runs in the load worker; the jobs run in decode workers, or inline in tests.
  */
 
-import { DatasetBuilder, type BlockAttr, type SourceBlock } from '../../data/builder';
+import { DatasetBuilder, SERIES_BREAK_S, SERIES_CAMPAIGN, type BlockAttr, type SourceBlock } from '../../data/builder';
 import { Dictionary } from '../../data/growable';
 import type { Dataset } from '../../state/types';
 import { setDeadSpan, TRACK_U32 } from '../../render/gpuTracks/store';
@@ -219,6 +219,51 @@ export class LeanAssembler {
     this.jobKeys = jobs.map(() => null);
   }
 
+  /** The matches as the sessions of one campaign round, in real order with breaks between (`Dataset.series`), or null. */
+  private series: { campaign: string; order: number[]; at: number[]; span: number[]; real: number[] } | null = null;
+
+  /**
+   * Matches that are the sessions of one campaign round - the same `campaign`
+   * on all their units, each match's label ending in its real start
+   * (`YYYY-MM-DD HH:MM`, a DCS recording's) - played one after another as
+   * the full load does (`DatasetBuilder`, `alignRecordings`): each group's
+   * start moved so it follows the last with a `SERIES_BREAK_S` break.
+   */
+  private arrangeSeries(units: readonly number[], grp: Uint32Array, box: Float64Array): void {
+    const m = this.spec.meta.indexOf(SERIES_CAMPAIGN);
+    const G = this.groupLabel.length;
+    if (m < 0 || G < 2) return;
+    const camp = new Array<string | null>(G).fill(null);
+    const lo = new Float64Array(G).fill(Infinity);
+    const hi = new Float64Array(G).fill(-Infinity);
+    for (const u of units) {
+      const g = grp[u];
+      const c = this.metaDict[m].labels[this.uMeta[m].data[u]] ?? '';
+      if (c) camp[g] = camp[g] === null || camp[g] === c ? c : '\u0000';
+      lo[g] = Math.min(lo[g], box[u * BOX + 6]);
+      hi[g] = Math.max(hi[g], box[u * BOX + 7]);
+    }
+    const name = camp[0];
+    if (!name || name === '\u0000' || camp.some((c) => c !== name)) return;
+    const real = this.groupMatch.map((l) => {
+      const s = /(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2})$/.exec(l);
+      return s ? Date.parse(`${s[1]}T${s[2]}:00Z`) / 1000 : NaN;
+    });
+    if (real.some((r) => !Number.isFinite(r))) return;
+    const order = [...Array(G).keys()].filter((g) => hi[g] >= lo[g]).sort((a, b) => real[a] - real[b] || a - b);
+    const at = new Array<number>(G).fill(0);
+    const span = new Array<number>(G).fill(0);
+    let t = 0;
+    for (const g of order) {
+      at[g] = t;
+      span[g] = hi[g] - lo[g];
+      // Its rows' overlay seconds are file seconds less its start: moved on by where it falls in the series.
+      this.groupStart[g] = lo[g] - t;
+      t += span[g] + SERIES_BREAK_S;
+    }
+    this.series = { campaign: name, order, at, span, real };
+  }
+
   private groupOf(file: number, label: string): number {
     const k = `${file}\u0001${label}`;
     let g = this.groupIndex.get(k);
@@ -370,6 +415,7 @@ export class LeanAssembler {
       const step = Math.max(b[o + 3] - b[o], b[o + 4] - b[o + 1], b[o + 5] - b[o + 2], 1e-6) / STEPS;
       spans.set([b[o], b[o + 1], b[o + 2], step, b[o + 6], Math.max(b[o + 7] - b[o + 6], 1e-6) / STEPS], i * SPAN);
     }
+    this.arrangeSeries(list, grp, b);
     // Times from each match's start, less the earliest track's first time (the dataset's origin, `finish`).
     const gs = (g: number) => (Number.isFinite(this.groupStart[g]) ? this.groupStart[g] : 0);
     let origin = Infinity;
@@ -657,6 +703,15 @@ export class LeanAssembler {
     const b = new DatasetBuilder(rows);
     b.append(block);
     const dataset = b.finish(name);
+    if (this.series) {
+      const s = this.series;
+      // Overlay seconds start at the origin; the first session at zero.
+      dataset.series = {
+        campaign: s.campaign,
+        breakSeconds: SERIES_BREAK_S,
+        sessions: s.order.map((g) => ({ session: g, start: s.at[g] - this.origin, end: s.at[g] + s.span[g] - this.origin, realStart: s.real[g] })),
+      };
+    }
     lap('dataset');
     if (entitySize) dataset.entitySize = entitySize;
     dataset.roleColumns = { x: this.spec.x, y: this.spec.y ?? undefined, z: this.spec.z ?? undefined, time: this.spec.time, person: this.spec.track, team: this.spec.team ?? undefined };

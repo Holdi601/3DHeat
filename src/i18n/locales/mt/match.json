@@ -167,5 +167,9 @@
   "match.series.held": "Postijiet ikkontestati miżmuma fil-bidu ta' kull sessjoni (aħmar, blu)",
   "match.series.go": "Mur għall-bidu tas-sessjoni {n}",
   "match.series.row": "{n}. {date} · Aħmar {red} / Blu {blue} · meħuda qabel: {taken}",
-  "match.series.offer": "Din ir-reġistrazzjoni hija s-sessjoni {n} tar-rawnd tal-kampanja {campaign}. Tella' r-reġistrazzjonijiet l-oħra tar-rawnd flimkien magħha biex tara r-rawnd bħala serje waħda."
+  "match.series.offer": "Din ir-reġistrazzjoni hija s-sessjoni {n} tar-rawnd tal-kampanja {campaign}. Tella' r-reġistrazzjonijiet l-oħra tar-rawnd flimkien magħha biex tara r-rawnd bħala serje waħda.",
+  "match.series.loadRound": "Tella' r-rawnd kollu: sessjonijiet {count}, {size}",
+  "match.series.loading": "Qed tinġieb is-sessjoni {n} minn {of}…",
+  "match.series.missing": "Sessjonijiet li mhumiex fuq din il-magna: {count}",
+  "match.series.loadFailed": "Ir-rawnd ma setax jitella': {error}"
 }

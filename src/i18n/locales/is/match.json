@@ -167,5 +167,9 @@
   "match.series.held": "Umdeildir staðir í höndum hvors liðs við upphaf hverrar lotu (rauðir, bláir)",
   "match.series.go": "Fara í upphaf lotu {n}",
   "match.series.row": "{n}. {date} · Rauðir {red} / Bláir {blue} · teknir áður: {taken}",
-  "match.series.offer": "Þessi upptaka er lota {n} í herferðarumferðinni {campaign}. Hladdu hinum upptökum umferðarinnar inn með henni til að horfa á umferðina sem eina röð."
+  "match.series.offer": "Þessi upptaka er lota {n} í herferðarumferðinni {campaign}. Hladdu hinum upptökum umferðarinnar inn með henni til að horfa á umferðina sem eina röð.",
+  "match.series.loadRound": "Hlaða allri umferðinni: {count} lotur, {size}",
+  "match.series.loading": "Sæki lotu {n} af {of}…",
+  "match.series.missing": "Lotur sem eru ekki á þessari vél: {count}",
+  "match.series.loadFailed": "Ekki tókst að hlaða umferðinni: {error}"
 }

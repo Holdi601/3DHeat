@@ -167,5 +167,9 @@
   "match.series.held": "Vitatott helyek az egyes munkamenetek elején (vörös, kék)",
   "match.series.go": "Ugrás a(z) {n}. munkamenet elejére",
   "match.series.row": "{n}. {date} · Vörös {red} / Kék {blue} · előtte elfoglalva: {taken}",
-  "match.series.offer": "Ez a felvétel a(z) {campaign} hadjárati forduló {n}. munkamenete. Töltsd be vele együtt a forduló többi felvételét, hogy a fordulót egy sorozatként nézd."
+  "match.series.offer": "Ez a felvétel a(z) {campaign} hadjárati forduló {n}. munkamenete. Töltsd be vele együtt a forduló többi felvételét, hogy a fordulót egy sorozatként nézd.",
+  "match.series.loadRound": "Az egész forduló betöltése: {count} munkamenet, {size}",
+  "match.series.loading": "{n}. munkamenet lekérése ({of})…",
+  "match.series.missing": "Ezen a gépen nem található munkamenetek: {count}",
+  "match.series.loadFailed": "A fordulót nem sikerült betölteni: {error}"
 }

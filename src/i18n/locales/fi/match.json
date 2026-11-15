@@ -167,5 +167,9 @@
   "match.series.held": "Kiistellyt paikat kunkin istunnon alussa (punainen, sininen)",
   "match.series.go": "Siirry istunnon {n} alkuun",
   "match.series.row": "{n}. {date} · Punainen {red} / Sininen {blue} · vallattu ennen: {taken}",
-  "match.series.offer": "Tämä tallenne on kampanjakierroksen {campaign} istunto {n}. Lataa kierroksen muut tallenteet sen kanssa katsoaksesi kierroksen yhtenä sarjana."
+  "match.series.offer": "Tämä tallenne on kampanjakierroksen {campaign} istunto {n}. Lataa kierroksen muut tallenteet sen kanssa katsoaksesi kierroksen yhtenä sarjana.",
+  "match.series.loadRound": "Lataa koko kierros: {count} istuntoa, {size}",
+  "match.series.loading": "Haetaan istuntoa {n}/{of}…",
+  "match.series.missing": "Istunnot, joita ei ole tällä koneella: {count}",
+  "match.series.loadFailed": "Kierrosta ei voitu ladata: {error}"
 }

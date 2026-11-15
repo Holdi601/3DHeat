@@ -167,5 +167,9 @@
   "match.series.held": "Umkämpfte Orte zu Beginn jeder Sitzung (Rot, Blau)",
   "match.series.go": "Zum Beginn von Sitzung {n}",
   "match.series.row": "{n}. {date} · Rot {red} / Blau {blue} · davor eingenommen: {taken}",
-  "match.series.offer": "Diese Aufnahme ist Sitzung {n} der Kampagnenrunde {campaign}. Lade die anderen Aufnahmen der Runde zusammen mit ihr, um die Runde als eine Serie anzusehen."
+  "match.series.offer": "Diese Aufnahme ist Sitzung {n} der Kampagnenrunde {campaign}. Lade die anderen Aufnahmen der Runde zusammen mit ihr, um die Runde als eine Serie anzusehen.",
+  "match.series.loadRound": "Ganze Runde laden: {count} Sitzungen, {size}",
+  "match.series.loading": "Sitzung {n} von {of} wird geholt…",
+  "match.series.missing": "Sitzungen nicht auf diesem Rechner: {count}",
+  "match.series.loadFailed": "Die Runde konnte nicht geladen werden: {error}"
 }

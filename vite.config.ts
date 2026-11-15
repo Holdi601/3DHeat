@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 import { execFile, execFileSync } from 'node:child_process';
 import os from 'node:os';
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { brotliCompressSync, constants as zlibConstants, gzipSync } from 'node:zlib';
 import { encodePackFigure, type PackFigure } from './src/figures/figurepackBin.ts';
@@ -241,6 +241,63 @@ function figurePack(): Plugin {
   return { name: 'heat3d-figure-pack', configureServer: handler, configurePreviewServer: handler };
 }
 
+/** Where the page asks for a campaign round's recordings on this machine (src/ui/match/SeriesPanel.tsx). */
+const CAMPAIGN_ROUTE = '/__heat3d/campaign';
+
+/**
+ * A campaign round's recordings, served from this machine so the viewer can
+ * load a round whole when it has one of its sessions (`tools/campaign-files.mjs`):
+ * `?name=<campaign>` answers its sessions found here (name, size, an id), and
+ * `/file/<id>` one of those files. Configured by the `campaigns` entry of the
+ * git-ignored `tools/local-data.json`; without one the route answers 404 and
+ * the viewer keeps its hint to load the files by hand.
+ */
+function campaignFiles(): Plugin {
+  let index: { round(name: string): unknown; file(id: number): string | null } | null = null;
+  const config = (): unknown => {
+    try {
+      const local = fileURLToPath(new URL('./tools/local-data.json', import.meta.url));
+      return existsSync(local) ? (JSON.parse(readFileSync(local, 'utf8')) as { campaigns?: unknown }).campaigns ?? null : null;
+    } catch {
+      return null;
+    }
+  };
+  const handler = (server: ViteDevServer | { middlewares: ViteDevServer['middlewares'] }) => {
+    server.middlewares.use(CAMPAIGN_ROUTE, async (req, res) => {
+      const c = config();
+      if (!c) {
+        res.statusCode = 404;
+        res.end();
+        return;
+      }
+      if (!index) {
+        const { campaignIndex } = await import('./tools/campaign-files.mjs');
+        index = campaignIndex(c);
+      }
+      const url = new URL(req.url ?? '/', 'http://campaign');
+      const file = /^\/file\/(\d+)$/.exec(url.pathname);
+      if (file) {
+        const p = index.file(Number(file[1]));
+        if (!p || !existsSync(p)) {
+          res.statusCode = 404;
+          res.end();
+          return;
+        }
+        res.setHeader('Content-Type', 'application/octet-stream');
+        res.setHeader('Content-Length', statSync(p).size);
+        createReadStream(p).pipe(res);
+        return;
+      }
+      const round = index.round(url.searchParams.get('name') ?? '');
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Cache-Control', 'no-cache');
+      if (!round) res.statusCode = 404;
+      res.end(JSON.stringify(round ?? {}));
+    });
+  };
+  return { name: 'heat3d-campaign-files', configureServer: handler, configurePreviewServer: handler };
+}
+
 /** Where the page asks whether a newer version is out, and asks for it. */
 export const UPDATE_ROUTE = '/__heat3d/update';
 
@@ -338,7 +395,7 @@ function selfUpdate(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), hostMemory(), selfUpdate(), figurePack()],
+  plugins: [react(), hostMemory(), selfUpdate(), figurePack(), campaignFiles()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

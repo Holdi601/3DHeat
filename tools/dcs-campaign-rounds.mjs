@@ -23,12 +23,7 @@ import { readText } from './acmi-read.mjs';
 
 const { AcmiStreamReader } = await import(new URL('../src/data/acmiStream.ts', import.meta.url).href);
 const { dcsServer, DcsRounds } = await import(new URL('../src/data/dcsOutcome.ts', import.meta.url).href);
-const { chainCampaigns, roundOfChain } = await import(new URL('../src/data/dcsCampaign.ts', import.meta.url).href);
-
-/** Seconds of a recording read: the start is written in the first frames. */
-const LIMIT_S = 180;
-const SIDE_UNIT = /(^|\+)(Ground|Sea|Static|Building|Aerodrome|FARP)(\+|$)/i;
-const NOT_UNIT = /Weapon|Missile|Rocket|Bomb|Shell|Bullet|Projectile|Bullseye|Navaid|Waypoint|Decoy|Flare|Chaff|Parachutist|(^|\+)Air(\+|$)/i;
+const { chainCampaigns, roundOfChain, START_S: LIMIT_S, START_UNIT: SIDE_UNIT, NOT_START_UNIT: NOT_UNIT } = await import(new URL('../src/data/dcsCampaign.ts', import.meta.url).href);
 
 async function startOf(file) {
   const units = new Map();

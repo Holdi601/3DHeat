@@ -27,7 +27,7 @@ export interface ObjectivesState {
    * many-match load's (`objectivesLazy.ts`), one read for every battle of a map
    * and mode, under each of its battles' names.
    */
-  lite: { match: string; objectives: Objective[] }[];
+  lite: { match: string; objectives: Objective[]; ownerLabels?: Record<number, string> }[];
   /** Bumped on every change the drawing depends on. */
   rev: number;
   error: string | null;
@@ -35,7 +35,7 @@ export interface ObjectivesState {
   setLayer: (layer: ObjectiveLayer, on: boolean) => void;
   setLabels: (on: boolean) => void;
   addTimelines: (list: ObjectiveTimeline[]) => void;
-  addLite: (list: { match: string; objectives: Objective[] }[]) => void;
+  addLite: (list: { match: string; objectives: Objective[]; ownerLabels?: Record<number, string> }[]) => void;
 }
 
 const KEY = '3dheat.objectives';

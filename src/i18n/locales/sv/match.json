@@ -167,5 +167,9 @@
   "match.series.held": "Omstridda platser som hölls vid varje sessions start (röd, blå)",
   "match.series.go": "Gå till början av session {n}",
   "match.series.row": "{n}. {date} · Röd {red} / Blå {blue} · tagna innan: {taken}",
-  "match.series.offer": "Den här inspelningen är session {n} av kampanjrundan {campaign}. Läs in rundans andra inspelningar tillsammans med den för att se rundan som en serie."
+  "match.series.offer": "Den här inspelningen är session {n} av kampanjrundan {campaign}. Läs in rundans andra inspelningar tillsammans med den för att se rundan som en serie.",
+  "match.series.loadRound": "Läs in hela rundan: {count} sessioner, {size}",
+  "match.series.loading": "Hämtar session {n} av {of}…",
+  "match.series.missing": "Sessioner som inte finns på den här datorn: {count}",
+  "match.series.loadFailed": "Rundan kunde inte läsas in: {error}"
 }

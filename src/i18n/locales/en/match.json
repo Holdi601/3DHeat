@@ -167,5 +167,9 @@
   "match.series.held": "Contested places held at each session's start (red, blue)",
   "match.series.go": "Go to the start of session {n}",
   "match.series.row": "{n}. {date} · Red {red} / Blue {blue} · taken before: {taken}",
-  "match.series.offer": "This recording is session {n} of the campaign round {campaign}. Load the round's other recordings together with it to watch the round as one series."
+  "match.series.offer": "This recording is session {n} of the campaign round {campaign}. Load the round's other recordings together with it to watch the round as one series.",
+  "match.series.loadRound": "Load the whole round: {count} sessions, {size}",
+  "match.series.loading": "Fetching session {n} of {of}…",
+  "match.series.missing": "Sessions not on this machine: {count}",
+  "match.series.loadFailed": "The round could not be loaded: {error}"
 }

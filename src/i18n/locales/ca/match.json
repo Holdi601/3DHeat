@@ -167,5 +167,9 @@
   "match.series.held": "Llocs disputats en mans de cada bàndol a l'inici de cada sessió (vermell, blau)",
   "match.series.go": "Ves a l'inici de la sessió {n}",
   "match.series.row": "{n}. {date} · Vermell {red} / Blau {blue} · presos abans: {taken}",
-  "match.series.offer": "Aquest enregistrament és la sessió {n} de la ronda de campanya {campaign}. Carrega-hi juntament els altres enregistraments de la ronda per veure-la com una sola sèrie."
+  "match.series.offer": "Aquest enregistrament és la sessió {n} de la ronda de campanya {campaign}. Carrega-hi juntament els altres enregistraments de la ronda per veure-la com una sola sèrie.",
+  "match.series.loadRound": "Carrega tota la ronda: {count} sessions, {size}",
+  "match.series.loading": "Obtenint la sessió {n} de {of}…",
+  "match.series.missing": "Sessions que no són en aquest equip: {count}",
+  "match.series.loadFailed": "No s'ha pogut carregar la ronda: {error}"
 }

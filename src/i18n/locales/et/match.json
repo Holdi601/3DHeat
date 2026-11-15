@@ -167,5 +167,9 @@
   "match.series.held": "Vaidlusalused kohad iga seansi alguses (punane, sinine)",
   "match.series.go": "Mine seansi {n} algusesse",
   "match.series.row": "{n}. {date} · Punane {red} / Sinine {blue} · varem vallutatud: {taken}",
-  "match.series.offer": "See salvestus on kampaaniavooru {campaign} seanss {n}. Laadi vooru teised salvestused koos sellega, et vaadata voor ühe seeriana."
+  "match.series.offer": "See salvestus on kampaaniavooru {campaign} seanss {n}. Laadi vooru teised salvestused koos sellega, et vaadata voor ühe seeriana.",
+  "match.series.loadRound": "Laadi kogu voor: {count} seanssi, {size}",
+  "match.series.loading": "Toon seanssi {n}/{of}…",
+  "match.series.missing": "Seansid, mida selles masinas pole: {count}",
+  "match.series.loadFailed": "Vooru ei õnnestunud laadida: {error}"
 }

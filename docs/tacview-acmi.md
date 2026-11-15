@@ -119,7 +119,17 @@ The last session's start can be hours before the round's end, so the confidence 
 
 ### Watching a campaign round as a series
 
-Load the recordings of one round together - the files whose `campaign` is the same - and the viewer plays them as one series: session after session in their real order, the hours or days between two cut to a one-minute break. The timeline marks each session's start in yellow and the breaks as dark bands, and the clock says which session is playing and its real date (`session 4/12 · 2026-11-02 12:38 UTC`). Heat, the replay, filters and Insights work on the whole series as on any loaded data. The **Campaign round** section of the Match tab lists the sessions with their dates, how many contested places each side held at each start - also as a chart over the round - and how many were taken before it; a click goes to a session's start. A recording loaded alone says there which round and session it is. Recordings of different rounds loaded together are not a series: each starts at zero, as separate matches do.
+Load the recordings of one round together - the files whose `campaign` is the same - and the viewer plays them as one series: session after session in their real order, the hours or days between two cut to a one-minute break. The timeline marks each session's start in yellow and the breaks as dark bands, and the clock says which session is playing and its real date (`session 4/12 · 2026-11-02 12:38 UTC`). Heat, the replay, filters and Insights work on the whole series as on any loaded data. The **Campaign round** section of the Match tab lists the sessions with their dates, how many contested places each side held at each start - also as a chart over the round - and how many were taken before it; a click goes to a session's start. A recording loaded alone says there which round and session it is. Recordings of different rounds loaded together are not a series: each starts at zero, as separate matches do. The many-match loader (**Many matches at once**) plays a round as a series too, streamed and sized to the GPU, for rounds of many gigabytes.
+
+The places that changed hands during the round are drawn on the map as capture zones, coloured by the side that held each at the start of the session playing, switching at the session boundaries; each change is a capture in the replay's event list. They are worked out from the loaded rows - each session's ground units and statics in its first minutes, in cells of about 2 km, as the chain does - so they need the full loader (the many-match loader keeps too little of each row).
+
+**Loading the whole round from one of its recordings.** In a plain browser the viewer cannot open files you did not pick: load the round's files together. Served by the local viewer server (`npm run dev` or `npm run preview`), it can: give the git-ignored `tools/local-data.json` a `campaigns` entry naming the folder of rounds files and the folders of converted recordings, and the Campaign round section of a single recording offers **Load the whole round**, fetches the round's sessions found there and loads them with the many-match loader:
+
+```json
+"campaigns": { "rounds": "D:/dcs/rounds", "recordings": ["D:/dcs/converted"] }
+```
+
+Only the recordings a rounds file names are served (`tools/campaign-files.mjs`); a session not found under those folders is counted, not loaded.
 
 What the known servers publish:
 

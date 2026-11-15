@@ -167,5 +167,9 @@
   "match.series.held": "Sporne miejsca utrzymywane na początku każdej sesji (czerwoni, niebiescy)",
   "match.series.go": "Przejdź do początku sesji {n}",
   "match.series.row": "{n}. {date} · Czerwoni {red} / Niebiescy {blue} · zajęte wcześniej: {taken}",
-  "match.series.offer": "To nagranie jest sesją {n} rundy kampanii {campaign}. Wczytaj razem z nim pozostałe nagrania rundy, aby oglądać rundę jako jedną serię."
+  "match.series.offer": "To nagranie jest sesją {n} rundy kampanii {campaign}. Wczytaj razem z nim pozostałe nagrania rundy, aby oglądać rundę jako jedną serię.",
+  "match.series.loadRound": "Wczytaj całą rundę: sesje {count}, {size}",
+  "match.series.loading": "Pobieranie sesji {n} z {of}…",
+  "match.series.missing": "Sesje, których nie ma na tym komputerze: {count}",
+  "match.series.loadFailed": "Nie udało się wczytać rundy: {error}"
 }

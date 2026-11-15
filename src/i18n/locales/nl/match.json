@@ -167,5 +167,9 @@
   "match.series.held": "Betwiste plaatsen in handen aan het begin van elke sessie (rood, blauw)",
   "match.series.go": "Naar het begin van sessie {n}",
   "match.series.row": "{n}. {date} · Rood {red} / Blauw {blue} · eerder ingenomen: {taken}",
-  "match.series.offer": "Deze opname is sessie {n} van campagneronde {campaign}. Laad de andere opnames van de ronde samen met deze om de ronde als één reeks te bekijken."
+  "match.series.offer": "Deze opname is sessie {n} van campagneronde {campaign}. Laad de andere opnames van de ronde samen met deze om de ronde als één reeks te bekijken.",
+  "match.series.loadRound": "Hele ronde laden: {count} sessies, {size}",
+  "match.series.loading": "Sessie {n} van {of} ophalen…",
+  "match.series.missing": "Sessies niet op deze computer: {count}",
+  "match.series.loadFailed": "De ronde kon niet worden geladen: {error}"
 }

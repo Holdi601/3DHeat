@@ -167,5 +167,9 @@
   "match.series.held": "Locais disputados detidos no início de cada sessão (vermelho, azul)",
   "match.series.go": "Ir para o início da sessão {n}",
   "match.series.row": "{n}. {date} · Vermelho {red} / Azul {blue} · tomados antes: {taken}",
-  "match.series.offer": "Esta gravação é a sessão {n} da ronda de campanha {campaign}. Carregue as outras gravações da ronda juntamente com ela para ver a ronda como uma série."
+  "match.series.offer": "Esta gravação é a sessão {n} da ronda de campanha {campaign}. Carregue as outras gravações da ronda juntamente com ela para ver a ronda como uma série.",
+  "match.series.loadRound": "Carregar a ronda inteira: {count} sessões, {size}",
+  "match.series.loading": "A obter a sessão {n} de {of}…",
+  "match.series.missing": "Sessões que não estão nesta máquina: {count}",
+  "match.series.loadFailed": "Não foi possível carregar a ronda: {error}"
 }

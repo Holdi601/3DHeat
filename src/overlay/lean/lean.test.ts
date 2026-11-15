@@ -453,3 +453,47 @@ describe('lean overlay place on the earth', () => {
     expect(sharedGeo([hints(42)], { x: 'U', y: 'V', z: 'Altitude' })).toBeNull();
   });
 });
+
+describe('lean overlay campaign series', () => {
+  it('plays the sessions of one campaign round one after another, in real order, with breaks', () => {
+    // Three sessions of one round, their mission clocks years apart, read in an order that is not the real one.
+    const labels = ['North 2026-11-02 12:00', 'North 2026-11-01 06:00', 'North 2026-11-03 18:30'];
+    const r: Record<string, unknown>[] = [];
+    labels.forEach((label, m) => {
+      const start = [5e8, 9e8, 1e8][m];
+      for (let u = 0; u < 2; u++)
+        for (let t = 0; t <= 100; t += 1)
+          r.push({ time: start + t, event: 'position', track: `u${u} #1`, match: label, team: String(1 + u), kind: 'aircraft', Vehicle: 'f-16', campaign: 'Test North 2', x: 10 * t + 100 * u, y: 1000, z: 50 * m, dirX: 1, dirY: 0, dirZ: 0, roll: 0 });
+    });
+    const cols = [...COLS, 'campaign'];
+    const c: Columns = {};
+    for (const k of cols) c[k] = NUM.has(k) ? Float64Array.from(r, (x) => x[k] as number) : r.map((x) => x[k]);
+    const hints = JSON.stringify({ ...JSON.parse(HINTS), columns: { ...JSON.parse(HINTS).columns, extra: ['event', 'kind', 'Vehicle', 'roll', 'campaign'] } });
+    const res = leanSpec({ columns: cols, rows: r.slice(0, 50).map((x) => cols.map((k) => String(x[k]))), numeric: cols.map((k) => NUM.has(k)), hints, timestamps: [] });
+    if (!res.ok) throw new Error(res.reason);
+    expect(res.spec.meta[0]).toBe('campaign');
+    const files = [{ name: 'round.parquet', rowGroups: [r.length] }];
+    const jobs = planJobs(files, 1e9);
+    const asm = new LeanAssembler(files, jobs, res.spec, false);
+    jobs.forEach((_, k) => asm.addPass1(k, scanPass1(c, r.length, res.spec, 0, asm.levels)));
+    if (!asm.plan(1e9)) throw new Error('too big');
+    jobs.forEach((_, k) => {
+      const inp = asm.pass2Input(k);
+      asm.addPass2(k, scanPass2(c, r.length, res.spec, inp.base, inp.alloc, inp.level));
+    });
+    const b = asm.finish('series');
+    const s = b.dataset.series!;
+    expect(s.campaign).toBe('Test North 2');
+    expect(s.sessions.map((x) => b.groups[x.session])).toEqual([labels[1], labels[0], labels[2]]);
+    expect(s.sessions[0].start).toBe(0);
+    expect(s.sessions[1].start).toBeCloseTo(s.sessions[0].end + 60, 3);
+    expect(s.sessions[2].start).toBeCloseTo(s.sessions[1].end + 60, 3);
+    expect(s.sessions[0].realStart).toBe(Date.parse('2026-11-01T06:00:00Z') / 1000);
+    // Each track starts where its session does.
+    const t0 = new Float32Array(b.trackData.buffer);
+    for (let i = 0; i < b.tracks; i++) {
+      const sess = s.sessions.find((x) => x.session === b.trackGroup[i])!;
+      expect(t0[i * TRACK_U32 + 12]).toBeCloseTo(sess.start, 2);
+    }
+  });
+});

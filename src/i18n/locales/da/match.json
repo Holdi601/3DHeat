@@ -167,5 +167,9 @@
   "match.series.held": "Omstridte steder holdt ved hver sessions start (rød, blå)",
   "match.series.go": "Gå til starten af session {n}",
   "match.series.row": "{n}. {date} · Rød {red} / Blå {blue} · indtaget før: {taken}",
-  "match.series.offer": "Denne optagelse er session {n} af kampagnerunden {campaign}. Indlæs rundens andre optagelser sammen med den for at se runden som én serie."
+  "match.series.offer": "Denne optagelse er session {n} af kampagnerunden {campaign}. Indlæs rundens andre optagelser sammen med den for at se runden som én serie.",
+  "match.series.loadRound": "Indlæs hele runden: {count} sessioner, {size}",
+  "match.series.loading": "Henter session {n} af {of}…",
+  "match.series.missing": "Sessioner der ikke er på denne maskine: {count}",
+  "match.series.loadFailed": "Runden kunne ikke indlæses: {error}"
 }

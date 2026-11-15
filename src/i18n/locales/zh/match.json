@@ -167,5 +167,9 @@
   "match.series.held": "每个会话开始时各方占据的争夺地点（红、蓝）",
   "match.series.go": "转到会话 {n} 的开始",
   "match.series.row": "{n}. {date} · 红 {red} / 蓝 {blue} · 此前夺取：{taken}",
-  "match.series.offer": "此记录是战役回合 {campaign} 的第 {n} 个会话。将该回合的其他记录与它一起加载，即可把整个回合作为一个系列观看。"
+  "match.series.offer": "此记录是战役回合 {campaign} 的第 {n} 个会话。将该回合的其他记录与它一起加载，即可把整个回合作为一个系列观看。",
+  "match.series.loadRound": "加载整个回合：{count} 个会话，{size}",
+  "match.series.loading": "正在获取会话 {n}/{of}…",
+  "match.series.missing": "本机上没有的会话：{count}",
+  "match.series.loadFailed": "无法加载该回合：{error}"
 }

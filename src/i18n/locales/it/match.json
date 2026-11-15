@@ -167,5 +167,9 @@
   "match.series.held": "Luoghi contesi tenuti all'inizio di ogni sessione (rosso, blu)",
   "match.series.go": "Vai all'inizio della sessione {n}",
   "match.series.row": "{n}. {date} · Rosso {red} / Blu {blue} · presi prima: {taken}",
-  "match.series.offer": "Questa registrazione è la sessione {n} del round di campagna {campaign}. Carica insieme a essa le altre registrazioni del round per guardarlo come una serie."
+  "match.series.offer": "Questa registrazione è la sessione {n} del round di campagna {campaign}. Carica insieme a essa le altre registrazioni del round per guardarlo come una serie.",
+  "match.series.loadRound": "Carica l'intero round: {count} sessioni, {size}",
+  "match.series.loading": "Recupero della sessione {n} di {of}…",
+  "match.series.missing": "Sessioni non presenti su questa macchina: {count}",
+  "match.series.loadFailed": "Impossibile caricare il round: {error}"
 }

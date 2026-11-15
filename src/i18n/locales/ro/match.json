@@ -167,5 +167,9 @@
   "match.series.held": "Locuri disputate deținute la începutul fiecărei sesiuni (roșii, albaștrii)",
   "match.series.go": "Mergi la începutul sesiunii {n}",
   "match.series.row": "{n}. {date} · Roșii {red} / Albaștrii {blue} · cucerite înainte: {taken}",
-  "match.series.offer": "Această înregistrare este sesiunea {n} a rundei de campanie {campaign}. Încarcă împreună cu ea celelalte înregistrări ale rundei pentru a urmări runda ca o singură serie."
+  "match.series.offer": "Această înregistrare este sesiunea {n} a rundei de campanie {campaign}. Încarcă împreună cu ea celelalte înregistrări ale rundei pentru a urmări runda ca o singură serie.",
+  "match.series.loadRound": "Încarcă toată runda: sesiuni {count}, {size}",
+  "match.series.loading": "Se preia sesiunea {n} din {of}…",
+  "match.series.missing": "Sesiuni care nu sunt pe acest calculator: {count}",
+  "match.series.loadFailed": "Runda nu a putut fi încărcată: {error}"
 }

@@ -167,5 +167,9 @@
   "match.series.held": "各セッション開始時に各陣営が保持していた係争地（赤、青）",
   "match.series.go": "セッション {n} の開始へ移動",
   "match.series.row": "{n}. {date} · 赤 {red} / 青 {blue} · 直前までの奪取：{taken}",
-  "match.series.offer": "この記録はキャンペーンラウンド {campaign} のセッション {n} です。ラウンドの他の記録も一緒に読み込むと、ラウンドを一つのシリーズとして見られます。"
+  "match.series.offer": "この記録はキャンペーンラウンド {campaign} のセッション {n} です。ラウンドの他の記録も一緒に読み込むと、ラウンドを一つのシリーズとして見られます。",
+  "match.series.loadRound": "ラウンド全体を読み込む：{count} セッション、{size}",
+  "match.series.loading": "セッション {n}/{of} を取得中…",
+  "match.series.missing": "このマシンにないセッション：{count}",
+  "match.series.loadFailed": "ラウンドを読み込めませんでした：{error}"
 }

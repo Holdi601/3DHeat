@@ -167,5 +167,9 @@
   "match.series.held": "Sporna mesta, ki jih je strana držala ob začetku vsake seje (rdeči, modri)",
   "match.series.go": "Pojdi na začetek seje {n}",
   "match.series.row": "{n}. {date} · Rdeči {red} / Modri {blue} · zavzeto prej: {taken}",
-  "match.series.offer": "Ta posnetek je seja {n} kroga kampanje {campaign}. Naložite z njim še druge posnetke kroga, da si krog ogledate kot eno serijo."
+  "match.series.offer": "Ta posnetek je seja {n} kroga kampanje {campaign}. Naložite z njim še druge posnetke kroga, da si krog ogledate kot eno serijo.",
+  "match.series.loadRound": "Naloži cel krog: seje {count}, {size}",
+  "match.series.loading": "Pridobivanje seje {n} od {of}…",
+  "match.series.missing": "Seje, ki jih ni na tem računalniku: {count}",
+  "match.series.loadFailed": "Kroga ni bilo mogoče naložiti: {error}"
 }

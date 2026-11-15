@@ -32,6 +32,8 @@ export interface ObjectiveSource {
   timeline: ObjectiveTimeline | null;
   /** Replay seconds = dataset seconds + offset. */
   offset: number;
+  /** The team label each owner number stands for, where it is not the number itself (a DCS campaign's coalitions). */
+  ownerLabels?: Record<number, string>;
 }
 
 /** A label to place over the view. */
@@ -104,7 +106,7 @@ export type GroundAt = (x: number, z: number) => number | null;
  */
 export function objectiveSources(
   d: Dataset | null,
-  games: Pick<GameMatch, 'match' | 'objectives'>[],
+  games: (Pick<GameMatch, 'match' | 'objectives'> & { ownerLabels?: Record<number, string> })[],
   timelines: Record<string, ObjectiveTimeline>,
   filters: FilterSpec[],
   session: number,
@@ -137,6 +139,7 @@ export function objectiveSources(
     objectives: g.objectives!,
     timeline: timelines[g.match] ?? null,
     offset,
+    ...(g.ownerLabels ? { ownerLabels: g.ownerLabels } : {}),
   }));
 }
 

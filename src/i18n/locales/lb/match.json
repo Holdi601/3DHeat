@@ -167,5 +167,9 @@
   "match.series.held": "Ëmstridde Plazen am Ufank vun all Sessioun (rout, blo)",
   "match.series.go": "Op den Ufank vun der Sessioun {n}",
   "match.series.row": "{n}. {date} · Rout {red} / Blo {blue} · virdrun ageholl: {taken}",
-  "match.series.offer": "Dës Opnam ass d'Sessioun {n} vun der Campagnesronn {campaign}. Lued déi aner Opnamen vun der Ronn mat hir, fir d'Ronn als eng Serie ze kucken."
+  "match.series.offer": "Dës Opnam ass d'Sessioun {n} vun der Campagnesronn {campaign}. Lued déi aner Opnamen vun der Ronn mat hir, fir d'Ronn als eng Serie ze kucken.",
+  "match.series.loadRound": "Ganz Ronn lueden: {count} Sessiounen, {size}",
+  "match.series.loading": "Sessioun {n} vun {of} gëtt geholl…",
+  "match.series.missing": "Sessiounen net op dësem Computer: {count}",
+  "match.series.loadFailed": "D'Ronn konnt net geluede ginn: {error}"
 }

@@ -2096,7 +2096,7 @@ export class Engine {
 
   /** The objectives' lines for this frame, after `base`: coloured by the replay's teams, laid on the level. */
   /** The match documents' battles and a many-match load's objectives (`objectivesLazy.ts`), as one list while neither changes. */
-  private objectiveGames(lite: { match: string; objectives: Objective[] }[]): { match: string; objectives?: Objective[] }[] {
+  private objectiveGames(lite: { match: string; objectives: Objective[]; ownerLabels?: Record<number, string> }[]): { match: string; objectives?: Objective[]; ownerLabels?: Record<number, string> }[] {
     const games = useMatchStore.getState().games;
     if (!lite.length) return games;
     if (!games.length) return lite;
@@ -2146,9 +2146,9 @@ export class Engine {
         axes: d.axes ?? null,
         layers: useObjectivesStore.getState().layers,
         t: this.playhead,
-        // A replay's team (1, 2) in the colour its units have.
+        // A replay's team (1, 2) in the colour its units have; a source may name the team label a number stands for.
         teamColor: (team) => {
-          const i = d.teamLabels.indexOf(String(team));
+          const i = d.teamLabels.indexOf((sources.length === 1 ? sources[0].ownerLabels?.[team] : undefined) ?? String(team));
           return i >= 0 ? teamMemberColor(i, 0, 1) : [0.86, 0.86, 0.82];
         },
         ground,

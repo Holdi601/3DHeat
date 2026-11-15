@@ -167,5 +167,9 @@
   "match.series.held": "Lugares disputados en poder de cada bando al inicio de cada sesión (rojo, azul)",
   "match.series.go": "Ir al inicio de la sesión {n}",
   "match.series.row": "{n}. {date} · Rojo {red} / Azul {blue} · tomados antes: {taken}",
-  "match.series.offer": "Esta grabación es la sesión {n} de la ronda de campaña {campaign}. Carga junto con ella las demás grabaciones de la ronda para verla como una serie."
+  "match.series.offer": "Esta grabación es la sesión {n} de la ronda de campaña {campaign}. Carga junto con ella las demás grabaciones de la ronda para verla como una serie.",
+  "match.series.loadRound": "Cargar la ronda entera: {count} sesiones, {size}",
+  "match.series.loading": "Obteniendo la sesión {n} de {of}…",
+  "match.series.missing": "Sesiones que no están en este equipo: {count}",
+  "match.series.loadFailed": "No se pudo cargar la ronda: {error}"
 }

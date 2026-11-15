@@ -167,5 +167,9 @@
   "match.series.held": "Apstrīdētās vietas katras sesijas sākumā (sarkanie, zilie)",
   "match.series.go": "Pāriet uz sesijas {n} sākumu",
   "match.series.row": "{n}. {date} · Sarkanie {red} / Zilie {blue} · ieņemtas pirms tam: {taken}",
-  "match.series.offer": "Šis ieraksts ir kampaņas kārtas {campaign} sesija {n}. Ielādējiet kopā ar to pārējos kārtas ierakstus, lai skatītu kārtu kā vienu sēriju."
+  "match.series.offer": "Šis ieraksts ir kampaņas kārtas {campaign} sesija {n}. Ielādējiet kopā ar to pārējos kārtas ierakstus, lai skatītu kārtu kā vienu sēriju.",
+  "match.series.loadRound": "Ielādēt visu kārtu: {count} sesijas, {size}",
+  "match.series.loading": "Ielādē sesiju {n} no {of}…",
+  "match.series.missing": "Sesijas, kuru nav šajā datorā: {count}",
+  "match.series.loadFailed": "Kārtu neizdevās ielādēt: {error}"
 }

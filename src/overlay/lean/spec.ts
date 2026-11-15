@@ -51,7 +51,9 @@ export function leanSpec(input: SpecInput): SpecResult {
   const timeScale = timestamp ? 1e-3 : (TIME_SCALE[mapping.timeUnit] ?? 1);
   const roles = new Set([mapping.x, mapping.y, mapping.z, mapping.time, mapping.personId, mapping.sessionId, mapping.teamId].filter(Boolean));
   const event = input.columns.find((c) => /^events?$/i.test(c.trim()) && !input.numeric[input.columns.indexOf(c)]) ?? null;
-  const meta = input.columns.filter((c) => !roles.has(c) && c !== event && (NAME_COLUMN.test(c.trim()) || TYPE_COLUMN.test(c.trim()) || WHO_COLUMN.test(c.trim()))).slice(0, MAX_META);
+  // A campaign round's sessions (a DCS server's recordings) are kept as which round, so they play as a series (`assemble.ts`).
+  const series = input.columns.filter((c) => c === 'campaign' && !input.numeric[input.columns.indexOf(c)]);
+  const meta = [...series, ...input.columns.filter((c) => !roles.has(c) && c !== event && !series.includes(c) && (NAME_COLUMN.test(c.trim()) || TYPE_COLUMN.test(c.trim()) || WHO_COLUMN.test(c.trim())))].slice(0, MAX_META);
   const roll = input.columns.find((c) => /^roll$/i.test(c.trim()) && input.numeric[input.columns.indexOf(c)]) ?? null;
   const look = mapping.lookMode === 'vector' && mapping.dirX && mapping.dirY && mapping.dirZ ? 'vector' : mapping.lookMode === 'yawPitch' && mapping.yaw ? 'yawPitch' : 'none';
   const scale = mapping.axes.scale || 1;

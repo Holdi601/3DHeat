@@ -167,5 +167,9 @@
   "match.series.held": "Omstridte steder holdt ved starten av hver økt (rød, blå)",
   "match.series.go": "Gå til starten av økt {n}",
   "match.series.row": "{n}. {date} · Rød {red} / Blå {blue} · tatt før: {taken}",
-  "match.series.offer": "Dette opptaket er økt {n} av kampanjerunden {campaign}. Last inn rundens andre opptak sammen med det for å se runden som én serie."
+  "match.series.offer": "Dette opptaket er økt {n} av kampanjerunden {campaign}. Last inn rundens andre opptak sammen med det for å se runden som én serie.",
+  "match.series.loadRound": "Last inn hele runden: {count} økter, {size}",
+  "match.series.loading": "Henter økt {n} av {of}…",
+  "match.series.missing": "Økter som ikke er på denne maskinen: {count}",
+  "match.series.loadFailed": "Runden kunne ikke lastes inn: {error}"
 }

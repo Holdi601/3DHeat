@@ -167,5 +167,9 @@
   "match.series.held": "Her oturumun başında tutulan çekişmeli yerler (kırmızı, mavi)",
   "match.series.go": "{n}. oturumun başına git",
   "match.series.row": "{n}. {date} · Kırmızı {red} / Mavi {blue} · önceden alınan: {taken}",
-  "match.series.offer": "Bu kayıt, {campaign} sefer turunun {n}. oturumu. Turu tek bir seri olarak izlemek için turun diğer kayıtlarını bununla birlikte yükleyin."
+  "match.series.offer": "Bu kayıt, {campaign} sefer turunun {n}. oturumu. Turu tek bir seri olarak izlemek için turun diğer kayıtlarını bununla birlikte yükleyin.",
+  "match.series.loadRound": "Turun tamamını yükle: {count} oturum, {size}",
+  "match.series.loading": "{of} oturumdan {n}. alınıyor…",
+  "match.series.missing": "Bu makinede olmayan oturumlar: {count}",
+  "match.series.loadFailed": "Tur yüklenemedi: {error}"
 }

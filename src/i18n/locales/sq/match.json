@@ -167,5 +167,9 @@
   "match.series.held": "Vendet e kontestuara të mbajtura në fillim të çdo seance (të kuqtë, blutë)",
   "match.series.go": "Shko në fillim të seancës {n}",
   "match.series.row": "{n}. {date} · Të kuqtë {red} / Blutë {blue} · marrë më parë: {taken}",
-  "match.series.offer": "Ky regjistrim është seanca {n} e raundit të fushatës {campaign}. Ngarkoni bashkë me të regjistrimet e tjera të raundit për ta parë raundin si një seri."
+  "match.series.offer": "Ky regjistrim është seanca {n} e raundit të fushatës {campaign}. Ngarkoni bashkë me të regjistrimet e tjera të raundit për ta parë raundin si një seri.",
+  "match.series.loadRound": "Ngarko gjithë raundin: seanca {count}, {size}",
+  "match.series.loading": "Po merret seanca {n} nga {of}…",
+  "match.series.missing": "Seanca që nuk janë në këtë kompjuter: {count}",
+  "match.series.loadFailed": "Raundi nuk u ngarkua dot: {error}"
 }

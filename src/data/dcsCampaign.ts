@@ -52,6 +52,11 @@ export interface SessionStart {
 }
 
 export const CELL_DEG = 0.02;
+/** Seconds of a session's start read for its layout: the units are written in the first frames. */
+export const START_S = 180;
+/** What holds ground: units, ships and statics of a side (not aircraft, weapons or map marks). */
+export const START_UNIT = /(^|\+)(Ground|Sea|Static|Building|Aerodrome|FARP)(\+|$)/i;
+export const NOT_START_UNIT = /Weapon|Missile|Rocket|Bomb|Shell|Bullet|Projectile|Bullseye|Navaid|Waypoint|Decoy|Flare|Chaff|Parachutist|(^|\+)Air(\+|$)/i;
 export const RESET_SHARE = 0.6;
 /** How soon (s) after a map's last session another map of the server must begin for the server to have moved on. */
 const ROTATE_S = 12 * 3600;

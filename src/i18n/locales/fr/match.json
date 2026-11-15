@@ -167,5 +167,9 @@
   "match.series.held": "Lieux disputés tenus au début de chaque session (rouge, bleu)",
   "match.series.go": "Aller au début de la session {n}",
   "match.series.row": "{n}. {date} · Rouge {red} / Bleu {blue} · pris avant : {taken}",
-  "match.series.offer": "Cet enregistrement est la session {n} de la manche de campagne {campaign}. Chargez les autres enregistrements de la manche avec lui pour regarder la manche comme une série."
+  "match.series.offer": "Cet enregistrement est la session {n} de la manche de campagne {campaign}. Chargez les autres enregistrements de la manche avec lui pour regarder la manche comme une série.",
+  "match.series.loadRound": "Charger toute la manche : {count} sessions, {size}",
+  "match.series.loading": "Récupération de la session {n} sur {of}…",
+  "match.series.missing": "Sessions absentes de cette machine : {count}",
+  "match.series.loadFailed": "La manche n'a pas pu être chargée : {error}"
 }

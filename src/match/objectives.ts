@@ -219,6 +219,14 @@ export function toWorld(p: Vec3, axes: AxisMapping | null | undefined): Vec3 {
   return axes.up === 'z' ? [x, z, y] : [x, y, z];
 }
 
+/** A world point back in the data's own frame: `toWorld`'s inverse. */
+export function fromWorld(w: Vec3, axes: AxisMapping | null | undefined): Vec3 {
+  if (!axes) return [w[0], w[1], w[2]];
+  const s = axes.scale || 1;
+  const [x, y, z] = axes.up === 'z' ? [w[0], w[2], w[1]] : [w[0], w[1], w[2]];
+  return [(x / s) * (axes.flipX ? -1 : 1), (y / s) * (axes.flipY ? -1 : 1), (z / s) * (axes.flipZ ? -1 : 1)];
+}
+
 /** The battle's mode from its match document: `battle.missionMode` ("Conq1", "Dom"), else the mission name's tail, else the file name's. */
 export function battleMode(j: Record<string, unknown>): {
   mode: string;
