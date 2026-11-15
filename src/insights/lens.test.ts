@@ -3,7 +3,7 @@ import { CANON } from '../data/canonical';
 import type { Dataset } from '../state/types';
 import { FULL_SCOPE } from '../volumes/stats';
 import { debriefPrompt } from './ai/prompt';
-import { KB, KB_BY_ID, kbStats, PATTERNS, REF_BY_ID } from './knowledge';
+import { KB, KB_BY_ID, kbStats, PATTERNS, REF_BY_ID, REFERENCES } from './knowledge';
 import { ofInsight, readReport, topEntries } from './lens';
 import { aucTest, concentration, fitLanchester, spearman } from './lensMetrics';
 import { baseDebrief } from './narrate';
@@ -271,5 +271,12 @@ describe('lens metrics on simulated battles', () => {
       expect(s, kind).not.toBeNull();
       for (const p of Object.keys(s!.patterns)) expect(pats.has(p), `${kind}: ${p}`).toBe(true);
     }
+  });
+});
+
+describe('bibliography verification marker', () => {
+  it('carries a valid ISO date where present', () => {
+    const bad = REFERENCES.filter((r) => r.verified !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(r.verified)).map((r) => r.id);
+    expect(bad).toEqual([]);
   });
 });

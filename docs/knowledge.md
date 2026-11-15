@@ -118,12 +118,12 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `concept.lanchester-linear` | Lanchester's linear law (area fire, one-on-one) | military, urban, esports | area-fire, attrition, urban-close | Lanchester 1916; Taylor 1983; Bracken 1995; Washburn & Kress 2009 |
 | `concept.concentration` | Concentration of force (mass) | military, air, naval, esports | concentration, local-superiority, defeat-in-detail | Clausewitz 1873; Jomini 1862; FM 3-0 2022; MCDP 1 1997 |
 | `concept.force-ratio` | Force ratios and the 3:1 rule | military | local-superiority, concentration, balance | Mearsheimer 1989; Epstein 1989; Dupuy 1987; FM 3-90 2023 |
-| `concept.exchange-ratio` | Loss-exchange ratio | military, air, esports, design | exchange-ratio, attrition, air-superiority | Morse & Kimball 1951; USAF Tactical Fighter Weapons Center 1974; Dupuy 1979 |
+| `concept.exchange-ratio` | Loss-exchange ratio | military, air, esports, design | exchange-ratio, attrition, air-superiority | Morse & Kimball 1951; Weapons Systems Evaluation Group 1967; Dupuy 1979 |
 | `concept.combat-power` | Combat power and its multipliers | military | local-superiority, combined-arms, fields-of-fire, cover | Dupuy 1979; Dupuy 1987; FM 3-0 2022; Biddle 2004 |
 | `concept.modern-system` | The modern system of force employment | military | cover, open-ground, combined-arms, static-exposure | Biddle 2004 |
 | `concept.ooda` | The OODA loop (observe-orient-decide-act) | military, air, esports | tempo, initiative, surprise | Boyd 1986; Osinga 2007; MCDP 1 1997 |
 | `concept.energy-maneuverability` | Energy-maneuverability theory | air | energy-advantage, high-ground, mobility | Boyd et al. 1966; Shaw 1985; Osinga 2007 |
-| `concept.bfm-acm` | Basic fighter maneuvers and air combat maneuvering | air | energy-advantage, initiative, surprise | Shaw 1985; USAF Tactical Fighter Weapons Center 1974 |
+| `concept.bfm-acm` | Basic fighter maneuvers and air combat maneuvering | air | energy-advantage, initiative, surprise | Shaw 1985; Weapons Systems Evaluation Group 1967 |
 | `concept.terrain-ocoka` | Terrain analysis: OAKOC / KOCOA | military, design, urban | key-terrain, fields-of-fire, avenue-of-approach, cover, obstacle | FM 3-90 2023; ATP 2-01.3 2019; FM 34-130 1994; FM 5-33 1990 |
 | `concept.mett-tc` | METT-TC: mission variables | military | balance, key-terrain | FM 3-90 2023; FM 3-0 2022 |
 | `concept.key-terrain` | Key and decisive terrain | military, design, esports | key-terrain, high-ground, fields-of-fire | FM 3-90 2023; ATP 2-01.3 2019; FM 34-130 1994 |
@@ -158,9 +158,9 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `concept.wargaming` | Wargaming as analysis | military, design | balance, flow | Perla 1990; Perla & McGrady 2011 |
 | `concept.manoeuvre-warfare` | Manoeuvre warfare | military, esports | tempo, flank, surprise, mobility | MCDP 1 1997; Boyd 1986; Liddell Hart 1954 |
 | `concept.morale-cohesion` | Cohesion and the moral factor | military | mutual-support, defeat-in-detail | Ardant du Picq 1921 |
-| `concept.centre-of-gravity` | Centre of gravity | military | key-terrain, concentration | Clausewitz 1873; Echevarria 2002; JP 5-0 2020; Vego 2009 |
-| `concept.decisive-point` | Decisive points | military, esports | key-terrain, concentration | Jomini 1862; JP 5-0 2020; Vego 2009 |
-| `concept.lines-of-operation` | Lines of operation | military | avenue-of-approach, interior-lines, flow | Jomini 1862; Vego 2009 |
+| `concept.centre-of-gravity` | Centre of gravity | military | key-terrain, concentration | Clausewitz 1873; Echevarria 2002; JP 5-0 2020; Vego 2007 |
+| `concept.decisive-point` | Decisive points | military, esports | key-terrain, concentration | Jomini 1862; JP 5-0 2020; Vego 2007 |
+| `concept.lines-of-operation` | Lines of operation | military | avenue-of-approach, interior-lines, flow | Jomini 1862; Vego 2007 |
 | `concept.attrition-annihilation` | Strategies of annihilation and exhaustion | military | attrition, envelopment, tempo | Delbrück 1990; Clausewitz 1873 |
 | `concept.deep-battle` | Deep battle and deep operations | military | tempo, flank, concentration, interior-lines | Triandafillov 1994; Isserson 2013; Glantz 1991 |
 | `concept.airland-battle` | AirLand Battle | military, air | combined-arms, tempo, initiative | FM 100-5 1982; Romjue 1984 |
@@ -216,10 +216,10 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `method.space-control` | Space control and pitch control | key-terrain, flow, local-superiority | Fernández & Bornn 2018; Spearman 2018; Goldsberry 2012 |
 | `method.salvo-fit` | Salvo equation fitted to ships in contact | fleet-salvo, initiative, scouting, attrition | Hughes 1995; Hughes 2000; Armstrong 2005; Hughes & Girrier 2018 |
 | `method.combat-power` | Combat effectiveness ratio per unit-hour in action | exchange-ratio, balance, local-superiority, skill-dispersion | Dupuy 1979; Dupuy 1987; Dupuy 1990; Rotte & Schmidt 2003; Biddle 2004 |
-| `method.engagement-ranges` | Detection-to-engagement and engagement ranges | bvr, fields-of-fire, scouting, sightlines | USAF Tactical Fighter Weapons Center 1974; Ault 1969; Keaney & Cohen 1993; Shaw 1985; Koopman 1946 |
-| `method.kill-chain` | Kill-chain timing | tempo, initiative, surprise | Boyd 1986; Osinga 2007; USAF Tactical Fighter Weapons Center 1974 |
+| `method.engagement-ranges` | Detection-to-engagement and engagement ranges | bvr, fields-of-fire, scouting, sightlines | Weapons Systems Evaluation Group 1967; Ault 1969; Keaney & Cohen 1993; Shaw 1985; Koopman 1946 |
+| `method.kill-chain` | Kill-chain timing | tempo, initiative, surprise | Boyd 1986; Osinga 2007; Weapons Systems Evaluation Group 1967 |
 | `method.dispersion` | Dispersion against kill share (concentration of force in time) | concentration, area-fire, local-superiority, mutual-support | Lanchester 1916; Biddle 2004; Clausewitz 1873; Jomini 1862 |
-| `method.sortie-attrition` | Loss rate and kills per sortie | air-superiority, exchange-ratio, attrition | Keaney & Cohen 1993; Morse & Kimball 1951; Overy 2000; USAF Tactical Fighter Weapons Center 1974 |
+| `method.sortie-attrition` | Loss rate and kills per sortie | air-superiority, exchange-ratio, attrition | Keaney & Cohen 1993; Morse & Kimball 1951; Overy 2000; Weapons Systems Evaluation Group 1967 |
 
 ### Historical cases (275)
 
@@ -352,14 +352,14 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `case.spring-awakening` | Operation Spring Awakening | Mar 1945 | battle | obstacle, attrition, mobility, kill-zone | Glantz & House 1995 |
 | `case.ortona` | Ortona | Dec 1943 | battle | urban-close, vertical, kill-zone, ambush | Zuehlke 1999 |
 | `case.warsaw-1944` | Warsaw Uprising | Aug-Oct 1944 | campaign | urban-close, attrition, vertical | Davies 2003 |
-| `case.tarawa` | Tarawa | Nov 1943 | battle | open-ground, kill-zone, obstacle, fields-of-fire | Alexander 1995 |
+| `case.tarawa` | Tarawa | Nov 1943 | battle | open-ground, kill-zone, obstacle, fields-of-fire | Alexander 1993 |
 | `case.peleliu` | Peleliu | Sept-Nov 1944 | battle | cover, attrition, high-ground, mutual-support | Gayle 1996 |
 | `case.iwo-jima` | Iwo Jima | Feb-Mar 1945 | battle | attrition, aimed-fire, cover, kill-zone | Bartley 1954; Engel 1954 |
 | `case.okinawa` | Okinawa | Apr-June 1945 | campaign | attrition, reverse-slope, mutual-support, fields-of-fire | Appleman et al. 1948 |
 | `case.manila-1945` | Manila | Feb-Mar 1945 | battle | urban-close, attrition, vertical | Smith 1963 |
 | `case.manchuria-1945` | Manchuria (August Storm) | Aug 1945 | campaign | tempo, avenue-of-approach, surprise, envelopment | Glantz 1983 |
 | `case.pusan-perimeter` | Pusan perimeter | Aug-Sept 1950 | campaign | interior-lines, mutual-support, obstacle | Appleman 1961 |
-| `case.chosin` | Chosin Reservoir | Nov-Dec 1950 | campaign | envelopment, mutual-support, chokepoint, key-terrain | Montross & Canzona 1957; Appleman 1990 |
+| `case.chosin` | Chosin Reservoir | Nov-Dec 1950 | campaign | envelopment, mutual-support, chokepoint, key-terrain | Montross & Canzona 1957; Appleman 1987 |
 | `case.imjin` | Imjin River | Apr 1951 | battle | mutual-support, key-terrain, defeat-in-detail, attrition | Salmon 2009 |
 | `case.kapyong` | Kapyong | Apr 1951 | battle | key-terrain, high-ground, mutual-support, fields-of-fire | O'Neill 1985 |
 | `case.pork-chop` | Pork Chop Hill | Apr and July 1953 | engagement | attrition, kill-zone, key-terrain | Marshall 1956; Hermes 1966 |
@@ -475,7 +475,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `case.eastern-solomons-1942` | The Eastern Solomons | Aug 1942 | battle | scouting, fleet-salvo, air-superiority | Lundstrom 1994; Frank 1990 |
 | `case.cape-esperance-1942` | Cape Esperance | Oct 1942 | battle | fields-of-fire, surprise, readability | Frank 1990; Hornfischer 2011 |
 | `case.santa-cruz-1942` | Santa Cruz Islands | Oct 1942 | battle | attrition, exchange-ratio, skill-dispersion | Lundstrom 1994; Frank 1990 |
-| `case.guadalcanal-naval-1942` | Naval Battle of Guadalcanal | 13-15 Nov 1942 | battle | attrition, fields-of-fire, readability, key-terrain | Hornfischer 2011; Frank 1990 |
+| `case.guadalcanal-naval-1942` | Naval Battle of Guadalcanal | 12-15 Nov 1942 | battle | attrition, fields-of-fire, readability, key-terrain | Hornfischer 2011; Frank 1990 |
 | `case.tassafaronga-1942` | Tassafaronga | Nov 1942 | engagement | class-counter, fields-of-fire, initiative | Frank 1990; Hornfischer 2011 |
 | `case.channel-dash-1942` | The Channel Dash | Feb 1942 | engagement | surprise, tempo, defeat-in-detail | Roskill 1956 |
 | `case.pedestal-1942` | Operation Pedestal | Aug 1942 | battle | attrition, mutual-support, kill-zone | Roskill 1956; Holland 2003 |
@@ -535,7 +535,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `study.hoobler-2004` | Lighthouse: visualising competitive behaviour | Hoobler et al. 2004 |
 | `study.xenopoulos-2020` | Valuing actions in Counter-Strike | Xenopoulos et al. 2020 |
 | `study.schubert-2016` | Encounter detection in esports | Schubert et al. 2016 |
-| `study.red-baron` | Project Red Baron: air combat over Vietnam | USAF Tactical Fighter Weapons Center 1974; Michel 1997 |
+| `study.red-baron` | Project Red Baron: air combat over Vietnam | Weapons Systems Evaluation Group 1967; Michel 1997 |
 | `study.dupuy-qjm` | Dupuy: quantified judgement of historical battles | Dupuy 1979; Dupuy 1987 |
 | `study.biddle-2004` | Biddle: force employment explains outcomes | Biddle 2004 |
 | `study.wallner-kriglstein-2013` | Survey of gameplay data visualisation | Wallner & Kriglstein 2013; Bowman et al. 2012 |
@@ -618,12 +618,12 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Adams, E.; Dormans, J. (2012). Game Mechanics: Advanced Game Design. New Riders, Berkeley.
 - Akaike, H. (1974). A new look at the statistical model identification. IEEE Transactions on Automatic Control 19(6): 716-723.
 - Alexander, C.; Ishikawa, S.; Silverstein, M. (1977). A Pattern Language. Oxford University Press, New York.
-- Alexander, J. H. (1995). Across the Reef: The Marine Assault of Tarawa. Marine Corps Historical Center, Washington DC. *(public domain)*
+- Alexander, J. H. (1993). Across the Reef: The Marine Assault of Tarawa. Marine Corps Historical Center, Washington DC. *(public domain)*
 - Ammianus Marcellinus (trans. Yonge, C. D.) (1862). The Roman History of Ammianus Marcellinus. Henry G. Bohn, London. *(public domain)*
 - Andreas, P. (2008). Blue Helmets and Black Markets: The Business of Survival in the Siege of Sarajevo. Cornell University Press, Ithaca.
-- Anselin, L. (1995). Local indicators of spatial association - LISA. Geographical Analysis 27(2): 93-115.
+- Anselin, L. (1995). Local Indicators of Spatial Association—LISA. Geographical Analysis 27(2): 93-115.
 - Appleman, R. E. (1961). South to the Naktong, North to the Yalu (US Army in the Korean War). Office of the Chief of Military History, Washington DC. *(public domain)*
-- Appleman, R. E. (1990). East of Chosin: Entrapment and Breakout in Korea, 1950. Texas A&M University Press, College Station.
+- Appleman, R. E. (1987). East of Chosin: Entrapment and Breakout in Korea, 1950. Texas A&M University Press, College Station.
 - Appleman, R. E.; Burns, J. M.; Gugeler, R. A.; Stevens, J. (1948). Okinawa: The Last Battle (US Army in World War II). Historical Division, Department of the Army, Washington DC. *(public domain)*
 - Ardant du Picq, C. (trans. Greely, J. N.; Cotton, R. C.) (1921). Battle Studies: Ancient and Modern Battle. Macmillan, New York. https://www.gutenberg.org/ebooks/7294 *(public domain)*
 - Armstrong, M. J. (2005). A stochastic salvo model for naval surface combat. Operations Research 53(5): 830-841. doi:10.1287/opre.1040.0195
@@ -702,7 +702,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Davies, N. (2003). Rising '44: The Battle for Warsaw. Macmillan, London.
 - Davis, R. G. (1993). Carl A. Spaatz and the Air War in Europe. Center for Air Force History, Washington DC. *(public domain)*
 - Decroos, T.; Bransen, L.; Van Haaren, J.; Davis, J. (2019). Actions speak louder than goals: valuing player actions in soccer. Proc. 25th ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD 2019): 1851-1861. doi:10.1145/3292500.3330758
-- Deitchman, S. J. (1962). A Lanchester model of guerrilla warfare. Operations Research 10(6): 818-827.
+- Deitchman, S. J. (1962). A Lanchester model of guerrilla warfare. Operations Research 10(6): 818-827. doi:10.1287/opre.10.6.818
 - Delbrück, H. (trans. Renfroe, W. J.) (1990). History of the Art of War, vol. 4: The Dawn of Modern Warfare (orig. 1920). University of Nebraska Press, Lincoln.
 - Desch, M. C. (2002). Democracy and victory: why regime type hardly matters. International Security 27(2): 5-47.
 - Diggle, P. J. (2013). Statistical Analysis of Spatial and Spatio-Temporal Point Patterns (3rd ed.). CRC Press, Boca Raton.
@@ -723,12 +723,12 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Eggert, C.; Herrlich, M.; Smeddinck, J.; Malaka, R. (2015). Classification of player roles in the team-based multi-player game Dota 2. Entertainment Computing - ICEC 2015, LNCS 9353, Springer: 112-125.
 - Elias, G. S.; Garfield, R.; Gutschera, K. R. (2012). Characteristics of Games. MIT Press, Cambridge MA.
 - Elo, A. E. (1978). The Rating of Chessplayers, Past and Present. Arco, New York.
-- Engel, J. H. (1954). A verification of Lanchester's law. Journal of the Operations Research Society of America 2(2): 163-171.
+- Engel, J. H. (1954). A verification of Lanchester's law. Journal of the Operations Research Society of America 2(2): 163-171. doi:10.1287/opre.2.2.163
 - Englund, P. (2003). The Battle That Shook Europe: Poltava and the Birth of the Russian Empire. I. B. Tauris, London.
 - Epstein, J. M. (1985). The Calculus of Conventional War: Dynamic Analysis without Lanchester Theory. Brookings Institution, Washington DC.
 - Epstein, J. M. (1989). The 3:1 rule, the adaptive dynamic model, and the future of security studies. International Security 13(4).
 - Erickson, J. (1975). The Road to Stalingrad: Stalin's War with Germany, Volume One. Harper & Row, New York.
-- ESPN (2016). Daigo and JWong: the legacy of Street Fighter's Moment 37. ESPN Esports. https://www.espn.com/esports/story/_/id/17391663
+- ESPN (2016). Daigo and JWong: the legacy of Street Fighter's Moment 37. ESPN Esports. https://www.espn.com/espn/story/_/id/17391663
 - Ethell, J.; Price, A. (1983). Air War South Atlantic. Sidgwick & Jackson, London.
 - Evans, D. C.; Peattie, M. R. (1997). Kaigun: Strategy, Tactics, and Technology in the Imperial Japanese Navy, 1887-1941. Naval Institute Press, Annapolis.
 - Fain, J. B. (1977). The Lanchester equations and historical warfare: an analysis of sixty World War II land engagements. History, Numbers and War 1(1), Historical Evaluation and Research Organization, Dunn Loring VA.
@@ -745,7 +745,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Fricker, R. D. (1998). Attrition models of the Ardennes campaign. Naval Research Logistics 45(1): 1-22. https://www.rand.org/pubs/external_publications/EP19980204.html
 - Frieser, K.-H. (2005). The Blitzkrieg Legend: The 1940 Campaign in the West. Naval Institute Press, Annapolis.
 - Fuller, J. F. C. (1926). The Foundations of the Science of War. Hutchinson, London.
-- Fullerton, T. (2008). Game Design Workshop (2nd ed.). Morgan Kaufmann, Burlington.
+- Fullerton, T.; Swain, C.; Hoffman, S. (2008). Game Design Workshop (2nd ed.). Morgan Kaufmann, Burlington.
 - Futrell, R. F. (1983). The United States Air Force in Korea, 1950-1953 (rev. ed.). Office of Air Force History, Washington DC. *(public domain)*
 - Gabriel, R. A. (1984). Operation Peace for Galilee: The Israeli-PLO War in Lebanon. Hill & Wang, New York.
 - Galula, D. (1964). Counterinsurgency Warfare: Theory and Practice. Praeger, New York.
@@ -818,7 +818,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Hornfischer, J. D. (2011). Neptune's Inferno: The U.S. Navy at Guadalcanal. Bantam, New York.
 - House, J. M. (1984). Toward Combined Arms Warfare: A Survey of 20th-Century Tactics, Doctrine, and Organization. Combat Studies Institute, Fort Leavenworth. *(public domain)*
 - Howard, M. (1961). The Franco-Prussian War: The German Invasion of France, 1870-1871. Rupert Hart-Davis, London.
-- Hughes, W. P. (1995). A salvo model of warfare between missile-armed ships. Naval Research Logistics 42(2): 267-289.
+- Hughes, W. P. (1995). A salvo model of warships in missile combat used to evaluate their staying power. Naval Research Logistics 42(2): 267-289.
 - Hughes, W. P. (2000). Fleet Tactics and Coastal Combat (2nd ed.). Naval Institute Press, Annapolis.
 - Hughes, W. P.; Girrier, R. P. (2018). Fleet Tactics and Naval Operations (3rd ed.). Naval Institute Press, Annapolis.
 - Hullett, K.; Whitehead, J. (2010). Design patterns in FPS levels. Proc. Foundations of Digital Games (FDG 2010), ACM: 78-85.
@@ -889,7 +889,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - McCloskey, J. F. (1987). The beginnings of operations research: 1934-1941. Operations Research 35(1): 143-152.
 - McCullagh, P.; Nelder, J. A. (1989). Generalized Linear Models (2nd ed.). Chapman & Hall, London.
 - McFarland, S. L.; Newton, W. P. (1991). To Command the Sky: The Battle for Air Superiority over Germany, 1942-1944. Smithsonian Institution Press, Washington DC.
-- Mearsheimer, J. J. (1989). Assessing the conventional balance: the 3:1 rule and its critics. International Security 13(4).
+- Mearsheimer, J. J. (1989). Assessing the conventional balance: the 3:1 rule and its critics. International Security 13(4): 54-89 (Spring 1989). doi:10.2307/2538780
 - Medler, B.; John, M.; Lane, J. (2011). Data Cracker: developing a visual game analytic tool for analyzing online gameplay. Proc. CHI 2011, ACM: 2365-2374.
 - Michaels, J. (2010). A Chance in Hell: The Men Who Triumphed over Iraq's Deadliest City and Turned the Tide of War. St. Martin's Press, New York.
 - Michel, M. L. (1997). Clashes: Air Combat over North Vietnam 1965-1972. Naval Institute Press, Annapolis.
@@ -913,11 +913,11 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Morison, S. E. (1953). New Guinea and the Marianas, March 1944-August 1944 (History of US Naval Operations in WWII, vol. 8). Little, Brown, Boston.
 - Morison, S. E. (1958). Leyte, June 1944-January 1945 (History of US Naval Operations in WWII, vol. 12). Little, Brown, Boston.
 - Morison, S. E. (1960). Victory in the Pacific, 1945 (History of US Naval Operations in WWII, vol. 14). Little, Brown, Boston.
-- Morse, P. M.; Kimball, G. E. (1951). Methods of Operations Research. MIT Press / Wiley, New York (first issued as OEG Report 54, 1946). *(public domain)*
+- Morse, P. M.; Kimball, G. E. (1951). Methods of Operations Research. Technology Press of MIT and John Wiley & Sons, New York, 1951. *(public domain)*
 - Mueller, K. P. (ed.) (2015). Precision and Purpose: Airpower in the Libyan Civil War (RR-676-AF). RAND Corporation, Santa Monica.
 - Murray, W. (1983). Strategy for Defeat: The Luftwaffe 1933-1945. Air University Press, Maxwell AFB. *(public domain)*
 - Murray, W.; Woods, K. M. (2014). The Iran-Iraq War: A Military and Strategic History. Cambridge University Press, Cambridge.
-- Nash, D. E. (2002). Hell's Gate: The Battle of the Cherkassy Pocket, January-February 1944. RZM Publishing, Southbury.
+- Nash, D. E. (2002). Hell's Gate: The Battle of the Cherkassy Pocket, January-February 1944. RZM Imports, Stamford, CT.
 - Naylor, S. (2005). Not a Good Day to Die: The Untold Story of Operation Anaconda. Berkley Books, New York.
 - Nelder, J. A.; Wedderburn, R. W. M. (1972). Generalized linear models. Journal of the Royal Statistical Society A 135(3): 370-384.
 - Nolan, K. W. (1983). Battle for Hue: Tet, 1968. Presidio Press, Novato.
@@ -930,7 +930,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Oren, M. B. (2002). Six Days of War: June 1967 and the Making of the Modern Middle East. Oxford University Press, New York.
 - Osinga, F. P. B. (2007). Science, Strategy and War: The Strategic Theory of John Boyd. Routledge, Abingdon.
 - Osipov, M. (trans. Helmbold, R. L.; Rehm, A. S.) (1995). The influence of the numerical strength of engaged forces on their casualties (orig. 1915). Naval Research Logistics 42(3): 435-490.
-- Overy, R. (2000). The Battle of Britain: The Myth and the Reality. Penguin, London.
+- Overy, R. (2000). The Battle. Penguin, London, 2000. US edition: W. W. Norton, New York, 2001, as 'The Battle of Britain: The Myth and the Reality'.
 - Overy, R. (2013). The Bombing War: Europe 1939-1945. Allen Lane, London.
 - Paine, S. C. M. (2003). The Sino-Japanese War of 1894-1895: Perceptions, Power, and Primacy. Cambridge University Press, Cambridge.
 - Pakenham, T. (1979). The Boer War. Weidenfeld & Nicolson, London.
@@ -1019,10 +1019,9 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - US Marine Corps (1997). MCDP 1 Warfighting. Headquarters USMC, Washington DC. *(public domain)*
 - US Navy Department (1898). Official Records of the Union and Confederate Navies in the War of the Rebellion, Series I, vol. 7. Government Printing Office, Washington DC. *(public domain)*
 - US War Department (1888). The War of the Rebellion: Official Records of the Union and Confederate Armies, Series I vol. 21 (Fredericksburg). Government Printing Office, Washington DC. *(public domain)*
-- USAF Tactical Fighter Weapons Center (1974). Project Red Baron III: Air-to-Air Encounters in Southeast Asia. Nellis AFB. *(public domain)*
 - van Creveld, M. (1982). Fighting Power: German and U.S. Army Performance, 1939-1945. Greenwood Press, Westport.
 - Vegetius (trans. Clarke, J.) (1767). De Re Militari (The Military Institutions of the Romans). W. Griffin, London. *(public domain)*
-- Vego, M. N. (2009). Joint Operational Warfare: Theory and Practice. Naval War College Press, Newport. *(public domain)*
+- Vego, M. N. (2007). Joint Operational Warfare: Theory and Practice. Naval War College, Newport. *(public domain)*
 - Venkus, R. E. (1992). Raid on Qaddafi. St. Martin's Press, New York.
 - Vinyals, O.; Babuschkin, I.; Czarnecki, W. M.; et al. (2019). Grandmaster level in StarCraft II using multi-agent reinforcement learning. Nature 575(7782): 350-354. doi:10.1038/s41586-019-1724-z
 - Waddington, C. H. (1973). O.R. in World War 2: Operational Research against the U-Boat. Elek Science, London.
@@ -1037,6 +1036,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 - Watling, J.; Reynolds, N. (2023). Meatgrinder: Russian Tactics in the Second Year of Its Invasion of Ukraine. Royal United Services Institute, London.
 - Watling, J.; Reynolds, N. (2023). Stormbreak: Fighting Through Russian Defences in Ukraine's 2023 Offensive. Royal United Services Institute, London.
 - Wawro, G. (1996). The Austro-Prussian War: Austria's War with Prussia and Italy in 1866. Cambridge University Press, Cambridge.
+- Weapons Systems Evaluation Group (1967). Project Red Baron: Air-to-Air Encounters in Southeast Asia, Volume I (WSEG Report 116). Weapons Systems Evaluation Group, Washington DC (DTIC). *(public domain)*
 - Weiss, H. K. (1966). Combat models and historical data: the U.S. Civil War. Operations Research 14(5): 759-790. doi:10.1287/opre.14.5.759
 - Werrell, K. P. (2005). Sabres over MiG Alley: The F-86 and the Battle for Air Superiority in Korea. Naval Institute Press, Annapolis.
 - Werrell, K. P. (2005). Archie to SAM: A Short Operational History of Ground-Based Air Defense (2nd ed.). Air University Press, Maxwell AFB. *(public domain)*

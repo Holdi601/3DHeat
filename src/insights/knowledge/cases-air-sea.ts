@@ -146,7 +146,7 @@ export const CASES_AIR_SEA: KbEntry[] = [
     id: 'nuremberg-raid-1944', title: 'The Nuremberg raid', when: '30-31 Mar 1944', where: 'Germany', scale: 'engagement', lenses: AIR, domains: ['air'],
     patterns: { ambush: 0.9, 'avenue-of-approach': 0.7, 'static-exposure': 0.4, scouting: 0.6 },
     summary: 'On a bright, moonlit night with unexpected weather, a long straight leg of the bomber stream passed close to German night-fighter assembly beacons. Fighters fed into the stream shot down bombers along the route.',
-    outcome: 'Bomber Command\'s heaviest loss in a single raid, about ninety-five aircraft.',
+    outcome: 'Bomber Command\'s heaviest loss in a single raid, 96 aircraft (of 779 dispatched).',
     lesson: 'Losses strung along one predictable leg of a route mean the enemy was waiting on the avenue of approach.',
     refs: ['middlebrook-1973', 'overy-2013'],
   }),
@@ -606,7 +606,7 @@ export const CASES_AIR_SEA: KbEntry[] = [
     refs: ['lundstrom-1994', 'frank-1990'],
   }),
   k({
-    id: 'guadalcanal-naval-1942', title: 'Naval Battle of Guadalcanal', when: '13-15 Nov 1942', where: 'Ironbottom Sound', scale: 'battle', lenses: SEA, domains: ['sea'],
+    id: 'guadalcanal-naval-1942', title: 'Naval Battle of Guadalcanal', when: '12-15 Nov 1942', where: 'Ironbottom Sound', scale: 'battle', lenses: SEA, domains: ['sea'],
     patterns: { attrition: 0.8, 'fields-of-fire': 0.6, readability: 0.6, 'key-terrain': 0.5 },
     summary: 'Two nights of close-range fighting off Guadalcanal: a US cruiser force threw itself into a Japanese battleship force in a confused melee, and two nights later US battleships using radar sank a Japanese battleship. The Japanese reinforcement effort failed.',
     outcome: 'Heavy losses on both sides; the island\'s airfield stayed in US hands.',

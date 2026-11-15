@@ -31,7 +31,7 @@ export const METHODS: KbEntry[] = [
     patterns: { 'exchange-ratio': 1, 'kill-zone': 0.6 },
     summary: 'Kills divided by deaths, computed per team and per grid cell, plus how concentrated the deaths are against the time spent: places are ranked by their death rate (shrunk towards the map rate so a single death on rarely visited ground does not dominate), and the share of deaths on the deadliest places holding 5% of the time is read off the Lorenz curve together with its Gini coefficient.',
     measure: 'Lens metric `exchange`: team kills and deaths; mid-grid cells with at least 8 events ranked by exchange ratio; death concentration as the top-5%-of-time share (5% would be even) and the Gini coefficient of deaths against time.',
-    formula: 'LER = K / D;  rate_c = (D_c + 2) / (T_c + 2/r0);  Gini = 2 x area under the Lorenz curve of deaths against time, ordered by rate, minus 1',
+    formula: 'LER = K / D;  rate_c = (D_c + 2) / (T_c + 2/r0);  Gini = 1 - 2 x area under the Lorenz curve of deaths against time, ordered by rate',
     lesson: 'High death concentration means the map has engagement areas that decide matches; a flat distribution means fights are everywhere.',
     refs: ['morse-kimball-1951', 'gini-1912', 'dupuy-1979'],
     see: ['concept.exchange-ratio', 'concept.engagement-area'],

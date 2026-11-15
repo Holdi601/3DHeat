@@ -36,6 +36,8 @@ export interface Reference {
   doi?: string;
   /** Public domain (old enough, or a work of the US government): short quotes allowed. */
   pd?: boolean;
+  /** ISO date the details were last checked against a catalogue, publisher or archive record. */
+  verified?: string;
 }
 
 export interface KbEntry {
