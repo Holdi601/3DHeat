@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Schlüsselgelände",
   "lens.metric.trades": "Gegenseitige Unterstützung (Trades)",
   "lens.metric.initiative": "Erstschlag",
-  "lens.kb": "Wissensbasis: {entries} Einträge, {refs} Quellen"
+  "lens.kb": "Wissensbasis: {entries} Einträge, {refs} Quellen",
+  "lens.metric.salvo": "Salvenmodell",
+  "lens.metric.combatPower": "Kampfwert",
+  "lens.metric.ranges": "Kampfentfernungen",
+  "lens.metric.killChain": "Wirkungskette",
+  "lens.metric.dispersion": "Konzentration oder Streuung",
+  "lens.metric.sorties": "Einsätze"
 }

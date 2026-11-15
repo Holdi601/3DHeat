@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Key terrain",
   "lens.metric.trades": "Mutual support (trades)",
   "lens.metric.initiative": "First strike",
-  "lens.kb": "Knowledge base: {entries} entries, {refs} references"
+  "lens.kb": "Knowledge base: {entries} entries, {refs} references",
+  "lens.metric.salvo": "Salvo model",
+  "lens.metric.combatPower": "Combat effectiveness",
+  "lens.metric.ranges": "Engagement ranges",
+  "lens.metric.killChain": "Kill chain",
+  "lens.metric.dispersion": "Concentration or dispersion",
+  "lens.metric.sorties": "Sorties"
 }

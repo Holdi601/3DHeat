@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Avainmaasto",
   "lens.metric.trades": "Keskinäinen tuki (vaihdot)",
   "lens.metric.initiative": "Ensi-isku",
-  "lens.kb": "Tietokanta: {entries} merkintää, {refs} lähdettä"
+  "lens.kb": "Tietokanta: {entries} merkintää, {refs} lähdettä",
+  "lens.metric.salvo": "Yhteislaukausmalli",
+  "lens.metric.combatPower": "Taisteluteho",
+  "lens.metric.ranges": "Taisteluetäisyydet",
+  "lens.metric.killChain": "Tuhoamisketju",
+  "lens.metric.dispersion": "Keskitys vai hajautus",
+  "lens.metric.sorties": "Lentotehtävät"
 }

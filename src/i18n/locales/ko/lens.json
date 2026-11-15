@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "핵심 지형",
   "lens.metric.trades": "상호 지원 (트레이드)",
   "lens.metric.initiative": "선제 타격",
-  "lens.kb": "지식 기반: 항목 {entries}개, 참고문헌 {refs}개"
+  "lens.kb": "지식 기반: 항목 {entries}개, 참고문헌 {refs}개",
+  "lens.metric.salvo": "일제사격 모델",
+  "lens.metric.combatPower": "전투 효율",
+  "lens.metric.ranges": "교전 거리",
+  "lens.metric.killChain": "킬 체인",
+  "lens.metric.dispersion": "집중인가 분산인가",
+  "lens.metric.sorties": "출격"
 }

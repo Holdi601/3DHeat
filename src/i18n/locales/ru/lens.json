@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Ключевая местность",
   "lens.metric.trades": "Взаимная поддержка (размены)",
   "lens.metric.initiative": "Первый удар",
-  "lens.kb": "База знаний: {entries} записей, {refs} источников"
+  "lens.kb": "База знаний: {entries} записей, {refs} источников",
+  "lens.metric.salvo": "Залповая модель",
+  "lens.metric.combatPower": "Боевая эффективность",
+  "lens.metric.ranges": "Дальности боя",
+  "lens.metric.killChain": "Цепочка поражения",
+  "lens.metric.dispersion": "Сосредоточение или рассредоточение",
+  "lens.metric.sorties": "Боевые вылеты"
 }

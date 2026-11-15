@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Schlësselterrain",
   "lens.metric.trades": "Géigesäiteg Ënnerstëtzung (Trades)",
   "lens.metric.initiative": "Éischtschlag",
-  "lens.kb": "Wëssensbasis: {entries} Entréeën, {refs} Quellen"
+  "lens.kb": "Wëssensbasis: {entries} Entréeën, {refs} Quellen",
+  "lens.metric.salvo": "Salvemodell",
+  "lens.metric.combatPower": "Kampfwäert",
+  "lens.metric.ranges": "Kampfdistanzen",
+  "lens.metric.killChain": "Wierkungskette",
+  "lens.metric.dispersion": "Konzentratioun oder Streeung",
+  "lens.metric.sorties": "Asätz"
 }

@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Klíčový terén",
   "lens.metric.trades": "Vzájemná podpora (výměny)",
   "lens.metric.initiative": "První úder",
-  "lens.kb": "Znalostní báze: {entries} položek, {refs} zdrojů"
+  "lens.kb": "Znalostní báze: {entries} položek, {refs} zdrojů",
+  "lens.metric.salvo": "Model salv",
+  "lens.metric.combatPower": "Bojová efektivita",
+  "lens.metric.ranges": "Bojové vzdálenosti",
+  "lens.metric.killChain": "Ničivý řetězec",
+  "lens.metric.dispersion": "Soustředění nebo rozptýlení",
+  "lens.metric.sorties": "Bojové lety"
 }

@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Sleutelterrein",
   "lens.metric.trades": "Wederzijdse steun (trades)",
   "lens.metric.initiative": "Eerste slag",
-  "lens.kb": "Kennisbank: {entries} items, {refs} bronnen"
+  "lens.kb": "Kennisbank: {entries} items, {refs} bronnen",
+  "lens.metric.salvo": "Salvomodel",
+  "lens.metric.combatPower": "Gevechtswaarde",
+  "lens.metric.ranges": "Gevechtsafstanden",
+  "lens.metric.killChain": "Kill chain",
+  "lens.metric.dispersion": "Concentratie of spreiding",
+  "lens.metric.sorties": "Vluchten"
 }

@@ -41,6 +41,7 @@ interface Prep {
   names: InsightNames;
   info: ReportInfo;
   lens: LensOptions;
+  shooterCol: Uint32Array | null;
 }
 
 function prepare(ds: Dataset, sc: CompareScope, level: Level | null): Prep {
@@ -57,6 +58,7 @@ function prepare(ds: Dataset, sc: CompareScope, level: Level | null): Prep {
     spawn: ev('spawn'),
     contact: ['fire', 'launch', 'hit', 'damage', 'kill', 'death'].map(ev),
   };
+  const shooter = shooterOf(ds);
   const model = level && level.kind === 'model' && !level.stream && level.vertices.length > 0 ? level : null;
   return {
     ds,
@@ -75,7 +77,8 @@ function prepare(ds: Dataset, sc: CompareScope, level: Level | null): Prep {
     },
     info: { name: ds.name, rows: ds.count, hasLevel: !!model },
     // Units in a metre, as the replay reckons it (`replayData.unitsPerMetre`): from the file's entity size.
-    lens: { upm: ds.entitySize ? ds.entitySize / 0.8 : 1 },
+    lens: { upm: ds.entitySize ? ds.entitySize / 0.8 : 1, events: { launch: ev('launch'), fire: ev('fire'), takeoff: ev('takeoff'), landing: ev('landing') }, shooterMap: shooter?.map },
+    shooterCol: shooter?.col ?? null,
   };
 }
 
@@ -89,7 +92,35 @@ function chunk(p: Prep, lo: number, n: number): { chunk: InsightChunk; transfer:
       transfer.push(target.buffer as ArrayBuffer);
     }
   }
-  return { chunk: { ...c, target }, transfer };
+  // The launching unit of weapon rows, for the lens (`lensMetrics.ts`: launch ranges, kill chain).
+  let shooter: Uint32Array | null = null;
+  if (p.shooterCol) {
+    shooter = p.shooterCol.slice(lo, lo + n);
+    transfer.push(shooter.buffer as ArrayBuffer);
+  }
+  return { chunk: { ...c, target, shooter } as InsightChunk, transfer };
+}
+
+/** Columns naming the unit that fired or launched a row's weapon, in order of preference. */
+const SHOOTER_COLUMNS = ['Shooter', 'Launcher', 'shooter', 'launcher', 'attacker', 'Attacker'];
+
+/**
+ * The shooter column's categories as person indices: by the whole label, else
+ * by its trailing object id (`#5702`), as Tacview-derived labels carry one.
+ */
+function shooterOf(ds: Dataset): { col: Uint32Array; map: Int32Array } | null {
+  const a = SHOOTER_COLUMNS.map((n) => ds.attrs.find((x) => x.name === n && x.categories)).find(Boolean);
+  if (!a || !a.categories) return null;
+  const byLabel = new Map<string, number>();
+  const byId = new Map<string, number>();
+  ds.personLabels.forEach((l, i) => {
+    byLabel.set(l, i);
+    const id = /#[0-9a-f]+$/i.exec(l)?.[0];
+    // An id worn by two people (recordings reuse them) names neither.
+    if (id) byId.set(id, byId.has(id) ? -1 : i);
+  });
+  const map = Int32Array.from(a.categories, (c) => byLabel.get(c) ?? byId.get(/#[0-9a-f]+$/i.exec(c)?.[0] ?? '') ?? -1);
+  return map.some((v) => v >= 0) ? { col: a.data as Uint32Array, map } : null;
 }
 
 /** The people the report names by index, named. */

@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Kulcsterep",
   "lens.metric.trades": "Kölcsönös támogatás (cserék)",
   "lens.metric.initiative": "Első csapás",
-  "lens.kb": "Tudásbázis: {entries} bejegyzés, {refs} forrás"
+  "lens.kb": "Tudásbázis: {entries} bejegyzés, {refs} forrás",
+  "lens.metric.salvo": "Sortűzmodell",
+  "lens.metric.combatPower": "Harci hatékonyság",
+  "lens.metric.ranges": "Harci távolságok",
+  "lens.metric.killChain": "Csapási lánc",
+  "lens.metric.dispersion": "Összpontosítás vagy szétszórás",
+  "lens.metric.sorties": "Bevetések"
 }

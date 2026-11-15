@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Kilit arazi",
   "lens.metric.trades": "Karşılıklı destek (takaslar)",
   "lens.metric.initiative": "İlk vuruş",
-  "lens.kb": "Bilgi tabanı: {entries} kayıt, {refs} kaynak"
+  "lens.kb": "Bilgi tabanı: {entries} kayıt, {refs} kaynak",
+  "lens.metric.salvo": "Salvo modeli",
+  "lens.metric.combatPower": "Muharebe etkinliği",
+  "lens.metric.ranges": "Angajman mesafeleri",
+  "lens.metric.killChain": "Vuruş zinciri",
+  "lens.metric.dispersion": "Yoğunlaşma mı dağılma mı",
+  "lens.metric.sorties": "Sortiler"
 }

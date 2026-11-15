@@ -5,11 +5,14 @@
  * publisher's record where one is known.
  */
 
+import { REFS_AIR_SEA } from './refs-air-sea.ts';
+import { REFS_LAND } from './refs-land.ts';
+import { REFS_SCIENCE } from './refs-science.ts';
 import type { Reference } from './types';
 
 const r = (id: string, authors: string, year: number, title: string, publisher: string, extra: Partial<Reference> = {}): Reference => ({ id, authors, year, title, publisher, ...extra });
 
-export const REFERENCES: Reference[] = [
+const BASE: Reference[] = [
   // Classics of military thought
   r('suntzu-giles', 'Sun Tzu (trans. Giles, L.)', 1910, 'The Art of War', 'Luzac & Co., London', { pd: true, url: 'https://www.gutenberg.org/ebooks/132' }),
   r('clausewitz-graham', 'Clausewitz, C. von (trans. Graham, J. J.)', 1873, 'On War', 'N. Trübner, London', { pd: true, url: 'https://www.gutenberg.org/ebooks/1946' }),
@@ -125,7 +128,7 @@ export const REFERENCES: Reference[] = [
   r('cutler-1994', 'Cutler, T. J.', 1994, 'The Battle of Leyte Gulf, 23-26 October 1944', 'HarperCollins, New York'),
   r('gordon-1996', 'Gordon, A.', 1996, 'The Rules of the Game: Jutland and British Naval Command', 'John Murray, London'),
   r('campbell-1986', 'Campbell, N. J. M.', 1986, 'Jutland: An Analysis of the Fighting', 'Conway Maritime Press, London'),
-  r('corbett-1919', 'Corbett, J. S.', 1919, 'Naval Operations vol. 3 (History of the Great War)', 'Longmans, Green, London', { pd: true }),
+  r('corbett-1923', 'Corbett, J. S.', 1923, 'Naval Operations vol. 3 (History of the Great War)', 'Longmans, Green, London', { pd: true }),
   r('corbett-1910', 'Corbett, J. S.', 1910, 'The Campaign of Trafalgar', 'Longmans, Green, London', { pd: true }),
   r('evans-peattie-1997', 'Evans, D. C.; Peattie, M. R.', 1997, 'Kaigun: Strategy, Tactics, and Technology in the Imperial Japanese Navy, 1887-1941', 'Naval Institute Press, Annapolis'),
   r('strauss-2004', 'Strauss, B.', 2004, 'The Battle of Salamis', 'Simon & Schuster, New York'),
@@ -187,6 +190,9 @@ export const REFERENCES: Reference[] = [
   r('fisher-1993', 'Fisher, P. F.', 1993, 'Algorithm and implementation uncertainty in viewshed analysis', 'International Journal of Geographical Information Systems 7(4): 331-347'),
   r('kendall-1938', 'Kendall, M. G.', 1938, 'A new measure of rank correlation', 'Biometrika 30(1/2): 81-93'),
 ];
+
+/** Every reference: the base list and those of the larger entry files; the same work cited from two files is listed once. */
+export const REFERENCES: Reference[] = [...new Map([...BASE, ...REFS_AIR_SEA, ...REFS_LAND, ...REFS_SCIENCE].map((x) => [x.id, x])).values()];
 
 export const REF_BY_ID = new Map(REFERENCES.map((x) => [x.id, x]));
 

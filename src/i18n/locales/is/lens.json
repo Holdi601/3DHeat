@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Lykilsvæði",
   "lens.metric.trades": "Gagnkvæmur stuðningur (skipti)",
   "lens.metric.initiative": "Fyrsta högg",
-  "lens.kb": "Þekkingargrunnur: {entries} færslur, {refs} heimildir"
+  "lens.kb": "Þekkingargrunnur: {entries} færslur, {refs} heimildir",
+  "lens.metric.salvo": "Skothrinulíkan",
+  "lens.metric.combatPower": "Bardagagildi",
+  "lens.metric.ranges": "Bardagafjarlægðir",
+  "lens.metric.killChain": "Árásarkeðja",
+  "lens.metric.dispersion": "Samþjöppun eða dreifing",
+  "lens.metric.sorties": "Flugferðir"
 }

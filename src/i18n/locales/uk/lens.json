@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Ключова місцевість",
   "lens.metric.trades": "Взаємна підтримка (розміни)",
   "lens.metric.initiative": "Перший удар",
-  "lens.kb": "База знань: {entries} записів, {refs} джерел"
+  "lens.kb": "База знань: {entries} записів, {refs} джерел",
+  "lens.metric.salvo": "Залпова модель",
+  "lens.metric.combatPower": "Бойова ефективність",
+  "lens.metric.ranges": "Дальності бою",
+  "lens.metric.killChain": "Ланцюг ураження",
+  "lens.metric.dispersion": "Зосередження чи розосередження",
+  "lens.metric.sorties": "Бойові вильоти"
 }

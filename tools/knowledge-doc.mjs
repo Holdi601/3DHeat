@@ -11,12 +11,12 @@
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const ROOT = resolve(import.meta.dirname, '..');
-const kb = (f) => import(`file:///${resolve(ROOT, 'src/insights/knowledge', f).replace(/\\/g, '/')}`);
-const [{ CONCEPTS }, { METHODS }, { CASES }, { DESIGN }, { PATTERNS }, { REFERENCES, shortCite, fullCite }] = await Promise.all(
-  ['concepts.ts', 'methods.ts', 'cases.ts', 'design.ts', 'patterns.ts', 'refs.ts'].map(kb),
-);
+const { KB, PATTERNS, REFERENCES, shortCite, fullCite } = await import(pathToFileURL(resolve(ROOT, 'src/insights/knowledge/index.ts')).href);
+const of = (type) => KB.filter((e) => e.type === type);
+const [CONCEPTS, METHODS, CASES] = [of('concept'), of('method'), of('case')];
 
 const esc = (s) => String(s).replace(/\|/g, '\\|');
 const cites = (e) => e.refs.map(shortCite).join('; ');
@@ -32,10 +32,10 @@ const table = (title, rows, head, cells) => {
   for (const e of rows) out.push(`| ${cells(e).map(esc).join(' | ')} |`);
   out.push('');
 };
-const studies = DESIGN.filter((e) => e.type === 'study');
-const design = DESIGN.filter((e) => e.type === 'design');
+const studies = of('study');
+const design = of('design');
 out.push(
-  `The knowledge base holds ${CONCEPTS.length + METHODS.length + CASES.length + DESIGN.length} entries (${CONCEPTS.length} concepts, ${METHODS.length} methods, ${CASES.length} historical cases, ${design.length} design principles, ${studies.length} studies) over ${PATTERNS.length} patterns, citing ${REFERENCES.length} references.`,
+  `The knowledge base holds ${KB.length} entries (${CONCEPTS.length} concepts, ${METHODS.length} methods, ${CASES.length} historical cases, ${design.length} design principles, ${studies.length} studies) over ${PATTERNS.length} patterns, citing ${REFERENCES.length} references.`,
   '',
 );
 table('Patterns', PATTERNS, ['id', 'family', 'what it looks like in the data'], (p) => [`\`${p.id}\``, p.family, p.sign]);

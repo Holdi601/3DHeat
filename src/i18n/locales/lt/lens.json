@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Raktinė vietovė",
   "lens.metric.trades": "Abipusė parama (mainai)",
   "lens.metric.initiative": "Pirmasis smūgis",
-  "lens.kb": "Žinių bazė: {entries} įrašai, {refs} šaltiniai"
+  "lens.kb": "Žinių bazė: {entries} įrašai, {refs} šaltiniai",
+  "lens.metric.salvo": "Salvių modelis",
+  "lens.metric.combatPower": "Kovinis efektyvumas",
+  "lens.metric.ranges": "Kovos atstumai",
+  "lens.metric.killChain": "Naikinimo grandinė",
+  "lens.metric.dispersion": "Koncentracija ar išsklaidymas",
+  "lens.metric.sorties": "Skrydžiai"
 }

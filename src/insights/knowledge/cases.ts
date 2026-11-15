@@ -243,7 +243,7 @@ export const CASES: KbEntry[] = [
     summary: 'The British and German battle fleets met in the only full-scale clash of the war. British battlecruisers suffered catastrophic magazine explosions; poor signalling and night fighting let the German fleet escape.',
     outcome: 'Britain lost more ships and men, yet kept control of the North Sea.',
     lesson: 'A worse exchange ratio can still leave strategic control unchanged - kills are not the whole score.',
-    refs: ['gordon-1996', 'campbell-1986', 'corbett-1919'],
+    refs: ['gordon-1996', 'campbell-1986', 'corbett-1923'],
   }),
   // Second World War
   k({

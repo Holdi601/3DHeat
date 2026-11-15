@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Tír-raon lárnach",
   "lens.metric.trades": "Tacaíocht fhrithpháirteach (malartuithe)",
   "lens.metric.initiative": "An chéad bhuille",
-  "lens.kb": "Bunachar eolais: {entries} iontráil, {refs} tagairt"
+  "lens.kb": "Bunachar eolais: {entries} iontráil, {refs} tagairt",
+  "lens.metric.salvo": "Samhail rois",
+  "lens.metric.combatPower": "Éifeachtacht chomhraic",
+  "lens.metric.ranges": "Raonta teagmhála",
+  "lens.metric.killChain": "Slabhra marfach",
+  "lens.metric.dispersion": "Comhchruinniú nó scaipeadh",
+  "lens.metric.sorties": "Turais aeir"
 }

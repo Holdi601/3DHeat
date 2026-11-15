@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "要地",
   "lens.metric.trades": "相互支援（換人）",
   "lens.metric.initiative": "先發制人",
-  "lens.kb": "知識庫：{entries} 條目，{refs} 篇文獻"
+  "lens.kb": "知識庫：{entries} 條目，{refs} 篇文獻",
+  "lens.metric.salvo": "齊射模型",
+  "lens.metric.combatPower": "戰鬥效能",
+  "lens.metric.ranges": "交戰距離",
+  "lens.metric.killChain": "殺傷鏈",
+  "lens.metric.dispersion": "集中還是分散",
+  "lens.metric.sorties": "出動架次"
 }

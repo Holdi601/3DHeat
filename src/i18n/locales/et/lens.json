@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Võtmemaastik",
   "lens.metric.trades": "Vastastikune toetus (vahetused)",
   "lens.metric.initiative": "Esimene löök",
-  "lens.kb": "Teadmusbaas: {entries} kirjet, {refs} viidet"
+  "lens.kb": "Teadmusbaas: {entries} kirjet, {refs} viidet",
+  "lens.metric.salvo": "Salvomudel",
+  "lens.metric.combatPower": "Lahingutõhusus",
+  "lens.metric.ranges": "Lahingukaugused",
+  "lens.metric.killChain": "Hävitusahel",
+  "lens.metric.dispersion": "Koondamine või hajutamine",
+  "lens.metric.sorties": "Lennud"
 }

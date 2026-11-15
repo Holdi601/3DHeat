@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Teren kluczowy",
   "lens.metric.trades": "Wzajemne wsparcie (wymiany)",
   "lens.metric.initiative": "Pierwsze uderzenie",
-  "lens.kb": "Baza wiedzy: {entries} wpisów, {refs} źródeł"
+  "lens.kb": "Baza wiedzy: {entries} wpisów, {refs} źródeł",
+  "lens.metric.salvo": "Model salw",
+  "lens.metric.combatPower": "Skuteczność bojowa",
+  "lens.metric.ranges": "Odległości walki",
+  "lens.metric.killChain": "Łańcuch rażenia",
+  "lens.metric.dispersion": "Koncentracja czy rozproszenie",
+  "lens.metric.sorties": "Loty bojowe"
 }

@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "要地",
   "lens.metric.trades": "相互支援（トレード）",
   "lens.metric.initiative": "先制",
-  "lens.kb": "知識ベース：{entries} 項目、{refs} 文献"
+  "lens.kb": "知識ベース：{entries} 項目、{refs} 文献",
+  "lens.metric.salvo": "斉射モデル",
+  "lens.metric.combatPower": "戦闘効率",
+  "lens.metric.ranges": "交戦距離",
+  "lens.metric.killChain": "キルチェーン",
+  "lens.metric.dispersion": "集中か分散か",
+  "lens.metric.sorties": "出撃"
 }

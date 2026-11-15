@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Terreny clau",
   "lens.metric.trades": "Suport mutu (intercanvis)",
   "lens.metric.initiative": "Primer cop",
-  "lens.kb": "Base de coneixement: {entries} entrades, {refs} referències"
+  "lens.kb": "Base de coneixement: {entries} entrades, {refs} referències",
+  "lens.metric.salvo": "Model de salves",
+  "lens.metric.combatPower": "Eficàcia en combat",
+  "lens.metric.ranges": "Distàncies d'enfrontament",
+  "lens.metric.killChain": "Cadena d'atac",
+  "lens.metric.dispersion": "Concentració o dispersió",
+  "lens.metric.sorties": "Sortides"
 }

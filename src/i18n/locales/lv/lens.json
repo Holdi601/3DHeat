@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Atslēgas apvidus",
   "lens.metric.trades": "Savstarpējs atbalsts (apmaiņas)",
   "lens.metric.initiative": "Pirmais trieciens",
-  "lens.kb": "Zināšanu bāze: {entries} ieraksti, {refs} atsauces"
+  "lens.kb": "Zināšanu bāze: {entries} ieraksti, {refs} atsauces",
+  "lens.metric.salvo": "Zalvju modelis",
+  "lens.metric.combatPower": "Kaujas efektivitāte",
+  "lens.metric.ranges": "Kaujas attālumi",
+  "lens.metric.killChain": "Iznīcināšanas ķēde",
+  "lens.metric.dispersion": "Koncentrācija vai izkliede",
+  "lens.metric.sorties": "Lidojumi"
 }

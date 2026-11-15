@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Terrain clé",
   "lens.metric.trades": "Appui mutuel (échanges)",
   "lens.metric.initiative": "Première frappe",
-  "lens.kb": "Base de connaissances : {entries} entrées, {refs} références"
+  "lens.kb": "Base de connaissances : {entries} entrées, {refs} références",
+  "lens.metric.salvo": "Modèle de salves",
+  "lens.metric.combatPower": "Efficacité au combat",
+  "lens.metric.ranges": "Distances d'engagement",
+  "lens.metric.killChain": "Chaîne de destruction",
+  "lens.metric.dispersion": "Concentration ou dispersion",
+  "lens.metric.sorties": "Sorties"
 }

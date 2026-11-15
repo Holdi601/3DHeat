@@ -38,7 +38,8 @@ function poisson(r: () => number, mean: number): number {
  * strength, team 0 shooting `edge` times as well. With `air`, every unit is a
  * fighter, team 0 flying high and team 1 low, both at 200 m/s.
  */
-function battles(matches: number, air: boolean, seed = 3): Dataset {
+function battles(matches: number, mode: 'ground' | 'air' | 'sea', seed = 3): Dataset {
+  const air = mode === 'air';
   const r = rng(seed);
   type Row = { x: number; y: number; z: number; t: number; p: number; s: number; e: number; team: number };
   const rows: Row[] = [];
@@ -74,16 +75,18 @@ function battles(matches: number, air: boolean, seed = 3): Dataset {
           v.alive = false;
           rows.push({ x: v.x, y: v.y, z: v.z, t: t0 + sec + 0.5, p: v.p, s, e: 2, team: v.team });
           rows.push({ x: killer.x, y: killer.y, z: killer.z, t: t0 + sec + 0.5, p: killer.p, s, e: 1, team: killer.team });
+          // The killer launched its weapon four seconds before.
+          rows.push({ x: killer.x, y: killer.y, z: killer.z, t: t0 + sec - 3.5, p: killer.p, s, e: 3, team: killer.team });
         }
       }
     }
   }
   rows.sort((a, b) => a.t - b.t);
   const N = rows.length;
-  const attrs: unknown[] = [{ name: CANON.event, kind: 'category', data: Uint32Array.from(rows, (q) => q.e), min: 0, max: 2, categories: ['position', 'kill', 'death'] }];
-  if (air) attrs.push({ name: CANON.vehicleClass, kind: 'category', data: new Uint32Array(N), min: 0, max: 0, categories: ['fighter'] });
+  const attrs: unknown[] = [{ name: CANON.event, kind: 'category', data: Uint32Array.from(rows, (q) => q.e), min: 0, max: 3, categories: ['position', 'kill', 'death', 'launch'] }];
+  if (mode !== 'ground') attrs.push({ name: CANON.vehicleClass, kind: 'category', data: new Uint32Array(N), min: 0, max: 0, categories: [air ? 'fighter' : 'ship'] });
   return {
-    id: air ? 'air' : 'ground',
+    id: mode,
     name: 'lens-synth',
     count: N,
     px: Float32Array.from(rows, (q) => q.x),
@@ -191,7 +194,7 @@ describe('lens statistics', () => {
 
 describe('lens metrics on simulated battles', () => {
   it('measures attrition, force ratios, trades, initiative and key terrain on the ground', () => {
-    const rep = insightsSync(battles(60, false), FULL_SCOPE);
+    const rep = insightsSync(battles(60, 'ground'), FULL_SCOPE);
     const L = rep.lens!;
     expect(L.lanchester).toBeDefined();
     expect(L.lanchester!.p).toBeGreaterThan(0.6);
@@ -207,7 +210,7 @@ describe('lens metrics on simulated battles', () => {
   });
 
   it('reads the energy state of aircraft', () => {
-    const rep = insightsSync(battles(40, true), FULL_SCOPE);
+    const rep = insightsSync(battles(40, 'air'), FULL_SCOPE);
     const E = rep.lens!.energy!;
     expect(rep.lens!.domain.air).toBe(1);
     expect(E.kills).toBeGreaterThan(50);
@@ -217,8 +220,30 @@ describe('lens metrics on simulated battles', () => {
     expect(rep.lens!.fieldsOfFire).toBeUndefined();
   });
 
+  it('measures combat power, ranges, the kill chain, dispersion, sorties and the salvo model', () => {
+    const rep = insightsSync(battles(60, 'ground'), FULL_SCOPE);
+    const L = rep.lens!;
+    // Red shoots 1.6 times as well per unit: it kills more per unit-hour.
+    expect(L.combatPower!.better).toBe('red');
+    expect(L.combatPower!.cev).toBeGreaterThan(1.2);
+    expect(L.combatPower!.lo).toBeGreaterThan(1);
+    // Every kill follows its launch by four seconds.
+    const chain = L.killChain!.groups[0];
+    expect(chain.launchToKill!.p50).toBeCloseTo(4, 0);
+    expect(L.ranges!.groups[0].kill!.p50).toBeGreaterThan(100);
+    expect(L.dispersion!.bins).toBeGreaterThan(10);
+    const sea = insightsSync(battles(60, 'sea'), FULL_SCOPE).lens!;
+    expect(sea.domain.sea).toBe(1);
+    expect(sea.salvo!.alpha).toBeGreaterThan(0);
+    expect(sea.salvo!.bins).toBeGreaterThan(50);
+    const air = insightsSync(battles(40, 'air'), FULL_SCOPE).lens!;
+    expect(air.ranges!.groups.find((g) => g.group === 'air')!.launch).not.toBeNull();
+    const names = readReport(rep).map((x) => x.about);
+    for (const id of ['lens.combatPower', 'lens.ranges', 'lens.killChain', 'lens.dispersion']) expect(names).toContain(id);
+  });
+
   it('judges findings and metrics through the literature, in the debrief and for a model', () => {
-    const rep = insightsSync(battles(60, false), FULL_SCOPE);
+    const rep = insightsSync(battles(60, 'ground'), FULL_SCOPE);
     const readings = readReport(rep, 'auto');
     const lanch = readings.find((x) => x.about === 'lens.lanchester')!;
     expect(lanch.literature.map((h) => h.id)).toContain('concept.lanchester-square');

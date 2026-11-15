@@ -17,6 +17,16 @@
  *   keyTerrain    how persistently the same places host each match's fighting
  *   trades        deaths answered by a teammate's kill nearby within 5 s
  *   initiative    engagements won by the side that scored first
+ *   salvo         Hughes' salvo equation fitted to ships in contact: offensive
+ *                 power per ship and defensive power per defender
+ *   combatPower   kills per unit-hour in action of each side and their ratio
+ *                 (Dupuy's combat effectiveness value), and at even local numbers
+ *   ranges        distance to the nearest enemy at kills, at launches and at
+ *                 each life's first shot, by kind of unit
+ *   killChain     seconds from launch to kill and from a fight's first shot to kill
+ *   dispersion    who wins a 20 s period: the side standing closer together or
+ *                 the one spread out
+ *   sorties       losses and kills per sortie of each side's aircraft
  *
  * Every metric is optional: it is left out when the data cannot carry it
  * (no time, no teams, no air units, too few events).
@@ -27,10 +37,24 @@ import { rowShown } from '../volumes/compare';
 import { COARSE, MID, type InsightChunk, type InsightJob, type InsightMeta } from './pass';
 import { binomTwoSided, quantileSorted } from './stats';
 
+export interface LensEvents {
+  launch: number;
+  fire: number;
+  takeoff: number;
+  landing: number;
+}
+
 export interface LensOptions {
   /** World units in a metre (1 for metres; a CS2 unit is about an inch). */
   upm: number;
+  /** EVENT_KINDS indices (kept out of the worker's imports); -1 where absent. */
+  events?: LensEvents;
+  /** Shooter column category -> person index (-1 none): who launched a weapon row. */
+  shooterMap?: Int32Array;
 }
+
+/** A chunk as the lens reads it: the insight chunk and, where the data has one, the shooter column. */
+export type LensChunk = InsightChunk & { shooter?: Uint32Array | null };
 
 /** Seconds a Lanchester time bin spans. */
 export const LANCHESTER_BIN = 20;
@@ -50,6 +74,9 @@ const AIR_MAX = 4;
 const GROUND = [5, 6, 7, 8, 9];
 const SEA = [10, 11];
 const INFANTRY = 12;
+const WEAPON = 13;
+const DECOY = 14;
+const STRUCTURE = 15;
 
 export interface LanchesterFit {
   bins: number;
@@ -177,6 +204,12 @@ export interface LensMetrics {
   keyTerrain?: KeyTerrainMetric;
   trades?: TradesMetric;
   initiative?: InitiativeMetric;
+  salvo?: SalvoMetric;
+  combatPower?: CombatPowerMetric;
+  ranges?: RangeMetric;
+  killChain?: KillChainMetric;
+  dispersion?: DispersionMetric;
+  sorties?: SortieMetric;
 }
 
 class Grow {
@@ -201,11 +234,37 @@ class Grow {
 interface Engagement {
   last: number;
   first: number;
+  x: number;
+  z: number;
+  n: number;
   kills: Map<number, number>;
+}
+
+/** Kinds of unit the range and timing metrics are split by. */
+export const GROUPS = ['air', 'ground', 'sea', 'infantry', 'other'] as const;
+type Group = 0 | 1 | 2 | 3 | 4;
+function groupOf(k: number): Group {
+  if (k < 0) return 4;
+  if (k <= AIR_MAX) return 0;
+  if (k === INFANTRY) return 3;
+  if (SEA.includes(k)) return 2;
+  if (GROUND.includes(k)) return 1;
+  return 4;
+}
+
+/** Values by group, for medians at the end. */
+class ByGroup {
+  g = GROUPS.map(() => new Grow(64));
+  push(group: Group, v: number) {
+    if (v === v && Number.isFinite(v)) this.g[group].push(v);
+  }
 }
 
 export interface LensJob {
   meta: InsightMeta;
+  /** Taxonomy indices of the shot and flight events, where the data has them. */
+  ev: LensEvents | null;
+  shooterMap: Int32Array | null;
   scope: CompareScope;
   upm: number;
   T: number;
@@ -220,6 +279,15 @@ export interface LensJob {
   talive: Grow;
   tbin: Grow;
   tE: Grow;
+  tgrp: Grow;
+  /** Last launch and last fire; first shot since the life began or the last kill; NaN none. */
+  tLaunch: Grow;
+  tFire: Grow;
+  tFirst: Grow;
+  /** 1 once the life has engaged (its first-engagement range taken). */
+  tEngaged: Grow;
+  tSample: Grow;
+  tsess: Grow;
   bySession: Map<number, number[]>;
   // Domain: movement rows by kind of unit.
   rowsAir: number;
@@ -227,12 +295,31 @@ export interface LensJob {
   rowsSea: number;
   rowsInf: number;
   rowsAll: number;
-  // Lanchester: per (match, bin) presence and losses per team.
+  /**
+   * Per (match, bin), per team: presence, losses, kills, and the sums of x, z
+   * and x²+z² of the units present (their spread). Sea units also in `seaBins`.
+   */
   bins: Map<number, Float64Array>;
-  // Force ratio: per kill, the nearest enemy and counts within each radius.
+  seaBins: Map<number, Float64Array>;
+  // Force ratio: per kill, the nearest enemy and counts within each radius, and the killer's team.
   frNear: Grow;
+  frTeam: Grow;
+  /** Per kill: match, time and place, for the engagements (`initiative`). */
+  frSess: Grow;
+  frT: Grow;
+  frX: Grow;
+  frZ: Grow;
   frCounts: Uint16Array;
   frN: number;
+  // Ranges: nearest enemy at kills, at launches, and at each life's first shot.
+  rKill: ByGroup;
+  rLaunch: ByGroup;
+  rFirst: ByGroup;
+  // Kill chain: launch to kill, first shot to kill.
+  cLaunch: ByGroup;
+  cFirst: ByGroup;
+  // Sorties: per team takeoffs, landings, air spawns, air losses, air kills.
+  sorties: Float64Array;
   // Energy.
   eKill: Grow;
   eDeath: Grow;
@@ -247,10 +334,6 @@ export interface LensJob {
   dTeam: Grow;
   dTrade: Grow;
   recent: Map<number, number[]>;
-  // Initiative.
-  eng: Map<number, Engagement>;
-  engN: number;
-  engFirst: number;
   // Level heights per mid cell.
   lvH: Float32Array | null;
   lvN: Uint8Array | null;
@@ -258,11 +341,29 @@ export interface LensJob {
   seed: number;
 }
 
+/** Bin row fields, each `T` wide. */
+const F_PRES = 0;
+const F_LOSS = 1;
+const F_KILL = 2;
+const F_SX = 3;
+const F_SZ = 4;
+const F_SXX = 5;
+const FIELDS = 6;
+/** Sortie fields per team. */
+const S_TAKEOFF = 0;
+const S_LANDING = 1;
+const S_SPAWN = 2;
+const S_LOSS = 3;
+const S_KILL = 4;
+const SORTIE_FIELDS = 5;
+
 export function createLensJob(meta: InsightMeta, scope: CompareScope, opt: LensOptions): LensJob {
   const T = Math.max(1, Math.min(32, meta.teams));
   const f = meta.grid.f;
   return {
     meta,
+    ev: opt.events ?? null,
+    shooterMap: opt.shooterMap ?? null,
     scope,
     upm: opt.upm > 0 ? opt.upm : 1,
     T,
@@ -276,6 +377,13 @@ export function createLensJob(meta: InsightMeta, scope: CompareScope, opt: LensO
     talive: new Grow(),
     tbin: new Grow(),
     tE: new Grow(),
+    tgrp: new Grow(),
+    tLaunch: new Grow(),
+    tFire: new Grow(),
+    tFirst: new Grow(),
+    tEngaged: new Grow(),
+    tSample: new Grow(),
+    tsess: new Grow(),
     bySession: new Map(),
     rowsAir: 0,
     rowsGround: 0,
@@ -283,9 +391,21 @@ export function createLensJob(meta: InsightMeta, scope: CompareScope, opt: LensO
     rowsInf: 0,
     rowsAll: 0,
     bins: new Map(),
+    seaBins: new Map(),
     frNear: new Grow(),
+    frTeam: new Grow(),
+    frSess: new Grow(),
+    frT: new Grow(),
+    frX: new Grow(),
+    frZ: new Grow(),
     frCounts: new Uint16Array(1024 * RADII * 2),
     frN: 0,
+    rKill: new ByGroup(),
+    rLaunch: new ByGroup(),
+    rFirst: new ByGroup(),
+    cLaunch: new ByGroup(),
+    cFirst: new ByGroup(),
+    sorties: new Float64Array(T * SORTIE_FIELDS),
     eKill: new Grow(),
     eDeath: new Grow(),
     kt: new Map(),
@@ -297,9 +417,6 @@ export function createLensJob(meta: InsightMeta, scope: CompareScope, opt: LensO
     dTeam: new Grow(),
     dTrade: new Grow(),
     recent: new Map(),
-    eng: new Map(),
-    engN: 0,
-    engFirst: 0,
     lvH: null,
     lvN: null,
     lvSeen: null,
@@ -350,20 +467,28 @@ function trackOf(job: LensJob, person: number, session: number): number {
   job.talive.push(1);
   job.tbin.push(-1);
   job.tE.push(NaN);
+  job.tgrp.push(4);
+  job.tLaunch.push(NaN);
+  job.tFire.push(NaN);
+  job.tFirst.push(NaN);
+  job.tEngaged.push(0);
+  job.tSample.push(-Infinity);
+  job.tsess.push(session);
   let list = job.bySession.get(session);
   if (!list) job.bySession.set(session, (list = []));
   list.push(a);
   return a;
 }
 
-function binRow(job: LensJob, s: number, bin: number): Float64Array {
+function binRow(map: Map<number, Float64Array>, T: number, s: number, bin: number): Float64Array {
   const key = (s + 1) * 65536 + Math.min(65535, bin);
-  let b = job.bins.get(key);
-  if (!b) job.bins.set(key, (b = new Float64Array(job.T * 2)));
+  let b = map.get(key);
+  if (!b) map.set(key, (b = new Float64Array(T * FIELDS)));
   return b;
 }
 
-function closeEngagement(job: LensJob, e: Engagement): void {
+/** Whether the side that scored first in an engagement also scored most: 1, 0, or null (no contest). */
+function firstWins(e: Engagement): number | null {
   let total = 0;
   let best = -1;
   let bestK = -1;
@@ -376,22 +501,62 @@ function closeEngagement(job: LensJob, e: Engagement): void {
       tie = false;
     } else if (k === bestK) tie = true;
   }
-  if (total < 2 || e.kills.size < 2 || tie) return;
-  job.engN++;
-  if (best === e.first) job.engFirst++;
+  if (total < 2 || e.kills.size < 2 || tie) return null;
+  return best === e.first ? 1 : 0;
+}
+
+/** The nearest alive enemy of `team` to (x, y, z) seen within `STALE` of `t`. */
+function nearestEnemy(job: LensJob, list: number[], team: number, x: number, y: number, z: number, t: number): number {
+  let near = Infinity;
+  for (const u of list) {
+    const ut = job.tt.a[u];
+    const tm = job.tteam.a[u];
+    if (tm < 0 || tm === team || !job.talive.a[u] || !(ut === ut) || t - ut > STALE || t - ut < -STALE) continue;
+    const d = Math.hypot(x - job.tx.a[u], y - job.ty.a[u], z - job.tz.a[u]);
+    if (d < near) near = d;
+  }
+  return near;
+}
+
+/** Seconds a fire row may be sampled for its range once per track. */
+const FIRE_SAMPLE = 5;
+/** Seconds after a launch or first shot a kill is credited to it. */
+const CHAIN_SECS = 120;
+const MAX_SAMPLES = 400_000;
+
+/** A shot by track `a` (a launch, or gunfire): its times, and its range to the nearest enemy where sampled. */
+function shotBy(job: LensJob, a: number, launch: boolean, x: number, y: number, z: number, t: number): void {
+  if (launch) job.tLaunch.a[a] = t;
+  else job.tFire.a[a] = t;
+  if (!(job.tFirst.a[a] === job.tFirst.a[a])) job.tFirst.a[a] = t;
+  const tm = job.tteam.a[a];
+  const grp = job.tgrp.a[a] as Group;
+  const list = job.bySession.get(job.tsess.a[a]);
+  const first = !job.tEngaged.a[a];
+  const sample = launch || first || t - job.tSample.a[a] >= FIRE_SAMPLE;
+  if (!list || tm < 0 || !sample || job.rLaunch.g[grp].n + job.rFirst.g[grp].n >= MAX_SAMPLES) return;
+  job.tSample.a[a] = t;
+  const near = nearestEnemy(job, list, tm, x, y, z, t);
+  if (launch) job.rLaunch.push(grp, near);
+  if (first) {
+    job.tEngaged.a[a] = 1;
+    job.rFirst.push(grp, near);
+  }
 }
 
 /** Fold one chunk in, in row order (as `stepInsight`). */
-export function stepLens(job: LensJob, ch: InsightChunk): void {
+export function stepLens(job: LensJob, ch: LensChunk): void {
   const { meta, scope } = job;
   const g = meta.grid;
   const KILL = meta.kill;
   const DEATH = meta.death;
   const POS = meta.position;
+  const ev = job.ev;
   const T = job.T;
   const cap = meta.dwellCap;
   const g2 = 2 * 9.81 * job.upm;
   const { px, py, pz, time, person, team, session, event, cls, target } = ch;
+  const shooter = ch.shooter && job.shooterMap ? ch.shooter : null;
   const radii = job.radii;
   const rMax = radii[RADII - 1];
   for (let j = 0; j < ch.n; j++) {
@@ -399,16 +564,28 @@ export function stepLens(job: LensJob, ch: InsightChunk): void {
     const y = py[j];
     const z = pz[j];
     if (!(x === x && y === y && z === z) || !rowShown(scope, ch, j)) continue;
-    const kind = event && meta.eventMap ? meta.eventMap[event[j]] ?? -1 : -1;
-    const moving = POS < 0 || kind === POS;
     const k = cls && meta.classMap ? meta.classMap[cls[j]] ?? -1 : -1;
-    const air = k >= 0 && k <= AIR_MAX;
+    const kind = event && meta.eventMap ? meta.eventMap[event[j]] ?? -1 : -1;
+    // Weapons, decoys and buildings are not units: they neither count as strength nor die as losses.
+    // A weapon's launch row still tells when and where its shooter fired.
+    if (k === WEAPON || k === DECOY || k === STRUCTURE) {
+      const ev = job.ev;
+      if (shooter && ev && (kind === ev.launch || kind === ev.fire)) {
+        const sp = job.shooterMap![shooter[j]] ?? -1;
+        const t = time ? time[j] : NaN;
+        if (sp >= 0 && t === t) shotBy(job, trackOf(job, sp, session ? session[j] : -1), kind === ev.launch, x, y, z, t);
+      }
+      continue;
+    }
+    const moving = POS < 0 || kind === POS;
+    const grp = groupOf(k);
+    const air = grp === 0;
     if (moving && k >= 0) {
       job.rowsAll++;
       if (air) job.rowsAir++;
-      else if (k === INFANTRY) job.rowsInf++;
-      else if (SEA.includes(k)) job.rowsSea++;
-      else if (GROUND.includes(k)) job.rowsGround++;
+      else if (grp === 3) job.rowsInf++;
+      else if (grp === 2) job.rowsSea++;
+      else if (grp === 1) job.rowsGround++;
     }
     const s = session ? session[j] : -1;
     const tm0 = team ? team[j] : -1;
@@ -420,11 +597,27 @@ export function stepLens(job: LensJob, ch: InsightChunk): void {
     const p = person ? person[j] : -1;
     const shared = p >= 0 && meta.personShared ? meta.personShared[p] === 1 : false;
     const a = p >= 0 && !shared ? trackOf(job, p, s) : -1;
+    const list = job.bySession.get(s);
+    if (tm >= 0 && ev) {
+      const so = tm * SORTIE_FIELDS;
+      if (kind === ev.takeoff) job.sorties[so + S_TAKEOFF]++;
+      else if (kind === ev.landing) job.sorties[so + S_LANDING]++;
+      else if (kind === meta.spawn && air) job.sorties[so + S_SPAWN]++;
+    }
     if (a >= 0) {
       if (tm >= 0) job.tteam.a[a] = tm;
-      if (kind === meta.spawn) job.talive.a[a] = 1;
+      if (k >= 0) job.tgrp.a[a] = grp;
+      if (kind === meta.spawn) {
+        job.talive.a[a] = 1;
+        job.tFirst.a[a] = NaN;
+        job.tEngaged.a[a] = 0;
+      }
       if (moving) {
-        if (!job.talive.a[a] && kind !== DEATH) job.talive.a[a] = 1;
+        if (!job.talive.a[a] && kind !== DEATH) {
+          job.talive.a[a] = 1;
+          job.tFirst.a[a] = NaN;
+          job.tEngaged.a[a] = 0;
+        }
         const lt = job.tt.a[a];
         if (air && hasT && lt === lt && t > lt && t - lt <= cap) {
           const v = Math.hypot(x - job.tx.a[a], y - job.ty.a[a], z - job.tz.a[a]) / (t - lt);
@@ -434,15 +627,26 @@ export function stepLens(job: LensJob, ch: InsightChunk): void {
         job.ty.a[a] = y;
         job.tz.a[a] = z;
         job.tt.a[a] = hasT ? t : job.tt.a[a];
-        // Strength: an alive unit seen moving in this bin.
+        // Strength and spread: an alive unit seen moving in this bin, once.
         if (bin >= 0 && tm >= 0 && job.talive.a[a] && job.tbin.a[a] !== bin) {
           job.tbin.a[a] = bin;
-          binRow(job, s, bin)[tm]++;
+          for (const b of grp === 2 ? [binRow(job.bins, T, s, bin), binRow(job.seaBins, T, s, bin)] : [binRow(job.bins, T, s, bin)]) {
+            b[F_PRES * T + tm]++;
+            b[F_SX * T + tm] += x;
+            b[F_SZ * T + tm] += z;
+            b[F_SXX * T + tm] += x * x + z * z;
+          }
         }
       }
+      // Shots: launch and fire times, the range at launches and at each life's first shot.
+      if (ev && hasT && (kind === ev.launch || kind === ev.fire)) shotBy(job, a, kind === ev.launch, x, y, z, t);
     }
     if (kind === DEATH) {
-      if (bin >= 0 && tm >= 0) binRow(job, s, bin)[T + tm]++;
+      if (bin >= 0 && tm >= 0) {
+        binRow(job.bins, T, s, bin)[F_LOSS * T + tm]++;
+        if (grp === 2) binRow(job.seaBins, T, s, bin)[F_LOSS * T + tm]++;
+      }
+      if (air && tm >= 0) job.sorties[tm * SORTIE_FIELDS + S_LOSS]++;
       if (air && a >= 0) {
         const e = job.tE.a[a];
         if (e === e) job.eDeath.push(e);
@@ -472,10 +676,23 @@ export function stepLens(job: LensJob, ch: InsightChunk): void {
       let m = job.kt.get(s);
       if (!m) job.kt.set(s, (m = new Map()));
       m.set(ci, (m.get(ci) ?? 0) + 1);
+      if (bin >= 0 && tm >= 0) {
+        binRow(job.bins, T, s, bin)[F_KILL * T + tm]++;
+        if (grp === 2) binRow(job.seaBins, T, s, bin)[F_KILL * T + tm]++;
+      }
+      if (air && tm >= 0) job.sorties[tm * SORTIE_FIELDS + S_KILL]++;
       if (air && a >= 0) {
         const tk = target && meta.targetMap ? meta.targetMap[target[j]] ?? -1 : -1;
         const e = job.tE.a[a];
         if (e === e && (tk < 0 || tk <= AIR_MAX)) job.eKill.push(e);
+      }
+      // Kill chain: from the killer's last launch, and from its first shot of this fight.
+      if (a >= 0 && hasT) {
+        const dl = t - job.tLaunch.a[a];
+        if (dl >= 0 && dl <= CHAIN_SECS) job.cLaunch.push(grp, dl);
+        const df = t - job.tFirst.a[a];
+        if (df >= 0 && df <= CHAIN_SECS) job.cFirst.push(grp, df);
+        job.tFirst.a[a] = NaN;
       }
       if (hasT && tm >= 0) {
         // Trades: this kill answers recent deaths of the killer's team.
@@ -489,17 +706,7 @@ export function stepLens(job: LensJob, ch: InsightChunk): void {
             const dd = Math.hypot(x - job.dX.a[di], y - job.dY.a[di], z - job.dZ.a[di]);
             if (dd < job.dTrade.a[di]) job.dTrade.a[di] = dd;
           }
-        // Initiative: engagements by quiet gaps.
-        let e = job.eng.get(s);
-        if (e && t - e.last > ENGAGEMENT_GAP) {
-          closeEngagement(job, e);
-          e = undefined;
-        }
-        if (!e) job.eng.set(s, (e = { last: t, first: tm, kills: new Map() }));
-        e.last = t;
-        e.kills.set(tm, (e.kills.get(tm) ?? 0) + 1);
         // Force ratio: who was within reach of the kill.
-        const list = job.bySession.get(s);
         if (list && job.frN < MAX_KILLS) {
           if ((job.frN + 1) * RADII * 2 > job.frCounts.length) {
             const b = new Uint16Array(job.frCounts.length * 2);
@@ -528,7 +735,13 @@ export function stepLens(job: LensJob, ch: InsightChunk): void {
           if (a < 0 || !(job.tt.a[a] === job.tt.a[a]) || t - job.tt.a[a] > STALE)
             for (let r = 0; r < RADII; r++) job.frCounts[base + r * 2]++;
           job.frNear.push(near);
+          job.frTeam.push(tm);
+          job.frSess.push(s);
+          job.frT.push(t);
+          job.frX.push(x);
+          job.frZ.push(z);
           job.frN++;
+          job.rKill.push(grp, near);
         }
       }
     }
@@ -984,11 +1197,55 @@ function finishTrades(job: LensJob, radius: number, teams: readonly string[]): T
   };
 }
 
-function finishInitiative(job: LensJob): InitiativeMetric | undefined {
-  for (const e of job.eng.values()) closeEngagement(job, e);
-  job.eng.clear();
-  if (job.engN < 10) return undefined;
-  return { engagements: job.engN, firstWins: job.engFirst, share: round(job.engFirst / job.engN, 3), p: binomTwoSided(job.engFirst, job.engN, 0.5) };
+/**
+ * Engagements: each match's kills in time order, a kill joining the open
+ * engagement within `radius` of its centre and `ENGAGEMENT_GAP` of its last
+ * kill (kills sit at the killers, so the radius is the engagement range).
+ */
+function finishInitiative(job: LensJob, radius: number): InitiativeMetric | undefined {
+  if (!(radius > 0)) return undefined;
+  const bySess = new Map<number, number[]>();
+  for (let q = 0; q < job.frN; q++) {
+    const s = job.frSess.a[q];
+    let l = bySess.get(s);
+    if (!l) bySess.set(s, (l = []));
+    l.push(q);
+  }
+  let n = 0;
+  let won = 0;
+  const close = (e: Engagement) => {
+    const w = firstWins(e);
+    if (w === null) return;
+    n++;
+    won += w;
+  };
+  for (const list of bySess.values()) {
+    list.sort((a, b) => job.frT.a[a] - job.frT.a[b]);
+    const open: Engagement[] = [];
+    for (const q of list) {
+      const t = job.frT.a[q];
+      const x = job.frX.a[q];
+      const z = job.frZ.a[q];
+      const tm = job.frTeam.a[q];
+      let e: Engagement | undefined;
+      for (let i = open.length - 1; i >= 0; i--) {
+        const o = open[i];
+        if (t - o.last > ENGAGEMENT_GAP) {
+          close(o);
+          open.splice(i, 1);
+        } else if (!e && Math.hypot(x - o.x, z - o.z) <= radius) e = o;
+      }
+      if (!e) open.push((e = { last: t, first: tm, x, z, n: 0, kills: new Map() }));
+      e.last = t;
+      e.x = (e.x * e.n + x) / (e.n + 1);
+      e.z = (e.z * e.n + z) / (e.n + 1);
+      e.n++;
+      e.kills.set(tm, (e.kills.get(tm) ?? 0) + 1);
+    }
+    for (const o of open) close(o);
+  }
+  if (n < 10) return undefined;
+  return { engagements: n, firstWins: won, share: round(won / n, 3), p: binomTwoSided(won, n, 0.5) };
 }
 
 /**
@@ -1130,6 +1387,246 @@ function finishFieldsOfFire(job: LensJob, ins: InsightJob, range: number): Field
   };
 }
 
+// ---------------------------------------------------------------- the newer measures
+
+export interface Quartiles {
+  n: number;
+  p25: number;
+  p50: number;
+  p75: number;
+}
+
+function quart(g: Grow, min = 5): Quartiles | null {
+  if (g.n < min) return null;
+  const v = Float64Array.from(g.view()).sort();
+  return { n: g.n, p25: round(quantileSorted(v, 0.25), 1), p50: round(quantileSorted(v, 0.5), 1), p75: round(quantileSorted(v, 0.75), 1) };
+}
+
+export interface SalvoMetric {
+  /** Twenty-second bins of ships in contact, each seen from the side losing ships. */
+  bins: number;
+  matches: number;
+  losses: number;
+  /** Ships put out of action per attacking ship per bin. */
+  alpha: number;
+  alphaSe: number;
+  /** Losses avoided per defending ship per bin (its defensive power). */
+  delta: number;
+  deltaSe: number;
+  /** The Lanchester fit on ships alone, where enough bins exist. */
+  lanchester: LanchesterFit | null;
+}
+
+export interface CombatPowerMetric {
+  teams: { team: string; unitHours: number; kills: number; deaths: number; killsPerUnitHour: number }[];
+  /** The two sides with most time in action: kills per unit-hour of the first over the second's, with a 95% interval. */
+  better: string;
+  worse: string;
+  cev: number;
+  lo: number;
+  hi: number;
+  /** Kills each of the two took at even local numbers (1:1.5 to 1.5:1), and the first's share. */
+  parity: { kills: number; share: number; p: number } | null;
+}
+
+export interface RangeMetric {
+  groups: { group: (typeof GROUPS)[number]; kill: Quartiles | null; launch: Quartiles | null; firstShot: Quartiles | null }[];
+}
+
+export interface KillChainMetric {
+  groups: { group: (typeof GROUPS)[number]; launchToKill: Quartiles | null; firstShotToKill: Quartiles | null }[];
+}
+
+export interface DispersionMetric {
+  /** Bins where two sides had at least two units each and someone scored. */
+  bins: number;
+  kills: number;
+  /** Share of those kills taken by the side whose units stood closer together. */
+  tighterShare: number;
+  p: number;
+  /** Median spread (root mean square distance from the side's centre), world units. */
+  byTeam: { team: string; spread: number }[];
+}
+
+export interface SortieMetric {
+  byTeam: { team: string; sorties: number; landings: number; losses: number; kills: number; lossRate: number; killsPerSortie: number }[];
+}
+
+function twoTop(b: Float64Array, T: number, field: number, min: number): [number, number] | null {
+  let a = -1;
+  let c = -1;
+  for (let t = 0; t < T; t++) {
+    const v = b[field * T + t];
+    if (v < min) continue;
+    if (a < 0 || v > b[field * T + a]) {
+      c = a;
+      a = t;
+    } else if (c < 0 || v > b[field * T + c]) c = t;
+  }
+  return a >= 0 && c >= 0 ? [a, c] : null;
+}
+
+function finishSalvo(job: LensJob): SalvoMetric | undefined {
+  const T = job.T;
+  let saa = 0;
+  let sab = 0;
+  let sbb = 0;
+  let say = 0;
+  let sby = 0;
+  let n = 0;
+  let losses = 0;
+  const ys: number[] = [];
+  const As: number[] = [];
+  const Bs: number[] = [];
+  const ms = new Set<number>();
+  for (const [key, b] of job.seaBins) {
+    const two = twoTop(b, T, F_PRES, 1);
+    if (!two) continue;
+    for (const [att, def] of [two, [two[1], two[0]]]) {
+      const A = b[F_PRES * T + att];
+      const B = b[F_PRES * T + def];
+      const y = b[F_LOSS * T + def];
+      saa += A * A;
+      sab += A * B;
+      sbb += B * B;
+      say += A * y;
+      sby += B * y;
+      ys.push(y);
+      As.push(A);
+      Bs.push(B);
+      losses += y;
+      n++;
+    }
+    ms.add(Math.floor(key / 65536));
+  }
+  if (n < 10 || losses < 5) return undefined;
+  // Least squares of y = α·A − δ·B (no intercept): the salvo equation per bin.
+  const det = saa * sbb - sab * sab;
+  if (!(Math.abs(det) > 1e-12)) return undefined;
+  const alpha = (say * sbb - sby * sab) / det;
+  const delta = -(saa * sby - sab * say) / det;
+  let rss = 0;
+  for (let i = 0; i < n; i++) rss += (ys[i] - alpha * As[i] + delta * Bs[i]) ** 2;
+  const s2 = rss / Math.max(1, n - 2);
+  const lanch = fitLanchester(ys, As.map(Math.log), Bs.map(Math.log), ms.size);
+  return {
+    bins: n,
+    matches: ms.size,
+    losses,
+    alpha: round(alpha, 4),
+    alphaSe: round(Math.sqrt((s2 * sbb) / det), 4),
+    delta: round(delta, 4),
+    deltaSe: round(Math.sqrt((s2 * saa) / det), 4),
+    lanchester: lanch,
+  };
+}
+
+/** The force-ratio radius index the data supports, or -1. */
+function frRadius(job: LensJob): number {
+  const near = Array.from(job.frNear.view()).filter((d) => Number.isFinite(d)).sort((a, b) => a - b);
+  if (near.length < 10) return -1;
+  const p50 = quantileSorted(near, 0.5);
+  let r = 0;
+  while (r < RADII - 1 && job.radii[r] < 2 * p50) r++;
+  return r;
+}
+
+function finishCombatPower(job: LensJob, ins: InsightJob, teams: readonly string[]): CombatPowerMetric | undefined {
+  const rows: CombatPowerMetric['teams'] = [];
+  const idx: number[] = [];
+  for (let t = 0; t < ins.teamPres.length; t++) {
+    const h = ins.teamPres[t] / 3600;
+    if (!(h > 0)) continue;
+    rows.push({ team: teams[t] ?? `#${t}`, unitHours: round(h, 2), kills: ins.teamKills[t], deaths: ins.teamDeaths[t], killsPerUnitHour: round(ins.teamKills[t] / h, 3) });
+    idx.push(t);
+  }
+  if (rows.length < 2) return undefined;
+  const order = rows.map((_, i) => i).sort((a, b) => rows[b].unitHours - rows[a].unitHours);
+  let [i, j] = order;
+  if (rows[i].killsPerUnitHour < rows[j].killsPerUnitHour) [i, j] = [j, i];
+  const A = rows[i];
+  const B = rows[j];
+  if (A.kills < 5 || B.kills < 5) return undefined;
+  const cev = A.killsPerUnitHour / B.killsPerUnitHour;
+  const se = Math.sqrt(1 / A.kills + 1 / B.kills);
+  let parity: CombatPowerMetric['parity'] = null;
+  const r = frRadius(job);
+  if (r >= 0) {
+    let ka = 0;
+    let kb = 0;
+    for (let q = 0; q < job.frN; q++) {
+      const f = job.frCounts[(q * RADII + r) * 2];
+      const e = job.frCounts[(q * RADII + r) * 2 + 1];
+      if (!f || !e || f / e >= 1.5 || f / e <= 1 / 1.5) continue;
+      const tm = job.frTeam.a[q];
+      if (tm === idx[i]) ka++;
+      else if (tm === idx[j]) kb++;
+    }
+    if (ka + kb >= 10) parity = { kills: ka + kb, share: round(ka / (ka + kb), 3), p: binomTwoSided(ka, ka + kb, 0.5) };
+  }
+  return { teams: rows, better: A.team, worse: B.team, cev: round(cev, 2), lo: round(cev * Math.exp(-1.96 * se), 2), hi: round(cev * Math.exp(1.96 * se), 2), parity };
+}
+
+function finishRanges(job: LensJob): RangeMetric | undefined {
+  const groups = GROUPS.map((group, g) => ({ group, kill: quart(job.rKill.g[g]), launch: quart(job.rLaunch.g[g]), firstShot: quart(job.rFirst.g[g]) })).filter((x) => x.kill || x.launch || x.firstShot);
+  return groups.length ? { groups } : undefined;
+}
+
+function finishKillChain(job: LensJob): KillChainMetric | undefined {
+  const groups = GROUPS.map((group, g) => ({ group, launchToKill: quart(job.cLaunch.g[g]), firstShotToKill: quart(job.cFirst.g[g]) })).filter((x) => x.launchToKill || x.firstShotToKill);
+  return groups.length ? { groups } : undefined;
+}
+
+function finishDispersion(job: LensJob, teams: readonly string[]): DispersionMetric | undefined {
+  const T = job.T;
+  const spread = (b: Float64Array, t: number) => {
+    const n = b[F_PRES * T + t];
+    const mx = b[F_SX * T + t] / n;
+    const mz = b[F_SZ * T + t] / n;
+    return Math.sqrt(Math.max(0, b[F_SXX * T + t] / n - mx * mx - mz * mz));
+  };
+  const per = Array.from({ length: T }, () => new Grow(64));
+  let bins = 0;
+  let kills = 0;
+  let tight = 0;
+  for (const b of job.bins.values()) {
+    for (let t = 0; t < T; t++) if (b[F_PRES * T + t] >= 2) per[t].push(spread(b, t));
+    const two = twoTop(b, T, F_PRES, 2);
+    if (!two) continue;
+    const [a, c] = two;
+    const ka = b[F_KILL * T + a];
+    const kc = b[F_KILL * T + c];
+    if (ka + kc < 1) continue;
+    const sa = spread(b, a);
+    const sc = spread(b, c);
+    if (sa === sc) continue;
+    bins++;
+    kills += ka + kc;
+    tight += sa < sc ? ka : kc;
+  }
+  if (bins < 10 || kills < 20) return undefined;
+  return {
+    bins,
+    kills,
+    tighterShare: round(tight / kills, 3),
+    p: binomTwoSided(tight, kills, 0.5),
+    byTeam: per.flatMap((g, t) => (g.n >= 5 ? [{ team: teams[t] ?? `#${t}`, spread: round(quantileSorted(Float64Array.from(g.view()).sort(), 0.5), 1) }] : [])),
+  };
+}
+
+function finishSorties(job: LensJob, teams: readonly string[]): SortieMetric | undefined {
+  const rows: SortieMetric['byTeam'] = [];
+  for (let t = 0; t < job.T; t++) {
+    const o = t * SORTIE_FIELDS;
+    const sorties = Math.max(job.sorties[o + S_TAKEOFF], job.sorties[o + S_SPAWN]);
+    if (sorties < 5) continue;
+    const losses = job.sorties[o + S_LOSS];
+    const kills = job.sorties[o + S_KILL];
+    rows.push({ team: teams[t] ?? `#${t}`, sorties, landings: job.sorties[o + S_LANDING], losses, kills, lossRate: round(losses / sorties, 3), killsPerSortie: round(kills / sorties, 3) });
+  }
+  return rows.length ? { byTeam: rows } : undefined;
+}
+
 export function finishLens(job: LensJob, ins: InsightJob, teams: readonly string[]): LensMetrics {
   const all = Math.max(1, job.rowsAll);
   const domain = {
@@ -1149,7 +1646,13 @@ export function finishLens(job: LensJob, ins: InsightJob, teams: readonly string
   put('energy', finishEnergy(job));
   put('keyTerrain', finishKeyTerrain(job));
   put('trades', finishTrades(job, fr?.radius ?? job.radii[4], teams));
-  put('initiative', finishInitiative(job));
+  put('initiative', finishInitiative(job, fr ? fr.range.p50 * 3 : NaN));
+  put('salvo', finishSalvo(job));
+  put('combatPower', finishCombatPower(job, ins, teams));
+  put('ranges', finishRanges(job));
+  put('killChain', finishKillChain(job));
+  put('dispersion', finishDispersion(job, teams));
+  put('sorties', finishSorties(job, teams));
   if (domain.air < 0.5) put('fieldsOfFire', finishFieldsOfFire(job, ins, fr ? fr.range.p75 * 3 : 48 * job.meta.grid.f * MID));
   return out;
 }

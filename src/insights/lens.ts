@@ -191,6 +191,65 @@ export function ofMetrics(m: LensMetrics | undefined): Map<string, Shows> {
       weight: sig(I.p) * Math.min(1, Math.abs(I.share - 0.5) * 4 + 0.2),
     });
   }
+  const dist = (v: number) => {
+    const metres = v / (m.upm || 1);
+    return metres >= 2000 ? `${r2(metres / 1000)} km` : `${Math.round(metres)} m`;
+  };
+  const S = m.salvo;
+  if (S) {
+    out.set('lens.salvo', {
+      patterns: { 'fleet-salvo': 1, initiative: 0.5, scouting: 0.4, attrition: 0.3 },
+      why: `Fitted to ${S.bins} periods of ships in contact, each attacking ship puts ${r2(S.alpha)} ± ${r2(S.alphaSe)} enemy ships out of action per 20 s and each defender saves ${r2(S.delta)} ± ${r2(S.deltaSe)} (Hughes' salvo equation).`,
+      weight: Math.min(1, 0.3 + S.losses / 100),
+    });
+  }
+  const C = m.combatPower;
+  if (C) {
+    const clear = C.lo > 1;
+    out.set('lens.combatPower', {
+      patterns: clear ? { 'exchange-ratio': 0.8, balance: 0.6, 'local-superiority': 0.3, 'skill-dispersion': 0.3 } : { balance: 0.5, 'exchange-ratio': 0.4 },
+      why: `Per unit-hour in action, ${C.better} kills at ${r2(C.cev)}× the rate of ${C.worse} (95% interval ${r2(C.lo)} to ${r2(C.hi)}: a combat effectiveness ratio in Dupuy's sense)${C.parity ? `; at even local numbers ${C.better} took ${pct(C.parity.share)} of ${C.parity.kills} kills` : ''}.`,
+      weight: clear ? Math.min(1, 0.4 + Math.log(C.cev) / 2) : 0.25,
+    });
+  }
+  const R = m.ranges;
+  if (R) {
+    const parts = R.groups.map((g) => `${g.group} ${[g.kill ? `kills ${dist(g.kill.p50)}` : '', g.launch ? `launches ${dist(g.launch.p50)}` : '', g.firstShot ? `first shot ${dist(g.firstShot.p50)}` : ''].filter(Boolean).join(', ')}`);
+    const air = R.groups.find((g) => g.group === 'air');
+    const long = !!air && ((air.launch?.p50 ?? 0) / (m.upm || 1) >= 10000 || (air.kill?.p50 ?? 0) / (m.upm || 1) >= 10000);
+    out.set('lens.ranges', {
+      patterns: long ? { bvr: 1, initiative: 0.4, scouting: 0.4 } : { 'fields-of-fire': 0.6, sightlines: 0.6, scouting: 0.3 },
+      why: `Median distance to the nearest enemy - ${parts.join('; ')}.`,
+      weight: 0.45,
+    });
+  }
+  const KC = m.killChain;
+  if (KC) {
+    const parts = KC.groups.map((g) => `${g.group} ${[g.launchToKill ? `launch to kill ${r2(g.launchToKill.p50)} s` : '', g.firstShotToKill ? `first shot to kill ${r2(g.firstShotToKill.p50)} s` : ''].filter(Boolean).join(', ')}`);
+    out.set('lens.killChain', {
+      patterns: { tempo: 1, initiative: 0.5, surprise: 0.3 },
+      why: `Kill chain, medians - ${parts.join('; ')}.`,
+      weight: 0.4,
+    });
+  }
+  const D = m.dispersion;
+  if (D) {
+    const conc = D.tighterShare >= 0.55 && D.p < 0.05;
+    const spread = D.tighterShare <= 0.45 && D.p < 0.05;
+    out.set('lens.dispersion', {
+      patterns: conc ? { concentration: 1, 'local-superiority': 0.6, 'mutual-support': 0.5 } : spread ? { 'area-fire': 0.9, mobility: 0.4, flank: 0.3 } : { concentration: 0.3, 'area-fire': 0.3 },
+      why: `In ${D.bins} periods where both sides had units in action, the side standing closer together took ${pct(D.tighterShare)} of ${D.kills} kills.`,
+      weight: sig(D.p) * Math.min(1, Math.abs(D.tighterShare - 0.5) * 4 + 0.2),
+    });
+  }
+  const SO = m.sorties;
+  if (SO) {
+    out.set('lens.sorties', {
+      patterns: { 'air-superiority': 0.9, 'exchange-ratio': 0.6, attrition: 0.5 },
+      why: `Per sortie - ${SO.byTeam.map((t) => `${t.team}: ${pct(t.lossRate)} lost, ${r2(t.killsPerSortie)} kills (${t.sorties} sorties)`).join('; ')}.`,
+      weight: 0.55,
+    });
+  }
   return out;
 }
 

@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Teren-cheie",
   "lens.metric.trades": "Sprijin reciproc (schimburi)",
   "lens.metric.initiative": "Prima lovitură",
-  "lens.kb": "Bază de cunoștințe: {entries} intrări, {refs} referințe"
+  "lens.kb": "Bază de cunoștințe: {entries} intrări, {refs} referințe",
+  "lens.metric.salvo": "Modelul salvelor",
+  "lens.metric.combatPower": "Eficiență în luptă",
+  "lens.metric.ranges": "Distanțe de angajare",
+  "lens.metric.killChain": "Lanț de lovire",
+  "lens.metric.dispersion": "Concentrare sau dispersare",
+  "lens.metric.sorties": "Misiuni de zbor"
 }

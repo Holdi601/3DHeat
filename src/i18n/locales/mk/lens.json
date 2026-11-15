@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Клучен терен",
   "lens.metric.trades": "Заемна поддршка (размени)",
   "lens.metric.initiative": "Прв удар",
-  "lens.kb": "База на знаење: {entries} записи, {refs} извори"
+  "lens.kb": "База на знаење: {entries} записи, {refs} извори",
+  "lens.metric.salvo": "Модел на плотуни",
+  "lens.metric.combatPower": "Борбена ефикасност",
+  "lens.metric.ranges": "Борбени растојанија",
+  "lens.metric.killChain": "Синџир на уништување",
+  "lens.metric.dispersion": "Концентрација или распрснатост",
+  "lens.metric.sorties": "Летови"
 }

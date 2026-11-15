@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Ključno zemljište",
   "lens.metric.trades": "Uzajamna potpora (razmjene)",
   "lens.metric.initiative": "Prvi udar",
-  "lens.kb": "Baza znanja: {entries} unosa, {refs} izvora"
+  "lens.kb": "Baza znanja: {entries} unosa, {refs} izvora",
+  "lens.metric.salvo": "Model salvi",
+  "lens.metric.combatPower": "Borbena učinkovitost",
+  "lens.metric.ranges": "Borbene udaljenosti",
+  "lens.metric.killChain": "Lanac uništenja",
+  "lens.metric.dispersion": "Koncentracija ili raspršenost",
+  "lens.metric.sorties": "Leteće misije"
 }

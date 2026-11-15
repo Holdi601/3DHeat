@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Κρίσιμο έδαφος",
   "lens.metric.trades": "Αμοιβαία υποστήριξη (ανταλλαγές)",
   "lens.metric.initiative": "Πρώτο πλήγμα",
-  "lens.kb": "Βάση γνώσεων: {entries} λήμματα, {refs} πηγές"
+  "lens.kb": "Βάση γνώσεων: {entries} λήμματα, {refs} πηγές",
+  "lens.metric.salvo": "Μοντέλο ομοβροντιών",
+  "lens.metric.combatPower": "Μαχητική αποτελεσματικότητα",
+  "lens.metric.ranges": "Αποστάσεις εμπλοκής",
+  "lens.metric.killChain": "Αλυσίδα προσβολής",
+  "lens.metric.dispersion": "Συγκέντρωση ή διασπορά",
+  "lens.metric.sorties": "Έξοδοι"
 }

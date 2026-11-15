@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Art ewlenija",
   "lens.metric.trades": "Appoġġ reċiproku (skambji)",
   "lens.metric.initiative": "L-ewwel daqqa",
-  "lens.kb": "Bażi tal-għarfien: {entries} daħliet, {refs} referenzi"
+  "lens.kb": "Bażi tal-għarfien: {entries} daħliet, {refs} referenzi",
+  "lens.metric.salvo": "Mudell tas-salvi",
+  "lens.metric.combatPower": "Effettività fil-ġlieda",
+  "lens.metric.ranges": "Distanzi tal-ingaġġ",
+  "lens.metric.killChain": "Katina tal-qtil",
+  "lens.metric.dispersion": "Konċentrazzjoni jew tixrid",
+  "lens.metric.sorties": "Titjiriet"
 }

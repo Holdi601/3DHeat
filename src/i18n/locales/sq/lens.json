@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Terren kyç",
   "lens.metric.trades": "Mbështetje e ndërsjellë (shkëmbime)",
   "lens.metric.initiative": "Goditja e parë",
-  "lens.kb": "Baza e njohurive: {entries} hyrje, {refs} referenca"
+  "lens.kb": "Baza e njohurive: {entries} hyrje, {refs} referenca",
+  "lens.metric.salvo": "Modeli i salvave",
+  "lens.metric.combatPower": "Efektiviteti luftarak",
+  "lens.metric.ranges": "Distancat e angazhimit",
+  "lens.metric.killChain": "Zinxhiri i goditjes",
+  "lens.metric.dispersion": "Përqendrim apo shpërndarje",
+  "lens.metric.sorties": "Fluturime luftarake"
 }

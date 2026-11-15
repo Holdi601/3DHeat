@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Ключов терен",
   "lens.metric.trades": "Взаимна поддръжка (размени)",
   "lens.metric.initiative": "Първи удар",
-  "lens.kb": "База знания: {entries} записа, {refs} източника"
+  "lens.kb": "База знания: {entries} записа, {refs} източника",
+  "lens.metric.salvo": "Модел на залповете",
+  "lens.metric.combatPower": "Бойна ефективност",
+  "lens.metric.ranges": "Бойни разстояния",
+  "lens.metric.killChain": "Верига на поразяване",
+  "lens.metric.dispersion": "Съсредоточаване или разпръскване",
+  "lens.metric.sorties": "Бойни полети"
 }

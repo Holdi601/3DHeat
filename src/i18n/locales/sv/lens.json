@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Nyckelterräng",
   "lens.metric.trades": "Ömsesidigt stöd (trades)",
   "lens.metric.initiative": "Första slaget",
-  "lens.kb": "Kunskapsbas: {entries} poster, {refs} källor"
+  "lens.kb": "Kunskapsbas: {entries} poster, {refs} källor",
+  "lens.metric.salvo": "Salvmodell",
+  "lens.metric.combatPower": "Stridsvärde",
+  "lens.metric.ranges": "Stridsavstånd",
+  "lens.metric.killChain": "Bekämpningskedja",
+  "lens.metric.dispersion": "Koncentration eller spridning",
+  "lens.metric.sorties": "Uppdrag"
 }

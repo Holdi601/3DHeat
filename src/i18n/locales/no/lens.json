@@ -20,5 +20,11 @@
   "lens.metric.keyTerrain": "Nøkkelterreng",
   "lens.metric.trades": "Gjensidig støtte (trades)",
   "lens.metric.initiative": "Første slag",
-  "lens.kb": "Kunnskapsbase: {entries} oppføringer, {refs} kilder"
+  "lens.kb": "Kunnskapsbase: {entries} oppføringer, {refs} kilder",
+  "lens.metric.salvo": "Salvemodell",
+  "lens.metric.combatPower": "Kampverdi",
+  "lens.metric.ranges": "Kampavstander",
+  "lens.metric.killChain": "Drapskjede",
+  "lens.metric.dispersion": "Konsentrasjon eller spredning",
+  "lens.metric.sorties": "Tokt"
 }
